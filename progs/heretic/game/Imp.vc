@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Imp:Pawn
+class Imp : Pawn
 	__mobjinfo__(66);
 
 int XCrashState;
@@ -34,7 +34,7 @@ int XCrashState;
 //
 //==========================================================================
 
-void A_ImpMeAttack(void)
+void A_ImpMeAttack()
 {
 	if (!Enemy)
 	{
@@ -53,7 +53,7 @@ void A_ImpMeAttack(void)
 //
 //==========================================================================
 
-void A_ImpMsAttack(void)
+void A_ImpMsAttack()
 {
 	if (!Enemy || Random() > 0.25)
 	{
@@ -72,7 +72,7 @@ void A_ImpMsAttack(void)
 //
 //==========================================================================
 
-void A_ImpDeath(void)
+void A_ImpDeath()
 {
 	bSolid = false;
 	bFloorClip = true;
@@ -88,7 +88,7 @@ void A_ImpDeath(void)
 //
 //==========================================================================
 
-void A_ImpXDeath1(void)
+void A_ImpXDeath1()
 {
 	bSolid = false;
 	bNoGravity = true;
@@ -102,7 +102,7 @@ void A_ImpXDeath1(void)
 //
 //==========================================================================
 
-void A_ImpXDeath2(void)
+void A_ImpXDeath2()
 {
 	bNoGravity = false;
 	if (Origin.z <= FloorZ)
@@ -117,7 +117,7 @@ void A_ImpXDeath2(void)
 //
 //==========================================================================
 
-void A_ImpExplode(void)
+void A_ImpExplode()
 {
 	Actor mo;
 
@@ -224,16 +224,19 @@ defaultproperties
 	GibsDeathState = S_IMP_XDIE1;
 	CrashState = S_IMP_CRASH1;
 	XCrashState = S_IMP_XCRASH1;
-	SightSound = 'ImpSight';
-	ActiveSound = 'ImpActive';
-	AttackSound = 'ImpAttack1';
-	PainSound = 'ImpPain';
-	DeathSound = 'ImpDeath';
+	SightSound = 'himp/sight';
+	ActiveSound = 'himp/active';
+	AttackSound = 'himp/attack';
+	PainSound = 'himp/pain';
+	DeathSound = 'himp/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2004/12/27 12:23:12  dj_jl
 //  Multiple small changes for version 1.16
 //

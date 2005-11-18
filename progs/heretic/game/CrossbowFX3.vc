@@ -44,13 +44,16 @@ defaultproperties
 	bThruGhost = true;
 	IdleState = S_CRBOWFX3;
 	DeathState = S_CRBOWFXI3_1;
-	DeathSound = 'SkullRodHit';
+	DeathSound = 'weapons/bowhit';
 	Effects = EF_DL_GREEN;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/08/13 15:38:22  dj_jl
 //  Models added.
 //

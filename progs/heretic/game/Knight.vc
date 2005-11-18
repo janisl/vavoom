@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Knight:Pawn
+class Knight : Pawn
 	__mobjinfo__(64);
 
 //==========================================================================
@@ -32,7 +32,7 @@ class Knight:Pawn
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	DropItem(ItemAmmoCrossbowWimpy, 5, 0.328125);
 }
@@ -43,7 +43,7 @@ void DropStuff(void)
 //
 //==========================================================================
 
-void A_KnightAttack(void)
+void A_KnightAttack()
 {
 	if (!Enemy)
 	{
@@ -52,7 +52,7 @@ void A_KnightAttack(void)
 	if (CheckMeleeRange())
 	{
 		Enemy.Damage(self, self, HITDICE(3));
-		PlaySound('KnightAttack2', CHAN_WEAPON);
+		PlaySound('hknight/melee', CHAN_WEAPON);
 		return;
 	}
 	// Throw axe
@@ -129,16 +129,19 @@ defaultproperties
 	MissileState = S_KNIGHT_ATK1;
 	PainState = S_KNIGHT_PAIN1;
 	DeathState = S_KNIGHT_DIE1;
-	SightSound = 'KnightSight';
-	ActiveSound = 'KnightActive';
-	AttackSound = 'KnightAttack1';
-	PainSound = 'KnightPain';
-	DeathSound = 'KnightDeath';
+	SightSound = 'hknight/sight';
+	ActiveSound = 'hknight/active';
+	AttackSound = 'hknight/attack';
+	PainSound = 'hknight/pain';
+	DeathSound = 'hknight/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SoundWind:Actor
+class SoundWind : Actor
 	__mobjinfo__(42);
 
 //==========================================================================
@@ -32,9 +32,9 @@ class SoundWind:Actor
 //
 //==========================================================================
 
-void A_ESound(void)
+void A_ESound()
 {
-	PlaySound('Wind', CHAN_VOICE);
+	PlaySound('world/wind', CHAN_VOICE);
 }
 
 __states__
@@ -58,6 +58,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

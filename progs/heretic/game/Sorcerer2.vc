@@ -37,7 +37,7 @@ int DeathLoopState;
 
 void A_SorRise()
 {
-	PlayFullVolumeSound('SorcererRise', CHAN_VOICE);
+	PlayFullVolumeSound('dsparil/rise', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -48,7 +48,7 @@ void A_SorRise()
 
 void A_SorSightSnd()
 {
-	PlayFullVolumeSound('SorcererSight', CHAN_VOICE);
+	PlayFullVolumeSound('dsparil/sight', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -84,9 +84,9 @@ void DSparilTeleport()
 	if (TeleportMove(vector(x, y, Origin.z)))
 	{
 		fog = Spawn(Sorcerer2TeleFade, PrevOrg);
-		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
 		SetState(TeleportState);
-		PlaySound('Teleport', CHAN_VOICE);
+		PlaySound('misc/teleport', CHAN_VOICE);
 		Origin.z = FloorZ;
 		Angles.yaw = BossSpot_angle[i % BossSpotCount];
 		Velocity = vector(0.0, 0.0, 0.0);
@@ -200,7 +200,7 @@ void A_Sor2DthInit()
 
 void A_SorDSph()
 {
-	PlayFullVolumeSound('SorcererDeath', CHAN_VOICE);
+	PlayFullVolumeSound('dsparil/scream', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -226,7 +226,7 @@ void A_Sor2DthLoop()
 
 void A_SorDExp()
 {
-	PlayFullVolumeSound('SorcererExplodes', CHAN_BODY);
+	PlayFullVolumeSound('dsparil/explode', CHAN_BODY);
 }
 
 //==========================================================================
@@ -237,7 +237,7 @@ void A_SorDExp()
 
 void A_SorDBon()
 {
-	PlayFullVolumeSound('SorcererBones', CHAN_BODY);
+	PlayFullVolumeSound('dsparil/bones', CHAN_BODY);
 }
 
 __states__
@@ -350,15 +350,18 @@ defaultproperties
 	PainState = S_SOR2_PAIN1;
 	DeathState = S_SOR2_DIE1;
 	DeathLoopState = S_SOR2_DIE4;
-	SightSound = 'SorcererSight';
-	ActiveSound = 'SorcererActive';
-	AttackSound = 'SorcererAttack';
-	PainSound = 'SorcererPain';
+	SightSound = 'dsparil/sight';
+	ActiveSound = 'dsparil/active';
+	AttackSound = 'dsparil/attack';
+	PainSound = 'dsparil/pain';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/06/16 17:46:39  dj_jl
 //  Added model definitions.
 //

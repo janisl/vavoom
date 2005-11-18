@@ -124,7 +124,7 @@ void A_Sor1Pain()
 
 void A_SorZap()
 {
-	PlayFullVolumeSound('SorcererZap', CHAN_BODY);
+	PlayFullVolumeSound('dsparil/zap', CHAN_BODY);
 }
 
 //==========================================================================
@@ -204,16 +204,19 @@ defaultproperties
 	ReAttackState = S_SRCR1_ATK4;
 	PainState = S_SRCR1_PAIN1;
 	DeathState = S_SRCR1_DIE1;
-	SightSound = 'SorcererDemonSight';
-	ActiveSound = 'SorcererDemonActive';
-	AttackSound = 'SorcererDemonAttack';
-	PainSound = 'SorcererDemonPain';
-	DeathSound = 'SorcererDemonDeath';
+	SightSound = 'dsparilserpent/sight';
+	ActiveSound = 'dsparilserpent/active';
+	AttackSound = 'dsparilserpent/attack';
+	PainSound = 'dsparilserpent/pain';
+	DeathSound = 'dsparilserpent/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/06/16 17:46:39  dj_jl
 //  Added model definitions.
 //

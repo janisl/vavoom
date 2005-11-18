@@ -130,16 +130,19 @@ defaultproperties
 	MeleeState = S_CLINK_ATK1;
 	PainState = S_CLINK_PAIN1;
 	DeathState = S_CLINK_DIE1;
-	SightSound = 'ClinkSight';
-	ActiveSound = 'ClinkActive';
-	AttackSound = 'ClinkAttack';
-	PainSound = 'ClinkPain';
-	DeathSound = 'ClinkDeath';
+	SightSound = 'clink/sight';
+	ActiveSound = 'clink/active';
+	AttackSound = 'clink/attack';
+	PainSound = 'clink/pain';
+	DeathSound = 'clink/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/06/16 17:46:38  dj_jl
 //  Added model definitions.
 //

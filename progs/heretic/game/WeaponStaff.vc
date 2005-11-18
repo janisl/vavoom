@@ -31,7 +31,7 @@ class WeaponStaff : Weapon;
 //
 //==========================================================================
 
-void WeaponLevel2Init(void)
+void WeaponLevel2Init()
 {
 	SetState(ReadyState2);
 }
@@ -42,7 +42,7 @@ void WeaponLevel2Init(void)
 //
 //==========================================================================
 
-void WeaponLevel2Fade(void)
+void WeaponLevel2Fade()
 {
 	Player.PendingWeapon = Player.ReadyWeapon;
 }
@@ -53,7 +53,7 @@ void WeaponLevel2Fade(void)
 //
 //===========================================================================
 
-void A_StaffAttackPL1(void)
+void A_StaffAttackPL1()
 {
 	TAVec angles;
 	int damage;
@@ -82,7 +82,7 @@ void A_StaffAttackPL1(void)
 //
 //===========================================================================
 
-void A_StaffAttackPL2(void)
+void A_StaffAttackPL2()
 {
 	TAVec angles;
 	int damage;
@@ -117,7 +117,7 @@ __states__
 		// Check for staff PL2 active sound
 		if (Random() < 0.5)
 		{
-			Player.MO.PlaySound('StaffActive', CHAN_WEAPON);
+			Player.MO.PlaySound('weapons/staffcrackle', CHAN_WEAPON);
 		}
 		A_WeaponReady();
 	}
@@ -152,6 +152,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

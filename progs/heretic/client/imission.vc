@@ -494,7 +494,7 @@ void IM_DrawDMStats()
 	}
 	if (intertime >= 3.0 && slaughterboy && im_sounds < 2)
 	{
-		LocalSound('PickupWeapon');
+		LocalSound('*evillaugh');
 		im_sounds++;
 	}
 	T_SetShadow(true);
@@ -654,7 +654,7 @@ void IM_Drawer()
 	}
 	if (oldinterstate != 2 && interstate == 2)
 	{
-		LocalSound('PlatformStop');
+		LocalSound('plats/pt1_stop');
 	}
 	oldinterstate = interstate;
 
@@ -822,6 +822,9 @@ void IM_Start()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.10  2005/01/19 13:08:57  dj_jl
 //  Fixed wrong episode 5 finale.
 //

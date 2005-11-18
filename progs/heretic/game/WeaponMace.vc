@@ -51,7 +51,7 @@ void A_FireMacePL1B()
 	ball.Origin.z += 173.0 * -tan(Player.MO.Angles.pitch) / 16.0;
 	ball.Velocity.x = Player.MO.Velocity.x / 2.0 + ball.Speed * cos(angle);
 	ball.Velocity.y = Player.MO.Velocity.y / 2.0 + ball.Speed * sin(angle);
-	ball.PlaySound('MaceFire', CHAN_WEAPON);
+	ball.PlaySound('weapons/maceshoot', CHAN_WEAPON);
 	ball.CheckMissileSpawn();
 }
 
@@ -108,7 +108,7 @@ void A_FireMacePL2()
 			A.Enemy = linetarget;
 		}
 	}
-	Player.MO.PlaySound('MaceFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/maceshoot', CHAN_WEAPON);
 }
 
 __states__
@@ -151,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/06/16 17:46:39  dj_jl
 //  Added model definitions.
 //

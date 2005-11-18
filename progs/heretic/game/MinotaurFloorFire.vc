@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MinotaurFloorFire:Projectile;
+class MinotaurFloorFire : Projectile;
 
 //==========================================================================
 //
@@ -31,7 +31,7 @@ class MinotaurFloorFire:Projectile;
 //
 //==========================================================================
 
-void A_MntrFloorFire(void)
+void A_MntrFloorFire()
 {
 	Actor mo;
 	float i1;
@@ -60,7 +60,7 @@ defaultproperties
 	bFireDamage = true;
 	IdleState = S_MNTRFX2_1;
 	DeathState = S_MNTRFXI2_1;
-	DeathSound = 'PhoenixHit';
+	DeathSound = 'minotaur/fx2hit';
 	Effects = EF_DL_WHITE;
 	// The Minotaur floor fire can step up any amount
 	MaxStepHeight = 99999.0;
@@ -69,6 +69,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

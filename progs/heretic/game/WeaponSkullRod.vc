@@ -31,7 +31,7 @@ class WeaponSkullRod : Weapon;
 //
 //===========================================================================
 
-void A_FireSkullRodPL1(void)
+void A_FireSkullRodPL1()
 {
 	Actor A;
 
@@ -58,7 +58,7 @@ void A_FireSkullRodPL1(void)
 //
 //===========================================================================
 
-void A_FireSkullRodPL2(void)
+void A_FireSkullRodPL2()
 {
 	Player.Ammo[am_skullrod] -=
 		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
@@ -80,7 +80,7 @@ void A_FireSkullRodPL2(void)
 	{
 		MissileMobj.Enemy = linetarget;
 	}
-	MissileMobj.PlaySound('SkullRodFire2', CHAN_WEAPON);
+	MissileMobj.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
 }
 
 __states__
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

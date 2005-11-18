@@ -322,7 +322,7 @@ bool CheckSpot(mthing_t * mthing)
 
 	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		sec->floorheight + TELEFOGHEIGHT));
-	A.PlaySound('Teleport', CHAN_VOICE);
+	A.PlaySound('misc/teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -539,7 +539,7 @@ bool GiveWeapon(int weapon)
 		WeaponOwned[weapon] = true;
 		GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
 		PendingWeapon = weapon;
-		MO.PlaySound('PickupWeapon', CHAN_ITEM);
+		MO.PlaySound('misc/w_pkup', CHAN_ITEM);
 		return false;
 	}
 	gaveAmmo = GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
@@ -1564,7 +1564,7 @@ void ChickenPlayerThink()
 	if (P_Random() < 48)
 	{
 		// Just noise
-		MO.PlaySound('ChickenAttack', CHAN_VOICE);
+		MO.PlaySound('chicken/attack', CHAN_VOICE);
 	}
 }
 
@@ -1609,7 +1609,7 @@ bool UndoPlayerChicken()
 
 	fog = Spawn(TeleportFog, MO.Origin + vector(
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	MO.SetState(S_FREETARGMOBJ);
 	MO = A;
@@ -2128,7 +2128,7 @@ void PlayerUseArtifact(int arti)
 			{
 				// Artifact was used - remove it from inventory
 				PlayerRemoveArtifact(i);
-				MO.PlaySound('UseArtifact', CHAN_ITEM);
+				MO.PlaySound('misc/invuse', CHAN_ITEM);
 				ArtifactFlash = 4;
 			}
 			else
@@ -2367,7 +2367,7 @@ bool UseArtiTomeOfPower()
 		{
 			// Succeeded
 			ChickenTime = 0.0;
-			MO.PlaySound('PickupWeapon', CHAN_ITEM);
+			MO.PlaySound('*evillaugh', CHAN_ITEM);
 		}
 	}
 	else
@@ -2446,7 +2446,7 @@ void BringUpWeapon()
 	SetWeapon(ReadyWeapon);
 	if (ReadyWeapon == wp_gauntlets)
 	{
-		MO.PlaySound('GauntletActive', CHAN_WEAPON);
+		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
 	}
 	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
 	if (Powers[pw_weaponlevel2])
@@ -2648,7 +2648,7 @@ void FireWeapon()
 	if (ReadyWeapon == wp_gauntlets && !Refire)
 	{
 		// Play the sound for the initial gauntlet attack
-		MO.PlaySound('GauntletUse', CHAN_WEAPON);
+		MO.PlaySound('weapons/gauntletsuse', CHAN_WEAPON);
 	}
 }
 
@@ -2940,6 +2940,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.10  2005/04/28 06:56:24  dj_jl
 //  Fixed removing of wings.
 //

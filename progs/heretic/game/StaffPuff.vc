@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StaffPuff:Effect;
+class StaffPuff : Effect;
 
 __states__
 {
@@ -36,12 +36,15 @@ __states__
 defaultproperties
 {
 	IdleState = S_STAFFPUFF1;
-	AttackSound = 'StaffHit';
+	AttackSound = 'weapons/staffhit';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

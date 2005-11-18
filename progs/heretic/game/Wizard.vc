@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Wizard:Pawn
+class Wizard : Pawn
 	__mobjinfo__(15);
 
 //==========================================================================
@@ -32,7 +32,7 @@ class Wizard:Pawn
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	DropItem(ItemAmmoBlasterWimpy, 10, 0.328125);
 	DropItem(ArtifactTomeOfPower, 0, 0.015625);
@@ -44,7 +44,7 @@ void DropStuff(void)
 //
 //==========================================================================
 
-void A_WizAtk1(void)
+void A_WizAtk1()
 {
 	A_FaceTarget();
 	Translucency = 0;
@@ -56,7 +56,7 @@ void A_WizAtk1(void)
 //
 //==========================================================================
 
-void A_WizAtk2(void)
+void A_WizAtk2()
 {
 	A_FaceTarget();
 	Translucency = 33;
@@ -68,7 +68,7 @@ void A_WizAtk2(void)
 //
 //==========================================================================
 
-void A_WizAtk3(void)
+void A_WizAtk3()
 {
 	Actor A;
 	float angle;
@@ -103,7 +103,7 @@ void A_WizAtk3(void)
 //
 //==========================================================================
 
-void A_GhostOff(void)
+void A_GhostOff()
 {
 	Translucency = 0;
 }
@@ -214,16 +214,19 @@ defaultproperties
 	MissileState = S_WIZARD_ATK1;
 	PainState = S_WIZARD_PAIN1;
 	DeathState = S_WIZARD_DIE1;
-	SightSound = 'WizardSight';
-	ActiveSound = 'WizardActive';
-	AttackSound = 'WizardAttack';
-	PainSound = 'WizardPain';
-	DeathSound = 'WizardDeath';
+	SightSound = 'wizard/sight';
+	ActiveSound = 'wizard/active';
+	AttackSound = 'wizard/attack';
+	PainSound = 'wizard/pain';
+	DeathSound = 'wizard/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

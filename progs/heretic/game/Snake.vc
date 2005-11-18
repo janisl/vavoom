@@ -32,7 +32,7 @@ class Snake : Pawn
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	DropItem(ItemAmmoPhoenixWimpy, 5, 0.328125);
 }
@@ -43,7 +43,7 @@ void DropStuff(void)
 //
 //==========================================================================
 
-void A_SnakeAttack(void)
+void A_SnakeAttack()
 {
 	if (!Enemy)
 	{
@@ -61,7 +61,7 @@ void A_SnakeAttack(void)
 //
 //==========================================================================
 
-void A_SnakeAttack2(void)
+void A_SnakeAttack2()
 {
 	if (!Enemy)
 	{
@@ -121,16 +121,19 @@ defaultproperties
 	MissileState = S_SNAKE_ATK1;
 	PainState = S_SNAKE_PAIN1;
 	DeathState = S_SNAKE_DIE1;
-	SightSound = 'SnakeSight';
-	ActiveSound = 'SnakeActive';
-	AttackSound = 'SnakeAttack';
-	PainSound = 'SnakePain';
-	DeathSound = 'SnakeDeath';
+	SightSound = 'snake/sight';
+	ActiveSound = 'snake/active';
+	AttackSound = 'snake/attack';
+	PainSound = 'snake/pain';
+	DeathSound = 'snake/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/06/16 17:46:39  dj_jl
 //  Added model definitions.
 //

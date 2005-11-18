@@ -31,7 +31,7 @@ class WeaponGauntlets : Weapon;
 //
 //==========================================================================
 
-void WeaponLevel2Init(void)
+void WeaponLevel2Init()
 {
 	SetState(ReadyState2);
 }
@@ -42,7 +42,7 @@ void WeaponLevel2Init(void)
 //
 //==========================================================================
 
-void WeaponLevel2Fade(void)
+void WeaponLevel2Fade()
 {
 	Player.PendingWeapon = Player.ReadyWeapon;
 }
@@ -53,7 +53,7 @@ void WeaponLevel2Fade(void)
 //
 //===========================================================================
 
-void A_GauntletAttack(void)
+void A_GauntletAttack()
 {
 	float angle;
 	int damage;
@@ -90,7 +90,7 @@ void A_GauntletAttack(void)
 		{
 			Player.ExtraLight = !Player.ExtraLight;
 		}
-		Player.MO.PlaySound('GauntletFull', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/gauntletson', CHAN_WEAPON);
 		return;
 	}
 	randVal = P_Random();
@@ -109,11 +109,11 @@ void A_GauntletAttack(void)
 	if (Player.Powers[pw_weaponlevel2])
 	{
 		Player.GiveBody(damage >> 1);
-		Player.MO.PlaySound('GauntletHit2', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
 	}
 	else
 	{
-		Player.MO.PlaySound('GauntletHit', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
 	}
 	// turn to face target
 	angle = atan2(linetarget.Origin.y - Player.MO.Origin.y,
@@ -180,6 +180,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/08/22 19:23:24  dj_jl
 //  Moved many functions to player class.
 //

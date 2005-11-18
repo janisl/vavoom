@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuChoice_SaveSlot:MenuSaveSlot;
+class MenuChoice_SaveSlot : MenuSaveSlot;
 
-void ActivateSlot(void)
+void ActivateSlot()
 {
 	// we are going to be intercepting all chars
 	bEnteringText = true;
@@ -34,7 +34,7 @@ void ActivateSlot(void)
 	{
 		strcpy(ARR2STR(EnterText), ARR2STR(Text));
 	}
-	LocalSound('MenuSelect');
+	LocalSound('menu/choose');
 }
 
 defaultproperties
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/03/08 12:13:51  dj_jl
 //  Menu code cleanup.
 //

@@ -46,7 +46,7 @@ void CreateChoices(void)
 bool Key(int key)
 {
 	CurPage++;
-	LocalSound('MenuClose');
+	LocalSound('menu/clear');
 
 	if (key == K_ESCAPE || CurPage >= NumPages)
 	{
@@ -72,6 +72,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

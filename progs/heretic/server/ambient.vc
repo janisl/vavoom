@@ -48,7 +48,7 @@ enum
 int *LevelAmbientSfx[MAX_AMBIENT_SFX];
 int *AmbSfxPtr;
 int AmbSfxCount;
-int AmbSfxTics;
+float AmbSfxTime;
 int AmbSfxVolume;
 
 int AmbSndSeqInit[] = {	// Startup
@@ -164,7 +164,7 @@ int AmbSndSeq10[] = {	// FastFootsteps
 
 int *AmbientSfx[10];
 
-int AmbientSoundStart;
+int AmbientSounds[12];
 
 // CODE --------------------------------------------------------------------
 
@@ -174,12 +174,23 @@ int AmbientSoundStart;
 //
 //==========================================================================
 
-void P_InitAmbientSound(void)
+void P_InitAmbientSound()
 {
-	AmbientSoundStart = GetSoundID('Ambient1') - 1;
+	AmbientSounds[0] = GetSoundID('world/amb12');
+	AmbientSounds[1] = GetSoundID('world/amb1');
+	AmbientSounds[2] = GetSoundID('world/amb2');
+	AmbientSounds[3] = GetSoundID('world/amb3');
+	AmbientSounds[4] = GetSoundID('world/amb4');
+	AmbientSounds[5] = GetSoundID('world/amb5');
+	AmbientSounds[6] = GetSoundID('world/amb6');
+	AmbientSounds[7] = GetSoundID('world/amb7');
+	AmbientSounds[8] = GetSoundID('world/amb8');
+	AmbientSounds[9] = GetSoundID('world/amb9');
+	AmbientSounds[10] = GetSoundID('world/amb10');
+	AmbientSounds[11] = GetSoundID('world/amb11');
 	AmbSfxCount = 0;
 	AmbSfxVolume = 0;
-	AmbSfxTics = 10 * TICRATE;
+	AmbSfxTime = 10.0;
 	AmbSfxPtr = &AmbSndSeqInit[0];
 	AmbientSfx[0] = &AmbSndSeq1[0];	// Scream
 	AmbientSfx[1] = &AmbSndSeq2[0];	// Squish
@@ -218,7 +229,7 @@ void P_AddAmbientSfx(int sequence)
 //
 //==========================================================================
 
-void P_AmbientSound(void)
+void P_AmbientSound()
 {
 	int cmd;
 	int sound;
@@ -229,7 +240,8 @@ void P_AmbientSound(void)
 		// No ambient sound sequences on current level
 		return;
 	}
-	if (--AmbSfxTics)
+	AmbSfxTime -= frametime;
+	if (AmbSfxTime > 0.0)
 	{
 		return;
 	}
@@ -242,27 +254,19 @@ void P_AmbientSound(void)
 		{
 		case afxcmd_play:
 			AmbSfxVolume = P_Random() >> 2;
-			sound = *AmbSfxPtr;
-			if (sound)
-				sound += AmbientSoundStart;
-			else
-				sound = GetSoundID('BeastSight');
+			sound = AmbientSounds[*AmbSfxPtr];
 			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 			break;
 		case afxcmd_playabsvol:
-			sound = *AmbSfxPtr;
+			sound = AmbientSounds[*AmbSfxPtr];
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 			AmbSfxVolume = *AmbSfxPtr;
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
-			if (sound)
-				sound += AmbientSoundStart;
-			else
-				sound = GetSoundID('BeastSight');
 			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
 			break;
 		case afxcmd_playrelvol:
-			sound = *AmbSfxPtr;
+			sound = AmbientSounds[*AmbSfxPtr];
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 			AmbSfxVolume += *AmbSfxPtr;
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
@@ -274,24 +278,20 @@ void P_AmbientSound(void)
 			{
 				AmbSfxVolume = 127;
 			}
-			if (sound)
-				sound += AmbientSoundStart;
-			else
-				sound = GetSoundID('BeastSight');
 			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
 			break;
 		case afxcmd_delay:
-			AmbSfxTics = *AmbSfxPtr;
+			AmbSfxTime = itof(*AmbSfxPtr) / 35.0;
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 			done = true;
 			break;
 		case afxcmd_delayrand:
-			AmbSfxTics = P_Random() & (*AmbSfxPtr);
+			AmbSfxTime = itof(P_Random() & (*AmbSfxPtr)) / 35.0;
 			AmbSfxPtr = &AmbSfxPtr[1];	//AmbSfxPtr++;
 			done = true;
 			break;
 		case afxcmd_end:
-			AmbSfxTics = 6 * TICRATE + P_Random();
+			AmbSfxTime = 6.0 + Random() * 256.0 / 35.0;
 			AmbSfxPtr = LevelAmbientSfx[P_Random() % AmbSfxCount];
 			done = true;
 			break;
@@ -306,6 +306,9 @@ void P_AmbientSound(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.9  2002/09/07 16:28:25  dj_jl
 //  Added Level class.
 //

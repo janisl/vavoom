@@ -45,7 +45,7 @@ void A_FireGoldWandPL1(void)
 	}
 	PuffType = GoldWandPuff1;
 	LineAttack(Player.MO, dir, MISSILERANGE, damage);
-	Player.MO.PlaySound('GoldWandFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -78,7 +78,7 @@ void A_FireGoldWandPL2(void)
 		LineAttack(Player.MO, dir, MISSILERANGE, damage);
 		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
 	}
-	Player.MO.PlaySound('GoldWandFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
 }
 
 __states__
@@ -115,6 +115,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

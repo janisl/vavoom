@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Beast:Pawn
+class Beast : Pawn
 	__mobjinfo__(70);
 
 //==========================================================================
@@ -32,7 +32,7 @@ class Beast:Pawn
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	DropItem(ItemAmmoCrossbowWimpy, 10, 0.328125);
 }
@@ -43,7 +43,7 @@ void DropStuff(void)
 //
 //==========================================================================
 
-void A_BeastAttack(void)
+void A_BeastAttack()
 {
 	if (!Enemy)
 	{
@@ -141,16 +141,19 @@ defaultproperties
 	PainState = S_BEAST_PAIN1;
 	DeathState = S_BEAST_DIE1;
 	GibsDeathState = S_BEAST_XDIE1;
-	SightSound = 'BeastSight';
-	ActiveSound = 'BeastActive';
-	AttackSound = 'BeastAttack';
-	PainSound = 'BeastPain';
-	DeathSound = 'BeastDeath';
+	SightSound = 'beast/sight';
+	ActiveSound = 'beast/active';
+	AttackSound = 'beast/attack';
+	PainSound = 'beast/pain';
+	DeathSound = 'beast/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

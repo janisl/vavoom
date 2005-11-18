@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MummyMissile:Projectile;
+class MummyMissile : Projectile;
 
 //==========================================================================
 //
@@ -31,9 +31,9 @@ class MummyMissile:Projectile;
 //
 //==========================================================================
 
-void A_ContMobjSound(void)
+void A_ContMobjSound()
 {
-	PlaySound('MumyHeadExplode', CHAN_VOICE);
+	PlaySound('mummy/head', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -42,7 +42,7 @@ void A_ContMobjSound(void)
 //
 //==========================================================================
 
-void A_MummyFX1Seek(void)
+void A_MummyFX1Seek()
 {
 	SeekerMissile(10.0, 20.0);
 }
@@ -73,6 +73,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

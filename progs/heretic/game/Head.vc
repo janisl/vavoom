@@ -74,7 +74,7 @@ void A_HeadAttack(void)
 	{
 		// Ice ball
 		SpawnMissile(Enemy, HeadMissile1);
-		PlaySound('HeadAttack2', CHAN_WEAPON);
+		PlaySound('ironlich/attack2', CHAN_WEAPON);
 	}
 	else if (randAttack < (dist ? 200 : 150))
 	{
@@ -88,7 +88,7 @@ void A_HeadAttack(void)
 				fire = Spawn(HeadMissile3, baseFire.Origin);
 				if (i == 0)
 				{
-					PlaySound('HeadAttack1', CHAN_WEAPON);
+					PlaySound('ironlich/attack1', CHAN_WEAPON);
 				}
 				fire.Instigator = baseFire.Instigator;
 				fire.Angles.yaw = baseFire.Angles.yaw;
@@ -108,7 +108,7 @@ void A_HeadAttack(void)
 			A.Origin.z -= 32.0;
 			A.Enemy = Enemy;
 			A.Health = 20 * TICRATE;	// Duration
-			PlaySound('HeadAttack3', CHAN_WEAPON);
+			PlaySound('ironlich/attack3', CHAN_WEAPON);
 		}
 	}
 }
@@ -145,16 +145,19 @@ defaultproperties
 	MissileState = S_HEAD_ATK1;
 	PainState = S_HEAD_PAIN1;
 	DeathState = S_HEAD_DIE1;
-	SightSound = 'HeadSight';
-	ActiveSound = 'HeadActive';
-	AttackSound = 'HeadAttack1';
-	PainSound = 'HeadPain';
-	DeathSound = 'HeadDeath';
+	SightSound = 'ironlich/sight';
+	ActiveSound = 'ironlich/active';
+	AttackSound = 'ironlich/attack1';
+	PainSound = 'ironlich/pain';
+	DeathSound = 'ironlich/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

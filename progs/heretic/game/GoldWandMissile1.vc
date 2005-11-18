@@ -27,7 +27,7 @@
 //
 //**************************************************************************
 
-class GoldWandMissile1:GoldWandMissile2;
+class GoldWandMissile1 : GoldWandMissile2;
 
 __states__
 {
@@ -40,12 +40,15 @@ defaultproperties
 	Speed = 770.0;
 	MissileDamage = 2;
 	IdleState = S_GWANDFX1_1;
-	DeathSound = 'GoldWandFire';
+	DeathSound = 'weapons/wandhit';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

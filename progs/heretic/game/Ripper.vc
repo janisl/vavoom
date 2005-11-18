@@ -46,12 +46,15 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_RIPPER1;
 	DeathState = S_RIPPERX1;
-	DeathSound = 'SkullRodHit';
+	DeathSound = 'weapons/blasterpowhit';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/08/13 15:38:22  dj_jl
 //  Models added.
 //

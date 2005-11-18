@@ -51,12 +51,15 @@ defaultproperties
 	bNoGravity = true;
 	bNoPassMobj = true;
 	IdleState = S_FIREBOMB1;
-	DeathSound = 'PhoenixHit';
+	DeathSound = 'misc/timebomb';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/06/16 17:46:38  dj_jl
 //  Added model definitions.
 //

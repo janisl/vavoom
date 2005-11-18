@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ImpLeader:Imp
+class ImpLeader : Imp
 	__mobjinfo__(5);
 
 //==========================================================================
@@ -34,7 +34,7 @@ class ImpLeader:Imp
 //
 //==========================================================================
 
-void A_ImpMsAttack2(void)
+void A_ImpMsAttack2()
 {
 	if (!Enemy)
 	{
@@ -66,12 +66,15 @@ defaultproperties
 	GibsHealth = -40;
 	MeleeState = S_NULL;
 	MissileState = S_IMP_MSATK2_1;
-	AttackSound = 'ImpAttack2';
+	AttackSound = 'himp/leaderattack';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

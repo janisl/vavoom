@@ -539,7 +539,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		Actor A;
 
 		A = Spawn(BlasterPuff2, hit_point);
-		A.PlaySound('BlasterFire', CHAN_VOICE);
+		A.PlaySound('weapons/blastershoot', CHAN_VOICE);
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion);
@@ -656,6 +656,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.33  2005/03/28 07:43:30  dj_jl
 //  Some Boom line specials and other improvements.
 //

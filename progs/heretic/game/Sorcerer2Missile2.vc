@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sorcerer2Missile2:Projectile;
+class Sorcerer2Missile2 : Projectile;
 
 //==========================================================================
 //
@@ -31,7 +31,7 @@ class Sorcerer2Missile2:Projectile;
 //
 //==========================================================================
 
-void A_GenWizard(void)
+void A_GenWizard()
 {
 	Actor A;
 	Actor fog;
@@ -48,7 +48,7 @@ void A_GenWizard(void)
 	SetState(DeathState);
 	bMissile = false;
 	fog = Spawn(TeleportFog, Origin);
-	fog.PlaySound('Teleport', CHAN_VOICE);
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
 }
 
 __states__
@@ -77,6 +77,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

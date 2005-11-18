@@ -415,7 +415,7 @@ void Kill(Actor source)
 			{
 				source.Player.FragsStats[P_GetPlayerNum(Player)]++;
 				source.Player.Frags++;
-				source.PlaySound('Frag', CHAN_ITEM);
+				source.PlaySound('misc/frag', CHAN_ITEM);
 				if (source.Player.ChickenTime)
 				{
 					// Make a super chicken
@@ -550,7 +550,7 @@ bool ChickenMorphPlayer(void)
 	}
 
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	chicken = Spawn(ChickenPlayer, Origin);
 	chicken.Special1 = Player.ReadyWeapon;
@@ -603,7 +603,7 @@ bool ChickenMorph(void)
 	}
 
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	chicken = Spawn(Chicken, Origin);
 	chicken.SpecialCID = Class;
@@ -1049,13 +1049,13 @@ int HitFloorEffect(void)
 		A.Velocity.x = (Random() - Random()) * 35.0;
 		A.Velocity.y = (Random() - Random()) * 35.0;
 		A.Velocity.z = (2.0 + Random()) * 35.0;
-		A.PlaySound('WaterSplash', CHAN_VOICE);
+		A.PlaySound('world/watersplash', CHAN_VOICE);
 		return FLOOR_WATER;
 	case FLOOR_LAVA:
 		Spawn(LavaSplash, vector(Origin.x, Origin.y, ONFLOORZ));
 		A = Spawn(LavaSmoke, vector(Origin.x, Origin.y, ONFLOORZ));
 		A.Velocity.z = (1.0 + Random() / 2.0) * 35.0;
-		A.PlaySound('Burn', CHAN_VOICE);
+		A.PlaySound('world/lavasizzle', CHAN_VOICE);
 		return FLOOR_LAVA;
 	case FLOOR_SLUDGE:
 		Spawn(SludgeSplash, vector(Origin.x, Origin.y, ONFLOORZ));
@@ -1113,12 +1113,12 @@ void NightmareRespawn(void)
 	// spawn a teleport fog at old spot
 	A = Spawn(TeleportFog, vector(Origin.x, Origin.y, ONFLOORZ));
 	A.Origin.z += TELEFOGHEIGHT;
-	A.PlaySound('Teleport', CHAN_VOICE);
+	A.PlaySound('misc/teleport', CHAN_VOICE);
 
 	// spawn a teleport fog at the new spot
 	A = Spawn(TeleportFog, vector(x, y, ONFLOORZ));
 	A.Origin.z += TELEFOGHEIGHT;
-	A.PlaySound('Teleport', CHAN_VOICE);
+	A.PlaySound('misc/teleport', CHAN_VOICE);
 
 	// spawn the new monster
 
@@ -1230,7 +1230,7 @@ bool Touch(Entity InOther)
 				// Ok to spawn some blood
 				SpawnRipperBlood();
 			}
-			PlaySound('RipSlop', CHAN_VOICE);
+			PlaySound('misc/ripslop', CHAN_VOICE);
 			damage = ((P_Random() & 3) + 2) * MissileDamage;
 			Other.Damage(self, Instigator, damage);
 			if (Other.bPushable && !bCannotPush)
@@ -1682,7 +1682,7 @@ void ZMovement(void)
 			if (bIsPlayer && vdot < -GRAVITY * 0.25 && !bFly)	// squat down
 			{
 				Player.DeltaViewHeight = vdot / 8.0;
-				PlaySound('PlayerLand', CHAN_BODY);
+				PlaySound('*land', CHAN_BODY);
 //FIXME				Player.centering = true;
 			}
 			Velocity -= vdot * Floor->normal;
@@ -1803,12 +1803,12 @@ bool BlasterPhysics(void)
 //
 //===========================================================================
 
-void PlayerLandedOnThing(void)
+void PlayerLandedOnThing()
 {
 	Player.DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
-		PlaySound('PlayerLand', CHAN_VOICE);
+		PlaySound('*land', CHAN_VOICE);
 	}
 }
 
@@ -2524,13 +2524,13 @@ bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 	if (SrcFog)
 	{
 		fog = Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
-		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
 	}
 	if (DstFog)
 	{
 		fog = Spawn(TeleportFog, vector(Origin.x + 20.0 * cos(angle),
 			Origin.y + 20.0 * sin(angle), Origin.z + fogDelta));
-		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
 	}
 	if (!KeepDir)
 	{
@@ -3079,6 +3079,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.14  2005/07/09 13:55:46  dj_jl
 //  Scrolers carrying objects.
 //

@@ -160,7 +160,7 @@ void A_SkullRodStorm()
 	A.CheckMissileSpawn();
 	if (!(Special1 & 31))
 	{
-		PlaySound('SkullRodRain', CHAN_VOICE);
+		PlaySound('weapons/hornrodpowrain', CHAN_VOICE);
 	}
 	Special1++;
 }
@@ -191,14 +191,17 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_HRODFX2_1;
 	DeathState = S_HRODFXI2_1;
-	SightSound = 'SkullRodFire';
-	DeathSound = 'SkullRodHit';
+	SightSound = 'weapons/hornrodshoot';
+	DeathSound = 'weapons/hornrodpowhit';
 	Effects = EF_DL_RED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/28 07:36:10  dj_jl
 //  Player missiles can activate impact lines.
 //

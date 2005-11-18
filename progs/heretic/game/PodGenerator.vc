@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PodGenerator:Actor
+class PodGenerator : Actor
 	__mobjinfo__(43);
 
 //==========================================================================
@@ -56,7 +56,7 @@ void A_MakePod(void)
 	}
 	A.SetState(S_POD_GROW1);
 	A.Thrust(Random() * 360.0, 4.5);
-	A.PlaySound('PodNew', CHAN_VOICE);
+	A.PlaySound('world/podgrow', CHAN_VOICE);
 	Special1++;	// Increment generated pod count
 	Pod(A).Generator = self;	// Link the generator to the pod
 }
@@ -82,6 +82,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

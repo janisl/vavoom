@@ -31,13 +31,13 @@ class HereticPlayer : PlayerPawn;
 //
 //==========================================================================
 
-void A_Scream(void)
+void A_Scream()
 {
 	// Handle the different player death screams
 	if (Special1 < 10)
 	{
 		// Wimpy death sound
-		PlaySound('PlayerWimpyDeath', CHAN_VOICE);
+		PlaySound('*wimpydeath', CHAN_VOICE);
 	}
 	else if (Health > -50)
 	{
@@ -47,12 +47,12 @@ void A_Scream(void)
 	else if (Health > -100)
 	{
 		// Crazy death sound
-		PlaySound('PlayerCrazyDeath', CHAN_VOICE);
+		PlaySound('*crazydeath', CHAN_VOICE);
 	}
 	else
 	{
 		// Extreme death sound
-		PlaySound('PlayerExtremeDeath', CHAN_VOICE);
+		PlaySound('*gibbed', CHAN_VOICE);
 	}
 }
 
@@ -62,7 +62,7 @@ void A_Scream(void)
 //
 //==========================================================================
 
-void A_SkullPop(void)
+void A_SkullPop()
 {
 	Actor A;
 
@@ -93,9 +93,9 @@ void A_SkullPop(void)
 //
 //==========================================================================
 
-void A_FlameSnd(void)
+void A_FlameSnd()
 {
-	PlaySound('HeadAttack1', CHAN_WEAPON);	// Burn sound
+	PlaySound('misc/burn', CHAN_WEAPON);	// Burn sound
 }
 
 //==========================================================================
@@ -104,7 +104,7 @@ void A_FlameSnd(void)
 //
 //==========================================================================
 
-void A_CheckBurnGone(void)
+void A_CheckBurnGone()
 {
 	if (bSafeToRemove)
 	{
@@ -183,13 +183,16 @@ defaultproperties
 	DeathState = S_PLAY_DIE1;
 	GibsDeathState = S_PLAY_XDIE1;
 	FireDeathState = S_PLAY_FDTH1;
-	PainSound = 'PlayerPain';
-	DeathSound = 'PlayerDeath';
+	PainSound = '*pain100';
+	DeathSound = '*death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:49:43  dj_jl
 //  Changed player structure into a class
 //

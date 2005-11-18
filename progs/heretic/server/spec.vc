@@ -63,7 +63,7 @@ bool CheckLock(Actor user, int lock)
 	if (!(user.Player.Keys & (1 << (lock - 1))))
 	{
 		centerprint(user.Player, keymsg[lock - 1]);
-		user.PlaySound('PlayerLand', CHAN_VOICE);
+		user.PlaySound('*usefail', CHAN_VOICE);
 		return false;
 	}
 	return true;
@@ -1256,6 +1256,9 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.31  2005/06/04 13:48:47  dj_jl
 //  Added pusher specials.
 //

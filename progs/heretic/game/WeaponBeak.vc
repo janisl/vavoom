@@ -81,7 +81,6 @@ void A_BeakAttackPL1(void)
 {
 	int damage;
 	TVec dir;
-	name SoundName;
 
 	damage = 1 + (P_Random() & 3);
 	dir = AimLineAttack(Player.MO, Player.MO.Angles, MELEERANGE);
@@ -94,19 +93,7 @@ void A_BeakAttackPL1(void)
 			linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
-	switch (P_Random() % 3)
-	{
-	case 0:
-		SoundName = 'ChickenPeak1';
-		break;
-	case 1:
-		SoundName = 'ChickenPeak2';
-		break;
-	case 2:
-		SoundName = 'ChickenPeak3';
-		break;
-	}
-	Player.MO.PlaySound(SoundName, CHAN_VOICE);
+	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
 	Player.ChickenPeck = 12;
 	StateTime -= Random() * 0.25;
 }
@@ -121,7 +108,6 @@ void A_BeakAttackPL2(void)
 {
 	int damage;
 	TVec dir;
-	name SoundName;
 
 	damage = HITDICE(4);
 	dir = AimLineAttack(Player.MO, Player.MO.Angles, MELEERANGE);
@@ -134,19 +120,7 @@ void A_BeakAttackPL2(void)
 			linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
-	switch (P_Random() % 3)
-	{
-	case 0:
-		SoundName = 'ChickenPeak1';
-		break;
-	case 1:
-		SoundName = 'ChickenPeak2';
-		break;
-	case 2:
-		SoundName = 'ChickenPeak3';
-		break;
-	}
-	Player.MO.PlaySound(SoundName, CHAN_VOICE);
+	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
 	Player.ChickenPeck = 12;
 	StateTime -= Random() * 0.125;
 }
@@ -179,6 +153,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

@@ -105,7 +105,7 @@ void A_FirePhoenixPL2(void)
 	A.Velocity = Player.MO.Velocity + A.Speed * dir;
 	if (!Player.Refire || !(level->tictime % 38))
 	{
-		Player.MO.PlaySound('PhoenixHit2', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
 	}
 	A.CheckMissileSpawn();
 }
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

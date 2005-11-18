@@ -83,7 +83,7 @@ bool UpdateChicken(int tics)
 	A.Args[4] = oldArgs[4];
 	A.InsertIntoTIDList(oldTID);
 	fog = Spawn(TeleportFog, A.Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
 	return true;
 }
 
@@ -192,16 +192,19 @@ defaultproperties
 	MeleeState = S_CHICKEN_ATK1;
 	PainState = S_CHICKEN_PAIN1;
 	DeathState = S_CHICKEN_DIE1;
-	SightSound = 'ChickenPain';
-	ActiveSound = 'ChickenActive';
-	AttackSound = 'ChickenAttack';
-	PainSound = 'ChickenPain';
-	DeathSound = 'ChickenDeath';
+	SightSound = 'chicken/sight';
+	ActiveSound = 'chicken/active';
+	AttackSound = 'chicken/attack';
+	PainSound = 'chicken/pain';
+	DeathSound = 'chicken/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/06/16 17:46:38  dj_jl
 //  Added model definitions.
 //

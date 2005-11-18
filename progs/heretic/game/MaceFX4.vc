@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaceFX4:MaceFX3;
+class MaceFX4 : MaceFX3;
 
 //===========================================================================
 //
@@ -31,7 +31,7 @@ class MaceFX4:MaceFX3;
 //
 //===========================================================================
 
-void A_DeathBallImpact(void)
+void A_DeathBallImpact()
 {
 	int i;
 	float angle;
@@ -90,13 +90,13 @@ void A_DeathBallImpact(void)
 			Velocity.y = Speed * sin(angle);
 		}
 		SetState(IdleState);
-		PlaySound('PlatformStop', CHAN_VOICE);
+		PlaySound('weapons/macestop', CHAN_VOICE);
 	}
 	else
 	{
 		// Explode
 		bNoGravity = true;
-		PlaySound('PhoenixHit', CHAN_VOICE);
+		PlaySound('weapons/maceexplode', CHAN_VOICE);
 	}
 }
 
@@ -118,6 +118,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

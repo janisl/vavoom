@@ -35,7 +35,7 @@ bool bCanRespawn;
 //
 //==========================================================================
 
-void A_HideThing(void)
+void A_HideThing()
 {
 	bHidden = true;
 }
@@ -46,7 +46,7 @@ void A_HideThing(void)
 //
 //==========================================================================
 
-void A_UnHideThing(void)
+void A_UnHideThing()
 {
 	bHidden = false;
 }
@@ -57,11 +57,11 @@ void A_UnHideThing(void)
 //
 //==========================================================================
 
-void A_RestoreArtifact(void)
+void A_RestoreArtifact()
 {
 	bSpecial = true;
 	SetState(IdleState);
-	PlaySound('Respawn', CHAN_VOICE);
+	PlaySound('misc/spawn', CHAN_VOICE);
 }
 
 __states__
@@ -108,7 +108,7 @@ __states__
 //
 //==========================================================================
 
-void SetDormantArtifact(void)
+void SetDormantArtifact()
 {
 	bSpecial = false;
 	if (deathmatch && bCanRespawn)
@@ -120,7 +120,7 @@ void SetDormantArtifact(void)
 		// Don't respawn
 		SetState(S_DEADARTI1);
 	}
-	PlaySound('PickupArtifact', CHAN_ITEM);
+	PlaySound('misc/p_pkup', CHAN_ITEM);
 }
 
 //==========================================================================
@@ -162,6 +162,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/08/22 19:23:24  dj_jl
 //  Moved many functions to player class.
 //

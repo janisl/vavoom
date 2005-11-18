@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KnightRedAxe:Projectile;
+class KnightRedAxe : Projectile;
 
 //==========================================================================
 //
@@ -60,13 +60,16 @@ defaultproperties
 	bThruGhost = true;
 	IdleState = S_REDAXE1;
 	DeathState = S_REDAXEX1;
-	DeathSound = 'SkullRodHit';
+	DeathSound = 'hknight/hit';
 	Effects = EF_DL_RED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

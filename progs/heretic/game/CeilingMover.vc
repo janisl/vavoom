@@ -356,7 +356,7 @@ void Tick(float deltaTime)
 			case CEILEV_CrushRaiseAndStaySilA:
 				break;
 			default:
-				SectorStartSoundName(Sector, 'DoorMove', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr1_move', CHAN_VOICE);
 				break;
 			}
 		}
@@ -399,7 +399,7 @@ void Tick(float deltaTime)
 			case CEILEV_CrushRaiseAndStaySilA:
 				break;
 			default:
-				SectorStartSoundName(Sector, 'DoorMove', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr1_move', CHAN_VOICE);
 				break;
 			}
 		}
@@ -456,6 +456,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //

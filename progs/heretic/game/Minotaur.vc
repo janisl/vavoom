@@ -39,7 +39,7 @@ int FloorFireAttackState2;
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	DropItem(ArtifactSuperHeal, 0, 0.19921875);
 	DropItem(ItemAmmoPhoenixWimpy, 10, 0.328125);
@@ -53,13 +53,13 @@ void DropStuff(void)
 //
 //==========================================================================
 
-void A_MinotaurAtk1(void)
+void A_MinotaurAtk1()
 {
 	if (!Enemy)
 	{
 		return;
 	}
-	PlaySound('StaffHit2', CHAN_WEAPON);
+	PlaySound('minotaur/melee', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		Enemy.Damage(self, self, HITDICE(4));
@@ -79,7 +79,7 @@ void A_MinotaurAtk1(void)
 //
 //==========================================================================
 
-void A_MinotaurDecide(void)
+void A_MinotaurDecide()
 {
 	float dist;
 
@@ -87,7 +87,7 @@ void A_MinotaurDecide(void)
 	{
 		return;
 	}
-	PlaySound('MinotaurSight', CHAN_VOICE);
+	PlaySound('minotaur/sight', CHAN_VOICE);
 	dist = MobjDist(self, Enemy);
 	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
 		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
@@ -125,7 +125,7 @@ void A_MinotaurDecide(void)
 //
 //==========================================================================
 
-void A_MinotaurAtk2(void)
+void A_MinotaurAtk2()
 {
 	Actor A;
 	float angle;
@@ -135,7 +135,7 @@ void A_MinotaurAtk2(void)
 	{
 		return;
 	}
-	PlaySound('MinotaurAttack2', CHAN_WEAPON);
+	PlaySound('minotaur/attack2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		Enemy.Damage(self, self, HITDICE(5));
@@ -144,7 +144,7 @@ void A_MinotaurAtk2(void)
 	A = SpawnMissile(Enemy, MinotaurMissile);
 	if (A)
 	{
-		A.PlaySound('MinotaurAttack2', CHAN_WEAPON);
+		A.PlaySound('minotaur/attack2', CHAN_WEAPON);
 		VectorAngles(&A.Velocity, &ang);
 		angle = A.Angles.yaw;
 		SpawnMissileAngles(MinotaurMissile,
@@ -166,7 +166,7 @@ void A_MinotaurAtk2(void)
 //
 //==========================================================================
 
-void A_MinotaurAtk3(void)
+void A_MinotaurAtk3()
 {
 	Actor A;
 
@@ -174,6 +174,7 @@ void A_MinotaurAtk3(void)
 	{
 		return;
 	}
+	PlaySound('minotaur/attack3', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
 		Enemy.Damage(self, self, HITDICE(5));
@@ -188,7 +189,7 @@ void A_MinotaurAtk3(void)
 		A = SpawnMissile(Enemy, MinotaurFloorFire);
 		if (A != none)
 		{
-			A.PlaySound('MinotaurAttack1', CHAN_VOICE);
+			A.PlaySound('minotaur/attack1', CHAN_VOICE);
 		}
 	}
 	if (Random() < 0.75 && !bFloorFireRefired)
@@ -204,7 +205,7 @@ void A_MinotaurAtk3(void)
 //
 //==========================================================================
 
-void A_MinotaurCharge(void)
+void A_MinotaurCharge()
 {
 	Actor puff;
 
@@ -317,16 +318,19 @@ defaultproperties
 	FloorFireAttackState2 = S_MNTR_ATK3_9;
 	PainState = S_MNTR_PAIN1;
 	DeathState = S_MNTR_DIE1;
-	SightSound = 'MinotaurSight';
-	ActiveSound = 'MinotaurActive';
-	AttackSound = 'MinotaurAttack1';
-	PainSound = 'MinotaurPain';
-	DeathSound = 'MinotaurDeath';
+	SightSound = 'minotaur/sight';
+	ActiveSound = 'minotaur/active';
+	AttackSound = 'minotaur/attack1';
+	PainSound = 'minotaur/pain';
+	DeathSound = 'minotaur/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/12/27 12:23:12  dj_jl
 //  Multiple small changes for version 1.16
 //

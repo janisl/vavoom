@@ -34,10 +34,10 @@ class Pickup : Actor
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1(void)
+void A_RestoreSpecialThing1()
 {
 	bHidden = false;
-	PlaySound('Respawn', CHAN_VOICE);
+	PlaySound('misc/spawn', CHAN_VOICE);
 }
 
 //==========================================================================
@@ -46,7 +46,7 @@ void A_RestoreSpecialThing1(void)
 //
 //==========================================================================
 
-void A_RestoreSpecialThing2(void)
+void A_RestoreSpecialThing2()
 {
 	bSpecial = true;
 	SetState(IdleState);
@@ -73,7 +73,7 @@ __states__
 //
 //==========================================================================
 
-void HideSpecialThing(void)
+void HideSpecialThing()
 {
 	bSpecial = false;
 	bHidden = true;
@@ -101,7 +101,7 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	sound = 'PickupItem';
+	sound = 'misc/i_pkup';
 	switch (Class)
 	{
 		// Items
@@ -173,6 +173,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2004/12/27 12:23:12  dj_jl
 //  Multiple small changes for version 1.16
 //

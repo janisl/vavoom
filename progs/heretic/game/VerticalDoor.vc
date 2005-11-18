@@ -65,7 +65,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
 		break;
 
 	case DOOREV_CloseWaitOpen:
@@ -73,7 +73,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		TopHeight = Sector->ceiling.dist;
 		TopWait *= 4.0;
 		Direction = -1;
-		SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+		SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
 		break;
 
 	case DOOREV_Raise:
@@ -106,7 +106,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = 1;
 		if (TopHeight != Sector->ceilingheight)
 		{
-			SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
 		}
 		break;
 
@@ -212,11 +212,11 @@ void Tick(float deltaTime)
 			{
 			case DOOREV_Raise:
 				Direction = -1;	// time to go back down
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 1;
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -233,7 +233,7 @@ void Tick(float deltaTime)
 			case DOOREV_RaiseIn5Mins:
 				Direction = 1;
 				Type = DOOREV_Raise;
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -258,7 +258,7 @@ void Tick(float deltaTime)
 			case DOOREV_Raise:
 			case DOOREV_Close:
 				Finished();	// unlink and free
-				SectorStartSoundName(Sector, 'DoorClose', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr1_clos', CHAN_VOICE);
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 0;
@@ -276,7 +276,7 @@ void Tick(float deltaTime)
 				break;
 			default:
 				Direction = 1;
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
 				break;
 			}
 		}
@@ -320,6 +320,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/18 23:36:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/01 14:39:32  dj_jl
 //  Big update of line specials.
 //
