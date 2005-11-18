@@ -304,6 +304,7 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 	node->delayTics = 0;
 	node->stopSound = SeqInfo[sequence].stopSound;
 	node->volume = 127; // Start at max volume
+	node->currentSoundID = 0;
 
 	if(!SequenceListHead)
 	{
@@ -528,9 +529,12 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/11/18 20:09:31  dj_jl
+//	Properly initialise current sound.
+//
 //	Revision 1.10  2005/11/08 18:38:01  dj_jl
 //	Parse all sequence scripts.
-//
+//	
 //	Revision 1.9  2005/11/05 15:50:07  dj_jl
 //	Voices played as normal sounds.
 //	
