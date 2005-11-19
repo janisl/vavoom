@@ -682,18 +682,16 @@ void Died(Actor source)
 		if (bFireDamage)
 		{
 			// Player flame death
+			PlaySound('*burndeath', CHAN_VOICE);
 			switch (Player.PClass)
 			{
 			case PCLASS_FIGHTER:
-				PlaySound('PlayerFighterBurnDeath', CHAN_VOICE);
 				SetState(S_PLAY_F_FDTH1);
 				return;
 			case PCLASS_CLERIC:
-				PlaySound('PlayerClericBurnDeath', CHAN_VOICE);
 				SetState(S_PLAY_C_FDTH1);
 				return;
 			case PCLASS_MAGE:
-				PlaySound('PlayerMageBurnDeath', CHAN_VOICE);
 				SetState(S_PLAY_M_FDTH1);
 				return;
 			default:
@@ -1128,7 +1126,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 				{
 					PoisonDamage(source, 15 + (P_Random() & 15), false);	// Don't play painsound
 					PoisonPlayer(source, 50);
-					PlaySound('PlayerPoisonCough', CHAN_VOICE);
+					PlaySound('*poison', CHAN_VOICE);
 				}
 				return;
 			}
@@ -1368,7 +1366,7 @@ void FallingDamage(void)
 		// No-death threshold
 		damage = Health - 1;
 	}
-	PlaySound('PlayerLand', CHAN_BODY);
+	PlaySound('*land', CHAN_BODY);
 	Damage(none, none, damage);
 }
 
@@ -2398,28 +2396,14 @@ bool HitFloor(void)
 					FallingDamage();
 					NoiseAlert(self, self);
 				}
-				else if (vdot < -GRAVITY * 0.375
-					&& !Player.MorphTime)
+				else if (vdot < -GRAVITY * 0.375 && !Player.MorphTime)
 				{
-					PlaySound('PlayerLand', CHAN_BODY);
-					switch (Player.PClass)
-					{
-					case PCLASS_FIGHTER:
-						PlaySound('PlayerFighterGrunt', CHAN_VOICE);
-						break;
-					case PCLASS_CLERIC:
-						PlaySound('PlayerClericGrunt', CHAN_VOICE);
-						break;
-					case PCLASS_MAGE:
-						PlaySound('PlayerMageGrunt', CHAN_VOICE);
-						break;
-					default:
-						break;
-					}
+					PlaySound('*land', CHAN_BODY);
+					PlaySound('*grunt', CHAN_VOICE);
 				}
 				else if (GetFloorType() < FLOOR_LIQUID && !Player.MorphTime)
 				{
-					PlaySound('PlayerLand', CHAN_BODY);
+					PlaySound('*land', CHAN_BODY);
 				}
 //FIXME				Player.centering = true;
 			}
@@ -2598,25 +2582,12 @@ void PlayerLandedOnThing(void)
 	}
 	else if (Velocity.z < -GRAVITY * 0.375 && !Player.MorphTime)
 	{
-		PlaySound('PlayerLand', CHAN_BODY);
-		switch (Player.PClass)
-		{
-		case PCLASS_FIGHTER:
-			PlaySound('PlayerFighterGrunt', CHAN_VOICE);
-			break;
-		case PCLASS_CLERIC:
-			PlaySound('PlayerClericGrunt', CHAN_VOICE);
-			break;
-		case PCLASS_MAGE:
-			PlaySound('PlayerMageGrunt', CHAN_VOICE);
-			break;
-		default:
-			break;
-		}
+		PlaySound('*land', CHAN_BODY);
+		PlaySound('*grunt', CHAN_VOICE);
 	}
 	else if (!Player.MorphTime)
 	{
-		PlaySound('PlayerLand', CHAN_BODY);
+		PlaySound('*land', CHAN_BODY);
 	}
 //FIXME Player.centering = true;
 }
@@ -2982,7 +2953,7 @@ bool SectorChanged(int CrushChange)
 				SetState(S_GIBS1);
 				Height = 0.0;
 				Radius = 0.0;
-				PlaySound('PlayerFallingSplat', CHAN_VOICE);
+				PlaySound('*splat', CHAN_VOICE);
 			}
 		}
 		return true;
@@ -3519,9 +3490,28 @@ void A_UnSetInvulnerable(void)
 //
 //==========================================================================
 
-void A_Pain(void)
+void A_Pain()
 {
-	if (PainSound)
+	if (bIsPlayer && !Player.MorphTime)
+	{
+		if (Health < 25)
+		{
+			PlaySound('*pain25', CHAN_VOICE);
+		}
+		else if (Health < 50)
+		{
+			PlaySound('*pain50', CHAN_VOICE);
+		}
+		else if (Health < 75)
+		{
+			PlaySound('*pain75', CHAN_VOICE);
+		}
+		else
+		{
+			PlaySound('*pain100', CHAN_VOICE);
+		}
+	}
+	else if (PainSound)
 	{
 		PlaySound(PainSound, CHAN_VOICE);
 	}
@@ -3558,112 +3548,31 @@ void A_FreeTargMobj(void)
 //
 //============================================================================
 
-void A_Scream(void)
+void A_Scream()
 {
 	StopSound(CHAN_AUTO);
-	if (bIsPlayer)
+	if (bIsPlayer && !Player.MorphTime)
 	{
-		if (Player.MorphTime)
+		// Handle the different player death screams
+		if (Velocity.z <= -39.0 * 35.0)
 		{
-			PlaySound(DeathSound, CHAN_VOICE);
+			// Falling splat
+			PlaySound('*splat', CHAN_VOICE);
+		}
+		else if (Health > -50)
+		{
+			// Normal death sound
+			PlaySound('*death', CHAN_VOICE);
+		}
+		else if (Health > -100)
+		{
+			// Crazy death sound
+			PlaySound('*crazydeath', CHAN_VOICE);
 		}
 		else
 		{
-			// Handle the different player death screams
-			if (Velocity.z <= -39.0 * 35.0)
-			{
-				// Falling splat
-				PlaySound('PlayerFallingSplat', CHAN_VOICE);
-			}
-			else if (Health > -50)
-			{
-				// Normal death sound
-				switch (Player.PClass)
-				{
-				case PCLASS_FIGHTER:
-					PlaySound('PlayerFighterNormalDeath',
-						CHAN_VOICE);
-					break;
-				case PCLASS_CLERIC:
-					PlaySound('PlayerClericNormalDeath',
-						CHAN_VOICE);
-					break;
-				case PCLASS_MAGE:
-					PlaySound('PlayerMageNormalDeath',
-						CHAN_VOICE);
-					break;
-				}
-			}
-			else if (Health > -100)
-			{
-				// Crazy death sound
-				switch (Player.PClass)
-				{
-				case PCLASS_FIGHTER:
-					PlaySound('PlayerFighterCrazyDeath',
-						CHAN_VOICE);
-					break;
-				case PCLASS_CLERIC:
-					PlaySound('PlayerClericCrazyDeath',
-						CHAN_VOICE);
-					break;
-				case PCLASS_MAGE:
-					PlaySound('PlayerMageCrazyDeath', CHAN_VOICE);
-					break;
-				}
-			}
-			else
-			{	// Extreme death sound
-				name sound;
-
-				switch (Player.PClass)
-				{
-				case PCLASS_FIGHTER:
-					switch (P_Random() % 3)
-					{
-					case 0:
-						sound = 'PlayerFighterExtreme1Death';
-						break;
-					case 1:
-						sound = 'PlayerFighterExtreme2Death';
-						break;
-					case 2:
-						sound = 'PlayerFighterExtreme3Death';
-						break;
-					}
-					break;
-				case PCLASS_CLERIC:
-					switch (P_Random() % 3)
-					{
-					case 0:
-						sound = 'PlayerClericExtreme1Death';
-						break;
-					case 1:
-						sound = 'PlayerClericExtreme2Death';
-						break;
-					case 2:
-						sound = 'PlayerClericExtreme3Death';
-						break;
-					}
-					break;
-				case PCLASS_MAGE:
-					switch (P_Random() % 3)
-					{
-					case 0:
-						sound = 'PlayerMageExtreme1Death';
-						break;
-					case 1:
-						sound = 'PlayerMageExtreme2Death';
-						break;
-					case 2:
-						sound = 'PlayerMageExtreme3Death';
-						break;
-					}
-					break;
-				}
-				// Three different extreme deaths
-				PlaySound(sound, CHAN_VOICE);
-			}
+			// Extreme death sound
+			PlaySound('*xdeath', CHAN_VOICE);
 		}
 	}
 	else
@@ -3909,6 +3818,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2005/11/19 15:15:08  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.17  2005/11/17 18:55:04  dj_jl
 //  Implemented support for sndinfo extensions.
 //

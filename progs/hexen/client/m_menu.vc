@@ -135,7 +135,7 @@ void PushMenuScreen(MenuScreen menu)
 		}
 		C_ClearNotify();*/
 		CmdBuf_AddText("HideConsole\n");
-		LocalSound('MenuActivate');
+		LocalSound('menu/activate');
 	}
 	else
 	{
@@ -164,12 +164,12 @@ void PopMenu(void)
 		CurrentMenuScreen = menu_stack[menu_sp - 1];
 		CurrentMenuScreen.Show();
 		CurrentMenuScreen.Raise();
-		LocalSound('MenuPrevious');
+		LocalSound('menu/backup');
 	}
 	else
 	{
 		CurrentMenuScreen = none;
-		LocalSound('MenuClose');
+		LocalSound('menu/clear');
 	}
 }
 
@@ -291,6 +291,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2005/11/19 15:15:07  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.28  2004/02/16 07:09:28  dj_jl
 //  Multiple hotkey fix
 //

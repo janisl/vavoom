@@ -2150,34 +2150,10 @@ void PlayerTick(float deltaTime)
 	}
 	PlayerInContents();
 
-	switch (PClass)
+	if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
+		!MorphTime && !GetSoundPlayingInfo(MO, GetSoundID('*falling')))
 	{
-	case PCLASS_FIGHTER:
-		if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
-			!MorphTime && !GetSoundPlayingInfo(MO,
-				GetSoundID('PlayerFighterFallingScream')))
-		{
-			MO.PlaySound('PlayerFighterFallingScream', CHAN_VOICE);
-		}
-		break;
-	case PCLASS_CLERIC:
-		if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
-			!MorphTime && !GetSoundPlayingInfo(MO,
-				GetSoundID('PlayerClericFallingScream')))
-		{
-			MO.PlaySound('PlayerClericFallingScream', CHAN_VOICE);
-		}
-		break;
-	case PCLASS_MAGE:
-		if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
-			!MorphTime && !GetSoundPlayingInfo(MO,
-				GetSoundID('PlayerMageFallingScream')))
-		{
-			MO.PlaySound('PlayerMageFallingScream', CHAN_VOICE);
-		}
-		break;
-	default:
-		break;
+		MO.PlaySound('*falling', CHAN_VOICE);
 	}
 
 	// Check for weapon change.
@@ -3668,6 +3644,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/11/19 15:15:08  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.9  2005/07/16 10:15:06  dj_jl
 //  Increased jump velocity.
 //

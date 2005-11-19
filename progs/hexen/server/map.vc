@@ -53,7 +53,6 @@ TVec useDir;
 bool PTR_UseTraverse(intercept_t * in)
 {
 	line_t* line;
-	name sound;
 	float pheight;
 	TVec hit_point;
 	opening_t *open;
@@ -70,25 +69,14 @@ bool PTR_UseTraverse(intercept_t * in)
 		{
 			if (usething.bIsPlayer)
 			{
-				switch (usething.Player.PClass)
+				if (usething.Player.MorphTime)
 				{
-				case PCLASS_FIGHTER:
-					sound = 'PlayerFighterFailedUse';
-					break;
-				case PCLASS_CLERIC:
-					sound = 'PlayerClericFailedUse';
-					break;
-				case PCLASS_MAGE:
-					sound = 'PlayerMageFailedUse';
-					break;
-				case PCLASS_PIG:
-					sound = 'PigActive1';
-					break;
-				default:
-					sound = 'None';
-					break;
+					usething.PlaySound('PigActive1', CHAN_VOICE);
 				}
-				usething.PlaySound(sound, CHAN_VOICE);
+				else
+				{
+					usething.PlaySound('*usefail', CHAN_VOICE);
+				}
 			}
 			return false;	// can't use through a wall
 		}
@@ -97,25 +85,14 @@ bool PTR_UseTraverse(intercept_t * in)
 			pheight = usething.Origin.z + usething.Height / 2.0;
 			if ((open->top < pheight) || (open->bottom > pheight))
 			{
-				switch (usething.Player.PClass)
+				if (usething.Player.MorphTime)
 				{
-				case PCLASS_FIGHTER:
-					sound = 'PlayerFighterFailedUse';
-					break;
-				case PCLASS_CLERIC:
-					sound = 'PlayerClericFailedUse';
-					break;
-				case PCLASS_MAGE:
-					sound = 'PlayerMageFailedUse';
-					break;
-				case PCLASS_PIG:
-					sound = 'PigActive1';
-					break;
-				default:
-					sound = 'None';
-					break;
+					usething.PlaySound('PigActive1', CHAN_VOICE);
 				}
-				usething.PlaySound(sound, CHAN_VOICE);
+				else
+				{
+					usething.PlaySound('*usefail', CHAN_VOICE);
+				}
 			}
 		}
 		return true;	// not a special line, but keep checking
@@ -194,25 +171,10 @@ bool PTR_PuzzleItemTraverse(intercept_t * in)
 			open = LineOpenings(in->line, hit_point);
 			if (!open || open->range <= 0.0)
 			{
-				name sound;
-
-				sound = 'None';
 				if (PuzzleItemUser.bIsPlayer)
 				{
-					switch (PuzzleItemUser.Player.PClass)
-					{
-					case PCLASS_FIGHTER:
-						sound = 'PuzzleFailFighter';
-						break;
-					case PCLASS_CLERIC:
-						sound = 'PuzzleFailCleric';
-						break;
-					case PCLASS_MAGE:
-						sound = 'PuzzleFailMage';
-						break;
-					}
+					PuzzleItemUser.PlaySound('*puzzfail', CHAN_VOICE);
 				}
-				PuzzleItemUser.PlaySound(sound, CHAN_VOICE);
 				return false;	// can't use through a wall
 			}
 			return true;	// Continue searching
@@ -886,6 +848,9 @@ void PIT_ThrustSpike(Actor actor)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2005/11/19 15:15:08  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.35  2005/09/29 17:17:22  dj_jl
 //  Fix for using a puzzle item.
 //
