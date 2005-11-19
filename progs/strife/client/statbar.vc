@@ -211,8 +211,8 @@ void SB_StartMap()
 	pic_sigil[4] = R_RegisterPic("I_SGL5", PIC_PATCH);
 	pic_i_comm = R_RegisterPic("I_COMM", PIC_PATCH);
 	pic_ammo[am_clip] = R_RegisterPic("BLITA0", PIC_PATCH);
-	pic_ammo[am_electric_arrow] = R_RegisterPic("PQRLA0", PIC_PATCH);
-	pic_ammo[am_poison_arrow] = R_RegisterPic("XQRLA0", PIC_PATCH);
+	pic_ammo[am_electric_arrow] = R_RegisterPic("XQRLA0", PIC_PATCH);
+	pic_ammo[am_poison_arrow] = R_RegisterPic("PQRLA0", PIC_PATCH);
 	pic_ammo[am_cell] = R_RegisterPic("CPACA0", PIC_PATCH);
 	pic_ammo[am_misl] = R_RegisterPic("MSSLA0", PIC_PATCH);
 	pic_ammo[am_grenade1] = R_RegisterPic("GRN1A0", PIC_PATCH);
@@ -478,6 +478,9 @@ void SB_UpdateWidgets()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/11/19 15:37:58  dj_jl
+//  Fixed ammo icons.
+//
 //  Revision 1.14  2005/11/06 19:11:13  dj_jl
 //  Fixed default objectives text.
 //
