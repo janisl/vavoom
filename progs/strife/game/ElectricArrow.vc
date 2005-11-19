@@ -42,12 +42,15 @@ defaultproperties
 	DeathState = S_ZAP1_0;
 	SightSound = 'PunchMiss';
 	ActiveSound = 'PunchMiss';
-	DeathSound = 'ElectricArrowExplode';
+	DeathSound = 'weapons/xbowhit';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/03/28 07:38:24  dj_jl
 //  Player missiles can activate impact lines.
 //

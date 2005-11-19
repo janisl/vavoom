@@ -50,13 +50,16 @@ defaultproperties
 	bNoGravity = false;
 	IdleState = S_INQUISITOR_GRENADE_1;
 	DeathState = S_INQUISITOR_GRENADE_X1;
-	SightSound = 'FireGrenade';
-	DeathSound = 'Explode';
+	SightSound = 'inquisitor/attack';
+	DeathSound = 'inquisitor/atkexplode';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

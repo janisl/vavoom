@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SigilFX2:Projectile;
+class SigilFX2 : Projectile;
 
 __states__
 {
@@ -43,13 +43,16 @@ defaultproperties
 	bSpectral = true;
 	IdleState = S_SIGIL_FX2_1;
 	DeathState = S_ZAP1_1;
-	SightSound = 'SigilFire';
-	DeathSound = 'SigilHit';
+	SightSound = 'weapons/sigil';
+	DeathSound = 'weapons/sigilhit';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

@@ -40,7 +40,7 @@ void A_Burnination()
 	Velocity.z -= 8.0 * 35.0;
 	Velocity.x += (Random() - Random()) * 4.0 * 35.0;
 	Velocity.y += (Random() - Random()) * 4.0 * 35.0;
-	PlaySound('LargeFire', CHAN_VOICE);
+	PlaySound('world/largefire', CHAN_VOICE);
 
 	//	Only the main fire spawns more.
 	if (!bDropped)
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2004/12/27 12:23:14  dj_jl
 //  Multiple small changes for version 1.16
 //

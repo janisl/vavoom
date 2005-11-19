@@ -140,7 +140,7 @@ __states__
 
 		// spawn a teleport fog at the new spot
 		A = Spawn(ItemRespawnFog, Origin);
-		A.PlaySound('ItemRespawn', CHAN_VOICE);
+		A.PlaySound('misc/spawn', CHAN_VOICE);
 	}
 }
 
@@ -446,6 +446,7 @@ void Died(Actor source)
 	else if (bDisruptDamage && DisruptDeathState)
 	{
 		SetState(DisruptDeathState);
+		PlaySound('human/disrupt', CHAN_BODY);
 	}
 	else if (Health < GibsHealth && GibsDeathState)
 	{
@@ -683,12 +684,12 @@ void NightmareRespawn()
 	A = Spawn(TeleportFog, vector(Origin.x, Origin.y, ONFLOORZ));
 
 	// initiate teleport sound
-	A.PlaySound('Teleport', CHAN_BODY);
+	A.PlaySound('misc/teleport', CHAN_BODY);
 
 	// spawn a teleport fog at the new spot
 	A = Spawn(TeleportFog, vector(x, y, ONFLOORZ));
 
-	A.PlaySound('Teleport', CHAN_BODY);
+	A.PlaySound('misc/teleport', CHAN_BODY);
 
 	// spawn the new monster
 	mthing = &SpawnSpot;
@@ -1467,7 +1468,7 @@ void ZMovement()
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
 				Player.DeltaViewHeight = vdot / 8.0;
-				PlaySound('PlayerLand', CHAN_VOICE);
+				PlaySound('*land', CHAN_VOICE);
 			}
 		}
 		Origin.z = FloorZ;
@@ -1623,7 +1624,7 @@ void PlayerLandedOnThing()
 	Player.DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
-		PlaySound('PlayerLand', CHAN_VOICE);
+		PlaySound('*land', CHAN_VOICE);
 	}
 }
 
@@ -2030,7 +2031,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 	{
 		// spawn teleport fog at source and destination
 		fog = Spawn(TeleportFog, oldOrg);
-		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
 	}
 
 	if (DstFog)
@@ -2039,7 +2040,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 			vector(20.0 * cos(angle), 20.0 * sin(angle), 0.0));
 
 		// emit sound, where?
-		fog.PlaySound('Teleport', CHAN_VOICE);
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
 	}
 
 	if (!KeepDir)
@@ -2526,7 +2527,7 @@ void A_SpawnPuff()
 
 	if (Class == MiniMissile)
 	{
-		PlaySound('ReactorActive2', CHAN_VOICE);
+		PlaySound('misc/missileinflight', CHAN_VOICE);
 		SpawnPuff(Origin.x, Origin.y, Origin.z);
 		A = Spawn(ReactorPuff, Origin - Velocity / 35.0);
 		if (A)
@@ -2759,6 +2760,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.18  2005/07/09 13:55:47  dj_jl
 //  Scrolers carrying objects.
 //

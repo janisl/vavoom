@@ -34,7 +34,7 @@ class AlarmIndicator : Decoration
 
 void A_AlarmActive()
 {
-	PlaySound('Alarm', CHAN_VOICE);
+	PlaySound('misc/alarm', CHAN_VOICE);
 	ReactionCount--;
 	if (!ReactionCount)
 	{
@@ -64,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/10/18 06:35:20  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

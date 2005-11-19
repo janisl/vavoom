@@ -110,15 +110,18 @@ defaultproperties
 	MissileState = S_BISHOP_ATK1;
 	PainState = S_BISHOP_PAIN1;
 	DeathState = S_BISHOP_DIE1;
-	SightSound = 'CrusaderSight';
-	ActiveSound = 'CrusaderActive';
-	PainSound = 'CrusaderPain';
-	DeathSound = 'TemplarDeath';
+	SightSound = 'bishop/sight';
+	ActiveSound = 'bishop/active';
+	PainSound = 'bishop/pain';
+	DeathSound = 'bishop/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

@@ -2936,7 +2936,7 @@ COMMAND(Say)
 		return;
 
 	SV_BroadcastPrintf("%s: %s", sv_player->PlayerName, Args());
-	SV_StartSound(NULL, S_GetSoundID("Chat"), 0, 127);
+	SV_StartSound(NULL, S_GetSoundID("misc/chat"), 0, 127);
 	unguard;
 }
 
@@ -3005,9 +3005,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.71  2005/11/19 13:45:13  dj_jl
+//	Renamed sounds.
+//
 //	Revision 1.70  2005/11/10 12:51:45  dj_jl
 //	Fixed spelling mistake.
-//
+//	
 //	Revision 1.69  2005/07/09 12:18:52  dj_jl
 //	Changed rounding for win compatibility.
 //	

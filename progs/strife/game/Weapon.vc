@@ -58,7 +58,7 @@ void A_WeaponReady(void)
 
 	if (Player.ReadyWeapon == wp_flame && StateNum == ReadyState)
 	{
-		Player.MO.PlaySound('FlameThrowerIdle', CHAN_WEAPON);
+		Player.MO.PlaySound('weapons/flameidle', CHAN_WEAPON);
 	}
 
 	// check for change
@@ -281,6 +281,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.6  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

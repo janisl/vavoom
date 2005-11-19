@@ -41,9 +41,9 @@ void A_ProgrammerMelee()
 
 	if (CheckMeleeRange())
 	{
-		Enemy.ReactionTime = 20.0 / 35.0;
-		Enemy.Damage(self, self, ((P_Random() % 10) + 1) * 4);
-    }
+		PlaySound('programmer/clank', CHAN_WEAPON);
+		Enemy.Damage(self, self, ((P_Random() % 10) + 1) * 6);
+	}
 }
 
 //==========================================================================
@@ -59,7 +59,7 @@ void A_ProgrammerDeath()
 
 	//	Give Silil piece to the player.
 	Enemy.Player.GiveSigilPiece();
-	cprint(Enemy.Player, "You've Killed the Programmer!");
+	cprint(Enemy.Player, "You\'ve Killed the Programmer!");
 }
 
 __states__
@@ -120,15 +120,18 @@ defaultproperties
 	MissileState = S_PROGRAMMER_ATK2_1;
 	PainState = S_PROGRAMMER_PAIN1;
 	DeathState = S_PROGRAMMER_DIE1;
-	ActiveSound = 'ProgrammerActive';
-	AttackSound = 'ReaverBlade';
-	PainSound = 'ProgrammerPain';
-	DeathSound = 'CrusaderDeath';
+	ActiveSound = 'programmer/active';
+	AttackSound = 'programmer/attack';
+	PainSound = 'programmer/pain';
+	DeathSound = 'programmer/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

@@ -46,6 +46,7 @@ void A_InquisitorChase()
 	if (!Enemy)
 		return;
 
+	PlaySound('inquisitor/walk', CHAN_BODY);
 	ZSpeed = fabs(Velocity.z);
 	if (Origin.z < Enemy.Origin.z)
 	{
@@ -238,15 +239,18 @@ defaultproperties
 	GrenadeState = S_INQUISITOR_ATK2_1;
 	JumpState = S_INQUISITOR_JUMP1;
 	DeathState = S_INQUISITOR_DIE1;
-	SightSound = 'InquisitorSight';
-	ActiveSound = 'InquisitorActive';
-	JumpSound = 'InquisitorJump';
-	DeathSound = 'InquisitorDeath';
+	SightSound = 'inquisitor/sight';
+	ActiveSound = 'inquisitor/active';
+	JumpSound = 'inquisitor/jump';
+	DeathSound = 'inquisitor/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

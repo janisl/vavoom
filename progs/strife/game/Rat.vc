@@ -54,14 +54,17 @@ defaultproperties
 	SeeState = S_RAT_RUN1;
 	MeleeState = S_RAT_WALK1;
 	DeathState = S_RAT_DIE;
-	SightSound = 'RatActive';
-	ActiveSound = 'RatActive';
-	DeathSound = 'RatActive';
+	SightSound = 'rat/sight';
+	ActiveSound = 'rat/active';
+	DeathSound = 'rat/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LampCandle:Decoration
+class LampCandle : Decoration
 	__mobjinfo__(47);
 
 __states__
@@ -41,12 +41,15 @@ defaultproperties
 	Height = 72.0;
 	bSolid = true;
 	IdleState = S_LAMPCAND_1;
-	ActiveSound = 'SmallFire';
+	ActiveSound = 'world/smallfire';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

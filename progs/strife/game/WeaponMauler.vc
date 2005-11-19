@@ -39,7 +39,7 @@ void A_FireBlaster1()
 	TVec aimDir;
 	TVec dir;
 
-	Player.MO.PlaySound('TemplarAttack', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/mauler1', CHAN_WEAPON);
 
 	Player.Ammo[Ammo] -= 20;
 
@@ -65,7 +65,7 @@ void A_FireBlaster1()
 
 void A_FireBlasterSound()
 {
-	Player.MO.PlaySound('MaulerTorpedoOn', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/mauler2charge', CHAN_WEAPON);
 	SX += (Random() - Random()) * 4.0;
 	SY += (Random() - Random()) * 4.0;
 }
@@ -138,6 +138,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.5  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

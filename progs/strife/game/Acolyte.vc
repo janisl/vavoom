@@ -95,16 +95,19 @@ defaultproperties
 	GibsDeathState = S_ACOLYTE_XDIE1;
 	FireDeathState = S_BURN1;
 	DisruptDeathState = S_DISRUPT1;
-	SightSound = 'AcolyteSight';
-	ActiveSound = 'AcolyteActive1';
-	AttackSound = 'AssaultGunFire';
-	PainSound = 'AcolytePain';
-	DeathSound = 'AcolyteDeath';
+	SightSound = 'acolyte/sight';
+	ActiveSound = 'acolyte/active';
+	AttackSound = 'acolyte/rifle';
+	PainSound = 'acolyte/pain';
+	DeathSound = 'acolyte/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

@@ -84,38 +84,38 @@ void StartAnim()
 	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;	
 	if (texTop == TextureNumForName("DORALN01"))
 	{
-		opensound = 'DoorOpen';
-		CloseSound = 'DoorClose';
+		opensound = 'doors/airlock_open';
+		CloseSound = 'doors/airlock_close';
 	}
 	else if (texTop == TextureNumForName("DORCHN01"))
 	{
-		opensound = 'DoorChainedOpen';
-		CloseSound = 'DoorChainedClose';
+		opensound = 'doors/chain_open';
+		CloseSound = 'doors/chain_close';
 	}
 	else if (texTop == TextureNumForName("DORCRG01"))
 	{
-		opensound = 'DoorLongWood';
-		CloseSound = 'DoorShortWood';
+		opensound = 'doors/small_metal_open';
+		CloseSound = 'doors/small_metal_close';
 	}
 	else if (texTop == TextureNumForName("DORIRS01"))
 	{
-		opensound = 'Airlock';
-		CloseSound = 'Airlock';
+		opensound = 'doors/airlock_open';
+		CloseSound = 'doors/airlock_close';
 	}
 	else if (texTop == TextureNumForName("DORQTR01"))
 	{
-		opensound = 'Airlock';
-		CloseSound = 'Airlock';
+		opensound = 'doors/airlock_open';
+		CloseSound = 'doors/airlock_close';
 	}
 	else if (texTop == TextureNumForName("DORSTN01"))
 	{
-		opensound = 'DoorLongWood';
-		CloseSound = 'DoorShortWood';
+		opensound = 'doors/stone_open';
+		CloseSound = 'doors/stone_close';
 	}
 	else
 	{
-		opensound = 'BlazeDoorOpen';
-		CloseSound = 'BlazeDoorClose';
+		opensound = 'doors/large_metal_open';
+		CloseSound = 'doors/large_metal_close';
 	}
 	SectorStartSoundName(Sector, opensound, CHAN_VOICE);
 	SetLineTexture(Line->sidenum[0], 1, texTop);
@@ -220,6 +220,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.5  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

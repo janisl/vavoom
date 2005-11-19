@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LoremasterChainTrail:Effect;
+class LoremasterChainTrail : Effect;
 
 __states__
 {
@@ -33,12 +33,15 @@ __states__
 defaultproperties
 {
 	IdleState = S_LOREMASTER_FX_TRAIL;
-	SightSound = 'LoremasterActive';
+	SightSound = 'loremaster/active';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

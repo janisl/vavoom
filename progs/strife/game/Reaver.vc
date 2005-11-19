@@ -81,15 +81,18 @@ defaultproperties
 	PainState = S_REAVER_PAIN1;
 	DeathState = S_REAVER_DIE1;
 	GibsDeathState = S_REAVER_XDIE1;
-	SightSound = 'ReaverSight';
-	ActiveSound = 'ReaverActive';
-	PainSound = 'ReaverPain';
-	DeathSound = 'ReaverDeath';
+	SightSound = 'reaver/sight';
+	ActiveSound = 'reaver/active';
+	PainSound = 'reaver/pain';
+	DeathSound = 'reaver/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

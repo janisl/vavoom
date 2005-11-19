@@ -778,7 +778,7 @@ void A_XScream()
 	}
 	else
 	{
-		PlaySound('Slop', CHAN_VOICE);
+		PlaySound('misc/gibbed', CHAN_VOICE);
 	}
 }
 
@@ -796,7 +796,7 @@ void A_RiffleAttack()
 	if (!Enemy)
 		return;
 
-	PlaySound('AssaultGunFire', CHAN_WEAPON);
+	PlaySound('monsters/rifle', CHAN_WEAPON);
 	A_FaceTarget();
 	dir = AimLineAttack(self, Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
@@ -860,7 +860,7 @@ void A_RobotMelee()
 	A_FaceTarget();
 	if (CheckMeleeRange())
 	{
-		PlaySound('ReaverBlade', CHAN_WEAPON);
+		PlaySound('reaver/blade', CHAN_WEAPON);
 		damage = ((P_Random() % 8) + 1) * 3;
 		Enemy.Damage(self, self, damage);
 	}
@@ -883,7 +883,7 @@ void A_RobotMissile()
 		return;
 
 	A_FaceTarget();
-	PlaySound('ReaverAttack', CHAN_WEAPON);
+	PlaySound('reaver/attack', CHAN_WEAPON);
 	aimDir = AimLineAttack(self, Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
 	{
@@ -932,6 +932,7 @@ void A_FlightChase()
 
 void A_Burn()
 {
+	PlaySound('human/imonfire', CHAN_VOICE);
 	TossUpObject(FireFoot);
 }
 
@@ -1324,6 +1325,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.12  2005/04/04 07:36:37  dj_jl
 //  Several fixes of quests.
 //

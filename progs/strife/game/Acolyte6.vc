@@ -23,19 +23,21 @@
 //**
 //**************************************************************************
 
-class Acolyte6:Acolyte
+class Acolyte6 : Acolyte
 	__mobjinfo__(148);
 
 defaultproperties
 {
 	ConversationID = 58;
 	Translation = 5;
-	ActiveSound = 'AcolyteActive3';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

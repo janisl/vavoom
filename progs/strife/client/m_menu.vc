@@ -165,7 +165,7 @@ void PushMenuScreen(MenuScreen menu)
 		}
 		C_ClearNotify();*/
 		CmdBuf_AddText("HideConsole\n");
-		LocalSound('MenuActivate');
+		LocalSound('menu/activate');
 	}
 	else
 	{
@@ -194,12 +194,12 @@ void PopMenu(void)
 		CurrentMenuScreen = menu_stack[menu_sp - 1];
 		CurrentMenuScreen.Show();
 		CurrentMenuScreen.Raise();
-		LocalSound('MenuPrevious');
+		LocalSound('menu/backup');
 	}
 	else
 	{
 		CurrentMenuScreen = none;
-		LocalSound('MenuClose');
+		LocalSound('menu/clear');
 	}
 }
 
@@ -327,6 +327,9 @@ void menu_quit(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.32  2005/11/05 15:50:55  dj_jl
 //  Voices played as normal sounds.
 //

@@ -155,7 +155,7 @@ __states__
 
 		// spawn a teleport fog at the new spot
 		A = Spawn(ItemRespawnFog, Origin);
-		A.PlaySound('ItemRespawn', CHAN_ITEM);
+		A.PlaySound('misc/spawn', CHAN_ITEM);
 	}
 }
 
@@ -163,13 +163,16 @@ defaultproperties
 {
 	Height = 8.0;
 	bSpecial = true;
-	PickupSound = 'PickupItem';
+	PickupSound = 'misc/i_pkup';
 	PickupString = "Item";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.5  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

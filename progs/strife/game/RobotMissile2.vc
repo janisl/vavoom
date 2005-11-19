@@ -50,11 +50,16 @@ defaultproperties
 {
 	bActivateImpact = false;
 	IdleState = S_ROBOT_MISSILE2_1;
+	SightSound = 'bishop/misl';
+	DeathSound = 'bishop/mislx';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/28 07:38:24  dj_jl
 //  Player missiles can activate impact lines.
 //

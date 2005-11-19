@@ -174,15 +174,18 @@ defaultproperties
 	MissileState = S_CRUSADER_ATK1;
 	PainState = S_CRUSADER_PAIN;
 	DeathState = S_CRUSADER_DIE1;
-	SightSound = 'CrusaderSight';
-	ActiveSound = 'CrusaderActive';
-	PainSound = 'CrusaderPain';
-	DeathSound = 'CrusaderDeath';
+	SightSound = 'crusader/sight';
+	ActiveSound = 'crusader/active';
+	PainSound = 'crusader/pain';
+	DeathSound = 'crusader/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

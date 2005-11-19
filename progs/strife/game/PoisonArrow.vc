@@ -40,14 +40,17 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_ARROW2;
 	DeathState = S_ARROW2_X;
-	SightSound = 'PunchMiss';
-	ActiveSound = 'PunchMiss';
+	SightSound = 'misc/swish';
+	ActiveSound = 'misc/swish';
 	bPoisonDamage = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:38:24  dj_jl
 //  Player missiles can activate impact lines.
 //

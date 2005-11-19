@@ -62,12 +62,15 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_FLAMEFX_1;
 	DeathState = S_FLAMEFX_X1;
-	SightSound = 'FlameThrowerFire';
+	SightSound = 'weapons/flamethrower';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2005/03/28 07:38:24  dj_jl
 //  Player missiles can activate impact lines.
 //

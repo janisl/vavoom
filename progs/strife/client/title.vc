@@ -49,60 +49,66 @@ int page_pic;
 //
 //==========================================================================
 
-void AdvanceDemo(void)
+void AdvanceDemo()
 {
 	demosequence++;
-	demosequence %= 9;
+	demosequence %= 10;
 
 	switch (demosequence)
 	{
 	case 0:
-		pagetime = 5.0;
+		pagetime = 12.0;
 		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
 		CmdBuf_AddText("music play d_logo");
 		break;
 
 	case 1:
+		pagetime = 5.0;
+		page_pic = R_RegisterPic("RGELOGO", PIC_PATCH);
+		LocalSound('crusader/active');
+		break;
+
+	case 2:
 		pagetime = 7.0;
 		page_pic = R_RegisterPic("PANEL1", PIC_PATCH);
 		LocalSound('svox/pro1');
 		break;
 
-	case 2:
+	case 3:
 		pagetime = 9.0;
 		page_pic = R_RegisterPic("PANEL2", PIC_PATCH);
 		LocalSound('svox/pro2');
 		break;
 
-	case 3:
+	case 4:
 		pagetime = 12.0;
 		page_pic = R_RegisterPic("PANEL3", PIC_PATCH);
 		LocalSound('svox/pro3');
 		break;
 
-	case 4:
+	case 5:
 		pagetime = 11.0;
 		page_pic = R_RegisterPic("PANEL4", PIC_PATCH);
 		LocalSound('svox/pro4');
 		break;
 
-	case 5:
+	case 6:
 		pagetime = 10.0;
 		page_pic = R_RegisterPic("PANEL5", PIC_PATCH);
 		LocalSound('svox/pro5');
 		break;
 
-	case 6:
+	case 7:
 		pagetime = 16.0;
 		page_pic = R_RegisterPic("PANEL6", PIC_PATCH);
 		LocalSound('svox/pro6');
 		break;
 
-	case 7:
+	case 8:
 		CmdBuf_AddText("PlayDemo demo1\n");
 		break;
 
-	case 8:
+	case 9:
 		pagetime = 6.0;
 		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
 		break;
@@ -115,7 +121,7 @@ void AdvanceDemo(void)
 //
 //==========================================================================
 
-void ForceTitle(void)
+void ForceTitle()
 {
 	pagetime = 11.0;
 	page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
@@ -127,7 +133,7 @@ void ForceTitle(void)
 //
 //==========================================================================
 
-void PageDrawer(void)
+void PageDrawer()
 {
 	pagetime -= frametime;
 	if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
@@ -144,7 +150,7 @@ void PageDrawer(void)
 //
 //==========================================================================
 
-void OnHostEndGame(void)
+void OnHostEndGame()
 {
 	if (demosequence != -1)
 		AdvanceDemo();
@@ -157,7 +163,7 @@ void OnHostEndGame(void)
 //
 //==========================================================================
 
-void OnHostError(void)
+void OnHostError()
 {
 	demosequence = -1;
 	ForceTitle();
@@ -169,7 +175,7 @@ void OnHostError(void)
 //
 //==========================================================================
 
-void StopDemoLoop(void)
+void StopDemoLoop()
 {
 	demosequence = -1;	// not in the demo loop now
 }
@@ -177,6 +183,9 @@ void StopDemoLoop(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.7  2005/11/05 15:50:55  dj_jl
 //  Voices played as normal sounds.
 //

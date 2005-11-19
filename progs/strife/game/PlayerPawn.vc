@@ -37,13 +37,13 @@ class PlayerPawn : Pawn
 void A_PlayerScream()
 {
 	// Default death sound.
-	name sound = 'PlayerDeath';
+	name sound = '*death';
 
 	if (Health < -50)
 	{
 		// IF THE PLAYER DIES
 		// LESS THAN -50% WITHOUT GIBBING
-		sound = 'PlayerExtremeDeath';
+		sound = '*xdeath';
 	}
 
 	PlaySound(sound, CHAN_VOICE);
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.7  2004/11/22 07:36:28  dj_jl
 //  Implemented all sector specials in all games.
 //

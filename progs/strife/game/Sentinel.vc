@@ -95,14 +95,17 @@ defaultproperties
 	MissileState = S_SENTINEL_ATK1;
 	PainState = S_SENTINEL_PAIN;
 	DeathState = S_SENTINEL_DIE1;
-	SightSound = 'SentinelSight';
-	ActiveSound = 'SentinelActive';
-	DeathSound = 'SentinelDeath';
+	SightSound = 'sentinel/sight';
+	ActiveSound = 'sentinel/active';
+	DeathSound = 'sentinel/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

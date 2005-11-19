@@ -58,14 +58,17 @@ defaultproperties
 	PainState = S_PRAYER_PAIN1;
 	DyingState = S_PRAYER_DIE1;
 	DeathState = S_PRAYER_DIE3;
-	ActiveSound = 'Chant';
-	PainSound = 'Static';
-	DeathSound = 'Static';
+	ActiveSound = 'misc/chant';
+	PainSound = 'misc/static';
+	DeathSound = 'misc/static';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

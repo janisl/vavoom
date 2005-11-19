@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Macil:Pawn
+class Macil : Pawn
 	__mobjinfo__(64);
 
 __states__
@@ -66,14 +66,17 @@ defaultproperties
 	MissileState = S_MACIL_ATK1_1;
 	PainState = S_MACIL_PAIN1;
 	DeathState = S_MACIL_RUN1;
-	SightSound = 'AcolyteSight';
-	ActiveSound = 'RebelActive';
-	PainSound = 'PeasantPain';
+	SightSound = 'macil/sight';
+	ActiveSound = 'macil/active';
+	PainSound = 'macil/pain';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

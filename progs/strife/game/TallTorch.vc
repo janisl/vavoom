@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TallTorch:Decoration
+class TallTorch : Decoration
 	__mobjinfo__(50);
 
 __states__
@@ -41,12 +41,15 @@ defaultproperties
 	Height = 80.0;
 	bSolid = true;
 	IdleState = S_LOGS_1;
-	ActiveSound = 'SmallFire';
+	ActiveSound = 'world/smallfire';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

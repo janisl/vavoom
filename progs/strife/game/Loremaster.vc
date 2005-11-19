@@ -135,16 +135,19 @@ defaultproperties
 	MeleeState = S_LOREMASTER_ATK1_1;
 	MissileState = S_LOREMASTER_ATK2_1;
 	DeathState = S_LOREMASTER_DIE1;
-	SightSound = 'LoremasterSight';
-	ActiveSound = 'LoremasterActive';
-	AttackSound = 'ReaverBlade';
-	PainSound = 'LoremasterPain';
-	DeathSound = 'Slop';
+	SightSound = 'loremaster/sight';
+	ActiveSound = 'loremaster/active';
+	AttackSound = 'loremaster/attack';
+	PainSound = 'loremaster/pain';
+	DeathSound = 'loremaster/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

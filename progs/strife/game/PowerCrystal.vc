@@ -128,8 +128,8 @@ defaultproperties
 	bNoBlood = true;
 	IdleState = S_CRYSTAL_1;
 	DeathState = S_CRYSTAL_X1;
-	ActiveSound = 'ReactorActive';
-	DeathSound = 'Explode';
+	ActiveSound = 'misc/reactor';
+	DeathSound = 'misc/explosion';
 	bGiveQuest = true;
 	QuestID = QUEST_BlownUpCrystal;
 }
@@ -137,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.6  2005/01/25 17:45:17  dj_jl
 //  Constants for common line specials
 //  Updated special utilites.

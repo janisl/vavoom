@@ -63,12 +63,15 @@ defaultproperties
 	bNoDeathmatch = true;
 	IdleState = S_ENT_POD;
 	SeeState = S_ENT_POD_OPEN1;
-	SightSound = 'Slop';
+	SightSound = 'misc/gibbed';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

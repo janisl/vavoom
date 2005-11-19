@@ -53,12 +53,15 @@ defaultproperties
 	bNoBlood = true;
 	IdleState = S_TECH_BARREL;
 	DeathState = S_TECH_BARREL_X1;
-	DeathSound = 'BarrelExplode';
+	DeathSound = 'world/barrelx';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

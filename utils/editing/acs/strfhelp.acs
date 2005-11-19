@@ -311,8 +311,7 @@ script << 0 >> (int type, int tag)
 		else
 		{
 			print(s:"You need the chalice!");
-//			activatorsound("*usefail", 127);
-			activatorsound("PlayerLand", 127);
+			activatorsound("*usefail", 127);
 			SetResultValue(0);
 		}
 		break;
@@ -331,8 +330,7 @@ script << 0 >> (int type, int tag)
 		if (!CheckInventory("OfferingChalice"))
 		{
 			print(s:"You need the chalice !");
-//			activatorsound("*usefail", 127);
-			activatorsound("PlayerLand", 127);
+			activatorsound("*usefail", 127);
 			SetResultValue(0);
 		}
 		else
@@ -432,8 +430,7 @@ script << 0 >> (int type, int tag)
 		if (!CheckInventory("QuestItem18"))
 		{
 			print(s:"You need the Oracle Pass!");
-//			activatorsound("*usefail", 127);
-			activatorsound("PlayerLand", 127);
+			activatorsound("*usefail", 127);
 			SetResultValue(0);
 		}
 		else

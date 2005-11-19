@@ -33,7 +33,7 @@ class WeaponSigil : Weapon;
 
 void A_SigilSound()
 {
-	Player.MO.PlaySound('SigilFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/sigil', CHAN_WEAPON);
 	SpriteFrame = Player.Sigil;
 }
 
@@ -179,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.4  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

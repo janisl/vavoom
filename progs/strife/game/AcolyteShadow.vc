@@ -38,12 +38,14 @@ defaultproperties
 	ConversationID = 61;
 	SeeState = S_ACOLYTE_RUN_B;
 	PainState = S_ACOLYTE_PAIN_B1;
-	ActiveSound = 'AcolyteActive2';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2004/01/30 17:43:11  dj_jl
 //  Implemented many action functions.
 //

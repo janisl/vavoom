@@ -75,16 +75,19 @@ defaultproperties
 	GibsDeathState = S_PEASANT_XDIE1;
 	FireDeathState = S_BURN1;
 	DisruptDeathState = S_DISRUPT1;
-	SightSound = 'RebelActive';
-	ActiveSound = 'RebelActive';
-	AttackSound = 'PunchHitMeat';
-	PainSound = 'PeasantPain';
-	DeathSound = 'PeasantDeath';
+	SightSound = 'peasant/sight';
+	ActiveSound = 'peasant/active';
+	AttackSound = 'peasant/attack';
+	PainSound = 'peasant/pain';
+	DeathSound = 'peasant/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

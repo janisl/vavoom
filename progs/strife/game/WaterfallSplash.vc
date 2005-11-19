@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WaterfallSplash:Decoration
+class WaterfallSplash : Decoration
 	__mobjinfo__(104);
 
 __states__
@@ -42,12 +42,15 @@ defaultproperties
 {
 	bNoBlockmap = true;
 	IdleState = S_WFALL_1;
-	ActiveSound = 'Waterfall';
+	ActiveSound = 'world/waterfall';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

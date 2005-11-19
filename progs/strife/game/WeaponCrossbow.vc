@@ -42,7 +42,7 @@ void A_FireElectricArrow()
 	Player.MO.SetState(Player.MO.MissileState);
 	Player.SpawnPlayerMissile(ElectricArrow);
 	Player.MO.Angles.yaw = savedangle;
-	Player.MO.PlaySound('CrossbowFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -62,7 +62,7 @@ void A_FirePoisonArrow()
 	Player.MO.SetState(Player.MO.MissileState);
 	Player.SpawnPlayerMissile(PoisonArrow);
 	Player.MO.Angles.yaw = savedangle;
-	Player.MO.PlaySound('CrossbowFire', CHAN_WEAPON);
+	Player.MO.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
 
 __states__
@@ -127,6 +127,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.5  2004/08/23 19:24:01  dj_jl
 //  Moved weapon utilites to player class.
 //

@@ -103,7 +103,7 @@ bool Key(int key)
 		if (SetNewValue(newValue))
 		{
 			Value = newValue;
-			LocalSound('MenuSwitch');
+			LocalSound('menu/change');
 		}
 		return true;
 	case K_RIGHTARROW:
@@ -117,7 +117,7 @@ bool Key(int key)
 		if (SetNewValue(newValue))
 		{
 			Value = newValue;
-			LocalSound('MenuSwitch');
+			LocalSound('menu/change');
 		}
 		return true;
 	}
@@ -132,6 +132,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2003/09/11 17:17:25  dj_jl
 //  Fixed return value
 //

@@ -100,7 +100,7 @@ void A_SummonRebel()
 	A.Angles = Angles;
 
 	TFog = Spawn(TeleportFog, A.Origin);
-	TFog.PlaySound('Teleport', CHAN_BODY);
+	TFog.PlaySound('misc/teleport', CHAN_BODY);
 
 	Health--;
 	if (Health < 0)
@@ -133,6 +133,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.5  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

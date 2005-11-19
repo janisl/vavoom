@@ -31,13 +31,16 @@ defaultproperties
 	ConversationID = 3;
 	ClassName = 'Bar_Keep';
 	Translation = 8;
-	ActiveSound = 'BarKeepActive';
-	PainSound = 'BarKeepPain';
+	ActiveSound = 'barkeep/active';
+	PainSound = 'barkeep/pain';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

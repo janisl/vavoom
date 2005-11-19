@@ -67,11 +67,11 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = -1;
 		if (Speed >= 256.0)
 		{
-			SectorStartSoundName(Sector, 'BlazeDoorClose', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'doors/dr2_clos', CHAN_VOICE);
 		}
 		else
 		{
-			SectorStartSoundName(Sector, 'DoorClose', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'doors/small_metal_close', CHAN_VOICE);
 		}
 		break;
 
@@ -82,11 +82,11 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = -1;
 		if (Speed >= 256.0)
 		{
-			SectorStartSoundName(Sector, 'BlazeDoorClose', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'doors/dr2_clos', CHAN_VOICE);
 		}
 		else
 		{
-			SectorStartSoundName(Sector, 'DoorClose', CHAN_VOICE);
+			SectorStartSoundName(Sector, 'doors/small_metal_close', CHAN_VOICE);
 		}
 		break;
 
@@ -122,11 +122,11 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		{
 			if (Speed >= 256.0)
 			{
-				SectorStartSoundName(Sector, 'BlazeDoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/dr2_open', CHAN_VOICE);
 			}
 			else
 			{
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/small_metal_open', CHAN_VOICE);
 			}
 		}
 		break;
@@ -234,18 +234,18 @@ void Tick(float deltaTime)
 				Direction = -1;	// time to go back down
 				if (Speed >= 256.0)
 				{
-					SectorStartSoundName(Sector, 'BlazeDoorClose',
+					SectorStartSoundName(Sector, 'doors/dr2_clos',
 						CHAN_VOICE);
 				}
 				else
 				{
-					SectorStartSoundName(Sector, 'DoorClose', CHAN_VOICE);
+					SectorStartSoundName(Sector, 'doors/small_metal_close', CHAN_VOICE);
 				}
 				break;
 
 			case DOOREV_CloseWaitOpen:
 				Direction = 1;
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/small_metal_open', CHAN_VOICE);
 				break;
 			default:
 				break;
@@ -264,7 +264,7 @@ void Tick(float deltaTime)
 			case DOOREV_RaiseIn5Mins:
 				Direction = 1;
 				Type = DOOREV_Raise;
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/small_metal_open', CHAN_VOICE);
 				break;
 
 			default:
@@ -293,7 +293,7 @@ void Tick(float deltaTime)
 			case DOOREV_Close:
 				if (Speed >= 256.0)
 				{
-					SectorStartSoundName(Sector, 'BlazeDoorClose',
+					SectorStartSoundName(Sector, 'doors/dr2_clos',
 						CHAN_VOICE);
 				}
 				Finished();	// unlink and free
@@ -316,7 +316,7 @@ void Tick(float deltaTime)
 
 			default:
 				Direction = 1;
-				SectorStartSoundName(Sector, 'DoorOpen', CHAN_VOICE);
+				SectorStartSoundName(Sector, 'doors/small_metal_open', CHAN_VOICE);
 				break;
 			}
 		}
@@ -363,6 +363,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

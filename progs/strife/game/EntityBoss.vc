@@ -136,16 +136,19 @@ defaultproperties
 	MissileState = S_ENTITY_ATK1;
 	PainState = S_ENTITY_PAIN;
 	DeathState = S_ENTITY_DIE1;
-	SightSound = 'EntitySight';
-	ActiveSound = 'SpecterActive';
-	AttackSound = 'ReaverBlade';
-	PainSound = 'SpecterPain';
-	DeathSound = 'EntityDeath';
+	SightSound = 'entity/sight';
+	ActiveSound = 'entity/active';
+	AttackSound = 'entity/melee';
+	PainSound = 'entity/pain';
+	DeathSound = 'entity/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

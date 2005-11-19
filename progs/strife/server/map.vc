@@ -627,7 +627,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		open = FindOpening(open, hit_point.z, hit_point.z + usething.Height);
 		if (!open)
 		{
-			usething.PlaySound('Blocked', CHAN_VOICE);
+			usething.PlaySound('*usefail', CHAN_VOICE);
 
 			// can't use through a wall
 			return false;
@@ -1226,6 +1226,9 @@ bool PIT_RadiusAttack(Entity Other)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.39  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

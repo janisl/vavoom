@@ -65,21 +65,21 @@ bool CheckLock(Actor user, int lock)
 		if (!(user.Player.Keys & (1 << (lock - 1))))
 		{
 			centerprint(user.Player, "You need a key");
-			user.PlaySound('PlayerLand', CHAN_VOICE);
+			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 	}
 	else if (lock == 102)
 	{
 		centerprint(user.Player, "That doesn't seem to work");
-		user.PlaySound('PlayerLand', CHAN_VOICE);
+		user.PlaySound('*grunt', CHAN_VOICE);
 		return false;
 	}
 	else if (lock == 103)
 	{
 		centerprint(user.Player,
 			"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
-		user.PlaySound('PlayerLand', CHAN_VOICE);
+		user.PlaySound('*grunt', CHAN_VOICE);
 		return false;
 	}
 
@@ -1397,6 +1397,9 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.36  2005/06/04 13:51:32  dj_jl
 //  Added pusher specials.
 //

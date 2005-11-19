@@ -41,11 +41,15 @@ bool HandlePickup(Actor Toucher)
 
 defaultproperties
 {
+	PickupSound = 'misc/k_pkup';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/19 13:43:50  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.2  2004/08/22 19:23:27  dj_jl
 //  Moved many functions to player class.
 //

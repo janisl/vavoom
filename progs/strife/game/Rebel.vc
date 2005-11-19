@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Rebel:Pawn
+class Rebel : Pawn
 	__mobjinfo__(9);
 
 __states__
@@ -90,15 +90,18 @@ defaultproperties
 	GibsDeathState = S_REBEL_XDIE1;
 	FireDeathState = S_BURN1;
 	DisruptDeathState = S_DISRUPT1;
-	SightSound = 'PickupWeapon';
-	ActiveSound = 'RebelActive';
-	PainSound = 'PeasantPain';
-	DeathSound = 'RebelDeath';
+	SightSound = 'rebel/sight';
+	ActiveSound = 'rebel/active';
+	PainSound = 'rebel/pain';
+	DeathSound = 'rebel/death';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/19 13:43:51  dj_jl
+//  Renamed sounds.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //
