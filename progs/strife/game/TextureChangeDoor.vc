@@ -84,40 +84,40 @@ void StartAnim()
 	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;	
 	if (texTop == TextureNumForName("DORALN01"))
 	{
-		opensound = 'doors/airlock_open';
-		CloseSound = 'doors/airlock_close';
+		opensound = 'DoorOpenAirlock';
+		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName("DORCHN01"))
 	{
-		opensound = 'doors/chain_open';
-		CloseSound = 'doors/chain_close';
+		opensound = 'DoorOpenChain';
+		CloseSound = 'DoorCloseChain';
 	}
 	else if (texTop == TextureNumForName("DORCRG01"))
 	{
-		opensound = 'doors/small_metal_open';
-		CloseSound = 'doors/small_metal_close';
+		opensound = 'DoorOpenSmallMetal';
+		CloseSound = 'DoorCloseSmallMetal';
 	}
 	else if (texTop == TextureNumForName("DORIRS01"))
 	{
-		opensound = 'doors/airlock_open';
-		CloseSound = 'doors/airlock_close';
+		opensound = 'DoorOpenAirlock';
+		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName("DORQTR01"))
 	{
-		opensound = 'doors/airlock_open';
-		CloseSound = 'doors/airlock_close';
+		opensound = 'DoorOpenAirlock';
+		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName("DORSTN01"))
 	{
-		opensound = 'doors/stone_open';
-		CloseSound = 'doors/stone_close';
+		opensound = 'DoorOpenStone';
+		CloseSound = 'DoorCloseStone';
 	}
 	else
 	{
-		opensound = 'doors/large_metal_open';
-		CloseSound = 'doors/large_metal_close';
+		opensound = 'DoorOpenLargeMetal';
+		CloseSound = 'DoorCloseLargeMetal';
 	}
-	SectorStartSoundName(Sector, opensound, CHAN_VOICE);
+	SectorStartSequence(Sector, opensound);
 	SetLineTexture(Line->sidenum[0], 1, texTop);
 	SetLineTexture(Line->sidenum[1], 1, texTop);
 }
@@ -148,6 +148,7 @@ void Tick(float deltaTime)
 			CurrentFrame = itof(NumFrames) - 0.001;
 			Direction = 0;	// wait at top
 			TopTime = TopWait;
+			SectorStopSequence(Sector);
 			for (i = 0; i < Sector->linecount; i++)
 			{
 				if (Sector->lines[i]->backsector)
@@ -168,7 +169,7 @@ void Tick(float deltaTime)
 		{
 			TopTime = 0.0;
 			Direction = -1;	// time to go back down
-			SectorStartSoundName(Sector, CloseSound, CHAN_VOICE);
+			SectorStartSequence(Sector, CloseSound);
 		}
 		break;
 
@@ -202,6 +203,7 @@ void Tick(float deltaTime)
 					Sector->lines[i]->flags |= ML_BLOCKING;
 				}
 			}
+			SectorStopSequence(Sector);
 			Finished();	// unlink and free
 		}
 		else
@@ -220,6 +222,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/11/20 12:55:21  dj_jl
+//  Using sound sequences.
+//
 //  Revision 1.6  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

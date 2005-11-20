@@ -208,7 +208,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		SetFloorPic(Sector, Line->frontsector->floor.pic);
 		// NO MORE DAMAGE, IF APPLICABLE
 		Sector->special &= SECSPEC_SECRET_MASK;
-		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
 		break;
 
 	case FLOOREV_RaiseByValueChange:
@@ -227,7 +226,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		SetFloorPic(Sector, Line->frontsector->floor.pic);
-		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
 		break;
 
 	case FLOOREV_RaiseAndCrush:
@@ -333,6 +331,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 #if 0//FIXME use sequences
 	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
 #endif
+	SectorStartSequence(Sector, 'Floor');
 }
 
 //==========================================================================
@@ -373,6 +372,7 @@ void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	//	Reset.
 	ResetTime = itof(Arg5) / 35.0;
 	OrgDist = Sector->floor.dist;
+	SectorStartSequence(Sector, 'Floor');
 }
 
 //==========================================================================
@@ -398,6 +398,7 @@ void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
 	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+	SectorStartSequence(Sector, 'Floor');
 }
 
 //==========================================================================
@@ -421,6 +422,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+	SectorStartSequence(Sector, 'Floor');
 }
 
 //==========================================================================
@@ -505,16 +507,9 @@ void Tick(float deltaTime)
 	res = MovePlane(Sector, Speed * deltaTime, FloorDestDist, Crush, 0,
 		Direction, false);
 
-	//FIXME sound sequence
-	if (!(level->tictime & 7))
-	{
-		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
-	}
-
 	if (res == RES_PASTDEST)
 	{
-		//FIXME sound sequence
-		SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
+		SectorStopSequence(Sector);
 		if (Type == FLOOREV_RaiseBuildStep && ResetTime)
 		{
 			return;
@@ -547,6 +542,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/20 12:55:21  dj_jl
+//  Using sound sequences.
+//
 //  Revision 1.5  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //
