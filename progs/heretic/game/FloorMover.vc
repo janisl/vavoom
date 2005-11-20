@@ -55,6 +55,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	float			CeilHeight;
 	TVec			Spot;
 	TVec			Spot2;
+	name			SeqName;
 
 	Sector = InSector;
 	Sector->FloorData = self;
@@ -68,6 +69,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Speed = 35.0 * 2000.0;
 	}
 	Spot = *Sector->lines[0]->v1;
+	SeqName = 'Floor';
 	switch (Type)
 	{
 	case FLOOREV_LowerToHighest:
@@ -208,7 +210,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		SetFloorPic(Sector, Line->frontsector->floor.pic);
 		// NO MORE DAMAGE, IF APPLICABLE
 		Sector->special &= SECSPEC_SECRET_MASK;
-		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
+		SeqName = 'FloorAlt';
 		break;
 
 	case FLOOREV_RaiseByValueChange:
@@ -227,7 +229,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		SetFloorPic(Sector, Line->frontsector->floor.pic);
-		SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
+		SeqName = 'FloorAlt';
 		break;
 
 	case FLOOREV_RaiseAndCrush:
@@ -330,9 +332,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		break;
 	}
-#if 0//FIXME use sequences
-	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
-#endif
+	SectorStartSequence(Sector, 'Floor');
 }
 
 //==========================================================================
@@ -373,6 +373,7 @@ void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	//	Reset.
 	ResetTime = itof(Arg5) / 35.0;
 	OrgDist = Sector->floor.dist;
+	SectorStartSequence(Sector, 'FloorStairStep');
 }
 
 //==========================================================================
@@ -398,6 +399,7 @@ void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
 	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+	SectorStartSequence(Sector, 'Floor');
 }
 
 //==========================================================================
@@ -421,6 +423,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+	SectorStartSequence(Sector, 'Floor');
 }
 
 //==========================================================================
@@ -474,6 +477,7 @@ void Tick(float deltaTime)
 				Delay = 0.0;
 				StepTime = 0.0;
 				PerStepTime = 0.0;
+				SectorStartSequence(Sector, 'FloorStairStep');
 			}
 		}
 		if (PauseTime)
@@ -505,25 +509,9 @@ void Tick(float deltaTime)
 	res = MovePlane(Sector, Speed * deltaTime, FloorDestDist, Crush, 0,
 		Direction, false);
 
-	//FIXME sound sequence
-	if (!(level->tictime & 7))
-	{
-		if (Type == FLOOREV_RaiseByValueChange2 ||
-			Type == FLOOREV_RaiseToNearestChange)
-			SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
-		else
-			SectorStartSoundName(Sector, 'doors/dr1_move', CHAN_VOICE);
-	}
-
 	if (res == RES_PASTDEST)
 	{
-		//FIXME sound sequence
-		if (Type == FLOOREV_RaiseBuildStep ||
-			Type == FLOOREV_RaiseByValueChange2 ||
-			Type == FLOOREV_RaiseToNearestChange)
-		{
-			SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
-		}
+		SectorStopSequence(Sector);
 		if (Type == FLOOREV_RaiseBuildStep && ResetTime)
 		{
 			return;
@@ -556,6 +544,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/20 13:57:25  dj_jl
+//  Using sound sequences.
+//
 //  Revision 1.5  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

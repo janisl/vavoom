@@ -84,7 +84,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Tag = Arg1;
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Crush = 0;
-	StartSound = 'plats/pt1_strt';
+	StartSound = 'Platform';
 	switch (Type)
 	{
 	case PLATEV_PerpetualRaise:
@@ -218,7 +218,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 	}
 	if (StartSound != '')
-		SectorStartSoundName(Sector, StartSound, CHAN_VOICE);
+		SectorStartSequence(Sector, StartSound);
 }
 
 //==========================================================================
@@ -233,6 +233,7 @@ bool StopPlat(int InTag)
 	{
 		OldStatus = Status;
 		Status = PLAT_InStasis;
+		SectorStopSequence(Sector);
 		return true;
 	}
 	return false;
@@ -251,7 +252,10 @@ void ActivateInStasis(int InTag)
 		if (Type == PLATEV_Toggle)	//jff 3/14/98 reactivate toggle type
 			Status = OldStatus == PLAT_Up ? PLAT_Down : PLAT_Up;
 		else
+		{
 			Status = OldStatus;
+			SectorStartSequence(Sector, 'Platform');
+		}
 	}
 }
 
@@ -272,15 +276,11 @@ void Tick(float deltaTime)
 	case PLAT_Up:
 		res = MovePlane(Sector, Speed * deltaTime, High, false, Crush, 1,
 			false);
-		if (!(level->tictime & 31))
-		{
-			SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
-		}
 		if (res == RES_CRUSHED && Crush == 0)
 		{
 			Time = Wait;
 			Status = PLAT_Down;
-			SectorStartSoundName(Sector, 'plats/pt1_strt', CHAN_VOICE);
+			SectorStartSequence(Sector, 'Platform');
 		}
 		else if (res == RES_PASTDEST)
 		{
@@ -293,7 +293,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
-				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
+				SectorStopSequence(Sector);
 				switch (Type)
 				{
 				case PLATEV_DownWaitUpStay:
@@ -324,7 +324,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
-				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
+				SectorStopSequence(Sector);
 				switch (Type)
 				{
 				case PLATEV_UpWaitDownStay:
@@ -337,13 +337,6 @@ void Tick(float deltaTime)
 				}
 			}
 		}
-		else
-		{
-			if (!(level->tictime & 31))
-			{
-				SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
-			}
-		}
 		break;
 	case PLAT_Waiting:
 		Time -= deltaTime;
@@ -354,7 +347,7 @@ void Tick(float deltaTime)
 				Status = PLAT_Up;
 			else
 				Status = PLAT_Down;
-			SectorStartSoundName(Sector, 'plats/pt1_strt', CHAN_VOICE);
+			SectorStartSequence(Sector, 'Platform');
 		}
 		break;
 	case PLAT_InStasis:
@@ -369,6 +362,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/20 13:57:25  dj_jl
+//  Using sound sequences.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

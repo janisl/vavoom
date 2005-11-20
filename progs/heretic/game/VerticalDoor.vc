@@ -65,7 +65,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
+		SectorStartSequence(Sector, 'DoorCloseNormal');
 		break;
 
 	case DOOREV_CloseWaitOpen:
@@ -73,7 +73,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		TopHeight = Sector->ceiling.dist;
 		TopWait *= 4.0;
 		Direction = -1;
-		SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
+		SectorStartSequence(Sector, 'DoorCloseNormal');
 		break;
 
 	case DOOREV_Raise:
@@ -106,7 +106,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = 1;
 		if (TopHeight != Sector->ceilingheight)
 		{
-			SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
+			SectorStartSequence(Sector, 'DoorOpenNormal');
 		}
 		break;
 
@@ -212,11 +212,11 @@ void Tick(float deltaTime)
 			{
 			case DOOREV_Raise:
 				Direction = -1;	// time to go back down
-				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
+				SectorStartSequence(Sector, 'DoorCloseNormal');
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 1;
-				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
+				SectorStartSequence(Sector, 'DoorOpenNormal');
 				break;
 			default:
 				break;
@@ -233,7 +233,7 @@ void Tick(float deltaTime)
 			case DOOREV_RaiseIn5Mins:
 				Direction = 1;
 				Type = DOOREV_Raise;
-				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
+				SectorStartSequence(Sector, 'DoorOpenNormal');
 				break;
 			default:
 				break;
@@ -253,12 +253,12 @@ void Tick(float deltaTime)
 
 		if (res == RES_PASTDEST)
 		{
+			SectorStopSequence(Sector);
 			switch (Type)
 			{
 			case DOOREV_Raise:
 			case DOOREV_Close:
 				Finished();	// unlink and free
-				SectorStartSoundName(Sector, 'doors/dr1_clos', CHAN_VOICE);
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 0;
@@ -276,7 +276,7 @@ void Tick(float deltaTime)
 				break;
 			default:
 				Direction = 1;
-				SectorStartSoundName(Sector, 'doors/dr1_open', CHAN_VOICE);
+				SectorStartSequence(Sector, 'DoorOpenNormal');
 				break;
 			}
 		}
@@ -294,6 +294,7 @@ void Tick(float deltaTime)
 
 		if (res == RES_PASTDEST)
 		{
+			SectorStopSequence(Sector);
 			switch (Type)
 			{
 			case DOOREV_Raise:
@@ -303,7 +304,6 @@ void Tick(float deltaTime)
 			case DOOREV_Open:
 			case DOOREV_CloseWaitOpen:
 				Finished();	// unlink and free
-				SectorStopSound(Sector, CHAN_AUTO);
 				break;
 			default:
 				break;
@@ -320,6 +320,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/20 13:57:25  dj_jl
+//  Using sound sequences.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //
