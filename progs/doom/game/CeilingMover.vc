@@ -38,6 +38,7 @@ float		UpSpeed;
 int			Texture;
 int			NewSpecial;
 bool		bStopOnCrush;
+name		SeqName;
 
 //==========================================================================
 //
@@ -60,6 +61,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Crush = false;
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Spot = *Sector->lines[0]->v1;
+	SeqName = 'CeilingNormal';
 	switch (Type)
 	{
 	case CEILEV_LowerToFloor:
@@ -180,10 +182,11 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		bStopOnCrush = true;
 		break;
 
-	case CEILEV_CrushAndRaiseA:
 	case CEILEV_CrushAndRaiseSilA:
-	case CEILEV_CrushRaiseAndStayA:
 	case CEILEV_CrushRaiseAndStaySilA:
+		SeqName = 'CeilingSemiSilent';
+	case CEILEV_CrushAndRaiseA:
+	case CEILEV_CrushRaiseAndStayA:
 		Crush = Arg4;	// args[3] = crushing value
 		TopDist = Sector->ceiling.dist;
 		DestHeight = FindHighestFloorPoint(Sector, &Spot);
@@ -293,8 +296,11 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = -1;
 		DnSpeed = itof(Arg2) * 35.0 / 8.0;
 		UpSpeed = itof(Arg3) * 35.0 / 8.0;
+		if (Arg4)
+			SeqName = 'CeilingSemiSilent';
 		break;
 	}
+	SectorStartSequence(Sector, SeqName);
 }
 
 //==========================================================================
@@ -361,34 +367,22 @@ void Tick(float deltaTime)
 		res = MovePlane(Sector, Speed * deltaTime, TopDist, false, 1,
 			Direction, bStopOnCrush);
 
-		//FIXME sound sequences
-		if (!(level->tictime & 7))
-		{
-			switch (Type)
-			{
-			case CEILEV_CrushAndRaiseSilA:
-			case CEILEV_CrushRaiseAndStaySilA:
-				break;
-			default:
-				SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
-				break;
-			}
-		}
-
 		if (res == RES_PASTDEST)
 		{
+			SectorStopSequence(Sector);
 			switch (Type)
 			{
 			case CEILEV_CrushAndRaise:
 				Direction = -1;
 				Speed = Speed * 2.0;
+				SectorStartSequence(Sector, SeqName);
 				break;
 
 			case CEILEV_CrushAndRaiseSilA:
-				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 			case CEILEV_CrushAndRaiseA:
 				Direction = -1;
 				Speed = DnSpeed;
+				SectorStartSequence(Sector, SeqName);
 				break;
 
 			// movers with texture change, change the texture then get removed
@@ -398,8 +392,6 @@ void Tick(float deltaTime)
 			case CEILEV_GenericChange:
 				SetCeilPic(Sector, Texture);
 			default:
-				if (Type == CEILEV_CrushRaiseAndStaySilA)
-					SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 				Finished();
 				break;
 			}
@@ -410,37 +402,25 @@ void Tick(float deltaTime)
 		res = MovePlane(Sector, Speed * deltaTime, BottomDist, Crush, 1,
 			Direction, bStopOnCrush);
 
-		//FIXME use sequences
-		if (!(level->tictime & 7))
-		{
-			switch (Type)
-			{
-			case CEILEV_CrushAndRaiseSilA:
-			case CEILEV_CrushRaiseAndStaySilA:
-				break;
-			default:
-				SectorStartSoundName(Sector, 'plats/pt1_mid', CHAN_VOICE);
-				break;
-			}
-		}
-
 		if (res == RES_PASTDEST)
 		{
+			SectorStopSequence(Sector);
 			switch (Type)
 			{
 			case CEILEV_CrushAndRaise:
 			case CEILEV_CrushRaiseAndStay:
 				Speed = Speed / 2.0;
 				Direction = 1;
+				SectorStartSequence(Sector, SeqName);
 				break;
 
 			case CEILEV_CrushAndRaiseSilA:
 			case CEILEV_CrushRaiseAndStaySilA:
-				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
 			case CEILEV_CrushAndRaiseA:
 			case CEILEV_CrushRaiseAndStayA:
 				Speed = UpSpeed;
 				Direction = 1;
+				SectorStartSequence(Sector, SeqName);
 				break;
 
 			// in the case of ceiling mover/changer, change the texture
@@ -480,6 +460,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/20 15:48:53  dj_jl
+//  Using sound sequences.
+//
 //  Revision 1.3  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

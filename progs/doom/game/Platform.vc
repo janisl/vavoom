@@ -84,7 +84,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Tag = Arg1;
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Crush = 0;
-	StartSound = 'plats/pt1_strt';
+	StartSound = 'Platform';
 	switch (Type)
 	{
 	case PLATEV_PerpetualRaise:
@@ -138,7 +138,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Wait = itof(Arg3) / 35.0;
 		Status = PLAT_Down;
 		if (Arg5)
-			StartSound = 'plats/pt1_mid';
+			StartSound = 'Floor';
 		break;
 
 	case PLATEV_DownNearestWaitUpStay:
@@ -217,7 +217,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 	}
 	if (Type != PLATEV_Toggle)
-		SectorStartSoundName(Sector, StartSound, CHAN_VOICE);
+		SectorStartSequence(Sector, StartSound);
 }
 
 //==========================================================================
@@ -276,7 +276,8 @@ void Tick(float deltaTime)
 		{
 			Time = Wait;
 			Status = PLAT_Down;
-			SectorStartSoundName(Sector, 'plats/pt1_strt', CHAN_VOICE);
+			SectorStopSequence(Sector);
+			SectorStartSequence(Sector, 'PLatform');
 		}
 		else if (res == RES_PASTDEST)
 		{
@@ -289,7 +290,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
-				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
+				SectorStopSequence(Sector);
 	
 				switch (Type)
 				{
@@ -324,7 +325,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
-				SectorStartSoundName(Sector, 'plats/pt1_stop', CHAN_VOICE);
+				SectorStopSequence(Sector);
 				switch (Type)
 				{
 				case PLATEV_UpWaitDownStay:
@@ -348,7 +349,7 @@ void Tick(float deltaTime)
 				Status = PLAT_Up;
 			else
 				Status = PLAT_Down;
-			SectorStartSoundName(Sector, 'plats/pt1_strt', CHAN_VOICE);
+			SectorStartSequence(Sector, 'Platform');
 		}
 		break;
 
@@ -364,6 +365,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/20 15:48:53  dj_jl
+//  Using sound sequences.
+//
 //  Revision 1.4  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //
