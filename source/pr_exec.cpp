@@ -173,6 +173,21 @@ static void PF_Fixme(void)
 
 //==========================================================================
 //
+//	SwapBits
+//
+//==========================================================================
+
+static int SwapBits(int Val)
+{
+	int Ret = 0;
+	for (int i = 0; i < 32; i++)
+		if (Val & (1 << i))
+			Ret |= 1 << (31 - i);
+	return Ret;
+}
+
+//==========================================================================
+//
 //	TProgs::Load
 //
 //==========================================================================
@@ -410,9 +425,22 @@ void TProgs::Load(const char *AName)
 		}
 	}
 
+	union
+	{
+		struct
+		{
+			int b1:1;
+		} b;
+		int i;
+	} a;
+	a.i = 0;
+	a.b.b1 = 1;
+	bool NeedBitSwap = a.i != 1;
+
 	//
 	//	Patch code
 	//
+	int PrevOpc = OPC_DONE;
 	for (i = 0; i < Progs->num_statements; i++)
 	{
 		switch (Statements[i])
@@ -460,7 +488,13 @@ void TProgs::Load(const char *AName)
 		case OPC_CALL:
 		    Statements[i + 1] = (int)(Functions + Statements[i + 1]);
 			break;
+		case OPC_PUSHBOOL:
+		case OPC_ASSIGNBOOL:
+			if (NeedBitSwap && PrevOpc != OPC_LOCALADDRESS && PrevOpc != OPC_GLOBALADDRESS)
+				Statements[i + 1] = SwapBits(Statements[i + 1]);
+			break;
 		}
+		PrevOpc = Statements[i];
 		i += OpcodeArgCount[Statements[i]];
 	}
 
@@ -1415,7 +1449,8 @@ int TProgs::ExecuteFunction(FFunction *func)
 
 	//	All done
 	return ret;
-	unguardf(("(%s)", *func->Name));
+	unguardf(("(%s.%s)", func->OuterClass ? func->OuterClass->GetName() :
+		"",*func->Name));
 }
 
 //==========================================================================
@@ -2011,9 +2046,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2005/11/20 15:52:03  dj_jl
+//	Fixes for MacOS X.
+//
 //	Revision 1.34  2005/11/07 23:00:24  dj_jl
 //	Fixed a compiler warning.
-//
+//	
 //	Revision 1.33  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
