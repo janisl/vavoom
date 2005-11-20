@@ -1098,7 +1098,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	else
 	{
 		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		if (skin_index < 0 || skin_index > pmdl->numskins)
+		if (skin_index < 0 || skin_index >= pmdl->numskins)
 			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[0].name), TEXTYPE_Skin));
 		else
 			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[skin_index].name), TEXTYPE_Skin));
@@ -1259,9 +1259,12 @@ void VDirect3DDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/11/20 10:39:57  dj_jl
+//	Fixed skin index check.
+//
 //	Revision 1.29  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.28  2005/05/03 14:57:00  dj_jl
 //	Added support for specifying skin index.
 //	

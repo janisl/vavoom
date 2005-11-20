@@ -652,7 +652,7 @@ int TTextureManager::AddFileTexture(FName Name, int Type)
 	}
 	else
 	{
-		Sys_Error("Unsupported texture type.");
+		Sys_Error("Unsupported texture type (%s).", *Name);
 		return -1;
 	}
 	unguard;
@@ -2757,9 +2757,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2005/11/20 10:39:57  dj_jl
+//	Fixed skin index check.
+//
 //	Revision 1.33  2005/10/02 23:14:47  dj_jl
 //	Case insensitive extension check.
-//
+//	
 //	Revision 1.32  2005/09/04 14:57:24  dj_jl
 //	Fixed check for any texture.
 //	

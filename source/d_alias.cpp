@@ -419,7 +419,7 @@ void VSoftwareDrawer::AliasSetupSkin(int skin_index, const char *skin)
 	else
 	{
 		mskin_t* pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		if (skin_index < 0 || skin_index > pmdl->numskins)
+		if (skin_index < 0 || skin_index >= pmdl->numskins)
 			SkinID = GTextureManager.AddFileTexture(FName(pskins[0].name), TEXTYPE_Skin);
 		else
 			SkinID = GTextureManager.AddFileTexture(FName(pskins[skin_index].name), TEXTYPE_Skin);
@@ -803,9 +803,12 @@ extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/11/20 10:39:57  dj_jl
+//	Fixed skin index check.
+//
 //	Revision 1.16  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.15  2005/05/03 14:57:00  dj_jl
 //	Added support for specifying skin index.
 //	

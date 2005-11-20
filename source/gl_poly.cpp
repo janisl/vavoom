@@ -994,7 +994,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	else
 	{
 		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
-		if (skin_index < 0 || skin_index > pmdl->numskins)
+		if (skin_index < 0 || skin_index >= pmdl->numskins)
 			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[0].name), TEXTYPE_Skin));
 		else
 			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[skin_index].name), TEXTYPE_Skin));
@@ -1132,9 +1132,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/11/20 10:39:57  dj_jl
+//	Fixed skin index check.
+//
 //	Revision 1.30  2005/07/16 10:17:34  dj_jl
 //	Print which model has missing frame.
-//
+//	
 //	Revision 1.29  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	
