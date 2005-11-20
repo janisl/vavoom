@@ -100,7 +100,7 @@ bool EV_RotatePoly(line_t * line, int *args, int direction, bool overRide)
 	pe.thrust_force = pe.speed / 32.0 * itof(0x800) / 90.0;
 
 	poly->SpecialData = pe;
-	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 
 	for (mirror = GetPolyobjMirror(polyNum); mirror;
 		mirror = GetPolyobjMirror(polyNum))
@@ -144,7 +144,7 @@ bool EV_RotatePoly(line_t * line, int *args, int direction, bool overRide)
 		pe.thrust_force = pe.speed / 32.0 * itof(0x800) / 90.0;
 
 		polyNum = mirror;
-		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 	}
 	return true;
 }
@@ -196,7 +196,7 @@ bool EV_MovePoly(line_t * line, int *args, bool timesEight, bool overRide)
 	an = itof(args[2]) * (90.0 / 64.0);
 
 	pe.angle = an;
-	PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 
 	for (mirror = GetPolyobjMirror(polyNum); mirror;
 		mirror = GetPolyobjMirror(polyNum))
@@ -225,7 +225,7 @@ bool EV_MovePoly(line_t * line, int *args, bool timesEight, bool overRide)
 		an = AngleMod360(an + 180.0);	// reverse the angle
 		pe.angle = an;
 		polyNum = mirror;
-		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 	}
 	return true;
 }
@@ -273,7 +273,7 @@ bool EV_OpenPolyDoor(line_t * line, int *args, int type)
 		//THRUST
 		pd.thrust_force = pd.speed / 8.0;
 
-		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 	}
 	else if (type == PODOOR_SWING)
 	{
@@ -285,7 +285,7 @@ bool EV_OpenPolyDoor(line_t * line, int *args, int type)
 		//THRUST
 		pd.thrust_force = pd.speed * itof(0x1000) / 180.0;
 
-		PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 	}
 
 	poly->SpecialData = pd;
@@ -315,7 +315,7 @@ bool EV_OpenPolyDoor(line_t * line, int *args, int type)
 			//THRUST
 			pd.thrust_force = pd.speed / 8.0;
 
-			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 		}
 		else if (type == PODOOR_SWING)
 		{
@@ -327,7 +327,7 @@ bool EV_OpenPolyDoor(line_t * line, int *args, int type)
 			//THRUST
 			pd.thrust_force = pd.speed * itof(0x1000) / 180.0;
 
-			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 		}
 		polyNum = mirror;
 	}
@@ -405,6 +405,9 @@ bool PolyBusy(int polyobj)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2005/11/20 12:41:35  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.23  2002/11/02 08:24:11  dj_jl
 //  New style classes.
 //

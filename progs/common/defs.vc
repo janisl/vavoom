@@ -294,6 +294,13 @@ enum
 
 enum
 {
+	SEQ_Door,
+	SEQ_Platform,
+	SEQ_Environment
+};
+
+enum
+{
 	SECSPEC_None,
 	SECSPEC_LightPhased,
 	SECSPEC_LightSequenceStart,
@@ -593,6 +600,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2005/11/20 12:40:14  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.27  2005/06/04 13:46:07  dj_jl
 //  Added pusher specials.
 //

@@ -154,7 +154,7 @@ void QueueInit(sector_t* InSector, int InType, float InHeight, int InStairsType,
 		Speed = StairSpeed * (QueueHeight - StairStartHeight) / StairStepDelta;
 		break;
 	}
-	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
 }
 
 //==========================================================================
@@ -298,6 +298,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/20 12:40:55  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.4  2005/04/28 06:55:31  dj_jl
 //  Fixed stair building.
 //

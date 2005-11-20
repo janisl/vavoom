@@ -1921,6 +1921,40 @@ PF(GetSoundID)
 
 //==========================================================================
 //
+//  PF_SetSeqTrans
+//
+//==========================================================================
+
+PF(SetSeqTrans)
+{
+	FName	Name;
+	int		Num;
+	int		SeqType;
+
+	SeqType = Pop();
+	Num = Pop();
+	Name = PopName();
+	SN_SetSeqTrans(Name, Num, SeqType);
+}
+
+//==========================================================================
+//
+//  PF_GetSeqTrans
+//
+//==========================================================================
+
+PF(GetSeqTrans)
+{
+	int		Num;
+	int		SeqType;
+
+	SeqType = Pop();
+	Num = Pop();
+	Push(SN_GetSeqTrans(Num, SeqType).GetIndex());
+}
+
+//==========================================================================
+//
 //  PF_SectorStartSequence
 //
 //==========================================================================
@@ -3295,6 +3329,8 @@ builtin_info_t BuiltinInfo[] =
 	_(SectorStopSound),
 	_(GetSoundPlayingInfo),
 	_(GetSoundID),
+	_(SetSeqTrans),
+	_(GetSeqTrans),
 	_(SectorStartSequence),
 	_(SectorStopSequence),
 	_(PolyobjStartSequence),
@@ -3333,9 +3369,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.61  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.60  2005/11/08 20:57:15  dj_jl
 //	Removed playing sound till done.
-//
+//	
 //	Revision 1.59  2005/11/05 16:01:32  dj_jl
 //	Added builtin to stop local sounds.
 //	

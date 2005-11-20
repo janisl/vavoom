@@ -64,8 +64,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		SectorStartSequence(Sector, seq_name[SEQ_DOOR_STONE +
-			Sector->seqType]);
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
 		break;
 
 	case DOOREV_CloseWaitOpen:
@@ -73,8 +72,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		TopHeight = Sector->ceiling.dist;
 		TopWait *= 4.0;
 		Direction = -1;
-		SectorStartSequence(Sector, seq_name[SEQ_DOOR_STONE +
-			Sector->seqType]);
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
 		break;
 
 	case DOOREV_Raise:
@@ -105,8 +103,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = 1;
-		SectorStartSequence(Sector, seq_name[SEQ_DOOR_STONE +
-			Sector->seqType]);
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
 		break;
 
 	case DOOREV_RaiseIn5Mins:
@@ -207,13 +204,11 @@ void Tick(float deltaTime)
 			{
 			case DOOREV_Raise:
 				Direction = -1;	// time to go back down
-				SectorStartSequence(Sector,
-					seq_name[SEQ_DOOR_STONE + Sector->seqType]);
+				SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 1;
-				SectorStartSequence(Sector,
-					seq_name[SEQ_DOOR_STONE + Sector->seqType]);
+				SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
 				break;
 			default:
 				break;
@@ -231,8 +226,7 @@ void Tick(float deltaTime)
 			case DOOREV_RaiseIn5Mins:
 				Direction = 1;
 				Type = DOOREV_Raise;
-				SectorStartSequence(Sector,
-					seq_name[SEQ_DOOR_STONE + Sector->seqType]);
+				SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
 				break;
 			}
 		}
@@ -318,6 +312,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/20 12:40:55  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.4  2005/03/01 14:39:33  dj_jl
 //  Big update of line specials.
 //

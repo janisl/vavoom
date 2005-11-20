@@ -200,11 +200,6 @@ FCDAudioDeviceDesc::FCDAudioDeviceDesc(int Type, const char* AName,
 void S_Init()
 {
 	guard(S_Init);
-	//	Parse scripts BEFORE initializing device, because it may need to know
-	// total number of sounds.
-	S_InitScript();
-	SN_InitSequenceScript();
-
 	//	Initialise sound driver.
 	int SIdx = -1;
 	if (!M_CheckParm("-nosound") && !M_CheckParm("-nosfx"))
@@ -1931,9 +1926,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.24  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
-//
+//	
 //	Revision 1.23  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
 //	

@@ -330,7 +330,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		break;
 	}
-	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
 }
 
 //==========================================================================
@@ -372,7 +372,7 @@ void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	ResetTime = itof(Arg5) / 35.0;
 	OrgDist = Sector->floor.dist;
 
-	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
 }
 
 //==========================================================================
@@ -398,7 +398,7 @@ void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
 	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
 }
 
 //==========================================================================
@@ -422,7 +422,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
 }
 
 //==========================================================================
@@ -542,6 +542,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/20 12:40:55  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.3  2005/03/28 07:44:09  dj_jl
 //  Some Boom line specials and other improvements.
 //

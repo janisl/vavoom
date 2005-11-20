@@ -31,18 +31,11 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct seqnode_t
+enum seqtype_t
 {
-	int			*sequencePtr;
-	int			sequence;
-	int			origin_id;
-	TVec		origin;
-	int			currentSoundID;
-	int			delayTics;
-	int			volume;
-	int			stopSound;
-	seqnode_t	*prev;
-	seqnode_t	*next;
+	SEQ_Door,
+	SEQ_Platform,
+	SEQ_Environment,
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -51,6 +44,7 @@ struct seqnode_t
 //	Main
 //
 void S_Init();
+void S_InitScript();
 void S_Start();
 void S_MusicChanged();
 void S_StartSong(FName name, int track, boolean loop);
@@ -77,27 +71,27 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id);
 //
 //	Sound sequences
 //
-void SN_InitSequenceScript(void);
+void SN_InitSequenceScript();
+void SN_SetSeqTrans(FName Name, int Num, int SeqType);
+FName SN_GetSeqTrans(int Num, int SeqType);
 void SN_StartSequence(int origin_id, const TVec &origin, int sequence);
 void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name);
 void SN_StopSequence(int origin_id);
-void SN_UpdateActiveSequences(void);
-void SN_StopAllSequences(void);
-int SN_GetSequenceOffset(int sequence, int *sequencePtr);
-void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
-	int currentSoundID);
+void SN_UpdateActiveSequences();
+void SN_StopAllSequences();
+void SN_SerialiseSounds(FArchive& Ar);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern int			ActiveSequences;
-extern seqnode_t	*SequenceListHead;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.13  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
-//
+//	
 //	Revision 1.12  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
 //	

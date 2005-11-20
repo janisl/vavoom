@@ -40,7 +40,7 @@ dnl ---------------- DJGPP ----------------
 
 	SERVER_EXE='VavoomSV$(EXEEXT)'
 	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_DJGPP)'
-	SV_LIBS='-lstdcxx'
+	SV_LIBS='-lz -lstdcxx'
 	;;
 
 dnl ---------------- Windows ----------------
@@ -67,7 +67,7 @@ dnl ---------------- Windows ----------------
 
 	SERVER_EXE='Vavm95SV$(EXEEXT)'
 	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_WIN32)'
-	SV_LIBS='-lwsock32 -lm -lstdc++'
+	SV_LIBS='-lwsock32 -lz -lm -lstdc++'
 	;;
 
 dnl ---------------- Other *NIX platforms ----------------
@@ -135,7 +135,7 @@ dnl ---------------- Other *NIX platforms ----------------
 
 	SERVER_EXE='VavoomSV$(EXEEXT)'
 	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_UNIX)'
-	SV_LIBS='-lm -lstdc++'
+	SV_LIBS='-lz -lm -lstdc++'
 	;;
 esac
 
@@ -172,6 +172,15 @@ if test "x$with_mikmod" != "xno"; then
 		MAIN_CFLAGS="$MAIN_CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
 		MAIN_LIBS="`$LIBMIKMOD_CONFIG --libs` $MAIN_LIBS"
 	fi
+fi
+
+AC_ARG_WITH([flac], AS_HELP_STRING([--with-flac], [Enable FLAC support]))
+if test "x$with_flac" != "xno"; then
+	AC_LANG_CPLUSPLUS
+	AC_CHECK_HEADER([FLAC++/decoder.h], [
+		OBJ_FILES="$OBJ_FILES \$(FLAC_OBJS)"
+		MAIN_LIBS="-lFLAC++ $MAIN_LIBS"
+	])
 fi
 
 AC_SUBST([LIB_STDCXX])

@@ -136,13 +136,13 @@ void Host_Init(void)
 
 	PR_Init();
 
+	S_InitScript();
+	SN_InitSequenceScript();
+	R_InitTexture();
+
 #ifdef CLIENT
 	IN_Init();
-#endif
-
 	S_Init();
-	R_InitTexture();
-#ifdef CLIENT
 	SCR_Init();
 	T_Init();
 	CT_Init();
@@ -608,9 +608,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.28  2005/11/05 14:57:36  dj_jl
 //	Putting Strife shareware voices in correct namespace.
-//
+//	
 //	Revision 1.27  2005/05/26 16:54:21  dj_jl
 //	Created texture manager class
 //	

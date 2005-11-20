@@ -894,28 +894,11 @@ static void UnarchiveScripts(void)
 //
 //==========================================================================
 
-static void ArchiveSounds(void)
+static void ArchiveSounds()
 {
 #ifdef CLIENT
-	seqnode_t *node;
-
 	StreamOutLong(ASEG_SOUNDS);
-
-	// Save the sound sequences
-	StreamOutLong(ActiveSequences);
-	for (node = SequenceListHead; node; node = node->next)
-	{
-		StreamOutLong(node->sequence);
-		StreamOutLong(node->delayTics);
-		StreamOutLong(node->volume);
-		StreamOutLong(SN_GetSequenceOffset(node->sequence,
-			node->sequencePtr));
-		StreamOutLong(node->currentSoundID);
-		StreamOutLong(node->origin_id);
-		StreamOutFloat(node->origin.x);
-		StreamOutFloat(node->origin.y);
-		StreamOutFloat(node->origin.z);
-	}
+	SN_SerialiseSounds(*Saver);
 #endif
 }
 
@@ -925,39 +908,11 @@ static void ArchiveSounds(void)
 //
 //==========================================================================
 
-static void UnarchiveSounds(void)
+static void UnarchiveSounds()
 {
 #ifdef CLIENT
-	int i;
-	int numSequences;
-	int sequence;
-	int delayTics;
-	int volume;
-	int seqOffset;
-	int soundID;
-	int objectNum;
-	float x;
-	float y;
-	float z;
-
 	AssertSegment(ASEG_SOUNDS);
-
-	// Reload and restart all sound sequences
-	numSequences = GET_LONG;
-	for (i = 0; i < numSequences; i++)
-	{
-		sequence = GET_LONG;
-		delayTics = GET_LONG;
-		volume = GET_LONG;
-		seqOffset = GET_LONG;
-		soundID = GET_LONG;
-		objectNum = GET_LONG;
-		x = GET_FLOAT;
-		y = GET_FLOAT;
-		z = GET_FLOAT;
-		SN_StartSequence(objectNum, TVec(x, y, z), sequence);
-		SN_ChangeNodeData(i, seqOffset, delayTics, volume, soundID);
-	}
+	SN_SerialiseSounds(*Loader);
 #endif
 }
 
@@ -1496,9 +1451,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.40  2005/04/04 07:48:13  dj_jl
 //	Fix for loading level variables.
-//
+//	
 //	Revision 1.39  2005/03/28 07:24:36  dj_jl
 //	Saving a net game.
 //	

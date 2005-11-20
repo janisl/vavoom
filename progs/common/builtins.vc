@@ -458,6 +458,8 @@ native void SectorStartSound(sector_t * sec, int sound, int channel);
 native void SectorStopSound(sector_t * sec, int channel);
 native bool GetSoundPlayingInfo(Entity mobj, int sound_id);
 native int GetSoundID(name Name);
+native void SetSeqTrans(name Name, int Num, int SeqType);
+native name GetSeqTrans(int Num, int SeqType);
 native void SectorStartSequence(sector_t * sector, name sequence);
 native void SectorStopSequence(sector_t * sector);
 native void PolyobjStartSequence(polyobj_t * mobj, name sequence);
@@ -502,6 +504,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.54  2005/11/20 12:40:14  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.53  2005/11/08 20:56:05  dj_jl
 //  Removed playing sound till done.
 //

@@ -32,6 +32,7 @@
 
 // TYPES -------------------------------------------------------------------
 
+#ifdef CLIENT
 class VRawSampleLoader : public VSampleLoader
 {
 public:
@@ -46,6 +47,7 @@ public:
 
 	void Load(sfxinfo_t&, FArchive&);
 };
+#endif
 
 struct FPlayerSound
 {
@@ -94,7 +96,9 @@ VSampleLoader*		VSampleLoader::List;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+#ifdef CLIENT
 static VRawSampleLoader		RawSampleLoader;
+#endif
 
 static TArray<FName>		PlayerClasses;
 static TArray<FName>		PlayerGenders;
@@ -834,26 +838,16 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
 }
 
 #endif
-#ifndef CLIENT
-//==========================================================================
-//
-//	S_Init
-//
-//==========================================================================
-
-void S_Init(void)
-{
-	S_InitScript();
-}
-
-#endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.17  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
-//
+//	
 //	Revision 1.16  2005/11/07 22:57:09  dj_jl
 //	Some M$VC fixes.
 //	

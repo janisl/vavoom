@@ -288,34 +288,6 @@ enum
 
 enum
 {
-	SEQ_PLATFORM,
-	SEQ_PLATFORM_HEAVY,	// same script as a normal platform
-	SEQ_PLATFORM_METAL,
-	SEQ_PLATFORM_CREAK,	// same script as a normal platform
-	SEQ_PLATFORM_SILENCE,
-	SEQ_PLATFORM_LAVA,
-	SEQ_PLATFORM_WATER,
-	SEQ_PLATFORM_ICE,
-	SEQ_PLATFORM_EARTH,
-	SEQ_PLATFORM_METAL2,
-
-	SEQ_DOOR_STONE,
-	SEQ_DOOR_HEAVY,
-	SEQ_DOOR_METAL,
-	SEQ_DOOR_CREAK,
-	SEQ_DOOR_SILENCE,
-	SEQ_DOOR_LAVA,
-	SEQ_DOOR_WATER,
-	SEQ_DOOR_ICE,
-	SEQ_DOOR_EARTH,
-	SEQ_DOOR_METAL2,
-
-	SEQ_ESOUND_WIND,
-	SEQ_NUMSEQ
-};
-
-enum
-{
 	CHAN_AUTO,
 	CHAN_VOICE,
 	CHAN_WEAPON,
@@ -465,47 +437,6 @@ float FloatBobOffsets[64] = {
 	-3.061477661, -2.322280884, -1.56072998, -0.7841339111
 };
 
-name seq_name[] = {
-	'Platform',
-	'Platform',	// a 'heavy' platform is just a platform
-	'PlatformMetal',
-	'Platform',	// same with a 'creak' platform
-	'Silence',
-	'Lava',
-	'Water',
-	'Ice',
-	'Earth',
-	'PlatformMetal2',
-
-	'DoorNormal',
-	'DoorHeavy',
-	'DoorMetal',
-	'DoorCreak',
-	'Silence',
-	'Lava',
-	'Water',
-	'Ice',
-	'Earth',
-	'DoorMetal2',
-
-	'Wind'
-};
-
-name door_seq_name[] = {
-	'DoorNormal',
-	'DoorHeavy',
-	'DoorMetal',
-	'DoorCreak',
-	'Silence',
-	'Lava',
-	'Water',
-	'Ice',
-	'Earth',
-	'DoorMetal2'
-};
-
-#define POLY_SEQ_NAME(num)		seq_name[SEQ_DOOR_STONE + num]
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -517,6 +448,9 @@ name door_seq_name[] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.43  2005/11/20 12:41:35  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.42  2004/11/01 07:38:23  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

@@ -212,7 +212,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Status = PLAT_Down;
 		break;
 	}
-	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
 }
 
 //==========================================================================
@@ -271,7 +271,7 @@ void Tick(float deltaTime)
 			Time = Wait;
 			Status = PLAT_Down;
 			SectorStartSequence(Sector,
-				seq_name[SEQ_PLATFORM + Sector->seqType]);
+				GetSeqTrans(Sector->seqType, SEQ_Platform));
 		}
 		else if (res == RES_PASTDEST)
 		{
@@ -340,7 +340,7 @@ void Tick(float deltaTime)
 			else
 				Status = PLAT_Down;
 			SectorStartSequence(Sector,
-				seq_name[SEQ_PLATFORM + Sector->seqType]);
+				GetSeqTrans(Sector->seqType, SEQ_Platform));
 		}
 
 	case PLAT_InStasis:
@@ -355,6 +355,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/20 12:40:55  dj_jl
+//  Implemented support for sound sequence extensions.
+//
 //  Revision 1.3  2005/03/16 15:04:39  dj_jl
 //  More work on line specials.
 //

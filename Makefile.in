@@ -187,6 +187,10 @@ MP3_OBJS = \
 MIKMOD_OBJS = \
 	obj/s_mikmod.$(OBJEXT)
 
+#-- FLAC files --
+FLAC_OBJS = \
+	obj/s_flac.$(OBJEXT)
+
 #-- DOS --
 SYS_OBJS_DJGPP = \
 	obj/cd_dos.$(OBJEXT) \
@@ -279,6 +283,7 @@ SV_COMMON_OBJ_FILES = \
 	obj/sv/s_data.$(OBJEXT) \
 	obj/sv/sc_man.$(OBJEXT) \
 	obj/sv/sizebuf.$(OBJEXT) \
+	obj/sv/sn_sonix.$(OBJEXT) \
 	obj/sv/sv_acs.$(OBJEXT) \
 	obj/sv/sv_ent.$(OBJEXT) \
 	obj/sv/sv_main.$(OBJEXT) \
@@ -362,7 +367,7 @@ obj/%.$(OBJEXT) : source/%.s source/asm_i386.h
 
 # ---------------------------------------
 
-source/timidity/libtimidity.a: source/timidity/*.c source/timidity/*.h
+source/timidity/libtimidity.a: source/timidity/*.cpp source/timidity/*.h
 	$(MAKE) -C source/timidity
 
 utils/glbsp/libglbsp.a:

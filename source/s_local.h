@@ -336,7 +336,6 @@ FAudioCodecDesc		TClass##Desc(Description, TClass::Create);
 //
 //	Data
 //
-void S_InitScript();
 int S_ResolveSound(int);
 bool S_LoadSound(int);
 void S_DoneWithLump(int);
@@ -389,9 +388,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.23  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
-//
+//	
 //	Revision 1.22  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
 //	

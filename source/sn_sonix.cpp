@@ -40,11 +40,17 @@
 #define SS_STRING_PLAYUNTILDONE "playuntildone"
 #define SS_STRING_PLAYTIME		"playtime"
 #define SS_STRING_PLAYREPEAT	"playrepeat"
+#define SS_STRING_PLAYLOOP		"playloop"
 #define SS_STRING_DELAY			"delay"
 #define SS_STRING_DELAYRAND		"delayrand"
 #define SS_STRING_VOLUME		"volume"
 #define SS_STRING_END			"end"
 #define SS_STRING_STOPSOUND		"stopsound"
+#define SS_STRING_NO_CUTOFF		"nostopcutoff"
+#define SS_STRING_ATTENUATION	"attenuation"
+#define SS_STRING_DOOR			"door"
+#define SS_STRING_PLATFORM		"platform"
+#define SS_STRING_ENVIRONMENT	"environment"
 
 // TYPES -------------------------------------------------------------------
 
@@ -55,10 +61,12 @@ enum sscmds_t
 	SS_CMD_WAITUNTILDONE, // used by PLAYUNTILDONE
 	SS_CMD_PLAYTIME,
 	SS_CMD_PLAYREPEAT,
+	SS_CMD_PLAYLOOP,
 	SS_CMD_DELAY,
 	SS_CMD_DELAYRAND,
 	SS_CMD_VOLUME,
 	SS_CMD_STOPSOUND,
+	SS_CMD_ATTENUATION,
 	SS_CMD_END
 };
 
@@ -69,6 +77,22 @@ struct seq_info_t
 	int		stopSound;
 };
 
+#ifdef CLIENT
+struct seqnode_t
+{
+	int			*sequencePtr;
+	int			sequence;
+	int			origin_id;
+	TVec		origin;
+	int			currentSoundID;
+	int			delayTics;
+	int			volume;
+	int			stopSound;
+	seqnode_t	*prev;
+	seqnode_t	*next;
+};
+#endif
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -77,19 +101,31 @@ struct seq_info_t
 
 static void ParseSequenceScript();
 static void VerifySequencePtr(int *base, int *ptr);
-static int GetSoundOffset(const char *name);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int			ActiveSequences;
-seqnode_t	*SequenceListHead;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static seq_info_t	SeqInfo[SS_MAX_SCRIPTS];
 static int			NumSequences;
+static int			SeqTrans[64 * 3];
+
+#ifdef CLIENT
+static int			ActiveSequences;
+static seqnode_t	*SequenceListHead;
+#endif
+
+static const char *Attenuations[] =
+{
+	"none",
+	"normal",
+	"idle",
+	"static",
+	"surround",
+	NULL
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -141,8 +177,11 @@ static int GetSoundOffset(const char *name)
 void SN_InitSequenceScript()
 {
 	guard(SN_InitSequenceScript);
+#ifdef CLIENT
 	ActiveSequences = 0;
+#endif
 	NumSequences = 0;
+	memset(SeqTrans, -1, sizeof(SeqTrans));
 	memset(SeqInfo, 0, sizeof(SeqInfo));
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
@@ -165,6 +204,31 @@ void SN_InitSequenceScript()
 
 //==========================================================================
 //
+//	AssignTranslations
+//
+//==========================================================================
+
+static void AssignTranslations(int SeqId, seqtype_t SeqType)
+{
+	guard(AssignTranslations);
+	sc_Crossed = false;
+
+	while (SC_GetString() && !sc_Crossed)
+	{
+		char* Stopper;
+		int Num = strtol(sc_String, &Stopper, 0);
+		if (*Stopper == 0)
+		{
+			SeqTrans[(Num & 63) + SeqType * 64] = SeqId;
+		}
+	}
+
+	SC_UnGet();
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseSequenceScript
 //
 //==========================================================================
@@ -175,6 +239,7 @@ static void ParseSequenceScript()
 	int 		*tempDataStart = NULL;
 	int 		*tempDataPtr = NULL;
 	bool		inSequence = false;
+	int			SeqId = 0;
 
 	while (SC_GetString())
 	{
@@ -184,16 +249,29 @@ static void ParseSequenceScript()
 			{
 				SC_ScriptError("SN_InitSequenceScript:  Nested Script Error");
 			}
-			if (NumSequences == SS_MAX_SCRIPTS)
+			for (SeqId = 0; SeqId < NumSequences; SeqId++)
 			{
-				SC_ScriptError("Number of SS Scripts >= SS_MAX_SCRIPTS");
+				if (!strcmp(SeqInfo[SeqId].name, sc_String))
+				{
+					Z_Free(SeqInfo[SeqId].data);
+					break;
+				}
+			}
+			if (SeqId == NumSequences)
+			{
+				SeqId = NumSequences;
+				NumSequences++;
+				if (NumSequences == SS_MAX_SCRIPTS)
+				{
+					SC_ScriptError("Number of SS Scripts >= SS_MAX_SCRIPTS");
+				}
 			}
 			tempDataStart = (int *)Z_Malloc(SS_TEMPBUFFER_SIZE, 
 				PU_STATIC, NULL);
 			memset(tempDataStart, 0, SS_TEMPBUFFER_SIZE);
 			tempDataPtr = tempDataStart;
             inSequence = true;
-            strcpy(SeqInfo[NumSequences].name, sc_String + 1);
+            strcpy(SeqInfo[SeqId].name, sc_String + 1);
 			continue; // parse the next command
 		}
 		if (!inSequence)
@@ -233,6 +311,15 @@ static void ParseSequenceScript()
 			*tempDataPtr++ = SS_CMD_PLAYREPEAT;
 			*tempDataPtr++ = GetSoundOffset(sc_String);
 		}
+		else if (SC_Compare(SS_STRING_PLAYLOOP))
+		{
+			VerifySequencePtr(tempDataStart, tempDataPtr);
+			SC_MustGetString();
+			*tempDataPtr++ = SS_CMD_PLAYLOOP;
+			*tempDataPtr++ = GetSoundOffset(sc_String);
+			SC_MustGetNumber();
+			*tempDataPtr++ = sc_Number;
+		}
 		else if (SC_Compare(SS_STRING_DELAY))
 		{
 			VerifySequencePtr(tempDataStart, tempDataPtr);
@@ -256,24 +343,46 @@ static void ParseSequenceScript()
 			SC_MustGetNumber();
 			*tempDataPtr++ = sc_Number;
 		}
-		else if (SC_Compare(SS_STRING_END))
+		else if (SC_Compare(SS_STRING_ATTENUATION))
 		{
-			int dataSize;
-
-			*tempDataPtr++ = SS_CMD_END;
-			dataSize = (tempDataPtr-tempDataStart)*sizeof(int);
-			SeqInfo[NumSequences].data = (int *)Z_Malloc(dataSize, PU_STATIC,
-				NULL);
-			memcpy(SeqInfo[NumSequences].data, tempDataStart, dataSize);
-			Z_Free(tempDataStart);
-			inSequence = false;
-			NumSequences++;
+			VerifySequencePtr(tempDataStart, tempDataPtr);
+			*tempDataPtr++ = SS_CMD_ATTENUATION;
+			SC_MustGetString();
+			*tempDataPtr++ = SC_MustMatchString(Attenuations);
 		}
 		else if (SC_Compare(SS_STRING_STOPSOUND))
 		{
 			SC_MustGetString();
-			SeqInfo[NumSequences].stopSound = GetSoundOffset(sc_String);
+			SeqInfo[SeqId].stopSound = GetSoundOffset(sc_String);
 			*tempDataPtr++ = SS_CMD_STOPSOUND;
+		}
+		else if (SC_Compare(SS_STRING_NO_CUTOFF))
+		{
+			SC_MustGetString();
+			SeqInfo[SeqId].stopSound = -1;
+			*tempDataPtr++ = SS_CMD_STOPSOUND;
+		}
+		else if (SC_Compare(SS_STRING_DOOR))
+		{
+			AssignTranslations(SeqId, SEQ_Door);
+		}
+		else if (SC_Compare(SS_STRING_PLATFORM))
+		{
+			AssignTranslations(SeqId, SEQ_Platform);
+		}
+		else if (SC_Compare(SS_STRING_ENVIRONMENT))
+		{
+			AssignTranslations(SeqId, SEQ_Environment);
+		}
+		else if (SC_Compare(SS_STRING_END))
+		{
+			*tempDataPtr++ = SS_CMD_END;
+			int dataSize = (tempDataPtr-tempDataStart)*sizeof(int);
+			SeqInfo[SeqId].data = (int *)Z_Malloc(dataSize, PU_STATIC,
+				NULL);
+			memcpy(SeqInfo[SeqId].data, tempDataStart, dataSize);
+			Z_Free(tempDataStart);
+			inSequence = false;
 		}
 		else
 		{
@@ -283,6 +392,45 @@ static void ParseSequenceScript()
 	SC_Close();
 	unguard;
 }
+
+//==========================================================================
+//
+//  SN_SetSeqTrans
+//
+//==========================================================================
+
+void SN_SetSeqTrans(FName Name, int Num, int SeqType)
+{
+	guard(SN_SetSeqTrans);
+	for (int i = 0; i < NumSequences; i++)
+	{
+		if (!strcmp(*Name, SeqInfo[i].name))
+		{
+			SeqTrans[(Num & 63) + SeqType * 64] = i;
+			return;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  SN_GetSeqTrans
+//
+//==========================================================================
+
+FName SN_GetSeqTrans(int Num, int SeqType)
+{
+	guard(SN_GetSeqTrans);
+	if (SeqTrans[(Num & 63) + SeqType * 64] < 0)
+	{
+		return NAME_None;
+	}
+	return SeqInfo[SeqTrans[(Num & 63) + SeqType * 64]].name;
+	unguard;
+}
+
+#ifdef CLIENT
 
 //==========================================================================
 //
@@ -331,9 +479,7 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name)
 {
 	guard(SN_StartSequenceName);
-	int i;
-
-	for (i = 0; i < NumSequences; i++)
+	for (int i = 0; i < NumSequences; i++)
 	{
 		if (!strcmp(name, SeqInfo[i].name))
 		{
@@ -355,25 +501,28 @@ void SN_StopSequence(int origin_id)
 	guard(SN_StopSequence);
 	seqnode_t *node;
 
-	for(node = SequenceListHead; node; node = node->next)
+	for (node = SequenceListHead; node; node = node->next)
 	{
-		if(node->origin_id == origin_id)
+		if (node->origin_id == origin_id)
 		{
-			S_StopSound(origin_id, 0);
-			if(node->stopSound)
+			if (node->stopSound >= 0)
+			{
+				S_StopSound(origin_id, 0);
+			}
+			if (node->stopSound >= 1)
 			{
 				S_StartSound(node->stopSound, node->origin, TVec(0, 0, 0),
 					node->origin_id, 1, node->volume);
 			}
-			if(SequenceListHead == node)
+			if (SequenceListHead == node)
 			{
 				SequenceListHead = node->next;
 			}
-			if(node->prev)
+			if (node->prev)
 			{
 				node->prev->next = node->next;
 			}
-			if(node->next)
+			if (node->next)
 			{
 				node->next->prev = node->prev;
 			}
@@ -390,7 +539,7 @@ void SN_StopSequence(int origin_id)
 //
 //==========================================================================
 
-void SN_UpdateActiveSequences(void)
+void SN_UpdateActiveSequences()
 {
 	guard(SN_UpdateActiveSequences);
 	seqnode_t *node;
@@ -400,9 +549,9 @@ void SN_UpdateActiveSequences(void)
 	{ // No sequences currently playing/game is paused
 		return;
 	}
-	for(node = SequenceListHead; node; node = node->next)
+	for (node = SequenceListHead; node; node = node->next)
 	{
-		if(node->delayTics)
+		if (node->delayTics)
 		{
 			node->delayTics--;
 			continue;
@@ -434,6 +583,12 @@ void SN_UpdateActiveSequences(void)
 						TVec(0, 0, 0), node->origin_id, 1, node->volume);
 				}
 				break;
+			case SS_CMD_PLAYLOOP:
+				node->currentSoundID = *(node->sequencePtr + 1);
+				S_StartSound(node->currentSoundID, node->origin,
+					TVec(0, 0, 0), node->origin_id, 1, node->volume);
+				node->delayTics = *(node->sequencePtr + 2);
+				break;
 			case SS_CMD_DELAY:
 				node->delayTics = *(node->sequencePtr+1);
 				node->sequencePtr += 2;
@@ -447,6 +602,10 @@ void SN_UpdateActiveSequences(void)
 				break;
 			case SS_CMD_VOLUME:
 				node->volume = (127*(*(node->sequencePtr+1)))/100;
+				node->sequencePtr += 2;
+				break;
+			case SS_CMD_ATTENUATION:
+				// Unused for now.
 				node->sequencePtr += 2;
 				break;
 			case SS_CMD_STOPSOUND:
@@ -480,14 +639,14 @@ void SN_StopAllSequences(void)
 	}
 	unguard;
 }
-	
+
 //==========================================================================
 //
 //  SN_GetSequenceOffset
 //
 //==========================================================================
 
-int SN_GetSequenceOffset(int sequence, int *sequencePtr)
+static int SN_GetSequenceOffset(int sequence, int *sequencePtr)
 {
 	guard(SN_GetSequenceOffset);
 	return (sequencePtr - SeqInfo[sequence].data);
@@ -501,8 +660,8 @@ int SN_GetSequenceOffset(int sequence, int *sequencePtr)
 // 	nodeNum zero is the first node
 //==========================================================================
 
-void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
-	int currentSoundID)
+static void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics,
+	int volume, int currentSoundID)
 {
 	guard(SN_ChangeNodeData);
 	int i;
@@ -526,12 +685,65 @@ void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics, int volume,
 	unguard;
 }
 
+//==========================================================================
+//
+//	SN_SerialiseSounds
+//
+//==========================================================================
+
+void SN_SerialiseSounds(FArchive& Ar)
+{
+	if (Ar.IsLoading())
+	{
+		// Reload and restart all sound sequences
+		int numSequences = Arctor<int>(Ar);
+		for (int i = 0; i < numSequences; i++)
+		{
+			int sequence = Arctor<int>(Ar);
+			int delayTics = Arctor<int>(Ar);
+			int volume = Arctor<int>(Ar);
+			int seqOffset = Arctor<int>(Ar);
+			int soundID = Arctor<int>(Ar);
+			int objectNum = Arctor<int>(Ar);
+			float x = Arctor<float>(Ar);
+			float y = Arctor<float>(Ar);
+			float z = Arctor<float>(Ar);
+			SN_StartSequence(objectNum, TVec(x, y, z), sequence);
+			SN_ChangeNodeData(i, seqOffset, delayTics, volume, soundID);
+		}
+	}
+	else
+	{
+		// Save the sound sequences
+		Ar << ActiveSequences;
+		for (seqnode_t* node = SequenceListHead; node; node = node->next)
+		{
+			Ar << node->sequence;
+			Ar << node->delayTics;
+			Ar << node->volume;
+			int Offset = SN_GetSequenceOffset(node->sequence,
+				node->sequencePtr);
+			Ar << Offset;
+			Ar << node->currentSoundID;
+			Ar << node->origin_id;
+			Ar << node->origin.x;
+			Ar << node->origin.y;
+			Ar << node->origin.z;
+		}
+	}
+}
+
+#endif
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/11/20 12:38:50  dj_jl
+//	Implemented support for sound sequence extensions.
+//
 //	Revision 1.11  2005/11/18 20:09:31  dj_jl
 //	Properly initialise current sound.
-//
+//	
 //	Revision 1.10  2005/11/08 18:38:01  dj_jl
 //	Parse all sequence scripts.
 //	
