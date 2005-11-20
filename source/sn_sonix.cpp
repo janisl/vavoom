@@ -77,7 +77,6 @@ struct seq_info_t
 	int		stopSound;
 };
 
-#ifdef CLIENT
 struct seqnode_t
 {
 	int			*sequencePtr;
@@ -91,7 +90,6 @@ struct seqnode_t
 	seqnode_t	*prev;
 	seqnode_t	*next;
 };
-#endif
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -112,10 +110,8 @@ static seq_info_t	SeqInfo[SS_MAX_SCRIPTS];
 static int			NumSequences;
 static int			SeqTrans[64 * 3];
 
-#ifdef CLIENT
 static int			ActiveSequences;
 static seqnode_t	*SequenceListHead;
-#endif
 
 static const char *Attenuations[] =
 {
@@ -177,9 +173,7 @@ static int GetSoundOffset(const char *name)
 void SN_InitSequenceScript()
 {
 	guard(SN_InitSequenceScript);
-#ifdef CLIENT
 	ActiveSequences = 0;
-#endif
 	NumSequences = 0;
 	memset(SeqTrans, -1, sizeof(SeqTrans));
 	memset(SeqInfo, 0, sizeof(SeqInfo));
@@ -358,7 +352,6 @@ static void ParseSequenceScript()
 		}
 		else if (SC_Compare(SS_STRING_NO_CUTOFF))
 		{
-			SC_MustGetString();
 			SeqInfo[SeqId].stopSound = -1;
 			*tempDataPtr++ = SS_CMD_STOPSOUND;
 		}
@@ -642,22 +635,10 @@ void SN_StopAllSequences(void)
 
 //==========================================================================
 //
-//  SN_GetSequenceOffset
-//
-//==========================================================================
-
-static int SN_GetSequenceOffset(int sequence, int *sequencePtr)
-{
-	guard(SN_GetSequenceOffset);
-	return (sequencePtr - SeqInfo[sequence].data);
-	unguard;
-}
-
-//==========================================================================
-//
 //  SN_ChangeNodeData
 //
 // 	nodeNum zero is the first node
+//
 //==========================================================================
 
 static void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics,
@@ -685,6 +666,8 @@ static void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics,
 	unguard;
 }
 
+#endif
+
 //==========================================================================
 //
 //	SN_SerialiseSounds
@@ -708,8 +691,10 @@ void SN_SerialiseSounds(FArchive& Ar)
 			float x = Arctor<float>(Ar);
 			float y = Arctor<float>(Ar);
 			float z = Arctor<float>(Ar);
+#ifdef CLIENT
 			SN_StartSequence(objectNum, TVec(x, y, z), sequence);
 			SN_ChangeNodeData(i, seqOffset, delayTics, volume, soundID);
+#endif
 		}
 	}
 	else
@@ -721,8 +706,7 @@ void SN_SerialiseSounds(FArchive& Ar)
 			Ar << node->sequence;
 			Ar << node->delayTics;
 			Ar << node->volume;
-			int Offset = SN_GetSequenceOffset(node->sequence,
-				node->sequencePtr);
+			int Offset = node->sequencePtr - SeqInfo[node->sequence].data;
 			Ar << Offset;
 			Ar << node->currentSoundID;
 			Ar << node->origin_id;
@@ -733,14 +717,15 @@ void SN_SerialiseSounds(FArchive& Ar)
 	}
 }
 
-#endif
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/11/20 15:50:40  dj_jl
+//	Some fixes.
+//
 //	Revision 1.12  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.11  2005/11/18 20:09:31  dj_jl
 //	Properly initialise current sound.
 //	

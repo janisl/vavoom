@@ -896,10 +896,8 @@ static void UnarchiveScripts(void)
 
 static void ArchiveSounds()
 {
-#ifdef CLIENT
 	StreamOutLong(ASEG_SOUNDS);
 	SN_SerialiseSounds(*Saver);
-#endif
 }
 
 //==========================================================================
@@ -910,10 +908,8 @@ static void ArchiveSounds()
 
 static void UnarchiveSounds()
 {
-#ifdef CLIENT
 	AssertSegment(ASEG_SOUNDS);
 	SN_SerialiseSounds(*Loader);
-#endif
 }
 
 //==========================================================================
@@ -1451,9 +1447,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2005/11/20 15:50:40  dj_jl
+//	Some fixes.
+//
 //	Revision 1.41  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.40  2005/04/04 07:48:13  dj_jl
 //	Fix for loading level variables.
 //	

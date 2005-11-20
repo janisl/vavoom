@@ -61,7 +61,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Crush = false;
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Spot = *Sector->lines[0]->v1;
-	SeqName = 'Ceiling';
+	SeqName = 'CeilingNormal';
 	switch (Type)
 	{
 	case CEILEV_LowerToFloor:
@@ -436,6 +436,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/20 15:49:48  dj_jl
+//  Some fixes.
+//
 //  Revision 1.4  2005/11/20 13:57:25  dj_jl
 //  Using sound sequences.
 //
