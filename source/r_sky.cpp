@@ -633,7 +633,7 @@ static void R_LightningFlash()
 				sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
 			}
 		}
-		S_StartSoundName("ThunderCrash");
+		S_StartSoundName("world/thunder");
 	}
 	// Calculate the next lighting flash
 	if (!NextLightningFlash)
@@ -701,9 +701,12 @@ void R_DrawSky()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/11/20 10:39:20  dj_jl
+//	Renamed sound.
+//
 //	Revision 1.17  2005/10/18 21:09:49  dj_jl
 //	Fixed levels with lightning and skybox.
-//
+//	
 //	Revision 1.16  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
 //	
