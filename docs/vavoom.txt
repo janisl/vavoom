@@ -109,6 +109,8 @@ Optional:
     * OpenAL (http://www.openal.org), the source must be checked out from the
   CVS repository. You will find info on this on OpenAL website or at Creative
   developer center (http://developer.creative.com).
+    * libvorbis (http://www.vorbis.com)
+    * libmad (http://www.underbit.com/products/mad/)
 
   And of course Vavoom sources.
 
@@ -383,10 +385,6 @@ Custom games and development
 
 -DEVGAME like -game, but also sets Vavoom in development mode
 -devgame <directory>
-
--DEVSND sets sound development mode, uses given SNDINFO script, sounds and
-music are loaded form archive directory, which is specified in script.
--devsound <SNDINFO_script>
 
 -PROGS specifies directory where to look for progs. Server progs are loaded
 from file svprogs.dat, client progs - clprogs.dat. Path must include ending

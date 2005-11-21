@@ -764,3 +764,128 @@
 ******************************************************************************
                             VERSION 1.18
 ******************************************************************************
+
+04.09.2005
+  Fixed check for any texture.
+  Started to create a MIDI driver class, similar to sound driver class.
+06.09.2005
+  In texture manager made case in-sensitive comparision of extensions of file
+ textures.
+  The source had 5 copies of the qmus2mid converter (including modified one in
+ Allegro driver and non-working version in SDL driver) which is a bad thing.
+ So I started to merge them all.
+07.09.2005
+  Finished merging of qmus2mid.
+10.09.2005
+  Finished implementing MIDI driver interface. Comsole command 'Music' moved
+ to common sound module.
+11.09.2005
+  Little fix for network packet compression.
+  Changed sound and music volume cvars to be floats.
+  Changed MIDI driver initialisation if OpenAL is used.
+  Moved music lump loading and MUS to MIDI conversion to main sound module.
+12.09.2005
+  Created CD audio driver class, all drivers converted. Console commans 'CD'
+ moved to common sound module.
+13.09.2005
+  Started to implement streaming support in sound drivers. Implemented in
+ Allegro and OpenAL drivers. Simple playback of a wav file.
+16.09.2005
+  Implemented streaming support in DirectSound deriver.
+  Started work on replacement for DirectMusic driver.
+18.09.2005
+  Replaced DirectMusic driver with new driver that uses MMSystem. It's based
+ on sample code from M$, and is prety messy.
+19.09.2005
+  Implemented streaming in SDL driver.
+29.09.2005
+  Temporary fix for using a puzzle line.
+02.10.2005
+  Big cleanup and beautification of the new MMSystem MIDI driver.
+06.10.2005
+  Some more cleanup in MMSystem MIDI driver.
+10.10.2005
+  Created base class for a streamable audio codec.
+12.10.2005
+  Implemented Vorbis audio codec. The playback is a little bit too fast, but
+ I'll deal with that later.
+13.10.2005
+  Implemented general API for registering an audio codec.
+18.10.2005
+  Created streamed music player class and made general music code to use it.
+ Audio codecs moved to their own files. Ogg support works as expected.
+  Added Firebrand's fixes for lightning in level with skybox and movement of
+ Hexen's ceiling lightning.
+19.10.2005
+  Removed archive path handling from SNDINFO.
+  Started implementing MP3 codec.
+20.10.2005
+  Got a working MP3 codec.
+22.10.2005
+  Some MP3 code cleanup. Fixes to stream player for looping and stopping.
+28.10.2005
+  Sprite offset fix on by default.
+  Added Timidity driver. It uses Timidity version from SDL_mixer with some more
+ fixes.
+29.10.2005
+  Added MikMod codec.
+02.11.2005
+  Fixed armor percent sign in Doom status bar.
+  Implemented health bar and ammo icon in Strife status bar.
+  Added FLACC audio codec.
+  Fixed Vorbis codec.
+03.11.2005
+  Implemented support for any bitrate music streams.
+  Proper WAV codec implementation.
+05.11.2005
+  Strife voices are added to sounds as normal sounds. They have prefix svox/.
+ Closing coversation dialog stops playing voice. Shareware voices are put in
+ voices namespace.
+06.11.2005
+  Fixed initial Strife objectives.
+  Fixed Strife hazard palette flash.
+  Added support for 16 bit sounds.
+  Implemented support for different sample loaders and added loaders for WAV
+ and FLACC format samples.
+08.11.2005
+  Removed playing soun till done.
+  Parsing of all MAPINFO, SNDINFO and SNDSEQ scripts.
+  Started to move common parts from sound drivers to main sound module.
+09.11.2005
+  Most of the common parts from sound drivers are moved.
+10.11.2005
+  Separated playback of 3D sound.
+  In SDL driver moved chunks from channel structure to sound chunks array.
+11.11.2005
+  InMikMod codec fixed conflict with SDL mixer.
+  Put Timidity library in namespace to avoid conflicts.
+12.11.2005
+  Checksum fix in datagram driver.
+  In progs Added swaping of bitmask for MacOS X.
+  Added support for looped sounds.
+13.11.2005
+  Some final cleanup of sound drivers.
+  In Doom restored old puffs and blood.
+  Upgraded to glBSP 2.20, added support for version 5 GL nodes.
+  Added console variables to disable static lights and particles.
+  Fixed line endings of WadAuthor config files.
+14.11.2005
+  Implemented support for GL nodes for levels with names onger that 6 chars by
+ searching for corresponding GL_LEVEL lump.
+15.11.2005
+  Some additional fixes for MacOS X.
+  Started to add support for SNDINFO extensions. Got rid of SFXINFO.
+16.11.2005
+  Have support for all SNDINFO extensions.
+17.11.2005
+  Renamed Doom sounds to ZDoom names.
+18.11.2005
+  Renames Heretic sounds.
+  Added Firebrand's fix for Strife title sequence.
+19.11.2005
+  Renamed Strife and Hexen sounds.
+  Added Firebrand's fix for Strife status bar ammo icons and glBSP.
+20.11.2005
+  Implemented support for SNDSEQ extensions. Changed Doom, Heretic and Strife
+ action specials to use sequences.
+  Fixed MD2 skin index check.
