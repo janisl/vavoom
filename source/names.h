@@ -32,15 +32,14 @@
 // Define a message as an enumeration.
 #ifndef REGISTER_NAME
 	#define REGISTER_NAME(name)	NAME_##name,
-	#define REG_NAME_HIGH(name)	NAME_##name,
 	#define REGISTERING_ENUM
 	enum EName {
 #endif
 
-// Hardcoded names which are not messages ----------------------------------
+// Hardcoded names ---------------------------------------------------------
 
 // Special zero value, meaning no name.
-REG_NAME_HIGH(None)
+REGISTER_NAME(None)
 
 // Log messages.
 REGISTER_NAME(Log)
@@ -63,18 +62,21 @@ REGISTER_NAME(RootWindow)
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM
+		NUM_HARDCODED_NAMES
 	};
 	#undef REGISTER_NAME
-	#undef REG_NAME_HIGH
 	#undef REGISTERING_ENUM
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/11/22 19:10:38  dj_jl
+//	Cleaned up a bit.
+//
 //	Revision 1.6  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
-//
+//	
 //	Revision 1.5  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
 //	

@@ -42,14 +42,12 @@
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // Static subsystem variables.
-TArray<FNameEntry*>	FName::Names;			 // Table of all names.
-TArray<int>			FName::Available;       // Indices of available names.
+TArray<FNameEntry*>	FName::Names;			// Table of all names.
 FNameEntry*			FName::NameHash[4096];  // Hashed names.
-bool				FName::Initialized;	 // Subsystem initialized.
+bool				FName::Initialised;	 	// Subsystem initialised.
 
-#define REGISTER_NAME(name)		{ NAME_##name, OF_Native, NULL, #name },
-#define REG_NAME_HIGH(name)		{ NAME_##name, OF_Native, NULL, #name },
-FNameEntry AutoNames[] =
+#define REGISTER_NAME(name)		{ NAME_##name, NULL, #name },
+static FNameEntry AutoNames[] =
 {
 #include "names.h"
 };
@@ -71,7 +69,7 @@ inline dword GetTypeHash(const char *S)
 
 //==========================================================================
 //
-//
+//	operator << (FArchive& Ar, FNameEntry& E)
 //
 //==========================================================================
 
@@ -94,14 +92,17 @@ FArchive& operator << (FArchive& Ar, FNameEntry& E)
 //==========================================================================
 
 FNameEntry* AllocateNameEntry(const char* Name, dword Index, 
-							  dword Flags, FNameEntry* HashNext)
+							  FNameEntry* HashNext)
 {
-	FNameEntry *E = Z_CNew<FNameEntry>();
+	guard(AllocateNameEntry);
+	int Size = sizeof(FNameEntry) - NAME_SIZE + strlen(Name) + 1;
+	FNameEntry* E = (FNameEntry*)Z_Malloc(Size);
+	memset(E, 0, Size);
 	strcpy(E->Name, Name);
 	E->Index = Index;
-	E->Flags = Flags;
 	E->HashNext = HashNext;
 	return E;
+	unguard;
 }
 
 //==========================================================================
@@ -112,50 +113,49 @@ FNameEntry* AllocateNameEntry(const char* Name, dword Index,
 
 FName::FName(const char* Name, EFindName FindType)
 {
-	char		Name8Buf[12];
+	guard(FName::FName);
+	char		NameBuf[NAME_SIZE];
 
+	Index = NAME_None;
+	//	Make sure name is valid.
 	if (!Name || !*Name)
 	{
-		Index = NAME_None;
 		return;
 	}
+	//	Copy name localy, make sure it's not longer than 64 characters.
 	if (FindType == FNAME_AddLower8)
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			Name8Buf[i] = tolower(Name[i]);
+			NameBuf[i] = tolower(Name[i]);
 		}
-		Name8Buf[8] = 0;
-		Name = Name8Buf;
+		NameBuf[8] = 0;
 	}
-	Index = 0;
-	int HashIndex = GetTypeHash(Name) & 4095;
-	FNameEntry *TempHash = NameHash[HashIndex];
+	else
+	{
+		strncpy(NameBuf, Name, NAME_SIZE);
+		NameBuf[NAME_SIZE - 1] = 0;
+	}
+	//	Search in cache.
+	int HashIndex = GetTypeHash(NameBuf) & 4095;
+	FNameEntry* TempHash = NameHash[HashIndex];
 	while (TempHash)
 	{
-		if (!strcmp(Name, TempHash->Name))
+		if (!strcmp(NameBuf, TempHash->Name))
 		{
 			Index = TempHash->Index;
 			break;
 		}
 		TempHash = TempHash->HashNext;
 	}
-	if (!TempHash)
+	//	Add new name if not found.
+	if (!TempHash && (FindType == FNAME_Add || FindType == FNAME_AddLower8))
 	{
-		if (FindType == FNAME_Add || FindType == FNAME_AddLower8)
-		{
-			if (Available.Num())
-			{
-				Index = Available.Pop();
-			}
-			else
-			{
-				Index = Names.Add();
-			}
-			Names[Index] = AllocateNameEntry(Name, Index, 0, NameHash[HashIndex]);
-			NameHash[HashIndex] = Names[Index];
-		}
+		Index = Names.Add();
+		Names[Index] = AllocateNameEntry(NameBuf, Index, NameHash[HashIndex]);
+		NameHash[HashIndex] = Names[Index];
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -166,23 +166,19 @@ FName::FName(const char* Name, EFindName FindType)
 
 void FName::StaticInit()
 {
-	int i;
-
+	guard(FName::StaticInit);
 	// Register hardcoded names
-	for (i = 0; i < (int)ARRAY_COUNT(AutoNames); i++)
+	for (int i = 0; i < (int)ARRAY_COUNT(AutoNames); i++)
 	{
-		Hardcode(&AutoNames[i]);
+		Names.Insert(AutoNames[i].Index);
+		Names[AutoNames[i].Index] = &AutoNames[i];
+		int HashIndex = GetTypeHash(AutoNames[i].Name) & 4095;
+		AutoNames[i].HashNext = NameHash[HashIndex];
+		NameHash[HashIndex] = &AutoNames[i];
 	}
-	// Find free indices
-	for (i = 0; i < Names.Num(); i++)
-	{
-		if (!Names[i])
-		{
-			Available.AddItem(i);
-		}
-	}
-	// We are now initialized
-	Initialized = true;
+	// We are now initialised
+	Initialised = true;
+	unguard;
 }
 
 //==========================================================================
@@ -193,62 +189,26 @@ void FName::StaticInit()
 
 void FName::StaticExit()
 {
-	int i;
-
+	guard(FName::StaticExit);
 	//FIXME do we really need this?
-	for (i = 0; i < Names.Num(); i++)
-	{
-		if (Names[i] && !(Names[i]->Flags & OF_Native))
-		{
-			Z_Free(Names[i]);
-		}
-	}
-	Names.Empty();
-	Available.Empty();
-	Initialized = false;
-}
-
-//==========================================================================
-//
-//	FName::Hardcode
-//
-//==========================================================================
-
-void FName::Hardcode(FNameEntry* AutoName)
-{
-	if (Names.Num() < AutoName->Index)
-	{
-		Names.AddZeroed(AutoName->Index - Names.Num());
-	}
-	Names.Insert(AutoName->Index);
-	Names[AutoName->Index] = AutoName;
-	int HashIndex = GetTypeHash(AutoName->Name) & 4095;
-	AutoName->HashNext = NameHash[HashIndex];
-	NameHash[HashIndex] = AutoName;
-}
-
-//==========================================================================
-//
-//	FName::DeleteEntry
-//
-//==========================================================================
-
-void FName::DeleteEntry(int i)
-{
-	if (Names[i] && !(Names[i]->Flags & OF_Native))
+	for (int i = NUM_HARDCODED_NAMES; i < Names.Num(); i++)
 	{
 		Z_Free(Names[i]);
-		Names[i] = NULL;
-		Available.AddItem(i);
 	}
+	Names.Empty();
+	Initialised = false;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/11/22 19:10:36  dj_jl
+//	Cleaned up a bit.
+//
 //	Revision 1.7  2005/05/26 16:49:14  dj_jl
 //	Added lowercased max 8 chars names.
-//
+//	
 //	Revision 1.6  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

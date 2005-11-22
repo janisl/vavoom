@@ -27,10 +27,6 @@
 //**
 //**************************************************************************
 
-/*----------------------------------------------------------------------------
-	Definitions.
-----------------------------------------------------------------------------*/
-
 // Maximum size of name.
 enum {NAME_SIZE	= 64};
 
@@ -45,9 +41,11 @@ enum EFindName
 	FNAME_AddLower8,	// Find or add lowercased max length 8 name.
 };
 
-/*----------------------------------------------------------------------------
-	FNameEntry.
-----------------------------------------------------------------------------*/
+//==========================================================================
+//
+//	FNameEntry
+//
+//==========================================================================
 
 //
 // A global name, as stored in the global name table.
@@ -56,7 +54,6 @@ struct FNameEntry
 {
 	// Variables.
 	NAME_INDEX	Index;				// Index of name in hash.
-	dword		Flags;				// OF_TagImp, OF_TagExp, OF_Native.
 	FNameEntry*	HashNext;			// Pointer to the next entry in this hash bin's linked list.
 
 	// The name string.
@@ -65,17 +62,19 @@ struct FNameEntry
 	// Functions.
 	friend FArchive& operator << (FArchive& Ar, FNameEntry& E);
 	friend FNameEntry* AllocateNameEntry(const char* Name, dword Index, 
-		dword Flags, FNameEntry* HashNext);
+		FNameEntry* HashNext);
 };
 
-/*----------------------------------------------------------------------------
-	FName.
-----------------------------------------------------------------------------*/
+//==========================================================================
+//
+//	FName
+//
+//==========================================================================
 
 //
 // Public name, available to the world.  Names are stored as int indices
-// into the name table and every name in Vavoom is stored once
-// and only once in that table.  Names are case-sensitive.
+// into the name table and every name in Vavoom is stored once and only
+// once in that table.  Names are case-sensitive.
 //
 class FName 
 {
@@ -88,18 +87,6 @@ public:
 	NAME_INDEX GetIndex() const
 	{
 		return Index;
-	}
-	dword GetFlags() const
-	{
-		return Names[Index]->Flags;
-	}
-	void SetFlags(dword Set) const
-	{
-		Names[Index]->Flags |= Set;
-	}
-	void ClearFlags(dword Clear) const
-	{
-		Names[Index]->Flags &= ~Clear;
 	}
 	bool operator == (const FName& Other) const
 	{
@@ -124,19 +111,12 @@ public:
 	// Name subsystem.
 	static void StaticInit();
 	static void StaticExit();
-	static void DeleteEntry(int i);
-	//static void DisplayHash(class FOutputDevice& Ar);
-	static void Hardcode(FNameEntry* AutoName);
 
 	// Name subsystem accessors.
 	static const char* SafeString(EName Index)
 	{
-		return Initialized ? Names[Index]->Name : "Uninitialized";
+		return Initialised ? Names[Index]->Name : "Uninitialised";
 	}
-	//static bool SafeSuppressed(EName Index)
-	//{
-	//	return Initialized && (Names[Index]->Flags & 0x00001000);
-	//}
 	static int GetMaxNames()
 	{
 		return Names.Num();
@@ -145,20 +125,19 @@ public:
 	{
 		return Names[i];
 	}
-	static bool GetInitialized()
+	static bool GetInitialised()
 	{
-		return Initialized;
+		return Initialised;
 	}
 
 private:
 	// Name index.
-	NAME_INDEX Index;
+	NAME_INDEX					Index;
 
 	// Static subsystem variables.
 	static TArray<FNameEntry*>	Names;			 // Table of all names.
-	static TArray<int>          Available;       // Indices of available names.
 	static FNameEntry*			NameHash[4096];  // Hashed names.
-	static bool					Initialized;	 // Subsystem initialized.
+	static bool					Initialised;	 // Subsystem initialised.
 };
 inline dword GetTypeHash(const FName N)
 {
@@ -168,9 +147,12 @@ inline dword GetTypeHash(const FName N)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/11/22 19:10:38  dj_jl
+//	Cleaned up a bit.
+//
 //	Revision 1.4  2005/05/26 16:49:14  dj_jl
 //	Added lowercased max 8 chars names.
-//
+//	
 //	Revision 1.3  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
