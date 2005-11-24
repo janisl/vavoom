@@ -51,8 +51,8 @@ VClass::VClass(FName AName, int ASize)
 //==========================================================================
 
 VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags, 
-	VClass *AParent, EName AName, int AFlags, void(*ACtor)(void*))
-: ObjectFlags(AFlags)
+	VClass *AParent, EName AName, void(*ACtor)(void*))
+: ObjectFlags(CLASSOF_Native)
 , Name(AName)
 , ParentClass(AParent)
 , ClassSize(ASize)
@@ -208,9 +208,12 @@ int VClass::GetFunctionIndex(FName InName)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.4  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.3  2002/03/09 18:05:34  dj_jl
 //	Added support for defining native functions outside pr_cmds
 //	

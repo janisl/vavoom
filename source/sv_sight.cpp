@@ -446,7 +446,7 @@ bool VEntity::CanSee(VEntity* Other)
 	{
 		return false;
 	}
-	if ((GetFlags() & OF_Destroyed) || (Other->GetFlags() & OF_Destroyed))
+	if ((GetFlags() & _OF_Destroyed) || (Other->GetFlags() & _OF_Destroyed))
 	{
 		return false;
 	}
@@ -521,9 +521,12 @@ bool VEntity::CanSee(VEntity* Other)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.13  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.12  2002/08/28 16:41:10  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

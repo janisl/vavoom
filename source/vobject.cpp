@@ -25,17 +25,6 @@
 
 #include "gamedefs.h"
 
-// Verify the a class definition and C++ definition match up.
-#define VERIFY_CLASS_OFFSET(Pre,ClassName,Member) /*\
-	{for( TFieldIterator<UProperty> It( FindObjectChecked<UClass>( Pre##ClassName::StaticClass()->GetOuter(), TEXT(#ClassName) ) ); It; ++It ) \
-		if( appStricmp(It->GetName(),TEXT(#Member))==0 ) \
-			if( It->Offset != STRUCT_OFFSET(Pre##ClassName,Member) ) \
-				appErrorf(TEXT("Class %s Member %s problem: Script=%i C++=%i"), TEXT(#ClassName), TEXT(#Member), It->Offset, STRUCT_OFFSET(Pre##ClassName,Member) );}*/
-
-// Verify that C++ and script code agree on the size of a class.
-#define VERIFY_CLASS_SIZE(ClassName) /*\
-	check(sizeof(ClassName)==ClassName::StaticClass()->GetPropertiesSize());*/
-
 // Register a class at startup time.
 VClass VObject::PrivateStaticClass
 (
@@ -44,7 +33,6 @@ VClass VObject::PrivateStaticClass
 	VObject::StaticClassFlags,
 	NULL,
 	NAME_Object,
-	OF_Native,
 	(void(*)(void*))VObject::InternalConstructor
 );
 VClass* autoclassVObject = VObject::StaticClass();
@@ -78,7 +66,6 @@ VObject::~VObject(void)
 	{
 		return;
 	}
-	UnhashObject();
 	if (Index == GObjObjects.Num() - 1)
 	{
 		GObjObjects.Pop();
@@ -121,12 +108,12 @@ void VObject::StaticExit(void)
 //
 //==========================================================================
 
-VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
+VObject *VObject::StaticSpawnObject(VClass *AClass, int tag)
 {
 	guard(VObject::StaticSpawnObject);
 	VObject *Obj = (VObject *)Z_Calloc(AClass->ClassSize, tag, 0);
 	VClass *NativeClass = AClass;
-	while (NativeClass && !(NativeClass->GetFlags() & OF_Native))
+	while (NativeClass && !(NativeClass->GetFlags() & CLASSOF_Native))
 	{
 		NativeClass = NativeClass->GetSuperClass();
 	}
@@ -136,7 +123,6 @@ VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 	}
 	NativeClass->ClassConstructor(Obj);
 	Obj->Class = AClass;
-	Obj->Outer = AOuter;
 	Obj->vtable = AClass->ClassVTable;
 	Obj->Register();
 	if (Obj->vtable)
@@ -153,7 +139,7 @@ VObject *VObject::StaticSpawnObject(VClass *AClass, VObject *AOuter, int tag)
 //
 //==========================================================================
 
-void VObject::Register(void)
+void VObject::Register()
 {
 	guard(VObject::Register);
 	if (GObjAvailable.Num())
@@ -165,56 +151,7 @@ void VObject::Register(void)
 	{
 		Index = GObjObjects.AddItem(this);
 	}
-	HashObject();
 	unguard;
-}
-
-//==========================================================================
-//
-//	VObject::HashObject
-//
-//==========================================================================
-
-void VObject::HashObject(void)
-{
-#if 0
-	int HashIndex = GetTypeHash(Name) & 4095;
-	HashNext = GObjHash[HashIndex];
-	GObjHash[HashIndex] = this;
-#endif
-}
-
-//==========================================================================
-//
-//	VObject::UnhashObject
-//
-//==========================================================================
-
-void VObject::UnhashObject(void)
-{
-#if 0
-	int HashIndex = GetTypeHash(Name) & 4095;
-	if (GObjHash[HashIndex] == this)
-	{
-		GObjHash[HashIndex] = HashNext;
-	}
-	else
-	{
-		VObject *TempHash = GObjHash[HashIndex];
-		while (TempHash && TempHash->HashNext != this)
-		{
-			TempHash = TempHash->HashNext;
-		}
-		if (TempHash)
-		{
-			TempHash->HashNext = HashNext;
-		}
-		else
-		{
-			GCon->Log(NAME_Dev, "VObject::UnhashObject: Not in hash");
-		}
-	}
-#endif
 }
 
 //==========================================================================
@@ -225,9 +162,9 @@ void VObject::UnhashObject(void)
 
 bool VObject::ConditionalDestroy(void)
 {
-	if (!(ObjectFlags & OF_Destroyed))
+	if (!(ObjectFlags & _OF_Destroyed))
 	{
-		SetFlags(OF_Destroyed);
+		SetFlags(_OF_Destroyed);
 		Destroy();
 	}
 	return true;
@@ -273,24 +210,6 @@ bool VObject::IsA(VClass *SomeBaseClass) const
 
 //==========================================================================
 //
-//	VObject::IsIn
-//
-//==========================================================================
-
-bool VObject::IsIn(VObject *SomeOuter) const
-{
-	for (const VObject *o = Outer; o; o = o->GetOuter())
-	{
-		if (SomeOuter == o)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-//==========================================================================
-//
 //	VObject::GetVFunction
 //
 //==========================================================================
@@ -318,7 +237,7 @@ void VObject::CollectGarbage(void)
 			continue;
 		}
 		VObject *Obj = GObjObjects[i];
-		if (Obj->GetFlags() & OF_Destroyed)
+		if (Obj->GetFlags() & _OF_Destroyed)
 		{
 			delete Obj;
 		}
@@ -397,15 +316,18 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 	VObject *ptr;
 
 	ptr = (VObject *)PR_Pop();
-	PR_Push(ptr->GetFlags() & OF_Destroyed);
+	PR_Push(ptr->GetFlags() & _OF_Destroyed);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.14  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.13  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

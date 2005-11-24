@@ -1163,11 +1163,9 @@ PF(MSG_ReadLong)
 PF(SpawnObject)
 {
 	VClass *Class;
-	VObject *Outer;
 
-	Outer = (VObject *)Pop();
 	Class = (VClass *)Pop();
-	Push((int)VObject::StaticSpawnObject(Class, Outer, PU_STRING));
+	Push((int)VObject::StaticSpawnObject(Class, PU_STRING));
 }
 
 //==========================================================================
@@ -1551,7 +1549,7 @@ PF(NewSpecialThinker)
 	VThinker	*spec;
 
 	Class = (VClass *)Pop();
-	spec = (VThinker*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
+	spec = (VThinker*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
 	Push((int)spec);
 }
 
@@ -3369,9 +3367,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.62  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.61  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.60  2005/11/08 20:57:15  dj_jl
 //	Removed playing sound till done.
 //	

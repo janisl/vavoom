@@ -37,6 +37,14 @@ struct FPropertyInfo
 	int			Offset;
 };
 
+//
+// Flags describing an class instance.
+//
+enum EClassObjectFlags
+{
+	CLASSOF_Native			= 0x00000001,   // Native
+};
+
 //==========================================================================
 //
 //	VClass
@@ -71,7 +79,7 @@ public:
 	// Constructors.
 	VClass(FName AName, int ASize);
 	VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
-		VClass *AParent, EName AName, int AFlags, void(*ACtor)(void*));
+		VClass *AParent, EName AName, void(*ACtor)(void*));
 	void* operator new(size_t Size, int Tag)
 		{ return Z_Calloc(Size, Tag, 0); }
 
@@ -131,9 +139,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.9  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.8  2003/03/08 12:08:05  dj_jl
 //	Beautification.
 //	

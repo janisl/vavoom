@@ -574,7 +574,7 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 	bool Delayed)
 {
 	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass(),
-		NULL, PU_LEVSPEC);
+		PU_LEVSPEC);
 	script->info = Info;
 	script->number = Info->number;
 	script->ip = Info->address;
@@ -2106,7 +2106,7 @@ int VACS::RunScript(float DeltaTime)
 	action = SCRIPT_CONTINUE;
 	do
 	{
-#define PC_GET_INT	(*PCodePtr++)
+#define PC_GET_INT	LittleLong(*PCodePtr++)
 #define NEXTBYTE	(fmt == ACS_LittleEnhanced ? getbyte(PCodePtr) : PC_GET_INT)
 
 		if (fmt == ACS_LittleEnhanced)
@@ -2446,13 +2446,13 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_Goto:
-			PCodePtr = activeObject->OffsetToPtr(*PCodePtr);
+			PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
 			break;
 
 		case PCD_IfGoto:
 			if (stack[--stackPtr])
 			{
-				PCodePtr = activeObject->OffsetToPtr(*PCodePtr);
+				PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
 			}
 			else
 			{
@@ -2666,7 +2666,7 @@ int VACS::RunScript(float DeltaTime)
 			}
 			else
 			{
-				PCodePtr = activeObject->OffsetToPtr(*PCodePtr);
+				PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
 			}
 			stackPtr--;
 			break;
@@ -2698,7 +2698,7 @@ int VACS::RunScript(float DeltaTime)
 		case PCD_CaseGoto:
 			if (stack[stackPtr - 1] == PC_GET_INT)
 			{
-				PCodePtr = activeObject->OffsetToPtr(*PCodePtr);
+				PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
 				stackPtr--;
 			}
 			else
@@ -4134,10 +4134,10 @@ int VACS::RunScript(float DeltaTime)
 				while (min <= max)
 				{
 					int mid = (min + max) / 2;
-					int caseval = PCodePtr[mid * 2];
+					int caseval = LittleLong(PCodePtr[mid * 2]);
 					if (caseval == stack[stackPtr - 1])
 					{
-						PCodePtr = activeObject->OffsetToPtr(PCodePtr[mid * 2 + 1]);
+						PCodePtr = activeObject->OffsetToPtr(LittleLong(PCodePtr[mid * 2 + 1]));
 						stackPtr--;
 						break;
 					}
@@ -4646,9 +4646,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.34  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.33  2005/03/28 07:29:24  dj_jl
 //	Temporary fix for save/load of local vars.
 //	

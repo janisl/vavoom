@@ -71,7 +71,6 @@ public: \
 		Pre##TClass::StaticClassFlags, \
 		Pre##TClass::Super::StaticClass(), \
 		NAME_##TClass, \
-		OF_Native, \
 		(void(*)(void*))Pre##TClass::InternalConstructor \
 	); \
 	VClass* autoclass##Pre##TClass = Pre##TClass::StaticClass();
@@ -99,12 +98,7 @@ enum EInternal				{EC_Internal};
 enum EClassFlags
 {
 	// Base flags.
-	CLASS_Abstract          = 0x00001,  // Class is abstract and can't be instantiated directly.
-	CLASS_Transient			= 0x00008,	// This object type can't be saved; null it out at save time.
-
-	// Flags to inherit from base class.
-	CLASS_Inherit           = CLASS_Transient,
-	CLASS_RecompilerClear   = CLASS_Inherit | CLASS_Abstract,
+	CLASS_Abstract		= 0x00001,  // Class is abstract and can't be instantiated directly.
 };
 
 //
@@ -112,8 +106,7 @@ enum EClassFlags
 //
 enum EObjectFlags
 {
-	OF_Native			= 0x00000001,   // Native (VClass only).
-	OF_Destroyed        = 0x00000002,	// Object Destroy has already been called.
+	_OF_Destroyed		= 0x00000001,	// Object Destroy has already been called.
 };
 
 // TYPES -------------------------------------------------------------------
@@ -151,10 +144,7 @@ private:
 	// Internal per-object variables.
 	FFunction**				vtable;
 	int						Index;				// Index of object into table.
-	VObject*				HashNext;			// Next object in this hash bin.
-	VObject*				Outer;				// Object this object resides in.
 	dword					ObjectFlags;		// Private EObjectFlags used by object manager.
-	FName					Name;				// Name of the object.
 	VClass*					Class;	  			// Class the object belongs to.
 
 	// Private systemwide variables.
@@ -162,10 +152,6 @@ private:
 	static TArray<VObject*>	GObjObjects;		// List of all objects.
 	static TArray<int>		GObjAvailable;		// Available object indices.
 	static VObject*			GObjHash[4096];		// Object hash.
-
-	// Private functions.
-	void HashObject(void);
-	void UnhashObject(void);
 
 public:
 	// Constructors.
@@ -184,24 +170,23 @@ public:
 	virtual void Serialise(FArchive &Ar);
 
 	// Systemwide functions.
-	static void StaticInit(void);
-	static void StaticExit(void);
-	static VObject *StaticSpawnObject(VClass *, VObject *, int);
-	static void CollectGarbage(void);
+	static void StaticInit();
+	static void StaticExit();
+	static VObject *StaticSpawnObject(VClass*, int);
+	static void CollectGarbage();
 	static VObject *GetIndexObject(int Index);
-	static int GetObjectsCount(void);
+	static int GetObjectsCount();
 
 	// Functions.
 	bool ConditionalDestroy();
 	bool IsA(VClass *SomeBaseClass) const;
-	bool IsIn(VObject *SomeOuter) const;
 
 	// Accessors.
-	VClass* GetClass(void) const
+	VClass* GetClass() const
 	{
 		return Class;
 	}
-	dword GetFlags(void) const
+	dword GetFlags() const
 	{
 		return ObjectFlags;
 	}
@@ -213,19 +198,7 @@ public:
 	{
 		ObjectFlags &= ~NewFlags;
 	}
-	const char *GetName(void) const
-	{
-		return *Name;
-	}
-	const FName GetFName(void) const
-	{
-		return Name;
-	}
-	VObject *GetOuter(void) const
-	{
-		return Outer;
-	}
-	dword GetIndex(void) const
+	dword GetIndex() const
 	{
 		return Index;
 	}
@@ -313,9 +286,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.13  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.12  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

@@ -71,7 +71,7 @@ void VWindow::Init(VWindow *InParent)
 {
 	guard(VWindow::Init);
 	Parent = InParent;
-	WinGC = (VGC *)StaticSpawnObject(VGC::StaticClass(), NULL, PU_STRING);
+	WinGC = (VGC*)StaticSpawnObject(VGC::StaticClass(), PU_STRING);
 	if (Parent)
 	{
 		Parent->AddChild(this);
@@ -615,7 +615,7 @@ VWindow *VWindow::CreateNewWindow(VClass *NewClass, VWindow *ParentWindow)
 	guard(VWindow::CreateNewWindow);
 	VWindow *win;
 
-	win = (VWindow *)StaticSpawnObject(NewClass, NULL, PU_STRING);
+	win = (VWindow *)StaticSpawnObject(NewClass, PU_STRING);
 	win->Init(ParentWindow);
 	return win;
 	unguardf(("(%s)", NewClass->GetName()));
@@ -794,9 +794,12 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.6  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
-//
+//	
 //	Revision 1.5  2003/03/08 12:10:13  dj_jl
 //	API fixes.
 //	

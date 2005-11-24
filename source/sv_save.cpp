@@ -442,7 +442,7 @@ VObject *ReadVObject(int tag)
 	}
 
 	//  Allocate object and copy data
-	VObject *o = VObject::StaticSpawnObject(Class, NULL, tag);
+	VObject *o = VObject::StaticSpawnObject(Class, tag);
 	Loader->Serialise((byte*)o + sizeof(VObject), Class->ClassSize - sizeof(VObject));
 	return o;
 	unguard;
@@ -674,7 +674,7 @@ static void UnarchiveWorld(void)
 void MangleVObject(VObject *Obj, VClass *InClass)
 {
 	guard(MangleVObject);
-	if (InClass->GetFlags() & OF_Native)
+	if (InClass->GetFlags() & CLASSOF_Native)
 	{
 		return;
 	}
@@ -725,7 +725,7 @@ void MangleVObject(VObject *Obj, VClass *InClass)
 void UnMangleVObject(VObject *Obj, VClass *InClass)
 {
 	guard(UnMangleVObject);
-	if (InClass->GetFlags() & OF_Native)
+	if (InClass->GetFlags() & CLASSOF_Native)
 	{
 		return;
 	}
@@ -1447,9 +1447,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.42  2005/11/20 15:50:40  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.41  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	

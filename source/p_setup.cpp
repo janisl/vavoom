@@ -148,7 +148,7 @@ void SV_LoadLevel(const char *MapName)
 		GLevel = NULL;
 	}
 
-	GLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass(), NULL, PU_STATIC);
+	GLevel = (VLevel*)VObject::StaticSpawnObject(VLevel::StaticClass(), PU_STATIC);
 	GLevel->bForServer = true;
 	svpr.SetGlobal("GLevel", (int)GLevel);
 
@@ -174,7 +174,7 @@ void CL_LoadLevel(const char *MapName)
 		GClLevel = NULL;
 	}
 
-	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass(), NULL, PU_STATIC);
+	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass(), PU_STATIC);
 	clpr.SetGlobal("GLevel", (int)GClLevel);
 
 	GClLevel->LoadMap(MapName);
@@ -337,6 +337,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2005/11/24 20:09:23  dj_jl
+//  Removed unused fields from Object class.
+//
 //  Revision 1.26  2005/03/28 07:28:19  dj_jl
 //  Transfer lighting and other BOOM stuff.
 //

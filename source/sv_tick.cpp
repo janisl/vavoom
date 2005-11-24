@@ -112,7 +112,7 @@ static void RunThinkers(void)
 	guard(RunThinkers);
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		if (!(It->GetFlags() & OF_Destroyed))
+		if (!(It->GetFlags() & _OF_Destroyed))
 		{
 			It->Tick(host_frametime);
 		}
@@ -151,9 +151,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.19  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.18  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

@@ -170,7 +170,7 @@ void SV_Init(void)
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
-			PlayerClass, NULL, PU_STATIC);
+			PlayerClass, PU_STATIC);
 	}
 
 	svpr.SetGlobal("svvars", (int)&svvars);
@@ -241,7 +241,7 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	VEntity *Ent;
 	int i;
 
-	Ent = (VEntity*)VObject::StaticSpawnObject(Class, NULL, PU_LEVSPEC);
+	Ent = (VEntity*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
 
 	//	Client treats first objects as player objects and will use
 	// models and skins from player info
@@ -3005,9 +3005,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.72  2005/11/24 20:09:23  dj_jl
+//	Removed unused fields from Object class.
+//
 //	Revision 1.71  2005/11/19 13:45:13  dj_jl
 //	Renamed sounds.
-//
+//	
 //	Revision 1.70  2005/11/10 12:51:45  dj_jl
 //	Fixed spelling mistake.
 //	
