@@ -991,7 +991,8 @@ void IM_UpdateCooperativeStats(void)
 
 			cnt_frags[i] += 1;
 
-			if (cnt_frags[i] >= (fsum = FragSum(i)))
+			fsum = FragSum(i);
+			if (cnt_frags[i] >= fsum)
 				cnt_frags[i] = fsum;
 			else
 				stillticking = true;
@@ -1727,6 +1728,9 @@ void IM_Start(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2005/11/24 20:36:19  dj_jl
+//  Beautification.
+//
 //  Revision 1.11  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

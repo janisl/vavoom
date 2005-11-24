@@ -305,8 +305,8 @@ bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	sector_t *sec;
 	line_t *secline;
 
-	secnum = -1;
-	while ((secnum = FindSectorFromTag(Arg1, secnum)) >= 0)
+	for (secnum = FindSectorFromTag(Arg1, -1); secnum >= 0;
+		secnum = FindSectorFromTag(Arg1, secnum))
 	{
 		sec = &GLevel.Sectors[secnum];
 		for (i = 0; i < sec->linecount; i++)
@@ -1357,6 +1357,9 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2005/11/24 20:30:25  dj_jl
+//  Beautification.
+//
 //  Revision 1.30  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

@@ -278,10 +278,10 @@ int EV_DoDonut(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	int i;
 	FloorMover Floor;
 
-	secnum = -1;
 	rtn = 0;
 	// do function on all sectors with same tag as linedef
-	while ((secnum = FindSectorFromTag(Arg1, secnum)) >= 0)
+	for (secnum = FindSectorFromTag(Arg1, -1); secnum >= 0;
+		secnum = FindSectorFromTag(Arg1, secnum))
 	{
 		s1 = &GLevel.Sectors[secnum];	// s1 is pillar's sector
 
@@ -585,6 +585,9 @@ int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2005/11/24 20:31:36  dj_jl
+//  Beautification.
+//
 //  Revision 1.21  2005/03/28 07:44:09  dj_jl
 //  Some Boom line specials and other improvements.
 //

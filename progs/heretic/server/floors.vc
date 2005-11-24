@@ -276,9 +276,9 @@ int EV_DoDonut(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	FloorMover Floor;
 	line_t *secline;
 
-	secnum = -1;
 	rtn = 0;
-	while ((secnum = FindSectorFromTag(Arg1, secnum)) >= 0)
+	for (secnum = FindSectorFromTag(Arg1, -1); secnum >= 0;
+		secnum = FindSectorFromTag(Arg1, secnum))
 	{
 		s1 = &GLevel.Sectors[secnum];
 
@@ -585,6 +585,9 @@ int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2005/11/24 20:30:57  dj_jl
+//  Beautification.
+//
 //  Revision 1.19  2005/03/28 07:43:30  dj_jl
 //  Some Boom line specials and other improvements.
 //
