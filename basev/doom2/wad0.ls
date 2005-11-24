@@ -1,5 +1,7 @@
+$label pr_start
 progs/clprogs.dat
 progs/svprogs.dat
+$label pr_end
 
 scripts/mapinfo.txt
 scripts/fin1text.txt

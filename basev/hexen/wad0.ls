@@ -1,5 +1,7 @@
+$label pr_start
 progs/clprogs.dat
 progs/svprogs.dat
+$label pr_end
 
 scripts/animdefs.txt
 scripts/terrains.txt

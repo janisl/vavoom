@@ -1,9 +1,11 @@
+$label pr_start
 progs/clprogs.dat
 progs/svprogs.dat
+$label pr_end
 
-$label A_START
+$label a_start
 strfhelp.o
-$label A_END
+$label a_end
 
 scripts/mapinfo.txt
 scripts/skyboxes.txt
