@@ -29,11 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-enum
-{
-	OF_Native = 1
-};
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -47,13 +42,12 @@ enum
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // Static subsystem variables.
-TArray<FNameEntry*>	FName::Names;			 // Table of all names.
-TArray<int>			FName::Available;       // Indices of available names.
+TArray<FNameEntry*>	FName::Names;			// Table of all names.
 FNameEntry*			FName::NameHash[4096];  // Hashed names.
-bool				FName::Initialized;	 // Subsystem initialized.
+bool				FName::Initialised;	 	// Subsystem initialised.
 
-#define REGISTER_NAME(name)		{ NAME_##name, OF_Native, NULL, #name },
-FNameEntry AutoNames[] =
+#define REGISTER_NAME(name)		{ NAME_##name, NULL, #name },
+static FNameEntry AutoNames[] =
 {
 #include "names.h"
 };
@@ -85,13 +79,12 @@ inline dword GetTypeHash(const char *S)
 //==========================================================================
 
 FNameEntry* AllocateNameEntry(const char* Name, dword Index, 
-							  dword Flags, FNameEntry* HashNext)
+							  FNameEntry* HashNext)
 {
 	FNameEntry *E = new FNameEntry;
 	memset(E, 0, sizeof(*E));
 	strcpy(E->Name, Name);
 	E->Index = Index;
-	E->Flags = Flags;
 	E->HashNext = HashNext;
 	return E;
 }
@@ -104,11 +97,11 @@ FNameEntry* AllocateNameEntry(const char* Name, dword Index,
 
 FName::FName(const char* Name, EFindName FindType)
 {
+	Index = NAME_None;
 	if (!Name || !*Name)
 	{
-		Name = "None";
+		return;
 	}
-	Index = 0;
 	int HashIndex = GetTypeHash(Name) & 4095;
 	FNameEntry *TempHash = NameHash[HashIndex];
 	while (TempHash)
@@ -120,21 +113,11 @@ FName::FName(const char* Name, EFindName FindType)
 		}
 		TempHash = TempHash->HashNext;
 	}
-	if (!TempHash)
+	if (!TempHash && FindType == FNAME_Add)
 	{
-		if (FindType == FNAME_Add)
-		{
-			if (Available.Num())
-			{
-				Index = Available.Pop();
-			}
-			else
-			{
-				Index = Names.Add();
-			}
-			Names[Index] = AllocateNameEntry(Name, Index, 0, NameHash[HashIndex]);
-			NameHash[HashIndex] = Names[Index];
-		}
+		Index = Names.Add();
+		Names[Index] = AllocateNameEntry(Name, Index, NameHash[HashIndex]);
+		NameHash[HashIndex] = Names[Index];
 	}
 }
 
@@ -146,23 +129,17 @@ FName::FName(const char* Name, EFindName FindType)
 
 void FName::StaticInit()
 {
-	int i;
-
 	// Register hardcoded names
-	for (i = 0; i < ARRAY_COUNT(AutoNames); i++)
+	for (int i = 0; i < ARRAY_COUNT(AutoNames); i++)
 	{
-		Hardcode(&AutoNames[i]);
+		Names.Insert(AutoNames[i].Index);
+		Names[AutoNames[i].Index] = &AutoNames[i];
+		int HashIndex = GetTypeHash(AutoNames[i].Name) & 4095;
+		AutoNames[i].HashNext = NameHash[HashIndex];
+		NameHash[HashIndex] = &AutoNames[i];
 	}
-	// Find free indices
-	for (i = 0; i < Names.Num(); i++)
-	{
-		if (!Names[i])
-		{
-			Available.AddItem(i);
-		}
-	}
-	// We are now initialized
-	Initialized = true;
+	// We are now initialised
+	Initialised = true;
 }
 
 //==========================================================================
@@ -173,62 +150,24 @@ void FName::StaticInit()
 
 void FName::StaticExit()
 {
-	int i;
-
 	//FIXME do we really need this?
-	for (i = 0; i < Names.Num(); i++)
-	{
-		if (Names[i] && !(Names[i]->Flags & OF_Native))
-		{
-			delete Names[i];
-		}
-	}
-	Names.Empty();
-	Available.Empty();
-	Initialized = false;
-}
-
-//==========================================================================
-//
-//	FName::Hardcode
-//
-//==========================================================================
-
-void FName::Hardcode(FNameEntry* AutoName)
-{
-	if (Names.Num() < AutoName->Index)
-	{
-		Names.AddZeroed(AutoName->Index - Names.Num());
-	}
-	Names.Insert(AutoName->Index);
-	Names[AutoName->Index] = AutoName;
-	int HashIndex = GetTypeHash(AutoName->Name) & 4095;
-	AutoName->HashNext = NameHash[HashIndex];
-	NameHash[HashIndex] = AutoName;
-}
-
-//==========================================================================
-//
-//	FName::DeleteEntry
-//
-//==========================================================================
-
-void FName::DeleteEntry(int i)
-{
-	if (Names[i] && !(Names[i]->Flags & OF_Native))
+	for (int i = NUM_HARDCODED_NAMES; i < Names.Num(); i++)
 	{
 		delete Names[i];
-		Names[i] = NULL;
-		Available.AddItem(i);
 	}
+	Names.Empty();
+	Initialised = false;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2005/11/24 20:41:07  dj_jl
+//	Cleaned up a bit.
+//
 //	Revision 1.2  2002/01/25 18:05:58  dj_jl
 //	Better string hash function
-//
+//	
 //	Revision 1.1  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

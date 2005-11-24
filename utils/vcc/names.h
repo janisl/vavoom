@@ -44,6 +44,7 @@ REGISTER_NAME(None)
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM
+		NUM_HARDCODED_NAMES
 	};
 	#undef REGISTER_NAME
 	#undef REGISTERING_ENUM
@@ -52,9 +53,12 @@ REGISTER_NAME(None)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2005/11/24 20:41:07  dj_jl
+//	Cleaned up a bit.
+//
 //	Revision 1.2  2002/01/25 18:05:58  dj_jl
 //	Better string hash function
-//
+//	
 //	Revision 1.1  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	
