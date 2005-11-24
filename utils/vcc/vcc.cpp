@@ -187,53 +187,53 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 			option = *text++;
 			switch (option)
 			{
-				case 'c':
-					if (*text == 'a' && !text[1])
-					{
-						ClassAddfields = true;
-					}
-					break;
-				case 'd':
-					DebugMode = true;
-					if (*text)
-					{
-						OpenDebugFile(text);
-					}
-					break;
-				case 'a':
-					if (!*text)
-					{
-						DisplayUsage();
-					}
-					dump_asm_names[num_dump_asm++] = text;
-					break;
-				case 'I':
-					cpp_add_include(text);
-					break;
-				case 'D':
-				case 'U':
-					cpp_add_define(option, text);
-					break;
-				default:
+			case 'c':
+				if (*text == 'a' && !text[1])
+				{
+					ClassAddfields = true;
+				}
+				break;
+			case 'd':
+				DebugMode = true;
+				if (*text)
+				{
+					OpenDebugFile(text);
+				}
+				break;
+			case 'a':
+				if (!*text)
+				{
 					DisplayUsage();
-					break;
+				}
+				dump_asm_names[num_dump_asm++] = text;
+				break;
+			case 'I':
+				cpp_add_include(text);
+				break;
+			case 'D':
+			case 'U':
+				cpp_add_define(option, text);
+				break;
+			default:
+				DisplayUsage();
+				break;
 			}
 			continue;
 		}
 		count++;
 		switch(count)
 		{
-			case 1:
-				strcpy(SourceFileName, text);
-				DefaultExtension(SourceFileName, ".vc");
-				break;
-			case 2:
-				strcpy(ObjectFileName, text);
-				DefaultExtension(ObjectFileName, ".dat");
-				break;
-			default:
-				DisplayUsage();
-				break;
+		case 1:
+			strcpy(SourceFileName, text);
+			DefaultExtension(SourceFileName, ".vc");
+			break;
+		case 2:
+			strcpy(ObjectFileName, text);
+			DefaultExtension(ObjectFileName, ".dat");
+			break;
+		default:
+			DisplayUsage();
+			break;
 		}
 	}
 	if (count == 0)
@@ -245,6 +245,15 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 		strcpy(ObjectFileName, SourceFileName);
 		StripExtension(ObjectFileName);
 		DefaultExtension(ObjectFileName, ".dat");
+	}
+	if (!DebugFile)
+	{
+		char DbgFileName[MAX_FILE_NAME_LENGTH];
+		strcpy(DbgFileName, ObjectFileName);
+		StripExtension(DbgFileName);
+		DefaultExtension(DbgFileName, ".txt");
+		OpenDebugFile(DbgFileName);
+		DebugMode = true;
 	}
 	FixFileSlashes(SourceFileName);
 	FixFileSlashes(ObjectFileName);
@@ -309,9 +318,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.15  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.14  2002/11/02 17:11:13  dj_jl
 //	New style classes.
 //	

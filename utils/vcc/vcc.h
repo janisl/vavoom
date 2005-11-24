@@ -56,8 +56,6 @@ using namespace VavoomUtils;
 #define PF_VARARGS				0x8000
 #define PF_COUNT_MASK			0x7fff
 
-#define REF_CPP		// C++ style references
-
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -85,7 +83,7 @@ enum
 enum ECompileError
 {
 	ERR_NONE,
-	//  Atmi∑as kı›das
+	//  Memory errors
 	ERR_TOO_MANY_STRINGS,
 	ERR_BREAK_OVERFLOW,
 	ERR_CONTINUE_OVERFLOW,
@@ -93,10 +91,10 @@ enum ECompileError
 	ERR_PARAMS_OVERFLOW,
     ERR_LOCALS_OVERFLOW,
 	ERR_STATEMENTS_OVERFLOW,
-	//  Failu kı›das
+	//  File errors
     ERR_CANT_OPEN_FILE,
 	ERR_CANT_OPEN_DBGFILE,
-	//  Sadalÿ˝anas kı›das
+	//  Tokeniser erros
 	ERR_INCL_NESTING_TOO_DEEP,
 	ERR_BAD_RADIX_CONSTANT,
 	ERR_STRING_TOO_LONG,
@@ -107,7 +105,7 @@ enum ECompileError
 	ERR_BAD_CHARACTER,
 	ERR_UNTERM_COMMENT,
 	ERR_TOO_MENY_CONSTANTS,
-	//  Sintakses kı›das
+	//  Syntax errors
 	ERR_BAD_CONST_EXPR,
 	ERR_BAD_EXPR,
 	ERR_MISSING_LPAREN,
@@ -154,14 +152,14 @@ enum ECompileError
 enum ETokenType
 {
 	TK_NONE,
-	TK_EOF,				//	Sasniegtas faila biegas
-	TK_IDENTIFIER, 		//	Identifik∆tors, vÒrtÿba: tk_String
-	TK_PUNCT, 			//	speci∆lais simbols, vÒrtÿba: tk_String
-	TK_NAME,
-	TK_KEYWORD,			//	atslÒgv∆rds, vÒrtÿba: tk_String
-	TK_STRING,			//	simbolu virkne, vÒrtÿba: tk_String
-	TK_INTEGER,			//	vesels skaitlis, vÒrtÿba: tk_Number
-	TK_FLOAT,			//	peldo˝∆ komata skaitlis, vÒrtÿba: tk_Float
+	TK_EOF,				//	Reached end of file
+	TK_IDENTIFIER, 		//	Identifier, value: tk_String
+	TK_PUNCT, 			//	Special symbol, value: tk_String
+	TK_NAME,			//	Name constant, value: tk_Name
+	TK_KEYWORD,			//	Keyword, value: tk_String
+	TK_STRING,			//	String, value: tk_String
+	TK_INTEGER,			//	Integer number, value: tk_Number
+	TK_FLOAT,			//	Floating number, value: tk_Float
 };
 
 enum EKeyword
@@ -251,133 +249,18 @@ enum EPunctuation
 	PU_RBRACE,
 };
 
-// Define private default constructor.
-#define NO_DEFAULT_CONSTRUCTOR(cls) \
-	protected: cls() {} public:
-
-// Declare the base VObject class.
-#define DECLARE_BASE_CLASS(TClass, TSuperClass) \
-public: \
-	/* Identification */ \
-	typedef TSuperClass Super;\
-	typedef TClass ThisClass;
-
 //
 // The base class of all objects.
 //
 class FField
 {
-	// Friends.
-//	friend template<class T> class TFieldIterator;
-
-private:
-	// Internal per-object variables.
-//	int						Index;				// Index of object into table.
-//	FField*					Outer;				// Object this object resides in.
-//	FName					Name;				// Name of the object.
-
-	// Private systemwide variables.
-//	static bool				GObjInitialized;
-//	static TArray<VObject*>	GObjObjects;		// List of all objects.
-//	static TArray<int>		GObjAvailable;		// Available object indices.
-
 public:
 	FName		Name;
-/*	// Constructors.
-	VObject();
-
-	// Destructors.
-	virtual ~VObject();
-
-	// VObject interface.
-	virtual void Register(void);
-	virtual void Destroy(void);
-	virtual void Serialize(FArchive &Ar);
-
-	// Systemwide functions.
-	static void StaticInit(void);
-	static void StaticExit(void);
-	static VObject *StaticSpawnObject(VClass *, VObject *, int);
-	static void CollectGarbage(void);
-	static VObject *GetIndexObject(int Index);
-	static int GetObjectsCount(void);
-
-	// Functions.
-	bool IsA(VClass *SomeBaseClass) const;
-	bool IsIn(VObject *SomeOuter) const;
-
-	// Accessors.
-	VClass* GetClass(void) const
-	{
-		return Class;
-	}
-	dword GetFlags(void) const
-	{
-		return ObjectFlags;
-	}
-	void SetFlags(dword NewFlags)
-	{
-		ObjectFlags |= NewFlags;
-	}
-	void ClearFlags(dword NewFlags)
-	{
-		ObjectFlags &= ~NewFlags;
-	}
-	const char *GetName(void) const
-	{
-		return *Name;
-	}
-	const FName GetFName(void) const
-	{
-		return Name;
-	}
-	VObject *GetOuter(void) const
-	{
-		return Outer;
-	}
-	dword GetIndex(void) const
-	{
-		return Index;
-	}*/
 };
-
-/*//
-// Class for iterating through all objects which inherit from a
-// specified base class.
-//
-template<class T> class TFieldIterator
-{
-public:
-	TFieldIterator()
-	:	Index(-1)
-	{
-		++*this;
-	}
-	void operator++()
-	{
-		while (++Index < FField::GFields.Num() &&
-			(!FField::GFields[Index] ||
-				!dynamic_cast<t>(FField::GFields[Index])));
-	}
-	T* operator*()
-	{
-		return (T*)FField::GFields[Index];
-	}
-	T* operator->()
-	{
-		return (T*)FField::GFields[Index];
-	}
-	operator bool()
-	{
-		return Index < FField::GFields.Num();
-	}
-protected:
-	int Index;
-};*/
 
 class TType;
 
-struct field_t:public FField
+struct field_t : public FField
 {
 	int			ofs;
 	TType		*type;
@@ -385,7 +268,7 @@ struct field_t:public FField
 	FName		TypeName;
 };
 
-class TType:public FField
+class TType : public FField
 {
 public:
 	TType(void) {}
@@ -397,6 +280,7 @@ public:
 	TType		*next;
 	TType		*aux_type;
 	int			size;
+	int			bit_mask;
 
 	//	Structure fields
 	int			numfields;
@@ -411,37 +295,35 @@ public:
 	int			vtable;
 	int			num_properties;
 	int			ofs_properties;
-
-	//	Function params
-	int			num_params;
-	int			params_size;
-	TType		*param_types[MAX_PARAMS];
 };
 
-class TFunction:public FField
+class TFunction : public FField
 {
 public:
-	TType		*OuterClass;
-	int			first_statement;	//	Negatÿvi skaitıi ir ieb›vÒt∆s funkcijas
+	TType*		OuterClass;
+	int			first_statement;	//	Negative numbers are builtin functions
 	int			num_locals;
 	int			flags;
-	TType		*type;
+	TType*		ReturnType;
+	int			NumParams;
+	int			ParamsSize;
+	TType*		ParamTypes[MAX_PARAMS];
 };
 
-class TGlobalDef:public FField
+class TGlobalDef : public FField
 {
 public:
 	int			ofs;
 	TType		*type;
 };
 
-struct localvardef_t:public FField
+struct localvardef_t : public FField
 {
 	int			ofs;
 	TType		*type;
 };
 
-struct constant_t:public FField
+struct constant_t : public FField
 {
 	int			value;
 	constant_t	*HashNext;
@@ -607,7 +489,6 @@ extern TType			type_int;
 extern TType			type_float;
 extern TType			type_name;
 extern TType			type_string;
-extern TType			type_function;
 extern TType			type_state;
 extern TType			type_mobjinfo;
 extern TType			type_void_ptr;
@@ -689,9 +570,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.28  2004/12/22 07:31:57  dj_jl
 //	Increased argument count limit.
-//
+//	
 //	Revision 1.27  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	

@@ -705,9 +705,6 @@ void ParseLocalVar(void)
 	do
 	{
 		while (TK_Check(PU_ASTERISK));
-#ifdef REF_CPP
-		while (TK_Check(PU_AND));
-#endif
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ParseError(ERR_INVALID_IDENTIFIER, "variable name expected");
@@ -829,19 +826,15 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		*dst = EvalConstExpression(type->type);
 		if (type->type == ev_string)
 		{
-			globalinfo[dst - globals] = 1;
-		}
-		else if (type->type == ev_function)
-		{
-			globalinfo[dst - globals] = 2;
+			globalinfo[dst - globals] = GLOBALTYPE_String;
 		}
 		else if (type->type == ev_classid)
 		{
-			globalinfo[dst - globals] = 3;
+			globalinfo[dst - globals] = GLOBALTYPE_Class;
 		}
 		else if (type->type == ev_name)
 		{
-			globalinfo[dst - globals] = 4;
+			globalinfo[dst - globals] = GLOBALTYPE_Name;
 		}
 	}
 	return type;
@@ -895,12 +888,6 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		t = MakePointerType(t);
 	}
-#ifdef REF_CPP
-	while (TK_Check(PU_AND))
-	{
-		t = MakeReferenceType(t);
-	}
-#endif
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
@@ -926,12 +913,6 @@ static void ParseDef(TType *type, bool IsNative)
 				{
 					t = MakePointerType(t);
 				}
-#ifdef REF_CPP
-				if (TK_Check(PU_AND))
-				{
-					t = MakeReferenceType(t);
-				}
-#endif
 				if (tk_Token != TK_IDENTIFIER)
 				{
 					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
@@ -980,12 +961,6 @@ static void ParseDef(TType *type, bool IsNative)
 		t = MakeReferenceType(t);
 	}
 
-	TType functype;
-	memset(&functype, 0, sizeof(TType));
-	functype.type = ev_function;
-	functype.size = 4;
-	functype.aux_type = t;
-
 	if (CheckForGlobalVar(Name))
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
@@ -994,12 +969,23 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
+	if (CheckForFunction(NULL, Name))
+	{
+		ERR_Exit(ERR_FUNCTION_REDECLARED, true, "Function: %s", *Name);
+	}
+
+	num = numfunctions;
+	numfunctions++;
+	functions[num].Name = Name;
+	functions[num].OuterClass = NULL;
+	functions[num].first_statement = 0;
+	functions[num].ReturnType = t;
 
 	do
 	{
 		if (TK_Check(PU_VARARGS))
 		{
-			functype.num_params |= PF_VARARGS;
+			functions[num].NumParams |= PF_VARARGS;
 			break;
 		}
 
@@ -1017,23 +1003,17 @@ static void ParseDef(TType *type, bool IsNative)
 		{
 		   	type = MakePointerType(type);
 		}
-#ifdef REF_CPP
-		while (TK_Check(PU_AND))
-		{
-		   	type = MakeReferenceType(type);
-		}
-#endif
 		if (type->type == ev_class)
 		{
 			type = MakeReferenceType(type);
 		}
-		if (numlocaldefs == 1 && type == &type_void)
+		if (functions[num].NumParams == 0 && type == &type_void)
 		{
 			break;
 		}
 		TypeCheckPassable(type);
 
-		if (numlocaldefs - 1 == MAX_PARAMS)
+		if (functions[num].NumParams == MAX_PARAMS)
 		{
 			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 		}
@@ -1042,35 +1022,13 @@ static void ParseDef(TType *type, bool IsNative)
 			numlocaldefs++;
 			TK_NextToken();
 		}
-		functype.param_types[functype.num_params] = type;
-		functype.num_params++;
+		functions[num].ParamTypes[functions[num].NumParams] = type;
+		functions[num].NumParams++;
 		localsofs += TypeSize(type) / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	functype.params_size = localsofs;
+	functions[num].ParamsSize = localsofs;
 
-	num = CheckForFunction(NULL, Name);
-	if (num)
-	{
-		if (IsNative && functions[num].first_statement > 0)
-		{
-	   		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-	   				 "Declared function defined as native.");
-		}
-		if (functions[num].type != FindType(&functype))
-		{
-	   		ERR_Exit(ERR_TYPE_MISTMATCH, true, NULL);
-		}
-	}
-	else
-	{
-		num = numfunctions;
-		functions[num].Name = Name;
-		functions[num].OuterClass = NULL;
-		functions[num].first_statement = 0;
-		functions[num].type = FindType(&functype);
-		numfunctions++;
-	}
 	if (IsNative)
 	{
 		functions[num].first_statement = -numbuiltins;
@@ -1106,17 +1064,32 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	numlocaldefs = 1;
 	int localsofs = 1;
 
-	TType functype;
-	memset(&functype, 0, sizeof(TType));
-	functype.type = ev_function;
-	functype.size = 4;
-	functype.aux_type = t;
+	if (CheckForFunction(class_type, method->Name))
+	{
+		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
+			"Function: %s::%s", *class_type->Name, *method->Name);
+	}
+
+	int num = numfunctions;
+	numfunctions++;
+	method->func_num = num;
+	TFunction& Func = functions[num];
+	Func.Name = method->Name;
+	Func.OuterClass = class_type;
+	Func.flags = FuncFlags;
+	Func.ReturnType = t;
+
+	TType methodtype;
+	memset(&methodtype, 0, sizeof(TType));
+	methodtype.type = ev_method;
+	methodtype.size = 4;
+	methodtype.aux_type = t;
 
 	do
 	{
 		if (TK_Check(PU_VARARGS))
 		{
-			functype.num_params |= PF_VARARGS;
+			Func.NumParams |= PF_VARARGS;
 			break;
 		}
 
@@ -1124,7 +1097,7 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 
 		if (!type)
 		{
-			if (functype.num_params == 0)
+			if (Func.NumParams == 0)
 			{
 				break;
 			}
@@ -1132,25 +1105,19 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		}
 		while (TK_Check(PU_ASTERISK))
 		{
-		   	type = MakePointerType(type);
+			type = MakePointerType(type);
 		}
-#ifdef REF_CPP
-		while (TK_Check(PU_AND))
-		{
-		   	type = MakeReferenceType(type);
-		}
-#endif
 		if (type->type == ev_class)
 		{
 			type = MakeReferenceType(type);
 		}
-		if (functype.num_params == 0 && type == &type_void)
+		if (Func.NumParams == 0 && type == &type_void)
 		{
 			break;
 		}
 		TypeCheckPassable(type);
 
-		if (functype.num_params == MAX_PARAMS)
+		if (Func.NumParams == MAX_PARAMS)
 		{
 			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 		}
@@ -1159,23 +1126,30 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 			numlocaldefs++;
 			TK_NextToken();
 		}
-		functype.param_types[functype.num_params] = type;
-		functype.num_params++;
+		Func.ParamTypes[Func.NumParams] = type;
+		Func.NumParams++;
 		localsofs += TypeSize(type) / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	functype.params_size = localsofs;
+	Func.ParamsSize = localsofs;
 
-	TType methodtype;
-	memcpy(&methodtype, &functype, sizeof(TType));
-	methodtype.type = ev_method;
 	method->type = FindType(&methodtype);
 	if (otherfield)
 	{
-		if (otherfield->type != method->type)
+		TFunction& BaseFunc = functions[otherfield->func_num];
+		if (BaseFunc.ReturnType != Func.ReturnType)
 		{
-			ParseError("Method redefined with different type");
+			ParseError("Method redefined with different return type");
 		}
+		else if (BaseFunc.NumParams != Func.NumParams)
+		{
+			ParseError("Method redefined with different number of arguments");
+		}
+		else for (int i = 0; i < Func.NumParams; i++)
+			if (BaseFunc.ParamTypes[i] != Func.ParamTypes[i])
+			{
+				ParseError("Type of argument %d differs from base class", i + 1);
+			}
 		method->ofs = otherfield->ofs;
 	}
 	else
@@ -1185,37 +1159,18 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	}
 	class_type->numfields++;
 
-	if (CheckForFunction(class_type, method->Name))
-	{
-		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			 "Function: %s::%s", *class_type->Name, *method->Name);
-	}
-
-	int num = numfunctions;
-	numfunctions++;
-	method->func_num = num;
-	functions[num].Name = method->Name;
-	functions[num].OuterClass = class_type;
-	functions[num].type = FindType(&functype);
-	functions[num].first_statement = 0;
-	functions[num].flags = FuncFlags;
+	Func.first_statement = 0;
 
 	if (FuncFlags & FUNC_Native)
 	{
-		functions[num].first_statement = -numbuiltins;
+		Func.first_statement = -numbuiltins;
 		numbuiltins++;
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
 	}
 
-	if (TK_Check(PU_LBRACE))
-	{
-	   	ParseCompoundStatement();
-	}
-	else
-	{
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	ParseCompoundStatement();
 }
 
 //==========================================================================
@@ -1228,27 +1183,15 @@ int ParseStateCode(TType *class_type)
 {
 	numlocaldefs = 1;
 
-	TType functype;
-	memset(&functype, 0, sizeof(TType));
-	functype.type = ev_function;
-	functype.size = 4;
-	functype.aux_type = &type_void;
-	functype.params_size = 1;
-
 	int num = numfunctions;
 	numfunctions++;
 	functions[num].Name = NAME_None;
 	functions[num].OuterClass = class_type;
-	functions[num].type = FindType(&functype);
+	functions[num].ReturnType = &type_void;
+	functions[num].ParamsSize = 1;
 
-	if (TK_Check(PU_LBRACE))
-	{
-	   	ParseCompoundStatement();
-	}
-	else
-	{
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	ParseCompoundStatement();
 	return num;
 }
 
@@ -1262,16 +1205,13 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 {
 	numlocaldefs = 1;
 
-	TType functype;
-	memset(&functype, 0, sizeof(TType));
-	functype.type = ev_function;
-	functype.size = 4;
-	functype.aux_type = &type_void;
-	functype.params_size = 1;
 
 	TType methodtype;
-	memcpy(&methodtype, &functype, sizeof(TType));
+	memset(&methodtype, 0, sizeof(TType));
 	methodtype.type = ev_method;
+	methodtype.size = 4;
+	methodtype.aux_type = &type_void;
+
 	method->type = FindType(&methodtype);
 	method->ofs = 0;
 	method->Name = NAME_None;
@@ -1287,17 +1227,12 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 	numfunctions++;
 	method->func_num = num;
 	functions[num].OuterClass = class_type;
-	functions[num].type = FindType(&functype);
+	functions[num].ReturnType = &type_void;
+	functions[num].ParamsSize = 1;
 	functions[num].first_statement = 0;
 
-	if (TK_Check(PU_LBRACE))
-	{
-	   	ParseCompoundStatement();
-	}
-	else
-	{
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	ParseCompoundStatement();
 }
 
 //==========================================================================
@@ -1341,16 +1276,10 @@ void PA_Parse(void)
 	numconstants = 0;
 
 	//  Add empty function for default constructors
-	TType functype;
-	memset(&functype, 0, sizeof(TType));
-	functype.type = ev_function;
-	functype.size = 4;
-	functype.aux_type = &type_void;
-	functype.params_size = 1; // this pointer
-
 	functions[numfunctions].Name = NAME_None;
 	functions[numfunctions].OuterClass = NULL;
-	functions[numfunctions].type = FindType(&functype);
+	functions[numfunctions].ReturnType = &type_void;
+	functions[numfunctions].ParamsSize = 1; // this pointer
 	functions[numfunctions].num_locals = 1;
 	numfunctions++;
 
@@ -1461,9 +1390,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.3  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.2  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.

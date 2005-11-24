@@ -425,27 +425,6 @@ int EvalConstExpression(int type)
 		TK_NextToken();
 		return ret;
 
-	 case ev_function:
-		if (TK_Check(KW_NULL))
-		{
-			return 0;
-		}
-		else if (tk_Token == TK_IDENTIFIER)
-		{
-			ret = Pass2::CheckForFunction(NULL, tk_Name);
-			if (!ret)
-			{
-				ERR_Exit(ERR_NONE, true, "%s is not a function", *tk_Name);
-			}
-			TK_NextToken();
-			return ret;
-		}
-		else
-		{
-			ERR_Exit(ERR_NONE, true, "Function name expected");
-		}
-		break;
-
 	 case ev_classid:
 		t = CheckForType();
 		if (t && t->type == ev_class)
@@ -481,9 +460,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.12  2003/03/08 12:47:51  dj_jl
 //	Code cleanup.
-//
+//	
 //	Revision 1.11  2002/09/07 16:36:38  dj_jl
 //	Support bool in function args and return type.
 //	Removed support for typedefs.

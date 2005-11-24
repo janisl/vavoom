@@ -267,7 +267,7 @@ static void AddInfoData(int globaldef, void *data, int size, bool names)
 	memcpy(&globals[numglobals], data, size);
 	if (names)
 	{
-		memset(globalinfo + numglobals, 4, size / 4);
+		memset(globalinfo + numglobals, GLOBALTYPE_Name, size / 4);
 	}
 	numglobals += size / 4;
 }
@@ -300,10 +300,10 @@ void AddInfoTables(void)
 		if (states[i].function)
 		{
 			globalinfo[numglobals + i * sizeof(state_t) / 4 +
-				STRUCT_OFFSET(state_t, function) / 4] = 2;
+				STRUCT_OFFSET(state_t, function) / 4] = GLOBALTYPE_Function;
 		}
 		globalinfo[numglobals + i * sizeof(state_t) / 4 +
-			STRUCT_OFFSET(state_t, statename) / 4] = 4;
+			STRUCT_OFFSET(state_t, statename) / 4] = GLOBALTYPE_Name;
 	}
 	AddInfoData(gv_states, states.GetData(), states.Num() * sizeof(state_t), false);
 	//	Pievieno objektu aprakstu tabulu
@@ -311,7 +311,7 @@ void AddInfoTables(void)
 	AddInfoData(gv_num_mobj_info, &i, 4, false);
 	for (i = 0; i < mobj_info.Num(); i++)
 	{
-		globalinfo[numglobals + i * sizeof(mobjinfo_t) / 4 + 1] = 3;
+		globalinfo[numglobals + i * sizeof(mobjinfo_t) / 4 + 1] = GLOBALTYPE_Class;
 	}
 	AddInfoData(gv_mobj_info, mobj_info.GetData(), mobj_info.Num() * sizeof(mobjinfo_t), false);
 
@@ -458,9 +458,12 @@ void AddToMobjInfo(int Index, int ClassID)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.23  2005/04/28 07:00:40  dj_jl
 //	Temporary fix for crash with optimisations.
-//
+//	
 //	Revision 1.22  2003/10/22 06:42:55  dj_jl
 //	Added function name
 //	

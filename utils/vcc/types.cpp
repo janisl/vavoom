@@ -58,8 +58,7 @@ TType		type_int(ev_int, &type_void, NULL, 4);
 TType		type_float(ev_float, &type_int, NULL, 4);
 TType		type_name(ev_name, &type_float, NULL, 4);
 TType		type_string(ev_string, &type_name, NULL, 4);
-TType		type_function(ev_function, &type_string, &type_void, 4);
-TType		type_state(ev_struct, &type_function, NULL, -1);
+TType		type_state(ev_struct, &type_string, NULL, -1);
 TType		type_mobjinfo(ev_struct, &type_state, NULL, -1);
 TType		type_void_ptr(ev_pointer, &type_mobjinfo, &type_void, 4);
 TType		type_vector(ev_vector, &type_void_ptr, NULL, 12);
@@ -86,7 +85,7 @@ void InitTypes(void)
 	type_state.Name = "state_t";
 	type_mobjinfo.Name = "mobjinfo_t";
 	type_class.Name = "Object";
-	type_bool.params_size = 1;
+	type_bool.bit_mask = 1;
 }
 
 //==========================================================================
@@ -101,7 +100,6 @@ TType *FindType(TType *type)
 {
 	TType	*check;
 	TType	*newtype;
-	int		i;
 
 	for (check = types; check; check = check->next)
 	{
@@ -109,17 +107,9 @@ TType *FindType(TType *type)
 		if (type->type != check->type ||
 			type->aux_type != check->aux_type ||
 			type->size != check->size ||
-			type->num_params != check->num_params ||
-			type->params_size != check->params_size)
+			type->bit_mask != check->bit_mask)
 			continue;
-
-		for (i = 0; i < (type->num_params & PF_COUNT_MASK); i++)
-		{
-			if (type->param_types[i] != check->param_types[i])
-				break;
-		}
-		if (i == (type->num_params & PF_COUNT_MASK))
-			return check;
+		return check;
 	}
 
 	//	Not found, create a new one
@@ -359,7 +349,7 @@ void TypeCheck2(TType *t)
 //
 //	TypeCheck3
 //
-//	Check, if typea are compatible
+//	Check, if types are compatible
 //
 //	t1 - current type
 //	t2 - needed type
@@ -372,11 +362,6 @@ void TypeCheck3(TType *t1, TType *t2)
 	TypeCheckPassable(t2);
 	if (t1 == t2)
 	{
-		return;
-	}
-	if ((t1->type == ev_function) || (t2->type == ev_function))
-	{
-		ParseError("Function types");
 		return;
 	}
 	if ((t1->type == ev_vector) && (t2->type == ev_vector))
@@ -472,9 +457,6 @@ void ParseStruct(void)
 		do
 		{
 			while (TK_Check(PU_ASTERISK));
-#ifdef REF_CPP
-			while (TK_Check(PU_AND));
-#endif
 			if (tk_Token != TK_IDENTIFIER)
 			{
 				ParseError("Field name expected");
@@ -509,9 +491,6 @@ void AddFields(void)
 		do
 		{
 			while (TK_Check(PU_ASTERISK));
-#ifdef REF_CPP
-			while (TK_Check(PU_AND));
-#endif
 			if (tk_Token != TK_IDENTIFIER)
 			{
 				ParseError("Field name expected");
@@ -678,12 +657,6 @@ void ParseClass(void)
 			{
 				t = MakePointerType(t);
 			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-				t = MakeReferenceType(t);
-			}
-#endif
 			if (tk_Token != TK_IDENTIFIER)
 			{
 				ParseError("Field name expected");
@@ -906,7 +879,7 @@ static void AddVTable(TType *t)
 	classtypes[t->classid] = t;
 	t->vtable = numglobals;
 	int *vtable = globals + numglobals;
-	memset(globalinfo + numglobals, 2, t->num_methods);
+	memset(globalinfo + numglobals, GLOBALTYPE_Function, t->num_methods);
 	numglobals += t->num_methods;
 	if (t->aux_type)
 	{
@@ -959,8 +932,6 @@ static void WritePropertyField(TType *t, dfield_t *df, TType *type, int ofs)
 		df[t->num_properties].type = PROPTYPE_String;
 		df[t->num_properties].ofs = ofs;
 		t->num_properties++;
-		break;
-	case ev_function:	// Do we support them anymore?
 		break;
 	case ev_pointer:	// FIXME
 		break;
@@ -1193,12 +1164,6 @@ void ParseStruct(void)
 			{
 				t = MakePointerType(t);
 			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-				t = MakeReferenceType(t);
-			}
-#endif
 			if (t == &type_void)
 			{
 				ParseError("Field cannot have void type.");
@@ -1214,12 +1179,12 @@ void ParseStruct(void)
 			{
 				field_t &prevbool = fields[num_fields - 1];
 				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->params_size != 0x80000000)
+					(dword)prevbool.type->bit_mask != 0x80000000)
 				{
 					TType btype;
 
 					memcpy(&btype, t, sizeof(TType));
-					btype.params_size = prevbool.type->params_size << 1;
+					btype.bit_mask = prevbool.type->bit_mask << 1;
 					fi->type = FindType(&btype);
 					fi->ofs = prevbool.ofs;
 					num_fields++;
@@ -1317,12 +1282,6 @@ void AddFields(void)
 			{
 				t = MakePointerType(t);
 			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-				t = MakeReferenceType(t);
-			}
-#endif
 			if (t == &type_void)
 			{
 				ParseError("Field cannot have void type.");
@@ -1338,12 +1297,12 @@ void AddFields(void)
 			{
 				field_t &prevbool = fields[num_fields - 1];
 				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->params_size != 0x80000000)
+					(dword)prevbool.type->bit_mask != 0x80000000)
 				{
 					TType btype;
 
 					memcpy(&btype, t, sizeof(TType));
-					btype.params_size = prevbool.type->params_size << 1;
+					btype.bit_mask = prevbool.type->bit_mask << 1;
 					fi->type = FindType(&btype);
 					fi->ofs = prevbool.ofs;
 					num_fields++;
@@ -1657,12 +1616,6 @@ class_type->fields = &fields[0];
 			{
 				t = MakePointerType(t);
 			}
-#ifdef REF_CPP
-			while (TK_Check(PU_AND))
-			{
-				t = MakeReferenceType(t);
-			}
-#endif
 			if (tk_Token != TK_IDENTIFIER)
 			{
 				ParseError("Field name expected");
@@ -1695,12 +1648,12 @@ class_type->fields = &fields[0];
 			{
 				field_t &prevbool = fields[fields.Num() - 2];
 				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->params_size != 0x80000000)
+					(dword)prevbool.type->bit_mask != 0x80000000)
 				{
 					TType btype;
 
 					memcpy(&btype, t, sizeof(TType));
-					btype.params_size = prevbool.type->params_size << 1;
+					btype.bit_mask = prevbool.type->bit_mask << 1;
 					fi->type = FindType(&btype);
 					fi->ofs = prevbool.ofs;
 					class_type->numfields++;
@@ -1840,9 +1793,12 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.31  2005/04/28 07:14:03  dj_jl
 //	Fixed some warnings.
-//
+//	
 //	Revision 1.30  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	

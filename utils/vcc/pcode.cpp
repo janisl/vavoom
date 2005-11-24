@@ -34,7 +34,7 @@
 #define MAX_STRINGS				8192
 #define	MAX_STRINGS_BUF			500000
 
-//#define OPCODE_STATS
+#define OPCODE_STATS
 
 // TYPES -------------------------------------------------------------------
 
@@ -117,11 +117,14 @@ void PC_Init(void)
 	memset(globaldefs, 0, MAX_GLOBALS * sizeof(TGlobalDef));
 	numglobaldefs = 1;
 	globaldefs[0].type = &type_void;
+
+	//	Functions.
 	functions = new TFunction[MAX_FUNCTIONS];
 	memset(functions, 0, MAX_FUNCTIONS * sizeof(TFunction));
 	numfunctions = 1;
 	numbuiltins = 1;
-	functions[0].type = &type_function;
+	functions[0].ReturnType = &type_void;
+
 	strings = new char[MAX_STRINGS_BUF];
 	memset(strings, 0, MAX_STRINGS_BUF);
 	memset(StringLookup, 0, 256 * 4);
@@ -202,89 +205,89 @@ int* AddStatement(int statement)
 		ERR_Exit(ERR_NONE, false, "Opcode doesn't have 0 params");
 	}
 
-	if (statement == OPC_DROP)
+	if (statement == OPC_Drop)
 	{
 		switch (undoOpcode)
 		{
-		 case OPC_ASSIGN:
-			statement = OPC_ASSIGN_DROP;
+		case OPC_Assign:
+			statement = OPC_AssignDrop;
 			break;
 
-		 case OPC_ADDVAR:
-			statement = OPC_ADDVAR_DROP;
+		case OPC_AddVar:
+			statement = OPC_AddVarDrop;
 			break;
 
-		 case OPC_SUBVAR:
-			statement = OPC_SUBVAR_DROP;
+		case OPC_SubVar:
+			statement = OPC_SubVarDrop;
 			break;
 
-		 case OPC_MULVAR:
-			statement = OPC_MULVAR_DROP;
+		case OPC_MulVar:
+			statement = OPC_MulVarDrop;
 			break;
 
-		 case OPC_DIVVAR:
-			statement = OPC_DIVVAR_DROP;
+		case OPC_DivVar:
+			statement = OPC_DivVarDrop;
 			break;
 
-		 case OPC_MODVAR:
-			statement = OPC_MODVAR_DROP;
+		case OPC_ModVar:
+			statement = OPC_ModVarDrop;
 			break;
 
-		 case OPC_ANDVAR:
-			statement = OPC_ANDVAR_DROP;
+		case OPC_AndVar:
+			statement = OPC_AndVarDrop;
 			break;
 
-		 case OPC_ORVAR:
-			statement = OPC_ORVAR_DROP;
+		case OPC_OrVar:
+			statement = OPC_OrVarDrop;
 			break;
 
-		 case OPC_XORVAR:
-			statement = OPC_XORVAR_DROP;
+		case OPC_XOrVar:
+			statement = OPC_XOrVarDrop;
 			break;
 
-		 case OPC_LSHIFTVAR:
-			statement = OPC_LSHIFTVAR_DROP;
+		case OPC_LShiftVar:
+			statement = OPC_LShiftVarDrop;
 			break;
 
-		 case OPC_RSHIFTVAR:
-			statement = OPC_RSHIFTVAR_DROP;
+		case OPC_RShiftVar:
+			statement = OPC_RShiftVarDrop;
 			break;
 
-		 case OPC_PREINC:
-		 case OPC_POSTINC:
-			statement = OPC_INC_DROP;
+		case OPC_PreInc:
+		case OPC_PostInc:
+			statement = OPC_IncDrop;
 			break;
 
-		 case OPC_PREDEC:
-		 case OPC_POSTDEC:
-			statement = OPC_DEC_DROP;
+		case OPC_PreDec:
+		case OPC_PostDec:
+			statement = OPC_DecDrop;
 			break;
 
-		 case OPC_FADDVAR:
-			statement = OPC_FADDVAR_DROP;
+		case OPC_FAddVar:
+			statement = OPC_FAddVarDrop;
 			break;
 
-		 case OPC_FSUBVAR:
-			statement = OPC_FSUBVAR_DROP;
+		case OPC_FSubVar:
+			statement = OPC_FSubVarDrop;
 			break;
 
-		 case OPC_FMULVAR:
-			statement = OPC_FMULVAR_DROP;
+		case OPC_FMulVar:
+			statement = OPC_FMulVarDrop;
 			break;
 
-		 case OPC_FDIVVAR:
-			statement = OPC_FDIVVAR_DROP;
+		case OPC_FDivVar:
+			statement = OPC_FDivVarDrop;
 			break;
 
-		 case OPC_ASSIGNBOOL:
+		case OPC_AssignBool:
 //FIXME
 		 	return &CodeBuffer[CodeBufferSize - 1];
 
-		 default:
+		default:
 			break;
 		}
 
-		if (statement != OPC_DROP)
+		if (statement != OPC_Drop)
 		{
 			UndoStatement();
 #ifdef OPCODE_STATS
@@ -293,35 +296,35 @@ int* AddStatement(int statement)
 		}
 	}
 
-	if (statement == OPC_VDROP)
+	if (statement == OPC_VDrop)
 	{
 		switch (undoOpcode)
 		{
-		 case OPC_VASSIGN:
-			statement = OPC_VASSIGN_DROP;
+		case OPC_VAssign:
+			statement = OPC_VAssignDrop;
 			break;
 
-		 case OPC_VADDVAR:
-			statement = OPC_VADDVAR_DROP;
+		case OPC_VAddVar:
+			statement = OPC_VAddVarDrop;
 			break;
 
-		 case OPC_VSUBVAR:
-			statement = OPC_VSUBVAR_DROP;
+		case OPC_VSubVar:
+			statement = OPC_VSubVarDrop;
 			break;
 
-		 case OPC_VSCALEVAR:
-			statement = OPC_VSCALEVAR_DROP;
+		case OPC_VScaleVar:
+			statement = OPC_VScaleVarDrop;
 			break;
 
-		 case OPC_VISCALEVAR:
-			statement = OPC_VISCALEVAR_DROP;
+		case OPC_VIScaleVar:
+			statement = OPC_VIScaleVarDrop;
 			break;
 
-		 default:
+		default:
 			break;
 		}
 
-		if (statement != OPC_VDROP)
+		if (statement != OPC_VDrop)
 		{
 			UndoStatement();
 #ifdef OPCODE_STATS
@@ -515,9 +518,9 @@ void PC_WriteObject(char *name)
 		func.outer_class = LittleShort(functions[i].OuterClass ?
 			functions[i].OuterClass->classid : -1);
 		func.first_statement = LittleLong(functions[i].first_statement);
-		func.num_parms = LittleShort(functions[i].type->params_size);
+		func.num_parms = LittleShort(functions[i].ParamsSize);
 		func.num_locals = LittleShort(functions[i].num_locals);
-		func.type = LittleShort(functions[i].type->aux_type->type);
+		func.type = LittleShort(functions[i].ReturnType->type);
 		func.flags = LittleShort(functions[i].flags);
 		fwrite(&func, 1, sizeof(dfunction_t), f);
 	}	
@@ -590,7 +593,7 @@ void PC_WriteObject(char *name)
 //
 //==========================================================================
 
-static void DumpAsmFunction(int num)
+void DumpAsmFunction(int num)
 {
 	int		s;
 	int		st;
@@ -613,19 +616,19 @@ static void DumpAsmFunction(int num)
 		{
 			//	1. arguments
 			dprintf("%6d ", CodeBuffer[s]);
-			if (st == OPC_CALL)
+			if (st == OPC_Call)
 			{
 				//	IzsauktÆs funkcijas vÆrds
 				dprintf("(%s::%s)", functions[CodeBuffer[s]].OuterClass ?
 					*functions[CodeBuffer[s]].OuterClass->Name : "none",
 					*functions[CodeBuffer[s]].Name);
 			}
-			else if (st == OPC_PUSHSTRING)
+			else if (st == OPC_PushString)
 			{
 				//  Sibolu virkne
 				dprintf("(%s)", strings + CodeBuffer[s]);
 			}
-			else if (st == OPC_PUSHBOOL || st == OPC_ASSIGNBOOL)
+			else if (st == OPC_PushBool || st == OPC_AssignBool)
 			{
 				dprintf("(%x)", CodeBuffer[s]);
 			}
@@ -694,9 +697,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.19  2003/09/24 16:44:26  dj_jl
 //	Fixed asm dump of class members
-//
+//	
 //	Revision 1.18  2002/08/24 14:45:38  dj_jl
 //	2 pass compiling.
 //	

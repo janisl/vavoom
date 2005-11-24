@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "vcc.h"
+void DumpAsmFunction(int num);
 
 namespace Pass2 {
 
@@ -185,11 +186,11 @@ void AddDrop(TType *type)
 {
 	if (TypeSize(type) == 4)
 	{
-		AddStatement(OPC_DROP);
+		AddStatement(OPC_Drop);
 	}
 	else if (type->type == ev_vector)
 	{
-		AddStatement(OPC_VDROP);
+		AddStatement(OPC_VDrop);
 	}
 	else if (type != &type_void)
 	{
@@ -215,7 +216,7 @@ static void AddBreak(void)
 		ERR_Exit(ERR_BREAK_OVERFLOW, true, NULL);
 	}
 	BreakInfo[BreakIndex].level = BreakLevel;
-	BreakInfo[BreakIndex].addressPtr = AddStatement(OPC_GOTO, 0);
+	BreakInfo[BreakIndex].addressPtr = AddStatement(OPC_Goto, 0);
 	BreakIndex++;
 }
 
@@ -252,7 +253,7 @@ static void AddContinue(void)
 		ERR_Exit(ERR_CONTINUE_OVERFLOW, true, NULL);
 	}
 	ContinueInfo[ContinueIndex].level = ContinueLevel;
-	ContinueInfo[ContinueIndex].addressPtr = AddStatement(OPC_GOTO, 0);
+	ContinueInfo[ContinueIndex].addressPtr = AddStatement(OPC_Goto, 0);
 	ContinueIndex++;
 }
 
@@ -295,11 +296,11 @@ static void ParseStatement(void)
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				jumpAddrPtr1 = AddStatement(OPC_IFNOTGOTO, 0);
+				jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
 				ParseStatement();
 				if (TK_Check(KW_ELSE))
 				{
-					jumpAddrPtr2 = AddStatement(OPC_GOTO, 0);
+					jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
 					*jumpAddrPtr1 = CodeBufferSize;
 					ParseStatement();
 					*jumpAddrPtr2 = CodeBufferSize;
@@ -320,9 +321,9 @@ static void ParseStatement(void)
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				outAddrPtr = AddStatement(OPC_IFNOTGOTO, 0);
+				outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
 				ParseStatement();
-				AddStatement(OPC_GOTO, topAddr);
+				AddStatement(OPC_Goto, topAddr);
 
 				*outAddrPtr = CodeBufferSize;
 				WriteContinues(topAddr);
@@ -343,7 +344,7 @@ static void ParseStatement(void)
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				AddStatement(OPC_IFGOTO, topAddr);
+				AddStatement(OPC_IfGoto, topAddr);
 				WriteContinues(exprAddr);
 				WriteBreaks();
 			}
@@ -367,14 +368,14 @@ static void ParseStatement(void)
 				t = ParseExpression();
 				if (t == &type_void)
 				{
-					AddStatement(OPC_PUSHNUMBER, 1);
+					AddStatement(OPC_PushNumber, 1);
 				}
 				else
 				{
 					TypeCheck1(t);
 				}
-				jumpAddrPtr1 = AddStatement(OPC_IFGOTO, 0);
-				jumpAddrPtr2 = AddStatement(OPC_GOTO, 0);
+				jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
+				jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 				contAddr = CodeBufferSize;
 				do
@@ -382,11 +383,11 @@ static void ParseStatement(void)
 					t = ParseExpression();
 				   	AddDrop(t);
 				} while (TK_Check(PU_COMMA));
-				AddStatement(OPC_GOTO, topAddr);
+				AddStatement(OPC_Goto, topAddr);
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 				*jumpAddrPtr1 = CodeBufferSize;
 				ParseStatement();
-				AddStatement(OPC_GOTO, contAddr);
+				AddStatement(OPC_Goto, contAddr);
 				*jumpAddrPtr2 = CodeBufferSize;
 				WriteContinues(contAddr);
 				WriteBreaks();
@@ -407,7 +408,7 @@ static void ParseStatement(void)
 					{
 						ERR_Exit(ERR_NO_RET_VALUE, true, NULL);
 					}
-					AddStatement(OPC_RETURN);
+					AddStatement(OPC_Return);
 				}
 				else
 				{
@@ -420,11 +421,11 @@ static void ParseStatement(void)
 					TypeCheck3(t, FuncRetType);
 					if (TypeSize(t) == 4)
 					{
-						AddStatement(OPC_RETURNL);
+						AddStatement(OPC_ReturnL);
 					}
 					else if (t->type == ev_vector)
 					{
-						AddStatement(OPC_RETURNV);
+						AddStatement(OPC_ReturnV);
 					}
 					else
 					{
@@ -454,7 +455,7 @@ static void ParseStatement(void)
 //				}
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
-				switcherAddrPtr = AddStatement(OPC_GOTO, 0);
+				switcherAddrPtr = AddStatement(OPC_Goto, 0);
 				defaultAddress = 0;
 				numcases = 0;
 				BreakLevel++;
@@ -487,26 +488,26 @@ static void ParseStatement(void)
 					ParseStatement();
 				} while (!TK_Check(PU_RBRACE));
 
-				outAddrPtr = AddStatement(OPC_GOTO, 0);
+				outAddrPtr = AddStatement(OPC_Goto, 0);
 
 				*switcherAddrPtr = CodeBufferSize;
 				for (i = 0; i < numcases; i++)
 				{
 					if (etype->type == ev_classid)
-						AddStatement(OPC_CASE_GOTO_CLASSID,
+						AddStatement(OPC_CaseGotoClassId,
 							CaseInfo[i].value, CaseInfo[i].address);
 					else if (etype->type == ev_name)
-						AddStatement(OPC_CASE_GOTO_NAME,
+						AddStatement(OPC_CaseGotoName,
 							CaseInfo[i].value, CaseInfo[i].address);
 					else
-						AddStatement(OPC_CASEGOTO, CaseInfo[i].value,
+						AddStatement(OPC_CaseGoto, CaseInfo[i].value,
 										CaseInfo[i].address);
 				}
 				AddDrop(&type_int);
 
 				if (defaultAddress)
 				{
-					AddStatement(OPC_GOTO, defaultAddress);
+					AddStatement(OPC_Goto, defaultAddress);
 				}
 
 				*outAddrPtr = CodeBufferSize;
@@ -562,12 +563,6 @@ void ParseLocalVar(TType *type)
 		{
 			t = MakePointerType(t);
 		}
-#ifdef REF_CPP
-		while (TK_Check(PU_AND))
-		{
-			t = MakeReferenceType(t);
-		}
-#endif
 		if (t == &type_void)
 		{
 			ParseError(ERR_BAD_VAR_TYPE);
@@ -604,13 +599,13 @@ void ParseLocalVar(TType *type)
 		//  inicializÆcija
 		else if (TK_Check(PU_ASSIGN))
 		{
-			AddStatement(OPC_LOCALADDRESS, localsofs);
+			AddStatement(OPC_LocalAddress, localsofs);
 			TType *t1 = ParseExpression();
 			TypeCheck3(t, t1);
 			if (t1->type == ev_vector)
-				AddStatement(OPC_VASSIGN);
+				AddStatement(OPC_VAssign);
 			else
-				AddStatement(OPC_ASSIGN);
+				AddStatement(OPC_Assign);
 			AddDrop(t1);
 		}
 		localdefs[numlocaldefs].type = t;
@@ -771,12 +766,6 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		t = MakePointerType(t);
 	}
-#ifdef REF_CPP
-	while (TK_Check(PU_AND))
-	{
-		t = MakeReferenceType(t);
-	}
-#endif
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
@@ -801,9 +790,6 @@ static void ParseDef(TType *type, bool IsNative)
 			if (Name == NAME_None)
 			{
 				if (TK_Check(PU_ASTERISK));
-#ifdef REF_CPP
-				if (TK_Check(PU_AND));
-#endif
 				if (tk_Token != TK_IDENTIFIER)
 				{
 					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
@@ -835,12 +821,6 @@ static void ParseDef(TType *type, bool IsNative)
 		TypeCheckPassable(t);
 	}
 
-	TType functype;
-	memset(&functype, 0, sizeof(TType));
-	functype.type = ev_function;
-	functype.size = 4;
-	functype.aux_type = t;
-
 	if (CheckForGlobalVar(Name))
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
@@ -854,7 +834,6 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		if (TK_Check(PU_VARARGS))
 		{
-			functype.num_params |= PF_VARARGS;
 			break;
 		}
 
@@ -870,14 +849,8 @@ static void ParseDef(TType *type, bool IsNative)
 		}
 		while (TK_Check(PU_ASTERISK))
 		{
-		   	type = MakePointerType(type);
+			type = MakePointerType(type);
 		}
-#ifdef REF_CPP
-		while (TK_Check(PU_AND))
-		{
-		   	type = MakeReferenceType(type);
-		}
-#endif
 		if (type->type == ev_class)
 		{
 			type = MakeReferenceType(type);
@@ -892,7 +865,7 @@ static void ParseDef(TType *type, bool IsNative)
 		{
 			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 		}
-   		if (tk_Token == TK_IDENTIFIER)
+		if (tk_Token == TK_IDENTIFIER)
 		{
 			if (CheckForLocalVar(tk_Name))
 			{
@@ -904,28 +877,13 @@ static void ParseDef(TType *type, bool IsNative)
 			numlocaldefs++;
 			TK_NextToken();
 		}
-		functype.param_types[functype.num_params] = type;
-		functype.num_params++;
 		localsofs += TypeSize(type) / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	functype.params_size = localsofs;
 	maxlocalsofs = localsofs;
 
 	num = CheckForFunction(NULL, Name);
-	if (num)
-	{
-		if (IsNative && functions[num].first_statement > 0)
-		{
-	   		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-	   				 "Declared function defined as native.");
-		}
-		if (functions[num].type != FindType(&functype))
-		{
-	   		ERR_Exit(ERR_TYPE_MISTMATCH, true, NULL);
-		}
-	}
-	else
+	if (!num)
 	{
 		ERR_Exit(ERR_NONE, true, "Missing func declaration");
 	}
@@ -935,7 +893,7 @@ static void ParseDef(TType *type, bool IsNative)
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
 	}
-	
+
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	dprintf("Global function %s\n", *Name);
 	if (functions[num].first_statement)
@@ -944,13 +902,14 @@ static void ParseDef(TType *type, bool IsNative)
 	}
 	functions[num].first_statement = CodeBufferSize;
 
-   	ParseCompoundStatement();
+	ParseCompoundStatement();
 
 	if (FuncRetType == &type_void)
 	{
-		AddStatement(OPC_RETURN);
+		AddStatement(OPC_Return);
 	}
 	functions[num].num_locals = maxlocalsofs;
+//DumpAsmFunction(num);
 }
 
 //==========================================================================
@@ -975,17 +934,10 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	numlocaldefs = 1;
 	localsofs = 1;
 
-	TType functype;
-	memset(&functype, 0, sizeof(TType));
-	functype.type = ev_function;
-	functype.size = 4;
-	functype.aux_type = t;
-
 	do
 	{
 		if (TK_Check(PU_VARARGS))
 		{
-			functype.num_params |= PF_VARARGS;
 			break;
 		}
 
@@ -993,36 +945,22 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 
 		if (!type)
 		{
-			if (functype.num_params == 0)
-			{
-				break;
-			}
-			ERR_Exit(ERR_BAD_VAR_TYPE, true, NULL);
+			break;
 		}
 		while (TK_Check(PU_ASTERISK))
 		{
 		   	type = MakePointerType(type);
 		}
-#ifdef REF_CPP
-		while (TK_Check(PU_AND))
-		{
-		   	type = MakeReferenceType(type);
-		}
-#endif
 		if (type->type == ev_class)
 		{
 			type = MakeReferenceType(type);
 		}
-		if (functype.num_params == 0 && type == &type_void)
+		if (type == &type_void)
 		{
 			break;
 		}
 		TypeCheckPassable(type);
 
-		if (functype.num_params == MAX_PARAMS)
-		{
-			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
-		}
    		if (tk_Token == TK_IDENTIFIER)
 		{
 			if (CheckForLocalVar(tk_Name))
@@ -1035,28 +973,14 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 			numlocaldefs++;
 			TK_NextToken();
 		}
-		functype.param_types[functype.num_params] = type;
-		functype.num_params++;
 		localsofs += TypeSize(type) / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	functype.params_size = localsofs;
 	maxlocalsofs = localsofs;
 
-	TType methodtype;
-	memcpy(&methodtype, &functype, sizeof(TType));
-	methodtype.type = ev_method;
-	method->type = FindType(&methodtype);
-	if (otherfield)
-	{
-		if (otherfield->type != method->type)
-		{
-			ParseError("Method redefined with different type");
-		}
-	}
-
 	int num = CheckForFunction(class_type, method->Name);
-	method->func_num = num;
+	if (method->func_num != num)
+		ERR_Exit(ERR_NONE, true, "Found wrong function");
 
 	if (FuncFlags & FUNC_Native)
 	{
@@ -1064,7 +988,6 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		return;
 	}
 
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	SelfType = MakeReferenceType(class_type);
 	BreakLevel = 0;
 	ContinueLevel = 0;
@@ -1072,11 +995,12 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 
 	functions[num].first_statement = CodeBufferSize;
 
-   	ParseCompoundStatement();
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	ParseCompoundStatement();
 
 	if (FuncRetType == &type_void)
 	{
-		AddStatement(OPC_RETURN);
+		AddStatement(OPC_Return);
 	}
 	functions[num].num_locals = maxlocalsofs;
 }
@@ -1100,15 +1024,9 @@ void ParseStateCode(TType *class_type, int num)
 	ContinueLevel = 0;
 	FuncRetType = &type_void;
 
-	if (TK_Check(PU_LBRACE))
-	{
-	   	ParseCompoundStatement();
-		AddStatement(OPC_RETURN);
-	}
-	else
-	{
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	ParseCompoundStatement();
+	AddStatement(OPC_Return);
 	functions[num].num_locals = maxlocalsofs;
 }
 
@@ -1126,32 +1044,26 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 
 	int num = method->func_num;
 
-	if (TK_Check(PU_LBRACE))
+	SelfType = MakeReferenceType(class_type);
+	BreakLevel = 0;
+	ContinueLevel = 0;
+	FuncRetType = &type_void;
+
+	functions[num].first_statement = CodeBufferSize;
+
+	//  Call parent constructor
+	field_t *pcon = FindConstructor(class_type->aux_type);
+	if (pcon)
 	{
-		SelfType = MakeReferenceType(class_type);
-		BreakLevel = 0;
-		ContinueLevel = 0;
-		FuncRetType = &type_void;
-
-		functions[num].first_statement = CodeBufferSize;
-
-		//  Call parent constructor
-		field_t *pcon = FindConstructor(class_type->aux_type);
-		if (pcon)
-		{
-			AddStatement(OPC_LOCALADDRESS, 0);
-			AddStatement(OPC_PUSHPOINTED);
-			AddStatement(OPC_CALL, pcon->func_num);
-		}
-
-	   	ParseCompoundStatement();
-		AddStatement(OPC_RETURN);
-		functions[num].num_locals = maxlocalsofs;
+		AddStatement(OPC_LocalAddress, 0);
+		AddStatement(OPC_PushPointed);
+		AddStatement(OPC_Call, pcon->func_num);
 	}
-	else
-	{
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
+
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	ParseCompoundStatement();
+	AddStatement(OPC_Return);
+	functions[num].num_locals = maxlocalsofs;
 }
 
 //==========================================================================
@@ -1173,7 +1085,7 @@ void PA_Parse(void)
 	//  Add empty function for default constructors
 	functions[1].first_statement = CodeBufferSize;
 
-	AddStatement(OPC_RETURN);
+	AddStatement(OPC_Return);
 
 	TK_NextToken();
 	done = false;
@@ -1300,9 +1212,12 @@ void PA_Parse(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/11/24 20:42:05  dj_jl
+//	Renamed opcodes, cleanup and improvements.
+//
 //	Revision 1.27  2005/03/16 14:41:34  dj_jl
 //	Increased limits.
-//
+//	
 //	Revision 1.26  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	
