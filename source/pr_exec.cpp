@@ -64,7 +64,7 @@ struct FGlobalDef
 
 extern builtin_info_t	BuiltinInfo[];
 
-extern "C" void TestCaller(void);
+extern "C" void TestCaller();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -94,7 +94,7 @@ static int OpcodeArgCount[NUM_OPCODES] =
 //
 //==========================================================================
 
-void PR_Init(void)
+void PR_Init()
 {
 	//	Set stack ID for overflow / underflow checks
 	pr_stack[0] = STACK_ID;
@@ -113,7 +113,7 @@ void PR_Init(void)
 //
 //==========================================================================
 
-void PR_OnAbort(void)
+void PR_OnAbort()
 {
 	current_func = NULL;
 	pr_stackPtr = pr_stack + 1;
@@ -125,7 +125,7 @@ void PR_OnAbort(void)
 //
 //==========================================================================
 
-extern "C" void PR_Profile1(void)
+extern "C" void PR_Profile1()
 {
 	current_func->Profile1++;
 }
@@ -136,7 +136,7 @@ extern "C" void PR_Profile1(void)
 //
 //==========================================================================
 
-extern "C" void PR_Profile2(void)
+extern "C" void PR_Profile2()
 {
 	if (current_func && (!(current_func->Flags & FUNC_Native)))
 	{
@@ -151,7 +151,7 @@ extern "C" void PR_Profile2_end(void){}
 //
 //==========================================================================
 
-void PR_Traceback(void)
+void PR_Traceback()
 {
 	if (current_func)
 	{
@@ -166,7 +166,7 @@ void PR_Traceback(void)
 //
 //==========================================================================
 
-static void PF_Fixme(void)
+static void PF_Fixme()
 {
 	Sys_Error("unimplemented bulitin");
 }
@@ -220,7 +220,7 @@ void TProgs::Load(const char *AName)
     else
     {
     	//	Load PROGS from wad file
-		i =	W_GetNumForName(AName);
+		i =	W_GetNumForName(AName, WADNS_Progs);
 		Progs = (dprograms_t*)W_CacheLumpNum(i, PU_STATIC);
 		len = W_LumpLength(i);
 	}
@@ -329,7 +329,7 @@ void TProgs::Load(const char *AName)
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
 	{
-		if (!ClassList[i]->ParentClass && !(ClassList[i]->GetFlags() & OF_Native))
+		if (!ClassList[i]->ParentClass && !(ClassList[i]->GetFlags() & CLASSOF_Native))
 		{
 			ClassList[i]->ParentClass = ClassList[ClassInfo[i].parent];
 		}
@@ -359,11 +359,11 @@ void TProgs::Load(const char *AName)
 	byte *globalinfo = (byte*)Progs + Progs->ofs_globalinfo;
 	for (i = 0; i < Progs->num_globals; i++)
 	{
-		if (globalinfo[i] == 1)
+		if (globalinfo[i] == GLOBALTYPE_String)
 		{
 			Globals[i] += int(Strings);
 		}
-		if (globalinfo[i] == 2 && Globals[i])
+		if (globalinfo[i] == GLOBALTYPE_Function && Globals[i])
 		{
 #ifdef CHECK_FUNC_NUM
 			if (Globals[i] < 0 || Globals[i] >= Progs->num_functions)
@@ -373,11 +373,11 @@ void TProgs::Load(const char *AName)
 #endif
 			Globals[i] = int(Functions + Globals[i]);
 		}
-		if (globalinfo[i] == 3)
+		if (globalinfo[i] == GLOBALTYPE_Class)
 		{
 			Globals[i] = (int)ClassList[Globals[i]];
 		}
-		if (globalinfo[i] == 4)
+		if (globalinfo[i] == GLOBALTYPE_Name)
 		{
 			Globals[i] = NameRemap[Globals[i]].GetIndex();
 		}
@@ -440,43 +440,43 @@ void TProgs::Load(const char *AName)
 	//
 	//	Patch code
 	//
-	int PrevOpc = OPC_DONE;
+	int PrevOpc = OPC_Done;
 	for (i = 0; i < Progs->num_statements; i++)
 	{
 		switch (Statements[i])
 		{
-		case OPC_PUSHSTRING:
+		case OPC_PushString:
 			Statements[i + 1] += (int)Strings;
 			break;
-		case OPC_PUSHFUNCTION:
+		case OPC_PushFunction:
 			Statements[i + 1] = (int)(Functions + Statements[i + 1]);
 			break;
-		case OPC_PUSHCLASSID:
-		case OPC_DYNAMIC_CAST:
+		case OPC_PushClassId:
+		case OPC_DynamicCast:
 			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
 			break;
-		case OPC_PUSHNAME:
+		case OPC_PushName:
 			Statements[i + 1] = NameRemap[Statements[i + 1]].GetIndex();
 			break;
-		case OPC_GOTO:
-		case OPC_IFGOTO:
-		case OPC_IFNOTGOTO:
-		case OPC_IFTOPGOTO:
-		case OPC_IFNOTTOPGOTO:
+		case OPC_Goto:
+		case OPC_IfGoto:
+		case OPC_IfNotGoto:
+		case OPC_IfTopGoto:
+		case OPC_IfNotTopGoto:
 			Statements[i + 1] = (int)(Statements + Statements[i + 1]);
 			break;
-		case OPC_CASEGOTO:
+		case OPC_CaseGoto:
 			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
 			break;
-		case OPC_CASE_GOTO_CLASSID:
+		case OPC_CaseGotoClassId:
 			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
 			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
 			break;
-		case OPC_CASE_GOTO_NAME:
+		case OPC_CaseGotoName:
 			Statements[i + 1] = NameRemap[Statements[i + 1]].GetIndex();
 			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
 			break;
-		case OPC_GLOBALADDRESS:
+		case OPC_GlobalAddress:
 #ifdef CHECK_VALID_VAR_NUM
 			if (Statements[i + 1] < 0 || Statements[i + 1] >= Progs->num_globaldefs)
 			{
@@ -485,12 +485,12 @@ void TProgs::Load(const char *AName)
 #endif
 			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].Ofs);
 			break;
-		case OPC_CALL:
+		case OPC_Call:
 		    Statements[i + 1] = (int)(Functions + Statements[i + 1]);
 			break;
-		case OPC_PUSHBOOL:
-		case OPC_ASSIGNBOOL:
-			if (NeedBitSwap && PrevOpc != OPC_LOCALADDRESS && PrevOpc != OPC_GLOBALADDRESS)
+		case OPC_PushBool:
+		case OPC_AssignBool:
+			if (NeedBitSwap && PrevOpc != OPC_LocalAddress && PrevOpc != OPC_GlobalAddress)
 				Statements[i + 1] = SwapBits(Statements[i + 1]);
 			break;
 		}
@@ -645,7 +645,7 @@ extern "C" VObject *PR_DynamicCast(VObject *object, VClass *SomeClass)
 	return object;
 }
 
-#ifdef USEASM
+#if 0//def USEASM
 
 //	Use asm version
 extern "C" void RunFunction(FFunction *func);
@@ -690,40 +690,40 @@ static void RunFunction(FFunction *func)
 
 	switch (*current_statement++)
 	{
-     case OPC_DONE:
+     case OPC_Done:
 		PR_RFInvalidOpcode();
 		break;
 
-	 case OPC_RETURN:
+	 case OPC_Return:
 		pr_stackPtr = local_vars;
         return;
 
-	 case OPC_RETURNL:
+	 case OPC_ReturnL:
 		local_vars[0] = sp[-1];
 		pr_stackPtr = local_vars + 1;
         return;
 
-	 case OPC_RETURNV:
+	 case OPC_ReturnV:
 		local_vars[0] = sp[-3];
 		local_vars[1] = sp[-2];
 		local_vars[2] = sp[-1];
 		pr_stackPtr = local_vars + 3;
         return;
 
-	 case OPC_PUSHNUMBER:
-	 case OPC_GLOBALADDRESS:
-	 case OPC_PUSHSTRING:
-	 case OPC_PUSHFUNCTION:
-	 case OPC_PUSHCLASSID:
-	 case OPC_PUSHNAME:
+	 case OPC_PushNumber:
+	 case OPC_GlobalAddress:
+	 case OPC_PushString:
+	 case OPC_PushFunction:
+	 case OPC_PushClassId:
+	 case OPC_PushName:
 		*sp++ = *current_statement++;
 		break;
 
-	 case OPC_PUSHPOINTED:
+	 case OPC_PushPointed:
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_LOCALADDRESS:
+	 case OPC_LocalAddress:
 #ifdef CHECK_VALID_VAR_NUM
 		if (*current_statement < 0 || *current_statement >= MAX_LOCALS)
 	    {
@@ -733,120 +733,120 @@ static void RunFunction(FFunction *func)
 		*sp++ = (int)&local_vars[*current_statement++];
 		break;
 
-	 case OPC_ADD:
+	 case OPC_Add:
         sp--;
 		sp[-1] += *sp;
 		break;
 
-	 case OPC_SUBTRACT:
+	 case OPC_Subtract:
         sp--;
 		sp[-1] -= *sp;
 		break;
 
-	 case OPC_MULTIPLY:
+	 case OPC_Multiply:
         sp--;
 		sp[-1] *= *sp;
 		break;
 
-	 case OPC_DIVIDE:
+	 case OPC_Divide:
         sp--;
 		sp[-1] /= *sp;
 		break;
 
-	 case OPC_MODULUS:
+	 case OPC_Modulus:
         sp--;
 		sp[-1] %= *sp;
 		break;
 
-	 case OPC_EQ:
+	 case OPC_Equals:
         sp--;
 		sp[-1] = sp[-1] == *sp;
 		break;
 
-	 case OPC_NE:
+	 case OPC_NotEquals:
         sp--;
 		sp[-1] = sp[-1] != *sp;
 		break;
 
-	 case OPC_LT:
+	 case OPC_Less:
         sp--;
 		sp[-1] = sp[-1] < *sp;
 		break;
 
-	 case OPC_GT:
+	 case OPC_Greater:
         sp--;
 		sp[-1] = sp[-1] > *sp;
 		break;
 
-	 case OPC_LE:
+	 case OPC_LessEquals:
         sp--;
 		sp[-1] = sp[-1] <= *sp;
 		break;
 
-	 case OPC_GE:
+	 case OPC_GreaterEquals:
         sp--;
 		sp[-1] = sp[-1] >= *sp;
 		break;
 
-	 case OPC_ANDLOGICAL:
+	 case OPC_AndLogical:
         sp--;
 		sp[-1] = sp[-1] && *sp;
 		break;
 
-	 case OPC_ORLOGICAL:
+	 case OPC_OrLogical:
         sp--;
 		sp[-1] = sp[-1] || *sp;
 		break;
 
-	 case OPC_NEGATELOGICAL:
+	 case OPC_NegateLogical:
 		sp[-1] = !sp[-1];
 		break;
 
-	 case OPC_ANDBITWISE:
+	 case OPC_AndBitwise:
         sp--;
 		sp[-1] &= *sp;
 		break;
 
-	 case OPC_ORBITWISE:
+	 case OPC_OrBitwise:
         sp--;
 		sp[-1] |= *sp;
 		break;
 
-	 case OPC_XORBITWISE:
+	 case OPC_XOrBitwise:
         sp--;
 		sp[-1] ^= *sp;
 		break;
 
-	 case OPC_LSHIFT:
+	 case OPC_LShift:
         sp--;
 		sp[-1] <<= *sp;
 		break;
 
-	 case OPC_RSHIFT:
+	 case OPC_RShift:
         sp--;
 		sp[-1] >>= *sp;
 		break;
 
-	 case OPC_UNARYMINUS:
+	 case OPC_UnaryMinus:
 		sp[-1] = -sp[-1];
 		break;
 
-	 case OPC_BITINVERSE:
+	 case OPC_BitInverse:
 		sp[-1] = ~sp[-1];
 		break;
 
-	 case OPC_CALL:
+	 case OPC_Call:
 		pr_stackPtr = sp;
 	    RunFunction((FFunction *)*current_statement++);
 		current_func = func;
 		sp = pr_stackPtr;
 		break;
 
-	 case OPC_GOTO:
+	 case OPC_Goto:
 		current_statement = (int *)*current_statement;
 		break;
 
-	 case OPC_IFGOTO:
+	 case OPC_IfGoto:
         sp--;
 		if (*sp)
 		{
@@ -858,7 +858,7 @@ static void RunFunction(FFunction *func)
 	    }
 		break;
 
-	 case OPC_IFNOTGOTO:
+	 case OPC_IfNotGoto:
         sp--;
 	    if (!*sp)
 	    {
@@ -870,9 +870,9 @@ static void RunFunction(FFunction *func)
 	    }
 		break;
 
-	 case OPC_CASEGOTO:
-	 case OPC_CASE_GOTO_CLASSID:
-	 case OPC_CASE_GOTO_NAME:
+	 case OPC_CaseGoto:
+	 case OPC_CaseGotoClassId:
+	 case OPC_CaseGotoName:
 		if (*current_statement++ == sp[-1])
 	    {
 	    	current_statement = (int *)*current_statement;
@@ -884,77 +884,77 @@ static void RunFunction(FFunction *func)
 	    }
 		break;
 
-	 case OPC_DROP:
+	 case OPC_Drop:
 		sp--;
 		break;
 
-	 case OPC_ASSIGN:
+	 case OPC_Assign:
         sp--;
 		*(int*)sp[-1] = *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_ADDVAR:
+	 case OPC_AddVar:
         sp--;
 		*(int*)sp[-1] += *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_SUBVAR:
+	 case OPC_SubVar:
         sp--;
 		*(int*)sp[-1] -= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_MULVAR:
+	 case OPC_MulVar:
         sp--;
 		*(int*)sp[-1] *= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_DIVVAR:
+	 case OPC_DivVar:
         sp--;
 		*(int*)sp[-1] /= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_MODVAR:
+	 case OPC_ModVar:
         sp--;
 		*(int*)sp[-1] %= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_ANDVAR:
+	 case OPC_AndVar:
         sp--;
 		*(int*)sp[-1] &= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_ORVAR:
+	 case OPC_OrVar:
         sp--;
 		*(int*)sp[-1] |= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_XORVAR:
+	 case OPC_XOrVar:
         sp--;
 		*(int*)sp[-1] ^= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_LSHIFTVAR:
+	 case OPC_LShiftVar:
         sp--;
 		*(int*)sp[-1] <<= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_RSHIFTVAR:
+	 case OPC_RShiftVar:
         sp--;
 		*(int*)sp[-1] >>= *sp;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_PREINC:
+	 case OPC_PreInc:
 #ifdef __GNUC__
 		sp[-1] = ++(*(int*)sp[-1]);
 #else
@@ -968,7 +968,7 @@ static void RunFunction(FFunction *func)
 #endif
 		break;
 
-	 case OPC_PREDEC:
+	 case OPC_PreDec:
 #ifdef __GNUC__
 		sp[-1] = --(*(int*)sp[-1]);
 #else
@@ -982,7 +982,7 @@ static void RunFunction(FFunction *func)
 #endif
 		break;
 
-	 case OPC_POSTINC:
+	 case OPC_PostInc:
 #ifdef __GNUC__
 		sp[-1] = (*(int*)sp[-1])++;
 #else
@@ -996,7 +996,7 @@ static void RunFunction(FFunction *func)
 #endif
 		break;
 
-	 case OPC_POSTDEC:
+	 case OPC_PostDec:
 #ifdef __GNUC__
 		sp[-1] = (*(int*)sp[-1])--;
 #else
@@ -1010,7 +1010,7 @@ static void RunFunction(FFunction *func)
 #endif
 		break;
 
-	 case OPC_IFTOPGOTO:
+	 case OPC_IfTopGoto:
 	    if (sp[-1])
 	    {
 	    	current_statement = (int *)*current_statement;
@@ -1021,7 +1021,7 @@ static void RunFunction(FFunction *func)
 	    }
 		break;
 
-	 case OPC_IFNOTTOPGOTO:
+	 case OPC_IfNotTopGoto:
 	    if (!sp[-1])
 	    {
 	    	current_statement = (int *)*current_statement;
@@ -1032,78 +1032,78 @@ static void RunFunction(FFunction *func)
 	    }
 		break;
 
-	 case OPC_ASSIGN_DROP:
+	 case OPC_AssignDrop:
         sp--;
 		*(int*)sp[-1] = *sp;
 		sp--;
 		break;
 
-	 case OPC_ADDVAR_DROP:
+	 case OPC_AddVarDrop:
         sp--;
 		*(int*)sp[-1] += *sp;
 		sp--;
 		break;
 
-	 case OPC_SUBVAR_DROP:
+	 case OPC_SubVarDrop:
         sp--;
 		*(int*)sp[-1] -= *sp;
 		sp--;
 		break;
 
-	 case OPC_MULVAR_DROP:
+	 case OPC_MulVarDrop:
         sp--;
 		*(int*)sp[-1] *= *sp;
 		sp--;
 		break;
 
-	 case OPC_DIVVAR_DROP:
+	 case OPC_DivVarDrop:
         sp--;
 		*(int*)sp[-1] /= *sp;
 		sp--;
 		break;
 
-	 case OPC_MODVAR_DROP:
+	 case OPC_ModVarDrop:
         sp--;
 		*(int*)sp[-1] %= *sp;
 		sp--;
 		break;
 
-	 case OPC_ANDVAR_DROP:
+	 case OPC_AndVarDrop:
         sp--;
 		*(int*)sp[-1] &= *sp;
 		sp--;
 		break;
 
-	 case OPC_ORVAR_DROP:
+	 case OPC_OrVarDrop:
         sp--;
 		*(int*)sp[-1] |= *sp;
 		sp--;
 		break;
 
-	 case OPC_XORVAR_DROP:
+	 case OPC_XOrVarDrop:
         sp--;
 		*(int*)sp[-1] ^= *sp;
 		sp--;
 		break;
 
-	 case OPC_LSHIFTVAR_DROP:
+	 case OPC_LShiftVarDrop:
         sp--;
 		*(int*)sp[-1] <<= *sp;
 		sp--;
 		break;
 
-	 case OPC_RSHIFTVAR_DROP:
+	 case OPC_RShiftVarDrop:
         sp--;
 		*(int*)sp[-1] >>= *sp;
 		sp--;
 		break;
 
-	 case OPC_INC_DROP:
+	 case OPC_IncDrop:
 		(*(int*)sp[-1])++;
 		sp--;
 		break;
 
-	 case OPC_DEC_DROP:
+	 case OPC_DecDrop:
 		(*(int*)sp[-1])--;
 		sp--;
 		break;
@@ -1111,103 +1111,103 @@ static void RunFunction(FFunction *func)
 #define spf	((float*)sp)
 
 //=====================================
-	 case OPC_FADD:
+	 case OPC_FAdd:
         sp--;
 		spf[-1] += *spf;
 		break;
 
-	 case OPC_FSUBTRACT:
+	 case OPC_FSubtract:
         sp--;
 		spf[-1] -= *spf;
 		break;
 
-	 case OPC_FMULTIPLY:
+	 case OPC_FMultiply:
         sp--;
 		spf[-1] *= *spf;
 		break;
 
-	 case OPC_FDIVIDE:
+	 case OPC_FDivide:
         sp--;
 		spf[-1] /= *spf;
 		break;
 
-	 case OPC_FEQ:
+	 case OPC_FEquals:
         sp--;
 		sp[-1] = spf[-1] == *spf;
 		break;
 
-	 case OPC_FNE:
+	 case OPC_FNotEquals:
         sp--;
 		sp[-1] = spf[-1] != *spf;
 		break;
 
-	 case OPC_FLT:
+	 case OPC_FLess:
         sp--;
 		sp[-1] = spf[-1] < *spf;
 		break;
 
-	 case OPC_FGT:
+	 case OPC_FGreater:
         sp--;
 		sp[-1] = spf[-1] > *spf;
 		break;
 
-	 case OPC_FLE:
+	 case OPC_FLessEquals:
         sp--;
 		sp[-1] = spf[-1] <= *spf;
 		break;
 
-	 case OPC_FGE:
+	 case OPC_FGreaterEquals:
         sp--;
 		sp[-1] = spf[-1] >= *spf;
 		break;
 
-	 case OPC_FUNARYMINUS:
+	 case OPC_FUnaryMinus:
 		spf[-1] = -spf[-1];
 		break;
 
-	 case OPC_FADDVAR:
+	 case OPC_FAddVar:
         sp--;
 		*(float*)sp[-1] += *spf;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_FSUBVAR:
+	 case OPC_FSubVar:
         sp--;
 		*(float*)sp[-1] -= *spf;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_FMULVAR:
+	 case OPC_FMulVar:
         sp--;
 		*(float*)sp[-1] *= *spf;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_FDIVVAR:
+	 case OPC_FDivVar:
         sp--;
 		*(float*)sp[-1] /= *spf;
 		sp[-1] = *(int*)sp[-1];
 		break;
 
-	 case OPC_FADDVAR_DROP:
+	 case OPC_FAddVarDrop:
         sp--;
 		*(float*)sp[-1] += *spf;
 		sp--;
 		break;
 
-	 case OPC_FSUBVAR_DROP:
+	 case OPC_FSubVarDrop:
         sp--;
 		*(float*)sp[-1] -= *spf;
 		sp--;
 		break;
 
-	 case OPC_FMULVAR_DROP:
+	 case OPC_FMulVarDrop:
         sp--;
 		*(float*)sp[-1] *= *spf;
 		sp--;
 		break;
 
-	 case OPC_FDIVVAR_DROP:
+	 case OPC_FDivVarDrop:
         sp--;
 		*(float*)sp[-1] /= *spf;
 		sp--;
@@ -1215,7 +1215,7 @@ static void RunFunction(FFunction *func)
 
 //=====================================
 
-	 case OPC_SWAP:
+	 case OPC_Swap:
 		{
 			int tmp = sp[-2];
 			sp[-2] = sp[-1];
@@ -1223,7 +1223,7 @@ static void RunFunction(FFunction *func)
 		}
 		break;
 
-	 case OPC_ICALL:
+	 case OPC_ICall:
 		sp--;
 		pr_stackPtr = sp;
 	    RunFunction((FFunction *)*sp);
@@ -1237,117 +1237,117 @@ static void RunFunction(FFunction *func)
 #define top_vec2	(*(TVec*)(sp - 3))
 #define dec_top_vec	(*(TVec*)(sp - 4))
 
-	 case OPC_VPUSHPOINTED:
+	 case OPC_VPushPointed:
 		sp += 2;
 		top_vec2 = *(TVec*)sp[-3];
 		break;
 
-	 case OPC_VADD:
+	 case OPC_VAdd:
 		top_vec1 = top_vec1 + top_vec2;
 		sp -= 3;
 		break;
 
-	 case OPC_VSUBTRACT:
+	 case OPC_VSubtract:
 		top_vec1 = top_vec1 - top_vec2;
 		sp -= 3;
 		break;
 
-	 case OPC_VPRESCALE:
+	 case OPC_VPreScale:
 		dec_top_vec = spf[-4] * top_vec2;
 		sp--;
 		break;
 
-	 case OPC_VPOSTSCALE:
+	 case OPC_VPostScale:
 		dec_top_vec = dec_top_vec * spf[-1];
 		sp--;
 		break;
 
-	 case OPC_VISCALE:
+	 case OPC_VIScale:
 		dec_top_vec = dec_top_vec / spf[-1];
 		sp--;
 		break;
 
-	 case OPC_VEQ:
+	 case OPC_VEquals:
 		sp[-6] = top_vec1 == top_vec2;
 		sp -= 5;
 		break;
 
-	 case OPC_VNE:
+	 case OPC_VNotEquals:
 		sp[-6] = top_vec1 != top_vec2;
 		sp -= 5;
 		break;
 
-	 case OPC_VUNARYMINUS:
+	 case OPC_VUnaryMinus:
 		top_vec2 = -top_vec2;
 		break;
 
-	 case OPC_VDROP:
+	 case OPC_VDrop:
 		sp -= 3;
 		break;
 
-	 case OPC_VASSIGN:
+	 case OPC_VAssign:
 		*(TVec*)sp[-4] = top_vec2;
 		dec_top_vec = *(TVec*)sp[-4];
         sp--;
 		break;
 
-	 case OPC_VADDVAR:
+	 case OPC_VAddVar:
 		*(TVec*)sp[-4] += top_vec2;
 		dec_top_vec = *(TVec*)sp[-4];
         sp--;
 		break;
 
-	 case OPC_VSUBVAR:
+	 case OPC_VSubVar:
 		*(TVec*)sp[-4] -= top_vec2;
 		dec_top_vec = *(TVec*)sp[-4];
         sp--;
 		break;
 
-	 case OPC_VSCALEVAR:
+	 case OPC_VScaleVar:
 		sp++;
 		*(TVec*)sp[-3] *= spf[-2];
 		top_vec2 = *(TVec*)sp[-3];
 		break;
 
-	 case OPC_VISCALEVAR:
+	 case OPC_VIScaleVar:
 		sp++;
 		*(TVec*)sp[-3] /= spf[-2];
 		top_vec2 = *(TVec*)sp[-3];
 		break;
 
-	 case OPC_VASSIGN_DROP:
+	 case OPC_VAssignDrop:
 		*(TVec*)sp[-4] = top_vec2;
         sp -= 4;
 		break;
 
-	 case OPC_VADDVAR_DROP:
+	 case OPC_VAddVarDrop:
 		*(TVec*)sp[-4] += top_vec2;
         sp -= 4;
 		break;
 
-	 case OPC_VSUBVAR_DROP:
+	 case OPC_VSubVarDrop:
 		*(TVec*)sp[-4] -= top_vec2;
         sp -= 4;
 		break;
 
-	 case OPC_VSCALEVAR_DROP:
+	 case OPC_VScaleVarDrop:
 		*(TVec*)sp[-2] *= spf[-1];
 		sp -= 2;
 		break;
 
-	 case OPC_VISCALEVAR_DROP:
+	 case OPC_VIScaleVarDrop:
 		*(TVec*)sp[-2] /= spf[-1];
 		sp -= 2;
 		break;
 
 //=====================================
 
-	 case OPC_COPY:
+	 case OPC_Copy:
 		*sp = sp[-1];
 		sp++;
 		break;
 
-	 case OPC_SWAP3:
+	 case OPC_Swap3:
 		{
 			int tmp = sp[-4];
 			sp[-4] = sp[-3];
@@ -1357,18 +1357,18 @@ static void RunFunction(FFunction *func)
 		}
 		break;
 
-	 case OPC_DYNAMIC_CAST:
+	 case OPC_DynamicCast:
 		sp[-1] = (int)PR_DynamicCast((VObject *)sp[-1], (VClass *)*current_statement++);
 		break;
 
-	 case OPC_PUSHBOOL:
+	 case OPC_PushBool:
 		{
 			int mask = *current_statement++;
 			sp[-1] = !!(*(int*)sp[-1] & mask);
 		}
 		break;
 
-	 case OPC_ASSIGNBOOL:
+	 case OPC_AssignBool:
 		{
 			int mask = *current_statement++;
 	        sp--;
@@ -1380,7 +1380,7 @@ static void RunFunction(FFunction *func)
 		}
 		break;
 
-	 case OPC_PUSH_VFUNC:
+	 case OPC_PushVFunc:
 		*sp = (int)((VObject*)sp[-1])->GetVFunction(*current_statement++);
 		sp++;
 		break;
@@ -2046,9 +2046,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2005/11/24 20:06:47  dj_jl
+//	Renamed opcodes.
+//
 //	Revision 1.35  2005/11/20 15:52:03  dj_jl
 //	Fixes for MacOS X.
-//
+//	
 //	Revision 1.34  2005/11/07 23:00:24  dj_jl
 //	Fixed a compiler warning.
 //	

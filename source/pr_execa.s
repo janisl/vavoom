@@ -111,135 +111,135 @@ LINTERPRET_FUNCTION:
     //
 	Align4
 LOPCODE_TABLE:
-	.long	LOPC_DONE
-	.long	LOPC_RETURN
-	.long	LOPC_PUSHNUMBER
-	.long	LOPC_PUSHPOINTED
-	.long	LOPC_LOCALADDRESS
-	.long	LOPC_GLOBALADDRESS
-	.long	LOPC_ADD
-	.long	LOPC_SUBTRACT
-	.long	LOPC_MULTIPLY
-	.long	LOPC_DIVIDE
+	.long	LOPC_Done
+	.long	LOPC_Return
+	.long	LOPC_PushNumber
+	.long	LOPC_PushPointed
+	.long	LOPC_LocalAddress
+	.long	LOPC_GlobalAddress
+	.long	LOPC_Add
+	.long	LOPC_Subtract
+	.long	LOPC_Multiply
+	.long	LOPC_Divide
 
-	.long	LOPC_MODULUS
-	.long	LOPC_EQ
-	.long	LOPC_NE
-	.long	LOPC_LT
-	.long	LOPC_GT
-	.long	LOPC_LE
-	.long	LOPC_GE
-	.long	LOPC_ANDLOGICAL
-	.long	LOPC_ORLOGICAL
-	.long	LOPC_NEGATELOGICAL
+	.long	LOPC_Modulus
+	.long	LOPC_Equals
+	.long	LOPC_NotEquals
+	.long	LOPC_Less
+	.long	LOPC_Greater
+	.long	LOPC_LessEquals
+	.long	LOPC_GreaterEquals
+	.long	LOPC_AndLogical
+	.long	LOPC_OrLogical
+	.long	LOPC_NegateLogical
 
-	.long	LOPC_ANDBITWISE
-	.long	LOPC_ORBITWISE
-	.long	LOPC_XORBITWISE
-	.long	LOPC_LSHIFT
-	.long	LOPC_RSHIFT
-	.long	LOPC_UNARYMINUS
-	.long	LOPC_BITINVERSE
-	.long	LOPC_CALL
-	.long	LOPC_GOTO
-	.long	LOPC_IFGOTO
+	.long	LOPC_AndBitwise
+	.long	LOPC_OrBitwise
+	.long	LOPC_XOrBitwise
+	.long	LOPC_LShift
+	.long	LOPC_RShift
+	.long	LOPC_UnaryMinus
+	.long	LOPC_BitInverse
+	.long	LOPC_Call
+	.long	LOPC_Goto
+	.long	LOPC_IfGoto
 
-	.long	LOPC_IFNOTGOTO
-	.long	LOPC_CASEGOTO
-	.long	LOPC_DROP
-	.long	LOPC_ASSIGN
-	.long	LOPC_ADDVAR
-	.long	LOPC_SUBVAR
-	.long	LOPC_MULVAR
-	.long	LOPC_DIVVAR
-	.long	LOPC_MODVAR
-	.long	LOPC_ANDVAR
+	.long	LOPC_IfNotGoto
+	.long	LOPC_CaseGoto
+	.long	LOPC_Drop
+	.long	LOPC_Assign
+	.long	LOPC_AddVar
+	.long	LOPC_SubVar
+	.long	LOPC_MulVar
+	.long	LOPC_DivVar
+	.long	LOPC_ModVar
+	.long	LOPC_AndVar
 
-	.long	LOPC_ORVAR
-	.long	LOPC_XORVAR
-	.long	LOPC_LSHIFTVAR
-	.long	LOPC_RSHIFTVAR
-	.long	LOPC_PREINC
-	.long	LOPC_PREDEC
-	.long	LOPC_POSTINC
-	.long	LOPC_POSTDEC
-	.long	LOPC_IFTOPGOTO
-	.long	LOPC_IFNOTTOPGOTO
+	.long	LOPC_OrVar
+	.long	LOPC_XOrVar
+	.long	LOPC_LShiftVar
+	.long	LOPC_RShiftVar
+	.long	LOPC_PreInc
+	.long	LOPC_PreDec
+	.long	LOPC_PostInc
+	.long	LOPC_PostDec
+	.long	LOPC_IfTopGoto
+	.long	LOPC_IfNotTopGoto
 
-	.long	LOPC_ASSIGN_DROP
-	.long	LOPC_ADDVAR_DROP
-	.long	LOPC_SUBVAR_DROP
-	.long	LOPC_MULVAR_DROP
-	.long	LOPC_DIVVAR_DROP
-	.long	LOPC_MODVAR_DROP
-	.long	LOPC_ANDVAR_DROP
-	.long	LOPC_ORVAR_DROP
-	.long	LOPC_XORVAR_DROP
-	.long	LOPC_LSHIFTVAR_DROP
+	.long	LOPC_AssignDrop
+	.long	LOPC_AddVarDrop
+	.long	LOPC_SubVarDrop
+	.long	LOPC_MulVarDrop
+	.long	LOPC_DivVarDrop
+	.long	LOPC_ModVarDrop
+	.long	LOPC_AndVarDrop
+	.long	LOPC_OrVarDrop
+	.long	LOPC_XOrVarDrop
+	.long	LOPC_LShiftVarDrop
 
-	.long	LOPC_RSHIFTVAR_DROP
-	.long	LOPC_INC_DROP
-	.long	LOPC_DEC_DROP
-	.long	LOPC_FADD
-	.long	LOPC_FSUBTRACT
-	.long	LOPC_FMULTIPLY
-	.long	LOPC_FDIVIDE
-	.long	LOPC_FEQ
-	.long	LOPC_FNE
-	.long	LOPC_FLT
+	.long	LOPC_RShiftVarDrop
+	.long	LOPC_IncDrop
+	.long	LOPC_DecDrop
+	.long	LOPC_FAdd
+	.long	LOPC_FSubtract
+	.long	LOPC_FMultiply
+	.long	LOPC_FDivide
+	.long	LOPC_FEquals
+	.long	LOPC_FNotEquals
+	.long	LOPC_FLess
 
-	.long	LOPC_FGT
-	.long	LOPC_FLE
-	.long	LOPC_FGE
-	.long	LOPC_FUNARYMINUS
-	.long	LOPC_FADDVAR
-	.long	LOPC_FSUBVAR
-	.long	LOPC_FMULVAR
-	.long	LOPC_FDIVVAR
-	.long	LOPC_FADDVAR_DROP
-	.long	LOPC_FSUBVAR_DROP
+	.long	LOPC_FGreater
+	.long	LOPC_FLessEquals
+	.long	LOPC_FGreaterEquals
+	.long	LOPC_FUnaryMinus
+	.long	LOPC_FAddVar
+	.long	LOPC_FSubVar
+	.long	LOPC_FMulVar
+	.long	LOPC_FDivVar
+	.long	LOPC_FAddVarDrop
+	.long	LOPC_FSubVarDrop
 
-	.long	LOPC_FMULVAR_DROP
-	.long	LOPC_FDIVVAR_DROP
-	.long	LOPC_SWAP
-	.long	LOPC_ICALL
-	.long	LOPC_VPUSHPOINTED
-	.long	LOPC_VADD
-	.long	LOPC_VSUBTRACT
-	.long	LOPC_VPRESCALE
-	.long	LOPC_VPOSTSCALE
-	.long	LOPC_VISCALE
+	.long	LOPC_FMulVarDrop
+	.long	LOPC_FDivVarDrop
+	.long	LOPC_Swap
+	.long	LOPC_ICall
+	.long	LOPC_VPushPointed
+	.long	LOPC_VAdd
+	.long	LOPC_VSubtract
+	.long	LOPC_VPreScale
+	.long	LOPC_VPostScale
+	.long	LOPC_VIScale
 
-	.long	LOPC_VEQ
-	.long	LOPC_VNE
-	.long	LOPC_VUNARYMINUS
-	.long	LOPC_VDROP
-	.long	LOPC_VASSIGN
-	.long	LOPC_VADDVAR
-	.long	LOPC_VSUBVAR
-	.long	LOPC_VSCALEVAR
-	.long	LOPC_VISCALEVAR
-	.long	LOPC_VASSIGN_DROP
+	.long	LOPC_VEquals
+	.long	LOPC_VNotEquals
+	.long	LOPC_VUnaryMinus
+	.long	LOPC_VDrop
+	.long	LOPC_VAssign
+	.long	LOPC_VAddVar
+	.long	LOPC_VSubVar
+	.long	LOPC_VScaleVar
+	.long	LOPC_VIScaleVar
+	.long	LOPC_VAssignDrop
 
-	.long	LOPC_VADDVAR_DROP
-	.long	LOPC_VSUBVAR_DROP
-	.long	LOPC_VSCALEVAR_DROP
-	.long	LOPC_VISCALEVAR_DROP
-	.long	LOPC_RETURNL
-	.long	LOPC_RETURNV
-	.long	LOPC_PUSHSTRING
-	.long	LOPC_COPY
-	.long	LOPC_SWAP3
-	.long	LOPC_PUSHFUNCTION
+	.long	LOPC_VAddVarDrop
+	.long	LOPC_VSubVarDrop
+	.long	LOPC_VScaleVarDrop
+	.long	LOPC_VIScaleVarDrop
+	.long	LOPC_ReturnL
+	.long	LOPC_ReturnV
+	.long	LOPC_PushString
+	.long	LOPC_Copy
+	.long	LOPC_Swap3
+	.long	LOPC_PushFunction
 
-	.long	LOPC_PUSHCLASSID
-	.long	LOPC_DYNAMIC_CAST
-	.long	LOPC_CASE_GOTO_CLASSID
-	.long	LOPC_PUSHNAME
-	.long	LOPC_CASE_GOTO_NAME
-	.long	LOPC_PUSHBOOL
-	.long	LOPC_ASSIGNBOOL
-	.long	LOPC_PUSH_VFUNC
+	.long	LOPC_PushClassId
+	.long	LOPC_DynamicCast
+	.long	LOPC_CaseGotoClassId
+	.long	LOPC_PushName
+	.long	LOPC_CaseGotoName
+	.long	LOPC_PushBool
+	.long	LOPC_AssignBool
+	.long	LOPC_PushVFunc
 
 	Align4
 LINC_STATEMENT_POINTER:
@@ -251,24 +251,24 @@ LINC_STATEMENT_POINTER:
 
     //	Empty function or invalid opcode
 	Align4
-LOPC_DONE:
+LOPC_Done:
 	movl	$C(PR_RFInvalidOpcode),%eax
 	call	*%eax
 
     //	Return from void function
 	Align4
-LOPC_RETURN:
+LOPC_Return:
 	movl	%ebp,C(pr_stackPtr)
 	jmp		LEND_RUN_FUNCTION
 
 	//	Push number
 	Align4
-LOPC_PUSHNUMBER:
-LOPC_GLOBALADDRESS:		// Patched
-LOPC_PUSHSTRING:		// Patched
-LOPC_PUSHFUNCTION:
-LOPC_PUSHCLASSID:
-LOPC_PUSHNAME:
+LOPC_PushNumber:
+LOPC_GlobalAddress:		// Patched
+LOPC_PushString:		// Patched
+LOPC_PushFunction:
+LOPC_PushClassId:
+LOPC_PushName:
 	movl	(%edi),%eax
 	movl	%eax,(%esi)
 	addl	$4,%edi
@@ -280,7 +280,7 @@ LOPC_PUSHNAME:
 
     //	Push pointed
 	Align4
-LOPC_PUSHPOINTED:
+LOPC_PushPointed:
 	movl	-4(%esi),%eax
 	movl	(%eax),%eax
 	movl	%eax,-4(%esi)
@@ -291,7 +291,7 @@ LOPC_PUSHPOINTED:
 
     //	Push address of a local variable
 	Align4
-LOPC_LOCALADDRESS:
+LOPC_LocalAddress:
 	movl	(%edi),%eax
 	leal	(%ebp,%eax,4),%eax
 	movl	%eax,(%esi)
@@ -304,7 +304,7 @@ LOPC_LOCALADDRESS:
 
 	//	Add
 	Align4
-LOPC_ADD:
+LOPC_Add:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	addl	%eax,-4(%esi)
@@ -315,7 +315,7 @@ LOPC_ADD:
 
     //	Subtract
 	Align4
-LOPC_SUBTRACT:
+LOPC_Subtract:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	subl	%eax,-4(%esi)
@@ -326,7 +326,7 @@ LOPC_SUBTRACT:
 
     //	Multiply
 	Align4
-LOPC_MULTIPLY:
+LOPC_Multiply:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	imull	(%esi),%eax
@@ -338,7 +338,7 @@ LOPC_MULTIPLY:
 
 	//	Divide
 	Align4
-LOPC_DIVIDE:
+LOPC_Divide:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	cltd
@@ -351,7 +351,7 @@ LOPC_DIVIDE:
 
     //	Modulus
 	Align4
-LOPC_MODULUS:
+LOPC_Modulus:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	cltd
@@ -364,7 +364,7 @@ LOPC_MODULUS:
 
     //	Equals
 	Align4
-LOPC_EQ:
+LOPC_Equals:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	cmpl	%eax,-4(%esi)
@@ -378,7 +378,7 @@ LOPC_EQ:
 
     //	Not equals
 	Align4
-LOPC_NE:
+LOPC_NotEquals:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	cmpl	%eax,-4(%esi)
@@ -392,7 +392,7 @@ LOPC_NE:
 
     //	Less
 	Align4
-LOPC_LT:
+LOPC_Less:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	cmpl	%eax,-4(%esi)
@@ -406,7 +406,7 @@ LOPC_LT:
 
     //	Greater
 	Align4
-LOPC_GT:
+LOPC_Greater:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	cmpl	%eax,-4(%esi)
@@ -420,7 +420,7 @@ LOPC_GT:
 
     //	Less or equals
 	Align4
-LOPC_LE:
+LOPC_LessEquals:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	cmpl	%eax,-4(%esi)
@@ -434,7 +434,7 @@ LOPC_LE:
 
     //	Greater or equals
 	Align4
-LOPC_GE:
+LOPC_GreaterEquals:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	cmpl	%eax,-4(%esi)
@@ -448,7 +448,7 @@ LOPC_GE:
 
     //	Logical AND
 	Align4
-LOPC_ANDLOGICAL:
+LOPC_AndLogical:
 	subl	$4,%esi
 	cmpl	$0,-4(%esi)
 	je		LAND_FALSE
@@ -468,7 +468,7 @@ LAND_FALSE:
 
     //	Logical OR
 	Align4
-LOPC_ORLOGICAL:
+LOPC_OrLogical:
 	subl	$4,%esi
 	cmpl	$0,-4(%esi)
 	jne		LOR_TRUE
@@ -488,7 +488,7 @@ LOR_TRUE:
 
     //	Logical negate
 	Align4
-LOPC_NEGATELOGICAL:
+LOPC_NegateLogical:
 	cmpl	$0,-4(%esi)
 	sete	%al
 	andl	$1,%eax
@@ -500,7 +500,7 @@ LOPC_NEGATELOGICAL:
 
     //	Bitwise AND
 	Align4
-LOPC_ANDBITWISE:
+LOPC_AndBitwise:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	andl	%eax,-4(%esi)
@@ -511,7 +511,7 @@ LOPC_ANDBITWISE:
 
     //	Bitwise OR
 	Align4
-LOPC_ORBITWISE:
+LOPC_OrBitwise:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	orl		%eax,-4(%esi)
@@ -522,7 +522,7 @@ LOPC_ORBITWISE:
 
     //	Bitwise XOR
 	Align4
-LOPC_XORBITWISE:
+LOPC_XOrBitwise:
 	subl	$4,%esi
 	movl	(%esi),%eax
 	xorl	%eax,-4(%esi)
@@ -533,7 +533,7 @@ LOPC_XORBITWISE:
 
     //	Left shift
 	Align4
-LOPC_LSHIFT:
+LOPC_LShift:
 	subl	$4,%esi
 	movl	(%esi),%ecx
 	sall	%cl,-4(%esi)
@@ -544,7 +544,7 @@ LOPC_LSHIFT:
 
     //	Right shift
 	Align4
-LOPC_RSHIFT:
+LOPC_RShift:
 	subl	$4,%esi
 	movl	(%esi),%ecx
 	sarl	%cl,-4(%esi)
@@ -555,7 +555,7 @@ LOPC_RSHIFT:
 
     //	Unary minus
 	Align4
-LOPC_UNARYMINUS:
+LOPC_UnaryMinus:
 	negl	-4(%esi)
 	//	Go to the next statement
 	movl	(%edi),%eax
@@ -564,7 +564,7 @@ LOPC_UNARYMINUS:
 
     //	Bit inverse
 	Align4
-LOPC_BITINVERSE:
+LOPC_BitInverse:
 	notl	-4(%esi)
 	//	Go to the next statement
 	movl	(%edi),%eax
@@ -573,7 +573,7 @@ LOPC_BITINVERSE:
 
     //	Call another function
 	Align4
-LOPC_CALL:
+LOPC_Call:
 	movl	%esi,C(pr_stackPtr)
 	pushl	(%edi)
 	addl	$4,%edi
@@ -589,7 +589,7 @@ LOPC_CALL:
 
     //	Goto
 	Align4
-LOPC_GOTO:
+LOPC_Goto:
 	movl	(%edi),%edi
 	//	Go to the next statement
 	movl	(%edi),%eax
@@ -598,7 +598,7 @@ LOPC_GOTO:
 
     //	If goto
 	Align4
-LOPC_IFGOTO:
+LOPC_IfGoto:
 	subl	$4,%esi
 	cmpl	$0,(%esi)
 	je		LINC_STATEMENT_POINTER
@@ -610,7 +610,7 @@ LOPC_IFGOTO:
 
     //	If not goto
 	Align4
-LOPC_IFNOTGOTO:
+LOPC_IfNotGoto:
 	subl	$4,%esi
 	cmpl	$0,(%esi)
 	jne		LINC_STATEMENT_POINTER
@@ -622,9 +622,9 @@ LOPC_IFNOTGOTO:
 
     //	Case goto
 	Align4
-LOPC_CASEGOTO:
-LOPC_CASE_GOTO_CLASSID:
-LOPC_CASE_GOTO_NAME:
+LOPC_CaseGoto:
+LOPC_CaseGotoClassId:
+LOPC_CaseGotoName:
 	movl	(%edi),%eax
 	addl	$4,%edi
 	cmpl	-4(%esi),%eax
@@ -638,7 +638,7 @@ LOPC_CASE_GOTO_NAME:
 
     //	Drop from stack
 	Align4
-LOPC_DROP:
+LOPC_Drop:
 	subl	$4,%esi
 	//	Go to the next statement
 	movl	(%edi),%eax
@@ -647,7 +647,7 @@ LOPC_DROP:
 
     //	Assign
 	Align4
-LOPC_ASSIGN:
+LOPC_Assign:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -660,7 +660,7 @@ LOPC_ASSIGN:
 
     //	Add to variable
 	Align4
-LOPC_ADDVAR:
+LOPC_AddVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -674,7 +674,7 @@ LOPC_ADDVAR:
 
     //	Subtract from variable
 	Align4
-LOPC_SUBVAR:
+LOPC_SubVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -688,7 +688,7 @@ LOPC_SUBVAR:
 
     //	Multiply variable
 	Align4
-LOPC_MULVAR:
+LOPC_MulVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -702,7 +702,7 @@ LOPC_MULVAR:
 
     //	Divide variable
 	Align4
-LOPC_DIVVAR:
+LOPC_DivVar:
 	subl	$4,%esi
 	movl	-4(%esi),%ecx
 	movl	(%ecx),%eax
@@ -717,7 +717,7 @@ LOPC_DIVVAR:
 
     //	Modulus variable
 	Align4
-LOPC_MODVAR:
+LOPC_ModVar:
 	subl	$4,%esi
 	movl	-4(%esi),%ecx
 	movl	(%ecx),%eax
@@ -732,7 +732,7 @@ LOPC_MODVAR:
 
     //	Bitwise AND variable
 	Align4
-LOPC_ANDVAR:
+LOPC_AndVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -746,7 +746,7 @@ LOPC_ANDVAR:
 
     //	Bitwise OR variable
 	Align4
-LOPC_ORVAR:
+LOPC_OrVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -760,7 +760,7 @@ LOPC_ORVAR:
 
     //	Bitwise XOR variable
 	Align4
-LOPC_XORVAR:
+LOPC_XOrVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -774,7 +774,7 @@ LOPC_XORVAR:
 
     //	Left shift variable
 	Align4
-LOPC_LSHIFTVAR:
+LOPC_LShiftVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%ecx
@@ -788,7 +788,7 @@ LOPC_LSHIFTVAR:
 
     //	Right shift variable
 	Align4
-LOPC_RSHIFTVAR:
+LOPC_RShiftVar:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%ecx
@@ -802,7 +802,7 @@ LOPC_RSHIFTVAR:
 
     //	Preincrement
 	Align4
-LOPC_PREINC:
+LOPC_PreInc:
 	movl	-4(%esi),%edx
 	incl	(%edx)
 	movl	(%edx),%eax
@@ -814,7 +814,7 @@ LOPC_PREINC:
 
     //	Predecrement
 	Align4
-LOPC_PREDEC:
+LOPC_PreDec:
 	movl	-4(%esi),%edx
 	decl	(%edx)
 	movl	(%edx),%eax
@@ -826,7 +826,7 @@ LOPC_PREDEC:
 
     //	Postincrement
 	Align4
-LOPC_POSTINC:
+LOPC_PostInc:
 	movl	-4(%esi),%edx
 	movl	(%edx),%eax
 	movl	%eax,-4(%esi)
@@ -838,7 +838,7 @@ LOPC_POSTINC:
 
     //	Postdecrement
 	Align4
-LOPC_POSTDEC:
+LOPC_PostDec:
 	movl	-4(%esi),%edx
 	movl	(%edx),%eax
 	movl	%eax,-4(%esi)
@@ -850,7 +850,7 @@ LOPC_POSTDEC:
 
     //	If top goto
 	Align4
-LOPC_IFTOPGOTO:
+LOPC_IfTopGoto:
 	cmpl	$0,-4(%esi)
 	je		LINC_STATEMENT_POINTER
 	movl	(%edi),%edi
@@ -861,7 +861,7 @@ LOPC_IFTOPGOTO:
 
     //	If not top goto
 	Align4
-LOPC_IFNOTTOPGOTO:
+LOPC_IfNotTopGoto:
 	cmpl	$0,-4(%esi)
 	jne		LINC_STATEMENT_POINTER
 	movl	(%edi),%edi
@@ -872,7 +872,7 @@ LOPC_IFNOTTOPGOTO:
 
     //	Assign, drop result
 	Align4
-LOPC_ASSIGN_DROP:
+LOPC_AssignDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -885,7 +885,7 @@ LOPC_ASSIGN_DROP:
 
     //	Add to variable, drop result
 	Align4
-LOPC_ADDVAR_DROP:
+LOPC_AddVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -898,7 +898,7 @@ LOPC_ADDVAR_DROP:
 
     //	Subtract from variable, drop result
 	Align4
-LOPC_SUBVAR_DROP:
+LOPC_SubVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%esi),%eax
@@ -911,7 +911,7 @@ LOPC_SUBVAR_DROP:
 
     //	Multiply variable, drop result
 	Align4
-LOPC_MULVAR_DROP:
+LOPC_MulVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%edx
 	movl	(%edx),%eax
@@ -925,7 +925,7 @@ LOPC_MULVAR_DROP:
 
     //	Divide variable, drop result
 	Align4
-LOPC_DIVVAR_DROP:
+LOPC_DivVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%ecx
 	movl	(%ecx),%eax
@@ -940,7 +940,7 @@ LOPC_DIVVAR_DROP:
 
     //	Modulus variable, drop result
 	Align4
-LOPC_MODVAR_DROP:
+LOPC_ModVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%ecx
 	movl	(%ecx),%eax
@@ -955,7 +955,7 @@ LOPC_MODVAR_DROP:
 
     //	Bitwise AND variable, drop result
 	Align4
-LOPC_ANDVAR_DROP:
+LOPC_AndVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	movl	(%esi),%ecx
@@ -968,7 +968,7 @@ LOPC_ANDVAR_DROP:
 
     //	Bitwise OR variable, drop result
 	Align4
-LOPC_ORVAR_DROP:
+LOPC_OrVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	movl	(%esi),%ecx
@@ -981,7 +981,7 @@ LOPC_ORVAR_DROP:
 
     //	Bitwise XOR variable, drop result
 	Align4
-LOPC_XORVAR_DROP:
+LOPC_XOrVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	movl	(%esi),%ecx
@@ -994,7 +994,7 @@ LOPC_XORVAR_DROP:
 
     //	Left shift variable, drop result
 	Align4
-LOPC_LSHIFTVAR_DROP:
+LOPC_LShiftVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	movl	(%esi),%ecx
@@ -1007,7 +1007,7 @@ LOPC_LSHIFTVAR_DROP:
 
     //	Right shift variable, drop result
 	Align4
-LOPC_RSHIFTVAR_DROP:
+LOPC_RShiftVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	movl	(%esi),%ecx
@@ -1020,7 +1020,7 @@ LOPC_RSHIFTVAR_DROP:
 
     //	Increment, drop result
 	Align4
-LOPC_INC_DROP:
+LOPC_IncDrop:
 	movl	-4(%esi),%edx
 	incl	(%edx)
 	subl	$4,%esi
@@ -1031,7 +1031,7 @@ LOPC_INC_DROP:
 
     //	Decrement, drop result
 	Align4
-LOPC_DEC_DROP:
+LOPC_DecDrop:
 	movl	-4(%esi),%edx
 	decl	(%edx)
 	subl	$4,%esi
@@ -1043,7 +1043,7 @@ LOPC_DEC_DROP:
 //**************************************************************************
 	//	Add float
 	Align4
-LOPC_FADD:
+LOPC_FAdd:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fadds	(%esi)
@@ -1055,7 +1055,7 @@ LOPC_FADD:
 
 	//	Subtract float
 	Align4
-LOPC_FSUBTRACT:
+LOPC_FSubtract:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fsubs	(%esi)
@@ -1067,7 +1067,7 @@ LOPC_FSUBTRACT:
 
 	//	Multiply float
 	Align4
-LOPC_FMULTIPLY:
+LOPC_FMultiply:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fmuls	(%esi)
@@ -1079,7 +1079,7 @@ LOPC_FMULTIPLY:
 
 	//	Divide float
 	Align4
-LOPC_FDIVIDE:
+LOPC_FDivide:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fdivs	(%esi)
@@ -1090,7 +1090,7 @@ LOPC_FDIVIDE:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FEQ:
+LOPC_FEquals:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fcomps	(%esi)
@@ -1105,7 +1105,7 @@ LOPC_FEQ:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FNE:
+LOPC_FNotEquals:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fcomps	(%esi)
@@ -1120,7 +1120,7 @@ LOPC_FNE:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FLT:
+LOPC_FLess:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fcomps	(%esi)
@@ -1135,7 +1135,7 @@ LOPC_FLT:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FGT:
+LOPC_FGreater:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fcomps	(%esi)
@@ -1150,7 +1150,7 @@ LOPC_FGT:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FLE:
+LOPC_FLessEquals:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fcomps	(%esi)
@@ -1165,7 +1165,7 @@ LOPC_FLE:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FGE:
+LOPC_FGreaterEquals:
 	subl	$4,%esi
 	flds	-4(%esi)
 	fcomps	(%esi)
@@ -1180,7 +1180,7 @@ LOPC_FGE:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FUNARYMINUS:
+LOPC_FUnaryMinus:
 	flds	-4(%esi)
 	fchs
 	fstps	-4(%esi)
@@ -1190,7 +1190,7 @@ LOPC_FUNARYMINUS:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FADDVAR:
+LOPC_FAddVar:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1204,7 +1204,7 @@ LOPC_FADDVAR:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FSUBVAR:
+LOPC_FSubVar:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1218,7 +1218,7 @@ LOPC_FSUBVAR:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FMULVAR:
+LOPC_FMulVar:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1232,7 +1232,7 @@ LOPC_FMULVAR:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FDIVVAR:
+LOPC_FDivVar:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1246,7 +1246,7 @@ LOPC_FDIVVAR:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FADDVAR_DROP:
+LOPC_FAddVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1259,7 +1259,7 @@ LOPC_FADDVAR_DROP:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FSUBVAR_DROP:
+LOPC_FSubVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1272,7 +1272,7 @@ LOPC_FSUBVAR_DROP:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FMULVAR_DROP:
+LOPC_FMulVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1285,7 +1285,7 @@ LOPC_FMULVAR_DROP:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_FDIVVAR_DROP:
+LOPC_FDivVarDrop:
 	subl	$4,%esi
 	movl	-4(%esi),%eax
 	flds	(%eax)
@@ -1301,7 +1301,7 @@ LOPC_FDIVVAR_DROP:
 
 	//	Swap elements on top of the stack
 	Align4
-LOPC_SWAP:
+LOPC_Swap:
 	movl	-8(%esi),%eax
 	movl	-4(%esi),%edx
 	movl	%edx,-8(%esi)
@@ -1313,7 +1313,7 @@ LOPC_SWAP:
 
     //	Indirect call another function
 	Align4
-LOPC_ICALL:
+LOPC_ICall:
 	subl	$4,%esi
 	pushl	(%esi)
 	movl	%esi,C(pr_stackPtr)
@@ -1331,7 +1331,7 @@ LOPC_ICALL:
 
 	//	Push vector
 	Align4
-LOPC_VPUSHPOINTED:
+LOPC_VPushPointed:
 	addl	$8,%esi
 	movl	-12(%esi),%edx
 	movl	(%edx),%eax
@@ -1347,7 +1347,7 @@ LOPC_VPUSHPOINTED:
 
 	//	Add vectors
 	Align4
-LOPC_VADD:
+LOPC_VAdd:
 	flds	-24(%esi)
 	fadds	-12(%esi)
 	fstps	-24(%esi)
@@ -1365,7 +1365,7 @@ LOPC_VADD:
 
 	//	Subtract vectors
 	Align4
-LOPC_VSUBTRACT:
+LOPC_VSubtract:
 	flds	-24(%esi)
 	fsubs	-12(%esi)
 	fstps	-24(%esi)
@@ -1383,7 +1383,7 @@ LOPC_VSUBTRACT:
 
 	//	Scale vector float*vector
 	Align4
-LOPC_VPRESCALE:
+LOPC_VPreScale:
 	flds	-16(%esi)
 	fld		%st(0)
 	fld		%st(1)
@@ -1401,7 +1401,7 @@ LOPC_VPRESCALE:
 
 	//	Scale vector vector*float
 	Align4
-LOPC_VPOSTSCALE:
+LOPC_VPostScale:
 	flds	-4(%esi)
 	fld		%st(0)
 	fld		%st(1)
@@ -1419,7 +1419,7 @@ LOPC_VPOSTSCALE:
 
 	//	Scale vector vector/float
 	Align4
-LOPC_VISCALE:
+LOPC_VIScale:
 	flds	-16(%esi)
 	fdivs	-4(%esi)
 	fstps	-16(%esi)
@@ -1437,7 +1437,7 @@ LOPC_VISCALE:
 
 	//	Equal vectors
 	Align4
-LOPC_VEQ:
+LOPC_VEquals:
 	flds	-24(%esi)
 	flds	-12(%esi)
 	fucompp
@@ -1472,7 +1472,7 @@ VEQ_FALSE:
 
 	//	Not equal vectors
 	Align4
-LOPC_VNE:
+LOPC_VNotEquals:
 	flds	-24(%esi)
 	flds	-12(%esi)
 	fucompp
@@ -1507,7 +1507,7 @@ LVNE_TRUE:
 
 	//	Vector unary minus
 	Align4
-LOPC_VUNARYMINUS:
+LOPC_VUnaryMinus:
 	flds	-12(%esi)
 	fchs
 	fstps	-12(%esi)
@@ -1524,7 +1524,7 @@ LOPC_VUNARYMINUS:
 
 	//	Drop vector
 	Align4
-LOPC_VDROP:
+LOPC_VDrop:
 	addl	$-12,%esi
 	//	Go to the next statement
 	movl	(%edi),%eax
@@ -1533,7 +1533,7 @@ LOPC_VDROP:
 
 	//	Assign vector
 	Align4
-LOPC_VASSIGN:
+LOPC_VAssign:
 	movl	-16(%esi),%edx
 	movl	-12(%esi),%eax
 	movl	%eax,(%edx)
@@ -1552,7 +1552,7 @@ LOPC_VASSIGN:
 
 	//	Add vector to vector
 	Align4
-LOPC_VADDVAR:
+LOPC_VAddVar:
 	movl	-16(%esi),%edx
 	flds	(%edx)
 	fadds	-12(%esi)
@@ -1574,7 +1574,7 @@ LOPC_VADDVAR:
 
 	//	Subtract vector from vector
 	Align4
-LOPC_VSUBVAR:
+LOPC_VSubVar:
 	movl	-16(%esi),%edx
 	flds	(%edx)
 	fsubs	-12(%esi)
@@ -1596,7 +1596,7 @@ LOPC_VSUBVAR:
 
 	//	Scale vector with float
 	Align4
-LOPC_VSCALEVAR:
+LOPC_VScaleVar:
 	addl	$4,%esi
 	movl	-12(%esi),%edx
 	flds	-8(%esi)
@@ -1618,7 +1618,7 @@ LOPC_VSCALEVAR:
 
 	//	Divide vector with float
 	Align4
-LOPC_VISCALEVAR:
+LOPC_VIScaleVar:
 	addl	$4,%esi
 	movl	-12(%esi),%edx
 	flds	-8(%esi)
@@ -1640,7 +1640,7 @@ LOPC_VISCALEVAR:
 
 	//	Assign vector, drop result
 	Align4
-LOPC_VASSIGN_DROP:
+LOPC_VAssignDrop:
 	movl	-16(%esi),%edx
 	movl	-12(%esi),%eax
 	movl	%eax,(%edx)
@@ -1656,7 +1656,7 @@ LOPC_VASSIGN_DROP:
 
 	//	Add vector to vector, drop result
 	Align4
-LOPC_VADDVAR_DROP:
+LOPC_VAddVarDrop:
 	movl	-16(%esi),%edx
 	flds	(%edx)
 	fadds	-12(%esi)
@@ -1675,7 +1675,7 @@ LOPC_VADDVAR_DROP:
 
 	//	Subtract vector from vector, drop result
 	Align4
-LOPC_VSUBVAR_DROP:
+LOPC_VSubVarDrop:
 	movl	-16(%esi),%edx
 	flds	(%edx)
 	fsubs	-12(%esi)
@@ -1694,7 +1694,7 @@ LOPC_VSUBVAR_DROP:
 
 	//	Multiply vector with float, drop result
 	Align4
-LOPC_VSCALEVAR_DROP:
+LOPC_VScaleVarDrop:
 	movl	-8(%esi),%edx
 	flds	-4(%esi)
 	flds	(%edx)
@@ -1713,7 +1713,7 @@ LOPC_VSCALEVAR_DROP:
 
 	//	Divide vector with float, drop result
 	Align4
-LOPC_VISCALEVAR_DROP:
+LOPC_VIScaleVarDrop:
 	movl	-8(%esi),%edx
 	flds	-4(%esi)
 	flds	(%edx)
@@ -1734,7 +1734,7 @@ LOPC_VISCALEVAR_DROP:
 
     //	Return from function returning dword sized value
 	Align4
-LOPC_RETURNL:
+LOPC_ReturnL:
 	movl	-4(%esi),%eax
 	movl	%eax,(%ebp)
 	leal	4(%ebp),%esi
@@ -1743,7 +1743,7 @@ LOPC_RETURNL:
 
     //	Return from function returning vector
 	Align4
-LOPC_RETURNV:
+LOPC_ReturnV:
 	movl	-12(%esi),%eax
 	movl	%eax,(%ebp)
 	movl	-8(%esi),%eax
@@ -1758,7 +1758,7 @@ LOPC_RETURNV:
 
 	//	Copy top of the stack
 	Align4
-LOPC_COPY:
+LOPC_Copy:
 	movl	-4(%esi),%eax
 	movl	%eax,(%esi)
 	addl	$4,%esi
@@ -1769,7 +1769,7 @@ LOPC_COPY:
 
 	//	Swap element with vector on top of the stack
 	Align4
-LOPC_SWAP3:
+LOPC_Swap3:
 	movl	-16(%esi),%eax
 	movl	-12(%esi),%edx
 	movl	%edx,-16(%esi)
@@ -1785,7 +1785,7 @@ LOPC_SWAP3:
 
 	//	Dynamic cast of a object
 	Align4
-LOPC_DYNAMIC_CAST:
+LOPC_DynamicCast:
 	movl	(%edi),%eax
 	movl	-4(%esi),%edx
 	pushl	%eax
@@ -1801,7 +1801,7 @@ LOPC_DYNAMIC_CAST:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_PUSHBOOL:
+LOPC_PushBool:
 	movl	(%edi),%eax
 	movl	-4(%esi),%edx
 	addl	$4,%edi
@@ -1815,7 +1815,7 @@ LOPC_PUSHBOOL:
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
 	Align4
-LOPC_ASSIGNBOOL:
+LOPC_AssignBool:
 	movl	(%edi),%edx
 	addl	$-4,%esi
 	addl	$4,%edi
@@ -1838,7 +1838,7 @@ LABOOL_FALSE:
 	addl	$4,%edi
 	jmp		*LOPCODE_TABLE(,%eax,4)
 
-LOPC_PUSH_VFUNC:
+LOPC_PushVFunc:
 	movl	-4(%esi),%edx
 	movl	(%edi),%eax
 	movl	4(%edx),%edx
@@ -1863,9 +1863,12 @@ LEND_RUN_FUNCTION:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/11/24 20:06:47  dj_jl
+//	Renamed opcodes.
+//
 //	Revision 1.12  2002/03/16 17:53:12  dj_jl
 //	Added opcode for pushing virtual function.
-//
+//	
 //	Revision 1.11  2002/02/16 16:29:26  dj_jl
 //	Added support for bool variables
 //	
