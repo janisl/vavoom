@@ -43,6 +43,8 @@ enum EWadNamespace
 	WADNS_ACSLibrary,
 	WADNS_NewTextures,
 	WADNS_Voices,
+	WADNS_HiResTextures,
+	WADNS_Progs,
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -80,9 +82,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2005/11/24 20:07:36  dj_jl
+//	Aded namespace for progs.
+//
 //	Revision 1.10  2005/11/06 15:28:40  dj_jl
 //	Some cleanup.
-//
+//	
 //	Revision 1.9  2005/11/05 14:57:36  dj_jl
 //	Putting Strife shareware voices in correct namespace.
 //	

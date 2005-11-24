@@ -905,6 +905,8 @@ void WadFile::InitNamespaces()
 	InitNamespace(WADNS_ACSLibrary, "A_START", "A_END", true);
 	InitNamespace(WADNS_NewTextures, "TX_START", "TX_END", false);
 	InitNamespace(WADNS_Voices, "V_START", "V_END", true);
+	InitNamespace(WADNS_HiResTextures, "H_START", "H_END", true);
+	InitNamespace(WADNS_Progs, "PR_START", "PR_END", false);
 	unguard;
 }
 
@@ -1052,6 +1054,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2005/11/24 20:07:36  dj_jl
+//  Aded namespace for progs.
+//
 //  Revision 1.20  2005/11/06 15:28:40  dj_jl
 //  Some cleanup.
 //
