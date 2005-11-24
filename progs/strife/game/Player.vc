@@ -106,9 +106,9 @@ TVec MoveDir;
 
 void PutClientIntoServer()
 {
-	ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
+	ViewEnts[ps_weapon] = SpawnObject(Weapon);
 	ViewEnts[ps_weapon].Player = self;
-	ViewEnts[ps_flash] = SpawnObject(Weapon, none);
+	ViewEnts[ps_flash] = SpawnObject(Weapon);
 	ViewEnts[ps_flash].Player = self;
 }
 
@@ -2043,7 +2043,7 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnts[ps_weapon].Destroy();
 	}
-	ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon], none);
+	ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon]);
 	ViewEnts[ps_weapon].Player = self;
 }
 
@@ -2386,6 +2386,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/11/24 20:16:24  dj_jl
+//  Removed unused fields from Object class.
+//
 //  Revision 1.18  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

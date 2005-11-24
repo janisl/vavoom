@@ -123,13 +123,13 @@ BotPlayer Bot;
 
 void PutClientIntoServer()
 {
-	ViewEnts[ps_weapon] = SpawnObject(Weapon, none);
+	ViewEnts[ps_weapon] = SpawnObject(Weapon);
 	ViewEnts[ps_weapon].Player = self;
-	ViewEnts[ps_flash] = SpawnObject(Weapon, none);
+	ViewEnts[ps_flash] = SpawnObject(Weapon);
 	ViewEnts[ps_flash].Player = self;
 	if (bIsBot)
 	{
-		Bot = SpawnObject(BotPlayer, none);
+		Bot = SpawnObject(BotPlayer);
 		Bot.player = self;
 		Bot.OnBeginPlay();
 	}
@@ -3225,7 +3225,7 @@ void SetWeapon(int NewWeapon)
 		ViewEnts[ps_weapon].Destroy();
 	}
 	ViewEnts[ps_weapon] =
-		SpawnObject(WeaponClasses[NewWeapon * NUMCLASSES + PClass], none);
+		SpawnObject(WeaponClasses[NewWeapon * NUMCLASSES + PClass]);
 	ViewEnts[ps_weapon].Player = self;
 	PSpriteSY = Weapon(ViewEnts[ps_weapon]).PSpriteSY;
 }
@@ -3644,6 +3644,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2005/11/24 20:17:57  dj_jl
+//  Removed unused fields from Object class.
+//
 //  Revision 1.10  2005/11/19 15:15:08  dj_jl
 //  Renamed sounds.
 //

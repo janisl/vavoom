@@ -229,7 +229,7 @@ native string Info_ValueForKey(string info, string key);
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
 native bool WadLumpPresent(string Name);
 
-native Object SpawnObject(classid cid, Object owner);
+native Object SpawnObject(classid cid);
 
 native classid FindClass(name Name);
 
@@ -504,6 +504,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.55  2005/11/24 20:27:00  dj_jl
+//  Removed unused fields from Object class.
+//
 //  Revision 1.54  2005/11/20 12:40:14  dj_jl
 //  Implemented support for sound sequence extensions.
 //

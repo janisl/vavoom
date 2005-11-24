@@ -31,12 +31,12 @@ class Object
 	native
 	abstract;
 
-int ObjectInternal[7];
+int ObjectInternal[4];
 classid Class;
 
-native void Destroy(void);
+native void Destroy();
 native bool IsA(name CheckName);
-native bool IsDestroyed(void);
+native bool IsDestroyed();
 
 defaultproperties
 {
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/24 20:27:00  dj_jl
+//  Removed unused fields from Object class.
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //
