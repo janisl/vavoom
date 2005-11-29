@@ -33,6 +33,8 @@
 #define	MAX_GLOBALS				(256 * 1024)
 #define MAX_STRINGS				8192
 #define	MAX_STRINGS_BUF			500000
+#define MAX_CLASSES				1024
+#define MAX_STRUCTS				1024
 
 #define OPCODE_STATS
 
@@ -72,6 +74,12 @@ constant_t		Constants[MAX_CONSTANTS];
 int				numconstants;
 constant_t		*ConstantsHash[256];
 
+TClass*			classtypes;
+int				numclasses;
+
+TStruct*		structtypes;
+int				numstructs;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int			undoOpcode;
@@ -105,9 +113,12 @@ static struct
 
 void PC_Init(void)
 {
+	//	Code buffer
 	CodeBuffer = new int[CODE_BUFFER_SIZE];
 	memset(CodeBuffer, 0, CODE_BUFFER_SIZE * 4);
 	CodeBufferSize = 1;
+
+	//	Globals
 	globals = new int[MAX_GLOBALS];
 	memset(globals, 0, MAX_GLOBALS * 4);
 	globalinfo = new byte[MAX_GLOBALS];
@@ -125,12 +136,31 @@ void PC_Init(void)
 	numbuiltins = 1;
 	functions[0].ReturnType = &type_void;
 
+	//	Strings
 	strings = new char[MAX_STRINGS_BUF];
 	memset(strings, 0, MAX_STRINGS_BUF);
 	memset(StringLookup, 0, 256 * 4);
-	//	1. simbolu virkne ir tukýa
+	//	1-st string is empty
 	StringCount = 1;
 	strofs = 4;
+
+	//	Structs
+	structtypes = new TStruct[MAX_STRUCTS];
+	numstructs = 2;
+	structtypes[0].Name = NAME_state_t;
+	structtypes[0].Type = &type_state;
+	structtypes[0].Size = -1;
+	type_state.Struct = &structtypes[0];
+	structtypes[1].Name = NAME_mobjinfo_t;
+	structtypes[1].Type = &type_mobjinfo;
+	structtypes[1].Size = -1;
+	type_mobjinfo.Struct = &structtypes[1];
+
+	//	Classes
+	classtypes = new TClass[MAX_CLASSES];
+	numclasses = 1;
+	classtypes[0].Name = NAME_Object;
+	classtypes[0].Size = -1;
 }
 
 //==========================================================================
@@ -516,12 +546,12 @@ void PC_WriteObject(char *name)
 		dfunction_t func;
 		func.name = LittleShort(functions[i].Name.GetIndex());
 		func.outer_class = LittleShort(functions[i].OuterClass ?
-			functions[i].OuterClass->classid : -1);
-		func.first_statement = LittleLong(functions[i].first_statement);
+			functions[i].OuterClass->Index : -1);
+		func.first_statement = LittleLong(functions[i].FirstStatement);
 		func.num_parms = LittleShort(functions[i].ParamsSize);
-		func.num_locals = LittleShort(functions[i].num_locals);
+		func.num_locals = LittleShort(functions[i].NumLocals);
 		func.type = LittleShort(functions[i].ReturnType->type);
-		func.flags = LittleShort(functions[i].flags);
+		func.flags = LittleShort(functions[i].Flags);
 		fwrite(&func, 1, sizeof(dfunction_t), f);
 	}	
 
@@ -540,15 +570,15 @@ void PC_WriteObject(char *name)
 	for (i = 0; i < numclasses; i++)
 	{
 		dclassinfo_t ci;
-		TType *ct = classtypes[i];
+		TClass& ct = classtypes[i];
 
-		ci.name = LittleLong(ct->Name.GetIndex());
-		ci.vtable = LittleLong(ct->vtable);
-		ci.size = LittleShort(ct->size);
-		ci.num_methods = LittleShort(ct->num_methods);
-		ci.parent = LittleLong(ct->aux_type ? ct->aux_type->classid : 0);
-		ci.num_properties = LittleLong(ct->num_properties);
-		ci.ofs_properties = LittleLong(ct->ofs_properties);
+		ci.name = LittleLong(ct.Name.GetIndex());
+		ci.vtable = LittleLong(ct.VTable);
+		ci.size = LittleShort(ct.Size);
+		ci.num_methods = LittleShort(ct.NumMethods);
+		ci.parent = LittleLong(ct.ParentClass ? ct.ParentClass->Index : 0);
+		ci.num_properties = LittleLong(ct.NumProperties);
+		ci.ofs_properties = LittleLong(ct.OfsProperties);
 		fwrite(&ci, 1, sizeof(ci), f);
 	}
 
@@ -599,33 +629,33 @@ void DumpAsmFunction(int num)
 	int		st;
 	int		i;
 
-	s = functions[num].first_statement;
+	s = functions[num].FirstStatement;
 	if (s < 0)
 	{
-		//	IebÝvñtÆ funkcija
+		//	Builtin function
 		dprintf("Builtin Nr. %d\n", -s);
 		return;
 	}
 	do
 	{
-		//	OperÆcijas kods
+		//	Opcode
 		st = CodeBuffer[s];
 		dprintf("%6d: %s ", s, StatementInfo[st].name);
 		s++;
 		if (StatementInfo[st].params >= 1)
 		{
-			//	1. arguments
+			//	1-st argument
 			dprintf("%6d ", CodeBuffer[s]);
 			if (st == OPC_Call)
 			{
-				//	IzsauktÆs funkcijas vÆrds
-				dprintf("(%s::%s)", functions[CodeBuffer[s]].OuterClass ?
+				//	Name of the function called
+				dprintf("(%s.%s)", functions[CodeBuffer[s]].OuterClass ?
 					*functions[CodeBuffer[s]].OuterClass->Name : "none",
 					*functions[CodeBuffer[s]].Name);
 			}
 			else if (st == OPC_PushString)
 			{
-				//  Sibolu virkne
+				//  String
 				dprintf("(%s)", strings + CodeBuffer[s]);
 			}
 			else if (st == OPC_PushBool || st == OPC_AssignBool)
@@ -636,16 +666,16 @@ void DumpAsmFunction(int num)
 		}
 		if (StatementInfo[st].params >= 2)
 		{
-			//	2. arguments
+			//	2-nd argument
 			dprintf("%6d ", CodeBuffer[s]);
 			s++;
 		}
 		dprintf("\n");
-		for (i=0; i<numfunctions; i++)
+		for (i = 0; i < numfunctions; i++)
 		{
-			//	Ja nÆkoýÆ komanda ir kÆdas citas funkcijas pirmÆ komanda,
-			// tad ýØ funkcija ir beigusies
-			if (s == functions[i].first_statement)
+			//	if next command is first statement of another function,
+			// then this function has ended.
+			if (s == functions[i].FirstStatement)
 			{
 				s = CodeBufferSize;
 			}
@@ -667,11 +697,11 @@ void PC_DumpAsm(char* name)
 	char	*fname;
 
 	strcpy(buf, name);
-	if (strstr(buf, "::"))
+	if (strstr(buf, "."))
 	{
 		cname = buf;
-		fname = strstr(buf, "::") + 2;
-		fname[-2] = 0;
+		fname = strstr(buf, ".") + 1;
+		fname[-1] = 0;
 	}
 	else
 	{
@@ -697,9 +727,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.20  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
-//
+//	
 //	Revision 1.19  2003/09/24 16:44:26  dj_jl
 //	Fixed asm dump of class members
 //	

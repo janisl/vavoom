@@ -27,13 +27,7 @@
 
 #include "vcc.h"
 
-namespace Pass1 {
-
 // MACROS ------------------------------------------------------------------
-
-#define MAX_BREAK		128
-#define MAX_CONTINUE	128
-#define MAX_CASE		128
 
 // TYPES -------------------------------------------------------------------
 
@@ -43,11 +37,10 @@ namespace Pass1 {
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void ParseCompoundStatement(void);
+static void SkipCompoundStatement();
 
-static void ParseExpressionPriority2(void);
-static void ParseExpressionPriority13(void);
-static void ParseExpressionPriority14(void);
+static void SkipExpressionPriority2();
+static void SkipExpressionPriority13();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -63,644 +56,11 @@ static bool			CheckForLocal;
 
 //==========================================================================
 //
-//	CheckForGlobalVar
+//	SkipLocalVar
 //
 //==========================================================================
 
-int CheckForGlobalVar(FName Name)
-{
-	if (Name == NAME_None)
-	{
-		return 0;
-	}
-	for (int i = 1; i < numglobaldefs; i++)
-	{
-		if (globaldefs[i].Name == Name)
-		{
-			return i;
-		}
-	}
-	return 0;
-}
-
-//==========================================================================
-//
-//	CheckForFunction
-//
-//==========================================================================
-
-int CheckForFunction(TType *InClass, FName Name)
-{
-	if (Name == NAME_None)
-	{
-		return 0;
-	}
-	for (int i = 1; i < numfunctions; i++)
-	{
-		if (functions[i].OuterClass == InClass && functions[i].Name == Name)
-		{
-			return i;
-		}
-	}
-	return 0;
-}
-
-//==========================================================================
-//
-//	CheckForConstant
-//
-//==========================================================================
-
-int CheckForConstant(FName Name)
-{
-#if 1
-	for (constant_t *C = ConstantsHash[GetTypeHash(Name) & 255];
-		C; C = C->HashNext)
-	{
-		if (C->Name == Name)
-		{
-			return C - Constants;
-		}
-	}
-#else
-	for (int i = 0; i < numconstants; i++)
-	{
-		if (Constants[i].Name == Name)
-		{
-			return i;
-		}
-	}
-#endif
-	return -1;
-}
-
-//==========================================================================
-//
-//	ParseFunctionCall
-//
-//==========================================================================
-
-static void ParseFunctionCall(void)
-{
-	if (!TK_Check(PU_RPAREN))
-	{
-		do
-		{
-			ParseExpressionPriority14();
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority0
-//
-//==========================================================================
-
-static void ParseExpressionPriority0(void)
-{
-	bool		bLocals;
-
-	bLocals = CheckForLocal;
-	CheckForLocal = false;
-   	switch (tk_Token)
-	{
-	case TK_INTEGER:
-		TK_NextToken();
-		return;
-
-	case TK_FLOAT:
-		TK_NextToken();
-		return;
-
-	case TK_NAME:
-		TK_NextToken();
-		return;
-
-	case TK_STRING:
-		TK_NextToken();
-		return;
-
-	case TK_PUNCT:
-	   	if (TK_Check(PU_LPAREN))
-		{
-			ParseExpressionPriority14();
-			TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
-			return;
-		}
-
-		if (TK_Check(PU_DCOLON))
-		{
-			if (tk_Token != TK_IDENTIFIER)
-				ParseError("Identifier expected");
-			TK_NextToken();
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			ParseFunctionCall();
-			return;
-		}
-		break;
-
-	case TK_KEYWORD:
-		if (TK_Check(KW_VECTOR))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			ParseExpressionPriority14();
-			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
-			ParseExpressionPriority14();
-			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
-			ParseExpressionPriority14();
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			return;
-		}
-		if (TK_Check(KW_SELF))
-		{
-			return;
-		}
-		if (TK_Check(KW_NONE))
-		{
-		   	return;
-		}
-		if (TK_Check(KW_NULL))
-		{
-		   	return;
-		}
-		if (bLocals)
-		{
-			TK_NextToken();
-			ParseLocalVar();
-			return;
-		}
-		break;
-
-	case TK_IDENTIFIER:
-		TK_NextToken();
-		if (TK_Check(PU_LPAREN))
-		{
-			ParseFunctionCall();
-			return;
-		}
-		if (bLocals && (tk_Token == TK_IDENTIFIER ||
-			(tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)))
-		{
-			ParseLocalVar();
-			return;
-		}
-		break;
-
-	default:
-	   	break;
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority1
-//
-//==========================================================================
-
-static void ParseExpressionPriority1(void)
-{
-	bool		done;
-
-   	ParseExpressionPriority0();
-	done = false;
-	do
-	{
-   		if (TK_Check(PU_MINUS_GT))
-   	   	{
-			ParseField();
-   		}
-   		else if (TK_Check(PU_DOT))
-   	   	{
-			ParseField();
-   		}
-		else if (TK_Check(PU_LINDEX))
-		{
-			ParseExpressionPriority14();
-			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
-		}
-		else if (TK_Check(PU_LPAREN))
-		{
-			ParseFunctionCall();
-		}
-		else
-		{
-			done = true;
-		}
-	} while (!done);
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority2
-//
-//==========================================================================
-
-static void ParseExpressionPriority2(void)
-{
-   	if (tk_Token == TK_PUNCT)
-	{
-		if (TK_Check(PU_PLUS))
-		{
-		   	ParseExpressionPriority2();
-			return;
-		}
-
-	   	if (TK_Check(PU_MINUS))
-		{
-		   	ParseExpressionPriority2();
-			return;
-		}
-
-	   	if (TK_Check(PU_NOT))
-		{
-		   	ParseExpressionPriority2();
-			return;
-		}
-
-	   	if (TK_Check(PU_TILDE))
-		{
-		   	ParseExpressionPriority2();
-			return;
-		}
-
-		if (TK_Check(PU_AND))
-		{
-		   	ParseExpressionPriority1();
-			return;
-		}
-		if (TK_Check(PU_ASTERISK))
-		{
-		   	ParseExpressionPriority2();
-			return;
-		}
-
-	   	if (TK_Check(PU_INC))
-		{
-		   	ParseExpressionPriority2();
-			return;
-		}
-
-	   	if (TK_Check(PU_DEC))
-		{
-		   	ParseExpressionPriority2();
-			return;
-		}
-	}
-
-	ParseExpressionPriority1();
-
-	if (TK_Check(PU_INC))
-	{
-		return;
-	}
-
-	if (TK_Check(PU_DEC))
-	{
-		return;
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority3
-//
-//==========================================================================
-
-static void ParseExpressionPriority3(void)
-{
-	ParseExpressionPriority2();
-	while (TK_Check(PU_ASTERISK) || TK_Check(PU_SLASH) ||
-		TK_Check(PU_PERCENT))
-	{
-		ParseExpressionPriority2();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority4
-//
-//==========================================================================
-
-static void ParseExpressionPriority4(void)
-{
-	ParseExpressionPriority3();
-	while (TK_Check(PU_PLUS) || TK_Check(PU_MINUS))
-	{
-		ParseExpressionPriority3();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority5
-//
-//==========================================================================
-
-static void ParseExpressionPriority5(void)
-{
-	ParseExpressionPriority4();
-	while (TK_Check(PU_LSHIFT) || TK_Check(PU_RSHIFT))
-	{
-		ParseExpressionPriority4();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority6
-//
-//==========================================================================
-
-static void ParseExpressionPriority6(void)
-{
-	ParseExpressionPriority5();
-	while (TK_Check(PU_LT) || TK_Check(PU_LE) ||
-		TK_Check(PU_GT) || TK_Check(PU_GE))
-	{
-		ParseExpressionPriority5();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority7
-//
-//==========================================================================
-
-static void ParseExpressionPriority7(void)
-{
-	ParseExpressionPriority6();
-	while (TK_Check(PU_EQ) || TK_Check(PU_NE))
-	{
-		ParseExpressionPriority6();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority8
-//
-//==========================================================================
-
-static void ParseExpressionPriority8(void)
-{
-	ParseExpressionPriority7();
-	while (TK_Check(PU_AND))
-	{
-		ParseExpressionPriority7();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority9
-//
-//==========================================================================
-
-static void ParseExpressionPriority9(void)
-{
-	ParseExpressionPriority8();
-	while (TK_Check(PU_XOR))
-	{
-		ParseExpressionPriority8();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority10
-//
-//==========================================================================
-
-static void ParseExpressionPriority10(void)
-{
-	ParseExpressionPriority9();
-	while (TK_Check(PU_OR))
-	{
-		ParseExpressionPriority9();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority11
-//
-//==========================================================================
-
-static void ParseExpressionPriority11(void)
-{
-	ParseExpressionPriority10();
-	while (TK_Check(PU_AND_LOG))
-	{
-		ParseExpressionPriority10();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority12
-//
-//==========================================================================
-
-static void ParseExpressionPriority12(void)
-{
-	ParseExpressionPriority11();
-	while (TK_Check(PU_OR_LOG))
-	{
-		ParseExpressionPriority11();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority13
-//
-//==========================================================================
-
-static void ParseExpressionPriority13(void)
-{
-	ParseExpressionPriority12();
-   	if (TK_Check(PU_QUEST))
-	{
-		ParseExpressionPriority13();
-		TK_Expect(PU_COLON, ERR_MISSING_COLON);
-		ParseExpressionPriority13();
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpressionPriority14
-//
-//==========================================================================
-
-static void ParseExpressionPriority14(void)
-{
-	static const EPunctuation AssignOps[] =
-	{
-		PU_ASSIGN,
-		PU_ADD_ASSIGN,
-		PU_MINUS_ASSIGN,
-		PU_MULTIPLY_ASSIGN,
-		PU_DIVIDE_ASSIGN,
-		PU_MOD_ASSIGN,
-		PU_AND_ASSIGN,
-		PU_OR_ASSIGN,
-		PU_XOR_ASSIGN,
-		PU_LSHIFT_ASSIGN,
-		PU_RSHIFT_ASSIGN
-	};
-
-	ParseExpressionPriority13();
-	for (int i = 0; i < 11; i++)
-   	{
-		if (TK_Check(AssignOps[i]))
-		{
-			ParseExpressionPriority14();
-			return;
-   		}
-	}
-}
-
-//==========================================================================
-//
-//	ParseExpression
-//
-//==========================================================================
-
-void ParseExpression(bool bLocals)
-{
-	CheckForLocal = bLocals;
-	ParseExpressionPriority14();
-}
-
-//==========================================================================
-//
-// ProcessStatement
-//
-//==========================================================================
-
-static void ParseStatement(void)
-{
-	switch (tk_Token)
-	{
-		case TK_EOF:
-			ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
-			break;
-		case TK_KEYWORD:
-			if (TK_Check(KW_IF))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				ParseExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				ParseStatement();
-				if (TK_Check(KW_ELSE))
-				{
-					ParseStatement();
-				}
-			}
-			else if (TK_Check(KW_WHILE))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				ParseExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				ParseStatement();
-			}
-			else if (TK_Check(KW_DO))
-			{
-				ParseStatement();
-				TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				ParseExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_FOR))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				do
-				{
-					ParseExpression();
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				ParseExpression();
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				do
-				{
-					ParseExpression();
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				ParseStatement();
-			}
-			else if (TK_Check(KW_BREAK))
-			{
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_CONTINUE))
-			{
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_RETURN))
-			{
-//				if (!TK_Check(PU_SEMICOLON))
-				{
-					ParseExpression();
-					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				}
-			}
-			else if (TK_Check(KW_SWITCH))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				ParseExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-
-				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-				do
-				{
-					if (TK_Check(KW_CASE))
-					{
-						//FIXME
-						ParseExpression(false);
-						TK_Expect(PU_COLON, ERR_MISSING_COLON);
-						continue;
-					}
-					if (TK_Check(KW_DEFAULT))
-					{
-						TK_Expect(PU_COLON, ERR_MISSING_COLON);
-						continue;
-					}
-					ParseStatement();
-				} while (!TK_Check(PU_RBRACE));
-			}
-			else
-			{
-				ParseExpression(true);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			break;
-		case TK_PUNCT:
-			if (TK_Check(PU_LBRACE))
-			{
-				ParseCompoundStatement();
-				break;
-			}
-		default:
-			ParseExpression(true);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			break;
-	}
-}
-
-//==========================================================================
-//
-//	ParseLocalVar
-//
-//==========================================================================
-
-void ParseLocalVar(void)
+static void SkipLocalVar()
 {
 	do
 	{
@@ -720,22 +80,380 @@ void ParseLocalVar(void)
 		//  inicializÆcija
 		else if (TK_Check(PU_ASSIGN))
 		{
-			ParseExpression();
+			SkipExpressionPriority13();
 		}
 	} while (TK_Check(PU_COMMA));
 }
 
 //==========================================================================
 //
-//	ParseCompoundStatement
+//	SkipFunctionCall
 //
 //==========================================================================
 
-static void ParseCompoundStatement(void)
+static void SkipFunctionCall()
+{
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			SkipExpressionPriority13();
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+}
+
+//==========================================================================
+//
+//	SkipExpressionPriority0
+//
+//==========================================================================
+
+static void SkipExpressionPriority0()
+{
+	bool		bLocals;
+
+	bLocals = CheckForLocal;
+	CheckForLocal = false;
+   	switch (tk_Token)
+	{
+	case TK_INTEGER:
+	case TK_FLOAT:
+	case TK_NAME:
+	case TK_STRING:
+		TK_NextToken();
+		return;
+
+	case TK_PUNCT:
+	   	if (TK_Check(PU_LPAREN))
+		{
+			SkipExpressionPriority13();
+			TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
+			return;
+		}
+
+		if (TK_Check(PU_DCOLON))
+		{
+			if (tk_Token != TK_IDENTIFIER)
+				ParseError("Identifier expected");
+			TK_NextToken();
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			SkipFunctionCall();
+			return;
+		}
+		break;
+
+	case TK_KEYWORD:
+		if (TK_Check(KW_VECTOR))
+		{
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			SkipExpressionPriority13();
+			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
+			SkipExpressionPriority13();
+			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
+			SkipExpressionPriority13();
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+			return;
+		}
+		if (TK_Check(KW_SELF) || TK_Check(KW_NONE) || TK_Check(KW_NULL))
+		{
+			return;
+		}
+		if (bLocals)
+		{
+			TK_NextToken();
+			SkipLocalVar();
+			return;
+		}
+		break;
+
+	case TK_IDENTIFIER:
+		TK_NextToken();
+		if (TK_Check(PU_LPAREN))
+		{
+			SkipFunctionCall();
+			return;
+		}
+		if (bLocals && (tk_Token == TK_IDENTIFIER ||
+			(tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)))
+		{
+			SkipLocalVar();
+			return;
+		}
+		break;
+
+	default:
+	   	break;
+	}
+}
+
+//==========================================================================
+//
+//	SkipExpressionPriority1
+//
+//==========================================================================
+
+static void SkipExpressionPriority1()
+{
+	SkipExpressionPriority0();
+	bool done = false;
+	do
+	{
+		if (TK_Check(PU_MINUS_GT) || TK_Check(PU_DOT))
+		{
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError(ERR_INVALID_IDENTIFIER);
+			}
+			else
+			{
+				TK_NextToken();
+			}
+		}
+		else if (TK_Check(PU_LINDEX))
+		{
+			SkipExpressionPriority13();
+			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
+		}
+		else if (TK_Check(PU_LPAREN))
+		{
+			SkipFunctionCall();
+		}
+		else
+		{
+			done = true;
+		}
+	} while (!done);
+}
+
+//==========================================================================
+//
+//	SkipExpressionPriority2
+//
+//==========================================================================
+
+static void SkipExpressionPriority2()
+{
+   	if (tk_Token == TK_PUNCT)
+	{
+		if (TK_Check(PU_PLUS) || TK_Check(PU_MINUS) ||
+			TK_Check(PU_NOT) || TK_Check(PU_TILDE) ||
+			TK_Check(PU_AND) || TK_Check(PU_ASTERISK) ||
+			TK_Check(PU_INC) || TK_Check(PU_DEC))
+		{
+		   	SkipExpressionPriority2();
+			return;
+		}
+	}
+
+	SkipExpressionPriority1();
+	TK_Check(PU_INC) || TK_Check(PU_DEC);
+}
+
+//==========================================================================
+//
+//	SkipExpressionPriority12
+//
+//==========================================================================
+
+static void SkipExpressionPriority12()
+{
+	SkipExpressionPriority2();
+	while (TK_Check(PU_OR_LOG) || TK_Check(PU_AND_LOG) ||
+		TK_Check(PU_OR) || TK_Check(PU_XOR) || TK_Check(PU_AND) ||
+		TK_Check(PU_EQ) || TK_Check(PU_NE) ||
+		TK_Check(PU_LT) || TK_Check(PU_LE) ||
+		TK_Check(PU_GT) || TK_Check(PU_GE) ||
+		TK_Check(PU_LSHIFT) || TK_Check(PU_RSHIFT) ||
+		TK_Check(PU_PLUS) || TK_Check(PU_MINUS) ||
+		TK_Check(PU_ASTERISK) || TK_Check(PU_SLASH) || TK_Check(PU_PERCENT))
+	{
+		SkipExpressionPriority2();
+	}
+}
+
+//==========================================================================
+//
+//	SkipExpressionPriority13
+//
+//==========================================================================
+
+static void SkipExpressionPriority13()
+{
+	SkipExpressionPriority12();
+   	if (TK_Check(PU_QUEST))
+	{
+		SkipExpressionPriority13();
+		TK_Expect(PU_COLON, ERR_MISSING_COLON);
+		SkipExpressionPriority13();
+	}
+}
+
+//==========================================================================
+//
+//	SkipExpressionPriority14
+//
+//==========================================================================
+
+static void SkipExpressionPriority14()
+{
+	SkipExpressionPriority13();
+	if (TK_Check(PU_ASSIGN) ||
+		TK_Check(PU_ADD_ASSIGN) ||
+		TK_Check(PU_MINUS_ASSIGN) ||
+		TK_Check(PU_MULTIPLY_ASSIGN) ||
+		TK_Check(PU_DIVIDE_ASSIGN) ||
+		TK_Check(PU_MOD_ASSIGN) ||
+		TK_Check(PU_AND_ASSIGN) ||
+		TK_Check(PU_OR_ASSIGN) ||
+		TK_Check(PU_XOR_ASSIGN) ||
+		TK_Check(PU_LSHIFT_ASSIGN) ||
+		TK_Check(PU_RSHIFT_ASSIGN))
+	{
+		SkipExpressionPriority13();
+	}
+}
+
+//==========================================================================
+//
+//	SkipExpression
+//
+//==========================================================================
+
+static void SkipExpression(bool bLocals = false)
+{
+	CheckForLocal = bLocals;
+	SkipExpressionPriority14();
+}
+
+//==========================================================================
+//
+//	SkipStatement
+//
+//==========================================================================
+
+static void SkipStatement()
+{
+	switch (tk_Token)
+	{
+		case TK_EOF:
+			ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
+			break;
+		case TK_KEYWORD:
+			if (TK_Check(KW_IF))
+			{
+				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+				SkipExpression();
+				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+				SkipStatement();
+				if (TK_Check(KW_ELSE))
+				{
+					SkipStatement();
+				}
+			}
+			else if (TK_Check(KW_WHILE))
+			{
+				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+				SkipExpression();
+				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+				SkipStatement();
+			}
+			else if (TK_Check(KW_DO))
+			{
+				SkipStatement();
+				TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
+				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+				SkipExpression();
+				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
+			else if (TK_Check(KW_FOR))
+			{
+				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+				do
+				{
+					SkipExpression();
+				} while (TK_Check(PU_COMMA));
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+				SkipExpression();
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+				do
+				{
+					SkipExpression();
+				} while (TK_Check(PU_COMMA));
+				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+				SkipStatement();
+			}
+			else if (TK_Check(KW_BREAK))
+			{
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
+			else if (TK_Check(KW_CONTINUE))
+			{
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
+			else if (TK_Check(KW_RETURN))
+			{
+//				if (!TK_Check(PU_SEMICOLON))
+				{
+					SkipExpression();
+					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+				}
+			}
+			else if (TK_Check(KW_SWITCH))
+			{
+				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+				SkipExpression();
+				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+
+				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+				do
+				{
+					if (TK_Check(KW_CASE))
+					{
+						//FIXME
+						SkipExpression(false);
+						TK_Expect(PU_COLON, ERR_MISSING_COLON);
+						continue;
+					}
+					if (TK_Check(KW_DEFAULT))
+					{
+						TK_Expect(PU_COLON, ERR_MISSING_COLON);
+						continue;
+					}
+					SkipStatement();
+				} while (!TK_Check(PU_RBRACE));
+			}
+			else
+			{
+				SkipExpression(true);
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
+			break;
+		case TK_PUNCT:
+			if (TK_Check(PU_LBRACE))
+			{
+				SkipCompoundStatement();
+				break;
+			}
+		default:
+			SkipExpression(true);
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			break;
+	}
+}
+
+//==========================================================================
+//
+//	SkipCompoundStatement
+//
+//==========================================================================
+
+static void SkipCompoundStatement()
 {
 	while (!TK_Check(PU_RBRACE))
 	{
-		ParseStatement();
+		SkipStatement();
 	}
 }
 
@@ -756,9 +474,9 @@ static bool ParseFields(TType *type, int *dst)
 			return false;
 		}
 	}
-	for (int i = 0; i < type->numfields; i++)
+	for (int i = 0; i < type->Struct->NumFields; i++)
 	{
-		field_t *field = &type->fields[i];
+		field_t* field = &type->Struct->Fields[i];
 		ParseGlobalData(field->type, (int*)((byte*)dst + field->ofs));
 		if (!TK_Check(PU_COMMA))
 		{
@@ -785,7 +503,7 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		do
 		{
 			ParseGlobalData(type->aux_type,
-				(int*)((byte*)dst + numinitialisers * type->aux_type->size));
+				(int*)((byte*)dst + numinitialisers * TypeSize(type->aux_type)));
 			numinitialisers++;
 			if (!TK_Check(PU_COMMA))
 			{
@@ -793,13 +511,13 @@ static TType* ParseGlobalData(TType *type, int *dst)
 				break;
 			}
 		} while (!TK_Check(PU_RBRACE));
-		if (!type->size)
+		if (!type->array_dim)
 		{
 			type = MakeArrayType(type->aux_type, numinitialisers);
 		}
 		else
 		{
-			if (numinitialisers > type->size / type->aux_type->size)
+			if (numinitialisers > type->array_dim)
 			{
 				ERR_Exit(ERR_NONE, true, "Too many initialisers.");
 			}
@@ -862,7 +580,7 @@ static TType *ParseArrayDimensions(TType *type)
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
 		type = ParseArrayDimensions(type);
-		if (!type->size)
+		if (!TypeSize(type))
 		{
 			ParseError("Empty sub-array type");
 		}
@@ -923,10 +641,6 @@ static void ParseDef(TType *type, bool IsNative)
 			{
 				ERR_Exit(ERR_VOID_VAR, true, NULL);
 			}
-			if (t->type == ev_class)
-			{
-				t = MakeReferenceType(t);
-			}
 			if (CheckForGlobalVar(Name) ||
 				CheckForFunction(NULL, Name) ||
 				CheckForConstant(Name) != -1)
@@ -940,7 +654,7 @@ static void ParseDef(TType *type, bool IsNative)
 			{
 				t = ParseGlobalData(t, globals + numglobals);
 			}
-			if (!t->size)
+			if (!TypeSize(t))
 			{
 				ERR_Exit(ERR_NONE, true, "Size of type = 0.");
 			}
@@ -954,11 +668,6 @@ static void ParseDef(TType *type, bool IsNative)
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
-	}
-
-	if (t->type == ev_class)
-	{
-		t = MakeReferenceType(t);
 	}
 
 	if (CheckForGlobalVar(Name))
@@ -978,7 +687,6 @@ static void ParseDef(TType *type, bool IsNative)
 	numfunctions++;
 	functions[num].Name = Name;
 	functions[num].OuterClass = NULL;
-	functions[num].first_statement = 0;
 	functions[num].ReturnType = t;
 
 	do
@@ -1002,10 +710,6 @@ static void ParseDef(TType *type, bool IsNative)
 		while (TK_Check(PU_ASTERISK))
 		{
 		   	type = MakePointerType(type);
-		}
-		if (type->type == ev_class)
-		{
-			type = MakeReferenceType(type);
 		}
 		if (functions[num].NumParams == 0 && type == &type_void)
 		{
@@ -1031,15 +735,15 @@ static void ParseDef(TType *type, bool IsNative)
 
 	if (IsNative)
 	{
-		functions[num].first_statement = -numbuiltins;
-		functions[num].flags |= FUNC_Native;
+		functions[num].FirstStatement = -numbuiltins;
+		functions[num].Flags |= FUNC_Native;
 		numbuiltins++;
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-   	ParseCompoundStatement();
+   	SkipCompoundStatement();
 }
 
 //==========================================================================
@@ -1048,26 +752,22 @@ static void ParseDef(TType *type, bool IsNative)
 //
 //==========================================================================
 
-void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
-	TType *class_type, int FuncFlags)
+void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
+	TClass* InClass, int FuncFlags)
 {
-	if (t->type == ev_class)
-	{
-		t = MakeReferenceType(t);
-	}
 	if (t != &type_void)
 	{
-		//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
+		//	Function's rturn type must be void, vector or with size 4
 		TypeCheckPassable(t);
 	}
 
 	numlocaldefs = 1;
 	int localsofs = 1;
 
-	if (CheckForFunction(class_type, method->Name))
+	if (CheckForFunction(InClass, method->Name))
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			"Function: %s::%s", *class_type->Name, *method->Name);
+			"Function: %s.%s", *InClass->Name, *method->Name);
 	}
 
 	int num = numfunctions;
@@ -1075,14 +775,13 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	method->func_num = num;
 	TFunction& Func = functions[num];
 	Func.Name = method->Name;
-	Func.OuterClass = class_type;
-	Func.flags = FuncFlags;
+	Func.OuterClass = InClass;
+	Func.Flags = FuncFlags;
 	Func.ReturnType = t;
 
 	TType methodtype;
 	memset(&methodtype, 0, sizeof(TType));
 	methodtype.type = ev_method;
-	methodtype.size = 4;
 	methodtype.aux_type = t;
 
 	do
@@ -1106,10 +805,6 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 		while (TK_Check(PU_ASTERISK))
 		{
 			type = MakePointerType(type);
-		}
-		if (type->type == ev_class)
-		{
-			type = MakeReferenceType(type);
 		}
 		if (Func.NumParams == 0 && type == &type_void)
 		{
@@ -1154,23 +849,21 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 	}
 	else
 	{
-		method->ofs = class_type->num_methods;
-		class_type->num_methods++;
+		method->ofs = InClass->NumMethods;
+		InClass->NumMethods++;
 	}
-	class_type->numfields++;
-
-	Func.first_statement = 0;
+	InClass->NumFields++;
 
 	if (FuncFlags & FUNC_Native)
 	{
-		Func.first_statement = -numbuiltins;
+		Func.FirstStatement = -numbuiltins;
 		numbuiltins++;
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	ParseCompoundStatement();
+	SkipCompoundStatement();
 }
 
 //==========================================================================
@@ -1179,19 +872,19 @@ void ParseMethodDef(TType *t, field_t *method, field_t *otherfield,
 //
 //==========================================================================
 
-int ParseStateCode(TType *class_type)
+int ParseStateCode(TClass* InClass)
 {
 	numlocaldefs = 1;
 
 	int num = numfunctions;
 	numfunctions++;
 	functions[num].Name = NAME_None;
-	functions[num].OuterClass = class_type;
+	functions[num].OuterClass = InClass;
 	functions[num].ReturnType = &type_void;
 	functions[num].ParamsSize = 1;
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	ParseCompoundStatement();
+	SkipCompoundStatement();
 	return num;
 }
 
@@ -1201,7 +894,7 @@ int ParseStateCode(TType *class_type)
 //
 //==========================================================================
 
-void ParseDefaultProperties(field_t *method, TType *class_type)
+void ParseDefaultProperties(field_t *method, TClass* InClass)
 {
 	numlocaldefs = 1;
 
@@ -1209,30 +902,28 @@ void ParseDefaultProperties(field_t *method, TType *class_type)
 	TType methodtype;
 	memset(&methodtype, 0, sizeof(TType));
 	methodtype.type = ev_method;
-	methodtype.size = 4;
 	methodtype.aux_type = &type_void;
 
 	method->type = FindType(&methodtype);
 	method->ofs = 0;
 	method->Name = NAME_None;
-	class_type->numfields++;
+	InClass->NumFields++;
 
-	if (CheckForFunction(class_type, class_type->Name))
+	if (CheckForFunction(InClass, InClass->Name))
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			 "Function: %s", *class_type->Name, *class_type->Name);
+			 "Function: %s.%s", *InClass->Name, *InClass->Name);
 	}
 
 	int num = numfunctions;
 	numfunctions++;
 	method->func_num = num;
-	functions[num].OuterClass = class_type;
+	functions[num].OuterClass = InClass;
 	functions[num].ReturnType = &type_void;
 	functions[num].ParamsSize = 1;
-	functions[num].first_statement = 0;
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	ParseCompoundStatement();
+	SkipCompoundStatement();
 }
 
 //==========================================================================
@@ -1266,7 +957,7 @@ void AddConstant(FName Name, int value)
 //
 //==========================================================================
 
-void PA_Parse(void)
+void PA_Parse()
 {
 	boolean		done;
 	TType		*type;
@@ -1280,7 +971,7 @@ void PA_Parse(void)
 	functions[numfunctions].OuterClass = NULL;
 	functions[numfunctions].ReturnType = &type_void;
 	functions[numfunctions].ParamsSize = 1; // this pointer
-	functions[numfunctions].num_locals = 1;
+	functions[numfunctions].NumLocals = 1;
 	numfunctions++;
 
 	TK_NextToken();
@@ -1337,7 +1028,7 @@ void PA_Parse(void)
 				}
 				else if (TK_Check(KW_STRUCT))
 				{
-					ParseStruct();
+					ParseStruct(false);
 				}
 				else if (TK_Check(KW_CLASS))
 				{
@@ -1349,7 +1040,7 @@ void PA_Parse(void)
 				}
 				else if (TK_Check(KW_VECTOR))
 				{
-					ParseVector();
+					ParseStruct(true);
 				}
 				else if (TK_Check(KW_STATES))
 				{
@@ -1385,14 +1076,15 @@ void PA_Parse(void)
 	}
 }
 
-} // namespace Pass1
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.4  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
-//
+//	
 //	Revision 1.3  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	

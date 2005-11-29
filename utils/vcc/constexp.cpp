@@ -80,12 +80,11 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_IDENTIFIER:
-			num = CurrentPass == 1 ? Pass1::CheckForConstant(tk_Name) :
-				Pass2::CheckForConstant(tk_Name);
+			num = CheckForConstant(tk_Name);
 			if (num != -1)
 			{
 				TK_NextToken();
-			   	ret = Constants[num].value;
+				ret = Constants[num].value;
 			}
 			else
 			{
@@ -397,7 +396,7 @@ static float FCExprLevI(void)
 int EvalConstExpression(int type)
 {
 	int		ret;
-	TType	*t;
+	TClass*	c;
 
  	switch (type)
 	{
@@ -426,10 +425,10 @@ int EvalConstExpression(int type)
 		return ret;
 
 	 case ev_classid:
-		t = CheckForType();
-		if (t && t->type == ev_class)
+		c = CheckForClass();
+		if (c)
 		{
-			return t->classid;
+			return c->Index;
 		}
 		else
 		{
@@ -460,9 +459,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.13  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
-//
+//	
 //	Revision 1.12  2003/03/08 12:47:51  dj_jl
 //	Code cleanup.
 //	

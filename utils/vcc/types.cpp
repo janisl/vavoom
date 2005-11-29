@@ -53,24 +53,20 @@ enum
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-TType		type_void(ev_void, NULL, NULL, 0);
-TType		type_int(ev_int, &type_void, NULL, 4);
-TType		type_float(ev_float, &type_int, NULL, 4);
-TType		type_name(ev_name, &type_float, NULL, 4);
-TType		type_string(ev_string, &type_name, NULL, 4);
-TType		type_state(ev_struct, &type_string, NULL, -1);
-TType		type_mobjinfo(ev_struct, &type_state, NULL, -1);
-TType		type_void_ptr(ev_pointer, &type_mobjinfo, &type_void, 4);
-TType		type_vector(ev_vector, &type_void_ptr, NULL, 12);
-TType		type_classid(ev_classid, &type_vector, NULL, 4);
-TType		type_class(ev_class, &type_classid, NULL, -1);
-TType		type_none_ref(ev_reference, &type_class, &type_class, 4);
-TType		type_bool(ev_bool, &type_none_ref, NULL, 4);
+TType		type_void(ev_void, NULL, NULL);
+TType		type_int(ev_int, &type_void, NULL);
+TType		type_float(ev_float, &type_int, NULL);
+TType		type_name(ev_name, &type_float, NULL);
+TType		type_string(ev_string, &type_name, NULL);
+TType		type_state(ev_struct, &type_string, NULL);
+TType		type_mobjinfo(ev_struct, &type_state, NULL);
+TType		type_void_ptr(ev_pointer, &type_mobjinfo, &type_void);
+TType		type_vector(ev_vector, &type_void_ptr, NULL);
+TType		type_classid(ev_classid, &type_vector, NULL);
+TType		type_none_ref(ev_reference, &type_classid, NULL);
+TType		type_bool(ev_bool, &type_none_ref, NULL);
 
 TType		*types = &type_bool;
-
-TType		**classtypes;
-int			numclasses = 1;
 
 // CODE --------------------------------------------------------------------
 
@@ -82,9 +78,8 @@ int			numclasses = 1;
 
 void InitTypes(void)
 {
-	type_state.Name = "state_t";
-	type_mobjinfo.Name = "mobjinfo_t";
-	type_class.Name = "Object";
+	type_state.Name = NAME_state_t;
+	type_mobjinfo.Name = NAME_mobjinfo_t;
 	type_bool.bit_mask = 1;
 }
 
@@ -106,8 +101,9 @@ TType *FindType(TType *type)
 		//	Check main params
 		if (type->type != check->type ||
 			type->aux_type != check->aux_type ||
-			type->size != check->size ||
-			type->bit_mask != check->bit_mask)
+			type->array_dim != check->array_dim ||
+			type->bit_mask != check->bit_mask ||
+			type->Class != check->Class)
 			continue;
 		return check;
 	}
@@ -130,12 +126,9 @@ TType *MakePointerType(TType *type)
 {
 	TType	pointer;
 
-	if (type->type == ev_class)
-		ParseWarning("Class pointer");
 	memset(&pointer, 0, sizeof(TType));
 	pointer.type = ev_pointer;
 	pointer.aux_type = type;
-	pointer.size = 4;
 	return FindType(&pointer);
 }
 
@@ -145,18 +138,13 @@ TType *MakePointerType(TType *type)
 //
 //==========================================================================
 
-TType *MakeReferenceType(TType *type)
+TType *MakeReferenceType(TClass* InClass)
 {
 	TType reference;
 
-	if (type->type == ev_reference)
-	{
-		ParseError("Can't create reference to reference");
-	}
 	memset(&reference, 0, sizeof(TType));
 	reference.type = ev_reference;
-	reference.aux_type = type;
-	reference.size = 4;
+	reference.Class = InClass;
 	return FindType(&reference);
 }
 
@@ -173,7 +161,7 @@ TType *MakeArrayType(TType *type, int elcount)
 	memset(&array, 0, sizeof(TType));
 	array.type = ev_array;
 	array.aux_type = type;
-	array.size = type->size * elcount;
+	array.array_dim = elcount;
 	return FindType(&array);
 }
 
@@ -222,16 +210,21 @@ static TType *CheckForTypeKeyword(void)
 //
 //==========================================================================
 
-TType *CheckForType(void)
+TType *CheckForType()
 {
-	TType		*check;
-
 	if (tk_Token == TK_KEYWORD)
 	{
 		return CheckForTypeKeyword();
 	}
 
-	for (check = types; check; check = check->next)
+	for (int i = 0; i < numclasses; i++)
+	{
+		if (TK_Check(classtypes[i].Name))
+		{
+			return MakeReferenceType(&classtypes[i]);
+		}
+	}
+	for (TType* check = types; check; check = check->next)
 	{
 		if (check->Name != NAME_None)
 		{
@@ -252,14 +245,19 @@ TType *CheckForType(void)
 
 TType *CheckForType(FName Name)
 {
-	TType		*check;
-
 	if (Name == NAME_None)
 	{
 		return NULL;
 	}
 
-	for (check = types; check; check = check->next)
+	for (int i = 0; i < numclasses; i++)
+	{
+		if (Name == classtypes[i].Name)
+		{
+			return MakeReferenceType(&classtypes[i]);
+		}
+	}
+	for (TType* check = types; check; check = check->next)
 	{
 		if (check->Name != NAME_None)
 		{
@@ -272,10 +270,46 @@ TType *CheckForType(FName Name)
 	return NULL;
 }
 
-//**************************************************************************
-//**************************************************************************
+//==========================================================================
+//
+//  CheckForClass
+//
+//==========================================================================
 
-namespace Pass2 {
+TClass* CheckForClass()
+{
+	if (tk_Token == TK_KEYWORD)
+	{
+		return NULL;
+	}
+
+	for (int i = 0; i < numclasses; i++)
+	{
+		if (TK_Check(classtypes[i].Name))
+		{
+			return &classtypes[i];
+		}
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//  CheckForClass
+//
+//==========================================================================
+
+TClass* CheckForClass(FName Name)
+{
+	for (int i = 0; i < numclasses; i++)
+	{
+		if (classtypes[i].Name == Name)
+		{
+			return &classtypes[i];
+		}
+	}
+	return NULL;
+}
 
 //==========================================================================
 //
@@ -285,11 +319,95 @@ namespace Pass2 {
 
 int TypeSize(TType *type)
 {
-	if (type->size < 0)
+	switch (type->type)
 	{
-		ParseError("Incomplete type");
+	case ev_int:		return 4;
+	case ev_float:		return 4;
+	case ev_name:		return 4;
+	case ev_string:		return 4;
+	case ev_pointer:	return 4;
+	case ev_reference:	return 4;
+	case ev_array:		return type->array_dim * TypeSize(type->aux_type);
+	case ev_struct:		if (type->Struct->Size < 0) { ParseError("Incomplete type"); }
+						return (type->Struct->Size + 3) & ~3;
+	case ev_vector:		return 12;
+	case ev_classid:	return 4;
+	case ev_bool:		return 4;
 	}
-	return (type->size + 3) & ~3;
+	return 0;
+}
+
+//==========================================================================
+//
+//	CheckForGlobalVar
+//
+//==========================================================================
+
+int CheckForGlobalVar(FName Name)
+{
+	if (Name == NAME_None)
+	{
+		return 0;
+	}
+	for (int i = 1; i < numglobaldefs; i++)
+	{
+		if (globaldefs[i].Name == Name)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	CheckForFunction
+//
+//==========================================================================
+
+int CheckForFunction(TClass* InClass, FName Name)
+{
+	if (Name == NAME_None)
+	{
+		return 0;
+	}
+	for (int i = 1; i < numfunctions; i++)
+	{
+		if (functions[i].OuterClass == InClass && functions[i].Name == Name)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	CheckForConstant
+//
+//==========================================================================
+
+int CheckForConstant(FName Name)
+{
+#if 1
+	for (constant_t *C = ConstantsHash[GetTypeHash(Name) & 255];
+		C; C = C->HashNext)
+	{
+		if (C->Name == Name)
+		{
+			return C - Constants;
+		}
+	}
+#else
+	for (int i = 0; i < numconstants; i++)
+	{
+		if (Constants[i].Name == Name)
+		{
+			return i;
+		}
+	}
+#endif
+	return -1;
 }
 
 //==========================================================================
@@ -312,7 +430,7 @@ void TypeCheckPassable(TType *type)
 //
 //	TypeCheck1
 //
-//  PÆrbauda, vai tipa izmñrs ir 4
+//  Checks if type size is 4
 //
 //==========================================================================
 
@@ -325,23 +443,6 @@ void TypeCheck1(TType *t)
 	if (TypeSize(t) != 4)
 	{
 		ParseError(ERR_EXPR_TYPE_MISTMATCH, "Size is not 4");
-	}
-}
-
-//==========================================================================
-//
-//	TypeCheck2
-//
-//  PÆrbauda, vai tips ir veselÆ skaitõa tips
-//
-//==========================================================================
-
-void TypeCheck2(TType *t)
-{
-	TypeCheck1(t);
-	if (t != &type_int)
-	{
-		ParseError(ERR_EXPR_TYPE_MISTMATCH);
 	}
 }
 
@@ -380,12 +481,13 @@ void TypeCheck3(TType *t1, TType *t2)
 		{
 			return;
 		}
-		if ((t1->type == ev_struct && t2->type == ev_struct) ||
-			(t1->type == ev_class && t2->type == ev_class))
+		if (t1->type == ev_struct && t2->type == ev_struct)
 		{
-			for (TType *st1 = t1->aux_type; st1; st1 = st1->aux_type)
+			TStruct* s1 = t1->Struct;
+			TStruct* s2 = t2->Struct;
+			for (TStruct* st1 = s1->ParentStruct; st1; st1 = st1->ParentStruct)
 			{
-				if (st1 == t2)
+				if (st1 == s2)
 				{
 					return;
 				}
@@ -394,25 +496,26 @@ void TypeCheck3(TType *t1, TType *t2)
 	}
 	if ((t1->type == ev_reference) && (t2->type == ev_reference))
 	{
-		t1 = t1->aux_type;
-		t2 = t2->aux_type;
-		if (t1 == t2)
+		TClass* c1 = t1->Class;
+		TClass* c2 = t2->Class;
+		if (!c1 || !c2)
+		{
+			//	none reference can be assigned to any reference.
+			return;
+		}
+		if (c1 == c2)
 		{
 			return;
 		}
-		if ((t1 == &type_class) || (t2 == &type_class))
+		if ((c1 == &classtypes[0]) || (c2 == &classtypes[0]))
 		{
 			return;
 		}
-		if ((t1->type == ev_struct && t2->type == ev_struct) ||
-			(t1->type == ev_class && t2->type == ev_class))
+		for (TClass* pc1 = c1->ParentClass; pc1; pc1 = pc1->ParentClass)
 		{
-			for (TType *st1 = t1->aux_type; st1; st1 = st1->aux_type)
+			if (pc1 == c2)
 			{
-				if (st1 == t2)
-				{
-					return;
-				}
+				return;
 			}
 		}
 	}
@@ -426,14 +529,13 @@ void TypeCheck3(TType *t1, TType *t2)
 
 //==========================================================================
 //
-//	ParseStruct
+//	SkipStruct
 //
 //==========================================================================
 
-void ParseStruct(void)
+void SkipStruct()
 {
-	CheckForType();
-
+	TK_NextToken();
 	if (TK_Check(PU_SEMICOLON))
 	{
 		return;
@@ -441,7 +543,7 @@ void ParseStruct(void)
 
 	if (TK_Check(PU_COLON))
 	{
-		CheckForType();
+		TK_NextToken();
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -453,14 +555,10 @@ void ParseStruct(void)
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
-		CheckForType();
+		TK_NextToken();
 		do
 		{
 			while (TK_Check(PU_ASTERISK));
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-			}
 			TK_NextToken();
 			while (TK_Check(PU_LINDEX))
 			{
@@ -475,26 +573,21 @@ void ParseStruct(void)
 
 //==========================================================================
 //
-//	AddFields
+//	SkipAddFields
 //
 //==========================================================================
 
-void AddFields(void)
+void SkipAddFields()
 {
-	CheckForType();
+	TK_NextToken();
 
-	//	Pievieno laukus
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		CheckForType();
+		TK_NextToken();
 		do
 		{
 			while (TK_Check(PU_ASTERISK));
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-			}
 			TK_NextToken();
 			while (TK_Check(PU_LINDEX))
 			{
@@ -509,58 +602,20 @@ void AddFields(void)
 
 //==========================================================================
 //
-//	ParseVector
+//	CompileClass
 //
 //==========================================================================
 
-void ParseVector(void)
-{
-	if (!CheckForType())
-	{
-		ParseError("Not a vector type");
-		return;
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		return;
-	}
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		CheckForType();
-		do
-		{
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-				continue;
-			}
-			TK_NextToken();
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-}
-
-//==========================================================================
-//
-//	ParseClass
-//
-//==========================================================================
-
-void ParseClass(void)
+void CompileClass()
 {
 	field_t		*fi = NULL;
 	field_t		*otherfield;
 	int			i;
 	TType		*t;
 	TType		*type;
-	TType		*class_type;
 
-	class_type = CheckForType();
-	if (!class_type)
+	TClass* Class = CheckForClass();
+	if (!Class)
 	{
 		ParseError("Not a class type");
 		return;
@@ -599,33 +654,9 @@ void ParseClass(void)
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	while (!TK_Check(KW_DEFAULTPROPERTIES))
 	{
-		if (ClassAddfields && TK_Check(KW_ADDFIELDS))
-		{
-			TK_NextToken();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
 		if (TK_Check(KW_STATES))
 		{
-		   	ParseStates(class_type);
-			continue;
-		}
-
-		if (TK_Check(KW_DEFAULTPROPERTIES))
-		{
-			for (i = 0; i < class_type->numfields; i++)
-			{
-				fi = &class_type->fields[i];
-				if (fi->type->type == ev_method &&
-					fi->Name == NAME_None && fi->ofs == 0)
-				{
-					break;
-				}
-			}
-			if (i == class_type->numfields)
-				ERR_Exit(ERR_NONE, true, "DP Field not found");
-			ParseDefaultProperties(fi, class_type);
+		   	SkipStates(Class);
 			continue;
 		}
 
@@ -662,24 +693,24 @@ void ParseClass(void)
 				ParseError("Field name expected");
 				continue;
 			}
-			for (i = 0; i < class_type->numfields; i++)
+			for (i = 0; i < Class->NumFields; i++)
 			{
-				fi = &class_type->fields[i];
+				fi = &Class->Fields[i];
 				if (fi->Name == tk_Name)
 				{
 					break;
 				}
 			}
-			if (i == class_type->numfields)
+			if (i == Class->NumFields)
 				ERR_Exit(ERR_NONE, true, "Method Field not found");
-			otherfield = CheckForField(class_type);
+			otherfield = CheckForField(Class);
 			if (!otherfield)
 			{
 				TK_NextToken();
 			}
 			if (TK_Check(PU_LPAREN))
 			{
-				ParseMethodDef(t, fi, otherfield, class_type, Flags);
+				CompileMethodDef(t, fi, otherfield, Class, Flags);
 				need_semicolon = false;
 				break;
 			}
@@ -695,57 +726,102 @@ void ParseClass(void)
 		}
 	}
 
-	for (i = 0; i < class_type->numfields; i++)
+	for (i = 0; i < Class->NumFields; i++)
 	{
-		fi = &class_type->fields[i];
+		fi = &Class->Fields[i];
 		if (fi->type->type == ev_method &&
 			fi->Name == NAME_None && fi->ofs == 0)
 		{
 			break;
 		}
 	}
-	if (i == class_type->numfields)
+	if (i == Class->NumFields)
 		ERR_Exit(ERR_NONE, true, "DP Field not found");
-	ParseDefaultProperties(fi, class_type);
+	CompileDefaultProperties(fi, Class);
 }
 
 //==========================================================================
 //
-//	ParseField
+//	ParseStructField
 //
 //==========================================================================
 
-field_t* ParseField(TType *t)
+field_t* ParseStructField(TStruct* InStruct)
 {
-	field_t		*fi;
+	field_t*	fi;
+	int			numfields;
 	int			i;
 
-	if (t->type != ev_struct && t->type != ev_vector && t->type != ev_class)
+	if (!InStruct)
 	{
-	 	ParseError(ERR_NOT_A_STRUCT, "Base type required.");
+		ParseError(ERR_NOT_A_STRUCT, "Base type required.");
 		return NULL;
 	}
-	if (t->size == -1)
+	if (InStruct->Size == -1)
 	{
-	 	ParseError("Incomplete type.");
+		ParseError("Incomplete type.");
 		return NULL;
 	}
-	fi = t->fields;
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
 		return NULL;
 	}
-	for (i = 0; i < t->numfields; i++)
+	numfields = InStruct->NumFields;
+	fi = InStruct->Fields;
+	for (i = 0; i < numfields; i++)
 	{
 		if (TK_Check(fi[i].Name))
 		{
 			return &fi[i];
 		}
 	}
-	if (t->aux_type)
+	if (InStruct->ParentStruct)
 	{
-		return ParseField(t->aux_type);
+		return ParseStructField(InStruct->ParentStruct);
+	}
+	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
+	if (tk_Token == TK_IDENTIFIER)
+	{
+		TK_NextToken();
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	ParseClassField
+//
+//==========================================================================
+
+field_t* ParseClassField(TClass* InClass)
+{
+	field_t*	fi;
+	int			numfields;
+	int			i;
+
+	if (InClass->Size == -1)
+	{
+		ParseError("Incomplete type.");
+		return NULL;
+	}
+	if (tk_Token != TK_IDENTIFIER)
+	{
+		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
+		return NULL;
+	}
+	numfields = InClass->NumFields;
+	fi = InClass->Fields;
+	for (i = 0; i < numfields; i++)
+	{
+		if (TK_Check(fi[i].Name))
+		{
+			return &fi[i];
+		}
+	}
+	if (InClass->ParentClass)
+	{
+		return ParseClassField(InClass->ParentClass);
 	}
 	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
 	if (tk_Token == TK_IDENTIFIER)
@@ -761,17 +837,13 @@ field_t* ParseField(TType *t)
 //
 //==========================================================================
 
-field_t* CheckForField(TType *t, bool check_aux)
+field_t* CheckForField(TClass* InClass, bool check_aux)
 {
-	if (!t)
+	if (!InClass)
 	{
 		return NULL;
 	}
-	if (t->type != ev_class)
-	{
-		return NULL;
-	}
-	if (t->size == -1)
+	if (InClass->Size == -1)
 	{
 		return NULL;
 	}
@@ -779,8 +851,8 @@ field_t* CheckForField(TType *t, bool check_aux)
 	{
 		return NULL;
 	}
-	field_t *fi = t->fields;
-	for (int i = 0; i < t->numfields; i++)
+	field_t *fi = InClass->Fields;
+	for (int i = 0; i < InClass->NumFields; i++)
 	{
 		if (TK_Check(fi[i].Name))
 		{
@@ -789,7 +861,7 @@ field_t* CheckForField(TType *t, bool check_aux)
 	}
 	if (check_aux)
 	{
-		return CheckForField(t->aux_type);
+		return CheckForField(InClass->ParentClass);
 	}
 	return NULL;
 }
@@ -800,17 +872,13 @@ field_t* CheckForField(TType *t, bool check_aux)
 //
 //==========================================================================
 
-field_t* CheckForField(FName Name, TType *t, bool check_aux)
+field_t* CheckForField(FName Name, TClass* InClass, bool check_aux)
 {
-	if (!t)
+	if (!InClass)
 	{
 		return NULL;
 	}
-	if (t->type != ev_class)
-	{
-		return NULL;
-	}
-	if (t->size == -1)
+	if (InClass->Size == -1)
 	{
 		return NULL;
 	}
@@ -818,8 +886,8 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 	{
 		return NULL;
 	}
-	field_t *fi = t->fields;
-	for (int i = 0; i < t->numfields; i++)
+	field_t *fi = InClass->Fields;
+	for (int i = 0; i < InClass->NumFields; i++)
 	{
 		if (Name == fi[i].Name)
 		{
@@ -828,7 +896,7 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 	}
 	if (check_aux)
 	{
-		return CheckForField(Name, t->aux_type);
+		return CheckForField(Name, InClass->ParentClass);
 	}
 	return NULL;
 }
@@ -839,29 +907,25 @@ field_t* CheckForField(FName Name, TType *t, bool check_aux)
 //
 //==========================================================================
 
-field_t* FindConstructor(TType *t)
+field_t* FindConstructor(TClass* InClass)
 {
-	if (!t)
+	if (!InClass)
 	{
 		return NULL;
 	}
-	if (t->type != ev_class)
+	if (InClass->Size == -1)
 	{
 		return NULL;
 	}
-	if (t->size == -1)
-	{
-		return NULL;
-	}
-	field_t *fi = t->fields;
-	for (int i = 0; i < t->numfields; i++)
+	field_t *fi = InClass->Fields;
+	for (int i = 0; i < InClass->NumFields; i++)
 	{
 		if (fi[i].type->type == ev_method && fi[i].ofs == 0)
 		{
 			return &fi[i];
 		}
 	}
-	return FindConstructor(t->aux_type);
+	return FindConstructor(InClass->ParentClass);
 }
 
 //==========================================================================
@@ -870,39 +934,38 @@ field_t* FindConstructor(TType *t)
 //
 //==========================================================================
 
-static void AddVTable(TType *t)
+static void AddVTable(TClass* InClass)
 {
-	if (t->vtable)
+	if (InClass->VTable)
 	{
 		return;
 	}
-	classtypes[t->classid] = t;
-	t->vtable = numglobals;
+	InClass->VTable = numglobals;
 	int *vtable = globals + numglobals;
-	memset(globalinfo + numglobals, GLOBALTYPE_Function, t->num_methods);
-	numglobals += t->num_methods;
-	if (t->aux_type)
+	memset(globalinfo + numglobals, GLOBALTYPE_Function, InClass->NumMethods);
+	numglobals += InClass->NumMethods;
+	if (InClass->ParentClass)
 	{
-		AddVTable(t->aux_type);
-		memcpy(vtable, globals + t->aux_type->vtable,
-			t->aux_type->num_methods * 4);
+		AddVTable(InClass->ParentClass);
+		memcpy(vtable, globals + InClass->ParentClass->VTable,
+			InClass->ParentClass->NumMethods * 4);
 	}
-	for (int i = 0; i < t->numfields; i++)
+	for (int i = 0; i < InClass->NumFields; i++)
 	{
-		field_t &f = t->fields[i];
+		field_t &f = InClass->Fields[i];
 		if (f.type->type != ev_method)
 		{
 			continue;
 		}
 		if (!f.func_num)
 		{
-			ParseError("Method %s::%s not defined", *t->Name, *f.Name);
+			ParseError("Method %s.%s not defined", *InClass->Name, *f.Name);
 		}
 		vtable[f.ofs] = f.func_num;
 	}
 	if (!vtable[0])
 	{
-		ERR_Exit(ERR_NONE, false, "Missing defaultproperties for %s", *t->Name);
+		ERR_Exit(ERR_NONE, false, "Missing defaultproperties for %s", *InClass->Name);
 	}
 }
 
@@ -912,7 +975,7 @@ static void AddVTable(TType *t)
 //
 //==========================================================================
 
-static void WritePropertyField(TType *t, dfield_t *df, TType *type, int ofs)
+static void WritePropertyField(TClass* InClass, dfield_t *df, TType *type, int ofs)
 {
 	int i;
 
@@ -924,44 +987,42 @@ static void WritePropertyField(TType *t, dfield_t *df, TType *type, int ofs)
 	case ev_bool:
 		break;
 	case ev_name:
-		df[t->num_properties].type = PROPTYPE_Name;
-		df[t->num_properties].ofs = ofs;
-		t->num_properties++;
+		df[InClass->NumProperties].type = PROPTYPE_Name;
+		df[InClass->NumProperties].ofs = ofs;
+		InClass->NumProperties++;
 		break;
 	case ev_string:
-		df[t->num_properties].type = PROPTYPE_String;
-		df[t->num_properties].ofs = ofs;
-		t->num_properties++;
+		df[InClass->NumProperties].type = PROPTYPE_String;
+		df[InClass->NumProperties].ofs = ofs;
+		InClass->NumProperties++;
 		break;
 	case ev_pointer:	// FIXME
 		break;
 	case ev_reference:
-		df[t->num_properties].type = PROPTYPE_Reference;
-		df[t->num_properties].ofs = ofs;
-		t->num_properties++;
+		df[InClass->NumProperties].type = PROPTYPE_Reference;
+		df[InClass->NumProperties].ofs = ofs;
+		InClass->NumProperties++;
 		break;
 	case ev_array:
-		for (i = 0; i < type->size / type->aux_type->size; i++)
+		for (i = 0; i < TypeSize(type) / TypeSize(type->aux_type); i++)
 		{
-			WritePropertyField(t, df, type->aux_type,
-				ofs + i * type->aux_type->size);
+			WritePropertyField(InClass, df, type->aux_type,
+				ofs + i * TypeSize(type->aux_type));
 		}
 		break;
 	case ev_struct:
 	case ev_vector:
-		for (i = 0; i < type->numfields; i++)
+		for (i = 0; i < type->Struct->NumFields; i++)
 		{
-			WritePropertyField(t, df, type->fields[i].type,
-				ofs + type->fields[i].ofs);
+			WritePropertyField(InClass, df, type->Struct->Fields[i].type,
+				ofs + type->Struct->Fields[i].ofs);
 		}
-	case ev_class:		// Can't contain classes
-		break;
 	case ev_method:		// Properties are not methods
 		break;
 	case ev_classid:
-		df[t->num_properties].type = PROPTYPE_ClassID;
-		df[t->num_properties].ofs = ofs;
-		t->num_properties++;
+		df[InClass->NumProperties].type = PROPTYPE_ClassID;
+		df[InClass->NumProperties].ofs = ofs;
+		InClass->NumProperties++;
 		break;
 	}
 }
@@ -972,16 +1033,16 @@ static void WritePropertyField(TType *t, dfield_t *df, TType *type, int ofs)
 //
 //==========================================================================
 
-static void WritePropertyInfo(TType *t)
+static void WritePropertyInfo(TClass* InClass)
 {
-	t->ofs_properties = numglobals;
-	t->num_properties = 0;
+	InClass->OfsProperties = numglobals;
+	InClass->NumProperties = 0;
 	dfield_t *df = (dfield_t *)(globals + numglobals);
-	for (int i = 0; i < t->numfields; i++)
+	for (int i = 0; i < InClass->NumFields; i++)
 	{
-		WritePropertyField(t, df, t->fields[i].type, t->fields[i].ofs);
+		WritePropertyField(InClass, df, InClass->Fields[i].type, InClass->Fields[i].ofs);
 	}
-	numglobals += t->num_properties * sizeof(dfield_t) / 4;
+	numglobals += InClass->NumProperties * sizeof(dfield_t) / 4;
 }
 
 //==========================================================================
@@ -990,71 +1051,29 @@ static void WritePropertyInfo(TType *t)
 //
 //==========================================================================
 
-void AddVirtualTables(void)
+void AddVirtualTables()
 {
-	TType *t;
+	dprintf("Adding virtual tables\n");
+	int i;
 	int OldNumGlobals = numglobals;
-	classtypes = new TType*[numclasses];
-	memset(classtypes, 0, numclasses * 4);
-	for (t = types; t; t = t->next)
+	for (i = 0; i < numclasses; i++)
 	{
-		if (t->type == ev_class)
-		{
-			AddVTable(t);
-		}
+		AddVTable(&classtypes[i]);
 	}
 	dprintf("Virtual tables takes %d bytes\n", (numglobals - OldNumGlobals) * 4);
 	OldNumGlobals = numglobals;
-	for (t = types; t; t = t->next)
+	for (i = 0; i < numclasses; i++)
 	{
-		if (t->type == ev_class)
-		{
-			WritePropertyInfo(t);
-		}
+		WritePropertyInfo(&classtypes[i]);
 	}
 	dprintf("Fields info takes %d bytes\n", (numglobals - OldNumGlobals) * 4);
 }
 
-} // namespace Pass2
-
 //**************************************************************************
 //**
 //**
 //**
 //**************************************************************************
-
-namespace Pass1 {
-
-//==========================================================================
-//
-//	TypeSize
-//
-//==========================================================================
-
-int TypeSize(TType *type)
-{
-	if (type->size < 0)
-	{
-		ParseError("Incomplete type");
-	}
-	return (type->size + 3) & ~3;
-}
-
-//==========================================================================
-//
-//	TypeCheckPassable
-//
-//	Check, if type can be pushed into the stack
-//
-//==========================================================================
-
-void TypeCheckPassable(TType *type)
-{
-	if (TypeSize(type) != 4 && type->type != ev_vector)
-	{
-		ParseError(ERR_EXPR_TYPE_MISTMATCH);
-	}
-}
 
 //==========================================================================
 //
@@ -1062,7 +1081,7 @@ void TypeCheckPassable(TType *type)
 //
 //==========================================================================
 
-void ParseStruct(void)
+void ParseStruct(bool IsVector)
 {
 	field_t		fields[128];
 	field_t		*fi;
@@ -1072,16 +1091,18 @@ void ParseStruct(void)
 	TType		*t;
 	TType		*type;
 	TType		*struct_type;
+	TStruct*	Struct;
 
 	struct_type = CheckForType();
 	if (struct_type)
 	{
-		if (struct_type->type != ev_struct)
+		if (struct_type->type != (IsVector ? ev_vector : ev_struct))
 		{
-			ParseError("Not a struct type");
+			ParseError(IsVector ? "Not a vector type" : "Not a struct type");
 			return;
 		}
-		if (struct_type->size != -1)
+		Struct = struct_type->Struct;
+		if (Struct->Size != -1)
 		{
 			ParseError("Struct type already completed");
 			return;
@@ -1093,26 +1114,32 @@ void ParseStruct(void)
 		{
 			ParseError("Struct name expected");
 		}
-		//  Pievieno pie tipiem
+		//	New struct
+		Struct = &structtypes[numstructs];
+		Struct->Name = tk_Name;
+		numstructs++;
+		//  Add to types
 		struct_type = new TType;
 		memset(struct_type, 0, sizeof(TType));
 		struct_type->Name = tk_Name;
-		struct_type->type = ev_struct;
+		struct_type->type = IsVector ? ev_vector : ev_struct;
 		struct_type->next = types;
+		struct_type->Struct = Struct;
+		Struct->Type = struct_type;
 		types = struct_type;
 		TK_NextToken();
 	}
 
 	if (TK_Check(PU_SEMICOLON))
 	{
-		struct_type->size = -1;
+		Struct->Size = -1;
 		return;
 	}
 
 	num_fields = 0;
 	size = 0;
 
-	if (TK_Check(PU_COLON))
+	if (!IsVector && TK_Check(PU_COLON))
 	{
 		type = CheckForType();
 		if (!type)
@@ -1126,18 +1153,17 @@ void ParseStruct(void)
 		else
 		{
 			struct_type->aux_type = type;
+			Struct->ParentStruct = type->Struct;
 			size = TypeSize(type);
 		}
 	}
 
-   	struct_type->available_size = 0;
-   	struct_type->available_ofs = 0;
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		if (TK_Check(KW_ADDFIELDS))
+		if (!IsVector && TK_Check(KW_ADDFIELDS))
 		{
-	   		if (struct_type->available_size)
+			if (Struct->AvailableSize)
 			{
 				ParseError("Addfields already defined");
 			}
@@ -1145,8 +1171,8 @@ void ParseStruct(void)
 			{
 				ParseError("Field count expacted");
 			}
-	   		struct_type->available_size = tk_Number * 4;
-   			struct_type->available_ofs = size;
+			Struct->AvailableSize = tk_Number * 4;
+			Struct->AvailableOfs = size;
 			size += tk_Number * 4;
 			TK_NextToken();
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
@@ -1157,16 +1183,29 @@ void ParseStruct(void)
 		{
 			ParseError("Field type expected.");
 		}
+		if (IsVector && type != &type_float)
+		{
+			ParseError("Vector can have only float fields");
+			continue;
+		}
 		do
 		{
 			t = type;
-			while (TK_Check(PU_ASTERISK))
+			if (!IsVector)
 			{
-				t = MakePointerType(t);
+				while (TK_Check(PU_ASTERISK))
+				{
+					t = MakePointerType(t);
+				}
 			}
 			if (t == &type_void)
 			{
 				ParseError("Field cannot have void type.");
+			}
+			if (IsVector && num_fields == 3)
+			{
+				ParseError("Vector must have exactly 3 float fields");
+				continue;
 			}
 			if (tk_Token != TK_IDENTIFIER)
 			{
@@ -1192,29 +1231,32 @@ void ParseStruct(void)
 				}
 			}
 			fi->ofs = size;
-			if (t->type == ev_class)
+			if (!IsVector)
 			{
-				t = MakeReferenceType(t);
+				while (TK_Check(PU_LINDEX))
+				{
+					i = EvalConstExpression(ev_int);
+					TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+					t = MakeArrayType(t, i);
+				}
 			}
-			while (TK_Check(PU_LINDEX))
-			{
-				i = EvalConstExpression(ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-				t = MakeArrayType(t, i);
-			}
-		   	size += TypeSize(t);
+			size += TypeSize(t);
 			fi->type = t;
 			num_fields++;
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+	if (IsVector && num_fields != 3)
+	{
+		ParseError("Vector must have exactly 3 float fields");
+	}
 
-	//	Pievieno pie tipa
-	struct_type->fields = new field_t[num_fields];
-	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
-	struct_type->numfields = num_fields;
-   	struct_type->size = size;
+	//	Add to the type
+	Struct->Fields = new field_t[num_fields];
+	memcpy(Struct->Fields, fields, num_fields * sizeof(*fields));
+	Struct->NumFields = num_fields;
+	Struct->Size = size;
 }
 
 //==========================================================================
@@ -1223,7 +1265,7 @@ void ParseStruct(void)
 //
 //==========================================================================
 
-void AddFields(void)
+void AddFields()
 {
 	TType			*struct_type;
 	TType			*type;
@@ -1235,37 +1277,38 @@ void AddFields(void)
 	int				i;
 	TType			*t;
 
-	//  Nolasa tipu, kuram tiks pievienoti jaunie lauki.
+	//  Read type, to which fields will be added to.
 	struct_type = CheckForType();
-   	if (!struct_type)
+	if (!struct_type)
 	{
-	   	ParseError("Parent type expected.");
+		ParseError("Parent type expected.");
 		return;
 	}
 
-	//  PÆrbauda, vai tas ir struktÝras tips
-	if (struct_type->type != ev_struct && (
-		!ClassAddfields || struct_type->type != ev_class))
+	//  Check if it's a structure type
+	if (struct_type->type != ev_struct)
 	{
-	 	ParseError("Parent must be a struct.");
+		ParseError("Parent must be a struct.");
 		return;
 	}
 
-	//  PÆrbauda, vai tipam ir atmi·a papildu laukiem
-	if (!struct_type->available_size)
+	TStruct* Struct = struct_type->Struct;
+
+	//  Check if type has reserved memory for additional fields
+	if (!Struct->AvailableSize)
 	{
 		ParseError("Parent type don't have available memory for additional fields.");
 		return;
 	}
 
-	//  Nolasa informÆciju
-	num_fields = struct_type->numfields;
-	memcpy(fields, struct_type->fields, num_fields * sizeof(*fields));
-	delete struct_type->fields;
-	size = struct_type->available_size;
-	ofs = struct_type->available_ofs;
+	//  Read info
+	num_fields = Struct->NumFields;
+	memcpy(fields, Struct->Fields, num_fields * sizeof(*fields));
+	delete Struct->Fields;
+	size = Struct->AvailableSize;
+	ofs = Struct->AvailableOfs;
 
-	//	Pievieno laukus
+	//	Add fields
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
@@ -1310,21 +1353,17 @@ void AddFields(void)
 				}
 			}
 			fi->ofs = ofs;
-			if (t->type == ev_class)
-			{
-				t = MakeReferenceType(t);
-			}
 			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 				t = MakeArrayType(t, i);
 			}
-		   	size -= TypeSize(t);
-		   	ofs += TypeSize(t);
-		   	if (size < 0)
+			size -= TypeSize(t);
+			ofs += TypeSize(t);
+			if (size < 0)
 			{
-	   			ParseError("Additional fields size overflow.");
+				ParseError("Additional fields size overflow.");
 			}
 			fi->type = t;
 			num_fields++;
@@ -1333,115 +1372,12 @@ void AddFields(void)
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 
-	//	Atjauno TypeInfo
-	struct_type->fields = new field_t[num_fields];
-	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
-	struct_type->numfields = num_fields;
-   	struct_type->available_size = size;
-   	struct_type->available_ofs = ofs;
-}
-
-//==========================================================================
-//
-//	ParseVector
-//
-//==========================================================================
-
-void ParseVector(void)
-{
-	field_t		fields[3];
-	field_t		*fi;
-	int			num_fields;
-	int			size;
-	TType		*type;
-	TType		*struct_type;
-
-	struct_type = CheckForType();
-	if (struct_type)
-	{
-		if (struct_type->type != ev_vector)
-		{
-			ParseError("Not a vector type");
-			return;
-		}
-		if (struct_type->size != -1)
-		{
-			ParseError("Vector type already completed");
-			return;
-		}
-	}
-	else
-	{
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Vector type name expected");
-		}
-		//  Pievieno pie tipiem
-		struct_type = new TType;
-		memset(struct_type, 0, sizeof(TType));
-		struct_type->Name = tk_Name;
-		struct_type->type = ev_vector;
-		struct_type->next = types;
-		types = struct_type;
-		TK_NextToken();
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		struct_type->size = -1;
-		return;
-	}
-
-	num_fields = 0;
-	size = 0;
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		type = CheckForType();
-		if (!type)
-		{
-			ParseError("Field type expected.");
-			continue;
-		}
-		if (type != &type_float)
-		{
-			ParseError("Vector can have only float fields");
-			continue;
-		}
-		do
-		{
-			if (num_fields == 3)
-			{
-				ParseError("Vector must have exactly 3 float fields");
-				continue;
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-				continue;
-			}
-			fi = &fields[num_fields];
-			fi->Name = tk_Name;
-			TK_NextToken();
-			fi->ofs = size;
-		   	size += TypeSize(type);
-			fi->type = type;
-			num_fields++;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	if (num_fields != 3)
-	{
-		ParseError("Vector must have exactly 3 float fields");
-	}
-
-	//	Pievieno pie tipa
-	struct_type->fields = new field_t[num_fields];
-	memcpy(struct_type->fields, fields, num_fields * sizeof(*fields));
-	struct_type->numfields = num_fields;
-   	struct_type->size = size;
+	//	Renew TypeInfo
+	Struct->Fields = new field_t[num_fields];
+	memcpy(Struct->Fields, fields, num_fields * sizeof(*fields));
+	Struct->NumFields = num_fields;
+	Struct->AvailableSize = size;
+	Struct->AvailableOfs = ofs;
 }
 
 //==========================================================================
@@ -1450,26 +1386,20 @@ void ParseVector(void)
 //
 //==========================================================================
 
-void ParseClass(void)
+void ParseClass()
 {
 	TArray<field_t>		fields;
-	field_t		*fi;
-	field_t		*otherfield;
-	int			size;
-	int			i;
-	TType		*t;
-	TType		*type;
-	TType		*class_type;
+	field_t*			fi;
+	field_t*			otherfield;
+	int					size;
+	int					i;
+	TType*				t;
+	TType*				type;
 
-	class_type = CheckForType();
-	if (class_type)
+	TClass* Class = CheckForClass();
+	if (Class)
 	{
-		if (class_type->type != ev_class)
-		{
-			ParseError("Not a class type");
-			return;
-		}
-		if (class_type->size != -1)
+		if (Class->Size != -1)
 		{
 			ParseError("Class definition already completed");
 			return;
@@ -1481,43 +1411,47 @@ void ParseClass(void)
 		{
 			ParseError("Class name expected");
 		}
-		//  Pievieno pie tipiem
-		class_type = new TType;
+		//	New class.
+		Class = &classtypes[numclasses];
+		Class->Name = tk_Name;
+		Class->Index = numclasses;
+		numclasses++;
+		//  Add to the types
+		TType* class_type = new TType;
 		memset(class_type, 0, sizeof(TType));
 		class_type->Name = tk_Name;
-		class_type->type = ev_class;
+		class_type->type = ev_unused_1;//ev_class;
 		class_type->next = types;
-		class_type->classid = numclasses++;
-		types = class_type;
+		class_type->Class = Class;
 		TK_NextToken();
 	}
 
 	if (TK_Check(PU_SEMICOLON))
 	{
-		class_type->size = -1;
+		Class->Size = -1;
 		return;
 	}
 
-	class_type->numfields = 0;
-	class_type->num_methods = BASE_NUM_METHODS;
+	Class->NumFields = 0;
+	Class->NumMethods = BASE_NUM_METHODS;
 	size = 0;
 
 	if (TK_Check(PU_COLON))
 	{
-		type = CheckForType();
-		if (!type)
+		TClass* Parent = CheckForClass();
+		if (!Parent)
 		{
 			ParseError("Parent class type expected");
 		}
-		else if (type->type != ev_class)
+		else if (Parent->Size == -1)
 		{
-			ParseError("Parent type must be a class");
+			ParseError("Incomplete parent class");
 		}
 		else
 		{
-			class_type->aux_type = type;
-			class_type->num_methods = type->num_methods;
-			size = TypeSize(type);
+			Class->ParentClass = Parent;
+			Class->NumMethods = Parent->NumMethods;
+			size = Parent->Size;
 		}
 	}
 
@@ -1526,7 +1460,7 @@ void ParseClass(void)
 		if (TK_Check(KW_MOBJINFO))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToMobjInfo(EvalConstExpression(ev_int), class_type->classid);
+			AddToMobjInfo(EvalConstExpression(ev_int), Class->Index);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
 		else if (TK_Check(KW_NATIVE))
@@ -1541,42 +1475,14 @@ void ParseClass(void)
 		}
 	} while (1);
 
-   	class_type->available_size = 0;
-   	class_type->available_ofs = 0;
-	class_type->fields = &fields[0];
-	class_type->size = size;
+	Class->Fields = &fields[0];
+	Class->Size = size;
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	while (!TK_Check(KW_DEFAULTPROPERTIES))
 	{
-		if (ClassAddfields && TK_Check(KW_ADDFIELDS))
-		{
-	   		if (class_type->available_size)
-			{
-				ParseError("Addfields already defined");
-			}
-			if (tk_Token != TK_INTEGER)
-			{
-				ParseError("Field count expacted");
-			}
-	   		class_type->available_size = tk_Number * 4;
-   			class_type->available_ofs = size;
-			size += tk_Number * 4;
-			TK_NextToken();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
 		if (TK_Check(KW_STATES))
 		{
-		   	ParseStates(class_type);
-			continue;
-		}
-
-		if (TK_Check(KW_DEFAULTPROPERTIES))
-		{
-			fi = new(fields) field_t;
-class_type->fields = &fields[0];
-			ParseDefaultProperties(fi, class_type);
+		   	ParseStates(Class);
 			continue;
 		}
 
@@ -1622,16 +1528,16 @@ class_type->fields = &fields[0];
 				continue;
 			}
 			fi = new(fields) field_t;
-class_type->fields = &fields[0];
+Class->Fields = &fields[0];
 			fi->Name = tk_Name;
-			otherfield = CheckForField(class_type);
+			otherfield = CheckForField(Class);
 			if (!otherfield)
 			{
 				TK_NextToken();
 			}
 			if (TK_Check(PU_LPAREN))
 			{
-				ParseMethodDef(t, fi, otherfield, class_type, Flags);
+				ParseMethodDef(t, fi, otherfield, Class, Flags);
 				need_semicolon = false;
 				break;
 			}
@@ -1656,15 +1562,11 @@ class_type->fields = &fields[0];
 					btype.bit_mask = prevbool.type->bit_mask << 1;
 					fi->type = FindType(&btype);
 					fi->ofs = prevbool.ofs;
-					class_type->numfields++;
+					Class->NumFields++;
 					continue;
 				}
 			}
 			fi->ofs = size;
-			if (t->type == ev_class)
-			{
-				t = MakeReferenceType(t);
-			}
 			while (TK_Check(PU_LINDEX))
 			{
 				i = EvalConstExpression(ev_int);
@@ -1673,7 +1575,7 @@ class_type->fields = &fields[0];
 			}
 		   	size += TypeSize(t);
 			fi->type = t;
-			class_type->numfields++;
+			Class->NumFields++;
 		} while (TK_Check(PU_COMMA));
 		if (need_semicolon)
 		{
@@ -1682,120 +1584,25 @@ class_type->fields = &fields[0];
 	}
 
 	fi = new(fields) field_t;
-class_type->fields = &fields[0];
-	ParseDefaultProperties(fi, class_type);
+Class->Fields = &fields[0];
+	ParseDefaultProperties(fi, Class);
 
-	//	Pievieno pie tipa
-	class_type->fields = new field_t[class_type->numfields];
-	memcpy(class_type->fields, fields.GetData(),
-		class_type->numfields * sizeof(field_t));
-   	class_type->size = size;
+	//	Add to the type
+	Class->Fields = new field_t[Class->NumFields];
+	memcpy(Class->Fields, fields.GetData(),
+		Class->NumFields * sizeof(field_t));
+	Class->Size = size;
 }
-
-//==========================================================================
-//
-//	ParseField
-//
-//==========================================================================
-
-void ParseField(void)
-{
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ParseError(ERR_INVALID_IDENTIFIER);
-	}
-	else
-	{
-		TK_NextToken();
-	}
-}
-
-//==========================================================================
-//
-//	CheckForField
-//
-//==========================================================================
-
-field_t* CheckForField(TType *t, bool check_aux)
-{
-	if (!t)
-	{
-		return NULL;
-	}
-	if (t->type != ev_class)
-	{
-		return NULL;
-	}
-	if (t->size == -1)
-	{
-		return NULL;
-	}
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		return NULL;
-	}
-	field_t *fi = t->fields;
-	for (int i = 0; i < t->numfields; i++)
-	{
-		if (TK_Check(fi[i].Name))
-		{
-			return &fi[i];
-		}
-	}
-	if (check_aux)
-	{
-		return CheckForField(t->aux_type);
-	}
-	return NULL;
-}
-
-//==========================================================================
-//
-//	CheckForField
-//
-//==========================================================================
-
-field_t* CheckForField(FName Name, TType *t, bool check_aux)
-{
-	if (!t)
-	{
-		return NULL;
-	}
-	if (t->type != ev_class)
-	{
-		return NULL;
-	}
-	if (t->size == -1)
-	{
-		return NULL;
-	}
-	if (Name == NAME_None)
-	{
-		return NULL;
-	}
-	field_t *fi = t->fields;
-	for (int i = 0; i < t->numfields; i++)
-	{
-		if (Name == fi[i].Name)
-		{
-			return &fi[i];
-		}
-	}
-	if (check_aux)
-	{
-		return CheckForField(Name, t->aux_type);
-	}
-	return NULL;
-}
-
-} // namespace Pass1
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.32  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
-//
+//	
 //	Revision 1.31  2005/04/28 07:14:03  dj_jl
 //	Fixed some warnings.
 //	

@@ -92,7 +92,7 @@ static int				gv_mobj_info;
 //
 //==========================================================================
 
-void InitInfoTables(void)
+void InitInfoTables()
 {
 	//	For some strange reason when compiling with gcc, data field contains
 	// some garbage already at the start of the program.
@@ -165,20 +165,143 @@ static int FindState(FName StateName)
 	return 0;
 }
 
-namespace Pass2 {
-
 //==========================================================================
 //
 //	ParseStates
 //
 //==========================================================================
 
-void ParseStates(TType *class_type)
+void ParseStates(TClass* InClass)
 {
-	if (!class_type && TK_Check(PU_LPAREN))
+	int i;
+
+	if (!InClass && TK_Check(PU_LPAREN))
 	{
-		class_type = CheckForType();
-		if (!class_type || class_type->type != ev_class)
+		InClass = CheckForClass();
+		if (!InClass)
+		{
+			ParseError("Class name expected");
+		}
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	while (!TK_Check(PU_RBRACE))
+	{
+		state_t &s = *new(states) state_t;
+		memset(&s, 0, sizeof(s));
+		compstate_t &cs = *new(compstates) compstate_t;
+		memset(&cs, 0, sizeof(cs));
+
+		//	State identifier
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+		}
+		s.statename = tk_Name;
+		AddConstant(tk_Name, states.Num() - 1);
+		TK_NextToken();
+		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+		//	Sprite name
+		if (tk_Token != TK_NAME)
+		{
+			ERR_Exit(ERR_NONE, true, "Sprite name expected");
+		}
+		if (tk_Name != NAME_None)
+		{
+			if (strlen(*tk_Name) != 4)
+			{
+				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
+			}
+			for (i = 0; i < sprite_names.Num(); i++)
+			{
+		   		if (sprite_names[i] == tk_Name)
+				{
+				   	break;
+				}
+			}
+			if (i == sprite_names.Num())
+			{
+			   	i = sprite_names.AddItem(tk_Name);
+			}
+			s.sprite = i;
+		}
+		else
+		{
+			s.sprite = 0;
+		}
+		TK_NextToken();
+		TK_Expect(PU_COMMA, ERR_NONE);
+		//  Frame
+		s.frame = EvalConstExpression(ev_int);
+		TK_Expect(PU_COMMA, ERR_NONE);
+		if (tk_Token == TK_NAME)
+		{
+			//	Model
+			for (i = 0; i < models.Num(); i++)
+			{
+		   		if (models[i] == tk_Name)
+				{
+				   	break;
+				}
+			}
+			if (i == models.Num())
+			{
+			   	i = models.AddItem(tk_Name);
+			}
+			s.model_index = i;
+			TK_NextToken();
+			TK_Expect(PU_COMMA, ERR_NONE);
+			//  Frame
+			s.model_frame = EvalConstExpression(ev_int);
+			TK_Expect(PU_COMMA, ERR_NONE);
+		}
+		else
+		{
+			s.model_index = 0;
+			s.model_frame = 0;
+		}
+		//  Tics
+		s.time = ConstFloatExpression();
+		TK_Expect(PU_COMMA, ERR_NONE);
+		//  Next state
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ERR_Exit(ERR_NONE, true, NULL);
+		}
+		cs.NextName = tk_Name;
+		TK_NextToken();
+		TK_Expect(PU_RPAREN, ERR_NONE);
+		//	Code
+		s.function = ParseStateCode(InClass);
+		functions[s.function].Name = va("%s_func", *s.statename);
+	}
+}
+
+//==========================================================================
+//
+//	AddToMobjInfo
+//
+//==========================================================================
+
+void AddToMobjInfo(int Index, int ClassID)
+{
+	int i = mobj_info.Add();
+	mobj_info[i].doomednum = Index;
+	mobj_info[i].class_id = ClassID;
+}
+
+//==========================================================================
+//
+//	SkipStates
+//
+//==========================================================================
+
+void SkipStates(TClass* InClass)
+{
+	if (!InClass && TK_Check(PU_LPAREN))
+	{
+		InClass = CheckForClass();
+		if (!InClass)
 		{
 			ParseError("Class name expected");
 		}
@@ -189,31 +312,31 @@ void ParseStates(TType *class_type)
 	{
 		state_t &s = states[FindState(tk_Name)];
 
-		//	St∆vokıa identifik∆tors
+		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-		//	Spraita v∆rds
+		//	Sprite name
 		TK_NextToken();
 		TK_Expect(PU_COMMA, ERR_NONE);
-		//  Kadrs
+		//  Frame
 		EvalConstExpression(ev_int);
 		TK_Expect(PU_COMMA, ERR_NONE);
 		if (tk_Token == TK_NAME)
 		{
 			TK_NextToken();
 			TK_Expect(PU_COMMA, ERR_NONE);
-			//  Kadrs
+			//  Frame
 			EvalConstExpression(ev_int);
 			TK_Expect(PU_COMMA, ERR_NONE);
 		}
-		//  Taktis
+		//  Tics
 		ConstFloatExpression();
 		TK_Expect(PU_COMMA, ERR_NONE);
-		//  N∆ko˝ais st∆voklis
+		//  Next state
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
@@ -221,7 +344,7 @@ void ParseStates(TType *class_type)
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
-		ParseStateCode(class_type, s.function);
+		CompileStateCode(InClass, s.function);
 	}
 }
 
@@ -231,7 +354,7 @@ void ParseStates(TType *class_type)
 //
 //==========================================================================
 
-static void CheckStates(void)
+static void CheckStates()
 {
 	int		i;
 	int		j;
@@ -278,21 +401,21 @@ static void AddInfoData(int globaldef, void *data, int size, bool names)
 //
 //==========================================================================
 
-void AddInfoTables(void)
+void AddInfoTables()
 {
 	int i;
 
 	CheckStates();
 
-	//  Pievieno spraitu v∆rdus
+	//  Add sprite names
 	i = sprite_names.Num();
 	AddInfoData(gv_num_sprite_names, &i, 4, false);
 	AddInfoData(gv_sprite_names, sprite_names.GetData(), 4 * sprite_names.Num(), true);
-	//  Pievieno modeıus
+	//  Add models
 	i = models.Num();
 	AddInfoData(gv_num_models, &i, 4, false);
 	AddInfoData(gv_models, models.GetData(), 4 * models.Num(), true);
-	//	Pievieno st∆vokıu tabulu
+	//	Add state table
 	i = states.Num();
 	AddInfoData(gv_num_states, &i, 4, false);
 	for (i = 0; i < states.Num(); i++)
@@ -306,7 +429,7 @@ void AddInfoTables(void)
 			STRUCT_OFFSET(state_t, statename) / 4] = GLOBALTYPE_Name;
 	}
 	AddInfoData(gv_states, states.GetData(), states.Num() * sizeof(state_t), false);
-	//	Pievieno objektu aprakstu tabulu
+	//	Add object description table
 	i = mobj_info.Num();
 	AddInfoData(gv_num_mobj_info, &i, 4, false);
 	for (i = 0; i < mobj_info.Num(); i++)
@@ -321,146 +444,15 @@ void AddInfoTables(void)
 				states.Num(), mobj_info.Num());
 }
 
-} // namespace Pass2
-
-//**************************************************************************
-//**************************************************************************
-
-namespace Pass1 {
-
-//==========================================================================
-//
-//	ParseStates
-//
-//==========================================================================
-
-void ParseStates(TType *class_type)
-{
-	int i;
-
-	if (!class_type && TK_Check(PU_LPAREN))
-	{
-		class_type = CheckForType();
-		if (!class_type || class_type->type != ev_class)
-		{
-			ParseError("Class name expected");
-		}
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	}
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		state_t &s = *new(states) state_t;
-		memset(&s, 0, sizeof(s));
-		compstate_t &cs = *new(compstates) compstate_t;
-		memset(&cs, 0, sizeof(cs));
-
-		//	St∆vokıa identifik∆tors
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-		}
-		s.statename = tk_Name;
-		AddConstant(tk_Name, states.Num() - 1);
-		TK_NextToken();
-		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-		//	Spraita v∆rds
-		if (tk_Token != TK_NAME)
-		{
-			ERR_Exit(ERR_NONE, true, "Sprite name expected");
-		}
-		if (tk_Name != NAME_None)
-		{
-			if (strlen(*tk_Name) != 4)
-			{
-				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
-			}
-			for (i = 0; i < sprite_names.Num(); i++)
-			{
-		   		if (sprite_names[i] == tk_Name)
-				{
-				   	break;
-				}
-			}
-			if (i == sprite_names.Num())
-			{
-			   	i = sprite_names.AddItem(tk_Name);
-			}
-			s.sprite = i;
-		}
-		else
-		{
-			s.sprite = 0;
-		}
-		TK_NextToken();
-		TK_Expect(PU_COMMA, ERR_NONE);
-		//  Kadrs
-		s.frame = EvalConstExpression(ev_int);
-		TK_Expect(PU_COMMA, ERR_NONE);
-		if (tk_Token == TK_NAME)
-		{
-			//	Modelis
-			for (i = 0; i < models.Num(); i++)
-			{
-		   		if (models[i] == tk_Name)
-				{
-				   	break;
-				}
-			}
-			if (i == models.Num())
-			{
-			   	i = models.AddItem(tk_Name);
-			}
-			s.model_index = i;
-			TK_NextToken();
-			TK_Expect(PU_COMMA, ERR_NONE);
-			//  Kadrs
-			s.model_frame = EvalConstExpression(ev_int);
-			TK_Expect(PU_COMMA, ERR_NONE);
-		}
-		else
-		{
-			s.model_index = 0;
-			s.model_frame = 0;
-		}
-		//  Taktis
-		s.time = ConstFloatExpression();
-		TK_Expect(PU_COMMA, ERR_NONE);
-		//  N∆ko˝ais st∆voklis
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ERR_Exit(ERR_NONE, true, NULL);
-		}
-		cs.NextName = tk_Name;
-		TK_NextToken();
-		TK_Expect(PU_RPAREN, ERR_NONE);
-		//	Code
-		s.function = ParseStateCode(class_type);
-		functions[s.function].Name = va("%s_func", *s.statename);
-	}
-}
-
-//==========================================================================
-//
-//	AddToMobjInfo
-//
-//==========================================================================
-
-void AddToMobjInfo(int Index, int ClassID)
-{
-	int i = mobj_info.Add();
-	mobj_info[i].doomednum = Index;
-	mobj_info[i].class_id = ClassID;
-}
-
-} // namespace Pass1
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.24  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
-//
+//	
 //	Revision 1.23  2005/04/28 07:00:40  dj_jl
 //	Temporary fix for crash with optimisations.
 //	

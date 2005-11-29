@@ -65,13 +65,13 @@ enum
 	ev_float,
 	ev_name,
 	ev_string,
-	ev_function,
+	ev_unused_1,
 	ev_pointer,
 	ev_reference,
 	ev_array,
 	ev_struct,
 	ev_vector,
-	ev_class,
+	ev_unused_2,
 	ev_method,
 	ev_classid,
 	ev_bool,
@@ -249,6 +249,10 @@ enum EPunctuation
 	PU_RBRACE,
 };
 
+class TType;
+class TClass;
+class TStruct;
+
 //
 // The base class of all objects.
 //
@@ -257,8 +261,6 @@ class FField
 public:
 	FName		Name;
 };
-
-class TType;
 
 struct field_t : public FField
 {
@@ -272,38 +274,29 @@ class TType : public FField
 {
 public:
 	TType(void) {}
-	TType(int Atype, TType *Anext, TType *Aaux_type, int Asize) :
-		type(Atype), next(Anext), aux_type(Aaux_type), size(Asize)
+	TType(int Atype, TType *Anext, TType *Aaux_type) :
+		type(Atype), next(Anext), aux_type(Aaux_type)
 	{ }
 
 	int			type;
-	TType		*next;
-	TType		*aux_type;
-	int			size;
-	int			bit_mask;
-
-	//	Structure fields
-	int			numfields;
-	field_t		*fields;
-	//	Addfield info
-	int			available_size;
-	int			available_ofs;
-
-	//  Class stuff
-	int			classid;
-	int			num_methods;
-	int			vtable;
-	int			num_properties;
-	int			ofs_properties;
+	TType*		next;
+	TType*		aux_type;
+	int			array_dim;
+	union
+	{
+		int			bit_mask;
+		TClass*		Class;			//  Class of the reference
+		TStruct*	Struct;			//  Struct data.
+	};
 };
 
 class TFunction : public FField
 {
 public:
-	TType*		OuterClass;
-	int			first_statement;	//	Negative numbers are builtin functions
-	int			num_locals;
-	int			flags;
+	TClass*		OuterClass;
+	int			FirstStatement;	//	Negative numbers are builtin functions
+	int			NumLocals;
+	int			Flags;
 	TType*		ReturnType;
 	int			NumParams;
 	int			ParamsSize;
@@ -327,6 +320,56 @@ struct constant_t : public FField
 {
 	int			value;
 	constant_t	*HashNext;
+};
+
+class TStruct : public FField
+{
+public:
+	TType*			Type;
+	TStruct*		ParentStruct;
+	int				Size;
+	//	Structure fields
+	field_t*		Fields;
+	int				NumFields;
+	//	Addfield info
+	int				AvailableSize;
+	int				AvailableOfs;
+
+	TStruct()
+	: Type(0)
+	, ParentStruct(0)
+	, Size(0)
+	, Fields(0)
+	, NumFields(0)
+	, AvailableSize(0)
+	, AvailableOfs(0)
+	{}
+};
+
+class TClass : public FField
+{
+public:
+	TClass*			ParentClass;
+	field_t*		Fields;
+	int				NumFields;
+	int				NumProperties;
+	int				OfsProperties;
+	int				VTable;
+	int				NumMethods;
+	int				Size;
+	int				Index;
+
+	TClass()
+	: ParentClass(NULL)
+	, Fields(NULL)
+	, NumFields(0)
+	, NumProperties(0)
+	, OfsProperties(0)
+	, VTable(0)
+	, NumMethods(0)
+	, Size(0)
+	, Index(0)
+	{}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -365,95 +408,58 @@ void PC_DumpAsm(char* name);
 int EvalConstExpression(int type);
 float ConstFloatExpression(void);
 
-void InitTypes(void);
-TType *FindType(TType *type);
-TType *MakePointerType(TType *type);
-TType *MakeReferenceType(TType *type);
-TType *MakeArrayType(TType *type, int elcount);
-TType *CheckForType(void);
-TType *CheckForType(FName Name);
-
-void InitInfoTables(void);
-
-// -- Pass 1 --
-
-namespace Pass1
-{
-
-void PA_Parse(void);
-void ParseLocalVar(void);
-void ParseMethodDef(TType *, field_t *, field_t *, TType *, int);
-int ParseStateCode(TType *class_type);
-void ParseDefaultProperties(field_t *method, TType *class_type);
-
-int CheckForFunction(TType *InClass, FName Name);
-int CheckForGlobalVar(FName Name);
-int CheckForConstant(FName Name);
-void AddConstant(FName Name, int value);
-
-void ParseExpression(bool = false);
-
-int TypeSize(TType *t);
-void TypeCheckPassable(TType *type);
-void ParseStruct(void);
-void ParseClass(void);
-void AddFields(void);
-void ParseVector(void);
-void ParseField(void);
-field_t* CheckForField(TType *, bool = true);
-field_t* CheckForField(FName, TType *, bool = true);
-void AddVirtualTables(void);
-
-void ParseStates(TType *class_type);
-void AddToMobjInfo(int Index, int ClassID);
-
-}
-
-// -- Pass2 --
-
-namespace Pass2
-{
-
-void PA_Parse(void);
-void ParseLocalVar(TType *type);
-void ParseMethodDef(TType *, field_t *, field_t *, TType *, int);
-void ParseStateCode(TType *class_type, int funcnum);
-void ParseDefaultProperties(field_t *method, TType *class_type);
-
-int CheckForFunction(TType *InClass, FName Name);
-int CheckForGlobalVar(FName Name);
-int CheckForLocalVar(FName Name);
-int CheckForConstant(FName Name);
-
 TType *ParseExpression(bool = false);
 
+void ParseMethodDef(TType*, field_t*, field_t*, TClass*, int);
+int ParseStateCode(TClass*);
+void ParseDefaultProperties(field_t*, TClass*);
+void AddConstant(FName Name, int value);
+void PA_Parse();
+
+int CheckForLocalVar(FName);
+void ParseLocalVar(TType*);
+void CompileMethodDef(TType*, field_t*, field_t*, TClass*, int);
+void CompileStateCode(TClass*, int);
+void CompileDefaultProperties(field_t*, TClass*);
+void PA_Compile();
+
+void InitTypes(void);
+TType* FindType(TType *type);
+TType* MakePointerType(TType *type);
+TType* MakeReferenceType(TClass* type);
+TType* MakeArrayType(TType *type, int elcount);
+TType* CheckForType();
+TType* CheckForType(FName Name);
+TClass* CheckForClass();
+TClass* CheckForClass(FName Name);
 int TypeSize(TType *t);
+int CheckForGlobalVar(FName Name);
+int CheckForFunction(TClass*, FName);
+int CheckForConstant(FName);
 void TypeCheckPassable(TType *type);
 void TypeCheck1(TType *t);
-void TypeCheck2(TType *t);
 void TypeCheck3(TType *t1, TType *t2);
-void ParseStruct(void);
-void ParseClass(void);
-void AddFields(void);
-void ParseVector(void);
-field_t* ParseField(TType *t);
-field_t* CheckForField(TType *, bool = true);
-field_t* CheckForField(FName, TType *, bool = true);
-field_t* FindConstructor(TType *t);
-void AddVirtualTables(void);
+void SkipStruct();
+void SkipAddFields();
+void CompileClass();
+field_t* ParseStructField(TStruct*);
+field_t* ParseClassField(TClass*);
+field_t* FindConstructor(TClass*);
+void AddVirtualTables();
+void ParseStruct(bool);
+void AddFields();
+void ParseClass();
+field_t* CheckForField(TClass*, bool = true);
+field_t* CheckForField(FName, TClass*, bool = true);
 
-void ParseStates(TType *class_type);
-void AddInfoTables(void);
-
-extern TType			*SelfType;
-
-extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
-
-}
+void InitInfoTables();
+void ParseStates(TClass*);
+void AddToMobjInfo(int Index, int ClassID);
+void SkipStates(TClass*);
+void AddInfoTables();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern bool				ClassAddfields;
 extern char				tk_SourceName[MAX_FILE_NAME_LENGTH];
 extern int				tk_IncludedLines;
 extern ETokenType		tk_Token;
@@ -484,6 +490,12 @@ extern constant_t		Constants[MAX_CONSTANTS];
 extern int				numconstants;
 extern constant_t		*ConstantsHash[256];
 
+extern TClass*			classtypes;
+extern int				numclasses;
+
+extern TStruct*			structtypes;
+extern int				numstructs;
+
 extern TType			type_void;
 extern TType			type_int;
 extern TType			type_float;
@@ -494,16 +506,17 @@ extern TType			type_mobjinfo;
 extern TType			type_void_ptr;
 extern TType			type_vector;
 extern TType			type_classid;
-extern TType			type_class;
 extern TType			type_none_ref;
 extern TType			type_bool;
-
-extern TType			**classtypes;
-extern int				numclasses;
 
 extern int				NumErrors;
 
 extern int				CurrentPass;
+
+extern TType*			SelfType;
+extern TClass*			SelfClass;
+
+extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
 
 // INLINE CODE -------------------------------------------------------------
 
@@ -570,9 +583,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.29  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
-//
+//	
 //	Revision 1.28  2004/12/22 07:31:57  dj_jl
 //	Increased argument count limit.
 //	

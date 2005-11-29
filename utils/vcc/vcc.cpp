@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include <time.h>
+#include <signal.h>
 #include "vcc.h"
 
 // MACROS ------------------------------------------------------------------
@@ -43,6 +44,7 @@ void cpp_add_define(int, char *);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static void SignalHandler(int s);
 static void Init(void);
 static void ProcessArgs(int ArgCount, char **ArgVector);
 static void OpenDebugFile(char *name);
@@ -54,7 +56,6 @@ static void DumpAsm(void);
 
 int				CurrentPass;
 
-bool			ClassAddfields = false;
 char			SourceFileName[MAX_FILE_NAME_LENGTH];
 static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
@@ -80,6 +81,8 @@ int main(int argc, char **argv)
 	void *buf;
 	size_t size;
 
+	signal(SIGSEGV, SignalHandler);
+
 	starttime = time(0);
 	cpp_init();
 	Init();
@@ -92,13 +95,13 @@ int main(int argc, char **argv)
 		(preptime - starttime) / 60, (preptime - starttime) % 60);
 	TK_OpenSource(buf, size);
 	CurrentPass = 1;
-	Pass1::PA_Parse();
+	PA_Parse();
 	TK_Restart();
 	int pass1time = time(0);
 	dprintf("Pass 1 in %02d:%02d\n",
 		(pass1time - preptime) / 60, (pass1time - preptime) % 60);
 	CurrentPass = 2;
-	Pass2::PA_Parse();
+	PA_Compile();
 	int pass2time = time(0);
 	dprintf("Pass 2 in %02d:%02d\n",
 		(pass2time - pass1time) / 60, (pass2time - pass1time) % 60);
@@ -113,6 +116,23 @@ int main(int argc, char **argv)
 	dprintf("Time elapsed: %02d:%02d\n",
 		(endtime - starttime) / 60, (endtime - starttime) % 60);
 	return 0;
+}
+
+//==========================================================================
+//
+// 	signal_handler
+//
+// 	Shuts down system, on error signal
+//
+//==========================================================================
+
+static void SignalHandler(int s)
+{
+	switch (s)
+	{
+	case SIGSEGV:
+		ERR_Exit(ERR_NONE, true, "Segmentation Violation");
+	}
 }
 
 //==========================================================================
@@ -187,12 +207,6 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 			option = *text++;
 			switch (option)
 			{
-			case 'c':
-				if (*text == 'a' && !text[1])
-				{
-					ClassAddfields = true;
-				}
-				break;
 			case 'd':
 				DebugMode = true;
 				if (*text)
@@ -318,9 +332,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.16  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
-//
+//	
 //	Revision 1.15  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	

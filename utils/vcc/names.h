@@ -41,6 +41,10 @@
 // Special zero value, meaning no name.
 REGISTER_NAME(None)
 
+REGISTER_NAME(state_t)
+REGISTER_NAME(mobjinfo_t)
+REGISTER_NAME(Object)
+
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM
@@ -53,9 +57,12 @@ REGISTER_NAME(None)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2005/11/29 19:31:43  dj_jl
+//	Class and struct classes, removed namespaces, beautification.
+//
 //	Revision 1.3  2005/11/24 20:41:07  dj_jl
 //	Cleaned up a bit.
-//
+//	
 //	Revision 1.2  2002/01/25 18:05:58  dj_jl
 //	Better string hash function
 //	
