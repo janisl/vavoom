@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolyFX:Projectile;
+class HolyFX : Projectile;
 
 int WeaveXY;
 int WeaveZ;
@@ -330,6 +330,7 @@ defaultproperties
 	Translucency = 33;
 	bRip = true;
 	bSeekerMissile = true;
+	bDamageInvulnerable = true;
 	IdleState = S_HOLY_FX1;
 	DeathState = S_HOLY_FX_X1;
 	DeathSound = 'SpiritDie';
@@ -338,6 +339,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

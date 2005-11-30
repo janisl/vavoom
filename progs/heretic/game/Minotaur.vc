@@ -309,6 +309,7 @@ defaultproperties
 	ChargeSpeed	= 455.0;
 	bDropOff = true;
 	bBoss = true;
+	bNoMorph = true;
 	IdleState = S_MNTR_LOOK1;
 	SeeState = S_MNTR_WALK1;
 	MeleeState = S_MNTR_ATK1_1;
@@ -328,6 +329,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

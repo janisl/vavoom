@@ -23,7 +23,34 @@
 //**
 //**************************************************************************
 
-class StainedGlassShard1:Fragment;
+class StainedGlassShard1 : Fragment;
+
+//==========================================================================
+//
+//  FloorBounceMissile
+//
+//==========================================================================
+
+void FloorBounceMissile()
+{
+	if (HitFloorType() >= FLOOR_LIQUID)
+	{
+		Remove();
+		return;
+	}
+	Velocity.z = Velocity.z * -0.3;
+	if (fabs(Velocity.z) < 0.5 * 35.0)
+	{
+		SetState(S_NULL);
+		return;
+	}
+	Velocity.x = 2.0 * Velocity.x / 3.0;
+	Velocity.y = 2.0 * Velocity.y / 3.0;
+	if (SightSound)
+	{
+		PlaySound(SightSound, CHAN_VOICE);
+	}
+}
 
 __states__
 {
@@ -48,6 +75,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

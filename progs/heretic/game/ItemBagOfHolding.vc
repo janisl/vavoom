@@ -23,8 +23,54 @@
 //**
 //**************************************************************************
 
-class ItemBagOfHolding:Pickup
+class ItemBagOfHolding : Pickup
 	__mobjinfo__(8);
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	int i;
+	name sound;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	sound = 'misc/i_pkup';
+	Toucher.Player.Backpack = true;
+	Toucher.Player.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
+	Toucher.Player.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
+	Toucher.Player.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
+	Toucher.Player.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
+	Toucher.Player.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
+	cprint(Toucher.Player, TXT_ITEMBAGOFHOLDING);
+	if (bCountItem)
+	{
+		Toucher.Player.ItemCount++;
+		level->currentitems++;
+	}
+	if (deathmatch && !bDropped)
+	{
+		HideSpecialThing();
+	}
+	else
+	{
+		Remove();
+	}
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound(sound, CHAN_ITEM);
+}
 
 __states__
 {
@@ -41,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

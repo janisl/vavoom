@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ShardMissile:Projectile;
+class ShardMissile : Projectile;
 
 bool bShardSpawnLeft;
 bool bShardSpawnRight;
@@ -32,11 +32,34 @@ bool bShardSpawnDown;
 
 //==========================================================================
 //
+//  InflictorModifyDamage
+//
+//==========================================================================
+
+int InflictorModifyDamage(Actor victim, Actor source, int damage)
+{
+	switch (_Special2)
+	{
+	case 3:
+		damage <<= 3;
+		break;
+	case 2:
+		damage <<= 2;
+		break;
+	case 1:
+		damage <<= 1;
+		break;
+	}
+	return damage;
+}
+
+//==========================================================================
+//
 //  A_ShedShard
 //
 //==========================================================================
 
-void A_ShedShard(void)
+void A_ShedShard()
 {
 	ShardMissile mo;
 	int spermcount = _Special2;
@@ -141,6 +164,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

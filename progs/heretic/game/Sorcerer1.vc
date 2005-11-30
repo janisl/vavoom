@@ -198,6 +198,7 @@ defaultproperties
 	StepSpeed = 16.0;
 	PainChance = 0.21875;
 	bBoss = true;
+	bNoMorph = true;
 	IdleState = S_SRCR1_LOOK1;
 	SeeState = S_SRCR1_WALK1;
 	MissileState = S_SRCR1_ATK1;
@@ -214,6 +215,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.3  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

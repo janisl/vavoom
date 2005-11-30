@@ -224,14 +224,13 @@ void SpawnPuff(TVec org)
 	{
 		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
 	}
-	switch (PuffType)
+	if (PuffType == PunchPuff)
 	{
-	case PunchPuff:
 		puff.Velocity.z = 1.0 * 35.0;
-		break;
-	case HammerPuff:
+	}
+	else if (PuffType == HammerPuff)
+	{
 		puff.Velocity.z = 8.0 / 10.0 * 35.0;
-		break;
 	}
 	PuffSpawned = puff;
 }
@@ -586,35 +585,31 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 		if (mo.bIceCorpse)
 			continue;	// Not ice corpses
 		// Only corpses that call A_QueueCorpse from death routine
-		switch (mo.Class)
+		if (mo.Class == Centaur ||
+			mo.Class == CentaurLeader ||
+			mo.Class == Demon ||
+			mo.Class == Demon2 ||
+			mo.Class == Wraith ||
+			mo.Class == WraithBuried ||
+			mo.Class == Bishop ||
+			mo.Class == Ettin ||
+			mo.Class == Pig ||
+			mo.Class == CentaurShield ||
+			mo.Class == CentaurSword ||
+			mo.Class == DemonChunk1 ||
+			mo.Class == DemonChunk2 ||
+			mo.Class == DemonChunk3 ||
+			mo.Class == DemonChunk4 ||
+			mo.Class == DemonChunk5 ||
+			mo.Class == Demon2Chunk1 ||
+			mo.Class == Demon2Chunk2 ||
+			mo.Class == Demon2Chunk3 ||
+			mo.Class == Demon2Chunk4 ||
+			mo.Class == Demon2Chunk5 ||
+			mo.Class == FireDemonSplotch1 ||
+			mo.Class == FireDemonSplotch2)
 		{
-		case Centaur:
-		case CentaurLeader:
-		case Demon:
-		case Demon2:
-		case Wraith:
-		case WraithBuried:
-		case Bishop:
-		case Ettin:
-		case Pig:
-		case CentaurShield:
-		case CentaurSword:
-		case DemonChunk1:
-		case DemonChunk2:
-		case DemonChunk3:
-		case DemonChunk4:
-		case DemonChunk5:
-		case Demon2Chunk1:
-		case Demon2Chunk2:
-		case Demon2Chunk3:
-		case Demon2Chunk4:
-		case Demon2Chunk5:
-		case FireDemonSplotch1:
-		case FireDemonSplotch2:
 			mo.A_QueueCorpse();	// Add corpse to queue
-			break;
-		default:
-			break;
 		}
 	}
 }
@@ -696,6 +691,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.60  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.59  2004/12/27 12:23:13  dj_jl
 //  Multiple small changes for version 1.16
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcererBall:Projectile
+class SorcererBall : Projectile
 	abstract;
 
 //  Sorcerer Ball Variables
@@ -31,6 +31,23 @@ class SorcererBall:Projectile
 //      Special2        Countdown of rapid fire (FX4)
 //      Args[0]         If set, don't play the bounce sound when bouncing
 float BallAngleOffset;
+
+//==========================================================================
+//
+//  FloorBounceMissile
+//
+//==========================================================================
+
+void FloorBounceMissile()
+{
+	Velocity.z = Velocity.z * -0.7;
+	Velocity.x = 2.0 * Velocity.x / 3.0;
+	Velocity.y = 2.0 * Velocity.y / 3.0;
+	if (SightSound && !Args[0])
+	{
+		PlaySound(SightSound, CHAN_VOICE);
+	}
+}
 
 //============================================================================
 //
@@ -40,7 +57,7 @@ float BallAngleOffset;
 //
 //============================================================================
 
-void A_AccelBalls(void)
+void A_AccelBalls()
 {
 	Actor sorc = Instigator;
 
@@ -67,7 +84,7 @@ void A_AccelBalls(void)
 //
 //============================================================================
 
-void A_DecelBalls(void)
+void A_DecelBalls()
 {
 	Actor sorc = Instigator;
 
@@ -89,7 +106,7 @@ void A_DecelBalls(void)
 //
 //============================================================================
 
-void A_SorcUpdateBallAngle(void)
+void A_SorcUpdateBallAngle()
 {
 	if (Class == SorcererBall1)
 	{
@@ -105,7 +122,7 @@ void A_SorcUpdateBallAngle(void)
 //
 //============================================================================
 
-void A_SorcOffense2(void)
+void A_SorcOffense2()
 {
 	float ang1;
 	Actor mo;
@@ -136,7 +153,7 @@ void A_SorcOffense2(void)
 //
 //============================================================================
 
-void A_CastSorcererSpell(void)
+void A_CastSorcererSpell()
 {
 }
 
@@ -146,7 +163,7 @@ void A_CastSorcererSpell(void)
 //
 //============================================================================
 
-void A_SorcBallOrbit(void)
+void A_SorcBallOrbit()
 {
 	float angle, baseangle;
 	int mode = Instigator.Args[3];
@@ -246,7 +263,7 @@ void A_SorcBallOrbit(void)
 //
 //============================================================================
 
-void A_SorcBallPop(void)
+void A_SorcBallPop()
 {
 	PlayFullVolumeSound('SorcererBallPop', CHAN_VOICE);
 	bNoGravity = false;
@@ -263,7 +280,7 @@ void A_SorcBallPop(void)
 //
 //============================================================================
 
-void A_BounceCheck(void)
+void A_BounceCheck()
 {
 	if (Args[4]-- <= 0)
 	{
@@ -295,6 +312,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

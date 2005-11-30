@@ -23,8 +23,52 @@
 //**
 //**************************************************************************
 
-class ItemHealthPotion:Pickup
+class ItemHealthPotion : Pickup
 	__mobjinfo__(81);
+
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	int i;
+	name sound;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	sound = 'misc/i_pkup';
+	if (!Toucher.Player.GiveBody(10))
+	{
+		return;
+	}
+	cprint(Toucher.Player, TXT_ITEMHEALTH);
+	if (bCountItem)
+	{
+		Toucher.Player.ItemCount++;
+		level->currentitems++;
+	}
+	if (deathmatch && !bDropped)
+	{
+		HideSpecialThing();
+	}
+	else
+	{
+		Remove();
+	}
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound(sound, CHAN_ITEM);
+}
 
 __states__
 {
@@ -42,6 +86,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -342,6 +342,7 @@ defaultproperties
 	PainChance = 0.125;
 	bDropOff = true;
 	bBoss = true;
+	bNoMorph = true;
 	RiseState = S_SOR2_RISE1;
 	IdleState = S_SOR2_LOOK1;
 	SeeState = S_SOR2_WALK1;
@@ -359,6 +360,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.3  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

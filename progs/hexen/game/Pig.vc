@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Pig:Pawn;
+class Pig : Pawn;
 
 //==========================================================================
 //
@@ -51,15 +51,13 @@ int UpdateMorphedMonster(int tics)
 		return false;
 	}
 	originalClass = SpecialCID;
-	switch (originalClass)
+	if (originalClass == WraithBuried ||
+		originalClass == Serpent ||
+		originalClass == SerpentLeader ||
+		originalClass == Minotaur)
 	{
-	case WraithBuried:	// These must remain morphed
-	case Serpent:
-	case SerpentLeader:
-	case Minotaur:
+		// These must remain morphed
 		return false;
-	default:
-		break;
 	}
 	oldOrigin = Origin;
 	oldAngle = Angles.yaw;
@@ -107,7 +105,7 @@ int UpdateMorphedMonster(int tics)
 //
 //============================================================================
 
-void A_PigLook(void)
+void A_PigLook()
 {
 	if (UpdateMorphedMonster(10))
 	{
@@ -122,7 +120,7 @@ void A_PigLook(void)
 //
 //============================================================================
 
-void A_PigChase(void)
+void A_PigChase()
 {
 	if (UpdateMorphedMonster(3))
 	{
@@ -137,7 +135,7 @@ void A_PigChase(void)
 //
 //============================================================================
 
-void A_PigAttack(void)
+void A_PigAttack()
 {
 	if (UpdateMorphedMonster(18))
 	{
@@ -186,6 +184,7 @@ defaultproperties
 	PainChance = 0.5;
 	bWindThrust = true;
 	bActivateMCross = false;
+	bNoMorph = true;
 	IdleState = S_PIG_LOOK1;
 	SeeState = S_PIG_WALK1;
 	MeleeState = S_PIG_ATK1;
@@ -201,6 +200,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -408,20 +408,9 @@ float GetAngle(void)
 
 int WeapFromItem(Actor item)
 {
-	switch (item.Class)
+	if (WeaponPickup(item))
 	{
-	case ItemWeaponGauntlets:
-		return wp_gauntlets;
-	case ItemWeaponCrossbow:
-		return wp_crossbow;
-	case ItemWeaponBlaster:
-		return wp_blaster;
-	case ItemWeaponSkullRod:
-		return wp_skullrod;
-	case ItemWeaponPhoenixRod:
-		return wp_phoenixrod;
-	case ItemWeaponMace:
-		return wp_mace;
+		return WeaponPickup(item).WeaponType;
 	}
 	return -1;
 }
@@ -437,26 +426,9 @@ int WeapFromItem(Actor item)
 
 int AmmoFromItem(Actor item)
 {
-	switch (item.Class)
+	if (Ammo(item))
 	{
-	case ItemAmmoGoldWandWimpy:
-	case ItemAmmoGoldWandHefty:
-		return am_goldwand;
-	case ItemAmmoCrossbowWimpy:
-	case ItemAmmoCrossbowHefty:
-		return am_crossbow;
-	case ItemAmmoBlasterWimpy:
-	case ItemAmmoBlasterHefty:
-		return am_blaster;
-	case ItemAmmoSkullRodWimpy:
-	case ItemAmmoSkullRodHefty:
-		return am_skullrod;
-	case ItemAmmoPhoenixWimpy:
-	case ItemAmmoPhoenixHefty:
-		return am_phoenixrod;
-	case ItemAmmoMaceWimpy:
-	case ItemAmmoMaceHefty:
-		return am_mace;
+		return Ammo(item).AmmoType;
 	}
 	return -1;
 }
@@ -1227,6 +1199,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.3  2003/11/12 16:49:43  dj_jl
 //  Changed player structure into a class
 //

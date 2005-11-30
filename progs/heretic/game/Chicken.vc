@@ -187,6 +187,7 @@ defaultproperties
 	PainChance = 0.78125;
 	bDropOff = true;
 	bWindThrust = true;
+	bNoMorph = true;
 	IdleState = S_CHICKEN_LOOK1;
 	SeeState = S_CHICKEN_WALK1;
 	MeleeState = S_CHICKEN_ATK1;
@@ -202,6 +203,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

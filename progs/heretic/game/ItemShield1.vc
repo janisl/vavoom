@@ -26,6 +26,50 @@
 class ItemShield1 : Pickup
 	__mobjinfo__(85);
 
+//==========================================================================
+//
+//  TouchSpecial
+//
+//==========================================================================
+
+void TouchSpecial(Actor Toucher)
+{
+	int i;
+	name sound;
+
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	if (Toucher.Health <= 0)
+	{
+		// Toucher is dead
+		return;
+	}
+	sound = 'misc/i_pkup';
+	if (!Toucher.Player.GiveArmor(1))
+	{
+		return;
+	}
+	cprint(Toucher.Player, TXT_ITEMSHIELD1);
+	if (bCountItem)
+	{
+		Toucher.Player.ItemCount++;
+		level->currentitems++;
+	}
+	if (deathmatch && !bDropped)
+	{
+		HideSpecialThing();
+	}
+	else
+	{
+		Remove();
+	}
+	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.PlaySound(sound, CHAN_ITEM);
+}
+
 __states__
 {
 	S_ITEM_SHLD1('SHLD', 0, 'items/shield1.md2', 0, -1.0, S_NULL) { }
@@ -40,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.2  2005/06/16 17:46:39  dj_jl
 //  Added model definitions.
 //

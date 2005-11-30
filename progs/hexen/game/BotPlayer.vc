@@ -420,35 +420,10 @@ float GetAngle(void)
 
 int WeapFromItem(Actor item)
 {
-	switch (player.PClass)
+	if (WeaponPickup(item) && 
+		WeaponPickup(item).WeaponClass == player.PClass)
 	{
-	case PCLASS_FIGHTER:
-		switch (item.Class)
-		{
-		case WeaponFAxe:
-			return WP_SECOND;
-		case WeaponFHammer:
-			return WP_THIRD;
-		}
-		break;
-	case PCLASS_CLERIC:
-		switch (item.Class)
-		{
-		case WeaponCSerpentStaff:
-			return WP_SECOND;
-		case WeaponCFlame:
-			return WP_THIRD;
-		}
-		break;
-	case PCLASS_MAGE:
-		switch (item.Class)
-		{
-		case WeaponMCone:
-			return WP_SECOND;
-		case WeaponMLightning:
-			return WP_THIRD;
-		}
-		break;
+		return WeaponPickup(item).WeaponType;
 	}
 	return -1;
 }
@@ -463,41 +438,10 @@ int WeapFromItem(Actor item)
 
 int WeapPieceFromItem(Actor item)
 {
-	switch (player.PClass)
+	if (WeaponPiece(item) &&
+		WeaponPiece(item).PieceClass == player.PClass)
 	{
-	case PCLASS_FIGHTER:
-		switch (item.Class)
-		{
-		case WeaponFSwordPiece1:
-			return WPIECE1;
-		case WeaponFSwordPiece2:
-			return WPIECE2;
-		case WeaponFSwordPiece3:
-			return WPIECE3;
-		}
-		break;
-	case PCLASS_CLERIC:
-		switch (item.Class)
-		{
-		case WeaponCHolyPiece1:
-			return WPIECE1;
-		case WeaponCHolyPiece2:
-			return WPIECE2;
-		case WeaponCHolyPiece3:
-			return WPIECE3;
-		}
-		break;
-	case PCLASS_MAGE:
-		switch (item.Class)
-		{
-		case WeaponMStaffPiece1:
-			return WPIECE1;
-		case WeaponMStaffPiece2:
-			return WPIECE2;
-		case WeaponMStaffPiece3:
-			return WPIECE3;
-		}
-		break;
+		return WeaponPiece(item).PieceValue;
 	}
 	return -1;
 }
@@ -513,14 +457,9 @@ int WeapPieceFromItem(Actor item)
 
 int ManaFromItem(Actor item)
 {
-	switch (item.Class)
+	if (Mana(item))
 	{
-	case ItemManaBlue:
-		return MANA_1;
-	case ItemManaGreen:
-		return MANA_2;
-	case ItemManaCombined:
-		return MANA_BOTH;
+		return Mana(item).ManaType;
 	}
 	return -1;
 }
@@ -1273,6 +1212,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.3  2003/11/12 16:50:47  dj_jl
 //  Changed player structure into a class
 //

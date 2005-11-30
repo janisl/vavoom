@@ -84,6 +84,7 @@ bool bActivatePCross;	// can activate projectile cross lines
 bool bDormant;		// thing is dormant
 bool bWaterJump;
 bool bBlaster;
+bool bNoMorph;			// Don't morph into chicken.
 
 //  Params
 float Speed;
@@ -589,17 +590,9 @@ bool ChickenMorph(void)
 	{
 		return false;
 	}
-	switch (Class)
+	if (bNoMorph)
 	{
-	case Pod:
-	case Chicken:
-	case Head:
-	case Minotaur:
-	case Sorcerer1:
-	case Sorcerer2:
 		return false;
-	default:
-		break;
 	}
 
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
@@ -771,9 +764,8 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// Special damage types
 	if (inflictor)
 	{
-		switch (inflictor.Class)
+		if (inflictor.Class == EggMissile)
 		{
-		case EggMissile:
 			if (bIsPlayer)
 			{
 				ChickenMorphPlayer();
@@ -783,22 +775,26 @@ void Damage(Actor inflictor, Actor source, int damage)
 				ChickenMorph();
 			}
 			return;	// Always return
-		case WhirlWind:
+		}
+		else if (inflictor.Class == WhirlWind)
+		{
 			inflictor.TouchWhirlwind(self);
 			return;
-		case Minotaur:
+		}
+		else if (inflictor.Class == Minotaur)
+		{
 			if (inflictor.bSkullFly)
 			{
 				// Slam only when in charge mode
 				inflictor.MinotaurSlam(self);
 				return;
 			}
-			break;
-		case MaceFX4:	// Death ball
+		}
+		else if (inflictor.Class == MaceFX4)	// Death ball
+		{
 			if (bBoss || Class == Head)
 			{
 				// Don't allow cheap boss kills
-				break;
 			}
 			else if (bIsPlayer)
 			{
@@ -806,44 +802,51 @@ void Damage(Actor inflictor, Actor source, int damage)
 				if (Player.Powers[pw_invulnerability])
 				{
 					// Can't hurt invulnerable players
-					break;
 				}
-				if (AutoUseChaosDevice())
+				else if (AutoUseChaosDevice())
 				{
 					// Player was saved using chaos device
 					return;
 				}
+				else
+					damage = 10000;	// Something's gonna die
 			}
-			damage = 10000;	// Something's gonna die
-			break;
-		case PhoenixFX2:	// Flame thrower
+			else
+				damage = 10000;	// Something's gonna die
+		}
+		else if (inflictor.Class == PhoenixFX2)
+		{
+			// Flame thrower
 			if (Player && P_Random() < 128)
 			{
 				// Freeze player for a bit
 				ReactionTime += 0.125;
 			}
-			break;
-		case RainPlayer1:	// Rain missiles
-		case RainPlayer2:
-		case RainPlayer3:
-		case RainPlayer4:
+		}
+		else if (inflictor.Class == RainPlayer1 ||	// Rain missiles
+			inflictor.Class == RainPlayer2 ||
+			inflictor.Class == RainPlayer3 ||
+			inflictor.Class == RainPlayer4)
+		{
 			if (bBoss)
 			{
 				// Decrease damage for bosses
 				damage = (P_Random() & 7) + 1;
 			}
-			break;
-		case HornRodMissile2:
-		case PhoenixFX1:
+		}
+		else if (inflictor.Class == HornRodMissile2 ||
+			inflictor.Class == PhoenixFX1)
+		{
 			if (Class == Sorcerer2 && P_Random() < 96)
 			{
 				// D'Sparil teleports away
 				Sorcerer2(self).DSparilTeleport();
 				return;
 			}
-			break;
-		case BlasterFX1:
-		case Ripper:
+		}
+		else if (inflictor.Class == BlasterFX1 ||
+			inflictor.Class == Ripper)
+		{
 			if (Class == Head)
 			{
 				// Less damage to Ironlich bosses
@@ -853,9 +856,6 @@ void Damage(Actor inflictor, Actor source, int damage)
 					return;
 				}
 			}
-			break;
-		default:
-			break;
 		}
 	}
 	// Push the target unless source is using the gauntlets
@@ -2208,24 +2208,29 @@ Actor SpawnMissile(Actor dest, classid type)
 	TVec dir;
 
 	org = Origin;
-	switch (type)
+	if (type == MinotaurMissile)
 	{
-	case MinotaurMissile:	// Minotaur swing attack missile
+		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
-		break;
-	case MinotaurFloorFire:	// Minotaur floor fire missile
+	}
+	else if (type == MinotaurFloorFire)
+	{
+		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
-		break;
-	case Sorcerer1Missile:	// Sorcerer Demon fireball
+	}
+	else if (type == Sorcerer1Missile)
+	{
+		// Sorcerer Demon fireball
 		org.z = Origin.z + 48.0;
-		break;
-	case KnightAxe:	// Knight normal axe
-	case KnightRedAxe:	// Knight red power axe
+	}
+	else if (type == KnightAxe||	// Knight normal axe
+			type == KnightRedAxe)	// Knight red power axe
+	{
 		org.z = Origin.z + 36.0;
-		break;
-	default:
+	}
+	else
+	{
 		org.z = Origin.z + 32.0;
-		break;
 	}
 	org.z -= FloorClip;
 	A = Spawn(type, org);
@@ -2262,20 +2267,24 @@ Actor SpawnMissileAngles(classid type, float yaw, float pitch)
 	TVec dir;
 
 	org = Origin;
-	switch (type)
+	if (type == MinotaurMissile)
 	{
-	case MinotaurMissile:	// Minotaur swing attack missile
+		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
-		break;
-	case MinotaurFloorFire:	// Minotaur floor fire missile
+	}
+	else if (type == MinotaurFloorFire)
+	{
+		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
-		break;
-	case Sorcerer1Missile:	// Sorcerer Demon fireball
+	}
+	if (type == Sorcerer1Missile)
+	{
+		// Sorcerer Demon fireball
 		org.z = Origin.z + 48.0;
-		break;
-	default:
+	}
+	else
+	{
 		org.z = Origin.z + 32.0;
-		break;
 	}
 	org.z -= FloorClip;
 	A = Spawn(type, org);
@@ -2998,19 +3007,16 @@ void A_FreeTargMobj(void)
 //
 //==========================================================================
 
-void A_Scream(void)
+void A_Scream()
 {
-	switch (Class)
+	if (Class == ChickenPlayer || Class == Sorcerer1 || Class == Minotaur)
 	{
-	case ChickenPlayer:
-	case Sorcerer1:
-	case Minotaur:
 		// Make boss death sounds full volume
 		PlayFullVolumeSound(DeathSound, CHAN_VOICE);
-		break;
-	default:
+	}
+	else
+	{
 		PlaySound(DeathSound, CHAN_VOICE);
-		break;
 	}
 }
 
@@ -3022,25 +3028,26 @@ void A_Scream(void)
 //
 //==========================================================================
 
-void A_Explode(void)
+void A_Explode()
 {
 	int damage;
 
 	damage = 128;
-	switch (Class)
+	if (Class == FireBomb)
 	{
-	case FireBomb:	// Time Bombs
+		// Time Bombs
 		Origin.z += 32.0;
 		Translucency = 0;
-		break;
-	case MinotaurFloorFire:	// Minotaur floor fire
+	}
+	else if (Class == MinotaurFloorFire)
+	{
+		// Minotaur floor fire
 		damage = 24;
-		break;
-	case Sorcerer2Missile1:	// D'Sparil missile
+	}
+	else if (Class == Sorcerer2Missile1)
+	{
+		// D'Sparil missile
 		damage = 80 + (P_Random() & 31);
-		break;
-	default:
-		break;
 	}
 	RadiusAttack(damage, 0, 0);
 	HitFloorEffect();
@@ -3079,6 +3086,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.15  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

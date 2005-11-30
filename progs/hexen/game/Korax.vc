@@ -48,7 +48,7 @@
 //
 //**************************************************************************
 
-class Korax:Pawn
+class Korax : Pawn
 	__mobjinfo__(10200);
 
 //
@@ -77,13 +77,26 @@ bool bDidBelowHalfHealth;	//  set if "below half" script not yet run
 int KoraxMissileState;
 int KoraxCommandState;
 
+//==========================================================================
+//
+//  Archive
+//
+//==========================================================================
+
+void Archive()
+{
+	::Archive();
+	// Miscellaneous
+	_Special1 = 0;	// Searching index
+}
+
 //============================================================================
 //
 //  A_KoraxStep
 //
 //============================================================================
 
-void A_KoraxStep(void)
+void A_KoraxStep()
 {
 	A_Chase();
 }
@@ -94,7 +107,7 @@ void A_KoraxStep(void)
 //
 //============================================================================
 
-void A_KoraxStep2(void)
+void A_KoraxStep2()
 {
 	PlayFullVolumeSound('KoraxStep', CHAN_BODY);
 	A_Chase();
@@ -106,7 +119,7 @@ void A_KoraxStep2(void)
 //
 //============================================================================
 
-void A_KoraxChase(void)
+void A_KoraxChase()
 {
 	Actor spot;
 	int search;
@@ -157,7 +170,7 @@ void A_KoraxChase(void)
 //
 //============================================================================
 
-void A_KoraxDecide(void)
+void A_KoraxDecide()
 {
 	if (Random() < 0.859375)
 	{
@@ -301,7 +314,7 @@ void KoraxFire6(classid type)
 //
 //============================================================================
 
-void A_KoraxMissile(void)
+void A_KoraxMissile()
 {
 	classid mtype;
 	name sound;
@@ -350,7 +363,7 @@ void A_KoraxMissile(void)
 // Call action code scripts (250-254)
 //============================================================================
 
-void A_KoraxCommand(void)
+void A_KoraxCommand()
 {
 	float x, y, z;
 	float ang;
@@ -400,7 +413,7 @@ void A_KoraxCommand(void)
 //
 //============================================================================
 
-void A_KoraxBonePop(void)
+void A_KoraxBonePop()
 {
 	Actor mo;
 
@@ -515,6 +528,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.5  2005/03/16 15:04:39  dj_jl
 //  More work on line specials.
 //

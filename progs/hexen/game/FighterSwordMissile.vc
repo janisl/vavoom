@@ -23,7 +23,22 @@
 //**
 //**************************************************************************
 
-class FighterSwordMissile:Projectile;
+class FighterSwordMissile : Projectile;
+
+//==========================================================================
+//
+//  InflictorModifyDamage
+//
+//==========================================================================
+
+int InflictorModifyDamage(Actor victim, Actor source, int damage)
+{
+	if (victim.bIsPlayer)
+	{
+		damage -= damage >> 2;
+	}
+	return damage;
+}
 
 //============================================================================
 //
@@ -31,7 +46,7 @@ class FighterSwordMissile:Projectile;
 //
 //============================================================================
 
-void A_FSwordFlames(void)
+void A_FSwordFlames()
 {
 	int i;
 
@@ -74,6 +89,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

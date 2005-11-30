@@ -119,26 +119,31 @@ Actor SpawnMissile(Actor dest, classid type)
 	TVec dir;
 
 	org = Origin;
-	switch (type)
+	if (type == MinotaurMissile)
 	{
-	case MinotaurMissile:	// Minotaur swing attack missile
+		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
-		break;
-	case MinotaurFloorFire1:	// Minotaur floor fire missile
+	}
+	else if (type == MinotaurFloorFire1)
+	{
+		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
-		break;
-	case CentaurMissile:
+	}
+	else if (type == CentaurMissile)
+	{
 		org.z = Origin.z + 45.0;
-		break;
-	case IceGuyMissile:
+	}
+	else if (type == IceGuyMissile)
+	{
 		org.z = Origin.z + 40.0;
-		break;
-	case HolyMissile:
+	}
+	else if (type == HolyMissile)
+	{
 		org.z = Origin.z + 40.0;
-		break;
-	default:
+	}
+	else
+	{
 		org.z = Origin.z + 32.0;
-		break;
 	}
 	org.z -= FloorClip;
 	th = Spawn(type, org);
@@ -1030,6 +1035,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.5  2004/12/27 12:23:13  dj_jl
 //  Multiple small changes for version 1.16
 //

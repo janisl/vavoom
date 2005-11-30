@@ -23,10 +23,36 @@
 //**
 //**************************************************************************
 
-class PoisonCloud:Effect;
+class PoisonCloud : Effect;
 
 int LifeCount;
 int BobIndex;
+
+//==========================================================================
+//
+//  InflictorModifyDamage
+//
+//==========================================================================
+
+int InflictorModifyDamage(Actor victim, Actor source, int damage)
+{
+	if (victim.bIsPlayer)
+	{
+		if (victim.Player.PoisonCount < 4)
+		{
+			victim.PoisonDamage(source, 15 + (P_Random() & 15), false);	// Don't play painsound
+			victim.PoisonPlayer(source, 50);
+			victim.PlaySound('*poison', CHAN_VOICE);
+		}
+		return -1;
+	}
+	else if (!victim.bCountKill)
+	{
+		// only damage monsters/players with the poison cloud
+		return -1;
+	}
+	return damage;
+}
 
 //==========================================================================
 //
@@ -54,7 +80,7 @@ void InitCloud(Actor InstigatedBy)
 //
 //============================================================================
 
-void A_Explode(void)
+void A_Explode()
 {
 	P_RadiusAttack(self, Instigator, 4, 40.0, true);
 }
@@ -65,7 +91,7 @@ void A_Explode(void)
 //
 //===========================================================================
 
-void A_PoisonBagDamage(void)
+void A_PoisonBagDamage()
 {
 	A_Explode();
 
@@ -79,7 +105,7 @@ void A_PoisonBagDamage(void)
 //
 //===========================================================================
 
-void A_PoisonBagCheck(void)
+void A_PoisonBagCheck()
 {
 	if (!--LifeCount)
 	{
@@ -123,6 +149,7 @@ defaultproperties
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bNoDamageThrust = true;
+	bDamageInvulnerable = true;
 	IdleState = S_POISONCLOUD1;
 	DeathState = S_POISONCLOUD_X1;
 	DeathSound = 'PoisonShroomDeath';
@@ -131,6 +158,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

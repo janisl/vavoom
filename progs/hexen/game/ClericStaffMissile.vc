@@ -23,9 +23,26 @@
 //**
 //**************************************************************************
 
-class ClericStaffMissile:Projectile;
+class ClericStaffMissile : Projectile;
 
 int WeaveXY;
+
+//==========================================================================
+//
+//  InflictorModifyDamage
+//
+//==========================================================================
+
+int InflictorModifyDamage(Actor victim, Actor source, int damage)
+{
+	// Cleric Serpent Staff does poison damage
+	if (victim.bIsPlayer)
+	{
+		victim.PoisonPlayer(source, 20);
+		damage >>= 1;
+	}
+	return damage;
+}
 
 //============================================================================
 //
@@ -33,7 +50,7 @@ int WeaveXY;
 //
 //============================================================================
 
-void A_CStaffMissileSlither(void)
+void A_CStaffMissileSlither()
 {
 	float newX, newY;
 	float angle;
@@ -74,6 +91,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

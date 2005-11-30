@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sorcerer:Pawn
+class Sorcerer : Pawn
 	__mobjinfo__(10080);
 
 bool bBallsSpawned;
@@ -40,13 +40,31 @@ bool bBallsSpawned;
 //      Args[3]         Movement mode (see SORC_ macros)
 //      Args[4]         Current ball orbit speed
 
+//==========================================================================
+//
+//	GetReflectedAngle
+//
+//==========================================================================
+
+float GetReflectedAngle(Actor Other)
+{
+	float angle = atan2(Other.Origin.y - Origin.y,
+		Other.Origin.x - Origin.x);
+	// Change angle for delflection
+	if (Random() < 0.5)
+		angle = AngleMod360(angle + 45.0);
+	else
+		angle = AngleMod360(angle - 45.0);
+	return angle;
+}
+
 //============================================================================
 //
 // Set balls to slow mode - actor is sorcerer
 //
 //============================================================================
 
-void A_SlowBalls(void)
+void A_SlowBalls()
 {
 	Args[3] = SORC_DECELERATE;	// slow mode
 	Args[2] = SORCBALL_INITIAL_SPEED;	// target speed
@@ -60,7 +78,7 @@ void A_SlowBalls(void)
 //
 //============================================================================
 
-void A_SorcSpinBalls(void)
+void A_SorcSpinBalls()
 {
 	Actor ball;
 	TVec org;
@@ -100,7 +118,7 @@ void A_SorcSpinBalls(void)
 //
 //============================================================================
 
-void A_SpeedBalls(void)
+void A_SpeedBalls()
 {
 	Args[3] = SORC_ACCELERATE;	// speed mode
 	Args[2] = SORCBALL_TERMINAL_SPEED;	// target speed
@@ -114,7 +132,7 @@ void A_SpeedBalls(void)
 //
 //============================================================================
 
-void A_SpawnFizzle(void)
+void A_SpawnFizzle()
 {
 	TVec org;
 	float dist = 5.0;
@@ -147,7 +165,7 @@ void A_SpawnFizzle(void)
 //
 //============================================================================
 
-void A_SorcBossAttack(void)
+void A_SorcBossAttack()
 {
 	Args[3] = SORC_ACCELERATE;
 	Args[2] = SORCBALL_INITIAL_SPEED;
@@ -162,7 +180,7 @@ void A_SorcBossAttack(void)
 //
 //============================================================================
 
-void A_StopBalls(void)
+void A_StopBalls()
 {
 	int chance = P_Random();
 
@@ -249,6 +267,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

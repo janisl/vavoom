@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Leaf1:Fragment;
+class Leaf1 : Fragment;
 
 int RestartState;
 int RestartCount;
@@ -101,6 +101,7 @@ defaultproperties
 	Mass = 12.5;
 	bDropOff = false;
 	bNoGravity = false;
+	bNoSplash = true;
 	IdleState = S_LEAF1_1;
 	RestartState = S_LEAF1_8;
 	DeathState = S_LEAF_X1;
@@ -109,6 +110,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

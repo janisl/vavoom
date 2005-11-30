@@ -23,8 +23,36 @@
 //**
 //**************************************************************************
 
-class Centaur:Pawn
+class Centaur : Pawn
 	__mobjinfo__(107);
+
+//==========================================================================
+//
+//	GetReflectedAngle
+//
+//==========================================================================
+
+float GetReflectedAngle(Actor Other)
+{
+	float angle = atan2(Other.Origin.y - Origin.y,
+		Other.Origin.x - Origin.x);
+
+	// Change angle for delflection/reflection
+	if (fabs(AngleMod180(angle - Angles.yaw)) > 45.0 * 45.0 / 32.0)
+	{
+		return -1.0;
+	}
+	if (HolyFX(Other))
+	{
+		return -1.0;
+	}
+	// Deflection
+	if (Random() < 0.5)
+		angle = AngleMod360(angle + 45.0);
+	else
+		angle = AngleMod360(angle - 45.0);
+	return angle;
+}
 
 //==========================================================================
 //
@@ -32,7 +60,7 @@ class Centaur:Pawn
 //
 //==========================================================================
 
-void A_CentaurAttack(void)
+void A_CentaurAttack()
 {
 	if (!Enemy)
 	{
@@ -50,7 +78,7 @@ void A_CentaurAttack(void)
 //
 //==========================================================================
 
-void A_SetReflective(void)
+void A_SetReflective()
 {
 	bReflective = true;
 
@@ -63,7 +91,7 @@ void A_SetReflective(void)
 //
 //==========================================================================
 
-void A_UnSetReflective(void)
+void A_UnSetReflective()
 {
 	bReflective = false;
 
@@ -76,7 +104,7 @@ void A_UnSetReflective(void)
 //
 //==========================================================================
 
-void A_CentaurDefend(void)
+void A_CentaurDefend()
 {
 	A_FaceTarget();
 	if (CheckMeleeRange() && Random() < 0.125)
@@ -94,7 +122,7 @@ void A_CentaurDefend(void)
 //
 //==========================================================================
 
-void A_CentaurDropStuff(void)
+void A_CentaurDropStuff()
 {
 	Actor A;
 	float angle;
@@ -187,6 +215,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

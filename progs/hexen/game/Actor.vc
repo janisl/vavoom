@@ -90,6 +90,9 @@ bool bSeekerMissile;	// is a seeker (for reflection)
 bool bReflective;		// reflects missiles
 bool bWaterJump;
 bool bBlaster;
+bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
+bool bNoSplash;			// Things that don't splash
+bool bNoMorph;			// Won't morph into a pig.
 
 //  Params
 float Speed;
@@ -112,23 +115,6 @@ int MissileDamage;	// For missiles
 
 // Used by player to freeze a bit after teleporting.
 float ReactionTime;
-
-//==========================================================================
-//
-//  Archive
-//
-//==========================================================================
-
-void Archive(void)
-{
-	switch (Class)
-	{
-		// Miscellaneous
-	case Korax:
-		_Special1 = 0;	// Searching index
-		break;
-	}
-}
 
 //===========================================================================
 //
@@ -341,17 +327,9 @@ int HitFloorType(void)
 	}
 
 	// Things that don't splash go here
-	switch (Class)
+	if (bNoSplash)
 	{
-	case Leaf1:
-	case Leaf2:
-//	case MT_BLOOD:          // I set these to low mass -- pm
-//	case MT_BLOODSPLATTER:
-	case Splash:
-	case SludgeChunk:
 		return FLOOR_SOLID;
-	default:
-		break;
 	}
 
 	// Small splash for small masses
@@ -432,64 +410,19 @@ int HitFloorType(void)
 //
 //==========================================================================
 
-void FloorBounceMissile(void)
+void FloorBounceMissile()
 {
 	if (HitFloorType() >= FLOOR_LIQUID)
 	{
-		switch (Class)
-		{
-		case SorcererFX1:
-		case SorcererBall1:
-		case SorcererBall2:
-		case SorcererBall3:
-			break;
-		default:
-			Remove();
-			return;
-		}
+		Remove();
+		return;
 	}
-	switch (Class)
-	{
-	case SorcererFX1:
-		Velocity.z = -Velocity.z;	// no energy absorbed
-		break;
-	case StainedGlassShard1:
-	case StainedGlassShard2:
-	case StainedGlassShard3:
-	case StainedGlassShard4:
-	case StainedGlassShard5:
-	case StainedGlassShard6:
-	case StainedGlassShard7:
-	case StainedGlassShard8:
-	case StainedGlassShard9:
-	case StainedGlassShard0:
-		Velocity.z = Velocity.z * -0.3;
-		if (fabs(Velocity.z) < 0.5 * 35.0)
-		{
-			SetState(S_NULL);
-			return;
-		}
-		break;
-	default:
-		Velocity.z = Velocity.z * -0.7;
-		break;
-	}
+	Velocity.z = Velocity.z * -0.7;
 	Velocity.x = 2.0 * Velocity.x / 3.0;
 	Velocity.y = 2.0 * Velocity.y / 3.0;
 	if (SightSound)
 	{
-		switch (Class)
-		{
-		case SorcererBall1:
-		case SorcererBall2:
-		case SorcererBall3:
-			if (!Args[0])
-				PlaySound(SightSound, CHAN_VOICE);
-			break;
-		default:
-			PlaySound(SightSound, CHAN_VOICE);
-			break;
-		}
+		PlaySound(SightSound, CHAN_VOICE);
 	}
 }
 
@@ -858,14 +791,8 @@ bool MorphMonster()
 		return false;
 	if (bBoss)
 		return false;
-	switch (Class)
-	{
-	case Pig:
-	case FighterBoss:
-	case ClericBoss:
-	case MageBoss:
+	if (bNoMorph)
 		return false;
-	}
 
 	fog = Spawn(TeleportFog, Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
@@ -1007,23 +934,8 @@ void Damage(Actor inflictor, Actor source, int damage)
 		// mobj is invulnerable
 		if (bIsPlayer)
 			return;	// for player, no exceptions
-		if (inflictor)
-		{
-			switch (inflictor.Class)
-			{
-				// These inflictors aren't foiled by invulnerability
-			case HolyFX:
-			case PoisonCloud:
-			case FireBomb:
-				break;
-			default:
-				return;
-			}
-		}
-		else
-		{
+		if (!inflictor || !inflictor.bDamageInvulnerable)
 			return;
-		}
 	}
 	if (bIsPlayer)
 	{
@@ -1050,100 +962,10 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// Special damage types
 	if (inflictor)
 	{
-		switch (inflictor.Class)
+		damage = inflictor.InflictorModifyDamage(self, source, damage);
+		if (damage < 0)
 		{
-		case EggMissile:
-			if (bIsPlayer)
-			{
-				MorphPlayer();
-			}
-			else
-			{
-				MorphMonster();
-			}
-			return;	// Always return
-		case TeleportOtherFX1:
-		case TeleportOtherFX2:
-		case TeleportOtherFX3:
-		case TeleportOtherFX4:
-		case TeleportOtherFX5:
-			if (bCountKill && !bBoss &&
-				(Class != Serpent) && (Class != SerpentLeader))
-			{
-				TeleportOther();
-			}
 			return;
-		case Minotaur:
-			if (inflictor.bSkullFly)
-			{
-				// Slam only when in charge mode
-				MinotaurSlam(inflictor);
-				return;
-			}
-			break;
-		case BishopMissile:
-			// Bishops are just too nasty
-			damage >>= 1;
-			break;
-		case ShardMissile:
-			switch (inflictor._Special2)
-			{
-			case 3:
-				damage <<= 3;
-				break;
-			case 2:
-				damage <<= 2;
-				break;
-			case 1:
-				damage <<= 1;
-				break;
-			default:
-				break;
-			}
-			break;
-		case ClericStaffMissile:
-			// Cleric Serpent Staff does poison damage
-			if (bIsPlayer)
-			{
-				PoisonPlayer(source, 20);
-				damage >>= 1;
-			}
-			break;
-		case IceGuyMissile2:
-			damage >>= 1;
-			break;
-		case PoisonDart:
-			if (bIsPlayer)
-			{
-				PoisonPlayer(source, 20);
-				damage >>= 1;
-			}
-			break;
-		case PoisonCloud:
-			if (bIsPlayer)
-			{
-				if (Player.PoisonCount < 4)
-				{
-					PoisonDamage(source, 15 + (P_Random() & 15), false);	// Don't play painsound
-					PoisonPlayer(source, 50);
-					PlaySound('*poison', CHAN_VOICE);
-				}
-				return;
-			}
-			else if (!bCountKill)
-			{
-				// only damage monsters/players with the poison cloud
-				return;
-			}
-			break;
-		case FighterSwordMissile:
-			if (bIsPlayer)
-			{
-				damage -= damage >> 2;
-			}
-			break;
-		default:
-			break;
 		}
 	}
 	// Push the	target
@@ -1337,6 +1159,17 @@ void Damage(Actor inflictor, Actor source, int damage)
 			SetState(SeeState);
 		}
 	}
+}
+
+//==========================================================================
+//
+//  InflictorModifyDamage
+//
+//==========================================================================
+
+int InflictorModifyDamage(Actor victim, Actor source, int damage)
+{
+	return damage;
 }
 
 //==========================================================================
@@ -1748,18 +1581,11 @@ bool Touch(Entity InOther)
 		}
 		if (Class == MageStaffFX2 && Other != Instigator)
 		{
-			if (!Other.bIsPlayer && !Other.bBoss)
+			// Class bosses not flagged boss so they can be blasted
+			if (!Other.bIsPlayer && !Other.bBoss && !ClassBoss(Other))
 			{
-				switch (Other.Class)
-				{
-				case FighterBoss:	// these not flagged boss
-				case ClericBoss:	// so they can be blasted
-				case MageBoss:
-					break;
-				default:
-					Other.Damage(self, Instigator, 10);
-					return true;
-				}
+				Other.Damage(self, Instigator, 10);
+				return true;
 			}
 		}
 		if (Instigator && Instigator.Class == Other.Class)
@@ -2084,42 +1910,8 @@ void HitMobj(Entity Other)
 		}
 		if (Actor(Other).bReflective)
 		{
-			int explode = false;
-
-			angle = atan2(Origin.y - Other.Origin.y,
-				Origin.x - Other.Origin.x);
-
-			// Change angle for delflection/reflection
-			switch (Other.Class)
-			{
-			case Centaur:
-			case CentaurLeader:
-				if (fabs(AngleMod180(angle -
-					Other.Angles.yaw)) > 45.0 * 45.0 / 32.0)
-				{
-					explode = true;
-					break;
-				}
-				if (Class == HolyFX)
-				{
-					explode = true;
-					break;
-				}
-				// Drop through to sorcerer full reflection
-			case Sorcerer:
-				// Deflection
-				if (P_Random() < 128)
-					angle = AngleMod360(angle + 45.0);
-				else
-					angle = AngleMod360(angle - 45.0);
-				break;
-			default:
-				// Reflection
-				angle = AngleMod360(angle + itof((P_Random() % 16) - 8));
-				break;
-			}
-
-			if (!explode)
+			angle = Actor(Other).GetReflectedAngle(self);
+			if (angle != -1.0)
 			{
 				// Reflect the missile along angle
 				Angles.yaw = angle;
@@ -2169,6 +1961,22 @@ void HitMobj(Entity Other)
 
 //==========================================================================
 //
+//	GetReflectedAngle
+//
+//==========================================================================
+
+float GetReflectedAngle(Actor Other)
+{
+	float angle = atan2(Other.Origin.y - Origin.y,
+		Other.Origin.x - Origin.x);
+
+	// Change angle for reflection
+	angle = AngleMod360(angle + Random() * 16.0 - 8.0);
+	return angle;
+}
+
+//==========================================================================
+//
 //	HitLine
 //
 //==========================================================================
@@ -2181,19 +1989,12 @@ void HitLine(void)
 		{
 			// Struck a wall
 			BounceWall(1.5);
-			switch (Class)
+			if (!SorcererBall(self) && !SorcererFX1(self))
 			{
-			case SorcererBall1:
-			case SorcererBall2:
-			case SorcererBall3:
-			case SorcererFX1:
-				break;
-			default:
 				if (SightSound)
 				{
 					PlaySound(SightSound, CHAN_VOICE);
 				}
-				break;
 			}
 			return;
 		}
@@ -3162,23 +2963,28 @@ Actor SpawnMissileAngle(classid type, float angle, float momz)
 	Actor mo;
 
 	org = Origin;
-	switch (type)
+	if (type == MinotaurMissile)
 	{
-	case MinotaurMissile:	// Minotaur swing attack missile
+		// Minotaur swing attack missile
 		org.z = Origin.z + 40.0;
-		break;
-	case MinotaurFloorFire1:	// Minotaur floor fire missile
+	}
+	else if (type == MinotaurFloorFire1)
+	{
+		// Minotaur floor fire missile
 		org.z = ONFLOORZ + FloorClip;
-		break;
-	case IceGuyMissile2:	// Secondary Projectiles of the Ice Guy
+	}
+	else if (type == IceGuyMissile2)
+	{
+		// Secondary Projectiles of the Ice Guy
 		org.z = Origin.z + 3.0;
-		break;
-	case MageStaffFX2:
+	}
+	else if (type == MageStaffFX2)
+	{
 		org.z = Origin.z + 40.0;
-		break;
-	default:
+	}
+	else
+	{
 		org.z = Origin.z + 32.0;
-		break;
 	}
 	org.z -= FloorClip;
 	mo = Spawn(type, org);
@@ -3290,7 +3096,7 @@ bool SeekerMissile(float thresh, float turnMax)
 //
 //==========================================================================
 
-bool ExplodeMissile(void)
+bool ExplodeMissile()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	if (!SetState(DeathState))
@@ -3300,22 +3106,17 @@ bool ExplodeMissile(void)
 	//mo->tics -= P_Random()&3;
 	bMissile = false;
 
-	switch (Class)
+	if (SorcererBall(self))
 	{
-	case SorcererBall1:
-	case SorcererBall2:
-	case SorcererBall3:
 		PlayFullVolumeSound('SorcererBigBallExplode', CHAN_AUTO);
-		break;
-	case SorcererFX1:
+	}
+	else if (SorcererFX1(self))
+	{
 		PlayFullVolumeSound('SorcererHeadScream', CHAN_AUTO);
-		break;
-	default:
-		if (DeathSound)
-		{
-			PlaySound(DeathSound, CHAN_VOICE);
-		}
-		break;
+	}
+	else if (DeathSound)
+	{
+		PlaySound(DeathSound, CHAN_VOICE);
 	}
 	if (Effects & EF_DLIGHT_MASK)
 	{
@@ -3364,19 +3165,16 @@ void Blast(Actor source, float strength)
 	{
 		if (bMissile)
 		{
-			switch (Class)
+			if (SorcererBall(self))
 			{
-			case SorcererBall1:	// don't blast sorcerer balls
-			case SorcererBall2:
-			case SorcererBall3:
+				// don't blast sorcerer balls
 				return;
-				break;
-			case MageStaffFX2:	// Reflect to originator
+			}
+			else if (MageStaffFX2(self))
+			{
+				// Reflect to originator
 				Enemy = Instigator;
 				Instigator = source;
-				break;
-			default:
-				break;
 			}
 		}
 		if (Class == HolyFX)
@@ -3589,7 +3387,7 @@ void A_Scream()
 //
 //============================================================================
 
-void A_Explode(void)
+void A_Explode()
 {
 	int damage;
 	float distance;
@@ -3598,67 +3396,82 @@ void A_Explode(void)
 	damage = 128;
 	distance = 128.0;
 	damageSelf = true;
-	switch (Class)
+	if (Class == FireBomb)
 	{
-	case FireBomb:	// Time Bombs
+		// Time Bombs
 		Origin.z += 32.0;
 		Translucency = 0;
-		break;
-	case MinotaurFloorFire1:	// Minotaur floor fire
+	}
+	else if (Class == MinotaurFloorFire1)
+	{
+		// Minotaur floor fire
 		damage = 24;
-		break;
-	case Bishop:	// Bishop radius death
+	}
+	else if (Class == Bishop)
+	{
+		// Bishop radius death
 		damage = 25 + (P_Random() & 15);
-		break;
-	case HammerMissile:	// Fighter Hammer
+	}
+	else if (Class == HammerMissile)
+	{
+		// Fighter Hammer
 		damage = 128;
 		damageSelf = false;
-		break;
-	case FighterSwordMissile:	// Fighter Runesword
+	}
+	else if (Class == FighterSwordMissile)
+	{
+		// Fighter Runesword
 		damage = 64;
 		damageSelf = false;
-		break;
-	case CircleFlame:	// Cleric Flame secondary flames
+	}
+	else if (Class == CircleFlame)
+	{
+		// Cleric Flame secondary flames
 		damage = 20;
 		damageSelf = false;
-		break;
-	case SorcererBall1:	// Sorcerer balls
-	case SorcererBall2:
-	case SorcererBall3:
+	}
+	else if (SorcererBall(self))
+	{
+		// Sorcerer balls
 		distance = 255.0;
 		damage = 255;
 		Args[0] = 1;	// don't play bounce
-		break;
-	case SorcererFX1:	// Sorcerer spell 1
+	}
+	else if (Class == SorcererFX1)
+	{
+		// Sorcerer spell 1
 		damage = 30;
-		break;
-	case SorcererFX4:	// Sorcerer spell 4
+	}
+	else if (Class == SorcererFX4)
+	{
+		// Sorcerer spell 4
 		damage = 20;
-		break;
-	case TreeDestructible:
+	}
+	else if (Class == TreeDestructible)
+	{
 		damage = 10;
-		break;
-	case DragonFX2:
+	}
+	else if (Class == DragonFX2)
+	{
 		damage = 80;
 		damageSelf = false;
-		break;
-	case MageStaffFX:
+	}
+	else if (Class == MageStaffFX)
+	{
 		damage = 64;
 		distance = 192.0;
 		damageSelf = false;
-		break;
-	case MageStaffFX2:
+	}
+	else if (Class == MageStaffFX2)
+	{
 		damage = 80;
 		distance = 192.0;
 		damageSelf = false;
-		break;
-	case ZXmasTree:
-	case ZShrub2:
+	}
+	else if (Class == ZXmasTree || Class == ZShrub2)
+	{
 		damage = 30;
 		distance = 64.0;
-		break;
-	default:
-		break;
 	}
 	P_RadiusAttack(self, Instigator, damage, distance, damageSelf);
 	if (Origin.z <= FloorZ + distance)
@@ -3818,6 +3631,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.18  2005/11/19 15:15:08  dj_jl
 //  Renamed sounds.
 //

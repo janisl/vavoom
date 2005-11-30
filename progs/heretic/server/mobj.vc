@@ -280,17 +280,13 @@ void SpawnPuff(TVec org)
 	{
 		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
 	}
-	switch (PuffType)
+	if (PuffType == BeakPuff || PuffType == StaffPuff)
 	{
-	case BeakPuff:
-	case StaffPuff:
 		puff.Velocity.z = 1.0 * 35.0;
-		break;
-	case GauntletPuff1:
-	case GauntletPuff2:
+	}
+	else if (PuffType == GauntletPuff1 || PuffType == GauntletPuff2)
+	{
 		puff.Velocity.z = 0.8 * 35.0;
-	default:
-		break;
 	}
 	if (PuffType == GoldWandPuff1)
 	{
@@ -421,36 +417,31 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 	}
 
 	// spawn it
-	switch (mobjinfo[i].class_id)
+	if (shareware)
 	{
 		// Special stuff
-	case ItemWeaponSkullRod:
-	case ItemWeaponPhoenixRod:
-	case ItemAmmoSkullRodWimpy:
-	case ItemAmmoSkullRodHefty:
-	case ItemAmmoPhoenixWimpy:
-	case ItemAmmoPhoenixHefty:
-	case ItemAmmoMaceWimpy:
-	case ItemAmmoMaceHefty:
-	case ArtifactSuperHeal:
-	case ArtifactTeleport:
-	case ItemShield2:
-		if (shareware)
+		if (mobjinfo[i].class_id == ItemWeaponSkullRod ||
+			mobjinfo[i].class_id == ItemWeaponPhoenixRod ||
+			mobjinfo[i].class_id == ItemAmmoSkullRodWimpy ||
+			mobjinfo[i].class_id == ItemAmmoSkullRodHefty ||
+			mobjinfo[i].class_id == ItemAmmoPhoenixWimpy ||
+			mobjinfo[i].class_id == ItemAmmoPhoenixHefty ||
+			mobjinfo[i].class_id == ItemAmmoMaceWimpy ||
+			mobjinfo[i].class_id == ItemAmmoMaceHefty ||
+			mobjinfo[i].class_id == ArtifactSuperHeal ||
+			mobjinfo[i].class_id == ArtifactTeleport ||
+			mobjinfo[i].class_id == ItemShield2 ||
+			mobjinfo[i].class_id == ItemWeaponMace)
 		{
 			// Don't place on map in shareware version
 			return;
 		}
-		break;
-	case ItemWeaponMace:
-		if (!shareware)
-		{
-			// Put in the mace spot list
-			AddMaceSpot(mthing->x, mthing->y);
-			return;
-		}
+	}
+	if (mobjinfo[i].class_id == ItemWeaponMace)
+	{
+		// Put in the mace spot list
+		AddMaceSpot(mthing->x, mthing->y);
 		return;
-	default:
-		break;
 	}
 	if (!spawn_thinkers)
 	{
@@ -676,6 +667,9 @@ bool A_LocalQuake(int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.58  2005/11/30 23:52:04  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.57  2004/11/22 07:36:26  dj_jl
 //  Implemented all sector specials in all games.
 //

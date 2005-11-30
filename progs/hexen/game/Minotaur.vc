@@ -46,6 +46,23 @@ float ChargeSpeed;
 
 //==========================================================================
 //
+//  InflictorModifyDamage
+//
+//==========================================================================
+
+int InflictorModifyDamage(Actor victim, Actor source, int damage)
+{
+	if (bSkullFly)
+	{
+		// Slam only when in charge mode
+		victim.MinotaurSlam(self);
+		return -1;
+	}
+	return damage;
+}
+
+//==========================================================================
+//
 //  Died
 //
 //==========================================================================
@@ -68,7 +85,7 @@ void Died(Actor source)
 //
 //==========================================================================
 
-bool MorphMonster(void)
+bool MorphMonster()
 {
 	if (::MorphMonster())
 	{
@@ -128,7 +145,7 @@ bool RoughCheckThing(Entity Other)
 //
 //============================================================================
 
-void A_MinotaurFade0(void)
+void A_MinotaurFade0()
 {
 	Translucency = 66;
 }
@@ -139,7 +156,7 @@ void A_MinotaurFade0(void)
 //
 //============================================================================
 
-void A_MinotaurFade1(void)
+void A_MinotaurFade1()
 {
 	// Second level of transparency
 	Translucency = 33;
@@ -151,7 +168,7 @@ void A_MinotaurFade1(void)
 //
 //============================================================================
 
-void A_MinotaurFade2(void)
+void A_MinotaurFade2()
 {
 	// Make fully visible
 	Translucency = 0;
@@ -165,7 +182,7 @@ void A_MinotaurFade2(void)
 //
 //============================================================================
 
-void A_MinotaurLook(void)
+void A_MinotaurLook()
 {
 	Actor mo;
 	float dist;
@@ -238,7 +255,7 @@ void A_MinotaurLook(void)
 //
 //============================================================================
 
-void A_MinotaurChase(void)
+void A_MinotaurChase()
 {
 	int starttime = Args[0];
 
@@ -301,7 +318,7 @@ void A_MinotaurChase(void)
 //
 //============================================================================
 
-void A_MinotaurRoam(void)
+void A_MinotaurRoam()
 {
 	int starttime = Args[0];
 
@@ -341,7 +358,7 @@ void A_MinotaurRoam(void)
 //
 //============================================================================
 
-void A_MinotaurAtk1(void)
+void A_MinotaurAtk1()
 {
 	if (!Enemy)
 	{
@@ -363,7 +380,7 @@ void A_MinotaurAtk1(void)
 //
 //============================================================================
 
-void A_MinotaurDecide(void)
+void A_MinotaurDecide()
 {
 	float dist;
 
@@ -407,7 +424,7 @@ void A_MinotaurDecide(void)
 //
 //============================================================================
 
-void A_MinotaurAtk2(void)
+void A_MinotaurAtk2()
 {
 	Actor mo;
 	float angle;
@@ -446,7 +463,7 @@ void A_MinotaurAtk2(void)
 //
 //============================================================================
 
-void A_MinotaurAtk3(void)
+void A_MinotaurAtk3()
 {
 	Actor mo;
 
@@ -484,7 +501,7 @@ void A_MinotaurAtk3(void)
 //
 //============================================================================
 
-void A_MinotaurCharge(void)
+void A_MinotaurCharge()
 {
 	Actor puff;
 
@@ -510,7 +527,7 @@ void A_MinotaurCharge(void)
 //
 //============================================================================
 
-void A_SmokePuffExit(void)
+void A_SmokePuffExit()
 {
 	Spawn(MinotaurSmokeExit, Origin);
 }
@@ -640,6 +657,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.5  2004/12/27 12:23:13  dj_jl
 //  Multiple small changes for version 1.16
 //

@@ -362,10 +362,10 @@ static void ParseStatement()
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TType *etype = ParseExpression();
 				TypeCheck1(etype);
-//				if (etype->type != ev_int)
-//				{
-//					ParseWarning("Int expression expected");
-//				}
+				if (etype->type != ev_int)
+				{
+					ParseError("Int expression expected");
+				}
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
 				switcherAddrPtr = AddStatement(OPC_Goto, 0);
@@ -406,15 +406,8 @@ static void ParseStatement()
 				FixupJump(switcherAddrPtr);
 				for (i = 0; i < numcases; i++)
 				{
-					if (etype->type == ev_classid)
-						AddStatement(OPC_CaseGotoClassId,
-							CaseInfo[i].value, CaseInfo[i].address);
-					else if (etype->type == ev_name)
-						AddStatement(OPC_CaseGotoName,
-							CaseInfo[i].value, CaseInfo[i].address);
-					else
-						AddStatement(OPC_CaseGoto, CaseInfo[i].value,
-										CaseInfo[i].address);
+					AddStatement(OPC_CaseGoto, CaseInfo[i].value,
+						CaseInfo[i].address);
 				}
 				AddDrop(&type_int);
 
@@ -512,10 +505,9 @@ void ParseLocalVar(TType *type)
 			TType *t1 = ParseExpression();
 			TypeCheck3(t, t1);
 			if (t1->type == ev_vector)
-				AddStatement(OPC_VAssign);
+				AddStatement(OPC_VAssignDrop);
 			else
-				AddStatement(OPC_Assign);
-			AddDrop(t1);
+				AddStatement(OPC_AssignDrop);
 		}
 		localdefs[numlocaldefs].type = t;
 		localdefs[numlocaldefs].ofs = localsofs;
@@ -1092,9 +1084,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/11/30 23:54:27  dj_jl
+//	Switch statement requires integer.
+//
 //	Revision 1.30  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
-//
+//	
 //	Revision 1.29  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	

@@ -23,7 +23,24 @@
 //**
 //**************************************************************************
 
-class SorcererFX1:Projectile;
+class SorcererFX1 : Projectile;
+
+//==========================================================================
+//
+//  FloorBounceMissile
+//
+//==========================================================================
+
+void FloorBounceMissile()
+{
+	Velocity.z = -Velocity.z;	// no energy absorbed
+	Velocity.x = 2.0 * Velocity.x / 3.0;
+	Velocity.y = 2.0 * Velocity.y / 3.0;
+	if (SightSound)
+	{
+		PlaySound(SightSound, CHAN_VOICE);
+	}
+}
 
 //============================================================================
 //
@@ -33,7 +50,7 @@ class SorcererFX1:Projectile;
 //
 //============================================================================
 
-void A_SorcFX1Seek(void)
+void A_SorcFX1Seek()
 {
 	if (Args[4]-- <= 0)
 	{
@@ -84,6 +101,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

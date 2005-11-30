@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Splash:Fragment;
+class Splash : Fragment;
 
 __states__
 {
@@ -41,6 +41,7 @@ defaultproperties
 	Mass = 12.5;
 	bNoGravity = false;
 	bCannotPush = true;
+	bNoSplash = true;
 	IdleState = S_SPLASH1;
 	DeathState = S_SPLASHX;
 }
@@ -48,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/11/30 23:52:53  dj_jl
+//  Switch statement requires integer.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //
