@@ -423,24 +423,9 @@ float GetAngle(void)
 
 int WeapFromItem(Actor item)
 {
-	switch (item.Class)
+	if (WeaponPickup(item))
 	{
-	case ItemWeaponChainsaw:
-		return wp_chainsaw;
-	case ItemWeaponShotgun:
-		return wp_shotgun;
-#ifdef DOOM2
-	case ItemWeaponSuperShotgun:
-		return wp_supershotgun;
-#endif
-	case ItemWeaponChaingun:
-		return wp_chaingun;
-	case ItemWeaponRocketLauncher:
-		return wp_missile;
-	case ItemWeaponPlasmaGun:
-		return wp_plasma;
-	case ItemWeaponBFG:
-		return wp_bfg;
+		return WeaponPickup(item).WeaponType;
 	}
 	return -1;
 }
@@ -456,20 +441,9 @@ int WeapFromItem(Actor item)
 
 int AmmoFromItem(Actor item)
 {
-	switch (item.Class)
+	if (AmmoPickup(item))
 	{
-	case ItemAmmoBulletClip:
-	case ItemAmmoBulletBox:
-		return am_clip;
-	case ItemAmmoShells:
-	case ItemAmmoShellsBox:
-		return am_shell;
-	case ItemAmmoRocket:
-	case ItemAmmoRocketBox:
-		return am_misl;
-	case ItemAmmoCells:
-	case ItemAmmoCellsPack:
-		return am_cell;
+		return AmmoPickup(item).AmmoType;
 	}
 	return -1;
 }
@@ -1240,6 +1214,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/11/30 23:51:22  dj_jl
+//  Simplified detecttion.
+//
 //  Revision 1.3  2003/11/12 16:48:33  dj_jl
 //  Changed player structure into a class
 //
