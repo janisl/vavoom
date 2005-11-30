@@ -258,50 +258,6 @@ int AddStatement(int statement)
 	{
 		switch (Instructions[NumInstructions - 1].Opcode)
 		{
-		case OPC_Assign:
-			statement = OPC_AssignDrop;
-			break;
-
-		case OPC_AddVar:
-			statement = OPC_AddVarDrop;
-			break;
-
-		case OPC_SubVar:
-			statement = OPC_SubVarDrop;
-			break;
-
-		case OPC_MulVar:
-			statement = OPC_MulVarDrop;
-			break;
-
-		case OPC_DivVar:
-			statement = OPC_DivVarDrop;
-			break;
-
-		case OPC_ModVar:
-			statement = OPC_ModVarDrop;
-			break;
-
-		case OPC_AndVar:
-			statement = OPC_AndVarDrop;
-			break;
-
-		case OPC_OrVar:
-			statement = OPC_OrVarDrop;
-			break;
-
-		case OPC_XOrVar:
-			statement = OPC_XOrVarDrop;
-			break;
-
-		case OPC_LShiftVar:
-			statement = OPC_LShiftVarDrop;
-			break;
-
-		case OPC_RShiftVar:
-			statement = OPC_RShiftVarDrop;
-			break;
-
 		case OPC_PreInc:
 		case OPC_PostInc:
 			statement = OPC_IncDrop;
@@ -312,65 +268,11 @@ int AddStatement(int statement)
 			statement = OPC_DecDrop;
 			break;
 
-		case OPC_FAddVar:
-			statement = OPC_FAddVarDrop;
-			break;
-
-		case OPC_FSubVar:
-			statement = OPC_FSubVarDrop;
-			break;
-
-		case OPC_FMulVar:
-			statement = OPC_FMulVarDrop;
-			break;
-
-		case OPC_FDivVar:
-			statement = OPC_FDivVarDrop;
-			break;
-
-		case OPC_AssignBool:
-//FIXME
-		 	return NumInstructions - 1;
-
 		default:
 			break;
 		}
 
 		if (statement != OPC_Drop)
-		{
-			UndoStatement();
-		}
-	}
-
-	if (statement == OPC_VDrop)
-	{
-		switch (Instructions[NumInstructions - 1].Opcode)
-		{
-		case OPC_VAssign:
-			statement = OPC_VAssignDrop;
-			break;
-
-		case OPC_VAddVar:
-			statement = OPC_VAddVarDrop;
-			break;
-
-		case OPC_VSubVar:
-			statement = OPC_VSubVarDrop;
-			break;
-
-		case OPC_VScaleVar:
-			statement = OPC_VScaleVarDrop;
-			break;
-
-		case OPC_VIScaleVar:
-			statement = OPC_VIScaleVarDrop;
-			break;
-
-		default:
-			break;
-		}
-
-		if (statement != OPC_VDrop)
 		{
 			UndoStatement();
 		}
@@ -832,9 +734,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2005/11/30 23:55:05  dj_jl
+//	Directly use with-drop statements.
+//
 //	Revision 1.22  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
-//
+//	
 //	Revision 1.21  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	

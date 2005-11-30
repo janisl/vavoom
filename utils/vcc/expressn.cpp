@@ -1368,35 +1368,35 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_Assign);
+			AddStatement(OPC_AssignDrop);
 		}
 		else if (type == &type_float && op2.type == &type_float)
 		{
-			AddStatement(OPC_Assign);
+			AddStatement(OPC_AssignDrop);
 		}
 		else if (type == &type_name && op2.type == &type_name)
 		{
-			AddStatement(OPC_Assign);
+			AddStatement(OPC_AssignDrop);
 		}
 		else if (type == &type_string && op2.type == &type_string)
 		{
-			AddStatement(OPC_Assign);
+			AddStatement(OPC_AssignDrop);
 		}
 		else if (type->type == ev_pointer && op2.type->type == ev_pointer)
 		{
-			AddStatement(OPC_Assign);
+			AddStatement(OPC_AssignDrop);
 		}
 		else if (type->type == ev_vector && op2.type->type == ev_vector)
 		{
-			AddStatement(OPC_VAssign);
+			AddStatement(OPC_VAssignDrop);
 		}
 		else if (type == &type_classid && op2.type == &type_classid)
 		{
-			AddStatement(OPC_Assign);
+			AddStatement(OPC_AssignDrop);
 		}
 		else if (type->type == ev_reference && op2.type->type == ev_reference)
 		{
-			AddStatement(OPC_Assign);
+			AddStatement(OPC_AssignDrop);
 		}
 		else if (type->type == ev_bool && op2.type == &type_int)
 		{
@@ -1406,8 +1406,7 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_ADD_ASSIGN))
 	{
@@ -1417,21 +1416,21 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_AddVar);
+			AddStatement(OPC_AddVarDrop);
 		}
 		else if (type == &type_float && op2.type == &type_float)
 		{
-			AddStatement(OPC_FAddVar);
+			AddStatement(OPC_FAddVarDrop);
 		}
 		else if (type->type == ev_vector && op2.type->type == ev_vector)
 		{
-			AddStatement(OPC_VAddVar);
+			AddStatement(OPC_VAddVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
+		op1 = TTree(&type_void);
 		return op1;
 	}
 	else if (TK_Check(PU_MINUS_ASSIGN))
@@ -1442,22 +1441,21 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_SubVar);
+			AddStatement(OPC_SubVarDrop);
 		}
 		else if (type == &type_float && op2.type == &type_float)
 		{
-			AddStatement(OPC_FSubVar);
+			AddStatement(OPC_FSubVarDrop);
 		}
 		else if (type->type == ev_vector && op2.type->type == ev_vector)
 		{
-			AddStatement(OPC_VSubVar);
+			AddStatement(OPC_VSubVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_MULTIPLY_ASSIGN))
 	{
@@ -1467,22 +1465,21 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_MulVar);
+			AddStatement(OPC_MulVarDrop);
 		}
 		else if (type == &type_float && op2.type == &type_float)
 		{
-			AddStatement(OPC_FMulVar);
+			AddStatement(OPC_FMulVarDrop);
 		}
 		else if (type->type == ev_vector && op2.type == &type_float)
 		{
-			AddStatement(OPC_VScaleVar);
+			AddStatement(OPC_VScaleVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_DIVIDE_ASSIGN))
 	{
@@ -1492,22 +1489,21 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_DivVar);
+			AddStatement(OPC_DivVarDrop);
 		}
 		else if (type == &type_float && op2.type == &type_float)
 		{
-			AddStatement(OPC_FDivVar);
+			AddStatement(OPC_FDivVarDrop);
 		}
 		else if (type->type == ev_vector && op2.type == &type_float)
 		{
-			AddStatement(OPC_VIScaleVar);
+			AddStatement(OPC_VIScaleVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_MOD_ASSIGN))
 	{
@@ -1517,14 +1513,13 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_ModVar);
+			AddStatement(OPC_ModVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_AND_ASSIGN))
 	{
@@ -1534,14 +1529,13 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_AndVar);
+			AddStatement(OPC_AndVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_OR_ASSIGN))
 	{
@@ -1551,19 +1545,18 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_OrVar);
+			AddStatement(OPC_OrVarDrop);
 		}
 //FIXME This is wrong!
 		else if (type->type == ev_bool && op2.type == &type_int)
 		{
-			AddStatement(OPC_OrVar);
+			AddStatement(OPC_OrVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_XOR_ASSIGN))
 	{
@@ -1573,14 +1566,13 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_XOrVar);
+			AddStatement(OPC_XOrVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_LSHIFT_ASSIGN))
 	{
@@ -1590,14 +1582,13 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_LShiftVar);
+			AddStatement(OPC_LShiftVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	else if (TK_Check(PU_RSHIFT_ASSIGN))
 	{
@@ -1607,14 +1598,13 @@ static TTree ParseExpressionPriority14()
 		TypeCheck3(op2.type, type);
 		if (type == &type_int && op2.type == &type_int)
 		{
-			AddStatement(OPC_RShiftVar);
+			AddStatement(OPC_RShiftVarDrop);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(type);
-		return op1;
+		return TTree(&type_void);
 	}
 	return op1;
 }
@@ -1635,9 +1625,12 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/11/30 23:55:05  dj_jl
+//	Directly use with-drop statements.
+//
 //	Revision 1.30  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
-//
+//	
 //	Revision 1.29  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	
