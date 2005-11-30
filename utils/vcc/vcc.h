@@ -398,10 +398,14 @@ void TK_Expect(EPunctuation punct, ECompileError error);
 
 void PC_Init(void);
 int FindString(const char *str);
-int *AddStatement(int statement);
-int *AddStatement(int statement, int parm1);
-int *AddStatement(int statement, int parm1, int parm2);
-int UndoStatement(void);
+int AddStatement(int statement);
+int AddStatement(int statement, int parm1);
+int AddStatement(int statement, int parm1, int parm2);
+int UndoStatement();
+void FixupJump(int Pos, int JmpPos);
+void FixupJump(int Pos);
+void BeginCode(int);
+void EndCode(int);
 void PC_WriteObject(char *name);
 void PC_DumpAsm(char* name);
 
@@ -472,8 +476,7 @@ extern EKeyword			tk_Keyword;
 extern EPunctuation		tk_Punct;
 extern FName			tk_Name;
 
-extern int*				CodeBuffer;
-extern int				CodeBufferSize;
+extern int				NumInstructions;
 
 extern int*				globals;
 extern byte*			globalinfo;
@@ -583,9 +586,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/11/30 13:14:53  dj_jl
+//	Implemented instruction buffer.
+//
 //	Revision 1.30  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.29  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	

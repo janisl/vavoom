@@ -26,7 +26,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "vcc.h"
-void DumpAsmFunction(int num);
 
 // MACROS ------------------------------------------------------------------
 
@@ -39,13 +38,13 @@ void DumpAsmFunction(int num);
 struct breakInfo_t
 {
 	int		level;
-	int		*addressPtr;
+	int		addressPtr;
 };
 
 struct continueInfo_t
 {
 	int		level;
-	int		*addressPtr;
+	int		addressPtr;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -157,7 +156,7 @@ static void WriteBreaks()
 	BreakLevel--;
 	while (BreakIndex && BreakInfo[BreakIndex-1].level > BreakLevel)
 	{
-		*BreakInfo[--BreakIndex].addressPtr = CodeBufferSize;
+		FixupJump(BreakInfo[--BreakIndex].addressPtr);
 	}
 }
 
@@ -194,7 +193,7 @@ static void WriteContinues(int address)
 	ContinueLevel--;
 	while (ContinueIndex && ContinueInfo[ContinueIndex-1].level > ContinueLevel)
 	{
-		*ContinueInfo[--ContinueIndex].addressPtr = address;
+		FixupJump(ContinueInfo[--ContinueIndex].addressPtr, address);
 	}
 }
 
@@ -216,57 +215,50 @@ static void ParseStatement()
 		case TK_KEYWORD:
 			if (TK_Check(KW_IF))
 			{
-				int*		jumpAddrPtr1;
-				int*		jumpAddrPtr2;
-
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
+				int jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
 				ParseStatement();
 				if (TK_Check(KW_ELSE))
 				{
-					jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
-					*jumpAddrPtr1 = CodeBufferSize;
+					int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
+					FixupJump(jumpAddrPtr1);
 					ParseStatement();
-					*jumpAddrPtr2 = CodeBufferSize;
+					FixupJump(jumpAddrPtr2);
 				}
 				else
 				{
-					*jumpAddrPtr1 = CodeBufferSize;
+					FixupJump(jumpAddrPtr1);
 				}
 			}
 			else if (TK_Check(KW_WHILE))
 			{
 				int			topAddr;
-				int*		outAddrPtr;
 
 				BreakLevel++;
 				ContinueLevel++;
-				topAddr = CodeBufferSize;
+				topAddr = NumInstructions;
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
+				int outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
 				ParseStatement();
 				AddStatement(OPC_Goto, topAddr);
 
-				*outAddrPtr = CodeBufferSize;
+				FixupJump(outAddrPtr);
 				WriteContinues(topAddr);
 				WriteBreaks();
 			}
 			else if (TK_Check(KW_DO))
 			{
-				int			topAddr;
-				int			exprAddr;
-
 				BreakLevel++;
 				ContinueLevel++;
-				topAddr = CodeBufferSize;
+				int topAddr = NumInstructions;
 				ParseStatement();
 				TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				exprAddr = CodeBufferSize;
+				int exprAddr = NumInstructions;
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
@@ -276,11 +268,6 @@ static void ParseStatement()
 			}
 			else if (TK_Check(KW_FOR))
 			{
-				int*		jumpAddrPtr1;
-				int*		jumpAddrPtr2;
-				int			topAddr;
-				int			contAddr;
-
 				BreakLevel++;
 				ContinueLevel++;
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
@@ -290,7 +277,7 @@ static void ParseStatement()
 				   	AddDrop(t);
 				} while (TK_Check(PU_COMMA));
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				topAddr = CodeBufferSize;
+				int topAddr = NumInstructions;
 				t = ParseExpression();
 				if (t == &type_void)
 				{
@@ -300,10 +287,10 @@ static void ParseStatement()
 				{
 					TypeCheck1(t);
 				}
-				jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
-				jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
+				int jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
+				int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				contAddr = CodeBufferSize;
+				int contAddr = NumInstructions;
 				do
 				{
 					t = ParseExpression();
@@ -311,10 +298,10 @@ static void ParseStatement()
 				} while (TK_Check(PU_COMMA));
 				AddStatement(OPC_Goto, topAddr);
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				*jumpAddrPtr1 = CodeBufferSize;
+				FixupJump(jumpAddrPtr1);
 				ParseStatement();
 				AddStatement(OPC_Goto, contAddr);
-				*jumpAddrPtr2 = CodeBufferSize;
+				FixupJump(jumpAddrPtr2);
 				WriteContinues(contAddr);
 				WriteBreaks();
 			}
@@ -361,8 +348,8 @@ static void ParseStatement()
 			}
 			else if (TK_Check(KW_SWITCH))
 			{
-				int*		switcherAddrPtr;
-				int*		outAddrPtr;
+				int			switcherAddrPtr;
+				int			outAddrPtr;
 				int			numcases;
 				int			defaultAddress;
 				int			i;
@@ -382,7 +369,7 @@ static void ParseStatement()
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 
 				switcherAddrPtr = AddStatement(OPC_Goto, 0);
-				defaultAddress = 0;
+				defaultAddress = -1;
 				numcases = 0;
 				BreakLevel++;
 
@@ -396,18 +383,18 @@ static void ParseStatement()
 							ERR_Exit(ERR_CASE_OVERFLOW, true, NULL);
 						}
 						CaseInfo[numcases].value = EvalConstExpression(etype->type);
-						CaseInfo[numcases].address = CodeBufferSize;
+						CaseInfo[numcases].address = NumInstructions;
 						numcases++;
 						TK_Expect(PU_COLON, ERR_MISSING_COLON);
 						continue;
 					}
 					if (TK_Check(KW_DEFAULT))
 					{
-						if (defaultAddress)
+						if (defaultAddress != -1)
 						{
 							ERR_Exit(ERR_MULTIPLE_DEFAULT, true, NULL);
 						}
-						defaultAddress = CodeBufferSize;
+						defaultAddress = NumInstructions;
 						TK_Expect(PU_COLON, ERR_MISSING_COLON);
 						continue;
 					}
@@ -416,7 +403,7 @@ static void ParseStatement()
 
 				outAddrPtr = AddStatement(OPC_Goto, 0);
 
-				*switcherAddrPtr = CodeBufferSize;
+				FixupJump(switcherAddrPtr);
 				for (i = 0; i < numcases; i++)
 				{
 					if (etype->type == ev_classid)
@@ -431,12 +418,12 @@ static void ParseStatement()
 				}
 				AddDrop(&type_int);
 
-				if (defaultAddress)
+				if (defaultAddress != -1)
 				{
 					AddStatement(OPC_Goto, defaultAddress);
 				}
 
-				*outAddrPtr = CodeBufferSize;
+				FixupJump(outAddrPtr);
 
 				WriteBreaks();
 			}
@@ -815,8 +802,8 @@ static void CompileDef(TType *type, bool IsNative)
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true, "Function: %s", *Name);
 	}
-	functions[num].FirstStatement = CodeBufferSize;
 
+	BeginCode(num);
 	ParseCompoundStatement();
 
 	if (FuncRetType == &type_void)
@@ -824,7 +811,7 @@ static void CompileDef(TType *type, bool IsNative)
 		AddStatement(OPC_Return);
 	}
 	functions[num].NumLocals = maxlocalsofs;
-//DumpAsmFunction(num);
+	EndCode(num);
 }
 
 //==========================================================================
@@ -901,8 +888,7 @@ void CompileMethodDef(TType *t, field_t *method, field_t *otherfield,
 	ContinueLevel = 0;
 	FuncRetType = t;
 
-	functions[num].FirstStatement = CodeBufferSize;
-
+	BeginCode(num);
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 
@@ -911,6 +897,7 @@ void CompileMethodDef(TType *t, field_t *method, field_t *otherfield,
 		AddStatement(OPC_Return);
 	}
 	functions[num].NumLocals = maxlocalsofs;
+	EndCode(num);
 }
 
 //==========================================================================
@@ -925,7 +912,7 @@ void CompileStateCode(TClass* InClass, int num)
 	localsofs = 1;
 	maxlocalsofs = 1;
 
-	functions[num].FirstStatement = CodeBufferSize;
+	BeginCode(num);
 
 	SelfType = MakeReferenceType(InClass);
 	SelfClass = InClass;
@@ -937,6 +924,7 @@ void CompileStateCode(TClass* InClass, int num)
 	ParseCompoundStatement();
 	AddStatement(OPC_Return);
 	functions[num].NumLocals = maxlocalsofs;
+	EndCode(num);
 }
 
 //==========================================================================
@@ -959,7 +947,7 @@ void CompileDefaultProperties(field_t *method, TClass* InClass)
 	ContinueLevel = 0;
 	FuncRetType = &type_void;
 
-	functions[num].FirstStatement = CodeBufferSize;
+	BeginCode(num);
 
 	//  Call parent constructor
 	field_t *pcon = FindConstructor(InClass->ParentClass);
@@ -974,6 +962,7 @@ void CompileDefaultProperties(field_t *method, TClass* InClass)
 	ParseCompoundStatement();
 	AddStatement(OPC_Return);
 	functions[num].NumLocals = maxlocalsofs;
+	EndCode(num);
 }
 
 //==========================================================================
@@ -992,9 +981,9 @@ void PA_Compile()
 	numconstants = 0;
 
 	//  Add empty function for default constructors
-	functions[1].FirstStatement = CodeBufferSize;
-
+	BeginCode(1);
 	AddStatement(OPC_Return);
+	EndCode(1);
 
 	TK_NextToken();
 	done = false;
@@ -1103,9 +1092,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/11/30 13:14:53  dj_jl
+//	Implemented instruction buffer.
+//
 //	Revision 1.29  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.28  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	

@@ -30,6 +30,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define CODE_BUFFER_SIZE		(256 * 1024)
+#define MAX_INSTRUCTIONS		(256 * 1024)
 #define	MAX_GLOBALS				(256 * 1024)
 #define MAX_STRINGS				8192
 #define	MAX_STRINGS_BUF			500000
@@ -46,18 +47,28 @@ struct TStringInfo
 	int next;
 };
 
+struct FInstruction
+{
+	int			Address;
+	int			Opcode;
+	int			Arg1;
+	int			Arg2;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+void DumpAsmFunction(int num);
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int*			CodeBuffer;
-int				CodeBufferSize;
+FInstruction*	Instructions;
+int				NumInstructions;
 
 int*			globals;
 byte*			globalinfo;
@@ -82,8 +93,8 @@ int				numstructs;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			undoOpcode;
-static int			undoSize;
+static int*			CodeBuffer;
+static int			CodeBufferSize;
 
 static char*		strings;
 static int			strofs;
@@ -117,6 +128,10 @@ void PC_Init(void)
 	CodeBuffer = new int[CODE_BUFFER_SIZE];
 	memset(CodeBuffer, 0, CODE_BUFFER_SIZE * 4);
 	CodeBufferSize = 1;
+
+	Instructions = new FInstruction[MAX_INSTRUCTIONS];
+	memset(Instructions, 0, MAX_INSTRUCTIONS * sizeof(FInstruction));
+	NumInstructions = 1;
 
 	//	Globals
 	globals = new int[MAX_GLOBALS];
@@ -219,7 +234,7 @@ int FindString(const char *str)
 //
 //==========================================================================
 
-int* AddStatement(int statement)
+int AddStatement(int statement)
 {
 	if (CurrentPass == 1)
 	{
@@ -230,6 +245,10 @@ int* AddStatement(int statement)
 	{
 		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
 	}
+	if (NumInstructions >= MAX_INSTRUCTIONS)
+	{
+		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
+	}
 	if (StatementInfo[statement].params != 0)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode doesn't have 0 params");
@@ -237,7 +256,7 @@ int* AddStatement(int statement)
 
 	if (statement == OPC_Drop)
 	{
-		switch (undoOpcode)
+		switch (Instructions[NumInstructions - 1].Opcode)
 		{
 		case OPC_Assign:
 			statement = OPC_AssignDrop;
@@ -311,7 +330,7 @@ int* AddStatement(int statement)
 
 		case OPC_AssignBool:
 //FIXME
-		 	return &CodeBuffer[CodeBufferSize - 1];
+		 	return NumInstructions - 1;
 
 		default:
 			break;
@@ -320,15 +339,12 @@ int* AddStatement(int statement)
 		if (statement != OPC_Drop)
 		{
 			UndoStatement();
-#ifdef OPCODE_STATS
-			StatementInfo[undoOpcode].usecount--;
-#endif
 		}
 	}
 
 	if (statement == OPC_VDrop)
 	{
-		switch (undoOpcode)
+		switch (Instructions[NumInstructions - 1].Opcode)
 		{
 		case OPC_VAssign:
 			statement = OPC_VAssignDrop;
@@ -357,21 +373,15 @@ int* AddStatement(int statement)
 		if (statement != OPC_VDrop)
 		{
 			UndoStatement();
-#ifdef OPCODE_STATS
-			StatementInfo[undoOpcode].usecount--;
-#endif
 		}
 	}
 
-	undoOpcode = statement;
-	undoSize = CodeBufferSize;
+	int i = NumInstructions++;
+	Instructions[i].Opcode = statement;
+	Instructions[i].Arg1 = 0;
+	Instructions[i].Arg2 = 0;
 
-	CodeBuffer[CodeBufferSize++] = statement;
-#ifdef OPCODE_STATS
-	StatementInfo[statement].usecount++;
-#endif
-
-	return &CodeBuffer[CodeBufferSize - 1];
+	return i;
 }
 
 //==========================================================================
@@ -380,7 +390,7 @@ int* AddStatement(int statement)
 //
 //==========================================================================
 
-int* AddStatement(int statement, int parm1)
+int AddStatement(int statement, int parm1)
 {
 	if (CurrentPass == 1)
 	{
@@ -391,21 +401,21 @@ int* AddStatement(int statement, int parm1)
 	{
 		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
 	}
+	if (NumInstructions >= MAX_INSTRUCTIONS)
+	{
+		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
+	}
 	if (StatementInfo[statement].params != 1)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 1 params");
 	}
 
-	undoOpcode = statement;
-	undoSize = CodeBufferSize;
+	int i = NumInstructions++;
+	Instructions[i].Opcode = statement;
+	Instructions[i].Arg1 = parm1;
+	Instructions[i].Arg2 = 0;
 
-	CodeBuffer[CodeBufferSize++] = statement;
-   	CodeBuffer[CodeBufferSize++] = parm1;
-#ifdef OPCODE_STATS
-	StatementInfo[statement].usecount++;
-#endif
-
-	return &CodeBuffer[CodeBufferSize - 1];
+	return i;
 }
 
 //==========================================================================
@@ -414,7 +424,7 @@ int* AddStatement(int statement, int parm1)
 //
 //==========================================================================
 
-int* AddStatement(int statement, int parm1, int parm2)
+int AddStatement(int statement, int parm1, int parm2)
 {
 	if (CurrentPass == 1)
 	{
@@ -430,17 +440,34 @@ int* AddStatement(int statement, int parm1, int parm2)
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 2 params");
 	}
 
-	undoOpcode = statement;
-	undoSize = CodeBufferSize;
+	int i = NumInstructions++;
+	Instructions[i].Opcode = statement;
+	Instructions[i].Arg1 = parm1;
+	Instructions[i].Arg2 = parm2;
 
-	CodeBuffer[CodeBufferSize++] = statement;
-   	CodeBuffer[CodeBufferSize++] = parm1;
-   	CodeBuffer[CodeBufferSize++] = parm2;
-#ifdef OPCODE_STATS
-	StatementInfo[statement].usecount++;
-#endif
+	return i;
+}
 
-	return &CodeBuffer[CodeBufferSize - 1];
+//==========================================================================
+//
+//  FixupJump
+//
+//==========================================================================
+
+void FixupJump(int Pos, int JmpPos)
+{
+	Instructions[Pos].Arg1 = JmpPos;
+}
+
+//==========================================================================
+//
+//  FixupJump
+//
+//==========================================================================
+
+void FixupJump(int Pos)
+{
+	Instructions[Pos].Arg1 = NumInstructions;
 }
 
 //==========================================================================
@@ -449,15 +476,86 @@ int* AddStatement(int statement, int parm1, int parm2)
 //
 //==========================================================================
 
-int UndoStatement(void)
+int UndoStatement()
 {
 	if (CurrentPass == 1)
 	{
 		dprintf("UndoStatement in pass 1\n");
 	}
 
-	CodeBufferSize = undoSize;
-	return undoOpcode;
+	NumInstructions--;
+	return Instructions[NumInstructions].Opcode;
+}
+
+//==========================================================================
+//
+//	BeginCode
+//
+//==========================================================================
+
+void BeginCode(int)
+{
+	NumInstructions = 0;
+}
+
+//==========================================================================
+//
+//	EndCode
+//
+//==========================================================================
+
+void EndCode(int FuncNum)
+{
+	functions[FuncNum].FirstStatement = CodeBufferSize;
+
+	for (int i = 0; i < NumInstructions; i++)
+	{
+		Instructions[i].Address = CodeBufferSize;
+		CodeBuffer[CodeBufferSize++] = Instructions[i].Opcode;
+		if (StatementInfo[Instructions[i].Opcode].params > 0)
+			CodeBuffer[CodeBufferSize++] = Instructions[i].Arg1;
+		if (StatementInfo[Instructions[i].Opcode].params > 1)
+			CodeBuffer[CodeBufferSize++] = Instructions[i].Arg2;
+#ifdef OPCODE_STATS
+		StatementInfo[Instructions[i].Opcode].usecount++;
+#endif
+	}
+	Instructions[NumInstructions].Address = CodeBufferSize;
+
+	for (int i = 0; i < NumInstructions; i++)
+	{
+		switch (Instructions[i].Opcode)
+		{
+		case OPC_Goto:
+		case OPC_IfGoto:
+		case OPC_IfNotGoto:
+		case OPC_IfTopGoto:
+		case OPC_IfNotTopGoto:
+			CodeBuffer[Instructions[i].Address + 1] =
+				Instructions[Instructions[i].Arg1].Address;
+			break;
+		case OPC_CaseGoto:
+		case OPC_CaseGotoName:
+		case OPC_CaseGotoClassId:
+			CodeBuffer[Instructions[i].Address + 2] =
+				Instructions[Instructions[i].Arg2].Address;
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	WriteCode
+//
+//==========================================================================
+
+static void WriteCode()
+{
+//	for (int i = 0; i < numfunctions; i++)
+//	{
+//		DumpAsmFunction(i);
+//	}
 }
 
 //==========================================================================
@@ -474,6 +572,8 @@ void PC_WriteObject(char *name)
 
 	dprintf("Writing object\n");
 
+	WriteCode();
+
 	//	Chack buffers
 	if (StringCount >= MAX_STRINGS)
 	{
@@ -481,6 +581,10 @@ void PC_WriteObject(char *name)
 				 "Current maximum: %d", MAX_STRINGS);
 	}
 	if (CodeBufferSize >= CODE_BUFFER_SIZE)
+	{
+		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
+	}
+	if (NumInstructions >= MAX_INSTRUCTIONS)
 	{
 		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
 	}
@@ -629,6 +733,9 @@ void DumpAsmFunction(int num)
 	int		st;
 	int		i;
 
+	dprintf("--------------------------------------------\n");
+	dprintf("Dump ASM function %s.%s\n\n", functions[num].OuterClass ?
+		*functions[num].OuterClass->Name : "None", *functions[num].Name);
 	s = functions[num].FirstStatement;
 	if (s < 0)
 	{
@@ -708,8 +815,6 @@ void PC_DumpAsm(char* name)
 		cname = NULL;
 		fname = buf;
 	}
-	dprintf("--------------------------------------------\n");
-	dprintf("Dump ASM function %s\n\n", name);
 	for (i = 0; i < numfunctions; i++)
 	{
 		if (((!cname && !functions[i].OuterClass) ||
@@ -721,15 +826,18 @@ void PC_DumpAsm(char* name)
 			return;
 		}
 	}
-	dprintf("Not found!\n");
+	dprintf("Dump ASM: %s not found!\n", name);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/11/30 13:14:53  dj_jl
+//	Implemented instruction buffer.
+//
 //	Revision 1.21  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.20  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	

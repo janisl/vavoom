@@ -1287,11 +1287,11 @@ static TTree ParseExpressionPriority11()
 	while (TK_Check(PU_AND_LOG))
 	{
 		TypeCheck1(op1.type);
-		int* jmppos = AddStatement(OPC_IfNotTopGoto, 0);
+		int jmppos = AddStatement(OPC_IfNotTopGoto, 0);
 		TTree op2 = ParseExpressionPriority10();
 		TypeCheck1(op2.type);
 		AddStatement(OPC_AndLogical);
-		*jmppos = CodeBufferSize;
+		FixupJump(jmppos);
 		op1 = TTree(&type_int);
 	}
 	return op1;
@@ -1309,11 +1309,11 @@ static TTree ParseExpressionPriority12()
 	while (TK_Check(PU_OR_LOG))
 	{
 		TypeCheck1(op1.type);
-		int* jmppos = AddStatement(OPC_IfTopGoto, 0);
+		int jmppos = AddStatement(OPC_IfTopGoto, 0);
 		TTree op2 = ParseExpressionPriority11();
 		TypeCheck1(op2.type);
 		AddStatement(OPC_OrLogical);
-		*jmppos = CodeBufferSize;
+		FixupJump(jmppos);
 		op1 = TTree(&type_int);
 	}
 	return op1;
@@ -1334,17 +1334,14 @@ static TTree ParseExpressionPriority13()
 	op = ParseExpressionPriority12();
    	if (TK_Check(PU_QUEST))
 	{
-	   	int*	jumppos1;
-	   	int*	jumppos2;
-
 		TypeCheck1(op.type);
-		jumppos1 = AddStatement(OPC_IfNotGoto, 0);
+		int jumppos1 = AddStatement(OPC_IfNotGoto, 0);
 		op1 = ParseExpressionPriority13();
 		TK_Expect(PU_COLON, ERR_MISSING_COLON);
-		jumppos2 = AddStatement(OPC_Goto, 0);
-		*jumppos1 = CodeBufferSize;
+		int jumppos2 = AddStatement(OPC_Goto, 0);
+		FixupJump(jumppos1);
 		op2 = ParseExpressionPriority13();
-		*jumppos2 = CodeBufferSize;
+		FixupJump(jumppos2);
 		TypeCheck3(op1.type, op2.type);
 		if (op1.type == &type_void_ptr)
 			op = TTree(op2.type);
@@ -1638,9 +1635,12 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/11/30 13:14:53  dj_jl
+//	Implemented instruction buffer.
+//
 //	Revision 1.29  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.28  2005/11/24 20:40:42  dj_jl
 //	Removed building of the tree, opcode renaming.
 //	
