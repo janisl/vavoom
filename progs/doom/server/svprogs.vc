@@ -45,7 +45,6 @@
 
 #include "world.vc"
 
-#include "mobjinfo.vc"
 #include "wpninfo.vc"
 
 #include "../game/classes.vc"
@@ -74,6 +73,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2005/12/01 19:46:34  dj_jl
+//  Cleanup.
+//
 //  Revision 1.26  2005/03/28 07:34:49  dj_jl
 //  Some Boom line specials and other improvements.
 //

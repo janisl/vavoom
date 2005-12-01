@@ -44,7 +44,6 @@ bool respawnmonsters;
 
 #include "world.vc"
 
-#include "mobjinfo.vc"
 #include "wpninfo.vc"
 
 #include "../game/classes.vc"
@@ -61,6 +60,9 @@ bool respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2005/12/01 19:46:34  dj_jl
+//  Cleanup.
+//
 //  Revision 1.22  2005/03/28 07:43:30  dj_jl
 //  Some Boom line specials and other improvements.
 //
