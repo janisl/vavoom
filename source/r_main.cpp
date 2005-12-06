@@ -212,7 +212,7 @@ void R_SetViewSize(int blocks)
 COMMAND(SizeDown)
 {
 	R_SetViewSize(screenblocks - 1);
-	S_StartSoundName("MenuSwitch");
+	S_StartSoundName("menu/change");
 }
 
 //==========================================================================
@@ -224,7 +224,7 @@ COMMAND(SizeDown)
 COMMAND(SizeUp)
 {
 	R_SetViewSize(screenblocks + 1);
-	S_StartSoundName("MenuSwitch");
+	S_StartSoundName("menu/change");
 }
 
 //==========================================================================
@@ -962,9 +962,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2005/12/06 17:49:08  dj_jl
+//	Renamed sounds.
+//
 //	Revision 1.29  2005/11/13 18:44:55  dj_jl
 //	CVar to disable drawing of particles.
-//
+//	
 //	Revision 1.28  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	
