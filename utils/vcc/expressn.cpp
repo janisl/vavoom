@@ -207,6 +207,7 @@ static TTree ParseMethodCall(field_t* field)
 	{
 		max_params = functions[num].NumParams;
 	}
+	AddStatement(OPC_PushVFunc, field->ofs);
 	if (!TK_Check(PU_RPAREN))
 	{
 		do
@@ -267,28 +268,28 @@ static TTree ParseExpressionPriority0()
 	CheckForLocal = false;
    	switch (tk_Token)
 	{
-	 case TK_INTEGER:
+	case TK_INTEGER:
 		AddStatement(OPC_PushNumber, tk_Number);
 		TK_NextToken();
 		return TTree(&type_int);
 
-	 case TK_FLOAT:
+	case TK_FLOAT:
 		AddStatement(OPC_PushNumber, PassFloat(tk_Float));
 		TK_NextToken();
 		return TTree(&type_float);
 
-	 case TK_NAME:
+	case TK_NAME:
 		AddStatement(OPC_PushName, tk_Name.GetIndex());
 		TK_NextToken();
 		return TTree(&type_name);
 
-	 case TK_STRING:
+	case TK_STRING:
 		AddStatement(OPC_PushString, tk_StringI);
 		TK_NextToken();
 		return TTree(&type_string);
 
-	 case TK_PUNCT:
-	   	if (TK_Check(PU_LPAREN))
+	case TK_PUNCT:
+		if (TK_Check(PU_LPAREN))
 		{
 			op = ParseExpressionPriority13();
 			TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
@@ -318,7 +319,7 @@ static TTree ParseExpressionPriority0()
 		}
 		break;
 
-	 case TK_KEYWORD:
+	case TK_KEYWORD:
 		if (TK_Check(KW_VECTOR))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
@@ -373,7 +374,7 @@ static TTree ParseExpressionPriority0()
 		}
 		break;
 
-	 case TK_IDENTIFIER:
+	case TK_IDENTIFIER:
 		Name = tk_Name;
 		TK_NextToken();
 		if (TK_Check(PU_LPAREN))
@@ -405,7 +406,6 @@ static TTree ParseExpressionPriority0()
 				{
 					AddStatement(OPC_LocalAddress, 0);
 					AddStatement(OPC_PushPointed);
-					AddStatement(OPC_PushVFunc, field->ofs);
 					return ParseMethodCall(field);
 				}
 			}
@@ -481,8 +481,8 @@ static TTree ParseExpressionPriority0()
 		ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", *Name);
 		break;
 
-	 default:
-	   	break;
+	default:
+		break;
 	}
 
 	op = TTree(&type_void);
@@ -539,7 +539,6 @@ static TTree ParseExpressionPriority1()
 					if (field->type->type == ev_method)
 					{
 						TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-						AddStatement(OPC_PushVFunc, field->ofs);
 						op = ParseMethodCall(field);
 					}
 					else
@@ -1625,9 +1624,12 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/12/07 22:52:55  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.31  2005/11/30 23:55:05  dj_jl
 //	Directly use with-drop statements.
-//
+//	
 //	Revision 1.30  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
 //	

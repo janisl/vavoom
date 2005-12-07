@@ -204,15 +204,7 @@ void OnMapSpawn(mthing_t * mthing)
 	// Set the state, but do not use P_SetMobjState, because action
 	// routines can't be called yet.  If the spawnstate has an action
 	// routine, it will not be called.
-	StateNum = IdleState;
-	st = &states[StateNum];
-	StateTime = st->time;
-	SpriteIndex = st->sprite;
-	SpriteName = sprite_names[st->sprite];
-	SpriteFrame = st->frame;
-	ModelIndex = st->model_index;
-	ModelFrame = st->model_frame;
-	NextState = st->nextstate;
+	SetInitialState(IdleState);
 
 	if (mthing)
 	{
@@ -3086,6 +3078,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/12/07 22:54:18  dj_jl
+//  Moved compiler generated data out of globals.
+//
 //  Revision 1.16  2005/11/30 23:52:04  dj_jl
 //  Switch statement requires integer.
 //

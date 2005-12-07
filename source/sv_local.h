@@ -291,7 +291,9 @@ class VEntity : public VThinker
 		ConditionalDestroy();
 	}
 
-	boolean SetState(int state);
+	bool SetState(int state);
+	void SetInitialState(int state);
+	int FindState(FName StateName);
 
 	boolean CheckWater(void);
 	boolean CheckPosition(TVec Pos);
@@ -311,6 +313,8 @@ class VEntity : public VThinker
 
 	DECLARE_FUNCTION(Remove)
 	DECLARE_FUNCTION(SetState)
+	DECLARE_FUNCTION(SetInitialState)
+	DECLARE_FUNCTION(FindState)
 	DECLARE_FUNCTION(PlaySound)
 	DECLARE_FUNCTION(PlayFullVolumeSound)
 	DECLARE_FUNCTION(StopSound)
@@ -619,9 +623,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2005/12/07 22:53:26  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.38  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
-//
+//	
 //	Revision 1.37  2005/10/18 21:33:13  dj_jl
 //	Fixed ceiling lightninfg.
 //	

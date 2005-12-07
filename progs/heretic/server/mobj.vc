@@ -316,10 +316,10 @@ void SpawnPuff(TVec org)
 
 void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 {
-	int i;
 	int bit;
 	Actor A;
 	int spawnMask;
+	classid moClass;
 
 	if (mthing->type <= 0)
 	{
@@ -405,11 +405,8 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 		return;
 
 	// find which type to spawn
-	for (i = 0; i < num_mobj_types; i++)
-		if (mthing->type == mobjinfo[i].doomednum)
-			break;
-
-	if (i == num_mobj_types)
+	moClass = FindClassFromEditorId(mthing->type);
+	if (!moClass || moClass == classidNone)
 	{
 		dprint("P_SpawnMapThing: Unknown type %i at (%f, %f)",
 			mthing->type, mthing->x, mthing->y);
@@ -420,24 +417,24 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 	if (shareware)
 	{
 		// Special stuff
-		if (mobjinfo[i].class_id == ItemWeaponSkullRod ||
-			mobjinfo[i].class_id == ItemWeaponPhoenixRod ||
-			mobjinfo[i].class_id == ItemAmmoSkullRodWimpy ||
-			mobjinfo[i].class_id == ItemAmmoSkullRodHefty ||
-			mobjinfo[i].class_id == ItemAmmoPhoenixWimpy ||
-			mobjinfo[i].class_id == ItemAmmoPhoenixHefty ||
-			mobjinfo[i].class_id == ItemAmmoMaceWimpy ||
-			mobjinfo[i].class_id == ItemAmmoMaceHefty ||
-			mobjinfo[i].class_id == ArtifactSuperHeal ||
-			mobjinfo[i].class_id == ArtifactTeleport ||
-			mobjinfo[i].class_id == ItemShield2 ||
-			mobjinfo[i].class_id == ItemWeaponMace)
+		if (moClass == ItemWeaponSkullRod ||
+			moClass == ItemWeaponPhoenixRod ||
+			moClass == ItemAmmoSkullRodWimpy ||
+			moClass == ItemAmmoSkullRodHefty ||
+			moClass == ItemAmmoPhoenixWimpy ||
+			moClass == ItemAmmoPhoenixHefty ||
+			moClass == ItemAmmoMaceWimpy ||
+			moClass == ItemAmmoMaceHefty ||
+			moClass == ArtifactSuperHeal ||
+			moClass == ArtifactTeleport ||
+			moClass == ItemShield2 ||
+			moClass == ItemWeaponMace)
 		{
 			// Don't place on map in shareware version
 			return;
 		}
 	}
-	if (mobjinfo[i].class_id == ItemWeaponMace)
+	if (moClass == ItemWeaponMace)
 	{
 		// Put in the mace spot list
 		AddMaceSpot(mthing->x, mthing->y);
@@ -448,7 +445,7 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 		return;
 	}
 
-	A = Actor(NewMobjThinker(mobjinfo[i].class_id));
+	A = Actor(NewMobjThinker(moClass));
 	A.OnMapSpawn(mthing);
 }
 
@@ -667,6 +664,9 @@ bool A_LocalQuake(int *args)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.59  2005/12/07 22:54:18  dj_jl
+//  Moved compiler generated data out of globals.
+//
 //  Revision 1.58  2005/11/30 23:52:04  dj_jl
 //  Switch statement requires integer.
 //

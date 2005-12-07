@@ -400,20 +400,12 @@ void OnMapSpawn(mthing_t * mthing)
 	// because action routines can not be called yet
 #ifdef DDF
 	if (SpawnState)
-		StateNum = SpawnState;
+		SetInitialState(SpawnState);
 	else if (MeanderState)
-		StateNum = MeanderState;
+		SetInitialState(MeanderState);
 	else
 #endif
-		StateNum = IdleState;
-	st = &states[StateNum];
-	StateTime = st->time;
-	SpriteIndex = st->sprite;
-	SpriteName = sprite_names[st->sprite];
-	SpriteFrame = st->frame;
-	ModelIndex = st->model_index;
-	ModelFrame = st->model_frame;
-	NextState = st->nextstate;
+		SetInitialState(IdleState);
 
 	if (mthing)
 	{
@@ -4054,6 +4046,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2005/12/07 22:54:18  dj_jl
+//  Moved compiler generated data out of globals.
+//
 //  Revision 1.17  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

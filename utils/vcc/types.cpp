@@ -76,7 +76,7 @@ TType		*types = &type_bool;
 //
 //==========================================================================
 
-void InitTypes(void)
+void InitTypes()
 {
 	type_state.Name = NAME_state_t;
 	type_mobjinfo.Name = NAME_mobjinfo_t;
@@ -940,14 +940,13 @@ static void AddVTable(TClass* InClass)
 	{
 		return;
 	}
-	InClass->VTable = numglobals;
-	int *vtable = globals + numglobals;
-	memset(globalinfo + numglobals, GLOBALTYPE_Function, InClass->NumMethods);
-	numglobals += InClass->NumMethods;
+	InClass->VTable = numvtables;
+	int *vtable = vtables + numvtables;
+	numvtables += InClass->NumMethods;
 	if (InClass->ParentClass)
 	{
 		AddVTable(InClass->ParentClass);
-		memcpy(vtable, globals + InClass->ParentClass->VTable,
+		memcpy(vtable, vtables + InClass->ParentClass->VTable,
 			InClass->ParentClass->NumMethods * 4);
 	}
 	for (int i = 0; i < InClass->NumFields; i++)
@@ -1035,14 +1034,14 @@ static void WritePropertyField(TClass* InClass, dfield_t *df, TType *type, int o
 
 static void WritePropertyInfo(TClass* InClass)
 {
-	InClass->OfsProperties = numglobals;
+	InClass->OfsProperties = numpropinfos;
 	InClass->NumProperties = 0;
-	dfield_t *df = (dfield_t *)(globals + numglobals);
+	dfield_t *df = propinfos + numpropinfos;
 	for (int i = 0; i < InClass->NumFields; i++)
 	{
 		WritePropertyField(InClass, df, InClass->Fields[i].type, InClass->Fields[i].ofs);
 	}
-	numglobals += InClass->NumProperties * sizeof(dfield_t) / 4;
+	numpropinfos += InClass->NumProperties;
 }
 
 //==========================================================================
@@ -1055,18 +1054,14 @@ void AddVirtualTables()
 {
 	dprintf("Adding virtual tables\n");
 	int i;
-	int OldNumGlobals = numglobals;
 	for (i = 0; i < numclasses; i++)
 	{
 		AddVTable(&classtypes[i]);
 	}
-	dprintf("Virtual tables takes %d bytes\n", (numglobals - OldNumGlobals) * 4);
-	OldNumGlobals = numglobals;
 	for (i = 0; i < numclasses; i++)
 	{
 		WritePropertyInfo(&classtypes[i]);
 	}
-	dprintf("Fields info takes %d bytes\n", (numglobals - OldNumGlobals) * 4);
 }
 
 //**************************************************************************
@@ -1416,13 +1411,6 @@ void ParseClass()
 		Class->Name = tk_Name;
 		Class->Index = numclasses;
 		numclasses++;
-		//  Add to the types
-		TType* class_type = new TType;
-		memset(class_type, 0, sizeof(TType));
-		class_type->Name = tk_Name;
-		class_type->type = ev_unused_1;//ev_class;
-		class_type->next = types;
-		class_type->Class = Class;
 		TK_NextToken();
 	}
 
@@ -1597,9 +1585,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2005/12/07 22:52:55  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.33  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.32  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	

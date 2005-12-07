@@ -31,29 +31,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct state_t
-{
-	int		sprite;
-	int		frame;
-	int		model_index;
-	int		model_frame;
-	float	time;
-	int		nextstate;
-	int		function;
-	FName	statename;
-};
-
-struct mobjinfo_t
-{
-    int		doomednum;
-	int		class_id;
-};
-
-struct compstate_t
-{
-	FName NextName;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -66,24 +43,6 @@ struct compstate_t
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TArray<FName>		sprite_names;
-
-static TArray<FName>		models;
-
-static TArray<state_t>		states;
-static TArray<compstate_t>	compstates;
-
-static TArray<mobjinfo_t>	mobj_info;
-
-static int				gv_num_sprite_names;
-static int				gv_sprite_names;
-static int				gv_num_models;
-static int				gv_models;
-static int				gv_num_states;
-static int				gv_states;
-static int				gv_num_mobj_info;
-static int				gv_mobj_info;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -94,56 +53,12 @@ static int				gv_mobj_info;
 
 void InitInfoTables()
 {
-	//	For some strange reason when compiling with gcc, data field contains
-	// some garbage already at the start of the program.
-	memset(&mobj_info, 0, sizeof(mobj_info));
-
 	sprite_names.Empty(64);
 	models.Empty(64);
 	states.Empty(1024);
 	compstates.Empty(1024);
 	mobj_info.Empty(128);
 	models.AddItem(NAME_None);	// 0 indicates no-model
-
-	globaldefs[numglobaldefs].Name = "num_sprite_names";
-	globaldefs[numglobaldefs].type = &type_int;
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_num_sprite_names = numglobaldefs++;
-
-	globaldefs[numglobaldefs].Name = "sprite_names";
-	globaldefs[numglobaldefs].type = MakeArrayType(&type_name, -1);
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_sprite_names = numglobaldefs++;
-
-	globaldefs[numglobaldefs].Name = "num_models";
-	globaldefs[numglobaldefs].type = &type_int;
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_num_models = numglobaldefs++;
-
-	globaldefs[numglobaldefs].Name = "models";
-	globaldefs[numglobaldefs].type = MakeArrayType(&type_name, -1);
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_models = numglobaldefs++;
-
-	globaldefs[numglobaldefs].Name = "num_states";
-	globaldefs[numglobaldefs].type = &type_int;
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_num_states = numglobaldefs++;
-
-	globaldefs[numglobaldefs].Name = "states";
-	globaldefs[numglobaldefs].type = MakeArrayType(&type_state, -1);
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_states = numglobaldefs++;
-
-	globaldefs[numglobaldefs].Name = "num_mobj_types";
-	globaldefs[numglobaldefs].type = &type_int;
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_num_mobj_info = numglobaldefs++;
-
-	globaldefs[numglobaldefs].Name = "mobjinfo";
-	globaldefs[numglobaldefs].type = MakeArrayType(&type_mobjinfo, -1);
-	globaldefs[numglobaldefs].ofs = 0;
-	gv_mobj_info = numglobaldefs++;
 }
 
 //==========================================================================
@@ -380,76 +295,24 @@ static void CheckStates()
 
 //==========================================================================
 //
-//  AddInfoData
-//
-//==========================================================================
-
-static void AddInfoData(int globaldef, void *data, int size, bool names)
-{
-	globaldefs[globaldef].ofs = numglobals;
-	memcpy(&globals[numglobals], data, size);
-	if (names)
-	{
-		memset(globalinfo + numglobals, GLOBALTYPE_Name, size / 4);
-	}
-	numglobals += size / 4;
-}
-
-//==========================================================================
-//
 //  AddInfoTables
 //
 //==========================================================================
 
 void AddInfoTables()
 {
-	int i;
-
 	CheckStates();
-
-	//  Add sprite names
-	i = sprite_names.Num();
-	AddInfoData(gv_num_sprite_names, &i, 4, false);
-	AddInfoData(gv_sprite_names, sprite_names.GetData(), 4 * sprite_names.Num(), true);
-	//  Add models
-	i = models.Num();
-	AddInfoData(gv_num_models, &i, 4, false);
-	AddInfoData(gv_models, models.GetData(), 4 * models.Num(), true);
-	//	Add state table
-	i = states.Num();
-	AddInfoData(gv_num_states, &i, 4, false);
-	for (i = 0; i < states.Num(); i++)
-	{
-		if (states[i].function)
-		{
-			globalinfo[numglobals + i * sizeof(state_t) / 4 +
-				STRUCT_OFFSET(state_t, function) / 4] = GLOBALTYPE_Function;
-		}
-		globalinfo[numglobals + i * sizeof(state_t) / 4 +
-			STRUCT_OFFSET(state_t, statename) / 4] = GLOBALTYPE_Name;
-	}
-	AddInfoData(gv_states, states.GetData(), states.Num() * sizeof(state_t), false);
-	//	Add object description table
-	i = mobj_info.Num();
-	AddInfoData(gv_num_mobj_info, &i, 4, false);
-	for (i = 0; i < mobj_info.Num(); i++)
-	{
-		globalinfo[numglobals + i * sizeof(mobjinfo_t) / 4 + 1] = GLOBALTYPE_Class;
-	}
-	AddInfoData(gv_mobj_info, mobj_info.GetData(), mobj_info.Num() * sizeof(mobjinfo_t), false);
-
-	dprintf("Num sprite names: %d, num models: %d\n",
-				sprite_names.Num(), models.Num());
-	dprintf("Num states: %d, num mobj types: %d\n",
-				states.Num(), mobj_info.Num());
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2005/12/07 22:52:55  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.25  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.24  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	

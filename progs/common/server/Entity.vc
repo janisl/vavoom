@@ -186,6 +186,8 @@ name SoundGender;
 native void Remove(void);
 
 native bool SetState(int state);
+native void SetInitialState(int state);
+native int FindState(name StateName);
 
 native void PlaySound(name SoundName, int Channel);
 native void PlayFullVolumeSound(name SoundName, int Channel);
@@ -480,6 +482,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/12/07 22:54:18  dj_jl
+//  Moved compiler generated data out of globals.
+//
 //  Revision 1.7  2005/11/17 18:55:04  dj_jl
 //  Implemented support for sndinfo extensions.
 //

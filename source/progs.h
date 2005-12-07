@@ -30,6 +30,7 @@
 // TYPES -------------------------------------------------------------------
 
 class VClass;
+struct FPropertyInfo;
 
 struct dprograms_t;
 struct FGlobalDef;
@@ -76,10 +77,37 @@ public:
 	}
 };
 
+struct state_t
+{
+	int			sprite;
+	int			frame;
+	int			model_index;
+	int			model_frame;
+	float		time;
+	int			nextstate;
+	FFunction*	function;
+	FName		statename;
+};
+
+struct mobjinfo_t
+{
+    int			doomednum;
+	VClass*		class_id;
+};
+
 class TProgs
 {
- public:
+public:
 	TCRC		crc;
+
+	int			NumSpriteNames;
+	FName*		SpriteNames;
+	int			NumModelNames;
+	FName*		ModelNames;
+	int			NumStates;
+	state_t*	States;
+	int			NumMobjInfo;
+	mobjinfo_t*	MobjInfo;
 
 	void Load(const char*);
 	void Unload(void);
@@ -263,12 +291,14 @@ class TProgs
 		return Strings + Offs;
 	}
 
- private:
-	dprograms_t	*Progs;
-	char		*Strings;
-	int			*Globals;
-	FFunction	*Functions;
-	FGlobalDef	*Globaldefs;
+private:
+	dprograms_t*	Progs;
+	char*			Strings;
+	int*			Globals;
+	FFunction*		Functions;
+	FGlobalDef*		Globaldefs;
+	FFunction**		VTables;
+	FPropertyInfo*	PropInfos;
 
 	FFunction *CheckFuncForName(const char* name);
 	int CheckGlobalNumForName(const char* name);
@@ -343,9 +373,12 @@ inline FName PR_PopName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2005/12/07 22:53:26  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.13  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.12  2002/05/03 17:06:23  dj_jl
 //	Mangling of string pointers.
 //	

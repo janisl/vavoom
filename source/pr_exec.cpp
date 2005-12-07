@@ -195,31 +195,37 @@ static int SwapBits(int Val)
 void TProgs::Load(const char *AName)
 {
 	guard(TProgs::Load);
-	int		i;
-	int		len;
-	char	progfilename[256];
-	int		*Statements;
-	dfunction_t		*DFunctions;
-	dglobaldef_t	*DGlobalDefs;
-	dclassinfo_t	*ClassInfo;
-	VClass		**ClassList;
-	FName	*NameRemap;
-	char	*pName;
+	int				i;
+	int				len;
+	char			progfilename[256];
+	int*			Statements;
+	dfunction_t	*	DFunctions;
+	dglobaldef_t*	DGlobalDefs;
+	dclassinfo_t*	ClassInfo;
+	VClass**		ClassList;
+	FName*			NameRemap;
+	char*			pName;
+	short*			DVTables;
+	dfield_t*		DPropInfos;
+	short*			DSprNames;
+	short*			DMdlNames;
+	dstate_t*		DStates;
+	dmobjinfo_t*	DMobjInfo;
 
 	i = M_CheckParm("-progs");
-    if (i && i < myargc - 1)
-    {
-    	//	Load PROGS from a specified file
-    	len = M_ReadFile(va("%s%s.dat", myargv[i + 1], AName), (byte**)&Progs);
-    }
-    else if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName), progfilename))
+	if (i && i < myargc - 1)
 	{
-    	//	Load PROGS from a specified file
-    	len = M_ReadFile(progfilename, (byte**)&Progs);
+		//	Load PROGS from a specified file
+		len = M_ReadFile(va("%s%s.dat", myargv[i + 1], AName), (byte**)&Progs);
 	}
-    else
-    {
-    	//	Load PROGS from wad file
+	else if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName), progfilename))
+	{
+		//	Load PROGS from a specified file
+		len = M_ReadFile(progfilename, (byte**)&Progs);
+	}
+	else
+	{
+		//	Load PROGS from wad file
 		i =	W_GetNumForName(AName, WADNS_Progs);
 		Progs = (dprograms_t*)W_CacheLumpNum(i, PU_STATIC);
 		len = W_LumpLength(i);
@@ -228,13 +234,13 @@ void TProgs::Load(const char *AName)
 	//	Calcutate CRC
 	crc.Init();
 	for (i = 0; i < len; i++)
-    {
-    	crc + ((byte*)Progs)[i];
-    }
+	{
+		crc + ((byte*)Progs)[i];
+	}
 
 	// byte swap the header
 	for (i = 0; i < (int)sizeof(*Progs) / 4; i++)
-    {
+	{
 		((int *)Progs)[i] = LittleLong(((int *)Progs)[i]);
 	}
 
@@ -250,9 +256,26 @@ void TProgs::Load(const char *AName)
 	DFunctions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
 	DGlobalDefs = (dglobaldef_t *)((byte *)Progs + Progs->ofs_globaldefs);
 	ClassInfo = (dclassinfo_t *)((byte *)Progs + Progs->ofs_classinfo);
+	DVTables = (short*)((byte*)Progs + Progs->ofs_vtables);
+	DPropInfos = (dfield_t*)((byte*)Progs + Progs->ofs_propinfo);
+	DSprNames = (short*)((byte*)Progs + Progs->ofs_sprnames);
+	DMdlNames = (short*)((byte*)Progs + Progs->ofs_mdlnames);
+	DStates = (dstate_t*)((byte*)Progs + Progs->ofs_states);
+	DMobjInfo = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_mobjinfo);
 
 	Functions = Z_CNew<FFunction>(Progs->num_functions);
 	Globaldefs = Z_CNew<FGlobalDef>(Progs->num_globaldefs);
+	VTables = Z_CNew<FFunction*>(Progs->num_vtables);
+	PropInfos = Z_CNew<FPropertyInfo>(Progs->num_propinfo);
+
+	NumSpriteNames = Progs->num_sprnames;
+	SpriteNames = Z_CNew<FName>(NumSpriteNames);
+	NumModelNames = Progs->num_mdlnames;
+	ModelNames = Z_CNew<FName>(NumModelNames);
+	NumStates = Progs->num_states;
+	States = Z_CNew<state_t>(NumStates);
+	NumMobjInfo = Progs->num_mobjinfo;
+	MobjInfo = Z_CNew<mobjinfo_t>(NumMobjInfo);
 
 	// Read names
 	NameRemap = Z_New<FName>(Progs->num_names);
@@ -297,6 +320,15 @@ void TProgs::Load(const char *AName)
 		ClassInfo[i].num_properties = LittleLong(ClassInfo[i].num_properties);
 		ClassInfo[i].ofs_properties = LittleLong(ClassInfo[i].ofs_properties);
 	}
+	for (i = 0; i < Progs->num_vtables; i++)
+	{
+		DVTables[i] = LittleShort(DVTables[i]);
+	}
+	for (i = 0; i < Progs->num_propinfo; i++)
+	{
+		PropInfos[i].Type = LittleShort(DPropInfos[i].type);
+		PropInfos[i].Offset = LittleShort(DPropInfos[i].ofs);
+	}
 
 	//	Setup classes
 	ClassList = Z_CNew<VClass *>(Progs->num_classinfo);
@@ -317,14 +349,12 @@ void TProgs::Load(const char *AName)
 		if (!ClassList[i]->ClassVTable)
 		{
 			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
-			ClassList[i]->ClassVTable = (FFunction **)(Globals +
-				ClassInfo[i].vtable);
+			ClassList[i]->ClassVTable = VTables + ClassInfo[i].vtable;
 		}
 		if (!ClassList[i]->PropertyInfo)
 		{
 			ClassList[i]->NumPropertyInfo = ClassInfo[i].num_properties;
-			ClassList[i]->PropertyInfo = (FPropertyInfo *)(Globals +
-				ClassInfo[i].ofs_properties);
+			ClassList[i]->PropertyInfo = PropInfos + ClassInfo[i].ofs_properties;
 		}
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
@@ -355,6 +385,32 @@ void TProgs::Load(const char *AName)
 		Globaldefs[i].Name = NameRemap[DGlobalDefs[i].name];
 	}
 
+	//	Set up info tables.
+	for (i = 0; i < Progs->num_sprnames; i++)
+	{
+		SpriteNames[i] = NameRemap[LittleShort(DSprNames[i])];
+	}
+	for (i = 0; i < Progs->num_mdlnames; i++)
+	{
+		ModelNames[i] = NameRemap[LittleShort(DMdlNames[i])];
+	}
+	for (i = 0; i < Progs->num_states; i++)
+	{
+		States[i].sprite = LittleShort(DStates[i].sprite);
+		States[i].frame = DStates[i].frame;
+		States[i].model_index = LittleShort(DStates[i].model_index);
+		States[i].model_frame = DStates[i].model_frame;
+		States[i].time = LittleFloat(DStates[i].time);
+		States[i].nextstate = LittleShort(DStates[i].nextstate);
+		States[i].function = &Functions[LittleShort(DStates[i].function)];
+		States[i].statename = NameRemap[LittleShort(DStates[i].statename)];
+	}
+	for (i = 0; i < Progs->num_mobjinfo; i++)
+	{
+		MobjInfo[i].doomednum = LittleShort(DMobjInfo[i].doomednum);
+		MobjInfo[i].class_id = ClassList[LittleShort(DMobjInfo[i].class_id)];
+	}
+
 	//	Setup string pointers in globals
 	byte *globalinfo = (byte*)Progs + Progs->ofs_globalinfo;
 	for (i = 0; i < Progs->num_globals; i++)
@@ -362,16 +418,6 @@ void TProgs::Load(const char *AName)
 		if (globalinfo[i] == GLOBALTYPE_String)
 		{
 			Globals[i] += int(Strings);
-		}
-		if (globalinfo[i] == GLOBALTYPE_Function && Globals[i])
-		{
-#ifdef CHECK_FUNC_NUM
-			if (Globals[i] < 0 || Globals[i] >= Progs->num_functions)
-			{
-				Sys_Error("RunFunction: NULL function");
-			}
-#endif
-			Globals[i] = int(Functions + Globals[i]);
 		}
 		if (globalinfo[i] == GLOBALTYPE_Class)
 		{
@@ -381,6 +427,16 @@ void TProgs::Load(const char *AName)
 		{
 			Globals[i] = NameRemap[Globals[i]].GetIndex();
 		}
+	}
+
+	//	Set up function pointers in vitual tables
+	for (i = 0; i < Progs->num_vtables; i++)
+	{
+		if (DVTables[i] < 0 || DVTables[i] >= Progs->num_functions)
+		{
+			Sys_Error("Virtual table has invalid function number");
+		}
+		VTables[i] = Functions + DVTables[i];
 	}
 
 	//	Set up builtins
@@ -480,13 +536,13 @@ void TProgs::Load(const char *AName)
 #ifdef CHECK_VALID_VAR_NUM
 			if (Statements[i + 1] < 0 || Statements[i + 1] >= Progs->num_globaldefs)
 			{
-		    	Sys_Error("Bad global num %d", Statements[i + 1]);
-	    	}
+				Sys_Error("Bad global num %d", Statements[i + 1]);
+			}
 #endif
 			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].Ofs);
 			break;
 		case OPC_Call:
-		    Statements[i + 1] = (int)(Functions + Statements[i + 1]);
+			Statements[i + 1] = (int)(Functions + Statements[i + 1]);
 			break;
 		case OPC_PushBool:
 		case OPC_AssignBool:
@@ -511,11 +567,17 @@ void TProgs::Load(const char *AName)
 //
 //==========================================================================
 
-void TProgs::Unload(void)
+void TProgs::Unload()
 {
 	Z_Free(Progs);
 	Z_Free(Functions);
 	Z_Free(Globaldefs);
+	Z_Free(VTables);
+	Z_Free(PropInfos);
+	Z_Free(SpriteNames);
+	Z_Free(ModelNames);
+	Z_Free(States);
+	Z_Free(MobjInfo);
 }
 
 //==========================================================================
@@ -2046,9 +2108,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2005/12/07 22:53:26  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.36  2005/11/24 20:06:47  dj_jl
 //	Renamed opcodes.
-//
+//	
 //	Revision 1.35  2005/11/20 15:52:03  dj_jl
 //	Fixes for MacOS X.
 //	

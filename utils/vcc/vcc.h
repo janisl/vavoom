@@ -65,13 +65,11 @@ enum
 	ev_float,
 	ev_name,
 	ev_string,
-	ev_unused_1,
 	ev_pointer,
 	ev_reference,
 	ev_array,
 	ev_struct,
 	ev_vector,
-	ev_unused_2,
 	ev_method,
 	ev_classid,
 	ev_bool,
@@ -372,6 +370,29 @@ public:
 	{}
 };
 
+struct state_t
+{
+	int		sprite;
+	int		frame;
+	int		model_index;
+	int		model_frame;
+	float	time;
+	int		nextstate;
+	int		function;
+	FName	statename;
+};
+
+struct mobjinfo_t
+{
+    int		doomednum;
+	int		class_id;
+};
+
+struct compstate_t
+{
+	FName NextName;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // -- Common --
@@ -496,8 +517,23 @@ extern constant_t		*ConstantsHash[256];
 extern TClass*			classtypes;
 extern int				numclasses;
 
+extern int*				vtables;
+extern int				numvtables;
+
+extern dfield_t*		propinfos;
+extern int				numpropinfos;
+
 extern TStruct*			structtypes;
 extern int				numstructs;
+
+extern TArray<FName>		sprite_names;
+
+extern TArray<FName>		models;
+
+extern TArray<state_t>		states;
+extern TArray<compstate_t>	compstates;
+
+extern TArray<mobjinfo_t>	mobj_info;
 
 extern TType			type_void;
 extern TType			type_int;
@@ -586,9 +622,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/12/07 22:52:55  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.31  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
-//
+//	
 //	Revision 1.30  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	

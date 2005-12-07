@@ -121,10 +121,10 @@ Actor Spawn(classid type, TVec AOrigin)
 
 void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 {
-	int i;
 	int bit;
 	Actor A;
 	int spawnMask;
+	classid moClass;
 
 	if (mthing->type <= 0)
 		return;
@@ -200,18 +200,18 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 		return;
 
 	// find which type to spawn
-	for (i = 0; i < num_mobj_types; i++)
+	moClass = FindClassFromEditorId(mthing->type);
+	if (moClass && moClass != classidNone)
 	{
-		if (mthing->type == mobjinfo[i].doomednum)
-		{
-			// spawn it
-			A = Actor(NewMobjThinker(mobjinfo[i].class_id));
-			A.OnMapSpawn(mthing);
-			return;
-		}
+		// spawn it
+		A = Actor(NewMobjThinker(moClass));
+		A.OnMapSpawn(mthing);
 	}
-	dprint("P_SpawnMapThing: Unknown type %d at (%f, %f)",
-		mthing->type, mthing->x, mthing->y);
+	else
+	{
+		dprint("P_SpawnMapThing: Unknown type %d at (%f, %f)",
+			mthing->type, mthing->x, mthing->y);
+	}
 }
 
 //==========================================================================
@@ -425,6 +425,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.57  2005/12/07 22:54:19  dj_jl
+//  Moved compiler generated data out of globals.
+//
 //  Revision 1.56  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

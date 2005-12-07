@@ -34,26 +34,17 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct state_t
-{
-	int sprite;
-	int frame;
-	int model_index;
-	int model_frame;
-	float time;
-	int nextstate;
-	FFunction *function;
-	FName statename;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static state_t	*GStates;
-static FName	*GSpriteNames;
+static state_t*		GStates;
+static int 			GNumStates;
+static mobjinfo_t*	GMobjInfo;
+static int			GNumMobjTypes;
+static FName*		GSpriteNames;
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -87,7 +78,7 @@ int VEntity::FIndex_GetSigilPieces;
 //
 //==========================================================================
 
-boolean VEntity::SetState(int InState)
+bool VEntity::SetState(int InState)
 {
 	guard(VEntity::SetState);
 	int state = InState;
@@ -122,6 +113,50 @@ boolean VEntity::SetState(int InState)
 	}
 	while (!StateTime);
 	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VEntity::SetInitialState
+//
+//  Returns true if the actor is still present.
+//
+//==========================================================================
+
+void VEntity::SetInitialState(int InState)
+{
+	guard(VEntity::SetInitialState);
+	StateNum = InState;
+	state_t* st = &GStates[InState];
+	StateTime = st->time;
+	SpriteIndex = st->sprite;
+	SpriteName = GSpriteNames[st->sprite];
+	SpriteFrame = st->frame;
+	ModelIndex = st->model_index;
+	ModelFrame = st->model_frame;
+	NextState = st->nextstate;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::FindState
+//
+//==========================================================================
+
+int VEntity::FindState(FName StateName)
+{
+	guard(VEntity::FindState);
+	for (int i = 0; i < GNumStates; i++)
+	{
+		if (GStates[i].statename == StateName)
+		{
+			return i;
+		}
+	}
+	Host_Error("Can't find state %s", *StateName);
+	return 0;
 	unguard;
 }
 
@@ -1523,6 +1558,20 @@ IMPLEMENT_FUNCTION(VEntity, SetState)
 	PR_Push(Self->SetState(state));
 }
 
+IMPLEMENT_FUNCTION(VEntity, SetInitialState)
+{
+	int state = PR_Pop();
+	VEntity *Self = (VEntity *)PR_Pop();
+	Self->SetInitialState(state);
+}
+
+IMPLEMENT_FUNCTION(VEntity, FindState)
+{
+	FName StateName = PR_PopName();
+	VEntity *Self = (VEntity*)PR_Pop();
+	PR_Push(Self->FindState(StateName));
+}
+
 //==========================================================================
 //
 //	Entity.PlaySound
@@ -1788,26 +1837,46 @@ void VEntity::InitFuncIndexes(void)
 //
 //==========================================================================
 
-void EntInit(void)
+void EntInit()
 {
 	svpr.SetGlobal("tmtrace", (int)&tmtrace);
-	GStates = (state_t *)svpr.GlobalAddr("states");
-	GSpriteNames = (FName *)svpr.GlobalAddr("sprite_names");
+	GStates = svpr.States;
+	GNumStates = svpr.NumStates;
+	GMobjInfo = svpr.MobjInfo;
+	GNumMobjTypes = svpr.NumMobjInfo;
+	GSpriteNames = svpr.SpriteNames;
 	VEntity::InitFuncIndexes();
 }
 
 //==========================================================================
 //
-//
+//	SV_FindClassFromEditorId
 //
 //==========================================================================
+
+VClass* SV_FindClassFromEditorId(int Id)
+{
+	guard(SV_FindClassFromEditorId);
+	for (int i = 0; i < GNumMobjTypes; i++)
+	{
+		if (Id == GMobjInfo[i].doomednum)
+		{
+			return GMobjInfo[i].class_id;
+		}
+	}
+	return NULL;
+	unguard;
+}
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2005/12/07 22:53:26  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.15  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
-//
+//	
 //	Revision 1.14  2005/10/18 21:33:13  dj_jl
 //	Fixed ceiling lightninfg.
 //	

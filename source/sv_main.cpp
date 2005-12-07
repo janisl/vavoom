@@ -1935,20 +1935,17 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 static void SV_InitModelLists(void)
 {
 	int i;
-	FName* list;
 
-	numsprites = svpr.GetGlobal("num_sprite_names");
-	list = (FName*)svpr.GlobalAddr("sprite_names");
+	numsprites = svpr.NumSpriteNames;
 	for (i = 0; i < numsprites; i++)
 	{
-		strcpy(sprites[i], *list[i]);
+		strcpy(sprites[i], *svpr.SpriteNames[i]);
 	}
 
-	nummodels = svpr.GetGlobal("num_models");
-	list = (FName*)svpr.GlobalAddr("models");
+	nummodels = svpr.NumModelNames;
 	for (i = 1; i < nummodels; i++)
 	{
-		strcpy(models[i], *list[i]);
+		strcpy(models[i], *svpr.ModelNames[i]);
 	}
 
 	numskins = 1;
@@ -3005,9 +3002,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.73  2005/12/07 22:53:26  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.72  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.71  2005/11/19 13:45:13  dj_jl
 //	Renamed sounds.
 //	

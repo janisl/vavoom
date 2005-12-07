@@ -451,27 +451,6 @@ Entity FindMobjFromTID(int tid, int *searchPosition)
 	return none;
 }
 
-//==========================================================================
-//
-//	FindState
-//
-//==========================================================================
-
-int FindState(name StateName)
-{
-	int i;
-
-	for (i = 0; i < num_states; i++)
-	{
-		if (states[i].statename == StateName)
-		{
-			return i;
-		}
-	}
-	Error("Can't find state %n", StateName);
-	return 0;
-}
-
 //**************************************************************************
 //**
 //**    Special thinker utilites.
@@ -1397,6 +1376,9 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2005/12/07 22:54:17  dj_jl
+//  Moved compiler generated data out of globals.
+//
 //  Revision 1.37  2005/05/29 11:29:29  dj_jl
 //  Fixed moving extrafloors
 //

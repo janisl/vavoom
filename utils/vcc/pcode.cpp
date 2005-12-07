@@ -36,6 +36,8 @@
 #define	MAX_STRINGS_BUF			500000
 #define MAX_CLASSES				1024
 #define MAX_STRUCTS				1024
+#define	MAX_VTABLES				(128 * 1024)
+#define	MAX_PROPINFOS			1024
 
 #define OPCODE_STATS
 
@@ -90,6 +92,21 @@ int				numclasses;
 
 TStruct*		structtypes;
 int				numstructs;
+
+int*			vtables;
+int				numvtables;
+
+dfield_t*		propinfos;
+int				numpropinfos;
+
+TArray<FName>		sprite_names;
+
+TArray<FName>		models;
+
+TArray<state_t>		states;
+TArray<compstate_t>	compstates;
+
+TArray<mobjinfo_t>	mobj_info;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -176,6 +193,14 @@ void PC_Init(void)
 	numclasses = 1;
 	classtypes[0].Name = NAME_Object;
 	classtypes[0].Size = -1;
+
+	//	Virtual tables
+	vtables = new int[MAX_VTABLES];
+	memset(vtables, 0, MAX_VTABLES * 4);
+
+	//	Property info
+	propinfos = new dfield_t[MAX_PROPINFOS];
+	memset(propinfos, 0, MAX_PROPINFOS * sizeof(dfield_t));
 }
 
 //==========================================================================
@@ -408,9 +433,10 @@ void BeginCode(int)
 
 void EndCode(int FuncNum)
 {
+	int i;
 	functions[FuncNum].FirstStatement = CodeBufferSize;
 
-	for (int i = 0; i < NumInstructions; i++)
+	for (i = 0; i < NumInstructions; i++)
 	{
 		Instructions[i].Address = CodeBufferSize;
 		CodeBuffer[CodeBufferSize++] = Instructions[i].Opcode;
@@ -424,7 +450,7 @@ void EndCode(int FuncNum)
 	}
 	Instructions[NumInstructions].Address = CodeBufferSize;
 
-	for (int i = 0; i < NumInstructions; i++)
+	for (i = 0; i < NumInstructions; i++)
 	{
 		switch (Instructions[i].Opcode)
 		{
@@ -458,6 +484,24 @@ static void WriteCode()
 //	{
 //		DumpAsmFunction(i);
 //	}
+}
+
+//==========================================================================
+//
+//	LittleFloat
+//
+//==========================================================================
+
+float LittleFloat(float f)
+{
+	union
+	{
+		int i;
+		float f;
+	} fi;
+	fi.f = f;
+	fi.i = LittleLong(fi.i);
+	return fi.f;
 }
 
 //==========================================================================
@@ -501,6 +545,14 @@ void PC_WriteObject(char *name)
 	if (strofs >= MAX_STRINGS_BUF)
 	{
 		ERR_Exit(ERR_NONE, false, "Strings buffer overflow");
+	}
+	if (numvtables >= MAX_VTABLES)
+	{
+		ERR_Exit(ERR_NONE, false, "VTables overflow");
+	}
+	if (numpropinfos >= MAX_PROPINFOS)
+	{
+		ERR_Exit(ERR_NONE, false, "Property infos overflow");
 	}
 
 	f = fopen(name, "wb");
@@ -588,6 +640,69 @@ void PC_WriteObject(char *name)
 		fwrite(&ci, 1, sizeof(ci), f);
 	}
 
+	progs.ofs_vtables = ftell(f);
+	progs.num_vtables = numvtables;
+	for (i = 0; i < numvtables; i++)
+	{
+		short gv;
+		gv = LittleShort(vtables[i]);
+		fwrite(&gv, 1, 2, f);
+	}
+
+	progs.ofs_propinfo = ftell(f);
+	progs.num_propinfo = numpropinfos;
+	for (i = 0; i < numpropinfos; i++)
+	{
+		dfield_t pi;
+		pi.type = LittleShort(propinfos[i].type);
+		pi.ofs = LittleShort(propinfos[i].ofs);
+		fwrite(&pi, 1, sizeof(dfield_t), f);
+	}
+
+	progs.ofs_sprnames = ftell(f);
+	progs.num_sprnames = sprite_names.Num();
+	for (i = 0; i < sprite_names.Num(); i++)
+	{
+		short n;
+		n = LittleShort(sprite_names[i].GetIndex());
+		fwrite(&n, 1, 2, f);
+	}
+
+	progs.ofs_mdlnames = ftell(f);
+	progs.num_mdlnames = models.Num();
+	for (i = 0; i < models.Num(); i++)
+	{
+		short n;
+		n = LittleShort(models[i].GetIndex());
+		fwrite(&n, 1, 2, f);
+	}
+
+	progs.ofs_states = ftell(f);
+	progs.num_states = states.Num();
+	for (i = 0; i < states.Num(); i++)
+	{
+		dstate_t s;
+		s.sprite = LittleShort(states[i].sprite);
+		s.frame = (byte)states[i].frame;
+		s.model_index = LittleShort(states[i].model_index);
+		s.model_frame = (byte)states[i].model_frame;
+		s.time = LittleFloat(states[i].time);
+		s.nextstate = LittleShort(states[i].nextstate);
+		s.function = LittleShort(states[i].function);
+		s.statename = LittleShort(states[i].statename.GetIndex());
+		fwrite(&s, 1, sizeof(dstate_t), f);
+	}
+
+	progs.ofs_mobjinfo = ftell(f);
+	progs.num_mobjinfo = mobj_info.Num();
+	for (i = 0; i < mobj_info.Num(); i++)
+	{
+		dmobjinfo_t m;
+		m.doomednum = LittleShort(mobj_info[i].doomednum);
+		m.class_id = LittleShort(mobj_info[i].class_id);
+		fwrite(&m, 1, sizeof(dmobjinfo_t), f);
+	}
+
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", FName::GetMaxNames(), progs.ofs_strings - progs.ofs_names);
@@ -599,7 +714,13 @@ void PC_WriteObject(char *name)
 	dprintf("Builtins   %6d\n", numbuiltins);
 	dprintf("Globaldefs %6d %6ld\n", numglobaldefs, numglobaldefs * sizeof(dglobaldef_t));
 	dprintf("Class info %6d %6ld\n", numclasses, numclasses * sizeof(dclassinfo_t));
-	dprintf("TOTAL SIZE        %6d\n", (int)ftell(f));
+	dprintf("VTables    %6d %6d\n", numvtables, numvtables * 2);
+	dprintf("Prop info  %6d %6d\n", numpropinfos, numpropinfos * sizeof(dfield_t));
+	dprintf("Spr names  %6d %6d\n", sprite_names.Num(), sprite_names.Num() * 2);
+	dprintf("Mdl names  %6d %6d\n", models.Num(), models.Num() * 2);
+	dprintf("States     %6d %6d\n", states.Num(), states.Num() * sizeof(dstate_t));
+	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), mobj_info.Num() * sizeof(dmobjinfo_t));
+	dprintf("TOTAL SIZE       %7d\n", (int)ftell(f));
 
 	memcpy(progs.magic, PROG_MAGIC, 4);
 	progs.version = PROG_VERSION;
@@ -734,9 +855,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2005/12/07 22:52:55  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.23  2005/11/30 23:55:05  dj_jl
 //	Directly use with-drop statements.
-//
+//	
 //	Revision 1.22  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
 //	

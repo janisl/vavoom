@@ -198,6 +198,24 @@ struct dprograms_t
 
 	int		ofs_classinfo;
 	int		num_classinfo;
+
+	int		ofs_vtables;
+	int		num_vtables;
+
+	int		ofs_propinfo;
+	int		num_propinfo;
+
+	int		ofs_sprnames;
+	int		num_sprnames;
+
+	int		ofs_mdlnames;
+	int		num_mdlnames;
+
+	int		ofs_states;
+	int		num_states;
+
+	int		ofs_mobjinfo;
+	int		num_mobjinfo;
 };
 
 enum
@@ -208,9 +226,8 @@ enum
 enum
 {
 	GLOBALTYPE_String = 1,
-	GLOBALTYPE_Function = 2,
-	GLOBALTYPE_Class = 3,
-	GLOBALTYPE_Name = 4
+	GLOBALTYPE_Class = 2,
+	GLOBALTYPE_Name = 3
 };
 
 struct dfunction_t
@@ -243,8 +260,26 @@ struct dclassinfo_t
 
 struct dfield_t
 {
-	int		type;
-	int		ofs;
+	short	type;
+	short	ofs;
+};
+
+struct dstate_t
+{
+	short			sprite;
+	short			model_index;
+	unsigned char	frame;
+	unsigned char	model_frame;
+	short			nextstate;
+	float			time;
+	short			function;
+	short			statename;
+};
+
+struct dmobjinfo_t
+{
+	short	doomednum;
+	short	class_id;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -256,9 +291,12 @@ struct dfield_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/12/07 22:53:26  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.20  2005/11/24 20:06:47  dj_jl
 //	Renamed opcodes.
-//
+//	
 //	Revision 1.19  2005/03/28 07:49:56  dj_jl
 //	Changed version number.
 //	

@@ -233,15 +233,7 @@ void OnMapSpawn(mthing_t * mthing)
 	LastLook = P_Random() % MAXPLAYERS;
 	// do not set the state with P_SetMobjState,
 	// because action routines can not be called yet
-	StateNum = IdleState;
-	st = &states[StateNum];
-	StateTime = st->time;
-	SpriteIndex = st->sprite;
-	SpriteName = sprite_names[st->sprite];
-	SpriteFrame = st->frame;
-	ModelIndex = st->model_index;
-	ModelFrame = st->model_frame;
-	NextState = st->nextstate;
+	SetInitialState(IdleState);
 
 	if (mthing)
 	{
@@ -2760,6 +2752,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2005/12/07 22:54:19  dj_jl
+//  Moved compiler generated data out of globals.
+//
 //  Revision 1.19  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

@@ -58,6 +58,7 @@ VEntity *SV_SpawnMobj(VClass *Class);
 void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
+VClass* SV_FindClassFromEditorId(int Id);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -2411,6 +2412,21 @@ PF(FindSkin)
 	name = (char*)Pop();
 	Push(SV_FindSkin(name));
 }
+
+//==========================================================================
+//
+//	PF_FindClassFromEditorId
+//
+//==========================================================================
+
+PF(FindClassFromEditorId)
+{
+	int		Id;
+
+	Id = Pop();
+	Push((int)SV_FindClassFromEditorId(Id));
+}
+
 #endif
 #ifdef CLIENT
 
@@ -3359,6 +3375,7 @@ builtin_info_t BuiltinInfo[] =
 	_(FindModel),
 	_(GetModelIndex),
 	_(FindSkin),
+	_(FindClassFromEditorId),
 	_(MSG_SelectClientMsg),
 #endif
 	{NULL, NULL, NULL}
@@ -3367,9 +3384,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.63  2005/12/07 22:53:26  dj_jl
+//	Moved compiler generated data out of globals.
+//
 //	Revision 1.62  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.61  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	
