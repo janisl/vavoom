@@ -42,38 +42,9 @@ void AfterUnarchiveThinkers()
 
 void G_InitNew(int skill)
 {
-	int i;
-
 	respawnmonsters = skill == sk_nightmare || GetCvar("RespawnMonsters");
 	nomonsters = GetCvar("NoMonsters");
 	fastparm = skill == sk_nightmare || GetCvar("Fast");
-
-#ifndef DDF
-	if (fastparm && (GetCvar("Fast") || gameskill != sk_nightmare))
-	{
-		for (i = S_SARG_RUN1; i <= S_SARG_PAIN2; i++)
-		{
-			states[i].time /= 2.0;
-		}
-#ifdef FIXME
-		mobjinfo[MT_BRUISERSHOT].speed = 700.0;
-		mobjinfo[MT_HEADSHOT].speed = 700.0;
-		mobjinfo[MT_TROOPSHOT].speed = 700.0;
-#endif
-	}
-	else if (skill != sk_nightmare && gameskill == sk_nightmare)
-	{
-		for (i = S_SARG_RUN1; i <= S_SARG_PAIN2; i++)
-		{
-			states[i].time *= 2.0;
-		}
-#ifdef FIXME
-		mobjinfo[MT_BRUISERSHOT].speed = 525.0;
-		mobjinfo[MT_HEADSHOT].speed = 350.0;
-		mobjinfo[MT_TROOPSHOT].speed = 350.0;
-#endif
-	}
-#endif
 }
 
 //==========================================================================
@@ -114,6 +85,9 @@ void main()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/12/07 19:57:30  dj_jl
+//  Fixed fastparam.
+//
 //  Revision 1.6  2004/11/01 07:38:21  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //
