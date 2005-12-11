@@ -46,7 +46,7 @@ void A_FireShotgun2()
 
 	Player.SetPsprite(ps_flash, FlashState);
 
-	aimDir = Aim(Player.MO, 16.0 * 64.0);
+	aimDir = Player.MO.Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -54,7 +54,7 @@ void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		LineAttack(Player.MO, dir, MISSILERANGE, damage);
+		Player.MO.LineAttack(dir, MISSILERANGE, damage);
 	}
 	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -128,6 +128,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.5  2005/11/18 20:17:44  dj_jl
 //  Fixed super shotgun sounds.
 //

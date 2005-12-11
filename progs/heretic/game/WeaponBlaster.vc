@@ -38,14 +38,14 @@ void A_FireBlasterPL1()
 	TVec dir;
 
 	Player.Ammo[am_blaster] -= USE_BLSR_AMMO_1;
-	dir = Aim(Player.MO, Player.MO.Angles.yaw, 16.0 * 64.0);
+	dir = Player.MO.Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
 	damage = HITDICE(4);
 	if (Player.Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
 	PuffType = BlasterPuff1;
-	LineAttack(Player.MO, dir, MISSILERANGE, damage);
+	Player.MO.LineAttack(dir, MISSILERANGE, damage);
 	Player.MO.PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.3  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

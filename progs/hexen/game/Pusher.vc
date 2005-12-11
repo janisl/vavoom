@@ -146,6 +146,45 @@ void ChangeValues(int magnitude, int angle)
 
 //==========================================================================
 //
+//	PIT_PushThing
+//
+// PIT_PushThing determines the angle and magnitude of the effect.
+// The object's x and y momentum values are changed.
+//
+//==========================================================================
+
+bool PIT_PushThing(Actor thing)
+{
+	float sx;
+	float sy;
+	float dist;
+	float speed;
+	float pushangle;
+
+	if (thing.bWindThrust && thing.bColideWithWorld)
+	{
+		sx = X;
+		sy = Y;
+		dist = Length(vector(thing.Origin.x - sx, thing.Origin.y - sy, 0.0));
+		speed = itof(Magnitude - (ftoi(dist) >> 1)) / (2.0 * PUSH_FACTOR);
+
+		// If speed <= 0, you're outside the effective radius. You also have
+		// to be able to see the push/pull source point.
+
+		if ((speed > 0.0) && thing.CanSee(Source))
+		{
+			pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
+			if (PointPusher(Source))
+				pushangle += 180.0;    // away
+			thing.Velocity.x += speed * cos(pushangle) * 35.0 * frametime;
+			thing.Velocity.y += speed * sin(pushangle) * 35.0 * frametime;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
 //	Tick
 //
 //	Looks for all objects that are inside the radius of the effect.
@@ -195,8 +234,6 @@ void Tick(float DeltaTime)
 	{
 		// Seek out all pushable things within the force radius of this
 		// point pusher. Crosses sectors, so use blockmap.
-		tmpusher = self; // MT_PUSH/MT_PULL point source
-
 		xl = MapBlock(X - Radius - XLevel.BlockMapOrgX - MAXRADIUS);
 		xh = MapBlock(X + Radius - XLevel.BlockMapOrgX + MAXRADIUS);
 		yl = MapBlock(Y - Radius - XLevel.BlockMapOrgY - MAXRADIUS);
@@ -204,7 +241,7 @@ void Tick(float DeltaTime)
 
 		for (bx = xl; bx <= xh; bx++)
 			for (by = yl; by <= yh; by++)
-				P_BlockThingsIterator(bx, by, 'PIT_PushThing');
+				P_BlockThingsIterator(bx, by, self, 'PIT_PushThing');
 		return;
 	}
 
@@ -303,6 +340,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.1  2005/06/04 13:49:47  dj_jl
 //  Added pusher specials.
 //

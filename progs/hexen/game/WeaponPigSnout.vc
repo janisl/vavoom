@@ -41,11 +41,11 @@ void A_SnoutAttack(void)
 
 	damage = 3 + (P_Random() & 3);
 	angles = Player.MO.Angles;
-	AimLineAttack(Player.MO, &angles, MELEERANGE);
+	Player.MO.AimLineAttack(&angles, MELEERANGE);
 	PuffType = SnoutPuff;
 	PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	LineAttack(Player.MO, vforward, MELEERANGE, damage);
+	Player.MO.LineAttack(vforward, MELEERANGE, damage);
 	Player.MO.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (linetarget)
@@ -95,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

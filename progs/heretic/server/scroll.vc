@@ -185,51 +185,6 @@ void SpawnScrollTextureModel(line_t* Line)
 
 //==========================================================================
 //
-//	PIT_PushThing
-//
-// PIT_PushThing determines the angle and magnitude of the effect.
-// The object's x and y momentum values are changed.
-//
-// tmpusher belongs to the point source (MT_PUSH/MT_PULL).
-//
-//==========================================================================
-
-class Pusher;
-
-Pusher tmpusher; // pusher structure for blockmap searches
-
-bool PIT_PushThing(Actor thing)
-{
-	float sx;
-	float sy;
-	float dist;
-	float speed;
-	float pushangle;
-
-	if (thing.bWindThrust && thing.bColideWithWorld)
-	{
-		sx = tmpusher.X;
-		sy = tmpusher.Y;
-		dist = Length(vector(thing.Origin.x - sx, thing.Origin.y - sy, 0.0));
-		speed = itof(tmpusher.Magnitude - (ftoi(dist) >> 1)) / (2.0 * tmpusher.PUSH_FACTOR);
-
-		// If speed <= 0, you're outside the effective radius. You also have
-		// to be able to see the push/pull source point.
-
-		if ((speed > 0.0) && thing.CanSee(tmpusher.Source))
-		{
-			pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
-			if (PointPusher(tmpusher.Source))
-				pushangle += 180.0;    // away
-			thing.Velocity.x += speed * cos(pushangle) * 35.0 * frametime;
-			thing.Velocity.y += speed * sin(pushangle) * 35.0 * frametime;
-		}
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	P_GetPushThing
 //
 //	Returns a pointer to an MT_PUSH or MT_PULL thing, NULL otherwise.
@@ -390,6 +345,9 @@ bool AdjustPusher(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.5  2005/06/04 13:48:47  dj_jl
 //  Added pusher specials.
 //

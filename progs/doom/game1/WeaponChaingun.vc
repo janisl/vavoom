@@ -45,7 +45,7 @@ void A_FireCGun()
 
 	Player.SetPsprite(ps_flash, FlashState + StateNum - AttackState);
 
-	dir = Aim(Player.MO, 16.0 * 64.0);
+	dir = Player.MO.Aim(16.0 * 64.0);
 	GunShot(Player.MO, !Player.Refire, dir);
 	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -76,6 +76,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

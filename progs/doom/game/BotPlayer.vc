@@ -65,6 +65,9 @@ float combatdist[NUMWEAPONS + 1]; //different for each weapon.
 
 float angle;			// The wanted angle that the bot tries to get every tic.
 
+float bottracerange;
+TVec bottracedir;
+
 //==========================================================================
 //
 //	BotTick
@@ -450,6 +453,159 @@ int AmmoFromItem(Actor item)
 
 //==========================================================================
 //
+//	IsDangerous
+//
+//	Checks if a sector is dangerous.
+//
+//==========================================================================
+
+bool IsDangerous(sector_t *sec)
+{
+	int special = sec->special & ~SECSPEC_SECRET_MASK;
+
+	switch (special)
+	{
+		case 64 + 5:
+		case 64 + 7:
+		case 64 + 16:
+		case 64 + 4:
+		case 64 + 11:
+			return true;
+		default:
+			// [RH] Ignore unknown specials
+			break;
+	}
+	switch (special & SECSPEC_DAMAGE_MASK)
+	{
+		case 0x100: // 2/5 damage per 31 ticks
+		case 0x200: // 5/10 damage per 31 ticks
+		case 0x300: // 10/20 damage per 31 ticks
+			return true;
+		default:
+			break;
+	}
+
+//	if (sec->damage)
+//		return true;
+
+	return false;
+}
+
+//==========================================================================
+//
+//	PTR_BotPathTraverse
+//
+//	[BC] For the bots
+//
+//==========================================================================
+
+bool PTR_BotPathTraverse(intercept_t *in)
+{
+	Actor th;
+	line_t *ld;
+	TVec hit_point;
+
+	if (in->bIsALine)
+	{
+		sector_t *back;
+		sector_t *front;
+		opening_t *open;
+		float diffheight;
+
+		ld = in->line;					// This linedef
+		hit_point = botmo.Origin + (bottracerange * in->frac) * bottracedir;
+
+		// Line is impassible
+		if (!(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKING))
+			return false;
+
+		// Line isn't two sided
+		if (!ld->backsector)
+			return false;
+
+		if (!PointOnPlaneSide(botmo.Origin, ld))
+		{
+			back = ld->backsector;
+			front = ld->frontsector;
+		}
+		else
+		{
+			back = ld->frontsector;
+			front = ld->backsector;
+		}
+
+		// Sector is dangerous
+		if (IsDangerous(back))
+			return false;
+
+		// crosses a two sided line
+		open = LineOpenings(ld, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + botmo.Height);
+		// No valid openings
+		if (!open)
+		{
+			return false;
+		}
+
+		// No cliff jumping unless we're going after something
+		if ((front->floorheight - back->floorheight) > 32.0 && !enemy)
+		{
+			return false;
+		}
+
+		diffheight = back->floorheight - front->floorheight;
+		
+		if (diffheight > 0.0)
+		{
+			if (diffheight > 48.0)
+			{
+/*				if (front->SSpecial == ThrustThingZ || front->springpadzone)
+				{
+					if (P_GetPlayerNum(bot->player) == displayplayer && netstate != NS_SERVER)
+						Printf (PRINT_HIGH, "B_CheckPath: Bouncy sector, should be okay\n");
+					return true;
+				}
+				else*/
+					return false;
+			}
+			else if (diffheight <= 48.0 && diffheight >= 24.0)
+			{
+				botmo.Player.Buttons |= BT_JUMP;
+			}
+		}
+
+		return true;
+	}
+
+	th = Actor(in->Thing);
+
+	if (th == botmo)
+		return true;
+
+	if (th.bSolid)
+		return false;
+
+/*	fixed_t diffheight = (th->z + th->Height) - shootthing->z;
+
+	if (diffheight > 0)
+	{
+		if (diffheight <= 48*FRACUNIT && diffheight >= 24*FRACUNIT)
+		{
+			bot->player->cmd.ucmd.buttons |= BT_JUMP;
+			return true;
+		}
+		else if (diffheight <= 24*FRACUNIT)
+			return true;
+		else
+			return false;
+				
+	}
+*/
+	return true;
+}
+
+//==========================================================================
+//
 //	CheckPath
 //
 //	Checks for obstructions at a certain angle and distance. Returns true if
@@ -469,11 +625,10 @@ bool CheckPath(float ang, float dist)
 	y1 = botmo.Origin.y;
  	x2 = x1 + dist * bottracedir.x;
  	y2 = y1 + dist * bottracedir.y;
-	usething = botmo;
 
-	P_UseLines(player);
+	player.P_UseLines();
 
-	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, 'PTR_BotPathTraverse'))
+	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_BotPathTraverse'))
 		return false;
 	else
 		return true;
@@ -1214,6 +1369,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2005/11/30 23:51:22  dj_jl
 //  Simplified detecttion.
 //

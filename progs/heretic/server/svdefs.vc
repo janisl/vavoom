@@ -213,6 +213,8 @@ enum
 #define MONS_LOOK_RANGE (20.0 * 64.0)
 #define MONS_LOOK_LIMIT 64
 
+#define USERANGE	64.0
+
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -448,6 +450,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.38  2003/11/12 16:49:44  dj_jl
 //  Changed player structure into a class
 //

@@ -1749,7 +1749,7 @@ void PlayerTick(float deltaTime)
 	{
 		if (!bUseDown)
 		{
-			P_UseLines(self);
+			P_UseLines();
 			bUseDown = true;
 		}
 	}
@@ -1977,7 +1977,7 @@ Actor SpawnPlayerMissile(classid type)
 	TVec dir;
 
 	// see which target is to be aimed at
-	dir = Aim(MO, 16.0 * 64.0);
+	dir = MO.Aim(16.0 * 64.0);
 
 	A = Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
 
@@ -2007,7 +2007,7 @@ Actor SpawnPlayerMissileAngle(classid type, float angle)
 	TVec dir;
 
 	// see which target is to be aimed at
-	dir = AimAngle(MO, 16.0 * 64.0, angle);
+	dir = MO.AimAngle(16.0 * 64.0, angle);
 
 	A = Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
 
@@ -2268,6 +2268,127 @@ void FireWeapon()
 		P_NoiseAlert(MO, MO);
 }
 
+//**************************************************************************
+//
+//  USE LINES
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  PTR_UseThingTraverse
+//
+//==========================================================================
+
+bool PTR_UseThingTraverse(intercept_t * in)
+{
+	TVec hit_point;
+	opening_t *open;
+	TVec useDir;
+
+	if (!in->bIsALine)
+	{
+		//	Check height.
+		if (MO.Origin.z >= in->Thing.Origin.z + in->Thing.Height ||
+			MO.Origin.z + MO.Height <= in->Thing.Origin.z)
+		{
+			return true;
+		}
+		if (StartConversation(MO, Actor(in->Thing)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	if (!(in->line->flags & ML_TWOSIDED))
+		return false;	// stop
+
+	AngleVector(&MO.Angles, &useDir);
+	hit_point = MO.Origin + (USETHINGRANGE * in->frac) * useDir;
+	open = LineOpenings(in->line, hit_point);
+	open = FindOpening(open, hit_point.z, hit_point.z + MO.Height);
+	if (!open || open->range < 1.0)
+	{
+		// can't use through a wall
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  PTR_UseTraverse
+//
+//==========================================================================
+
+bool PTR_UseTraverse(intercept_t * in)
+{
+	if (!in->line->special || (GET_SPAC(in->line->flags) != SPAC_USE &&
+		GET_SPAC(in->line->flags) != SPAC_USETHROUGH))
+	{
+		TVec hit_point;
+		opening_t *open;
+		TVec useDir;
+
+		AngleVector(&MO.Angles, &useDir);
+		hit_point = MO.Origin + (USERANGE * in->frac) * useDir;
+		open = LineOpenings(in->line, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + MO.Height);
+		if (!open)
+		{
+			MO.PlaySound('*usefail', CHAN_VOICE);
+
+			// can't use through a wall
+			return false;
+		}
+		// not a special line, but keep checking
+		return true;
+	}
+
+	if (PointOnPlaneSide(MO.Origin, in->line) == 1)
+	{
+		//	Don't use back side unless it's a two-sided line.
+		return in->line->backsector != NULL;
+	}
+
+	P_ActivateLine(in->line, MO, 0, SPAC_USE);
+
+	//WAS can't use more than one special line in a row
+	//jff 3/21/98 NOW multiple use allowed with enabling line flag
+	return GET_SPAC(in->line->flags) == SPAC_USETHROUGH;
+}
+
+//==========================================================================
+//
+//  P_UseLines
+//
+//  Looks for special lines in front of the player to activate.
+//
+//==========================================================================
+
+void P_UseLines()
+{
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+	TVec useDir;
+
+	AngleVector(&MO.Angles, &useDir);
+	x1 = MO.Origin.x;
+	y1 = MO.Origin.y;
+
+	x2 = x1 + USETHINGRANGE * useDir.x;
+	y2 = y1 + USETHINGRANGE * useDir.y;
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
+		self, 'PTR_UseThingTraverse');
+
+	x2 = x1 + USERANGE * useDir.x;
+	y2 = y1 + USERANGE * useDir.y;
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
+}
+
 //==========================================================================
 //
 //  Cheat_God
@@ -2386,6 +2507,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.19  2005/11/24 20:16:24  dj_jl
 //  Removed unused fields from Object class.
 //

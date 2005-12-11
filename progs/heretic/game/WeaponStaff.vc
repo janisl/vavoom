@@ -63,15 +63,15 @@ void A_StaffAttackPL1()
 	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player.MO, angles, MELEERANGE);
+	dir = Player.MO.AimLineAttack(angles, MELEERANGE);
 	PuffType = StaffPuff;
-	LineAttack(Player.MO, dir, MELEERANGE, damage);
-	if (linetarget)
+	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	if (Player.MO.linetarget)
 	{
 		// turn to face target
 		Player.MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player.MO.Origin.y,
-			linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
+			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 }
@@ -94,15 +94,15 @@ void A_StaffAttackPL2()
 	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player.MO, angles, MELEERANGE);
+	dir = Player.MO.AimLineAttack(angles, MELEERANGE);
 	PuffType = StaffPuff2;
-	LineAttack(Player.MO, dir, MELEERANGE, damage);
-	if (linetarget)
+	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	if (Player.MO.linetarget)
 	{
 		// turn to face target
 		Player.MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player.MO.Origin.y,
-			linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
+			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 }
@@ -152,6 +152,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.3  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

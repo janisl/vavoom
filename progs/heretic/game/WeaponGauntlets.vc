@@ -82,9 +82,9 @@ void A_GauntletAttack()
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	dir = AimLineAttack(Player.MO, angles, dist);
-	LineAttack(Player.MO, dir, dist, damage);
-	if (!linetarget)
+	dir = Player.MO.AimLineAttack(angles, dist);
+	Player.MO.LineAttack(dir, dist, damage);
+	if (!Player.MO.linetarget)
 	{
 		if (P_Random() > 64)
 		{
@@ -116,8 +116,8 @@ void A_GauntletAttack()
 		Player.MO.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(linetarget.Origin.y - Player.MO.Origin.y,
-		linetarget.Origin.x - Player.MO.Origin.x);
+	angle = atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
+		Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
 	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Player.MO.Angles.yaw) < 360.0 - 90.0 / 20.0)
@@ -180,6 +180,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

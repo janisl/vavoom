@@ -115,6 +115,8 @@ float LastHazardTime;
 
 BotPlayer Bot;
 
+TVec useDir;
+
 //==========================================================================
 //
 //	PutClientIntoServer
@@ -2167,7 +2169,7 @@ void PlayerTick(float deltaTime)
 	{
 		if (!bUseDown)
 		{
-			P_UseLines(self);
+			P_UseLines();
 			bUseDown = true;
 		}
 	}
@@ -2738,7 +2740,7 @@ bool UseArtifact(int arti)
 	case arti_puzzgear2:
 	case arti_puzzgear3:
 	case arti_puzzgear4:
-		if (P_UsePuzzleItem(self, arti - arti_firstpuzzitem))
+		if (UsePuzzleItem(arti - arti_firstpuzzitem))
 		{
 			return true;
 		}
@@ -3036,15 +3038,15 @@ Actor SpawnPlayerMissile(classid type)
 
 	// Try to find a target
 	angles = MO.Angles;
-	AimLineAttack(MO, &angles, 16.0 * 64.0);
+	MO.AimLineAttack(&angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(MO, &angles, 16.0 * 64.0);
+		MO.AimLineAttack(&angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(MO, &angles, 16.0 * 64.0);
+			MO.AimLineAttack(&angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = MO.Angles.yaw;
@@ -3110,15 +3112,15 @@ Actor SpawnPlayerMissileAngle(classid type, float angle)
 	//
 	angles = MO.Angles;
 	angles.yaw = angle;
-	AimLineAttack(MO, &angles, 16.0 * 64.0);
+	MO.AimLineAttack(&angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(MO, &angles, 16.0 * 64.0);
+		MO.AimLineAttack(&angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(MO, &angles, 16.0 * 64.0);
+			MO.AimLineAttack(&angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = angle;
@@ -3153,15 +3155,15 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
 	//
 	angles = MO.Angles;
 	angles.yaw = angle;
-	AimLineAttack(MO, &angles, 16.0 * 64.0);
+	MO.AimLineAttack(&angles, 16.0 * 64.0);
 	if (!linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		AimLineAttack(MO, &angles, 16.0 * 64.0);
+		MO.AimLineAttack(&angles, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			AimLineAttack(MO, &angles, 16.0 * 64.0);
+			MO.AimLineAttack(&angles, 16.0 * 64.0);
 			if (!linetarget)
 			{
 				angles.yaw = angle;
@@ -3424,6 +3426,194 @@ void PostMorphWeapon(int weapon)
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
 }
 
+//**************************************************************************
+//
+//  USE LINES
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  PTR_UseTraverse
+//
+//==========================================================================
+
+bool PTR_UseTraverse(intercept_t * in)
+{
+	line_t* line;
+	float pheight;
+	TVec hit_point;
+	opening_t *open;
+
+	line = in->line;
+	if (!line->special || (GET_SPAC(line->flags) != SPAC_USE &&
+		GET_SPAC(line->flags) != SPAC_USETHROUGH))
+	{
+		hit_point = MO.Origin + (USERANGE * in->frac) * useDir;
+		open = LineOpenings(line, hit_point);
+		open = FindOpening(open, hit_point.z + MO.Height / 2.0,
+			hit_point.z + MO.Height);
+		if (!open)
+		{
+			if (MorphTime)
+			{
+				MO.PlaySound('PigActive1', CHAN_VOICE);
+			}
+			else
+			{
+				MO.PlaySound('*usefail', CHAN_VOICE);
+			}
+			return false;	// can't use through a wall
+		}
+		pheight = MO.Origin.z + MO.Height / 2.0;
+		if ((open->top < pheight) || (open->bottom > pheight))
+		{
+			if (MorphTime)
+			{
+				MO.PlaySound('PigActive1', CHAN_VOICE);
+			}
+			else
+			{
+				MO.PlaySound('*usefail', CHAN_VOICE);
+			}
+		}
+		return true;	// not a special line, but keep checking
+	}
+
+	if (PointOnPlaneSide(MO.Origin, line) == 1)
+	{
+		//	Don't use back side unless it's a two-sided line.
+		return line->backsector != NULL;
+	}
+
+	P_ActivateLine(line, MO, 0, SPAC_USE);
+
+	//WAS can't use more than one special line in a row
+	//jff 3/21/98 NOW multiple use allowed with enabling line flag
+	return GET_SPAC(line->flags) == SPAC_USETHROUGH;
+}
+
+//==========================================================================
+//
+//  P_UseLines
+//
+//  Looks for special lines in front of the player to activate.
+//
+//==========================================================================
+
+void P_UseLines()
+{
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+
+	AngleVector(&MO.Angles, &useDir);
+	x1 = MO.Origin.x;
+	y1 = MO.Origin.y;
+	x2 = x1 + USERANGE * useDir.x;
+	y2 = y1 + USERANGE * useDir.y;
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
+}
+
+//**************************************************************************
+//
+//  USING A PUZZLE ITEM
+//
+//**************************************************************************
+
+int PuzzleItemType;
+bool PuzzleActivated;
+TVec PuzzleUseDir;
+
+//==========================================================================
+//
+// PTR_PuzzleItemTraverse
+//
+//==========================================================================
+
+bool PTR_PuzzleItemTraverse(intercept_t * in)
+{
+	Actor mobj;
+	TVec hit_point;
+	opening_t *open;
+
+	if (in->bIsALine)
+	{
+		// Check line
+		hit_point = MO.Origin + (USERANGE * in->frac) * PuzzleUseDir;
+		if (in->line->special != LNSPEC_UsePuzzleItem)
+		{
+			open = LineOpenings(in->line, hit_point);
+			if (!open || open->range <= 0.0)
+			{
+				if (MO.bIsPlayer)
+				{
+					MO.PlaySound('*puzzfail', CHAN_VOICE);
+				}
+				return false;	// can't use through a wall
+			}
+			return true;	// Continue searching
+		}
+		if (PointOnPlaneSide(MO.Origin, in->line) == 1)
+		{
+			// Don't use back sides
+			return false;
+		}
+		if (PuzzleItemType != in->line->arg1)
+		{
+			// Item type doesn't match
+			return false;
+		}
+		StartACS(in->line->arg2, 0, in->line->arg3, in->line->arg4,
+			in->line->arg5, MO, in->line, 0, false, false);
+		in->line->special = 0;
+		PuzzleActivated = true;
+		return false;	// Stop searching
+	}
+	// Check thing
+	mobj = Actor(in->Thing);
+	if (mobj.Special != LNSPEC_UsePuzzleItem)
+	{
+		// Wrong special
+		return true;
+	}
+	if (PuzzleItemType != mobj.Args[0])
+	{
+		// Item type doesn't match
+		return true;
+	}
+	StartACS(mobj.Args[1], 0, mobj.Args[2], mobj.Args[3], mobj.Args[4],
+		MO, NULL, 0, false, false);
+	mobj.Special = 0;
+	PuzzleActivated = true;
+	return false;	// Stop searching
+}
+
+//==========================================================================
+//
+//  UsePuzzleItem
+//
+//  Returns true if the puzzle item was used on a line or a thing.
+//
+//==========================================================================
+
+bool UsePuzzleItem(int itemType)
+{
+	float x1, y1, x2, y2;
+
+	PuzzleItemType = itemType;
+	PuzzleActivated = false;
+	AngleVector(&MO.Angles, &PuzzleUseDir);
+	x1 = MO.Origin.x;
+	y1 = MO.Origin.y;
+	x2 = x1 + USERANGE * PuzzleUseDir.x;
+	y2 = y1 + USERANGE * PuzzleUseDir.y;
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
+		self, 'PTR_PuzzleItemTraverse');
+	return PuzzleActivated;
+}
+
 //==========================================================================
 //
 //  Cheat_God
@@ -3644,6 +3834,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.11  2005/11/24 20:17:57  dj_jl
 //  Removed unused fields from Object class.
 //

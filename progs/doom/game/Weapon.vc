@@ -602,7 +602,7 @@ void GunShot(Actor A, int accurate, TVec dir)
 
 	damage = 5 * (P_Random() % 3 + 1);
 
-	LineAttack(A, dir, MISSILERANGE, damage);
+	A.LineAttack(dir, MISSILERANGE, damage);
 }
 
 #ifndef NO_BOTS
@@ -635,6 +635,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.5  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

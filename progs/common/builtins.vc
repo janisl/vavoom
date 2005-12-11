@@ -387,11 +387,11 @@ native opening_t *LineOpenings(line_t * linedef, TVec point);
 native int P_BoxOnLineSide(float *tmbox, line_t * ld);
 
 //
-native bool P_BlockThingsIterator(int x, int y, name FuncName);
+native bool P_BlockThingsIterator(int x, int y, Object SelfObj, name FuncName);
 
 //
 native bool P_PathTraverse(float x1, float y1, float x2, float y2,
-	int flags, name FuncName);
+	int flags, Object SelfObj, name FuncName);
 
 //  Find the best gap that the thing could fit in, given a certain Z
 // position (z1 is foot, z2 is head).
@@ -505,6 +505,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.57  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.56  2005/12/07 22:54:17  dj_jl
 //  Moved compiler generated data out of globals.
 //

@@ -60,13 +60,13 @@ void A_SPosAttack()
 
 	PlaySound('spider/attack', CHAN_WEAPON);
 	A_FaceTarget();
-	aimDir = AimLineAttack(self, Angles, MISSILERANGE);
+	aimDir = AimLineAttack(Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
 	{
 		dir = aimDir;
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		damage = ((P_Random() % 5) + 1) * 3;
-		LineAttack(self, dir, MISSILERANGE, damage);
+		LineAttack(dir, MISSILERANGE, damage);
 	}
 
 	Effects |= EF_DL_MUZZLEFLASH;
@@ -203,6 +203,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.6  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

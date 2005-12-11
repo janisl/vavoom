@@ -50,7 +50,7 @@ void A_FireConePL1(void)
 	{
 		ang = pmo.Angles;
 		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
-		AimLineAttack(pmo, &ang, MELEERANGE);
+		pmo.AimLineAttack(&ang, MELEERANGE);
 		if (linetarget)
 		{
 			pmo.bIceDamage = true;
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.3  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

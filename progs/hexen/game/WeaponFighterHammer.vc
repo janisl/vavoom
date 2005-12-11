@@ -50,11 +50,11 @@ void A_FHammerAttack(void)
 	{
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 32.0));
-		AimLineAttack(Owner, &angles, HammerRange);
+		Owner.AimLineAttack(&angles, HammerRange);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, vforward, HammerRange, damage))
+			if (Owner.LineAttack(vforward, HammerRange, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -68,11 +68,11 @@ void A_FHammerAttack(void)
 		}
 		angles = Owner.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 32.0));
-		AimLineAttack(Owner, &angles, HammerRange);
+		Owner.AimLineAttack(&angles, HammerRange);
 		if (linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (LineAttack(Owner, vforward, HammerRange, damage))
+			if (Owner.LineAttack(vforward, HammerRange, damage))
 			{
 				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -90,9 +90,9 @@ void A_FHammerAttack(void)
 		// didn't find any targets in meleerange, so set to throw out a hammer
 		PuffSpawned = none;
 		angles = Owner.Angles;
-		AimLineAttack(Owner, &angles, HammerRange);
+		Owner.AimLineAttack(&angles, HammerRange);
 		AngleVector(&angles, &vforward);
-		if (LineAttack(Owner, vforward, HammerRange, damage))
+		if (Owner.LineAttack(vforward, HammerRange, damage))
 		{
 			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -166,6 +166,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.3  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

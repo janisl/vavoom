@@ -466,6 +466,141 @@ int ManaFromItem(Actor item)
 
 //==========================================================================
 //
+//	IsDangerous
+//
+//	Checks if a sector is dangerous.
+//
+//==========================================================================
+
+bool IsDangerous(sector_t *sec)
+{
+	switch (sec->special)
+	{
+	case 7:	// Damage_Sludge
+	case 5:	// Damage_LavaWimpy
+	case 16:	// Damage_LavaHefty
+	case 4:	// Scroll_EastLavaDamage
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	PTR_BotPathTraverse
+//
+//	[BC] For the bots
+//
+//==========================================================================
+
+float bottracerange;
+TVec bottracedir;
+
+bool PTR_BotPathTraverse(intercept_t *in)
+{
+	Actor th;
+	line_t *ld;
+	TVec hit_point;
+
+	if (in->bIsALine)
+	{
+		sector_t *back;
+		sector_t *front;
+		opening_t *open;
+		float diffheight;
+
+		ld = in->line;					// This linedef
+		hit_point = botmo.Origin + (bottracerange * in->frac) * bottracedir;
+
+		// Line is impassible
+		if (!(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKING))
+			return false;
+
+		// Line isn't two sided
+		if (!ld->backsector)
+			return false;
+
+		if (!PointOnPlaneSide(botmo.Origin, ld))
+		{
+			back = ld->backsector;
+			front = ld->frontsector;
+		}
+		else
+		{
+			back = ld->frontsector;
+			front = ld->backsector;
+		}
+
+		// Sector is dangerous
+		if (IsDangerous(back))
+			return false;
+
+		// crosses a two sided line
+		open = LineOpenings(ld, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + botmo.Height);
+		// No valid openings
+		if (!open)
+		{
+			return false;
+		}
+
+		// No cliff jumping unless we're going after something
+		if ((front->floorheight - back->floorheight) > 32.0 && !enemy)
+		{
+			return false;
+		}
+
+		diffheight = back->floorheight - front->floorheight;
+		
+		if (diffheight > 0.0)
+		{
+			if (diffheight > 48.0)
+			{
+/*				if (front->SSpecial == ThrustThingZ || front->springpadzone)
+				{
+					return true;
+				}
+				else*/
+					return false;
+			}
+			else if (diffheight <= 48.0 && diffheight >= 24.0)
+			{
+				player.Buttons |= BT_JUMP;
+			}
+		}
+
+		return true;
+	}
+
+	th = Actor(in->Thing);
+
+	if (th == botmo)
+		return true;
+
+	if (th.bSolid)
+		return false;
+
+/*	fixed_t diffheight = (th->z + th->height) - shootthing->z;
+
+	if (diffheight > 0)
+	{
+		if (diffheight <= 48*FRACUNIT && diffheight >= 24*FRACUNIT)
+		{
+			bot->player->cmd.ucmd.buttons |= BT_JUMP;
+			return true;
+		}
+		else if (diffheight <= 24*FRACUNIT)
+			return true;
+		else
+			return false;
+				
+	}
+*/
+	return true;
+}
+
+//==========================================================================
+//
 //	CheckPath
 //
 //	Checks for obstructions at a certain angle and distance. Returns true if
@@ -483,13 +618,12 @@ bool CheckPath(float ang, float dist)
 	bottracedir.z = 0.0;
 	x1 = botmo.Origin.x;
 	y1 = botmo.Origin.y;
- 	x2 = x1 + dist * bottracedir.x;
- 	y2 = y1 + dist * bottracedir.y;
-	usething = botmo;
+	x2 = x1 + dist * bottracedir.x;
+	y2 = y1 + dist * bottracedir.y;
 
-	P_UseLines(player);
+	player.P_UseLines();
 
-	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, 'PTR_BotPathTraverse'))
+	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_BotPathTraverse'))
 		return false;
 	else
 		return true;
@@ -1212,6 +1346,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

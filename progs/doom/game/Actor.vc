@@ -246,6 +246,28 @@ Actor BrainTargets[32];
 int SpreadCount;
 #endif
 
+float bombdamage;
+
+Actor CorpseHit;
+float viletryx;
+float viletryy;
+
+// Height if not aiming up or down
+// ???: use slope for monsters?
+float aim_z;
+float aim_range;
+float aim_slope;
+TVec aim_dir;
+float aim_topslope;
+float aim_bottomslope;	// slopes to top and bottom of target
+Actor linetarget;	// who got hit (or NULL)
+float aim_range2d;
+
+float shoot_range;
+TVec shoot_origin;
+TVec shoot_dir;
+int la_damage;
+
 __states__
 {
 	S_DORMANT_PICKUP1('', 0, 30.0, S_DORMANT_PICKUP2)
@@ -1801,6 +1823,49 @@ bool SectorChanged(int CrushChange)
 	return false;	//	Don't fit
 }
 
+//**************************************************************************
+//
+//  RADIUS ATTACK
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  PIT_RadiusAttack
+//
+//  "bombsource" is the creature that caused the explosion at "bombspot".
+//
+//==========================================================================
+
+bool PIT_RadiusAttack(Entity Other)
+{
+	float dist;
+
+	if (!Actor(Other).bShootable)
+		return true;
+
+	// Boss spider and cyborg
+	// take no damage from concussion.
+	if (Actor(Other).bBoss)
+		return true;
+
+	dist = Length(MobjCenter(Other) - MobjCenter(self)) - Other.Radius;
+
+	if (dist < 0.0)
+		dist = 0.0;
+
+	if (dist >= bombdamage)
+		return true;	// out of range
+
+	if (Actor(Other).CanSee(self))
+	{
+		// must be in direct path
+		Actor(Other).Damage(self, Instigator, ftoi(bombdamage - dist));
+	}
+
+	return true;
+}
+
 //==========================================================================
 //
 //  RadiusAttack
@@ -1826,13 +1891,50 @@ void RadiusAttack(int damage, int distance, bool damageSource)
 	yl = MapBlock(Origin.y - dist - XLevel.BlockMapOrgY);
 	xh = MapBlock(Origin.x + dist - XLevel.BlockMapOrgX);
 	xl = MapBlock(Origin.x - dist - XLevel.BlockMapOrgX);
-	bombspot = self;
-	bombsource = Instigator;
 	bombdamage = itof(damage);
 
 	for (y = yl; y <= yh; y++)
 		for (x = xl; x <= xh; x++)
-			P_BlockThingsIterator(x, y, 'PIT_RadiusAttack');
+			P_BlockThingsIterator(x, y, self, 'PIT_RadiusAttack');
+}
+
+float teleport_x;
+float teleport_y;
+
+//==========================================================================
+//
+//  PIT_StompThing
+//
+//==========================================================================
+
+bool PIT_StompThing(Entity Other)
+{
+	float blockdist;
+
+	if (!Actor(Other).bShootable)
+		return true;
+
+	blockdist = Other.Radius + Radius;
+
+	if (fabs(Other.Origin.x - teleport_x) >= blockdist ||
+		fabs(Other.Origin.y - teleport_y) >= blockdist)
+	{
+		// didn't hit it
+		return true;
+	}
+
+	// don't clip against self
+	if (Other == self)
+		return true;
+
+	if (!bTelestomp)
+	{
+		return false;
+	}
+
+	Actor(Other).Damage(self, self, 10000);
+
+	return true;
 }
 
 //==========================================================================
@@ -1851,8 +1953,6 @@ bool TeleportMove(TVec org)
 	int by;
 
 	// kill anything occupying the position
-	teleport_thing = self;
-
 	teleport_x = org.x;
 	teleport_y = org.y;
 
@@ -1864,7 +1964,7 @@ bool TeleportMove(TVec org)
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, 'PIT_StompThing'))
+			if (!P_BlockThingsIterator(bx, by, self, 'PIT_StompThing'))
 				return false;
 
 	// the move is ok,
@@ -2451,6 +2551,443 @@ void NewChaseDir()
 	MoveDir = DI_NODIR;	// can not move
 }
 
+//**************************************************************************
+//
+//  AIMING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  PTR_AimTraverse
+//
+//  Sets linetaget and aim_slope when a target is aimed at.
+//
+//==========================================================================
+
+bool PTR_AimTraverse(intercept_t * in)
+{
+	line_t *li;
+	Actor Th;
+	float thingtopslope;
+	float thingbottomslope;
+	float dist;
+	float slope;
+	opening_t *open;
+
+	if (in->bIsALine)
+	{
+		TVec hit_point;
+
+		li = in->line;
+
+		if (!(li->flags & ML_TWOSIDED))
+			return false;	// stop
+
+		// Crosses a two sided line.
+		// A two sided line will restrict
+		// the possible target ranges.
+		dist = aim_range * in->frac;
+		hit_point = Origin + dist * aim_dir;
+		open = LineOpenings(li, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z);
+
+		if (!open || open->bottom >= open->top)
+			return false;	// stop
+
+		dist = aim_range2d * in->frac;
+		if (li->frontsector->floorheight != li->backsector->floorheight)
+		{
+			slope = (open->bottom - aim_z) / dist;
+			if (slope > aim_bottomslope)
+				aim_bottomslope = slope;
+		}
+
+		if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+		{
+			slope = (open->top - aim_z) / dist;
+			if (slope < aim_topslope)
+				aim_topslope = slope;
+		}
+
+		if (aim_topslope <= aim_bottomslope)
+			return false;	// stop
+
+		return true;	// shot continues
+	}
+
+	// shoot a thing
+	Th = Actor(in->Thing);
+	if (Th == self)
+		return true;	// can't shoot self
+
+	if (!Th.bShootable)
+		return true;	// corpse or something
+
+#ifdef FIXME
+	//  Hexen does this. There's no reason why we can't enable it in Doom.
+	if (Th.player && netgame && !deathmatch)
+	{
+		// don't aim at fellow co-op players
+		return true;
+	}
+#endif
+
+	// check angles to see if the thing can be aimed at
+	dist = aim_range2d * in->frac;
+	thingtopslope = (Th.Origin.z + Th.Height - aim_z) / dist;
+
+	if (thingtopslope < aim_bottomslope)
+		return true;	// shot over the thing
+
+	thingbottomslope = (Th.Origin.z - aim_z) / dist;
+
+	if (thingbottomslope > aim_topslope)
+		return true;	// shot under the thing
+
+	// this thing can be hit!
+	if (thingtopslope > aim_topslope)
+		thingtopslope = aim_topslope;
+
+	if (thingbottomslope < aim_bottomslope)
+		thingbottomslope = aim_bottomslope;
+
+	aim_slope = (thingtopslope + thingbottomslope) / 2.0;
+	linetarget = Th;
+
+	return false;	// don't go any farther
+}
+
+//==========================================================================
+//
+//  AimLineAttack
+//
+//==========================================================================
+
+TVec AimLineAttack(TAVec angles, float distance)
+{
+	float x2;
+	float y2;
+	float topangle;
+	float botangle;
+	TVec dir;
+
+	AngleVector(&angles, &aim_dir);
+	x2 = Origin.x + distance * aim_dir.x;
+	y2 = Origin.y + distance * aim_dir.y;
+	aim_z = Origin.z + Height / 2.0 + 8.0 - FloorClip;
+	aim_range2d =
+		Length(vector(distance * aim_dir.x, distance * aim_dir.y, 0.0));
+
+	// can't shoot outside view angles
+	topangle = AngleMod180(-angles.pitch + 30.0);
+	botangle = AngleMod180(-angles.pitch - 30.0);
+	if (topangle > 89.0)
+		topangle = 89.0;
+	if (botangle < -89.0)
+		botangle = -89.0;
+	aim_topslope = tan(topangle);
+	aim_bottomslope = tan(botangle);
+
+	aim_range = distance;
+	linetarget = none;
+
+	P_PathTraverse(Origin.x, Origin.y, x2, y2,
+		PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_AimTraverse');
+
+	if (linetarget)
+	{
+		angles.pitch = -atan(aim_slope);
+	}
+	AngleVector(&angles, &dir);
+	return dir;
+}
+
+//===========================================================================
+//
+//	Aim
+//
+//  Sets a slope so a near miss is at aproximately the height of the
+// intended target
+//
+//===========================================================================
+
+TVec Aim(float distance)
+{
+	TAVec an;
+	TVec dir;
+
+	// see which target is to be aimed at
+	an = Angles;
+
+	dir = AimLineAttack(an, distance);
+	if (!linetarget)
+	{
+		an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
+		dir = AimLineAttack(an, distance);
+		if (!linetarget)
+		{
+			an.yaw = AngleMod360(an.yaw - 45.0 / 4.0);
+			dir = AimLineAttack(an, distance);
+			if (!linetarget)
+			{
+				an.yaw = AngleMod360(an.yaw + 45.0 / 8.0);
+				AngleVector(&an, &dir);
+			}
+		}
+	}
+	return dir;
+}
+
+//**************************************************************************
+//
+//  SHOOTING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  ShootHitPlane
+//
+//==========================================================================
+
+bool ShootHitPlane(sec_plane_t * plane)
+{
+	float org_dist;
+	float hit_dist;
+
+	if (plane->flags & SPF_NOBLOCKSHOOT)
+	{
+		//  Doesn't block shooting
+		return true;
+	}
+	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	if (org_dist < 0.0)
+	{
+		//  Don't shoot back side
+		return true;
+	}
+	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	if (hit_dist >= 0.0)
+	{
+		//  Didn't hit plane
+		return true;
+	}
+
+	//  Hit plane
+	if (plane->pic == skyflatnum)
+	{
+		// don't shoot the sky!
+		return false;
+	}
+
+	//  If we are shooting floor or ceiling we are adjusting position
+	// to spawn puff on floor or ceiling, not on wall
+	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
+
+	// position a bit closer
+	lineend += 4.0 * plane->normal;
+
+	// Spawn bullet puffs.
+	SpawnPuff(lineend, shoot_range);
+
+	// don't go any farther
+	return false;
+}
+
+//==========================================================================
+//
+//  ShootCheckPlanes
+//
+//==========================================================================
+
+bool ShootCheckPlanes(sector_t * sec)
+{
+	sec_region_t *reg;
+	sec_region_t *startreg;
+
+	startreg = PointInRegion(sec, linestart);
+	for (reg = startreg; reg; reg = reg->next)
+	{
+		if (!ShootHitPlane(reg->floor))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!ShootHitPlane(reg->ceiling))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	for (reg = startreg->prev; reg; reg = reg->prev)
+	{
+		if (!ShootHitPlane(reg->floor))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!ShootHitPlane(reg->ceiling))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  PTR_ShootTraverse
+//
+//==========================================================================
+
+bool PTR_ShootTraverse(intercept_t * in)
+{
+	TVec hit_point;
+	line_t *li;
+	Actor th;
+
+	if (in->bIsALine)
+	{
+		sector_t *sec;
+
+		li = in->line;
+		hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
+		if (li->flags & ML_TWOSIDED && PointOnPlaneSide(shoot_origin, li))
+		{
+			sec = li->backsector;
+		}
+		else
+		{
+			sec = li->frontsector;
+		}
+
+		lineend = hit_point;
+
+		//  Check for shooting floor or ceiling
+		if (!ShootCheckPlanes(sec))
+		{
+			return false;
+		}
+
+		linestart = lineend;
+
+		//  Execute line special after checking for hitting floor or ceiling
+		// when we know that it actally hits line
+		if (li->special)
+		{
+			P_ActivateLine(li, self, 0, SPAC_IMPACT);
+		}
+
+		if (li->flags & ML_TWOSIDED)
+		{
+			// crosses a two sided line
+			opening_t *open;
+			float opentop = 0.0;
+
+			open = LineOpenings(li, hit_point);
+			if (open)
+			{
+				opentop = open->top;
+			}
+			while (open)
+			{
+				if (open->bottom <= hit_point.z && open->top >= hit_point.z)
+				{
+					// shot continues
+					return true;
+				}
+				open = open->next;
+			}
+			if (li->frontsector->ceiling.pic == skyflatnum &&
+				li->backsector->ceiling.pic == skyflatnum &&
+				hit_point.z > opentop)
+			{
+				// it's a sky hack wall
+				return false;
+			}
+		}
+
+		//  Hit line
+
+		// position a bit closer
+		hit_point -= 4.0 * shoot_dir;
+
+		// Spawn bullet puffs.
+		SpawnPuff(hit_point, shoot_range);
+
+		// don't go any farther
+		return false;
+	}
+
+	// shoot a thing
+	th = Actor(in->Thing);
+
+	if (th == self)
+		return true;	// can't shoot self
+
+	if (!th.bShootable)
+		return true;	// corpse or something
+
+	// check angles to see if the thing can be aimed at
+	hit_point = shoot_origin + (shoot_range * in->frac) * shoot_dir;
+
+	if (th.Origin.z + th.Height < hit_point.z)
+		return true;	// shot over the thing
+
+	if (th.Origin.z > hit_point.z)
+		return true;	// shot under the thing
+
+	// hit thing
+	// position a bit closer
+	hit_point -= 10.0 * shoot_dir;
+
+	// Spawn bullet puffs or blod spots,
+	// depending on target type.
+	if (th.bNoBlood)
+		SpawnPuff(hit_point, shoot_range);
+	else
+		P_SpawnBlood(hit_point, la_damage);
+
+	if (la_damage)
+		th.Damage(self, self, la_damage);
+
+	// don't go any farther
+	return false;
+}
+
+//==========================================================================
+//
+//  P_LineAttack
+//
+//  If damage == 0, it is just a test trace that will leave linetarget set.
+//
+//==========================================================================
+
+int LineAttack(TVec dir, float distance, int damage)
+{
+	TVec dst;
+
+	la_damage = damage;
+
+	shoot_origin = Origin;
+	shoot_origin.z += Height * 0.5 + 8.0 - FloorClip;
+
+	shoot_dir = dir;
+	shoot_range = distance;
+
+	dst = shoot_origin + shoot_range * shoot_dir;
+	linestart = shoot_origin;
+	if (!P_PathTraverse(Origin.x, Origin.y, dst.x, dst.y,
+		PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_ShootTraverse'))
+	{
+		return false;
+	}
+	lineend = dst;
+	return ShootCheckPlanes(GLevel.PointInSector(dst));
+}
+
 //==========================================================================
 //
 //	A_Look
@@ -2807,6 +3344,50 @@ void A_PlayerScream()
 #endif
 
 	PlaySound(sound, CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//  PIT_VileCheck
+//
+//  Detect a corpse that could be raised.
+//
+//==========================================================================
+
+bool PIT_VileCheck(Entity Other)
+{
+	float maxdist;
+	bool check;
+
+	if (!Actor(Other).bCorpse)
+		return true;	// not a monster
+
+	if (Actor(Other).StateTime != -1.0)
+		return true;	// not lying still yet
+
+	if (Actor(Other).RaiseState == S_NULL)
+		return true;	// monster doesn't have a raise state
+
+	maxdist = Other.Radius + Radius;
+
+	if (fabs(Other.Origin.x - viletryx) > maxdist ||
+		fabs(Other.Origin.y - viletryy) > maxdist)
+		return true;	// not actually touching
+
+	if (!CanSee(Other))
+		return true;	//  Con't see, possibly in other region
+
+	CorpseHit = Actor(Other);
+	CorpseHit.Velocity.x = 0.0;
+	CorpseHit.Velocity.y = 0.0;
+	CorpseHit.Height *= 4.0;
+	check = CorpseHit.CheckPosition(CorpseHit.Origin);
+	CorpseHit.Height /= 4.0;
+
+	if (!check)
+		return true;	// doesn't fit here
+
+	return false;	// got one, so stop checking
 }
 
 #ifdef DDF
@@ -3466,7 +4047,6 @@ void P_ActResurrectChase(void)
 		// check for corpses to raise
 		viletryx = Origin.x + StepSpeed * xspeed[MoveDir];
 		viletryy = Origin.y + StepSpeed * yspeed[MoveDir];
-		vileobj = self;
 
 		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
 		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
@@ -3479,7 +4059,7 @@ void P_ActResurrectChase(void)
 			{
 				// Call PIT_VileCheck to check whether object is a corpse
 				// that canbe raised.
-				if (!P_BlockThingsIterator(bx, by, 'PIT_VileCheck'))
+				if (!P_BlockThingsIterator(bx, by, self, 'PIT_VileCheck'))
 				{
 					// got one!
 					temp = Enemy;
@@ -4046,6 +4626,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.18  2005/12/07 22:54:18  dj_jl
 //  Moved compiler generated data out of globals.
 //

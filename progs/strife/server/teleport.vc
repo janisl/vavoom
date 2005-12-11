@@ -27,47 +27,6 @@
 //**
 //**************************************************************************
 
-float teleport_bbox[4];
-Actor teleport_thing;
-float teleport_x;
-float teleport_y;
-
-//==========================================================================
-//
-//  PIT_StompThing
-//
-//==========================================================================
-
-bool PIT_StompThing(Entity Other)
-{
-	float blockdist;
-
-	if (!Actor(Other).bShootable)
-		return true;
-
-	blockdist = Other.Radius + teleport_thing.Radius;
-
-	if (fabs(Other.Origin.x - teleport_x) >= blockdist ||
-		fabs(Other.Origin.y - teleport_y) >= blockdist)
-	{
-		// didn't hit it
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == teleport_thing)
-		return true;
-
-	if (!teleport_thing.bIsPlayer)
-	{
-		return false;
-	}
-
-	Actor(Other).Damage(teleport_thing, teleport_thing, 10000);
-
-	return true;
-}
-
 //==========================================================================
 //
 //	EV_Teleport
@@ -495,6 +454,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.31  2005/03/28 07:45:30  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

@@ -44,14 +44,14 @@ void A_TemplarAttack()
 
 	PlaySound('templar/shoot', CHAN_WEAPON);
 	A_FaceTarget();
-	aimDir = AimLineAttack(self, Angles, MAULERRANGE);
+	aimDir = AimLineAttack(Angles, MAULERRANGE);
 	for (i = 0; i < 3; i++)
 	{
 		dir = aimDir;
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		damage = ((P_Random() % 5) + 1) * 3;
 		bDisruptDamage = true;
-		LineAttack(self, dir, MAULERRANGE, damage);
+		LineAttack(dir, MAULERRANGE, damage);
 		bDisruptDamage = false;
 	}
 }
@@ -124,6 +124,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

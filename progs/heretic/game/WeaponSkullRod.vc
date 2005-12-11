@@ -76,9 +76,9 @@ void A_FireSkullRodPL2()
 		// Always use red missiles in single player games
 		HornRodMissile2(MissileMobj).RainColor = 2;
 	}
-	if (linetarget)
+	if (Player.MO.linetarget)
 	{
-		MissileMobj.Enemy = linetarget;
+		MissileMobj.Enemy = Player.MO.linetarget;
 	}
 	MissileMobj.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
 }
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.3  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

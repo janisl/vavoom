@@ -1084,7 +1084,6 @@ void A_VileChase()
 		// check for corpses to raise
 		viletryx = Origin.x + StepSpeed * xspeed[MoveDir];
 		viletryy = Origin.y + StepSpeed * yspeed[MoveDir];
-		vileobj = self;
 
 		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
 		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
@@ -1097,7 +1096,7 @@ void A_VileChase()
 			{
 				// Call PIT_VileCheck to check whether object is a corpse
 				// that canbe raised.
-				if (!P_BlockThingsIterator(bx, by, 'PIT_VileCheck'))
+				if (!P_BlockThingsIterator(bx, by, self, 'PIT_VileCheck'))
 				{
 					// got one!
 					temp = Enemy;
@@ -1648,6 +1647,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.11  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

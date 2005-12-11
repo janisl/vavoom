@@ -49,7 +49,7 @@ void A_BFGSpray()
 
 		// target is the originator (player)
 		//  of the missile
-		AimLineAttack(Instigator, aimAng, 16.0 * 64.0);
+		Instigator.AimLineAttack(aimAng, 16.0 * 64.0);
 		if (!linetarget)
 		{
 			continue;
@@ -102,6 +102,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.3  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

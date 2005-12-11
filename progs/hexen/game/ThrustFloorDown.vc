@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ThrustFloorDown:Decoration
+class ThrustFloorDown : Decoration
 	__mobjinfo__(10090);
 
 //
@@ -37,8 +37,8 @@ int BloodyDownState;
 
 Actor SpawnedDirt;	//	pointer to dirt clump mobj
 float RaiseSpeed;	//	speed of raise
-//      args[0]     0 = lowered,  1 = raised
-//      args[1]     0 = normal,   1 = bloody
+bool bRaised;		//	Lowered or raised state
+bool bBloody;		//	Bloody spike.
 
 //==========================================================================
 //
@@ -46,10 +46,10 @@ float RaiseSpeed;	//	speed of raise
 //
 //==========================================================================
 
-void A_ThrustInitUp(void)
+void A_ThrustInitUp()
 {
 	RaiseSpeed = 5.0;	// Raise speed
-	Args[0] = 1;		// Mark as up
+	bRaised = true;		// Mark as up
 	FloorClip = 0.0;
 	bSolid = true;
 	SpawnedDirt = none;
@@ -61,10 +61,10 @@ void A_ThrustInitUp(void)
 //
 //==========================================================================
 
-void A_ThrustInitDn(void)
+void A_ThrustInitDn()
 {
 	RaiseSpeed = 5.0;	// Raise speed
-	Args[0] = 0;		// Mark as down
+	bRaised = false;	// Mark as down
 	FloorClip = Height;
 	bSolid = false;
 	bHidden = true;
@@ -79,7 +79,7 @@ void A_ThrustInitDn(void)
 // 
 //==========================================================================
 
-void A_ThrustRaise(void)
+void A_ThrustRaise()
 {
 	// Raise spike from the ground
 	FloorClip -= RaiseSpeed;
@@ -87,8 +87,8 @@ void A_ThrustRaise(void)
 	{
 		// Reached it's target height
 		FloorClip = 0.0;
-		Args[0] = 1;
-		if (Args[1])
+		bRaised = true;
+		if (bBloody)
 			SetState(BloodyUpState);
 		else
 			SetState(UpState);
@@ -115,7 +115,7 @@ void A_ThrustRaise(void)
 //
 //==========================================================================
 
-void A_ThrustLower(void)
+void A_ThrustLower()
 {
 	if (FloorClip < Height)
 	{
@@ -123,8 +123,8 @@ void A_ThrustLower(void)
 	}
 	else
 	{
-		Args[0] = 0;
-		if (Args[1])
+		bRaised = false;
+		if (bBloody)
 			SetState(BloodyDownState);
 		else
 			SetState(DownState);
@@ -137,9 +137,39 @@ void A_ThrustLower(void)
 //
 //==========================================================================
 
-void A_ThrustBlock(void)
+void A_ThrustBlock()
 {
 	bSolid = true;
+}
+
+//==========================================================================
+//
+//  PIT_ThrustStompThing
+//
+//==========================================================================
+
+bool PIT_ThrustStompThing(Entity Other)
+{
+	float blockdist;
+
+	if (!Actor(Other).bShootable)
+		return true;
+
+	blockdist = Other.Radius + Radius;
+	if (fabs(Other.Origin.x - Origin.x) >= blockdist ||
+		fabs(Other.Origin.y - Origin.y) >= blockdist ||
+		(Other.Origin.z > Origin.z + Height))
+	{
+		return true;	// didn't hit it
+	}
+
+	if (Other == self)
+		return true;	// don't clip against self
+
+	Actor(Other).Damage(self, self, 10001);
+	bBloody = true;	// Mark thrust thing as bloody
+
+	return true;
 }
 
 //==========================================================================
@@ -148,10 +178,26 @@ void A_ThrustBlock(void)
 //
 //==========================================================================
 
-void A_ThrustImpale(void)
+void A_ThrustImpale()
 {
+	int xl, xh, yl, yh, bx, by;
+	float x0, x2, y0, y2;
+
 	// Impale all shootables in radius
-	PIT_ThrustSpike(self);
+	x0 = Origin.x - Radius;
+	x2 = Origin.x + Radius;
+	y0 = Origin.y - Radius;
+	y2 = Origin.y + Radius;
+
+	xl = MapBlock(x0 - XLevel.BlockMapOrgX - MAXRADIUS);
+	xh = MapBlock(x2 - XLevel.BlockMapOrgX + MAXRADIUS);
+	yl = MapBlock(y0 - XLevel.BlockMapOrgY - MAXRADIUS);
+	yh = MapBlock(y2 - XLevel.BlockMapOrgY + MAXRADIUS);
+
+	// stomp on any things contacted
+	for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+			P_BlockThingsIterator(bx, by, self, 'PIT_ThrustStompThing');
 }
 
 __states__
@@ -190,13 +236,13 @@ __states__
 //
 //==========================================================================
 
-bool Activate(void)
+bool Activate()
 {
-	if (Args[0] == 0)
+	if (!bRaised)
 	{
 		PlaySound('ThrustSpikeLower', CHAN_VOICE);
 		bHidden = false;
-		if (Args[1])
+		if (bBloody)
 			SetState(S_BTHRUSTRAISE1);
 		else
 			SetState(S_THRUSTRAISE1);
@@ -210,12 +256,12 @@ bool Activate(void)
 //
 //==========================================================================
 
-bool Deactivate(void)
+bool Deactivate()
 {
-	if (Args[0] == 1)
+	if (bRaised)
 	{
 		PlaySound('ThrustSpikeRaise', CHAN_VOICE);
-		if (Args[1])
+		if (bBloody)
 			SetState(S_BTHRUSTLOWER);
 		else
 			SetState(S_THRUSTLOWER);
@@ -240,6 +286,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

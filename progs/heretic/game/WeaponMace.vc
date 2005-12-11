@@ -103,9 +103,9 @@ void A_FireMacePL2()
 		A.Velocity.y += Player.MO.Velocity.y;
 		A.Velocity.z =
 			(2.0 + 173.0 * -tan(Player.MO.Angles.pitch) / 32.0) * 35.0;
-		if (linetarget)
+		if (Player.MO.linetarget)
 		{
-			A.Enemy = linetarget;
+			A.Enemy = Player.MO.linetarget;
 		}
 	}
 	Player.MO.PlaySound('weapons/maceshoot', CHAN_WEAPON);
@@ -151,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

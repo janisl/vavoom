@@ -45,16 +45,16 @@ void A_Punch(void)
 	aimAngles = Player.MO.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = AimLineAttack(Player.MO, aimAngles, MELEERANGE);
-	LineAttack(Player.MO, dir, MELEERANGE, damage);
+	dir = Player.MO.AimLineAttack(aimAngles, MELEERANGE);
+	Player.MO.LineAttack(dir, MELEERANGE, damage);
 
 	// turn to face target
-	if (linetarget)
+	if (Player.MO.linetarget)
 	{
 		Player.MO.PlaySound('*fist', CHAN_WEAPON);
 		Player.MO.Angles.yaw = atan2(
-			linetarget.Origin.y - Player.MO.Origin.y,
-			linetarget.Origin.x - Player.MO.Origin.x);
+			Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
+			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 }
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.3  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

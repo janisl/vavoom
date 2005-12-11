@@ -83,14 +83,14 @@ void A_BeakAttackPL1(void)
 	TVec dir;
 
 	damage = 1 + (P_Random() & 3);
-	dir = AimLineAttack(Player.MO, Player.MO.Angles, MELEERANGE);
+	dir = Player.MO.AimLineAttack(Player.MO.Angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(Player.MO, dir, MELEERANGE, damage);
-	if (linetarget)
+	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	if (Player.MO.linetarget)
 	{
 		Player.MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player.MO.Origin.y,
-			linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
+			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
@@ -110,14 +110,14 @@ void A_BeakAttackPL2(void)
 	TVec dir;
 
 	damage = HITDICE(4);
-	dir = AimLineAttack(Player.MO, Player.MO.Angles, MELEERANGE);
+	dir = Player.MO.AimLineAttack(Player.MO.Angles, MELEERANGE);
 	PuffType = BeakPuff;
-	LineAttack(Player.MO, dir, MELEERANGE, damage);
-	if (linetarget)
+	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	if (Player.MO.linetarget)
 	{
 		Player.MO.Angles.yaw =
-			atan2(linetarget.Origin.y - Player.MO.Origin.y,
-			linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
+			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
@@ -153,6 +153,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

@@ -100,16 +100,16 @@ void A_FireSigil()
 
 		sigil.Instigator = Player.MO;
 		sigil.Origin.z = sigil.FloorZ;
-		Aim(Player.MO, 16.0 * 64.0);
-		if (!linetarget)
+		Player.MO.Aim(16.0 * 64.0);
+		if (!Player.MO.linetarget)
 		{
 			sigil.Origin.x = Player.MO.Origin.x;
 			sigil.Origin.y = Player.MO.Origin.y;
 		}
 		else
 		{
-			sigil.Origin.x = linetarget.Origin.x;
-			sigil.Origin.y = linetarget.Origin.y;
+			sigil.Origin.x = Player.MO.linetarget.Origin.x;
+			sigil.Origin.y = Player.MO.linetarget.Origin.y;
 		}
 	}
 	SpriteFrame = Player.Sigil;
@@ -179,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.5  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

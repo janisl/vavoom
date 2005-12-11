@@ -142,6 +142,8 @@ enum
 
 #define MAX_TAGGED_LINES		1024
 
+#define USERANGE	64.0
+
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -441,6 +443,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.46  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.45  2005/03/28 07:34:49  dj_jl
 //  Some Boom line specials and other improvements.
 //

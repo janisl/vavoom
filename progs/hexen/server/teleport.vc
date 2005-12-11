@@ -41,52 +41,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-float teleport_bbox[4];
-Actor teleport_thing;
-TVec teleport_pos;
-
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  PIT_StompThing
-//
-//==========================================================================
-
-bool PIT_StompThing(Entity Other)
-{
-	float blockdist;
-
-	if (!Actor(Other).bShootable)
-	{
-		return true;
-	}
-
-	blockdist = Other.Radius + teleport_thing.Radius;
-
-	if (fabs(Other.Origin.x - teleport_pos.x) >= blockdist ||
-		fabs(Other.Origin.y - teleport_pos.y) >= blockdist)
-	{
-		// didn't hit it
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == teleport_thing)
-	{
-		return true;
-	}
-
-	//  Check if allowed to stomp things
-	if (!teleport_thing.bTelestomp)
-	{
-		return false;
-	}
-
-	Actor(Other).Damage(teleport_thing, teleport_thing, 10000);
-
-	return true;
-}
 
 //==========================================================================
 //
@@ -514,6 +469,9 @@ bool EV_SilentLineTeleport(line_t *line, int side, Actor thing, int id,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.29  2005/03/28 07:44:09  dj_jl
 //  Some Boom line specials and other improvements.
 //

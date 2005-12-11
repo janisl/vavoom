@@ -49,7 +49,6 @@ bool respawnmonsters;
 #include "../game/classes.vc"
 
 #include "mobj.vc"
-#include "map.vc"
 #include "teleport.vc"
 #include "things.vc"
 
@@ -60,6 +59,9 @@ bool respawnmonsters;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.23  2005/12/01 19:46:34  dj_jl
 //  Cleanup.
 //

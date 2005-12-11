@@ -50,7 +50,6 @@
 #include "../game/classes.vc"
 
 #include "mobj.vc"
-#include "map.vc"
 #include "teleport.vc"
 
 #include "bot.vc"
@@ -73,6 +72,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.27  2005/12/01 19:46:34  dj_jl
 //  Cleanup.
 //

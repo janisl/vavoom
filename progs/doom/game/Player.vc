@@ -1542,7 +1542,7 @@ void PlayerTick(float deltaTime)
 	{
 		if (!bUseDown)
 		{
-			P_UseLines(self);
+			P_UseLines();
 			bUseDown = true;
 		}
 	}
@@ -1782,7 +1782,7 @@ Actor SpawnPlayerMissile(classid type)
 	Actor A;
 	TVec dir;
 
-	dir = Aim(MO, 16.0 * 64.0);
+	dir = MO.Aim(16.0 * 64.0);
 
 	A = Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
 
@@ -2369,6 +2369,73 @@ void FireWeaponSA()
 
 //==========================================================================
 //
+//  PTR_UseTraverse
+//
+//==========================================================================
+
+bool PTR_UseTraverse(intercept_t * in)
+{
+	if (!in->line->special || (GET_SPAC(in->line->flags) != SPAC_USE &&
+		GET_SPAC(in->line->flags) != SPAC_USETHROUGH))
+	{
+		TVec useDir;
+		TVec hit_point;
+		opening_t *open;
+
+		AngleVector(&MO.Angles, &useDir);
+		hit_point = MO.Origin + (USERANGE * in->frac) * useDir;
+		open = LineOpenings(in->line, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + MO.Height);
+		if (!open)
+		{
+			MO.PlaySound('*usefail', CHAN_VOICE);
+
+			// can't use through a wall
+			return false;
+		}
+		// not a special line, but keep checking
+		return true;
+	}
+
+	if (PointOnPlaneSide(MO.Origin, in->line) == 1)
+	{
+		//	Don't use back side unless it's a two-sided line.
+		return in->line->backsector != NULL;
+	}
+
+	P_ActivateLine(in->line, MO, 0, SPAC_USE);
+
+	//WAS can't use more than one special line in a row
+	//jff 3/21/98 NOW multiple use allowed with enabling line flag
+	return GET_SPAC(in->line->flags) == SPAC_USETHROUGH;
+}
+
+//==========================================================================
+//
+//  P_UseLines
+//
+//  Looks for special lines in front of the player to activate.
+//
+//==========================================================================
+
+void P_UseLines()
+{
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+	TVec useDir;
+
+	AngleVector(&MO.Angles, &useDir);
+	x1 = MO.Origin.x;
+	y1 = MO.Origin.y;
+	x2 = x1 + USERANGE * useDir.x;
+	y2 = y1 + USERANGE * useDir.y;
+	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
+}
+
+//==========================================================================
+//
 //  Cheat_God
 //
 //==========================================================================
@@ -2673,6 +2740,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2005/12/11 21:31:39  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.11  2005/11/24 20:24:26  dj_jl
 //  Removed unused fields from Object class.
 //

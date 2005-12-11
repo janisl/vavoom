@@ -137,6 +137,9 @@ enum
 
 #define	BODYQUESIZE				32
 
+#define USERANGE		64.0
+#define USETHINGRANGE	128.0
+
 // CONSTANTS ---------------------------------------------------------------
 
 // Power up artifacts.
@@ -252,6 +255,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.53  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
+//
 //  Revision 1.52  2005/11/03 22:49:51  dj_jl
 //  Implemented health bars and ammo type icons.
 //
