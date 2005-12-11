@@ -436,7 +436,7 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 //==========================================================================
 
 boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
-	FFunction *prfunc)
+	VObject* PrSelf, FFunction *prfunc)
 {
 	guard(SV_BlockThingsIterator);
     if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
@@ -449,7 +449,9 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
     {
 		if (func && !func(Ent))
 		    return false;
-		if (prfunc && !svpr.Exec(prfunc, (int)Ent))
+		if (prfunc && PrSelf && !svpr.Exec(prfunc, (int)PrSelf, (int)Ent))
+		    return false;
+		if (prfunc && !PrSelf && !svpr.Exec(prfunc, (int)Ent))
 		    return false;
     }
     return true;
@@ -589,7 +591,7 @@ static boolean PIT_AddThingIntercepts(VEntity* thing)
 //==========================================================================
 
 boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
-		int flags, boolean(*trav)(intercept_t *), FFunction *prtrav)
+	int flags, boolean(*trav)(intercept_t *), VObject* PrSelf, FFunction *prtrav)
 {
 	guard(SV_PathTraverse);
 	float x1 = InX1;
@@ -692,79 +694,82 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 	}
 	xintercept = FL(FX(x1) >> MAPBTOFRAC) + partial * xstep;
 //	xintercept = x1 / MAPBLOCKSIZE + partial * xstep;
-    
-    // Step through map blocks.
-    // Count is present to prevent a round off error
-    // from skipping the break.
-    mapx = xt1;
-    mapy = yt1;
 	
-    for (count = 0 ; count < 64 ; count++)
-    {
+	// Step through map blocks.
+	// Count is present to prevent a round off error
+	// from skipping the break.
+	mapx = xt1;
+	mapy = yt1;
+	
+	for (count = 0 ; count < 64 ; count++)
+	{
 		if (flags & PT_ADDLINES)
 		{
-		    if (!SV_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts))
+			if (!SV_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts))
 				return false;	// early out
 		}
 	
 		if (flags & PT_ADDTHINGS)
 		{
-		    if (!SV_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts, 0))
+			if (!SV_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts, NULL, NULL))
 				return false;	// early out
 		}
 		
 		if (mapx == xt2 && mapy == yt2)
 		{
-		    break;
+			break;
 		}
 	
 		if ((int)yintercept == mapy)
 		{
-		    yintercept += ystep;
-		    mapx += mapxstep;
+			yintercept += ystep;
+			mapx += mapxstep;
 		}
 		else if ((int)xintercept == mapx)
 		{
-		    xintercept += xstep;
-		    mapy += mapystep;
+			xintercept += xstep;
+			mapy += mapystep;
 		}
 		
-    }
+	}
 
-    // go through the sorted list
+	// go through the sorted list
 	float			dist;
-    intercept_t*	scan;
-    intercept_t*	in;
+	intercept_t*	scan;
+	intercept_t*	in;
 	
-    count = intercept_p - intercepts;
-    
-    in = 0;			// shut up compiler warning
+	count = intercept_p - intercepts;
 	
-    while (count--)
-    {
+	in = 0;			// shut up compiler warning
+	
+	while (count--)
+	{
 		dist = 99999.0;
 		for (scan = intercepts; scan < intercept_p; scan++)
 		{
-		    if (scan->frac < dist)
-		    {
+			if (scan->frac < dist)
+			{
 				dist = scan->frac;
 				in = scan;
-		    }
+			}
 		}
-	
+
 		if (dist > 1.0)
-		    return true;	// checked everything in range
+			return true;	// checked everything in range
 
-        if (trav && !trav(in))
-		    return false;	// don't bother going farther
+		if (trav && !trav(in))
+			return false;	// don't bother going farther
 
-        if (prtrav && !svpr.Exec(prtrav, (int)in))
-		    return false;	// don't bother going farther
+		if (prtrav && PrSelf && !svpr.Exec(prtrav, (int)PrSelf, (int)in))
+			return false;	// don't bother going farther
+
+		if (prtrav && !PrSelf && !svpr.Exec(prtrav, (int)in))
+			return false;	// don't bother going farther
 
 		in->frac = 99999.0;
-    }
+	}
 	
-    return true;		// everything was traversed
+	return true;		// everything was traversed
 	unguard;
 }
 
@@ -1066,7 +1071,7 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 	// re-check heights for all things near the moving sector
 	for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
 		for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
-			SV_BlockThingsIterator(x, y, PIT_ChangeSector, NULL);
+			SV_BlockThingsIterator(x, y, PIT_ChangeSector, NULL, NULL);
 
 	ret = nofit;
 	if (sector->bExtrafloorSource)
@@ -1094,9 +1099,12 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/12/11 21:37:00  dj_jl
+//	Made path traversal callbacks class members.
+//
 //	Revision 1.21  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.20  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
 //	

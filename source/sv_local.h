@@ -445,9 +445,9 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld);
 
 boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*));
 boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
-	FFunction *prfunc);
+	VObject* PrSelf, FFunction *prfunc);
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
-	int flags, boolean(*trav)(intercept_t *), FFunction *prtrav);
+	int flags, boolean(*trav)(intercept_t *), VObject* PrSelf, FFunction *prtrav);
 
 sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, float z2);
 opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2);
@@ -623,9 +623,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2005/12/11 21:37:00  dj_jl
+//	Made path traversal callbacks class members.
+//
 //	Revision 1.39  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.38  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
 //	

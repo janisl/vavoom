@@ -1277,39 +1277,21 @@ PF(P_BoxOnLineSide)
 
 PF(P_BlockThingsIterator)
 {
-	int		x;
-    int		y;
-    FName	FuncName;
-	FFunction	*func = NULL;
-	static FName PrevNames[8];
-	static FFunction *PrevFuncs[8];
-	int i;
+	int			x;
+	int			y;
+	VObject*	SelfObj;
+	FName		FuncName;
+	FFunction*	func = NULL;
 
 	FuncName = PopName();
-    y = Pop();
-    x = Pop();
-	for (i = 0; i < 8; i++)
-	{
-		if (PrevNames[i] == FuncName)
-		{
-			func = PrevFuncs[i];
-			break;
-		}
-	}
-	if (!func)
-	{
+	SelfObj = (VObject*)Pop();
+	y = Pop();
+	x = Pop();
+	if (SelfObj)
+		func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
+	else
 		func = svpr.FindFunctionChecked(FuncName);
-		for (i = 0; i < 8; i++)
-		{
-			if (PrevNames[i] == NAME_None)
-			{
-				PrevNames[i] = FuncName;
-				PrevFuncs[i] = func;
-				break;
-			}
-		}
-	}
-	Push(SV_BlockThingsIterator(x, y, NULL, func));
+	Push(SV_BlockThingsIterator(x, y, NULL, SelfObj, func));
 }
 
 //==========================================================================
@@ -1320,45 +1302,27 @@ PF(P_BlockThingsIterator)
 
 PF(P_PathTraverse)
 {
-	float	x1;
-	float	y1;
-	float	x2;
-	float	y2;
-	int		flags;
-	FName	FuncName;
-	FFunction	*func = NULL;
-	static FName PrevNames[8];
-	static FFunction *PrevFuncs[8];
-	int i;
+	float		x1;
+	float		y1;
+	float		x2;
+	float		y2;
+	int			flags;
+	FName		FuncName;
+	VObject*	SelfObj;
+	FFunction*	func;
 
 	FuncName = PopName();
+	SelfObj = (VObject*)Pop();
 	flags = Pop();
 	y2 = Popf();
 	x2 = Popf();
 	y1 = Popf();
 	x1 = Popf();
-	for (i = 0; i < 8; i++)
-	{
-		if (PrevNames[i] == FuncName)
-		{
-			func = PrevFuncs[i];
-			break;
-		}
-	}
-	if (!func)
-	{
+	if (SelfObj)
+		func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
+	else
 		func = svpr.FindFunctionChecked(FuncName);
-		for (i = 0; i < 8; i++)
-		{
-			if (PrevNames[i] == NAME_None)
-			{
-				PrevNames[i] = FuncName;
-				PrevFuncs[i] = func;
-				break;
-			}
-		}
-	}
-	Push(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, func));
+	Push(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, SelfObj, func));
 }
 
 //==========================================================================
@@ -3384,9 +3348,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.64  2005/12/11 21:37:00  dj_jl
+//	Made path traversal callbacks class members.
+//
 //	Revision 1.63  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.62  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

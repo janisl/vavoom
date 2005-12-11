@@ -440,7 +440,7 @@ boolean VEntity::CheckPosition(TVec Pos)
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!SV_BlockThingsIterator(bx, by, PIT_CheckThing, NULL))
+			if (!SV_BlockThingsIterator(bx, by, PIT_CheckThing, NULL, NULL))
 				return false;
 
 	// check lines
@@ -765,7 +765,7 @@ boolean VEntity::CheckRelPosition(TVec Pos)
 
 		for (bx = xl; bx <= xh; bx++)
 			for (by = yl; by <= yh; by++)
-				if (!SV_BlockThingsIterator(bx, by, PIT_CheckRelThing, NULL))
+				if (!SV_BlockThingsIterator(bx, by, PIT_CheckRelThing, NULL, NULL))
 					return false;
 
 		tmtrace.BlockingMobj = NULL;
@@ -1018,7 +1018,7 @@ static void SlidePathTraverse(float x, float y)
 	slideorg = TVec(x, y, slidemo->Origin.z);
 	slidedir = slidemo->Velocity * host_frametime;
 	SV_PathTraverse(x, y, x + slidedir.x, y + slidedir.y,
-		PT_ADDLINES, PTR_SlideTraverse, NULL);
+		PT_ADDLINES, PTR_SlideTraverse, NULL, NULL);
 }
 
 //==========================================================================
@@ -1203,7 +1203,7 @@ void VEntity::BounceWall(float overbounce)
 	slidedir = Velocity * host_frametime;
 	SV_PathTraverse(slideorg.x, slideorg.y,
 		slideorg.x + slidedir.x, slideorg.y + slidedir.y,
-		PT_ADDLINES, PTR_BounceTraverse, NULL);
+		PT_ADDLINES, PTR_BounceTraverse, NULL, NULL);
 	Velocity = ClipVelocity(Velocity, bestslideline->normal, overbounce);
 }
 
@@ -1381,7 +1381,7 @@ VEntity *VEntity::CheckOnmobj(void)
 	{
 		for (by = yl; by <= yh; by++)
 		{
-			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, NULL))
+			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, NULL, NULL))
 			{
 				return onmobj;
 			}
@@ -1871,9 +1871,12 @@ VClass* SV_FindClassFromEditorId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/12/11 21:37:00  dj_jl
+//	Made path traversal callbacks class members.
+//
 //	Revision 1.16  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.15  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
 //	
