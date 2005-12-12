@@ -385,8 +385,6 @@ void SetOrigin2(TVec origin)
 
 void OnMapSpawn(mthing_t * mthing)
 {
-	state_t *st;
-
 	if (bNoDeathmatch && deathmatch)
 	{
 		Remove();
@@ -4626,6 +4624,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2005/12/12 20:33:49  dj_jl
+//  Cleaned up state types.
+//
 //  Revision 1.19  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //
