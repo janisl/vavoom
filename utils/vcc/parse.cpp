@@ -238,7 +238,7 @@ static void ParseStatement()
 
 				BreakLevel++;
 				ContinueLevel++;
-				topAddr = NumInstructions;
+				topAddr = GetNumInstructions();
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
@@ -254,11 +254,11 @@ static void ParseStatement()
 			{
 				BreakLevel++;
 				ContinueLevel++;
-				int topAddr = NumInstructions;
+				int topAddr = GetNumInstructions();
 				ParseStatement();
 				TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				int exprAddr = NumInstructions;
+				int exprAddr = GetNumInstructions();
 				TypeCheck1(ParseExpression());
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
@@ -277,7 +277,7 @@ static void ParseStatement()
 				   	AddDrop(t);
 				} while (TK_Check(PU_COMMA));
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				int topAddr = NumInstructions;
+				int topAddr = GetNumInstructions();
 				t = ParseExpression();
 				if (t == &type_void)
 				{
@@ -290,7 +290,7 @@ static void ParseStatement()
 				int jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
 				int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				int contAddr = NumInstructions;
+				int contAddr = GetNumInstructions();
 				do
 				{
 					t = ParseExpression();
@@ -383,7 +383,7 @@ static void ParseStatement()
 							ERR_Exit(ERR_CASE_OVERFLOW, true, NULL);
 						}
 						CaseInfo[numcases].value = EvalConstExpression(etype->type);
-						CaseInfo[numcases].address = NumInstructions;
+						CaseInfo[numcases].address = GetNumInstructions();
 						numcases++;
 						TK_Expect(PU_COLON, ERR_MISSING_COLON);
 						continue;
@@ -394,7 +394,7 @@ static void ParseStatement()
 						{
 							ERR_Exit(ERR_MULTIPLE_DEFAULT, true, NULL);
 						}
-						defaultAddress = NumInstructions;
+						defaultAddress = GetNumInstructions();
 						TK_Expect(PU_COLON, ERR_MISSING_COLON);
 						continue;
 					}
@@ -719,7 +719,7 @@ static void CompileDef(TType *type, bool IsNative)
 		TypeCheckPassable(t);
 	}
 
-	if (CheckForGlobalVar(Name))
+	if (CheckForGlobalVar(Name) != -1)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
@@ -777,7 +777,7 @@ static void CompileDef(TType *type, bool IsNative)
 	maxlocalsofs = localsofs;
 
 	num = CheckForFunction(NULL, Name);
-	if (!num)
+	if (num == -1)
 	{
 		ERR_Exit(ERR_NONE, true, "Missing func declaration");
 	}
@@ -970,8 +970,6 @@ void PA_Compile()
 
 	dprintf("Compiling pass 2\n");
 
-	numconstants = 0;
-
 	//  Add empty function for default constructors
 	BeginCode(1);
 	AddStatement(OPC_Return);
@@ -1072,8 +1070,7 @@ void PA_Compile()
 	   	}
 	}
 
-	dprintf("User defined globals - %d\n", numglobals);
-	AddInfoTables();
+	dprintf("User defined globals - %d\n", globals.Num());
 	AddVirtualTables();
 	if (NumErrors)
 	{
@@ -1084,9 +1081,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.31  2005/11/30 23:54:27  dj_jl
 //	Switch statement requires integer.
-//
+//	
 //	Revision 1.30  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
 //	

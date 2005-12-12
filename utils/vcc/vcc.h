@@ -50,8 +50,6 @@ using namespace VavoomUtils;
 #define MAX_IDENTIFIER_LENGTH	64
 #define	MAX_PARAMS				16
 #define MAX_LOCAL_DEFS			64
-#define	MAX_FUNCTIONS			8192
-#define MAX_CONSTANTS			10000
 
 #define PF_VARARGS				0x8000
 #define PF_COUNT_MASK			0x7fff
@@ -102,7 +100,6 @@ enum ECompileError
 	ERR_IDENTIFIER_TOO_LONG,
 	ERR_BAD_CHARACTER,
 	ERR_UNTERM_COMMENT,
-	ERR_TOO_MENY_CONSTANTS,
 	//  Syntax errors
 	ERR_BAD_CONST_EXPR,
 	ERR_BAD_EXPR,
@@ -258,6 +255,10 @@ class FField
 {
 public:
 	FName		Name;
+
+	FField()
+	: Name(NAME_None)
+	{}
 };
 
 struct field_t : public FField
@@ -299,6 +300,18 @@ public:
 	int			NumParams;
 	int			ParamsSize;
 	TType*		ParamTypes[MAX_PARAMS];
+
+	TFunction()
+	: OuterClass(0)
+	, FirstStatement(0)
+	, NumLocals(0)
+	, Flags(0)
+	, ReturnType(0)
+	, NumParams(0)
+	, ParamsSize(0)
+	{
+		memset(ParamTypes, 0, sizeof(ParamTypes));
+	}
 };
 
 class TGlobalDef : public FField
@@ -306,6 +319,11 @@ class TGlobalDef : public FField
 public:
 	int			ofs;
 	TType		*type;
+
+	TGlobalDef()
+	: ofs(0)
+	, type(0)
+	{}
 };
 
 struct localvardef_t : public FField
@@ -317,7 +335,7 @@ struct localvardef_t : public FField
 struct constant_t : public FField
 {
 	int			value;
-	constant_t	*HashNext;
+	int			HashNext;
 };
 
 class TStruct : public FField
@@ -370,6 +388,17 @@ public:
 	{}
 };
 
+struct TPropInfo
+{
+	short	Type;
+	short	Ofs;
+
+	TPropInfo(short	InType, short InOfs)
+	: Type(InType)
+	, Ofs(InOfs)
+	{}
+};
+
 struct state_t
 {
 	int		sprite;
@@ -386,11 +415,6 @@ struct mobjinfo_t
 {
     int		doomednum;
 	int		class_id;
-};
-
-struct compstate_t
-{
-	FName NextName;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -423,6 +447,7 @@ int AddStatement(int statement);
 int AddStatement(int statement, int parm1);
 int AddStatement(int statement, int parm1, int parm2);
 int UndoStatement();
+int GetNumInstructions();
 void FixupJump(int Pos, int JmpPos);
 void FixupJump(int Pos);
 void BeginCode(int);
@@ -481,7 +506,6 @@ void InitInfoTables();
 void ParseStates(TClass*);
 void AddToMobjInfo(int Index, int ClassID);
 void SkipStates(TClass*);
-void AddInfoTables();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -497,42 +521,25 @@ extern EKeyword			tk_Keyword;
 extern EPunctuation		tk_Punct;
 extern FName			tk_Name;
 
-extern int				NumInstructions;
+extern TArray<int>			globals;
+extern TArray<byte>			globalinfo;
+extern TArray<TGlobalDef>	globaldefs;
 
-extern int*				globals;
-extern byte*			globalinfo;
-extern int				numglobals;
+extern TArray<TFunction>	functions;
+extern int					numbuiltins;
 
-extern TGlobalDef*		globaldefs;
-extern int				numglobaldefs;
+extern TArray<constant_t>	Constants;
+extern int					ConstantsHash[256];
 
-extern TFunction*		functions;
-extern int				numfunctions;
-extern int				numbuiltins;
+extern TArray<TClass*>		classtypes;
+extern TArray<int>			vtables;
+extern TArray<TPropInfo>	propinfos;
 
-extern constant_t		Constants[MAX_CONSTANTS];
-extern int				numconstants;
-extern constant_t		*ConstantsHash[256];
-
-extern TClass*			classtypes;
-extern int				numclasses;
-
-extern int*				vtables;
-extern int				numvtables;
-
-extern dfield_t*		propinfos;
-extern int				numpropinfos;
-
-extern TStruct*			structtypes;
-extern int				numstructs;
+extern TArray<TStruct*>		structtypes;
 
 extern TArray<FName>		sprite_names;
-
 extern TArray<FName>		models;
-
 extern TArray<state_t>		states;
-extern TArray<compstate_t>	compstates;
-
 extern TArray<mobjinfo_t>	mobj_info;
 
 extern TType			type_void;
@@ -540,8 +547,6 @@ extern TType			type_int;
 extern TType			type_float;
 extern TType			type_name;
 extern TType			type_string;
-extern TType			type_state;
-extern TType			type_mobjinfo;
 extern TType			type_void_ptr;
 extern TType			type_vector;
 extern TType			type_classid;
@@ -622,9 +627,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.32  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.31  2005/11/30 13:14:53  dj_jl
 //	Implemented instruction buffer.
 //	

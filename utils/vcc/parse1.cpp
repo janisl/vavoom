@@ -544,15 +544,15 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		*dst = EvalConstExpression(type->type);
 		if (type->type == ev_string)
 		{
-			globalinfo[dst - globals] = GLOBALTYPE_String;
+			globalinfo[dst - &globals[0]] = GLOBALTYPE_String;
 		}
 		else if (type->type == ev_classid)
 		{
-			globalinfo[dst - globals] = GLOBALTYPE_Class;
+			globalinfo[dst - &globals[0]] = GLOBALTYPE_Class;
 		}
 		else if (type->type == ev_name)
 		{
-			globalinfo[dst - globals] = GLOBALTYPE_Name;
+			globalinfo[dst - &globals[0]] = GLOBALTYPE_Name;
 		}
 	}
 	return type;
@@ -641,8 +641,8 @@ static void ParseDef(TType *type, bool IsNative)
 			{
 				ERR_Exit(ERR_VOID_VAR, true, NULL);
 			}
-			if (CheckForGlobalVar(Name) ||
-				CheckForFunction(NULL, Name) ||
+			if (CheckForGlobalVar(Name) != -1 ||
+				CheckForFunction(NULL, Name) != -1 ||
 				CheckForConstant(Name) != -1)
 			{
 				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s",
@@ -652,17 +652,17 @@ static void ParseDef(TType *type, bool IsNative)
 			// inicializÆcija
 			if (TK_Check(PU_ASSIGN))
 			{
-				t = ParseGlobalData(t, globals + numglobals);
+				t = ParseGlobalData(t, &globals[globals.Num()]);
 			}
 			if (!TypeSize(t))
 			{
 				ERR_Exit(ERR_NONE, true, "Size of type = 0.");
 			}
-			globaldefs[numglobaldefs].Name = Name;
-			globaldefs[numglobaldefs].type = t;
-			globaldefs[numglobaldefs].ofs = numglobals;
-			numglobals += TypeSize(t) / 4;
-			numglobaldefs++;
+			TGlobalDef* GlobalDef = new(globaldefs) TGlobalDef;
+			GlobalDef->Name = Name;
+			GlobalDef->type = t;
+			GlobalDef->ofs = globals.Num();
+			globals.Add(TypeSize(t) / 4);
 			dprintf("Added global %s, %d bytes\n", *Name, TypeSize(t));
 			Name = NAME_None;
 		} while (TK_Check(PU_COMMA));
@@ -670,7 +670,7 @@ static void ParseDef(TType *type, bool IsNative)
 		return;
 	}
 
-	if (CheckForGlobalVar(Name))
+	if (CheckForGlobalVar(Name) != -1)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
@@ -678,13 +678,13 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
-	if (CheckForFunction(NULL, Name))
+	if (CheckForFunction(NULL, Name) != -1)
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true, "Function: %s", *Name);
 	}
 
-	num = numfunctions;
-	numfunctions++;
+	num = functions.Num();
+	new(functions) TFunction;
 	functions[num].Name = Name;
 	functions[num].OuterClass = NULL;
 	functions[num].ReturnType = t;
@@ -764,16 +764,15 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 	numlocaldefs = 1;
 	int localsofs = 1;
 
-	if (CheckForFunction(InClass, method->Name))
+	if (CheckForFunction(InClass, method->Name) != -1)
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
 			"Function: %s.%s", *InClass->Name, *method->Name);
 	}
 
-	int num = numfunctions;
-	numfunctions++;
+	int num = functions.Num();
 	method->func_num = num;
-	TFunction& Func = functions[num];
+	TFunction& Func = *new(functions) TFunction;
 	Func.Name = method->Name;
 	Func.OuterClass = InClass;
 	Func.Flags = FuncFlags;
@@ -876,8 +875,8 @@ int ParseStateCode(TClass* InClass)
 {
 	numlocaldefs = 1;
 
-	int num = numfunctions;
-	numfunctions++;
+	int num = functions.Num();
+	new(functions) TFunction;
 	functions[num].Name = NAME_None;
 	functions[num].OuterClass = InClass;
 	functions[num].ReturnType = &type_void;
@@ -909,14 +908,14 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 	method->Name = NAME_None;
 	InClass->NumFields++;
 
-	if (CheckForFunction(InClass, InClass->Name))
+	if (CheckForFunction(InClass, InClass->Name) != -1)
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
 			 "Function: %s.%s", *InClass->Name, *InClass->Name);
 	}
 
-	int num = numfunctions;
-	numfunctions++;
+	int num = functions.Num();
+	new(functions) TFunction;
 	method->func_num = num;
 	functions[num].OuterClass = InClass;
 	functions[num].ReturnType = &type_void;
@@ -934,21 +933,19 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 
 void AddConstant(FName Name, int value)
 {
-	if (CheckForGlobalVar(Name) || CheckForFunction(NULL, Name) ||
+	if (CurrentPass == 2)
+		ParseError("Add constant in pass 2");
+	if (CheckForGlobalVar(Name) != -1 || CheckForFunction(NULL, Name) != -1 ||
 		CheckForConstant(Name) != -1)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
-	if (numconstants == MAX_CONSTANTS)
-	{
-		ERR_Exit(ERR_TOO_MENY_CONSTANTS, true, NULL);
-	}
-	Constants[numconstants].Name = Name;
-	Constants[numconstants].value = value;
+	constant_t* cDef = new(Constants) constant_t;
+	cDef->Name = Name;
+	cDef->value = value;
 	int hash = GetTypeHash(Name) & 255;
-	Constants[numconstants].HashNext = ConstantsHash[hash];
-	ConstantsHash[hash] = &Constants[numconstants];
-	numconstants++;
+	cDef->HashNext = ConstantsHash[hash];
+	ConstantsHash[hash] = Constants.Num() - 1;
 }
 
 //==========================================================================
@@ -964,110 +961,100 @@ void PA_Parse()
 
 	dprintf("Compiling pass 1\n");
 
-	numconstants = 0;
-
-	//  Add empty function for default constructors
-	functions[numfunctions].Name = NAME_None;
-	functions[numfunctions].OuterClass = NULL;
-	functions[numfunctions].ReturnType = &type_void;
-	functions[numfunctions].ParamsSize = 1; // this pointer
-	functions[numfunctions].NumLocals = 1;
-	numfunctions++;
-
 	TK_NextToken();
 	done = false;
 	while (!done)
 	{
 		switch(tk_Token)
 		{
-			case TK_EOF:
-				done = true;
-				break;
-			case TK_KEYWORD:
+		case TK_EOF:
+			done = true;
+			break;
+		case TK_KEYWORD:
+			type = CheckForType();
+			if (type)
+			{
+				ParseDef(type, false);
+			}
+			else if (TK_Check(KW_NATIVE))
+			{
 				type = CheckForType();
 				if (type)
 				{
-					ParseDef(type, false);
-				}
-				else if (TK_Check(KW_NATIVE))
-				{
-					type = CheckForType();
-					if (type)
-					{
-						ParseDef(type, true);
-					}
-					else
-					{
-						ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-					}
-				}
-				else if (TK_Check(KW_ENUM))
-				{
-					int val;
-					FName Name;
-
-					val = 0;
-					TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-					do
-					{
-						if (tk_Token != TK_IDENTIFIER)
-						{
-							ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-						}
-						Name = tk_Name;
-						TK_NextToken();
-						if (TK_Check(PU_ASSIGN))
-						{
-							val = EvalConstExpression(ev_int);
-						}
-						AddConstant(Name, val);
-						val++;
-					} while (TK_Check(PU_COMMA));
-					TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				}
-				else if (TK_Check(KW_STRUCT))
-				{
-					ParseStruct(false);
-				}
-				else if (TK_Check(KW_CLASS))
-				{
-					ParseClass();
-				}
-				else if (TK_Check(KW_ADDFIELDS))
-				{
-					AddFields();
-				}
-				else if (TK_Check(KW_VECTOR))
-				{
-					ParseStruct(true);
-				}
-				else if (TK_Check(KW_STATES))
-				{
-				   	ParseStates(NULL);
+					ParseDef(type, true);
 				}
 				else
 				{
 					ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
 				}
-				break;
+			}
+			else if (TK_Check(KW_ENUM))
+			{
+				int val;
+				FName Name;
 
-			case TK_IDENTIFIER:
-				type = CheckForType();
-				if (type)
+				val = 0;
+				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+				do
 				{
-					ParseDef(type, false);
-				}
-				else
-				{
-					ERR_Exit(ERR_INVALID_DECLARATOR, true, "Identifier \"%s\"", tk_String);
-				}
-				break;
+					if (tk_Token != TK_IDENTIFIER)
+					{
+						ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+					}
+					Name = tk_Name;
+					TK_NextToken();
+					if (TK_Check(PU_ASSIGN))
+					{
+						val = EvalConstExpression(ev_int);
+					}
+					AddConstant(Name, val);
+					val++;
+				} while (TK_Check(PU_COMMA));
+				TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
+			else if (TK_Check(KW_STRUCT))
+			{
+				ParseStruct(false);
+			}
+			else if (TK_Check(KW_CLASS))
+			{
+				ParseClass();
+			}
+			else if (TK_Check(KW_ADDFIELDS))
+			{
+				AddFields();
+			}
+			else if (TK_Check(KW_VECTOR))
+			{
+				ParseStruct(true);
+			}
+			else if (TK_Check(KW_STATES))
+			{
+				ParseStates(NULL);
+			}
+			else
+			{
+				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
+			}
+			break;
 
-			default:
-				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Token type %d, symbol \"%s\"", tk_Token, tk_String);
-				break;
-	   	}
+		case TK_IDENTIFIER:
+			type = CheckForType();
+			if (type)
+			{
+				ParseDef(type, false);
+			}
+			else
+			{
+				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Identifier \"%s\"", tk_String);
+			}
+			break;
+
+		default:
+			ERR_Exit(ERR_INVALID_DECLARATOR, true, "Token type %d, symbol \"%s\"", tk_Token, tk_String);
+			break;
+		}
 	}
 
 	if (NumErrors)
@@ -1079,9 +1066,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.5  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.4  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	

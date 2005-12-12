@@ -58,9 +58,7 @@ TType		type_int(ev_int, &type_void, NULL);
 TType		type_float(ev_float, &type_int, NULL);
 TType		type_name(ev_name, &type_float, NULL);
 TType		type_string(ev_string, &type_name, NULL);
-TType		type_state(ev_struct, &type_string, NULL);
-TType		type_mobjinfo(ev_struct, &type_state, NULL);
-TType		type_void_ptr(ev_pointer, &type_mobjinfo, &type_void);
+TType		type_void_ptr(ev_pointer, &type_string, &type_void);
 TType		type_vector(ev_vector, &type_void_ptr, NULL);
 TType		type_classid(ev_classid, &type_vector, NULL);
 TType		type_none_ref(ev_reference, &type_classid, NULL);
@@ -78,8 +76,6 @@ TType		*types = &type_bool;
 
 void InitTypes()
 {
-	type_state.Name = NAME_state_t;
-	type_mobjinfo.Name = NAME_mobjinfo_t;
 	type_bool.bit_mask = 1;
 }
 
@@ -217,11 +213,11 @@ TType *CheckForType()
 		return CheckForTypeKeyword();
 	}
 
-	for (int i = 0; i < numclasses; i++)
+	for (int i = 0; i < classtypes.Num(); i++)
 	{
-		if (TK_Check(classtypes[i].Name))
+		if (TK_Check(classtypes[i]->Name))
 		{
-			return MakeReferenceType(&classtypes[i]);
+			return MakeReferenceType(classtypes[i]);
 		}
 	}
 	for (TType* check = types; check; check = check->next)
@@ -250,11 +246,11 @@ TType *CheckForType(FName Name)
 		return NULL;
 	}
 
-	for (int i = 0; i < numclasses; i++)
+	for (int i = 0; i < classtypes.Num(); i++)
 	{
-		if (Name == classtypes[i].Name)
+		if (Name == classtypes[i]->Name)
 		{
-			return MakeReferenceType(&classtypes[i]);
+			return MakeReferenceType(classtypes[i]);
 		}
 	}
 	for (TType* check = types; check; check = check->next)
@@ -283,11 +279,11 @@ TClass* CheckForClass()
 		return NULL;
 	}
 
-	for (int i = 0; i < numclasses; i++)
+	for (int i = 0; i < classtypes.Num(); i++)
 	{
-		if (TK_Check(classtypes[i].Name))
+		if (TK_Check(classtypes[i]->Name))
 		{
-			return &classtypes[i];
+			return classtypes[i];
 		}
 	}
 	return NULL;
@@ -301,11 +297,11 @@ TClass* CheckForClass()
 
 TClass* CheckForClass(FName Name)
 {
-	for (int i = 0; i < numclasses; i++)
+	for (int i = 0; i < classtypes.Num(); i++)
 	{
-		if (classtypes[i].Name == Name)
+		if (classtypes[i]->Name == Name)
 		{
-			return &classtypes[i];
+			return classtypes[i];
 		}
 	}
 	return NULL;
@@ -347,16 +343,16 @@ int CheckForGlobalVar(FName Name)
 {
 	if (Name == NAME_None)
 	{
-		return 0;
+		return -1;
 	}
-	for (int i = 1; i < numglobaldefs; i++)
+	for (int i = 0; i < globaldefs.Num(); i++)
 	{
 		if (globaldefs[i].Name == Name)
 		{
 			return i;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 //==========================================================================
@@ -369,16 +365,16 @@ int CheckForFunction(TClass* InClass, FName Name)
 {
 	if (Name == NAME_None)
 	{
-		return 0;
+		return -1;
 	}
-	for (int i = 1; i < numfunctions; i++)
+	for (int i = 0; i < functions.Num(); i++)
 	{
 		if (functions[i].OuterClass == InClass && functions[i].Name == Name)
 		{
 			return i;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 //==========================================================================
@@ -390,12 +386,12 @@ int CheckForFunction(TClass* InClass, FName Name)
 int CheckForConstant(FName Name)
 {
 #if 1
-	for (constant_t *C = ConstantsHash[GetTypeHash(Name) & 255];
-		C; C = C->HashNext)
+	for (int C = ConstantsHash[GetTypeHash(Name) & 255];
+		C != -1; C = Constants[C].HashNext)
 	{
-		if (C->Name == Name)
+		if (Constants[C].Name == Name)
 		{
-			return C - Constants;
+			return C;
 		}
 	}
 #else
@@ -507,7 +503,7 @@ void TypeCheck3(TType *t1, TType *t2)
 		{
 			return;
 		}
-		if ((c1 == &classtypes[0]) || (c2 == &classtypes[0]))
+		if ((c1 == classtypes[0]) || (c2 == classtypes[0]))
 		{
 			return;
 		}
@@ -940,13 +936,16 @@ static void AddVTable(TClass* InClass)
 	{
 		return;
 	}
-	InClass->VTable = numvtables;
-	int *vtable = vtables + numvtables;
-	numvtables += InClass->NumMethods;
 	if (InClass->ParentClass)
 	{
 		AddVTable(InClass->ParentClass);
-		memcpy(vtable, vtables + InClass->ParentClass->VTable,
+	}
+	InClass->VTable = vtables.Num();
+	int *vtable = &vtables[vtables.Add(InClass->NumMethods)];
+	memset(vtable, 0, InClass->NumMethods * 4);
+	if (InClass->ParentClass)
+	{
+		memcpy(vtable, &vtables[InClass->ParentClass->VTable],
 			InClass->ParentClass->NumMethods * 4);
 	}
 	for (int i = 0; i < InClass->NumFields; i++)
@@ -956,7 +955,7 @@ static void AddVTable(TClass* InClass)
 		{
 			continue;
 		}
-		if (!f.func_num)
+		if (f.func_num == -1)
 		{
 			ParseError("Method %s.%s not defined", *InClass->Name, *f.Name);
 		}
@@ -974,7 +973,7 @@ static void AddVTable(TClass* InClass)
 //
 //==========================================================================
 
-static void WritePropertyField(TClass* InClass, dfield_t *df, TType *type, int ofs)
+static void WritePropertyField(TClass* InClass, TType *type, int ofs)
 {
 	int i;
 
@@ -986,26 +985,23 @@ static void WritePropertyField(TClass* InClass, dfield_t *df, TType *type, int o
 	case ev_bool:
 		break;
 	case ev_name:
-		df[InClass->NumProperties].type = PROPTYPE_Name;
-		df[InClass->NumProperties].ofs = ofs;
+		propinfos.AddItem(TPropInfo(PROPTYPE_Name, ofs));
 		InClass->NumProperties++;
 		break;
 	case ev_string:
-		df[InClass->NumProperties].type = PROPTYPE_String;
-		df[InClass->NumProperties].ofs = ofs;
+		propinfos.AddItem(TPropInfo(PROPTYPE_String, ofs));
 		InClass->NumProperties++;
 		break;
 	case ev_pointer:	// FIXME
 		break;
 	case ev_reference:
-		df[InClass->NumProperties].type = PROPTYPE_Reference;
-		df[InClass->NumProperties].ofs = ofs;
+		propinfos.AddItem(TPropInfo(PROPTYPE_Reference, ofs));
 		InClass->NumProperties++;
 		break;
 	case ev_array:
 		for (i = 0; i < TypeSize(type) / TypeSize(type->aux_type); i++)
 		{
-			WritePropertyField(InClass, df, type->aux_type,
+			WritePropertyField(InClass, type->aux_type,
 				ofs + i * TypeSize(type->aux_type));
 		}
 		break;
@@ -1013,14 +1009,13 @@ static void WritePropertyField(TClass* InClass, dfield_t *df, TType *type, int o
 	case ev_vector:
 		for (i = 0; i < type->Struct->NumFields; i++)
 		{
-			WritePropertyField(InClass, df, type->Struct->Fields[i].type,
+			WritePropertyField(InClass, type->Struct->Fields[i].type,
 				ofs + type->Struct->Fields[i].ofs);
 		}
 	case ev_method:		// Properties are not methods
 		break;
 	case ev_classid:
-		df[InClass->NumProperties].type = PROPTYPE_ClassID;
-		df[InClass->NumProperties].ofs = ofs;
+		propinfos.AddItem(TPropInfo(PROPTYPE_ClassID, ofs));
 		InClass->NumProperties++;
 		break;
 	}
@@ -1034,14 +1029,12 @@ static void WritePropertyField(TClass* InClass, dfield_t *df, TType *type, int o
 
 static void WritePropertyInfo(TClass* InClass)
 {
-	InClass->OfsProperties = numpropinfos;
+	InClass->OfsProperties = propinfos.Num();
 	InClass->NumProperties = 0;
-	dfield_t *df = propinfos + numpropinfos;
 	for (int i = 0; i < InClass->NumFields; i++)
 	{
-		WritePropertyField(InClass, df, InClass->Fields[i].type, InClass->Fields[i].ofs);
+		WritePropertyField(InClass, InClass->Fields[i].type, InClass->Fields[i].ofs);
 	}
-	numpropinfos += InClass->NumProperties;
 }
 
 //==========================================================================
@@ -1054,13 +1047,13 @@ void AddVirtualTables()
 {
 	dprintf("Adding virtual tables\n");
 	int i;
-	for (i = 0; i < numclasses; i++)
+	for (i = 0; i < classtypes.Num(); i++)
 	{
-		AddVTable(&classtypes[i]);
+		AddVTable(classtypes[i]);
 	}
-	for (i = 0; i < numclasses; i++)
+	for (i = 0; i < classtypes.Num(); i++)
 	{
-		WritePropertyInfo(&classtypes[i]);
+		WritePropertyInfo(classtypes[i]);
 	}
 }
 
@@ -1110,9 +1103,9 @@ void ParseStruct(bool IsVector)
 			ParseError("Struct name expected");
 		}
 		//	New struct
-		Struct = &structtypes[numstructs];
+		Struct = new TStruct;
+		structtypes.AddItem(Struct);
 		Struct->Name = tk_Name;
-		numstructs++;
 		//  Add to types
 		struct_type = new TType;
 		memset(struct_type, 0, sizeof(TType));
@@ -1407,10 +1400,9 @@ void ParseClass()
 			ParseError("Class name expected");
 		}
 		//	New class.
-		Class = &classtypes[numclasses];
+		Class = new TClass;
+		Class->Index = classtypes.AddItem(Class);
 		Class->Name = tk_Name;
-		Class->Index = numclasses;
-		numclasses++;
 		TK_NextToken();
 	}
 
@@ -1585,9 +1577,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.34  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.33  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	

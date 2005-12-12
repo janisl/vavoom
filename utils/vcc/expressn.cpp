@@ -394,7 +394,7 @@ static TTree ParseExpressionPriority0()
 			}
 
 			num = CheckForFunction(NULL, Name);
-			if (num)
+			if (num != -1)
 			{
 				return ParseFunctionCall(num, false);
 			}
@@ -441,7 +441,7 @@ static TTree ParseExpressionPriority0()
 		}
 
 		num = CheckForGlobalVar(Name);
-		if (num)
+		if (num != -1)
 		{
 			AddStatement(OPC_GlobalAddress, num);
 			op = EmitPushPointed(globaldefs[num].type);
@@ -1624,9 +1624,12 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.32  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.31  2005/11/30 23:55:05  dj_jl
 //	Directly use with-drop statements.
 //	

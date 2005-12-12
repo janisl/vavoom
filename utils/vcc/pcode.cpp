@@ -29,16 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define CODE_BUFFER_SIZE		(256 * 1024)
-#define MAX_INSTRUCTIONS		(256 * 1024)
-#define	MAX_GLOBALS				(256 * 1024)
-#define MAX_STRINGS				8192
-#define	MAX_STRINGS_BUF			500000
-#define MAX_CLASSES				1024
-#define MAX_STRUCTS				1024
-#define	MAX_VTABLES				(128 * 1024)
-#define	MAX_PROPINFOS			1024
-
 #define OPCODE_STATS
 
 // TYPES -------------------------------------------------------------------
@@ -69,55 +59,35 @@ void DumpAsmFunction(int num);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-FInstruction*	Instructions;
-int				NumInstructions;
+TArray<int>			globals;
+TArray<byte>		globalinfo;
+TArray<TGlobalDef>	globaldefs;
 
-int*			globals;
-byte*			globalinfo;
-int				numglobals;
+TArray<TFunction>	functions;
+int					numbuiltins;
 
-TGlobalDef*		globaldefs;
-int				numglobaldefs;
+TArray<constant_t>	Constants;
+int					ConstantsHash[256];
 
-TFunction*		functions;
-int				numfunctions;
-int				numbuiltins;
+TArray<TClass*>		classtypes;
+TArray<int>			vtables;
+TArray<TPropInfo>	propinfos;
 
-constant_t		Constants[MAX_CONSTANTS];
-int				numconstants;
-constant_t		*ConstantsHash[256];
-
-TClass*			classtypes;
-int				numclasses;
-
-TStruct*		structtypes;
-int				numstructs;
-
-int*			vtables;
-int				numvtables;
-
-dfield_t*		propinfos;
-int				numpropinfos;
+TArray<TStruct*>	structtypes;
 
 TArray<FName>		sprite_names;
-
 TArray<FName>		models;
-
 TArray<state_t>		states;
-TArray<compstate_t>	compstates;
-
 TArray<mobjinfo_t>	mobj_info;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int*			CodeBuffer;
-static int			CodeBufferSize;
+static TArray<FInstruction>	Instructions;
+static TArray<int>			CodeBuffer;
 
-static char*		strings;
-static int			strofs;
-static TStringInfo	StringInfo[MAX_STRINGS];
-static int 			StringCount;
-static int			StringLookup[256];
+static TArray<char>			strings;
+static TArray<TStringInfo>	StringInfo;
+static int					StringLookup[256];
 
 static struct
 {
@@ -139,68 +109,28 @@ static struct
 //
 //==========================================================================
 
-void PC_Init(void)
+void PC_Init()
 {
-	//	Code buffer
-	CodeBuffer = new int[CODE_BUFFER_SIZE];
-	memset(CodeBuffer, 0, CODE_BUFFER_SIZE * 4);
-	CodeBufferSize = 1;
-
-	Instructions = new FInstruction[MAX_INSTRUCTIONS];
-	memset(Instructions, 0, MAX_INSTRUCTIONS * sizeof(FInstruction));
-	NumInstructions = 1;
+	memset(ConstantsHash, -1, sizeof(ConstantsHash));
 
 	//	Globals
-	globals = new int[MAX_GLOBALS];
-	memset(globals, 0, MAX_GLOBALS * 4);
-	globalinfo = new byte[MAX_GLOBALS];
-	memset(globalinfo, 0, MAX_GLOBALS);
-	numglobals = 1;
-	globaldefs = new TGlobalDef[MAX_GLOBALS];
-	memset(globaldefs, 0, MAX_GLOBALS * sizeof(TGlobalDef));
-	numglobaldefs = 1;
-	globaldefs[0].type = &type_void;
-
-	//	Functions.
-	functions = new TFunction[MAX_FUNCTIONS];
-	memset(functions, 0, MAX_FUNCTIONS * sizeof(TFunction));
-	numfunctions = 1;
-	numbuiltins = 1;
-	functions[0].ReturnType = &type_void;
+	globals.Empty(10000);
+	memset(&globals[0], 0, 10000 * 4);
+	globalinfo.Empty(10000);
+	memset(&globalinfo[0], 0, 10000);
 
 	//	Strings
-	strings = new char[MAX_STRINGS_BUF];
-	memset(strings, 0, MAX_STRINGS_BUF);
 	memset(StringLookup, 0, 256 * 4);
 	//	1-st string is empty
-	StringCount = 1;
-	strofs = 4;
-
-	//	Structs
-	structtypes = new TStruct[MAX_STRUCTS];
-	numstructs = 2;
-	structtypes[0].Name = NAME_state_t;
-	structtypes[0].Type = &type_state;
-	structtypes[0].Size = -1;
-	type_state.Struct = &structtypes[0];
-	structtypes[1].Name = NAME_mobjinfo_t;
-	structtypes[1].Type = &type_mobjinfo;
-	structtypes[1].Size = -1;
-	type_mobjinfo.Struct = &structtypes[1];
+	StringInfo.Add();
+	StringInfo[0].offs = 0;
+	StringInfo[0].next = 0;
+	strings.AddZeroed(4);
 
 	//	Classes
-	classtypes = new TClass[MAX_CLASSES];
-	numclasses = 1;
-	classtypes[0].Name = NAME_Object;
-	classtypes[0].Size = -1;
-
-	//	Virtual tables
-	vtables = new int[MAX_VTABLES];
-	memset(vtables, 0, MAX_VTABLES * 4);
-
-	//	Property info
-	propinfos = new dfield_t[MAX_PROPINFOS];
-	memset(propinfos, 0, MAX_PROPINFOS * sizeof(dfield_t));
+	classtypes.AddItem(new TClass);
+	classtypes[0]->Name = NAME_Object;
+	classtypes[0]->Size = -1;
 }
 
 //==========================================================================
@@ -231,26 +161,20 @@ int FindString(const char *str)
 	int hash = StringHashFunc(str);
 	for (int i = StringLookup[hash]; i; i = StringInfo[i].next)
 	{
-		if (!strcmp(strings + StringInfo[i].offs, str))
+		if (!strcmp(&strings[StringInfo[i].offs], str))
 		{
 			return StringInfo[i].offs;
 		}
 	}
 
-	//  Pievieno jaunu
-	if (StringCount == MAX_STRINGS)
-	{
-		ERR_Exit(ERR_TOO_MANY_STRINGS, true,
-				 "Current maximum: %d", MAX_STRINGS);
-	}
-
-	StringInfo[StringCount].offs = strofs;
-	StringInfo[StringCount].next = StringLookup[hash];
-	StringLookup[hash] = StringCount;
-	strcpy(strings + strofs, str);
-	strofs += (strlen(str) + 4) & ~3;
-	StringCount++;
-	return StringInfo[StringCount - 1].offs;
+	//  Add new string
+	int Idx = StringInfo.Add();
+	int Ofs = strings.AddZeroed((strlen(str) + 4) & ~3);
+	StringInfo[Idx].offs = Ofs;
+	StringInfo[Idx].next = StringLookup[hash];
+	StringLookup[hash] = Idx;
+	strcpy(&strings[Ofs], str);
+	return StringInfo[Idx].offs;
 }
 
 //==========================================================================
@@ -266,14 +190,6 @@ int AddStatement(int statement)
 		dprintf("AddStatement in pass 1\n");
 	}
 
-	if (CodeBufferSize >= CODE_BUFFER_SIZE)
-	{
-		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-	}
-	if (NumInstructions >= MAX_INSTRUCTIONS)
-	{
-		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-	}
 	if (StatementInfo[statement].params != 0)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode doesn't have 0 params");
@@ -281,7 +197,7 @@ int AddStatement(int statement)
 
 	if (statement == OPC_Drop)
 	{
-		switch (Instructions[NumInstructions - 1].Opcode)
+		switch (Instructions[Instructions.Num() - 1].Opcode)
 		{
 		case OPC_PreInc:
 		case OPC_PostInc:
@@ -303,7 +219,7 @@ int AddStatement(int statement)
 		}
 	}
 
-	int i = NumInstructions++;
+	int i = Instructions.Add();
 	Instructions[i].Opcode = statement;
 	Instructions[i].Arg1 = 0;
 	Instructions[i].Arg2 = 0;
@@ -324,20 +240,12 @@ int AddStatement(int statement, int parm1)
 		dprintf("AddStatement in pass 1\n");
 	}
 
-	if (CodeBufferSize >= CODE_BUFFER_SIZE)
-	{
-		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-	}
-	if (NumInstructions >= MAX_INSTRUCTIONS)
-	{
-		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-	}
 	if (StatementInfo[statement].params != 1)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 1 params");
 	}
 
-	int i = NumInstructions++;
+	int i = Instructions.Add();
 	Instructions[i].Opcode = statement;
 	Instructions[i].Arg1 = parm1;
 	Instructions[i].Arg2 = 0;
@@ -358,16 +266,12 @@ int AddStatement(int statement, int parm1, int parm2)
 		dprintf("AddStatement in pass 1\n");
 	}
 
-	if (CodeBufferSize >= CODE_BUFFER_SIZE)
-	{
-		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-	}
 	if (StatementInfo[statement].params != 2)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 2 params");
 	}
 
-	int i = NumInstructions++;
+	int i = Instructions.Add();
 	Instructions[i].Opcode = statement;
 	Instructions[i].Arg1 = parm1;
 	Instructions[i].Arg2 = parm2;
@@ -394,7 +298,18 @@ void FixupJump(int Pos, int JmpPos)
 
 void FixupJump(int Pos)
 {
-	Instructions[Pos].Arg1 = NumInstructions;
+	Instructions[Pos].Arg1 = Instructions.Num();
+}
+
+//==========================================================================
+//
+//  GetNumInstructions
+//
+//==========================================================================
+
+int GetNumInstructions()
+{
+	return Instructions.Num();
 }
 
 //==========================================================================
@@ -410,8 +325,9 @@ int UndoStatement()
 		dprintf("UndoStatement in pass 1\n");
 	}
 
-	NumInstructions--;
-	return Instructions[NumInstructions].Opcode;
+	int Ret = Instructions.Last().Opcode;
+	Instructions.Pop();
+	return Ret;
 }
 
 //==========================================================================
@@ -422,7 +338,7 @@ int UndoStatement()
 
 void BeginCode(int)
 {
-	NumInstructions = 0;
+	Instructions.Empty(1024);
 }
 
 //==========================================================================
@@ -434,23 +350,23 @@ void BeginCode(int)
 void EndCode(int FuncNum)
 {
 	int i;
-	functions[FuncNum].FirstStatement = CodeBufferSize;
+	functions[FuncNum].FirstStatement = CodeBuffer.Num();
 
-	for (i = 0; i < NumInstructions; i++)
+	for (i = 0; i < Instructions.Num(); i++)
 	{
-		Instructions[i].Address = CodeBufferSize;
-		CodeBuffer[CodeBufferSize++] = Instructions[i].Opcode;
+		Instructions[i].Address = CodeBuffer.Num();
+		CodeBuffer.AddItem(Instructions[i].Opcode);
 		if (StatementInfo[Instructions[i].Opcode].params > 0)
-			CodeBuffer[CodeBufferSize++] = Instructions[i].Arg1;
+			CodeBuffer.AddItem(Instructions[i].Arg1);
 		if (StatementInfo[Instructions[i].Opcode].params > 1)
-			CodeBuffer[CodeBufferSize++] = Instructions[i].Arg2;
+			CodeBuffer.AddItem(Instructions[i].Arg2);
 #ifdef OPCODE_STATS
 		StatementInfo[Instructions[i].Opcode].usecount++;
 #endif
 	}
-	Instructions[NumInstructions].Address = CodeBufferSize;
+	Instructions[Instructions.Add()].Address = CodeBuffer.Num();
 
-	for (i = 0; i < NumInstructions; i++)
+	for (i = 0; i < Instructions.Num() - 1; i++)
 	{
 		switch (Instructions[i].Opcode)
 		{
@@ -520,41 +436,6 @@ void PC_WriteObject(char *name)
 
 	WriteCode();
 
-	//	Chack buffers
-	if (StringCount >= MAX_STRINGS)
-	{
-		ERR_Exit(ERR_TOO_MANY_STRINGS, true,
-				 "Current maximum: %d", MAX_STRINGS);
-	}
-	if (CodeBufferSize >= CODE_BUFFER_SIZE)
-	{
-		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-	}
-	if (NumInstructions >= MAX_INSTRUCTIONS)
-	{
-		ERR_Exit(ERR_NONE, false, "Code buffer overflow.");
-	}
-	if (numglobals >= MAX_GLOBALS)
-	{
-		ERR_Exit(ERR_NONE, false, "Globals overflow");
-	}
-	if (numfunctions >= MAX_FUNCTIONS)
-	{
-		ERR_Exit(ERR_NONE, false, "Functions overflow");
-	}
-	if (strofs >= MAX_STRINGS_BUF)
-	{
-		ERR_Exit(ERR_NONE, false, "Strings buffer overflow");
-	}
-	if (numvtables >= MAX_VTABLES)
-	{
-		ERR_Exit(ERR_NONE, false, "VTables overflow");
-	}
-	if (numpropinfos >= MAX_PROPINFOS)
-	{
-		ERR_Exit(ERR_NONE, false, "Property infos overflow");
-	}
-
 	f = fopen(name, "wb");
 	if (!f)
 	{
@@ -574,11 +455,11 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_strings = ftell(f);
-	fwrite(strings, 1, strofs, f);
+	fwrite(&strings[0], 1, strings.Num(), f);
 
 	progs.ofs_statements = ftell(f);
-	progs.num_statements = CodeBufferSize;
-	for (i = 0; i < CodeBufferSize; i++)
+	progs.num_statements = CodeBuffer.Num();
+	for (i = 0; i < CodeBuffer.Num(); i++)
 	{
 		int opc;
 		opc = LittleLong(CodeBuffer[i]);
@@ -586,8 +467,8 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_globals = ftell(f);
-	progs.num_globals = numglobals;
-	for (i = 0; i < numglobals; i++)
+	progs.num_globals = globals.Num();
+	for (i = 0; i < globals.Num(); i++)
 	{
 		int gv;
 		gv = LittleLong(globals[i]);
@@ -595,11 +476,11 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_globalinfo = ftell(f);
-	fwrite(globalinfo, 1, (numglobals + 3) & ~3, f);
+	fwrite(&globalinfo[0], 1, (globals.Num() + 3) & ~3, f);
 
 	progs.ofs_functions = ftell(f);
-	progs.num_functions = numfunctions;
-	for (i = 0; i < numfunctions; i++)
+	progs.num_functions = functions.Num();
+	for (i = 0; i < functions.Num(); i++)
 	{
 		dfunction_t func;
 		func.name = LittleShort(functions[i].Name.GetIndex());
@@ -614,8 +495,8 @@ void PC_WriteObject(char *name)
 	}	
 
 	progs.ofs_globaldefs = ftell(f);
-	progs.num_globaldefs = numglobaldefs;
-	for (i = 0; i < numglobaldefs; i++)
+	progs.num_globaldefs = globaldefs.Num();
+	for (i = 0; i < globaldefs.Num(); i++)
 	{
 		dglobaldef_t gdef;
 		gdef.name = LittleShort(globaldefs[i].Name.GetIndex());
@@ -624,11 +505,11 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_classinfo = ftell(f);
-	progs.num_classinfo = numclasses;
-	for (i = 0; i < numclasses; i++)
+	progs.num_classinfo = classtypes.Num();
+	for (i = 0; i < classtypes.Num(); i++)
 	{
 		dclassinfo_t ci;
-		TClass& ct = classtypes[i];
+		TClass& ct = *classtypes[i];
 
 		ci.name = LittleLong(ct.Name.GetIndex());
 		ci.vtable = LittleLong(ct.VTable);
@@ -641,8 +522,8 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_vtables = ftell(f);
-	progs.num_vtables = numvtables;
-	for (i = 0; i < numvtables; i++)
+	progs.num_vtables = vtables.Num();
+	for (i = 0; i < vtables.Num(); i++)
 	{
 		short gv;
 		gv = LittleShort(vtables[i]);
@@ -650,12 +531,12 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_propinfo = ftell(f);
-	progs.num_propinfo = numpropinfos;
-	for (i = 0; i < numpropinfos; i++)
+	progs.num_propinfo = propinfos.Num();
+	for (i = 0; i < propinfos.Num(); i++)
 	{
 		dfield_t pi;
-		pi.type = LittleShort(propinfos[i].type);
-		pi.ofs = LittleShort(propinfos[i].ofs);
+		pi.type = LittleShort(propinfos[i].Type);
+		pi.ofs = LittleShort(propinfos[i].Ofs);
 		fwrite(&pi, 1, sizeof(dfield_t), f);
 	}
 
@@ -706,16 +587,16 @@ void PC_WriteObject(char *name)
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", FName::GetMaxNames(), progs.ofs_strings - progs.ofs_names);
-	dprintf("Strings    %6d %6d\n", StringCount, strofs);
-	dprintf("Statements %6d %6d\n", CodeBufferSize, CodeBufferSize * 4);
-	dprintf("Globals    %6d %6d\n", numglobals, numglobals * 4);
-	dprintf("Global info       %6d\n", (numglobals + 3) & ~3);
-	dprintf("Functions  %6d %6ld\n", numfunctions, numfunctions * sizeof(dfunction_t));
+	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
+	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), CodeBuffer.Num() * 4);
+	dprintf("Globals    %6d %6d\n", globals.Num(), globals.Num() * 4);
+	dprintf("Global info       %6d\n", (globals.Num() + 3) & ~3);
+	dprintf("Functions  %6d %6ld\n", functions.Num(), functions.Num() * sizeof(dfunction_t));
 	dprintf("Builtins   %6d\n", numbuiltins);
-	dprintf("Globaldefs %6d %6ld\n", numglobaldefs, numglobaldefs * sizeof(dglobaldef_t));
-	dprintf("Class info %6d %6ld\n", numclasses, numclasses * sizeof(dclassinfo_t));
-	dprintf("VTables    %6d %6d\n", numvtables, numvtables * 2);
-	dprintf("Prop info  %6d %6d\n", numpropinfos, numpropinfos * sizeof(dfield_t));
+	dprintf("Globaldefs %6d %6ld\n", globaldefs.Num(), globaldefs.Num() * sizeof(dglobaldef_t));
+	dprintf("Class info %6d %6ld\n", classtypes.Num(), classtypes.Num() * sizeof(dclassinfo_t));
+	dprintf("VTables    %6d %6d\n", vtables.Num(), vtables.Num() * 2);
+	dprintf("Prop info  %6d %6d\n", propinfos.Num(), propinfos.Num() * sizeof(dfield_t));
 	dprintf("Spr names  %6d %6d\n", sprite_names.Num(), sprite_names.Num() * 2);
 	dprintf("Mdl names  %6d %6d\n", models.Num(), models.Num() * 2);
 	dprintf("States     %6d %6d\n", states.Num(), states.Num() * sizeof(dstate_t));
@@ -760,10 +641,10 @@ void DumpAsmFunction(int num)
 	dprintf("Dump ASM function %s.%s\n\n", functions[num].OuterClass ?
 		*functions[num].OuterClass->Name : "None", *functions[num].Name);
 	s = functions[num].FirstStatement;
-	if (s < 0)
+	if (functions[num].Flags & FUNC_Native)
 	{
 		//	Builtin function
-		dprintf("Builtin Nr. %d\n", -s);
+		dprintf("Builtin function.\n");
 		return;
 	}
 	do
@@ -786,7 +667,7 @@ void DumpAsmFunction(int num)
 			else if (st == OPC_PushString)
 			{
 				//  String
-				dprintf("(%s)", strings + CodeBuffer[s]);
+				dprintf("(%s)", &strings[CodeBuffer[s]]);
 			}
 			else if (st == OPC_PushBool || st == OPC_AssignBool)
 			{
@@ -801,16 +682,16 @@ void DumpAsmFunction(int num)
 			s++;
 		}
 		dprintf("\n");
-		for (i = 0; i < numfunctions; i++)
+		for (i = 0; i < functions.Num(); i++)
 		{
 			//	if next command is first statement of another function,
 			// then this function has ended.
 			if (s == functions[i].FirstStatement)
 			{
-				s = CodeBufferSize;
+				s = CodeBuffer.Num();
 			}
 		}
-	} while (s < CodeBufferSize);
+	} while (s < CodeBuffer.Num());
 }
 
 //==========================================================================
@@ -838,7 +719,7 @@ void PC_DumpAsm(char* name)
 		cname = NULL;
 		fname = buf;
 	}
-	for (i = 0; i < numfunctions; i++)
+	for (i = 0; i < functions.Num(); i++)
 	{
 		if (((!cname && !functions[i].OuterClass) ||
 			(cname && functions[i].OuterClass &&
@@ -855,9 +736,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.24  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.23  2005/11/30 23:55:05  dj_jl
 //	Directly use with-drop statements.
 //	

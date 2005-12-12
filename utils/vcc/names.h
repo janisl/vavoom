@@ -41,8 +41,6 @@
 // Special zero value, meaning no name.
 REGISTER_NAME(None)
 
-REGISTER_NAME(state_t)
-REGISTER_NAME(mobjinfo_t)
 REGISTER_NAME(Object)
 
 // Closing -----------------------------------------------------------------
@@ -57,9 +55,12 @@ REGISTER_NAME(Object)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.4  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.3  2005/11/24 20:41:07  dj_jl
 //	Cleaned up a bit.
 //	

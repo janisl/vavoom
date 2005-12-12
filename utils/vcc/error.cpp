@@ -75,7 +75,6 @@ static char* ErrorNames[NUM_ERRORS] =
 	"Identifier too long.",
 	"Bad character.",
 	"Unterminated comment.",
-	"Too meny constants.",
 	//  Syntactic errors
 	"Syntax error in constant expression.",
 	"Syntax error in expression.",
@@ -314,9 +313,12 @@ static char *ErrorFileName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.7  2004/12/22 07:31:11  dj_jl
 //	Increased argument count limit.
-//
+//	
 //	Revision 1.6  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	

@@ -56,7 +56,6 @@ void InitInfoTables()
 	sprite_names.Empty(64);
 	models.Empty(64);
 	states.Empty(1024);
-	compstates.Empty(1024);
 	mobj_info.Empty(128);
 	models.AddItem(NAME_None);	// 0 indicates no-model
 }
@@ -104,8 +103,6 @@ void ParseStates(TClass* InClass)
 	{
 		state_t &s = *new(states) state_t;
 		memset(&s, 0, sizeof(s));
-		compstate_t &cs = *new(compstates) compstate_t;
-		memset(&cs, 0, sizeof(cs));
 
 		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
@@ -183,7 +180,6 @@ void ParseStates(TClass* InClass)
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
 		}
-		cs.NextName = tk_Name;
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
@@ -256,6 +252,7 @@ void SkipStates(TClass* InClass)
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
 		}
+		s.nextstate = FindState(tk_Name);
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
@@ -263,53 +260,15 @@ void SkipStates(TClass* InClass)
 	}
 }
 
-//==========================================================================
-//
-//	CheckStates
-//
-//==========================================================================
-
-static void CheckStates()
-{
-	int		i;
-	int		j;
-
-	for (i = 0; i < states.Num(); i++)
-	{
-		for (j = 0; j < states.Num(); j++)
-		{
-			if (compstates[i].NextName == states[j].statename)
-			{
-				states[i].nextstate = j;
-				break;
-			}
-		}
-		if (j == states.Num())
-		{
-			ERR_Exit(ERR_NONE, true, "State named \"%s\" was not defined",
-				*compstates[i].NextName);
-		}
-	}
-
-}
-
-//==========================================================================
-//
-//  AddInfoTables
-//
-//==========================================================================
-
-void AddInfoTables()
-{
-	CheckStates();
-}
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/12/12 20:58:47  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.26  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.25  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	
