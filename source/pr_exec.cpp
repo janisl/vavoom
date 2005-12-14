@@ -440,7 +440,7 @@ void TProgs::Load(const char *AName)
 	}
 
 	//	Set up builtins
-	for (i = 1; i < Progs->num_functions; i++)
+	for (i = 0; i < Progs->num_functions; i++)
 	{
 		FBuiltinInfo *B;
 
@@ -588,9 +588,7 @@ void TProgs::Unload()
 
 FFunction *TProgs::CheckFuncForName(const char* name)
 {
-	int		i;
-
-	for (i = 1; i < Progs->num_functions; i++)
+	for (int i = 0; i < Progs->num_functions; i++)
     {
     	if (!Functions[i].OuterClass && !strcmp(*Functions[i].Name, name))
 		{
@@ -626,7 +624,7 @@ FFunction *TProgs::FuncForName(const char* name)
 
 FFunction *TProgs::FindFunctionChecked(FName InName)
 {
-	for (int i = 1; i < Progs->num_functions; i++)
+	for (int i = 0; i < Progs->num_functions; i++)
     {
     	if (!Functions[i].OuterClass && Functions[i].Name == InName)
 		{
@@ -645,15 +643,13 @@ FFunction *TProgs::FindFunctionChecked(FName InName)
 
 int TProgs::CheckGlobalNumForName(const char* name)
 {
-	int		i;
-
-	for (i=1; i<Progs->num_globaldefs; i++)
-    {
-    	if (!strcmp(*Globaldefs[i].Name, name))
+	for (int i = 0; i < Progs->num_globaldefs; i++)
+	{
+		if (!strcmp(*Globaldefs[i].Name, name))
 		{
-        	return Globaldefs[i].Ofs;
+			return Globaldefs[i].Ofs;
 		}
-    }
+	}
 	return -1;
 }
 
@@ -665,14 +661,12 @@ int TProgs::CheckGlobalNumForName(const char* name)
 
 int TProgs::GlobalNumForName(const char* name)
 {
-	int		i;
-
-	i = CheckGlobalNumForName(name);
-    if (i == -1)
-    {
-    	Sys_Error("PR_GlobalNumForName: global %s not found", name);
-    }
-    return i;
+	int i = CheckGlobalNumForName(name);
+	if (i == -1)
+	{
+		Sys_Error("PR_GlobalNumForName: global %s not found", name);
+	}
+	return i;
 }
 
 //==========================================================================
@@ -683,7 +677,7 @@ int TProgs::GlobalNumForName(const char* name)
 
 char* TProgs::FuncName(int fnum)
 {
-	return const_cast<char *>(*((FFunction *)fnum)->Name);
+	return const_cast<char*>(*((FFunction *)fnum)->Name);
 }
 
 //==========================================================================
@@ -725,8 +719,7 @@ static void RunFunction(FFunction *func)
 
 	if (func->Flags & FUNC_Native)
 	{
-		//	Negative first statements are built in functions. Don't need to
-		// check builtin number (already done when setup builtins).
+		//	Native function, first statement is pointer to function.
 		((void(*)(void))func->FirstStatement)();
 		return;
 	}
@@ -2108,9 +2101,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2005/12/14 18:54:53  dj_jl
+//	Removed compiler limitations.
+//
 //	Revision 1.37  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.36  2005/11/24 20:06:47  dj_jl
 //	Renamed opcodes.
 //	
