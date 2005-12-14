@@ -44,7 +44,7 @@ void A_FireSkullRodPL1()
 	// Randomize the first frame
 	if (A && P_Random() > 128)
 	{
-		A.SetState(S_HRODFX1_2);
+		A.SetState(HornRodMissile1::S_HRODFX1_2);
 	}
 }
 
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.4  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

@@ -1611,7 +1611,7 @@ bool UndoPlayerChicken()
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
-	MO.SetState(S_FREETARGMOBJ);
+	MO.SetState(Actor::S_FREETARGMOBJ);
 	MO = A;
 
 	return true;
@@ -3003,6 +3003,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.13  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

@@ -38,6 +38,15 @@ native void Destroy();
 native bool IsA(name CheckName);
 native bool IsDestroyed();
 
+//
+//	States
+//
+
+__states__
+{
+	S_NULL('', 0, -1.0, S_NULL) { }
+}
+
 defaultproperties
 {
 }
@@ -45,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.2  2005/11/24 20:27:00  dj_jl
 //  Removed unused fields from Object class.
 //

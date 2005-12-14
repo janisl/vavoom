@@ -38,7 +38,7 @@ void A_LastZap(void)
 	A = Spawn(LightningZap, Origin);
 	if (A)
 	{
-		A.SetState(S_LIGHTNING_ZAP_X1);
+		A.SetState(LightningZap::S_LIGHTNING_ZAP_X1);
 		A.Velocity.z = 40.0 * 35.0;
 	}
 }
@@ -80,6 +80,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -3097,7 +3097,7 @@ void A_SpawnPuff()
 			(Random() - Random()) * 5.0 / 8.0,
 			(Random() - Random()) * 5.0 / 8.0, 0.0));
 		//FIXME Create a class for this.
-		A.SetState(S_GRENADE_HE_X2);
+		A.SetState(Puff::S_GRENADE_HE_X2);
 	}
 }
 
@@ -3316,6 +3316,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.22  2005/12/12 20:33:49  dj_jl
 //  Cleaned up state types.
 //

@@ -458,7 +458,7 @@ void A_Feathers(void)
 		mo.Velocity.x = (Random() - Random()) * 35.0;
 		mo.Velocity.y = (Random() - Random()) * 35.0;
 		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
-		mo.SetState(S_FEATHER1 + (P_Random() & 7));
+		mo.SetState(Feather::S_FEATHER1 + (P_Random() & 7));
 	}
 }
 
@@ -478,6 +478,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.4  2005/03/28 07:43:29  dj_jl
 //  Some Boom line specials and other improvements.
 //

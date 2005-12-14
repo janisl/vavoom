@@ -23,13 +23,20 @@
 //**
 //**************************************************************************
 
-class IceShard:Projectile;
+class IceShard : Projectile;
 
 __states__
 {
 	S_ICESHARD1('SHRD', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICESHARD2) { }
 	S_ICESHARD2('SHRD', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICESHARD3) { }
 	S_ICESHARD3('SHRD', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_ICESHARD1) { }
+
+	//FIXME avoid copying.
+	S_SHARDFXE1_1('SHEX', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_2) { }
+	S_SHARDFXE1_2('SHEX', 1 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_3) { }
+	S_SHARDFXE1_3('SHEX', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_4) { }
+	S_SHARDFXE1_4('SHEX', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SHARDFXE1_5) { }
+	S_SHARDFXE1_5('SHEX', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
@@ -50,6 +57,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -266,9 +266,9 @@ void P_SpawnBlood(float x, float y, float z, int damage)
 		A.StateTime = 0.1;
 
 	if (damage <= 12 && damage >= 9)
-		A.SetState(S_BLOOD2);
+		A.SetState(Blood::S_BLOOD2);
 	else if (damage < 9)
-		A.SetState(S_BLOOD3);
+		A.SetState(Blood::S_BLOOD3);
 }
 
 //**************************************************************************
@@ -425,6 +425,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.58  2005/12/14 20:52:33  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.57  2005/12/07 22:54:19  dj_jl
 //  Moved compiler generated data out of globals.
 //

@@ -324,7 +324,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			glass.bColideWithThings = false;
 			glass.bColideWithWorld = false;
 			glass.Origin.z += 24.0;
-			glass.SetState(S_SHARD_4 + P_Random() % 3);
+			glass.SetState(Actor::S_SHARD_4 + P_Random() % 3);
 			an = Random() * 360.0;
 			glass.Angles.yaw = an;
 			speed = Random() * 4.0 * 35.0;
@@ -1397,6 +1397,9 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2005/12/14 20:52:33  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.38  2005/11/24 20:32:09  dj_jl
 //  Beautification.
 //

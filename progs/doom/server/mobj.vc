@@ -252,7 +252,7 @@ void SpawnPuff(TVec Org, float Range)
 
 	// don't make punches spark on the wall
 	if (Range == MELEERANGE)
-		A.SetState(S_PUFF3);
+		A.SetState(Puff::S_PUFF3);
 }
 
 //==========================================================================
@@ -281,9 +281,9 @@ void P_SpawnBlood(TVec Org, int damage)
 		A.StateTime = 0.1;
 
 	if (damage <= 12 && damage >= 9)
-		A.SetState(S_BLOOD2);
+		A.SetState(Blood::S_BLOOD2);
 	else if (damage < 9)
-		A.SetState(S_BLOOD3);
+		A.SetState(Blood::S_BLOOD3);
 }
 
 //**************************************************************************
@@ -437,6 +437,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.59  2005/12/14 20:52:32  dj_jl
+//  State names belong to a class.
+//
 //  Revision 1.58  2005/12/07 22:54:18  dj_jl
 //  Moved compiler generated data out of globals.
 //
