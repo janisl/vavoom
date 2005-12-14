@@ -334,6 +334,7 @@ struct localvardef_t : public FField
 
 struct constant_t : public FField
 {
+	TClass*		OuterClass;
 	int			value;
 	int			HashNext;
 };
@@ -341,6 +342,7 @@ struct constant_t : public FField
 class TStruct : public FField
 {
 public:
+	TClass*			OuterClass;
 	TType*			Type;
 	TStruct*		ParentStruct;
 	int				Size;
@@ -352,7 +354,8 @@ public:
 	int				AvailableOfs;
 
 	TStruct()
-	: Type(0)
+	: OuterClass(0)
+	, Type(0)
 	, ParentStruct(0)
 	, Size(0)
 	, Fields(0)
@@ -455,7 +458,7 @@ void EndCode(int);
 void PC_WriteObject(char *name);
 void PC_DumpAsm(char* name);
 
-int EvalConstExpression(int type);
+int EvalConstExpression(TClass*InClass, int type);
 float ConstFloatExpression(void);
 
 TType *ParseExpression(bool = false);
@@ -463,7 +466,7 @@ TType *ParseExpression(bool = false);
 void ParseMethodDef(TType*, field_t*, field_t*, TClass*, int);
 int ParseStateCode(TClass*);
 void ParseDefaultProperties(field_t*, TClass*);
-void AddConstant(FName Name, int value);
+void AddConstant(TClass* InClass, FName Name, int value);
 void PA_Parse();
 
 int CheckForLocalVar(FName);
@@ -478,26 +481,26 @@ TType* FindType(TType *type);
 TType* MakePointerType(TType *type);
 TType* MakeReferenceType(TClass* type);
 TType* MakeArrayType(TType *type, int elcount);
-TType* CheckForType();
-TType* CheckForType(FName Name);
+TType* CheckForType(TClass* InClass);
+TType* CheckForType(TClass* InClass, FName Name);
 TClass* CheckForClass();
 TClass* CheckForClass(FName Name);
 int TypeSize(TType *t);
 int CheckForGlobalVar(FName Name);
 int CheckForFunction(TClass*, FName);
-int CheckForConstant(FName);
+int CheckForConstant(TClass* InClass, FName);
 void TypeCheckPassable(TType *type);
 void TypeCheck1(TType *t);
 void TypeCheck3(TType *t1, TType *t2);
-void SkipStruct();
-void SkipAddFields();
+void SkipStruct(TClass*);
+void SkipAddFields(TClass*);
 void CompileClass();
 field_t* ParseStructField(TStruct*);
 field_t* ParseClassField(TClass*);
 field_t* FindConstructor(TClass*);
 void AddVirtualTables();
-void ParseStruct(bool);
-void AddFields();
+void ParseStruct(TClass*, bool);
+void AddFields(TClass*);
 void ParseClass();
 field_t* CheckForField(TClass*, bool = true);
 field_t* CheckForField(FName, TClass*, bool = true);
@@ -627,9 +630,13 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2005/12/14 20:53:23  dj_jl
+//	State names belong to a class.
+//	Structs and enums defined in a class.
+//
 //	Revision 1.33  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.32  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
 //	

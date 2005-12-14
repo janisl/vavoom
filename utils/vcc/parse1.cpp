@@ -74,7 +74,7 @@ static void SkipLocalVar()
 
 		if (TK_Check(PU_LINDEX))
 		{
-			EvalConstExpression(ev_int);
+			SkipExpressionPriority13();
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
 		//  inicializÆcija
@@ -174,6 +174,15 @@ static void SkipExpressionPriority0()
 			SkipFunctionCall();
 			return;
 		}
+		if (TK_Check(PU_DCOLON))
+		{
+			if (tk_Token == TK_IDENTIFIER)
+			{
+				TK_NextToken();
+				return;
+			}
+		}
+
 		if (bLocals && (tk_Token == TK_IDENTIFIER ||
 			(tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)))
 		{
@@ -541,7 +550,7 @@ static TType* ParseGlobalData(TType *type, int *dst)
 		break;
 
 	 default:
-		*dst = EvalConstExpression(type->type);
+		*dst = EvalConstExpression(NULL, type->type);
 		if (type->type == ev_string)
 		{
 			globalinfo[dst - &globals[0]] = GLOBALTYPE_String;
@@ -576,7 +585,7 @@ static TType *ParseArrayDimensions(TType *type)
 		}
 		else
 		{
-			size = EvalConstExpression(ev_int);
+			size = EvalConstExpression(NULL, ev_int);
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
 		type = ParseArrayDimensions(type);
@@ -643,7 +652,7 @@ static void ParseDef(TType *type, bool IsNative)
 			}
 			if (CheckForGlobalVar(Name) != -1 ||
 				CheckForFunction(NULL, Name) != -1 ||
-				CheckForConstant(Name) != -1)
+				CheckForConstant(NULL, Name) != -1)
 			{
 				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s",
 					*Name);
@@ -674,7 +683,7 @@ static void ParseDef(TType *type, bool IsNative)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
-	if (CheckForConstant(Name) != -1)
+	if (CheckForConstant(NULL, Name) != -1)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
@@ -697,7 +706,7 @@ static void ParseDef(TType *type, bool IsNative)
 			break;
 		}
 
-		type = CheckForType();
+		type = CheckForType(NULL);
 
 		if (!type)
 		{
@@ -791,7 +800,7 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 			break;
 		}
 
-		TType *type = CheckForType();
+		TType *type = CheckForType(InClass);
 
 		if (!type)
 		{
@@ -931,16 +940,17 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 //
 //==========================================================================
 
-void AddConstant(FName Name, int value)
+void AddConstant(TClass* InClass, FName Name, int value)
 {
 	if (CurrentPass == 2)
 		ParseError("Add constant in pass 2");
 	if (CheckForGlobalVar(Name) != -1 || CheckForFunction(NULL, Name) != -1 ||
-		CheckForConstant(Name) != -1)
+		CheckForConstant(InClass, Name) != -1)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
 	constant_t* cDef = new(Constants) constant_t;
+	cDef->OuterClass = InClass;
 	cDef->Name = Name;
 	cDef->value = value;
 	int hash = GetTypeHash(Name) & 255;
@@ -971,14 +981,14 @@ void PA_Parse()
 			done = true;
 			break;
 		case TK_KEYWORD:
-			type = CheckForType();
+			type = CheckForType(NULL);
 			if (type)
 			{
 				ParseDef(type, false);
 			}
 			else if (TK_Check(KW_NATIVE))
 			{
-				type = CheckForType();
+				type = CheckForType(NULL);
 				if (type)
 				{
 					ParseDef(type, true);
@@ -1005,9 +1015,9 @@ void PA_Parse()
 					TK_NextToken();
 					if (TK_Check(PU_ASSIGN))
 					{
-						val = EvalConstExpression(ev_int);
+						val = EvalConstExpression(NULL, ev_int);
 					}
-					AddConstant(Name, val);
+					AddConstant(NULL, Name, val);
 					val++;
 				} while (TK_Check(PU_COMMA));
 				TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
@@ -1015,7 +1025,7 @@ void PA_Parse()
 			}
 			else if (TK_Check(KW_STRUCT))
 			{
-				ParseStruct(false);
+				ParseStruct(NULL, false);
 			}
 			else if (TK_Check(KW_CLASS))
 			{
@@ -1023,11 +1033,11 @@ void PA_Parse()
 			}
 			else if (TK_Check(KW_ADDFIELDS))
 			{
-				AddFields();
+				AddFields(NULL);
 			}
 			else if (TK_Check(KW_VECTOR))
 			{
-				ParseStruct(true);
+				ParseStruct(NULL, true);
 			}
 			else if (TK_Check(KW_STATES))
 			{
@@ -1040,7 +1050,7 @@ void PA_Parse()
 			break;
 
 		case TK_IDENTIFIER:
-			type = CheckForType();
+			type = CheckForType(NULL);
 			if (type)
 			{
 				ParseDef(type, false);
@@ -1066,9 +1076,13 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2005/12/14 20:53:23  dj_jl
+//	State names belong to a class.
+//	Structs and enums defined in a class.
+//
 //	Revision 1.6  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.5  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	

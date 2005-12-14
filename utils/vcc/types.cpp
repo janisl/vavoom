@@ -206,7 +206,7 @@ static TType *CheckForTypeKeyword(void)
 //
 //==========================================================================
 
-TType *CheckForType()
+TType *CheckForType(TClass* InClass)
 {
 	if (tk_Token == TK_KEYWORD)
 	{
@@ -239,7 +239,7 @@ TType *CheckForType()
 //
 //==========================================================================
 
-TType *CheckForType(FName Name)
+TType *CheckForType(TClass* InClass, FName Name)
 {
 	if (Name == NAME_None)
 	{
@@ -383,26 +383,24 @@ int CheckForFunction(TClass* InClass, FName Name)
 //
 //==========================================================================
 
-int CheckForConstant(FName Name)
+int CheckForConstant(TClass* InClass, FName Name)
 {
 #if 1
-	for (int C = ConstantsHash[GetTypeHash(Name) & 255];
-		C != -1; C = Constants[C].HashNext)
-	{
-		if (Constants[C].Name == Name)
-		{
-			return C;
-		}
-	}
+	for (int i = ConstantsHash[GetTypeHash(Name) & 255];
+		i != -1; i = Constants[i].HashNext)
 #else
 	for (int i = 0; i < numconstants; i++)
+#endif
 	{
-		if (Constants[i].Name == Name)
+		if (Constants[i].OuterClass == InClass && Constants[i].Name == Name)
 		{
 			return i;
 		}
 	}
-#endif
+	if (InClass)
+	{
+		return CheckForConstant(InClass->ParentClass, Name);
+	}
 	return -1;
 }
 
@@ -529,7 +527,7 @@ void TypeCheck3(TType *t1, TType *t2)
 //
 //==========================================================================
 
-void SkipStruct()
+void SkipStruct(TClass* InClass)
 {
 	TK_NextToken();
 	if (TK_Check(PU_SEMICOLON))
@@ -558,7 +556,7 @@ void SkipStruct()
 			TK_NextToken();
 			while (TK_Check(PU_LINDEX))
 			{
-				EvalConstExpression(ev_int);
+				EvalConstExpression(InClass, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 			}
 		} while (TK_Check(PU_COMMA));
@@ -573,7 +571,7 @@ void SkipStruct()
 //
 //==========================================================================
 
-void SkipAddFields()
+void SkipAddFields(TClass* InClass)
 {
 	TK_NextToken();
 
@@ -587,7 +585,7 @@ void SkipAddFields()
 			TK_NextToken();
 			while (TK_Check(PU_LINDEX))
 			{
-				EvalConstExpression(ev_int);
+				EvalConstExpression(InClass, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 			}
 		} while (TK_Check(PU_COMMA));
@@ -624,7 +622,7 @@ void CompileClass()
 
 	if (TK_Check(PU_COLON))
 	{
-		CheckForType();
+		CheckForClass();
 	}
 
 	do
@@ -632,7 +630,7 @@ void CompileClass()
 		if (TK_Check(KW_MOBJINFO))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			EvalConstExpression(ev_int);
+			EvalConstExpression(NULL, ev_int);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
 		else if (TK_Check(KW_NATIVE))
@@ -652,7 +650,45 @@ void CompileClass()
 	{
 		if (TK_Check(KW_STATES))
 		{
-		   	SkipStates(Class);
+			SkipStates(Class);
+			continue;
+		}
+
+		if (TK_Check(KW_ENUM))
+		{
+			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+			do
+			{
+				if (tk_Token != TK_IDENTIFIER)
+				{
+					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+				}
+				TK_NextToken();
+				if (TK_Check(PU_ASSIGN))
+				{
+					EvalConstExpression(Class, ev_int);
+				}
+			} while (TK_Check(PU_COMMA));
+			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			continue;
+		}
+
+		if (TK_Check(KW_STRUCT))
+		{
+			SkipStruct(Class);
+			continue;
+		}
+
+		if (TK_Check(KW_VECTOR))
+		{
+			SkipStruct(Class);
+			continue;
+		}
+
+		if (TK_Check(KW_ADDFIELDS))
+		{
+			SkipAddFields(Class);
 			continue;
 		}
 
@@ -670,7 +706,7 @@ void CompileClass()
 			}
 		} while (!flags_done);
 
-		type = CheckForType();
+		type = CheckForType(Class);
 		if (!type)
 		{
 			ParseError("Field type expected.");
@@ -712,7 +748,7 @@ void CompileClass()
 			}
 			while (TK_Check(PU_LINDEX))
 			{
-				EvalConstExpression(ev_int);
+				EvalConstExpression(Class, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 			}
 		} while (TK_Check(PU_COMMA));
@@ -1069,7 +1105,7 @@ void AddVirtualTables()
 //
 //==========================================================================
 
-void ParseStruct(bool IsVector)
+void ParseStruct(TClass* InClass, bool IsVector)
 {
 	field_t		fields[128];
 	field_t		*fi;
@@ -1081,7 +1117,7 @@ void ParseStruct(bool IsVector)
 	TType		*struct_type;
 	TStruct*	Struct;
 
-	struct_type = CheckForType();
+	struct_type = CheckForType(InClass);
 	if (struct_type)
 	{
 		if (struct_type->type != (IsVector ? ev_vector : ev_struct))
@@ -1129,7 +1165,7 @@ void ParseStruct(bool IsVector)
 
 	if (!IsVector && TK_Check(PU_COLON))
 	{
-		type = CheckForType();
+		type = CheckForType(InClass);
 		if (!type)
 		{
 			ParseError("Parent type expected");
@@ -1166,7 +1202,7 @@ void ParseStruct(bool IsVector)
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
-		type = CheckForType();
+		type = CheckForType(InClass);
 		if (!type)
 		{
 			ParseError("Field type expected.");
@@ -1223,7 +1259,7 @@ void ParseStruct(bool IsVector)
 			{
 				while (TK_Check(PU_LINDEX))
 				{
-					i = EvalConstExpression(ev_int);
+					i = EvalConstExpression(InClass, ev_int);
 					TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 					t = MakeArrayType(t, i);
 				}
@@ -1253,7 +1289,7 @@ void ParseStruct(bool IsVector)
 //
 //==========================================================================
 
-void AddFields()
+void AddFields(TClass* InClass)
 {
 	TType			*struct_type;
 	TType			*type;
@@ -1266,7 +1302,7 @@ void AddFields()
 	TType			*t;
 
 	//  Read type, to which fields will be added to.
-	struct_type = CheckForType();
+	struct_type = CheckForType(NULL);
 	if (!struct_type)
 	{
 		ParseError("Parent type expected.");
@@ -1300,7 +1336,7 @@ void AddFields()
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		type = CheckForType();
+		type = CheckForType(NULL);
 		if (!type)
 		{
 			ParseError("Field type expected.");
@@ -1343,7 +1379,7 @@ void AddFields()
 			fi->ofs = ofs;
 			while (TK_Check(PU_LINDEX))
 			{
-				i = EvalConstExpression(ev_int);
+				i = EvalConstExpression(NULL, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 				t = MakeArrayType(t, i);
 			}
@@ -1440,7 +1476,7 @@ void ParseClass()
 		if (TK_Check(KW_MOBJINFO))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToMobjInfo(EvalConstExpression(ev_int), Class->Index);
+			AddToMobjInfo(EvalConstExpression(NULL, ev_int), Class->Index);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
 		else if (TK_Check(KW_NATIVE))
@@ -1462,7 +1498,52 @@ void ParseClass()
 	{
 		if (TK_Check(KW_STATES))
 		{
-		   	ParseStates(Class);
+			ParseStates(Class);
+			continue;
+		}
+
+		if (TK_Check(KW_ENUM))
+		{
+			int val;
+			FName Name;
+
+			val = 0;
+			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+			do
+			{
+				if (tk_Token != TK_IDENTIFIER)
+				{
+					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+				}
+				Name = tk_Name;
+				TK_NextToken();
+				if (TK_Check(PU_ASSIGN))
+				{
+					val = EvalConstExpression(Class, ev_int);
+				}
+				AddConstant(Class, Name, val);
+				val++;
+			} while (TK_Check(PU_COMMA));
+			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			continue;
+		}
+
+		if (TK_Check(KW_STRUCT))
+		{
+			ParseStruct(Class, false);
+			continue;
+		}
+
+		if (TK_Check(KW_VECTOR))
+		{
+			ParseStruct(Class, true);
+			continue;
+		}
+
+		if (TK_Check(KW_ADDFIELDS))
+		{
+			AddFields(Class);
 			continue;
 		}
 
@@ -1481,7 +1562,7 @@ void ParseClass()
 		} while (!flags_done);
 
 		FName TypeName = NAME_None;
-		type = CheckForType();
+		type = CheckForType(Class);
 		if (!type)
 		{
 			if (tk_Token != TK_IDENTIFIER)
@@ -1549,7 +1630,7 @@ Class->Fields = &fields[0];
 			fi->ofs = size;
 			while (TK_Check(PU_LINDEX))
 			{
-				i = EvalConstExpression(ev_int);
+				i = EvalConstExpression(Class, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 				t = MakeArrayType(t, i);
 			}
@@ -1577,9 +1658,13 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2005/12/14 20:53:23  dj_jl
+//	State names belong to a class.
+//	Structs and enums defined in a class.
+//
 //	Revision 1.35  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.34  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
 //	

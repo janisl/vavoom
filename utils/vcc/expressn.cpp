@@ -365,7 +365,7 @@ static TTree ParseExpressionPriority0()
 		}
 		if (bLocals)
 		{
-			type = CheckForType();
+			type = CheckForType(SelfClass);
 			if (type)
 			{
 				ParseLocalVar(type);
@@ -413,10 +413,36 @@ static TTree ParseExpressionPriority0()
 			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", *Name);
 			break;
 		}
+
+		if (TK_Check(PU_DCOLON))
+		{
+			TClass* Class = CheckForClass(Name);
+			if (!Class)
+			{
+				ParseError("Class name expected");
+				break;
+			}
+
+			if (tk_Token == TK_IDENTIFIER)
+			{
+				num = CheckForConstant(Class, tk_Name);
+				if (num != -1)
+				{
+					TK_NextToken();
+					AddStatement(OPC_PushNumber, Constants[num].value);
+					op = TTree(&type_int);
+					return op;
+				}
+			}
+
+			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+			break;
+		}
+
 		if (bLocals && (tk_Token == TK_IDENTIFIER ||
 			(tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)))
 		{
-			type = CheckForType(Name);
+			type = CheckForType(SelfClass, Name);
 			if (type)
 			{
 				ParseLocalVar(type);
@@ -432,7 +458,7 @@ static TTree ParseExpressionPriority0()
 			return op;
 		}
 
-		num = CheckForConstant(Name);
+		num = CheckForConstant(SelfClass, Name);
 		if (num != -1)
 		{
 			AddStatement(OPC_PushNumber, Constants[num].value);
@@ -1624,9 +1650,13 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2005/12/14 20:53:23  dj_jl
+//	State names belong to a class.
+//	Structs and enums defined in a class.
+//
 //	Revision 1.33  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.32  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
 //	

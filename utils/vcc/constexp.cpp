@@ -43,6 +43,8 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static TClass*			ConstExprClass;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -66,7 +68,7 @@ static int ConstExprFactor(void)
 		case TK_PUNCT:
 			if (TK_Check(PU_LPAREN))
 			{
-				ret = EvalConstExpression(ev_int);
+				ret = EvalConstExpression(ConstExprClass, ev_int);
 				TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
 			}
 			else if (TK_Check(PU_NOT))
@@ -80,7 +82,7 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_IDENTIFIER:
-			num = CheckForConstant(tk_Name);
+			num = CheckForConstant(ConstExprClass, tk_Name);
 			if (num != -1)
 			{
 				TK_NextToken();
@@ -393,12 +395,13 @@ static float FCExprLevI(void)
 
 //=====================
 
-int EvalConstExpression(int type)
+int EvalConstExpression(TClass*InClass, int type)
 {
 	int		ret;
 	TClass*	c;
 
- 	switch (type)
+	ConstExprClass = InClass;
+	switch (type)
 	{
 	 case ev_int:
 		return CExprLevA();
@@ -459,9 +462,13 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2005/12/14 20:53:23  dj_jl
+//	State names belong to a class.
+//	Structs and enums defined in a class.
+//
 //	Revision 1.14  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.13  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	

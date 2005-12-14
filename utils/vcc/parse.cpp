@@ -382,7 +382,7 @@ static void ParseStatement()
 						{
 							ERR_Exit(ERR_CASE_OVERFLOW, true, NULL);
 						}
-						CaseInfo[numcases].value = EvalConstExpression(etype->type);
+						CaseInfo[numcases].value = EvalConstExpression(SelfClass, etype->type);
 						CaseInfo[numcases].address = GetNumInstructions();
 						numcases++;
 						TK_Expect(PU_COLON, ERR_MISSING_COLON);
@@ -494,7 +494,7 @@ void ParseLocalVar(TType *type)
 		size = 1;
 		if (TK_Check(PU_LINDEX))
 		{
-			size = EvalConstExpression(ev_int);
+			size = EvalConstExpression(SelfClass, ev_int);
 			t = MakeArrayType(t, size);
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
@@ -624,7 +624,7 @@ static void SkipGlobalData(TType *type)
 		break;
 
 	 default:
-		EvalConstExpression(type->type);
+		EvalConstExpression(NULL, type->type);
 	}
 }
 
@@ -643,7 +643,7 @@ static void SkipArrayDimensions()
 		}
 		else
 		{
-			EvalConstExpression(ev_int);
+			EvalConstExpression(NULL, ev_int);
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
 		SkipArrayDimensions();
@@ -723,7 +723,7 @@ static void CompileDef(TType *type, bool IsNative)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
-	if (CheckForConstant(Name) != -1)
+	if (CheckForConstant(NULL, Name) != -1)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
@@ -735,7 +735,7 @@ static void CompileDef(TType *type, bool IsNative)
 			break;
 		}
 
-		type = CheckForType();
+		type = CheckForType(NULL);
 
 		if (!type)
 		{
@@ -831,7 +831,7 @@ void CompileMethodDef(TType *t, field_t *method, field_t *otherfield,
 			break;
 		}
 
-		TType *type = CheckForType();
+		TType *type = CheckForType(InClass);
 
 		if (!type)
 		{
@@ -985,14 +985,14 @@ void PA_Compile()
 			done = true;
 			break;
 		case TK_KEYWORD:
-			type = CheckForType();
+			type = CheckForType(NULL);
 			if (type)
 			{
 				CompileDef(type, false);
 			}
 			else if (TK_Check(KW_NATIVE))
 			{
-				type = CheckForType();
+				type = CheckForType(NULL);
 				if (type)
 				{
 					CompileDef(type, true);
@@ -1019,7 +1019,7 @@ void PA_Compile()
 					TK_NextToken();
 					if (TK_Check(PU_ASSIGN))
 					{
-						val = EvalConstExpression(ev_int);
+						val = EvalConstExpression(NULL, ev_int);
 					}
 					val++;
 				} while (TK_Check(PU_COMMA));
@@ -1028,7 +1028,7 @@ void PA_Compile()
 			}
 			else if (TK_Check(KW_STRUCT))
 			{
-				SkipStruct();
+				SkipStruct(NULL);
 			}
 			else if (TK_Check(KW_CLASS))
 			{
@@ -1036,11 +1036,11 @@ void PA_Compile()
 			}
 			else if (TK_Check(KW_ADDFIELDS))
 			{
-				SkipAddFields();
+				SkipAddFields(NULL);
 			}
 			else if (TK_Check(KW_VECTOR))
 			{
-				SkipStruct();
+				SkipStruct(NULL);
 			}
 			else if (TK_Check(KW_STATES))
 			{
@@ -1053,7 +1053,7 @@ void PA_Compile()
 			break;
 
 		case TK_IDENTIFIER:
-			type = CheckForType();
+			type = CheckForType(NULL);
 			if (type)
 			{
 				CompileDef(type, false);
@@ -1081,9 +1081,13 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2005/12/14 20:53:23  dj_jl
+//	State names belong to a class.
+//	Structs and enums defined in a class.
+//
 //	Revision 1.32  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.31  2005/11/30 23:54:27  dj_jl
 //	Switch statement requires integer.
 //	

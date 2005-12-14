@@ -110,7 +110,7 @@ void ParseStates(TClass* InClass)
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
 		s.statename = tk_Name;
-		AddConstant(tk_Name, states.Num() - 1);
+		AddConstant(InClass, tk_Name, states.Num() - 1);
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 		//	Sprite name
@@ -144,7 +144,7 @@ void ParseStates(TClass* InClass)
 		TK_NextToken();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  Frame
-		s.frame = EvalConstExpression(ev_int);
+		s.frame = EvalConstExpression(InClass, ev_int);
 		TK_Expect(PU_COMMA, ERR_NONE);
 		if (tk_Token == TK_NAME)
 		{
@@ -164,7 +164,7 @@ void ParseStates(TClass* InClass)
 			TK_NextToken();
 			TK_Expect(PU_COMMA, ERR_NONE);
 			//  Frame
-			s.model_frame = EvalConstExpression(ev_int);
+			s.model_frame = EvalConstExpression(InClass, ev_int);
 			TK_Expect(PU_COMMA, ERR_NONE);
 		}
 		else
@@ -234,14 +234,14 @@ void SkipStates(TClass* InClass)
 		TK_NextToken();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  Frame
-		EvalConstExpression(ev_int);
+		EvalConstExpression(InClass, ev_int);
 		TK_Expect(PU_COMMA, ERR_NONE);
 		if (tk_Token == TK_NAME)
 		{
 			TK_NextToken();
 			TK_Expect(PU_COMMA, ERR_NONE);
 			//  Frame
-			EvalConstExpression(ev_int);
+			EvalConstExpression(InClass, ev_int);
 			TK_Expect(PU_COMMA, ERR_NONE);
 		}
 		//  Tics
@@ -263,9 +263,13 @@ void SkipStates(TClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2005/12/14 20:53:23  dj_jl
+//	State names belong to a class.
+//	Structs and enums defined in a class.
+//
 //	Revision 1.27  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.26  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
 //	
