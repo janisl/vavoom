@@ -41,15 +41,18 @@ int ArmorPoints;
 
 int ReadyWeapon;
 
-// For screen flashing (red or bright).
-float DamageFlash;
-float BonusFlash;
+// current face index, used by w_faces
+int sb_faceindex;
 
 //
 //  ----------
 //
 
 bool Backpack;
+
+// For screen flashing (red or bright).
+float DamageFlash;
+float BonusFlash;
 
 // Bit flags, for cheats and debug.
 // See cheat_t, above.
@@ -88,6 +91,27 @@ float LastSectorDamageTime;
 
 float HazardTime;
 float LastHazardTime;
+
+//
+//  FACE WIDGET DATA
+//
+
+// count until face changes
+float sb_facetime;
+
+// used for evil grin
+bool sb_oldweaponsowned[NUMWEAPONS];
+
+// used to use appopriately pained face
+int sb_oldhealth;
+
+// int sb_face_lastattackdown = -1;
+int sb_face_priority;
+
+int sb_cpo_lastcalc;
+int sb_cpo_oldhealth;
+
+float sb_face_lastattackdown;
 
 #ifndef	NO_BOTS
 BotPlayer Bot;
@@ -361,6 +385,7 @@ bool CheckSpot(mthing_t * mthing)
 
 void SpawnPlayer(mthing_t * mthing)
 {
+	int i;
 	float x;
 	float y;
 	float z;
@@ -396,6 +421,11 @@ void SpawnPlayer(mthing_t * mthing)
 	ViewHeight = VIEWHEIGHT;
 	ViewAngles = PP.Angles;
 	bFixAngle = true;
+
+	sb_faceindex = 0;
+	sb_oldhealth = -1;
+	for (i = 0; i < NUMWEAPONS; i++)
+		sb_oldweaponsowned[i] = WeaponOwned[i];
 
 	// setup gun psprite
 	SetupPsprites();
@@ -1720,6 +1750,205 @@ void PaletteFlash()
 
 //==========================================================================
 //
+//  CalcPainOffset
+//
+//==========================================================================
+
+int CalcPainOffset()
+{
+	int health;
+
+	health = Health > 100 ? 100 : Health;
+
+	if (health != sb_cpo_oldhealth)
+	{
+		sb_cpo_lastcalc =
+			ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
+		sb_cpo_oldhealth = health;
+	}
+	return sb_cpo_lastcalc;
+}
+
+//==========================================================================
+//
+//  UpdateFaceWidget
+//
+//  This is a not-very-pretty routine which handles the face states and
+// their timing.
+//  the precedence of expressions is:
+//  dead > evil grin > turned head > straight ahead
+//
+//==========================================================================
+
+void UpdateFaceWidget(float FrameTime)
+{
+	int i;
+	float badguyangle;
+	float diffang;
+	bool doevilgrin;
+
+	// a random number per tick
+	int st_randomnumber;
+
+	st_randomnumber = P_Random();
+
+	if (sb_face_priority < 10)
+	{
+		// dead
+		if (!Health)
+		{
+			sb_face_priority = 9;
+			sb_faceindex = ST_DEADFACE;
+			sb_facetime = 0.01;
+		}
+	}
+
+	if (sb_face_priority < 9)
+	{
+		if (BonusFlash)
+		{
+			// picking up bonus
+			doevilgrin = false;
+
+			for (i = 0; i < NUMWEAPONS; i++)
+			{
+				if (sb_oldweaponsowned[i] != WeaponOwned[i])
+				{
+					doevilgrin = true;
+					sb_oldweaponsowned[i] = WeaponOwned[i];
+				}
+			}
+			if (doevilgrin)
+			{
+				// evil grin if just picked up weapon
+				sb_face_priority = 8;
+				sb_facetime = ST_EVILGRINTIME;
+				sb_faceindex = CalcPainOffset() + ST_EVILGRINOFFSET;
+			}
+		}
+	}
+
+	if (sb_face_priority < 8)
+	{
+		if (DamageFlash && Attacker && Attacker != MO)
+		{
+			// being attacked
+			sb_face_priority = 7;
+
+			if (Health - sb_oldhealth > ST_MUCHPAIN)
+			{
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
+			}
+			else
+			{
+				badguyangle = atan2(Attacker.Origin.y - MO.Origin.y,
+					Attacker.Origin.x - MO.Origin.x);
+
+				if (badguyangle > MO.Angles.yaw)
+				{
+					// whether right or left
+					diffang = AngleMod360(badguyangle - MO.Angles.yaw);
+					i = diffang > 180.0;
+				}
+				else
+				{
+					// whether left or right
+					diffang = AngleMod360(MO.Angles.yaw - badguyangle);
+					i = diffang <= 180.0;
+				}	// confusing, aint it?
+
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset();
+
+				if (diffang < 45.0)
+				{
+					// head-on
+					sb_faceindex += ST_RAMPAGEOFFSET;
+				}
+				else if (i)
+				{
+					// turn face right
+					sb_faceindex += ST_TURNOFFSET;
+				}
+				else
+				{
+					// turn face left
+					sb_faceindex += ST_TURNOFFSET + 1;
+				}
+			}
+		}
+	}
+
+	if (sb_face_priority < 7)
+	{
+		// getting hurt because of your own damn stupidity
+		if (DamageFlash)
+		{
+			if (Health - sb_oldhealth > ST_MUCHPAIN)
+			{
+				sb_face_priority = 7;
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
+			}
+			else
+			{
+				sb_face_priority = 6;
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
+			}
+		}
+	}
+
+	if (sb_face_priority < 6)
+	{
+		// rapid firing
+		if (bAttackDown)
+		{
+			if (sb_face_lastattackdown == -1.0)
+				sb_face_lastattackdown = ST_RAMPAGEDELAY;
+			else
+			{
+				sb_face_lastattackdown -= FrameTime;
+				if (sb_face_lastattackdown <= 0.0)
+				{
+					sb_face_priority = 5;
+					sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
+					sb_facetime = 0.01;
+					sb_face_lastattackdown = 0.01;
+				}
+			}
+		}
+		else
+			sb_face_lastattackdown = -1.0;
+	}
+
+	if (sb_face_priority < 5)
+	{
+		// invulnerability
+		if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
+		{
+			sb_face_priority = 4;
+
+			sb_faceindex = ST_GODFACE;
+			sb_facetime = 0.01;
+		}
+	}
+
+	// look left or look right if the facecount has timed out
+	if (sb_facetime <= 0.0)
+	{
+		sb_faceindex = CalcPainOffset() + (st_randomnumber % 3);
+		sb_facetime = ST_STRAIGHTFACETIME;
+		sb_face_priority = 0;
+	}
+
+	sb_facetime -= FrameTime;
+	sb_oldhealth = Health;
+}
+
+//==========================================================================
+//
 //  SetViewPos
 //
 //==========================================================================
@@ -1744,6 +1973,8 @@ void SetViewPos()
 	}
 
 	PaletteFlash();
+
+	UpdateFaceWidget(frametime);
 
 	Stats.flags = Keys;
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
@@ -2740,6 +2971,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/12/22 19:06:20  dj_jl
+//  Fixed status bar face.
+//
 //  Revision 1.12  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

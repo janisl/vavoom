@@ -89,6 +89,38 @@ struct sb_stats_t
 #define SBF_RED_SKULL		0x00000020
 #define SBF_GOD_MODE		0x00000040
 
+//
+//  FACE WIDGET MACROS
+//
+
+// Number of status faces.
+#define ST_NUMPAINFACES		5
+#define ST_NUMSTRAIGHTFACES	3
+#define ST_NUMTURNFACES		2
+#define ST_NUMSPECIALFACES	3
+
+#define ST_FACESTRIDE \
+          (ST_NUMSTRAIGHTFACES + ST_NUMTURNFACES + ST_NUMSPECIALFACES)
+
+#define ST_NUMEXTRAFACES	2
+
+#define ST_NUMFACES \
+          (ST_FACESTRIDE*ST_NUMPAINFACES+ST_NUMEXTRAFACES)
+
+#define ST_TURNOFFSET		(ST_NUMSTRAIGHTFACES)
+#define ST_OUCHOFFSET		(ST_TURNOFFSET + ST_NUMTURNFACES)
+#define ST_EVILGRINOFFSET	(ST_OUCHOFFSET + 1)
+#define ST_RAMPAGEOFFSET	(ST_EVILGRINOFFSET + 1)
+#define ST_GODFACE			(ST_NUMPAINFACES * ST_FACESTRIDE)
+#define ST_DEADFACE			(ST_GODFACE + 1)
+
+#define ST_STRAIGHTFACETIME		0.5
+#define ST_TURNTIME				1.0
+#define ST_EVILGRINTIME			2.0
+#define ST_RAMPAGEDELAY			2.0
+
+#define ST_MUCHPAIN			20
+
 #ifdef CLIENT
 
 addfields client_state_t
@@ -109,9 +141,8 @@ addfields client_state_t
 
 	int ReadyWeapon;
 
-	// For screen flashing (red or bright).
-	float DamageFlash;
-	float BonusFlash;
+	// current face index, used by w_faces
+	int sb_faceindex;
 };
 
 #endif
@@ -142,6 +173,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/12/22 19:06:20  dj_jl
+//  Fixed status bar face.
+//
 //  Revision 1.14  2002/09/07 16:28:24  dj_jl
 //  Added Level class.
 //

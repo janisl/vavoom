@@ -409,7 +409,7 @@ class BotPlayer;
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int num_stats = NUM_STATS + 2 * NUMAMMO + NUMWEAPONS + 5;
+int num_stats = NUM_STATS + 2 * NUMAMMO + NUMWEAPONS + 4;
 
 bool respawnmonsters;
 
@@ -443,6 +443,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.47  2005/12/22 19:06:20  dj_jl
+//  Fixed status bar face.
+//
 //  Revision 1.46  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

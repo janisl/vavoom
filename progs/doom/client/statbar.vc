@@ -99,38 +99,6 @@
 #define ST_TDAMMOX		315
 #define ST_TDAMMOY		180
 
-//
-//  FACE WIDGET MACROS
-//
-
-// Number of status faces.
-#define ST_NUMPAINFACES		5
-#define ST_NUMSTRAIGHTFACES	3
-#define ST_NUMTURNFACES		2
-#define ST_NUMSPECIALFACES	3
-
-#define ST_FACESTRIDE \
-          (ST_NUMSTRAIGHTFACES + ST_NUMTURNFACES + ST_NUMSPECIALFACES)
-
-#define ST_NUMEXTRAFACES	2
-
-#define ST_NUMFACES \
-          (ST_FACESTRIDE*ST_NUMPAINFACES+ST_NUMEXTRAFACES)
-
-#define ST_TURNOFFSET		(ST_NUMSTRAIGHTFACES)
-#define ST_OUCHOFFSET		(ST_TURNOFFSET + ST_NUMTURNFACES)
-#define ST_EVILGRINOFFSET	(ST_OUCHOFFSET + 1)
-#define ST_RAMPAGEOFFSET	(ST_EVILGRINOFFSET + 1)
-#define ST_GODFACE			(ST_NUMPAINFACES * ST_FACESTRIDE)
-#define ST_DEADFACE			(ST_GODFACE + 1)
-
-#define ST_STRAIGHTFACECOUNT	(TICRATE / 2)
-#define ST_TURNCOUNT			(1 * TICRATE)
-#define ST_EVILGRINCOUNT		(2 * TICRATE)
-#define ST_RAMPAGEDELAY			(2 * TICRATE)
-
-#define ST_MUCHPAIN			20
-
 // CONSTANTS ---------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
@@ -140,32 +108,6 @@
 // DATA DECLARATIONS -------------------------------------------------------
 
 int sb_height = 32;
-
-//
-//  WIDGET DATA
-//
-
-// current face index, used by w_faces
-int st_faceindex = 0;
-
-//
-//  FACE WIDGET DATA
-//
-
-// count until face changes
-int st_facecount = 0;
-
-// used for evil grin
-bool oldweaponsowned[NUMWEAPONS];
-
-// used to use appopriately pained face
-int st_oldhealth = -1;
-
-int sb_face_lastattackdown = -1;
-int sb_face_priority = 0;
-
-int sb_cpo_lastcalc;
-int sb_cpo_oldhealth = -1;
 
 //
 //  PICS
@@ -256,11 +198,6 @@ void SB_StartMap(void)
 	pic_ammoicon[3] = R_RegisterPic("ROCKA0", PIC_PATCH);
 	pic_health = R_RegisterPic("STIMA0", PIC_PATCH);
 	pic_armor2 = R_RegisterPic("ARM2A0", PIC_PATCH);
-
-	st_faceindex = 0;
-	st_oldhealth = -1;
-	for (i = 0; i < NUMWEAPONS; i++)
-		oldweaponsowned[i] = cl->WeaponOwned[i];
 }
 
 //==========================================================================
@@ -398,7 +335,7 @@ void SB_DrawMainBar()
 	{
 		R_DrawPic(ST_FACESX, ST_FACESY, pic_faceback);
 	}
-	R_DrawPic(ST_FACESX, ST_FACESY, pic_faces[st_faceindex]);
+	R_DrawPic(ST_FACESX, ST_FACESY, pic_faces[cl->sb_faceindex]);
 
 	// armor percentage
 	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, cl->ArmorPoints, 0, true);
@@ -552,218 +489,20 @@ void SB_Drawer(int sb_view)
 
 //==========================================================================
 //
-//  CalcPainOffset
-//
-//==========================================================================
-
-int CalcPainOffset(void)
-{
-	int health;
-
-	health = cl->health > 100 ? 100 : cl->health;
-
-	if (health != sb_cpo_oldhealth)
-	{
-		sb_cpo_lastcalc =
-			ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
-		sb_cpo_oldhealth = health;
-	}
-	return sb_cpo_lastcalc;
-}
-
-//==========================================================================
-//
-//  UpdateFaceWidget
-//
-//  This is a not-very-pretty routine which handles the face states and
-// their timing.
-//  the precedence of expressions is:
-//  dead > evil grin > turned head > straight ahead
-//
-//==========================================================================
-
-void UpdateFaceWidget(void)
-{
-	int i;
-//	float badguyangle;
-//	float diffang;
-	bool doevilgrin;
-
-	// a random number per tick
-	int st_randomnumber;
-
-	st_randomnumber = P_Random();
-
-	if (sb_face_priority < 10)
-	{
-		// dead
-		if (!cl->health)
-		{
-			sb_face_priority = 9;
-			st_faceindex = ST_DEADFACE;
-			st_facecount = 1;
-		}
-	}
-
-	if (sb_face_priority < 9)
-	{
-		if (cl->BonusFlash)
-		{
-			// picking up bonus
-			doevilgrin = false;
-
-			for (i = 0; i < NUMWEAPONS; i++)
-			{
-				if (oldweaponsowned[i] != cl->WeaponOwned[i])
-				{
-					doevilgrin = true;
-					oldweaponsowned[i] = cl->WeaponOwned[i];
-				}
-			}
-			if (doevilgrin)
-			{
-				// evil grin if just picked up weapon
-				sb_face_priority = 8;
-				st_facecount = ST_EVILGRINCOUNT;
-				st_faceindex = CalcPainOffset() + ST_EVILGRINOFFSET;
-			}
-		}
-	}
-
-#ifdef FIXME
-	if (sb_face_priority < 8)
-	{
-		if (cl->DamageFlash && cl->attacker && cl->attacker != cl->mo)
-		{
-			// being attacked
-			sb_face_priority = 7;
-
-			if (cl->health - st_oldhealth > ST_MUCHPAIN)
-			{
-				st_facecount = ST_TURNCOUNT;
-				st_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
-			}
-			else
-			{
-				badguyangle = PointToAngle(cl->mo->x,
-					cl->mo->y, cl->attacker->x, cl->attacker->y);
-
-				if (badguyangle > cl->mo->angle)
-				{
-					// whether right or left
-					diffang = badguyangle - cl->mo->angle;
-					i = diffang > ANG180;
-				}
-				else
-				{
-					// whether left or right
-					diffang = cl->mo->angle - badguyangle;
-					i = diffang <= ANG180;
-				}	// confusing, aint it?
-
-				st_facecount = ST_TURNCOUNT;
-				st_faceindex = CalcPainOffset();
-
-				if (diffang < ANG45)
-				{
-					// head-on
-					st_faceindex += ST_RAMPAGEOFFSET;
-				}
-				else if (i)
-				{
-					// turn face right
-					st_faceindex += ST_TURNOFFSET;
-				}
-				else
-				{
-					// turn face left
-					st_faceindex += ST_TURNOFFSET + 1;
-				}
-			}
-		}
-	}
-#endif
-
-	if (sb_face_priority < 7)
-	{
-		// getting hurt because of your own damn stupidity
-		if (cl->DamageFlash)
-		{
-			if (cl->health - st_oldhealth > ST_MUCHPAIN)
-			{
-				sb_face_priority = 7;
-				st_facecount = ST_TURNCOUNT;
-				st_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
-			}
-			else
-			{
-				sb_face_priority = 6;
-				st_facecount = ST_TURNCOUNT;
-				st_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
-			}
-		}
-	}
-
-#ifdef FIXME
-	if (sb_face_priority < 6)
-	{
-		// rapid firing
-		if (cl->attackdown)
-		{
-			if (sb_face_lastattackdown == -1)
-				sb_face_lastattackdown = ST_RAMPAGEDELAY;
-			else if (!--sb_face_lastattackdown)
-			{
-				sb_face_priority = 5;
-				st_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
-				st_facecount = 1;
-				sb_face_lastattackdown = 1;
-			}
-		}
-		else
-			sb_face_lastattackdown = -1;
-	}
-#endif
-
-	if (sb_face_priority < 5)
-	{
-		// invulnerability
-		if (cl->Stats.flags & SBF_GOD_MODE)
-		{
-			sb_face_priority = 4;
-
-			st_faceindex = ST_GODFACE;
-			st_facecount = 1;
-		}
-	}
-
-	// look left or look right if the facecount has timed out
-	if (!st_facecount)
-	{
-		st_faceindex = CalcPainOffset() + (st_randomnumber % 3);
-		st_facecount = ST_STRAIGHTFACECOUNT;
-		sb_face_priority = 0;
-	}
-
-	st_facecount--;
-	st_oldhealth = cl->health;
-}
-
-//==========================================================================
-//
 //  SB_UpdateWidgets
 //
 //==========================================================================
 
-void SB_UpdateWidgets(void)
+void SB_UpdateWidgets()
 {
-	//  Update widget data
-	UpdateFaceWidget();
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2005/12/22 19:06:20  dj_jl
+//  Fixed status bar face.
+//
 //  Revision 1.16  2005/11/02 22:34:59  dj_jl
 //  Fixed percent sign.
 //
