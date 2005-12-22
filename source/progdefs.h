@@ -28,7 +28,7 @@
 // MACROS ------------------------------------------------------------------
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	17
+#define PROG_VERSION	19
 
 // TYPES -------------------------------------------------------------------
 
@@ -291,9 +291,12 @@ struct dmobjinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2005/12/22 19:04:58  dj_jl
+//	Changed version number.
+//
 //	Revision 1.21  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.20  2005/11/24 20:06:47  dj_jl
 //	Renamed opcodes.
 //	
