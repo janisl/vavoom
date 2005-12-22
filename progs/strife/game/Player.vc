@@ -423,8 +423,7 @@ void PlayerExitMap(bool clusterChange)
 //
 //  GiveAmmo
 //
-//  Num is the number of clip loads, not the individual count (0= 1/2 clip).
-// Returns false if the ammo can't be picked up at all
+//  Returns false if the ammo can't be picked up at all
 //
 //==========================================================================
 
@@ -443,11 +442,6 @@ bool GiveAmmo(int ammo, int num)
 	max = Backpack ? maxammo[ammo] * 2 : maxammo[ammo];
 	if (Ammo[ammo] == max)
 		return false;
-
-	if (num)
-		num *= clipammo[ammo];
-	else
-		num = clipammo[ammo] / 2;
 
 	if (gameskill == sk_baby || gameskill == sk_nightmare)
 	{
@@ -518,7 +512,7 @@ bool GiveAmmo(int ammo, int num)
 //
 //==========================================================================
 
-bool GiveWeapon(int weapon, int weapon2, bool dropped)
+bool GiveWeapon(int weapon, int weapon2, bool dropped, int ammo1, int ammo2)
 {
 	bool gaveammo;
 	bool gaveammo2;
@@ -534,9 +528,9 @@ bool GiveWeapon(int weapon, int weapon2, bool dropped)
 		WeaponOwned[weapon] = true;
 
 		if (deathmatch)
-			GiveAmmo(weapon_ammo_type[weapon], 5);
+			GiveAmmo(weapon_ammo_type[weapon], ammo1 * 2);
 		else
-			GiveAmmo(weapon_ammo_type[weapon], 2);
+			GiveAmmo(weapon_ammo_type[weapon], ammo1);
 		PendingWeapon = weapon;
 
 		if (weapon2 != -1)
@@ -545,9 +539,9 @@ bool GiveWeapon(int weapon, int weapon2, bool dropped)
 			if (weapon_ammo_type[weapon] != weapon_ammo_type[weapon2])
 			{
 				if (deathmatch)
-					GiveAmmo(weapon_ammo_type[weapon], 5);
+					GiveAmmo(weapon_ammo_type[weapon], ammo2 * 2);
 				else
-					GiveAmmo(weapon_ammo_type[weapon], 2);
+					GiveAmmo(weapon_ammo_type[weapon], ammo2);
 			}
 		}
 
@@ -560,22 +554,22 @@ bool GiveWeapon(int weapon, int weapon2, bool dropped)
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
 		if (dropped)
-			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 1);
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], ammo1 / 2);
 		else
-			gaveammo = GiveAmmo(weapon_ammo_type[weapon], 2);
+			gaveammo = GiveAmmo(weapon_ammo_type[weapon], ammo1);
 	}
 	else
 		gaveammo = false;
 
 	if (weapon2 != -1 && weapon_ammo_type[weapon2] != am_noammo &&
-		weapon_ammo_type[weapon] != weapon_ammo_type[weapon2])
+		weapon_ammo_type[weapon] != weapon_ammo_type[weapon2] && ammo2)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
 		if (dropped)
-			gaveammo2 = GiveAmmo(weapon_ammo_type[weapon2], 1);
+			gaveammo2 = GiveAmmo(weapon_ammo_type[weapon2], ammo2 / 2);
 		else
-			gaveammo2 = GiveAmmo(weapon_ammo_type[weapon2], 2);
+			gaveammo2 = GiveAmmo(weapon_ammo_type[weapon2], ammo2);
 	}
 	else
 		gaveammo2 = false;
@@ -2507,6 +2501,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2005/12/22 23:06:00  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.20  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

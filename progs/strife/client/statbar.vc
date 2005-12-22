@@ -60,6 +60,7 @@ int pic_sigil[5];
 int pic_i_comm;
 int pic_key[NUMKEYS];
 int pic_ammo[NUMAMMO];
+int pic_backpack;
 
 int LoadedLog;
 int LogText[1024 / 4];
@@ -210,13 +211,14 @@ void SB_StartMap()
 	pic_sigil[3] = R_RegisterPic("I_SGL4", PIC_PATCH);
 	pic_sigil[4] = R_RegisterPic("I_SGL5", PIC_PATCH);
 	pic_i_comm = R_RegisterPic("I_COMM", PIC_PATCH);
-	pic_ammo[am_clip] = R_RegisterPic("BLITA0", PIC_PATCH);
-	pic_ammo[am_electric_arrow] = R_RegisterPic("XQRLA0", PIC_PATCH);
-	pic_ammo[am_poison_arrow] = R_RegisterPic("PQRLA0", PIC_PATCH);
-	pic_ammo[am_cell] = R_RegisterPic("CPACA0", PIC_PATCH);
-	pic_ammo[am_misl] = R_RegisterPic("MSSLA0", PIC_PATCH);
-	pic_ammo[am_grenade1] = R_RegisterPic("GRN1A0", PIC_PATCH);
-	pic_ammo[am_grenade2] = R_RegisterPic("GRN2A0", PIC_PATCH);
+	pic_ammo[am_clip] = R_RegisterPic("I_BLIT", PIC_PATCH);
+	pic_ammo[am_electric_arrow] = R_RegisterPic("I_XQRL", PIC_PATCH);
+	pic_ammo[am_poison_arrow] = R_RegisterPic("I_PQRL", PIC_PATCH);
+	pic_ammo[am_cell] = R_RegisterPic("I_BRY1", PIC_PATCH);
+	pic_ammo[am_misl] = R_RegisterPic("I_ROKT", PIC_PATCH);
+	pic_ammo[am_grenade1] = R_RegisterPic("I_GRN1", PIC_PATCH);
+	pic_ammo[am_grenade2] = R_RegisterPic("I_GRN2", PIC_PATCH);
+	pic_backpack = R_RegisterPic("I_BKPK", PIC_PATCH);
 
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
 
@@ -343,7 +345,7 @@ void SB_DrawMainBar()
 	if (cl->ReadyAmmo != am_noammo)
 	{
 		SB_DrawSmallNum(310, 162, cl->Ammo[cl->ReadyAmmo]);
-		R_DrawPic(302, 192, pic_ammo[cl->ReadyAmmo]);
+		R_DrawPic(290, 181, pic_ammo[cl->ReadyAmmo]);
 	}
 
 	if (bShowWeapons)
@@ -478,6 +480,9 @@ void SB_UpdateWidgets()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/12/22 23:05:58  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.15  2005/11/19 15:37:58  dj_jl
 //  Fixed ammo icons.
 //

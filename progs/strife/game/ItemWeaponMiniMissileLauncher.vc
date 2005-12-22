@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemWeaponMiniMissileLauncher:WeaponPickup
+class ItemWeaponMiniMissileLauncher : WeaponPickup
 	__mobjinfo__(2003);
 
 __states__
@@ -37,11 +37,15 @@ defaultproperties
 	PickupString = "mini missile launcher";
 	IdleState = S_MISSILE_LAUNCHER;
 	WeaponType = wp_missile;
+	Ammo1Count = 8;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/22 23:06:00  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

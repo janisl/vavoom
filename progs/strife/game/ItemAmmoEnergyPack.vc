@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemAmmoEnergyPack:AmmoPickup
+class ItemAmmoEnergyPack : AmmoPickup
 	__mobjinfo__(17);
 
 __states__
@@ -38,12 +38,15 @@ defaultproperties
 	PickupString = "energy pack";
 	IdleState = S_ENERGY_PACK_1;
 	AmmoType = am_cell;
-	NumClips = 4;
+	AmmoCount = 100;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/22 23:06:00  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemWeaponFlameThrower:WeaponPickup
+class ItemWeaponFlameThrower : WeaponPickup
 	__mobjinfo__(2005);
 
 __states__
@@ -37,11 +37,15 @@ defaultproperties
 	PickupString = "flame thrower";
 	IdleState = S_FLAME_THROWER;
 	WeaponType = wp_flame;
+	Ammo1Count = 40;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/22 23:06:00  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

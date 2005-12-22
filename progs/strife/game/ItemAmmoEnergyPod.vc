@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemAmmoEnergyPod:AmmoPickup
+class ItemAmmoEnergyPod : AmmoPickup
 	__mobjinfo__(2047);
 
 __states__
@@ -38,11 +38,15 @@ defaultproperties
 	PickupString = "energy pod";
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = am_cell;
+	AmmoCount = 40;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/22 23:06:00  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

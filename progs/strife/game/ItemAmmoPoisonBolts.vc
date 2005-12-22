@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemAmmoPoisonBolts:AmmoPickup
+class ItemAmmoPoisonBolts : AmmoPickup
 	__mobjinfo__(115);
 
 __states__
@@ -37,11 +37,15 @@ defaultproperties
 	PickupString = "poison bolts";
 	IdleState = S_ARROWS_POISON;
 	AmmoType = am_poison_arrow;
+	AmmoCount = 20;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/22 23:06:00  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

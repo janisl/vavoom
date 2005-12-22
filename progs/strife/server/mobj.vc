@@ -35,8 +35,6 @@ bool onground;
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
 
-int clipammo[] = { 10, 10, 10, 10, 10, 10, 10 };
-
 int opposite[] = {
 	DI_WEST, DI_SOUTHWEST, DI_SOUTH, DI_SOUTHEAST,
 	DI_EAST, DI_NORTHEAST, DI_NORTH, DI_NORTHWEST, DI_NODIR
@@ -425,6 +423,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.59  2005/12/22 23:06:00  dj_jl
+//  Fixed ammo and weapon pickups.
+//
 //  Revision 1.58  2005/12/14 20:52:33  dj_jl
 //  State names belong to a class.
 //
