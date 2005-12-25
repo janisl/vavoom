@@ -23,24 +23,14 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
+class TitleScreen : Window;
 
 // demo loop control
-int demosequence = -1;	// -1 = don't play demos
+int demosequence;
 
 float pagetime;
 int page_pic;
 int advisor_pic;
-
-// CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
@@ -50,7 +40,7 @@ int advisor_pic;
 //
 //==========================================================================
 
-void AdvanceDemo(void)
+void AdvanceDemo()
 {
 	demosequence++;
 	demosequence %= 6;
@@ -102,7 +92,7 @@ void AdvanceDemo(void)
 //
 //==========================================================================
 
-void ForceTitle(void)
+void ForceTitle()
 {
 	pagetime = 10.0;
 	page_pic = R_RegisterPic("TITLE", PIC_RAW);
@@ -110,18 +100,38 @@ void ForceTitle(void)
 
 //==========================================================================
 //
-//  PageDrawer
+//	VisibilityChanged
 //
 //==========================================================================
 
-void PageDrawer(void)
+void VisibilityChanged(bool bNewVisibility)
 {
-	pagetime -= frametime;
+	bTickEnabled = bNewVisibility;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	pagetime -= DeltaTime;
 	if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
 	{
 		AdvanceDemo();
 	}
+}
 
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
 	R_DrawPic(0, 0, page_pic);
 	if (demosequence == 1)
 	{
@@ -135,7 +145,7 @@ void PageDrawer(void)
 //
 //==========================================================================
 
-void OnHostEndGame(void)
+void OnHostEndGame()
 {
 	if (demosequence != -1)
 		AdvanceDemo();
@@ -148,7 +158,7 @@ void OnHostEndGame(void)
 //
 //==========================================================================
 
-void OnHostError(void)
+void OnHostError()
 {
 	demosequence = -1;
 	ForceTitle();
@@ -160,21 +170,23 @@ void OnHostError(void)
 //
 //==========================================================================
 
-void StopDemoLoop(void)
+void StopDemoLoop()
 {
 	demosequence = -1;	// not in the demo loop now
+}
+
+defaultproperties
+{
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+	demosequence = -1;	// -1 = don't play demos
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.3  2002/01/07 12:23:17  dj_jl
-//  Changed copyright year
+//  Revision 1.1  2005/12/25 19:19:15  dj_jl
+//  Moved title screen into a class.
 //
-//  Revision 1.2  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.1  2001/08/04 17:18:35  dj_jl
-//  Moved title / demo loop to progs
-//  
 //**************************************************************************

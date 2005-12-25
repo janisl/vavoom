@@ -128,13 +128,16 @@
 #include "MenuChoice_SwapStereo.vc"
 #include "MenuChoice_CDMusic.vc"
 #include "MenuScreenSoundOptions.vc"
-
 #include "MenuHelpPage.vc"
 #include "MenuScreenHelp.vc"
+#include "TitleScreen.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/25 19:19:15  dj_jl
+//  Moved title screen into a class.
+//
 //  Revision 1.1  2002/10/26 16:32:21  dj_jl
 //  New style of defining classes.
 //

@@ -23,23 +23,14 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
+class TitleScreen : Window;
 
 // demo loop control
-int demosequence = -1;	// -1 = don't play demos
+int demosequence;
 
 float pagetime;
 int page_pic;
-
-// CODE --------------------------------------------------------------------
+int advisor_pic;
 
 //==========================================================================
 //
@@ -52,65 +43,38 @@ int page_pic;
 void AdvanceDemo()
 {
 	demosequence++;
-	demosequence %= 10;
+	demosequence %= 6;
 
 	switch (demosequence)
 	{
 	case 0:
-		pagetime = 12.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-		CmdBuf_AddText("music play d_logo");
+		pagetime = 490.0 / 35.0;
+		page_pic = R_RegisterPic("TITLE", PIC_RAW);
+//      S_StartSong("hexen", P_GetCDTitleTrack(), true);
+		CmdBuf_AddText("music play hexen\n");
 		break;
 
 	case 1:
-		pagetime = 5.0;
-		page_pic = R_RegisterPic("RGELOGO", PIC_PATCH);
-		LocalSound('crusader/active');
-		break;
-
-	case 2:
-		pagetime = 7.0;
-		page_pic = R_RegisterPic("PANEL1", PIC_PATCH);
-		LocalSound('svox/pro1');
-		break;
-
-	case 3:
-		pagetime = 9.0;
-		page_pic = R_RegisterPic("PANEL2", PIC_PATCH);
-		LocalSound('svox/pro2');
-		break;
-
-	case 4:
-		pagetime = 12.0;
-		page_pic = R_RegisterPic("PANEL3", PIC_PATCH);
-		LocalSound('svox/pro3');
-		break;
-
-	case 5:
-		pagetime = 11.0;
-		page_pic = R_RegisterPic("PANEL4", PIC_PATCH);
-		LocalSound('svox/pro4');
-		break;
-
-	case 6:
-		pagetime = 10.0;
-		page_pic = R_RegisterPic("PANEL5", PIC_PATCH);
-		LocalSound('svox/pro5');
-		break;
-
-	case 7:
-		pagetime = 16.0;
-		page_pic = R_RegisterPic("PANEL6", PIC_PATCH);
-		LocalSound('svox/pro6');
-		break;
-
-	case 8:
+		advisor_pic = R_RegisterPic("ADVISOR", PIC_PATCH);
 		CmdBuf_AddText("PlayDemo demo1\n");
 		break;
 
-	case 9:
-		pagetime = 6.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
+	case 2:
+		pagetime = 200.0 / 35.0;
+		page_pic = R_RegisterPic("CREDIT", PIC_RAW);
+		break;
+
+	case 3:
+		CmdBuf_AddText("PlayDemo demo2\n");
+		break;
+
+	case 4:
+		pagetime = 200.0 / 35.0;
+		page_pic = R_RegisterPic("CREDIT", PIC_RAW);
+		break;
+
+	case 5:
+		CmdBuf_AddText("PlayDemo demo3\n");
 		break;
 	}
 }
@@ -123,25 +87,49 @@ void AdvanceDemo()
 
 void ForceTitle()
 {
-	pagetime = 11.0;
-	page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
+	pagetime = 14.0;
+	page_pic = R_RegisterPic("TITLE", PIC_RAW);
 }
 
 //==========================================================================
 //
-//  PageDrawer
+//	VisibilityChanged
 //
 //==========================================================================
 
-void PageDrawer()
+void VisibilityChanged(bool bNewVisibility)
 {
-	pagetime -= frametime;
+	bTickEnabled = bNewVisibility;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	pagetime -= DeltaTime;
 	if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
 	{
 		AdvanceDemo();
 	}
+}
 
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
 	R_DrawPic(0, 0, page_pic);
+	if (demosequence == 1)
+	{
+		R_DrawPic(4, 160, advisor_pic);
+	}
 }
 
 //==========================================================================
@@ -180,31 +168,18 @@ void StopDemoLoop()
 	demosequence = -1;	// not in the demo loop now
 }
 
+defaultproperties
+{
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+	demosequence = -1;	// -1 = don't play demos
+}
+
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.8  2005/11/19 13:43:50  dj_jl
-//  Renamed sounds.
+//  Revision 1.1  2005/12/25 19:19:16  dj_jl
+//  Moved title screen into a class.
 //
-//  Revision 1.7  2005/11/05 15:50:55  dj_jl
-//  Voices played as normal sounds.
-//
-//  Revision 1.6  2002/07/27 18:08:12  dj_jl
-//  Implementing Strife conversations.
-//
-//  Revision 1.5  2002/07/15 17:54:56  dj_jl
-//  Implemented intro sequence.
-//
-//  Revision 1.4  2002/05/03 17:14:02  dj_jl
-//  Fixed music.
-//
-//  Revision 1.3  2002/01/07 12:27:41  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.2  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.1  2001/08/04 17:18:35  dj_jl
-//  Moved title / demo loop to progs
-//  
 //**************************************************************************

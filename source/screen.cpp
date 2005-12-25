@@ -60,7 +60,6 @@ struct pcx_t
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CalcFadetable16(byte *pal);
-void V_DarkenScreen(int darkening);
 
 void C_DrawNotify(void);
 void C_DrawCenterMessage(void);
@@ -605,12 +604,7 @@ void SCR_Update(void)
 	}
 
 	// do buffered drawing
-	if (cls.state == ca_disconnected)
-	{
-		clpr.SetGlobal("frametime", PassFloat(host_frametime));
-		clpr.Exec("PageDrawer");
-	}
-	else
+	if (cls.state != ca_disconnected)
 	{
 		switch (cl.intermission)
 		{
@@ -638,9 +632,6 @@ void SCR_Update(void)
 			break;
 		}
 	}
-
-	if (MN_Active())
-		V_DarkenScreen(menu_darkening);
 
 	// Menu drawing
 	MN_Drawer();
@@ -732,9 +723,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2005/12/25 19:20:02  dj_jl
+//	Moved title screen into a class.
+//
 //	Revision 1.26  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.25  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

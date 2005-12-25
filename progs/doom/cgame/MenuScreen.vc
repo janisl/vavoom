@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreen:MenuObject;
+class MenuScreen : MenuObject;
 
 MenuObject Items[MAX_MENU_ITEMS];
 int NumItems;
@@ -201,6 +201,20 @@ bool Key(int key)
 	return false;
 }
 
+//==========================================================================
+//
+//	DrawWindow
+//
+//  Fade all the screen buffer, so that the menu is more readable,
+// especially now that we use the small hufont in the menus...
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	R_ShadeRect(0, 0, 320, 200, GetCvar("menu_darkening"));
+}
+
 defaultproperties
 {
 	TitleX = 160;
@@ -210,6 +224,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/12/25 19:19:07  dj_jl
+//  Moved title screen into a class.
+//
 //  Revision 1.2  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

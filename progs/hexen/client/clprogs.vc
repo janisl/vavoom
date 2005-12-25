@@ -45,13 +45,14 @@
 
 #include "statbar.vc"
 
-#include "title.vc"
-
 #include "clmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2005/12/25 19:19:16  dj_jl
+//  Moved title screen into a class.
+//
 //  Revision 1.12  2003/03/08 12:13:51  dj_jl
 //  Menu code cleanup.
 //

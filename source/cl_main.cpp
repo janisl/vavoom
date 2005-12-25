@@ -418,6 +418,7 @@ void CL_Disconnect(void)
 	cls.demoplayback = false;
 	cls.timedemo = false;
 	cls.signon = 0;
+	clpr.Exec("CL_Disconnected");
 	unguard;
 }
 
@@ -454,7 +455,7 @@ void CL_EstablishConnection(char *host)
 
 	UserInfoSent = false;
 
-	clpr.Exec("StopDemoLoop");
+	clpr.Exec("CL_Connected");
 	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
 
@@ -538,9 +539,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2005/12/25 19:20:02  dj_jl
+//	Moved title screen into a class.
+//
 //	Revision 1.16  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.15  2002/08/28 16:42:04  dj_jl
 //	Configurable entity limit.
 //	

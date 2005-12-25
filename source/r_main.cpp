@@ -709,22 +709,6 @@ void R_FillRectWithFlat(int DestX, int DestY, int width, int height, const char*
 
 //==========================================================================
 //
-//	V_DarkenScreen
-//
-//  Fade all the screen buffer, so that the menu is more readable,
-// especially now that we use the small hufont in the menus...
-//
-//==========================================================================
-
-void V_DarkenScreen(int darkening)
-{
-	guard(V_DarkenScreen);
-	Drawer->ShadeRect(0, 0, ScreenWidth, ScreenHeight, darkening);
-	unguard;
-}
-
-//==========================================================================
-//
 //	R_ShadeRect
 //
 //==========================================================================
@@ -962,9 +946,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2005/12/25 19:20:02  dj_jl
+//	Moved title screen into a class.
+//
 //	Revision 1.30  2005/12/06 17:49:08  dj_jl
 //	Renamed sounds.
-//
+//	
 //	Revision 1.29  2005/11/13 18:44:55  dj_jl
 //	CVar to disable drawing of particles.
 //	

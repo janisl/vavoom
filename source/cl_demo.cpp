@@ -105,6 +105,7 @@ void CL_StopPlayback(void)
 	{
 		CL_FinishTimeDemo();
 	}
+	clpr.Exec("CL_DemoPlaybackStopped");
 	unguard;
 }
 
@@ -377,6 +378,7 @@ COMMAND(PlayDemo)
 
 	cls.demoplayback = true;
 	cls.state = ca_connected;
+	clpr.Exec("CL_DemoPlaybackStarted");
 	unguard;
 }
 
@@ -416,9 +418,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/12/25 19:20:02  dj_jl
+//	Moved title screen into a class.
+//
 //	Revision 1.12  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
-//
+//	
 //	Revision 1.11  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

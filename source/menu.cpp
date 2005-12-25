@@ -98,6 +98,7 @@ void MN_Init(void)
 	pg_frametime = clpr.GlobalNumForName("frametime");
 
 	VRootWindow::StaticInit();
+	clpr.Exec("CL_RootWindowCreated");
 }
 
 //==========================================================================
@@ -179,9 +180,12 @@ boolean MN_Active(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2005/12/25 19:20:02  dj_jl
+//	Moved title screen into a class.
+//
 //	Revision 1.12  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
-//
+//	
 //	Revision 1.11  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
 //	
