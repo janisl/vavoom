@@ -1611,27 +1611,28 @@ bool Physics()
 					bOnMobj = false;
 				}
 			}
-			else if (bIsPlayer)
+			else
 			{
-				if (Velocity.z < -GRAVITY * 0.25 && !bFly)
+				if (bIsPlayer)
 				{
-					PlayerLandedOnThing();
+					if (Velocity.z < -GRAVITY * 0.25 && !bFly)
+					{
+						PlayerLandedOnThing();
+					}
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					Player.ViewHeight -=
-						onmo.Origin.z + onmo.Height - Origin.z;
-					Player.DeltaViewHeight =
-						(VIEWHEIGHT - Player.ViewHeight) * 4.0;
+					if (bIsPlayer)
+					{
+						Player.ViewHeight -=
+							onmo.Origin.z + onmo.Height - Origin.z;
+						Player.DeltaViewHeight =
+							(VIEWHEIGHT - Player.ViewHeight) * 4.0;
+					}
 					Origin.z = onmo.Origin.z + onmo.Height;
-					bOnMobj = true;
-					Velocity.z = 0.0;
 				}
-				else
-				{
-					// hit the bottom of the blocking actor
-					Velocity.z = 0.0;
-				}
+				bOnMobj = true;
+				Velocity.z = 0.0;
 			}
 		}
 		else
@@ -4624,6 +4625,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2005/12/25 17:13:02  dj_jl
+//  Some fixes.
+//
 //  Revision 1.20  2005/12/12 20:33:49  dj_jl
 //  Cleaned up state types.
 //

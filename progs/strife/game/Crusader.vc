@@ -28,11 +28,11 @@ class Crusader : Pawn
 
 //==========================================================================
 //
-//	Sys_1ed64
+//	EnemyCloseEnough
 //
 //==========================================================================
 
-bool Sys_1ed64()
+bool EnemyCloseEnough()
 {
 	if (CanSee(Enemy) && ReactionCount == 0)
 	{
@@ -52,22 +52,22 @@ void A_CrusaderChoose()
 	if (!Enemy)
 		return;
 
-	if (Sys_1ed64())
+	if (EnemyCloseEnough())
 	{
 		A_FaceTarget();
 		Angles.yaw = AngleMod360(Angles.yaw - 45.0 / 4.0);
-		SpawnMissileZ(40.0, Enemy, FlameFX2);
+		SpawnMissileZAimed(40.0, Enemy, FlameFX2);
 	}
 	else
 	{
 		if (CheckMissileRange())
 		{
 			A_FaceTarget();
-			SpawnMissileZ(56.0, Enemy, RobotMissile);
+			SpawnMissileZAimed(56.0, Enemy, RobotMissile);
 			Angles.yaw -= 45.0 / 32.0;
-			SpawnMissileZ(40.0, Enemy, RobotMissile);
+			SpawnMissileZAimed(40.0, Enemy, RobotMissile);
 			Angles.yaw += 45.0 / 16.0;
-			SpawnMissileZ(40.0, Enemy, RobotMissile);
+			SpawnMissileZAimed(40.0, Enemy, RobotMissile);
 			Angles.yaw -= 45.0 / 16.0;
 			ReactionCount += 15;
 		}
@@ -86,7 +86,7 @@ void A_CrusaderSweepLeft()
 	Actor misl;
 
 	Angles.yaw = AngleMod360(Angles.yaw + 45.0 / 8.0);
-	misl = SpawnMissileZ(48.0, Enemy, FlameFX2);
+	misl = SpawnMissileZAimed(48.0, Enemy, FlameFX2);
 	if (misl)
 	{
 		misl.Velocity.z = 1.0 * 35.0;
@@ -104,7 +104,7 @@ void A_CrusaderSweepRight()
 	Actor misl;
 
 	Angles.yaw = AngleMod360(Angles.yaw - 45.0 / 8.0);
-	misl = SpawnMissileZ(48.0, Enemy, FlameFX2);
+	misl = SpawnMissileZAimed(48.0, Enemy, FlameFX2);
 	if (misl)
 	{
 		misl.Velocity.z = 1.0 * 35.0;
@@ -183,6 +183,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/12/25 17:13:08  dj_jl
+//  Some fixes.
+//
 //  Revision 1.5  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

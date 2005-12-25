@@ -38,7 +38,7 @@ void A_SentinelAttack()
 	Actor missile;
 	Actor trail;
 
-	missile = SpawnMissileZ(32.0, Enemy, SentinelShot);
+	missile = SpawnMissileZAimed(32.0, Enemy, SentinelShot);
 	if (missile && (missile.Velocity.x || missile.Velocity.y))
 	{
 		for (i = 8; i > 1; i--)
@@ -103,6 +103,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/25 17:13:08  dj_jl
+//  Some fixes.
+//
 //  Revision 1.4  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

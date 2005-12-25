@@ -505,6 +505,11 @@ void Died(Actor source)
 		A = Spawn(ItemAmmoClipOfBullets, vector(Origin.x, Origin.y, ONFLOORZ));
 		A.bDropped = true;	// special versions of items
 	}
+	if (Class == Crusader)
+	{
+		A = Spawn(ItemAmmoEnergyPod, vector(Origin.x, Origin.y, ONFLOORZ));
+		A.bDropped = true;	// special versions of items
+	}
 }
 
 //==========================================================================
@@ -651,7 +656,8 @@ void Damage(Actor inflictor, Actor source, int damage)
 
 	ReactionCount = 0;	// we're awake now...
 
-	if ((!Threshold) && source && source != self)
+	if ((!Threshold) && source && source != self &&
+		(deathmatch || source.bFriendly != bFriendly))
 	{
 		// if not intent on another player,
 		// chase after this one
@@ -3087,7 +3093,7 @@ void A_SpawnPuff()
 {
 	Actor A;
 
-	if (Class == MiniMissile)
+	if (MiniMissile(self))
 	{
 		PlaySound('misc/missileinflight', CHAN_VOICE);
 		SpawnPuff(Origin.x, Origin.y, Origin.z);
@@ -3322,6 +3328,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2005/12/25 17:13:08  dj_jl
+//  Some fixes.
+//
 //  Revision 1.24  2005/12/22 23:53:01  dj_jl
 //  Rebel always drops an ammo clip.
 //

@@ -28,7 +28,7 @@ class ItemWeaponSkullRod : WeaponPickup
 
 __states__
 {
-	S_WSKL('WSKL', 0, 'weapon/g_skull.md2', 0, -1.0, S_NULL) { }
+	S_WSKL('WSKL', 0, 'weapons/g_skull.md2', 0, -1.0, S_NULL) { }
 }
 
 defaultproperties
@@ -40,6 +40,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/12/25 17:13:08  dj_jl
+//  Some fixes.
+//
 //  Revision 1.2  2005/06/16 17:46:39  dj_jl
 //  Added model definitions.
 //

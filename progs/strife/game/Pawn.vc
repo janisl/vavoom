@@ -150,6 +150,44 @@ Actor SpawnMissileZ(float z, Actor dest, classid type)
 
 //==========================================================================
 //
+//  SpawnMissileZAimed
+//
+//==========================================================================
+
+Actor SpawnMissileZAimed(float z, Actor dest, classid type)
+{
+	Actor A;
+	TVec dir;
+	float dist;
+
+	A = Spawn(type, Origin + vector(0.0, 0.0, z));
+
+	if (A.SightSound)
+		A.PlaySound(A.SightSound, CHAN_VOICE);
+
+	A.Instigator = self;	// where it came from
+
+	dist = MobjDist2(self, Enemy);
+	dir.x = cos(Angles.yaw);
+	dir.y = sin(Angles.yaw);
+	dir.z = dist != 0.0 ? (dest.Origin.z - Origin.z) / dist : A.Speed;
+	// fuzzy player
+	if (dest.Translucency)
+	{
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+	}
+	dir = Normalise(dir);
+	A.Velocity = dir * A.Speed;
+
+	VectorAngles(&dir, &A.Angles);
+
+	A.CheckMissileSpawn();
+
+	return A;
+}
+
+//==========================================================================
+//
 //  CheckMeleeRange
 //
 //==========================================================================
@@ -1325,6 +1363,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/12/25 17:13:08  dj_jl
+//  Some fixes.
+//
 //  Revision 1.14  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //
