@@ -134,7 +134,8 @@ void Tick(float DeltaTime)
 	if ((LastD < WatchD && NewDist >= WatchD) ||
 		(LastD > WatchD && NewDist <= WatchD))
 	{
-		ExecuteLineSpecial(Special, &Args[0], Line, LineSide, Activator);
+		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
+			Args[3], Args[4], Line, LineSide, Activator);
 		RemoveSpecialThinker(self);
 	}
 
@@ -147,6 +148,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.1  2004/12/27 12:23:11  dj_jl
 //  Multiple small changes for version 1.16
 //

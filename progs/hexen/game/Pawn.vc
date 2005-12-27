@@ -544,7 +544,7 @@ bool StepMove(void)
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (P_ActivateLine(ld, self, 0, SPAC_USE))
+			if (HexenLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_USE))
 			{
 				good = true;
 			}
@@ -945,7 +945,8 @@ void A_FreezeDeath(void)
 		if (bCountKill && Special)
 		{
 			// Initiate monster death actions
-			ExecuteLineSpecial(Special, &Args[0], NULL, 0, self);
+			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
+				Args[3], Args[4], NULL, 0, self);
 		}
 	}
 }
@@ -1035,6 +1036,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.6  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

@@ -2346,7 +2346,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		return in->line->backsector != NULL;
 	}
 
-	P_ActivateLine(in->line, MO, 0, SPAC_USE);
+	StrifeLevelInfo(MO.Level).ActivateLine(in->line, MO, 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
@@ -2501,6 +2501,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.21  2005/12/22 23:06:00  dj_jl
 //  Fixed ammo and weapon pickups.
 //

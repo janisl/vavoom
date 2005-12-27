@@ -23,6 +23,7 @@
 //**
 //**************************************************************************
 
+#include "DoomLevelInfo.vc"
 #include "Actor.vc"
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
@@ -74,6 +75,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.9  2005/06/04 13:46:48  dj_jl
 //  Added pusher specials.
 //

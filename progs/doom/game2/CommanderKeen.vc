@@ -43,7 +43,7 @@ void A_KeenDie()
 	{
 		return;
 	}
-	EV_DoDoor(666, 16, 150, 0, 0, DOOREV_Open, NULL, none);
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 16, 150, 0, 0, NULL, 0, none);
 }
 
 __states__
@@ -84,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.3  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

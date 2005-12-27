@@ -91,7 +91,7 @@ void A_BossDeath()
 	}
 
 	// victory!
-	EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+	Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0, 0, NULL, 0, none);
 }
 
 __states__
@@ -152,6 +152,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.5  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

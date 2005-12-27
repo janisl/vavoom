@@ -50,6 +50,7 @@ REGISTER_NAME(DevNet)
 //	Native class names.
 REGISTER_NAME(Object)
 REGISTER_NAME(Thinker)
+REGISTER_NAME(LevelInfo)
 REGISTER_NAME(Entity)
 REGISTER_NAME(ViewEntity)
 REGISTER_NAME(ACS)
@@ -71,9 +72,12 @@ REGISTER_NAME(RootWindow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2005/12/27 22:24:00  dj_jl
+//	Created level info class, moved action special handling to it.
+//
 //	Revision 1.7  2005/11/22 19:10:38  dj_jl
 //	Cleaned up a bit.
-//
+//	
 //	Revision 1.6  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

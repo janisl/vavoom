@@ -2737,7 +2737,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		return in->line->backsector != NULL;
 	}
 
-	P_ActivateLine(in->line, MO, 0, SPAC_USE);
+	HereticLevelInfo(MO.Level).ActivateLine(in->line, MO, 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
@@ -3003,6 +3003,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.15  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.14  2005/12/14 20:52:32  dj_jl
 //  State names belong to a class.
 //

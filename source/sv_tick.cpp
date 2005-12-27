@@ -54,7 +54,6 @@
 
 IMPLEMENT_CLASS(V, Thinker)
 
-static FFunction *pf_UpdateSpecials;
 static int FIndex_Tick;
 
 // CODE --------------------------------------------------------------------
@@ -67,7 +66,6 @@ static int FIndex_Tick;
 
 void P_InitThinkers(void)
 {
-	pf_UpdateSpecials = svpr.FuncForName("P_UpdateSpecials");
 	FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex("Tick");
 }
 
@@ -132,7 +130,7 @@ void P_Ticker(void)
 	int 	i;
 
 	RunThinkers();
-	svpr.Exec(pf_UpdateSpecials);
+	GLevelInfo->eventUpdateSpecials();
     P_UpdateButtons();
 
 	for (i = 0; i < MAXPLAYERS; i++)
@@ -151,9 +149,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2005/12/27 22:24:00  dj_jl
+//	Created level info class, moved action special handling to it.
+//
 //	Revision 1.20  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.19  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
 //	

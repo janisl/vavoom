@@ -34,25 +34,12 @@
 #include "svdefs.vc"
 
 #include "xlat.vc"
-#include "ceilings.vc"
-#include "doors.vc"
-#include "floors.vc"
-#include "plats.vc"
-#include "polyobj.vc"
-#include "lights.vc"
-#include "scroll.vc"
-#include "spec.vc"
 
 #include "world.vc"
 
 #include "wpninfo.vc"
 
 #include "../game/classes.vc"
-
-#include "mobj.vc"
-#include "teleport.vc"
-
-#include "bot.vc"
 
 #include "../game1/classes.vc"
 
@@ -65,13 +52,18 @@
 //#include "deh_act.vc"
 #endif
 
-#include "things.vc"
+#include "mobj.vc"
+
+#include "bot.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.28  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

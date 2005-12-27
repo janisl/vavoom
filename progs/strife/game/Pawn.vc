@@ -336,7 +336,7 @@ bool StepMove()
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (P_ActivateLine(ld, self, 0, SPAC_USE))
+			if (StrifeLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_USE))
 			{
 				good = true;
 			}
@@ -1010,7 +1010,7 @@ void A_BossDeath()
 	if (Class == Crusader)
 	{
 		A_Fall();
-		EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		StrifeLevelInfo(Level).EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 	}
 	else if (Class == Inquisitor)
 	{
@@ -1024,7 +1024,7 @@ void A_BossDeath()
 	else if (Class == Specter1)
 	{
 		//	Specter in ruined temple.
-		EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		Enemy.Player.SetObjectives(95);
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(svc_voice);
@@ -1072,7 +1072,7 @@ void A_BossDeath()
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(87);
 		}
-		EV_DoDoor(222, 256, 0, 0, 0, DOOREV_Open, NULL, none);
+		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 256, 0, 0, 0, NULL, 0, none);
 	}
 	else if (Class == Specter4)
 	{
@@ -1124,7 +1124,7 @@ void A_BossDeath()
 			MSG_WriteByte(svc_voice);
 			MSG_WriteShort(83);
 		}
-		EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 	}
 	else if (Class == SubEntity)
 	{
@@ -1363,6 +1363,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.15  2005/12/25 17:13:08  dj_jl
 //  Some fixes.
 //

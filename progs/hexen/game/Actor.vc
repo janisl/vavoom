@@ -577,7 +577,8 @@ void Died(Actor source)
 		}
 		else
 		{
-			ExecuteLineSpecial(Special, &Args[0], NULL, 0, self);
+			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
+				Args[3], Args[4], NULL, 0, self);
 		}
 	}
 	if (source && source.bIsPlayer)
@@ -1484,7 +1485,8 @@ void TeleportOther(void)
 		if (bCountKill && Special)
 		{
 			RemoveFromTIDList();
-			ExecuteLineSpecial(Special, &Args[0], NULL, 0, self);
+			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
+				Args[3], Args[4], NULL, 0, self);
 			Special = 0;
 		}
 
@@ -1682,12 +1684,12 @@ void CheckForPushSpecial(line_t * line, int side)
 	{
 		if (bActivatePushWall)
 		{
-			P_ActivateLine(line, self, side, SPAC_PUSH);
+			HexenLevelInfo(Level).ActivateLine(line, self, side, SPAC_PUSH);
 		}
 		else if (bActivateImpact)
 		{
-			P_ActivateLine(line, bMissile ? Instigator : self, side,
-				SPAC_IMPACT);
+			HexenLevelInfo(Level).ActivateLine(line,
+				bMissile ? Instigator : self, side, SPAC_IMPACT);
 		}
 	}
 }
@@ -1747,15 +1749,15 @@ void CrossSpecialLine(line_t *ld, int side)
 {
 	if (bIsPlayer)
 	{
-		P_ActivateLine(ld, self, side, SPAC_CROSS);
+		HexenLevelInfo(Level).ActivateLine(ld, self, side, SPAC_CROSS);
 	}
 	else if (bActivateMCross)
 	{
-		P_ActivateLine(ld, self, side, SPAC_MCROSS);
+		HexenLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
 	}
 	else if (bActivatePCross)
 	{
-		P_ActivateLine(ld, self, side, SPAC_PCROSS);
+		HexenLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCROSS);
 	}
 }
 
@@ -3647,7 +3649,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		// when we know that it actally hits line
 		if (li->special)
 		{
-			P_ActivateLine(li, self, 0, SPAC_IMPACT);
+			HexenLevelInfo(Level).ActivateLine(li, self, 0, SPAC_IMPACT);
 		}
 
 		if (li->flags & ML_TWOSIDED)
@@ -4190,6 +4192,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.22  2005/12/12 20:33:49  dj_jl
 //  Cleaned up state types.
 //

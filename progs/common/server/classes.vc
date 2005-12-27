@@ -25,6 +25,7 @@
 
 #include "BasePlayer.vc"
 #include "Thinker.vc"
+#include "LevelInfo.vc"
 #include "Entity.vc"
 #include "ViewEntity.vc"
 #include "SectorThinker.vc"
@@ -35,6 +36,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.4  2005/03/16 15:04:19  dj_jl
 //  More work on line specials.
 //

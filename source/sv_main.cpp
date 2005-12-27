@@ -67,6 +67,7 @@ static void G_DoCompleted(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_CLASS(V, LevelInfo)
 IMPLEMENT_CLASS(V, ViewEntity)
 
 TCvarI			real_time("real_time", "1");
@@ -111,6 +112,8 @@ int 			TimerGame;
 
 boolean			in_secret;
 char			mapaftersecret[12];
+
+VLevelInfo*		GLevelInfo;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -2222,6 +2225,11 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	//	Load it
 	SV_LoadLevel(level.mapname);
 
+	if (spawn_thinkers)
+	{
+		GLevelInfo = (VLevelInfo*)svpr.Exec("CreateLevelInfo");
+	}
+
 	//	Spawn slopes, extra floors, etc.
 	svpr.Exec("SpawnWorld");
 
@@ -2232,7 +2240,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 		svpr.Exec(pf_spawn_map_thing, (int)&GLevel->Things[i], spawn_thinkers);
 	}
 	Z_Free(GLevel->Things);
-	PO_Init(); // Initialize the polyobjs
+	PO_Init(); // Initialise the polyobjs
 
 	if (deathmatch)
 	{
@@ -2256,7 +2264,10 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	//	P_SpawnSpecials
 	//	After the map has been loaded, scan for specials that spawn thinkers
 	//
-	svpr.Exec("P_SpawnSpecials", spawn_thinkers);
+	if (spawn_thinkers)
+	{
+		GLevelInfo->eventSpawnSpecials();
+	}
 	svpr.Exec("EndLevelLoading");
 
 	Z_CheckHeap();
@@ -3002,9 +3013,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.74  2005/12/27 22:24:00  dj_jl
+//	Created level info class, moved action special handling to it.
+//
 //	Revision 1.73  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.72  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

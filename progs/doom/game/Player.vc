@@ -2634,7 +2634,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		return in->line->backsector != NULL;
 	}
 
-	P_ActivateLine(in->line, MO, 0, SPAC_USE);
+	DoomLevelInfo(MO.Level).ActivateLine(in->line, MO, 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
@@ -2971,6 +2971,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.13  2005/12/22 19:06:20  dj_jl
 //  Fixed status bar face.
 //

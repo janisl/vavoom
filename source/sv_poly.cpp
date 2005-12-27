@@ -119,10 +119,8 @@ int PO_GetPolyobjMirror(int poly)
 
 static void ThrustMobj(VEntity *mobj, seg_t *seg, polyobj_t *po)
 {
-	svpr.Exec("PolyThrustMobj", (int)mobj, PassFloat(seg->normal.x),
-		PassFloat(seg->normal.y), PassFloat(seg->normal.z), (int)po);
+	GLevelInfo->eventPolyThrustMobj(mobj, seg->normal, po);
 }
-
 
 //==========================================================================
 //
@@ -889,16 +887,19 @@ void PO_Init(void)
 boolean PO_Busy(int polyobj)
 {
 	guard(PO_Busy);
-	return svpr.Exec("PolyBusy", polyobj);
+	return GLevelInfo->eventPolyBusy(polyobj);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2005/12/27 22:24:00  dj_jl
+//	Created level info class, moved action special handling to it.
+//
 //	Revision 1.17  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.16  2002/08/28 16:41:09  dj_jl
 //	Merged VMapObject with VEntity, some natives.
 //	

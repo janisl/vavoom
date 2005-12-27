@@ -136,7 +136,7 @@ void A_BossDeath()
 	// victory!
 	if (!strcmp(mapname, "E4M8"))
 	{
-		EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0, 0, NULL, 0, none);
 		return;
 	}
 
@@ -203,6 +203,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.7  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

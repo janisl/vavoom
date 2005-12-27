@@ -27,6 +27,118 @@ classid PuffType;
 Actor PuffSpawned;
 Actor linetarget;	// who got hit (or none)
 
+classid TranslateThingType[] = {
+	MapSpot,	// T_NONE
+	Centaur,	// T_CENTAUR
+	CentaurLeader,	// T_CENTAURLEADER
+	Demon,	// T_DEMON
+	Ettin,	// T_ETTIN
+	FireDemon,	// T_FIREGARGOYLE
+	Serpent,	// T_WATERLURKER
+	SerpentLeader,	// T_WATERLURKERLEADER
+	Wraith,	// T_WRAITH
+	WraithBuried,	// T_WRAITHBURIED
+	FireBall1,	// T_FIREBALL1
+	ItemManaBlue,	// T_MANA1
+	ItemManaGreen,	// T_MANA2
+	ArtifactSpeedBoots,	// T_ITEMBOOTS
+	ArtifactEgg,	// T_ITEMEGG
+	ArtifactFly,	// T_ITEMFLIGHT
+	ArtifactSummonMaulator,	// T_ITEMSUMMON
+	ArtifactTeleportOther,	// T_ITEMTPORTOTHER
+	ArtifactTeleport,	// T_ITEMTELEPORT
+	Bishop,	// T_BISHOP
+	IceGuy,	// T_ICEGOLEM
+	Bridge,	// T_BRIDGE
+	ArtifactBoostArmor,	// T_DRAGONSKINBRACERS
+	ItemHealingBottle,	// T_ITEMHEALTHPOTION
+	ArtifactHealthFlask,	// T_ITEMHEALTHFLASK
+	ArtifactSuperHeal,	// T_ITEMHEALTHFULL
+	ArtifactBoostMana,	// T_ITEMBOOSTMANA
+	WeaponFAxe,	// T_FIGHTERAXE
+	WeaponFHammer,	// T_FIGHTERHAMMER
+	WeaponFSwordPiece1,	// T_FIGHTERSWORD1
+	WeaponFSwordPiece2,	// T_FIGHTERSWORD2
+	WeaponFSwordPiece3,	// T_FIGHTERSWORD3
+	WeaponCSerpentStaff,	// T_CLERICSTAFF
+	WeaponCHolyPiece1,	// T_CLERICHOLY1
+	WeaponCHolyPiece2,	// T_CLERICHOLY2
+	WeaponCHolyPiece3,	// T_CLERICHOLY3
+	WeaponMCone,	// T_MAGESHARDS
+	WeaponMStaffPiece1,	// T_MAGESTAFF1
+	WeaponMStaffPiece2,	// T_MAGESTAFF2
+	WeaponMStaffPiece3,	// T_MAGESTAFF3
+	EggMissile,	// T_MORPHBLAST
+	Rock1,	// T_ROCK1
+	Rock2,	// T_ROCK2
+	Rock3,	// T_ROCK3
+	Dirt1,	// T_DIRT1
+	Dirt2,	// T_DIRT2
+	Dirt3,	// T_DIRT3
+	Dirt4,	// T_DIRT4
+	Dirt5,	// T_DIRT5
+	Dirt6,	// T_DIRT6
+	Arrow,	// T_ARROW
+	Dart,	// T_DART
+	PoisonDart,	// T_POISONDART
+	RipperBall,	// T_RIPPERBALL
+	StainedGlassShard1,	// T_STAINEDGLASS1
+	StainedGlassShard2,	// T_STAINEDGLASS2
+	StainedGlassShard3,	// T_STAINEDGLASS3
+	StainedGlassShard4,	// T_STAINEDGLASS4
+	StainedGlassShard5,	// T_STAINEDGLASS5
+	StainedGlassShard6,	// T_STAINEDGLASS6
+	StainedGlassShard7,	// T_STAINEDGLASS7
+	StainedGlassShard8,	// T_STAINEDGLASS8
+	StainedGlassShard9,	// T_STAINEDGLASS9
+	StainedGlassShard0,	// T_STAINEDGLASS0
+	ProjectileBlade,	// T_BLADE
+	IceShard,	// T_ICESHARD
+	FlameSmall,	// T_FLAME_SMALL
+	FlameLarge,	// T_FLAME_LARGE
+	ItemArmor1,	// T_MESHARMOR
+	ItemArmor2,	// T_FALCONSHIELD
+	ItemArmor3,	// T_PLATINUMHELM
+	ItemArmor4,	// T_AMULETOFWARDING
+	ArtifactFlechette,	// T_ITEMFLECHETTE
+	ArtifactTorch,	// T_ITEMTORCH
+	ArtifactBlastRadius,	// T_ITEMREPULSION
+	ItemManaCombined,	// T_MANA3
+	ArtifactPuzzleSkull,	// T_PUZZSKULL
+	ArtifactPuzzleGemBig,	// T_PUZZGEMBIG
+	ArtifactPuzzleGemRed,	// T_PUZZGEMRED
+	ArtifactPuzzleGemGreen1,	// T_PUZZGEMGREEN1
+	ArtifactPuzzleGemGreen2,	// T_PUZZGEMGREEN2
+	ArtifactPuzzleGemBlue1,	// T_PUZZGEMBLUE1
+	ArtifactPuzzleGemBlue2,	// T_PUZZGEMBLUE2
+	ArtifactPuzzleBook1,	// T_PUZZBOOK1
+	ArtifactPuzzleBook2,	// T_PUZZBOOK2
+	ItemKey1,	// T_METALKEY
+	ItemKey2,	// T_SMALLMETALKEY
+	ItemKey3,	// T_AXEKEY
+	ItemKey4,	// T_FIREKEY
+	ItemKey5,	// T_GREENKEY
+	ItemKey6,	// T_MACEKEY
+	ItemKey7,	// T_SILVERKEY
+	ItemKey8,	// T_RUSTYKEY
+	ItemKey9,	// T_HORNKEY
+	ItemKeyA,	// T_SERPENTKEY
+	WaterDrip,	// T_WATERDRIP
+	FlameSmallTemp,	// T_TEMPSMALLFLAME
+	FlameSmall,	// T_PERMSMALLFLAME
+	FlameLargeTemp,	// T_TEMPLARGEFLAME
+	FlameLarge,	// T_PERMLARGEFLAME
+	DemonMash,	// T_DEMON_MASH
+	Demon2Mash,	// T_DEMON2_MASH
+	EttinMash,	// T_ETTIN_MASH
+	CentaurMash,	// T_CENTAUR_MASH
+	ThrustFloorUp,	// T_THRUSTSPIKEUP
+	ThrustFloorDown,	// T_THRUSTSPIKEDOWN
+	WraithFleshDrip1,	// T_FLESH_DRIP1
+	WraithFleshDrip2,	// T_FLESH_DRIP2
+	WraithSparkDrip	// T_SPARK_DRIP
+};
+
 int classFlags[] =
 {
 	MTF_FIGHTER,
@@ -468,52 +580,6 @@ void NoiseAlert(Actor target, Actor emmiter)
 
 //==========================================================================
 //
-// EV_LineSearchForPuzzleItem
-//
-//==========================================================================
-
-bool EV_LineSearchForPuzzleItem(line_t * line, int *args, Actor A)
-{
-	int i;
-	int type, arti;
-
-	if (!A)
-		return false;
-	if (!A.bIsPlayer)
-		return false;
-
-	// Search player's inventory for puzzle items
-	for (i = 0; i < A.Player.ArtifactCount; i++)
-	{
-		arti = A.Player.Inventory[i].type;
-		type = arti - arti_firstpuzzitem;
-		if (type < 0)
-			continue;
-		if (type == line->arg1)
-		{
-			// A puzzle item was found for the line
-			if (A.Player.UseArtifact(arti))
-			{
-				// A puzzle item was found for the line
-				A.Player.PlayerRemoveArtifact(i);
-				if (arti < arti_firstpuzzitem)
-				{
-					A.PlaySound('UseArtifact', CHAN_ITEM);
-				}
-				else
-				{
-					A.PlaySound('PuzzleSuccess', CHAN_ITEM);
-				}
-				A.Player.ArtifactFlash = 4;
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-//==========================================================================
-//
 //  InitLava
 //
 //==========================================================================
@@ -615,52 +681,6 @@ void P_InitCreatureCorpseQueue(int corpseScan)
 	}
 }
 
-//===========================================================================
-// Quake variables
-//
-//      args[0]     Intensity on richter scale (2..9)
-//      args[1]     Duration in tics
-//      args[2]     Radius for damage, in tile units (64 pixels)
-//      args[3]     Radius for tremor in tile units (64 pixels)
-//      args[4]     TID of map thing for focus of quake
-//
-//===========================================================================
-
-//===========================================================================
-//
-//	A_LocalQuake
-//
-//===========================================================================
-
-bool A_LocalQuake(int *args)
-{
-	QuakeFocus focus;
-	Actor target;
-	int lastfound = 0;
-	int success = false;
-
-	// Find all quake foci
-	do
-	{
-		target = Actor(FindMobjFromTID(args[4], &lastfound));
-		if (target)
-		{
-			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
-			if (focus)
-			{
-				focus.Richters = args[0];
-				focus.QuakeDuration = args[1] >> 1;	// decremented every 2 tics
-				focus.DamageRadius = itof(args[2]) * 64.0;
-				focus.TremorRadius = itof(args[3]) * 64.0;
-				success = true;
-			}
-		}
-	}
-	while (target);
-
-	return success;
-}
-
 //==========================================================================
 //
 //  P_Massacre
@@ -692,6 +712,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.62  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.61  2005/12/07 22:54:19  dj_jl
 //  Moved compiler generated data out of globals.
 //

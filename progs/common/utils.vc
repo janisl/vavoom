@@ -429,28 +429,6 @@ void CreateTIDList()
 	TIDList[i] = 0;
 }
 
-//==========================================================================
-//
-//	FindMobjFromTID
-//
-//==========================================================================
-
-Entity FindMobjFromTID(int tid, int *searchPosition)
-{
-	int i;
-
-	for (i = *searchPosition + 1; TIDList[i] != 0; i++)
-	{
-		if (TIDList[i] == tid)
-		{
-			*searchPosition = i;
-			return TIDMobj[i];
-		}
-	}
-	*searchPosition = -1;
-	return none;
-}
-
 //**************************************************************************
 //**
 //**    Special thinker utilites.
@@ -1376,6 +1354,9 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2005/12/27 22:22:26  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.39  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

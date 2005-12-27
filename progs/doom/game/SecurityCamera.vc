@@ -547,7 +547,8 @@ void NewNode()
 	{
 		if (S.TID == CurrNode.TID)
 		{
-			ExecuteLineSpecial(S.Special, &S.Args[0], NULL, 0, none);
+			Level.ExecuteActionSpecial(S.Special, S.Args[0], S.Args[1],
+				S.Args[2], S.Args[3], S.Args[4], NULL, 0, none);
 		}
 	}
 }
@@ -896,6 +897,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.2  2004/11/01 07:38:21  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

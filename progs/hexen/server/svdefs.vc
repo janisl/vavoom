@@ -295,7 +295,186 @@ enum
 	CHAN_BODY
 };
 
+#define MAX_TAGGED_LINES	64
+
+// Keys
+
+#define	TXT_KEY_STEEL		"STEEL KEY"
+#define	TXT_KEY_CAVE		"CAVE KEY"
+#define	TXT_KEY_AXE			"AXE KEY"
+#define	TXT_KEY_FIRE		"FIRE KEY"
+#define	TXT_KEY_EMERALD		"EMERALD KEY"
+#define	TXT_KEY_DUNGEON		"DUNGEON KEY"
+#define	TXT_KEY_SILVER		"SILVER KEY"
+#define	TXT_KEY_RUSTED		"RUSTED KEY"
+#define	TXT_KEY_HORN		"HORN KEY"
+#define	TXT_KEY_SWAMP		"SWAMP KEY"
+#define TXT_KEY_CASTLE		"CASTLE KEY"
+
+enum
+{
+	DOOREV_Close,
+	DOOREV_Open,
+	DOOREV_Raise,
+	DOOREV_RaiseLocked,
+	DOOREV_CloseWaitOpen,
+	DOOREV_RaiseIn5Mins
+};
+
+enum
+{
+	FLOOREV_LowerToHighest,
+	FLOOREV_RaiseToHighest,
+	FLOOREV_LowerToLowest,
+	FLOOREV_LowerToNearest,
+	FLOOREV_RaiseToNearest,
+	FLOOREV_RaiseToLowestCeiling,
+	FLOOREV_LowerByValue,
+	FLOOREV_RaiseByValue,
+	FLOOREV_LowerByValueTimes8,
+	FLOOREV_RaiseByValueTimes8,
+	FLOOREV_LowerTimes8Instant,
+	FLOOREV_RaiseTimes8Instant,
+	FLOOREV_MoveToValueTimes8,
+	FLOOREV_RaiseByTexture,
+	FLOOREV_LowerToLowestChange,
+	FLOOREV_RaiseToNearestChange,
+	FLOOREV_RaiseByValueChange,
+	FLOOREV_RaiseByValueChange2,
+	FLOOREV_RaiseAndCrush,
+	FLOOREV_RaiseBuildStep,
+	FLOOREV_Generic,
+	FLOOREV_GenericChange0,
+	FLOOREV_GenericChangeT,
+	FLOOREV_GenericChange,
+	FLOOREV_Donut
+};
+
+enum
+{
+	ELEVEV_Down,
+	ELEVEV_Up,
+	ELEVEV_Current,
+	ELEVEV_Raise,
+	ELEVEV_Lower
+};
+
+enum
+{
+	STAIRSEV_DownNormal,
+	STAIRSEV_UpNormal,
+	STAIRSEV_DownSync,
+	STAIRSEV_UpSync
+};
+
+enum
+{
+	WGLSTATE_EXPAND,
+	WGLSTATE_STABLE,
+	WGLSTATE_REDUCE
+};
+
+enum
+{
+	CEILEV_LowerToFloor,
+	CEILEV_LowerToHighestFloor,
+	CEILEV_LowerToLowest,
+	CEILEV_RaiseToHighest,
+	CEILEV_RaiseToNearest,
+	CEILEV_LowerByValue,
+	CEILEV_RaiseByValue,
+	CEILEV_LowerByValueTimes8,
+	CEILEV_RaiseByValueTimes8,
+	CEILEV_LowerTimes8Instant,
+	CEILEV_RaiseTimes8Instant,
+	CEILEV_MoveToValueTimes8,
+	CEILEV_LowerAndCrush,
+	CEILEV_CrushAndRaise,
+	CEILEV_CrushRaiseAndStay,
+	CEILEV_CrushAndRaiseA,
+	CEILEV_CrushAndRaiseSilA,
+	CEILEV_CrushRaiseAndStayA,
+	CEILEV_CrushRaiseAndStaySilA,
+	CEILEV_Generic,
+	CEILEV_GenericChange0,
+	CEILEV_GenericChangeT,
+	CEILEV_GenericChange,
+	CEILEV_GenericCrush
+};
+
+enum
+{
+	PLAT_Up,
+	PLAT_Down,
+	PLAT_Waiting,
+	PLAT_InStasis
+};
+
+enum
+{
+	PLATEV_PerpetualRaise,
+	PLATEV_PerpetualRaiseLip,
+	PLATEV_DownWaitUpStay,
+	PLATEV_DownWaitUpStayLip,
+	PLATEV_DownNearestWaitUpStay,
+	PLATEV_DownLowestCeilingWaitUpStay,
+	PLATEV_DownByValueWaitUpStay,
+	PLATEV_UpWaitDownStay,
+	PLATEV_UpNearestWaitDownStay,
+	PLATEV_UpByValueWaitDownStay,
+	PLATEV_Toggle,
+	PLATEV_Generic
+};
+
+#define STROBEBRIGHT		5
+#define FASTDARK			15
+#define SLOWDARK			35
+
+enum
+{
+	LIGHTEV_Fade,
+	LIGHTEV_Glow,
+	LIGHTEV_Flicker,
+	LIGHTEV_Strobe
+};
+
+enum
+{
+	SCROLLEV_Side,
+	SCROLLEV_Floor,
+	SCROLLEV_Ceiling,
+	SCROLLEV_Carry
+};
+
+enum
+{
+	PUSHER_Push,
+	PUSHER_Pull,
+	PUSHER_Wind,
+	PUSHER_Current
+};
+
+enum
+{
+	PODOOR_NONE,
+	PODOOR_SLIDE,
+	PODOOR_SWING
+};
+
 // TYPES -------------------------------------------------------------------
+
+class PolyobjThinker;
+
+addfields polyobj_t
+{
+	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
+};
+
+struct tagged_line_t
+{
+	line_t *line;
+	int lineTag;
+};
 
 /*
 
@@ -437,6 +616,34 @@ float FloatBobOffsets[64] = {
 	-3.061477661, -2.322280884, -1.56072998, -0.7841339111
 };
 
+tagged_line_t TaggedLines[MAX_TAGGED_LINES];
+int TaggedLineCount;
+
+string TextKeyMessages[] = {
+	TXT_KEY_STEEL,
+	TXT_KEY_CAVE,
+	TXT_KEY_AXE,
+	TXT_KEY_FIRE,
+	TXT_KEY_EMERALD,
+	TXT_KEY_DUNGEON,
+	TXT_KEY_SILVER,
+	TXT_KEY_RUSTED,
+	TXT_KEY_HORN,
+	TXT_KEY_SWAMP,
+	TXT_KEY_CASTLE
+};
+
+int PhaseTable[64] = {
+	128, 112, 96, 80, 64, 48, 32, 32,
+	16, 16, 16, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 16, 16, 16,
+	32, 32, 48, 64, 80, 96, 112, 128
+};
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -448,6 +655,9 @@ float FloatBobOffsets[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.44  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.43  2005/11/20 12:41:35  dj_jl
 //  Implemented support for sound sequence extensions.
 //

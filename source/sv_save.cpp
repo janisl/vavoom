@@ -836,6 +836,13 @@ static void UnarchiveThinkers(void)
 		thinker = (VThinker *)ReadVObject(PU_LEVSPEC);
 		thinker->XLevel = GLevel;
 
+		//  Handle level info
+		if (thinker->IsA(VLevelInfo::StaticClass()))
+		{
+			GLevelInfo = (VLevelInfo*)thinker;
+		}
+		thinker->Level = GLevelInfo;
+
 		//  Handle entities
 		VEntity *Ent = Cast<VEntity>(thinker);
 		if (Ent)
@@ -1447,9 +1454,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2005/12/27 22:24:00  dj_jl
+//	Created level info class, moved action special handling to it.
+//
 //	Revision 1.43  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.42  2005/11/20 15:50:40  dj_jl
 //	Some fixes.
 //	

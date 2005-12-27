@@ -51,7 +51,8 @@ void TouchSpecial(Actor Toucher)
 	cprint(Toucher.Player, TXT_ITEMHEALTH);
 	if (Special)
 	{
-		ExecuteLineSpecial(Special, &Args[0], NULL, 0, Toucher);
+		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
+			Args[4], NULL, 0, Toucher);
 		Special = 0;
 	}
 	if (deathmatch && !bDropped)
@@ -82,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.2  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

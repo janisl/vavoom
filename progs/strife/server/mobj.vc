@@ -28,6 +28,169 @@
 //**
 //**************************************************************************
 
+classid TranslateThingType[] =
+{
+	MapSpot,	// T_NONE
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 10
+	ItemAmmoClipOfBullets,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 20
+	MapSpot/*Bridge*/,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 30
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 40
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 50
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 60
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	LeatherArmor,
+	MetalArmor,
+
+	MapSpot,	// 70
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemAmmoEnergyPod,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 80
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 90
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 100
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 110
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 120
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	Blood,	// 130
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	Shadow_armor,
+	Environmental_Suit,
+	Map,
+	MapSpot,
+	ItemAmmoBoxOfBullets,
+
+	ItemAmmoMiniMissiles,	// 140
+	ItemAmmoCrateOfMissiles,
+	ItemAmmoEnergyPack,
+	MapSpot,
+	Ammo_satchel
+};
+
 float air_control = 1.0 / 256.0;
 
 bool onground;
@@ -349,52 +512,6 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 	P_RecursiveSound(emmiter.Sector, 0);
 }
 
-//===========================================================================
-// Quake variables
-//
-//      args[0]     Intensity on richter scale (2..9)
-//      args[1]     Duration in tics
-//      args[2]     Radius for damage, in tile units (64 pixels)
-//      args[3]     Radius for tremor in tile units (64 pixels)
-//      args[4]     TID of map thing for focus of quake
-//
-//===========================================================================
-
-//===========================================================================
-//
-//	A_LocalQuake
-//
-//===========================================================================
-
-bool A_LocalQuake(int *args)
-{
-	QuakeFocus focus;
-	Actor target;
-	int lastfound = 0;
-	int success = false;
-
-	// Find all quake foci
-	do
-	{
-		target = Actor(FindMobjFromTID(args[4], &lastfound));
-		if (target)
-		{
-			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
-			if (focus)
-			{
-				focus.Richters = args[0];
-				focus.QuakeDuration = args[1] >> 1;	// decremented every 2 tics
-				focus.DamageRadius = itof(args[2]) * 64.0;
-				focus.TremorRadius = itof(args[3]) * 64.0;
-				success = true;
-			}
-		}
-	}
-	while (target);
-
-	return success;
-}
-
 //==========================================================================
 //
 //  P_Massacre
@@ -423,6 +540,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.60  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.59  2005/12/22 23:06:00  dj_jl
 //  Fixed ammo and weapon pickups.
 //

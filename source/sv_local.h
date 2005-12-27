@@ -30,6 +30,10 @@
 
 #include "player.h"
 
+class VLevelInfo;
+
+extern VLevelInfo*		GLevelInfo;
+
 //==========================================================================
 //
 //								THINKERS
@@ -43,12 +47,80 @@ class VThinker : public VObject
 {
 	DECLARE_CLASS(VThinker, VObject, 0)
 
-	VThinker() : XLevel(GLevel) {}
+	VThinker() : XLevel(GLevel), Level(GLevelInfo) {}
 
-	VLevel		*XLevel;		//	Level object.
+	VLevel*			XLevel;		//	Level object.
+	VLevelInfo*		Level;		//	Level info object.
 
 	//	VThinker interface.
 	virtual void Tick(float DeltaTime);
+};
+
+//==========================================================================
+//
+//	LevelInfo
+//
+//==========================================================================
+
+class VLevelInfo : public VThinker
+{
+	DECLARE_CLASS(VLevelInfo, VThinker, 0)
+
+	VLevelInfo()
+	{
+		Level = this;
+	}
+
+	void eventSpawnSpecials()
+	{
+		svpr.Exec(GetVFunction("SpawnSpecials"), (int)this);
+	}
+	void eventUpdateSpecials()
+	{
+		svpr.Exec(GetVFunction("UpdateSpecials"), (int)this);
+	}
+	line_t* eventFindLine(int lineTag, int *searchPosition)
+	{
+		return (line_t*)svpr.Exec(GetVFunction("FindLine"), (int)this,
+			lineTag, (int)searchPosition);
+	}
+	void eventPolyThrustMobj(VEntity* A, TVec thrustDir, polyobj_t* po)
+	{
+		svpr.Exec(GetVFunction("PolyThrustMobj"), (int)this, (int)A,
+			PassFloat(thrustDir.x), PassFloat(thrustDir.y), PassFloat(thrustDir.z), (int)po);
+	}
+	bool eventPolyBusy(int polyobj)
+	{
+		return svpr.Exec(GetVFunction("PolyBusy"), (int)this, polyobj);
+	}
+	int eventThingCount(int type, int tid)
+	{
+		return svpr.Exec(GetVFunction("ThingCount"), (int)this, type, tid);
+	}
+	VEntity* eventFindMobjFromTID(int tid, int *searchPosition)
+	{
+		return (VEntity*)svpr.Exec(GetVFunction("FindMobjFromTID"), (int)this, tid, (int)searchPosition);
+	}
+	bool eventExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
+		int Arg4, int Arg5, line_t* Line, int Side, VEntity* A)
+	{
+		return svpr.Exec(GetVFunction("ExecuteActionSpecial"), (int)this,
+			Special, Arg1, Arg2, Arg3, Arg4, Arg5, (int)Line, Side, (int)A);
+	}
+	int eventEV_ThingProjectile(int tid, int type, int angle, int speed,
+		int vspeed, int gravity, int newtid)
+	{
+		return svpr.Exec(GetVFunction("EV_ThingProjectile"), (int)this, tid,
+			type, angle, speed, vspeed, gravity, newtid);
+	}
+	void eventStartPlaneWatcher(VEntity* it, line_t* line, int lineSide,
+		bool ceiling, int tag, int height, int special, int arg1, int arg2,
+		int arg3, int arg4, int arg5)
+	{
+		svpr.Exec(GetVFunction("StartPlaneWatcher"), (int)this, (int)it,
+			(int)line, lineSide, ceiling, tag, height, special, arg1,
+			arg2, arg3, arg4, arg5);
+	}
 };
 
 //==========================================================================
@@ -623,9 +695,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2005/12/27 22:24:00  dj_jl
+//	Created level info class, moved action special handling to it.
+//
 //	Revision 1.40  2005/12/11 21:37:00  dj_jl
 //	Made path traversal callbacks class members.
-//
+//	
 //	Revision 1.39  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
 //	

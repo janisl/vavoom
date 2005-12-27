@@ -23,6 +23,194 @@
 //**
 //**************************************************************************
 
+classid TranslateThingType[] =
+{
+	MapSpot,	// T_NONE
+	Clink,
+	MummyLeader,
+	Beast,
+	Mummy,
+	Imp,
+	Knight,
+	ImpLeader,
+	MummyGhost,
+	MummyLeaderGhost,
+
+	ImpBall,	// 10
+	ItemAmmoGoldWandWimpy,
+	ItemAmmoGoldWandHefty,
+	MapSpot,
+	ArtifactEgg,
+	ArtifactFly,
+	MapSpot,
+	MapSpot,
+	ArtifactTeleport,
+	Wizard,
+
+	Head,	// 20
+	MapSpot/*Bridge*/,
+	MapSpot,
+	ItemHealthPotion,
+	ArtifactHealthFlask,
+	ArtifactSuperHeal,
+	MapSpot,
+	ItemWeaponCrossbow,
+	ItemWeaponBlaster,
+	ItemWeaponPhoenixRod,
+
+	ItemWeaponSkullRod,	// 30
+	MapSpot,
+	ItemWeaponGauntlets,
+	ItemAmmoCrossbowWimpy,
+	ItemAmmoCrossbowHefty,
+	ItemAmmoMaceWimpy,
+	ItemAmmoMaceHefty,
+	ItemAmmoBlasterWimpy,
+	ItemAmmoBlasterHefty,
+	MapSpot,
+
+	EggMissile,	// 40
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 50
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 60
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemShield1,
+	ItemShield2,
+
+	MapSpot,	// 70
+	MapSpot,
+	ArtifactFireBomb/*FireBomb*/,
+	ArtifactTorch,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 80
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemKeyBlue,
+	ItemKeyGreen,
+	ItemKeyYellow,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 90
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 100
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	SoundWind,	// 110
+	SoundWaterfall,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	BeastBall,	// 120
+	Feather,
+	Chicken,
+	VolcanoBlast,
+	VolcanoTBlast,
+	Pod,
+	PodGenerator,
+	KnightAxe,
+	KnightRedAxe,
+	KnightGhost,
+
+	Blood,	// 130
+	MummyMissile,
+	Snake,
+	ArtifactInvulnerability,
+	ArtifactTomeOfPower,
+	ArtifactInvisibility,
+	ItemBagOfHolding,
+	ItemMap,
+	SnakeProjectileA,
+	SnakeProjectileB,
+
+	WizardMissile,	// 140
+	MapSpot/*BossSpot*/,
+	Sorcerer1,
+	Sorcerer2,
+	Sorcerer1Missile,
+	Sorcerer2Missile1,
+	Sorcerer2Missile2,
+	CrossbowFX1,
+	CrossbowFX2,
+	CrossbowFX3,
+
+	Volcano,	// 150
+	GoldWandMissile1,
+	GoldWandMissile2,
+	MaceFX4,
+	MaceFX1,
+	MaceFX3,
+	MaceFX2,
+	Ripper,
+	ItemAmmoSkullRodWimpy,
+	ItemAmmoSkullRodHefty,
+
+	HornRodMissile1,	// 160
+	ItemAmmoPhoenixWimpy,
+	ItemAmmoPhoenixHefty,
+	PhoenixFX1,
+	HeadMissile1,
+	WhirlWind,
+	TeleGlitter,
+	TeleGlitter2
+};
+
 #define MAX_BOSS_SPOTS 8
 
 int GetAmmoChange[] = {
@@ -615,55 +803,12 @@ void CloseWeapons(void)
 		ONFLOORZ));
 }
 
-//===========================================================================
-// Quake variables
-//
-//      args[0]     Intensity on richter scale (2..9)
-//      args[1]     Duration in tics
-//      args[2]     Radius for damage, in tile units (64 pixels)
-//      args[3]     Radius for tremor in tile units (64 pixels)
-//      args[4]     TID of map thing for focus of quake
-//
-//===========================================================================
-
-//===========================================================================
-//
-//	A_LocalQuake
-//
-//===========================================================================
-
-bool A_LocalQuake(int *args)
-{
-	QuakeFocus focus;
-	Actor target;
-	int lastfound = 0;
-	int success = false;
-
-	// Find all quake foci
-	do
-	{
-		target = Actor(FindMobjFromTID(args[4], &lastfound));
-		if (target)
-		{
-			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
-			if (focus)
-			{
-				focus.Richters = args[0];
-				focus.QuakeDuration = args[1] >> 1;	// decremented every 2 tics
-				focus.DamageRadius = itof(args[2]) * 64.0;
-				focus.TremorRadius = itof(args[3]) * 64.0;
-				success = true;
-			}
-		}
-	}
-	while (target);
-
-	return success;
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.60  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.59  2005/12/07 22:54:18  dj_jl
 //  Moved compiler generated data out of globals.
 //

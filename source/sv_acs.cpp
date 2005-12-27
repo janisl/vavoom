@@ -629,43 +629,36 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 static boolean P_ExecuteLineSpecial(int special, int *args, line_t *line, int side,
 	VEntity *mo)
 {
-   	return svpr.Exec("ExecuteLineSpecial",
-   		special, (int)args, (int)line, side, (int)mo);
+   	return GLevelInfo->eventExecuteActionSpecial(special, args[0], args[1], args[2], args[3], args[4], line, side, mo);
 }
 
 static line_t* P_FindLine(int lineTag, int *searchPosition)
 {
-	return (line_t*)svpr.Exec("P_FindLine", lineTag, (int)searchPosition);
+	return GLevelInfo->eventFindLine(lineTag, searchPosition);
 }
 
 static VEntity* P_FindMobjFromTID(int tid, int *searchPosition)
 {
-	return (VEntity*)svpr.Exec("FindMobjFromTID", tid, (int)searchPosition);
+	return GLevelInfo->eventFindMobjFromTID(tid, searchPosition);
 }
 
 static int ThingCount(int type, int tid)
 {
-	return svpr.Exec("ThingCount", type, tid);
+	return GLevelInfo->eventThingCount(type, tid);
 }
 
 static int Thing_Projectile2(int tid, int type, int angle, int speed,
 	int vspeed, int gravity, int newtid)
 {
-	int args[5];
-
-	args[0] = tid;
-	args[1] = type;
-	args[2] = angle;
-	args[3] = speed;
-	args[4] = vspeed;
-	return svpr.Exec("EV_ThingProjectile", (int)&args[0], gravity, newtid);
+	GLevelInfo->eventEV_ThingProjectile(tid, type, angle, speed, vspeed,
+		gravity, newtid);
 }
 
 static void StartPlaneWatcher(VEntity* it, line_t* line, int lineSide,
 	bool ceiling, int tag, int height, int special, int arg0, int arg1,
 	int arg2, int arg3, int arg4)
 {
-	svpr.Exec("StartPlaneWatcher", (int)it, (int)line, lineSide, ceiling,
+	GLevelInfo->eventStartPlaneWatcher(it, line, lineSide, ceiling,
 		tag, height, special, arg0, arg1, arg2, arg3, arg4);
 }
 
@@ -4674,9 +4667,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2005/12/27 22:24:00  dj_jl
+//	Created level info class, moved action special handling to it.
+//
 //	Revision 1.36  2005/12/22 19:05:27  dj_jl
 //	Added extra licence.
-//
+//	
 //	Revision 1.35  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

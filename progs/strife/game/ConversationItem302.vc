@@ -33,14 +33,8 @@ class ConversationItem302 : Pickup;
 
 bool HandlePickup(Actor Toucher)
 {
-	int Args[5];
-
-	Args[0] = 222;
-	Args[1] = 16;
-	Args[2] = 0;
-	Args[3] = 0;
-	Args[4] = 0;
-	return ExecuteLineSpecial(LNSPEC_DoorOpen, &Args[0], NULL, 0, Toucher);
+	return Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 16, 0, 0, 0,
+		NULL, 0, Toucher);
 }
 
 defaultproperties
@@ -52,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

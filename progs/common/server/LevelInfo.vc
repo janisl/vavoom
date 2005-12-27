@@ -23,107 +23,139 @@
 //**
 //**************************************************************************
 
+class LevelInfo : Thinker
+	native
+	abstract;
+
 //==========================================================================
 //
-//  CreateLevelInfo
+//  SpawnSpecials
 //
 //==========================================================================
 
-LevelInfo CreateLevelInfo()
+void SpawnSpecials()
 {
-	return NewSpecialThinker(DoomLevelInfo);
 }
 
 //==========================================================================
 //
-//  AfterUnarchiveThinkers
+//  UpdateSpecials
 //
 //==========================================================================
 
-void AfterUnarchiveThinkers()
+void UpdateSpecials()
 {
-	CreateTIDList();
 }
 
 //==========================================================================
 //
-//  G_InitNew
+//  FindLine
 //
 //==========================================================================
 
-void G_InitNew(int skill)
+line_t* FindLine(int lineTag, int *searchPosition)
 {
-	respawnmonsters = skill == sk_nightmare || GetCvar("RespawnMonsters");
-	nomonsters = GetCvar("NoMonsters");
-	fastparm = skill == sk_nightmare || GetCvar("Fast");
+	return NULL;
 }
 
 //==========================================================================
 //
-//  StartLevelLoading
+//  PolyThrustMobj
 //
 //==========================================================================
 
-void StartLevelLoading()
+void PolyThrustMobj(Entity A, TVec thrustDir, polyobj_t * po)
 {
-	bodyqueslot = 0;
 }
 
 //==========================================================================
 //
-//  EndLevelLoading
+//  PolyBusy
 //
 //==========================================================================
 
-void EndLevelLoading()
+bool PolyBusy(int polyobj)
 {
-	CreateTIDList();
+	return false;
 }
 
 //==========================================================================
 //
-//  main
+//	ThingCount
 //
 //==========================================================================
 
-void main()
+int ThingCount(int type, int tid)
 {
-#ifndef DOOM2
-	shareware = !WadLumpPresent("E2M1");
-#endif
+	return 0;
+}
+
+//==========================================================================
+//
+//	FindMobjFromTID
+//
+//==========================================================================
+
+Entity FindMobjFromTID(int tid, int *searchPosition)
+{
+	int i;
+
+	for (i = *searchPosition + 1; TIDList[i] != 0; i++)
+	{
+		if (TIDList[i] == tid)
+		{
+			*searchPosition = i;
+			return TIDMobj[i];
+		}
+	}
+	*searchPosition = -1;
+	return none;
+}
+
+//==========================================================================
+//
+//  ExecuteActionSpecial
+//
+//==========================================================================
+
+bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
+	int Arg4, int Arg5, line_t* line, int side, Entity A)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	EV_ThingProjectile
+//
+//==========================================================================
+
+bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	bool gravity, int newtid)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//  StartPlaneWatcher
+//
+//==========================================================================
+
+void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
+	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
+	int arg4)
+{
+}
+
+defaultproperties
+{
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.8  2005/12/27 22:22:28  dj_jl
+//  Revision 1.1  2005/12/27 22:22:27  dj_jl
 //  Created level info class, moved action special handling to it.
-//
-//  Revision 1.7  2005/12/07 19:57:30  dj_jl
-//  Fixed fastparam.
-//
-//  Revision 1.6  2004/11/01 07:38:21  dj_jl
-//  Almost all Hexen line specials are available in all games.
-//
-//  Revision 1.5  2002/05/18 16:59:59  dj_jl
-//  Renamed SpawnState to IdleState, other changes.
-//
-//  Revision 1.4  2002/03/28 18:11:24  dj_jl
-//  Changed hiding of specials like in Raven games.
-//
-//  Revision 1.3  2002/02/26 17:49:47  dj_jl
-//  no message
-//
-//  Revision 1.2  2002/01/07 12:21:11  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.1  2001/09/24 17:27:47  dj_jl
-//  Renaming
-//
-//  Revision 1.3  2001/07/31 16:57:52  dj_jl
-//  Checking for shareware/extended wad by the presence of wad lump
-//
-//  Revision 1.2  2001/07/27 14:27:51  dj_jl
-//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

@@ -37,6 +37,17 @@
 
 //==========================================================================
 //
+//  CreateLevelInfo
+//
+//==========================================================================
+
+LevelInfo CreateLevelInfo()
+{
+	return NewSpecialThinker(HexenLevelInfo);
+}
+
+//==========================================================================
+//
 //  AfterUnarchiveThinkers
 //
 //==========================================================================
@@ -119,6 +130,9 @@ void main()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.5  2005/11/20 12:41:35  dj_jl
 //  Implemented support for sound sequence extensions.
 //

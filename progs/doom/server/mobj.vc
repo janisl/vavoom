@@ -28,6 +28,238 @@
 //**
 //**************************************************************************
 
+classid TranslateThingType[] =
+{
+	MapSpot,	// T_NONE
+	ShotgunGuy,
+#ifdef DOOM2
+	ChaingunGuy,
+#else
+	MapSpot,
+#endif
+	BaronOfHell,
+	Zombieman,
+	Imp,
+#ifdef DOOM2
+	Arachnotron,
+#else
+	MapSpot,
+#endif
+	SpiderMastermind,
+	Demon,
+	Shadows,
+
+	ImpMissile,	// 10
+	ItemAmmoBulletClip,
+	ItemAmmoShells,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	Cacodemon,
+
+#ifdef DOOM2
+	Revenant,	// 20
+#else
+	MapSpot,	// 20
+#endif
+	MapSpot/*Bridge*/,
+	ItemArmorBonus,
+	ItemStimPack,
+	ItemMedikit,
+	ItemSoulSphere,
+	MapSpot,
+	ItemWeaponShotgun,
+	ItemWeaponChaingun,
+	ItemWeaponRocketLauncher,
+
+	ItemWeaponPlasmaGun,	// 30
+	ItemWeaponBFG,
+	ItemWeaponChainsaw,
+#ifdef DOOM2
+	ItemWeaponSuperShotgun,
+#else
+	MapSpot,
+#endif
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 40
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 50
+	PlasmaShot,
+	MapSpot,
+#ifdef DOOM2
+	RevenantTracer,
+#else
+	MapSpot,
+#endif
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 60
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemArmor1,
+	ItemArmor2,
+
+	MapSpot,	// 70
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemAmmoCells,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	MapSpot,	// 80
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	ItemKeyBlueCard,
+	ItemKeyRedCard,
+	ItemKeyYellowCard,
+	ItemKeyYellowSkull,
+	ItemKeyRedSkull,
+
+	ItemKeyBlueSkull,	// 90
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+#ifdef Doom2
+	ArchvileFire,
+#else
+	MapSpot,
+#endif
+	MapSpot,
+
+	MapSpot/*StealthBaron*/,	// 100
+#ifdef Doom2
+	MapSpot/*StealthHellKnight*/,
+#else
+	MapSpot,
+#endif
+	MapSpot/*StealthZombieman*/,
+	MapSpot/*StealthShotgunGuy*/,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+
+	LostSoul,	// 110
+#ifdef DOOM2
+	ArchVile,
+	Mancubus,
+	HellKnight,
+#else
+	MapSpot,
+	MapSpot,
+	MapSpot,
+#endif
+	Cyberdemon,
+#ifdef DOOM2
+	PainElemental,
+	WolfSS,
+	MapSpot/*StealthArachnotron*/,
+	MapSpot/*StealthArchvile*/,
+#else
+	MapSpot,
+	MapSpot,
+	MapSpot,
+	MapSpot,
+#endif
+	MapSpot/*StealthCacodemon*/,
+
+	MapSpot/*StealthChaingunGuy*/,	// 120
+	MapSpot/*StealthDemon*/,
+	MapSpot/*StealthImp*/,
+#ifdef DOOM2
+	MapSpot/*StealthMancubus*/,
+	MapSpot/*StealthRevenant*/,
+#else
+	MapSpot,
+	MapSpot,
+#endif
+	Barrel,
+	CacodemonMissile,
+	Rocket,
+	BFGShot,
+#ifdef DOOM2
+	ArachnotronPlasma,
+#else
+	MapSpot,
+#endif
+
+	Blood,	// 130
+	Puff,
+#ifdef DOOM2
+	ItemMegaSphere,
+#else
+	MapSpot,
+#endif
+	ItemInvulnerability,
+	ItemBerserk,
+	ItemInvisibility,
+	ItemRadiationSuit,
+	ItemComputerMap,
+	ItemInfrared,
+	ItemAmmoBulletBox,
+
+	ItemAmmoRocket,	// 140
+	ItemAmmoRocketBox,
+	ItemAmmoCellsPack,
+	ItemAmmoShellsBox,
+	ItemBackpack,
+	DeadPlayerGibs,
+	Gibs,
+	ColonGibs,
+	SmallPool,
+	BurningBarrel,
+
+	BrainStem,	// 150
+	MapSpot/*ScriptedMarine*/,
+	ItemHealthBonus,
+#ifdef DOOM2
+	MancubusMissile,
+#else
+	MapSpot,
+#endif
+	BruiserShot
+};
+
 float air_control = 1.0 / 256.0;
 
 bool onground;
@@ -363,52 +595,6 @@ void P_NoiseAlert(Actor target, Actor emmiter)
 	P_RecursiveSound(emmiter.Sector, 0);
 }
 
-//===========================================================================
-// Quake variables
-//
-//      args[0]     Intensity on richter scale (2..9)
-//      args[1]     Duration in tics
-//      args[2]     Radius for damage, in tile units (64 pixels)
-//      args[3]     Radius for tremor in tile units (64 pixels)
-//      args[4]     TID of map thing for focus of quake
-//
-//===========================================================================
-
-//===========================================================================
-//
-//	A_LocalQuake
-//
-//===========================================================================
-
-bool A_LocalQuake(int *args)
-{
-	QuakeFocus focus;
-	Actor target;
-	int lastfound = 0;
-	int success = false;
-
-	// Find all quake foci
-	do
-	{
-		target = Actor(FindMobjFromTID(args[4], &lastfound));
-		if (target)
-		{
-			focus = QuakeFocus(Spawn(QuakeFocus, target.Origin));
-			if (focus)
-			{
-				focus.Richters = args[0];
-				focus.QuakeDuration = args[1] >> 1;	// decremented every 2 tics
-				focus.DamageRadius = itof(args[2]) * 64.0;
-				focus.TremorRadius = itof(args[3]) * 64.0;
-				success = true;
-			}
-		}
-	}
-	while (target);
-
-	return success;
-}
-
 //==========================================================================
 //
 //  P_Massacre
@@ -437,6 +623,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.60  2005/12/27 22:22:27  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.59  2005/12/14 20:52:32  dj_jl
 //  State names belong to a class.
 //

@@ -33,14 +33,6 @@
 #include "svdefs.vc"
 
 #include "xlat.vc"
-#include "ceilings.vc"
-#include "doors.vc"
-#include "floors.vc"
-#include "plats.vc"
-#include "polyobj.vc"
-#include "lights.vc"
-#include "scroll.vc"
-#include "spec.vc"
 
 #include "world.vc"
 
@@ -50,14 +42,15 @@
 
 #include "mobj.vc"
 #include "map.vc"
-#include "teleport.vc"
-#include "things.vc"
 
 #include "svmain.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2005/12/27 22:22:28  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.26  2005/12/01 19:46:35  dj_jl
 //  Cleanup.
 //

@@ -382,6 +382,7 @@ class Entity;
 class Actor;
 class ViewEntity;
 class Player;
+class LevelInfo;
 
 //==========================================================================
 //
@@ -703,6 +704,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.60  2005/12/27 22:22:26  dj_jl
+//  Created level info class, moved action special handling to it.
+//
 //  Revision 1.59  2005/12/12 20:33:48  dj_jl
 //  Cleaned up state types.
 //
