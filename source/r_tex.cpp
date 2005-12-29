@@ -1523,6 +1523,11 @@ byte* TFlatTexture::GetPixels()
 	}
 
 	Pixels = (byte*)Z_Malloc(64 * 64, PU_STATIC, (void**)&Pixels);
+	if (W_LumpLength(LumpNum) < 64 * 64)
+	{
+		memset(Pixels, 0, 64 * 64);
+		return Pixels;
+	}
 	byte* data = (byte*)W_CacheLumpNum(LumpNum, PU_TEMP);
 	for (int i = 0; i < 64 * 64; i++)
 	{
@@ -2757,9 +2762,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2005/12/29 20:17:41  dj_jl
+//	Fix for too small flats.
+//
 //	Revision 1.34  2005/11/20 10:39:57  dj_jl
 //	Fixed skin index check.
-//
+//	
 //	Revision 1.33  2005/10/02 23:14:47  dj_jl
 //	Case insensitive extension check.
 //	
