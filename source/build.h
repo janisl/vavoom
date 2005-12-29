@@ -24,9 +24,9 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	18
+#define VERSION_MINOR	19
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.18"
+#define VERSION_TEXT	"1.19"
 
 #if !defined CLIENT && !defined SERVER
 #define CLIENT
@@ -58,9 +58,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2005/12/29 17:26:01  dj_jl
+//	Changed version number.
+//
 //	Revision 1.11  2005/08/29 19:39:30  dj_jl
 //	Increased version number.
-//
+//	
 //	Revision 1.10  2005/03/28 07:49:56  dj_jl
 //	Changed version number.
 //	
