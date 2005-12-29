@@ -650,7 +650,7 @@ static int ThingCount(int type, int tid)
 static int Thing_Projectile2(int tid, int type, int angle, int speed,
 	int vspeed, int gravity, int newtid)
 {
-	GLevelInfo->eventEV_ThingProjectile(tid, type, angle, speed, vspeed,
+	return GLevelInfo->eventEV_ThingProjectile(tid, type, angle, speed, vspeed,
 		gravity, newtid);
 }
 
@@ -4667,9 +4667,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2005/12/29 19:51:54  dj_jl
+//	Fixed missing return.
+//
 //	Revision 1.37  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
-//
+//	
 //	Revision 1.36  2005/12/22 19:05:27  dj_jl
 //	Added extra licence.
 //	
