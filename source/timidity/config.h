@@ -147,6 +147,8 @@ typedef double FLOAT_T;
 #define BIG_ENDIAN 1
 #endif
 
+}
+
 /* Byte order, defined in <machine/endian.h> for FreeBSD and DEC OSF/1 */
 #ifdef DEC
 #include <machine/endian.h>
@@ -178,6 +180,9 @@ typedef double FLOAT_T;
 # error No byte sex defined
 # endif
 #endif /* linux */
+
+namespace LibTimidity
+{
 
 /* Win32 on Intel machines */
 #ifdef __WIN32__

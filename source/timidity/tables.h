@@ -26,7 +26,10 @@ namespace LibTimidity
 #ifdef LOOKUP_SINE
 extern FLOAT_T sine(int x);
 #else
+}
 #include <math.h>
+namespace LibTimidity
+{
 #define sine(x) (sin((2*PI/1024.0) * (x)))
 #endif
 
