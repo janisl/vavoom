@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MT /W4 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
+# ADD CPP /nologo /MT /W4 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "FLAC__NO_DLL" /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x426 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /libpath:"C:\Gamma\Microsoft Visual C++ Toolkit 2003\lib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /libpath:"C:\Gamma\Microsoft Visual C++ Toolkit 2003\lib"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "Vavoom95 - Win32 Debug"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /MTd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /YX /FD /GZ /c
+# ADD CPP /nologo /MTd /W4 /Gm /GX /ZI /Od /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "FLAC__NO_DLL" /YX /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x426 /d "_DEBUG"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib fmodvc.lib zlib.lib /nologo /subsystem:windows /debug /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib /nologo /subsystem:windows /debug /machine:I386
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -1643,11 +1643,6 @@ SOURCE=..\..\source\cd_linux.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\cd_none.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\cd_win32.cpp
 # ADD CPP /W4
 # End Source File
@@ -1677,6 +1672,10 @@ SOURCE=..\..\source\s_data.cpp
 # Begin Source File
 
 SOURCE=..\..\source\s_eaxutl.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\s_flac.cpp
 # End Source File
 # Begin Source File
 
@@ -1712,6 +1711,10 @@ SOURCE=..\..\source\s_tmidty.cpp
 # Begin Source File
 
 SOURCE=..\..\source\s_vorbis.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\s_wav.cpp
 # End Source File
 # Begin Source File
 
@@ -2107,102 +2110,6 @@ SOURCE=..\..\source\system.h
 # Begin Source File
 
 SOURCE=..\..\source\winlocal.h
-# End Source File
-# End Group
-# Begin Group "Timidity Driver"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\source\timidity\common.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\common.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\config.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\controls.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\controls.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\filter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\filter.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\instrum.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\instrum.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\mix.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\mix.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\output.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\output.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\playmidi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\playmidi.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\readmidi.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\readmidi.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\resample.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\resample.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\tables.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\tables.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\timidity.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\timidity\timidity.h
 # End Source File
 # End Group
 # End Target
