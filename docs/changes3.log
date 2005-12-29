@@ -889,3 +889,53 @@
   Implemented support for SNDSEQ extensions. Changed Doom, Heretic and Strife
  action specials to use sequences.
   Fixed MD2 skin index check.
+21.11.2005
+  Removed unused fields from VObject. Renamed progs opcodes to much nicer
+ names, put progs into it's own wad namespace.
+  In ACS added extra byte swapping.
+22.11.2005
+  Some cleanup in names.
+  In compiler removed building of the expression tree, that never was used as
+ initially planed. It also now compiles much faster.
+23.11.2005
+  In vcc moved function properties from type class to function class, in the
+ end got rid of function type. Some more improvements in expressions parsing.
+24.11.2005
+  In vcc created class class (I like how it sounds). Some cleanup.
+25.11.2005
+  In vcc fields of the class are moved from type class to class class.
+26.11.2005
+  Moved rest of the class specific fields to class class. Created struct class.
+ Got rid of the class type.
+27.11.2005
+  In compiler removed operator class. Moved struct secific fields from type
+ class to struct class.
+29.11.2005
+  Removed compiler namespaces.
+30.11.2005
+  Got rid of using classes in case statement.
+07.12.2005
+  In progs moved virtual tables, property info, states, mobjinfo, sprite and
+ model tables into their own chunks.
+11.12.2005
+  Made path traversal callbacks class members.
+12.12.2005
+  Implemented support for defining enums and structs inside a class. State
+ names belong to the class. Removed compiler limitations.
+19.12.2005
+  Changed progs version number, added extra licence notice in ACS code.
+24.12.2005
+  In Doom fixed status bar face.
+  Fixed Strife ammo icons and amounts.
+25.12.2005
+  Moved title screen drawing to a class.
+  Created LevelInfo class, every thinker has a reference to it.
+  Fixed Srife crusaders.
+26.12.2005
+  Moved execution of action specials to the LevelInfo class.
+27.12.2005
+  Some more engine callbacks moved to LevelInfo class.
+
+******************************************************************************
+                            VERSION 1.19
+******************************************************************************

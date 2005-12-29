@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.18
+                                                    version 1.19
 
 Contents:
     0. Disclaimer
@@ -111,6 +111,8 @@ Optional:
   developer center (http://developer.creative.com).
     * libvorbis (http://www.vorbis.com)
     * libmad (http://www.underbit.com/products/mad/)
+    * mikmod (http://mikmod.raphnet.net/)
+    * FLAC (http://flac.sourceforge.net/)
 
   And of course Vavoom sources.
 
@@ -119,7 +121,7 @@ Step by step:
 
   1. Unpack the Vavoom source package:
 
-    tar xvjf vavoom-1.18.tar.bz2
+    tar xvjf vavoom-1.19.tar.bz2
 
   If you got zip file instead of tarball then you must run fixunix.sh to
 convert text files to UNIX format:
@@ -455,6 +457,7 @@ Misc
     - Support for tall patches and scaled textures.
     - glBSP plugin.
     - glVIS plugin.
+    - WAV and FLAC sounds, MP3, OGG and mod-style music.
     - A lots more.
 
 *****************************************************************************
@@ -924,6 +927,19 @@ Version 1.18
 * More complete Boom support.
 * Basic network packet compression.
 * Other small fixes.
+
+==============================================================================
+Version 1.19
+==============================================================================
+
+* Replaced DirectMusic driver with new driver that uses MMSystem.
+* Added support for WAV and FLACC format samples.
+* Added suport for Vorbis, MP3, FLACC and tracker module format music.
+* Midi emulation with Timidity.
+* Parsing of all MAPINFO, SNDINFO and SNDSEQ scripts.
+* Sdded support for version 5 GL nodes.
+* Added support for SNDINFO and SNDSEQ extensions.
+* Renamed sounds to ZDoom names.
 
 *****************************************************************************
 8. Licencing
