@@ -862,7 +862,7 @@ static void UnarchiveThinkers(void)
 
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		thinker->Level = GLevelInfo;
+		It->Level = GLevelInfo;
 		svpr.Exec(pf_unarchive_thinker, (int)*It);
 		UnMangleVObject(*It, It->GetClass());
 	}
@@ -1454,9 +1454,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2005/12/29 19:50:24  dj_jl
+//	Fixed loading.
+//
 //	Revision 1.45  2005/12/29 17:26:01  dj_jl
 //	Changed version number.
-//
+//	
 //	Revision 1.44  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
 //	
