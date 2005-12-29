@@ -263,6 +263,7 @@ static TTree ParseExpressionPriority0()
 	field_t*	field;
 	FName		Name;
 	bool		bLocals;
+	TClass*		Class;
 
 	bLocals = CheckForLocal;
 	CheckForLocal = false;
@@ -496,7 +497,7 @@ static TTree ParseExpressionPriority0()
 			}
 		}
 
-		TClass* Class = CheckForClass(Name);
+		Class = CheckForClass(Name);
 		if (Class)
 		{
 			AddStatement(OPC_PushClassId, Class->Index);
@@ -1650,10 +1651,13 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2005/12/29 19:10:40  dj_jl
+//	Fixed compiler problem.
+//
 //	Revision 1.34  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
-//
+//	
 //	Revision 1.33  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	
