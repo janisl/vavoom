@@ -327,13 +327,16 @@ void QuitResponse(int ch)
 
 void menu_quit(void)
 {
-	LocalSound('Chat');
+	LocalSound('misc/chat');
 	MB_StartMessage("ARE YOU SURE YOU WANT TO QUIT?", MB_Quit, true);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2006/01/03 20:17:49  dj_jl
+//  Fixed missing sound renaming.
+//
 //  Revision 1.31  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //
