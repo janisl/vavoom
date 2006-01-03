@@ -343,6 +343,11 @@ void VOpenGLDrawer::GenerateTexture(int texnum)
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
 	}
+	//	Set up texture anisotropic filtering.
+	if (max_anisotropy > 1.0)
+	{
+		glTexParameterf(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), max_anisotropy);
+	}
 	unguard;
 }
 
@@ -374,6 +379,11 @@ void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 		Tex->GetPalette());
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, ClampToEdge);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, ClampToEdge);
+	//	Set up texture anisotropic filtering.
+	if (max_anisotropy > 1.0)
+	{
+		glTexParameterf(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), max_anisotropy);
+	}
 
 	Z_Free(block);
 	Tex->Unload();
@@ -655,9 +665,12 @@ void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/01/03 19:57:45  dj_jl
+//	Fixed anisotropic texture filtering.
+//
 //	Revision 1.27  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.26  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
 //	

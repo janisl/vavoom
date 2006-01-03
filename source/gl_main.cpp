@@ -135,12 +135,10 @@ void VOpenGLDrawer::InitResolution(void)
 	}
 
 	//  Anisotropy extension
+	max_anisotropy = 1.0;
 	if (ext_anisotropy && CheckExtension("GL_EXT_texture_filter_anisotropic"))
 	{
-		GLfloat		max_anisotropy;
-
 		glGetFloatv(GLenum(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
-		glTexParameterfv(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), &max_anisotropy);
 		GCon->Logf(NAME_Init, "Max anisotropy %f", max_anisotropy);
 	}
 
@@ -486,9 +484,12 @@ void VOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/01/03 19:57:45  dj_jl
+//	Fixed anisotropic texture filtering.
+//
 //	Revision 1.23  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
-//
+//	
 //	Revision 1.22  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
 //	

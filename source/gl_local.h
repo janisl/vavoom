@@ -200,6 +200,7 @@ private:
 	GLenum		minfilter;
 	GLenum		mipfilter;
 	GLenum		ClampToEdge;
+	GLfloat		max_anisotropy;
 
 	//
 	//	Console variables
@@ -271,9 +272,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/01/03 19:57:45  dj_jl
+//	Fixed anisotropic texture filtering.
+//
 //	Revision 1.29  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.28  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
 //	
