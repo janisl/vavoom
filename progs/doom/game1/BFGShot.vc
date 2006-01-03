@@ -50,13 +50,13 @@ void A_BFGSpray()
 		// target is the originator (player)
 		//  of the missile
 		Instigator.AimLineAttack(aimAng, 16.0 * 64.0);
-		if (!linetarget)
+		if (!Instigator.linetarget)
 		{
 			continue;
 		}
 
-		emo = Spawn(ExtraBFG, linetarget.Origin +
-			vector(0.0, 0.0, linetarget.Height / 4.0));
+		emo = Spawn(ExtraBFG, Instigator.linetarget.Origin +
+			vector(0.0, 0.0, Instigator.linetarget.Height / 4.0));
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
@@ -69,7 +69,7 @@ void A_BFGSpray()
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
 
-		linetarget.Damage(Instigator, Instigator, damage);
+		Instigator.linetarget.Damage(Instigator, Instigator, damage);
 	}
 }
 
@@ -102,6 +102,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/01/03 20:30:34  dj_jl
+//  Fixed explosion.
+//
 //  Revision 1.4  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //
