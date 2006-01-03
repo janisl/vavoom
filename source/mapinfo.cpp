@@ -159,6 +159,7 @@ void InitMapInfo()
 	{
 		if (!stricmp(W_LumpName(Lump), MAPINFO_SCRIPT_NAME))
 		{
+GCon->Logf("Parsing lump %d", Lump);
 			SC_OpenLumpNum(Lump);
 			ParseMapInfo();
 		}
@@ -167,6 +168,7 @@ void InitMapInfo()
 	char filename[MAX_OSPATH];
 	if (fl_devmode && FL_FindFile("scripts/mapinfo.txt", filename))
 	{
+GCon->Logf("Parsing file %s", filename);
 		SC_OpenFile(filename);
 		ParseMapInfo();
 	}
@@ -193,6 +195,7 @@ static void ParseMapInfo()
 	mapInfo_t 	*info;
 	int 		mcmdValue;
 	int			NumMapAlias;
+	char		MapLumpName[12];
 
 	while(SC_GetString())
 	{
@@ -200,17 +203,6 @@ static void ParseMapInfo()
 		{
 			SC_ScriptError(NULL);
 		}
-
-		info = &MapInfo[MapCount];
-
-		// Copy defaults to current map definition
-		memcpy(info, &MapInfo[0], sizeof(*info));
-
-		// The warp translation defaults to the map	index
-		info->warpTrans = MapCount;
-
-		MapCount++;
-		NumMapAlias = 0;
 
 		SC_MustGetString();
 		if (sc_String[0] >= '0' && sc_String[0] <= '9')
@@ -222,7 +214,7 @@ static void ParseMapInfo()
 			{
 				SC_ScriptError(NULL);
 			}
-			sprintf(info->lumpname, "MAP%02d", sc_Number);
+			sprintf(MapLumpName, "MAP%02d", sc_Number);
 		}
 		else
 		{
@@ -231,8 +223,38 @@ static void ParseMapInfo()
 			{
 				SC_ScriptError(NULL);
 			}
-			W_CleanupName(sc_String, info->lumpname);
+			W_CleanupName(sc_String, MapLumpName);
 		}
+
+		//	Check for replaced map info.
+		info = NULL;
+		for (int i = 1; i < MAX_MAPS; i++)
+		{
+			if (!stricmp(MapLumpName, MapInfo[i].lumpname))
+			{
+				info = &MapInfo[i];
+				memcpy(info, &MapInfo[0], sizeof(*info));
+
+				// The warp translation defaults to the map	index
+				info->warpTrans = i;
+				break;
+			}
+		}
+		if (!info)
+		{
+			info = &MapInfo[MapCount];
+
+			// Copy defaults to current map definition
+			memcpy(info, &MapInfo[0], sizeof(*info));
+
+			// The warp translation defaults to the map	index
+			info->warpTrans = MapCount;
+
+			MapCount++;
+		}
+		strcpy(info->lumpname, MapLumpName);
+
+		NumMapAlias = 0;
 
 		// Map name must follow the number
 		SC_MustGetString();
@@ -572,9 +594,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/01/03 18:36:12  dj_jl
+//	Fixed map infos redefining maps.
+//
 //	Revision 1.13  2005/11/08 18:36:43  dj_jl
 //	Parse all mapinfo scripts.
-//
+//	
 //	Revision 1.12  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
 //	
