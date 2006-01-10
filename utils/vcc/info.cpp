@@ -66,14 +66,18 @@ void InitInfoTables()
 //
 //==========================================================================
 
-static int FindState(FName StateName)
+static int FindState(FName StateName, TClass* InClass)
 {
 	for (TArray<state_t>::TIterator It(states); It; ++It)
 	{
-		if (It->statename == StateName)
+		if (It->statename == StateName && It->OuterClass == InClass)
 		{
 			return It.GetIndex();
 		}
+	}
+	if (InClass->ParentClass)
+	{
+		return FindState(StateName, InClass->ParentClass);
 	}
 	ParseError("No such state %s", *StateName);
 	return 0;
@@ -103,6 +107,7 @@ void ParseStates(TClass* InClass)
 	{
 		state_t &s = *new(states) state_t;
 		memset(&s, 0, sizeof(s));
+		s.OuterClass = InClass;
 
 		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
@@ -221,7 +226,7 @@ void SkipStates(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		state_t &s = states[FindState(tk_Name)];
+		state_t &s = states[FindState(tk_Name, InClass)];
 
 		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
@@ -252,7 +257,7 @@ void SkipStates(TClass* InClass)
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
 		}
-		s.nextstate = FindState(tk_Name);
+		s.nextstate = FindState(tk_Name, InClass);
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
@@ -263,10 +268,13 @@ void SkipStates(TClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/01/10 19:29:10  dj_jl
+//	Fixed states belonging to a class.
+//
 //	Revision 1.28  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
-//
+//	
 //	Revision 1.27  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	

@@ -412,6 +412,7 @@ struct state_t
 	int		nextstate;
 	int		function;
 	FName	statename;
+	TClass*	OuterClass;
 };
 
 struct mobjinfo_t
@@ -630,10 +631,13 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/01/10 19:29:10  dj_jl
+//	Fixed states belonging to a class.
+//
 //	Revision 1.34  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
-//
+//	
 //	Revision 1.33  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	
