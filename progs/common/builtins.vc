@@ -497,6 +497,7 @@ native int FindModel(string Name);
 native int GetModelIndex(name Name);
 native int FindSkin(string Name);
 native classid FindClassFromEditorId(int Id);
+native void ChangeMusic(string SongName);
 
 native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 
@@ -505,6 +506,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.58  2006/01/10 19:47:29  dj_jl
+//  Added builtin for changing the music.
+//
 //  Revision 1.57  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

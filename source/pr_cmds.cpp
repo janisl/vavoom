@@ -2391,6 +2391,20 @@ PF(FindClassFromEditorId)
 	Push((int)SV_FindClassFromEditorId(Id));
 }
 
+//==========================================================================
+//
+//	PF_FindClassFromEditorId
+//
+//==========================================================================
+
+PF(ChangeMusic)
+{
+	const char*		SongName;
+
+	SongName = (const char*)Pop();
+	SV_ChangeMusic(SongName);
+}
+
 #endif
 #ifdef CLIENT
 
@@ -3341,6 +3355,7 @@ builtin_info_t BuiltinInfo[] =
 	_(FindSkin),
 	_(FindClassFromEditorId),
 	_(MSG_SelectClientMsg),
+	_(ChangeMusic),
 #endif
 	{NULL, NULL, NULL}
 };
@@ -3348,9 +3363,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.65  2006/01/10 19:47:00  dj_jl
+//	Added builtin for changing the music.
+//
 //	Revision 1.64  2005/12/11 21:37:00  dj_jl
 //	Made path traversal callbacks class members.
-//
+//	
 //	Revision 1.63  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
 //	
