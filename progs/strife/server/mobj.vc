@@ -381,24 +381,16 @@ void P_SpawnMapThing(mthing_t * mthing, bool spawn_thinkers)
 //
 //==========================================================================
 
-void SpawnPuff(float x, float y, float z)
+void SpawnPuff(classid PuffType, TVec Org)
 {
 	Actor A;
 
-	z += (Random() - Random()) * 4.0;
-
-	A = Spawn(Puff, vector(x, y, z));
+	Org.z += (Random() - Random()) * 4.0;
+	A = Spawn(PuffType, Org);
 	A.Velocity.z = 1.0 * 35.0;
 	A.StateTime -= Random() * 0.1;
-
 	if (A.StateTime < 0.1)
 		A.StateTime = 0.1;
-
-#ifdef FIXME
-	// don't make punches spark on the wall
-	if (attackrange == MELEERANGE)
-		SetMobjState(th, S_PUFF3);
-#endif
 }
 
 //==========================================================================
@@ -540,6 +532,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.61  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.60  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

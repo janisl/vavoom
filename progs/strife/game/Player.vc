@@ -2428,6 +2428,12 @@ void Cheat_Gimme()
 {
 	int i;
 
+	// Backpack
+	if (Cmd_CheckParm("Backpack"))
+	{
+		Backpack = true;
+	}
+
 	// Weapons
 	if (Cmd_CheckParm("Weapons"))
 	{
@@ -2501,6 +2507,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.23  2006/01/03 20:17:50  dj_jl
 //  Fixed missing sound renaming.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PuffPow3:Effect;
+class PuffPow3 : Effect;
 
 __states__
 {
@@ -35,16 +35,25 @@ __states__
 	S_POW3_6('POW3', 5, 3.0 / 35.0, S_POW3_7) { }
 	S_POW3_7('POW3', 6, 3.0 / 35.0, S_POW3_8) { }
 	S_POW3_8('POW3', 7, 3.0 / 35.0, S_NULL) { }
+
+	S_PUNCH_PUFF_1('POW2', 0, 4.0 / 35.0, S_PUNCH_PUFF_2) { }
+	S_PUNCH_PUFF_2('POW2', 1, 4.0 / 35.0, S_PUNCH_PUFF_3) { }
+	S_PUNCH_PUFF_3('POW2', 2, 4.0 / 35.0, S_PUNCH_PUFF_4) { }
+	S_PUNCH_PUFF_4('POW2', 3, 4.0 / 35.0, S_NULL) { }
 }
 
 defaultproperties
 {
-	IdleState = S_POW3_1;
+	IdleState = S_PUNCH_PUFF_1;//FIXME S_POW3_1;
+	DyingState = S_PUNCH_PUFF_1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

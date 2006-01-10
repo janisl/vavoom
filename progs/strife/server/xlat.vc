@@ -96,7 +96,7 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false},	//  41
 	{LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, true},	//  42
 	{LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true},	//  43
-	{LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_CROSS, false},	//  44
+	{LNSPEC_CeilingLowerAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, false},	//  44
 	{LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, true},	//  45
 	{LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_IMPACT, true},	//  46
 	{LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_IMPACT, false},	//  47
@@ -111,7 +111,7 @@ spec_trans_t spec_trans_tab[] = {
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, false},	//  55
 	{LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, false},	//  56
 	{LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_CROSS, false},	//  57
-	{LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_CROSS, false},	//  58
+	{LNSPEC_FloorRaiseByValue, -1, 8, 64, 0, 0, SPAC_CROSS, false},	//  58
 	{LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_CROSS, false},	//  59
 
 	{LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, true},	//  60
@@ -533,6 +533,9 @@ void TranslateLevel(Level InLevel)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.18  2005/03/28 07:45:30  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

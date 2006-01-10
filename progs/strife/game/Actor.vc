@@ -144,6 +144,7 @@ float shoot_range;
 TVec shoot_origin;
 TVec shoot_dir;
 int la_damage;
+classid shootPuffType;
 
 __states__
 {
@@ -316,9 +317,12 @@ void OnMapSpawn(mthing_t * mthing)
 
 void ExplodeMissile()
 {
+print("Explode missile");
 	Velocity = vector(0.0, 0.0, 0.0);
 
+print("Set state %d", DeathState);
 	SetState(DeathState);
+print("Sprite %n", SpriteName);
 
 	StateTime -= Random() * 0.1;
 
@@ -2669,7 +2673,7 @@ bool ShootHitPlane(sec_plane_t * plane)
 	lineend += 4.0 * plane->normal;
 
 	// Spawn bullet puffs.
-	SpawnPuff(lineend.x, lineend.y, lineend.z);
+	SpawnPuff(shootPuffType, lineend);
 
 	// don't go any farther
 	return false;
@@ -2795,7 +2799,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		hit_point -= 4.0 * shoot_dir;
 
 		// Spawn bullet puffs.
-		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+		SpawnPuff(shootPuffType, hit_point);
 
 		// don't go any farther
 		return false;
@@ -2826,7 +2830,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 	// Spawn bullet puffs or blod spots,
 	// depending on target type.
 	if (th.bNoBlood)
-		SpawnPuff(hit_point.x, hit_point.y, hit_point.z);
+		SpawnPuff(shootPuffType, hit_point);
 	else
 		P_SpawnBlood(hit_point.x, hit_point.y, hit_point.z, la_damage);
 
@@ -2845,11 +2849,12 @@ bool PTR_ShootTraverse(intercept_t * in)
 //
 //==========================================================================
 
-int LineAttack(TVec dir, float distance, int damage)
+int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 {
 	TVec dst;
 
 	la_damage = damage;
+	shootPuffType = PuffType;
 
 	shoot_origin = Origin;
 	shoot_origin.z += Height * 0.5 + 8.0 - FloorClip;
@@ -3097,7 +3102,7 @@ void A_SpawnPuff()
 	if (MiniMissile(self))
 	{
 		PlaySound('misc/missileinflight', CHAN_VOICE);
-		SpawnPuff(Origin.x, Origin.y, Origin.z);
+		SpawnPuff(Puff, Origin);
 		A = Spawn(ReactorPuff, Origin - Velocity / 35.0);
 		if (A)
 		{
@@ -3277,11 +3282,6 @@ void A_RemoveForceField()
 
 __states__
 {
-	S_PUNCH_PUFF_1('POW2', 0, 4.0 / 35.0, S_PUNCH_PUFF_2) { }
-	S_PUNCH_PUFF_2('POW2', 1, 4.0 / 35.0, S_PUNCH_PUFF_3) { }
-	S_PUNCH_PUFF_3('POW2', 2, 4.0 / 35.0, S_PUNCH_PUFF_4) { }
-	S_PUNCH_PUFF_4('POW2', 3, 4.0 / 35.0, S_NULL) { }
-
 	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Explode32(); }
 	S_ZAP1_0('ZAP1', 0, 3.0 / 35.0, S_ZAP1_2) { A_AlertMonsters(); }
 	S_ZAP1_2('ZAP1', 1, 3.0 / 35.0, S_ZAP1_3) { }
@@ -3329,6 +3329,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.26  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

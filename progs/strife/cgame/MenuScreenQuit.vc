@@ -39,6 +39,7 @@ void CreateChoices()
 	else
 		QuitSound = QuitSounds[P_Random() % 8];
 	LocalSound(QuitSound);
+	CmdBuf_AddText("music play d_fast\n");
 }
 
 bool Key(int key)
@@ -62,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.2  2005/11/08 20:56:53  dj_jl
 //  Removed playing sound till done.
 //

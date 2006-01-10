@@ -51,7 +51,7 @@ void A_TemplarAttack()
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		damage = ((P_Random() % 5) + 1) * 3;
 		bDisruptDamage = true;
-		LineAttack(dir, MAULERRANGE, damage);
+		LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
 		bDisruptDamage = false;
 	}
 }
@@ -124,6 +124,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.5  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

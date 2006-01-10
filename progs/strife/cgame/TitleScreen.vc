@@ -61,6 +61,7 @@ void AdvanceDemo()
 	case 2:
 		pagetime = 7.0;
 		page_pic = R_RegisterPic("PANEL1", PIC_PATCH);
+		CmdBuf_AddText("music play d_intro");
 		LocalSound('svox/pro1');
 		break;
 
@@ -201,6 +202,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.1  2005/12/25 19:19:16  dj_jl
 //  Moved title screen into a class.
 //

@@ -52,7 +52,7 @@ void A_FireBlaster1()
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
 		Player.MO.bDisruptDamage = true;
-		Player.MO.LineAttack(dir, MAULERRANGE, damage);
+		Player.MO.LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
 		Player.MO.bDisruptDamage = false;
 	}
 }
@@ -138,6 +138,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.7  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

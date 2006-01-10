@@ -48,7 +48,7 @@ void A_Punch()
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	dir = Player.MO.AimLineAttack(angles, PUNCHRANGE);
-	Player.MO.LineAttack(dir, PUNCHRANGE, damage);
+	Player.MO.LineAttack(dir, PUNCHRANGE, damage, PuffPow3);
 
 	// turn to face target
 	if (Player.MO.linetarget)
@@ -100,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.7  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

@@ -38,13 +38,16 @@ defaultproperties
 	IdleState = S_GRENADE_LAUNCHER;
 	WeaponType = wp_grenade;
 	Weapon2Type = wp_grenade2;
-	Ammo1Count = 8;
+	Ammo1Count = 12;
 	Ammo2Count = 0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/01/10 19:54:01  dj_jl
+//  Many bug fixes.
+//
 //  Revision 1.3  2005/12/22 23:06:00  dj_jl
 //  Fixed ammo and weapon pickups.
 //
