@@ -79,7 +79,7 @@ int T_TextHeight(const char*);
 void T_DrawString(int, int, const char*);
 void T_DrawString8(int, int, const char*);
 void T_DrawText(int, int, const char*);
-void T_DrawTextW(int x, int y, const char* String, int w);
+int T_DrawTextW(int x, int y, const char* String, int w);
 
 void T_DrawNString(int, int, const char*, int);
 void T_DrawNText(int, int, const char*, int);
@@ -92,9 +92,12 @@ void T_DrawCursorAt(int, int);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/01/10 19:32:27  dj_jl
+//	Fix for long notify messages.
+//
 //	Revision 1.7  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

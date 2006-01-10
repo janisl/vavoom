@@ -508,7 +508,7 @@ void T_DrawText(int x, int y, const char* String)
 //
 //==========================================================================
 
-void T_DrawTextW(int x, int y, const char* String, int w)
+int T_DrawTextW(int x, int y, const char* String, int w)
 {
 	guard(T_DrawTextW);
 	int			start = 0;
@@ -517,6 +517,7 @@ void T_DrawTextW(int x, int y, const char* String, int w)
 	char		cs[80];
 	int			i;
 	bool		wordStart = true;
+	int			LinesPrinted = 0;
 
 	cx = x;
 	cy = y;
@@ -541,6 +542,7 @@ void T_DrawTextW(int x, int y, const char* String, int w)
 			cy += T_StringHeight(cs) + VDistance;
 			start = i + 1;
 			wordStart = true;
+			LinesPrinted++;
 		}
 		else if (wordStart && String[i] > ' ')
 		{
@@ -556,6 +558,7 @@ void T_DrawTextW(int x, int y, const char* String, int w)
 				T_DrawNString(cx, cy, cs, i - start);
 				cy += T_StringHeight(cs) + VDistance;
 				start = i;
+				LinesPrinted++;
 			}
 			wordStart = false;
 		}
@@ -566,8 +569,10 @@ void T_DrawTextW(int x, int y, const char* String, int w)
 		if (!String[i + 1])
 		{
 			T_DrawNString(cx, cy, String + start, i - start + 1);
+			LinesPrinted++;
 		}
 	}
+	return LinesPrinted;
 	unguard;
 }
 
@@ -660,9 +665,12 @@ void T_DrawString8(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/01/10 19:32:27  dj_jl
+//	Fix for long notify messages.
+//
 //	Revision 1.15  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.14  2004/08/18 18:05:47  dj_jl
 //	Support for higher virtual screen resolutions.
 //	

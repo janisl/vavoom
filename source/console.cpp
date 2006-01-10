@@ -675,9 +675,10 @@ void FConsoleDevice::Serialise(const char* V, EName Event)
 //**************************************************************************
 //**************************************************************************
 
-#define NUM_NOTIFY_LINES	5
+#define NUM_NOTIFY_LINES		5
+#define MAX_NOTIFY_LINE_LENGTH	80
 
-static char				notify_lines[NUM_NOTIFY_LINES][MAX_LINE_LENGTH];
+static char				notify_lines[NUM_NOTIFY_LINES][MAX_NOTIFY_LINE_LENGTH];
 static double			notify_times[NUM_NOTIFY_LINES];
 static int				num_notify = 0;
 static int				first_notify = 0;
@@ -714,10 +715,12 @@ void C_NotifyMessage(const char *str)
 		num_notify--;
         first_notify++;
 	}
-	strcpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
-		str);
+	strncpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
+		str, MAX_NOTIFY_LINE_LENGTH - 1);
+	notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES][
+		MAX_NOTIFY_LINE_LENGTH - 1] = 0;
 	notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
-			host_time + notify_time;
+		host_time + notify_time;
 	num_notify++;
 }
 
@@ -744,8 +747,12 @@ void C_DrawNotify(void)
 		}
 		else
 		{
-			T_DrawString(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES]);
-			y += 9;
+#ifdef USE640
+			int lp = T_DrawTextW(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES], 640);
+#else
+			int lp = T_DrawTextW(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES], 320);
+#endif
+			y += 9 * lp;
 			i++;
 		}
 	}
@@ -794,9 +801,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/01/10 19:32:27  dj_jl
+//	Fix for long notify messages.
+//
 //	Revision 1.23  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.22  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	
