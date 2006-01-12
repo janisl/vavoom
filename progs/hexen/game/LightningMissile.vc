@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LightningMissile:Projectile
+class LightningMissile : Projectile
 	abstract;
 
 LightningMissile LightningLink;
@@ -135,14 +135,17 @@ bool Touch(Entity InOther)
 //
 //==========================================================================
 
-void A_LightningClip(void)
+void A_LightningClip()
 {
 	Actor targ;
 	int zigZag;
 
 	if (Class == LightningFloor)
 	{
-		Origin.z = FloorZ;
+		if (Sector->bHasExtrafloors && LightningLink && Instigator.Origin.z >= LightningLink.FloorZ)
+			Origin.z = LightningLink.FloorZ;
+		else
+			Origin.z = FloorZ;
 		if (LightningLink)
 			targ = LightningLink.Enemy;
 		else
@@ -150,7 +153,10 @@ void A_LightningClip(void)
 	}
 	else if (Class == LightningCeiling)
 	{
-		Origin.z = CeilingZ - Height;
+		if (Sector->bHasExtrafloors && LightningLink && Instigator.Origin.z <= LightningLink.CeilingZ)
+			Origin.z = LightningLink.CeilingZ - Height;
+		else
+			Origin.z = CeilingZ - Height;
 		targ = Enemy;
 	}
 	if (Class == LightningFloor)
@@ -273,6 +279,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/01/12 23:27:25  dj_jl
+//  Added a fix for 3d floors.
+//
 //  Revision 1.2  2003/03/08 12:41:43  dj_jl
 //  Removing class pointers.
 //
