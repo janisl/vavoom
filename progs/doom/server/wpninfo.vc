@@ -79,12 +79,31 @@ int weapon_ammo_type[] =
 #endif
 };
 
+int WeaponOrder[] =
+{
+	wp_fist,
+	wp_chainsaw,
+	wp_pistol,
+	wp_shotgun,
+	wp_supershotgun,
+	wp_chaingun,
+	wp_missile,
+#ifdef GRENADE_LAUNCHER
+	wp_grenade,
+#endif
+	wp_plasma,
+	wp_bfg,
+};
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/01/18 19:14:06  dj_jl
+//	Switch to previous and next weapon.
+//
 //	Revision 1.13  2002/08/05 17:17:21  dj_jl
 //	Working on models.
-//
+//	
 //	Revision 1.12  2002/05/03 17:11:55  dj_jl
 //	Object classes split up into their files.
 //	

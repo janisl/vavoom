@@ -39,6 +39,8 @@ void CreateControlKeyChoices(void)
 	AddControl("Show keys", "sb_show_keys 1", "sb_show_keys 0");
 	AddControl("Show objectives", "sb_show_objectives 1", "sb_show_objectives 0");
 	AddControl("Toggle always run", "ToggleAlwaysRun", "");
+	AddControl("Previous weapon", "impulse 17", "");
+	AddControl("Next weapon", "impulse 18", "");
 }
 
 defaultproperties
@@ -48,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/01/18 19:14:07  dj_jl
+//  Switch to previous and next weapon.
+//
 //  Revision 1.4  2005/08/14 10:01:29  dj_jl
 //  Added inventory drop.
 //

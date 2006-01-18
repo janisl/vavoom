@@ -70,12 +70,30 @@ int weapon_ammo_type[] =
 	am_cell,
 };
 
+int WeaponOrder[] =
+{
+	wp_fist,
+	wp_crossbow,
+	wp_crossbow2,
+	wp_riffle,
+	wp_missile,
+	wp_grenade,
+	wp_grenade2,
+	wp_flame,
+	wp_blaster,
+	wp_blaster2,
+	wp_sigil,
+};
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/01/18 19:14:07  dj_jl
+//	Switch to previous and next weapon.
+//
 //	Revision 1.9  2004/01/30 17:48:52  dj_jl
 //	Implemented many action functions.
-//
+//	
 //	Revision 1.8  2002/05/03 17:17:33  dj_jl
 //	Started work on weapons and items.
 //	

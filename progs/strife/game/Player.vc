@@ -1622,6 +1622,70 @@ void DeathPlayerTick(float deltaTime)
 
 //==========================================================================
 //
+//  PrevWeapon
+//
+//==========================================================================
+
+void PrevWeapon()
+{
+	int			i;
+	int			CurIdx;
+	int			NewWeap;
+
+	CurIdx = 0;
+	for (i = 0; i < NUMWEAPONS; i++)
+	{
+		if (ReadyWeapon == WeaponOrder[i])
+		{
+			CurIdx = i;
+			break;
+		}
+	}
+	for (i = NUMWEAPONS - 1; i > 0; i--)
+	{
+		NewWeap = WeaponOrder[(CurIdx + i) % NUMWEAPONS];
+		if (WeaponOwned[NewWeap])
+		{
+			PendingWeapon = NewWeap;
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  NextWeapon
+//
+//==========================================================================
+
+void NextWeapon()
+{
+	int			i;
+	int			CurIdx;
+	int			NewWeap;
+
+	CurIdx = 0;
+	for (i = 0; i < NUMWEAPONS; i++)
+	{
+		if (ReadyWeapon == WeaponOrder[i])
+		{
+			CurIdx = i;
+			break;
+		}
+	}
+	for (i = 1; i < NUMWEAPONS; i++)
+	{
+		NewWeap = WeaponOrder[(CurIdx + i) % NUMWEAPONS];
+		if (WeaponOwned[NewWeap])
+		{
+			PendingWeapon = NewWeap;
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
 //  PlayerImpulse
 //
 //==========================================================================
@@ -1657,6 +1721,14 @@ void PlayerImpulse()
 	{
 		//  Suicide
 		MO.Damage(none, none, 10000);
+	}
+	else if (impulse == 17)
+	{
+		PrevWeapon();
+	}
+	else if (impulse == 18)
+	{
+		NextWeapon();
 	}
 	else if (impulse >= 200 && impulse <= 205)
 	{
@@ -2507,6 +2579,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2006/01/18 19:14:07  dj_jl
+//  Switch to previous and next weapon.
+//
 //  Revision 1.24  2006/01/10 19:54:01  dj_jl
 //  Many bug fixes.
 //

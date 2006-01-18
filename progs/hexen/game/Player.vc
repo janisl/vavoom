@@ -1693,6 +1693,54 @@ void PlayerInContents()
 
 //==========================================================================
 //
+//  PrevWeapon
+//
+//==========================================================================
+
+void PrevWeapon()
+{
+	int			i;
+	int			NewWeap;
+
+	if (MorphTime)
+		return;
+	for (i = NUMWEAPONS - 1; i > 0; i--)
+	{
+		NewWeap = (ReadyWeapon + i) % NUMWEAPONS;
+		if (WeaponOwned[NewWeap])
+		{
+			PendingWeapon = NewWeap;
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  NextWeapon
+//
+//==========================================================================
+
+void NextWeapon()
+{
+	int			i;
+	int			NewWeap;
+
+	if (MorphTime)
+		return;
+	for (i = 1; i < NUMWEAPONS; i++)
+	{
+		NewWeap = (ReadyWeapon + i) % NUMWEAPONS;
+		if (WeaponOwned[NewWeap])
+		{
+			PendingWeapon = NewWeap;
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
 //  PlayerImpulse
 //
 //==========================================================================
@@ -1732,6 +1780,14 @@ void PlayerImpulse()
 	else if (impulse == 16)
 	{
 		MO.Damage(none, none, 10000);
+	}
+	else if (impulse == 17)
+	{
+		PrevWeapon();
+	}
+	else if (impulse == 18)
+	{
+		NextWeapon();
 	}
 	// Hexen artifact hot keys
 	if (!Arti)
@@ -3834,6 +3890,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2006/01/18 19:14:07  dj_jl
+//  Switch to previous and next weapon.
+//
 //  Revision 1.15  2006/01/03 20:17:50  dj_jl
 //  Fixed missing sound renaming.
 //

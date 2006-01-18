@@ -63,9 +63,25 @@ int weapon_ammo_type[] = {
 	am_noammo,
 };
 
+int WeaponOrder[] =
+{
+	wp_staff,
+	wp_gauntlets,
+	wp_goldwand,
+	wp_crossbow,
+	wp_blaster,
+	wp_skullrod,
+	wp_phoenixrod,
+	wp_mace,
+	wp_beak,
+};
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/01/18 19:14:06  dj_jl
+//  Switch to previous and next weapon.
+//
 //  Revision 1.7  2002/03/02 17:35:55  dj_jl
 //  Weapon classes
 //
