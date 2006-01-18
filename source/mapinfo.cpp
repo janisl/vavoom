@@ -159,7 +159,6 @@ void InitMapInfo()
 	{
 		if (!stricmp(W_LumpName(Lump), MAPINFO_SCRIPT_NAME))
 		{
-GCon->Logf("Parsing lump %d", Lump);
 			SC_OpenLumpNum(Lump);
 			ParseMapInfo();
 		}
@@ -168,7 +167,6 @@ GCon->Logf("Parsing lump %d", Lump);
 	char filename[MAX_OSPATH];
 	if (fl_devmode && FL_FindFile("scripts/mapinfo.txt", filename))
 	{
-GCon->Logf("Parsing file %s", filename);
 		SC_OpenFile(filename);
 		ParseMapInfo();
 	}
@@ -371,7 +369,7 @@ static void ParseMapInfo()
 			}
 		}
 		if (info->doubleSky)
-			GTextureManager.SetFrontSkyLayer(info->sky2Texture);
+			GTextureManager.SetFrontSkyLayer(info->sky1Texture);
 	}
 	SC_Close();
 	unguard;
@@ -594,9 +592,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/01/18 19:55:26  dj_jl
+//	Fixed doublesky.
+//
 //	Revision 1.14  2006/01/03 18:36:12  dj_jl
 //	Fixed map infos redefining maps.
-//
+//	
 //	Revision 1.13  2005/11/08 18:36:43  dj_jl
 //	Parse all mapinfo scripts.
 //	
