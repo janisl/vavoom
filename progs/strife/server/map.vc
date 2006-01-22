@@ -248,54 +248,6 @@ void StartSpeech(int SpeechNum)
 
 //==========================================================================
 //
-//	CheckChoice
-//
-//==========================================================================
-
-bool CheckChoice(RogueConChoice *Choice)
-{
-	int Item1;
-	int Item2;
-	int Item3;
-	classid ItemType;
-	Pickup Item;
-
-	Item1 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem1, Choice->NeedAmount1);
-	Item2 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem2, Choice->NeedAmount2);
-	Item3 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem3, Choice->NeedAmount3);
-	if (Item1 == -2 || Item2 == -2 || Item3 == -2)
-	{
-		return false;
-	}
-	if (Choice->GiveItem > 0)
-	{
-		ItemType = GetClassFromID(Choice->GiveItem);
-		if (ItemType != classidNone)
-		{
-			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
-			if (!Item.GiveItemTo(CurrentSpeakingTo))
-			{
-				Item.Remove();
-				return false;
-			}
-			Item.Remove();
-		}
-	}
-	if (Item1 != -1)
-		CurrentSpeakingTo.Player.RemoveInvItem(Item1, Choice->NeedAmount1);
-	if (Item2 != -1)
-		CurrentSpeakingTo.Player.RemoveInvItem(Item2, Choice->NeedAmount2);
-	if (Item3 != -1)
-		CurrentSpeakingTo.Player.RemoveInvItem(Item3, Choice->NeedAmount3);
-	if (Choice->Objectives)
-	{
-		CurrentSpeakingTo.Player.SetObjectives(Choice->Objectives);
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	GetClassFromID
 //
 //==========================================================================
@@ -500,6 +452,12 @@ void ConChoiceImpulse(int ChoiceNum)
 	RogueConSpeech *Speech;
 	RogueConChoice *Choice;
 	int SpeechNum;
+	int Item1;
+	int Item2;
+	int Item3;
+	classid ItemType;
+	Pickup Item;
+	bool GaveItem;
 
 	if (ConversationSlideshow)
 	{
@@ -526,13 +484,45 @@ void ConChoiceImpulse(int ChoiceNum)
 		Speech = &GLevel.LevelSpeeches[CurrentSpeechIndex - 1];
 	}
 	Choice = &Speech->Choices[ChoiceNum - 1];
-	if (!CheckChoice(Choice))
+	//	Check if player has needed items.
+	Item1 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem1, Choice->NeedAmount1);
+	Item2 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem2, Choice->NeedAmount2);
+	Item3 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem3, Choice->NeedAmount3);
+	if (Item1 == -2 || Item2 == -2 || Item3 == -2)
 	{
 		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextNo));
 		StopSpeech();
 		return;
 	}
-	if (strcmp(ARR2STR(Choice->TextOK), "") &&
+	GaveItem = true;
+	if (Choice->GiveItem > 0)
+	{
+		ItemType = GetClassFromID(Choice->GiveItem);
+		if (ItemType != classidNone)
+		{
+			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
+			GaveItem = Item.GiveItemTo(CurrentSpeakingTo);
+			Item.Remove();
+		}
+	}
+	if (GaveItem)
+	{
+		if (Item1 != -1)
+			CurrentSpeakingTo.Player.RemoveInvItem(Item1, Choice->NeedAmount1);
+		if (Item2 != -1)
+			CurrentSpeakingTo.Player.RemoveInvItem(Item2, Choice->NeedAmount2);
+		if (Item3 != -1)
+			CurrentSpeakingTo.Player.RemoveInvItem(Item3, Choice->NeedAmount3);
+	}
+	if (Choice->Objectives)
+	{
+		CurrentSpeakingTo.Player.SetObjectives(Choice->Objectives);
+	}
+	if (!GaveItem)
+	{
+		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextNo));
+	}
+	else if (strcmp(ARR2STR(Choice->TextOK), "") &&
 		strcmp(ARR2STR(Choice->TextOK), "_"))
 	{
 		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextOK));
@@ -559,6 +549,9 @@ void ConChoiceImpulse(int ChoiceNum)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2006/01/22 17:30:21  dj_jl
+//  Continue conversation if failed to give the item.
+//
 //  Revision 1.41  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //
