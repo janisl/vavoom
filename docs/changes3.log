@@ -935,7 +935,25 @@
   Moved execution of action specials to the LevelInfo class.
 27.12.2005
   Some more engine callbacks moved to LevelInfo class.
+28.12.2005
+  Added fix for too small flats. Fixed some other compiler problems.
 
 ******************************************************************************
                             VERSION 1.19
 ******************************************************************************
+
+03.01.2006
+  Fixed BFG, some missing sound renaming.
+  Fixed anisotropic texture filtering in OpenGL.
+  Fixed MAPINFO redefining previous maps.
+08.01.2006
+  Fixed several bugs in Strife.
+  Added wrapping for long notify messages.
+10.01.2006
+  Fixed vcc not properly checking if state belongs to a class.
+18.01.2006
+  Implemented previous / next weapon commands.
+  Added Firebrand's fix for Hexen's mage lightning on 3D floors.
+  Fixed doublesky.
+22.01.2006
+  In Strife continue conversation if failed to give the item.

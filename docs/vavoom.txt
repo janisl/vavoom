@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.19
+                                                  version 1.19.1
 
 Contents:
     0. Disclaimer
@@ -940,6 +940,12 @@ Version 1.19
 * Sdded support for version 5 GL nodes.
 * Added support for SNDINFO and SNDSEQ extensions.
 * Renamed sounds to ZDoom names.
+
+==============================================================================
+Version 1.19
+==============================================================================
+
+* Fixed multiple bugs (some were quite serious).
 
 *****************************************************************************
 8. Licencing
