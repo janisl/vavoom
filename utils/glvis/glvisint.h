@@ -112,11 +112,11 @@ struct line_t
 
 class TVisBuilder
 {
- public:
+public:
 	TVisBuilder(TGLVis &);
-	void Run(const char *srcfile);
+	void Run(const char *srcfile, const char* gwafile);
 
- private:
+private:
 	TGLVis &Owner;
 
 	TIWadFile inwad;
@@ -213,9 +213,12 @@ class TVisBuilder
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/01/29 20:30:34  dj_jl
+//	Allow specification of the GWA file name.
+//
 //	Revision 1.5  2005/11/14 19:03:18  dj_jl
 //	Added support for version 5 GL nodes.
-//
+//	
 //	Revision 1.4  2004/12/27 12:23:18  dj_jl
 //	Multiple small changes for version 1.16
 //	

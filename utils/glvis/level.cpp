@@ -860,7 +860,7 @@ void TVisBuilder::BuildWAD(void)
 //
 //==========================================================================
 
-void TVisBuilder::Run(const char *srcfile)
+void TVisBuilder::Run(const char *srcfile, const char* gwafile)
 {
 	char filename[1024];
 	char destfile[1024];
@@ -883,8 +883,15 @@ void TVisBuilder::Run(const char *srcfile)
 	inwad.Open(filename);
 	mainwad = &inwad;
 
-	StripExtension(filename);
-	strcat(filename, ".gwa");
+	if (gwafile)
+	{
+		strcpy(filename, gwafile);
+	}
+	else
+	{
+		StripExtension(filename);
+		strcat(filename, ".gwa");
+	}
 	FILE *ff = fopen(filename, "rb");
 	if (ff)
 	{
@@ -952,13 +959,13 @@ GLVisError::GLVisError(const char *error, ...)
 //
 //==========================================================================
 
-void TGLVis::Build(const char *srcfile)
+void TGLVis::Build(const char *srcfile, const char* gwafile)
 {
 	try
 	{
 		TVisBuilder VisBuilder(*this);
 
-		VisBuilder.Run(srcfile);
+		VisBuilder.Run(srcfile, gwafile);
 	}
 	catch (WadLibError &e)
 	{
@@ -969,9 +976,12 @@ void TGLVis::Build(const char *srcfile)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/01/29 20:30:34  dj_jl
+//	Allow specification of the GWA file name.
+//
 //	Revision 1.11  2005/11/14 19:03:18  dj_jl
 //	Added support for version 5 GL nodes.
-//
+//	
 //	Revision 1.10  2004/10/11 06:49:04  dj_jl
 //	Added support for version 3.0 GL nodes.
 //	

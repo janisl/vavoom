@@ -56,7 +56,7 @@ public:
 	virtual ~TGLVis()
 	{}
 
-	void Build(const char *srcfile);
+	void Build(const char *srcfile, const char* gwafile = NULL);
 	virtual void DisplayMessage(const char *text, ...)
 		__attribute__((format(printf, 2, 3))) = 0;
 	virtual void DisplayStartMap(const char *levelname) = 0;
@@ -86,9 +86,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/01/29 20:30:34  dj_jl
+//	Allow specification of the GWA file name.
+//
 //	Revision 1.9  2005/04/28 07:14:03  dj_jl
 //	Fixed some warnings.
-//
+//	
 //	Revision 1.8  2004/10/11 06:49:04  dj_jl
 //	Added support for version 3.0 GL nodes.
 //	
