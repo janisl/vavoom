@@ -43,13 +43,13 @@
 #define EMPTYSTRING				"empty slot"
 #define MOBJ_NULL 				-1
 #define SAVE_NAME(_name, _slot) \
-   	sprintf(_name, "saves/savegame.vs%d", _slot)
+	sprintf(_name, "saves/savegame.vs%d", _slot)
 #define SAVE_MAP_NAME(_name, _slot, _map) \
-   	sprintf(_name, "saves/%s.vs%d", _map, _slot)
+	sprintf(_name, "saves/%s.vs%d", _map, _slot)
 #define SAVE_NAME_ABS(_name, _slot) \
-   	sprintf(_name, "%s/saves/savegame.vs%d", fl_gamedir, _slot)
+	sprintf(_name, "%s/savegame.vs%d", SV_GetSavesDir(), _slot)
 #define SAVE_MAP_NAME_ABS(_name, _slot, _map) \
-   	sprintf(_name, "%s/saves/%s.vs%d", fl_gamedir, _map, _slot)
+	sprintf(_name, "%s/%s.vs%d", SV_GetSavesDir(), _map, _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
 #define SAVE_VERSION_TEXT			"Version 1.19"
@@ -97,6 +97,7 @@ extern char			mapaftersecret[12];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static char		SavesDir[MAX_OSPATH];
 static boolean 	SavingPlayers;
 static FArchive	*Saver;
 static FArchive	*Loader;
@@ -109,6 +110,24 @@ static FArchive	*Loader;
 static FName		*NameRemap;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	SV_GetSavesDir
+//
+//==========================================================================
+
+static const char* SV_GetSavesDir()
+{
+	if (!SavesDir[0])
+	{
+		if (fl_savedir[0])
+			sprintf(SavesDir, "%s/%s/saves", fl_savedir, fl_gamedir);
+		else
+			sprintf(SavesDir, "%s/%s/saves", fl_basedir, fl_gamedir);
+	}
+	return SavesDir;
+}
 
 //==========================================================================
 //
@@ -207,17 +226,6 @@ static void CloseStreamOut(void)
 
 //==========================================================================
 //
-// CreateSavePath
-//
-//==========================================================================
-
-void CreateSavePath(void)
-{
-	Sys_CreateDirectory(va("%s/saves", fl_gamedir));
-}
-
-//==========================================================================
-//
 //	ClearSaveSlot
 //
 //	Deletes all save game files associated with a slot number.
@@ -232,7 +240,7 @@ static void ClearSaveSlot(int slot)
 	char fileName[MAX_OSPATH];
 
 	sprintf(slotExt, "vs%d", slot);
-	if (!Sys_OpenDir(va("%s/saves", fl_gamedir)))
+	if (!Sys_OpenDir(SV_GetSavesDir()))
 	{
 		//  Directory doesn't exist ... yet
 		return;
@@ -244,7 +252,7 @@ static void ClearSaveSlot(int slot)
 		FL_ExtractFileExtension(curName, ext);
 		if (!strcmp(ext, slotExt))
 		{
-			sprintf(fileName, "%s/saves/%s", fl_gamedir, curName);
+			sprintf(fileName, "%s/%s", SV_GetSavesDir(), curName);
 			remove(fileName);
 		}
 	}
@@ -271,7 +279,7 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
 
 	sprintf(srcExt, "vs%d", sourceSlot);
 	sprintf(dstExt, "vs%d", destSlot);
-	if (!Sys_OpenDir(va("%s/saves", fl_gamedir)))
+	if (!Sys_OpenDir(SV_GetSavesDir()))
 	{
 		//  Directory doesn't exist ... yet
 		return;
@@ -283,7 +291,7 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
 		FL_ExtractFileExtension(curName, ext);
 		if (!strcmp(ext, srcExt))
 		{
-			sprintf(sourceName, "%s/saves/%s", fl_gamedir, curName);
+			sprintf(sourceName, "%s/%s", SV_GetSavesDir(), curName);
 			strcpy(destName, sourceName);
 			FL_StripExtension(destName);
 			strcat(destName, ".");
@@ -935,8 +943,6 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 
 	SavingPlayers = savePlayers;
 
-	CreateSavePath();
-
 	// Open the output file
 	SAVE_MAP_NAME(fileName, slot, level.mapname);
 	OpenStreamOut(fileName);
@@ -1076,8 +1082,6 @@ void SV_SaveGame(int slot, char* description)
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
 	char fileName[100];
 	int i;
-
-	CreateSavePath();
 
 	// Open the output file
 	SAVE_NAME(fileName, BASE_SLOT);
@@ -1454,9 +1458,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2006/01/29 20:41:30  dj_jl
+//	On Unix systems use ~/.vavoom for generated files.
+//
 //	Revision 1.46  2005/12/29 19:50:24  dj_jl
 //	Fixed loading.
-//
+//	
 //	Revision 1.45  2005/12/29 17:26:01  dj_jl
 //	Changed version number.
 //	

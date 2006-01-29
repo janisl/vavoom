@@ -291,7 +291,7 @@ const nodebuildfuncs_t edge_build_funcs =
 //
 //==========================================================================
 
-bool GLBSP_BuildNodes(const char *name)
+bool GLBSP_BuildNodes(const char *name, const char* gwafile)
 {
 	nodebuildinfo_t nb_info;
 	nodebuildcomms_t nb_comms;
@@ -301,6 +301,7 @@ bool GLBSP_BuildNodes(const char *name)
 	nb_comms = default_buildcomms;
 
 	nb_info.input_file = name;
+	nb_info.output_file = gwafile;
 
 	// FIXME: check parm "-node-factor"
 
@@ -375,9 +376,12 @@ COMMAND(glBSP)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/01/29 20:41:30  dj_jl
+//	On Unix systems use ~/.vavoom for generated files.
+//
 //	Revision 1.6  2003/10/23 06:36:15  dj_jl
 //	Parsing all args
-//
+//	
 //	Revision 1.5  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

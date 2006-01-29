@@ -41,12 +41,14 @@ void FL_DefaultExtension(char *path, const char *extension);
 void FL_StripFilename(char *path);
 void FL_StripExtension(char *path);
 void FL_ExtractFilePath(const char *path, char *dest);
+void FL_ExtractFileName(const char *path, char *dest);
 void FL_ExtractFileBase(const char *path, char *dest);
 void FL_ExtractFileExtension(const char *path, char *dest);
 
 bool FL_FindFile(const char *fname, char *dest);
 int FL_ReadFile(const char* name, void** buffer, int tag);
 bool FL_WriteFile(const char* name, const void* source, int length);
+void FL_CreatePath(const char* Path);
 
 FArchive* FL_OpenFileRead(const char *Name);
 FArchive* FL_OpenFileWrite(const char *Name);
@@ -55,14 +57,18 @@ FArchive* FL_OpenFileWrite(const char *Name);
 
 extern bool		fl_devmode;
 extern char		fl_basedir[MAX_OSPATH];
+extern char		fl_savedir[MAX_OSPATH];
 extern char		fl_gamedir[MAX_OSPATH];
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/01/29 20:41:30  dj_jl
+//	On Unix systems use ~/.vavoom for generated files.
+//
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

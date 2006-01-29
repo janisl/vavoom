@@ -62,6 +62,7 @@ static void SetupGameDir(const char *dirname);
 
 bool	fl_devmode = false;
 char	fl_basedir[MAX_OSPATH];
+char	fl_savedir[MAX_OSPATH];
 char	fl_gamedir[MAX_OSPATH];
 char	fl_mainwad[MAX_OSPATH];
 
@@ -70,6 +71,7 @@ char	fl_mainwad[MAX_OSPATH];
 static search_path_t	*searchpaths;
 
 const char				*wadfiles[MAXWADFILES];
+const char				*gwadirs[MAXWADFILES];
 static bool				fl_fixvoices;
 
 // CODE --------------------------------------------------------------------
@@ -80,19 +82,19 @@ static bool				fl_fixvoices;
 //
 //==========================================================================
 
-void FL_AddFile(const char *file)
+void FL_AddFile(const char *file, const char* gwadir)
 {
-    int     i;
-    char    *newfile;
-
-    i = 0;
-    while (wadfiles[i])
+	int i = 0;
+	while (wadfiles[i])
 	{
-    	i++;
+		i++;
 	}
-    newfile = (char*)Z_Malloc(strlen(file) + 1, PU_STATIC, 0);
-    strcpy(newfile, file);
-    wadfiles[i] = newfile;
+	char* newfile = (char*)Z_Malloc(strlen(file) + 1, PU_STATIC, 0);
+	strcpy(newfile, file);
+	wadfiles[i] = newfile;
+	char* newdir = (char*)Z_Malloc(strlen(gwadir) + 1, PU_STATIC, 0);
+	strcpy(newdir, gwadir);
+	gwadirs[i] = newdir;
 }
 
 //==========================================================================
@@ -106,18 +108,41 @@ static void AddGameDir(const char *dir)
 	search_path_t	*info;
 
 	info = (search_path_t*)Z_StrCalloc(sizeof(*info));
-	strcpy(info->path, dir);
+	sprintf(info->path, "%s/%s", fl_basedir, dir);
 	info->next = searchpaths;
 	searchpaths = info;
+
+	const char* gwadir = NULL;
+	if (fl_savedir[0])
+	{
+		info = (search_path_t*)Z_StrCalloc(sizeof(*info));
+		sprintf(info->path, "%s/%s", fl_savedir, dir);
+		info->next = searchpaths;
+		searchpaths = info;
+		gwadir = info->path;
+	}
 
 	for (int i = 0; i < 1024; i++)
 	{
 		char	buf[128];
 
-		sprintf(buf, "%s/wad%d.wad", dir, i);
+		sprintf(buf, "%s/%s/wad%d.wad", fl_basedir, dir, i);
 		if (!Sys_FileExists(buf))
 			break;
-		FL_AddFile(buf);
+		FL_AddFile(buf, gwadir);
+	}
+
+	if (fl_savedir[0])
+	{
+		for (int i = 0; i < 1024; i++)
+		{
+			char	buf[128];
+	
+			sprintf(buf, "%s/%s/wad%d.wad", fl_savedir, dir, i);
+			if (!Sys_FileExists(buf))
+				break;
+			FL_AddFile(buf, NULL);
+		}
 	}
 
 	strcpy(fl_gamedir, dir);
@@ -133,14 +158,23 @@ static void ParseBase(const char *name)
 {
 	TArray<version_t>	games;
 	bool				select_game;
+	char				UseName[MAX_OSPATH];
 
-	if (!Sys_FileExists(name))
+	if (fl_savedir[0] && Sys_FileExists(va("%s/%s", fl_savedir, name)))
+	{
+		sprintf(UseName, "%s/%s", fl_savedir, name);
+	}
+	else if (Sys_FileExists(va("%s/%s", fl_basedir, name)))
+	{
+		sprintf(UseName, "%s/%s", fl_basedir, name);
+	}
+	else
 	{
 		return;
 	}
 
 	select_game = false;
-	SC_OpenFile(name);
+	SC_OpenFile(UseName);
 	while (SC_GetString())
 	{
 		version_t &dst = *new(games, 0) version_t;
@@ -199,7 +233,8 @@ static void ParseBase(const char *name)
 			{
 				for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
 				{
-					FL_AddFile(**It);
+					FL_AddFile(va("%s/%s", fl_basedir, **It),
+						fl_savedir[0] ? fl_savedir : NULL);
 				}
 				SetupGameDir(*GIt->GameDir);
 				fl_fixvoices = GIt->FixVoices;
@@ -211,13 +246,31 @@ static void ParseBase(const char *name)
 		{
 			continue;
 		}
-		if (Sys_FileExists(*GIt->MainWad))
+
+		//	First look in the save directory.
+		if (Sys_FileExists(va("%s/%s", fl_savedir, *GIt->MainWad)))
 		{
 			strcpy(fl_mainwad, *GIt->MainWad);
-			FL_AddFile(fl_mainwad);
+			FL_AddFile(va("%s/%s", fl_savedir, fl_mainwad), NULL);
 			for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
 			{
-				FL_AddFile(**It);
+				FL_AddFile(va("%s/%s", fl_savedir, **It), NULL);
+			}
+			SetupGameDir(*GIt->GameDir);
+			fl_fixvoices = GIt->FixVoices;
+			return;
+		}
+
+		//	Then in base directory.
+		if (Sys_FileExists(va("%s/%s", fl_basedir, *GIt->MainWad)))
+		{
+			strcpy(fl_mainwad, *GIt->MainWad);
+			FL_AddFile(va("%s/%s", fl_basedir, fl_mainwad),
+				fl_savedir[0] ? fl_savedir : NULL);
+			for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
+			{
+				FL_AddFile(va("%s/%s", fl_basedir, **It),
+					fl_savedir[0] ? fl_savedir : NULL);
 			}
 			SetupGameDir(*GIt->GameDir);
 			fl_fixvoices = GIt->FixVoices;
@@ -256,13 +309,38 @@ void FL_Init(void)
 {
 	int p;
 
+	//	Set up base directory (main data files).
+	strcpy(fl_basedir, ".");
+	p = M_CheckParm("-basedir");
+	if (p && p < myargc - 1)
+	{
+		strcpy(fl_basedir, myargv[p + 1]);
+	}
+
+	//	Set up save directory (files written by engine).
+	p = M_CheckParm("-savedir");
+	if (p && p < myargc - 1)
+	{
+		strcpy(fl_savedir, myargv[p + 1]);
+	}
+#if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
+	else
+	{
+		const char* HomeDir = getenv("HOME");
+		if (HomeDir)
+		{
+			sprintf(fl_savedir, "%s/.vavoom", HomeDir);
+		}
+	}
+#endif
+
 	AddGameDir("basev");
 
 	p = M_CheckParm("-iwad");
 	if (p && p < myargc - 1)
 	{
 		strcpy(fl_mainwad, myargv[p + 1]);
-		FL_AddFile(fl_mainwad);
+		FL_AddFile(fl_mainwad, NULL);
 	}
 
 	p =	M_CheckParm("-devgame");
@@ -293,15 +371,16 @@ void FL_Init(void)
 	{
 		while (++p != myargc && myargv[p][0] != '-' && myargv[p][0] != '+')
 		{
-			FL_AddFile(myargv[p]);
+			FL_AddFile(myargv[p], NULL);
 		}
 	}
 
 	const char** filenames = wadfiles;
+	const char** gwanames = gwadirs;
 	// open all the files, load headers, and count lumps
-	for ( ; *filenames ; filenames++)
+	for ( ; *filenames ; filenames++, gwanames++)
 	{
-		W_AddFile(*filenames, fl_fixvoices);
+		W_AddFile(*filenames, *gwanames, fl_fixvoices);
 	}
 }
 
@@ -329,6 +408,44 @@ bool FL_FindFile(const char *fname, char *dest)
 		}
 	}
 	return false;
+}
+
+//==========================================================================
+//
+//	FL_CreatePath
+//
+//==========================================================================
+
+void FL_CreatePath(const char* Path)
+{
+	char* Temp = (char*)Z_Malloc(strlen(Path) + 1);
+	strcpy(Temp, Path);
+	for (size_t i = 3; i <= strlen(Temp); i++)
+	{
+		if (Temp[i] == '/' || Temp[i] == '\\' || Temp[i] == 0)
+		{
+			char Save = Temp[i];
+			Temp[i] = 0;
+			if (!Sys_FileExists(Temp))
+				Sys_CreateDirectory(Temp);
+			Temp[i] = Save;
+		}
+	}
+	Z_Free(Temp);
+}
+
+//==========================================================================
+//
+//	FL_CreateFilePath
+//
+//==========================================================================
+
+static void FL_CreateFilePath(const char* Path)
+{
+	char* Temp = (char*)Z_Malloc(strlen(Path) + 1);
+	FL_ExtractFilePath(Path, Temp);
+	FL_CreatePath(Temp);
+	Z_Free(Temp);
 }
 
 //==========================================================================
@@ -379,8 +496,18 @@ bool FL_WriteFile(const char* name, const void* source, int length)
 {
 	int		handle;
 	int		count;
-	
-	handle = Sys_FileOpenWrite(va("%s/%s", fl_gamedir, name));
+	const char*		RealName;
+
+	if (fl_savedir[0])
+	{
+		RealName = va("%s/%s/%s", fl_savedir, fl_gamedir, name);
+	}
+	else
+	{
+		RealName = va("%s/%s/%s", fl_basedir, fl_gamedir, name);
+	}
+	FL_CreateFilePath(RealName);
+	handle = Sys_FileOpenWrite(RealName);
 
 	if (handle == -1)
 	{
@@ -500,11 +627,32 @@ void FL_ExtractFilePath(const char *path, char *dest)
 	//
 	// back up until a \ or the start
 	//
-	while (src != path && *(src-1) != '/')
+	while (src != path && *(src-1) != '/' && *(src-1) != '\\')
 		src--;
 
 	memcpy(dest, path, src - path);
 	dest[src - path] = 0;
+}
+
+//==========================================================================
+//
+//	FL_ExtractFileName
+//
+//==========================================================================
+
+void FL_ExtractFileName(const char *path, char *dest)
+{
+	const char    *src;
+
+	src = path + strlen(path) - 1;
+
+	//
+	// back up until a \ or the start
+	//
+	while (src != path && *(src-1) != '/' && *(src-1) != '\\')
+		src--;
+
+	strcpy(dest, src);
 }
 
 //==========================================================================
@@ -762,9 +910,13 @@ protected:
 
 FArchive* FL_OpenFileWrite(const char *Name)
 {
-	char TmpName[256];
+	char TmpName[1024];
 
-	sprintf(TmpName, "%s/%s", fl_gamedir, Name);
+	if (fl_savedir[0])
+		sprintf(TmpName, "%s/%s/%s", fl_savedir, fl_gamedir, Name);
+	else
+		sprintf(TmpName, "%s/%s/%s", fl_basedir, fl_gamedir, Name);
+	FL_CreateFilePath(TmpName);
 	FILE *File = fopen(TmpName, "wb");
 	if (!File)
 	{
@@ -776,9 +928,12 @@ FArchive* FL_OpenFileWrite(const char *Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/01/29 20:41:30  dj_jl
+//	On Unix systems use ~/.vavoom for generated files.
+//
 //	Revision 1.17  2005/11/05 14:57:36  dj_jl
 //	Putting Strife shareware voices in correct namespace.
-//
+//	
 //	Revision 1.16  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

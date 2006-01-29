@@ -59,12 +59,13 @@ public:
 	int NumLumps;
 	lumpinfo_t *LumpInfo;	// Location of each lump on disk.
 	void **LumpCache;
+	const char* GwaDir;
 
 	WadFile(void) : Handle(-1),
 		NumLumps(0), LumpInfo(NULL), LumpCache(NULL)
 	{
 	}
-	void Open(const char *filename, bool FixVoices);
+	void Open(const char *filename, const char* AGwaDir, bool FixVoices);
 	void OpenSingleLump(const char *filename);
 	void CloseFile(void);
 	bool CanClose(void);
@@ -81,8 +82,8 @@ public:
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-bool GLBSP_BuildNodes(const char *name);
-void GLVis_BuildPVS(const char *srcfile);
+bool GLBSP_BuildNodes(const char *name, const char* gwafile);
+void GLVis_BuildPVS(const char *srcfile, const char* gwafile);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -128,7 +129,7 @@ void W_CleanupName(const char *src, char *dst)
 //
 //==========================================================================
 
-void WadFile::Open(const char *filename, bool FixVoices)
+void WadFile::Open(const char *filename, const char* AGwaDir, bool FixVoices)
 {
 	guard(WadFile::Open);
 	wadinfo_t		header;
@@ -139,6 +140,7 @@ void WadFile::Open(const char *filename, bool FixVoices)
 	filelump_t*		fi_p;
 
 	strcpy(Name, filename);
+	GwaDir = AGwaDir;
 
 	// open the file and add to directory
 	Handle = Sys_FileOpenRead(filename);
@@ -213,6 +215,7 @@ void WadFile::OpenSingleLump(const char *filename)
 	GCon->Logf(NAME_Init, "adding %s", filename);
 
 	strcpy(Name, filename);
+	GwaDir = NULL;
 
 	// single lump file
 	NumLumps = 1;
@@ -309,7 +312,7 @@ void WadFile::Close()
 //
 //==========================================================================
 
-void W_AddFile(const char *filename, bool FixVoices)
+void W_AddFile(const char *filename, const char* gwadir, bool FixVoices)
 {
 	guard(W_AddFile);
 	int wadtime;
@@ -328,7 +331,7 @@ void W_AddFile(const char *filename, bool FixVoices)
 	}
 	else
 	{
-		wad_files[num_wad_files].Open(filename, FixVoices);
+		wad_files[num_wad_files].Open(filename, gwadir, FixVoices);
 	}
 
 	num_wad_files++;
@@ -337,17 +340,35 @@ void W_AddFile(const char *filename, bool FixVoices)
 	{
 		char gl_name[1024];
 
-		strcpy(gl_name, filename);
-		FL_StripExtension(gl_name);
-		strcat(gl_name, ".gwa");
-		if (Sys_FileTime(gl_name) >= wadtime)
+		bool FoundGwa = false;
+		if (gwadir)
 		{
-			W_AddFile(gl_name, false);
+			strcpy(gl_name, gwadir);
+			strcat(gl_name, "/");
+			FL_ExtractFileName(filename, gl_name + strlen(gl_name));
+			FL_StripExtension(gl_name);
+			strcat(gl_name, ".gwa");
+			if (Sys_FileTime(gl_name) >= wadtime)
+			{
+				W_AddFile(gl_name, NULL, false);
+				FoundGwa = true;
+			}
 		}
-		else
+
+		if (!FoundGwa)
 		{
-			//	Leave empty slot for GWA file
-			num_wad_files++;
+			strcpy(gl_name, filename);
+			FL_StripExtension(gl_name);
+			strcat(gl_name, ".gwa");
+			if (Sys_FileTime(gl_name) >= wadtime)
+			{
+				W_AddFile(gl_name, NULL, false);
+			}
+			else
+			{
+				//	Leave empty slot for GWA file
+				num_wad_files++;
+			}
 		}
 	}
 	unguard;
@@ -366,7 +387,7 @@ void W_OpenAuxiliary(const char *filename)
 
 	AuxiliaryIndex = num_wad_files;
 
-	W_AddFile(filename, false);
+	W_AddFile(filename, NULL, false);
 	unguard;
 }
 
@@ -418,22 +439,31 @@ void W_BuildGLNodes(int lump)
 {
 	guard(W_BuildGLNodes);
 	int fi = FILE_INDEX(lump);
-	char name[MAX_OSPATH];
-	strcpy(name, wad_files[fi].Name);
+
+	char gwaname[MAX_OSPATH];
+	if (wad_files[fi].GwaDir)
+	{
+		FL_CreatePath(wad_files[fi].GwaDir);
+		strcpy(gwaname, wad_files[fi].GwaDir);
+		strcat(gwaname, "/");
+		FL_ExtractFileName(wad_files[fi].Name, gwaname + strlen(gwaname));
+	}
+	else
+		strcpy(gwaname, wad_files[fi].Name);
+	FL_StripExtension(gwaname);
+	strcat(gwaname, ".gwa");
 
 	// Build GL nodes
-	if (!GLBSP_BuildNodes(name))
+	if (!GLBSP_BuildNodes(wad_files[fi].Name, gwaname))
 	{
 		Sys_Error("Node build failed");
 	}
 
 	// Build PVS
-	GLVis_BuildPVS(name);
+	GLVis_BuildPVS(wad_files[fi].Name, gwaname);
 
 	// Add GWA file
-	FL_StripExtension(name);
-	strcat(name, ".gwa");
-	wad_files[fi + 1].Open(name, false);
+	wad_files[fi + 1].Open(gwaname, NULL, false);
 	unguard;
 }
 
@@ -465,10 +495,10 @@ void W_BuildPVS(int lump, int gllump)
 	wad_files[glfi].Close();
 
 	// Build PVS
-	GLVis_BuildPVS(name);
+	GLVis_BuildPVS(name, fi != glfi ? glname : NULL);
 
 	// Add GWA file
-	wad_files[glfi].Open(glname, false);
+	wad_files[glfi].Open(glname, NULL, false);
 	unguard;
 }
 
@@ -1054,6 +1084,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2006/01/29 20:41:30  dj_jl
+//  On Unix systems use ~/.vavoom for generated files.
+//
 //  Revision 1.21  2005/11/24 20:07:36  dj_jl
 //  Aded namespace for progs.
 //

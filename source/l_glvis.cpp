@@ -208,7 +208,7 @@ static void GLVisFree(void *ptr)
 //
 //==========================================================================
 
-void GLVis_BuildPVS(const char *srcfile)
+void GLVis_BuildPVS(const char *srcfile, const char* gwafile)
 {
 	try
 	{
@@ -223,7 +223,7 @@ void GLVis_BuildPVS(const char *srcfile)
 		GLVis.Free = GLVisFree;
 		GLVis.fastvis = !!glvis_fast;
 		GLVis.no_reject = !!glvis_noreject;
-		GLVis.Build(srcfile);
+		GLVis.Build(srcfile, gwafile);
 	}
 	catch (GLVisError &e)
 	{
@@ -241,16 +241,19 @@ COMMAND(glVIS)
 {
 	if (Argc() > 1)
 	{
-		GLVis_BuildPVS(Argv(1));
+		GLVis_BuildPVS(Argv(1), NULL);
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/01/29 20:41:30  dj_jl
+//	On Unix systems use ~/.vavoom for generated files.
+//
 //	Revision 1.7  2003/03/08 12:08:04  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.6  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

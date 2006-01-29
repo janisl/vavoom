@@ -39,8 +39,6 @@ char *P_TranslateMap(int map);
 
 // MACROS ------------------------------------------------------------------
 
-#define DEBUGFILENAME	"basev/debug.txt"
-
 // TYPES -------------------------------------------------------------------
 
 class EndGame : public VavoomError
@@ -104,7 +102,20 @@ static char		*host_error_string;
 void Host_Init(void)
 {
 	guard(Host_Init);
-	OpenDebugFile(DEBUGFILENAME);
+#if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
+	const char* HomeDir = getenv("HOME");
+	if (HomeDir)
+	{
+		Sys_CreateDirectory(va("%s/.vavoom", HomeDir));
+		OpenDebugFile(va("%s/.vavoom/debug.txt", getenv("HOME")));
+	}
+	else
+	{
+		OpenDebugFile("basev/debug.txt");
+	}
+#else
+	OpenDebugFile("basev/debug.txt");
+#endif
 
 	// init subsystems
 
@@ -480,7 +491,17 @@ void Host_SaveConfiguration(void)
 	if (!host_initialized)
 		return;
 
-	FILE *f = fopen(va("%s/%s", fl_gamedir, (char*)configfile), "w");
+	FILE *f;
+	if (fl_savedir[0])
+	{
+		FL_CreatePath(va("%s/%s", fl_savedir, fl_gamedir));
+		f = fopen(va("%s/%s/%s", fl_savedir, fl_gamedir, (char*)configfile), "w");
+	}
+	else
+	{
+		FL_CreatePath(va("%s/%s", fl_basedir, fl_gamedir));
+		f = fopen(va("%s/%s/%s", fl_basedir, fl_gamedir, (char*)configfile), "w");
+	}
 	if (!f)
 	{
 		GCon->Logf("Host_SaveConfiguration: Failed to open config file \"%s\"",
@@ -608,9 +629,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/01/29 20:41:30  dj_jl
+//	On Unix systems use ~/.vavoom for generated files.
+//
 //	Revision 1.29  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.28  2005/11/05 14:57:36  dj_jl
 //	Putting Strife shareware voices in correct namespace.
 //	

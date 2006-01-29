@@ -49,7 +49,7 @@ enum EWadNamespace
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void W_AddFile(const char *filename, bool FixVoices);
+void W_AddFile(const char *filename, const char* gwadir, bool FixVoices);
 
 void W_OpenAuxiliary(const char *filename);
 void W_CloseAuxiliaryFile(void);
@@ -82,9 +82,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/01/29 20:41:30  dj_jl
+//	On Unix systems use ~/.vavoom for generated files.
+//
 //	Revision 1.11  2005/11/24 20:07:36  dj_jl
 //	Aded namespace for progs.
-//
+//	
 //	Revision 1.10  2005/11/06 15:28:40  dj_jl
 //	Some cleanup.
 //	
