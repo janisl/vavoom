@@ -53,6 +53,7 @@ void PlayPage()
 	{
 	case 0:
 		BackPic.Handle = R_RegisterPic("SS2F1", PIC_PATCH);
+		CmdBuf_AddText("music loop d_dark");
 		LocalSound('svox/mac10');
 		PicTimer = 9.0;
 		PageNum = 1;
@@ -107,6 +108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/01/29 12:25:31  dj_jl
+//  Fixed slideshow music changes.
+//
 //  Revision 1.2  2005/11/05 15:51:27  dj_jl
 //  Voices played as normal sounds.
 //
