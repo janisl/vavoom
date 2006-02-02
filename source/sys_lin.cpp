@@ -32,9 +32,6 @@
 #include <unistd.h>
 #include <signal.h>
 #include <dirent.h>
-#include <locale.h>
-#include <iconv.h>
-#include <langinfo.h>
 #include <allegro.h>
 
 #include "gamedefs.h"
@@ -63,8 +60,10 @@ void Sys_SetFPCW(void);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef __linux__
 jmp_buf __Context::Env;
 const char* __Context::ErrToThrow;
+#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -332,65 +331,55 @@ static void PutEndText(const char *name)
 	int nlflag = 0;
 	char *text;
 	char *col;
-	iconv_t cd;
 
-	/* if option -noendtxt is set, don't print the text */
+	//	If option -noendtxt is set, don't print the text.
 	if (M_CheckParm("-noendtxt"))
 		return;
 
-	/* if the xterm has more then 80 columns we need to add nl's */
+	//	If the xterm has more then 80 columns we need to add nl's
 	col = getenv("COLUMNS");
 	if (col)
 	{
 		if (atoi(col) > 80)
 			nlflag++;
 	}
+	else
+		nlflag++;
 
-	/* get the lump with the text */
+	//	Get the lump with the text.
 	text = (char*)W_CacheLumpName(name, PU_CACHE);
-
-	setlocale(LC_CTYPE, "");
-	cd = iconv_open(va("%s//TRANSLIT", nl_langinfo(CODESET)), "cp437");
 
 	/* print 80x25 text and deal with the attributes too */
 	for (i = 1; i <= 80 * 25; i++, text += 2)
 	{
-		/* attribute first */
-		/* attribute changed? */
+		//	Attribute first
 		j = (byte)text[1];
+		//	Attribute changed?
 		if (j != att)
 		{
 			static const char map[] = "04261537";
-			/* save current attribute */
+			//	Save current attribute
 			att = j;
-			/* set new attribute: bright, foreground, background
-			 * (we don't have bright background) */
+			//	Set new attribute: bright, foreground, background
+			// (we don't have bright background)
 			printf("\033[0;%s3%c;4%cm", (j & 0x88) ? "1;" : "", map[j & 7],
 				map[(j & 0x70) >> 4]);
 		}
 
-		/* now the text */
-		if (*text >= 0 && *text < 32)
+		//	Now the text.
+		if (*text < 32)
 			putchar('.');
 		else
-		{
-			char buf[8];
-			char *in = text;
-			char *out = buf;
-			size_t inbytes = 1;
-			size_t outbytes = 8;
-			iconv(cd, &in, &inbytes, &out, &outbytes);
-			fwrite(buf, 1, out - buf, stdout);
-		}
+			putchar(*text);
 
-		/* do we need a nl? */
+		//	Do we need a nl?
 		if (nlflag && !(i % 80))
 		{
 			att = 0;
 			puts("\033[0m");
 		}
 	}
-	/* all attributes off */
+	//	All attributes off
 	printf("\033[0m");
 
 	if (nlflag)
@@ -633,8 +622,11 @@ char *Sys_ConsoleInput(void)
 
 static void signal_handler(int s)
 {
-	signal(s, SIG_IGN);	// Ignore future instances of this signal.
+	// Ignore future instances of this signal.
+	signal(s, SIG_IGN);
 
+	//	Exit with error message
+#ifdef __linux__
 	switch (s)
 	{
 	case SIGABRT:
@@ -665,6 +657,20 @@ static void signal_handler(int s)
 		__Context::ErrToThrow = "Terminated by signal";
 	}
 	longjmp(__Context::Env, 1);
+#else
+	switch (s)
+	{
+	 case SIGABRT:	throw VavoomError("Abnormal termination triggered by abort call");
+	 case SIGFPE:	throw VavoomError("Floating Point Exception");
+	 case SIGILL:	throw VavoomError("Illegal Instruction");
+	 case SIGINT:	throw VavoomError("Interrupted by User");
+	 case SIGSEGV:	throw VavoomError("Segmentation Violation");
+	 case SIGTERM:	throw VavoomError("Software termination signal from kill");
+	 case SIGKILL:	throw VavoomError("Killed");
+	 case SIGQUIT:	throw VavoomError("Quited");
+     default:		throw VavoomError("Terminated by signal");
+	}
+#endif
 }
 
 //==========================================================================
@@ -744,9 +750,12 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/02 22:55:30  dj_jl
+//	Some FreeBSD fixes.
+//
 //	Revision 1.15  2005/05/26 16:59:21  dj_jl
 //	Initial heap size
-//
+//	
 //	Revision 1.14  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

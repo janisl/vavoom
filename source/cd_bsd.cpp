@@ -224,7 +224,6 @@ void VBsdCDAudioDevice::GetInfo()
 void VBsdCDAudioDevice::Play(int track, bool looping)
 {
 	guard(VBsdCDAudioDevice::Play);
-	struct ioc_read_toc_single_entry        entry;
 	struct ioc_play_track                   ti;
 
 	if (!CDValid)
@@ -244,6 +243,7 @@ void VBsdCDAudioDevice::Play(int track, bool looping)
 
 /*
 	// don't try to play a non-audio track
+	struct ioc_read_toc_single_entry        entry;
 	entry.cdte_track = track;
 	entry.cdte_format = CDROM_MSF;
 	if (ioctl(CDFile, CDROMREADTOCENTRY, &entry) == -1)
@@ -374,9 +374,12 @@ void VBsdCDAudioDevice::CloseDoor()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/02/02 22:55:30  dj_jl
+//	Some FreeBSD fixes.
+//
 //	Revision 1.2  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
-//
+//	
 //	Revision 1.1  2004/12/22 07:39:08  dj_jl
 //	Applied BSD patches.
 //	
