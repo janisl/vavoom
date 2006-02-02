@@ -16,9 +16,12 @@ fi
 AC_SUBST([AR])
 
 AC_ARG_WITH([allegro], AS_HELP_STRING([--with-allegro], [use Allegro library]))
+AC_ARG_WITH([allegro-config], AS_HELP_STRING([--with-allegro-config=<path>], [Set Allegro config script]))
 AC_ARG_WITH([sdl], AS_HELP_STRING([--with-sdl], [use SDL library]))
+AC_ARG_WITH([sdl-config], AS_HELP_STRING([--with-sdl-config=<path>], [Set SDL config script]))
 AC_ARG_WITH([opengl], AS_HELP_STRING([--with-opengl], [use OpenGL library]))
 AC_ARG_WITH([openal], AS_HELP_STRING([--with-openal], [use OpenAL library]))
+AC_ARG_WITH([openal-config], AS_HELP_STRING([--with-openal-config], [Set OpenAL config script]))
 
 OBJ_FILES='$(COMMON_OBJS)'
 
@@ -77,32 +80,50 @@ dnl ---------------- Other *NIX platforms ----------------
 	MAIN_EXE='Vavoom$(EXEEXT)'
 
 	if test "x$with_allegro" = "xyes"; then
-		AC_PATH_PROG([allegro_config], [allegro-config])
-		if test "x$allegro_config" = "x"; then
-			AC_MSG_ERROR(['cannot find Allegro instalation'])
+		if test "x$with_allegro_config" = "x"; then
+			AC_PATH_PROG([allegro_config], [allegro-config])
+			if test "x$allegro_config" = "x"; then
+				AC_MSG_ERROR(['cannot find Allegro instalation'])
+			fi
+		else
+			allegro_config=$with_allegro_config
 		fi
 	else
 	if test "x$with_sdl" = "xyes"; then
-		AC_PATH_PROG([sdl_config], [sdl-config])
-		if test "x$sdl_config" = "x"; then
-			AC_MSG_ERROR(['cannot find SDL instalation'])
+		if test "x$with_sdl_config" = "x"; then
+			AC_PATH_PROG([sdl_config], [sdl-config])
+			if test "x$sdl_config" = "x"; then
+				AC_MSG_ERROR(['cannot find SDL instalation'])
+			fi
+		else
+			sdl_config=$with_sdl_config
 		fi
 	else
 		if test "x$with_allegro" != "xno"; then
-			AC_PATH_PROG([allegro_config], [allegro-config])
+			if test "x$with_allegro_config" = "x"; then
+				AC_PATH_PROG([allegro_config], [allegro-config])
+			else
+				allegro_config=$with_allegro_config
+			fi
 		fi
 		if test "x$with_sdl" != "xno" -a "x$allegro_config" = "x"; then
-			AC_PATH_PROG([sdl_config], [sdl-config])
+			if test "x$with_sdl_config" = "x"; then
+				AC_PATH_PROG([sdl_config], [sdl-config])
+			else
+				sdl_config=$with_sdl_config
+			fi
 		fi
 	fi
 	fi
 
 	if test "x$allegro_config" != "x"; then
+		AC_MSG_NOTICE(['Using Allegro'])
 		MAIN_PLATFORM='UNIX_ALLEGRO'
 		MAIN_CFLAGS="`${allegro_config} --cflags`"
 		MAIN_LIBS="`${allegro_config} --libs` -lpng -lz -lm -lstdc++"
 	else
 	if test "x$sdl_config" != "x"; then
+		AC_MSG_NOTICE(['Using SDL'])
 		MAIN_PLATFORM='UNIX_SDL'
 		MAIN_CFLAGS="`${sdl_config} --cflags`"
 		MAIN_LIBS="-lSDL_mixer `${sdl_config} --libs` -lpng -lz -lm -lstdc++"
@@ -112,7 +133,7 @@ dnl ---------------- Other *NIX platforms ----------------
 
 	AC_CHECK_HEADER([linux/cdrom.h], [
 		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_LINUX)"
-	], [AC_CHECK_HEADER([sys/cdrom.h], [
+	], [AC_CHECK_HEADER([sys/cdio.h], [
 		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_BSD)"
 	])])
 
@@ -125,7 +146,11 @@ dnl ---------------- Other *NIX platforms ----------------
 	fi
 
 	if test "x$with_openal" != "xno"; then
-		AC_PATH_PROG([openal_config], [openal-config])
+		if test "x$with_openal_config" = "x"; then
+			AC_PATH_PROG([openal_config], [openal-config])
+		else
+			openal_config=$with_openal_config
+		fi
 		if test "x$openal_config" != "x"; then
 			OBJ_FILES="$OBJ_FILES \$(AL_OBJS)"
 			MAIN_CFLAGS="$MAIN_CFLAGS `$openal_config --cflags`"
@@ -165,8 +190,13 @@ if test "x$with_libmad" != "xno"; then
 fi
 
 AC_ARG_WITH([mikmod], AS_HELP_STRING([--with-mikmod], [Enable MikMod support]))
+AC_ARG_WITH([mikmod-config], AS_HELP_STRING([--with-mikmod-config], [Set MikMod config script]))
 if test "x$with_mikmod" != "xno"; then
-	AC_PATH_PROG([LIBMIKMOD_CONFIG], [libmikmod-config])
+	if test "x$with_mikmod_config" = "x"; then
+		AC_PATH_PROG([LIBMIKMOD_CONFIG], [libmikmod-config])
+	else
+		mikmod_config=$with_mikmod_config
+	fi
 	if test "x$LIBMIKMOD_CONFIG" != "x"; then
 		OBJ_FILES="$OBJ_FILES \$(MIKMOD_OBJS)"
 		MAIN_CFLAGS="$MAIN_CFLAGS `$LIBMIKMOD_CONFIG --cflags`"
@@ -183,6 +213,26 @@ if test "x$with_flac" != "xno"; then
 	])
 fi
 
+if test "x$INSTALL_DIR" == "x"; then
+	INSTALL_DIR="\$(prefix)/games/Vavoom"
+fi
+if test "x$INSTALL_GROUP" == "x"; then
+	INSTALL_GROUP=root
+fi
+if test "x$INSTALL_OWNER" == "x"; then
+	INSTALL_OWNER=root
+fi
+
+if test "x$INSTALL_GROUP_ONLY" != "x"; then
+	INSTALL_PARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0750"
+	INSTALL_EXEPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 4750"
+	INSTALL_DIRPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0750 -d"
+else
+	INSTALL_PARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0755"
+	INSTALL_EXEPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 4755"
+	INSTALL_DIRPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0755 -d"
+fi
+
 AC_SUBST([LIB_STDCXX])
 AC_SUBST([MAIN_EXE])
 AC_SUBST([SERVER_EXE])
@@ -192,6 +242,12 @@ AC_SUBST([MAIN_LIBS])
 AC_SUBST([LIB_FILES])
 AC_SUBST([SV_OBJ_FILES])
 AC_SUBST([SV_LIBS])
+AC_SUBST([INSTALL_DIR])
+AC_SUBST([INSTALL_GROUP])
+AC_SUBST([INSTALL_OWNER])
+AC_SUBST([INSTALL_PARMS])
+AC_SUBST([INSTALL_EXEPARMS])
+AC_SUBST([INSTALL_DIRPARMS])
 
 AC_OUTPUT([
 	Makefile
