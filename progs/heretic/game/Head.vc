@@ -68,7 +68,7 @@ void A_HeadAttack(void)
 		Enemy.Damage(self, self, HITDICE(6));
 		return;
 	}
-	dist = MobjDist2(self, Enemy) > 8.0 * 64.0;
+	dist = DistTo2(Enemy) > 8.0 * 64.0;
 	randAttack = P_Random();
 	if (randAttack < (dist ? 150 : 50))
 	{
@@ -156,6 +156,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.4  2005/12/14 20:52:32  dj_jl
 //  State names belong to a class.
 //

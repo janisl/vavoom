@@ -142,7 +142,7 @@ void A_FiredChase(void)
 		StrafeCount = 0;
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		dist = MobjDist(self, Enemy);
+		dist = DistTo(Enemy);
 		if (dist < AttackRange)
 		{
 			if (P_Random() < 30)
@@ -303,6 +303,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

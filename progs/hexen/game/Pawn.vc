@@ -211,7 +211,7 @@ bool CheckMeleeRange(void)
 	{
 		return false;
 	}
-	dist = MobjDist(Enemy, self);
+	dist = DistTo(Enemy);
 	if (dist >= MELEERANGE)
 	{
 		return false;
@@ -247,7 +247,7 @@ bool CheckMeleeRange2(void)
 	{
 		return false;
 	}
-	dist = MobjDist(Enemy, self);
+	dist = DistTo(Enemy);
 	if (dist >= MELEERANGE * 2.0 || dist < MELEERANGE)
 	{
 		return false;
@@ -294,7 +294,7 @@ bool CheckMissileRange(void)
 		// Don't attack yet
 		return false;
 	}
-	dist = MobjDist(self, Enemy) - 64.0;
+	dist = DistTo(Enemy) - 64.0;
 	if (!MeleeState)
 	{
 		// No melee attack, so fire more frequently
@@ -372,7 +372,7 @@ bool LookForMonsters(void)
 			// Not a valid monster
 			continue;
 		}
-		if (MobjDist(self, mo) > MONS_LOOK_RANGE)
+		if (DistTo(mo) > MONS_LOOK_RANGE)
 		{
 			// Out of range
 			continue;
@@ -455,7 +455,7 @@ bool LookForPlayers(bool allaround)
 				P.MO.Origin.x - Origin.x) - Angles.yaw);
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(P.MO, self);
+				dist = DistTo(P.MO);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
@@ -464,7 +464,7 @@ bool LookForPlayers(bool allaround)
 		if (P.MO.Translucency)
 		{
 			// Player is invisible
-			if (MobjDist(P.MO, self) > 2.0 * MELEERANGE &&
+			if (DistTo(P.MO) > 2.0 * MELEERANGE &&
 				Length(P.MO.Velocity) < 5.0 * 35.0)
 			{
 				// Player is sneaking - can't detect
@@ -1036,6 +1036,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.7  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

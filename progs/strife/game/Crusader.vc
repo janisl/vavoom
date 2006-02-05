@@ -36,7 +36,7 @@ bool EnemyCloseEnough()
 {
 	if (CanSee(Enemy) && ReactionCount == 0)
 	{
-		return MobjDist2(self, Enemy) < 264.0;
+		return DistTo2(Enemy) < 264.0;
 	}
 	return false;
 }
@@ -183,6 +183,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.6  2005/12/25 17:13:08  dj_jl
 //  Some fixes.
 //

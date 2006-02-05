@@ -441,6 +441,34 @@ PF(AngleMod180)
 
 //==========================================================================
 //
+//	PF_abs
+//
+//==========================================================================
+
+PF(abs)
+{
+	int i;
+
+    i = Pop();
+    Push(abs(i));
+}
+
+//==========================================================================
+//
+//	PF_fabs
+//
+//==========================================================================
+
+PF(fabs)
+{
+	float i;
+
+    i = Popf();
+    Pushf(fabs(i));
+}
+
+//==========================================================================
+//
 //	PF_sin
 //
 //==========================================================================
@@ -621,6 +649,86 @@ PF(VectorAngles)
 	angles = (TAVec*)Pop();
 	vec = (TVec*)Pop();
 	VectorAngles(*vec, *angles);
+}
+
+//==========================================================================
+//
+//  PF_GetPlanePointZ
+//
+//==========================================================================
+
+PF(GetPlanePointZ)
+{
+	TPlane*		plane;
+	TVec		point;
+
+	point = Popv();
+	plane = (TPlane*)Pop();
+	Pushf(plane->GetPointZ(point));
+}
+
+//==========================================================================
+//
+//  PF_PointOnPlaneSide
+//
+//==========================================================================
+
+PF(PointOnPlaneSide)
+{
+	TVec		point;
+	TPlane*		plane;
+
+	plane = (TPlane*)Pop();
+	point = Popv();
+	Push(plane->PointOnSide(point));
+}
+
+//==========================================================================
+//
+//	PF_RotateDirectionVector
+//
+//==========================================================================
+
+PF(RotateDirectionVector)
+{
+	TVec	vec;
+	TAVec	rot;
+
+	vec = Popv();
+	rot.roll = Popf();
+	rot.yaw = Popf();
+	rot.pitch = Popf();
+
+	TAVec angles;
+	TVec out;
+
+	VectorAngles(vec, angles);
+	angles.pitch += rot.pitch;
+	angles.yaw += rot.yaw;
+	angles.roll += rot.roll;
+	AngleVector(angles, out);
+	Pushv(out);
+}
+
+//==========================================================================
+//
+//  PF_VectorRotateAroundZ
+//
+//==========================================================================
+
+PF(VectorRotateAroundZ)
+{
+	TVec*		vec;
+	float		angle;
+
+	angle = Popf();
+	vec = (TVec*)Pop();
+
+	float dstx = vec->x * cos(angle) - vec->y * sin(angle);
+	float dsty = vec->x * sin(angle) + vec->y * cos(angle);
+
+	vec->x = dstx;
+	vec->y = dsty;
 }
 
 //**************************************************************************
@@ -2405,6 +2513,29 @@ PF(ChangeMusic)
 	SV_ChangeMusic(SongName);
 }
 
+//==========================================================================
+//
+//  PF_FindSectorFromTag
+//
+//==========================================================================
+
+PF(FindSectorFromTag)
+{
+	int		tag;
+	int		start;
+
+	start = Pop();
+	tag = Pop();
+	int Ret = -1;
+	for (int i = start + 1; i < GLevel->NumSectors; i++)
+		if (GLevel->Sectors[i].tag == tag)
+		{
+			Ret = i;
+			break;
+		}
+	Push(Ret);
+}
+
 #endif
 #ifdef CLIENT
 
@@ -3154,6 +3285,8 @@ builtin_info_t BuiltinInfo[] =
 	//	Math functions
 	_(AngleMod360),
 	_(AngleMod180),
+	_(abs),
+	_(fabs),
 	_(sin),
 	_(cos),
 	_(tan),
@@ -3166,6 +3299,10 @@ builtin_info_t BuiltinInfo[] =
 	_(AngleVectors),
 	_(AngleVector),
 	_(VectorAngles),
+	_(GetPlanePointZ),
+	_(PointOnPlaneSide),
+	_(RotateDirectionVector),
+	_(VectorRotateAroundZ),
 
 	//	String functions
 	_(ptrtos),
@@ -3356,6 +3493,7 @@ builtin_info_t BuiltinInfo[] =
 	_(FindClassFromEditorId),
 	_(MSG_SelectClientMsg),
 	_(ChangeMusic),
+	_(FindSectorFromTag),
 #endif
 	{NULL, NULL, NULL}
 };
@@ -3363,9 +3501,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.67  2006/02/05 18:52:44  dj_jl
+//	Moved common utils to level info class or built-in.
+//
 //	Revision 1.66  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.65  2006/01/10 19:47:00  dj_jl
 //	Added builtin for changing the music.
 //	

@@ -25,6 +25,10 @@
 
 class HexenLevelInfo : LevelInfo;
 
+// Corpse queue for monsters
+Actor corpseQueue[CORPSEQUEUESIZE];
+int corpseQueueSlot;
+
 //============================================================================
 //
 //  SpawnSpecials
@@ -208,6 +212,8 @@ void SpawnSpecials()
 		}
 	}
 	SpawnPushers();
+
+	CreateTIDList();
 }
 
 //==========================================================================
@@ -3835,6 +3841,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.1  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

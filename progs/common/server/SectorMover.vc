@@ -44,6 +44,171 @@ void Finished()
 	RemoveSpecialThinker(self);
 }
 
+//**************************************************************************
+//
+//  MOVE FLOOR/CEILING
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  MovePlane
+//
+//  Move a plane (floor or ceiling) and check for crushing
+//
+//==========================================================================
+
+int MovePlane(sector_t* sector, float amount, float dest, int crush,
+	int floorOrCeiling, int direction, bool StopOnCrush)
+{
+	bool		flag;
+	float		lastpos;
+
+	switch (floorOrCeiling)
+	{
+	case 0:
+		// FLOOR
+		lastpos = sector->floor.dist;
+		switch (direction)
+		{
+		case -1:
+			// DOWN
+			sector->floor.dist -= amount * sector->floor.normal.z;
+			if (sector->floor.dist <= dest)
+			{
+				sector->floor.dist = dest;
+				flag = P_ChangeSector(sector, crush);
+				if (flag)
+				{
+					sector->floor.dist = lastpos;
+					P_ChangeSector(sector, crush);
+				}
+				return RES_PASTDEST;
+			}
+			else
+			{
+				flag = P_ChangeSector(sector, crush);
+				if (flag)
+				{
+					sector->floor.dist = lastpos;
+					P_ChangeSector(sector, crush);
+					return RES_CRUSHED;
+				}
+			}
+			break;
+
+		case 1:
+			// UP
+			// jff 02/04/98 keep floor from moving thru ceilings
+			// [RH] not so easy with arbitrary planes
+			if (!sector->bExtrafloorSource &&
+				!sector->ceiling.normal.x && !sector->ceiling.normal.y &&
+				!sector->floor.normal.x && !sector->floor.normal.y &&
+				dest > -sector->ceiling.dist)
+			{
+				dest = -sector->ceiling.dist;
+			}
+			sector->floor.dist += amount * sector->floor.normal.z;
+			if (sector->floor.dist > dest)
+			{
+				sector->floor.dist = dest;
+				flag = P_ChangeSector(sector, crush);
+				if (flag)
+				{
+					sector->floor.dist = lastpos;
+					P_ChangeSector(sector, crush);
+				}
+				return RES_PASTDEST;
+			}
+			else
+			{
+				// COULD GET CRUSHED
+				flag = P_ChangeSector(sector, crush);
+				if (flag)
+				{
+					if (!crush || StopOnCrush)
+					{
+						sector->floor.dist = lastpos;
+						P_ChangeSector(sector, crush);
+					}
+					return RES_CRUSHED;
+				}
+			}
+			break;
+		}
+		break;
+
+	case 1:
+		// CEILING
+		lastpos = sector->ceiling.dist;
+		switch (direction)
+		{
+		case -1:
+			// DOWN
+			// jff 02/04/98 keep ceiling from moving thru floors
+			// [RH] not so easy with arbitrary planes
+			if (!sector->bExtrafloorSource &&
+				!sector->ceiling.normal.x && !sector->ceiling.normal.y &&
+				sector->floor.normal.x && !sector->floor.normal.y &&
+				-dest < sector->floor.dist)
+			{
+				dest = -sector->floor.dist;
+			}
+			sector->ceiling.dist -= amount * sector->ceiling.normal.z;
+			if (sector->ceiling.dist > dest)
+			{
+				sector->ceiling.dist = dest;
+				flag = P_ChangeSector(sector, crush);
+
+				if (flag)
+				{
+					sector->ceiling.dist = lastpos;
+					P_ChangeSector(sector, crush);
+				}
+				return RES_PASTDEST;
+			}
+			else
+			{
+				// COULD GET CRUSHED
+				flag = P_ChangeSector(sector, crush);
+
+				if (flag)
+				{
+					if (!crush || StopOnCrush)
+					{
+						sector->ceiling.dist = lastpos;
+						P_ChangeSector(sector, crush);
+					}
+					return RES_CRUSHED;
+				}
+			}
+			break;
+
+		case 1:
+			// UP
+			sector->ceiling.dist += amount * sector->ceiling.normal.z;
+			if (sector->ceiling.dist < dest)
+			{
+				sector->ceiling.dist = dest;
+				flag = P_ChangeSector(sector, crush);
+				if (flag)
+				{
+					sector->ceiling.dist = lastpos;
+					P_ChangeSector(sector, crush);
+				}
+				return RES_PASTDEST;
+			}
+			else
+			{
+				flag = P_ChangeSector(sector, crush);
+			}
+			break;
+		}
+		break;
+	}
+	return RES_OK;
+}
+
 defaultproperties
 {
 }
@@ -51,6 +216,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.3  2005/07/09 13:55:46  dj_jl
 //  Scrolers carrying objects.
 //

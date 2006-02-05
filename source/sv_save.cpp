@@ -785,8 +785,6 @@ void UnMangleVObject(VObject *Obj, VClass *InClass)
 static void ArchiveThinkers(void)
 {
 	guard(ArchiveThinkers);
-	FFunction *pf_archive_thinker = svpr.FuncForName("ArchiveThinker");
-
 	StreamOutLong(ASEG_THINKERS);
 
 	for (TObjectIterator<VThinker> It; It; ++It)
@@ -811,7 +809,7 @@ static void ArchiveThinkers(void)
 			}
 		}
 
-		svpr.Exec(pf_archive_thinker, (int)th);
+		th->eventArchive();
 		MangleVObject(th, th->GetClass());
 
 		StreamOutByte(1);
@@ -866,16 +864,16 @@ static void UnarchiveThinkers(void)
 	}
 
 	//  Call unarchive function for each thinker.
-	FFunction *pf_unarchive_thinker = svpr.FuncForName("UnarchiveThinker");
+	svpr.SetGlobal("GLevelInfo", (int)GLevelInfo);
 
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
 		It->Level = GLevelInfo;
-		svpr.Exec(pf_unarchive_thinker, (int)*It);
+		(*It)->eventUnarchive();
 		UnMangleVObject(*It, It->GetClass());
 	}
 
-	svpr.Exec("AfterUnarchiveThinkers");
+	GLevelInfo->eventAfterUnarchiveThinkers();
 	unguard;
 }
 
@@ -1458,9 +1456,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2006/02/05 18:52:44  dj_jl
+//	Moved common utils to level info class or built-in.
+//
 //	Revision 1.47  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
-//
+//	
 //	Revision 1.46  2005/12/29 19:50:24  dj_jl
 //	Fixed loading.
 //	

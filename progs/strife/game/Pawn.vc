@@ -167,7 +167,7 @@ Actor SpawnMissileZAimed(float z, Actor dest, classid type)
 
 	A.Instigator = self;	// where it came from
 
-	dist = MobjDist2(self, Enemy);
+	dist = DistTo2(Enemy);
 	dir.x = cos(Angles.yaw);
 	dir.y = sin(Angles.yaw);
 	dir.z = dist != 0.0 ? (dest.Origin.z - Origin.z) / dist : A.Speed;
@@ -201,7 +201,7 @@ int CheckMeleeRange()
 		return false;
 	}
 
-	dist = MobjDist(Enemy, self);
+	dist = DistTo(Enemy);
 
 	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
 	{
@@ -245,7 +245,7 @@ int CheckMissileRange()
 	}
 
 	// OPTIMIZE: get this from a global checksight
-	dist = MobjDist(self, Enemy) - 64.0;
+	dist = DistTo(Enemy) - 64.0;
 
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
@@ -571,7 +571,7 @@ void RandomChaseDir()
 bool CheckRobotRange()
 {
 	return Enemy && !(bFriendly && Enemy.bFriendly) &&
-		(MobjDist2(Enemy, self) < ROBOTRANGE - 20.0 + Enemy.Radius) &&
+		(DistTo2(Enemy) < ROBOTRANGE - 20.0 + Enemy.Radius) &&
     	CanSee(Enemy);
 }
 
@@ -1376,6 +1376,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.17  2006/01/10 19:54:01  dj_jl
 //  Many bug fixes.
 //

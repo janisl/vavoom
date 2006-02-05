@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StaticLightSource:Actor
+class StaticLightSource : Actor
 	__mobjinfo__(1502);
 
 //==========================================================================
@@ -41,7 +41,7 @@ void OnMapSpawn(mthing_t * mthing)
 		l = 200.0;
 	else
 		l = itof(mthing->arg1) * 8.0;
-	AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
+	Level.AddStaticLight(vector(mthing->x, mthing->y, mthing->height), l);
 }
 
 defaultproperties
@@ -51,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.1  2002/11/02 08:20:57  dj_jl
 //  New style classes.
 //

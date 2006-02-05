@@ -42,6 +42,19 @@ float PSpriteSY;
 void WeaponLevel2Init(void) { }
 void WeaponLevel2Fade(void) { }
 
+//==========================================================================
+//
+//  HITDICE
+//
+//  Most damage in HERETIC and HEXEN defined using HITDICE
+//
+//==========================================================================
+
+int HITDICE(int a)
+{
+	return (1 + (P_Random() & 7)) * a;
+}
+
 //===========================================================================
 //
 //  A_WeaponReady
@@ -225,6 +238,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.3  2004/08/23 19:23:56  dj_jl
 //  Moved weapon utilites to player class.
 //

@@ -54,6 +54,15 @@ class VThinker : public VObject
 
 	//	VThinker interface.
 	virtual void Tick(float DeltaTime);
+
+	void eventArchive()
+	{
+		svpr.Exec(GetVFunction("Archive"), (int)this);
+	}
+	void eventUnarchive()
+	{
+		svpr.Exec(GetVFunction("Unarchive"), (int)this);
+	}
 };
 
 //==========================================================================
@@ -65,6 +74,13 @@ class VThinker : public VObject
 class VLevelInfo : public VThinker
 {
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
+
+	TVec trace_start;
+	TVec trace_end;
+	TVec trace_plane_normal;
+
+	TVec linestart;
+	TVec lineend;
 
 	VLevelInfo()
 	{
@@ -79,6 +95,10 @@ class VLevelInfo : public VThinker
 	{
 		svpr.Exec(GetVFunction("UpdateSpecials"), (int)this);
 	}
+	void eventAfterUnarchiveThinkers()
+	{
+		svpr.Exec(GetVFunction("AfterUnarchiveThinkers"), (int)this);
+	}
 	line_t* eventFindLine(int lineTag, int *searchPosition)
 	{
 		return (line_t*)svpr.Exec(GetVFunction("FindLine"), (int)this,
@@ -89,9 +109,13 @@ class VLevelInfo : public VThinker
 		svpr.Exec(GetVFunction("PolyThrustMobj"), (int)this, (int)A,
 			PassFloat(thrustDir.x), PassFloat(thrustDir.y), PassFloat(thrustDir.z), (int)po);
 	}
+	bool eventTagBusy(int tag)
+	{
+		return !!svpr.Exec(GetVFunction("TagBusy"), (int)this, tag);
+	}
 	bool eventPolyBusy(int polyobj)
 	{
-		return svpr.Exec(GetVFunction("PolyBusy"), (int)this, polyobj);
+		return !!svpr.Exec(GetVFunction("PolyBusy"), (int)this, polyobj);
 	}
 	int eventThingCount(int type, int tid)
 	{
@@ -104,7 +128,7 @@ class VLevelInfo : public VThinker
 	bool eventExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		int Arg4, int Arg5, line_t* Line, int Side, VEntity* A)
 	{
-		return svpr.Exec(GetVFunction("ExecuteActionSpecial"), (int)this,
+		return !!svpr.Exec(GetVFunction("ExecuteActionSpecial"), (int)this,
 			Special, Arg1, Arg2, Arg3, Arg4, Arg5, (int)Line, Side, (int)A);
 	}
 	int eventEV_ThingProjectile(int tid, int type, int angle, int speed,
@@ -695,9 +719,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/02/05 18:52:44  dj_jl
+//	Moved common utils to level info class or built-in.
+//
 //	Revision 1.41  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
-//
+//	
 //	Revision 1.40  2005/12/11 21:37:00  dj_jl
 //	Made path traversal callbacks class members.
 //	

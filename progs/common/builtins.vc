@@ -74,6 +74,12 @@ native float AngleMod360(float angle);
 //  Normalises angle in range -180..180
 native float AngleMod180(float angle);
 
+//  Absolute value
+native int abs(int val);
+
+//  Absolute value
+native float fabs(float val);
+
 //  Sine
 native float sin(float angle);
 
@@ -110,6 +116,19 @@ native void AngleVector(TAVec * angles, TVec * forward);
 
 //  Create angle vector for a vector
 native void VectorAngles(TVec * vec, TAVec * angles);
+
+//  Get z of point with given x and y coords
+// Don't try to use it on a vertical plane
+native float GetPlanePointZ(TPlane * plane, TVec point);
+
+//  Returns side 0 (front) or 1 (back).
+native int PointOnPlaneSide(TVec point, TPlane * plane);
+
+//  Rotates a direction vector
+native TVec RotateDirectionVector(TVec vec, TAVec rot);
+
+//  Rotates vector around Z axis
+native void VectorRotateAroundZ(TVec * vec, float angle);
 
 //
 //  Random numbers
@@ -499,6 +518,9 @@ native int FindSkin(string Name);
 native classid FindClassFromEditorId(int Id);
 native void ChangeMusic(string SongName);
 
+//  Return next sector # that line tag refers to
+native int FindSectorFromTag(int tag, int start);
+
 native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 
 #endif
@@ -506,6 +528,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.59  2006/02/05 18:50:54  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.58  2006/01/10 19:47:29  dj_jl
 //  Added builtin for changing the music.
 //

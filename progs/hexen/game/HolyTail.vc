@@ -45,11 +45,11 @@ void CHolyTailFollow(float dist)
 	{
 		an = atan2(child.Origin.y - Origin.y,
 			Origin.x - child.Origin.x);
-		oldDistance = MobjDist(child, self);
+		oldDistance = DistTo(child);
 		if (child.TryMove(vector(Origin.x + dist * cos(an),
 				Origin.y + dist * sin(an), child.Origin.z)))
 		{
-			newDistance = MobjDist2(child, self) - 1.0;
+			newDistance = DistTo2(child) - 1.0;
 			if (oldDistance < 1.0)
 			{
 				if (child.Origin.z < Origin.z)
@@ -137,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -292,6 +292,13 @@ enum
 
 #ifdef SERVER
 
+#define MobjCenter(mobj)\
+	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
+
+#define FOREACH(type, var) \
+	for (var = type(NextThinker(none, type)); var; \
+		var = type(NextThinker(var, type)))
+
 enum
 {
 	SEQ_Door,
@@ -600,6 +607,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2006/02/05 18:50:54  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.29  2005/12/22 19:04:14  dj_jl
 //  Changed version number.
 //

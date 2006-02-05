@@ -32,11 +32,13 @@
 #include "server/classes.vc"
 #include "builtins.vc"
 #include "svvars.vc"
-#include "utils.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/05 18:50:54  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.7  2002/10/26 16:32:14  dj_jl
 //  New style of defining classes.
 //

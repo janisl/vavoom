@@ -299,7 +299,7 @@ void CheckStuff(void)
 	if (node)
 	{
 		if (!CheckTo(node.Origin) ||
-			(MobjDist2(botmo, node) < botmo.Radius))
+			(botmo.DistTo2(node) < botmo.Radius))
 		{
 			prev = node;
 			node = none;
@@ -368,7 +368,7 @@ void Scan(void)
 				}
 			}
 			else if (!missile && actor.bMissile &&
-				(MobjDist(botmo, actor) < AVOID_DIST))
+				(botmo.DistTo(actor) < AVOID_DIST))
 			{
 				missile = actor;
 			}
@@ -680,7 +680,7 @@ void BotAim(void)
 		return;
 
 	// Distance to enemy.
-	dist = MobjDist2(botmo, enemy);
+	dist = botmo.DistTo2(enemy);
 
 	right = !!(P_Random() & 1);
 	an = AngleTo(enemy.Origin);
@@ -819,7 +819,7 @@ Actor FindEnemy(void)
 			{
 				if (botmo.CanSee(svvars->Players[i].MO))
 				{
-					temp = MobjDist(svvars->Players[i].MO, botmo);
+					temp = svvars->Players[i].MO.DistTo(botmo);
 					if (temp < closest_dist)
 					{
 						closest_dist = temp;
@@ -1088,7 +1088,7 @@ void Move(float deltaTime)
 			}
 		}
 
-		dist = MobjDist(botmo, enemy);
+		dist = botmo.DistTo(enemy);
 
 		// Remember where we saw him last in case he gets away
 		lastpos = enemy.Origin;
@@ -1369,6 +1369,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.5  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

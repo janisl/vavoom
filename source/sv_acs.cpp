@@ -593,8 +593,6 @@ TArray<FACScriptsObject*>	FACScriptsObject::LoadedObjects;
 static int 					stack[ACS_STACK_DEPTH];
 static int					stackPtr;
 
-static FFunction*			pf_TagBusy;
-
 // CODE --------------------------------------------------------------------
 
 static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
@@ -1813,8 +1811,6 @@ void FACSGrowingArray::Serialise(FArchive& Ar)
 void P_LoadACScripts(int Lump)
 {
 	guard(P_LoadACScripts);
-	pf_TagBusy = svpr.FuncForName("TagBusy");
-
 	FACScriptsObject::StaticUnloadObjects();
 
 	if (Lump < 0)
@@ -4494,7 +4490,7 @@ static int FindSectorFromTag(int tag, int start)
 
 static bool TagBusy(int tag)
 {
-	return !!svpr.Exec(pf_TagBusy, tag);
+	return GLevelInfo->eventTagBusy(tag);
 }
 
 //============================================================================
@@ -4667,9 +4663,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/02/05 18:52:44  dj_jl
+//	Moved common utils to level info class or built-in.
+//
 //	Revision 1.38  2005/12/29 19:51:54  dj_jl
 //	Fixed missing return.
-//
+//	
 //	Revision 1.37  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
 //	

@@ -2228,6 +2228,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	if (spawn_thinkers)
 	{
 		GLevelInfo = (VLevelInfo*)svpr.Exec("CreateLevelInfo");
+		svpr.SetGlobal("GLevelInfo", (int)GLevelInfo);
 	}
 
 	//	Spawn slopes, extra floors, etc.
@@ -3013,9 +3014,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.75  2006/02/05 18:52:44  dj_jl
+//	Moved common utils to level info class or built-in.
+//
 //	Revision 1.74  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
-//
+//	
 //	Revision 1.73  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
 //	

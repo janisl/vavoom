@@ -1085,13 +1085,13 @@ void CheckWaterJump()
 	vforward.z = 0.0;
 	vforward = Normalise(vforward);
 	end = start + vforward * 24.0;
-	if (!TraceLine(start, end))
+	if (!MO.Level.TraceLine(start, end))
 	{
 		// solid at waist
 		start.z = MO.Origin.z + MO.Height;
 		end = start + vforward * 24.0;
-		MoveDir = trace_plane_normal * -50.0;
-		if (TraceLine(start, end))
+		MoveDir = MO.Level.trace_plane_normal * -50.0;
+		if (MO.Level.TraceLine(start, end))
 		{
 			// open at eye level
 			MO.bWaterJump = true;
@@ -3075,6 +3075,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.17  2006/01/18 19:14:06  dj_jl
 //  Switch to previous and next weapon.
 //

@@ -61,7 +61,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	switch (Type)
 	{
 	case DOOREV_Close:
-		Height = FindLowestCeilingSurrounding(Sector, &Spot);
+		Height = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
@@ -100,7 +100,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 			Type = DOOREV_Open;
 		}
 
-		Height = FindLowestCeilingSurrounding(Sector, &Spot);
+		Height = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = 1;
@@ -112,14 +112,14 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 
 	case DOOREV_RaiseIn5Mins:
 		Direction = 2;
-		Height = FindLowestCeilingSurrounding(Sector, &Spot);
+		Height = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		TopTime = 5.0 * 60.0;
 		break;
 	}
 
-	Height = FindHighestFloorPoint(Sector, &BotSpot);
+	Height = Level.FindHighestFloorPoint(Sector, &BotSpot);
 	BotDist = DotProduct(vector(BotSpot.x, BotSpot.y, Height),
 		Sector->ceiling.normal);
 	OldFloorDist = Sector->floor.dist;
@@ -144,7 +144,7 @@ void InitCloseIn30(sector_t* InSector)
 	Type = DOOREV_Raise;
 	Speed = 70.0;
 	TopTime = 30.0;
-	Height = FindHighestFloorPoint(Sector, &BotSpot);
+	Height = Level.FindHighestFloorPoint(Sector, &BotSpot);
 	BotDist = DotProduct(vector(BotSpot.x, BotSpot.y, Height),
 		Sector->ceiling.normal);
 	OldFloorDist = Sector->floor.dist;
@@ -352,7 +352,7 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 
 		for (j = 0; j < sector->linecount; j++)
 		{
-			temp = getNextSector(sector->lines[j], sector);
+			temp = Level.getNextSector(sector->lines[j], sector);
 			if (temp)
 			{
 				if (temp->params.lightlevel > bright)
@@ -377,6 +377,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.6  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

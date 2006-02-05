@@ -56,7 +56,7 @@ void A_LightGoesOut()
 	Actor foo;
 
 	Sector->params.lightlevel = 0;
-	Sector->floor.dist = FindLowestFloorSurrounding(Sector, NULL);
+	Sector->floor.dist = Level.FindLowestFloorSurrounding(Sector, NULL);
 	for (i = 0; i < 8; i++)
 	{
 		foo = Spawn(Rub1, Origin);
@@ -137,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.7  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

@@ -36,17 +36,6 @@ LevelInfo CreateLevelInfo()
 
 //==========================================================================
 //
-//  AfterUnarchiveThinkers
-//
-//==========================================================================
-
-void AfterUnarchiveThinkers()
-{
-	CreateTIDList();
-}
-
-//==========================================================================
-//
 //  G_InitNew
 //
 //==========================================================================
@@ -77,7 +66,6 @@ void StartLevelLoading()
 
 void EndLevelLoading()
 {
-	CreateTIDList();
 }
 
 //==========================================================================
@@ -96,6 +84,9 @@ void main()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.8  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

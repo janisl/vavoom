@@ -53,10 +53,10 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Sector = InSector;
 	Sector->CeilingData = self;
 
-	Height = FindLowestCeilingSurrounding(Sector, &Spot);
+	Height = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 	Spot.z = Height;
 	TopDist = DotProduct(Sector->ceiling.normal, Spot);
-	Height = FindHighestFloorPoint(Sector, &Spot);
+	Height = Level.FindHighestFloorPoint(Sector, &Spot);
 	Spot.z = Height;
 	BotDist = DotProduct(Sector->ceiling.normal, Spot);
 
@@ -222,6 +222,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.7  2005/11/20 12:55:21  dj_jl
 //  Using sound sequences.
 //

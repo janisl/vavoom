@@ -126,7 +126,7 @@ void InitOpen(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 
 	if (!Arg3)
 	{
-		FloorDestHeight = FindLowestFloorSurrounding(Sector, &Spot1);
+		FloorDestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot1);
 	}
 	else
 	{
@@ -139,7 +139,7 @@ void InitOpen(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 
 	if (!Arg4)
 	{
-		CeilDestHeight = FindHighestCeilingSurrounding(Sector, &Spot2);
+		CeilDestHeight = Level.FindHighestCeilingSurrounding(Sector, &Spot2);
 	}
 	else
 	{
@@ -197,6 +197,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.4  2005/11/20 12:40:55  dj_jl
 //  Implemented support for sound sequence extensions.
 //

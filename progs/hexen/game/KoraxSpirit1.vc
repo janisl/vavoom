@@ -115,7 +115,7 @@ void A_KSpiritSeeker(float thresh, float turnMax)
 				deltaZ = -15.0;
 			}
 		}
-		dist = MobjDist2(Enemy, self);
+		dist = DistTo2(Enemy);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -206,6 +206,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

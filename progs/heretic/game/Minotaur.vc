@@ -88,7 +88,7 @@ void A_MinotaurDecide()
 		return;
 	}
 	PlaySound('minotaur/sight', CHAN_VOICE);
-	dist = MobjDist(self, Enemy);
+	dist = DistTo(Enemy);
 	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
 		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
 		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
@@ -329,6 +329,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.5  2005/11/30 23:52:04  dj_jl
 //  Switch statement requires integer.
 //

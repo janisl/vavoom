@@ -136,6 +136,21 @@ float shoot_range;
 TVec shoot_origin;
 TVec shoot_dir;
 int la_damage;
+TVec shoot_linestart;
+TVec shoot_lineend;
+
+//==========================================================================
+//
+//  HITDICE
+//
+//  Most damage in HERETIC and HEXEN defined using HITDICE
+//
+//==========================================================================
+
+int HITDICE(int a)
+{
+	return (1 + (P_Random() & 7)) * a;
+}
 
 //===========================================================================
 //
@@ -2335,7 +2350,7 @@ bool ZMovement(void)
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, Enemy);
+			dist = DistTo2(Enemy);
 			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -delta * 3.0)
 				Origin.z -= FLOATSPEED * frametime;
@@ -3130,7 +3145,7 @@ bool SeekerMissile(float thresh, float turnMax)
 		Enemy.Origin.z + Enemy.Height < Origin.z)
 	{
 		// Need to seek vertically
-		dist = MobjDist2(Enemy, self);
+		dist = DistTo2(Enemy);
 		dist = dist / Speed;
 		if (dist < 1.0)
 		{
@@ -3533,13 +3548,13 @@ bool ShootHitPlane(sec_plane_t * plane)
 		//  Doesn't block shooting
 		return true;
 	}
-	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	org_dist = DotProduct(shoot_linestart, plane->normal) - plane->dist;
 	if (org_dist < 0.0)
 	{
 		//  Don't shoot back side
 		return true;
 	}
-	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	hit_dist = DotProduct(shoot_lineend, plane->normal) - plane->dist;
 	if (hit_dist >= 0.0)
 	{
 		//  Didn't hit plane
@@ -3555,13 +3570,13 @@ bool ShootHitPlane(sec_plane_t * plane)
 
 	//  If we are shooting floor or ceiling we are adjusting position
 	// to spawn puff on floor or ceiling, not on wall
-	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
+	shoot_lineend -= (shoot_lineend - shoot_linestart) * hit_dist / (hit_dist - org_dist);
 
 	// position a bit closer
-	lineend += 4.0 * plane->normal;
+	shoot_lineend += 4.0 * plane->normal;
 
 	// Spawn bullet puffs.
-	SpawnPuff(lineend);
+	SpawnPuff(shoot_lineend);
 
 	// don't go any farther
 	return false;
@@ -3578,7 +3593,7 @@ bool ShootCheckPlanes(sector_t * sec)
 	sec_region_t *reg;
 	sec_region_t *startreg;
 
-	startreg = PointInRegion(sec, linestart);
+	startreg = PointInRegion(sec, shoot_linestart);
 	for (reg = startreg; reg; reg = reg->next)
 	{
 		if (!ShootHitPlane(reg->floor))
@@ -3635,7 +3650,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 			sec = li->frontsector;
 		}
 
-		lineend = hit_point;
+		shoot_lineend = hit_point;
 
 		//  Check for shooting floor or ceiling
 		if (!ShootCheckPlanes(sec))
@@ -3643,7 +3658,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 			return false;
 		}
 
-		linestart = lineend;
+		shoot_linestart = shoot_lineend;
 
 		//  Execute line special after checking for hitting floor or ceiling
 		// when we know that it actally hits line
@@ -3772,13 +3787,13 @@ int LineAttack(TVec dir, float distance, int damage)
 	shoot_range = distance;
 
 	dst = shoot_origin + shoot_range * shoot_dir;
-	linestart = shoot_origin;
+	shoot_linestart = shoot_origin;
 	if (!P_PathTraverse(Origin.x, Origin.y, dst.x, dst.y,
 		PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_ShootTraverse'))
 	{
 		return false;
 	}
-	lineend = dst;
+	shoot_lineend = dst;
 	return ShootCheckPlanes(GLevel.PointInSector(dst));
 }
 
@@ -4091,19 +4106,19 @@ void A_CheckBurnGone(void)
 //
 //============================================================================
 
-void A_QueueCorpse(void)
+void A_QueueCorpse()
 {
 	Actor corpse;
 
-	if (corpseQueueSlot >= CORPSEQUEUESIZE)
+	if (HexenLevelInfo(Level).corpseQueueSlot >= CORPSEQUEUESIZE)
 	{
 		// Too many corpses - remove an old one
-		corpse = corpseQueue[corpseQueueSlot % CORPSEQUEUESIZE];
+		corpse = HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % CORPSEQUEUESIZE];
 		if (corpse)
 			corpse.Remove();
 	}
-	corpseQueue[corpseQueueSlot % CORPSEQUEUESIZE] = self;
-	corpseQueueSlot++;
+	HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % CORPSEQUEUESIZE] = self;
+	HexenLevelInfo(Level).corpseQueueSlot++;
 }
 
 //============================================================================
@@ -4114,15 +4129,15 @@ void A_QueueCorpse(void)
 //
 //============================================================================
 
-void A_DeQueueCorpse(void)
+void A_DeQueueCorpse()
 {
 	int slot;
 
 	for (slot = 0; slot < CORPSEQUEUESIZE; slot++)
 	{
-		if (corpseQueue[slot] == self)
+		if (HexenLevelInfo(Level).corpseQueue[slot] == self)
 		{
-			corpseQueue[slot] = none;
+			HexenLevelInfo(Level).corpseQueue[slot] = none;
 			break;
 		}
 	}
@@ -4192,6 +4207,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.23  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

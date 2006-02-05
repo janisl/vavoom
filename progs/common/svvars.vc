@@ -37,6 +37,7 @@ int skyflatnum;
 
 sv_level_t *level;
 Level GLevel;
+LevelInfo GLevelInfo;
 
 int RebornPosition;
 
@@ -50,6 +51,9 @@ Entity TIDMobj[MAX_TID_COUNT];
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/02/05 18:50:54  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.11  2004/11/01 07:38:21  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

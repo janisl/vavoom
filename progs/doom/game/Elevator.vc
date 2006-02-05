@@ -61,7 +61,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	//	Elevator down to next floor.
 	case ELEVEV_Down:
 		Direction = -1;
-		NewHeight = FindNextLowestFloor(Sector, &Spot);
+		NewHeight = Level.FindNextLowestFloor(Sector, &Spot);
 		Spot.z = NewHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		Spot.z += GetPlanePointZ(&Sector->ceiling, Spot) -
@@ -72,7 +72,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	//	Elevator up to next floor.
 	case ELEVEV_Up:
 		Direction = 1;
-		NewHeight = FindNextHighestFloor(Sector, &Spot);
+		NewHeight = Level.FindNextHighestFloor(Sector, &Spot);
 		Spot.z = NewHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		Spot.z += GetPlanePointZ(&Sector->ceiling, Spot) -
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.1  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

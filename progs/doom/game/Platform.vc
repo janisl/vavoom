@@ -88,12 +88,12 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	switch (Type)
 	{
 	case PLATEV_PerpetualRaise:
-		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight + 8.0;
 		Low = DotProduct(Sector->floor.normal, Spot);
 		if (Low > Sector->floor.dist)
 			Low = Sector->floor.dist;
-		DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		High = DotProduct(Sector->floor.normal, Spot);
 		if (High < Sector->floor.dist)
@@ -103,12 +103,12 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case PLATEV_PerpetualRaiseLip:
-		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight + itof(Arg4);
 		Low = DotProduct(Sector->floor.normal, Spot);
 		if (Low > Sector->floor.dist)
 			Low = Sector->floor.dist;
-		DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		High = DotProduct(Sector->floor.normal, Spot);
 		if (High < Sector->floor.dist)
@@ -118,7 +118,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case PLATEV_DownWaitUpStay:
-		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight + 8.0;
 		Low = DotProduct(Sector->floor.normal, Spot);
 		if (Low > Sector->floor.dist)
@@ -129,7 +129,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case PLATEV_DownWaitUpStayLip:
-		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight + itof(Arg4);
 		Low = DotProduct(Sector->floor.normal, Spot);
 		if (Low > Sector->floor.dist)
@@ -142,7 +142,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case PLATEV_DownNearestWaitUpStay:
-		DestHeight = FindNextLowestFloor(Sector, &Spot);
+		DestHeight = Level.FindNextLowestFloor(Sector, &Spot);
 		Spot.z = DestHeight + itof(Arg4);
 		Low = DotProduct(Sector->floor.normal, Spot);
 		High = Sector->floor.dist;
@@ -151,7 +151,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case PLATEV_DownLowestCeilingWaitUpStay:
-		DestHeight = FindLowestCeilingSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		Low = DotProduct(Sector->floor.normal, Spot);
 		if (Low > Sector->floor.dist)
@@ -173,7 +173,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case PLATEV_UpWaitDownStay:
-		DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		High = DotProduct(Sector->floor.normal, Spot);
 		if (High < Sector->floor.dist)
@@ -184,7 +184,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case PLATEV_UpNearestWaitDownStay:
-		DestHeight = FindNextHighestFloor(Sector, &Spot);
+		DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
 		Spot.z = DestHeight;
 		High = DotProduct(Sector->floor.normal, Spot);
 		if (High < Sector->floor.dist)
@@ -209,7 +209,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Crush = 10;	//jff 3/14/98 crush anything in the way
 
 		// set up toggling between ceiling, floor inclusive
-		DestHeight = FindLowestCeilingPoint(Sector, &Spot);
+		DestHeight = Level.FindLowestCeilingPoint(Sector, &Spot);
 		Spot.z = DestHeight;
 		Low = DotProduct(Sector->floor.normal, Spot);
 		High = Sector->floor.dist;
@@ -365,6 +365,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.5  2005/11/20 15:48:53  dj_jl
 //  Using sound sequences.
 //

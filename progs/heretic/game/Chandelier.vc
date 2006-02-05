@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class Chandelier:Decoration
+class Chandelier : Decoration
 	__mobjinfo__(28);
 
 void OnMapSpawn(mthing_t *mthing)
 {
 	::OnMapSpawn(mthing);
-	AddStaticLight(Origin,
+	Level.AddStaticLight(Origin,
 		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
 }
 
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -201,7 +201,7 @@ void A_MinotaurLook()
 				continue;
 			if (mo.Health <= 0)
 				continue;
-			dist = MobjDist(self, mo);
+			dist = DistTo(mo);
 			if (dist > MinotaurLookDist)
 				continue;
 			Enemy = mo;
@@ -227,7 +227,7 @@ void A_MinotaurLook()
 				continue;
 			if (!mo.bShootable)
 				continue;
-			dist = MobjDist(self, mo);
+			dist = DistTo(mo);
 			if (dist > MinotaurLookDist)
 				continue;
 			if ((mo == Instigator) || (mo == self))
@@ -386,7 +386,7 @@ void A_MinotaurDecide()
 
 	if (!Enemy)
 		return;
-	dist = MobjDist(self, Enemy);
+	dist = DistTo(Enemy);
 
 	if (Enemy.Origin.z + Enemy.Height > Origin.z &&
 		Enemy.Origin.z + Enemy.Height < Origin.z + Height &&
@@ -657,6 +657,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.6  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

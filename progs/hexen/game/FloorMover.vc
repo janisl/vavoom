@@ -72,7 +72,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 	case FLOOREV_LowerToHighest:
 		Direction = -1;
-		DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		if (FloorDestDist != Sector->floor.dist)
@@ -84,38 +84,38 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 
 	case FLOOREV_RaiseToHighest:
 		Direction = 1;
-		DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
 	case FLOOREV_LowerToLowest:
 		Direction = -1;
-		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
 	case FLOOREV_LowerToNearest:
 		Direction = -1;
-		DestHeight = FindNextLowestFloor(Sector, &Spot);
+		DestHeight = Level.FindNextLowestFloor(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
 	case FLOOREV_RaiseToNearest:
 		Direction = 1;
-		DestHeight = FindNextHighestFloor(Sector, &Spot);
+		DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
 	case FLOOREV_RaiseToLowestCeiling:
 		Direction = 1;
-		DestHeight = FindLowestCeilingSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		CeilHeight = FindLowestCeilingPoint(Sector, &Spot2);
+		CeilHeight = Level.FindLowestCeilingPoint(Sector, &Spot2);
 		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
 			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
 			CeilHeight)
@@ -156,7 +156,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case FLOOREV_MoveToValueTimes8:
-		FindHighestFloorPoint(Sector, &Spot);
+		Level.FindHighestFloorPoint(Sector, &Spot);
 		DestHeight = itof(Arg3) * 8.0;
 		if (Arg4)
 		{
@@ -177,14 +177,14 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	case FLOOREV_RaiseByTexture:
 		Direction = 1;
 		DestHeight = GetPlanePointZ(&Sector->floor, Spot) +
-			FindShortestTextureAround(Sector);
+			Level.FindShortestTextureAround(Sector);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		break;
 
 	case FLOOREV_LowerToLowestChange:
 		Direction = -1;
-		DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		Texture = Sector->floor.pic;
@@ -192,7 +192,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		// in case no surrounding sector is at DestHeight
 		// --> should not affect compatibility <--
 		NewSpecial = Sector->special & ~SECSPEC_SECRET_MASK; 
-		ModelSec = FindModelFloorSector(Sector, DestHeight);
+		ModelSec = Level.FindModelFloorSector(Sector, DestHeight);
 		if (ModelSec)
 		{
 			Texture = ModelSec->floor.pic;
@@ -202,7 +202,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 
 	case FLOOREV_RaiseToNearestChange:
 		Direction = 1;
-		DestHeight = FindNextHighestFloor(Sector, &Spot);
+		DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		SetFloorPic(Sector, Line->frontsector->floor.pic);
@@ -233,10 +233,10 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	case FLOOREV_RaiseAndCrush:
 		Crush = Arg3;	// arg[2] = crushing value
 		Direction = 1;
-		DestHeight = FindLowestCeilingSurrounding(Sector, &Spot);
+		DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 		Spot.z = DestHeight - 8.0;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-		CeilHeight = FindLowestCeilingPoint(Sector, &Spot2);
+		CeilHeight = Level.FindLowestCeilingPoint(Sector, &Spot2);
 		if ((FloorDestDist - Sector->floor.normal.x * Spot2.x -
 			Sector->floor.normal.y * Spot2.y) / Sector->floor.normal.z >
 			CeilHeight)
@@ -252,26 +252,26 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		switch (Arg4)
 		{
 		case 1:
-			DestHeight = FindHighestFloorSurrounding(Sector, &Spot);
+			DestHeight = Level.FindHighestFloorSurrounding(Sector, &Spot);
 			break;
 		case 2:
-			DestHeight = FindLowestFloorSurrounding(Sector, &Spot);
+			DestHeight = Level.FindLowestFloorSurrounding(Sector, &Spot);
 			break;
 		case 3:
 			if (Direction == 1)
-				DestHeight = FindNextHighestFloor(Sector, &Spot);
+				DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
 			else
-				DestHeight = FindNextLowestFloor(Sector, &Spot);
+				DestHeight = Level.FindNextLowestFloor(Sector, &Spot);
 			break;
 		case 4:
-			DestHeight = FindLowestCeilingSurrounding(Sector, &Spot);
+			DestHeight = Level.FindLowestCeilingSurrounding(Sector, &Spot);
 			break;
 		case 5:
-			DestHeight = FindLowestCeilingPoint(Sector, &Spot);
+			DestHeight = Level.FindLowestCeilingPoint(Sector, &Spot);
 			 break;
 		case 6:
 			DestHeight = GetPlanePointZ(&Sector->floor, Spot) +
-				itof(Direction) * FindShortestTextureAround(Sector);
+				itof(Direction) * Level.FindShortestTextureAround(Sector);
 			 break;
 		default:
 			DestHeight = GetPlanePointZ(&Sector->floor, Spot) +
@@ -287,8 +287,8 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 			{
 				// Numeric model change
 				ModelSec = (Arg4 == 4 || Arg4 == 5) ?
-					FindModelCeilingSector(Sector, DestHeight) :
-					FindModelFloorSector(Sector, DestHeight);
+					Level.FindModelCeilingSector(Sector, DestHeight) :
+					Level.FindModelFloorSector(Sector, DestHeight);
 				if (ModelSec)
 				{
 					Texture = ModelSec->floor.pic;
@@ -395,7 +395,7 @@ void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Texture = OtherSector->floor.pic;
 	NewSpecial = 0;
-	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
+	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
@@ -419,7 +419,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	Crush = false;
 	Direction = -1;
 	Speed = itof(Arg3) * 35.0 / 8.0;
-	DestHeight = FindHighestFloorPoint(OtherSector, &Spot);
+	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
@@ -542,6 +542,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.4  2005/11/20 12:40:55  dj_jl
 //  Implemented support for sound sequence extensions.
 //

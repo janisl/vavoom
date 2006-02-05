@@ -145,6 +145,8 @@ TVec shoot_origin;
 TVec shoot_dir;
 int la_damage;
 classid shootPuffType;
+TVec shoot_linestart;
+TVec shoot_lineend;
 
 __states__
 {
@@ -1458,7 +1460,7 @@ void ZMovement()
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
 		{
-			dist = MobjDist2(self, Enemy);
+			dist = DistTo2(Enemy);
 
 			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 
@@ -2195,7 +2197,7 @@ bool LookForMonsters(bool allaround)
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(mo, self);
+				dist = DistTo(mo);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
@@ -2247,7 +2249,7 @@ bool LookForMonsters2(bool allaround)
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(mo, self);
+				dist = DistTo(mo);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
@@ -2325,7 +2327,7 @@ bool LookForPlayers(bool allaround)
 
 			if (an > 90.0 && an < 270.0)
 			{
-				dist = MobjDist(player.MO, self);
+				dist = DistTo(player.MO);
 				// if real close, react anyway
 				if (dist > MELEERANGE)
 					continue;	// behind back
@@ -2642,13 +2644,13 @@ bool ShootHitPlane(sec_plane_t * plane)
 		//  Doesn't block shooting
 		return true;
 	}
-	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	org_dist = DotProduct(shoot_linestart, plane->normal) - plane->dist;
 	if (org_dist < 0.0)
 	{
 		//  Don't shoot back side
 		return true;
 	}
-	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	hit_dist = DotProduct(shoot_lineend, plane->normal) - plane->dist;
 	if (hit_dist >= 0.0)
 	{
 		//  Didn't hit plane
@@ -2664,13 +2666,13 @@ bool ShootHitPlane(sec_plane_t * plane)
 
 	//  If we are shooting floor or ceiling we are adjusting position
 	// to spawn puff on floor or ceiling, not on wall
-	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
+	shoot_lineend -= (shoot_lineend - shoot_linestart) * hit_dist / (hit_dist - org_dist);
 
 	// position a bit closer
-	lineend += 4.0 * plane->normal;
+	shoot_lineend += 4.0 * plane->normal;
 
 	// Spawn bullet puffs.
-	SpawnPuff(shootPuffType, lineend);
+	SpawnPuff(shootPuffType, shoot_lineend);
 
 	// don't go any farther
 	return false;
@@ -2687,7 +2689,7 @@ bool ShootCheckPlanes(sector_t * sec)
 	sec_region_t *reg;
 	sec_region_t *startreg;
 
-	startreg = PointInRegion(sec, linestart);
+	startreg = PointInRegion(sec, shoot_linestart);
 	for (reg = startreg; reg; reg = reg->next)
 	{
 		if (!ShootHitPlane(reg->floor))
@@ -2744,7 +2746,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 			sec = li->frontsector;
 		}
 
-		lineend = hit_point;
+		shoot_lineend = hit_point;
 
 		//  Check for shooting floor or ceiling
 		if (!ShootCheckPlanes(sec))
@@ -2752,7 +2754,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 			return false;
 		}
 
-		linestart = lineend;
+		shoot_linestart = shoot_lineend;
 
 		//  Execute line special after checking for hitting floor or ceiling
 		// when we know that it actally hits line
@@ -2860,13 +2862,13 @@ int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 	shoot_range = distance;
 
 	dst = shoot_origin + shoot_range * shoot_dir;
-	linestart = shoot_origin;
+	shoot_linestart = shoot_origin;
 	if (!P_PathTraverse(Origin.x, Origin.y, dst.x, dst.y,
 			PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_ShootTraverse'))
 	{
 		return false;
 	}
-	lineend = dst;
+	shoot_lineend = dst;
 	return ShootCheckPlanes(GLevel.PointInSector(dst));
 }
 
@@ -3068,7 +3070,7 @@ void A_Tracer()
 	Velocity.y = Speed * sin(Angles.yaw);
 
 	// change slope
-	dist = MobjDist2(dest, self);
+	dist = DistTo2(dest);
 	dist /= Speed;
 
 	if (dist < 1.0)
@@ -3326,6 +3328,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.28  2006/01/22 17:30:02  dj_jl
 //  Continue conversation if failed to give the item.
 //

@@ -613,74 +613,6 @@ int WeaponManaUse(int pclass, int num)
 	return WeaponManaUseTable[(pclass << 2) + num];
 }
 
-//============================================================================
-//
-// CorpseQueue Routines
-//
-//============================================================================
-
-// Corpse queue for monsters - this should be saved out
-Actor corpseQueue[CORPSEQUEUESIZE];
-int corpseQueueSlot;
-
-//============================================================================
-//
-//  P_InitCreatureCorpseQueue
-//
-//============================================================================
-
-void P_InitCreatureCorpseQueue(int corpseScan)
-{
-	Actor mo;
-	int i;
-
-	// Initialize queue
-	corpseQueueSlot = 0;
-	for (i = 0; i < CORPSEQUEUESIZE; i++)
-	{
-		corpseQueue[i] = none;
-	}
-
-	if (!corpseScan)
-		return;
-
-	// Search mobj list for corpses and place them in this queue
-	FOREACH(Actor, mo)
-	{
-		if (!mo.bCorpse)
-			continue;	// Must be a corpse
-		if (mo.bIceCorpse)
-			continue;	// Not ice corpses
-		// Only corpses that call A_QueueCorpse from death routine
-		if (mo.Class == Centaur ||
-			mo.Class == CentaurLeader ||
-			mo.Class == Demon ||
-			mo.Class == Demon2 ||
-			mo.Class == Wraith ||
-			mo.Class == WraithBuried ||
-			mo.Class == Bishop ||
-			mo.Class == Ettin ||
-			mo.Class == Pig ||
-			mo.Class == CentaurShield ||
-			mo.Class == CentaurSword ||
-			mo.Class == DemonChunk1 ||
-			mo.Class == DemonChunk2 ||
-			mo.Class == DemonChunk3 ||
-			mo.Class == DemonChunk4 ||
-			mo.Class == DemonChunk5 ||
-			mo.Class == Demon2Chunk1 ||
-			mo.Class == Demon2Chunk2 ||
-			mo.Class == Demon2Chunk3 ||
-			mo.Class == Demon2Chunk4 ||
-			mo.Class == Demon2Chunk5 ||
-			mo.Class == FireDemonSplotch1 ||
-			mo.Class == FireDemonSplotch2)
-		{
-			mo.A_QueueCorpse();	// Add corpse to queue
-		}
-	}
-}
-
 //==========================================================================
 //
 //  P_Massacre
@@ -712,6 +644,9 @@ int P_Massacre()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.63  2006/02/05 18:50:55  dj_jl
+//  Moved common utils to level info class or built-in.
+//
 //  Revision 1.62  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //
