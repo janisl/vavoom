@@ -920,7 +920,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int InFrame, int skin_index, const char *skin,
+	VModel* model, int InFrame, int skin_index, const char *skin,
 	dword light, int translucency, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
@@ -1132,9 +1132,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.31  2005/11/20 10:39:57  dj_jl
 //	Fixed skin index check.
-//
+//	
 //	Revision 1.30  2005/07/16 10:17:34  dj_jl
 //	Print which model has missing frame.
 //	

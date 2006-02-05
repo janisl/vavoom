@@ -90,7 +90,7 @@ struct tgaHeader_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static model_t *Mod_LoadModel(model_t *mod);
+static VModel* Mod_LoadModel(VModel* mod);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -104,7 +104,7 @@ rgba_t			SkinPal[256];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static model_t	mod_known[MAX_MOD_KNOWN];
+static VModel	mod_known[MAX_MOD_KNOWN];
 static int		mod_numknown;
 
 // CODE --------------------------------------------------------------------
@@ -117,7 +117,7 @@ static int		mod_numknown;
 //
 //==========================================================================
 
-void *Mod_Extradata(model_t *mod)
+void *Mod_Extradata(VModel* mod)
 {
 	guard(Mod_Extradata);
 	void	*r;
@@ -140,11 +140,11 @@ void *Mod_Extradata(model_t *mod)
 //
 //==========================================================================
 
-model_t *Mod_FindName(char *name)
+VModel* Mod_FindName(char *name)
 {
 	guard(Mod_FindName);
 	int		i;
-	model_t	*mod;
+	VModel*	mod;
 
 	if (!name[0])
 		Sys_Error("Mod_ForName: NULL name");
@@ -179,7 +179,7 @@ model_t *Mod_FindName(char *name)
 //
 //==========================================================================
 
-static void Mod_SwapAliasModel(model_t *mod)
+static void Mod_SwapAliasModel(VModel* mod)
 {
 	guard(Mod_SwapAliasModel);
 	int					i, j;
@@ -284,7 +284,7 @@ static void Mod_SwapAliasModel(model_t *mod)
 //
 //==========================================================================
 
-static model_t *Mod_LoadModel(model_t *mod)
+static VModel* Mod_LoadModel(VModel* mod)
 {
 	guard(Mod_LoadModel);
 	if (mod->data)
@@ -1052,7 +1052,7 @@ void Mod_LoadSkin(const char *name, void **bufptr)
 //
 //==========================================================================
 
-void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int InFrame)
+void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int InFrame)
 {
 	guard(R_PositionWeaponModel);
 	mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(wpmodel);
@@ -1086,9 +1086,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int InFrame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.14  2005/05/30 18:34:03  dj_jl
 //	Added support for IMGZ and PNG lump textures
-//
+//	
 //	Revision 1.13  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	

@@ -197,7 +197,7 @@ public:
 	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, dword, int, bool);
 
 	//	Particles
 	void StartParticles();
@@ -400,9 +400,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.28  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.27  2005/05/03 14:57:00  dj_jl
 //	Added support for specifying skin index.
 //	

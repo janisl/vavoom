@@ -54,8 +54,8 @@ clmobj_t		cl_weapon_mobjs[MAXPLAYERS];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static model_t			*model_precache[1024];
-static model_t			*weapon_model_precache[1024];
+static VModel*			model_precache[1024];
+static VModel*			weapon_model_precache[1024];
 static char				skin_list[256][MAX_VPATH];
 
 static FFunction *pf_ParseServerCommand;
@@ -1073,9 +1073,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.36  2005/06/30 20:20:54  dj_jl
 //	Implemented rendering of Boom fake flats.
-//
+//	
 //	Revision 1.35  2005/06/04 13:59:02  dj_jl
 //	Adding support for Boom fake sectors.
 //	

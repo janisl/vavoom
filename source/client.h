@@ -70,13 +70,13 @@ struct ticcmd_t
 	byte		impulse;
 };
 
-struct model_t;
+struct VModel;
 
 struct cl_pspdef_t
 {
 	int			sprite;
 	int			frame;
-	model_t		*alias_model;
+	VModel*		alias_model;
 	int			alias_frame;
 	int			alias_skinnum;
 	float		sx;
@@ -191,9 +191,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.11  2005/04/04 07:45:45  dj_jl
 //	Palette flash state fix.
-//
+//	
 //	Revision 1.10  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

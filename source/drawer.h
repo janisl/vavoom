@@ -69,10 +69,10 @@ struct refdef_t
 	boolean		drawworld;
 };
 
-struct model_t
+struct VModel
 {
 	char		name[128];
-	void		*data;		// only access through Mod_Extradata
+	void*		data;		// only access through Mod_Extradata
 };
 
 class VDrawer
@@ -115,7 +115,7 @@ public:
 	virtual void EndSky() = 0;
 	virtual void DrawMaskedPolygon(TVec*, int, int, int) = 0;
 	virtual void DrawSpritePolygon(TVec*, int, int, int, dword) = 0;
-	virtual void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool) = 0;
+	virtual void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, dword, int, bool) = 0;
 
 	//	Particles
 	virtual void StartParticles() = 0;
@@ -176,9 +176,12 @@ extern VDrawer			*Drawer;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.19  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.18  2005/05/03 14:57:06  dj_jl
 //	Added support for specifying skin index.
 //	

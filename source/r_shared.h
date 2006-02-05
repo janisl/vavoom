@@ -127,7 +127,7 @@ void R_DrawViewBorder(void);
 
 bool R_BuildLightMap(surface_t*, int);
 
-void *Mod_Extradata(model_t *mod);	// handles caching
+void *Mod_Extradata(VModel* mod);	// handles caching
 void Mod_LoadSkin(const char *name, void **bufptr);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -192,9 +192,12 @@ extern float			PixelAspect;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.18  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.17  2002/08/28 16:39:19  dj_jl
 //	Implemented sector light color.
 //	

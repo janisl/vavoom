@@ -123,7 +123,7 @@ static aedge_t aedges[12] =
 //==========================================================================
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	model_t *model, int frame, int skin_index, const char *skin, dword light,
+	VModel* model, int frame, int skin_index, const char *skin, dword light,
 	int translucency, bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
@@ -185,7 +185,7 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //
 //==========================================================================
 
-bool VSoftwareDrawer::AliasCheckBBox(model_t *model, const TAVec &angles, int frame)
+bool VSoftwareDrawer::AliasCheckBBox(VModel* model, const TAVec &angles, int frame)
 {
 	int					i, flags, numv;
 	float				zi, basepts[8][3], v0, v1, frac;
@@ -803,9 +803,12 @@ extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.17  2005/11/20 10:39:57  dj_jl
 //	Fixed skin index check.
-//
+//	
 //	Revision 1.16  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	

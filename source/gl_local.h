@@ -144,7 +144,7 @@ public:
 	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
 	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, model_t*, int, int, const char*, dword, int, bool);
+	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, dword, int, bool);
 
 	//	Particles
 	void StartParticles();
@@ -272,9 +272,12 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.30  2006/01/03 19:57:45  dj_jl
 //	Fixed anisotropic texture filtering.
-//
+//	
 //	Revision 1.29  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	

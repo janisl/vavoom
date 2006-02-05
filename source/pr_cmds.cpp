@@ -2609,13 +2609,13 @@ PF(R_DrawModelFrame)
 {
 	TVec		origin;
 	float		angle;
-	model_t		*model;
+	VModel		*model;
 	int			frame;
 	int			skin;
 
 	skin = Pop();
 	frame = Pop();
-	model = (model_t*)Pop();
+	model = (VModel*)Pop();
 	angle = Popf();
 	origin = Popv();
 	R_DrawModelFrame(origin, angle, model, frame, (char*)skin);
@@ -3363,9 +3363,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.66  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.65  2006/01/10 19:47:00  dj_jl
 //	Added builtin for changing the music.
-//
+//	
 //	Revision 1.64  2005/12/11 21:37:00  dj_jl
 //	Made path traversal callbacks class members.
 //	

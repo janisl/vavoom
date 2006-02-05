@@ -387,7 +387,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		if (spr.type == 2)
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(model_t*)spr.surf, spr.lump, spr.count, spr.skin,
+				(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
 				spr.light, spr.translucency - 1, false);
 		}
 		else if (spr.type)
@@ -726,7 +726,7 @@ void RenderTranslucentAliasModel(clmobj_t *mobj, dword light)
 		if (spr.type == 2)
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-				(model_t*)spr.surf, spr.lump, spr.count, spr.skin,
+				(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
 				spr.light, spr.translucency - 1, false);
 		}
 		else if (spr.type)
@@ -890,7 +890,7 @@ void R_DrawTranslucentPolys(void)
 			if (spr.type == 2)
 			{
 				Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
-					(model_t*)spr.surf, spr.lump, spr.count, spr.skin,
+					(VModel*)spr.surf, spr.lump, spr.count, spr.skin,
 					spr.light, spr.translucency - 1, false);
 			}
 			else if (spr.type)
@@ -1142,7 +1142,7 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 //
 //==========================================================================
 
-void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
+void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 	int frame, const char *skin)
 {
 	guard(R_DrawModelFrame);
@@ -1179,9 +1179,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.23  2005/11/02 22:29:26  dj_jl
 //	Offset fix enabled by default.
-//
+//	
 //	Revision 1.22  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
 //	

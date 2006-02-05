@@ -61,7 +61,7 @@ struct clmobj_t
 	int			frame;	// might be ORed with FF_FULLBRIGHT
 
 	int			ModelIndex;
-	model_t*	AliasModel;
+	VModel*		AliasModel;
 	int			AliasFrame;
 	int			AliasSkinIndex;
 	char		Skin[64];
@@ -104,11 +104,11 @@ particle_t *R_NewParticle(void);
 void R_AddStaticLight(const TVec &origin, float radius, dword color);
 
 void R_InstallSprite(const char *name, int index);
-void R_DrawModelFrame(const TVec &origin, float angle, model_t *model,
+void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 	int frame, const char *skin);
 
-model_t *Mod_FindName(char *name);
-void R_PositionWeaponModel(clmobj_t &wpent, model_t *wpmodel, int frame);
+VModel* Mod_FindName(char *name);
+void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int frame);
 
 void SCR_SetVirtualScreen(int Width, int Height);
 
@@ -138,9 +138,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/05 14:11:00  dj_jl
+//	Fixed conflict with Solaris.
+//
 //	Revision 1.15  2005/05/03 14:56:58  dj_jl
 //	Added support for specifying skin index.
-//
+//	
 //	Revision 1.14  2004/08/18 18:05:46  dj_jl
 //	Support for higher virtual screen resolutions.
 //	
