@@ -84,6 +84,7 @@ static bool				fl_fixvoices;
 
 void FL_AddFile(const char *file, const char* gwadir)
 {
+	guard(FL_AddFile);
 	int i = 0;
 	while (wadfiles[i])
 	{
@@ -92,9 +93,13 @@ void FL_AddFile(const char *file, const char* gwadir)
 	char* newfile = (char*)Z_Malloc(strlen(file) + 1, PU_STATIC, 0);
 	strcpy(newfile, file);
 	wadfiles[i] = newfile;
-	char* newdir = (char*)Z_Malloc(strlen(gwadir) + 1, PU_STATIC, 0);
-	strcpy(newdir, gwadir);
-	gwadirs[i] = newdir;
+	if (gwadir)
+	{
+		char* newdir = (char*)Z_Malloc(strlen(gwadir) + 1, PU_STATIC, 0);
+		strcpy(newdir, gwadir);
+		gwadirs[i] = newdir;
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -105,6 +110,7 @@ void FL_AddFile(const char *file, const char* gwadir)
 
 static void AddGameDir(const char *dir)
 {
+	guard(AddGameDir);
 	search_path_t	*info;
 
 	info = (search_path_t*)Z_StrCalloc(sizeof(*info));
@@ -146,6 +152,7 @@ static void AddGameDir(const char *dir)
 	}
 
 	strcpy(fl_gamedir, dir);
+	unguard;
 }
 
 //==========================================================================
@@ -156,6 +163,7 @@ static void AddGameDir(const char *dir)
 
 static void ParseBase(const char *name)
 {
+	guard(ParseBase);
 	TArray<version_t>	games;
 	bool				select_game;
 	char				UseName[MAX_OSPATH];
@@ -248,7 +256,7 @@ static void ParseBase(const char *name)
 		}
 
 		//	First look in the save directory.
-		if (Sys_FileExists(va("%s/%s", fl_savedir, *GIt->MainWad)))
+		if (fl_savedir[0] && Sys_FileExists(va("%s/%s", fl_savedir, *GIt->MainWad)))
 		{
 			strcpy(fl_mainwad, *GIt->MainWad);
 			FL_AddFile(va("%s/%s", fl_savedir, fl_mainwad), NULL);
@@ -282,6 +290,7 @@ static void ParseBase(const char *name)
 		Sys_Error("Main wad file not found.");
 	else
 		Sys_Error("Game mode indeterminate.");
+	unguard;
 }
 
 //==========================================================================
@@ -292,11 +301,13 @@ static void ParseBase(const char *name)
 
 static void SetupGameDir(const char *dirname)
 {
+	guard(SetupGameDir);
 	char		tmp[256];
 
 	sprintf(tmp, "%s/base.txt", dirname);
 	ParseBase(tmp);
 	AddGameDir(dirname);
+	unguard;
 }
 
 //==========================================================================
@@ -305,8 +316,9 @@ static void SetupGameDir(const char *dirname)
 //
 //==========================================================================
 
-void FL_Init(void)
+void FL_Init()
 {
+	guard(FL_Init);
 	int p;
 
 	//	Set up base directory (main data files).
@@ -382,6 +394,7 @@ void FL_Init(void)
 	{
 		W_AddFile(*filenames, *gwanames, fl_fixvoices);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -392,6 +405,7 @@ void FL_Init(void)
 
 bool FL_FindFile(const char *fname, char *dest)
 {
+	guard(FL_FindFile);
 	search_path_t	*search;
 	char			tmp[MAX_OSPATH];
 
@@ -408,6 +422,7 @@ bool FL_FindFile(const char *fname, char *dest)
 		}
 	}
 	return false;
+	unguard;
 }
 
 //==========================================================================
@@ -418,6 +433,7 @@ bool FL_FindFile(const char *fname, char *dest)
 
 void FL_CreatePath(const char* Path)
 {
+	guard(FL_CreatePath);
 	char* Temp = (char*)Z_Malloc(strlen(Path) + 1);
 	strcpy(Temp, Path);
 	for (size_t i = 3; i <= strlen(Temp); i++)
@@ -432,6 +448,7 @@ void FL_CreatePath(const char* Path)
 		}
 	}
 	Z_Free(Temp);
+	unguard;
 }
 
 //==========================================================================
@@ -442,10 +459,12 @@ void FL_CreatePath(const char* Path)
 
 static void FL_CreateFilePath(const char* Path)
 {
+	guard(FL_CreateFilePath);
 	char* Temp = (char*)Z_Malloc(strlen(Path) + 1);
 	FL_ExtractFilePath(Path, Temp);
 	FL_CreatePath(Temp);
 	Z_Free(Temp);
+	unguard;
 }
 
 //==========================================================================
@@ -456,6 +475,7 @@ static void FL_CreateFilePath(const char* Path)
 
 int FL_ReadFile(const char* name, void** buffer, int tag)
 {
+	guard(FL_ReadFile);
 	int			handle;
 	int			count;
 	int			length;
@@ -484,6 +504,7 @@ int FL_ReadFile(const char* name, void** buffer, int tag)
 	}
 		
 	return length;
+	unguard;
 }
 
 //==========================================================================
@@ -494,6 +515,7 @@ int FL_ReadFile(const char* name, void** buffer, int tag)
 
 bool FL_WriteFile(const char* name, const void* source, int length)
 {
+	guard(FL_WriteFile);
 	int		handle;
 	int		count;
 	const char*		RealName;
@@ -516,13 +538,14 @@ bool FL_WriteFile(const char* name, const void* source, int length)
 
 	count = Sys_FileWrite(handle, source, length);
 	Sys_FileClose(handle);
-	
+
 	if (count < length)
 	{
 		return false;
 	}
-		
+
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -533,6 +556,7 @@ bool FL_WriteFile(const char* name, const void* source, int length)
 
 void FL_DefaultPath(char *path, const char *basepath)
 {
+	guard(FL_DefaultPath);
 	char    temp[128];
 
 	if (path[0] == '/')
@@ -542,6 +566,7 @@ void FL_DefaultPath(char *path, const char *basepath)
 	strcpy(temp, path);
 	strcpy(path, basepath);
 	strcat(path, temp);
+	unguard;
 }
 
 //==========================================================================
@@ -552,6 +577,7 @@ void FL_DefaultPath(char *path, const char *basepath)
 
 void FL_DefaultExtension(char *path, const char *extension)
 {
+	guard(FL_DefaultExtension);
 	char    *src;
 
 	//
@@ -570,6 +596,7 @@ void FL_DefaultExtension(char *path, const char *extension)
 	}
 
 	strcat(path, extension);
+	unguard;
 }
 
 //==========================================================================
@@ -580,6 +607,7 @@ void FL_DefaultExtension(char *path, const char *extension)
 
 void FL_StripFilename(char *path)
 {
+	guard(FL_StripFilename);
 	int             length;
 
 	length = strlen(path)-1;
@@ -588,6 +616,7 @@ void FL_StripFilename(char *path)
 		length--;
 	}
 	path[length] = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -598,6 +627,7 @@ void FL_StripFilename(char *path)
 
 void FL_StripExtension(char *path)
 {
+	guard(FL_StripExtension);
 	char *search;
 
 	search = path + strlen(path) - 1;
@@ -610,6 +640,7 @@ void FL_StripExtension(char *path)
 		}
 		search--;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -620,6 +651,7 @@ void FL_StripExtension(char *path)
 
 void FL_ExtractFilePath(const char *path, char *dest)
 {
+	guard(FL_ExtractFilePath);
 	const char    *src;
 
 	src = path + strlen(path) - 1;
@@ -632,6 +664,7 @@ void FL_ExtractFilePath(const char *path, char *dest)
 
 	memcpy(dest, path, src - path);
 	dest[src - path] = 0;
+	unguard;
 }
 
 //==========================================================================
@@ -642,6 +675,7 @@ void FL_ExtractFilePath(const char *path, char *dest)
 
 void FL_ExtractFileName(const char *path, char *dest)
 {
+	guard(FL_ExtractFileName);
 	const char    *src;
 
 	src = path + strlen(path) - 1;
@@ -653,6 +687,7 @@ void FL_ExtractFileName(const char *path, char *dest)
 		src--;
 
 	strcpy(dest, src);
+	unguard;
 }
 
 //==========================================================================
@@ -663,6 +698,7 @@ void FL_ExtractFileName(const char *path, char *dest)
 
 void FL_ExtractFileBase(const char *path, char *dest)
 {
+	guard(FL_ExtractFileBase);
 #if 0
 	const char    *src;
 
@@ -704,6 +740,7 @@ void FL_ExtractFileBase(const char *path, char *dest)
 		i++;
     }
 #endif
+	unguard;
 }
 
 //==========================================================================
@@ -714,6 +751,7 @@ void FL_ExtractFileBase(const char *path, char *dest)
 
 void FL_ExtractFileExtension(const char *path, char *dest)
 {
+	guard(FL_ExtractFileExtension);
 	const char    *src;
 
 	src = path + strlen(path) - 1;
@@ -730,6 +768,7 @@ void FL_ExtractFileExtension(const char *path, char *dest)
 	}
 
 	strcpy(dest, src);
+	unguard;
 }
 
 //==========================================================================
@@ -767,11 +806,11 @@ public:
 		}
 		//unguard;
 	}
-	int Tell(void)
+	int Tell()
 	{
 		return ftell(File);
 	}
-	int TotalSize(void)
+	int TotalSize()
 	{
 		int CurPos = ftell(File);
 		fseek(File, 0, SEEK_END);
@@ -779,11 +818,11 @@ public:
 		fseek(File, CurPos, SEEK_SET);
 		return Size;
 	}
-	bool AtEnd(void)
+	bool AtEnd()
 	{
 		return !!feof(File);
 	}
-	bool Close(void)
+	bool Close()
 	{
 		guardSlow(FArchiveFileReader::Close);
 		if (File)
@@ -809,6 +848,7 @@ protected:
 
 FArchive* FL_OpenFileRead(const char *Name)
 {
+	guard(FL_OpenFileRead);
 	char TmpName[256];
 
 	if (!FL_FindFile(Name, TmpName))
@@ -821,6 +861,7 @@ FArchive* FL_OpenFileRead(const char *Name)
 		return NULL;
 	}
 	return new FArchiveFileReader(File, GCon);
+	unguard;
 }
 
 //==========================================================================
@@ -857,11 +898,11 @@ public:
 		}
 		//unguard;
 	}
-	int Tell(void)
+	int Tell()
 	{
 		return ftell(File);
 	}
-	int TotalSize(void)
+	int TotalSize()
 	{
 		int CurPos = ftell(File);
 		fseek(File, 0, SEEK_END);
@@ -869,11 +910,11 @@ public:
 		fseek(File, CurPos, SEEK_SET);
 		return Size;
 	}
-	bool AtEnd(void)
+	bool AtEnd()
 	{
 		return !!feof(File);
 	}
-	bool Close(void)
+	bool Close()
 	{
 		guardSlow(FArchiveFileWriter::Close);
 		if (File && fclose(File))
@@ -910,6 +951,7 @@ protected:
 
 FArchive* FL_OpenFileWrite(const char *Name)
 {
+	guard(FL_OpenFileWrite);
 	char TmpName[1024];
 
 	if (fl_savedir[0])
@@ -923,14 +965,18 @@ FArchive* FL_OpenFileWrite(const char *Name)
 		return NULL;
 	}
 	return new FArchiveFileWriter(File, GCon);
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/06 21:46:10  dj_jl
+//	Fixed missing validity check, added guard macros.
+//
 //	Revision 1.18  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
-//
+//	
 //	Revision 1.17  2005/11/05 14:57:36  dj_jl
 //	Putting Strife shareware voices in correct namespace.
 //	
