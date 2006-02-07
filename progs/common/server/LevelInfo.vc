@@ -347,7 +347,7 @@ bool TraceLine(TVec start, TVec end)
 
 	linestart = trace_start;
 	if (P_PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES,
-		none, 'TraceTraverse'))
+		self, 'TraceTraverse'))
 	{
 		lineend = end;
 		return TraceCheckPlanes(GLevel.PointInSector(end));
@@ -1140,6 +1140,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/07 19:44:19  dj_jl
+//  Fixed trace callback.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //
