@@ -54,6 +54,8 @@ client_static_t		cls;
 client_state_t		cl;
 TProgs				clpr;
 
+VClientGameBase*	GClGame;
+
 TCvarS			cl_name("name", "PLAYER", CVAR_ARCHIVE | CVAR_USERINFO);
 TCvarI			cl_color("color", "0", CVAR_ARCHIVE | CVAR_USERINFO);
 TCvarI			cl_class("class", "0", CVAR_ARCHIVE | CVAR_USERINFO);
@@ -64,7 +66,7 @@ dlight_t		cl_dlights[MAX_DLIGHTS];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static FFunction *pf_CL_UpdateMobj;
+IMPLEMENT_CLASS(V, ClientGameBase);
 
 static bool UserInfoSent;
 
@@ -80,15 +82,16 @@ void CL_Init(void)
 {
 	guard(CL_Init);
 	clpr.Load("clprogs");
-	clpr.SetGlobal("cl", (int)&cl);
-	clpr.SetGlobal("level", (int)&cl_level);
-
-	pf_CL_UpdateMobj = clpr.FuncForName("CL_UpdateMobj");
 
 	cl_mobjs = Z_CNew<clmobj_t>(GMaxEntities);
 	cl_mo_base = Z_CNew<clmobjbase_t>(GMaxEntities);
 
 	cls.message.Alloc(NET_MAXMESSAGE);
+
+	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
+		VClass::FindClass("ClientGame"), PU_STATIC);
+	GClGame->cl = &cl;
+	GClGame->level = &cl_level;
 	unguard;
 }
 
@@ -107,14 +110,6 @@ void CL_Ticker(void)
       case 0:
 		SB_Ticker();
 		AM_Ticker();
-		break;
-
-      case 1:
-		IM_Ticker();
-		break;
-			 
-      case 2:
-		F_Ticker();
 		break;
     }
 	unguard;
@@ -222,7 +217,7 @@ void CL_UpdateMobjs(void)
 	{
 		if (cl_mobjs[i].in_use)
 		{
-			clpr.Exec(pf_CL_UpdateMobj, (int)&cl_mobjs[i], i);
+			GClGame->eventUpdateMobj(&cl_mobjs[i], i, host_frametime);
 		}
 	}
 	unguard;
@@ -418,7 +413,7 @@ void CL_Disconnect(void)
 	cls.demoplayback = false;
 	cls.timedemo = false;
 	cls.signon = 0;
-	clpr.Exec("CL_Disconnected");
+	GClGame->eventDisconnected();
 	unguard;
 }
 
@@ -455,7 +450,7 @@ void CL_EstablishConnection(char *host)
 
 	UserInfoSent = false;
 
-	clpr.Exec("CL_Connected");
+	GClGame->eventConnected();
 	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
 
@@ -539,9 +534,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.17  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
-//
+//	
 //	Revision 1.16  2002/09/07 16:31:50  dj_jl
 //	Added Level class.
 //	

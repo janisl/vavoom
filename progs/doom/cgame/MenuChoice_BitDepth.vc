@@ -23,9 +23,11 @@
 //**
 //**************************************************************************
 
-class MenuChoice_BitDepth:MenuChoiceEnum;
+class MenuChoice_BitDepth : MenuChoiceEnum;
 
-int GetInitialValue(void)
+int depths[4];
+
+int GetInitialValue()
 {
 	int b;
 	int bi;
@@ -46,7 +48,7 @@ int GetInitialValue(void)
 	return bi;
 }
 
-int GetDepth(void)
+int GetDepth()
 {
 	return depths[Value];
 }
@@ -58,11 +60,18 @@ defaultproperties
 	EnumNames[1] = "16";
 	EnumNames[2] = "24";
 	EnumNames[3] = "32";
+	depths[0] = 8;
+	depths[1] = 16;
+	depths[2] = 24;
+	depths[3] = 32;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:09  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:18  dj_jl
 //  New style of defining classes.
 //

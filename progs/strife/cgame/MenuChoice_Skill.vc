@@ -23,23 +23,23 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Skill:MenuBigTextButton;
+class MenuChoice_Skill : MenuBigTextButton;
 
 int SkillLevel;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 	SetCvar("Skill", SkillLevel);
 
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers 1\n");
 
-	if (shareware)
+	if (!WadLumpPresent("MAP01"))
 		CmdBuf_AddText("Map MAP33\n");
 	else
 		CmdBuf_AddText("Map MAP02\n");
 
-	ForceMenuOff();
+	GetClGame().ForceMenuOff();
 }
 
 defaultproperties
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

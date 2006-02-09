@@ -23,7 +23,63 @@
 //**
 //**************************************************************************
 
-class MenuChoice:MenuObject;
+class MenuChoice : MenuObject;
+
+int pic_M_LSLEFT;
+int pic_M_LSCNTR;
+int pic_M_LSRGHT;
+
+ClientGame GetClGame()
+{
+	return MenuScreen(Parent).ClGame;
+}
+
+//**************************************************************************
+//**
+//**    Slot for saves and input lines
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//  InitSlot
+//
+//==========================================================================
+
+void InitSlot()
+{
+	pic_M_LSLEFT = R_RegisterPic("M_LSLEFT", PIC_PATCH);
+	pic_M_LSCNTR = R_RegisterPic("M_LSCNTR", PIC_PATCH);
+	pic_M_LSRGHT = R_RegisterPic("M_LSRGHT", PIC_PATCH);
+}
+
+//==========================================================================
+//
+//  DrawSlot
+//
+//==========================================================================
+
+int DrawSlot(GC gc, int y, string text, bool entering)
+{
+	int xx;
+	int j;
+
+	gc.DrawIcon(2, y + 12, pic_M_LSLEFT);
+	for (j = 0, xx = 10; j < 24; j++, xx += 8)
+	{
+		gc.DrawIcon(xx, y + 12, pic_M_LSCNTR);
+	}
+	gc.DrawIcon(xx, y + 12, pic_M_LSRGHT);
+
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	gc.DrawText(8, y + 5, text);
+	if (entering)
+	{
+		T_DrawCursor();
+	}
+	return 16;
+}
 
 defaultproperties
 {
@@ -32,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

@@ -23,9 +23,17 @@
 //**
 //**************************************************************************
 
-class MenuChoice_VideoMode:MenuChoiceEnum;
+class MenuChoice_VideoMode : MenuChoiceEnum;
 
-int GetInitialValue(void)
+struct mode_t
+{
+	int width;
+	int height;
+};
+
+mode_t modes[9];
+
+int GetInitialValue()
 {
 	int w;
 	int h;
@@ -70,11 +78,23 @@ defaultproperties
 	EnumNames[6] = "1152x864";
 	EnumNames[7] = "1280x1024";
 	EnumNames[8] = "1600x1200";
+	modes[0].width = 320; modes[0].height = 200;
+	modes[1].width = 320; modes[1].height = 240;
+	modes[2].width = 640; modes[2].height = 400;
+	modes[3].width = 640; modes[3].height = 480;
+	modes[4].width = 800; modes[4].height = 600;
+	modes[5].width = 1024; modes[5].height = 768;
+	modes[6].width = 1152; modes[6].height = 864;
+	modes[7].width = 1280; modes[7].height = 1024;
+	modes[8].width = 1600; modes[8].height = 1200;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.2  2003/09/24 16:38:58  dj_jl
 //  Increase max video mode
 //

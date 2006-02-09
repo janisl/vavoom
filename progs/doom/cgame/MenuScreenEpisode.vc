@@ -27,7 +27,7 @@ class MenuScreenEpisode:MenuScreen;
 
 void InitWindow(void)
 {
-	if (!ExtendedWAD)
+	if (!(WadLumpPresent("E2M1") && WadLumpPresent("E4M1")))
 	{
 		Choices[3] = classidNone;
 	}
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:09  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

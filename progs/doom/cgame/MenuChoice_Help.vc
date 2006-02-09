@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Help:MenuBigTextButton;
+class MenuChoice_Help : MenuBigTextButton;
 
 #ifndef DOOM2
-void InitWindow(void)
+void InitWindow()
 {
-	if (shareware)
+	if (!WadLumpPresent("E2M1"))
 	{
 		Text = "Read This!";
 	}
@@ -36,9 +36,9 @@ void InitWindow(void)
 }
 #endif
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
-	PushMenuScreen(SpawnMenu(MenuScreenHelp));
+	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenHelp));
 }
 
 defaultproperties
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:09  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

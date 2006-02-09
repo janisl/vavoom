@@ -70,7 +70,7 @@ void CursorMoved(void)
 	::CursorMoved();
 	if (Selector)
 	{
-		Selector.SetPos(Items[CursorPos].X + ControlColumn * 90,
+		Selector.SetPos(Items[CursorPos].X + ClGame.ControlColumn * 90,
 			Items[CursorPos].Y);
 	}
 }
@@ -86,6 +86,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

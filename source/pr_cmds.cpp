@@ -694,10 +694,10 @@ PF(RotateDirectionVector)
 	TVec	vec;
 	TAVec	rot;
 
-	vec = Popv();
 	rot.roll = Popf();
 	rot.yaw = Popf();
 	rot.pitch = Popf();
+	vec = Popv();
 
 	TAVec angles;
 	TVec out;
@@ -724,8 +724,8 @@ PF(VectorRotateAroundZ)
 	angle = Popf();
 	vec = (TVec*)Pop();
 
-	float dstx = vec->x * cos(angle) - vec->y * sin(angle);
-	float dsty = vec->x * sin(angle) + vec->y * cos(angle);
+	float dstx = vec->x * mcos(angle) - vec->y * msin(angle);
+	float dsty = vec->x * msin(angle) + vec->y * mcos(angle);
 
 	vec->x = dstx;
 	vec->y = dsty;
@@ -3501,9 +3501,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.68  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.67  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
-//
+//	
 //	Revision 1.66  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
 //	

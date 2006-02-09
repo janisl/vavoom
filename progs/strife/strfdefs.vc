@@ -23,8 +23,6 @@
 //**
 //**************************************************************************
 
-bool shareware;
-
 enum
 {
 	svc_gun_shot = USER_PROTOCOL_START,
@@ -151,6 +149,7 @@ addfields client_state_t
 	//
 
 	int Ammo[NUMAMMO];
+	int MaxAmmo[NUMAMMO];
 	int ReadyAmmo;
 
 	bool WeaponOwned[NUMWEAPONS];
@@ -180,11 +179,12 @@ addfields client_state_t
 
 #endif
 
-int maxammo[] = { 250, 50, 25, 400, 100, 30, 16 };
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.16  2005/11/03 22:50:07  dj_jl
 //  Implemented health bars and ammo type icons.
 //

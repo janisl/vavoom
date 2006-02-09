@@ -33,6 +33,9 @@
 #include "gamedefs.h"
 #include "sv_local.h"
 #include "fmapdefs.h"
+#ifdef CLIENT
+#include "cl_local.h"
+#endif
 
 // MACROS ------------------------------------------------------------------
 
@@ -175,7 +178,7 @@ void CL_LoadLevel(const char *MapName)
 	}
 
 	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass(), PU_STATIC);
-	clpr.SetGlobal("GLevel", (int)GClLevel);
+	GClGame->GLevel = GClLevel;
 
 	GClLevel->LoadMap(MapName);
 	unguard;
@@ -337,6 +340,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2006/02/09 22:35:54  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.27  2005/11/24 20:09:23  dj_jl
 //  Removed unused fields from Object class.
 //

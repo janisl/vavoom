@@ -25,10 +25,6 @@
 
 //#define GRENADE_LAUNCHER
 
-#ifndef DOOM2
-bool shareware;
-#endif
-
 enum
 {
 	wp_fist,
@@ -173,6 +169,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2006/02/09 22:33:08  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.15  2005/12/22 19:06:20  dj_jl
 //  Fixed status bar face.
 //

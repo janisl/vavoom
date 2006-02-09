@@ -59,10 +59,6 @@ int 					sb_height = 32;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static FFunction *pf_SB_UpdateWidgets;
-static FFunction *pf_SB_Drawer;
-static FFunction *pf_SB_StartMap;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -73,10 +69,7 @@ static FFunction *pf_SB_StartMap;
 
 void SB_Init(void)
 {
-	pf_SB_UpdateWidgets = clpr.FuncForName("SB_UpdateWidgets");
-	pf_SB_Drawer = clpr.FuncForName("SB_Drawer");
-	pf_SB_StartMap = clpr.FuncForName("SB_StartMap");
-	sb_height = clpr.GetGlobal("sb_height");
+	sb_height = GClGame->sb_height;
 }
 
 //==========================================================================
@@ -89,7 +82,7 @@ void SB_Ticker(void)
 {
 	if (cls.signon == SIGNONS)
 	{
-	    clpr.Exec(pf_SB_UpdateWidgets);
+	    GClGame->eventStatusBarUpdateWidgets();
 	}
 }
 
@@ -110,10 +103,10 @@ boolean SB_Responder(event_t *)
 //
 //==========================================================================
 
-void SB_Drawer(void)
+void SB_Drawer()
 {
 	//	Update widget visibility
-	clpr.Exec(pf_SB_Drawer, automapactive ? SB_VIEW_AUTOMAP :
+	GClGame->eventStatusBarDrawer(automapactive ? SB_VIEW_AUTOMAP :
 		refdef.height == ScreenHeight ? SB_VIEW_FULLSCREEN : SB_VIEW_NORMAL);
 }
 
@@ -125,15 +118,18 @@ void SB_Drawer(void)
 
 void SB_Start(void)
 {
-	clpr.Exec(pf_SB_StartMap);
+	GClGame->eventStatusBarStartMap();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.10  2002/02/02 19:20:41  dj_jl
 //	FFunction pointers used instead of the function numbers
-//
+//	
 //	Revision 1.9  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

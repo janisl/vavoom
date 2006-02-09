@@ -23,17 +23,10 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+class StatusBarScreen : Window;
 
-// CONSTANTS ---------------------------------------------------------------
+client_state_t *cl;
 
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-int sb_height = 32;
 bool bShowWeapons;
 bool bShowKeys;
 bool bShowObjectives;
@@ -65,108 +58,16 @@ int pic_backpack;
 int LoadedLog;
 int LogText[1024 / 4];
 
-int AmmoPosY[NUMAMMO] = { 75, 99, 91, 139, 131, 115, 123 };
-
-string InventoryIconNames[NUMINVITEMS] =
-{
-	"I_STMP",
-	"I_MDKT",
-	"I_FULL",
-	"I_XPRK",
-	"I_ARM1",
-	"I_ARM2",
-	"I_SHD1",
-	"I_MASK",
-	"I_UNIF",
-	"I_OFIC",
-	"I_PMUP",//"I_PMAP", - pic doesn't exist.
-	"I_PMUP",
-	"I_BEAC",
-	"I_TARG",
-	"I_COIN",
-	"I_RING",
-	"I_RELC",
-	"I_EARS",
-	"I_BFLM",
-	"I_COUP",
-	"I_TOKN",
-	"I_TOKN",
-	"I_HELT",
-	"I_GUNT",
-	"I_OTOK",
-};
-
-string KeyIconNames[NUMKEYS] =
-{
-	"I_FUSL",
-	"I_REBL",
-	"I_TPAS",
-	"I_CRD1",
-	"I_PRIS",
-	"I_HAND",
-	"I_PWR1",
-	"I_PWR2",
-	"I_KY1G",
-	"I_PWR3",
-	"I_CRD2",
-	"I_KY2S",
-	"I_ORAC",
-	"I_GYID",
-	"I_FUBR",
-	"I_WARE",
-	"I_KY3B",
-	"I_RCRY",
-	"I_BCRY",
-	"I_CHAP",
-	"I_TUNL",
-	"I_SECK",
-	"I_GOID",
-	"I_BLTK",
-	"I_PROC",
-	"I_MINE",
-	"I_BLTK"
-};
-
-string KeyNames[NUMKEYS] =
-{
-	"Base Key",
-	"Govs Key",
-	"Passcard",
-	"ID Badge",
-	"Prison Key",
-	"Severed Hand",
-	"Power1 Key",
-	"Power2 Key",
-	"Gold Key",
-	"Power3 Key",
-	"ID Card",
-	"Silver Key",
-	"Oracle Key",
-	"Military ID",
-	"Order Key",
-	"Warehouse Key",
-	"Brass Key",
-	"Red Crystal Key",
-	"Blue Crystal Key",
-	"Chapel Key",
-	"Catacomb Key",
-	"Security Key",
-	"Core Key",
-	"Mauler Key",
-	"Factory Key",
-	"Mine Key",
-	"New Key 5",
-};
-
-// CODE --------------------------------------------------------------------
+int AmmoPosY[NUMAMMO];
+string KeyNames[NUMKEYS];
 
 //==========================================================================
 //
-//  SB_StartMap
+//  StartMap
 //
 //==========================================================================
 
-void SB_StartMap()
+void StartMap()
 {
 	int namebuf[3];
 	string Name = ARR2STR(namebuf);
@@ -189,15 +90,60 @@ void SB_StartMap()
 	pic_yellownum[10] = R_RegisterPic("INVFONY%", PIC_PATCH);
 	pic_graynum[10] = R_RegisterPic("INVFONG%", PIC_PATCH);
 
-	for (i = 0; i < NUMINVITEMS; i++)
-	{
-		pic_inv[i] = R_RegisterPic(InventoryIconNames[i], PIC_PATCH);
-	}
+	pic_inv[0] = R_RegisterPic("I_STMP", PIC_PATCH);
+	pic_inv[1] = R_RegisterPic("I_MDKT", PIC_PATCH);
+	pic_inv[2] = R_RegisterPic("I_FULL", PIC_PATCH);
+	pic_inv[3] = R_RegisterPic("I_XPRK", PIC_PATCH);
+	pic_inv[4] = R_RegisterPic("I_ARM1", PIC_PATCH);
+	pic_inv[5] = R_RegisterPic("I_ARM2", PIC_PATCH);
+	pic_inv[6] = R_RegisterPic("I_SHD1", PIC_PATCH);
+	pic_inv[7] = R_RegisterPic("I_MASK", PIC_PATCH);
+	pic_inv[8] = R_RegisterPic("I_UNIF", PIC_PATCH);
+	pic_inv[9] = R_RegisterPic("I_OFIC", PIC_PATCH);
+	pic_inv[10] = R_RegisterPic("I_PMUP", PIC_PATCH);//"I_PMAP", - pic doesn't exist.
+	pic_inv[11] = R_RegisterPic("I_PMUP", PIC_PATCH);
+	pic_inv[12] = R_RegisterPic("I_BEAC", PIC_PATCH);
+	pic_inv[13] = R_RegisterPic("I_TARG", PIC_PATCH);
+	pic_inv[14] = R_RegisterPic("I_COIN", PIC_PATCH);
+	pic_inv[15] = R_RegisterPic("I_RING", PIC_PATCH);
+	pic_inv[16] = R_RegisterPic("I_RELC", PIC_PATCH);
+	pic_inv[17] = R_RegisterPic("I_EARS", PIC_PATCH);
+	pic_inv[18] = R_RegisterPic("I_BFLM", PIC_PATCH);
+	pic_inv[19] = R_RegisterPic("I_COUP", PIC_PATCH);
+	pic_inv[20] = R_RegisterPic("I_TOKN", PIC_PATCH);
+	pic_inv[21] = R_RegisterPic("I_TOKN", PIC_PATCH);
+	pic_inv[22] = R_RegisterPic("I_HELT", PIC_PATCH);
+	pic_inv[23] = R_RegisterPic("I_GUNT", PIC_PATCH);
+	pic_inv[24] = R_RegisterPic("I_OTOK", PIC_PATCH);
 	pic_invcurs = R_RegisterPic("INVCURS", PIC_PATCH);
-	for (i = 0; i < NUMKEYS; i++)
-	{
-		pic_key[i] = R_RegisterPic(KeyIconNames[i], PIC_PATCH);
-	}
+
+	pic_key[0] = R_RegisterPic("I_FUSL", PIC_PATCH);
+	pic_key[1] = R_RegisterPic("I_REBL", PIC_PATCH);
+	pic_key[2] = R_RegisterPic("I_TPAS", PIC_PATCH);
+	pic_key[3] = R_RegisterPic("I_CRD1", PIC_PATCH);
+	pic_key[4] = R_RegisterPic("I_PRIS", PIC_PATCH);
+	pic_key[5] = R_RegisterPic("I_HAND", PIC_PATCH);
+	pic_key[6] = R_RegisterPic("I_PWR1", PIC_PATCH);
+	pic_key[7] = R_RegisterPic("I_PWR2", PIC_PATCH);
+	pic_key[8] = R_RegisterPic("I_KY1G", PIC_PATCH);
+	pic_key[9] = R_RegisterPic("I_PWR3", PIC_PATCH);
+	pic_key[10] = R_RegisterPic("I_CRD2", PIC_PATCH);
+	pic_key[11] = R_RegisterPic("I_KY2S", PIC_PATCH);
+	pic_key[12] = R_RegisterPic("I_ORAC", PIC_PATCH);
+	pic_key[13] = R_RegisterPic("I_GYID", PIC_PATCH);
+	pic_key[14] = R_RegisterPic("I_FUBR", PIC_PATCH);
+	pic_key[15] = R_RegisterPic("I_WARE", PIC_PATCH);
+	pic_key[16] = R_RegisterPic("I_KY3B", PIC_PATCH);
+	pic_key[17] = R_RegisterPic("I_RCRY", PIC_PATCH);
+	pic_key[18] = R_RegisterPic("I_BCRY", PIC_PATCH);
+	pic_key[19] = R_RegisterPic("I_CHAP", PIC_PATCH);
+	pic_key[20] = R_RegisterPic("I_TUNL", PIC_PATCH);
+	pic_key[21] = R_RegisterPic("I_SECK", PIC_PATCH);
+	pic_key[22] = R_RegisterPic("I_GOID", PIC_PATCH);
+	pic_key[23] = R_RegisterPic("I_BLTK", PIC_PATCH);
+	pic_key[24] = R_RegisterPic("I_PROC", PIC_PATCH);
+	pic_key[25] = R_RegisterPic("I_MINE", PIC_PATCH);
+	pic_key[26] = R_RegisterPic("I_BLTK", PIC_PATCH);
 
 	pic_crossbow = R_RegisterPic("CBOWA0", PIC_PATCH);
 	pic_riffle = R_RegisterPic("RIFLA0", PIC_PATCH);
@@ -379,7 +325,7 @@ void SB_DrawMainBar()
 		for (i = 0; i < NUMAMMO; i++)
 		{
 			SB_DrawSmallNum(205, AmmoPosY[i], cl->Ammo[i]);
-			SB_DrawSmallNum(238, AmmoPosY[i], maxammo[i] * (cl->Backpack ? 2 : 1));
+			SB_DrawSmallNum(238, AmmoPosY[i], cl->MaxAmmo[i] * (cl->Backpack ? 2 : 1));
 		}
 		SB_DrawSmallNum(267, 84, cl->Accuracy);
 		SB_DrawSmallNum(267, 108, cl->Stamina);
@@ -477,52 +423,62 @@ void SB_UpdateWidgets()
 	bShowObjectives = GetCvar("sb_show_objectives");
 }
 
+//==========================================================================
+//
+//	VisibilityChanged
+//
+//==========================================================================
+
+void VisibilityChanged(bool bNewVisibility)
+{
+	bTickEnabled = bNewVisibility;
+}
+
+defaultproperties
+{
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+	AmmoPosY[0] = 75;
+	AmmoPosY[1] = 99;
+	AmmoPosY[2] = 91;
+	AmmoPosY[3] = 139;
+	AmmoPosY[4] = 131;
+	AmmoPosY[5] = 115;
+	AmmoPosY[6] = 123;
+	KeyNames[0] = "Base Key";
+	KeyNames[1] = "Govs Key";
+	KeyNames[2] = "Passcard";
+	KeyNames[3] = "ID Badge";
+	KeyNames[4] = "Prison Key";
+	KeyNames[5] = "Severed Hand";
+	KeyNames[6] = "Power1 Key";
+	KeyNames[7] = "Power2 Key";
+	KeyNames[8] = "Gold Key";
+	KeyNames[9] = "Power3 Key";
+	KeyNames[10] = "ID Card";
+	KeyNames[11] = "Silver Key";
+	KeyNames[12] = "Oracle Key";
+	KeyNames[13] = "Military ID";
+	KeyNames[14] = "Order Key";
+	KeyNames[15] = "Warehouse Key";
+	KeyNames[16] = "Brass Key";
+	KeyNames[17] = "Red Crystal Key";
+	KeyNames[18] = "Blue Crystal Key";
+	KeyNames[19] = "Chapel Key";
+	KeyNames[20] = "Catacomb Key";
+	KeyNames[21] = "Security Key";
+	KeyNames[22] = "Core Key";
+	KeyNames[23] = "Mauler Key";
+	KeyNames[24] = "Factory Key";
+	KeyNames[25] = "Mine Key";
+	KeyNames[26] = "New Key 5";
+}
+
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.16  2005/12/22 23:05:58  dj_jl
-//  Fixed ammo and weapon pickups.
-//
-//  Revision 1.15  2005/11/19 15:37:58  dj_jl
-//  Fixed ammo icons.
-//
-//  Revision 1.14  2005/11/06 19:11:13  dj_jl
-//  Fixed default objectives text.
-//
-//  Revision 1.13  2005/11/03 22:49:03  dj_jl
-//  Implemented health bars and ammo type icons.
-//
-//  Revision 1.12  2004/12/22 07:56:47  dj_jl
-//  Fully working Strife support.
-//
-//  Revision 1.11  2003/10/16 17:04:30  dj_jl
-//  Status bar implementation
-//
-//  Revision 1.10  2003/10/02 18:04:39  dj_jl
-//  Inventory system.
-//
-//  Revision 1.9  2003/09/15 16:42:25  dj_jl
-//  Health indicator
-//
-//  Revision 1.8  2002/09/07 16:28:26  dj_jl
-//  Added Level class.
-//
-//  Revision 1.7  2002/01/07 12:27:41  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.6  2001/10/02 17:37:19  dj_jl
-//  Removed status bar widgets
-//
-//  Revision 1.5  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.4  2001/08/29 17:46:25  dj_jl
-//  Moved view border and message box to progs
-//  
-//  Revision 1.3  2001/08/15 17:07:37  dj_jl
-//  Fixed Strife status bar
-//
-//  Revision 1.2  2001/07/27 14:27:53  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
 //
 //**************************************************************************

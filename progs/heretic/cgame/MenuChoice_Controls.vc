@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Controls:MenuSmallTextButton;
+class MenuChoice_Controls : MenuSmallTextButton;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
-	PushMenuScreen(SpawnMenu(MenuScreenControls));
+	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenControls));
 }
 
 defaultproperties
@@ -38,6 +38,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:21  dj_jl
 //  New style of defining classes.
 //

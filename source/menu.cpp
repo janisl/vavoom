@@ -53,15 +53,6 @@ void CL_Disconnect(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static FFunction *pf_MN_SetMenu;
-static FFunction *pf_MN_DeactivateMenu;
-static FFunction *pf_MB_Responder;
-static FFunction *pf_MN_Responder;
-static FFunction *pf_MB_Drawer;
-static FFunction *pf_MN_Active;
-static FFunction *pf_MB_Active;
-static int pg_frametime;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -72,7 +63,7 @@ static int pg_frametime;
 
 COMMAND(SetMenu)
 {
-	clpr.Exec(pf_MN_SetMenu, (int)Argv(1));
+	GClGame->eventSetMenu(Argv(1));
 }
 
 //==========================================================================
@@ -81,24 +72,15 @@ COMMAND(SetMenu)
 //
 //==========================================================================
 
-void MN_Init(void)
+void MN_Init()
 {
 #ifdef SERVER
-	clpr.SetGlobal("local_server", 1);
+	GClGame->local_server = true;
 #else
-	clpr.SetGlobal("local_server", 0);
+	GClGame->local_server = false;
 #endif
-	pf_MN_SetMenu = clpr.FuncForName("MN_SetMenu");
-	pf_MN_DeactivateMenu = clpr.FuncForName("MN_DeactivateMenu");
-	pf_MB_Responder = clpr.FuncForName("MB_Responder");
-	pf_MN_Responder = clpr.FuncForName("MN_Responder");
-	pf_MB_Drawer = clpr.FuncForName("MB_Drawer");
-	pf_MN_Active = clpr.FuncForName("MN_Active");
-	pf_MB_Active = clpr.FuncForName("MB_Active");
-	pg_frametime = clpr.GlobalNumForName("frametime");
-
 	VRootWindow::StaticInit();
-	clpr.Exec("CL_RootWindowCreated");
+	GClGame->eventRootWindowCreated();
 }
 
 //==========================================================================
@@ -107,12 +89,12 @@ void MN_Init(void)
 //
 //==========================================================================
 
-void MN_ActivateMenu(void)
+void MN_ActivateMenu()
 {
     // intro might call this repeatedly
     if (!MN_Active())
 	{
-		clpr.Exec(pf_MN_SetMenu, (int)"Main");
+		GClGame->eventSetMenu("Main");
 	}
 }
 
@@ -122,9 +104,9 @@ void MN_ActivateMenu(void)
 //
 //==========================================================================
 
-void MN_DeactivateMenu(void)
+void MN_DeactivateMenu()
 {
-	clpr.Exec(pf_MN_DeactivateMenu);
+	GClGame->eventDeactivateMenu();
 }
 
 //==========================================================================
@@ -135,7 +117,7 @@ void MN_DeactivateMenu(void)
 
 boolean MN_Responder(event_t* event)
 {
-	if (clpr.Exec(pf_MB_Responder, (int)event))
+	if (GClGame->eventMessageBoxResponder(event))
 	{
 		return true;
 	}
@@ -149,7 +131,7 @@ boolean MN_Responder(event_t* event)
 		return true;
 	}
 
-	return clpr.Exec(pf_MN_Responder, (int)event);
+	return GClGame->eventMenuResponder(event);
 }
 
 //==========================================================================
@@ -158,12 +140,11 @@ boolean MN_Responder(event_t* event)
 //
 //==========================================================================
 
-void MN_Drawer(void)
+void MN_Drawer()
 {
-	clpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
 	GRoot->TickWindows(host_frametime);
 	GRoot->PaintWindows();
-	clpr.Exec(pf_MB_Drawer);
+	GClGame->eventMessageBoxDrawer();
 }
 
 //==========================================================================
@@ -172,17 +153,20 @@ void MN_Drawer(void)
 //
 //==========================================================================
 
-boolean MN_Active(void)
+boolean MN_Active()
 {
-	return clpr.Exec(pf_MN_Active) || clpr.Exec(pf_MB_Active);
+	return GClGame->eventMenuActive() || GClGame->eventMessageBoxActive();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.13  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
-//
+//	
 //	Revision 1.12  2002/05/29 16:51:50  dj_jl
 //	Started a work on native Window classes.
 //	

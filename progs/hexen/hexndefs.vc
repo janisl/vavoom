@@ -158,7 +158,8 @@ addfields client_state_t
 
 	sb_stats_t stats;
 
-	float armorpoints[NUMARMOR];
+	int TotalArmorPoints;
+	int ArmorPerc[NUMARMOR];
 
 	float InventoryTime;
 
@@ -173,15 +174,6 @@ addfields client_state_t
 };
 
 #endif
-
-float AutoArmorSave[NUMCLASSES] = { 15.0, 10.0, 5.0, 0.0 };
-
-float ArmorIncrement[NUMCLASSES * NUMARMOR] = {
-	25.0, 20.0, 15.0, 5.0,
-	10.0, 25.0, 5.0, 20.0,
-	5.0, 15.0, 10.0, 25.0,
-	0.0, 0.0, 0.0, 0.0
-};
 
 enum
 {
@@ -204,6 +196,9 @@ enum
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.9  2002/03/16 17:49:35  dj_jl
 //  Beautification.
 //

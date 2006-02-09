@@ -1,0 +1,272 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FinaleScreen : Window;
+
+#define	TEXTSPEED	0.1
+#define	TEXTWAIT	7.0
+
+#define MAX_FINALE_MESSAGE_SIZE	1024
+
+ClientGameBase ClGame;
+
+int f_episode;
+int f_map;
+
+int FinaleStage;
+float FinaleTime;
+float FinaleEndTime;
+string FinaleFlat;
+
+int FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
+
+int fpage1;
+int fpage2;
+
+//==========================================================================
+//
+//  StartFinale
+//
+//==========================================================================
+
+void StartFinale()
+{
+	FinaleStage = 0;
+	FinaleTime = 0.0;
+
+	FindEpisodeAndMap(ARR2STR(ClGame.level->mapname), &f_episode, &f_map);
+
+	switch (f_episode)
+	{
+	case 1:
+		FinaleFlat = "FLOOR25";
+		F_GetFinaleText("fin1text");
+		break;
+	case 2:
+		FinaleFlat = "FLATHUH1";
+		F_GetFinaleText("fin2text");
+		break;
+	case 3:
+		FinaleFlat = "FLTWAWA2";
+		F_GetFinaleText("fin3text");
+		break;
+	case 4:
+		FinaleFlat = "FLOOR28";
+		F_GetFinaleText("fin4text");
+		break;
+	case 5:
+		FinaleFlat = "FLOOR08";
+		F_GetFinaleText("fin5text");
+		break;
+	}
+
+#ifdef FIXME
+	S_StartSong("MUS_CPTD", P_GetCDEnd1Track(), true);
+#else
+	CmdBuf_AddText("music loop MUS_CPTD\n");
+#endif
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	FinaleTime += DeltaTime;
+
+	if (!FinaleStage && FinaleTime > FinaleEndTime)
+	{
+		FinaleTime = 0.0;
+		FinaleStage = 1;
+		switch (f_episode)
+		{
+		case 1:
+			if (!WadLumpPresent("E2M1"))
+			{
+				fpage1 = R_RegisterPic("ORDER", PIC_RAW);
+			}
+			else
+			{
+				fpage1 = R_RegisterPic("CREDIT", PIC_RAW);
+			}
+			break;
+		case 2:
+			fpage1 = R_RegisterPicPal("E2END", PIC_RAW, "E2PAL");
+			break;
+		case 3:
+			fpage1 = R_RegisterPic("FINAL1", PIC_RAW);
+			fpage2 = R_RegisterPic("FINAL2", PIC_RAW);
+			break;
+		case 4:	// Just show credits screen for extended episodes
+		case 5:
+			fpage1 = R_RegisterPic("CREDIT", PIC_RAW);
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	if (!FinaleStage)
+	{
+		F_TextWrite();
+		return;
+	}
+
+	switch (f_episode)
+	{
+	case 3:
+		F_DemonScroll();
+		break;
+	default:
+		R_DrawPic(0, 0, fpage1);
+		break;
+	}
+}
+
+//==========================================================================
+//
+//  FindEpisodeAndMap
+//
+//==========================================================================
+
+void FindEpisodeAndMap(string Name, int *epi, int *map)
+{
+	int e;
+	int m;
+
+	for (e = 1; e <= 5; e++)
+	{
+		for (m = 1; m <= 9; m++)
+		{
+			if (!strcmp(Name, va("E%dM%d", e, m)))
+			{
+				*epi = e;
+				*map = m;
+				return;
+			}
+		}
+	}
+	*epi = 4;
+	*map = 1;
+}
+
+//==========================================================================
+//
+//  F_GetFinaleText
+//
+//==========================================================================
+
+void F_GetFinaleText(string msgLumpName)
+{
+	LoadTextLump(msgLumpName, &FinaleText[0], MAX_FINALE_MESSAGE_SIZE);
+	FinaleEndTime = itof(strlen(ARR2STR(FinaleText))) * TEXTSPEED + TEXTWAIT;
+}
+
+//===========================================================================
+//
+//  F_TextWrite
+//
+//===========================================================================
+
+void F_TextWrite()
+{
+	int count;
+
+	// erase the entire screen to a tiled background
+	R_FillRectWithFlat(0, 0, 320, 200, FinaleFlat);
+
+	// draw some of the text onto the screen
+	count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
+	if (count < 0)
+		count = 0;
+
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	T_SetDist(-1, -1);
+	T_DrawNText(20, 5, ARR2STR(FinaleText), count);
+	T_SetDist(-1, 1);
+}
+
+//==========================================================================
+//
+//  F_DemonScroll
+//
+//==========================================================================
+
+void F_DemonScroll()
+{
+	if (FinaleTime < 2.0)
+	{
+		R_DrawPic(0, 0, fpage1);
+	}
+	else if (FinaleTime < 22.0)
+	{
+		int yval = ftoi((FinaleTime - 2.0) * 10.0);
+
+		R_DrawPic(0, yval, fpage1);
+		R_DrawPic(0, yval - 200, fpage2);
+	}
+	else
+	{
+		//else, we'll just sit here and wait, for now
+		R_DrawPic(0, 0, fpage2);
+	}
+}
+
+//==========================================================================
+//
+//	VisibilityChanged
+//
+//==========================================================================
+
+void VisibilityChanged(bool bNewVisibility)
+{
+	bTickEnabled = bNewVisibility;
+}
+
+defaultproperties
+{
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
+//**************************************************************************

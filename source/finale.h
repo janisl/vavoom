@@ -32,8 +32,6 @@
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 boolean	F_Responder(event_t* ev);
-void F_Ticker(void);
-void F_Drawer(void);
 void F_StartFinale(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -41,9 +39,12 @@ void F_StartFinale(void);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

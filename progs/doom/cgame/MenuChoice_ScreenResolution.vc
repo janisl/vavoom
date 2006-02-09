@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-class MenuChoice_ScreenResolution:MenuSmallTextButton;
+class MenuChoice_ScreenResolution : MenuSmallTextButton;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
-	PushMenuScreen(SpawnMenu(MenuScreenScreenResolution));
+	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenScreenResolution));
 }
 
 defaultproperties
@@ -38,6 +38,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:09  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

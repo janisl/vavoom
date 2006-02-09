@@ -1,0 +1,864 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class ClientGame : ClientGameBase;
+
+enum
+{
+	MB_None,
+	MB_Control,
+	MB_Quit
+};
+
+TitleScreen			GTitle;
+StatusBarScreen		GSBar;
+IntermissionScreen	GImission;
+FinaleScreen		GFinale;
+
+MenuScreen menu_stack[MAX_MENU_STACK];
+int menu_sp;
+
+MenuScreen CurrentMenuScreen;
+
+MenuControlKey CurrentCtl;
+int ControlColumn;	// menu column for controls
+
+//
+//  MESSAGE BOX
+//
+bool messageToPrint;
+int msgBoxX;
+int msgBoxY;
+int msgBoxW;
+int msgBoxH;
+int messageString[256 / 4];	// ...and here is the message string!
+bool messageNeedsInput;	// timed message = no input from user
+int messageType;
+
+int pic_brdr_t;
+int pic_brdr_b;
+int pic_brdr_l;
+int pic_brdr_r;
+int pic_brdr_tl;
+int pic_brdr_tr;
+int pic_brdr_bl;
+int pic_brdr_br;
+
+//==========================================================================
+//
+//  RootWindowCreated
+//
+//==========================================================================
+
+void RootWindowCreated()
+{
+	CreateCvar("sb_show_weapons", "0", 0);
+	CreateCvar("sb_show_keys", "0", 0);
+	CreateCvar("sb_show_objectives", "0", 0);
+
+	GTitle = TitleScreen(GRoot.NewChild(TitleScreen));
+	GSBar = StatusBarScreen(GRoot.NewChild(StatusBarScreen));
+	GImission = IntermissionScreen(GRoot.NewChild(IntermissionScreen));
+	GFinale = FinaleScreen(GRoot.NewChild(FinaleScreen));
+	GTitle.ClGame = self;
+	GSBar.cl = cl;
+	GSBar.Hide();
+	GImission.ClGame = self;
+	GImission.Hide();
+	GFinale.Hide();
+}
+
+//==========================================================================
+//
+//  Connected
+//
+//==========================================================================
+
+void Connected()
+{
+	GTitle.Hide();
+	GTitle.StopDemoLoop();
+	GSBar.Show();
+	GImission.Hide();
+	GFinale.Hide();
+}
+
+//==========================================================================
+//
+//  Disconnected
+//
+//==========================================================================
+
+void Disconnected()
+{
+	GTitle.Show();
+	GSBar.Hide();
+	GImission.Hide();
+	GFinale.Hide();
+}
+
+//==========================================================================
+//
+//  DemoPlaybackStarted
+//
+//==========================================================================
+
+void DemoPlaybackStarted()
+{
+	GTitle.Hide();
+	GSBar.Show();
+	GImission.Hide();
+	GFinale.Hide();
+}
+
+//==========================================================================
+//
+//  DemoPlaybackStopped
+//
+//==========================================================================
+
+void DemoPlaybackStopped()
+{
+	GTitle.Show();
+	GSBar.Hide();
+	GImission.Hide();
+	GFinale.Hide();
+}
+
+//==========================================================================
+//
+//  OnHostEndGame
+//
+//==========================================================================
+
+void OnHostEndGame()
+{
+	GTitle.OnHostEndGame();
+}
+
+//==========================================================================
+//
+//  OnHostError
+//
+//==========================================================================
+
+void OnHostError()
+{
+	GTitle.OnHostError();
+}
+
+//==========================================================================
+//
+//  StatusBarStartMap
+//
+//==========================================================================
+
+void StatusBarStartMap()
+{
+	GSBar.Show();
+	GSBar.StartMap();
+	GImission.Hide();
+	GFinale.Hide();
+}
+
+//==========================================================================
+//
+//  StatusBarDrawer
+//
+//==========================================================================
+
+void StatusBarDrawer(int sb_view)
+{
+	GSBar.SB_Drawer(sb_view);
+}
+
+//==========================================================================
+//
+//  StatusBarUpdateWidgets
+//
+//==========================================================================
+
+void StatusBarUpdateWidgets()
+{
+	GSBar.SB_UpdateWidgets();
+}
+
+//==========================================================================
+//
+//  IintermissionStart
+//
+//==========================================================================
+
+void IintermissionStart()
+{
+	GSBar.Hide();
+	GImission.Show();
+	GImission.Start();
+	GFinale.Hide();
+}
+
+//==========================================================================
+//
+//  StartFinale
+//
+//==========================================================================
+
+void StartFinale()
+{
+	GSBar.Hide();
+	GImission.Hide();
+	GFinale.Show();
+	GFinale.StartFinale();
+}
+
+//===========================================================================
+//
+//  FinaleResponder
+//
+//===========================================================================
+
+bool FinaleResponder(event_t* event)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//  DeactivateMenu
+//
+//==========================================================================
+
+void DeactivateMenu()
+{
+	ForceMenuOff();
+}
+
+//==========================================================================
+//
+//  MenuResponder
+//
+//==========================================================================
+
+bool MenuResponder(event_t * event)
+{
+	if (!CurrentMenuScreen)
+	{
+		// Pop-up menu?
+		if (event->type == ev_keydown && event->data1 == K_ESCAPE)
+		{
+			PushMenuScreen(SpawnMenu(MenuScreenMain));
+			return true;
+		}
+		return false;
+	}
+
+	if (event->type != ev_keydown)
+	{
+		return false;
+	}
+	return CurrentMenuScreen.Key(event->data1);
+}
+
+//==========================================================================
+//
+//  MenuActive
+//
+//==========================================================================
+
+bool MenuActive()
+{
+	return CurrentMenuScreen != none;
+}
+
+//==========================================================================
+//
+//	SetMenu
+//
+//==========================================================================
+
+void SetMenu(string Name)
+{
+	if (!stricmp(Name, "Main"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenMain));
+		return;
+	}
+	if (!stricmp(Name, "Save"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenSaveGame));
+		return;
+	}
+	if (!stricmp(Name, "Load"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenLoadGame));
+		return;
+	}
+	if (!stricmp(Name, "PSetup"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenPlayerSetup));
+		return;
+	}
+	if (!stricmp(Name, "Options"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenOptions));
+		return;
+	}
+	if (!stricmp(Name, "Controls"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenControls));
+		return;
+	}
+	if (!stricmp(Name, "Controls2"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenControls2));
+		return;
+	}
+	if (!stricmp(Name, "Mouse"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenMouseOptions));
+		return;
+	}
+	if (!stricmp(Name, "Resolution"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenScreenResolution));
+		return;
+	}
+	if (!stricmp(Name, "Video"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenVideoOptions));
+		return;
+	}
+	if (!stricmp(Name, "Sound"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenSoundOptions));
+		return;
+	}
+	if (!stricmp(Name, "Help"))
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenHelp));
+		return;
+	}
+	if (!stricmp(Name, "Quit"))
+	{
+		menu_quit();
+		return;
+	}
+	PushMenuScreen(SpawnMenu(MenuScreenMain));
+}
+
+//==========================================================================
+//
+//  SpawnMenu
+//
+//==========================================================================
+
+MenuScreen SpawnMenu(classid CID)
+{
+	MenuScreen m;
+
+	m = MenuScreen(GRoot.NewChild(CID));
+	m.ClGame = self;
+	return m;
+}
+
+//**************************************************************************
+//**
+//**    Menu stack handling
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//  PushMenuScreen
+//
+//==========================================================================
+
+void PushMenuScreen(MenuScreen menu)
+{
+	int i;
+
+	// avoid stacking menus invoked by hotkeys
+	for (i = 0; i < menu_sp; i++)
+	{
+		if (menu_stack[i].Class == menu.Class)
+		{
+			int j;
+
+			for (j = i; j < menu_sp; j++)
+			{
+				menu_stack[j].Destroy();
+			}
+			menu_sp = i;
+			CurrentMenuScreen = none;
+			break;
+		}
+	}
+
+	if (menu_sp >= MAX_MENU_STACK)
+		FatalError("PushMenu: menu stack overflow");
+
+	menu_stack[menu_sp++] = menu;
+
+	if (!CurrentMenuScreen)
+	{
+/*		if (cl.paused)
+		{
+			S_ResumeSound();
+		}
+		C_ClearNotify();*/
+		CmdBuf_AddText("HideConsole\n");
+		LocalSound('menu/activate');
+	}
+	else
+	{
+		CurrentMenuScreen.Hide();
+	}
+
+	CurrentMenuScreen = menu;
+}
+
+//==========================================================================
+//
+//  PopMenu
+//
+//==========================================================================
+
+void PopMenu(void)
+{
+	menu_sp--;
+
+	if (menu_sp < 0)
+		FatalError("PopMenu: menu stack underflow");
+
+	menu_stack[menu_sp].Destroy();
+	if (menu_sp)
+	{
+		CurrentMenuScreen = menu_stack[menu_sp - 1];
+		CurrentMenuScreen.Show();
+		CurrentMenuScreen.Raise();
+		LocalSound('menu/backup');
+	}
+	else
+	{
+		CurrentMenuScreen = none;
+		LocalSound('menu/clear');
+	}
+}
+
+//==========================================================================
+//
+//  ForceMenuOff
+//
+//==========================================================================
+
+void ForceMenuOff(void)
+{
+	int i;
+
+	for (i = 0; i < menu_sp; i++)
+	{
+		menu_stack[i].Destroy();
+	}
+	menu_sp = 0;
+	CurrentMenuScreen = none;
+}
+
+//==========================================================================
+//
+//  MessageBoxStartMessage
+//
+//==========================================================================
+
+void MessageBoxStartMessage(string text, int type, bool input)
+{
+	messageToPrint = true;
+	strcpy(ARR2STR(messageString), text);
+	messageType = type;
+	messageNeedsInput = input;
+
+	T_SetFont(font_small);
+	msgBoxW = (T_TextWidth(ARR2STR(messageString)) + 16) & ~15;
+	msgBoxH = (T_TextHeight(ARR2STR(messageString)) + 16) & ~15;
+	if (msgBoxW > 304)
+		msgBoxW = 304;
+	if (msgBoxH > 184)
+		msgBoxH = 184;
+	msgBoxX = (320 - msgBoxW) / 2;
+	msgBoxY = (200 - msgBoxH) / 2;
+
+	CmdBuf_AddText("HideConsole\n");
+}
+
+//==========================================================================
+//
+//  MessageBoxDrawer
+//
+//==========================================================================
+
+void MessageBoxDrawer()
+{
+	// Horiz. & Vertically center string and print it.
+	if (messageToPrint)
+	{
+		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, "F_PAVE01");
+		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
+		T_SetFont(font_small);
+		T_SetAlign(hcenter, vcenter);
+		T_DrawText(160, 100, ARR2STR(messageString));
+	}
+}
+
+//==========================================================================
+//
+//  MessageBoxResponder
+//
+//==========================================================================
+
+bool MessageBoxResponder(event_t * event)
+{
+	// Take care of any messages that need input
+	if (messageToPrint && event->type == ev_keydown)
+	{
+		if (messageNeedsInput &&
+			event->data1 != K_SPACE &&
+			event->data1 != K_n &&
+			event->data1 != K_y &&
+			event->data1 != K_ESCAPE &&
+			event->data1 != K_MOUSE1 && event->data1 != K_MOUSE2)
+		{
+			return true;
+		}
+
+		messageToPrint = false;
+		switch (messageType)
+		{
+		case MB_None:
+			break;
+		case MB_Control:
+			ControlResponse(event->data1);
+			break;
+		case MB_Quit:
+			QuitResponse(event->data1);
+			break;
+		}
+
+//      S_StartSound(sfx1_swtchx);
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  MessageBoxActive
+//
+//==========================================================================
+
+bool MessageBoxActive()
+{
+	return messageToPrint;
+}
+
+//==========================================================================
+//
+//  menu_quit
+//
+//==========================================================================
+
+void menu_quit()
+{
+	MessageBoxStartMessage("Do you really want to leave?\n\n(press y to quit)",
+		MB_Quit, true);
+}
+
+//==========================================================================
+//
+//  QuitResponse
+//
+//==========================================================================
+
+void QuitResponse(int ch)
+{
+	if (ch != K_y)
+		return;
+	PushMenuScreen(SpawnMenu(MenuScreenQuit));
+}
+
+//==========================================================================
+//
+//  ControlResponse
+//
+//==========================================================================
+
+void ControlResponse(int key)
+{
+	string kb_down;
+	string kb_up;
+	int key1;
+	int key2;
+
+	if (key != K_ESCAPE)
+	{
+		kb_down = CurrentCtl.CommandOn;
+		kb_up = CurrentCtl.CommandOff;
+		IN_GetBindingKeys(kb_down, &key1, &key2);
+		if (ControlColumn == 0)
+		{
+			IN_SetBinding(key1, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+		if (ControlColumn == 1)
+		{
+			IN_SetBinding(key2, "", "");
+			IN_SetBinding(key, kb_down, kb_up);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  InitBorder
+//
+//==========================================================================
+
+void InitBorder(void)
+{
+	pic_brdr_t = R_RegisterPic("brdr_t", PIC_PATCH);
+	pic_brdr_b = R_RegisterPic("brdr_b", PIC_PATCH);
+	pic_brdr_l = R_RegisterPic("brdr_l", PIC_PATCH);
+	pic_brdr_r = R_RegisterPic("brdr_r", PIC_PATCH);
+	pic_brdr_tl = R_RegisterPic("brdr_tl", PIC_PATCH);
+	pic_brdr_tr = R_RegisterPic("brdr_tr", PIC_PATCH);
+	pic_brdr_bl = R_RegisterPic("brdr_bl", PIC_PATCH);
+	pic_brdr_br = R_RegisterPic("brdr_br", PIC_PATCH);
+}
+
+//==========================================================================
+//
+//  DrawBorder
+//
+//  Draws border
+//
+//==========================================================================
+
+void DrawBorder(int x, int y, int w, int h)
+{
+	int i;
+
+	if (!pic_brdr_b)
+	{
+		InitBorder();
+	}
+
+	for (i = 0; i < w; i += 8)
+		R_DrawPic(x + i, y - 8, pic_brdr_t);
+
+	for (i = 0; i < w; i += 8)
+		R_DrawPic(x + i, y + h, pic_brdr_b);
+
+	for (i = 0; i < h; i += 8)
+		R_DrawPic(x - 8, y + i, pic_brdr_l);
+
+	for (i = 0; i < h; i += 8)
+		R_DrawPic(x + w, y + i, pic_brdr_r);
+
+	// Draw beveled edge.
+	R_DrawPic(x - 8, y - 8, pic_brdr_tl);
+	R_DrawPic(x + w, y - 8, pic_brdr_tr);
+	R_DrawPic(x - 8, y + h, pic_brdr_bl);
+	R_DrawPic(x + w, y + h, pic_brdr_br);
+}
+
+//==========================================================================
+//
+//  DrawViewBorder
+//
+//==========================================================================
+
+void DrawViewBorder(int x, int y, int w, int h)
+{
+	R_FillRectWithFlat(0, 0, 320, 200 - 32, "F_PAVE01");
+	DrawBorder(x, y, w, h);
+}
+
+//==========================================================================
+//
+//  ParseGunShot
+//
+//==========================================================================
+
+void ParseGunShot()
+{
+	TVec org;
+	int i, j;
+	particle_t *p;
+	int c;
+
+	org.x = itof(MSG_ReadShort());
+	org.y = itof(MSG_ReadShort());
+	org.z = itof(MSG_ReadShort());
+
+	for (i = 0; i < 20; i++)
+	{
+		p = NewParticle();
+		if (!p)
+			return;
+
+		p->org = org;
+		c = P_Random() >> 1;
+		p->color = RGB(c, c, c);
+		p->die = cl->time + 0.5 * Random();
+		p->vel.x = 32.0 * (Random() - 0.5);
+		p->vel.y = 32.0 * (Random() - 0.5);
+		p->vel.z = 32.0 * (Random() - 0.5);
+	}
+}
+
+//==========================================================================
+//
+//  ParseBlood
+//
+//==========================================================================
+
+void ParseBlood()
+{
+	TVec org;
+	int damage;
+	int i, j;
+	particle_t *p;
+	int c;
+
+	org.x = itof(MSG_ReadShort());
+	org.y = itof(MSG_ReadShort());
+	org.z = itof(MSG_ReadShort());
+	damage = MSG_ReadByte();
+
+	for (i = 0; i < damage; i++)
+	{
+		p = NewParticle();
+		if (!p)
+			return;
+
+		p->org = org;
+		c = P_Random() >> 1;
+		p->color = RGB(32 + c, c >> 4, c >> 4);
+		p->die = cl->time + 0.5 * Random();
+		p->vel.x = 32.0 * (Random() - 0.5);
+		p->vel.y = 32.0 * (Random() - 0.5);
+		p->vel.z = 32.0 * (Random() - 0.5);
+	}
+}
+
+//==========================================================================
+//
+//  ParseServerCommand
+//
+//==========================================================================
+
+bool ParseServerCommand(int cmd_type)
+{
+	switch (cmd_type)
+	{
+	case svc_gun_shot:
+		ParseGunShot();
+		break;
+
+	case svc_blood:
+		ParseBlood();
+		break;
+
+	case svc_speech:
+		StartSpeech(MSG_ReadShort());
+		break;
+
+	case svc_voice:
+		LocalSound(StrToName(va("svox/voc%d", MSG_ReadShort())));
+		break;
+
+	case svc_slideshow1:
+		PushMenuScreen(SpawnMenu(ConSlideshow1));
+		break;
+
+	case svc_slideshow2:
+		PushMenuScreen(SpawnMenu(ConSlideshow2));
+		break;
+
+	case svc_finale_type:
+		GFinale.FinaleType = MSG_ReadByte();
+		break;
+
+	default:
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  UpdateParticle
+//
+//==========================================================================
+
+void UpdateParticle(particle_t * p, float DeltaTime)
+{
+}
+
+//==========================================================================
+//
+//  UpdateMobj
+//
+//==========================================================================
+
+void UpdateMobj(clmobj_t * mobj, int i, float DeltaTime)
+{
+}
+
+//==========================================================================
+//
+//	StartSpeech
+//
+//==========================================================================
+
+void StartSpeech(int SpeechNum)
+{
+	ConDialog Dlg;
+
+	Dlg = ConDialog(SpawnMenu(ConDialog));
+	Dlg.SetSpeech(SpeechNum);
+	PushMenuScreen(Dlg);
+}
+
+defaultproperties
+{
+	sb_height = 32;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
+//**************************************************************************

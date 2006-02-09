@@ -30,7 +30,7 @@ MenuChoice_Level Levels;
 void InitWindow(void)
 {
 	::InitWindow();
-	MaxValue = shareware ? 1 : ExtendedWAD ? 5 : 3;
+	MaxValue = !WadLumpPresent("E2M1") ? 1 : WadLumpPresent("EXTENDED") ? 5 : 3;
 }
 
 bool SetNewValue(int newValue)
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

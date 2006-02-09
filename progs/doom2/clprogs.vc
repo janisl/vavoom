@@ -25,11 +25,14 @@
 
 #define DOOM2
 
-#include "../doom/client/clprogs.vc"
+#include "../doom/clprogs.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.5  2002/01/07 12:21:10  dj_jl
 //  Changed copyright year
 //

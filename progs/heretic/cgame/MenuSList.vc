@@ -55,7 +55,7 @@ void DrawTextBox(GC gc, string text)
 	y = (200 - h) / 2;
 
 	R_FillRectWithFlat(x, y, w, h, "FLOOR04");
-	DrawBorder(x, y, w, h);
+	GetClGame().DrawBorder(x, y, w, h);
 
 	gc.DrawText(160, 100, text);
 }
@@ -171,6 +171,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.2  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

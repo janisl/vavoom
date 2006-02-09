@@ -29,35 +29,46 @@
 
 #include <client.vc>
 
-#include "../doomdefs.vc"
+#define MAX_MENU_ITEMS		32
 
-#ifndef DOOM2
-bool ExtendedWAD;
-#endif
+#define MAX_MENU_STACK		32
 
-#include "effects.vc"
+#define NUM_END_MESSAGES	15
 
-#include "imission.vc"
+#define SLOTTEXTLEN 		24
 
-#include "finale.vc"
+#define MAX_ILINE_LENGTH	79
 
-#include "border.vc"
+class ClientGame;
+class MenuScreen;
+class MenuControlKey;
 
-#include "msgbox.vc"
+addfields particle_t
+{
+	int type;
+	float ramp;
+};
 
-#include "m_menu.vc"
+#include "doomdefs.vc"
 
-#include "../cgame/classes.vc"
+#include "cgame/classes.vc"
 
-#include "m_api.vc"
+//==========================================================================
+//
+//  main
+//
+//==========================================================================
 
-#include "statbar.vc"
-
-#include "clmain.vc"
+void main()
+{
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.1  2006/02/09 22:33:08  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.16  2005/12/25 19:19:15  dj_jl
 //  Moved title screen into a class.
 //

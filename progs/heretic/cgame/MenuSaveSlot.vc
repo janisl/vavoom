@@ -76,7 +76,7 @@ bool Key(int key)
 				strcpy(ARR2STR(Text), ARR2STR(EnterText));
 				CmdBuf_AddText("Save %d \"%s\"\n", SlotNum,
 					ARR2STR(Text));
-				ForceMenuOff();
+				GetClGame().ForceMenuOff();
 			}
 			break;
 
@@ -120,6 +120,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.2  2003/03/08 12:13:51  dj_jl
 //  Menu code cleanup.
 //

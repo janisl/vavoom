@@ -36,6 +36,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -43,7 +44,7 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_Disconnect(void);
+void CL_Disconnect();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -105,7 +106,7 @@ void CL_StopPlayback(void)
 	{
 		CL_FinishTimeDemo();
 	}
-	clpr.Exec("CL_DemoPlaybackStopped");
+	GClGame->eventDemoPlaybackStopped();
 	unguard;
 }
 
@@ -378,7 +379,7 @@ COMMAND(PlayDemo)
 
 	cls.demoplayback = true;
 	cls.state = ca_connected;
-	clpr.Exec("CL_DemoPlaybackStarted");
+	GClGame->eventDemoPlaybackStarted();
 	unguard;
 }
 
@@ -418,9 +419,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.13  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
-//
+//	
 //	Revision 1.12  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

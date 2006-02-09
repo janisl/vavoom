@@ -129,10 +129,17 @@
 #include "ConSlideshow2.vc"
 
 #include "TitleScreen.vc"
+#include "StatusBarScreen.vc"
+#include "IntermissionScreen.vc"
+#include "FinaleScreen.vc"
+#include "ClientGame.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.4  2005/12/25 19:19:16  dj_jl
 //  Moved title screen into a class.
 //

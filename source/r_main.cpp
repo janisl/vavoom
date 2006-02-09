@@ -107,10 +107,6 @@ subsector_t				*r_oldviewleaf;
 // if true, load all graphics at start
 static TCvarI			precache("precache", "1", CVAR_ARCHIVE);
 
-static FFunction *pf_DrawViewBorder;
-static FFunction *pf_UpdateParticle;
-static int				pg_frametime;
-
 static TCvarI			_driver("_driver", "0", CVAR_ROM);
 
 // CODE --------------------------------------------------------------------
@@ -147,9 +143,6 @@ void R_Init(void)
 	Drawer->InitTextures();
 	Drawer->InitData();
 	R_InitParticles();
-	pf_DrawViewBorder = clpr.FuncForName("DrawViewBorder");
-	pf_UpdateParticle = clpr.FuncForName("UpdateParticle");
-	pg_frametime = clpr.GlobalNumForName("frametime");
 	unguard;
 }
 
@@ -302,10 +295,10 @@ static void R_ExecuteSetViewSize(void)
 //
 //==========================================================================
 
-void R_DrawViewBorder(void)
+void R_DrawViewBorder()
 {
 	guard(R_DrawViewBorder);
-	clpr.Exec(pf_DrawViewBorder, 160 - screenblocks * 16,
+	GClGame->eventDrawViewBorder(160 - screenblocks * 16,
 		(200 - sb_height - screenblocks * (200 - sb_height) / 10) / 2,
 		screenblocks * 32, screenblocks * (200 - sb_height) / 10);
 	unguard;
@@ -546,7 +539,6 @@ void R_UpdateParticles()
 
 //	frametime = cl.time - cl.oldtime;
 	frametime = host_frametime;
-	clpr.SetGlobal(pg_frametime, PassFloat(frametime));
 	
 	kill = active_particles;
 	while (kill && kill->die < cl.time)
@@ -570,7 +562,7 @@ void R_UpdateParticles()
 
 		p->org += p->vel * frametime;
 
-		clpr.Exec(pf_UpdateParticle, (int)p);
+		GClGame->eventUpdateParticle(p, frametime);
 	}
 	unguard;
 }
@@ -946,9 +938,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.31  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
-//
+//	
 //	Revision 1.30  2005/12/06 17:49:08  dj_jl
 //	Renamed sounds.
 //	

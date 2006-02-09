@@ -23,7 +23,54 @@
 //**
 //**************************************************************************
 
-class MenuChoice:MenuObject;
+class MenuChoice : MenuObject;
+
+int pic_M_FSLOT;
+
+ClientGame GetClGame()
+{
+	return MenuScreen(Parent).ClGame;
+}
+
+//**************************************************************************
+//**
+//**	Slot for saves and input lines
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//  InitSlot
+//
+//==========================================================================
+
+void InitSlot()
+{
+	pic_M_FSLOT = R_RegisterPic("M_FSLOT", PIC_PATCH);
+}
+
+//==========================================================================
+//
+//  DrawSlot
+//
+//==========================================================================
+
+int DrawSlot(GC gc, int y, string text, bool entering)
+{
+	int xx;
+	int j;
+
+	gc.DrawIcon(0, y, pic_M_FSLOT);
+
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	gc.DrawText(5, y + 5, text);
+	if (entering)
+	{
+		T_DrawCursor();
+	}
+	return 20;
+}
 
 defaultproperties
 {
@@ -32,6 +79,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

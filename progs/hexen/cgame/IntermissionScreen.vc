@@ -23,10 +23,10 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+class IntermissionScreen : Window;
 
-#define	TEXTSPEED	0.1
-#define	TEXTWAIT	4.0
+ClientGameBase ClGame;
+
 #define MAX_INTRMSN_MESSAGE_SIZE	1024
 
 #define TALLY_EFFECT_TIME	0.625
@@ -42,13 +42,8 @@
 #define TALLY_LEFT_Y		71
 #define TALLY_TOTALS_X		291
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
+float TextSpeed;
+float TextWait;
 
 // specifies current state
 int interstate;
@@ -73,15 +68,86 @@ int tallylft;
 
 bool showTotals;
 
-string ClusMsgLumpNames[] = {
-	"clus1msg",
-	"clus2msg",
-	"clus3msg",
-	"clus4msg",
-	"clus5msg"
-};
+string ClusMsgLumpNames[5];
 
-// CODE --------------------------------------------------------------------
+//==========================================================================
+//
+//  Start
+//
+//==========================================================================
+
+void Start()
+{
+	IM_InitStats();
+	IM_LoadPics();
+	interstate = 0;
+	ClGame.skipintermission = false;
+	intertime = 0.0;
+
+	if (!ClGame.cl->deathmatch && !HubCount)
+	{
+		interstate = 1;
+		cnt = 0.3;
+	}
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	if (interstate)
+	{
+		if (cnt > 0.0)
+		{
+			cnt -= DeltaTime;
+			if (cnt <= 0.0)
+			{
+				IM_UnloadPics();
+				CmdBuf_AddText("TeleportNewMap\n");
+			}
+		}
+		return;
+	}
+	intertime += DeltaTime;
+	if (ClGame.skipintermission || (!ClGame.cl->deathmatch && !HubCount))
+	{
+		interstate = 1;
+		cnt = 0.3;
+		ClGame.skipintermission = false;
+	}
+}
+
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	if (interstate)
+	{
+		return;
+	}
+
+	R_DrawPic(0, 0, patchINTERPIC);
+
+	if (!ClGame.cl->deathmatch)
+	{
+		if (HubCount)
+		{
+			IM_DrawHubText();
+		}
+	}
+	else
+	{
+		IM_DrawDeathTally();
+	}
+}
 
 //========================================================================
 //
@@ -91,7 +157,7 @@ string ClusMsgLumpNames[] = {
 
 void IM_LoadPics(void)
 {
-	if (HubCount || cl->deathmatch)
+	if (HubCount || ClGame.cl->deathmatch)
 	{
 		patchINTERPIC = R_RegisterPic("INTERPIC", PIC_RAW);
 		tallytop = R_RegisterPic("tallytop", PIC_PATCH);
@@ -127,18 +193,18 @@ void IM_InitStats(void)
 	int playercount;
 	string msgLumpName;
 
-	if (!cl->deathmatch)
+	if (!ClGame.cl->deathmatch)
 	{
 		HubCount = 0.0;
-		if (im->leavecluster != im->entercluster)
+		if (ClGame.im->leavecluster != ClGame.im->entercluster)
 		{
-			if (im->leavecluster >= 1 && im->leavecluster <= 5)
+			if (ClGame.im->leavecluster >= 1 && ClGame.im->leavecluster <= 5)
 			{
-				msgLumpName = ClusMsgLumpNames[im->leavecluster - 1];
+				msgLumpName = ClusMsgLumpNames[ClGame.im->leavecluster - 1];
 				LoadTextLump(msgLumpName, &ClusterMessage[0],
 					MAX_INTRMSN_MESSAGE_SIZE);
 				HubText = ARR2STR(ClusterMessage);
-				HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
+				HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
 #ifdef FIXME
 				S_StartSong("hub", P_GetCDIntermissionTrack(), true);
 #else
@@ -157,14 +223,14 @@ void IM_InitStats(void)
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			totalFrags[i] = 0;
-			if (scores[i].bActive)
+			if (ClGame.scores[i].bActive)
 			{
 				playercount++;
 				for (j = 0; j < MAXPLAYERS; j++)
 				{
-					if (scores[j].bActive)
+					if (ClGame.scores[j].bActive)
 					{
-						totalFrags[i] += scores[i].frags[j];
+						totalFrags[i] += ClGame.scores[i].frags[j];
 					}
 				}
 				posnum++;
@@ -203,7 +269,7 @@ void IM_DrawHubText(void)
 {
 	int count;
 
-	count = ftoi((intertime - 0.3) / TEXTSPEED);
+	count = ftoi((intertime - 0.3) / TextSpeed);
 	if (count < 0)
 	{
 		count = 0;
@@ -302,16 +368,16 @@ void IM_DrawDeathTally(void)
 		for (j = 0; j < MAXPLAYERS; j++, xPos += xDelta)
 		{
 			x = ftoi(xPos);
-			bold = (i == cl->clientnum || j == cl->clientnum);
-			if (scores[i].bActive && scores[j].bActive)
+			bold = (i == ClGame.cl->clientnum || j == ClGame.cl->clientnum);
+			if (ClGame.scores[i].bActive && ClGame.scores[j].bActive)
 			{
 				if (bold)
 				{
-					IM_DrawNumberBold(scores[i].frags[j], x, y, 100);
+					IM_DrawNumberBold(ClGame.scores[i].frags[j], x, y, 100);
 				}
 				else
 				{
-					IM_DrawNumber(scores[i].frags[j], x, y, 100);
+					IM_DrawNumber(ClGame.scores[i].frags[j], x, y, 100);
 				}
 			}
 			else
@@ -328,7 +394,7 @@ void IM_DrawDeathTally(void)
 				T_DrawText(x, y, "--");
 			}
 		}
-		if (showTotals && scores[i].bActive && !((slaughterboy & (1 << i)) &&
+		if (showTotals && ClGame.scores[i].bActive && !((slaughterboy & (1 << i)) &&
 				!(ftoi(32.0 * intertime) & 16)))
 		{
 			IM_DrawNumber(totalFrags[i], TALLY_TOTALS_X, y, 1000);
@@ -340,102 +406,33 @@ void IM_DrawDeathTally(void)
 
 //==========================================================================
 //
-//  IM_Drawer
+//	VisibilityChanged
 //
 //==========================================================================
 
-void IM_Drawer(void)
+void VisibilityChanged(bool bNewVisibility)
 {
-	if (interstate)
-	{
-		return;
-	}
-
-	R_DrawPic(0, 0, patchINTERPIC);
-
-	if (!cl->deathmatch)
-	{
-		if (HubCount)
-		{
-			IM_DrawHubText();
-		}
-	}
-	else
-	{
-		IM_DrawDeathTally();
-	}
+	bTickEnabled = bNewVisibility;
 }
 
-//========================================================================
-//
-//  IM_UpdateStats
-//
-//========================================================================
-
-void IM_UpdateStats(void)
+defaultproperties
 {
-	if (interstate)
-	{
-		if (cnt > 0.0)
-		{
-			cnt -= frametime;
-			if (cnt <= 0.0)
-			{
-				IM_UnloadPics();
-				CmdBuf_AddText("TeleportNewMap\n");
-			}
-		}
-		return;
-	}
-	intertime += frametime;
-	if (skipintermission || (!cl->deathmatch && !HubCount))
-	{
-		interstate = 1;
-		cnt = 0.3;
-		skipintermission = false;
-	}
-}
-
-//==========================================================================
-//
-//  IM_Start
-//
-//==========================================================================
-
-void IM_Start(void)
-{
-	IM_InitStats();
-	IM_LoadPics();
-	interstate = 0;
-	skipintermission = false;
-	intertime = 0.0;
-
-	if (!cl->deathmatch && !HubCount)
-	{
-		interstate = 1;
-		cnt = 0.3;
-	}
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+	TextSpeed = 0.1;
+	TextWait = 4.0;
+	ClusMsgLumpNames[0] = "clus1msg";
+	ClusMsgLumpNames[1] = "clus2msg";
+	ClusMsgLumpNames[2] = "clus3msg";
+	ClusMsgLumpNames[3] = "clus4msg";
+	ClusMsgLumpNames[4] = "clus5msg";
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.7  2002/09/07 16:28:25  dj_jl
-//  Added Level class.
-//
-//  Revision 1.6  2002/01/11 18:19:41  dj_jl
-//  Started to use names in progs
-//
-//  Revision 1.5  2002/01/07 12:25:57  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.4  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.3  2001/09/20 16:20:00  dj_jl
-//  Start using object-oriented stuff, beautification
-//  
-//  Revision 1.2  2001/07/27 14:27:52  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
 //
 //**************************************************************************

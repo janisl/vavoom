@@ -51,6 +51,7 @@ REGISTER_NAME(DevNet)
 REGISTER_NAME(Object)
 REGISTER_NAME(Thinker)
 REGISTER_NAME(LevelInfo)
+REGISTER_NAME(GameInfo)
 REGISTER_NAME(Entity)
 REGISTER_NAME(ViewEntity)
 REGISTER_NAME(ACS)
@@ -59,6 +60,7 @@ REGISTER_NAME(GC)
 REGISTER_NAME(Window)
 REGISTER_NAME(ModalWindow)
 REGISTER_NAME(RootWindow)
+REGISTER_NAME(ClientGameBase)
 
 // Closing -----------------------------------------------------------------
 
@@ -72,9 +74,12 @@ REGISTER_NAME(RootWindow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.8  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
-//
+//	
 //	Revision 1.7  2005/11/22 19:10:38  dj_jl
 //	Cleaned up a bit.
 //	

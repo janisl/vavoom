@@ -23,17 +23,11 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+class StatusBarScreen : Window;
 
-// CONSTANTS ---------------------------------------------------------------
+ClientGameBase ClGame;
 
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-int sb_height = 39;
+client_state_t *cl;
 
 int sb_pclass;
 int sb_color;
@@ -88,51 +82,13 @@ int pic_paused;
 int pic_health;
 int pic_armor2;
 
-string arti_pic_names[NUMARTIFACTS] = {
-	"ARTIBOX",	// none
-	"ARTIINVU",	// invulnerability
-	"ARTIPTN2",	// health
-	"ARTISPHL",	// superhealth
-	"ARTIHRAD",	// healing radius
-	"ARTISUMN",	// summon maulator
-	"ARTITRCH",	// torch
-	"ARTIPORK",	// pig
-	"ARTISOAR",	// fly
-	"ARTIBLST",	// blast radius
-	"ARTIPSBG",	// poison bag
-	"ARTITELO",	// teleport other
-	"ARTISPED",	// speed
-	"ARTIBMAN",	// boost mana
-	"ARTIBRAC",	// boost armor
-	"ARTIATLP",	// teleport
-	"ARTISKLL",	// arti_puzzskull
-	"ARTIBGEM",	// arti_puzzgembig
-	"ARTIGEMR",	// arti_puzzgemred
-	"ARTIGEMG",	// arti_puzzgemgreen1
-	"ARTIGMG2",	// arti_puzzgemgreen2
-	"ARTIGEMB",	// arti_puzzgemblue1
-	"ARTIGMB2",	// arti_puzzgemblue2
-	"ARTIBOK1",	// arti_puzzbook1
-	"ARTIBOK2",	// arti_puzzbook2
-	"ARTISKL2",	// arti_puzzskull2
-	"ARTIFWEP",	// arti_puzzfweapon
-	"ARTICWEP",	// arti_puzzcweapon
-	"ARTIMWEP",	// arti_puzzmweapon
-	"ARTIGEAR",	// arti_puzzgear1
-	"ARTIGER2",	// arti_puzzgear2
-	"ARTIGER3",	// arti_puzzgear3
-	"ARTIGER4"	// arti_puzzgear4
-};
-
-// CODE --------------------------------------------------------------------
-
 //==========================================================================
 //
-//  SB_StartMap
+//  StartMap
 //
 //==========================================================================
 
-void SB_StartMap(void)
+void StartMap()
 {
 	int i;
 	int namebuf[3];
@@ -150,7 +106,7 @@ void SB_StartMap(void)
 	{
 	case PCLASS_FIGHTER:
 		pic_chain = R_RegisterPic("CHAIN", PIC_PATCH);
-		if (!netgame)
+		if (cl->maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic("LIFEGMF2", PIC_PATCH);
@@ -167,7 +123,7 @@ void SB_StartMap(void)
 		break;
 	case PCLASS_CLERIC:
 		pic_chain = R_RegisterPic("CHAIN2", PIC_PATCH);
-		if (!netgame)
+		if (cl->maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic("LIFEGMC2", PIC_PATCH);
@@ -180,7 +136,7 @@ void SB_StartMap(void)
 		break;
 	case PCLASS_MAGE:
 		pic_chain = R_RegisterPic("CHAIN3", PIC_PATCH);
-		if (!netgame)
+		if (cl->maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic("LIFEGMM2", PIC_PATCH);
@@ -209,10 +165,39 @@ void SB_StartMap(void)
 		bignumwidth[i] = info.width;
 	}
 	pic_minus = R_RegisterPic("NEGNUM", PIC_PATCH);
-	for (i = 0; i < NUMARTIFACTS; i++)
-	{
-		pic_arti[i] = R_RegisterPic(arti_pic_names[i], PIC_PATCH);
-	}
+	pic_arti[0] = R_RegisterPic("ARTIBOX", PIC_PATCH);	// none
+	pic_arti[1] = R_RegisterPic("ARTIINVU", PIC_PATCH);	// invulnerability
+	pic_arti[2] = R_RegisterPic("ARTIPTN2", PIC_PATCH);	// health
+	pic_arti[3] = R_RegisterPic("ARTISPHL", PIC_PATCH);	// superhealth
+	pic_arti[4] = R_RegisterPic("ARTIHRAD", PIC_PATCH);	// healing radius
+	pic_arti[5] = R_RegisterPic("ARTISUMN", PIC_PATCH);	// summon maulator
+	pic_arti[6] = R_RegisterPic("ARTITRCH", PIC_PATCH);	// torch
+	pic_arti[7] = R_RegisterPic("ARTIPORK", PIC_PATCH);	// pig
+	pic_arti[8] = R_RegisterPic("ARTISOAR", PIC_PATCH);	// fly
+	pic_arti[9] = R_RegisterPic("ARTIBLST", PIC_PATCH);	// blast radius
+	pic_arti[10] = R_RegisterPic("ARTIPSBG", PIC_PATCH);	// poison bag
+	pic_arti[11] = R_RegisterPic("ARTITELO", PIC_PATCH);	// teleport other
+	pic_arti[12] = R_RegisterPic("ARTISPED", PIC_PATCH);	// speed
+	pic_arti[13] = R_RegisterPic("ARTIBMAN", PIC_PATCH);	// boost mana
+	pic_arti[14] = R_RegisterPic("ARTIBRAC", PIC_PATCH);	// boost armor
+	pic_arti[15] = R_RegisterPic("ARTIATLP", PIC_PATCH);	// teleport
+	pic_arti[16] = R_RegisterPic("ARTISKLL", PIC_PATCH);	// arti_puzzskull
+	pic_arti[17] = R_RegisterPic("ARTIBGEM", PIC_PATCH);	// arti_puzzgembig
+	pic_arti[18] = R_RegisterPic("ARTIGEMR", PIC_PATCH);	// arti_puzzgemred
+	pic_arti[19] = R_RegisterPic("ARTIGEMG", PIC_PATCH);	// arti_puzzgemgreen1
+	pic_arti[20] = R_RegisterPic("ARTIGMG2", PIC_PATCH);	// arti_puzzgemgreen2
+	pic_arti[21] = R_RegisterPic("ARTIGEMB", PIC_PATCH);	// arti_puzzgemblue1
+	pic_arti[22] = R_RegisterPic("ARTIGMB2", PIC_PATCH);	// arti_puzzgemblue2
+	pic_arti[23] = R_RegisterPic("ARTIBOK1", PIC_PATCH);	// arti_puzzbook1
+	pic_arti[24] = R_RegisterPic("ARTIBOK2", PIC_PATCH);	// arti_puzzbook2
+	pic_arti[25] = R_RegisterPic("ARTISKL2", PIC_PATCH);	// arti_puzzskull2
+	pic_arti[26] = R_RegisterPic("ARTIFWEP", PIC_PATCH);	// arti_puzzfweapon
+	pic_arti[27] = R_RegisterPic("ARTICWEP", PIC_PATCH);	// arti_puzzcweapon
+	pic_arti[28] = R_RegisterPic("ARTIMWEP", PIC_PATCH);	// arti_puzzmweapon
+	pic_arti[29] = R_RegisterPic("ARTIGEAR", PIC_PATCH);	// arti_puzzgear1
+	pic_arti[30] = R_RegisterPic("ARTIGER2", PIC_PATCH);	// arti_puzzgear2
+	pic_arti[31] = R_RegisterPic("ARTIGER3", PIC_PATCH);	// arti_puzzgear3
+	pic_arti[32] = R_RegisterPic("ARTIGER4", PIC_PATCH);	// arti_puzzgear4
 
 	//
 	//  MAIN BAR
@@ -465,7 +450,7 @@ void SB_DrawMainBar(void)
 	R_DrawPic(38, 162, pic_statbar);
 
 	// Frags / health
-	if (deathmatch)
+	if (cl->deathmatch)
 	{
 		R_DrawPic(38, 162, pic_kills);
 		SB_DrawNumber9(40, 176, cl->Frags, 0);
@@ -571,11 +556,7 @@ void SB_DrawMainBar(void)
 	}
 
 	// Armor
-	SB_DrawNumber9(250, 176, ftoi((AutoArmorSave[sb_pclass]
-			+ cl->armorpoints[ARMOR_ARMOR]
-			+ cl->armorpoints[ARMOR_SHIELD]
-			+ cl->armorpoints[ARMOR_HELMET]
-			+ cl->armorpoints[ARMOR_AMULET]) / 5.0), 0);
+	SB_DrawNumber9(250, 176, cl->TotalArmorPoints, 0);
 }
 
 //==========================================================================
@@ -605,25 +586,7 @@ void SB_DrawKeyBar(void)
 	//  Armor
 	for (i = 0; i < NUMARMOR; i++)
 	{
-		if (!cl->armorpoints[i])
-		{
-			num = 100;
-		}
-		else if (cl->armorpoints[i] <=
-			(ArmorIncrement[sb_pclass * NUMARMOR + i] / 4.0))
-		{
-			num = 66;
-		}
-		else if (cl->armorpoints[i] <=
-			(ArmorIncrement[sb_pclass * NUMARMOR + i] / 2.0))
-		{
-			num = 33;
-		}
-		else
-		{
-			num = 0;
-		}
-		R_DrawPic2(150 + 31 * i, 164, pic_armor[i], num);
+		R_DrawPic2(150 + 31 * i, 164, pic_armor[i], cl->ArmorPerc[i]);
 	}
 }
 
@@ -656,11 +619,11 @@ void SB_DrawInventoryBar(void)
 	R_DrawPic(50 + cl->curpos * 31, 163, pic_selectbox);
 	if (x != 0)
 	{
-		R_DrawPic(42, 163, pic_invgeml[!(level->tictime & 4) ? 0 : 1]);
+		R_DrawPic(42, 163, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 	}
 	if (cl->inventorySlotNum - x > 7)
 	{
-		R_DrawPic(269, 163, pic_invgemr[!(level->tictime & 4) ? 0 : 1]);
+		R_DrawPic(269, 163, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 	}
 }
 
@@ -683,15 +646,11 @@ void SB_DrawFullscreenStats(void)
 	R_DrawPic(62, 224, pic_health);
 
 	// Armor
-	SB_DrawNumber12(5, 160, ftoi((AutoArmorSave[sb_pclass]
-			+ cl->armorpoints[ARMOR_ARMOR]
-			+ cl->armorpoints[ARMOR_SHIELD]
-			+ cl->armorpoints[ARMOR_HELMET]
-			+ cl->armorpoints[ARMOR_AMULET]) / 5.0));
+	SB_DrawNumber12(5, 160, cl->TotalArmorPoints);
 	R_DrawPic(62, 200, pic_armor2);
 
 	//  Frags
-	if (deathmatch)
+	if (cl->deathmatch)
 	{
 		SB_DrawNumber9(45, 185, cl->Frags, 0);
 	}
@@ -714,11 +673,11 @@ void SB_DrawFullscreenStats(void)
 		R_DrawPic(50 + cl->curpos * 31, 167, pic_selectbox);
 		if (x != 0)
 		{
-			R_DrawPic(40, 167, pic_invgeml[!(level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(40, 167, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 		if (cl->inventorySlotNum - x > 7)
 		{
-			R_DrawPic(268, 167, pic_invgemr[!(level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(268, 167, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 	}
 	else if (cl->readyArtifact > 0)
@@ -787,7 +746,7 @@ void SB_DrawIcons(void)
 	// Wings of wrath
 	if (cl->stats.flags & SBF_POWER_FLIGHT)
 	{
-		frame = (level->tictime / 3) & 15;
+		frame = (ClGame.level->tictime / 3) & 15;
 		if (cl->stats.flags & SBF_IN_FLIGHT)
 		{
 			if (hitCenterFrame && frame != 15 && frame != 0)
@@ -813,19 +772,19 @@ void SB_DrawIcons(void)
 	// Speed Boots
 	if (cl->stats.flags & SBF_POWER_SPEED)
 	{
-		R_DrawPic(60, 19, pic_boot[(level->tictime / 3) & 15]);
+		R_DrawPic(60, 19, pic_boot[(ClGame.level->tictime / 3) & 15]);
 	}
 
 	// Defensive power
 	if (cl->stats.flags & SBF_POWER_INVULN)
 	{
-		R_DrawPic(260, 19, pic_shld[(level->tictime / 3) & 15]);
+		R_DrawPic(260, 19, pic_shld[(ClGame.level->tictime / 3) & 15]);
 	}
 
 	// Minotaur Active
 	if (cl->stats.flags & SBF_POWER_MINOTAUR)
 	{
-		R_DrawPic(300, 19, pic_mino[(level->tictime / 3) & 15]);
+		R_DrawPic(300, 19, pic_mino[(ClGame.level->tictime / 3) & 15]);
 	}
 }
 
@@ -839,7 +798,7 @@ void SB_DrawPause(void)
 {
 	if (cl->bPaused && GetCvar("draw_pause"))
 	{
-		R_DrawPic(160, netgame ? 70 : 20, pic_paused);
+		R_DrawPic(160, cl->maxclients > 1 ? 70 : 20, pic_paused);
 	}
 }
 
@@ -920,49 +879,28 @@ void SB_UpdateWidgets(void)
 	}
 }
 
+//==========================================================================
+//
+//	VisibilityChanged
+//
+//==========================================================================
+
+void VisibilityChanged(bool bNewVisibility)
+{
+	bTickEnabled = bNewVisibility;
+}
+
+defaultproperties
+{
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+}
+
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.15  2005/03/28 07:44:09  dj_jl
-//  Some Boom line specials and other improvements.
-//
-//  Revision 1.14  2002/09/07 16:28:25  dj_jl
-//  Added Level class.
-//
-//  Revision 1.13  2002/06/29 15:58:14  dj_jl
-//  Added total frags count.
-//
-//  Revision 1.12  2002/03/16 17:49:35  dj_jl
-//  Beautification.
-//
-//  Revision 1.11  2002/02/02 19:17:25  dj_jl
-//  Replacing pointers with references, beautification.
-//
-//  Revision 1.10  2002/01/28 18:47:02  dj_jl
-//  Fixed blue fighter ligegem
-//
-//  Revision 1.9  2002/01/17 18:15:54  dj_jl
-//  Renamed all map object classes
-//
-//  Revision 1.8  2002/01/11 08:03:13  dj_jl
-//  Renamed 'name' to "Name'
-//
-//  Revision 1.7  2002/01/07 12:25:57  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.6  2001/10/09 17:36:57  dj_jl
-//  Added flags for status bar
-//
-//  Revision 1.5  2001/10/02 17:37:19  dj_jl
-//  Removed status bar widgets
-//
-//  Revision 1.4  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.3  2001/08/29 17:46:25  dj_jl
-//  Moved view border and message box to progs
-//  
-//  Revision 1.2  2001/07/27 14:27:52  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
 //
 //**************************************************************************

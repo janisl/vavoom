@@ -622,14 +622,6 @@ void SCR_Update(void)
 			C_DrawNotify();
 			C_DrawCenterMessage();
 			break;
-
-		  case 1:
-			IM_Drawer();
-			break;
-
-		  case 2:
-			F_Drawer();
-			break;
 		}
 	}
 
@@ -723,9 +715,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.27  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
-//
+//	
 //	Revision 1.26  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
 //	

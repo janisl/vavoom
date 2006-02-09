@@ -25,6 +25,8 @@
 
 class MenuScreen : MenuObject;
 
+ClientGame ClGame;
+
 int NumItems;
 MenuObject Items[MAX_MENU_ITEMS];
 int CursorPos;
@@ -194,7 +196,7 @@ bool Key(int key)
 
 	case K_ESCAPE:
 	case K_MOUSE2:
-		PopMenu();
+		ClGame.PopMenu();
 		return true;
 	}
 
@@ -224,6 +226,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.3  2005/12/25 19:19:16  dj_jl
 //  Moved title screen into a class.
 //

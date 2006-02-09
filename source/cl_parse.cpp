@@ -58,8 +58,6 @@ static VModel*			model_precache[1024];
 static VModel*			weapon_model_precache[1024];
 static char				skin_list[256][MAX_VPATH];
 
-static FFunction *pf_ParseServerCommand;
-
 // CODE --------------------------------------------------------------------
 
 void CL_Clear(void)
@@ -82,8 +80,6 @@ void CL_Clear(void)
 		Z_FreeTag(PU_LEVEL);
 	}
 	cls.signon = 0;
-
-	pf_ParseServerCommand = clpr.FuncForName("ParseServerCommand");
 	unguard;
 }
 
@@ -510,9 +506,6 @@ static void CL_ParseServerInfo(void)
 	GCon->Log(cl_level.level_name);
 	GCon->Log("");
     C_ClearNotify();
-
-	clpr.SetGlobal("netgame", cl.maxclients > 1);
-	clpr.SetGlobal("deathmatch", cl.deathmatch);
 
 	CL_LoadLevel(cl_level.mapname);
 
@@ -1053,7 +1046,7 @@ void CL_ParseServerMessage(void)
 			break;
 
 		default:
-			if (clpr.Exec(pf_ParseServerCommand, cmd_type))
+			if (GClGame->eventParseServerCommand(cmd_type))
 			{
 				break;
 			}
@@ -1073,9 +1066,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.37  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.36  2005/06/30 20:20:54  dj_jl
 //	Implemented rendering of Boom fake flats.
 //	

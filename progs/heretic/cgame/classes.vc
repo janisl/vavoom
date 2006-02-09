@@ -131,10 +131,17 @@
 #include "MenuHelpPage.vc"
 #include "MenuScreenHelp.vc"
 #include "TitleScreen.vc"
+#include "StatusBarScreen.vc"
+#include "IntermissionScreen.vc"
+#include "FinaleScreen.vc"
+#include "ClientGame.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.2  2005/12/25 19:19:15  dj_jl
 //  Moved title screen into a class.
 //

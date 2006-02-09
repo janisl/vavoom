@@ -25,6 +25,8 @@
 
 class TitleScreen : Window;
 
+ClientGameBase ClGame;
+
 // demo loop control
 int demosequence;
 
@@ -70,7 +72,7 @@ void AdvanceDemo()
 
 	case 4:
 		pagetime = 200.0 / 35.0;
-		if (shareware)
+		if (!WadLumpPresent("E2M1"))
 		{
 			page_pic = R_RegisterPic("ORDER", PIC_RAW);
 		}
@@ -118,7 +120,7 @@ void VisibilityChanged(bool bNewVisibility)
 void Tick(float DeltaTime)
 {
 	pagetime -= DeltaTime;
-	if (demosequence == -1 || (!MN_Active() && pagetime < 0.0))
+	if (demosequence == -1 || (!ClGame.MenuActive() && pagetime < 0.0))
 	{
 		AdvanceDemo();
 	}
@@ -186,6 +188,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2005/12/25 19:19:15  dj_jl
 //  Moved title screen into a class.
 //

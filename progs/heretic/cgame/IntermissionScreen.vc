@@ -23,21 +23,15 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+class IntermissionScreen : Window;
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
+ClientGameBase ClGame;
 
 struct yahpt_t
 {
 	int x;
 	int y;
 };
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
 
 // specifies current state
 int interstate;
@@ -79,44 +73,186 @@ int im_sounds;
 // used for general timing
 float cnt;
 
-yahpt_t YAHspot[3][9] =
-{
-	{
-			{172, 78},
-			{86, 90},
-			{73, 66},
-			{159, 95},
-			{148, 126},
-			{132, 54},
-			{131, 74},
-			{208, 138},
-			{52, 101}
-		},
-	{
-			{218, 57},
-			{137, 81},
-			{155, 124},
-			{171, 68},
-			{250, 86},
-			{136, 98},
-			{203, 90},
-			{220, 140},
-			{279, 106}
-		},
-	{
-			{86, 99},
-			{124, 103},
-			{154, 79},
-			{202, 83},
-			{178, 59},
-			{142, 58},
-			{219, 66},
-			{247, 57},
-			{107, 80}
-		}
-};
+yahpt_t YAHspot[3][9];
 
-// CODE --------------------------------------------------------------------
+//==========================================================================
+//
+//  Start
+//
+//==========================================================================
+
+void Start()
+{
+	FindEpisodeAndMap(ARR2STR(ClGame.im->leavemap), &im_episode, &im_map);
+	FindEpisodeAndMap(ARR2STR(ClGame.im->entermap), &im_nextepisode, &im_nextmap);
+	IM_LoadPics();
+	IM_InitStats();
+	interstate = 0;
+	ClGame.skipintermission = false;
+	intertime = 0.0;
+	if (im_episode > 3)
+	{
+		oldintertime = 35.0;
+	}
+	else
+	{
+		oldintertime = 10.0;
+	}
+	im_sounds = 0;
+#ifdef FIXME
+	S_StartSong("MUS_INTR", P_GetCDIntermissionTrack(), true);
+#else
+	CmdBuf_AddText("music loop MUS_INTR\n");
+#endif
+}
+
+//==========================================================================
+//
+//  FindEpisodeAndMap
+//
+//==========================================================================
+
+void FindEpisodeAndMap(string Name, int *epi, int *map)
+{
+	int e;
+	int m;
+
+	for (e = 1; e <= 5; e++)
+	{
+		for (m = 1; m <= 9; m++)
+		{
+			if (!strcmp(Name, va("E%dM%d", e, m)))
+			{
+				*epi = e;
+				*map = m;
+				return;
+			}
+		}
+	}
+	*epi = 4;
+	*map = 1;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	if (interstate == 3)
+	{
+		if (cnt > 0.0)
+		{
+			cnt -= DeltaTime;
+			if (cnt <= 0.0)
+			{
+				IM_UnloadPics();
+				CmdBuf_AddText("TeleportNewMap\n");
+			}
+		}
+		return;
+	}
+	intertime += DeltaTime;
+	if (oldintertime < intertime)
+	{
+		interstate++;
+		if (im_episode > 3 && interstate >= 1)
+		{
+			// Extended Wad levels:  skip directly to the next level
+			interstate = 3;
+		}
+		switch (interstate)
+		{
+		case 0:
+			oldintertime = intertime + 10.0;
+			if (im_episode > 3)
+			{
+				oldintertime = intertime + 35.0;
+			}
+			break;
+		case 1:
+			oldintertime = intertime + 6.0;
+			break;
+		case 2:
+			oldintertime = 99999.0;
+			break;
+		case 3:
+			cnt = 0.3;
+			break;
+		default:
+			break;
+		}
+	}
+	if (ClGame.skipintermission)
+	{
+		if (interstate == 0 && intertime < 5.0)
+		{
+			intertime = 5.0;
+			ClGame.skipintermission = false;
+			return;
+		}
+		else if (interstate < 2 && im_episode < 4)
+		{
+			interstate = 2;
+			ClGame.skipintermission = false;
+			LocalSound('DoorClose');
+			return;
+		}
+		interstate = 3;
+		cnt = 0.3;
+		ClGame.skipintermission = false;
+		LocalSound('DoorClose');
+	}
+}
+
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	if (interstate == 3)
+	{
+		return;
+	}
+	if (oldinterstate != 2 && interstate == 2)
+	{
+		LocalSound('plats/pt1_stop');
+	}
+	oldinterstate = interstate;
+
+	IM_DrawBackground();
+
+	switch (interstate)
+	{
+	case 0:	// draw stats
+		if (ClGame.cl->maxclients == 1)
+			IM_DrawSingleStats();
+		else if (!ClGame.cl->deathmatch)
+			IM_DrawCoopStats();
+		else
+			IM_DrawDMStats();
+		break;
+	case 1:	// leaving old level
+		if (im_episode < 4)
+		{
+			IM_DrawOldLevel();
+		}
+		break;
+	case 2:	// going to the next level
+		if (im_episode < 4)
+		{
+			IM_DrawYAH();
+		}
+		break;
+	case 3:	// waiting before going to the next level
+		break;
+	}
+}
 
 //========================================================================
 //
@@ -198,38 +334,38 @@ void IM_InitStats()
 	int playercount;
 	int time;
 
-	if (cl->maxclients == 1)
+	if (ClGame.cl->maxclients == 1)
 	{
-		time = ftoi(im->time);
+		time = ftoi(ClGame.im->time);
 		hours = time / 3600;
 		time -= hours * 3600;
 		minutes = time / 60;
 		time -= minutes * 60;
 		seconds = time;
 	}
-	else if (!cl->deathmatch)
+	else if (!ClGame.cl->deathmatch)
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			killPercent[i] = 0;
 			bonusPercent[i] = 0;
 			secretPercent[i] = 0;
-			if (scores[i].bActive)
+			if (ClGame.scores[i].bActive)
 			{
-				if (im->totalkills)
+				if (ClGame.im->totalkills)
 				{
 					killPercent[i] =
-						scores[i].killcount * 100 / im->totalkills;
+						ClGame.scores[i].killcount * 100 / ClGame.im->totalkills;
 				}
-				if (im->totalitems)
+				if (ClGame.im->totalitems)
 				{
 					bonusPercent[i] =
-						scores[i].itemcount * 100 / im->totalitems;
+						ClGame.scores[i].itemcount * 100 / ClGame.im->totalitems;
 				}
-				if (im->totalsecret)
+				if (ClGame.im->totalsecret)
 				{
 					secretPercent[i] =
-						scores[i].secretcount * 100 / im->totalsecret;
+						ClGame.scores[i].secretcount * 100 / ClGame.im->totalsecret;
 				}
 			}
 		}
@@ -244,14 +380,14 @@ void IM_InitStats()
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			totalFrags[i] = 0;
-			if (scores[i].bActive)
+			if (ClGame.scores[i].bActive)
 			{
 				playercount++;
 				for (j = 0; j < MAXPLAYERS; j++)
 				{
-					if (scores[j].bActive)
+					if (ClGame.scores[j].bActive)
 					{
-						totalFrags[i] += scores[i].frags[j];
+						totalFrags[i] += ClGame.scores[i].frags[j];
 					}
 				}
 				dSlideX[i] = (43.0 * itof(posnum)) / 20.0;
@@ -293,7 +429,7 @@ void IM_DrawSingleStats()
 	T_DrawText(50, 90, "ITEMS");
 	T_DrawText(50, 115, "SECRETS");
 	T_SetAlign(hcenter, vtop);
-	T_DrawText(160, 3, ARR2STR(im->leave_name));
+	T_DrawText(160, 3, ARR2STR(ClGame.im->leave_name));
 	T_SetShadow(false);
 
 	T_SetFont(font_small);
@@ -312,9 +448,9 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(202, 65, va("%d", scores[0].killcount));
+	T_DrawText(202, 65, va("%d", ClGame.scores[0].killcount));
 	T_DrawText(237, 65, "/");
-	T_DrawText(250, 65, va("%d", im->totalkills));
+	T_DrawText(250, 65, va("%d", ClGame.im->totalkills));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 2.0)
@@ -330,9 +466,9 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(202, 90, va("%d", scores[0].itemcount));
+	T_DrawText(202, 90, va("%d", ClGame.scores[0].itemcount));
 	T_DrawText(237, 90, "/");
-	T_DrawText(250, 90, va("%d", im->totalitems));
+	T_DrawText(250, 90, va("%d", ClGame.im->totalitems));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 3.0)
@@ -348,9 +484,9 @@ void IM_DrawSingleStats()
 	T_SetFont(font_big);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(1, 1);
-	T_DrawText(202, 115, va("%d", scores[0].secretcount));
+	T_DrawText(202, 115, va("%d", ClGame.scores[0].secretcount));
 	T_DrawText(237, 115, "/");
-	T_DrawText(250, 115, va("%d", im->totalsecret));
+	T_DrawText(250, 115, va("%d", ClGame.im->totalsecret));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 5.0)
@@ -363,7 +499,7 @@ void IM_DrawSingleStats()
 		im_sounds++;
 	}
 
-	if (!ExtendedWAD || im_episode < 4)
+	if (!WadLumpPresent("EXTENDED") || im_episode < 4)
 	{
 		T_SetShadow(true);
 		T_SetFont(font_big);
@@ -382,9 +518,9 @@ void IM_DrawSingleStats()
 		T_DrawText(160, 160, "NOW ENTERING:");
 		T_SetShadow(true);
 		T_SetFont(font_big);
-		T_DrawText(160, 170, ARR2STR(im->enter_name));
+		T_DrawText(160, 170, ARR2STR(ClGame.im->enter_name));
 		T_SetShadow(false);
-		skipintermission = false;
+		ClGame.skipintermission = false;
 	}
 }
 
@@ -407,7 +543,7 @@ void IM_DrawCoopStats()
 	T_DrawText(232, 35, "SECRET");
 
 	T_SetAlign(hcenter, vtop);
-	T_DrawText(160, 3, ARR2STR(im->leave_name));
+	T_DrawText(160, 3, ARR2STR(ClGame.im->leave_name));
 	T_SetShadow(false);
 	T_SetFont(font_small);
 	T_DrawText(160, 25, "FINISHED");
@@ -420,7 +556,7 @@ void IM_DrawCoopStats()
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
 	{
-		if (scores[i].bActive)
+		if (ClGame.scores[i].bActive)
 		{
 			R_DrawShadowedPic(25, ypos, patchFaceOkay[i]);
 			if (intertime < 1.25)
@@ -476,7 +612,7 @@ void IM_DrawDMStats()
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (scores[i].bActive)
+			if (ClGame.scores[i].bActive)
 			{
 				R_DrawShadowedPic(40,
 					ypos + ftoi(dSlideY[i] * 35.0 * intertime),
@@ -504,9 +640,9 @@ void IM_DrawDMStats()
 //  for (i = 0; i < MAXPLAYERS; i++)
 	for (i = 0; i < 4; i++)
 	{
-		if (scores[i].bActive)
+		if (ClGame.scores[i].bActive)
 		{
-			if (intertime < 3.0 || i == cl->clientnum)
+			if (intertime < 3.0 || i == ClGame.cl->clientnum)
 			{
 				R_DrawShadowedPic(40, ypos, patchFaceOkay[i]);
 				R_DrawShadowedPic(xpos, 18, patchFaceDead[i]);
@@ -520,9 +656,9 @@ void IM_DrawDMStats()
 //          for (j = 0; j < MAXPLAYERS; j++)
 			for (j = 0; j < 4; j++)
 			{
-				if (scores[j].bActive)
+				if (ClGame.scores[j].bActive)
 				{
-					T_DrawText(kpos, ypos + 10, va("%d", scores[i].frags[j]));
+					T_DrawText(kpos, ypos + 10, va("%d", ClGame.scores[i].frags[j]));
 					kpos += 43;
 				}
 			}
@@ -559,7 +695,7 @@ void IM_DrawOldLevel()
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
-	T_DrawText(160, 3, ARR2STR(im->leave_name));
+	T_DrawText(160, 3, ARR2STR(ClGame.im->leave_name));
 	T_SetShadow(false);
 
 	T_SetFont(font_small);
@@ -585,7 +721,7 @@ void IM_DrawOldLevel()
 			R_DrawPic(YAHspot[im_episode - 1][i].x,
 				YAHspot[im_episode - 1][i].y, patchBEENTHERE);
 		}
-		if (cl->bDidSecret)
+		if (ClGame.cl->bDidSecret)
 		{
 			R_DrawPic(YAHspot[im_episode - 1][8].x,
 				YAHspot[im_episode - 1][8].y, patchBEENTHERE);
@@ -615,7 +751,7 @@ void IM_DrawYAH()
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
-	T_DrawText(160, 20, ARR2STR(im->enter_name));
+	T_DrawText(160, 20, ARR2STR(ClGame.im->enter_name));
 	T_SetShadow(false);
 
 	if (im_map == 9)
@@ -627,7 +763,7 @@ void IM_DrawYAH()
 		R_DrawPic(YAHspot[im_episode - 1][i].x, YAHspot[im_episode - 1][i].y,
 			patchBEENTHERE);
 	}
-	if (cl->bDidSecret)
+	if (ClGame.cl->bDidSecret)
 	{
 		R_DrawPic(YAHspot[im_episode - 1][8].x, YAHspot[im_episode - 1][8].y,
 			patchBEENTHERE);
@@ -642,214 +778,55 @@ void IM_DrawYAH()
 
 //==========================================================================
 //
-//  IM_Drawer
+//	VisibilityChanged
 //
 //==========================================================================
 
-void IM_Drawer()
+void VisibilityChanged(bool bNewVisibility)
 {
-	if (interstate == 3)
-	{
-		return;
-	}
-	if (oldinterstate != 2 && interstate == 2)
-	{
-		LocalSound('plats/pt1_stop');
-	}
-	oldinterstate = interstate;
-
-	IM_DrawBackground();
-
-	switch (interstate)
-	{
-	case 0:	// draw stats
-		if (cl->maxclients == 1)
-			IM_DrawSingleStats();
-		else if (!cl->deathmatch)
-			IM_DrawCoopStats();
-		else
-			IM_DrawDMStats();
-		break;
-	case 1:	// leaving old level
-		if (im_episode < 4)
-		{
-			IM_DrawOldLevel();
-		}
-		break;
-	case 2:	// going to the next level
-		if (im_episode < 4)
-		{
-			IM_DrawYAH();
-		}
-		break;
-	case 3:	// waiting before going to the next level
-		break;
-	}
+	bTickEnabled = bNewVisibility;
 }
 
-//========================================================================
-//
-//  IM_UpdateStats
-//
-//========================================================================
-
-void IM_UpdateStats()
+defaultproperties
 {
-	if (interstate == 3)
-	{
-		if (cnt > 0.0)
-		{
-			cnt -= frametime;
-			if (cnt <= 0.0)
-			{
-				IM_UnloadPics();
-				CmdBuf_AddText("TeleportNewMap\n");
-			}
-		}
-		return;
-	}
-	intertime += frametime;
-	if (oldintertime < intertime)
-	{
-		interstate++;
-		if (im_episode > 3 && interstate >= 1)
-		{
-			// Extended Wad levels:  skip directly to the next level
-			interstate = 3;
-		}
-		switch (interstate)
-		{
-		case 0:
-			oldintertime = intertime + 10.0;
-			if (im_episode > 3)
-			{
-				oldintertime = intertime + 35.0;
-			}
-			break;
-		case 1:
-			oldintertime = intertime + 6.0;
-			break;
-		case 2:
-			oldintertime = 99999.0;
-			break;
-		case 3:
-			cnt = 0.3;
-			break;
-		default:
-			break;
-		}
-	}
-	if (skipintermission)
-	{
-		if (interstate == 0 && intertime < 5.0)
-		{
-			intertime = 5.0;
-			skipintermission = false;
-			return;
-		}
-		else if (interstate < 2 && im_episode < 4)
-		{
-			interstate = 2;
-			skipintermission = false;
-			LocalSound('DoorClose');
-			return;
-		}
-		interstate = 3;
-		cnt = 0.3;
-		skipintermission = false;
-		LocalSound('DoorClose');
-	}
-}
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+	YAHspot[0][0].x = 172;	YAHspot[0][0].y = 78;
+	YAHspot[0][1].x = 86;	YAHspot[0][1].y = 90;
+	YAHspot[0][2].x = 73;	YAHspot[0][2].y = 66;
+	YAHspot[0][3].x = 159;	YAHspot[0][3].y = 95;
+	YAHspot[0][4].x = 148;	YAHspot[0][4].y = 126;
+	YAHspot[0][5].x = 132;	YAHspot[0][5].y = 54;
+	YAHspot[0][6].x = 131;	YAHspot[0][6].y = 74;
+	YAHspot[0][7].x = 208;	YAHspot[0][7].y = 138;
+	YAHspot[0][8].x = 52;	YAHspot[0][8].y = 101;
 
-//==========================================================================
-//
-//  FindEpisodeAndMap
-//
-//==========================================================================
+	YAHspot[1][0].x = 218;	YAHspot[1][0].y = 57;
+	YAHspot[1][1].x = 137;	YAHspot[1][1].y = 81;
+	YAHspot[1][2].x = 155;	YAHspot[1][2].y = 124;
+	YAHspot[1][3].x = 171;	YAHspot[1][3].y = 68;
+	YAHspot[1][4].x = 250;	YAHspot[1][4].y = 86;
+	YAHspot[1][5].x = 136;	YAHspot[1][5].y = 98;
+	YAHspot[1][6].x = 203;	YAHspot[1][6].y = 90;
+	YAHspot[1][7].x = 220;	YAHspot[1][7].y = 140;
+	YAHspot[1][8].x = 279;	YAHspot[1][8].y = 106;
 
-void FindEpisodeAndMap(string Name, int *epi, int *map)
-{
-	int e;
-	int m;
-
-	for (e = 1; e <= 5; e++)
-	{
-		for (m = 1; m <= 9; m++)
-		{
-			if (!strcmp(Name, va("E%dM%d", e, m)))
-			{
-				*epi = e;
-				*map = m;
-				return;
-			}
-		}
-	}
-	*epi = 4;
-	*map = 1;
-}
-
-//==========================================================================
-//
-//  IM_Start
-//
-//==========================================================================
-
-void IM_Start()
-{
-	FindEpisodeAndMap(ARR2STR(im->leavemap), &im_episode, &im_map);
-	FindEpisodeAndMap(ARR2STR(im->entermap), &im_nextepisode, &im_nextmap);
-	IM_LoadPics();
-	IM_InitStats();
-	interstate = 0;
-	skipintermission = false;
-	intertime = 0.0;
-	if (im_episode > 3)
-	{
-		oldintertime = 35.0;
-	}
-	else
-	{
-		oldintertime = 10.0;
-	}
-	im_sounds = 0;
-#ifdef FIXME
-	S_StartSong("MUS_INTR", P_GetCDIntermissionTrack(), true);
-#else
-	CmdBuf_AddText("music loop MUS_INTR\n");
-#endif
+	YAHspot[2][0].x = 86;	YAHspot[2][0].y = 99;
+	YAHspot[2][1].x = 124;	YAHspot[2][1].y = 103;
+	YAHspot[2][2].x = 154;	YAHspot[2][2].y = 79;
+	YAHspot[2][3].x = 202;	YAHspot[2][3].y = 83;
+	YAHspot[2][4].x = 178;	YAHspot[2][4].y = 59;
+	YAHspot[2][5].x = 142;	YAHspot[2][5].y = 58;
+	YAHspot[2][6].x = 219;	YAHspot[2][6].y = 66;
+	YAHspot[2][7].x = 247;	YAHspot[2][7].y = 57;
+	YAHspot[2][8].x = 107;	YAHspot[2][8].y = 80;
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.11  2005/11/18 23:36:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.10  2005/01/19 13:08:57  dj_jl
-//  Fixed wrong episode 5 finale.
-//
-//  Revision 1.9  2002/09/07 16:28:25  dj_jl
-//  Added Level class.
-//
-//  Revision 1.8  2002/02/02 19:17:25  dj_jl
-//  Replacing pointers with references, beautification.
-//
-//  Revision 1.7  2002/01/11 18:19:40  dj_jl
-//  Started to use names in progs
-//
-//  Revision 1.6  2002/01/11 08:03:11  dj_jl
-//  Renamed 'name' to "Name'
-//
-//  Revision 1.5  2002/01/07 12:23:17  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.4  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.3  2001/09/20 16:19:59  dj_jl
-//  Start using object-oriented stuff, beautification
-//  
-//  Revision 1.2  2001/07/27 14:27:52  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
 //
 //**************************************************************************

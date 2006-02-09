@@ -17,7 +17,7 @@ svprogs: $(OUTDIR)/svprogs.dat
 del:
 	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
 
-$(OUTDIR)/clprogs.dat: $(VCC) clprogs.vc ../doom/*.vc ../doom/client/*.vc ../doom/cgame/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/client/*.vc
+$(OUTDIR)/clprogs.dat: $(VCC) clprogs.vc ../doom/*.vc ../doom/cgame/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/client/*.vc
 	$(VCC) -I$(COMMON_DIR) clprogs.vc $@
 
 $(OUTDIR)/svprogs.dat: $(VCC) svprogs.vc ../doom/*.vc ../doom/server/*.vc ../doom/game/*.vc ../doom/game1/*.vc ../doom/game2/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc

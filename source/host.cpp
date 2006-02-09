@@ -395,7 +395,7 @@ void Host_Frame(void)
 			Sys_Error("Host_Error: %s\n", e.message);	// dedicated servers exit
 
 		CL_Disconnect();
-		clpr.Exec("OnHostError");
+		GClGame->eventOnHostError();
 		C_StartFull();
 #else
 		Sys_Error("Host_Error: %s\n", e.message);	// dedicated servers exit
@@ -419,7 +419,7 @@ void Host_Frame(void)
 			Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
 	
 		CL_Disconnect();
-		clpr.Exec("OnHostEndGame");
+		GClGame->eventOnHostEndGame();
 #else
 		Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
 #endif
@@ -629,9 +629,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.30  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
-//
+//	
 //	Revision 1.29  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	

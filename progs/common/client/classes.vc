@@ -27,10 +27,14 @@
 #include "Window.vc"
 #include "ModalWindow.vc"
 #include "RootWindow.vc"
+#include "ClientGameBase.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:08  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //

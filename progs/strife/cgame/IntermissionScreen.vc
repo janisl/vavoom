@@ -23,50 +23,62 @@
 //**
 //**************************************************************************
 
-RootWindow GRoot;
+class IntermissionScreen : Window;
 
-bool local_server = true;
+ClientGameBase ClGame;
 
-int netgame;
-int deathmatch;
+//==========================================================================
+//
+//  Start
+//
+//==========================================================================
 
-client_state_t *cl;
-cl_level_t *level;
-Level GLevel;
+void Start()
+{
+}
 
-float frametime;
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
 
-scores_t *scores;
-im_t *im;
+void Tick(float DeltaTime)
+{
+}
 
-// used to accelerate or skip a stage
-bool skipintermission;
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+}
+
+//==========================================================================
+//
+//	VisibilityChanged
+//
+//==========================================================================
+
+void VisibilityChanged(bool bNewVisibility)
+{
+	bTickEnabled = bNewVisibility;
+}
+
+defaultproperties
+{
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+}
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.9  2002/10/26 16:32:14  dj_jl
-//  New style of defining classes.
-//
-//  Revision 1.8  2002/09/07 16:28:21  dj_jl
-//  Added Level class.
-//
-//  Revision 1.7  2002/01/07 12:19:56  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.6  2001/10/08 17:23:15  dj_jl
-//  Different client and server level structures
-//
-//  Revision 1.5  2001/09/24 17:24:09  dj_jl
-//  Beautification
-//
-//  Revision 1.4  2001/08/31 17:19:16  dj_jl
-//  Beautification
-//  
-//  Revision 1.3  2001/07/31 16:57:52  dj_jl
-//  Checking for shareware/extended wad by the presence of wad lump
-//
-//  Revision 1.2  2001/07/27 14:27:51  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
 //
 //**************************************************************************

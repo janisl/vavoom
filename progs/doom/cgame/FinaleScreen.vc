@@ -23,6 +23,10 @@
 //**
 //**************************************************************************
 
+class FinaleScreen : Window;
+
+ClientGameBase ClGame;
+
 //**************************************************************************
 //**
 //**    DOOM finale
@@ -31,20 +35,10 @@
 
 #ifndef DOOM2
 
-// MACROS ------------------------------------------------------------------
-
 #define	TEXTSPEED	0.1
 #define	TEXTWAIT	7.0
 
 #define MAX_FINALE_MESSAGE_SIZE	1024
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
 
 int f_episode;
 int f_map;
@@ -62,7 +56,118 @@ int fend[7];
 
 int laststage;
 
-// CODE --------------------------------------------------------------------
+//==========================================================================
+//
+//  StartFinale
+//
+//==========================================================================
+
+void StartFinale()
+{
+	FinaleStage = 0;
+	FinaleTime = 0.0;
+
+	FindEpisodeAndMap(ARR2STR(ClGame.level->mapname), &f_episode, &f_map);
+
+	switch (f_episode)
+	{
+	case 1:
+		FinaleFlat = "FLOOR4_8";
+		F_GetFinaleText("FIN1TEXT");
+		break;
+	case 2:
+		FinaleFlat = "SFLR6_1";
+		F_GetFinaleText("FIN2TEXT");
+		break;
+	case 3:
+		FinaleFlat = "MFLR8_4";
+		F_GetFinaleText("FIN3TEXT");
+		break;
+	case 4:
+		FinaleFlat = "MFLR8_3";
+		F_GetFinaleText("FIN4TEXT");
+		break;
+	default:
+		// Ouch.
+		break;
+	}
+
+#ifdef FIXME
+	S_StartSong("D_VICTOR", P_GetCDEnd1Track(), true);
+#else
+	CmdBuf_AddText("music loop D_VICTOR\n");
+#endif
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	FinaleTime += DeltaTime;
+
+	if (!FinaleStage && FinaleTime > FinaleEndTime)
+	{
+		FinaleTime = 0.0;
+		FinaleStage = 1;
+		switch (f_episode)
+		{
+		case 1:
+			if (WadLumpPresent("E4M1"))
+				fpage1 = R_RegisterPic("CREDIT", PIC_PATCH);
+			else
+				fpage1 = R_RegisterPic("HELP2", PIC_PATCH);
+			break;
+		case 2:
+			fpage1 = R_RegisterPic("VICTORY2", PIC_PATCH);
+			break;
+		case 3:
+			F_InitBunnyScroll();
+			break;
+		case 4:
+			fpage1 = R_RegisterPic("ENDPIC", PIC_PATCH);
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	if (!FinaleStage)
+	{
+		F_TextWrite();
+		return;
+	}
+
+	if (f_episode == 3)
+	{
+		F_BunnyScroll();
+	}
+	else
+	{
+		R_DrawPic(0, 0, fpage1);
+	}
+}
+
+//===========================================================================
+//
+//  Responder
+//
+//===========================================================================
+
+bool Responder(event_t * event)
+{
+	return false;
+}
 
 //==========================================================================
 //
@@ -174,116 +279,29 @@ void F_BunnyScroll()
 
 //==========================================================================
 //
-//  F_StartFinale
+//  FindEpisodeAndMap
 //
 //==========================================================================
 
-void F_StartFinale()
+void FindEpisodeAndMap(string Name, int *epi, int *map)
 {
-	cl->intermission = 2;
-	FinaleStage = 0;
-	FinaleTime = 0.0;
+	int e;
+	int m;
 
-	FindEpisodeAndMap(ARR2STR(level->mapname), &f_episode, &f_map);
-
-	switch (f_episode)
+	for (e = 1; e <= 3; e++)
 	{
-	case 1:
-		FinaleFlat = "FLOOR4_8";
-		F_GetFinaleText("FIN1TEXT");
-		break;
-	case 2:
-		FinaleFlat = "SFLR6_1";
-		F_GetFinaleText("FIN2TEXT");
-		break;
-	case 3:
-		FinaleFlat = "MFLR8_4";
-		F_GetFinaleText("FIN3TEXT");
-		break;
-	case 4:
-		FinaleFlat = "MFLR8_3";
-		F_GetFinaleText("FIN4TEXT");
-		break;
-	default:
-		// Ouch.
-		break;
-	}
-
-#ifdef FIXME
-	S_StartSong("D_VICTOR", P_GetCDEnd1Track(), true);
-#else
-	CmdBuf_AddText("music loop D_VICTOR\n");
-#endif
-}
-
-//===========================================================================
-//
-//  F_Ticker
-//
-//===========================================================================
-
-void F_Ticker()
-{
-	FinaleTime += frametime;
-
-	if (!FinaleStage && FinaleTime > FinaleEndTime)
-	{
-		FinaleTime = 0.0;
-		FinaleStage = 1;
-		switch (f_episode)
+		for (m = 1; m <= 9; m++)
 		{
-		case 1:
-			if (ExtendedWAD)
-				fpage1 = R_RegisterPic("CREDIT", PIC_PATCH);
-			else
-				fpage1 = R_RegisterPic("HELP2", PIC_PATCH);
-			break;
-		case 2:
-			fpage1 = R_RegisterPic("VICTORY2", PIC_PATCH);
-			break;
-		case 3:
-			F_InitBunnyScroll();
-			break;
-		case 4:
-			fpage1 = R_RegisterPic("ENDPIC", PIC_PATCH);
-			break;
+			if (!strcmp(Name, va("E%dM%d", e, m)))
+			{
+				*epi = e;
+				*map = m;
+				return;
+			}
 		}
 	}
-}
-
-//==========================================================================
-//
-//  F_Drawer
-//
-//==========================================================================
-
-void F_Drawer()
-{
-	if (!FinaleStage)
-	{
-		F_TextWrite();
-		return;
-	}
-
-	if (f_episode == 3)
-	{
-		F_BunnyScroll();
-	}
-	else
-	{
-		R_DrawPic(0, 0, fpage1);
-	}
-}
-
-//===========================================================================
-//
-//  F_Responder
-//
-//===========================================================================
-
-bool F_Responder(event_t * event)
-{
-	return false;
+	*epi = 4;
+	*map = 1;
 }
 
 #else
@@ -293,16 +311,6 @@ bool F_Responder(event_t * event)
 //**    DOOM 2 finale
 //**
 //**************************************************************************
-
-// MACROS ------------------------------------------------------------------
-
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
 
 int fpage1;
 
@@ -363,7 +371,49 @@ string caststrings[] = {
 };
 #endif
 
-// CODE --------------------------------------------------------------------
+//==========================================================================
+//
+//  StartFinale
+//
+//==========================================================================
+
+void StartFinale()
+{
+	F_StartCast();
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	F_CastTicker();
+}
+
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	F_CastDrawer();
+}
+
+//===========================================================================
+//
+//  Responder
+//
+//===========================================================================
+
+bool Responder(event_t * event)
+{
+	return F_CastResponder(event);
+}
 
 //==========================================================================
 //
@@ -611,78 +661,30 @@ void F_CastDrawer(void)
 #endif
 }
 
-//==========================================================================
-//
-//  F_StartFinale
-//
-//==========================================================================
-
-void F_StartFinale(void)
-{
-	cl->intermission = 2;
-	F_StartCast();
-}
-
-//===========================================================================
-//
-//  F_Ticker
-//
-//===========================================================================
-
-void F_Ticker(void)
-{
-	F_CastTicker();
-}
-
-//==========================================================================
-//
-//  F_Drawer
-//
-//==========================================================================
-
-void F_Drawer(void)
-{
-	F_CastDrawer();
-}
-
-//===========================================================================
-//
-//  F_Responder
-//
-//===========================================================================
-
-bool F_Responder(event_t * event)
-{
-	return F_CastResponder(event);
-}
-
 #endif
+
+//==========================================================================
+//
+//	VisibilityChanged
+//
+//==========================================================================
+
+void VisibilityChanged(bool bNewVisibility)
+{
+	bTickEnabled = bNewVisibility;
+}
+
+defaultproperties
+{
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
+}
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.9  2005/11/17 23:05:22  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.8  2002/09/07 16:28:24  dj_jl
-//  Added Level class.
-//
-//  Revision 1.7  2002/01/11 18:19:40  dj_jl
-//  Started to use names in progs
-//
-//  Revision 1.6  2002/01/11 08:03:10  dj_jl
-//  Renamed 'name' to "Name'
-//
-//  Revision 1.5  2002/01/07 12:21:10  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.4  2001/09/24 17:24:09  dj_jl
-//  Beautification
-//
-//  Revision 1.3  2001/08/15 17:07:10  dj_jl
-//  Fixed finale
-//
-//  Revision 1.2  2001/07/27 14:27:51  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/09 22:33:09  dj_jl
+//  Moved all client game code to classes.
 //
 //**************************************************************************

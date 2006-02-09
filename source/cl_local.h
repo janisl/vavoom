@@ -91,6 +91,126 @@ struct clmobjbase_t
 	int			effects;
 };
 
+class VRootWindow;
+
+class VClientGameBase : public VObject
+{
+	DECLARE_CLASS(VClientGameBase, VObject, 0)
+
+	dword				local_server:1;
+
+	// used to accelerate or skip a stage
+	dword				skipintermission:1;
+
+	client_state_t*		cl;
+	cl_level_t*			level;
+	VLevel*				GLevel;
+
+	scores_t*			scores;
+	im_t*				im;
+
+	VRootWindow*		GRoot;
+
+	int					sb_height;
+
+	void eventRootWindowCreated()
+	{
+		clpr.Exec(GetVFunction("RootWindowCreated"), (int)this);
+	}
+	void eventConnected()
+	{
+		clpr.Exec(GetVFunction("Connected"), (int)this);
+	}
+	void eventDisconnected()
+	{
+		clpr.Exec(GetVFunction("Disconnected"), (int)this);
+	}
+	void eventDemoPlaybackStarted()
+	{
+		clpr.Exec(GetVFunction("DemoPlaybackStarted"), (int)this);
+	}
+	void eventDemoPlaybackStopped()
+	{
+		clpr.Exec(GetVFunction("DemoPlaybackStopped"), (int)this);
+	}
+	void eventOnHostEndGame()
+	{
+		clpr.Exec(GetVFunction("OnHostEndGame"), (int)this);
+	}
+	void eventOnHostError()
+	{
+		clpr.Exec(GetVFunction("OnHostError"), (int)this);
+	}
+	void eventStatusBarStartMap()
+	{
+		clpr.Exec(GetVFunction("StatusBarStartMap"), (int)this);
+	}
+	void eventStatusBarDrawer(int sb_type)
+	{
+		clpr.Exec(GetVFunction("StatusBarDrawer"), (int)this, sb_type);
+	}
+	void eventStatusBarUpdateWidgets()
+	{
+		clpr.Exec(GetVFunction("StatusBarUpdateWidgets"), (int)this);
+	}
+	void eventIintermissionStart()
+	{
+		clpr.Exec(GetVFunction("IintermissionStart"), (int)this);
+	}
+	void eventStartFinale()
+	{
+		clpr.Exec(GetVFunction("StartFinale"), (int)this);
+	}
+	bool eventFinaleResponder(event_t* event)
+	{
+		return !!clpr.Exec(GetVFunction("FinaleResponder"), (int)this, (int)event);
+	}
+	void eventDeactivateMenu()
+	{
+		clpr.Exec(GetVFunction("DeactivateMenu"), (int)this);
+	}
+	bool eventMenuResponder(event_t* event)
+	{
+		return !!clpr.Exec(GetVFunction("MenuResponder"), (int)this, (int)event);
+	}
+	bool eventMenuActive()
+	{
+		return !!clpr.Exec(GetVFunction("MenuActive"), (int)this);
+	}
+	void eventSetMenu(const char* Name)
+	{
+		clpr.Exec(GetVFunction("SetMenu"), (int)this, (int)Name);
+	}
+	void eventMessageBoxDrawer()
+	{
+		clpr.Exec(GetVFunction("MessageBoxDrawer"), (int)this);
+	}
+	bool eventMessageBoxResponder(event_t* event)
+	{
+		return !!clpr.Exec(GetVFunction("MessageBoxResponder"), (int)this, (int)event);
+	}
+	bool eventMessageBoxActive()
+	{
+		return !!clpr.Exec(GetVFunction("MessageBoxActive"), (int)this);
+	}
+	void eventDrawViewBorder(int x, int y, int w, int h)
+	{
+		clpr.Exec(GetVFunction("DrawViewBorder"), (int)this, x, y, w, h);
+	}
+	bool eventParseServerCommand(int cmd_type)
+	{
+		return !!clpr.Exec(GetVFunction("ParseServerCommand"), (int)this, cmd_type);
+	}
+	void eventUpdateParticle(particle_t* p, float DeltaTime)
+	{
+		clpr.Exec(GetVFunction("UpdateParticle"), (int)this, (int)p, PassFloat(DeltaTime));
+	}
+	void eventUpdateMobj(clmobj_t* mobj, int key, float DeltaTime)
+	{
+		clpr.Exec(GetVFunction("UpdateMobj"), (int)this, (int)mobj, key, PassFloat(DeltaTime));
+	}
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 dlight_t *CL_AllocDlight(int key);
@@ -118,6 +238,8 @@ extern clmobj_t			*cl_mobjs;
 extern clmobjbase_t		*cl_mo_base;
 extern clmobj_t			cl_weapon_mobjs[MAXPLAYERS];
 
+extern VClientGameBase*	GClGame;
+
 extern int				VirtualWidth;
 extern int				VirtualHeight;
 
@@ -138,9 +260,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.16  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.15  2005/05/03 14:56:58  dj_jl
 //	Added support for specifying skin index.
 //	

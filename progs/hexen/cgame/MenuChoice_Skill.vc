@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Skill:MenuBigTextButton;
+class MenuChoice_Skill : MenuBigTextButton;
 
 int SkillLevel;
 int PClass;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 	SetCvar("Skill", SkillLevel);
 	SetCvar("Class", PClass);
@@ -37,7 +37,7 @@ void ActivateEvent(void)
 	CmdBuf_AddText("MaxPlayers 1\n");
 	CmdBuf_AddText("Map %s\n", P_TranslateMap(1));
 
-	ForceMenuOff();
+	GetClGame().ForceMenuOff();
 }
 
 defaultproperties
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

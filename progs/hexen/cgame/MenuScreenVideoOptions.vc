@@ -23,9 +23,16 @@
 //**
 //**************************************************************************
 
-class MenuScreenVideoOptions:MenuScreen;
+class MenuScreenVideoOptions : MenuScreen;
 
-void InitWindow(void)
+enum
+{
+	DRV_SOFTWARE,
+	DRV_OPENGL,
+	DRV_DIRECT3D
+};
+
+void InitWindow()
 {
 	switch (GetCvar("_driver"))
 	{
@@ -63,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:25  dj_jl
 //  New style of defining classes.
 //

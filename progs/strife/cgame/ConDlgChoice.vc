@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ConDlgChoice:MenuSmallTextButton;
+class ConDlgChoice : MenuSmallTextButton;
 
 int ImpulseNum;
 
@@ -31,7 +31,7 @@ void ActivateEvent(void)
 {
 	CmdBuf_AddText("Impulse %d\n", ImpulseNum);
 	StopLocalSounds();
-	PopMenu();
+	GetClGame().PopMenu();
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.2  2005/11/05 16:02:13  dj_jl
 //  Stop voice when closing conversation screen.
 //

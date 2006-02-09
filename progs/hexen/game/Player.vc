@@ -31,7 +31,8 @@ class Player : BasePlayer;
 
 sb_stats_t Stats;
 
-float ArmorPoints[NUMARMOR];
+int TotalArmorPoints;
+int ArmorPerc[NUMARMOR];
 
 float InventoryTime;
 
@@ -47,6 +48,8 @@ int Mana[NUMMANA];
 //
 //  ----------
 //
+
+float ArmorPoints[NUMARMOR];
 
 int Keys;
 
@@ -2508,6 +2511,8 @@ void PaletteFlash()
 
 void SetViewPos()
 {
+	int		i;
+
 	ViewOrg.x = MO.Origin.x;
 	ViewOrg.y = MO.Origin.y;
 
@@ -2562,6 +2567,33 @@ void SetViewPos()
 	if (MO.bFly)
 	{
 		Stats.flags |= SBF_IN_FLIGHT;
+	}
+
+	TotalArmorPoints = ftoi((AutoArmorSave[PClass]
+			+ ArmorPoints[ARMOR_ARMOR]
+			+ ArmorPoints[ARMOR_SHIELD]
+			+ ArmorPoints[ARMOR_HELMET]
+			+ ArmorPoints[ARMOR_AMULET]) / 5.0);
+	for (i = 0; i < NUMARMOR; i++)
+	{
+		if (!ArmorPoints[i])
+		{
+			ArmorPerc[i] = 100;
+		}
+		else if (ArmorPoints[i] <=
+			(ArmorIncrement[PClass * NUMARMOR + i] / 4.0))
+		{
+			ArmorPerc[i] = 66;
+		}
+		else if (ArmorPoints[i] <=
+			(ArmorIncrement[PClass * NUMARMOR + i] / 2.0))
+		{
+			ArmorPerc[i] = 33;
+		}
+		else
+		{
+			ArmorPerc[i] = 0;
+		}
 	}
 }
 
@@ -3890,6 +3922,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.17  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

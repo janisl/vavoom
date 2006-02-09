@@ -574,6 +574,10 @@ class BotPlayer;
 
 // DATA DECLARATIONS -------------------------------------------------------
 
+#ifndef DOOM2
+bool shareware;
+#endif
+
 int num_stats = NUM_STATS + 2 * NUMAMMO + NUMWEAPONS + 4;
 
 bool respawnmonsters;
@@ -622,6 +626,9 @@ int PhaseTable[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.49  2006/02/09 22:33:09  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.48  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

@@ -23,23 +23,14 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
-
-#undef TEXTSPEED
-#undef TEXTWAIT
+class FinaleScreen : Window;
 
 #define	TEXTSPEED	0.1
 #define	TEXTWAIT	7.0
 
 #define MAX_FINALE_MESSAGE_SIZE	1024
 
-// CONSTANTS ---------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
+client_state_t *cl;
 
 int FinaleStage;
 float FinaleTime;
@@ -50,7 +41,117 @@ int fpage2;
 
 int FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
 
-// CODE --------------------------------------------------------------------
+//==========================================================================
+//
+//  StartFinale
+//
+//==========================================================================
+
+void StartFinale()
+{
+	FinaleStage = 0;
+	FinaleTime = 0.0;
+
+	FinaleEndTime = 2.0;
+	fpage1 = R_RegisterPic("FINALE1", PIC_RAW);
+	if (cl->maxclients > 1)
+	{
+		fpage2 = R_RegisterPic("chessall", PIC_PATCH);
+	}
+	else if (GetCvar("class") == 1)
+	{
+		fpage2 = R_RegisterPic("chessc", PIC_PATCH);
+	}
+	else if (GetCvar("class") == 2)
+	{
+		fpage2 = R_RegisterPic("chessm", PIC_PATCH);
+	}
+
+#ifdef FIXME
+	S_StartSong("hall", P_GetCDEnd1Track(), false);	// don't loop the song
+#else
+	CmdBuf_AddText("music play hall\n");	// don't loop the song
+#endif
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	FinaleTime += DeltaTime;
+
+	if (FinaleStage < 5 && FinaleTime >= FinaleEndTime)
+	{
+		FinaleTime = 0.0;
+		FinaleStage++;
+		switch (FinaleStage)
+		{
+		case 1:	// Text 1
+			F_GetFinaleText("win1msg");
+			break;
+		case 2:	// Pic 2, Text 2
+			F_GetFinaleText("win2msg");
+			fpage1 = R_RegisterPic("FINALE2", PIC_RAW);
+#ifdef FIXME
+			S_StartSong("orb", P_GetCDEnd2Track(), false);
+#else
+			CmdBuf_AddText("music play orb\n");
+#endif
+			break;
+		case 3:	// Pic 2 -- Fade out
+			FinaleEndTime = 2.0;
+			break;
+		case 4:	// Pic 3 -- Fade in
+			fpage1 = R_RegisterPic("FINALE3", PIC_RAW);
+			FinaleEndTime = 2.0;
+#ifdef FIXME
+			S_StartSong("chess", P_GetCDEnd3Track(), true);
+#else
+			CmdBuf_AddText("music loop chess\n");
+#endif
+			break;
+		case 5:	// Pic 3 , Text 3
+			F_GetFinaleText("win3msg");
+			break;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  DrawWindow
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	F_DrawPic();
+	switch (FinaleStage)
+	{
+	case 0:	// Fade in initial finale screen
+		F_FadeIn();
+		break;
+	case 1:
+		F_TextWrite();
+		break;
+	case 2:
+		F_TextWrite();
+		break;
+	case 3:	// Fade screen out
+		F_FadeOut();
+		break;
+	case 4:	// Fade in chess screen
+		F_FadeIn();
+		break;
+	case 5:
+		F_TextWrite();
+		break;
+	}
+}
 
 //===========================================================================
 //
@@ -143,143 +244,26 @@ void F_FadeIn(void)
 
 //==========================================================================
 //
-//  F_StartFinale
+//	VisibilityChanged
 //
 //==========================================================================
 
-void F_StartFinale(void)
+void VisibilityChanged(bool bNewVisibility)
 {
-	FinaleStage = 0;
-	FinaleTime = 0.0;
-
-	FinaleEndTime = 2.0;
-	fpage1 = R_RegisterPic("FINALE1", PIC_RAW);
-	if (cl->maxclients > 1)
-	{
-		fpage2 = R_RegisterPic("chessall", PIC_PATCH);
-	}
-	else if (GetCvar("class") == 1)
-	{
-		fpage2 = R_RegisterPic("chessc", PIC_PATCH);
-	}
-	else if (GetCvar("class") == 2)
-	{
-		fpage2 = R_RegisterPic("chessm", PIC_PATCH);
-	}
-
-#ifdef FIXME
-	S_StartSong("hall", P_GetCDEnd1Track(), false);	// don't loop the song
-#else
-	CmdBuf_AddText("music play hall\n");	// don't loop the song
-#endif
+	bTickEnabled = bNewVisibility;
 }
 
-//===========================================================================
-//
-//  F_Ticker
-//
-//===========================================================================
-
-void F_Ticker(void)
+defaultproperties
 {
-	FinaleTime += frametime;
-
-	if (FinaleStage < 5 && FinaleTime >= FinaleEndTime)
-	{
-		FinaleTime = 0.0;
-		FinaleStage++;
-		switch (FinaleStage)
-		{
-		case 1:	// Text 1
-			F_GetFinaleText("win1msg");
-			break;
-		case 2:	// Pic 2, Text 2
-			F_GetFinaleText("win2msg");
-			fpage1 = R_RegisterPic("FINALE2", PIC_RAW);
-#ifdef FIXME
-			S_StartSong("orb", P_GetCDEnd2Track(), false);
-#else
-			CmdBuf_AddText("music play orb\n");
-#endif
-			break;
-		case 3:	// Pic 2 -- Fade out
-			FinaleEndTime = 2.0;
-			break;
-		case 4:	// Pic 3 -- Fade in
-			fpage1 = R_RegisterPic("FINALE3", PIC_RAW);
-			FinaleEndTime = 2.0;
-#ifdef FIXME
-			S_StartSong("chess", P_GetCDEnd3Track(), true);
-#else
-			CmdBuf_AddText("music loop chess\n");
-#endif
-			break;
-		case 5:	// Pic 3 , Text 3
-			F_GetFinaleText("win3msg");
-			break;
-		}
-	}
-}
-
-//==========================================================================
-//
-//  F_Drawer
-//
-//==========================================================================
-
-void F_Drawer(void)
-{
-	F_DrawPic();
-	switch (FinaleStage)
-	{
-	case 0:	// Fade in initial finale screen
-		F_FadeIn();
-		break;
-	case 1:
-		F_TextWrite();
-		break;
-	case 2:
-		F_TextWrite();
-		break;
-	case 3:	// Fade screen out
-		F_FadeOut();
-		break;
-	case 4:	// Fade in chess screen
-		F_FadeIn();
-		break;
-	case 5:
-		F_TextWrite();
-		break;
-	}
-}
-
-//===========================================================================
-//
-//  F_Responder
-//
-//===========================================================================
-
-bool F_Responder(event_t * event)
-{
-	return false;
+	bTickEnabled = true;
+	Width = 320;
+	Height = 200;
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.6  2002/09/07 16:28:25  dj_jl
-//  Added Level class.
-//
-//  Revision 1.5  2002/01/07 12:25:57  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.4  2001/09/24 17:24:10  dj_jl
-//  Beautification
-//
-//  Revision 1.3  2001/09/20 16:20:00  dj_jl
-//  Start using object-oriented stuff, beautification
-//  
-//  Revision 1.2  2001/07/27 14:27:52  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
 //
 //**************************************************************************

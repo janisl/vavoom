@@ -23,16 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreenMultiplayer:MenuScreen;
-
-void InitWindow(void)
-{
-	if (!local_server)
-	{
-		Choices[0] = classidNone;
-	}
-	::InitWindow();
-}
+class MenuScreenMultiplayer : MenuScreen;
 
 defaultproperties
 {
@@ -48,6 +39,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

@@ -34,7 +34,7 @@ void ActivateSlot()
 	}
 
 	CmdBuf_AddText("Load %d\n", SlotNum);
-	ForceMenuOff();
+	GetClGame().ForceMenuOff();
 	LocalSound('menu/choose');
 }
 
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/09 22:33:09  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.2  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

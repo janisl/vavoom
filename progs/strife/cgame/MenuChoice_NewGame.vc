@@ -23,11 +23,15 @@
 //**
 //**************************************************************************
 
-class MenuChoice_NewGame:MenuBigTextButton;
+class MenuChoice_NewGame : MenuBigTextButton;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
-	PushMenuScreen(SpawnMenu(MenuScreenSkill));
+	if (!GetClGame().local_server)
+	{
+		return;
+	}
+	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
 }
 
 defaultproperties
@@ -38,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

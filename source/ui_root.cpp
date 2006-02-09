@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
 #include "ui.h"
 
 // MACROS ------------------------------------------------------------------
@@ -106,7 +107,7 @@ void VRootWindow::StaticInit()
 	guard(VRootWindow::StaticInit);
 	GRoot = (VRootWindow*)StaticSpawnObject(StaticClass(), PU_STRING);
 	GRoot->Init();
-	clpr.SetGlobal("GRoot", (int)GRoot);
+	GClGame->GRoot = GRoot;
 	unguard;
 }
 
@@ -119,9 +120,12 @@ void VRootWindow::StaticInit()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.3  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.2  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

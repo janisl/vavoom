@@ -30,6 +30,7 @@ class Player : BasePlayer;
 //
 
 int Ammo[NUMAMMO];
+int MaxAmmo[NUMAMMO];
 int ReadyAmmo;
 
 bool WeaponOwned[NUMWEAPONS];
@@ -386,6 +387,14 @@ void PlayerReborn()
 	Health = INITIAL_HEALTH;
 	WeaponOwned[wp_fist] = true;
 	SetWeapon(wp_fist);
+	MaxAmmo[am_clip] = maxammo[am_clip];
+	MaxAmmo[am_electric_arrow] = maxammo[am_electric_arrow];
+	MaxAmmo[am_poison_arrow] = maxammo[am_poison_arrow];
+	MaxAmmo[am_cell] = maxammo[am_cell];
+	MaxAmmo[am_misl] = maxammo[am_misl];
+	MaxAmmo[am_grenade1] = maxammo[am_grenade1];
+	MaxAmmo[am_grenade2] = maxammo[am_grenade2];
+
 	LocalQuakeHappening = 0;
 }
 
@@ -2579,6 +2588,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.26  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

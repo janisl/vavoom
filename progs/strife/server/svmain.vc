@@ -76,12 +76,14 @@ void EndLevelLoading()
 
 void main()
 {
-	shareware = !WadLumpPresent("MAP01");
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.9  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

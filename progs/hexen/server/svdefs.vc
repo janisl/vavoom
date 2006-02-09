@@ -591,9 +591,18 @@ class BotPlayer;
 
 // DATA DECLARATIONS -------------------------------------------------------
 
-int num_stats = NUM_STATS + NUMARMOR + NUMMANA + 6 + NUMARTIFACTS * 2;
+int num_stats = NUM_STATS + NUMARMOR + NUMMANA + 7 + NUMARTIFACTS * 2;
 
 bool randomclass;
+
+float AutoArmorSave[NUMCLASSES] = { 15.0, 10.0, 5.0, 0.0 };
+
+float ArmorIncrement[NUMCLASSES * NUMARMOR] = {
+	25.0, 20.0, 15.0, 5.0,
+	10.0, 25.0, 5.0, 20.0,
+	5.0, 15.0, 10.0, 25.0,
+	0.0, 0.0, 0.0, 0.0
+};
 
 // Hexen only
 
@@ -655,6 +664,9 @@ int PhaseTable[64] = {
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.45  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.44  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

@@ -58,8 +58,6 @@ struct im_t
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void IM_Start(void);
-void IM_Ticker(void);
-void IM_Drawer(void);
 void IM_SkipIntermission(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -70,9 +68,12 @@ extern im_t				im;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.5  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

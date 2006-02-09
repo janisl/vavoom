@@ -28,13 +28,16 @@ class MenuScreenQuit : MenuScreen;
 MenuHelpPage	Page;
 name			QuitSound;
 
+name TeaserQuitSounds[5];
+name QuitSounds[8];
+
 void CreateChoices()
 {
 	::CreateChoices();
 	Page = MenuHelpPage(NewChild(MenuHelpPage));
 	Page.SetPage("PANEL7");
 
-	if (shareware)
+	if (!WadLumpPresent("MAP01"))
 		QuitSound = TeaserQuitSounds[P_Random() % 5];
 	else
 		QuitSound = QuitSounds[P_Random() % 8];
@@ -58,11 +61,27 @@ void Tick(float DeltaTime)
 defaultproperties
 {
 	bTickEnabled = true;
+	TeaserQuitSounds[0] = 'svox/voc100';
+	TeaserQuitSounds[1] = 'svox/voc101';
+	TeaserQuitSounds[2] = 'svox/voc102';
+	TeaserQuitSounds[3] = 'svox/voc103';
+	TeaserQuitSounds[4] = 'svox/voc104';
+	QuitSounds[0] = 'svox/qfmrm1';
+	QuitSounds[1] = 'svox/qfmrm2';
+	QuitSounds[2] = 'svox/qfmrm3';
+	QuitSounds[3] = 'svox/qfmrm4';
+	QuitSounds[4] = 'svox/qfmrm5';
+	QuitSounds[5] = 'svox/qfmrm6';
+	QuitSounds[6] = 'svox/qfmrm7';
+	QuitSounds[7] = 'svox/qfmrm8';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/09 22:33:11  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.3  2006/01/10 19:54:01  dj_jl
 //  Many bug fixes.
 //

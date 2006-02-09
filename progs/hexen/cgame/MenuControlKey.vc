@@ -75,28 +75,28 @@ bool Key(int key)
 	switch (key)
 	{
 	case K_LEFTARROW:
-		ControlColumn = 0;
+		GetClGame().ControlColumn = 0;
 		MenuScreen(Parent).CursorMoved();
 		return true;
 
 	case K_RIGHTARROW:
-		ControlColumn = 1;
+		GetClGame().ControlColumn = 1;
 		MenuScreen(Parent).CursorMoved();
 		return true;
 
 	case K_ENTER:
 	case K_PADENTER:
 	case K_MOUSE1:
-		CurrentCtl = self;
-		MB_StartMessage("Press new key\n\nESC to cancel",
-			MB_Control, false);
+		GetClGame().CurrentCtl = self;
+		GetClGame().MessageBoxStartMessage("Press new key\n\nESC to cancel",
+			ClientGame::MB_Control, false);
 		return true;
 
 	case K_BACKSPACE:
 		IN_GetBindingKeys(CommandOn, &key1, &key2);
-		if (ControlColumn == 0)
+		if (GetClGame().ControlColumn == 0)
 			IN_SetBinding(key1, "", "");
-		if (ControlColumn == 1)
+		if (GetClGame().ControlColumn == 1)
 			IN_SetBinding(key2, "", "");
 		return true;
 	}
@@ -110,6 +110,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/09 22:33:10  dj_jl
+//  Moved all client game code to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

@@ -30,6 +30,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -79,9 +80,9 @@ void LoadTextLump(char *name, char *buf, int bufsize)
 //
 //==========================================================================
 
-void IM_SkipIntermission(void)
+void IM_SkipIntermission()
 {
-	clpr.SetGlobal("skipintermission", true);
+	GClGame->skipintermission = true;
 }
 
 //==========================================================================
@@ -92,49 +93,26 @@ void IM_SkipIntermission(void)
 
 void IM_Start(void)
 {
-	clpr.SetGlobal("scores", (int)scores);
-	clpr.SetGlobal("im", (int)&im);
+	GClGame->scores = scores;
+	GClGame->im = &im;
 
 	cl.intermission = 1;
 	cl.palette = 0;
 	AM_Stop();
 	SN_StopAllSequences();
 
-	clpr.Exec("IM_Start");
-}
-
-//==========================================================================
-//
-//  IM_Drawer
-//
-//==========================================================================
-
-void IM_Drawer(void)
-{
-	clpr.SetGlobal("frametime", PassFloat(host_frametime));
-	clpr.Exec("IM_Drawer");
-}
-
-//==========================================================================
-//
-//  IM_Ticker
-//
-//	Updates stuff each frame
-//
-//==========================================================================
-
-void IM_Ticker(void)
-{
-	clpr.SetGlobal("frametime", PassFloat(host_frametime));
-	clpr.Exec("IM_UpdateStats");
+	GClGame->eventIintermissionStart();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

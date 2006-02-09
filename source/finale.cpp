@@ -56,25 +56,13 @@
 //
 //==========================================================================
 
-void F_StartFinale(void)
+void F_StartFinale()
 {
-    cl.intermission = 2;
-    automapactive = false;
+	cl.intermission = 2;
+	automapactive = false;
 	cl.palette = 0;
 
-	clpr.Exec("F_StartFinale");
-}
-
-//===========================================================================
-//
-//	F_Ticker
-//
-//===========================================================================
-
-void F_Ticker(void)
-{
-	clpr.SetGlobal("frametime", PassFloat(host_frametime));
-	clpr.Exec("F_Ticker");
+	GClGame->eventStartFinale();
 }
 
 //===========================================================================
@@ -87,27 +75,18 @@ boolean F_Responder(event_t *event)
 {
     if (cls.state != ca_connected || cl.intermission != 2)
     	return false;
-    return clpr.Exec("F_Responder", (int)event);
-}
-
-//==========================================================================
-//
-//	F_Drawer
-//
-//==========================================================================
-
-void F_Drawer(void)
-{
-	clpr.SetGlobal("frametime", PassFloat(host_frametime));
-	clpr.Exec("F_Drawer");
+    return GClGame->eventFinaleResponder(event);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/02/09 22:35:54  dj_jl
+//	Moved all client game code to classes.
+//
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.5  2001/08/15 17:08:59  dj_jl
 //	Fixed finale
 //	
