@@ -699,7 +699,7 @@ static void CompileDef(TType *type, bool IsNative)
 				Name = tk_Name;
 			}
 			SkipArrayDimensions();
-			// inicializÆcija
+			// Initialisation
 			if (TK_Check(PU_ASSIGN))
 			{
 				SkipGlobalData(globaldefs[CheckForGlobalVar(Name)].type);
@@ -765,6 +765,10 @@ static void CompileDef(TType *type, bool IsNative)
 			{
 				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
 			}
+			//FIXME Treat bool varaibles as ints because on big-endian systems 
+			// it's hard to detect when assignment mask should not be swapped.
+			if (type->type == ev_bool)
+				type = &type_int;
 			localdefs[numlocaldefs].Name = tk_Name;
 			localdefs[numlocaldefs].type = type;
 			localdefs[numlocaldefs].ofs = localsofs;
@@ -853,6 +857,10 @@ void CompileMethodDef(TType *t, field_t *method, field_t *otherfield,
 			{
 				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
 			}
+			//FIXME Treat bool varaibles as ints because on big-endian systems 
+			// it's hard to detect when assignment mask should not be swapped.
+			if (type->type == ev_bool)
+				type = &type_int;
 			localdefs[numlocaldefs].Name = tk_Name;
 			localdefs[numlocaldefs].type = type;
 			localdefs[numlocaldefs].ofs = localsofs;
@@ -1081,10 +1089,13 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2006/02/10 22:15:21  dj_jl
+//	Temporary fix for big-endian systems.
+//
 //	Revision 1.33  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
-//
+//	
 //	Revision 1.32  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	

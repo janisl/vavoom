@@ -369,6 +369,10 @@ static TTree ParseExpressionPriority0()
 			type = CheckForType(SelfClass);
 			if (type)
 			{
+				//FIXME Treat bool varaibles as ints because on big-endian systems 
+				// it's hard to detect when assignment mask should not be swapped.
+				if (type->type == ev_bool)
+					type = &type_int;
 				ParseLocalVar(type);
 				return TTree();
 			}
@@ -1651,9 +1655,12 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/02/10 22:15:21  dj_jl
+//	Temporary fix for big-endian systems.
+//
 //	Revision 1.35  2005/12/29 19:10:40  dj_jl
 //	Fixed compiler problem.
-//
+//	
 //	Revision 1.34  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.

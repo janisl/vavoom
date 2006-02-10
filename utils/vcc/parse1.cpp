@@ -667,6 +667,10 @@ static void ParseDef(TType *type, bool IsNative)
 			{
 				ERR_Exit(ERR_NONE, true, "Size of type = 0.");
 			}
+			//FIXME Treat bool varaibles as ints because on big-endian systems 
+			// it's hard to detect when assignment mask should not be swapped.
+			if (t->type == ev_bool)
+				t = &type_int;
 			TGlobalDef* GlobalDef = new(globaldefs) TGlobalDef;
 			GlobalDef->Name = Name;
 			GlobalDef->type = t;
@@ -735,6 +739,10 @@ static void ParseDef(TType *type, bool IsNative)
 			numlocaldefs++;
 			TK_NextToken();
 		}
+		//FIXME Treat bool varaibles as ints because on big-endian systems 
+		// it's hard to detect when assignment mask should not be swapped.
+		if (type->type == ev_bool)
+			type = &type_int;
 		functions[num].ParamTypes[functions[num].NumParams] = type;
 		functions[num].NumParams++;
 		localsofs += TypeSize(type) / 4;
@@ -829,6 +837,10 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 			numlocaldefs++;
 			TK_NextToken();
 		}
+		//FIXME Treat bool varaibles as ints because on big-endian systems 
+		// it's hard to detect when assignment mask should not be swapped.
+		if (type->type == ev_bool)
+			type = &type_int;
 		Func.ParamTypes[Func.NumParams] = type;
 		Func.NumParams++;
 		localsofs += TypeSize(type) / 4;
@@ -1076,10 +1088,13 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/02/10 22:15:21  dj_jl
+//	Temporary fix for big-endian systems.
+//
 //	Revision 1.7  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
-//
+//	
 //	Revision 1.6  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	
