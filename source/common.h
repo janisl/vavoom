@@ -51,7 +51,7 @@
 #define __declspec(whatever)
 #endif
 
-#if defined __unix__ && !defined DJGPP
+#if !defined _WIN32 && !defined DJGPP
 #undef stricmp	//	Allegro defines them
 #undef strnicmp
 #define stricmp		strcasecmp
@@ -99,7 +99,13 @@ typedef unsigned long	 	dword;
 //
 //==========================================================================
 
+//	Turn on usage of context in guard macros on platforms where it's not
+// safe to throw an exception in signal handler.
 #ifdef __linux__
+#define USE_GUARD_SIGNAL_CONTEXT
+#endif
+
+#ifdef USE_GUARD_SIGNAL_CONTEXT
 #include <setjmp.h>
 //	Stack control.
 class __Context
@@ -119,7 +125,7 @@ protected:
 #define guard(name)		static const char __FUNC_NAME__[] = #name; {
 #define unguard			}
 #define unguardf(msg)	}
-#elif defined(__linux__)
+#elif defined(USE_GUARD_SIGNAL_CONTEXT)
 #define guard(name)		{static const char __FUNC_NAME__[] = #name; \
 	__Context __LOCAL_CONTEXT__; try { if (setjmp(__Context::Env)) { \
 	throw VavoomError(__Context::ErrToThrow); } else {
@@ -186,9 +192,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/10 22:17:00  dj_jl
+//	Some platform fixes.
+//
 //	Revision 1.17  2003/10/22 06:15:00  dj_jl
 //	Safer handling of signals in Linux
-//
+//	
 //	Revision 1.16  2003/03/08 11:33:39  dj_jl
 //	Got rid of some warnings.
 //	

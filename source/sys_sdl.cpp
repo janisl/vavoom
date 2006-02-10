@@ -60,7 +60,7 @@ extern "C" {
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef __linux__
+#ifdef USE_GUARD_SIGNAL_CONTEXT
 jmp_buf __Context::Env;
 const char* __Context::ErrToThrow;
 #endif
@@ -628,7 +628,7 @@ static void signal_handler(int s)
 	signal(s, SIG_IGN);
 
 	//	Exit with error message
-#ifdef __linux__
+#ifdef USE_GUARD_SIGNAL_CONTEXT
 	switch (s)
 	{
 	case SIGABRT:
@@ -755,9 +755,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/10 22:17:00  dj_jl
+//	Some platform fixes.
+//
 //	Revision 1.8  2006/02/02 22:55:30  dj_jl
 //	Some FreeBSD fixes.
-//
+//	
 //	Revision 1.7  2005/05/26 16:59:21  dj_jl
 //	Initial heap size
 //	

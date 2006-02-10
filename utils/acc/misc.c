@@ -12,7 +12,7 @@
 #else
 #include <fcntl.h>
 #include <stdlib.h>
-#ifndef unix
+#ifdef _WIN32
 #include <io.h>
 #endif
 #endif

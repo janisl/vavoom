@@ -59,7 +59,7 @@
 #define __attribute__(whatever)
 #endif
 
-#if defined __unix__ && !defined DJGPP
+#if !defined _WIN32 && !defined DJGPP
 #undef stricmp	//	Allegro defines them
 #undef strnicmp
 #define stricmp		strcasecmp
@@ -125,9 +125,12 @@ inline void Delete(void *ptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/10 22:17:21  dj_jl
+//	Some platform fixes.
+//
 //	Revision 1.8  2002/08/24 14:41:32  dj_jl
 //	Removed usage of the iostream.
-//
+//	
 //	Revision 1.7  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

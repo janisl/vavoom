@@ -10,7 +10,7 @@
 #ifdef __NeXT__
 #include <libc.h>
 #else
-#ifndef unix
+#ifdef _WIN32
 #include <io.h>
 #endif
 #include <fcntl.h>

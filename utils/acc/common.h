@@ -73,12 +73,12 @@ enum
 #define ASCII_QUOTE 34
 #define ASCII_UNDERSCORE 95
 #define EOF_CHARACTER 127
-#if defined(__NeXT__) || defined(__unix__)
-#define DIRECTORY_DELIMITER "/"
-#define DIRECTORY_DELIMITER_CHAR ('/')
-#else
+#if defined(DJGPP) || defined(_WIN32)
 #define DIRECTORY_DELIMITER "\\"
 #define DIRECTORY_DELIMITER_CHAR ('\\')
+#else
+#define DIRECTORY_DELIMITER "/"
+#define DIRECTORY_DELIMITER_CHAR ('/')
 #endif
 
 
