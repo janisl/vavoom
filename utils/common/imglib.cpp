@@ -125,7 +125,7 @@ static void LoadPCX(const char *filename)
 	ImgHeight = LittleShort(pcx->ymax) - LittleShort(pcx->ymin) + 1;
 	ImgBPP = 8;
 
-	bytes_per_line = pcx->bytes_per_line;
+	bytes_per_line = LittleShort(pcx->bytes_per_line);
 
 	ImgData = new byte[ImgWidth * ImgHeight];
 
@@ -602,9 +602,12 @@ void DestroyImage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/02/10 22:16:07  dj_jl
+//	Added missing byte swap.
+//
 //	Revision 1.6  2002/04/11 16:53:31  dj_jl
 //	Added support for TGA images.
-//
+//	
 //	Revision 1.5  2002/01/07 12:30:05  dj_jl
 //	Changed copyright year
 //	

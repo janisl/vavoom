@@ -343,7 +343,7 @@ static void LoadPCX(const char *filename, void **bufptr)
 	SkinHeight = LittleShort(pcx->ymax) - LittleShort(pcx->ymin) + 1;
 	SkinBPP = 8;
 
-	bytes_per_line = pcx->bytes_per_line;
+	bytes_per_line = LittleShort(pcx->bytes_per_line);
 
 	SkinData = (byte*)Z_Malloc(SkinWidth * SkinHeight, PU_STATIC, bufptr);
 
@@ -1086,9 +1086,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int InFrame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/10 22:16:26  dj_jl
+//	Added missing byte swap.
+//
 //	Revision 1.15  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.14  2005/05/30 18:34:03  dj_jl
 //	Added support for IMGZ and PNG lump textures
 //	
