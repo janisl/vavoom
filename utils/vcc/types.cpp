@@ -1101,6 +1101,24 @@ void AddVirtualTables()
 
 //==========================================================================
 //
+//	ParsePropArrayDims
+//
+//==========================================================================
+
+static TType* ParsePropArrayDims(TClass* Class, TType* t)
+{
+	if (TK_Check(PU_LINDEX))
+	{
+		int i = EvalConstExpression(Class, ev_int);
+		TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+		t = ParsePropArrayDims(Class, t);
+		t = MakeArrayType(t, i);
+	}
+	return t;
+}
+
+//==========================================================================
+//
 //	ParseStruct
 //
 //==========================================================================
@@ -1111,7 +1129,6 @@ void ParseStruct(TClass* InClass, bool IsVector)
 	field_t		*fi;
 	int			num_fields;
 	int			size;
-	int			i;
 	TType		*t;
 	TType		*type;
 	TType		*struct_type;
@@ -1257,12 +1274,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			fi->ofs = size;
 			if (!IsVector)
 			{
-				while (TK_Check(PU_LINDEX))
-				{
-					i = EvalConstExpression(InClass, ev_int);
-					TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-					t = MakeArrayType(t, i);
-				}
+				t = ParsePropArrayDims(InClass, t);
 			}
 			size += TypeSize(t);
 			fi->type = t;
@@ -1298,7 +1310,6 @@ void AddFields(TClass* InClass)
 	field_t			fields[128];
 	int				size;
 	int				ofs;
-	int				i;
 	TType			*t;
 
 	//  Read type, to which fields will be added to.
@@ -1377,12 +1388,7 @@ void AddFields(TClass* InClass)
 				}
 			}
 			fi->ofs = ofs;
-			while (TK_Check(PU_LINDEX))
-			{
-				i = EvalConstExpression(NULL, ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-				t = MakeArrayType(t, i);
-			}
+			t = ParsePropArrayDims(InClass, t);
 			size -= TypeSize(t);
 			ofs += TypeSize(t);
 			if (size < 0)
@@ -1402,24 +1408,6 @@ void AddFields(TClass* InClass)
 	Struct->NumFields = num_fields;
 	Struct->AvailableSize = size;
 	Struct->AvailableOfs = ofs;
-}
-
-//==========================================================================
-//
-//	ParsePropArrayDims
-//
-//==========================================================================
-
-static TType* ParsePropArrayDims(TClass* Class, TType* t)
-{
-	if (TK_Check(PU_LINDEX))
-	{
-		int i = EvalConstExpression(Class, ev_int);
-		TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-		t = ParsePropArrayDims(Class, t);
-		t = MakeArrayType(t, i);
-	}
-	return t;
 }
 
 //==========================================================================
@@ -1670,9 +1658,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/02/11 14:48:33  dj_jl
+//	Fixed arrays also for structs.
+//
 //	Revision 1.37  2006/02/11 14:44:35  dj_jl
 //	Fixed multi-dimentional arrays.
-//
+//	
 //	Revision 1.36  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
