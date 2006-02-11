@@ -1406,6 +1406,24 @@ void AddFields(TClass* InClass)
 
 //==========================================================================
 //
+//	ParsePropArrayDims
+//
+//==========================================================================
+
+static TType* ParsePropArrayDims(TClass* Class, TType* t)
+{
+	if (TK_Check(PU_LINDEX))
+	{
+		int i = EvalConstExpression(Class, ev_int);
+		TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+		t = ParsePropArrayDims(Class, t);
+		t = MakeArrayType(t, i);
+	}
+	return t;
+}
+
+//==========================================================================
+//
 //	ParseClass
 //
 //==========================================================================
@@ -1416,7 +1434,6 @@ void ParseClass()
 	field_t*			fi;
 	field_t*			otherfield;
 	int					size;
-	int					i;
 	TType*				t;
 	TType*				type;
 
@@ -1628,13 +1645,8 @@ Class->Fields = &fields[0];
 				}
 			}
 			fi->ofs = size;
-			while (TK_Check(PU_LINDEX))
-			{
-				i = EvalConstExpression(Class, ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-				t = MakeArrayType(t, i);
-			}
-		   	size += TypeSize(t);
+			t = ParsePropArrayDims(Class, t);
+			size += TypeSize(t);
 			fi->type = t;
 			Class->NumFields++;
 		} while (TK_Check(PU_COMMA));
@@ -1658,10 +1670,13 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/02/11 14:44:35  dj_jl
+//	Fixed multi-dimentional arrays.
+//
 //	Revision 1.36  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
-//
+//	
 //	Revision 1.35  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	
