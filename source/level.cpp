@@ -1336,10 +1336,32 @@ void VLevel::LoadRogueConScript(const char *LumpName,
 		return;	//	Not here.
 
 	//	Load them.
-	SpeechList = (FRogueConSpeech *)W_CacheLumpNum(LumpNum, PU_LEVEL);
+	SpeechList = (FRogueConSpeech *)Z_Malloc(W_LumpLength(LumpNum), PU_LEVEL, 0);
+	memcpy(SpeechList, W_CacheLumpNum(LumpNum, PU_CACHE), W_LumpLength(LumpNum));
 	NumSpeeches = W_LumpLength(LumpNum) / sizeof(FRogueConSpeech);
 
-	//FIXME byte-swap, extend text strings with ending chars.
+	for (int i = 0; i < NumSpeeches; i++)
+	{
+		FRogueConSpeech& S = SpeechList[i];
+		S.SpeakerID = LittleLong(S.SpeakerID);
+		S.Unknown1 = LittleLong(S.Unknown1);
+		S.Unknown2 = LittleLong(S.Unknown2);
+		S.Unknown3 = LittleLong(S.Unknown3);
+		S.Unknown4 = LittleLong(S.Unknown4);
+		S.Unknown5 = LittleLong(S.Unknown5);
+		for (int j = 0; j < 5; j++)
+		{
+			S.Choices[j].Unknown1 = LittleLong(S.Choices[j].Unknown1);
+			S.Choices[j].Unknown2 = LittleLong(S.Choices[j].Unknown2);
+			S.Choices[j].Unknown3 = LittleLong(S.Choices[j].Unknown3);
+			S.Choices[j].Unknown4 = LittleLong(S.Choices[j].Unknown4);
+			S.Choices[j].Unknown5 = LittleLong(S.Choices[j].Unknown5);
+			S.Choices[j].Unknown6 = LittleLong(S.Choices[j].Unknown6);
+			S.Choices[j].Unknown7 = LittleLong(S.Choices[j].Unknown7);
+			S.Choices[j].Next = LittleLong(S.Choices[j].Next);
+			S.Choices[j].Objectives = LittleLong(S.Choices[j].Objectives);
+		}
+	}
 }
 
 //==========================================================================
@@ -1408,9 +1430,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/02/11 12:21:10  dj_jl
+//	Byte swap Strife conversation lumps.
+//
 //	Revision 1.7  2005/11/14 19:34:16  dj_jl
 //	Added support for version 5 GL nodes.
-//
+//	
 //	Revision 1.6  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
 //	
