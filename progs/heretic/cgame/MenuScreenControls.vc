@@ -68,7 +68,7 @@ void CreateChoices(void)
 void CursorMoved(void)
 {
 	::CursorMoved();
-	if (Selector)
+	if (Selector && ClGame)
 	{
 		Selector.SetPos(Items[CursorPos].X + ClGame.ControlColumn * 90,
 			Items[CursorPos].Y);
@@ -86,6 +86,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/13 12:38:16  dj_jl
+//  Fixed setting cursor during initialisation.
+//
 //  Revision 1.2  2006/02/09 22:33:10  dj_jl
 //  Moved all client game code to classes.
 //
