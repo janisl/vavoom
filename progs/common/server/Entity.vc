@@ -183,7 +183,7 @@ name SoundGender;
 //	Natives
 //
 
-native void Remove(void);
+native void Remove();
 
 native bool SetState(int state);
 native void SetInitialState(int state);
@@ -197,17 +197,17 @@ native bool CheckPosition(TVec Pos);
 native bool CheckRelPosition(TVec Pos);
 native bool TryMove(TVec newPos);
 
-native void SlideMove(void);
+native void SlideMove();
 native void BounceWall(float overbounce);
 
-native bool CheckWater(void);
+native bool CheckWater();
 
-native void UpdateVelocity(void);
+native void UpdateVelocity();
 
-native Entity CheckOnmobj(void);
+native Entity CheckOnmobj();
 
-native void LinkToWorld(void);
-native void UnlinkFromWorld(void);
+native void LinkToWorld();
+native void UnlinkFromWorld();
 
 native bool CanSee(Entity Other);
 
@@ -499,6 +499,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/02/13 18:30:15  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.10  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

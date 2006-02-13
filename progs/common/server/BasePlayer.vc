@@ -29,6 +29,8 @@
 
 class BasePlayer : Object;
 
+LevelInfo		Level;
+
 bool bActive;
 bool bSpawned;
 bool bIsBot;
@@ -182,6 +184,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/13 18:30:15  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.3  2004/12/27 12:23:10  dj_jl
 //  Multiple small changes for version 1.16
 //

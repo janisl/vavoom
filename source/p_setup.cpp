@@ -54,10 +54,10 @@
 int			GMaxEntities = 4096;
 
 #ifdef CLIENT
-cl_level_t cl_level;
+level_t cl_level;
 #endif
 #ifdef SERVER
-sv_level_t level;
+level_t level;
 #endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -340,6 +340,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2006/02/13 18:34:34  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.28  2006/02/09 22:35:54  dj_jl
 //  Moved all client game code to classes.
 //

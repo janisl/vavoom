@@ -23,7 +23,20 @@
 //**
 //**************************************************************************
 
-class Sorcerer2Missile1:Projectile;
+class Sorcerer2Missile1 : Projectile;
+
+//==========================================================================
+//
+//  OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+	::OnMapSpawn(mthing);
+	if (fastparm)
+		Speed = 980.0;
+}
 
 //==========================================================================
 //
@@ -31,7 +44,7 @@ class Sorcerer2Missile1:Projectile;
 //
 //==========================================================================
 
-void A_BlueSpark(void)
+void A_BlueSpark()
 {
 	int i;
 	Actor spark;
@@ -72,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

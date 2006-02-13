@@ -39,7 +39,7 @@ float TremorRadius;	// Radius for tremor
 //
 //==========================================================================
 
-void A_Quake(void)
+void A_Quake()
 {
 	float an;
 	Player pl;
@@ -91,7 +91,7 @@ void A_Quake(void)
 //
 //==========================================================================
 
-void A_ContMobjSound(void)
+void A_ContMobjSound()
 {
 	PlaySound('Earthquake', CHAN_VOICE);
 }
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

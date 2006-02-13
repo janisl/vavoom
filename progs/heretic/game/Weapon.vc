@@ -39,8 +39,8 @@ int AttackState2;
 int HoldAttackState2;
 float PSpriteSY;
 
-void WeaponLevel2Init(void) { }
-void WeaponLevel2Fade(void) { }
+void WeaponLevel2Init() { }
+void WeaponLevel2Fade() { }
 
 //==========================================================================
 //
@@ -125,7 +125,7 @@ void A_WeaponReady()
 //
 //===========================================================================
 
-void A_Lower(void)
+void A_Lower()
 {
 	if (Player.ChickenTime)
 	{
@@ -166,7 +166,7 @@ void A_Lower(void)
 //
 //===========================================================================
 
-void A_Raise(void)
+void A_Raise()
 {
 	//	FIXME!!
 	if (frametime < 1.0 / 35.0)
@@ -197,7 +197,7 @@ void A_Raise(void)
 //
 //===========================================================================
 
-void A_ReFire(void)
+void A_ReFire()
 {
 	if ((Player.Buttons & BT_ATTACK)
 		&& Player.PendingWeapon == wp_nochange && Player.Health)
@@ -218,7 +218,7 @@ void A_ReFire(void)
 //
 //===========================================================================
 
-void A_Light0(void)
+void A_Light0()
 {
 	Player.ExtraLight = 0;
 }
@@ -238,6 +238,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.4  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

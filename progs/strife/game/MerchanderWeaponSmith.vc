@@ -37,7 +37,7 @@ void A_CloseUpShop()
 	StrifeLevelInfo(Level).EV_DoDoor(999, 64, 960, 0, 0, DOOREV_CloseWaitOpen, NULL, none);
 	if (Enemy && Enemy.bIsPlayer)
 	{
-		P_NoiseAlert(Enemy, self);
+		StrifeLevelInfo(Level).NoiseAlert(Enemy, self);
 	}
 }
 
@@ -113,6 +113,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.5  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

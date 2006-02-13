@@ -27,6 +27,13 @@ class LevelInfo : Thinker
 	native
 	abstract;
 
+GameInfo		Game;
+
+// Maintain single and multi player starting spots.
+mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
+int				NumDeathmatchStarts;
+mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
+
 TVec trace_start;
 TVec trace_end;
 TVec trace_plane_normal;
@@ -1133,6 +1140,39 @@ float FindLowestCeilingPoint(sector_t* sec, TVec* v)
 	return height;
 }
 
+//==========================================================================
+//
+//  SpawnMapThing
+//
+//==========================================================================
+
+void SpawnMapThing(mthing_t* mthing)
+{
+}
+
+//==========================================================================
+//
+//  CopyMThing
+//
+//==========================================================================
+
+void CopyMThing(mthing_t * from, mthing_t * to)
+{
+	to->tid = from->tid;
+	to->x = from->x;
+	to->y = from->y;
+	to->height = from->height;
+	to->angle = from->angle;
+	to->type = from->type;
+	to->options = from->options;
+	to->special = from->special;
+	to->arg1 = from->arg1;
+	to->arg2 = from->arg2;
+	to->arg3 = from->arg3;
+	to->arg4 = from->arg4;
+	to->arg5 = from->arg5;
+}
+
 defaultproperties
 {
 }
@@ -1140,6 +1180,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/13 18:30:15  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.3  2006/02/07 19:44:19  dj_jl
 //  Fixed trace callback.
 //

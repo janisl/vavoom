@@ -53,19 +53,12 @@ addfields particle_t
 
 #include "cgame/classes.vc"
 
-//==========================================================================
-//
-//  main
-//
-//==========================================================================
-
-void main()
-{
-}
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.1  2006/02/09 22:33:08  dj_jl
 //  Moved all client game code to classes.
 //

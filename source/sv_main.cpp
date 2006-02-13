@@ -68,6 +68,7 @@ static void G_DoCompleted(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 IMPLEMENT_CLASS(V, LevelInfo)
+IMPLEMENT_CLASS(V, GameInfo)
 IMPLEMENT_CLASS(V, ViewEntity)
 
 TCvarI			real_time("real_time", "1");
@@ -113,6 +114,7 @@ int 			TimerGame;
 boolean			in_secret;
 char			mapaftersecret[12];
 
+VGameInfo*		GGameInfo;
 VLevelInfo*		GLevelInfo;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -168,6 +170,10 @@ void SV_Init(void)
 	sv_mo_free_time = Z_CNew<double>(GMaxEntities);
 
 	svpr.Load("svprogs");
+
+	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
+		VClass::FindClass("MainGameInfo"), PU_STATIC);
+	GGameInfo->eventInit();
 
 	VClass* PlayerClass = VClass::FindClass("Player");
 	for (i = 0; i < MAXPLAYERS; i++)
@@ -2219,36 +2225,32 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	svpr.SetGlobal("netgame", netgame);
 	svpr.SetGlobal("deathmatch", deathmatch);
 
-	//	Prepare to load level
-	svpr.Exec("StartLevelLoading");
-
 	//	Load it
 	SV_LoadLevel(level.mapname);
 
-	if (spawn_thinkers)
-	{
-		GLevelInfo = (VLevelInfo*)svpr.Exec("CreateLevelInfo");
-		svpr.SetGlobal("GLevelInfo", (int)GLevelInfo);
-	}
-
 	//	Spawn slopes, extra floors, etc.
-	svpr.Exec("SpawnWorld");
+	GGameInfo->eventSpawnWorld(GLevel);
 
 	P_InitThinkers();
-	FFunction *pf_spawn_map_thing = svpr.FuncForName("P_SpawnMapThing");
-	for (i = 0; i < GLevel->NumThings; i++)
+
+	if (spawn_thinkers)
 	{
-		svpr.Exec(pf_spawn_map_thing, (int)&GLevel->Things[i], spawn_thinkers);
+		GLevelInfo = GGameInfo->eventCreateLevelInfo();
+		svpr.SetGlobal("GLevelInfo", (int)GLevelInfo);
+		for (i = 0; i < GLevel->NumThings; i++)
+		{
+			GLevelInfo->eventSpawnMapThing(&GLevel->Things[i]);
+		}
+		if (deathmatch && GLevelInfo->NumDeathmatchStarts < 4)
+		{
+			Host_Error("Level needs more deathmatch start spots");
+		}
 	}
 	Z_Free(GLevel->Things);
 	PO_Init(); // Initialise the polyobjs
 
 	if (deathmatch)
 	{
-		if (level.numdeathmatchstarts < 4)
-		{
-			Host_Error("Level needs more deathmatch start spots");
-		}
 		TimerGame = TimeLimit * 35 * 60;
 	}
 	else
@@ -2269,7 +2271,6 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	{
 		GLevelInfo->eventSpawnSpecials();
 	}
-	svpr.Exec("EndLevelLoading");
 
 	Z_CheckHeap();
 
@@ -2411,6 +2412,7 @@ COMMAND(Spawn)
 		return;
 	}
 
+	sv_player->Level = GLevelInfo;
 	if (!sv_loading)
 	{
 		if (sv_player->bSpawned)
@@ -2828,7 +2830,7 @@ COMMAND(Map)
 
 	// Set up a bunch of globals
 	gameskill = (skill_t)(int)Skill;
-	svpr.Exec("G_InitNew", gameskill);
+	GGameInfo->eventInitNewGame(gameskill);
 
 	SV_SpawnServer(mapname, true);
 #ifdef CLIENT
@@ -3014,9 +3016,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.76  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.75  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
-//
+//	
 //	Revision 1.74  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
 //	

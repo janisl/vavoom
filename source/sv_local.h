@@ -28,11 +28,13 @@
 
 #define MAXHEALTH		100
 
-#include "player.h"
-
+class VGameInfo;
 class VLevelInfo;
 
+extern VGameInfo*		GGameInfo;
 extern VLevelInfo*		GLevelInfo;
+
+#include "player.h"
 
 //==========================================================================
 //
@@ -67,7 +69,7 @@ class VThinker : public VObject
 
 //==========================================================================
 //
-//	LevelInfo
+//	VLevelInfo
 //
 //==========================================================================
 
@@ -75,16 +77,24 @@ class VLevelInfo : public VThinker
 {
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
 
-	TVec trace_start;
-	TVec trace_end;
-	TVec trace_plane_normal;
+	VGameInfo*		Game;
 
-	TVec linestart;
-	TVec lineend;
+	// Maintain single and multi player starting spots.
+	mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
+	int				NumDeathmatchStarts;
+	mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
+
+	TVec			trace_start;
+	TVec			trace_end;
+	TVec			trace_plane_normal;
+
+	TVec			linestart;
+	TVec			lineend;
 
 	VLevelInfo()
 	{
 		Level = this;
+		Game = GGameInfo;
 	}
 
 	void eventSpawnSpecials()
@@ -144,6 +154,45 @@ class VLevelInfo : public VThinker
 		svpr.Exec(GetVFunction("StartPlaneWatcher"), (int)this, (int)it,
 			(int)line, lineSide, ceiling, tag, height, special, arg1,
 			arg2, arg3, arg4, arg5);
+	}
+	void eventSpawnMapThing(mthing_t* mthing)
+	{
+		svpr.Exec(GetVFunction("SpawnMapThing"), (int)this, (int)mthing);
+	}
+};
+
+//==========================================================================
+//
+//	VGameInfo
+//
+//==========================================================================
+
+class VGameInfo : public VObject
+{
+	DECLARE_CLASS(VGameInfo, VObject, 0)
+
+	VGameInfo()
+	{}
+
+	void eventInit()
+	{
+		svpr.Exec(GetVFunction("Init"), (int)this);
+	}
+	void eventInitNewGame(int skill)
+	{
+		svpr.Exec(GetVFunction("InitNewGame"), (int)this, skill);
+	}
+	VLevelInfo* eventCreateLevelInfo()
+	{
+		return (VLevelInfo*)svpr.Exec(GetVFunction("CreateLevelInfo"), (int)this);
+	}
+	void eventTranslateLevel(VLevel* InLevel)
+	{
+		svpr.Exec(GetVFunction("TranslateLevel"), (int)this, (int)InLevel);
+	}
+	void eventSpawnWorld(VLevel* InLevel)
+	{
+		svpr.Exec(GetVFunction("SpawnWorld"), (int)this, (int)InLevel);
 	}
 };
 
@@ -719,9 +768,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.42  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
-//
+//	
 //	Revision 1.41  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
 //	

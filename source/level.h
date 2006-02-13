@@ -548,7 +548,7 @@ private:
 	DECLARE_FUNCTION(PointInSector)
 };
 
-struct base_level_t
+struct level_t
 {
 	float		time;
 	int			tictime;
@@ -579,18 +579,6 @@ struct base_level_t
 	char		songLump[12];
 };
 
-struct sv_level_t:base_level_t
-{
-	// Maintain single and multi player starting spots.
-	mthing_t	deathmatchstarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
-	int			numdeathmatchstarts;
-	mthing_t	playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
-};
-
-struct cl_level_t:base_level_t
-{
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void CalcLine(line_t *line);
@@ -605,8 +593,8 @@ void CalcSecMinMaxs(sector_t *sector);
 
 extern int				GMaxEntities;
 
-extern sv_level_t		level;
-extern cl_level_t		cl_level;
+extern level_t			level;
+extern level_t			cl_level;
 
 extern VLevel*			GLevel;
 extern VLevel*			GClLevel;
@@ -614,9 +602,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.33  2005/11/14 19:34:16  dj_jl
 //	Added support for version 5 GL nodes.
-//
+//	
 //	Revision 1.32  2005/06/30 20:20:54  dj_jl
 //	Implemented rendering of Boom fake flats.
 //	

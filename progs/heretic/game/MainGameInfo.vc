@@ -1,0 +1,1341 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MainGameInfo : GameInfo;
+
+enum { NUM_SPECIALS = 108 };
+
+struct spec_trans_t
+{
+	int special;
+	int arg1;
+	int arg2;
+	int arg3;
+	int arg4;
+	int arg5;
+	int spac;
+	int repeat;
+};
+
+spec_trans_t spec_trans_tab[NUM_SPECIALS];
+
+classid WeaponClasses[NUMWEAPONS];
+int weapon_ammo_type[NUMWEAPONS];
+int WeaponOrder[NUMWEAPONS];
+
+int terrain_contents[4];
+int contents_transluc[4];
+
+botinfo_t botinfo[NUMTOTALBOTS];
+int botskill;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init()
+{
+	shareware = !WadLumpPresent("E2M1");
+	InitTranslationTables();
+	InitBotTypes();
+}
+
+//==========================================================================
+//
+//  InitNewGame
+//
+//==========================================================================
+
+void InitNewGame(int skill)
+{
+	respawnmonsters = GetCvar("RespawnMonsters");
+	nomonsters = GetCvar("NoMonsters");
+	fastparm = gameskill == sk_nightmare || GetCvar("Fast");
+}
+
+//==========================================================================
+//
+//  CreateLevelInfo
+//
+//==========================================================================
+
+LevelInfo CreateLevelInfo()
+{
+	return NewSpecialThinker(HereticLevelInfo);
+}
+
+//==========================================================================
+//
+//  InitBotTypes
+//
+//==========================================================================
+
+void InitBotTypes()
+{
+	SetBotType(0,
+		"bot1",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot1\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
+	);
+	SetBotType(1,
+		"bot2",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot2\\color\\1\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+	);
+	SetBotType(2,
+		"bot3",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot3\\color\\2\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+	);
+	SetBotType(3,
+		"bot4",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot4\\color\\3\\class\\0\\model\\doomguy\\skin\\camo.pcx"
+	);
+	SetBotType(4,
+		"bot5",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot5\\color\\4\\class\\0\\model\\doomguy\\skin\\green.pcx"
+	);
+	SetBotType(5,
+		"bot6",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot6\\color\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+	);
+	SetBotType(6,
+		"bot7",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot7\\color\\6\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+	);
+	SetBotType(7,
+		"bot8",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\Name\\bot8\\color\\7\\class\\0\\model\\doomguy\\skin\\camo.pcx"
+	);
+}
+
+//==========================================================================
+//
+//  SetBotType
+//
+//==========================================================================
+
+void SetBotType(int i, string Name, int accuracy, int intelect, int evade,
+	int anticip, int reaction, string userinfo)
+{
+	botinfo[i].Name = Name;
+	botinfo[i].accuracy = accuracy;
+	botinfo[i].intelect = intelect;
+	botinfo[i].evade = evade;
+	botinfo[i].anticip = anticip;
+	botinfo[i].reaction = reaction;
+	botinfo[i].userinfo = userinfo;
+}
+
+//==========================================================================
+//
+//	InitTranslationTables
+//
+//==========================================================================
+
+void InitTranslationTables()
+{
+	//  0
+	SetLineTrans(1, LNSPEC_DoorRaise, 0, 16, 150, 0, 0, SPAC_USE, true);
+	SetLineTrans(2, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(3, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(4, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(5, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(6, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, false);
+	SetLineTrans(7, LNSPEC_StairsBuildUpDoom, -1, 8, 8, 0, 0, SPAC_USE, false);
+	SetLineTrans(8, LNSPEC_StairsBuildUpDoom, -1, 8, 8, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(9, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, false);
+
+	SetLineTrans(10, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(11, LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(12, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(13, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(14, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, false);
+	SetLineTrans(15, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, false);
+	SetLineTrans(16, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(17, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(18, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(19, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, false);
+
+	SetLineTrans(20, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(21, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_USE, false);
+	SetLineTrans(22, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(23, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(24, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_IMPACT, false);
+	SetLineTrans(25, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_CROSS, false);
+	SetLineTrans(26, LNSPEC_DoorLockedRaise, 0, 16, 150, key_blue + 1, 0, SPAC_USE, true);
+	SetLineTrans(27, LNSPEC_DoorLockedRaise, 0, 16, 150, key_yellow + 1, 0, SPAC_USE, true);
+	SetLineTrans(28, LNSPEC_DoorLockedRaise, 0, 16, 150, key_green + 1, 0, SPAC_USE, true);
+	SetLineTrans(29, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, false);
+
+	SetLineTrans(30, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(31, LNSPEC_DoorOpen, 0, 16, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(32, LNSPEC_DoorLockedRaise, 0, 16, 0, key_blue + 1, 0, SPAC_USE, false);
+	SetLineTrans(33, LNSPEC_DoorLockedRaise, 0, 16, 0, key_green + 1, 0, SPAC_USE, false);
+	SetLineTrans(34, LNSPEC_DoorLockedRaise, 0, 16, 0, key_yellow + 1, 0, SPAC_USE, false);
+	SetLineTrans(35, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(36, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(37, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(38, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(39, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, false);
+
+	SetLineTrans(40, LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(41, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(42, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(43, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(44, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(45, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, true);
+	SetLineTrans(46, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_IMPACT, true);
+	SetLineTrans(47, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_IMPACT, false);
+	SetLineTrans(48, LNSPEC_ScrollTextureLeft, 64, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(49, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, false);
+
+	SetLineTrans(50, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(51, LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(52, LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(53, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(54, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(55, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, false);
+	SetLineTrans(56, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(57, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(58, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(59, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_CROSS, false);
+
+	SetLineTrans(60, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(61, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(62, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_USE, true);
+	SetLineTrans(63, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, true);
+	SetLineTrans(64, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(65, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, true);
+	SetLineTrans(66, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, true);
+	SetLineTrans(67, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, true);
+	SetLineTrans(68, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(69, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, true);
+
+	SetLineTrans(70, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_USE, true);
+	SetLineTrans(71, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_USE, false);
+	SetLineTrans(72, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(73, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_CROSS, true);
+	SetLineTrans(74, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(75, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(76, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(77, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, true);
+	//  78
+	SetLineTrans(79, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, true);
+
+	SetLineTrans(80, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(81, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(82, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(83, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(84, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, true);
+	//  85
+	SetLineTrans(86, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(87, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(88, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(89, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, true);
+
+	SetLineTrans(90, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(91, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(92, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(93, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(94, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(95, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(96, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(97, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(98, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(99, LNSPEC_ScrollTextureRight, 64, 0, 0, 0, 0, SPAC_CROSS, false);
+
+	SetLineTrans(100, LNSPEC_DoorRaise, -1, 48, 150, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(101, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(102, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, false);
+	SetLineTrans(103, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(104, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(105, LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(106, LNSPEC_StairsBuildUpDoom, -1, 8, 16, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(107, LNSPEC_StairsBuildUpDoom, -1, 8, 16, 0, 0, SPAC_USE, false);
+}
+
+//==========================================================================
+//
+//	SetLineTrans
+//
+//==========================================================================
+
+void SetLineTrans(int i, int special, int arg1, int arg2, int arg3,
+	int arg4, int arg5, int spac, int repeat)
+{
+	spec_trans_tab[i].special = special;
+	spec_trans_tab[i].arg1 = arg1;
+	spec_trans_tab[i].arg2 = arg2;
+	spec_trans_tab[i].arg3 = arg3;
+	spec_trans_tab[i].arg4 = arg4;
+	spec_trans_tab[i].arg5 = arg5;
+	spec_trans_tab[i].spac = spac;
+	spec_trans_tab[i].repeat = repeat;
+}
+
+//==========================================================================
+//
+//  TranslateLine
+//
+//==========================================================================
+
+void TranslateLine(line_t* line)
+{
+	int			OldSpec;
+	int			OldTag;
+	int			OldFlags;
+
+	OldSpec = line->special;
+	OldTag = line->arg1;
+	OldFlags = line->flags;
+	if (!line->special)
+	{
+		return;
+	}
+
+	if (line->special >= NUM_SPECIALS)
+	{
+		line->special = 0;
+		line->arg1 = 0;
+		return;
+	}
+
+	//	Special.
+	line->special = spec_trans_tab[OldSpec].special;
+	//	Arg 1.
+	if (spec_trans_tab[OldSpec].arg1 == -1)
+	{
+		line->arg1 = OldTag;
+	}
+	else
+	{
+		line->arg1 = spec_trans_tab[OldSpec].arg1;
+	}
+	//	Arg 2.
+	if (spec_trans_tab[OldSpec].arg2 == -1)
+	{
+		line->arg2 = OldTag;
+	}
+	else
+	{
+		line->arg2 = spec_trans_tab[OldSpec].arg2;
+	}
+	//	Arg 3.
+	if (spec_trans_tab[OldSpec].arg3 == -1)
+	{
+		line->arg3 = OldTag;
+	}
+	else
+	{
+		line->arg3 = spec_trans_tab[OldSpec].arg3;
+	}
+	//	Arg 4.
+	if (spec_trans_tab[OldSpec].arg4 == -1)
+	{
+		line->arg4 = OldTag;
+	}
+	else
+	{
+		line->arg4 = spec_trans_tab[OldSpec].arg4;
+	}
+	//	Arg 5.
+	if (spec_trans_tab[OldSpec].arg5 == -1)
+	{
+		line->arg5 = OldTag;
+	}
+	else
+	{
+		line->arg5 = spec_trans_tab[OldSpec].arg5;
+	}
+	//	Activation flags.
+	line->flags |= spec_trans_tab[OldSpec].spac << ML_SPAC_SHIFT;
+	if (spec_trans_tab[OldSpec].repeat)
+	{
+		line->flags |= ML_REPEAT_SPECIAL;
+	}
+}
+
+//==========================================================================
+//
+//	TranslateSector
+//
+//==========================================================================
+
+void TranslateSector(sector_t* sector)
+{
+	int special;
+	int high;
+
+	special = sector->special;
+	if (!special)
+	{
+		return;
+	}
+	if (special == 9)
+	{
+		sector->special = SECSPEC_SECRET_MASK;
+		return;
+	}
+
+	high = (special & 0xfc0) << 3;
+	special &= 0x3f;
+	if (special == 5)
+	{
+		sector->special = high | SECSPEC_DamageLavaWimpy;
+	}
+	else if (special == 6)
+	{
+		sector->special = high | SECSPEC_DamageSludge;
+	}
+	else if (special == 16)
+	{
+		sector->special = high | SECSPEC_DamageLavaHefty;
+	}
+	else if (special == 4)
+	{
+		sector->special = high | SECSPEC_ScrollEastLavaDamage;
+	}
+	else if (special < 20)
+	{
+		sector->special = high | (special + 64);
+	}
+	else if (special < 40)
+	{
+		sector->special = high | (special + 205);
+	}
+	else
+	{
+		sector->special = high | special;
+	}
+}
+
+//==========================================================================
+//
+//  TranslateThing
+//
+//==========================================================================
+
+void TranslateThing(mthing_t* mthing)
+{
+	int flags;
+
+	// translate the spawn flags to Hexen format.
+	flags = mthing->options;
+	mthing->options = (flags & 0xf) | 0x7e0;
+	if (flags & 0x10)
+		mthing->options &= ~MTF_GSINGLE;
+}
+
+//==========================================================================
+//
+//  TranslateLevel
+//
+//==========================================================================
+
+void TranslateLevel(Level InLevel)
+{
+	int i;
+
+	for (i = 0; i < InLevel.NumLines; i++)
+	{
+		TranslateLine(&InLevel.Lines[i]);
+	}
+
+	for (i = 0; i < InLevel.NumSectors; i++)
+	{
+		TranslateSector(&InLevel.Sectors[i]);
+	}
+
+	for (i = 0; i < InLevel.NumThings; i++)
+	{
+		TranslateThing(&InLevel.Things[i]);
+	}
+}
+
+//==========================================================================
+//
+//  MakeFloorSlope
+//
+//==========================================================================
+
+void MakeFloorSlope(Level InLevel, mthing_t * mthing)
+{
+	sector_t *sec;
+	line_t *line;
+	int i;
+
+	sec = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
+	for (i = 0; i < sec->linecount; i++)
+	{
+		line = sec->lines[i];
+		if (mthing->tid == line->arg1)
+		{
+			TVec v1;
+			TVec v2;
+			TVec p1;
+			TVec p2;
+			TVec p3;
+
+			p1 = vector(line->v1->x, line->v1->y, sec->floor.minz);
+			p2 = vector(line->v2->x, line->v2->y, sec->floor.minz);
+			p3 = vector(mthing->x, mthing->y, mthing->height);
+			if (PointOnPlaneSide(p3, line) == 0)
+			{
+				v1 = p2 - p3;
+				v2 = p1 - p3;
+			}
+			else
+			{
+				v1 = p1 - p3;
+				v2 = p2 - p3;
+			}
+			sec->floor.normal = Normalise(CrossProduct(v1, v2));
+			if (sec->floor.normal.z <= 0.0)
+			{
+				Error("Floor with normal.z <= 0.0");
+			}
+			sec->floor.dist = DotProduct(sec->floor.normal, p3);
+			sec->base_floorheight = sec->floor.dist;
+			SendFloorSlope(sec);
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  MakeCeilingSlope
+//
+//==========================================================================
+
+void MakeCeilingSlope(Level InLevel, mthing_t * mthing)
+{
+	sector_t *sec;
+	line_t *line;
+	int i;
+
+	sec = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
+	for (i = 0; i < sec->linecount; i++)
+	{
+		line = sec->lines[i];
+		if (mthing->tid == line->arg1)
+		{
+			TVec p1;
+			TVec p2;
+			TVec p3;
+			TVec v1;
+			TVec v2;
+
+			p1 = vector(line->v1->x, line->v1->y, sec->ceiling.maxz);
+			p2 = vector(line->v2->x, line->v2->y, sec->ceiling.maxz);
+			p3 = vector(mthing->x, mthing->y, mthing->height);
+			if (PointOnPlaneSide(p3, line) == 0)
+			{
+				v1 = p1 - p3;
+				v2 = p2 - p3;
+			}
+			else
+			{
+				v1 = p2 - p3;
+				v2 = p1 - p3;
+			}
+			sec->ceiling.normal = Normalise(CrossProduct(v1, v2));
+			if (sec->ceiling.normal.z >= 0.0)
+			{
+				Error("Ceiling with normal.z >= 0.0");
+			}
+			sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
+			sec->base_ceilingheight = sec->ceiling.dist;
+			SendCeilingSlope(sec);
+			return;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	SetVertexHeights
+//
+//==========================================================================
+
+bool SetVertexHeights(Level InLevel, int ThingID)
+{
+	int i;
+	int j;
+	bool ret;
+	mthing_t * mthing;
+	
+	ret = false;
+	//	Clean all
+	for (i = 0; i < InLevel.NumVertexes; i++)
+	{
+		InLevel.Vertexes[i].z = 0.1;
+	}
+	for (j = 0; j < InLevel.NumThings; j++)
+	{
+		mthing = &InLevel.Things[j];
+		if (mthing->type == ThingID)
+		{
+			for (i = 0; i < InLevel.NumVertexes; i++)
+			{
+				if (InLevel.Vertexes[i].x == mthing->x &&
+					InLevel.Vertexes[i].y == mthing->y)
+				{
+					InLevel.Vertexes[i].z = mthing->height;
+					ret = true;
+				}
+			}
+		}
+	}
+	return ret;
+}
+
+//==========================================================================
+//
+//	CleanVertexHeights
+//
+//==========================================================================
+
+void CleanVertexHeights(Level InLevel)
+{
+	int i;
+	
+	for (i = 0; i < InLevel.NumVertexes; i++)
+	{
+		InLevel.Vertexes[i].z = 0.0;
+	}
+}
+
+//==========================================================================
+//
+//	MakeVertexFloorHeights
+//
+//==========================================================================
+
+void MakeVertexFloorHeights(Level InLevel)
+{
+	int i;
+	sector_t *sec;
+	TVec p1;
+	TVec p2;
+	TVec p3;
+	TVec v1;
+	TVec v2;
+	
+	if (!SetVertexHeights(InLevel, 1504))
+	{
+		return;
+	}
+	for (i = 0; i < InLevel.NumSectors; i++)
+	{
+		sec = &InLevel.Sectors[i];
+		if (sec->linecount != 3)
+			continue;
+		p1 = *sec->lines[0]->v1;
+		p2 = *sec->lines[0]->v2;
+		if (sec->lines[1]->v1 == sec->lines[0]->v1 ||
+			sec->lines[1]->v1 == sec->lines[0]->v2)
+		{
+			p3 = *sec->lines[1]->v2;
+		}
+		else
+		{
+			p3 = *sec->lines[1]->v1;
+		}
+		if (p1.z == 0.1 && p2.z == 0.1 && p3.z == 0.1)
+		{
+			continue;
+		}
+		if (p1.z == 0.1)
+		{
+			p1.z = sec->floorheight;
+		}
+		if (p2.z == 0.1)
+		{
+			p2.z = sec->floorheight;
+		}
+		if (p3.z == 0.1)
+		{
+			p3.z = sec->floorheight;
+		}
+		if (PointOnPlaneSide(p3, sec->lines[0]) == 0)
+		{
+			v1 = p2 - p3;
+			v2 = p1 - p3;
+		}
+		else
+		{
+			v1 = p1 - p3;
+			v2 = p2 - p3;
+		}
+		sec->floor.normal = Normalise(CrossProduct(v1, v2));
+		if (sec->floor.normal.z <= 0.0)
+		{
+			Error("Floor with normal.z <= 0.0");
+		}
+		sec->floor.dist = DotProduct(sec->floor.normal, p3);
+		sec->base_floorheight = sec->floor.dist;
+		SendFloorSlope(sec);
+	}
+}
+
+//==========================================================================
+//
+//	MakeVertexCeilingHeights
+//
+//==========================================================================
+
+void MakeVertexCeilingHeights(Level InLevel)
+{
+	int i;
+	sector_t *sec;
+	TVec p1;
+	TVec p2;
+	TVec p3;
+	TVec v1;
+	TVec v2;
+	
+	if (!SetVertexHeights(InLevel, 1505))
+	{
+		return;
+	}
+	for (i = 0; i < InLevel.NumSectors; i++)
+	{
+		sec = &InLevel.Sectors[i];
+		if (sec->linecount != 3)
+			continue;
+		p1 = *sec->lines[0]->v1;
+		p2 = *sec->lines[0]->v2;
+		if (sec->lines[1]->v1 == sec->lines[0]->v1 ||
+			sec->lines[1]->v1 == sec->lines[0]->v2)
+		{
+			p3 = *sec->lines[1]->v2;
+		}
+		else
+		{
+			p3 = *sec->lines[1]->v1;
+		}
+		if (p1.z == 0.1 && p2.z == 0.1 && p3.z == 0.1)
+		{
+			continue;
+		}
+		if (p1.z == 0.1)
+		{
+			p1.z = sec->ceilingheight;
+		}
+		if (p2.z == 0.1)
+		{
+			p2.z = sec->ceilingheight;
+		}
+		if (p3.z == 0.1)
+		{
+			p3.z = sec->ceilingheight;
+		}
+		if (PointOnPlaneSide(p3, sec->lines[0]) == 0)
+		{
+			v1 = p1 - p3;
+			v2 = p2 - p3;
+		}
+		else
+		{
+			v1 = p2 - p3;
+			v2 = p1 - p3;
+		}
+		sec->ceiling.normal = Normalise(CrossProduct(v1, v2));
+		if (sec->ceiling.normal.z >= 0.0)
+		{
+			Error("Ceiling with normal.z >= 0.0");
+		}
+		sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
+		sec->base_ceilingheight = sec->ceiling.dist;
+		SendCeilingSlope(sec);
+	}
+}
+
+//==========================================================================
+//
+//	AlignPlane
+//
+//	Set slopes for sectors, based on line specials
+//
+//	Aligns the floor or ceiling of a sector to the corresponding plane
+// on the other side of the reference line. (By definition, line must be
+// two-sided.)
+//
+//	If (which & 1), sets floor.
+//	If (which & 2), sets ceiling.
+//
+//==========================================================================
+
+void AlignPlane(sector_t *sec, line_t *line, int which)
+{
+	sector_t *refsec;
+	float bestdist;
+	TVec *refvert = (*sec->lines)->v1;
+	int i;
+	line_t **probe;
+	float dist;
+	TVec *vert;
+	TVec p, v1, v2, cross;
+	sec_plane_t *refplane;
+	sec_plane_t *srcplane;
+	float srcheight, destheight;
+
+	if (line->backsector == NULL)
+		return;
+
+	//	Find furthest vertex from the reference line. It, along with the two
+	// ends of the line will define the plane.
+	bestdist = 0.0;
+	for (i = sec->linecount * 2, probe = sec->lines; i > 0; i--)
+	{
+		if (i & 1)
+		{
+			vert = (*probe)->v2;
+			probe = &probe[1];
+		}
+		else
+			vert = (*probe)->v1;
+		dist = fabs(DotProduct(*vert, line->normal));
+
+		if (dist > bestdist)
+		{
+			bestdist = dist;
+			refvert = vert;
+		}
+	}
+
+	refsec = line->frontsector == sec ? line->backsector : line->frontsector;
+
+	p = *line->v1;
+	v1 = *line->v2 - *line->v1;
+	v2 = *refvert - *line->v1;
+
+	refplane = (which == 0) ? &refsec->floor : &refsec->ceiling;
+	srcplane = (which == 0) ? &sec->floor : &sec->ceiling;
+	srcheight = (which == 0) ? sec->floorheight : sec->ceilingheight;
+	destheight = (which == 0) ? refsec->floorheight : refsec->ceilingheight;
+
+	p.z = destheight;
+	v1.z = 0.0;
+	v2.z = srcheight - destheight;
+
+	cross = Normalise(CrossProduct(v1, v2));
+
+	// Fix backward normals
+	if ((cross.z < 0.0 && which == 0) || (cross.z > 0.0 && which == 1))
+	{
+		cross = -cross;
+	}
+
+	srcplane->normal = cross;
+	srcplane->dist = DotProduct(cross, p);
+	if (which == 0)
+		SendFloorSlope(sec);
+	else
+		SendCeilingSlope(sec);
+}
+
+//==========================================================================
+//
+//	SetSlopes
+//
+//==========================================================================
+
+void SetSlopes(Level InLevel)
+{
+	int i, s;
+
+	for (i = 0; i < InLevel.NumLines; i++)
+	{
+		if (InLevel.Lines[i].special == LNSPEC_PlaneAlign)
+		{
+			InLevel.Lines[i].special = 0;
+//			InLevel.Lines[i].id = InLevel.Lines[i].args[2];
+			if (InLevel.Lines[i].backsector != NULL)
+			{
+				// args[0] is for floor, args[1] is for ceiling
+				//
+				// As a special case, if args[1] is 0,
+				// then args[0], bits 2-3 are for ceiling.
+				for (s = 0; s < 2; s++)
+				{
+					int bits = (s == 0 ? InLevel.Lines[i].arg1 :
+ 						InLevel.Lines[i].arg2) & 3;
+
+					if (s == 1 && bits == 0)
+						bits = (InLevel.Lines[i].arg1 >> 2) & 3;
+
+					if (bits == 1)			// align front side to back
+						AlignPlane(InLevel.Lines[i].frontsector,
+							&InLevel.Lines[i], s);
+					else if (bits == 2)		// align back side to front
+						AlignPlane(InLevel.Lines[i].backsector,
+							&InLevel.Lines[i], s);
+				}
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  SpawnExtraFloors
+//
+//==========================================================================
+
+void SpawnExtraFloors(Level InLevel, line_t * line)
+{
+	int j;
+
+	for (j = 0; j < InLevel.NumSectors; j++)
+	{
+		if (line->arg1 == InLevel.Sectors[j].tag)
+		{
+			AddExtraFloor(line, &InLevel.Sectors[j]);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  CreateContents
+//
+//==========================================================================
+
+void MakeContents(line_t * line)
+{
+	int contents;
+
+	if (!line->arg1 && !line->arg2 && !line->arg3)
+	{
+		contents =
+			terrain_contents[TerrainType(line->frontsector->floor.pic)];
+		line->frontsector->params.contents = contents;
+		if (line->frontsector->floor.dist == -line->frontsector->ceiling.dist)
+		{
+			line->frontsector->floor.translucency =
+				contents_transluc[contents];
+			line->frontsector->ceiling.translucency =
+				contents_transluc[contents];
+			line->frontsector->ceiling.flags |=
+				SPF_NOBLOCKING | SPF_NOBLOCKSIGHT | SPF_NOBLOCKSHOOT;
+			line->frontsector->floor.flags |=
+				SPF_NOBLOCKING | SPF_NOBLOCKSIGHT | SPF_NOBLOCKSHOOT;
+		}
+	}
+	else
+	{
+		line->frontsector->params.contents = line->arg1;
+
+		line->frontsector->floor.translucency = line->arg2;
+		line->frontsector->ceiling.translucency = line->arg2;
+
+		line->frontsector->ceiling.flags = line->arg3;
+		line->frontsector->floor.flags = line->arg3;
+	}
+}
+
+//==========================================================================
+//
+//  MakeHeightSec
+//
+//	killough 3/7/98:
+//	support for drawn heights coming from different sector
+//
+//==========================================================================
+
+void MakeHeightSec(Level InLevel, line_t* Line)
+{
+	sector_t*	Sec;
+	int			s;
+
+	Sec = Line->frontsector;
+	if (Line->arg2 & 2)
+	{
+		Sec->bFakeFloorOnly = true;
+	}
+	if (Line->arg2 & 4)
+	{
+		Sec->bClipFakePlanes = true;
+	}
+	if (Line->arg2 & 8)
+	{
+		Sec->bUnderWater = true;
+	}
+	if (Line->arg2 & 16)
+	{
+		Sec->bIgnoreHeightSec = true;
+	}
+	if (Line->arg2 & 32)
+	{
+		Sec->bNoFakeLight = true;
+	}
+	for (s = FindSectorFromTag(Line->arg1, -1); s  >= 0;
+		s = FindSectorFromTag(Line->arg1, s))
+	{
+		InLevel.Sectors[s].heightsec = Sec;
+		SetHeightSector(&InLevel.Sectors[s], Sec, Line->arg2);
+	}
+}
+
+//==========================================================================
+//
+//  SetSectorFriction
+//
+//==========================================================================
+
+void SetSectorFriction(Level InLevel, int tag, int amount, bool alterFlag)
+{
+	int			s;
+	int			OldFriction;
+	int			OldMoveFactor;
+	float		Friction;
+	float		MoveFactor;
+
+	// An amount of 100 should result in a friction of
+	// ORIG_FRICTION (0xE800)
+	OldFriction = (0x1EB8 * amount) / 0x80 + 0xD001;
+
+	// killough 8/28/98: prevent odd situations
+	if (OldFriction > 0x10000)
+		OldFriction = 0x10000;
+	if (OldFriction < 0)
+		OldFriction = 0;
+
+	// The following check might seem odd. At the time of movement,
+	// the move distance is multiplied by 'friction/0x10000', so a
+	// higher friction value actually means 'less friction'.
+
+	// [RH] Twiddled these values so that momentum on ice (with
+	//		friction 0xf900) is the same as in Heretic/Hexen.
+	if (OldFriction >= 0xe800)	// ice
+//		movefactor = ((0x10092 - friction)*(0x70))/0x158;
+		OldMoveFactor = ((0x10092 - OldFriction) * 1024) / 4352 + 568;
+	else
+		OldMoveFactor = ((OldFriction - 0xDB34) * (0xA)) / 0x80;
+
+	// killough 8/28/98: prevent odd situations
+	if (OldMoveFactor < 32)
+		OldMoveFactor = 32;
+
+	Friction = (1.0 - itof(OldFriction) / itof(0x10000)) * 35.0;
+	MoveFactor = itof(OldMoveFactor) / itof(0x10000);
+
+	for (s = FindSectorFromTag(tag, -1); s >= 0;
+		s = FindSectorFromTag(tag, s))
+	{
+		// killough 8/28/98:
+		//
+		// Instead of spawning thinkers, which are slow and expensive,
+		// modify the sector's own friction values. Friction should be
+		// a property of sectors, not objects which reside inside them.
+		// Original code scanned every object in every friction sector
+		// on every tic, adjusting its friction, putting unnecessary
+		// drag on CPU. New code adjusts friction of sector only once
+		// at level startup, and then uses this friction value.
+
+		InLevel.Sectors[s].Friction = Friction;
+		InLevel.Sectors[s].MoveFactor = MoveFactor;
+		if (alterFlag)
+		{
+			// When used inside a script, the sectors' friction flags
+			// can be enabled and disabled at will.
+			if (OldFriction == 0xe800)
+			{
+				InLevel.Sectors[s].special &= ~SECSPEC_FRICTION_MASK;
+			}
+			else
+			{
+				InLevel.Sectors[s].special |= SECSPEC_FRICTION_MASK;
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  SpawnWorld
+//
+//==========================================================================
+
+void SpawnWorld(Level InLevel)
+{
+	int			i;
+	int			j;
+	int			length;
+	int			SecNum;
+	mthing_t*	mthing;
+
+	//  Spawn slopes first
+	SetSlopes(InLevel);
+	for (i = 0; i < InLevel.NumThings; i++)
+	{
+		mthing = &InLevel.Things[i];
+
+		if (mthing->type == 1500)
+		{
+			MakeFloorSlope(InLevel, mthing);
+			mthing->type = 0;
+			continue;
+		}
+
+		if (mthing->type == 1501)
+		{
+			MakeCeilingSlope(InLevel, mthing);
+			mthing->type = 0;
+			continue;
+		}
+
+		if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
+		{
+			// Polyobj StartSpot Pt.
+			SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
+				(mthing->type == PO_SPAWNCRUSH_TYPE));
+			mthing->type = 0;
+			continue;
+		}
+		if (mthing->type == PO_ANCHOR_TYPE)
+		{
+			// Polyobj Anchor Pt.
+			AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
+			mthing->type = 0;
+			continue;
+		}
+	}
+	MakeVertexFloorHeights(InLevel);
+	MakeVertexCeilingHeights(InLevel);
+	CleanVertexHeights(InLevel);
+
+	//	Initialise initial friction values.
+	for (i = 0; i < InLevel.NumSectors; i++)
+	{
+		InLevel.Sectors[i].Friction = FRICTION_NORMAL;
+	}
+
+	//  Spawn 3D floors
+	for (i = 0; i < InLevel.NumLines; i++)
+	{
+		switch (InLevel.Lines[i].special)
+		{
+		case LNSPEC_3DFloor:
+			SpawnExtraFloors(InLevel, &InLevel.Lines[i]);
+			InLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_Contents:
+			MakeContents(&InLevel.Lines[i]);
+			InLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_TransferFloorLight:
+			for (SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, -1);
+				SecNum >= 0;
+				SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
+			{
+				SetFloorLightSector(&InLevel.Sectors[SecNum],
+					InLevel.Lines[i].frontsector);
+			}
+			InLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_TransferCeilingLight:
+			for (SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, -1);
+				SecNum >= 0;
+				SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
+			{
+				SetCeilingLightSector(&InLevel.Sectors[SecNum],
+					InLevel.Lines[i].frontsector);
+			}
+			InLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_SectorSetFriction:
+			if (InLevel.Lines[i].arg2)
+			{
+				//	Allow setting friction amount from parameter
+				length = InLevel.Lines[i].arg2 <= 200 ?
+					InLevel.Lines[i].arg2 : 200;
+			}
+			else
+			{
+				length = ftoi(Length(*InLevel.Lines[i].v2 -
+					*InLevel.Lines[i].v1));
+			}
+
+			SetSectorFriction(InLevel, InLevel.Lines[i].arg1, length, false);
+			InLevel.Lines[i].special = 0;
+			break;
+
+		case LNSPEC_TransferHeights:
+			MakeHeightSec(InLevel, &InLevel.Lines[i]);
+			break;
+		}
+	}
+
+	TaggedLineCount = 0;
+	for (i = 0; i < InLevel.NumLines; i++)
+	{
+		switch (InLevel.Lines[i].special)
+		{
+		case LNSPEC_LineSetIdentification:
+		case LNSPEC_LineTranslucent:
+		case LNSPEC_TeleportLine:
+			if (InLevel.Lines[i].arg1)
+			{
+				if (TaggedLineCount == MAX_TAGGED_LINES)
+				{
+					Error("P_SpawnSpecials: MAX_TAGGED_LINES exceeded.");
+				}
+				TaggedLines[TaggedLineCount].line = &InLevel.Lines[i];
+				TaggedLines[TaggedLineCount++].lineTag = InLevel.Lines[i].arg1;
+			}
+			if (InLevel.Lines[i].special == LNSPEC_LineSetIdentification)
+			{
+				InLevel.Lines[i].special = 0;
+			}
+			break;
+		}
+	}
+
+	//	Process translucent lines
+	for (i = 0; i < InLevel.NumLines; i++)
+	{
+		if (InLevel.Lines[i].special != LNSPEC_LineTranslucent)
+		{
+			continue;
+		}
+
+		int trans = (255 - InLevel.Lines[i].arg2) * 100 / 255;
+		if (InLevel.Lines[i].arg1)
+		{
+			for (j = 0; j < TaggedLineCount; j++)
+			{
+				if (TaggedLines[j].lineTag == InLevel.Lines[i].arg1)
+				{
+					SetLineTransluc(TaggedLines[j].line, trans);
+				}
+			}
+		}
+		else
+		{
+			SetLineTransluc(&InLevel.Lines[i], trans);
+		}
+		InLevel.Lines[i].special = 0;
+	}
+}
+
+defaultproperties
+{
+	WeaponClasses[0] = WeaponStaff;
+	WeaponClasses[1] = WeaponGoldWand;
+	WeaponClasses[2] = WeaponCrossbow;
+	WeaponClasses[3] = WeaponBlaster;
+	WeaponClasses[4] = WeaponSkullRod;
+	WeaponClasses[5] = WeaponPhoenixRod;
+	WeaponClasses[6] = WeaponMace;
+	WeaponClasses[7] = WeaponGauntlets;
+	WeaponClasses[8] = WeaponBeak;
+
+	weapon_ammo_type[0] = am_noammo;
+	weapon_ammo_type[1] = am_goldwand;
+	weapon_ammo_type[2] = am_crossbow;
+	weapon_ammo_type[3] = am_blaster;
+	weapon_ammo_type[4] = am_skullrod;
+	weapon_ammo_type[5] = am_phoenixrod;
+	weapon_ammo_type[6] = am_mace;
+	weapon_ammo_type[7] = am_noammo;
+	weapon_ammo_type[8] = am_noammo;
+
+	WeaponOrder[0] = wp_staff;
+	WeaponOrder[1] = wp_gauntlets;
+	WeaponOrder[2] = wp_goldwand;
+	WeaponOrder[3] = wp_crossbow;
+	WeaponOrder[4] = wp_blaster;
+	WeaponOrder[5] = wp_skullrod;
+	WeaponOrder[6] = wp_phoenixrod;
+	WeaponOrder[7] = wp_mace;
+	WeaponOrder[8] = wp_beak;
+
+	terrain_contents[0] = CONTENTS_EMPTY;
+	terrain_contents[1] = CONTENTS_WATER;
+	terrain_contents[2] = CONTENTS_SLUDGE;
+	terrain_contents[3] = CONTENTS_LAVA;
+
+	contents_transluc[0] = 0;
+	contents_transluc[1] = 50;
+	contents_transluc[2] = 20;
+	contents_transluc[3] = 30;
+
+	botskill = 2;
+}
+
+//**************************************************************************
+//
+//  $Log$
+//  Revision 1.1  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
+//**************************************************************************

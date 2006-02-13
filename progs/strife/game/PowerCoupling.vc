@@ -53,7 +53,7 @@ void Died(Actor source)
 		return;
 	}
 
-	P_NoiseAlert(source, self);
+	StrifeLevelInfo(Level).NoiseAlert(source, self);
 	StrifeLevelInfo(Level).EV_DoDoor(225, 16, 0, 0, 0, DOOREV_Close, NULL, svvars->Players[i].MO);
 	StrifeLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0, FLOOREV_LowerToHighest, NULL);
 	svvars->Players[i].GiveQuest(QUEST_BrokePowerCoupling);
@@ -90,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.4  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

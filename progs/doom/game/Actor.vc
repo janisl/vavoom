@@ -291,13 +291,30 @@ __states__
 	}
 }
 
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+Actor Spawn(classid type, TVec AOrigin)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
 //==========================================================================
 //
 //	HideSpecial
 //
 //==========================================================================
 
-void HideSpecial(void)
+void HideSpecial()
 {
 	// only respawn items in deathmatch
 	if ((deathmatch == 2 || deathmatch == 3) && !bDropped && !bNoRespawn)
@@ -441,7 +458,7 @@ void OnMapSpawn(mthing_t * mthing)
 		float y;
 		float z;
 
-		CopyMThing(mthing, &SpawnPoint);
+		Level.CopyMThing(mthing, &SpawnPoint);
 
 		x = mthing->x;
 		y = mthing->y;
@@ -497,7 +514,7 @@ void OnMapSpawn(mthing_t * mthing)
 //
 //==========================================================================
 
-void ExplodeMissile(void)
+void ExplodeMissile()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 
@@ -707,7 +724,7 @@ void Died(Actor source)
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 #ifdef DDF
 	if (DropItem)
@@ -849,7 +866,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 //
 //==========================================================================
 
-void NightmareRespawn(void)
+void NightmareRespawn()
 {
 	float x;
 	float y;
@@ -889,7 +906,7 @@ void NightmareRespawn(void)
 
 	// inherit attributes from deceased one
 	A = Spawn(Class, vector(x, y, z));
-	CopyMThing(&SpawnPoint, &A.SpawnPoint);
+	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & MTF_AMBUSH)
@@ -1168,7 +1185,7 @@ int FaceActor(Actor target, float *delta)
 //
 //==========================================================================
 
-void XYMovement(void)
+void XYMovement()
 {
 	float ptryx;
 	float ptryy;
@@ -1315,7 +1332,7 @@ void XYMovement(void)
 //
 //==========================================================================
 
-void ZMovement(void)
+void ZMovement()
 {
 	float dist;
 	float delta;
@@ -1426,7 +1443,7 @@ void ZMovement(void)
 //
 //==========================================================================
 
-void ApplyFriction(void)
+void ApplyFriction()
 {
 	float dot;
 
@@ -3211,7 +3228,7 @@ void A_FaceTarget()
 //
 //==========================================================================
 
-void A_Pain(void)
+void A_Pain()
 {
 	//  Remove muzzle flash
 	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
@@ -3396,6 +3413,70 @@ bool PIT_VileCheck(Entity Other)
 		return true;	// doesn't fit here
 
 	return false;	// got one, so stop checking
+}
+
+//==========================================================================
+//
+//  SpawnPuff
+//
+//==========================================================================
+
+void SpawnPuff(TVec Org, float Range)
+{
+	Actor A;
+
+	MSG_Select(MSG_SV_DATAGRAM);
+	if (MSG_CheckSpace(7))
+	{
+		MSG_WriteByte(svc_gun_shot);
+		MSG_WriteShort(ftoi(Org.x));
+		MSG_WriteShort(ftoi(Org.y));
+		MSG_WriteShort(ftoi(Org.z));
+	}
+
+	Org.z += (Random() - Random()) * 4.0;
+
+	A = Spawn(Puff, Org);
+	A.Velocity.z = 1.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+
+	// don't make punches spark on the wall
+	if (Range == MELEERANGE)
+		A.SetState(Puff::S_PUFF3);
+}
+
+//==========================================================================
+//
+//  P_SpawnBlood
+// 
+//==========================================================================
+
+void P_SpawnBlood(TVec Org, int damage)
+{
+	Actor A;
+
+	MSG_Select(MSG_SV_DATAGRAM);
+	MSG_WriteByte(svc_blood);
+	MSG_WriteShort(ftoi(Org.x));
+	MSG_WriteShort(ftoi(Org.y));
+	MSG_WriteShort(ftoi(Org.z));
+	MSG_WriteByte(damage > 255 ? 255 : damage);
+
+	Org.z += (Random() - Random()) * 4.0;
+	A = Spawn(Blood, Org);
+	A.Velocity.z = 2.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+
+	if (damage <= 12 && damage >= 9)
+		A.SetState(Blood::S_BLOOD2);
+	else if (damage < 9)
+		A.SetState(Blood::S_BLOOD3);
 }
 
 #ifdef DDF
@@ -3678,7 +3759,7 @@ void DoAttack(AttackType *attack)
 //
 //==========================================================================
 
-void P_ActComboAttack(void)
+void P_ActComboAttack()
 {
 	AttackType *attack;
 
@@ -3810,7 +3891,7 @@ void P_ActSpareAttack(AttackType *custom_attack)
 //
 //==========================================================================
 
-void P_ActRefireCheck(void)
+void P_ActRefireCheck()
 {
 	AttackType *attack;
 
@@ -3858,7 +3939,7 @@ void P_ActPlaySound(name sound)
 //
 //==========================================================================
 
-void P_ActKillSound(void)
+void P_ActKillSound()
 {
 	StopSound(CHAN_AUTO);
 }
@@ -3872,7 +3953,7 @@ void P_ActKillSound(void)
 //
 //==========================================================================
 
-void P_ActMakeAmbientSound(void)
+void P_ActMakeAmbientSound()
 {
 	if (SightSound)
 		PlaySound(SightSound, CHAN_VOICE);
@@ -3889,7 +3970,7 @@ void P_ActMakeAmbientSound(void)
 //
 //==========================================================================
 
-void P_ActMakeAmbientSoundRandom(void)
+void P_ActMakeAmbientSoundRandom()
 {
 	if (SightSound)
 	{
@@ -3907,7 +3988,7 @@ void P_ActMakeAmbientSoundRandom(void)
 //
 //==========================================================================
 
-void P_ActMakeActiveSound(void)
+void P_ActMakeActiveSound()
 {
 	if (ActiveSound)
 		PlaySound(ActiveSound, CHAN_VOICE);
@@ -3924,7 +4005,7 @@ void P_ActMakeActiveSound(void)
 //
 //==========================================================================
 
-void P_ActMakeDyingSound(void)
+void P_ActMakeDyingSound()
 {
 	if (DeathSound)
 	{
@@ -3941,7 +4022,7 @@ void P_ActMakeDyingSound(void)
 //
 //==========================================================================
 
-void P_ActMakePainSound(void)
+void P_ActMakePainSound()
 {
 	if (PainSound)
 	{
@@ -3958,7 +4039,7 @@ void P_ActMakePainSound(void)
 //
 //==========================================================================
 
-void P_ActMakeOverKillSound(void)
+void P_ActMakeOverKillSound()
 {
 	if (OverkillSound)
 	{
@@ -3977,7 +4058,7 @@ void P_ActMakeOverKillSound(void)
 //
 //==========================================================================
 
-void P_ActMakeCloseAttemptSound(void)
+void P_ActMakeCloseAttemptSound()
 {
 	if (CloseCombat.InitSound)
 	{
@@ -3993,7 +4074,7 @@ void P_ActMakeCloseAttemptSound(void)
 //
 //==========================================================================
 
-void P_ActMakeRangeAttemptSound(void)
+void P_ActMakeRangeAttemptSound()
 {
 	if (RangeAttack.InitSound)
 		PlaySound(RangeAttack.InitSound, CHAN_VOICE);
@@ -4007,7 +4088,7 @@ void P_ActMakeRangeAttemptSound(void)
 //
 //==========================================================================
 
-void P_ActDamageExplosion(void)
+void P_ActDamageExplosion()
 {
 	int damage;
   
@@ -4016,7 +4097,7 @@ void P_ActDamageExplosion(void)
 	RadiusAttack(damage, damage, false);
 }
 
-void P_ActThrust(void) { }					// EXTRA
+void P_ActThrust() { }					// EXTRA
 
 //==========================================================================
 //
@@ -4024,7 +4105,7 @@ void P_ActThrust(void) { }					// EXTRA
 //
 //==========================================================================
 
-void P_ActWalkSoundChase(void)
+void P_ActWalkSoundChase()
 {
 	PlaySound(WalkSound, CHAN_BODY);
 	A_Chase();
@@ -4038,7 +4119,7 @@ void P_ActWalkSoundChase(void)
 //
 //==========================================================================
 
-void P_ActResurrectChase(void)
+void P_ActResurrectChase()
 {
 	int xl;
 	int xh;
@@ -4110,7 +4191,7 @@ void P_ActResurrectChase(void)
 //
 //==========================================================================
 
-void LookForShootSpots(void)
+void LookForShootSpots()
 {
 	Actor m;
 
@@ -4134,7 +4215,7 @@ void LookForShootSpots(void)
 //
 //==========================================================================
 
-void A_BrainScream(void)
+void A_BrainScream()
 {
 	TVec org;
 	Actor A;
@@ -4165,7 +4246,7 @@ void A_BrainScream(void)
 //
 //==========================================================================
 
-void A_BrainDie(void)
+void A_BrainDie()
 {
 	G_ExitLevel();
 }
@@ -4178,7 +4259,7 @@ void A_BrainDie(void)
 //
 //==========================================================================
 
-void A_BrainSpit(void)
+void A_BrainSpit()
 {
 	Actor targ;
 	Actor A;
@@ -4199,7 +4280,7 @@ void A_BrainSpit(void)
 //
 //==========================================================================
 
-void A_CubeSpawn(void)
+void A_CubeSpawn()
 {
 	Actor newmobj;
 	int r;
@@ -4257,7 +4338,7 @@ void A_CubeSpawn(void)
 //
 //==========================================================================
 
-void A_BrainMissileExplode(void)
+void A_BrainMissileExplode()
 {
 	TVec org;
 	Actor A;
@@ -4298,7 +4379,7 @@ void P_ActJump(float chance, name jumpState)
 //
 //==========================================================================
 
-void P_ActFixedHomingProjectile(void)
+void P_ActFixedHomingProjectile()
 {
 	//Actor A;
 	TVec wishdir;
@@ -4342,7 +4423,7 @@ void P_ActFixedHomingProjectile(void)
 //
 //==========================================================================
 
-void P_ActRandomHomingProjectile(void)
+void P_ActRandomHomingProjectile()
 {
 	//Actor A;
 	TVec wishdir;
@@ -4380,9 +4461,9 @@ void P_ActRandomHomingProjectile(void)
 	VectorAngles(&wishdir, &Angles);
 }
 
-void P_ActLaunchOrderedSpread(void) { }	// EXTRA
-void P_ActLaunchRandomSpread(void) { }	// EXTRA
-void P_ActCreateSmokeTrail(void) { }	// EXTRA
+void P_ActLaunchOrderedSpread() { }	// EXTRA
+void P_ActLaunchRandomSpread() { }	// EXTRA
+void P_ActCreateSmokeTrail() { }	// EXTRA
 
 //==========================================================================
 //
@@ -4394,7 +4475,7 @@ void P_ActCreateSmokeTrail(void) { }	// EXTRA
 //
 //==========================================================================
 
-void P_ActHomeToSpot(void)
+void P_ActHomeToSpot()
 {
 	float dist;
 	float ck_radius;
@@ -4426,7 +4507,7 @@ void P_ActHomeToSpot(void)
 //
 //==========================================================================
 
-void P_ActEffectTracker(void)
+void P_ActEffectTracker()
 {
 	Actor tracker;
 	int damage;
@@ -4472,7 +4553,7 @@ void P_ActEffectTracker(void)
 //
 //==========================================================================
 
-void P_ActTrackerFollow(void)
+void P_ActTrackerFollow()
 {
 	if (!Enemy)
 		return;
@@ -4496,7 +4577,7 @@ void P_ActTrackerFollow(void)
 //
 //==========================================================================
 
-void P_ActTrackerActive(void)
+void P_ActTrackerActive()
 {
 	if (ActiveSound)
 		PlaySound(ActiveSound, CHAN_VOICE);
@@ -4512,7 +4593,7 @@ void P_ActTrackerActive(void)
 //
 //==========================================================================
 
-void P_ActTrackerStart(void)
+void P_ActTrackerStart()
 {
 	if (SightSound)
 		PlaySound(SightSound, CHAN_VOICE);
@@ -4531,47 +4612,47 @@ void P_ActTransSet(int value)
 	Translucency = value;
 }
 
-void P_ActTransFade(void) { }
-void P_ActTransMore(void) { }				// EXTRA
-void P_ActTransLess(void) { }				// EXTRA
-void P_ActTransAlternate(void) { }			// EXTRA
+void P_ActTransFade() { }
+void P_ActTransMore() { }				// EXTRA
+void P_ActTransLess() { }				// EXTRA
+void P_ActTransAlternate() { }			// EXTRA
 
-void P_ActPlayerSupportLook(void) { }		// EXTRA
+void P_ActPlayerSupportLook() { }		// EXTRA
 
-void P_ActStandardMeander(void) { }			// EXTRA
-void P_ActPlayerSupportMeander(void) { }	// EXTRA
+void P_ActStandardMeander() { }			// EXTRA
+void P_ActPlayerSupportMeander() { }	// EXTRA
 
-void P_ActResetSpreadCount(void)
+void P_ActResetSpreadCount()
 {
 	SpreadCount = 0;
 }
-void P_ActExplode(void) { }				// EXTRA
-void P_ActActivateLineType(void) { }	// EXTRA
-void P_ActEnableRadTrig(void) { }		// EXTRA
-void P_ActDisableRadTrig(void) { }		// EXTRA
-void P_ActTouchyRearm(void) { }			// EXTRA
-void P_ActTouchyDisarm(void) { }		// EXTRA
-void P_ActBounceRearm(void) { }			// EXTRA
-void P_ActBounceDisarm(void) { }		// EXTRA
-void P_ActPathCheck(void) { }			// EXTRA
-void P_ActPathFollow(void) { }			// EXTRA
-void P_ActDropItem(void) { }			// EXTRA
-void P_ActDLightSet(void) { }
-void P_ActDLightFade(void) { }
-void P_ActDLightRandom(void) { }		// EXTRA
+void P_ActExplode() { }				// EXTRA
+void P_ActActivateLineType() { }	// EXTRA
+void P_ActEnableRadTrig() { }		// EXTRA
+void P_ActDisableRadTrig() { }		// EXTRA
+void P_ActTouchyRearm() { }			// EXTRA
+void P_ActTouchyDisarm() { }		// EXTRA
+void P_ActBounceRearm() { }			// EXTRA
+void P_ActBounceDisarm() { }		// EXTRA
+void P_ActPathCheck() { }			// EXTRA
+void P_ActPathFollow() { }			// EXTRA
+void P_ActDropItem() { }			// EXTRA
+void P_ActDLightSet() { }
+void P_ActDLightFade() { }
+void P_ActDLightRandom() { }		// EXTRA
 
-void P_ActFaceDir(void) { }				// EXTRA
-void P_ActTurnDir(void) { }				// EXTRA
-void P_ActTurnRandom(void) { }			// EXTRA
-void P_ActMlookFace(void) { }			// EXTRA
-void P_ActMlookTurn(void) { }			// EXTRA
-void P_ActMoveFwd(void) { }				// EXTRA
-void P_ActMoveRight(void) { }			// EXTRA
-void P_ActMoveUp(void) { }				// EXTRA
-void P_ActStopMoving(void) { }			// EXTRA
+void P_ActFaceDir() { }				// EXTRA
+void P_ActTurnDir() { }				// EXTRA
+void P_ActTurnRandom() { }			// EXTRA
+void P_ActMlookFace() { }			// EXTRA
+void P_ActMlookTurn() { }			// EXTRA
+void P_ActMoveFwd() { }				// EXTRA
+void P_ActMoveRight() { }			// EXTRA
+void P_ActMoveUp() { }				// EXTRA
+void P_ActStopMoving() { }			// EXTRA
 
-void P_ActCheckBlood(void) { }
-void P_ActCheckMoving(void) { }
+void P_ActCheckBlood() { }
+void P_ActCheckMoving() { }
 #endif
 
 #ifndef NO_BOTS
@@ -4634,6 +4715,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.23  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

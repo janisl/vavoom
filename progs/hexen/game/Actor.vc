@@ -141,6 +141,22 @@ TVec shoot_lineend;
 
 //==========================================================================
 //
+//	Spawn
+//
+//==========================================================================
+
+Actor Spawn(classid type, TVec position)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+	A.Origin = position;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
+//==========================================================================
+//
 //  HITDICE
 //
 //  Most damage in HERETIC and HEXEN defined using HITDICE
@@ -158,7 +174,7 @@ int HITDICE(int a)
 //
 //===========================================================================
 
-int GetFloorType(void)
+int GetFloorType()
 {
 	return TerrainType(Floor->pic);
 }
@@ -341,7 +357,7 @@ void Destroyed()
 //
 //==========================================================================
 
-int HitFloorType(void)
+int HitFloorType()
 {
 	Actor A;
 	int smallsplash = false;
@@ -381,7 +397,7 @@ int HitFloorType(void)
 			A.Velocity.z = (2.0 + Random()) * 35.0;
 			A = Spawn(SplashBase, vector(Origin.x, Origin.y, ONFLOORZ));
 			if (bIsPlayer)
-				NoiseAlert(self, self);
+				HexenLevelInfo(Level).NoiseAlert(self, self);
 			A.PlaySound('WaterSplash', CHAN_VOICE);
 		}
 		return FLOOR_WATER;
@@ -398,7 +414,7 @@ int HitFloorType(void)
 			A.Velocity.z = (1.0 + Random() / 2.0) * 35.0;
 			A = Spawn(LavaSplash, vector(Origin.x, Origin.y, ONFLOORZ));
 			if (bIsPlayer)
-				NoiseAlert(self, self);
+				HexenLevelInfo(Level).NoiseAlert(self, self);
 		}
 		A.PlaySound('LavaSizzle', CHAN_VOICE);
 		if (bIsPlayer && level->tictime & 31)
@@ -422,7 +438,7 @@ int HitFloorType(void)
 			A.Velocity.z = (1.0 + Random()) * 35.0;
 			A = Spawn(SludgeSplash, vector(Origin.x, Origin.y, ONFLOORZ));
 			if (bIsPlayer)
-				NoiseAlert(self, self);
+				HexenLevelInfo(Level).NoiseAlert(self, self);
 		}
 		A.PlaySound('SludgeGloop', CHAN_VOICE);
 		return FLOOR_SLUDGE;
@@ -518,7 +534,7 @@ int FaceActor(Actor target, float *delta)
 //
 //==========================================================================
 
-void MonsterFallingDamage(void)
+void MonsterFallingDamage()
 {
 	int damage;
 	float mom;
@@ -545,7 +561,7 @@ void MonsterFallingDamage(void)
 //
 //==========================================================================
 
-Actor ActiveMinotaur(void)
+Actor ActiveMinotaur()
 {
 	Minotaur mo;
 
@@ -758,7 +774,7 @@ void MinotaurSlam(Actor source)
 //
 //==========================================================================
 
-bool MorphPlayer(void)
+bool MorphPlayer()
 {
 	Actor fog;
 	Actor beastMo;
@@ -1205,7 +1221,7 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 //
 //==========================================================================
 
-void FallingDamage(void)
+void FallingDamage()
 {
 	int damage;
 	float mom;
@@ -1363,7 +1379,7 @@ void SpawnBloodSplatter2(TVec org)
 //
 //==========================================================================
 
-void SpawnRipperBlood(void)
+void SpawnRipperBlood()
 {
 	Actor th;
 	TVec org;
@@ -1430,7 +1446,7 @@ void SpawnDirt(float radius)
 //
 //==========================================================================
 
-void TeleportToPlayerStarts(void)
+void TeleportToPlayerStarts()
 {
 	int i;
 	int selections = 0;
@@ -1445,9 +1461,9 @@ void TeleportToPlayerStarts(void)
 		selections++;
 	}
 	i = P_Random() % selections;
-	destX = level->playerstarts[i].x;
-	destY = level->playerstarts[i].y;
-	destAngle = itof(45 * (level->playerstarts[i].angle / 45));
+	destX = Level.PlayerStarts[i].x;
+	destY = Level.PlayerStarts[i].y;
+	destAngle = itof(45 * (Level.PlayerStarts[i].angle / 45));
 	Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true, false);
 }
 
@@ -1457,19 +1473,19 @@ void TeleportToPlayerStarts(void)
 //
 //==========================================================================
 
-void TeleportToDeathmatchStarts(void)
+void TeleportToDeathmatchStarts()
 {
 	int i;
 	float destX;
 	float destY;
 	float destAngle;
 
-	if (level->numdeathmatchstarts)
+	if (Level.NumDeathmatchStarts)
 	{
-		i = P_Random() % level->numdeathmatchstarts;
-		destX = level->deathmatchstarts[i].x;
-		destY = level->deathmatchstarts[i].y;
-		destAngle = itof(45 * (level->deathmatchstarts[i].angle / 45));
+		i = P_Random() % Level.NumDeathmatchStarts;
+		destX = Level.DeathmatchStarts[i].x;
+		destY = Level.DeathmatchStarts[i].y;
+		destAngle = itof(45 * (Level.DeathmatchStarts[i].angle / 45));
 		Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
 			false);
 	}
@@ -1485,7 +1501,7 @@ void TeleportToDeathmatchStarts(void)
 //
 //==========================================================================
 
-void TeleportOther(void)
+void TeleportOther()
 {
 	if (bIsPlayer)
 	{
@@ -1519,7 +1535,7 @@ void TeleportOther(void)
 //
 //==========================================================================
 
-bool TestLocation(void)
+bool TestLocation()
 {
 	if (!bColideWithThings && !bColideWithWorld)
 		return true;
@@ -1782,7 +1798,7 @@ void CrossSpecialLine(line_t *ld, int side)
 //
 //==========================================================================
 
-void HandleFloorclip(void)
+void HandleFloorclip()
 {
 	if (bFloorClip)
 	{
@@ -1810,7 +1826,7 @@ void HandleFloorclip(void)
 //
 //==========================================================================
 
-void ApplyFriction(void)
+void ApplyFriction()
 {
 	if (bSkullFly || bMissile)
 	{
@@ -2009,7 +2025,7 @@ float GetReflectedAngle(Actor Other)
 //
 //==========================================================================
 
-void HitLine(void)
+void HitLine()
 {
 	if (bMissile)
 	{
@@ -2070,7 +2086,7 @@ void HitLine(void)
 //
 //==========================================================================
 
-void XYMovement(void)
+void XYMovement()
 {
 	float ptryx, ptryy;
 	float xmove, ymove;
@@ -2156,11 +2172,24 @@ void XYMovement(void)
 
 //==========================================================================
 //
+//  ClipVelocity
+//
+//  Slide off of the impacting object
+//
+//==========================================================================
+
+TVec ClipVelocity(TVec in, TVec normal, float overbounce)
+{
+	return in - normal * (DotProduct(in, normal) * overbounce);
+}
+
+//==========================================================================
+//
 //	HitFloor
 //
 //==========================================================================
 
-bool HitFloor(void)
+bool HitFloor()
 {
 	float vdot;
 
@@ -2223,7 +2252,7 @@ bool HitFloor(void)
 				if (vdot < -23.0 * 35.0)
 				{
 					FallingDamage();
-					NoiseAlert(self, self);
+					HexenLevelInfo(Level).NoiseAlert(self, self);
 				}
 				else if (vdot < -GRAVITY * 0.375 && !Player.MorphTime)
 				{
@@ -2268,7 +2297,7 @@ bool HitFloor(void)
 //
 //==========================================================================
 
-bool HitCeiling(void)
+bool HitCeiling()
 {
 	float vdot;
 
@@ -2328,7 +2357,7 @@ bool HitCeiling(void)
 //
 //==========================================================================
 
-bool ZMovement(void)
+bool ZMovement()
 {
 	float dist;
 	float delta;
@@ -2386,7 +2415,7 @@ bool ZMovement(void)
 //
 //==========================================================================
 
-void ResetBlasted(void)
+void ResetBlasted()
 {
 	bBlasted = false;
 	if (!bIceCorpse)
@@ -2401,13 +2430,13 @@ void ResetBlasted(void)
 //
 //===========================================================================
 
-void PlayerLandedOnThing(void)
+void PlayerLandedOnThing()
 {
 	Player.DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -23.0 * 35.0)
 	{
 		FallingDamage();
-		NoiseAlert(self, self);
+		HexenLevelInfo(Level).NoiseAlert(self, self);
 	}
 	else if (Velocity.z < -GRAVITY * 0.375 && !Player.MorphTime)
 	{
@@ -2427,7 +2456,7 @@ void PlayerLandedOnThing(void)
 //
 //==========================================================================
 
-bool BlasterPhysics(void)
+bool BlasterPhysics()
 {
 	int i;
 	float xfrac;
@@ -2701,7 +2730,7 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-void SetDormant(void)
+void SetDormant()
 {
 	bDormant = true;
 	StateTime = -1.0;
@@ -2718,7 +2747,7 @@ void SetDormant(void)
 //
 //==========================================================================
 
-bool HeightClip(void)
+bool HeightClip()
 {
 	bool onfloor;
 
@@ -3002,7 +3031,7 @@ bool Teleport(TVec pos, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 //
 //==========================================================================
 
-bool CheckMissileSpawn(void)
+bool CheckMissileSpawn()
 {
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
@@ -3799,11 +3828,43 @@ int LineAttack(TVec dir, float distance, int damage)
 
 //==========================================================================
 //
+//  SpawnPuff
+//
+//==========================================================================
+
+void SpawnPuff(TVec org)
+{
+	Actor puff;
+
+	org.z += (Random() - Random()) * 4.0;
+	puff = Spawn(PuffType, org);
+	if (linetarget && puff.SightSound)
+	{
+		// Hit thing sound
+		puff.PlaySound(puff.SightSound, CHAN_VOICE);
+	}
+	else if (puff.AttackSound)
+	{
+		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
+	}
+	if (PuffType == PunchPuff)
+	{
+		puff.Velocity.z = 1.0 * 35.0;
+	}
+	else if (PuffType == HammerPuff)
+	{
+		puff.Velocity.z = 8.0 / 10.0 * 35.0;
+	}
+	PuffSpawned = puff;
+}
+
+//==========================================================================
+//
 //  A_HideThing
 //
 //==========================================================================
 
-void A_HideThing(void)
+void A_HideThing()
 {
 	if (Translucency < 100)
 	{
@@ -3817,7 +3878,7 @@ void A_HideThing(void)
 //
 //==========================================================================
 
-void A_UnHideThing(void)
+void A_UnHideThing()
 {
 	if (Translucency >= 100)
 	{
@@ -3831,7 +3892,7 @@ void A_UnHideThing(void)
 //
 //===========================================================================
 
-void A_NoGravity(void)
+void A_NoGravity()
 {
 	bNoGravity = true;
 }
@@ -3842,7 +3903,7 @@ void A_NoGravity(void)
 //
 //============================================================================
 
-void A_SetInvulnerable(void)
+void A_SetInvulnerable()
 {
 	bInvulnerable = true;
 }
@@ -3853,7 +3914,7 @@ void A_SetInvulnerable(void)
 //
 //============================================================================
 
-void A_UnSetInvulnerable(void)
+void A_UnSetInvulnerable()
 {
 	bInvulnerable = false;
 }
@@ -3897,7 +3958,7 @@ void A_Pain()
 //
 //============================================================================
 
-void A_FreeTargMobj(void)
+void A_FreeTargMobj()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	Origin.z = CeilingZ + 4.0;
@@ -4062,7 +4123,7 @@ void A_Explode()
 //
 //============================================================================
 
-void A_NoBlocking(void)
+void A_NoBlocking()
 {
 	bSolid = false;
 }
@@ -4073,15 +4134,15 @@ void A_NoBlocking(void)
 //
 //============================================================================
 
-void A_AddPlayerCorpse(void)
+void A_AddPlayerCorpse()
 {
-	if (bodyqueslot >= BODYQUESIZE)
+	if (HexenLevelInfo(Level).bodyqueslot >= BODYQUESIZE)
 	{
 		// Too many player corpses - remove an old one
-		bodyque[bodyqueslot % BODYQUESIZE].Remove();
+		HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % BODYQUESIZE].Remove();
 	}
-	bodyque[bodyqueslot % BODYQUESIZE] = self;
-	bodyqueslot++;
+	HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % BODYQUESIZE] = self;
+	HexenLevelInfo(Level).bodyqueslot++;
 }
 
 //============================================================================
@@ -4090,7 +4151,7 @@ void A_AddPlayerCorpse(void)
 //
 //============================================================================
 
-void A_CheckBurnGone(void)
+void A_CheckBurnGone()
 {
 	if (_Special2 == 666)
 	{
@@ -4149,7 +4210,7 @@ void A_DeQueueCorpse()
 //
 //============================================================================
 
-void A_PigPain(void)
+void A_PigPain()
 {
 	A_Pain();
 	if (Origin.z <= FloorZ)
@@ -4207,6 +4268,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.24  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

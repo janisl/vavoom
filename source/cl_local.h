@@ -103,7 +103,7 @@ class VClientGameBase : public VObject
 	dword				skipintermission:1;
 
 	client_state_t*		cl;
-	cl_level_t*			level;
+	level_t*			level;
 	VLevel*				GLevel;
 
 	scores_t*			scores;
@@ -260,9 +260,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.17  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.16  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
 //	

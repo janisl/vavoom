@@ -22,6 +22,13 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//
+//  This section contains the main bot AI. The
+//  main bot AI loop, B_Think, is called every tic.
+//  Also included are various bot decision-making
+//  procedures, such as B_CheckStuff and B_SetEnemy.
+//
+//**************************************************************************
 
 // Main bot class
 class BotPlayer : Object;
@@ -107,7 +114,7 @@ void BotTick(float deltaTime)
 	Pitch();
 
 	// Only walk if we're on skill 0
-	if (!botskill)
+	if (!MainGameInfo(player.Level.Game).botskill)
 	{
 		if (forwardmove == FORWARDRUN)
 			forwardmove = FORWARDWALK;
@@ -180,8 +187,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the ammo it gives
-		if (player.Ammo[weapon_ammo_type[weapon]] ==
-				maxammo[weapon_ammo_type[weapon]])
+		if (player.Ammo[MainGameInfo(player.Level.Game).weapon_ammo_type[weapon]] ==
+				maxammo[MainGameInfo(player.Level.Game).weapon_ammo_type[weapon]])
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon
@@ -214,7 +221,7 @@ bool CheckItem(Actor item)
 //
 //==========================================================================
 
-void SetEnemy(void)
+void SetEnemy()
 {
 	if (enemy && enemy.Health > 0 && player.MO &&
 		player.MO.CanSee(enemy))
@@ -263,7 +270,7 @@ bool CheckTo(TVec pos)
 //
 //==========================================================================
 
-void CheckStuff(void)
+void CheckStuff()
 {
 	if (item)
 	{
@@ -326,7 +333,7 @@ void CheckStuff(void)
 //
 //==========================================================================
 
-void Scan(void)
+void Scan()
 {
 	Actor actor;
 
@@ -393,7 +400,7 @@ void SetAngle(float an)
 //
 //==========================================================================
 
-float GetAngle(void)
+float GetAngle()
 {
 	return angle;
 }
@@ -631,7 +638,7 @@ bool Check_LOS(Actor to, float vangle)
 //
 //==========================================================================
 
-void BotAim(void)
+void BotAim()
 {
 	float dist;
 	bool right;
@@ -755,7 +762,7 @@ void BotAim(void)
 //
 //==========================================================================
 
-Actor FindEnemy(void)
+Actor FindEnemy()
 {
 	float closest_dist, temp;
 	Actor target;
@@ -805,7 +812,7 @@ Actor FindEnemy(void)
 //
 //==========================================================================
 
-void Roam(void)
+void Roam()
 {
 	TVec dest;
 
@@ -1106,7 +1113,7 @@ void Move(float deltaTime)
 //
 //==========================================================================
 
-void Attack(void)
+void Attack()
 {
 	// Still reacting to something or we don't have an enemy to fight
 	if (t_react || !enemy)
@@ -1139,7 +1146,7 @@ void Attack(void)
 //
 //==========================================================================
 
-void Turn(void)
+void Turn()
 {
 	float distance;
 
@@ -1196,7 +1203,7 @@ void Turn(void)
 //
 //==========================================================================
 
-void Pitch(void)
+void Pitch()
 {
 	if (enemy)
 	{
@@ -1245,7 +1252,7 @@ void Died(Actor killer)
 //
 //==========================================================================
 
-void OnBeginPlay(void)
+void OnBeginPlay()
 {
 	int botskill = 2;
 	int bottype = 0;
@@ -1256,7 +1263,7 @@ void OnBeginPlay(void)
 	{
 		for (i = 0; i < NUMTOTALBOTS; i++)
 		{
-			if (!stricmp(botinfo[i].Name, ARR2STR(player.PlayerName)))
+			if (!stricmp(MainGameInfo(player.Level.Game).botinfo[i].Name, ARR2STR(player.PlayerName)))
 			{
 				bottype = i;
 				break;
@@ -1272,7 +1279,7 @@ void OnBeginPlay(void)
 		bottype = P_Random() % NUMBOTTYPES;
 	}
 
-	binfo = &botinfo[bottype];
+	binfo = &MainGameInfo(player.Level.Game).botinfo[bottype];
 
 	t_strafe = 1.0;
 
@@ -1322,7 +1329,7 @@ void OnBeginPlay(void)
 //
 //==========================================================================
 
-void OnSpawn(void)
+void OnSpawn()
 {
 }
 
@@ -1333,6 +1340,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.6  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

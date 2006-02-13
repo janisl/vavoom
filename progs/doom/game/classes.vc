@@ -23,6 +23,7 @@
 //**
 //**************************************************************************
 
+#include "MainGameInfo.vc"
 #include "DoomLevelInfo.vc"
 #include "Actor.vc"
 #include "Pawn.vc"
@@ -75,6 +76,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.10  2005/12/27 22:22:27  dj_jl
 //  Created level info class, moved action special handling to it.
 //

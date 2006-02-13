@@ -146,6 +146,23 @@ int la_damage;
 TVec shoot_linestart;
 TVec shoot_lineend;
 
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+Actor Spawn(classid type, TVec AOrigin)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
 //==========================================================================
 //
 //  HITDICE
@@ -165,7 +182,7 @@ int HITDICE(int a)
 //
 //===========================================================================
 
-int GetFloorType(void)
+int GetFloorType()
 {
 	return TerrainType(Floor->pic);
 }
@@ -292,7 +309,7 @@ void OnMapSpawn(mthing_t * mthing)
 		if (bCountKill)
 		{
 			level->totalkills++;
-			CopyMThing(mthing, &SpawnSpot);
+			Level.CopyMThing(mthing, &SpawnSpot);
 		}
 		if (bCountItem)
 		{
@@ -369,7 +386,7 @@ int FaceActor(Actor Other, float * delta)
 //
 //===========================================================================
 
-void ExplodeMissile(void)
+void ExplodeMissile()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	SetState(DeathState);
@@ -556,7 +573,7 @@ void TouchWhirlwind(Actor Other)
 //
 //==========================================================================
 
-bool ChickenMorphPlayer(void)
+bool ChickenMorphPlayer()
 {
 	Actor fog;
 	Actor chicken;
@@ -607,7 +624,7 @@ bool ChickenMorphPlayer(void)
 //
 //==========================================================================
 
-bool ChickenMorph(void)
+bool ChickenMorph()
 {
 	Actor fog;
 	Actor chicken;
@@ -652,7 +669,7 @@ bool ChickenMorph(void)
 //
 //==========================================================================
 
-bool AutoUseChaosDevice(void)
+bool AutoUseChaosDevice()
 {
 	int i;
 
@@ -1037,7 +1054,7 @@ void SpawnBloodSplatter(TVec org)
 //
 //==========================================================================
 
-void SpawnRipperBlood(void)
+void SpawnRipperBlood()
 {
 	Actor th;
 	TVec org;
@@ -1058,7 +1075,7 @@ void SpawnRipperBlood(void)
 //
 //==========================================================================
 
-int HitFloorEffect(void)
+int HitFloorEffect()
 {
 	Actor A;
 
@@ -1102,7 +1119,7 @@ int HitFloorEffect(void)
 //
 //===========================================================================
 
-void FloorBounceMissile(void)
+void FloorBounceMissile()
 {
 	Velocity.z = -Velocity.z;
 	SetState(DeathState);
@@ -1126,7 +1143,7 @@ void Thrust(float angle, float move)
 //
 //===========================================================================
 
-void NightmareRespawn(void)
+void NightmareRespawn()
 {
 	float x, y, z;
 	Actor A;
@@ -1155,7 +1172,7 @@ void NightmareRespawn(void)
 	else
 		z = ONFLOORZ;
 	A = Spawn(Class, vector(x, y, z));
-	CopyMThing(&SpawnSpot, &A.SpawnSpot);
+	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
 	A.Angles.yaw = itof(45 * (SpawnSpot.angle / 45));
 	if (SpawnSpot.options & MTF_AMBUSH)
 		A.bAmbush = true;
@@ -1175,7 +1192,7 @@ void NightmareRespawn(void)
 //
 //===========================================================================
 
-bool TestLocation(void)
+bool TestLocation()
 {
 	if (!bColideWithThings && !bColideWithWorld)
 		return true;
@@ -1401,7 +1418,7 @@ void CrossSpecialLine(line_t *ld, int side)
 //
 //==========================================================================
 
-void HandleFloorclip(void)
+void HandleFloorclip()
 {
 	if (bFloorClip && GetFloorType() != FLOOR_SOLID)
 	{
@@ -1425,7 +1442,7 @@ void HandleFloorclip(void)
 //
 //==========================================================================
 
-void ApplyFriction(void)
+void ApplyFriction()
 {
 	// Friction
 
@@ -1519,7 +1536,7 @@ float GetFriction()
 //
 //===========================================================================
 
-void XYMovement(void)
+void XYMovement()
 {
 	float ptryx, ptryy;
 	float xmove, ymove;
@@ -1635,7 +1652,7 @@ void XYMovement(void)
 //
 //===========================================================================
 
-void ZMovement(void)
+void ZMovement()
 {
 	float dist;
 	float delta;
@@ -1765,7 +1782,7 @@ void ZMovement(void)
 //
 //===========================================================================
 
-bool BlasterPhysics(void)
+bool BlasterPhysics()
 {
 	int i;
 	float xfrac;
@@ -2082,7 +2099,7 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-bool HeightClip(void)
+bool HeightClip()
 {
 	bool onfloor;
 
@@ -2249,7 +2266,7 @@ void RadiusAttack(int damage, int distance, bool damageSource)
 //
 //==========================================================================
 
-bool CheckMissileSpawn(void)
+bool CheckMissileSpawn()
 {
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
@@ -2685,7 +2702,7 @@ bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 //
 //==========================================================================
 
-bool CheckMeleeRange(void)
+bool CheckMeleeRange()
 {
 	float dist;
 
@@ -2711,7 +2728,7 @@ bool CheckMeleeRange(void)
 //
 //==========================================================================
 
-bool CheckMissileRange(void)
+bool CheckMissileRange()
 {
 	float dist;
 
@@ -2758,7 +2775,7 @@ bool CheckMissileRange(void)
 //
 //==========================================================================
 
-bool LookForMonsters(void)
+bool LookForMonsters()
 {
 	int count;
 	Actor mo;
@@ -2887,7 +2904,7 @@ bool LookForPlayers(bool allaround)
 //
 //==========================================================================
 
-bool StepMove(void)
+bool StepMove()
 {
 	float tryx;
 	float tryy;
@@ -2966,7 +2983,7 @@ bool StepMove(void)
 //
 //==========================================================================
 
-bool TryWalk(void)
+bool TryWalk()
 {
 	if (!StepMove())
 	{
@@ -2982,7 +2999,7 @@ bool TryWalk(void)
 //
 //==========================================================================
 
-void NewChaseDir(void)
+void NewChaseDir()
 {
 	float deltax, deltay;
 	int d[3];
@@ -3568,7 +3585,7 @@ int LineAttack(TVec dir, float distance, int damage)
 //
 //==========================================================================
 
-void A_FreeTargMobj(void)
+void A_FreeTargMobj()
 {
 	Velocity = vector(0.0, 0.0, 0.0);
 	Origin.z = CeilingZ + 4.0;
@@ -3654,6 +3671,50 @@ void A_Explode()
 	}
 }
 
+//==========================================================================
+//
+//  SpawnPuff
+//
+//==========================================================================
+
+void SpawnPuff(TVec org)
+{
+	Actor puff;
+
+	org.z += (Random() - Random()) * 4.0;
+	puff = Spawn(PuffType, org);
+	if (puff.AttackSound)
+	{
+		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
+	}
+	if (PuffType == BeakPuff || PuffType == StaffPuff)
+	{
+		puff.Velocity.z = 1.0 * 35.0;
+	}
+	else if (PuffType == GauntletPuff1 || PuffType == GauntletPuff2)
+	{
+		puff.Velocity.z = 0.8 * 35.0;
+	}
+	if (PuffType == GoldWandPuff1)
+	{
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(svc_explosion);
+		MSG_WriteByte(EF_DL_WHITE);
+		MSG_WriteShort(ftoi(org.x));
+		MSG_WriteShort(ftoi(org.y));
+		MSG_WriteShort(ftoi(org.z));
+	}
+	if (PuffType == BlasterPuff1)
+	{
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(svc_explosion);
+		MSG_WriteByte(EF_DL_BLUE);
+		MSG_WriteShort(ftoi(org.x));
+		MSG_WriteShort(ftoi(org.y));
+		MSG_WriteShort(ftoi(org.z));
+	}
+}
+
 __states__
 {
 	S_FREETARGMOBJ('ACLO', 4, 30.0, S_NULL) { A_FreeTargMobj(); }
@@ -3669,6 +3730,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.21  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

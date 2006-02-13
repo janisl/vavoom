@@ -135,10 +135,10 @@ native void VectorRotateAroundZ(TVec * vec, float angle);
 //
 
 //  Floating random number 0.0 ... 0.999999
-native float Random(void);
+native float Random();
 
 //  Integer random number 1 .. 255
-native int P_Random(void);
+native int P_Random();
 
 //
 //  String functions
@@ -222,11 +222,11 @@ native bool MSG_CheckSpace(int Size);
 native void MSG_WriteByte(int data);
 native void MSG_WriteShort(int data);
 native void MSG_WriteLong(int data);
-native int MSG_ReadChar(void);
-native int MSG_ReadByte(void);
-native int MSG_ReadShort(void);
-native int MSG_ReadWord(void);
-native int MSG_ReadLong(void);
+native int MSG_ReadChar();
+native int MSG_ReadByte();
+native int MSG_ReadShort();
+native int MSG_ReadWord();
+native int MSG_ReadLong();
 
 //
 //  Misc
@@ -340,7 +340,7 @@ native void T_DrawNText(int x, int y, string text, int n);
 native void T_DrawTextW(int x, int y, string text, int w);
 
 //  Draws a cursor at the end of last drawn string
-native void T_DrawCursor(void);
+native void T_DrawCursor();
 
 //
 //  Client sound stuff
@@ -362,8 +362,8 @@ native string P_GetMapName(int map);
 native string P_GetMapLumpName(int map);
 native string P_TranslateMap(int map);
 native bool SV_GetSaveString(int i, string buf);
-native void StartSearch(void);
-native slist_t * GetSlist(void);
+native void StartSearch();
+native slist_t * GetSlist();
 native void KeyNameForNum(int KeyNr, string NameString);
 native void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 native void IN_SetBinding(int key, string ondown, string onup);
@@ -371,7 +371,7 @@ native void IN_SetBinding(int key, string ondown, string onup);
 native void LoadTextLump(string Name, void *buf, int bufsize);
 
 native dlight_t *AllocDlight(int key);
-native particle_t *NewParticle(void);
+native particle_t *NewParticle();
 
 #endif
 
@@ -500,8 +500,8 @@ native int P_GetPlayerNum(BasePlayer player);
 native void ClearPlayer(BasePlayer p);
 native void G_Completed(int Map, int Position, int SaveAngle);
 native int TerrainType(int pic);
-native void P_ForceLightning(void);
-native void SB_Start(void);
+native void P_ForceLightning();
+native void SB_Start();
 native void SetFloorPic(sector_t * sec, int texture);
 native void SetCeilPic(sector_t * sec, int texture);
 native void SetLineTexture(int side, int position, int texture);
@@ -528,6 +528,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.60  2006/02/13 18:30:13  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.59  2006/02/05 18:50:54  dj_jl
 //  Moved common utils to level info class or built-in.
 //

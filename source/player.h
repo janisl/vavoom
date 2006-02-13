@@ -74,6 +74,8 @@ class VBasePlayer : public VObject
 	DECLARE_CLASS(VBasePlayer, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VBasePlayer)
 
+	VLevelInfo*		Level;
+
 	dword			bActive:1;
 	dword			bSpawned:1;
 	dword			bIsBot:1;
@@ -245,9 +247,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.19  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.18  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	

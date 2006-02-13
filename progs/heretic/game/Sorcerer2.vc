@@ -66,7 +66,7 @@ void DSparilTeleport()
 	TVec dir;
 	Actor fog;
 
-	if (!BossSpotCount)
+	if (!HereticLevelInfo(Level).BossSpotCount)
 	{
 		// No spots
 		return;
@@ -75,9 +75,9 @@ void DSparilTeleport()
 	do
 	{
 		i++;
-		x = BossSpot[i % BossSpotCount].x;
-		y = BossSpot[i % BossSpotCount].y;
-		dir = BossSpot[i % BossSpotCount] - Origin;
+		x = HereticLevelInfo(Level).BossSpot[i % HereticLevelInfo(Level).BossSpotCount].x;
+		y = HereticLevelInfo(Level).BossSpot[i % HereticLevelInfo(Level).BossSpotCount].y;
+		dir = HereticLevelInfo(Level).BossSpot[i % HereticLevelInfo(Level).BossSpotCount] - Origin;
 	}
 	while (Length(dir) < 128.0);
 	PrevOrg = Origin;
@@ -88,7 +88,7 @@ void DSparilTeleport()
 		SetState(TeleportState);
 		PlaySound('misc/teleport', CHAN_VOICE);
 		Origin.z = FloorZ;
-		Angles.yaw = BossSpot_angle[i % BossSpotCount];
+		Angles.yaw = HereticLevelInfo(Level).BossSpot_angle[i % HereticLevelInfo(Level).BossSpotCount];
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
 }
@@ -103,7 +103,7 @@ void A_Srcr2Decide()
 {
 	float chance;
 
-	if (!BossSpotCount)
+	if (!HereticLevelInfo(Level).BossSpotCount)
 	{
 		// No spots
 		return;
@@ -189,7 +189,7 @@ void A_Srcr2Attack()
 void A_Sor2DthInit()
 {
 	Special1 = 7;	// Animation loop counter
-	P_Massacre();	// Kill monsters early
+	HereticLevelInfo(Level).P_Massacre();	// Kill monsters early
 }
 
 //==========================================================================
@@ -360,6 +360,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.4  2005/11/30 23:52:04  dj_jl
 //  Switch statement requires integer.
 //

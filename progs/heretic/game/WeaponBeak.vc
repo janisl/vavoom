@@ -31,7 +31,7 @@ class WeaponBeak : Weapon;
 //
 //===========================================================================
 
-void A_BeakRaise(void)
+void A_BeakRaise()
 {
 	SY = WEAPONTOP;
 	SetState(ReadyState);
@@ -43,7 +43,7 @@ void A_BeakRaise(void)
 //
 //===========================================================================
 
-void A_BeakReady(void)
+void A_BeakReady()
 {
 	if (Player.Buttons & BT_ATTACK)
 	{
@@ -58,7 +58,7 @@ void A_BeakReady(void)
 		{
 			SetState(AttackState);
 		}
-		P_NoiseAlert(Player.MO, Player.MO);
+		HereticLevelInfo(Player.MO.Level).NoiseAlert(Player.MO, Player.MO);
 	}
 	else
 	{
@@ -77,7 +77,7 @@ void A_BeakReady(void)
 //
 //===========================================================================
 
-void A_BeakAttackPL1(void)
+void A_BeakAttackPL1()
 {
 	int damage;
 	TVec dir;
@@ -104,7 +104,7 @@ void A_BeakAttackPL1(void)
 //
 //===========================================================================
 
-void A_BeakAttackPL2(void)
+void A_BeakAttackPL2()
 {
 	int damage;
 	TVec dir;
@@ -153,6 +153,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.5  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

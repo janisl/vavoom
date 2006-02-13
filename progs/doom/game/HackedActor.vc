@@ -23,48 +23,6 @@
 //**
 //**************************************************************************
 
-class Zombieman;
-class ShotgunGuy;
-class Imp;
-class Demon;
-class Shadows;
-class Cacodemon;
-class LostSoul;
-class ChaingunGuy;
-class WolfSS;
-class PainElemental;
-class ArchVile;
-class Revenant;
-class Arachnotron;
-class Mancubus;
-class HellKnight;
-class BaronOfHell;
-class Cyberdemon;
-class SpiderMastermind;
-
-class ItemAmmoBulletClip;
-class ItemWeaponShotgun;
-class ItemWeaponChaingun;
-class ItemInvulnerability;
-class ItemInvisibility;
-
-class ExtraBFG;
-class ImpMissile;
-class CacodemonMissile;
-class BruiserShot;
-class RevenantTracer;
-class RevenantTracerSmoke;
-class MancubusMissile;
-class ArchvileFire;
-class BossTarget;
-class SpawnShot;
-class SpawnFire;
-class ArachnotronPlasma;
-
-#define	SKULLSPEED		700.0
-#define SKULL_RADIUS	16.0
-#define	FATSPREAD		(90.0 / 8.0)
-
 class HackedActor : Actor
 	abstract;
 
@@ -73,13 +31,51 @@ int braintargeton;
 int brain_easy;
 Actor braintargets[32];
 
+string GOTARMOR;
+string GOTMEGA;
+string GOTHTHBONUS;
+string GOTARMBONUS;
+string GOTSTIM;
+string GOTMEDINEED;
+string GOTMEDIKIT;
+string GOTSUPER;
+string GOTBLUECARD;
+string GOTYELWCARD;
+string GOTREDCARD;
+string GOTBLUESKUL;
+string GOTYELWSKUL;
+string GOTREDSKULL;
+string GOTINVUL;
+string GOTBERSERK;
+string GOTINVIS;
+string GOTSUIT;
+string GOTMAP;
+string GOTVISOR;
+string GOTMSPHERE;
+string GOTCLIP;
+string GOTCLIPBOX;
+string GOTROCKET;
+string GOTROCKBOX;
+string GOTCELL;
+string GOTCELLBOX;
+string GOTSHELLS;
+string GOTSHELLBOX;
+string GOTBACKPACK;
+string GOTBFG9000;
+string GOTCHAINGUN;
+string GOTCHAINSAW;
+string GOTLAUNCHER;
+string GOTPLASMA;
+string GOTSHOTGUN;
+string GOTSHOTGUN2;
+
 //==========================================================================
 //
 //	DropStuff
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	classid item;
 	Actor A;
@@ -87,22 +83,21 @@ void DropStuff(void)
 	// Drop stuff.
 	// This determines the kind of object spawned
 	// during the death frame of a thing.
-	switch (Class)
+	if (Class == WolfSS ||
+		Class == Zombieman)
 	{
-	case WolfSS:
-	case Zombieman:
 		item = ItemAmmoBulletClip;
-		break;
-
-	case ShotgunGuy:
+	}
+	else if (Class == ShotgunGuy)
+	{
 		item = ItemWeaponShotgun;
-		break;
-
-	case ChaingunGuy:
+	}
+	else if (Class == ChaingunGuy)
+	{
 		item = ItemWeaponChaingun;
-		break;
-
-	default:
+	}
+	else
+	{
 		return;
 	}
 
@@ -124,108 +119,107 @@ bool HandlePickup(Actor Toucher)
 	sound = 'misc/i_pkup';
 
 	// Identify by sprite.
-	switch (SpriteName)
+	// armor
+	if (SpriteName == 'ARM1')
 	{
-		// armor
-	case 'ARM1':
 		if (!Toucher.Player.GiveArmor(1))
 			return false;
 		cprint(Toucher.Player, GOTARMOR);
-		break;
-
-	case 'ARM2':
+	}
+	else if (SpriteName == 'ARM2')
+	{
 		if (!Toucher.Player.GiveArmor(2))
 			return false;
 		cprint(Toucher.Player, GOTMEGA);
-		break;
-
+	}
 		// bonus items
-	case 'BON1':
+	else if (SpriteName == 'BON1')
+	{
 		Toucher.Player.Health++;	// can go over 100%
 		if (Toucher.Player.Health > 200)
 			Toucher.Player.Health = 200;
 		Toucher.Health = Toucher.Player.Health;
 		cprint(Toucher.Player, GOTHTHBONUS);
-		break;
-
-	case 'BON2':
+	}
+	else if (SpriteName == 'BON2')
+	{
 		Toucher.Player.ArmorPoints++;	// can go over 100%
 		if (Toucher.Player.ArmorPoints > 200)
 			Toucher.Player.ArmorPoints = 200;
 		if (!Toucher.Player.ArmorType)
 			Toucher.Player.ArmorType = 1;
 		cprint(Toucher.Player, GOTARMBONUS);
-		break;
-
-	case 'SOUL':
+	}
+	else if (SpriteName == 'SOUL')
+	{
 		Toucher.Player.Health += SOULSPHERE_HEALTH;
 		if (Toucher.Player.Health > SOULSPHERE_MAX)
 			Toucher.Player.Health = SOULSPHERE_MAX;
 		Toucher.Player.MO.Health = Toucher.Player.Health;
 		cprint(Toucher.Player, GOTSUPER);
 		sound = 'misc/p_pkup';
-		break;
-
-	case 'MEGA':
+	}
+	else if (SpriteName == 'MEGA')
+	{
 		Toucher.Player.Health = MEGASPHERE_HEALTH;
 		Toucher.Health = Toucher.Player.Health;
 		Toucher.Player.GiveArmor(2);
 		cprint(Toucher.Player, GOTMSPHERE);
 		sound = 'misc/p_pkup';
-		break;
-
+	}
 		// cards
 		// leave cards for everyone
-	case 'BKEY':
+	else if (SpriteName == 'BKEY')
+	{
 		if (Toucher.Player.GiveCard(it_bluecard))
 			cprint(Toucher.Player, GOTBLUECARD);
-		if (!netgame)
-			break;
-		return false;
-
-	case 'YKEY':
+		if (netgame)
+			return false;
+	}
+	else if (SpriteName == 'YKEY')
+	{
 		if (Toucher.Player.GiveCard(it_yellowcard))
 			cprint(Toucher.Player, GOTYELWCARD);
-		if (!netgame)
-			break;
-		return false;
-
-	case 'RKEY':
+		if (netgame)
+			return false;
+	}
+	else if (SpriteName == 'RKEY')
+	{
 		if (Toucher.Player.GiveCard(it_redcard))
 			cprint(Toucher.Player, GOTREDCARD);
-		if (!netgame)
-			break;
-		return false;
-
-	case 'BSKU':
+		if (netgame)
+			return false;
+	}
+	else if (SpriteName == 'BSKU')
+	{
 		if (Toucher.Player.GiveCard(it_blueskull))
 			cprint(Toucher.Player, GOTBLUESKUL);
-		if (!netgame)
-			break;
-		return false;
-
-	case 'YSKU':
+		if (netgame)
+			return false;
+	}
+	else if (SpriteName == 'YSKU')
+	{
 		if (Toucher.Player.GiveCard(it_yellowskull))
 			cprint(Toucher.Player, GOTYELWSKUL);
-		if (!netgame)
-			break;
-		return false;
-
-	case 'RSKU':
+		if (netgame)
+			return false;
+	}
+	else if (SpriteName == 'RSKU')
+	{
 		if (Toucher.Player.GiveCard(it_redskull))
 			cprint(Toucher.Player, GOTREDSKULL);
-		if (!netgame)
-			break;
-		return false;
-
+		if (netgame)
+			return false;
+	}
 		// medikits, heals
-	case 'STIM':
+	else if (SpriteName == 'STIM')
+	{
 		if (!Toucher.Player.GiveBody(10, MAXHEALTH))
 			return false;
 		cprint(Toucher.Player, GOTSTIM);
-		break;
-
-	case 'MEDI':
+	}
+	else if (SpriteName == 'MEDI')
+	{
 		if (!Toucher.Player.GiveBody(25, MAXHEALTH))
 			return false;
 
@@ -233,54 +227,54 @@ bool HandlePickup(Actor Toucher)
 			cprint(Toucher.Player, GOTMEDINEED);
 		else
 			cprint(Toucher.Player, GOTMEDIKIT);
-		break;
-
+	}
 		// power ups
-	case 'PINV':
+	else if (SpriteName == 'PINV')
+	{
 		if (!Toucher.Player.GivePower(pw_invulnerability))
 			return false;
 		cprint(Toucher.Player, GOTINVUL);
 		sound = 'misc/p_pkup';
-		break;
-
-	case 'PSTR':
+	}
+	else if (SpriteName == 'PSTR')
+	{
 		if (!Toucher.Player.GivePower(pw_strength))
 			return false;
 		cprint(Toucher.Player, GOTBERSERK);
 		sound = 'misc/p_pkup';
-		break;
-
-	case 'PINS':
+	}
+	else if (SpriteName == 'PINS')
+	{
 		if (!Toucher.Player.GivePower(pw_invisibility))
 			return false;
 		cprint(Toucher.Player, GOTINVIS);
 		sound = 'misc/p_pkup';
-		break;
-
-	case 'SUIT':
+	}
+	else if (SpriteName == 'SUIT')
+	{
 		if (!Toucher.Player.GivePower(pw_ironfeet))
 			return false;
 		cprint(Toucher.Player, GOTSUIT);
 		sound = 'misc/p_pkup';
-		break;
-
-	case 'PVIS':
+	}
+	else if (SpriteName == 'PVIS')
+	{
 		if (!Toucher.Player.GivePower(pw_infrared))
 			return false;
 		cprint(Toucher.Player, GOTVISOR);
 		sound = 'misc/p_pkup';
-		break;
-
+	}
 		//  Items
-	case 'PMAP':
+	else if (SpriteName == 'PMAP')
+	{
 		if (!Toucher.Player.GiveItem(IT_ALL_MAP))
 			return false;
 		cprint(Toucher.Player, GOTMAP);
 		sound = 'misc/p_pkup';
-		break;
-
+	}
 		// ammo
-	case 'CLIP':
+	else if (SpriteName == 'CLIP')
+	{
 		if (bDropped)
 		{
 			if (!Toucher.Player.GiveAmmo(am_clip, clipammo[am_clip] / 2))
@@ -292,51 +286,51 @@ bool HandlePickup(Actor Toucher)
 				return false;
 		}
 		cprint(Toucher.Player, GOTCLIP);
-		break;
-
-	case 'AMMO':
+	}
+	else if (SpriteName == 'AMMO')
+	{
 		if (!Toucher.Player.GiveAmmo(am_clip, 5 * clipammo[am_clip]))
 			return false;
 		cprint(Toucher.Player, GOTCLIPBOX);
-		break;
-
-	case 'ROCK':
+	}
+	else if (SpriteName == 'ROCK')
+	{
 		if (!Toucher.Player.GiveAmmo(am_misl, clipammo[am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKET);
-		break;
-
-	case 'BROK':
+	}
+	else if (SpriteName == 'BROK')
+	{
 		if (!Toucher.Player.GiveAmmo(am_misl, 5 * clipammo[am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKBOX);
-		break;
-
-	case 'CELL':
+	}
+	else if (SpriteName == 'CELL')
+	{
 		if (!Toucher.Player.GiveAmmo(am_cell, clipammo[am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELL);
-		break;
-
-	case 'CELP':
+	}
+	else if (SpriteName == 'CELP')
+	{
 		if (!Toucher.Player.GiveAmmo(am_cell, 5 * clipammo[am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELLBOX);
-		break;
-
-	case 'SHEL':
+	}
+	else if (SpriteName == 'SHEL')
+	{
 		if (!Toucher.Player.GiveAmmo(am_shell, clipammo[am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLS);
-		break;
-
-	case 'SBOX':
+	}
+	else if (SpriteName == 'SBOX')
+	{
 		if (!Toucher.Player.GiveAmmo(am_shell, 5 * clipammo[am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLBOX);
-		break;
-
-	case 'BPAK':
+	}
+	else if (SpriteName == 'BPAK')
+	{
 		if (!Toucher.Player.Backpack)
 		{
 			Toucher.Player.Backpack = true;
@@ -348,57 +342,56 @@ bool HandlePickup(Actor Toucher)
 			Toucher.Player.GiveAmmo(i, clipammo[i]);
 		}
 		cprint(Toucher.Player, GOTBACKPACK);
-		break;
-
+	}
 		// weapons
-	case 'BFUG':
+	else if (SpriteName == 'BFUG')
+	{
 		if (!Toucher.Player.GiveWeapon(wp_bfg, false))
 			return false;
 		cprint(Toucher.Player, GOTBFG9000);
 		sound = 'misc/w_pkup';
-		break;
-
-	case 'MGUN':
+	}
+	else if (SpriteName == 'MGUN')
+	{
 		if (!Toucher.Player.GiveWeapon(wp_chaingun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTCHAINGUN);
 		sound = 'misc/w_pkup';
-		break;
-
-	case 'CSAW':
+	}
+	else if (SpriteName == 'CSAW')
+	{
 		if (!Toucher.Player.GiveWeapon(wp_chainsaw, false))
 			return false;
 		cprint(Toucher.Player, GOTCHAINSAW);
 		sound = 'misc/w_pkup';
-		break;
-
-	case 'LAUN':
+	}
+	else if (SpriteName == 'LAUN')
+	{
 		if (!Toucher.Player.GiveWeapon(wp_missile, false))
 			return false;
 		cprint(Toucher.Player, GOTLAUNCHER);
 		sound = 'misc/w_pkup';
-		break;
-
-	case 'PLAS':
+	}
+	else if (SpriteName == 'PLAS')
+	{
 		if (!Toucher.Player.GiveWeapon(wp_plasma, false))
 			return false;
 		cprint(Toucher.Player, GOTPLASMA);
 		sound = 'misc/w_pkup';
-		break;
-
-	case 'SHOT':
+	}
+	else if (SpriteName == 'SHOT')
+	{
 		if (!Toucher.Player.GiveWeapon(wp_shotgun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTSHOTGUN);
 		sound = 'misc/w_pkup';
-		break;
-
-	case 'SGN2':
+	}
+	else if (SpriteName == 'SGN2')
+	{
 		if (!Toucher.Player.GiveWeapon(wp_supershotgun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTSHOTGUN2);
 		sound = 'misc/w_pkup';
-		break;
 	}
 	Toucher.PlaySound(sound, CHAN_ITEM);
 	return true;
@@ -412,7 +405,7 @@ bool HandlePickup(Actor Toucher)
 //
 //===========================================================================
 
-void A_BFGSpray(void)
+void A_BFGSpray()
 {
 	int i;
 	int j;
@@ -428,14 +421,14 @@ void A_BFGSpray(void)
 
 		// target is the originator (player)
 		//  of the missile
-		AimLineAttack(Instigator, aimAng, 16.0 * 64.0);
-		if (!linetarget)
+		Instigator.AimLineAttack(aimAng, 16.0 * 64.0);
+		if (!Instigator.linetarget)
 		{
 			continue;
 		}
 
-		emo = Spawn(ExtraBFG, linetarget.Origin +
-			vector(0.0, 0.0, linetarget.Height / 4.0));
+		emo = Spawn(ExtraBFG, Instigator.linetarget.Origin +
+			vector(0.0, 0.0, Instigator.linetarget.Height / 4.0));
 
 		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(svc_explosion2);
@@ -470,14 +463,14 @@ void A_PosAttack()
 
 	A_FaceTarget();
 
-	dir = AimLineAttack(self, Angles, MISSILERANGE);
+	dir = AimLineAttack(Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 
 	PlaySound('grunt/attack', CHAN_WEAPON);
 
 	damage = ((P_Random() % 5) + 1) * 3;
 
-	LineAttack(self, dir, MISSILERANGE, damage);
+	LineAttack(dir, MISSILERANGE, damage);
 
 	Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -502,13 +495,13 @@ void A_SPosAttack()
 
 	PlaySound('shotguy/attack', CHAN_WEAPON);
 	A_FaceTarget();
-	aimDir = AimLineAttack(self, Angles, MISSILERANGE);
+	aimDir = AimLineAttack(Angles, MISSILERANGE);
 	for (i = 0; i < 3; i++)
 	{
 		dir = aimDir;
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 		damage = ((P_Random() % 5) + 1) * 3;
-		LineAttack(self, dir, MISSILERANGE, damage);
+		LineAttack(dir, MISSILERANGE, damage);
 	}
 
 	Effects |= EF_DL_MUZZLEFLASH;
@@ -550,7 +543,7 @@ void A_TroopAttack()
 //
 //==========================================================================
 
-void A_SargAttack(void)
+void A_SargAttack()
 {
 	int damage;
 
@@ -573,7 +566,7 @@ void A_SargAttack(void)
 //
 //==========================================================================
 
-void A_HeadAttack(void)
+void A_HeadAttack()
 {
 	int damage;
 
@@ -600,7 +593,7 @@ void A_HeadAttack(void)
 //
 //==========================================================================
 
-void A_BruisAttack(void)
+void A_BruisAttack()
 {
 	int damage;
 
@@ -627,7 +620,7 @@ void A_BruisAttack(void)
 //
 //==========================================================================
 
-void A_SkullAttack(void)
+void A_SkullAttack()
 {
 	if (!Enemy)
 		return;
@@ -647,7 +640,7 @@ void A_SkullAttack(void)
 //
 //==========================================================================
 
-void A_Hoof(void)
+void A_Hoof()
 {
 	PlaySound('cyber/hoof', CHAN_BODY);
 	A_Chase();
@@ -661,7 +654,7 @@ void A_Hoof(void)
 //
 //==========================================================================
 
-void A_Metal(void)
+void A_Metal()
 {
 	PlaySound('cyber/walk', CHAN_BODY);
 	A_Chase();
@@ -675,7 +668,7 @@ void A_Metal(void)
 //
 //==========================================================================
 
-void A_CyberAttack(void)
+void A_CyberAttack()
 {
 	if (!Enemy)
 		return;
@@ -692,7 +685,7 @@ void A_CyberAttack(void)
 //
 //==========================================================================
 
-void A_SpidRefire(void)
+void A_SpidRefire()
 {
 	// keep firing unless target got out of sight
 	A_FaceTarget();
@@ -714,7 +707,7 @@ void A_SpidRefire(void)
 //
 //==========================================================================
 
-void A_CPosAttack(void)
+void A_CPosAttack()
 {
 	int damage;
 	TVec dir;
@@ -724,10 +717,10 @@ void A_CPosAttack(void)
 
 	PlaySound('chainguy/attack', CHAN_WEAPON);
 	A_FaceTarget();
-	dir = AimLineAttack(self, Angles, MISSILERANGE);
+	dir = AimLineAttack(Angles, MISSILERANGE);
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	damage = ((P_Random() % 5) + 1) * 3;
-	LineAttack(self, dir, MISSILERANGE, damage);
+	LineAttack(dir, MISSILERANGE, damage);
 
 	Effects |= EF_DL_MUZZLEFLASH;
 }
@@ -740,7 +733,7 @@ void A_CPosAttack(void)
 //
 //==========================================================================
 
-void A_CPosRefire(void)
+void A_CPosRefire()
 {
 	// keep firing unless target got out of sight
 	A_FaceTarget();
@@ -776,7 +769,7 @@ void A_BabyMetal()
 //
 //==========================================================================
 
-void A_BspiAttack(void)
+void A_BspiAttack()
 {
 	if (!Enemy)
 		return;
@@ -816,7 +809,7 @@ void A_PainShootSkull(float angle)
 		return;
 
 	// okay, there's playe for another one
-	prestep = 4.0 + 3.0 * (Radius + SKULL_RADIUS) / 2.0;
+	prestep = 4.0 + 3.0 * (Radius + 16.0) / 2.0;//SKULL_RADIUS
 
 	newmobj = HackedActor(Spawn(LostSoul, Origin + vector(
 		prestep * cos(angle), prestep * sin(angle), 8.0)));
@@ -841,7 +834,7 @@ void A_PainShootSkull(float angle)
 // 
 //==========================================================================
 
-void A_PainAttack(void)
+void A_PainAttack()
 {
 	if (!Enemy)
 		return;
@@ -858,7 +851,7 @@ void A_PainAttack(void)
 //
 //==========================================================================
 
-void A_PainDie(void)
+void A_PainDie()
 {
 	A_Fall();
 	A_PainShootSkull(Angles.yaw + 90.0);
@@ -890,7 +883,7 @@ void A_SkelWhoosh()
 //
 //==========================================================================
 
-void A_SkelFist(void)
+void A_SkelFist()
 {
 	int damage;
 
@@ -915,7 +908,7 @@ void A_SkelFist(void)
 //
 //==========================================================================
 
-void A_SkelMissile(void)
+void A_SkelMissile()
 {
 	Actor A;
 
@@ -941,7 +934,7 @@ void A_SkelMissile(void)
 
 #define TRACEADJUST	0.2865921825
 
-void A_Tracer(void)
+void A_Tracer()
 {
 	Actor A;
 	TVec wishdir;
@@ -953,7 +946,7 @@ void A_Tracer(void)
 		return;
 
 	// spawn a puff of smoke behind the rocket      
-	SpawnPuff(Origin.x, Origin.y, Origin.z);
+	SpawnPuff(Origin, MISSILERANGE);
 
 	A = Spawn(RevenantTracerSmoke, Origin - Velocity * frametime);
 
@@ -1000,18 +993,18 @@ void A_FatRaise()
 //
 //==========================================================================
 
-void A_FatAttack1(void)
+void A_FatAttack1()
 {
 	Actor A;
 
 	A_FaceTarget();
 	// Change direction  to ...
-	Angles.yaw = AngleMod360(Angles.yaw + FATSPREAD);
+	Angles.yaw = AngleMod360(Angles.yaw + (90.0 / 8.0));
 	SpawnMissile(Enemy, MancubusMissile);
 
 	A = SpawnMissile(Enemy, MancubusMissile);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw + FATSPREAD);
-	VectorRotateAroundZ(&A.Velocity, FATSPREAD);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + (90.0 / 8.0));
+	VectorRotateAroundZ(&A.Velocity, (90.0 / 8.0));
 }
 
 //==========================================================================
@@ -1022,18 +1015,18 @@ void A_FatAttack1(void)
 //
 //==========================================================================
 
-void A_FatAttack2(void)
+void A_FatAttack2()
 {
 	Actor A;
 
 	A_FaceTarget();
 	// Now here choose opposite deviation.
-	Angles.yaw = AngleMod360(Angles.yaw - FATSPREAD);
+	Angles.yaw = AngleMod360(Angles.yaw - (90.0 / 8.0));
 	SpawnMissile(Enemy, MancubusMissile);
 
 	A = SpawnMissile(Enemy, MancubusMissile);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw - FATSPREAD * 2.0);
-	VectorRotateAroundZ(&A.Velocity, -FATSPREAD * 2.0);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - (90.0 / 8.0) * 2.0);
+	VectorRotateAroundZ(&A.Velocity, -(90.0 / 8.0) * 2.0);
 }
 
 //==========================================================================
@@ -1044,19 +1037,19 @@ void A_FatAttack2(void)
 //
 //==========================================================================
 
-void A_FatAttack3(void)
+void A_FatAttack3()
 {
 	Actor A;
 
 	A_FaceTarget();
 
 	A = SpawnMissile(Enemy, MancubusMissile);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw - FATSPREAD / 2.0);
-	VectorRotateAroundZ(&A.Velocity, -FATSPREAD / 2.0);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw - (90.0 / 8.0) / 2.0);
+	VectorRotateAroundZ(&A.Velocity, -(90.0 / 8.0) / 2.0);
 
 	A = SpawnMissile(Enemy, MancubusMissile);
-	A.Angles.yaw = AngleMod360(A.Angles.yaw + FATSPREAD / 2.0);
-	VectorRotateAroundZ(&A.Velocity, FATSPREAD / 2.0);
+	A.Angles.yaw = AngleMod360(A.Angles.yaw + (90.0 / 8.0) / 2.0);
+	VectorRotateAroundZ(&A.Velocity, (90.0 / 8.0) / 2.0);
 }
 
 //==========================================================================
@@ -1148,7 +1141,7 @@ void A_VileStart()
 //
 //==========================================================================
 
-void A_VileTarget(void)
+void A_VileTarget()
 {
 	Actor fog;
 
@@ -1208,7 +1201,7 @@ void A_VileAttack()
 //
 //==========================================================================
 
-void A_Fire(void)
+void A_Fire()
 {
 	if (!Enemy)
 		return;
@@ -1273,7 +1266,7 @@ void A_BrainPain()
 //
 //==========================================================================
 
-void A_BrainScream(void)
+void A_BrainScream()
 {
 	TVec org;
 	Actor A;
@@ -1303,7 +1296,7 @@ void A_BrainScream(void)
 //
 //==========================================================================
 
-void A_BrainExplode(void)
+void A_BrainExplode()
 {
 	TVec org;
 	Actor A;
@@ -1329,7 +1322,7 @@ void A_BrainExplode(void)
 //
 //==========================================================================
 
-void A_BrainDie(void)
+void A_BrainDie()
 {
 	G_ExitLevel(0);
 }
@@ -1342,7 +1335,7 @@ void A_BrainDie(void)
 //
 //==========================================================================
 
-void A_BrainAwake(void)
+void A_BrainAwake()
 {
 	Actor m;
 
@@ -1369,7 +1362,7 @@ void A_BrainAwake(void)
 //
 //==========================================================================
 
-void A_BrainSpit(void)
+void A_BrainSpit()
 {
 	Actor targ;
 	Actor A;
@@ -1461,7 +1454,7 @@ void A_SpawnFly()
 //
 //==========================================================================
 
-void A_SpawnSound(void)
+void A_SpawnSound()
 {
 	PlaySound('brain/cube', CHAN_VOICE);
 	A_SpawnFly();
@@ -1475,7 +1468,7 @@ void A_SpawnSound(void)
 //
 //==========================================================================
 
-void A_KeenDie(void)
+void A_KeenDie()
 {
 	A_Fall();
 
@@ -1484,7 +1477,7 @@ void A_KeenDie(void)
 	{
 		return;
 	}
-	EV_DoDoor(666, 16, 150, 0, 0, DOOREV_Open, NULL, none);
+	DoomLevelInfo(Level).EV_DoDoor(666, 16, 150, 0, 0, DOOREV_Open, NULL, none);
 }
 
 //==========================================================================
@@ -1495,7 +1488,7 @@ void A_KeenDie(void)
 //
 //==========================================================================
 
-void A_BossDeath(void)
+void A_BossDeath()
 {
 	string mapname;
 	int i;
@@ -1561,28 +1554,28 @@ void A_BossDeath(void)
 	// victory!
 	if (!strcmp(mapname, "E1M8"))
 	{
-		EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		return;
 	}
 	if (!strcmp(mapname, "E4M6"))
 	{
-		EV_DoDoor(666, 64, 150, 0, 0, DOOREV_Open, NULL, none);
+		DoomLevelInfo(Level).EV_DoDoor(666, 64, 150, 0, 0, DOOREV_Open, NULL, none);
 		return;
 	}
 	if (!strcmp(mapname, "E4M8"))
 	{
-		EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		return;
 	}
 	if (!strcmp(mapname, "MAP07"))
 	{
 		if (Class == Mancubus)
 		{
-			EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+			DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		}
 		else	// mo->Class == MT_BABY
 		{
-			EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_RaiseByTexture, NULL);
+			DoomLevelInfo(Level).EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_RaiseByTexture, NULL);
 		}
 		return;
 	}
@@ -1642,11 +1635,51 @@ defaultproperties
 	Health = 0;
 	GibsHealth = 0;
 	Mass = 0.0;
+	GOTARMOR = "Picked up the armor.";
+	GOTMEGA = "Picked up the MegaArmor!";
+	GOTHTHBONUS = "Picked up a health bonus.";
+	GOTARMBONUS = "Picked up an armor bonus.";
+	GOTSTIM = "Picked up a stimpack.";
+	GOTMEDINEED = "Picked up a medikit that you REALLY need!";
+	GOTMEDIKIT = "Picked up a medikit.";
+	GOTSUPER = "Supercharge!";
+	GOTBLUECARD = "Picked up a blue keycard.";
+	GOTYELWCARD = "Picked up a yellow keycard.";
+	GOTREDCARD = "Picked up a red keycard.";
+	GOTBLUESKUL = "Picked up a blue skull key.";
+	GOTYELWSKUL = "Picked up a yellow skull key.";
+	GOTREDSKULL = "Picked up a red skull key.";
+	GOTINVUL = "Invulnerability!";
+	GOTBERSERK = "Berserk!";
+	GOTINVIS = "Partial Invisibility";
+	GOTSUIT = "Radiation Shielding Suit";
+	GOTMAP = "Computer Area Map";
+	GOTVISOR = "Light Amplification Visor";
+	GOTMSPHERE = "MegaSphere!";
+	GOTCLIP = "Picked up a clip.";
+	GOTCLIPBOX = "Picked up a box of bullets.";
+	GOTROCKET = "Picked up a rocket.";
+	GOTROCKBOX = "Picked up a box of rockets.";
+	GOTCELL = "Picked up an energy cell.";
+	GOTCELLBOX = "Picked up an energy cell pack.";
+	GOTSHELLS = "Picked up 4 shotgun shells.";
+	GOTSHELLBOX = "Picked up a box of shotgun shells.";
+	GOTBACKPACK = "Picked up a backpack full of ammo!";
+	GOTBFG9000 = "You got the BFG9000!  Oh, yes.";
+	GOTCHAINGUN = "You got the chaingun!";
+	GOTCHAINSAW = "A chainsaw!  Find some meat!";
+	GOTLAUNCHER = "You got the rocket launcher!";
+	GOTPLASMA = "You got the plasma gun!";
+	GOTSHOTGUN = "You got the shotgun!";
+	GOTSHOTGUN2 = "You got the super shotgun!";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.1  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.12  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

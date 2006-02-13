@@ -45,7 +45,7 @@ bool bRaiseNoiseAlert;
 //
 //===========================================================================
 
-void A_WeaponReady(void)
+void A_WeaponReady()
 {
 	float angle;
 
@@ -103,7 +103,7 @@ void A_WeaponReady(void)
 //
 //===========================================================================
 
-void A_Lower(void)
+void A_Lower()
 {
 	//	FIXME!!
 	if (frametime < 1.0 / 35.0)
@@ -144,7 +144,7 @@ void A_Lower(void)
 //
 //===========================================================================
 
-void A_Raise(void)
+void A_Raise()
 {
 	//	FIXME!!
 	if (frametime < 1.0 / 35.0)
@@ -172,7 +172,7 @@ void A_Raise(void)
 //
 //===========================================================================
 
-void A_ReFire(void)
+void A_ReFire()
 {
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
@@ -195,7 +195,7 @@ void A_ReFire(void)
 //
 //===========================================================================
 
-void A_CheckReload(void)
+void A_CheckReload()
 {
 	Player.CheckAmmo();
 }
@@ -206,7 +206,7 @@ void A_CheckReload(void)
 //
 //===========================================================================
 
-void A_GunFlash(void)
+void A_GunFlash()
 {
 	Player.MO.SetState(Player.MO.MissileState);
 	Player.SetPsprite(ps_flash, Weapon(Player.ViewEnts[ps_weapon]).FlashState);
@@ -218,7 +218,7 @@ void A_GunFlash(void)
 //
 //===========================================================================
 
-void A_Light0(void)
+void A_Light0()
 {
 	Player.ExtraLight = 0;
 }
@@ -229,7 +229,7 @@ void A_Light0(void)
 //
 //===========================================================================
 
-void A_Light1(void)
+void A_Light1()
 {
 	Player.ExtraLight = 1;
 }
@@ -240,7 +240,7 @@ void A_Light1(void)
 //
 //===========================================================================
 
-void A_Light2(void)
+void A_Light2()
 {
 	Player.ExtraLight = 2;
 }
@@ -281,6 +281,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.7  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

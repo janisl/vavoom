@@ -335,6 +335,10 @@ static void AssertSegment(gameArchiveSegment_t segType)
 int GetMobjNum(VEntity *mobj)
 {
 	guard(GetMobjNum);
+	if (mobj && !mobj->IsA(VEntity::StaticClass()))
+	{
+		return MOBJ_NULL;
+	}
 	if (!mobj || (mobj->bIsPlayer && !SavingPlayers))
 	{
 		return MOBJ_NULL;
@@ -864,6 +868,7 @@ static void UnarchiveThinkers(void)
 	}
 
 	//  Call unarchive function for each thinker.
+	GLevelInfo->Game = GGameInfo;
 	svpr.SetGlobal("GLevelInfo", (int)GLevelInfo);
 
 	for (TObjectIterator<VThinker> It; It; ++It)
@@ -1201,7 +1206,7 @@ void SV_LoadGame(int slot)
 	mapname[8] = 0;
 
 	//	Init skill hacks
-	svpr.Exec("G_InitNew", gameskill);
+	GGameInfo->eventInitNewGame(gameskill);
 
 	// Read secret level info
 	in_secret = GET_BYTE;
@@ -1456,9 +1461,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.49  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.48  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
-//
+//	
 //	Revision 1.47  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
 //	

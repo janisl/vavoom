@@ -88,7 +88,7 @@ bool Deactivate()
 //
 //==========================================================================
 
-void A_Look(void)
+void A_Look()
 {
 	Actor targ;
 
@@ -139,7 +139,7 @@ void A_Look(void)
 //
 //==========================================================================
 
-void A_Chase(void)
+void A_Chase()
 {
 	float delta;
 
@@ -274,7 +274,7 @@ void A_Chase(void)
 //
 //==========================================================================
 
-void A_FaceTarget(void)
+void A_FaceTarget()
 {
 	if (!Enemy)
 		return;
@@ -295,7 +295,7 @@ void A_FaceTarget(void)
 //
 //==========================================================================
 
-void A_Pain(void)
+void A_Pain()
 {
 	if (PainSound)
 	{
@@ -309,7 +309,7 @@ void A_Pain(void)
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 }
 
@@ -344,7 +344,7 @@ void DropItem(classid type, int amount, float chance)
 //
 //==========================================================================
 
-void A_NoBlocking(void)
+void A_NoBlocking()
 {
 	bSolid = false;
 	// Check for monsters dropping things
@@ -359,7 +359,7 @@ void A_NoBlocking(void)
 //
 //==========================================================================
 
-void A_BossDeath(void)
+void A_BossDeath()
 {
 	string mapname;
 	Actor mo;
@@ -424,7 +424,7 @@ void A_BossDeath(void)
 	if (strcmp(mapname, "E1M8"))
 	{
 		// Kill any remaining monsters
-		P_Massacre();
+		HereticLevelInfo(Level).P_Massacre();
 	}
 	HereticLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
 		FLOOREV_LowerToNearest, NULL);
@@ -436,7 +436,7 @@ void A_BossDeath(void)
 //
 //==========================================================================
 
-void A_Feathers(void)
+void A_Feathers()
 {
 	int i;
 	int count;
@@ -479,6 +479,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.6  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

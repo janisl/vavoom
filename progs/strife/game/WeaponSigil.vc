@@ -66,7 +66,7 @@ void A_FireSigil()
 	angle = Player.MO.Angles.yaw + 180.0;
 	Player.MO.Velocity.x += 4.0 * 35.0 * cos(angle);
 	Player.MO.Velocity.y += 4.0 * 35.0 * sin(angle);
-	P_NoiseAlert(Player.MO, Player.MO);
+	StrifeLevelInfo(Player.MO.Level).NoiseAlert(Player.MO, Player.MO);
 
 	if (Player.Sigil == 4)
 	{
@@ -93,7 +93,7 @@ void A_FireSigil()
 	}
 	else
 	{
-		sigil = Spawn(SigilFloor, Player.MO.Origin + vector(0.0, 0.0, 32.0));
+		sigil = StrifeLevelInfo(Player.Level).Spawn(SigilFloor, Player.MO.Origin + vector(0.0, 0.0, 32.0));
 
 		if (sigil.SightSound)
 			sigil.PlaySound(sigil.SightSound, CHAN_VOICE);
@@ -179,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.6  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

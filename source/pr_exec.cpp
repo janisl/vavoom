@@ -554,8 +554,6 @@ void TProgs::Load(const char *AName)
 		i += OpcodeArgCount[Statements[i]];
 	}
 
-	//	Execute initialization function
-	Exec("main");
 	Z_Free(ClassList);
 	Z_Free(NameRemap);
 	unguard;
@@ -2101,9 +2099,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.38  2005/12/14 18:54:53  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.37  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
 //	

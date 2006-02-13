@@ -39,10 +39,10 @@ void A_RestoreSpecialThing1()
 	int spot;
 
 	// Do random mace placement
-	spot = P_Random() % MaceSpotCount;
+	spot = P_Random() % HereticLevelInfo(Level).MaceSpotCount;
 	UnlinkFromWorld();
-	Origin.x = MaceSpot_x[spot];
-	Origin.y = MaceSpot_y[spot];
+	Origin.x = HereticLevelInfo(Level).MaceSpot_x[spot];
+	Origin.y = HereticLevelInfo(Level).MaceSpot_y[spot];
 	LinkToWorld();
 	Origin.z = FloorZ;
 
@@ -63,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.2  2005/06/16 17:46:39  dj_jl
 //  Added model definitions.
 //

@@ -338,7 +338,7 @@ struct RogueConSpeech
 	RogueConChoice Choices[5];	//	Choices
 };
 
-struct base_level_t
+struct level_t
 {
 	float		time;
 	int			tictime;
@@ -383,6 +383,7 @@ class Actor;
 class ViewEntity;
 class Player;
 class LevelInfo;
+class GameInfo;
 
 //==========================================================================
 //
@@ -392,20 +393,6 @@ class LevelInfo;
 
 #define MAXNAME		32
 #define MAX_MSGLEN	8000
-
-//==========================================================================
-//
-//	Level
-//
-//==========================================================================
-
-struct sv_level_t:base_level_t
-{
-	// Maintain single and multi player starting spots.
-	mthing_t deathmatchstarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
-	int numdeathmatchstarts;
-	mthing_t playerstarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
-};
 
 //==========================================================================
 //
@@ -500,10 +487,6 @@ struct server_vars_t
 //**************************************************************************
 
 #ifdef CLIENT
-
-struct cl_level_t:base_level_t
-{
-};
 
 struct model_t;
 
@@ -704,6 +687,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.61  2006/02/13 18:30:13  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.60  2005/12/27 22:22:26  dj_jl
 //  Created level info class, moved action special handling to it.
 //

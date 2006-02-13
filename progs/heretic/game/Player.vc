@@ -147,7 +147,7 @@ void SpawnClient()
 	}
 	else
 	{
-		SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+		SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
 			P_GetPlayerNum(self)]);
 	}
 }
@@ -177,10 +177,10 @@ void NetGameReborn()
 		return;
 	}
 
-	if (CheckSpot(&level->playerstarts[RebornPosition * MAXPLAYERS +
+	if (CheckSpot(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
 		P_GetPlayerNum(self)]))
 	{
-		SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+		SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
 			P_GetPlayerNum(self)]);
 		return;
 	}
@@ -188,15 +188,15 @@ void NetGameReborn()
 	// try to spawn at one of the other players spots
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (CheckSpot(&level->playerstarts[RebornPosition * MAXPLAYERS + i]))
+		if (CheckSpot(&Level.PlayerStarts[RebornPosition * MAXPLAYERS + i]))
 		{
-			SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS + i]);
+			SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS + i]);
 			return;
 		}
 	}
 
 	// he's going to be inside something.  Too bad.
-	SpawnPlayer(&level->playerstarts[RebornPosition * MAXPLAYERS +
+	SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
 		P_GetPlayerNum(self)]);
 }
 
@@ -264,16 +264,16 @@ void DeathMatchSpawnPlayer()
 
 	for (j = 0; j < 20; j++)
 	{
-		i = P_Random() % level->numdeathmatchstarts;
-		if (CheckSpot(&level->deathmatchstarts[i]))
+		i = P_Random() % Level.NumDeathmatchStarts;
+		if (CheckSpot(&Level.DeathmatchStarts[i]))
 		{
-			SpawnPlayer(&level->deathmatchstarts[i]);
+			SpawnPlayer(&Level.DeathmatchStarts[i]);
 			return;
 		}
 	}
 
 	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(&level->playerstarts[P_GetPlayerNum(self)]);
+	SpawnPlayer(&Level.PlayerStarts[P_GetPlayerNum(self)]);
 }
 
 //==========================================================================
@@ -320,7 +320,7 @@ bool CheckSpot(mthing_t * mthing)
 	sec = GLevel.PointInSector(vector(x, y, 0.0));
 	an = itof(45 * (mthing->angle / 45));
 
-	A = Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
+	A = HereticLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		sec->floorheight + TELEFOGHEIGHT));
 	A.PlaySound('misc/teleport', CHAN_VOICE);
 
@@ -349,7 +349,7 @@ void SpawnPlayer(mthing_t * mthing)
 	y = mthing->y;
 
 	z = ONFLOORZ;
-	A = Spawn(HereticPlayer, vector(x, y, z));
+	A = HereticLevelInfo(Level).Spawn(HereticPlayer, vector(x, y, z));
 	A.Origin.z += mthing->height;
 	A.LinkToWorld();
 	// set color translations for player sprites
@@ -537,12 +537,12 @@ bool GiveWeapon(int weapon)
 		}
 		BonusFlash += BONUSADD;
 		WeaponOwned[weapon] = true;
-		GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
+		GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
 		PendingWeapon = weapon;
 		MO.PlaySound('misc/w_pkup', CHAN_ITEM);
 		return false;
 	}
-	gaveAmmo = GiveAmmo(weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
+	gaveAmmo = GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], GetWeaponAmmo[weapon]);
 	if (WeaponOwned[weapon])
 	{
 		gaveWeapon = false;
@@ -1085,13 +1085,13 @@ void CheckWaterJump()
 	vforward.z = 0.0;
 	vforward = Normalise(vforward);
 	end = start + vforward * 24.0;
-	if (!MO.Level.TraceLine(start, end))
+	if (!Level.TraceLine(start, end))
 	{
 		// solid at waist
 		start.z = MO.Origin.z + MO.Height;
 		end = start + vforward * 24.0;
-		MoveDir = MO.Level.trace_plane_normal * -50.0;
-		if (MO.Level.TraceLine(start, end))
+		MoveDir = Level.trace_plane_normal * -50.0;
+		if (Level.TraceLine(start, end))
 		{
 			// open at eye level
 			MO.bWaterJump = true;
@@ -1254,7 +1254,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = level->time;
-				MO.Damage(GLavaInflictor, none, 5);
+				MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
 				MO.HitFloorEffect();
 			}
 			break;
@@ -1262,7 +1262,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = level->time;
-				MO.Damage(GLavaInflictor, none, 8);
+				MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
 				MO.HitFloorEffect();
 			}
 			break;
@@ -1271,7 +1271,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = level->time;
-				MO.Damage(GLavaInflictor, none, 5);
+				MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
 				MO.HitFloorEffect();
 			}
 			break;
@@ -1449,7 +1449,7 @@ void PlayerInContents()
 	case CONTENTS_LAVA:
 		if (!(level->tictime & 15))
 		{
-			MO.Damage(GLavaInflictor, none, 8);
+			MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
 		}
 		break;
 
@@ -1477,7 +1477,7 @@ void PrevWeapon()
 	CurIdx = 0;
 	for (i = 0; i < NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == WeaponOrder[i])
+		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1485,7 +1485,7 @@ void PrevWeapon()
 	}
 	for (i = NUMWEAPONS - 1; i > 0; i--)
 	{
-		NewWeap = WeaponOrder[(CurIdx + i) % NUMWEAPONS];
+		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
 		if (WeaponOwned[NewWeap])
 		{
 			PendingWeapon = NewWeap;
@@ -1509,7 +1509,7 @@ void NextWeapon()
 	CurIdx = 0;
 	for (i = 0; i < NUMWEAPONS; i++)
 	{
-		if (ReadyWeapon == WeaponOrder[i])
+		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
 			CurIdx = i;
 			break;
@@ -1517,7 +1517,7 @@ void NextWeapon()
 	}
 	for (i = 1; i < NUMWEAPONS; i++)
 	{
-		NewWeap = WeaponOrder[(CurIdx + i) % NUMWEAPONS];
+		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
 		if (WeaponOwned[NewWeap] && (WeaponInShareware[NewWeap] || !shareware))
 		{
 			PendingWeapon = NewWeap;
@@ -1652,7 +1652,7 @@ bool UndoPlayerChicken()
 	Actor A;
 
 	MO.UnlinkFromWorld();
-	A = Spawn(HereticPlayer, MO.Origin);
+	A = HereticLevelInfo(Level).Spawn(HereticPlayer, MO.Origin);
 	if (!A.TestLocation())
 	{
 		// Didn't fit
@@ -1679,7 +1679,7 @@ bool UndoPlayerChicken()
 	Health = A.Health;
 	PostChickenWeapon(MO.Special1);
 
-	fog = Spawn(TeleportFog, MO.Origin + vector(
+	fog = HereticLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
@@ -2379,17 +2379,17 @@ void UseArtiTele()
 
 	if (deathmatch)
 	{
-		selections = level->numdeathmatchstarts;
+		selections = Level.NumDeathmatchStarts;
 		i = P_Random() % selections;
-		destX = level->deathmatchstarts[i].x;
-		destY = level->deathmatchstarts[i].y;
-		destAngle = itof(45 * (level->deathmatchstarts[i].angle / 45));
+		destX = Level.DeathmatchStarts[i].x;
+		destY = Level.DeathmatchStarts[i].y;
+		destAngle = itof(45 * (Level.DeathmatchStarts[i].angle / 45));
 	}
 	else
 	{
-		destX = level->playerstarts[0].x;
-		destY = level->playerstarts[0].y;
-		destAngle = itof(45 * (level->playerstarts[0].angle / 45));
+		destX = Level.PlayerStarts[0].x;
+		destY = Level.PlayerStarts[0].y;
+		destAngle = itof(45 * (Level.PlayerStarts[0].angle / 45));
 	}
 	MO.Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
 		false);
@@ -2462,7 +2462,7 @@ bool UseArtiTomeOfPower()
 void UseArtiFireBomb()
 {
 	float angle = MO.Angles.yaw;
-	Actor A = Spawn(FireBomb, MO.Origin + vector(24.0 * cos(angle),
+	Actor A = HereticLevelInfo(Level).Spawn(FireBomb, MO.Origin + vector(24.0 * cos(angle),
 		24.0 * sin(angle), -MO.FloorClip));
 
 	A.Instigator = MO;
@@ -2489,7 +2489,7 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnts[ps_weapon].Destroy();
 	}
-	ViewEnts[ps_weapon] = SpawnObject(WeaponClasses[NewWeapon]);
+	ViewEnts[ps_weapon] = SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]);
 	ViewEnts[ps_weapon].Player = self;
 	PSpriteSY = Weapon(ViewEnts[ps_weapon]).PSpriteSY;
 }
@@ -2716,7 +2716,7 @@ void FireWeapon()
 			Weapon(ViewEnts[ps_weapon]).AttackState;
 	}
 	SetPsprite(ps_weapon, attackState);
-	P_NoiseAlert(MO, MO);
+	HereticLevelInfo(Level).NoiseAlert(MO, MO);
 	if (ReadyWeapon == wp_gauntlets && !Refire)
 	{
 		// Play the sound for the initial gauntlet attack
@@ -2809,7 +2809,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		return in->line->backsector != NULL;
 	}
 
-	HereticLevelInfo(MO.Level).ActivateLine(in->line, MO, 0, SPAC_USE);
+	HereticLevelInfo(Level).ActivateLine(in->line, MO, 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
@@ -3010,7 +3010,7 @@ void Cheat_Gimme()
 
 void Cheat_KillAll()
 {
-	P_Massacre();
+	HereticLevelInfo(Level).P_Massacre();
 	cprint(self, "MASSACRE");
 }
 
@@ -3075,6 +3075,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.18  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

@@ -33,7 +33,7 @@ bool local_server;
 bool skipintermission;
 
 client_state_t *cl;
-cl_level_t *level;
+level_t* level;
 Level GLevel;
 
 scores_t *scores;
@@ -287,6 +287,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/13 18:30:15  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.1  2006/02/09 22:33:08  dj_jl
 //  Moved all client game code to classes.
 //

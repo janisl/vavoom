@@ -34,17 +34,28 @@ int AttackState;
 int HoldAttackState;
 float PSpriteSY;		// Y-adjustment value for full screen
 
-int GetUpState(void)
+//==========================================================================
+//
+//  WeaponManaUse
+//
+//==========================================================================
+
+int WeaponManaUse(int pclass, int num)
+{
+	return WeaponManaUseTable[(pclass << 2) + num];
+}
+
+int GetUpState()
 {
 	return UpState;
 }
 
-int GetDownState(void)
+int GetDownState()
 {
 	return DownState;
 }
 
-int GetReadyState(void)
+int GetReadyState()
 {
 	return ReadyState;
 }
@@ -55,7 +66,7 @@ int GetReadyState(void)
 //
 //==========================================================================
 
-int GetAttackState(void)
+int GetAttackState()
 {
 	return Player.Refire ? HoldAttackState : AttackState;
 }
@@ -65,7 +76,7 @@ void GotMana(int InMana)
 }
 
 // FIXME
-void SnoutSniff(void)
+void SnoutSniff()
 {
 }
 
@@ -75,7 +86,7 @@ void SnoutSniff(void)
 //
 //==========================================================================
 
-void A_Light0(void)
+void A_Light0()
 {
 	Player.ExtraLight = 0;
 }
@@ -88,7 +99,7 @@ void A_Light0(void)
 //
 //==========================================================================
 
-void A_WeaponReady(void)
+void A_WeaponReady()
 {
 	float angle;
 
@@ -136,7 +147,7 @@ void A_WeaponReady(void)
 //
 //==========================================================================
 
-void A_Lower(void)
+void A_Lower()
 {
 	if (Player.MorphTime)
 	{
@@ -177,7 +188,7 @@ void A_Lower(void)
 //
 //==========================================================================
 
-void A_Raise(void)
+void A_Raise()
 {
 	//	FIXME!!
 	if (frametime < 1.0 / 35.0)
@@ -229,6 +240,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.3  2004/08/23 19:23:59  dj_jl
 //  Moved weapon utilites to player class.
 //

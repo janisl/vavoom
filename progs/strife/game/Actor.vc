@@ -168,6 +168,23 @@ __states__
 	}
 }
 
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+Actor Spawn(classid type, TVec AOrigin)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
 //==========================================================================
 //
 //	HideSpecial
@@ -263,7 +280,7 @@ void OnMapSpawn(mthing_t * mthing)
 		float y;
 		float z;
 
-		CopyMThing(mthing, &SpawnSpot);
+		Level.CopyMThing(mthing, &SpawnSpot);
 
 		x = mthing->x;
 		y = mthing->y;
@@ -476,7 +493,7 @@ void Died(Actor source)
 	if (StateTime < 0.1)
 		StateTime = 0.1;
 
-	SpeechNum = GetSpeech(self);
+	SpeechNum = GetSpeech();
 	if (SpeechNum)
 	{
 		//	Drop stuff as determined by conversation.
@@ -488,7 +505,7 @@ void Died(Actor source)
 		{
 			Speech = &XLevel.LevelSpeeches[SpeechNum - 1];
 		}
-		DropItemType = GetClassFromID(Speech->DropItem);
+		DropItemType = StrifeLevelInfo(Level).GetClassFromID(Speech->DropItem);
 		if (DropItemType != classidNone)
 		{
 			A = Spawn(DropItemType, vector(Origin.x, Origin.y, ONFLOORZ));
@@ -729,7 +746,7 @@ void NightmareRespawn()
 
 	// inherit attributes from deceased one
 	A = Spawn(Class, vector(x, y, z));
-	CopyMThing(&SpawnSpot, &A.SpawnSpot);
+	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 
 	if (mthing->options & MTF_AMBUSH)
@@ -2831,7 +2848,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 	if (th.bNoBlood)
 		SpawnPuff(shootPuffType, hit_point);
 	else
-		P_SpawnBlood(hit_point.x, hit_point.y, hit_point.z, la_damage);
+		SpawnBlood(hit_point.x, hit_point.y, hit_point.z, la_damage);
 
 	if (la_damage)
 		th.Damage(self, self, la_damage);
@@ -2870,6 +2887,55 @@ int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 	}
 	shoot_lineend = dst;
 	return ShootCheckPlanes(GLevel.PointInSector(dst));
+}
+
+//==========================================================================
+//
+//  SpawnPuff
+//
+//==========================================================================
+
+void SpawnPuff(classid PuffType, TVec Org)
+{
+	Actor A;
+
+	Org.z += (Random() - Random()) * 4.0;
+	A = Spawn(PuffType, Org);
+	A.Velocity.z = 1.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+}
+
+//==========================================================================
+//
+//  SpawnBlood
+// 
+//==========================================================================
+
+void SpawnBlood(float x, float y, float z, int damage)
+{
+	Actor A;
+
+	MSG_Select(MSG_SV_DATAGRAM);
+	MSG_WriteByte(svc_blood);
+	MSG_WriteShort(ftoi(x));
+	MSG_WriteShort(ftoi(y));
+	MSG_WriteShort(ftoi(z));
+	MSG_WriteByte(damage > 255 ? 255 : damage);
+
+	z += (Random() - Random()) * 4.0;
+	A = Spawn(Blood, vector(x, y, z));
+	A.Velocity.z = 2.0 * 35.0;
+	A.StateTime -= Random() * 0.1;
+
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+
+	if (damage <= 12 && damage >= 9)
+		A.SetState(Blood::S_BLOOD2);
+	else if (damage < 9)
+		A.SetState(Blood::S_BLOOD3);
 }
 
 //==========================================================================
@@ -3198,7 +3264,7 @@ void A_AlertMonsters()
 {
 	if (Instigator && Instigator.bIsPlayer)
 	{
-		P_NoiseAlert(Instigator, self);
+		StrifeLevelInfo(Level).NoiseAlert(Instigator, self);
 	}
 }
 
@@ -3279,6 +3345,56 @@ void A_RemoveForceField()
 	}
 }
 
+//==========================================================================
+//
+//	GetSpeechIndex
+//
+//==========================================================================
+
+int GetSpeechIndex(RogueConSpeech *List, int Count, int ID, int Num)
+{
+	int Found;
+	int i;
+
+	Found = 0;
+	for (i = 0; i < Count; i++)
+	{
+		if (List[i].SpeakerID == ID)
+		{
+			Found++;
+			if (Found == Num)
+			{
+				return i + 1;
+			}
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	GetSpeech
+//
+//==========================================================================
+
+int GetSpeech()
+{
+	int Index;
+
+	if (!CurrentSpeech)
+	{
+		CurrentSpeech = 1;
+	}
+	Index = GetSpeechIndex(XLevel.LevelSpeeches, XLevel.NumLevelSpeeches,
+		ConversationID, CurrentSpeech);
+	if (Index)
+	{
+		return Index;
+	}
+	return -GetSpeechIndex(XLevel.GenericSpeeches, XLevel.NumGenericSpeeches,
+		ConversationID, CurrentSpeech);
+}
+
 __states__
 {
 	S_ZAP1_1('ZAP1', 1, 3.0 / 35.0, S_ZAP1_2) { A_Explode32(); }
@@ -3328,6 +3444,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.29  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

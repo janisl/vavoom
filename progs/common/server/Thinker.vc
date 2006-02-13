@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Thinker:Object
+class Thinker : Object
 	native
 	abstract;
 
@@ -34,11 +34,11 @@ void Tick(float deltaTime)
 {
 }
 
-void Archive(void)
+void Archive()
 {
 }
 
-void Unarchive(void)
+void Unarchive()
 {
 }
 
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/13 18:30:15  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.2  2005/12/27 22:22:27  dj_jl
 //  Created level info class, moved action special handling to it.
 //

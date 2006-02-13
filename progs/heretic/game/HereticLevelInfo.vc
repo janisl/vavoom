@@ -25,6 +25,45 @@
 
 class HereticLevelInfo : LevelInfo;
 
+enum { MAX_BOSS_SPOTS = 8 };
+
+enum { MAX_AMBIENT_SFX = 8 };	// Per level
+
+enum
+{
+	afxcmd_play,	// (sound)
+	afxcmd_playabsvol,	// (sound, volume)
+	afxcmd_playrelvol,	// (sound, volume)
+	afxcmd_delay,	// (ticks)
+	afxcmd_delayrand,	// (andbits)
+	afxcmd_end	// ()
+};
+
+Actor GLavaInflictor;
+
+Actor bodyque[BODYQUESIZE];
+int bodyqueslot;
+
+int BossSpotCount;
+TVec BossSpot[MAX_BOSS_SPOTS];
+float BossSpot_angle[MAX_BOSS_SPOTS];
+
+int MaceSpotCount;
+float MaceSpot_x[MAX_MACE_SPOTS];
+float MaceSpot_y[MAX_MACE_SPOTS];
+
+int LevelAmbientSfx[MAX_AMBIENT_SFX];
+int AmbSfxPtr;
+int AmbSfxCount;
+float AmbSfxTime;
+int AmbSfxVolume;
+
+int AmbSndSeq[192];
+int AmbSndSeqSize;
+int AmbientSfx[10];
+
+int AmbientSounds[12];
+
 //==========================================================================
 //
 //  SpawnSpecials
@@ -221,7 +260,7 @@ void SpawnSpecials()
 
 void UpdateSpecials()
 {
-	P_AmbientSound();
+	AmbientSound();
 }
 
 //==========================================================================
@@ -859,7 +898,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			PUSHER_Wind);
 		break;
 	case LNSPEC_SectorSetFriction:
-		SetSectorFriction(Arg1, Arg2, true);
+		MainGameInfo(Game).SetSectorFriction(XLevel, Arg1, Arg2, true);
 		buttonSuccess = true;
 		break;
 	case LNSPEC_SectorSetCurrent:
@@ -1266,7 +1305,7 @@ bool EV_NoiseAlert(Actor A, int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		ATarget = Actor(FindMobjFromTID(Arg2, &Search));
 	}
 
-	P_NoiseAlert(ASource, ATarget);
+	NoiseAlert(ASource, ATarget);
 	return true;
 }
 
@@ -3850,6 +3889,599 @@ bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	return success;
 }
 
+//**************************************************************************
+//
+//      NOISE ALERT
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  RecursiveSound
+//
+//  Called by NoiseAlert. Recursively traverse adjacent sectors, sound
+// blocking lines cut off traversal.
+//
+//==========================================================================
+
+void RecursiveSound(sector_t * sec, int soundblocks, Actor soundtarget)
+{
+	int i;
+	line_t *check;
+	sector_t *other;
+
+	// wake up all monsters in this sector
+	if (sec->validcount == *validcount &&
+		sec->soundtraversed <= soundblocks + 1)
+	{
+		return;	// already flooded
+	}
+
+	sec->validcount = *validcount;
+	sec->soundtraversed = soundblocks + 1;
+	sec->SoundTarget = soundtarget;
+
+	for (i = 0; i < sec->linecount; i++)
+	{
+		check = sec->lines[i];
+		if (!(check->flags & ML_TWOSIDED))
+			continue;
+
+		if (!LineOpenings(check, *check->v1))
+		{
+			if (!LineOpenings(check, *check->v2))
+				continue;	// closed door
+		}
+
+		if (GLevel.Sides[check->sidenum[0]].sector == sec)
+			other = GLevel.Sides[check->sidenum[1]].sector;
+		else
+			other = GLevel.Sides[check->sidenum[0]].sector;
+
+		if (check->flags & ML_SOUNDBLOCK)
+		{
+			if (!soundblocks)
+				RecursiveSound(other, 1, soundtarget);
+		}
+		else
+			RecursiveSound(other, soundblocks, soundtarget);
+	}
+}
+
+//==========================================================================
+//
+//  NoiseAlert
+//
+//  If a monster yells at a player, it will alert other monsters to the
+// player.
+//
+//==========================================================================
+
+void NoiseAlert(Actor target, Actor emmiter)
+{
+	(*validcount)++;
+	RecursiveSound(emmiter.Sector, 0, target);
+}
+
+//==========================================================================
+//
+//  SpawnMapThing
+//
+//==========================================================================
+
+void SpawnMapThing(mthing_t * mthing)
+{
+	int bit;
+	Actor A;
+	int spawnMask;
+	classid moClass;
+
+	if (mthing->type <= 0)
+	{
+		return;
+	}
+
+	// count deathmatch start positions
+	if (mthing->type == 11)
+	{
+		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
+		{
+			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
+			NumDeathmatchStarts++;
+		}
+		return;
+	}
+
+	// check for players specially
+	if (mthing->type <= 4)
+	{
+		// save spots for respawning in network games
+		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
+		return;
+	}
+
+	// Ambient sound sequences
+	if (mthing->type >= 1200 && mthing->type < 1300)
+	{
+		AddAmbientSfx(mthing->type - 1200);
+		return;
+	}
+
+	// Check for boss spots
+	if (mthing->type == 56)	// Monster_BossSpot
+	{
+		AddBossSpot(mthing->x, mthing->y, itof(45 * (mthing->angle / 45)));
+		return;
+	}
+
+	// Check current game type with spawn flags
+	if (netgame == false)
+	{
+		spawnMask = MTF_GSINGLE;
+	}
+	else if (deathmatch)
+	{
+		spawnMask = MTF_GDEATHMATCH;
+	}
+	else
+	{
+		spawnMask = MTF_GCOOP;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// check for apropriate skill level
+	if (gameskill == sk_baby)
+		bit = 1;
+	else if (gameskill == sk_nightmare)
+		bit = 4;
+	else
+		bit = 1 << (gameskill - 1);
+	if (!(mthing->options & bit))
+		return;
+
+	// find which type to spawn
+	moClass = FindClassFromEditorId(mthing->type);
+	if (!moClass || moClass == classidNone)
+	{
+		dprint("SpawnMapThing: Unknown type %i at (%f, %f)",
+			mthing->type, mthing->x, mthing->y);
+		return;
+	}
+
+	// spawn it
+	if (shareware)
+	{
+		// Special stuff
+		if (moClass == ItemWeaponSkullRod ||
+			moClass == ItemWeaponPhoenixRod ||
+			moClass == ItemAmmoSkullRodWimpy ||
+			moClass == ItemAmmoSkullRodHefty ||
+			moClass == ItemAmmoPhoenixWimpy ||
+			moClass == ItemAmmoPhoenixHefty ||
+			moClass == ItemAmmoMaceWimpy ||
+			moClass == ItemAmmoMaceHefty ||
+			moClass == ArtifactSuperHeal ||
+			moClass == ArtifactTeleport ||
+			moClass == ItemShield2 ||
+			moClass == ItemWeaponMace)
+		{
+			// Don't place on map in shareware version
+			return;
+		}
+	}
+	if (moClass == ItemWeaponMace)
+	{
+		// Put in the mace spot list
+		AddMaceSpot(mthing->x, mthing->y);
+		return;
+	}
+
+	A = Actor(NewMobjThinker(moClass));
+	A.OnMapSpawn(mthing);
+}
+
+//===========================================================================
+//
+//  AddMaceSpot
+//
+//===========================================================================
+
+void AddMaceSpot(float x, float y)
+{
+	if (MaceSpotCount == MAX_MACE_SPOTS)
+	{
+		Error("Too many mace spots.");
+	}
+	MaceSpot_x[MaceSpotCount] = x;
+	MaceSpot_y[MaceSpotCount] = y;
+	MaceSpotCount++;
+}
+
+//===========================================================================
+//
+//  CloseWeapons
+//
+//  Called at level load after things are loaded.
+//
+//===========================================================================
+
+void CloseWeapons()
+{
+	int spot;
+
+	if (!MaceSpotCount)
+	{
+		// No maces placed
+		return;
+	}
+	if (!deathmatch && P_Random() < 64)
+	{
+		// Sometimes doesn't show up if not in deathmatch
+		return;
+	}
+	spot = P_Random() % MaceSpotCount;
+	Spawn(ItemWeaponMace, vector(MaceSpot_x[spot], MaceSpot_y[spot],
+		ONFLOORZ));
+}
+
+//==========================================================================
+//
+//  P_AddBossSpot
+//
+//==========================================================================
+
+void AddBossSpot(float x, float y, float angle)
+{
+	if (BossSpotCount == MAX_BOSS_SPOTS)
+	{
+		Error("Too many boss spots.");
+	}
+	BossSpot[BossSpotCount].x = x;
+	BossSpot[BossSpotCount].y = y;
+	BossSpot[BossSpotCount].z = 0.0;	//FIXME
+	BossSpot_angle[BossSpotCount] = angle;
+	BossSpotCount++;
+}
+
+//==========================================================================
+//
+//  InitAmbientSound
+//
+//==========================================================================
+
+void InitAmbientSound()
+{
+	AmbientSounds[0] = GetSoundID('world/amb12');
+	AmbientSounds[1] = GetSoundID('world/amb1');
+	AmbientSounds[2] = GetSoundID('world/amb2');
+	AmbientSounds[3] = GetSoundID('world/amb3');
+	AmbientSounds[4] = GetSoundID('world/amb4');
+	AmbientSounds[5] = GetSoundID('world/amb5');
+	AmbientSounds[6] = GetSoundID('world/amb6');
+	AmbientSounds[7] = GetSoundID('world/amb7');
+	AmbientSounds[8] = GetSoundID('world/amb8');
+	AmbientSounds[9] = GetSoundID('world/amb9');
+	AmbientSounds[10] = GetSoundID('world/amb10');
+	AmbientSounds[11] = GetSoundID('world/amb11');
+	AmbSfxCount = 0;
+	AmbSndSeqSize = 0;
+	AmbSfxVolume = 0;
+	AmbSfxTime = 10.0;
+
+	// Startup
+	AmbSfxPtr = 0;
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Scream
+	AmbientSfx[0] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 1);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Squish
+	AmbientSfx[1] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 2);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Drops
+	AmbientSfx[2] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 3);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd1(afxcmd_delayrand, 31);
+	AddAmbSeqCmd1(afxcmd_play, 7);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd1(afxcmd_delayrand, 31);
+	AddAmbSeqCmd1(afxcmd_play, 3);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd1(afxcmd_delayrand, 31);
+	AddAmbSeqCmd1(afxcmd_play, 7);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd1(afxcmd_delayrand, 31);
+	AddAmbSeqCmd1(afxcmd_play, 3);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd1(afxcmd_delayrand, 31);
+	AddAmbSeqCmd1(afxcmd_play, 7);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd1(afxcmd_delayrand, 31);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// SlowFootSteps
+	AmbientSfx[3] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 4);
+	AddAmbSeqCmd1(afxcmd_delay, 15);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 15);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 4, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 15);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 15);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 4, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 15);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 15);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 4, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 15);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Heartbeat
+	AmbientSfx[4] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 5);
+	AddAmbSeqCmd1(afxcmd_delay, 35);
+	AddAmbSeqCmd1(afxcmd_play, 5);
+	AddAmbSeqCmd1(afxcmd_delay, 35);
+	AddAmbSeqCmd1(afxcmd_play, 5);
+	AddAmbSeqCmd1(afxcmd_delay, 35);
+	AddAmbSeqCmd1(afxcmd_play, 5);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Bells
+	AmbientSfx[5] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 6);
+	AddAmbSeqCmd1(afxcmd_delay, 17);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 6, -8);
+	AddAmbSeqCmd1(afxcmd_delay, 17);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 6, -8);
+	AddAmbSeqCmd1(afxcmd_delay, 17);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 6, -8);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Growl
+	AmbientSfx[6] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 0);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Magic
+	AmbientSfx[7] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 8);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// Laughter
+	AmbientSfx[8] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 9);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 9, -4);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 9, -4);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 10, -4);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 10, -4);
+	AddAmbSeqCmd1(afxcmd_delay, 16);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 10, -4);
+	AddAmbSeqCmd0(afxcmd_end);
+
+	// FastFootsteps
+	AmbientSfx[9] = AmbSndSeqSize;
+	AddAmbSeqCmd1(afxcmd_play, 4);
+	AddAmbSeqCmd1(afxcmd_delay, 8);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 8);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 4, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 8);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 8);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 4, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 8);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 8);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 4, -3);
+	AddAmbSeqCmd1(afxcmd_delay, 8);
+	AddAmbSeqCmd2(afxcmd_playrelvol, 11, -3);
+	AddAmbSeqCmd0(afxcmd_end);
+}
+
+//==========================================================================
+//
+//  AddAmbSeqCmd0
+//
+//==========================================================================
+
+void AddAmbSeqCmd0(int Cmd)
+{
+	AmbSndSeq[AmbSndSeqSize++] = Cmd;
+}
+
+//==========================================================================
+//
+//  AddAmbSeqCmd1
+//
+//==========================================================================
+
+void AddAmbSeqCmd1(int Cmd, int Arg)
+{
+	AmbSndSeq[AmbSndSeqSize++] = Cmd;
+	AmbSndSeq[AmbSndSeqSize++] = Arg;
+}
+
+//==========================================================================
+//
+//  AddAmbSeqCmd2
+//
+//==========================================================================
+
+void AddAmbSeqCmd2(int Cmd, int Arg1, int Arg2)
+{
+	AmbSndSeq[AmbSndSeqSize++] = Cmd;
+	AmbSndSeq[AmbSndSeqSize++] = Arg1;
+	AmbSndSeq[AmbSndSeqSize++] = Arg2;
+}
+
+//==========================================================================
+//
+//  AddAmbientSfx
+//
+//  Called by (P_mobj):P_SpawnMapThing during (P_setup):P_SetupLevel.
+//
+//==========================================================================
+
+void AddAmbientSfx(int sequence)
+{
+	if (!AmbSndSeqSize)
+	{
+		InitAmbientSound();
+	}
+	if (AmbSfxCount == MAX_AMBIENT_SFX)
+	{
+		Error("Too many ambient sound sequences");
+	}
+	LevelAmbientSfx[AmbSfxCount++] = AmbientSfx[sequence];
+}
+
+//==========================================================================
+//
+//  AmbientSound
+//
+//  Called every tic by (P_tick):P_Ticker.
+//
+//==========================================================================
+
+void AmbientSound()
+{
+	int cmd;
+	int sound;
+	bool done;
+
+	if (!AmbSfxCount)
+	{
+		// No ambient sound sequences on current level
+		return;
+	}
+	AmbSfxTime -= frametime;
+	if (AmbSfxTime > 0.0)
+	{
+		return;
+	}
+	done = false;
+	do
+	{
+		cmd = AmbSndSeq[AmbSfxPtr];
+		AmbSfxPtr++;
+		switch (cmd)
+		{
+		case afxcmd_play:
+			AmbSfxVolume = P_Random() >> 2;
+			sound = AmbientSounds[AmbSndSeq[AmbSfxPtr]];
+			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
+			AmbSfxPtr++;
+			break;
+		case afxcmd_playabsvol:
+			sound = AmbientSounds[AmbSndSeq[AmbSfxPtr]];
+			AmbSfxPtr++;
+			AmbSfxVolume = AmbSndSeq[AmbSfxPtr];
+			AmbSfxPtr++;
+			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
+			break;
+		case afxcmd_playrelvol:
+			sound = AmbientSounds[AmbSndSeq[AmbSfxPtr]];
+			AmbSfxPtr++;
+			AmbSfxVolume += AmbSndSeq[AmbSfxPtr];
+			AmbSfxPtr++;
+			if (AmbSfxVolume < 0)
+			{
+				AmbSfxVolume = 0;
+			}
+			else if (AmbSfxVolume > 127)
+			{
+				AmbSfxVolume = 127;
+			}
+			StartSoundAtVolume(none, sound, CHAN_AUTO, AmbSfxVolume);
+			break;
+		case afxcmd_delay:
+			AmbSfxTime = itof(AmbSndSeq[AmbSfxPtr]) / 35.0;
+			AmbSfxPtr++;
+			done = true;
+			break;
+		case afxcmd_delayrand:
+			AmbSfxTime = itof(P_Random() & (AmbSndSeq[AmbSfxPtr])) / 35.0;
+			AmbSfxPtr++;
+			done = true;
+			break;
+		case afxcmd_end:
+			AmbSfxTime = 6.0 + Random() * 256.0 / 35.0;
+			AmbSfxPtr = LevelAmbientSfx[P_Random() % AmbSfxCount];
+			done = true;
+			break;
+		default:
+			Error("AmbientSound: Unknown afxcmd");
+			break;
+		}
+	}
+	while (!done);
+}
+
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+Actor Spawn(classid type, TVec AOrigin)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
+//==========================================================================
+//
+//  InitLava
+//
+//==========================================================================
+
+void InitLava()
+{
+	GLavaInflictor = LavaInflictor(NewMobjThinker(LavaInflictor));
+}
+
+//==========================================================================
+//
+//  P_Massacre
+//
+//  Kills all monsters.
+//
+//==========================================================================
+
+void P_Massacre()
+{
+	Actor mo;
+
+	FOREACH(Actor, mo)
+	{
+		if (mo.bCountKill && mo.Health > 0)
+		{
+			mo.Damage(none, none, 10000);
+		}
+	}
+}
+
 defaultproperties
 {
 }
@@ -3857,6 +4489,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

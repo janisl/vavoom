@@ -25,6 +25,9 @@
 
 class StrifeLevelInfo : LevelInfo;
 
+Actor bodyque[BODYQUESIZE];
+int bodyqueslot;
+
 //==========================================================================
 //
 //  SpawnSpecials
@@ -840,7 +843,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			PUSHER_Wind);
 		break;
 	case LNSPEC_SectorSetFriction:
-		SetSectorFriction(Arg1, Arg2, true);
+		MainGameInfo(Game).SetSectorFriction(XLevel, Arg1, Arg2, true);
 		buttonSuccess = true;
 		break;
 	case LNSPEC_SectorSetCurrent:
@@ -1274,7 +1277,7 @@ bool EV_NoiseAlert(Actor A, int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		ATarget = Actor(FindMobjFromTID(Arg2, &Search));
 	}
 
-	P_NoiseAlert(ASource, ATarget);
+	NoiseAlert(ASource, ATarget);
 	return true;
 }
 
@@ -4051,6 +4054,583 @@ bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	return success;
 }
 
+//**************************************************************************
+//
+//      NOISE ALERT
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  RecursiveSound
+//
+//  Called by P_NoiseAlert. Recursively traverse adjacent sectors, sound
+// blocking lines cut off traversal.
+//
+//==========================================================================
+
+void RecursiveSound(sector_t * sec, int soundblocks, Actor soundtarget)
+{
+	int i;
+	line_t *check;
+	sector_t *other;
+
+	// wake up all monsters in this sector
+	if (sec->validcount == *validcount &&
+		sec->soundtraversed <= soundblocks + 1)
+	{
+		return;	// already flooded
+	}
+
+	sec->validcount = *validcount;
+	sec->soundtraversed = soundblocks + 1;
+	sec->SoundTarget = soundtarget;
+
+	for (i = 0; i < sec->linecount; i++)
+	{
+		check = sec->lines[i];
+		if (!(check->flags & ML_TWOSIDED))
+			continue;
+
+		if (!LineOpenings(check, *check->v1))
+		{
+			if (!LineOpenings(check, *check->v2))
+				continue;	// closed door
+		}
+
+		if (GLevel.Sides[check->sidenum[0]].sector == sec)
+			other = GLevel.Sides[check->sidenum[1]].sector;
+		else
+			other = GLevel.Sides[check->sidenum[0]].sector;
+
+		if (check->flags & ML_SOUNDBLOCK)
+		{
+			if (!soundblocks)
+				RecursiveSound(other, 1, soundtarget);
+		}
+		else
+			RecursiveSound(other, soundblocks, soundtarget);
+	}
+}
+
+//==========================================================================
+//
+//  NoiseAlert
+//
+//  If a monster yells at a player, it will alert other monsters to the
+// player.
+//
+//==========================================================================
+
+void NoiseAlert(Actor target, Actor emmiter)
+{
+	if (!emmiter)
+		return;
+
+	(*validcount)++;
+	RecursiveSound(emmiter.Sector, 0, target);
+}
+
+//==========================================================================
+//
+//  SpawnMapThing
+//
+//  The fields of the mapthing should already be in host byte order.
+//
+//==========================================================================
+
+void SpawnMapThing(mthing_t * mthing)
+{
+	int bit;
+	Actor A;
+	int spawnMask;
+	classid moClass;
+
+	if (mthing->type <= 0)
+		return;
+
+	// count deathmatch start positions
+	if (mthing->type == 11)
+	{
+		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
+		{
+			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
+			NumDeathmatchStarts++;
+		}
+		return;
+	}
+
+	// check for players specially
+	if (mthing->type <= 8)
+	{
+		// save spots for respawning in network games
+		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
+		return;
+	}
+
+	// Check current game type with spawn flags
+	if (netgame == false)
+	{
+		spawnMask = MTF_GSINGLE;
+	}
+	else if (deathmatch)
+	{
+		spawnMask = MTF_GDEATHMATCH;
+	}
+	else
+	{
+		spawnMask = MTF_GCOOP;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// check for apropriate skill level
+	if (gameskill == sk_baby)
+		bit = 1;
+	else if (gameskill == sk_nightmare)
+		bit = 4;
+	else
+		bit = 1 << (gameskill - 1);
+
+	if (!(mthing->options & bit))
+		return;
+
+	// find which type to spawn
+	moClass = FindClassFromEditorId(mthing->type);
+	if (moClass && moClass != classidNone)
+	{
+		// spawn it
+		A = Actor(NewMobjThinker(moClass));
+		A.OnMapSpawn(mthing);
+	}
+	else
+	{
+		dprint("SpawnMapThing: Unknown type %d at (%f, %f)",
+			mthing->type, mthing->x, mthing->y);
+	}
+}
+
+//**************************************************************************
+//
+//	CONVERSATION STUFF
+//
+//**************************************************************************
+
+Actor CurrentSpeaker;
+Actor CurrentSpeakingTo;
+float OldSpeakerAngle;
+int CurrentSpeechIndex;
+bool ConversationSlideshow;
+
+//==========================================================================
+//
+//	StartConversation
+//
+//==========================================================================
+
+bool StartConversation(Actor User, Actor UseOn)
+{
+	int SpeechNum;
+
+	if (netgame)
+	{
+		return false;
+	}
+	if (!User || !User.bIsPlayer || User.Health <= 0)
+	{
+		return false;
+	}
+	if (!UseOn || UseOn.Health <= 0)
+	{
+		return false;
+	}
+	if (UseOn.bInCombat)
+	{
+		//	This dude is too busy to talk right now.
+		return false;
+	}
+	if (!UseOn.ConversationID)
+	{
+		return false;
+	}
+	SpeechNum = UseOn.GetSpeech();
+	if (SpeechNum)
+	{
+		CurrentSpeaker = UseOn;
+		CurrentSpeakingTo = User;
+		OldSpeakerAngle = UseOn.Angles.yaw;
+		UseOn.Angles.yaw = atan2(User.Origin.y - UseOn.Origin.y,
+			User.Origin.x - UseOn.Origin.x);
+		StartSpeech(SpeechNum);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	StartSpeech
+//
+//==========================================================================
+
+void StartSpeech(int SpeechNum)
+{
+	RogueConSpeech *Speech;
+	bool conJumped;
+
+	do
+	{
+		conJumped = false;
+		if (!SpeechNum)
+		{
+			StopSpeech();
+			return;
+		}
+		if (SpeechNum < 0)
+		{
+			Speech = &GLevel.GenericSpeeches[-SpeechNum - 1];
+		}
+		else
+		{
+			Speech = &GLevel.LevelSpeeches[SpeechNum - 1];
+		}
+		if (Speech->JumpToConv &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem1, 1) != -2 &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem2, 1) != -2 &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem3, 1) != -2)
+		{
+			CurrentSpeaker.CurrentSpeech = Speech->JumpToConv;
+			SpeechNum = CurrentSpeaker.GetSpeech();
+			conJumped = true;
+		}
+	}
+	while (conJumped);
+	CurrentSpeechIndex = SpeechNum;
+
+	MSG_Select(MSG_SV_RELIABLE);
+	MSG_WriteByte(svc_speech);
+	MSG_WriteShort(SpeechNum);
+}
+
+//==========================================================================
+//
+//	GetClassFromID
+//
+//==========================================================================
+
+classid GetClassFromID(int ID)
+{
+	switch (ID)
+	{
+	case 125:	return MedPatch;
+	case 126:	return MedicalKit;
+	case 127:	return SurgeryKit;
+	case 128:	return DegninOre;
+	case 129:	return MetalArmor;
+	case 130:	return LeatherArmor;
+	case 133:	return ItemBaseKey;
+	case 134:	return ItemGovsKey;
+	case 135:	return ItemPasscard;
+	case 136:	return ItemIDBadge;
+	case 137:	return ItemPrisonKey;
+	case 138:	return ItemSeveredHand;
+	case 139:	return ItemPower1Key;
+	case 140:	return ItemPower2Key;
+	case 141:	return ItemPower3Key;
+	case 142:	return ItemGoldKey;
+	case 143:	return ItemIDCard;
+	case 144:	return ItemSilverKey;
+	case 145:	return ItemOracleKey;
+	case 146:	return ItemMilitaryID;
+	case 147:	return ItemOrderKey;
+	case 148:	return ItemWarehouseKey;
+	case 149:	return ItemBrassKey;
+	case 150:	return ItemRedCrystalKey;
+	case 151:	return ItemBlueCrystalKey;
+	case 152:	return ItemChapelKey;
+	case 153:	return ItemCatacombKey;
+	case 154:	return ItemSecurityKey;
+	case 155:	return ItemCoreKey;
+	case 156:	return ItemMaulerKey;
+	case 157:	return ItemFactoryKey;
+	case 158:	return ItemMineKey;
+	case 159:	return ItemNewKey5;
+	case 160:	return Shadow_armor;
+	case 161:	return Environmental_Suit;
+	case 162:	return Guard_Uniform;
+	case 163:	return Officers_Uniform;
+	case 164:	return Map;
+	case 165:	return Scanner;
+	case 166:	return Teleporter_Beacon;
+	case 167:	return Targeter;
+	case 168:	return Coin;
+	case 169:	return Gold10;
+	case 170:	return Gold25;
+	case 171:	return Gold50;
+	case 172:	return Gold300;
+	case 173:	return Ring;
+	case 174:	return Offering_Chalice;
+	case 175:	return Ear;
+	case 176:	return Communicator;
+	case 177:	return ItemAmmoHEGrenadeRounds;
+	case 178:	return ItemAmmoPhosphorusGrenadeRounds;
+	case 179:	return ItemAmmoClipOfBullets;
+	case 180:	return ItemAmmoBoxOfBullets;
+	case 181:	return ItemAmmoMiniMissiles;
+	case 182:	return ItemAmmoCrateOfMissiles;
+	case 183:	return ItemAmmoEnergyPod;
+	case 184:	return ItemAmmoEnergyPack;
+	case 185:	return ItemAmmoPoisonBolts;
+	case 186:	return ItemAmmoElectricBolts;
+	case 187:	return Ammo_satchel;
+	case 188:	return ItemWeaponAssaultGun;
+	case 189:	return ItemWeaponAssaultGun2;
+	case 190:	return ItemWeaponFlameThrower;
+	case 191:	return Flame_thrower_Parts;
+	case 192:	return ItemWeaponMiniMissileLauncher;
+	case 193:	return ItemWeaponMauler;
+	case 194:	return ItemWeaponCrossbow;
+	case 195:	return ItemWeaponGrenadeLauncher;
+	case 196:	return ItemWeaponSigil1;
+	case 197:	return ItemWeaponSigil2;
+	case 198:	return ItemWeaponSigil3;
+	case 199:	return ItemWeaponSigil4;
+	case 200:	return ItemWeaponSigil5;
+	case 289:	return BrokenPowerCoupling;
+	case 298:	return Ammo2;
+	case 299:	return Health1;
+	case 300:	return Info1;
+	case 301:	return Alarm1;
+	case 302:	return ConversationItem302;
+	case 303:	return ConversationItem303;
+	case 304:	return Prison_pass;
+	case 305:	return ConversationItem305;
+	case 306:	return ConversationItem306;
+	case 307:	return ConversationItem307;
+	case 308:	return Report;
+	case 309:	return Toughness;
+	case 310:	return Accuracy;
+	case 311:	return Oracle_Pass;
+	case 312:	return Quest1;
+	case 313:	return Quest2;
+	case 314:	return Quest3;
+	case 315:	return Quest4;
+	case 316:	return Quest5;
+	case 317:	return Quest6;
+	case 318:	return Quest7;
+	case 319:	return Quest8;
+	case 320:	return Quest9;
+	case 321:	return Quest10;
+	case 322:	return Quest11;
+	case 323:	return Quest12;
+	case 324:	return Quest13;
+	case 325:	return Quest14;
+	case 326:	return Quest15;
+	case 327:	return Quest16;
+	case 328:	return Quest17;
+	case 329:	return Quest18;
+	case 330:	return Quest19;
+	case 331:	return Quest20;
+	case 332:	return Quest21;
+	case 333:	return Quest22;
+	case 334:	return Quest23;
+	case 335:	return Quest24;
+	case 336:	return Quest25;
+	case 337:	return Quest26;
+	case 338:	return Quest27;
+	case 339:	return Quest28;
+	case 340:	return Quest29;
+	case 341:	return Quest30;
+	case 342:	return Quest31;
+	case 343:	return ConversationItem343;
+	}
+	if (ID)
+	{
+		print("Unknown item %d", ID);
+	}
+	return classidNone;
+}
+
+//==========================================================================
+//
+//	CheckForNeededItem
+//
+//==========================================================================
+
+int CheckForNeededItem(Actor A, int ID, int Amount)
+{
+	classid CID;
+	int i;
+
+	//	Get class ID.
+	CID = GetClassFromID(ID);
+	//	Check inventory items.
+	for (i = 0; i < NUMINVITEMS; i++)
+	{
+		if (MainGameInfo(Game).InvItemCID[i] == CID)
+		{
+			return A.Player.Inventory[i] < Amount ? -2 : i;
+		}
+	}
+	//	Check keys.
+	for (i = 0; i < NUMKEYS; i++)
+	{
+		if (MainGameInfo(Game).KeyCID[i] == CID)
+		{
+			return A.Player.Keys & (1 << i) ? -1 : -2;
+		}
+	}
+	//	Check quests.
+	if (ID >= 312 && ID <= 342)
+	{
+		return A.Player.Quests & (1 << (ID - 312)) ? -1 : -2;
+	}
+	//	Check Communicator.
+	if (CID == Communicator)
+	{
+		return A.Player.Communicator ? -1 : -2;
+	}
+	return -1;
+}
+
+//==========================================================================
+//
+//	StopSpeech
+//
+//==========================================================================
+
+void StopSpeech()
+{
+	CurrentSpeaker.Angles.yaw = OldSpeakerAngle;
+	CurrentSpeaker = none;
+	CurrentSpeakingTo = none;
+	CurrentSpeechIndex = 0;
+}
+
+//==========================================================================
+//
+//	ConChoiceImpulse
+//
+//==========================================================================
+
+void ConChoiceImpulse(int ChoiceNum)
+{
+	RogueConSpeech *Speech;
+	RogueConChoice *Choice;
+	int SpeechNum;
+	int Item1;
+	int Item2;
+	int Item3;
+	classid ItemType;
+	Pickup Item;
+	bool GaveItem;
+
+	if (ConversationSlideshow)
+	{
+		//	Resume conversation after slideshow.
+		StartSpeech(CurrentSpeaker.GetSpeech());
+		ConversationSlideshow = false;
+		return;
+	}
+	if (!CurrentSpeaker || !CurrentSpeechIndex)
+	{
+		return;
+	}
+	if (!ChoiceNum)
+	{
+		StopSpeech();
+		return;
+	}
+	if (CurrentSpeechIndex < 0)
+	{
+		Speech = &GLevel.GenericSpeeches[-CurrentSpeechIndex - 1];
+	}
+	else
+	{
+		Speech = &GLevel.LevelSpeeches[CurrentSpeechIndex - 1];
+	}
+	Choice = &Speech->Choices[ChoiceNum - 1];
+	//	Check if player has needed items.
+	Item1 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem1, Choice->NeedAmount1);
+	Item2 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem2, Choice->NeedAmount2);
+	Item3 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem3, Choice->NeedAmount3);
+	if (Item1 == -2 || Item2 == -2 || Item3 == -2)
+	{
+		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextNo));
+		StopSpeech();
+		return;
+	}
+	GaveItem = true;
+	if (Choice->GiveItem > 0)
+	{
+		ItemType = GetClassFromID(Choice->GiveItem);
+		if (ItemType != classidNone)
+		{
+			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
+			GaveItem = Item.GiveItemTo(CurrentSpeakingTo);
+			Item.Remove();
+		}
+	}
+	if (GaveItem)
+	{
+		if (Item1 != -1)
+			CurrentSpeakingTo.Player.RemoveInvItem(Item1, Choice->NeedAmount1);
+		if (Item2 != -1)
+			CurrentSpeakingTo.Player.RemoveInvItem(Item2, Choice->NeedAmount2);
+		if (Item3 != -1)
+			CurrentSpeakingTo.Player.RemoveInvItem(Item3, Choice->NeedAmount3);
+	}
+	if (Choice->Objectives)
+	{
+		CurrentSpeakingTo.Player.SetObjectives(Choice->Objectives);
+	}
+	if (!GaveItem)
+	{
+		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextNo));
+	}
+	else if (strcmp(ARR2STR(Choice->TextOK), "") &&
+		strcmp(ARR2STR(Choice->TextOK), "_"))
+	{
+		cprint(CurrentSpeakingTo.Player, ARR2STR(Choice->TextOK));
+	}
+	if (Choice->Next < 0)
+	{
+		CurrentSpeaker.CurrentSpeech = -Choice->Next;
+		if (!ConversationSlideshow)
+		{
+			StartSpeech(CurrentSpeaker.GetSpeech());
+		}
+	}
+	else
+	{
+		if (Choice->Next)
+		{
+			CurrentSpeaker.CurrentSpeech = Choice->Next;
+		}
+		StopSpeech();
+		ConversationSlideshow = false;
+	}
+}
+
+//===========================================================================
+//
+//  Spawn
+//
+//===========================================================================
+
+Actor Spawn(classid type, TVec AOrigin)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
 defaultproperties
 {
 }
@@ -4058,6 +4638,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

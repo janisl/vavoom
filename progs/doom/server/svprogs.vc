@@ -33,12 +33,6 @@
 #include "gendefs.vc"
 #include "svdefs.vc"
 
-#include "xlat.vc"
-
-#include "world.vc"
-
-#include "wpninfo.vc"
-
 #include "../game/classes.vc"
 
 #include "../game1/classes.vc"
@@ -47,20 +41,18 @@
 #include "../game2/classes.vc"
 
 //	Test only with Doom2 because attack functions need Doom2 types.
-//#include "strings.vc"
-//#include "deh_wpn.vc"
-//#include "deh_act.vc"
+#include "../game/HackedWeapon.vc"
+#include "../game/HackedActor.vc"
 #endif
 
 #include "mobj.vc"
 
-#include "bot.vc"
-
-#include "svmain.vc"
-
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.29  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

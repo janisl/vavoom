@@ -23,17 +23,318 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+class MainGameInfo : GameInfo;
 
-// CONSTANTS ---------------------------------------------------------------
+classid WeaponClasses[NUMWEAPONS * NUMCLASSES];
 
-// TYPES -------------------------------------------------------------------
+int terrain_contents[6];
+int contents_transluc[6];
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
+botinfo_t botinfo[NUMTOTALBOTS];
+int botskill;
 
-// DATA DECLARATIONS -------------------------------------------------------
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
 
-// CODE --------------------------------------------------------------------
+void Init()
+{
+	SetSeqTrans('Platform', 0, SEQ_Platform);
+	SetSeqTrans('Platform', 1, SEQ_Platform);	// a 'heavy' platform is just a platform
+	SetSeqTrans('PlatformMetal', 2, SEQ_Platform);
+	SetSeqTrans('Platform', 3, SEQ_Platform);	// same with a 'creak' platform
+	SetSeqTrans('Silence', 4, SEQ_Platform);
+	SetSeqTrans('Lava', 5, SEQ_Platform);
+	SetSeqTrans('Water', 6, SEQ_Platform);
+	SetSeqTrans('Ice', 7, SEQ_Platform);
+	SetSeqTrans('Earth', 8, SEQ_Platform);
+	SetSeqTrans('PlatformMetal2', 9, SEQ_Platform);
+
+	SetSeqTrans('DoorNormal', 0, SEQ_Door);
+	SetSeqTrans('DoorHeavy', 1, SEQ_Door);
+	SetSeqTrans('DoorMetal', 2, SEQ_Door);
+	SetSeqTrans('DoorCreak', 3, SEQ_Door);
+	SetSeqTrans('Silence', 4, SEQ_Door);
+	SetSeqTrans('Lava', 5, SEQ_Door);
+	SetSeqTrans('Water', 6, SEQ_Door);
+	SetSeqTrans('Ice', 7, SEQ_Door);
+	SetSeqTrans('Earth', 8, SEQ_Door);
+	SetSeqTrans('DoorMetal2', 9, SEQ_Door);
+
+	SetSeqTrans('Wind', 0, SEQ_Environment);
+
+	InitBotTypes();
+}
+
+//==========================================================================
+//
+//  InitNewGame
+//
+//==========================================================================
+
+void InitNewGame(int skill)
+{
+	nomonsters = GetCvar("NoMonsters");
+	fastparm = gameskill == sk_nightmare || GetCvar("Fast");
+	randomclass = GetCvar("RandomClass");
+}
+
+//==========================================================================
+//
+//  CreateLevelInfo
+//
+//==========================================================================
+
+LevelInfo CreateLevelInfo()
+{
+	return NewSpecialThinker(HexenLevelInfo);
+}
+
+//==========================================================================
+//
+//  InitBotTypes
+//
+//==========================================================================
+
+void InitBotTypes()
+{
+	SetBotType(0,
+		"botf1",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf1\\color\\0\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(1,
+		"botf2",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf2\\color\\1\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(2,
+		"botf3",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf3\\color\\2\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(3,
+		"botf4",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf4\\color\\3\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(4,
+		"botf5",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf5\\color\\4\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(5,
+		"botf6",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf6\\color\\5\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(6,
+		"botf7",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf7\\color\\6\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(7,
+		"botf8",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botf8\\color\\7\\class\\0\\model\\\\skin\\"
+	);
+	SetBotType(8,
+		"botc1",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc1\\color\\0\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(9,
+		"botc2",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc2\\color\\1\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(10,
+		"botc3",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc3\\color\\2\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(11,
+		"botc4",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc4\\color\\3\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(12,
+		"botc5",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc5\\color\\4\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(13,
+		"botc6",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc6\\color\\5\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(14,
+		"botc7",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc7\\color\\6\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(15,
+		"botc8",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botc8\\color\\7\\class\\1\\model\\\\skin\\"
+	);
+	SetBotType(16,
+		"botm1",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm1\\color\\0\\class\\2\\model\\\\skin\\"
+	);
+	SetBotType(17,
+		"botm2",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm2\\color\\1\\class\\2\\model\\\\skin\\"
+	);
+	SetBotType(18,
+		"botm3",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm3\\color\\2\\class\\2\\model\\\\skin\\"
+	);
+	SetBotType(19,
+		"botm4",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm4\\color\\3\\class\\2\\model\\\\skin\\"
+	);
+	SetBotType(20,
+		"botm5",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm5\\color\\4\\class\\2\\model\\\\skin\\"
+	);
+	SetBotType(21,
+		"botm6",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm6\\color\\5\\class\\2\\model\\\\skin\\"
+	);
+	SetBotType(22,
+		"botm7",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm7\\color\\6\\class\\2\\model\\\\skin\\"
+	);
+	SetBotType(23,
+		"botm8",
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		bsk_medium,
+		"\\name\\botm8\\color\\7\\class\\2\\model\\\\skin\\"
+	);
+}
+
+//==========================================================================
+//
+//  SetBotType
+//
+//==========================================================================
+
+void SetBotType(int i, string Name, int accuracy, int intelect, int evade,
+	int anticip, int reaction, string userinfo)
+{
+	botinfo[i].Name = Name;
+	botinfo[i].accuracy = accuracy;
+	botinfo[i].intelect = intelect;
+	botinfo[i].evade = evade;
+	botinfo[i].anticip = anticip;
+	botinfo[i].reaction = reaction;
+	botinfo[i].userinfo = userinfo;
+}
 
 //==========================================================================
 //
@@ -41,13 +342,13 @@
 //
 //==========================================================================
 
-void MakeFloorSlope(mthing_t * mthing)
+void MakeFloorSlope(Level InLevel, mthing_t * mthing)
 {
 	sector_t *sec;
 	line_t *line;
 	int i;
 
-	sec = GLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
+	sec = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
 	for (i = 0; i < sec->linecount; i++)
 	{
 		line = sec->lines[i];
@@ -91,13 +392,13 @@ void MakeFloorSlope(mthing_t * mthing)
 //
 //==========================================================================
 
-void MakeCeilingSlope(mthing_t * mthing)
+void MakeCeilingSlope(Level InLevel, mthing_t * mthing)
 {
 	sector_t *sec;
 	line_t *line;
 	int i;
 
-	sec = GLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
+	sec = InLevel.PointInSector(vector(mthing->x, mthing->y, 0.0));
 	for (i = 0; i < sec->linecount; i++)
 	{
 		line = sec->lines[i];
@@ -141,7 +442,7 @@ void MakeCeilingSlope(mthing_t * mthing)
 //
 //==========================================================================
 
-bool SetVertexHeights(int ThingID)
+bool SetVertexHeights(Level InLevel, int ThingID)
 {
 	int i;
 	int j;
@@ -150,21 +451,21 @@ bool SetVertexHeights(int ThingID)
 	
 	ret = false;
 	//	Clean all
-	for (i = 0; i < GLevel.NumVertexes; i++)
+	for (i = 0; i < InLevel.NumVertexes; i++)
 	{
-		GLevel.Vertexes[i].z = 0.1;
+		InLevel.Vertexes[i].z = 0.1;
 	}
-	for (j = 0; j < GLevel.NumThings; j++)
+	for (j = 0; j < InLevel.NumThings; j++)
 	{
-		mthing = &GLevel.Things[j];
+		mthing = &InLevel.Things[j];
 		if (mthing->type == ThingID)
 		{
-			for (i = 0; i < GLevel.NumVertexes; i++)
+			for (i = 0; i < InLevel.NumVertexes; i++)
 			{
-				if (GLevel.Vertexes[i].x == mthing->x &&
-					GLevel.Vertexes[i].y == mthing->y)
+				if (InLevel.Vertexes[i].x == mthing->x &&
+					InLevel.Vertexes[i].y == mthing->y)
 				{
-					GLevel.Vertexes[i].z = mthing->height;
+					InLevel.Vertexes[i].z = mthing->height;
 					ret = true;
 				}
 			}
@@ -179,13 +480,13 @@ bool SetVertexHeights(int ThingID)
 //
 //==========================================================================
 
-void CleanVertexHeights(void)
+void CleanVertexHeights(Level InLevel)
 {
 	int i;
 	
-	for (i = 0; i < GLevel.NumVertexes; i++)
+	for (i = 0; i < InLevel.NumVertexes; i++)
 	{
-		GLevel.Vertexes[i].z = 0.0;
+		InLevel.Vertexes[i].z = 0.0;
 	}
 }
 
@@ -195,7 +496,7 @@ void CleanVertexHeights(void)
 //
 //==========================================================================
 
-void MakeVertexFloorHeights(void)
+void MakeVertexFloorHeights(Level InLevel)
 {
 	int i;
 	sector_t *sec;
@@ -205,13 +506,13 @@ void MakeVertexFloorHeights(void)
 	TVec v1;
 	TVec v2;
 	
-	if (!SetVertexHeights(1504))
+	if (!SetVertexHeights(InLevel, 1504))
 	{
 		return;
 	}
-	for (i = 0; i < GLevel.NumSectors; i++)
+	for (i = 0; i < InLevel.NumSectors; i++)
 	{
-		sec = &GLevel.Sectors[i];
+		sec = &InLevel.Sectors[i];
 		if (sec->linecount != 3)
 			continue;
 		p1 = *sec->lines[0]->v1;
@@ -268,7 +569,7 @@ void MakeVertexFloorHeights(void)
 //
 //==========================================================================
 
-void MakeVertexCeilingHeights(void)
+void MakeVertexCeilingHeights(Level InLevel)
 {
 	int i;
 	sector_t *sec;
@@ -278,13 +579,13 @@ void MakeVertexCeilingHeights(void)
 	TVec v1;
 	TVec v2;
 	
-	if (!SetVertexHeights(1505))
+	if (!SetVertexHeights(InLevel, 1505))
 	{
 		return;
 	}
-	for (i = 0; i < GLevel.NumSectors; i++)
+	for (i = 0; i < InLevel.NumSectors; i++)
 	{
-		sec = &GLevel.Sectors[i];
+		sec = &InLevel.Sectors[i];
 		if (sec->linecount != 3)
 			continue;
 		p1 = *sec->lines[0]->v1;
@@ -425,17 +726,17 @@ void AlignPlane(sector_t *sec, line_t *line, int which)
 //
 //==========================================================================
 
-void SetSlopes(void)
+void SetSlopes(Level InLevel)
 {
 	int i, s;
 
-	for (i = 0; i < GLevel.NumLines; i++)
+	for (i = 0; i < InLevel.NumLines; i++)
 	{
-		if (GLevel.Lines[i].special == LNSPEC_PlaneAlign)
+		if (InLevel.Lines[i].special == LNSPEC_PlaneAlign)
 		{
-			GLevel.Lines[i].special = 0;
-//			GLevel.Lines[i].id = GLevel.Lines[i].args[2];
-			if (GLevel.Lines[i].backsector != NULL)
+			InLevel.Lines[i].special = 0;
+//			InLevel.Lines[i].id = InLevel.Lines[i].args[2];
+			if (InLevel.Lines[i].backsector != NULL)
 			{
 				// args[0] is for floor, args[1] is for ceiling
 				//
@@ -443,18 +744,18 @@ void SetSlopes(void)
 				// then args[0], bits 2-3 are for ceiling.
 				for (s = 0; s < 2; s++)
 				{
-					int bits = (s == 0 ? GLevel.Lines[i].arg1 :
- 						GLevel.Lines[i].arg2) & 3;
+					int bits = (s == 0 ? InLevel.Lines[i].arg1 :
+ 						InLevel.Lines[i].arg2) & 3;
 
 					if (s == 1 && bits == 0)
-						bits = (GLevel.Lines[i].arg1 >> 2) & 3;
+						bits = (InLevel.Lines[i].arg1 >> 2) & 3;
 
 					if (bits == 1)			// align front side to back
-						AlignPlane(GLevel.Lines[i].frontsector,
-							&GLevel.Lines[i], s);
+						AlignPlane(InLevel.Lines[i].frontsector,
+							&InLevel.Lines[i], s);
 					else if (bits == 2)		// align back side to front
-						AlignPlane(GLevel.Lines[i].backsector,
-							&GLevel.Lines[i], s);
+						AlignPlane(InLevel.Lines[i].backsector,
+							&InLevel.Lines[i], s);
 				}
 			}
 		}
@@ -467,32 +768,24 @@ void SetSlopes(void)
 //
 //==========================================================================
 
-void SpawnExtraFloors(line_t * line)
+void SpawnExtraFloors(Level InLevel, line_t * line)
 {
 	int j;
 
-	for (j = 0; j < GLevel.NumSectors; j++)
+	for (j = 0; j < InLevel.NumSectors; j++)
 	{
-		if (line->arg1 == GLevel.Sectors[j].tag)
+		if (line->arg1 == InLevel.Sectors[j].tag)
 		{
-			AddExtraFloor(line, &GLevel.Sectors[j]);
+			AddExtraFloor(line, &InLevel.Sectors[j]);
 		}
 	}
 }
 
 //==========================================================================
 //
-//  MakeContents
+//  CreateContents
 //
 //==========================================================================
-
-int terrain_contents[] = {
-	CONTENTS_EMPTY,
-	CONTENTS_WATER,
-	CONTENTS_SLUDGE,
-	CONTENTS_LAVA
-};
-int contents_transluc[] = { 0, 50, 30, 40 };
 
 void MakeContents(line_t * line)
 {
@@ -529,11 +822,54 @@ void MakeContents(line_t * line)
 
 //==========================================================================
 //
+//  MakeHeightSec
+//
+//	killough 3/7/98:
+//	support for drawn heights coming from different sector
+//
+//==========================================================================
+
+void MakeHeightSec(Level InLevel, line_t* Line)
+{
+	sector_t*	Sec;
+	int			s;
+
+	Sec = Line->frontsector;
+	if (Line->arg2 & 2)
+	{
+		Sec->bFakeFloorOnly = true;
+	}
+	if (Line->arg2 & 4)
+	{
+		Sec->bClipFakePlanes = true;
+	}
+	if (Line->arg2 & 8)
+	{
+		Sec->bUnderWater = true;
+	}
+	if (Line->arg2 & 16)
+	{
+		Sec->bIgnoreHeightSec = true;
+	}
+	if (Line->arg2 & 32)
+	{
+		Sec->bNoFakeLight = true;
+	}
+	for (s = FindSectorFromTag(Line->arg1, -1); s  >= 0;
+		s = FindSectorFromTag(Line->arg1, s))
+	{
+		InLevel.Sectors[s].heightsec = Sec;
+		SetHeightSector(&InLevel.Sectors[s], Sec, Line->arg2);
+	}
+}
+
+//==========================================================================
+//
 //  SetSectorFriction
 //
 //==========================================================================
 
-void SetSectorFriction(int tag, int amount, bool alterFlag)
+void SetSectorFriction(Level InLevel, int tag, int amount, bool alterFlag)
 {
 	int			s;
 	int			OldFriction;
@@ -583,64 +919,21 @@ void SetSectorFriction(int tag, int amount, bool alterFlag)
 		// drag on CPU. New code adjusts friction of sector only once
 		// at level startup, and then uses this friction value.
 
-		GLevel.Sectors[s].Friction = Friction;
-		GLevel.Sectors[s].MoveFactor = MoveFactor;
+		InLevel.Sectors[s].Friction = Friction;
+		InLevel.Sectors[s].MoveFactor = MoveFactor;
 		if (alterFlag)
 		{
 			// When used inside a script, the sectors' friction flags
 			// can be enabled and disabled at will.
 			if (OldFriction == 0xe800)
 			{
-				GLevel.Sectors[s].special &= ~SECSPEC_FRICTION_MASK;
+				InLevel.Sectors[s].special &= ~SECSPEC_FRICTION_MASK;
 			}
 			else
 			{
-				GLevel.Sectors[s].special |= SECSPEC_FRICTION_MASK;
+				InLevel.Sectors[s].special |= SECSPEC_FRICTION_MASK;
 			}
 		}
-	}
-}
-
-//==========================================================================
-//
-//  MakeHeightSec
-//
-//	killough 3/7/98:
-//	support for drawn heights coming from different sector
-//
-//==========================================================================
-
-void MakeHeightSec(line_t* Line)
-{
-	sector_t*	Sec;
-	int			s;
-
-	Sec = Line->frontsector;
-	if (Line->arg2 & 2)
-	{
-		Sec->bFakeFloorOnly = true;
-	}
-	if (Line->arg2 & 4)
-	{
-		Sec->bClipFakePlanes = true;
-	}
-	if (Line->arg2 & 8)
-	{
-		Sec->bUnderWater = true;
-	}
-	if (Line->arg2 & 16)
-	{
-		Sec->bIgnoreHeightSec = true;
-	}
-	if (Line->arg2 & 32)
-	{
-		Sec->bNoFakeLight = true;
-	}
-	for (s = FindSectorFromTag(Line->arg1, -1); s  >= 0;
-		s = FindSectorFromTag(Line->arg1, s))
-	{
-		GLevel.Sectors[s].heightsec = Sec;
-		SetHeightSector(&GLevel.Sectors[s], Sec, Line->arg2);
 	}
 }
 
@@ -650,7 +943,7 @@ void MakeHeightSec(line_t* Line)
 //
 //==========================================================================
 
-void SpawnWorld()
+void SpawnWorld(Level InLevel)
 {
 	int			i;
 	int			j;
@@ -659,185 +952,201 @@ void SpawnWorld()
 	mthing_t*	mthing;
 
 	//  Spawn slopes first
-	SetSlopes();
-	for (i = 0; i < GLevel.NumThings; i++)
+	SetSlopes(InLevel);
+	for (i = 0; i < InLevel.NumThings; i++)
 	{
-		mthing = &GLevel.Things[i];
+		mthing = &InLevel.Things[i];
 
 		if (mthing->type == 1500)
 		{
-			MakeFloorSlope(mthing);
+			MakeFloorSlope(InLevel, mthing);
 			mthing->type = 0;
 			continue;
 		}
 
 		if (mthing->type == 1501)
 		{
-			MakeCeilingSlope(mthing);
+			MakeCeilingSlope(InLevel, mthing);
+			mthing->type = 0;
+			continue;
+		}
+
+		if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
+		{
+			// Polyobj StartSpot Pt.
+			SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
+				(mthing->type == PO_SPAWNCRUSH_TYPE));
+			mthing->type = 0;
+			continue;
+		}
+		if (mthing->type == PO_ANCHOR_TYPE)
+		{
+			// Polyobj Anchor Pt.
+			AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
 			mthing->type = 0;
 			continue;
 		}
 	}
-	MakeVertexFloorHeights();
-	MakeVertexCeilingHeights();
-	CleanVertexHeights();
+	MakeVertexFloorHeights(InLevel);
+	MakeVertexCeilingHeights(InLevel);
+	CleanVertexHeights(InLevel);
 
 	//	Initialise initial friction values.
-	for (i = 0; i < GLevel.NumSectors; i++)
+	for (i = 0; i < InLevel.NumSectors; i++)
 	{
-		GLevel.Sectors[i].Friction = FRICTION;
+		InLevel.Sectors[i].Friction = FRICTION_NORMAL;
 	}
 
 	//  Spawn 3D floors
-	for (i = 0; i < GLevel.NumLines; i++)
+	for (i = 0; i < InLevel.NumLines; i++)
 	{
-		switch (GLevel.Lines[i].special)
+		switch (InLevel.Lines[i].special)
 		{
 		case LNSPEC_3DFloor:
-			SpawnExtraFloors(&GLevel.Lines[i]);
-			GLevel.Lines[i].special = 0;
+			SpawnExtraFloors(InLevel, &InLevel.Lines[i]);
+			InLevel.Lines[i].special = 0;
 			break;
 
 		case LNSPEC_Contents:
-			MakeContents(&GLevel.Lines[i]);
-			GLevel.Lines[i].special = 0;
+			MakeContents(&InLevel.Lines[i]);
+			InLevel.Lines[i].special = 0;
 			break;
 
 		case LNSPEC_TransferFloorLight:
-			for (SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, -1);
+			for (SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, -1);
 				SecNum >= 0;
-				SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, SecNum))
+				SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
 			{
-				SetFloorLightSector(&GLevel.Sectors[SecNum],
-					GLevel.Lines[i].frontsector);
+				SetFloorLightSector(&InLevel.Sectors[SecNum],
+					InLevel.Lines[i].frontsector);
 			}
-			GLevel.Lines[i].special = 0;
+			InLevel.Lines[i].special = 0;
 			break;
 
 		case LNSPEC_TransferCeilingLight:
-			for (SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, -1);
+			for (SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, -1);
 				SecNum >= 0;
-				SecNum = FindSectorFromTag(GLevel.Lines[i].arg1, SecNum))
+				SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
 			{
-				SetCeilingLightSector(&GLevel.Sectors[SecNum],
-					GLevel.Lines[i].frontsector);
+				SetCeilingLightSector(&InLevel.Sectors[SecNum],
+					InLevel.Lines[i].frontsector);
 			}
-			GLevel.Lines[i].special = 0;
+			InLevel.Lines[i].special = 0;
 			break;
 
 		case LNSPEC_SectorSetFriction:
-			if (GLevel.Lines[i].arg2)
+			if (InLevel.Lines[i].arg2)
 			{
 				//	Allow setting friction amount from parameter
-				length = GLevel.Lines[i].arg2 <= 200 ?
-					GLevel.Lines[i].arg2 : 200;
+				length = InLevel.Lines[i].arg2 <= 200 ?
+					InLevel.Lines[i].arg2 : 200;
 			}
 			else
 			{
-				length = ftoi(Length(*GLevel.Lines[i].v2 -
-					*GLevel.Lines[i].v1));
+				length = ftoi(Length(*InLevel.Lines[i].v2 -
+					*InLevel.Lines[i].v1));
 			}
 
-			SetSectorFriction(GLevel.Lines[i].arg1, length, false);
-			GLevel.Lines[i].special = 0;
+			SetSectorFriction(InLevel, InLevel.Lines[i].arg1, length, false);
+			InLevel.Lines[i].special = 0;
 			break;
 
 		case LNSPEC_TransferHeights:
-			MakeHeightSec(&GLevel.Lines[i]);
+			MakeHeightSec(InLevel, &InLevel.Lines[i]);
 			break;
 		}
 	}
 
 	TaggedLineCount = 0;
-	for (i = 0; i < GLevel.NumLines; i++)
+	for (i = 0; i < InLevel.NumLines; i++)
 	{
-		switch (GLevel.Lines[i].special)
+		switch (InLevel.Lines[i].special)
 		{
 		case LNSPEC_LineSetIdentification:
 		case LNSPEC_LineTranslucent:
 		case LNSPEC_TeleportLine:
-			if (GLevel.Lines[i].arg1)
+			if (InLevel.Lines[i].arg1)
 			{
 				if (TaggedLineCount == MAX_TAGGED_LINES)
 				{
 					Error("P_SpawnSpecials: MAX_TAGGED_LINES exceeded.");
 				}
-				TaggedLines[TaggedLineCount].line = &GLevel.Lines[i];
-				TaggedLines[TaggedLineCount++].lineTag = GLevel.Lines[i].arg1;
+				TaggedLines[TaggedLineCount].line = &InLevel.Lines[i];
+				TaggedLines[TaggedLineCount++].lineTag = InLevel.Lines[i].arg1;
 			}
-			if (GLevel.Lines[i].special == LNSPEC_LineSetIdentification)
+			if (InLevel.Lines[i].special == LNSPEC_LineSetIdentification)
 			{
-				GLevel.Lines[i].special = 0;
+				InLevel.Lines[i].special = 0;
 			}
 			break;
 		}
 	}
 
 	//	Process translucent lines
-	for (i = 0; i < GLevel.NumLines; i++)
+	for (i = 0; i < InLevel.NumLines; i++)
 	{
-		if (GLevel.Lines[i].special == 208)
+		if (InLevel.Lines[i].special != 208)
 		{
-			int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
-			if (GLevel.Lines[i].arg1)
+			continue;
+		}
+
+		int trans = (255 - InLevel.Lines[i].arg2) * 100 / 255;
+		if (InLevel.Lines[i].arg1)
+		{
+			for (j = 0; j < TaggedLineCount; j++)
 			{
-				for (j = 0; j < TaggedLineCount; j++)
+				if (TaggedLines[j].lineTag == InLevel.Lines[i].arg1)
 				{
-					if (TaggedLines[j].lineTag == GLevel.Lines[i].arg1)
-					{
-						SetLineTransluc(TaggedLines[j].line, trans);
-					}
+					SetLineTransluc(TaggedLines[j].line, trans);
 				}
 			}
-			else
-			{
-				SetLineTransluc(&GLevel.Lines[i], trans);
-			}
-			GLevel.Lines[i].special = 0;
 		}
-		else if (GLevel.Lines[i].special == 49 && GLevel.Lines[i].arg2 != 255)
+		else
 		{
-			int trans = (255 - GLevel.Lines[i].arg2) * 100 / 255;
-			SetLineTransluc(&GLevel.Lines[i], trans);
+			SetLineTransluc(&InLevel.Lines[i], trans);
 		}
+		InLevel.Lines[i].special = 0;
 	}
+}
+
+defaultproperties
+{
+	WeaponClasses[0] = WeaponFighterPunch;
+	WeaponClasses[1] = WeaponClericMace;
+	WeaponClasses[2] = WeaponMageWand;
+	WeaponClasses[3] = WeaponPigSnout;
+	WeaponClasses[4] = WeaponFighterAxe;
+	WeaponClasses[5] = WeaponClericStaff;
+	WeaponClasses[6] = WeaponMageCone;
+	WeaponClasses[7] = WeaponPigSnout;
+	WeaponClasses[8] = WeaponFighterHammer;
+	WeaponClasses[9] = WeaponClericFire;
+	WeaponClasses[10] = WeaponMageLightning;
+	WeaponClasses[11] = WeaponPigSnout;
+	WeaponClasses[12] = WeaponFighterSword;
+	WeaponClasses[13] = WeaponClericHoly;
+	WeaponClasses[14] = WeaponMageStaff;
+	WeaponClasses[15] = WeaponPigSnout;
+
+	terrain_contents[0] = CONTENTS_EMPTY;
+	terrain_contents[1] = CONTENTS_EMPTY;
+	terrain_contents[2] = CONTENTS_WATER;
+	terrain_contents[3] = CONTENTS_WATER;
+	terrain_contents[4] = CONTENTS_LAVA;
+	terrain_contents[5] = CONTENTS_SLUDGE;
+
+	contents_transluc[0] = 0;
+	contents_transluc[1] = 50;
+	contents_transluc[2] = 20;
+	contents_transluc[3] = 30;
+
+	botskill = 2;
 }
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.12  2005/12/27 22:22:28  dj_jl
-//  Created level info class, moved action special handling to it.
-//
-//  Revision 1.11  2005/06/04 13:58:13  dj_jl
-//  Adding support for Boom fake sectors.
-//
-//  Revision 1.10  2005/03/28 07:45:30  dj_jl
-//  Some Boom line specials, fixed multiple bugs.
-//
-//  Revision 1.9  2005/01/25 17:45:18  dj_jl
-//  Constants for common line specials
-//  Updated special utilites.
-//
-//  Revision 1.8  2004/12/27 12:23:15  dj_jl
-//  Multiple small changes for version 1.16
-//
-//  Revision 1.7  2002/09/07 16:28:26  dj_jl
-//  Added Level class.
-//
-//  Revision 1.6  2002/08/28 16:36:39  dj_jl
-//  Merged MapObject with Entity, some natives, beautification.
-//
-//  Revision 1.5  2002/08/24 14:53:07  dj_jl
-//  Implemented sloping with vertex heights.
-//
-//  Revision 1.4  2002/01/07 12:27:42  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.3  2001/09/24 17:24:11  dj_jl
-//  Beautification
-//
-//  Revision 1.2  2001/07/27 14:27:53  dj_jl
-//  Update with Id-s and Log-s, some fixes
+//  Revision 1.1  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
 //
 //**************************************************************************

@@ -25,6 +25,9 @@
 
 class HexenLevelInfo : LevelInfo;
 
+Actor bodyque[BODYQUESIZE];
+int bodyqueslot;
+
 // Corpse queue for monsters
 Actor corpseQueue[CORPSEQUEUESIZE];
 int corpseQueueSlot;
@@ -853,7 +856,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			PUSHER_Wind);
 		break;
 	case LNSPEC_SectorSetFriction:
-		SetSectorFriction(Arg1, Arg2, true);
+		MainGameInfo(Game).SetSectorFriction(XLevel, Arg1, Arg2, true);
 		buttonSuccess = true;
 		break;
 	case LNSPEC_SectorSetCurrent:
@@ -3834,6 +3837,239 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 	return false;
 }
 
+//**************************************************************************
+//
+//      NOISE ALERT
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  RecursiveSound
+//
+//  Called by NoiseAlert. Recursively traverse adjacent sectors, sound
+// blocking lines cut off traversal.
+//
+//==========================================================================
+
+void RecursiveSound(sector_t * sec, int soundblocks, Actor soundtarget)
+{
+	int i;
+	line_t *check;
+	sector_t *other;
+
+	// wake up all monsters in this sector
+	if (sec->validcount == *validcount &&
+		sec->soundtraversed <= soundblocks + 1)
+	{
+		return;	// already flooded
+	}
+
+	sec->validcount = *validcount;
+	sec->soundtraversed = soundblocks + 1;
+	sec->SoundTarget = soundtarget;
+
+	for (i = 0; i < sec->linecount; i++)
+	{
+		check = sec->lines[i];
+		if (!(check->flags & ML_TWOSIDED))
+			continue;
+
+		if (!LineOpenings(check, *check->v1))
+		{
+			if (!LineOpenings(check, *check->v2))
+				continue;	// closed door
+		}
+
+		if (GLevel.Sides[check->sidenum[0]].sector == sec)
+			other = GLevel.Sides[check->sidenum[1]].sector;
+		else
+			other = GLevel.Sides[check->sidenum[0]].sector;
+
+		if (check->flags & ML_SOUNDBLOCK)
+		{
+			if (!soundblocks)
+				RecursiveSound(other, 1, soundtarget);
+		}
+		else
+			RecursiveSound(other, soundblocks, soundtarget);
+	}
+}
+
+//==========================================================================
+//
+//  NoiseAlert
+//
+//  If a monster yells at a player, it will alert other monsters to the
+// player.
+//
+//==========================================================================
+
+void NoiseAlert(Actor target, Actor emmiter)
+{
+	(*validcount)++;
+	RecursiveSound(emmiter.Sector, 0, target);
+}
+
+//==========================================================================
+//
+// SpawnMapThing
+//
+// The fields of the mapthing should already be in host byte order.
+//
+//==========================================================================
+
+void SpawnMapThing(mthing_t * mthing)
+{
+	int spawnMask;
+	Actor A;
+	classid moClass;
+
+	if (mthing->type <= 0)
+		return;
+
+	// Count deathmatch start positions
+	if (mthing->type == 11)
+	{
+		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
+		{
+			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
+			NumDeathmatchStarts++;
+		}
+		return;
+	}
+
+	// Check for player starts 1 to 4
+	if (mthing->type <= 4)
+	{
+		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
+		return;
+	}
+	// Check for player starts 5 to 8
+	if (mthing->type >= 9100 && mthing->type <= 9103)
+	{
+		mthing->type = 5 + mthing->type - 9100;	// Translate to 5 - 8
+		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
+			mthing->type - 1]);
+		return;
+	}
+
+	if (mthing->type >= 1400 && mthing->type < 1410)
+	{
+		GLevel.PointInSector(vector(mthing->x,
+			mthing->y, 0.0))->seqType = mthing->type - 1400;
+		return;
+	}
+
+	// Check current game type with spawn flags
+	if (netgame == false)
+	{
+		spawnMask = MTF_GSINGLE;
+	}
+	else if (deathmatch)
+	{
+		spawnMask = MTF_GDEATHMATCH;
+	}
+	else
+	{
+		spawnMask = MTF_GCOOP;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// Check current skill with spawn flags
+	if (gameskill == sk_baby || gameskill == sk_easy)
+	{
+		spawnMask = MTF_EASY;
+	}
+	else if (gameskill == sk_hard || gameskill == sk_nightmare)
+	{
+		spawnMask = MTF_HARD;
+	}
+	else
+	{
+		spawnMask = MTF_NORMAL;
+	}
+	if (!(mthing->options & spawnMask))
+	{
+		return;
+	}
+
+	// Check current character classes with spawn flags
+	if (!netgame)
+	{
+		// Single player
+		if (!(mthing->options & classFlags[GetCvar("Class")]))
+		{
+			// Not for current class
+			return;
+		}
+	}
+#if 0	//  Because of client/server and in-game joining we can't do this
+	else if (!deathmatch)
+	{
+		// Cooperative
+		spawnMask = 0;
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (GPlayers[i])
+			{
+				spawnMask |= classFlags[PlayerClass[i]];
+			}
+		}
+		if (!(mthing->options & spawnMask))
+		{
+			return;
+		}
+	}
+#endif
+
+	// Find which type to spawn
+	moClass = FindClassFromEditorId(mthing->type);
+	if (moClass && moClass != classidNone)
+	{
+		// spawn it
+		A = Actor(NewMobjThinker(moClass));
+		A.OnMapSpawn(mthing);
+	}
+	else
+	{
+		// Can't find thing type
+		dprint("SpawnMapThing: Unknown type %i at (%f, %f)",
+			mthing->type, mthing->x, mthing->y);
+	}
+}
+
+//==========================================================================
+//
+//  InitLava
+//
+//==========================================================================
+
+void InitLava(void)
+{
+	GLavaInflictor = Actor(NewMobjThinker(LavaInflictor));
+}
+
+//==========================================================================
+//
+//	Spawn
+//
+//==========================================================================
+
+Actor Spawn(classid type, TVec position)
+{
+	Actor A;
+
+	A = Actor(NewMobjThinker(type));
+	A.Origin = position;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
 defaultproperties
 {
 }
@@ -3841,6 +4077,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

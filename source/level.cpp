@@ -176,7 +176,7 @@ void VLevel::LoadMap(const char *mapname)
 	if (!bExtended)
 	{
 		//	Translate level to Hexen format
-		svpr.Exec("TranslateLevel", (int)this);
+		GGameInfo->eventTranslateLevel(this);
 	}
 #endif
 	//	Set up textures after loading lines because for some Boom line
@@ -1430,9 +1430,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/13 18:34:34  dj_jl
+//	Moved all server progs global functions to classes.
+//
 //	Revision 1.8  2006/02/11 12:21:10  dj_jl
 //	Byte swap Strife conversation lumps.
-//
+//	
 //	Revision 1.7  2005/11/14 19:34:16  dj_jl
 //	Added support for version 5 GL nodes.
 //	

@@ -35,7 +35,7 @@ int fastparm;
 int *validcount;
 int skyflatnum;
 
-sv_level_t *level;
+level_t *level;
 Level GLevel;
 LevelInfo GLevelInfo;
 
@@ -51,6 +51,9 @@ Entity TIDMobj[MAX_TID_COUNT];
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2006/02/13 18:30:13  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.12  2006/02/05 18:50:54  dj_jl
 //  Moved common utils to level info class or built-in.
 //

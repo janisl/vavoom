@@ -35,7 +35,7 @@ bool HandlePickup(Actor Toucher)
 {
 	if (Toucher)
 	{
-		P_NoiseAlert(Toucher, Toucher);
+		StrifeLevelInfo(Level).NoiseAlert(Toucher, Toucher);
 		cprint(Toucher.Player, "You Fool!  You've set off the alarm.\n");
 	}
 	return true;
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

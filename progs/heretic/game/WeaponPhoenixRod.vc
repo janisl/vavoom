@@ -35,7 +35,7 @@ int Attack2ShutdownState;
 //
 //==========================================================================
 
-void WeaponLevel2Fade(void)
+void WeaponLevel2Fade()
 {
 	if (StateNum != ReadyState2 && StateNum != UpState2)
 	{
@@ -51,7 +51,7 @@ void WeaponLevel2Fade(void)
 //
 //===========================================================================
 
-void A_FirePhoenixPL1(void)
+void A_FirePhoenixPL1()
 {
 	TVec vforward;
 
@@ -67,7 +67,7 @@ void A_FirePhoenixPL1(void)
 //
 //===========================================================================
 
-void A_InitPhoenixPL2(void)
+void A_InitPhoenixPL2()
 {
 	FlameCount = 10 * 35;
 }
@@ -80,7 +80,7 @@ void A_InitPhoenixPL2(void)
 //
 //===========================================================================
 
-void A_FirePhoenixPL2(void)
+void A_FirePhoenixPL2()
 {
 	Actor A;
 	TVec dir;
@@ -97,7 +97,7 @@ void A_FirePhoenixPL2(void)
 	org.y = Player.MO.Origin.y + (Random() - Random()) * 2.0;
 	org.z = Player.MO.Origin.z + 26.0 - sin(Player.MO.Angles.pitch);
 	org.z -= Player.MO.FloorClip;
-	A = Spawn(PhoenixFX2, org);
+	A = HereticLevelInfo(Player.Level).Spawn(PhoenixFX2, org);
 	A.Instigator = Player.MO;
 	A.Angles.yaw = Player.MO.Angles.yaw;
 	A.Angles.pitch = Player.MO.Angles.pitch;
@@ -116,7 +116,7 @@ void A_FirePhoenixPL2(void)
 //
 //===========================================================================
 
-void A_ShutdownPhoenixPL2(void)
+void A_ShutdownPhoenixPL2()
 {
 	Player.Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 }
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.3  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

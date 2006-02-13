@@ -41,7 +41,7 @@ void A_FireMacePL1B()
 		return;
 	}
 	Player.Ammo[am_mace] -= USE_MACE_AMMO_1;
-	ball = Spawn(MaceFX2, Player.MO.Origin +
+	ball = HereticLevelInfo(Player.Level).Spawn(MaceFX2, Player.MO.Origin +
 		vector(0.0, 0.0, 28.0 - Player.MO.FloorClip));
 	ball.Velocity.z =
 		(2.0 + 173.0 * -tan(Player.MO.Angles.pitch) / 32.0) * 35.0;
@@ -151,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/13 18:30:16  dj_jl
+//  Moved all server progs global functions to classes.
+//
 //  Revision 1.5  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //
