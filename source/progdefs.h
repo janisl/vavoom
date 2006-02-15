@@ -216,6 +216,9 @@ struct dprograms_t
 
 	int		ofs_mobjinfo;
 	int		num_mobjinfo;
+
+	int		ofs_scriptids;
+	int		num_scriptids;
 };
 
 enum
@@ -291,9 +294,12 @@ struct dmobjinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/02/15 23:27:41  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.22  2005/12/22 19:04:58  dj_jl
 //	Changed version number.
-//
+//	
 //	Revision 1.21  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
 //	

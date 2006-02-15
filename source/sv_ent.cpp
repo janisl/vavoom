@@ -44,6 +44,8 @@ static state_t*		GStates;
 static int 			GNumStates;
 static mobjinfo_t*	GMobjInfo;
 static int			GNumMobjTypes;
+static mobjinfo_t*	GScriptIds;
+static int			GNumScriptIds;
 static FName*		GSpriteNames;
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -1839,11 +1841,13 @@ void VEntity::InitFuncIndexes(void)
 
 void EntInit()
 {
-	svpr.SetGlobal("tmtrace", (int)&tmtrace);
+	GGameInfo->tmtrace = &tmtrace;
 	GStates = svpr.States;
 	GNumStates = svpr.NumStates;
 	GMobjInfo = svpr.MobjInfo;
 	GNumMobjTypes = svpr.NumMobjInfo;
+	GScriptIds = svpr.ScriptIds;
+	GNumScriptIds = svpr.NumScriptIds;
 	GSpriteNames = svpr.SpriteNames;
 	VEntity::InitFuncIndexes();
 }
@@ -1868,12 +1872,35 @@ VClass* SV_FindClassFromEditorId(int Id)
 	unguard;
 }
 
+//==========================================================================
+//
+//	SV_FindClassFromScriptId
+//
+//==========================================================================
+
+VClass* SV_FindClassFromScriptId(int Id)
+{
+	guard(SV_FindClassFromScriptId);
+	for (int i = 0; i < GNumScriptIds; i++)
+	{
+		if (Id == GScriptIds[i].doomednum)
+		{
+			return GScriptIds[i].class_id;
+		}
+	}
+	return NULL;
+	unguard;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/15 23:27:41  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.17  2005/12/11 21:37:00  dj_jl
 //	Made path traversal callbacks class members.
-//
+//	
 //	Revision 1.16  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
 //	

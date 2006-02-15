@@ -108,6 +108,8 @@ public:
 	state_t*	States;
 	int			NumMobjInfo;
 	mobjinfo_t*	MobjInfo;
+	int			NumScriptIds;
+	mobjinfo_t*	ScriptIds;
 
 	void Load(const char*);
 	void Unload(void);
@@ -373,9 +375,12 @@ inline FName PR_PopName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/02/15 23:27:41  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.14  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
-//
+//	
 //	Revision 1.13  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

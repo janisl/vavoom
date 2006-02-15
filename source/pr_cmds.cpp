@@ -59,6 +59,7 @@ void SV_ForceLightning(void);
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
 VClass* SV_FindClassFromEditorId(int Id);
+VClass* SV_FindClassFromScriptId(int Id);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -2501,7 +2502,21 @@ PF(FindClassFromEditorId)
 
 //==========================================================================
 //
-//	PF_FindClassFromEditorId
+//	PF_FindClassFromScriptId
+//
+//==========================================================================
+
+PF(FindClassFromScriptId)
+{
+	int		Id;
+
+	Id = Pop();
+	Push((int)SV_FindClassFromScriptId(Id));
+}
+
+//==========================================================================
+//
+//	PF_ChangeMusic
 //
 //==========================================================================
 
@@ -3491,6 +3506,7 @@ builtin_info_t BuiltinInfo[] =
 	_(GetModelIndex),
 	_(FindSkin),
 	_(FindClassFromEditorId),
+	_(FindClassFromScriptId),
 	_(MSG_SelectClientMsg),
 	_(ChangeMusic),
 	_(FindSectorFromTag),
@@ -3501,9 +3517,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.69  2006/02/15 23:27:40  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.68  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.67  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
 //	

@@ -79,6 +79,7 @@ TArray<FName>		sprite_names;
 TArray<FName>		models;
 TArray<state_t>		states;
 TArray<mobjinfo_t>	mobj_info;
+TArray<mobjinfo_t>	script_ids;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -584,6 +585,16 @@ void PC_WriteObject(char *name)
 		fwrite(&m, 1, sizeof(dmobjinfo_t), f);
 	}
 
+	progs.ofs_scriptids = ftell(f);
+	progs.num_scriptids = script_ids.Num();
+	for (i = 0; i < script_ids.Num(); i++)
+	{
+		dmobjinfo_t m;
+		m.doomednum = LittleShort(script_ids[i].doomednum);
+		m.class_id = LittleShort(script_ids[i].class_id);
+		fwrite(&m, 1, sizeof(dmobjinfo_t), f);
+	}
+
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", FName::GetMaxNames(), progs.ofs_strings - progs.ofs_names);
@@ -601,6 +612,7 @@ void PC_WriteObject(char *name)
 	dprintf("Mdl names  %6d %6d\n", models.Num(), models.Num() * 2);
 	dprintf("States     %6d %6d\n", states.Num(), states.Num() * sizeof(dstate_t));
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), mobj_info.Num() * sizeof(dmobjinfo_t));
+	dprintf("Script Ids %6d %6d\n", script_ids.Num(), script_ids.Num() * sizeof(dmobjinfo_t));
 	dprintf("TOTAL SIZE       %7d\n", (int)ftell(f));
 
 	memcpy(progs.magic, PROG_MAGIC, 4);
@@ -736,9 +748,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/15 23:27:06  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.25  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.24  2005/12/07 22:52:55  dj_jl
 //	Moved compiler generated data out of globals.
 //	

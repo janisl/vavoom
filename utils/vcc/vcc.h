@@ -161,6 +161,7 @@ enum EKeyword
 {
 	KW_STATES = 1,
 	KW_MOBJINFO,
+	KW_SCRIPTID,
 	KW_ABSTRACT,
 	KW_ADDFIELDS,
 	KW_BOOL,
@@ -509,6 +510,7 @@ field_t* CheckForField(FName, TClass*, bool = true);
 void InitInfoTables();
 void ParseStates(TClass*);
 void AddToMobjInfo(int Index, int ClassID);
+void AddToScriptIds(int Index, int ClassID);
 void SkipStates(TClass*);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -545,6 +547,7 @@ extern TArray<FName>		sprite_names;
 extern TArray<FName>		models;
 extern TArray<state_t>		states;
 extern TArray<mobjinfo_t>	mobj_info;
+extern TArray<mobjinfo_t>	script_ids;
 
 extern TType			type_void;
 extern TType			type_int;
@@ -631,9 +634,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/02/15 23:27:07  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.35  2006/01/10 19:29:10  dj_jl
 //	Fixed states belonging to a class.
-//
+//	
 //	Revision 1.34  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.

@@ -633,6 +633,12 @@ void CompileClass()
 			EvalConstExpression(NULL, ev_int);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
+		else if (TK_Check(KW_SCRIPTID))
+		{
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			EvalConstExpression(NULL, ev_int);
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		}
 		else if (TK_Check(KW_NATIVE))
 		{
 		}
@@ -1484,6 +1490,12 @@ void ParseClass()
 			AddToMobjInfo(EvalConstExpression(NULL, ev_int), Class->Index);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
+		else if (TK_Check(KW_SCRIPTID))
+		{
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			AddToScriptIds(EvalConstExpression(NULL, ev_int), Class->Index);
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		}
 		else if (TK_Check(KW_NATIVE))
 		{
 		}
@@ -1658,9 +1670,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/02/15 23:27:07  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.38  2006/02/11 14:48:33  dj_jl
 //	Fixed arrays also for structs.
-//
+//	
 //	Revision 1.37  2006/02/11 14:44:35  dj_jl
 //	Fixed multi-dimentional arrays.
 //	

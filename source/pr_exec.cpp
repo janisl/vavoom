@@ -211,6 +211,7 @@ void TProgs::Load(const char *AName)
 	short*			DMdlNames;
 	dstate_t*		DStates;
 	dmobjinfo_t*	DMobjInfo;
+	dmobjinfo_t*	DScriptIds;
 
 	i = M_CheckParm("-progs");
 	if (i && i < myargc - 1)
@@ -262,6 +263,7 @@ void TProgs::Load(const char *AName)
 	DMdlNames = (short*)((byte*)Progs + Progs->ofs_mdlnames);
 	DStates = (dstate_t*)((byte*)Progs + Progs->ofs_states);
 	DMobjInfo = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_mobjinfo);
+	DScriptIds = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_scriptids);
 
 	Functions = Z_CNew<FFunction>(Progs->num_functions);
 	Globaldefs = Z_CNew<FGlobalDef>(Progs->num_globaldefs);
@@ -276,6 +278,8 @@ void TProgs::Load(const char *AName)
 	States = Z_CNew<state_t>(NumStates);
 	NumMobjInfo = Progs->num_mobjinfo;
 	MobjInfo = Z_CNew<mobjinfo_t>(NumMobjInfo);
+	NumScriptIds = Progs->num_scriptids;
+	ScriptIds = Z_CNew<mobjinfo_t>(NumScriptIds);
 
 	// Read names
 	NameRemap = Z_New<FName>(Progs->num_names);
@@ -409,6 +413,11 @@ void TProgs::Load(const char *AName)
 	{
 		MobjInfo[i].doomednum = LittleShort(DMobjInfo[i].doomednum);
 		MobjInfo[i].class_id = ClassList[LittleShort(DMobjInfo[i].class_id)];
+	}
+	for (i = 0; i < Progs->num_scriptids; i++)
+	{
+		ScriptIds[i].doomednum = LittleShort(DScriptIds[i].doomednum);
+		ScriptIds[i].class_id = ClassList[LittleShort(DScriptIds[i].class_id)];
 	}
 
 	//	Setup string pointers in globals
@@ -2099,9 +2108,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2006/02/15 23:27:41  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.39  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.38  2005/12/14 18:54:53  dj_jl
 //	Removed compiler limitations.
 //	

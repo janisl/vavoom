@@ -86,6 +86,7 @@ static char* Keywords[] =
 	"",
 	"__states__",
 	"__mobjinfo__",
+	"__scriptid__",
 	"addfields",
 	"bool",
 	"break",
@@ -482,6 +483,16 @@ static void ProcessLetterToken(void)
 			{
 				tk_Token = TK_KEYWORD;
 				tk_Keyword = KW_MOBJINFO;
+			}
+			else if (tk_String[2] == 's' && tk_String[3] == 'c' &&
+				tk_String[4] == 'r' && tk_String[5] == 'i' &&
+				tk_String[6] == 'p' && tk_String[7] == 't' &&
+				tk_String[8] == 'i' && tk_String[9] == 'd' &&
+				tk_String[10] == '_' && tk_String[11] == '_' &&
+				tk_String[12] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_SCRIPTID;
 			}
 		}
 		break;
@@ -1169,9 +1180,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/02/15 23:27:07  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.20  2005/04/28 07:14:03  dj_jl
 //	Fixed some warnings.
-//
+//	
 //	Revision 1.19  2003/03/08 12:47:52  dj_jl
 //	Code cleanup.
 //	

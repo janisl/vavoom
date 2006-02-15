@@ -57,6 +57,7 @@ void InitInfoTables()
 	models.Empty(64);
 	states.Empty(1024);
 	mobj_info.Empty(128);
+	script_ids.Empty(128);
 	models.AddItem(NAME_None);	// 0 indicates no-model
 }
 
@@ -208,6 +209,19 @@ void AddToMobjInfo(int Index, int ClassID)
 
 //==========================================================================
 //
+//	AddToScriptIds
+//
+//==========================================================================
+
+void AddToScriptIds(int Index, int ClassID)
+{
+	int i = script_ids.Add();
+	script_ids[i].doomednum = Index;
+	script_ids[i].class_id = ClassID;
+}
+
+//==========================================================================
+//
 //	SkipStates
 //
 //==========================================================================
@@ -268,9 +282,12 @@ void SkipStates(TClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/02/15 23:27:06  dj_jl
+//	Added script ID class attribute.
+//
 //	Revision 1.29  2006/01/10 19:29:10  dj_jl
 //	Fixed states belonging to a class.
-//
+//	
 //	Revision 1.28  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
