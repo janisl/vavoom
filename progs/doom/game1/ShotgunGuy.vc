@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ShotgunGuy : Pawn
-	__mobjinfo__(9);
+	__mobjinfo__(9)
+	__scriptid__(1);
 
 //==========================================================================
 //
@@ -135,6 +136,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

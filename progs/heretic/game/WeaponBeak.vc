@@ -84,8 +84,7 @@ void A_BeakAttackPL1()
 
 	damage = 1 + (P_Random() & 3);
 	dir = Player.MO.AimLineAttack(Player.MO.Angles, MELEERANGE);
-	PuffType = BeakPuff;
-	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	Player.MO.LineAttack(dir, MELEERANGE, damage, BeakPuff);
 	if (Player.MO.linetarget)
 	{
 		Player.MO.Angles.yaw =
@@ -111,8 +110,7 @@ void A_BeakAttackPL2()
 
 	damage = HITDICE(4);
 	dir = Player.MO.AimLineAttack(Player.MO.Angles, MELEERANGE);
-	PuffType = BeakPuff;
-	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	Player.MO.LineAttack(dir, MELEERANGE, damage, BeakPuff);
 	if (Player.MO.linetarget)
 	{
 		Player.MO.Angles.yaw =
@@ -153,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.6  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ItemBackpack : Pickup
-	__mobjinfo__(8);
+	__mobjinfo__(8)
+	__scriptid__(144);
 
 //==========================================================================
 //
@@ -44,7 +45,7 @@ bool HandlePickup(Actor Toucher)
 	}
 	for (i = 0; i < NUMAMMO; i++)
 	{
-		Toucher.Player.GiveAmmo(i, clipammo[i]);
+		Toucher.Player.GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
 	}
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
@@ -65,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

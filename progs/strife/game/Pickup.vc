@@ -76,7 +76,7 @@ bool HandlePickup(Actor Toucher)
 void HideSpecial()
 {
 	// only respawn items in deathmatch
-	if (deathmatch && !bDropped)
+	if (Level.Game.deathmatch && !bDropped)
 	{
 		SetState(S_DORMANT_PICKUP1);
 	}
@@ -176,6 +176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.8  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class Ammo_satchel : Pickup
-	__mobjinfo__(183);
+	__mobjinfo__(183)
+	__scriptid__(144);
 
 //==========================================================================
 //
@@ -60,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/22 23:06:00  dj_jl
 //  Fixed ammo and weapon pickups.
 //

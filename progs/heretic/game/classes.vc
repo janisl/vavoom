@@ -243,6 +243,7 @@
 #include "MinotaurFloorFire2.vc"
 #include "MinotaurFloorFire.vc"
 #include "Minotaur.vc"
+#include "BossSpot.vc"
 #include "Sorcerer1Missile.vc"
 #include "Sorcerer1.vc"
 #include "Sorcerer2MissileSpark.vc"
@@ -254,6 +255,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.10  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

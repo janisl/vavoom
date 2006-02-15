@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ItemWeaponSkullRod : WeaponPickup
-	__mobjinfo__(2004);
+	__mobjinfo__(2004)
+	__scriptid__(30);
 
 __states__
 {
@@ -40,6 +41,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/25 17:13:08  dj_jl
 //  Some fixes.
 //

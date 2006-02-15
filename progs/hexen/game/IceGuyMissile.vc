@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceGuyMissile:Projectile;
+class IceGuyMissile : Projectile;
 
 //==========================================================================
 //
@@ -31,7 +31,7 @@ class IceGuyMissile:Projectile;
 //
 //==========================================================================
 
-void A_IceGuyMissilePuff(void)
+void A_IceGuyMissilePuff()
 {
 	Spawn(IceGuyMissilePuff, Origin + vector(0.0, 0.0, 2.0));
 }
@@ -42,7 +42,7 @@ void A_IceGuyMissilePuff(void)
 //
 //==========================================================================
 
-void A_IceGuyMissileExplode(void)
+void A_IceGuyMissileExplode()
 {
 	Actor mo;
 	int i;
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

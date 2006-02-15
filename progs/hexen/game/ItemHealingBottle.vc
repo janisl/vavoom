@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ItemHealingBottle : Pickup
-	__mobjinfo__(81);
+	__mobjinfo__(81)
+	__scriptid__(23);
 
 //==========================================================================
 //
@@ -55,7 +56,7 @@ void TouchSpecial(Actor Toucher)
 			Args[4], NULL, 0, Toucher);
 		Special = 0;
 	}
-	if (deathmatch && !bDropped)
+	if (Level.Game.deathmatch && !bDropped)
 	{
 		HideSpecial();
 	}
@@ -83,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

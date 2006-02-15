@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class BeastBall:Projectile;
+class BeastBall : Projectile
+	__scriptid__(120);
 
 //==========================================================================
 //
@@ -34,7 +35,7 @@ class BeastBall:Projectile;
 void OnMapSpawn(mthing_t* mthing)
 {
 	::OnMapSpawn(mthing);
-	if (fastparm)
+	if (Level.Game.fastparm)
 		Speed = 700.0;
 }
 
@@ -87,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

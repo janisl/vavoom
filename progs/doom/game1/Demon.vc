@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class Demon : Pawn
-	__mobjinfo__(3002);
+	__mobjinfo__(3002)
+	__scriptid__(8);
 
 //==========================================================================
 //
@@ -35,7 +36,7 @@ class Demon : Pawn
 void A_Chase()
 {
 	::A_Chase();
-	if (fastparm)
+	if (Level.Game.fastparm)
 		StateTime /= 2.0;
 }
 
@@ -79,40 +80,40 @@ __states__
 	S_SARG_ATK1('SARG', 4, 'monsters/demon/base.md2', 12, 8.0 / 35.0, S_SARG_ATK2)
 	{
 		A_FaceTarget();
-		if (fastparm)
+		if (Level.Game.fastparm)
 			StateTime /= 2.0;
 	}
 	S_SARG_ATK2('SARG', 5, 'monsters/demon/base.md2', 13, 4.0 / 35.0, S_SARG_ATK3)
 	{
 		A_FaceTarget();
-		if (fastparm)
+		if (Level.Game.fastparm)
 			StateTime /= 2.0;
 	}
 	S_SARG_ATK3('SARG', 5, 'monsters/demon/base.md2', 14, 4.0 / 35.0, S_SARG_ATK4)
 	{
-		if (fastparm)
+		if (Level.Game.fastparm)
 			StateTime /= 2.0;
 	}
 	S_SARG_ATK4('SARG', 6, 'monsters/demon/base.md2', 15, 4.0 / 35.0, S_SARG_ATK5)
 	{
 		A_SargAttack();
-		if (fastparm)
+		if (Level.Game.fastparm)
 			StateTime /= 2.0;
 	}
 	S_SARG_ATK5('SARG', 6, 'monsters/demon/base.md2', 16, 4.0 / 35.0, S_SARG_RUN1)
 	{
-		if (fastparm)
+		if (Level.Game.fastparm)
 			StateTime /= 2.0;
 	}
 	S_SARG_PAIN('SARG', 7, 'monsters/demon/base.md2', 17, 2.0 / 35.0, S_SARG_PAIN2)
 	{
-		if (fastparm)
+		if (Level.Game.fastparm)
 			StateTime /= 2.0;
 	}
 	S_SARG_PAIN2('SARG', 7, 'monsters/demon/base.md2', 18, 2.0 / 35.0, S_SARG_RUN1)
 	{
 		A_Pain();
-		if (fastparm)
+		if (Level.Game.fastparm)
 			StateTime /= 2.0;
 	}
 	S_SARG_DIE1('SARG', 8, 'monsters/demon/death.md2', 0, 8.0 / 35.0, S_SARG_DIE2) { }
@@ -153,6 +154,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/07 19:56:56  dj_jl
 //  Fixed fastparam.
 //

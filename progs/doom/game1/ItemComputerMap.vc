@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ItemComputerMap : Pickup
-	__mobjinfo__(2026);
+	__mobjinfo__(2026)
+	__scriptid__(137);
 
 //==========================================================================
 //
@@ -49,7 +50,7 @@ bool HandlePickup(Actor Toucher)
 
 void Tick(float DeltaTime)
 {
-	ModelSkinIndex = ftoi(level->time * 4.0) & 3;
+	ModelSkinIndex = ftoi(Level.Game.level->time * 4.0) & 3;
 	::Tick(DeltaTime);
 }
 
@@ -73,6 +74,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

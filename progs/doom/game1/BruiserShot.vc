@@ -23,12 +23,13 @@
 //**
 //**************************************************************************
 
-class BruiserShot : Projectile;
+class BruiserShot : Projectile
+	__scriptid__(154);
 
 void OnMapSpawn(mthing_t* mthing)
 {
 	::OnMapSpawn(mthing);
-	if (fastparm)
+	if (Level.Game.fastparm)
 		Speed = 700.0;
 }
 
@@ -58,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/07 19:56:56  dj_jl
 //  Fixed fastparam.
 //

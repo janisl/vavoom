@@ -37,7 +37,7 @@ bool bSafeToRemove;
 //
 //==========================================================================
 
-void A_AddPlayerCorpse(void)
+void A_AddPlayerCorpse()
 {
 	if (HereticLevelInfo(Level).bodyqueslot >= BODYQUESIZE)
 	{
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.6  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

@@ -64,8 +64,7 @@ void A_StaffAttackPL1()
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	dir = Player.MO.AimLineAttack(angles, MELEERANGE);
-	PuffType = StaffPuff;
-	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	Player.MO.LineAttack(dir, MELEERANGE, damage, StaffPuff);
 	if (Player.MO.linetarget)
 	{
 		// turn to face target
@@ -95,8 +94,7 @@ void A_StaffAttackPL2()
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
 	dir = Player.MO.AimLineAttack(angles, MELEERANGE);
-	PuffType = StaffPuff2;
-	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	Player.MO.LineAttack(dir, MELEERANGE, damage, StaffPuff2);
 	if (Player.MO.linetarget)
 	{
 		// turn to face target
@@ -152,6 +150,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

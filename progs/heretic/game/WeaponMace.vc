@@ -95,7 +95,7 @@ void A_FireMacePL2()
 {
 	Actor A;
 
-	Player.Ammo[am_mace] -= deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
+	Player.Ammo[am_mace] -= Player.Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
 	A = Player.MO.SpawnPlayerMissile(MaceFX4);
 	if (A)
 	{
@@ -151,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.6  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

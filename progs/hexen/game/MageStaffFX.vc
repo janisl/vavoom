@@ -27,7 +27,7 @@
 //
 //**************************************************************************
 
-class MageStaffFX:Projectile;
+class MageStaffFX : Projectile;
 
 int WeaveXY;
 int WeaveZ;
@@ -38,21 +38,21 @@ int WeaveZ;
 //
 //==========================================================================
 
-void A_MStaffWeave(void)
+void A_MStaffWeave()
 {
 	float newX, newY;
 	float angle;
 
 	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
-	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
 	WeaveXY = (WeaveXY + 6) & 63;
-	newX += cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
-	newY += sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
 	TryMove(vector(newX, newY, Origin.z));
-	Origin.z -= FloatBobOffsets[WeaveZ] * 2.0;
+	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
 	WeaveZ = (WeaveZ + 3) & 63;
-	Origin.z += FloatBobOffsets[WeaveZ] * 2.0;
+	Origin.z += Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
 	if (Origin.z <= FloorZ)
 	{
 		Origin.z = FloorZ + 1.0;
@@ -96,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

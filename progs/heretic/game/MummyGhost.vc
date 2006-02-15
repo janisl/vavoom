@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class MummyGhost:Mummy
-	__mobjinfo__(69);
+class MummyGhost : Mummy
+	__mobjinfo__(69)
+	__scriptid__(8);
 
 defaultproperties
 {
@@ -34,6 +35,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

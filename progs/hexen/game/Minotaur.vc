@@ -128,7 +128,7 @@ bool RoughCheckThing(Entity Other)
 	{
 		return false;
 	}
-	if (netgame && !deathmatch && link.bIsPlayer)
+	if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
 	{
 		return false;
 	}
@@ -190,13 +190,13 @@ void A_MinotaurLook()
 
 	Enemy = none;
 
-	if (deathmatch)	// Quick search for players
+	if (Level.Game.deathmatch)	// Quick search for players
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!svvars->Players[i] || !svvars->Players[i].bSpawned)
+			if (!Level.Game.Players[i] || !Level.Game.Players[i].bSpawned)
 				continue;
-			mo = svvars->Players[i].MO;
+			mo = Level.Game.Players[i].MO;
 			if (mo == Instigator)
 				continue;
 			if (mo.Health <= 0)
@@ -261,7 +261,7 @@ void A_MinotaurChase()
 
 	Translucency = 0;	// In case pain caused him to skip his fade in.
 
-	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	if ((Level.Game.level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
 		Damage(none, none, 10000);
 		return;
@@ -324,7 +324,7 @@ void A_MinotaurRoam()
 
 	Translucency = 0;	// In case pain caused him to skip his fade in.
 
-	if ((level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
+	if ((Level.Game.level->tictime - starttime) >= ftoi(MAULATORTIME * 35.0))
 	{
 		Damage(none, none, 10000);
 		return;
@@ -657,6 +657,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.7  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

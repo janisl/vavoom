@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class CentaurLeader:Centaur
-	__mobjinfo__(115);
+class CentaurLeader : Centaur
+	__mobjinfo__(115)
+	__scriptid__(2);
 
 //==========================================================================
 //
@@ -32,7 +33,7 @@ class CentaurLeader:Centaur
 //
 //==========================================================================
 
-void A_CentaurAttack2(void)
+void A_CentaurAttack2()
 {
 	if (!Enemy)
 	{
@@ -62,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

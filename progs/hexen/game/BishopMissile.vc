@@ -52,15 +52,15 @@ void A_BishopMissileWeave()
 	float angle;
 
 	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY] * 2.0;
-	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY] * 2.0;
+	newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
+	newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
 	WeaveXY = (WeaveXY + 2) & 63;
-	newX += cos(angle) * FloatBobOffsets[WeaveXY] * 2.0;
-	newY += sin(angle) * FloatBobOffsets[WeaveXY] * 2.0;
+	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
+	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
 	TryMove(vector(newX, newY, Origin.z));
-	Origin.z -= FloatBobOffsets[WeaveZ];
+	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ];
 	WeaveZ = (WeaveZ + 2) & 63;
-	Origin.z += FloatBobOffsets[WeaveZ];
+	Origin.z += Level.Game.FloatBobOffsets[WeaveZ];
 }
 
 //==========================================================================
@@ -109,6 +109,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

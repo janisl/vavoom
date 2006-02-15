@@ -76,7 +76,6 @@ TCvarI			real_time("real_time", "1");
 server_t		sv;
 server_static_t	svs;
 TProgs			svpr;
-server_vars_t	svvars;
 
 // increment every time a check is made
 int				validcount = 1;
@@ -146,8 +145,6 @@ static char		models[MAX_MODELS][MAX_VPATH];
 static int		numskins;
 static char		skins[MAX_SKINS][MAX_VPATH];
 
-static int		pg_frametime;
-
 static TCvarI	split_frame("split_frame", "1", CVAR_ARCHIVE);
 
 // CODE --------------------------------------------------------------------
@@ -182,15 +179,12 @@ void SV_Init(void)
 			PlayerClass, PU_STATIC);
 	}
 
-	svpr.SetGlobal("svvars", (int)&svvars);
-	svpr.SetGlobal("validcount", (int)&validcount);
-	svpr.SetGlobal("level", (int)&level);
-	svpr.SetGlobal("skyflatnum", skyflatnum);
+	GGameInfo->validcount = &validcount;
+	GGameInfo->level = &level;
+	GGameInfo->skyflatnum = skyflatnum;
 	EntInit();
 
-	pg_frametime = svpr.GlobalNumForName("frametime");
-
-	num_stats = svpr.GetGlobal("num_stats");
+	num_stats = GGameInfo->num_stats;
 	if (num_stats > 96)
 		Sys_Error("Too many stats %d", num_stats);
 
@@ -767,8 +761,8 @@ void SV_BroadcastPrintf(const char *s, ...)
 	va_end(v);
 
 	for (int i = 0; i < svs.max_clients; i++)
-		if (svvars.Players[i])
-			svvars.Players[i]->Message << (byte)svc_print << buf;
+		if (GGameInfo->Players[i])
+			GGameInfo->Players[i]->Message << (byte)svc_print << buf;
 	unguard;
 }
 
@@ -1147,12 +1141,12 @@ void SV_SendClientDatagram(void)
 	}
 	for (int i = 0; i < svs.max_clients; i++)
 	{
-		if (!svvars.Players[i])
+		if (!GGameInfo->Players[i])
 		{
 			continue;
 		}
 
-		sv_player = svvars.Players[i];
+		sv_player = GGameInfo->Players[i];
 
 		if (!sv_player->bSpawned)
 		{
@@ -1205,38 +1199,38 @@ void SV_SendReliable(void)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (!svvars.Players[i])
+		if (!GGameInfo->Players[i])
 			continue;
 
-		svvars.Players[i]->Message << sv_reliable;
+		GGameInfo->Players[i]->Message << sv_reliable;
 
-		if (!svvars.Players[i]->bSpawned)
+		if (!GGameInfo->Players[i]->bSpawned)
 			continue;
 
-		Stats = (int*)((byte*)svvars.Players[i] + sizeof(VBasePlayer));
+		Stats = (int*)((byte*)GGameInfo->Players[i] + sizeof(VBasePlayer));
 		for (j = 0; j < num_stats; j++)
 		{
-			if (Stats[j] == svvars.Players[i]->OldStats[j])
+			if (Stats[j] == GGameInfo->Players[i]->OldStats[j])
 			{
 				continue;
 			}
 			int sval = Stats[j];
 			if (sval >= 0 && sval < 256)
 			{
-				svvars.Players[i]->Message << (byte)svc_stats_byte
+				GGameInfo->Players[i]->Message << (byte)svc_stats_byte
 					<< (byte)j << (byte)sval;
 			}
 			else if (sval >= MINSHORT && sval <= MAXSHORT)
 			{
-				svvars.Players[i]->Message << (byte)svc_stats_short
+				GGameInfo->Players[i]->Message << (byte)svc_stats_short
 					<< (byte)j << (short)sval;
 			}
 			else
 			{
-				svvars.Players[i]->Message << (byte)svc_stats_long
+				GGameInfo->Players[i]->Message << (byte)svc_stats_long
 					<< (byte)j << sval;
 			}
-			svvars.Players[i]->OldStats[j] = sval;
+			GGameInfo->Players[i]->OldStats[j] = sval;
 		}
 	}
 
@@ -1244,35 +1238,35 @@ void SV_SendReliable(void)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		if (!svvars.Players[i])
+		if (!GGameInfo->Players[i])
 		{
 			continue;
 		}
 
-		if (svvars.Players[i]->Message.Overflowed)
+		if (GGameInfo->Players[i]->Message.Overflowed)
 		{
 			SV_DropClient(true);
 			GCon->Log(NAME_Dev, "Client message overflowed");
 			continue;
 		}
 
-		if (!svvars.Players[i]->Message.CurSize)
+		if (!GGameInfo->Players[i]->Message.CurSize)
 		{
 			continue;
 		}
 
-		if (!NET_CanSendMessage(svvars.Players[i]->NetCon))
+		if (!NET_CanSendMessage(GGameInfo->Players[i]->NetCon))
 		{
 			continue;
 		}
 
-		if (NET_SendMessage(svvars.Players[i]->NetCon, &svvars.Players[i]->Message) == -1)
+		if (NET_SendMessage(GGameInfo->Players[i]->NetCon, &GGameInfo->Players[i]->Message) == -1)
 		{
 			SV_DropClient(true);
 			continue;
 		}
-		svvars.Players[i]->Message.Clear();
-		svvars.Players[i]->LastMessage = realtime;
+		GGameInfo->Players[i]->Message.Clear();
+		GGameInfo->Players[i]->LastMessage = realtime;
 	}
 	unguard;
 }
@@ -1307,7 +1301,7 @@ static void CheckForSkip(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		player = svvars.Players[i];
+		player = GGameInfo->Players[i];
 		if (player)
 		{
 			if (player->Buttons & BT_ATTACK)
@@ -1374,13 +1368,13 @@ void SV_RunClients(void)
 	// get commands
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!svvars.Players[i])
+		if (!GGameInfo->Players[i])
 		{
 			continue;
 		}
 
 		// do player reborns if needed
-		if (svvars.Players[i]->PlayerState == PST_REBORN)
+		if (GGameInfo->Players[i]->PlayerState == PST_REBORN)
 		{
 			G_DoReborn(i);
 		}
@@ -1393,13 +1387,13 @@ void SV_RunClients(void)
 
 		// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
-		if (svvars.Players[i]->bSpawned && !sv.intermission && !paused &&
+		if (GGameInfo->Players[i]->bSpawned && !sv.intermission && !paused &&
 			(netgame || !(MN_Active() || C_Active())))
 #else
-		if (svvars.Players[i]->bSpawned && !sv.intermission && !paused)
+		if (GGameInfo->Players[i]->bSpawned && !sv.intermission && !paused)
 #endif
 		{
-			svvars.Players[i]->eventPlayerTick(host_frametime);
+			GGameInfo->Players[i]->eventPlayerTick(host_frametime);
 		}
 	}
 
@@ -1436,7 +1430,7 @@ void SV_Ticker(void)
 			exec_times++;
 	}
 
-	svpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
+	GGameInfo->frametime = host_frametime;
 	SV_RunClients();
 
 	if (sv_loading)
@@ -1446,7 +1440,7 @@ void SV_Ticker(void)
 	if (!sv.intermission)
 	{
 		host_frametime /= exec_times;
-		svpr.SetGlobal(pg_frametime, PassFloat(host_frametime));
+		GGameInfo->frametime = host_frametime;
 		for (int i = 0; i < exec_times && !completed; i++)
 		{
 			// pause if in menu or console
@@ -1639,7 +1633,7 @@ static void G_DoCompleted(void)
 	{
 		return;
 	}
-	if (!netgame && (!svvars.Players[0] || !svvars.Players[0]->bSpawned))
+	if (!netgame && (!GGameInfo->Players[0] || !GGameInfo->Players[0]->bSpawned))
 	{
 		//FIXME Some ACS left from previous visit of the level
 		return;
@@ -1652,9 +1646,9 @@ static void G_DoCompleted(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (svvars.Players[i])
+		if (GGameInfo->Players[i])
 		{
-			svvars.Players[i]->eventPlayerExitMap(!old_info.cluster ||
+			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.cluster ||
 				old_info.cluster != new_info.cluster);
 		}
 	}
@@ -1670,14 +1664,14 @@ static void G_DoCompleted(void)
 				<< sv_next_map;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (svvars.Players[i])
+		if (GGameInfo->Players[i])
 		{
 			sv_reliable << (byte)true;
 			for (j = 0; j < MAXPLAYERS; j++)
-				sv_reliable << (byte)svvars.Players[i]->FragsStats[j];
-			sv_reliable << (short)svvars.Players[i]->KillCount
-						<< (short)svvars.Players[i]->ItemCount
-						<< (short)svvars.Players[i]->SecretCount;
+				sv_reliable << (byte)GGameInfo->Players[i]->FragsStats[j];
+			sv_reliable << (short)GGameInfo->Players[i]->KillCount
+						<< (short)GGameInfo->Players[i]->ItemCount
+						<< (short)GGameInfo->Players[i]->SecretCount;
 		}
 		else
 		{
@@ -1752,9 +1746,9 @@ void G_SecretExitLevel(int Position)
 	in_secret = true;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		if (svvars.Players[i])
+		if (GGameInfo->Players[i])
 		{
-			svvars.Players[i]->bDidSecret = true;
+			GGameInfo->Players[i]->bDidSecret = true;
 		}
 	}
 	unguard;
@@ -1828,7 +1822,7 @@ COMMAND(TeleportNewMap)
 	Draw_TeleportIcon();
 #endif
 	RebornPosition = LeavePosition;
-	svpr.SetGlobal("RebornPosition", RebornPosition);
+	GGameInfo->RebornPosition = RebornPosition;
 	mapteleport_issued = true;
 	unguard;
 }
@@ -1841,16 +1835,16 @@ COMMAND(TeleportNewMap)
 
 static void G_DoReborn(int playernum)
 {
-	if (!svvars.Players[playernum] || !svvars.Players[playernum]->bSpawned)
+	if (!GGameInfo->Players[playernum] || !GGameInfo->Players[playernum]->bSpawned)
 		return;
 	if (!netgame && !deathmatch)// For fun now
 	{
 		CmdBuf << "Restart\n";
-		svvars.Players[playernum]->PlayerState = PST_LIVE;
+		GGameInfo->Players[playernum]->PlayerState = PST_LIVE;
 	}
 	else
 	{
-		svvars.Players[playernum]->eventNetGameReborn();
+		GGameInfo->Players[playernum]->eventNetGameReborn();
 	}
 }
 
@@ -1871,7 +1865,7 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		sv_player = svvars.Players[i];
+		sv_player = GGameInfo->Players[i];
 		if (sv_player && sv_player->NetCon)
 		{
 			if (sv_player->NetCon->driver == 0)
@@ -1898,7 +1892,7 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 		count = 0;
 		for (i = 0; i < svs.max_clients; i++)
 		{
-			sv_player = svvars.Players[i];
+			sv_player = GGameInfo->Players[i];
 			if (!state1[i])
 			{
 				if (NET_CanSendMessage(sv_player->NetCon))
@@ -2091,7 +2085,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 	{
 		msg << (byte)svc_userinfo
 			<< (byte)i
-			<< (svvars.Players[i] ? svvars.Players[i]->UserInfo : "");
+			<< (GGameInfo->Players[i] ? GGameInfo->Players[i]->UserInfo : "");
 	}
 
 	msg << (byte)svc_sprites
@@ -2131,12 +2125,12 @@ void SV_SendServerInfoToClients()
 	guard(SV_SendServerInfoToClients);
 	for (int i = 0; i < svs.max_clients; i++)
 	{
-		if (svvars.Players[i])
+		if (GGameInfo->Players[i])
 		{
-			SV_SendServerInfo(svvars.Players[i]);
-			if (svvars.Players[i]->bIsBot)
+			SV_SendServerInfo(GGameInfo->Players[i]);
+			if (GGameInfo->Players[i]->bIsBot)
 			{
-				sv_player = svvars.Players[i];
+				sv_player = GGameInfo->Players[i];
 				SV_RunClientCommand("PreSpawn\n");
 				SV_RunClientCommand("Spawn\n");
 				SV_RunClientCommand("Begin\n");
@@ -2167,20 +2161,20 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 		//	Level change
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (!svvars.Players[i])
+			if (!GGameInfo->Players[i])
 				continue;
 
-			svvars.Players[i]->KillCount = 0;
-			svvars.Players[i]->SecretCount = 0;
-			svvars.Players[i]->ItemCount = 0;
+			GGameInfo->Players[i]->KillCount = 0;
+			GGameInfo->Players[i]->SecretCount = 0;
+			GGameInfo->Players[i]->ItemCount = 0;
 
-			svvars.Players[i]->bSpawned = false;
-			svvars.Players[i]->MO = NULL;
-			svvars.Players[i]->Frags = 0;
-			memset(svvars.Players[i]->FragsStats, 0, sizeof(svvars.Players[i]->FragsStats));
-			if (svvars.Players[i]->PlayerState == PST_DEAD)
-				svvars.Players[i]->PlayerState = PST_REBORN;
-			svvars.Players[i]->Message.Clear();
+			GGameInfo->Players[i]->bSpawned = false;
+			GGameInfo->Players[i]->MO = NULL;
+			GGameInfo->Players[i]->Frags = 0;
+			memset(GGameInfo->Players[i]->FragsStats, 0, sizeof(GGameInfo->Players[i]->FragsStats));
+			if (GGameInfo->Players[i]->PlayerState == PST_DEAD)
+				GGameInfo->Players[i]->PlayerState = PST_REBORN;
+			GGameInfo->Players[i]->Message.Clear();
 		}
 	}
 	else if (!sv_loading)
@@ -2221,9 +2215,9 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	netgame = svs.max_clients > 1;
 	deathmatch = DeathMatch;
 
-	svpr.SetGlobal("gameskill", gameskill);
-	svpr.SetGlobal("netgame", netgame);
-	svpr.SetGlobal("deathmatch", deathmatch);
+	GGameInfo->gameskill = gameskill;
+	GGameInfo->netgame = netgame;
+	GGameInfo->deathmatch = deathmatch;
 
 	//	Load it
 	SV_LoadLevel(level.mapname);
@@ -2236,7 +2230,6 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	if (spawn_thinkers)
 	{
 		GLevelInfo = GGameInfo->eventCreateLevelInfo();
-		svpr.SetGlobal("GLevelInfo", (int)GLevelInfo);
 		for (i = 0; i < GLevel->NumThings; i++)
 		{
 			GLevelInfo->eventSpawnMapThing(&GLevel->Things[i]);
@@ -2487,7 +2480,7 @@ void SV_DropClient(boolean)
 		sv_player->eventDisconnectClient();
 	}
 	sv_player->bActive = false;
-	svvars.Players[SV_GetPlayerNum(sv_player)] = NULL;
+	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
 	sv_player->bSpawned = false;
 	NET_Close(sv_player->NetCon);
 	sv_player->NetCon = NULL;
@@ -2564,7 +2557,7 @@ void SV_ShutdownServer(boolean crash)
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
-		sv_player = svvars.Players[i];
+		sv_player = GGameInfo->Players[i];
 		if (sv_player)
 			SV_DropClient(crash);
 	}
@@ -2578,7 +2571,7 @@ void SV_ShutdownServer(boolean crash)
 		memset((byte*)GPlayersBase[i] + sizeof(VObject), 0,
 			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
 	}
-	memset(svvars.Players, 0, sizeof(svvars.Players));
+	memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
 	memset(&sv, 0, sizeof(sv));
 	unguard;
 }
@@ -2676,7 +2669,7 @@ void SV_ConnectClient(VBasePlayer *player)
 	guard(SV_ConnectClient);
 	GCon->Logf(NAME_Dev, "Client %s connected", player->NetCon->address);
 
-	svvars.Players[SV_GetPlayerNum(player)] = player;
+	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->bActive = true;
 
 	player->Message.Data = player->MsgBuf;
@@ -2723,7 +2716,7 @@ void SV_CheckForNewClients(void)
 		// init a new client structure
 		//
 		for (i = 0; i < svs.max_clients; i++)
-			if (!svvars.Players[i])
+			if (!GGameInfo->Players[i])
 				break;
 		if (i == svs.max_clients)
 			Sys_Error("Host_CheckForNewClients: no free clients");
@@ -2759,7 +2752,7 @@ void SV_ConnectBot(const char *name)
 	// init a new client structure
 	//
 	for (i = 0; i < svs.max_clients; i++)
-		if (!svvars.Players[i])
+		if (!GGameInfo->Players[i])
 			break;
 	if (i == svs.max_clients)
 		Sys_Error("SV_ConnectBot: no free clients");
@@ -2770,7 +2763,7 @@ void SV_ConnectBot(const char *name)
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 
-	sv_player = svvars.Players[i];
+	sv_player = GGameInfo->Players[i];
 	sv_player->Message.Clear();
 	SV_RunClientCommand("PreSpawn\n");
 	sv_player->Message.Clear();
@@ -2821,7 +2814,7 @@ COMMAND(Map)
 	P_ACSInitNewGame();
 	// Default the player start spot group to 0
 	RebornPosition = 0;
-	svpr.SetGlobal("RebornPosition", RebornPosition);
+	GGameInfo->RebornPosition = RebornPosition;
 
 	if ((int)Skill < sk_baby)
 		Skill = sk_baby;
@@ -3016,9 +3009,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.77  2006/02/15 23:28:18  dj_jl
+//	Moved all server progs global variables to classes.
+//
 //	Revision 1.76  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.75  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
 //	

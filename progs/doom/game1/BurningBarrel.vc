@@ -24,11 +24,12 @@
 //**************************************************************************
 
 class BurningBarrel : Decoration
-	__mobjinfo__(70);
+	__mobjinfo__(70)
+	__scriptid__(149);
 
 void Tick(float DeltaTime)
 {
-	ModelSkinIndex = ftoi(level->time * 32.0) & 7;
+	ModelSkinIndex = ftoi(Level.Game.level->time * 32.0) & 7;
 	::Tick(DeltaTime);
 }
 
@@ -50,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/06/06 19:03:24  dj_jl
 //  Models updated.
 //

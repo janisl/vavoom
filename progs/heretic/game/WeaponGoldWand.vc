@@ -31,7 +31,7 @@ class WeaponGoldWand : Weapon;
 //
 //===========================================================================
 
-void A_FireGoldWandPL1(void)
+void A_FireGoldWandPL1()
 {
 	int damage;
 	TVec dir;
@@ -43,8 +43,7 @@ void A_FireGoldWandPL1(void)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	PuffType = GoldWandPuff1;
-	Player.MO.LineAttack(dir, MISSILERANGE, damage);
+	Player.MO.LineAttack(dir, MISSILERANGE, damage, GoldWandPuff1);
 	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
 }
 
@@ -54,7 +53,7 @@ void A_FireGoldWandPL1(void)
 //
 //===========================================================================
 
-void A_FireGoldWandPL2(void)
+void A_FireGoldWandPL2()
 {
 	int i;
 	int damage;
@@ -63,8 +62,7 @@ void A_FireGoldWandPL2(void)
 	TVec dir;
 
 	Player.Ammo[am_goldwand] -=
-		deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
-	PuffType = GoldWandPuff2;
+		Player.Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
 	dir = Player.MO.Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
 	Player.MO.SpawnMissileAngles(GoldWandMissile2,
@@ -75,7 +73,7 @@ void A_FireGoldWandPL2(void)
 	for (i = 0; i < 5; i++)
 	{
 		damage = 1 + (P_Random() & 7);
-		Player.MO.LineAttack(dir, MISSILERANGE, damage);
+		Player.MO.LineAttack(dir, MISSILERANGE, damage, GoldWandPuff2);
 		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
 	}
 	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
@@ -115,6 +113,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

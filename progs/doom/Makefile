@@ -20,23 +20,23 @@ del:
 $(OUTDIR)/clprogs.dat: $(VCC) *.vc cgame/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/client/*.vc
 	$(VCC) -I$(COMMON_DIR) clprogs.vc $@
 
-$(OUTDIR)/svprogs.dat: $(VCC) *.vc server/*.vc game/*.vc game1/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc
-	$(VCC) -I$(COMMON_DIR) server/svprogs.vc $@
+$(OUTDIR)/svprogs.dat: $(VCC) *.vc game/*.vc game1/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc
+	$(VCC) -I$(COMMON_DIR) svprogs.vc $@
 
 #---------------------------------------
 # Debugging
 #---------------------------------------
 
-debug: clprogs.dat server/svprogs.dat
+debug: clprogs.dat svprogs.dat
 debugcl: clprogs.dat
-debugsv: server/svprogs.dat
+debugsv: svprogs.dat
 
 deldebug:
-	rm clprogs.dat server/svprogs.dat
+	rm clprogs.dat svprogs.dat
 
 clprogs.dat:
-	$(VCC) -I$(COMMON_DIR) clprogs.vc $@ -ddebug.txt $(DUMP_ASM)
+	$(VCC) -I$(COMMON_DIR) clprogs.vc $@ -dclprogs.txt $(DUMP_ASM)
 
-server/svprogs.dat:
-	$(VCC) -I$(COMMON_DIR) server/svprogs.vc $@ -dserver/debug.txt $(DUMP_ASM)
+svprogs.dat:
+	$(VCC) -I$(COMMON_DIR) svprogs.vc $@ -dsvprogs.txt $(DUMP_ASM)
 

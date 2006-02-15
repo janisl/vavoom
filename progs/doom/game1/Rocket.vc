@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Rocket : Projectile;
+class Rocket : Projectile
+	__scriptid__(127);
 
 __states__
 {
@@ -50,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

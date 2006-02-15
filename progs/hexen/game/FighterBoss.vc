@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FighterBoss:ClassBoss
+class FighterBoss : ClassBoss
 	__mobjinfo__(10100);
 
 //============================================================================
@@ -32,7 +32,7 @@ class FighterBoss:ClassBoss
 //
 //============================================================================
 
-void A_FighterAttack(void)
+void A_FighterAttack()
 {
 	if (!Enemy)
 		return;
@@ -105,6 +105,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -52,12 +52,12 @@ int MoveCount;	// when 0, select a new dir
 
 void OnMapSpawn(mthing_t * mthing)
 {
-	if (bCheckNoMonsters && nomonsters)
+	if (bCheckNoMonsters && Level.Game.nomonsters)
 	{
 		Remove();
 		return;
 	}
-	if (gameskill == sk_nightmare)
+	if (Level.Game.gameskill == sk_nightmare)
 	{
 		ReactionCount = 0;
 	}
@@ -73,7 +73,7 @@ void OnMapSpawn(mthing_t * mthing)
 //
 //==========================================================================
 
-bool Activate(void)
+bool Activate()
 {
 	// Monster
 	if (bDormant)
@@ -91,7 +91,7 @@ bool Activate(void)
 //
 //==========================================================================
 
-bool Deactivate(void)
+bool Deactivate()
 {
 	// Monster
 	if (!bDormant)
@@ -203,7 +203,7 @@ Actor SpawnMissileXYZ(TVec org, Actor dest, classid type)
 //
 //==========================================================================
 
-bool CheckMeleeRange(void)
+bool CheckMeleeRange()
 {
 	float dist;
 
@@ -239,7 +239,7 @@ bool CheckMeleeRange(void)
 //
 //==========================================================================
 
-bool CheckMeleeRange2(void)
+bool CheckMeleeRange2()
 {
 	float dist;
 
@@ -275,7 +275,7 @@ bool CheckMeleeRange2(void)
 //
 //==========================================================================
 
-bool CheckMissileRange(void)
+bool CheckMissileRange()
 {
 	float dist;
 
@@ -317,7 +317,7 @@ bool CheckMissileRange(void)
 //
 //==========================================================================
 
-void FaceMovementDirection(void)
+void FaceMovementDirection()
 {
 	switch (MoveDir)
 	{
@@ -354,12 +354,12 @@ void FaceMovementDirection(void)
 //
 //============================================================================
 
-bool LookForMonsters(void)
+bool LookForMonsters()
 {
 	int count;
 	Actor mo;
 
-	if (!svvars->Players[0].MO.CanSee(self))
+	if (!Level.Game.Players[0].MO.CanSee(self))
 	{
 		// Player can't see monster
 		return false;
@@ -423,7 +423,7 @@ bool LookForPlayers(bool allaround)
 	float an;
 	float dist;
 
-	if (!netgame && svvars->Players[0] && svvars->Players[0].bSpawned && svvars->Players[0].Health <= 0)
+	if (!Level.Game.netgame && Level.Game.Players[0] && Level.Game.Players[0].bSpawned && Level.Game.Players[0].Health <= 0)
 	{
 		// Single player game and player is dead, look for monsters
 		return LookForMonsters();
@@ -435,13 +435,13 @@ bool LookForPlayers(bool allaround)
 		if (LastLook == stop)
 			return false;	// done looking
 
-		if (!svvars->Players[LastLook])
+		if (!Level.Game.Players[LastLook])
 			continue;
 
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = svvars->Players[LastLook];
+		P = Level.Game.Players[LastLook];
 		if (!P.bSpawned || !P.MO)
 			continue;	//  not spawned yet
 		if (P.Health <= 0)
@@ -497,7 +497,7 @@ bool LookForPlayers(bool allaround)
 //
 //==========================================================================
 
-bool StepMove(void)
+bool StepMove()
 {
 	float tryx;
 	float tryy;
@@ -515,32 +515,32 @@ bool StepMove(void)
 		Error("Weird actor->MoveDir!");
 #endif
 
-	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
-	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
+	tryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
 
 	if (!TryMove(vector(tryx, tryy, Origin.z)))
 	{
 		// open any specials
-		if (bFloat && tmtrace->bFloatOk)
+		if (bFloat && Level.Game.tmtrace->bFloatOk)
 		{
 			// must adjust height
-			if (Origin.z < tmtrace->FloorZ)
-				Origin.z += FLOATSPEED * frametime;
+			if (Origin.z < Level.Game.tmtrace->FloorZ)
+				Origin.z += FLOATSPEED * Level.Game.frametime;
 			else
-				Origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * Level.Game.frametime;
 
 			bInFloat = true;
 			return true;
 		}
 
-		if (!tmtrace->NumSpecHit)
+		if (!Level.Game.tmtrace->NumSpecHit)
 			return false;
 
 		MoveDir = DI_NODIR;
 		good = false;
-		while (tmtrace->NumSpecHit--)
+		while (Level.Game.tmtrace->NumSpecHit--)
 		{
-			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
+			ld = Level.Game.tmtrace->SpecHit[Level.Game.tmtrace->NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -578,7 +578,7 @@ bool StepMove(void)
 //
 //==========================================================================
 
-bool TryWalk(void)
+bool TryWalk()
 {
 	if (!StepMove())
 	{
@@ -594,7 +594,7 @@ bool TryWalk(void)
 //
 //============================================================================
 
-void NewChaseDir(void)
+void NewChaseDir()
 {
 	float deltax, deltay;
 	int d[3];
@@ -604,7 +604,7 @@ void NewChaseDir(void)
 		Error("NewChaseDir: called with no target");
 
 	olddir = MoveDir;
-	turnaround = opposite[olddir];
+	turnaround = MainGameInfo(Level.Game).opposite[olddir];
 
 	deltax = Enemy.Origin.x - Origin.x;
 	deltay = Enemy.Origin.y - Origin.y;
@@ -624,7 +624,7 @@ void NewChaseDir(void)
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
-		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		MoveDir = MainGameInfo(Level.Game).diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
 		if (MoveDir != turnaround && TryWalk())
 			return;
 	}
@@ -708,7 +708,7 @@ void NewChaseDir(void)
 //
 //==========================================================================
 
-void A_Look(void)
+void A_Look()
 {
 	Actor targ;
 
@@ -759,7 +759,7 @@ void A_Look(void)
 //
 //==========================================================================
 
-void A_Chase(void)
+void A_Chase()
 {
 	float delta;
 
@@ -781,7 +781,7 @@ void A_Chase(void)
 		}
 	}
 
-	if (fastparm)
+	if (Level.Game.fastparm)
 	{
 		// Monsters move faster in nightmare mode
 		StateTime *= 0.5;
@@ -822,7 +822,7 @@ void A_Chase(void)
 	if (bJustAttacked)
 	{
 		bJustAttacked = false;
-		if (!fastparm)
+		if (!Level.Game.fastparm)
 		{
 			NewChaseDir();
 		}
@@ -843,7 +843,7 @@ void A_Chase(void)
 	// check for missile attack
 	if (MissileState)
 	{
-		if (fastparm || !MoveCount)
+		if (Level.Game.fastparm || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
@@ -855,7 +855,7 @@ void A_Chase(void)
 	}
 
 	// possibly choose another target
-	if (netgame && !Threshold)
+	if (Level.Game.netgame && !Threshold)
 	{
 		if (!CanSee(Enemy))
 		{
@@ -899,7 +899,7 @@ void A_Chase(void)
 //
 //==========================================================================
 
-void A_FaceTarget(void)
+void A_FaceTarget()
 {
 	if (!Enemy)
 		return;
@@ -921,7 +921,7 @@ void A_FaceTarget(void)
 //
 //============================================================================
 
-void A_FreezeDeath(void)
+void A_FreezeDeath()
 {
 	StateTime = 2.0 + Random() * 8.0 + Random() * 8.0;
 	bSolid = true;
@@ -957,7 +957,7 @@ void A_FreezeDeath(void)
 //
 //============================================================================
 
-void A_FreezeDeathChunks(void)
+void A_FreezeDeathChunks()
 {
 	int i;
 	Actor A;
@@ -1036,6 +1036,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.8  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

@@ -104,7 +104,7 @@ void Tick(float DeltaTime)
 	}
 
 	Accumulator += AccSpeed * DeltaTime;
-	Sector->ceiling.dist = OriginalDist + FloatBobOffsets[
+	Sector->ceiling.dist = OriginalDist + Level.Game.FloatBobOffsets[
 		ftoi(Accumulator) & 63] * Scale / Sector->ceiling.normal.z;
 	P_ChangeSector(Sector, true);
 }
@@ -116,6 +116,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

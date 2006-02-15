@@ -153,7 +153,6 @@ void SV_LoadLevel(const char *MapName)
 
 	GLevel = (VLevel*)VObject::StaticSpawnObject(VLevel::StaticClass(), PU_STATIC);
 	GLevel->bForServer = true;
-	svpr.SetGlobal("GLevel", (int)GLevel);
 
 	GLevel->LoadMap(MapName);
 	unguard;
@@ -340,6 +339,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2006/02/15 23:28:18  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.29  2006/02/13 18:34:34  dj_jl
 //  Moved all server progs global functions to classes.
 //

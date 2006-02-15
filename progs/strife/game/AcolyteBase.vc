@@ -44,7 +44,7 @@ void A_AcolyteDeath()
 	//	Make sure there is a player alive for victory.
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (svvars->Players[i] && svvars->Players[i].bSpawned && svvars->Players[i].Health > 0)
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
 		{
 			break;
 		}
@@ -62,8 +62,8 @@ void A_AcolyteDeath()
 		}
 	}
 
-	svvars->Players[0].GiveQuest(QUEST_7);
-	svvars->Players[0].SetObjectives(14);
+	Level.Game.Players[0].GiveQuest(QUEST_7);
+	Level.Game.Players[0].SetObjectives(14);
 	MSG_Select(MSG_SV_RELIABLE);
 	MSG_WriteByte(svc_voice);
 	MSG_WriteShort(14);
@@ -92,6 +92,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2005/03/16 15:04:41  dj_jl
 //  More work on line specials.
 //

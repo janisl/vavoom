@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class ItemAmmoBlasterWimpy:Ammo
-	__mobjinfo__(54);
+class ItemAmmoBlasterWimpy : Ammo
+	__mobjinfo__(54)
+	__scriptid__(37);
 
 __states__
 {
@@ -44,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SerpentMissile:Projectile;
+class SerpentMissile : Projectile;
 
 //==========================================================================
 //
@@ -31,7 +31,7 @@ class SerpentMissile:Projectile;
 //
 //==========================================================================
 
-void A_ContMobjSound(void)
+void A_ContMobjSound()
 {
 	PlaySound('SerpentFXContinuous', CHAN_VOICE);
 }
@@ -67,6 +67,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

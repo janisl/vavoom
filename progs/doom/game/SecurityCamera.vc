@@ -500,12 +500,12 @@ void Tick(float DeltaTime)
 		bJustStepped = false;
 		if (CurrNode.Args[2])
 		{
-			HoldTime = level->time + itof(CurrNode.Args[2]) / 8.0;
+			HoldTime = Level.Game.level->time + itof(CurrNode.Args[2]) / 8.0;
 			Origin = CurrNode.Origin;
 		}
 	}
 
-	if (HoldTime > level->time)
+	if (HoldTime > Level.Game.level->time)
 		return;
 
 	if (CurrNode.Next == none)
@@ -897,6 +897,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/27 22:22:27  dj_jl
 //  Created level info class, moved action special handling to it.
 //

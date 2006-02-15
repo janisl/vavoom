@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Sorcerer2 : Pawn;
+class Sorcerer2 : Pawn
+	__scriptid__(143);
 
 int RiseState;
 int TeleportState;
@@ -360,6 +361,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

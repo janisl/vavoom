@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BrainExplosion:Rocket;
+class BrainExplosion : Rocket;
 
 //==========================================================================
 //
@@ -33,7 +33,7 @@ class BrainExplosion:Rocket;
 //
 //==========================================================================
 
-void A_BrainExplode(void)
+void A_BrainExplode()
 {
 	TVec org;
 	Actor A;
@@ -66,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:32:36  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

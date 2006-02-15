@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ItemKey3 : Key
-	__mobjinfo__(8032);
+	__mobjinfo__(8032)
+	__scriptid__(87);
 
 __states__
 {
@@ -40,6 +41,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2004/08/28 12:12:03  dj_jl
 //  New 3D models.
 //

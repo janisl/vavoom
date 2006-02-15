@@ -81,7 +81,7 @@ bool Touch(Entity InOther)
 		Other.Velocity.x += Velocity.x / 16.0;
 		Other.Velocity.y += Velocity.y / 16.0;
 	}
-	if ((!Other.bIsPlayer && !Other.bBoss) || !(level->tictime & 1))
+	if ((!Other.bIsPlayer && !Other.bBoss) || !(Level.Game.level->tictime & 1))
 	{
 		if (Other.Class == Centaur ||
 			Other.Class == CentaurLeader)
@@ -194,7 +194,7 @@ void A_LightningClip()
 				targ.Origin.x - Origin.x);
 			Velocity.x = 0.0;
 			Velocity.y = 0.0;
-			Thrust(Angles.yaw, Speed * frametime / 2.0);
+			Thrust(Angles.yaw, Speed * Level.Game.frametime / 2.0);
 		}
 	}
 }
@@ -205,7 +205,7 @@ void A_LightningClip()
 //
 //==========================================================================
 
-void A_LightningZap(void)
+void A_LightningZap()
 {
 	LightningZap Zap;
 	float deltaZ;
@@ -256,7 +256,7 @@ void A_LightningZap(void)
 //
 //==========================================================================
 
-void A_LightningRemove(void)
+void A_LightningRemove()
 {
 	if (LightningLink)
 	{
@@ -279,6 +279,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2006/01/12 23:27:25  dj_jl
 //  Added a fix for 3d floors.
 //

@@ -49,7 +49,7 @@ void Init(sector_t* InSector, int InBase, int InIndex)
 		Index = itof(InIndex) / 32.0;
 	}
 	Base = InBase & 255;
-	Sector->params.lightlevel = Base + PhaseTable[ftoi(Index * 32.0) & 63];
+	Sector->params.lightlevel = Base + Level.Game.PhaseTable[ftoi(Index * 32.0) & 63];
 	if (Sector->params.lightlevel > 255)
 	{
 		Sector->params.lightlevel = 255;
@@ -65,7 +65,7 @@ void Init(sector_t* InSector, int InBase, int InIndex)
 void Tick(float deltaTime)
 {
 	Index += deltaTime;
-	Sector->params.lightlevel = Base + PhaseTable[ftoi(Index * 32.0) & 63];
+	Sector->params.lightlevel = Base + Level.Game.PhaseTable[ftoi(Index * 32.0) & 63];
 	if (Sector->params.lightlevel > 255)
 	{
 		Sector->params.lightlevel = 255;
@@ -79,6 +79,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/03/16 15:04:39  dj_jl
 //  More work on line specials.
 //

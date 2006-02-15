@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class SpiderMastermind : Pawn
-	__mobjinfo__(7);
+	__mobjinfo__(7)
+	__scriptid__(7);
 
 //==========================================================================
 //
@@ -108,7 +109,7 @@ void A_BossDeath()
 	int i;
 	Actor Other;
 
-	mapname = ARR2STR(level->mapname);
+	mapname = ARR2STR(Level.Game.level->mapname);
 	if (strcmp(mapname, "E3M8") && strcmp(mapname, "E4M8"))
 	{
 		//  Not a boss level
@@ -117,7 +118,7 @@ void A_BossDeath()
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
-		if (svvars->Players[i] && svvars->Players[i].bSpawned && svvars->Players[i].Health > 0)
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
 			break;
 
 	if (i == MAXPLAYERS)
@@ -203,6 +204,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.8  2005/12/27 22:22:27  dj_jl
 //  Created level info class, moved action special handling to it.
 //

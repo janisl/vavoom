@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ZSuitOfArmor:Decoration
+class ZSuitOfArmor : Decoration
 	__mobjinfo__(8064);
 
 //===========================================================================
@@ -34,7 +34,7 @@ class ZSuitOfArmor:Decoration
 //
 //===========================================================================
 
-void A_SoAExplode(void)
+void A_SoAExplode()
 {
 	Actor A;
 	int i;
@@ -54,7 +54,7 @@ void A_SoAExplode(void)
 	if (Args[0])
 	{
 		// Spawn an item
-		Spawn(TranslateThingType[Args[0]], Origin);
+		Spawn(FindClassFromScriptId(Args[0]), Origin);
 	}
 	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
 	Remove();
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

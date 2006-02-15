@@ -35,7 +35,7 @@ int Attack2State;
 //
 //============================================================================
 
-void A_CStaffInitBlink(void)
+void A_CStaffInitBlink()
 {
 	BlinkCount = (P_Random() >> 1) + 20;
 }
@@ -46,7 +46,7 @@ void A_CStaffInitBlink(void)
 //
 //============================================================================
 
-void A_CStaffCheckBlink(void)
+void A_CStaffCheckBlink()
 {
 	if (!--BlinkCount)
 	{
@@ -61,7 +61,7 @@ void A_CStaffCheckBlink(void)
 //
 //============================================================================
 
-void A_CStaffCheck(void)
+void A_CStaffCheck()
 {
 	Actor pmo;
 	int damage;
@@ -72,20 +72,19 @@ void A_CStaffCheck(void)
 
 	pmo = Player.MO;
 	damage = 20 + (P_Random() & 15);
-	PuffType = ClericStaffPuff;
 	for (i = 0; i < 3; i++)
 	{
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		pmo.AimLineAttack(&angles, 3.0 * MELEERANGE / 2.0);
-		if (linetarget)
+		if (pmo.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			pmo.LineAttack(vforward, 1.5 * MELEERANGE, damage);
-			pmo.Angles.yaw = atan2(linetarget.Origin.y - pmo.Origin.y,
-				linetarget.Origin.x - pmo.Origin.x);
-			if ((linetarget.bIsPlayer || linetarget.bCountKill) &&
-				!linetarget.bDormant && !linetarget.bInvulnerable)
+			pmo.LineAttack(vforward, 1.5 * MELEERANGE, damage, ClericStaffPuff);
+			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
+				pmo.linetarget.Origin.x - pmo.Origin.x);
+			if ((pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill) &&
+				!pmo.linetarget.bDormant && !pmo.linetarget.bInvulnerable)
 			{
 				newLife = Player.Health + (damage >> 3);
 				newLife = newLife > 100 ? 100 : newLife;
@@ -100,13 +99,13 @@ void A_CStaffCheck(void)
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		Player.MO.AimLineAttack(&angles, 3.0 * MELEERANGE / 2.0);
-		if (linetarget)
+		if (pmo.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			pmo.LineAttack(vforward, 1.5 * MELEERANGE, damage);
-			pmo.Angles.yaw = atan2(linetarget.Origin.y - pmo.Origin.y,
-				linetarget.Origin.x - pmo.Origin.x);
-			if (linetarget.bIsPlayer || linetarget.bCountKill)
+			pmo.LineAttack(vforward, 1.5 * MELEERANGE, damage, ClericStaffPuff);
+			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
+				pmo.linetarget.Origin.x - pmo.Origin.x);
+			if (pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill)
 			{
 				newLife = Player.Health + (damage >> 4);
 				newLife = newLife > 100 ? 100 : newLife;
@@ -202,6 +201,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

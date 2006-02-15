@@ -23,7 +23,9 @@
 //**
 //**************************************************************************
 
-// MACROS ------------------------------------------------------------------
+#include <server.vc>
+
+#include "hexndefs.vc"
 
 #define TELEFOGHEIGHT	32.0
 
@@ -296,20 +298,6 @@ enum
 };
 
 #define MAX_TAGGED_LINES	64
-
-// Keys
-
-#define	TXT_KEY_STEEL		"STEEL KEY"
-#define	TXT_KEY_CAVE		"CAVE KEY"
-#define	TXT_KEY_AXE			"AXE KEY"
-#define	TXT_KEY_FIRE		"FIRE KEY"
-#define	TXT_KEY_EMERALD		"EMERALD KEY"
-#define	TXT_KEY_DUNGEON		"DUNGEON KEY"
-#define	TXT_KEY_SILVER		"SILVER KEY"
-#define	TXT_KEY_RUSTED		"RUSTED KEY"
-#define	TXT_KEY_HORN		"HORN KEY"
-#define	TXT_KEY_SWAMP		"SWAMP KEY"
-#define TXT_KEY_CASTLE		"CASTLE KEY"
 
 enum
 {
@@ -587,218 +575,79 @@ class BotPlayer;
 #define NUMTOTALBOTS	24
 #define	NUMBOTTYPES		24
 
-// FUNCTION PROTOTYPES -----------------------------------------------------
-
-// DATA DECLARATIONS -------------------------------------------------------
-
-int num_stats = NUM_STATS + NUMARMOR + NUMMANA + 7 + NUMARTIFACTS * 2;
-
-bool randomclass;
-
-float AutoArmorSave[NUMCLASSES] = { 15.0, 10.0, 5.0, 0.0 };
-
-float ArmorIncrement[NUMCLASSES * NUMARMOR] = {
-	25.0, 20.0, 15.0, 5.0,
-	10.0, 25.0, 5.0, 20.0,
-	5.0, 15.0, 10.0, 25.0,
-	0.0, 0.0, 0.0, 0.0
-};
-
-// Hexen only
-
-float FloatBobOffsets[64] = {
-	0.0, 0.7841339111, 1.560714722, 2.322265625,
-	3.061462402, 3.77116394, 4.444549561, 5.075134277,
-	5.656845093, 6.184082031, 6.651748657, 7.055358887,
-	7.391021729, 7.655517578, 7.8462677, 7.961471558,
-	7.999984741, 7.961471558, 7.8462677, 7.655517578,
-	7.391021729, 7.055358887, 6.651748657, 6.184082031,
-	5.656845093, 5.075134277, 4.444549561, 3.77116394,
-	3.061462402, 2.322265625, 1.560714722, 0.7841339111,
-	-0.0000152587, -0.7841491699, -1.56072998, -2.322280884,
-	-3.061477661, -3.771179199, -4.444564819, -5.075149536,
-	-5.656860352, -6.18409729, -6.651763916, -7.055374146,
-	-7.391052246, -7.655532837, -7.846298218, -7.961486816,
-	-8.0, -7.961486816, -7.846298218, -7.655532837,
-	-7.391052246, -7.055374146, -6.651763916, -6.18409729,
-	-5.656860352, -5.075149536, -4.444564819, -3.771179199,
-	-3.061477661, -2.322280884, -1.56072998, -0.7841339111
-};
-
-tagged_line_t TaggedLines[MAX_TAGGED_LINES];
-int TaggedLineCount;
-
-string TextKeyMessages[] = {
-	TXT_KEY_STEEL,
-	TXT_KEY_CAVE,
-	TXT_KEY_AXE,
-	TXT_KEY_FIRE,
-	TXT_KEY_EMERALD,
-	TXT_KEY_DUNGEON,
-	TXT_KEY_SILVER,
-	TXT_KEY_RUSTED,
-	TXT_KEY_HORN,
-	TXT_KEY_SWAMP,
-	TXT_KEY_CASTLE
-};
-
-int PhaseTable[64] = {
-	128, 112, 96, 80, 64, 48, 32, 32,
-	16, 16, 16, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 16, 16, 16,
-	32, 32, 48, 64, 80, 96, 112, 128
-};
-
-// CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
+#include "game/classes.vc"
 
 //**************************************************************************
 //
 //  $Log$
-//  Revision 1.45  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
+//  Revision 1.1  2006/02/15 23:34:59  dj_jl
+//  Moved all server progs global variables to classes.
 //
-//  Revision 1.44  2005/12/27 22:22:28  dj_jl
+//  Revision 1.23  2006/02/13 18:30:17  dj_jl
+//  Moved all server progs global functions to classes.
+//
+//  Revision 1.22  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //
-//  Revision 1.43  2005/11/20 12:41:35  dj_jl
-//  Implemented support for sound sequence extensions.
+//  Revision 1.21  2005/12/11 21:31:40  dj_jl
+//  Made path traversal callbacks class members.
 //
-//  Revision 1.42  2004/11/01 07:38:23  dj_jl
-//  Almost all Hexen line specials are available in all games.
+//  Revision 1.20  2005/12/01 19:46:34  dj_jl
+//  Cleanup.
 //
-//  Revision 1.41  2003/11/12 16:50:47  dj_jl
-//  Changed player structure into a class
+//  Revision 1.19  2005/03/28 07:44:09  dj_jl
+//  Some Boom line specials and other improvements.
 //
-//  Revision 1.40  2003/03/08 12:41:45  dj_jl
-//  Removing class pointers.
+//  Revision 1.18  2004/12/27 12:23:14  dj_jl
+//  Multiple small changes for version 1.16
 //
-//  Revision 1.39  2002/11/02 08:24:11  dj_jl
+//  Revision 1.17  2004/08/28 12:35:23  dj_jl
+//  Move general client functions to player class.
+//
+//  Revision 1.16  2002/11/02 08:24:11  dj_jl
 //  New style classes.
 //
-//  Revision 1.38  2002/09/07 16:28:26  dj_jl
-//  Added Level class.
-//
-//  Revision 1.37  2002/08/28 16:36:39  dj_jl
-//  Merged MapObject with Entity, some natives, beautification.
-//
-//  Revision 1.36  2002/07/23 13:07:31  dj_jl
-//  Final touches for switching to floating-point time, beautification.
-//
-//  Revision 1.35  2002/06/29 15:54:34  dj_jl
-//  Floatized PainChance.
-//
-//  Revision 1.34  2002/06/22 07:16:02  dj_jl
+//  Revision 1.15  2002/06/22 07:16:02  dj_jl
 //  Added base classes for objects, split them into corresponding files.
 //
-//  Revision 1.33  2002/06/14 15:49:45  dj_jl
+//  Revision 1.14  2002/06/14 15:49:45  dj_jl
 //  Added Projectile class.
 //
-//  Revision 1.32  2002/05/18 17:00:00  dj_jl
-//  Renamed SpawnState to IdleState, other changes.
-//
-//  Revision 1.31  2002/05/03 17:13:35  dj_jl
-//  Fixed content types.
-//
-//  Revision 1.30  2002/04/11 16:50:54  dj_jl
-//  Made TryMove native, Tick function.
-//
-//  Revision 1.29  2002/03/28 18:32:51  dj_jl
-//  Little renaming, some bug fixes.
-//
-//  Revision 1.28  2002/03/16 17:47:47  dj_jl
+//  Revision 1.13  2002/03/16 17:47:47  dj_jl
 //  Got rid of mobj_t and some other legacy.
 //
-//  Revision 1.27  2002/03/12 19:19:18  dj_jl
-//  Pickup classes
-//
-//  Revision 1.26  2002/03/09 17:57:02  dj_jl
-//  Got rid of function pointers, made most of the physics functions native.
-//
-//  Revision 1.25  2002/03/04 18:31:36  dj_jl
+//  Revision 1.12  2002/03/04 18:31:36  dj_jl
 //  Replaced bNoClip with two seperate flags, beautification.
 //
-//  Revision 1.24  2002/03/02 17:58:37  dj_jl
-//  Created Pawn class as a base class for all creatures.
-//  Moved all monster classes into corresponding files.
+//  Revision 1.11  2002/03/02 18:00:17  dj_jl
+//  Some smaller changes, beautification.
 //
-//  Revision 1.23  2002/02/26 17:49:49  dj_jl
-//  no message
-//
-//  Revision 1.22  2002/02/22 18:00:24  dj_jl
-//  A lots of the renaming, beautification.
-//
-//  Revision 1.21  2002/02/16 16:27:44  dj_jl
-//  Added bool variables
-//
-//  Revision 1.20  2002/02/14 19:20:59  dj_jl
-//  Renamed Entity properties to new naming style
-//
-//  Revision 1.19  2002/02/09 18:15:42  dj_jl
-//  Beautification
-//
-//  Revision 1.18  2002/02/07 18:50:09  dj_jl
-//  Made CheckPosition shared.
-//
-//  Revision 1.17  2002/02/06 17:28:53  dj_jl
+//  Revision 1.10  2002/02/06 17:28:53  dj_jl
 //  Replaced Actor flags with boolean variables.
 //
-//  Revision 1.16  2002/02/02 19:17:26  dj_jl
-//  Replacing pointers with references, beautification.
-//
-//  Revision 1.15  2002/01/25 18:04:35  dj_jl
-//  Many global functions made Actor functions
-//
-//  Revision 1.14  2002/01/24 18:19:27  dj_jl
-//  Split common class Entity, made SetMobjState an Entity function
-//
-//  Revision 1.13  2002/01/15 18:27:00  dj_jl
+//  Revision 1.9  2002/01/15 18:27:00  dj_jl
 //  Some property names with logical words starting with capital letter.
 //  Moved everything from Entity class into Actor class.
 //
-//  Revision 1.12  2002/01/12 18:00:48  dj_jl
-//  Sound names initialized as names
-//
-//  Revision 1.11  2002/01/11 18:16:34  dj_jl
-//  Moved here Actor and Weapon class declarations
-//
-//  Revision 1.10  2002/01/07 12:25:58  dj_jl
+//  Revision 1.8  2002/01/07 12:25:58  dj_jl
 //  Changed copyright year
 //
-//  Revision 1.9  2001/12/27 17:52:24  dj_jl
-//  Removed Entity property type, replaced with Object property Class
-//
-//  Revision 1.8  2001/12/18 18:31:49  dj_jl
-//  Beautification
-//
-//  Revision 1.7  2001/12/12 18:57:42  dj_jl
-//  State functions now are methods of Actor and Weapon classes
-//
-//  Revision 1.6  2001/12/01 18:08:53  dj_jl
-//  Physics functions as methods, started to use class references
-//
-//  Revision 1.5  2001/11/02 18:42:08  dj_jl
-//  Damage method
-//
-//  Revision 1.4  2001/10/27 07:40:58  dj_jl
-//  Switched some functions into class members
-//
-//  Revision 1.3  2001/10/22 17:23:13  dj_jl
-//  Floatification of angles
-//
-//  Revision 1.2  2001/10/18 17:39:34  dj_jl
+//  Revision 1.7  2001/10/18 17:39:34  dj_jl
 //  A lots of changes for Alpha 2
 //
-//  Revision 1.1  2001/10/09 17:35:46  dj_jl
+//  Revision 1.6  2001/10/09 17:35:46  dj_jl
 //  Split server defines into seperate file
+//
+//  Revision 1.5  2001/09/25 17:13:50  dj_jl
+//  Beautification
+//
+//  Revision 1.4  2001/09/24 17:18:15  dj_jl
+//  Created thinker classes
+//
+//  Revision 1.3  2001/09/20 16:20:00  dj_jl
+//  Start using object-oriented stuff, beautification
+//  
+//  Revision 1.2  2001/07/27 14:27:53  dj_jl
+//  Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

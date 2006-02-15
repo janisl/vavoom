@@ -173,42 +173,42 @@ bool HandlePickup(Actor Toucher)
 	{
 		if (Toucher.Player.GiveCard(it_bluecard))
 			cprint(Toucher.Player, GOTBLUECARD);
-		if (netgame)
+		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'YKEY')
 	{
 		if (Toucher.Player.GiveCard(it_yellowcard))
 			cprint(Toucher.Player, GOTYELWCARD);
-		if (netgame)
+		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'RKEY')
 	{
 		if (Toucher.Player.GiveCard(it_redcard))
 			cprint(Toucher.Player, GOTREDCARD);
-		if (netgame)
+		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'BSKU')
 	{
 		if (Toucher.Player.GiveCard(it_blueskull))
 			cprint(Toucher.Player, GOTBLUESKUL);
-		if (netgame)
+		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'YSKU')
 	{
 		if (Toucher.Player.GiveCard(it_yellowskull))
 			cprint(Toucher.Player, GOTYELWSKUL);
-		if (netgame)
+		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'RSKU')
 	{
 		if (Toucher.Player.GiveCard(it_redskull))
 			cprint(Toucher.Player, GOTREDSKULL);
-		if (netgame)
+		if (Level.Game.netgame)
 			return false;
 	}
 		// medikits, heals
@@ -277,55 +277,55 @@ bool HandlePickup(Actor Toucher)
 	{
 		if (bDropped)
 		{
-			if (!Toucher.Player.GiveAmmo(am_clip, clipammo[am_clip] / 2))
+			if (!Toucher.Player.GiveAmmo(am_clip, MainGameInfo(Level.Game).clipammo[am_clip] / 2))
 				return false;
 		}
 		else
 		{
-			if (!Toucher.Player.GiveAmmo(am_clip, clipammo[am_clip]))
+			if (!Toucher.Player.GiveAmmo(am_clip, MainGameInfo(Level.Game).clipammo[am_clip]))
 				return false;
 		}
 		cprint(Toucher.Player, GOTCLIP);
 	}
 	else if (SpriteName == 'AMMO')
 	{
-		if (!Toucher.Player.GiveAmmo(am_clip, 5 * clipammo[am_clip]))
+		if (!Toucher.Player.GiveAmmo(am_clip, 5 * MainGameInfo(Level.Game).clipammo[am_clip]))
 			return false;
 		cprint(Toucher.Player, GOTCLIPBOX);
 	}
 	else if (SpriteName == 'ROCK')
 	{
-		if (!Toucher.Player.GiveAmmo(am_misl, clipammo[am_misl]))
+		if (!Toucher.Player.GiveAmmo(am_misl, MainGameInfo(Level.Game).clipammo[am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKET);
 	}
 	else if (SpriteName == 'BROK')
 	{
-		if (!Toucher.Player.GiveAmmo(am_misl, 5 * clipammo[am_misl]))
+		if (!Toucher.Player.GiveAmmo(am_misl, 5 * MainGameInfo(Level.Game).clipammo[am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKBOX);
 	}
 	else if (SpriteName == 'CELL')
 	{
-		if (!Toucher.Player.GiveAmmo(am_cell, clipammo[am_cell]))
+		if (!Toucher.Player.GiveAmmo(am_cell, MainGameInfo(Level.Game).clipammo[am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELL);
 	}
 	else if (SpriteName == 'CELP')
 	{
-		if (!Toucher.Player.GiveAmmo(am_cell, 5 * clipammo[am_cell]))
+		if (!Toucher.Player.GiveAmmo(am_cell, 5 * MainGameInfo(Level.Game).clipammo[am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELLBOX);
 	}
 	else if (SpriteName == 'SHEL')
 	{
-		if (!Toucher.Player.GiveAmmo(am_shell, clipammo[am_shell]))
+		if (!Toucher.Player.GiveAmmo(am_shell, MainGameInfo(Level.Game).clipammo[am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLS);
 	}
 	else if (SpriteName == 'SBOX')
 	{
-		if (!Toucher.Player.GiveAmmo(am_shell, 5 * clipammo[am_shell]))
+		if (!Toucher.Player.GiveAmmo(am_shell, 5 * MainGameInfo(Level.Game).clipammo[am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLBOX);
 	}
@@ -339,7 +339,7 @@ bool HandlePickup(Actor Toucher)
 		}
 		for (i = 0; i < NUMAMMO; i++)
 		{
-			Toucher.Player.GiveAmmo(i, clipammo[i]);
+			Toucher.Player.GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
 		}
 		cprint(Toucher.Player, GOTBACKPACK);
 	}
@@ -942,13 +942,13 @@ void A_Tracer()
 	TVec delta;
 	float adjustlen;
 
-	if (level->tictime & 3)
+	if (Level.Game.level->tictime & 3)
 		return;
 
 	// spawn a puff of smoke behind the rocket      
 	SpawnPuff(Origin, MISSILERANGE);
 
-	A = Spawn(RevenantTracerSmoke, Origin - Velocity * frametime);
+	A = Spawn(RevenantTracerSmoke, Origin - Velocity * Level.Game.frametime);
 
 	A.Velocity.z = 1.0 * 35.0;
 	A.StateTime -= Random() * 0.1;
@@ -1075,8 +1075,8 @@ void A_VileChase()
 	if (MoveDir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx = Origin.x + StepSpeed * xspeed[MoveDir];
-		viletryy = Origin.y + StepSpeed * yspeed[MoveDir];
+		viletryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+		viletryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
 
 		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
 		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
@@ -1368,7 +1368,7 @@ void A_BrainSpit()
 	Actor A;
 
 	brain_easy ^= 1;
-	if (gameskill <= sk_easy && (!brain_easy))
+	if (Level.Game.gameskill <= sk_easy && (!brain_easy))
 		return;
 
 	// shoot a cube at current target
@@ -1495,7 +1495,7 @@ void A_BossDeath()
 	Actor Other;
 	int args[5];
 
-	mapname = ARR2STR(level->mapname);
+	mapname = ARR2STR(Level.Game.level->mapname);
 
 	if (!strcmp(mapname, "E1M8"))
 	{
@@ -1535,7 +1535,7 @@ void A_BossDeath()
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
-		if (svvars->Players[i] && svvars->Players[i].bSpawned && svvars->Players[i].Health > 0)
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
 			break;
 
 	if (i == MAXPLAYERS)
@@ -1677,6 +1677,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

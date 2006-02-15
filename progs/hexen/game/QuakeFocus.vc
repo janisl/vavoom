@@ -39,7 +39,7 @@ float TremorRadius;	// Radius for tremor
 //
 //==========================================================================
 
-void A_Quake(void)
+void A_Quake()
 {
 	float an;
 	Player pl;
@@ -51,7 +51,7 @@ void A_Quake(void)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			pl = svvars->Players[playnum];
+			pl = Level.Game.Players[playnum];
 			if (!pl || !pl.bSpawned)
 				continue;
 
@@ -78,8 +78,8 @@ void A_Quake(void)
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			if (svvars->Players[playnum])
-				svvars->Players[playnum].LocalQuakeHappening = 0;
+			if (Level.Game.Players[playnum])
+				Level.Game.Players[playnum].LocalQuakeHappening = 0;
 		}
 		SetState(S_NULL);
 	}
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

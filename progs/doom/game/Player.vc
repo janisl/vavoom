@@ -147,13 +147,13 @@ void PutClientIntoServer()
 
 void SpawnClient()
 {
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		DeathMatchSpawnPlayer();
 	}
 	else
 	{
-		SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 			P_GetPlayerNum(self)]);
 	}
 }
@@ -179,16 +179,16 @@ void NetGameReborn()
 	MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		DeathMatchSpawnPlayer();
 		return;
 	}
 
-	if (CheckSpot(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 		P_GetPlayerNum(self)]))
 	{
-		SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 			P_GetPlayerNum(self)]);
 		return;
 	}
@@ -196,14 +196,14 @@ void NetGameReborn()
 	// try to spawn at one of the other players spots
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (CheckSpot(&Level.PlayerStarts[RebornPosition * MAXPLAYERS + i]))
+		if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]))
 		{
-			SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS + i]);
+			SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]);
 			return;
 		}
 		// he's going to be inside something.  Too bad.
 	}
-	SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+	SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 		P_GetPlayerNum(self)]);
 }
 
@@ -342,9 +342,9 @@ bool CheckSpot(mthing_t * mthing)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < MAXPLAYERS; i++)
-			if (svvars->Players[i] && svvars->Players[i].MO &&
-				svvars->Players[i].MO.Origin.x == mthing->x &&
-				svvars->Players[i].MO.Origin.y == mthing->y)
+			if (Level.Game.Players[i] && Level.Game.Players[i].MO &&
+				Level.Game.Players[i].MO.Origin.x == mthing->x &&
+				Level.Game.Players[i].MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -364,7 +364,7 @@ bool CheckSpot(mthing_t * mthing)
 	DoomLevelInfo(Level).bodyqueslot++;
 
 	// spawn a teleport fog 
-	sec = GLevel.PointInSector(vector(x, y, 0.0));
+	sec = Level.XLevel.PointInSector(vector(x, y, 0.0));
 	an = itof(45 * (mthing->angle / 45));
 
 	A = DoomLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
@@ -431,7 +431,7 @@ void SpawnPlayer(mthing_t * mthing)
 	SetupPsprites();
 
 	// give all cards in death match mode
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		Keys = 0x3f;
 	}
@@ -481,10 +481,10 @@ void PlayerReborn()
 	SetInitialWeapons(self);
 #else
 	Ammo[am_clip] = INITIAL_AMMO;
-	MaxAmmo[am_clip] = maxammo[am_clip];
-	MaxAmmo[am_shell] = maxammo[am_shell];
-	MaxAmmo[am_misl] = maxammo[am_misl];
-	MaxAmmo[am_cell] = maxammo[am_cell];
+	MaxAmmo[am_clip] = MainGameInfo(Level.Game).maxammo[am_clip];
+	MaxAmmo[am_shell] = MainGameInfo(Level.Game).maxammo[am_shell];
+	MaxAmmo[am_misl] = MainGameInfo(Level.Game).maxammo[am_misl];
+	MaxAmmo[am_cell] = MainGameInfo(Level.Game).maxammo[am_cell];
 	WeaponOwned[wp_fist] = true;
 	WeaponOwned[wp_pistol] = true;
 	SetWeapon(wp_pistol);
@@ -545,7 +545,7 @@ bool GiveAmmo(int ammo, int num)
 	if (Ammo[ammo] == max)
 		return false;
 
-	if (gameskill == sk_baby || gameskill == sk_nightmare)
+	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
 	{
 		// give double ammo in trainer mode,
 		// you'll need in nightmare
@@ -631,8 +631,8 @@ bool GiveWeapon(int weapon, bool dropped)
 	bool gaveweapon;
 	int ammoCount;
 
-	ammoCount = clipammo[MainGameInfo(Level.Game).weapon_ammo_type[weapon]];
-	if (netgame && (deathmatch < 2) && !dropped)
+	ammoCount = MainGameInfo(Level.Game).clipammo[MainGameInfo(Level.Game).weapon_ammo_type[weapon]];
+	if (Level.Game.netgame && (Level.Game.deathmatch < 2) && !dropped)
 	{
 		// leave placed weapons forever on net games
 		if (WeaponOwned[weapon])
@@ -641,7 +641,7 @@ bool GiveWeapon(int weapon, bool dropped)
 		BonusFlash += BONUSADD;
 		WeaponOwned[weapon] = true;
 
-		if (deathmatch)
+		if (Level.Game.deathmatch)
 			GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], 5 * ammoCount);
 		else
 			GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], 2 * ammoCount);
@@ -897,7 +897,7 @@ void CalcHeight(float deltaTime)
 	if (Bob > MAXBOB)
 		Bob = MAXBOB;
 
-	angle = (180.0 * 35.0 / 10.0) * level->time;
+	angle = (180.0 * 35.0 / 10.0) * Level.Game.level->time;
 	bob = Bob / 2.0 * sin(angle);
 
 	// move viewheight
@@ -941,6 +941,7 @@ void MovePlayer(float deltaTime)
 {
 	float forward;
 	float side;
+	bool onground;
 
 	// Do not let the player control movement
 	//  if not onground.
@@ -951,8 +952,8 @@ void MovePlayer(float deltaTime)
 
 	if (!onground)
 	{
-		forward *= air_control;
-		side *= air_control;
+		forward *= MainGameInfo(Level.Game).air_control;
+		side *= MainGameInfo(Level.Game).air_control;
 	}
 
 	if (forward)
@@ -1027,10 +1028,6 @@ void WaterMove(float deltaTime)
 	TVec vup;
 	TVec wishvel;
 
-	// Do not let the player control movement
-	//  if not onground.
-	onground = MO.Origin.z <= MO.FloorZ || MO.bOnMobj;
-
 	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
 
 	forward = ForwardMove;
@@ -1099,7 +1096,7 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		//	Secret area.
 		SecretCount++;
-		level->currentsecret++;
+		Level.Game.level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
 		centerprint(self, "You found a secret area");
 	}
@@ -1112,34 +1109,34 @@ void PlayerInSpecialSector(float deltaTime)
 		{
 		case SECSPEC_DamageHellslime:
 			if (!Powers[pw_ironfeet] &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 10);
 			}
 			break;
 		case SECSPEC_DamageSludge:
 			if (!Powers[pw_ironfeet] &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 4);
 			}
 			break;
 		case SECSPEC_DamageNukage:
 			if (!Powers[pw_ironfeet] &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 5);
 			}
 			break;
 		case SECSPEC_LightStrobeFastDamage:
 		case SECSPEC_DamageSuperHellslime:
 			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 20);
 			}
 			break;
@@ -1147,9 +1144,9 @@ void PlayerInSpecialSector(float deltaTime)
 			// EXIT SUPER DAMAGE! (for E1M8 finale)
 			Cheats &= ~CF_GODMODE;
 	
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 20);
 			}
 	
@@ -1159,18 +1156,18 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
-			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				//MO.Damage(GLavaInflictor, none, 5);
 				MO.Damage(none, none, 5);
 				//MO.HitFloorEffect();
 			}
 			break;
 		case SECSPEC_DamageLavaHefty:
-			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				//MO.Damage(GLavaInflictor, none, 8);
 				MO.Damage(none, none, 8);
 				//MO.HitFloorEffect();
@@ -1178,9 +1175,9 @@ void PlayerInSpecialSector(float deltaTime)
 			break;
 		case SECSPEC_ScrollEastLavaDamage:
 			ThrustPlayer(0.0, 1024.0, deltaTime);
-			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				//MO.Damage(GLavaInflictor, none, 5);
 				MO.Damage(none, none, 5);
 				//MO.HitFloorEffect();
@@ -1206,25 +1203,25 @@ void PlayerInSpecialSector(float deltaTime)
 		{
 		case 0x0100:
 			if (!Powers[pw_ironfeet] &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 5);
 			}
 			break;
 		case 0x0200:
 			if (!Powers[pw_ironfeet] &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 10);
 			}
 			break;
 		case 0x0300:
 			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 20);
 			}
 			break;
@@ -1237,24 +1234,24 @@ void PlayerInSpecialSector(float deltaTime)
 		if (MO.Sector->Damage < 20)
 		{
 			if (!Powers[pw_ironfeet] &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (MO.Sector->Damage < 50)
 		{
 			if ((!Powers[pw_ironfeet] || (P_Random() < 5)) &&
-				level->time - LastSectorDamageTime >= 32.0 / 35.0)
+				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, MO.Sector->Damage);
 			}
 		}
-		else if (level->time - LastSectorDamageTime >= 1.0 / 35.0)
+		else if (Level.Game.level->time - LastSectorDamageTime >= 1.0 / 35.0)
 		{
-			LastSectorDamageTime = level->time;
+			LastSectorDamageTime = Level.Game.level->time;
 			MO.Damage(none, none, MO.Sector->Damage);
 		}
 	}
@@ -1270,49 +1267,49 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollNorthSlow:
 	case SECSPEC_ScrollNorthMedium:
 	case SECSPEC_ScrollNorthFast:
-		ThrustPlayer(90.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(90.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollEastSlow:
 	case SECSPEC_ScrollEastMedium:
 	case SECSPEC_ScrollEastFast:
-		ThrustPlayer(0.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(0.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollSouthSlow:
 	case SECSPEC_ScrollSouthMedium:
 	case SECSPEC_ScrollSouthFast:
-		ThrustPlayer(270.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(270.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollWestSlow:
 	case SECSPEC_ScrollWestMedium:
 	case SECSPEC_ScrollWestFast:
-		ThrustPlayer(180.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(180.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollNorthWestSlow:
 	case SECSPEC_ScrollNorthWestMedium:
 	case SECSPEC_ScrollNorthWestFast:
-		ThrustPlayer(135.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(135.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollNorthEastSlow:
 	case SECSPEC_ScrollNorthEastMedium:
 	case SECSPEC_ScrollNorthEastFast:
-		ThrustPlayer(45.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(45.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollSouthEastSlow:
 	case SECSPEC_ScrollSouthEastMedium:
 	case SECSPEC_ScrollSouthEastFast:
-		ThrustPlayer(315.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(315.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollSouthWestSlow:
 	case SECSPEC_ScrollSouthWestMedium:
 	case SECSPEC_ScrollSouthWestFast:
-		ThrustPlayer(225.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(225.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollEast5:
@@ -1320,7 +1317,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollEast25:
 	case SECSPEC_ScrollEast30:
 	case SECSPEC_ScrollEast35:
-		ThrustPlayer(0.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(0.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5], deltaTime);
 		break;
 	case SECSPEC_ScrollNorth5:
@@ -1328,7 +1325,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollNorth25:
 	case SECSPEC_ScrollNorth30:
 	case SECSPEC_ScrollNorth35:
-		ThrustPlayer(90.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(90.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorth5], deltaTime);
 		break;
 	case SECSPEC_ScrollSouth5:
@@ -1336,7 +1333,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollSouth25:
 	case SECSPEC_ScrollSouth30:
 	case SECSPEC_ScrollSouth35:
-		ThrustPlayer(270.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(270.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouth5], deltaTime);
 		break;
 	case SECSPEC_ScrollWest5:
@@ -1344,7 +1341,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollWest25:
 	case SECSPEC_ScrollWest30:
 	case SECSPEC_ScrollWest35:
-		ThrustPlayer(180.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(180.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollWest5], deltaTime);
 		break;
 	};
@@ -1367,14 +1364,14 @@ void PlayerInContents()
 	case CONTENTS_NUKAGE:
 		// NUKAGE DAMAGE
 		if (!Powers[pw_ironfeet])
-			if (!(level->tictime & 0x1f))
+			if (!(Level.Game.level->tictime & 0x1f))
 				MO.Damage(none, none, 5);
 		break;
 
 	case CONTENTS_SLIME:
 		// HELLSLIME DAMAGE
 		if (!Powers[pw_ironfeet])
-			if (!(level->tictime & 0x1f))
+			if (!(Level.Game.level->tictime & 0x1f))
 				MO.Damage(none, none, 10);
 		break;
 
@@ -1382,7 +1379,7 @@ void PlayerInContents()
 		// SUPER HELLSLIME DAMAGE
 		if (!Powers[pw_ironfeet] || (P_Random() < 5))
 		{
-			if (!(level->tictime & 0x1f))
+			if (!(Level.Game.level->tictime & 0x1f))
 				MO.Damage(none, none, 20);
 		}
 		break;
@@ -1403,8 +1400,6 @@ void DeathPlayerTick(float deltaTime)
 	float delta;
 
 	MovePsprites();
-
-	onground = MO.Origin.z <= MO.FloorZ || MO.bOnMobj;
 
 	if (MO.WaterLevel > 1)
 	{
@@ -1485,7 +1480,7 @@ void PrevWeapon()
 		if (WeaponOwned[NewWeap])
 #else
 		if (WeaponOwned[NewWeap] && ((NewWeap != wp_plasma &&
-			NewWeap != wp_bfg) || !shareware))
+			NewWeap != wp_bfg) || !MainGameInfo(Level.Game).shareware))
 #endif
 		{
 			PendingWeapon = NewWeap;
@@ -1522,7 +1517,7 @@ void NextWeapon()
 		if (WeaponOwned[NewWeap])
 #else
 		if (WeaponOwned[NewWeap] && ((NewWeap != wp_plasma &&
-			NewWeap != wp_bfg) || !shareware))
+			NewWeap != wp_bfg) || !MainGameInfo(Level.Game).shareware))
 #endif
 		{
 			PendingWeapon = NewWeap;
@@ -1722,10 +1717,10 @@ void PlayerTick(float deltaTime)
 		HazardTime -= deltaTime;
 		if (HazardTime <= 0.0)
 			HazardTime = 0.0;
-		if (level->time - LastHazardTime >= 32.0 / 35.0 &&
+		if (Level.Game.level->time - LastHazardTime >= 32.0 / 35.0 &&
 			HazardTime > 16.0)
 		{
-			LastHazardTime = level->time;
+			LastHazardTime = Level.Game.level->time;
 			MO.Damage(none, none, 5);
 		}
 	}
@@ -2056,7 +2051,7 @@ void SetViewPos()
 
 	PaletteFlash();
 
-	UpdateFaceWidget(frametime);
+	UpdateFaceWidget(Level.Game.frametime);
 
 	Stats.flags = Keys;
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
@@ -2376,7 +2371,7 @@ void ChangeWeapon(int newweapon)
 		PendingWeapon = newweapon;
 #else
 		// Do not go to plasma or BFG in shareware, even if cheated.
-		if ((newweapon != wp_plasma && newweapon != wp_bfg) || !shareware)
+		if ((newweapon != wp_plasma && newweapon != wp_bfg) || !MainGameInfo(Level.Game).shareware)
 		{
 			PendingWeapon = newweapon;
 		}
@@ -2444,7 +2439,7 @@ void MovePsprites()
 			// a -1 tic count never changes
 			if (e.StateTime != -1.0)
 			{
-				e.StateTime -= frametime;
+				e.StateTime -= Level.Game.frametime;
 				if (e.StateTime <= 0.0)
 				{
 					e.StateTime = 0.0;
@@ -2498,7 +2493,7 @@ int CheckAmmo()
 	do
 	{
 #ifndef DOOM2
-		if (WeaponOwned[wp_plasma] && Ammo[am_cell] && (!shareware))
+		if (WeaponOwned[wp_plasma] && Ammo[am_cell] && (!MainGameInfo(Level.Game).shareware))
 #else
 		if (WeaponOwned[wp_plasma] && Ammo[am_cell])
 #endif
@@ -2535,7 +2530,7 @@ int CheckAmmo()
 		else if (WeaponOwned[wp_bfg] && Ammo[am_cell] > 40)
 #else
 		else if (WeaponOwned[wp_bfg] && Ammo[am_cell] > BFGCELLS &&
-			(!shareware))
+			(!MainGameInfo(Level.Game).shareware))
 #endif
 		{
 			PendingWeapon = wp_bfg;
@@ -2960,13 +2955,13 @@ void Cheat_Gimme()
 
 	// Ammo
 	if (i1 & GIMME_BULLETS)
-		Ammo[am_clip] = maxammo[am_clip] * (Backpack ? 2 : 1);
+		Ammo[am_clip] = MainGameInfo(Level.Game).maxammo[am_clip] * (Backpack ? 2 : 1);
 	if (i1 & GIMME_SHELLS)
-		Ammo[am_shell] = maxammo[am_shell] * (Backpack ? 2 : 1);
+		Ammo[am_shell] = MainGameInfo(Level.Game).maxammo[am_shell] * (Backpack ? 2 : 1);
 	if (i1 & GIMME_ROCKETS)
-		Ammo[am_misl] = maxammo[am_misl] * (Backpack ? 2 : 1);
+		Ammo[am_misl] = MainGameInfo(Level.Game).maxammo[am_misl] * (Backpack ? 2 : 1);
 	if (i1 & GIMME_CELLS)
-		Ammo[am_cell] = maxammo[am_cell] * (Backpack ? 2 : 1);
+		Ammo[am_cell] = MainGameInfo(Level.Game).maxammo[am_cell] * (Backpack ? 2 : 1);
 
 	// Keys
 	if (i1 & GIMME_BLUECARD)
@@ -3078,6 +3073,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.17  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

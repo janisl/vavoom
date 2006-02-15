@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ZPoisonShroom:Decoration
+class ZPoisonShroom : Decoration
 	__mobjinfo__(8104);
 
 //===========================================================================
@@ -32,7 +32,7 @@ class ZPoisonShroom:Decoration
 //
 //===========================================================================
 
-void A_PoisonShroom(void)
+void A_PoisonShroom()
 {
 	StateTime = 4.0 + Random() * 16.0;
 }
@@ -43,7 +43,7 @@ void A_PoisonShroom(void)
 //
 //===========================================================================
 
-void A_PoisonBagInit(void)
+void A_PoisonBagInit()
 {
 	Actor A;
 
@@ -85,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

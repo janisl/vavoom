@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Feather : ProjEffect;
+class Feather : ProjEffect
+	__scriptid__(121);
 
 __states__
 {
@@ -53,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/06/16 17:46:38  dj_jl
 //  Added model definitions.
 //

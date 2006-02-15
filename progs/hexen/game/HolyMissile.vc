@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolyMissile:Projectile;
+class HolyMissile : Projectile;
 
 //============================================================================
 //
@@ -31,7 +31,7 @@ class HolyMissile:Projectile;
 //
 //============================================================================
 
-void A_CHolySpawnPuff(void)
+void A_CHolySpawnPuff()
 {
 	Spawn(HolyMissilePuff, Origin);
 }
@@ -44,7 +44,7 @@ void A_CHolySpawnPuff(void)
 //
 //============================================================================
 
-void A_CHolyAttack2(void)
+void A_CHolyAttack2()
 {
 	int j;
 	int i;
@@ -78,11 +78,11 @@ void A_CHolyAttack2(void)
 		A.Origin.z = Origin.z;
 		A.Angles.yaw = AngleMod360(Angles.yaw +
 			(45.0 + 45.0 / 2.0) - 45.0 * itof(j));
-		A.Thrust(A.Angles.yaw, A.Speed * frametime);
+		A.Thrust(A.Angles.yaw, A.Speed * Level.Game.frametime);
 		A.Instigator = Instigator;
 		A.Args[0] = 10;	// initial turn value
 		A.Args[1] = 0;	// initial look angle
-		if (deathmatch)
+		if (Level.Game.deathmatch)
 		{
 			// Ghosts last slightly less longer in DeathMatch
 			A.Health = 85;
@@ -132,6 +132,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

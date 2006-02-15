@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class Wraith:Pawn
-	__mobjinfo__(34);
+class Wraith : Pawn
+	__mobjinfo__(34)
+	__scriptid__(8);
 
 //
 // Wraith Variables
@@ -38,7 +39,7 @@ int WeaveIndex;		//	Internal index into floatbob
 //
 //==========================================================================
 
-void A_WraithInit(void)
+void A_WraithInit()
 {
 	Origin.z += 48.0;
 	WeaveIndex = 0;	// index into floatbob
@@ -52,7 +53,7 @@ void A_WraithInit(void)
 //
 //==========================================================================
 
-void A_WraithFX3(void)
+void A_WraithFX3()
 {
 	Actor A;
 	int numdropped = P_Random() % 15;
@@ -79,7 +80,7 @@ void A_WraithFX3(void)
 //
 //==========================================================================
 
-void A_WraithFX4(void)
+void A_WraithFX4()
 {
 	Actor mo;
 	int chance = P_Random();
@@ -136,7 +137,7 @@ void A_WraithFX4(void)
 //
 //==========================================================================
 
-void A_WraithLook(void)
+void A_WraithLook()
 {
 //	A_WraithFX4();             // too expensive
 	A_Look();
@@ -148,9 +149,9 @@ void A_WraithLook(void)
 //
 //==========================================================================
 
-void A_WraithChase(void)
+void A_WraithChase()
 {
-	Origin.z += FloatBobOffsets[WeaveIndex];
+	Origin.z += Level.Game.FloatBobOffsets[WeaveIndex];
 	WeaveIndex = (WeaveIndex + 2) & 63;
 //  if (actor->FloorClip > 0)
 //  {
@@ -167,7 +168,7 @@ void A_WraithChase(void)
 //
 //==========================================================================
 
-void A_WraithMelee(void)
+void A_WraithMelee()
 {
 	int amount;
 
@@ -186,7 +187,7 @@ void A_WraithMelee(void)
 //
 //==========================================================================
 
-void A_WraithMissile(void)
+void A_WraithMissile()
 {
 	Actor mo;
 
@@ -269,6 +270,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

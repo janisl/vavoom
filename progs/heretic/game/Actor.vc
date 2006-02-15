@@ -145,6 +145,7 @@ TVec shoot_dir;
 int la_damage;
 TVec shoot_linestart;
 TVec shoot_lineend;
+classid shootPuffType;
 
 //===========================================================================
 //
@@ -245,7 +246,7 @@ void SetOrigin2(TVec origin)
 void OnMapSpawn(mthing_t * mthing)
 {
 	SpawnHealth = Health;
-	if (gameskill == sk_nightmare)
+	if (Level.Game.gameskill == sk_nightmare)
 	{
 		ReactionCount = 0;
 	}
@@ -308,12 +309,12 @@ void OnMapSpawn(mthing_t * mthing)
 		}
 		if (bCountKill)
 		{
-			level->totalkills++;
+			Level.Game.level->totalkills++;
 			Level.CopyMThing(mthing, &SpawnSpot);
 		}
 		if (bCountItem)
 		{
-			level->totalitems++;
+			Level.Game.level->totalitems++;
 		}
 		Angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
@@ -469,13 +470,13 @@ void Kill(Actor source)
 			}
 		}
 	}
-	else if (!netgame && bCountKill)
+	else if (!Level.Game.netgame && bCountKill)
 	{
 		// Count all monster deaths
-		svvars->Players[0].KillCount++;
+		Level.Game.Players[0].KillCount++;
 	}
 	if (bCountKill)
-		level->currentkills++;
+		Level.Game.level->currentkills++;
 	if (bIsPlayer)
 	{
 		if (!source)
@@ -546,7 +547,7 @@ void TouchWhirlwind(Actor Other)
 		(Random() - Random()) * 45.0 / 2.0);
 	Other.Velocity.x += (Random() - Random()) * 4.0 * 35.0;
 	Other.Velocity.y += (Random() - Random()) * 4.0 * 35.0;
-	if (level->tictime & 16 && !Other.bBoss)
+	if (Level.Game.level->tictime & 16 && !Other.bBoss)
 	{
 		randVal = Random() * 4.0;
 		if (randVal > 2.5)
@@ -559,7 +560,7 @@ void TouchWhirlwind(Actor Other)
 			Other.Velocity.z = 12.0 * 35.0;
 		}
 	}
-	if (!(level->tictime & 7))
+	if (!(Level.Game.level->tictime & 7))
 	{
 		Other.Damage(none, none, 3);
 	}
@@ -716,7 +717,7 @@ void AutoUseHealth(int saveHealth)
 			superCount = Player.Inventory[i].count;
 		}
 	}
-	if ((gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
+	if ((Level.Game.gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
 	{
 		// Use quartz flasks
 		count = (saveHealth + 24) / 25;
@@ -736,7 +737,7 @@ void AutoUseHealth(int saveHealth)
 			Player.PlayerRemoveArtifact(superSlot);
 		}
 	}
-	else if ((gameskill == sk_baby)
+	else if ((Level.Game.gameskill == sk_baby)
 		&& (superCount * 100 + normalCount * 25 >= saveHealth))
 	{
 		// Use mystic urns and quartz flasks
@@ -800,7 +801,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		// Invulnerable, and won't wake up
 		return;
 	}
-	if (bIsPlayer && gameskill == sk_baby)
+	if (bIsPlayer && Level.Game.gameskill == sk_baby)
 	{
 		// Take half damage in trainer mode
 		damage >>= 1;
@@ -966,8 +967,8 @@ void Damage(Actor inflictor, Actor source, int damage)
 			Player.ArmorPoints -= saved;
 			damage -= saved;
 		}
-		if (damage >= Player.Health
-			&& ((gameskill == sk_baby) || deathmatch) && !Player.ChickenTime)
+		if (damage >= Player.Health && ((Level.Game.gameskill == sk_baby) ||
+			Level.Game.deathmatch) && !Player.ChickenTime)
 		{
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
@@ -1373,12 +1374,12 @@ void PushLine()
 		{
 			Damage(none, none, ftoi(Mass) >> 5);
 		}
-		numSpecHitTemp = tmtrace->NumSpecHit;
+		numSpecHitTemp = Level.Game.tmtrace->NumSpecHit;
 		while (numSpecHitTemp > 0)
 		{
 			numSpecHitTemp--;
 			// see if the line was crossed
-			ld = tmtrace->SpecHit[numSpecHitTemp];
+			ld = Level.Game.tmtrace->SpecHit[numSpecHitTemp];
 			side = PointOnPlaneSide(Origin, ld);
 			CheckForPushSpecial(ld, side);
 		}
@@ -1499,7 +1500,7 @@ void ApplyFriction()
 	}
 	else
 	{
-		Velocity -= Velocity * (GetFriction() * frametime);
+		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
 	}
 }
 
@@ -1536,7 +1537,7 @@ float GetFriction()
 //
 //===========================================================================
 
-void XYMovement()
+void XYMovement(float DeltaTime)
 {
 	float ptryx, ptryy;
 	float xmove, ymove;
@@ -1550,22 +1551,22 @@ void XYMovement()
 		case SECSPEC_WindEastSlow:
 		case SECSPEC_WindEastMedium:
 		case SECSPEC_WindEastFast:
-			Thrust(0.0, windTab[special - SECSPEC_WindEastSlow]);
+			Thrust(0.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindEastSlow]);
 			break;
 		case SECSPEC_WindNorthSlow:
 		case SECSPEC_WindNorthMedium:
 		case SECSPEC_WindNorthFast:
-			Thrust(90.0, windTab[special - SECSPEC_WindNorthSlow]);
+			Thrust(90.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindNorthSlow]);
 			break;
 		case SECSPEC_WindSouthSlow:
 		case SECSPEC_WindSouthMedium:
 		case SECSPEC_WindSouthFast:
-			Thrust(270.0, windTab[special - SECSPEC_WindSouthSlow]);
+			Thrust(270.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindSouthSlow]);
 			break;
 		case SECSPEC_WindWestSlow:
 		case SECSPEC_WindWestMedium:
 		case SECSPEC_WindWestFast:
-			Thrust(180.0, windTab[special - SECSPEC_WindWestSlow]);
+			Thrust(180.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindWestSlow]);
 			break;
 		}
 	}
@@ -1585,8 +1586,8 @@ void XYMovement()
 	{
 		Velocity.y = -MAXMOVE;
 	}
-	xmove = Velocity.x * frametime;
-	ymove = Velocity.y * frametime;
+	xmove = Velocity.x * DeltaTime;
+	ymove = Velocity.y * DeltaTime;
 	do
 	{
 		if (xmove > MAXMOVE / (35.0 * 2.0) || ymove > MAXMOVE / (35.0 * 2.0))
@@ -1614,8 +1615,8 @@ void XYMovement()
 			else if (bMissile)
 			{
 				// Explode a missile
-				if (tmtrace->CeilingLine && tmtrace->CeilingLine->backsector &&
-					tmtrace->CeilingLine->backsector->ceiling.pic == skyflatnum)
+				if (Level.Game.tmtrace->CeilingLine && Level.Game.tmtrace->CeilingLine->backsector &&
+					Level.Game.tmtrace->CeilingLine->backsector->ceiling.pic == Level.Game.skyflatnum)
 				{
 					// Hack to prevent missiles exploding against the sky
 					if (Class == BloodySkull)
@@ -1652,7 +1653,7 @@ void XYMovement()
 //
 //===========================================================================
 
-void ZMovement()
+void ZMovement(float DeltaTime)
 {
 	float dist;
 	float delta;
@@ -1670,7 +1671,7 @@ void ZMovement()
 	//
 	// adjust height
 	//
-	Origin.z += Velocity.z * frametime;
+	Origin.z += Velocity.z * DeltaTime;
 	if (bFloat && Enemy)
 	{
 		// float down towards enemy if too close
@@ -1679,14 +1680,14 @@ void ZMovement()
 			dist = DistTo(Enemy);
 			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -(delta * 3.0))
-				Origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * DeltaTime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
-				Origin.z += FLOATSPEED * frametime;
+				Origin.z += FLOATSPEED * DeltaTime;
 		}
 	}
-	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && level->tictime & 2)
+	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && Level.Game.level->tictime & 2)
 	{
-		Origin.z += sin(90.0 * 35.0 / 20.0 * level->time);
+		Origin.z += sin(90.0 * 35.0 / 20.0 * Level.Game.level->time);
 	}
 
 	//
@@ -1715,7 +1716,7 @@ void ZMovement()
 				return;
 			}
 		}
-		if (Origin.z - Velocity.z * frametime > FloorZ)
+		if (Origin.z - Velocity.z * DeltaTime > FloorZ)
 		{
 			// Spawn splashes, etc.
 			HitFloorEffect();
@@ -1756,7 +1757,7 @@ void ZMovement()
 		}
 		if (bMissile)
 		{
-			if (Sector->ceiling.pic == skyflatnum)
+			if (Sector->ceiling.pic == Level.Game.skyflatnum)
 			{
 				if (Class == BloodySkull)
 				{
@@ -1782,7 +1783,7 @@ void ZMovement()
 //
 //===========================================================================
 
-bool BlasterPhysics()
+bool BlasterPhysics(float DeltaTime)
 {
 	int i;
 	float xfrac;
@@ -1795,9 +1796,9 @@ bool BlasterPhysics()
 	if (Velocity.x || Velocity.y ||
 		(Origin.z != FloorZ) || Velocity.z)
 	{
-		xfrac = Velocity.x * frametime / 8.0;
-		yfrac = Velocity.y * frametime / 8.0;
-		zfrac = Velocity.z * frametime / 8.0;
+		xfrac = Velocity.x * DeltaTime / 8.0;
+		yfrac = Velocity.y * DeltaTime / 8.0;
+		zfrac = Velocity.z * DeltaTime / 8.0;
 		changexy = xfrac || yfrac;
 		for (i = 0; i < 8; i++)
 		{
@@ -1862,7 +1863,7 @@ void PlayerLandedOnThing()
 //
 //===========================================================================
 
-bool Physics()
+bool Physics(float DeltaTime)
 {
 	Actor			onmo;
 	SectorThinker	SecThink;
@@ -1873,7 +1874,7 @@ bool Physics()
 
 	if (bBlaster)
 	{
-		return BlasterPhysics();
+		return BlasterPhysics(DeltaTime);
 	}
 
 	if (Sector->AffectorData && bColideWithWorld)
@@ -1934,7 +1935,7 @@ bool Physics()
 	// Handle X and Y momentums
 	if (Velocity.x || Velocity.y)
 	{
-		XYMovement();
+		XYMovement(DeltaTime);
 		if (IsDestroyed())
 		{
 			// mobj was removed
@@ -1962,7 +1963,7 @@ bool Physics()
 			Origin.z = ONFLOORZ;
 			LinkToWorld();
 		}
-		Origin.z = FloorZ + Special1f + FloatBobOffsets[(Health++) & 63];
+		Origin.z = FloorZ + Special1f + Level.Game.FloatBobOffsets[(Health++) & 63];
 	}
 	else if ((Origin.z != FloorZ) || Velocity.z)
 	{
@@ -1972,7 +1973,7 @@ bool Physics()
 			onmo = Actor(CheckOnmobj());
 			if (!onmo)
 			{
-				ZMovement();
+				ZMovement(DeltaTime);
 				if (bIsPlayer && bOnMobj)
 				{
 					bOnMobj = false;
@@ -2020,7 +2021,7 @@ bool Physics()
 		}
 		else
 		{
-			ZMovement();
+			ZMovement(DeltaTime);
 		}
 		if (IsDestroyed())
 		{
@@ -2039,7 +2040,7 @@ bool Physics()
 
 void Tick(float deltaTime)
 {
-	if (!Physics())
+	if (!Physics(deltaTime))
 	{
 		return;
 	}
@@ -2067,7 +2068,7 @@ void Tick(float deltaTime)
 		{
 			return;
 		}
-		if (!respawnmonsters)
+		if (!MainGameInfo(Level.Game).respawnmonsters)
 		{
 			return;
 		}
@@ -2076,7 +2077,7 @@ void Tick(float deltaTime)
 		{
 			return;
 		}
-		if (level->tictime & 31)
+		if (Level.Game.level->tictime & 31)
 		{
 			return;
 		}
@@ -2108,10 +2109,10 @@ bool HeightClip()
 	CheckRelPosition(Origin);
 	// what about stranding a monster partially off an edge?
 
-	Floor = tmtrace->Floor;
-	Ceiling = tmtrace->Ceiling;
-	FloorZ = tmtrace->FloorZ;
-	CeilingZ = tmtrace->CeilingZ;
+	Floor = Level.Game.tmtrace->Floor;
+	Ceiling = Level.Game.tmtrace->Ceiling;
+	FloorZ = Level.Game.tmtrace->FloorZ;
+	CeilingZ = Level.Game.tmtrace->CeilingZ;
 
 	if (onfloor)
 	{
@@ -2168,7 +2169,7 @@ bool SectorChanged(int CrushChange)
 		return true;	//fit
 	}
 
-	if (CrushChange && !(level->tictime & 3))
+	if (CrushChange && !(Level.Game.level->tictime & 3))
 	{
 		Damage(none, none, CrushChange);
 
@@ -2399,6 +2400,7 @@ Actor SpawnPlayerMissile(classid type)
 {
 	TVec dir;
 	TVec org;
+	Actor MissileMobj;
 
 	// Try to find a target
 	dir = Aim(Angles.yaw, 16.0 * 64.0);
@@ -2406,6 +2408,7 @@ Actor SpawnPlayerMissile(classid type)
 	org.z = Origin.z + 32.0 - tan(Angles.pitch);
 	org.z -= FloorClip;
 	MissileMobj = Spawn(type, org);
+	MainGameInfo(Level.Game).MissileMobj = MissileMobj;
 	if (MissileMobj.SightSound)
 	{
 		MissileMobj.PlaySound(MissileMobj.SightSound, CHAN_VOICE);
@@ -2780,7 +2783,7 @@ bool LookForMonsters()
 	int count;
 	Actor mo;
 
-	if (!svvars->Players[0].MO.CanSee(self))
+	if (!Level.Game.Players[0].MO.CanSee(self))
 	{
 		// Player can't see monster
 		return false;
@@ -2837,7 +2840,7 @@ bool LookForPlayers(bool allaround)
 	float an;
 	float dist;
 
-	if (!netgame && svvars->Players[0] && svvars->Players[0].bSpawned && svvars->Players[0].Health <= 0)
+	if (!Level.Game.netgame && Level.Game.Players[0] && Level.Game.Players[0].bSpawned && Level.Game.Players[0].Health <= 0)
 	{
 		// Single player game and player is dead, look for monsters
 		return LookForMonsters();
@@ -2849,13 +2852,13 @@ bool LookForPlayers(bool allaround)
 		if (LastLook == stop)
 			return false;	// done looking
 
-		if (!svvars->Players[LastLook])
+		if (!Level.Game.Players[LastLook])
 			continue;
 
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = svvars->Players[LastLook];
+		P = Level.Game.Players[LastLook];
 		if (!P.bSpawned || !P.MO)
 			continue;	// not spawned yet
 		if (P.Health <= 0)
@@ -2920,32 +2923,32 @@ bool StepMove()
 		Error("Weird MoveDir!");
 #endif
 
-	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
-	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
+	tryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
 
 	if (!TryMove(vector(tryx, tryy, Origin.z)))
 	{
 		// open any specials
-		if (bFloat && tmtrace->bFloatOk)
+		if (bFloat && Level.Game.tmtrace->bFloatOk)
 		{
 			// must adjust height
-			if (Origin.z < tmtrace->FloorZ)
-				Origin.z += FLOATSPEED * frametime;
+			if (Origin.z < Level.Game.tmtrace->FloorZ)
+				Origin.z += FLOATSPEED * Level.Game.frametime;
 			else
-				Origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * Level.Game.frametime;
 
 			bInFloat = true;
 			return true;
 		}
 
-		if (!tmtrace->NumSpecHit)
+		if (!Level.Game.tmtrace->NumSpecHit)
 			return false;
 
 		MoveDir = DI_NODIR;
 		good = false;
-		while (tmtrace->NumSpecHit--)
+		while (Level.Game.tmtrace->NumSpecHit--)
 		{
-			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
+			ld = Level.Game.tmtrace->SpecHit[Level.Game.tmtrace->NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -3009,7 +3012,7 @@ void NewChaseDir()
 		Error("NewChaseDir: called with no Enemy");
 
 	olddir = MoveDir;
-	turnaround = opposite[olddir];
+	turnaround = MainGameInfo(Level.Game).opposite[olddir];
 
 	deltax = Enemy.Origin.x - Origin.x;
 	deltay = Enemy.Origin.y - Origin.y;
@@ -3029,7 +3032,7 @@ void NewChaseDir()
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
-		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		MoveDir = MainGameInfo(Level.Game).diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
 		if (MoveDir != turnaround && TryWalk())
 			return;
 	}
@@ -3335,7 +3338,7 @@ bool ShootHitPlane(sec_plane_t * plane)
 	}
 
 	//  Hit plane
-	if (plane->pic == skyflatnum)
+	if (plane->pic == Level.Game.skyflatnum)
 	{
 		// don't shoot the sky!
 		return false;
@@ -3349,7 +3352,7 @@ bool ShootHitPlane(sec_plane_t * plane)
 	shoot_lineend += 4.0 * plane->normal;
 
 	// Spawn bullet puffs.
-	SpawnPuff(shoot_lineend);
+	SpawnPuff(shoot_lineend, shootPuffType);
 
 	// don't go any farther
 	return false;
@@ -3460,8 +3463,8 @@ bool PTR_ShootTraverse(intercept_t * in)
 				}
 				open = open->next;
 			}
-			if (li->frontsector->ceiling.pic == skyflatnum &&
-				li->backsector->ceiling.pic == skyflatnum &&
+			if (li->frontsector->ceiling.pic == Level.Game.skyflatnum &&
+				li->backsector->ceiling.pic == Level.Game.skyflatnum &&
 				hit_point.z > opentop)
 			{
 				// it's a sky hack wall
@@ -3475,7 +3478,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		hit_point -= 4.0 * shoot_dir;
 
 		// Spawn bullet puffs.
-		SpawnPuff(hit_point);
+		SpawnPuff(hit_point, shootPuffType);
 
 		// don't go any farther
 		return false;
@@ -3509,7 +3512,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		return true;
 	}
 
-	if (PuffType == BlasterPuff1)
+	if (shootPuffType == BlasterPuff1)
 	{
 		// Make blaster big puff
 		Actor A;
@@ -3526,7 +3529,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 	}
 	else
 	{
-		SpawnPuff(hit_point);
+		SpawnPuff(hit_point, shootPuffType);
 	}
 	if (la_damage)
 	{
@@ -3556,11 +3559,12 @@ bool PTR_ShootTraverse(intercept_t * in)
 //
 //==========================================================================
 
-int LineAttack(TVec dir, float distance, int damage)
+int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 {
 	TVec dst;
 
 	la_damage = damage;
+	shootPuffType = PuffType;
 
 	shoot_origin = Origin;
 	shoot_origin.z += Height * 0.5 + 8.0 - FloorClip;
@@ -3576,7 +3580,7 @@ int LineAttack(TVec dir, float distance, int damage)
 		return false;
 	}
 	shoot_lineend = dst;
-	return ShootCheckPlanes(GLevel.PointInSector(dst));
+	return ShootCheckPlanes(XLevel.PointInSector(dst));
 }
 
 //==========================================================================
@@ -3677,7 +3681,7 @@ void A_Explode()
 //
 //==========================================================================
 
-void SpawnPuff(TVec org)
+void SpawnPuff(TVec org, classid PuffType)
 {
 	Actor puff;
 
@@ -3730,6 +3734,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.22  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

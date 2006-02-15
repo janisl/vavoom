@@ -34,12 +34,15 @@ mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for death
 int				NumDeathmatchStarts;
 mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
 
-TVec trace_start;
-TVec trace_end;
-TVec trace_plane_normal;
+int				TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
+Entity			TIDMobj[MAX_TID_COUNT];
 
-TVec linestart;
-TVec lineend;
+TVec			trace_start;
+TVec			trace_end;
+TVec			trace_plane_normal;
+
+TVec			linestart;
+TVec			lineend;
 
 //==========================================================================
 //
@@ -357,7 +360,7 @@ bool TraceLine(TVec start, TVec end)
 		self, 'TraceTraverse'))
 	{
 		lineend = end;
-		return TraceCheckPlanes(GLevel.PointInSector(end));
+		return TraceCheckPlanes(XLevel.PointInSector(end));
 	}
 	return false;
 }
@@ -878,7 +881,7 @@ float FindShortestTextureAround(sector_t* sec)
 		if (!(sec->lines[i]->flags & ML_TWOSIDED))
 			continue;
 
-		texnum = GLevel.Sides[sec->lines[i]->sidenum[0]].bottomtexture;
+		texnum = XLevel.Sides[sec->lines[i]->sidenum[0]].bottomtexture;
 		if (texnum >= 0)
 		{
 			if (TextureHeight(texnum) < minsize)
@@ -886,7 +889,7 @@ float FindShortestTextureAround(sector_t* sec)
 				minsize = TextureHeight(texnum);
 			}
 		}
-		texnum = GLevel.Sides[sec->lines[i]->sidenum[1]].bottomtexture;
+		texnum = XLevel.Sides[sec->lines[i]->sidenum[1]].bottomtexture;
 		if (texnum >= 0)
 		{
 			if (TextureHeight(texnum) < minsize)
@@ -923,7 +926,7 @@ float FindShortestUpperAround(sector_t* sec)
 		if ((sec->lines[i]->flags & ML_TWOSIDED))
 			continue;
 
-		texnum = GLevel.Sides[sec->lines[i]->sidenum[0]].toptexture;
+		texnum = XLevel.Sides[sec->lines[i]->sidenum[0]].toptexture;
 		if (texnum >= 0)
 		{
 			if (TextureHeight(texnum) < minsize)
@@ -931,7 +934,7 @@ float FindShortestUpperAround(sector_t* sec)
 				minsize = TextureHeight(texnum);
 			}
 		}
-		texnum = GLevel.Sides[sec->lines[i]->sidenum[1]].toptexture;
+		texnum = XLevel.Sides[sec->lines[i]->sidenum[1]].toptexture;
 		if (texnum >= 0)
 		{
 			if (TextureHeight(texnum) < minsize)
@@ -1180,6 +1183,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2006/02/13 18:30:15  dj_jl
 //  Moved all server progs global functions to classes.
 //

@@ -163,7 +163,7 @@ bool SV_ReadClientMessages(int clientnum)
 	int			ret;
 	byte		cmd_type;
 
-	sv_player = svvars.Players[clientnum];
+	sv_player = GGameInfo->Players[clientnum];
 	sv_player->bNeedsUpdate = false;
 	do
 	{
@@ -257,9 +257,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/15 23:28:18  dj_jl
+//	Moved all server progs global variables to classes.
+//
 //	Revision 1.15  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.14  2003/11/12 16:47:40  dj_jl
 //	Changed player structure into a class
 //	

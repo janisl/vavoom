@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class Head : Pawn
-	__mobjinfo__(6);
+	__mobjinfo__(6)
+	__scriptid__(20);
 
 //==========================================================================
 //
@@ -32,7 +33,7 @@ class Head : Pawn
 //
 //==========================================================================
 
-void DropStuff(void)
+void DropStuff()
 {
 	DropItem(ItemAmmoBlasterWimpy, 10, 0.328125);
 	DropItem(ArtifactEgg, 0, 0.19921875);
@@ -44,7 +45,7 @@ void DropStuff(void)
 //
 //==========================================================================
 
-void A_HeadAttack(void)
+void A_HeadAttack()
 {
 	int i;
 	Actor fire;
@@ -156,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

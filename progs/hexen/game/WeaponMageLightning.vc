@@ -31,7 +31,7 @@ class WeaponMageLightning : Weapon;
 //
 //==========================================================================
 
-void A_LightningReady(void)
+void A_LightningReady()
 {
 	A_WeaponReady();
 	if (P_Random() < 160)
@@ -46,7 +46,7 @@ void A_LightningReady(void)
 //
 //==========================================================================
 
-void A_MLightningAttack(void)
+void A_MLightningAttack()
 {
 	LightningFloor fmo;
 	LightningCeiling cmo;
@@ -125,6 +125,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2005/06/16 17:45:08  dj_jl
 //  Fixeds from Firebrand.
 //

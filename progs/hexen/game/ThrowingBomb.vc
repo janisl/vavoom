@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ThrowingBomb:Projectile;
+class ThrowingBomb : Projectile;
 
 int LastThrowState;
 int LandedState;
@@ -34,7 +34,7 @@ int LandedState;
 //
 //===========================================================================
 
-void A_CheckThrowBomb(void)
+void A_CheckThrowBomb()
 {
 	if (fabs(Velocity.x) < 1.5 * 35.0 &&
 		fabs(Velocity.y) < 1.5 * 35.0 &&
@@ -99,6 +99,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

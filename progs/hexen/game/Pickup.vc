@@ -44,7 +44,7 @@ void TouchSpecial(Actor Toucher)
 //
 //==========================================================================
 
-void A_RestoreSpecialThing1(void)
+void A_RestoreSpecialThing1()
 {
 	bHidden = false;
 	PlaySound('Respawn', CHAN_VOICE);
@@ -56,7 +56,7 @@ void A_RestoreSpecialThing1(void)
 //
 //==========================================================================
 
-void A_RestoreSpecialThing2(void)
+void A_RestoreSpecialThing2()
 {
 	bSpecial = true;
 	SetState(IdleState);
@@ -84,7 +84,7 @@ __states__
 //
 //==========================================================================
 
-void HideSpecial(void)
+void HideSpecial()
 {
 	bSpecial = false;
 	bHidden = true;
@@ -104,6 +104,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

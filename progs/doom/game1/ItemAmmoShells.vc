@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class ItemAmmoShells:AmmoPickup
-	__mobjinfo__(2008);
+class ItemAmmoShells : AmmoPickup
+	__mobjinfo__(2008)
+	__scriptid__(12);
 
 __states__
 {
@@ -35,13 +36,16 @@ defaultproperties
 {
 	IdleState = S_SHEL;
 	AmmoType = am_shell;
-	AmmoCount = clipammo[am_shell];
+	AmmoCount = MainGameInfo(Level.Game).clipammo[am_shell];
 	PickupMessage = "Picked up 4 shotgun shells.";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

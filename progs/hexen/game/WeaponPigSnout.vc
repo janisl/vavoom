@@ -33,7 +33,7 @@ int SniffState;
 //
 //============================================================================
 
-void A_SnoutAttack(void)
+void A_SnoutAttack()
 {
 	int damage;
 	TAVec angles;
@@ -42,16 +42,15 @@ void A_SnoutAttack(void)
 	damage = 3 + (P_Random() & 3);
 	angles = Player.MO.Angles;
 	Player.MO.AimLineAttack(&angles, MELEERANGE);
-	PuffType = SnoutPuff;
-	PuffSpawned = none;
+	MainGameInfo(Player.Level.Game).PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	Player.MO.LineAttack(vforward, MELEERANGE, damage);
+	Player.MO.LineAttack(vforward, MELEERANGE, damage, SnoutPuff);
 	Player.MO.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
-	if (linetarget)
+	if (Player.MO.linetarget)
 	{
 		Player.AdjustPlayerAngle();
-		if (PuffSpawned)
+		if (MainGameInfo(Player.Level.Game).PuffSpawned)
 		{
 			// Bit something
 			Player.MO.PlaySound('PigAttack', CHAN_VOICE);
@@ -65,7 +64,7 @@ void A_SnoutAttack(void)
 //
 //==========================================================================
 
-void SnoutSniff(void)
+void SnoutSniff()
 {
 	SetState(SniffState);
 }
@@ -95,6 +94,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

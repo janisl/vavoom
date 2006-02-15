@@ -31,7 +31,7 @@ class WeaponFist : Weapon;
 //
 //===========================================================================
 
-void A_Punch(void)
+void A_Punch()
 {
 	int damage;
 	TAVec aimAngles;
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:32:10  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

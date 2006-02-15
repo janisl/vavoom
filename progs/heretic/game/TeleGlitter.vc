@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class TeleGlitter:ProjEffect;
+class TeleGlitter : ProjEffect
+	__scriptid__(166);
 
 //==========================================================================
 //
@@ -31,7 +32,7 @@ class TeleGlitter:ProjEffect;
 //
 //==========================================================================
 
-void A_AccTeleGlitter(void)
+void A_AccTeleGlitter()
 {
 	if (++Health > 35)
 	{
@@ -61,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

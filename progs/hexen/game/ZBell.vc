@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ZBell:Decoration
+class ZBell : Decoration
 	__mobjinfo__(8065);
 
 //==========================================================================
@@ -32,7 +32,7 @@ class ZBell:Decoration
 //
 //==========================================================================
 
-void A_BellReset1(void)
+void A_BellReset1()
 {
 	bNoGravity = true;
 	Height *= 4.0;
@@ -44,7 +44,7 @@ void A_BellReset1(void)
 //
 //==========================================================================
 
-bool Activate(void)
+bool Activate()
 {
 	if (Health > 0)
 	{
@@ -59,7 +59,7 @@ bool Activate(void)
 //
 //==========================================================================
 
-void A_BellReset2(void)
+void A_BellReset2()
 {
 	bShootable = true;
 	bCorpse = false;
@@ -137,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

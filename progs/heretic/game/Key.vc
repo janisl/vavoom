@@ -30,7 +30,7 @@ int KeyType;
 
 void OnMapSpawn(mthing_t *mthing)
 {
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		Remove();
 		return;
@@ -58,7 +58,7 @@ void TouchSpecial(Actor Toucher)
 	}
 	if (Toucher.Player.GiveKey(KeyType))
 	{
-		cprint(Toucher.Player, KeyText[KeyType]);
+		cprint(Toucher.Player, MainGameInfo(Level.Game).KeyText[KeyType]);
 	}
 	if (Special)
 	{
@@ -66,7 +66,7 @@ void TouchSpecial(Actor Toucher)
 			Args[4], NULL, 0, Toucher);
 		Special = 0;
 	}
-	if (netgame)
+	if (Level.Game.netgame)
 	{
 		return;
 	}
@@ -86,6 +86,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

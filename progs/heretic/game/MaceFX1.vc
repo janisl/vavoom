@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class MaceFX1:MaceFX3;
+class MaceFX1 : MaceFX3
+	__scriptid__(154);
 
 //===========================================================================
 //
@@ -31,7 +32,7 @@ class MaceFX1:MaceFX3;
 //
 //===========================================================================
 
-void A_MacePL1Check(void)
+void A_MacePL1Check()
 {
 	float angle;
 
@@ -71,6 +72,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

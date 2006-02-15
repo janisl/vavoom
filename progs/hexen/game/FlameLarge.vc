@@ -24,7 +24,9 @@
 //**************************************************************************
 
 class FlameLarge : Decoration
-	__mobjinfo__(10503);
+	__mobjinfo__(10503)
+	__scriptid__(99)
+	__scriptid__(67);
 
 void OnMapSpawn(mthing_t *mthing)
 {
@@ -66,7 +68,7 @@ __states__
 //
 //==========================================================================
 
-bool Activate(void)
+bool Activate()
 {
 	PlaySound('Ignite', CHAN_VOICE);
 	SetState(S_FLAME_LARGE1);
@@ -79,7 +81,7 @@ bool Activate(void)
 //
 //==========================================================================
 
-bool Deactivate(void)
+bool Deactivate()
 {
 	SetState(S_FLAME_LDORM1);
 	return true;
@@ -95,6 +97,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

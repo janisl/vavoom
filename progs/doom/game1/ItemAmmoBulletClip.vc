@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class ItemAmmoBulletClip:AmmoPickup
-	__mobjinfo__(2007);
+class ItemAmmoBulletClip : AmmoPickup
+	__mobjinfo__(2007)
+	__scriptid__(11);
 
 __states__
 {
@@ -35,13 +36,16 @@ defaultproperties
 {
 	IdleState = S_CLIP;
 	AmmoType = am_clip;
-	AmmoCount = clipammo[am_clip];
+	AmmoCount = MainGameInfo(Level.Game).clipammo[am_clip];
 	PickupMessage = "Picked up a clip.";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

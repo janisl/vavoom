@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KoraxSpirit1:Projectile;
+class KoraxSpirit1 : Projectile;
 
 int LifeTime;
 int WeaveXY;
@@ -98,7 +98,7 @@ void A_KSpiritSeeker(float thresh, float turnMax)
 	Velocity.x = Speed * cos(angle);
 	Velocity.y = Speed * sin(angle);
 
-	if (!(level->tictime & 15) ||
+	if (!(Level.Game.level->tictime & 15) ||
 		Origin.z > Enemy.Origin.z + Enemy.Height ||
 		Origin.z + Height < Enemy.Origin.z)
 	{
@@ -132,21 +132,21 @@ void A_KSpiritSeeker(float thresh, float turnMax)
 //
 //============================================================================
 
-void A_KSpiritWeave(void)
+void A_KSpiritWeave()
 {
 	float newX, newY;
 	float angle;
 
 	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
-	newY = Origin.y - sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
 	WeaveXY = (WeaveXY + (P_Random() % 5)) & 63;
-	newX += cos(angle) * FloatBobOffsets[WeaveXY] * 4.0;
-	newY += sin(angle) * FloatBobOffsets[WeaveXY] * 4.0;
+	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
 	TryMove(vector(newX, newY, Origin.z));
-	Origin.z -= FloatBobOffsets[WeaveZ] * 2.0;
+	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
 	WeaveZ = (WeaveZ + (P_Random() % 5)) & 63;
-	Origin.z += FloatBobOffsets[WeaveZ] * 2.0;
+	Origin.z += Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
 }
 
 //============================================================================
@@ -155,7 +155,7 @@ void A_KSpiritWeave(void)
 //
 //============================================================================
 
-void A_KSpiritRoam(void)
+void A_KSpiritRoam()
 {
 	if (LifeTime-- <= 0)
 	{
@@ -206,6 +206,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

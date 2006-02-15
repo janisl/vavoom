@@ -20,7 +20,7 @@ del:
 $(OUTDIR)/clprogs.dat: $(VCC) clprogs.vc ../doom/*.vc ../doom/cgame/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/client/*.vc
 	$(VCC) -I$(COMMON_DIR) clprogs.vc $@
 
-$(OUTDIR)/svprogs.dat: $(VCC) svprogs.vc ../doom/*.vc ../doom/server/*.vc ../doom/game/*.vc ../doom/game1/*.vc ../doom/game2/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc
+$(OUTDIR)/svprogs.dat: $(VCC) svprogs.vc ../doom/*.vc ../doom/game/*.vc ../doom/game1/*.vc ../doom/game2/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc
 	$(VCC) -I$(COMMON_DIR) svprogs.vc $@
 
 #---------------------------------------
@@ -35,8 +35,8 @@ deldebug:
 	rm clprogs.dat svprogs.dat
 
 clprogs.dat:
-	$(VCC) -I$(COMMON_DIR) clprogs.vc $@ -dcldebug.txt $(DUMP_ASM)
+	$(VCC) -I$(COMMON_DIR) clprogs.vc $@ -dclprogs.txt $(DUMP_ASM)
 
 svprogs.dat:
-	$(VCC) -I$(COMMON_DIR) svprogs.vc $@ -dsvdebug.txt $(DUMP_ASM)
+	$(VCC) -I$(COMMON_DIR) svprogs.vc $@ -dsvprogs.txt $(DUMP_ASM)
 

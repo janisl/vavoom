@@ -31,7 +31,7 @@ class PlayerFighter : PlayerPawn;
 //
 //============================================================================
 
-void A_SkullPop(void)
+void A_SkullPop()
 {
 	Actor A;
 
@@ -111,6 +111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/11/17 18:55:04  dj_jl
 //  Implemented support for sndinfo extensions.
 //

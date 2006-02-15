@@ -190,7 +190,7 @@ void DragonSeek(float thresh, float turnMax)
 //
 //============================================================================
 
-void A_DragonFlight(void)
+void A_DragonFlight()
 {
 	float angle;
 
@@ -228,7 +228,7 @@ void A_DragonFlight(void)
 //
 //============================================================================
 
-void A_DragonFlap(void)
+void A_DragonFlap()
 {
 	A_DragonFlight();
 	if (P_Random() < 240)
@@ -247,7 +247,7 @@ void A_DragonFlap(void)
 //
 //============================================================================
 
-void A_DragonAttack(void)
+void A_DragonAttack()
 {
 	SpawnMissile(Enemy, DragonMissile);
 }
@@ -258,7 +258,7 @@ void A_DragonAttack(void)
 //
 //============================================================================
 
-void A_DragonPain(void)
+void A_DragonPain()
 {
 	A_Pain();
 	if (!FlightTarget)
@@ -274,7 +274,7 @@ void A_DragonPain(void)
 //
 //============================================================================
 
-void A_DragonCheckCrash(void)
+void A_DragonCheckCrash()
 {
 	if (Origin.z <= FloorZ)
 	{
@@ -343,6 +343,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

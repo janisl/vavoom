@@ -194,7 +194,7 @@ Actor Spawn(classid type, TVec AOrigin)
 void HideSpecial()
 {
 	// only respawn items in deathmatch
-	if ((deathmatch == 2 || deathmatch == 3) &&
+	if ((Level.Game.deathmatch == 2 || Level.Game.deathmatch == 3) &&
 		!bDropped)
 	{
 		SetState(S_HIDDEN_SPECIAL1);
@@ -246,7 +246,7 @@ void SetOrigin2(TVec origin)
 
 void OnMapSpawn(mthing_t * mthing)
 {
-	if (bNoDeathmatch && deathmatch)
+	if (bNoDeathmatch && Level.Game.deathmatch)
 	{
 		Remove();
 		return;
@@ -264,7 +264,7 @@ void OnMapSpawn(mthing_t * mthing)
 		}
 	}
 
-	if (gameskill == sk_nightmare)
+	if (Level.Game.gameskill == sk_nightmare)
 	{
 		ReactionCount = 0;
 	}
@@ -309,7 +309,7 @@ void OnMapSpawn(mthing_t * mthing)
 		if (StateTime > 0.0)
 			StateTime = 0.1 + Random() * StateTime;
 		if (bCountKill)
-			level->totalkills++;
+			Level.Game.level->totalkills++;
 
 		Angles.yaw = itof(45 * (mthing->angle / 45));
 		if (mthing->options & MTF_AMBUSH)
@@ -390,7 +390,7 @@ void Died(Actor source)
 	classid DropItemType;
 	Actor A;
 
-	if (bIsPlayer && !strcmp(ARR2STR(level->mapname), "MAP29"))
+	if (bIsPlayer && !strcmp(ARR2STR(Level.Game.level->mapname), "MAP29"))
 	{
 		//	Start sad finale.
 		MSG_Select(MSG_SV_RELIABLE);
@@ -435,14 +435,14 @@ void Died(Actor source)
 			}
 		}
 	}
-	else if (!netgame && bCountKill)
+	else if (!Level.Game.netgame && bCountKill)
 	{
 		// count all monster deaths,
 		// even those caused by other monsters
-		svvars->Players[0].KillCount++;
+		Level.Game.Players[0].KillCount++;
 	}
 	if (bCountKill)
-		level->currentkills++;
+		Level.Game.level->currentkills++;
 
 	if (bIsPlayer)
 	{
@@ -457,7 +457,7 @@ void Died(Actor source)
 		Player.PlayerState = PST_DEAD;
 		Player.DropWeapon();
 #ifdef FIXME
-		if (Player == svvars->Players[consoleplayer] && automapactive)
+		if (Player == Level.Game.Players[consoleplayer] && automapactive)
 		{
 			// don't die in auto map,
 			// switch view prior to dying
@@ -579,7 +579,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		return;
 	}
 
-	if (bIsPlayer && gameskill == sk_baby)
+	if (bIsPlayer && Level.Game.gameskill == sk_baby)
 		damage >>= 1;	// take half damage in trainer mode
 
 	if (inflictor)
@@ -678,7 +678,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	ReactionCount = 0;	// we're awake now...
 
 	if ((!Threshold) && source && source != self &&
-		(deathmatch || source.bFriendly != bFriendly))
+		(Level.Game.deathmatch || source.bFriendly != bFriendly))
 	{
 		// if not intent on another player,
 		// chase after this one
@@ -921,12 +921,12 @@ void PushLine()
 		{
 			Damage(none, none, ftoi(Mass) >> 5);
 		}
-		numSpecHitTemp = tmtrace->NumSpecHit;
+		numSpecHitTemp = Level.Game.tmtrace->NumSpecHit;
 		while (numSpecHitTemp > 0)
 		{
 			numSpecHitTemp--;
 			// see if the line was crossed
-			ld = tmtrace->SpecHit[numSpecHitTemp];
+			ld = Level.Game.tmtrace->SpecHit[numSpecHitTemp];
 			side = PointOnPlaneSide(Origin, ld);
 			CheckForPushSpecial(ld, side);
 		}
@@ -1304,7 +1304,7 @@ int GetSigilPieces()
 //
 //==========================================================================
 
-void XYMovement()
+void XYMovement(float DeltaTime)
 {
 	float ptryx;
 	float ptryy;
@@ -1320,22 +1320,22 @@ void XYMovement()
 		case SECSPEC_WindEastSlow:
 		case SECSPEC_WindEastMedium:
 		case SECSPEC_WindEastFast:
-			Thrust(0.0, windTab[special - SECSPEC_WindEastSlow]);
+			Thrust(0.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindEastSlow]);
 			break;
 		case SECSPEC_WindNorthSlow:
 		case SECSPEC_WindNorthMedium:
 		case SECSPEC_WindNorthFast:
-			Thrust(90.0, windTab[special - SECSPEC_WindNorthSlow]);
+			Thrust(90.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindNorthSlow]);
 			break;
 		case SECSPEC_WindSouthSlow:
 		case SECSPEC_WindSouthMedium:
 		case SECSPEC_WindSouthFast:
-			Thrust(270.0, windTab[special - SECSPEC_WindSouthSlow]);
+			Thrust(270.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindSouthSlow]);
 			break;
 		case SECSPEC_WindWestSlow:
 		case SECSPEC_WindWestMedium:
 		case SECSPEC_WindWestFast:
-			Thrust(180.0, windTab[special - SECSPEC_WindWestSlow]);
+			Thrust(180.0, MainGameInfo(Level.Game).windTab[special - SECSPEC_WindWestSlow]);
 			break;
 		}
 	}
@@ -1349,8 +1349,8 @@ void XYMovement()
 	else if (Velocity.y < -MAXMOVE)
 		Velocity.y = -MAXMOVE;
 
-	xmove = Velocity.x * frametime;
-	ymove = Velocity.y * frametime;
+	xmove = Velocity.x * DeltaTime;
+	ymove = Velocity.y * DeltaTime;
 
 	do
 	{
@@ -1429,8 +1429,8 @@ void XYMovement()
 #endif
 
 				// explode a missile
-				if (tmtrace->CeilingLine && tmtrace->CeilingLine->backsector &&
-					tmtrace->CeilingLine->backsector->ceiling.pic == skyflatnum)
+				if (Level.Game.tmtrace->CeilingLine && Level.Game.tmtrace->CeilingLine->backsector &&
+					Level.Game.tmtrace->CeilingLine->backsector->ceiling.pic == Level.Game.skyflatnum)
 				{
 					// Hack to prevent missiles exploding
 					// against the sky.
@@ -1456,7 +1456,7 @@ void XYMovement()
 //
 //==========================================================================
 
-void ZMovement()
+void ZMovement(float DeltaTime)
 {
 	float dist;
 	float delta;
@@ -1470,7 +1470,7 @@ void ZMovement()
 	}
 
 	// adjust height
-	Origin.z += Velocity.z * frametime;
+	Origin.z += Velocity.z * DeltaTime;
 
 	if (bFloat && Enemy)
 	{
@@ -1482,9 +1482,9 @@ void ZMovement()
 			delta = Enemy.Origin.z + Height / 2.0 - Origin.z;
 
 			if (delta < 0.0 && dist < -(delta * 3.0))
-				Origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * DeltaTime;
 			else if (delta > 0.0 && dist < (delta * 3.0))
-				Origin.z += FLOATSPEED * frametime;
+				Origin.z += FLOATSPEED * DeltaTime;
 		}
 	}
 
@@ -1630,7 +1630,7 @@ void ApplyFriction()
 	}
 	else
 	{
-		Velocity -= Velocity * (GetFriction() * frametime);
+		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
 	}
 }
 
@@ -1678,7 +1678,7 @@ void PlayerLandedOnThing()
 //
 //==========================================================================
 
-bool Physics()
+bool Physics(float DeltaTime)
 {
 	Actor			onmo;
 	SectorThinker	SecThink;
@@ -1742,7 +1742,7 @@ bool Physics()
 	// momentum movement
 	if (Velocity.x || Velocity.y)
 	{
-		XYMovement();
+		XYMovement(DeltaTime);
 		if (IsDestroyed())
 		{
 			return false;	// mobj was removed
@@ -1758,13 +1758,13 @@ bool Physics()
 			return false;
 		}
 	}
-	if ((Origin.z != FloorZ) || Velocity.z || tmtrace->BlockingMobj)
+	if ((Origin.z != FloorZ) || Velocity.z || Level.Game.tmtrace->BlockingMobj)
 	{
 		// Handle Z momentum and gravity
 		onmo = Actor(CheckOnmobj());
 		if (!onmo || bMissile)
 		{
-			ZMovement();
+			ZMovement(DeltaTime);
 			if (bIsPlayer && bOnMobj)
 			{
 				bOnMobj = false;
@@ -1814,7 +1814,7 @@ void Tick(float deltaTime)
 	//  In my deathmatch mode remove dropped weapons after 30 seconds
 	// because otherwise they are spawned fastar than player(s) can pick 
 	// them up and the game is going slower and slower and slower ...
-	if (bDropped && (deathmatch == 3))
+	if (bDropped && (Level.Game.deathmatch == 3))
 	{
 		MoveCount++;
 		if (MoveCount >= 30 * 35)
@@ -1824,7 +1824,7 @@ void Tick(float deltaTime)
 		}
 	}
 
-	if (!Physics())
+	if (!Physics(deltaTime))
 	{
 		return;
 	}
@@ -1850,9 +1850,9 @@ void Tick(float deltaTime)
 			return;
 
 		//  In my deathmatch mode monstars respawns very fast
-		if (deathmatch == 3)
+		if (Level.Game.deathmatch == 3)
 		{
-			if (level->tictime & 31)
+			if (Level.Game.level->tictime & 31)
 				return;
 
 			if (P_Random() > 32)
@@ -1862,7 +1862,7 @@ void Tick(float deltaTime)
 		}
 		else
 		{
-			if (!respawnmonsters)
+			if (!MainGameInfo(Level.Game).respawnmonsters)
 				return;
 
 			MoveCount++;
@@ -1870,7 +1870,7 @@ void Tick(float deltaTime)
 			if (MoveCount < 12 * 35)
 				return;
 
-			if (level->tictime & 31)
+			if (Level.Game.level->tictime & 31)
 				return;
 
 			if (P_Random() > 4)
@@ -1901,10 +1901,10 @@ bool HeightClip()
 	CheckRelPosition(Origin);
 	// what about stranding a monster partially off an edge?
 
-	Floor = tmtrace->Floor;
-	Ceiling = tmtrace->Ceiling;
-	FloorZ = tmtrace->FloorZ;
-	CeilingZ = tmtrace->CeilingZ;
+	Floor = Level.Game.tmtrace->Floor;
+	Ceiling = Level.Game.tmtrace->Ceiling;
+	FloorZ = Level.Game.tmtrace->FloorZ;
+	CeilingZ = Level.Game.tmtrace->CeilingZ;
 
 	if (onfloor)
 	{
@@ -1962,7 +1962,7 @@ bool SectorChanged(int CrushChange)
 		return true;
 	}
 
-	if (CrushChange && !(level->tictime & 3))
+	if (CrushChange && !(Level.Game.level->tictime & 3))
 	{
 		Damage(none, none, CrushChange);
 
@@ -2185,7 +2185,7 @@ bool LookForMonsters(bool allaround)
 	float an;
 	float dist;
 
-	if (!svvars->Players[0].MO.CanSee(self))
+	if (!Level.Game.Players[0].MO.CanSee(self))
 	{
 		return false;	//  Not seen by player
 	}
@@ -2301,7 +2301,7 @@ bool LookForPlayers(bool allaround)
 		return LookForMonsters2(allaround);
 	}
 
-	if (!netgame && svvars->Players[0] && svvars->Players[0].bSpawned && svvars->Players[0].Health <= 0)
+	if (!Level.Game.netgame && Level.Game.Players[0] && Level.Game.Players[0].bSpawned && Level.Game.Players[0].Health <= 0)
 	{
 		return LookForMonsters(allaround);
 	}
@@ -2317,7 +2317,7 @@ bool LookForPlayers(bool allaround)
 			return false;
 		}
 
-		player = svvars->Players[LastLook];
+		player = Level.Game.Players[LastLook];
 
 		if (!player)
 			continue;
@@ -2675,7 +2675,7 @@ bool ShootHitPlane(sec_plane_t * plane)
 	}
 
 	//  Hit plane
-	if (plane->pic == skyflatnum)
+	if (plane->pic == Level.Game.skyflatnum)
 	{
 		// don't shoot the sky!
 		return false;
@@ -2800,8 +2800,8 @@ bool PTR_ShootTraverse(intercept_t * in)
 				}
 				open = open->next;
 			}
-			if (li->frontsector->ceiling.pic == skyflatnum &&
-				li->backsector->ceiling.pic == skyflatnum &&
+			if (li->frontsector->ceiling.pic == Level.Game.skyflatnum &&
+				li->backsector->ceiling.pic == Level.Game.skyflatnum &&
 				hit_point.z > opentop)
 			{
 				// it's a sky hack wall
@@ -2886,7 +2886,7 @@ int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 		return false;
 	}
 	shoot_lineend = dst;
-	return ShootCheckPlanes(GLevel.PointInSector(dst));
+	return ShootCheckPlanes(XLevel.PointInSector(dst));
 }
 
 //==========================================================================
@@ -3444,6 +3444,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.30  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

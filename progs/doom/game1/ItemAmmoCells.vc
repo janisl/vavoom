@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class ItemAmmoCells:AmmoPickup
-	__mobjinfo__(2047);
+class ItemAmmoCells : AmmoPickup
+	__mobjinfo__(2047)
+	__scriptid__(75);
 
 __states__
 {
@@ -35,13 +36,16 @@ defaultproperties
 {
 	IdleState = S_CELL;
 	AmmoType = am_cell;
-	AmmoCount = clipammo[am_cell];
+	AmmoCount = MainGameInfo(Level.Game).clipammo[am_cell];
 	PickupMessage = "Picked up an energy cell.";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

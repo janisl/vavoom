@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class FireDemon:Pawn
-	__mobjinfo__(10060);
+class FireDemon : Pawn
+	__mobjinfo__(10060)
+	__scriptid__(5);
 
 //
 // Fire Demon AI
@@ -41,7 +42,7 @@ int StrafeCount;	//	Whether strafing or not
 //
 //============================================================================
 
-void A_FiredSpawnRock(void)
+void A_FiredSpawnRock()
 {
 	Actor mo;
 	TVec rockOrg;
@@ -90,7 +91,7 @@ void A_FiredSpawnRock(void)
 //
 //============================================================================
 
-void A_FiredRocks(void)
+void A_FiredRocks()
 {
 	A_FiredSpawnRock();
 	A_FiredSpawnRock();
@@ -105,7 +106,7 @@ void A_FiredRocks(void)
 //
 //============================================================================
 
-void A_FiredChase(void)
+void A_FiredChase()
 {
 	float ang;
 	float dist;
@@ -116,7 +117,7 @@ void A_FiredChase(void)
 		Threshold--;
 
 	// Float up and down
-	Origin.z += FloatBobOffsets[WeaveIndex];
+	Origin.z += Level.Game.FloatBobOffsets[WeaveIndex];
 	WeaveIndex = (WeaveIndex + 2) & 63;
 
 	// Insure it stays above certain height
@@ -199,7 +200,7 @@ void A_FiredChase(void)
 //
 //============================================================================
 
-void A_FiredAttack(void)
+void A_FiredAttack()
 {
 	Actor mo;
 
@@ -216,7 +217,7 @@ void A_FiredAttack(void)
 //
 //============================================================================
 
-void A_FiredSplotch(void)
+void A_FiredSplotch()
 {
 	Actor A;
 
@@ -303,6 +304,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

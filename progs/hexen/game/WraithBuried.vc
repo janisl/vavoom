@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class WraithBuried:Wraith
-	__mobjinfo__(10011);
+class WraithBuried : Wraith
+	__mobjinfo__(10011)
+	__scriptid__(9);
 
 //==========================================================================
 //
@@ -32,7 +33,7 @@ class WraithBuried:Wraith
 //
 //==========================================================================
 
-void A_WraithRaiseInit(void)
+void A_WraithRaiseInit()
 {
 	Translucency = 0;
 	bNonShootable = false;
@@ -49,7 +50,7 @@ void A_WraithRaiseInit(void)
 // 
 //============================================================================
 
-bool RaiseFromFloor(void)
+bool RaiseFromFloor()
 {
 	bool done;
 
@@ -77,7 +78,7 @@ bool RaiseFromFloor(void)
 //
 //==========================================================================
 
-void A_WraithRaise(void)
+void A_WraithRaise()
 {
 	if (RaiseFromFloor())
 	{
@@ -110,6 +111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

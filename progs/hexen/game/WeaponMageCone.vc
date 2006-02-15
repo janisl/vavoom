@@ -31,7 +31,7 @@ class WeaponMageCone : Weapon;
 //
 //==========================================================================
 
-void A_FireConePL1(void)
+void A_FireConePL1()
 {
 	TAVec ang;
 	int damage;
@@ -51,10 +51,10 @@ void A_FireConePL1(void)
 		ang = pmo.Angles;
 		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
 		pmo.AimLineAttack(&ang, MELEERANGE);
-		if (linetarget)
+		if (pmo.linetarget)
 		{
 			pmo.bIceDamage = true;
-			linetarget.Damage(pmo, pmo, damage);
+			pmo.linetarget.Damage(pmo, pmo, damage);
 			pmo.bIceDamage = false;
 			conedone = true;
 			break;
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

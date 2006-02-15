@@ -385,7 +385,7 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 	for (i = FindSectorFromTag(Tag, i); i >= 0;
 		i = FindSectorFromTag(Tag, i))
 	{
-		sector = &GLevel.Sectors[i];
+		sector = &XLevel.Sectors[i];
 		bright = 0;
 		min = sector->params.lightlevel;
 
@@ -416,6 +416,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.7  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

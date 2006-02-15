@@ -475,20 +475,20 @@ static void ArchivePlayers(void)
 	StreamOutLong(ASEG_PLAYERS);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		StreamOutByte((byte)!!svvars.Players[i]);
+		StreamOutByte((byte)!!GGameInfo->Players[i]);
 	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!svvars.Players[i])
+		if (!GGameInfo->Players[i])
 		{
 			continue;
 		}
 
-		tempPlayer = (VBasePlayer*)Z_Malloc(svvars.Players[i]->GetClass()->ClassSize);
-		memcpy(tempPlayer, svvars.Players[i], svvars.Players[i]->GetClass()->ClassSize);
+		tempPlayer = (VBasePlayer*)Z_Malloc(GGameInfo->Players[i]->GetClass()->ClassSize);
+		memcpy(tempPlayer, GGameInfo->Players[i], GGameInfo->Players[i]->GetClass()->ClassSize);
 		tempPlayer->eventArchivePlayer();
 		StreamOutBuffer((byte*)tempPlayer + sizeof(VObject),
-			svvars.Players[i]->GetClass()->ClassSize - sizeof(VObject));
+			GGameInfo->Players[i]->GetClass()->ClassSize - sizeof(VObject));
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
 		{
@@ -522,36 +522,36 @@ static void UnarchivePlayers(void)
 		GPlayersBase[i]->bActive = Active;
 		if (Active)
 		{
-			svvars.Players[i] = GPlayersBase[i];
+			GGameInfo->Players[i] = GPlayersBase[i];
 			sv_load_num_players++;
 		}
 		else
 		{
-			svvars.Players[i] = NULL;
+			GGameInfo->Players[i] = NULL;
 		}
 	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (!svvars.Players[i])
+		if (!GGameInfo->Players[i])
 		{
 			continue;
 		}
-		Loader->Serialise((byte*)svvars.Players[i] + sizeof(VObject),
-			svvars.Players[i]->GetClass()->ClassSize - sizeof(VObject));
-		svvars.Players[i]->MO = NULL; // Will be set when unarc thinker
-		svvars.Players[i]->eventUnarchivePlayer();
-		svvars.Players[i]->bActive = false;
+		Loader->Serialise((byte*)GGameInfo->Players[i] + sizeof(VObject),
+			GGameInfo->Players[i]->GetClass()->ClassSize - sizeof(VObject));
+		GGameInfo->Players[i]->MO = NULL; // Will be set when unarc thinker
+		GGameInfo->Players[i]->eventUnarchivePlayer();
+		GGameInfo->Players[i]->bActive = false;
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
 		{
-			if (!svvars.Players[i]->ViewEnts[pi])
+			if (!GGameInfo->Players[i]->ViewEnts[pi])
 			{
 				continue;
 			}
-			svvars.Players[i]->ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
-			svvars.Players[i]->ViewEnts[pi]->Player = svvars.Players[i];
+			GGameInfo->Players[i]->ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
+			GGameInfo->Players[i]->ViewEnts[pi]->Player = GGameInfo->Players[i];
 		}
-		svvars.Players[i] = NULL;
+		GGameInfo->Players[i] = NULL;
 	}
 	unguard;
 }
@@ -869,7 +869,6 @@ static void UnarchiveThinkers(void)
 
 	//  Call unarchive function for each thinker.
 	GLevelInfo->Game = GGameInfo;
-	svpr.SetGlobal("GLevelInfo", (int)GLevelInfo);
 
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
@@ -1461,9 +1460,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.50  2006/02/15 23:28:18  dj_jl
+//	Moved all server progs global variables to classes.
+//
 //	Revision 1.49  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.48  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
 //	

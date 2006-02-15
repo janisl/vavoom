@@ -36,7 +36,7 @@ bool bCheckNoMonsters;
 
 void OnMapSpawn(mthing_t *mthing)
 {
-	if (bCheckNoMonsters && nomonsters)
+	if (bCheckNoMonsters && Level.Game.nomonsters)
 	{
 		Remove();
 		return;
@@ -161,7 +161,7 @@ void A_Chase()
 		}
 	}
 
-	if (fastparm)
+	if (Level.Game.fastparm)
 	{
 		// Monsters move faster in nightmare mode
 		StateTime *= 0.5;
@@ -202,7 +202,7 @@ void A_Chase()
 	if (bJustAttacked)
 	{
 		bJustAttacked = false;
-		if (!fastparm)
+		if (!Level.Game.fastparm)
 		{
 			NewChaseDir();
 		}
@@ -223,7 +223,7 @@ void A_Chase()
 	// check for missile attack
 	if (MissileState)
 	{
-		if (fastparm || !MoveCount)
+		if (Level.Game.fastparm || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
@@ -235,7 +235,7 @@ void A_Chase()
 	}
 
 	// possibly choose another target
-	if (netgame && !Threshold)
+	if (Level.Game.netgame && !Threshold)
 	{
 		if (!CanSee(Enemy))
 		{
@@ -364,7 +364,7 @@ void A_BossDeath()
 	string mapname;
 	Actor mo;
 
-	mapname = ptrtos(&level->mapname[0]);
+	mapname = ptrtos(&Level.Game.level->mapname[0]);
 
 	if (!strcmp(mapname, "E1M8"))
 	{
@@ -479,6 +479,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.7  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

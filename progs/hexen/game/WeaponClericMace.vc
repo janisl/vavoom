@@ -39,16 +39,15 @@ void A_CMaceAttack()
 	TVec vforward;
 
 	damage = 25 + (P_Random() & 15);
-	PuffType = HammerPuff;
 	for (i = 0; i < 16; i++)
 	{
 		angles = Player.MO.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
 		Player.MO.AimLineAttack(&angles, 2.0 * MELEERANGE);
-		if (linetarget)
+		if (Player.MO.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Player.MO.LineAttack(vforward, 2.0 * MELEERANGE, damage))
+			if (Player.MO.LineAttack(vforward, 2.0 * MELEERANGE, damage, HammerPuff))
 			{
 				Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -58,10 +57,10 @@ void A_CMaceAttack()
 		angles = Player.MO.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
 		Player.MO.AimLineAttack(&angles, 2.0 * MELEERANGE);
-		if (linetarget)
+		if (Player.MO.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Player.MO.LineAttack(vforward, 2.0 * MELEERANGE, damage))
+			if (Player.MO.LineAttack(vforward, 2.0 * MELEERANGE, damage, HammerPuff))
 			{
 				Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -73,7 +72,7 @@ void A_CMaceAttack()
 	angles = Player.MO.Angles;
 	Player.MO.AimLineAttack(&angles, MELEERANGE);
 	AngleVector(&angles, &vforward);
-	if (Player.MO.LineAttack(vforward, MELEERANGE, damage))
+	if (Player.MO.LineAttack(vforward, MELEERANGE, damage, HammerPuff))
 	{
 		Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 	}
@@ -117,6 +116,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.6  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

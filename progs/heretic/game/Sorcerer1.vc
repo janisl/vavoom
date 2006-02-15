@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class Sorcerer1 : Pawn
-	__mobjinfo__(7);
+	__mobjinfo__(7)
+	__scriptid__(142);
 
 int ReAttackState;
 
@@ -215,6 +216,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/11/30 23:52:04  dj_jl
 //  Switch statement requires integer.
 //

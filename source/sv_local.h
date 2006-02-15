@@ -30,6 +30,7 @@
 
 class VGameInfo;
 class VLevelInfo;
+struct tmtrace_t;
 
 extern VGameInfo*		GGameInfo;
 extern VLevelInfo*		GLevelInfo;
@@ -77,12 +78,17 @@ class VLevelInfo : public VThinker
 {
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
 
+	enum { MAX_TID_COUNT = 200 };
+
 	VGameInfo*		Game;
 
 	// Maintain single and multi player starting spots.
 	mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
 	int				NumDeathmatchStarts;
 	mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
+
+	int				TIDList[MAX_TID_COUNT + 1];	// +1 for termination marker
+	VEntity*		TIDMobj[MAX_TID_COUNT];
 
 	TVec			trace_start;
 	TVec			trace_end;
@@ -170,6 +176,31 @@ class VLevelInfo : public VThinker
 class VGameInfo : public VObject
 {
 	DECLARE_CLASS(VGameInfo, VObject, 0)
+
+	int				netgame;
+	int				deathmatch;
+	int				gameskill;
+	int				respawn;
+	int				nomonsters;
+	int				fastparm;
+
+	int*			validcount;
+	int				skyflatnum;
+
+	VBasePlayer*	Players[MAXPLAYERS]; // Bookkeeping on players - state.
+
+	level_t*		level;
+
+	tmtrace_t*		tmtrace;
+
+	int				RebornPosition;
+
+	float			frametime;
+
+	int				num_stats;
+
+	float			FloatBobOffsets[64];
+	int				PhaseTable[64];
 
 	VGameInfo()
 	{}
@@ -667,12 +698,6 @@ struct mobj_base_t
 	int			Effects;		// dynamic lights, trails
 };
 
-//	Variables shared with progs.
-struct server_vars_t
-{
-	VBasePlayer*		Players[MAXPLAYERS]; // Bookkeeping on players - state.
-};
-
 void SV_StartSound(const VEntity *, int, int, int);
 void SV_StartLocalSound(const VEntity *, int, int, int);
 void SV_StopSound(const VEntity *, int);
@@ -699,7 +724,6 @@ void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName);
 
 void SV_ReadMove(void);
 
-extern server_vars_t	svvars;
 extern VBasePlayer*		sv_player;
 
 //==========================================================================
@@ -768,9 +792,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/02/15 23:28:18  dj_jl
+//	Moved all server progs global variables to classes.
+//
 //	Revision 1.43  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.42  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
 //	

@@ -191,7 +191,7 @@ bool CheckItem(Actor item)
 
 		// If we have no more room for the ammo it gives
 		if (player.Ammo[MainGameInfo(player.Level.Game).weapon_ammo_type[weapon]] ==
-				maxammo[MainGameInfo(player.Level.Game).weapon_ammo_type[weapon]])
+				MainGameInfo(player.Level.Game).maxammo[MainGameInfo(player.Level.Game).weapon_ammo_type[weapon]])
 			return false;
 
 		// Can't pick it up because we have it and it's not a dropped weapon
@@ -203,7 +203,7 @@ bool CheckItem(Actor item)
 	if (ammo != -1)
 	{
 		// If we have no more room for the ammo it gives
-		if (player.Ammo[ammo] >= maxammo[ammo])
+		if (player.Ammo[ammo] >= MainGameInfo(player.Level.Game).maxammo[ammo])
 			return false;
 	}
 
@@ -818,19 +818,19 @@ Actor FindEnemy()
 	// Search for player enemies
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (svvars->Players[i] && svvars->Players[i].bSpawned &&
-			svvars->Players[i].MO.Health > 0 && botmo != svvars->Players[i].MO)
+		if (player.Level.Game.Players[i] && player.Level.Game.Players[i].bSpawned &&
+			player.Level.Game.Players[i].MO.Health > 0 && botmo != player.Level.Game.Players[i].MO)
 		{
 			 //Here's a strange one, when bot is standing still, the CanSee within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up.
-			if (Check_LOS(svvars->Players[i].MO, vangle))
+			if (Check_LOS(player.Level.Game.Players[i].MO, vangle))
 			{
-				if (botmo.CanSee(svvars->Players[i].MO))
+				if (botmo.CanSee(player.Level.Game.Players[i].MO))
 				{
-					temp = svvars->Players[i].MO.DistTo(botmo);
+					temp = player.Level.Game.Players[i].MO.DistTo(botmo);
 					if (temp < closest_dist)
 					{
 						closest_dist = temp;
-						target = svvars->Players[i].MO;
+						target = player.Level.Game.Players[i].MO;
 					}
 				}
 			}
@@ -1333,7 +1333,7 @@ void OnBeginPlay()
 	strcpy(ARR2STR(player.UserInfo), binfo->userinfo);
 
 	// Setup combat distance tables
-	if (deathmatch)
+	if (player.Level.Game.deathmatch)
 	{
 		combatdist[wp_fist]			= 1.0;
 		combatdist[wp_chainsaw]		= 1.0;
@@ -1376,6 +1376,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.7  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

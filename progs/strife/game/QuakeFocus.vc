@@ -51,7 +51,7 @@ void A_Quake()
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			pl = svvars->Players[playnum];
+			pl = Level.Game.Players[playnum];
 			if (!pl || !pl.bSpawned)
 				continue;
 
@@ -78,8 +78,8 @@ void A_Quake()
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			if (svvars->Players[playnum])
-				svvars->Players[playnum].LocalQuakeHappening = 0;
+			if (Level.Game.Players[playnum])
+				Level.Game.Players[playnum].LocalQuakeHappening = 0;
 		}
 		SetState(S_NULL);
 	}
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

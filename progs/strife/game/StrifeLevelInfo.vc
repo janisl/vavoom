@@ -40,9 +40,9 @@ void SpawnSpecials()
 	int i;
 
 	//  Init special SECTORs.
-	for (i = 0; i < GLevel.NumSectors; i++)
+	for (i = 0; i < XLevel.NumSectors; i++)
 	{
-		sector = &GLevel.Sectors[i];
+		sector = &XLevel.Sectors[i];
 
 		if (!sector->special)
 			continue;
@@ -50,7 +50,7 @@ void SpawnSpecials()
 		if (sector->special & SECSPEC_SECRET_MASK)
 		{
 			//	Secret sector.
-			level->totalsecret++;
+			Game.level->totalsecret++;
 		}
 		switch (sector->special & SECSPEC_BASE_MASK)
 		{
@@ -164,45 +164,45 @@ void SpawnSpecials()
 	}
 
 	//  Init line EFFECTs
-	for (i = 0; i < GLevel.NumLines; i++)
+	for (i = 0; i < XLevel.NumLines; i++)
 	{
-		switch (GLevel.Lines[i].special)
+		switch (XLevel.Lines[i].special)
 		{
 		case LNSPEC_ScrollTextureLeft:
-			SpawnWallScroller(&GLevel.Lines[i], 1, 0);
-			GLevel.Lines[i].special = 0;
+			SpawnWallScroller(&XLevel.Lines[i], 1, 0);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollTextureRight:
-			SpawnWallScroller(&GLevel.Lines[i], -1, 0);
-			GLevel.Lines[i].special = 0;
+			SpawnWallScroller(&XLevel.Lines[i], -1, 0);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollTextureUp:
-			SpawnWallScroller(&GLevel.Lines[i], 0, 1);
-			GLevel.Lines[i].special = 0;
+			SpawnWallScroller(&XLevel.Lines[i], 0, 1);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollTextureDown:
-			SpawnWallScroller(&GLevel.Lines[i], 0, -1);
-			GLevel.Lines[i].special = 0;
+			SpawnWallScroller(&XLevel.Lines[i], 0, -1);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollTextureBoth:
-			SpawnTextureBothScroller(&GLevel.Lines[i]);
-			GLevel.Lines[i].special = 0;
+			SpawnTextureBothScroller(&XLevel.Lines[i]);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollTextureModel:
-			SpawnScrollTextureModel(&GLevel.Lines[i]);
-			GLevel.Lines[i].special = 0;
+			SpawnScrollTextureModel(&XLevel.Lines[i]);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollFloor:
-			SpawnScrollFloor(&GLevel.Lines[i]);
-			GLevel.Lines[i].special = 0;
+			SpawnScrollFloor(&XLevel.Lines[i]);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollCeiling:
-			SpawnScrollCeiling(&GLevel.Lines[i]);
-			GLevel.Lines[i].special = 0;
+			SpawnScrollCeiling(&XLevel.Lines[i]);
+			XLevel.Lines[i].special = 0;
 			break;
 		case LNSPEC_ScrollTextureOffsets:
-			SpawnWallOffsetsScroller(&GLevel.Lines[i]);
-			GLevel.Lines[i].special = 0;
+			SpawnWallOffsetsScroller(&XLevel.Lines[i]);
+			XLevel.Lines[i].special = 0;
 			break;
 		}
 	}
@@ -221,12 +221,12 @@ line_t* FindLine(int lineTag, int *searchPosition)
 {
 	int i;
 
-	for (i = *searchPosition + 1; i < TaggedLineCount; i++)
+	for (i = *searchPosition + 1; i < MainGameInfo(Game).TaggedLineCount; i++)
 	{
-		if (TaggedLines[i].lineTag == lineTag)
+		if (MainGameInfo(Game).TaggedLines[i].lineTag == lineTag)
 		{
 			*searchPosition = i;
-			return TaggedLines[i].line;
+			return MainGameInfo(Game).TaggedLines[i].line;
 		}
 	}
 	*searchPosition = -1;
@@ -272,7 +272,7 @@ void PolyThrustMobj(Entity A, TVec thrustDir, polyobj_t * po)
 	{
 		TVec testPos;
 
-		testPos = A.Origin + force * thrustDir * frametime;
+		testPos = A.Origin + force * thrustDir * Game.frametime;
 		if (!A.CheckPosition(testPos))
 		{
 			Actor(A).Damage(none, none, 3);
@@ -319,7 +319,7 @@ int ThingCount(int type, int tid)
 		// Nothing to count
 		return 0;
 	}
-	moType = TranslateThingType[type];
+	moType = FindClassFromScriptId(type);
 	count = 0;
 	searcher = -1;
 	if (tid)
@@ -622,7 +622,7 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))
 			{
 				buttonSuccess = true;
-				if (deathmatch)
+				if (Game.deathmatch)
 				{
 					// Winning in deathmatch just goes back to map 1
 					G_Completed(1, 0, 0);
@@ -1213,7 +1213,7 @@ bool EV_SectorSoundChange(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (secNum = FindSectorFromTag(Arg1, -1); secNum >= 0;
 		secNum = FindSectorFromTag(Arg1, secNum))
 	{
-		GLevel.Sectors[secNum].seqType = Arg2;
+		XLevel.Sectors[secNum].seqType = Arg2;
 		rtn = true;
 	}
 	return rtn;
@@ -1238,7 +1238,7 @@ bool EV_SectorSetDamage(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		GLevel.Sectors[SecNum].Damage = Arg2;
+		XLevel.Sectors[SecNum].Damage = Arg2;
 		//FIXME Arg3 is MOD
 		Rtn = true;
 	}
@@ -1309,7 +1309,7 @@ bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (secnum = FindSectorFromTag(Arg1, -1); secnum >= 0;
 		secnum = FindSectorFromTag(Arg1, secnum))
 	{
-		sec = &GLevel.Sectors[secnum];
+		sec = &XLevel.Sectors[secnum];
 		for (i = 0; i < sec->linecount; i++)
 		{
 			secline = sec->lines[i];
@@ -1387,7 +1387,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		Line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING);
 	}
 	quest1 = false;
-	if (GLevel.Sides[Line->sidenum[0]].midtexture == TextureNumForName("BRNSCN01"))
+	if (XLevel.Sides[Line->sidenum[0]].midtexture == TextureNumForName("BRNSCN01"))
 		quest1 = true;
 	P_ChangeSwitchTexture(Line, false);
 	switched = true;
@@ -1395,7 +1395,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	if (Line->sidenum[1] != -1)
 	{
 		//switched |= P_ChangeSwitchTexture(&sides[ln->sidenum[1]], false, 0, &quest2);
-		SetLineTexture(Line->sidenum[1], 1, GLevel.Sides[Line->sidenum[0]].midtexture);
+		SetLineTexture(Line->sidenum[1], 1, XLevel.Sides[Line->sidenum[0]].midtexture);
 		quest2 = quest1;
 	}
 	else
@@ -1431,9 +1431,9 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			{
 				for (i = 0; i < MAXPLAYERS; ++i)
 				{
-					if (svvars->Players[i] && svvars->Players[i].bSpawned)
+					if (Game.Players[i] && Game.Players[i].bSpawned)
 					{
-						A = svvars->Players[i].MO;
+						A = Game.Players[i].MO;
 						break;
 					}
 				}
@@ -1485,7 +1485,7 @@ int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 			return false;
 	
 		// if the sector has an active thinker, use it
-		Sec = GLevel.Sides[Line->sidenum[1]].sector;
+		Sec = XLevel.Sides[Line->sidenum[1]].sector;
 	
 		if (Sec->CeilingData)
 		{
@@ -1507,7 +1507,7 @@ int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 			SecNum = FindSectorFromTag(Arg1, SecNum))
 		{
-			Sec = &GLevel.Sectors[SecNum];
+			Sec = &XLevel.Sectors[SecNum];
 			if (Sec->CeilingData)
 			{
 				continue;
@@ -1610,7 +1610,7 @@ int EV_TextureChangeDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 			SecNum = FindSectorFromTag(Arg1, SecNum))
 		{
-			Sec = &GLevel.Sectors[SecNum];
+			Sec = &XLevel.Sectors[SecNum];
 			if (Sec->CeilingData)
 			{
 				continue;
@@ -1694,7 +1694,7 @@ int EV_DoFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 			SecNum = FindSectorFromTag(Arg1, SecNum))
 		{
-			Sec = &GLevel.Sectors[SecNum];
+			Sec = &XLevel.Sectors[SecNum];
 
 			// ALREADY MOVING?  IF SO, KEEP GOING...
 			if (Sec->FloorData)
@@ -1776,7 +1776,7 @@ int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	for (SecNum = Arg1 ? FindSectorFromTag(Arg1, -1) : 1; SecNum >= 0;
 		SecNum = Arg1 ? FindSectorFromTag(Arg1, SecNum) : -1)
 	{
-		Sec = Arg1 ? &GLevel.Sectors[SecNum] : Line->backsector;
+		Sec = Arg1 ? &XLevel.Sectors[SecNum] : Line->backsector;
 
 		// ALREADY MOVING?  IF SO, KEEP GOING...
 		if (Sec->FloorData)
@@ -1820,10 +1820,10 @@ int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 					continue;
 
 				Sec = TSec;
-				//	SecNum = TSec - GLevel.Sectors;
-				for (j = 0; j < GLevel.NumSectors; j++)
+				//	SecNum = TSec - XLevel.Sectors;
+				for (j = 0; j < XLevel.NumSectors; j++)
 				{
-					if (TSec == &GLevel.Sectors[j])
+					if (TSec == &XLevel.Sectors[j])
 					{
 						SecNum = j;
 						break;
@@ -1869,7 +1869,7 @@ int EV_DoDonut(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (secnum = FindSectorFromTag(Arg1, -1); secnum >= 0;
 		secnum = FindSectorFromTag(Arg1, secnum))
 	{
-		s1 = &GLevel.Sectors[secnum];	// s1 is pillar's sector
+		s1 = &XLevel.Sectors[secnum];	// s1 is pillar's sector
 
 		// ALREADY MOVING?  IF SO, KEEP GOING...
 		if (s1->FloorData)
@@ -1928,7 +1928,7 @@ int EV_BuildStairs(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 
 		// ALREADY MOVING?  IF SO, KEEP GOING...
 		if (Sec->FloorData)
@@ -1979,7 +1979,7 @@ int EV_BuildPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		if (Sec->FloorData || Sec->CeilingData)
 			continue;	// already moving
 		Rtn = true;
@@ -2006,7 +2006,7 @@ int EV_OpenPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		if (Sec->FloorData || Sec->CeilingData)
 			continue;	// already moving
 		Rtn = true;
@@ -2039,7 +2039,7 @@ bool EV_StartFloorWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SectorIndex = FindSectorFromTag(Arg1, -1); SectorIndex >= 0;
 		SectorIndex = FindSectorFromTag(Arg1, SectorIndex))
 	{
-		Sector = &GLevel.Sectors[SectorIndex];
+		Sector = &XLevel.Sectors[SectorIndex];
 		if (Sector->FloorData)
 		{
 			// Already busy with another thinker
@@ -2074,7 +2074,7 @@ bool EV_FloorTransferTrigger(int Arg1, int Arg2, int Arg3, int Arg4,
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Rtn = true;
 
 		Sec->floor.pic = Line->frontsector->floor.pic;
@@ -2102,7 +2102,7 @@ bool EV_FloorTransferNumeric(int Arg1, int Arg2, int Arg3, int Arg4,
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Rtn = true;
 
 		MdlSec = FindModelFloorSector(Sec, GetPlanePointZ(&Sec->floor,
@@ -2139,7 +2139,7 @@ int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 
 		//	Skip if already busy.
 		if (Sec->FloorData || Sec->CeilingData)
@@ -2216,7 +2216,7 @@ int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 			SecNum = FindSectorFromTag(Arg1, SecNum))
 		{
-			Sec = &GLevel.Sectors[SecNum];
+			Sec = &XLevel.Sectors[SecNum];
 			if (Sec->CeilingData)
 				continue;
 
@@ -2271,7 +2271,7 @@ bool EV_StartCeilingWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SectorIndex = FindSectorFromTag(Arg1, -1); SectorIndex >= 0;
 		SectorIndex = FindSectorFromTag(Arg1, SectorIndex))
 	{
-		Sector = &GLevel.Sectors[SectorIndex];
+		Sector = &XLevel.Sectors[SectorIndex];
 		if (Sector->CeilingData)
 		{
 			// Already busy with another thinker
@@ -2355,7 +2355,7 @@ int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 			SecNum = FindSectorFromTag(Arg1, SecNum))
 		{
-			Sec = &GLevel.Sectors[SecNum];
+			Sec = &XLevel.Sectors[SecNum];
 			if (Sec->FloorData)
 				continue;
 
@@ -2857,7 +2857,7 @@ int EV_StartLightStrobing(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		if (Sec->LightingData)
 			continue;
 
@@ -2891,7 +2891,7 @@ int EV_TagLightTurnOn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Max = 0;
 		for (j = 0; j < Sec->linecount; j++)
 		{
@@ -2923,7 +2923,7 @@ int EV_TurnTagLightsOff(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Min = Sec->params.lightlevel;
 		for (i = 0; i < Sec->linecount; i++)
 		{
@@ -2954,7 +2954,7 @@ bool EV_LightRaiseByValue(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Sec->params.lightlevel += Arg2;
 		if (Sec->params.lightlevel > 255)
 		{
@@ -2981,7 +2981,7 @@ bool EV_LightLowerByValue(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Sec->params.lightlevel -= Arg2;
 		if (Sec->params.lightlevel < 0)
 		{
@@ -3008,7 +3008,7 @@ bool EV_LightChangeToValue(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Sec->params.lightlevel = Arg2;
 		if (Sec->params.lightlevel < 0)
 		{
@@ -3040,7 +3040,7 @@ bool EV_SpawnLight(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type)
 	for (SecNum = FindSectorFromTag(Arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
-		Sec = &GLevel.Sectors[SecNum];
+		Sec = &XLevel.Sectors[SecNum];
 		Light = NewSpecialThinker(LightEffect);
 		Light.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		Rtn = true;
@@ -3215,7 +3215,7 @@ Actor GetPushThing(int s)
 	Actor		thing;
 	sector_t*	sec;
 
-	sec = &GLevel.Sectors[s];
+	sec = &XLevel.Sectors[s];
 	FOREACH(Actor, thing)
 	{
 		if (PointPusher(thing) || PointPuller(thing))
@@ -3243,9 +3243,9 @@ void SpawnPushers()
 	Actor		thing;
 	int			searcher;
 
-	for (i = 0; i < GLevel.NumLines; i++)
+	for (i = 0; i < XLevel.NumLines; i++)
 	{
-		l = &GLevel.Lines[i];
+		l = &XLevel.Lines[i];
 		switch (l->special)
 		{
 		case LNSPEC_SectorSetWind: // wind
@@ -3294,8 +3294,8 @@ void SpawnPushers()
 				{
 					if (PointPuller(thing) || PointPusher(thing))
 					{
-						for (s = 0; s < GLevel.NumSectors; s++)
-							if (&GLevel.Sectors[s] == thing.Sector)
+						for (s = 0; s < XLevel.NumSectors; s++)
+							if (&XLevel.Sectors[s] == thing.Sector)
 								break;
 						P = Pusher(NewSpecialThinker(Pusher));
 						P.Init(PUSHER_Push, l->arg4 ? l : NULL, l->arg3, 0,
@@ -3444,7 +3444,7 @@ bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		for (SecNum = FindSectorFromTag(SecTag, -1); SecNum >= 0;
 			SecNum = FindSectorFromTag(SecTag, SecNum))
 		{
-			Sec = &GLevel.Sectors[SecNum];
+			Sec = &XLevel.Sectors[SecNum];
 			FOREACH(Actor, A)
 			{
 				if (!TeleportSpot(A))
@@ -3674,7 +3674,7 @@ bool EV_TeleportSector(int tag, int source_tid, int dest_tid, bool fog,
 	for (secnum = FindSectorFromTag(tag, -1); secnum >= 0;
 		secnum = FindSectorFromTag(tag, secnum))
 	{
-		sec = &GLevel.Sectors[secnum];
+		sec = &XLevel.Sectors[secnum];
 
 		FOREACH(Actor, A)
 		{
@@ -3819,7 +3819,7 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	success = false;
 	searcher = -1;
 	tid = Arg1;
-	moType = TranslateThingType[Arg2];
+	moType = FindClassFromScriptId(Arg2);
 	angle = itof(Arg3) * (360.0 / 256.0);
 	speed = itof(Arg4) / 8.0;
 	vspeed = itof(Arg5) / 8.0;
@@ -3872,7 +3872,7 @@ bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 	success = false;
 	searcher = -1;
 	tid = Arg1;
-	moType = TranslateThingType[Arg2];
+	moType = FindClassFromScriptId(Arg2);
 	angle = itof(Arg3) * 360.0 / 256.0;
 	for (A = Actor(FindMobjFromTID(tid, &searcher)); A;
 		A = Actor(FindMobjFromTID(tid, &searcher)))
@@ -4076,13 +4076,13 @@ void RecursiveSound(sector_t * sec, int soundblocks, Actor soundtarget)
 	sector_t *other;
 
 	// wake up all monsters in this sector
-	if (sec->validcount == *validcount &&
+	if (sec->validcount == *Game.validcount &&
 		sec->soundtraversed <= soundblocks + 1)
 	{
 		return;	// already flooded
 	}
 
-	sec->validcount = *validcount;
+	sec->validcount = *Game.validcount;
 	sec->soundtraversed = soundblocks + 1;
 	sec->SoundTarget = soundtarget;
 
@@ -4098,10 +4098,10 @@ void RecursiveSound(sector_t * sec, int soundblocks, Actor soundtarget)
 				continue;	// closed door
 		}
 
-		if (GLevel.Sides[check->sidenum[0]].sector == sec)
-			other = GLevel.Sides[check->sidenum[1]].sector;
+		if (XLevel.Sides[check->sidenum[0]].sector == sec)
+			other = XLevel.Sides[check->sidenum[1]].sector;
 		else
-			other = GLevel.Sides[check->sidenum[0]].sector;
+			other = XLevel.Sides[check->sidenum[0]].sector;
 
 		if (check->flags & ML_SOUNDBLOCK)
 		{
@@ -4127,7 +4127,7 @@ void NoiseAlert(Actor target, Actor emmiter)
 	if (!emmiter)
 		return;
 
-	(*validcount)++;
+	(*Game.validcount)++;
 	RecursiveSound(emmiter.Sector, 0, target);
 }
 
@@ -4170,11 +4170,11 @@ void SpawnMapThing(mthing_t * mthing)
 	}
 
 	// Check current game type with spawn flags
-	if (netgame == false)
+	if (Game.netgame == false)
 	{
 		spawnMask = MTF_GSINGLE;
 	}
-	else if (deathmatch)
+	else if (Game.deathmatch)
 	{
 		spawnMask = MTF_GDEATHMATCH;
 	}
@@ -4188,12 +4188,12 @@ void SpawnMapThing(mthing_t * mthing)
 	}
 
 	// check for apropriate skill level
-	if (gameskill == sk_baby)
+	if (Game.gameskill == sk_baby)
 		bit = 1;
-	else if (gameskill == sk_nightmare)
+	else if (Game.gameskill == sk_nightmare)
 		bit = 4;
 	else
-		bit = 1 << (gameskill - 1);
+		bit = 1 << (Game.gameskill - 1);
 
 	if (!(mthing->options & bit))
 		return;
@@ -4235,7 +4235,7 @@ bool StartConversation(Actor User, Actor UseOn)
 {
 	int SpeechNum;
 
-	if (netgame)
+	if (Game.netgame)
 	{
 		return false;
 	}
@@ -4290,11 +4290,11 @@ void StartSpeech(int SpeechNum)
 		}
 		if (SpeechNum < 0)
 		{
-			Speech = &GLevel.GenericSpeeches[-SpeechNum - 1];
+			Speech = &XLevel.GenericSpeeches[-SpeechNum - 1];
 		}
 		else
 		{
-			Speech = &GLevel.LevelSpeeches[SpeechNum - 1];
+			Speech = &XLevel.LevelSpeeches[SpeechNum - 1];
 		}
 		if (Speech->JumpToConv &&
 			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem1, 1) != -2 &&
@@ -4545,11 +4545,11 @@ void ConChoiceImpulse(int ChoiceNum)
 	}
 	if (CurrentSpeechIndex < 0)
 	{
-		Speech = &GLevel.GenericSpeeches[-CurrentSpeechIndex - 1];
+		Speech = &XLevel.GenericSpeeches[-CurrentSpeechIndex - 1];
 	}
 	else
 	{
-		Speech = &GLevel.LevelSpeeches[CurrentSpeechIndex - 1];
+		Speech = &XLevel.LevelSpeeches[CurrentSpeechIndex - 1];
 	}
 	Choice = &Speech->Choices[ChoiceNum - 1];
 	//	Check if player has needed items.
@@ -4638,6 +4638,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

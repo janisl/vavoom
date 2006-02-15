@@ -51,6 +51,28 @@ int contents_transluc[6];
 int botskill;
 botinfo_t botinfo[30];
 
+tagged_line_t	TaggedLines[MAX_TAGGED_LINES];
+int				TaggedLineCount;
+
+float windTab[3];
+float pushTab[5];
+
+int opposite[9];
+int diags[4];
+float xspeed[8];
+float yspeed[8];
+
+int maxammo[NUMAMMO];
+int clipammo[NUMAMMO];
+
+float air_control;
+
+#ifndef DOOM2
+bool shareware;
+#endif
+
+bool respawnmonsters;
+
 //==========================================================================
 //
 //	Init
@@ -2016,6 +2038,8 @@ void SpawnWorld(Level InLevel)
 
 defaultproperties
 {
+	num_stats = NUM_STATS + 2 * NUMAMMO + NUMWEAPONS + 4;
+
 	WeaponClasses[0] = WeaponFist;
 	WeaponClasses[1] = WeaponPistol;
 	WeaponClasses[2] = WeaponShotgun;
@@ -2076,12 +2100,70 @@ defaultproperties
 	contents_transluc[4] = 45;
 	contents_transluc[5] = 30;
 
+	windTab[0] = 5.0 / 32.0;
+	windTab[1] = 10.0 / 32.0;
+	windTab[2] = 25.0 / 32.0;
+
+	pushTab[0] = 5.0 * 35.0 * 35.0 / 32.0;
+	pushTab[1] = 10.0 * 35.0 * 35.0 / 32.0;
+	pushTab[2] = 25.0 * 35.0 * 35.0 / 32.0;
+	pushTab[3] = 30.0 * 35.0 * 35.0 / 32.0;
+	pushTab[4] = 35.0 * 35.0 * 35.0 / 32.0;
+
+	opposite[0] = DI_WEST;
+	opposite[1] = DI_SOUTHWEST;
+	opposite[2] = DI_SOUTH;
+	opposite[3] = DI_SOUTHEAST;
+	opposite[4] = DI_EAST;
+	opposite[5] = DI_NORTHEAST;
+	opposite[6] = DI_NORTH;
+	opposite[7] = DI_NORTHWEST;
+	opposite[8] = DI_NODIR;
+
+	diags[0] = DI_NORTHWEST;
+	diags[1] = DI_NORTHEAST;
+	diags[2] = DI_SOUTHWEST;
+	diags[3] = DI_SOUTHEAST;
+
+	xspeed[0] = 1.0;
+	xspeed[1] = 0.7171630859;
+	xspeed[2] = 0.0;
+	xspeed[3] = -0.7171630859;
+	xspeed[4] = -1.0;
+	xspeed[5] = -0.7171630859;
+	xspeed[6] = 0.0;
+	xspeed[7] = 0.7171630859;
+
+	yspeed[0] = 0.0;
+	yspeed[1] = 0.7171630859;
+	yspeed[2] = 1.0;
+	yspeed[3] = 0.7171630859;
+	yspeed[4] = 0.0;
+	yspeed[5] = -0.7171630859;
+	yspeed[6] = -1.0;
+	yspeed[7] = -0.7171630859;
+
+	maxammo[0] = 200;
+	maxammo[1] = 50;
+	maxammo[2] = 300;
+	maxammo[3] = 50;
+
+	clipammo[0] = 10;
+	clipammo[1] = 4;
+	clipammo[2] = 20;
+	clipammo[3] = 1;
+
+	air_control = 1.0 / 256.0;
+
 	botskill = 2;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

@@ -103,7 +103,7 @@ void A_FirePhoenixPL2()
 	A.Angles.pitch = Player.MO.Angles.pitch;
 	AngleVector(&A.Angles, &dir);
 	A.Velocity = Player.MO.Velocity + A.Speed * dir;
-	if (!Player.Refire || !(level->tictime % 38))
+	if (!Player.Refire || !(Player.Level.Game.level->tictime % 38))
 	{
 		Player.MO.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
 	}
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

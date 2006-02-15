@@ -33,6 +33,45 @@ int contents_transluc[6];
 botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
+tagged_line_t TaggedLines[MAX_TAGGED_LINES];
+int TaggedLineCount;
+
+float AutoArmorSave[NUMCLASSES];
+float ArmorIncrement[NUMCLASSES * NUMARMOR];
+
+//
+//  Pickup messages
+//
+string weaponMessages[6];
+string fourthWeaponText[3];
+string weaponPieceText[3];
+string artifactMessages[NUMARTIFACTS];
+string armorText[NUMARMOR];
+string manaText[4];
+string TextKeyMessages[NUMKEYS];
+
+float windTab[3];
+float pushTab[5];
+
+float ArmorMax[NUMCLASSES];
+
+int pieceValueTrans[5];
+
+int opposite[9];
+int diags[4];
+float xspeed[8];
+float yspeed[8];
+
+int WeaponManaUseTable[NUMCLASSES * NUMWEAPONS];
+
+int classFlags[3];
+
+float air_control;
+
+bool randomclass;
+
+Actor PuffSpawned;
+
 //==========================================================================
 //
 //	Init
@@ -1111,6 +1150,8 @@ void SpawnWorld(Level InLevel)
 
 defaultproperties
 {
+	num_stats = NUM_STATS + NUMARMOR + NUMMANA + 7 + NUMARTIFACTS * 2;
+
 	WeaponClasses[0] = WeaponFighterPunch;
 	WeaponClasses[1] = WeaponClericMace;
 	WeaponClasses[2] = WeaponMageWand;
@@ -1140,12 +1181,162 @@ defaultproperties
 	contents_transluc[2] = 20;
 	contents_transluc[3] = 30;
 
+	AutoArmorSave[0] = 15.0;
+	AutoArmorSave[1] = 10.0;
+	AutoArmorSave[2] = 5.0;
+	AutoArmorSave[3] = 0.0;
+
+	ArmorIncrement[0] = 25.0; ArmorIncrement[1] = 20.0; ArmorIncrement[2] = 15.0; ArmorIncrement[3] = 5.0;
+	ArmorIncrement[4] = 10.0; ArmorIncrement[5] = 25.0; ArmorIncrement[6] = 5.0; ArmorIncrement[7] = 20.0;
+	ArmorIncrement[8] = 5.0; ArmorIncrement[9] = 15.0; ArmorIncrement[10] = 10.0; ArmorIncrement[11] = 25.0;
+	ArmorIncrement[12] = 0.0; ArmorIncrement[13] = 0.0; ArmorIncrement[14] = 0.0; ArmorIncrement[15] = 0.0;
+
+	weaponMessages[0] = TXT_WEAPON_F2;
+	weaponMessages[1] = TXT_WEAPON_F3;
+	weaponMessages[2] = TXT_WEAPON_C2;
+	weaponMessages[3] = TXT_WEAPON_C3;
+	weaponMessages[4] = TXT_WEAPON_M2;
+	weaponMessages[5] = TXT_WEAPON_M3;
+
+	fourthWeaponText[0] = TXT_WEAPON_F4;
+	fourthWeaponText[1] = TXT_WEAPON_C4;
+	fourthWeaponText[2] = TXT_WEAPON_M4;
+
+	weaponPieceText[0] = TXT_QUIETUS_PIECE;
+	weaponPieceText[1] = TXT_WRAITHVERGE_PIECE;
+	weaponPieceText[2] = TXT_BLOODSCOURGE_PIECE;
+
+	artifactMessages[0] = "";
+	artifactMessages[1] = TXT_ARTIINVULNERABILITY;
+	artifactMessages[2] = TXT_ARTIHEALTH;
+	artifactMessages[3] = TXT_ARTISUPERHEALTH;
+	artifactMessages[4] = TXT_ARTIHEALINGRADIUS;
+	artifactMessages[5] = TXT_ARTISUMMON;
+	artifactMessages[6] = TXT_ARTITORCH;
+	artifactMessages[7] = TXT_ARTIEGG;
+	artifactMessages[8] = TXT_ARTIFLY;
+	artifactMessages[9] = TXT_ARTIBLASTRADIUS;
+	artifactMessages[10] = TXT_ARTIPOISONBAG;
+	artifactMessages[11] = TXT_ARTITELEPORTOTHER;
+	artifactMessages[12] = TXT_ARTISPEED;
+	artifactMessages[13] = TXT_ARTIBOOSTMANA;
+	artifactMessages[14] = TXT_ARTIBOOSTARMOR;
+	artifactMessages[15] = TXT_ARTITELEPORT;
+
+	artifactMessages[16] = TXT_ARTIPUZZSKULL;
+	artifactMessages[17] = TXT_ARTIPUZZGEMBIG;
+	artifactMessages[18] = TXT_ARTIPUZZGEMRED;
+	artifactMessages[19] = TXT_ARTIPUZZGEMGREEN1;
+	artifactMessages[20] = TXT_ARTIPUZZGEMGREEN2;
+	artifactMessages[21] = TXT_ARTIPUZZGEMBLUE1;
+	artifactMessages[22] = TXT_ARTIPUZZGEMBLUE2;
+	artifactMessages[23] = TXT_ARTIPUZZBOOK1;
+	artifactMessages[24] = TXT_ARTIPUZZBOOK2;
+	artifactMessages[25] = TXT_ARTIPUZZSKULL2;
+	artifactMessages[26] = TXT_ARTIPUZZFWEAPON;
+	artifactMessages[27] = TXT_ARTIPUZZCWEAPON;
+	artifactMessages[28] = TXT_ARTIPUZZMWEAPON;
+	artifactMessages[29] = TXT_ARTIPUZZGEAR;	// All gear pickups use the same text
+	artifactMessages[30] = TXT_ARTIPUZZGEAR;
+	artifactMessages[31] = TXT_ARTIPUZZGEAR;
+	artifactMessages[32] = TXT_ARTIPUZZGEAR;
+
+	armorText[0] = TXT_ARMOR1;
+	armorText[1] = TXT_ARMOR2;
+	armorText[2] = TXT_ARMOR3;
+	armorText[3] = TXT_ARMOR4;
+
+	manaText[0] = TXT_MANA_1;
+	manaText[1] = TXT_MANA_2;
+	manaText[2] = "";
+	manaText[3] = TXT_MANA_BOTH;
+
+	TextKeyMessages[0] = "STEEL KEY";
+	TextKeyMessages[1] = "CAVE KEY";
+	TextKeyMessages[2] = "AXE KEY";
+	TextKeyMessages[3] = "FIRE KEY";
+	TextKeyMessages[4] = "EMERALD KEY";
+	TextKeyMessages[5] = "DUNGEON KEY";
+	TextKeyMessages[6] = "SILVER KEY";
+	TextKeyMessages[7] = "RUSTED KEY";
+	TextKeyMessages[8] = "HORN KEY";
+	TextKeyMessages[9] = "SWAMP KEY";
+	TextKeyMessages[10] = "CASTLE KEY";
+
+	windTab[0] = 5.0 / 32.0;
+	windTab[1] = 10.0 / 32.0;
+	windTab[2] = 25.0 / 32.0;
+
+	pushTab[0] = 5.0 * 35.0 * 35.0 / 32.0;
+	pushTab[1] = 10.0 * 35.0 * 35.0 / 32.0;
+	pushTab[2] = 25.0 * 35.0 * 35.0 / 32.0;
+	pushTab[3] = 30.0 * 35.0 * 35.0 / 32.0;
+	pushTab[4] = 35.0 * 35.0 * 35.0 / 32.0;
+
+	ArmorMax[0] = 20.0;
+	ArmorMax[1] = 18.0;
+	ArmorMax[2] = 16.0;
+	ArmorMax[3] = 1.0;
+
+	pieceValueTrans[0] = 0;	// 0: never
+	pieceValueTrans[1] = WPIECE1 | WPIECE2 | WPIECE3;	// WPIECE1 (1)
+	pieceValueTrans[2] = WPIECE2 | WPIECE3;	// WPIECE2 (2)
+	pieceValueTrans[3] = 0;	// 3: never
+	pieceValueTrans[4] = WPIECE3;	// WPIECE3 (4)
+
+	opposite[0] = DI_WEST;
+	opposite[1] = DI_SOUTHWEST;
+	opposite[2] = DI_SOUTH;
+	opposite[3] = DI_SOUTHEAST;
+	opposite[4] = DI_EAST;
+	opposite[5] = DI_NORTHEAST;
+	opposite[6] = DI_NORTH;
+	opposite[7] = DI_NORTHWEST;
+	opposite[8] = DI_NODIR;
+
+	diags[0] = DI_NORTHWEST;
+	diags[1] = DI_NORTHEAST;
+	diags[2] = DI_SOUTHWEST;
+	diags[3] = DI_SOUTHEAST;
+
+	xspeed[0] = 1.0;
+	xspeed[1] = 0.7171630859;
+	xspeed[2] = 0.0;
+	xspeed[3] = -0.7171630859;
+	xspeed[4] = -1.0;
+	xspeed[5] = -0.7171630859;
+	xspeed[6] = 0.0;
+	xspeed[7] = 0.7171630859;
+
+	yspeed[0] = 0.0;
+	yspeed[1] = 0.7171630859;
+	yspeed[2] = 1.0;
+	yspeed[3] = 0.7171630859;
+	yspeed[4] = 0.0;
+	yspeed[5] = -0.7171630859;
+	yspeed[6] = -1.0;
+	yspeed[7] = -0.7171630859;
+
+	WeaponManaUseTable[0] = 0; WeaponManaUseTable[1] = 2; WeaponManaUseTable[2] = 3; WeaponManaUseTable[3] = 14;	//  Fighter
+	WeaponManaUseTable[4] = 0; WeaponManaUseTable[5] = 1; WeaponManaUseTable[6] = 4; WeaponManaUseTable[7] = 18;	//  Priest
+	WeaponManaUseTable[8] = 0; WeaponManaUseTable[9] = 3; WeaponManaUseTable[10] = 5; WeaponManaUseTable[11] = 15;	//  Mage
+	WeaponManaUseTable[12] = 0; WeaponManaUseTable[13] = 0; WeaponManaUseTable[14] = 0; WeaponManaUseTable[15] = 0;	//  Pig
+
+	classFlags[0] = MTF_FIGHTER;
+	classFlags[1] = MTF_CLERIC;
+	classFlags[2] = MTF_MAGE;
+
+	air_control = 1.0 / 256.0;
+
 	botskill = 2;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

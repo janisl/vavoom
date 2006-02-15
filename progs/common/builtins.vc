@@ -516,6 +516,7 @@ native int FindModel(string Name);
 native int GetModelIndex(name Name);
 native int FindSkin(string Name);
 native classid FindClassFromEditorId(int Id);
+native classid FindClassFromScriptId(int Id);
 native void ChangeMusic(string SongName);
 
 //  Return next sector # that line tag refers to
@@ -528,6 +529,9 @@ native void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.61  2006/02/15 23:29:42  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.60  2006/02/13 18:30:13  dj_jl
 //  Moved all server progs global functions to classes.
 //

@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class Environmental_Suit : InventoryItem
-	__mobjinfo__(2025);
+	__mobjinfo__(2025)
+	__scriptid__(136);
 
 __states__
 {
@@ -43,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2003/10/02 17:15:47  dj_jl
 //  Inventory items.
 //

@@ -176,8 +176,8 @@ bool PIT_PushThing(Actor thing)
 			pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
 			if (PointPusher(Source))
 				pushangle += 180.0;    // away
-			thing.Velocity.x += speed * cos(pushangle) * 35.0 * frametime;
-			thing.Velocity.y += speed * sin(pushangle) * 35.0 * frametime;
+			thing.Velocity.x += speed * cos(pushangle) * 35.0 * Level.Game.frametime;
+			thing.Velocity.y += speed * sin(pushangle) * 35.0 * Level.Game.frametime;
 		}
 	}
 	return true;
@@ -340,6 +340,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

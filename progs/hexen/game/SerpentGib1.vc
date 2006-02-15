@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SerpentGib1:Effect;
+class SerpentGib1 : Effect;
 
 //==========================================================================
 //
@@ -31,7 +31,7 @@ class SerpentGib1:Effect;
 //
 //==========================================================================
 
-void A_FloatGib(void)
+void A_FloatGib()
 {
 	FloorClip -= 1.0;
 }
@@ -42,7 +42,7 @@ void A_FloatGib(void)
 //
 //==========================================================================
 
-void A_SinkGib(void)
+void A_SinkGib()
 {
 	FloorClip += 1.0;
 }
@@ -53,7 +53,7 @@ void A_SinkGib(void)
 //
 //==========================================================================
 
-void A_DelayGib(void)
+void A_DelayGib()
 {
 	StateTime -= Random() * 2.0;
 }
@@ -84,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

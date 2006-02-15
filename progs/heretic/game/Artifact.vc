@@ -111,7 +111,7 @@ __states__
 void SetDormantArtifact()
 {
 	bSpecial = false;
-	if (deathmatch && bCanRespawn)
+	if (Level.Game.deathmatch && bCanRespawn)
 	{
 		SetState(S_DORMANTARTI1);
 	}
@@ -143,7 +143,7 @@ void TouchSpecial(Actor Toucher)
 	}
 	if (Toucher.Player.GiveArtifact(ArtifactType))
 	{
-		cprint(Toucher.Player, ArtifactText[ArtifactType]);
+		cprint(Toucher.Player, MainGameInfo(Level.Game).ArtifactText[ArtifactType]);
 		if (Special)
 		{
 			Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
@@ -168,6 +168,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

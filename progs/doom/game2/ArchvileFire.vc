@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class ArchvileFire : Effect;
+class ArchvileFire : Effect
+	__scriptid__(98);
 
 //==========================================================================
 //
@@ -121,6 +122,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:32:36  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

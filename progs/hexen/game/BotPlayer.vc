@@ -800,19 +800,19 @@ Actor FindEnemy()
 	// Search for player enemies
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (svvars->Players[i] &&
-			svvars->Players[i].MO.Health > 0 && botmo != svvars->Players[i].MO)
+		if (player.Level.Game.Players[i] &&
+			player.Level.Game.Players[i].MO.Health > 0 && botmo != player.Level.Game.Players[i].MO)
 		{
 			 //Here's a strange one, when bot is standing still, the CanSee within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up. 
-			if (Check_LOS(svvars->Players[i].MO, vangle))
+			if (Check_LOS(player.Level.Game.Players[i].MO, vangle))
 			{
-				if (botmo.CanSee(svvars->Players[i].MO))
+				if (botmo.CanSee(player.Level.Game.Players[i].MO))
 				{
-					temp = svvars->Players[i].MO.DistTo(botmo);
+					temp = player.Level.Game.Players[i].MO.DistTo(botmo);
 					if (temp < closest_dist)
 					{
 						closest_dist = temp;
-						target = svvars->Players[i].MO;
+						target = player.Level.Game.Players[i].MO;
 					}
 				}
 			}
@@ -1304,7 +1304,7 @@ void OnBeginPlay()
 	strcpy(ARR2STR(player.UserInfo), binfo->userinfo);
 
 	// Setup combat distance tables
-	if (deathmatch)
+	if (player.Level.Game.deathmatch)
 	{
 		combatdist[WP_FIRST]		= 48.0;
 		combatdist[WP_SECOND]		= 48.0;
@@ -1353,6 +1353,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.7  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

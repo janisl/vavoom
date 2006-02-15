@@ -36,7 +36,7 @@ bool bCkeckNoMonsters;
 
 void OnMapSpawn(mthing_t *mthing)
 {
-	if (bCkeckNoMonsters && nomonsters)
+	if (bCkeckNoMonsters && Level.Game.nomonsters)
 	{
 		Remove();
 		return;
@@ -307,32 +307,32 @@ bool StepMove()
 		I_Error("Weird MoveDir!");
 #endif
 
-	tryx = Origin.x + StepSpeed * xspeed[MoveDir];
-	tryy = Origin.y + StepSpeed * yspeed[MoveDir];
+	tryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+	tryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
 
 	if (!TryMove(vector(tryx, tryy, Origin.z)))
 	{
 		// open any specials
-		if (bFloat && tmtrace->bFloatOk)
+		if (bFloat && Level.Game.tmtrace->bFloatOk)
 		{
 			// must adjust height
-			if (Origin.z < tmtrace->FloorZ)
-				Origin.z += FLOATSPEED * frametime;
+			if (Origin.z < Level.Game.tmtrace->FloorZ)
+				Origin.z += FLOATSPEED * Level.Game.frametime;
 			else
-				Origin.z -= FLOATSPEED * frametime;
+				Origin.z -= FLOATSPEED * Level.Game.frametime;
 
 			bInFloat = true;
 			return true;
 		}
 
-		if (!tmtrace->NumSpecHit)
+		if (!Level.Game.tmtrace->NumSpecHit)
 			return false;
 
 		MoveDir = DI_NODIR;
 		good = false;
-		while (tmtrace->NumSpecHit--)
+		while (Level.Game.tmtrace->NumSpecHit--)
 		{
-			ld = tmtrace->SpecHit[tmtrace->NumSpecHit];
+			ld = Level.Game.tmtrace->SpecHit[Level.Game.tmtrace->NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -401,7 +401,7 @@ void NewChaseDir()
 	}
 
 	olddir = MoveDir;
-	turnaround = opposite[olddir];
+	turnaround = MainGameInfo(Level.Game).opposite[olddir];
 
 	deltax = Enemy.Origin.x - Origin.x;
 	deltay = Enemy.Origin.y - Origin.y;
@@ -423,7 +423,7 @@ void NewChaseDir()
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
-		MoveDir = diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
+		MoveDir = MainGameInfo(Level.Game).diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
 		if (MoveDir != turnaround && TryWalk())
 			return;
 	}
@@ -520,7 +520,7 @@ void RandomChaseDir()
 	int tdir;
 
 	olddir = MoveDir;
-	turnaround = opposite[olddir];
+	turnaround = MainGameInfo(Level.Game).opposite[olddir];
 
 	if (P_Random() & 1)
 	{
@@ -591,8 +591,8 @@ void A_Stand()
 	if (!bNeutral && targ && targ.bShootable)
 	{
 		if (bFriendly != targ.bFriendly ||
-			!strcmp(ARR2STR(level->mapname), "MAP03") ||
-			!strcmp(ARR2STR(level->mapname), "MAP34"))
+			!strcmp(ARR2STR(Level.Game.level->mapname), "MAP03") ||
+			!strcmp(ARR2STR(Level.Game.level->mapname), "MAP34"))
 		{
 			Enemy = targ;
 			if (!bCountItem || CanSee(targ))
@@ -725,7 +725,7 @@ void A_Chase()
 	if (bJustAttacked)
 	{
 		bJustAttacked = false;
-		if (!fastparm)
+		if (!Level.Game.fastparm)
 		{
 			NewChaseDir();
 		}
@@ -746,7 +746,7 @@ void A_Chase()
 	// check for missile attack
 	if (MissileState)
 	{
-		if (fastparm || !MoveCount)
+		if (Level.Game.fastparm || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
@@ -758,7 +758,7 @@ void A_Chase()
 	}
 
 	// possibly choose another target
-	if (netgame && !Threshold)
+	if (Level.Game.netgame && !Threshold)
 	{
 		if (!CanSee(Enemy))
 		{
@@ -1003,7 +1003,7 @@ void A_BossDeath()
 
 	// make sure there is a player alive for victory
 	for (i = 0; i < MAXPLAYERS; i++)
-		if (svvars->Players[i] && svvars->Players[i].bSpawned && svvars->Players[i].Health > 0)
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
 			break;
 
 	if (i == MAXPLAYERS)
@@ -1376,6 +1376,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2006/02/15 23:34:27  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.18  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

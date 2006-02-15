@@ -376,9 +376,9 @@ void InsertIntoTIDList(int tid)
 	int index;
 
 	index = -1;
-	for (i = 0; TIDList[i] != 0; i++)
+	for (i = 0; Level.TIDList[i] != 0; i++)
 	{
-		if (TIDList[i] == -1)
+		if (Level.TIDList[i] == -1)
 		{
 			// Found empty slot
 			index = i;
@@ -393,11 +393,11 @@ void InsertIntoTIDList(int tid)
 			Error("P_InsertMobjIntoTIDList: MAX_TID_COUNT exceeded.");
 		}
 		index = i;
-		TIDList[index + 1] = 0;
+		Level.TIDList[index + 1] = 0;
 	}
 	TID = tid;
-	TIDList[index] = tid;
-	TIDMobj[index] = self;
+	Level.TIDList[index] = tid;
+	Level.TIDMobj[index] = self;
 }
 
 //==========================================================================
@@ -410,12 +410,12 @@ void RemoveFromTIDList()
 {
 	int i;
 
-	for (i = 0; TIDList[i] != 0; i++)
+	for (i = 0; Level.TIDList[i] != 0; i++)
 	{
-		if (TIDMobj[i] == self)
+		if (Level.TIDMobj[i] == self)
 		{
-			TIDList[i] = -1;
-			TIDMobj[i] = none;
+			Level.TIDList[i] = -1;
+			Level.TIDMobj[i] = none;
 			TID = 0;
 			return;
 		}
@@ -499,6 +499,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/02/15 23:29:43  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.11  2006/02/13 18:30:15  dj_jl
 //  Moved all server progs global functions to classes.
 //

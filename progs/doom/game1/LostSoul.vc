@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class LostSoul : Pawn
-	__mobjinfo__(3006);
+	__mobjinfo__(3006)
+	__scriptid__(110);
 
 float SkullSpeed;
 
@@ -116,6 +117,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

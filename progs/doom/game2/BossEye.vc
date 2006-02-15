@@ -72,7 +72,7 @@ void A_BrainSpit()
 	Actor A;
 
 	bBrainEasy = !bBrainEasy;
-	if (gameskill <= sk_easy && !bBrainEasy)
+	if (Level.Game.gameskill <= sk_easy && !bBrainEasy)
 		return;
 
 	// shoot a cube at current target
@@ -109,6 +109,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:32:36  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

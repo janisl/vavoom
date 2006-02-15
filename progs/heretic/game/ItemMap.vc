@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ItemMap : Pickup
-	__mobjinfo__(35);
+	__mobjinfo__(35)
+	__scriptid__(137);
 
 //==========================================================================
 //
@@ -62,9 +63,9 @@ void TouchSpecial(Actor Toucher)
 	if (bCountItem)
 	{
 		Toucher.Player.ItemCount++;
-		level->currentitems++;
+		Level.Game.level->currentitems++;
 	}
-	if (deathmatch && !bDropped)
+	if (Level.Game.deathmatch && !bDropped)
 	{
 		HideSpecialThing();
 	}
@@ -91,6 +92,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/27 22:22:28  dj_jl
 //  Created level info class, moved action special handling to it.
 //

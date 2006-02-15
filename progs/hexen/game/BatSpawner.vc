@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BatSpawner:Actor
+class BatSpawner : Actor
 	__mobjinfo__(10225);
 
 //===========================================================================
@@ -45,7 +45,7 @@ int FrequencyCount;		// frequency counter
 //
 //===========================================================================
 
-void A_BatSpawnInit(void)
+void A_BatSpawnInit()
 {
 	FrequencyCount = 0;	// Frequency count
 }
@@ -56,7 +56,7 @@ void A_BatSpawnInit(void)
 //
 //===========================================================================
 
-void A_BatSpawn(void)
+void A_BatSpawn()
 {
 	Bat mo;
 	float delta;
@@ -96,7 +96,7 @@ __states__
 //
 //==========================================================================
 
-bool Activate(void)
+bool Activate()
 {
 	SetState(S_SPAWNBATS1);
 	return true;
@@ -108,7 +108,7 @@ bool Activate(void)
 //
 //==========================================================================
 
-bool Deactivate(void)
+bool Deactivate()
 {
 	SetState(S_SPAWNBATS_OFF);
 	return true;
@@ -131,6 +131,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

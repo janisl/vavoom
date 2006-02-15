@@ -51,6 +51,38 @@ int contents_transluc[4];
 botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
+tagged_line_t TaggedLines[MAX_TAGGED_LINES];
+int TaggedLineCount;
+
+int GetAmmoChange[NUMAMMO];
+int GetWeaponAmmo[NUMWEAPONS];
+int WeaponValue[NUMWEAPONS];
+int maxammo[NUMAMMO];
+bool WeaponInShareware[NUMWEAPONS];
+int WeaponAmmoUsePL1[NUMWEAPONS];
+int WeaponAmmoUsePL2[NUMWEAPONS];
+
+string ArtifactText[NUMARTIFACTS];
+string WeaponText[NUMWEAPONS];
+string KeyText[NUMKEYS];
+string AmmoText[NUMAMMO * 2];
+string keymsg[NUMKEYS];
+
+float windTab[3];
+float pushTab[5];
+
+int opposite[9];
+int diags[4];
+float xspeed[8];
+float yspeed[8];
+
+float air_control;
+
+Actor MissileMobj;
+
+bool shareware;
+bool respawnmonsters;
+
 //==========================================================================
 //
 //	Init
@@ -1289,6 +1321,8 @@ void SpawnWorld(Level InLevel)
 
 defaultproperties
 {
+	num_stats = NUM_STATS + 7 + 2 * NUMARTIFACTS;
+
 	WeaponClasses[0] = WeaponStaff;
 	WeaponClasses[1] = WeaponGoldWand;
 	WeaponClasses[2] = WeaponCrossbow;
@@ -1329,12 +1363,166 @@ defaultproperties
 	contents_transluc[2] = 20;
 	contents_transluc[3] = 30;
 
+	GetAmmoChange[0] = wp_goldwand;
+	GetAmmoChange[1] = wp_crossbow;
+	GetAmmoChange[2] = wp_blaster;
+	GetAmmoChange[3] = wp_skullrod;
+	GetAmmoChange[4] = wp_phoenixrod;
+	GetAmmoChange[5] = wp_mace;
+
+	GetWeaponAmmo[0] = 0;	// staff
+	GetWeaponAmmo[1] = 25;	// gold wand
+	GetWeaponAmmo[2] = 10;	// crossbow
+	GetWeaponAmmo[3] = 30;	// blaster
+	GetWeaponAmmo[4] = 50;	// skull rod
+	GetWeaponAmmo[5] = 2;	// phoenix rod
+	GetWeaponAmmo[6] = 50;	// mace
+	GetWeaponAmmo[7] = 0;	// gauntlets
+	GetWeaponAmmo[8] = 0;	// beak
+
+	WeaponValue[0] = 1;	// staff
+	WeaponValue[1] = 3;	// goldwand
+	WeaponValue[2] = 4;	// crossbow
+	WeaponValue[3] = 5;	// blaster
+	WeaponValue[4] = 6;	// skullrod
+	WeaponValue[5] = 7;	// phoenixrod
+	WeaponValue[6] = 8;	// mace
+	WeaponValue[7] = 2;	// gauntlets
+	WeaponValue[8] = 0;	// beak
+
+	maxammo[0] = 100;	// gold wand
+	maxammo[1] = 50;	// crossbow
+	maxammo[2] = 200;	// blaster
+	maxammo[3] = 200;	// skull rod
+	maxammo[4] = 20;	// phoenix rod
+	maxammo[5] = 150;	// mace
+
+	WeaponInShareware[0] = true;	// Staff
+	WeaponInShareware[1] = true;	// Gold wand
+	WeaponInShareware[2] = true;	// Crossbow
+	WeaponInShareware[3] = true;	// Blaster
+	WeaponInShareware[4] = false;	// Skull rod
+	WeaponInShareware[5] = false;	// Phoenix rod
+	WeaponInShareware[6] = false;	// Mace
+	WeaponInShareware[7] = true;	// Gauntlets
+	WeaponInShareware[8] = true;	// Beak
+
+	WeaponAmmoUsePL1[0] = 0;	// staff
+	WeaponAmmoUsePL1[1] = USE_GWND_AMMO_1;	// gold wand
+	WeaponAmmoUsePL1[2] = USE_CBOW_AMMO_1;	// crossbow
+	WeaponAmmoUsePL1[3] = USE_BLSR_AMMO_1;	// blaster
+	WeaponAmmoUsePL1[4] = USE_SKRD_AMMO_1;	// skull rod
+	WeaponAmmoUsePL1[5] = USE_PHRD_AMMO_1;	// phoenix rod
+	WeaponAmmoUsePL1[6] = USE_MACE_AMMO_1;	// mace
+	WeaponAmmoUsePL1[7] = 0;	// gauntlets
+	WeaponAmmoUsePL1[8] = 0;	// beak
+
+	WeaponAmmoUsePL2[0] = 0;	// staff
+	WeaponAmmoUsePL2[1] = USE_GWND_AMMO_2;	// gold wand
+	WeaponAmmoUsePL2[2] = USE_CBOW_AMMO_2;	// crossbow
+	WeaponAmmoUsePL2[3] = USE_BLSR_AMMO_2;	// blaster
+	WeaponAmmoUsePL2[4] = USE_SKRD_AMMO_2;	// skull rod
+	WeaponAmmoUsePL2[5] = USE_PHRD_AMMO_2;	// phoenix rod
+	WeaponAmmoUsePL2[6] = USE_MACE_AMMO_2;	// mace
+	WeaponAmmoUsePL2[7] = 0;	// gauntlets
+	WeaponAmmoUsePL2[8] = 0;	// beak
+
+	ArtifactText[0] = "";
+	ArtifactText[1] = TXT_ARTIINVULNERABILITY;
+	ArtifactText[2] = TXT_ARTIINVISIBILITY;
+	ArtifactText[3] = TXT_ARTIHEALTH;
+	ArtifactText[4] = TXT_ARTISUPERHEALTH;
+	ArtifactText[5] = TXT_ARTITOMEOFPOWER;
+	ArtifactText[6] = TXT_ARTITORCH;
+	ArtifactText[7] = TXT_ARTIFIREBOMB;
+	ArtifactText[8] = TXT_ARTIEGG;
+	ArtifactText[9] = TXT_ARTIFLY;
+	ArtifactText[10] = TXT_ARTITELEPORT;
+
+	WeaponText[0] = "";
+	WeaponText[1] = "";
+	WeaponText[2] = TXT_WPNCROSSBOW;
+	WeaponText[3] = TXT_WPNBLASTER;
+	WeaponText[4] = TXT_WPNSKULLROD;
+	WeaponText[5] = TXT_WPNPHOENIXROD;
+	WeaponText[6] = TXT_WPNMACE;
+	WeaponText[7] = TXT_WPNGAUNTLETS;
+
+	KeyText[0] = TXT_GOTYELLOWKEY;
+	KeyText[1] = TXT_GOTGREENKEY;
+	KeyText[2] = TXT_GOTBLUEKEY;
+
+	AmmoText[0] = TXT_AMMOGOLDWAND1;
+	AmmoText[1] = TXT_AMMOGOLDWAND2;
+	AmmoText[2] = TXT_AMMOMACE1;
+	AmmoText[3] = TXT_AMMOMACE2;
+	AmmoText[4] = TXT_AMMOCROSSBOW1;
+	AmmoText[5] = TXT_AMMOCROSSBOW2;
+	AmmoText[6] = TXT_AMMOBLASTER1;
+	AmmoText[7] = TXT_AMMOBLASTER2;
+	AmmoText[8] = TXT_AMMOSKULLROD1;
+	AmmoText[9] = TXT_AMMOSKULLROD2;
+	AmmoText[10] = TXT_AMMOPHOENIXROD1;
+	AmmoText[11] = TXT_AMMOPHOENIXROD2;
+
+	keymsg[0] = "YOU NEED A YELLOW KEY TO OPEN THIS DOOR";
+	keymsg[1] = "YOU NEED A GREEN KEY TO OPEN THIS DOOR";
+	keymsg[2] = "YOU NEED A BLUE KEY TO OPEN THIS DOOR";
+
+	windTab[0] = 5.0 / 32.0;
+	windTab[1] = 10.0 / 32.0;
+	windTab[2] = 25.0 / 32.0;
+
+	pushTab[0] = 5.0 * 35.0 * 35.0 / 32.0;
+	pushTab[1] = 10.0 * 35.0 * 35.0 / 32.0;
+	pushTab[2] = 25.0 * 35.0 * 35.0 / 32.0;
+	pushTab[3] = 30.0 * 35.0 * 35.0 / 32.0;
+	pushTab[4] = 35.0 * 35.0 * 35.0 / 32.0;
+
+	opposite[0] = DI_WEST;
+	opposite[1] = DI_SOUTHWEST;
+	opposite[2] = DI_SOUTH;
+	opposite[3] = DI_SOUTHEAST;
+	opposite[4] = DI_EAST;
+	opposite[5] = DI_NORTHEAST;
+	opposite[6] = DI_NORTH;
+	opposite[7] = DI_NORTHWEST;
+	opposite[8] = DI_NODIR;
+
+	diags[0] = DI_NORTHWEST;
+	diags[1] = DI_NORTHEAST;
+	diags[2] = DI_SOUTHWEST;
+	diags[3] = DI_SOUTHEAST;
+
+	xspeed[0] = 1.0;
+	xspeed[1] = 0.7171630859;
+	xspeed[2] = 0.0;
+	xspeed[3] = -0.7171630859;
+	xspeed[4] = -1.0;
+	xspeed[5] = -0.7171630859;
+	xspeed[6] = 0.0;
+	xspeed[7] = 0.7171630859;
+
+	yspeed[0] = 0.0;
+	yspeed[1] = 0.7171630859;
+	yspeed[2] = 1.0;
+	yspeed[3] = 0.7171630859;
+	yspeed[4] = 0.0;
+	yspeed[5] = -0.7171630859;
+	yspeed[6] = -1.0;
+	yspeed[7] = -0.7171630859;
+
+	air_control = 1.0 / 256.0;
+
 	botskill = 2;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

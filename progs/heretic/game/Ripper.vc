@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Ripper : Projectile;
+class Ripper : Projectile
+	__scriptid__(157);
 
 __states__
 {
@@ -52,6 +53,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

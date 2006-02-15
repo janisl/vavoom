@@ -61,26 +61,26 @@ void A_FireSkullRodPL1()
 void A_FireSkullRodPL2()
 {
 	Player.Ammo[am_skullrod] -=
-		deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
+		Player.Level.Game.deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
 	Player.MO.SpawnPlayerMissile(HornRodMissile2);
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
 	// even if it exploded immediately.
-	if (netgame)
+	if (Player.Level.Game.netgame)
 	{
 		// Multi-player game
-		HornRodMissile2(MissileMobj).RainColor = P_GetPlayerNum(Player);
+		HornRodMissile2(MainGameInfo(Player.Level.Game).MissileMobj).RainColor = P_GetPlayerNum(Player);
 	}
 	else
 	{
 		// Always use red missiles in single player games
-		HornRodMissile2(MissileMobj).RainColor = 2;
+		HornRodMissile2(MainGameInfo(Player.Level.Game).MissileMobj).RainColor = 2;
 	}
 	if (Player.MO.linetarget)
 	{
-		MissileMobj.Enemy = Player.MO.linetarget;
+		MainGameInfo(Player.Level.Game).MissileMobj.Enemy = Player.MO.linetarget;
 	}
-	MissileMobj.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
+	MainGameInfo(Player.Level.Game).MissileMobj.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
 }
 
 __states__
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2005/12/14 20:52:32  dj_jl
 //  State names belong to a class.
 //

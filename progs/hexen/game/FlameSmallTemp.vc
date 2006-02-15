@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class FlameSmallTemp:Decoration
-	__mobjinfo__(10500);
+class FlameSmallTemp : Decoration
+	__mobjinfo__(10500)
+	__scriptid__(96);
 
 //===========================================================================
 //
@@ -32,7 +33,7 @@ class FlameSmallTemp:Decoration
 //
 //===========================================================================
 
-void A_FlameCheck(void)
+void A_FlameCheck()
 {
 	if (!Args[0]--)	// Called every 8 tics
 	{
@@ -59,6 +60,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

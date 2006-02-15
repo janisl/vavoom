@@ -135,9 +135,9 @@ void P_Ticker(void)
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (svvars.Players[i] && svvars.Players[i]->bSpawned)
+		if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
 		{
-			svvars.Players[i]->eventSetViewPos();
+			GGameInfo->Players[i]->eventSetViewPos();
 		}
 	}
 
@@ -149,9 +149,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/02/15 23:28:18  dj_jl
+//	Moved all server progs global variables to classes.
+//
 //	Revision 1.21  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
-//
+//	
 //	Revision 1.20  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

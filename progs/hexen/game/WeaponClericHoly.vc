@@ -31,7 +31,7 @@ class WeaponClericHoly : Weapon;
 //
 //============================================================================
 
-void A_CHolyAttack(void)
+void A_CHolyAttack()
 {
 	Player.Mana[MANA_1] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
@@ -50,7 +50,7 @@ void A_CHolyAttack(void)
 //
 //============================================================================
 
-void A_CHolyPalette1(void)
+void A_CHolyPalette1()
 {
 	Player.WeaponPalette = STARTHOLYPAL + 1;
 }
@@ -61,7 +61,7 @@ void A_CHolyPalette1(void)
 //
 //============================================================================
 
-void A_CHolyPalette2(void)
+void A_CHolyPalette2()
 {
 	Player.WeaponPalette = STARTHOLYPAL + 2;
 }
@@ -72,7 +72,7 @@ void A_CHolyPalette2(void)
 //
 //============================================================================
 
-void A_CHolyPalette3(void)
+void A_CHolyPalette3()
 {
 	// reset back to original playpal
 	Player.WeaponPalette = 0;
@@ -108,6 +108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class BFGShot : Projectile;
+class BFGShot : Projectile
+	__scriptid__(128);
 
 //===========================================================================
 //
@@ -102,6 +103,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:32:09  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2006/01/03 20:30:34  dj_jl
 //  Fixed explosion.
 //

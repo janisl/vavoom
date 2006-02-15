@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Sorcerer2Missile2 : Projectile;
+class Sorcerer2Missile2 : Projectile
+	__scriptid__(146);
 
 //==========================================================================
 //
@@ -77,6 +78,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/11/18 23:36:50  dj_jl
 //  Renamed sounds.
 //

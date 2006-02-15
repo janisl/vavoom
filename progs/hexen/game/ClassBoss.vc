@@ -39,7 +39,7 @@ float StrafeRange;
 
 void A_ClassBossHealth()
 {
-	if (netgame && !deathmatch)	// co-op only
+	if (Level.Game.netgame && !Level.Game.deathmatch)	// co-op only
 	{
 		if (!bHealthInitialized)
 		{
@@ -72,7 +72,7 @@ void A_FastChase()
 		Threshold--;
 	}
 
-	if (gameskill == sk_nightmare)
+	if (Level.Game.gameskill == sk_nightmare)
 	{
 		// Monsters move faster in nightmare mode
 		StateTime *= 0.5;
@@ -117,7 +117,7 @@ void A_FastChase()
 	if (bJustAttacked)
 	{
 		bJustAttacked = false;
-		if (gameskill != sk_nightmare)
+		if (Level.Game.gameskill != sk_nightmare)
 			NewChaseDir();
 		return;
 	}
@@ -155,7 +155,7 @@ void A_FastChase()
 	//
 	if (MissileState)
 	{
-		if ((gameskill == sk_nightmare) || !MoveCount)
+		if ((Level.Game.gameskill == sk_nightmare) || !MoveCount)
 		{
 			if (CheckMissileRange())
 			{
@@ -169,7 +169,7 @@ void A_FastChase()
 	//
 	// possibly choose another enemy
 	//
-	if (netgame && !Threshold && !CanSee(Enemy))
+	if (Level.Game.netgame && !Threshold && !CanSee(Enemy))
 	{
 		if (LookForPlayers(true))
 			return;	// got a new enemy
@@ -196,6 +196,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

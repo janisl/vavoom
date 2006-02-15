@@ -31,11 +31,13 @@
 #include "shared/classes.vc"
 #include "server/classes.vc"
 #include "builtins.vc"
-#include "svvars.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/15 23:29:42  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.8  2006/02/05 18:50:54  dj_jl
 //  Moved common utils to level info class or built-in.
 //

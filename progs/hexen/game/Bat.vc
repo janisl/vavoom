@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Bat:Fragment;
+class Bat : Fragment;
 
 // Bat Variables
 int LifeTime;		// lifetime counter
@@ -36,7 +36,7 @@ float TurnAngle;	// turn amount per move (in degrees)
 //
 //===========================================================================
 
-void A_BatMove(void)
+void A_BatMove()
 {
 	float newangle;
 	float newSpeed;
@@ -65,7 +65,7 @@ void A_BatMove(void)
 		PlaySound('BatScream', CHAN_VOICE);
 
 	// Handle Z movement
-	Origin.z = Instigator.Origin.z + 2.0 * FloatBobOffsets[FloatBobIndex];
+	Origin.z = Instigator.Origin.z + 2.0 * Level.Game.FloatBobOffsets[FloatBobIndex];
 	FloatBobIndex = (FloatBobIndex + 3) & 63;
 }
 
@@ -90,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

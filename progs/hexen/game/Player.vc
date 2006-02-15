@@ -120,6 +120,8 @@ BotPlayer Bot;
 
 TVec useDir;
 
+bool onground;
+
 //==========================================================================
 //
 //	PutClientIntoServer
@@ -158,7 +160,7 @@ void SpawnClient()
 	Attacker = none;
 	Poisoner = none;
 
-	if (netgame && !deathmatch)
+	if (Level.Game.netgame && !Level.Game.deathmatch)
 	{
 		// Cooperative net-play, retain keys and weapons
 		oldKeys = Keys;
@@ -171,17 +173,17 @@ void SpawnClient()
 	}
 
 	//  Spawn player
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		DeathMatchSpawnPlayer();
 	}
 	else
 	{
-		SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 			P_GetPlayerNum(self)]);
 	}
 
-	if (netgame && !deathmatch && playerWasReborn)
+	if (Level.Game.netgame && !Level.Game.deathmatch && playerWasReborn)
 	{
 		// Restore keys and weapons when reborn in co-op
 		Keys = oldKeys;
@@ -231,7 +233,7 @@ void NetGameReborn()
 	MO.bIsPlayer = false;
 
 	// spawn at random spot if in death match
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		DeathMatchSpawnPlayer();
 		return;
@@ -246,11 +248,11 @@ void NetGameReborn()
 	}
 
 	foundSpot = false;
-	if (CheckSpot(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 		P_GetPlayerNum(self)]))
 	{
 		// Appropriate player start spot is open
-		SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 			P_GetPlayerNum(self)]);
 		foundSpot = true;
 	}
@@ -259,10 +261,10 @@ void NetGameReborn()
 		// Try to spawn at one of the other player start spots
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (CheckSpot(&Level.PlayerStarts[RebornPosition * MAXPLAYERS + i]))
+			if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]))
 			{
 				// Found an open start spot
-				SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS + i]);
+				SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]);
 				foundSpot = true;
 				break;
 			}
@@ -272,7 +274,7 @@ void NetGameReborn()
 	if (!foundSpot)
 	{
 		// Player's going to be inside something
-		SpawnPlayer(&Level.PlayerStarts[RebornPosition * MAXPLAYERS +
+		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
 			P_GetPlayerNum(self)]);
 	}
 
@@ -423,9 +425,9 @@ bool CheckSpot(mthing_t * mthing)
 	{
 		// first spawn of level, before corpses
 		for (i = 0; i < MAXPLAYERS; i++)
-			if (svvars->Players[i] && svvars->Players[i].MO &&
-				svvars->Players[i].MO.Origin.x == mthing->x &&
-				svvars->Players[i].MO.Origin.y == mthing->y)
+			if (Level.Game.Players[i] && Level.Game.Players[i].MO &&
+				Level.Game.Players[i].MO.Origin.x == mthing->x &&
+				Level.Game.Players[i].MO.Origin.y == mthing->y)
 				return false;
 		return true;
 	}
@@ -442,7 +444,7 @@ bool CheckSpot(mthing_t * mthing)
 	MO.bNoPassMobj = false;
 
 	// spawn a teleport fog 
-	sec = GLevel.PointInSector(vector(x, y, 0.0));
+	sec = Level.XLevel.PointInSector(vector(x, y, 0.0));
 	an = itof(45 * (mthing->angle / 45));
 
 	A = HexenLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
@@ -470,7 +472,7 @@ void SpawnPlayer(mthing_t * mthing)
 	{
 		PlayerReborn();
 	}
-	if (randomclass && deathmatch)
+	if (MainGameInfo(Level.Game).randomclass && Level.Game.deathmatch)
 	{
 		PClass = P_Random() % 3;
 		if (PClass == BaseClass)
@@ -524,7 +526,7 @@ void SpawnPlayer(mthing_t * mthing)
 	ViewAngles = pp.Angles;
 	bFixAngle = true;
 	SetupPsprites();
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		// Give all keys in death match mode
 		Keys = 2047;
@@ -585,7 +587,7 @@ void PlayerExitMap(bool clusterChange)
 //  memset(Powers, 0, sizeof(Powers));
 	Powers[pw_flight] = flightPower;
 
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		Powers[pw_flight] = 0.0;
 	}
@@ -651,7 +653,7 @@ bool GiveMana(int mana, int count)
 	{
 		return false;
 	}
-	if (gameskill == sk_baby || gameskill == sk_nightmare)
+	if (Level.Game.gameskill == sk_baby || Level.Game.gameskill == sk_nightmare)
 	{
 		// extra mana in baby mode and nightmare mode
 		count += count >> 1;
@@ -715,7 +717,7 @@ bool GiveArmor(int armortype, int amount)
 
 	if (amount == -1)
 	{
-		hits = ArmorIncrement[PClass * NUMARMOR + armortype];
+		hits = MainGameInfo(Level.Game).ArmorIncrement[PClass * NUMARMOR + armortype];
 		if (ArmorPoints[armortype] >= hits)
 		{
 			return false;
@@ -732,8 +734,8 @@ bool GiveArmor(int armortype, int amount)
 			+ ArmorPoints[ARMOR_SHIELD]
 			+ ArmorPoints[ARMOR_HELMET]
 			+ ArmorPoints[ARMOR_AMULET]
-			+ AutoArmorSave[PClass];
-		if (totalArmor < ArmorMax[PClass] * 5.0)
+			+ MainGameInfo(Level.Game).AutoArmorSave[PClass];
+		if (totalArmor < MainGameInfo(Level.Game).ArmorMax[PClass] * 5.0)
 		{
 			ArmorPoints[armortype] += hits;
 		}
@@ -883,7 +885,7 @@ bool GiveArtifact(int arti)
 	}
 	else
 	{
-		if (arti >= arti_firstpuzzitem && netgame && !deathmatch)
+		if (arti >= arti_firstpuzzitem && Level.Game.netgame && !Level.Game.deathmatch)
 		{
 			// Can't carry more than 1 puzzle item in coop netplay
 			return false;
@@ -1080,8 +1082,8 @@ void MovePlayer(float deltaTime)
 	if (!(onground || MO.bFly))
 	{
 		//  not on ground, so little effect on velocity
-		forward *= air_control;
-		side *= air_control;
+		forward *= MainGameInfo(Level.Game).air_control;
+		side *= MainGameInfo(Level.Game).air_control;
 	}
 
 	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
@@ -1331,7 +1333,7 @@ void CalcHeight(float deltaTime)
 		Bob = 0.5;
 	}
 
-	angle = 180.0 * 35.0 / 10.0 * level->time;
+	angle = 180.0 * 35.0 / 10.0 * Level.Game.level->time;
 	bob = Bob / 2.0 * sin(angle);
 
 	// move viewheight
@@ -1404,7 +1406,7 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		//	Secret area.
 		SecretCount++;
-		level->currentsecret++;
+		Level.Game.level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
 		centerprint(self, "You found a secret area");
 	}
@@ -1415,31 +1417,31 @@ void PlayerInSpecialSector(float deltaTime)
 		switch (MO.Sector->special)
 		{
 		case SECSPEC_DamageHellslime:
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 10);
 			}
 			break;
 		case SECSPEC_DamageSludge:
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 4);
 			}
 			break;
 		case SECSPEC_DamageNukage:
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 5);
 			}
 			break;
 		case SECSPEC_LightStrobeFastDamage:
 		case SECSPEC_DamageSuperHellslime:
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 20);
 			}
 			break;
@@ -1447,9 +1449,9 @@ void PlayerInSpecialSector(float deltaTime)
 			// EXIT SUPER DAMAGE! (for E1M8 finale)
 			Cheats &= ~CF_GODMODE;
 	
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 20);
 			}
 	
@@ -1459,29 +1461,29 @@ void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case SECSPEC_DamageLavaWimpy:
-			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
-				MO.Damage(GLavaInflictor, none, 5);
+				LastSectorDamageTime = Level.Game.level->time;
+				MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
 				//MO.HitFloorEffect();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
 			break;
 		case SECSPEC_DamageLavaHefty:
-			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
-				MO.Damage(GLavaInflictor, none, 8);
+				LastSectorDamageTime = Level.Game.level->time;
+				MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 8);
 				//MO.HitFloorEffect();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
 			break;
 		case SECSPEC_ScrollEastLavaDamage:
 			ThrustPlayer(0.0, 1024.0, deltaTime);
-			if (level->time - LastSectorDamageTime >= 16.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
-				MO.Damage(GLavaInflictor, none, 5);
+				LastSectorDamageTime = Level.Game.level->time;
+				MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
 				//MO.HitFloorEffect();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
@@ -1503,23 +1505,23 @@ void PlayerInSpecialSector(float deltaTime)
 		switch (MO.Sector->special & SECSPEC_DAMAGE_MASK)
 		{
 		case 0x0100:
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 5);
 			}
 			break;
 		case 0x0200:
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 10);
 			}
 			break;
 		case 0x0300:
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, 20);
 			}
 			break;
@@ -1531,23 +1533,23 @@ void PlayerInSpecialSector(float deltaTime)
 	{
 		if (MO.Sector->Damage < 20)
 		{
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (MO.Sector->Damage < 50)
 		{
-			if (level->time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
-				LastSectorDamageTime = level->time;
+				LastSectorDamageTime = Level.Game.level->time;
 				MO.Damage(none, none, MO.Sector->Damage);
 			}
 		}
-		else if (level->time - LastSectorDamageTime >= 1.0 / 35.0)
+		else if (Level.Game.level->time - LastSectorDamageTime >= 1.0 / 35.0)
 		{
-			LastSectorDamageTime = level->time;
+			LastSectorDamageTime = Level.Game.level->time;
 			MO.Damage(none, none, MO.Sector->Damage);
 		}
 	}
@@ -1563,49 +1565,49 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollNorthSlow:
 	case SECSPEC_ScrollNorthMedium:
 	case SECSPEC_ScrollNorthFast:
-		ThrustPlayer(90.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(90.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollEastSlow:
 	case SECSPEC_ScrollEastMedium:
 	case SECSPEC_ScrollEastFast:
-		ThrustPlayer(0.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(0.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollSouthSlow:
 	case SECSPEC_ScrollSouthMedium:
 	case SECSPEC_ScrollSouthFast:
-		ThrustPlayer(270.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(270.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollWestSlow:
 	case SECSPEC_ScrollWestMedium:
 	case SECSPEC_ScrollWestFast:
-		ThrustPlayer(180.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(180.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollNorthWestSlow:
 	case SECSPEC_ScrollNorthWestMedium:
 	case SECSPEC_ScrollNorthWestFast:
-		ThrustPlayer(135.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(135.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollNorthEastSlow:
 	case SECSPEC_ScrollNorthEastMedium:
 	case SECSPEC_ScrollNorthEastFast:
-		ThrustPlayer(45.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(45.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollSouthEastSlow:
 	case SECSPEC_ScrollSouthEastMedium:
 	case SECSPEC_ScrollSouthEastFast:
-		ThrustPlayer(315.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(315.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollSouthWestSlow:
 	case SECSPEC_ScrollSouthWestMedium:
 	case SECSPEC_ScrollSouthWestFast:
-		ThrustPlayer(225.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(225.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow], deltaTime);
 		break;
 	case SECSPEC_ScrollEast5:
@@ -1613,7 +1615,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollEast25:
 	case SECSPEC_ScrollEast30:
 	case SECSPEC_ScrollEast35:
-		ThrustPlayer(0.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(0.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5], deltaTime);
 		break;
 	case SECSPEC_ScrollNorth5:
@@ -1621,7 +1623,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollNorth25:
 	case SECSPEC_ScrollNorth30:
 	case SECSPEC_ScrollNorth35:
-		ThrustPlayer(90.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(90.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollNorth5], deltaTime);
 		break;
 	case SECSPEC_ScrollSouth5:
@@ -1629,7 +1631,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollSouth25:
 	case SECSPEC_ScrollSouth30:
 	case SECSPEC_ScrollSouth35:
-		ThrustPlayer(270.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(270.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollSouth5], deltaTime);
 		break;
 	case SECSPEC_ScrollWest5:
@@ -1637,7 +1639,7 @@ void PlayerInSpecialSector(float deltaTime)
 	case SECSPEC_ScrollWest25:
 	case SECSPEC_ScrollWest30:
 	case SECSPEC_ScrollWest35:
-		ThrustPlayer(180.0, pushTab[(MO.Sector->special &
+		ThrustPlayer(180.0, MainGameInfo(Level.Game).pushTab[(MO.Sector->special &
 			SECSPEC_BASE_MASK) - SECSPEC_ScrollWest5], deltaTime);
 		break;
 	}
@@ -1659,9 +1661,9 @@ void PlayerOnSpecialFlat(int floorType)
 	switch (floorType)
 	{
 	case FLOOR_LAVA:
-		if (!(level->tictime & 31))
+		if (!(Level.Game.level->tictime & 31))
 		{
-			MO.Damage(GLavaInflictor, none, 10);
+			MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
 			MO.PlaySound('LavaSizzle', CHAN_BODY);
 		}
 		break;
@@ -1685,9 +1687,9 @@ void PlayerInContents()
 	switch (MO.WaterType)
 	{
 	case CONTENTS_LAVA:
-		if (!(level->tictime & 31))
+		if (!(Level.Game.level->tictime & 31))
 		{
-			MO.Damage(GLavaInflictor, none, 10);
+			MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
 			MO.PlaySound('LavaSizzle', CHAN_BODY);
 		}
 		break;
@@ -1988,7 +1990,7 @@ void DeathPlayerTick(float deltaTime)
 			if (lookdir < 60)
 			{
 				lookDelta = (60 - lookdir) / 8;
-				if (lookDelta < 1 && (level->tictime & 1))
+				if (lookDelta < 1 && (Level.Game.level->tictime & 1))
 				{
 					lookDelta = 1;
 				}
@@ -2172,7 +2174,7 @@ void PlayerTick(float deltaTime)
 			WaterMove(deltaTime);
 		else
 			MovePlayer(deltaTime);
-		if (Powers[pw_speed] && !(level->tictime & 1) &&
+		if (Powers[pw_speed] && !(Level.Game.level->tictime & 1) &&
 			Length(MO.Velocity) > 12.0 * 35.0)
 		{
 			speedA = HexenLevelInfo(Level).Spawn(PlayerSpeed, MO.Origin);
@@ -2258,7 +2260,7 @@ void PlayerTick(float deltaTime)
 	{
 		if (PClass == PCLASS_CLERIC)
 		{
-			if (!(level->tictime & 7) && bShadow && !bDontDraw)
+			if (!(Level.Game.level->tictime & 7) && bShadow && !bDontDraw)
 			{
 				bShadow = false;
 				if (!bAltShadow)
@@ -2267,7 +2269,7 @@ void PlayerTick(float deltaTime)
  					MO.bNonShootable = true;
 				}
 			}
-			if (!(level->tictime & 31))
+			if (!(Level.Game.level->tictime & 31))
 			{
 				if (bDontDraw)
 				{
@@ -2340,7 +2342,7 @@ void PlayerTick(float deltaTime)
 			Powers[pw_speed] = 0.0;
 	}
 
-	if (Powers[pw_flight] && netgame)
+	if (Powers[pw_flight] && Level.Game.netgame)
 	{
 		Powers[pw_flight] -= deltaTime;
 		if (Powers[pw_flight] <= 0.0)
@@ -2355,14 +2357,14 @@ void PlayerTick(float deltaTime)
 		}
 	}
 
-	if (PoisonCount && level->time - LastPoisonTime >= 0.5)
+	if (PoisonCount && Level.Game.level->time - LastPoisonTime >= 0.5)
 	{
 		PoisonCount -= 5;
 		if (PoisonCount < 0)
 		{
 			PoisonCount = 0;
 		}
-		LastPoisonTime = level->time;
+		LastPoisonTime = Level.Game.level->time;
 		MO.PoisonDamage(Poisoner, 1, true);
 	}
 
@@ -2385,10 +2387,10 @@ void PlayerTick(float deltaTime)
 		HazardTime -= deltaTime;
 		if (HazardTime <= 0.0)
 			HazardTime = 0.0;
-		if (level->time - LastHazardTime >= 32.0 / 35.0 &&
+		if (Level.Game.level->time - LastHazardTime >= 32.0 / 35.0 &&
 			HazardTime > 16.0)
 		{
-			LastHazardTime = level->time;
+			LastHazardTime = Level.Game.level->time;
 			MO.Damage(none, none, 5);
 		}
 	}
@@ -2407,7 +2409,7 @@ void PlayerTick(float deltaTime)
 				FixedColormap = 1;
 			}
 		}
-		else if (!(level->tictime & 16))
+		else if (!(Level.Game.level->tictime & 16))
 		{
 			if (NewTorch)
 			{
@@ -2569,7 +2571,7 @@ void SetViewPos()
 		Stats.flags |= SBF_IN_FLIGHT;
 	}
 
-	TotalArmorPoints = ftoi((AutoArmorSave[PClass]
+	TotalArmorPoints = ftoi((MainGameInfo(Level.Game).AutoArmorSave[PClass]
 			+ ArmorPoints[ARMOR_ARMOR]
 			+ ArmorPoints[ARMOR_SHIELD]
 			+ ArmorPoints[ARMOR_HELMET]
@@ -2581,12 +2583,12 @@ void SetViewPos()
 			ArmorPerc[i] = 100;
 		}
 		else if (ArmorPoints[i] <=
-			(ArmorIncrement[PClass * NUMARMOR + i] / 4.0))
+			(MainGameInfo(Level.Game).ArmorIncrement[PClass * NUMARMOR + i] / 4.0))
 		{
 			ArmorPerc[i] = 66;
 		}
 		else if (ArmorPoints[i] <=
-			(ArmorIncrement[PClass * NUMARMOR + i] / 2.0))
+			(MainGameInfo(Level.Game).ArmorIncrement[PClass * NUMARMOR + i] / 2.0))
 		{
 			ArmorPerc[i] = 33;
 		}
@@ -2857,7 +2859,7 @@ void UseArtiTele()
 	float destY;
 	float destAngle;
 
-	if (deathmatch)
+	if (Level.Game.deathmatch)
 	{
 		i = P_Random() % Level.NumDeathmatchStarts;
 		destX = Level.DeathmatchStarts[i].x;
@@ -3082,7 +3084,7 @@ void UseArtiPoisonBag()
 			bomb.Velocity.z =
 				(4.0 + 173.0 * -tan(MO.Angles.pitch) / 16.0) * 35.0;
 			bomb.Origin.z += 173.0 * -tan(MO.Angles.pitch) / 16.0;
-			bomb.Thrust(bomb.Angles.yaw, bomb.Speed * frametime);
+			bomb.Thrust(bomb.Angles.yaw, bomb.Speed * Level.Game.frametime);
 			bomb.Velocity.x += MO.Velocity.x / 2.0;
 			bomb.Velocity.y += MO.Velocity.y / 2.0;
 			bomb.Instigator = MO;
@@ -3127,15 +3129,15 @@ Actor SpawnPlayerMissile(classid type)
 	// Try to find a target
 	angles = MO.Angles;
 	MO.AimLineAttack(&angles, 16.0 * 64.0);
-	if (!linetarget)
+	if (!MO.linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		MO.AimLineAttack(&angles, 16.0 * 64.0);
-		if (!linetarget)
+		if (!MO.linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			MO.AimLineAttack(&angles, 16.0 * 64.0);
-			if (!linetarget)
+			if (!MO.linetarget)
 			{
 				angles.yaw = MO.Angles.yaw;
 			}
@@ -3166,12 +3168,12 @@ Actor SpawnPlayerMissile(classid type)
 		MissileMobj.Class == ClericFlameMissile)
 	{
 		// Ultra-fast ripper spawning missile
-		MissileMobj.Origin += MissileMobj.Velocity * frametime / 8.0;
+		MissileMobj.Origin += MissileMobj.Velocity * Level.Game.frametime / 8.0;
 	}
 	else
 	{
 		// Normal missile
-		MissileMobj.Origin += MissileMobj.Velocity * frametime / 2.0;
+		MissileMobj.Origin += MissileMobj.Velocity * Level.Game.frametime / 2.0;
 	}
 	if (!MissileMobj.TryMove(MissileMobj.Origin))
 	{
@@ -3201,15 +3203,15 @@ Actor SpawnPlayerMissileAngle(classid type, float angle)
 	angles = MO.Angles;
 	angles.yaw = angle;
 	MO.AimLineAttack(&angles, 16.0 * 64.0);
-	if (!linetarget)
+	if (!MO.linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		MO.AimLineAttack(&angles, 16.0 * 64.0);
-		if (!linetarget)
+		if (!MO.linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			MO.AimLineAttack(&angles, 16.0 * 64.0);
-			if (!linetarget)
+			if (!MO.linetarget)
 			{
 				angles.yaw = angle;
 			}
@@ -3244,15 +3246,15 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
 	angles = MO.Angles;
 	angles.yaw = angle;
 	MO.AimLineAttack(&angles, 16.0 * 64.0);
-	if (!linetarget)
+	if (!MO.linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
 		MO.AimLineAttack(&angles, 16.0 * 64.0);
-		if (!linetarget)
+		if (!MO.linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
 			MO.AimLineAttack(&angles, 16.0 * 64.0);
-			if (!linetarget)
+			if (!MO.linetarget)
 			{
 				angles.yaw = angle;
 			}
@@ -3279,8 +3281,8 @@ void AdjustPlayerAngle()
 	float angle;
 	float difference;
 
-	angle = atan2(linetarget.Origin.y - MO.Origin.y,
-		linetarget.Origin.x - MO.Origin.x);
+	angle = atan2(MO.linetarget.Origin.y - MO.Origin.y,
+		MO.linetarget.Origin.x - MO.Origin.x);
 	difference = AngleMod180(angle - MO.Angles.yaw);
 	if (fabs(difference) > 5.0)
 	{
@@ -3401,7 +3403,7 @@ void MovePsprites()
 			// drop tic count and possibly change state
 			if (e.StateTime != -1.0)	// a -1 tic count never changes
 			{
-				e.StateTime -= frametime;
+				e.StateTime -= Level.Game.frametime;
 				if (e.StateTime <= 0.0)
 				{
 					e.StateTime = 0.0;
@@ -3710,7 +3712,7 @@ bool UsePuzzleItem(int itemType)
 
 int WeaponManaUse(int pclass, int num)
 {
-	return WeaponManaUseTable[(pclass << 2) + num];
+	return MainGameInfo(Level.Game).WeaponManaUseTable[(pclass << 2) + num];
 }
 
 //==========================================================================
@@ -3765,7 +3767,7 @@ void Cheat_Gimme()
 
 		for (i = 0; i < NUMARMOR; i++)
 		{
-			ArmorPoints[i] = ArmorIncrement[PClass * NUMARMOR + i];
+			ArmorPoints[i] = MainGameInfo(Level.Game).ArmorIncrement[PClass * NUMARMOR + i];
 		}
 		for (i = 0; i < NUMWEAPONS; i++)
 		{
@@ -3961,6 +3963,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.19  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

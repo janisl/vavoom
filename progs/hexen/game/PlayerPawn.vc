@@ -60,7 +60,7 @@ bool RoughCheckThing(Entity Other)
 	{
 		return false;
 	}
-	if (netgame && !deathmatch && link.bIsPlayer)
+	if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
 	{
 		return false;
 	}
@@ -85,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.5  2004/08/22 19:23:26  dj_jl
 //  Moved many functions to player class.
 //

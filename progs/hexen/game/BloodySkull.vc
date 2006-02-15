@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BloodySkull:PlayerPawn;
+class BloodySkull : PlayerPawn;
 
 int FloorState;
 int RemoveState;
@@ -34,7 +34,7 @@ int RemoveState;
 //
 //============================================================================
 
-void A_CheckSkullFloor(void)
+void A_CheckSkullFloor()
 {
 	if (Origin.z <= FloorZ)
 	{
@@ -49,7 +49,7 @@ void A_CheckSkullFloor(void)
 //
 //============================================================================
 
-void A_CheckSkullDone(void)
+void A_CheckSkullDone()
 {
 	if (_Special2 == 666)
 	{
@@ -95,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

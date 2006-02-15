@@ -95,7 +95,7 @@ void A_PoisonBagDamage()
 {
 	A_Explode();
 
-	Origin.z += FloatBobOffsets[BobIndex] / 16.0;
+	Origin.z += Level.Game.FloatBobOffsets[BobIndex] / 16.0;
 	BobIndex = (BobIndex + 1) & 63;
 }
 
@@ -158,6 +158,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:54  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

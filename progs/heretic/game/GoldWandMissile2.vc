@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class GoldWandMissile2 : Projectile;
+class GoldWandMissile2 : Projectile
+	__scriptid__(152);
 
 __states__
 {
@@ -50,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.2  2005/03/28 07:36:10  dj_jl
 //  Player missiles can activate impact lines.
 //

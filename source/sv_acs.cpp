@@ -2738,9 +2738,9 @@ int VACS::RunScript(float DeltaTime)
 			{
 				for (int i = 0; i < MAXPLAYERS; i++)
 				{
-					if (svvars.Players[i])
+					if (GGameInfo->Players[i])
 					{
-						SV_ClientCenterPrintf(svvars.Players[i], "%s\n", PrintBuffer);
+						SV_ClientCenterPrintf(GGameInfo->Players[i], "%s\n", PrintBuffer);
 					}
 				}
 			}
@@ -2775,7 +2775,7 @@ int VACS::RunScript(float DeltaTime)
 				count = 0;
 				for(i = 0; i < MAXPLAYERS; i++)
 				{
-					if (svvars.Players[i])
+					if (GGameInfo->Players[i])
 						count++;
 				}
 				stack[stackPtr++] = count;
@@ -2948,9 +2948,9 @@ int VACS::RunScript(float DeltaTime)
 				//FIXME yellow message
 				for (int i = 0; i < MAXPLAYERS; i++)
 				{
-					if (svvars.Players[i])
+					if (GGameInfo->Players[i])
 					{
-						SV_ClientCenterPrintf(svvars.Players[i], "%s\n", PrintBuffer);
+						SV_ClientCenterPrintf(GGameInfo->Players[i], "%s\n", PrintBuffer);
 					}
 				}
 			}
@@ -3031,7 +3031,7 @@ int VACS::RunScript(float DeltaTime)
 				}
 				else
 				{
-					player = svvars.Players[stack[stackPtr - 1] - 1];
+					player = GGameInfo->Players[stack[stackPtr - 1] - 1];
 				}
 				if (player && player->bSpawned)
 				{
@@ -3108,8 +3108,8 @@ int VACS::RunScript(float DeltaTime)
 			{
 				for (int i = 0; i < MAXPLAYERS; ++i)
 				{
-					//if (svvars.Players[i] && svvars.Players[i]->bSpawned)
-						//DoClearInv(svvars.Players[i]->MO);
+					//if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
+						//DoClearInv(GGameInfo->Players[i]->MO);
 				}
 			}
 			break;
@@ -3281,9 +3281,9 @@ int VACS::RunScript(float DeltaTime)
 				{
 					for (int i = 0; i < MAXPLAYERS; i++)
 					{
-						if (svvars.Players[i])
+						if (GGameInfo->Players[i])
 						{
-							SV_ClientPrintf(svvars.Players[i], "%s\n", PrintBuffer);
+							SV_ClientPrintf(GGameInfo->Players[i], "%s\n", PrintBuffer);
 						}
 					}
 				}
@@ -4325,8 +4325,8 @@ int VACS::RunScript(float DeltaTime)
 			}
 			else
 			{
-				stack[stackPtr - 1] = svvars.Players[stack[stackPtr - 1]] &&
-					svvars.Players[stack[stackPtr - 1]]->bSpawned;
+				stack[stackPtr - 1] = GGameInfo->Players[stack[stackPtr - 1]] &&
+					GGameInfo->Players[stack[stackPtr - 1]]->bSpawned;
 			}
 			break;
 
@@ -4337,9 +4337,9 @@ int VACS::RunScript(float DeltaTime)
 			}
 			else
 			{
-				stack[stackPtr - 1] = svvars.Players[stack[stackPtr - 1]] &&
-					svvars.Players[stack[stackPtr - 1]]->bSpawned &&
-					svvars.Players[stack[stackPtr - 1]]->bIsBot;
+				stack[stackPtr - 1] = GGameInfo->Players[stack[stackPtr - 1]] &&
+					GGameInfo->Players[stack[stackPtr - 1]]->bSpawned &&
+					GGameInfo->Players[stack[stackPtr - 1]]->bIsBot;
 			}
 			break;
 
@@ -4517,8 +4517,8 @@ static void GiveInventory(VEntity* Activator, const char* Type, int Amount)
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (svvars.Players[i] && svvars.Players[i]->bSpawned)
-				svvars.Players[i]->MO->eventGiveInventory(Type, Amount);
+			if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
+				GGameInfo->Players[i]->MO->eventGiveInventory(Type, Amount);
 		}
 	}
 }
@@ -4547,8 +4547,8 @@ static void TakeInventory(VEntity* Activator, const char* Type, int Amount)
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (svvars.Players[i] && svvars.Players[i]->bSpawned)
-				svvars.Players[i]->MO->eventTakeInventory(Type, Amount);
+			if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
+				GGameInfo->Players[i]->MO->eventTakeInventory(Type, Amount);
 		}
 	}
 }
@@ -4663,9 +4663,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2006/02/15 23:28:18  dj_jl
+//	Moved all server progs global variables to classes.
+//
 //	Revision 1.39  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
-//
+//	
 //	Revision 1.38  2005/12/29 19:51:54  dj_jl
 //	Fixed missing return.
 //	

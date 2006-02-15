@@ -23,8 +23,9 @@
 //**
 //**************************************************************************
 
-class SerpentLeader:Serpent
-	__mobjinfo__(120);
+class SerpentLeader : Serpent
+	__mobjinfo__(120)
+	__scriptid__(7);
 
 //==========================================================================
 //
@@ -34,7 +35,7 @@ class SerpentLeader:Serpent
 //
 //==========================================================================
 
-void A_SerpentHumpDecide(void)
+void A_SerpentHumpDecide()
 {
 	if (P_Random() > 30)
 	{
@@ -67,7 +68,7 @@ void A_SerpentHumpDecide(void)
 //
 //==========================================================================
 
-void A_SerpentCheckForAttack(void)
+void A_SerpentCheckForAttack()
 {
 	if (!Enemy)
 	{
@@ -87,7 +88,7 @@ void A_SerpentCheckForAttack(void)
 //
 //==========================================================================
 
-void A_SerpentChooseAttack(void)
+void A_SerpentChooseAttack()
 {
 	if (!Enemy || CheckMeleeRange())
 	{
@@ -102,7 +103,7 @@ void A_SerpentChooseAttack(void)
 //
 //==========================================================================
 
-void A_SerpentMissileAttack(void)
+void A_SerpentMissileAttack()
 {
 	if (!Enemy)
 	{
@@ -125,6 +126,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/15 23:33:55  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

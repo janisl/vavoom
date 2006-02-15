@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class ArchVile : Pawn
-	__mobjinfo__(64);
+	__mobjinfo__(64)
+	__scriptid__(111);
 
 int HealState;
 
@@ -51,8 +52,8 @@ void A_VileChase()
 	if (MoveDir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx = Origin.x + StepSpeed * xspeed[MoveDir];
-		viletryy = Origin.y + StepSpeed * yspeed[MoveDir];
+		viletryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+		viletryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
 
 		xl = MapBlock(viletryx - XLevel.BlockMapOrgX - MAXRADIUS * 2.0);
 		xh = MapBlock(viletryx - XLevel.BlockMapOrgX + MAXRADIUS * 2.0);
@@ -239,6 +240,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:32:36  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

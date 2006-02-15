@@ -44,8 +44,7 @@ void A_FireBlasterPL1()
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	PuffType = BlasterPuff1;
-	Player.MO.LineAttack(dir, MISSILERANGE, damage);
+	Player.MO.LineAttack(dir, MISSILERANGE, damage, BlasterPuff1);
 	Player.MO.PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 
@@ -60,7 +59,7 @@ void A_FireBlasterPL2()
 	Actor A;
 
 	Player.Ammo[am_blaster] -=
-		deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
+		Player.Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
 	A = Player.MO.SpawnPlayerMissile(BlasterFX1);
 	if (A)
 	{
@@ -107,6 +106,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.4  2005/12/11 21:31:40  dj_jl
 //  Made path traversal callbacks class members.
 //

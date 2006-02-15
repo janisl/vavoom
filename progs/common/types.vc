@@ -472,12 +472,6 @@ struct tmtrace_t
 	Entity BlockingMobj;
 };
 
-//	Variables shared with progs.
-struct server_vars_t
-{
-	Player Players[MAXPLAYERS]; // Bookkeeping on players - state.
-};
-
 #endif
 
 //**************************************************************************
@@ -687,6 +681,9 @@ struct ClipRect
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.62  2006/02/15 23:29:42  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.61  2006/02/13 18:30:13  dj_jl
 //  Moved all server progs global functions to classes.
 //

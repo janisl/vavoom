@@ -24,7 +24,8 @@
 //**************************************************************************
 
 class PodGenerator : Actor
-	__mobjinfo__(43);
+	__mobjinfo__(43)
+	__scriptid__(126);
 
 //==========================================================================
 //
@@ -32,7 +33,7 @@ class PodGenerator : Actor
 //
 //==========================================================================
 
-void A_MakePod(void)
+void A_MakePod()
 {
 	Actor A;
 	float x;
@@ -82,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/15 23:33:11  dj_jl
+//  Moved all server progs global variables to classes.
+//
 //  Revision 1.3  2005/12/14 20:52:32  dj_jl
 //  State names belong to a class.
 //

@@ -58,7 +58,7 @@
 
 static boolean CheatAllowed()
 {
-   	if (!sv.active || sv.intermission || !svvars.Players[0])
+   	if (!sv.active || sv.intermission || !GGameInfo->Players[0])
     {
 		GCon->Log("You are not in game!");
         return false;
@@ -73,7 +73,7 @@ static boolean CheatAllowed()
 		GCon->Log("You are too good to cheat!");
 		return false;
 	}
-	if (svvars.Players[0]->Health <= 0)
+	if (GGameInfo->Players[0]->Health <= 0)
 	{
 		// Dead players can't cheat
         GCon->Log("You must be alive to cheat");
@@ -94,7 +94,7 @@ COMMAND(God)
 {
 	if (CheatAllowed())
     {
-		svvars.Players[0]->eventCheat_God();
+		GGameInfo->Players[0]->eventCheat_God();
     }
 }
 
@@ -108,7 +108,7 @@ COMMAND(NoClip)
 {
 	if (CheatAllowed())
     {
-		svvars.Players[0]->eventCheat_NoClip();
+		GGameInfo->Players[0]->eventCheat_NoClip();
     }
 }
 
@@ -122,7 +122,7 @@ COMMAND(Gimme)
 {
 	if (CheatAllowed())
     {
-		svvars.Players[0]->eventCheat_Gimme();
+		GGameInfo->Players[0]->eventCheat_Gimme();
     }
 }
 
@@ -136,7 +136,7 @@ COMMAND(KillAll)
 {
 	if (CheatAllowed())
     {
-		svvars.Players[0]->eventCheat_KillAll();
+		GGameInfo->Players[0]->eventCheat_KillAll();
     }
 }
 
@@ -150,7 +150,7 @@ COMMAND(Morph)
 {
 	if (CheatAllowed())
     {
-		svvars.Players[0]->eventCheat_Morph();
+		GGameInfo->Players[0]->eventCheat_Morph();
     }
 }
 
@@ -164,7 +164,7 @@ COMMAND(NoWeapons)
 {
 	if (CheatAllowed())
     {
-		svvars.Players[0]->eventCheat_NoWeapons();
+		GGameInfo->Players[0]->eventCheat_NoWeapons();
     }
 }
 
@@ -178,7 +178,7 @@ COMMAND(ChangeClass)
 {
 	if (CheatAllowed())
     {
-		svvars.Players[0]->eventCheat_Class();
+		GGameInfo->Players[0]->eventCheat_Class();
     }
 }
 
@@ -199,7 +199,7 @@ COMMAND(Script)
 		if (script < 1) return;
 		if (script > 99) return;
 
-		if (P_StartACS(script, 0, 0, 0, 0, svvars.Players[0]->MO, NULL, 0,
+		if (P_StartACS(script, 0, 0, 0, 0, GGameInfo->Players[0]->MO, NULL, 0,
 			false, false))
 		{
 			GCon->Logf("Running script %d", script);
@@ -218,18 +218,21 @@ COMMAND(MyPos)
 	if (CheatAllowed())
     {
 		GCon->Logf("MAP %s  X:%f  Y:%f  Z:%f  Yaw:%f Pitch:%f",
-			level.mapname, svvars.Players[0]->MO->Origin.x,
-			svvars.Players[0]->MO->Origin.y, svvars.Players[0]->MO->Origin.z,
-			svvars.Players[0]->MO->Angles.yaw, svvars.Players[0]->MO->Angles.pitch);
+			level.mapname, GGameInfo->Players[0]->MO->Origin.x,
+			GGameInfo->Players[0]->MO->Origin.y, GGameInfo->Players[0]->MO->Origin.z,
+			GGameInfo->Players[0]->MO->Angles.yaw, GGameInfo->Players[0]->MO->Angles.pitch);
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/02/15 23:28:18  dj_jl
+//	Moved all server progs global variables to classes.
+//
 //	Revision 1.12  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.11  2004/12/22 07:50:06  dj_jl
 //	More extended ACS support, more linedef flags.
 //	
