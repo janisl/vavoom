@@ -33,7 +33,6 @@ class VClass;
 struct FPropertyInfo;
 
 struct dprograms_t;
-struct FGlobalDef;
 
 struct FFunction
 {
@@ -116,32 +115,6 @@ public:
 
 	FFunction *FuncForName(const char* name);
 	FFunction *FindFunctionChecked(FName InName);
-	int GlobalNumForName(const char* name);
-
-	void SetGlobal(int num, int val)
-	{
-		Globals[num] = val;
-	}
-	void SetGlobal(const char *name, int value)
-	{
-		Globals[GlobalNumForName(name)] = value;
-	}
-	int GetGlobal(int num)
-	{
-		return Globals[num];
-	}
-	int GetGlobal(const char *name)
-	{
-		return Globals[GlobalNumForName(name)];
-	}
-	int *GlobalAddr(int num)
-	{
-		return &Globals[num];
-	}
-	int *GlobalAddr(const char *name)
-	{
-		return &Globals[GlobalNumForName(name)];
-	}
 
 	static int Exec(FFunction *func);
 	static int Exec(FFunction *func, int parm1);
@@ -296,14 +269,11 @@ public:
 private:
 	dprograms_t*	Progs;
 	char*			Strings;
-	int*			Globals;
 	FFunction*		Functions;
-	FGlobalDef*		Globaldefs;
 	FFunction**		VTables;
 	FPropertyInfo*	PropInfos;
 
 	FFunction *CheckFuncForName(const char* name);
-	int CheckGlobalNumForName(const char* name);
 	char* FuncName(int fnum);
 	static int ExecuteFunction(FFunction *func);
 };
@@ -375,9 +345,12 @@ inline FName PR_PopName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/17 19:23:47  dj_jl
+//	Removed support for progs global variables.
+//
 //	Revision 1.15  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.14  2005/12/07 22:53:26  dj_jl
 //	Moved compiler generated data out of globals.
 //	

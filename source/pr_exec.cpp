@@ -29,6 +29,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#define DO_GUARD_SLOW	1
 #include "gamedefs.h"
 #include "progdefs.h"
 
@@ -200,7 +201,6 @@ void TProgs::Load(const char *AName)
 	char			progfilename[256];
 	int*			Statements;
 	dfunction_t	*	DFunctions;
-	dglobaldef_t*	DGlobalDefs;
 	dclassinfo_t*	ClassInfo;
 	VClass**		ClassList;
 	FName*			NameRemap;
@@ -253,9 +253,7 @@ void TProgs::Load(const char *AName)
 
 	Strings = (char*)Progs + Progs->ofs_strings;
 	Statements = (int*)((byte*)Progs + Progs->ofs_statements);
-	Globals = (int*)((byte*)Progs + Progs->ofs_globals);
 	DFunctions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
-	DGlobalDefs = (dglobaldef_t *)((byte *)Progs + Progs->ofs_globaldefs);
 	ClassInfo = (dclassinfo_t *)((byte *)Progs + Progs->ofs_classinfo);
 	DVTables = (short*)((byte*)Progs + Progs->ofs_vtables);
 	DPropInfos = (dfield_t*)((byte*)Progs + Progs->ofs_propinfo);
@@ -266,7 +264,6 @@ void TProgs::Load(const char *AName)
 	DScriptIds = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_scriptids);
 
 	Functions = Z_CNew<FFunction>(Progs->num_functions);
-	Globaldefs = Z_CNew<FGlobalDef>(Progs->num_globaldefs);
 	VTables = Z_CNew<FFunction*>(Progs->num_vtables);
 	PropInfos = Z_CNew<FPropertyInfo>(Progs->num_propinfo);
 
@@ -295,10 +292,6 @@ void TProgs::Load(const char *AName)
 	{
 		Statements[i] = LittleLong(Statements[i]);
 	}
-	for (i = 0; i < Progs->num_globals; i++)
-	{
-		Globals[i] = LittleLong(Globals[i]);
-	}
 	for (i = 0; i < Progs->num_functions; i++)
 	{
 		DFunctions[i].name = LittleShort(DFunctions[i].name);
@@ -308,11 +301,6 @@ void TProgs::Load(const char *AName)
 		DFunctions[i].num_locals = LittleShort(DFunctions[i].num_locals);
 		DFunctions[i].type = LittleShort(DFunctions[i].type);
 		DFunctions[i].flags = LittleShort(DFunctions[i].flags);
-	}
-	for (i = 0; i < Progs->num_globaldefs; i++)
-	{
-		DGlobalDefs[i].name = LittleShort(DGlobalDefs[i].name);
-		DGlobalDefs[i].ofs = LittleShort(DGlobalDefs[i].ofs);
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
 	{
@@ -382,13 +370,6 @@ void TProgs::Load(const char *AName)
 		Functions[i].Flags = DFunctions[i].flags;
 	}
 
-	//	Setup globaldefs
-	for (i = 0; i < Progs->num_globaldefs; i++)
-	{
-		Globaldefs[i].Ofs = DGlobalDefs[i].ofs;
-		Globaldefs[i].Name = NameRemap[DGlobalDefs[i].name];
-	}
-
 	//	Set up info tables.
 	for (i = 0; i < Progs->num_sprnames; i++)
 	{
@@ -418,24 +399,6 @@ void TProgs::Load(const char *AName)
 	{
 		ScriptIds[i].doomednum = LittleShort(DScriptIds[i].doomednum);
 		ScriptIds[i].class_id = ClassList[LittleShort(DScriptIds[i].class_id)];
-	}
-
-	//	Setup string pointers in globals
-	byte *globalinfo = (byte*)Progs + Progs->ofs_globalinfo;
-	for (i = 0; i < Progs->num_globals; i++)
-	{
-		if (globalinfo[i] == GLOBALTYPE_String)
-		{
-			Globals[i] += int(Strings);
-		}
-		if (globalinfo[i] == GLOBALTYPE_Class)
-		{
-			Globals[i] = (int)ClassList[Globals[i]];
-		}
-		if (globalinfo[i] == GLOBALTYPE_Name)
-		{
-			Globals[i] = NameRemap[Globals[i]].GetIndex();
-		}
 	}
 
 	//	Set up function pointers in vitual tables
@@ -541,21 +504,12 @@ void TProgs::Load(const char *AName)
 			Statements[i + 1] = NameRemap[Statements[i + 1]].GetIndex();
 			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
 			break;
-		case OPC_GlobalAddress:
-#ifdef CHECK_VALID_VAR_NUM
-			if (Statements[i + 1] < 0 || Statements[i + 1] >= Progs->num_globaldefs)
-			{
-				Sys_Error("Bad global num %d", Statements[i + 1]);
-			}
-#endif
-			Statements[i + 1] = (int)(Globals + Globaldefs[Statements[i + 1]].Ofs);
-			break;
 		case OPC_Call:
 			Statements[i + 1] = (int)(Functions + Statements[i + 1]);
 			break;
 		case OPC_PushBool:
 		case OPC_AssignBool:
-			if (NeedBitSwap && PrevOpc != OPC_LocalAddress && PrevOpc != OPC_GlobalAddress)
+			if (NeedBitSwap && PrevOpc != OPC_LocalAddress)
 				Statements[i + 1] = SwapBits(Statements[i + 1]);
 			break;
 		}
@@ -578,7 +532,6 @@ void TProgs::Unload()
 {
 	Z_Free(Progs);
 	Z_Free(Functions);
-	Z_Free(Globaldefs);
 	Z_Free(VTables);
 	Z_Free(PropInfos);
 	Z_Free(SpriteNames);
@@ -640,40 +593,6 @@ FFunction *TProgs::FindFunctionChecked(FName InName)
     }
 	Sys_Error("Function %s not found", *InName);
 	return NULL;
-}
-
-//==========================================================================
-//
-//	TProgs::CheckGlobalNumForName
-//
-//==========================================================================
-
-int TProgs::CheckGlobalNumForName(const char* name)
-{
-	for (int i = 0; i < Progs->num_globaldefs; i++)
-	{
-		if (!strcmp(*Globaldefs[i].Name, name))
-		{
-			return Globaldefs[i].Ofs;
-		}
-	}
-	return -1;
-}
-
-//==========================================================================
-//
-//	TProgs::GlobalNumForName
-//
-//==========================================================================
-
-int TProgs::GlobalNumForName(const char* name)
-{
-	int i = CheckGlobalNumForName(name);
-	if (i == -1)
-	{
-		Sys_Error("PR_GlobalNumForName: global %s not found", name);
-	}
-	return i;
 }
 
 //==========================================================================
@@ -773,7 +692,6 @@ static void RunFunction(FFunction *func)
         return;
 
 	 case OPC_PushNumber:
-	 case OPC_GlobalAddress:
 	 case OPC_PushString:
 	 case OPC_PushFunction:
 	 case OPC_PushClassId:
@@ -1455,7 +1373,7 @@ static void RunFunction(FFunction *func)
 	}
 
     goto func_loop;
-	unguardfSlow(("(%s %d)", *func->Name, 
+	unguardfSlow(("(%s.%s %d)", func->OuterClass->GetName(), *func->Name, 
 		current_statement - (int *)func->FirstStatement));
 }
 
@@ -2108,9 +2026,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2006/02/17 19:23:47  dj_jl
+//	Removed support for progs global variables.
+//
 //	Revision 1.40  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.39  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	

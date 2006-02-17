@@ -42,7 +42,7 @@ enum
 	DECLARE_OPC(PushNumber, 1),
 	DECLARE_OPC(PushPointed, 0),
 	DECLARE_OPC(LocalAddress, 1),
-	DECLARE_OPC(GlobalAddress, 1),
+	DECLARE_OPC(__UNUSED__1__, 0),
 	DECLARE_OPC(Add, 0),
 	DECLARE_OPC(Subtract, 0),
 	DECLARE_OPC(Multiply, 0),
@@ -185,17 +185,9 @@ struct dprograms_t
 	int		ofs_statements;
 	int		num_statements;	//	Instruction 0 is error
 
-	int		ofs_globals;
-	int		num_globals;
-
 	int		ofs_functions;
 	int		num_functions;	//	Function 0 is empty
 	
-	int		ofs_globaldefs;
-	int		num_globaldefs;
-
-	int		ofs_globalinfo;
-
 	int		ofs_classinfo;
 	int		num_classinfo;
 
@@ -223,14 +215,8 @@ struct dprograms_t
 
 enum
 {
-	FUNC_Native		= 0x0001	// Native function
-};
-
-enum
-{
-	GLOBALTYPE_String = 1,
-	GLOBALTYPE_Class = 2,
-	GLOBALTYPE_Name = 3
+	FUNC_Native		= 0x0001,	// Native function
+	FUNC_Static		= 0x0002	// Static function
 };
 
 struct dfunction_t
@@ -242,12 +228,6 @@ struct dfunction_t
 	short	num_locals;
     short	type;
 	short	flags;
-};
-
-struct dglobaldef_t
-{
-	unsigned short	name;
-	unsigned short	ofs;
 };
 
 struct dclassinfo_t
@@ -294,9 +274,12 @@ struct dmobjinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/02/17 19:23:47  dj_jl
+//	Removed support for progs global variables.
+//
 //	Revision 1.23  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.22  2005/12/22 19:04:58  dj_jl
 //	Changed version number.
 //	
