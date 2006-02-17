@@ -37,9 +37,8 @@
 
 #define PF(name)			static void PF_##name(void)
 #define PF_M(cname, name)	static void PF_##cname##__##name(void)
-#define _(name)				{#name, PF_##name, NULL}
-#define _M(cname, name)		{#name, PF_##cname##__##name, V##cname::StaticClass()}
-#define __(name)			{#name, name, NULL}
+#define _(name)				{#name, PF_##name, VObject::StaticClass()}
+#define __(name)			{#name, name, VObject::StaticClass()}
 
 // TYPES -------------------------------------------------------------------
 
@@ -3517,9 +3516,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.70  2006/02/17 19:22:46  dj_jl
+//	Builtins belong to object class.
+//
 //	Revision 1.69  2006/02/15 23:27:40  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.68  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	
