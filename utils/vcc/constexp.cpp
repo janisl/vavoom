@@ -53,10 +53,11 @@ static TClass*			ConstExprClass;
 //
 //==========================================================================
 
-static int ConstExprFactor(void)
+static int ConstExprFactor()
 {
 	int		num;
 	int		ret = 0;
+	FName	Name;
 
 	switch(tk_Token)
 	{
@@ -82,15 +83,40 @@ static int ConstExprFactor(void)
 			break;
 
 		case TK_IDENTIFIER:
-			num = CheckForConstant(ConstExprClass, tk_Name);
+			Name = tk_Name;
+			TK_NextToken();
+			if (TK_Check(PU_DCOLON))
+			{
+				TClass* Class = CheckForClass(Name);
+				if (!Class)
+				{
+					ParseError("Class name expected");
+					break;
+				}
+
+				if (tk_Token == TK_IDENTIFIER)
+				{
+					num = CheckForConstant(Class, tk_Name);
+					if (num != -1)
+					{
+						TK_NextToken();
+						ret = Constants[num].value;
+						break;
+					}
+				}
+
+				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+				break;
+			}
+
+			num = CheckForConstant(ConstExprClass, Name);
 			if (num != -1)
 			{
-				TK_NextToken();
 				ret = Constants[num].value;
 			}
 			else
 			{
-				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid identifier %s", *tk_Name);
+				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid identifier %s", *Name);
 			}
 			break;
 
@@ -102,9 +128,9 @@ static int ConstExprFactor(void)
 }
 
 // Operatori: * / %
-static int CExprLevJ(void)
+static int CExprLevJ()
 {
-	boolean	unaryMinus;
+	bool	unaryMinus;
 	int		ret;
 
 	unaryMinus = false;
@@ -462,10 +488,13 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.15  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.
-//
+//	
 //	Revision 1.14  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	

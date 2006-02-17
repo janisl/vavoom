@@ -186,6 +186,7 @@ enum EKeyword
 	KW_NULL,
 	KW_RETURN,
 	KW_SELF,
+	KW_STATIC,
 	KW_STRING,
 	KW_STRUCT,
 	KW_SWITCH,
@@ -315,18 +316,6 @@ public:
 	}
 };
 
-class TGlobalDef : public FField
-{
-public:
-	int			ofs;
-	TType		*type;
-
-	TGlobalDef()
-	: ofs(0)
-	, type(0)
-	{}
-};
-
 struct localvardef_t : public FField
 {
 	int			ofs;
@@ -426,7 +415,7 @@ struct mobjinfo_t
 
 // -- Common --
 
-void ERR_Exit(ECompileError error, boolean info, char *text, ...) __attribute__((noreturn));
+void ERR_Exit(ECompileError error, bool info, char *text, ...) __attribute__((noreturn));
 void ParseError(ECompileError error);
 void ParseError(ECompileError error, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseError(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
@@ -488,7 +477,6 @@ TType* CheckForType(TClass* InClass, FName Name);
 TClass* CheckForClass();
 TClass* CheckForClass(FName Name);
 int TypeSize(TType *t);
-int CheckForGlobalVar(FName Name);
 int CheckForFunction(TClass*, FName);
 int CheckForConstant(TClass* InClass, FName);
 void TypeCheckPassable(TType *type);
@@ -526,10 +514,6 @@ extern int				tk_StringI;
 extern EKeyword			tk_Keyword;
 extern EPunctuation		tk_Punct;
 extern FName			tk_Name;
-
-extern TArray<int>			globals;
-extern TArray<byte>			globalinfo;
-extern TArray<TGlobalDef>	globaldefs;
 
 extern TArray<TFunction>	functions;
 extern int					numbuiltins;
@@ -634,9 +618,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.36  2006/02/15 23:27:07  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.35  2006/01/10 19:29:10  dj_jl
 //	Fixed states belonging to a class.
 //	

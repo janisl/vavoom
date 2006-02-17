@@ -125,7 +125,7 @@ static char* ErrorNames[NUM_ERRORS] =
 //
 //==========================================================================
 
-void ERR_Exit(ECompileError error, boolean info, char *text, ...)
+void ERR_Exit(ECompileError error, bool info, char *text, ...)
 {
 	char	workString[256];
 	va_list	argPtr;
@@ -313,9 +313,12 @@ static char *ErrorFileName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.8  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
-//
+//	
 //	Revision 1.7  2004/12/22 07:31:11  dj_jl
 //	Increased argument count limit.
 //	

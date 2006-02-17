@@ -558,260 +558,6 @@ static void ParseCompoundStatement()
 
 //==========================================================================
 //
-//	SkipGlobalData
-//
-//==========================================================================
-
-static void SkipGlobalData(TType *type);
-
-static bool SkipFields(TType *type)
-{
-	if (type->aux_type)
-	{
-		if (!SkipFields(type->aux_type))
-		{
-			return false;
-		}
-	}
-	for (int i = 0; i < type->Struct->NumFields; i++)
-	{
-		field_t* field = &type->Struct->Fields[i];
-		SkipGlobalData(field->type);
-		if (!TK_Check(PU_COMMA))
-		{
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-			return false;
-		}
-		if (TK_Check(PU_RBRACE))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-static void SkipGlobalData(TType *type)
-{
-	switch (type->type)
-	{
-	case ev_array:
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		do
-		{
-			SkipGlobalData(type->aux_type);
-			if (!TK_Check(PU_COMMA))
-			{
-				TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-				break;
-			}
-		} while (!TK_Check(PU_RBRACE));
-		break;
-
-	 case ev_struct:
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		if (SkipFields(type))
-		{
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-		}
-		break;
-
-	 case ev_vector:
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		if (SkipFields(type))
-		{
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-		}
-		break;
-
-	 default:
-		EvalConstExpression(NULL, type->type);
-	}
-}
-
-//==========================================================================
-//
-//	SkipArrayDimensions
-//
-//==========================================================================
-
-static void SkipArrayDimensions()
-{
-	if (TK_Check(PU_LINDEX))
-	{
-		if (TK_Check(PU_RINDEX))
-		{
-		}
-		else
-		{
-			EvalConstExpression(NULL, ev_int);
-			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-		}
-		SkipArrayDimensions();
-	}
-}
-
-//==========================================================================
-//
-//	CompileDef
-//
-//==========================================================================
-
-static void CompileDef(TType *type, bool IsNative)
-{
-	FName		Name;
-	int			num;
-	TType		*t;
-
-	t = type;
-	while (TK_Check(PU_ASTERISK))
-	{
-		t = MakePointerType(t);
-	}
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-	}
-
-	numlocaldefs = 1;
-	localsofs = 0;
-	maxlocalsofs = 0;
-	SelfType = NULL;
-	SelfClass = NULL;
-	Name = tk_Name;
-	TK_NextToken();
-
-	if (!TK_Check(PU_LPAREN))
-	{
-		//	Global variable
-		if (IsNative)
-		{
-			ERR_Exit(ERR_MISSING_LPAREN, true, NULL);
-		}
-		do
-		{
-			if (Name == NAME_None)
-			{
-				if (TK_Check(PU_ASTERISK));
-				if (tk_Token != TK_IDENTIFIER)
-				{
-					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-				}
-				Name = tk_Name;
-			}
-			SkipArrayDimensions();
-			// Initialisation
-			if (TK_Check(PU_ASSIGN))
-			{
-				SkipGlobalData(globaldefs[CheckForGlobalVar(Name)].type);
-			}
-			Name = NAME_None;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		return;
-	}
-
-	BreakLevel = 0;
-	ContinueLevel = 0;
-	FuncRetType = t;
-	if (t != &type_void)
-	{
-		//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
-		TypeCheckPassable(t);
-	}
-
-	if (CheckForGlobalVar(Name) != -1)
-	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
-	}
-	if (CheckForConstant(NULL, Name) != -1)
-	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
-	}
-
-	do
-	{
-		if (TK_Check(PU_VARARGS))
-		{
-			break;
-		}
-
-		type = CheckForType(NULL);
-
-		if (!type)
-		{
-			if (numlocaldefs == 1)
-			{
-				break;
-			}
-			ERR_Exit(ERR_BAD_VAR_TYPE, true, NULL);
-		}
-		while (TK_Check(PU_ASTERISK))
-		{
-			type = MakePointerType(type);
-		}
-		if (numlocaldefs == 1 && type == &type_void)
-		{
-			break;
-		}
-		TypeCheckPassable(type);
-
-		if (numlocaldefs - 1 == MAX_PARAMS)
-		{
-			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
-		}
-		if (tk_Token == TK_IDENTIFIER)
-		{
-			if (CheckForLocalVar(tk_Name))
-			{
-				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
-			}
-			//FIXME Treat bool varaibles as ints because on big-endian systems 
-			// it's hard to detect when assignment mask should not be swapped.
-			if (type->type == ev_bool)
-				type = &type_int;
-			localdefs[numlocaldefs].Name = tk_Name;
-			localdefs[numlocaldefs].type = type;
-			localdefs[numlocaldefs].ofs = localsofs;
-			numlocaldefs++;
-			TK_NextToken();
-		}
-		localsofs += TypeSize(type) / 4;
-	} while (TK_Check(PU_COMMA));
-	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	maxlocalsofs = localsofs;
-
-	num = CheckForFunction(NULL, Name);
-	if (num == -1)
-	{
-		ERR_Exit(ERR_NONE, true, "Missing func declaration");
-	}
-
-	if (IsNative)
-	{
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		return;
-	}
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	dprintf("Global function %s\n", *Name);
-	if (functions[num].FirstStatement)
-	{
-		ERR_Exit(ERR_FUNCTION_REDECLARED, true, "Function: %s", *Name);
-	}
-
-	BeginCode(num);
-	ParseCompoundStatement();
-
-	if (FuncRetType == &type_void)
-	{
-		AddStatement(OPC_Return);
-	}
-	functions[num].NumLocals = maxlocalsofs;
-	EndCode(num);
-}
-
-//==========================================================================
-//
 //	CompileMethodDef
 //
 //==========================================================================
@@ -847,6 +593,9 @@ void CompileMethodDef(TType *t, field_t *method, field_t *otherfield,
 		}
 		if (type == &type_void)
 		{
+static int un = 0;
+un++;
+//ParseWarning("This is ugly %d", un);
 			break;
 		}
 		TypeCheckPassable(type);
@@ -974,7 +723,6 @@ void CompileDefaultProperties(field_t *method, TClass* InClass)
 void PA_Compile()
 {
 	bool		done;
-	TType		*type;
 
 	dprintf("Compiling pass 2\n");
 
@@ -993,24 +741,7 @@ void PA_Compile()
 			done = true;
 			break;
 		case TK_KEYWORD:
-			type = CheckForType(NULL);
-			if (type)
-			{
-				CompileDef(type, false);
-			}
-			else if (TK_Check(KW_NATIVE))
-			{
-				type = CheckForType(NULL);
-				if (type)
-				{
-					CompileDef(type, true);
-				}
-				else
-				{
-					ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-				}
-			}
-			else if (TK_Check(KW_ENUM))
+			if (TK_Check(KW_ENUM))
 			{
 				int val;
 				FName Name;
@@ -1050,25 +781,9 @@ void PA_Compile()
 			{
 				SkipStruct(NULL);
 			}
-			else if (TK_Check(KW_STATES))
-			{
-				SkipStates(NULL);
-			}
 			else
 			{
 				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-			}
-			break;
-
-		case TK_IDENTIFIER:
-			type = CheckForType(NULL);
-			if (type)
-			{
-				CompileDef(type, false);
-			}
-			else
-			{
-				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Identifier \"%s\"", tk_String);
 			}
 			break;
 
@@ -1078,7 +793,6 @@ void PA_Compile()
 	   	}
 	}
 
-	dprintf("User defined globals - %d\n", globals.Num());
 	AddVirtualTables();
 	if (NumErrors)
 	{
@@ -1089,9 +803,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.34  2006/02/10 22:15:21  dj_jl
 //	Temporary fix for big-endian systems.
-//
+//	
 //	Revision 1.33  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.

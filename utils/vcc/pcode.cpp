@@ -59,10 +59,6 @@ void DumpAsmFunction(int num);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TArray<int>			globals;
-TArray<byte>		globalinfo;
-TArray<TGlobalDef>	globaldefs;
-
 TArray<TFunction>	functions;
 int					numbuiltins;
 
@@ -113,12 +109,6 @@ static struct
 void PC_Init()
 {
 	memset(ConstantsHash, -1, sizeof(ConstantsHash));
-
-	//	Globals
-	globals.Empty(10000);
-	memset(&globals[0], 0, 10000 * 4);
-	globalinfo.Empty(10000);
-	memset(&globalinfo[0], 0, 10000);
 
 	//	Strings
 	memset(StringLookup, 0, 256 * 4);
@@ -467,18 +457,6 @@ void PC_WriteObject(char *name)
 		fwrite(&opc, 1, 4, f);
 	}
 
-	progs.ofs_globals = ftell(f);
-	progs.num_globals = globals.Num();
-	for (i = 0; i < globals.Num(); i++)
-	{
-		int gv;
-		gv = LittleLong(globals[i]);
-		fwrite(&gv, 1, 4, f);
-	}
-
-	progs.ofs_globalinfo = ftell(f);
-	fwrite(&globalinfo[0], 1, (globals.Num() + 3) & ~3, f);
-
 	progs.ofs_functions = ftell(f);
 	progs.num_functions = functions.Num();
 	for (i = 0; i < functions.Num(); i++)
@@ -494,16 +472,6 @@ void PC_WriteObject(char *name)
 		func.flags = LittleShort(functions[i].Flags);
 		fwrite(&func, 1, sizeof(dfunction_t), f);
 	}	
-
-	progs.ofs_globaldefs = ftell(f);
-	progs.num_globaldefs = globaldefs.Num();
-	for (i = 0; i < globaldefs.Num(); i++)
-	{
-		dglobaldef_t gdef;
-		gdef.name = LittleShort(globaldefs[i].Name.GetIndex());
-		gdef.ofs = LittleShort(globaldefs[i].ofs);
-		fwrite(&gdef, 1, sizeof(dglobaldef_t), f);
-	}
 
 	progs.ofs_classinfo = ftell(f);
 	progs.num_classinfo = classtypes.Num();
@@ -600,11 +568,8 @@ void PC_WriteObject(char *name)
 	dprintf("Names      %6d %6d\n", FName::GetMaxNames(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
 	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), CodeBuffer.Num() * 4);
-	dprintf("Globals    %6d %6d\n", globals.Num(), globals.Num() * 4);
-	dprintf("Global info       %6d\n", (globals.Num() + 3) & ~3);
 	dprintf("Functions  %6d %6ld\n", functions.Num(), functions.Num() * sizeof(dfunction_t));
 	dprintf("Builtins   %6d\n", numbuiltins);
-	dprintf("Globaldefs %6d %6ld\n", globaldefs.Num(), globaldefs.Num() * sizeof(dglobaldef_t));
 	dprintf("Class info %6d %6ld\n", classtypes.Num(), classtypes.Num() * sizeof(dclassinfo_t));
 	dprintf("VTables    %6d %6d\n", vtables.Num(), vtables.Num() * 2);
 	dprintf("Prop info  %6d %6d\n", propinfos.Num(), propinfos.Num() * sizeof(dfield_t));
@@ -748,9 +713,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.26  2006/02/15 23:27:06  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.25  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	

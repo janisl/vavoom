@@ -192,7 +192,7 @@ static TTree ParseFunctionCall(int num, bool is_method)
 //
 //==========================================================================
 
-static TTree ParseMethodCall(field_t* field)
+static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 {
 	int num = field->func_num;
 	int arg = 0;
@@ -207,7 +207,20 @@ static TTree ParseMethodCall(field_t* field)
 	{
 		max_params = functions[num].NumParams;
 	}
-	AddStatement(OPC_PushVFunc, field->ofs);
+	if (functions[num].Flags & FUNC_Static)
+	{
+		if (HaveSelf)
+			ParseError("Invalid static function call");
+	}
+	else
+	{
+		if (!HaveSelf)
+		{
+			AddStatement(OPC_LocalAddress, 0);
+			AddStatement(OPC_PushPointed);
+		}
+		AddStatement(OPC_PushVFunc, field->ofs);
+	}
 	if (!TK_Check(PU_RPAREN))
 	{
 		do
@@ -223,10 +236,13 @@ static TTree ParseMethodCall(field_t* field)
 				{
 					TypeCheck3(op.type, functions[num].ParamTypes[arg]);
 				}
-				if (op.type->type == ev_vector)
-					AddStatement(OPC_Swap3);
-				else
-					AddStatement(OPC_Swap);
+				if (!(functions[num].Flags & FUNC_Static))
+				{
+					if (op.type->type == ev_vector)
+						AddStatement(OPC_Swap3);
+					else
+						AddStatement(OPC_Swap);
+				}
 			}
 			arg++;
 			argsize += TypeSize(op.type);
@@ -240,9 +256,19 @@ static TTree ParseMethodCall(field_t* field)
 	if (functions[num].NumParams & PF_VARARGS)
 	{
 		AddStatement(OPC_PushNumber, argsize / 4 - num_needed_params);
-		AddStatement(OPC_Swap);
+		if (!(functions[num].Flags & FUNC_Static))
+		{
+			AddStatement(OPC_Swap);
+		}
 	}
-	AddStatement(OPC_ICall);
+	if (functions[num].Flags & FUNC_Static)
+	{
+		AddStatement(OPC_Call, num);
+	}
+	else
+	{
+		AddStatement(OPC_ICall);
+	}
 	TTree fop = TTree(functions[num].ReturnType);
 	if (fop.type->type == ev_bool)
 		fop.type = &type_int;
@@ -398,20 +424,12 @@ static TTree ParseExpressionPriority0()
 				return op;
 			}
 
-			num = CheckForFunction(NULL, Name);
-			if (num != -1)
-			{
-				return ParseFunctionCall(num, false);
-			}
-
 			if (SelfClass)
 			{
 				field = CheckForField(Name, SelfClass);
 				if (field && field->type->type == ev_method)
 				{
-					AddStatement(OPC_LocalAddress, 0);
-					AddStatement(OPC_PushPointed);
-					return ParseMethodCall(field);
+					return ParseMethodCall(field, false);
 				}
 			}
 
@@ -468,14 +486,6 @@ static TTree ParseExpressionPriority0()
 		{
 			AddStatement(OPC_PushNumber, Constants[num].value);
 			op = TTree(&type_int);
-			return op;
-		}
-
-		num = CheckForGlobalVar(Name);
-		if (num != -1)
-		{
-			AddStatement(OPC_GlobalAddress, num);
-			op = EmitPushPointed(globaldefs[num].type);
 			return op;
 		}
 
@@ -570,7 +580,7 @@ static TTree ParseExpressionPriority1()
 					if (field->type->type == ev_method)
 					{
 						TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-						op = ParseMethodCall(field);
+						op = ParseMethodCall(field, true);
 					}
 					else
 					{
@@ -1655,9 +1665,12 @@ TType* ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.36  2006/02/10 22:15:21  dj_jl
 //	Temporary fix for big-endian systems.
-//
+//	
 //	Revision 1.35  2005/12/29 19:10:40  dj_jl
 //	Fixed compiler problem.
 //	

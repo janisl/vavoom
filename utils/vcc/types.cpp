@@ -335,28 +335,6 @@ int TypeSize(TType *type)
 
 //==========================================================================
 //
-//	CheckForGlobalVar
-//
-//==========================================================================
-
-int CheckForGlobalVar(FName Name)
-{
-	if (Name == NAME_None)
-	{
-		return -1;
-	}
-	for (int i = 0; i < globaldefs.Num(); i++)
-	{
-		if (globaldefs[i].Name == Name)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-//==========================================================================
-//
 //	CheckForFunction
 //
 //==========================================================================
@@ -705,6 +683,10 @@ void CompileClass()
 			if (TK_Check(KW_NATIVE))
 			{
 				Flags |= FUNC_Native;
+			}
+			else if (TK_Check(KW_STATIC))
+			{
+				Flags |= FUNC_Static;
 			}
 			else
 			{
@@ -1165,6 +1147,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 		Struct = new TStruct;
 		structtypes.AddItem(Struct);
 		Struct->Name = tk_Name;
+		Struct->OuterClass = InClass;
 		//  Add to types
 		struct_type = new TType;
 		memset(struct_type, 0, sizeof(TType));
@@ -1572,6 +1555,10 @@ void ParseClass()
 			{
 				Flags |= FUNC_Native;
 			}
+			else if (TK_Check(KW_STATIC))
+			{
+				Flags |= FUNC_Static;
+			}
 			else
 			{
 				flags_done = true;
@@ -1670,9 +1657,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.39  2006/02/15 23:27:07  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.38  2006/02/11 14:48:33  dj_jl
 //	Fixed arrays also for structs.
 //	

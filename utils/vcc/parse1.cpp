@@ -468,303 +468,6 @@ static void SkipCompoundStatement()
 
 //==========================================================================
 //
-//	ParseGlobalData
-//
-//==========================================================================
-
-static TType* ParseGlobalData(TType *type, int *dst);
-
-static bool ParseFields(TType *type, int *dst)
-{
-	if (type->aux_type)
-	{
-		if (!ParseFields(type->aux_type, dst))
-		{
-			return false;
-		}
-	}
-	for (int i = 0; i < type->Struct->NumFields; i++)
-	{
-		field_t* field = &type->Struct->Fields[i];
-		ParseGlobalData(field->type, (int*)((byte*)dst + field->ofs));
-		if (!TK_Check(PU_COMMA))
-		{
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-			return false;
-		}
-		if (TK_Check(PU_RBRACE))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-static TType* ParseGlobalData(TType *type, int *dst)
-{
-	int numinitialisers;
-
-	switch (type->type)
-	{
-	 case ev_array:
-		numinitialisers = 0;
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		do
-		{
-			ParseGlobalData(type->aux_type,
-				(int*)((byte*)dst + numinitialisers * TypeSize(type->aux_type)));
-			numinitialisers++;
-			if (!TK_Check(PU_COMMA))
-			{
-				TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-				break;
-			}
-		} while (!TK_Check(PU_RBRACE));
-		if (!type->array_dim)
-		{
-			type = MakeArrayType(type->aux_type, numinitialisers);
-		}
-		else
-		{
-			if (numinitialisers > type->array_dim)
-			{
-				ERR_Exit(ERR_NONE, true, "Too many initialisers.");
-			}
-		}
-		break;
-
-	 case ev_struct:
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		if (ParseFields(type, dst))
-		{
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-		}
-		break;
-
-	 case ev_vector:
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-		if (ParseFields(type, dst))
-		{
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-		}
-		break;
-
-	 default:
-		*dst = EvalConstExpression(NULL, type->type);
-		if (type->type == ev_string)
-		{
-			globalinfo[dst - &globals[0]] = GLOBALTYPE_String;
-		}
-		else if (type->type == ev_classid)
-		{
-			globalinfo[dst - &globals[0]] = GLOBALTYPE_Class;
-		}
-		else if (type->type == ev_name)
-		{
-			globalinfo[dst - &globals[0]] = GLOBALTYPE_Name;
-		}
-	}
-	return type;
-}
-
-//==========================================================================
-//
-//	ParseArrayDimensions
-//
-//==========================================================================
-
-static TType *ParseArrayDimensions(TType *type)
-{
-	if (TK_Check(PU_LINDEX))
-	{
-		int		size;
-
-		if (TK_Check(PU_RINDEX))
-		{
-			size = 0;
-		}
-		else
-		{
-			size = EvalConstExpression(NULL, ev_int);
-			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-		}
-		type = ParseArrayDimensions(type);
-		if (!TypeSize(type))
-		{
-			ParseError("Empty sub-array type");
-		}
-		type = MakeArrayType(type, size);
-	}
-	return type;
-}
-
-//==========================================================================
-//
-//	ParseDef
-//
-//==========================================================================
-
-static void ParseDef(TType *type, bool IsNative)
-{
-	FName		Name;
-	int			num;
-	TType		*t;
-
-	t = type;
-	while (TK_Check(PU_ASTERISK))
-	{
-		t = MakePointerType(t);
-	}
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-	}
-
-	numlocaldefs = 1;
-	int localsofs = 0;
-	Name = tk_Name;
-	TK_NextToken();
-
-	if (!TK_Check(PU_LPAREN))
-	{
-		if (IsNative)
-		{
-			ERR_Exit(ERR_MISSING_LPAREN, true, NULL);
-		}
-		do
-		{
-			if (Name == NAME_None)
-			{
-				t = type;
-				if (TK_Check(PU_ASTERISK))
-				{
-					t = MakePointerType(t);
-				}
-				if (tk_Token != TK_IDENTIFIER)
-				{
-					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-				}
-				Name = tk_Name;
-			}
-		   	if (t == &type_void)
-			{
-				ERR_Exit(ERR_VOID_VAR, true, NULL);
-			}
-			if (CheckForGlobalVar(Name) != -1 ||
-				CheckForFunction(NULL, Name) != -1 ||
-				CheckForConstant(NULL, Name) != -1)
-			{
-				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s",
-					*Name);
-			}
-			t = ParseArrayDimensions(t);
-			// inicializÆcija
-			if (TK_Check(PU_ASSIGN))
-			{
-				t = ParseGlobalData(t, &globals[globals.Num()]);
-			}
-			if (!TypeSize(t))
-			{
-				ERR_Exit(ERR_NONE, true, "Size of type = 0.");
-			}
-			//FIXME Treat bool varaibles as ints because on big-endian systems 
-			// it's hard to detect when assignment mask should not be swapped.
-			if (t->type == ev_bool)
-				t = &type_int;
-			TGlobalDef* GlobalDef = new(globaldefs) TGlobalDef;
-			GlobalDef->Name = Name;
-			GlobalDef->type = t;
-			GlobalDef->ofs = globals.Num();
-			globals.Add(TypeSize(t) / 4);
-			dprintf("Added global %s, %d bytes\n", *Name, TypeSize(t));
-			Name = NAME_None;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		return;
-	}
-
-	if (CheckForGlobalVar(Name) != -1)
-	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
-	}
-	if (CheckForConstant(NULL, Name) != -1)
-	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
-	}
-	if (CheckForFunction(NULL, Name) != -1)
-	{
-		ERR_Exit(ERR_FUNCTION_REDECLARED, true, "Function: %s", *Name);
-	}
-
-	num = functions.Num();
-	new(functions) TFunction;
-	functions[num].Name = Name;
-	functions[num].OuterClass = NULL;
-	functions[num].ReturnType = t;
-
-	do
-	{
-		if (TK_Check(PU_VARARGS))
-		{
-			functions[num].NumParams |= PF_VARARGS;
-			break;
-		}
-
-		type = CheckForType(NULL);
-
-		if (!type)
-		{
-			if (numlocaldefs == 1)
-			{
-				break;
-			}
-			ERR_Exit(ERR_BAD_VAR_TYPE, true, NULL);
-		}
-		while (TK_Check(PU_ASTERISK))
-		{
-		   	type = MakePointerType(type);
-		}
-		if (functions[num].NumParams == 0 && type == &type_void)
-		{
-			break;
-		}
-		TypeCheckPassable(type);
-
-		if (functions[num].NumParams == MAX_PARAMS)
-		{
-			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
-		}
-   		if (tk_Token == TK_IDENTIFIER)
-		{
-			numlocaldefs++;
-			TK_NextToken();
-		}
-		//FIXME Treat bool varaibles as ints because on big-endian systems 
-		// it's hard to detect when assignment mask should not be swapped.
-		if (type->type == ev_bool)
-			type = &type_int;
-		functions[num].ParamTypes[functions[num].NumParams] = type;
-		functions[num].NumParams++;
-		localsofs += TypeSize(type) / 4;
-	} while (TK_Check(PU_COMMA));
-	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	functions[num].ParamsSize = localsofs;
-
-	if (IsNative)
-	{
-		functions[num].FirstStatement = -numbuiltins;
-		functions[num].Flags |= FUNC_Native;
-		numbuiltins++;
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		return;
-	}
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-   	SkipCompoundStatement();
-}
-
-//==========================================================================
-//
 //	ParseMethodDef
 //
 //==========================================================================
@@ -956,8 +659,7 @@ void AddConstant(TClass* InClass, FName Name, int value)
 {
 	if (CurrentPass == 2)
 		ParseError("Add constant in pass 2");
-	if (CheckForGlobalVar(Name) != -1 || CheckForFunction(NULL, Name) != -1 ||
-		CheckForConstant(InClass, Name) != -1)
+	if (CheckForConstant(InClass, Name) != -1)
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
@@ -978,8 +680,7 @@ void AddConstant(TClass* InClass, FName Name, int value)
 
 void PA_Parse()
 {
-	boolean		done;
-	TType		*type;
+	bool		done;
 
 	dprintf("Compiling pass 1\n");
 
@@ -993,24 +694,7 @@ void PA_Parse()
 			done = true;
 			break;
 		case TK_KEYWORD:
-			type = CheckForType(NULL);
-			if (type)
-			{
-				ParseDef(type, false);
-			}
-			else if (TK_Check(KW_NATIVE))
-			{
-				type = CheckForType(NULL);
-				if (type)
-				{
-					ParseDef(type, true);
-				}
-				else
-				{
-					ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-				}
-			}
-			else if (TK_Check(KW_ENUM))
+			if (TK_Check(KW_ENUM))
 			{
 				int val;
 				FName Name;
@@ -1051,25 +735,9 @@ void PA_Parse()
 			{
 				ParseStruct(NULL, true);
 			}
-			else if (TK_Check(KW_STATES))
-			{
-				ParseStates(NULL);
-			}
 			else
 			{
 				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-			}
-			break;
-
-		case TK_IDENTIFIER:
-			type = CheckForType(NULL);
-			if (type)
-			{
-				ParseDef(type, false);
-			}
-			else
-			{
-				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Identifier \"%s\"", tk_String);
 			}
 			break;
 
@@ -1088,9 +756,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.8  2006/02/10 22:15:21  dj_jl
 //	Temporary fix for big-endian systems.
-//
+//	
 //	Revision 1.7  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.

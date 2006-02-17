@@ -65,7 +65,7 @@ int					tk_StringI;
 int 				tk_Number;
 float				tk_Float;
 EKeyword			tk_Keyword;
-EPunctuation			tk_Punct;
+EPunctuation		tk_Punct;
 FName				tk_Name;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -73,9 +73,9 @@ FName				tk_Name;
 static char			ASCIIToChrCode[256];
 static byte			ASCIIToHexDigit[256];
 static char			TokenStringBuffer[MAX_QUOTED_LENGTH];
-static boolean		IncLineNumber;
-static boolean		NewLine;
-static boolean		SourceOpen;
+static bool			IncLineNumber;
+static bool			NewLine;
+static bool			SourceOpen;
 static char*		FileStart;
 static char*		FilePtr;
 static char*		FileEnd;
@@ -110,6 +110,7 @@ static char* Keywords[] =
 	"NULL",
 	"return",
 	"self",
+	"static",
 	"string",
 	"struct",
 	"switch",
@@ -651,6 +652,11 @@ static void ProcessLetterToken(void)
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_SELF;
 		}
+		else if (!strcmp(tk_String, "static"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_STATIC;
+		}
 		else if (!strcmp(tk_String, "string"))
 		{
 			tk_Token = TK_KEYWORD;
@@ -1180,9 +1186,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/02/17 19:25:00  dj_jl
+//	Removed support for progs global variables and functions.
+//
 //	Revision 1.21  2006/02/15 23:27:07  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.20  2005/04/28 07:14:03  dj_jl
 //	Fixed some warnings.
 //	
