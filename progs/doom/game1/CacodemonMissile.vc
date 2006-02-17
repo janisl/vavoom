@@ -53,12 +53,15 @@ defaultproperties
 	DeathState = S_RBALLX1;
 	SightSound = 'caco/attack';
 	DeathSound = 'caco/shotx';
-	Effects = EF_DL_RBALL;
+	Effects = DoomDefs::EF_DL_RBALL;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

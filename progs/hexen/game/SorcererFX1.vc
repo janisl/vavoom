@@ -95,12 +95,15 @@ defaultproperties
 	DeathState = S_SORCFX1_D1;
 	GibsDeathState = S_SORCFX1_D1;
 	SightSound = 'SorcererBallBounce';
-	Effects = EF_DL_WHITE;
+	Effects = HexenDefs::EF_DL_WHITE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

@@ -39,7 +39,7 @@ defaultproperties
 	Height = 8.0;
 	bDropped = true;
 	IdleState = S_CHALICE;
-	ItemType = ITEM_OfferingChalice;
+	ItemType = StrifeDefs::ITEM_OfferingChalice;
 	bGiveQuest = true;
 	QuestID = QUEST_StoleChalice;
 }
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2004/10/13 06:36:30  dj_jl
 //  Implemented items also giving quests.
 //

@@ -25,7 +25,7 @@
 
 class MainGameInfo : GameInfo;
 
-classid WeaponClasses[NUMWEAPONS * NUMCLASSES];
+classid WeaponClasses[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES];
 
 int terrain_contents[6];
 int contents_transluc[6];
@@ -36,8 +36,8 @@ int botskill;
 tagged_line_t TaggedLines[MAX_TAGGED_LINES];
 int TaggedLineCount;
 
-float AutoArmorSave[NUMCLASSES];
-float ArmorIncrement[NUMCLASSES * NUMARMOR];
+float AutoArmorSave[HexenDefs::NUMCLASSES];
+float ArmorIncrement[HexenDefs::NUMCLASSES * HexenDefs::NUMARMOR];
 
 //
 //  Pickup messages
@@ -45,15 +45,15 @@ float ArmorIncrement[NUMCLASSES * NUMARMOR];
 string weaponMessages[6];
 string fourthWeaponText[3];
 string weaponPieceText[3];
-string artifactMessages[NUMARTIFACTS];
-string armorText[NUMARMOR];
+string artifactMessages[HexenDefs::NUMARTIFACTS];
+string armorText[HexenDefs::NUMARMOR];
 string manaText[4];
-string TextKeyMessages[NUMKEYS];
+string TextKeyMessages[HexenDefs::NUMKEYS];
 
 float windTab[3];
 float pushTab[5];
 
-float ArmorMax[NUMCLASSES];
+float ArmorMax[HexenDefs::NUMCLASSES];
 
 int pieceValueTrans[5];
 
@@ -62,7 +62,7 @@ int diags[4];
 float xspeed[8];
 float yspeed[8];
 
-int WeaponManaUseTable[NUMCLASSES * NUMWEAPONS];
+int WeaponManaUseTable[HexenDefs::NUMCLASSES * HexenDefs::NUMWEAPONS];
 
 int classFlags[3];
 
@@ -1150,7 +1150,7 @@ void SpawnWorld(Level InLevel)
 
 defaultproperties
 {
-	num_stats = NUM_STATS + NUMARMOR + NUMMANA + 7 + NUMARTIFACTS * 2;
+	num_stats = HexenDefs::NUMARMOR + HexenDefs::NUMMANA + 8 + HexenDefs::NUMARTIFACTS * 2;
 
 	WeaponClasses[0] = WeaponFighterPunch;
 	WeaponClasses[1] = WeaponClericMace;
@@ -1334,6 +1334,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

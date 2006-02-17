@@ -37,13 +37,16 @@ defaultproperties
 	ConversationID = 179;
 	PickupString = "clip of bullets";
 	IdleState = S_BULLETS;
-	AmmoType = am_clip;
+	AmmoType = StrifeDefs::am_clip;
 	AmmoCount = 10;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

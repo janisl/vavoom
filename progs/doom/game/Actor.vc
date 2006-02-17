@@ -530,17 +530,17 @@ void ExplodeMissile()
 	if (DeathSound)
 		PlaySound(DeathSound, CHAN_VOICE);
 
-	if (!(Effects & EF_ROCKET) && (Effects & EF_DLIGHT_MASK))
+	if (!(Effects & DoomDefs::EF_ROCKET) && (Effects & DoomDefs::EF_DLIGHT_MASK))
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion2);
-		MSG_WriteByte(Effects & EF_DLIGHT_MASK);
+		MSG_WriteByte(DoomDefs::svc_explosion2);
+		MSG_WriteByte(Effects & DoomDefs::EF_DLIGHT_MASK);
 		MSG_WriteShort(ftoi(Origin.x));
 		MSG_WriteShort(ftoi(Origin.y));
 		MSG_WriteShort(ftoi(Origin.z));
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
-	Effects &= ~EF_ROCKET;
+	Effects &= ~DoomDefs::EF_ROCKET;
 }
 
 //==========================================================================
@@ -778,7 +778,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// thus kick away unless using the chainsaw.
 	if (inflictor && bColideWithThings &&
 		(!source || !source.bIsPlayer ||
-			source.Player.ReadyWeapon != wp_chainsaw))
+			source.Player.ReadyWeapon != DoomDefs::wp_chainsaw))
 	{
 		Velocity += (500.0 * itof(damage) / Mass) *
 			Normalise(MobjCenter(self) - MobjCenter(inflictor));
@@ -3087,9 +3087,9 @@ void A_Chase()
 	}
 
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
 
 	// modify target threshold
@@ -3231,9 +3231,9 @@ void A_FaceTarget()
 void A_Pain()
 {
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
 
 	if (PainSound)
@@ -3257,13 +3257,13 @@ void A_Explode()
 
 	//  Spawn explosion effects - dynamic light and particles
 	MSG_Select(MSG_SV_DATAGRAM);
-	MSG_WriteByte(svc_explosion);
+	MSG_WriteByte(DoomDefs::svc_explosion);
 	MSG_WriteShort(ftoi(Origin.x));
 	MSG_WriteShort(ftoi(Origin.y));
 	MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
 
 	//  Clear old dynamic light effect
-	Effects &= ~EF_DLIGHT_MASK;
+	Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 }
 
 //==========================================================================
@@ -3277,9 +3277,9 @@ void A_Explode()
 void A_Scream()
 {
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
 
 	if (DeathSound)
@@ -3308,9 +3308,9 @@ void A_Scream()
 void A_XScream()
 {
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
 
 	if (bIsPlayer)
@@ -3334,9 +3334,9 @@ void A_XScream()
 void A_Fall()
 {
 	//  Remove muzzle flash
-	if ((Effects & EF_DLIGHT_MASK) == EF_DL_MUZZLEFLASH)
+	if ((Effects & DoomDefs::EF_DLIGHT_MASK) == DoomDefs::EF_DL_MUZZLEFLASH)
 	{
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
 
 	// actor is on ground, it can be walked over
@@ -3428,7 +3428,7 @@ void SpawnPuff(TVec Org, float Range)
 	MSG_Select(MSG_SV_DATAGRAM);
 	if (MSG_CheckSpace(7))
 	{
-		MSG_WriteByte(svc_gun_shot);
+		MSG_WriteByte(DoomDefs::svc_gun_shot);
 		MSG_WriteShort(ftoi(Org.x));
 		MSG_WriteShort(ftoi(Org.y));
 		MSG_WriteShort(ftoi(Org.z));
@@ -3459,7 +3459,7 @@ void P_SpawnBlood(TVec Org, int damage)
 	Actor A;
 
 	MSG_Select(MSG_SV_DATAGRAM);
-	MSG_WriteByte(svc_blood);
+	MSG_WriteByte(DoomDefs::svc_blood);
 	MSG_WriteShort(ftoi(Org.x));
 	MSG_WriteShort(ftoi(Org.y));
 	MSG_WriteShort(ftoi(Org.z));
@@ -4715,6 +4715,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.25  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

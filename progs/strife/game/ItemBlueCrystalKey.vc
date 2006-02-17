@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemBlueCrystalKey:KeyPickup
+class ItemBlueCrystalKey : KeyPickup
 	__mobjinfo__(193);
 
 __states__
@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "Blue Crystal Key";
 	bNoDeathmatch = true;
 	IdleState = S_BLUE_CRYSTAL_KEY;
-	KeyType = KEY_BlueCrystalKey;
+	KeyType = StrifeDefs::KEY_BlueCrystalKey;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

@@ -33,9 +33,9 @@ class WeaponClericHoly : Weapon;
 
 void A_CHolyAttack()
 {
-	Player.Mana[MANA_1] -=
+	Player.Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-	Player.Mana[MANA_2] -=
+	Player.Mana[HexenDefs::MANA_2] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 	Player.SpawnPlayerMissile(HolyMissile);
 	Player.DamageFlash = 0.0;
@@ -96,7 +96,7 @@ __states__
 
 defaultproperties
 {
-	Mana = MANA_BOTH;
+	Mana = HexenDefs::MANA_BOTH;
 	UpState = S_CHOLYUP;
 	DownState = S_CHOLYDOWN;
 	ReadyState = S_CHOLYREADY;
@@ -108,6 +108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

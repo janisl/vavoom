@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemBaseKey:KeyPickup
+class ItemBaseKey : KeyPickup
 	__mobjinfo__(230);
 
 __states__
@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "Base Key";
 	bNoDeathmatch = true;
 	IdleState = S_BASE_KEY;
-	KeyType = KEY_BaseKey;
+	KeyType = StrifeDefs::KEY_BaseKey;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

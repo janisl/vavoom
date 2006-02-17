@@ -41,12 +41,15 @@ defaultproperties
 	PickupString = "Shadow armor";
 	Mass = 2.0;
 	IdleState = S_SHADOW_ARMOR1;
-	ItemType = ITEM_ShadowArmor;
+	ItemType = StrifeDefs::ITEM_ShadowArmor;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

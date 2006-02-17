@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "Medical kit";
 	Mass = 15.0;
 	IdleState = S_MEDICAL_KIT;
-	ItemType = ITEM_MedicalKit;
+	ItemType = StrifeDefs::ITEM_MedicalKit;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2005/08/29 22:27:51  dj_jl
 //  Added models.
 //

@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "Med patch";
 	Mass = 20.0;
 	IdleState = S_MED_PATCH;
-	ItemType = ITEM_MedPatch;
+	ItemType = StrifeDefs::ITEM_MedPatch;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2005/08/29 22:27:51  dj_jl
 //  Added models.
 //

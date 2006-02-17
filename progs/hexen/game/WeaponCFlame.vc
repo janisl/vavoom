@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WeaponCFlame:WeaponPickup
+class WeaponCFlame : WeaponPickup
 	__mobjinfo__(8009);
 
 __states__
@@ -41,14 +41,17 @@ __states__
 defaultproperties
 {
 	bNoGravity = true;
-	WeaponClass = PCLASS_CLERIC;
-	WeaponType = WP_THIRD;
+	WeaponClass = HexenDefs::PCLASS_CLERIC;
+	WeaponType = HexenDefs::WP_THIRD;
 	IdleState = S_CFLAME1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

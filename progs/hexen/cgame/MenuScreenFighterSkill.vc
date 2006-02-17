@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class MenuScreenFighterSkill:MenuScreen;
+class MenuScreenFighterSkill : MenuScreen;
 
 string SkillNames[5];
 int PClass;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	int i;
 	MenuChoice_Skill newChoice;
@@ -43,7 +43,7 @@ void CreateChoices(void)
 	}
 }
 
-void SetDefaultChoice(void)
+void SetDefaultChoice()
 {
 	::SetDefaultChoice();
 	CycleNextChoice();
@@ -59,7 +59,7 @@ defaultproperties
 	SkillNames[4] = "TITAN";
 	ChoicesStartX = 120;
 	ChoicesStartY = 44;
-	PClass = PCLASS_FIGHTER;
+	PClass = HexenDefs::PCLASS_FIGHTER;
 	SelectorType = MenuSelector_BigArrow;
 	Title = "CHOOSE SKILL LEVEL:";
 }
@@ -67,6 +67,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

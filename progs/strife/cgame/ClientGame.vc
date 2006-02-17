@@ -781,31 +781,31 @@ bool ParseServerCommand(int cmd_type)
 {
 	switch (cmd_type)
 	{
-	case svc_gun_shot:
+	case StrifeDefs::svc_gun_shot:
 		ParseGunShot();
 		break;
 
-	case svc_blood:
+	case StrifeDefs::svc_blood:
 		ParseBlood();
 		break;
 
-	case svc_speech:
+	case StrifeDefs::svc_speech:
 		StartSpeech(MSG_ReadShort());
 		break;
 
-	case svc_voice:
+	case StrifeDefs::svc_voice:
 		LocalSound(StrToName(va("svox/voc%d", MSG_ReadShort())));
 		break;
 
-	case svc_slideshow1:
+	case StrifeDefs::svc_slideshow1:
 		PushMenuScreen(SpawnMenu(ConSlideshow1));
 		break;
 
-	case svc_slideshow2:
+	case StrifeDefs::svc_slideshow2:
 		PushMenuScreen(SpawnMenu(ConSlideshow2));
 		break;
 
-	case svc_finale_type:
+	case StrifeDefs::svc_finale_type:
 		GFinale.FinaleType = MSG_ReadByte();
 		break;
 
@@ -858,6 +858,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2006/02/09 22:33:11  dj_jl
 //  Moved all client game code to classes.
 //

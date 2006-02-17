@@ -1347,7 +1347,7 @@ bool EV_SendToCommunicator(Actor A, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 
 		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(svc_voice);
+		MSG_WriteByte(StrifeDefs::svc_voice);
 		MSG_WriteShort(Arg1);
 
 		if (Arg3 == 0)
@@ -4310,7 +4310,7 @@ void StartSpeech(int SpeechNum)
 	CurrentSpeechIndex = SpeechNum;
 
 	MSG_Select(MSG_SV_RELIABLE);
-	MSG_WriteByte(svc_speech);
+	MSG_WriteByte(StrifeDefs::svc_speech);
 	MSG_WriteShort(SpeechNum);
 }
 
@@ -4467,7 +4467,7 @@ int CheckForNeededItem(Actor A, int ID, int Amount)
 	//	Get class ID.
 	CID = GetClassFromID(ID);
 	//	Check inventory items.
-	for (i = 0; i < NUMINVITEMS; i++)
+	for (i = 0; i < StrifeDefs::NUMINVITEMS; i++)
 	{
 		if (MainGameInfo(Game).InvItemCID[i] == CID)
 		{
@@ -4475,7 +4475,7 @@ int CheckForNeededItem(Actor A, int ID, int Amount)
 		}
 	}
 	//	Check keys.
-	for (i = 0; i < NUMKEYS; i++)
+	for (i = 0; i < StrifeDefs::NUMKEYS; i++)
 	{
 		if (MainGameInfo(Game).KeyCID[i] == CID)
 		{
@@ -4638,6 +4638,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

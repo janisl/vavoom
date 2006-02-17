@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreenPlayerSetup:MenuScreen;
+class MenuScreenPlayerSetup : MenuScreen;
 
 MenuSpriteAnim Anim;
 int Color;
@@ -33,7 +33,7 @@ void SetColor(void)
 {
 	Anim.SprDef = 500 + PClass;
 	Anim.Translation = 0;
-	if (PClass == PCLASS_FIGHTER)
+	if (PClass == HexenDefs::PCLASS_FIGHTER)
 	{
 		if (Color == 0)
 			Anim.Translation = 2;
@@ -59,7 +59,7 @@ void SetPClass(int newPClass)
 	SetColor();
 }
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	R_InstallSprite("PLAY", 500);
 	R_InstallSprite("CLER", 501);
@@ -88,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

@@ -127,12 +127,15 @@ defaultproperties
 	bDropped = true;
 	IdleState = S_BEACON;
 	SeeState = S_BEACON_1;
-	ItemType = ITEM_TeleporterBeacon;
+	ItemType = StrifeDefs::ITEM_TeleporterBeacon;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.6  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

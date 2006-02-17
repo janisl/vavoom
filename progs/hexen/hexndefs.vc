@@ -23,6 +23,8 @@
 //**
 //**************************************************************************
 
+class HexenDefs : Object;
+
 enum
 {
 	PCLASS_FIGHTER,
@@ -54,7 +56,7 @@ enum
 	MANA_NONE
 };
 
-#define MAX_MANA		200
+enum { MAX_MANA		= 200 };
 
 enum
 {
@@ -121,34 +123,48 @@ enum
 	NUMKEYS
 };
 
+enum
+{
+	SBF_KEYS_MASK		= 0x000007ff,
+	SBF_WPN_MASK		= 0x00001800,
+	SBF_WPN_SHIFT		= 11,
+	SBF_PIECE1			= 0x00002000,
+	SBF_PIECE2			= 0x00004000,
+	SBF_PIECE3			= 0x00008000,
+	SBF_PIECES_MASK		= 0x0000e000,
+	SBF_PIECES_SHIFT	= 13,
+	SBF_POWER_FLIGHT	= 0x00010000,
+	SBF_POWER_SPEED		= 0x00020000,
+	SBF_POWER_INVULN	= 0x00040000,
+	SBF_POWER_MINOTAUR	= 0x00080000,
+	SBF_IN_FLIGHT		= 0x00100000
+};
+
+enum
+{
+	svc_gun_shot = USER_PROTOCOL_START,
+	svc_blood,
+	svc_explosion
+};
+
+enum
+{
+	EF_DL_NONE,
+	EF_DL_WHITE,
+	EF_DL_RED,
+	EF_DL_GREEN,
+	EF_DL_BLUE,
+
+	EF_DLIGHT_MASK		= 7
+};
+
+#ifdef CLIENT
+
 struct inventory_t
 {
 	int type;
 	int count;
 };
-
-struct sb_stats_t
-{
-	int flags;
-};
-
-#define NUM_STATS			1
-
-#define SBF_KEYS_MASK		0x000007ff
-#define SBF_WPN_MASK		0x00001800
-#define SBF_WPN_SHIFT		11
-#define SBF_PIECE1			0x00002000
-#define SBF_PIECE2			0x00004000
-#define SBF_PIECE3			0x00008000
-#define SBF_PIECES_MASK		0x0000e000
-#define SBF_PIECES_SHIFT	13
-#define SBF_POWER_FLIGHT	0x00010000
-#define SBF_POWER_SPEED		0x00020000
-#define SBF_POWER_INVULN	0x00040000
-#define SBF_POWER_MINOTAUR	0x00080000
-#define SBF_IN_FLIGHT		0x00100000
-
-#ifdef CLIENT
 
 addfields client_state_t
 {
@@ -156,7 +172,7 @@ addfields client_state_t
 	//  STATS FOR STATUS BAR
 	//
 
-	sb_stats_t stats;
+	int SBFlags;
 
 	int TotalArmorPoints;
 	int ArmorPerc[NUMARMOR];
@@ -175,27 +191,16 @@ addfields client_state_t
 
 #endif
 
-enum
+defaultproperties
 {
-	svc_gun_shot = USER_PROTOCOL_START,
-	svc_blood,
-	svc_explosion
-};
-
-enum
-{
-	EF_DL_NONE,
-	EF_DL_WHITE,
-	EF_DL_RED,
-	EF_DL_GREEN,
-	EF_DL_BLUE
-};
-
-#define EF_DLIGHT_MASK		7
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.10  2006/02/09 22:33:10  dj_jl
 //  Moved all client game code to classes.
 //

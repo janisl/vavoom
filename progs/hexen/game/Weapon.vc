@@ -110,7 +110,7 @@ void A_WeaponReady()
 		Player.MO.SetState(Player.MO.IdleState);
 	}
 	// Put the weapon away if the player has a pending weapon or has died.
-	if (Player.PendingWeapon != wp_nochange || !Player.Health)
+	if (Player.PendingWeapon != HexenDefs::wp_nochange || !Player.Health)
 	{
 		Player.SetPsprite(ps_weapon, GetDownState());
 		return;
@@ -215,7 +215,7 @@ void A_Raise()
 void A_ReFire()
 {
 	if ((Player.Buttons & BT_ATTACK) &&
-		Player.PendingWeapon == wp_nochange && Player.Health)
+		Player.PendingWeapon == HexenDefs::wp_nochange && Player.Health)
 	{
 		Player.Refire++;
 		Player.FireWeapon();
@@ -240,6 +240,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

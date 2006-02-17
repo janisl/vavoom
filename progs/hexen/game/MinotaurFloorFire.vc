@@ -42,12 +42,15 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathState = S_MNTRFXI2_1;
-	Effects = EF_DL_WHITE;
+	Effects = HexenDefs::EF_DL_WHITE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

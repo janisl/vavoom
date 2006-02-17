@@ -63,7 +63,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_cell;
+	Ammo = DoomDefs::am_cell;
 	UpState = S_BFGUP;
 	DownState = S_BFGDOWN;
 	ReadyState = S_BFG;
@@ -75,6 +75,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

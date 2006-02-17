@@ -68,12 +68,15 @@ defaultproperties
 	IdleState = S_HAMMER_MISSILE_1;
 	DeathState = S_HAMMER_MISSILE_X1;
 	DeathSound = 'FighterHammerExplode';
-	Effects = EF_DL_RED;
+	Effects = HexenDefs::EF_DL_RED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

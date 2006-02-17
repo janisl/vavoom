@@ -81,7 +81,7 @@ __states__
 
 defaultproperties
 {
-	Mana = MANA_NONE;
+	Mana = HexenDefs::MANA_NONE;
 	UpState = S_SNOUTUP;
 	DownState = S_SNOUTDOWN;
 	ReadyState = S_SNOUTREADY;
@@ -94,6 +94,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.6  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

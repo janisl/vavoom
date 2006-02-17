@@ -38,12 +38,15 @@ defaultproperties
 	PickupString = "Metal Armor";
 	Mass = 3.0;
 	IdleState = S_METAL_ARMOR;
-	ItemType = ITEM_MetalArmor;
+	ItemType = StrifeDefs::ITEM_MetalArmor;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

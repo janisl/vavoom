@@ -82,12 +82,15 @@ defaultproperties
 	bWindThrust = true;
 	IdleState = S_BEASTBALL1;
 	DeathState = S_BEASTBALLX1;
-	Effects = EF_DL_RED;
+	Effects = HereticDefs::EF_DL_RED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

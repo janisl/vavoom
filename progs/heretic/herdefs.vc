@@ -23,6 +23,8 @@
 //**
 //**************************************************************************
 
+class HereticDefs : Object;
+
 enum
 {
 	arti_none,
@@ -39,30 +41,44 @@ enum
 	NUMARTIFACTS
 };
 
+enum
+{
+	SBF_KEY_YELLOW		= 0x00000001,
+	SBF_KEY_GREEN		= 0x00000002,
+	SBF_KEY_BLUE		= 0x00000004,
+	SBF_GOD_MODE		= 0x00000008,
+	SBF_POWER_FLIGHT	= 0x00000010,
+	SBF_POWER_BOOK		= 0x00000020,
+	SBF_IN_FLIGHT		= 0x00000040,
+	SBF_INVENTORY_OPEN	= 0x00000080
+};
+
+enum
+{
+	svc_gun_shot = USER_PROTOCOL_START,
+	svc_blood,
+	svc_explosion
+};
+
+enum
+{
+	EF_DL_NONE,
+	EF_DL_WHITE,
+	EF_DL_RED,
+	EF_DL_GREEN,
+	EF_DL_BLUE,
+	EF_DL_MAGENTA,
+
+	EF_DLIGHT_MASK		= 7
+};
+
+#ifdef CLIENT
+
 struct inventory_t
 {
 	int type;
 	int count;
 };
-
-struct sb_stats_t
-{
-	int flags;
-	int readyammo;
-};
-
-#define NUM_STATS	2
-
-#define SBF_KEY_YELLOW		0x00000001
-#define SBF_KEY_GREEN		0x00000002
-#define SBF_KEY_BLUE		0x00000004
-#define SBF_GOD_MODE		0x00000008
-#define SBF_POWER_FLIGHT	0x00000010
-#define SBF_POWER_BOOK		0x00000020
-#define SBF_IN_FLIGHT		0x00000040
-#define SBF_INVENTORY_OPEN	0x00000080
-
-#ifdef CLIENT
 
 addfields client_state_t
 {
@@ -70,7 +86,8 @@ addfields client_state_t
 	//  STATS FOR STATUS BAR
 	//
 
-	sb_stats_t stats;
+	int SBFlags;
+	int ReadyAmmo;
 
 	int ArtifactFlash;
 	int inv_ptr;
@@ -87,28 +104,16 @@ addfields client_state_t
 
 #endif
 
-enum
+defaultproperties
 {
-	svc_gun_shot = USER_PROTOCOL_START,
-	svc_blood,
-	svc_explosion
-};
-
-enum
-{
-	EF_DL_NONE,
-	EF_DL_WHITE,
-	EF_DL_RED,
-	EF_DL_GREEN,
-	EF_DL_BLUE,
-	EF_DL_MAGENTA
-};
-
-#define EF_DLIGHT_MASK		7
+}
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.9  2002/03/20 19:07:46  dj_jl
 //  Got rid of a lots of legacy, beautification.
 //

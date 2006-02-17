@@ -34,14 +34,17 @@ __states__
 
 defaultproperties
 {
-	WeaponClass = PCLASS_FIGHTER;
-	WeaponType = WP_THIRD;
+	WeaponClass = HexenDefs::PCLASS_FIGHTER;
+	WeaponType = HexenDefs::WP_THIRD;
 	IdleState = S_HAMM;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

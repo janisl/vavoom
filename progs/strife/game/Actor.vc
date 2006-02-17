@@ -394,7 +394,7 @@ void Died(Actor source)
 	{
 		//	Start sad finale.
 		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(svc_finale_type);
+		MSG_WriteByte(StrifeDefs::svc_finale_type);
 		MSG_WriteByte(1);
 		G_Completed(-1, -1, 0);
 	}
@@ -612,7 +612,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player.Cheats & CF_GODMODE) ||
+		if (damage < 1000 && ((Player.Cheats & StrifeDefs::CF_GODMODE) ||
 			Player.Powers[pw_invulnerability]))
 		{
 			return;
@@ -1130,21 +1130,21 @@ int CheckInventory(name ItemName)
 	//	Weapons.
 	if (ItemName == 'FlameThrower')
 	{
-		return Player.WeaponOwned[wp_flame];
+		return Player.WeaponOwned[StrifeDefs::wp_flame];
 	}
 	if (ItemName == 'Sigil')
 	{
-		return Player.WeaponOwned[wp_sigil];
+		return Player.WeaponOwned[StrifeDefs::wp_sigil];
 	}
 
 	//	Inventory items.
 	if (ItemName == 'OfferingChalice')
 	{
-		return Player.Inventory[ITEM_OfferingChalice];
+		return Player.Inventory[StrifeDefs::ITEM_OfferingChalice];
 	}
 	if (ItemName == 'OfficersUniform')
 	{
-		return Player.Inventory[ITEM_OfficersUniform];
+		return Player.Inventory[StrifeDefs::ITEM_OfficersUniform];
 	}
 
 	//	Quest items.
@@ -1285,7 +1285,7 @@ int CheckInventory(name ItemName)
 
 int GetSigilPieces()
 {
-	if (bIsPlayer && Player.WeaponOwned[wp_sigil])
+	if (bIsPlayer && Player.WeaponOwned[StrifeDefs::wp_sigil])
 	{
 		return Player.Sigil + 1;
 	}
@@ -2918,7 +2918,7 @@ void SpawnBlood(float x, float y, float z, int damage)
 	Actor A;
 
 	MSG_Select(MSG_SV_DATAGRAM);
-	MSG_WriteByte(svc_blood);
+	MSG_WriteByte(StrifeDefs::svc_blood);
 	MSG_WriteShort(ftoi(x));
 	MSG_WriteShort(ftoi(y));
 	MSG_WriteShort(ftoi(z));
@@ -3444,6 +3444,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.32  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.31  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

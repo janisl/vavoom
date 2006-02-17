@@ -58,7 +58,7 @@ void Died(Actor source)
 	StrifeLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0, FLOOREV_LowerToHighest, NULL);
 	Level.Game.Players[i].GiveQuest(QUEST_BrokePowerCoupling);
 	MSG_Select(MSG_SV_RELIABLE);
-	MSG_WriteByte(svc_voice);
+	MSG_WriteByte(StrifeDefs::svc_voice);
 	MSG_WriteShort(13);
 	Level.Game.Players[i].SetObjectives(13);
 	Spawn(BrokenPowerCoupling, Origin);
@@ -90,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.6  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

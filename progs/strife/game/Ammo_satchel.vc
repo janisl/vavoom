@@ -36,13 +36,13 @@ class Ammo_satchel : Pickup
 bool HandlePickup(Actor Toucher)
 {
 	Toucher.Player.Backpack = true;
-	Toucher.Player.GiveAmmo(am_clip, 20);
-	Toucher.Player.GiveAmmo(am_electric_arrow, 4);
-	Toucher.Player.GiveAmmo(am_poison_arrow, 2);
-	Toucher.Player.GiveAmmo(am_cell, 20);
-	Toucher.Player.GiveAmmo(am_misl, 4);
-	Toucher.Player.GiveAmmo(am_grenade1, 6);
-	Toucher.Player.GiveAmmo(am_grenade2, 2);
+	Toucher.Player.GiveAmmo(StrifeDefs::am_clip, 20);
+	Toucher.Player.GiveAmmo(StrifeDefs::am_electric_arrow, 4);
+	Toucher.Player.GiveAmmo(StrifeDefs::am_poison_arrow, 2);
+	Toucher.Player.GiveAmmo(StrifeDefs::am_cell, 20);
+	Toucher.Player.GiveAmmo(StrifeDefs::am_misl, 4);
+	Toucher.Player.GiveAmmo(StrifeDefs::am_grenade1, 6);
+	Toucher.Player.GiveAmmo(StrifeDefs::am_grenade2, 2);
 	return true;
 }
 
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

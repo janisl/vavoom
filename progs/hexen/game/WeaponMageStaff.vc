@@ -53,9 +53,9 @@ void A_MStaffAttack()
 {
 	float angle;
 
-	Player.Mana[MANA_1] -=
+	Player.Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-	Player.Mana[MANA_2] -=
+	Player.Mana[HexenDefs::MANA_2] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 	angle = Player.MO.Angles.yaw;
 
@@ -152,7 +152,7 @@ __states__
 
 defaultproperties
 {
-	Mana = MANA_BOTH;
+	Mana = HexenDefs::MANA_BOTH;
 	UpState = S_MSTAFFUP;
 	DownState = S_MSTAFFDOWN;
 	ReadyState = S_MSTAFFREADY;
@@ -164,6 +164,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

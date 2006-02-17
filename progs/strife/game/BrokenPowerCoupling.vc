@@ -44,12 +44,15 @@ defaultproperties
 //	bUnknown5 = true;
 	bDropped = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
-	ItemType = ITEM_BrokenPowerCoupling;
+	ItemType = StrifeDefs::ITEM_BrokenPowerCoupling;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/01/10 19:31:40  dj_jl
 //  Fixed states belonging to a class.
 //

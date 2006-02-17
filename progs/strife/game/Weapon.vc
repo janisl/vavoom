@@ -56,14 +56,14 @@ void A_WeaponReady()
 		Player.MO.SetState(Player.MO.IdleState);
 	}
 
-	if (Player.ReadyWeapon == wp_flame && StateNum == ReadyState)
+	if (Player.ReadyWeapon == StrifeDefs::wp_flame && StateNum == ReadyState)
 	{
 		Player.MO.PlaySound('weapons/flameidle', CHAN_WEAPON);
 	}
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player.PendingWeapon != wp_nochange || !Player.Health)
+	if (Player.PendingWeapon != StrifeDefs::wp_nochange || !Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
@@ -75,7 +75,7 @@ void A_WeaponReady()
 	//  the missile launcher and bfg do not auto fire
 	if (Player.Buttons & BT_ATTACK)
 	{
-		if (!Player.bAttackDown || (Player.ReadyWeapon != wp_missile))
+		if (!Player.bAttackDown || (Player.ReadyWeapon != StrifeDefs::wp_missile))
 		{
 			Player.bAttackDown = true;
 			Player.FireWeapon();
@@ -177,7 +177,7 @@ void A_ReFire()
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
 	if ((Player.Buttons & BT_ATTACK)
-		&& Player.PendingWeapon == wp_nochange && Player.Health)
+		&& Player.PendingWeapon == StrifeDefs::wp_nochange && Player.Health)
 	{
 		Player.Refire++;
 		Player.FireWeapon();
@@ -281,6 +281,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.9  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

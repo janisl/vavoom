@@ -104,7 +104,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_electric_arrow;
+	Ammo = StrifeDefs::am_electric_arrow;
 	UpState = S_XBOWUP;
 	DownState = S_XBOWDOWN;
 	ReadyState = S_XBOW;
@@ -117,7 +117,7 @@ class WeaponCrossbow2 : WeaponCrossbow;
 
 defaultproperties
 {
-	Ammo = am_poison_arrow;
+	Ammo = StrifeDefs::am_poison_arrow;
 	UpState = S_XBOWPOISONUP;
 	DownState = S_XBOWPOISONDOWN;
 	ReadyState = S_XBOWPOISON;
@@ -127,6 +127,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.6  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

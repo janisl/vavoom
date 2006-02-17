@@ -807,15 +807,15 @@ bool ParseServerCommand(int cmd_type)
 {
 	switch (cmd_type)
 	{
-	case svc_gun_shot:
+	case HexenDefs::svc_gun_shot:
 		ParseGunShot();
 		break;
 
-	case svc_blood:
+	case HexenDefs::svc_blood:
 		ParseBlood();
 		break;
 
-	case svc_explosion:
+	case HexenDefs::svc_explosion:
 		ParseExplosion();
 		break;
 
@@ -845,12 +845,12 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 {
 	dlight_t *dl;
 
-	switch (mobj->effects & EF_DLIGHT_MASK)
+	switch (mobj->effects & HexenDefs::EF_DLIGHT_MASK)
 	{
-	case EF_DL_NONE:
+	case HexenDefs::EF_DL_NONE:
 		break;
 
-	case EF_DL_WHITE:
+	case HexenDefs::EF_DL_WHITE:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -858,7 +858,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 		dl->die = cl->time + 0.1;
 		break;
 
-	case EF_DL_RED:
+	case HexenDefs::EF_DL_RED:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -866,7 +866,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 		dl->die = cl->time + 0.1;
 		break;
 
-	case EF_DL_GREEN:
+	case HexenDefs::EF_DL_GREEN:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -874,7 +874,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 		dl->die = cl->time + 0.1;
 		break;
 
-	case EF_DL_BLUE:
+	case HexenDefs::EF_DL_BLUE:
 		dl = AllocDlight(key);
 		dl->origin = mobj->origin;
 		dl->radius = 200.0;
@@ -897,6 +897,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2006/02/09 22:33:10  dj_jl
 //  Moved all client game code to classes.
 //

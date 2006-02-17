@@ -34,13 +34,16 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = arti_tomeofpower;
+	ArtifactType = HereticDefs::arti_tomeofpower;
 	IdleState = S_ARTI_PWBK1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

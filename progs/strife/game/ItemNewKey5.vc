@@ -30,12 +30,15 @@ defaultproperties
 	ConversationID = 159;
 	PickupString = "New Key5";
 	IdleState = S_MAULER_KEY;
-	KeyType = KEY_NewKey5;
+	KeyType = StrifeDefs::KEY_NewKey5;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2005/12/14 20:52:32  dj_jl
 //  State names belong to a class.
 //

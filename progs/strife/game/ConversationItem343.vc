@@ -37,13 +37,13 @@ bool HandlePickup(Actor Toucher)
 	{
 		StrifeLevelInfo(Level).ConversationSlideshow = true;
 		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(svc_slideshow1);
+		MSG_WriteByte(StrifeDefs::svc_slideshow1);
 	}
 	else if (!strcmp(ARR2STR(Level.Game.level->mapname), "MAP10"))
 	{
 		StrifeLevelInfo(Level).ConversationSlideshow = true;
 		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(svc_slideshow2);
+		MSG_WriteByte(StrifeDefs::svc_slideshow2);
 
 		Toucher.Player.GiveQuest(QUEST_VisitOracle);
 	}
@@ -59,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.7  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

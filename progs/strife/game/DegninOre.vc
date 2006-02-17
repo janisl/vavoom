@@ -55,12 +55,15 @@ defaultproperties
 	IdleState = S_ORE;
 	DeathState = S_ORE_X;
 	DeathSound = 'ore/explode';
-	ItemType = ITEM_DegninOre;
+	ItemType = StrifeDefs::ITEM_DegninOre;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

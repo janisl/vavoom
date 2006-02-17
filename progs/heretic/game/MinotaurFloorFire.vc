@@ -74,7 +74,7 @@ defaultproperties
 	IdleState = S_MNTRFX2_1;
 	DeathState = S_MNTRFXI2_1;
 	DeathSound = 'minotaur/fx2hit';
-	Effects = EF_DL_WHITE;
+	Effects = HereticDefs::EF_DL_WHITE;
 	// The Minotaur floor fire can step up any amount
 	MaxStepHeight = 99999.0;
 }
@@ -82,6 +82,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

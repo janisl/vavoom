@@ -25,16 +25,24 @@
 
 #define SERVER
 
-#include "defs.vc"
-#include "protocol.vc"
-#include "types.vc"
+class Thinker;
+class Entity;
+class Actor;
+class ViewEntity;
+class BasePlayer;
+class Player;
+class LevelInfo;
+class GameInfo;
+
 #include "shared/classes.vc"
 #include "server/classes.vc"
-#include "builtins.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/17 19:06:50  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.9  2006/02/15 23:29:42  dj_jl
 //  Moved all server progs global variables to classes.
 //

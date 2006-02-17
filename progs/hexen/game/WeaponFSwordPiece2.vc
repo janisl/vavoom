@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	PieceClass = PCLASS_FIGHTER;
+	PieceClass = HexenDefs::PCLASS_FIGHTER;
 	PieceValue = WPIECE2;
 	IdleState = S_FSWORD2;
 }
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

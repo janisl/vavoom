@@ -36,13 +36,16 @@ defaultproperties
 	ConversationID = 188;
 	PickupString = "assault gun";
 	IdleState = S_ASSAULT_GUN1;
-	WeaponType = wp_riffle;
+	WeaponType = StrifeDefs::wp_riffle;
 	Ammo1Count = 20;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2005/12/22 23:06:00  dj_jl
 //  Fixed ammo and weapon pickups.
 //

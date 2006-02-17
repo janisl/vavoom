@@ -25,11 +25,18 @@
 
 class Player : BasePlayer;
 
+struct inventory_t
+{
+	int type;
+	int count;
+};
+
 //
 //  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
 //
 
-sb_stats_t Stats;
+int SBFlags;
+int ReadyAmmo;
 
 int ArtifactFlash;
 int InvPtr;
@@ -38,7 +45,7 @@ int InvCurPos;
 int ArmorPoints;
 
 int ReadyArtifact;
-inventory_t Inventory[NUMARTIFACTS];
+inventory_t Inventory[HereticDefs::NUMARTIFACTS];
 int InventorySlotNum;
 
 int ReadyWeapon;
@@ -435,7 +442,7 @@ void PlayerExitMap(bool clusterChange)
 
 	if (!Level.Game.deathmatch)
 	{
-		PlayerUseArtifact(arti_fly);
+		PlayerUseArtifact(HereticDefs::arti_fly);
 	}
 
 	for (i = 0; i < NUMPOWERS; i++)
@@ -1041,7 +1048,7 @@ void MovePlayer(float deltaTime)
 	}
 	else if (fly > 0.0)
 	{
-		PlayerUseArtifact(arti_fly);
+		PlayerUseArtifact(HereticDefs::arti_fly);
 	}
 	if (MO.bFly)
 	{
@@ -1581,7 +1588,7 @@ void PlayerImpulse()
 	{
 		if (!Powers[pw_weaponlevel2])
 		{
-			Arti = arti_tomeofpower;
+			Arti = HereticDefs::arti_tomeofpower;
 		}
 	}
 	else if (impulse == 16)
@@ -2149,15 +2156,15 @@ void SetViewPos()
 
 	PaletteFlash();
 
-	Stats.flags = Keys;
+	SBFlags = Keys;
 	if (Cheats & CF_GODMODE)
-		Stats.flags |= SBF_GOD_MODE;
+		SBFlags |= HereticDefs::SBF_GOD_MODE;
 	if (Powers[pw_flight])
 	{
 		if (Powers[pw_flight] > BLINKTHRESHOLD ||
 			!(ftoi(2.0 * Powers[pw_flight]) & 1))
 		{
-			Stats.flags |= SBF_POWER_FLIGHT;
+			SBFlags |= HereticDefs::SBF_POWER_FLIGHT;
 		}
 	}
 	if (Powers[pw_weaponlevel2] && !ChickenTime)
@@ -2165,22 +2172,22 @@ void SetViewPos()
 		if (Powers[pw_weaponlevel2] > BLINKTHRESHOLD ||
 			!(ftoi(2.0 * Powers[pw_weaponlevel2]) & 1))
 		{
-			Stats.flags |= SBF_POWER_BOOK;
+			SBFlags |= HereticDefs::SBF_POWER_BOOK;
 		}
 	}
 	if (MO.bFly)
 	{
-		Stats.flags |= SBF_IN_FLIGHT;
+		SBFlags |= HereticDefs::SBF_IN_FLIGHT;
 	}
 	if (InventoryTime)
 	{
-		Stats.flags |= SBF_INVENTORY_OPEN;
+		SBFlags |= HereticDefs::SBF_INVENTORY_OPEN;
 	}
 
 	if (ReadyWeapon > 0 && ReadyWeapon < 7)
-		Stats.readyammo = Ammo[Weapon(ViewEnts[ps_weapon]).Ammo];
+		ReadyAmmo = Ammo[Weapon(ViewEnts[ps_weapon]).Ammo];
 	else
-		Stats.readyammo = 0;
+		ReadyAmmo = 0;
 }
 
 //==========================================================================
@@ -2261,8 +2268,8 @@ void PlayerRemoveArtifact(int slot)
 	if (!(--Inventory[slot].count))
 	{
 		// Used last of a type - compact the artifact list
-		ReadyArtifact = arti_none;
-		Inventory[slot].type = arti_none;
+		ReadyArtifact = HereticDefs::arti_none;
+		Inventory[slot].type = HereticDefs::arti_none;
 		for (i = slot + 1; i < InventorySlotNum; i++)
 		{
 			Inventory[i - 1].type = Inventory[i].type;
@@ -2303,31 +2310,31 @@ bool UseArtifact(int arti)
 {
 	switch (arti)
 	{
-	case arti_health:
+	case HereticDefs::arti_health:
 		if (!GiveBody(25))
 		{
 			return false;
 		}
 		break;
-	case arti_superhealth:
+	case HereticDefs::arti_superhealth:
 		if (!GiveBody(100))
 		{
 			return false;
 		}
 		break;
-	case arti_invulnerability:
+	case HereticDefs::arti_invulnerability:
 		if (!GivePower(pw_invulnerability))
 		{
 			return false;
 		}
 		break;
-	case arti_torch:
+	case HereticDefs::arti_torch:
 		if (!GivePower(pw_infrared))
 		{
 			return false;
 		}
 		break;
-	case arti_fly:
+	case HereticDefs::arti_fly:
 		if (!GivePower(pw_flight))
 		{
 			return false;
@@ -2338,25 +2345,25 @@ bool UseArtifact(int arti)
 			MO.StopSound(CHAN_VOICE);
 		}
 		break;
-	case arti_teleport:
+	case HereticDefs::arti_teleport:
 		UseArtiTele();
 		break;
-	case arti_egg:
+	case HereticDefs::arti_egg:
 		UseArtiEgg();
 		break;
-	case arti_invisibility:
+	case HereticDefs::arti_invisibility:
 		if (!GivePower(pw_invisibility))
 		{
 			return false;
 		}
 		break;
-	case arti_tomeofpower:
+	case HereticDefs::arti_tomeofpower:
 		if (!UseArtiTomeOfPower())
 		{
 			return false;
 		}
 		break;
-	case arti_firebomb:
+	case HereticDefs::arti_firebomb:
 		UseArtiFireBomb();
 		break;
 	default:
@@ -2920,7 +2927,7 @@ void Cheat_Gimme()
 		}
 		else
 		{
-			UseArtifact(arti_tomeofpower);
+			UseArtifact(HereticDefs::arti_tomeofpower);
 			cprint(self, "POWER ON");
 		}
 	}
@@ -2949,9 +2956,9 @@ void Cheat_Gimme()
 		int j;
 
 		// All artifacts
-		for (i = arti_none + 1; i < NUMARTIFACTS; i++)
+		for (i = HereticDefs::arti_none + 1; i < HereticDefs::NUMARTIFACTS; i++)
 		{
-			if (MainGameInfo(Level.Game).shareware && (i == arti_superhealth || i == arti_teleport))
+			if (MainGameInfo(Level.Game).shareware && (i == HereticDefs::arti_superhealth || i == HereticDefs::arti_teleport))
 			{
 				continue;
 			}
@@ -3077,6 +3084,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.20  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

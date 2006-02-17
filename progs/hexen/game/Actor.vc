@@ -663,13 +663,13 @@ void Died(Actor source)
 			PlaySound('*burndeath', CHAN_VOICE);
 			switch (Player.PClass)
 			{
-			case PCLASS_FIGHTER:
+			case HexenDefs::PCLASS_FIGHTER:
 				SetState(S_PLAY_F_FDTH1);
 				return;
-			case PCLASS_CLERIC:
+			case HexenDefs::PCLASS_CLERIC:
 				SetState(S_PLAY_C_FDTH1);
 				return;
-			case PCLASS_MAGE:
+			case HexenDefs::PCLASS_MAGE:
 				SetState(S_PLAY_M_FDTH1);
 				return;
 			default:
@@ -804,11 +804,11 @@ bool MorphPlayer()
 	beastMo.Health = MAXMORPHHEALTH;
 	Player.Health = beastMo.Health;
 	Player.MO = beastMo;
-	for (i = 0; i < NUMARMOR; i++)
+	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
 		Player.ArmorPoints[i] = 0.0;
 	}
-	Player.PClass = PCLASS_PIG;
+	Player.PClass = HexenDefs::PCLASS_PIG;
 	beastMo.bFly = bFly;
 	Player.MorphTime = MORPHTIME;
 	Player.ActivateMorphWeapon();
@@ -882,12 +882,12 @@ void AutoUseHealth(int saveHealth)
 	superCount = 0;
 	for (i = 0; i < Player.InventorySlotNum; i++)
 	{
-		if (Player.Inventory[i].type == arti_health)
+		if (Player.Inventory[i].type == HexenDefs::arti_health)
 		{
 			normalSlot = i;
 			normalCount = Player.Inventory[i].count;
 		}
-		else if (Player.Inventory[i].type == arti_superhealth)
+		else if (Player.Inventory[i].type == HexenDefs::arti_superhealth)
 		{
 			superSlot = i;
 			superCount = Player.Inventory[i].count;
@@ -1038,10 +1038,10 @@ void Damage(Actor inflictor, Actor source, int damage)
 		}
 
 		savedPercent = MainGameInfo(Level.Game).AutoArmorSave[Player.PClass]
-			+ Player.ArmorPoints[ARMOR_ARMOR]
-			+ Player.ArmorPoints[ARMOR_SHIELD]
-			+ Player.ArmorPoints[ARMOR_HELMET]
-			+ Player.ArmorPoints[ARMOR_AMULET];
+			+ Player.ArmorPoints[HexenDefs::ARMOR_ARMOR]
+			+ Player.ArmorPoints[HexenDefs::ARMOR_SHIELD]
+			+ Player.ArmorPoints[HexenDefs::ARMOR_HELMET]
+			+ Player.ArmorPoints[HexenDefs::ARMOR_AMULET];
 		if (savedPercent)
 		{
 			// armor absorbed some damage
@@ -1049,12 +1049,12 @@ void Damage(Actor inflictor, Actor source, int damage)
 			{
 				savedPercent = 100.0;
 			}
-			for (i = 0; i < NUMARMOR; i++)
+			for (i = 0; i < HexenDefs::NUMARMOR; i++)
 			{
 				if (Player.ArmorPoints[i])
 				{
 					Player.ArmorPoints[i] -= itof(damage) *
-						MainGameInfo(Level.Game).ArmorIncrement[Player.PClass * NUMARMOR + i] / 300.0;
+						MainGameInfo(Level.Game).ArmorIncrement[Player.PClass * HexenDefs::NUMARMOR + i] / 300.0;
 					if (Player.ArmorPoints[i] < 2.0)
 					{
 						Player.ArmorPoints[i] = 0.0;
@@ -1128,7 +1128,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			}
 		}
 		if (source && (source.bIsPlayer) &&
-			(source.Player.ReadyWeapon == WP_FOURTH))
+			(source.Player.ReadyWeapon == HexenDefs::WP_FOURTH))
 		{
 			// Always extreme death from fourth weapon
 			Health = -5000;
@@ -3216,15 +3216,15 @@ bool ExplodeMissile()
 	{
 		PlaySound(DeathSound, CHAN_VOICE);
 	}
-	if (Effects & EF_DLIGHT_MASK)
+	if (Effects & HexenDefs::EF_DLIGHT_MASK)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(Effects & EF_DLIGHT_MASK);
+		MSG_WriteByte(HexenDefs::svc_explosion);
+		MSG_WriteByte(Effects & HexenDefs::EF_DLIGHT_MASK);
 		MSG_WriteShort(ftoi(Origin.x));
 		MSG_WriteShort(ftoi(Origin.y));
 		MSG_WriteShort(ftoi(Origin.z));
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~HexenDefs::EF_DLIGHT_MASK;
 	}
 	return true;
 }
@@ -3773,7 +3773,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 			if (P_Random() < 192)
 			{
 				MSG_Select(MSG_SV_DATAGRAM);
-				MSG_WriteByte(svc_blood);
+				MSG_WriteByte(HexenDefs::svc_blood);
 				MSG_WriteShort(ftoi(hit_point.x));
 				MSG_WriteShort(ftoi(hit_point.y));
 				MSG_WriteShort(ftoi(hit_point.z));
@@ -4271,6 +4271,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.26  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

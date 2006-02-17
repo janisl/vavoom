@@ -113,7 +113,7 @@ int pic_graynum[10];
 int pic_minus;
 int pic_percent;
 int pic_faceback;
-int pic_faces[ST_NUMFACES];
+int pic_faces[DoomDefs::ST_NUMFACES];
 int pic_keys[6];
 int pic_pause;
 //For Icons in Fullscreen HUD
@@ -157,27 +157,27 @@ void StartMap()
 		pic_keys[i] = R_RegisterPic(Name, PIC_PATCH);
 	}
 
-	for (i = 0; i < ST_NUMPAINFACES; i++)
+	for (i = 0; i < DoomDefs::ST_NUMPAINFACES; i++)
 	{
 		sprint(Name, "STFST%d0", i);
-		pic_faces[i * ST_FACESTRIDE] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE] = R_RegisterPic(Name, PIC_PATCH);
 		sprint(Name, "STFST%d1", i);
-		pic_faces[i * ST_FACESTRIDE + 1] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] = R_RegisterPic(Name, PIC_PATCH);
 		sprint(Name, "STFST%d2", i);
-		pic_faces[i * ST_FACESTRIDE + 2] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] = R_RegisterPic(Name, PIC_PATCH);
 		sprint(Name, "STFTR%d0", i);
-		pic_faces[i * ST_FACESTRIDE + 3] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] = R_RegisterPic(Name, PIC_PATCH);
 		sprint(Name, "STFTL%d0", i);
-		pic_faces[i * ST_FACESTRIDE + 4] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] = R_RegisterPic(Name, PIC_PATCH);
 		sprint(Name, "STFOUCH%d", i);
-		pic_faces[i * ST_FACESTRIDE + 5] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] = R_RegisterPic(Name, PIC_PATCH);
 		sprint(Name, "STFEVL%d", i);
-		pic_faces[i * ST_FACESTRIDE + 6] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] = R_RegisterPic(Name, PIC_PATCH);
 		sprint(Name, "STFKILL%d", i);
-		pic_faces[i * ST_FACESTRIDE + 7] = R_RegisterPic(Name, PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] = R_RegisterPic(Name, PIC_PATCH);
 	}
-	pic_faces[ST_GODFACE] = R_RegisterPic("STFGOD0", PIC_PATCH);
-	pic_faces[ST_DEADFACE] = R_RegisterPic("STFDEAD0", PIC_PATCH);
+	pic_faces[DoomDefs::ST_GODFACE] = R_RegisterPic("STFGOD0", PIC_PATCH);
+	pic_faces[DoomDefs::ST_DEADFACE] = R_RegisterPic("STFDEAD0", PIC_PATCH);
 
 	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
 
@@ -331,29 +331,29 @@ void SB_DrawMainBar()
 	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, cl->ArmorPoints, 0, true);
 
 	// keyboxes 0-2
-	if (cl->Stats.flags & SBF_BLUE_SKULL)
+	if (cl->SBFlags & DoomDefs::SBF_BLUE_SKULL)
 	{
 		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[3]);
 	}
-	else if (cl->Stats.flags & SBF_BLUE_CARD)
+	else if (cl->SBFlags & DoomDefs::SBF_BLUE_CARD)
 	{
 		R_DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[0]);
 	}
 
-	if (cl->Stats.flags & SBF_YELLOW_SKULL)
+	if (cl->SBFlags & DoomDefs::SBF_YELLOW_SKULL)
 	{
 		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[4]);
 	}
-	else if (cl->Stats.flags & SBF_YELLOW_CARD)
+	else if (cl->SBFlags & DoomDefs::SBF_YELLOW_CARD)
 	{
 		R_DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[1]);
 	}
 
-	if (cl->Stats.flags & SBF_RED_SKULL)
+	if (cl->SBFlags & DoomDefs::SBF_RED_SKULL)
 	{
 		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[5]);
 	}
-	else if (cl->Stats.flags & SBF_RED_CARD)
+	else if (cl->SBFlags & DoomDefs::SBF_RED_CARD)
 	{
 		R_DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[2]);
 	}
@@ -392,47 +392,47 @@ void SB_DrawFullscreenStats(void)
 
 	// ready weapon ammo with icon
 	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl->ReadyAmmo, 40, false);
-	if ((cl->ReadyWeapon == wp_pistol) || (cl->ReadyWeapon == wp_chaingun))
+	if ((cl->ReadyWeapon == DoomDefs::wp_pistol) || (cl->ReadyWeapon == DoomDefs::wp_chaingun))
 	{
 		R_DrawPic(260, 195, pic_ammoicon[0]);
 	}
-	else if ((cl->ReadyWeapon == wp_shotgun) || (cl->ReadyWeapon == wp_supershotgun))
+	else if ((cl->ReadyWeapon == DoomDefs::wp_shotgun) || (cl->ReadyWeapon == DoomDefs::wp_supershotgun))
 	{
 		R_DrawPic(260, 195, pic_ammoicon[1]);
 	}
-	else if ((cl->ReadyWeapon == wp_plasma) || (cl->ReadyWeapon == wp_bfg))
+	else if ((cl->ReadyWeapon == DoomDefs::wp_plasma) || (cl->ReadyWeapon == DoomDefs::wp_bfg))
 	{
 		R_DrawPic(260, 195, pic_ammoicon[2]);
 	}
-	else if ((cl->ReadyWeapon == wp_missile)) //|| (cl->ReadyWeapon & wp_grenade))
+	else if ((cl->ReadyWeapon == DoomDefs::wp_missile)) //|| (cl->ReadyWeapon & wp_grenade))
 	{
 		R_DrawPic(260, 195, pic_ammoicon[3]);
 	}
 
 	// keys
-	if (cl->Stats.flags & SBF_BLUE_SKULL)
+	if (cl->SBFlags & DoomDefs::SBF_BLUE_SKULL)
 	{
 		R_DrawPic(230, 190, pic_keys[3]);
 	}
-	else if (cl->Stats.flags & SBF_BLUE_CARD)
+	else if (cl->SBFlags & DoomDefs::SBF_BLUE_CARD)
 	{
 		R_DrawPic(230, 190, pic_keys[0]);
 	}
 
-	if (cl->Stats.flags & SBF_YELLOW_SKULL)
+	if (cl->SBFlags & DoomDefs::SBF_YELLOW_SKULL)
 	{
 		R_DrawPic(220, 190, pic_keys[4]);
 	}
-	else if (cl->Stats.flags & SBF_YELLOW_CARD)
+	else if (cl->SBFlags & DoomDefs::SBF_YELLOW_CARD)
 	{
 		R_DrawPic(220, 190, pic_keys[1]);
 	}
 
-	if (cl->Stats.flags & SBF_RED_SKULL)
+	if (cl->SBFlags & DoomDefs::SBF_RED_SKULL)
 	{
 		R_DrawPic(210, 190, pic_keys[5]);
 	}
-	else if (cl->Stats.flags & SBF_RED_CARD)
+	else if (cl->SBFlags & DoomDefs::SBF_RED_CARD)
 	{
 		R_DrawPic(210, 190, pic_keys[2]);
 	}
@@ -508,6 +508,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

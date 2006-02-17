@@ -60,16 +60,16 @@ void TouchSpecial(Actor Toucher)
 			// Can't pick up weapons for other classes in coop netplay
 			return;
 		}
-		if (WeaponType == WP_SECOND)
+		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			if (!Toucher.Player.GiveMana(MANA_1, 25))
+			if (!Toucher.Player.GiveMana(HexenDefs::MANA_1, 25))
 			{
 				return;
 			}
 		}
 		else
 		{
-			if (!Toucher.Player.GiveMana(MANA_2, 25))
+			if (!Toucher.Player.GiveMana(HexenDefs::MANA_2, 25))
 			{
 				return;
 			}
@@ -83,13 +83,13 @@ void TouchSpecial(Actor Toucher)
 			return;
 		}
 		Toucher.Player.WeaponOwned[WeaponType] = true;
-		if (WeaponType == WP_SECOND)
+		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			Toucher.Player.GiveMana(MANA_1, 25);
+			Toucher.Player.GiveMana(HexenDefs::MANA_1, 25);
 		}
 		else
 		{
-			Toucher.Player.GiveMana(MANA_2, 25);
+			Toucher.Player.GiveMana(HexenDefs::MANA_2, 25);
 		}
 		Toucher.Player.PendingWeapon = WeaponType;
 		remove = false;
@@ -97,13 +97,13 @@ void TouchSpecial(Actor Toucher)
 	else
 	{
 		// Deathmatch or single player game
-		if (WeaponType == WP_SECOND)
+		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			gaveMana = Toucher.Player.GiveMana(MANA_1, 25);
+			gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_1, 25);
 		}
 		else
 		{
-			gaveMana = Toucher.Player.GiveMana(MANA_2, 25);
+			gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_2, 25);
 		}
 		if (Toucher.Player.WeaponOwned[WeaponType])
 		{
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

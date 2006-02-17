@@ -1040,7 +1040,7 @@ void A_BossDeath()
 		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
 		Enemy.Player.SetObjectives(95);
 		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(svc_voice);
+		MSG_WriteByte(StrifeDefs::svc_voice);
 		MSG_WriteShort(95);
 	}
 	else if (Class == Specter2)
@@ -1054,7 +1054,7 @@ void A_BossDeath()
 		Enemy.Player.GiveQuest(QUEST_KilledBishop);
 		Enemy.Player.SetObjectives(74);
 		MSG_Select(MSG_SV_RELIABLE);
-		MSG_WriteByte(svc_voice);
+		MSG_WriteByte(StrifeDefs::svc_voice);
 		MSG_WriteShort(74);
 	}
 	else if (Class == Specter3)
@@ -1075,14 +1075,14 @@ void A_BossDeath()
 		{
 			Enemy.Player.SetObjectives(85);
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_voice);
+			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(85);
 		}
 		else
 		{
 			Enemy.Player.SetObjectives(87);
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_voice);
+			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(87);
 		}
 		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 256, 0, 0, 0, NULL, 0, none);
@@ -1100,14 +1100,14 @@ void A_BossDeath()
 		{
 			Enemy.Player.SetObjectives(106);
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_voice);
+			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(106);
 		}
 		else
 		{
 			Enemy.Player.SetObjectives(79);
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_voice);
+			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(79);
 		}
 	}
@@ -1127,14 +1127,14 @@ void A_BossDeath()
 		{
 			Enemy.Player.SetObjectives(85);
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_voice);
+			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(85);
 		}
 		else
 		{
 			Enemy.Player.SetObjectives(83);
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_voice);
+			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(83);
 		}
 		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
@@ -1147,13 +1147,13 @@ void A_BossDeath()
 		if (Enemy.Player.Quests & (1 << QUEST_Factory))
 		{
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_finale_type);
+			MSG_WriteByte(StrifeDefs::svc_finale_type);
 			MSG_WriteByte(0);
 		}
 		else
 		{
 			MSG_Select(MSG_SV_RELIABLE);
-			MSG_WriteByte(svc_finale_type);
+			MSG_WriteByte(StrifeDefs::svc_finale_type);
 			MSG_WriteByte(2);
 		}
 		G_Completed(-1, -1, 0);
@@ -1376,6 +1376,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.19  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

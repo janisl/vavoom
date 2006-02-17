@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ArtifactPuzzleGear3:ArtifactPuzzle
+class ArtifactPuzzleGear3 : ArtifactPuzzle
 	__mobjinfo__(9020);
 
 __states__
@@ -40,13 +40,16 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = arti_puzzgear3;
+	ArtifactType = HexenDefs::arti_puzzgear3;
 	IdleState = S_ARTIPUZZGEAR3_1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

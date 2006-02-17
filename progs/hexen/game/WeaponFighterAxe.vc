@@ -47,7 +47,7 @@ void A_FAxeAttack()
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
-	if (Player.Mana[MANA_1] > 0)
+	if (Player.Mana[HexenDefs::MANA_1] > 0)
 	{
 		damage <<= 1;
 		power = 6.0;
@@ -112,9 +112,9 @@ void A_FAxeAttack()
 
 	if (useMana == 2)
 	{
-		Player.Mana[MANA_1] -=
+		Player.Mana[HexenDefs::MANA_1] -=
 			WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-		if (Player.Mana[MANA_1] <= 0)
+		if (Player.Mana[HexenDefs::MANA_1] <= 0)
 		{
 			SetState(NoMoreManaState);
 		}
@@ -170,7 +170,7 @@ __states__
 
 int GetUpState()
 {
-	if (Player.Mana[MANA_1])
+	if (Player.Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEUP_G;
 	}
@@ -188,7 +188,7 @@ int GetUpState()
 
 int GetDownState()
 {
-	if (Player.Mana[MANA_1])
+	if (Player.Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEDOWN_G;
 	}
@@ -206,7 +206,7 @@ int GetDownState()
 
 int GetReadyState()
 {
-	if (Player.Mana[MANA_1])
+	if (Player.Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEREADY_G;
 	}
@@ -224,7 +224,7 @@ int GetReadyState()
 
 int GetAttackState()
 {
-	if (Player.Mana[MANA_1] > 0)
+	if (Player.Mana[HexenDefs::MANA_1] > 0)
 	{
 		// Glowing axe
 		return S_FAXEATK_G1;
@@ -243,7 +243,7 @@ int GetAttackState()
 
 void GotMana(int InMana)
 {
-	if (InMana == MANA_1)
+	if (InMana == HexenDefs::MANA_1)
 	{
 		SetState(S_FAXEREADY_G);
 	}
@@ -251,7 +251,7 @@ void GotMana(int InMana)
 
 defaultproperties
 {
-	Mana = MANA_NONE;
+	Mana = HexenDefs::MANA_NONE;
 	UpState = S_FAXEUP;
 	DownState = S_FAXEDOWN;
 	ReadyState = S_FAXEREADY;
@@ -265,6 +265,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

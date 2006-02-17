@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemSeveredHand:KeyPickup
+class ItemSeveredHand : KeyPickup
 	__mobjinfo__(91);
 
 __states__
@@ -37,7 +37,7 @@ defaultproperties
 	PickupString = "Severed Hand";
 	bNoDeathmatch = true;
 	IdleState = S_SEVERED_HAND;
-	KeyType = KEY_SeveredHand;
+	KeyType = StrifeDefs::KEY_SeveredHand;
 	bGiveQuest = true;
 	QuestID = QUEST_GotSeveredHand;
 }
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2004/10/13 06:36:30  dj_jl
 //  Implemented items also giving quests.
 //

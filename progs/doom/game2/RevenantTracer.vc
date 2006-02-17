@@ -94,12 +94,15 @@ defaultproperties
 	DeathState = S_TRACEEXP1;
 	SightSound = 'skeleton/attack';
 	DeathSound = 'skeleton/tracex';
-	Effects = EF_DL_RBALL;
+	Effects = DoomDefs::EF_DL_RBALL;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:32:36  dj_jl
 //  Moved all server progs global variables to classes.
 //

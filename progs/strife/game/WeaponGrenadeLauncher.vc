@@ -38,7 +38,7 @@ void A_FireGrenade()
 	float an;
 	float tworadii;
 
-	if (Player.ReadyWeapon == wp_grenade)
+	if (Player.ReadyWeapon == StrifeDefs::wp_grenade)
 	{
 		grenadetype = HEGrenade;
 	}
@@ -111,7 +111,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_grenade1;
+	Ammo = StrifeDefs::am_grenade1;
 	UpState = S_GRENADEUP;
 	DownState = S_GRENADEDOWN;
 	ReadyState = S_GRENADE;
@@ -123,7 +123,7 @@ class WeaponGrenadeLauncher2 : WeaponGrenadeLauncher;
 
 defaultproperties
 {
-	Ammo = am_grenade2;
+	Ammo = StrifeDefs::am_grenade2;
 	UpState = S_GRENADEHIGHUP;
 	DownState = S_GRENADEHIGHDOWN;
 	ReadyState = S_GRENADEHIGH;
@@ -134,6 +134,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2004/12/22 07:56:47  dj_jl
 //  Fully working Strife support.
 //

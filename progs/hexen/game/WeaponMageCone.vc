@@ -41,7 +41,7 @@ void A_FireConePL1()
 	int conedone = false;
 
 	pmo = Player.MO;
-	Player.Mana[MANA_1] -=
+	Player.Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 	pmo.PlaySound('MageShardsFire', CHAN_WEAPON);
 
@@ -95,7 +95,7 @@ __states__
 
 defaultproperties
 {
-	Mana = MANA_1;
+	Mana = HexenDefs::MANA_1;
 	UpState = S_CONEUP;
 	DownState = S_CONEDOWN;
 	ReadyState = S_CONEREADY;
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

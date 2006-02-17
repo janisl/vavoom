@@ -58,7 +58,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_cell;
+	Ammo = DoomDefs::am_cell;
 	UpState = S_PLASMAUP;
 	DownState = S_PLASMADOWN;
 	ReadyState = S_PLASMA;
@@ -70,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2005/05/03 15:03:49  dj_jl
 //  Models updated.
 //

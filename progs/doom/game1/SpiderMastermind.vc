@@ -70,7 +70,7 @@ void A_SPosAttack()
 		LineAttack(dir, MISSILERANGE, damage);
 	}
 
-	Effects |= EF_DL_MUZZLEFLASH;
+	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -204,6 +204,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.9  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

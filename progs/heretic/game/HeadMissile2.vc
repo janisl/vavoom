@@ -44,12 +44,15 @@ defaultproperties
 	MissileDamage = 3;
 	IdleState = S_HEADFX2_1;
 	DeathState = S_HEADFXI2_1;
-	Effects = EF_DL_BLUE;
+	Effects = HereticDefs::EF_DL_BLUE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

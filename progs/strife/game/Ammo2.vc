@@ -33,9 +33,9 @@ class Ammo2 : Pickup;
 
 bool HandlePickup(Actor Toucher)
 {
-	if (Toucher.Player.Ammo[am_clip] < 50)
+	if (Toucher.Player.Ammo[StrifeDefs::am_clip] < 50)
 	{
-		Toucher.Player.Ammo[am_clip] = 50;
+		Toucher.Player.Ammo[StrifeDefs::am_clip] = 50;
 		return true;
 	}
 	else
@@ -54,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

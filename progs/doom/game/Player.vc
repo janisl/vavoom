@@ -29,13 +29,13 @@ class Player : BasePlayer;
 //  FIRST FIELDS ARE STATS THAT ARE SENT TO CLIENT FOR STATUS BAR
 //
 
-sb_stats_t Stats;
+int SBFlags;
 
-int Ammo[NUMAMMO];
-int MaxAmmo[NUMAMMO];
+int Ammo[DoomDefs::NUMAMMO];
+int MaxAmmo[DoomDefs::NUMAMMO];
 int ReadyAmmo;
 
-bool WeaponOwned[NUMWEAPONS];
+bool WeaponOwned[DoomDefs::NUMWEAPONS];
 
 int ArmorPoints;
 
@@ -100,7 +100,7 @@ float LastHazardTime;
 float sb_facetime;
 
 // used for evil grin
-bool sb_oldweaponsowned[NUMWEAPONS];
+bool sb_oldweaponsowned[DoomDefs::NUMWEAPONS];
 
 // used to use appopriately pained face
 int sb_oldhealth;
@@ -424,7 +424,7 @@ void SpawnPlayer(mthing_t * mthing)
 
 	sb_faceindex = 0;
 	sb_oldhealth = -1;
-	for (i = 0; i < NUMWEAPONS; i++)
+	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 		sb_oldweaponsowned[i] = WeaponOwned[i];
 
 	// setup gun psprite
@@ -480,14 +480,14 @@ void PlayerReborn()
 #ifdef DDF
 	SetInitialWeapons(self);
 #else
-	Ammo[am_clip] = INITIAL_AMMO;
-	MaxAmmo[am_clip] = MainGameInfo(Level.Game).maxammo[am_clip];
-	MaxAmmo[am_shell] = MainGameInfo(Level.Game).maxammo[am_shell];
-	MaxAmmo[am_misl] = MainGameInfo(Level.Game).maxammo[am_misl];
-	MaxAmmo[am_cell] = MainGameInfo(Level.Game).maxammo[am_cell];
-	WeaponOwned[wp_fist] = true;
-	WeaponOwned[wp_pistol] = true;
-	SetWeapon(wp_pistol);
+	Ammo[DoomDefs::am_clip] = INITIAL_AMMO;
+	MaxAmmo[DoomDefs::am_clip] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_clip];
+	MaxAmmo[DoomDefs::am_shell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_shell];
+	MaxAmmo[DoomDefs::am_misl] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_misl];
+	MaxAmmo[DoomDefs::am_cell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_cell];
+	WeaponOwned[DoomDefs::wp_fist] = true;
+	WeaponOwned[DoomDefs::wp_pistol] = true;
+	SetWeapon(DoomDefs::wp_pistol);
 #endif
 	LocalQuakeHappening = 0;
 }
@@ -535,10 +535,10 @@ bool GiveAmmo(int ammo, int num)
 	int oldammo;
 	int max;
 
-	if (ammo == am_noammo)
+	if (ammo == DoomDefs::am_noammo)
 		return false;
 
-	if (ammo < 0 || ammo > NUMAMMO)
+	if (ammo < 0 || ammo > DoomDefs::NUMAMMO)
 		Error("P_GiveAmmo: bad type %i", ammo);
 
 	max = MaxAmmo[ammo];
@@ -569,37 +569,37 @@ bool GiveAmmo(int ammo, int num)
 	// Preferences are not user selectable.
 	switch (ammo)
 	{
-	case am_clip:
-		if (ReadyWeapon == wp_fist)
+	case DoomDefs::am_clip:
+		if (ReadyWeapon == DoomDefs::wp_fist)
 		{
-			if (WeaponOwned[wp_chaingun])
-				PendingWeapon = wp_chaingun;
+			if (WeaponOwned[DoomDefs::wp_chaingun])
+				PendingWeapon = DoomDefs::wp_chaingun;
 			else
-				PendingWeapon = wp_pistol;
+				PendingWeapon = DoomDefs::wp_pistol;
 		}
 		break;
 
-	case am_shell:
-		if (ReadyWeapon == wp_fist || ReadyWeapon == wp_pistol)
+	case DoomDefs::am_shell:
+		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
 		{
-			if (WeaponOwned[wp_shotgun])
-				PendingWeapon = wp_shotgun;
+			if (WeaponOwned[DoomDefs::wp_shotgun])
+				PendingWeapon = DoomDefs::wp_shotgun;
 		}
 		break;
 
-	case am_cell:
-		if (ReadyWeapon == wp_fist || ReadyWeapon == wp_pistol)
+	case DoomDefs::am_cell:
+		if (ReadyWeapon == DoomDefs::wp_fist || ReadyWeapon == DoomDefs::wp_pistol)
 		{
-			if (WeaponOwned[wp_plasma])
-				PendingWeapon = wp_plasma;
+			if (WeaponOwned[DoomDefs::wp_plasma])
+				PendingWeapon = DoomDefs::wp_plasma;
 		}
 		break;
 
-	case am_misl:
-		if (ReadyWeapon == wp_fist)
+	case DoomDefs::am_misl:
+		if (ReadyWeapon == DoomDefs::wp_fist)
 		{
-			if (WeaponOwned[wp_missile])
-				PendingWeapon = wp_missile;
+			if (WeaponOwned[DoomDefs::wp_missile])
+				PendingWeapon = DoomDefs::wp_missile;
 		}
 	default:
 		break;
@@ -652,7 +652,7 @@ bool GiveWeapon(int weapon, bool dropped)
 	}
 
 	gaveammo = false;
-	if (MainGameInfo(Level.Game).weapon_ammo_type[weapon] != am_noammo)
+	if (MainGameInfo(Level.Game).weapon_ammo_type[weapon] != DoomDefs::am_noammo)
 	{
 		// give one clip with a dropped weapon,
 		// two clips with a found weapon
@@ -817,8 +817,8 @@ bool GivePower(int power)
 	{
 		GiveBody(100, MAXHEALTH);
 		Powers[power] = 1.0;
-		if (ReadyWeapon != wp_fist)
-			PendingWeapon = wp_fist;
+		if (ReadyWeapon != DoomDefs::wp_fist)
+			PendingWeapon = DoomDefs::wp_fist;
 		return true;
 	}
 
@@ -852,8 +852,8 @@ bool GivePower2(int power, float duration, float max)
 	}
 	if (power == pw_strength)
 	{
-		if (ReadyWeapon != wp_fist)
-			PendingWeapon = wp_fist;
+		if (ReadyWeapon != DoomDefs::wp_fist)
+			PendingWeapon = DoomDefs::wp_fist;
 	}
 
 	return true;
@@ -1465,7 +1465,7 @@ void PrevWeapon()
 	int			NewWeap;
 
 	CurIdx = 0;
-	for (i = 0; i < NUMWEAPONS; i++)
+	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 	{
 		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
@@ -1473,14 +1473,14 @@ void PrevWeapon()
 			break;
 		}
 	}
-	for (i = NUMWEAPONS - 1; i > 0; i--)
+	for (i = DoomDefs::NUMWEAPONS - 1; i > 0; i--)
 	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
+		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % DoomDefs::NUMWEAPONS];
 #ifdef DOOM2
 		if (WeaponOwned[NewWeap])
 #else
-		if (WeaponOwned[NewWeap] && ((NewWeap != wp_plasma &&
-			NewWeap != wp_bfg) || !MainGameInfo(Level.Game).shareware))
+		if (WeaponOwned[NewWeap] && ((NewWeap != DoomDefs::wp_plasma &&
+			NewWeap != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware))
 #endif
 		{
 			PendingWeapon = NewWeap;
@@ -1502,7 +1502,7 @@ void NextWeapon()
 	int			NewWeap;
 
 	CurIdx = 0;
-	for (i = 0; i < NUMWEAPONS; i++)
+	for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 	{
 		if (ReadyWeapon == MainGameInfo(Level.Game).WeaponOrder[i])
 		{
@@ -1510,14 +1510,14 @@ void NextWeapon()
 			break;
 		}
 	}
-	for (i = 1; i < NUMWEAPONS; i++)
+	for (i = 1; i < DoomDefs::NUMWEAPONS; i++)
 	{
-		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % NUMWEAPONS];
+		NewWeap = MainGameInfo(Level.Game).WeaponOrder[(CurIdx + i) % DoomDefs::NUMWEAPONS];
 #ifdef DOOM2
 		if (WeaponOwned[NewWeap])
 #else
-		if (WeaponOwned[NewWeap] && ((NewWeap != wp_plasma &&
-			NewWeap != wp_bfg) || !MainGameInfo(Level.Game).shareware))
+		if (WeaponOwned[NewWeap] && ((NewWeap != DoomDefs::wp_plasma &&
+			NewWeap != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware))
 #endif
 		{
 			PendingWeapon = NewWeap;
@@ -1840,7 +1840,7 @@ int CalcPainOffset()
 	if (health != sb_cpo_oldhealth)
 	{
 		sb_cpo_lastcalc =
-			ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
+			DoomDefs::ST_FACESTRIDE * (((100 - health) * DoomDefs::ST_NUMPAINFACES) / 101);
 		sb_cpo_oldhealth = health;
 	}
 	return sb_cpo_lastcalc;
@@ -1875,7 +1875,7 @@ void UpdateFaceWidget(float FrameTime)
 		if (!Health)
 		{
 			sb_face_priority = 9;
-			sb_faceindex = ST_DEADFACE;
+			sb_faceindex = DoomDefs::ST_DEADFACE;
 			sb_facetime = 0.01;
 		}
 	}
@@ -1887,7 +1887,7 @@ void UpdateFaceWidget(float FrameTime)
 			// picking up bonus
 			doevilgrin = false;
 
-			for (i = 0; i < NUMWEAPONS; i++)
+			for (i = 0; i < DoomDefs::NUMWEAPONS; i++)
 			{
 				if (sb_oldweaponsowned[i] != WeaponOwned[i])
 				{
@@ -1900,7 +1900,7 @@ void UpdateFaceWidget(float FrameTime)
 				// evil grin if just picked up weapon
 				sb_face_priority = 8;
 				sb_facetime = ST_EVILGRINTIME;
-				sb_faceindex = CalcPainOffset() + ST_EVILGRINOFFSET;
+				sb_faceindex = CalcPainOffset() + DoomDefs::ST_EVILGRINOFFSET;
 			}
 		}
 	}
@@ -1912,10 +1912,10 @@ void UpdateFaceWidget(float FrameTime)
 			// being attacked
 			sb_face_priority = 7;
 
-			if (Health - sb_oldhealth > ST_MUCHPAIN)
+			if (Health - sb_oldhealth > DoomDefs::ST_MUCHPAIN)
 			{
 				sb_facetime = ST_TURNTIME;
-				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
+				sb_faceindex = CalcPainOffset() + DoomDefs::ST_OUCHOFFSET;
 			}
 			else
 			{
@@ -1941,17 +1941,17 @@ void UpdateFaceWidget(float FrameTime)
 				if (diffang < 45.0)
 				{
 					// head-on
-					sb_faceindex += ST_RAMPAGEOFFSET;
+					sb_faceindex += DoomDefs::ST_RAMPAGEOFFSET;
 				}
 				else if (i)
 				{
 					// turn face right
-					sb_faceindex += ST_TURNOFFSET;
+					sb_faceindex += DoomDefs::ST_TURNOFFSET;
 				}
 				else
 				{
 					// turn face left
-					sb_faceindex += ST_TURNOFFSET + 1;
+					sb_faceindex += DoomDefs::ST_TURNOFFSET + 1;
 				}
 			}
 		}
@@ -1962,17 +1962,17 @@ void UpdateFaceWidget(float FrameTime)
 		// getting hurt because of your own damn stupidity
 		if (DamageFlash)
 		{
-			if (Health - sb_oldhealth > ST_MUCHPAIN)
+			if (Health - sb_oldhealth > DoomDefs::ST_MUCHPAIN)
 			{
 				sb_face_priority = 7;
 				sb_facetime = ST_TURNTIME;
-				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
+				sb_faceindex = CalcPainOffset() + DoomDefs::ST_OUCHOFFSET;
 			}
 			else
 			{
 				sb_face_priority = 6;
 				sb_facetime = ST_TURNTIME;
-				sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
+				sb_faceindex = CalcPainOffset() + DoomDefs::ST_RAMPAGEOFFSET;
 			}
 		}
 	}
@@ -1990,7 +1990,7 @@ void UpdateFaceWidget(float FrameTime)
 				if (sb_face_lastattackdown <= 0.0)
 				{
 					sb_face_priority = 5;
-					sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
+					sb_faceindex = CalcPainOffset() + DoomDefs::ST_RAMPAGEOFFSET;
 					sb_facetime = 0.01;
 					sb_face_lastattackdown = 0.01;
 				}
@@ -2007,7 +2007,7 @@ void UpdateFaceWidget(float FrameTime)
 		{
 			sb_face_priority = 4;
 
-			sb_faceindex = ST_GODFACE;
+			sb_faceindex = DoomDefs::ST_GODFACE;
 			sb_facetime = 0.01;
 		}
 	}
@@ -2053,11 +2053,11 @@ void SetViewPos()
 
 	UpdateFaceWidget(Level.Game.frametime);
 
-	Stats.flags = Keys;
+	SBFlags = Keys;
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
-		Stats.flags |= SBF_GOD_MODE;
+		SBFlags |= DoomDefs::SBF_GOD_MODE;
 
-	if (Weapon(ViewEnts[ps_weapon]).Ammo == am_noammo)
+	if (Weapon(ViewEnts[ps_weapon]).Ammo == DoomDefs::am_noammo)
 		ReadyAmmo = 1994;	// means "n/a"
 	else
 		ReadyAmmo = Ammo[Weapon(ViewEnts[ps_weapon]).Ammo];
@@ -2250,7 +2250,7 @@ void ActPlayerAttack(AttackType *attack)
 void SetWeapon(int NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
-	PendingWeapon = wp_nochange;
+	PendingWeapon = DoomDefs::wp_nochange;
 	if (ViewEnts[ps_weapon])
 	{
 		ViewEnts[ps_weapon].Destroy();
@@ -2287,11 +2287,11 @@ void BringUpWeapon()
 	if (Weapon(ViewEnts[ps_weapon]).StartSound)
 		MO.PlaySound(Weapon(ViewEnts[ps_weapon]).StartSound, CHAN_WEAPON);
 #else
-	if (ReadyWeapon == wp_chainsaw)
+	if (ReadyWeapon == DoomDefs::wp_chainsaw)
 		MO.PlaySound('weapons/sawup', CHAN_WEAPON);
 #endif
 
-	PendingWeapon = wp_nochange;
+	PendingWeapon = DoomDefs::wp_nochange;
 	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
 
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
@@ -2343,17 +2343,17 @@ void ChangeWeapon(int newweapon)
 		}
 	}
 #else //---------
-	if (newweapon == wp_fist && WeaponOwned[wp_chainsaw] &&
-		!(ReadyWeapon == wp_chainsaw && Powers[pw_strength]))
+	if (newweapon == DoomDefs::wp_fist && WeaponOwned[DoomDefs::wp_chainsaw] &&
+		!(ReadyWeapon == DoomDefs::wp_chainsaw && Powers[pw_strength]))
 	{
-		newweapon = wp_chainsaw;
+		newweapon = DoomDefs::wp_chainsaw;
 	}
 
 #ifdef DOOM2
-	if (newweapon == wp_shotgun && WeaponOwned[wp_supershotgun] &&
-		ReadyWeapon != wp_supershotgun)
+	if (newweapon == DoomDefs::wp_shotgun && WeaponOwned[DoomDefs::wp_supershotgun] &&
+		ReadyWeapon != DoomDefs::wp_supershotgun)
 	{
-		newweapon = wp_supershotgun;
+		newweapon = DoomDefs::wp_supershotgun;
 	}
 #endif
 
@@ -2371,7 +2371,7 @@ void ChangeWeapon(int newweapon)
 		PendingWeapon = newweapon;
 #else
 		// Do not go to plasma or BFG in shareware, even if cheated.
-		if ((newweapon != wp_plasma && newweapon != wp_bfg) || !MainGameInfo(Level.Game).shareware)
+		if ((newweapon != DoomDefs::wp_plasma && newweapon != DoomDefs::wp_bfg) || !MainGameInfo(Level.Game).shareware)
 		{
 			PendingWeapon = newweapon;
 		}
@@ -2473,10 +2473,10 @@ int CheckAmmo()
 	count = Weapon(ViewEnts[ps_weapon]).AmmoPerShot;
 #else
 	// Minimal amount for one shot varies.
-	if (ReadyWeapon == wp_bfg)
+	if (ReadyWeapon == DoomDefs::wp_bfg)
 		count = BFGCELLS;
 #ifdef DOOM2
-	else if (ReadyWeapon == wp_supershotgun)
+	else if (ReadyWeapon == DoomDefs::wp_supershotgun)
 		count = 2;	// Double barrel.
 #endif
 	else
@@ -2485,7 +2485,7 @@ int CheckAmmo()
 
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
-	if (ammo == am_noammo || Ammo[ammo] >= count)
+	if (ammo == DoomDefs::am_noammo || Ammo[ammo] >= count)
 		return true;
 
 	// Out of ammo, pick a weapon to change to.
@@ -2493,55 +2493,55 @@ int CheckAmmo()
 	do
 	{
 #ifndef DOOM2
-		if (WeaponOwned[wp_plasma] && Ammo[am_cell] && (!MainGameInfo(Level.Game).shareware))
+		if (WeaponOwned[DoomDefs::wp_plasma] && Ammo[DoomDefs::am_cell] && (!MainGameInfo(Level.Game).shareware))
 #else
-		if (WeaponOwned[wp_plasma] && Ammo[am_cell])
+		if (WeaponOwned[DoomDefs::wp_plasma] && Ammo[DoomDefs::am_cell])
 #endif
 		{
-			PendingWeapon = wp_plasma;
+			PendingWeapon = DoomDefs::wp_plasma;
 		}
 #ifdef DOOM2
-		else if (WeaponOwned[wp_supershotgun] && Ammo[am_shell] > 2)
+		else if (WeaponOwned[DoomDefs::wp_supershotgun] && Ammo[DoomDefs::am_shell] > 2)
 		{
-			PendingWeapon = wp_supershotgun;
+			PendingWeapon = DoomDefs::wp_supershotgun;
 		}
 #endif
-		else if (WeaponOwned[wp_chaingun] && Ammo[am_clip])
+		else if (WeaponOwned[DoomDefs::wp_chaingun] && Ammo[DoomDefs::am_clip])
 		{
-			PendingWeapon = wp_chaingun;
+			PendingWeapon = DoomDefs::wp_chaingun;
 		}
-		else if (WeaponOwned[wp_shotgun] && Ammo[am_shell])
+		else if (WeaponOwned[DoomDefs::wp_shotgun] && Ammo[DoomDefs::am_shell])
 		{
-			PendingWeapon = wp_shotgun;
+			PendingWeapon = DoomDefs::wp_shotgun;
 		}
-		else if (Ammo[am_clip])
+		else if (Ammo[DoomDefs::am_clip])
 		{
-			PendingWeapon = wp_pistol;
+			PendingWeapon = DoomDefs::wp_pistol;
 		}
-		else if (WeaponOwned[wp_chainsaw])
+		else if (WeaponOwned[DoomDefs::wp_chainsaw])
 		{
-			PendingWeapon = wp_chainsaw;
+			PendingWeapon = DoomDefs::wp_chainsaw;
 		}
-		else if (WeaponOwned[wp_missile] && Ammo[am_misl])
+		else if (WeaponOwned[DoomDefs::wp_missile] && Ammo[DoomDefs::am_misl])
 		{
-			PendingWeapon = wp_missile;
+			PendingWeapon = DoomDefs::wp_missile;
 		}
 #ifdef DOOM2
-		else if (WeaponOwned[wp_bfg] && Ammo[am_cell] > 40)
+		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > 40)
 #else
-		else if (WeaponOwned[wp_bfg] && Ammo[am_cell] > BFGCELLS &&
+		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > BFGCELLS &&
 			(!MainGameInfo(Level.Game).shareware))
 #endif
 		{
-			PendingWeapon = wp_bfg;
+			PendingWeapon = DoomDefs::wp_bfg;
 		}
 		else
 		{
 			// If everything fails.
-			PendingWeapon = wp_fist;
+			PendingWeapon = DoomDefs::wp_fist;
 		}
 	}
-	while (PendingWeapon == wp_nochange);
+	while (PendingWeapon == DoomDefs::wp_nochange);
 
 	// Now set appropriate weapon overlay.
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
@@ -2929,24 +2929,24 @@ void Cheat_Gimme()
 
 	// Weapons
 	if (i1 & GIMME_SHOTGUN)
-		WeaponOwned[wp_shotgun] = true;
+		WeaponOwned[DoomDefs::wp_shotgun] = true;
 	if (i1 & GIMME_CHAINGUN)
-		WeaponOwned[wp_chaingun] = true;
+		WeaponOwned[DoomDefs::wp_chaingun] = true;
 	if (i1 & GIMME_LAUNCHER)
-		WeaponOwned[wp_missile] = true;
+		WeaponOwned[DoomDefs::wp_missile] = true;
 	if (i1 & GIMME_PLASMA)
-		WeaponOwned[wp_plasma] = true;
+		WeaponOwned[DoomDefs::wp_plasma] = true;
 	if (i1 & GIMME_BFG)
-		WeaponOwned[wp_bfg] = true;
+		WeaponOwned[DoomDefs::wp_bfg] = true;
 	if (i1 & GIMME_CHAINSAW)
-		WeaponOwned[wp_chainsaw] = true;
+		WeaponOwned[DoomDefs::wp_chainsaw] = true;
 #ifdef DOOM2
 	if (i1 & GIMME_SUPERSHOTGUN)
-		WeaponOwned[wp_supershotgun] = true;
+		WeaponOwned[DoomDefs::wp_supershotgun] = true;
 #endif
 #ifdef GRENADE_LAUNCHER
 	if (i1 & GIMME_GRENADE)
-		WeaponOwned[wp_grenade] = true;
+		WeaponOwned[DoomDefs::wp_grenade] = true;
 #endif
 
 	// Backpack
@@ -2955,13 +2955,13 @@ void Cheat_Gimme()
 
 	// Ammo
 	if (i1 & GIMME_BULLETS)
-		Ammo[am_clip] = MainGameInfo(Level.Game).maxammo[am_clip] * (Backpack ? 2 : 1);
+		Ammo[DoomDefs::am_clip] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_clip] * (Backpack ? 2 : 1);
 	if (i1 & GIMME_SHELLS)
-		Ammo[am_shell] = MainGameInfo(Level.Game).maxammo[am_shell] * (Backpack ? 2 : 1);
+		Ammo[DoomDefs::am_shell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_shell] * (Backpack ? 2 : 1);
 	if (i1 & GIMME_ROCKETS)
-		Ammo[am_misl] = MainGameInfo(Level.Game).maxammo[am_misl] * (Backpack ? 2 : 1);
+		Ammo[DoomDefs::am_misl] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_misl] * (Backpack ? 2 : 1);
 	if (i1 & GIMME_CELLS)
-		Ammo[am_cell] = MainGameInfo(Level.Game).maxammo[am_cell] * (Backpack ? 2 : 1);
+		Ammo[DoomDefs::am_cell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_cell] * (Backpack ? 2 : 1);
 
 	// Keys
 	if (i1 & GIMME_BLUECARD)
@@ -3073,6 +3073,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.18  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

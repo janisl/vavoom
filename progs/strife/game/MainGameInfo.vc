@@ -41,20 +41,20 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-classid WeaponClasses[NUMWEAPONS];
-int weapon_ammo_type[NUMWEAPONS];
-int WeaponOrder[NUMWEAPONS];
+classid WeaponClasses[StrifeDefs::NUMWEAPONS];
+int weapon_ammo_type[StrifeDefs::NUMWEAPONS];
+int WeaponOrder[StrifeDefs::NUMWEAPONS];
 
 int terrain_contents[4];
 int contents_transluc[4];
 
-classid InvItemCID[NUMINVITEMS];
-classid KeyCID[NUMKEYS];
+classid InvItemCID[StrifeDefs::NUMINVITEMS];
+classid KeyCID[StrifeDefs::NUMKEYS];
 
 tagged_line_t TaggedLines[MAX_TAGGED_LINES];
 int TaggedLineCount;
 
-int maxammo[NUMAMMO];
+int maxammo[StrifeDefs::NUMAMMO];
 
 int opposite[9];
 int diags[4];
@@ -282,7 +282,7 @@ void InitTranslationTables()
 	SetLineTrans(151, LNSPEC_DoorLockedRaise, -1, 64, 0, 9, 0, SPAC_USE, true);
 	SetLineTrans(152, LNSPEC_DoorLockedRaise, -1, 64, 0, 17, 0, SPAC_USE, true);
 	SetLineTrans(153, LNSPEC_DoorLockedRaise, -1, 64, 0, 12, 0, SPAC_USE, true);
-	SetLineTrans(154, LNSPEC_ACSLockedExecute, 0, 0, 154, -1, 1 + KEY_GoldKey, SPAC_USE, true);
+	SetLineTrans(154, LNSPEC_ACSLockedExecute, 0, 0, 154, -1, 1 + StrifeDefs::KEY_GoldKey, SPAC_USE, true);
 	SetLineTrans(155, LNSPEC_PlatUpWaitDownStay, -1, 32, 105, 0, 0, SPAC_USE, true);
 	SetLineTrans(156, LNSPEC_DoorLockedRaise, 0, 16, 0, 17, 0, SPAC_USE, false);
 	SetLineTrans(157, LNSPEC_DoorLockedRaise, 0, 16, 0, 12, 0, SPAC_USE, false);
@@ -307,7 +307,7 @@ void InitTranslationTables()
 	SetLineTrans(174, LNSPEC_ACSExecuteWithResult, 0, 174, -1, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(175, LNSPEC_ACSExecuteWithResult, 0, 175, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(176, LNSPEC_DoorLockedRaise, -1, 16, 0, 10, 0, SPAC_USE, true);
-	SetLineTrans(177, LNSPEC_ACSLockedExecute, 0, 0, 177, -1, 1 + KEY_Power3Key, SPAC_USE, true);
+	SetLineTrans(177, LNSPEC_ACSLockedExecute, 0, 0, 177, -1, 1 + StrifeDefs::KEY_Power3Key, SPAC_USE, true);
 	SetLineTrans(178, LNSPEC_StairsGeneric, -1, 16, 16, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(179, LNSPEC_CeilingLowerAndCrush, -1, 8, 1, 0, 0, SPAC_CROSS, false);
 
@@ -320,11 +320,11 @@ void InitTranslationTables()
 	SetLineTrans(186, LNSPEC_ACSExecuteWithResult, 0, 186, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(187, LNSPEC_ACSExecuteWithResult, 0, 187, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(188, LNSPEC_ACSExecuteWithResult, 0, 188, -1, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(189, LNSPEC_ACSLockedExecute, 0, 0, 189, -1, 1 + KEY_OracleKey, SPAC_USE, false);
+	SetLineTrans(189, LNSPEC_ACSLockedExecute, 0, 0, 189, -1, 1 + StrifeDefs::KEY_OracleKey, SPAC_USE, false);
 
-	SetLineTrans(190, LNSPEC_DoorLockedRaise, 0, 16, 150, 1 + KEY_MilitaryID, 0, SPAC_USE, true);
-	SetLineTrans(191, LNSPEC_DoorLockedRaise, -1, 16, 0, 1 + KEY_MilitaryID, 0, SPAC_USE, true);
-	SetLineTrans(192, LNSPEC_DoorLockedRaise, -1, 16, 0, 1 + KEY_WarehouseKey, 0, SPAC_USE, false);
+	SetLineTrans(190, LNSPEC_DoorLockedRaise, 0, 16, 150, 1 + StrifeDefs::KEY_MilitaryID, 0, SPAC_USE, true);
+	SetLineTrans(191, LNSPEC_DoorLockedRaise, -1, 16, 0, 1 + StrifeDefs::KEY_MilitaryID, 0, SPAC_USE, true);
+	SetLineTrans(192, LNSPEC_DoorLockedRaise, -1, 16, 0, 1 + StrifeDefs::KEY_WarehouseKey, 0, SPAC_USE, false);
 	SetLineTrans(193, LNSPEC_ACSExecuteWithResult, 0, 193, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(194, LNSPEC_ACSExecuteWithResult, 0, 194, -1, 0, 0, SPAC_USE, false);
 	SetLineTrans(195, 39, -1, 0, 0, 0, 0, SPAC_MCROSS, true);
@@ -353,9 +353,9 @@ void InitTranslationTables()
 	SetLineTrans(216, LNSPEC_ACSExecuteWithResult, 0, 216, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(217, LNSPEC_DoorLockedRaise, 0, 16, 150, 23, 0, SPAC_USE, true);
 	//  218 W1 Clear NonBlock Quest UNUSED
-	SetLineTrans(219, LNSPEC_ACSLockedExecute, 0, 0, 219, -1, 1 + KEY_RedCrystalKey, SPAC_USE, false);
+	SetLineTrans(219, LNSPEC_ACSLockedExecute, 0, 0, 219, -1, 1 + StrifeDefs::KEY_RedCrystalKey, SPAC_USE, false);
 
-	SetLineTrans(220, LNSPEC_ACSLockedExecute, 0, 0, 220, -1, 1 + KEY_BlueCrystalKey, SPAC_USE, false);
+	SetLineTrans(220, LNSPEC_ACSLockedExecute, 0, 0, 220, -1, 1 + StrifeDefs::KEY_BlueCrystalKey, SPAC_USE, false);
 	SetLineTrans(221, LNSPEC_DoorLockedRaise, 0, 16, 150, 24, 0, SPAC_USE, true);
 	SetLineTrans(222, LNSPEC_DoorLockedRaise, -1, 16, 0, 25, 0, SPAC_USE, false); // ??? Realy a key?
 	SetLineTrans(223, LNSPEC_DoorLockedRaise, -1, 16, 0, 26, 0, SPAC_USE, true);
@@ -1374,7 +1374,7 @@ void SpawnWorld(Level InLevel)
 
 defaultproperties
 {
-	num_stats = 2 * NUMAMMO + NUMWEAPONS + NUMINVITEMS + 12;
+	num_stats = 2 * StrifeDefs::NUMAMMO + StrifeDefs::NUMWEAPONS + StrifeDefs::NUMINVITEMS + 12;
 
 	WeaponClasses[0] = WeaponPunch;
 	WeaponClasses[1] = WeaponCrossbow;
@@ -1388,29 +1388,29 @@ defaultproperties
 	WeaponClasses[9] = WeaponGrenadeLauncher2;
 	WeaponClasses[10] = WeaponMauler2;
 
-	weapon_ammo_type[0] = am_noammo;
-	weapon_ammo_type[1] = am_electric_arrow;
-	weapon_ammo_type[2] = am_clip;
-	weapon_ammo_type[3] = am_misl;
-	weapon_ammo_type[4] = am_grenade1;
-	weapon_ammo_type[5] = am_cell;
-	weapon_ammo_type[6] = am_cell;
-	weapon_ammo_type[7] = am_noammo;
-	weapon_ammo_type[8] = am_poison_arrow;
-	weapon_ammo_type[9] = am_grenade2;
-	weapon_ammo_type[10] = am_cell;
+	weapon_ammo_type[0] = StrifeDefs::am_noammo;
+	weapon_ammo_type[1] = StrifeDefs::am_electric_arrow;
+	weapon_ammo_type[2] = StrifeDefs::am_clip;
+	weapon_ammo_type[3] = StrifeDefs::am_misl;
+	weapon_ammo_type[4] = StrifeDefs::am_grenade1;
+	weapon_ammo_type[5] = StrifeDefs::am_cell;
+	weapon_ammo_type[6] = StrifeDefs::am_cell;
+	weapon_ammo_type[7] = StrifeDefs::am_noammo;
+	weapon_ammo_type[8] = StrifeDefs::am_poison_arrow;
+	weapon_ammo_type[9] = StrifeDefs::am_grenade2;
+	weapon_ammo_type[10] = StrifeDefs::am_cell;
 
-	WeaponOrder[0] = wp_fist;
-	WeaponOrder[1] = wp_crossbow;
-	WeaponOrder[2] = wp_crossbow2;
-	WeaponOrder[3] = wp_riffle;
-	WeaponOrder[4] = wp_missile;
-	WeaponOrder[5] = wp_grenade;
-	WeaponOrder[6] = wp_grenade2;
-	WeaponOrder[7] = wp_flame;
-	WeaponOrder[8] = wp_blaster;
-	WeaponOrder[9] = wp_blaster2;
-	WeaponOrder[10] = wp_sigil;
+	WeaponOrder[0] = StrifeDefs::wp_fist;
+	WeaponOrder[1] = StrifeDefs::wp_crossbow;
+	WeaponOrder[2] = StrifeDefs::wp_crossbow2;
+	WeaponOrder[3] = StrifeDefs::wp_riffle;
+	WeaponOrder[4] = StrifeDefs::wp_missile;
+	WeaponOrder[5] = StrifeDefs::wp_grenade;
+	WeaponOrder[6] = StrifeDefs::wp_grenade2;
+	WeaponOrder[7] = StrifeDefs::wp_flame;
+	WeaponOrder[8] = StrifeDefs::wp_blaster;
+	WeaponOrder[9] = StrifeDefs::wp_blaster2;
+	WeaponOrder[10] = StrifeDefs::wp_sigil;
 
 	terrain_contents[0] = CONTENTS_EMPTY;
 	terrain_contents[1] = CONTENTS_WATER;
@@ -1476,13 +1476,13 @@ defaultproperties
 	KeyCID[25] = ItemMineKey;
 	KeyCID[26] = ItemNewKey5;
 
-	maxammo[am_clip] = 250;
-	maxammo[am_electric_arrow] = 50;
-	maxammo[am_poison_arrow] = 25;
-	maxammo[am_cell] = 400;
-	maxammo[am_misl] = 100;
-	maxammo[am_grenade1] = 30;
-	maxammo[am_grenade2] = 16;
+	maxammo[StrifeDefs::am_clip] = 250;
+	maxammo[StrifeDefs::am_electric_arrow] = 50;
+	maxammo[StrifeDefs::am_poison_arrow] = 25;
+	maxammo[StrifeDefs::am_cell] = 400;
+	maxammo[StrifeDefs::am_misl] = 100;
+	maxammo[StrifeDefs::am_grenade1] = 30;
+	maxammo[StrifeDefs::am_grenade2] = 16;
 
 	opposite[0] = DI_WEST; opposite[1] = DI_SOUTHWEST; opposite[2] = DI_SOUTH; opposite[3] = DI_SOUTHEAST;
 	opposite[4] = DI_EAST; opposite[5] = DI_NORTHEAST; opposite[6] = DI_NORTH; opposite[7] = DI_NORTHWEST; opposite[8] = DI_NODIR;
@@ -1508,6 +1508,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

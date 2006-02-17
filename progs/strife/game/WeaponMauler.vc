@@ -118,7 +118,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_cell;
+	Ammo = StrifeDefs::am_cell;
 	UpState = S_BLASTERUP;
 	DownState = S_BLASTERDOWN;
 	ReadyState = S_BLASTER;
@@ -138,6 +138,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.8  2006/01/10 19:54:01  dj_jl
 //  Many bug fixes.
 //

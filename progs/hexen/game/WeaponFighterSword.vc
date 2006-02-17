@@ -35,9 +35,9 @@ void A_FSwordAttack()
 {
 	PlayerPawn Owner = PlayerPawn(Player.MO);
 
-	Player.Mana[MANA_1] -=
+	Player.Mana[HexenDefs::MANA_1] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-	Player.Mana[MANA_2] -=
+	Player.Mana[HexenDefs::MANA_2] -=
 		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
 	Player.SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
 		FighterSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 4.0));
@@ -84,7 +84,7 @@ __states__
 
 defaultproperties
 {
-	Mana = MANA_BOTH;
+	Mana = HexenDefs::MANA_BOTH;
 	UpState = S_FSWORDUP;
 	DownState = S_FSWORDDOWN;
 	ReadyState = S_FSWORDREADY;
@@ -96,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

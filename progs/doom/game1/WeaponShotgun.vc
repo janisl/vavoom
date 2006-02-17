@@ -48,7 +48,7 @@ void A_FireShotgun()
 	{
 		GunShot(Player.MO, false, dir);
 	}
-	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
+	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 __states__
@@ -71,7 +71,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_shell;
+	Ammo = DoomDefs::am_shell;
 	UpState = S_SGUNUP;
 	DownState = S_SGUNDOWN;
 	ReadyState = S_SGUN;
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2005/12/11 21:31:39  dj_jl
 //  Made path traversal callbacks class members.
 //

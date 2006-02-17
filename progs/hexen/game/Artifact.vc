@@ -196,7 +196,7 @@ void TouchSpecial(Actor Toucher)
 			Special = 0;
 		}
 		Toucher.Player.BonusFlash += BONUSADD;
-		if (ArtifactType < arti_firstpuzzitem)
+		if (ArtifactType < HexenDefs::arti_firstpuzzitem)
 		{
 			SetDormantArtifact();
 			PlaySound('PickupArtifact', CHAN_ITEM);
@@ -225,6 +225,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemPower3Key:KeyPickup;
+class ItemPower3Key : KeyPickup;
 
 __states__
 {
@@ -35,12 +35,15 @@ defaultproperties
 	ConversationID = 141;
 	PickupString = "Power3 Key";
 	IdleState = S_POWER3_KEY;
-	KeyType = KEY_Power3Key;
+	KeyType = StrifeDefs::KEY_Power3Key;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

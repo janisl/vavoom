@@ -35,12 +35,15 @@ defaultproperties
 	ConversationID = 310;
 	PickupString = "Accuracy";
 	IdleState = S_ACCURACY;
-	ItemType = ITEM_Accuracy;
+	ItemType = StrifeDefs::ITEM_Accuracy;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2003/10/02 17:17:21  dj_jl
 //  Inventory items.
 //

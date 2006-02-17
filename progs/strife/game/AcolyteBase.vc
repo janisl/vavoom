@@ -65,7 +65,7 @@ void A_AcolyteDeath()
 	Level.Game.Players[0].GiveQuest(QUEST_7);
 	Level.Game.Players[0].SetObjectives(14);
 	MSG_Select(MSG_SV_RELIABLE);
-	MSG_WriteByte(svc_voice);
+	MSG_WriteByte(StrifeDefs::svc_voice);
 	MSG_WriteShort(14);
 }
 
@@ -92,6 +92,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.6  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

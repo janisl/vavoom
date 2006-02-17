@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "Officer's Uniform";
 	bNoDeathmatch = true;
 	IdleState = S_OFFICERS_UNIFORM;
-	ItemType = ITEM_OfficersUniform;
+	ItemType = StrifeDefs::ITEM_OfficersUniform;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2003/10/02 17:15:47  dj_jl
 //  Inventory items.
 //

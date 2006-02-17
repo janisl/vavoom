@@ -38,13 +38,16 @@ defaultproperties
 	ConversationID = 184;
 	PickupString = "energy pack";
 	IdleState = S_ENERGY_PACK_1;
-	AmmoType = am_cell;
+	AmmoType = StrifeDefs::am_cell;
 	AmmoCount = 100;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -108,7 +108,7 @@ void A_WeaponReady()
 		Player.MO.PlaySound(IdleSound, CHAN_WEAPON);
 	}
 #else
-	if (Player.ReadyWeapon == wp_chainsaw && StateNum == ReadyState)
+	if (Player.ReadyWeapon == DoomDefs::wp_chainsaw && StateNum == ReadyState)
 	{
 		Player.MO.PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
@@ -116,7 +116,7 @@ void A_WeaponReady()
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player.PendingWeapon != wp_nochange || !Player.Health)
+	if (Player.PendingWeapon != DoomDefs::wp_nochange || !Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
@@ -131,8 +131,8 @@ void A_WeaponReady()
 #ifdef DDF
 		if (!Player.bAttackDown || bAutoFire)
 #else
-		if (!Player.bAttackDown || (Player.ReadyWeapon != wp_missile &&
-			Player.ReadyWeapon != wp_bfg))
+		if (!Player.bAttackDown || (Player.ReadyWeapon != DoomDefs::wp_missile &&
+			Player.ReadyWeapon != DoomDefs::wp_bfg))
 #endif
 		{
 			Player.bAttackDown = true;
@@ -249,7 +249,7 @@ void A_ReFire()
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
 	if ((Player.Buttons & BT_ATTACK)
-		&& Player.PendingWeapon == wp_nochange && Player.Health)
+		&& Player.PendingWeapon == DoomDefs::wp_nochange && Player.Health)
 	{
 		Player.Refire++;
 		Player.FireWeapon();
@@ -301,7 +301,7 @@ void A_GunFlash()
 void A_Light0()
 {
 	Player.ExtraLight = 0;
-	Player.MO.Effects &= ~EF_DLIGHT_MASK;
+	Player.MO.Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 }
 
 //===========================================================================
@@ -614,7 +614,7 @@ __states__
 
 defaultproperties
 {
-	Ammo = am_noammo;
+	Ammo = DoomDefs::am_noammo;
 #ifdef DDF
 	Attack.DamageMax = -1;
 	Attack.DamageError = -1;
@@ -635,6 +635,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.7  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

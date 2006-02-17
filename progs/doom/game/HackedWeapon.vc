@@ -129,7 +129,7 @@ void A_FirePistol()
 
 	dir = Player.MO.Aim(16.0 * 64.0);
 	GunShot(Player.MO, !Player.Refire, dir);
-	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
+	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -155,7 +155,7 @@ void A_FireShotgun()
 	{
 		GunShot(Player.MO, false, dir);
 	}
-	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
+	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -189,7 +189,7 @@ void A_FireShotgun2()
 		damage = 5 * (P_Random() % 3 + 1);
 		Player.MO.LineAttack(dir, MISSILERANGE, damage);
 	}
-	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
+	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -248,7 +248,7 @@ void A_FireCGun()
 
 	dir = Player.MO.Aim(16.0 * 64.0);
 	GunShot(Player.MO, !Player.Refire, dir);
-	Player.MO.Effects |= EF_DL_MUZZLEFLASH;
+	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //===========================================================================
@@ -308,6 +308,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

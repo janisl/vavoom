@@ -277,55 +277,55 @@ bool HandlePickup(Actor Toucher)
 	{
 		if (bDropped)
 		{
-			if (!Toucher.Player.GiveAmmo(am_clip, MainGameInfo(Level.Game).clipammo[am_clip] / 2))
+			if (!Toucher.Player.GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip] / 2))
 				return false;
 		}
 		else
 		{
-			if (!Toucher.Player.GiveAmmo(am_clip, MainGameInfo(Level.Game).clipammo[am_clip]))
+			if (!Toucher.Player.GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
 				return false;
 		}
 		cprint(Toucher.Player, GOTCLIP);
 	}
 	else if (SpriteName == 'AMMO')
 	{
-		if (!Toucher.Player.GiveAmmo(am_clip, 5 * MainGameInfo(Level.Game).clipammo[am_clip]))
+		if (!Toucher.Player.GiveAmmo(DoomDefs::am_clip, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
 			return false;
 		cprint(Toucher.Player, GOTCLIPBOX);
 	}
 	else if (SpriteName == 'ROCK')
 	{
-		if (!Toucher.Player.GiveAmmo(am_misl, MainGameInfo(Level.Game).clipammo[am_misl]))
+		if (!Toucher.Player.GiveAmmo(DoomDefs::am_misl, MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKET);
 	}
 	else if (SpriteName == 'BROK')
 	{
-		if (!Toucher.Player.GiveAmmo(am_misl, 5 * MainGameInfo(Level.Game).clipammo[am_misl]))
+		if (!Toucher.Player.GiveAmmo(DoomDefs::am_misl, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKBOX);
 	}
 	else if (SpriteName == 'CELL')
 	{
-		if (!Toucher.Player.GiveAmmo(am_cell, MainGameInfo(Level.Game).clipammo[am_cell]))
+		if (!Toucher.Player.GiveAmmo(DoomDefs::am_cell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELL);
 	}
 	else if (SpriteName == 'CELP')
 	{
-		if (!Toucher.Player.GiveAmmo(am_cell, 5 * MainGameInfo(Level.Game).clipammo[am_cell]))
+		if (!Toucher.Player.GiveAmmo(DoomDefs::am_cell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELLBOX);
 	}
 	else if (SpriteName == 'SHEL')
 	{
-		if (!Toucher.Player.GiveAmmo(am_shell, MainGameInfo(Level.Game).clipammo[am_shell]))
+		if (!Toucher.Player.GiveAmmo(DoomDefs::am_shell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLS);
 	}
 	else if (SpriteName == 'SBOX')
 	{
-		if (!Toucher.Player.GiveAmmo(am_shell, 5 * MainGameInfo(Level.Game).clipammo[am_shell]))
+		if (!Toucher.Player.GiveAmmo(DoomDefs::am_shell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLBOX);
 	}
@@ -334,10 +334,10 @@ bool HandlePickup(Actor Toucher)
 		if (!Toucher.Player.Backpack)
 		{
 			Toucher.Player.Backpack = true;
-			for (i = 0; i < NUMAMMO; i++)
+			for (i = 0; i < DoomDefs::NUMAMMO; i++)
 				Toucher.Player.MaxAmmo[i] *= 2;
 		}
-		for (i = 0; i < NUMAMMO; i++)
+		for (i = 0; i < DoomDefs::NUMAMMO; i++)
 		{
 			Toucher.Player.GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
 		}
@@ -346,49 +346,49 @@ bool HandlePickup(Actor Toucher)
 		// weapons
 	else if (SpriteName == 'BFUG')
 	{
-		if (!Toucher.Player.GiveWeapon(wp_bfg, false))
+		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_bfg, false))
 			return false;
 		cprint(Toucher.Player, GOTBFG9000);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'MGUN')
 	{
-		if (!Toucher.Player.GiveWeapon(wp_chaingun, bDropped))
+		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_chaingun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTCHAINGUN);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'CSAW')
 	{
-		if (!Toucher.Player.GiveWeapon(wp_chainsaw, false))
+		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_chainsaw, false))
 			return false;
 		cprint(Toucher.Player, GOTCHAINSAW);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'LAUN')
 	{
-		if (!Toucher.Player.GiveWeapon(wp_missile, false))
+		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_missile, false))
 			return false;
 		cprint(Toucher.Player, GOTLAUNCHER);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'PLAS')
 	{
-		if (!Toucher.Player.GiveWeapon(wp_plasma, false))
+		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_plasma, false))
 			return false;
 		cprint(Toucher.Player, GOTPLASMA);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'SHOT')
 	{
-		if (!Toucher.Player.GiveWeapon(wp_shotgun, bDropped))
+		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_shotgun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTSHOTGUN);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'SGN2')
 	{
-		if (!Toucher.Player.GiveWeapon(wp_supershotgun, bDropped))
+		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_supershotgun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTSHOTGUN2);
 		sound = 'misc/w_pkup';
@@ -431,8 +431,8 @@ void A_BFGSpray()
 			vector(0.0, 0.0, Instigator.linetarget.Height / 4.0));
 
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion2);
-		MSG_WriteByte(EF_DL_GBALL);
+		MSG_WriteByte(DoomDefs::svc_explosion2);
+		MSG_WriteByte(DoomDefs::EF_DL_GBALL);
 		MSG_WriteShort(ftoi(emo.Origin.x));
 		MSG_WriteShort(ftoi(emo.Origin.y));
 		MSG_WriteShort(ftoi(emo.Origin.z));
@@ -472,7 +472,7 @@ void A_PosAttack()
 
 	LineAttack(dir, MISSILERANGE, damage);
 
-	Effects |= EF_DL_MUZZLEFLASH;
+	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -504,7 +504,7 @@ void A_SPosAttack()
 		LineAttack(dir, MISSILERANGE, damage);
 	}
 
-	Effects |= EF_DL_MUZZLEFLASH;
+	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -722,7 +722,7 @@ void A_CPosAttack()
 	damage = ((P_Random() % 5) + 1) * 3;
 	LineAttack(dir, MISSILERANGE, damage);
 
-	Effects |= EF_DL_MUZZLEFLASH;
+	Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -1677,6 +1677,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

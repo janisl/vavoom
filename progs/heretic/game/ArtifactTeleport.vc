@@ -37,13 +37,16 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = arti_teleport;
+	ArtifactType = HereticDefs::arti_teleport;
 	IdleState = S_ARTI_ATLP1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

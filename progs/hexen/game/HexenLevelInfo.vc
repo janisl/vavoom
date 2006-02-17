@@ -3813,7 +3813,7 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 	for (i = 0; i < A.Player.ArtifactCount; i++)
 	{
 		arti = A.Player.Inventory[i].type;
-		type = arti - arti_firstpuzzitem;
+		type = arti - HexenDefs::arti_firstpuzzitem;
 		if (type < 0)
 			continue;
 		if (type == Arg1)
@@ -3823,7 +3823,7 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 			{
 				// A puzzle item was found for the line
 				A.Player.PlayerRemoveArtifact(i);
-				if (arti < arti_firstpuzzitem)
+				if (arti < HexenDefs::arti_firstpuzzitem)
 				{
 					A.PlaySound('UseArtifact', CHAN_ITEM);
 				}
@@ -4079,6 +4079,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemOracleKey:KeyPickup
+class ItemOracleKey : KeyPickup
 	__mobjinfo__(61);
 
 __states__
@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "Oracle Key";
 	bNoDeathmatch = true;
 	IdleState = S_ORACLE_KEY;
-	KeyType = KEY_OracleKey;
+	KeyType = StrifeDefs::KEY_OracleKey;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

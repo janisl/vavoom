@@ -64,7 +64,7 @@ void TouchSpecial(Actor Toucher)
 			return;
 		}
 		checkAssembled = false;
-		gaveMana = Toucher.Player.GiveMana(MANA_BOTH, 20);
+		gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_BOTH, 20);
 		if (!gaveMana)
 		{
 			// Didn't need the mana, so don't pick it up
@@ -80,13 +80,13 @@ void TouchSpecial(Actor Toucher)
 			return;
 		}
 		PieceValue = MainGameInfo(Level.Game).pieceValueTrans[PieceValue];
-		Toucher.Player.GiveMana(MANA_BOTH, 20);
+		Toucher.Player.GiveMana(HexenDefs::MANA_BOTH, 20);
 		remove = false;
 	}
 	else
 	{
 		// Deathmatch or single player game
-		gaveMana = Toucher.Player.GiveMana(MANA_BOTH, 20);
+		gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_BOTH, 20);
 		if (Toucher.Player.Pieces & PieceValue)
 		{
 			// Already has the piece, check if mana needed
@@ -126,8 +126,8 @@ void TouchSpecial(Actor Toucher)
 		if (Toucher.Player.Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 		{
 			gaveWeapon = true;
-			Toucher.Player.WeaponOwned[WP_FOURTH] = true;
-			Toucher.Player.PendingWeapon = WP_FOURTH;
+			Toucher.Player.WeaponOwned[HexenDefs::WP_FOURTH] = true;
+			Toucher.Player.PendingWeapon = HexenDefs::WP_FOURTH;
 		}
 	}
 
@@ -152,6 +152,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.5  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

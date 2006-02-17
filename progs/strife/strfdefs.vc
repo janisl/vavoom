@@ -23,6 +23,8 @@
 //**
 //**************************************************************************
 
+class StrifeDefs : Object;
+
 enum
 {
 	svc_gun_shot = USER_PROTOCOL_START,
@@ -137,8 +139,11 @@ enum
 //
 // Player internal flags, for cheats and debug.
 //
-#define CF_NOCLIP		1	// No clipping, walk through barriers.
-#define CF_GODMODE		2	// No damage, no health loss.
+enum
+{
+	CF_NOCLIP		= 1,	// No clipping, walk through barriers.
+	CF_GODMODE		= 2		// No damage, no health loss.
+};
 
 #ifdef CLIENT
 
@@ -179,9 +184,16 @@ addfields client_state_t
 
 #endif
 
+defaultproperties
+{
+}
+
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.17  2006/02/09 22:33:11  dj_jl
 //  Moved all client game code to classes.
 //

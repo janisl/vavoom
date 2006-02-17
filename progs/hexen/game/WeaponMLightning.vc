@@ -41,14 +41,17 @@ __states__
 defaultproperties
 {
 	bNoGravity = true;
-	WeaponClass = PCLASS_MAGE;
-	WeaponType = WP_THIRD;
+	WeaponClass = HexenDefs::PCLASS_MAGE;
+	WeaponType = HexenDefs::WP_THIRD;
 	IdleState = S_MW_LIGHTNING1;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2005/08/29 19:40:09  dj_jl
 //  Fixed model name.
 //

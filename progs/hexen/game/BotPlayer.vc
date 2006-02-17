@@ -68,7 +68,7 @@ botinfo_t info;			// Aiming, name, perfection, yadda yadda
 
 int angerlevel;
 
-float combatdist[NUMWEAPONS * NUMCLASSES]; //different for each weapon.
+float combatdist[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES]; //different for each weapon.
 
 float angle;			// The wanted angle that the bot tries to get every tic.
 
@@ -188,8 +188,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the mana it gives
-		if ((weapon == WP_SECOND && player.Mana[MANA_1] == MAX_MANA) ||
-			(weapon == WP_THIRD && player.Mana[MANA_2] == MAX_MANA))
+		if ((weapon == HexenDefs::WP_SECOND && player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA) ||
+			(weapon == HexenDefs::WP_THIRD && player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA))
 			return false;
 	}
 
@@ -203,8 +203,8 @@ bool CheckItem(Actor item)
 			return true;
 
 		// If we have no more room for the mana it gives
-		if (player.Mana[MANA_1] == MAX_MANA &&
-			player.Mana[MANA_2] == MAX_MANA)
+		if (player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA &&
+			player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA)
 			return false;
 	}
 
@@ -212,12 +212,12 @@ bool CheckItem(Actor item)
 	if (mana != -1)
 	{
 		// If we have no more room for the mana it gives
-		if (mana == MANA_1 && player.Mana[MANA_1] == MAX_MANA)
+		if (mana == HexenDefs::MANA_1 && player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA)
 			return false;
-		if (mana == MANA_2 && player.Mana[MANA_2] == MAX_MANA)
+		if (mana == HexenDefs::MANA_2 && player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA)
 			return false;
-		if (mana == MANA_BOTH && player.Mana[MANA_1] == MAX_MANA &&
-			player.Mana[MANA_2] == MAX_MANA)
+		if (mana == HexenDefs::MANA_BOTH && player.Mana[HexenDefs::MANA_1] == HexenDefs::MAX_MANA &&
+			player.Mana[HexenDefs::MANA_2] == HexenDefs::MAX_MANA)
 			return false;
 	}
 
@@ -701,9 +701,9 @@ void BotAim()
 	*/
 
 	// Fix me: Implement botskill, accuracy, and intelligence
-	if ((player.PClass == PCLASS_FIGHTER && player.ReadyWeapon >= WP_THIRD) ||
-		(player.PClass == PCLASS_CLERIC && player.ReadyWeapon >= WP_SECOND) ||
-		(player.PClass == PCLASS_MAGE))
+	if ((player.PClass == HexenDefs::PCLASS_FIGHTER && player.ReadyWeapon >= HexenDefs::WP_THIRD) ||
+		(player.PClass == HexenDefs::PCLASS_CLERIC && player.ReadyWeapon >= HexenDefs::WP_SECOND) ||
+		(player.PClass == HexenDefs::PCLASS_MAGE))
 	{
 		// Projectile weapons
 		switch (info.intelect)
@@ -1087,7 +1087,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon == WP_FIRST))
+				(bItemIsWeapon && player.ReadyWeapon == HexenDefs::WP_FIRST))
 			{
 				Roam();
 				return;
@@ -1104,7 +1104,7 @@ void Move(float deltaTime)
 			sidemove = -sidemove;
 
 		if (CheckTo(enemy.Origin) && dist >
-				combatdist[player.PClass * NUMWEAPONS + player.ReadyWeapon])
+				combatdist[player.PClass * HexenDefs::NUMWEAPONS + player.ReadyWeapon])
 			forwardmove = FORWARDRUN;
 		else
 			forwardmove = -FORWARDRUN;
@@ -1306,33 +1306,33 @@ void OnBeginPlay()
 	// Setup combat distance tables
 	if (player.Level.Game.deathmatch)
 	{
-		combatdist[WP_FIRST]		= 48.0;
-		combatdist[WP_SECOND]		= 48.0;
-		combatdist[WP_THIRD]		= 192.0;
-		combatdist[WP_FOURTH]		= 256.0;
-		combatdist[4 + WP_FIRST]	= 48.0;
-		combatdist[4 + WP_SECOND]	= 192.0;
-		combatdist[4 + WP_THIRD]	= 256.0;
-		combatdist[4 + WP_FOURTH]	= 384.0;
-		combatdist[8 + WP_FIRST]	= 192.0;
-		combatdist[8 + WP_SECOND]	= 256.0;
-		combatdist[8 + WP_THIRD]	= 384.0;
-		combatdist[8 + WP_FOURTH]	= 384.0;
+		combatdist[HexenDefs::WP_FIRST]		= 48.0;
+		combatdist[HexenDefs::WP_SECOND]		= 48.0;
+		combatdist[HexenDefs::WP_THIRD]		= 192.0;
+		combatdist[HexenDefs::WP_FOURTH]		= 256.0;
+		combatdist[4 + HexenDefs::WP_FIRST]	= 48.0;
+		combatdist[4 + HexenDefs::WP_SECOND]	= 192.0;
+		combatdist[4 + HexenDefs::WP_THIRD]	= 256.0;
+		combatdist[4 + HexenDefs::WP_FOURTH]	= 384.0;
+		combatdist[8 + HexenDefs::WP_FIRST]	= 192.0;
+		combatdist[8 + HexenDefs::WP_SECOND]	= 256.0;
+		combatdist[8 + HexenDefs::WP_THIRD]	= 384.0;
+		combatdist[8 + HexenDefs::WP_FOURTH]	= 384.0;
 	}
 	else
 	{
-		combatdist[WP_FIRST]		= 48.0;
-		combatdist[WP_SECOND]		= 48.0;
-		combatdist[WP_THIRD]		= 192.0 / 2.0;
-		combatdist[WP_FOURTH]		= 256.0 / 2.0;
-		combatdist[4 + WP_FIRST]	= 48.0;
-		combatdist[4 + WP_SECOND]	= 192.0 / 2.0;
-		combatdist[4 + WP_THIRD]	= 256.0 / 2.0;
-		combatdist[4 + WP_FOURTH]	= 384.0 / 2.0;
-		combatdist[8 + WP_FIRST]	= 192.0 / 2.0;
-		combatdist[8 + WP_SECOND]	= 256.0 / 2.0;
-		combatdist[8 + WP_THIRD]	= 384.0 / 2.0;
-		combatdist[8 + WP_FOURTH]	= 384.0 / 2.0;
+		combatdist[HexenDefs::WP_FIRST]		= 48.0;
+		combatdist[HexenDefs::WP_SECOND]		= 48.0;
+		combatdist[HexenDefs::WP_THIRD]		= 192.0 / 2.0;
+		combatdist[HexenDefs::WP_FOURTH]		= 256.0 / 2.0;
+		combatdist[4 + HexenDefs::WP_FIRST]	= 48.0;
+		combatdist[4 + HexenDefs::WP_SECOND]	= 192.0 / 2.0;
+		combatdist[4 + HexenDefs::WP_THIRD]	= 256.0 / 2.0;
+		combatdist[4 + HexenDefs::WP_FOURTH]	= 384.0 / 2.0;
+		combatdist[8 + HexenDefs::WP_FIRST]	= 192.0 / 2.0;
+		combatdist[8 + HexenDefs::WP_SECOND]	= 256.0 / 2.0;
+		combatdist[8 + HexenDefs::WP_THIRD]	= 384.0 / 2.0;
+		combatdist[8 + HexenDefs::WP_FOURTH]	= 384.0 / 2.0;
 	}
 }
 
@@ -1353,6 +1353,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.8  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

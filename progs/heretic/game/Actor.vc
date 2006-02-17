@@ -397,15 +397,15 @@ void ExplodeMissile()
 	{
 		PlaySound(DeathSound, CHAN_VOICE);
 	}
-	if (Effects & EF_DLIGHT_MASK)
+	if (Effects & HereticDefs::EF_DLIGHT_MASK)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(Effects & EF_DLIGHT_MASK);
+		MSG_WriteByte(HereticDefs::svc_explosion);
+		MSG_WriteByte(Effects & HereticDefs::EF_DLIGHT_MASK);
 		MSG_WriteShort(ftoi(Origin.x));
 		MSG_WriteShort(ftoi(Origin.y));
 		MSG_WriteShort(ftoi(Origin.z));
-		Effects &= ~EF_DLIGHT_MASK;
+		Effects &= ~HereticDefs::EF_DLIGHT_MASK;
 	}
 }
 
@@ -676,9 +676,9 @@ bool AutoUseChaosDevice()
 
 	for (i = 0; i < Player.InventorySlotNum; i++)
 	{
-		if (Player.Inventory[i].type == arti_teleport)
+		if (Player.Inventory[i].type == HereticDefs::arti_teleport)
 		{
-			Player.PlayerUseArtifact(arti_teleport);
+			Player.PlayerUseArtifact(HereticDefs::arti_teleport);
 			Health = (Health + 1) / 2;
 			Player.Health = Health;
 			return true;
@@ -706,12 +706,12 @@ void AutoUseHealth(int saveHealth)
 	superCount = 0;
 	for (i = 0; i < Player.InventorySlotNum; i++)
 	{
-		if (Player.Inventory[i].type == arti_health)
+		if (Player.Inventory[i].type == HereticDefs::arti_health)
 		{
 			normalSlot = i;
 			normalCount = Player.Inventory[i].count;
 		}
-		else if (Player.Inventory[i].type == arti_superhealth)
+		else if (Player.Inventory[i].type == HereticDefs::arti_superhealth)
 		{
 			superSlot = i;
 			superCount = Player.Inventory[i].count;
@@ -3521,8 +3521,8 @@ bool PTR_ShootTraverse(intercept_t * in)
 		A.PlaySound('weapons/blastershoot', CHAN_VOICE);
 
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(EF_DL_BLUE);
+		MSG_WriteByte(HereticDefs::svc_explosion);
+		MSG_WriteByte(HereticDefs::EF_DL_BLUE);
 		MSG_WriteShort(ftoi(hit_point.x));
 		MSG_WriteShort(ftoi(hit_point.y));
 		MSG_WriteShort(ftoi(hit_point.z));
@@ -3536,7 +3536,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 		if (!th.bNoBlood && P_Random() < 192)
 		{
 			MSG_Select(MSG_SV_DATAGRAM);
-			MSG_WriteByte(svc_blood);
+			MSG_WriteByte(HereticDefs::svc_blood);
 			MSG_WriteShort(ftoi(hit_point.x));
 			MSG_WriteShort(ftoi(hit_point.y));
 			MSG_WriteShort(ftoi(hit_point.z));
@@ -3658,8 +3658,8 @@ void A_Explode()
 	if (Class == FireBomb)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(EF_DL_WHITE);
+		MSG_WriteByte(HereticDefs::svc_explosion);
+		MSG_WriteByte(HereticDefs::EF_DL_WHITE);
 		MSG_WriteShort(ftoi(Origin.x));
 		MSG_WriteShort(ftoi(Origin.y));
 		MSG_WriteShort(ftoi(Origin.z));
@@ -3667,8 +3667,8 @@ void A_Explode()
 	if (Class == Pod)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(EF_DL_GREEN);
+		MSG_WriteByte(HereticDefs::svc_explosion);
+		MSG_WriteByte(HereticDefs::EF_DL_GREEN);
 		MSG_WriteShort(ftoi(Origin.x));
 		MSG_WriteShort(ftoi(Origin.y));
 		MSG_WriteShort(ftoi(Origin.z));
@@ -3702,8 +3702,8 @@ void SpawnPuff(TVec org, classid PuffType)
 	if (PuffType == GoldWandPuff1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(EF_DL_WHITE);
+		MSG_WriteByte(HereticDefs::svc_explosion);
+		MSG_WriteByte(HereticDefs::EF_DL_WHITE);
 		MSG_WriteShort(ftoi(org.x));
 		MSG_WriteShort(ftoi(org.y));
 		MSG_WriteShort(ftoi(org.z));
@@ -3711,8 +3711,8 @@ void SpawnPuff(TVec org, classid PuffType)
 	if (PuffType == BlasterPuff1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(svc_explosion);
-		MSG_WriteByte(EF_DL_BLUE);
+		MSG_WriteByte(HereticDefs::svc_explosion);
+		MSG_WriteByte(HereticDefs::EF_DL_BLUE);
 		MSG_WriteShort(ftoi(org.x));
 		MSG_WriteShort(ftoi(org.y));
 		MSG_WriteShort(ftoi(org.z));
@@ -3734,6 +3734,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.23  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

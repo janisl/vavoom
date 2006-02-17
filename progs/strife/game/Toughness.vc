@@ -38,8 +38,8 @@ bool HandlePickup(Actor Toucher)
 	Ret = ::HandlePickup(Toucher);
 	if (Ret && !bDropped)
 	{
-		Toucher.Player.GiveInvItem(ITEM_Accuracy, 1);
-		Toucher.Player.GiveInvItem(ITEM_Coin, Toucher.Player.Accuracy * 5 + 300);
+		Toucher.Player.GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);
+		Toucher.Player.GiveInvItem(StrifeDefs::ITEM_Coin, Toucher.Player.Accuracy * 5 + 300);
 	}
 }
 
@@ -53,12 +53,15 @@ defaultproperties
 	ConversationID = 309;
 	PickupString = "Toughness";
 	IdleState = S_TOUGHNESS;
-	ItemType = ITEM_Toughness;
+	ItemType = StrifeDefs::ITEM_Toughness;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.3  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

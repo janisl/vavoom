@@ -68,7 +68,7 @@ botinfo_t info;			// Aiming, name, perfection, yadda yadda
 
 int angerlevel;
 
-float combatdist[NUMWEAPONS + 1]; //different for each weapon.
+float combatdist[DoomDefs::NUMWEAPONS + 1]; //different for each weapon.
 
 float angle;			// The wanted angle that the bot tries to get every tic.
 
@@ -709,13 +709,13 @@ void BotAim()
 	switch (player.ReadyWeapon)
 	{
 		// Splash weapons
-	case wp_missile:
+	case DoomDefs::wp_missile:
 //	case wp_grenlauncher:
 //		bot->SetAngle(R_PointToAngle2(MO->x, MO->y, enemy->x, enemy->y));
 //		break;
 
 		// Projectile weapons
-	case wp_plasma:
+	case DoomDefs::wp_plasma:
 		switch (info.intelect)
 		{
 		case bsk_verypoor:
@@ -741,13 +741,13 @@ void BotAim()
 
 		break;
 		// BFG9000
-	case wp_bfg:
+	case DoomDefs::wp_bfg:
 		SetAngle(AngleTo(enemy.Origin));
 		break;
 
 		// Instant weapons
-	case wp_chainsaw:
-	case wp_fist:
+	case DoomDefs::wp_chainsaw:
+	case DoomDefs::wp_fist:
 	default:
 
 		switch (info.accuracy)
@@ -1105,7 +1105,7 @@ void Move(float deltaTime)
 		if (item)
 		{
 			if (bItemIsPowerup ||
-				(bItemIsWeapon && player.ReadyWeapon == wp_pistol))
+				(bItemIsWeapon && player.ReadyWeapon == DoomDefs::wp_pistol))
 			{
 				Roam();
 				return;
@@ -1161,7 +1161,7 @@ void Attack()
 
 	switch (player.ReadyWeapon)
 	{
-	case wp_chaingun:
+	case DoomDefs::wp_chaingun:
 		// Double tap the chaingun for extreme accuracy
 		if (info.accuracy == bsk_supreme)
 			if (t_fire)
@@ -1335,27 +1335,27 @@ void OnBeginPlay()
 	// Setup combat distance tables
 	if (player.Level.Game.deathmatch)
 	{
-		combatdist[wp_fist]			= 1.0;
-		combatdist[wp_chainsaw]		= 1.0;
-		combatdist[wp_pistol]		= 256.0;
-		combatdist[wp_shotgun]		= 192.0;
-		combatdist[wp_supershotgun]	= 128.0;
-		combatdist[wp_chaingun]		= 256.0;
-		combatdist[wp_missile]		= SAFE_SELF_MISDIST * 2.0;
-		combatdist[wp_plasma]		= 384.0;
-		combatdist[wp_bfg]			= 384.0;
+		combatdist[DoomDefs::wp_fist]			= 1.0;
+		combatdist[DoomDefs::wp_chainsaw]		= 1.0;
+		combatdist[DoomDefs::wp_pistol]		= 256.0;
+		combatdist[DoomDefs::wp_shotgun]		= 192.0;
+		combatdist[DoomDefs::wp_supershotgun]	= 128.0;
+		combatdist[DoomDefs::wp_chaingun]		= 256.0;
+		combatdist[DoomDefs::wp_missile]		= SAFE_SELF_MISDIST * 2.0;
+		combatdist[DoomDefs::wp_plasma]		= 384.0;
+		combatdist[DoomDefs::wp_bfg]			= 384.0;
 	}
 	else
 	{
-		combatdist[wp_fist]			= 1.0;
-		combatdist[wp_chainsaw]		= 1.0;
-		combatdist[wp_pistol]		= 256.0 / 2.0;
-		combatdist[wp_shotgun]		= 192.0 / 2.0;
-		combatdist[wp_supershotgun]	= 128.0 / 2.0;
-		combatdist[wp_chaingun]		= 256.0 / 2.0;
-		combatdist[wp_missile]		= SAFE_SELF_MISDIST * 2.0 / 2.0;
-		combatdist[wp_plasma]		= 384.0 / 2.0;
-		combatdist[wp_bfg]			= 384.0 / 2.0;
+		combatdist[DoomDefs::wp_fist]			= 1.0;
+		combatdist[DoomDefs::wp_chainsaw]		= 1.0;
+		combatdist[DoomDefs::wp_pistol]		= 256.0 / 2.0;
+		combatdist[DoomDefs::wp_shotgun]		= 192.0 / 2.0;
+		combatdist[DoomDefs::wp_supershotgun]	= 128.0 / 2.0;
+		combatdist[DoomDefs::wp_chaingun]		= 256.0 / 2.0;
+		combatdist[DoomDefs::wp_missile]		= SAFE_SELF_MISDIST * 2.0 / 2.0;
+		combatdist[DoomDefs::wp_plasma]		= 384.0 / 2.0;
+		combatdist[DoomDefs::wp_bfg]			= 384.0 / 2.0;
 	}
 }
 
@@ -1376,6 +1376,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.8  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

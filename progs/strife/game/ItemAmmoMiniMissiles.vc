@@ -37,13 +37,16 @@ defaultproperties
 	ConversationID = 181;
 	PickupString = "mini missiles";
 	IdleState = S_MINI_MISSILES;
-	AmmoType = am_misl;
+	AmmoType = StrifeDefs::am_misl;
 	AmmoCount = 4;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.4  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

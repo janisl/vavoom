@@ -35,12 +35,15 @@ defaultproperties
 	ConversationID = 191;
 	PickupString = "flame thrower parts";
 	IdleState = S_FLAME_THROWER_PARTS;
-	ItemType = ITEM_FlameThrowerParts;
+	ItemType = StrifeDefs::ITEM_FlameThrowerParts;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:53  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2003/10/02 17:15:47  dj_jl
 //  Inventory items.
 //

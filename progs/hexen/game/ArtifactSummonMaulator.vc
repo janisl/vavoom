@@ -34,7 +34,7 @@ __states__
 
 defaultproperties
 {
-	ArtifactType = arti_summon;
+	ArtifactType = HexenDefs::arti_summon;
 	IdleState = S_ARTI_SUMMON;
 	DormantState = S_DORMANTARTI2_1;
 }
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

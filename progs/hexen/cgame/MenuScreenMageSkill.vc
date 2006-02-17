@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreenMageSkill:MenuScreenFighterSkill;
+class MenuScreenMageSkill : MenuScreenFighterSkill;
 
 defaultproperties
 {
@@ -33,12 +33,15 @@ defaultproperties
 	SkillNames[3] = "WARLOCK";
 	SkillNames[4] = "ARCHIMAGE";
 	ChoicesStartX = 112;
-	PClass = PCLASS_MAGE;
+	PClass = HexenDefs::PCLASS_MAGE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/17 19:06:52  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

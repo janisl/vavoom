@@ -35,14 +35,17 @@ __states__
 defaultproperties
 {
 	IdleState = S_AMMO;
-	AmmoType = am_clip;
-	AmmoCount = 5 * MainGameInfo(Level.Game).clipammo[am_clip];
+	AmmoType = DoomDefs::am_clip;
+	AmmoCount = 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip];
 	PickupMessage = "Picked up a box of bullets.";
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/17 19:06:51  dj_jl
+//  Moved common defs to classes.
+//
 //  Revision 1.2  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //
