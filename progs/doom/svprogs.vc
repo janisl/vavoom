@@ -31,30 +31,26 @@
 
 #include "doomdefs.vc"
 
-enum
-{
-	PO_ANCHOR_TYPE = 9300,
-	PO_SPAWN_TYPE,
-	PO_SPAWNCRUSH_TYPE
-};
-
 //#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
 #define POLY_SEQ_NAME(num)		'Sequence0'
 
 //
 // Map things flags
 //
-#define	MTF_EASY		0x0001	// Skill flags.
-#define	MTF_NORMAL		0x0002
-#define	MTF_HARD		0x0004
-#define	MTF_AMBUSH		0x0008	// Deaf monsters/do not react to sound.
-#define MTF_DORMANT		0x0010	// The thing is dormant
-#define MTF_FIGHTER		0x0020	// Thing appearing in player classes
-#define MTF_CLERIC		0x0040
-#define MTF_MAGE		0x0080
-#define MTF_GSINGLE		0x0100	// Appearing in game modes
-#define MTF_GCOOP		0x0200
-#define MTF_GDEATHMATCH	0x0400
+enum
+{
+	MTF_EASY		= 0x0001,	// Skill flags.
+	MTF_NORMAL		= 0x0002,
+	MTF_HARD		= 0x0004,
+	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
+	MTF_DORMANT		= 0x0010,	// The thing is dormant
+	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
+	MTF_CLERIC		= 0x0040,
+	MTF_MAGE		= 0x0080,
+	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
+	MTF_GCOOP		= 0x0200,
+	MTF_GDEATHMATCH	= 0x0400
+};
 
 #define VIEWHEIGHT		41.0
 
@@ -247,175 +243,9 @@ enum
 };
 #endif
 
-enum
-{
-	DOOREV_Close,
-	DOOREV_Open,
-	DOOREV_Raise,
-	DOOREV_RaiseLocked,
-	DOOREV_CloseWaitOpen,
-	DOOREV_RaiseIn5Mins
-};
-
-enum
-{
-	FLOOREV_LowerToHighest,
-	FLOOREV_RaiseToHighest,
-	FLOOREV_LowerToLowest,
-	FLOOREV_LowerToNearest,
-	FLOOREV_RaiseToNearest,
-	FLOOREV_RaiseToLowestCeiling,
-	FLOOREV_LowerByValue,
-	FLOOREV_RaiseByValue,
-	FLOOREV_LowerByValueTimes8,
-	FLOOREV_RaiseByValueTimes8,
-	FLOOREV_LowerTimes8Instant,
-	FLOOREV_RaiseTimes8Instant,
-	FLOOREV_MoveToValueTimes8,
-	FLOOREV_RaiseByTexture,
-	FLOOREV_LowerToLowestChange,
-	FLOOREV_RaiseToNearestChange,
-	FLOOREV_RaiseByValueChange,
-	FLOOREV_RaiseByValueChange2,
-	FLOOREV_RaiseAndCrush,
-	FLOOREV_RaiseBuildStep,
-	FLOOREV_Generic,
-	FLOOREV_GenericChange0,
-	FLOOREV_GenericChangeT,
-	FLOOREV_GenericChange,
-	FLOOREV_Donut
-};
-
-enum
-{
-	ELEVEV_Down,
-	ELEVEV_Up,
-	ELEVEV_Current,
-	ELEVEV_Raise,
-	ELEVEV_Lower
-};
-
-enum
-{
-	STAIRSEV_DownNormal,
-	STAIRSEV_UpNormal,
-	STAIRSEV_DownSync,
-	STAIRSEV_UpSync
-};
-
-enum
-{
-	WGLSTATE_EXPAND,
-	WGLSTATE_STABLE,
-	WGLSTATE_REDUCE
-};
-
-enum
-{
-	CEILEV_LowerToFloor,
-	CEILEV_LowerToHighestFloor,
-	CEILEV_LowerToLowest,
-	CEILEV_RaiseToHighest,
-	CEILEV_RaiseToNearest,
-	CEILEV_LowerByValue,
-	CEILEV_RaiseByValue,
-	CEILEV_LowerByValueTimes8,
-	CEILEV_RaiseByValueTimes8,
-	CEILEV_LowerTimes8Instant,
-	CEILEV_RaiseTimes8Instant,
-	CEILEV_MoveToValueTimes8,
-	CEILEV_LowerAndCrush,
-	CEILEV_CrushAndRaise,
-	CEILEV_CrushRaiseAndStay,
-	CEILEV_CrushAndRaiseA,
-	CEILEV_CrushAndRaiseSilA,
-	CEILEV_CrushRaiseAndStayA,
-	CEILEV_CrushRaiseAndStaySilA,
-	CEILEV_Generic,
-	CEILEV_GenericChange0,
-	CEILEV_GenericChangeT,
-	CEILEV_GenericChange,
-	CEILEV_GenericCrush
-};
-
-enum
-{
-	PLAT_Up,
-	PLAT_Down,
-	PLAT_Waiting,
-	PLAT_InStasis
-};
-
-enum
-{
-	PLATEV_PerpetualRaise,
-	PLATEV_PerpetualRaiseLip,
-	PLATEV_DownWaitUpStay,
-	PLATEV_DownWaitUpStayLip,
-	PLATEV_DownNearestWaitUpStay,
-	PLATEV_DownLowestCeilingWaitUpStay,
-	PLATEV_DownByValueWaitUpStay,
-	PLATEV_UpWaitDownStay,
-	PLATEV_UpNearestWaitDownStay,
-	PLATEV_UpByValueWaitDownStay,
-	PLATEV_Toggle,
-	PLATEV_Generic
-};
-
-#define STROBEBRIGHT		5
-#define FASTDARK			15
-#define SLOWDARK			35
-
-enum
-{
-	LIGHTEV_Fade,
-	LIGHTEV_Glow,
-	LIGHTEV_Flicker,
-	LIGHTEV_Strobe
-};
-
-enum
-{
-	SCROLLEV_Side,
-	SCROLLEV_Floor,
-	SCROLLEV_Ceiling,
-	SCROLLEV_Carry
-};
-
-enum
-{
-	PUSHER_Push,
-	PUSHER_Pull,
-	PUSHER_Wind,
-	PUSHER_Current
-};
-
-enum
-{
-	PODOOR_NONE,
-	PODOOR_SLIDE,
-	PODOOR_SWING
-};
-
 // TYPES -------------------------------------------------------------------
 
 class PolyobjThinker;
-
-addfields polyobj_t
-{
-	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
-};
-
-struct tagged_line_t
-{
-	line_t *line;
-	int lineTag;
-};
-
-addfields line_t
-{
-	int			LineTag;
-};
 
 #ifdef DDF
 struct AttackType
@@ -471,11 +301,7 @@ struct AttackType
 #endif
 
 #ifndef	NO_BOTS
-/*
-
-  Class definitions for botinfo, chatinfo, and
-  other various bot information thingamabobers.
-*/
+class BotPlayer;
 
 enum
 {
@@ -511,77 +337,6 @@ struct botinfo_t
 	string userinfo;
 };
 
-/*struct chatline_t
-{
-	char		*string;
-	chattype_t  bot;
-	chatline_t	*line;
-};
-
-struct chatinfo_t
-{
-	chatline_t		intro[5];
-	chatline_t		inter[5];
-	chatline_t		rare[5];
-	chatline_t		frag[15];
-	chatline_t		died[10];
-	chatline_t		roam[10];
-	chatline_t		pissed[5];
-	chatline_t		frustrated[5];
-	chatline_t		special[20];
-} chatinfo_t;*/
-
-/*
-
-  The bot class, prototypes and definitions be here!
-
-*/
-
-#define FORWARDWALK		200.0
-#define FORWARDRUN		400.0
-#define SIDEWALK		192.0
-#define SIDERUN			320.0
-
-/*#define MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
-#define AVOID_DIST					512.0	//Try avoid incoming missiles once they reached this close
-#define SAFE_SELF_MISDIST			128.0	//Distance from self to target where it's safe to pull a rocket.
-/*#define FRIEND_DIST					(128*FRACUNIT)	//To friend.
-#define DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
-#define WHATS_DARK					64				//light value thats classed as dark.
-#define MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
-#define ENEMY_SCAN_FOV				120.0
-/*#define MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
-#define GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
-#define SHOOTFOV					60.0
-/*#define MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
-
-// The things the bot knows about their enemy
-//struct enemyinfo_t
-//{
-//	int				health;
-//	weapontype_t	weap;
-//};
-
-//
-// Bot states
-//
-enum
-{
-	// Deciding what to do
-	BST_NOTHING,
-	// Bot is "fetching" something (skull, whatever)
-	BST_OFFENSE,
-	// Bot is defending something
-	BST_DEFENSE,
-	// Bot is heading to scoring place
-	BST_RETURN
-};
-
-class BotPlayer;
-
-#define NUMTOTALBOTS	30
-#define	NUMBOTTYPES		30
-
 #endif
 
 #include "game/classes.vc"
@@ -599,6 +354,9 @@ class BotPlayer;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/19 14:18:03  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.2  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

@@ -25,6 +25,34 @@
 
 class CeilingMover : SectorMover;
 
+enum
+{
+	CEILEV_LowerToFloor,
+	CEILEV_LowerToHighestFloor,
+	CEILEV_LowerToLowest,
+	CEILEV_RaiseToHighest,
+	CEILEV_RaiseToNearest,
+	CEILEV_LowerByValue,
+	CEILEV_RaiseByValue,
+	CEILEV_LowerByValueTimes8,
+	CEILEV_RaiseByValueTimes8,
+	CEILEV_LowerTimes8Instant,
+	CEILEV_RaiseTimes8Instant,
+	CEILEV_MoveToValueTimes8,
+	CEILEV_LowerAndCrush,
+	CEILEV_CrushAndRaise,
+	CEILEV_CrushRaiseAndStay,
+	CEILEV_CrushAndRaiseA,
+	CEILEV_CrushAndRaiseSilA,
+	CEILEV_CrushRaiseAndStayA,
+	CEILEV_CrushRaiseAndStaySilA,
+	CEILEV_Generic,
+	CEILEV_GenericChange0,
+	CEILEV_GenericChangeT,
+	CEILEV_GenericChange,
+	CEILEV_GenericCrush
+};
+
 int			Type;
 float		BottomDist;
 float		TopDist;
@@ -460,6 +488,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.5  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

@@ -25,6 +25,35 @@
 
 class FloorMover : SectorMover;
 
+enum
+{
+	FLOOREV_LowerToHighest,
+	FLOOREV_RaiseToHighest,
+	FLOOREV_LowerToLowest,
+	FLOOREV_LowerToNearest,
+	FLOOREV_RaiseToNearest,
+	FLOOREV_RaiseToLowestCeiling,
+	FLOOREV_LowerByValue,
+	FLOOREV_RaiseByValue,
+	FLOOREV_LowerByValueTimes8,
+	FLOOREV_RaiseByValueTimes8,
+	FLOOREV_LowerTimes8Instant,
+	FLOOREV_RaiseTimes8Instant,
+	FLOOREV_MoveToValueTimes8,
+	FLOOREV_RaiseByTexture,
+	FLOOREV_LowerToLowestChange,
+	FLOOREV_RaiseToNearestChange,
+	FLOOREV_RaiseByValueChange,
+	FLOOREV_RaiseByValueChange2,
+	FLOOREV_RaiseAndCrush,
+	FLOOREV_RaiseBuildStep,
+	FLOOREV_Generic,
+	FLOOREV_GenericChange0,
+	FLOOREV_GenericChangeT,
+	FLOOREV_GenericChange,
+	FLOOREV_Donut
+};
+
 int		Type;
 float	Speed;
 int		Crush;
@@ -539,6 +568,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.7  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

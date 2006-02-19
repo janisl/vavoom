@@ -25,6 +25,16 @@
 
 class VerticalDoor : SectorMover;
 
+enum
+{
+	DOOREV_Close,
+	DOOREV_Open,
+	DOOREV_Raise,
+	DOOREV_RaiseLocked,
+	DOOREV_CloseWaitOpen,
+	DOOREV_RaiseIn5Mins
+};
+
 int			Type;
 float		TopHeight;
 float		Speed;
@@ -421,6 +431,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.8  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

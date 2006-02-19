@@ -25,6 +25,14 @@
 
 class Scroller : SectorThinker;
 
+enum
+{
+	SCROLLEV_Side,
+	SCROLLEV_Floor,
+	SCROLLEV_Ceiling,
+	SCROLLEV_Carry
+};
+
 int				Type;
 int				Affectee;
 float			XSpeed;
@@ -335,6 +343,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.2  2005/07/09 13:55:46  dj_jl
 //  Scrolers carrying objects.
 //

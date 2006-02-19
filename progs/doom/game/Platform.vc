@@ -25,6 +25,30 @@
 
 class Platform : SectorMover;
 
+enum
+{
+	PLAT_Up,
+	PLAT_Down,
+	PLAT_Waiting,
+	PLAT_InStasis
+};
+
+enum
+{
+	PLATEV_PerpetualRaise,
+	PLATEV_PerpetualRaiseLip,
+	PLATEV_DownWaitUpStay,
+	PLATEV_DownWaitUpStayLip,
+	PLATEV_DownNearestWaitUpStay,
+	PLATEV_DownLowestCeilingWaitUpStay,
+	PLATEV_DownByValueWaitUpStay,
+	PLATEV_UpWaitDownStay,
+	PLATEV_UpNearestWaitDownStay,
+	PLATEV_UpByValueWaitDownStay,
+	PLATEV_Toggle,
+	PLATEV_Generic
+};
+
 int		Type;
 int		Tag;
 float	Speed;
@@ -365,6 +389,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.6  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

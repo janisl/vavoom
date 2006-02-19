@@ -25,6 +25,15 @@
 
 class Elevator : SectorMover;
 
+enum
+{
+	ELEVEV_Down,
+	ELEVEV_Up,
+	ELEVEV_Current,
+	ELEVEV_Raise,
+	ELEVEV_Lower
+};
+
 int			Type;
 int			Direction;
 float		Speed;
@@ -161,6 +170,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

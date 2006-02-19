@@ -1477,7 +1477,7 @@ void A_KeenDie()
 	{
 		return;
 	}
-	DoomLevelInfo(Level).EV_DoDoor(666, 16, 150, 0, 0, DOOREV_Open, NULL, none);
+	DoomLevelInfo(Level).EV_DoDoor(666, 16, 150, 0, 0, VerticalDoor::DOOREV_Open, NULL, none);
 }
 
 //==========================================================================
@@ -1554,28 +1554,28 @@ void A_BossDeath()
 	// victory!
 	if (!strcmp(mapname, "E1M8"))
 	{
-		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FloorMover::FLOOREV_LowerToLowest, NULL);
 		return;
 	}
 	if (!strcmp(mapname, "E4M6"))
 	{
-		DoomLevelInfo(Level).EV_DoDoor(666, 64, 150, 0, 0, DOOREV_Open, NULL, none);
+		DoomLevelInfo(Level).EV_DoDoor(666, 64, 150, 0, 0, VerticalDoor::DOOREV_Open, NULL, none);
 		return;
 	}
 	if (!strcmp(mapname, "E4M8"))
 	{
-		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FloorMover::FLOOREV_LowerToLowest, NULL);
 		return;
 	}
 	if (!strcmp(mapname, "MAP07"))
 	{
 		if (Class == Mancubus)
 		{
-			DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+			DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FloorMover::FLOOREV_LowerToLowest, NULL);
 		}
 		else	// mo->Class == MT_BABY
 		{
-			DoomLevelInfo(Level).EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_RaiseByTexture, NULL);
+			DoomLevelInfo(Level).EV_DoFloor(667, 8, 0, 0, 0, FloorMover::FLOOREV_RaiseByTexture, NULL);
 		}
 		return;
 	}
@@ -1677,6 +1677,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.3  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

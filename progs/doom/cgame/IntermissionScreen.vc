@@ -147,7 +147,7 @@ int cnt_time;
 float cnt_pause;
 int cnt_frags[MAXPLAYERS];
 
-int dm_frags[MAXPLAYERS][MAXPLAYERS];
+int dm_frags[MAXPLAYERS * MAXPLAYERS];
 int dm_totals[MAXPLAYERS];
 
 // "killers", "victims"
@@ -197,7 +197,7 @@ anim_t epsd0animinfo[10];
 anim_t epsd1animinfo[9];
 anim_t epsd2animinfo[6];
 
-point_t lnodes[NUMEPISODES][NUMMAPS];
+point_t lnodes[NUMEPISODES * NUMMAPS];
 
 #endif
 
@@ -357,8 +357,8 @@ void SetAnim2(anim_t* a, int Type, float Period, int NAnims, int x, int y, int l
 
 void SetLN(int epi, int map, int x, int y)
 {
-	lnodes[epi][map].x = x;
-	lnodes[epi][map].y = y;
+	lnodes[epi * NUMMAPS + map].x = x;
+	lnodes[epi * NUMMAPS + map].y = y;
 }
 
 //==========================================================================
@@ -495,7 +495,7 @@ void DrawWindow(GC gc)
 //
 //==========================================================================
 
-void IM_InitAnimatedBack(void)
+void IM_InitAnimatedBack()
 {
 	int i;
 	anim_t *a;
@@ -544,7 +544,7 @@ void IM_InitAnimatedBack(void)
 //
 //==========================================================================
 
-void IM_DrawBackground(void)
+void IM_DrawBackground()
 {
 	R_DrawPic(0, 0, patchINTERPIC);
 	// draw animated background
@@ -570,7 +570,7 @@ void IM_DrawBackground(void)
 //
 //==========================================================================
 
-void IM_UpdateBackground(void)
+void IM_UpdateBackground()
 {
 	int i;
 	anim_t *a;
@@ -628,7 +628,7 @@ void IM_UpdateBackground(void)
 //
 //==========================================================================
 
-void IM_DrawBackground(void)
+void IM_DrawBackground()
 {
 	R_DrawPic(0, 0, patchINTERPIC);
 }
@@ -640,7 +640,7 @@ void IM_DrawBackground(void)
 //
 //==========================================================================
 
-void IM_LoadData(void)
+void IM_LoadData()
 {
 	picinfo_t info;
 	int i;
@@ -727,7 +727,7 @@ void IM_LoadData(void)
 //
 //==========================================================================
 
-void IM_UnloadData(void)
+void IM_UnloadData()
 {
 }
 
@@ -739,7 +739,7 @@ void IM_UnloadData(void)
 //
 //==========================================================================
 
-void IM_DrawLF(void)
+void IM_DrawLF()
 {
 	int y = WI_TITLEY;
 
@@ -761,7 +761,7 @@ void IM_DrawLF(void)
 //
 //==========================================================================
 
-void IM_DrawEL(void)
+void IM_DrawEL()
 {
 	int y = WI_TITLEY;
 
@@ -842,7 +842,7 @@ void IM_InitSingleStats()
 //
 //==========================================================================
 
-void IM_DrawSingleStats(void)
+void IM_DrawSingleStats()
 {
 	// line height
 	int lh;
@@ -970,7 +970,7 @@ void IM_UpdateSingleStats(float DeltaTime)
 //
 //==========================================================================
 
-void IM_InitCooperativeStats(void)
+void IM_InitCooperativeStats()
 {
 	int i;
 
@@ -998,7 +998,7 @@ void IM_InitCooperativeStats(void)
 //
 //==========================================================================
 
-void IM_DrawCooperativeStats(void)
+void IM_DrawCooperativeStats()
 {
 	int i;
 	int x;
@@ -1242,7 +1242,7 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 //
 //==========================================================================
 
-void IM_InitDeathmatchStats(void)
+void IM_InitDeathmatchStats()
 {
 	int i;
 	int j;
@@ -1259,7 +1259,7 @@ void IM_InitDeathmatchStats(void)
 		{
 			for (j = 0; j < MAXPLAYERS; j++)
 				if (ClGame.scores[j].bActive)
-					dm_frags[i][j] = 0;
+					dm_frags[i * MAXPLAYERS + j] = 0;
 
 			dm_totals[i] = 0;
 		}
@@ -1272,7 +1272,7 @@ void IM_InitDeathmatchStats(void)
 //
 //==========================================================================
 
-void IM_DrawDeathmatchStats(void)
+void IM_DrawDeathmatchStats()
 {
 	int i;
 	int j;
@@ -1334,7 +1334,7 @@ void IM_DrawDeathmatchStats(void)
 			{
 				if (ClGame.scores[j].bActive)
 				{
-					T_DrawText(x + w, y, va("%d", dm_frags[i][j]));
+					T_DrawText(x + w, y, va("%d", dm_frags[i * MAXPLAYERS + j]));
 				}
 				x += DM_SPACINGX;
 			}
@@ -1367,7 +1367,7 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 			{
 				for (j = 0; j < MAXPLAYERS; j++)
 					if (ClGame.scores[j].bActive)
-						dm_frags[i][j] = ClGame.scores[i].frags[j];
+						dm_frags[i * MAXPLAYERS + j] = ClGame.scores[i].frags[j];
 
 				dm_totals[i] = FragSum(i);
 			}
@@ -1391,18 +1391,18 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 				for (j = 0; j < MAXPLAYERS; j++)
 				{
 					if (ClGame.scores[j].bActive
-						&& dm_frags[i][j] != ClGame.scores[i].frags[j])
+						&& dm_frags[i * MAXPLAYERS + j] != ClGame.scores[i].frags[j])
 					{
 						if (ClGame.scores[i].frags[j] < 0)
-							dm_frags[i][j]--;
+							dm_frags[i * MAXPLAYERS + j]--;
 						else
-							dm_frags[i][j]++;
+							dm_frags[i * MAXPLAYERS + j]++;
 
-						if (dm_frags[i][j] > 99)
-							dm_frags[i][j] = 99;
+						if (dm_frags[i * MAXPLAYERS + j] > 99)
+							dm_frags[i * MAXPLAYERS + j] = 99;
 
-						if (dm_frags[i][j] < -99)
-							dm_frags[i][j] = -99;
+						if (dm_frags[i * MAXPLAYERS + j] < -99)
+							dm_frags[i * MAXPLAYERS + j] = -99;
 
 						stillticking = true;
 					}
@@ -1456,7 +1456,7 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 //
 //==========================================================================
 
-void IM_InitNextLoc(void)
+void IM_InitNextLoc()
 {
 	interstate = 1;
 	ClGame.skipintermission = 0;
@@ -1486,8 +1486,8 @@ void IM_DrawOnLnode(int n, int *c)
 	do
 	{
 		R_GetPicInfo(c[i], &info);
-		left = lnodes[im_episode - 1][n].x - info.xoffset;
-		top = lnodes[im_episode - 1][n].y - info.yoffset;
+		left = lnodes[(im_episode - 1) * NUMMAPS + n].x - info.xoffset;
+		top = lnodes[(im_episode - 1) * NUMMAPS + n].y - info.yoffset;
 		right = left + info.width;
 		bottom = top + info.height;
 
@@ -1504,7 +1504,7 @@ void IM_DrawOnLnode(int n, int *c)
 
 	if (fits && i < 2)
 	{
-		R_DrawPic(lnodes[im_episode - 1][n].x, lnodes[im_episode - 1][n].y,
+		R_DrawPic(lnodes[(im_episode - 1) * NUMMAPS + n].x, lnodes[(im_episode - 1) * NUMMAPS + n].y,
 			c[i]);
 	}
 	else
@@ -1520,7 +1520,7 @@ void IM_DrawOnLnode(int n, int *c)
 //
 //==========================================================================
 
-void IM_DrawNextLoc(void)
+void IM_DrawNextLoc()
 {
 	int i;
 	int last;
@@ -1569,7 +1569,7 @@ void IM_UpdateNextLoc(float DeltaTime)
 //
 //==========================================================================
 
-void IM_InitNoState(void)
+void IM_InitNoState()
 {
 	interstate = -1;
 	ClGame.skipintermission = 0;
@@ -1582,7 +1582,7 @@ void IM_InitNoState(void)
 //
 //==========================================================================
 
-void IM_DrawNoState(void)
+void IM_DrawNoState()
 {
 #ifdef DOOM2
 	// draws which level you are entering..
@@ -1777,6 +1777,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/19 14:18:42  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.1  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

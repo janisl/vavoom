@@ -25,6 +25,13 @@
 
 class PolyobjDoor : PolyobjThinker;
 
+enum
+{
+	PODOOR_NONE,
+	PODOOR_SLIDE,
+	PODOOR_SWING
+};
+
 int type;
 float speed;
 float dist;
@@ -173,6 +180,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.2  2005/07/07 17:35:05  dj_jl
 //  Polyobj door distance fix.
 //

@@ -453,17 +453,6 @@ enum
 
 class PolyobjThinker;
 
-addfields polyobj_t
-{
-	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
-};
-
-struct tagged_line_t
-{
-	line_t *line;
-	int lineTag;
-};
-
 /*
 
   Class definitions for botinfo, chatinfo, and
@@ -580,6 +569,9 @@ class BotPlayer;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/19 14:23:50  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.1  2006/02/15 23:34:59  dj_jl
 //  Moved all server progs global variables to classes.
 //

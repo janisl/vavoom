@@ -25,6 +25,14 @@
 
 class LightEffect : Lighting;
 
+enum
+{
+	LIGHTEV_Fade,
+	LIGHTEV_Glow,
+	LIGHTEV_Flicker,
+	LIGHTEV_Strobe
+};
+
 int			Type;
 int			Value1;
 int			Value2;
@@ -190,6 +198,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.3  2005/03/16 15:04:20  dj_jl
 //  More work on line specials.
 //

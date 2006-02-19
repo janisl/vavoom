@@ -43,6 +43,12 @@ enum
 	MB_Nightmare
 };
 
+addfields particle_t
+{
+	int type;
+	float ramp;
+};
+
 TitleScreen			GTitle;
 StatusBarScreen		GSBar;
 IntermissionScreen	GImission;
@@ -1181,6 +1187,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/19 14:18:42  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.2  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

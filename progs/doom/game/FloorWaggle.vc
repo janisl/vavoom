@@ -29,6 +29,13 @@
 
 class FloorWaggle : SectorMover;
 
+enum
+{
+	WGLSTATE_EXPAND,
+	WGLSTATE_STABLE,
+	WGLSTATE_REDUCE
+};
+
 float	OriginalDist;
 float	Accumulator;
 float	AccSpeed;
@@ -116,6 +123,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.4  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

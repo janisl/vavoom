@@ -33,6 +33,81 @@
 // Main bot class
 class BotPlayer : Object;
 
+/*
+
+  Class definitions for botinfo, chatinfo, and
+  other various bot information thingamabobers.
+*/
+
+/*struct chatline_t
+{
+	char		*string;
+	chattype_t  bot;
+	chatline_t	*line;
+};
+
+struct chatinfo_t
+{
+	chatline_t		intro[5];
+	chatline_t		inter[5];
+	chatline_t		rare[5];
+	chatline_t		frag[15];
+	chatline_t		died[10];
+	chatline_t		roam[10];
+	chatline_t		pissed[5];
+	chatline_t		frustrated[5];
+	chatline_t		special[20];
+} chatinfo_t;*/
+
+enum { NUMTOTALBOTS = 30 };
+enum { NUMBOTTYPES = 30 };
+
+// The things the bot knows about their enemy
+//struct enemyinfo_t
+//{
+//	int				health;
+//	weapontype_t	weap;
+//};
+
+//
+// Bot states
+//
+enum
+{
+	// Deciding what to do
+	BST_NOTHING,
+	// Bot is "fetching" something (skull, whatever)
+	BST_OFFENSE,
+	// Bot is defending something
+	BST_DEFENSE,
+	// Bot is heading to scoring place
+	BST_RETURN
+};
+
+/*
+
+  The bot class, prototypes and definitions be here!
+
+*/
+
+#define FORWARDWALK		200.0
+#define FORWARDRUN		400.0
+#define SIDEWALK		192.0
+#define SIDERUN			320.0
+
+/*#define MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
+#define AVOID_DIST					512.0	//Try avoid incoming missiles once they reached this close
+#define SAFE_SELF_MISDIST			128.0	//Distance from self to target where it's safe to pull a rocket.
+/*#define FRIEND_DIST					(128*FRACUNIT)	//To friend.
+#define DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
+#define WHATS_DARK					64				//light value thats classed as dark.
+#define MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
+#define ENEMY_SCAN_FOV				120.0
+/*#define MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
+#define GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
+#define SHOOTFOV					60.0
+/*#define MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
+
 Player player;		// Points to reference player
 Actor botmo;
 
@@ -1376,6 +1451,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/19 14:19:33  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.9  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

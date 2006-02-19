@@ -25,6 +25,17 @@
 
 class MainGameInfo : GameInfo;
 
+addfields polyobj_t
+{
+	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
+};
+
+struct tagged_line_t
+{
+	line_t *line;
+	int lineTag;
+};
+
 classid WeaponClasses[HexenDefs::NUMWEAPONS * HexenDefs::NUMCLASSES];
 
 int terrain_contents[6];
@@ -1334,6 +1345,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/19 14:24:41  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.3  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

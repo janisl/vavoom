@@ -1172,7 +1172,7 @@ struct hostcache_t
 	int Name[16 / 4];
 	int map[16 / 4];
 	int cname[32 / 4];
-	int wadfiles[20][16 / 4];
+	int wadfiles[20 * 16 / 4];
 	int users;
 	int maxusers;
 };
@@ -2088,6 +2088,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/19 14:17:10  dj_jl
+//  Some changes because of compiler changes.
+//
 //  Revision 1.4  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //
