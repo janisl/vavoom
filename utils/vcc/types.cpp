@@ -53,19 +53,6 @@ enum
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-TType		type_void(ev_void, NULL, NULL);
-TType		type_int(ev_int, &type_void, NULL);
-TType		type_float(ev_float, &type_int, NULL);
-TType		type_name(ev_name, &type_float, NULL);
-TType		type_string(ev_string, &type_name, NULL);
-TType		type_void_ptr(ev_pointer, &type_string, &type_void);
-TType		type_vector(ev_vector, &type_void_ptr, NULL);
-TType		type_classid(ev_classid, &type_vector, NULL);
-TType		type_none_ref(ev_reference, &type_classid, NULL);
-TType		type_bool(ev_bool, &type_none_ref, NULL);
-
-TType		*types = &type_bool;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -76,40 +63,48 @@ TType		*types = &type_bool;
 
 void InitTypes()
 {
-	type_bool.bit_mask = 1;
 }
 
 //==========================================================================
 //
-//	FindType
-//
-//	Searches given type in type list. If not found, creates a new one.
+//	TType::TType
 //
 //==========================================================================
 
-TType *FindType(TType *type)
+TType::TType(TClass* InClass) :
+	type(ev_reference), InnerType(ev_void), ArrayInnerType(ev_void),
+	PtrLevel(0), array_dim(0), Class(InClass)
 {
-	TType	*check;
-	TType	*newtype;
+}
 
-	for (check = types; check; check = check->next)
-	{
-		//	Check main params
-		if (type->type != check->type ||
-			type->aux_type != check->aux_type ||
-			type->array_dim != check->array_dim ||
-			type->bit_mask != check->bit_mask ||
-			type->Class != check->Class)
-			continue;
-		return check;
-	}
+//==========================================================================
+//
+//	TType::TType
+//
+//==========================================================================
 
-	//	Not found, create a new one
-	newtype = new TType;
-	*newtype = *type;
-	newtype->next = types;
-	types = newtype;
-	return newtype;
+TType::TType(TStruct* InStruct) :
+	type(InStruct->IsVector ? ev_vector : ev_struct), InnerType(ev_void),
+	ArrayInnerType(ev_void), PtrLevel(0), array_dim(0), Struct(InStruct)
+{
+}
+
+//==========================================================================
+//
+//	TType::Equals
+//
+//==========================================================================
+
+bool TType::Equals(const TType& Other) const
+{
+	if (type != Other.type ||
+		InnerType != Other.InnerType ||
+		ArrayInnerType != Other.ArrayInnerType ||
+		PtrLevel != Other.PtrLevel ||
+		array_dim != Other.array_dim ||
+		bit_mask != Other.bit_mask)
+		return false;
+	return true;
 }
 
 //==========================================================================
@@ -118,30 +113,43 @@ TType *FindType(TType *type)
 //
 //==========================================================================
 
-TType *MakePointerType(TType *type)
+TType MakePointerType(const TType& type)
 {
-	TType	pointer;
-
-	memset(&pointer, 0, sizeof(TType));
-	pointer.type = ev_pointer;
-	pointer.aux_type = type;
-	return FindType(&pointer);
+	TType pointer = type;
+	if (pointer.type == ev_pointer)
+	{
+		pointer.PtrLevel++;
+	}
+	else
+	{
+		pointer.InnerType = pointer.type;
+		pointer.type = ev_pointer;
+		pointer.PtrLevel = 1;
+	}
+	return pointer;
 }
 
 //==========================================================================
 //
-//	MakeReferenceType
+//	TType::GetPointerInnerType
 //
 //==========================================================================
 
-TType *MakeReferenceType(TClass* InClass)
+TType TType::GetPointerInnerType() const
 {
-	TType reference;
-
-	memset(&reference, 0, sizeof(TType));
-	reference.type = ev_reference;
-	reference.Class = InClass;
-	return FindType(&reference);
+	if (type != ev_pointer)
+	{
+		ParseError("Not a pointer type");
+		return *this;
+	}
+	TType ret = *this;
+	ret.PtrLevel--;
+	if (ret.PtrLevel <= 0)
+	{
+		ret.type = InnerType;
+		ret.InnerType = ev_void;
+	}
+	return ret;
 }
 
 //==========================================================================
@@ -150,15 +158,37 @@ TType *MakeReferenceType(TClass* InClass)
 //
 //==========================================================================
 
-TType *MakeArrayType(TType *type, int elcount)
+TType MakeArrayType(const TType& type, int elcount)
 {
-	TType	array;
-
-	memset(&array, 0, sizeof(TType));
+	if (type.type == ev_array)
+	{
+		ParseError("Can't have multi-dimensional arrays");
+	}
+	TType array = type;
+	array.ArrayInnerType = type.type;
 	array.type = ev_array;
-	array.aux_type = type;
 	array.array_dim = elcount;
-	return FindType(&array);
+	return array;
+}
+
+//==========================================================================
+//
+//	TType::GetArrayInnerType
+//
+//==========================================================================
+
+TType TType::GetArrayInnerType() const
+{
+	if (type != ev_array)
+	{
+		ParseError("Not a pointer type");
+		return *this;
+	}
+	TType ret = *this;
+	ret.type = ArrayInnerType;
+	ret.ArrayInnerType = ev_void;
+	ret.array_dim = 0;
+	return ret;
 }
 
 //==========================================================================
@@ -167,37 +197,39 @@ TType *MakeArrayType(TType *type, int elcount)
 //
 //==========================================================================
 
-static TType *CheckForTypeKeyword(void)
+static TType CheckForTypeKeyword()
 {
 	if (TK_Check(KW_VOID))
 	{
-		return &type_void;
+		return TType(ev_void);
 	}
 	if (TK_Check(KW_INT))
 	{
-		return &type_int;
+		return TType(ev_int);
 	}
 	if (TK_Check(KW_FLOAT))
 	{
-		return &type_float;
+		return TType(ev_float);
 	}
 	if (TK_Check(KW_NAME))
 	{
-		return &type_name;
+		return TType(ev_name);
 	}
 	if (TK_Check(KW_STRING))
 	{
-		return &type_string;
+		return TType(ev_string);
 	}
 	if (TK_Check(KW_CLASSID))
 	{
-		return &type_classid;
+		return TType(ev_classid);
 	}
 	if (TK_Check(KW_BOOL))
 	{
-		return &type_bool;
+		TType ret(ev_bool);
+		ret.bit_mask = 1;
+		return ret;
 	}
-	return NULL;
+	return TType(ev_unknown);
 }
 
 //==========================================================================
@@ -206,7 +238,7 @@ static TType *CheckForTypeKeyword(void)
 //
 //==========================================================================
 
-TType *CheckForType(TClass* InClass)
+TType CheckForType(TClass* InClass)
 {
 	if (tk_Token == TK_KEYWORD)
 	{
@@ -217,20 +249,21 @@ TType *CheckForType(TClass* InClass)
 	{
 		if (TK_Check(classtypes[i]->Name))
 		{
-			return MakeReferenceType(classtypes[i]);
+			return TType(classtypes[i]);
 		}
 	}
-	for (TType* check = types; check; check = check->next)
+	for (int i = 0; i < structtypes.Num(); i++)
 	{
-		if (check->Name != NAME_None)
+		if (structtypes[i]->OuterClass == InClass && TK_Check(structtypes[i]->Name))
 		{
-			if (TK_Check(check->Name))
-			{
-				return check;
-			}
+			return TType(structtypes[i]);
 		}
 	}
-	return NULL;
+	if (InClass)
+	{
+		return CheckForType(InClass->ParentClass);
+	}
+	return TType(ev_unknown);
 }
 
 //==========================================================================
@@ -239,31 +272,32 @@ TType *CheckForType(TClass* InClass)
 //
 //==========================================================================
 
-TType *CheckForType(TClass* InClass, FName Name)
+TType CheckForType(TClass* InClass, FName Name)
 {
 	if (Name == NAME_None)
 	{
-		return NULL;
+		return TType(ev_unknown);
 	}
 
 	for (int i = 0; i < classtypes.Num(); i++)
 	{
 		if (Name == classtypes[i]->Name)
 		{
-			return MakeReferenceType(classtypes[i]);
+			return TType(classtypes[i]);
 		}
 	}
-	for (TType* check = types; check; check = check->next)
+	for (int i = 0; i < structtypes.Num(); i++)
 	{
-		if (check->Name != NAME_None)
+		if (structtypes[i]->OuterClass == InClass && Name == structtypes[i]->Name)
 		{
-			if (Name == check->Name)
-			{
-				return check;
-			}
+			return TType(structtypes[i]);
 		}
 	}
-	return NULL;
+	if (InClass)
+	{
+		return CheckForType(InClass->ParentClass, Name);
+	}
+	return TType(ev_unknown);
 }
 
 //==========================================================================
@@ -309,13 +343,13 @@ TClass* CheckForClass(FName Name)
 
 //==========================================================================
 //
-//	TypeSize
+//	TType::GetSize
 //
 //==========================================================================
 
-int TypeSize(TType *type)
+int TType::GetSize() const
 {
-	switch (type->type)
+	switch (type)
 	{
 	case ev_int:		return 4;
 	case ev_float:		return 4;
@@ -323,9 +357,9 @@ int TypeSize(TType *type)
 	case ev_string:		return 4;
 	case ev_pointer:	return 4;
 	case ev_reference:	return 4;
-	case ev_array:		return type->array_dim * TypeSize(type->aux_type);
-	case ev_struct:		if (type->Struct->Size < 0) { ParseError("Incomplete type"); }
-						return (type->Struct->Size + 3) & ~3;
+	case ev_array:		return array_dim * GetArrayInnerType().GetSize();
+	case ev_struct:		if (Struct->Size < 0) { ParseError("Incomplete type"); }
+						return (Struct->Size + 3) & ~3;
 	case ev_vector:		return 12;
 	case ev_classid:	return 4;
 	case ev_bool:		return 4;
@@ -384,15 +418,15 @@ int CheckForConstant(TClass* InClass, FName Name)
 
 //==========================================================================
 //
-//	TypeCheckPassable
+//	TType::CheckPassable
 //
 //	Check, if type can be pushed into the stack
 //
 //==========================================================================
 
-void TypeCheckPassable(TType *type)
+void TType::CheckPassable() const
 {
-	if (TypeSize(type) != 4 && type->type != ev_vector)
+	if (GetSize() != 4 && type != ev_vector)
 	{
 		ParseError(ERR_EXPR_TYPE_MISTMATCH);
 	}
@@ -400,19 +434,19 @@ void TypeCheckPassable(TType *type)
 
 //==========================================================================
 //
-//	TypeCheck1
+//	TType::CheckSizeIs4
 //
 //  Checks if type size is 4
 //
 //==========================================================================
 
-void TypeCheck1(TType *t)
+void TType::CheckSizeIs4() const
 {
-	if (t == &type_void)
+	if (type == ev_void)
 	{
 		ParseError(ERR_VOID_VALUE);
 	}
-	if (TypeSize(t) != 4)
+	if (GetSize() != 4)
 	{
 		ParseError(ERR_EXPR_TYPE_MISTMATCH, "Size is not 4");
 	}
@@ -420,7 +454,7 @@ void TypeCheck1(TType *t)
 
 //==========================================================================
 //
-//	TypeCheck3
+//	TType::CheckMatch
 //
 //	Check, if types are compatible
 //
@@ -429,34 +463,34 @@ void TypeCheck1(TType *t)
 //
 //==========================================================================
 
-void TypeCheck3(TType *t1, TType *t2)
+void TType::CheckMatch(const TType& Other) const
 {
-	TypeCheckPassable(t1);
-	TypeCheckPassable(t2);
-	if (t1 == t2)
+	CheckPassable();
+	Other.CheckPassable();
+	if (Equals(Other))
 	{
 		return;
 	}
-	if ((t1->type == ev_vector) && (t2->type == ev_vector))
+	if (type == ev_vector && Other.type == ev_vector)
 	{
 		return;
 	}
-	if ((t1->type == ev_pointer) && (t2->type == ev_pointer))
+	if (type == ev_pointer && Other.type == ev_pointer)
 	{
-		t1 = t1->aux_type;
-		t2 = t2->aux_type;
-		if (t1 == t2)
+		TType it1 = GetPointerInnerType();
+		TType it2 = Other.GetPointerInnerType();
+		if (it1.Equals(it2))
 		{
 			return;
 		}
-		if ((t1 == &type_void) || (t2 == &type_void))
+		if ((it1.type == ev_void) || (it2.type == ev_void))
 		{
 			return;
 		}
-		if (t1->type == ev_struct && t2->type == ev_struct)
+		if (it1.type == ev_struct && it2.type == ev_struct)
 		{
-			TStruct* s1 = t1->Struct;
-			TStruct* s2 = t2->Struct;
+			TStruct* s1 = it1.Struct;
+			TStruct* s2 = it2.Struct;
 			for (TStruct* st1 = s1->ParentStruct; st1; st1 = st1->ParentStruct)
 			{
 				if (st1 == s2)
@@ -466,10 +500,10 @@ void TypeCheck3(TType *t1, TType *t2)
 			}
 		}
 	}
-	if ((t1->type == ev_reference) && (t2->type == ev_reference))
+	if (type == ev_reference && Other.type == ev_reference)
 	{
-		TClass* c1 = t1->Class;
-		TClass* c2 = t2->Class;
+		TClass* c1 = Class;
+		TClass* c2 = Other.Class;
 		if (!c1 || !c2)
 		{
 			//	none reference can be assigned to any reference.
@@ -491,12 +525,42 @@ void TypeCheck3(TType *t1, TType *t2)
 			}
 		}
 	}
-	if ((t1->type == ev_int && t2->type == ev_bool))
+	if (type == ev_int && Other.type == ev_bool)
 	{
 		return;
 	}
+	char Name1[256];
+	char Name2[256];
+	GetName(Name1);
+	Other.GetName(Name2);
 	ParseError(ERR_EXPR_TYPE_MISTMATCH, " Types %s and %s are not compatible %d %d",
-		*t1->Name, *t2->Name, t1->type, t2->type);
+		Name1, Name2, type, Other.type);
+}
+
+//==========================================================================
+//
+//	TType::GetName
+//
+//==========================================================================
+
+void TType::GetName(char* Dest) const
+{
+	switch (type)
+	{
+	case ev_int:		strcpy(Dest, "int"); break;
+	case ev_float:		strcpy(Dest, "float"); break;
+	case ev_name:		strcpy(Dest, "name"); break;
+	case ev_string:		strcpy(Dest, "string"); break;
+	case ev_pointer:	GetPointerInnerType().GetName(Dest); 
+		for (int i = 0; i < PtrLevel; i++) strcat(Dest, "*"); break;
+	case ev_reference:	strcpy(Dest, Class ? *Class->Name : "none"); break;
+	case ev_array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
+	case ev_struct:		strcpy(Dest, *Struct->Name); break;
+	case ev_vector:		strcpy(Dest, "vector"); break;
+	case ev_classid:	strcpy(Dest, "classid"); break;
+	case ev_bool:		strcpy(Dest, "bool"); break;
+	default:			strcpy(Dest, "unknown"); break;
+	}
 }
 
 //==========================================================================
@@ -580,11 +644,11 @@ void SkipAddFields(TClass* InClass)
 
 void CompileClass()
 {
-	field_t		*fi = NULL;
-	field_t		*otherfield;
+	field_t*	fi = NULL;
+	field_t*	otherfield;
 	int			i;
-	TType		*t;
-	TType		*type;
+	TType		t;
+	TType		type;
 
 	TClass* Class = CheckForClass();
 	if (!Class)
@@ -695,7 +759,7 @@ void CompileClass()
 		} while (!flags_done);
 
 		type = CheckForType(Class);
-		if (!type)
+		if (type.type == ev_unknown)
 		{
 			ParseError("Field type expected.");
 		}
@@ -749,7 +813,7 @@ void CompileClass()
 	for (i = 0; i < Class->NumFields; i++)
 	{
 		fi = &Class->Fields[i];
-		if (fi->type->type == ev_method &&
+		if (fi->type.type == ev_method &&
 			fi->Name == NAME_None && fi->ofs == 0)
 		{
 			break;
@@ -940,7 +1004,7 @@ field_t* FindConstructor(TClass* InClass)
 	field_t *fi = InClass->Fields;
 	for (int i = 0; i < InClass->NumFields; i++)
 	{
-		if (fi[i].type->type == ev_method && fi[i].ofs == 0)
+		if (fi[i].type.type == ev_method && fi[i].ofs == 0)
 		{
 			return &fi[i];
 		}
@@ -975,7 +1039,7 @@ static void AddVTable(TClass* InClass)
 	for (int i = 0; i < InClass->NumFields; i++)
 	{
 		field_t &f = InClass->Fields[i];
-		if (f.type->type != ev_method)
+		if (f.type.type != ev_method)
 		{
 			continue;
 		}
@@ -1023,17 +1087,17 @@ static void WritePropertyField(TClass* InClass, TType *type, int ofs)
 		InClass->NumProperties++;
 		break;
 	case ev_array:
-		for (i = 0; i < TypeSize(type) / TypeSize(type->aux_type); i++)
+		for (i = 0; i < type->GetSize() / type->GetArrayInnerType().GetSize(); i++)
 		{
-			WritePropertyField(InClass, type->aux_type,
-				ofs + i * TypeSize(type->aux_type));
+			WritePropertyField(InClass, new TType(type->GetArrayInnerType()),
+				ofs + i * type->GetArrayInnerType().GetSize());
 		}
 		break;
 	case ev_struct:
 	case ev_vector:
 		for (i = 0; i < type->Struct->NumFields; i++)
 		{
-			WritePropertyField(InClass, type->Struct->Fields[i].type,
+			WritePropertyField(InClass, &type->Struct->Fields[i].type,
 				ofs + type->Struct->Fields[i].ofs);
 		}
 	case ev_method:		// Properties are not methods
@@ -1057,7 +1121,7 @@ static void WritePropertyInfo(TClass* InClass)
 	InClass->NumProperties = 0;
 	for (int i = 0; i < InClass->NumFields; i++)
 	{
-		WritePropertyField(InClass, InClass->Fields[i].type, InClass->Fields[i].ofs);
+		WritePropertyField(InClass, &InClass->Fields[i].type, InClass->Fields[i].ofs);
 	}
 }
 
@@ -1093,14 +1157,13 @@ void AddVirtualTables()
 //
 //==========================================================================
 
-static TType* ParsePropArrayDims(TClass* Class, TType* t)
+static TType ParsePropArrayDims(TClass* Class, const TType& t)
 {
 	if (TK_Check(PU_LINDEX))
 	{
 		int i = EvalConstExpression(Class, ev_int);
 		TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-		t = ParsePropArrayDims(Class, t);
-		t = MakeArrayType(t, i);
+		return MakeArrayType(t, i);
 	}
 	return t;
 }
@@ -1114,23 +1177,23 @@ static TType* ParsePropArrayDims(TClass* Class, TType* t)
 void ParseStruct(TClass* InClass, bool IsVector)
 {
 	field_t		fields[128];
-	field_t		*fi;
+	field_t*	fi;
 	int			num_fields;
 	int			size;
-	TType		*t;
-	TType		*type;
-	TType		*struct_type;
+	TType		t;
+	TType		type;
+	TType		struct_type;
 	TStruct*	Struct;
 
 	struct_type = CheckForType(InClass);
-	if (struct_type)
+	if (struct_type.type != ev_unknown)
 	{
-		if (struct_type->type != (IsVector ? ev_vector : ev_struct))
+		if (struct_type.type != (IsVector ? ev_vector : ev_struct))
 		{
 			ParseError(IsVector ? "Not a vector type" : "Not a struct type");
 			return;
 		}
-		Struct = struct_type->Struct;
+		Struct = struct_type.Struct;
 		if (Struct->Size != -1)
 		{
 			ParseError("Struct type already completed");
@@ -1148,15 +1211,8 @@ void ParseStruct(TClass* InClass, bool IsVector)
 		structtypes.AddItem(Struct);
 		Struct->Name = tk_Name;
 		Struct->OuterClass = InClass;
+		Struct->IsVector = IsVector;
 		//  Add to types
-		struct_type = new TType;
-		memset(struct_type, 0, sizeof(TType));
-		struct_type->Name = tk_Name;
-		struct_type->type = IsVector ? ev_vector : ev_struct;
-		struct_type->next = types;
-		struct_type->Struct = Struct;
-		Struct->Type = struct_type;
-		types = struct_type;
 		TK_NextToken();
 	}
 
@@ -1172,19 +1228,18 @@ void ParseStruct(TClass* InClass, bool IsVector)
 	if (!IsVector && TK_Check(PU_COLON))
 	{
 		type = CheckForType(InClass);
-		if (!type)
+		if (type.type == ev_unknown)
 		{
 			ParseError("Parent type expected");
 		}
-		else if (type->type != ev_struct)
+		else if (type.type != ev_struct)
 		{
 			ParseError("Parent type must be a struct");
 		}
 		else
 		{
-			struct_type->aux_type = type;
-			Struct->ParentStruct = type->Struct;
-			size = TypeSize(type);
+			Struct->ParentStruct = type.Struct;
+			size = type.GetSize();
 		}
 	}
 
@@ -1209,11 +1264,11 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			continue;
 		}
 		type = CheckForType(InClass);
-		if (!type)
+		if (type.type == ev_unknown)
 		{
 			ParseError("Field type expected.");
 		}
-		if (IsVector && type != &type_float)
+		if (IsVector && type.type != ev_float)
 		{
 			ParseError("Vector can have only float fields");
 			continue;
@@ -1228,7 +1283,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 					t = MakePointerType(t);
 				}
 			}
-			if (t == &type_void)
+			if (t.type == ev_void)
 			{
 				ParseError("Field cannot have void type.");
 			}
@@ -1244,17 +1299,14 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			fi = &fields[num_fields];
 			fi->Name = tk_Name;
 			TK_NextToken();
-			if (t->type == ev_bool && num_fields)
+			if (t.type == ev_bool && num_fields)
 			{
 				field_t &prevbool = fields[num_fields - 1];
-				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->bit_mask != 0x80000000)
+				if (prevbool.type.type == ev_bool &&
+					(dword)prevbool.type.bit_mask != 0x80000000)
 				{
-					TType btype;
-
-					memcpy(&btype, t, sizeof(TType));
-					btype.bit_mask = prevbool.type->bit_mask << 1;
-					fi->type = FindType(&btype);
+					fi->type = t;
+					fi->type.bit_mask = prevbool.type.bit_mask << 1;
 					fi->ofs = prevbool.ofs;
 					num_fields++;
 					continue;
@@ -1265,7 +1317,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			{
 				t = ParsePropArrayDims(InClass, t);
 			}
-			size += TypeSize(t);
+			size += t.GetSize();
 			fi->type = t;
 			num_fields++;
 		} while (TK_Check(PU_COMMA));
@@ -1292,31 +1344,31 @@ void ParseStruct(TClass* InClass, bool IsVector)
 
 void AddFields(TClass* InClass)
 {
-	TType			*struct_type;
-	TType			*type;
-	field_t			*fi;
+	TType			struct_type;
+	TType			type;
+	field_t*		fi;
 	int				num_fields;
 	field_t			fields[128];
 	int				size;
 	int				ofs;
-	TType			*t;
+	TType			t;
 
 	//  Read type, to which fields will be added to.
-	struct_type = CheckForType(NULL);
-	if (!struct_type)
+	struct_type = CheckForType(InClass);
+	if (struct_type.type == ev_unknown)
 	{
 		ParseError("Parent type expected.");
 		return;
 	}
 
 	//  Check if it's a structure type
-	if (struct_type->type != ev_struct)
+	if (struct_type.type != ev_struct)
 	{
 		ParseError("Parent must be a struct.");
 		return;
 	}
 
-	TStruct* Struct = struct_type->Struct;
+	TStruct* Struct = struct_type.Struct;
 
 	//  Check if type has reserved memory for additional fields
 	if (!Struct->AvailableSize)
@@ -1336,8 +1388,8 @@ void AddFields(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		type = CheckForType(NULL);
-		if (!type)
+		type = CheckForType(InClass);
+		if (type.type == ev_unknown)
 		{
 			ParseError("Field type expected.");
 			continue;
@@ -1349,7 +1401,7 @@ void AddFields(TClass* InClass)
 			{
 				t = MakePointerType(t);
 			}
-			if (t == &type_void)
+			if (t.type == ev_void)
 			{
 				ParseError("Field cannot have void type.");
 			}
@@ -1360,17 +1412,14 @@ void AddFields(TClass* InClass)
 			fi = &fields[num_fields];
 			fi->Name = tk_Name;
 			TK_NextToken();
-			if (t->type == ev_bool && num_fields)
+			if (t.type == ev_bool && num_fields)
 			{
 				field_t &prevbool = fields[num_fields - 1];
-				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->bit_mask != 0x80000000)
+				if (prevbool.type.type == ev_bool &&
+					(dword)prevbool.type.bit_mask != 0x80000000)
 				{
-					TType btype;
-
-					memcpy(&btype, t, sizeof(TType));
-					btype.bit_mask = prevbool.type->bit_mask << 1;
-					fi->type = FindType(&btype);
+					fi->type = t;
+					fi->type.bit_mask = prevbool.type.bit_mask << 1;
 					fi->ofs = prevbool.ofs;
 					num_fields++;
 					continue;
@@ -1378,8 +1427,8 @@ void AddFields(TClass* InClass)
 			}
 			fi->ofs = ofs;
 			t = ParsePropArrayDims(InClass, t);
-			size -= TypeSize(t);
-			ofs += TypeSize(t);
+			size -= t.GetSize();
+			ofs += t.GetSize();
 			if (size < 0)
 			{
 				ParseError("Additional fields size overflow.");
@@ -1411,8 +1460,8 @@ void ParseClass()
 	field_t*			fi;
 	field_t*			otherfield;
 	int					size;
-	TType*				t;
-	TType*				type;
+	TType				t;
+	TType				type;
 
 	TClass* Class = CheckForClass();
 	if (Class)
@@ -1567,7 +1616,7 @@ void ParseClass()
 
 		FName TypeName = NAME_None;
 		type = CheckForType(Class);
-		if (!type)
+		if (type.type == ev_unknown)
 		{
 			if (tk_Token != TK_IDENTIFIER)
 			{
@@ -1611,21 +1660,18 @@ Class->Fields = &fields[0];
 				ParseError("Redeclared field");
 				continue;
 			}
-			if (t == &type_void)
+			if (t.type == ev_void)
 			{
 				ParseError("Field cannot have void type.");
 			}
-			if (t->type == ev_bool && fields.Num() > 1)
+			if (t.type == ev_bool && fields.Num() > 1)
 			{
 				field_t &prevbool = fields[fields.Num() - 2];
-				if (prevbool.type->type == ev_bool &&
-					(dword)prevbool.type->bit_mask != 0x80000000)
+				if (prevbool.type.type == ev_bool &&
+					(dword)prevbool.type.bit_mask != 0x80000000)
 				{
-					TType btype;
-
-					memcpy(&btype, t, sizeof(TType));
-					btype.bit_mask = prevbool.type->bit_mask << 1;
-					fi->type = FindType(&btype);
+					fi->type = t;
+					fi->type.bit_mask = prevbool.type.bit_mask << 1;
 					fi->ofs = prevbool.ofs;
 					Class->NumFields++;
 					continue;
@@ -1633,7 +1679,7 @@ Class->Fields = &fields[0];
 			}
 			fi->ofs = size;
 			t = ParsePropArrayDims(Class, t);
-			size += TypeSize(t);
+			size += t.GetSize();
 			fi->type = t;
 			Class->NumFields++;
 		} while (TK_Check(PU_COMMA));
@@ -1657,9 +1703,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2006/02/19 14:37:36  dj_jl
+//	Changed type handling.
+//
 //	Revision 1.40  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.39  2006/02/15 23:27:07  dj_jl
 //	Added script ID class attribute.
 //	

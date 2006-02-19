@@ -56,7 +56,7 @@ using namespace VavoomUtils;
 
 // TYPES -------------------------------------------------------------------
 
-enum
+enum EType
 {
 	ev_void,
 	ev_int,
@@ -177,9 +177,8 @@ enum EKeyword
 	KW_ENUM,
 	KW_FLOAT,
 	KW_FOR,
-	KW_FUNCTION,
 	KW_IF,
-   	KW_INT,
+	KW_INT,
 	KW_NAME,
 	KW_NATIVE,
 	KW_NONE,
@@ -191,7 +190,7 @@ enum EKeyword
 	KW_STRUCT,
 	KW_SWITCH,
 	KW_VECTOR,
-   	KW_VOID,
+	KW_VOID,
 	KW_WHILE,
 };
 
@@ -246,7 +245,6 @@ enum EPunctuation
 	PU_RBRACE,
 };
 
-class TType;
 class TClass;
 class TStruct;
 
@@ -263,25 +261,24 @@ public:
 	{}
 };
 
-struct field_t : public FField
-{
-	int			ofs;
-	TType		*type;
-	int			func_num;	// Method's function
-	FName		TypeName;
-};
-
-class TType : public FField
+class TType
 {
 public:
-	TType(void) {}
-	TType(int Atype, TType *Anext, TType *Aaux_type) :
-		type(Atype), next(Anext), aux_type(Aaux_type)
-	{ }
+	TType() :
+		type(ev_void), InnerType(ev_void), ArrayInnerType(ev_void),
+		PtrLevel(0), array_dim(0), bit_mask(0)
+	{}
+	TType(EType Atype) :
+		type(Atype), InnerType(ev_void), ArrayInnerType(ev_void),
+		PtrLevel(0), array_dim(0), bit_mask(0)
+	{}
+	explicit TType(TClass* InClass);
+	explicit TType(TStruct* InStruct);
 
-	int			type;
-	TType*		next;
-	TType*		aux_type;
+	byte		type;
+	byte		InnerType;		//	For pointers
+	byte		ArrayInnerType;	//	For arrays
+	byte		PtrLevel;
 	int			array_dim;
 	union
 	{
@@ -289,6 +286,23 @@ public:
 		TClass*		Class;			//  Class of the reference
 		TStruct*	Struct;			//  Struct data.
 	};
+
+	bool Equals(const TType& Other) const;
+	TType GetPointerInnerType() const;
+	TType GetArrayInnerType() const;
+	int GetSize() const;
+	void CheckPassable() const;
+	void CheckSizeIs4() const;
+	void CheckMatch(const TType& Other) const;
+	void GetName(char* Dest) const;
+};
+
+struct field_t : public FField
+{
+	int			ofs;
+	TType		type;
+	int			func_num;	// Method's function
+	FName		TypeName;
 };
 
 class TFunction : public FField
@@ -298,28 +312,26 @@ public:
 	int			FirstStatement;	//	Negative numbers are builtin functions
 	int			NumLocals;
 	int			Flags;
-	TType*		ReturnType;
+	TType		ReturnType;
 	int			NumParams;
 	int			ParamsSize;
-	TType*		ParamTypes[MAX_PARAMS];
+	TType		ParamTypes[MAX_PARAMS];
 
 	TFunction()
 	: OuterClass(0)
 	, FirstStatement(0)
 	, NumLocals(0)
 	, Flags(0)
-	, ReturnType(0)
+	, ReturnType(ev_void)
 	, NumParams(0)
 	, ParamsSize(0)
-	{
-		memset(ParamTypes, 0, sizeof(ParamTypes));
-	}
+	{}
 };
 
 struct localvardef_t : public FField
 {
 	int			ofs;
-	TType		*type;
+	TType		type;
 };
 
 struct constant_t : public FField
@@ -333,8 +345,8 @@ class TStruct : public FField
 {
 public:
 	TClass*			OuterClass;
-	TType*			Type;
 	TStruct*		ParentStruct;
+	bool			IsVector;
 	int				Size;
 	//	Structure fields
 	field_t*		Fields;
@@ -345,8 +357,8 @@ public:
 
 	TStruct()
 	: OuterClass(0)
-	, Type(0)
 	, ParentStruct(0)
+	, IsVector(false)
 	, Size(0)
 	, Fields(0)
 	, NumFields(0)
@@ -411,6 +423,12 @@ struct mobjinfo_t
 	int		class_id;
 };
 
+class TPackage : public FField
+{
+	TPackage()
+	{}
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // -- Common --
@@ -452,36 +470,30 @@ void PC_DumpAsm(char* name);
 int EvalConstExpression(TClass*InClass, int type);
 float ConstFloatExpression(void);
 
-TType *ParseExpression(bool = false);
+TType ParseExpression(bool = false);
 
-void ParseMethodDef(TType*, field_t*, field_t*, TClass*, int);
+void ParseMethodDef(const TType&, field_t*, field_t*, TClass*, int);
 int ParseStateCode(TClass*);
 void ParseDefaultProperties(field_t*, TClass*);
 void AddConstant(TClass* InClass, FName Name, int value);
 void PA_Parse();
 
 int CheckForLocalVar(FName);
-void ParseLocalVar(TType*);
-void CompileMethodDef(TType*, field_t*, field_t*, TClass*, int);
+void ParseLocalVar(const TType&);
+void CompileMethodDef(const TType&, field_t*, field_t*, TClass*, int);
 void CompileStateCode(TClass*, int);
 void CompileDefaultProperties(field_t*, TClass*);
 void PA_Compile();
 
-void InitTypes(void);
-TType* FindType(TType *type);
-TType* MakePointerType(TType *type);
-TType* MakeReferenceType(TClass* type);
-TType* MakeArrayType(TType *type, int elcount);
-TType* CheckForType(TClass* InClass);
-TType* CheckForType(TClass* InClass, FName Name);
+void InitTypes();
+TType MakePointerType(const TType& type);
+TType MakeArrayType(const TType& type, int elcount);
+TType CheckForType(TClass* InClass);
+TType CheckForType(TClass* InClass, FName Name);
 TClass* CheckForClass();
 TClass* CheckForClass(FName Name);
-int TypeSize(TType *t);
 int CheckForFunction(TClass*, FName);
 int CheckForConstant(TClass* InClass, FName);
-void TypeCheckPassable(TType *type);
-void TypeCheck1(TType *t);
-void TypeCheck3(TType *t1, TType *t2);
 void SkipStruct(TClass*);
 void SkipAddFields(TClass*);
 void CompileClass();
@@ -533,22 +545,11 @@ extern TArray<state_t>		states;
 extern TArray<mobjinfo_t>	mobj_info;
 extern TArray<mobjinfo_t>	script_ids;
 
-extern TType			type_void;
-extern TType			type_int;
-extern TType			type_float;
-extern TType			type_name;
-extern TType			type_string;
-extern TType			type_void_ptr;
-extern TType			type_vector;
-extern TType			type_classid;
-extern TType			type_none_ref;
-extern TType			type_bool;
-
 extern int				NumErrors;
 
 extern int				CurrentPass;
 
-extern TType*			SelfType;
+extern TType			SelfType;
 extern TClass*			SelfClass;
 
 extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
@@ -618,9 +619,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/02/19 14:37:36  dj_jl
+//	Changed type handling.
+//
 //	Revision 1.37  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.36  2006/02/15 23:27:07  dj_jl
 //	Added script ID class attribute.
 //	

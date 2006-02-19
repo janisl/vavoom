@@ -87,6 +87,7 @@ static char* Keywords[] =
 	"__states__",
 	"__mobjinfo__",
 	"__scriptid__",
+	"abstract",
 	"addfields",
 	"bool",
 	"break",
@@ -101,9 +102,8 @@ static char* Keywords[] =
 	"enum",
 	"float",
 	"for",
-	"function_t",
 	"if",
-   	"int",
+	"int",
 	"name",
 	"native",
 	"none",
@@ -114,10 +114,8 @@ static char* Keywords[] =
 	"string",
 	"struct",
 	"switch",
-	"this",
-	"typedef",
 	"vector",
-   	"void",
+	"void",
 	"while",
 };
 
@@ -588,11 +586,6 @@ static void ProcessLetterToken(void)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_FOR;
-		}
-		else if (!strcmp(tk_String, "function_t"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_FUNCTION;
 		}
 		break;
 
@@ -1186,9 +1179,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/02/19 14:37:36  dj_jl
+//	Changed type handling.
+//
 //	Revision 1.22  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.21  2006/02/15 23:27:07  dj_jl
 //	Added script ID class attribute.
 //	

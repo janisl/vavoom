@@ -468,7 +468,7 @@ void PC_WriteObject(char *name)
 		func.first_statement = LittleLong(functions[i].FirstStatement);
 		func.num_parms = LittleShort(functions[i].ParamsSize);
 		func.num_locals = LittleShort(functions[i].NumLocals);
-		func.type = LittleShort(functions[i].ReturnType->type);
+		func.type = LittleShort(functions[i].ReturnType.type);
 		func.flags = LittleShort(functions[i].Flags);
 		fwrite(&func, 1, sizeof(dfunction_t), f);
 	}	
@@ -713,9 +713,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/02/19 14:37:36  dj_jl
+//	Changed type handling.
+//
 //	Revision 1.27  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.26  2006/02/15 23:27:06  dj_jl
 //	Added script ID class attribute.
 //	

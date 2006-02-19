@@ -472,13 +472,13 @@ static void SkipCompoundStatement()
 //
 //==========================================================================
 
-void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
+void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 	TClass* InClass, int FuncFlags)
 {
-	if (t != &type_void)
+	if (t.type != ev_void)
 	{
 		//	Function's rturn type must be void, vector or with size 4
-		TypeCheckPassable(t);
+		t.CheckPassable();
 	}
 
 	numlocaldefs = 1;
@@ -498,11 +498,6 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 	Func.Flags = FuncFlags;
 	Func.ReturnType = t;
 
-	TType methodtype;
-	memset(&methodtype, 0, sizeof(TType));
-	methodtype.type = ev_method;
-	methodtype.aux_type = t;
-
 	do
 	{
 		if (TK_Check(PU_VARARGS))
@@ -511,9 +506,9 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 			break;
 		}
 
-		TType *type = CheckForType(InClass);
+		TType type = CheckForType(InClass);
 
-		if (!type)
+		if (type.type == ev_unknown)
 		{
 			if (Func.NumParams == 0)
 			{
@@ -525,11 +520,12 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 		{
 			type = MakePointerType(type);
 		}
-		if (Func.NumParams == 0 && type == &type_void)
+		if (Func.NumParams == 0 && type.type == ev_void)
 		{
+//ParseWarning("This is ugly %d", un);
 			break;
 		}
-		TypeCheckPassable(type);
+		type.CheckPassable();
 
 		if (Func.NumParams == MAX_PARAMS)
 		{
@@ -542,20 +538,20 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 		}
 		//FIXME Treat bool varaibles as ints because on big-endian systems 
 		// it's hard to detect when assignment mask should not be swapped.
-		if (type->type == ev_bool)
-			type = &type_int;
+		if (type.type == ev_bool)
+			type = TType(ev_int);
 		Func.ParamTypes[Func.NumParams] = type;
 		Func.NumParams++;
-		localsofs += TypeSize(type) / 4;
+		localsofs += type.GetSize() / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	Func.ParamsSize = localsofs;
 
-	method->type = FindType(&methodtype);
+	method->type = TType(ev_method);
 	if (otherfield)
 	{
 		TFunction& BaseFunc = functions[otherfield->func_num];
-		if (BaseFunc.ReturnType != Func.ReturnType)
+		if (!BaseFunc.ReturnType.Equals(Func.ReturnType))
 		{
 			ParseError("Method redefined with different return type");
 		}
@@ -564,7 +560,7 @@ void ParseMethodDef(TType* t, field_t* method, field_t* otherfield,
 			ParseError("Method redefined with different number of arguments");
 		}
 		else for (int i = 0; i < Func.NumParams; i++)
-			if (BaseFunc.ParamTypes[i] != Func.ParamTypes[i])
+			if (!BaseFunc.ParamTypes[i].Equals(Func.ParamTypes[i]))
 			{
 				ParseError("Type of argument %d differs from base class", i + 1);
 			}
@@ -603,7 +599,7 @@ int ParseStateCode(TClass* InClass)
 	new(functions) TFunction;
 	functions[num].Name = NAME_None;
 	functions[num].OuterClass = InClass;
-	functions[num].ReturnType = &type_void;
+	functions[num].ReturnType = TType(ev_void);
 	functions[num].ParamsSize = 1;
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -622,12 +618,7 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 	numlocaldefs = 1;
 
 
-	TType methodtype;
-	memset(&methodtype, 0, sizeof(TType));
-	methodtype.type = ev_method;
-	methodtype.aux_type = &type_void;
-
-	method->type = FindType(&methodtype);
+	method->type = TType(ev_method);
 	method->ofs = 0;
 	method->Name = NAME_None;
 	InClass->NumFields++;
@@ -642,7 +633,7 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 	new(functions) TFunction;
 	method->func_num = num;
 	functions[num].OuterClass = InClass;
-	functions[num].ReturnType = &type_void;
+	functions[num].ReturnType = TType(ev_void);
 	functions[num].ParamsSize = 1;
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -756,9 +747,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/02/19 14:37:36  dj_jl
+//	Changed type handling.
+//
 //	Revision 1.9  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.8  2006/02/10 22:15:21  dj_jl
 //	Temporary fix for big-endian systems.
 //	

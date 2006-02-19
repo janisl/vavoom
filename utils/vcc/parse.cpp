@@ -61,7 +61,7 @@ static void 	ParseCompoundStatement();
 
 localvardef_t			localdefs[MAX_LOCAL_DEFS];
 
-TType*					SelfType;
+TType					SelfType;
 TClass*					SelfClass;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -75,7 +75,7 @@ static int				BreakLevel;
 static continueInfo_t 	ContinueInfo[MAX_CONTINUE];
 static int 				ContinueIndex;
 static int				ContinueLevel;
-static TType			*FuncRetType;
+static TType			FuncRetType;
 
 // CODE --------------------------------------------------------------------
 
@@ -107,17 +107,17 @@ int CheckForLocalVar(FName Name)
 //
 //==========================================================================
 
-static void AddDrop(TType *type)
+static void AddDrop(const TType& type)
 {
-	if (TypeSize(type) == 4)
+	if (type.GetSize() == 4)
 	{
 		AddStatement(OPC_Drop);
 	}
-	else if (type->type == ev_vector)
+	else if (type.type == ev_vector)
 	{
 		AddStatement(OPC_VDrop);
 	}
-	else if (type != &type_void)
+	else if (type.type != ev_void)
 	{
 		ParseError("Expression's result type cannot be dropped");
 	}
@@ -205,7 +205,7 @@ static void WriteContinues(int address)
 
 static void ParseStatement()
 {
-	TType		*t;
+	TType		t;
 
 	switch(tk_Token)
 	{
@@ -216,7 +216,7 @@ static void ParseStatement()
 			if (TK_Check(KW_IF))
 			{
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				TypeCheck1(ParseExpression());
+				ParseExpression().CheckSizeIs4();
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 				int jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
 				ParseStatement();
@@ -240,7 +240,7 @@ static void ParseStatement()
 				ContinueLevel++;
 				topAddr = GetNumInstructions();
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				TypeCheck1(ParseExpression());
+				ParseExpression().CheckSizeIs4();
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 				int outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
 				ParseStatement();
@@ -259,7 +259,7 @@ static void ParseStatement()
 				TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				int exprAddr = GetNumInstructions();
-				TypeCheck1(ParseExpression());
+				ParseExpression().CheckSizeIs4();
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 				AddStatement(OPC_IfGoto, topAddr);
@@ -274,18 +274,18 @@ static void ParseStatement()
 				do
 				{
 					t = ParseExpression();
-				   	AddDrop(t);
+					AddDrop(t);
 				} while (TK_Check(PU_COMMA));
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 				int topAddr = GetNumInstructions();
 				t = ParseExpression();
-				if (t == &type_void)
+				if (t.type == ev_void)
 				{
 					AddStatement(OPC_PushNumber, 1);
 				}
 				else
 				{
-					TypeCheck1(t);
+					t.CheckSizeIs4();
 				}
 				int jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
 				int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
@@ -294,7 +294,7 @@ static void ParseStatement()
 				do
 				{
 					t = ParseExpression();
-				   	AddDrop(t);
+					AddDrop(t);
 				} while (TK_Check(PU_COMMA));
 				AddStatement(OPC_Goto, topAddr);
 				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
@@ -317,7 +317,7 @@ static void ParseStatement()
 			{
 				if (TK_Check(PU_SEMICOLON))
 				{
-					if (FuncRetType != &type_void)
+					if (FuncRetType.type != ev_void)
 					{
 						ERR_Exit(ERR_NO_RET_VALUE, true, NULL);
 					}
@@ -325,18 +325,18 @@ static void ParseStatement()
 				}
 				else
 				{
-					if (FuncRetType == &type_void)
+					if (FuncRetType.type == ev_void)
 					{
 						ERR_Exit(ERR_VOID_RET, true, NULL);
 					}
 					t = ParseExpression();
 					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-					TypeCheck3(t, FuncRetType);
-					if (TypeSize(t) == 4)
+					t.CheckMatch(FuncRetType);
+					if (t.GetSize() == 4)
 					{
 						AddStatement(OPC_ReturnL);
 					}
-					else if (t->type == ev_vector)
+					else if (t.type == ev_vector)
 					{
 						AddStatement(OPC_ReturnV);
 					}
@@ -360,9 +360,9 @@ static void ParseStatement()
 				} CaseInfo[MAX_CASE];
 
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				TType *etype = ParseExpression();
-				TypeCheck1(etype);
-				if (etype->type != ev_int)
+				TType etype = ParseExpression();
+				etype.CheckSizeIs4();
+				if (etype.type != ev_int)
 				{
 					ParseError("Int expression expected");
 				}
@@ -382,7 +382,7 @@ static void ParseStatement()
 						{
 							ERR_Exit(ERR_CASE_OVERFLOW, true, NULL);
 						}
-						CaseInfo[numcases].value = EvalConstExpression(SelfClass, etype->type);
+						CaseInfo[numcases].value = EvalConstExpression(SelfClass, etype.type);
 						CaseInfo[numcases].address = GetNumInstructions();
 						numcases++;
 						TK_Expect(PU_COLON, ERR_MISSING_COLON);
@@ -409,7 +409,7 @@ static void ParseStatement()
 					AddStatement(OPC_CaseGoto, CaseInfo[i].value,
 						CaseInfo[i].address);
 				}
-				AddDrop(&type_int);
+				AddStatement(OPC_Drop);
 
 				if (defaultAddress != -1)
 				{
@@ -423,10 +423,7 @@ static void ParseStatement()
 			else
 			{
 				t = ParseExpression(true);
-				if (t)
-				{
-					AddDrop(t);
-				}
+				AddDrop(t);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			}
 			break;
@@ -438,10 +435,7 @@ static void ParseStatement()
 			}
 		default:
 			t = ParseExpression(true);
-			if (t)
-			{
-				AddDrop(t);
-			}
+			AddDrop(t);
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			break;
 	}
@@ -453,14 +447,15 @@ static void ParseStatement()
 //
 //==========================================================================
 
-void ParseLocalVar(TType *type)
+void ParseLocalVar(const TType& type)
 {
-	TType	*t;
+	TType	t;
 	int		size;
 
-	if (!type)
+	if (type.type == ev_unknown)
 	{
-		ERR_Exit(ERR_INVALID_IDENTIFIER, true, "Bad type");
+		ParseError(ERR_INVALID_IDENTIFIER, "Bad type");
+		return;
 	}
 	do
 	{
@@ -469,7 +464,7 @@ void ParseLocalVar(TType *type)
 		{
 			t = MakePointerType(t);
 		}
-		if (t == &type_void)
+		if (t.type == ev_void)
 		{
 			ParseError(ERR_BAD_VAR_TYPE);
 		}
@@ -502,9 +497,9 @@ void ParseLocalVar(TType *type)
 		else if (TK_Check(PU_ASSIGN))
 		{
 			AddStatement(OPC_LocalAddress, localsofs);
-			TType *t1 = ParseExpression();
-			TypeCheck3(t, t1);
-			if (t1->type == ev_vector)
+			TType t1 = ParseExpression();
+			t.CheckMatch(t1);
+			if (t1.type == ev_vector)
 				AddStatement(OPC_VAssignDrop);
 			else
 				AddStatement(OPC_AssignDrop);
@@ -514,7 +509,7 @@ void ParseLocalVar(TType *type)
 		//  MainØgo skaitu palielina pñc izteiksmes, lai ýo mainØgo
 		// nebÝtu iespñjams izmantot izteiksmñ
 		numlocaldefs++;
-		localsofs += TypeSize(t) / 4;
+		localsofs += t.GetSize() / 4;
 		if (localsofs > 1024)
 		{
 			ParseWarning("Local vars > 1k");
@@ -562,13 +557,13 @@ static void ParseCompoundStatement()
 //
 //==========================================================================
 
-void CompileMethodDef(TType *t, field_t *method, field_t *otherfield,
+void CompileMethodDef(const TType& t, field_t* method, field_t* otherfield,
 	TClass* InClass, int FuncFlags)
 {
-	if (t != &type_void)
+	if (t.type != ev_void)
 	{
 		//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
-		TypeCheckPassable(t);
+		t.CheckPassable();
 	}
 
 	numlocaldefs = 1;
@@ -581,24 +576,24 @@ void CompileMethodDef(TType *t, field_t *method, field_t *otherfield,
 			break;
 		}
 
-		TType *type = CheckForType(InClass);
+		TType type = CheckForType(InClass);
 
-		if (!type)
+		if (type.type == ev_unknown)
 		{
 			break;
 		}
 		while (TK_Check(PU_ASTERISK))
 		{
-		   	type = MakePointerType(type);
+			type = MakePointerType(type);
 		}
-		if (type == &type_void)
+		if (type.type == ev_void)
 		{
 static int un = 0;
 un++;
 //ParseWarning("This is ugly %d", un);
 			break;
 		}
-		TypeCheckPassable(type);
+		type.CheckPassable();
 
    		if (tk_Token == TK_IDENTIFIER)
 		{
@@ -608,15 +603,15 @@ un++;
 			}
 			//FIXME Treat bool varaibles as ints because on big-endian systems 
 			// it's hard to detect when assignment mask should not be swapped.
-			if (type->type == ev_bool)
-				type = &type_int;
+			if (type.type == ev_bool)
+				type = TType(ev_int);
 			localdefs[numlocaldefs].Name = tk_Name;
 			localdefs[numlocaldefs].type = type;
 			localdefs[numlocaldefs].ofs = localsofs;
 			numlocaldefs++;
 			TK_NextToken();
 		}
-		localsofs += TypeSize(type) / 4;
+		localsofs += type.GetSize() / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	maxlocalsofs = localsofs;
@@ -631,7 +626,7 @@ un++;
 		return;
 	}
 
-	SelfType = MakeReferenceType(InClass);
+	SelfType = TType(InClass);
 	SelfClass = InClass;
 	BreakLevel = 0;
 	ContinueLevel = 0;
@@ -641,7 +636,7 @@ un++;
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 
-	if (FuncRetType == &type_void)
+	if (FuncRetType.type == ev_void)
 	{
 		AddStatement(OPC_Return);
 	}
@@ -663,11 +658,11 @@ void CompileStateCode(TClass* InClass, int num)
 
 	BeginCode(num);
 
-	SelfType = MakeReferenceType(InClass);
+	SelfType = TType(InClass);
 	SelfClass = InClass;
 	BreakLevel = 0;
 	ContinueLevel = 0;
-	FuncRetType = &type_void;
+	FuncRetType = TType(ev_void);
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
@@ -690,11 +685,11 @@ void CompileDefaultProperties(field_t *method, TClass* InClass)
 
 	int num = method->func_num;
 
-	SelfType = MakeReferenceType(InClass);
+	SelfType = TType(InClass);
 	SelfClass = InClass;
 	BreakLevel = 0;
 	ContinueLevel = 0;
-	FuncRetType = &type_void;
+	FuncRetType = TType(ev_void);
 
 	BeginCode(num);
 
@@ -803,9 +798,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/02/19 14:37:36  dj_jl
+//	Changed type handling.
+//
 //	Revision 1.35  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.34  2006/02/10 22:15:21  dj_jl
 //	Temporary fix for big-endian systems.
 //	

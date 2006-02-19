@@ -37,20 +37,24 @@ class TTree
 {
 public:
 	TTree()
-	: type(NULL)
-	, RealType(NULL)
+	: Type(ev_void)
+	, RealType(ev_void)
 	{}
-	explicit TTree(TType *InType)
-	: type(InType)
-	, RealType(NULL)
+	explicit TTree(EType InType)
+	: Type(InType)
+	, RealType(ev_void)
 	{}
-	explicit TTree(TType *InType, TType* InRealType)
-	: type(InType)
+	explicit TTree(const TType& InType)
+	: Type(InType)
+	, RealType(ev_void)
+	{}
+	explicit TTree(const TType& InType, const TType& InRealType)
+	: Type(InType)
 	, RealType(InRealType)
 	{}
 
-	TType *type;
-	TType *RealType;
+	TType Type;
+	TType RealType;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -78,15 +82,15 @@ static bool			CheckForLocal;
 //
 //==========================================================================
 
-static TTree EmitPushPointed(TType* type)
+static TTree EmitPushPointed(const TType& type)
 {
-	if (type->type == ev_vector)
+	if (type.type == ev_vector)
 	{
 		AddStatement(OPC_VPushPointed);
 	}
-	else if (type->type == ev_bool)
+	else if (type.type == ev_bool)
 	{
-		AddStatement(OPC_PushBool, type->bit_mask);
+		AddStatement(OPC_PushBool, type.bit_mask);
 	}
 	else
 	{
@@ -94,9 +98,9 @@ static TTree EmitPushPointed(TType* type)
 	}
 
 	TTree op = TTree(type, type);
-	if (type->type == ev_bool)
+	if (type.type == ev_bool)
 	{
-		op.type = &type_int;
+		op.Type = TType(ev_int);
 	}
 	return op;
 }
@@ -109,7 +113,7 @@ static TTree EmitPushPointed(TType* type)
 
 static TTree GetAddress(TTree op)
 {
-	if (!op.RealType)
+	if (op.RealType.type == ev_void)
 	{
 		ParseError("Bad address operation");
 		return op;
@@ -120,8 +124,8 @@ static TTree GetAddress(TTree op)
 		ParseError("Bad address operation");
 		return op;
 	}
-	op.type = MakePointerType(op.RealType);
-	op.RealType = NULL;
+	op.Type = MakePointerType(op.RealType);
+	op.RealType = TType(ev_void);
 	return op;
 }
 
@@ -163,11 +167,11 @@ static TTree ParseFunctionCall(int num, bool is_method)
 			{
 				if (arg < num_needed_params)
 				{
-					TypeCheck3(op.type, functions[num].ParamTypes[arg]);
+					op.Type.CheckMatch(functions[num].ParamTypes[arg]);
 				}
 			}
 			arg++;
-			argsize += TypeSize(op.type);
+			argsize += op.Type.GetSize();
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	}
@@ -181,8 +185,8 @@ static TTree ParseFunctionCall(int num, bool is_method)
 	}
 	AddStatement(OPC_Call, num);
 	TTree fop = TTree(functions[num].ReturnType);
-	if (fop.type->type == ev_bool)
-		fop.type = &type_int;
+	if (fop.Type.type == ev_bool)
+		fop.Type = TType(ev_int);
 	return fop;
 }
 
@@ -234,18 +238,18 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 			{
 				if (arg < num_needed_params)
 				{
-					TypeCheck3(op.type, functions[num].ParamTypes[arg]);
+					op.Type.CheckMatch(functions[num].ParamTypes[arg]);
 				}
 				if (!(functions[num].Flags & FUNC_Static))
 				{
-					if (op.type->type == ev_vector)
+					if (op.Type.type == ev_vector)
 						AddStatement(OPC_Swap3);
 					else
 						AddStatement(OPC_Swap);
 				}
 			}
 			arg++;
-			argsize += TypeSize(op.type);
+			argsize += op.Type.GetSize();
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	}
@@ -270,8 +274,8 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 		AddStatement(OPC_ICall);
 	}
 	TTree fop = TTree(functions[num].ReturnType);
-	if (fop.type->type == ev_bool)
-		fop.type = &type_int;
+	if (fop.Type.type == ev_bool)
+		fop.Type = TType(ev_int);
 	return fop;
 }
 
@@ -284,7 +288,6 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 static TTree ParseExpressionPriority0()
 {
 	TTree		op;
-	TType*		type;
 	int			num;
 	field_t*	field;
 	FName		Name;
@@ -298,22 +301,22 @@ static TTree ParseExpressionPriority0()
 	case TK_INTEGER:
 		AddStatement(OPC_PushNumber, tk_Number);
 		TK_NextToken();
-		return TTree(&type_int);
+		return TTree(ev_int);
 
 	case TK_FLOAT:
 		AddStatement(OPC_PushNumber, PassFloat(tk_Float));
 		TK_NextToken();
-		return TTree(&type_float);
+		return TTree(ev_float);
 
 	case TK_NAME:
 		AddStatement(OPC_PushName, tk_Name.GetIndex());
 		TK_NextToken();
-		return TTree(&type_name);
+		return TTree(ev_name);
 
 	case TK_STRING:
 		AddStatement(OPC_PushString, tk_StringI);
 		TK_NextToken();
-		return TTree(&type_string);
+		return TTree(ev_string);
 
 	case TK_PUNCT:
 		if (TK_Check(PU_LPAREN))
@@ -336,7 +339,7 @@ static TTree ParseExpressionPriority0()
 				ParseError("No such method %s", *tk_Name);
 				break;
 			}
-			if (field->type->type != ev_method)
+			if (field->type.type != ev_method)
 			{
 				ParseError("Not a method");
 				break;
@@ -351,18 +354,18 @@ static TTree ParseExpressionPriority0()
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 			TTree op1 = ParseExpressionPriority13();
-			if (op1.type != &type_float)
+			if (op1.Type.type != ev_float)
 				ParseError("Expression type mistmatch, vector param 1 is not a float");
 			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
 			TTree op2 = ParseExpressionPriority13();
-			if (op2.type != &type_float)
+			if (op2.Type.type != ev_float)
 				ParseError("Expression type mistmatch, vector param 2 is not a float");
 			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
 			TTree op3 = ParseExpressionPriority13();
-			if (op3.type != &type_float)
+			if (op3.Type.type != ev_float)
 				ParseError("Expression type mistmatch, vector param 3 is not a float");
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			return TTree(&type_vector);
+			return TTree(ev_vector);
 		}
 		if (TK_Check(KW_SELF))
 		{
@@ -381,24 +384,24 @@ static TTree ParseExpressionPriority0()
 		if (TK_Check(KW_NONE))
 		{
 			AddStatement(OPC_PushNumber, 0);
-			op = TTree(&type_none_ref);
+			op = TTree(TType((TClass*)NULL));
 			return op;
 		}
 		if (TK_Check(KW_NULL))
 		{
 			AddStatement(OPC_PushNumber, 0);
-			op = TTree(&type_void_ptr);
+			op = TTree(MakePointerType(TType(ev_void)));
 			return op;
 		}
 		if (bLocals)
 		{
-			type = CheckForType(SelfClass);
-			if (type)
+			TType type = CheckForType(SelfClass);
+			if (type.type != ev_unknown)
 			{
 				//FIXME Treat bool varaibles as ints because on big-endian systems 
 				// it's hard to detect when assignment mask should not be swapped.
-				if (type->type == ev_bool)
-					type = &type_int;
+				if (type.type == ev_bool)
+					type = TType(ev_int);
 				ParseLocalVar(type);
 				return TTree();
 			}
@@ -414,20 +417,20 @@ static TTree ParseExpressionPriority0()
 			if (Class)
 			{
 				op = ParseExpressionPriority13();
-				if (op.type->type != ev_reference)
+				if (op.Type.type != ev_reference)
 				{
 					ParseError(ERR_BAD_EXPR, "Class reference required");
 				}
 				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
 				AddStatement(OPC_DynamicCast, Class->Index);
-				op = TTree(MakeReferenceType(Class));
+				op = TTree(TType(Class));
 				return op;
 			}
 
 			if (SelfClass)
 			{
 				field = CheckForField(Name, SelfClass);
-				if (field && field->type->type == ev_method)
+				if (field && field->type.type == ev_method)
 				{
 					return ParseMethodCall(field, false);
 				}
@@ -453,7 +456,7 @@ static TTree ParseExpressionPriority0()
 				{
 					TK_NextToken();
 					AddStatement(OPC_PushNumber, Constants[num].value);
-					op = TTree(&type_int);
+					op = TTree(ev_int);
 					return op;
 				}
 			}
@@ -465,8 +468,8 @@ static TTree ParseExpressionPriority0()
 		if (bLocals && (tk_Token == TK_IDENTIFIER ||
 			(tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)))
 		{
-			type = CheckForType(SelfClass, Name);
-			if (type)
+			TType type = CheckForType(SelfClass, Name);
+			if (type.type != ev_unknown)
 			{
 				ParseLocalVar(type);
 				return TTree();
@@ -485,7 +488,7 @@ static TTree ParseExpressionPriority0()
 		if (num != -1)
 		{
 			AddStatement(OPC_PushNumber, Constants[num].value);
-			op = TTree(&type_int);
+			op = TTree(ev_int);
 			return op;
 		}
 
@@ -497,7 +500,7 @@ static TTree ParseExpressionPriority0()
 				AddStatement(OPC_LocalAddress, 0);
 				AddStatement(OPC_PushPointed);
 				op = TTree(SelfType);
-				if (field->type->type == ev_method)
+				if (field->type.type == ev_method)
 				{
 					ParseError("Method call expected");
 				}
@@ -515,7 +518,7 @@ static TTree ParseExpressionPriority0()
 		if (Class)
 		{
 			AddStatement(OPC_PushClassId, Class->Index);
-			op = TTree(&type_classid);
+			op = TTree(ev_classid);
 			return op;
 		}
 
@@ -526,7 +529,7 @@ static TTree ParseExpressionPriority0()
 		break;
 	}
 
-	op = TTree(&type_void);
+	op = TTree(ev_void);
 	return op;
 }
 
@@ -540,7 +543,7 @@ static TTree ParseExpressionPriority1()
 {
 	bool		done;
 	TTree		op;
-	TType*		type;
+	TType		type;
 	field_t*	field;
 
 	op = ParseExpressionPriority0();
@@ -549,16 +552,16 @@ static TTree ParseExpressionPriority1()
 	{
 		if (TK_Check(PU_MINUS_GT))
 		{
-			TypeCheck1(op.type);
-			if (op.type->type != ev_pointer)
+			op.Type.CheckSizeIs4();
+			if (op.Type.type != ev_pointer)
 			{
 				ERR_Exit(ERR_BAD_EXPR, true, NULL);
 			}
-			type = op.type->aux_type;
-			field = ParseStructField(type->Struct);
+			type = op.Type.GetPointerInnerType();
+			field = ParseStructField(type.Struct);
 			if (field)
 			{
-				if (field->type->type == ev_method)
+				if (field->type.type == ev_method)
 				{
 					ParseError("Pointed method");
 				}
@@ -572,12 +575,12 @@ static TTree ParseExpressionPriority1()
 		}
 		else if (TK_Check(PU_DOT))
 		{
-			if (op.type->type == ev_reference)
+			if (op.Type.type == ev_reference)
 			{
-				field = ParseClassField(op.type->Class);
+				field = ParseClassField(op.Type.Class);
 				if (field)
 				{
-					if (field->type->type == ev_method)
+					if (field->type.type == ev_method)
 					{
 						TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 						op = ParseMethodCall(field, true);
@@ -590,11 +593,11 @@ static TTree ParseExpressionPriority1()
 					}
 				}
 			}
-			else if (op.type->type == ev_struct || op.type->type == ev_vector)
+			else if (op.Type.type == ev_struct || op.Type.type == ev_vector)
 			{
-				type = op.type;
+				type = op.Type;
 				op = GetAddress(op);
-				field = ParseStructField(type->Struct);
+				field = ParseStructField(type.Struct);
 				if (field)
 				{
 					AddStatement(OPC_PushNumber, field->ofs);
@@ -609,26 +612,26 @@ static TTree ParseExpressionPriority1()
 		}
 		else if (TK_Check(PU_LINDEX))
 		{
-			if (op.type->type == ev_array)
+			if (op.Type.type == ev_array)
 			{
-				type = op.type->aux_type;
+				type = op.Type.GetArrayInnerType();
 				op = GetAddress(op);
 			}
-			else if (op.type->type == ev_pointer)
+			else if (op.Type.type == ev_pointer)
 			{
-			   	type = op.type->aux_type;
+				type = op.Type.GetPointerInnerType();
 			}
 			else
 			{
 				ERR_Exit(ERR_BAD_ARRAY, true, NULL);
 			}
 			TTree ind = ParseExpressionPriority13();
-			if (ind.type != &type_int)
+			if (ind.Type.type != ev_int)
 			{
 				ParseError(ERR_EXPR_TYPE_MISTMATCH);
 			}
 			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
-			AddStatement(OPC_PushNumber, TypeSize(type));
+			AddStatement(OPC_PushNumber, type.GetSize());
 			AddStatement(OPC_Multiply);
 			AddStatement(OPC_Add);
 			op = EmitPushPointed(type);
@@ -655,14 +658,14 @@ static TTree ParseExpressionPriority1()
 static TTree ParseExpressionPriority2()
 {
 	TTree		op;
-	TType*		type;
+	TType		type;
 
 	if (tk_Token == TK_PUNCT)
 	{
 		if (TK_Check(PU_PLUS))
 		{
 			op = ParseExpressionPriority2();
-			if (op.type != &type_int && op.type != &type_float)
+			if (op.Type.type != ev_int && op.Type.type != ev_float)
 			{
 				ParseError("Expression type mistmatch");
 			}
@@ -672,20 +675,20 @@ static TTree ParseExpressionPriority2()
 		if (TK_Check(PU_MINUS))
 		{
 			op = ParseExpressionPriority2();
-			if (op.type == &type_int)
+			if (op.Type.type == ev_int)
 			{
 				AddStatement(OPC_UnaryMinus);
-				op = TTree(&type_int);
+				op = TTree(ev_int);
 			}
-			else if (op.type == &type_float)
+			else if (op.Type.type == ev_float)
 			{
 				AddStatement(OPC_FUnaryMinus);
-				op = TTree(&type_float);
+				op = TTree(ev_float);
 			}
-			else if (op.type->type == ev_vector)
+			else if (op.Type.type == ev_vector)
 			{
 				AddStatement(OPC_VUnaryMinus);
-				op = TTree(op.type);
+				op = TTree(op.Type);
 			}
 			else
 			{
@@ -697,31 +700,31 @@ static TTree ParseExpressionPriority2()
 		if (TK_Check(PU_NOT))
 		{
 			op = ParseExpressionPriority2();
-			if (op.type == &type_int)
+			if (op.Type.type == ev_int)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
-			else if (op.type == &type_float)
+			else if (op.Type.type == ev_float)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
-			else if (op.type == &type_name)
+			else if (op.Type.type == ev_name)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
-			else if (op.type == &type_string)
+			else if (op.Type.type == ev_string)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
-			else if (op.type->type == ev_pointer)
+			else if (op.Type.type == ev_pointer)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
-			else if (op.type->type == ev_reference)
+			else if (op.Type.type == ev_reference)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
-			else if (op.type == &type_classid)
+			else if (op.Type.type == ev_classid)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
@@ -729,14 +732,14 @@ static TTree ParseExpressionPriority2()
 			{
 				ParseError("Expression type mistmatch");
 			}
-			op = TTree(&type_int);
+			op = TTree(ev_int);
 			return op;
 		}
 
 		if (TK_Check(PU_TILDE))
 		{
 			op = ParseExpressionPriority2();
-			if (op.type == &type_int)
+			if (op.Type.type == ev_int)
 			{
 				AddStatement(OPC_BitInverse);
 			}
@@ -744,20 +747,20 @@ static TTree ParseExpressionPriority2()
 			{
 				ParseError("Expression type mistmatch");
 			}
-			op = TTree(&type_int);
+			op = TTree(ev_int);
 			return op;
 		}
 
 		if (TK_Check(PU_AND))
 		{
 			op = ParseExpressionPriority1();
-			if (op.type->type == ev_reference)
+			if (op.Type.type == ev_reference)
 			{
 				ParseError("Tried to take address of reference");
 			}
 			else
 			{
-				type = MakePointerType(op.type);
+				type = MakePointerType(op.Type);
 				op = GetAddress(op);
 			}
 			return op;
@@ -765,21 +768,21 @@ static TTree ParseExpressionPriority2()
 		if (TK_Check(PU_ASTERISK))
 		{
 			op = ParseExpressionPriority2();
-			if (op.type->type != ev_pointer)
+			if (op.Type.type != ev_pointer)
 			{
 				ParseError("Expression syntax error");
 				return op;
 			}
-			type = op.type->aux_type;
+			type = op.Type.GetPointerInnerType();
 			return EmitPushPointed(type);
 		}
 
 		if (TK_Check(PU_INC))
 		{
 			op = ParseExpressionPriority2();
-			type = op.type;
+			type = op.Type;
 			op = GetAddress(op);
-			if (type == &type_int)
+			if (type.type == ev_int)
 			{
 				AddStatement(OPC_PreInc);
 			}
@@ -787,16 +790,16 @@ static TTree ParseExpressionPriority2()
 			{
 				ParseError("Expression type mistmatch");
 			}
-			op = TTree(&type_int);
+			op = TTree(ev_int);
 			return op;
 		}
 
 		if (TK_Check(PU_DEC))
 		{
 			op = ParseExpressionPriority2();
-			type = op.type;
+			type = op.Type;
 			op = GetAddress(op);
-			if (type == &type_int)
+			if (type.type == ev_int)
 			{
 				AddStatement(OPC_PreDec);
 			}
@@ -804,7 +807,7 @@ static TTree ParseExpressionPriority2()
 			{
 				ParseError("Expression type mistmatch");
 			}
-			op = TTree(&type_int);
+			op = TTree(ev_int);
 			return op;
 		}
 	}
@@ -813,9 +816,9 @@ static TTree ParseExpressionPriority2()
 
 	if (TK_Check(PU_INC))
 	{
-		type = op.type;
+		type = op.Type;
 		op = GetAddress(op);
-		if (type == &type_int)
+		if (type.type == ev_int)
 		{
 			AddStatement(OPC_PostInc);
 		}
@@ -823,15 +826,15 @@ static TTree ParseExpressionPriority2()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op = TTree(&type_int);
+		op = TTree(ev_int);
 		return op;
 	}
 
 	if (TK_Check(PU_DEC))
 	{
-		type = op.type;
+		type = op.Type;
 		op = GetAddress(op);
-		if (type == &type_int)
+		if (type.type == ev_int)
 		{
 			AddStatement(OPC_PostDec);
 		}
@@ -839,7 +842,7 @@ static TTree ParseExpressionPriority2()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op = TTree(&type_int);
+		op = TTree(ev_int);
 		return op;
 	}
 
@@ -861,25 +864,25 @@ static TTree ParseExpressionPriority3()
 		if (TK_Check(PU_ASTERISK))
 		{
 			TTree op2 = ParseExpressionPriority2();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Multiply);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FMultiply);
-				op1 = TTree(&type_float);
+				op1 = TTree(ev_float);
 			}
-			else if (op1.type->type == ev_vector && op2.type == &type_float)
+			else if (op1.Type.type == ev_vector && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_VPostScale);
-				op1 = TTree(&type_vector);
+				op1 = TTree(ev_vector);
 			}
-			else if (op1.type == &type_float && op2.type->type == ev_vector)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_vector)
 			{
 				AddStatement(OPC_VPreScale);
-				op1 = TTree(&type_vector);
+				op1 = TTree(ev_vector);
 			}
 			else
 			{
@@ -889,20 +892,20 @@ static TTree ParseExpressionPriority3()
 		else if (TK_Check(PU_SLASH))
 		{
 			TTree op2 = ParseExpressionPriority2();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Divide);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FDivide);
-				op1 = TTree(&type_float);
+				op1 = TTree(ev_float);
 			}
-			else if (op1.type->type == ev_vector && op2.type == &type_float)
+			else if (op1.Type.type == ev_vector && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_VIScale);
-				op1 = TTree(&type_vector);
+				op1 = TTree(ev_vector);
 			}
 			else
 			{
@@ -912,10 +915,10 @@ static TTree ParseExpressionPriority3()
 		else if (TK_Check(PU_PERCENT))
 		{
 			TTree op2 = ParseExpressionPriority2();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Modulus);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
 			else
 			{
@@ -946,20 +949,20 @@ static TTree ParseExpressionPriority4()
 		if (TK_Check(PU_PLUS))
 		{
 			TTree op2 = ParseExpressionPriority3();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Add);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FAdd);
-				op1 = TTree(&type_float);
+				op1 = TTree(ev_float);
 			}
-			else if (op1.type->type == ev_vector && op2.type->type == ev_vector)
+			else if (op1.Type.type == ev_vector && op2.Type.type == ev_vector)
 			{
 				AddStatement(OPC_VAdd);
-				op1 = TTree(&type_vector);
+				op1 = TTree(ev_vector);
 			}
 			else
 			{
@@ -969,20 +972,20 @@ static TTree ParseExpressionPriority4()
 		else if (TK_Check(PU_MINUS))
 		{
 			TTree op2 = ParseExpressionPriority3();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Subtract);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FSubtract);
-				op1 = TTree(&type_float);
+				op1 = TTree(ev_float);
 			}
-			else if (op1.type->type == ev_vector && op2.type->type == ev_vector)
+			else if (op1.Type.type == ev_vector && op2.Type.type == ev_vector)
 			{
 				AddStatement(OPC_VSubtract);
-				op1 = TTree(&type_vector);
+				op1 = TTree(ev_vector);
 			}
 			else
 			{
@@ -1013,10 +1016,10 @@ static TTree ParseExpressionPriority5()
 		if (TK_Check(PU_LSHIFT))
 		{
 			TTree op2 = ParseExpressionPriority4();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_LShift);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
 			else
 			{
@@ -1026,10 +1029,10 @@ static TTree ParseExpressionPriority5()
 		else if (TK_Check(PU_RSHIFT))
 		{
 			TTree op2 = ParseExpressionPriority4();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_RShift);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
 			else
 			{
@@ -1060,15 +1063,15 @@ static TTree ParseExpressionPriority6()
 		if (TK_Check(PU_LT))
 		{
 			TTree op2 = ParseExpressionPriority5();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Less);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FLess);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
 			else
 			{
@@ -1078,15 +1081,15 @@ static TTree ParseExpressionPriority6()
 		else if (TK_Check(PU_LE))
 		{
 			TTree op2 = ParseExpressionPriority5();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_LessEquals);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FLessEquals);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
 			else
 			{
@@ -1096,15 +1099,15 @@ static TTree ParseExpressionPriority6()
 		else if (TK_Check(PU_GT))
 		{
 			TTree op2 = ParseExpressionPriority5();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Greater);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FGreater);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
 			else
 			{
@@ -1114,15 +1117,15 @@ static TTree ParseExpressionPriority6()
 		else if (TK_Check(PU_GE))
 		{
 			TTree op2 = ParseExpressionPriority5();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_GreaterEquals);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FGreaterEquals);
-				op1 = TTree(&type_int);
+				op1 = TTree(ev_int);
 			}
 			else
 			{
@@ -1153,35 +1156,35 @@ static TTree ParseExpressionPriority7()
 		if (TK_Check(PU_EQ))
 		{
 			TTree op2 = ParseExpressionPriority6();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_Equals);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FEquals);
 			}
-			else if (op1.type == &type_name && op2.type == &type_name)
+			else if (op1.Type.type == ev_name && op2.Type.type == ev_name)
 			{
 				AddStatement(OPC_Equals);
 			}
-			else if (op1.type == &type_string && op2.type == &type_string)
+			else if (op1.Type.type == ev_string && op2.Type.type == ev_string)
 			{
 				AddStatement(OPC_Equals);
 			}
-			else if (op1.type->type == ev_pointer && op2.type->type == ev_pointer)
+			else if (op1.Type.type == ev_pointer && op2.Type.type == ev_pointer)
 			{
 				AddStatement(OPC_Equals);
 			}
-			else if (op1.type->type == ev_vector && op2.type->type == ev_vector)
+			else if (op1.Type.type == ev_vector && op2.Type.type == ev_vector)
 			{
 				AddStatement(OPC_VEquals);
 			}
-			else if (op1.type == &type_classid && op2.type == &type_classid)
+			else if (op1.Type.type == ev_classid && op2.Type.type == ev_classid)
 			{
 				AddStatement(OPC_Equals);
 			}
-			else if (op1.type->type == ev_reference && op2.type->type == ev_reference)
+			else if (op1.Type.type == ev_reference && op2.Type.type == ev_reference)
 			{
 				AddStatement(OPC_Equals);
 			}
@@ -1189,40 +1192,40 @@ static TTree ParseExpressionPriority7()
 			{
 				ParseError("Expression type mistmatch");
 			}
-			op1 = TTree(&type_int);
+			op1 = TTree(ev_int);
 		}
 		else if (TK_Check(PU_NE))
 		{
 			TTree op2 = ParseExpressionPriority6();
-			if (op1.type == &type_int && op2.type == &type_int)
+			if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 			{
 				AddStatement(OPC_NotEquals);
 			}
-			else if (op1.type == &type_float && op2.type == &type_float)
+			else if (op1.Type.type == ev_float && op2.Type.type == ev_float)
 			{
 				AddStatement(OPC_FNotEquals);
 			}
-			else if (op1.type == &type_name && op2.type == &type_name)
+			else if (op1.Type.type == ev_name && op2.Type.type == ev_name)
 			{
 				AddStatement(OPC_NotEquals);
 			}
-			else if (op1.type == &type_string && op2.type == &type_string)
+			else if (op1.Type.type == ev_string && op2.Type.type == ev_string)
 			{
 				AddStatement(OPC_NotEquals);
 			}
-			else if (op1.type->type == ev_pointer && op2.type->type == ev_pointer)
+			else if (op1.Type.type == ev_pointer && op2.Type.type == ev_pointer)
 			{
 				AddStatement(OPC_NotEquals);
 			}
-			else if (op1.type->type == ev_vector && op2.type->type == ev_vector)
+			else if (op1.Type.type == ev_vector && op2.Type.type == ev_vector)
 			{
 				AddStatement(OPC_VNotEquals);
 			}
-			else if (op1.type == &type_classid && op2.type == &type_classid)
+			else if (op1.Type.type == ev_classid && op2.Type.type == ev_classid)
 			{
 				AddStatement(OPC_NotEquals);
 			}
-			else if (op1.type->type == ev_reference && op2.type->type == ev_reference)
+			else if (op1.Type.type == ev_reference && op2.Type.type == ev_reference)
 			{
 				AddStatement(OPC_NotEquals);
 			}
@@ -1230,7 +1233,7 @@ static TTree ParseExpressionPriority7()
 			{
 				ParseError("Expression type mistmatch");
 			}
-			op1 = TTree(&type_int);
+			op1 = TTree(ev_int);
 		}
 		else
 		{
@@ -1252,10 +1255,10 @@ static TTree ParseExpressionPriority8()
 	while (TK_Check(PU_AND))
 	{
 		TTree op2 = ParseExpressionPriority7();
-		if (op1.type == &type_int && op2.type == &type_int)
+		if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_AndBitwise);
-			op1 = TTree(&type_int);
+			op1 = TTree(ev_int);
 		}
 		else
 		{
@@ -1277,10 +1280,10 @@ static TTree ParseExpressionPriority9()
 	while (TK_Check(PU_XOR))
 	{
 		TTree op2 = ParseExpressionPriority8();
-		if (op1.type == &type_int && op2.type == &type_int)
+		if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_XOrBitwise);
-			op1 = TTree(&type_int);
+			op1 = TTree(ev_int);
 		}
 		else
 		{
@@ -1302,10 +1305,10 @@ static TTree ParseExpressionPriority10()
 	while (TK_Check(PU_OR))
 	{
 		TTree op2 = ParseExpressionPriority9();
-		if (op1.type == &type_int && op2.type == &type_int)
+		if (op1.Type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_OrBitwise);
-			op1 = TTree(&type_int);
+			op1 = TTree(ev_int);
 		}
 		else
 		{
@@ -1326,13 +1329,13 @@ static TTree ParseExpressionPriority11()
 	TTree op1 = ParseExpressionPriority10();
 	while (TK_Check(PU_AND_LOG))
 	{
-		TypeCheck1(op1.type);
+		op1.Type.CheckSizeIs4();
 		int jmppos = AddStatement(OPC_IfNotTopGoto, 0);
 		TTree op2 = ParseExpressionPriority10();
-		TypeCheck1(op2.type);
+		op2.Type.CheckSizeIs4();
 		AddStatement(OPC_AndLogical);
 		FixupJump(jmppos);
-		op1 = TTree(&type_int);
+		op1 = TTree(ev_int);
 	}
 	return op1;
 }
@@ -1348,13 +1351,13 @@ static TTree ParseExpressionPriority12()
 	TTree op1 = ParseExpressionPriority11();
 	while (TK_Check(PU_OR_LOG))
 	{
-		TypeCheck1(op1.type);
+		op1.Type.CheckSizeIs4();
 		int jmppos = AddStatement(OPC_IfTopGoto, 0);
 		TTree op2 = ParseExpressionPriority11();
-		TypeCheck1(op2.type);
+		op2.Type.CheckSizeIs4();
 		AddStatement(OPC_OrLogical);
 		FixupJump(jmppos);
-		op1 = TTree(&type_int);
+		op1 = TTree(ev_int);
 	}
 	return op1;
 }
@@ -1374,7 +1377,7 @@ static TTree ParseExpressionPriority13()
 	op = ParseExpressionPriority12();
    	if (TK_Check(PU_QUEST))
 	{
-		TypeCheck1(op.type);
+		op.Type.CheckSizeIs4();
 		int jumppos1 = AddStatement(OPC_IfNotGoto, 0);
 		op1 = ParseExpressionPriority13();
 		TK_Expect(PU_COLON, ERR_MISSING_COLON);
@@ -1382,11 +1385,11 @@ static TTree ParseExpressionPriority13()
 		FixupJump(jumppos1);
 		op2 = ParseExpressionPriority13();
 		FixupJump(jumppos2);
-		TypeCheck3(op1.type, op2.type);
-		if (op1.type == &type_void_ptr)
-			op = TTree(op2.type);
+		op1.Type.CheckMatch(op2.Type);
+		if (op1.Type.type == ev_pointer && op1.Type.InnerType == ev_void)
+			op = TTree(op2.Type);
 		else
-			op = TTree(op1.type);
+			op = TTree(op1.Type);
 	}
 	return op;
 }
@@ -1402,67 +1405,67 @@ static TTree ParseExpressionPriority14()
 	TTree op1 = ParseExpressionPriority13();
 	if (TK_Check(PU_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_AssignDrop);
 		}
-		else if (type == &type_float && op2.type == &type_float)
+		else if (type.type == ev_float && op2.Type.type == ev_float)
 		{
 			AddStatement(OPC_AssignDrop);
 		}
-		else if (type == &type_name && op2.type == &type_name)
+		else if (type.type == ev_name && op2.Type.type == ev_name)
 		{
 			AddStatement(OPC_AssignDrop);
 		}
-		else if (type == &type_string && op2.type == &type_string)
+		else if (type.type == ev_string && op2.Type.type == ev_string)
 		{
 			AddStatement(OPC_AssignDrop);
 		}
-		else if (type->type == ev_pointer && op2.type->type == ev_pointer)
+		else if (type.type == ev_pointer && op2.Type.type == ev_pointer)
 		{
 			AddStatement(OPC_AssignDrop);
 		}
-		else if (type->type == ev_vector && op2.type->type == ev_vector)
+		else if (type.type == ev_vector && op2.Type.type == ev_vector)
 		{
 			AddStatement(OPC_VAssignDrop);
 		}
-		else if (type == &type_classid && op2.type == &type_classid)
+		else if (type.type == ev_classid && op2.Type.type == ev_classid)
 		{
 			AddStatement(OPC_AssignDrop);
 		}
-		else if (type->type == ev_reference && op2.type->type == ev_reference)
+		else if (type.type == ev_reference && op2.Type.type == ev_reference)
 		{
 			AddStatement(OPC_AssignDrop);
 		}
-		else if (type->type == ev_bool && op2.type == &type_int)
+		else if (type.type == ev_bool && op2.Type.type == ev_int)
 		{
-			AddStatement(OPC_AssignBool, type->bit_mask);
+			AddStatement(OPC_AssignBool, type.bit_mask);
 		}
 		else
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_ADD_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_AddVarDrop);
 		}
-		else if (type == &type_float && op2.type == &type_float)
+		else if (type.type == ev_float && op2.Type.type == ev_float)
 		{
 			AddStatement(OPC_FAddVarDrop);
 		}
-		else if (type->type == ev_vector && op2.type->type == ev_vector)
+		else if (type.type == ev_vector && op2.Type.type == ev_vector)
 		{
 			AddStatement(OPC_VAddVarDrop);
 		}
@@ -1470,24 +1473,24 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		op1 = TTree(&type_void);
+		op1 = TTree(ev_void);
 		return op1;
 	}
 	else if (TK_Check(PU_MINUS_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_SubVarDrop);
 		}
-		else if (type == &type_float && op2.type == &type_float)
+		else if (type.type == ev_float && op2.Type.type == ev_float)
 		{
 			AddStatement(OPC_FSubVarDrop);
 		}
-		else if (type->type == ev_vector && op2.type->type == ev_vector)
+		else if (type.type == ev_vector && op2.Type.type == ev_vector)
 		{
 			AddStatement(OPC_VSubVarDrop);
 		}
@@ -1495,23 +1498,23 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_MULTIPLY_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_MulVarDrop);
 		}
-		else if (type == &type_float && op2.type == &type_float)
+		else if (type.type == ev_float && op2.Type.type == ev_float)
 		{
 			AddStatement(OPC_FMulVarDrop);
 		}
-		else if (type->type == ev_vector && op2.type == &type_float)
+		else if (type.type == ev_vector && op2.Type.type == ev_float)
 		{
 			AddStatement(OPC_VScaleVarDrop);
 		}
@@ -1519,23 +1522,23 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_DIVIDE_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_DivVarDrop);
 		}
-		else if (type == &type_float && op2.type == &type_float)
+		else if (type.type == ev_float && op2.Type.type == ev_float)
 		{
 			AddStatement(OPC_FDivVarDrop);
 		}
-		else if (type->type == ev_vector && op2.type == &type_float)
+		else if (type.type == ev_vector && op2.Type.type == ev_float)
 		{
 			AddStatement(OPC_VIScaleVarDrop);
 		}
@@ -1543,15 +1546,15 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_MOD_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_ModVarDrop);
 		}
@@ -1559,15 +1562,15 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_AND_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_AndVarDrop);
 		}
@@ -1575,20 +1578,20 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_OR_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_OrVarDrop);
 		}
 //FIXME This is wrong!
-		else if (type->type == ev_bool && op2.type == &type_int)
+		else if (type.type == ev_bool && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_OrVarDrop);
 		}
@@ -1596,15 +1599,15 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_XOR_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_XOrVarDrop);
 		}
@@ -1612,15 +1615,15 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_LSHIFT_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_LShiftVarDrop);
 		}
@@ -1628,15 +1631,15 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	else if (TK_Check(PU_RSHIFT_ASSIGN))
 	{
-		TType* type = op1.RealType;
+		TType type = op1.RealType;
 		op1 = GetAddress(op1);
 		TTree op2 = ParseExpressionPriority13();
-		TypeCheck3(op2.type, type);
-		if (type == &type_int && op2.type == &type_int)
+		op2.Type.CheckMatch(type);
+		if (type.type == ev_int && op2.Type.type == ev_int)
 		{
 			AddStatement(OPC_RShiftVarDrop);
 		}
@@ -1644,7 +1647,7 @@ static TTree ParseExpressionPriority14()
 		{
 			ParseError("Expression type mistmatch");
 		}
-		return TTree(&type_void);
+		return TTree(ev_void);
 	}
 	return op1;
 }
@@ -1655,19 +1658,22 @@ static TTree ParseExpressionPriority14()
 //
 //==========================================================================
 
-TType* ParseExpression(bool bLocals)
+TType ParseExpression(bool bLocals)
 {
 	CheckForLocal = bLocals;
 	TTree op = ParseExpressionPriority14();
-	return op.type;
+	return op.Type;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/02/19 14:37:36  dj_jl
+//	Changed type handling.
+//
 //	Revision 1.37  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.36  2006/02/10 22:15:21  dj_jl
 //	Temporary fix for big-endian systems.
 //	
