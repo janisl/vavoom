@@ -97,9 +97,11 @@ static char* Keywords[] =
 	"continue",
 	"default",
 	"defaultproperties",
+	"delegate",
 	"do",
 	"else",
 	"enum",
+	"false",
 	"float",
 	"for",
 	"if",
@@ -114,6 +116,7 @@ static char* Keywords[] =
 	"string",
 	"struct",
 	"switch",
+	"true",
 	"vector",
 	"void",
 	"while",
@@ -556,6 +559,11 @@ static void ProcessLetterToken(void)
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_DEFAULTPROPERTIES;
 		}
+		else if (!strcmp(tk_String, "delegate"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_DELEGATE;
+		}
 		else if (!strcmp(tk_String, "do"))
 		{
 			tk_Token = TK_KEYWORD;
@@ -577,6 +585,11 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'f':
+		if (!strcmp(tk_String, "false"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_FALSE;
+		}
 		if (!strcmp(tk_String, "float"))
 		{
 			tk_Token = TK_KEYWORD;
@@ -664,6 +677,14 @@ static void ProcessLetterToken(void)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_SWITCH;
+		}
+		break;
+
+	case 't':
+		if (!strcmp(tk_String, "true"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_TRUE;
 		}
 		break;
 
@@ -1179,9 +1200,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/02/19 20:37:02  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.23  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
-//
+//	
 //	Revision 1.22  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

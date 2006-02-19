@@ -646,6 +646,39 @@ un++;
 
 //==========================================================================
 //
+//	SkipDelegate
+//
+//==========================================================================
+
+void SkipDelegate(TClass* InClass)
+{
+	TK_NextToken();
+	while (TK_Check(PU_ASTERISK));
+	TK_NextToken();
+	TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+	do
+	{
+		if (TK_Check(PU_VARARGS))
+		{
+			break;
+		}
+		TType type = CheckForType(InClass);
+		if (type.type == ev_unknown)
+		{
+			break;
+		}
+		while (TK_Check(PU_ASTERISK));
+		if (tk_Token == TK_IDENTIFIER)
+		{
+			TK_NextToken();
+		}
+	} while (TK_Check(PU_COMMA));
+	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+}
+
+//==========================================================================
+//
 //	CompileStateCode
 //
 //==========================================================================
@@ -798,9 +831,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/02/19 20:37:02  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.36  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
-//
+//	
 //	Revision 1.35  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

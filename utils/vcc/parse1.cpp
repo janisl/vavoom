@@ -155,7 +155,8 @@ static void SkipExpressionPriority0()
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 			return;
 		}
-		if (TK_Check(KW_SELF) || TK_Check(KW_NONE) || TK_Check(KW_NULL))
+		if (TK_Check(KW_SELF) || TK_Check(KW_NONE) || TK_Check(KW_NULL) ||
+			TK_Check(KW_TRUE) || TK_Check(KW_FALSE))
 		{
 			return;
 		}
@@ -484,6 +485,10 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 	numlocaldefs = 1;
 	int localsofs = 1;
 
+	if ((FuncFlags & FUNC_Static) && !(FuncFlags & FUNC_Native))
+	{
+		ParseError("Currently only native functions can be static");
+	}
 	if (CheckForFunction(InClass, method->Name) != -1)
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
@@ -566,6 +571,10 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 			}
 		method->ofs = otherfield->ofs;
 	}
+	else if (FuncFlags & FUNC_Static)
+	{
+		method->ofs = -1;
+	}
 	else
 	{
 		method->ofs = InClass->NumMethods;
@@ -583,6 +592,81 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	SkipCompoundStatement();
+}
+
+//==========================================================================
+//
+//	ParseDelegate
+//
+//==========================================================================
+
+void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
+	TClass* InClass, int FuncFlags)
+{
+	if (t.type != ev_void)
+	{
+		//	Function's rturn type must be void, vector or with size 4
+		t.CheckPassable();
+	}
+
+	int localsofs = 1;
+
+	int num = functions.Num();
+	method->func_num = num;
+	TFunction& Func = *new(functions) TFunction;
+	Func.Name = NAME_None;
+	Func.OuterClass = InClass;
+	Func.Flags = FuncFlags;
+	Func.ReturnType = t;
+
+	TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+	do
+	{
+		if (TK_Check(PU_VARARGS))
+		{
+			Func.NumParams |= PF_VARARGS;
+			break;
+		}
+
+		TType type = CheckForType(InClass);
+
+		if (type.type == ev_unknown)
+		{
+			if (Func.NumParams == 0)
+			{
+				break;
+			}
+			ERR_Exit(ERR_BAD_VAR_TYPE, true, NULL);
+		}
+		while (TK_Check(PU_ASTERISK))
+		{
+			type = MakePointerType(type);
+		}
+		type.CheckPassable();
+
+		if (Func.NumParams == MAX_PARAMS)
+		{
+			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
+		}
+   		if (tk_Token == TK_IDENTIFIER)
+		{
+			TK_NextToken();
+		}
+		//FIXME Treat bool varaibles as ints because on big-endian systems 
+		// it's hard to detect when assignment mask should not be swapped.
+		if (type.type == ev_bool)
+			type = TType(ev_int);
+		Func.ParamTypes[Func.NumParams] = type;
+		Func.NumParams++;
+		localsofs += type.GetSize() / 4;
+	} while (TK_Check(PU_COMMA));
+	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	Func.ParamsSize = localsofs;
+
+	method->type = TType(ev_delegate);
+	method->type.FuncNum = num;
+
+	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 }
 
 //==========================================================================
@@ -747,9 +831,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/02/19 20:37:02  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.10  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
-//
+//	
 //	Revision 1.9  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

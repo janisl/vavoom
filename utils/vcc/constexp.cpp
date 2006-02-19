@@ -61,68 +61,82 @@ static int ConstExprFactor()
 
 	switch(tk_Token)
 	{
-		case TK_INTEGER:
-			ret = tk_Number;
-			TK_NextToken();
-			break;
+	case TK_INTEGER:
+		ret = tk_Number;
+		TK_NextToken();
+		break;
 
-		case TK_PUNCT:
-			if (TK_Check(PU_LPAREN))
-			{
-				ret = EvalConstExpression(ConstExprClass, ev_int);
-				TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
-			}
-			else if (TK_Check(PU_NOT))
-			{
-				ret = !ConstExprFactor();
-			}
-			else
-			{
-				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid punct");
-			}
-			break;
+	case TK_PUNCT:
+		if (TK_Check(PU_LPAREN))
+		{
+			ret = EvalConstExpression(ConstExprClass, ev_int);
+			TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
+		}
+		else if (TK_Check(PU_NOT))
+		{
+			ret = !ConstExprFactor();
+		}
+		else
+		{
+			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid punct");
+		}
+		break;
 
-		case TK_IDENTIFIER:
-			Name = tk_Name;
-			TK_NextToken();
-			if (TK_Check(PU_DCOLON))
+	case TK_IDENTIFIER:
+		Name = tk_Name;
+		TK_NextToken();
+		if (TK_Check(PU_DCOLON))
+		{
+			TClass* Class = CheckForClass(Name);
+			if (!Class)
 			{
-				TClass* Class = CheckForClass(Name);
-				if (!Class)
-				{
-					ParseError("Class name expected");
-					break;
-				}
-
-				if (tk_Token == TK_IDENTIFIER)
-				{
-					num = CheckForConstant(Class, tk_Name);
-					if (num != -1)
-					{
-						TK_NextToken();
-						ret = Constants[num].value;
-						break;
-					}
-				}
-
-				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+				ParseError("Class name expected");
 				break;
 			}
 
-			num = CheckForConstant(ConstExprClass, Name);
-			if (num != -1)
+			if (tk_Token == TK_IDENTIFIER)
 			{
-				ret = Constants[num].value;
+				num = CheckForConstant(Class, tk_Name);
+				if (num != -1)
+				{
+					TK_NextToken();
+					ret = Constants[num].value;
+					break;
+				}
 			}
-			else
-			{
-				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid identifier %s", *Name);
-			}
-			break;
 
-		default:
-			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
+			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
 			break;
+		}
+
+		num = CheckForConstant(ConstExprClass, Name);
+		if (num != -1)
+		{
+			ret = Constants[num].value;
+		}
+		else
+		{
+			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid identifier %s", *Name);
+		}
+		break;
+
+	case TK_KEYWORD:
+		if (TK_Check(KW_TRUE))
+		{
+			ret = true;
+			break;
+		}
+		if (TK_Check(KW_FALSE))
+		{
+			ret = false;
+			break;
+		}
+		ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
+		break;
+
+	default:
+		ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
+		break;
 	}
 	return ret;
 }
@@ -488,9 +502,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/02/19 20:37:01  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.16  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.15  2005/12/14 20:53:23  dj_jl
 //	State names belong to a class.
 //	Structs and enums defined in a class.

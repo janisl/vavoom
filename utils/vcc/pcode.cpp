@@ -628,7 +628,7 @@ void DumpAsmFunction(int num)
 	{
 		//	Opcode
 		st = CodeBuffer[s];
-		dprintf("%6d: %s ", s, StatementInfo[st].name);
+		dprintf("%6d (%4d): %s ", s, s - functions[num].FirstStatement, StatementInfo[st].name);
 		s++;
 		if (StatementInfo[st].params >= 1)
 		{
@@ -713,9 +713,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/02/19 20:37:02  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.28  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
-//
+//	
 //	Revision 1.27  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

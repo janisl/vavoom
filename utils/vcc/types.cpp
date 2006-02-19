@@ -426,7 +426,7 @@ int CheckForConstant(TClass* InClass, FName Name)
 
 void TType::CheckPassable() const
 {
-	if (GetSize() != 4 && type != ev_vector)
+	if (GetSize() != 4 && type != ev_vector && type != ev_delegate)
 	{
 		ParseError(ERR_EXPR_TYPE_MISTMATCH);
 	}
@@ -527,6 +527,33 @@ void TType::CheckMatch(const TType& Other) const
 	}
 	if (type == ev_int && Other.type == ev_bool)
 	{
+		return;
+	}
+	if (type == ev_reference && Class == NULL && Other.type == ev_delegate)
+	{
+		return;
+	}
+	if (type == ev_delegate && Other.type == ev_delegate)
+	{
+		TFunction& F1 = functions[FuncNum];
+		TFunction& F2 = functions[Other.FuncNum];
+		if (F1.Flags & FUNC_Static || F2.Flags & FUNC_Static)
+		{
+			ParseError("Can't assign a static function to delegate");
+		}
+		if (!F1.ReturnType.Equals(F2.ReturnType))
+		{
+			ParseError("Delegate has different return type");
+		}
+		else if (F1.NumParams != F2.NumParams)
+		{
+			ParseError("Delegate has different number of arguments");
+		}
+		else for (int i = 0; i < F1.NumParams; i++)
+			if (!F1.ParamTypes[i].Equals(F2.ParamTypes[i]))
+			{
+				ParseError("Delegate argument %d differs", i + 1);
+			}
 		return;
 	}
 	char Name1[256];
@@ -737,6 +764,12 @@ void CompileClass()
 		if (TK_Check(KW_ADDFIELDS))
 		{
 			SkipAddFields(Class);
+			continue;
+		}
+
+		if (TK_Check(KW_DELEGATE))
+		{
+			SkipDelegate(Class);
 			continue;
 		}
 
@@ -1039,7 +1072,7 @@ static void AddVTable(TClass* InClass)
 	for (int i = 0; i < InClass->NumFields; i++)
 	{
 		field_t &f = InClass->Fields[i];
-		if (f.type.type != ev_method)
+		if (f.type.type != ev_method || f.ofs == -1)
 		{
 			continue;
 		}
@@ -1596,6 +1629,43 @@ void ParseClass()
 			continue;
 		}
 
+		if (TK_Check(KW_DELEGATE))
+		{
+			int Flags = 0;
+	
+			t = CheckForType(Class);
+			if (t.type == ev_unknown)
+			{
+				ParseError("Field type expected.");
+			}
+			while (TK_Check(PU_ASTERISK))
+			{
+				t = MakePointerType(t);
+			}
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError("Field name expected");
+				continue;
+			}
+			fi = new(fields) field_t;
+Class->Fields = &fields[0];
+			fi->Name = tk_Name;
+			otherfield = CheckForField(Class);
+			if (otherfield)
+			{
+				ParseError("Redeclared field");
+			}
+			else
+			{
+				TK_NextToken();
+			}
+			fi->ofs = size;
+			size += 8;
+			Class->NumFields++;
+			ParseDelegate(t, fi, otherfield, Class, Flags);
+			continue;
+		}
+
 		int Flags = 0;
 		bool flags_done = false;
 		do
@@ -1614,18 +1684,10 @@ void ParseClass()
 			}
 		} while (!flags_done);
 
-		FName TypeName = NAME_None;
 		type = CheckForType(Class);
 		if (type.type == ev_unknown)
 		{
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field type expected.");
-			}
-			else
-			{
-				TypeName = tk_Name;
-			}
+			ParseError("Field type expected.");
 		}
 
 		bool need_semicolon = true;
@@ -1703,9 +1765,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/02/19 20:37:02  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.41  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
-//
+//	
 //	Revision 1.40  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

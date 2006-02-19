@@ -71,6 +71,7 @@ enum EType
 	ev_method,
 	ev_classid,
 	ev_bool,
+	ev_delegate,
 	ev_unknown,
 
 	NUM_BASIC_TYPES
@@ -172,9 +173,11 @@ enum EKeyword
 	KW_CONTINUE,
 	KW_DEFAULT,
 	KW_DEFAULTPROPERTIES,
+	KW_DELEGATE,
 	KW_DO,
 	KW_ELSE,
 	KW_ENUM,
+	KW_FALSE,
 	KW_FLOAT,
 	KW_FOR,
 	KW_IF,
@@ -189,6 +192,7 @@ enum EKeyword
 	KW_STRING,
 	KW_STRUCT,
 	KW_SWITCH,
+	KW_TRUE,
 	KW_VECTOR,
 	KW_VOID,
 	KW_WHILE,
@@ -285,6 +289,7 @@ public:
 		int			bit_mask;
 		TClass*		Class;			//  Class of the reference
 		TStruct*	Struct;			//  Struct data.
+		int			FuncNum;		//  Function of the delegate type.
 	};
 
 	bool Equals(const TType& Other) const;
@@ -473,6 +478,7 @@ float ConstFloatExpression(void);
 TType ParseExpression(bool = false);
 
 void ParseMethodDef(const TType&, field_t*, field_t*, TClass*, int);
+void ParseDelegate(const TType&, field_t*, field_t*, TClass*, int);
 int ParseStateCode(TClass*);
 void ParseDefaultProperties(field_t*, TClass*);
 void AddConstant(TClass* InClass, FName Name, int value);
@@ -481,6 +487,7 @@ void PA_Parse();
 int CheckForLocalVar(FName);
 void ParseLocalVar(const TType&);
 void CompileMethodDef(const TType&, field_t*, field_t*, TClass*, int);
+void SkipDelegate(TClass*);
 void CompileStateCode(TClass*, int);
 void CompileDefaultProperties(field_t*, TClass*);
 void PA_Compile();
@@ -619,9 +626,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/02/19 20:37:02  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.38  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
-//
+//	
 //	Revision 1.37  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

@@ -92,6 +92,10 @@ static TTree EmitPushPointed(const TType& type)
 	{
 		AddStatement(OPC_PushBool, type.bit_mask);
 	}
+	else if (type.type == ev_delegate)
+	{
+		AddStatement(OPC_PushPointedDelegate);
+	}
 	else
 	{
 		AddStatement(OPC_PushPointed);
@@ -119,7 +123,8 @@ static TTree GetAddress(TTree op)
 		return op;
 	}
 	int Opc = UndoStatement();
-	if (Opc != OPC_VPushPointed && Opc != OPC_PushBool && Opc != OPC_PushPointed)
+	if (Opc != OPC_VPushPointed && Opc != OPC_PushBool &&
+		Opc != OPC_PushPointed && Opc != OPC_PushPointedDelegate)
 	{
 		ParseError("Bad address operation");
 		return op;
@@ -223,7 +228,16 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 			AddStatement(OPC_LocalAddress, 0);
 			AddStatement(OPC_PushPointed);
 		}
-		AddStatement(OPC_PushVFunc, field->ofs);
+		if (field->type.type == ev_delegate)
+		{
+			AddStatement(OPC_PushNumber, field->ofs);
+			AddStatement(OPC_Add);
+			AddStatement(OPC_PushPointedDelegate);
+		}
+		else
+		{
+			AddStatement(OPC_PushVFunc, field->ofs);
+		}
 	}
 	if (!TK_Check(PU_RPAREN))
 	{
@@ -393,6 +407,18 @@ static TTree ParseExpressionPriority0()
 			op = TTree(MakePointerType(TType(ev_void)));
 			return op;
 		}
+		if (TK_Check(KW_TRUE))
+		{
+			AddStatement(OPC_PushNumber, 1);
+			op = TTree(ev_int);
+			return op;
+		}
+		if (TK_Check(KW_FALSE))
+		{
+			AddStatement(OPC_PushNumber, 0);
+			op = TTree(ev_int);
+			return op;
+		}
 		if (bLocals)
 		{
 			TType type = CheckForType(SelfClass);
@@ -430,7 +456,7 @@ static TTree ParseExpressionPriority0()
 			if (SelfClass)
 			{
 				field = CheckForField(Name, SelfClass);
-				if (field && field->type.type == ev_method)
+				if (field && (field->type.type == ev_method || field->type.type == ev_delegate))
 				{
 					return ParseMethodCall(field, false);
 				}
@@ -502,7 +528,9 @@ static TTree ParseExpressionPriority0()
 				op = TTree(SelfType);
 				if (field->type.type == ev_method)
 				{
-					ParseError("Method call expected");
+					AddStatement(OPC_PushVFunc, field->ofs);
+					op = TTree(ev_delegate);
+					op.Type.FuncNum = field->func_num;
 				}
 				else
 				{
@@ -582,8 +610,29 @@ static TTree ParseExpressionPriority1()
 				{
 					if (field->type.type == ev_method)
 					{
-						TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-						op = ParseMethodCall(field, true);
+						if (TK_Check(PU_LPAREN))
+						{
+							op = ParseMethodCall(field, true);
+						}
+						else
+						{
+							AddStatement(OPC_PushVFunc, field->ofs);
+							op = TTree(ev_delegate);
+							op.Type.FuncNum = field->func_num;
+						}
+					}
+					else if (field->type.type == ev_delegate)
+					{
+						if (TK_Check(PU_LPAREN))
+						{
+							op = ParseMethodCall(field, true);
+						}
+						else
+						{
+							AddStatement(OPC_PushNumber, field->ofs);
+							AddStatement(OPC_Add);
+							op = EmitPushPointed(field->type);
+						}
 					}
 					else
 					{
@@ -1445,6 +1494,15 @@ static TTree ParseExpressionPriority14()
 		{
 			AddStatement(OPC_AssignBool, type.bit_mask);
 		}
+		else if (type.type == ev_delegate && op2.Type.type == ev_delegate)
+		{
+			AddStatement(OPC_AssignDelegate);
+		}
+		else if (type.type == ev_delegate && op2.Type.type == ev_reference && op2.Type.Class == NULL)
+		{
+			AddStatement(OPC_PushNumber, 0);
+			AddStatement(OPC_AssignDelegate);
+		}
 		else
 		{
 			ParseError("Expression type mistmatch");
@@ -1662,15 +1720,24 @@ TType ParseExpression(bool bLocals)
 {
 	CheckForLocal = bLocals;
 	TTree op = ParseExpressionPriority14();
+	if (op.Type.type == ev_delegate)
+	{
+		op = GetAddress(op);
+		AddStatement(OPC_PushPointed);
+		op = TTree(ev_int);
+	}
 	return op.Type;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/02/19 20:37:01  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.38  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
-//
+//	
 //	Revision 1.37  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

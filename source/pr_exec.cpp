@@ -1341,17 +1341,17 @@ static void RunFunction(FFunction *func)
 		sp[-1] = (int)PR_DynamicCast((VObject *)sp[-1], (VClass *)*current_statement++);
 		break;
 
-	 case OPC_PushBool:
+	case OPC_PushBool:
 		{
 			int mask = *current_statement++;
 			sp[-1] = !!(*(int*)sp[-1] & mask);
 		}
 		break;
 
-	 case OPC_AssignBool:
+	case OPC_AssignBool:
 		{
 			int mask = *current_statement++;
-	        sp--;
+			sp--;
 			if (*sp)
 				*(int*)sp[-1] |= mask;
 			else
@@ -1360,12 +1360,24 @@ static void RunFunction(FFunction *func)
 		}
 		break;
 
-	 case OPC_PushVFunc:
+	case OPC_PushVFunc:
 		*sp = (int)((VObject*)sp[-1])->GetVFunction(*current_statement++);
 		sp++;
 		break;
 
-	 default:
+	case OPC_PushPointedDelegate:
+		sp[0] = ((int*)sp[-1])[1];
+		sp[-1] = ((int*)sp[-1])[0];
+		sp++;
+		break;
+
+	case OPC_AssignDelegate:
+		((int*)sp[-3])[0] = sp[-2];
+		((int*)sp[-3])[1] = sp[-1];
+		sp -= 3;
+		break;
+
+	default:
 #ifdef CHECK_VALID_OPCODE
 		Sys_Error("Invalid opcode %d", current_statement[-1]);
 #endif
@@ -2026,9 +2038,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/02/19 20:36:02  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.41  2006/02/17 19:23:47  dj_jl
 //	Removed support for progs global variables.
-//
+//	
 //	Revision 1.40  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
 //	

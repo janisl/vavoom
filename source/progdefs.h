@@ -166,6 +166,8 @@ enum
 	DECLARE_OPC(PushBool, 1),
 	DECLARE_OPC(AssignBool, 1),
 	DECLARE_OPC(PushVFunc, 1),
+	DECLARE_OPC(PushPointedDelegate, 0),
+	DECLARE_OPC(AssignDelegate, 0),
 
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO
@@ -274,9 +276,12 @@ struct dmobjinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/02/19 20:36:03  dj_jl
+//	Implemented support for delegates.
+//
 //	Revision 1.24  2006/02/17 19:23:47  dj_jl
 //	Removed support for progs global variables.
-//
+//	
 //	Revision 1.23  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
 //	
