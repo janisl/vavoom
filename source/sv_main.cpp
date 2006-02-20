@@ -172,21 +172,20 @@ void SV_Init(void)
 		VClass::FindClass("MainGameInfo"), PU_STATIC);
 	GGameInfo->eventInit();
 
+	num_stats = GGameInfo->num_stats;
+
 	VClass* PlayerClass = VClass::FindClass("Player");
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
 			PlayerClass, PU_STATIC);
+		GPlayersBase[i]->OldStats = Z_CNew<int>(num_stats);
 	}
 
 	GGameInfo->validcount = &validcount;
 	GGameInfo->level = &level;
 	GGameInfo->skyflatnum = skyflatnum;
 	EntInit();
-
-	num_stats = GGameInfo->num_stats;
-	if (num_stats > 96)
-		Sys_Error("Too many stats %d", num_stats);
 
 	P_InitSwitchList();
 	P_InitTerrainTypes();
@@ -2127,6 +2126,7 @@ void SV_SendServerInfoToClients()
 	{
 		if (GGameInfo->Players[i])
 		{
+			GGameInfo->Players[i]->Level = GLevelInfo;
 			SV_SendServerInfo(GGameInfo->Players[i]);
 			if (GGameInfo->Players[i]->bIsBot)
 			{
@@ -2431,7 +2431,7 @@ COMMAND(Spawn)
 						<< (byte)0;
 	sv_player->Message << (byte)svc_signonnum << (byte)3;
 	sv_player->bFixAngle = false;
-	memset(sv_player->OldStats, 0, sizeof(sv_player->OldStats));
+	memset(sv_player->OldStats, 0, num_stats * 4);
 	unguard;
 }
 
@@ -3009,9 +3009,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.79  2006/02/20 22:52:15  dj_jl
+//	Removed player stats limit.
+//
 //	Revision 1.78  2006/02/20 17:54:32  dj_jl
 //	Set level info for player when connecting.
-//
+//	
 //	Revision 1.77  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
 //	

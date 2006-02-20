@@ -107,7 +107,7 @@ float PSpriteSY;
 
 int WorldTimer;	// total time the player's been playing
 
-int OldStats[96];
+int* OldStats;
 
 void PutClientIntoServer()
 {
@@ -184,6 +184,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/20 22:53:32  dj_jl
+//  Removed player stats limit.
+//
 //  Revision 1.4  2006/02/13 18:30:15  dj_jl
 //  Moved all server progs global functions to classes.
 //

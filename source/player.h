@@ -152,7 +152,7 @@ class VBasePlayer : public VObject
 
 	dword 			WorldTimer;				// total time the player's been playing
 
-	int				OldStats[96];
+	int*			OldStats;
 
 	void eventPutClientIntoServer()
 	{
@@ -247,9 +247,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/02/20 22:52:15  dj_jl
+//	Removed player stats limit.
+//
 //	Revision 1.20  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.19  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	
