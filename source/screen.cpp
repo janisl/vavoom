@@ -507,7 +507,7 @@ static void CheckResolutionChange(void)
 
 	if (must_set_pal)
 	{
-		Drawer->SetPalette(cl.prev_palette);
+		Drawer->SetPalette(cl->prev_palette);
 	}
 
 	if (res_changed)
@@ -597,16 +597,16 @@ void SCR_Update(void)
 
 	Drawer->StartUpdate();
 
-	if (cl.prev_palette != cl.palette)
+	if (cl->prev_palette != cl->palette)
 	{
-		Drawer->SetPalette(cl.palette);
-		cl.prev_palette = cl.palette;
+		Drawer->SetPalette(cl->palette);
+		cl->prev_palette = cl->palette;
 	}
 
 	// do buffered drawing
 	if (cls.state != ca_disconnected)
 	{
-		switch (cl.intermission)
+		switch (cl->intermission)
 		{
 		  case 0:
 			if (automapactive)
@@ -715,9 +715,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.28  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.27  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
 //	

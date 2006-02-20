@@ -51,7 +51,7 @@ void CL_StopRecording(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 client_static_t		cls;
-client_state_t		cl;
+VClientState*		cl;
 TProgs				clpr;
 
 VClientGameBase*	GClGame;
@@ -67,6 +67,7 @@ dlight_t		cl_dlights[MAX_DLIGHTS];
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 IMPLEMENT_CLASS(V, ClientGameBase);
+IMPLEMENT_CLASS(V, ClientState);
 
 static bool UserInfoSent;
 
@@ -90,7 +91,9 @@ void CL_Init(void)
 
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"), PU_STATIC);
-	GClGame->cl = &cl;
+	cl = (VClientState*)VObject::StaticSpawnObject(
+		VClass::FindClass("MainClientState"), PU_STATIC);
+	GClGame->cl = cl;
 	GClGame->level = &cl_level;
 	unguard;
 }
@@ -105,7 +108,7 @@ void CL_Ticker(void)
 {
 	guard(CL_Ticker);
     // do main actions
-    switch (cl.intermission)
+    switch (cl->intermission)
     { 
       case 0:
 		SB_Ticker();
@@ -146,7 +149,7 @@ dlight_t *CL_AllocDlight(int key)
 	dl = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		if (dl->die < cl.time)
+		if (dl->die < cl->time)
 		{
 			memset(dl, 0, sizeof(*dl));
 			dl->key = key;
@@ -159,7 +162,7 @@ dlight_t *CL_AllocDlight(int key)
 	float bestdist = 0.0;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		float dist = Length(dl->origin - cl.vieworg);
+		float dist = Length(dl->origin - cl->vieworg);
 		if (dist > bestdist)
 		{
 			bestnum = i;
@@ -189,12 +192,12 @@ void CL_DecayLights(void)
 	dlight_t	*dl;
 	float		time;
 	
-	time = cl.time - cl.oldtime;
+	time = cl->time - cl->oldtime;
 
 	dl = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		if (dl->die < cl.time || !dl->radius)
+		if (dl->die < cl->time || !dl->radius)
 			continue;
 		
 		dl->radius -= time * dl->decay;
@@ -239,8 +242,8 @@ void CL_ReadFromServer(void)
 	if (cls.state != ca_connected)
 		return;
 
-	cl.oldtime = cl.time;
-	cl.time += host_frametime;
+	cl->oldtime = cl->time;
+	cl->time += host_frametime;
 	
 	do
     {
@@ -251,7 +254,7 @@ void CL_ReadFromServer(void)
 		}
 		if (ret)
 		{
-//			cl.last_received_message = realtime;
+//			cl->last_received_message = realtime;
 			CL_ParseServerMessage();
 		}
 	} while (ret && cls.state == ca_connected);
@@ -371,9 +374,9 @@ void CL_KeepaliveMessage(void)
 void CL_Disconnect(void)
 {
 	guard(CL_Disconnect);
-    if (cl.bPaused)
+    if (cl->bPaused)
     { 
-		cl.bPaused = false;
+		cl->bPaused = false;
 		S_ResumeSound();
     } 
 	
@@ -534,9 +537,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.18  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.17  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
 //	

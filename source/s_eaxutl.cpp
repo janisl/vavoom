@@ -397,8 +397,8 @@ static float EAXTraceLine(const TVec &start, const TVec &end)
 
 static float CalcDirSize(const TVec &dir)
 {
-	float len = EAXTraceLine(cl.vieworg, cl.vieworg + dir) +
-		EAXTraceLine(cl.vieworg, cl.vieworg - dir);
+	float len = EAXTraceLine(cl->vieworg, cl->vieworg + dir) +
+		EAXTraceLine(cl->vieworg, cl->vieworg - dir);
 	len /= eax_distance_unit;
 	if (len > 100)
 		len = 100;
@@ -430,9 +430,12 @@ float EAX_CalcEnvSize(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.2  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
-//
+//	
 //	Revision 1.1  2002/07/20 14:51:39  dj_jl
 //	Slit out EAX utilites for use on multiple platforms/drivers.
 //	

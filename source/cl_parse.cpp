@@ -60,10 +60,10 @@ static char				skin_list[256][MAX_VPATH];
 
 // CODE --------------------------------------------------------------------
 
-void CL_Clear(void)
+void CL_Clear()
 {
 	guard(CL_Clear);
-	memset(&cl, 0, sizeof(cl));
+	memset(cl, 0, sizeof(*cl));
 	memset(&cl_level, 0, sizeof(cl_level));
 	memset(cl_mobjs, 0, sizeof(clmobj_t) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
@@ -274,46 +274,46 @@ static void CL_ParseViewData(void)
 	int		i;
 	int		bits;
 
-	net_msg >> cl.vieworg.x
-			>> cl.vieworg.y
-			>> cl.vieworg.z;
-	cl.extralight = net_msg.ReadByte();
-	cl.fixedcolormap = net_msg.ReadByte();
-	cl.palette = net_msg.ReadByte();
-	cl.translucency = net_msg.ReadByte();
-	cl.pspriteSY = net_msg.ReadShort();
+	net_msg >> cl->vieworg.x
+			>> cl->vieworg.y
+			>> cl->vieworg.z;
+	cl->extralight = net_msg.ReadByte();
+	cl->fixedcolormap = net_msg.ReadByte();
+	cl->palette = net_msg.ReadByte();
+	cl->translucency = net_msg.ReadByte();
+	cl->pspriteSY = net_msg.ReadShort();
 
-	cl.psprites[0].sprite = net_msg.ReadShort();
-	if (cl.psprites[0].sprite != -1)
+	cl->psprites[0].sprite = net_msg.ReadShort();
+	if (cl->psprites[0].sprite != -1)
 	{
-		cl.psprites[0].frame = net_msg.ReadByte();
-		cl.psprites[0].alias_model = model_precache[net_msg.ReadShort()];
-		cl.psprites[0].alias_frame = net_msg.ReadByte();
-		cl.psprites[0].sx = net_msg.ReadShort();
-		cl.psprites[0].sy = net_msg.ReadShort();
+		cl->psprites[0].frame = net_msg.ReadByte();
+		cl->psprites[0].alias_model = model_precache[net_msg.ReadShort()];
+		cl->psprites[0].alias_frame = net_msg.ReadByte();
+		cl->psprites[0].sx = net_msg.ReadShort();
+		cl->psprites[0].sy = net_msg.ReadShort();
 	}
 
-	cl.psprites[1].sprite = net_msg.ReadShort();
-	if (cl.psprites[1].sprite != -1)
+	cl->psprites[1].sprite = net_msg.ReadShort();
+	if (cl->psprites[1].sprite != -1)
 	{
-		cl.psprites[1].frame = net_msg.ReadByte();
-		cl.psprites[1].alias_model = model_precache[net_msg.ReadShort()];
-		cl.psprites[1].alias_frame = net_msg.ReadByte();
-		cl.psprites[1].sx = net_msg.ReadShort();
-		cl.psprites[1].sy = net_msg.ReadShort();
+		cl->psprites[1].frame = net_msg.ReadByte();
+		cl->psprites[1].alias_model = model_precache[net_msg.ReadShort()];
+		cl->psprites[1].alias_frame = net_msg.ReadByte();
+		cl->psprites[1].sx = net_msg.ReadShort();
+		cl->psprites[1].sy = net_msg.ReadShort();
 	}
 
-	cl.health = net_msg.ReadByte();
-	net_msg >> cl.items;
-	cl.Frags = net_msg.ReadShort();
+	cl->health = net_msg.ReadByte();
+	net_msg >> cl->items;
+	cl->Frags = net_msg.ReadShort();
 
 	bits = net_msg.ReadByte();
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
 		if (bits & (1 << i))
-			net_msg >> cl.cshifts[i];
+			net_msg >> cl->cshifts[i];
 		else
-			cl.cshifts[i] = 0;
+			cl->cshifts[i] = 0;
 	}
 }
 
@@ -442,8 +442,8 @@ static void CL_ParseTime()
 	net_msg >> new_time;
 	cl_level.tictime = int(new_time * 35);
 	cl_level.time = new_time;
-	cl.mtime[1] = cl.mtime[0];
-	cl.mtime[0] = new_time;
+	cl->mtime[1] = cl->mtime[0];
+	cl->mtime[0] = new_time;
 	unguard;
 }
 
@@ -455,7 +455,7 @@ static void CL_ParseTime()
 
 static void CL_ReadFromServerInfo(void)
 {
-	TCvar::SetCheating(!!atoi(Info_ValueForKey(cl.serverinfo, "sv_cheats")));
+	TCvar::SetCheating(!!atoi(Info_ValueForKey(cl->serverinfo, "sv_cheats")));
 }
 
 //==========================================================================
@@ -477,15 +477,15 @@ static void CL_ParseServerInfo(void)
 
 	CL_Clear();
 
-	strcpy(cl.serverinfo, net_msg.ReadString());
+	strcpy(cl->serverinfo, net_msg.ReadString());
 	CL_ReadFromServerInfo();
 
 	strcpy(cl_level.mapname, net_msg.ReadString());
 	strcpy(cl_level.level_name, net_msg.ReadString());
 
-	cl.clientnum = net_msg.ReadByte();
-	cl.maxclients = net_msg.ReadByte();
-	cl.deathmatch = net_msg.ReadByte();
+	cl->clientnum = net_msg.ReadByte();
+	cl->maxclients = net_msg.ReadByte();
+	cl->deathmatch = net_msg.ReadByte();
 
 	net_msg >> cl_level.totalkills
 			>> cl_level.totalitems
@@ -804,9 +804,9 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_set_angles:
-			cl.viewangles.pitch = AngleMod180(ByteToAngle(net_msg.ReadByte()));
-			cl.viewangles.yaw = ByteToAngle(net_msg.ReadByte());
-			cl.viewangles.roll = ByteToAngle(net_msg.ReadByte());
+			cl->viewangles.pitch = AngleMod180(ByteToAngle(net_msg.ReadByte()));
+			cl->viewangles.yaw = ByteToAngle(net_msg.ReadByte());
+			cl->viewangles.roll = ByteToAngle(net_msg.ReadByte());
 			break;
 
 		 case svc_center_look:
@@ -876,8 +876,8 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_pause:
-		 	cl.bPaused = net_msg.ReadByte();
-   			if (cl.bPaused)
+		 	cl->bPaused = net_msg.ReadByte();
+   			if (cl->bPaused)
 				S_PauseSound();
    			else
 				S_ResumeSound();
@@ -885,17 +885,17 @@ void CL_ParseServerMessage(void)
 
 		 case svc_stats_long:
 			i = net_msg.ReadByte();
-			net_msg >> cl.user_fields[i];
+			net_msg >> ((int*)((byte*)cl + sizeof(VClientState)))[i];
 			break;
 
 		 case svc_stats_short:
 			i = net_msg.ReadByte();
-			cl.user_fields[i] = net_msg.ReadShort();
+			((int*)((byte*)cl + sizeof(VClientState)))[i] = net_msg.ReadShort();
 			break;
 
 		 case svc_stats_byte:
 			i = net_msg.ReadByte();
-			cl.user_fields[i] = net_msg.ReadByte();
+			((int*)((byte*)cl + sizeof(VClientState)))[i] = net_msg.ReadByte();
 			break;
 
 		 case svc_stringcmd:
@@ -941,7 +941,7 @@ void CL_ParseServerMessage(void)
 		 case svc_serverinfo:
 			strcpy(name, net_msg.ReadString());
 			strcpy(string, net_msg.ReadString());
-			Info_SetValueForKey(cl.serverinfo, name, string);
+			Info_SetValueForKey(cl->serverinfo, name, string);
 			CL_ReadFromServerInfo();
 			break;
 
@@ -1066,9 +1066,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.38  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.37  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
 //	

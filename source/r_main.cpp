@@ -353,7 +353,7 @@ static void R_SetupFrame(void)
 		R_ExecuteSetViewSize();
     }
 
-	viewangles = cl.viewangles;
+	viewangles = cl->viewangles;
 	if (r_chasecam && r_chase_front)
 	{
 		//	This is used to see how weapon looks in player's hands
@@ -364,32 +364,32 @@ static void R_SetupFrame(void)
 
 	if (r_chasecam)
 	{
-		vieworg = cl_mobjs[cl.clientnum + 1].origin + TVec(0.0, 0.0, 32.0)
+		vieworg = cl_mobjs[cl->clientnum + 1].origin + TVec(0.0, 0.0, 32.0)
 			- r_chase_dist * viewforward + r_chase_up * viewup
 			+ r_chase_right * viewright;
 	}
 	else
 	{
-		vieworg = cl.vieworg;
+		vieworg = cl->vieworg;
 	}
 
 	R_TransformFrustum();
 
-    extralight = cl.extralight;
-	if (cl.fixedcolormap >= 32)
+    extralight = cl->extralight;
+	if (cl->fixedcolormap >= 32)
 	{
 		fixedlight = 255;
 	}
-	else if (cl.fixedcolormap)
+	else if (cl->fixedcolormap)
 	{
-		fixedlight = 255 - (cl.fixedcolormap << 3);
+		fixedlight = 255 - (cl->fixedcolormap << 3);
 	}
 	else
 	{
 		fixedlight = 0;
 	}
 
-	r_viewleaf = CL_PointInSubsector(cl.vieworg.x, cl.vieworg.y);
+	r_viewleaf = CL_PointInSubsector(cl->vieworg.x, cl->vieworg.y);
 
 	Drawer->SetupView(&refdef);
 	unguard;
@@ -537,11 +537,11 @@ void R_UpdateParticles()
 	particle_t		*p, *kill;
 	float			frametime;
 
-//	frametime = cl.time - cl.oldtime;
+//	frametime = cl->time - cl->oldtime;
 	frametime = host_frametime;
 	
 	kill = active_particles;
-	while (kill && kill->die < cl.time)
+	while (kill && kill->die < cl->time)
 	{
 		active_particles = kill->next;
 		kill->next = free_particles;
@@ -552,7 +552,7 @@ void R_UpdateParticles()
 	for (p = active_particles; p; p = p->next)
 	{
 		kill = p->next;
-		while (kill && kill->die < cl.time)
+		while (kill && kill->die < cl->time)
 		{
 			p->next = kill->next;
 			kill->next = free_particles;
@@ -858,14 +858,14 @@ COMMAND(TimeRefresh)
 	double		start, stop, time, RenderTime, UpdateTime;
 	float		startangle;
 
-	startangle = cl.viewangles.yaw;
+	startangle = cl->viewangles.yaw;
 
 	RenderTime = 0;
 	UpdateTime = 0;
 	start = Sys_Time();
 	for (i = 0; i < 128; i++)
 	{
-		cl.viewangles.yaw = (float)(i) * 360.0 / 128.0;
+		cl->viewangles.yaw = (float)(i) * 360.0 / 128.0;
 
 		Drawer->StartUpdate();
 
@@ -882,7 +882,7 @@ COMMAND(TimeRefresh)
 	GCon->Logf("%f seconds (%f fps)", time, 128 / time);
 	GCon->Logf("Render time %f, update time %f", RenderTime, UpdateTime);
 
-	cl.viewangles.yaw = startangle;
+	cl->viewangles.yaw = startangle;
 	unguard;
 }
 
@@ -938,9 +938,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.32  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.31  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
 //	

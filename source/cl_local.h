@@ -102,7 +102,7 @@ class VClientGameBase : public VObject
 	// used to accelerate or skip a stage
 	dword				skipintermission:1;
 
-	client_state_t*		cl;
+	VClientState*		cl;
 	level_t*			level;
 	VLevel*				GLevel;
 
@@ -260,9 +260,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.18  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.17  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

@@ -327,7 +327,7 @@ static void AM_saveScaleAndLoc(void)
 //
 //==========================================================================
 
-static void AM_restoreScaleAndLoc(void)
+static void AM_restoreScaleAndLoc()
 {
     m_w = old_m_w;
     m_h = old_m_h;
@@ -338,8 +338,8 @@ static void AM_restoreScaleAndLoc(void)
     }
     else
     {
-		m_x = cl.vieworg.x - m_w / 2.0;
-		m_y = cl.vieworg.y - m_h / 2.0;
+		m_x = cl->vieworg.x - m_w / 2.0;
+		m_y = cl->vieworg.y - m_h / 2.0;
     }
     m_x2 = m_x + m_w;
     m_y2 = m_y + m_h;
@@ -480,10 +480,10 @@ static void AM_initVariables(void)
     m_w = FTOM(f_w);
     m_h = FTOM(f_h);
 
-	oldplr.x = cl.vieworg.x;
-	oldplr.y = cl.vieworg.y;
-    m_x = cl.vieworg.x - m_w / 2.0;
-    m_y = cl.vieworg.y - m_h / 2.0;
+	oldplr.x = cl->vieworg.x;
+	oldplr.y = cl->vieworg.y;
+    m_x = cl->vieworg.x - m_w / 2.0;
+    m_y = cl->vieworg.y - m_h / 2.0;
     AM_changeWindowLoc();
 
     // for saving & restoring
@@ -770,14 +770,14 @@ static void AM_changeWindowScale(void)
 
 static void AM_doFollowPlayer(void)
 {
-    if (f_oldloc.x != cl.vieworg.x || f_oldloc.y != cl.vieworg.y)
+    if (f_oldloc.x != cl->vieworg.x || f_oldloc.y != cl->vieworg.y)
     {
-		m_x = FTOM(MTOF(cl.vieworg.x)) - m_w / 2.0;
-		m_y = FTOM(MTOF(cl.vieworg.y)) - m_h / 2.0;
+		m_x = FTOM(MTOF(cl->vieworg.x)) - m_w / 2.0;
+		m_y = FTOM(MTOF(cl->vieworg.y)) - m_h / 2.0;
 		m_x2 = m_x + m_w;
 		m_y2 = m_y + m_h;
-		f_oldloc.x = cl.vieworg.x;
-		f_oldloc.y = cl.vieworg.y;
+		f_oldloc.x = cl->vieworg.x;
+		f_oldloc.y = cl->vieworg.y;
     }
 }
 
@@ -821,11 +821,11 @@ static void AM_clearFB(void)
 
 	if (followplayer)
 	{
-		dmapx = MTOF(cl.vieworg.x) - MTOF(oldplr.x);
-		dmapy = MTOF(oldplr.y) - MTOF(cl.vieworg.y);
+		dmapx = MTOF(cl->vieworg.x) - MTOF(oldplr.x);
+		dmapy = MTOF(oldplr.y) - MTOF(cl->vieworg.y);
 
-		oldplr.x = cl.vieworg.x;
-		oldplr.y = cl.vieworg.y;
+		oldplr.x = cl->vieworg.x;
+		oldplr.y = cl->vieworg.y;
 		mapxstart -= dmapx>>1;
 		mapystart -= dmapy>>1;
 
@@ -1128,7 +1128,7 @@ static void AM_drawWalls(void)
 			    AM_drawMline(&l, TSWallColor);
 			}
 		}
-		else if (cl.items & IT_ALL_MAP)
+		else if (cl->items & IT_ALL_MAP)
 		{
 		    if (!(line.flags & LINE_NEVERSEE))
 		    	AM_drawMline(&l, PowerWallColor);
@@ -1233,7 +1233,7 @@ static void AM_drawPlayers(void)
     {
 #endif
 	    AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0,
-	    	cl.viewangles.yaw, PlayerColor, cl.vieworg.x, cl.vieworg.y);
+	    	cl->viewangles.yaw, PlayerColor, cl->vieworg.x, cl->vieworg.y);
 #ifdef FIXME
 		return;
 	}
@@ -1516,7 +1516,7 @@ void AM_Drawer(void)
 	T_SetFont(font_small);
     T_SetAlign(hleft, vbottom);
 	T_DrawText(20, 200 - sb_height - 7, cl_level.level_name);
-	if (ShowKills && cl.maxclients > 1 && cl.deathmatch)
+	if (ShowKills && cl->maxclients > 1 && cl->deathmatch)
 	{
 		AM_DrawDeathmatchStats();
 	}
@@ -1525,9 +1525,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.16  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.15  2003/07/11 16:45:19  dj_jl
 //	Made array of players with pointers
 //	

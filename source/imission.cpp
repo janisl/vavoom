@@ -96,8 +96,8 @@ void IM_Start(void)
 	GClGame->scores = scores;
 	GClGame->im = &im;
 
-	cl.intermission = 1;
-	cl.palette = 0;
+	cl->intermission = 1;
+	cl->palette = 0;
 	AM_Stop();
 	SN_StopAllSequences();
 
@@ -107,9 +107,12 @@ void IM_Start(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.6  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

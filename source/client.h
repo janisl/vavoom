@@ -113,8 +113,10 @@ struct client_static_t
 	TMessage		message;		// writing buffer to send to server
 };
 
-struct client_state_t
+class VClientState : public VObject
 {
+	DECLARE_CLASS(VClientState, VObject, 0)
+
 	int				clientnum;		// cl_mobjs[cl.clientnum] = player
 
 	int				pclass;			// player class type
@@ -173,9 +175,6 @@ struct client_state_t
 	char			serverinfo[MAX_INFO_STRING];
 
 	int				intermission;
-
-	//	128 integers for user defined fields in PROGS
-	int				user_fields[128];
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -185,15 +184,18 @@ boolean CL_Responder(event_t* ev);
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern client_static_t	cls;
-extern client_state_t	cl;
+extern VClientState*	cl;
 extern TProgs			clpr;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.12  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.11  2005/04/04 07:45:45  dj_jl
 //	Palette flash state fix.
 //	

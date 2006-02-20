@@ -61,6 +61,7 @@ REGISTER_NAME(Window)
 REGISTER_NAME(ModalWindow)
 REGISTER_NAME(RootWindow)
 REGISTER_NAME(ClientGameBase)
+REGISTER_NAME(ClientState)
 
 // Closing -----------------------------------------------------------------
 
@@ -74,9 +75,12 @@ REGISTER_NAME(ClientGameBase)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.9  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.8  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
 //	

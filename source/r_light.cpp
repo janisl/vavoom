@@ -705,7 +705,7 @@ void R_PushDlights(void)
 	l = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
-		if (l->die < cl.time || !l->radius)
+		if (l->die < cl->time || !l->radius)
 			continue;
 		R_MarkLights(l, 1 << i, GClLevel->NumNodes - 1);
 	}
@@ -1075,9 +1075,12 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.19  2005/11/13 18:54:10  dj_jl
 //	CVar to disable static lights.
-//
+//	
 //	Revision 1.18  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

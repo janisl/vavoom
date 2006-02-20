@@ -328,11 +328,11 @@ COMMAND(ToggleAlwaysRun)
 
 void V_StartPitchDrift(void)
 {
-	cl.centering = true;
+	cl->centering = true;
 }
 void V_StopPitchDrift(void)
 {
-	cl.centering = false;
+	cl->centering = false;
 }
 
 //==========================================================================
@@ -361,32 +361,32 @@ static void AdjustAngles(void)
 	//	YAW
 	if (!(KeyStrafe.state & 1))
 	{ 
-		cl.viewangles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
-		cl.viewangles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
+		cl->viewangles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
+		cl->viewangles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
 		if (joyxmove > 0)
-			cl.viewangles.yaw -= joy_yaw * speed;
+			cl->viewangles.yaw -= joy_yaw * speed;
 		if (joyxmove < 0)
-			cl.viewangles.yaw += joy_yaw * speed;
+			cl->viewangles.yaw += joy_yaw * speed;
 	}
 	if (!(KeyStrafe.state & 1) &&
 		(!lookstrafe || (!mouse_look && !(KeyMouseLook.state & 1))))
 	{
-		cl.viewangles.yaw -= mousex * m_yaw;
+		cl->viewangles.yaw -= mousex * m_yaw;
 	}
-	cl.viewangles.yaw = AngleMod(cl.viewangles.yaw);
+	cl->viewangles.yaw = AngleMod(cl->viewangles.yaw);
 
 	//	PITCH
 	float up = KeyLookUp.KeyState();
 	float down = KeyLookDown.KeyState();
-	cl.viewangles.pitch -= cl_pitchspeed * up * speed;
-	cl.viewangles.pitch += cl_pitchspeed * down * speed;
+	cl->viewangles.pitch -= cl_pitchspeed * up * speed;
+	cl->viewangles.pitch += cl_pitchspeed * down * speed;
 	if (up || down || (KeyMouseLook.state & 1))
 	{
 		V_StopPitchDrift();
 	}
 	if ((mouse_look || (KeyMouseLook.state & 1)) && !(KeyStrafe.state & 1))
 	{
-		cl.viewangles.pitch -= mousey * m_pitch;
+		cl->viewangles.pitch -= mousey * m_pitch;
 	}
 
 	//	Center look
@@ -394,61 +394,61 @@ static void AdjustAngles(void)
 	{
 		V_StartPitchDrift();
 	}
-	if (cl.centering)
+	if (cl->centering)
 	{
 		float adelta = cl_pitchdriftspeed * host_frametime;
-		if (fabs(cl.viewangles.pitch) < adelta)
+		if (fabs(cl->viewangles.pitch) < adelta)
 		{
-			cl.viewangles.pitch = 0;
-			cl.centering = false;
+			cl->viewangles.pitch = 0;
+			cl->centering = false;
 		}
 		else
 		{
-			if (cl.viewangles.pitch > 0.0)
+			if (cl->viewangles.pitch > 0.0)
 			{
-				cl.viewangles.pitch -= adelta;
+				cl->viewangles.pitch -= adelta;
 			}
-			else if (cl.viewangles.pitch < 0.0)
+			else if (cl->viewangles.pitch < 0.0)
 			{
-				cl.viewangles.pitch += adelta;
+				cl->viewangles.pitch += adelta;
 			}
 		}
 	}
 
 	//	ROLL
-	if (cl.health <= 0)
+	if (cl->health <= 0)
  	{
- 		if (cl.viewangles.roll >= 0 && cl.viewangles.roll < cl_deathroll)
+ 		if (cl->viewangles.roll >= 0 && cl->viewangles.roll < cl_deathroll)
 		{
-			cl.viewangles.roll += cl_deathrollspeed * host_frametime;
+			cl->viewangles.roll += cl_deathrollspeed * host_frametime;
 		}
- 		if (cl.viewangles.roll < 0 && cl.viewangles.roll > -cl_deathroll)
+ 		if (cl->viewangles.roll < 0 && cl->viewangles.roll > -cl_deathroll)
 		{
-			cl.viewangles.roll -= cl_deathrollspeed * host_frametime;
+			cl->viewangles.roll -= cl_deathrollspeed * host_frametime;
 		}
 	}
 	else
 	{
-		cl.viewangles.roll = 0.0;
+		cl->viewangles.roll = 0.0;
 	}
 
 	//	Check angles
-	if (cl.viewangles.pitch > 80.0)
+	if (cl->viewangles.pitch > 80.0)
 	{
-		cl.viewangles.pitch = 80.0;
+		cl->viewangles.pitch = 80.0;
 	}
-	if (cl.viewangles.pitch < -70.0)
+	if (cl->viewangles.pitch < -70.0)
 	{
-		cl.viewangles.pitch = -70.0;
+		cl->viewangles.pitch = -70.0;
 	}
 
-	if (cl.viewangles.roll > 80.0)
+	if (cl->viewangles.roll > 80.0)
 	{
-		cl.viewangles.roll = 80.0;
+		cl->viewangles.roll = 80.0;
 	}
-	if (cl.viewangles.roll < -80.0)
+	if (cl->viewangles.roll < -80.0)
 	{
-		cl.viewangles.roll = -80.0;
+		cl->viewangles.roll = -80.0;
 	}
 	unguard;
 }
@@ -619,9 +619,9 @@ void CL_SendMove(void)
 		mousex = mousey = 0;
 		msg.Clear();
 		msg << (byte)clc_move
-			<< (byte)(AngleToByte(cl.viewangles.yaw))
-			<< (byte)(AngleToByte(cl.viewangles.pitch))
-			<< (byte)(AngleToByte(cl.viewangles.roll))
+			<< (byte)(AngleToByte(cl->viewangles.yaw))
+			<< (byte)(AngleToByte(cl->viewangles.pitch))
+			<< (byte)(AngleToByte(cl->viewangles.roll))
 			<< cmd.forwardmove
 			<< cmd.sidemove
 			<< cmd.flymove
@@ -703,9 +703,12 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.11  2004/10/11 07:57:30  dj_jl
 //	Joystick yaw speed fixed.
-//
+//	
 //	Revision 1.10  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

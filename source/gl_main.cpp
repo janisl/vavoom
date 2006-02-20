@@ -405,10 +405,10 @@ void VOpenGLDrawer::EndView(void)
 	guard(VOpenGLDrawer::EndView);
 	Setup2D();
 
-	cl.cshifts[7] = cl.prev_cshifts[7];
+	cl->cshifts[7] = cl->prev_cshifts[7];
 	for (int i = 0; i < NUM_CSHIFTS; i++)
 	{
-		if (!cl.cshifts[i])
+		if (!cl->cshifts[i])
 		{
 			continue;
 		}
@@ -416,10 +416,10 @@ void VOpenGLDrawer::EndView(void)
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 
-		glColor4f((float)((cl.cshifts[i] >> 16) & 0xff) / 255.0,
-				(float)((cl.cshifts[i] >> 8) & 0xff) / 255.0,
-				(float)(cl.cshifts[i] & 0xff) / 255.0,
-				(float)((cl.cshifts[i] >> 24) & 0xff) / 255.0);
+		glColor4f((float)((cl->cshifts[i] >> 16) & 0xff) / 255.0,
+				(float)((cl->cshifts[i] >> 8) & 0xff) / 255.0,
+				(float)(cl->cshifts[i] & 0xff) / 255.0,
+				(float)((cl->cshifts[i] >> 24) & 0xff) / 255.0);
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
 		glVertex2f(ScreenWidth, 0);
@@ -470,23 +470,26 @@ void VOpenGLDrawer::SetPalette(int pnum)
 	int cmax = MAX(MAX(pal[0], pal[1]), pal[2]);
 	if (!cmax)
 	{
-		cl.cshifts[7] = 0;
+		cl->cshifts[7] = 0;
 	}
 	else
 	{
-		cl.cshifts[7] = (cmax << 24) | ((255 * pal[0] / cmax) << 16) |
+		cl->cshifts[7] = (cmax << 24) | ((255 * pal[0] / cmax) << 16) |
 			((255 * pal[1] / cmax) << 8) | (255 * pal[2] / cmax);
 	}
-	cl.prev_cshifts[7] = cl.cshifts[7];
+	cl->prev_cshifts[7] = cl->cshifts[7];
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.24  2006/01/03 19:57:45  dj_jl
 //	Fixed anisotropic texture filtering.
-//
+//	
 //	Revision 1.23  2005/01/24 12:53:54  dj_jl
 //	Skybox fixes.
 //	

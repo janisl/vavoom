@@ -487,8 +487,8 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.
 	int dist = 0;
-	if (origin_id && origin_id != cl.clientnum + 1)
-		dist = (int)Length(origin - cl.vieworg);
+	if (origin_id && origin_id != cl->clientnum + 1)
+		dist = (int)Length(origin - cl->vieworg);
 	if (dist >= MAX_SND_DIST)
 	{
 		return; // sound is beyond the hearing range...
@@ -510,7 +510,7 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	}
 	int handle;
 	bool is3D;
-	if (!origin_id || origin_id == cl.clientnum + 1)
+	if (!origin_id || origin_id == cl->clientnum + 1)
 	{
 		//	Local sound
 		handle = GSoundDevice->PlaySound(sound_id, volume, 0, pitch, false);
@@ -519,7 +519,7 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	else if (!GSoundDevice->Sound3D)
 	{
 		float vol = SoundCurve[dist] / 127.0 * volume;
-		float sep = DotProduct(origin - cl.vieworg, listener_right) / MAX_SND_DIST;
+		float sep = DotProduct(origin - cl->vieworg, listener_right) / MAX_SND_DIST;
 		if (swap_stereo)
 		{
 			sep = -sep;
@@ -636,7 +636,7 @@ void S_UpdateSfx()
 		return;
 	}
 
-	AngleVectors(cl.viewangles, listener_forward, listener_right, listener_up);
+	AngleVectors(cl->viewangles, listener_forward, listener_right, listener_up);
 
 	for (int i = 0; i < NumChannels; i++)
 	{
@@ -657,7 +657,7 @@ void S_UpdateSfx()
 			continue;
 		}
 
-		if (Channel[i].origin_id == cl.clientnum + 1)
+		if (Channel[i].origin_id == cl->clientnum + 1)
 		{
 			//	Client sound
 			continue;
@@ -666,7 +666,7 @@ void S_UpdateSfx()
 		//	Move sound
 		Channel[i].origin += Channel[i].velocity * host_frametime;
 
-		int dist = (int)Length(Channel[i].origin - cl.vieworg);
+		int dist = (int)Length(Channel[i].origin - cl->vieworg);
 		if (dist >= MAX_SND_DIST)
 		{
 			//	Too far away
@@ -678,7 +678,7 @@ void S_UpdateSfx()
 		if (!Channel[i].is3D)
 		{
 			float vol = SoundCurve[dist] / 127.0 * Channel[i].volume;
-			float sep = DotProduct(Channel[i].origin - cl.vieworg,
+			float sep = DotProduct(Channel[i].origin - cl->vieworg,
 				listener_right) / MAX_SND_DIST;
 			if (swap_stereo)
 			{
@@ -697,7 +697,7 @@ void S_UpdateSfx()
 
 	if (GSoundDevice->Sound3D)
 	{
-		GSoundDevice->UpdateListener(cl.vieworg, TVec(0, 0, 0),
+		GSoundDevice->UpdateListener(cl->vieworg, TVec(0, 0, 0),
 			listener_forward, listener_right, listener_up);
 	}
 
@@ -1926,9 +1926,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.25  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.24  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
 //	

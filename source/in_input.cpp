@@ -319,7 +319,7 @@ void IN_ProcessEvents(void)
 		if (MN_Responder(ev))
 			continue;
 
-	    if (cls.state == ca_connected && !cl.intermission)
+	    if (cls.state == ca_connected && !cl->intermission)
     	{
 			if (SB_Responder(ev))
 		    	continue;	// status window ate it
@@ -689,9 +689,12 @@ int IN_TranslateKey(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.13  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.12  2004/04/16 06:25:52  dj_jl
 //	Added mousewheel key codes
 //	

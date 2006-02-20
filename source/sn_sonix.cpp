@@ -538,7 +538,7 @@ void SN_UpdateActiveSequences()
 	seqnode_t *node;
 	boolean sndPlaying;
 
-	if (!ActiveSequences || cl.bPaused)
+	if (!ActiveSequences || cl->bPaused)
 	{ // No sequences currently playing/game is paused
 		return;
 	}
@@ -720,9 +720,12 @@ void SN_SerialiseSounds(FArchive& Ar)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.13  2005/11/20 15:50:40  dj_jl
 //	Some fixes.
-//
+//	
 //	Revision 1.12  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	

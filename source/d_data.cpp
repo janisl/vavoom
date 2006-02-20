@@ -273,7 +273,7 @@ void VSoftwareDrawer::SetPalette(int InNum)
 	//	Save palette
 	memcpy(host_basepal, pal, 768);
 	//	Must recalculate any cshifts
-	memset(cl.prev_cshifts, 0, sizeof(cl.prev_cshifts));
+	memset(cl->prev_cshifts, 0, sizeof(cl->prev_cshifts));
 	unguard;
 }
 
@@ -360,10 +360,10 @@ void VSoftwareDrawer::UpdatePalette(void)
 	
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
-		if (cl.cshifts[i] != cl.prev_cshifts[i])
+		if (cl->cshifts[i] != cl->prev_cshifts[i])
 		{
 			newshifts = true;
-			cl.prev_cshifts[i] = cl.cshifts[i];
+			cl->prev_cshifts[i] = cl->cshifts[i];
 		}
 	}
 	
@@ -384,10 +384,10 @@ void VSoftwareDrawer::UpdatePalette(void)
 	
 		for (j = 0; j < NUM_CSHIFTS; j++)
 		{
-			perc = (cl.cshifts[j] >> 24) & 0xff;
-			dstr = (cl.cshifts[j] >> 16) & 0xff;
-			dstg = (cl.cshifts[j] >> 8) & 0xff;
-			dstb = cl.cshifts[j] & 0xff;
+			perc = (cl->cshifts[j] >> 24) & 0xff;
+			dstr = (cl->cshifts[j] >> 16) & 0xff;
+			dstg = (cl->cshifts[j] >> 8) & 0xff;
+			dstb = cl->cshifts[j] & 0xff;
 			r += (perc * (dstr - r)) >> 8;
 			g += (perc * (dstg - g)) >> 8;
 			b += (perc * (dstb - b)) >> 8;
@@ -468,9 +468,12 @@ void VSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.13  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.12  2005/04/28 07:16:12  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

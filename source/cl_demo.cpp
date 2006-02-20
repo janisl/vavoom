@@ -28,7 +28,7 @@
 //**	When a demo is playing back, all NET_SendMessages are skipped, and
 //**  NET_GetMessages are read from the demo file.
 //**
-//**	Whenever cl.time gets past the last received message, another message
+//**	Whenever cl->time gets past the last received message, another message
 //**  is read from the demo file.
 //**
 //**************************************************************************
@@ -122,7 +122,7 @@ void CL_WriteDemoMessage(void)
 {
 	guard(CL_WriteDemoMessage);
 	*cls.demofile << net_msg.CurSize;
-	*cls.demofile << cl.viewangles;
+	*cls.demofile << cl->viewangles;
 	cls.demofile->Serialise(net_msg.Data, net_msg.CurSize);
 	cls.demofile->Flush();
 	unguard;
@@ -160,7 +160,7 @@ int CL_GetMessage(void)
 					cls.td_starttime = realtime;
 				}
 			}
-			else if ( /* cl.time > 0 && */ cl.time <= cl_level.time)
+			else if ( /* cl->time > 0 && */ cl->time <= cl_level.time)
 			{
 				return 0;		// don't need another message yet
 			}
@@ -168,8 +168,8 @@ int CL_GetMessage(void)
 
 		// get the next message
 		*cls.demofile << net_msg.CurSize;
-//		VectorCopy (cl.mviewangles[0], cl.mviewangles[1]);
-		*cls.demofile << cl.viewangles;
+//		VectorCopy (cl->mviewangles[0], cl->mviewangles[1]);
+		*cls.demofile << cl->viewangles;
 
 		if (net_msg.CurSize > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");
@@ -419,9 +419,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.14  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.13  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
 //	

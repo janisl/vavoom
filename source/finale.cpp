@@ -58,9 +58,9 @@
 
 void F_StartFinale()
 {
-	cl.intermission = 2;
+	cl->intermission = 2;
 	automapactive = false;
-	cl.palette = 0;
+	cl->palette = 0;
 
 	GClGame->eventStartFinale();
 }
@@ -73,7 +73,7 @@ void F_StartFinale()
 
 boolean F_Responder(event_t *event)
 {
-    if (cls.state != ca_connected || cl.intermission != 2)
+    if (cls.state != ca_connected || cl->intermission != 2)
     	return false;
     return GClGame->eventFinaleResponder(event);
 }
@@ -81,9 +81,12 @@ boolean F_Responder(event_t *event)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.7  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

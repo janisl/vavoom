@@ -446,7 +446,7 @@ extern TCvarI		r_chasecam;
 static void RenderSprite(clmobj_t *thing)
 {
 	guard(RenderSprite);
-	if (thing == &cl_mobjs[cl.clientnum + 1] && !r_chasecam)
+	if (thing == &cl_mobjs[cl->clientnum + 1] && !r_chasecam)
 	{
 		//	Don't draw client's mobj
 		return;
@@ -769,8 +769,8 @@ void RenderTranslucentAliasModel(clmobj_t *mobj, dword light)
 static void RenderAliasModel(clmobj_t *mobj)
 {
 	guard(RenderAliasModel);
-	if (!r_chasecam && (mobj == &cl_mobjs[cl.clientnum + 1] ||
-		mobj == &cl_weapon_mobjs[cl.clientnum + 1]))
+	if (!r_chasecam && (mobj == &cl_mobjs[cl->clientnum + 1] ||
+		mobj == &cl_weapon_mobjs[cl->clientnum + 1]))
 	{
 		//	Don't draw client's mobj
 		return;
@@ -962,7 +962,7 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 	float spry = 100.0 - psp->sy + TexTOffset;
 	if (refdef.height == ScreenHeight)
 	{
-		spry -= cl.pspriteSY;
+		spry -= cl->pspriteSY;
 	}
 
 	//	1 / 160 = 0.00625
@@ -1011,7 +1011,7 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 		light = R_LightPoint(sprorigin);
 	}
 
-	Drawer->DrawSpritePolygon(dv, lump, cl.translucency, 0, light);
+	Drawer->DrawSpritePolygon(dv, lump, cl->translucency, 0, light);
 	unguard;
 }
 
@@ -1037,8 +1037,8 @@ static void RenderViewModel(cl_pspdef_t *psp)
 		light = R_LightPoint(origin);
 	}
 
-	Drawer->DrawAliasModel(origin, cl.viewangles, psp->alias_model,
-		psp->alias_frame, 0, NULL, light, cl.translucency, true);
+	Drawer->DrawAliasModel(origin, cl->viewangles, psp->alias_model,
+		psp->alias_frame, 0, NULL, light, cl->translucency, true);
 	unguard;
 }
 
@@ -1059,14 +1059,14 @@ void R_DrawPlayerSprites(void)
 		return;
 	}
 
-	if (cl.psprites[0].alias_model && r_view_models)
+	if (cl->psprites[0].alias_model && r_view_models)
 	{
-		RenderViewModel(cl.psprites);
+		RenderViewModel(cl->psprites);
 	}
 	else
 	{
 	    // add all active psprites
-		for (i = 0, psp = cl.psprites; i < NUMPSPRITES; i++, psp++)
+		for (i = 0, psp = cl->psprites; i < NUMPSPRITES; i++, psp++)
 		{
 			if (psp->sprite != -1)
 			{
@@ -1179,9 +1179,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/02/20 22:52:56  dj_jl
+//	Changed client state to a class.
+//
 //	Revision 1.24  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.23  2005/11/02 22:29:26  dj_jl
 //	Offset fix enabled by default.
 //	
