@@ -2405,7 +2405,6 @@ COMMAND(Spawn)
 		return;
 	}
 
-	sv_player->Level = GLevelInfo;
 	if (!sv_loading)
 	{
 		if (sv_player->bSpawned)
@@ -2678,6 +2677,7 @@ void SV_ConnectClient(VBasePlayer *player)
 	player->Message.AllowOverflow = true;		// we can catch it
 	player->Message.Overflowed = false;
 	player->bSpawned = false;
+	player->Level = GLevelInfo;
 	if (!sv_loading)
 	{
 		player->MO = NULL;
@@ -3009,9 +3009,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.78  2006/02/20 17:54:32  dj_jl
+//	Set level info for player when connecting.
+//
 //	Revision 1.77  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
-//
+//	
 //	Revision 1.76  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	
