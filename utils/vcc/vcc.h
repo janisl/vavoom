@@ -252,6 +252,23 @@ enum EPunctuation
 class TClass;
 class TStruct;
 
+class TModifiers
+{
+public:
+	enum
+	{
+		Native			= 0x0001,
+		Static			= 0x0002,
+		Abstract		= 0x0004,
+	};
+
+	static int Parse();
+	static const char* Name(int);
+	static int Check(int, int);
+	static int MethodAttr(int);
+	static int ClassAttr(int);
+};
+
 //
 // The base class of all objects.
 //
@@ -313,6 +330,8 @@ struct field_t : public FField
 class TFunction : public FField
 {
 public:
+	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static };
+
 	TClass*		OuterClass;
 	int			FirstStatement;	//	Negative numbers are builtin functions
 	int			NumLocals;
@@ -375,6 +394,8 @@ public:
 class TClass : public FField
 {
 public:
+	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
+
 	TClass*			ParentClass;
 	field_t*		Fields;
 	int				NumFields;
@@ -486,7 +507,7 @@ void PA_Parse();
 
 int CheckForLocalVar(FName);
 void ParseLocalVar(const TType&);
-void CompileMethodDef(const TType&, field_t*, field_t*, TClass*, int);
+void CompileMethodDef(const TType&, field_t*, field_t*, TClass*);
 void SkipDelegate(TClass*);
 void CompileStateCode(TClass*, int);
 void CompileDefaultProperties(field_t*, TClass*);
@@ -626,9 +647,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2006/02/20 19:34:32  dj_jl
+//	Created modifiers class.
+//
 //	Revision 1.39  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.38  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
 //	

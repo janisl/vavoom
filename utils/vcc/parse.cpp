@@ -558,14 +558,8 @@ static void ParseCompoundStatement()
 //==========================================================================
 
 void CompileMethodDef(const TType& t, field_t* method, field_t* otherfield,
-	TClass* InClass, int FuncFlags)
+	TClass* InClass)
 {
-	if (t.type != ev_void)
-	{
-		//	Funkcijas atgri÷amajam tipam jÆbÝt void vai arØ ar izmñru 4
-		t.CheckPassable();
-	}
-
 	numlocaldefs = 1;
 	localsofs = 1;
 
@@ -620,7 +614,7 @@ un++;
 	if (method->func_num != num)
 		ERR_Exit(ERR_NONE, true, "Found wrong function");
 
-	if (FuncFlags & FUNC_Native)
+	if (functions[num].Flags & FUNC_Native)
 	{
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
@@ -831,9 +825,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/02/20 19:34:32  dj_jl
+//	Created modifiers class.
+//
 //	Revision 1.37  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.36  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
 //	

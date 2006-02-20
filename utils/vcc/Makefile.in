@@ -13,6 +13,7 @@ OBJS = \
 	error.$(OBJEXT) \
 	expressn.$(OBJEXT) \
 	info.$(OBJEXT) \
+	modifiers.$(OBJEXT) \
 	name.$(OBJEXT) \
 	parse.$(OBJEXT) \
 	parse1.$(OBJEXT) \

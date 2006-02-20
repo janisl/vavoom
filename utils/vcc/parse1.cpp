@@ -474,7 +474,7 @@ static void SkipCompoundStatement()
 //==========================================================================
 
 void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
-	TClass* InClass, int FuncFlags)
+	TClass* InClass, int Modifiers)
 {
 	if (t.type != ev_void)
 	{
@@ -484,6 +484,9 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 
 	numlocaldefs = 1;
 	int localsofs = 1;
+
+	Modifiers = TModifiers::Check(Modifiers, TFunction::AllowedModifiers);
+	int FuncFlags = TModifiers::MethodAttr(Modifiers);
 
 	if ((FuncFlags & FUNC_Static) && !(FuncFlags & FUNC_Native))
 	{
@@ -831,9 +834,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/02/20 19:34:32  dj_jl
+//	Created modifiers class.
+//
 //	Revision 1.11  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.10  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
 //	

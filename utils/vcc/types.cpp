@@ -694,6 +694,7 @@ void CompileClass()
 		CheckForClass();
 	}
 
+	TModifiers::Parse();
 	do
 	{
 		if (TK_Check(KW_MOBJINFO))
@@ -707,12 +708,6 @@ void CompileClass()
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 			EvalConstExpression(NULL, ev_int);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		}
-		else if (TK_Check(KW_NATIVE))
-		{
-		}
-		else if (TK_Check(KW_ABSTRACT))
-		{
 		}
 		else
 		{
@@ -773,23 +768,7 @@ void CompileClass()
 			continue;
 		}
 
-		int Flags = 0;
-		bool flags_done = false;
-		do
-		{
-			if (TK_Check(KW_NATIVE))
-			{
-				Flags |= FUNC_Native;
-			}
-			else if (TK_Check(KW_STATIC))
-			{
-				Flags |= FUNC_Static;
-			}
-			else
-			{
-				flags_done = true;
-			}
-		} while (!flags_done);
+		TModifiers::Parse();
 
 		type = CheckForType(Class);
 		if (type.type == ev_unknown)
@@ -827,7 +806,7 @@ void CompileClass()
 			}
 			if (TK_Check(PU_LPAREN))
 			{
-				CompileMethodDef(t, fi, otherfield, Class, Flags);
+				CompileMethodDef(t, fi, otherfield, Class);
 				need_semicolon = false;
 				break;
 			}
@@ -1547,6 +1526,9 @@ void ParseClass()
 		}
 	}
 
+	int ClassModifiers = TModifiers::Parse();
+	ClassModifiers = TModifiers::Check(ClassModifiers, TClass::AllowedModifiers);
+	int ClassAttr = TModifiers::ClassAttr(ClassModifiers);
 	do
 	{
 		if (TK_Check(KW_MOBJINFO))
@@ -1560,12 +1542,6 @@ void ParseClass()
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 			AddToScriptIds(EvalConstExpression(NULL, ev_int), Class->Index);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		}
-		else if (TK_Check(KW_NATIVE))
-		{
-		}
-		else if (TK_Check(KW_ABSTRACT))
-		{
 		}
 		else
 		{
@@ -1666,23 +1642,7 @@ Class->Fields = &fields[0];
 			continue;
 		}
 
-		int Flags = 0;
-		bool flags_done = false;
-		do
-		{
-			if (TK_Check(KW_NATIVE))
-			{
-				Flags |= FUNC_Native;
-			}
-			else if (TK_Check(KW_STATIC))
-			{
-				Flags |= FUNC_Static;
-			}
-			else
-			{
-				flags_done = true;
-			}
-		} while (!flags_done);
+		int Modifiers = TModifiers::Parse();
 
 		type = CheckForType(Class);
 		if (type.type == ev_unknown)
@@ -1713,7 +1673,7 @@ Class->Fields = &fields[0];
 			}
 			if (TK_Check(PU_LPAREN))
 			{
-				ParseMethodDef(t, fi, otherfield, Class, Flags);
+				ParseMethodDef(t, fi, otherfield, Class, Modifiers);
 				need_semicolon = false;
 				break;
 			}
@@ -1765,9 +1725,12 @@ Class->Fields = &fields[0];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/02/20 19:34:32  dj_jl
+//	Created modifiers class.
+//
 //	Revision 1.42  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.41  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
 //	
