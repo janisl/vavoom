@@ -1090,71 +1090,6 @@ struct cl_pspdef_t
 	float sy;
 };
 
-struct client_state_t
-{
-	int clientnum;
-
-	int pclass;	// player class type
-
-	// Determine POV,
-	//  including viewpoint bobbing during movement.
-	// Focal origin above r.z
-	TVec vieworg;
-	TAVec viewangles;
-	int centering;
-
-	// This is only used between levels,
-	// mo->health is used during levels.
-	int health;
-
-	int items;
-
-	// Frags, kills of other players.
-	int Frags;
-
-	// So gun flashes light up areas.
-	int extralight;
-
-	// For lite-amp and invulnarability powers
-	int fixedcolormap;
-
-	// Current PLAYPAL index
-	//  can be set to REDCOLORMAP for pain, etc.
-	int palette;
-	int prev_palette;
-
-	int cshifts[NUM_CSHIFTS];	//  color shifts for damage,
-	int prev_cshifts[NUM_CSHIFTS];	// powerups and content types
-
-	// Overlay view sprites (gun, etc).
-	cl_pspdef_t psprites[NUMPSPRITES];
-	float pspriteSY;
-
-	// True if secret level has been done.
-	bool bDidSecret;
-
-	bool bPaused;
-
-	int worldTimer;	// total time the player's been playing
-
-	// Overlay view sprites (gun, etc).
-	int translucency;
-
-	int maxclients;
-	int deathmatch;
-
-	float mtime[2];
-	float time;
-	float oldtime;
-
-	int serverinfo[MAX_INFO_STRING / 4];
-
-	int intermission;
-
-	//  128 integers for user defined fields in PROGS
-	addfields 128;
-};
-
 //
 //  Server list
 //
@@ -2082,6 +2017,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/20 22:57:16  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.6  2006/02/19 20:37:42  dj_jl
 //  Made true and false keywords.
 //

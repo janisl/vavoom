@@ -140,32 +140,6 @@ enum
 	EF_ROCKET		= 0x08
 };
 
-#ifdef CLIENT
-
-addfields client_state_t
-{
-	//
-	//  STATS FOR STATUS BAR
-	//
-
-	int SBFlags;
-
-	int Ammo[NUMAMMO];
-	int MaxAmmo[NUMAMMO];
-	int ReadyAmmo;
-
-	bool WeaponOwned[NUMWEAPONS];
-
-	int ArmorPoints;
-
-	int ReadyWeapon;
-
-	// current face index, used by w_faces
-	int sb_faceindex;
-};
-
-#endif
-
 defaultproperties
 {
 }
@@ -173,6 +147,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.18  2006/02/20 22:57:16  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.17  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

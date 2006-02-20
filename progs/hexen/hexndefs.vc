@@ -158,39 +158,6 @@ enum
 	EF_DLIGHT_MASK		= 7
 };
 
-#ifdef CLIENT
-
-struct inventory_t
-{
-	int type;
-	int count;
-};
-
-addfields client_state_t
-{
-	//
-	//  STATS FOR STATUS BAR
-	//
-
-	int SBFlags;
-
-	int TotalArmorPoints;
-	int ArmorPerc[NUMARMOR];
-
-	float InventoryTime;
-
-	int ArtifactFlash;
-	int readyArtifact;
-	int inv_ptr;
-	int curpos;
-	int inventorySlotNum;
-	inventory_t inventory[NUMARTIFACTS];
-
-	int mana[NUMMANA];
-};
-
-#endif
-
 defaultproperties
 {
 }
@@ -198,6 +165,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/02/20 22:57:17  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.11  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

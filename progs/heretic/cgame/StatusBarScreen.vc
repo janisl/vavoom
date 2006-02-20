@@ -27,7 +27,7 @@ class StatusBarScreen : Window;
 
 ClientGameBase ClGame;
 
-client_state_t *cl;
+MainClientState cl;
 
 // Chain
 int HealthMarker;
@@ -89,20 +89,20 @@ void StartMap()
 	pic_barltop = R_RegisterPic("LTFCTOP", PIC_PATCH);
 	pic_barrtop = R_RegisterPic("RTFCTOP", PIC_PATCH);
 	pic_chain = R_RegisterPic("CHAIN", PIC_PATCH);
-	if (cl->maxclients == 1)
+	if (cl.maxclients == 1)
 	{
 		// single player game uses red life gem
 		pic_lifegem = R_RegisterPic("LIFEGEM2", PIC_PATCH);
 	}
 	else
 	{
-		sprint(Name, "LIFEGEM%d", cl->clientnum);
+		sprint(Name, "LIFEGEM%d", cl.clientnum);
 		pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
 	}
 	pic_ltface = R_RegisterPic("LTFACE", PIC_PATCH);
 	pic_rtface = R_RegisterPic("RTFACE", PIC_PATCH);
 
-	if (cl->deathmatch)
+	if (cl.deathmatch)
 	{
 		pic_mainbar = R_RegisterPic("STATBAR", PIC_PATCH);
 	}
@@ -279,7 +279,7 @@ void SB_DrawMainBar(void)
 	//  Background
 	R_DrawPic(0, 158, pic_barback);
 
-	if (cl->SBFlags & HereticDefs::SBF_GOD_MODE)
+	if (cl.SBFlags & HereticDefs::SBF_GOD_MODE)
 	{
 		//  God mode
 		R_DrawPic(16, 167, pic_god1);
@@ -301,7 +301,7 @@ void SB_DrawMainBar(void)
 		health = 100;
 	}
 	healthPos = (health * 256) / 100;
-	chainY = (HealthMarker == cl->health) ? 191 : 191 + ChainWiggle;
+	chainY = (HealthMarker == cl.health) ? 191 : 191 + ChainWiggle;
 
 	//  Chain
 	R_DrawPic(2 + (healthPos % 17), chainY, pic_chain);
@@ -314,55 +314,55 @@ void SB_DrawMainBar(void)
 		R_ShadeRect(19 + i, 190, 1, 10, 9 + 15 - i);
 	}
 
-	if (!(cl->SBFlags & HereticDefs::SBF_INVENTORY_OPEN))
+	if (!(cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN))
 	{
 		//  Main interface
 		R_DrawPic(34, 160, pic_mainbar);
 
 		//  Frags / Health
-		if (cl->deathmatch)
+		if (cl.deathmatch)
 		{
-			SB_DrawNumber9(61, 170, cl->Frags);
+			SB_DrawNumber9(61, 170, cl.Frags);
 		}
 		else
 		{
 			SB_DrawNumber9(61, 170, health);
 		}
 
-		if (cl->ReadyAmmo)
+		if (cl.ReadyAmmo)
 		{
 			//  Ammo
-			SB_DrawNumber9(109, 162, cl->ReadyAmmo);
-			R_DrawPic(111, 172, pic_ammoicon[cl->readyweapon - 1]);
+			SB_DrawNumber9(109, 162, cl.ReadyAmmo);
+			R_DrawPic(111, 172, pic_ammoicon[cl.readyweapon - 1]);
 		}
 
 		//  Ready artifact
-		if (cl->ArtifactFlash)
+		if (cl.ArtifactFlash)
 		{
-			R_DrawPic(182, 161, pic_artiflash[cl->ArtifactFlash - 1]);
+			R_DrawPic(182, 161, pic_artiflash[cl.ArtifactFlash - 1]);
 		}
-		else if (cl->readyArtifact > 0)
+		else if (cl.readyArtifact > 0)
 		{
-			R_DrawPic(179, 160, pic_arti[cl->readyArtifact - 1]);
-			SB_DrawINumber(201, 182, cl->inventory[cl->inv_ptr].count);
+			R_DrawPic(179, 160, pic_arti[cl.readyArtifact - 1]);
+			SB_DrawINumber(201, 182, cl.inventory[cl.inv_ptr].count);
 		}
 
 		//  Keys
-		if (cl->SBFlags & HereticDefs::SBF_KEY_YELLOW)
+		if (cl.SBFlags & HereticDefs::SBF_KEY_YELLOW)
 		{
 			R_DrawPic(153, 164, pic_ykey);
 		}
-		if (cl->SBFlags & HereticDefs::SBF_KEY_GREEN)
+		if (cl.SBFlags & HereticDefs::SBF_KEY_GREEN)
 		{
 			R_DrawPic(153, 172, pic_gkey);
 		}
-		if (cl->SBFlags & HereticDefs::SBF_KEY_BLUE)
+		if (cl.SBFlags & HereticDefs::SBF_KEY_BLUE)
 		{
 			R_DrawPic(153, 180, pic_bkey);
 		}
 
 		//  Armor
-		SB_DrawNumber9(228, 170, cl->armorpoints);
+		SB_DrawNumber9(228, 170, cl.armorpoints);
 	}
 	else
 	{
@@ -370,23 +370,23 @@ void SB_DrawMainBar(void)
 
 		//  Inventory
 		R_DrawPic(34, 160, pic_invbar);
-		x = cl->inv_ptr - cl->curpos;
+		x = cl.inv_ptr - cl.curpos;
 		for (i = 0; i < 7; i++)
 		{
-			if (cl->inventorySlotNum > x + i
-				&& cl->inventory[x + i].type != HereticDefs::arti_none)
+			if (cl.inventorySlotNum > x + i
+				&& cl.inventory[x + i].type != HereticDefs::arti_none)
 			{
 				R_DrawPic(50 + i * 31, 160,
-					pic_arti[cl->inventory[x + i].type - 1]);
-				SB_DrawINumber(69 + i * 31, 182, cl->inventory[x + i].count);
+					pic_arti[cl.inventory[x + i].type - 1]);
+				SB_DrawINumber(69 + i * 31, 182, cl.inventory[x + i].count);
 			}
 		}
-		R_DrawPic(50 + cl->curpos * 31, 189, pic_selectbox);
+		R_DrawPic(50 + cl.curpos * 31, 189, pic_selectbox);
 		if (x != 0)
 		{
 			R_DrawPic(38, 159, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
-		if ((cl->inventorySlotNum - x > 7))
+		if ((cl.inventorySlotNum - x > 7))
 		{
 			R_DrawPic(269, 159, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
@@ -405,71 +405,71 @@ void SB_DrawFullscreenStats(void)
 	int x;
 
 	//  Health
-	SB_DrawNumber12(5, 180, cl->health);
+	SB_DrawNumber12(5, 180, cl.health);
 	R_DrawPic(62, 224, pic_health);
 
 	//  Armorpoints
-	SB_DrawNumber12(5, 160, cl->armorpoints);
+	SB_DrawNumber12(5, 160, cl.armorpoints);
 	R_DrawPic(62, 200, pic_armor2);
 
 	//  Frags
-	if (cl->deathmatch)
+	if (cl.deathmatch)
 	{
-		SB_DrawNumber9(45, 185, cl->Frags);
+		SB_DrawNumber9(45, 185, cl.Frags);
 	}
 
 	//  Ammo
-	if (cl->ReadyAmmo)
+	if (cl.ReadyAmmo)
 	{
-		SB_DrawNumber9(290, 186, cl->ReadyAmmo);
-		R_DrawPic(270, 184, pic_ammoicon[cl->readyweapon - 1]);
+		SB_DrawNumber9(290, 186, cl.ReadyAmmo);
+		R_DrawPic(270, 184, pic_ammoicon[cl.readyweapon - 1]);
 	}
 
 	//  Keys
-	if (cl->SBFlags & HereticDefs::SBF_KEY_YELLOW)
+	if (cl.SBFlags & HereticDefs::SBF_KEY_YELLOW)
 	{
 		R_DrawPic(270, 164, pic_ykey);
 	}
-	if (cl->SBFlags & HereticDefs::SBF_KEY_GREEN)
+	if (cl.SBFlags & HereticDefs::SBF_KEY_GREEN)
 	{
 		R_DrawPic(270, 172, pic_gkey);
 	}
-	if (cl->SBFlags & HereticDefs::SBF_KEY_BLUE)
+	if (cl.SBFlags & HereticDefs::SBF_KEY_BLUE)
 	{
 		R_DrawPic(270, 180, pic_bkey);
 	}
 
-	if (cl->SBFlags & HereticDefs::SBF_INVENTORY_OPEN)
+	if (cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN)
 	{
 		//  Inventory
-		x = cl->inv_ptr - cl->curpos;
+		x = cl.inv_ptr - cl.curpos;
 		for (i = 0; i < 7; i++)
 		{
 			R_DrawPic2(50 + i * 31, 168, pic_artibox, 40);
-			if (cl->inventorySlotNum > x + i
-				&& cl->inventory[x + i].type != HereticDefs::arti_none)
+			if (cl.inventorySlotNum > x + i
+				&& cl.inventory[x + i].type != HereticDefs::arti_none)
 			{
 				R_DrawPic(50 + i * 31, 168,
-					pic_arti[cl->inventory[x + i].type - 1]);
-				SB_DrawINumber(69 + i * 31, 190, cl->inventory[x + i].count);
+					pic_arti[cl.inventory[x + i].type - 1]);
+				SB_DrawINumber(69 + i * 31, 190, cl.inventory[x + i].count);
 			}
 		}
-		R_DrawPic(50 + cl->curpos * 31, 197, pic_selectbox);
+		R_DrawPic(50 + cl.curpos * 31, 197, pic_selectbox);
 		if (x != 0)
 		{
 			R_DrawPic(38, 167, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
-		if (cl->inventorySlotNum - x > 7)
+		if (cl.inventorySlotNum - x > 7)
 		{
 			R_DrawPic(269, 167, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 	}
-	else if (cl->readyArtifact > 0)
+	else if (cl.readyArtifact > 0)
 	{
 		//  Ready artifact
 		R_DrawPic2(286, 150, pic_artibox, 40);
-		R_DrawPic(286, 150, pic_arti[cl->readyArtifact - 1]);
-		SB_DrawINumber(307, 172, cl->inventory[cl->inv_ptr].count);
+		R_DrawPic(286, 150, pic_arti[cl.readyArtifact - 1]);
+		SB_DrawINumber(307, 172, cl.inventory[cl.inv_ptr].count);
 	}
 }
 
@@ -484,10 +484,10 @@ void SB_DrawIcons(void)
 	int frame;
 
 	//  Artifact rotating icons
-	if (cl->SBFlags & HereticDefs::SBF_POWER_FLIGHT)
+	if (cl.SBFlags & HereticDefs::SBF_POWER_FLIGHT)
 	{
 		frame = (ClGame.level->tictime / 3) & 15;
-		if (cl->SBFlags & HereticDefs::SBF_IN_FLIGHT)
+		if (cl.SBFlags & HereticDefs::SBF_IN_FLIGHT)
 		{
 			if (hitCenterFrame && frame != 15 && frame != 0)
 			{
@@ -509,7 +509,7 @@ void SB_DrawIcons(void)
 		R_DrawPic(20, 17, pic_flight[frame]);
 	}
 
-	if (cl->SBFlags & HereticDefs::SBF_POWER_BOOK)
+	if (cl.SBFlags & HereticDefs::SBF_POWER_BOOK)
 	{
 		R_DrawPic(300, 17, pic_book[(ClGame.level->tictime / 3) & 15]);
 	}
@@ -523,9 +523,9 @@ void SB_DrawIcons(void)
 
 void SB_DrawPause(void)
 {
-	if (cl->bPaused && GetCvar("draw_pause"))
+	if (cl.bPaused && GetCvar("draw_pause"))
 	{
-		R_DrawPic(160, cl->maxclients > 1 ? 70 : 20, pic_paused);
+		R_DrawPic(160, cl.maxclients > 1 ? 70 : 20, pic_paused);
 	}
 }
 
@@ -566,7 +566,7 @@ void SB_UpdateWidgets(void)
 		ChainWiggle = P_Random() & 1;
 	}
 
-	curHealth = cl->health;
+	curHealth = cl.health;
 	if (curHealth < 0)
 	{
 		curHealth = 0;
@@ -620,6 +620,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/20 22:57:17  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.2  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

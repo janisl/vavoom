@@ -23,6 +23,7 @@
 //**
 //**************************************************************************
 
+#include "MainClientState.vc"
 #include "MenuObject.vc"
 #include "MenuChoice.vc"
 #include "MenuTitleText.vc"
@@ -137,6 +138,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/20 22:57:17  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.5  2006/02/09 22:33:11  dj_jl
 //  Moved all client game code to classes.
 //

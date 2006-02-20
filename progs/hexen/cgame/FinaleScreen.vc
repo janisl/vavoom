@@ -30,7 +30,7 @@ class FinaleScreen : Window;
 
 #define MAX_FINALE_MESSAGE_SIZE	1024
 
-client_state_t *cl;
+MainClientState cl;
 
 int FinaleStage;
 float FinaleTime;
@@ -54,7 +54,7 @@ void StartFinale()
 
 	FinaleEndTime = 2.0;
 	fpage1 = R_RegisterPic("FINALE1", PIC_RAW);
-	if (cl->maxclients > 1)
+	if (cl.maxclients > 1)
 	{
 		fpage2 = R_RegisterPic("chessall", PIC_PATCH);
 	}
@@ -165,7 +165,7 @@ void F_DrawPic(void)
 	if (FinaleStage == 4 || FinaleStage == 5)
 	{
 		// Chess pic, draw the correct character graphic
-		if (cl->maxclients > 1)
+		if (cl.maxclients > 1)
 		{
 			R_DrawPic(20, 0, fpage2);
 		}
@@ -263,6 +263,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/20 22:57:17  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.1  2006/02/09 22:33:10  dj_jl
 //  Moved all client game code to classes.
 //

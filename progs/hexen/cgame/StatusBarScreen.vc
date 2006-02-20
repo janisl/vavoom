@@ -27,7 +27,7 @@ class StatusBarScreen : Window;
 
 ClientGameBase ClGame;
 
-client_state_t *cl;
+MainClientState cl;
 
 int sb_pclass;
 int sb_color;
@@ -106,7 +106,7 @@ void StartMap()
 	{
 	case HexenDefs::PCLASS_FIGHTER:
 		pic_chain = R_RegisterPic("CHAIN", PIC_PATCH);
-		if (cl->maxclients == 1)
+		if (cl.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic("LIFEGMF2", PIC_PATCH);
@@ -123,7 +123,7 @@ void StartMap()
 		break;
 	case HexenDefs::PCLASS_CLERIC:
 		pic_chain = R_RegisterPic("CHAIN2", PIC_PATCH);
-		if (cl->maxclients == 1)
+		if (cl.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic("LIFEGMC2", PIC_PATCH);
@@ -136,7 +136,7 @@ void StartMap()
 		break;
 	case HexenDefs::PCLASS_MAGE:
 		pic_chain = R_RegisterPic("CHAIN3", PIC_PATCH);
-		if (cl->maxclients == 1)
+		if (cl.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic("LIFEGMM2", PIC_PATCH);
@@ -450,10 +450,10 @@ void SB_DrawMainBar()
 	R_DrawPic(38, 162, pic_statbar);
 
 	// Frags / health
-	if (cl->deathmatch)
+	if (cl.deathmatch)
 	{
 		R_DrawPic(38, 162, pic_kills);
-		SB_DrawNumber9(40, 176, cl->Frags, 0);
+		SB_DrawNumber9(40, 176, cl.Frags, 0);
 	}
 	else
 	{
@@ -468,7 +468,7 @@ void SB_DrawMainBar()
 	}
 
 	//  Mana
-	if (cl->mana[0] == 0)
+	if (cl.mana[0] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana1 = 0;
@@ -477,7 +477,7 @@ void SB_DrawMainBar()
 	{
 		sb_mana1 = 1;
 	}
-	if (cl->mana[1] == 0)
+	if (cl.mana[1] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana2 = 0;
@@ -488,7 +488,7 @@ void SB_DrawMainBar()
 	}
 
 	// Update mana graphics based upon mana count/weapon type
-	readyweapon = (cl->SBFlags & HexenDefs::SBF_WPN_MASK) >> HexenDefs::SBF_WPN_SHIFT;
+	readyweapon = (cl.SBFlags & HexenDefs::SBF_WPN_MASK) >> HexenDefs::SBF_WPN_SHIFT;
 	if (readyweapon == HexenDefs::WP_FIRST)
 	{
 		sb_mana1 = 0;
@@ -513,39 +513,39 @@ void SB_DrawMainBar()
 		sb_manaVial1 = 1;
 		sb_manaVial2 = 1;
 	}
-	SB_DrawMNumber(79, 181, cl->mana[0]);
-	SB_DrawMNumber(111, 181, cl->mana[1]);
+	SB_DrawMNumber(79, 181, cl.mana[0]);
+	SB_DrawMNumber(111, 181, cl.mana[1]);
 	R_DrawPic(77, 164, pic_manadim1[sb_mana1]);
 	R_DrawPic(110, 164, pic_manadim2[sb_mana2]);
 	R_DrawPic(94, 164, pic_manavial1[sb_manaVial1]);
 	R_DrawPic(102, 164, pic_manavial2[sb_manaVial2]);
-	R_ShadeRect(95, 165, 3, 22 - (22 * cl->mana[0]) / HexenDefs::MAX_MANA, 31);
-	R_ShadeRect(103, 165, 3, 22 - (22 * cl->mana[1]) / HexenDefs::MAX_MANA, 31);
+	R_ShadeRect(95, 165, 3, 22 - (22 * cl.mana[0]) / HexenDefs::MAX_MANA, 31);
+	R_ShadeRect(103, 165, 3, 22 - (22 * cl.mana[1]) / HexenDefs::MAX_MANA, 31);
 
 	// Ready artifact
-	if (cl->ArtifactFlash)
+	if (cl.ArtifactFlash)
 	{
-		R_DrawPic(148, 164, pic_artiflash[cl->ArtifactFlash]);
+		R_DrawPic(148, 164, pic_artiflash[cl.ArtifactFlash]);
 	}
-	else if (cl->readyArtifact > 0)
+	else if (cl.readyArtifact > 0)
 	{
-		R_DrawPic(143, 163, pic_arti[cl->readyArtifact]);
-		SB_DrawINumber(166, 184, cl->inventory[cl->inv_ptr].count);
+		R_DrawPic(143, 163, pic_arti[cl.readyArtifact]);
+		SB_DrawINumber(166, 184, cl.inventory[cl.inv_ptr].count);
 	}
 
 	// Weapon Pieces
-	if ((cl->SBFlags & HexenDefs::SBF_PIECES_MASK) != HexenDefs::SBF_PIECES_MASK)
+	if ((cl.SBFlags & HexenDefs::SBF_PIECES_MASK) != HexenDefs::SBF_PIECES_MASK)
 	{
 		R_DrawPic(190, 162, pic_wpslot);
-		if (cl->SBFlags & HexenDefs::SBF_PIECE1)
+		if (cl.SBFlags & HexenDefs::SBF_PIECE1)
 		{
 			R_DrawPic(wppiecex[0], 162, pic_wppiece[0]);
 		}
-		if (cl->SBFlags & HexenDefs::SBF_PIECE2)
+		if (cl.SBFlags & HexenDefs::SBF_PIECE2)
 		{
 			R_DrawPic(wppiecex[1], 162, pic_wppiece[1]);
 		}
-		if (cl->SBFlags & HexenDefs::SBF_PIECE3)
+		if (cl.SBFlags & HexenDefs::SBF_PIECE3)
 		{
 			R_DrawPic(wppiecex[2], 162, pic_wppiece[2]);
 		}
@@ -556,7 +556,7 @@ void SB_DrawMainBar()
 	}
 
 	// Armor
-	SB_DrawNumber9(250, 176, cl->TotalArmorPoints, 0);
+	SB_DrawNumber9(250, 176, cl.TotalArmorPoints, 0);
 }
 
 //==========================================================================
@@ -576,7 +576,7 @@ void SB_DrawKeyBar()
 	//  Keys
 	for (i = 0, num = 0; i < HexenDefs::NUMKEYS && num < 5; i++)
 	{
-		if (cl->SBFlags & (1 << i))
+		if (cl.SBFlags & (1 << i))
 		{
 			R_DrawPic(46 + num * 20, 164, pic_key[i]);
 			num++;
@@ -586,7 +586,7 @@ void SB_DrawKeyBar()
 	//  Armor
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
-		R_DrawPic2(150 + 31 * i, 164, pic_armor[i], cl->ArmorPerc[i]);
+		R_DrawPic2(150 + 31 * i, 164, pic_armor[i], cl.ArmorPerc[i]);
 	}
 }
 
@@ -605,23 +605,23 @@ void SB_DrawInventoryBar()
 	R_DrawPic(38, 162, pic_invbar);
 
 	//  Inventory
-	x = cl->inv_ptr - cl->curpos;
+	x = cl.inv_ptr - cl.curpos;
 	for (i = 0; i < 7; i++)
 	{
-		if (cl->inventorySlotNum > x + i
-			&& cl->inventory[x + i].type != HexenDefs::arti_none)
+		if (cl.inventorySlotNum > x + i
+			&& cl.inventory[x + i].type != HexenDefs::arti_none)
 		{
-			R_DrawPic(50 + i * 31, 163, pic_arti[cl->inventory[x + i].type]);
-			SB_DrawINumber(71 + i * 31, 185, cl->inventory[x + i].count);
+			R_DrawPic(50 + i * 31, 163, pic_arti[cl.inventory[x + i].type]);
+			SB_DrawINumber(71 + i * 31, 185, cl.inventory[x + i].count);
 		}
 	}
 
-	R_DrawPic(50 + cl->curpos * 31, 163, pic_selectbox);
+	R_DrawPic(50 + cl.curpos * 31, 163, pic_selectbox);
 	if (x != 0)
 	{
 		R_DrawPic(42, 163, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 	}
-	if (cl->inventorySlotNum - x > 7)
+	if (cl.inventorySlotNum - x > 7)
 	{
 		R_DrawPic(269, 163, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 	}
@@ -642,54 +642,54 @@ void SB_DrawFullscreenStats()
 	int readyweapon;
 
 	//  Health
-	SB_DrawNumber12(5, 180, cl->health);
+	SB_DrawNumber12(5, 180, cl.health);
 	R_DrawPic(62, 224, pic_health);
 
 	// Armor
-	SB_DrawNumber12(5, 160, cl->TotalArmorPoints);
+	SB_DrawNumber12(5, 160, cl.TotalArmorPoints);
 	R_DrawPic(62, 200, pic_armor2);
 
 	//  Frags
-	if (cl->deathmatch)
+	if (cl.deathmatch)
 	{
-		SB_DrawNumber9(45, 185, cl->Frags, 0);
+		SB_DrawNumber9(45, 185, cl.Frags, 0);
 	}
 
-	if (cl->InventoryTime)
+	if (cl.InventoryTime)
 	{
 		//  Inventory
-		x = cl->inv_ptr - cl->curpos;
+		x = cl.inv_ptr - cl.curpos;
 		for (i = 0; i < 7; i++)
 		{
 			R_DrawPic2(50 + i * 31, 168, pic_arti[0], 40);
-			if (cl->inventorySlotNum > x + i
-				&& cl->inventory[x + i].type != HexenDefs::arti_none)
+			if (cl.inventorySlotNum > x + i
+				&& cl.inventory[x + i].type != HexenDefs::arti_none)
 			{
 				R_DrawPic(49 + i * 31, 167,
-					pic_arti[cl->inventory[x + i].type]);
-				SB_DrawINumber(69 + i * 31, 188, cl->inventory[x + i].count);
+					pic_arti[cl.inventory[x + i].type]);
+				SB_DrawINumber(69 + i * 31, 188, cl.inventory[x + i].count);
 			}
 		}
-		R_DrawPic(50 + cl->curpos * 31, 167, pic_selectbox);
+		R_DrawPic(50 + cl.curpos * 31, 167, pic_selectbox);
 		if (x != 0)
 		{
 			R_DrawPic(40, 167, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
-		if (cl->inventorySlotNum - x > 7)
+		if (cl.inventorySlotNum - x > 7)
 		{
 			R_DrawPic(268, 167, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 	}
-	else if (cl->readyArtifact > 0)
+	else if (cl.readyArtifact > 0)
 	{
 		//  Ready artifact
 		R_DrawPic2(286, 170, pic_arti[0], 40);
-		R_DrawPic(284, 169, pic_arti[cl->readyArtifact]);
-		SB_DrawINumber(306, 192, cl->inventory[cl->inv_ptr].count);
+		R_DrawPic(284, 169, pic_arti[cl.readyArtifact]);
+		SB_DrawINumber(306, 192, cl.inventory[cl.inv_ptr].count);
 	}
 
 	//  Mana
-	if (cl->mana[0] == 0)
+	if (cl.mana[0] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana1 = 0;
@@ -698,7 +698,7 @@ void SB_DrawFullscreenStats()
 	{
 		sb_mana1 = 1;
 	}
-	if (cl->mana[1] == 0)
+	if (cl.mana[1] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana2 = 0;
@@ -709,7 +709,7 @@ void SB_DrawFullscreenStats()
 	}
 
 	// Update mana graphics based upon mana count/weapon type
-	readyweapon = (cl->SBFlags & HexenDefs::SBF_WPN_MASK) >> HexenDefs::SBF_WPN_SHIFT;
+	readyweapon = (cl.SBFlags & HexenDefs::SBF_WPN_MASK) >> HexenDefs::SBF_WPN_SHIFT;
 	if (readyweapon == HexenDefs::WP_FIRST)
 	{
 		sb_mana1 = 0;
@@ -727,8 +727,8 @@ void SB_DrawFullscreenStats()
 	{
 	}
 
-	SB_DrawMNumber(270, 176, cl->mana[0]);
-	SB_DrawMNumber(270, 192, cl->mana[1]);
+	SB_DrawMNumber(270, 176, cl.mana[0]);
+	SB_DrawMNumber(270, 192, cl.mana[1]);
 	R_DrawPic(254, 170, pic_manadim1[sb_mana1]);
 	R_DrawPic(254, 186, pic_manadim2[sb_mana2]);
 }
@@ -744,10 +744,10 @@ void SB_DrawIcons()
 	int frame;
 
 	// Wings of wrath
-	if (cl->SBFlags & HexenDefs::SBF_POWER_FLIGHT)
+	if (cl.SBFlags & HexenDefs::SBF_POWER_FLIGHT)
 	{
 		frame = (ClGame.level->tictime / 3) & 15;
-		if (cl->SBFlags & HexenDefs::SBF_IN_FLIGHT)
+		if (cl.SBFlags & HexenDefs::SBF_IN_FLIGHT)
 		{
 			if (hitCenterFrame && frame != 15 && frame != 0)
 			{
@@ -770,19 +770,19 @@ void SB_DrawIcons()
 	}
 
 	// Speed Boots
-	if (cl->SBFlags & HexenDefs::SBF_POWER_SPEED)
+	if (cl.SBFlags & HexenDefs::SBF_POWER_SPEED)
 	{
 		R_DrawPic(60, 19, pic_boot[(ClGame.level->tictime / 3) & 15]);
 	}
 
 	// Defensive power
-	if (cl->SBFlags & HexenDefs::SBF_POWER_INVULN)
+	if (cl.SBFlags & HexenDefs::SBF_POWER_INVULN)
 	{
 		R_DrawPic(260, 19, pic_shld[(ClGame.level->tictime / 3) & 15]);
 	}
 
 	// Minotaur Active
-	if (cl->SBFlags & HexenDefs::SBF_POWER_MINOTAUR)
+	if (cl.SBFlags & HexenDefs::SBF_POWER_MINOTAUR)
 	{
 		R_DrawPic(300, 19, pic_mino[(ClGame.level->tictime / 3) & 15]);
 	}
@@ -796,9 +796,9 @@ void SB_DrawIcons()
 
 void SB_DrawPause()
 {
-	if (cl->bPaused && GetCvar("draw_pause"))
+	if (cl.bPaused && GetCvar("draw_pause"))
 	{
-		R_DrawPic(160, cl->maxclients > 1 ? 70 : 20, pic_paused);
+		R_DrawPic(160, cl.maxclients > 1 ? 70 : 20, pic_paused);
 	}
 }
 
@@ -816,7 +816,7 @@ void SB_Drawer(int sb_view)
 	{
 		SB_DrawFullscreenStats();
 	}
-	else if (cl->InventoryTime)
+	else if (cl.InventoryTime)
 	{
 		SB_DrawInventoryBar();
 	}
@@ -846,7 +846,7 @@ void SB_UpdateWidgets()
 	int delta;
 	int curHealth;
 
-	curHealth = cl->health;
+	curHealth = cl.health;
 	if (curHealth < 0)
 	{
 		curHealth = 0;
@@ -900,6 +900,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/20 22:57:17  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.3  2006/02/19 14:24:10  dj_jl
 //  Some changes because of compiler changes.
 //

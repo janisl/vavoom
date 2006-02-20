@@ -145,45 +145,6 @@ enum
 	CF_GODMODE		= 2		// No damage, no health loss.
 };
 
-#ifdef CLIENT
-
-addfields client_state_t
-{
-	//
-	//  STATS FOR STATUS BAR
-	//
-
-	int Ammo[NUMAMMO];
-	int MaxAmmo[NUMAMMO];
-	int ReadyAmmo;
-
-	bool WeaponOwned[NUMWEAPONS];
-	int Sigil;
-
-	bool Backpack;
-	bool Communicator;
-
-	int Accuracy;
-	int Stamina;
-
-	int Keys;
-
-	int Inventory[NUMINVITEMS];
-	int InvFirst;
-	int InvCursor;
-
-	int Objectives;
-
-	// Armor type is 0-2.
-	int ArmorType;
-	int ArmorPoints;
-
-	// Bit flags, for cheats and debug.
-	int Cheats;
-};
-
-#endif
-
 defaultproperties
 {
 }
@@ -191,6 +152,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2006/02/20 22:57:17  dj_jl
+//  Changed client state structure to class.
+//
 //  Revision 1.18  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //
