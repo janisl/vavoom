@@ -35,15 +35,15 @@
 
 struct search_path_t
 {
-	char			path[MAX_OSPATH];
-	search_path_t	*next;
+	VStr			Path;
+	search_path_t*	Next;
 };
 
 struct version_t
 {
-    FString			MainWad;
-	FString			GameDir;
-	TArray<FString>	AddFiles;
+	VStr			MainWad;
+	VStr			GameDir;
+	TArray<VStr>	AddFiles;
 	int				ParmFound;
 	bool			FixVoices;
 };
@@ -68,10 +68,10 @@ char	fl_mainwad[MAX_OSPATH];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static search_path_t	*searchpaths;
+static search_path_t*	searchpaths;
 
-const char				*wadfiles[MAXWADFILES];
-const char				*gwadirs[MAXWADFILES];
+const char*				wadfiles[MAXWADFILES];
+const char*				gwadirs[MAXWADFILES];
 static bool				fl_fixvoices;
 
 // CODE --------------------------------------------------------------------
@@ -114,18 +114,18 @@ static void AddGameDir(const char *dir)
 	search_path_t	*info;
 
 	info = (search_path_t*)Z_StrCalloc(sizeof(*info));
-	sprintf(info->path, "%s/%s", fl_basedir, dir);
-	info->next = searchpaths;
+	info->Path = VStr(fl_basedir) + "/" + dir;
+	info->Next = searchpaths;
 	searchpaths = info;
 
 	const char* gwadir = NULL;
 	if (fl_savedir[0])
 	{
 		info = (search_path_t*)Z_StrCalloc(sizeof(*info));
-		sprintf(info->path, "%s/%s", fl_savedir, dir);
-		info->next = searchpaths;
+		info->Path = VStr(fl_savedir) + "/" + dir;
+		info->Next = searchpaths;
 		searchpaths = info;
-		gwadir = info->path;
+		gwadir = *info->Path;
 	}
 
 	for (int i = 0; i < 1024; i++)
@@ -204,7 +204,7 @@ static void ParseBase(const char *name)
 		while (SC_Compare("addfile"))
 		{
 			SC_MustGetString();
-			new(dst.AddFiles) FString(sc_String);
+			new(dst.AddFiles) VStr(sc_String);
 			SC_MustGetString();
 		}
 		if (SC_Compare("param"))
@@ -239,7 +239,7 @@ static void ParseBase(const char *name)
 		{
 			if (!GIt->MainWad || GIt->MainWad == fl_mainwad)
 			{
-				for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
+				for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
 				{
 					FL_AddFile(va("%s/%s", fl_basedir, **It),
 						fl_savedir[0] ? fl_savedir : NULL);
@@ -260,7 +260,7 @@ static void ParseBase(const char *name)
 		{
 			strcpy(fl_mainwad, *GIt->MainWad);
 			FL_AddFile(va("%s/%s", fl_savedir, fl_mainwad), NULL);
-			for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
+			for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
 			{
 				FL_AddFile(va("%s/%s", fl_savedir, **It), NULL);
 			}
@@ -275,7 +275,7 @@ static void ParseBase(const char *name)
 			strcpy(fl_mainwad, *GIt->MainWad);
 			FL_AddFile(va("%s/%s", fl_basedir, fl_mainwad),
 				fl_savedir[0] ? fl_savedir : NULL);
-			for (TArray<FString>::TIterator It(GIt->AddFiles); It; ++It)
+			for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
 			{
 				FL_AddFile(va("%s/%s", fl_basedir, **It),
 					fl_savedir[0] ? fl_savedir : NULL);
@@ -406,17 +406,14 @@ void FL_Init()
 bool FL_FindFile(const char *fname, char *dest)
 {
 	guard(FL_FindFile);
-	search_path_t	*search;
-	char			tmp[MAX_OSPATH];
-
-	for (search = searchpaths; search; search = search->next)
+	for (search_path_t* search = searchpaths; search; search = search->Next)
 	{
-		sprintf(tmp, "%s/%s", search->path, fname);
-		if (Sys_FileExists(tmp))
+		VStr tmp = search->Path + "/" + fname;
+		if (Sys_FileExists(*tmp))
 		{
 			if (dest)
 			{
-				strcpy(dest, tmp);
+				strcpy(dest, *tmp);
 			}
 			return true;
 		}
@@ -971,9 +968,12 @@ FArchive* FL_OpenFileWrite(const char *Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/21 22:31:44  dj_jl
+//	Created dynamic string class.
+//
 //	Revision 1.19  2006/02/06 21:46:10  dj_jl
 //	Fixed missing validity check, added guard macros.
-//
+//	
 //	Revision 1.18  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
 //	

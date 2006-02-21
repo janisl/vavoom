@@ -22,78 +22,80 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//
+//	Dynamic string class.
+//
+//**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
 
+#include "gamedefs.h"
+
 // MACROS ------------------------------------------------------------------
+
+#define ASSERT(e)	if (!(e)) Sys_Error("Assertion failed: " #e);
 
 // TYPES -------------------------------------------------------------------
 
-// An output device.
-class FOutputDevice
-{
-public:
-	// FOutputDevice interface.
-	virtual ~FOutputDevice() {}
-	virtual void Serialise(const char* V, EName Event) = 0;
-
-	// Simple text printing.
-	void Log(const char* S);
-	void Log(EName Type, const char* S);
-	void Log(const VStr& S);
-	void Log(EName Type, const VStr& S);
-	void Logf(const char* Fmt, ...);
-	void Logf(EName Type, const char* Fmt, ...);
-};
+// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void C_Init(void);
-boolean	C_Responder(event_t*);
-void C_Drawer(void);
-bool C_Active(void);
-void C_Start(void);
-void C_StartFull(void);
-void C_Stop(void);
-void C_ClearNotify(void);
-void C_NotifyMessage(const char *msg);
-void C_CenterMessage(const char *msg);
+// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern FOutputDevice	*GCon;
+// PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VStr::Resize
+//
+//==========================================================================
+
+void VStr::Resize(int NewLen)
+{
+	guard(VStr::Resize);
+	ASSERT(NewLen >= 0);
+	if (!NewLen)
+	{
+		//	Free string.
+		if (Str)
+		{
+			Z_Free((int*)Str - 1);
+			Str = NULL;
+		}
+	}
+	else
+	{
+		//	Allocate memory.
+		int AllocLen = sizeof(int) + NewLen + 1;
+		if (!Str)
+		{
+			Str = (char*)Z_Malloc(AllocLen, PU_STRING, NULL) + sizeof(int);
+		}
+		else
+		{
+			void* BasePtr = (int*)Str - 1;
+			Z_Resize(&BasePtr, AllocLen);
+			Str = (char*)((int*)BasePtr + 1);
+		}
+		//	Set length.
+		((int*)Str)[-1] = NewLen;
+		//	Set terminator.
+		Str[NewLen] = 0;
+	}
+	unguard;
+}
 
 //**************************************************************************
 //
 //	$Log$
-//	Revision 1.11  2006/02/21 22:31:44  dj_jl
+//	Revision 1.1  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
-//
-//	Revision 1.10  2005/04/28 07:16:11  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.9  2004/12/03 16:15:46  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.8  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.7  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.6  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/08/15 17:26:35  dj_jl
-//	Made console not active when closing
-//	
-//	Revision 1.4  2001/08/07 16:49:26  dj_jl
-//	Added C_Active
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
 //
 //**************************************************************************

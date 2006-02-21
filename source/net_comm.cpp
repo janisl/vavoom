@@ -657,7 +657,7 @@ int TComPort::Connect(char *host)
 
 	if ((ModemStatus & MODEM_STATUS_MASK) != MODEM_STATUS_MASK)
 	{
-		FString Msg = "Serial: line not ready (";
+		VStr Msg = "Serial: line not ready (";
 		if ((ModemStatus & MSR_CTS) == 0)
 			Msg += " CTS";
 		if ((ModemStatus & MSR_DSR) == 0)
@@ -983,9 +983,12 @@ void TComPort::ModemHangup(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/02/21 22:31:44  dj_jl
+//	Created dynamic string class.
+//
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

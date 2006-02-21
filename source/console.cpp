@@ -110,11 +110,11 @@ void FOutputDevice::Log(EName Type, const char* S)
 {
 	Serialise(S, Type);
 }
-void FOutputDevice::Log(const FString& S)
+void FOutputDevice::Log(const VStr& S)
 {
 	Serialise(*S, NAME_Log);
 }
-void FOutputDevice::Log(EName Type, const FString& S)
+void FOutputDevice::Log(EName Type, const VStr& S)
 {
 	Serialise(*S, Type);
 }
@@ -801,9 +801,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/02/21 22:31:44  dj_jl
+//	Created dynamic string class.
+//
 //	Revision 1.24  2006/01/10 19:32:27  dj_jl
 //	Fix for long notify messages.
-//
+//	
 //	Revision 1.23  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
 //	

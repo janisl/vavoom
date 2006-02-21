@@ -44,6 +44,9 @@
 #include "zone.h"		//	Zone memory allocation
 #include "archive.h"
 #include "array.h"		//	Dynamic arrays
+#include "names.h"
+#include "name.h"
+#include "str.h"		//	Strings
 #include "vector.h"
 #include "maths.h"
 #include "sizebuf.h"
@@ -56,8 +59,6 @@
 #include "files.h"
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
-#include "names.h"
-#include "name.h"
 #include "progs.h"		//	Progs
 #include "vobject.h"
 #include "vclass.h"
@@ -90,9 +91,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/21 22:31:44  dj_jl
+//	Created dynamic string class.
+//
 //	Revision 1.25  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
-//
+//	
 //	Revision 1.24  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

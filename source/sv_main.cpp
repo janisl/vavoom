@@ -2977,11 +2977,11 @@ void FOutputDevice::Log(EName Type, const char* S)
 {
 	Serialise(S, Type);
 }
-void FOutputDevice::Log(const FString& S)
+void FOutputDevice::Log(const VStr& S)
 {
 	Serialise(*S, NAME_Log);
 }
-void FOutputDevice::Log(EName Type, const FString& S)
+void FOutputDevice::Log(EName Type, const VStr& S)
 {
 	Serialise(*S, Type);
 }
@@ -3013,9 +3013,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.81  2006/02/21 22:31:44  dj_jl
+//	Created dynamic string class.
+//
 //	Revision 1.80  2006/02/21 17:54:13  dj_jl
 //	Save pointer to old stats.
-//
+//	
 //	Revision 1.79  2006/02/20 22:52:15  dj_jl
 //	Removed player stats limit.
 //	
