@@ -2567,8 +2567,12 @@ void SV_ShutdownServer(boolean crash)
 	SV_DestroyAllThinkers();
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
+		//	Save old stats pointer
+		int* OldStats = GPlayersBase[i]->OldStats;
 		memset((byte*)GPlayersBase[i] + sizeof(VObject), 0,
 			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
+		//	Restore pointer
+		GPlayersBase[i]->OldStats = OldStats;
 	}
 	memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
 	memset(&sv, 0, sizeof(sv));
@@ -3009,9 +3013,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.80  2006/02/21 17:54:13  dj_jl
+//	Save pointer to old stats.
+//
 //	Revision 1.79  2006/02/20 22:52:15  dj_jl
 //	Removed player stats limit.
-//
+//	
 //	Revision 1.78  2006/02/20 17:54:32  dj_jl
 //	Set level info for player when connecting.
 //	

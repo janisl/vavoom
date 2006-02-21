@@ -536,11 +536,15 @@ static void UnarchivePlayers(void)
 		{
 			continue;
 		}
+		//	Save old stats pointer
+		int* OldStats = GGameInfo->Players[i]->OldStats;
 		Loader->Serialise((byte*)GGameInfo->Players[i] + sizeof(VObject),
 			GGameInfo->Players[i]->GetClass()->ClassSize - sizeof(VObject));
 		GGameInfo->Players[i]->MO = NULL; // Will be set when unarc thinker
 		GGameInfo->Players[i]->eventUnarchivePlayer();
 		GGameInfo->Players[i]->bActive = false;
+		//	Restore pointer
+		GGameInfo->Players[i]->OldStats = OldStats;
 
 		for (int pi = 0; pi < NUMPSPRITES; pi++)
 		{
@@ -1460,9 +1464,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.51  2006/02/21 17:54:13  dj_jl
+//	Save pointer to old stats.
+//
 //	Revision 1.50  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
-//
+//	
 //	Revision 1.49  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	
