@@ -107,6 +107,10 @@ SOURCE=..\..\utils\vcc\info.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\utils\vcc\modifiers.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\utils\vcc\name.cpp
 # End Source File
 # Begin Source File

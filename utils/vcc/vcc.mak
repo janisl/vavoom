@@ -5,13 +5,14 @@ BCB = $(MAKEDIR)\..
 
 PROJECT = vcc.exe
 OBJFILES = cmdlib.obj constexp.obj error.obj expressn.obj info.obj \
-    name.obj parse.obj parse1.obj pcode.obj token.obj types.obj vcc.obj \
+    modifiers.obj name.obj parse.obj parse1.obj pcode.obj token.obj \
+    types.obj vcc.obj \
     cpp.obj eval.obj hideset.obj include.obj \
     lex.obj macro.obj nlist.obj tokens.obj unix.obj
 # ---------------------------------------------------------------------------
 SYSDEFINES = _NO_VCL;_ASSERTE;NO_STRICT
 INCLUDEPATH = ../common
-LIBPATH = vcpp;$(BCB)\lib
+LIBPATH = $(BCB)\lib
 WARNINGS= -w-8026 -w-8027 -w-par -w-8061
 # ---------------------------------------------------------------------------
 CFLAG1 = -O2 -w -VF -X- -a4 -b -k -vi -q -c
