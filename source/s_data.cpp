@@ -45,7 +45,7 @@ public:
 	};
 #pragma pack()
 
-	void Load(sfxinfo_t&, FArchive&);
+	void Load(sfxinfo_t&, VStream&);
 };
 #endif
 
@@ -752,12 +752,12 @@ bool S_LoadSound(int sound_id)
 	guard(S_LoadSound);
 	if (!S_sfx[sound_id].Data)
 	{
-		FArchive* Ar = FL_OpenFileRead(va("sound/%s.flac", W_LumpName(S_sfx[sound_id].LumpNum)));
-		if (!Ar)
-			Ar = FL_OpenFileRead(va("sound/%s.wav", W_LumpName(S_sfx[sound_id].LumpNum)));
-		if (!Ar)
-			Ar = FL_OpenFileRead(va("sound/%s.raw", W_LumpName(S_sfx[sound_id].LumpNum)));
-		if (!Ar)
+		VStream* Strm = FL_OpenFileRead(va("sound/%s.flac", W_LumpName(S_sfx[sound_id].LumpNum)));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("sound/%s.wav", W_LumpName(S_sfx[sound_id].LumpNum)));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("sound/%s.raw", W_LumpName(S_sfx[sound_id].LumpNum)));
+		if (!Strm)
 		{
 			// get LumpNum if necessary
 			if (S_sfx[sound_id].LumpNum < 0)
@@ -766,15 +766,15 @@ bool S_LoadSound(int sound_id)
 					*S_sfx[sound_id].TagName);
 				return false;
 			}
-			Ar = W_CreateLumpReader(S_sfx[sound_id].LumpNum);
+			Strm = W_CreateLumpReader(S_sfx[sound_id].LumpNum);
 		}
 
 		for (VSampleLoader* Ldr = VSampleLoader::List;
 			!S_sfx[sound_id].Data; Ldr = Ldr->Next)
 		{
-			Ldr->Load(S_sfx[sound_id], *Ar);
+			Ldr->Load(S_sfx[sound_id], *Strm);
 		}
-		delete Ar;
+		delete Strm;
 	}
 	Z_ChangeTag(S_sfx[sound_id].Data, PU_SOUND);
 	S_sfx[sound_id].UseCount++;
@@ -815,16 +815,16 @@ void S_DoneWithLump(int sound_id)
 //
 //==========================================================================
 
-void VRawSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
+void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 {
 	guard(VRawSampleLoader::Load);
 	//	Read header and see if it's a valid raw sample.
 	FRawSoundHeader Hdr;
-	Ar.Seek(0);
-	Ar.Serialise(&Hdr, 8);
+	Strm.Seek(0);
+	Strm.Serialise(&Hdr, 8);
 	int Rate = LittleShort(Hdr.SampleRate);
 	if ((Rate != 11025 && Rate != 22050 && Rate != 44100) ||
-		LittleLong(Hdr.DataSize) != Ar.TotalSize() - 8)
+		LittleLong(Hdr.DataSize) != Strm.TotalSize() - 8)
 	{
 		return;
 	}
@@ -833,7 +833,7 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
 	Sfx.SampleRate = LittleShort(Hdr.SampleRate);
 	Sfx.DataSize = LittleLong(Hdr.DataSize);
 	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_SOUND, &Sfx.Data);
-	Ar.Serialise(Sfx.Data, Sfx.DataSize);
+	Strm.Serialise(Sfx.Data, Sfx.DataSize);
 	unguard;
 }
 
@@ -842,9 +842,12 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.18  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.17  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
 //	

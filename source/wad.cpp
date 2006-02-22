@@ -786,20 +786,19 @@ void* W_CacheLumpName(const char* name,int tag, EWadNamespace NS)
 
 //==========================================================================
 //
-//	FArchiveLumpReader
+//	VStreamLumpReader
 //
 //==========================================================================
 
-class FArchiveLumpReader : public FArchive
+class VStreamLumpReader : public VStream
 {
 public:
-	FArchiveLumpReader(byte* InData, int InSize)
+	VStreamLumpReader(byte* InData, int InSize)
 		: Data(InData), Pos(0), Size(InSize)
 	{
-		ArIsLoading = true;
-		ArIsPersistent = true;
+		bLoading = true;
 	}
-	~FArchiveLumpReader(void)
+	~VStreamLumpReader(void)
 	{
 		if (Data)
 			Close();
@@ -808,7 +807,7 @@ public:
 	{
 		if (Length > Size - Pos)
 		{
-			ArIsError = true;
+			bError = true;
 		}
 		memcpy(V, Data + Pos, Length);
 		Pos += Length;
@@ -833,7 +832,7 @@ public:
 	{
 		Z_Free(Data);
 		Data = NULL;
-		return !ArIsError;
+		return !bError;
 	}
 
 protected:
@@ -848,10 +847,10 @@ protected:
 //
 //==========================================================================
 
-FArchive* W_CreateLumpReader(int lump)
+VStream* W_CreateLumpReader(int lump)
 {
 	guard(W_CreateLumpReader);
-	return new FArchiveLumpReader((byte *)W_CacheLumpNum(lump, PU_STATIC),
+	return new VStreamLumpReader((byte *)W_CacheLumpNum(lump, PU_STATIC),
 		W_LumpLength(lump));
 	unguard;
 }
@@ -862,7 +861,7 @@ FArchive* W_CreateLumpReader(int lump)
 //
 //==========================================================================
 
-FArchive* W_CreateLumpReader(const char* name, EWadNamespace NS)
+VStream* W_CreateLumpReader(const char* name, EWadNamespace NS)
 {
 	guard(W_CreateLumpReader);
 	return W_CreateLumpReader(W_GetNumForName(name, NS));
@@ -1084,6 +1083,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2006/02/22 20:33:51  dj_jl
+//  Created stream class.
+//
 //  Revision 1.22  2006/01/29 20:41:30  dj_jl
 //  On Unix systems use ~/.vavoom for generated files.
 //

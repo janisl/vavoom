@@ -188,6 +188,16 @@ SOURCE=..\..\source\sizebuf.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\source\str.cpp
+# ADD CPP /W4
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\stream.cpp
+# ADD CPP /W4
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\template.cpp
 # PROP Exclude_From_Build 1
 # End Source File
@@ -215,10 +225,6 @@ SOURCE=..\..\source\zone.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-# Begin Source File
-
-SOURCE=..\..\source\archive.h
-# End Source File
 # Begin Source File
 
 SOURCE=..\..\source\array.h
@@ -326,6 +332,14 @@ SOURCE=..\..\source\scripts.h
 # Begin Source File
 
 SOURCE=..\..\source\sizebuf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\str.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\stream.h
 # End Source File
 # Begin Source File
 

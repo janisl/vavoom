@@ -90,7 +90,7 @@ public:
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static int qmus2mid(FArchive& Ar, byte* mid);
+static int qmus2mid(VStream& InStrm, VStream& OutStrm);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -887,64 +887,6 @@ void S_UpdateSounds(void)
 
 //==========================================================================
 //
-//	FArchiveMemoryReader
-//
-//==========================================================================
-
-class FArchiveMemoryReader : public FArchive
-{
-public:
-	FArchiveMemoryReader(byte* InData, int InSize)
-		: Data(InData), Pos(0), Size(InSize)
-	{
-		ArIsLoading = true;
-		ArIsPersistent = true;
-	}
-	~FArchiveMemoryReader()
-	{
-		if (Data)
-			Close();
-	}
-	void Serialise(void* V, int Length)
-	{
-		if (Length > Size - Pos)
-		{
-			ArIsError = true;
-		}
-		memcpy(V, Data + Pos, Length);
-		Pos += Length;
-	}
-	int Tell()
-	{
-		return Pos;
-	}
-	int TotalSize()
-	{
-		return Size;
-	}
-	bool AtEnd()
-	{
-		return Pos >= Size;
-	}
-	void Seek(int InPos)
-	{
-		Pos = InPos;
-	}
-	bool Close()
-	{
-		Z_Free(Data);
-		Data = NULL;
-		return !ArIsError;
-	}
-
-protected:
-	byte *Data;
-	int Pos;
-	int Size;
-};
-
-//==========================================================================
-//
 //	PlaySong
 //
 //==========================================================================
@@ -964,87 +906,91 @@ static void PlaySong(const char* Song, bool Loop)
 	StreamPlaying = false;
 
 	//	Find the song.
-	FArchive* StrmAr = FL_OpenFileRead(va("music/%s.ogg", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.mp3", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.wav", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.mid", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.mus", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.669", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.amf", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.dsm", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.far", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.gdm", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.imf", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.it", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.m15", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.med", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.mod", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.mtm", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.okt", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.s3m", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.stm", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.stx", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.ult", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.uni", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.xm", Song));
-	if (!StrmAr)
-		StrmAr = FL_OpenFileRead(va("music/%s.flac", Song));
-	if (!StrmAr)
+	VStream* Strm = FL_OpenFileRead(va("music/%s.ogg", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mp3", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.wav", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mid", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mus", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.669", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.amf", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.dsm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.far", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.gdm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.imf", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.it", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.m15", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.med", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mod", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mtm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.okt", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.s3m", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.stm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.stx", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.ult", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.uni", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.xm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.flac", Song));
+	if (!Strm)
 	{
 		if (W_CheckNumForName(Song) < 0)
 		{
 			GCon->Logf("Can't find song %s", Song);
 			return;
 		}
-		StrmAr = W_CreateLumpReader(Song);
+		Strm = W_CreateLumpReader(Song);
 	}
 
 	byte Hdr[4];
-	StrmAr->Serialise(Hdr, 4);
+	Strm->Serialise(Hdr, 4);
 	if (!memcmp(Hdr, MUSMAGIC, 4))
 	{
 		// convert mus to mid with a wanderfull function
 		// thanks to S.Bacquet for the source of qmus2mid
-		StrmAr->Seek(0);
-		byte* Buf = (byte*)Z_Malloc(256 * 1024, PU_STATIC, 0);
-		int MidLength = qmus2mid(*StrmAr, Buf);
-		StrmAr->Close();
-		delete StrmAr;
+		Strm->Seek(0);
+		VMemoryStream* MidStrm = new VMemoryStream();
+		MidStrm->BeginWrite();
+		int MidLength = qmus2mid(*Strm, *MidStrm);
+		Strm->Close();
+		delete Strm;
 		if (!MidLength)
 		{
-			Z_Free(Buf);
+			MidStrm->Close();
+			delete MidStrm;
 			return;
 		}
-		StrmAr = new FArchiveMemoryReader(Buf, MidLength);
+		MidStrm->Seek(0);
+		MidStrm->BeginRead();
+		Strm = MidStrm;
 	}
 
 	//	Try to create audio codec.
 	VAudioCodec* Codec = NULL;
 	for (FAudioCodecDesc* Desc = FAudioCodecDesc::List; Desc && !Codec; Desc = Desc->Next)
 	{
-		Codec = Desc->Creator(StrmAr);
+		Codec = Desc->Creator(Strm);
 	}
 
 	if (GStreamMusicPlayer && Codec)
@@ -1055,12 +1001,12 @@ static void PlaySong(const char* Song, bool Loop)
 	}
 	else if (GMidiDevice)
 	{
-		int Length = StrmAr->TotalSize();
+		int Length = Strm->TotalSize();
 		void* Data = Z_Malloc(Length, PU_MUSIC, NULL);
-		StrmAr->Seek(0);
-		StrmAr->Serialise(Data, Length);
-		StrmAr->Close();
-		delete StrmAr;
+		Strm->Seek(0);
+		Strm->Serialise(Data, Length);
+		Strm->Close();
+		delete Strm;
 
 		if (!memcmp(Data, MIDIMAGIC, 4))
 		{
@@ -1074,7 +1020,7 @@ static void PlaySong(const char* Song, bool Loop)
 	}
 	else
 	{
-		delete StrmAr;
+		delete Strm;
 	}
 	unguard;
 }
@@ -1340,8 +1286,6 @@ struct Track
 	char*		data; 	   /* Primary data */
 };
 
-static byte*			mid_file;
-
 static struct Track		tracks[32];
 static word				TrackCnt = 0;
 static int	 			MUS2MIDchannel[16];
@@ -1473,19 +1417,19 @@ static void TWriteVarLen(int tracknum, dword value)
 //
 //==========================================================================
 
-static dword ReadTime(FArchive& Ar)
+static dword ReadTime(VStream& Strm)
 {
 	guard(ReadTime);
 	dword 		time = 0;
 	byte		data;
 
-	if (Ar.AtEnd())
+	if (Strm.AtEnd())
 		return 0;
 	do
 	{
-		Ar << data;
+		Strm << data;
 		time = (time << 7) + (data & 0x7F);
-	} while (!Ar.AtEnd() && (data & 0x80));
+	} while (!Strm.AtEnd() && (data & 0x80));
 
 	return time;
 	unguard;
@@ -1497,7 +1441,7 @@ static dword ReadTime(FArchive& Ar)
 //
 //==========================================================================
 
-static bool convert(FArchive& Ar)
+static bool convert(VStream& Strm)
 {
 	guard(convert);
 	byte				et;
@@ -1526,7 +1470,7 @@ static bool convert(FArchive& Ar)
 		tracks[i].data = NULL;
 	}
 
-	Ar.Serialise(&MUSh, sizeof(FMusHeader));
+	Strm.Serialise(&MUSh, sizeof(FMusHeader));
 	if (strncmp(MUSh.ID, MUSMAGIC, 4))
 	{
 		GCon->Log("Not a MUS file");
@@ -1539,7 +1483,7 @@ static bool convert(FArchive& Ar)
 		return false;
 	}
 
-	Ar.Seek((word)LittleShort(MUSh.ScoreStart));
+	Strm.Seek((word)LittleShort(MUSh.ScoreStart));
 
 	tracks[0].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_MUSIC, 0);
 	TWriteBuf(0, midikey, 6);
@@ -1547,10 +1491,10 @@ static bool convert(FArchive& Ar)
 
 	TrackCnt = 1;	//	Music starts here
 
-	Ar << event;
+	Strm << event;
 	et = event_type(event);
 	MUSchannel = channel(event);
-	while ((et != 6) && !Ar.AtEnd())
+	while ((et != 6) && !Strm.AtEnd())
 	{
 		if (MUS2MIDchannel[MUSchannel] == -1)
 		{
@@ -1572,7 +1516,7 @@ static bool convert(FArchive& Ar)
 			NewEvent = 0x90 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			Ar << data;
+			Strm << data;
 			TWriteByte(MIDItrack, data);
 			TWriteByte(MIDItrack, 0);
 			break;
@@ -1580,11 +1524,11 @@ static bool convert(FArchive& Ar)
 			NewEvent = 0x90 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			Ar << data;
+			Strm << data;
 			TWriteByte(MIDItrack, data & 0x7F);
 			if (data & 0x80)
 			{
-				Ar << data;
+				Strm << data;
 				tracks[MIDItrack].vel = data;
 			}
 			TWriteByte(MIDItrack, tracks[MIDItrack].vel);
@@ -1593,7 +1537,7 @@ static bool convert(FArchive& Ar)
 			NewEvent = 0xE0 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			Ar << data;
+			Strm << data;
 			TWriteByte(MIDItrack, (data & 1) << 6);
 			TWriteByte(MIDItrack, data >> 1);
 			break;
@@ -1601,7 +1545,7 @@ static bool convert(FArchive& Ar)
 			NewEvent = 0xB0 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
 			tracks[MIDItrack].LastEvent = NewEvent;
-			Ar << data;
+			Strm << data;
 			TWriteByte(MIDItrack, MUS2MIDcontrol[data]);
 			if (data == 12)
 				TWriteByte(MIDItrack, LittleShort(MUSh.NumChannels) + 1);
@@ -1609,7 +1553,7 @@ static bool convert(FArchive& Ar)
 				TWriteByte(MIDItrack, 0);
 			break;
 		case 4:
-			Ar << data;
+			Strm << data;
 			if (data)
 			{
 				NewEvent = 0xB0 | MIDIchannel;
@@ -1623,7 +1567,7 @@ static bool convert(FArchive& Ar)
 				TWriteByte(MIDItrack, NewEvent);
 				tracks[MIDItrack].LastEvent = NewEvent;
 			}
-			Ar << data;
+			Strm << data;
 			TWriteByte(MIDItrack, data);
 			break;
 		case 5:
@@ -1635,13 +1579,13 @@ static bool convert(FArchive& Ar)
 		}
 		if (last(event))
 		{
-			DeltaTime = ReadTime(Ar);
+			DeltaTime = ReadTime(Strm);
 			for (i = 0; i < (int)TrackCnt; i++)
 				tracks[i].DeltaTime += DeltaTime;
 		}
-		if (!Ar.AtEnd())
+		if (!Strm.AtEnd())
 		{
-			Ar << event;
+			Strm << event;
 			et = event_type(event);
 			MUSchannel = channel(event);
 		}
@@ -1668,47 +1612,32 @@ static bool convert(FArchive& Ar)
 
 //==========================================================================
 //
-//  WriteBuf
-//
-//==========================================================================
-
-static void WriteBuf(const void* p, int size)
-{
-	guard(WriteBuf);
-	memcpy(mid_file, p, size);
-	mid_file += size;
-	unguard;
-}
-
-//==========================================================================
-//
 //	WriteMIDIFile
 //
 //==========================================================================
 
-static void WriteMIDIFile()
+static void WriteMIDIFile(VStream& Strm)
 {
 	guard(WriteMIDIFile);
 	int				i;
 	dword			size;
-	MIDheader*		hdr;
+	MIDheader		hdr;
 
 	//	Header
-	hdr = (MIDheader*)mid_file;
-	memcpy(hdr->ID, MIDIMAGIC, 4);
-	hdr->hdr_size   = BigLong(6);
-	hdr->type       = BigShort(1);
-	hdr->num_tracks = BigShort(TrackCnt);
-	hdr->divisions  = BigShort(89);
-	mid_file += sizeof(*hdr);
+	memcpy(hdr.ID, MIDIMAGIC, 4);
+	hdr.hdr_size   = BigLong(6);
+	hdr.type       = BigShort(1);
+	hdr.num_tracks = BigShort(TrackCnt);
+	hdr.divisions  = BigShort(89);
+	Strm.Serialise(&hdr, sizeof(hdr));
 
 	//	Tracks
 	for (i = 0; i < (int)TrackCnt; i++)
 	{
 		size = BigLong(tracks[i].current);
-		WriteBuf("MTrk", 4);
-		WriteBuf(&size, 4);
-		WriteBuf(tracks[i].data, tracks[i].current);
+		Strm.Serialise((void*)"MTrk", 4);
+		Strm.Serialise(&size, 4);
+		Strm.Serialise(tracks[i].data, tracks[i].current);
 	}
 	unguard;
 }
@@ -1739,18 +1668,15 @@ static void FreeTracks()
 //
 //==========================================================================
 
-static int qmus2mid(FArchive& Ar, byte* mid)
+static int qmus2mid(VStream& InStrm, VStream& OutStrm)
 {
 	guard(qmus2mid);
-	mid_file = mid;
-
-	if (convert(Ar))
+	if (convert(InStrm))
 	{
-		WriteMIDIFile();
+		WriteMIDIFile(OutStrm);
 	}
 	FreeTracks();
-
-	return mid_file - mid;
+	return OutStrm.TotalSize();
 	unguard;
 }
 
@@ -1926,9 +1852,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.26  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.25  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	

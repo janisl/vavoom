@@ -176,17 +176,7 @@ bool VObject::ConditionalDestroy(void)
 //
 //==========================================================================
 
-void VObject::Destroy(void)
-{
-}
-
-//==========================================================================
-//
-//	VObject::Serialise
-//
-//==========================================================================
-
-void VObject::Serialise(FArchive &Ar)
+void VObject::Destroy()
 {
 }
 
@@ -322,9 +312,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.15  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.14  2004/12/03 16:15:47  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

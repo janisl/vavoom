@@ -223,8 +223,8 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 	int i;
 	int j;
 
-	FArchive *Ar = FL_OpenFileWrite(filename);
-	if (!Ar)
+	VStream* Strm = FL_OpenFileWrite(filename);
+	if (!Strm)
 	{
 		GCon->Log("Couldn't write pcx");
 		return;
@@ -246,7 +246,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
     pcx.bytes_per_line = LittleShort(width);
     pcx.palette_type = LittleShort(1);	// not a grey scale
     memset(pcx.filler, 0, sizeof(pcx.filler));
-	Ar->Serialise(&pcx, sizeof(pcx));
+	Strm->Serialise(&pcx, sizeof(pcx));
 
     // pack the image
 	if (bpp == 8)
@@ -259,16 +259,16 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 				if ((src[i] & 0xc0) == 0xc0)
 				{
 					byte tmp = 0xc1;
-					*Ar << tmp;
+					*Strm << tmp;
 				}
-				*Ar << src[i];
+				*Strm << src[i];
 			}
 		}
 
 		// write the palette
 		byte PalId = 0x0c;	// palette ID byte
-		*Ar << PalId;
-		Ar->Serialise(palette, 768);
+		*Strm << PalId;
+		Strm->Serialise(palette, 768);
 	}
 	else if	(bpp == 24)
 	{
@@ -280,33 +280,33 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 				if ((src[i].r & 0xc0) == 0xc0)
 				{
 					byte tmp = 0xc1;
-					*Ar << tmp;
+					*Strm << tmp;
 				}
-				*Ar << src[i].r;
+				*Strm << src[i].r;
 			}
 			for (i = 0; i < width; i++)
 			{
 				if ((src[i].g & 0xc0) == 0xc0)
 				{
 					byte tmp = 0xc1;
-					*Ar << tmp;
+					*Strm << tmp;
 				}
-				*Ar << src[i].g;
+				*Strm << src[i].g;
 			}
 			for (i = 0; i < width; i++)
 			{
 				if ((src[i].b & 0xc0) == 0xc0)
 				{
 					byte tmp = 0xc1;
-					*Ar << tmp;
+					*Strm << tmp;
 				}
-				*Ar << src[i].b;
+				*Strm << src[i].b;
 			}
 		}
 	}
-    
-	Ar->Close();
-	delete Ar;
+
+	Strm->Close();
+	delete Strm;
 	unguard;
 }
 
@@ -715,9 +715,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.29  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.28  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

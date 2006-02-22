@@ -286,7 +286,7 @@ public:
 	}
 	virtual ~VSampleLoader()
 	{}
-	virtual void Load(sfxinfo_t&, FArchive&) = 0;
+	virtual void Load(sfxinfo_t&, VStream&) = 0;
 };
 
 //	Streamed audio decoder interface.
@@ -313,12 +313,12 @@ public:
 struct FAudioCodecDesc
 {
 	const char*					Description;
-	VAudioCodec*				(*Creator)(FArchive*);
+	VAudioCodec*				(*Creator)(VStream*);
 	FAudioCodecDesc*			Next;
 
 	static FAudioCodecDesc*		List;
 
-	FAudioCodecDesc(const char* InDescription, VAudioCodec* (*InCreator)(FArchive*))
+	FAudioCodecDesc(const char* InDescription, VAudioCodec* (*InCreator)(VStream*))
 	: Description(InDescription)
 	, Creator(InCreator)
 	{
@@ -388,9 +388,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.24  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.23  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
 //	

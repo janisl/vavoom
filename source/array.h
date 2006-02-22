@@ -113,10 +113,6 @@ public:
 		Data = NULL;
 		ArrayNum = ArrayMax = 0;
 	}
-	/*void CountBytes(FArchive& Ar, int ElementSize)
-	{
-		Ar.CountBytes(ArrayNum * ElementSize, ArrayMax * ElementSize);
-	}*/
 	void Remove(int Index, int Count, int ElementSize, EZoneTag Tag)
 	{
 		if (ArrayNum > Index + Count)
@@ -230,42 +226,6 @@ public:
 				return Index;
 		return -1;
 	}
-	/*friend FArchive& operator<<( FArchive& Ar, TArray& A )
-	{
-		A.CountBytes( Ar );
-		if( sizeof(T)==1 )
-		{
-			// Serialise simple bytes which require no construction or destruction.
-			Ar << AR_INDEX(A.ArrayNum);
-			if( Ar.IsLoading() )
-			{
-				A.ArrayMax = A.ArrayNum;
-				A.Realloc( sizeof(T) );
-			}
-			Ar.Serialise( &A(0), A.Num() );
-		}
-		else if( Ar.IsLoading() )
-		{
-			// Load array.
-			INT NewNum;
-			Ar << AR_INDEX(NewNum);
-			A.Empty( NewNum );
-			for( INT i=0; i<NewNum; i++ )
-				Ar << *new(A)T;
-		}
-		else
-		{
-			// Save array.
-			Ar << AR_INDEX(A.ArrayNum);
-			for( INT i=0; i<A.ArrayNum; i++ )
-				Ar << A( i );
-		}
-		return Ar;
-	}*/
-	/*void CountBytes( FArchive& Ar )
-	{
-		FArray::CountBytes( Ar, sizeof(T) );
-	}*/
 
 	// Add, Insert, Remove, Empty interface.
 	int Add(int n = 1)
@@ -367,9 +327,12 @@ template <class T, EZoneTag Tag> void* operator new(size_t, TArray<T, Tag>& Arra
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.9  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
-//
+//	
 //	Revision 1.8  2004/12/03 16:15:46  dj_jl
 //	Implemented support for extended ACS format scripts, functions, libraries and more.
 //	

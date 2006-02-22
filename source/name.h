@@ -60,7 +60,7 @@ struct FNameEntry
 	char		Name[NAME_SIZE];	// Name, variable-sized.
 
 	// Functions.
-	friend FArchive& operator << (FArchive& Ar, FNameEntry& E);
+	friend VStream& operator << (VStream& Strm, FNameEntry& E);
 	friend FNameEntry* AllocateNameEntry(const char* Name, dword Index, 
 		FNameEntry* HashNext);
 };
@@ -147,9 +147,12 @@ inline dword GetTypeHash(const FName N)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.5  2005/11/22 19:10:38  dj_jl
 //	Cleaned up a bit.
-//
+//	
 //	Revision 1.4  2005/05/26 16:49:14  dj_jl
 //	Added lowercased max 8 chars names.
 //	

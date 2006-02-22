@@ -43,7 +43,7 @@ public:
 	struct FMikModArchiveReader
 	{
 		MREADER		Core;
-		FArchive*	Ar;
+		VStream*	Strm;
 	};
 
 	MODULE*			Module;
@@ -70,7 +70,7 @@ public:
 	static int ArchiveReader_Get(MREADER* rd);
 	static BOOL ArchiveReader_Eof(MREADER* rd);
 
-	static VAudioCodec* Create(FArchive* InAr);
+	static VAudioCodec* Create(VStream* InStrm);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -236,20 +236,20 @@ BOOL VMikModAudioCodec::Drv_Reset()
 BOOL VMikModAudioCodec::ArchiveReader_Seek(MREADER* rd, long offset, int whence)
 {
 	guard(VMikModAudioCodec::ArchiveReader_Seek);
-	FArchive* Ar = ((FMikModArchiveReader*)rd)->Ar;
+	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
 	switch (whence)
 	{
 	case SEEK_SET:
-		Ar->Seek(offset);
+		Strm->Seek(offset);
 		break;
 	case SEEK_CUR:
-		Ar->Seek(Ar->Tell() + offset);
+		Strm->Seek(Strm->Tell() + offset);
 		break;
 	case SEEK_END:
-		Ar->Seek(Ar->TotalSize() + offset);
+		Strm->Seek(Strm->TotalSize() + offset);
 		break;
 	}
-	return !Ar->IsError();
+	return !Strm->IsError();
 	unguard;
 }
 
@@ -262,8 +262,8 @@ BOOL VMikModAudioCodec::ArchiveReader_Seek(MREADER* rd, long offset, int whence)
 long VMikModAudioCodec::ArchiveReader_Tell(MREADER* rd)
 {
 	guard(VMikModAudioCodec::ArchiveReader_Tell);
-	FArchive* Ar = ((FMikModArchiveReader*)rd)->Ar;
-	return Ar->Tell();
+	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
+	return Strm->Tell();
 	unguard;
 }
 
@@ -276,9 +276,9 @@ long VMikModAudioCodec::ArchiveReader_Tell(MREADER* rd)
 BOOL VMikModAudioCodec::ArchiveReader_Read(MREADER* rd, void *dest, size_t length)
 {
 	guard(VMikModAudioCodec::ArchiveReader_Read);
-	FArchive* Ar = ((FMikModArchiveReader*)rd)->Ar;
-	Ar->Serialise(dest, length);
-	return !Ar->IsError();
+	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
+	Strm->Serialise(dest, length);
+	return !Strm->IsError();
 	unguard;
 }
 
@@ -291,13 +291,13 @@ BOOL VMikModAudioCodec::ArchiveReader_Read(MREADER* rd, void *dest, size_t lengt
 int VMikModAudioCodec::ArchiveReader_Get(MREADER* rd)
 {
 	guard(VMikModAudioCodec::ArchiveReader_Get);
-	FArchive* Ar = ((FMikModArchiveReader*)rd)->Ar;
-	if (Ar->AtEnd())
+	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
+	if (Strm->AtEnd())
 		return EOF;
 	else
 	{
 		byte c;
-		*Ar << c;
+		*Strm << c;
 		return c;
 	}
 	unguard;
@@ -312,8 +312,8 @@ int VMikModAudioCodec::ArchiveReader_Get(MREADER* rd)
 BOOL VMikModAudioCodec::ArchiveReader_Eof(MREADER* rd)
 {
 	guard(VMikModAudioCodec::ArchiveReader_Eof);
-	FArchive* Ar = ((FMikModArchiveReader*)rd)->Ar;
-	return Ar->AtEnd();
+	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
+	return Strm->AtEnd();
 	unguard;
 }
 
@@ -323,7 +323,7 @@ BOOL VMikModAudioCodec::ArchiveReader_Eof(MREADER* rd)
 //
 //==========================================================================
 
-VAudioCodec* VMikModAudioCodec::Create(FArchive* InAr)
+VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 {
 	guard(VMikModAudioCodec::Create);
 	if (!MikModInitialised)
@@ -355,8 +355,8 @@ VAudioCodec* VMikModAudioCodec::Create(FArchive* InAr)
 	Reader.Core.Get  = ArchiveReader_Get;
 	Reader.Core.Seek = ArchiveReader_Seek;
 	Reader.Core.Tell = ArchiveReader_Tell;
-	Reader.Ar = InAr;
-	InAr->Seek(0);
+	Reader.Strm = InStrm;
+	InStrm->Seek(0);
 
 	//	Try to load the song.
 	MODULE* module = Player_LoadGeneric(&Reader.Core, 256, 0);
@@ -367,9 +367,9 @@ VAudioCodec* VMikModAudioCodec::Create(FArchive* InAr)
 		return NULL;
 	}
 
-	//	Close archive.
-	InAr->Close();
-	delete InAr;
+	//	Close stream.
+	InStrm->Close();
+	delete InStrm;
 
 	//	Start playback.
 	Player_Start(module);
@@ -380,9 +380,12 @@ VAudioCodec* VMikModAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.3  2005/11/12 09:43:35  dj_jl
 //	Fixed conflict with SDL mixer.
-//
+//	
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	

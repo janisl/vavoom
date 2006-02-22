@@ -40,14 +40,14 @@ public:
 	class FStream : public FLAC::Decoder::Stream
 	{
 	public:
-		FArchive&			Ar;
+		VStream&			Stream;
 		size_t				BytesLeft;
 		int					SampleBits;
 		int					SampleRate;
 		void*				Data;
 		size_t				DataSize;
 
-		FStream(FArchive& InAr);
+		FStream(VStream& InStream);
 		void StrmWrite(const FLAC__int32* const Buf[], size_t Offs,
 			size_t Len);
 
@@ -61,7 +61,7 @@ public:
 		void error_callback(::FLAC__StreamDecoderErrorStatus status);
 	};
 
-	void Load(sfxinfo_t&, FArchive&);
+	void Load(sfxinfo_t&, VStream&);
 };
 
 class VFlacAudioCodec : public VAudioCodec
@@ -70,7 +70,7 @@ public:
 	class FStream : public FLAC::Decoder::Stream
 	{
 	public:
-		FArchive*			Ar;
+		VStream*			Stream;
 		size_t				BytesLeft;
 		int					NumChannels;
 		int					SampleBits;
@@ -84,7 +84,7 @@ public:
 		short*				StrmBuf;
 		size_t				StrmSize;
 
-		FStream(FArchive* InAr);
+		FStream(VStream* InStream);
 		~FStream();
 		void StrmWrite(const FLAC__int32* const Buf[], size_t Offs,
 			size_t Len);
@@ -106,7 +106,7 @@ public:
 	int Decode(short* Data, int NumSamples);
 	bool Finished();
 	void Restart();
-	static VAudioCodec* Create(FArchive* InAr);
+	static VAudioCodec* Create(VStream* InStream);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -133,11 +133,11 @@ IMPLEMENT_AUDIO_CODEC(VFlacAudioCodec, "FLAC");
 //
 //==========================================================================
 
-void VFlacSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
+void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 {
 	guard(VFlacSampleLoader::Load);
 	//	Create reader sream.
-	FStream* Strm = new FStream(Ar);
+	FStream* Strm = new FStream(Stream);
 	Strm->Data = Z_Malloc(1, PU_SOUND, &Sfx.Data);
 	Strm->init();
 	Strm->process_until_end_of_metadata();
@@ -170,16 +170,16 @@ void VFlacSampleLoader::Load(sfxinfo_t& Sfx, FArchive& Ar)
 //
 //==========================================================================
 
-VFlacSampleLoader::FStream::FStream(FArchive& InAr)
-: Ar(InAr)
+VFlacSampleLoader::FStream::FStream(VStream& InStream)
+: Stream(InStream)
 , SampleBits(0)
 , SampleRate(0)
 , Data(0)
 , DataSize(0)
 {
 	guard(VFlacSampleLoader::FStream::FStream);
-	Ar.Seek(0);
-	BytesLeft = Ar.TotalSize();
+	Stream.Seek(0);
+	BytesLeft = Stream.TotalSize();
 	unguard;
 }
 
@@ -205,7 +205,7 @@ VFlacSampleLoader::FStream::FStream(FArchive& InAr)
 			{
 				*bytes = BytesLeft;
 			}
-			Ar.Serialise(buffer, *bytes);
+			Stream.Serialise(buffer, *bytes);
 			BytesLeft -= *bytes;
 			return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 		}
@@ -373,8 +373,8 @@ bool VFlacAudioCodec::Finished()
 void VFlacAudioCodec::Restart()
 {
 	guard(VFlacAudioCodec::Restart);
-	Stream->Ar->Seek(0);
-	Stream->BytesLeft = Stream->Ar->TotalSize();
+	Stream->Stream->Seek(0);
+	Stream->BytesLeft = Stream->Stream->TotalSize();
 	Stream->reset();
 	unguard;
 }
@@ -385,8 +385,8 @@ void VFlacAudioCodec::Restart()
 //
 //==========================================================================
 
-VFlacAudioCodec::FStream::FStream(FArchive* InAr)
-: Ar(InAr)
+VFlacAudioCodec::FStream::FStream(VStream* InStream)
+: Stream(InStream)
 , NumChannels(0)
 , SampleBits(0)
 , SampleRate(0)
@@ -397,8 +397,8 @@ VFlacAudioCodec::FStream::FStream(FArchive* InAr)
 , StrmSize(0)
 {
 	guard(VFlacAudioCodec::FStream::FStream);
-	Ar->Seek(0);
-	BytesLeft = Ar->TotalSize();
+	Stream->Seek(0);
+	BytesLeft = Stream->TotalSize();
 	init();
 	process_until_end_of_metadata();
 	unguard;
@@ -417,8 +417,8 @@ VFlacAudioCodec::FStream::~FStream()
 	{
 		Z_Free(SamplePool[0]);
 		SamplePool[0] = NULL;
-		Ar->Close();
-		delete Ar;
+		Stream->Close();
+		delete Stream;
 	}
 	unguard;
 }
@@ -479,7 +479,7 @@ void VFlacAudioCodec::FStream::StrmWrite(const FLAC__int32* const Buf[],
 			{
 				*bytes = BytesLeft;
 			}
-			Ar->Serialise(buffer, *bytes);
+			Stream->Serialise(buffer, *bytes);
 			BytesLeft -= *bytes;
 			return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 		}
@@ -576,10 +576,10 @@ void VFlacAudioCodec::FStream::error_callback(
 //
 //==========================================================================
 
-VAudioCodec* VFlacAudioCodec::Create(FArchive* InAr)
+VAudioCodec* VFlacAudioCodec::Create(VStream* InStream)
 {
 	guard(VFlacAudioCodec::Create);
-	FStream* Strm = new FStream(InAr);
+	FStream* Strm = new FStream(InStream);
 	if (!Strm->SampleRate)
 	{
 		delete Strm;
@@ -592,9 +592,12 @@ VAudioCodec* VFlacAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.3  2005/11/06 15:28:16  dj_jl
 //	Added support for FLAC format sounds.
-//
+//	
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	

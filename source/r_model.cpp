@@ -779,8 +779,8 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	byte* palette, bool bot2top)
 {
 	guard(WriteTGA);
-	FArchive *Ar = FL_OpenFileWrite(filename);
-	if (!Ar)
+	VStream* Strm = FL_OpenFileWrite(filename);
+	if (!Strm)
 	{
 		GCon->Log("Couldn't write tga");
 		return;
@@ -799,13 +799,13 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	hdr.height = LittleShort(height);
 	hdr.bpp = bpp;
 	hdr.descriptor_bits = bot2top ? 0 : 0x20;
-	Ar->Serialise(&hdr, sizeof(hdr));
+	Strm->Serialise(&hdr, sizeof(hdr));
 
 	if (bpp == 8)
 	{
 		for (int i = 0; i < 256; i++)
 		{
-			*Ar << palette[i * 3 + 2]
+			*Strm << palette[i * 3 + 2]
 				<< palette[i * 3 + 1]
 				<< palette[i * 3];
 		}
@@ -813,21 +813,21 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 
 	if (bpp == 8)
 	{
-		Ar->Serialise(data, width * height);
+		Strm->Serialise(data, width * height);
 	}
 	else if (bpp == 24)
 	{
 		rgb_t *src = (rgb_t *)data;
 		for (int i = 0; i < width * height; i++, src++)
 		{
-			*Ar << src->b 
+			*Strm << src->b 
 				<< src->g 
 				<< src->r;
 		}
 	}
 
-	Ar->Close();
-	delete Ar;
+	Strm->Close();
+	delete Strm;
 	unguard;
 }
 
@@ -1086,9 +1086,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int InFrame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.16  2006/02/10 22:16:26  dj_jl
 //	Added missing byte swap.
-//
+//	
 //	Revision 1.15  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
 //	

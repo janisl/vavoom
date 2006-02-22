@@ -69,8 +69,8 @@ void W_ReadFromLump(int lump, void *dest, int pos, int size);
 void* W_CacheLumpNum(int lump, int tag);
 void* W_CacheLumpName(const char* name, int tag,
 	EWadNamespace NS = WADNS_Global);
-FArchive* W_CreateLumpReader(int lump);
-FArchive* W_CreateLumpReader(const char* name, EWadNamespace NS = WADNS_Global);
+VStream* W_CreateLumpReader(int lump);
+VStream* W_CreateLumpReader(const char* name, EWadNamespace NS = WADNS_Global);
 
 bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace));
 int W_IterateNS(int Prev, EWadNamespace NS);
@@ -82,9 +82,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.12  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
-//
+//	
 //	Revision 1.11  2005/11/24 20:07:36  dj_jl
 //	Aded namespace for progs.
 //	

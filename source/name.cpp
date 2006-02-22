@@ -69,20 +69,20 @@ inline dword GetTypeHash(const char *S)
 
 //==========================================================================
 //
-//	operator << (FArchive& Ar, FNameEntry& E)
+//	operator << (VStream& Ar, FNameEntry& E)
 //
 //==========================================================================
 
-FArchive& operator << (FArchive& Ar, FNameEntry& E)
+VStream& operator << (VStream& Strm, FNameEntry& E)
 {
 	byte Size;
-	if (Ar.IsSaving())
+	if (Strm.IsSaving())
 	{
 		Size = strlen(E.Name) + 1;
 	}
-	Ar << Size;
-	Ar.Serialise(E.Name, Size);
-	return Ar;
+	Strm << Size;
+	Strm.Serialise(E.Name, Size);
+	return Strm;
 }
 
 //==========================================================================
@@ -203,9 +203,12 @@ void FName::StaticExit()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.8  2005/11/22 19:10:36  dj_jl
 //	Cleaned up a bit.
-//
+//	
 //	Revision 1.7  2005/05/26 16:49:14  dj_jl
 //	Added lowercased max 8 chars names.
 //	

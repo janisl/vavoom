@@ -476,7 +476,7 @@ private:
 	int FindStringInChunk(byte* Chunk, const char* Name) const;
 	byte* FindChunk(const char* id) const;
 	byte* NextChunk(byte* prev) const;
-	void Serialise(FArchive& Ar);
+	void Serialise(VStream& Strm);
 	void StartTypedACScripts(int Type);
 	void TagFinished(int tag);
 	void PolyobjFinished(int po);
@@ -520,7 +520,7 @@ public:
 	static const char* StaticGetString(int Index);
 	static FACScriptsObject* StaticGetObject(int Index);
 	static void StaticStartTypedACScripts(int Type);
-	static void StaticSerialise(FArchive& Ar);
+	static void StaticSerialise(VStream& Strm);
 	static void StaticTagFinished(int tag);
 	static void StaticPolyobjFinished(int po);
 	static void StaticScriptFinished(int number);
@@ -1337,15 +1337,15 @@ byte* FACScriptsObject::NextChunk(byte* prev) const
 //
 //==========================================================================
 
-void FACScriptsObject::Serialise(FArchive& Ar)
+void FACScriptsObject::Serialise(VStream& Strm)
 {
 	guard(FACScriptsObject::Serialise);
 	for (int i = 0; i < NumScripts; i++)
 	{
-		Ar << *(int*)&Scripts[i].state;
-		Ar << Scripts[i].waitValue;
+		Strm << *(int*)&Scripts[i].state;
+		Strm << Scripts[i].waitValue;
 	}
-	Ar.Serialise(MapVarStore, sizeof(MapVarStore));
+	Strm.Serialise(MapVarStore, sizeof(MapVarStore));
 	unguard;
 }
 
@@ -1587,12 +1587,12 @@ void FACScriptsObject::StaticStartTypedACScripts(int Type)
 //
 //==========================================================================
 
-void FACScriptsObject::StaticSerialise(FArchive& Ar)
+void FACScriptsObject::StaticSerialise(VStream& Strm)
 {
 	guard(FACScriptsObject::StaticSerialise);
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 	{
-		LoadedObjects[i]->Serialise(Ar);
+		LoadedObjects[i]->Serialise(Strm);
 	}
 	unguard;
 }
@@ -1782,22 +1782,22 @@ int FACSGrowingArray::GetElemVal(int Index)
 //
 //==========================================================================
 
-void FACSGrowingArray::Serialise(FArchive& Ar)
+void FACSGrowingArray::Serialise(VStream& Strm)
 {
 	guard(FACSGrowingArray::Serialise);
-	if (Ar.IsSaving())
+	if (Strm.IsLoading())
 	{
-		Ar << Size;
+		int NewSize;
+		Strm << NewSize;
+		Redim(NewSize);
 	}
 	else
 	{
-		int NewSize;
-		Ar << NewSize;
-		Redim(NewSize);
+		Strm << Size;
 	}
 	for (int i = 0; i < Size; i++)
 	{
-		Ar << Data[i];
+		Strm << Data[i];
 	}
 	unguard;
 }
@@ -2055,9 +2055,9 @@ void P_ACSInitNewGame()
 //
 //==========================================================================
 
-void P_SerialiseScripts(FArchive& Ar)
+void P_SerialiseScripts(VStream& Strm)
 {
-	FACScriptsObject::StaticSerialise(Ar);
+	FACScriptsObject::StaticSerialise(Strm);
 }
 
 //==========================================================================
@@ -4663,9 +4663,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.40  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
-//
+//	
 //	Revision 1.39  2006/02/05 18:52:44  dj_jl
 //	Moved common utils to level info class or built-in.
 //	

@@ -42,8 +42,8 @@
 #include "common.h"		//	Common types
 #include "misc.h"		//	Misc utilites
 #include "zone.h"		//	Zone memory allocation
-#include "archive.h"
 #include "array.h"		//	Dynamic arrays
+#include "stream.h"		//	Streams
 #include "names.h"
 #include "name.h"
 #include "str.h"		//	Strings
@@ -91,9 +91,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.26  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
-//
+//	
 //	Revision 1.25  2004/08/21 19:10:44  dj_jl
 //	Changed sound driver declaration.
 //	

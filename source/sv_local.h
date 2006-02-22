@@ -548,7 +548,7 @@ public:
 	void Redim(int NewSize);
 	void SetElemVal(int Index, int Value);
 	int GetElemVal(int Index);
-	void Serialise(FArchive& Ar);
+	void Serialise(VStream& Strm);
 };
 
 struct acsstore_t
@@ -569,7 +569,7 @@ void P_TagFinished(int tag);
 void P_PolyobjFinished(int po);
 void P_ACSInitNewGame(void);
 void P_CheckACSStore(void);
-void P_SerialiseScripts(FArchive& Ar);
+void P_SerialiseScripts(VStream& Strm);
 
 extern int				WorldVars[MAX_ACS_WORLD_VARS];
 extern int				GlobalVars[MAX_ACS_GLOBAL_VARS];
@@ -792,9 +792,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.44  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
-//
+//	
 //	Revision 1.43  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	

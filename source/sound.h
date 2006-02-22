@@ -79,16 +79,19 @@ void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name);
 void SN_StopSequence(int origin_id);
 void SN_UpdateActiveSequences();
 void SN_StopAllSequences();
-void SN_SerialiseSounds(FArchive& Ar);
+void SN_SerialiseSounds(VStream& Strm);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.14  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
-//
+//	
 //	Revision 1.13  2005/11/17 18:53:21  dj_jl
 //	Implemented support for sndinfo extensions.
 //	

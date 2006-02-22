@@ -674,23 +674,23 @@ static void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics,
 //
 //==========================================================================
 
-void SN_SerialiseSounds(FArchive& Ar)
+void SN_SerialiseSounds(VStream& Strm)
 {
-	if (Ar.IsLoading())
+	if (Strm.IsLoading())
 	{
 		// Reload and restart all sound sequences
-		int numSequences = Arctor<int>(Ar);
+		int numSequences = Streamer<int>(Strm);
 		for (int i = 0; i < numSequences; i++)
 		{
-			int sequence = Arctor<int>(Ar);
-			int delayTics = Arctor<int>(Ar);
-			int volume = Arctor<int>(Ar);
-			int seqOffset = Arctor<int>(Ar);
-			int soundID = Arctor<int>(Ar);
-			int objectNum = Arctor<int>(Ar);
-			float x = Arctor<float>(Ar);
-			float y = Arctor<float>(Ar);
-			float z = Arctor<float>(Ar);
+			int sequence = Streamer<int>(Strm);
+			int delayTics = Streamer<int>(Strm);
+			int volume = Streamer<int>(Strm);
+			int seqOffset = Streamer<int>(Strm);
+			int soundID = Streamer<int>(Strm);
+			int objectNum = Streamer<int>(Strm);
+			float x = Streamer<float>(Strm);
+			float y = Streamer<float>(Strm);
+			float z = Streamer<float>(Strm);
 #ifdef CLIENT
 			SN_StartSequence(objectNum, TVec(x, y, z), sequence);
 			SN_ChangeNodeData(i, seqOffset, delayTics, volume, soundID);
@@ -700,19 +700,19 @@ void SN_SerialiseSounds(FArchive& Ar)
 	else
 	{
 		// Save the sound sequences
-		Ar << ActiveSequences;
+		Strm << ActiveSequences;
 		for (seqnode_t* node = SequenceListHead; node; node = node->next)
 		{
-			Ar << node->sequence;
-			Ar << node->delayTics;
-			Ar << node->volume;
+			Strm << node->sequence;
+			Strm << node->delayTics;
+			Strm << node->volume;
 			int Offset = node->sequencePtr - SeqInfo[node->sequence].data;
-			Ar << Offset;
-			Ar << node->currentSoundID;
-			Ar << node->origin_id;
-			Ar << node->origin.x;
-			Ar << node->origin.y;
-			Ar << node->origin.z;
+			Strm << Offset;
+			Strm << node->currentSoundID;
+			Strm << node->origin_id;
+			Strm << node->origin.x;
+			Strm << node->origin.y;
+			Strm << node->origin.z;
 		}
 	}
 }
@@ -720,9 +720,12 @@ void SN_SerialiseSounds(FArchive& Ar)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.14  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.13  2005/11/20 15:50:40  dj_jl
 //	Some fixes.
 //	

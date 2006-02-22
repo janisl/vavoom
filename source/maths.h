@@ -53,9 +53,9 @@ public:
 	float yaw;
 	float roll;
 
-	friend FArchive& operator << (FArchive &Ar, TAVec &v)
+	friend VStream& operator << (VStream &Strm, TAVec &v)
 	{
-		return Ar << v.pitch << v.yaw << v.roll;
+		return Strm << v.pitch << v.yaw << v.roll;
 	}
 };
 
@@ -193,9 +193,12 @@ class TPlane
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.10  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.9  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

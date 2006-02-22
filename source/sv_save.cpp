@@ -99,13 +99,13 @@ extern char			mapaftersecret[12];
 
 static char		SavesDir[MAX_OSPATH];
 static boolean 	SavingPlayers;
-static FArchive	*Saver;
-static FArchive	*Loader;
+static VStream	*Saver;
+static VStream	*Loader;
 
-#define GET_BYTE	Arctor<byte>(*Loader)
-#define GET_WORD	Arctor<word>(*Loader)
-#define GET_LONG	Arctor<int>(*Loader)
-#define GET_FLOAT	Arctor<float>(*Loader)
+#define GET_BYTE	Streamer<byte>(*Loader)
+#define GET_WORD	Streamer<word>(*Loader)
+#define GET_LONG	Streamer<int>(*Loader)
+#define GET_FLOAT	Streamer<float>(*Loader)
 
 static FName		*NameRemap;
 
@@ -370,13 +370,13 @@ VEntity* SetMobjPtr(int id)
 //
 //==========================================================================
 
-static void ArchiveNames(FArchive &Ar)
+static void ArchiveNames(VStream &Strm)
 {
 	int Count = FName::GetMaxNames();
-	Ar << Count;
+	Strm << Count;
 	for (int i = 0; i < Count; i++)
 	{
-		Ar << *FName::GetEntry(i);
+		Strm << *FName::GetEntry(i);
 	}
 }
 
@@ -386,15 +386,15 @@ static void ArchiveNames(FArchive &Ar)
 //
 //==========================================================================
 
-static void UnarchiveNames(FArchive &Ar)
+static void UnarchiveNames(VStream &Strm)
 {
 	int Count;
-	Ar << Count;
-	NameRemap = (FName *)Z_StrMalloc(Count * 4);
+	Strm << Count;
+	NameRemap = (FName*)Z_StrMalloc(Count * 4);
 	for (int i = 0; i < Count; i++)
 	{
 		FNameEntry E;
-		Ar << E;
+		Strm << E;
 		NameRemap[i] = FName(E.Name);
 	}
 }
@@ -566,7 +566,7 @@ static void UnarchivePlayers(void)
 //
 //==========================================================================
 
-static void Level__Serialise(FArchive &Ar)
+static void Level__Serialise(VStream& Strm)
 {
 	guard(Level__Serialise);
 	int i;
@@ -580,7 +580,7 @@ static void Level__Serialise(FArchive &Ar)
 	//
 	for (i = 0, sec = GLevel->Sectors; i < GLevel->NumSectors; i++, sec++)
 	{
-		Ar << sec->floor.dist
+		Strm << sec->floor.dist
 			<< sec->ceiling.dist
 			<< sec->floor.pic
 			<< sec->ceiling.pic
@@ -588,7 +588,7 @@ static void Level__Serialise(FArchive &Ar)
 			<< sec->special
 			<< sec->tag
 			<< sec->seqType;
-		if (Ar.IsLoading())
+		if (Strm.IsLoading())
 		{
 			CalcSecMinMaxs(sec);
 		}
@@ -606,7 +606,7 @@ static void Level__Serialise(FArchive &Ar)
 			li->flags |= GClLevel->Lines[i].flags & ML_MAPPED;
 		}
 #endif
-		Ar << li->flags
+		Strm << li->flags
 			<< li->special
 			<< li->arg1
 			<< li->arg2
@@ -620,7 +620,7 @@ static void Level__Serialise(FArchive &Ar)
 				continue;
 			}
 			si = &GLevel->Sides[li->sidenum[j]];
-			Ar << si->textureoffset 
+			Strm << si->textureoffset 
 				<< si->rowoffset
 				<< si->toptexture 
 				<< si->bottomtexture 
@@ -633,23 +633,23 @@ static void Level__Serialise(FArchive &Ar)
 	//
 	for (i = 0; i < GLevel->NumPolyObjs; i++)
 	{
-		if (Ar.IsSaving())
-		{
-			Ar << GLevel->PolyObjs[i].angle
-				<< GLevel->PolyObjs[i].startSpot.x
-				<< GLevel->PolyObjs[i].startSpot.y;
-		}
-		else
+		if (Strm.IsLoading())
 		{
 			float angle, polyX, polyY;
 
-			Ar << angle 
+			Strm << angle 
 				<< polyX 
 				<< polyY;
 			PO_RotatePolyobj(GLevel->PolyObjs[i].tag, angle);
 			PO_MovePolyobj(GLevel->PolyObjs[i].tag, 
 				polyX - GLevel->PolyObjs[i].startSpot.x, 
 				polyY - GLevel->PolyObjs[i].startSpot.y);
+		}
+		else
+		{
+			Strm << GLevel->PolyObjs[i].angle
+				<< GLevel->PolyObjs[i].startSpot.x
+				<< GLevel->PolyObjs[i].startSpot.y;
 		}
 	}
 	unguard;
@@ -1464,9 +1464,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.52  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.51  2006/02/21 17:54:13  dj_jl
 //	Save pointer to old stats.
-//
+//	
 //	Revision 1.50  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
 //	

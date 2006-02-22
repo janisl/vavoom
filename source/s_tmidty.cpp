@@ -74,7 +74,7 @@ public:
 	static int ctl_read(int32*);
 	static int ctl_msg(int, int, char*, ...);
 
-	static VAudioCodec* Create(FArchive* InAr);
+	static VAudioCodec* Create(VStream* InStrm);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -261,7 +261,7 @@ void VTimidityAudioCodec::ctl_reset() {}
 //
 //==========================================================================
 
-VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
+VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 {
 	guard(VTimidityAudioCodec::Create);
 	//	Handle only if enabled.
@@ -270,8 +270,8 @@ VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
 
 	//	Check if it's a MIDI file.
 	char Header[4];
-	InAr->Seek(0);
-	InAr->Serialise(Header, 4);
+	InStrm->Seek(0);
+	InStrm->Serialise(Header, 4);
 	if (memcmp(Header, MIDIMAGIC, 4))
 	{
 		return NULL;
@@ -296,10 +296,10 @@ VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
 	}
 
 	//	Load song.
-	int Size = InAr->TotalSize();
+	int Size = InStrm->TotalSize();
 	void* Data = Z_Malloc(Size);
-	InAr->Seek(0);
-	InAr->Serialise(Data, Size);
+	InStrm->Seek(0);
+	InStrm->Serialise(Data, Size);
 	MidiSong* Song = Timidity_LoadSongMem(Data, Size);
 	Z_Free(Data);
 	if (!Song)
@@ -307,8 +307,8 @@ VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
 		GCon->Logf("Failed to load MIDI song");
 		return NULL;
 	}
-	InAr->Close();
-	delete InAr;
+	InStrm->Close();
+	delete InStrm;
 
 	//	Create codec.
 	return new VTimidityAudioCodec(Song);
@@ -318,9 +318,12 @@ VAudioCodec* VTimidityAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.3  2005/11/12 09:47:54  dj_jl
 //	Created LibTimidity namespace to avoid conflicts.
-//
+//	
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
 //	

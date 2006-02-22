@@ -102,7 +102,7 @@ struct client_static_t
 	boolean			demorecording;
 	boolean			demoplayback;
 	boolean			timedemo;
-	FArchive		*demofile;
+	VStream*		demofile;
 	int				td_lastframe;	// to meter out one message a frame
 	int				td_startframe;	// host_framecount at start
 	double			td_starttime;	// realtime at second frame of timedemo
@@ -190,9 +190,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.13  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.12  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
 //	

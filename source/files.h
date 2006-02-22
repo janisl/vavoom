@@ -50,8 +50,8 @@ int FL_ReadFile(const char* name, void** buffer, int tag);
 bool FL_WriteFile(const char* name, const void* source, int length);
 void FL_CreatePath(const char* Path);
 
-FArchive* FL_OpenFileRead(const char *Name);
-FArchive* FL_OpenFileWrite(const char *Name);
+VStream* FL_OpenFileRead(const char *Name);
+VStream* FL_OpenFileWrite(const char *Name);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -63,9 +63,12 @@ extern char		fl_gamedir[MAX_OSPATH];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.9  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
-//
+//	
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

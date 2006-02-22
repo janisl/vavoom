@@ -39,7 +39,7 @@ class VMp3AudioCodec : public VAudioCodec
 public:
 	enum { INPUT_BUFFER_SIZE = 5 * 8192 };
 
-	FArchive*			Ar;
+	VStream*			Strm;
 	int					BytesLeft;
 	bool				Initialised;
 
@@ -50,14 +50,14 @@ public:
 	int					FramePos;
 	bool				HaveFrame;
 
-	VMp3AudioCodec(FArchive* InAr);
+	VMp3AudioCodec(VStream* InStrm);
 	~VMp3AudioCodec();
 	bool Init();
 	int Decode(short* Data, int NumSamples);
 	int ReadData();
 	bool Finished();
 	void Restart();
-	static VAudioCodec* Create(FArchive* InAr);
+	static VAudioCodec* Create(VStream* InStrm);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -82,14 +82,14 @@ IMPLEMENT_AUDIO_CODEC(VMp3AudioCodec, "MP3");
 //
 //==========================================================================
 
-VMp3AudioCodec::VMp3AudioCodec(FArchive* InAr)
-: Ar(InAr)
+VMp3AudioCodec::VMp3AudioCodec(VStream* InStrm)
+: Strm(InStrm)
 , Initialised(false)
 {
 	guard(VMp3AudioCodec::VMp3AudioCodec);
 	//	Seek file to the begining
-	BytesLeft = Ar->TotalSize();
-	Ar->Seek(0);
+	BytesLeft = Strm->TotalSize();
+	Strm->Seek(0);
 
 	//	Initialise structures used by libmad
 	mad_stream_init(&Stream);
@@ -110,9 +110,9 @@ VMp3AudioCodec::~VMp3AudioCodec()
 	if (Initialised)
 	{
 		//	Close file only if decoder has been initialised succesfully.
-		Ar->Close();
-		delete Ar;
-		Ar = NULL;
+		Strm->Close();
+		delete Strm;
+		Strm = NULL;
 	}
 	//	Clear structs used by libmad.
 	mad_synth_finish(&Synth);
@@ -133,8 +133,8 @@ bool VMp3AudioCodec::Init()
 
 	//	Check for ID3v2 header.
 	byte Id3Hdr[10];
-	int SavedPos = Ar->Tell();
-	Ar->Serialise(Id3Hdr, 10);
+	int SavedPos = Strm->Tell();
+	Strm->Serialise(Id3Hdr, 10);
 	if (Id3Hdr[0] == 'I' && Id3Hdr[1] == 'D' && Id3Hdr[2] == '3')
 	{
 		//	It's a ID3v3 header, skip it.
@@ -142,13 +142,13 @@ bool VMp3AudioCodec::Init()
 			(Id3Hdr[6] << 21);
 		if (HdrSize + 10 > BytesLeft)
 			return false;
-		Ar->Seek(Ar->Tell() + HdrSize);
+		Strm->Seek(Strm->Tell() + HdrSize);
 		BytesLeft -= 10 + HdrSize;
 	}
 	else
 	{
 		//	Not a ID3v3 header, seek back to saved position.
-		Ar->Seek(SavedPos);
+		Strm->Seek(SavedPos);
 	}
 
 	//	Read some data.
@@ -286,7 +286,7 @@ int VMp3AudioCodec::ReadData()
 		ReadSize = BytesLeft;
 	if (!ReadSize)
 		return 0;
-	Ar->Serialise(ReadStart, ReadSize);
+	Strm->Serialise(ReadStart, ReadSize);
 	BytesLeft -= ReadSize;
 
 	//	When decoding the last frame of a file, it must be followed by 
@@ -328,8 +328,8 @@ void VMp3AudioCodec::Restart()
 {
 	guard(VMp3AudioCodec::Restart);
 	//	Seek to the beginning of the file.
-	Ar->Seek(0);
-	BytesLeft = Ar->TotalSize();
+	Strm->Seek(0);
+	BytesLeft = Strm->TotalSize();
 	unguard;
 }
 
@@ -339,10 +339,10 @@ void VMp3AudioCodec::Restart()
 //
 //==========================================================================
 
-VAudioCodec* VMp3AudioCodec::Create(FArchive* InAr)
+VAudioCodec* VMp3AudioCodec::Create(VStream* InStrm)
 {
 	guard(VMp3AudioCodec::Create);
-	VMp3AudioCodec* Codec = new VMp3AudioCodec(InAr);
+	VMp3AudioCodec* Codec = new VMp3AudioCodec(InStrm);
 	if (!Codec->Init())
 	{
 		delete Codec;
@@ -355,9 +355,12 @@ VAudioCodec* VMp3AudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.1  2005/10/22 09:53:55  dj_jl
 //	Added MP3 decoder.
 //	

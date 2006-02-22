@@ -167,9 +167,9 @@ inline TVec CrossProduct(const TVec &v1, const TVec &v2)
 				v1.x * v2.y - v1.y * v2.x);
 }
 
-inline FArchive& operator << (FArchive &Ar, TVec &v)
+inline VStream& operator << (VStream &Strm, TVec &v)
 {
-	return Ar << v.x << v.y << v.z;
+	return Strm << v.x << v.y << v.z;
 }
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -179,9 +179,12 @@ inline FArchive& operator << (FArchive &Ar, TVec &v)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.7  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
-//
+//	
 //	Revision 1.6  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
 //	

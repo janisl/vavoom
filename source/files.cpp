@@ -770,35 +770,34 @@ void FL_ExtractFileExtension(const char *path, char *dest)
 
 //==========================================================================
 //
-//	FArchiveFileReader
+//	VStreamFileReader
 //
 //==========================================================================
 
-class FArchiveFileReader : public FArchive
+class VStreamFileReader : public VStream
 {
 public:
-	FArchiveFileReader(FILE* InFile, FOutputDevice *InError) 
+	VStreamFileReader(FILE* InFile, FOutputDevice *InError) 
 		: File(InFile), Error(InError)
 	{
-		guard(FArchiveFileReader::FArchiveFileReader);
+		guard(VStreamFileReader::VStreamFileReader);
 		fseek(File, 0, SEEK_SET);
-		ArIsLoading = true;
-		ArIsPersistent = true;
+		bLoading = true;
 		unguard;
 	}
-	~FArchiveFileReader()
+	~VStreamFileReader()
 	{
-		guard(FArchiveFileReader::~FArchiveFileReader);
+		guard(VStreamFileReader::~VStreamFileReader);
 		if (File)
 			Close();
 		unguard;
 	}
 	void Seek(int InPos)
 	{
-		//guard(FArchiveFileReader::Seek);
+		//guard(VStreamFileReader::Seek);
 		if (fseek(File, InPos, SEEK_SET))
 		{
-			ArIsError = true;
+			bError = true;
 			//Error->Logf("seek Failed %i/%i: %i %i", InPos, Size, Pos, ferror(File) );
 		}
 		//unguard;
@@ -821,19 +820,19 @@ public:
 	}
 	bool Close()
 	{
-		guardSlow(FArchiveFileReader::Close);
+		guardSlow(VStreamFileReader::Close);
 		if (File)
 			fclose(File);
 		File = NULL;
-		return !ArIsError;
+		return !bError;
 		unguardSlow;
 	}
 	void Serialise(void* V, int Length)
 	{
-		guardSlow(FArchiveFileReader::Serialise);
+		guardSlow(VStreamFileReader::Serialise);
 		if (fread(V, Length, 1, File) != 1)
 		{
-			ArIsError = true;
+			bError = true;
 			Error->Logf("fread failed: Length=%i Error=%i", Length, ferror(File));
 		}
 		unguardSlow;
@@ -843,7 +842,7 @@ protected:
 	FOutputDevice *Error;
 };
 
-FArchive* FL_OpenFileRead(const char *Name)
+VStream* FL_OpenFileRead(const char *Name)
 {
 	guard(FL_OpenFileRead);
 	char TmpName[256];
@@ -857,40 +856,39 @@ FArchive* FL_OpenFileRead(const char *Name)
 	{
 		return NULL;
 	}
-	return new FArchiveFileReader(File, GCon);
+	return new VStreamFileReader(File, GCon);
 	unguard;
 }
 
 //==========================================================================
 //
-//	FArchiveFileWriter
+//	VStreamFileWriter
 //
 //==========================================================================
 
-class FArchiveFileWriter : public FArchive
+class VStreamFileWriter : public VStream
 {
 public:
-	FArchiveFileWriter(FILE *InFile, FOutputDevice *InError) 
+	VStreamFileWriter(FILE *InFile, FOutputDevice *InError) 
 		: File(InFile), Error(InError)
 	{
-		guard(FArchiveFileWriter::FArchiveFileReader);
-		ArIsSaving = true;
-		ArIsPersistent = true;
+		guard(VStreamFileWriter::VStreamFileReader);
+		bLoading = false;
 		unguard;
 	}
-	~FArchiveFileWriter()
+	~VStreamFileWriter()
 	{
-		guard(FArchiveFileWriter::~FArchiveFileWriter);
+		guard(VStreamFileWriter::~VStreamFileWriter);
 		if (File)
 			Close();
 		unguard;
 	}
 	void Seek(int InPos)
 	{
-		//guard(FArchiveFileWriter::Seek);
+		//guard(VStreamFileWriter::Seek);
 		if (fseek(File, InPos, SEEK_SET))
 		{
-			ArIsError = true;
+			bError = true;
 			//Error->Logf( TEXT("seek Failed %i/%i: %i %i"), InPos, Size, Pos, ferror(File) );
 		}
 		//unguard;
@@ -913,22 +911,22 @@ public:
 	}
 	bool Close()
 	{
-		guardSlow(FArchiveFileWriter::Close);
+		guardSlow(VStreamFileWriter::Close);
 		if (File && fclose(File))
 		{
-			ArIsError = true;
+			bError = true;
 			Error->Logf("fclose failed");
 		}
 		File = NULL;
-		return !ArIsError;
+		return !bError;
 		unguardSlow;
 	}
 	void Serialise(void* V, int Length)
 	{
-		guardSlow(FArchiveFileWriter::Serialise);
+		guardSlow(VStreamFileWriter::Serialise);
 		if (fwrite(V, Length, 1, File) != 1)
 		{
-			ArIsError = true;
+			bError = true;
 			Error->Logf("fwrite failed: Length=%i Error=%i", Length, ferror(File));
 		}
 		unguardSlow;
@@ -937,7 +935,7 @@ public:
 	{
 		if (fflush(File))
 		{
-			ArIsError = true;
+			bError = true;
 			Error->Logf("WriteFailed");
 		}
 	}
@@ -946,7 +944,7 @@ protected:
 	FOutputDevice *Error;
 };
 
-FArchive* FL_OpenFileWrite(const char *Name)
+VStream* FL_OpenFileWrite(const char *Name)
 {
 	guard(FL_OpenFileWrite);
 	char TmpName[1024];
@@ -961,16 +959,19 @@ FArchive* FL_OpenFileWrite(const char *Name)
 	{
 		return NULL;
 	}
-	return new FArchiveFileWriter(File, GCon);
+	return new VStreamFileWriter(File, GCon);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.20  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
-//
+//	
 //	Revision 1.19  2006/02/06 21:46:10  dj_jl
 //	Fixed missing validity check, added guard macros.
 //	

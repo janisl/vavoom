@@ -137,6 +137,8 @@ COMMON_OBJS = \
 	obj/screen.$(OBJEXT) \
 	obj/sizebuf.$(OBJEXT) \
 	obj/sn_sonix.$(OBJEXT) \
+	obj/str.$(OBJEXT) \
+	obj/stream.$(OBJEXT) \
 	obj/sv_acs.$(OBJEXT) \
 	obj/sv_ent.$(OBJEXT) \
 	obj/sv_main.$(OBJEXT) \
@@ -277,6 +279,8 @@ SV_COMMON_OBJ_FILES = \
 	obj/sv/sc_man.$(OBJEXT) \
 	obj/sv/sizebuf.$(OBJEXT) \
 	obj/sv/sn_sonix.$(OBJEXT) \
+	obj/sv/str.$(OBJEXT) \
+	obj/sv/stream.$(OBJEXT) \
 	obj/sv/sv_acs.$(OBJEXT) \
 	obj/sv/sv_ent.$(OBJEXT) \
 	obj/sv/sv_main.$(OBJEXT) \

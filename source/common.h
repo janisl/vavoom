@@ -184,7 +184,8 @@ public:
 //==========================================================================
 
 class	FName;
-class	FArchive;
+class	VStr;
+class	VStream;
 
 class	VObject;
 class		VClass;
@@ -192,9 +193,12 @@ class		VClass;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.18  2006/02/10 22:17:00  dj_jl
 //	Some platform fixes.
-//
+//	
 //	Revision 1.17  2003/10/22 06:15:00  dj_jl
 //	Safer handling of signals in Linux
 //	

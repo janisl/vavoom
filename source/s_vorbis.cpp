@@ -38,7 +38,7 @@ class VVorbisAudioCodec : public VAudioCodec
 {
 public:
 	int					InitLevel;
-	FArchive*			Ar;
+	VStream*			Strm;
 	int					BytesLeft;
 
 	ogg_sync_state		oy;
@@ -50,7 +50,7 @@ public:
 
 	int					eos;
 
-	VVorbisAudioCodec(FArchive* InAr);
+	VVorbisAudioCodec(VStream* InStrm);
 	~VVorbisAudioCodec();
 	bool Init();
 	void Cleanup();
@@ -58,7 +58,7 @@ public:
 	int ReadData();
 	bool Finished();
 	void Restart();
-	static VAudioCodec* Create(FArchive* InAr);
+	static VAudioCodec* Create(VStream* InStrm);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -83,12 +83,12 @@ IMPLEMENT_AUDIO_CODEC(VVorbisAudioCodec, "Vorbis");
 //
 //==========================================================================
 
-VVorbisAudioCodec::VVorbisAudioCodec(FArchive* InAr)
-: Ar(InAr)
+VVorbisAudioCodec::VVorbisAudioCodec(VStream* InStrm)
+: Strm(InStrm)
 {
 	guard(VVorbisAudioCodec::VVorbisAudioCodec);
-	BytesLeft = Ar->TotalSize();
-	Ar->Seek(0);
+	BytesLeft = Strm->TotalSize();
+	Strm->Seek(0);
 
 	ogg_sync_init(&oy);
 	unguard;
@@ -107,9 +107,9 @@ VVorbisAudioCodec::~VVorbisAudioCodec()
 	{
 		Cleanup();
 
-		Ar->Close();
-		delete Ar;
-		Ar = NULL;
+		Strm->Close();
+		delete Strm;
+		Strm = NULL;
 	}
 	ogg_sync_clear(&oy);
 	unguard;
@@ -311,7 +311,7 @@ int VVorbisAudioCodec::ReadData()
 	int bytes = 4096;
 	if (bytes > BytesLeft)
 		bytes = BytesLeft;
-	Ar->Serialise(buffer, bytes);
+	Strm->Serialise(buffer, bytes);
 	ogg_sync_wrote(&oy, bytes);
 	BytesLeft -= bytes;
 	return bytes;
@@ -341,8 +341,8 @@ void VVorbisAudioCodec::Restart()
 {
 	guard(VVorbisAudioCodec::Restart);
 	Cleanup();
-	Ar->Seek(0);
-	BytesLeft = Ar->TotalSize();
+	Strm->Seek(0);
+	BytesLeft = Strm->TotalSize();
 	Init();
 	unguard;
 }
@@ -353,10 +353,10 @@ void VVorbisAudioCodec::Restart()
 //
 //==========================================================================
 
-VAudioCodec* VVorbisAudioCodec::Create(FArchive* InAr)
+VAudioCodec* VVorbisAudioCodec::Create(VStream* InStrm)
 {
 	guard(VVorbisAudioCodec::Create);
-	VVorbisAudioCodec* Codec = new VVorbisAudioCodec(InAr);
+	VVorbisAudioCodec* Codec = new VVorbisAudioCodec(InStrm);
 	if (!Codec->Init())
 	{
 		Codec->Cleanup();
@@ -370,9 +370,12 @@ VAudioCodec* VVorbisAudioCodec::Create(FArchive* InAr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/02/22 20:33:51  dj_jl
+//	Created stream class.
+//
 //	Revision 1.2  2005/11/03 22:46:35  dj_jl
 //	Support for any bitrate streams.
-//
+//	
 //	Revision 1.1  2005/10/18 20:53:04  dj_jl
 //	Implemented basic support for streamed music.
 //	
