@@ -1491,8 +1491,8 @@ struct event_t
 };
 #endif
 
-int ObjectInternal[4];
-classid Class;
+native int ObjectInternal[4];
+native classid Class;
 
 native void Destroy();
 native bool IsA(name CheckName);
@@ -1970,13 +1970,6 @@ native static void PolyobjStopSequence(polyobj_t * mobj);
 
 #define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)
 
-//
-//  Savegame archieve / unarchieve utilite functions
-//
-
-native static sector_t *SectorToNum(sector_t * sector);
-native static sector_t *NumToSector(sector_t * sector);
-
 native static void G_ExitLevel(int Position);
 native static void G_SecretExitLevel(int Position);
 
@@ -2017,6 +2010,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/25 17:15:55  dj_jl
+//  Implemented proper serialisation of the objects.
+//
 //  Revision 1.7  2006/02/20 22:57:16  dj_jl
 //  Changed client state structure to class.
 //

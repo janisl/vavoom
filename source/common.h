@@ -187,15 +187,21 @@ class	FName;
 class	VStr;
 class	VStream;
 
+class	VField;
+class	VStruct;
+class	VClass;
+
 class	VObject;
-class		VClass;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.19  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.18  2006/02/10 22:17:00  dj_jl
 //	Some platform fixes.
 //	

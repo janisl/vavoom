@@ -23,46 +23,46 @@
 //**
 //**************************************************************************
 
-class Level:Object
+class Level : Object
 	native;
 
 //	Flags.
-bool bForServer;	//	True if this level belongs to the server.
-bool bExtended;		//	True if level was in Hexen format.
-bool bGLNodesV5;	//	True if using version 5 GL nodes.
+native bool bForServer;	//	True if this level belongs to the server.
+native bool bExtended;	//	True if level was in Hexen format.
+native bool bGLNodesV5;	//	True if using version 5 GL nodes.
 
 //
 //	MAP related Lookup tables.
 //	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
 //
 
-int NumVertexes;
-TVec *Vertexes;
+native int NumVertexes;
+native TVec *Vertexes;
 
-int NumSectors;
-sector_t *Sectors;
+native int NumSectors;
+native sector_t *Sectors;
 
-int NumSides;
-side_t *Sides;
+native int NumSides;
+native side_t *Sides;
 
-int NumLines;
-line_t *Lines;
+native int NumLines;
+native line_t *Lines;
 
-int __NumSegs;
-void *__Segs;
+native int __NumSegs;
+native void *__Segs;
 
-int __NumSubsectors;
-void *__Subsectors;
+native int __NumSubsectors;
+native void *__Subsectors;
 
-int __NumNodes;
-void *__Nodes;
+native int __NumNodes;
+native void *__Nodes;
 
-void *__VisData;
-void *__NoVis;
+native void *__VisData;
+native void *__NoVis;
 
 // !!! Used only during level loading
-int NumThings;
-mthing_t *Things;
+native int NumThings;
+native mthing_t *Things;
 
 //
 //  BLOCKMAP
@@ -70,14 +70,14 @@ mthing_t *Things;
 // array of blocks of size ...
 // Used to speed up collision detection by spatial subdivision in 2D.
 //
-void *__BlockMapLump;	// offsets in blockmap are from here
-void *__BlockMap;	// int for larger maps
-int __BlockMapWidth;	// Blockmap size.
-int __BlockMapHeight;	// size in mapblocks
-float BlockMapOrgX;	// origin of block map
-float BlockMapOrgY;
-void *__BlockLinks;
-void *__PolyBlockMap;
+native void *__BlockMapLump;	// offsets in blockmap are from here
+native void *__BlockMap;	// int for larger maps
+native int __BlockMapWidth;	// Blockmap size.
+native int __BlockMapHeight;	// size in mapblocks
+native float BlockMapOrgX;	// origin of block map
+native float BlockMapOrgY;
+native void *__BlockLinks;
+native void *__PolyBlockMap;
 
 //
 //  REJECT
@@ -85,18 +85,18 @@ void *__PolyBlockMap;
 //  Speeds up enemy AI by skipping detailed LineOf Sight calculation.
 //  Without special effect, this could be used as a PVS lookup as well.
 //
-void *__RejectMatrix;
+native void *__RejectMatrix;
 
 //	Strife conversations.
-int NumGenericSpeeches;
-RogueConSpeech *GenericSpeeches;
+native int NumGenericSpeeches;
+native RogueConSpeech *GenericSpeeches;
 
-int NumLevelSpeeches;
-RogueConSpeech *LevelSpeeches;
+native int NumLevelSpeeches;
+native RogueConSpeech *LevelSpeeches;
 
 //	List of all poly-objects on the level.
-int __NumPolyObjs;
-void *__PolyObjs;
+native int __NumPolyObjs;
+native void *__PolyObjs;
 
 //
 //	Natives
@@ -111,6 +111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/25 17:15:55  dj_jl
+//  Implemented proper serialisation of the objects.
+//
 //  Revision 1.3  2005/11/14 19:34:43  dj_jl
 //  Added support for version 5 GL nodes.
 //

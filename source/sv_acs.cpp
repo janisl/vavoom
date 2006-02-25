@@ -546,17 +546,13 @@ class VACS : public VThinker
 	int 				number;
 	acsInfo_t*			info;
 	float				DelayTime;
-	//FIXME	Needs proper serialisation to be a pointer
-	//int*				LocalVars;
-	int					LocalVars[256];
+	int*				LocalVars;
 	int*				ip;
 	FACScriptsObject*	activeObject;
 
+	void Serialise(VStream&);
 	int RunScript(float DeltaTime);
 	void Tick(float DeltaTime);
-
-	DECLARE_FUNCTION(Archive)
-	DECLARE_FUNCTION(Unarchive)
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -608,8 +604,7 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 	script->Activator = Activator;
 	script->line = Line;
 	script->side = Side;
-	//FIXME Temporarely disabled until serialisation is fixed.
-	//script->LocalVars = (int*)Z_Malloc(Info->VarCount * 4, PU_LEVSPEC, 0);
+	script->LocalVars = (int*)Z_Malloc(Info->VarCount * 4, PU_LEVSPEC, 0);
 	script->LocalVars[0] = Arg1;
 	script->LocalVars[1] = Arg2;
 	script->LocalVars[2] = Arg3;
@@ -2062,6 +2057,41 @@ void P_SerialiseScripts(VStream& Strm)
 
 //==========================================================================
 //
+//	VACS::Serialise
+//
+//==========================================================================
+
+void VACS::Serialise(VStream& Strm)
+{
+	guard(VACS::Serialise);
+	int TmpInt;
+
+	Super::Serialise(Strm);
+	if (Strm.IsLoading())
+	{
+		Strm << TmpInt;
+		activeObject = FACScriptsObject::StaticGetObject(TmpInt);
+		Strm << TmpInt;
+		ip = activeObject->OffsetToPtr(TmpInt);
+		info = activeObject->FindScript(number);
+		LocalVars = (int*)Z_Malloc(info->VarCount * 4, PU_LEVSPEC, 0);
+	}
+	else
+	{
+		TmpInt = activeObject->GetLibraryID() >> 16;
+		Strm << TmpInt;
+		TmpInt = activeObject->PtrToOffset(ip);
+		Strm << TmpInt;
+	}
+	for (int i = 0; i < info->VarCount; i++)
+	{
+		Strm << LocalVars[i];
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VAcs::Tick
 //
 //==========================================================================
@@ -2100,8 +2130,7 @@ int VACS::RunScript(float DeltaTime)
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		ConditionalDestroy();
-		//FIXME Temporarely disabled until serialisation is fixed.
-		//Z_Free(LocalVars);
+		Z_Free(LocalVars);
 		return resultValue;
 	}
 	if (info->state != ASTE_RUNNING)
@@ -4388,56 +4417,9 @@ int VACS::RunScript(float DeltaTime)
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		ConditionalDestroy();
-		//FIXME Temporarely disabled until serialisation is fixed.
-		//Z_Free(LocalVars);
+		Z_Free(LocalVars);
 	}
 	return resultValue;
-	unguard;
-}
-
-//==========================================================================
-//
-//	ACS.Archive
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VACS, Archive)
-{
-	guard(VACS.Archive);
-	VACS	*acs;
-
-	acs = (VACS *)PR_Pop();
-	acs->ip = (int*)acs->activeObject->PtrToOffset(acs->ip);
-	acs->line = acs->line ? (line_t *)(acs->line - acs->XLevel->Lines) : (line_t *)-1;
-	acs->Activator = (VEntity *)GetMobjNum(acs->Activator);
-	acs->activeObject = (FACScriptsObject*)(acs->activeObject->GetLibraryID() >> 16);
-	unguard;
-}
-
-//==========================================================================
-//
-//	ACS.Unarchive
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VACS, Unarchive)
-{
-	guard(VACS.Unarchive);
-	VACS	*acs;
-
-	acs = (VACS *)PR_Pop();
-	acs->activeObject = FACScriptsObject::StaticGetObject((int)acs->activeObject);
-	acs->ip = acs->activeObject->OffsetToPtr((int)acs->ip);
-	if ((int)acs->line == -1)
-	{
-		acs->line = NULL;
-	}
-	else
-	{
-		acs->line = &acs->XLevel->Lines[(int)acs->line];
-	}
-	acs->Activator = (VEntity *)SetMobjPtr((int)acs->Activator);
-	acs->info = acs->activeObject->FindScript(acs->number);
 	unguard;
 }
 
@@ -4663,9 +4645,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.41  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.40  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
 //	

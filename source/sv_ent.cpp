@@ -76,6 +76,29 @@ int VEntity::FIndex_GetSigilPieces;
 //
 //  VEntity::SetState
 //
+//==========================================================================
+
+void VEntity::Serialise(VStream& Strm)
+{
+	guard(VEntity::Serialise);
+	Super::Serialise(Strm);
+
+	if (Strm.IsLoading())
+	{
+		if (bIsPlayer)
+		{
+			Player->MO = this;
+		}
+		SubSector = NULL;	//	Must mark as not linked
+		LinkToWorld();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VEntity::SetState
+//
 //  Returns true if the actor is still present.
 //
 //==========================================================================
@@ -1895,9 +1918,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.18  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.17  2005/12/11 21:37:00  dj_jl
 //	Made path traversal callbacks class members.
 //	

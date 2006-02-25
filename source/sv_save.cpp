@@ -57,7 +57,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef enum
+enum gameArchiveSegment_t
 {
 	ASEG_GAME_HEADER = 101,
 	ASEG_NAMES,
@@ -69,7 +69,201 @@ typedef enum
 	ASEG_PLAYERS,
 	ASEG_SOUNDS,
 	ASEG_END
-} gameArchiveSegment_t;
+};
+
+static FName UnarchiveName(int Index);
+
+class VObjectsStream : public VStream
+{
+public:
+};
+
+class VSaveLoaderStream : public VObjectsStream
+{
+private:
+	VStream*		Stream;
+
+public:
+	VSaveLoaderStream(VStream* InStream)
+	: Stream(InStream)
+	{
+		bLoading = true;
+	}
+	~VSaveLoaderStream()
+	{
+		delete Stream;
+	}
+
+	//	Stream interface.
+	void Serialise(void* Data, int Len)
+	{
+		Stream->Serialise(Data, Len);
+	}
+	void Seek(int Pos)
+	{
+		Seek(Pos);
+	}
+	int Tell()
+	{
+		return Stream->Tell();
+	}
+	int TotalSize()
+	{
+		return Stream->TotalSize();
+	}
+	bool AtEnd()
+	{
+		return Stream->AtEnd();
+	}
+	void Flush()
+	{
+		Stream->Flush();
+	}
+	bool Close()
+	{
+		return Stream->Close();
+	}
+
+	VObjectsStream& operator<<(FName& Name)
+	{
+		int TmpIdx;
+		*this << TmpIdx;
+		Name = UnarchiveName(TmpIdx);
+		return *this;
+	}
+	void SerialiseReference(VObject*& Ref, VClass* Class)
+	{
+		int TmpIdx;
+		*this << TmpIdx;
+		if (Class->IsChildOf(VEntity::StaticClass()))
+		{
+			Ref = SetMobjPtr(TmpIdx);
+		}
+		else if (Class->IsChildOf(VBasePlayer::StaticClass()))
+		{
+			Ref = TmpIdx ? GPlayersBase[TmpIdx - 1] : NULL;
+		}
+		else
+		{
+			dprintf("Don't know how to handle reference to %s\n", Class->GetName());
+			Ref = (VObject*)TmpIdx;
+		}
+	}
+	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)
+	{
+		int TmpIdx;
+		*this << TmpIdx;
+		if (Struct->Name == "sector_t")
+		{
+			Ptr = TmpIdx >= 0 ? &GLevel->Sectors[TmpIdx] : NULL;
+		}
+		else if (Struct->Name == "line_t")
+		{
+			Ptr = TmpIdx >= 0 ? &GLevel->Lines[TmpIdx] : NULL;
+		}
+		else
+		{
+			dprintf("Don't know how to handle pointer to %s\n", *Struct->Name);
+			Ptr = (void*)TmpIdx;
+		}
+	}
+};
+
+class VSaveWriterStream : public VObjectsStream
+{
+private:
+	VStream*		Stream;
+
+public:
+	VSaveWriterStream(VStream* InStream)
+	: Stream(InStream)
+	{
+		bLoading = false;
+	}
+	~VSaveWriterStream()
+	{
+		delete Stream;
+	}
+
+	//	Stream interface.
+	void Serialise(void* Data, int Len)
+	{
+		Stream->Serialise(Data, Len);
+	}
+	void Seek(int Pos)
+	{
+		Seek(Pos);
+	}
+	int Tell()
+	{
+		return Stream->Tell();
+	}
+	int TotalSize()
+	{
+		return Stream->TotalSize();
+	}
+	bool AtEnd()
+	{
+		return Stream->AtEnd();
+	}
+	void Flush()
+	{
+		Stream->Flush();
+	}
+	bool Close()
+	{
+		return Stream->Close();
+	}
+
+	VObjectsStream& operator<<(FName& Name)
+	{
+		int TmpIdx = Name.GetIndex();
+		*this << TmpIdx;
+		return *this;
+	}
+	void SerialiseReference(VObject*& Ref, VClass* Class)
+	{
+		int TmpIdx;
+		if (Class->IsChildOf(VEntity::StaticClass()))
+		{
+			TmpIdx = GetMobjNum((VEntity*)Ref);
+		}
+		else if (Class->IsChildOf(VBasePlayer::StaticClass()))
+		{
+			TmpIdx = Ref ? SV_GetPlayerNum((VBasePlayer*)Ref) + 1 : 0;
+		}
+		else
+		{
+			dprintf("Don't know how to handle reference to %s\n", Class->GetName());
+			TmpIdx = (int)Ref;
+		}
+		*this << TmpIdx;
+	}
+	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)
+	{
+		int TmpIdx;
+		if (Struct->Name == "sector_t")
+		{
+			if (Ptr)
+				TmpIdx = (sector_t*)Ptr - GLevel->Sectors;
+			else
+    			TmpIdx = -1;
+		}
+		else if (Struct->Name == "line_t")
+		{
+			if (Ptr)
+				TmpIdx = (line_t*)Ptr - GLevel->Lines;
+			else
+    			TmpIdx = -1;
+		}
+		else
+		{
+			dprintf("Don't know how to handle pointer to %s\n", *Struct->Name);
+			TmpIdx = (int)Ptr;
+		}
+		*this << TmpIdx;
+	}
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -99,8 +293,8 @@ extern char			mapaftersecret[12];
 
 static char		SavesDir[MAX_OSPATH];
 static boolean 	SavingPlayers;
-static VStream	*Saver;
-static VStream	*Loader;
+static VSaveWriterStream*	Saver;
+static VSaveLoaderStream*	Loader;
 
 #define GET_BYTE	Streamer<byte>(*Loader)
 #define GET_WORD	Streamer<word>(*Loader)
@@ -165,7 +359,7 @@ boolean	SV_GetSaveString(int slot, char* buf)
 
 static void OpenStreamOut(char *fileName)
 {
-	Saver = FL_OpenFileWrite(fileName);
+	Saver = new VSaveWriterStream(FL_OpenFileWrite(fileName));
 }
 
 //==========================================================================
@@ -405,7 +599,7 @@ static void UnarchiveNames(VStream &Strm)
 //
 //==========================================================================
 
-FName UnarchiveName(int Index)
+static FName UnarchiveName(int Index)
 {
 	return NameRemap[Index];
 }
@@ -683,152 +877,49 @@ static void UnarchiveWorld(void)
 
 //==========================================================================
 //
-//	MangleVObject
-//
-//==========================================================================
-
-void MangleVObject(VObject *Obj, VClass *InClass)
-{
-	guard(MangleVObject);
-	if (InClass->GetFlags() & CLASSOF_Native)
-	{
-		return;
-	}
-	if (InClass->GetSuperClass())
-	{
-		MangleVObject(Obj, InClass->GetSuperClass());
-	}
-	for (int i = 0; i < InClass->NumPropertyInfo; i++)
-	{
-		int *p = (int *)((byte *)Obj + InClass->PropertyInfo[i].Offset);
-		switch (InClass->PropertyInfo[i].Type)
-		{
-		case PROPTYPE_Reference:
-			*p = GetMobjNum((VEntity *)*p);
-			break;
-
-		case PROPTYPE_ClassID:
-			if (*p)
-			{
-				*p = ((VClass *)*p)->GetFName().GetIndex();
-			}
-			else
-			{
-				*p = -1;
-			}
-			break;
-
-		case PROPTYPE_Name:
-			break;
-
-		case PROPTYPE_String:
-			if (*p)
-			{
-				*p = svpr.GetStringOffs((char *)*p);
-			}
-			break;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	UnMangleVObject
-//
-//==========================================================================
-
-void UnMangleVObject(VObject *Obj, VClass *InClass)
-{
-	guard(UnMangleVObject);
-	if (InClass->GetFlags() & CLASSOF_Native)
-	{
-		return;
-	}
-	if (InClass->GetSuperClass())
-	{
-		UnMangleVObject(Obj, InClass->GetSuperClass());
-	}
-	for (int i = 0; i < InClass->NumPropertyInfo; i++)
-	{
-		int *p = (int *)((byte *)Obj + InClass->PropertyInfo[i].Offset);
-		switch (InClass->PropertyInfo[i].Type)
-		{
-		case PROPTYPE_Reference:
-			*p = (int)SetMobjPtr(*p);
-			break;
-
-		case PROPTYPE_ClassID:
-			if (*p == -1)
-			{
-				*p = 0;
-			}
-			else
-			{
-				*p = (int)SV_GetClass(*p);
-			}
-			break;
-
-		case PROPTYPE_Name:
-			*p = UnarchiveName(*p).GetIndex();
-			break;
-
-		case PROPTYPE_String:
-			if (*p)
-			{
-				*p = (int)svpr.StrAtOffs(*p);
-			}
-			break;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 // ArchiveThinkers
 //
 //==========================================================================
 
-static void ArchiveThinkers(void)
+static void ArchiveThinkers()
 {
 	guard(ArchiveThinkers);
 	StreamOutLong(ASEG_THINKERS);
 
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
-		int size = It->GetClass()->ClassSize;
-
-		VThinker *th = (VThinker*)Z_Malloc(size);
-		memcpy(th, *It, size);
-
-		VEntity *mobj = Cast<VEntity>(th);
+		VEntity *mobj = Cast<VEntity>(*It);
+		int NetId = -1;
 		if (mobj)
 		{
-			if (mobj->bIsPlayer)
+			if (mobj->bIsPlayer && !SavingPlayers)
 			{
-				if (!SavingPlayers)
-				{
-					// Skipping player mobjs
-					Z_Free(th);
-					continue;
-				}
-				mobj->Player = (VBasePlayer *)(SV_GetPlayerNum(mobj->Player) + 1);
+				// Skipping player mobjs
+				continue;
 			}
+			NetId = mobj->NetID;
 		}
 
-		th->eventArchive();
-		MangleVObject(th, th->GetClass());
-
 		StreamOutByte(1);
-		WriteVObject(th);
-		Z_Free(th);
+		StreamOutLong(It->GetClass()->GetFName().GetIndex());
+		StreamOutLong(NetId);
 	}
 
 	//
 	//  End marker
 	//
 	StreamOutByte(0);
+
+	for (TObjectIterator<VThinker> It; It; ++It)
+	{
+		VEntity *mobj = Cast<VEntity>(*It);
+		if (mobj && mobj->bIsPlayer && !SavingPlayers)
+		{
+			// Skipping player mobjs
+			continue;
+		}
+		It->Serialise(*Saver);
+	}
 	unguard;
 }
 
@@ -838,16 +929,28 @@ static void ArchiveThinkers(void)
 //
 //==========================================================================
 
-static void UnarchiveThinkers(void)
+static void UnarchiveThinkers()
 {
 	guard(UnarchiveThinkers);
-	VThinker	*thinker;
+	TArray<VThinker*>	Thinkers;
+	VThinker*			thinker;
 
 	AssertSegment(ASEG_THINKERS);
 
 	while (GET_BYTE)
 	{
-		thinker = (VThinker *)ReadVObject(PU_LEVSPEC);
+		//  Get params
+		int NameIndex = GET_LONG;
+		int NetId = GET_LONG;
+		VClass *Class = SV_GetClass(NameIndex);
+		if (!Class)
+		{
+			Sys_Error("No such class %s", *NameRemap[NameIndex]);
+		}
+	
+		//  Allocate object and copy data
+		thinker = (VThinker*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
+
 		thinker->XLevel = GLevel;
 
 		//  Handle level info
@@ -860,26 +963,19 @@ static void UnarchiveThinkers(void)
 		VEntity *Ent = Cast<VEntity>(thinker);
 		if (Ent)
 		{
-			if (Ent->bIsPlayer)
-			{
-				Ent->Player = GPlayersBase[(int)Ent->Player - 1];
-				Ent->Player->MO = Ent;
-			}
-			Ent->SubSector = NULL;	//	Must mark as not linked
-			Ent->LinkToWorld();
-			sv_mobjs[Ent->NetID] = Ent;
+			sv_mobjs[NetId] = Ent;
 		}
+		Thinkers.AddItem(thinker);
 	}
 
-	//  Call unarchive function for each thinker.
 	GLevelInfo->Game = GGameInfo;
 
-	for (TObjectIterator<VThinker> It; It; ++It)
+	for (int i = 0; i < Thinkers.Num(); i++)
 	{
-		It->Level = GLevelInfo;
-		(*It)->eventUnarchive();
-		UnMangleVObject(*It, It->GetClass());
+		Thinkers[i]->Serialise(*Loader);
 	}
+
+	GLevelInfo->Game = GGameInfo;
 
 	GLevelInfo->eventAfterUnarchiveThinkers();
 	unguard;
@@ -1020,7 +1116,7 @@ static void SV_LoadMap(char *mapname, int slot)
 	SAVE_MAP_NAME(fileName, slot, mapname);
 
 	// Load the file
-	Loader = FL_OpenFileRead(fileName);
+	Loader = new VSaveLoaderStream(FL_OpenFileRead(fileName));
 
 	// Load names
 	AssertSegment(ASEG_NAMES);
@@ -1180,7 +1276,7 @@ void SV_LoadGame(int slot)
 	SAVE_NAME(fileName, BASE_SLOT);
 
 	// Load the file
-	Loader = FL_OpenFileRead(fileName);
+	Loader = new VSaveLoaderStream(FL_OpenFileRead(fileName));
 
 	// Set the save pointer and skip the description field
 	char desc[SAVE_DESCRIPTION_LENGTH];
@@ -1464,9 +1560,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.53  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.52  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.51  2006/02/21 17:54:13  dj_jl
 //	Save pointer to old stats.
 //	

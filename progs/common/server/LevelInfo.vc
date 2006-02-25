@@ -27,7 +27,7 @@ class LevelInfo : Thinker
 	native
 	abstract;
 
-GameInfo		Game;
+native GameInfo	Game;
 
 // Maintain single and multi player starting spots.
 mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
@@ -72,7 +72,6 @@ void UpdateSpecials()
 
 void AfterUnarchiveThinkers()
 {
-	CreateTIDList();
 }
 
 //==========================================================================
@@ -1183,6 +1182,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/25 17:15:55  dj_jl
+//  Implemented proper serialisation of the objects.
+//
 //  Revision 1.5  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

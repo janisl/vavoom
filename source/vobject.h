@@ -89,7 +89,6 @@ public: \
 //
 // Internal enums.
 //
-enum ENativeConstructor		{EC_NativeConstructor};
 enum EInternal				{EC_Internal};
 
 //
@@ -167,6 +166,7 @@ public:
 	// VObject interface.
 	virtual void Register();
 	virtual void Destroy();
+	virtual void Serialise(VStream&);
 
 	// Systemwide functions.
 	static void StaticInit();
@@ -285,9 +285,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.15  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.14  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

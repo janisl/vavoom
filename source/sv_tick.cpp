@@ -88,6 +88,30 @@ void SV_DestroyAllThinkers(void)
 
 //==========================================================================
 //
+//	VThinker::Serialise
+//
+//==========================================================================
+
+void VThinker::Serialise(VStream& Strm)
+{
+	guard(VThinker::Serialise);
+	Super::Serialise(Strm);
+	if (Strm.IsLoading())
+	{
+		XLevel = GLevel;
+		Level = GLevelInfo;
+
+		eventUnarchive();
+	}
+	else
+	{
+		eventArchive();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VThinker::Tick
 //
 //==========================================================================
@@ -149,9 +173,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.22  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
-//
+//	
 //	Revision 1.21  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
 //	

@@ -69,6 +69,11 @@ public:
 	virtual void Flush();
 	virtual bool Close();
 
+	//	Interface functions for objects and classes streams.
+	virtual VStream& operator<<(FName&);
+	virtual void SerialiseReference(VObject*&, VClass*);
+	virtual void SerialiseStructPointer(void*&, VStruct*);
+
 	//	Serialise integers in particular byte order.
 	void SerialiseLittleEndian(void*, int);
 	void SerialiseBigEndian(void*, int);
@@ -166,7 +171,10 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.1  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //**************************************************************************

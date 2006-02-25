@@ -60,8 +60,8 @@
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
 #include "progs.h"		//	Progs
-#include "vobject.h"
 #include "vclass.h"
+#include "vobject.h"
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "network.h"
 #include "waddefs.h"    // 	External data types
@@ -91,9 +91,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/02/25 17:15:13  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.27  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.26  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
 //	

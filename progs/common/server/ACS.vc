@@ -30,13 +30,11 @@ Entity		Activator;
 line_t*		Line;
 int			Side;
 int			Number;
-int			Info;
+native int	Info;
 float		DelayTime;
-//FIXME	Needs proper serialisation to be a pointer
-//int*		LocalVars;
-int			LocalVars[256];
-int*		IP;
-int*		activeObject;
+native int*	LocalVars;
+native int*	IP;
+native int*	activeObject;
 
 native void Archive();
 native void Unarchive();
@@ -48,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/25 17:15:55  dj_jl
+//  Implemented proper serialisation of the objects.
+//
 //  Revision 1.4  2005/03/28 07:29:53  dj_jl
 //  Temporary fix for save/load of local vars.
 //

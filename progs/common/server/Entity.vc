@@ -104,21 +104,21 @@ float FloorClip;	// value to use for floor clipping
 
 int Effects;
 
-subsector_t *SubSector;
-sector_t *Sector;
+native subsector_t *SubSector;
+native sector_t *Sector;
 
 // Interaction info, by BLOCKMAP.
 // Links in blocks (if needed).
-Entity BlockMapNext;
-Entity BlockMapPrev;
+native Entity BlockMapNext;
+native Entity BlockMapPrev;
 
 // The closest interval over all contacted Sectors.
-float FloorZ;
-float CeilingZ;
+native float FloorZ;
+native float CeilingZ;
 
 //  Closest floor and ceiling, source of floorz and ceilingz
-sec_plane_t *Floor;
-sec_plane_t *Ceiling;
+native sec_plane_t *Floor;
+native sec_plane_t *Ceiling;
 
 // If == validcount, already checked.
 int ValidCount;
@@ -499,6 +499,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2006/02/25 17:15:55  dj_jl
+//  Implemented proper serialisation of the objects.
+//
 //  Revision 1.12  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

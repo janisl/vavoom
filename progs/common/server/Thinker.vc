@@ -27,8 +27,8 @@ class Thinker : Object
 	native
 	abstract;
 
-Level		XLevel;		//	Level object.
-LevelInfo	Level;		//	Level info object.
+native Level		XLevel;		//	Level object.
+native LevelInfo	Level;		//	Level info object.
 
 void Tick(float deltaTime)
 {
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/25 17:15:55  dj_jl
+//  Implemented proper serialisation of the objects.
+//
 //  Revision 1.3  2006/02/13 18:30:15  dj_jl
 //  Moved all server progs global functions to classes.
 //

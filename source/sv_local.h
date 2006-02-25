@@ -55,6 +55,8 @@ class VThinker : public VObject
 	VLevel*			XLevel;		//	Level object.
 	VLevelInfo*		Level;		//	Level info object.
 
+	void Serialise(VStream&);
+
 	//	VThinker interface.
 	virtual void Tick(float DeltaTime);
 
@@ -407,9 +409,10 @@ class VEntity : public VThinker
 	static void InitFuncIndexes(void);
 
 	//	VObject interface.
-	void Destroy(void);
+	void Destroy();
+	void Serialise(VStream&);
 
-	void eventDestroyed(void)
+	void eventDestroyed()
 	{
 		svpr.Exec(GetVFunction(FIndex_Destroyed), (int)this);
 	}
@@ -792,9 +795,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.45  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.44  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
 //	

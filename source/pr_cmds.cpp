@@ -2084,46 +2084,6 @@ PF(PolyobjStopSequence)
 	SV_PolyobjStopSequence(poly);
 }
 
-//**************************************************************************
-//
-//	Savegame archieve / unarchieve utilite functions
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	PF_SectorToNum
-//
-//==========================================================================
-
-PF(SectorToNum)
-{
-	sector_t*	sector;
-
-	sector = (sector_t*)Pop();
-	if (sector)
-		Push(sector - GLevel->Sectors);
-	else
-    	Push(-1);
-}
-
-//==========================================================================
-//
-//	PF_NumToSector
-//
-//==========================================================================
-
-PF(NumToSector)
-{
-	int		num;
-
-    num = Pop();
-	if (num >= 0)
-	    Push((int)&GLevel->Sectors[num]);
-	else
-    	Push(0);
-}
-
 //==========================================================================
 //
 //	PF_ClearPlayer
@@ -3479,10 +3439,6 @@ builtin_info_t BuiltinInfo[] =
 	_(PolyobjStartSequence),
 	_(PolyobjStopSequence),
 
-	//  Savegame archieve / unarchieve utilite functions
-	_(SectorToNum),
-	_(NumToSector),
-
 	_(G_ExitLevel),
 	_(G_SecretExitLevel),
 	_(G_Completed),
@@ -3516,9 +3472,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.71  2006/02/25 17:14:19  dj_jl
+//	Implemented proper serialisation of the objects.
+//
 //	Revision 1.70  2006/02/17 19:22:46  dj_jl
 //	Builtins belong to object class.
-//
+//	
 //	Revision 1.69  2006/02/15 23:27:40  dj_jl
 //	Added script ID class attribute.
 //	
