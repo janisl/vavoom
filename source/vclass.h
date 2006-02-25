@@ -23,26 +23,62 @@
 //**
 //**************************************************************************
 
-enum
-{
-	PROPTYPE_Reference,
-	PROPTYPE_ClassID,
-	PROPTYPE_Name,
-	PROPTYPE_String,
-};
-
-struct FPropertyInfo
-{
-	int			Type;
-	int			Offset;
-};
-
 //
 // Flags describing an class instance.
 //
 enum EClassObjectFlags
 {
 	CLASSOF_Native			= 0x00000001,   // Native
+};
+
+enum ENativeConstructor		{EC_NativeConstructor};
+
+//==========================================================================
+//
+//	VField
+//
+//==========================================================================
+
+class VField
+{
+public:
+	struct FType
+	{
+		byte		Type;
+		byte		InnerType;		//	For pointers
+		byte		ArrayInnerType;	//	For arrays
+		byte		PtrLevel;
+		int			ArrayDim;
+		union
+		{
+			int			BitMask;
+			VClass*		Class;			//  Class of the reference
+			VStruct*	Struct;			//  Struct data.
+			int			FuncNum;		//  Function of the delegate type.
+		};
+	};
+
+	FName		Name;
+	VField*		Next;
+	int			Ofs;
+	FType		Type;
+	int			Flags;
+};
+
+//==========================================================================
+//
+//	VStruct
+//
+//==========================================================================
+
+class VStruct
+{
+public:
+	FName			Name;
+	VClass*			OuterClass;
+	VStruct*		ParentStruct;
+	int				Size;
+	VField*			Fields;
 };
 
 //==========================================================================
@@ -73,8 +109,7 @@ public:
 
 	int				ClassNumMethods;
 
-	int				NumPropertyInfo;
-	FPropertyInfo	*PropertyInfo;
+	VField*			Fields;
 
 	// Constructors.
 	VClass(FName AName, int ASize);
@@ -139,9 +174,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/02/25 17:09:35  dj_jl
+//	Import all progs type info.
+//
 //	Revision 1.10  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.9  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

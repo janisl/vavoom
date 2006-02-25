@@ -49,12 +49,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct FGlobalDef
-{
-	FName	Name;
-	int		Ofs;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -206,12 +200,13 @@ void TProgs::Load(const char *AName)
 	FName*			NameRemap;
 	char*			pName;
 	short*			DVTables;
-	dfield_t*		DPropInfos;
 	short*			DSprNames;
 	short*			DMdlNames;
 	dstate_t*		DStates;
 	dmobjinfo_t*	DMobjInfo;
 	dmobjinfo_t*	DScriptIds;
+	dfield_t*		DFields;
+	dstruct_t*		DStructs;
 
 	i = M_CheckParm("-progs");
 	if (i && i < myargc - 1)
@@ -256,16 +251,18 @@ void TProgs::Load(const char *AName)
 	DFunctions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
 	ClassInfo = (dclassinfo_t *)((byte *)Progs + Progs->ofs_classinfo);
 	DVTables = (short*)((byte*)Progs + Progs->ofs_vtables);
-	DPropInfos = (dfield_t*)((byte*)Progs + Progs->ofs_propinfo);
 	DSprNames = (short*)((byte*)Progs + Progs->ofs_sprnames);
 	DMdlNames = (short*)((byte*)Progs + Progs->ofs_mdlnames);
 	DStates = (dstate_t*)((byte*)Progs + Progs->ofs_states);
 	DMobjInfo = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_mobjinfo);
 	DScriptIds = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_scriptids);
+	DFields = (dfield_t*)((byte*)Progs + Progs->ofs_fields);
+	DStructs = (dstruct_t*)((byte*)Progs + Progs->ofs_structs);
 
 	Functions = Z_CNew<FFunction>(Progs->num_functions);
 	VTables = Z_CNew<FFunction*>(Progs->num_vtables);
-	PropInfos = Z_CNew<FPropertyInfo>(Progs->num_propinfo);
+	Fields = Z_CNew<VField>(Progs->num_fields);
+	Structs = Z_CNew<VStruct>(Progs->num_structs);
 
 	NumSpriteNames = Progs->num_sprnames;
 	SpriteNames = Z_CNew<FName>(NumSpriteNames);
@@ -298,28 +295,22 @@ void TProgs::Load(const char *AName)
 		DFunctions[i].outer_class = LittleShort(DFunctions[i].outer_class);
 		DFunctions[i].first_statement = LittleLong(DFunctions[i].first_statement);
 		DFunctions[i].num_parms = LittleShort(DFunctions[i].num_parms);
+		DFunctions[i].ParamsSize = LittleShort(DFunctions[i].ParamsSize);
 		DFunctions[i].num_locals = LittleShort(DFunctions[i].num_locals);
-		DFunctions[i].type = LittleShort(DFunctions[i].type);
 		DFunctions[i].flags = LittleShort(DFunctions[i].flags);
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
 	{
-		ClassInfo[i].name = LittleLong(ClassInfo[i].name);
+		ClassInfo[i].name = LittleShort(ClassInfo[i].name);
+		ClassInfo[i].fields = LittleShort(ClassInfo[i].fields);
 		ClassInfo[i].vtable = LittleLong(ClassInfo[i].vtable);
 		ClassInfo[i].size = LittleShort(ClassInfo[i].size);
 		ClassInfo[i].num_methods = LittleShort(ClassInfo[i].num_methods);
 		ClassInfo[i].parent = LittleLong(ClassInfo[i].parent);
-		ClassInfo[i].num_properties = LittleLong(ClassInfo[i].num_properties);
-		ClassInfo[i].ofs_properties = LittleLong(ClassInfo[i].ofs_properties);
 	}
 	for (i = 0; i < Progs->num_vtables; i++)
 	{
 		DVTables[i] = LittleShort(DVTables[i]);
-	}
-	for (i = 0; i < Progs->num_propinfo; i++)
-	{
-		PropInfos[i].Type = LittleShort(DPropInfos[i].type);
-		PropInfos[i].Offset = LittleShort(DPropInfos[i].ofs);
 	}
 
 	//	Setup classes
@@ -343,10 +334,9 @@ void TProgs::Load(const char *AName)
 			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
 			ClassList[i]->ClassVTable = VTables + ClassInfo[i].vtable;
 		}
-		if (!ClassList[i]->PropertyInfo)
+		if (!ClassList[i]->Fields && ClassInfo[i].fields != -1)
 		{
-			ClassList[i]->NumPropertyInfo = ClassInfo[i].num_properties;
-			ClassList[i]->PropertyInfo = PropInfos + ClassInfo[i].ofs_properties;
+			ClassList[i]->Fields = &Fields[ClassInfo[i].fields];
 		}
 	}
 	for (i = 0; i < Progs->num_classinfo; i++)
@@ -364,10 +354,49 @@ void TProgs::Load(const char *AName)
 		Functions[i].OuterClass = DFunctions[i].outer_class != -1 ?
 			ClassList[DFunctions[i].outer_class] : NULL;
 		Functions[i].FirstStatement = DFunctions[i].first_statement;
-		Functions[i].NumParms = DFunctions[i].num_parms;
+		Functions[i].NumParms = DFunctions[i].ParamsSize;
 		Functions[i].NumLocals = DFunctions[i].num_locals;
-		Functions[i].Type = DFunctions[i].type;
+		Functions[i].Type = DFunctions[i].ReturnType.Type;
 		Functions[i].Flags = DFunctions[i].flags;
+	}
+
+	//	Set up structures.
+	for (i = 0; i < Progs->num_structs; i++)
+	{
+		Structs[i].Name = NameRemap[LittleShort(DStructs[i].Name)];
+		Structs[i].OuterClass = ClassList[LittleShort(DStructs[i].OuterClass)];
+		int TIdx = LittleShort(DStructs[i].ParentStruct);
+		Structs[i].ParentStruct = TIdx >= 0 ? &Structs[TIdx] : NULL;
+		Structs[i].Size = LittleShort(DStructs[i].Size);
+		TIdx = LittleShort(DStructs[i].Fields);
+		Structs[i].Fields = TIdx >= 0 ? &Fields[TIdx] : NULL;
+	}
+
+	//	Set up fields.
+	for (i = 0; i < Progs->num_fields; i++)
+	{
+		Fields[i].Name = NameRemap[LittleShort(DFields[i].name)];
+		int TIdx = LittleShort(DFields[i].next);
+		Fields[i].Next = TIdx >= 0 ? &Fields[TIdx] : NULL;
+		Fields[i].Ofs = LittleShort(DFields[i].ofs);
+		Fields[i].Flags = LittleShort(DFields[i].flags);
+		Fields[i].Type.Type = DFields[i].type.Type;
+		Fields[i].Type.InnerType = DFields[i].type.InnerType;
+		Fields[i].Type.ArrayInnerType = DFields[i].type.ArrayInnerType;
+		Fields[i].Type.PtrLevel = DFields[i].type.PtrLevel;
+		Fields[i].Type.ArrayDim = LittleLong(DFields[i].type.ArrayDim);
+		TIdx = LittleLong(DFields[i].type.Extra);
+		int RealType = Fields[i].Type.Type;
+		if (RealType == ev_array)
+			RealType = Fields[i].Type.ArrayInnerType;
+		if (RealType == ev_pointer)
+			RealType = Fields[i].Type.InnerType;
+		if (RealType == ev_reference)
+			Fields[i].Type.Class = TIdx >= 0 ? ClassList[TIdx] : NULL;
+		else if (RealType == ev_struct)
+			Fields[i].Type.Struct = TIdx >= 0 ? &Structs[TIdx] : NULL;
+		else
+			Fields[i].Type.BitMask = TIdx;
 	}
 
 	//	Set up info tables.
@@ -538,6 +567,8 @@ void TProgs::Unload()
 	Z_Free(ModelNames);
 	Z_Free(States);
 	Z_Free(MobjInfo);
+	Z_Free(Fields);
+	Z_Free(Structs);
 }
 
 //==========================================================================
@@ -593,6 +624,22 @@ FFunction *TProgs::FindFunctionChecked(FName InName)
     }
 	Sys_Error("Function %s not found", *InName);
 	return NULL;
+}
+
+//==========================================================================
+//
+//  TProgs::FindStruct
+//
+//==========================================================================
+
+VStruct* TProgs::FindStruct(FName InName, VClass* InClass)
+{
+	guard(TProgs::FindStruct);
+	for (int i = 0; i < Progs->num_structs; i++)
+		if (Structs[i].Name == InName && Structs[i].OuterClass == InClass)
+			return &Structs[i];
+	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -2038,9 +2085,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/02/25 17:09:35  dj_jl
+//	Import all progs type info.
+//
 //	Revision 1.42  2006/02/19 20:36:02  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.41  2006/02/17 19:23:47  dj_jl
 //	Removed support for progs global variables.
 //	

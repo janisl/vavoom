@@ -29,7 +29,10 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VField;
+class VStruct;
 class VClass;
+
 struct FPropertyInfo;
 
 struct dprograms_t;
@@ -115,6 +118,7 @@ public:
 
 	FFunction *FuncForName(const char* name);
 	FFunction *FindFunctionChecked(FName InName);
+	VStruct* FindStruct(FName InName, VClass* InClass);
 
 	static int Exec(FFunction *func);
 	static int Exec(FFunction *func, int parm1);
@@ -272,6 +276,8 @@ private:
 	FFunction*		Functions;
 	FFunction**		VTables;
 	FPropertyInfo*	PropInfos;
+	VField*			Fields;
+	VStruct*		Structs;
 
 	FFunction *CheckFuncForName(const char* name);
 	char* FuncName(int fnum);
@@ -345,9 +351,12 @@ inline FName PR_PopName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/02/25 17:09:35  dj_jl
+//	Import all progs type info.
+//
 //	Revision 1.16  2006/02/17 19:23:47  dj_jl
 //	Removed support for progs global variables.
-//
+//	
 //	Revision 1.15  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
 //	

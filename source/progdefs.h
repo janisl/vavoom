@@ -30,6 +30,29 @@
 #define PROG_MAGIC		"VPRG"
 #define PROG_VERSION	19
 
+#define	MAX_PARAMS		16
+
+enum EType
+{
+	ev_void,
+	ev_int,
+	ev_float,
+	ev_name,
+	ev_string,
+	ev_pointer,
+	ev_reference,
+	ev_array,
+	ev_struct,
+	ev_vector,
+	ev_method,
+	ev_classid,
+	ev_bool,
+	ev_delegate,
+	ev_unknown,
+
+	NUM_BASIC_TYPES
+};
+
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -196,9 +219,6 @@ struct dprograms_t
 	int		ofs_vtables;
 	int		num_vtables;
 
-	int		ofs_propinfo;
-	int		num_propinfo;
-
 	int		ofs_sprnames;
 	int		num_sprnames;
 
@@ -213,6 +233,20 @@ struct dprograms_t
 
 	int		ofs_scriptids;
 	int		num_scriptids;
+
+	int		ofs_fields;
+	int		num_fields;
+
+	int		ofs_structs;
+	int		num_structs;
+
+	int		ofs_constants;
+	int		num_constants;
+};
+
+enum
+{
+	FIELD_Native	= 0x0001,	//	Native serialisation.
 };
 
 enum
@@ -221,32 +255,66 @@ enum
 	FUNC_Static		= 0x0002	// Static function
 };
 
+struct dtype_t
+{
+	byte		Type;
+	byte		InnerType;		//	For pointers
+	byte		ArrayInnerType;	//	For arrays
+	byte		PtrLevel;
+	int			ArrayDim;
+	int			Extra;
+};
+
+struct dfield_t
+{
+	short		name;
+	short		next;
+	short		ofs;
+	short		func_num;
+	short		flags;
+	dtype_t		type;
+};
+
 struct dfunction_t
 {
 	short	name;
 	short	outer_class;
 	int		first_statement;	//	Negative numbers are builtin functions
 	short	num_parms;
+	short	ParamsSize;
 	short	num_locals;
-    short	type;
 	short	flags;
+	dtype_t	ReturnType;
+	dtype_t	ParamTypes[MAX_PARAMS];
+};
+
+struct dstruct_t
+{
+	short			Name;
+	short			OuterClass;
+	short			ParentStruct;
+	short			Size;
+	short			Fields;
+	short			AvailableSize;
+	short			AvailableOfs;
+	short			IsVector;
 };
 
 struct dclassinfo_t
 {
-	int		name;
+	short	name;
+	short	fields;
 	int		vtable;
 	short	size;
 	short	num_methods;
 	int		parent;
-	int		num_properties;
-	int		ofs_properties;
 };
 
-struct dfield_t
+struct dconstant_t
 {
-	short	type;
-	short	ofs;
+	short		Name;
+	short		OuterClass;
+	int			Value;
 };
 
 struct dstate_t
@@ -259,6 +327,7 @@ struct dstate_t
 	float			time;
 	short			function;
 	short			statename;
+	short			outer_class;
 };
 
 struct dmobjinfo_t
@@ -276,9 +345,12 @@ struct dmobjinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/25 17:09:35  dj_jl
+//	Import all progs type info.
+//
 //	Revision 1.25  2006/02/19 20:36:03  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.24  2006/02/17 19:23:47  dj_jl
 //	Removed support for progs global variables.
 //	
