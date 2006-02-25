@@ -33,14 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-enum
-{
-	PROPTYPE_Reference,
-	PROPTYPE_ClassID,
-	PROPTYPE_Name,
-	PROPTYPE_String,
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -618,12 +610,13 @@ void SkipStruct(TClass* InClass)
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
+		TModifiers::Parse();
 		TK_NextToken();
 		do
 		{
 			while (TK_Check(PU_ASTERISK));
 			TK_NextToken();
-			while (TK_Check(PU_LINDEX))
+			if (TK_Check(PU_LINDEX))
 			{
 				EvalConstExpression(InClass, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
@@ -647,12 +640,13 @@ void SkipAddFields(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
+		TModifiers::Parse();
 		TK_NextToken();
 		do
 		{
 			while (TK_Check(PU_ASTERISK));
 			TK_NextToken();
-			while (TK_Check(PU_LINDEX))
+			if (TK_Check(PU_LINDEX))
 			{
 				EvalConstExpression(InClass, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
@@ -673,7 +667,6 @@ void CompileClass()
 {
 	field_t*	fi = NULL;
 	field_t*	otherfield;
-	int			i;
 	TType		t;
 	TType		type;
 
@@ -789,15 +782,14 @@ void CompileClass()
 				ParseError("Field name expected");
 				continue;
 			}
-			for (i = 0; i < Class->NumFields; i++)
+			for (fi = Class->Fields; fi; fi = fi->Next)
 			{
-				fi = &Class->Fields[i];
 				if (fi->Name == tk_Name)
 				{
 					break;
 				}
 			}
-			if (i == Class->NumFields)
+			if (!fi)
 				ERR_Exit(ERR_NONE, true, "Method Field not found");
 			otherfield = CheckForField(Class);
 			if (!otherfield)
@@ -810,7 +802,7 @@ void CompileClass()
 				need_semicolon = false;
 				break;
 			}
-			while (TK_Check(PU_LINDEX))
+			if (TK_Check(PU_LINDEX))
 			{
 				EvalConstExpression(Class, ev_int);
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
@@ -822,16 +814,15 @@ void CompileClass()
 		}
 	}
 
-	for (i = 0; i < Class->NumFields; i++)
+	for (fi = Class->Fields; fi; fi = fi->Next)
 	{
-		fi = &Class->Fields[i];
 		if (fi->type.type == ev_method &&
 			fi->Name == NAME_None && fi->ofs == 0)
 		{
 			break;
 		}
 	}
-	if (i == Class->NumFields)
+	if (!fi)
 		ERR_Exit(ERR_NONE, true, "DP Field not found");
 	CompileDefaultProperties(fi, Class);
 }
@@ -844,10 +835,6 @@ void CompileClass()
 
 field_t* ParseStructField(TStruct* InStruct)
 {
-	field_t*	fi;
-	int			numfields;
-	int			i;
-
 	if (!InStruct)
 	{
 		ParseError(ERR_NOT_A_STRUCT, "Base type required.");
@@ -863,13 +850,11 @@ field_t* ParseStructField(TStruct* InStruct)
 		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
 		return NULL;
 	}
-	numfields = InStruct->NumFields;
-	fi = InStruct->Fields;
-	for (i = 0; i < numfields; i++)
+	for (field_t* fi = InStruct->Fields; fi; fi = fi->Next)
 	{
-		if (TK_Check(fi[i].Name))
+		if (TK_Check(fi->Name))
 		{
-			return &fi[i];
+			return fi;
 		}
 	}
 	if (InStruct->ParentStruct)
@@ -892,10 +877,6 @@ field_t* ParseStructField(TStruct* InStruct)
 
 field_t* ParseClassField(TClass* InClass)
 {
-	field_t*	fi;
-	int			numfields;
-	int			i;
-
 	if (InClass->Size == -1)
 	{
 		ParseError("Incomplete type.");
@@ -906,13 +887,11 @@ field_t* ParseClassField(TClass* InClass)
 		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
 		return NULL;
 	}
-	numfields = InClass->NumFields;
-	fi = InClass->Fields;
-	for (i = 0; i < numfields; i++)
+	for (field_t* fi = InClass->Fields; fi; fi = fi->Next)
 	{
-		if (TK_Check(fi[i].Name))
+		if (TK_Check(fi->Name))
 		{
-			return &fi[i];
+			return fi;
 		}
 	}
 	if (InClass->ParentClass)
@@ -947,12 +926,11 @@ field_t* CheckForField(TClass* InClass, bool check_aux)
 	{
 		return NULL;
 	}
-	field_t *fi = InClass->Fields;
-	for (int i = 0; i < InClass->NumFields; i++)
+	for (field_t *fi = InClass->Fields; fi; fi = fi->Next)
 	{
-		if (TK_Check(fi[i].Name))
+		if (TK_Check(fi->Name))
 		{
-			return &fi[i];
+			return fi;
 		}
 	}
 	if (check_aux)
@@ -982,12 +960,11 @@ field_t* CheckForField(FName Name, TClass* InClass, bool check_aux)
 	{
 		return NULL;
 	}
-	field_t *fi = InClass->Fields;
-	for (int i = 0; i < InClass->NumFields; i++)
+	for (field_t *fi = InClass->Fields; fi; fi = fi->Next)
 	{
-		if (Name == fi[i].Name)
+		if (Name == fi->Name)
 		{
-			return &fi[i];
+			return fi;
 		}
 	}
 	if (check_aux)
@@ -1013,12 +990,11 @@ field_t* FindConstructor(TClass* InClass)
 	{
 		return NULL;
 	}
-	field_t *fi = InClass->Fields;
-	for (int i = 0; i < InClass->NumFields; i++)
+	for (field_t *fi = InClass->Fields; fi; fi = fi->Next)
 	{
-		if (fi[i].type.type == ev_method && fi[i].ofs == 0)
+		if (fi->type.type == ev_method && fi->ofs == 0)
 		{
-			return &fi[i];
+			return fi;
 		}
 	}
 	return FindConstructor(InClass->ParentClass);
@@ -1048,92 +1024,21 @@ static void AddVTable(TClass* InClass)
 		memcpy(vtable, &vtables[InClass->ParentClass->VTable],
 			InClass->ParentClass->NumMethods * 4);
 	}
-	for (int i = 0; i < InClass->NumFields; i++)
+	for (field_t* f = InClass->Fields; f; f = f->Next)
 	{
-		field_t &f = InClass->Fields[i];
-		if (f.type.type != ev_method || f.ofs == -1)
+		if (f->type.type != ev_method || f->ofs == -1)
 		{
 			continue;
 		}
-		if (f.func_num == -1)
+		if (f->func_num == -1)
 		{
-			ParseError("Method %s.%s not defined", *InClass->Name, *f.Name);
+			ParseError("Method %s.%s not defined", *InClass->Name, *f->Name);
 		}
-		vtable[f.ofs] = f.func_num;
+		vtable[f->ofs] = f->func_num;
 	}
 	if (!vtable[0])
 	{
 		ERR_Exit(ERR_NONE, false, "Missing defaultproperties for %s", *InClass->Name);
-	}
-}
-
-//==========================================================================
-//
-//	WritePropertyField
-//
-//==========================================================================
-
-static void WritePropertyField(TClass* InClass, TType *type, int ofs)
-{
-	int i;
-
-	switch (type->type)
-	{
-	case ev_void:
-	case ev_int:
-	case ev_float:
-	case ev_bool:
-		break;
-	case ev_name:
-		propinfos.AddItem(TPropInfo(PROPTYPE_Name, ofs));
-		InClass->NumProperties++;
-		break;
-	case ev_string:
-		propinfos.AddItem(TPropInfo(PROPTYPE_String, ofs));
-		InClass->NumProperties++;
-		break;
-	case ev_pointer:	// FIXME
-		break;
-	case ev_reference:
-		propinfos.AddItem(TPropInfo(PROPTYPE_Reference, ofs));
-		InClass->NumProperties++;
-		break;
-	case ev_array:
-		for (i = 0; i < type->GetSize() / type->GetArrayInnerType().GetSize(); i++)
-		{
-			WritePropertyField(InClass, new TType(type->GetArrayInnerType()),
-				ofs + i * type->GetArrayInnerType().GetSize());
-		}
-		break;
-	case ev_struct:
-	case ev_vector:
-		for (i = 0; i < type->Struct->NumFields; i++)
-		{
-			WritePropertyField(InClass, &type->Struct->Fields[i].type,
-				ofs + type->Struct->Fields[i].ofs);
-		}
-	case ev_method:		// Properties are not methods
-		break;
-	case ev_classid:
-		propinfos.AddItem(TPropInfo(PROPTYPE_ClassID, ofs));
-		InClass->NumProperties++;
-		break;
-	}
-}
-
-//==========================================================================
-//
-//	WritePropertyInfo
-//
-//==========================================================================
-
-static void WritePropertyInfo(TClass* InClass)
-{
-	InClass->OfsProperties = propinfos.Num();
-	InClass->NumProperties = 0;
-	for (int i = 0; i < InClass->NumFields; i++)
-	{
-		WritePropertyField(InClass, &InClass->Fields[i].type, InClass->Fields[i].ofs);
 	}
 }
 
@@ -1150,10 +1055,6 @@ void AddVirtualTables()
 	for (i = 0; i < classtypes.Num(); i++)
 	{
 		AddVTable(classtypes[i]);
-	}
-	for (i = 0; i < classtypes.Num(); i++)
-	{
-		WritePropertyInfo(classtypes[i]);
 	}
 }
 
@@ -1182,15 +1083,55 @@ static TType ParsePropArrayDims(TClass* Class, const TType& t)
 
 //==========================================================================
 //
+//	TStruct::AddField
+//
+//==========================================================================
+
+void TStruct::AddField(field_t* f)
+{
+	if (!Fields)
+		Fields = f;
+	else
+	{
+		field_t* Prev = Fields;
+		while (Prev->Next)
+			Prev = Prev->Next;
+		Prev->Next = f;
+	}
+	f->Next = NULL;
+	f->Index = FieldList.AddItem(f);
+}
+
+//==========================================================================
+//
+//	TClass::AddField
+//
+//==========================================================================
+
+void TClass::AddField(field_t* f)
+{
+	if (!Fields)
+		Fields = f;
+	else
+	{
+		field_t* Prev = Fields;
+		while (Prev->Next)
+			Prev = Prev->Next;
+		Prev->Next = f;
+	}
+	f->Next = NULL;
+	f->Index = FieldList.AddItem(f);
+}
+
+//==========================================================================
+//
 //	ParseStruct
 //
 //==========================================================================
 
 void ParseStruct(TClass* InClass, bool IsVector)
 {
-	field_t		fields[128];
 	field_t*	fi;
-	int			num_fields;
 	int			size;
 	TType		t;
 	TType		type;
@@ -1220,7 +1161,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 		}
 		//	New struct
 		Struct = new TStruct;
-		structtypes.AddItem(Struct);
+		Struct->Index = structtypes.AddItem(Struct);
 		Struct->Name = tk_Name;
 		Struct->OuterClass = InClass;
 		Struct->IsVector = IsVector;
@@ -1234,7 +1175,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 		return;
 	}
 
-	num_fields = 0;
+	Struct->Fields = NULL;
 	size = 0;
 
 	if (!IsVector && TK_Check(PU_COLON))
@@ -1275,6 +1216,10 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
+
+		int Modifiers = TModifiers::Parse();
+		Modifiers = TModifiers::Check(Modifiers, field_t::AllowedModifiers);
+
 		type = CheckForType(InClass);
 		if (type.type == ev_unknown)
 		{
@@ -1299,28 +1244,37 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			{
 				ParseError("Field cannot have void type.");
 			}
-			if (IsVector && num_fields == 3)
+			if (IsVector)
 			{
-				ParseError("Vector must have exactly 3 float fields");
-				continue;
+				int fc = 0;
+				for (field_t* f = Struct->Fields; f; f = f->Next)
+					fc++;
+				if (fc == 3)
+				{
+					ParseError("Vector must have exactly 3 float fields");
+					continue;
+				}
 			}
 			if (tk_Token != TK_IDENTIFIER)
 			{
 				ParseError("Field name expected");
 			}
-			fi = &fields[num_fields];
+			fi = new field_t;
 			fi->Name = tk_Name;
+			fi->flags = TModifiers::FieldAttr(Modifiers);
 			TK_NextToken();
-			if (t.type == ev_bool && num_fields)
+			if (t.type == ev_bool && Struct->Fields)
 			{
-				field_t &prevbool = fields[num_fields - 1];
-				if (prevbool.type.type == ev_bool &&
-					(dword)prevbool.type.bit_mask != 0x80000000)
+				field_t* prevbool = Struct->Fields;
+				while (prevbool->Next)
+					prevbool = prevbool->Next;
+				if (prevbool->type.type == ev_bool &&
+					(dword)prevbool->type.bit_mask != 0x80000000)
 				{
 					fi->type = t;
-					fi->type.bit_mask = prevbool.type.bit_mask << 1;
-					fi->ofs = prevbool.ofs;
-					num_fields++;
+					fi->type.bit_mask = prevbool->type.bit_mask << 1;
+					fi->ofs = prevbool->ofs;
+					Struct->AddField(fi);
 					continue;
 				}
 			}
@@ -1331,20 +1285,22 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			}
 			size += t.GetSize();
 			fi->type = t;
-			num_fields++;
+			Struct->AddField(fi);
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	if (IsVector && num_fields != 3)
+	if (IsVector)
 	{
-		ParseError("Vector must have exactly 3 float fields");
+		int fc = 0;
+		for (field_t* f = Struct->Fields; f; f = f->Next)
+			fc++;
+		if (fc != 3)
+		{
+			ParseError("Vector must have exactly 3 float fields");
+		}
 	}
 
-	//	Add to the type
-	Struct->Fields = new field_t[num_fields];
-	memcpy(Struct->Fields, fields, num_fields * sizeof(*fields));
-	Struct->NumFields = num_fields;
 	Struct->Size = size;
 }
 
@@ -1359,8 +1315,6 @@ void AddFields(TClass* InClass)
 	TType			struct_type;
 	TType			type;
 	field_t*		fi;
-	int				num_fields;
-	field_t			fields[128];
 	int				size;
 	int				ofs;
 	TType			t;
@@ -1390,9 +1344,6 @@ void AddFields(TClass* InClass)
 	}
 
 	//  Read info
-	num_fields = Struct->NumFields;
-	memcpy(fields, Struct->Fields, num_fields * sizeof(*fields));
-	delete Struct->Fields;
 	size = Struct->AvailableSize;
 	ofs = Struct->AvailableOfs;
 
@@ -1400,6 +1351,9 @@ void AddFields(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
+		int Modifiers = TModifiers::Parse();
+		Modifiers = TModifiers::Check(Modifiers, field_t::AllowedModifiers);
+
 		type = CheckForType(InClass);
 		if (type.type == ev_unknown)
 		{
@@ -1421,19 +1375,22 @@ void AddFields(TClass* InClass)
 			{
 				ParseError("Field name expected");
 			}
-			fi = &fields[num_fields];
+			fi = new field_t;
 			fi->Name = tk_Name;
+			fi->flags = TModifiers::FieldAttr(Modifiers);
 			TK_NextToken();
-			if (t.type == ev_bool && num_fields)
+			if (t.type == ev_bool && Struct->Fields)
 			{
-				field_t &prevbool = fields[num_fields - 1];
-				if (prevbool.type.type == ev_bool &&
-					(dword)prevbool.type.bit_mask != 0x80000000)
+				field_t* prevbool = Struct->Fields;
+				while (prevbool->Next)
+					prevbool = prevbool->Next;
+				if (prevbool->type.type == ev_bool &&
+					(dword)prevbool->type.bit_mask != 0x80000000)
 				{
 					fi->type = t;
-					fi->type.bit_mask = prevbool.type.bit_mask << 1;
-					fi->ofs = prevbool.ofs;
-					num_fields++;
+					fi->type.bit_mask = prevbool->type.bit_mask << 1;
+					fi->ofs = prevbool->ofs;
+					Struct->AddField(fi);
 					continue;
 				}
 			}
@@ -1446,16 +1403,13 @@ void AddFields(TClass* InClass)
 				ParseError("Additional fields size overflow.");
 			}
 			fi->type = t;
-			num_fields++;
+			Struct->AddField(fi);
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 
 	//	Renew TypeInfo
-	Struct->Fields = new field_t[num_fields];
-	memcpy(Struct->Fields, fields, num_fields * sizeof(*fields));
-	Struct->NumFields = num_fields;
 	Struct->AvailableSize = size;
 	Struct->AvailableOfs = ofs;
 }
@@ -1468,7 +1422,6 @@ void AddFields(TClass* InClass)
 
 void ParseClass()
 {
-	TArray<field_t>		fields;
 	field_t*			fi;
 	field_t*			otherfield;
 	int					size;
@@ -1503,7 +1456,7 @@ void ParseClass()
 		return;
 	}
 
-	Class->NumFields = 0;
+	Class->Fields = NULL;
 	Class->NumMethods = BASE_NUM_METHODS;
 	size = 0;
 
@@ -1549,7 +1502,6 @@ void ParseClass()
 		}
 	} while (1);
 
-	Class->Fields = &fields[0];
 	Class->Size = size;
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	while (!TK_Check(KW_DEFAULTPROPERTIES))
@@ -1623,8 +1575,7 @@ void ParseClass()
 				ParseError("Field name expected");
 				continue;
 			}
-			fi = new(fields) field_t;
-Class->Fields = &fields[0];
+			fi = new field_t;
 			fi->Name = tk_Name;
 			otherfield = CheckForField(Class);
 			if (otherfield)
@@ -1637,7 +1588,7 @@ Class->Fields = &fields[0];
 			}
 			fi->ofs = size;
 			size += 8;
-			Class->NumFields++;
+			Class->AddField(fi);
 			ParseDelegate(t, fi, otherfield, Class, Flags);
 			continue;
 		}
@@ -1663,8 +1614,7 @@ Class->Fields = &fields[0];
 				ParseError("Field name expected");
 				continue;
 			}
-			fi = new(fields) field_t;
-Class->Fields = &fields[0];
+			fi = new field_t;
 			fi->Name = tk_Name;
 			otherfield = CheckForField(Class);
 			if (!otherfield)
@@ -1674,6 +1624,7 @@ Class->Fields = &fields[0];
 			if (TK_Check(PU_LPAREN))
 			{
 				ParseMethodDef(t, fi, otherfield, Class, Modifiers);
+				Class->AddField(fi);
 				need_semicolon = false;
 				break;
 			}
@@ -1686,16 +1637,20 @@ Class->Fields = &fields[0];
 			{
 				ParseError("Field cannot have void type.");
 			}
-			if (t.type == ev_bool && fields.Num() > 1)
+			Modifiers = TModifiers::Check(Modifiers, field_t::AllowedModifiers);
+			fi->flags = TModifiers::FieldAttr(Modifiers);
+			if (t.type == ev_bool && Class->Fields)
 			{
-				field_t &prevbool = fields[fields.Num() - 2];
-				if (prevbool.type.type == ev_bool &&
-					(dword)prevbool.type.bit_mask != 0x80000000)
+				field_t* prevbool = Class->Fields;
+				while (prevbool->Next)
+					prevbool = prevbool->Next;
+				if (prevbool->type.type == ev_bool &&
+					(dword)prevbool->type.bit_mask != 0x80000000)
 				{
 					fi->type = t;
-					fi->type.bit_mask = prevbool.type.bit_mask << 1;
-					fi->ofs = prevbool.ofs;
-					Class->NumFields++;
+					fi->type.bit_mask = prevbool->type.bit_mask << 1;
+					fi->ofs = prevbool->ofs;
+					Class->AddField(fi);
 					continue;
 				}
 			}
@@ -1703,7 +1658,7 @@ Class->Fields = &fields[0];
 			t = ParsePropArrayDims(Class, t);
 			size += t.GetSize();
 			fi->type = t;
-			Class->NumFields++;
+			Class->AddField(fi);
 		} while (TK_Check(PU_COMMA));
 		if (need_semicolon)
 		{
@@ -1711,23 +1666,22 @@ Class->Fields = &fields[0];
 		}
 	}
 
-	fi = new(fields) field_t;
-Class->Fields = &fields[0];
+	fi = new field_t;
 	ParseDefaultProperties(fi, Class);
+	Class->AddField(fi);
 
-	//	Add to the type
-	Class->Fields = new field_t[Class->NumFields];
-	memcpy(Class->Fields, fields.GetData(),
-		Class->NumFields * sizeof(field_t));
 	Class->Size = size;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/02/25 17:07:57  dj_jl
+//	Linked list of fields, export all type info.
+//
 //	Revision 1.43  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
-//
+//	
 //	Revision 1.42  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
 //	

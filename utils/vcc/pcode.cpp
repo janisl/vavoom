@@ -67,9 +67,10 @@ int					ConstantsHash[256];
 
 TArray<TClass*>		classtypes;
 TArray<int>			vtables;
-TArray<TPropInfo>	propinfos;
 
 TArray<TStruct*>	structtypes;
+
+TArray<field_t*>	FieldList;
 
 TArray<FName>		sprite_names;
 TArray<FName>		models;
@@ -413,6 +414,32 @@ float LittleFloat(float f)
 
 //==========================================================================
 //
+//	ConvType
+//
+//==========================================================================
+
+static void ConvType(const TType& T, dtype_t& dt)
+{
+	dt.Type = T.type;
+	dt.InnerType = T.InnerType;
+	dt.ArrayInnerType = T.ArrayInnerType;
+	dt.PtrLevel = T.PtrLevel;
+	dt.ArrayDim = LittleLong(T.array_dim);
+	byte RealType = T.type;
+	if (RealType == ev_array)
+		RealType = T.ArrayInnerType;
+	if (RealType == ev_pointer)
+		RealType = T.InnerType;
+	if (RealType == ev_reference)
+		dt.Extra = LittleLong(T.Class->Index);
+	else if (RealType == ev_struct)
+		dt.Extra = LittleLong(T.Struct->Index);
+	else
+		dt.Extra = LittleLong(T.bit_mask);
+}
+
+//==========================================================================
+//
 //	PC_WriteObject
 //
 //==========================================================================
@@ -466,10 +493,13 @@ void PC_WriteObject(char *name)
 		func.outer_class = LittleShort(functions[i].OuterClass ?
 			functions[i].OuterClass->Index : -1);
 		func.first_statement = LittleLong(functions[i].FirstStatement);
-		func.num_parms = LittleShort(functions[i].ParamsSize);
+		func.num_parms = LittleShort(functions[i].NumParams);
+		func.ParamsSize = LittleShort(functions[i].ParamsSize);
 		func.num_locals = LittleShort(functions[i].NumLocals);
-		func.type = LittleShort(functions[i].ReturnType.type);
 		func.flags = LittleShort(functions[i].Flags);
+		ConvType(functions[i].ReturnType, func.ReturnType);
+		for (int j = 0; j < MAX_PARAMS; j++)
+			ConvType(functions[i].ParamTypes[j], func.ParamTypes[j]);
 		fwrite(&func, 1, sizeof(dfunction_t), f);
 	}	
 
@@ -480,13 +510,12 @@ void PC_WriteObject(char *name)
 		dclassinfo_t ci;
 		TClass& ct = *classtypes[i];
 
-		ci.name = LittleLong(ct.Name.GetIndex());
+		ci.name = LittleShort(ct.Name.GetIndex());
+		ci.fields = LittleShort(ct.Fields ? ct.Fields->Index : -1);
 		ci.vtable = LittleLong(ct.VTable);
 		ci.size = LittleShort(ct.Size);
 		ci.num_methods = LittleShort(ct.NumMethods);
 		ci.parent = LittleLong(ct.ParentClass ? ct.ParentClass->Index : 0);
-		ci.num_properties = LittleLong(ct.NumProperties);
-		ci.ofs_properties = LittleLong(ct.OfsProperties);
 		fwrite(&ci, 1, sizeof(ci), f);
 	}
 
@@ -497,16 +526,6 @@ void PC_WriteObject(char *name)
 		short gv;
 		gv = LittleShort(vtables[i]);
 		fwrite(&gv, 1, 2, f);
-	}
-
-	progs.ofs_propinfo = ftell(f);
-	progs.num_propinfo = propinfos.Num();
-	for (i = 0; i < propinfos.Num(); i++)
-	{
-		dfield_t pi;
-		pi.type = LittleShort(propinfos[i].Type);
-		pi.ofs = LittleShort(propinfos[i].Ofs);
-		fwrite(&pi, 1, sizeof(dfield_t), f);
 	}
 
 	progs.ofs_sprnames = ftell(f);
@@ -540,6 +559,7 @@ void PC_WriteObject(char *name)
 		s.nextstate = LittleShort(states[i].nextstate);
 		s.function = LittleShort(states[i].function);
 		s.statename = LittleShort(states[i].statename.GetIndex());
+		s.outer_class = LittleShort(states[i].OuterClass->Index);
 		fwrite(&s, 1, sizeof(dstate_t), f);
 	}
 
@@ -563,6 +583,48 @@ void PC_WriteObject(char *name)
 		fwrite(&m, 1, sizeof(dmobjinfo_t), f);
 	}
 
+	progs.ofs_fields = ftell(f);
+	progs.num_fields = FieldList.Num();
+	for (i = 0; i < FieldList.Num(); i++)
+	{
+		dfield_t df;
+		df.name = LittleShort(FieldList[i]->Name.GetIndex());
+		df.next = LittleShort(FieldList[i]->Next ? FieldList[i]->Next->Index : -1);
+		df.ofs = LittleShort(FieldList[i]->ofs);
+		df.func_num = LittleShort(FieldList[i]->func_num);
+		df.flags = LittleShort(FieldList[i]->flags);
+		ConvType(FieldList[i]->type, df.type);
+		fwrite(&df, 1, sizeof(dfield_t), f);
+	}
+
+	progs.ofs_structs = ftell(f);
+	progs.num_structs = structtypes.Num();
+	for (i = 0; i < structtypes.Num(); i++)
+	{
+		TStruct* S = structtypes[i];
+		dstruct_t ds;
+		ds.Name = LittleShort(S->Name.GetIndex());
+		ds.OuterClass = LittleShort(S->OuterClass ? S->OuterClass->Index : -1);
+		ds.ParentStruct = LittleShort(S->ParentStruct ? S->ParentStruct->Index : -1);
+		ds.Size = LittleShort(S->Size);
+		ds.Fields = LittleShort(S->Fields ? S->Fields->Index : -1);
+		ds.AvailableSize = LittleShort(S->AvailableSize);
+		ds.AvailableOfs = LittleShort(S->AvailableOfs);
+		ds.IsVector = LittleShort(S->IsVector);
+		fwrite(&ds, 1, sizeof(dstruct_t), f);
+	}
+
+	progs.ofs_constants = ftell(f);
+	progs.num_constants = Constants.Num();
+	for (i = 0; i < Constants.Num(); i++)
+	{
+		dconstant_t dc;
+		dc.Name = LittleShort(Constants[i].Name.GetIndex());
+		dc.OuterClass = LittleShort(Constants[i].OuterClass ? Constants[i].OuterClass->Index : -1);
+		dc.Value = LittleLong(Constants[i].value);
+		fwrite(&dc, 1, sizeof(dconstant_t), f);
+	}
+
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", FName::GetMaxNames(), progs.ofs_strings - progs.ofs_names);
@@ -572,12 +634,14 @@ void PC_WriteObject(char *name)
 	dprintf("Builtins   %6d\n", numbuiltins);
 	dprintf("Class info %6d %6ld\n", classtypes.Num(), classtypes.Num() * sizeof(dclassinfo_t));
 	dprintf("VTables    %6d %6d\n", vtables.Num(), vtables.Num() * 2);
-	dprintf("Prop info  %6d %6d\n", propinfos.Num(), propinfos.Num() * sizeof(dfield_t));
 	dprintf("Spr names  %6d %6d\n", sprite_names.Num(), sprite_names.Num() * 2);
 	dprintf("Mdl names  %6d %6d\n", models.Num(), models.Num() * 2);
 	dprintf("States     %6d %6d\n", states.Num(), states.Num() * sizeof(dstate_t));
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), mobj_info.Num() * sizeof(dmobjinfo_t));
 	dprintf("Script Ids %6d %6d\n", script_ids.Num(), script_ids.Num() * sizeof(dmobjinfo_t));
+	dprintf("Fields     %6d %6d\n", FieldList.Num(), FieldList.Num() * sizeof(dfield_t));
+	dprintf("Structs    %6d %6d\n", structtypes.Num(), structtypes.Num() * sizeof(dstruct_t));
+	dprintf("Constants  %6d %6d\n", Constants.Num(), Constants.Num() * sizeof(dconstant_t));
 	dprintf("TOTAL SIZE       %7d\n", (int)ftell(f));
 
 	memcpy(progs.magic, PROG_MAGIC, 4);
@@ -713,9 +777,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/02/25 17:07:57  dj_jl
+//	Linked list of fields, export all type info.
+//
 //	Revision 1.29  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.28  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
 //	

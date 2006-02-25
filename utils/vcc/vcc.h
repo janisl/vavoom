@@ -29,9 +29,9 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "cmdlib.h"
-#include "../../source/progdefs.h"
-
 using namespace VavoomUtils;
+
+#include "../../source/progdefs.h"
 
 #include "array.h"
 #include "names.h"
@@ -48,34 +48,12 @@ using namespace VavoomUtils;
 #define MAX_FILE_NAME_LENGTH	512
 #define MAX_QUOTED_LENGTH		256
 #define MAX_IDENTIFIER_LENGTH	64
-#define	MAX_PARAMS				16
 #define MAX_LOCAL_DEFS			64
 
 #define PF_VARARGS				0x8000
 #define PF_COUNT_MASK			0x7fff
 
 // TYPES -------------------------------------------------------------------
-
-enum EType
-{
-	ev_void,
-	ev_int,
-	ev_float,
-	ev_name,
-	ev_string,
-	ev_pointer,
-	ev_reference,
-	ev_array,
-	ev_struct,
-	ev_vector,
-	ev_method,
-	ev_classid,
-	ev_bool,
-	ev_delegate,
-	ev_unknown,
-
-	NUM_BASIC_TYPES
-};
 
 enum ECompileError
 {
@@ -267,6 +245,7 @@ public:
 	static int Check(int, int);
 	static int MethodAttr(int);
 	static int ClassAttr(int);
+	static int FieldAttr(int);
 };
 
 //
@@ -319,12 +298,26 @@ public:
 	void GetName(char* Dest) const;
 };
 
-struct field_t : public FField
+class field_t : public FField
 {
+public:
+	enum { AllowedModifiers = TModifiers::Native };
+
+	field_t*	Next;
 	int			ofs;
 	TType		type;
 	int			func_num;	// Method's function
-	FName		TypeName;
+	int			flags;
+	int			Index;
+
+	field_t()
+	: Next(NULL)
+	, ofs(0)
+	, type(ev_void)
+	, func_num(0)
+	, flags(0)
+	, Index(0)
+	{}
 };
 
 class TFunction : public FField
@@ -374,10 +367,10 @@ public:
 	int				Size;
 	//	Structure fields
 	field_t*		Fields;
-	int				NumFields;
 	//	Addfield info
 	int				AvailableSize;
 	int				AvailableOfs;
+	int				Index;
 
 	TStruct()
 	: OuterClass(0)
@@ -385,10 +378,12 @@ public:
 	, IsVector(false)
 	, Size(0)
 	, Fields(0)
-	, NumFields(0)
 	, AvailableSize(0)
 	, AvailableOfs(0)
+	, Index(0)
 	{}
+
+	void AddField(field_t* f);
 };
 
 class TClass : public FField
@@ -398,9 +393,6 @@ public:
 
 	TClass*			ParentClass;
 	field_t*		Fields;
-	int				NumFields;
-	int				NumProperties;
-	int				OfsProperties;
 	int				VTable;
 	int				NumMethods;
 	int				Size;
@@ -409,25 +401,13 @@ public:
 	TClass()
 	: ParentClass(NULL)
 	, Fields(NULL)
-	, NumFields(0)
-	, NumProperties(0)
-	, OfsProperties(0)
 	, VTable(0)
 	, NumMethods(0)
 	, Size(0)
 	, Index(0)
 	{}
-};
 
-struct TPropInfo
-{
-	short	Type;
-	short	Ofs;
-
-	TPropInfo(short	InType, short InOfs)
-	: Type(InType)
-	, Ofs(InOfs)
-	{}
+	void AddField(field_t* f);
 };
 
 struct state_t
@@ -563,9 +543,10 @@ extern int					ConstantsHash[256];
 
 extern TArray<TClass*>		classtypes;
 extern TArray<int>			vtables;
-extern TArray<TPropInfo>	propinfos;
 
 extern TArray<TStruct*>		structtypes;
+
+extern TArray<field_t*>		FieldList;
 
 extern TArray<FName>		sprite_names;
 extern TArray<FName>		models;
@@ -647,9 +628,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2006/02/25 17:07:57  dj_jl
+//	Linked list of fields, export all type info.
+//
 //	Revision 1.40  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
-//
+//	
 //	Revision 1.39  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
 //	

@@ -583,7 +583,6 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 		method->ofs = InClass->NumMethods;
 		InClass->NumMethods++;
 	}
-	InClass->NumFields++;
 
 	if (FuncFlags & FUNC_Native)
 	{
@@ -704,11 +703,9 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 {
 	numlocaldefs = 1;
 
-
 	method->type = TType(ev_method);
 	method->ofs = 0;
 	method->Name = NAME_None;
-	InClass->NumFields++;
 
 	if (CheckForFunction(InClass, InClass->Name) != -1)
 	{
@@ -834,9 +831,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/02/25 17:07:57  dj_jl
+//	Linked list of fields, export all type info.
+//
 //	Revision 1.12  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
-//
+//	
 //	Revision 1.11  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
 //	

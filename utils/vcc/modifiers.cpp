@@ -151,10 +151,29 @@ int TModifiers::ClassAttr(int Modifiers)
 	return Attributes;
 }
 
+//==========================================================================
+//
+//	TModifiers::FieldAttr
+//
+//	Convert modifiers to field attributes.
+//
+//==========================================================================
+
+int TModifiers::FieldAttr(int Modifiers)
+{
+	int Attributes = 0;
+	if (Modifiers & Native)
+		Attributes |= FIELD_Native;
+	return Attributes;
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2006/02/25 17:07:57  dj_jl
+//	Linked list of fields, export all type info.
+//
 //	Revision 1.1  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
-//
+//	
 //**************************************************************************
