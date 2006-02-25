@@ -53,6 +53,7 @@ REGISTER_NAME(Thinker)
 REGISTER_NAME(LevelInfo)
 REGISTER_NAME(GameInfo)
 REGISTER_NAME(Entity)
+REGISTER_NAME(BasePlayer)
 REGISTER_NAME(ViewEntity)
 REGISTER_NAME(ACS)
 REGISTER_NAME(Level)
@@ -75,9 +76,12 @@ REGISTER_NAME(ClientState)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/02/25 17:12:38  dj_jl
+//	Added missing implementation of the player class.
+//
 //	Revision 1.10  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.9  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

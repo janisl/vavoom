@@ -69,6 +69,7 @@ static void G_DoCompleted(void);
 
 IMPLEMENT_CLASS(V, LevelInfo)
 IMPLEMENT_CLASS(V, GameInfo)
+IMPLEMENT_CLASS(V, BasePlayer)
 IMPLEMENT_CLASS(V, ViewEntity)
 
 TCvarI			real_time("real_time", "1");
@@ -3013,9 +3014,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.82  2006/02/25 17:12:38  dj_jl
+//	Added missing implementation of the player class.
+//
 //	Revision 1.81  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
-//
+//	
 //	Revision 1.80  2006/02/21 17:54:13  dj_jl
 //	Save pointer to old stats.
 //	
