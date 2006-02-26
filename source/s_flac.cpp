@@ -40,7 +40,7 @@ public:
 	class FStream : public FLAC::Decoder::Stream
 	{
 	public:
-		VStream&			Stream;
+		VStream&			Strm;
 		size_t				BytesLeft;
 		int					SampleBits;
 		int					SampleRate;
@@ -70,7 +70,7 @@ public:
 	class FStream : public FLAC::Decoder::Stream
 	{
 	public:
-		VStream*			Stream;
+		VStream*			Strm;
 		size_t				BytesLeft;
 		int					NumChannels;
 		int					SampleBits;
@@ -171,15 +171,15 @@ void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 //==========================================================================
 
 VFlacSampleLoader::FStream::FStream(VStream& InStream)
-: Stream(InStream)
+: Strm(InStream)
 , SampleBits(0)
 , SampleRate(0)
 , Data(0)
 , DataSize(0)
 {
 	guard(VFlacSampleLoader::FStream::FStream);
-	Stream.Seek(0);
-	BytesLeft = Stream.TotalSize();
+	Strm.Seek(0);
+	BytesLeft = Strm.TotalSize();
 	unguard;
 }
 
@@ -205,7 +205,7 @@ VFlacSampleLoader::FStream::FStream(VStream& InStream)
 			{
 				*bytes = BytesLeft;
 			}
-			Stream.Serialise(buffer, *bytes);
+			Strm.Serialise(buffer, *bytes);
 			BytesLeft -= *bytes;
 			return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 		}
@@ -373,8 +373,8 @@ bool VFlacAudioCodec::Finished()
 void VFlacAudioCodec::Restart()
 {
 	guard(VFlacAudioCodec::Restart);
-	Stream->Stream->Seek(0);
-	Stream->BytesLeft = Stream->Stream->TotalSize();
+	Stream->Strm->Seek(0);
+	Stream->BytesLeft = Stream->Strm->TotalSize();
 	Stream->reset();
 	unguard;
 }
@@ -386,7 +386,7 @@ void VFlacAudioCodec::Restart()
 //==========================================================================
 
 VFlacAudioCodec::FStream::FStream(VStream* InStream)
-: Stream(InStream)
+: Strm(InStream)
 , NumChannels(0)
 , SampleBits(0)
 , SampleRate(0)
@@ -397,8 +397,8 @@ VFlacAudioCodec::FStream::FStream(VStream* InStream)
 , StrmSize(0)
 {
 	guard(VFlacAudioCodec::FStream::FStream);
-	Stream->Seek(0);
-	BytesLeft = Stream->TotalSize();
+	Strm->Seek(0);
+	BytesLeft = Strm->TotalSize();
 	init();
 	process_until_end_of_metadata();
 	unguard;
@@ -417,8 +417,8 @@ VFlacAudioCodec::FStream::~FStream()
 	{
 		Z_Free(SamplePool[0]);
 		SamplePool[0] = NULL;
-		Stream->Close();
-		delete Stream;
+		Strm->Close();
+		delete Strm;
 	}
 	unguard;
 }
@@ -479,7 +479,7 @@ void VFlacAudioCodec::FStream::StrmWrite(const FLAC__int32* const Buf[],
 			{
 				*bytes = BytesLeft;
 			}
-			Stream->Serialise(buffer, *bytes);
+			Strm->Serialise(buffer, *bytes);
 			BytesLeft -= *bytes;
 			return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 		}
@@ -592,9 +592,12 @@ VAudioCodec* VFlacAudioCodec::Create(VStream* InStream)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/02/26 14:13:04  dj_jl
+//	Renamed variable to avoid conflicts.
+//
 //	Revision 1.4  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.3  2005/11/06 15:28:16  dj_jl
 //	Added support for FLAC format sounds.
 //	
