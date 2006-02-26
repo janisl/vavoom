@@ -36,9 +36,6 @@ native int*	LocalVars;
 native int*	IP;
 native int*	activeObject;
 
-native void Archive();
-native void Unarchive();
-
 defaultproperties
 {
 }
@@ -46,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/26 17:36:37  dj_jl
+//  Removed archiver functions.
+//
 //  Revision 1.5  2006/02/25 17:15:55  dj_jl
 //  Implemented proper serialisation of the objects.
 //
