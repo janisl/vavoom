@@ -506,6 +506,8 @@ class VLevel : public VObject
 	int 			NumPolyObjs;
 	polyobj_t		*PolyObjs;
 
+	void Serialise(VStream& Strm);
+
 	//	Map loader.
 	void LoadMap(const char *MapName);
 
@@ -602,9 +604,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/02/26 20:52:48  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.34  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.33  2005/11/14 19:34:16  dj_jl
 //	Added support for version 5 GL nodes.
 //	

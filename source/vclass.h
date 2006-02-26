@@ -63,6 +63,8 @@ public:
 	int			Ofs;
 	FType		Type;
 	int			Flags;
+
+	static void SerialiseFieldValue(VStream&, byte*, const VField::FType&);
 };
 
 //==========================================================================
@@ -79,6 +81,8 @@ public:
 	VStruct*		ParentStruct;
 	int				Size;
 	VField*			Fields;
+
+	void SerialiseObject(VStream&, byte*);
 };
 
 //==========================================================================
@@ -153,15 +157,15 @@ public:
 	{
 		ObjectFlags &= ~NewFlags;
 	}
-	const char *GetName(void) const
+	const char *GetName() const
 	{
 		return *Name;
 	}
-	const FName GetFName(void) const
+	const FName GetFName() const
 	{
 		return Name;
 	}
-	VClass *GetSuperClass(void) const
+	VClass *GetSuperClass() const
 	{
 		return ParentClass;
 	}
@@ -169,14 +173,18 @@ public:
 	FFunction *FindFunction(FName InName);
 	FFunction *FindFunctionChecked(FName InName);
 	int GetFunctionIndex(FName InName);
+	void SerialiseObject(VStream&, VObject*);
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/02/26 20:52:49  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.11  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
-//
+//	
 //	Revision 1.10  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

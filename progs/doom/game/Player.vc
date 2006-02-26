@@ -3055,17 +3055,6 @@ void Cheat_KillAll()
 	cprint(self, "%d MONSTERS KILLED", P_Massacre());
 }
 
-//==========================================================================
-//
-//  UnarchivePlayer
-//
-//==========================================================================
-
-void UnarchivePlayer()
-{
-	Attacker = none;
-}
-
 defaultproperties
 {
 }
@@ -3073,6 +3062,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.20  2006/02/26 20:55:26  dj_jl
+//  Proper serialisation of level and players.
+//
 //  Revision 1.19  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

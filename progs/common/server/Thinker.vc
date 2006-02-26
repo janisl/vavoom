@@ -34,14 +34,6 @@ void Tick(float deltaTime)
 {
 }
 
-void Archive()
-{
-}
-
-void Unarchive()
-{
-}
-
 defaultproperties
 {
 }
@@ -49,6 +41,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/26 20:55:05  dj_jl
+//  Proper serialisation of level and players.
+//
 //  Revision 1.4  2006/02/25 17:15:55  dj_jl
 //  Implemented proper serialisation of the objects.
 //

@@ -24,7 +24,6 @@
 //**************************************************************************
 
 #include "gamedefs.h"
-#include "progdefs.h"
 
 // Register a class at startup time.
 VClass VObject::PrivateStaticClass
@@ -260,170 +259,6 @@ int VObject::GetObjectsCount(void)
 
 //==========================================================================
 //
-//	SerialiseFieldValue
-//
-//==========================================================================
-
-static void SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType& Type, bool InNative)
-{
-	guard(SerialiseFieldValue);
-	VField::FType IntType;
-	int InnerSize;
-	switch (Type.Type)
-	{
-	case ev_int:
-		Strm << *(int*)Data;
-		break;
-
-	case ev_float:
-		Strm << *(float*)Data;
-		break;
-
-	case ev_bool:
-		if (Type.BitMask == 1)
-			Strm << *(int*)Data;
-		break;
-
-	case ev_vector:
-		Strm << *(TVec*)Data;
-		break;
-
-	case ev_name:
-		Strm << *(FName*)Data;
-		break;
-
-	case ev_string:
-		if (Strm.IsLoading())
-		{
-			int TmpIdx;
-			Strm << TmpIdx;
-			if (TmpIdx)
-			{
-				*(int*)Data = (int)svpr.StrAtOffs(TmpIdx);
-			}
-			else
-			{
-				*(int*)Data = 0;
-			}
-		}
-		else
-		{
-			int TmpIdx = 0;
-			if (*(int*)Data)
-			{
-				TmpIdx = svpr.GetStringOffs(*(char**)Data);
-			}
-			Strm << TmpIdx;
-		}
-		break;
-
-	case ev_pointer:
-		if (Type.InnerType == ev_struct)
-			Strm.SerialiseStructPointer(*(void**)Data, Type.Struct);
-		else
-		{
-			dprintf("Don't know how to serialise pointer type %d\n", Type.InnerType);
-			Strm << *(int*)Data;
-		}
-		break;
-
-	case ev_reference:
-		Strm.SerialiseReference(*(VObject**)Data, Type.Class);
-		break;
-
-	case ev_classid:
-		if (Strm.IsLoading())
-		{
-			FName CName;
-			Strm << CName;
-			if (CName != NAME_None)
-			{
-				*(VClass**)Data = VClass::FindClass(*CName);
-			}
-			else
-			{
-				*(VClass**)Data = NULL;
-			}
-		}
-		else
-		{
-			FName CName = NAME_None;
-			if (*(VClass**)Data)
-			{
-				CName = (*(VClass**)Data)->GetFName();
-			}
-			Strm << CName;
-		}
-		break;
-
-	case ev_delegate:
-		Strm.SerialiseReference(*(VObject**)Data, Type.Class);
-		if (Strm.IsLoading())
-		{
-			FName FuncName;
-			Strm << FuncName;
-			if (*(VObject**)Data)
-				((FFunction**)Data)[1] = (*(VObject**)Data)->GetVFunction(FuncName);
-		}
-		else
-		{
-			FName FuncName = NAME_None;
-			if (*(VObject**)Data)
-				FuncName = ((FFunction**)Data)[1]->Name;
-			Strm << FuncName;
-		}
-		break;
-
-	case ev_struct:
-		for (VField* SF = Type.Struct->Fields; SF; SF = SF->Next)
-		{
-			SerialiseFieldValue(Strm, Data + SF->Ofs, SF->Type, InNative);
-		}
-		break;
-
-	case ev_array:
-		IntType = Type;
-		IntType.Type = Type.ArrayInnerType;
-		InnerSize = IntType.Type == ev_vector ? 12 : IntType.Type == ev_struct ? IntType.Struct->Size : 4;
-		for (int i = 0; i < Type.ArrayDim; i++)
-		{
-			SerialiseFieldValue(Strm, Data + i * InnerSize, IntType, InNative);
-		}
-		break;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	SerialiseObject
-//
-//==========================================================================
-
-static void SerialiseObject(VStream& Strm, VObject* Obj, VClass* InClass)
-{
-	guard(SerialiseObject);
-	//	Serialise parent class fields.
-	if (InClass->GetSuperClass())
-	{
-		SerialiseObject(Strm, Obj, InClass->GetSuperClass());
-	}
-	//	Serialise fields.
-	bool InNative = !!(InClass->GetFlags() & CLASSOF_Native);
-	for (VField* F = InClass->Fields; F; F = F->Next)
-	{
-		//	Skip fields with native serialisation.
-		if (F->Flags & FIELD_Native)
-		{
-			continue;
-		}
-		SerialiseFieldValue(Strm, (byte*)Obj + F->Ofs, F->Type, InNative);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VObject::Serialise
 //
 //==========================================================================
@@ -431,7 +266,7 @@ static void SerialiseObject(VStream& Strm, VObject* Obj, VClass* InClass)
 void VObject::Serialise(VStream& Strm)
 {
 	guard(VObject::Serialise);
-	SerialiseObject(Strm, this, GetClass());
+	GetClass()->SerialiseObject(Strm, this);
 	unguard;
 }
 
@@ -490,9 +325,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/26 20:52:49  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.17  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.16  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

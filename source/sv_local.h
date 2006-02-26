@@ -59,15 +59,6 @@ class VThinker : public VObject
 
 	//	VThinker interface.
 	virtual void Tick(float DeltaTime);
-
-	void eventArchive()
-	{
-		svpr.Exec(GetVFunction("Archive"), (int)this);
-	}
-	void eventUnarchive()
-	{
-		svpr.Exec(GetVFunction("Unarchive"), (int)this);
-	}
 };
 
 //==========================================================================
@@ -795,9 +786,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2006/02/26 20:52:48  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.46  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.45  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

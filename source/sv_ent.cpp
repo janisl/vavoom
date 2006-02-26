@@ -50,6 +50,8 @@ static FName*		GSpriteNames;
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern VEntity**	sv_mobjs;
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 IMPLEMENT_CLASS(V, Entity);
@@ -85,6 +87,7 @@ void VEntity::Serialise(VStream& Strm)
 
 	if (Strm.IsLoading())
 	{
+		sv_mobjs[NetID] = this;
 		if (bIsPlayer)
 		{
 			Player->MO = this;
@@ -1918,9 +1921,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/26 20:52:48  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.19  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.18  2006/02/15 23:27:41  dj_jl
 //	Added script ID class attribute.
 //	

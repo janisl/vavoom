@@ -3066,17 +3066,6 @@ void Cheat_NoWeapons()
 	cprint(self, "CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
-//==========================================================================
-//
-//  UnarchivePlayer
-//
-//==========================================================================
-
-void UnarchivePlayer()
-{
-	Attacker = none;
-}
-
 defaultproperties
 {
 }
@@ -3084,6 +3073,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.22  2006/02/26 20:55:57  dj_jl
+//  Proper serialisation of level and players.
+//
 //  Revision 1.21  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

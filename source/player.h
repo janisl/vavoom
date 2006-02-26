@@ -228,16 +228,6 @@ class VBasePlayer : public VObject
 	{
 		svpr.Exec(GetVFunction("Cheat_Class"), (int)this);
 	}
-
-	void eventArchivePlayer()
-	{
-		svpr.Exec(GetVFunction("ArchivePlayer"), (int)this);
-	}
-
-	void eventUnarchivePlayer()
-	{
-		svpr.Exec(GetVFunction("UnarchivePlayer"), (int)this);
-	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -247,9 +237,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/02/26 20:52:48  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.21  2006/02/20 22:52:15  dj_jl
 //	Removed player stats limit.
-//
+//	
 //	Revision 1.20  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	

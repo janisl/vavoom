@@ -100,12 +100,6 @@ void VThinker::Serialise(VStream& Strm)
 	{
 		XLevel = GLevel;
 		Level = GLevelInfo;
-
-		eventUnarchive();
-	}
-	else
-	{
-		eventArchive();
 	}
 	unguard;
 }
@@ -173,9 +167,12 @@ void P_Ticker(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/02/26 20:52:48  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.23  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.22  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
 //	

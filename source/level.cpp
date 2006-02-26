@@ -1416,6 +1416,131 @@ byte *VLevel::LeafPVS(const subsector_t *ss) const
 
 //==========================================================================
 //
+//	VLevel::Serialise
+//
+//==========================================================================
+
+void VLevel::Serialise(VStream& Strm)
+{
+	guard(VLevel::Serialise);
+	int i;
+	int j;
+	sector_t* sec;
+	line_t* li;
+	side_t* si;
+
+	//
+	//	Sectors
+	//
+	VStruct* SSector = svpr.FindStruct("sector_t", VObject::StaticClass());
+	for (i = 0, sec = Sectors; i < NumSectors; i++, sec++)
+	{
+		Strm << sec->floor.dist
+			<< sec->ceiling.dist
+			<< sec->floor.pic
+			<< sec->ceiling.pic
+			<< sec->params.lightlevel
+			<< sec->special
+			<< sec->tag
+			<< sec->seqType;
+		if (Strm.IsLoading())
+		{
+			CalcSecMinMaxs(sec);
+		}
+		//	Serialise added fields.
+		for (VField* F = SSector->Fields; F; F = F->Next)
+		{
+			byte* Data = (byte*)sec + F->Ofs;
+			if (Data >= (byte*)sec->user_fields)
+			{
+				VField::SerialiseFieldValue(Strm, Data, F->Type);
+			}
+		}
+	}
+
+	//
+	//	Lines
+	//
+	VStruct* SLine = svpr.FindStruct("line_t", VObject::StaticClass());
+	for (i = 0, li = Lines; i < NumLines; i++, li++)
+	{
+		//	Temporary hack to save seen on automap flags.
+#ifdef CLIENT
+		if (cls.state == ca_connected)
+		{
+			li->flags |= GClLevel->Lines[i].flags & ML_MAPPED;
+		}
+#endif
+		Strm << li->flags
+			<< li->special
+			<< li->arg1
+			<< li->arg2
+			<< li->arg3
+			<< li->arg4
+			<< li->arg5;
+		for (j = 0; j < 2; j++)
+		{
+			if (li->sidenum[j] == -1)
+			{
+				continue;
+			}
+			si = &Sides[li->sidenum[j]];
+			Strm << si->textureoffset 
+				<< si->rowoffset
+				<< si->toptexture 
+				<< si->bottomtexture 
+				<< si->midtexture;
+		}
+		//	Serialise added fields.
+		for (VField* F = SLine->Fields; F; F = F->Next)
+		{
+			byte* Data = (byte*)li + F->Ofs;
+			if (Data >= (byte*)li->user_fields)
+			{
+				VField::SerialiseFieldValue(Strm, Data, F->Type);
+			}
+		}
+	}
+
+	//
+	//	Polyobjs
+	//
+	VStruct* SPolyobj = svpr.FindStruct("polyobj_t", VObject::StaticClass());
+	for (i = 0; i < NumPolyObjs; i++)
+	{
+		if (Strm.IsLoading())
+		{
+			float angle, polyX, polyY;
+
+			Strm << angle 
+				<< polyX 
+				<< polyY;
+			PO_RotatePolyobj(PolyObjs[i].tag, angle);
+			PO_MovePolyobj(PolyObjs[i].tag, 
+				polyX - PolyObjs[i].startSpot.x, 
+				polyY - PolyObjs[i].startSpot.y);
+		}
+		else
+		{
+			Strm << PolyObjs[i].angle
+				<< PolyObjs[i].startSpot.x
+				<< PolyObjs[i].startSpot.y;
+		}
+		//	Serialise added fields.
+		for (VField* F = SPolyobj->Fields; F; F = F->Next)
+		{
+			byte* Data = (byte*)&PolyObjs[i] + F->Ofs;
+			if (Data >= (byte*)PolyObjs[i].user_fields)
+			{
+				VField::SerialiseFieldValue(Strm, Data, F->Type);
+			}
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	Natives
 //
 //==========================================================================
@@ -1430,9 +1555,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/02/26 20:52:48  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.9  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
-//
+//	
 //	Revision 1.8  2006/02/11 12:21:10  dj_jl
 //	Byte swap Strife conversation lumps.
 //	

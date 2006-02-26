@@ -26,46 +26,7 @@
 class SectorThinker : Thinker;
 
 sector_t*		Sector;
-int				ThinkerState;
 SectorThinker	NextAffector;
-
-//==========================================================================
-//
-//	Archive
-//
-//==========================================================================
-
-void Archive()
-{
-	//	There must be a better way of doing this.
-	ThinkerState = 0;
-	if (Sector->FloorData == self)
-		ThinkerState |= 1;
-	if (Sector->CeilingData == self)
-		ThinkerState |= 2;
-	if (Sector->LightingData == self)
-		ThinkerState |= 4;
-	if (Sector->AffectorData == self)
-		ThinkerState |= 8;
-}
-
-//==========================================================================
-//
-//	Unarchive
-//
-//==========================================================================
-
-void Unarchive()
-{
-	if (ThinkerState & 1)
-		Sector->FloorData = self;
-	if (ThinkerState & 2)
-		Sector->CeilingData = self;
-	if (ThinkerState & 4)
-		Sector->LightingData = self;
-	if (ThinkerState & 8)
-		Sector->AffectorData = self;
-}
 
 //==========================================================================
 //
@@ -129,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/26 20:55:05  dj_jl
+//  Proper serialisation of level and players.
+//
 //  Revision 1.4  2006/02/25 17:15:55  dj_jl
 //  Implemented proper serialisation of the objects.
 //

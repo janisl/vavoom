@@ -64,33 +64,65 @@ enum gameArchiveSegment_t
 	ASEG_MAP_HEADER,
 	ASEG_BASELINE,
 	ASEG_WORLD,
-	ASEG_THINKERS,
 	ASEG_SCRIPTS,
-	ASEG_PLAYERS,
 	ASEG_SOUNDS,
 	ASEG_END
 };
 
-static FName UnarchiveName(int Index);
+// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-class VObjectsStream : public VStream
-{
-public:
-};
+void SV_SpawnServer(char *mapname, boolean spawn_thinkers);
+void SV_SendServerInfoToClients();
+void SV_ShutdownServer(boolean);
+void CL_Disconnect(void);
 
-class VSaveLoaderStream : public VObjectsStream
+// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+
+// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
+
+extern VEntity		**sv_mobjs;
+extern mobj_base_t	*sv_mo_base;
+extern bool			sv_loading;
+extern int			sv_load_num_players;
+extern TMessage		sv_signon;
+
+extern boolean		in_secret;
+extern char			mapaftersecret[12];
+
+// PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static char		SavesDir[MAX_OSPATH];
+static boolean 	SavingPlayers;
+
+#define GET_BYTE	Streamer<byte>(*Loader)
+#define GET_WORD	Streamer<word>(*Loader)
+#define GET_LONG	Streamer<int>(*Loader)
+#define GET_FLOAT	Streamer<float>(*Loader)
+
+// CODE --------------------------------------------------------------------
+
+class VSaveLoaderStream : public VStream
 {
 private:
-	VStream*		Stream;
+	VStream*			Stream;
 
 public:
+	FName*				NameRemap;
+	TArray<VObject*>	Exports;
+
 	VSaveLoaderStream(VStream* InStream)
 	: Stream(InStream)
+	, NameRemap(0)
 	{
 		bLoading = true;
 	}
 	~VSaveLoaderStream()
 	{
+		Z_Free(NameRemap);
 		delete Stream;
 	}
 
@@ -124,30 +156,33 @@ public:
 		return Stream->Close();
 	}
 
-	VObjectsStream& operator<<(FName& Name)
+	VStream& operator<<(FName& Name)
 	{
-		int TmpIdx;
-		*this << TmpIdx;
-		Name = UnarchiveName(TmpIdx);
+		int NameIndex;
+		*this << NameIndex;
+		Name = NameRemap[NameIndex];
 		return *this;
 	}
-	void SerialiseReference(VObject*& Ref, VClass* Class)
+	void SerialiseReference(VObject*& Ref, VClass*)
 	{
+		guard(Loader::SerialiseReference);
 		int TmpIdx;
 		*this << TmpIdx;
-		if (Class->IsChildOf(VEntity::StaticClass()))
+		if (TmpIdx == 0)
 		{
-			Ref = SetMobjPtr(TmpIdx);
+			Ref = NULL;
 		}
-		else if (Class->IsChildOf(VBasePlayer::StaticClass()))
+		else if (TmpIdx > 0)
 		{
-			Ref = TmpIdx ? GPlayersBase[TmpIdx - 1] : NULL;
+			if (TmpIdx > Exports.Num())
+				Sys_Error("Bad index %d", TmpIdx);
+			Ref = Exports[TmpIdx - 1];
 		}
 		else
 		{
-			dprintf("Don't know how to handle reference to %s\n", Class->GetName());
-			Ref = (VObject*)TmpIdx;
+			Ref = GPlayersBase[-TmpIdx - 1];
 		}
+		unguard;
 	}
 	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)
 	{
@@ -169,12 +204,15 @@ public:
 	}
 };
 
-class VSaveWriterStream : public VObjectsStream
+class VSaveWriterStream : public VStream
 {
 private:
-	VStream*		Stream;
+	VStream*			Stream;
 
 public:
+	TArray<VObject*>	Exports;
+	int*				ObjectsMap;
+
 	VSaveWriterStream(VStream* InStream)
 	: Stream(InStream)
 	{
@@ -215,29 +253,26 @@ public:
 		return Stream->Close();
 	}
 
-	VObjectsStream& operator<<(FName& Name)
+	VStream& operator<<(FName& Name)
 	{
 		int TmpIdx = Name.GetIndex();
 		*this << TmpIdx;
 		return *this;
 	}
-	void SerialiseReference(VObject*& Ref, VClass* Class)
+	void SerialiseReference(VObject*& Ref, VClass*)
 	{
+		guard(Saver::SerialiseReference);
 		int TmpIdx;
-		if (Class->IsChildOf(VEntity::StaticClass()))
+		if (!Ref)
 		{
-			TmpIdx = GetMobjNum((VEntity*)Ref);
-		}
-		else if (Class->IsChildOf(VBasePlayer::StaticClass()))
-		{
-			TmpIdx = Ref ? SV_GetPlayerNum((VBasePlayer*)Ref) + 1 : 0;
+			TmpIdx = 0;
 		}
 		else
 		{
-			dprintf("Don't know how to handle reference to %s\n", Class->GetName());
-			TmpIdx = (int)Ref;
+			TmpIdx = ObjectsMap[Ref->GetIndex()];
 		}
 		*this << TmpIdx;
+		unguard;
 	}
 	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)
 	{
@@ -265,45 +300,8 @@ public:
 	}
 };
 
-// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-void SV_SpawnServer(char *mapname, boolean spawn_thinkers);
-void SV_SendServerInfoToClients();
-void SV_ShutdownServer(boolean);
-void CL_Disconnect(void);
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-// EXTERNAL DATA DECLARATIONS ----------------------------------------------
-
-extern VEntity		**sv_mobjs;
-extern mobj_base_t	*sv_mo_base;
-extern bool			sv_loading;
-extern int			sv_load_num_players;
-extern TMessage		sv_signon;
-
-extern boolean		in_secret;
-extern char			mapaftersecret[12];
-
-// PUBLIC DATA DEFINITIONS -------------------------------------------------
-
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static char		SavesDir[MAX_OSPATH];
-static boolean 	SavingPlayers;
 static VSaveWriterStream*	Saver;
 static VSaveLoaderStream*	Loader;
-
-#define GET_BYTE	Streamer<byte>(*Loader)
-#define GET_WORD	Streamer<word>(*Loader)
-#define GET_LONG	Streamer<int>(*Loader)
-#define GET_FLOAT	Streamer<float>(*Loader)
-
-static FName		*NameRemap;
-
-// CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
@@ -522,44 +520,6 @@ static void AssertSegment(gameArchiveSegment_t segType)
 
 //==========================================================================
 //
-//	GetMobjNum
-//
-//==========================================================================
-
-int GetMobjNum(VEntity *mobj)
-{
-	guard(GetMobjNum);
-	if (mobj && !mobj->IsA(VEntity::StaticClass()))
-	{
-		return MOBJ_NULL;
-	}
-	if (!mobj || (mobj->bIsPlayer && !SavingPlayers))
-	{
-		return MOBJ_NULL;
-	}
-	return mobj->NetID;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SetMobjPtr
-//
-//==========================================================================
-
-VEntity* SetMobjPtr(int id)
-{
-	guard(SetMobjPtr);
-	if (id == MOBJ_NULL)
-	{
-		return NULL;
-	}
-	return sv_mobjs[id];
-	unguard;
-}
-
-//==========================================================================
-//
 //	ArchiveNames
 //
 //==========================================================================
@@ -584,295 +544,13 @@ static void UnarchiveNames(VStream &Strm)
 {
 	int Count;
 	Strm << Count;
-	NameRemap = (FName*)Z_StrMalloc(Count * 4);
+	Loader->NameRemap = (FName*)Z_StrMalloc(Count * 4);
 	for (int i = 0; i < Count; i++)
 	{
 		FNameEntry E;
 		Strm << E;
-		NameRemap[i] = FName(E.Name);
+		Loader->NameRemap[i] = FName(E.Name);
 	}
-}
-
-//==========================================================================
-//
-//	UnarchiveName
-//
-//==========================================================================
-
-static FName UnarchiveName(int Index)
-{
-	return NameRemap[Index];
-}
-
-//==========================================================================
-//
-//	SV_GetClass
-//
-//==========================================================================
-
-VClass *SV_GetClass(int NameIndex)
-{
-	return VClass::FindClass(*NameRemap[NameIndex]);
-}
-
-//==========================================================================
-//
-//	WriteVObject
-//
-//==========================================================================
-
-void WriteVObject(VObject *Obj)
-{
-	VClass *Class = Obj->GetClass();
-
-	StreamOutLong(Class->GetFName().GetIndex());
-	StreamOutBuffer((byte *)Obj + sizeof(VObject),
-		Class->ClassSize - sizeof(VObject));
-}
-
-//==========================================================================
-//
-//	ReadVObject
-//
-//==========================================================================
-
-VObject *ReadVObject(int tag)
-{
-	guard(ReadVObject);
-	//  Get params
-	int NameIndex = GET_LONG;
-	VClass *Class = SV_GetClass(NameIndex);
-	if (!Class)
-	{
-		Sys_Error("No such class %s", *NameRemap[NameIndex]);
-	}
-
-	//  Allocate object and copy data
-	VObject *o = VObject::StaticSpawnObject(Class, tag);
-	Loader->Serialise((byte*)o + sizeof(VObject), Class->ClassSize - sizeof(VObject));
-	return o;
-	unguard;
-}
-
-//==========================================================================
-//
-// ArchivePlayers
-//
-//==========================================================================
-
-static void ArchivePlayers(void)
-{
-	guard(ArchivePlayers);
-	int			i;
-	VBasePlayer	*tempPlayer;
-
-	StreamOutLong(ASEG_PLAYERS);
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		StreamOutByte((byte)!!GGameInfo->Players[i]);
-	}
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!GGameInfo->Players[i])
-		{
-			continue;
-		}
-
-		tempPlayer = (VBasePlayer*)Z_Malloc(GGameInfo->Players[i]->GetClass()->ClassSize);
-		memcpy(tempPlayer, GGameInfo->Players[i], GGameInfo->Players[i]->GetClass()->ClassSize);
-		tempPlayer->eventArchivePlayer();
-		StreamOutBuffer((byte*)tempPlayer + sizeof(VObject),
-			GGameInfo->Players[i]->GetClass()->ClassSize - sizeof(VObject));
-
-		for (int pi = 0; pi < NUMPSPRITES; pi++)
-		{
-			if (!tempPlayer->ViewEnts[pi])
-			{
-				continue;
-			}
-			WriteVObject(tempPlayer->ViewEnts[pi]);
-		}
-		Z_Free(tempPlayer);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-// UnarchivePlayers
-//
-//==========================================================================
-
-static void UnarchivePlayers(void)
-{
-	guard(UnarchivePlayers);
-	int		i;
-
-	AssertSegment(ASEG_PLAYERS);
-	sv_load_num_players = 0;
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		byte Active = GET_BYTE;
-		GPlayersBase[i]->bActive = Active;
-		if (Active)
-		{
-			GGameInfo->Players[i] = GPlayersBase[i];
-			sv_load_num_players++;
-		}
-		else
-		{
-			GGameInfo->Players[i] = NULL;
-		}
-	}
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!GGameInfo->Players[i])
-		{
-			continue;
-		}
-		//	Save old stats pointer
-		int* OldStats = GGameInfo->Players[i]->OldStats;
-		Loader->Serialise((byte*)GGameInfo->Players[i] + sizeof(VObject),
-			GGameInfo->Players[i]->GetClass()->ClassSize - sizeof(VObject));
-		GGameInfo->Players[i]->MO = NULL; // Will be set when unarc thinker
-		GGameInfo->Players[i]->eventUnarchivePlayer();
-		GGameInfo->Players[i]->bActive = false;
-		//	Restore pointer
-		GGameInfo->Players[i]->OldStats = OldStats;
-
-		for (int pi = 0; pi < NUMPSPRITES; pi++)
-		{
-			if (!GGameInfo->Players[i]->ViewEnts[pi])
-			{
-				continue;
-			}
-			GGameInfo->Players[i]->ViewEnts[pi] = (VViewEntity *)ReadVObject(PU_STRING);
-			GGameInfo->Players[i]->ViewEnts[pi]->Player = GGameInfo->Players[i];
-		}
-		GGameInfo->Players[i] = NULL;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	Level__Serialise
-//
-//==========================================================================
-
-static void Level__Serialise(VStream& Strm)
-{
-	guard(Level__Serialise);
-	int i;
-	int j;
-	sector_t* sec;
-	line_t* li;
-	side_t* si;
-
-	//
-	//	Sectors
-	//
-	for (i = 0, sec = GLevel->Sectors; i < GLevel->NumSectors; i++, sec++)
-	{
-		Strm << sec->floor.dist
-			<< sec->ceiling.dist
-			<< sec->floor.pic
-			<< sec->ceiling.pic
-			<< sec->params.lightlevel
-			<< sec->special
-			<< sec->tag
-			<< sec->seqType;
-		if (Strm.IsLoading())
-		{
-			CalcSecMinMaxs(sec);
-		}
-	}
-
-	//
-	//	Lines
-	//
-	for (i = 0, li = GLevel->Lines; i < GLevel->NumLines; i++, li++)
-	{
-		//	Temporary hack to save seen on automap flags.
-#ifdef CLIENT
-		if (cls.state == ca_connected)
-		{
-			li->flags |= GClLevel->Lines[i].flags & ML_MAPPED;
-		}
-#endif
-		Strm << li->flags
-			<< li->special
-			<< li->arg1
-			<< li->arg2
-			<< li->arg3
-			<< li->arg4
-			<< li->arg5;
-		for (j = 0; j < 2; j++)
-		{
-			if (li->sidenum[j] == -1)
-			{
-				continue;
-			}
-			si = &GLevel->Sides[li->sidenum[j]];
-			Strm << si->textureoffset 
-				<< si->rowoffset
-				<< si->toptexture 
-				<< si->bottomtexture 
-				<< si->midtexture;
-		}
-	}
-
-	//
-	//	Polyobjs
-	//
-	for (i = 0; i < GLevel->NumPolyObjs; i++)
-	{
-		if (Strm.IsLoading())
-		{
-			float angle, polyX, polyY;
-
-			Strm << angle 
-				<< polyX 
-				<< polyY;
-			PO_RotatePolyobj(GLevel->PolyObjs[i].tag, angle);
-			PO_MovePolyobj(GLevel->PolyObjs[i].tag, 
-				polyX - GLevel->PolyObjs[i].startSpot.x, 
-				polyY - GLevel->PolyObjs[i].startSpot.y);
-		}
-		else
-		{
-			Strm << GLevel->PolyObjs[i].angle
-				<< GLevel->PolyObjs[i].startSpot.x
-				<< GLevel->PolyObjs[i].startSpot.y;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	ArchiveWorld
-//
-//==========================================================================
-
-static void ArchiveWorld(void)
-{
-	StreamOutLong(ASEG_WORLD);
-
-	Level__Serialise(*Saver);
-}
-
-//==========================================================================
-//
-// UnarchiveWorld
-//
-//==========================================================================
-
-static void UnarchiveWorld(void)
-{
-	AssertSegment(ASEG_WORLD);
-
-	Level__Serialise(*Loader);
 }
 
 //==========================================================================
@@ -884,32 +562,28 @@ static void UnarchiveWorld(void)
 static void ArchiveThinkers()
 {
 	guard(ArchiveThinkers);
-	StreamOutLong(ASEG_THINKERS);
+	StreamOutLong(ASEG_WORLD);
 
-	for (TObjectIterator<VThinker> It; It; ++It)
+	Saver->ObjectsMap = (int*)Z_Calloc(VObject::GetObjectsCount() * 4);
+
+	//	Add level
+	Saver->Exports.AddItem(GLevel);
+	Saver->ObjectsMap[GLevel->GetIndex()] = Saver->Exports.Num();
+
+	//	Add players.
+	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		VEntity *mobj = Cast<VEntity>(*It);
-		int NetId = -1;
-		if (mobj)
+		StreamOutByte((byte)(SavingPlayers && GGameInfo->Players[i]));
+		if (!SavingPlayers || !GGameInfo->Players[i])
 		{
-			if (mobj->bIsPlayer && !SavingPlayers)
-			{
-				// Skipping player mobjs
-				continue;
-			}
-			NetId = mobj->NetID;
+			continue;
 		}
 
-		StreamOutByte(1);
-		StreamOutLong(It->GetClass()->GetFName().GetIndex());
-		StreamOutLong(NetId);
+		Saver->Exports.AddItem(GGameInfo->Players[i]);
+		Saver->ObjectsMap[GGameInfo->Players[i]->GetIndex()] = Saver->Exports.Num();
 	}
 
-	//
-	//  End marker
-	//
-	StreamOutByte(0);
-
+	//	Add thinkers.
 	for (TObjectIterator<VThinker> It; It; ++It)
 	{
 		VEntity *mobj = Cast<VEntity>(*It);
@@ -918,7 +592,44 @@ static void ArchiveThinkers()
 			// Skipping player mobjs
 			continue;
 		}
-		It->Serialise(*Saver);
+
+		StreamOutByte(1);
+		FName CName = It->GetClass()->GetFName();
+		*Saver << CName;
+		Saver->Exports.AddItem(*It);
+		Saver->ObjectsMap[It->GetIndex()] = Saver->Exports.Num();
+	}
+
+	//	Add player weapon objects.
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!SavingPlayers || !GGameInfo->Players[i])
+		{
+			continue;
+		}
+
+		for (int pi = 0; pi < NUMPSPRITES; pi++)
+		{
+			if (GGameInfo->Players[i]->ViewEnts[pi])
+			{
+				StreamOutByte(1);
+				FName CName = GGameInfo->Players[i]->ViewEnts[pi]->GetClass()->GetFName();
+				*Saver << CName;
+				Saver->Exports.AddItem(GGameInfo->Players[i]->ViewEnts[pi]);
+				Saver->ObjectsMap[GGameInfo->Players[i]->ViewEnts[pi]->GetIndex()] = Saver->Exports.Num();
+			}
+		}
+	}
+
+	//
+	//  End marker
+	//
+	StreamOutByte(0);
+
+	//	Serialise objects.
+	for (int i = 0; i < Saver->Exports.Num(); i++)
+	{
+		Saver->Exports[i]->Serialise(*Saver);
 	}
 	unguard;
 }
@@ -932,50 +643,54 @@ static void ArchiveThinkers()
 static void UnarchiveThinkers()
 {
 	guard(UnarchiveThinkers);
-	TArray<VThinker*>	Thinkers;
-	VThinker*			thinker;
+	VObject*			Obj;
 
-	AssertSegment(ASEG_THINKERS);
+	AssertSegment(ASEG_WORLD);
+
+	//	Add level.
+	Loader->Exports.AddItem(GLevel);
+
+	//	Add players.
+	sv_load_num_players = 0;
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		byte Active = GET_BYTE;
+		if (Active)
+		{
+			sv_load_num_players++;
+			Loader->Exports.AddItem(GPlayersBase[i]);
+		}
+	}
 
 	while (GET_BYTE)
 	{
 		//  Get params
-		int NameIndex = GET_LONG;
-		int NetId = GET_LONG;
-		VClass *Class = SV_GetClass(NameIndex);
+		FName CName;
+		*Loader << CName;
+		VClass *Class = VClass::FindClass(*CName);
 		if (!Class)
 		{
-			Sys_Error("No such class %s", *NameRemap[NameIndex]);
+			Sys_Error("No such class %s", *CName);
 		}
 	
 		//  Allocate object and copy data
-		thinker = (VThinker*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
-
-		thinker->XLevel = GLevel;
+		Obj = VObject::StaticSpawnObject(Class, PU_LEVSPEC);
 
 		//  Handle level info
-		if (thinker->IsA(VLevelInfo::StaticClass()))
+		if (Obj->IsA(VLevelInfo::StaticClass()))
 		{
-			GLevelInfo = (VLevelInfo*)thinker;
+			GLevelInfo = (VLevelInfo*)Obj;
 		}
 
-		//  Handle entities
-		VEntity *Ent = Cast<VEntity>(thinker);
-		if (Ent)
-		{
-			sv_mobjs[NetId] = Ent;
-		}
-		Thinkers.AddItem(thinker);
+		Loader->Exports.AddItem(Obj);
 	}
 
 	GLevelInfo->Game = GGameInfo;
 
-	for (int i = 0; i < Thinkers.Num(); i++)
+	for (int i = 0; i < Loader->Exports.Num(); i++)
 	{
-		Thinkers[i]->Serialise(*Loader);
+		Loader->Exports[i]->Serialise(*Loader);
 	}
-
-	GLevelInfo->Game = GGameInfo;
 
 	GLevelInfo->eventAfterUnarchiveThinkers();
 	unguard;
@@ -1085,7 +800,6 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	StreamOutBuffer(sv_signon.Data, sv_signon.CurSize);
 	StreamOutBuffer(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
 
-	ArchiveWorld();
 	ArchiveThinkers();
 	ArchiveScripts();
 	ArchiveSounds();
@@ -1154,7 +868,6 @@ static void SV_LoadMap(char *mapname, int slot)
 	sv_signon.Write(tmp, len);
 	Loader->Serialise(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
 
-	UnarchiveWorld();
 	UnarchiveThinkers();
 	UnarchiveScripts();
 	UnarchiveSounds();
@@ -1164,8 +877,6 @@ static void SV_LoadMap(char *mapname, int slot)
 	// Free save buffer
 	Loader->Close();
 	delete Loader;
-
-	Z_Free(NameRemap);
 
 	//	Do this here so that clients have loaded info, not initial one.
 	SV_SendServerInfoToClients();
@@ -1224,8 +935,6 @@ void SV_SaveGame(int slot, char* description)
 		GlobalArrays[i].Serialise(*Saver);
 	}
 	StreamOutBuffer(ACSStore, sizeof(ACSStore));
-
-	ArchivePlayers();
 
 	// Place a termination marker
 	StreamOutLong(ASEG_END);
@@ -1325,15 +1034,10 @@ void SV_LoadGame(int slot)
 	}
 	Loader->Serialise(ACSStore, sizeof(ACSStore));
 
-	// Read the player structures
-	UnarchivePlayers();
-
 	AssertSegment(ASEG_END);
 
 	Loader->Close();
 	delete Loader;
-
-	Z_Free(NameRemap);
 
 	sv_loading = true;
 
@@ -1560,9 +1264,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.54  2006/02/26 20:52:48  dj_jl
+//	Proper serialisation of level and players.
+//
 //	Revision 1.53  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.52  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	
