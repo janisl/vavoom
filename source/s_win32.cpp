@@ -25,6 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#define DIRECTSOUND_VERSION		0x0700
 #include "winlocal.h"
 #include <dsound.h>
 #include "eax.h"
@@ -979,9 +980,12 @@ void VDirectSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2006/02/26 14:45:57  dj_jl
+//	Fix compilation with newer version DirectX headers.
+//
 //	Revision 1.33  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.32  2005/11/07 22:57:09  dj_jl
 //	Some M$VC fixes.
 //	

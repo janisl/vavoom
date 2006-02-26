@@ -38,6 +38,7 @@
 
 //	Generate all GUIDs
 #define DIRECTINPUT_VERSION		0x0500
+#define DIRECTSOUND_VERSION		0x0700
 #include <dinput.h>
 #include <d3d.h>
 #include <dsound.h>
@@ -875,9 +876,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/02/26 14:45:57  dj_jl
+//	Fix compilation with newer version DirectX headers.
+//
 //	Revision 1.23  2005/10/02 23:13:22  dj_jl
 //	New Windows MIDI driver.
-//
+//	
 //	Revision 1.22  2005/09/14 12:04:21  dj_jl
 //	Created CD audio device class.
 //	
