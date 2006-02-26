@@ -35,6 +35,9 @@
 #pragma warning(disable : 4514)	// unreferenced inline function has been removed
 #pragma warning(disable : 4702) // unreachable code in inline expanded function
 #pragma warning(disable : 4710) // inline function not expanded
+
+// Workaround of for variable scoping
+#define for		if (0) ; else for
 #endif
 
 #ifdef __BORLANDC__
@@ -196,9 +199,12 @@ class	VObject;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/02/26 14:43:39  dj_jl
+//	Added workaround to for statement variable scoping.
+//
 //	Revision 1.20  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.19  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	
