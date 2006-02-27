@@ -212,6 +212,91 @@ void VStream::SerialiseBigEndian(void* Val, int Len)
 }
 
 //**************************************************************************
+//	VStreamCompactIndex
+//**************************************************************************
+
+//==========================================================================
+//
+//	operator<<
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, VStreamCompactIndex& I)
+{
+	guard(operator VStream << VStreamCompactIndex);
+	if (Strm.IsLoading())
+	{
+		vuint8 B;
+		Strm << B;
+		bool Neg = !!(B & 0x40);
+		vint32 Val = B & 0x3f;
+		if (B & 0x80)
+		{
+			Strm << B;
+			Val |= (B & 0x7f) << 6;
+			if (B & 0x80)
+			{
+				Strm << B;
+				Val |= (B & 0x7f) << 13;
+				if (B & 0x80)
+				{
+					Strm << B;
+					Val |= (B & 0x7f) << 20;
+					if (B & 0x80)
+					{
+						Strm << B;
+						Val |= (B & 0x7f) << 27;
+					}
+				}
+			}
+		}
+		if (Neg)
+			Val = -Val;
+		I.Val = Val;
+	}
+	else
+	{
+		vint32 Val = I.Val;
+		if (Val < 0)
+			Val = -Val;
+		vuint8 B = Val & 0x3f;
+		if (I.Val < 0)
+			B |= 0x40;
+		if (Val & 0xffffffc0)
+			B |= 0x80;
+		Strm << B;
+		if (Val & 0xffffffc0)
+		{
+			B = (Val >> 6) & 0x7f;
+			if (Val & 0xffffe000)
+				B |= 0x80;
+			Strm << B;
+			if (Val & 0xffffe000)
+			{
+				B = (Val >> 13) & 0x7f;
+				if (Val & 0xfff00000)
+					B |= 0x80;
+				Strm << B;
+				if (Val & 0xfff00000)
+				{
+					B = (Val >> 20) & 0x7f;
+					if (Val & 0xf8000000)
+						B |= 0x80;
+					Strm << B;
+					if (Val & 0xf8000000)
+					{
+						B = (Val >> 27) & 0x7f;
+						Strm << B;
+					}
+				}
+			}
+		}
+	}
+	return Strm;
+	unguard;
+}
+
+//**************************************************************************
 //	VMemoryStream
 //**************************************************************************
 
@@ -336,9 +421,12 @@ int VMemoryStream::TotalSize()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/02/27 18:44:25  dj_jl
+//	Serialisation of indexes in a compact way.
+//
 //	Revision 1.2  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.1  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

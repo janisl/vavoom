@@ -79,32 +79,32 @@ public:
 	void SerialiseBigEndian(void*, int);
 
 	//	Stream serialisation operators.
-	friend VStream& operator<<(VStream& Strm, char& Val)
+	friend VStream& operator<<(VStream& Strm, vint8& Val)
 	{
 		Strm.Serialise(&Val, 1);
 		return Strm;
 	}
-	friend VStream& operator<<(VStream& Strm, byte& Val)
+	friend VStream& operator<<(VStream& Strm, vuint8& Val)
 	{
 		Strm.Serialise(&Val, 1);
 		return Strm;
 	}
-	friend VStream& operator<<(VStream& Strm, short& Val)
+	friend VStream& operator<<(VStream& Strm, vint16& Val)
 	{
 		Strm.SerialiseLittleEndian(&Val, sizeof(Val));
 		return Strm;
 	}
-	friend VStream& operator<<(VStream& Strm, word& Val)
+	friend VStream& operator<<(VStream& Strm, vuint16& Val)
 	{
 		Strm.SerialiseLittleEndian(&Val, sizeof(Val));
 		return Strm;
 	}
-	friend VStream& operator<<(VStream& Strm, int& Val)
+	friend VStream& operator<<(VStream& Strm, vint32& Val)
 	{
 		Strm.SerialiseLittleEndian(&Val, sizeof(Val));
 		return Strm;
 	}
-	friend VStream& operator<<(VStream& Strm, dword& Val)
+	friend VStream& operator<<(VStream& Strm, vuint32& Val)
 	{
 		Strm.SerialiseLittleEndian(&Val, sizeof(Val));
 		return Strm;
@@ -130,6 +130,20 @@ template<class T> T Streamer(VStream& Strm)
 	Strm << Val;
 	return Val;
 }
+
+//
+//	VStreamCompactIndex
+//
+//	Class for serialising integer values in a compact way.
+//
+class VStreamCompactIndex
+{
+public:
+	vint32		Val;
+	friend VStream& operator<<(VStream&, VStreamCompactIndex&);
+};
+#define STRM_INDEX(val) \
+	(*(VStreamCompactIndex*)&(val))
 
 //
 //	VMemoryStream
@@ -171,9 +185,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/02/27 18:44:25  dj_jl
+//	Serialisation of indexes in a compact way.
+//
 //	Revision 1.2  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.1  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

@@ -159,7 +159,7 @@ public:
 	VStream& operator<<(FName& Name)
 	{
 		int NameIndex;
-		*this << NameIndex;
+		*this << STRM_INDEX(NameIndex);
 		Name = NameRemap[NameIndex];
 		return *this;
 	}
@@ -167,7 +167,7 @@ public:
 	{
 		guard(Loader::SerialiseReference);
 		int TmpIdx;
-		*this << TmpIdx;
+		*this << STRM_INDEX(TmpIdx);
 		if (TmpIdx == 0)
 		{
 			Ref = NULL;
@@ -187,7 +187,7 @@ public:
 	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)
 	{
 		int TmpIdx;
-		*this << TmpIdx;
+		*this << STRM_INDEX(TmpIdx);
 		if (Struct->Name == "sector_t")
 		{
 			Ptr = TmpIdx >= 0 ? &GLevel->Sectors[TmpIdx] : NULL;
@@ -256,7 +256,7 @@ public:
 	VStream& operator<<(FName& Name)
 	{
 		int TmpIdx = Name.GetIndex();
-		*this << TmpIdx;
+		*this << STRM_INDEX(TmpIdx);
 		return *this;
 	}
 	void SerialiseReference(VObject*& Ref, VClass*)
@@ -271,7 +271,7 @@ public:
 		{
 			TmpIdx = ObjectsMap[Ref->GetIndex()];
 		}
-		*this << TmpIdx;
+		*this << STRM_INDEX(TmpIdx);
 		unguard;
 	}
 	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)
@@ -296,7 +296,7 @@ public:
 			dprintf("Don't know how to handle pointer to %s\n", *Struct->Name);
 			TmpIdx = (int)Ptr;
 		}
-		*this << TmpIdx;
+		*this << STRM_INDEX(TmpIdx);
 	}
 };
 
@@ -526,8 +526,8 @@ static void AssertSegment(gameArchiveSegment_t segType)
 
 static void ArchiveNames(VStream &Strm)
 {
-	int Count = FName::GetMaxNames();
-	Strm << Count;
+	vint32 Count = FName::GetMaxNames();
+	Strm << STRM_INDEX(Count);
 	for (int i = 0; i < Count; i++)
 	{
 		Strm << *FName::GetEntry(i);
@@ -542,8 +542,8 @@ static void ArchiveNames(VStream &Strm)
 
 static void UnarchiveNames(VStream &Strm)
 {
-	int Count;
-	Strm << Count;
+	vint32 Count;
+	Strm << STRM_INDEX(Count);
 	Loader->NameRemap = (FName*)Z_StrMalloc(Count * 4);
 	for (int i = 0; i < Count; i++)
 	{
@@ -1264,9 +1264,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.55  2006/02/27 18:44:25  dj_jl
+//	Serialisation of indexes in a compact way.
+//
 //	Revision 1.54  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.53  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	
