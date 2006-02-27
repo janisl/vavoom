@@ -304,7 +304,7 @@ static TTree ParseExpressionPriority0()
 	TTree		op;
 	int			num;
 	field_t*	field;
-	FName		Name;
+	VName		Name;
 	bool		bLocals;
 	TClass*		Class;
 
@@ -1732,9 +1732,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2006/02/27 21:23:54  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.39  2006/02/19 20:37:01  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.38  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
 //	

@@ -27,117 +27,95 @@
 //**
 //**************************************************************************
 
-// Maximum size of name.
-enum {NAME_SIZE	= 64};
+//	Maximum length of a name
+enum { NAME_SIZE = 64 };
 
-// Name index.
-typedef int NAME_INDEX;
-
-// Enumeration for finding name.
-enum EFindName
+//
+//	VNameEntry
+//
+//	Entry in the names table.
+//
+struct VNameEntry
 {
-	FNAME_Find,			// Find a name; return 0 if it doesn't exist.
-	FNAME_Add,			// Find a name or add it if it doesn't exist.
+	VNameEntry*		HashNext;			//	Next name for this hash list.
+	vint32			Index;				//	Index of the name.
+	char			Name[NAME_SIZE];	//	Name value.
+
+	friend VStream& operator<<(VStream&, VNameEntry&);
+	friend VNameEntry* AllocateNameEntry(const char* Name, vint32 Index, 
+		VNameEntry* HashNext);
 };
 
-//==========================================================================
 //
-//	FNameEntry
+//	VName
 //
-//==========================================================================
-
+//	Names are stored as indexes in the global name table. They are stored once
+// and only once. All names are case-sensitive.
 //
-// A global name, as stored in the global name table.
-//
-struct FNameEntry
+class VName
 {
-	// Variables.
-	NAME_INDEX	Index;				// Index of name in hash.
-	FNameEntry*	HashNext;			// Pointer to the next entry in this hash bin's linked list.
+protected:
+	vint32						Index;
 
-	// The name string.
-	char		Name[NAME_SIZE];	// Name, variable-sized.
+	static TArray<VNameEntry*>	Names;
+	static VNameEntry*			HashTable[4096];
+	static bool					Initialised;
 
-	// Functions.
-	friend FNameEntry* AllocateNameEntry(const char* Name, dword Index, 
-		FNameEntry* HashNext);
-};
-
-//==========================================================================
-//
-//	FName
-//
-//==========================================================================
-
-//
-// Public name, available to the world.  Names are stored as int indices
-// into the name table and every name in Vavoom is stored once
-// and only once in that table.  Names are case-sensitive.
-//
-class FName 
-{
 public:
-	// Accessors.
+	//	Different types of finding a name.
+	enum ENameFindType
+	{
+		Find,		// Find a name, return 0 if it doesn't exist.
+		Add,		// Find a name, add it if it doesn't exist.
+		AddLower8,	// Find or add lowercased, max length 8 name.
+	};
+
+	//	Constructors.
+	VName()
+	{}
+	VName(EName N) : Index(N)
+	{}
+	VName(const char*, ENameFindType = Add);
+
+	//	Ancestors.
 	const char* operator*() const
 	{
 		return Names[Index]->Name;
 	}
-	NAME_INDEX GetIndex() const
+	vint32 GetIndex() const
 	{
 		return Index;
 	}
-	bool operator == (const FName& Other) const
+
+	//	Comparison operators.
+	bool operator==(const VName& Other) const
 	{
 		return Index == Other.Index;
 	}
-	bool operator != (const FName& Other) const
+	bool operator!=(const VName& Other) const
 	{
 		return Index != Other.Index;
 	}
-	bool IsValid()
-	{
-		return Index >= 0 && Index < Names.Num() && Names[Index] != NULL;
-	}
 
-	// Constructors.
-	FName(enum EName N) : Index(N)
-	{}
-	FName()
-	{}
-	FName(const char* Name, EFindName FindType = FNAME_Add);
-
-	// Name subsystem.
+	//	Global functions.
 	static void StaticInit();
 	static void StaticExit();
 
-	// Name subsystem accessors.
-	static const char* SafeString(EName Index)
-	{
-		return Initialised ? Names[Index]->Name : "Uninitialised";
-	}
-	static int GetMaxNames()
+	static int GetNumNames()
 	{
 		return Names.Num();
 	}
-	static FNameEntry* GetEntry(int i)
+	static VNameEntry* GetEntry(int i)
 	{
 		return Names[i];
 	}
-	static bool GetInitialised()
+	static const char* SafeString(EName N)
 	{
-		return Initialised;
+		return Initialised ? Names[N]->Name : "Uninitialised";
 	}
-
-private:
-	// Name index.
-	NAME_INDEX Index;
-
-	// Static subsystem variables.
-	static TArray<FNameEntry*>	Names;			 // Table of all names.
-	static FNameEntry*			NameHash[4096];  // Hashed names.
-	static bool					Initialised;	 // Subsystem initialised.
 };
-inline dword GetTypeHash(const FName N)
+
+inline vuint32 GetTypeHash(const VName N)
 {
 	return N.GetIndex();
 }
@@ -145,9 +123,12 @@ inline dword GetTypeHash(const FName N)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/02/27 21:23:54  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.2  2005/11/24 20:41:07  dj_jl
 //	Cleaned up a bit.
-//
+//	
 //	Revision 1.1  2002/01/11 08:17:31  dj_jl
 //	Added name subsystem, removed support for unsigned ints
 //	

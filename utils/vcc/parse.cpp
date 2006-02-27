@@ -85,7 +85,7 @@ static TType			FuncRetType;
 //
 //==========================================================================
 
-int CheckForLocalVar(FName Name)
+int CheckForLocalVar(VName Name)
 {
 	if (Name == NAME_None)
 	{
@@ -766,7 +766,7 @@ void PA_Compile()
 			if (TK_Check(KW_ENUM))
 			{
 				int val;
-				FName Name;
+				VName Name;
 
 				val = 0;
 				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -825,9 +825,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/02/27 21:23:55  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.38  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
-//
+//	
 //	Revision 1.37  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
 //	

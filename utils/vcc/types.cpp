@@ -264,7 +264,7 @@ TType CheckForType(TClass* InClass)
 //
 //==========================================================================
 
-TType CheckForType(TClass* InClass, FName Name)
+TType CheckForType(TClass* InClass, VName Name)
 {
 	if (Name == NAME_None)
 	{
@@ -321,7 +321,7 @@ TClass* CheckForClass()
 //
 //==========================================================================
 
-TClass* CheckForClass(FName Name)
+TClass* CheckForClass(VName Name)
 {
 	for (int i = 0; i < classtypes.Num(); i++)
 	{
@@ -365,7 +365,7 @@ int TType::GetSize() const
 //
 //==========================================================================
 
-int CheckForFunction(TClass* InClass, FName Name)
+int CheckForFunction(TClass* InClass, VName Name)
 {
 	if (Name == NAME_None)
 	{
@@ -387,7 +387,7 @@ int CheckForFunction(TClass* InClass, FName Name)
 //
 //==========================================================================
 
-int CheckForConstant(TClass* InClass, FName Name)
+int CheckForConstant(TClass* InClass, VName Name)
 {
 #if 1
 	for (int i = ConstantsHash[GetTypeHash(Name) & 255];
@@ -946,7 +946,7 @@ field_t* CheckForField(TClass* InClass, bool check_aux)
 //
 //==========================================================================
 
-field_t* CheckForField(FName Name, TClass* InClass, bool check_aux)
+field_t* CheckForField(VName Name, TClass* InClass, bool check_aux)
 {
 	if (!InClass)
 	{
@@ -1515,7 +1515,7 @@ void ParseClass()
 		if (TK_Check(KW_ENUM))
 		{
 			int val;
-			FName Name;
+			VName Name;
 
 			val = 0;
 			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -1676,9 +1676,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2006/02/27 21:23:55  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.44  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
-//
+//	
 //	Revision 1.43  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
 //	

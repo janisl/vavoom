@@ -67,7 +67,7 @@ void InitInfoTables()
 //
 //==========================================================================
 
-static int FindState(FName StateName, TClass* InClass)
+static int FindState(VName StateName, TClass* InClass)
 {
 	for (TArray<state_t>::TIterator It(states); It; ++It)
 	{
@@ -282,9 +282,12 @@ void SkipStates(TClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/02/27 21:23:54  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.30  2006/02/15 23:27:06  dj_jl
 //	Added script ID class attribute.
-//
+//	
 //	Revision 1.29  2006/01/10 19:29:10  dj_jl
 //	Fixed states belonging to a class.
 //	

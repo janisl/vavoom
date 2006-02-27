@@ -57,7 +57,7 @@ static int ConstExprFactor()
 {
 	int		num;
 	int		ret = 0;
-	FName	Name;
+	VName	Name;
 
 	switch(tk_Token)
 	{
@@ -502,9 +502,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/27 21:23:54  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.17  2006/02/19 20:37:01  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.16  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
 //	

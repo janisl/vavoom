@@ -66,7 +66,7 @@ int 				tk_Number;
 float				tk_Float;
 EKeyword			tk_Keyword;
 EPunctuation		tk_Punct;
-FName				tk_Name;
+VName				tk_Name;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1200,9 +1200,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/02/27 21:23:55  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.24  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
-//
+//	
 //	Revision 1.23  2006/02/19 14:37:36  dj_jl
 //	Changed type handling.
 //	

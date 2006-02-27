@@ -72,8 +72,8 @@ TArray<TStruct*>	structtypes;
 
 TArray<field_t*>	FieldList;
 
-TArray<FName>		sprite_names;
-TArray<FName>		models;
+TArray<VName>		sprite_names;
+TArray<VName>		models;
 TArray<state_t>		states;
 TArray<mobjinfo_t>	mobj_info;
 TArray<mobjinfo_t>	script_ids;
@@ -464,10 +464,10 @@ void PC_WriteObject(char *name)
 	fwrite(&progs, 1, sizeof(progs), f);
 
 	progs.ofs_names = ftell(f);
-	progs.num_names = FName::GetMaxNames();
-	for (i = 0; i < FName::GetMaxNames(); i++)
+	progs.num_names = VName::GetNumNames();
+	for (i = 0; i < VName::GetNumNames(); i++)
 	{
-		FNameEntry *E = FName::GetEntry(i);
+		VNameEntry *E = VName::GetEntry(i);
 		int len = strlen(E->Name);
 		fwrite(E->Name, 1, (len + 4) & ~3, f);
 	}
@@ -627,7 +627,7 @@ void PC_WriteObject(char *name)
 
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
-	dprintf("Names      %6d %6d\n", FName::GetMaxNames(), progs.ofs_strings - progs.ofs_names);
+	dprintf("Names      %6d %6d\n", VName::GetNumNames(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
 	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), CodeBuffer.Num() * 4);
 	dprintf("Functions  %6d %6ld\n", functions.Num(), functions.Num() * sizeof(dfunction_t));
@@ -777,9 +777,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/02/27 21:23:55  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.30  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
-//
+//	
 //	Revision 1.29  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
 //	

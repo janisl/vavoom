@@ -41,13 +41,12 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// Static subsystem variables.
-TArray<FNameEntry*>	FName::Names;			// Table of all names.
-FNameEntry*			FName::NameHash[4096];  // Hashed names.
-bool				FName::Initialised;	 	// Subsystem initialised.
+TArray<VNameEntry*>	VName::Names;
+VNameEntry*			VName::HashTable[4096];
+bool				VName::Initialised;
 
-#define REGISTER_NAME(name)		{ NAME_##name, NULL, #name },
-static FNameEntry AutoNames[] =
+#define REGISTER_NAME(name)		{ NULL, NAME_##name, #name },
+static VNameEntry AutoNames[] =
 {
 #include "names.h"
 };
@@ -62,14 +61,29 @@ static FNameEntry AutoNames[] =
 //
 //==========================================================================
 
-inline dword GetTypeHash(const char *S)
+inline vuint32 GetTypeHash(const char *S)
 {
-	dword ret = 0;
-	for (int i = 0; S[i]; i++)
+	return ((vuint8*)S)[0] | ((vuint8*)S)[1];
+}
+
+//==========================================================================
+//
+//	operator VStream << VNameEntry
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, VNameEntry& E)
+{
+	guard(operator VStream << VNameEntry);
+	vuint8 Size;
+	if (Strm.IsSaving())
 	{
-		ret ^= (byte)S[i] << ((i & 3) * 8);
+		Size = strlen(E.Name) + 1;
 	}
-	return ret;
+	Strm << Size;
+	Strm.Serialise(E.Name, Size);
+	return Strm;
+	unguard;
 }
 
 //==========================================================================
@@ -78,93 +92,125 @@ inline dword GetTypeHash(const char *S)
 //
 //==========================================================================
 
-FNameEntry* AllocateNameEntry(const char* Name, dword Index, 
-							  FNameEntry* HashNext)
+VNameEntry* AllocateNameEntry(const char* Name, vint32 Index,
+	VNameEntry* HashNext)
 {
-	FNameEntry *E = new FNameEntry;
-	memset(E, 0, sizeof(*E));
+	guard(AllocateNameEntry);
+	int Size = sizeof(VNameEntry) - NAME_SIZE + strlen(Name) + 1;
+	VNameEntry* E = (VNameEntry*)Z_Malloc(Size);
+	memset(E, 0, Size);
 	strcpy(E->Name, Name);
 	E->Index = Index;
 	E->HashNext = HashNext;
 	return E;
+	unguard;
 }
 
 //==========================================================================
 //
-//	FName::FName
+//	VName::VName
 //
 //==========================================================================
 
-FName::FName(const char* Name, EFindName FindType)
+VName::VName(const char* Name, ENameFindType FindType)
 {
+	guard(VName::VName);
+	char		NameBuf[NAME_SIZE];
+
 	Index = NAME_None;
+	//	Make sure name is valid.
 	if (!Name || !*Name)
 	{
 		return;
 	}
-	int HashIndex = GetTypeHash(Name) & 4095;
-	FNameEntry *TempHash = NameHash[HashIndex];
+
+	//	Copy name localy, make sure it's not longer than 64 characters.
+	if (FindType == AddLower8)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			NameBuf[i] = tolower(Name[i]);
+		}
+		NameBuf[8] = 0;
+	}
+	else
+	{
+		strncpy(NameBuf, Name, NAME_SIZE);
+		NameBuf[NAME_SIZE - 1] = 0;
+	}
+
+	//	Search in cache.
+	int HashIndex = GetTypeHash(NameBuf) & 4095;
+	VNameEntry* TempHash = HashTable[HashIndex];
 	while (TempHash)
 	{
-		if (!strcmp(Name, TempHash->Name))
+		if (!strcmp(NameBuf, TempHash->Name))
 		{
 			Index = TempHash->Index;
 			break;
 		}
 		TempHash = TempHash->HashNext;
 	}
-	if (!TempHash && FindType == FNAME_Add)
+
+	//	Add new name if not found.
+	if (!TempHash && (FindType == Add || FindType == AddLower8))
 	{
 		Index = Names.Add();
-		Names[Index] = AllocateNameEntry(Name, Index, NameHash[HashIndex]);
-		NameHash[HashIndex] = Names[Index];
+		Names[Index] = AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]);
+		HashTable[HashIndex] = Names[Index];
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//	FName::StaticInit
+//	VName::StaticInit
 //
 //==========================================================================
 
-void FName::StaticInit()
+void VName::StaticInit()
 {
-	// Register hardcoded names
-	for (int i = 0; i < ARRAY_COUNT(AutoNames); i++)
+	guard(VName::StaticInit);
+	//	Register hardcoded names.
+	for (int i = 0; i < (int)ARRAY_COUNT(AutoNames); i++)
 	{
-		Names.Insert(AutoNames[i].Index);
-		Names[AutoNames[i].Index] = &AutoNames[i];
+		Names.AddItem(&AutoNames[i]);
 		int HashIndex = GetTypeHash(AutoNames[i].Name) & 4095;
-		AutoNames[i].HashNext = NameHash[HashIndex];
-		NameHash[HashIndex] = &AutoNames[i];
+		AutoNames[i].HashNext = HashTable[HashIndex];
+		HashTable[HashIndex] = &AutoNames[i];
 	}
-	// We are now initialised
+	//	We are now initialised.
 	Initialised = true;
+	unguard;
 }
 
 //==========================================================================
 //
-//	FName::StaticExit
+//	VName::StaticExit
 //
 //==========================================================================
 
-void FName::StaticExit()
+void VName::StaticExit()
 {
-	//FIXME do we really need this?
+	guard(VName::StaticExit);
 	for (int i = NUM_HARDCODED_NAMES; i < Names.Num(); i++)
 	{
-		delete Names[i];
+		Z_Free(Names[i]);
 	}
 	Names.Empty();
 	Initialised = false;
+	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/02/27 21:23:54  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.3  2005/11/24 20:41:07  dj_jl
 //	Cleaned up a bit.
-//
+//	
 //	Revision 1.2  2002/01/25 18:05:58  dj_jl
 //	Better string hash function
 //	

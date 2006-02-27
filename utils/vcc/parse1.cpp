@@ -730,7 +730,7 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 //
 //==========================================================================
 
-void AddConstant(TClass* InClass, FName Name, int value)
+void AddConstant(TClass* InClass, VName Name, int value)
 {
 	if (CurrentPass == 2)
 		ParseError("Add constant in pass 2");
@@ -772,7 +772,7 @@ void PA_Parse()
 			if (TK_Check(KW_ENUM))
 			{
 				int val;
-				FName Name;
+				VName Name;
 
 				val = 0;
 				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -831,9 +831,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/02/27 21:23:54  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.13  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
-//
+//	
 //	Revision 1.12  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
 //	

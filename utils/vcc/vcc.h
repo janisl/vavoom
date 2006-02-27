@@ -33,7 +33,14 @@ using namespace VavoomUtils;
 
 #include "../../source/progdefs.h"
 
+//	For compatibility with engine files.
+#define guard(f)
+#define unguard
+#define Z_Malloc	Malloc
+#define Z_Free		Free
+
 #include "array.h"
+#include "stream.h"
 #include "names.h"
 #include "name.h"
 
@@ -254,7 +261,7 @@ public:
 class FField
 {
 public:
-	FName		Name;
+	VName		Name;
 
 	FField()
 	: Name(NAME_None)
@@ -419,7 +426,7 @@ struct state_t
 	float	time;
 	int		nextstate;
 	int		function;
-	FName	statename;
+	VName	statename;
 	TClass*	OuterClass;
 };
 
@@ -482,10 +489,10 @@ void ParseMethodDef(const TType&, field_t*, field_t*, TClass*, int);
 void ParseDelegate(const TType&, field_t*, field_t*, TClass*, int);
 int ParseStateCode(TClass*);
 void ParseDefaultProperties(field_t*, TClass*);
-void AddConstant(TClass* InClass, FName Name, int value);
+void AddConstant(TClass* InClass, VName Name, int value);
 void PA_Parse();
 
-int CheckForLocalVar(FName);
+int CheckForLocalVar(VName);
 void ParseLocalVar(const TType&);
 void CompileMethodDef(const TType&, field_t*, field_t*, TClass*);
 void SkipDelegate(TClass*);
@@ -497,11 +504,11 @@ void InitTypes();
 TType MakePointerType(const TType& type);
 TType MakeArrayType(const TType& type, int elcount);
 TType CheckForType(TClass* InClass);
-TType CheckForType(TClass* InClass, FName Name);
+TType CheckForType(TClass* InClass, VName Name);
 TClass* CheckForClass();
-TClass* CheckForClass(FName Name);
-int CheckForFunction(TClass*, FName);
-int CheckForConstant(TClass* InClass, FName);
+TClass* CheckForClass(VName Name);
+int CheckForFunction(TClass*, VName);
+int CheckForConstant(TClass* InClass, VName);
 void SkipStruct(TClass*);
 void SkipAddFields(TClass*);
 void CompileClass();
@@ -513,7 +520,7 @@ void ParseStruct(TClass*, bool);
 void AddFields(TClass*);
 void ParseClass();
 field_t* CheckForField(TClass*, bool = true);
-field_t* CheckForField(FName, TClass*, bool = true);
+field_t* CheckForField(VName, TClass*, bool = true);
 
 void InitInfoTables();
 void ParseStates(TClass*);
@@ -533,7 +540,7 @@ extern char*			tk_String;
 extern int				tk_StringI;
 extern EKeyword			tk_Keyword;
 extern EPunctuation		tk_Punct;
-extern FName			tk_Name;
+extern VName			tk_Name;
 
 extern TArray<TFunction>	functions;
 extern int					numbuiltins;
@@ -548,8 +555,8 @@ extern TArray<TStruct*>		structtypes;
 
 extern TArray<field_t*>		FieldList;
 
-extern TArray<FName>		sprite_names;
-extern TArray<FName>		models;
+extern TArray<VName>		sprite_names;
+extern TArray<VName>		models;
 extern TArray<state_t>		states;
 extern TArray<mobjinfo_t>	mobj_info;
 extern TArray<mobjinfo_t>	script_ids;
@@ -593,7 +600,7 @@ inline bool TK_Check(int s_string)
 	return false;
 }
 
-inline bool TK_Check(FName Name)
+inline bool TK_Check(VName Name)
 {
 	if (tk_Token == TK_IDENTIFIER && tk_Name == Name)
 	{
@@ -628,9 +635,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/02/27 21:23:55  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.41  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
-//
+//	
 //	Revision 1.40  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
 //	

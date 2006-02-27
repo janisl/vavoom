@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
 	DumpAsm();
-	FName::StaticExit();
+	VName::StaticExit();
 	endtime = time(0);
 	dprintf("Wrote in %02d:%02d\n",
 		(endtime - pass2time) / 60, (endtime - pass2time) % 60);
@@ -153,7 +153,7 @@ static void Init(void)
 	DebugMode = false;
 	DebugFile = NULL;
 	num_dump_asm = 0;
-	FName::StaticInit();
+	VName::StaticInit();
 	TK_Init();
 	PC_Init();
 	InitTypes();
@@ -332,9 +332,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/27 21:23:55  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.17  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
-//
+//	
 //	Revision 1.16  2005/11/24 20:42:05  dj_jl
 //	Renamed opcodes, cleanup and improvements.
 //	
