@@ -47,6 +47,9 @@
 #pragma warning(disable : 4514)	// unreferenced inline function has been removed
 #pragma warning(disable : 4702) // unreachable code in inline expanded function
 #pragma warning(disable : 4710) // inline function not expanded
+
+// Workaround of for variable scoping
+#define for		if (0) ; else for
 #endif
 
 #ifdef __BORLANDC__
@@ -76,6 +79,13 @@ typedef int					boolean;	//	Must be 4 bytes long
 typedef unsigned char 		byte;
 typedef unsigned short	 	word;
 typedef unsigned long	 	dword;
+
+typedef char				vint8;
+typedef unsigned char		vuint8;
+typedef short				vint16;
+typedef unsigned short		vuint16;
+typedef int					vint32;
+typedef unsigned int		vuint32;
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -125,9 +135,12 @@ inline void Delete(void *ptr)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/02/27 21:22:52  dj_jl
+//	Added definitions for common integer types.
+//
 //	Revision 1.9  2006/02/10 22:17:21  dj_jl
 //	Some platform fixes.
-//
+//	
 //	Revision 1.8  2002/08/24 14:41:32  dj_jl
 //	Removed usage of the iostream.
 //	
