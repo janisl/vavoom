@@ -5,8 +5,8 @@ BCB = $(MAKEDIR)\..
 
 PROJECT = vcc.exe
 OBJFILES = cmdlib.obj constexp.obj error.obj expressn.obj info.obj \
-    modifiers.obj name.obj parse.obj parse1.obj pcode.obj token.obj \
-    types.obj vcc.obj \
+    modifiers.obj name.obj parse.obj parse1.obj pcode.obj stream.obj \
+    token.obj types.obj vcc.obj \
     cpp.obj eval.obj hideset.obj include.obj \
     lex.obj macro.obj nlist.obj tokens.obj unix.obj
 # ---------------------------------------------------------------------------

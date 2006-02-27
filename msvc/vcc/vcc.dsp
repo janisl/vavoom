@@ -127,6 +127,10 @@ SOURCE=..\..\utils\vcc\pcode.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\utils\vcc\stream.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\utils\vcc\token.cpp
 # End Source File
 # Begin Source File

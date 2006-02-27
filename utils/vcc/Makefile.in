@@ -18,6 +18,7 @@ OBJS = \
 	parse.$(OBJEXT) \
 	parse1.$(OBJEXT) \
 	pcode.$(OBJEXT) \
+	stream.$(OBJEXT) \
 	token.$(OBJEXT) \
 	types.$(OBJEXT) \
 	vcc.$(OBJEXT) \
