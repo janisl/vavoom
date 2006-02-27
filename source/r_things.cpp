@@ -241,7 +241,7 @@ void R_InstallSprite(const char *name, int index)
     // scan all the lump names for each of the names,
     //  noting the highest frame letter.
     // Just compare 4 characters as ints
-	intname = *(int*)*FName(spritename, FNAME_AddLower8);
+	intname = *(int*)*VName(spritename, VName::AddLower8);
 
 	// scan the lumps, filling in the frames for whatever is found
 	for (int l = 0; l < GTextureManager.Textures.Num(); l++)
@@ -1096,8 +1096,8 @@ void R_DrawCroshair(void)
 			cy = (200 - sb_height) / 2;
 		else
 			cy = 100;
-		int handle = GTextureManager.AddPatch(FName(va("CROSHAI%i",
-			(int)croshair), FNAME_AddLower8), TEXTYPE_Pic);
+		int handle = GTextureManager.AddPatch(VName(va("CROSHAI%i",
+			(int)croshair), VName::AddLower8), TEXTYPE_Pic);
 		R_DrawPic(160, cy, handle, croshair_trans);
 	}
 	unguard;
@@ -1179,9 +1179,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.25  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.24  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
 //	

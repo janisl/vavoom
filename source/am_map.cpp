@@ -499,7 +499,7 @@ static void AM_initVariables(void)
 //
 //==========================================================================
 
-static void AM_loadPics(void)
+static void AM_loadPics()
 {
     int		i;
 
@@ -507,13 +507,13 @@ static void AM_loadPics(void)
     {
 	    for (i = 0; i < 10; i++)
     	{
-			marknums[i] = GTextureManager.AddPatch(FName(va("AMMNUM%d", i),
-				FNAME_AddLower8), TEXTYPE_Pic);
+			marknums[i] = GTextureManager.AddPatch(VName(va("AMMNUM%d", i),
+				VName::AddLower8), TEXTYPE_Pic);
     	}
 		use_marks = true;
 	}
 
-	mappic = GTextureManager.AddPatch(FName("AUTOPAGE", FNAME_AddLower8),
+	mappic = GTextureManager.AddPatch(VName("AUTOPAGE", VName::AddLower8),
 		TEXTYPE_Pic);
 	mapheight = W_LumpLength(W_GetNumForName("AUTOPAGE")) / 320;
 }
@@ -1525,9 +1525,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.17  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.16  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
 //	

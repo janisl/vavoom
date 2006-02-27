@@ -57,7 +57,7 @@ public:
 	VAudioCodec*	Codec;
 	//	Current playing song info.
 	bool			CurrLoop;
-	FName			CurrSong;
+	VName			CurrSong;
 	bool			Stopping;
 	double			FinishTime;
 
@@ -116,7 +116,7 @@ TVec					listener_up;
 
 static byte*				SoundCurve;
 
-static FName				MapSong;
+static VName				MapSong;
 static int					MapCDTrack;
 
 static TCvarI				cd_music("use_cd_music", "0", CVAR_ARCHIVE);
@@ -711,7 +711,7 @@ void S_UpdateSfx()
 //
 //==========================================================================
 
-void S_StartSong(FName song, int track, boolean loop)
+void S_StartSong(VName song, int track, boolean loop)
 {
 	guard(S_StartSong);
 	if (CDMusic)
@@ -797,7 +797,7 @@ void S_Start()
 	SN_StopAllSequences();
 	S_StopAllSound();
 
-	MapSong = FName(cl_level.songLump, FNAME_AddLower8);
+	MapSong = VName(cl_level.songLump, VName::AddLower8);
 	MapCDTrack = cl_level.cdTrack;
 
 	StartMusic();
@@ -813,7 +813,7 @@ void S_Start()
 void S_MusicChanged()
 {
 	guard(S_MusicChanged);
-	MapSong = FName(cl_level.songLump, FNAME_AddLower8);
+	MapSong = VName(cl_level.songLump, VName::AddLower8);
 	MapCDTrack = cl_level.cdTrack;
 
 	StartMusic();
@@ -1069,13 +1069,13 @@ COMMAND(Music)
 
 	if (!stricmp(command, "play"))
 	{
-		PlaySong(*FName(Argv(2), FNAME_AddLower8), false);
+		PlaySong(*VName(Argv(2), VName::AddLower8), false);
 		return;
 	}
 
 	if (!stricmp(command, "loop"))
 	{
-		PlaySong(*FName(Argv(2), FNAME_AddLower8), true);
+		PlaySong(*VName(Argv(2), VName::AddLower8), true);
 		return;
 	}
 
@@ -1852,9 +1852,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.27  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.26  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

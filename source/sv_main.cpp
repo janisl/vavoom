@@ -1574,10 +1574,10 @@ void SV_SetCeilPic(int i, int texture)
 void SV_ChangeSky(const char* Sky1, const char* Sky2)
 {
 	guard(SV_ChangeSky);
-	level.sky1Texture = GTextureManager.NumForName(FName(Sky1,
-		FNAME_AddLower8), TEXTYPE_Wall, true, false);
-	level.sky2Texture = GTextureManager.NumForName(FName(Sky2,
-		FNAME_AddLower8), TEXTYPE_Wall, true, false);
+	level.sky1Texture = GTextureManager.NumForName(VName(Sky1,
+		VName::AddLower8), TEXTYPE_Wall, true, false);
+	level.sky2Texture = GTextureManager.NumForName(VName(Sky2,
+		VName::AddLower8), TEXTYPE_Wall, true, false);
 	sv_reliable << (byte)svc_change_sky
 				<< (word)level.sky1Texture
 				<< (word)level.sky2Texture;
@@ -1991,7 +1991,7 @@ int SV_FindModel(const char *name)
 //
 //==========================================================================
 
-int SV_GetModelIndex(const FName &Name)
+int SV_GetModelIndex(const VName &Name)
 {
 	guard(SV_GetModelIndex);
 	int i;
@@ -3014,9 +3014,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.83  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.82  2006/02/25 17:12:38  dj_jl
 //	Added missing implementation of the player class.
-//
+//	
 //	Revision 1.81  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
 //	

@@ -2590,9 +2590,9 @@ int VACS::RunScript(float DeltaTime)
 				int flat;
 				int sectorIndex;
 
-				flat = GTextureManager.NumForName(FName(
+				flat = GTextureManager.NumForName(VName(
 					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
-					FNAME_AddLower8), TEXTYPE_Flat, true, true);
+					VName::AddLower8), TEXTYPE_Flat, true, true);
 				tag = stack[stackPtr - 2];
 				stackPtr -= 2;
 				sectorIndex = -1;
@@ -2610,9 +2610,9 @@ int VACS::RunScript(float DeltaTime)
 				int sectorIndex;
 			
 				tag = PC_GET_INT;
-				flat = GTextureManager.NumForName(FName(
+				flat = GTextureManager.NumForName(VName(
 					FACScriptsObject::StaticGetString(PC_GET_INT),
-					FNAME_AddLower8), TEXTYPE_Flat, true, true);
+					VName::AddLower8), TEXTYPE_Flat, true, true);
 				sectorIndex = -1;
 				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
 				{
@@ -2627,9 +2627,9 @@ int VACS::RunScript(float DeltaTime)
 				int flat;
 				int sectorIndex;
 			
-				flat = GTextureManager.NumForName(FName(
+				flat = GTextureManager.NumForName(VName(
 					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
-					FNAME_AddLower8), TEXTYPE_Flat, true, true);
+					VName::AddLower8), TEXTYPE_Flat, true, true);
 				tag = stack[stackPtr - 2];
 				stackPtr -= 2;
 				sectorIndex = -1;
@@ -2647,9 +2647,9 @@ int VACS::RunScript(float DeltaTime)
 				int sectorIndex;
 			
 				tag = PC_GET_INT;
-				flat = GTextureManager.NumForName(FName(
+				flat = GTextureManager.NumForName(VName(
 					FACScriptsObject::StaticGetString(PC_GET_INT),
-					FNAME_AddLower8), TEXTYPE_Flat, true, true);
+					VName::AddLower8), TEXTYPE_Flat, true, true);
 				sectorIndex = -1;
 				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
 				{
@@ -2890,9 +2890,9 @@ int VACS::RunScript(float DeltaTime)
 				int texture;
 				int searcher;
 			
-				texture = GTextureManager.NumForName(FName(
+				texture = GTextureManager.NumForName(VName(
 					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
-					FNAME_AddLower8), TEXTYPE_Wall, true, true);
+					VName::AddLower8), TEXTYPE_Wall, true, true);
 				position = stack[stackPtr - 2];
 				side = stack[stackPtr - 3];
 				lineTag = stack[stackPtr - 4];
@@ -4645,9 +4645,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.42  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.41  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

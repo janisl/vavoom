@@ -667,7 +667,7 @@ static void DoPrint(const char *buf)
 
 void FConsoleDevice::Serialise(const char* V, EName Event)
 {
-	dprintf("%s: %s\n", *FName(Event), V);
+	dprintf("%s: %s\n", VName::SafeString(Event), V);
 	DoPrint(V);
 	DoPrint("\n");
 }
@@ -801,9 +801,12 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.25  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
-//
+//	
 //	Revision 1.24  2006/01/10 19:32:27  dj_jl
 //	Fix for long notify messages.
 //	

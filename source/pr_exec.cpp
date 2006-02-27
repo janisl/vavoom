@@ -197,7 +197,7 @@ void TProgs::Load(const char *AName)
 	dfunction_t	*	DFunctions;
 	dclassinfo_t*	ClassInfo;
 	VClass**		ClassList;
-	FName*			NameRemap;
+	VName*			NameRemap;
 	char*			pName;
 	short*			DVTables;
 	short*			DSprNames;
@@ -265,9 +265,9 @@ void TProgs::Load(const char *AName)
 	Structs = Z_CNew<VStruct>(Progs->num_structs);
 
 	NumSpriteNames = Progs->num_sprnames;
-	SpriteNames = Z_CNew<FName>(NumSpriteNames);
+	SpriteNames = Z_CNew<VName>(NumSpriteNames);
 	NumModelNames = Progs->num_mdlnames;
-	ModelNames = Z_CNew<FName>(NumModelNames);
+	ModelNames = Z_CNew<VName>(NumModelNames);
 	NumStates = Progs->num_states;
 	States = Z_CNew<state_t>(NumStates);
 	NumMobjInfo = Progs->num_mobjinfo;
@@ -276,7 +276,7 @@ void TProgs::Load(const char *AName)
 	ScriptIds = Z_CNew<mobjinfo_t>(NumScriptIds);
 
 	// Read names
-	NameRemap = Z_New<FName>(Progs->num_names);
+	NameRemap = Z_New<VName>(Progs->num_names);
 	pName = (char *)Progs + Progs->ofs_names;
 	for (i = 0; i < Progs->num_names; i++)
 	{
@@ -613,7 +613,7 @@ FFunction *TProgs::FuncForName(const char* name)
 //
 //==========================================================================
 
-FFunction *TProgs::FindFunctionChecked(FName InName)
+FFunction *TProgs::FindFunctionChecked(VName InName)
 {
 	for (int i = 0; i < Progs->num_functions; i++)
     {
@@ -632,7 +632,7 @@ FFunction *TProgs::FindFunctionChecked(FName InName)
 //
 //==========================================================================
 
-VStruct* TProgs::FindStruct(FName InName, VClass* InClass)
+VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 {
 	guard(TProgs::FindStruct);
 	for (int i = 0; i < Progs->num_structs; i++)
@@ -2085,9 +2085,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.43  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
-//
+//	
 //	Revision 1.42  2006/02/19 20:36:02  dj_jl
 //	Implemented support for delegates.
 //	

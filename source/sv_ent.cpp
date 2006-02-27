@@ -46,7 +46,7 @@ static mobjinfo_t*	GMobjInfo;
 static int			GNumMobjTypes;
 static mobjinfo_t*	GScriptIds;
 static int			GNumScriptIds;
-static FName*		GSpriteNames;
+static VName*		GSpriteNames;
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -173,7 +173,7 @@ void VEntity::SetInitialState(int InState)
 //
 //==========================================================================
 
-int VEntity::FindState(FName StateName)
+int VEntity::FindState(VName StateName)
 {
 	guard(VEntity::FindState);
 	for (int i = 0; i < GNumStates; i++)
@@ -1595,7 +1595,7 @@ IMPLEMENT_FUNCTION(VEntity, SetInitialState)
 
 IMPLEMENT_FUNCTION(VEntity, FindState)
 {
-	FName StateName = PR_PopName();
+	VName StateName = PR_PopName();
 	VEntity *Self = (VEntity*)PR_Pop();
 	PR_Push(Self->FindState(StateName));
 }
@@ -1609,7 +1609,7 @@ IMPLEMENT_FUNCTION(VEntity, FindState)
 IMPLEMENT_FUNCTION(VEntity, PlaySound)
 {
 	int Channel = PR_Pop();
-	FName SoundName = PR_PopName();
+	VName SoundName = PR_PopName();
 	VEntity *Self = (VEntity *)PR_Pop();
 	SV_StartSound(Self, S_ResolveEntitySound(Self->SoundClass,
 		Self->SoundGender, SoundName), Channel, 127);
@@ -1624,7 +1624,7 @@ IMPLEMENT_FUNCTION(VEntity, PlaySound)
 IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 {
 	int Channel = PR_Pop();
-	FName SoundName = PR_PopName();
+	VName SoundName = PR_PopName();
 	VEntity *Self = (VEntity *)PR_Pop();
 	SV_StartSound(NULL, S_ResolveEntitySound(Self->SoundClass,
 		Self->SoundGender, SoundName), Channel, 127);
@@ -1921,9 +1921,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.20  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.19  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	

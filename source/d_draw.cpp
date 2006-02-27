@@ -895,7 +895,7 @@ void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, const char* fname)
 {
 	guard(VSoftwareDrawer::FillRectWithFlat);
-	SetTexture(GTextureManager.NumForName(FName(fname, FNAME_AddLower8),
+	SetTexture(GTextureManager.NumForName(VName(fname, VName::AddLower8),
 		TEXTYPE_Flat, true, true));
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
@@ -1313,9 +1313,12 @@ void VSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.15  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.14  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
 //	

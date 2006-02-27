@@ -133,7 +133,7 @@ void R_InitSkyBoxes()
 			SC_MustGetStringName("map");
 			SC_MustGetString();
 			info.surfs[i].texture = GTextureManager.AddFileTexture(
-				FName(sc_String), TEXTYPE_SkyMap);
+				VName(sc_String), TEXTYPE_SkyMap);
 			SC_MustGetStringName("}");
 		}
 		SC_MustGetStringName("}");
@@ -701,9 +701,12 @@ void R_DrawSky()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.18  2005/11/20 10:39:20  dj_jl
 //	Renamed sound.
-//
+//	
 //	Revision 1.17  2005/10/18 21:09:49  dj_jl
 //	Fixed levels with lightning and skybox.
 //	

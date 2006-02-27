@@ -346,7 +346,7 @@ void VMMSystemMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 	{
 		Pause();
 	}
-	CurrSong = FName(song, FNAME_AddLower8);
+	CurrSong = VName(song, VName::AddLower8);
 	CurrLoop = loop;
 	unguard;
 }
@@ -1257,9 +1257,12 @@ dword VMMSystemMidiDevice::GetVDword(const byte* ImagePtr, dword Left,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.15  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.14  2005/10/06 23:09:20  dj_jl
 //	Some cleanup.
 //	

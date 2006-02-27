@@ -74,18 +74,18 @@ public:
 	TTextureManager();
 	void Init();
 	int AddTexture(TTexture* Tex);
-	int	CheckNumForName(FName Name, int Type, bool bOverload = false,
+	int	CheckNumForName(VName Name, int Type, bool bOverload = false,
 		bool bCheckAny = false);
-	int	NumForName(FName Name, int Type, bool bOverload = false,
+	int	NumForName(VName Name, int Type, bool bOverload = false,
 		bool bCheckAny = false);
 	float TextureHeight(int TexNum);
 	int TextureAnimation(int InTex);
 	void SetFrontSkyLayer(int tex);
 	void GetTextureInfo(int TexNum, picinfo_t* info);
-	int AddPatch(FName Name, int Type);
+	int AddPatch(VName Name, int Type);
 	int CreatePatch(int Type, int LumpNum);
-	int AddRawWithPal(FName Name, FName PalName);
-	int AddFileTexture(FName Name, int Type);
+	int AddRawWithPal(VName Name, VName PalName);
+	int AddFileTexture(VName Name, int Type);
 
 private:
 	bool IsStrifeTexture();
@@ -140,9 +140,12 @@ extern TArray<TSwitch>	Switches;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.10  2005/06/30 20:20:55  dj_jl
 //	Implemented rendering of Boom fake flats.
-//
+//	
 //	Revision 1.9  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
 //	

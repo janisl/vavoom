@@ -138,7 +138,7 @@ void VDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	MyD3DVertex	dv[4];
 	int l = 0xffffffff;
 
-	SetTexture(GTextureManager.NumForName(FName(fname, FNAME_AddLower8),
+	SetTexture(GTextureManager.NumForName(VName(fname, VName::AddLower8),
 		TEXTYPE_Flat, true, true));
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
@@ -346,9 +346,12 @@ void VDirect3DDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.12  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.11  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

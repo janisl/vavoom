@@ -392,7 +392,7 @@ static void ParseSequenceScript()
 //
 //==========================================================================
 
-void SN_SetSeqTrans(FName Name, int Num, int SeqType)
+void SN_SetSeqTrans(VName Name, int Num, int SeqType)
 {
 	guard(SN_SetSeqTrans);
 	for (int i = 0; i < NumSequences; i++)
@@ -412,7 +412,7 @@ void SN_SetSeqTrans(FName Name, int Num, int SeqType)
 //
 //==========================================================================
 
-FName SN_GetSeqTrans(int Num, int SeqType)
+VName SN_GetSeqTrans(int Num, int SeqType)
 {
 	guard(SN_GetSeqTrans);
 	if (SeqTrans[(Num & 63) + SeqType * 64] < 0)
@@ -720,9 +720,12 @@ void SN_SerialiseSounds(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.15  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.14  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

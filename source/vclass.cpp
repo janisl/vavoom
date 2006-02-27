@@ -60,7 +60,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		break;
 
 	case ev_name:
-		Strm << *(FName*)Data;
+		Strm << *(VName*)Data;
 		break;
 
 	case ev_string:
@@ -105,7 +105,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 	case ev_classid:
 		if (Strm.IsLoading())
 		{
-			FName CName;
+			VName CName;
 			Strm << CName;
 			if (CName != NAME_None)
 			{
@@ -118,10 +118,10 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		}
 		else
 		{
-			FName CName = NAME_None;
+			VName CName = NAME_None;
 			if (*(VClass**)Data)
 			{
-				CName = (*(VClass**)Data)->GetFName();
+				CName = (*(VClass**)Data)->GetVName();
 			}
 			Strm << CName;
 		}
@@ -131,14 +131,14 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		Strm.SerialiseReference(*(VObject**)Data, Type.Class);
 		if (Strm.IsLoading())
 		{
-			FName FuncName;
+			VName FuncName;
 			Strm << FuncName;
 			if (*(VObject**)Data)
 				((FFunction**)Data)[1] = (*(VObject**)Data)->GetVFunction(FuncName);
 		}
 		else
 		{
-			FName FuncName = NAME_None;
+			VName FuncName = NAME_None;
 			if (*(VObject**)Data)
 				FuncName = ((FFunction**)Data)[1]->Name;
 			Strm << FuncName;
@@ -193,7 +193,7 @@ void VStruct::SerialiseObject(VStream& Strm, byte* Data)
 //
 //==========================================================================
 
-VClass::VClass(FName AName, int ASize)
+VClass::VClass(VName AName, int ASize)
 : Name(AName)
 , ClassSize(ASize)
 {
@@ -290,7 +290,7 @@ void VClass::StaticExit(void)
 
 VClass *VClass::FindClass(const char *AName)
 {
-	FName TempName(AName, FNAME_Find);
+	VName TempName(AName, VName::Find);
 	if (TempName == NAME_None)
 	{
 		// No such name, no chance to find a class
@@ -298,7 +298,7 @@ VClass *VClass::FindClass(const char *AName)
 	}
 	for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 	{
-		if (Cls->GetFName() == TempName)
+		if (Cls->GetVName() == TempName)
 		{
 			return Cls;
 		}
@@ -312,7 +312,7 @@ VClass *VClass::FindClass(const char *AName)
 //
 //==========================================================================
 
-FFunction *VClass::FindFunction(FName InName)
+FFunction *VClass::FindFunction(VName InName)
 {
 	guard(VClass::FindFunction);
 	for (int i = 0; i < ClassNumMethods; i++)
@@ -332,7 +332,7 @@ FFunction *VClass::FindFunction(FName InName)
 //
 //==========================================================================
 
-FFunction *VClass::FindFunctionChecked(FName InName)
+FFunction *VClass::FindFunctionChecked(VName InName)
 {
 	guard(VClass::FindFunctionChecked);
 	FFunction *func = FindFunction(InName);
@@ -350,7 +350,7 @@ FFunction *VClass::FindFunctionChecked(FName InName)
 //
 //==========================================================================
 
-int VClass::GetFunctionIndex(FName InName)
+int VClass::GetFunctionIndex(VName InName)
 {
 	guard(VClass::GetFunctionIndex);
 	for (int i = 0; i < ClassNumMethods; i++)
@@ -394,9 +394,12 @@ void VClass::SerialiseObject(VStream& Strm, VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.6  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.5  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

@@ -105,7 +105,7 @@ public:
 		Resize(strlen(Buf));
 		strcpy(Str, Buf);
 	}
-	explicit VStr(const FName& InName)
+	explicit VStr(const VName& InName)
 	: Str(NULL)
 	{
 		Resize(strlen(*InName));
@@ -218,7 +218,7 @@ public:
 		sprintf(Buf, "%f", InFloat);
 		return operator+=(Buf);
 	}
-	VStr& operator+=(const FName& InName)
+	VStr& operator+=(const VName& InName)
 	{
 		return operator+=(*InName);
 	}
@@ -264,7 +264,7 @@ public:
 		Ret += InFloat;
 		return Ret;
 	}
-	friend VStr operator+(const VStr& S1, const FName& InName)
+	friend VStr operator+(const VStr& S1, const VName& InName)
 	{
 		VStr Ret(S1);
 		Ret += InName;
@@ -293,7 +293,10 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.1  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
-//
+//	
 //**************************************************************************

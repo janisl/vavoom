@@ -140,7 +140,7 @@ bool VStream::Close()
 //
 //==========================================================================
 
-VStream& VStream::operator<<(FName&)
+VStream& VStream::operator<<(VName&)
 {
 	return *this;
 }
@@ -421,9 +421,12 @@ int VMemoryStream::TotalSize()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.3  2006/02/27 18:44:25  dj_jl
 //	Serialisation of indexes in a compact way.
-//
+//	
 //	Revision 1.2  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	

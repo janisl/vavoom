@@ -91,7 +91,7 @@ class TTexture
 public:
 	int			Type;
 	int			Format;
-	FName		Name;
+	VName		Name;
 	int			Width;
 	int			Height;
 	int			SOffset;
@@ -192,9 +192,12 @@ extern float			PixelAspect;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.19  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.18  2005/05/26 16:50:15  dj_jl
 //	Created texture manager class
 //	

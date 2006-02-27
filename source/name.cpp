@@ -41,13 +41,12 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// Static subsystem variables.
-TArray<FNameEntry*>	FName::Names;			// Table of all names.
-FNameEntry*			FName::NameHash[4096];  // Hashed names.
-bool				FName::Initialised;	 	// Subsystem initialised.
+TArray<VNameEntry*>	VName::Names;
+VNameEntry*			VName::HashTable[4096];
+bool				VName::Initialised;
 
-#define REGISTER_NAME(name)		{ NAME_##name, NULL, #name },
-static FNameEntry AutoNames[] =
+#define REGISTER_NAME(name)		{ NULL, NAME_##name, #name },
+static VNameEntry AutoNames[] =
 {
 #include "names.h"
 };
@@ -62,20 +61,21 @@ static FNameEntry AutoNames[] =
 //
 //==========================================================================
 
-inline dword GetTypeHash(const char *S)
+inline vuint32 GetTypeHash(const char *S)
 {
-	return ((byte *)S)[0] | ((byte *)S)[1];
+	return ((vuint8*)S)[0] | ((vuint8*)S)[1];
 }
 
 //==========================================================================
 //
-//	operator << (VStream& Ar, FNameEntry& E)
+//	operator VStream << VNameEntry
 //
 //==========================================================================
 
-VStream& operator << (VStream& Strm, FNameEntry& E)
+VStream& operator<<(VStream& Strm, VNameEntry& E)
 {
-	byte Size;
+	guard(operator VStream << VNameEntry);
+	vuint8 Size;
 	if (Strm.IsSaving())
 	{
 		Size = strlen(E.Name) + 1;
@@ -83,6 +83,7 @@ VStream& operator << (VStream& Strm, FNameEntry& E)
 	Strm << Size;
 	Strm.Serialise(E.Name, Size);
 	return Strm;
+	unguard;
 }
 
 //==========================================================================
@@ -91,12 +92,12 @@ VStream& operator << (VStream& Strm, FNameEntry& E)
 //
 //==========================================================================
 
-FNameEntry* AllocateNameEntry(const char* Name, dword Index, 
-							  FNameEntry* HashNext)
+VNameEntry* AllocateNameEntry(const char* Name, vint32 Index,
+	VNameEntry* HashNext)
 {
 	guard(AllocateNameEntry);
-	int Size = sizeof(FNameEntry) - NAME_SIZE + strlen(Name) + 1;
-	FNameEntry* E = (FNameEntry*)Z_Malloc(Size);
+	int Size = sizeof(VNameEntry) - NAME_SIZE + strlen(Name) + 1;
+	VNameEntry* E = (VNameEntry*)Z_Malloc(Size);
 	memset(E, 0, Size);
 	strcpy(E->Name, Name);
 	E->Index = Index;
@@ -107,13 +108,13 @@ FNameEntry* AllocateNameEntry(const char* Name, dword Index,
 
 //==========================================================================
 //
-//	FName::FName
+//	VName::VName
 //
 //==========================================================================
 
-FName::FName(const char* Name, EFindName FindType)
+VName::VName(const char* Name, ENameFindType FindType)
 {
-	guard(FName::FName);
+	guard(VName::VName);
 	char		NameBuf[NAME_SIZE];
 
 	Index = NAME_None;
@@ -122,8 +123,9 @@ FName::FName(const char* Name, EFindName FindType)
 	{
 		return;
 	}
+
 	//	Copy name localy, make sure it's not longer than 64 characters.
-	if (FindType == FNAME_AddLower8)
+	if (FindType == AddLower8)
 	{
 		for (int i = 0; i < 8; i++)
 		{
@@ -136,9 +138,10 @@ FName::FName(const char* Name, EFindName FindType)
 		strncpy(NameBuf, Name, NAME_SIZE);
 		NameBuf[NAME_SIZE - 1] = 0;
 	}
+
 	//	Search in cache.
 	int HashIndex = GetTypeHash(NameBuf) & 4095;
-	FNameEntry* TempHash = NameHash[HashIndex];
+	VNameEntry* TempHash = HashTable[HashIndex];
 	while (TempHash)
 	{
 		if (!strcmp(NameBuf, TempHash->Name))
@@ -148,49 +151,48 @@ FName::FName(const char* Name, EFindName FindType)
 		}
 		TempHash = TempHash->HashNext;
 	}
+
 	//	Add new name if not found.
-	if (!TempHash && (FindType == FNAME_Add || FindType == FNAME_AddLower8))
+	if (!TempHash && (FindType == Add || FindType == AddLower8))
 	{
 		Index = Names.Add();
-		Names[Index] = AllocateNameEntry(NameBuf, Index, NameHash[HashIndex]);
-		NameHash[HashIndex] = Names[Index];
+		Names[Index] = AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]);
+		HashTable[HashIndex] = Names[Index];
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	FName::StaticInit
+//	VName::StaticInit
 //
 //==========================================================================
 
-void FName::StaticInit()
+void VName::StaticInit()
 {
-	guard(FName::StaticInit);
-	// Register hardcoded names
+	guard(VName::StaticInit);
+	//	Register hardcoded names.
 	for (int i = 0; i < (int)ARRAY_COUNT(AutoNames); i++)
 	{
-		Names.Insert(AutoNames[i].Index);
-		Names[AutoNames[i].Index] = &AutoNames[i];
+		Names.AddItem(&AutoNames[i]);
 		int HashIndex = GetTypeHash(AutoNames[i].Name) & 4095;
-		AutoNames[i].HashNext = NameHash[HashIndex];
-		NameHash[HashIndex] = &AutoNames[i];
+		AutoNames[i].HashNext = HashTable[HashIndex];
+		HashTable[HashIndex] = &AutoNames[i];
 	}
-	// We are now initialised
+	//	We are now initialised.
 	Initialised = true;
 	unguard;
 }
 
 //==========================================================================
 //
-//	FName::StaticExit
+//	VName::StaticExit
 //
 //==========================================================================
 
-void FName::StaticExit()
+void VName::StaticExit()
 {
-	guard(FName::StaticExit);
-	//FIXME do we really need this?
+	guard(VName::StaticExit);
 	for (int i = NUM_HARDCODED_NAMES; i < Names.Num(); i++)
 	{
 		Z_Free(Names[i]);
@@ -203,9 +205,12 @@ void FName::StaticExit()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.9  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.8  2005/11/22 19:10:36  dj_jl
 //	Cleaned up a bit.
 //	

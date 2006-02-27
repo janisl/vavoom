@@ -349,7 +349,7 @@ class VEntity : public VThinker
 
 	int				NetID;
 
-	FName SpriteName;
+	VName SpriteName;
 	float StateTime;	// state tic counter
 	int StateNum;
 	int NextState;
@@ -380,8 +380,8 @@ class VEntity : public VThinker
 	int WaterType;
 
 	//   For player sounds.
-	FName SoundClass;
-	FName SoundGender;
+	VName SoundClass;
+	VName SoundGender;
 
 	static int FIndex_Destroyed;
 	static int FIndex_Touch;
@@ -439,15 +439,15 @@ class VEntity : public VThinker
 	{
 		return !!svpr.Exec(GetVFunction(FIndex_RoughCheckThing), (int)this, (int)Other);
 	}
-	void eventGiveInventory(FName ItemName, int Amount)
+	void eventGiveInventory(VName ItemName, int Amount)
 	{
 		svpr.Exec(GetVFunction(FIndex_GiveInventory), (int)this, ItemName.GetIndex(), Amount);
 	}
-	void eventTakeInventory(FName ItemName, int Amount)
+	void eventTakeInventory(VName ItemName, int Amount)
 	{
 		svpr.Exec(GetVFunction(FIndex_TakeInventory), (int)this, ItemName.GetIndex(), Amount);
 	}
-	int eventCheckInventory(FName ItemName)
+	int eventCheckInventory(VName ItemName)
 	{
 		return svpr.Exec(GetVFunction(FIndex_CheckInventory), (int)this, ItemName.GetIndex());
 	}
@@ -463,7 +463,7 @@ class VEntity : public VThinker
 
 	bool SetState(int state);
 	void SetInitialState(int state);
-	int FindState(FName StateName);
+	int FindState(VName StateName);
 
 	boolean CheckWater(void);
 	boolean CheckPosition(TVec Pos);
@@ -710,7 +710,7 @@ void SV_SetLineTexture(int side, int position, int texture);
 void SV_SetLineTransluc(line_t *line, int trans);
 const char *SV_GetMapName(int num);
 int SV_FindModel(const char *name);
-int SV_GetModelIndex(const FName &Name);
+int SV_GetModelIndex(const VName &Name);
 int SV_FindSkin(const char *name);
 void SV_ChangeSky(const char* Sky1, const char* Sky2);
 void SV_ChangeMusic(const char* SongName);
@@ -786,9 +786,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.47  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.46  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	

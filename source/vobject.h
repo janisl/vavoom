@@ -205,7 +205,7 @@ public:
 	{
 		return vtable[InIndex];
 	}
-	FFunction *GetVFunction(FName FuncName) const;
+	FFunction *GetVFunction(VName FuncName) const;
 
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(IsA)
@@ -285,9 +285,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.16  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.15  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

@@ -111,7 +111,7 @@ private:
 	VStream*			Stream;
 
 public:
-	FName*				NameRemap;
+	VName*				NameRemap;
 	TArray<VObject*>	Exports;
 
 	VSaveLoaderStream(VStream* InStream)
@@ -156,7 +156,7 @@ public:
 		return Stream->Close();
 	}
 
-	VStream& operator<<(FName& Name)
+	VStream& operator<<(VName& Name)
 	{
 		int NameIndex;
 		*this << STRM_INDEX(NameIndex);
@@ -253,7 +253,7 @@ public:
 		return Stream->Close();
 	}
 
-	VStream& operator<<(FName& Name)
+	VStream& operator<<(VName& Name)
 	{
 		int TmpIdx = Name.GetIndex();
 		*this << STRM_INDEX(TmpIdx);
@@ -526,11 +526,11 @@ static void AssertSegment(gameArchiveSegment_t segType)
 
 static void ArchiveNames(VStream &Strm)
 {
-	vint32 Count = FName::GetMaxNames();
+	vint32 Count = VName::GetNumNames();
 	Strm << STRM_INDEX(Count);
 	for (int i = 0; i < Count; i++)
 	{
-		Strm << *FName::GetEntry(i);
+		Strm << *VName::GetEntry(i);
 	}
 }
 
@@ -544,12 +544,12 @@ static void UnarchiveNames(VStream &Strm)
 {
 	vint32 Count;
 	Strm << STRM_INDEX(Count);
-	Loader->NameRemap = (FName*)Z_StrMalloc(Count * 4);
+	Loader->NameRemap = (VName*)Z_StrMalloc(Count * 4);
 	for (int i = 0; i < Count; i++)
 	{
-		FNameEntry E;
+		VNameEntry E;
 		Strm << E;
-		Loader->NameRemap[i] = FName(E.Name);
+		Loader->NameRemap[i] = VName(E.Name);
 	}
 }
 
@@ -594,7 +594,7 @@ static void ArchiveThinkers()
 		}
 
 		StreamOutByte(1);
-		FName CName = It->GetClass()->GetFName();
+		VName CName = It->GetClass()->GetVName();
 		*Saver << CName;
 		Saver->Exports.AddItem(*It);
 		Saver->ObjectsMap[It->GetIndex()] = Saver->Exports.Num();
@@ -613,7 +613,7 @@ static void ArchiveThinkers()
 			if (GGameInfo->Players[i]->ViewEnts[pi])
 			{
 				StreamOutByte(1);
-				FName CName = GGameInfo->Players[i]->ViewEnts[pi]->GetClass()->GetFName();
+				VName CName = GGameInfo->Players[i]->ViewEnts[pi]->GetClass()->GetVName();
 				*Saver << CName;
 				Saver->Exports.AddItem(GGameInfo->Players[i]->ViewEnts[pi]);
 				Saver->ObjectsMap[GGameInfo->Players[i]->ViewEnts[pi]->GetIndex()] = Saver->Exports.Num();
@@ -665,7 +665,7 @@ static void UnarchiveThinkers()
 	while (GET_BYTE)
 	{
 		//  Get params
-		FName CName;
+		VName CName;
 		*Loader << CName;
 		VClass *Class = VClass::FindClass(*CName);
 		if (!Class)
@@ -1264,9 +1264,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.56  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.55  2006/02/27 18:44:25  dj_jl
 //	Serialisation of indexes in a compact way.
-//
+//	
 //	Revision 1.54  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	

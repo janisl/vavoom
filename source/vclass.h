@@ -58,7 +58,7 @@ public:
 		};
 	};
 
-	FName		Name;
+	VName		Name;
 	VField*		Next;
 	int			Ofs;
 	FType		Type;
@@ -76,7 +76,7 @@ public:
 class VStruct
 {
 public:
-	FName			Name;
+	VName			Name;
 	VClass*			OuterClass;
 	VStruct*		ParentStruct;
 	int				Size;
@@ -96,7 +96,7 @@ class VClass
 private:
 	// Internal per-object variables.
 	dword			ObjectFlags;		// Private EObjectFlags used by object manager.
-	FName			Name;				// Name of the object.
+	VName			Name;				// Name of the object.
 	VClass*			LinkNext;			// Next class in linked list
 
 	// Private systemwide variables.
@@ -116,7 +116,7 @@ public:
 	VField*			Fields;
 
 	// Constructors.
-	VClass(FName AName, int ASize);
+	VClass(VName AName, int ASize);
 	VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
 		VClass *AParent, EName AName, void(*ACtor)(void*));
 	void* operator new(size_t Size, int Tag)
@@ -161,7 +161,7 @@ public:
 	{
 		return *Name;
 	}
-	const FName GetFName() const
+	const VName GetVName() const
 	{
 		return Name;
 	}
@@ -170,18 +170,21 @@ public:
 		return ParentClass;
 	}
 
-	FFunction *FindFunction(FName InName);
-	FFunction *FindFunctionChecked(FName InName);
-	int GetFunctionIndex(FName InName);
+	FFunction *FindFunction(VName InName);
+	FFunction *FindFunctionChecked(VName InName);
+	int GetFunctionIndex(VName InName);
 	void SerialiseObject(VStream&, VObject*);
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.12  2006/02/26 20:52:49  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.11  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
 //	

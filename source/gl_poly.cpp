@@ -989,15 +989,15 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	if (skin && *skin)
 	{
-		SetPic(GTextureManager.AddFileTexture(FName(skin), TEXTYPE_Skin));
+		SetPic(GTextureManager.AddFileTexture(VName(skin), TEXTYPE_Skin));
 	}
 	else
 	{
 		pskindesc = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
 		if (skin_index < 0 || skin_index >= pmdl->numskins)
-			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[0].name), TEXTYPE_Skin));
+			SetPic(GTextureManager.AddFileTexture(VName(pskindesc[0].name), TEXTYPE_Skin));
 		else
-			SetPic(GTextureManager.AddFileTexture(FName(pskindesc[skin_index].name), TEXTYPE_Skin));
+			SetPic(GTextureManager.AddFileTexture(VName(pskindesc[skin_index].name), TEXTYPE_Skin));
 	}
 
 	glShadeModel(GL_SMOOTH);
@@ -1132,9 +1132,12 @@ void VOpenGLDrawer::EndParticles(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.32  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.31  2005/11/20 10:39:57  dj_jl
 //	Fixed skin index check.
 //	

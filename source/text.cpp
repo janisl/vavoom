@@ -140,8 +140,8 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 		sprintf(buffer, "%s%02d", Name, i);
 		if (W_CheckNumForName(buffer) >= 0)
 		{
-			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(FName(buffer,
-				FNAME_AddLower8), TEXTYPE_Pic);
+			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
+				VName::AddLower8), TEXTYPE_Pic);
 			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
 				&Fonts[FontNr]->PicInfo[i]);
 			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
@@ -185,8 +185,8 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 		sprintf(buffer, "%s%03d", Name, i + 32);
 		if (W_CheckNumForName(buffer) >= 0)
 		{
-			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(FName(buffer,
-				FNAME_AddLower8), TEXTYPE_Pic);
+			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
+				VName::AddLower8), TEXTYPE_Pic);
 			GTextureManager.GetTextureInfo(Fonts[FontNr]->Pics[i],
 				&Fonts[FontNr]->PicInfo[i]);
 			if ((i + 32 >= 'a') && (i + 32 <= 'z') &&
@@ -665,9 +665,12 @@ void T_DrawString8(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.16  2006/01/10 19:32:27  dj_jl
 //	Fix for long notify messages.
-//
+//	
 //	Revision 1.15  2005/05/26 16:52:29  dj_jl
 //	Created texture manager class
 //	

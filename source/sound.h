@@ -47,13 +47,13 @@ void S_Init();
 void S_InitScript();
 void S_Start();
 void S_MusicChanged();
-void S_StartSong(FName name, int track, boolean loop);
+void S_StartSong(VName name, int track, boolean loop);
 void S_PauseSound();
 void S_ResumeSound();
 void S_UpdateSounds();
-int S_GetSoundID(FName Name);
+int S_GetSoundID(VName Name);
 int S_GetSoundID(const char *name);
-int S_ResolveEntitySound(FName, FName, FName);
+int S_ResolveEntitySound(VName, VName, VName);
 void S_Shutdown();
 
 //
@@ -72,8 +72,8 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id);
 //	Sound sequences
 //
 void SN_InitSequenceScript();
-void SN_SetSeqTrans(FName Name, int Num, int SeqType);
-FName SN_GetSeqTrans(int Num, int SeqType);
+void SN_SetSeqTrans(VName Name, int Num, int SeqType);
+VName SN_GetSeqTrans(int Num, int SeqType);
 void SN_StartSequence(int origin_id, const TVec &origin, int sequence);
 void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name);
 void SN_StopSequence(int origin_id);
@@ -86,9 +86,12 @@ void SN_SerialiseSounds(VStream& Strm);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.15  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.14  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	

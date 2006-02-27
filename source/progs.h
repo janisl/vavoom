@@ -39,7 +39,7 @@ struct dprograms_t;
 
 struct FFunction
 {
-	FName	Name;
+	VName	Name;
 	int		FirstStatement;
 	short	NumParms;
 	short	NumLocals;
@@ -88,7 +88,7 @@ struct state_t
 	float		time;
 	int			nextstate;
 	FFunction*	function;
-	FName		statename;
+	VName		statename;
 };
 
 struct mobjinfo_t
@@ -103,9 +103,9 @@ public:
 	TCRC		crc;
 
 	int			NumSpriteNames;
-	FName*		SpriteNames;
+	VName*		SpriteNames;
 	int			NumModelNames;
-	FName*		ModelNames;
+	VName*		ModelNames;
 	int			NumStates;
 	state_t*	States;
 	int			NumMobjInfo;
@@ -117,8 +117,8 @@ public:
 	void Unload(void);
 
 	FFunction *FuncForName(const char* name);
-	FFunction *FindFunctionChecked(FName InName);
-	VStruct* FindStruct(FName InName, VClass* InClass);
+	FFunction *FindFunctionChecked(VName InName);
+	VStruct* FindStruct(VName InName, VClass* InClass);
 
 	static int Exec(FFunction *func);
 	static int Exec(FFunction *func, int parm1);
@@ -338,22 +338,25 @@ inline TVec PR_Popv(void)
 	return v;
 }
 
-inline void PR_PushName(FName value)
+inline void PR_PushName(VName value)
 {
-	*((FName*)pr_stackPtr++) = value;
+	*((VName*)pr_stackPtr++) = value;
 }
 
-inline FName PR_PopName(void)
+inline VName PR_PopName()
 {
-	return *((FName*)--pr_stackPtr);
+	return *((VName*)--pr_stackPtr);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.17  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
-//
+//	
 //	Revision 1.16  2006/02/17 19:23:47  dj_jl
 //	Removed support for progs global variables.
 //	

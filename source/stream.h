@@ -70,7 +70,7 @@ public:
 	virtual bool Close();
 
 	//	Interface functions for objects and classes streams.
-	virtual VStream& operator<<(FName&);
+	virtual VStream& operator<<(VName&);
 	virtual void SerialiseReference(VObject*&, VClass*);
 	virtual void SerialiseStructPointer(void*&, VStruct*);
 
@@ -185,9 +185,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.3  2006/02/27 18:44:25  dj_jl
 //	Serialisation of indexes in a compact way.
-//
+//	
 //	Revision 1.2  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	

@@ -140,11 +140,11 @@ void InitMapInfo()
 	strcpy(info->nextMap, "MAP01"); // Always go to map 1 if not specified
 	info->cdTrack = 1;
 	info->sky1Texture = GTextureManager.CheckNumForName(
-		FName(DEFAULT_SKY_NAME, FNAME_AddLower8),
+		VName(DEFAULT_SKY_NAME, VName::AddLower8),
 		TEXTYPE_Wall, true, false);
 	if (info->sky1Texture < 0)
 		info->sky1Texture = GTextureManager.CheckNumForName(
-			FName("SKYMNT02", FNAME_AddLower8),
+			VName("SKYMNT02", VName::AddLower8),
 			TEXTYPE_Wall, true, false);
 	info->sky2Texture = info->sky1Texture;
 	info->sky1ScrollDelta = 0.0;
@@ -318,7 +318,7 @@ static void ParseMapInfo()
 				case MCMD_SKY1:
 					SC_MustGetString();
 					info->sky1Texture = GTextureManager.CheckNumForName(
-						FName(sc_String, FNAME_AddLower8),
+						VName(sc_String, VName::AddLower8),
 						TEXTYPE_Wall, true, false);
 					SC_MustGetNumber();
 					info->sky1ScrollDelta = (float)sc_Number * 35.0 / 256.0;
@@ -326,7 +326,7 @@ static void ParseMapInfo()
 				case MCMD_SKY2:
 					SC_MustGetString();
 					info->sky2Texture = GTextureManager.CheckNumForName(
-						FName(sc_String, FNAME_AddLower8),
+						VName(sc_String, VName::AddLower8),
 						TEXTYPE_Wall, true, false);
 					SC_MustGetNumber();
 					info->sky2ScrollDelta = (float)sc_Number * 35.0 / 256.0;
@@ -592,9 +592,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.15  2006/01/18 19:55:26  dj_jl
 //	Fixed doublesky.
-//
+//	
 //	Revision 1.14  2006/01/03 18:36:12  dj_jl
 //	Fixed map infos redefining maps.
 //	

@@ -75,7 +75,7 @@ struct FAmbientSound
 	float		PeriodMax;	// max # of tics for random ambients
 	float		Volume;		// relative volume of sound
 	float		Attenuation;
-	FName		Sound;		// Logical name of sound to play
+	VName		Sound;		// Logical name of sound to play
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -100,8 +100,8 @@ VSampleLoader*		VSampleLoader::List;
 static VRawSampleLoader		RawSampleLoader;
 #endif
 
-static TArray<FName>		PlayerClasses;
-static TArray<FName>		PlayerGenders;
+static TArray<VName>		PlayerClasses;
+static TArray<VName>		PlayerGenders;
 static TArray<FPlayerSound>	PlayerSounds;
 static int					NumPlayerReserves;
 static float				CurrentChangePitch = 7.0 / 255.0;
@@ -115,7 +115,7 @@ static FAmbientSound*		AmbientSounds[256];
 //
 //==========================================================================
 
-static int AddSoundLump(FName TagName, int Lump)
+static int AddSoundLump(VName TagName, int Lump)
 {
 	int id = S_sfx.AddZeroed();
 	S_sfx[id].TagName = TagName;
@@ -134,7 +134,7 @@ static int AddSoundLump(FName TagName, int Lump)
 //
 //==========================================================================
 
-static int FindSound(FName TagName)
+static int FindSound(VName TagName)
 {
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
 	{
@@ -152,7 +152,7 @@ static int FindSound(FName TagName)
 //
 //==========================================================================
 
-static int AddSound(FName TagName, int Lump)
+static int AddSound(VName TagName, int Lump)
 {
 	int id = FindSound(TagName);
 
@@ -194,7 +194,7 @@ static int AddSound(FName TagName, int Lump)
 //
 //==========================================================================
 
-static int FindOrAddSound(FName TagName)
+static int FindOrAddSound(VName TagName)
 {
 	int id = FindSound(TagName);
 	return id ? id : AddSoundLump(TagName, -1);
@@ -206,7 +206,7 @@ static int FindOrAddSound(FName TagName)
 //
 //==========================================================================
 
-static int FindPlayerClass(FName CName)
+static int FindPlayerClass(VName CName)
 {
 	for (int i = 0; i < PlayerClasses.Num(); i++)
 		if (PlayerClasses[i] == CName)
@@ -220,7 +220,7 @@ static int FindPlayerClass(FName CName)
 //
 //==========================================================================
 
-static int AddPlayerClass(FName CName)
+static int AddPlayerClass(VName CName)
 {
 	int idx = FindPlayerClass(CName);
 	return idx == -1 ? PlayerClasses.AddItem(CName) : idx;
@@ -232,7 +232,7 @@ static int AddPlayerClass(FName CName)
 //
 //==========================================================================
 
-static int FindPlayerGender(FName GName)
+static int FindPlayerGender(VName GName)
 {
 	for (int i = 0; i < PlayerGenders.Num(); i++)
 		if (PlayerGenders[i] == GName)
@@ -246,7 +246,7 @@ static int FindPlayerGender(FName GName)
 //
 //==========================================================================
 
-static int AddPlayerGender(FName GName)
+static int AddPlayerGender(VName GName)
 {
 	int idx = FindPlayerGender(GName);
 	return idx == -1 ? PlayerGenders.AddItem(GName) : idx;
@@ -316,7 +316,7 @@ void S_InitScript()
 		Lump = W_IterateNS(Lump, WADNS_Voices))
 	{
 		char SndName[16];
-		sprintf(SndName, "svox/%s", *FName(W_LumpName(Lump), FNAME_AddLower8));
+		sprintf(SndName, "svox/%s", *VName(W_LumpName(Lump), VName::AddLower8));
 
 		int id = AddSoundLump(SndName, Lump);
 		S_sfx[id].ChangePitch = 0;
@@ -602,7 +602,7 @@ static void S_ParseSndinfo()
 		}
 		else
 		{
-			FName TagName = sc_String;
+			VName TagName = sc_String;
 			SC_MustGetString();
 			AddSound(TagName, W_CheckNumForName(sc_String));
 		}
@@ -616,7 +616,7 @@ static void S_ParseSndinfo()
 //
 //==========================================================================
 
-int S_GetSoundID(FName Name)
+int S_GetSoundID(VName Name)
 {
 	guard(S_GetSoundID);
 	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
@@ -725,7 +725,7 @@ int S_ResolveSound(int InSoundId)
 //
 //==========================================================================
 
-int S_ResolveEntitySound(FName ClassName, FName GenderName, FName SoundName)
+int S_ResolveEntitySound(VName ClassName, VName GenderName, VName SoundName)
 {
 	guard(S_ResolveEntitySound);
 	int ClassId = FindPlayerClass(ClassName);
@@ -842,9 +842,12 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.19  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.18  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	

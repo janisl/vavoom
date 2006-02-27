@@ -649,8 +649,8 @@ void Draw_TeleportIcon()
 	if (W_CheckNumForName("teleicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, GTextureManager.AddPatch(FName("teleicon",
-			FNAME_AddLower8), TEXTYPE_Pic));
+		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("teleicon",
+			VName::AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -668,8 +668,8 @@ void Draw_SaveIcon()
 	if (W_CheckNumForName("saveicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, GTextureManager.AddPatch(FName("saveicon",
-			FNAME_AddLower8), TEXTYPE_Pic));
+		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("saveicon",
+			VName::AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -687,8 +687,8 @@ void Draw_LoadIcon()
 	if (W_CheckNumForName("loadicon") >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, GTextureManager.AddPatch(FName("loadicon",
-			FNAME_AddLower8), TEXTYPE_Pic));
+		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("loadicon",
+			VName::AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -715,9 +715,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.30  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.29  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

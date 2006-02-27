@@ -63,7 +63,7 @@ enum
 //
 struct sfxinfo_t
 {
-	FName	TagName;		// Name, by whitch sound is recognised in script
+	VName	TagName;		// Name, by whitch sound is recognised in script
 	int		LumpNum;        // lump number of sfx
 
 	int		Priority;		// Higher priority takes precendence
@@ -158,7 +158,7 @@ public:
 	bool		Initialised;
 	//	Current playing song info.
 	bool		CurrLoop;
-	FName		CurrSong;
+	VName		CurrSong;
 
 	void* operator new(size_t Size, int Tag)
 	{ return Z_Calloc(Size, Tag, 0); }
@@ -388,9 +388,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.25  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.24  2005/11/20 12:38:50  dj_jl
 //	Implemented support for sound sequence extensions.
 //	

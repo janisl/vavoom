@@ -204,7 +204,7 @@ bool VObject::IsA(VClass *SomeBaseClass) const
 //
 //==========================================================================
 
-FFunction *VObject::GetVFunction(FName FuncName) const
+FFunction *VObject::GetVFunction(VName FuncName) const
 {
 	guardSlow(VObject::GetVFunction);
 	return vtable[Class->GetFunctionIndex(FuncName)];
@@ -293,13 +293,13 @@ IMPLEMENT_FUNCTION(VObject, Destroy)
 IMPLEMENT_FUNCTION(VObject, IsA)
 {
 	VObject *ptr;
-	FName SomeName;
+	VName SomeName;
 
 	SomeName = PR_PopName();
 	ptr = (VObject *)PR_Pop();
 	for (const VClass *c = ptr->Class; c; c = c->GetSuperClass())
 	{
-		if (c->GetFName() == SomeName)
+		if (c->GetVName() == SomeName)
 		{
 			PR_Push(true);
 			return;
@@ -325,9 +325,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.18  2006/02/26 20:52:49  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.17  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	

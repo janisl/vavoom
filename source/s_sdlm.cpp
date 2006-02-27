@@ -198,7 +198,7 @@ void VSDLMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 	{
 		Mix_PauseMusic();
 	}
-	CurrSong = FName(song, FNAME_AddLower8);
+	CurrSong = VName(song, VName::AddLower8);
 	CurrLoop = loop;
 	unguard;
 }
@@ -272,9 +272,12 @@ bool VSDLMidiDevice::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.8  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.7  2005/09/12 19:45:16  dj_jl
 //	Created midi device class.
 //	

@@ -158,9 +158,9 @@ static TVec Popv(void)
 //
 //==========================================================================
 
-static FName PopName(void)
+static VName PopName()
 {
-	return *((FName*)--pr_stackPtr);
+	return *((VName*)--pr_stackPtr);
 }
 
 //**************************************************************************
@@ -217,7 +217,7 @@ static char *PF_FormatString(void)
 				break;
 
 			 case 'n':
-				strcat(vastring, *((FName *)params)[pi]);
+				strcat(vastring, *((VName*)params)[pi]);
 				pi++;
 				break;
 
@@ -975,7 +975,7 @@ PF(StrToName)
 	int		str;
 
 	str = Pop();
-	Push(FName((char*)str).GetIndex());
+	Push(VName((char*)str).GetIndex());
 }
 
 //**************************************************************************
@@ -1023,7 +1023,7 @@ PF(CheckTextureNumForName)
 	int		name;
 
 	name = Pop();
-	Push(GTextureManager.CheckNumForName(FName((char*)name, FNAME_AddLower8),
+	Push(GTextureManager.CheckNumForName(VName((char*)name, VName::AddLower8),
 		TEXTYPE_Wall, true, false));
 }
 
@@ -1038,7 +1038,7 @@ PF(TextureNumForName)
 	int		name;
 
 	name = Pop();
-	Push(GTextureManager.NumForName(FName((char*)name, FNAME_AddLower8),
+	Push(GTextureManager.NumForName(VName((char*)name, VName::AddLower8),
 		TEXTYPE_Wall, true, false));
 }
 
@@ -1053,8 +1053,8 @@ PF(CheckFlatNumForName)
 	int		name;
 
 	name = Pop();
-	Push(GTextureManager.CheckNumForName(FName((char*)name,
-		FNAME_AddLower8), TEXTYPE_Flat, true, false));
+	Push(GTextureManager.CheckNumForName(VName((char*)name,
+		VName::AddLower8), TEXTYPE_Flat, true, false));
 }
 
 //==========================================================================
@@ -1068,7 +1068,7 @@ PF(FlatNumForName)
 	int		name;
 
 	name = Pop();
-	Push(GTextureManager.NumForName(FName((char*)name, FNAME_AddLower8),
+	Push(GTextureManager.NumForName(VName((char*)name, VName::AddLower8),
 		TEXTYPE_Flat, true, false));
 }
 
@@ -1285,7 +1285,7 @@ PF(SpawnObject)
 
 PF(FindClass)
 {
-	FName	Name;
+	VName	Name;
 
 	Name = PopName();
 	Push((int)VClass::FindClass(*Name));
@@ -1388,7 +1388,7 @@ PF(P_BlockThingsIterator)
 	int			x;
 	int			y;
 	VObject*	SelfObj;
-	FName		FuncName;
+	VName		FuncName;
 	FFunction*	func = NULL;
 
 	FuncName = PopName();
@@ -1415,7 +1415,7 @@ PF(P_PathTraverse)
 	float		x2;
 	float		y2;
 	int			flags;
-	FName		FuncName;
+	VName		FuncName;
 	VObject*	SelfObj;
 	FFunction*	func;
 
@@ -1984,7 +1984,7 @@ PF(GetSoundPlayingInfo)
 
 PF(GetSoundID)
 {
-	FName	Name;
+	VName	Name;
 
     Name = PopName();
 	Push(S_GetSoundID(Name));
@@ -1998,7 +1998,7 @@ PF(GetSoundID)
 
 PF(SetSeqTrans)
 {
-	FName	Name;
+	VName	Name;
 	int		Num;
 	int		SeqType;
 
@@ -2033,7 +2033,7 @@ PF(GetSeqTrans)
 PF(SectorStartSequence)
 {
 	sector_t*	sec;
-	FName		name;
+	VName		name;
 
     name = PopName();
     sec = (sector_t*)Pop();
@@ -2063,7 +2063,7 @@ PF(SectorStopSequence)
 PF(PolyobjStartSequence)
 {
 	polyobj_t*	poly;
-	FName		name;
+	VName		name;
 
     name = PopName();
     poly = (polyobj_t*)Pop();
@@ -2425,7 +2425,7 @@ PF(FindModel)
 
 PF(GetModelIndex)
 {
-	FName Name;
+	VName Name;
 
 	Name = PopName();
 	Push(SV_GetModelIndex(Name));
@@ -2548,7 +2548,7 @@ PF(R_RegisterPic)
 
 	type = Pop();
 	name = Pop();
-	Push(GTextureManager.AddPatch(FName((char*)name, FNAME_AddLower8),
+	Push(GTextureManager.AddPatch(VName((char*)name, VName::AddLower8),
 		TEXTYPE_Pic));
 }
 
@@ -2567,8 +2567,8 @@ PF(R_RegisterPicPal)
 	palname = Pop();
 	type = Pop();
 	name = Pop();
-	Push(GTextureManager.AddRawWithPal(FName((char*)name, FNAME_AddLower8),
-		FName((char*)palname, FNAME_AddLower8)));
+	Push(GTextureManager.AddRawWithPal(VName((char*)name, VName::AddLower8),
+		VName((char*)palname, VName::AddLower8)));
 }
 
 //==========================================================================
@@ -2961,7 +2961,7 @@ PF(T_DrawTextW)
 
 PF(LocalSound)
 {
-	FName	name;
+	VName	name;
 
 	name = PopName();
 	S_StartSoundName(*name);
@@ -2975,7 +2975,7 @@ PF(LocalSound)
 
 PF(IsLocalSoundPlaying)
 {
-	FName	name;
+	VName	name;
 
 	name = PopName();
 	Push(S_GetSoundPlayingInfo(0, S_GetSoundID(*name)));
@@ -3472,9 +3472,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.72  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.71  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.70  2006/02/17 19:22:46  dj_jl
 //	Builtins belong to object class.
 //	

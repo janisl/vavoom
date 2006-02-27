@@ -159,7 +159,7 @@ public:
 	texpatch_t*	Patches;
 	byte*		Pixels;
 
-	TMultiPatchTexture(FName InName, int InWidth, int InHeight,
+	TMultiPatchTexture(VName InName, int InWidth, int InHeight,
 		float InSScale, float InTScale, int InPatchCount);
 	void SetFrontSkyLayer();
 	byte* GetPixels();
@@ -243,7 +243,7 @@ public:
 	byte*		Pixels;
 	rgba_t*		Palette;
 
-	TFileTexture(int InType, FName InName);
+	TFileTexture(int InType, VName InName);
 	void GetDimensions();
 	byte* GetPixels();
 	rgba_t* GetPalette();
@@ -257,7 +257,7 @@ public:
 class TPcxFileTexture : public TFileTexture
 {
 public:
-	TPcxFileTexture(int InType, FName InName);
+	TPcxFileTexture(int InType, VName InName);
 };
 
 //
@@ -266,7 +266,7 @@ public:
 class TTgaFileTexture : public TFileTexture
 {
 public:
-	TTgaFileTexture(int InType, FName InName);
+	TTgaFileTexture(int InType, VName InName);
 };
 
 //
@@ -275,7 +275,7 @@ public:
 class TPngFileTexture : public TFileTexture
 {
 public:
-	TPngFileTexture(int InType, FName InName);
+	TPngFileTexture(int InType, VName InName);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -362,13 +362,13 @@ void TTextureManager::Init()
 	InitSpriteLumps();
 
 	//	Find sky flat number.
-	skyflatnum = CheckNumForName(FName("F_SKY", FNAME_AddLower8),
+	skyflatnum = CheckNumForName(VName("F_SKY", VName::AddLower8),
 		TEXTYPE_Flat, true, false);
 	if (skyflatnum < 0)
-	    skyflatnum = CheckNumForName(FName("F_SKY001", FNAME_AddLower8),
+	    skyflatnum = CheckNumForName(VName("F_SKY001", VName::AddLower8),
 			TEXTYPE_Flat, true, false);
 	if (skyflatnum < 0)
-	    skyflatnum = NumForName(FName("F_SKY1", FNAME_AddLower8),
+	    skyflatnum = NumForName(VName("F_SKY1", VName::AddLower8),
 			TEXTYPE_Flat, true, false);
 	unguard;
 }
@@ -396,7 +396,7 @@ int TTextureManager::AddTexture(TTexture* Tex)
 //
 //==========================================================================
 
-int	TTextureManager::CheckNumForName(FName Name, int Type, bool bOverload,
+int	TTextureManager::CheckNumForName(VName Name, int Type, bool bOverload,
 	bool bCheckAny)
 {
 	guard(TTextureManager::CheckNumForName);
@@ -433,7 +433,7 @@ int	TTextureManager::CheckNumForName(FName Name, int Type, bool bOverload,
 //
 //==========================================================================
 
-int	TTextureManager::NumForName(FName Name, int Type, bool bOverload,
+int	TTextureManager::NumForName(VName Name, int Type, bool bOverload,
 	bool bCheckAny)
 {
 	guard(TTextureManager::NumForName);
@@ -515,7 +515,7 @@ void TTextureManager::GetTextureInfo(int TexNum, picinfo_t* info)
 //
 //==========================================================================
 
-int TTextureManager::AddPatch(FName Name, int Type)
+int TTextureManager::AddPatch(VName Name, int Type)
 {
 	guard(TTextureManager::AddPatch);
 	//	Find the lump number.
@@ -591,7 +591,7 @@ int TTextureManager::CreatePatch(int Type, int LumpNum)
 //
 //==========================================================================
 
-int TTextureManager::AddRawWithPal(FName Name, FName PalName)
+int TTextureManager::AddRawWithPal(VName Name, VName PalName)
 {
 	guard(TTextureManager::AddRawWithPal);
 	int LumpNum = W_CheckNumForName(*Name);
@@ -626,7 +626,7 @@ int TTextureManager::AddRawWithPal(FName Name, FName PalName)
 //
 //==========================================================================
 
-int TTextureManager::AddFileTexture(FName Name, int Type)
+int TTextureManager::AddFileTexture(VName Name, int Type)
 {
 	guard(TTextureManager::AddFileTexture)
 	char Ext[8];
@@ -781,7 +781,7 @@ void TTextureManager::InitTextures()
 		mtexture = (maptexture_t*)((byte *)maptex + offset);
 
 		TMultiPatchTexture* Tex = new(PU_STATIC) TMultiPatchTexture(
-			FName(mtexture->name, FNAME_AddLower8),
+			VName(mtexture->name, VName::AddLower8),
 			LittleShort(mtexture->width),
 			LittleShort(mtexture->height),
 			mtexture->sscale ? mtexture->sscale / 8.0 : 1.0,
@@ -920,7 +920,7 @@ void TTextureManager::InitTextures2()
 		mtexture = (maptexture_strife_t*)((byte *)maptex + offset);
 
 		TMultiPatchTexture* Tex = new(PU_STATIC) TMultiPatchTexture(
-			FName(mtexture->name, FNAME_AddLower8),
+			VName(mtexture->name, VName::AddLower8),
 			LittleShort(mtexture->width),
 			LittleShort(mtexture->height), 1.0, 1.0,
 			LittleShort(mtexture->patchcount));
@@ -1259,7 +1259,7 @@ TPatchTexture::TPatchTexture(int InType, int InLumpNum)
 , Pixels(0)
 {
 	Type = InType;
-	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
 	Format = TEXFMT_8;
 }
 
@@ -1375,7 +1375,7 @@ void TPatchTexture::Unload()
 //
 //==========================================================================
 
-TMultiPatchTexture::TMultiPatchTexture(FName InName, int InWidth,
+TMultiPatchTexture::TMultiPatchTexture(VName InName, int InWidth,
 	int InHeight, float InSScale, float InTScale, int InPatchCount)
 : Pixels(0)
 {
@@ -1501,7 +1501,7 @@ TFlatTexture::TFlatTexture(int InLumpNum)
 {
 	Type = TEXTYPE_Flat;
 	Format = TEXFMT_8;
-	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
 	Width = 64;
 	Height = 64;
 	LumpNum = InLumpNum;
@@ -1584,7 +1584,7 @@ TRawPicTexture::TRawPicTexture(int InLumpNum, int InPalLumpNum)
 , Palette(0)
 {
 	Type = TEXTYPE_Pic;
-	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
 	Width = 320;
 	Height = W_LumpLength(InLumpNum) / 320;
 	Format = PalLumpNum >= 0 ? TEXFMT_8Pal : TEXFMT_8;
@@ -1725,7 +1725,7 @@ TImgzTexture::TImgzTexture(int InType, int InLumpNum)
 , Pixels(0)
 {
 	Type = InType;
-	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
 	Format = TEXFMT_8;
 }
 
@@ -1866,7 +1866,7 @@ TPngLumpTexture::TPngLumpTexture(int InType, int InLumpNum)
 , Palette(0)
 {
 	Type = InType;
-	Name = FName(W_LumpName(InLumpNum), FNAME_AddLower8);
+	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
 	Format = TEXFMT_8;
 }
 
@@ -2027,7 +2027,7 @@ void TPngLumpTexture::Unload()
 //
 //==========================================================================
 
-TFileTexture::TFileTexture(int InType, FName InName)
+TFileTexture::TFileTexture(int InType, VName InName)
 : Pixels(0)
 , Palette(0)
 {
@@ -2193,7 +2193,7 @@ void TFileTexture::Unload()
 //
 //==========================================================================
 
-TPcxFileTexture::TPcxFileTexture(int InType, FName InName)
+TPcxFileTexture::TPcxFileTexture(int InType, VName InName)
 : TFileTexture(InType, InName)
 {
 }
@@ -2208,7 +2208,7 @@ TPcxFileTexture::TPcxFileTexture(int InType, FName InName)
 //
 //==========================================================================
 
-TTgaFileTexture::TTgaFileTexture(int InType, FName InName)
+TTgaFileTexture::TTgaFileTexture(int InType, VName InName)
 : TFileTexture(InType, InName)
 {
 }
@@ -2223,7 +2223,7 @@ TTgaFileTexture::TTgaFileTexture(int InType, FName InName)
 //
 //==========================================================================
 
-TPngFileTexture::TPngFileTexture(int InType, FName InName)
+TPngFileTexture::TPngFileTexture(int InType, VName InName)
 : TFileTexture(InType, InName)
 {
 }
@@ -2273,17 +2273,17 @@ void P_InitAnimated()
 	{
 		if (*anim_p & 1)
 		{
-			pic1 = GTextureManager.CheckNumForName(FName(anim_p + 10,
-				FNAME_AddLower8), TEXTYPE_Wall, true, false);
-			pic2 = GTextureManager.CheckNumForName(FName(anim_p + 1,
-				FNAME_AddLower8), TEXTYPE_Wall, true, false);
+			pic1 = GTextureManager.CheckNumForName(VName(anim_p + 10,
+				VName::AddLower8), TEXTYPE_Wall, true, false);
+			pic2 = GTextureManager.CheckNumForName(VName(anim_p + 1,
+				VName::AddLower8), TEXTYPE_Wall, true, false);
 		}
 		else
 		{
-			pic1 = GTextureManager.CheckNumForName(FName(anim_p + 10,
-				FNAME_AddLower8), TEXTYPE_Flat, true, false);
-			pic2 = GTextureManager.CheckNumForName(FName(anim_p + 1,
-				FNAME_AddLower8), TEXTYPE_Flat, true, false);
+			pic1 = GTextureManager.CheckNumForName(VName(anim_p + 10,
+				VName::AddLower8), TEXTYPE_Flat, true, false);
+			pic2 = GTextureManager.CheckNumForName(VName(anim_p + 1,
+				VName::AddLower8), TEXTYPE_Flat, true, false);
 		}
 		// different episode ?
 		if (pic1 == -1 || pic2 == -1)
@@ -2354,8 +2354,8 @@ static void ParseFTAnim(int IsFlat)
 
 	//	Name
 	ignore = false;
-	ad.index = GTextureManager.CheckNumForName(FName(sc_String,
-		FNAME_AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
+	ad.index = GTextureManager.CheckNumForName(VName(sc_String,
+		VName::AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
 	if (ad.index == -1)
 	{
 		ignore = true;
@@ -2410,8 +2410,8 @@ static void ParseFTAnim(int IsFlat)
 		else
 		{
 			SC_MustGetString();
-			fd.index = GTextureManager.CheckNumForName(FName(sc_String,
-				FNAME_AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
+			fd.index = GTextureManager.CheckNumForName(VName(sc_String,
+				VName::AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
 			if (fd.index == -1 && !missing)
 			{
 				SC_ScriptError(va("Unknown texture %s", sc_String));
@@ -2501,8 +2501,8 @@ static void ParseSwitchDef()
 	}
 
 	//	Switch texture
-	int t1 = GTextureManager.CheckNumForName(FName(sc_String,
-		FNAME_AddLower8), TEXTYPE_Wall, true, false);
+	int t1 = GTextureManager.CheckNumForName(VName(sc_String,
+		VName::AddLower8), TEXTYPE_Wall, true, false);
 	int t2 = -1;
 	char SndName[64];
 	strcpy(SndName, "Switch");
@@ -2525,8 +2525,8 @@ static void ParseSwitchDef()
 				else if (SC_Compare("pic"))
 				{
 					SC_MustGetString();
-					t2 = GTextureManager.CheckNumForName(FName(sc_String,
-						FNAME_AddLower8), TEXTYPE_Wall, true, false);
+					t2 = GTextureManager.CheckNumForName(VName(sc_String,
+						VName::AddLower8), TEXTYPE_Wall, true, false);
 					SC_MustGetStringName("tics");
 					SC_MustGetStringName("0");
 				}
@@ -2661,10 +2661,10 @@ void P_InitSwitchList()
 				GCon->Logf(NAME_Init, "Switch %s in SWITCHES has the same 'on' state", list_p);
 				continue;
 			}
-			int t1 = GTextureManager.CheckNumForName(FName(list_p,
-				FNAME_AddLower8), TEXTYPE_Wall, true, false);
-			int t2 = GTextureManager.CheckNumForName(FName(list_p + 9,
-				FNAME_AddLower8), TEXTYPE_Wall, true, false);
+			int t1 = GTextureManager.CheckNumForName(VName(list_p,
+				VName::AddLower8), TEXTYPE_Wall, true, false);
+			int t2 = GTextureManager.CheckNumForName(VName(list_p + 9,
+				VName::AddLower8), TEXTYPE_Wall, true, false);
 			if (t1 < 0 || t2 < 0)
 			{
 				continue;
@@ -2762,9 +2762,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.35  2005/12/29 20:17:41  dj_jl
 //	Fix for too small flats.
-//
+//	
 //	Revision 1.34  2005/11/20 10:39:57  dj_jl
 //	Fixed skin index check.
 //	

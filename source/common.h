@@ -193,7 +193,7 @@ public:
 //
 //==========================================================================
 
-class	FName;
+class	VName;
 class	VStr;
 class	VStream;
 
@@ -206,9 +206,12 @@ class	VObject;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.22  2006/02/27 18:43:41  dj_jl
 //	Added definitions for common integer types.
-//
+//	
 //	Revision 1.21  2006/02/26 14:43:39  dj_jl
 //	Added workaround to for statement variable scoping.
 //	

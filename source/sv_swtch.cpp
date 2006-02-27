@@ -241,8 +241,8 @@ void P_InitTerrainTypes(void)
 	SC_Open("TERRAINS");
 	while (SC_GetString())
 	{
-		int pic = GTextureManager.CheckNumForName(FName(sc_String,
-			FNAME_AddLower8), TEXTYPE_Flat, true, true);
+		int pic = GTextureManager.CheckNumForName(VName(sc_String,
+			VName::AddLower8), TEXTYPE_Flat, true, true);
 		SC_MustGetNumber();
 		if (pic != -1)
 		{
@@ -279,9 +279,12 @@ int SV_TerrainType(int pic)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.11  2005/05/26 16:53:59  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.10  2005/05/03 15:00:11  dj_jl
 //	Moved switch list, animdefs enhancements.
 //	

@@ -414,15 +414,15 @@ void VSoftwareDrawer::AliasSetupSkin(int skin_index, const char *skin)
 	int SkinID;
 	if (skin && *skin)
 	{
-		SkinID = GTextureManager.AddFileTexture(FName(skin), TEXTYPE_Skin);
+		SkinID = GTextureManager.AddFileTexture(VName(skin), TEXTYPE_Skin);
 	}
 	else
 	{
 		mskin_t* pskins = (mskin_t *)((byte *)pmdl + pmdl->ofsskins);
 		if (skin_index < 0 || skin_index >= pmdl->numskins)
-			SkinID = GTextureManager.AddFileTexture(FName(pskins[0].name), TEXTYPE_Skin);
+			SkinID = GTextureManager.AddFileTexture(VName(pskins[0].name), TEXTYPE_Skin);
 		else
-			SkinID = GTextureManager.AddFileTexture(FName(pskins[skin_index].name), TEXTYPE_Skin);
+			SkinID = GTextureManager.AddFileTexture(VName(pskins[skin_index].name), TEXTYPE_Skin);
 	}
 	d_affinetridesc.pskin = SetPic(SkinID);
 	d_affinetridesc.skinwidth = pmdl->skinwidth;
@@ -803,9 +803,12 @@ extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.18  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.17  2005/11/20 10:39:57  dj_jl
 //	Fixed skin index check.
 //	

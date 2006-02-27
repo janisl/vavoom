@@ -491,7 +491,7 @@ void VLevel::LoadSideDefsPass2(int Lump)
 		case LNSPEC_LineTranslucent:
 			//	In BOOM midtexture can be translucency table lump name.
 			sd->midtexture = GTextureManager.CheckNumForName(
-				FName(msd->midtexture, FNAME_AddLower8),
+				VName(msd->midtexture, VName::AddLower8),
 				TEXTYPE_Wall, true, true);
 			if (sd->midtexture == -1)
 			{
@@ -1098,7 +1098,7 @@ void VLevel::LoadThings2(int Lump)
 int VLevel::FTNumForName(const char *name) const
 {
 	guard(VLevel::FTNumForName);
-	FName Name(name, FNAME_AddLower8);
+	VName Name(name, VName::AddLower8);
 	int i = GTextureManager.CheckNumForName(Name, TEXTYPE_Flat, true, true);
 	if (i == -1)
 	{
@@ -1124,7 +1124,7 @@ int VLevel::FTNumForName(const char *name) const
 int VLevel::TFNumForName(const char *name) const
 {
 	guard(VLevel::TFNumForName);
-	FName Name(name, FNAME_AddLower8);
+	VName Name(name, VName::AddLower8);
 	int i = GTextureManager.CheckNumForName(Name, TEXTYPE_Wall, true, true);
 	if (i == -1)
 	{
@@ -1150,7 +1150,7 @@ int VLevel::TFNumForName(const char *name) const
 int VLevel::CMapTFNumForName(const char *name) const
 {
 	guard(VLevel::CMapTFNumForName);
-	int i = GTextureManager.CheckNumForName(FName(name, FNAME_AddLower8),
+	int i = GTextureManager.CheckNumForName(VName(name, VName::AddLower8),
 		TEXTYPE_Wall, true, true);
 	if (i == -1)
 	{
@@ -1555,9 +1555,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.10  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.9  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	

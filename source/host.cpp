@@ -137,7 +137,7 @@ void Host_Init(void)
 	base = Sys_ZoneBase(&size);
 	Z_Init(base, size);
 
-	FName::StaticInit();
+	VName::StaticInit();
 	VObject::StaticInit();
 
 	TCvar::Init();
@@ -623,15 +623,18 @@ void Host_Shutdown(void)
 	SAFE_SHUTDOWN(Sys_Shutdown, ())
 
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
-	SAFE_SHUTDOWN(FName::StaticExit, ())
+	SAFE_SHUTDOWN(VName::StaticExit, ())
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/02/27 20:45:26  dj_jl
+//	Rewrote names class.
+//
 //	Revision 1.31  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.30  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
 //	
