@@ -84,6 +84,13 @@ typedef unsigned char 		byte;
 typedef unsigned short	 	word;
 typedef unsigned long	 	dword;
 
+typedef char				vint8;
+typedef unsigned char		vuint8;
+typedef short				vint16;
+typedef unsigned short		vuint16;
+typedef int					vint32;
+typedef unsigned int		vuint32;
+
 //==========================================================================
 //
 //	Standard macros
@@ -199,9 +206,12 @@ class	VObject;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/02/27 18:43:41  dj_jl
+//	Added definitions for common integer types.
+//
 //	Revision 1.21  2006/02/26 14:43:39  dj_jl
 //	Added workaround to for statement variable scoping.
-//
+//	
 //	Revision 1.20  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	
