@@ -259,6 +259,7 @@ public:
 			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13,
 			parm14, parm15, parm16);
 	}
+	static int ExecuteFunction(FFunction *func);
 	void DumpProfile(void);
 
 	int GetStringOffs(const char *Str)
@@ -281,7 +282,6 @@ private:
 
 	FFunction *CheckFuncForName(const char* name);
 	char* FuncName(int fnum);
-	static int ExecuteFunction(FFunction *func);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -351,9 +351,12 @@ inline VName PR_PopName()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/28 18:04:36  dj_jl
+//	Added script execution helpers.
+//
 //	Revision 1.18  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.17  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
 //	

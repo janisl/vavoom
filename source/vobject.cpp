@@ -278,10 +278,8 @@ void VObject::Serialise(VStream& Strm)
 
 IMPLEMENT_FUNCTION(VObject, Destroy)
 {
-	VObject *ptr;
-
-	ptr = (VObject *)PR_Pop();
-	delete ptr;
+	P_GET_SELF;
+	delete Self;
 }
 
 //==========================================================================
@@ -292,20 +290,18 @@ IMPLEMENT_FUNCTION(VObject, Destroy)
 
 IMPLEMENT_FUNCTION(VObject, IsA)
 {
-	VObject *ptr;
-	VName SomeName;
-
-	SomeName = PR_PopName();
-	ptr = (VObject *)PR_Pop();
-	for (const VClass *c = ptr->Class; c; c = c->GetSuperClass())
+	P_GET_NAME(SomeName);
+	P_GET_SELF;
+	bool Ret = false;
+	for (const VClass *c = Self->Class; c; c = c->GetSuperClass())
 	{
 		if (c->GetVName() == SomeName)
 		{
-			PR_Push(true);
-			return;
+			Ret = true;
+			break;
 		}
 	}
-	PR_Push(false);
+	RET_BOOL(Ret);
 }
 
 //==========================================================================
@@ -316,18 +312,19 @@ IMPLEMENT_FUNCTION(VObject, IsA)
 
 IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 {
-	VObject *ptr;
-
-	ptr = (VObject *)PR_Pop();
-	PR_Push(ptr->GetFlags() & _OF_Destroyed);
+	P_GET_SELF;
+	RET_BOOL(Self->GetFlags() & _OF_Destroyed);
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/02/28 18:04:36  dj_jl
+//	Added script execution helpers.
+//
 //	Revision 1.19  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.18  2006/02/26 20:52:49  dj_jl
 //	Proper serialisation of level and players.
 //	
