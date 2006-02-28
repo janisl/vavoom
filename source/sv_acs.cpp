@@ -597,6 +597,7 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 {
 	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass(),
 		PU_LEVSPEC);
+	VThinker::AddThinker(script);
 	script->info = Info;
 	script->number = Info->number;
 	script->ip = Info->address;
@@ -2129,7 +2130,7 @@ int VACS::RunScript(float DeltaTime)
 	{
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
-		ConditionalDestroy();
+		SetFlags(_OF_DelayedDestroy);
 		Z_Free(LocalVars);
 		return resultValue;
 	}
@@ -4416,7 +4417,7 @@ int VACS::RunScript(float DeltaTime)
 	{
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
-		ConditionalDestroy();
+		SetFlags(_OF_DelayedDestroy);
 		Z_Free(LocalVars);
 	}
 	return resultValue;
@@ -4645,9 +4646,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/02/28 18:19:31  dj_jl
+//	Put thinkers back in linked list.
+//
 //	Revision 1.43  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.42  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	
