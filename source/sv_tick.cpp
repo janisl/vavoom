@@ -50,6 +50,9 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+VThinker*	VThinker::ThinkerHead;
+VThinker*	VThinker::ThinkerTail;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 IMPLEMENT_CLASS(V, Thinker)
@@ -64,7 +67,7 @@ static int FIndex_Tick;
 //
 //==========================================================================
 
-void P_InitThinkers(void)
+void P_InitThinkers()
 {
 	FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex("Tick");
 }
@@ -75,14 +78,20 @@ void P_InitThinkers(void)
 //
 //==========================================================================
 
-void SV_DestroyAllThinkers(void)
+void SV_DestroyAllThinkers()
 {
 	guard(SV_DestroyAllThinkers);
-	for (TObjectIterator<VThinker> It; It; ++It)
+	for (VThinker* Th = VThinker::ThinkerHead; Th; Th = Th->Next)
 	{
-		delete *It;
+		Th->ConditionalDestroy();
 	}
+//	for (TObjectIterator<VThinker> It; It; ++It)
+//	{
+//		delete *It;
+//	}
 	VObject::CollectGarbage();
+	VThinker::ThinkerHead = NULL;
+	VThinker::ThinkerTail = NULL;
 	unguard;
 }
 
@@ -100,6 +109,7 @@ void VThinker::Serialise(VStream& Strm)
 	{
 		XLevel = GLevel;
 		Level = GLevelInfo;
+		AddThinker(this);
 	}
 	unguard;
 }
@@ -123,14 +133,19 @@ void VThinker::Tick(float DeltaTime)
 //
 //==========================================================================
 
-static void RunThinkers(void)
+static void RunThinkers()
 {
 	guard(RunThinkers);
-	for (TObjectIterator<VThinker> It; It; ++It)
+	for (VThinker* Th = VThinker::ThinkerHead; Th; Th = Th->Next)
 	{
-		if (!(It->GetFlags() & _OF_Destroyed))
+		if (!(Th->GetFlags() & _OF_DelayedDestroy))
 		{
-			It->Tick(host_frametime);
+			Th->Tick(host_frametime);
+		}
+		else
+		{
+			VThinker::RemoveThinker(Th);
+			Th->ConditionalDestroy();
 		}
 	}
 	unguard;
@@ -142,7 +157,7 @@ static void RunThinkers(void)
 //
 //==========================================================================
 
-void P_Ticker(void)
+void P_Ticker()
 {
 	guard(P_Ticker);
 	int 	i;
@@ -160,16 +175,59 @@ void P_Ticker(void)
 	}
 
 	level.time += host_frametime;
-    level.tictime++;
+	level.tictime++;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::AddThinker
+//
+//==========================================================================
+
+void VThinker::AddThinker(VThinker* Th)
+{
+	guard(VThinker::AddThinker);
+	Th->Prev = ThinkerTail;
+	Th->Next = NULL;
+	if (ThinkerTail)
+		ThinkerTail->Next = Th;
+	else
+		ThinkerHead = Th;
+	ThinkerTail = Th;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VThinker::RemoveThinker
+//
+//==========================================================================
+
+void VThinker::RemoveThinker(VThinker* Th)
+{
+	guard(VThinker::RemoveThinker);
+dprintf("Remove %p %p %p %p %p\n", Th, ThinkerHead, ThinkerTail, Th->Prev, Th->Next);
+	if (Th == ThinkerHead)
+		ThinkerHead = Th->Next;
+	else
+		Th->Prev->Next = Th->Next;
+	if (Th == ThinkerTail)
+		ThinkerTail = Th->Prev;
+	else
+		Th->Next->Prev = Th->Prev;
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/02/28 18:06:28  dj_jl
+//	Put thinkers back in linked list.
+//
 //	Revision 1.24  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.23  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	

@@ -55,10 +55,19 @@ class VThinker : public VObject
 	VLevel*			XLevel;		//	Level object.
 	VLevelInfo*		Level;		//	Level info object.
 
+	VThinker*		Prev;
+	VThinker*		Next;
+
+	static VThinker*	ThinkerHead;
+	static VThinker*	ThinkerTail;
+
 	void Serialise(VStream&);
 
 	//	VThinker interface.
 	virtual void Tick(float DeltaTime);
+
+	static void AddThinker(VThinker*);
+	static void RemoveThinker(VThinker*);
 };
 
 //==========================================================================
@@ -456,9 +465,9 @@ class VEntity : public VThinker
 		return svpr.Exec(GetVFunction(FIndex_GetSigilPieces), (int)this);
 	}
 
-	void Remove(void)
+	void Remove()
 	{
-		ConditionalDestroy();
+		SetFlags(_OF_DelayedDestroy);
 	}
 
 	bool SetState(int state);
@@ -786,9 +795,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.49  2006/02/28 18:06:28  dj_jl
+//	Put thinkers back in linked list.
+//
 //	Revision 1.48  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.47  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	

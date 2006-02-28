@@ -245,6 +245,7 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	int i;
 
 	Ent = (VEntity*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
+	VThinker::AddThinker(Ent);
 
 	//	Client treats first objects as player objects and will use
 	// models and skins from player info
@@ -3014,9 +3015,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.84  2006/02/28 18:06:28  dj_jl
+//	Put thinkers back in linked list.
+//
 //	Revision 1.83  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.82  2006/02/25 17:12:38  dj_jl
 //	Added missing implementation of the player class.
 //	

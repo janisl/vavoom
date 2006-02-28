@@ -584,9 +584,9 @@ static void ArchiveThinkers()
 	}
 
 	//	Add thinkers.
-	for (TObjectIterator<VThinker> It; It; ++It)
+	for (VThinker* Th = VThinker::ThinkerHead; Th; Th = Th->Next)
 	{
-		VEntity *mobj = Cast<VEntity>(*It);
+		VEntity *mobj = Cast<VEntity>(Th);
 		if (mobj && mobj->bIsPlayer && !SavingPlayers)
 		{
 			// Skipping player mobjs
@@ -594,10 +594,10 @@ static void ArchiveThinkers()
 		}
 
 		StreamOutByte(1);
-		VName CName = It->GetClass()->GetVName();
+		VName CName = Th->GetClass()->GetVName();
 		*Saver << CName;
-		Saver->Exports.AddItem(*It);
-		Saver->ObjectsMap[It->GetIndex()] = Saver->Exports.Num();
+		Saver->Exports.AddItem(Th);
+		Saver->ObjectsMap[Th->GetIndex()] = Saver->Exports.Num();
 	}
 
 	//	Add player weapon objects.
@@ -1264,9 +1264,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.57  2006/02/28 18:06:28  dj_jl
+//	Put thinkers back in linked list.
+//
 //	Revision 1.56  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.55  2006/02/27 18:44:25  dj_jl
 //	Serialisation of indexes in a compact way.
 //	

@@ -1579,28 +1579,26 @@ PF(NewMobjThinker)
 
 PF(NextMobj)
 {
-    VObject *th;
-	int i;
+	VThinker*	th;
 
-    th = (VObject*)Pop();
+	th = (VThinker*)Pop();
 	if (!th)
-    {
-    	i = 0;
+	{
+		th = VThinker::ThinkerHead;
 	}
 	else
 	{
-		i = th->GetIndex() + 1;
+		th = th->Next;
 	}
-    while (i < VObject::GetObjectsCount())
-    {
-		th = VObject::GetIndexObject(i);
-        if (th && th->IsA(VEntity::StaticClass()))
-        {
-            Push((int)th);
-            return;
+	while (th)
+	{
+		if (th->IsA(VEntity::StaticClass()))
+		{
+			Push((int)th);
+			return;
 		}
-		i++;
-    }
+		th = th->Next;
+	}
 	Push(0);
 }
 
@@ -1623,6 +1621,7 @@ PF(NewSpecialThinker)
 
 	Class = (VClass *)Pop();
 	spec = (VThinker*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
+	VThinker::AddThinker(spec);
 	Push((int)spec);
 }
 
@@ -1637,7 +1636,7 @@ PF(RemoveSpecialThinker)
 	VThinker	*spec;
 
     spec = (VThinker*)Pop();
-    spec->ConditionalDestroy();
+    spec->SetFlags(_OF_DelayedDestroy);
 }
 
 //==========================================================================
@@ -1664,29 +1663,27 @@ PF(P_ChangeSwitchTexture)
 
 PF(NextThinker)
 {
-	VObject *th;
-	VClass *Class;
-	int i;
+	VThinker*	th;
+	VClass*		Class;
 
-	Class = (VClass *)Pop();
-	th = (VObject*)Pop();
+	Class = (VClass*)Pop();
+	th = (VThinker*)Pop();
 	if (!th)
 	{
-		i = 0;
+		th = VThinker::ThinkerHead;
 	}
 	else
 	{
-		i = th->GetIndex() + 1;
+		th = th->Next;
 	}
-	while (i < VObject::GetObjectsCount())
+	while (th)
 	{
-		th = VObject::GetIndexObject(i);
-		if (th && th->IsA(Class))
+		if (th->IsA(Class))
 		{
 			Push((int)th);
 			return;
 		}
-		i++;
+		th = th->Next;
 	}
 	Push(0);
 }
@@ -3472,9 +3469,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.73  2006/02/28 18:06:28  dj_jl
+//	Put thinkers back in linked list.
+//
 //	Revision 1.72  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.71  2006/02/25 17:14:19  dj_jl
 //	Implemented proper serialisation of the objects.
 //	
