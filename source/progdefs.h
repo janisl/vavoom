@@ -315,6 +315,8 @@ struct dconstant_t
 	short		Name;
 	short		OuterClass;
 	int			Value;
+	byte		Type;
+	byte		Pad[3];
 };
 
 struct dstate_t
@@ -345,9 +347,12 @@ struct dmobjinfo_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/02/28 22:50:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.26  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
-//
+//	
 //	Revision 1.25  2006/02/19 20:36:03  dj_jl
 //	Implemented support for delegates.
 //	
