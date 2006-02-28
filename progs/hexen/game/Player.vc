@@ -25,6 +25,44 @@
 
 class Player : BasePlayer;
 
+const int STARTREDPALS		= 1;
+const int STARTBONUSPALS	= 9;
+const int STARTPOISONPALS	= 13;
+const int STARTICEPAL		= 21;
+const int STARTHOLYPAL		= 22;
+const int STARTSCOURGEPAL	= 25;
+const int NUMREDPALS		= 8;
+const int NUMBONUSPALS		= 4;
+const int NUMPOISONPALS		= 8;
+
+const float BLINKTHRESHOLD	= 4.0;
+
+const float INVULNTIME		= 30.0;
+const float INFRATIME		= 120.0;
+const float FLIGHTTIME 		= 60.0;
+const float SPEEDTIME 		= 45.0;
+
+const int MAXHEALTH			= 100;
+const int MAXMORPHHEALTH	= 30;
+const float VIEWHEIGHT		= 48.0;
+
+//
+// Player internal flags, for cheats and debug.
+//
+const int CF_NOCLIP			= 1;	// No clipping, walk through barriers.
+const int CF_GODMODE		= 2;	// No damage, no health loss.
+
+// 16 pixels of bob
+const float MAXBOB			= 16.0;
+
+const float HEAL_RADIUS_DIST	= 255.0;
+
+const float USERANGE			= 64.0;
+
+const float BLAST_RADIUS_DIST	= 255.0;
+const float BLAST_FULLSTRENGTH	= 0.0038909912;
+const float BLAST_SPEED			= 20.0;
+
 struct inventory_t
 {
 	int type;
@@ -442,7 +480,7 @@ bool CheckSpot(mthing_t * mthing)
 	y = mthing->y;
 
 	MO.bNoPassMobj = true;
-	if (!MO.CheckPosition(vector(x, y, ONFLOORZ)))
+	if (!MO.CheckPosition(vector(x, y, Actor::ONFLOORZ)))
 	{
 		MO.bNoPassMobj = false;
 		return false;
@@ -454,7 +492,7 @@ bool CheckSpot(mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	A = HexenLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		sec->floorheight + TELEFOGHEIGHT));
+		sec->floorheight + Actor::TELEFOGHEIGHT));
 	A.PlaySound('Teleport', CHAN_VOICE);
 
 	return true;
@@ -494,7 +532,7 @@ void SpawnPlayer(mthing_t * mthing)
 	}
 	x = mthing->x;
 	y = mthing->y;
-	z = ONFLOORZ;
+	z = Actor::ONFLOORZ;
 	switch (PClass)
 	{
 	case HexenDefs::PCLASS_FIGHTER:
@@ -765,7 +803,7 @@ bool GiveKey(int key)
 	{
 		return false;
 	}
-	BonusFlash += BONUSADD;
+	BonusFlash += Actor::BONUSADD;
 	Keys |= 1 << key;
 	return true;
 }
@@ -834,7 +872,7 @@ bool GivePower(int power)
 	if (power == pw_minotaur)
 	{
 		// Doesn't matter if already have power, renew ticker
-		Powers[power] = MAULATORTIME;
+		Powers[power] = Actor::MAULATORTIME;
 		return true;
 	}
 	if (Powers[power])
@@ -1940,7 +1978,7 @@ bool UndoPlayerMorph()
 	PostMorphWeapon(MO._Special1);
 
 	fog = HexenLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
-		20.0 * sin(MO.Angles.yaw), TELEFOGHEIGHT));
+		20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	MO.SetState(Actor::S_FREETARGMOBJ);
@@ -2842,7 +2880,7 @@ bool UseArtifact(int arti)
 		}
 		else
 		{
-			centerprint(self, TXT_USEPUZZLEFAILED);
+			centerprint(self, "YOU CANNOT USE THIS HERE");
 			return false;
 		}
 		break;
@@ -2878,7 +2916,7 @@ void UseArtiTele()
 		destY = Level.PlayerStarts[0].y;
 		destAngle = itof(45 * (Level.PlayerStarts[0].angle / 45));
 	}
-	MO.Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
+	MO.Teleport(vector(destX, destY, Actor::ONFLOORZ), destAngle, true, true,
 		false);
 	if (MorphTime)
 	{
@@ -3152,12 +3190,12 @@ Actor SpawnPlayerMissile(classid type)
 	org = MO.Origin;
 	if (type == LightningFloor)
 	{
-		org.z = ONFLOORZ;
+		org.z = Actor::ONFLOORZ;
 		angles.pitch = 0.0;
 	}
 	else if (type == LightningCeiling)
 	{
-		org.z = ONCEILINGZ;
+		org.z = Actor::ONCEILINGZ;
 		angles.pitch = 0.0;
 	}
 	else
@@ -3350,7 +3388,7 @@ void SetPsprite(int position, int stnum)
 void BringUpWeapon()
 {
 	PendingWeapon = HexenDefs::wp_nochange;
-	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	ViewEnts[ps_weapon].SetState(Weapon(ViewEnts[ps_weapon]).GetUpState());
 }
 
@@ -3504,7 +3542,7 @@ void FireWeapon()
 
 void ActivateMorphWeapon()
 {
-	ViewEnts[ps_weapon].SY = WEAPONTOP;
+	ViewEnts[ps_weapon].SY = Weapon::WEAPONTOP;
 	SetWeapon(HexenDefs::WP_FIRST);	// Snout is the first weapon
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).ReadyState);
 }
@@ -3518,7 +3556,7 @@ void ActivateMorphWeapon()
 void PostMorphWeapon(int weapon)
 {
 	SetWeapon(weapon);
-	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
 }
 
@@ -3957,6 +3995,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.22  2006/02/26 20:56:25  dj_jl
 //  Proper serialisation of level and players.
 //

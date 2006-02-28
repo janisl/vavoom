@@ -25,6 +25,41 @@
 
 class Player : BasePlayer;
 
+const int MAXCHICKENHEALTH	= 30;
+const float VIEWHEIGHT		= 41.0;
+
+const float BLINKTHRESHOLD	= 4.0;
+
+const float
+	INVULNTIME		= 30.0,
+	INVISTIME		= 60.0,
+	INFRATIME		= 120.0,
+	WPNLEV2TIME 	= 40.0,
+	FLIGHTTIME 		= 60.0,
+	CHICKENTIME 	= 40.0;
+
+//
+// Player internal flags, for cheats and debug.
+//
+const int
+	CF_NOCLIP		= 1,	// No clipping, walk through barriers.
+	CF_GODMODE		= 2;	// No damage, no health loss.
+
+// 16 pixels of bob
+const float MAXBOB	= 16.0;
+
+const int
+	INVERSECOLORMAP	= 32,
+
+	STARTREDPALS	= 1,
+	STARTBONUSPALS	= 9,
+	NUMREDPALS		= 8,
+	NUMBONUSPALS	= 4;
+
+const int MAXHEALTH	= 100;
+
+const float USERANGE	= 64.0;
+
 struct inventory_t
 {
 	int type;
@@ -318,7 +353,7 @@ bool CheckSpot(mthing_t * mthing)
 	y = mthing->y;
 
 	MO.bNoPassMobj = true;
-	if (!MO.CheckPosition(vector(x, y, ONFLOORZ)))
+	if (!MO.CheckPosition(vector(x, y, Actor::ONFLOORZ)))
 	{
 		MO.bNoPassMobj = false;
 		return false;
@@ -330,7 +365,7 @@ bool CheckSpot(mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	A = HereticLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		sec->floorheight + TELEFOGHEIGHT));
+		sec->floorheight + Actor::TELEFOGHEIGHT));
 	A.PlaySound('misc/teleport', CHAN_VOICE);
 
 	return true;
@@ -357,7 +392,7 @@ void SpawnPlayer(mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 
-	z = ONFLOORZ;
+	z = Actor::ONFLOORZ;
 	A = HereticLevelInfo(Level).Spawn(HereticPlayer, vector(x, y, z));
 	A.Origin.z += mthing->height;
 	A.LinkToWorld();
@@ -544,7 +579,7 @@ bool GiveWeapon(int weapon)
 		{
 			return false;
 		}
-		BonusFlash += BONUSADD;
+		BonusFlash += Actor::BONUSADD;
 		WeaponOwned[weapon] = true;
 		GiveAmmo(MainGameInfo(Level.Game).weapon_ammo_type[weapon], MainGameInfo(Level.Game).GetWeaponAmmo[weapon]);
 		PendingWeapon = weapon;
@@ -633,7 +668,7 @@ bool GiveKey(int key)
 	{
 		return false;
 	}
-	BonusFlash = BONUSADD;
+	BonusFlash = Actor::BONUSADD;
 	Keys |= 1 << key;
 	return true;
 }
@@ -1689,7 +1724,7 @@ bool UndoPlayerChicken()
 	PostChickenWeapon(MO.Special1);
 
 	fog = HereticLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(
-		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), TELEFOGHEIGHT));
+		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	MO.SetState(Actor::S_FREETARGMOBJ);
@@ -2400,7 +2435,7 @@ void UseArtiTele()
 		destY = Level.PlayerStarts[0].y;
 		destAngle = itof(45 * (Level.PlayerStarts[0].angle / 45));
 	}
-	MO.Teleport(vector(destX, destY, ONFLOORZ), destAngle, true, true,
+	MO.Teleport(vector(destX, destY, Actor::ONFLOORZ), destAngle, true, true,
 		false);
 	if (ChickenTime)
 	{
@@ -2529,7 +2564,7 @@ void BringUpWeapon()
 	{
 		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
 	}
-	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	if (Powers[pw_weaponlevel2])
 	{
 		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState2);
@@ -2742,7 +2777,7 @@ void FireWeapon()
 void ActivateBeak()
 {
 	SetWeapon(wp_beak);
-	ViewEnts[ps_weapon].SY = WEAPONTOP;
+	ViewEnts[ps_weapon].SY = Weapon::WEAPONTOP;
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).ReadyState);
 }
 
@@ -2760,7 +2795,7 @@ void PostChickenWeapon(int weapon)
 		weapon = wp_staff;
 	}
 	SetWeapon(weapon);
-	ViewEnts[ps_weapon].SY = WEAPONBOTTOM;
+	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
 }
 
@@ -2772,7 +2807,7 @@ void PostChickenWeapon(int weapon)
 
 void UpdateBeak(ViewEntity e)
 {
-	e.SY = WEAPONTOP + itof(ChickenPeck) / 2.0;
+	e.SY = Weapon::WEAPONTOP + itof(ChickenPeck) / 2.0;
 }
 
 //===========================================================================
@@ -3073,6 +3108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2006/02/28 22:45:45  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.22  2006/02/26 20:55:57  dj_jl
 //  Proper serialisation of level and players.
 //

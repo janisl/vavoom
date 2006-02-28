@@ -45,8 +45,8 @@ void A_Punch()
 	aimAngles = Player.MO.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = Player.MO.AimLineAttack(aimAngles, MELEERANGE);
-	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	dir = Player.MO.AimLineAttack(aimAngles, Actor::MELEERANGE);
+	Player.MO.LineAttack(dir, Actor::MELEERANGE, damage);
 
 	// turn to face target
 	if (Player.MO.linetarget)
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/28 22:44:37  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

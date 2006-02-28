@@ -1002,7 +1002,7 @@ void A_FreezeDeathChunks()
 	if (bIsPlayer)
 	{
 		// attach the player's view to a chunk of ice
-		A = Spawn(IceChunkHead, Origin + vector(0.0, 0.0, VIEWHEIGHT));
+		A = Spawn(IceChunkHead, Origin + vector(0.0, 0.0, Player::VIEWHEIGHT));
 		A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
@@ -1036,6 +1036,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.9  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

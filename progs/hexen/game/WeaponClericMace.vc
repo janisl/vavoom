@@ -43,11 +43,11 @@ void A_CMaceAttack()
 	{
 		angles = Player.MO.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		Player.MO.AimLineAttack(&angles, 2.0 * MELEERANGE);
+		Player.MO.AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
 		if (Player.MO.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Player.MO.LineAttack(vforward, 2.0 * MELEERANGE, damage, HammerPuff))
+			if (Player.MO.LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
 			{
 				Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -56,11 +56,11 @@ void A_CMaceAttack()
 		}
 		angles = Player.MO.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Player.MO.AimLineAttack(&angles, 2.0 * MELEERANGE);
+		Player.MO.AimLineAttack(&angles, 2.0 * Actor::MELEERANGE);
 		if (Player.MO.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			if (Player.MO.LineAttack(vforward, 2.0 * MELEERANGE, damage, HammerPuff))
+			if (Player.MO.LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, HammerPuff))
 			{
 				Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
@@ -70,9 +70,9 @@ void A_CMaceAttack()
 	}
 	// didn't find any creatures, so try to strike any walls
 	angles = Player.MO.Angles;
-	Player.MO.AimLineAttack(&angles, MELEERANGE);
+	Player.MO.AimLineAttack(&angles, Actor::MELEERANGE);
 	AngleVector(&angles, &vforward);
-	if (Player.MO.LineAttack(vforward, MELEERANGE, damage, HammerPuff))
+	if (Player.MO.LineAttack(vforward, Actor::MELEERANGE, damage, HammerPuff))
 	{
 		Player.MO.PlaySound('FighterHammerMiss', CHAN_WEAPON);
 	}
@@ -116,6 +116,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.8  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

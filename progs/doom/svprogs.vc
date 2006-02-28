@@ -52,108 +52,6 @@ enum
 	MTF_GDEATHMATCH	= 0x0400
 };
 
-#define VIEWHEIGHT		41.0
-
-#define BLINKTHRESHOLD 	4.0
-
-#define INVULNTIME		30.0
-#define INVISTIME		60.0
-#define INFRATIME		120.0
-#define IRONTIME		60.0
-
-// follow a player exlusively for 3 seconds
-#define	BASETHRESHOLD	100
-
-#define ONFLOORZ		-99999.0
-#define ONCEILINGZ		99999.0
-
-//
-// Player internal flags, for cheats and debug.
-//
-#define CF_NOCLIP		1	// No clipping, walk through barriers.
-#define CF_GODMODE		2	// No damage, no health loss.
-
-#define MELEERANGE		64.0
-#define MISSILERANGE	(32.0 * 64.0)
-
-#define LOWERSPEED		6.0
-#define RAISESPEED		6.0
-
-#define WEAPONBOTTOM	128.0
-#define WEAPONTOP		32.0
-
-// 16 pixels of bob
-#define MAXBOB			16.0
-
-#define MAXHEALTH		100
-
-#define INITIAL_HEALTH		100
-#define INITIAL_AMMO		50
-#define BFGCELLS			40
-#define SOULSPHERE_MAX		200
-#define SOULSPHERE_HEALTH	100
-#define MEGASPHERE_HEALTH	200
-#define GOD_HEALTH			100
-
-//
-// --------- Inter --------
-//
-
-#define BONUSADD	0.2
-
-//
-// --------- User ---------
-//
-
-#define INVERSECOLORMAP		32
-
-//
-//  PALETTE MACROS
-//
-
-// Palette indices.
-// For damage/bonus red-/gold-shifts
-#define STARTREDPALS		1
-#define STARTBONUSPALS		9
-#define NUMREDPALS			8
-#define NUMBONUSPALS		4
-// Radiation suit, green shift.
-#define RADIATIONPAL		13
-
-//
-// ------ Mobj -------
-//
-
-#define ITEMQUESIZE		128
-
-//
-// ------- Physics -------
-//
-
-#define FLOATSPEED		140.0
-
-#define MAXMOVE			1050.0
-#define STOPSPEED		2.1875
-#define FRICTION		3.28125
-#define FRICTION_LOW	0.95703125
-#define FRICTION_WATER	3.0
-
-#define BOUNCE_VAL		1.5
-
-//
-// ------ Usersubs ---------
-//
-
-#define	BODYQUESIZE				32
-
-//
-// ------ Spec ------
-//
-
-#define MAX_TAGGED_LINES		1024
-
-#define USERANGE	64.0
-
 // CONSTANTS ---------------------------------------------------------------
 
 enum
@@ -354,6 +252,9 @@ struct botinfo_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/28 22:43:32  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.3  2006/02/19 14:18:03  dj_jl
 //  Some changes because of compiler changes.
 //

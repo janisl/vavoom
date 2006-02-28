@@ -29,12 +29,6 @@
 
 #include <client.vc>
 
-#define MAX_MENU_ITEMS		32
-
-#define MAX_MENU_STACK		32
-
-#define SLOTTEXTLEN 		24
-
 class ClientGame;
 class MenuObject;
 class MenuScreen;
@@ -47,6 +41,9 @@ class MenuControlKey;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/28 22:47:13  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.2  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

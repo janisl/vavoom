@@ -25,6 +25,19 @@
 
 class Weapon : ViewEntity;
 
+const float
+	MELEERANGE		= 64.0,
+	PUNCHRANGE		= 80.0,
+	MISSILERANGE	= (32.0 * 64.0),
+	MAULERRANGE		= (33.0 * 64.0),
+	ROBOTRANGE		= 264.0;
+
+const float LOWERSPEED		= 6.0;
+const float RAISESPEED		= 6.0;
+
+const float WEAPONBOTTOM	= 128.0;
+const float WEAPONTOP		= 32.0;
+
 int Ammo;
 int UpState;
 int DownState;
@@ -281,6 +294,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/02/28 22:47:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.10  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

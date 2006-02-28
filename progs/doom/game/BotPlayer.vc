@@ -90,23 +90,23 @@ enum
 
 */
 
-#define FORWARDWALK		200.0
-#define FORWARDRUN		400.0
-#define SIDEWALK		192.0
-#define SIDERUN			320.0
+const float FORWARDWALK		= 200.0;
+const float FORWARDRUN		= 400.0;
+const float SIDEWALK		= 192.0;
+const float SIDERUN			= 320.0;
 
-/*#define MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
-#define AVOID_DIST					512.0	//Try avoid incoming missiles once they reached this close
-#define SAFE_SELF_MISDIST			128.0	//Distance from self to target where it's safe to pull a rocket.
-/*#define FRIEND_DIST					(128*FRACUNIT)	//To friend.
-#define DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
-#define WHATS_DARK					64				//light value thats classed as dark.
-#define MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
-#define ENEMY_SCAN_FOV				120.0
-/*#define MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
-#define GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
-#define SHOOTFOV					60.0
-/*#define MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
+/*const float MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
+const float AVOID_DIST					= 512.0;	//Try avoid incoming missiles once they reached this close
+const float SAFE_SELF_MISDIST			= 128.0;	//Distance from self to target where it's safe to pull a rocket.
+/*const float FRIEND_DIST					(128*FRACUNIT)	//To friend.
+const float DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
+const float WHATS_DARK					64				//light value thats classed as dark.
+const float MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
+const float ENEMY_SCAN_FOV				= 120.0;
+/*const float MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
+const float GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
+const float SHOOTFOV					= 60.0;
+/*const float MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
 
 Player player;		// Points to reference player
 Actor botmo;
@@ -207,15 +207,16 @@ void BotTick(float deltaTime)
 	player.SideMove = sidemove;
 	player.ForwardMove = forwardmove;
 
-#define DECT(var) \
-	var -= deltaTime; \
-	if (var <= 0.0) \
-	{ \
-		var = 0.0; \
+	t_react -= deltaTime;
+	if (t_react <= 0.0)
+	{
+		t_react = 0.0;
 	}
-	DECT(t_react)
-	DECT(t_anticip)
-#undef DECT
+	t_anticip -= deltaTime;
+	if (t_anticip <= 0.0)
+	{
+		t_anticip = 0.0;
+	}
 }
 
 //==========================================================================
@@ -283,14 +284,14 @@ bool CheckItem(Actor item)
 	}
 
 	if ((item.Class == ItemStimPack || item.Class == ItemMedikit) &&
-		(botmo.Health >= MAXHEALTH))
+		(botmo.Health >= Player::MAXHEALTH))
 		return false;
 #ifdef DOOM2
 	if ((item.Class == ItemSoulSphere || item.Class == ItemMegaSphere) &&
-		(botmo.Health >= 2 * MAXHEALTH))
+		(botmo.Health >= 2 * Player::MAXHEALTH))
 		return false;
 #else
-	if (item.Class == ItemSoulSphere && (botmo.Health >= 2 * MAXHEALTH))
+	if (item.Class == ItemSoulSphere && (botmo.Health >= 2 * Player::MAXHEALTH))
 		return false;
 #endif
 	if (item.Class == ItemArmor1 && (player.ArmorPoints >= 100))
@@ -1451,6 +1452,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/02/28 22:44:18  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.10  2006/02/19 14:19:33  dj_jl
 //  Some changes because of compiler changes.
 //

@@ -35,10 +35,10 @@ ClientGameBase ClGame;
 
 #ifndef DOOM2
 
-#define	TEXTSPEED	0.1
-#define	TEXTWAIT	7.0
+const float TEXTSPEED	= 0.1;
+const float TEXTWAIT	= 7.0;
 
-#define MAX_FINALE_MESSAGE_SIZE	1024
+const int MAX_FINALE_MESSAGE_SIZE	= 1024;
 
 int f_episode;
 int f_map;
@@ -684,6 +684,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/02/28 22:43:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.1  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

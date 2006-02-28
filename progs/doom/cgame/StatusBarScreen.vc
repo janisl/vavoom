@@ -29,75 +29,76 @@ class StatusBarScreen : Window;
 //  Location of statistics, justified according to widget type.
 //
 
-#define ST_BGX				0
-#define ST_BGY				168
+const int
+	ST_BGX				= 0,
+	ST_BGY				= 168,
 
 // AMMO number pos.
-#define ST_AMMOX			44
-#define ST_AMMOY			171
+	ST_AMMOX			= 44,
+	ST_AMMOY			= 171,
 
 // HEALTH number pos.
-#define ST_HEALTHX			90
-#define ST_HEALTHY			171
+	ST_HEALTHX			= 90,
+	ST_HEALTHY			= 171,
 
 // Frags pos.
-#define ST_FRAGSX			138
-#define ST_FRAGSY			171
+	ST_FRAGSX			= 138,
+	ST_FRAGSY			= 171,
 
 // Weapon pos.
-#define ST_ARMSBGX			104
-#define ST_ARMSBGY			168
-#define ST_ARMSX			111
-#define ST_ARMSY			172
-#define ST_ARMSXSPACE		12
-#define ST_ARMSYSPACE		10
+	ST_ARMSBGX			= 104,
+	ST_ARMSBGY			= 168,
+	ST_ARMSX			= 111,
+	ST_ARMSY			= 172,
+	ST_ARMSXSPACE		= 12,
+	ST_ARMSYSPACE		= 10,
 
 // Location of marine face
-#define ST_FACESX			143
-#define ST_FACESY			168
+	ST_FACESX			= 143,
+	ST_FACESY			= 168,
 
 // ARMOR number pos.
-#define ST_ARMORX			221
-#define ST_ARMORY			171
+	ST_ARMORX			= 221,
+	ST_ARMORY			= 171,
 
 // Key icon positions.
-#define ST_KEY0X			239
-#define ST_KEY0Y			171
-#define ST_KEY1X			239
-#define ST_KEY1Y			181
-#define ST_KEY2X			239
-#define ST_KEY2Y			191
+	ST_KEY0X			= 239,
+	ST_KEY0Y			= 171,
+	ST_KEY1X			= 239,
+	ST_KEY1Y			= 181,
+	ST_KEY2X			= 239,
+	ST_KEY2Y			= 191,
 
 // Ammunition counter.
-#define ST_AMMO0X			288
-#define ST_AMMO0Y			173
-#define ST_AMMO1X			288
-#define ST_AMMO1Y			179
-#define ST_AMMO2X			288
-#define ST_AMMO2Y			191
-#define ST_AMMO3X			288
-#define ST_AMMO3Y			185
+	ST_AMMO0X			= 288,
+	ST_AMMO0Y			= 173,
+	ST_AMMO1X			= 288,
+	ST_AMMO1Y			= 179,
+	ST_AMMO2X			= 288,
+	ST_AMMO2Y			= 191,
+	ST_AMMO3X			= 288,
+	ST_AMMO3Y			= 185,
 
 // Indicate maximum ammunition.
 // Only needed because backpack exists.
-#define ST_MAXAMMO0X		314
-#define ST_MAXAMMO0Y		173
-#define ST_MAXAMMO1X		314
-#define ST_MAXAMMO1Y		179
-#define ST_MAXAMMO2X		314
-#define ST_MAXAMMO2Y		191
-#define ST_MAXAMMO3X		314
-#define ST_MAXAMMO3Y		185
+	ST_MAXAMMO0X		= 314,
+	ST_MAXAMMO0Y		= 173,
+	ST_MAXAMMO1X		= 314,
+	ST_MAXAMMO1Y		= 179,
+	ST_MAXAMMO2X		= 314,
+	ST_MAXAMMO2Y		= 191,
+	ST_MAXAMMO3X		= 314,
+	ST_MAXAMMO3Y		= 185,
 
 //  Fullscreen widgets
-#define ST_TDHEALTHX	64
-#define ST_TDHEALTHY	180
+	ST_TDHEALTHX	= 64,
+	ST_TDHEALTHY	= 180,
 
-#define ST_TDARMORX		140
-#define ST_TDARMORY		180
+	ST_TDARMORX		= 140,
+	ST_TDARMORY		= 180,
 
-#define ST_TDAMMOX		315
-#define ST_TDAMMOY		180
+	ST_TDAMMOX		= 315,
+	ST_TDAMMOY		= 180;
 
 MainClientState cl;
 
@@ -508,6 +509,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/28 22:43:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.3  2006/02/20 22:57:16  dj_jl
 //  Changed client state structure to class.
 //

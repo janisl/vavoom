@@ -25,7 +25,12 @@
 
 class MainGameInfo : GameInfo;
 
-enum { NUM_SPECIALS = 108 };
+const int NUM_SPECIALS		= 108;
+
+const int MAX_TAGGED_LINES	= 64;
+
+const int NUMTOTALBOTS		= 8;
+const int NUMBOTTYPES		= 8;
 
 struct spec_trans_t
 {
@@ -528,7 +533,7 @@ void TranslateThing(mthing_t* mthing)
 	flags = mthing->options;
 	mthing->options = (flags & 0xf) | 0x7e0;
 	if (flags & 0x10)
-		mthing->options &= ~MTF_GSINGLE;
+		mthing->options &= ~HereticLevelInfo::MTF_GSINGLE;
 }
 
 //==========================================================================
@@ -1215,7 +1220,7 @@ void SpawnWorld(Level InLevel)
 	//	Initialise initial friction values.
 	for (i = 0; i < InLevel.NumSectors; i++)
 	{
-		InLevel.Sectors[i].Friction = FRICTION_NORMAL;
+		InLevel.Sectors[i].Friction = Actor::FRICTION_NORMAL;
 	}
 
 	//  Spawn 3D floors
@@ -1419,62 +1424,62 @@ defaultproperties
 	WeaponInShareware[8] = true;	// Beak
 
 	WeaponAmmoUsePL1[0] = 0;	// staff
-	WeaponAmmoUsePL1[1] = USE_GWND_AMMO_1;	// gold wand
-	WeaponAmmoUsePL1[2] = USE_CBOW_AMMO_1;	// crossbow
-	WeaponAmmoUsePL1[3] = USE_BLSR_AMMO_1;	// blaster
-	WeaponAmmoUsePL1[4] = USE_SKRD_AMMO_1;	// skull rod
-	WeaponAmmoUsePL1[5] = USE_PHRD_AMMO_1;	// phoenix rod
-	WeaponAmmoUsePL1[6] = USE_MACE_AMMO_1;	// mace
+	WeaponAmmoUsePL1[1] = Weapon::USE_GWND_AMMO_1;	// gold wand
+	WeaponAmmoUsePL1[2] = Weapon::USE_CBOW_AMMO_1;	// crossbow
+	WeaponAmmoUsePL1[3] = Weapon::USE_BLSR_AMMO_1;	// blaster
+	WeaponAmmoUsePL1[4] = Weapon::USE_SKRD_AMMO_1;	// skull rod
+	WeaponAmmoUsePL1[5] = Weapon::USE_PHRD_AMMO_1;	// phoenix rod
+	WeaponAmmoUsePL1[6] = Weapon::USE_MACE_AMMO_1;	// mace
 	WeaponAmmoUsePL1[7] = 0;	// gauntlets
 	WeaponAmmoUsePL1[8] = 0;	// beak
 
 	WeaponAmmoUsePL2[0] = 0;	// staff
-	WeaponAmmoUsePL2[1] = USE_GWND_AMMO_2;	// gold wand
-	WeaponAmmoUsePL2[2] = USE_CBOW_AMMO_2;	// crossbow
-	WeaponAmmoUsePL2[3] = USE_BLSR_AMMO_2;	// blaster
-	WeaponAmmoUsePL2[4] = USE_SKRD_AMMO_2;	// skull rod
-	WeaponAmmoUsePL2[5] = USE_PHRD_AMMO_2;	// phoenix rod
-	WeaponAmmoUsePL2[6] = USE_MACE_AMMO_2;	// mace
+	WeaponAmmoUsePL2[1] = Weapon::USE_GWND_AMMO_2;	// gold wand
+	WeaponAmmoUsePL2[2] = Weapon::USE_CBOW_AMMO_2;	// crossbow
+	WeaponAmmoUsePL2[3] = Weapon::USE_BLSR_AMMO_2;	// blaster
+	WeaponAmmoUsePL2[4] = Weapon::USE_SKRD_AMMO_2;	// skull rod
+	WeaponAmmoUsePL2[5] = Weapon::USE_PHRD_AMMO_2;	// phoenix rod
+	WeaponAmmoUsePL2[6] = Weapon::USE_MACE_AMMO_2;	// mace
 	WeaponAmmoUsePL2[7] = 0;	// gauntlets
 	WeaponAmmoUsePL2[8] = 0;	// beak
 
 	ArtifactText[0] = "";
-	ArtifactText[1] = TXT_ARTIINVULNERABILITY;
-	ArtifactText[2] = TXT_ARTIINVISIBILITY;
-	ArtifactText[3] = TXT_ARTIHEALTH;
-	ArtifactText[4] = TXT_ARTISUPERHEALTH;
-	ArtifactText[5] = TXT_ARTITOMEOFPOWER;
-	ArtifactText[6] = TXT_ARTITORCH;
-	ArtifactText[7] = TXT_ARTIFIREBOMB;
-	ArtifactText[8] = TXT_ARTIEGG;
-	ArtifactText[9] = TXT_ARTIFLY;
-	ArtifactText[10] = TXT_ARTITELEPORT;
+	ArtifactText[1] = "RING OF INVINCIBILITY";
+	ArtifactText[2] = "SHADOWSPHERE";
+	ArtifactText[3] = "QUARTZ FLASK";
+	ArtifactText[4] = "MYSTIC URN";
+	ArtifactText[5] = "TOME OF POWER";
+	ArtifactText[6] = "TORCH";
+	ArtifactText[7] = "TIME BOMB OF THE ANCIENTS";
+	ArtifactText[8] = "MORPH OVUM";
+	ArtifactText[9] = "WINGS OF WRATH";
+	ArtifactText[10] = "CHAOS DEVICE";
 
 	WeaponText[0] = "";
 	WeaponText[1] = "";
-	WeaponText[2] = TXT_WPNCROSSBOW;
-	WeaponText[3] = TXT_WPNBLASTER;
-	WeaponText[4] = TXT_WPNSKULLROD;
-	WeaponText[5] = TXT_WPNPHOENIXROD;
-	WeaponText[6] = TXT_WPNMACE;
-	WeaponText[7] = TXT_WPNGAUNTLETS;
+	WeaponText[2] = "ETHEREAL CROSSBOW";
+	WeaponText[3] = "DRAGON CLAW";
+	WeaponText[4] = "HELLSTAFF";
+	WeaponText[5] = "PHOENIX ROD";
+	WeaponText[6] = "FIREMACE";
+	WeaponText[7] = "GAUNTLETS OF THE NECROMANCER";
 
-	KeyText[0] = TXT_GOTYELLOWKEY;
-	KeyText[1] = TXT_GOTGREENKEY;
-	KeyText[2] = TXT_GOTBLUEKEY;
+	KeyText[0] = "YELLOW KEY";
+	KeyText[1] = "GREEN KEY";
+	KeyText[2] = "BLUE KEY";
 
-	AmmoText[0] = TXT_AMMOGOLDWAND1;
-	AmmoText[1] = TXT_AMMOGOLDWAND2;
-	AmmoText[2] = TXT_AMMOMACE1;
-	AmmoText[3] = TXT_AMMOMACE2;
-	AmmoText[4] = TXT_AMMOCROSSBOW1;
-	AmmoText[5] = TXT_AMMOCROSSBOW2;
-	AmmoText[6] = TXT_AMMOBLASTER1;
-	AmmoText[7] = TXT_AMMOBLASTER2;
-	AmmoText[8] = TXT_AMMOSKULLROD1;
-	AmmoText[9] = TXT_AMMOSKULLROD2;
-	AmmoText[10] = TXT_AMMOPHOENIXROD1;
-	AmmoText[11] = TXT_AMMOPHOENIXROD2;
+	AmmoText[0] = "WAND CRYSTAL";
+	AmmoText[1] = "CRYSTAL GEODE";
+	AmmoText[2] = "MACE SPHERES";
+	AmmoText[3] = "PILE OF MACE SPHERES";
+	AmmoText[4] = "ETHEREAL ARROWS";
+	AmmoText[5] = "QUIVER OF ETHEREAL ARROWS";
+	AmmoText[6] = "CLAW ORB";
+	AmmoText[7] = "ENERGY ORB";
+	AmmoText[8] = "LESSER RUNES";
+	AmmoText[9] = "GREATER RUNES";
+	AmmoText[10] = "FLAME ORB";
+	AmmoText[11] = "INFERNO ORB";
 
 	keymsg[0] = "YOU NEED A YELLOW KEY TO OPEN THIS DOOR";
 	keymsg[1] = "YOU NEED A GREEN KEY TO OPEN THIS DOOR";
@@ -1531,6 +1536,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:45:45  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/19 14:22:33  dj_jl
 //  Some changes because of compiler changes.
 //

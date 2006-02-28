@@ -23,7 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuSaveSlot:MenuChoice;
+class MenuSaveSlot : MenuChoice;
+
+const int SLOTTEXTLEN 		= 24;
 
 int Status;
 bool bEnteringText;
@@ -120,6 +122,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/28 22:43:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.3  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

@@ -50,12 +50,12 @@ void TouchSpecial(Actor Toucher)
 	}
 	sound = 'misc/i_pkup';
 	Toucher.Player.Backpack = true;
-	Toucher.Player.GiveAmmo(am_goldwand, AMMO_GWND_WIMPY);
-	Toucher.Player.GiveAmmo(am_blaster, AMMO_BLSR_WIMPY);
-	Toucher.Player.GiveAmmo(am_crossbow, AMMO_CBOW_WIMPY);
-	Toucher.Player.GiveAmmo(am_skullrod, AMMO_SKRD_WIMPY);
-	Toucher.Player.GiveAmmo(am_phoenixrod, AMMO_PHRD_WIMPY);
-	cprint(Toucher.Player, TXT_ITEMBAGOFHOLDING);
+	Toucher.Player.GiveAmmo(am_goldwand, 10);
+	Toucher.Player.GiveAmmo(am_blaster, 10);
+	Toucher.Player.GiveAmmo(am_crossbow, 5);
+	Toucher.Player.GiveAmmo(am_skullrod, 20);
+	Toucher.Player.GiveAmmo(am_phoenixrod, 1);
+	cprint(Toucher.Player, "BAG OF HOLDING");
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
@@ -94,6 +94,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:45:45  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -27,6 +27,8 @@ class ItemMegaSphere : Pickup
 	__mobjinfo__(83)
 	__scriptid__(132);
 
+const int MEGASPHERE_HEALTH		= 200;
+
 //==========================================================================
 //
 //	HandlePickup
@@ -62,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/28 22:44:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.5  2006/02/15 23:32:36  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -26,6 +26,12 @@
 class Weapon : ViewEntity
 	abstract;
 
+const float LOWERSPEED		= 6.0;
+const float RAISESPEED		= 6.0;
+
+const float WEAPONBOTTOM	= 128.0;
+const float WEAPONTOP		= 32.0;
+
 int Mana;
 int UpState;
 int DownState;
@@ -240,6 +246,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

@@ -49,7 +49,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		return;
 	}
-	cprint(Toucher.Player, TXT_ITEMHEALTH);
+	cprint(Toucher.Player, "CRYSTAL VIAL");
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
@@ -84,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -233,7 +233,7 @@ defaultproperties
 class InterpolationPoint : TempActor
 	__mobjinfo__(9070);
 
-InterpolationPoint Next;
+InterpolationPoint NextPoint;
 
 //==========================================================================
 //
@@ -256,11 +256,11 @@ void FormChain()
 			continue;
 		if (A == self)	// Don't link to self
 			continue;
-		Next = A;
+		NextPoint = A;
 		break;
 	}
 
-	if (Next == none && (Args[3] | Args[4]))
+	if (NextPoint == none && (Args[3] | Args[4]))
 		print("Can't find target for camera node %d", TID);
 
 	Angles.pitch = itof(Args[0]);
@@ -269,8 +269,8 @@ void FormChain()
 	else if (Angles.pitch >= 90.0)
 		Angles.pitch = 89.0;
 
-	if (Next != none)
-		Next.FormChain();
+	if (NextPoint != none)
+		NextPoint.FormChain();
 }
 
 //==========================================================================
@@ -284,11 +284,11 @@ void FormChain()
 InterpolationPoint ScanForLoop()
 {
 	InterpolationPoint node = self;
-	while (node.Next && node.Next != self)
+	while (node.NextPoint && node.NextPoint != self)
 	{
-		node = node.Next;
+		node = node.NextPoint;
 	}
-	return node.Next ? node : none;
+	return node.NextPoint ? node : none;
 }
 
 defaultproperties
@@ -337,7 +337,7 @@ InterpolationPoint StartPrevNode;
 InterpolationPoint StartCurrNode;
 InterpolationPoint PrevNode;
 InterpolationPoint CurrNode;
-float Time;		// Runs from 0.0 to 1.0 between CurrNode and CurrNode->Next
+float Time;		// Runs from 0.0 to 1.0 between CurrNode and CurrNode->NextPoint
 float HoldTime;
 
 //==========================================================================
@@ -412,7 +412,7 @@ void BeginPlay()
 	if (Args[2] & 1)
 	{
 		// linear path; need 2 nodes
-		if (node.Next == none)
+		if (node.NextPoint == none)
 		{
 			print("PathFollower %d: Path needs at least 2 nodes", TID);
 			return;
@@ -422,9 +422,9 @@ void BeginPlay()
 	else
 	{
 		// spline path; need 4 nodes
-		if (node.Next == none ||
-			node.Next.Next == none ||
-			node.Next.Next.Next == none)
+		if (node.NextPoint == none ||
+			node.NextPoint.NextPoint == none ||
+			node.NextPoint.NextPoint.NextPoint == none)
 		{
 			print("PathFollower %d: Path needs at least 4 nodes", TID);
 			return;
@@ -432,10 +432,10 @@ void BeginPlay()
 		// If the first node is in a loop, we can start there.
 		// Otherwise, we need to start at the second node in the path.
 		prevnode = node.ScanForLoop();
-		if (prevnode == none || prevnode.Next != node)
+		if (prevnode == none || prevnode.NextPoint != node)
 		{
 			StartPrevNode = node;
-			StartCurrNode = node.Next;
+			StartCurrNode = node.NextPoint;
 		}
 		else
 		{
@@ -508,7 +508,7 @@ void Tick(float DeltaTime)
 	if (HoldTime > Level.Game.level->time)
 		return;
 
-	if (CurrNode.Next == none)
+	if (CurrNode.NextPoint == none)
 	{
 		bActive = false;
 		return;
@@ -522,12 +522,12 @@ void Tick(float DeltaTime)
 			Time -= 1.0;
 			bJustStepped = true;
 			PrevNode = CurrNode;
-			CurrNode = CurrNode.Next;
+			CurrNode = CurrNode.NextPoint;
 			if (CurrNode != none)
 				NewNode();
-			if (CurrNode == none || CurrNode.Next == none)
+			if (CurrNode == none || CurrNode.NextPoint == none)
 				Deactivate();
-			if ((Args[2] & 1) == 0 && CurrNode.Next.Next == none)
+			if ((Args[2] & 1) == 0 && CurrNode.NextPoint.NextPoint == none)
 				Deactivate();
 		}
 	}
@@ -573,19 +573,19 @@ bool Interpolate()
 	if (Args[2] & 1)
 	{
 		// linear
-		Origin.x = Lerp(CurrNode.Origin.x, CurrNode.Next.Origin.x);
-		Origin.y = Lerp(CurrNode.Origin.y, CurrNode.Next.Origin.y);
-		Origin.z = Lerp(CurrNode.Origin.z, CurrNode.Next.Origin.z);
+		Origin.x = Lerp(CurrNode.Origin.x, CurrNode.NextPoint.Origin.x);
+		Origin.y = Lerp(CurrNode.Origin.y, CurrNode.NextPoint.Origin.y);
+		Origin.z = Lerp(CurrNode.Origin.z, CurrNode.NextPoint.Origin.z);
 	}
 	else
 	{
 		// spline
 		Origin.x = SLerp(PrevNode.Origin.x, CurrNode.Origin.x,
-			CurrNode.Next.Origin.x, CurrNode.Next.Next.Origin.x);
+			CurrNode.NextPoint.Origin.x, CurrNode.NextPoint.NextPoint.Origin.x);
 		Origin.y = SLerp(PrevNode.Origin.y, CurrNode.Origin.y,
-			CurrNode.Next.Origin.y, CurrNode.Next.Next.Origin.y);
+			CurrNode.NextPoint.Origin.y, CurrNode.NextPoint.NextPoint.Origin.y);
 		Origin.z = SLerp(PrevNode.Origin.z, CurrNode.Origin.z,
-			CurrNode.Next.Origin.z, CurrNode.Next.Next.Origin.z);
+			CurrNode.NextPoint.Origin.z, CurrNode.NextPoint.NextPoint.Origin.z);
 	}
 	LinkToWorld();
 
@@ -596,7 +596,7 @@ bool Interpolate()
 			if (Args[2] & 1)
 			{
 				// linear
-				TempOrg = CurrNode.Next.Origin - CurrNode.Origin;
+				TempOrg = CurrNode.NextPoint.Origin - CurrNode.Origin;
 			}
 			else if (Time > 0.0)
 			{
@@ -633,7 +633,7 @@ bool Interpolate()
 			{
 				// interpolate angle
 				float angle1 = CurrNode.Angles.yaw;
-				float angle2 = CurrNode.Next.Angles.yaw;
+				float angle2 = CurrNode.NextPoint.Angles.yaw;
 				if (angle2 - angle1 <= -180.0)
 				{
 					float lerped = Lerp(angle1, angle2 + 360.0);
@@ -669,13 +669,13 @@ bool Interpolate()
 				if (Args[2] & 1)
 				{
 					// linear
-					Angles.pitch = Lerp(CurrNode.Angles.pitch, CurrNode.Next.Angles.pitch);
+					Angles.pitch = Lerp(CurrNode.Angles.pitch, CurrNode.NextPoint.Angles.pitch);
 				}
 				else
 				{
 					// spline
 					Angles.pitch = SLerp(PrevNode.Angles.pitch, CurrNode.Angles.pitch,
-						CurrNode.Next.Angles.pitch, CurrNode.Next.Next.Angles.pitch);
+						CurrNode.NextPoint.Angles.pitch, CurrNode.NextPoint.NextPoint.Angles.pitch);
 				}
 			}
 		}
@@ -897,6 +897,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:44:18  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

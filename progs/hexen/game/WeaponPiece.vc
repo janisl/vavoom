@@ -26,6 +26,11 @@
 class WeaponPiece : Pickup
 	abstract;
 
+const int
+	WPIECE1			= 1,
+	WPIECE2			= 2,
+	WPIECE3			= 4;
+
 int PieceClass;
 int PieceValue;
 
@@ -152,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

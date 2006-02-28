@@ -31,57 +31,6 @@
 
 #include "strfdefs.vc"
 
-//
-// Map things flags
-//
-#define	MTF_EASY		0x0001	// Skill flags.
-#define	MTF_NORMAL		0x0002
-#define	MTF_HARD		0x0004
-#define	MTF_AMBUSH		0x0008	// Deaf monsters/do not react to sound.
-#define MTF_DORMANT		0x0010	// The thing is dormant
-#define MTF_FIGHTER		0x0020	// Thing appearing in player classes
-#define MTF_CLERIC		0x0040
-#define MTF_MAGE		0x0080
-#define MTF_GSINGLE		0x0100	// Appearing in game modes
-#define MTF_GCOOP		0x0200
-#define MTF_GDEATHMATCH	0x0400
-
-#define VIEWHEIGHT		41.0
-
-#define BLINKTHRESHOLD 	4.0
-
-#define INVULNTIME		30.0
-#define INVISTIME		60.0
-#define INFRATIME		120.0
-#define IRONTIME		60.0
-
-// follow a player exlusively for 3 seconds
-#define	BASETHRESHOLD	100
-
-#define ONFLOORZ		-99999.0
-#define ONCEILINGZ		99999.0
-
-#define MELEERANGE		64.0
-#define PUNCHRANGE		80.0
-#define MISSILERANGE	(32.0 * 64.0)
-#define MAULERRANGE		(33.0 * 64.0)
-#define ROBOTRANGE		264.0
-
-#define LOWERSPEED		6.0
-#define RAISESPEED		6.0
-
-#define WEAPONBOTTOM	128.0
-#define WEAPONTOP		32.0
-
-// 16 pixels of bob
-#define MAXBOB			16.0
-
-#define MAXHEALTH		100
-
-#define INITIAL_HEALTH		100
-#define INITIAL_AMMO		50
-#define GOD_HEALTH			100
-
 enum
 {
 	PO_ANCHOR_TYPE = 9300,
@@ -91,60 +40,6 @@ enum
 
 //#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
 #define POLY_SEQ_NAME(num)		'Sequence0'
-
-//
-// --------- Inter -------------
-//
-
-#define BONUSADD	0.2
-
-//
-// -------- User ---------
-//
-
-#define INVERSECOLORMAP		32
-
-//
-//  PALETTE MACROS
-//
-
-// Palette indices.
-// For damage/bonus red-/gold-shifts
-#define STARTREDPALS		1
-#define STARTBONUSPALS		9
-#define NUMREDPALS			8
-#define NUMBONUSPALS		4
-// Radiation suit, green shift.
-#define RADIATIONPAL		13
-
-//
-// ---------- Mobj -----------
-//
-
-#define ITEMQUESIZE		128
-
-//
-// ----------- Physics --------
-//
-
-#define MAXMOVE			1050.0
-#define STOPSPEED		2.1875
-#define FRICTION		3.28125
-#define FRICTION_LOW	0.95703125
-#define FRICTION_WATER	3.0
-
-#define BOUNCE_VAL		1.5
-
-#define FLOATSPEED		140.0
-
-//
-// --------- UserSubs -------
-//
-
-#define	BODYQUESIZE				32
-
-#define USERANGE		64.0
-#define USETHINGRANGE	128.0
 
 // CONSTANTS ---------------------------------------------------------------
 
@@ -227,8 +122,6 @@ enum
 
 	NUMQUESTS
 };
-
-#define MAX_TAGGED_LINES	64
 
 enum
 {
@@ -352,10 +245,6 @@ enum
 	PODOOR_SWING
 };
 
-#define STROBEBRIGHT		5
-#define FASTDARK			15
-#define SLOWDARK			35
-
 enum
 {
 	LIGHTEV_Fade,
@@ -389,6 +278,9 @@ class PolyobjThinker;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/28 22:47:13  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.2  2006/02/19 14:25:21  dj_jl
 //  Some changes because of compiler changes.
 //

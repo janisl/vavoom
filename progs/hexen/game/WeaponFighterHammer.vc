@@ -159,12 +159,15 @@ defaultproperties
 	AttackState = S_FHAMMERATK_1;
 	HoldAttackState = S_FHAMMERATK_1;
 	PSpriteSY = -10.0;
-	HammerRange = MELEERANGE + MELEERANGE / 2.0;
+	HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

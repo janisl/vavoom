@@ -29,16 +29,6 @@
 
 #include <client.vc>
 
-#define MAX_MENU_ITEMS		32
-
-#define MAX_MENU_STACK		32
-
-#define NUM_END_MESSAGES	15
-
-#define SLOTTEXTLEN 		24
-
-#define MAX_ILINE_LENGTH	79
-
 class ClientGame;
 class MenuScreen;
 class MenuControlKey;
@@ -50,6 +40,9 @@ class MenuControlKey;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/28 22:43:32  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.3  2006/02/19 14:18:03  dj_jl
 //  Some changes because of compiler changes.
 //

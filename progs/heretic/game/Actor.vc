@@ -26,6 +26,33 @@
 class Actor : Entity
 	abstract;
 
+const float FOOTCLIPSIZE	= 10.0;
+const float TELEFOGHEIGHT 	= 32.0;
+
+const int BASETHRESHOLD		= 100;	// follow a player exlusively for 3 seconds
+
+const float ONFLOORZ		= -99999.0;
+const float ONCEILINGZ		= 99999.0;
+const float FLOATRANDZ		= 99998.0;
+
+const float MELEERANGE		= 64.0;
+const float MISSILERANGE	= (32.0 * 64.0);
+
+const float FLOATSPEED		= 140.0;
+
+const float MAXMOVE			= 1050.0;
+const float STOPSPEED		= 2.1875;
+
+const float FRICTION_NORMAL	= 3.28125;
+const float FRICTION_LOW	= 0.95703125;
+const float FRICTION_FLY	= 2.87109375;
+const float FRICTION_WATER	= 3.0;
+
+const float BONUSADD		= 0.2;
+
+const float MONS_LOOK_RANGE	= (20.0 * 64.0);
+const int MONS_LOOK_LIMIT	= 64;
+
 //  States
 int IdleState;
 int SeeState;
@@ -317,11 +344,11 @@ void OnMapSpawn(mthing_t * mthing)
 			Level.Game.level->totalitems++;
 		}
 		Angles.yaw = itof(45 * (mthing->angle / 45));
-		if (mthing->options & MTF_AMBUSH)
+		if (mthing->options & HereticLevelInfo::MTF_AMBUSH)
 		{
 			bAmbush = true;
 		}
-		if (mthing->options & MTF_DORMANT)
+		if (mthing->options & HereticLevelInfo::MTF_DORMANT)
 		{
 			bDormant = true;
 			StateTime = -1.0;
@@ -581,7 +608,7 @@ bool ChickenMorphPlayer()
 
 	if (Player.ChickenTime)
 	{
-		if ((Player.ChickenTime < CHICKENTIME - 1.0) &&
+		if ((Player.ChickenTime < Player::CHICKENTIME - 1.0) &&
 			!Player.Powers[pw_weaponlevel2])
 		{
 			// Make a super chicken
@@ -603,7 +630,7 @@ bool ChickenMorphPlayer()
 	chicken.Angles.yaw = Angles.yaw;
 	chicken.Player = Player;
 	chicken.bIsPlayer = true;
-	chicken.Health = MAXCHICKENHEALTH;
+	chicken.Health = Player::MAXCHICKENHEALTH;
 	Player.Health = chicken.Health;
 	Player.MO = chicken;
 	Player.ArmorPoints = 0;
@@ -611,7 +638,7 @@ bool ChickenMorphPlayer()
 	Player.Powers[pw_invisibility] = 0.0;
 	Player.Powers[pw_weaponlevel2] = 0.0;
 	chicken.bFly = bFly;
-	Player.ChickenTime = CHICKENTIME;
+	Player.ChickenTime = Player::CHICKENTIME;
 	Player.ActivateBeak();
 
 	SetState(S_FREETARGMOBJ);
@@ -645,7 +672,7 @@ bool ChickenMorph()
 
 	chicken = Spawn(Chicken, Origin);
 	chicken.SpecialCID = Class;
-	chicken.Special1 = ftoi(CHICKENTIME * 35.0) + P_Random();
+	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
 	chicken.Translucency = Translucency;
 	chicken.Enemy = Enemy;
 	chicken.Angles.yaw = Angles.yaw;
@@ -943,7 +970,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			damage = Health - 1;
 		}
 
-		if (damage < 1000 && ((Player.Cheats & CF_GODMODE) ||
+		if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE) ||
 			Player.Powers[pw_invulnerability]))
 		{
 			return;
@@ -1175,7 +1202,7 @@ void NightmareRespawn()
 	A = Spawn(Class, vector(x, y, z));
 	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
 	A.Angles.yaw = itof(45 * (SpawnSpot.angle / 45));
-	if (SpawnSpot.options & MTF_AMBUSH)
+	if (SpawnSpot.options & HereticLevelInfo::MTF_AMBUSH)
 		A.bAmbush = true;
 
 	A.ReactionCount = 18;
@@ -1665,7 +1692,7 @@ void ZMovement(float DeltaTime)
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
 		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 	}
 
 	//
@@ -1990,7 +2017,7 @@ bool Physics(float DeltaTime)
 					Player.ViewHeight -=
 						onmo.Origin.z + onmo.Height - Origin.z;
 					Player.DeltaViewHeight =
-						(VIEWHEIGHT - Player.ViewHeight) * 4.0;
+						(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
@@ -2012,7 +2039,7 @@ bool Physics(float DeltaTime)
 							onmo.Player.ViewHeight -=
 								onmo.FloorZ - onmo.Origin.z;
 							onmo.Player.DeltaViewHeight =
-								(VIEWHEIGHT - onmo.Player.ViewHeight) * 4.0;
+								(Player::VIEWHEIGHT - onmo.Player.ViewHeight) * 4.0;
 						}
 						onmo.Origin.z = onmo.FloorZ;
 					}
@@ -3734,6 +3761,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2006/02/28 22:45:45  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.24  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

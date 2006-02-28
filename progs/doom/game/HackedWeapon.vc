@@ -45,8 +45,8 @@ void A_Punch()
 	aimAngles = Player.MO.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = Player.MO.AimLineAttack(aimAngles, MELEERANGE);
-	Player.MO.LineAttack(dir, MELEERANGE, damage);
+	dir = Player.MO.AimLineAttack(aimAngles, Actor::MELEERANGE);
+	Player.MO.LineAttack(dir, Actor::MELEERANGE, damage);
 
 	// turn to face target
 	if (Player.MO.linetarget)
@@ -78,8 +78,8 @@ void A_Saw()
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = Player.MO.AimLineAttack(aimAng, MELEERANGE + 0.00001);
-	Player.MO.LineAttack(dir, MELEERANGE + 0.00001, damage);
+	dir = Player.MO.AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
+	Player.MO.LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
 
 	if (!Player.MO.linetarget)
 	{
@@ -187,7 +187,7 @@ void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Player.MO.LineAttack(dir, MISSILERANGE, damage);
+		Player.MO.LineAttack(dir, Actor::MISSILERANGE, damage);
 	}
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
@@ -308,6 +308,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/28 22:44:18  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.2  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

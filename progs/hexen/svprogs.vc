@@ -27,221 +27,6 @@
 
 #include "hexndefs.vc"
 
-#define TELEFOGHEIGHT	32.0
-
-#define STARTREDPALS    1
-#define STARTBONUSPALS  9
-#define STARTPOISONPALS 13
-#define STARTICEPAL		21
-#define STARTHOLYPAL	22
-#define STARTSCOURGEPAL 25
-#define NUMREDPALS      8
-#define NUMBONUSPALS    4
-#define NUMPOISONPALS	8
-
-#define BLINKTHRESHOLD 	4.0
-
-#define INVULNTIME		30.0
-#define INFRATIME		120.0
-#define FLIGHTTIME 		60.0
-#define SPEEDTIME 		45.0
-#define MORPHTIME 		40.0
-#define MAULATORTIME 	25.0
-
-#define MAXHEALTH 		100
-#define MAXMORPHHEALTH	30
-#define VIEWHEIGHT 		48.0
-
-// player radius for movement checking
-//#define PLAYERRADIUS  16*FRACUNIT
-
-#define BASETHRESHOLD	100	// follow a player exlusively for 3 seconds
-
-#define ONFLOORZ		-99999.0
-#define ONCEILINGZ		99999.0
-#define FLOATRANDZ		99998.0
-
-#define WPIECE1			1
-#define WPIECE2			2
-#define WPIECE3			4
-
-//
-// Map things flags
-//
-#define	MTF_EASY		0x0001	// Skill flags.
-#define	MTF_NORMAL		0x0002
-#define	MTF_HARD		0x0004
-#define	MTF_AMBUSH		0x0008	// Deaf monsters/do not react to sound.
-#define MTF_DORMANT		0x0010	// The thing is dormant
-#define MTF_FIGHTER		0x0020	// Thing appearing in player classes
-#define MTF_CLERIC		0x0040
-#define MTF_MAGE		0x0080
-#define MTF_GSINGLE		0x0100	// Appearing in game modes
-#define MTF_GCOOP		0x0200
-#define MTF_GDEATHMATCH	0x0400
-
-//
-// Player internal flags, for cheats and debug.
-//
-#define CF_NOCLIP		1	// No clipping, walk through barriers.
-#define CF_GODMODE		2	// No damage, no health loss.
-
-#define MELEERANGE		64.0
-#define MISSILERANGE	(32.0 * 64.0)
-
-#define LOWERSPEED		6.0
-#define RAISESPEED		6.0
-
-#define WEAPONBOTTOM	128.0
-#define WEAPONTOP		32.0
-
-// 16 pixels of bob
-#define MAXBOB			16.0
-
-//
-// ---------- Intercept ----------------
-//
-
-// Mana
-
-#define TXT_MANA_1				"BLUE MANA"
-#define TXT_MANA_2				"GREEN MANA"
-#define TXT_MANA_BOTH			"COMBINED MANA"
-
-// Artifacts
-
-#define TXT_ARTIINVULNERABILITY		"ICON OF THE DEFENDER"
-#define TXT_ARTIHEALTH				"QUARTZ FLASK"
-#define TXT_ARTISUPERHEALTH			"MYSTIC URN"
-#define TXT_ARTISUMMON				"DARK SERVANT"
-#define TXT_ARTITORCH				"TORCH"
-#define TXT_ARTIEGG					"PORKALATOR"
-#define TXT_ARTIFLY					"WINGS OF WRATH"
-#define TXT_ARTITELEPORT			"CHAOS DEVICE"
-#define TXT_ARTIPOISONBAG			"FLECHETTE"
-#define TXT_ARTITELEPORTOTHER		"BANISHMENT DEVICE"
-#define TXT_ARTISPEED				"BOOTS OF SPEED"
-#define TXT_ARTIBOOSTMANA			"KRATER OF MIGHT"
-#define TXT_ARTIBOOSTARMOR			"DRAGONSKIN BRACERS"
-#define TXT_ARTIBLASTRADIUS			"DISC OF REPULSION"
-#define TXT_ARTIHEALINGRADIUS		"MYSTIC AMBIT INCANT"
-
-// Puzzle artifacts
-
-#define TXT_ARTIPUZZSKULL			"YORICK'S SKULL"
-#define TXT_ARTIPUZZGEMBIG			"HEART OF D'SPARIL"
-#define TXT_ARTIPUZZGEMRED			"RUBY PLANET"
-#define TXT_ARTIPUZZGEMGREEN1		"EMERALD PLANET"
-#define TXT_ARTIPUZZGEMGREEN2		"EMERALD PLANET"
-#define TXT_ARTIPUZZGEMBLUE1		"SAPPHIRE PLANET"
-#define TXT_ARTIPUZZGEMBLUE2		"SAPPHIRE PLANET"
-#define TXT_ARTIPUZZBOOK1			"DAEMON CODEX"
-#define TXT_ARTIPUZZBOOK2			"LIBER OSCURA"
-#define TXT_ARTIPUZZSKULL2			"FLAME MASK"
-#define TXT_ARTIPUZZFWEAPON			"GLAIVE SEAL"
-#define TXT_ARTIPUZZCWEAPON			"HOLY RELIC"
-#define TXT_ARTIPUZZMWEAPON			"SIGIL OF THE MAGUS"
-#define TXT_ARTIPUZZGEAR			"CLOCK GEAR"
-
-// Items
-
-#define TXT_ITEMHEALTH			"CRYSTAL VIAL"
-#define TXT_ARMOR1				"MESH ARMOR"
-#define TXT_ARMOR2				"FALCON SHIELD"
-#define TXT_ARMOR3				"PLATINUM HELMET"
-#define TXT_ARMOR4				"AMULET OF WARDING"
-
-// Weapons
-
-#define TXT_WEAPON_F2			"TIMON'S AXE"
-#define TXT_WEAPON_F3			"HAMMER OF RETRIBUTION"
-#define TXT_WEAPON_F4			"QUIETUS ASSEMBLED"
-#define TXT_WEAPON_C2			"SERPENT STAFF"
-#define TXT_WEAPON_C3			"FIRESTORM"
-#define TXT_WEAPON_C4			"WRAITHVERGE ASSEMBLED"
-#define TXT_WEAPON_M2			"FROST SHARDS"
-#define TXT_WEAPON_M3			"ARC OF DEATH"
-#define TXT_WEAPON_M4			"BLOODSCOURGE ASSEMBLED"
-#define TXT_QUIETUS_PIECE		"SEGMENT OF QUIETUS"
-#define TXT_WRAITHVERGE_PIECE	"SEGMENT OF WRAITHVERGE"
-#define TXT_BLOODSCOURGE_PIECE	"SEGMENT OF BLOODSCOURGE"
-
-#define BONUSADD	0.2
-
-//
-// ----- User ---------
-//
-
-#define HEAL_RADIUS_DIST	255.0
-
-#define TXT_USEPUZZLEFAILED			"YOU CANNOT USE THIS HERE"
-
-//
-// --------- Mobj ------------
-//
-
-#define SMALLSPLASHCLIP		12.0
-
-//
-// --------- Physics --------
-//
-
-#define FLOATSPEED		140.0
-
-#define MAXMOVE 			1050.0
-#define MAXMOVESTEP			15.0	//MAXMOVE / (35.0 * 2.0)
-#define STOPSPEED			2.1875
-
-#define FRICTION_NORMAL		3.28125
-#define FRICTION_LOW		0.95703125
-#define FRICTION_FLY		2.87109375
-#define FRICTION_WATER		3.0
-
-//
-// --------- Map -----------
-//
-
-#define USERANGE 			64.0
-
-//
-// --------- UserSubs ---------
-//
-
-#define BLAST_RADIUS_DIST	255.0
-#define BLAST_FULLSTRENGTH	0.0038909912
-#define BLAST_SPEED			20.0
-
-//
-// ----------- Sorcerer --------------
-//
-
-#define SORCBALL_INITIAL_SPEED 		7
-#define SORCBALL_TERMINAL_SPEED		25
-#define SORCBALL_SPEED_ROTATIONS 	5
-#define SORCFX4_RAPIDFIRE_TIME		(6*3)	// 3 seconds
-#define SORCFX4_SPREAD_ANGLE		20.0
-#define SORC_DEFENSE_TIME			255
-#define SORC_DEFENSE_HEIGHT			45.0
-#define BOUNCE_TIME_UNIT			(35/2)
-
-#define SORC_DECELERATE		0
-#define SORC_ACCELERATE 	1
-#define SORC_STOPPING		2
-#define SORC_FIRESPELL		3
-#define SORC_STOPPED		4
-#define SORC_NORMAL			5
-#define SORC_FIRING_SPELL	6
-
-//
-// ---------- AI SUBS ---------------
-//
-
-#define MONS_LOOK_RANGE (16.0 * 64.0)
-#define MONS_LOOK_LIMIT 64
-
-#define BODYQUESIZE 		32
-#define CORPSEQUEUESIZE		64
-
 // CONSTANTS ---------------------------------------------------------------
 
 // Any floor type >= FLOOR_LIQUID will floorclip sprites
@@ -296,8 +81,6 @@ enum
 	CHAN_ITEM,
 	CHAN_BODY
 };
-
-#define MAX_TAGGED_LINES	64
 
 enum
 {
@@ -414,10 +197,6 @@ enum
 	PLATEV_Generic
 };
 
-#define STROBEBRIGHT		5
-#define FASTDARK			15
-#define SLOWDARK			35
-
 enum
 {
 	LIGHTEV_Fade,
@@ -513,62 +292,16 @@ struct chatinfo_t
 	chatline_t		special[20];
 } chatinfo_t;*/
 
-/*
-
-  The bot class, prototypes and definitions be here!
-
-*/
-
-#define FORWARDWALK		200.0
-#define FORWARDRUN		400.0
-#define SIDEWALK		192.0
-#define SIDERUN			320.0
-
-/*#define MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
-#define AVOID_DIST					512.0	//Try avoid incoming missiles once they reached this close
-#define SAFE_SELF_MISDIST			128.0	//Distance from self to target where it's safe to pull a rocket.
-/*#define FRIEND_DIST					(128*FRACUNIT)	//To friend.
-#define DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
-#define WHATS_DARK					64				//light value thats classed as dark.
-#define MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
-#define ENEMY_SCAN_FOV				120.0
-/*#define MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
-#define GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
-#define SHOOTFOV					60.0
-/*#define MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
-
-// The things the bot knows about their enemy
-//struct enemyinfo_t
-//{
-//	int				health;
-//	weapontype_t	weap;
-//};
-
-//
-// Bot states
-//
-enum
-{
-	// Deciding what to do
-	BST_NOTHING,
-	// Bot is "fetching" something (skull, whatever)
-	BST_OFFENSE,
-	// Bot is defending something
-	BST_DEFENSE,
-	// Bot is heading to scoring place
-	BST_RETURN
-};
-
 class BotPlayer;
-
-#define NUMTOTALBOTS	24
-#define	NUMBOTTYPES		24
 
 #include "game/classes.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/28 22:46:06  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.2  2006/02/19 14:23:50  dj_jl
 //  Some changes because of compiler changes.
 //

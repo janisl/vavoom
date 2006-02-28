@@ -25,7 +25,9 @@
 
 class MainGameInfo : GameInfo;
 
-enum { NUM_SPECIALS = 236 };
+const int NUM_SPECIALS		= 236;
+
+const int MAX_TAGGED_LINES	= 64;
 
 struct spec_trans_t
 {
@@ -572,7 +574,7 @@ void TranslateThing(mthing_t* mthing)
 	flags = mthing->options;
 	mthing->options = (flags & 0xf) | 0x7e0;
 	if (flags & 0x10)
-		mthing->options &= ~MTF_GSINGLE;
+		mthing->options &= ~StrifeLevelInfo::MTF_GSINGLE;
 	if (mthing->type >= 118 && mthing->type <= 127)
 	{
 		//	Map start spots, i.e. player starts.
@@ -1265,7 +1267,7 @@ void SpawnWorld(Level InLevel)
 	//	Initialise initial friction values.
 	for (i = 0; i < InLevel.NumSectors; i++)
 	{
-		InLevel.Sectors[i].Friction = FRICTION;
+		InLevel.Sectors[i].Friction = Actor::FRICTION;
 	}
 
 	//  Spawn 3D floors
@@ -1519,6 +1521,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:47:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/19 14:27:01  dj_jl
 //  Some changes because of compiler changes.
 //

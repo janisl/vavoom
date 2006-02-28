@@ -43,6 +43,10 @@ enum
 	MB_Nightmare
 };
 
+const int MAX_MENU_STACK	= 32;
+
+const int NUM_END_MESSAGES	= 15;
+
 addfields particle_t
 {
 	int type;
@@ -1187,6 +1191,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:43:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/20 22:57:16  dj_jl
 //  Changed client state structure to class.
 //

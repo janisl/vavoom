@@ -65,7 +65,7 @@ void A_MStaffAttack()
 	Player.MO.PlaySound('MageStaffFire', CHAN_WEAPON);
 	Player.DamageFlash = 0.0;
 	Player.BonusFlash = 0.0;
-	Player.WeaponPalette = STARTSCOURGEPAL;
+	Player.WeaponPalette = Player::STARTSCOURGEPAL;
 }
 
 //==========================================================================
@@ -76,7 +76,7 @@ void A_MStaffAttack()
 
 void A_MStaffPalette1()
 {
-	Player.WeaponPalette = STARTSCOURGEPAL + 1;
+	Player.WeaponPalette = Player::STARTSCOURGEPAL + 1;
 }
 
 //==========================================================================
@@ -87,7 +87,7 @@ void A_MStaffPalette1()
 
 void A_MStaffPalette2()
 {
-	Player.WeaponPalette = STARTSCOURGEPAL + 2;
+	Player.WeaponPalette = Player::STARTSCOURGEPAL + 2;
 }
 
 //==========================================================================
@@ -164,6 +164,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

@@ -25,6 +25,11 @@
 
 class MainGameInfo : GameInfo;
 
+const int MAX_TAGGED_LINES	= 64;
+
+const int NUMTOTALBOTS		= 24;
+const int NUMBOTTYPES		= 24;
+
 addfields polyobj_t
 {
 	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
@@ -1044,7 +1049,7 @@ void SpawnWorld(Level InLevel)
 	//	Initialise initial friction values.
 	for (i = 0; i < InLevel.NumSectors; i++)
 	{
-		InLevel.Sectors[i].Friction = FRICTION_NORMAL;
+		InLevel.Sectors[i].Friction = Actor::FRICTION_NORMAL;
 	}
 
 	//  Spawn 3D floors
@@ -1202,65 +1207,65 @@ defaultproperties
 	ArmorIncrement[8] = 5.0; ArmorIncrement[9] = 15.0; ArmorIncrement[10] = 10.0; ArmorIncrement[11] = 25.0;
 	ArmorIncrement[12] = 0.0; ArmorIncrement[13] = 0.0; ArmorIncrement[14] = 0.0; ArmorIncrement[15] = 0.0;
 
-	weaponMessages[0] = TXT_WEAPON_F2;
-	weaponMessages[1] = TXT_WEAPON_F3;
-	weaponMessages[2] = TXT_WEAPON_C2;
-	weaponMessages[3] = TXT_WEAPON_C3;
-	weaponMessages[4] = TXT_WEAPON_M2;
-	weaponMessages[5] = TXT_WEAPON_M3;
+	weaponMessages[0] = "TIMON\'S AXE";
+	weaponMessages[1] = "HAMMER OF RETRIBUTION";
+	weaponMessages[2] = "SERPENT STAFF";
+	weaponMessages[3] = "FIRESTORM";
+	weaponMessages[4] = "FROST SHARDS";
+	weaponMessages[5] = "ARC OF DEATH";
 
-	fourthWeaponText[0] = TXT_WEAPON_F4;
-	fourthWeaponText[1] = TXT_WEAPON_C4;
-	fourthWeaponText[2] = TXT_WEAPON_M4;
+	fourthWeaponText[0] = "QUIETUS ASSEMBLED";
+	fourthWeaponText[1] = "WRAITHVERGE ASSEMBLED";
+	fourthWeaponText[2] = "BLOODSCOURGE ASSEMBLED";
 
-	weaponPieceText[0] = TXT_QUIETUS_PIECE;
-	weaponPieceText[1] = TXT_WRAITHVERGE_PIECE;
-	weaponPieceText[2] = TXT_BLOODSCOURGE_PIECE;
+	weaponPieceText[0] = "SEGMENT OF QUIETUS";
+	weaponPieceText[1] = "SEGMENT OF WRAITHVERGE";
+	weaponPieceText[2] = "SEGMENT OF BLOODSCOURGE";
 
 	artifactMessages[0] = "";
-	artifactMessages[1] = TXT_ARTIINVULNERABILITY;
-	artifactMessages[2] = TXT_ARTIHEALTH;
-	artifactMessages[3] = TXT_ARTISUPERHEALTH;
-	artifactMessages[4] = TXT_ARTIHEALINGRADIUS;
-	artifactMessages[5] = TXT_ARTISUMMON;
-	artifactMessages[6] = TXT_ARTITORCH;
-	artifactMessages[7] = TXT_ARTIEGG;
-	artifactMessages[8] = TXT_ARTIFLY;
-	artifactMessages[9] = TXT_ARTIBLASTRADIUS;
-	artifactMessages[10] = TXT_ARTIPOISONBAG;
-	artifactMessages[11] = TXT_ARTITELEPORTOTHER;
-	artifactMessages[12] = TXT_ARTISPEED;
-	artifactMessages[13] = TXT_ARTIBOOSTMANA;
-	artifactMessages[14] = TXT_ARTIBOOSTARMOR;
-	artifactMessages[15] = TXT_ARTITELEPORT;
+	artifactMessages[1] = "ICON OF THE DEFENDER";
+	artifactMessages[2] = "QUARTZ FLASK";
+	artifactMessages[3] = "MYSTIC URN";
+	artifactMessages[4] = "MYSTIC AMBIT INCANT";
+	artifactMessages[5] = "DARK SERVANT";
+	artifactMessages[6] = "TORCH";
+	artifactMessages[7] = "PORKALATOR";
+	artifactMessages[8] = "WINGS OF WRATH";
+	artifactMessages[9] = "DISC OF REPULSION";
+	artifactMessages[10] = "FLECHETTE";
+	artifactMessages[11] = "BANISHMENT DEVICE";
+	artifactMessages[12] = "BOOTS OF SPEED";
+	artifactMessages[13] = "KRATER OF MIGHT";
+	artifactMessages[14] = "DRAGONSKIN BRACERS";
+	artifactMessages[15] = "CHAOS DEVICE";
 
-	artifactMessages[16] = TXT_ARTIPUZZSKULL;
-	artifactMessages[17] = TXT_ARTIPUZZGEMBIG;
-	artifactMessages[18] = TXT_ARTIPUZZGEMRED;
-	artifactMessages[19] = TXT_ARTIPUZZGEMGREEN1;
-	artifactMessages[20] = TXT_ARTIPUZZGEMGREEN2;
-	artifactMessages[21] = TXT_ARTIPUZZGEMBLUE1;
-	artifactMessages[22] = TXT_ARTIPUZZGEMBLUE2;
-	artifactMessages[23] = TXT_ARTIPUZZBOOK1;
-	artifactMessages[24] = TXT_ARTIPUZZBOOK2;
-	artifactMessages[25] = TXT_ARTIPUZZSKULL2;
-	artifactMessages[26] = TXT_ARTIPUZZFWEAPON;
-	artifactMessages[27] = TXT_ARTIPUZZCWEAPON;
-	artifactMessages[28] = TXT_ARTIPUZZMWEAPON;
-	artifactMessages[29] = TXT_ARTIPUZZGEAR;	// All gear pickups use the same text
-	artifactMessages[30] = TXT_ARTIPUZZGEAR;
-	artifactMessages[31] = TXT_ARTIPUZZGEAR;
-	artifactMessages[32] = TXT_ARTIPUZZGEAR;
+	artifactMessages[16] = "YORICK\'S SKULL";
+	artifactMessages[17] = "HEART OF D\'SPARIL";
+	artifactMessages[18] = "RUBY PLANET";
+	artifactMessages[19] = "EMERALD PLANET";
+	artifactMessages[20] = "EMERALD PLANET";
+	artifactMessages[21] = "SAPPHIRE PLANET";
+	artifactMessages[22] = "SAPPHIRE PLANET";
+	artifactMessages[23] = "DAEMON CODEX";
+	artifactMessages[24] = "LIBER OSCURA";
+	artifactMessages[25] = "FLAME MASK";
+	artifactMessages[26] = "GLAIVE SEAL";
+	artifactMessages[27] = "HOLY RELIC";
+	artifactMessages[28] = "SIGIL OF THE MAGUS";
+	artifactMessages[29] = "CLOCK GEAR";	// All gear pickups use the same text
+	artifactMessages[30] = "CLOCK GEAR";
+	artifactMessages[31] = "CLOCK GEAR";
+	artifactMessages[32] = "CLOCK GEAR";
 
-	armorText[0] = TXT_ARMOR1;
-	armorText[1] = TXT_ARMOR2;
-	armorText[2] = TXT_ARMOR3;
-	armorText[3] = TXT_ARMOR4;
+	armorText[0] = "MESH ARMOR";
+	armorText[1] = "FALCON SHIELD";
+	armorText[2] = "PLATINUM HELMET";
+	armorText[3] = "AMULET OF WARDING";
 
-	manaText[0] = TXT_MANA_1;
-	manaText[1] = TXT_MANA_2;
+	manaText[0] = "BLUE MANA";
+	manaText[1] = "GREEN MANA";
 	manaText[2] = "";
-	manaText[3] = TXT_MANA_BOTH;
+	manaText[3] = "COMBINED MANA";
 
 	TextKeyMessages[0] = "STEEL KEY";
 	TextKeyMessages[1] = "CAVE KEY";
@@ -1290,10 +1295,10 @@ defaultproperties
 	ArmorMax[3] = 1.0;
 
 	pieceValueTrans[0] = 0;	// 0: never
-	pieceValueTrans[1] = WPIECE1 | WPIECE2 | WPIECE3;	// WPIECE1 (1)
-	pieceValueTrans[2] = WPIECE2 | WPIECE3;	// WPIECE2 (2)
+	pieceValueTrans[1] = WeaponPiece::WPIECE1 | WeaponPiece::WPIECE2 | WeaponPiece::WPIECE3;	// WPIECE1 (1)
+	pieceValueTrans[2] = WeaponPiece::WPIECE2 | WeaponPiece::WPIECE3;	// WPIECE2 (2)
 	pieceValueTrans[3] = 0;	// 3: never
-	pieceValueTrans[4] = WPIECE3;	// WPIECE3 (4)
+	pieceValueTrans[4] = WeaponPiece::WPIECE3;	// WPIECE3 (4)
 
 	opposite[0] = DI_WEST;
 	opposite[1] = DI_SOUTHWEST;
@@ -1333,9 +1338,9 @@ defaultproperties
 	WeaponManaUseTable[8] = 0; WeaponManaUseTable[9] = 3; WeaponManaUseTable[10] = 5; WeaponManaUseTable[11] = 15;	//  Mage
 	WeaponManaUseTable[12] = 0; WeaponManaUseTable[13] = 0; WeaponManaUseTable[14] = 0; WeaponManaUseTable[15] = 0;	//  Pig
 
-	classFlags[0] = MTF_FIGHTER;
-	classFlags[1] = MTF_CLERIC;
-	classFlags[2] = MTF_MAGE;
+	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
+	classFlags[1] = HexenLevelInfo::MTF_CLERIC;
+	classFlags[2] = HexenLevelInfo::MTF_MAGE;
 
 	air_control = 1.0 / 256.0;
 
@@ -1345,6 +1350,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/19 14:24:41  dj_jl
 //  Some changes because of compiler changes.
 //

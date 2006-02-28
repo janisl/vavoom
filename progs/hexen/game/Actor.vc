@@ -26,6 +26,38 @@
 class Actor : Entity
 	abstract;
 
+const float MORPHTIME 		= 40.0;
+const float MAULATORTIME 	= 25.0;
+
+const float TELEFOGHEIGHT	= 32.0;
+
+const int BASETHRESHOLD		= 100;	// follow a player exlusively for 3 seconds
+
+const float ONFLOORZ		= -99999.0;
+const float ONCEILINGZ		= 99999.0;
+const float FLOATRANDZ		= 99998.0;
+
+const float MELEERANGE		= 64.0;
+const float MISSILERANGE	= (32.0 * 64.0);
+
+const float FLOATSPEED		= 140.0;
+
+const float MAXMOVE 		= 1050.0;
+const float MAXMOVESTEP		= 15.0;	//MAXMOVE / (35.0 * 2.0)
+const float STOPSPEED		= 2.1875;
+
+const float FRICTION_NORMAL	= 3.28125;
+const float FRICTION_LOW	= 0.95703125;
+const float FRICTION_FLY	= 2.87109375;
+const float FRICTION_WATER	= 3.0;
+
+const float BONUSADD		= 0.2;
+
+const float SMALLSPLASHCLIP		= 12.0;
+
+const float MONS_LOOK_RANGE 	= (16.0 * 64.0);
+const int MONS_LOOK_LIMIT 		= 64;
+
 //  States
 int IdleState;
 int SeeState;
@@ -321,11 +353,11 @@ void OnMapSpawn(mthing_t * mthing)
 			// Scale angle correctly (source is 0..359)
 			Angles.yaw = itof(mthing->angle);
 		}
-		if (mthing->options & MTF_AMBUSH)
+		if (mthing->options & HexenLevelInfo::MTF_AMBUSH)
 		{
 			bAmbush = true;
 		}
-		if (mthing->options & MTF_DORMANT)
+		if (mthing->options & HexenLevelInfo::MTF_DORMANT)
 		{
 			SetDormant();
 		}
@@ -801,7 +833,7 @@ bool MorphPlayer()
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;
 	beastMo.bIsPlayer = true;
-	beastMo.Health = MAXMORPHHEALTH;
+	beastMo.Health = Player::MAXMORPHHEALTH;
 	Player.Health = beastMo.Health;
 	Player.MO = beastMo;
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
@@ -984,7 +1016,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	if (bIsPlayer)
 	{
-		if (damage < 1000 && ((Player.Cheats & CF_GODMODE)
+		if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE)
 				|| Player.Powers[pw_invulnerability]))
 		{
 			return;
@@ -1256,7 +1288,7 @@ void FallingDamage()
 
 void PoisonPlayer(Actor poisoner, int poison)
 {
-	if ((Player.Cheats & CF_GODMODE) || Player.Powers[pw_invulnerability])
+	if ((Player.Cheats & Player::CF_GODMODE) || Player.Powers[pw_invulnerability])
 	{
 		return;
 	}
@@ -1295,7 +1327,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 		// Take half damage in trainer mode
 		damage >>= 1;
 	}
-	if (damage < 1000 && ((Player.Cheats & CF_GODMODE)
+	if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE)
 			|| Player.Powers[pw_invulnerability]))
 	{
 		return;
@@ -2370,7 +2402,7 @@ bool ZMovement(float DeltaTime)
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
 		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 	}
 	//
 	// adjust height
@@ -2670,7 +2702,7 @@ bool Physics(float DeltaTime)
 						Player.ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
 						Player.DeltaViewHeight =
-							(VIEWHEIGHT - Player.ViewHeight) * 4.0;
+							(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 						Origin.z = onmo.Origin.z + onmo.Height;
 						bOnMobj = true;
 						Velocity.z = 0.0;
@@ -3245,7 +3277,7 @@ void Blast(Actor source, float strength)
 	float z;
 
 	angle = atan2(Origin.y - source.Origin.y, Origin.x - source.Origin.x);
-	if (strength < BLAST_FULLSTRENGTH)
+	if (strength < Player::BLAST_FULLSTRENGTH)
 	{
 		Velocity.x = strength * cos(angle) * 35.0;
 		Velocity.y = strength * sin(angle) * 35.0;
@@ -3283,8 +3315,8 @@ void Blast(Actor source, float strength)
 				Instigator = source;
 			}
 		}
-		Velocity.x = BLAST_SPEED * cos(angle) * 35.0;
-		Velocity.y = BLAST_SPEED * sin(angle) * 35.0;
+		Velocity.x = Player::BLAST_SPEED * cos(angle) * 35.0;
+		Velocity.y = Player::BLAST_SPEED * sin(angle) * 35.0;
 
 		// Spawn blast puff
 		ang = atan2(source.Origin.y - Origin.y, source.Origin.x - Origin.x);
@@ -4139,12 +4171,12 @@ void A_NoBlocking()
 
 void A_AddPlayerCorpse()
 {
-	if (HexenLevelInfo(Level).bodyqueslot >= BODYQUESIZE)
+	if (HexenLevelInfo(Level).bodyqueslot >= HexenLevelInfo::BODYQUESIZE)
 	{
 		// Too many player corpses - remove an old one
-		HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % BODYQUESIZE].Remove();
+		HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE].Remove();
 	}
-	HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % BODYQUESIZE] = self;
+	HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE] = self;
 	HexenLevelInfo(Level).bodyqueslot++;
 }
 
@@ -4174,14 +4206,14 @@ void A_QueueCorpse()
 {
 	Actor corpse;
 
-	if (HexenLevelInfo(Level).corpseQueueSlot >= CORPSEQUEUESIZE)
+	if (HexenLevelInfo(Level).corpseQueueSlot >= HexenLevelInfo::CORPSEQUEUESIZE)
 	{
 		// Too many corpses - remove an old one
-		corpse = HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % CORPSEQUEUESIZE];
+		corpse = HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % HexenLevelInfo::CORPSEQUEUESIZE];
 		if (corpse)
 			corpse.Remove();
 	}
-	HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % CORPSEQUEUESIZE] = self;
+	HexenLevelInfo(Level).corpseQueue[HexenLevelInfo(Level).corpseQueueSlot % HexenLevelInfo::CORPSEQUEUESIZE] = self;
 	HexenLevelInfo(Level).corpseQueueSlot++;
 }
 
@@ -4197,7 +4229,7 @@ void A_DeQueueCorpse()
 {
 	int slot;
 
-	for (slot = 0; slot < CORPSEQUEUESIZE; slot++)
+	for (slot = 0; slot < HexenLevelInfo::CORPSEQUEUESIZE; slot++)
 	{
 		if (HexenLevelInfo(Level).corpseQueue[slot] == self)
 		{
@@ -4271,6 +4303,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.27  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

@@ -125,7 +125,7 @@ void A_SigilFlash()
 {
 	//Player.MiscTime = 10;
 	Player.MO.Damage(none, none, 5);
-	Player.FixedColormap = INVERSECOLORMAP;
+	Player.FixedColormap = Player::INVERSECOLORMAP;
 }
 
 __states__
@@ -179,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/28 22:47:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.8  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

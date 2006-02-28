@@ -33,6 +33,46 @@
 // Main bot class
 class BotPlayer : Object;
 
+const float FORWARDWALK		= 200.0;
+const float FORWARDRUN		= 400.0;
+const float SIDEWALK		= 192.0;
+const float SIDERUN			= 320.0;
+
+/*const float MAX_TRAVERSE_DIST			(1024*FRACUNIT)	//10 meters, used within b_func.c*/
+const float AVOID_DIST					= 512.0;	//Try avoid incoming missiles once they reached this close
+const float SAFE_SELF_MISDIST			= 128.0;	//Distance from self to target where it's safe to pull a rocket.
+/*const float FRIEND_DIST					(128*FRACUNIT)	//To friend.
+const float DARK_DIST					(256*FRACUNIT)	//Distance that bot can see enemies in the dark from.
+const float WHATS_DARK					64				//light value thats classed as dark.
+const float MAX_MONSTER_TARGET_DIST		(1024*FRACUNIT)	//Too high can slow down the performance, see P_mobj.c*/
+const float ENEMY_SCAN_FOV				= 120.0;
+/*const float MAXMOVEHEIGHT				(32*FRACUNIT)	//MAXSTEPMOVE but with jumping counted in.
+const float GETINCOMBAT					(512*FRACUNIT)	//Max distance to item. if it's due to be icked up in a combat situation.*/
+const float SHOOTFOV					= 60.0;
+/*const float MAXROAM						(5*TICRATE)		//When this time is elapsed the bot will roam after something else.*/
+
+// The things the bot knows about their enemy
+//struct enemyinfo_t
+//{
+//	int				health;
+//	weapontype_t	weap;
+//};
+
+//
+// Bot states
+//
+enum
+{
+	// Deciding what to do
+	BST_NOTHING,
+	// Bot is "fetching" something (skull, whatever)
+	BST_OFFENSE,
+	// Bot is defending something
+	BST_DEFENSE,
+	// Bot is heading to scoring place
+	BST_RETURN
+};
+
 Player player;		// Points to reference player
 Actor botmo;
 
@@ -129,15 +169,16 @@ void BotTick(float deltaTime)
 	player.SideMove = sidemove;
 	player.ForwardMove = forwardmove;
 
-#define DECT(var) \
-	var -= deltaTime; \
-	if (var <= 0.0) \
-	{ \
-		var = 0.0; \
+	t_react -= deltaTime;
+	if (t_react <= 0.0)
+	{
+		t_react = 0.0;
 	}
-	DECT(t_react)
-	DECT(t_anticip)
-#undef DECT
+	t_anticip -= deltaTime;
+	if (t_anticip <= 0.0)
+	{
+		t_anticip = 0.0;
+	}
 }
 
 //==========================================================================
@@ -221,7 +262,7 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
-	if (item.Class == ItemHealingBottle && (botmo.Health >= MAXHEALTH))
+	if (item.Class == ItemHealingBottle && (botmo.Health >= Player::MAXHEALTH))
 		return false;
 
 	// Guess we're okay
@@ -1268,7 +1309,7 @@ void OnBeginPlay()
 
 	if (strcmp(ARR2STR(player.PlayerName), ""))
 	{
-		for (i = 0; i < NUMTOTALBOTS; i++)
+		for (i = 0; i < MainGameInfo::NUMTOTALBOTS; i++)
 		{
 			if (!stricmp(MainGameInfo(player.Level.Game).botinfo[i].Name, ARR2STR(player.PlayerName)))
 			{
@@ -1283,7 +1324,7 @@ void OnBeginPlay()
 		// If the user doesn't input a name, don't
 		// spawn one of the "special" bots, only one of the
 		// normal ones.
-		bottype = P_Random() % NUMBOTTYPES;
+		bottype = P_Random() % MainGameInfo::NUMBOTTYPES;
 	}
 
 	binfo = &MainGameInfo(player.Level.Game).botinfo[bottype];
@@ -1353,6 +1394,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.9  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

@@ -26,6 +26,10 @@
 class HackedActor : Actor
 	abstract;
 
+const int SOULSPHERE_MAX		= 200;
+const int SOULSPHERE_HEALTH		= 100;
+const int MEGASPHERE_HEALTH		= 200;
+
 int numbraintargets;
 int braintargeton;
 int brain_easy;
@@ -214,13 +218,13 @@ bool HandlePickup(Actor Toucher)
 		// medikits, heals
 	else if (SpriteName == 'STIM')
 	{
-		if (!Toucher.Player.GiveBody(10, MAXHEALTH))
+		if (!Toucher.Player.GiveBody(10, Player::MAXHEALTH))
 			return false;
 		cprint(Toucher.Player, GOTSTIM);
 	}
 	else if (SpriteName == 'MEDI')
 	{
-		if (!Toucher.Player.GiveBody(25, MAXHEALTH))
+		if (!Toucher.Player.GiveBody(25, Player::MAXHEALTH))
 			return false;
 
 		if (Toucher.Player.Health < 25)
@@ -932,7 +936,7 @@ void A_SkelMissile()
 //
 //==========================================================================
 
-#define TRACEADJUST	0.2865921825
+const float TRACEADJUST	= 0.2865921825;
 
 void A_Tracer()
 {
@@ -1677,6 +1681,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:44:18  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/19 14:19:33  dj_jl
 //  Some changes because of compiler changes.
 //

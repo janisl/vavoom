@@ -26,6 +26,26 @@
 class Sorcerer : Pawn
 	__mobjinfo__(10080);
 
+const int SORCBALL_INITIAL_SPEED 		= 7;
+const int SORCBALL_TERMINAL_SPEED		= 25;
+const int SORCBALL_SPEED_ROTATIONS 		= 5;
+const int SORCFX4_RAPIDFIRE_TIME		= (6*3);	// 3 seconds
+const float SORCFX4_SPREAD_ANGLE		= 20.0;
+const int SORC_DEFENSE_TIME				= 255;
+const float SORC_DEFENSE_HEIGHT			= 45.0;
+const int BOUNCE_TIME_UNIT				= (35/2);
+
+enum
+{
+	SORC_DECELERATE,
+	SORC_ACCELERATE,
+	SORC_STOPPING,
+	SORC_FIRESPELL,
+	SORC_STOPPED,
+	SORC_NORMAL,
+	SORC_FIRING_SPELL
+};
+
 bool bBallsSpawned;
 
 //
@@ -267,6 +287,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.2  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

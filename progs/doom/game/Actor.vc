@@ -26,6 +26,25 @@
 class Actor : Entity
 	abstract;
 
+// follow a player exlusively for 3 seconds
+const int BASETHRESHOLD		= 100;
+
+const float ONFLOORZ		= -99999.0;
+const float ONCEILINGZ		= 99999.0;
+
+const float FLOATSPEED		= 140.0;
+
+const float MAXMOVE			= 1050.0;
+const float STOPSPEED		= 2.1875;
+const float FRICTION		= 3.28125;
+const float FRICTION_LOW	= 0.95703125;
+const float FRICTION_WATER	= 3.0;
+
+const float BOUNCE_VAL		= 1.5;
+
+const float MELEERANGE		= 64.0;
+const float MISSILERANGE	= (32.0 * 64.0);
+
 //  States
 int IdleState;
 int SeeState;
@@ -376,7 +395,7 @@ void TouchSpecial(Actor Toucher)
 		Level.Game.level->currentitems++;
 	}
 	HideSpecial();
-	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.Player.BonusFlash += Player::BONUSADD;
 }
 
 //==========================================================================
@@ -796,7 +815,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player.Cheats & CF_GODMODE) ||
+		if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE) ||
 			Player.Powers[pw_invulnerability]))
 		{
 			return;
@@ -1342,7 +1361,7 @@ void ZMovement(float DeltaTime)
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
 		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 	}
 
 	// adjust height
@@ -1653,7 +1672,7 @@ bool Physics(float DeltaTime)
 						Player.ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
 						Player.DeltaViewHeight =
-							(VIEWHEIGHT - Player.ViewHeight) * 4.0;
+							(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 					}
 					Origin.z = onmo.Origin.z + onmo.Height;
 				}
@@ -4715,6 +4734,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2006/02/28 22:44:18  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.26  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

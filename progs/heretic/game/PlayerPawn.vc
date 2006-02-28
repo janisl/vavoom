@@ -39,12 +39,12 @@ bool bSafeToRemove;
 
 void A_AddPlayerCorpse()
 {
-	if (HereticLevelInfo(Level).bodyqueslot >= BODYQUESIZE)
+	if (HereticLevelInfo(Level).bodyqueslot >= HereticLevelInfo::BODYQUESIZE)
 	{
 		// Too many player corpses - remove an old one
-		HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % BODYQUESIZE].Remove();
+		HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE].Remove();
 	}
-	HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % BODYQUESIZE] = self;
+	HereticLevelInfo(Level).bodyque[HereticLevelInfo(Level).bodyqueslot % HereticLevelInfo::BODYQUESIZE] = self;
 	HereticLevelInfo(Level).bodyqueslot++;
 }
 
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/28 22:45:45  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.7  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

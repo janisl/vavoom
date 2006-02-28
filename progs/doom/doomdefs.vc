@@ -110,13 +110,6 @@ enum
 	ST_DEADFACE			= (ST_GODFACE + 1)
 };
 
-#define ST_STRAIGHTFACETIME		0.5
-#define ST_TURNTIME				1.0
-#define ST_EVILGRINTIME			2.0
-#define ST_RAMPAGEDELAY			2.0
-
-enum { ST_MUCHPAIN			= 20 };
-
 // Additional network protocol commands
 enum
 {
@@ -147,6 +140,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.19  2006/02/28 22:43:32  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.18  2006/02/20 22:57:16  dj_jl
 //  Changed client state structure to class.
 //

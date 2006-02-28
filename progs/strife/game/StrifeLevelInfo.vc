@@ -25,6 +25,29 @@
 
 class StrifeLevelInfo : LevelInfo;
 
+//
+// Map things flags
+//
+const int
+	MTF_EASY		= 0x0001,	// Skill flags.
+	MTF_NORMAL		= 0x0002,
+	MTF_HARD		= 0x0004,
+	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
+	MTF_DORMANT		= 0x0010,	// The thing is dormant
+	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
+	MTF_CLERIC		= 0x0040,
+	MTF_MAGE		= 0x0080,
+	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
+	MTF_GCOOP		= 0x0200,
+	MTF_GDEATHMATCH	= 0x0400;
+
+const int
+	STROBEBRIGHT	= 5,
+	FASTDARK		= 15,
+	SLOWDARK		= 35;
+
+const int BODYQUESIZE	= 32;
+
 Actor bodyque[BODYQUESIZE];
 int bodyqueslot;
 
@@ -1412,7 +1435,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 		for (i = 0; i < 7; i++)
 		{
-			glass = Spawn(Blood, vector(x, y, ONFLOORZ));
+			glass = Spawn(Blood, vector(x, y, Actor::ONFLOORZ));
 			glass.bColideWithThings = false;
 			glass.bColideWithWorld = false;
 			glass.Origin.z += 24.0;
@@ -3485,7 +3508,7 @@ bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	}
 	if (!TeleportSpot2(A))
 	{
-		DstOrg.z = ONFLOORZ;
+		DstOrg.z = Actor::ONFLOORZ;
 	}
 	if (thing.Teleport(DstOrg, A.Angles.yaw, fog, SrcFog, KeepOrient))
 	{
@@ -3549,7 +3572,7 @@ bool DoGroupForOne(Actor victim, Actor source, Actor dest, bool floorz,
 	bool res;
 
 	res = victim.Teleport(vector(dest.Origin.x + newX,
-		dest.Origin.y + newY, floorz ? ONFLOORZ : dest.Origin.z +
+		dest.Origin.y + newY, floorz ? Actor::ONFLOORZ : dest.Origin.z +
 		victim.Origin.z - source.Origin.z), 0.0, fog, fog, !fog);
 	// P_Teleport only changes angle if fog is true
 	victim.Angles.yaw = AngleMod360(dest.Angles.yaw + offAngle);
@@ -3620,7 +3643,7 @@ bool EV_TeleportGroup(int group_tid, int source_tid, int dest_tid,
 	if (moveSource && didSomething)
 	{
 		didSomething |= sourceOrigin.Teleport(vector(destOrigin.Origin.x,
-			destOrigin.Origin.y, floorz ? ONFLOORZ : destOrigin.Origin.z),
+			destOrigin.Origin.y, floorz ? Actor::ONFLOORZ : destOrigin.Origin.z),
 			0.0, false, false, true);
 		sourceOrigin.Angles.yaw = destOrigin.Angles.yaw;
 	}
@@ -4638,6 +4661,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/28 22:47:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.5  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

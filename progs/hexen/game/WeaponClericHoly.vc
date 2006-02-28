@@ -40,7 +40,7 @@ void A_CHolyAttack()
 	Player.SpawnPlayerMissile(HolyMissile);
 	Player.DamageFlash = 0.0;
 	Player.BonusFlash = 0.0;
-	Player.WeaponPalette = STARTHOLYPAL;
+	Player.WeaponPalette = Player::STARTHOLYPAL;
 	Player.MO.PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
@@ -52,7 +52,7 @@ void A_CHolyAttack()
 
 void A_CHolyPalette1()
 {
-	Player.WeaponPalette = STARTHOLYPAL + 1;
+	Player.WeaponPalette = Player::STARTHOLYPAL + 1;
 }
 
 //============================================================================
@@ -63,7 +63,7 @@ void A_CHolyPalette1()
 
 void A_CHolyPalette2()
 {
-	Player.WeaponPalette = STARTHOLYPAL + 2;
+	Player.WeaponPalette = Player::STARTHOLYPAL + 2;
 }
 
 //============================================================================
@@ -108,6 +108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

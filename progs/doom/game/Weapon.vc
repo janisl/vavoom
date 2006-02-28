@@ -25,6 +25,14 @@
 
 class Weapon : ViewEntity;
 
+const float LOWERSPEED		= 6.0;
+const float RAISESPEED		= 6.0;
+
+const float WEAPONBOTTOM	= 128.0;
+const float WEAPONTOP		= 32.0;
+
+const int BFGCELLS			= 40;
+
 int Ammo;
 int UpState;
 int DownState;
@@ -602,7 +610,7 @@ void GunShot(Actor A, int accurate, TVec dir)
 
 	damage = 5 * (P_Random() % 3 + 1);
 
-	A.LineAttack(dir, MISSILERANGE, damage);
+	A.LineAttack(dir, Actor::MISSILERANGE, damage);
 }
 
 #ifndef NO_BOTS
@@ -635,6 +643,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/28 22:44:18  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.8  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

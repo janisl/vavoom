@@ -54,7 +54,7 @@ void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Player.MO.LineAttack(dir, MISSILERANGE, damage);
+		Player.MO.LineAttack(dir, Actor::MISSILERANGE, damage);
 	}
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
@@ -128,6 +128,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/28 22:44:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.7  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

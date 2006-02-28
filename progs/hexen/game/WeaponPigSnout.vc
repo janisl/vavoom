@@ -41,10 +41,10 @@ void A_SnoutAttack()
 
 	damage = 3 + (P_Random() & 3);
 	angles = Player.MO.Angles;
-	Player.MO.AimLineAttack(&angles, MELEERANGE);
+	Player.MO.AimLineAttack(&angles, Actor::MELEERANGE);
 	MainGameInfo(Player.Level.Game).PuffSpawned = none;
 	AngleVector(&angles, &vforward);
-	Player.MO.LineAttack(vforward, MELEERANGE, damage, SnoutPuff);
+	Player.MO.LineAttack(vforward, Actor::MELEERANGE, damage, SnoutPuff);
 	Player.MO.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
 		CHAN_VOICE);
 	if (Player.MO.linetarget)
@@ -94,6 +94,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.7  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

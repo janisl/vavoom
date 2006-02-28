@@ -44,8 +44,8 @@ void A_Saw()
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = Player.MO.AimLineAttack(aimAng, MELEERANGE + 0.00001);
-	Player.MO.LineAttack(dir, MELEERANGE + 0.00001, damage);
+	dir = Player.MO.AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
+	Player.MO.LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
 
 	if (!Player.MO.linetarget)
 	{
@@ -100,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/02/28 22:44:37  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

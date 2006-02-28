@@ -25,6 +25,8 @@
 
 class MenuScreen : MenuObject;
 
+const int MAX_MENU_ITEMS		= 32;
+
 ClientGame ClGame;
 
 MenuObject Items[MAX_MENU_ITEMS];
@@ -56,7 +58,7 @@ void ChildAdded(Window Child)
 	::ChildAdded(Child);
 }
 
-void CreateTitle(void)
+void CreateTitle()
 {
 	MenuTitleText newTitle;
 
@@ -68,7 +70,7 @@ void CreateTitle(void)
 	}
 }
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	MenuChoice newChoice;
 	int currentY;
@@ -86,7 +88,7 @@ void CreateChoices(void)
 	}
 }
 
-void CreateSelector(void)
+void CreateSelector()
 {
 	if (SelectorType && SelectorType != classidNone)
 	{
@@ -94,7 +96,7 @@ void CreateSelector(void)
 	}
 }
 
-void CursorMoved(void)
+void CursorMoved()
 {
 	if (CursorPrev == CursorPos)
 		return;
@@ -117,7 +119,7 @@ void CursorMoved(void)
 	}
 }
 
-void SetDefaultChoice(void)
+void SetDefaultChoice()
 {
 	int i;
 
@@ -138,7 +140,7 @@ void SetDefaultChoice(void)
 	}
 }
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	CreateTitle();
@@ -147,7 +149,7 @@ void InitWindow(void)
 	SetDefaultChoice();
 }
 
-void CyclePrevChoice(void)
+void CyclePrevChoice()
 {
 	CursorPrev = CursorPos;
 	do
@@ -161,7 +163,7 @@ void CyclePrevChoice(void)
 	CursorMoved();
 }
 
-void CycleNextChoice(void)
+void CycleNextChoice()
 {
 	CursorPrev = CursorPos;
 	do
@@ -226,6 +228,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:46:25  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/09 22:33:10  dj_jl
 //  Moved all client game code to classes.
 //

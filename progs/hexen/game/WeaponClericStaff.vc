@@ -76,11 +76,11 @@ void A_CStaffCheck()
 	{
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw + itof(i) * (45.0 / 16.0));
-		pmo.AimLineAttack(&angles, 3.0 * MELEERANGE / 2.0);
+		pmo.AimLineAttack(&angles, 3.0 * Actor::MELEERANGE / 2.0);
 		if (pmo.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			pmo.LineAttack(vforward, 1.5 * MELEERANGE, damage, ClericStaffPuff);
+			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, ClericStaffPuff);
 			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
 				pmo.linetarget.Origin.x - pmo.Origin.x);
 			if ((pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill) &&
@@ -98,11 +98,11 @@ void A_CStaffCheck()
 		}
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Player.MO.AimLineAttack(&angles, 3.0 * MELEERANGE / 2.0);
+		Player.MO.AimLineAttack(&angles, 3.0 * Actor::MELEERANGE / 2.0);
 		if (pmo.linetarget)
 		{
 			AngleVector(&angles, &vforward);
-			pmo.LineAttack(vforward, 1.5 * MELEERANGE, damage, ClericStaffPuff);
+			pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, ClericStaffPuff);
 			pmo.Angles.yaw = atan2(pmo.linetarget.Origin.y - pmo.Origin.y,
 				pmo.linetarget.Origin.x - pmo.Origin.x);
 			if (pmo.linetarget.bIsPlayer || pmo.linetarget.bCountKill)
@@ -201,6 +201,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

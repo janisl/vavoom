@@ -50,7 +50,7 @@ void A_FireConePL1()
 	{
 		ang = pmo.Angles;
 		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
-		pmo.AimLineAttack(&ang, MELEERANGE);
+		pmo.AimLineAttack(&ang, Actor::MELEERANGE);
 		if (pmo.linetarget)
 		{
 			pmo.bIceDamage = true;
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

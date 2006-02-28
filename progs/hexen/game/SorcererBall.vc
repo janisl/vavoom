@@ -67,8 +67,8 @@ void A_AccelBalls()
 	}
 	else
 	{
-		sorc.Args[3] = SORC_NORMAL;
-		if (sorc.Args[4] >= SORCBALL_TERMINAL_SPEED)
+		sorc.Args[3] = Sorcerer::SORC_NORMAL;
+		if (sorc.Args[4] >= Sorcerer::SORCBALL_TERMINAL_SPEED)
 		{
 			// Reached terminal velocity - stop balls
 			Sorcerer(sorc).A_StopBalls();
@@ -94,7 +94,7 @@ void A_DecelBalls()
 	}
 	else
 	{
-		sorc.Args[3] = SORC_NORMAL;
+		sorc.Args[3] = Sorcerer::SORC_NORMAL;
 	}
 }
 
@@ -131,7 +131,7 @@ void A_SorcOffense2()
 
 	index = itof(Args[4]) * 360.0 / 256.0;
 	Args[4] = (Args[4] + 15) & 0xff;
-	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
+	delta = sin(index) * Sorcerer::SORCFX4_SPREAD_ANGLE;
 	ang1 = AngleMod360(Angles.yaw + delta);
 	mo = Instigator.SpawnMissileAngle(SorcererFX4, ang1, 0.0);
 	if (mo)
@@ -179,25 +179,25 @@ void A_SorcBallOrbit()
 
 	switch (mode)
 	{
-	case SORC_NORMAL:	// Balls rotating normally
+	case Sorcerer::SORC_NORMAL:	// Balls rotating normally
 		A_SorcUpdateBallAngle();
 		break;
-	case SORC_DECELERATE:	// Balls decelerating
+	case Sorcerer::SORC_DECELERATE:	// Balls decelerating
 		A_DecelBalls();
 		A_SorcUpdateBallAngle();
 		break;
-	case SORC_ACCELERATE:	// Balls accelerating
+	case Sorcerer::SORC_ACCELERATE:	// Balls accelerating
 		A_AccelBalls();
 		A_SorcUpdateBallAngle();
 		break;
-	case SORC_STOPPING:	// Balls stopping
+	case Sorcerer::SORC_STOPPING:	// Balls stopping
 		if ((Instigator.SpecialCID == Class) &&
-			(Instigator.Args[1] > SORCBALL_SPEED_ROTATIONS) &&
+			(Instigator.Args[1] > Sorcerer::SORCBALL_SPEED_ROTATIONS) &&
 			(fabs(AngleMod180(angle - Instigator.Angles.yaw)) <
 			15.0 * 45.0 / 16.0))
 		{
 			// Can stop now
-			Instigator.Args[3] = SORC_FIRESPELL;
+			Instigator.Args[3] = Sorcerer::SORC_FIRESPELL;
 			Instigator.Args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
 			Instigator.Special1f = AngleMod360(Instigator.Angles.yaw -
@@ -208,7 +208,7 @@ void A_SorcBallOrbit()
 			A_SorcUpdateBallAngle();
 		}
 		break;
-	case SORC_FIRESPELL:	// Casting spell
+	case Sorcerer::SORC_FIRESPELL:	// Casting spell
 		if (Instigator.SpecialCID == Class)
 		{
 			// Put sorcerer into special throw spell anim
@@ -220,13 +220,13 @@ void A_SorcBallOrbit()
 			A_CastSorcererSpell();
 		}
 		break;
-	case SORC_FIRING_SPELL:
+	case Sorcerer::SORC_FIRING_SPELL:
 		if (Instigator.SpecialCID == Class)
 		{
 			if (_Special2-- <= 0)
 			{
 				// Done rapid firing 
-				Instigator.Args[3] = SORC_STOPPED;
+				Instigator.Args[3] = Sorcerer::SORC_STOPPED;
 				// Back to orbit balls
 				if (Instigator.Health > 0)
 					Instigator.SetState(Sorcerer::S_SORC_ATTACK4);
@@ -238,12 +238,12 @@ void A_SorcBallOrbit()
 			}
 		}
 		break;
-	case SORC_STOPPED:	// Balls stopped
+	case Sorcerer::SORC_STOPPED:	// Balls stopped
 	default:
 		break;
 	}
 
-	if ((angle < prevangle) && (Instigator.Args[4] == SORCBALL_TERMINAL_SPEED))
+	if ((angle < prevangle) && (Instigator.Args[4] == Sorcerer::SORCBALL_TERMINAL_SPEED))
 	{
 		Instigator.Args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
@@ -270,7 +270,7 @@ void A_SorcBallPop()
 	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
-	Args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
+	Args[4] = Sorcerer::BOUNCE_TIME_UNIT;	// Bounce time unit
 	Args[3] = 5;	// Bounce time in seconds
 }
 
@@ -291,7 +291,7 @@ void A_BounceCheck()
 		}
 		else
 		{
-			Args[4] = BOUNCE_TIME_UNIT;
+			Args[4] = Sorcerer::BOUNCE_TIME_UNIT;
 		}
 	}
 }
@@ -312,6 +312,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.4  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

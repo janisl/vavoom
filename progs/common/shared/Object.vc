@@ -40,7 +40,7 @@ class Object
 //FIXME
 #define classidNone		Object
 
-enum { MAX_INFO_STRING		= 1024 };
+const int MAX_INFO_STRING		= 1024;
 
 enum
 {
@@ -55,14 +55,14 @@ enum
 	CVAR_MODIFIED		= 128	//	Set each time the cvar is changed
 };
 
-enum { MININT				= 0x80000000 };
-enum { MAXINT				= 0x7fffffff };
+const int MININT				= 0x80000000;
+const int MAXINT				= 0x7fffffff;
 
-enum { TICRATE				= 35 };
+const int TICRATE				= 35;
 
-enum { MAXPLAYERS			= 8 };
+const int MAXPLAYERS			= 8;
 
-enum { NUM_CSHIFTS			= 8 };
+const int NUM_CSHIFTS			= 8;
 #define CSHIFT(r, g, b, a)	(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 
 // Difficulty/skill settings/filters.
@@ -140,7 +140,7 @@ enum
 	PST_REBORN
 };
 
-#define TOCENTER		-128.0
+const float TOCENTER		= -128.0;
 
 enum
 {
@@ -163,16 +163,15 @@ enum
 	RES_PASTDEST
 };
 
-enum { MAXDEATHMATCHSTARTS		= 16 };
-enum { MAX_PLAYER_STARTS		= 16 };
+const int MAXDEATHMATCHSTARTS	= 16;
+const int MAX_PLAYER_STARTS		= 16;
 
-#define MAXRADIUS		32.0
+const float MAXRADIUS			= 32.0;
 
 //
 // LineDef attributes.
 //
-enum
-{
+const int
 	ML_BLOCKING			= 0x0001,	// Solid, is an obstacle.
 	ML_BLOCKMONSTERS	= 0x0002,	// Blocks monsters only.
 	ML_TWOSIDED			= 0x0004,	// Backside will not be present at all
@@ -190,18 +189,15 @@ enum
 	ML_BLOCKEVERYTHING	= 0x8000,	//	Line blocks everything.
 	ML_RAILING			= 0x20000,
 	ML_BLOCK_FLOATERS	= 0x40000,
-	ML_CLIP_MIDTEX		= 0x80000	// Automatic for every Strife line
-};
+	ML_CLIP_MIDTEX		= 0x80000;	// Automatic for every Strife line
 
 //	These will be converted.
-enum
-{
+const int 
 	ML_PASSUSE_BOOM				= 0x0200,	//	Boom's ML_PASSUSE flag (conflicts with ML_REPEAT_SPECIAL)
 	ML_RAILING_STRIFE			= 0x0200,
 	ML_BLOCK_FLOATERS_STRIFE	= 0x0400,
 	ML_UNKNOWN2_STRIFE			= 0x0800,
-	ML_TRANSLUCENT_STRIFE		= 0x1000
-};
+	ML_TRANSLUCENT_STRIFE		= 0x1000;
 
 //
 // Special activation types
@@ -245,7 +241,7 @@ enum
 #define RGB(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
 #define RGBA(r, g, b, a)	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
-enum { MAX_TID_COUNT		= 200 };
+const int MAX_TID_COUNT		= 200;
 
 //**************************************************************************
 //**
@@ -317,8 +313,8 @@ enum
 
 #ifdef SERVER
 
-enum { MAXNAME		= 32 };
-enum { MAX_MSGLEN	= 8000 };
+const int MAXNAME		= 32;
+const int MAX_MSGLEN	= 8000;
 
 enum
 {
@@ -327,7 +323,7 @@ enum
 	PT_EARLYOUT		= 4
 };
 
-#define GRAVITY			1225.0
+const float GRAVITY			= 1225.0;
 
 #define MobjCenter(mobj)\
 	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
@@ -1040,6 +1036,8 @@ addfields sector_t
 	float		MoveFactor;
 };
 
+const int MAXSPECIALCROSS	= 32;
+
 struct tmtrace_t
 {
 	Entity Thing;
@@ -1060,7 +1058,6 @@ struct tmtrace_t
 
 	// keep track of special lines as they are hit,
 	// but don't process them until the move is proven valid
-	#define MAXSPECIALCROSS	32
 	line_t *SpecHit[MAXSPECIALCROSS];
 	int NumSpecHit;
 
@@ -2010,6 +2007,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/02/28 22:43:14  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.8  2006/02/25 17:15:55  dj_jl
 //  Implemented proper serialisation of the objects.
 //

@@ -63,7 +63,7 @@ void A_CastSorcererSpell()
 			mo.Instigator = Instigator;
 	}
 
-	Instigator.Args[3] = SORC_STOPPED;
+	Instigator.Args[3] = Sorcerer::SORC_STOPPED;
 }
 
 __states__
@@ -105,6 +105,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/28 22:46:53  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.3  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -28,49 +28,49 @@ class IntermissionScreen : Window;
 ClientGameBase ClGame;
 
 // GLOBAL LOCATIONS
-#define WI_SPACINGY    	33
+const int WI_SPACINGY	= 33;
 
-#define WI_TITLEY		2
+const int WI_TITLEY		= 2;
 
 // SINGPLE-PLAYER STUFF
-#define SP_STATSX		50
-#define SP_STATSY		50
+const int SP_STATSX		= 50;
+const int SP_STATSY		= 50;
 
-#define SP_TIMEX		16
-#define SP_TIMEY		168
+const int SP_TIMEX		= 16;
+const int SP_TIMEY		= 168;
 
 // NET GAME STUFF
-#define NG_STATSY		50
-#define NG_STATSX		(32 + star_width / 2)
+const int NG_STATSY		= 50;
+const int NG_STATSX		= (32 + 32 / 2);
 
-#define NG_SPACINGX    	64
+const int NG_SPACINGX    	= 64;
 
 // DEATHMATCH STUFF
-#define DM_MATRIXX		42
-#define DM_MATRIXY		68
+const int DM_MATRIXX		= 42;
+const int DM_MATRIXY		= 68;
 
-#define DM_TOTALSX		269
+const int DM_TOTALSX		= 269;
 
-#define DM_KILLERSX		10
-#define DM_KILLERSY		100
-#define DM_VICTIMSX    	5
-#define DM_VICTIMSY		50
+const int DM_KILLERSX		= 10;
+const int DM_KILLERSY		= 100;
+const int DM_VICTIMSX    	= 5;
+const int DM_VICTIMSY		= 50;
 
-#define DM_SPACINGX		40
+const int DM_SPACINGX		= 40;
 
 // in seconds
-#define SHOWNEXTLOCDELAY	4.0
+const float SHOWNEXTLOCDELAY	= 4.0;
 
 //  Different between registered DOOM (1994) and Ultimate DOOM - Final
 // edition (retail, 1995?).
-#define NUMEPISODES		3
-#define NUMMAPS			9
+const int NUMEPISODES		= 3;
+const int NUMMAPS			= 9;
 
 #ifdef DOOM2
 
-#define	TEXTSPEED	0.1
-#define	TEXTWAIT	4.0
-#define MAX_INTRMSN_MESSAGE_SIZE	1024
+const float TEXTSPEED	= 0.1;
+const float TEXTWAIT	= 4.0;
+const int MAX_INTRMSN_MESSAGE_SIZE	= 1024;
 
 #endif
 
@@ -1777,6 +1777,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/02/28 22:43:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.3  2006/02/20 22:57:16  dj_jl
 //  Changed client state structure to class.
 //

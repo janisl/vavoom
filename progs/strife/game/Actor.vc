@@ -26,6 +26,30 @@
 class Actor : Entity
 	abstract;
 
+// follow a player exlusively for 3 seconds
+const int BASETHRESHOLD		= 100;
+
+const float ONFLOORZ		= -99999.0;
+const float ONCEILINGZ		= 99999.0;
+
+const float
+	MELEERANGE		= 64.0,
+	PUNCHRANGE		= 80.0,
+	MISSILERANGE	= (32.0 * 64.0),
+	MAULERRANGE		= (33.0 * 64.0),
+	ROBOTRANGE		= 264.0;
+
+const float
+	MAXMOVE			= 1050.0,
+	STOPSPEED		= 2.1875,
+	FRICTION		= 3.28125,
+	FRICTION_LOW	= 0.95703125,
+	FRICTION_WATER	= 3.0,
+
+	BOUNCE_VAL		= 1.5,
+
+	FLOATSPEED		= 140.0;
+
 //  States
 int IdleState;
 int SeeState;
@@ -312,11 +336,11 @@ void OnMapSpawn(mthing_t * mthing)
 			Level.Game.level->totalkills++;
 
 		Angles.yaw = itof(45 * (mthing->angle / 45));
-		if (mthing->options & MTF_AMBUSH)
+		if (mthing->options & StrifeLevelInfo::MTF_AMBUSH)
 		{
 			bStanding = true;
 		}
-		if (mthing->options & MTF_DORMANT)
+		if (mthing->options & StrifeLevelInfo::MTF_DORMANT)
 		{
 			bDormant = true;
 			StateTime = -1.0;
@@ -749,7 +773,7 @@ void NightmareRespawn()
 	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 
-	if (mthing->options & MTF_AMBUSH)
+	if (mthing->options & StrifeLevelInfo::MTF_AMBUSH)
 		A.bStanding = true;
 
 	A.ReactionCount = 18;
@@ -1466,7 +1490,7 @@ void ZMovement(float DeltaTime)
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
 		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 	}
 
 	// adjust height
@@ -1783,7 +1807,7 @@ bool Physics(float DeltaTime)
 					Player.ViewHeight -= onmo.Origin.z + onmo.Height
 						- Origin.z;
 					Player.DeltaViewHeight =
-						(VIEWHEIGHT - Player.ViewHeight) * 4.0;
+						(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
@@ -3099,7 +3123,7 @@ void A_BeShadowyFoe()
 //
 //==========================================================================
 
-#define TRACEANGLE	(7.0 * 45.0 / 16.0)
+const float TRACEANGLE	= (7.0 * 45.0 / 16.0);
 
 void A_Tracer()
 {
@@ -3444,6 +3468,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2006/02/28 22:47:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.32  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

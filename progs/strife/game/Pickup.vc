@@ -118,7 +118,7 @@ void TouchSpecial(Actor Toucher)
 		Special = 0;
 	}
 	HideSpecial();
-	Toucher.Player.BonusFlash += BONUSADD;
+	Toucher.Player.BonusFlash += Player::BONUSADD;
 	Toucher.PlaySound(PickupSound, CHAN_ITEM);
 }
 
@@ -176,6 +176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/02/28 22:47:55  dj_jl
+//  Replaced defines with constants.
+//
 //  Revision 1.9  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //
