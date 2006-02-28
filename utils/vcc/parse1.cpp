@@ -730,7 +730,7 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 //
 //==========================================================================
 
-void AddConstant(TClass* InClass, VName Name, int value)
+void AddConstant(TClass* InClass, VName Name, int type, int value)
 {
 	if (CurrentPass == 2)
 		ParseError("Add constant in pass 2");
@@ -741,6 +741,7 @@ void AddConstant(TClass* InClass, VName Name, int value)
 	constant_t* cDef = new(Constants) constant_t;
 	cDef->OuterClass = InClass;
 	cDef->Name = Name;
+	cDef->Type = (EType)type;
 	cDef->value = value;
 	int hash = GetTypeHash(Name) & 255;
 	cDef->HashNext = ConstantsHash[hash];
@@ -788,7 +789,7 @@ void PA_Parse()
 					{
 						val = EvalConstExpression(NULL, ev_int);
 					}
-					AddConstant(NULL, Name, val);
+					AddConstant(NULL, Name, ev_int, val);
 					val++;
 				} while (TK_Check(PU_COMMA));
 				TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
@@ -831,9 +832,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.14  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.13  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
 //	

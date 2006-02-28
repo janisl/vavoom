@@ -94,6 +94,7 @@ static char* Keywords[] =
 	"case",
 	"class",
 	"classid",
+	"const",
 	"continue",
 	"default",
 	"defaultproperties",
@@ -540,6 +541,11 @@ static void ProcessLetterToken(void)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_CLASSID;
+		}
+		else if (!strcmp(tk_String, "const"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_CONST;
 		}
 		else if (!strcmp(tk_String, "continue"))
 		{
@@ -1200,9 +1206,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.25  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.24  2006/02/19 20:37:02  dj_jl
 //	Implemented support for delegates.
 //	

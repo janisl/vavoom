@@ -155,6 +155,7 @@ enum EKeyword
 	KW_CASE,
 	KW_CLASS,
 	KW_CLASSID,
+	KW_CONST,
 	KW_CONTINUE,
 	KW_DEFAULT,
 	KW_DEFAULTPROPERTIES,
@@ -361,6 +362,7 @@ struct localvardef_t : public FField
 struct constant_t : public FField
 {
 	TClass*		OuterClass;
+	EType		Type;
 	int			value;
 	int			HashNext;
 };
@@ -489,7 +491,7 @@ void ParseMethodDef(const TType&, field_t*, field_t*, TClass*, int);
 void ParseDelegate(const TType&, field_t*, field_t*, TClass*, int);
 int ParseStateCode(TClass*);
 void ParseDefaultProperties(field_t*, TClass*);
-void AddConstant(TClass* InClass, VName Name, int value);
+void AddConstant(TClass* InClass, VName Name, int type, int value);
 void PA_Parse();
 
 int CheckForLocalVar(VName);
@@ -635,9 +637,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.42  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.41  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
 //	

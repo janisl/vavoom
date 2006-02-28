@@ -622,6 +622,7 @@ void PC_WriteObject(char *name)
 		dc.Name = LittleShort(Constants[i].Name.GetIndex());
 		dc.OuterClass = LittleShort(Constants[i].OuterClass ? Constants[i].OuterClass->Index : -1);
 		dc.Value = LittleLong(Constants[i].value);
+		dc.Type = Constants[i].Type;
 		fwrite(&dc, 1, sizeof(dconstant_t), f);
 	}
 
@@ -777,9 +778,12 @@ void PC_DumpAsm(char* name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.31  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.30  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
 //	

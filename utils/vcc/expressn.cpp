@@ -482,7 +482,7 @@ static TTree ParseExpressionPriority0()
 				{
 					TK_NextToken();
 					AddStatement(OPC_PushNumber, Constants[num].value);
-					op = TTree(ev_int);
+					op = TTree(Constants[num].Type);
 					return op;
 				}
 			}
@@ -514,7 +514,7 @@ static TTree ParseExpressionPriority0()
 		if (num != -1)
 		{
 			AddStatement(OPC_PushNumber, Constants[num].value);
-			op = TTree(ev_int);
+			op = TTree(Constants[num].Type);
 			return op;
 		}
 
@@ -1732,9 +1732,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.40  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.39  2006/02/19 20:37:01  dj_jl
 //	Implemented support for delegates.
 //	

@@ -99,6 +99,8 @@ static int ConstExprFactor()
 				num = CheckForConstant(Class, tk_Name);
 				if (num != -1)
 				{
+					if (Constants[num].Type != ev_int)
+						ParseError(ERR_EXPR_TYPE_MISTMATCH);
 					TK_NextToken();
 					ret = Constants[num].value;
 					break;
@@ -112,6 +114,8 @@ static int ConstExprFactor()
 		num = CheckForConstant(ConstExprClass, Name);
 		if (num != -1)
 		{
+			if (Constants[num].Type != ev_int)
+				ParseError(ERR_EXPR_TYPE_MISTMATCH);
 			ret = Constants[num].value;
 		}
 		else
@@ -352,27 +356,70 @@ static int CExprLevA(void)
 static float FConstExprFactor(void)
 {
 	float		ret = 0.0;
+	int			num;
+	VName		Name;
 
 	switch (tk_Token)
 	{
-		case TK_FLOAT:
-			ret = tk_Float;
-			TK_NextToken();
-			break;
-		case TK_PUNCT:
-			if (TK_Check(PU_LPAREN))
+	case TK_FLOAT:
+		ret = tk_Float;
+		TK_NextToken();
+		break;
+	case TK_PUNCT:
+		if (TK_Check(PU_LPAREN))
+		{
+			ret = ConstFloatExpression();
+			TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
+		}
+		else
+		{
+			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid punct");
+		}
+		break;
+	case TK_IDENTIFIER:
+		Name = tk_Name;
+		TK_NextToken();
+		if (TK_Check(PU_DCOLON))
+		{
+			TClass* Class = CheckForClass(Name);
+			if (!Class)
 			{
-				ret = ConstFloatExpression();
-				TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
+				ParseError("Class name expected");
+				break;
 			}
-			else
+
+			if (tk_Token == TK_IDENTIFIER)
 			{
-				ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid punct");
+				num = CheckForConstant(Class, tk_Name);
+				if (num != -1)
+				{
+					if (Constants[num].Type != ev_float)
+						ParseError(ERR_EXPR_TYPE_MISTMATCH);
+					TK_NextToken();
+					ret = Constants[num].value;
+					break;
+				}
 			}
+
+			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
 			break;
-		default:
-			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
-			break;
+		}
+
+		num = CheckForConstant(ConstExprClass, Name);
+		if (num != -1)
+		{
+			if (Constants[num].Type != ev_float)
+				ParseError(ERR_EXPR_TYPE_MISTMATCH);
+			ret = Constants[num].value;
+		}
+		else
+		{
+			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid identifier %s", *Name);
+		}
+		break;
+	default:
+		ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
+		break;
 	}
 	return ret;
 }
@@ -502,9 +549,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.18  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.17  2006/02/19 20:37:01  dj_jl
 //	Implemented support for delegates.
 //	

@@ -722,10 +722,6 @@ void CompileClass()
 			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 			do
 			{
-				if (tk_Token != TK_IDENTIFIER)
-				{
-					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-				}
 				TK_NextToken();
 				if (TK_Check(PU_ASSIGN))
 				{
@@ -733,6 +729,20 @@ void CompileClass()
 				}
 			} while (TK_Check(PU_COMMA));
 			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			continue;
+		}
+
+		if (TK_Check(KW_CONST))
+		{
+			t = CheckForType(Class);
+			do
+			{
+				TK_NextToken();
+				if (!TK_Check(PU_ASSIGN))
+					ParseError("Assignement operator expected");
+				EvalConstExpression(Class, t.type);
+			} while (TK_Check(PU_COMMA));
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
@@ -1531,10 +1541,30 @@ void ParseClass()
 				{
 					val = EvalConstExpression(Class, ev_int);
 				}
-				AddConstant(Class, Name, val);
+				AddConstant(Class, Name, ev_int, val);
 				val++;
 			} while (TK_Check(PU_COMMA));
 			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			continue;
+		}
+
+		if (TK_Check(KW_CONST))
+		{
+			t = CheckForType(Class);
+			do
+			{
+				if (tk_Token != TK_IDENTIFIER)
+				{
+					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+				}
+				VName Name = tk_Name;
+				TK_NextToken();
+				if (!TK_Check(PU_ASSIGN))
+					ParseError("Assignement operator expected");
+				int val = EvalConstExpression(Class, t.type);
+				AddConstant(Class, Name, t.type, val);
+			} while (TK_Check(PU_COMMA));
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			continue;
 		}
@@ -1676,9 +1706,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.45  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.44  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
 //	

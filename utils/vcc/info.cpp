@@ -116,7 +116,7 @@ void ParseStates(TClass* InClass)
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
 		s.statename = tk_Name;
-		AddConstant(InClass, tk_Name, states.Num() - 1);
+		AddConstant(InClass, tk_Name, ev_int, states.Num() - 1);
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 		//	Sprite name
@@ -282,9 +282,12 @@ void SkipStates(TClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/02/28 19:17:20  dj_jl
+//	Added support for constants.
+//
 //	Revision 1.31  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.30  2006/02/15 23:27:06  dj_jl
 //	Added script ID class attribute.
 //	
