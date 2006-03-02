@@ -45,39 +45,39 @@
 
 struct lumpinfo_t
 {
-	char			name[12];
-	int				position;
-	int				size;
+	VName			Name;
+	vint32			Position;
+	vint32			Size;
 	EWadNamespace	Namespace;
 };
 
 class WadFile
 {
 public:
-	char Name[MAX_OSPATH];
-	int Handle;
-	int NumLumps;
-	lumpinfo_t *LumpInfo;	// Location of each lump on disk.
-	void **LumpCache;
-	const char* GwaDir;
+	VStr		Name;
+	int			Handle;
+	int			NumLumps;
+	lumpinfo_t*	LumpInfo;	// Location of each lump on disk.
+	void**		LumpCache;
+	VStr		GwaDir;
 
-	WadFile(void) : Handle(-1),
+	WadFile() : Handle(-1),
 		NumLumps(0), LumpInfo(NULL), LumpCache(NULL)
 	{
 	}
-	void Open(const char *filename, const char* AGwaDir, bool FixVoices);
-	void OpenSingleLump(const char *filename);
-	void CloseFile(void);
-	bool CanClose(void);
-	void Close(void);
-	int CheckNumForName(const char* name, EWadNamespace NS);
+	void Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices);
+	void OpenSingleLump(const VStr& FileName);
+	void CloseFile();
+	bool CanClose();
+	void Close();
+	int CheckNumForName(VName LumpName, EWadNamespace NS);
 	void ReadLump(int lump, void* dest);
 	void ReadFromLump(int lump, void* dest, int pos, int size);
 	void* CacheLumpNum(int lump, int tag);
 	void InitNamespaces();
 	void FixVoiceNamespaces();
-	void InitNamespace(EWadNamespace NS, const char* Start, const char* End,
-		bool AltMarkers);
+	void InitNamespace(EWadNamespace NS, VName Start, VName End,
+		VName AltStart = NAME_None, VName AltEnd = NAME_None);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -129,7 +129,7 @@ void W_CleanupName(const char *src, char *dst)
 //
 //==========================================================================
 
-void WadFile::Open(const char *filename, const char* AGwaDir, bool FixVoices)
+void WadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 {
 	guard(WadFile::Open);
 	wadinfo_t		header;
@@ -139,16 +139,16 @@ void WadFile::Open(const char *filename, const char* AGwaDir, bool FixVoices)
 	filelump_t*		fileinfo;
 	filelump_t*		fi_p;
 
-	strcpy(Name, filename);
+	Name = FileName;
 	GwaDir = AGwaDir;
 
 	// open the file and add to directory
-	Handle = Sys_FileOpenRead(filename);
+	Handle = Sys_FileOpenRead(*FileName);
 	if (Handle == -1)
 	{
-		Sys_Error("Couldn't open %s", filename);
+		Sys_Error("Couldn't open %s", *FileName);
 	}
-	GCon->Logf(NAME_Init, "adding %s", filename);
+	GCon->Logf(NAME_Init, "adding %s", *FileName);
 
 	// WAD file
 	Sys_FileRead(Handle, &header, sizeof(header));
@@ -158,7 +158,7 @@ void WadFile::Open(const char *filename, const char* AGwaDir, bool FixVoices)
 		if (strncmp(header.identification, "PWAD", 4))
 		{
 			Sys_Error ("Wad file %s doesn't have IWAD "
-		 		"or PWAD id\n", filename);
+		 		"or PWAD id\n", *FileName);
 		}
 	}
 	header.numlumps = LittleLong(header.numlumps);
@@ -176,9 +176,9 @@ void WadFile::Open(const char *filename, const char* AGwaDir, bool FixVoices)
 
 	for (i = 0; i < NumLumps; i++, lump_p++, fileinfo++)
 	{
-		W_CleanupName(fileinfo->name, lump_p->name);
-		lump_p->position = LittleLong(fileinfo->filepos);
-		lump_p->size = LittleLong(fileinfo->size);
+		lump_p->Name = VName(fileinfo->name, VName::AddLower8);
+		lump_p->Position = LittleLong(fileinfo->filepos);
+		lump_p->Size = LittleLong(fileinfo->size);
 		lump_p->Namespace = WADNS_Global;
 	}
 	
@@ -203,18 +203,18 @@ void WadFile::Open(const char *filename, const char* AGwaDir, bool FixVoices)
 //
 //==========================================================================
 
-void WadFile::OpenSingleLump(const char *filename)
+void WadFile::OpenSingleLump(const VStr& FileName)
 {
 	guard(WadFile::OpenSingleLump);
 	// open the file and add to directory
-	Handle = Sys_FileOpenRead(filename);
+	Handle = Sys_FileOpenRead(*FileName);
 	if (Handle == -1)
 	{
-		Sys_Error("Couldn't open %s", filename);
+		Sys_Error("Couldn't open %s", *FileName);
 	}
-	GCon->Logf(NAME_Init, "adding %s", filename);
+	GCon->Logf(NAME_Init, "adding %s", *FileName);
 
-	strcpy(Name, filename);
+	Name = FileName;
 	GwaDir = NULL;
 
 	// single lump file
@@ -222,10 +222,11 @@ void WadFile::OpenSingleLump(const char *filename)
 	LumpInfo = Z_New<lumpinfo_t>();
 
 	// Fill in lumpinfo
-	FL_ExtractFileBase(filename, LumpInfo->name);
-	W_CleanupName(LumpInfo->name, LumpInfo->name);
-	LumpInfo->position = 0;
-	LumpInfo->size = Sys_FileSize(Handle);
+	char TmpName[12];
+	FL_ExtractFileBase(*FileName, TmpName);
+	LumpInfo->Name = VName(TmpName, VName::AddLower8);
+	LumpInfo->Position = 0;
+	LumpInfo->Size = Sys_FileSize(Handle);
 	
 	// set up caching
 	LumpCache = Z_CNew<void*>();
@@ -312,26 +313,26 @@ void WadFile::Close()
 //
 //==========================================================================
 
-void W_AddFile(const char *filename, const char* gwadir, bool FixVoices)
+void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 {
 	guard(W_AddFile);
 	int wadtime;
 	char ext[8];
 
-	wadtime = Sys_FileTime(filename);
+	wadtime = Sys_FileTime(*FileName);
 	if (wadtime == -1)
 	{
-		Sys_Error("Required file %s doesn't exist", filename);
+		Sys_Error("Required file %s doesn't exist", *FileName);
 	}
 
-	FL_ExtractFileExtension(filename, ext);
+	FL_ExtractFileExtension(*FileName, ext);
 	if (stricmp(ext, "wad") && stricmp(ext, "gwa"))
 	{
-		wad_files[num_wad_files].OpenSingleLump(filename);
+		wad_files[num_wad_files].OpenSingleLump(FileName);
 	}
 	else
 	{
-		wad_files[num_wad_files].Open(filename, gwadir, FixVoices);
+		wad_files[num_wad_files].Open(FileName, GwaDir, FixVoices);
 	}
 
 	num_wad_files++;
@@ -341,28 +342,28 @@ void W_AddFile(const char *filename, const char* gwadir, bool FixVoices)
 		char gl_name[1024];
 
 		bool FoundGwa = false;
-		if (gwadir)
+		if (GwaDir)
 		{
-			strcpy(gl_name, gwadir);
+			strcpy(gl_name, *GwaDir);
 			strcat(gl_name, "/");
-			FL_ExtractFileName(filename, gl_name + strlen(gl_name));
+			FL_ExtractFileName(*FileName, gl_name + strlen(gl_name));
 			FL_StripExtension(gl_name);
 			strcat(gl_name, ".gwa");
 			if (Sys_FileTime(gl_name) >= wadtime)
 			{
-				W_AddFile(gl_name, NULL, false);
+				W_AddFile(gl_name, VStr(), false);
 				FoundGwa = true;
 			}
 		}
 
 		if (!FoundGwa)
 		{
-			strcpy(gl_name, filename);
+			strcpy(gl_name, *FileName);
 			FL_StripExtension(gl_name);
 			strcat(gl_name, ".gwa");
 			if (Sys_FileTime(gl_name) >= wadtime)
 			{
-				W_AddFile(gl_name, NULL, false);
+				W_AddFile(gl_name, VStr(), false);
 			}
 			else
 			{
@@ -380,14 +381,14 @@ void W_AddFile(const char *filename, const char* gwadir, bool FixVoices)
 //
 //==========================================================================
 
-void W_OpenAuxiliary(const char *filename)
+void W_OpenAuxiliary(const VStr& FileName)
 {
 	guard(W_OpenAuxiliary);
 	W_CloseAuxiliary();
 
 	AuxiliaryIndex = num_wad_files;
 
-	W_AddFile(filename, NULL, false);
+	W_AddFile(FileName, VStr(), false);
 	unguard;
 }
 
@@ -443,24 +444,24 @@ void W_BuildGLNodes(int lump)
 	char gwaname[MAX_OSPATH];
 	if (wad_files[fi].GwaDir)
 	{
-		FL_CreatePath(wad_files[fi].GwaDir);
-		strcpy(gwaname, wad_files[fi].GwaDir);
+		FL_CreatePath(*wad_files[fi].GwaDir);
+		strcpy(gwaname, *wad_files[fi].GwaDir);
 		strcat(gwaname, "/");
-		FL_ExtractFileName(wad_files[fi].Name, gwaname + strlen(gwaname));
+		FL_ExtractFileName(*wad_files[fi].Name, gwaname + strlen(gwaname));
 	}
 	else
-		strcpy(gwaname, wad_files[fi].Name);
+		strcpy(gwaname, *wad_files[fi].Name);
 	FL_StripExtension(gwaname);
 	strcat(gwaname, ".gwa");
 
 	// Build GL nodes
-	if (!GLBSP_BuildNodes(wad_files[fi].Name, gwaname))
+	if (!GLBSP_BuildNodes(*wad_files[fi].Name, gwaname))
 	{
 		Sys_Error("Node build failed");
 	}
 
 	// Build PVS
-	GLVis_BuildPVS(wad_files[fi].Name, gwaname);
+	GLVis_BuildPVS(*wad_files[fi].Name, gwaname);
 
 	// Add GWA file
 	wad_files[fi + 1].Open(gwaname, NULL, false);
@@ -478,11 +479,11 @@ void W_BuildPVS(int lump, int gllump)
 	guard(W_BuildPVS);
 	int fi = FILE_INDEX(lump);
 	char name[MAX_OSPATH];
-	strcpy(name, wad_files[fi].Name);
+	strcpy(name, *wad_files[fi].Name);
 
 	int glfi = FILE_INDEX(gllump);
 	char glname[MAX_OSPATH];
-	strcpy(glname, wad_files[glfi].Name);
+	strcpy(glname, *wad_files[glfi].Name);
 
 	if (!wad_files[glfi].CanClose())
 	{
@@ -512,12 +513,12 @@ void W_BuildPVS(int lump, int gllump)
 //
 //==========================================================================
 
-int WadFile::CheckNumForName(const char* name, EWadNamespace NS)
+int WadFile::CheckNumForName(VName LumpName, EWadNamespace NS)
 {
 	guard(WadFile::CheckNumForName);
 	for (int i = NumLumps - 1; i >= 0; i--)
 	{
-		if (LumpInfo[i].Namespace == NS && !strcmp(name, LumpInfo[i].name))
+		if (LumpInfo[i].Namespace == NS && LumpInfo[i].Name == LumpName)
 		{
 			return i;
 		}
@@ -536,14 +537,12 @@ int WadFile::CheckNumForName(const char* name, EWadNamespace NS)
 //
 //==========================================================================
 
-int W_CheckNumForName(const char* name, EWadNamespace NS)
+int W_CheckNumForName(VName Name, EWadNamespace NS)
 {
 	guard(W_CheckNumForName);
-	char cleaned[12];
-	W_CleanupName(name, cleaned);
 	for (int wi = num_wad_files - 1; wi >= 0; wi--)
 	{
-		int i = wad_files[wi].CheckNumForName(cleaned, NS);
+		int i = wad_files[wi].CheckNumForName(Name, NS);
 		if (i >= 0)
 		{
 			return MAKE_HANDLE(wi, i);
@@ -563,18 +562,14 @@ int W_CheckNumForName(const char* name, EWadNamespace NS)
 //
 //==========================================================================
 
-int W_GetNumForName(const char* name, EWadNamespace NS)
+int W_GetNumForName(VName Name, EWadNamespace NS)
 {
 	guard(W_GetNumForName);
-	int	i;
-
-	i = W_CheckNumForName(name, NS);
-	
+	int i = W_CheckNumForName(Name, NS);
 	if (i == -1)
 	{
-		Sys_Error("W_GetNumForName: %s not found!", name);
+		Sys_Error("W_GetNumForName: %s not found!", *Name);
 	}
-
 	return i;
 	unguard;
 }
@@ -596,7 +591,7 @@ int W_LumpLength(int lump)
 	}
 	WadFile &w = GET_LUMP_FILE(lump);
 	int lumpindex = LUMP_INDEX(lump);
-	return w.LumpInfo[lumpindex].size;
+	return w.LumpInfo[lumpindex].Size;
 	unguard;
 }
 
@@ -606,21 +601,20 @@ int W_LumpLength(int lump)
 //
 //==========================================================================
 
-const char *W_LumpName(int lump)
+VName W_LumpName(int lump)
 {
 	guard(W_LumpName);
-	static char empty_string[4] = "";
 	if (FILE_INDEX(lump) >= num_wad_files)
 	{
-		return empty_string;
+		return NAME_None;
 	}
 	WadFile &w = GET_LUMP_FILE(lump);
 	int lumpindex = LUMP_INDEX(lump);
 	if (lumpindex >= w.NumLumps)
 	{
-		return empty_string;
+		return NAME_None;
 	}
-	return w.LumpInfo[lumpindex].name;
+	return w.LumpInfo[lumpindex].Name;
 	unguard;
 }
 
@@ -642,13 +636,13 @@ void WadFile::ReadLump(int lump, void* dest)
 
 	lumpinfo_t &l = LumpInfo[lump];
 
-	Sys_FileSeek(Handle, l.position);
-	int c = Sys_FileRead(Handle, dest, l.size);
+	Sys_FileSeek(Handle, l.Position);
+	int c = Sys_FileRead(Handle, dest, l.Size);
 
-	if (c < l.size)
+	if (c < l.Size)
 	{
 		Sys_Error("W_ReadLump: only read %i of %i on lump %i",
-			c, l.size, lump);
+			c, l.Size, lump);
 	}
 	unguard;
 }
@@ -690,12 +684,12 @@ void WadFile::ReadFromLump(int lump, void* dest, int pos, int size)
 
 	lumpinfo_t &l = LumpInfo[lump];
 
-	if (pos >= l.size)
+	if (pos >= l.Size)
 	{
 		return;
 	}
 
-	Sys_FileSeek(Handle, l.position + pos);
+	Sys_FileSeek(Handle, l.Position + pos);
 	Sys_FileRead(Handle, dest, size);
 	unguard;
 }
@@ -736,11 +730,9 @@ void* WadFile::CacheLumpNum(int lump, int tag)
 	if (!LumpCache[lump])
 	{
 		// read the lump in
-//		byte *ptr = (byte*)Z_Malloc(W_LumpLength(lump) + 1, tag, &lumpcache[lump]);
-		byte *ptr = (byte*)Z_Malloc(LumpInfo[lump].size + 1, tag, &LumpCache[lump]);
+		byte *ptr = (byte*)Z_Malloc(LumpInfo[lump].Size + 1, tag, &LumpCache[lump]);
 		ReadLump(lump, LumpCache[lump]);
-//		ptr[W_LumpLength(lump)] = 0;
-		ptr[LumpInfo[lump].size] = 0;
+		ptr[LumpInfo[lump].Size] = 0;
 	}
 	else
 	{
@@ -777,10 +769,10 @@ void* W_CacheLumpNum(int lump, int tag)
 //
 //==========================================================================
 
-void* W_CacheLumpName(const char* name,int tag, EWadNamespace NS)
+void* W_CacheLumpName(VName Name,int tag, EWadNamespace NS)
 {
 	guard(W_CacheLumpName);
-	return W_CacheLumpNum(W_GetNumForName(name, NS), tag);
+	return W_CacheLumpNum(W_GetNumForName(Name, NS), tag);
 	unguard;
 }
 
@@ -798,7 +790,7 @@ public:
 	{
 		bLoading = true;
 	}
-	~VStreamLumpReader(void)
+	~VStreamLumpReader()
 	{
 		if (Data)
 			Close();
@@ -812,15 +804,15 @@ public:
 		memcpy(V, Data + Pos, Length);
 		Pos += Length;
 	}
-	int Tell(void)
+	int Tell()
 	{
 		return Pos;
 	}
-	int TotalSize(void)
+	int TotalSize()
 	{
 		return Size;
 	}
-	bool AtEnd(void)
+	bool AtEnd()
 	{
 		return Pos >= Size;
 	}
@@ -828,7 +820,7 @@ public:
 	{
 		Pos = InPos;
 	}
-	bool Close(void)
+	bool Close()
 	{
 		Z_Free(Data);
 		Data = NULL;
@@ -861,35 +853,10 @@ VStream* W_CreateLumpReader(int lump)
 //
 //==========================================================================
 
-VStream* W_CreateLumpReader(const char* name, EWadNamespace NS)
+VStream* W_CreateLumpReader(VName Name, EWadNamespace NS)
 {
 	guard(W_CreateLumpReader);
-	return W_CreateLumpReader(W_GetNumForName(name, NS));
-	unguard;
-}
-
-//==========================================================================
-//
-//  W_ForEachLump
-//
-//==========================================================================
-
-bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace))
-{
-	guard(W_ForEachLump);
-	for (int wi = 0; wi < num_wad_files; wi++)
-	{
-		WadFile &w = wad_files[wi];
-		for (int i = 0; i < w.NumLumps; i++)
-		{
-			if (!func(MAKE_HANDLE(wi, i), w.LumpInfo[i].name, 
-				w.LumpInfo[i].size, w.LumpInfo[i].Namespace))
-			{
-				return false;
-			}
-		}
-	}
-	return true;
+	return W_CreateLumpReader(W_GetNumForName(Name, NS));
 	unguard;
 }
 
@@ -928,14 +895,14 @@ int W_IterateNS(int Prev, EWadNamespace NS)
 void WadFile::InitNamespaces()
 {
 	guard(WadFile::InitNamespaces);
-	InitNamespace(WADNS_Sprites, "S_START", "S_END", true);
-	InitNamespace(WADNS_Flats, "F_START", "F_END", true);
-	InitNamespace(WADNS_ColorMaps, "C_START", "C_END", true);
-	InitNamespace(WADNS_ACSLibrary, "A_START", "A_END", true);
-	InitNamespace(WADNS_NewTextures, "TX_START", "TX_END", false);
-	InitNamespace(WADNS_Voices, "V_START", "V_END", true);
-	InitNamespace(WADNS_HiResTextures, "H_START", "H_END", true);
-	InitNamespace(WADNS_Progs, "PR_START", "PR_END", false);
+	InitNamespace(WADNS_Sprites, NAME_s_start, NAME_s_end, NAME_ss_start, NAME_ss_end);
+	InitNamespace(WADNS_Flats, NAME_f_start, NAME_f_end, NAME_ff_start, NAME_ff_end);
+	InitNamespace(WADNS_ColorMaps, NAME_c_start, NAME_c_end, NAME_cc_start, NAME_cc_end);
+	InitNamespace(WADNS_ACSLibrary, NAME_a_start, NAME_a_end, NAME_aa_start, NAME_aa_end);
+	InitNamespace(WADNS_NewTextures, NAME_tx_start, NAME_tx_end);
+	InitNamespace(WADNS_Voices, NAME_v_start, NAME_v_end, NAME_vv_start, NAME_vv_end);
+	InitNamespace(WADNS_HiResTextures, NAME_h_start, NAME_h_end, NAME_hh_start, NAME_hh_end);
+	InitNamespace(WADNS_Progs, NAME_pr_start, NAME_pr_end);
 	unguard;
 }
 
@@ -945,8 +912,8 @@ void WadFile::InitNamespaces()
 //
 //==========================================================================
 
-void WadFile::InitNamespace(EWadNamespace NS, const char* Start,
-	const char* End, bool AltMarkers)
+void WadFile::InitNamespace(EWadNamespace NS, VName Start, VName End,
+	VName AltStart, VName AltEnd)
 {
 	guard(WadFile::InitNamespace);
 	bool InNS = false;
@@ -961,8 +928,7 @@ void WadFile::InitNamespace(EWadNamespace NS, const char* Start,
 		if (InNS)
 		{
 			//	Check for ending marker.
-			if (!strcmp(L.name, End) || (AltMarkers && 
-				L.name[0] == End[0] && !strcmp(L.name + 1, End)))
+			if (L.Name == End || (AltEnd != NAME_None && L.Name == AltEnd))
 			{
 				InNS = false;
 			}
@@ -974,8 +940,7 @@ void WadFile::InitNamespace(EWadNamespace NS, const char* Start,
 		else
 		{
 			//	Check for starting marker.
-			if (!strcmp(L.name, Start) || (AltMarkers &&
-				L.name[0] == Start[0] && !strcmp(L.name + 1, Start)))
+			if (L.Name == Start || (AltStart != NAME_None && L.Name == AltStart))
 			{
 				InNS = true;
 			}
@@ -1001,12 +966,13 @@ void WadFile::FixVoiceNamespaces()
 		if (L.Namespace != WADNS_Global)
 			continue;
 
-		if (L.name[0] == 'V' && L.name[1] == 'O' && L.name[2] == 'C' &&
-			L.name[3] >= '0' && L.name[3] <= '9' &&
-			(L.name[4] == 0 || (L.name[4] >= '0' && L.name[4] <= '9' &&
-			(L.name[5] == 0 || (L.name[5] >= '0' && L.name[5] <= '9' &&
-			(L.name[6] == 0 || (L.name[6] >= '0' && L.name[6] <= '9' &&
-			(L.name[7] == 0 || (L.name[7] >= '0' && L.name[7] <= '9')))))))))
+		const char* LName = *L.Name;
+		if (LName[0] == 'v' && LName[1] == 'o' && LName[2] == 'c' &&
+			LName[3] >= '0' && LName[3] <= '9' &&
+			(LName[4] == 0 || (LName[4] >= '0' && LName[4] <= '9' &&
+			(LName[5] == 0 || (LName[5] >= '0' && LName[5] <= '9' &&
+			(LName[6] == 0 || (LName[6] >= '0' && LName[6] <= '9' &&
+			(LName[7] == 0 || (LName[7] >= '0' && LName[7] <= '9')))))))))
 		{
 			L.Namespace = WADNS_Voices;
 		}
@@ -1021,7 +987,7 @@ void WadFile::FixVoiceNamespaces()
 //==========================================================================
 
 #if 0
-void W_Profile(void)
+void W_Profile()
 {
 	static int	info[2500][10];
 	static int	profilecount = 0;
@@ -1083,6 +1049,9 @@ void W_Profile(void)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/03/02 23:24:36  dj_jl
+//  Wad lump names stored as names.
+//
 //  Revision 1.23  2006/02/22 20:33:51  dj_jl
 //  Created stream class.
 //

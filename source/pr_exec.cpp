@@ -222,7 +222,7 @@ void TProgs::Load(const char *AName)
 	else
 	{
 		//	Load PROGS from wad file
-		i =	W_GetNumForName(AName, WADNS_Progs);
+		i = W_GetNumForName(VName(AName, VName::AddLower8), WADNS_Progs);
 		Progs = (dprograms_t*)W_CacheLumpNum(i, PU_STATIC);
 		len = W_LumpLength(i);
 	}
@@ -2085,9 +2085,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.44  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.43  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
 //	

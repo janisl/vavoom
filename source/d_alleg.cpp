@@ -43,13 +43,6 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-BEGIN_COLOR_DEPTH_LIST
-	COLOR_DEPTH_8
-	COLOR_DEPTH_15
-	COLOR_DEPTH_16
-	COLOR_DEPTH_32
-END_COLOR_DEPTH_LIST
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static BITMAP		*gamebitmap = NULL;
@@ -315,9 +308,12 @@ void VSoftwareDrawer::Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.13  2005/10/02 23:15:44  dj_jl
 //	Changed default resolution.
-//
+//	
 //	Revision 1.12  2005/04/28 07:16:11  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

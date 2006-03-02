@@ -316,7 +316,7 @@ void S_InitScript()
 		Lump = W_IterateNS(Lump, WADNS_Voices))
 	{
 		char SndName[16];
-		sprintf(SndName, "svox/%s", *VName(W_LumpName(Lump), VName::AddLower8));
+		sprintf(SndName, "svox/%s", *W_LumpName(Lump));
 
 		int id = AddSoundLump(SndName, Lump);
 		S_sfx[id].ChangePitch = 0;
@@ -326,7 +326,7 @@ void S_InitScript()
 	for (Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		if (!stricmp(W_LumpName(Lump), "sndinfo"))
+		if (W_LumpName(Lump) == NAME_sndinfo)
 		{
 			SC_OpenLumpNum(Lump);
 			S_ParseSndinfo();
@@ -463,7 +463,8 @@ static void S_ParseSndinfo()
 				FakeName[len + 1] = Gender + '0';
 				strcpy(&FakeName[len + 2], *S_sfx[RefId].TagName);
 
-				id = AddSoundLump(FakeName, W_CheckNumForName(sc_String));
+				id = AddSoundLump(FakeName, W_CheckNumForName(
+					VName(sc_String, VName::AddLower8)));
 				int PlrSndId = PlayerSounds.Add();
 				PlayerSounds[PlrSndId].ClassId = PClass;
 				PlayerSounds[PlrSndId].GenderId = Gender;
@@ -604,7 +605,7 @@ static void S_ParseSndinfo()
 		{
 			VName TagName = sc_String;
 			SC_MustGetString();
-			AddSound(TagName, W_CheckNumForName(sc_String));
+			AddSound(TagName, W_CheckNumForName(VName(sc_String, VName::AddLower8)));
 		}
 	}
 	SC_Close();
@@ -752,11 +753,11 @@ bool S_LoadSound(int sound_id)
 	guard(S_LoadSound);
 	if (!S_sfx[sound_id].Data)
 	{
-		VStream* Strm = FL_OpenFileRead(va("sound/%s.flac", W_LumpName(S_sfx[sound_id].LumpNum)));
+		VStream* Strm = FL_OpenFileRead(va("sound/%s.flac", *W_LumpName(S_sfx[sound_id].LumpNum)));
 		if (!Strm)
-			Strm = FL_OpenFileRead(va("sound/%s.wav", W_LumpName(S_sfx[sound_id].LumpNum)));
+			Strm = FL_OpenFileRead(va("sound/%s.wav", *W_LumpName(S_sfx[sound_id].LumpNum)));
 		if (!Strm)
-			Strm = FL_OpenFileRead(va("sound/%s.raw", W_LumpName(S_sfx[sound_id].LumpNum)));
+			Strm = FL_OpenFileRead(va("sound/%s.raw", *W_LumpName(S_sfx[sound_id].LumpNum)));
 		if (!Strm)
 		{
 			// get LumpNum if necessary
@@ -842,9 +843,12 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.20  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.19  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

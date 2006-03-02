@@ -774,7 +774,7 @@ void R_PrecacheLevel()
 static void InitTranslationTables()
 {
 	guard(InitTranslationTables);
-	int Lump = W_GetNumForName("TRANSLAT");
+	int Lump = W_GetNumForName(NAME_translat);
 	translationtables = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 	int TabLen = W_LumpLength(Lump);
 	for (int i = 0; i < TabLen; i++)
@@ -814,7 +814,7 @@ void R_InitData()
 	// with modified graphics.
 	//	Strife uses color 0 as transparent. I already had problems with fact
 	// that colour 255 is normal color, now there shouldn't be any problems.
-	byte* psrc = (byte*)W_CacheLumpName("PLAYPAL", PU_TEMP);
+	byte* psrc = (byte*)W_CacheLumpName(NAME_playpal, PU_TEMP);
 	rgba_t* pal = r_palette;
 	int best_dist = 0x10000;
 	for (int i = 0; i < 256; i++)
@@ -938,9 +938,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.33  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.32  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

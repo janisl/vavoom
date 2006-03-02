@@ -97,7 +97,7 @@ void T_Init(void)
 {
 	guard(T_Init);
 	// Load fonts
-	if (W_CheckNumForName("STCFN033") >= 0)
+	if (W_CheckNumForName(NAME_stcfn033) >= 0)
 	{
 		T_LoadFont2(font_small, "STCFN", 4, 7);
 		T_LoadFont2(font_yellow, "STBFN", 4, 7);
@@ -138,7 +138,7 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	for (i = 0; i < 96; i++)
 	{
 		sprintf(buffer, "%s%02d", Name, i);
-		if (W_CheckNumForName(buffer) >= 0)
+		if (W_CheckNumForName(VName(buffer, VName::AddLower8)) >= 0)
 		{
 			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
 				VName::AddLower8), TEXTYPE_Pic);
@@ -183,7 +183,7 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	for (i = 0; i < 64; i++)
 	{
 		sprintf(buffer, "%s%03d", Name, i + 32);
-		if (W_CheckNumForName(buffer) >= 0)
+		if (W_CheckNumForName(VName(buffer, VName::AddLower8)) >= 0)
 		{
 			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
 				VName::AddLower8), TEXTYPE_Pic);
@@ -665,9 +665,12 @@ void T_DrawString8(int x, int y, const char* String)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/03/02 23:24:36  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.17  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.16  2006/01/10 19:32:27  dj_jl
 //	Fix for long notify messages.
 //	

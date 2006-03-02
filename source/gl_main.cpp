@@ -466,7 +466,7 @@ void *VOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 void VOpenGLDrawer::SetPalette(int pnum)
 {
 	guard(VOpenGLDrawer::SetPalette);
-	byte *pal = (byte*)W_CacheLumpName("PLAYPAL", PU_CACHE) + 768 * pnum;
+	byte* pal = (byte*)W_CacheLumpName(NAME_playpal, PU_CACHE) + 768 * pnum;
 	int cmax = MAX(MAX(pal[0], pal[1]), pal[2]);
 	if (!cmax)
 	{
@@ -484,9 +484,12 @@ void VOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.25  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.24  2006/01/03 19:57:45  dj_jl
 //	Fixed anisotropic texture filtering.
 //	

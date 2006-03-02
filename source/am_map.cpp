@@ -501,21 +501,20 @@ static void AM_initVariables(void)
 
 static void AM_loadPics()
 {
-    int		i;
+	int		i;
 
-	if (W_CheckNumForName("AMMNUM0") >= 0)
-    {
-	    for (i = 0; i < 10; i++)
-    	{
+	if (W_CheckNumForName(NAME_ammnum0) >= 0)
+	{
+		for (i = 0; i < 10; i++)
+		{
 			marknums[i] = GTextureManager.AddPatch(VName(va("AMMNUM%d", i),
 				VName::AddLower8), TEXTYPE_Pic);
-    	}
+		}
 		use_marks = true;
 	}
 
-	mappic = GTextureManager.AddPatch(VName("AUTOPAGE", VName::AddLower8),
-		TEXTYPE_Pic);
-	mapheight = W_LumpLength(W_GetNumForName("AUTOPAGE")) / 320;
+	mappic = GTextureManager.AddPatch(NAME_autopage, TEXTYPE_Pic);
+	mapheight = (int)GTextureManager.TextureHeight(mappic);
 }
 
 //==========================================================================
@@ -1525,9 +1524,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.18  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.17  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

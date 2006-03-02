@@ -119,7 +119,7 @@ void SC_OpenLump(const char *name)
 void SC_OpenLumpNum(int LumpNum)
 {
 	guard(SC_OpenLumpNum);
-	OpenScript(W_LumpName(LumpNum), LumpNum, LUMP_NUM_SCRIPT);
+	OpenScript(*W_LumpName(LumpNum), LumpNum, LUMP_NUM_SCRIPT);
 	unguard;
 }
 
@@ -152,8 +152,8 @@ static void OpenScript(const char *name, int LumpNum, int type)
 	if (type == LUMP_SCRIPT)
 	{
 		// Lump script
-		ScriptBuffer = (char *)W_CacheLumpName(name, PU_HIGH);
-		ScriptSize = W_LumpLength(W_GetNumForName(name));
+		ScriptBuffer = (char*)W_CacheLumpName(VName(name, VName::AddLower8), PU_HIGH);
+		ScriptSize = W_LumpLength(W_GetNumForName(VName(name, VName::AddLower8)));
 		strcpy(ScriptName, name);
 	}
 	else if (type == LUMP_NUM_SCRIPT)
@@ -624,9 +624,12 @@ static void CheckOpen(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.8  2005/07/03 12:07:37  dj_jl
 //	Fixed opening of lump num scripts.
-//
+//	
 //	Revision 1.7  2005/05/03 15:00:11  dj_jl
 //	Moved switch list, animdefs enhancements.
 //	

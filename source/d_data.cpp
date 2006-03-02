@@ -77,10 +77,9 @@ static rgb_t	host_basepal[256];
 //
 //==========================================================================
 
-static void CalcRGBTable8(void)
+static void CalcRGBTable8()
 {
 	guard(CalcRGBTable8);
-	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 	int i = 0;
 	for (int tn = 0; tn < 32; tn++)
 	{
@@ -95,9 +94,9 @@ static void CalcRGBTable8(void)
 				fadetable16b[i] = 0x8000;
 				continue;
 			}
-			int r = (int)(pal[ci].r * frac + 0.5) + fog;
-			int g = (int)(pal[ci].g * frac + 0.5) + fog;
-			int b = (int)(pal[ci].b * frac + 0.5) + fog;
+			int r = (int)(r_palette[ci].r * frac + 0.5) + fog;
+			int g = (int)(r_palette[ci].g * frac + 0.5) + fog;
+			int b = (int)(r_palette[ci].b * frac + 0.5) + fog;
 			fadetable16r[i] = (r << 7) & 0x7c00;
 			fadetable16g[i] = (g << 2) & 0x03e0;
 			fadetable16b[i] = (b >> 3) & 0x001f;
@@ -112,14 +111,14 @@ static void CalcRGBTable8(void)
 //
 //==========================================================================
 
-static void CalcCol16Table(void)
+static void CalcCol16Table()
 {
 	guard(CalcCol16Table);
-	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < 256; i++)
 	{
-		pal8_to16[i] = MakeCol(gt[pal[i].r], gt[pal[i].g], gt[pal[i].b]);
+		pal8_to16[i] = MakeCol(gt[r_palette[i].r], gt[r_palette[i].g],
+			gt[r_palette[i].b]);
 	}
 	unguard;
 }
@@ -176,14 +175,14 @@ static void CalcFadetable16(rgb_t *pal)
 //
 //==========================================================================
 
-static void CalcCol32Table(void)
+static void CalcCol32Table()
 {
 	guard(CalcCol32Table);
-	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
 	byte *gt = gammatable[usegamma];
 	for (int i = 0; i < 256; i++)
 	{
-		pal2rgb[i] = MakeCol(gt[pal[i].r], gt[pal[i].g], gt[pal[i].b]);
+		pal2rgb[i] = MakeCol(gt[r_palette[i].r], gt[r_palette[i].g],
+			gt[r_palette[i].b]);
 	}
 	unguard;
 }
@@ -249,7 +248,7 @@ void VSoftwareDrawer::SetPalette(int InNum)
 		GCon->Logf(NAME_Dev, "Invalid palette num %d", num);
 		num = 0;
 	}
-	byte *pal = (byte*)W_CacheLumpName("playpal", PU_CACHE) + num * 768;
+	byte *pal = (byte*)W_CacheLumpName(NAME_playpal, PU_CACHE) + num * 768;
 	if (ScreenBPP == 8)
 	{
 		SetPalette8(pal);
@@ -283,12 +282,12 @@ void VSoftwareDrawer::SetPalette(int InNum)
 //
 //==========================================================================
 
-static void InitColormaps(void)
+static void InitColormaps()
 {
 	guard(InitColormaps);
-    // Load in the light tables,
-    colormaps = (byte*)W_CacheLumpName("COLORMAP", PU_STATIC);
-    fadetable = colormaps;
+	// Load in the light tables,
+	colormaps = (byte*)W_CacheLumpName(NAME_colormap, PU_STATIC);
+	fadetable = colormaps;
 	fadetable16 = (word*)Z_Malloc(32 * 256 * 2);
 	fadetable16r = (word*)Z_Malloc(32 * 256 * 2);
 	fadetable16g = (word*)Z_Malloc(32 * 256 * 2);
@@ -306,14 +305,14 @@ static void InitColormaps(void)
 //
 //==========================================================================
 
-static void InitTranslucencyTables(void)
+static void InitTranslucencyTables()
 {
 	guard(InitTranslucencyTables);
-    tinttables[0] = (byte*)W_CacheLumpName("TRANSP10", PU_STATIC);
-    tinttables[1] = (byte*)W_CacheLumpName("TRANSP20", PU_STATIC);
-    tinttables[2] = (byte*)W_CacheLumpName("TRANSP30", PU_STATIC);
-    tinttables[3] = (byte*)W_CacheLumpName("TRANSP40", PU_STATIC);
-    tinttables[4] = (byte*)W_CacheLumpName("TRANSP50", PU_STATIC);
+	tinttables[0] = (byte*)W_CacheLumpName(NAME_transp10, PU_STATIC);
+	tinttables[1] = (byte*)W_CacheLumpName(NAME_transp20, PU_STATIC);
+	tinttables[2] = (byte*)W_CacheLumpName(NAME_transp30, PU_STATIC);
+	tinttables[3] = (byte*)W_CacheLumpName(NAME_transp40, PU_STATIC);
+	tinttables[4] = (byte*)W_CacheLumpName(NAME_transp50, PU_STATIC);
 
 	for (int t = 0; t < 32; t++)
 	{
@@ -331,11 +330,11 @@ static void InitTranslucencyTables(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::InitData(void)
+void VSoftwareDrawer::InitData()
 {
 	guard(VSoftwareDrawer::InitData);
-	d_rgbtable = (byte*)W_CacheLumpName("RGBTABLE", PU_STATIC);
-    InitColormaps();
+	d_rgbtable = (byte*)W_CacheLumpName(NAME_rgbtable, PU_STATIC);
+	InitColormaps();
 	InitTranslucencyTables();
 	unguard;
 }
@@ -436,7 +435,7 @@ void VSoftwareDrawer::NewMap(void)
 
 	if (r_fog)
 	{
-		fadetable = (byte*)W_CacheLumpName("FOGMAP", PU_STATIC);
+		fadetable = (byte*)W_CacheLumpName(NAME_fogmap, PU_STATIC);
 	}
 	else
 	{
@@ -468,9 +467,12 @@ void VSoftwareDrawer::NewMap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.14  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.13  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	

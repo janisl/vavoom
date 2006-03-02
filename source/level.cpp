@@ -94,7 +94,7 @@ void VLevel::LoadMap(const char *mapname)
 		}
 	}
 
-	int lumpnum = W_CheckNumForName(mapname);
+	int lumpnum = W_CheckNumForName(VName(mapname, VName::AddLower8));
 	if (lumpnum < 0)
 	{
 		Host_Error("Map %s not found\n", mapname);
@@ -106,11 +106,11 @@ void VLevel::LoadMap(const char *mapname)
 		W_BuildGLNodes(lumpnum);
 		gl_lumpnum = FindGLNodes(mapname);
 	}
-	else if (strcmp(W_LumpName(gl_lumpnum + ML_GL_PVS), "GL_PVS") ||
+	else if (W_LumpName(gl_lumpnum + ML_GL_PVS) == NAME_gl_pvs ||
 		W_LumpLength(gl_lumpnum + ML_GL_PVS) == 0)
 	{
 		W_BuildPVS(lumpnum, gl_lumpnum);
-		lumpnum = W_GetNumForName(mapname);
+		lumpnum = W_GetNumForName(VName(mapname, VName::AddLower8));
 		gl_lumpnum = FindGLNodes(mapname);
 	}
 #endif
@@ -118,7 +118,7 @@ void VLevel::LoadMap(const char *mapname)
 	{
 		Host_Error("Map %s is missing GL-Nodes\n", mapname);
 	}
-	bExtended = !strcmp(W_LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
+	bExtended = W_LumpName(lumpnum + ML_BEHAVIOR) == NAME_behavior;
 
 	//
 	// Begin processing map lumps
@@ -161,7 +161,7 @@ void VLevel::LoadMap(const char *mapname)
 			if (mi.acsLump[0])
 			{
 				//	ACS object code
-				P_LoadACScripts(W_GetNumForName(mi.acsLump, WADNS_ACSLibrary));
+				P_LoadACScripts(W_GetNumForName(VName(mi.acsLump, VName::AddLower8), WADNS_ACSLibrary));
 			}
 			else
 			{
@@ -219,14 +219,14 @@ int VLevel::FindGLNodes(const char* name) const
 	guard(VLevel::FindGLNodes);
 	if (strlen(name) < 6)
 	{
-		return W_CheckNumForName(va("GL_%s", name));
+		return W_CheckNumForName(VName(va("gl_%s", name), VName::AddLower8));
 	}
 
 	//	Long map name, check GL_LEVEL lumps.
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		if (stricmp(W_LumpName(Lump), "GL_LEVEL"))
+		if (W_LumpName(Lump) != NAME_gl_level)
 		{
 			continue;
 		}
@@ -965,7 +965,7 @@ void VLevel::LoadNodes(int Lump)
 void VLevel::LoadPVS(int Lump)
 {
 	guard(VLevel::LoadPVS);
-	if (strcmp(W_LumpName(Lump), "GL_PVS") || W_LumpLength(Lump) == 0)
+	if (W_LumpName(Lump) != NAME_gl_pvs || W_LumpLength(Lump) == 0)
 	{
 		GCon->Logf(NAME_Dev, "Empty or missing PVS lump");
 		VisData = NULL;
@@ -1331,7 +1331,7 @@ void VLevel::LoadRogueConScript(const char *LumpName,
 		return;
 
 	//	Get lump num.
-	int LumpNum = W_CheckNumForName(LumpName);
+	int LumpNum = W_CheckNumForName(VName(LumpName, VName::AddLower8));
 	if (LumpNum < 0)
 		return;	//	Not here.
 
@@ -1555,9 +1555,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.11  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.10  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	

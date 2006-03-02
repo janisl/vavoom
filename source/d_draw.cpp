@@ -233,9 +233,9 @@ void VSoftwareDrawer::ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 void VSoftwareDrawer::DrawConsoleBackground_8(int h)
 {
 	static byte *consbgmap = NULL;
-    if (!consbgmap)
+	if (!consbgmap)
 	{
-       	consbgmap = (byte*)W_CacheLumpName("CONSMAP", PU_STATIC);
+		consbgmap = (byte*)W_CacheLumpName(NAME_consmap, PU_STATIC);
 	}
 
 	int w = ScreenWidth >> 2;
@@ -244,13 +244,13 @@ void VSoftwareDrawer::DrawConsoleBackground_8(int h)
 		dword* buf = (dword*)(scrn + ScreenWidth * y);
 		for (int x = 0; x < w; x++)
 		{
-   			dword quad = buf[x];
-   			byte p1 = consbgmap[quad & 255];
-   			byte p2 = consbgmap[(quad >> 8) & 255];
-   			byte p3 = consbgmap[(quad >> 16) & 255];
-   			byte p4 = consbgmap[quad >> 24];
-   			buf[x] = (p4 << 24) | (p3 << 16) | (p2 << 8) | p1;
-		 }
+			dword quad = buf[x];
+			byte p1 = consbgmap[quad & 255];
+			byte p2 = consbgmap[(quad >> 8) & 255];
+			byte p3 = consbgmap[(quad >> 16) & 255];
+			byte p4 = consbgmap[quad >> 24];
+			buf[x] = (p4 << 24) | (p3 << 16) | (p2 << 8) | p1;
+		}
 	}
 }
 
@@ -1313,9 +1313,12 @@ void VSoftwareDrawer::EndAutomap(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.16  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.15  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	

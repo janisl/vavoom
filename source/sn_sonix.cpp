@@ -34,8 +34,6 @@
 #define SS_TEMPBUFFER_SIZE		1024
 #define SS_SEQUENCE_NAME_LENGTH	32
 
-#define SS_SCRIPT_NAME			"SNDSEQ"
-
 #define SS_STRING_PLAY			"play"
 #define SS_STRING_PLAYUNTILDONE "playuntildone"
 #define SS_STRING_PLAYTIME		"playtime"
@@ -180,7 +178,7 @@ void SN_InitSequenceScript()
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		if (!stricmp(W_LumpName(Lump), SS_SCRIPT_NAME))
+		if (W_LumpName(Lump) == NAME_sndseq)
 		{
 			SC_OpenLumpNum(Lump);
 			ParseSequenceScript();
@@ -720,9 +718,12 @@ void SN_SerialiseSounds(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.16  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.15  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

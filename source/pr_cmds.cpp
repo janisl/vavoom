@@ -3107,7 +3107,7 @@ PF(WadLumpPresent)
 	int			name;
 
 	name = Pop();
-	Push(W_CheckNumForName((char*)name) >= 0);
+	Push(W_CheckNumForName(VName((char*)name, VName::AddLower8)) >= 0);
 }
 
 //==========================================================================
@@ -3469,9 +3469,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.74  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.73  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
-//
+//	
 //	Revision 1.72  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

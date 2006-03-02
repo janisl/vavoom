@@ -49,30 +49,28 @@ enum EWadNamespace
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void W_AddFile(const char *filename, const char* gwadir, bool FixVoices);
+void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices);
 
-void W_OpenAuxiliary(const char *filename);
-void W_CloseAuxiliaryFile(void);
-void W_CloseAuxiliary(void);
+void W_OpenAuxiliary(const VStr& FileName);
+void W_CloseAuxiliaryFile();
+void W_CloseAuxiliary();
 
 void W_BuildGLNodes(int lump);
 void W_BuildPVS(int lump, int gllump);
 
-int	W_CheckNumForName(const char* name, EWadNamespace NS = WADNS_Global);
-int	W_GetNumForName(const char* name, EWadNamespace NS = WADNS_Global);
+int W_CheckNumForName(VName Name, EWadNamespace NS = WADNS_Global);
+int W_GetNumForName(VName Name, EWadNamespace NS = WADNS_Global);
 
-int	W_LumpLength(int lump);
-const char *W_LumpName(int lump);
+int W_LumpLength(int lump);
+VName W_LumpName(int lump);
 
 void W_ReadLump(int lump, void *dest);
 void W_ReadFromLump(int lump, void *dest, int pos, int size);
 void* W_CacheLumpNum(int lump, int tag);
-void* W_CacheLumpName(const char* name, int tag,
-	EWadNamespace NS = WADNS_Global);
+void* W_CacheLumpName(VName Name, int tag, EWadNamespace NS = WADNS_Global);
 VStream* W_CreateLumpReader(int lump);
-VStream* W_CreateLumpReader(const char* name, EWadNamespace NS = WADNS_Global);
+VStream* W_CreateLumpReader(VName Name, EWadNamespace NS = WADNS_Global);
 
-bool W_ForEachLump(bool (*func)(int, const char*, int, EWadNamespace));
 int W_IterateNS(int Prev, EWadNamespace NS);
 
 void W_CleanupName(const char *src, char *dst);
@@ -82,9 +80,12 @@ void W_CleanupName(const char *src, char *dst);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/02 23:24:36  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.13  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.12  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
 //	

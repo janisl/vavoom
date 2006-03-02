@@ -362,14 +362,11 @@ void TTextureManager::Init()
 	InitSpriteLumps();
 
 	//	Find sky flat number.
-	skyflatnum = CheckNumForName(VName("F_SKY", VName::AddLower8),
-		TEXTYPE_Flat, true, false);
+	skyflatnum = CheckNumForName(NAME_f_sky, TEXTYPE_Flat, true, false);
 	if (skyflatnum < 0)
-	    skyflatnum = CheckNumForName(VName("F_SKY001", VName::AddLower8),
-			TEXTYPE_Flat, true, false);
+	    skyflatnum = CheckNumForName(NAME_f_sky001, TEXTYPE_Flat, true, false);
 	if (skyflatnum < 0)
-	    skyflatnum = NumForName(VName("F_SKY1", VName::AddLower8),
-			TEXTYPE_Flat, true, false);
+	    skyflatnum = NumForName(NAME_f_sky1, TEXTYPE_Flat, true, false);
 	unguard;
 }
 
@@ -519,9 +516,9 @@ int TTextureManager::AddPatch(VName Name, int Type)
 {
 	guard(TTextureManager::AddPatch);
 	//	Find the lump number.
-	int LumpNum = W_CheckNumForName(*Name);
+	int LumpNum = W_CheckNumForName(Name);
 	if (LumpNum < 0)
-		LumpNum = W_CheckNumForName(*Name, WADNS_Sprites);
+		LumpNum = W_CheckNumForName(Name, WADNS_Sprites);
 	if (LumpNum < 0)
 	{
 		GCon->Logf("TTextureManager::AddPatch: Pic %s not found", *Name);
@@ -568,7 +565,7 @@ int TTextureManager::CreatePatch(int Type, int LumpNum)
 	}
 
 	//	Check for automap background.
-	if (!strcmp(W_LumpName(LumpNum), "AUTOPAGE"))
+	if (W_LumpName(LumpNum) == NAME_autopage)
 	{
 		return AddTexture(new(PU_STATIC) TRawPicTexture(LumpNum, -1));
 	}
@@ -594,7 +591,7 @@ int TTextureManager::CreatePatch(int Type, int LumpNum)
 int TTextureManager::AddRawWithPal(VName Name, VName PalName)
 {
 	guard(TTextureManager::AddRawWithPal);
-	int LumpNum = W_CheckNumForName(*Name);
+	int LumpNum = W_CheckNumForName(Name);
 	if (LumpNum < 0)
 	{
 		GCon->Logf("TTextureManager::AddRawWithPal: %s not found", *Name);
@@ -616,7 +613,7 @@ int TTextureManager::AddRawWithPal(VName Name, VName PalName)
 	}
 
 	return AddTexture(new(PU_STATIC) TRawPicTexture(LumpNum,
-		W_GetNumForName(*PalName)));
+		W_GetNumForName(PalName)));
 	unguard;
 }
 
@@ -667,7 +664,7 @@ int TTextureManager::AddFileTexture(VName Name, int Type)
 bool TTextureManager::IsStrifeTexture()
 {
 	guard(TTextureManager::IsStrifeTexture);
-	int *plump = (int*)W_CacheLumpName("TEXTURE1", PU_STATIC);
+	int *plump = (int*)W_CacheLumpName(NAME_texture1, PU_STATIC);
 	int numtex = LittleLong(*plump);
 	int *texdir = plump + 1;
 	int i;
@@ -704,7 +701,6 @@ void TTextureManager::InitTextures()
 	int*			maptex2;
 	int*			maptex1;
 
-	char			name[9];
 	char*			names;
 	char*			name_p;
 
@@ -718,19 +714,18 @@ void TTextureManager::InitTextures()
 	int*			directory;
 
 	// Load the patch names from pnames.lmp.
-	name[8] = 0;
-	names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
+	names = (char*)W_CacheLumpName(NAME_pnames, PU_STATIC);
 	nummappatches = LittleLong(*((int *)names));
 	name_p = names + 4;
 	TTexture** patchtexlookup = (TTexture**)Z_Malloc(nummappatches * sizeof(*patchtexlookup), PU_HIGH, 0);
 
 	for (i = 0; i < nummappatches; i++)
 	{
-		strncpy(name, name_p + i * 8, 8);
-		int LumpNum = W_CheckNumForName(name);
+		VName PatchName(name_p + i * 8, VName::AddLower8);
+		int LumpNum = W_CheckNumForName(PatchName);
 		//	Sprites also can be used as patches.
 		if (LumpNum < 0)
-			LumpNum = W_CheckNumForName(name, WADNS_Sprites);
+			LumpNum = W_CheckNumForName(PatchName, WADNS_Sprites);
 
 		if (LumpNum < 0)
 			patchtexlookup[i] = NULL;
@@ -742,16 +737,16 @@ void TTextureManager::InitTextures()
 	// Load the map texture definitions from textures.lmp.
 	// The data is contained in one or two lumps,
 	//  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
-	maptex = maptex1 = (int*)W_CacheLumpName("TEXTURE1", PU_HIGH);
+	maptex = maptex1 = (int*)W_CacheLumpName(NAME_texture1, PU_HIGH);
 	numtextures1 = LittleLong(*maptex);
-	maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
+	maxoff = W_LumpLength(W_GetNumForName(NAME_texture1));
 	directory = maptex+1;
 
-	if (W_CheckNumForName("TEXTURE2") != -1)
+	if (W_CheckNumForName(NAME_texture2) != -1)
 	{
-		maptex2 = (int*)W_CacheLumpName("TEXTURE2", PU_HIGH);
+		maptex2 = (int*)W_CacheLumpName(NAME_texture2, PU_HIGH);
 		numtextures2 = LittleLong(*maptex2);
-		maxoff2 = W_LumpLength(W_GetNumForName ("TEXTURE2"));
+		maxoff2 = W_LumpLength(W_GetNumForName(NAME_texture2));
 	}
 	else
 	{
@@ -843,7 +838,6 @@ void TTextureManager::InitTextures2()
 	int*			maptex2;
 	int*			maptex1;
 
-	char			name[9];
 	char*			names;
 	char*			name_p;
 
@@ -857,19 +851,18 @@ void TTextureManager::InitTextures2()
 	int*			directory;
 
 	// Load the patch names from pnames.lmp.
-	name[8] = 0;
-	names = (char*)W_CacheLumpName("PNAMES", PU_STATIC);
+	names = (char*)W_CacheLumpName(NAME_pnames, PU_STATIC);
 	nummappatches = LittleLong(*((int *)names));
 	name_p = names + 4;
 	TTexture** patchtexlookup = (TTexture**)Z_Malloc(nummappatches * sizeof(*patchtexlookup), PU_HIGH, 0);
 
 	for (i = 0; i < nummappatches; i++)
 	{
-		strncpy(name, name_p + i * 8, 8);
-		int LumpNum = W_CheckNumForName(name);
+		VName PatchName(name_p + i * 8, VName::AddLower8);
+		int LumpNum = W_CheckNumForName(PatchName);
 		//	Sprites also can be used as patches.
 		if (LumpNum < 0)
-			LumpNum = W_CheckNumForName(name, WADNS_Sprites);
+			LumpNum = W_CheckNumForName(PatchName, WADNS_Sprites);
 
 		if (LumpNum < 0)
 			patchtexlookup[i] = NULL;
@@ -881,16 +874,16 @@ void TTextureManager::InitTextures2()
 	// Load the map texture definitions from textures.lmp.
 	// The data is contained in one or two lumps,
 	//  TEXTURE1 for shareware, plus TEXTURE2 for commercial.
-	maptex = maptex1 = (int*)W_CacheLumpName("TEXTURE1", PU_HIGH);
+	maptex = maptex1 = (int*)W_CacheLumpName(NAME_texture1, PU_HIGH);
 	numtextures1 = LittleLong(*maptex);
-	maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
+	maxoff = W_LumpLength(W_GetNumForName(NAME_texture1));
 	directory = maptex+1;
 
-	if (W_CheckNumForName("TEXTURE2") != -1)
+	if (W_CheckNumForName(NAME_texture2) != -1)
 	{
-		maptex2 = (int*)W_CacheLumpName("TEXTURE2", PU_HIGH);
+		maptex2 = (int*)W_CacheLumpName(NAME_texture2, PU_HIGH);
 		numtextures2 = LittleLong(*maptex2);
-		maxoff2 = W_LumpLength(W_GetNumForName ("TEXTURE2"));
+		maxoff2 = W_LumpLength(W_GetNumForName(NAME_texture2));
 	}
 	else
 	{
@@ -1089,7 +1082,7 @@ byte* TTexture::GetPixels8()
 		//	Remap to game palette
 		if (!RGBTable)
 		{
-			RGBTable = (byte*)W_CacheLumpName("RGBTABLE", PU_STATIC);
+			RGBTable = (byte*)W_CacheLumpName(NAME_rgbtable, PU_STATIC);
 		}
 		int NumPixels = Width * Height;
 		rgba_t* Pal = GetPalette();
@@ -1113,7 +1106,7 @@ byte* TTexture::GetPixels8()
 	{
 		if (!RGBTable)
 		{
-			RGBTable = (byte*)W_CacheLumpName("RGBTABLE", PU_STATIC);
+			RGBTable = (byte*)W_CacheLumpName(NAME_rgbtable, PU_STATIC);
 		}
 		int NumPixels = Width * Height;
 		rgba_t* pSrc = (rgba_t*)Pixels;
@@ -1259,7 +1252,7 @@ TPatchTexture::TPatchTexture(int InType, int InLumpNum)
 , Pixels(0)
 {
 	Type = InType;
-	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
+	Name = W_LumpName(InLumpNum);
 	Format = TEXFMT_8;
 }
 
@@ -1501,7 +1494,7 @@ TFlatTexture::TFlatTexture(int InLumpNum)
 {
 	Type = TEXTYPE_Flat;
 	Format = TEXFMT_8;
-	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
+	Name = W_LumpName(InLumpNum);
 	Width = 64;
 	Height = 64;
 	LumpNum = InLumpNum;
@@ -1584,7 +1577,7 @@ TRawPicTexture::TRawPicTexture(int InLumpNum, int InPalLumpNum)
 , Palette(0)
 {
 	Type = TEXTYPE_Pic;
-	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
+	Name = W_LumpName(InLumpNum);
 	Width = 320;
 	Height = W_LumpLength(InLumpNum) / 320;
 	Format = PalLumpNum >= 0 ? TEXFMT_8Pal : TEXFMT_8;
@@ -1725,7 +1718,7 @@ TImgzTexture::TImgzTexture(int InType, int InLumpNum)
 , Pixels(0)
 {
 	Type = InType;
-	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
+	Name = W_LumpName(InLumpNum);
 	Format = TEXFMT_8;
 }
 
@@ -1866,7 +1859,7 @@ TPngLumpTexture::TPngLumpTexture(int InType, int InLumpNum)
 , Palette(0)
 {
 	Type = InType;
-	Name = VName(W_LumpName(InLumpNum), VName::AddLower8);
+	Name = W_LumpName(InLumpNum);
 	Format = TEXFMT_8;
 }
 
@@ -2260,12 +2253,12 @@ void P_InitAnimated()
 	animDef_t 	ad;
 	frameDef_t	fd;
 
-	if (W_CheckNumForName("ANIMATED") < 0)
+	if (W_CheckNumForName(NAME_animated) < 0)
 	{
 		return;
 	}
 
-	char *animdefs = (char*)W_CacheLumpName("ANIMATED", PU_STRING);
+	char *animdefs = (char*)W_CacheLumpName(NAME_animated, PU_STRING);
 	char *anim_p;
 	int pic1, pic2;
 
@@ -2590,22 +2583,6 @@ static void ParseFTAnims()
 
 //==========================================================================
 //
-//	AnimsCallback
-//
-//==========================================================================
-
-static bool AnimsCallback(int lump, const char* name, int, EWadNamespace NS)
-{
-	if (NS == WADNS_Global && !stricmp(name, "animdefs"))
-	{
-		SC_OpenLumpNum(lump);
-		ParseFTAnims();
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	InitFTAnims
 //
 //	Initialise flat and texture animation lists.
@@ -2618,7 +2595,15 @@ static void InitFTAnims()
 	char filename[MAX_OSPATH];
 
 	//	Process all animdefs lumps.
-	W_ForEachLump(AnimsCallback);
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) == NAME_animdefs)
+		{
+			SC_OpenLumpNum(Lump);
+			ParseFTAnims();
+		}
+	}
 
 	//	Optionally parse script file.
 	if (fl_devmode && FL_FindFile("scripts/animdefs.txt", filename))
@@ -2647,7 +2632,7 @@ static void InitFTAnims()
 void P_InitSwitchList()
 {
 	guard(P_InitSwitchList);
-	int lump = W_CheckNumForName("SWITCHES");
+	int lump = W_CheckNumForName(NAME_switches);
 	if (lump != -1)
 	{
 		const char* alphSwitchList = (const char*)W_CacheLumpNum(lump, PU_STATIC);
@@ -2762,9 +2747,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.36  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.35  2005/12/29 20:17:41  dj_jl
 //	Fix for too small flats.
 //	

@@ -1061,7 +1061,8 @@ void FACScriptsObject::LoadEnhancedObject()
 			if (parse[i])
 			{
 				FACScriptsObject* Object = NULL;
-				int Lump = W_CheckNumForName(&parse[i], WADNS_ACSLibrary);
+				int Lump = W_CheckNumForName(VName(&parse[i],
+					VName::AddLower8), WADNS_ACSLibrary);
 				if (Lump < 0)
 				{
 					GCon->Logf("Could not find ACS library %s.", &parse[i]);
@@ -1111,8 +1112,8 @@ void FACScriptsObject::LoadEnhancedObject()
 					GCon->Logf("Function %s in %s has %d arguments. "
 						"%s expects it to have %d.",
 						(char *)(buffer + 2) + LittleLong(buffer[3 + j]),
-						W_LumpName(lib->LumpNum), realfunc->ArgCount,
-						W_LumpName(LumpNum), func->ArgCount);
+						*W_LumpName(lib->LumpNum), realfunc->ArgCount,
+						*W_LumpName(LumpNum), func->ArgCount);
 					Format = ACS_Unknown;
 				}
 				//	The next two properties do not effect code compatibility,
@@ -1162,9 +1163,9 @@ void FACScriptsObject::LoadEnhancedObject()
 							Format = ACS_Unknown;
 							GCon->Logf("The array %s in %s has %ld elements, "
 								"but %s expects it to only have %ld.",
-								parse, W_LumpName(lib->LumpNum),
+								parse, *W_LumpName(lib->LumpNum),
 								lib->ArrayStore[impNum].Size,
-								W_LumpName(LumpNum), expectedSize);
+								*W_LumpName(LumpNum), expectedSize);
 						}
 					}
 					do ; while (*++parse);
@@ -4646,9 +4647,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.44  2006/02/28 18:19:31  dj_jl
 //	Put thinkers back in linked list.
-//
+//	
 //	Revision 1.43  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

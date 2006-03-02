@@ -324,7 +324,7 @@ COMMAND(ScreenShot)
 	bool	bot2top;
 	void	*data;
 	char	filename[128];
-    
+
 	//	Find a file name to save it to
 	for (i = 0; i <= 9999; i++)
 	{
@@ -337,20 +337,20 @@ COMMAND(ScreenShot)
 		GCon->Log("Couldn't create a PCX");
 		return;
 	}
-    
-    // save the pcx file
+
+	// save the pcx file
 	data = Drawer->ReadScreen(&bpp, &bot2top);
 	if (data)
 	{
 		if (!strcmp(screenshot_type, "pcx"))
 		{
-		    WritePCXfile(filename, data, ScreenWidth, ScreenHeight, bpp,
-				(byte*)W_CacheLumpName("PLAYPAL", PU_CACHE), bot2top);
+			WritePCXfile(filename, data, ScreenWidth, ScreenHeight, bpp,
+				(byte*)W_CacheLumpName(NAME_playpal, PU_CACHE), bot2top);
 		}
 		else if (!strcmp(screenshot_type, "tga"))
 		{
-		    WriteTGA(filename, data, ScreenWidth, ScreenHeight, bpp,
-				(byte*)W_CacheLumpName("PLAYPAL", PU_CACHE), bot2top);
+			WriteTGA(filename, data, ScreenWidth, ScreenHeight, bpp,
+				(byte*)W_CacheLumpName(NAME_playpal, PU_CACHE), bot2top);
 		}
 		else
 		{
@@ -646,7 +646,7 @@ void SCR_Update(void)
 void Draw_TeleportIcon()
 {
 	guard(Draw_TeleportIcon);
-	if (W_CheckNumForName("teleicon") >= 0)
+	if (W_CheckNumForName(NAME_teleicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("teleicon",
@@ -665,7 +665,7 @@ void Draw_TeleportIcon()
 void Draw_SaveIcon()
 {
 	guard(Draw_SaveIcon);
-	if (W_CheckNumForName("saveicon") >= 0)
+	if (W_CheckNumForName(NAME_saveicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("saveicon",
@@ -684,7 +684,7 @@ void Draw_SaveIcon()
 void Draw_LoadIcon()
 {
 	guard(Draw_LoadIcon);
-	if (W_CheckNumForName("loadicon") >= 0)
+	if (W_CheckNumForName(NAME_loadicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
 		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("loadicon",
@@ -715,9 +715,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.31  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.30  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

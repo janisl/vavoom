@@ -31,7 +31,6 @@
 
 #define MAX_MAPS			99
 
-#define MAPINFO_SCRIPT_NAME	"MAPINFO"
 #define UNKNOWN_MAP_NAME	"DEVELOPMENT MAP"
 #define DEFAULT_SKY_NAME	"SKY1"
 #define DEFAULT_FADE_TABLE	"COLORMAP"
@@ -157,7 +156,7 @@ void InitMapInfo()
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		if (!stricmp(W_LumpName(Lump), MAPINFO_SCRIPT_NAME))
+		if (W_LumpName(Lump) == NAME_mapinfo)
 		{
 			SC_OpenLumpNum(Lump);
 			ParseMapInfo();
@@ -572,7 +571,7 @@ COMMAND(MapList)
 	guard(COMMAND MapList);
 	for (int i = 0; i < MapCount; i++)
 	{
-		if (W_CheckNumForName(MapInfo[i].lumpname) >= 0)
+		if (W_CheckNumForName(VName(MapInfo[i].lumpname, VName::AddLower8)) >= 0)
 		{
 			GCon->Logf("%s - %s", MapInfo[i].lumpname, MapInfo[i].name);
 		}
@@ -592,9 +591,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.16  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.15  2006/01/18 19:55:26  dj_jl
 //	Fixed doublesky.
 //	

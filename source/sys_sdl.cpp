@@ -323,7 +323,7 @@ void Sys_Shutdown()
 //
 //==========================================================================
 
-static void PutEndText(const char *name)
+static void PutEndText(VName name)
 {
 	int i, j;
 	int att = -1;
@@ -402,17 +402,17 @@ void Sys_Quit()
 	SDL_Quit();
 
 	// Throw the end text at the screen
-	if (W_CheckNumForName("ENDOOM") >= 0)
+	if (W_CheckNumForName(NAME_endoom) >= 0)
 	{
-		PutEndText("ENDOOM");
+		PutEndText(NAME_endoom);
 	}
-	else if (W_CheckNumForName("ENDTEXT") >= 0)
+	else if (W_CheckNumForName(NAME_endtext) >= 0)
 	{
-		PutEndText("ENDTEXT");
+		PutEndText(NAME_endtext);
 	}
-	else if (W_CheckNumForName("ENDSTRF") >= 0)
+	else if (W_CheckNumForName(NAME_endstrf) >= 0)
 	{
-		PutEndText("ENDSTRF");
+		PutEndText(NAME_endstrf);
 	}
 	else
 	{
@@ -755,9 +755,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/03/02 23:24:36  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.9  2006/02/10 22:17:00  dj_jl
 //	Some platform fixes.
-//
+//	
 //	Revision 1.8  2006/02/02 22:55:30  dj_jl
 //	Some FreeBSD fixes.
 //	

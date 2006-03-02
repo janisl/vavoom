@@ -1124,7 +1124,7 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 void VDirect3DDrawer::SetPalette(int pnum)
 {
 	guard(VDirect3DDrawer::SetPalette);
-	rgb_t *pal = (rgb_t*)W_CacheLumpName("playpal", PU_CACHE);
+	rgb_t* pal = (rgb_t*)W_CacheLumpName(NAME_playpal, PU_CACHE);
 
 	pal += 256 * pnum;
 	int cmax = MAX(MAX(pal[0].r, pal[0].g), pal[0].b);
@@ -1144,9 +1144,12 @@ void VDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.26  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.25  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
 //	

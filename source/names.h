@@ -64,6 +64,72 @@ REGISTER_NAME(RootWindow)
 REGISTER_NAME(ClientGameBase)
 REGISTER_NAME(ClientState)
 
+//	Lump names
+REGISTER_NAME(s_start)
+REGISTER_NAME(s_end)
+REGISTER_NAME(ss_start)
+REGISTER_NAME(ss_end)
+REGISTER_NAME(f_start)
+REGISTER_NAME(f_end)
+REGISTER_NAME(ff_start)
+REGISTER_NAME(ff_end)
+REGISTER_NAME(c_start)
+REGISTER_NAME(c_end)
+REGISTER_NAME(cc_start)
+REGISTER_NAME(cc_end)
+REGISTER_NAME(a_start)
+REGISTER_NAME(a_end)
+REGISTER_NAME(aa_start)
+REGISTER_NAME(aa_end)
+REGISTER_NAME(tx_start)
+REGISTER_NAME(tx_end)
+REGISTER_NAME(v_start)
+REGISTER_NAME(v_end)
+REGISTER_NAME(vv_start)
+REGISTER_NAME(vv_end)
+REGISTER_NAME(h_start)
+REGISTER_NAME(h_end)
+REGISTER_NAME(hh_start)
+REGISTER_NAME(hh_end)
+REGISTER_NAME(pr_start)
+REGISTER_NAME(pr_end)
+REGISTER_NAME(pnames)
+REGISTER_NAME(texture1)
+REGISTER_NAME(texture2)
+REGISTER_NAME(f_sky)
+REGISTER_NAME(f_sky001)
+REGISTER_NAME(f_sky1)
+REGISTER_NAME(autopage)
+REGISTER_NAME(animated)
+REGISTER_NAME(switches)
+REGISTER_NAME(animdefs)
+REGISTER_NAME(playpal)
+REGISTER_NAME(rgbtable)
+REGISTER_NAME(colormap)
+REGISTER_NAME(fogmap)
+REGISTER_NAME(translat)
+REGISTER_NAME(transp10)
+REGISTER_NAME(transp20)
+REGISTER_NAME(transp30)
+REGISTER_NAME(transp40)
+REGISTER_NAME(transp50)
+REGISTER_NAME(consmap)
+REGISTER_NAME(sndcurve)
+REGISTER_NAME(sndinfo)
+REGISTER_NAME(sndseq)
+REGISTER_NAME(mapinfo)
+REGISTER_NAME(behavior)
+REGISTER_NAME(gl_level)
+REGISTER_NAME(gl_pvs)
+REGISTER_NAME(endoom)
+REGISTER_NAME(endtext)
+REGISTER_NAME(endstrf)
+REGISTER_NAME(teleicon)
+REGISTER_NAME(saveicon)
+REGISTER_NAME(loadicon)
+REGISTER_NAME(ammnum0)
+REGISTER_NAME(stcfn033)
+
 // Closing -----------------------------------------------------------------
 
 #ifdef REGISTERING_ENUM
@@ -76,9 +142,12 @@ REGISTER_NAME(ClientState)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.11  2006/02/25 17:12:38  dj_jl
 //	Added missing implementation of the player class.
-//
+//	
 //	Revision 1.10  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

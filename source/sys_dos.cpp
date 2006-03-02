@@ -433,33 +433,33 @@ void Sys_Shutdown(void)
 //
 //==========================================================================
 
-void Sys_Quit(void)
+void Sys_Quit()
 {
-    // Shutdown system
+	// Shutdown system
 	Host_Shutdown();
 
-    // Throw the end text at the screen
-	if (W_CheckNumForName("ENDOOM") >= 0)
-    {
-	    puttext(1, 1, 80, 25, W_CacheLumpName("ENDOOM", PU_CACHE));
-	    gotoxy(1, 24);
-	}
-    else if (W_CheckNumForName("ENDTEXT") >= 0)
-    {
-	    puttext(1, 1, 80, 25, W_CacheLumpName("ENDTEXT", PU_CACHE));
+	// Throw the end text at the screen
+	if (W_CheckNumForName(NAME_endoom) >= 0)
+	{
+		puttext(1, 1, 80, 25, W_CacheLumpName(NAME_endoom, PU_CACHE));
 		gotoxy(1, 24);
 	}
-    else if (W_CheckNumForName("ENDSTRF") >= 0)
-    {
-	    puttext(1, 1, 80, 25, W_CacheLumpName("ENDSTRF", PU_CACHE));
+	else if (W_CheckNumForName(NAME_endtext) >= 0)
+	{
+		puttext(1, 1, 80, 25, W_CacheLumpName(NAME_endtext, PU_CACHE));
 		gotoxy(1, 24);
 	}
-    else
-    {
+	else if (W_CheckNumForName(NAME_endstrf) >= 0)
+	{
+		puttext(1, 1, 80, 25, W_CacheLumpName(NAME_endstrf, PU_CACHE));
+		gotoxy(1, 24);
+	}
+	else
+	{
 		printf("\nHexen: Beyound Heretic");
 	}
 
-    // Exit
+	// Exit
 	exit(0);
 }
 
@@ -706,9 +706,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/02 23:24:36  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.13  2002/04/11 16:43:58  dj_jl
 //	Removed limiting of memory for OpenGL.
-//
+//	
 //	Revision 1.12  2002/01/25 18:06:53  dj_jl
 //	Little changes for progs profiling
 //	

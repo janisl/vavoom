@@ -64,7 +64,7 @@ void LoadTextLump(char *name, char *buf, int bufsize)
 	int		msgSize;
 	int		msgLump;
 
-	msgLump = W_GetNumForName(name);
+	msgLump = W_GetNumForName(VName(name, VName::AddLower8));
 	msgSize = W_LumpLength(msgLump);
 	if (msgSize >= bufsize)
 	{
@@ -107,9 +107,12 @@ void IM_Start(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.7  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.6  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

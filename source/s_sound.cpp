@@ -293,7 +293,7 @@ void S_Init()
 		GStreamMusicPlayer->Init();
 	}
 
-	SoundCurve = (byte*)W_CacheLumpName("SNDCURVE", PU_STATIC);
+	SoundCurve = (byte*)W_CacheLumpName(NAME_sndcurve, PU_STATIC);
 	snd_MaxVolume = -1;
 
 	//	Free all channels for use.
@@ -955,12 +955,13 @@ static void PlaySong(const char* Song, bool Loop)
 		Strm = FL_OpenFileRead(va("music/%s.flac", Song));
 	if (!Strm)
 	{
-		if (W_CheckNumForName(Song) < 0)
+		int Lump = W_CheckNumForName(VName(Song, VName::AddLower8));
+		if (Lump < 0)
 		{
 			GCon->Logf("Can't find song %s", Song);
 			return;
 		}
-		Strm = W_CreateLumpReader(Song);
+		Strm = W_CreateLumpReader(Lump);
 	}
 
 	byte Hdr[4];
@@ -1852,9 +1853,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/03/02 23:24:35  dj_jl
+//	Wad lump names stored as names.
+//
 //	Revision 1.28  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.27  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	
