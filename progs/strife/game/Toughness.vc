@@ -38,8 +38,8 @@ bool HandlePickup(Actor Toucher)
 	Ret = ::HandlePickup(Toucher);
 	if (Ret && !bDropped)
 	{
-		Toucher.Player.GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);
-		Toucher.Player.GiveInvItem(StrifeDefs::ITEM_Coin, Toucher.Player.Accuracy * 5 + 300);
+		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);
+		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Coin, Player(Toucher.Player).Accuracy * 5 + 300);
 	}
 }
 
@@ -59,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

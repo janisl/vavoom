@@ -27,10 +27,8 @@
 
 class Thinker;
 class Entity;
-class Actor;
 class ViewEntity;
 class BasePlayer;
-class Player;
 class LevelInfo;
 class GameInfo;
 
@@ -40,6 +38,9 @@ class GameInfo;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/02 18:26:12  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.10  2006/02/17 19:06:50  dj_jl
 //  Moved common defs to classes.
 //

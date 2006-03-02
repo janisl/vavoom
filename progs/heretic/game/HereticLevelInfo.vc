@@ -1181,14 +1181,14 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 //
 //==========================================================================
 
-void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
+void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
 	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
 	int arg4)
 {
 	PlaneWatcher	PW;
 
 	PW = PlaneWatcher(NewSpecialThinker(PlaneWatcher));
-	PW.Start(it, line, lineSide, ceiling, tag, height, special, arg0, arg1,
+	PW.Start(Actor(it), line, lineSide, ceiling, tag, height, special, arg0, arg1,
 		arg2, arg3, arg4);
 }
 
@@ -1208,7 +1208,7 @@ bool CheckLock(Actor user, int lock)
 	{
 		return true;
 	}
-	if (!(user.Player.Keys & (1 << (lock - 1))))
+	if (!(Player(user.Player).Keys & (1 << (lock - 1))))
 	{
 		centerprint(user.Player, MainGameInfo(Game).keymsg[lock - 1]);
 		user.PlaySound('*usefail', CHAN_VOICE);
@@ -4511,6 +4511,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/28 22:45:45  dj_jl
 //  Replaced defines with constants.
 //

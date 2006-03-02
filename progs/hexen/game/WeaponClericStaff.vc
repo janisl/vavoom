@@ -70,7 +70,7 @@ void A_CStaffCheck()
 	TAVec angles;
 	TVec vforward;
 
-	pmo = Player.MO;
+	pmo = Actor(Player.MO);
 	damage = 20 + (P_Random() & 15);
 	for (i = 0; i < 3; i++)
 	{
@@ -92,13 +92,13 @@ void A_CStaffCheck()
 				Player.Health = newLife;
 				SetState(Attack2State);
 			}
-			Player.Mana[HexenDefs::MANA_1] -=
-				WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+			Player(Player).Mana[HexenDefs::MANA_1] -=
+				WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
 			break;
 		}
 		angles = pmo.Angles;
 		angles.yaw = AngleMod360(angles.yaw - itof(i) * (45.0 / 16.0));
-		Player.MO.AimLineAttack(&angles, 3.0 * Actor::MELEERANGE / 2.0);
+		pmo.AimLineAttack(&angles, 3.0 * Actor::MELEERANGE / 2.0);
 		if (pmo.linetarget)
 		{
 			AngleVector(&angles, &vforward);
@@ -113,8 +113,8 @@ void A_CStaffCheck()
 				Player.Health = pmo.Health;
 				SetState(Attack2State);
 			}
-			Player.Mana[HexenDefs::MANA_1] -=
-				WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+			Player(Player).Mana[HexenDefs::MANA_1] -=
+				WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
 			break;
 		}
 	}
@@ -131,16 +131,16 @@ void A_CStaffAttack()
 	Actor mo;
 	PlayerPawn playPawn;
 
-	Player.Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
+	Player(Player).Mana[HexenDefs::MANA_1] -=
+		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
 	playPawn = PlayerPawn(Player.MO);
-	mo = Player.SpawnPlayerMissileAngle(ClericStaffMissile,
+	mo = Player(Player).SpawnPlayerMissileAngle(ClericStaffMissile,
 		playPawn.Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		ClericStaffMissile(mo).WeaveXY = 32;
 	}
-	mo = Player.SpawnPlayerMissileAngle(ClericStaffMissile,
+	mo = Player(Player).SpawnPlayerMissileAngle(ClericStaffMissile,
 		playPawn.Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
@@ -201,6 +201,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

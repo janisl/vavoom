@@ -55,7 +55,7 @@ void A_Summon()
 		{
 			//	Master isn't dead
 			A.Instigator = Instigator;	// Pointer to master
-			Instigator.Player.GivePower(pw_minotaur);
+			Player(Instigator.Player).GivePower(pw_minotaur);
 		}
 
 		// Make smoke puff
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

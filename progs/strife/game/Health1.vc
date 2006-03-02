@@ -50,13 +50,13 @@ bool HandlePickup(Actor Toucher)
 		Amount = 50;
 		break;
 	}
-	Max = Player::MAXHEALTH + Toucher.Player.Stamina;
+	Max = Player::MAXHEALTH + Player(Toucher.Player).Stamina;
 	Amount = Max * Amount / 100;
 	if (Toucher.Player.Health >= Amount)
 	{
 		return false;
 	}
-	Toucher.Player.GiveBody(Amount - Toucher.Player.Health);
+	Player(Toucher.Player).GiveBody(Amount - Toucher.Player.Health);
 	return true;
 }
 
@@ -70,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/28 22:47:55  dj_jl
 //  Replaced defines with constants.
 //

@@ -60,7 +60,7 @@ float FlyMove;	// fly up/down/centering
 int Buttons;	// fire, use
 int Impulse;	// weapon changes, inventory, etc
 
-Actor MO;
+Entity MO;
 int PlayerState;
 
 //  Model of current weapon
@@ -176,6 +176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:27:26  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/26 20:55:05  dj_jl
 //  Proper serialisation of level and players.
 //

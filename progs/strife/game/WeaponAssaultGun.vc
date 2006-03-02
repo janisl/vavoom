@@ -39,22 +39,22 @@ void A_FireRiffle()
 
 	Player.MO.PlaySound('weapons/assaultgun', CHAN_WEAPON);
 
-	if (!Player.Ammo[Ammo])
+	if (!Player(Player).Ammo[Ammo])
 		return;
 
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.Ammo[Ammo]--;
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).Ammo[Ammo]--;
 
-	dir = Player.MO.Aim(16.0 * 64.0);
-	if (Player.Refire)
+	dir = Actor(Player.MO).Aim(16.0 * 64.0);
+	if (Player(Player).Refire)
 	{
 		VectorAngles(&dir, &angles);
 		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player.Accuracy * 5 / 100)));
+			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
 		AngleVector(&angles, &dir);
 	}
 	damage = 4 * (P_Random() % 3 + 1);
-	Player.MO.LineAttack(dir, MISSILERANGE, damage, Puff);
+	Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, Puff);
 	//Player.MO.Effects |= EF_DL_MUZZLEFLASH;
 }
 
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

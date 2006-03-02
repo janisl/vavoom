@@ -469,12 +469,12 @@ void Kill(Actor source)
 		{
 			if (source.Player.bIsBot)
 			{
-				source.Player.Bot.Killed(self);
+				Player(source.Player).Bot.Killed(self);
 			}
 
 			if (Player.bIsBot)
 			{
-				Player.Bot.Died(source);
+				Player(Player).Bot.Died(source);
 			}
 
 			// Frag stuff
@@ -489,10 +489,10 @@ void Kill(Actor source)
 				source.Player.FragsStats[P_GetPlayerNum(Player)]++;
 				source.Player.Frags++;
 				source.PlaySound('misc/frag', CHAN_ITEM);
-				if (source.Player.ChickenTime)
+				if (Player(source.Player).ChickenTime)
 				{
 					// Make a super chicken
-					source.Player.GivePower(pw_weaponlevel2);
+					Player(source.Player).GivePower(pw_weaponlevel2);
 				}
 			}
 		}
@@ -514,10 +514,10 @@ void Kill(Actor source)
 		}
 		bSolid = false;
 		bFly = false;
-		Player.Powers[pw_flight] = 0.0;
-		Player.Powers[pw_weaponlevel2] = 0.0;
+		Player(Player).Powers[pw_flight] = 0.0;
+		Player(Player).Powers[pw_weaponlevel2] = 0.0;
 		Player.PlayerState = PST_DEAD;
-		Player.DropWeapon();
+		Player(Player).DropWeapon();
 		if (bFireDamage)
 		{
 			// Player flame death
@@ -606,17 +606,17 @@ bool ChickenMorphPlayer()
 	Actor fog;
 	Actor chicken;
 
-	if (Player.ChickenTime)
+	if (Player(Player).ChickenTime)
 	{
-		if ((Player.ChickenTime < Player::CHICKENTIME - 1.0) &&
-			!Player.Powers[pw_weaponlevel2])
+		if ((Player(Player).ChickenTime < Player::CHICKENTIME - 1.0) &&
+			!Player(Player).Powers[pw_weaponlevel2])
 		{
 			// Make a super chicken
-			Player.GivePower(pw_weaponlevel2);
+			Player(Player).GivePower(pw_weaponlevel2);
 		}
 		return false;
 	}
-	if (Player.Powers[pw_invulnerability])
+	if (Player(Player).Powers[pw_invulnerability])
 	{
 		// Immune when invulnerable
 		return false;
@@ -626,20 +626,20 @@ bool ChickenMorphPlayer()
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	chicken = Spawn(ChickenPlayer, Origin);
-	chicken.Special1 = Player.ReadyWeapon;
+	chicken.Special1 = Player(Player).ReadyWeapon;
 	chicken.Angles.yaw = Angles.yaw;
 	chicken.Player = Player;
 	chicken.bIsPlayer = true;
 	chicken.Health = Player::MAXCHICKENHEALTH;
 	Player.Health = chicken.Health;
 	Player.MO = chicken;
-	Player.ArmorPoints = 0;
-	Player.ArmorType = 0;
-	Player.Powers[pw_invisibility] = 0.0;
-	Player.Powers[pw_weaponlevel2] = 0.0;
+	Player(Player).ArmorPoints = 0;
+	Player(Player).ArmorType = 0;
+	Player(Player).Powers[pw_invisibility] = 0.0;
+	Player(Player).Powers[pw_weaponlevel2] = 0.0;
 	chicken.bFly = bFly;
-	Player.ChickenTime = Player::CHICKENTIME;
-	Player.ActivateBeak();
+	Player(Player).ChickenTime = Player::CHICKENTIME;
+	Player(Player).ActivateBeak();
 
 	SetState(S_FREETARGMOBJ);
 
@@ -701,11 +701,11 @@ bool AutoUseChaosDevice()
 {
 	int i;
 
-	for (i = 0; i < Player.InventorySlotNum; i++)
+	for (i = 0; i < Player(Player).InventorySlotNum; i++)
 	{
-		if (Player.Inventory[i].type == HereticDefs::arti_teleport)
+		if (Player(Player).Inventory[i].type == HereticDefs::arti_teleport)
 		{
-			Player.PlayerUseArtifact(HereticDefs::arti_teleport);
+			Player(Player).PlayerUseArtifact(HereticDefs::arti_teleport);
 			Health = (Health + 1) / 2;
 			Player.Health = Health;
 			return true;
@@ -731,17 +731,17 @@ void AutoUseHealth(int saveHealth)
 
 	normalCount = 0;
 	superCount = 0;
-	for (i = 0; i < Player.InventorySlotNum; i++)
+	for (i = 0; i < Player(Player).InventorySlotNum; i++)
 	{
-		if (Player.Inventory[i].type == HereticDefs::arti_health)
+		if (Player(Player).Inventory[i].type == HereticDefs::arti_health)
 		{
 			normalSlot = i;
-			normalCount = Player.Inventory[i].count;
+			normalCount = Player(Player).Inventory[i].count;
 		}
-		else if (Player.Inventory[i].type == HereticDefs::arti_superhealth)
+		else if (Player(Player).Inventory[i].type == HereticDefs::arti_superhealth)
 		{
 			superSlot = i;
-			superCount = Player.Inventory[i].count;
+			superCount = Player(Player).Inventory[i].count;
 		}
 	}
 	if ((Level.Game.gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
@@ -751,7 +751,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player.PlayerRemoveArtifact(normalSlot);
+			Player(Player).PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	else if (superCount * 100 >= saveHealth)
@@ -761,7 +761,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-			Player.PlayerRemoveArtifact(superSlot);
+			Player(Player).PlayerRemoveArtifact(superSlot);
 		}
 	}
 	else if ((Level.Game.gameskill == sk_baby)
@@ -773,7 +773,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player.PlayerRemoveArtifact(normalSlot);
+			Player(Player).PlayerRemoveArtifact(normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
@@ -782,7 +782,7 @@ void AutoUseHealth(int saveHealth)
 			//  I found a bug. There must be used superSlot, not normalSlot.
 			//  Also if player used all quartz flasks, superSlot may be
 			// invalid, so it must be found again.
-			Player.PlayerRemoveArtifact(superSlot);
+			Player(Player).PlayerRemoveArtifact(superSlot);
 		}
 	}
 	Player.Health = Health;
@@ -871,7 +871,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			else if (bIsPlayer)
 			{
 				// Player specific checks
-				if (Player.Powers[pw_invulnerability])
+				if (Player(Player).Powers[pw_invulnerability])
 				{
 					// Can't hurt invulnerable players
 				}
@@ -932,15 +932,15 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	// Push the target unless source is using the gauntlets
 	if (inflictor && (!source || !source.bIsPlayer ||
-			source.Player.ReadyWeapon != wp_gauntlets) &&
+			Player(source.Player).ReadyWeapon != wp_gauntlets) &&
 			!inflictor.bNoDamageThrust)
 	{
 		TVec dir;
 		float thrust;
 
 		if (source && source.bIsPlayer && (source == inflictor)
-			&& source.Player.Powers[pw_weaponlevel2]
-			&& source.Player.ReadyWeapon == wp_staff)
+			&& Player(source.Player).Powers[pw_weaponlevel2]
+			&& Player(source.Player).ReadyWeapon == wp_staff)
 		{
 			// Staff power level 2
 			thrust = 350.0;
@@ -970,14 +970,14 @@ void Damage(Actor inflictor, Actor source, int damage)
 			damage = Health - 1;
 		}
 
-		if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE) ||
-			Player.Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE) ||
+			Player(Player).Powers[pw_invulnerability]))
 		{
 			return;
 		}
-		if (Player.ArmorType)
+		if (Player(Player).ArmorType)
 		{
-			if (Player.ArmorType == 1)
+			if (Player(Player).ArmorType == 1)
 			{
 				saved = damage >> 1;
 			}
@@ -985,17 +985,17 @@ void Damage(Actor inflictor, Actor source, int damage)
 			{
 				saved = (damage >> 1) + (damage >> 2);
 			}
-			if (Player.ArmorPoints <= saved)
+			if (Player(Player).ArmorPoints <= saved)
 			{
 				// armor is used up
-				saved = Player.ArmorPoints;
-				Player.ArmorType = 0;
+				saved = Player(Player).ArmorPoints;
+				Player(Player).ArmorType = 0;
 			}
-			Player.ArmorPoints -= saved;
+			Player(Player).ArmorPoints -= saved;
 			damage -= saved;
 		}
 		if (damage >= Player.Health && ((Level.Game.gameskill == sk_baby) ||
-			Level.Game.deathmatch) && !Player.ChickenTime)
+			Level.Game.deathmatch) && !Player(Player).ChickenTime)
 		{
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
@@ -1005,11 +1005,11 @@ void Damage(Actor inflictor, Actor source, int damage)
 		{
 			Player.Health = 0;
 		}
-		Player.Attacker = source;
-		Player.DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
-		if (Player.DamageFlash > 3.0)
+		Player(Player).Attacker = source;
+		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		if (Player(Player).DamageFlash > 3.0)
 		{
-			Player.DamageFlash = 3.0;	// teleport stomp does 10k points...
+			Player(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
 		}
 	}
 
@@ -1026,7 +1026,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			// Make sure players get frags for chain-reaction kills
 			Instigator = source;
 		}
-		if (bIsPlayer && inflictor && !Player.ChickenTime)
+		if (bIsPlayer && inflictor && !Player(Player).ChickenTime)
 		{
 			// Check for flame death
 			if (inflictor.bFireDamage
@@ -1691,8 +1691,8 @@ void ZMovement(float DeltaTime)
 	//
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player(Player).ViewHeight -= FloorZ - Origin.z;
+		Player(Player).DeltaViewHeight = (Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 	}
 
 	//
@@ -1753,7 +1753,7 @@ void ZMovement(float DeltaTime)
 		{
 			if (bIsPlayer && vdot < -GRAVITY * 0.25 && !bFly)	// squat down
 			{
-				Player.DeltaViewHeight = vdot / 8.0;
+				Player(Player).DeltaViewHeight = vdot / 8.0;
 				PlaySound('*land', CHAN_BODY);
 //FIXME				Player.centering = true;
 			}
@@ -1877,7 +1877,7 @@ bool BlasterPhysics(float DeltaTime)
 
 void PlayerLandedOnThing()
 {
-	Player.DeltaViewHeight = Velocity.z / 8.0;
+	Player(Player).DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
 		PlaySound('*land', CHAN_VOICE);
@@ -2014,10 +2014,10 @@ bool Physics(float DeltaTime)
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					Player.ViewHeight -=
+					Player(Player).ViewHeight -=
 						onmo.Origin.z + onmo.Height - Origin.z;
-					Player.DeltaViewHeight =
-						(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+					Player(Player).DeltaViewHeight =
+						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
@@ -2036,10 +2036,10 @@ bool Physics(float DeltaTime)
 						Origin.z += onmo.FloorZ - onmo.Origin.z;
 						if (onmo.bIsPlayer)
 						{
-							onmo.Player.ViewHeight -=
+							Player(onmo.Player).ViewHeight -=
 								onmo.FloorZ - onmo.Origin.z;
-							onmo.Player.DeltaViewHeight =
-								(Player::VIEWHEIGHT - onmo.Player.ViewHeight) * 4.0;
+							Player(onmo.Player).DeltaViewHeight =
+								(Player::VIEWHEIGHT - Player(onmo.Player).ViewHeight) * 4.0;
 						}
 						onmo.Origin.z = onmo.FloorZ;
 					}
@@ -2657,18 +2657,18 @@ bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 	}
 	if (bIsPlayer)
 	{
-		if (Player.Powers[pw_flight] && aboveFloor)
+		if (Player(Player).Powers[pw_flight] && aboveFloor)
 		{
 			Origin.z = Origin.z + aboveFloor;
 			if (Origin.z + Height > CeilingZ)
 			{
 				Origin.z = CeilingZ - Height;
 			}
-			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
 		}
 		else
 		{
-			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
 			if (!KeepDir)
 			{
 				Angles.pitch = 0.0;
@@ -2699,7 +2699,7 @@ bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 	}
 	if (!KeepDir)
 	{
-		if (bIsPlayer && !Player.Powers[pw_weaponlevel2])
+		if (bIsPlayer && !Player(Player).Powers[pw_weaponlevel2])
 		{
 			// Freeze player for about .5 sec
 			ReactionTime = 0.5;
@@ -2885,7 +2885,7 @@ bool LookForPlayers(bool allaround)
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = Level.Game.Players[LastLook];
+		P = Player(Level.Game.Players[LastLook]);
 		if (!P.bSpawned || !P.MO)
 			continue;	// not spawned yet
 		if (P.Health <= 0)
@@ -2920,7 +2920,7 @@ bool LookForPlayers(bool allaround)
 				return false;
 			}
 		}
-		Enemy = P.MO;
+		Enemy = Actor(P.MO);
 		return true;
 	}
 	return false;
@@ -3534,7 +3534,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 	hit_point -= 10.0 * shoot_dir;
 
 	//  check for physical attacks on a ghost
-	if (th.Translucency && Player.ReadyWeapon == wp_staff)
+	if (th.Translucency && Player(Player).ReadyWeapon == wp_staff)
 	{
 		return true;
 	}
@@ -3761,6 +3761,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.26  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.25  2006/02/28 22:45:45  dj_jl
 //  Replaced defines with constants.
 //

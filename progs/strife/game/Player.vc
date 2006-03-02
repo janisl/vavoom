@@ -233,7 +233,7 @@ void DisconnectClient()
 	{
 		MO.Player = none;
 		MO.bIsPlayer = false;
-		MO.Damage(none, none, 10000);
+		Actor(MO).Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -332,7 +332,7 @@ bool CheckSpot(mthing_t * mthing)
 	// flush an old corpse if needed 
 	if (StrifeLevelInfo(Level).bodyqueslot >= StrifeLevelInfo::BODYQUESIZE)
 		StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE].Remove();
-	StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE] = MO;
+	StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE] = Actor(MO);
 	StrifeLevelInfo(Level).bodyqueslot++;
 
 	// spawn a teleport fog 
@@ -877,7 +877,7 @@ void InvUse()
 		if (A)
 		{
 			A.SetState(A.SeeState);
-			A.Instigator = MO;
+			A.Instigator = Actor(MO);
 			itemUsed = true;
 		}
 		else
@@ -1169,7 +1169,7 @@ void MovePlayer(float deltaTime)
 
 	// Do not let the player control movement
 	//  if not onground.
-	bool onground = MO.Origin.z <= MO.FloorZ || MO.bOnMobj;
+	bool onground = MO.Origin.z <= MO.FloorZ || Actor(MO).bOnMobj;
 
 	forward = ForwardMove * 5.0;
 	side = SideMove * 5.0;
@@ -1230,9 +1230,9 @@ void CheckWaterJump()
 		if (Level.TraceLine(start, end))
 		{
 			// open at eye level
-			MO.bWaterJump = true;
+			Actor(MO).bWaterJump = true;
 			MO.Velocity.z = 320.0;
-			MO.ReactionTime = 2.0;	// safety net
+			Actor(MO).ReactionTime = 2.0;	// safety net
 		}
 	}
 }
@@ -1290,10 +1290,10 @@ void WaterMove(float deltaTime)
 
 void WaterJump()
 {
-	if (!MO.ReactionTime || !MO.WaterLevel)
+	if (!Actor(MO).ReactionTime || !MO.WaterLevel)
 	{
-		MO.bWaterJump = false;
-		MO.ReactionTime = 0.0;
+		Actor(MO).bWaterJump = false;
+		Actor(MO).ReactionTime = 0.0;
 	}
 	MO.Velocity.x = MoveDir.x;
 	MO.Velocity.y = MoveDir.y;
@@ -1337,7 +1337,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 10);
+				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case SECSPEC_DamageSludge:
@@ -1345,7 +1345,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 4);
+				Actor(MO).Damage(none, none, 4);
 			}
 			break;
 		case SECSPEC_DamageNukage:
@@ -1353,7 +1353,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case SECSPEC_DamageSuperHellslime:
@@ -1362,7 +1362,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 			break;
 		case SECSPEC_DamageSuperHellslimeExit:
@@ -1372,7 +1372,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 	
 			if (Health <= 10)
@@ -1385,7 +1385,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				//MO.Damage(GLavaInflictor, none, 5);
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 				//MO.HitFloorEffect();
 			}
 			break;
@@ -1394,7 +1394,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				//MO.Damage(GLavaInflictor, none, 8);
-				MO.Damage(none, none, 8);
+				Actor(MO).Damage(none, none, 8);
 				//MO.HitFloorEffect();
 			}
 			break;
@@ -1404,7 +1404,7 @@ void PlayerInSpecialSector(float deltaTime)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
 				//MO.Damage(GLavaInflictor, none, 5);
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 				//MO.HitFloorEffect();
 			}
 			break;
@@ -1413,7 +1413,7 @@ void PlayerInSpecialSector(float deltaTime)
 				HazardTime += 2.0 * deltaTime;
 			break;
 		case SECSPEC_DamageInstantDeath:
-			MO.Damage(none, none, 999);
+			Actor(MO).Damage(none, none, 999);
 			break;
 		case SECSPEC_DamageSuperHazard:
 			if (!Powers[pw_ironfeet])
@@ -1431,7 +1431,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case 0x0200:
@@ -1439,7 +1439,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 10);
+				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case 0x0300:
@@ -1447,7 +1447,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 			break;
 		}
@@ -1462,7 +1462,7 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, MO.Sector->Damage);
+				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (MO.Sector->Damage < 50)
@@ -1471,13 +1471,13 @@ void PlayerInSpecialSector(float deltaTime)
 				Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, MO.Sector->Damage);
+				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (Level.Game.level->time - LastSectorDamageTime >= 1.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.Game.level->time;
-			MO.Damage(none, none, MO.Sector->Damage);
+			Actor(MO).Damage(none, none, MO.Sector->Damage);
 		}
 	}
 
@@ -1589,14 +1589,14 @@ void PlayerInContents()
 	case CONTENTS_SLUDGE:
 		if (!Powers[pw_ironfeet])
 			if (!(Level.Game.level->tictime & 0x1f))
-				MO.Damage(none, none, 10);
+				Actor(MO).Damage(none, none, 10);
 		break;
 
 	case CONTENTS_LAVA:
 		if (!Powers[pw_ironfeet] || (P_Random() < 5))
 		{
 			if (!(Level.Game.level->tictime & 0x1f))
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 		}
 		break;
 	}
@@ -1763,7 +1763,7 @@ void PlayerImpulse()
 	else if (impulse == 16)
 	{
 		//  Suicide
-		MO.Damage(none, none, 10000);
+		Actor(MO).Damage(none, none, 10000);
 	}
 	else if (impulse == 17)
 	{
@@ -1802,11 +1802,11 @@ void PlayerTick(float deltaTime)
 		MO.bColideWithWorld = true;
 	}
 
-	if (MO.bJustAttacked)
+	if (Actor(MO).bJustAttacked)
 	{
 		ForwardMove = 100.0;
 		SideMove = 0.0;
-		MO.bJustAttacked = false;
+		Actor(MO).bJustAttacked = false;
 	}
 
 	if (PlayerState == PST_DEAD)
@@ -1825,12 +1825,12 @@ void PlayerTick(float deltaTime)
 	// Move around.
 	// Reactiontime is used to prevent movement
 	//  for a bit after a teleport.
-	if (MO.ReactionTime)
+	if (Actor(MO).ReactionTime)
 	{
-		MO.ReactionTime -= deltaTime;
-		if (MO.ReactionTime <= 0.0)
-			MO.ReactionTime = 0.0;
-		if (MO.bWaterJump)
+		Actor(MO).ReactionTime -= deltaTime;
+		if (Actor(MO).ReactionTime <= 0.0)
+			Actor(MO).ReactionTime = 0.0;
+		if (Actor(MO).bWaterJump)
 			WaterJump();
 	}
 	else
@@ -1930,7 +1930,7 @@ void PlayerTick(float deltaTime)
 			HazardTime > 16.0)
 		{
 			LastHazardTime = Level.Game.level->time;
-			MO.Damage(none, none, 5);
+			Actor(MO).Damage(none, none, 5);
 		}
 	}
 
@@ -2066,9 +2066,9 @@ void SetViewPos()
 
 void SetPlayerRunState()
 {
-	if (MO.StateNum == MO.IdleState)
+	if (MO.StateNum == Actor(MO).IdleState)
 	{
-		MO.SetState(MO.SeeState);
+		MO.SetState(Actor(MO).SeeState);
 	}
 }
 
@@ -2086,14 +2086,14 @@ Actor SpawnPlayerMissile(classid type)
 	TVec dir;
 
 	// see which target is to be aimed at
-	dir = MO.Aim(16.0 * 64.0);
+	dir = Actor(MO).Aim(16.0 * 64.0);
 
 	A = StrifeLevelInfo(Level).Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = MO;
+	A.Instigator = Actor(MO);
 	A.Velocity = dir * A.Speed;
 	VectorAngles(&dir, &A.Angles);
 
@@ -2116,14 +2116,14 @@ Actor SpawnPlayerMissileAngle(classid type, float angle)
 	TVec dir;
 
 	// see which target is to be aimed at
-	dir = MO.AimAngle(16.0 * 64.0, angle);
+	dir = Actor(MO).AimAngle(16.0 * 64.0, angle);
 
 	A = StrifeLevelInfo(Level).Spawn(type, MO.Origin + vector(0.0, 0.0, 32.0));
 
 	if (A.SightSound)
 		A.PlaySound(A.SightSound, CHAN_VOICE);
 
-	A.Instigator = MO;
+	A.Instigator = Actor(MO);
 	A.Velocity = dir * A.Speed;
 	VectorAngles(&dir, &A.Angles);
 
@@ -2371,10 +2371,10 @@ void FireWeapon()
 		return;
 	}
 
-	MO.SetState(MO.MeleeState);
+	MO.SetState(Actor(MO).MeleeState);
 	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).AttackState);
 	if (Weapon(ViewEnts[ps_weapon]).bRaiseNoiseAlert)
-		StrifeLevelInfo(Level).NoiseAlert(MO, MO);
+		StrifeLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 
 //**************************************************************************
@@ -2403,7 +2403,7 @@ bool PTR_UseThingTraverse(intercept_t * in)
 		{
 			return true;
 		}
-		if (StrifeLevelInfo(Level).StartConversation(MO, Actor(in->Thing)))
+		if (StrifeLevelInfo(Level).StartConversation(Actor(MO), Actor(in->Thing)))
 		{
 			return false;
 		}
@@ -2461,7 +2461,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		return in->line->backsector != NULL;
 	}
 
-	StrifeLevelInfo(Level).ActivateLine(in->line, MO, 0, SPAC_USE);
+	StrifeLevelInfo(Level).ActivateLine(in->line, Actor(MO), 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
@@ -2636,6 +2636,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.32  2006/02/28 22:47:55  dj_jl
 //  Replaced defines with constants.
 //

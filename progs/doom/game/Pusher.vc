@@ -299,7 +299,7 @@ void Tick(float DeltaTime)
 					yspeed = Ymag;
 				}
 				else if (thing.bIsPlayer &&
-					thing.Origin.z + thing.Player.ViewHeight < ht) // underwater
+					thing.Origin.z + Player(thing.Player).ViewHeight < ht) // underwater
 				{
 					xspeed = 0;
 					yspeed = 0; // no force
@@ -350,6 +350,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:28:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/19 14:19:33  dj_jl
 //  Some changes because of compiler changes.
 //

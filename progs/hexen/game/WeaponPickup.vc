@@ -62,14 +62,14 @@ void TouchSpecial(Actor Toucher)
 		}
 		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			if (!Toucher.Player.GiveMana(HexenDefs::MANA_1, 25))
+			if (!Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25))
 			{
 				return;
 			}
 		}
 		else
 		{
-			if (!Toucher.Player.GiveMana(HexenDefs::MANA_2, 25))
+			if (!Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25))
 			{
 				return;
 			}
@@ -78,20 +78,20 @@ void TouchSpecial(Actor Toucher)
 	else if (Level.Game.netgame && !Level.Game.deathmatch)
 	{
 		// Cooperative net-game
-		if (Toucher.Player.WeaponOwned[WeaponType])
+		if (Player(Toucher.Player).WeaponOwned[WeaponType])
 		{
 			return;
 		}
-		Toucher.Player.WeaponOwned[WeaponType] = true;
+		Player(Toucher.Player).WeaponOwned[WeaponType] = true;
 		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			Toucher.Player.GiveMana(HexenDefs::MANA_1, 25);
+			Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25);
 		}
 		else
 		{
-			Toucher.Player.GiveMana(HexenDefs::MANA_2, 25);
+			Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25);
 		}
-		Toucher.Player.PendingWeapon = WeaponType;
+		Player(Toucher.Player).PendingWeapon = WeaponType;
 		remove = false;
 	}
 	else
@@ -99,24 +99,24 @@ void TouchSpecial(Actor Toucher)
 		// Deathmatch or single player game
 		if (WeaponType == HexenDefs::WP_SECOND)
 		{
-			gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_1, 25);
+			gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_1, 25);
 		}
 		else
 		{
-			gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_2, 25);
+			gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_2, 25);
 		}
-		if (Toucher.Player.WeaponOwned[WeaponType])
+		if (Player(Toucher.Player).WeaponOwned[WeaponType])
 		{
 			gaveWeapon = false;
 		}
 		else
 		{
 			gaveWeapon = true;
-			Toucher.Player.WeaponOwned[WeaponType] = true;
-			if (WeaponType > Toucher.Player.ReadyWeapon)
+			Player(Toucher.Player).WeaponOwned[WeaponType] = true;
+			if (WeaponType > Player(Toucher.Player).ReadyWeapon)
 			{
 				// Only switch to more powerful weapons
-				Toucher.Player.PendingWeapon = WeaponType;
+				Player(Toucher.Player).PendingWeapon = WeaponType;
 			}
 		}
 		if (!gaveWeapon && !gaveMana)
@@ -146,7 +146,7 @@ void TouchSpecial(Actor Toucher)
 		}
 	}
 
-	Toucher.Player.BonusFlash += BONUSADD;
+	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound('PickupWeapon', CHAN_ITEM);
 }
 
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

@@ -33,8 +33,8 @@ class ConversationItem306 : Pickup;
 
 bool HandlePickup(Actor Toucher)
 {
-	Toucher.Player.Stamina += 10;
-	Toucher.Player.GiveBody(200);
+	Player(Toucher.Player).Stamina += 10;
+	Player(Toucher.Player).GiveBody(200);
 	return true;
 }
 
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //

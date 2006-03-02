@@ -44,7 +44,7 @@ void WeaponLevel2Init()
 
 void WeaponLevel2Fade()
 {
-	Player.PendingWeapon = Player.ReadyWeapon;
+	Player(Player).PendingWeapon = Player(Player).ReadyWeapon;
 }
 
 //===========================================================================
@@ -67,7 +67,7 @@ void A_GauntletAttack()
 	SX = Random() * 4.0 - 2.0;
 	SY = WEAPONTOP + Random() * 4.0;
 	angles = Player.MO.Angles;
-	if (Player.Powers[pw_weaponlevel2])
+	if (Player(Player).Powers[pw_weaponlevel2])
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
@@ -83,9 +83,9 @@ void A_GauntletAttack()
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	dir = Player.MO.AimLineAttack(angles, dist);
-	Player.MO.LineAttack(dir, dist, damage, PuffType);
-	if (!Player.MO.linetarget)
+	dir = Actor(Player.MO).AimLineAttack(angles, dist);
+	Actor(Player.MO).LineAttack(dir, dist, damage, PuffType);
+	if (!Actor(Player.MO).linetarget)
 	{
 		if (P_Random() > 64)
 		{
@@ -107,9 +107,9 @@ void A_GauntletAttack()
 	{
 		Player.ExtraLight = 2;
 	}
-	if (Player.Powers[pw_weaponlevel2])
+	if (Player(Player).Powers[pw_weaponlevel2])
 	{
-		Player.GiveBody(damage >> 1);
+		Player(Player).GiveBody(damage >> 1);
 		Player.MO.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
 	}
 	else
@@ -117,8 +117,8 @@ void A_GauntletAttack()
 		Player.MO.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-		Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+	angle = atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+		Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Player.MO.Angles.yaw) < 360.0 - 90.0 / 20.0)
@@ -133,7 +133,7 @@ void A_GauntletAttack()
 		else
 			Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw + 90.0 / 20.0);
 	}
-	Player.MO.bJustAttacked = true;
+	Actor(Player.MO).bJustAttacked = true;
 }
 
 __states__
@@ -181,6 +181,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

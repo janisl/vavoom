@@ -263,7 +263,7 @@ void DisconnectClient()
 	{
 		MO.Player = none;
 		MO.bIsPlayer = false;
-		MO.Damage(none, none, 10000);
+		Actor(MO).Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -490,7 +490,7 @@ void PlayerExitMap(bool clusterChange)
 	}
 	if (ChickenTime)
 	{
-		SetWeapon(MO.Special1);	// Restore weapon
+		SetWeapon(Actor(MO).Special1);	// Restore weapon
 		ChickenTime = 0.0;
 	}
 	Items = 0;
@@ -1027,7 +1027,7 @@ void MovePlayer(float deltaTime)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = (MO.Origin.z <= MO.FloorZ) || MO.bOnMobj;
+	onground = (MO.Origin.z <= MO.FloorZ) || Actor(MO).bOnMobj;
 
 	forward = ForwardMove * 5.0;
 	side = SideMove * 5.0;
@@ -1105,7 +1105,7 @@ void MovePlayer(float deltaTime)
 		{
 			MO.Velocity.z = 9.0 * 35.0;
 		}
-		MO.bOnMobj = false;
+		Actor(MO).bOnMobj = false;
 		JumpTime = 0.5;
 	}
 }
@@ -1138,9 +1138,9 @@ void CheckWaterJump()
 		if (Level.TraceLine(start, end))
 		{
 			// open at eye level
-			MO.bWaterJump = true;
+			Actor(MO).bWaterJump = true;
 			MO.Velocity.z = 320.0;
-			MO.ReactionTime = 2.0;	// safety net
+			Actor(MO).ReactionTime = 2.0;	// safety net
 		}
 	}
 }
@@ -1162,7 +1162,7 @@ void WaterMove(float deltaTime)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = (MO.Origin.z <= MO.FloorZ) || MO.bOnMobj;
+	onground = (MO.Origin.z <= MO.FloorZ) || Actor(MO).bOnMobj;
 
 	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
 
@@ -1208,10 +1208,10 @@ void WaterMove(float deltaTime)
 
 void WaterJump()
 {
-	if (!MO.ReactionTime || !MO.WaterLevel)
+	if (!Actor(MO).ReactionTime || !MO.WaterLevel)
 	{
-		MO.bWaterJump = false;
-		MO.ReactionTime = 0.0;
+		Actor(MO).bWaterJump = false;
+		Actor(MO).ReactionTime = 0.0;
 	}
 	MO.Velocity.x = MoveDir.x;
 	MO.Velocity.y = MoveDir.y;
@@ -1254,21 +1254,21 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 10);
+				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case SECSPEC_DamageSludge:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 4);
+				Actor(MO).Damage(none, none, 4);
 			}
 			break;
 		case SECSPEC_DamageNukage:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case SECSPEC_LightStrobeFastDamage:
@@ -1276,7 +1276,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 			break;
 		case SECSPEC_DamageSuperHellslimeExit:
@@ -1286,7 +1286,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 	
 			if (Health <= 10)
@@ -1298,16 +1298,16 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
-				MO.HitFloorEffect();
+				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).HitFloorEffect();
 			}
 			break;
 		case SECSPEC_DamageLavaHefty:
 			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
-				MO.HitFloorEffect();
+				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
+				Actor(MO).HitFloorEffect();
 			}
 			break;
 		case SECSPEC_ScrollEastLavaDamage:
@@ -1315,15 +1315,15 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
-				MO.HitFloorEffect();
+				Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).HitFloorEffect();
 			}
 			break;
 		case SECSPEC_DamageHazard:
 			HazardTime += 2.0 * deltaTime;
 			break;
 		case SECSPEC_DamageInstantDeath:
-			MO.Damage(none, none, 999);
+			Actor(MO).Damage(none, none, 999);
 			break;
 		case SECSPEC_DamageSuperHazard:
 			HazardTime += 4.0 * deltaTime;
@@ -1339,21 +1339,21 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case 0x0200:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 10);
+				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case 0x0300:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 			break;
 		}
@@ -1367,7 +1367,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, MO.Sector->Damage);
+				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (MO.Sector->Damage < 50)
@@ -1375,13 +1375,13 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, MO.Sector->Damage);
+				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (Level.Game.level->time - LastSectorDamageTime >= 1.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.Game.level->time;
-			MO.Damage(none, none, MO.Sector->Damage);
+			Actor(MO).Damage(none, none, MO.Sector->Damage);
 		}
 	}
 
@@ -1493,14 +1493,14 @@ void PlayerInContents()
 	case CONTENTS_LAVA:
 		if (!(Level.Game.level->tictime & 15))
 		{
-			MO.Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
+			Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
 		}
 		break;
 
 	case CONTENTS_SLUDGE:
 		if (!(Level.Game.level->tictime & 31))
 		{
-			MO.Damage(none, none, 4);
+			Actor(MO).Damage(none, none, 4);
 		}
 		break;
 	}
@@ -1628,7 +1628,7 @@ void PlayerImpulse()
 	}
 	else if (impulse == 16)
 	{
-		MO.Damage(none, none, 10000);
+		Actor(MO).Damage(none, none, 10000);
 	}
 	else if (impulse == 17)
 	{
@@ -1674,7 +1674,7 @@ void ChickenPlayerThink()
 	{
 		// Jump and noise
 		MO.Velocity.z += 1.0 * 35.0;
-		MO.SetState(MO.PainState);
+		MO.SetState(Actor(MO).PainState);
 		return;
 	}
 	if (P_Random() < 48)
@@ -1721,7 +1721,7 @@ bool UndoPlayerChicken()
 	Powers[pw_weaponlevel2] = 0.0;
 	A.Health = MAXHEALTH;
 	Health = A.Health;
-	PostChickenWeapon(MO.Special1);
+	PostChickenWeapon(Actor(MO).Special1);
 
 	fog = HereticLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(
 		20.0 * cos(MO.Angles.yaw), 20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
@@ -1850,9 +1850,9 @@ void DeathPlayerTick(float deltaTime)
 
 void SetPlayerRunState()
 {
-	if (MO.StateNum == MO.IdleState)
+	if (MO.StateNum == Actor(MO).IdleState)
 	{
-		MO.SetState(MO.SeeState);
+		MO.SetState(Actor(MO).SeeState);
 	}
 }
 
@@ -1886,11 +1886,11 @@ void PlayerTick(float deltaTime)
 		MO.bColideWithWorld = true;
 	}
 
-	if (MO.bJustAttacked)
+	if (Actor(MO).bJustAttacked)
 	{
 		ForwardMove = 100.0;
 		SideMove = 0.0;
-		MO.bJustAttacked = false;
+		Actor(MO).bJustAttacked = false;
 	}
 
 	InventoryTick(deltaTime);
@@ -1915,12 +1915,12 @@ void PlayerTick(float deltaTime)
 	// Move around.
 	// ReactionTime is used to prevent movement
 	//  for a bit after a teleport.
-	if (MO.ReactionTime)
+	if (Actor(MO).ReactionTime)
 	{
-		MO.ReactionTime -= deltaTime;
-		if (MO.ReactionTime <= 0.0)
-			MO.ReactionTime = 0.0;
-		if (MO.bWaterJump)
+		Actor(MO).ReactionTime -= deltaTime;
+		if (Actor(MO).ReactionTime <= 0.0)
+			Actor(MO).ReactionTime = 0.0;
+		if (Actor(MO).bWaterJump)
 			WaterJump();
 	}
 	else
@@ -2052,7 +2052,7 @@ void PlayerTick(float deltaTime)
 			HazardTime > 16.0)
 		{
 			LastHazardTime = Level.Game.level->time;
-			MO.Damage(none, none, 5);
+			Actor(MO).Damage(none, none, 5);
 		}
 	}
 
@@ -2435,7 +2435,7 @@ void UseArtiTele()
 		destY = Level.PlayerStarts[0].y;
 		destAngle = itof(45 * (Level.PlayerStarts[0].angle / 45));
 	}
-	MO.Teleport(vector(destX, destY, Actor::ONFLOORZ), destAngle, true, true,
+	Actor(MO).Teleport(vector(destX, destY, Actor::ONFLOORZ), destAngle, true, true,
 		false);
 	if (ChickenTime)
 	{
@@ -2477,7 +2477,7 @@ bool UseArtiTomeOfPower()
 		if (UndoPlayerChicken() == false)
 		{
 			// Failed
-			MO.Damage(none, none, 10000);
+			Actor(MO).Damage(none, none, 10000);
 		}
 		else
 		{
@@ -2509,7 +2509,7 @@ void UseArtiFireBomb()
 	Actor A = HereticLevelInfo(Level).Spawn(FireBomb, MO.Origin + vector(24.0 * cos(angle),
 		24.0 * sin(angle), -MO.FloorClip));
 
-	A.Instigator = MO;
+	A.Instigator = Actor(MO);
 }
 
 //****************************************************************************
@@ -2760,7 +2760,7 @@ void FireWeapon()
 			Weapon(ViewEnts[ps_weapon]).AttackState;
 	}
 	SetPsprite(ps_weapon, attackState);
-	HereticLevelInfo(Level).NoiseAlert(MO, MO);
+	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 	if (ReadyWeapon == wp_gauntlets && !Refire)
 	{
 		// Play the sound for the initial gauntlet attack
@@ -2853,7 +2853,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		return in->line->backsector != NULL;
 	}
 
-	HereticLevelInfo(Level).ActivateLine(in->line, MO, 0, SPAC_USE);
+	HereticLevelInfo(Level).ActivateLine(in->line, Actor(MO), 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
@@ -3073,7 +3073,7 @@ void Cheat_Morph()
 			cprint(self, "CHICKEN OFF");
 		}
 	}
-	else if (MO.ChickenMorphPlayer())
+	else if (Actor(MO).ChickenMorphPlayer())
 	{
 		cprint(self, "CHICKEN ON");
 	}
@@ -3108,6 +3108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.23  2006/02/28 22:45:45  dj_jl
 //  Replaced defines with constants.
 //

@@ -41,9 +41,9 @@ void A_FireBlaster1()
 
 	Player.MO.PlaySound('weapons/mauler1', CHAN_WEAPON);
 
-	Player.Ammo[Ammo] -= 20;
+	Player(Player).Ammo[Ammo] -= 20;
 
-	aimDir = Player.MO.Aim(16.0 * 64.0);
+	aimDir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -51,9 +51,9 @@ void A_FireBlaster1()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Player.MO.bDisruptDamage = true;
-		Player.MO.LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
-		Player.MO.bDisruptDamage = false;
+		Actor(Player.MO).bDisruptDamage = true;
+		Actor(Player.MO).LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
+		Actor(Player.MO).bDisruptDamage = false;
 	}
 }
 
@@ -78,11 +78,11 @@ void A_FireBlasterSound()
 
 void A_FireBlaster2()
 {
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.Ammo[Ammo] -= 30;
-	Player.SpawnPlayerMissile(MaulerTorpedoMissile);
-	Player.MO.Damage(none, Player.MO, 20);
-	Player.MO.Thrust(Player.MO.Angles.yaw + 180.0, 125.0 / 16.0 * 35.0);
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).Ammo[Ammo] -= 30;
+	Player(Player).SpawnPlayerMissile(MaulerTorpedoMissile);
+	Actor(Player.MO).Damage(none, Actor(Player.MO), 20);
+	Actor(Player.MO).Thrust(Player.MO.Angles.yaw + 180.0, 125.0 / 16.0 * 35.0);
 }
 
 __states__
@@ -138,6 +138,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.9  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

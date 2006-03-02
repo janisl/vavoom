@@ -479,7 +479,7 @@ void Died(Actor source)
 
 		bSolid = false;
 		Player.PlayerState = PST_DEAD;
-		Player.DropWeapon();
+		Player(Player).DropWeapon();
 #ifdef FIXME
 		if (Player == Level.Game.Players[consoleplayer] && automapactive)
 		{
@@ -636,37 +636,37 @@ void Damage(Actor inflictor, Actor source, int damage)
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player.Cheats & StrifeDefs::CF_GODMODE) ||
-			Player.Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player(Player).Cheats & StrifeDefs::CF_GODMODE) ||
+			Player(Player).Powers[pw_invulnerability]))
 		{
 			return;
 		}
 
-		if (Player.ArmorType)
+		if (Player(Player).ArmorType)
 		{
-			if (Player.ArmorType == 1)
+			if (Player(Player).ArmorType == 1)
 				saved = damage / 3;
 			else
 				saved = damage / 2;
 
-			if (Player.ArmorPoints <= saved)
+			if (Player(Player).ArmorPoints <= saved)
 			{
 				// armor is used up
-				saved = Player.ArmorPoints;
-				Player.ArmorType = 0;
+				saved = Player(Player).ArmorPoints;
+				Player(Player).ArmorType = 0;
 			}
-			Player.ArmorPoints -= saved;
+			Player(Player).ArmorPoints -= saved;
 			damage -= saved;
 		}
 		Player.Health -= damage;	// mirror mobj health here for Dave
 		if (Player.Health < 0)
 			Player.Health = 0;
 
-		Player.Attacker = source;
-		Player.DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		Player(Player).Attacker = source;
+		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 
-		if (Player.DamageFlash > 3.0)
-			Player.DamageFlash = 3.0;	// teleport stomp does 10k points...
+		if (Player(Player).DamageFlash > 3.0)
+			Player(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
 	}
 
 	// do the damage    
@@ -1000,140 +1000,140 @@ void GiveInventory(name ItemName, int Amount)
 	//	Stamina upgrade.
 	if (ItemName == 'UpgradeStamina')
 	{
-		Player.Stamina += 10;
-		Player.GiveBody(200);
+		Player(Player).Stamina += 10;
+		Player(Player).GiveBody(200);
 	}
 
 	//	Accuracy upgrade.
 	if (ItemName == 'UpgradeAccuracy')
 	{
-		Player.Accuracy += 10;
+		Player(Player).Accuracy += 10;
 	}
 
 	//	Quest items.
 	if (ItemName == 'QuestItem1')
 	{
-		Player.GiveQuest(QUEST_KilledBeldin);
+		Player(Player).GiveQuest(QUEST_KilledBeldin);
 	}
 	if (ItemName == 'QuestItem2')
 	{
-		Player.GiveQuest(QUEST_StoleChalice);
+		Player(Player).GiveQuest(QUEST_StoleChalice);
 	}
 	if (ItemName == 'QuestItem3')
 	{
-		Player.GiveQuest(QUEST_Prison);
+		Player(Player).GiveQuest(QUEST_Prison);
 	}
 	if (ItemName == 'QuestItem4')
 	{
-		Player.GiveQuest(QUEST_GovPowerCoupling);
+		Player(Player).GiveQuest(QUEST_GovPowerCoupling);
 	}
 	if (ItemName == 'QuestItem5')
 	{
-		Player.GiveQuest(QUEST_GovDerwin);
+		Player(Player).GiveQuest(QUEST_GovDerwin);
 	}
 	if (ItemName == 'QuestItem6')
 	{
-		Player.GiveQuest(QUEST_BrokePowerCoupling);
+		Player(Player).GiveQuest(QUEST_BrokePowerCoupling);
 	}
 	if (ItemName == 'QuestItem7')
 	{
-		Player.GiveQuest(QUEST_7);
+		Player(Player).GiveQuest(QUEST_7);
 	}
 	if (ItemName == 'QuestItem8')
 	{
-		Player.GiveQuest(QUEST_8);
+		Player(Player).GiveQuest(QUEST_8);
 	}
 	if (ItemName == 'QuestItem9')
 	{
-		Player.GiveQuest(QUEST_GotDerwinsEar);
+		Player(Player).GiveQuest(QUEST_GotDerwinsEar);
 	}
 	if (ItemName == 'QuestItem10')
 	{
-		Player.GiveQuest(QUEST_GotPrisonPass);
+		Player(Player).GiveQuest(QUEST_GotPrisonPass);
 	}
 	if (ItemName == 'QuestItem11')
 	{
-		Player.GiveQuest(QUEST_GotPrisonKey);
+		Player(Player).GiveQuest(QUEST_GotPrisonKey);
 	}
 	if (ItemName == 'QuestItem12')
 	{
-		Player.GiveQuest(QUEST_GotSeveredHand);
+		Player(Player).GiveQuest(QUEST_GotSeveredHand);
 	}
 	if (ItemName == 'QuestItem13')
 	{
-		Player.GiveQuest(QUEST_FreedPrisoners);
+		Player(Player).GiveQuest(QUEST_FreedPrisoners);
 	}
 	if (ItemName == 'QuestItem14')
 	{
-		Player.GiveQuest(QUEST_BlownUpCrystal);
+		Player(Player).GiveQuest(QUEST_BlownUpCrystal);
 	}
 	if (ItemName == 'QuestItem15')
 	{
-		Player.GiveQuest(QUEST_GotGuardUniform);
+		Player(Player).GiveQuest(QUEST_GotGuardUniform);
 	}
 	if (ItemName == 'QuestItem16')
 	{
-		Player.GiveQuest(QUEST_BlownUpGates);
+		Player(Player).GiveQuest(QUEST_BlownUpGates);
 	}
 	if (ItemName == 'QuestItem17')
 	{
-		Player.GiveQuest(QUEST_VisitOracle);
+		Player(Player).GiveQuest(QUEST_VisitOracle);
 	}
 	if (ItemName == 'QuestItem18')
 	{
-		Player.GiveQuest(QUEST_GotOraclePass);
+		Player(Player).GiveQuest(QUEST_GotOraclePass);
 	}
 	if (ItemName == 'QuestItem19')
 	{
-		Player.GiveQuest(QUEST_DestroyComputer);
+		Player(Player).GiveQuest(QUEST_DestroyComputer);
 	}
 	if (ItemName == 'QuestItem20')
 	{
-		Player.GiveQuest(QUEST_20);
+		Player(Player).GiveQuest(QUEST_20);
 	}
 	if (ItemName == 'QuestItem21')
 	{
-		Player.GiveQuest(QUEST_KilledBishop);
+		Player(Player).GiveQuest(QUEST_KilledBishop);
 	}
 	if (ItemName == 'QuestItem22')
 	{
-		Player.GiveQuest(QUEST_KillMacil);
+		Player(Player).GiveQuest(QUEST_KillMacil);
 	}
 	if (ItemName == 'QuestItem23')
 	{
-		Player.GiveQuest(QUEST_KilledOracle);
+		Player(Player).GiveQuest(QUEST_KilledOracle);
 	}
 	if (ItemName == 'QuestItem24')
 	{
-		Player.GiveQuest(QUEST_KilledMacil);
+		Player(Player).GiveQuest(QUEST_KilledMacil);
 	}
 	if (ItemName == 'QuestItem25')
 	{
-		Player.GiveQuest(QUEST_Factory);
+		Player(Player).GiveQuest(QUEST_Factory);
 	}
 	if (ItemName == 'QuestItem26')
 	{
-		Player.GiveQuest(QUEST_KilledLoremaster);
+		Player(Player).GiveQuest(QUEST_KilledLoremaster);
 	}
 	if (ItemName == 'QuestItem27')
 	{
-		Player.GiveQuest(QUEST_BlownUpComputer);
+		Player(Player).GiveQuest(QUEST_BlownUpComputer);
 	}
 	if (ItemName == 'QuestItem28')
 	{
-		Player.GiveQuest(QUEST_GotCatacombKey);
+		Player(Player).GiveQuest(QUEST_GotCatacombKey);
 	}
 	if (ItemName == 'QuestItem29')
 	{
-		Player.GiveQuest(QUEST_FreedWorkers);
+		Player(Player).GiveQuest(QUEST_FreedWorkers);
 	}
 	if (ItemName == 'QuestItem30')
 	{
-		Player.GiveQuest(QUEST_30);
+		Player(Player).GiveQuest(QUEST_30);
 	}
 	if (ItemName == 'QuestItem31')
 	{
-		Player.GiveQuest(QUEST_31);
+		Player(Player).GiveQuest(QUEST_31);
 	}
 }
 
@@ -1154,147 +1154,147 @@ int CheckInventory(name ItemName)
 	//	Weapons.
 	if (ItemName == 'FlameThrower')
 	{
-		return Player.WeaponOwned[StrifeDefs::wp_flame];
+		return Player(Player).WeaponOwned[StrifeDefs::wp_flame];
 	}
 	if (ItemName == 'Sigil')
 	{
-		return Player.WeaponOwned[StrifeDefs::wp_sigil];
+		return Player(Player).WeaponOwned[StrifeDefs::wp_sigil];
 	}
 
 	//	Inventory items.
 	if (ItemName == 'OfferingChalice')
 	{
-		return Player.Inventory[StrifeDefs::ITEM_OfferingChalice];
+		return Player(Player).Inventory[StrifeDefs::ITEM_OfferingChalice];
 	}
 	if (ItemName == 'OfficersUniform')
 	{
-		return Player.Inventory[StrifeDefs::ITEM_OfficersUniform];
+		return Player(Player).Inventory[StrifeDefs::ITEM_OfficersUniform];
 	}
 
 	//	Quest items.
 	if (ItemName == 'QuestItem1')
 	{
-		return Player.Quests & (1 << 0) ? 1 : 0;
+		return Player(Player).Quests & (1 << 0) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem2')
 	{
-		return Player.Quests & (1 << 1) ? 1 : 0;
+		return Player(Player).Quests & (1 << 1) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem3')
 	{
-		return Player.Quests & (1 << 2) ? 1 : 0;
+		return Player(Player).Quests & (1 << 2) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem4')
 	{
-		return Player.Quests & (1 << 3) ? 1 : 0;
+		return Player(Player).Quests & (1 << 3) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem5')
 	{
-		return Player.Quests & (1 << 4) ? 1 : 0;
+		return Player(Player).Quests & (1 << 4) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem6')
 	{
-		return Player.Quests & (1 << 5) ? 1 : 0;
+		return Player(Player).Quests & (1 << 5) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem7')
 	{
-		return Player.Quests & (1 << 6) ? 1 : 0;
+		return Player(Player).Quests & (1 << 6) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem8')
 	{
-		return Player.Quests & (1 << 7) ? 1 : 0;
+		return Player(Player).Quests & (1 << 7) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem9')
 	{
-		return Player.Quests & (1 << 8) ? 1 : 0;
+		return Player(Player).Quests & (1 << 8) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem10')
 	{
-		return Player.Quests & (1 << 9) ? 1 : 0;
+		return Player(Player).Quests & (1 << 9) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem11')
 	{
-		return Player.Quests & (1 << 10) ? 1 : 0;
+		return Player(Player).Quests & (1 << 10) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem12')
 	{
-		return Player.Quests & (1 << 11) ? 1 : 0;
+		return Player(Player).Quests & (1 << 11) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem13')
 	{
-		return Player.Quests & (1 << 12) ? 1 : 0;
+		return Player(Player).Quests & (1 << 12) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem14')
 	{
-		return Player.Quests & (1 << 13) ? 1 : 0;
+		return Player(Player).Quests & (1 << 13) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem15')
 	{
-		return Player.Quests & (1 << 14) ? 1 : 0;
+		return Player(Player).Quests & (1 << 14) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem16')
 	{
-		return Player.Quests & (1 << 15) ? 1 : 0;
+		return Player(Player).Quests & (1 << 15) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem17')
 	{
-		return Player.Quests & (1 << 16) ? 1 : 0;
+		return Player(Player).Quests & (1 << 16) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem18')
 	{
-		return Player.Quests & (1 << 17) ? 1 : 0;
+		return Player(Player).Quests & (1 << 17) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem19')
 	{
-		return Player.Quests & (1 << 18) ? 1 : 0;
+		return Player(Player).Quests & (1 << 18) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem20')
 	{
-		return Player.Quests & (1 << 19) ? 1 : 0;
+		return Player(Player).Quests & (1 << 19) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem21')
 	{
-		return Player.Quests & (1 << 20) ? 1 : 0;
+		return Player(Player).Quests & (1 << 20) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem22')
 	{
-		return Player.Quests & (1 << 21) ? 1 : 0;
+		return Player(Player).Quests & (1 << 21) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem23')
 	{
-		return Player.Quests & (1 << 22) ? 1 : 0;
+		return Player(Player).Quests & (1 << 22) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem24')
 	{
-		return Player.Quests & (1 << 23) ? 1 : 0;
+		return Player(Player).Quests & (1 << 23) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem25')
 	{
-		return Player.Quests & (1 << 24) ? 1 : 0;
+		return Player(Player).Quests & (1 << 24) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem26')
 	{
-		return Player.Quests & (1 << 25) ? 1 : 0;
+		return Player(Player).Quests & (1 << 25) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem27')
 	{
-		return Player.Quests & (1 << 26) ? 1 : 0;
+		return Player(Player).Quests & (1 << 26) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem28')
 	{
-		return Player.Quests & (1 << 27) ? 1 : 0;
+		return Player(Player).Quests & (1 << 27) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem29')
 	{
-		return Player.Quests & (1 << 28) ? 1 : 0;
+		return Player(Player).Quests & (1 << 28) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem30')
 	{
-		return Player.Quests & (1 << 29) ? 1 : 0;
+		return Player(Player).Quests & (1 << 29) ? 1 : 0;
 	}
 	if (ItemName == 'QuestItem31')
 	{
-		return Player.Quests & (1 << 30) ? 1 : 0;
+		return Player(Player).Quests & (1 << 30) ? 1 : 0;
 	}
 
 	//	I don't know what it is.
@@ -1309,9 +1309,9 @@ int CheckInventory(name ItemName)
 
 int GetSigilPieces()
 {
-	if (bIsPlayer && Player.WeaponOwned[StrifeDefs::wp_sigil])
+	if (bIsPlayer && Player(Player).WeaponOwned[StrifeDefs::wp_sigil])
 	{
-		return Player.Sigil + 1;
+		return Player(Player).Sigil + 1;
 	}
 	return 0;
 }
@@ -1489,8 +1489,8 @@ void ZMovement(float DeltaTime)
 	// check for smooth step up
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player(Player).ViewHeight -= FloorZ - Origin.z;
+		Player(Player).DeltaViewHeight = (Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 	}
 
 	// adjust height
@@ -1535,7 +1535,7 @@ void ZMovement(float DeltaTime)
 				// Decrease ViewHeight for a moment
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
-				Player.DeltaViewHeight = vdot / 8.0;
+				Player(Player).DeltaViewHeight = vdot / 8.0;
 				PlaySound('*land', CHAN_VOICE);
 			}
 		}
@@ -1689,7 +1689,7 @@ float GetFriction()
 
 void PlayerLandedOnThing()
 {
-	Player.DeltaViewHeight = Velocity.z / 8.0;
+	Player(Player).DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
 		PlaySound('*land', CHAN_VOICE);
@@ -1804,10 +1804,10 @@ bool Physics(float DeltaTime)
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					Player.ViewHeight -= onmo.Origin.z + onmo.Height
+					Player(Player).ViewHeight -= onmo.Origin.z + onmo.Height
 						- Origin.z;
-					Player.DeltaViewHeight =
-						(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+					Player(Player).DeltaViewHeight =
+						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
@@ -2164,7 +2164,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 		return 0;
 
 	if (bIsPlayer)
-		Player.ViewOrg.z = Origin.z + Player.ViewHeight;
+		Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
 
 	if (SrcFog)
 	{
@@ -2341,7 +2341,7 @@ bool LookForPlayers(bool allaround)
 			return false;
 		}
 
-		player = Level.Game.Players[LastLook];
+		player = Player(Level.Game.Players[LastLook]);
 
 		if (!player)
 			continue;
@@ -2375,7 +2375,7 @@ bool LookForPlayers(bool allaround)
 			}
 		}
 
-		Enemy = player.MO;
+		Enemy = Actor(player.MO);
 		return true;
 	}
 
@@ -3468,6 +3468,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.34  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.33  2006/02/28 22:47:55  dj_jl
 //  Replaced defines with constants.
 //

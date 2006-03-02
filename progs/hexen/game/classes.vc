@@ -23,14 +23,14 @@
 //**
 //**************************************************************************
 
+#include "Actor.vc"
 #include "MainGameInfo.vc"
 #include "HexenLevelInfo.vc"
-#include "Actor.vc"
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
 #include "Weapon.vc"
-#include "BotPlayer.vc"
 #include "Player.vc"
+#include "BotPlayer.vc"
 
 #include "Projectile.vc"
 #include "Fragment.vc"
@@ -505,6 +505,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.10  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

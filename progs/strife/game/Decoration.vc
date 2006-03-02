@@ -48,7 +48,7 @@ void A_QuestObjectDeath()
 	//	Basicly all object using this function does this.
 	if (bGiveQuest)
 	{
-		Level.Game.Players[0].GiveQuest(QuestID);
+		Player(Level.Game.Players[0]).GiveQuest(QuestID);
 	}
 }
 
@@ -59,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.3  2006/02/15 23:34:27  dj_jl
 //  Moved all server progs global variables to classes.
 //

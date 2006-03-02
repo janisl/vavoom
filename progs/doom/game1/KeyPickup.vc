@@ -36,7 +36,7 @@ int KeyType;
 
 bool HandlePickup(Actor Toucher)
 {
-	if (Toucher.Player.GiveCard(KeyType))
+	if (Player(Toucher.Player).GiveCard(KeyType))
 		cprint(Toucher.Player, PickupMessage);
 	if (Level.Game.netgame)
 		return false;
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

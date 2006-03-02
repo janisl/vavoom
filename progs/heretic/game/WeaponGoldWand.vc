@@ -36,14 +36,14 @@ void A_FireGoldWandPL1()
 	int damage;
 	TVec dir;
 
-	Player.Ammo[am_goldwand] -= USE_GWND_AMMO_1;
+	Player(Player).Ammo[am_goldwand] -= USE_GWND_AMMO_1;
 	damage = 7 + (P_Random() & 7);
-	dir = Player.MO.Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
-	if (Player.Refire)
+	dir = Actor(Player.MO).Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
+	if (Player(Player).Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	Player.MO.LineAttack(dir, MISSILERANGE, damage, GoldWandPuff1);
+	Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, GoldWandPuff1);
 	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
 }
 
@@ -61,19 +61,19 @@ void A_FireGoldWandPL2()
 	TAVec angles;
 	TVec dir;
 
-	Player.Ammo[am_goldwand] -=
+	Player(Player).Ammo[am_goldwand] -=
 		Player.Level.Game.deathmatch ? USE_GWND_AMMO_1 : USE_GWND_AMMO_2;
-	dir = Player.MO.Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
+	dir = Actor(Player.MO).Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
-	Player.MO.SpawnMissileAngles(GoldWandMissile2,
+	Actor(Player.MO).SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw - (45.0 / 8.0)), angles.pitch);
-	Player.MO.SpawnMissileAngles(GoldWandMissile2,
+	Actor(Player.MO).SpawnMissileAngles(GoldWandMissile2,
 		AngleMod360(angles.yaw + (45.0 / 8.0)), angles.pitch);
 	VectorRotateAroundZ(&dir, -45.0 / 8.0);
 	for (i = 0; i < 5; i++)
 	{
 		damage = 1 + (P_Random() & 7);
-		Player.MO.LineAttack(dir, MISSILERANGE, damage, GoldWandPuff2);
+		Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, GoldWandPuff2);
 		VectorRotateAroundZ(&dir, (45.0 / 8.0) / 2.0);
 	}
 	Player.MO.PlaySound('weapons/wandhit', CHAN_WEAPON);
@@ -113,6 +113,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

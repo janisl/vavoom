@@ -51,11 +51,11 @@ void A_Quake()
 	{
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
-			pl = Level.Game.Players[playnum];
+			pl = Player(Level.Game.Players[playnum]);
 			if (!pl || !pl.bSpawned)
 				continue;
 
-			victim = pl.MO;
+			victim = Actor(pl.MO);
 			dist = DistTo(victim);
 			if (dist < TremorRadius)	// In tremor radius
 			{
@@ -79,7 +79,7 @@ void A_Quake()
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
 			if (Level.Game.Players[playnum])
-				Level.Game.Players[playnum].LocalQuakeHappening = 0;
+				Player(Level.Game.Players[playnum]).LocalQuakeHappening = 0;
 		}
 		SetState(S_NULL);
 	}
@@ -161,6 +161,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

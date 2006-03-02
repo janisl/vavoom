@@ -33,11 +33,11 @@ class WeaponCrossbow : Weapon;
 
 void A_FireCrossbowPL1()
 {
-	Player.Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
-	Player.MO.SpawnPlayerMissile(CrossbowFX1);
-	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+	Player(Player).Ammo[am_crossbow] -= USE_CBOW_AMMO_1;
+	Actor(Player.MO).SpawnPlayerMissile(CrossbowFX1);
+	Actor(Player.MO).SpawnPlayerMissileAngle(CrossbowFX3,
 		AngleMod360(Player.MO.Angles.yaw - (45.0 / 10.0)));
-	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+	Actor(Player.MO).SpawnPlayerMissileAngle(CrossbowFX3,
 		AngleMod360(Player.MO.Angles.yaw + (45.0 / 10.0)));
 }
 
@@ -49,16 +49,16 @@ void A_FireCrossbowPL1()
 
 void A_FireCrossbowPL2()
 {
-	Player.Ammo[am_crossbow] -=
+	Player(Player).Ammo[am_crossbow] -=
 		Player.Level.Game.deathmatch ? USE_CBOW_AMMO_1 : USE_CBOW_AMMO_2;
-	Player.MO.SpawnPlayerMissile(CrossbowFX2);
-	Player.MO.SpawnPlayerMissileAngle(CrossbowFX2,
+	Actor(Player.MO).SpawnPlayerMissile(CrossbowFX2);
+	Actor(Player.MO).SpawnPlayerMissileAngle(CrossbowFX2,
 		AngleMod360(Player.MO.Angles.yaw - (45.0 / 10.0)));
-	Player.MO.SpawnPlayerMissileAngle(CrossbowFX2,
+	Actor(Player.MO).SpawnPlayerMissileAngle(CrossbowFX2,
 		AngleMod360(Player.MO.Angles.yaw + (45.0 / 10.0)));
-	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+	Actor(Player.MO).SpawnPlayerMissileAngle(CrossbowFX3,
 		AngleMod360(Player.MO.Angles.yaw - (45.0 / 5.0)));
-	Player.MO.SpawnPlayerMissileAngle(CrossbowFX3,
+	Actor(Player.MO).SpawnPlayerMissileAngle(CrossbowFX3,
 		AngleMod360(Player.MO.Angles.yaw + (45.0 / 5.0)));
 }
 
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.3  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

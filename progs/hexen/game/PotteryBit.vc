@@ -54,7 +54,7 @@ void A_PotteryCheck()
 		{
 			continue;
 		}
-		pmo = Level.Game.Players[i].MO;
+		pmo = Actor(Level.Game.Players[i].MO);
 		if (CanSee(pmo) && (fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
 			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
 		{
@@ -99,6 +99,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

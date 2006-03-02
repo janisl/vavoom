@@ -38,22 +38,22 @@ void A_Punch()
 	TAVec angles;
 	TVec dir;
 
-	power = Player.Stamina / 10;
+	power = Player(Player).Stamina / 10;
 	damage = (P_Random() % (power + 8)) * (power + 2);
 
-	if (Player.Powers[pw_strength])
+	if (Player(Player).Powers[pw_strength])
 		damage *= 10;
 
 	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Player.MO.AimLineAttack(angles, PUNCHRANGE);
-	Player.MO.LineAttack(dir, PUNCHRANGE, damage, PuffPow3);
+	dir = Actor(Player.MO).AimLineAttack(angles, PUNCHRANGE);
+	Actor(Player.MO).LineAttack(dir, PUNCHRANGE, damage, PuffPow3);
 
 	// turn to face target
-	if (Player.MO.linetarget)
+	if (Actor(Player.MO).linetarget)
 	{
-		if (Player.MO.linetarget.bNoBlood)
+		if (Actor(Player.MO).linetarget.bNoBlood)
 		{
 			Player.MO.PlaySound('misc/metalhit', CHAN_WEAPON);
 		}
@@ -62,10 +62,10 @@ void A_Punch()
 			Player.MO.PlaySound('misc/meathit', CHAN_WEAPON);
 		}
 		Player.MO.Angles.yaw =
-			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
-		Player.MO.bJustAttacked = true;
+		Actor(Player.MO).bJustAttacked = true;
 		// Sys1eae0 (actor->player, linetarget);
 	}
 	else
@@ -100,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.9  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

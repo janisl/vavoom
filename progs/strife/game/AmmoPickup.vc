@@ -37,7 +37,7 @@ int AmmoCount;
 
 bool HandlePickup(Actor Toucher)
 {
-	return Toucher.Player.GiveAmmo(AmmoType, bDropped ? AmmoCount / 2 : AmmoCount);
+	return Player(Toucher.Player).GiveAmmo(AmmoType, bDropped ? AmmoCount / 2 : AmmoCount);
 }
 
 defaultproperties
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.3  2005/12/22 23:06:00  dj_jl
 //  Fixed ammo and weapon pickups.
 //

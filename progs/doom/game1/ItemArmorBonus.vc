@@ -35,11 +35,11 @@ class ItemArmorBonus : Pickup
 
 bool HandlePickup(Actor Toucher)
 {
-	Toucher.Player.ArmorPoints++;	// can go over 100%
-	if (Toucher.Player.ArmorPoints > 200)
-		Toucher.Player.ArmorPoints = 200;
-	if (!Toucher.Player.ArmorType)
-		Toucher.Player.ArmorType = 1;
+	Player(Toucher.Player).ArmorPoints++;	// can go over 100%
+	if (Player(Toucher.Player).ArmorPoints > 200)
+		Player(Toucher.Player).ArmorPoints = 200;
+	if (!Player(Toucher.Player).ArmorType)
+		Player(Toucher.Player).ArmorType = 1;
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
 	return true;
@@ -65,6 +65,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

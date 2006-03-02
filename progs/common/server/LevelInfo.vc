@@ -191,7 +191,7 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 //
 //==========================================================================
 
-void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
+void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
 	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
 	int arg4)
 {
@@ -1182,6 +1182,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:27:26  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/25 17:15:55  dj_jl
 //  Implemented proper serialisation of the objects.
 //

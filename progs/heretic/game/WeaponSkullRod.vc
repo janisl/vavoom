@@ -35,12 +35,12 @@ void A_FireSkullRodPL1()
 {
 	Actor A;
 
-	if (Player.Ammo[am_skullrod] < USE_SKRD_AMMO_1)
+	if (Player(Player).Ammo[am_skullrod] < USE_SKRD_AMMO_1)
 	{
 		return;
 	}
-	Player.Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
-	A = Player.MO.SpawnPlayerMissile(HornRodMissile1);
+	Player(Player).Ammo[am_skullrod] -= USE_SKRD_AMMO_1;
+	A = Actor(Player.MO).SpawnPlayerMissile(HornRodMissile1);
 	// Randomize the first frame
 	if (A && P_Random() > 128)
 	{
@@ -60,9 +60,9 @@ void A_FireSkullRodPL1()
 
 void A_FireSkullRodPL2()
 {
-	Player.Ammo[am_skullrod] -=
+	Player(Player).Ammo[am_skullrod] -=
 		Player.Level.Game.deathmatch ? USE_SKRD_AMMO_1 : USE_SKRD_AMMO_2;
-	Player.MO.SpawnPlayerMissile(HornRodMissile2);
+	Actor(Player.MO).SpawnPlayerMissile(HornRodMissile2);
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj
 	// even if it exploded immediately.
@@ -76,9 +76,9 @@ void A_FireSkullRodPL2()
 		// Always use red missiles in single player games
 		HornRodMissile2(MainGameInfo(Player.Level.Game).MissileMobj).RainColor = 2;
 	}
-	if (Player.MO.linetarget)
+	if (Actor(Player.MO).linetarget)
 	{
-		MainGameInfo(Player.Level.Game).MissileMobj.Enemy = Player.MO.linetarget;
+		MainGameInfo(Player.Level.Game).MissileMobj.Enemy = Actor(Player.MO).linetarget;
 	}
 	MainGameInfo(Player.Level.Game).MissileMobj.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
 }
@@ -121,6 +121,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

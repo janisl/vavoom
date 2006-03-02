@@ -69,7 +69,7 @@ void TouchSpecial(Actor Toucher)
 			return;
 		}
 		checkAssembled = false;
-		gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_BOTH, 20);
+		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
 		if (!gaveMana)
 		{
 			// Didn't need the mana, so don't pick it up
@@ -79,20 +79,20 @@ void TouchSpecial(Actor Toucher)
 	else if (Level.Game.netgame && !Level.Game.deathmatch)
 	{
 		// Cooperative net-game
-		if (Toucher.Player.Pieces & PieceValue)
+		if (Player(Toucher.Player).Pieces & PieceValue)
 		{
 			// Already has the piece
 			return;
 		}
 		PieceValue = MainGameInfo(Level.Game).pieceValueTrans[PieceValue];
-		Toucher.Player.GiveMana(HexenDefs::MANA_BOTH, 20);
+		Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
 		remove = false;
 	}
 	else
 	{
 		// Deathmatch or single player game
-		gaveMana = Toucher.Player.GiveMana(HexenDefs::MANA_BOTH, 20);
-		if (Toucher.Player.Pieces & PieceValue)
+		gaveMana = Player(Toucher.Player).GiveMana(HexenDefs::MANA_BOTH, 20);
+		if (Player(Toucher.Player).Pieces & PieceValue)
 		{
 			// Already has the piece, check if mana needed
 			if (!gaveMana)
@@ -122,17 +122,17 @@ void TouchSpecial(Actor Toucher)
 			Remove();
 		}
 	}
-	Toucher.Player.BonusFlash += BONUSADD;
+	Player(Toucher.Player).BonusFlash += BONUSADD;
 
 	// Check if fourth weapon assembled
 	if (checkAssembled)
 	{
-		Toucher.Player.Pieces |= PieceValue;
-		if (Toucher.Player.Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
+		Player(Toucher.Player).Pieces |= PieceValue;
+		if (Player(Toucher.Player).Pieces == (WPIECE1 | WPIECE2 | WPIECE3))
 		{
 			gaveWeapon = true;
-			Toucher.Player.WeaponOwned[HexenDefs::WP_FOURTH] = true;
-			Toucher.Player.PendingWeapon = HexenDefs::WP_FOURTH;
+			Player(Toucher.Player).WeaponOwned[HexenDefs::WP_FOURTH] = true;
+			Player(Toucher.Player).PendingWeapon = HexenDefs::WP_FOURTH;
 		}
 	}
 
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

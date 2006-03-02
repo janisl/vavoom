@@ -187,7 +187,7 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	if (Toucher.Player.GiveArtifact(ArtifactType))
+	if (Player(Toucher.Player).GiveArtifact(ArtifactType))
 	{
 		if (Special)
 		{
@@ -195,7 +195,7 @@ void TouchSpecial(Actor Toucher)
 				Args[3], Args[4], NULL, 0, Toucher);
 			Special = 0;
 		}
-		Toucher.Player.BonusFlash += BONUSADD;
+		Player(Toucher.Player).BonusFlash += BONUSADD;
 		if (ArtifactType < HexenDefs::arti_firstpuzzitem)
 		{
 			SetDormantArtifact();
@@ -225,6 +225,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

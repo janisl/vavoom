@@ -49,7 +49,7 @@ void TouchSpecial(Actor Toucher)
 		return;
 	}
 	sound = 'misc/i_pkup';
-	if (!Toucher.Player.GiveBody(10))
+	if (!Player(Toucher.Player).GiveBody(10))
 	{
 		return;
 	}
@@ -73,7 +73,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	Toucher.Player.BonusFlash += BONUSADD;
+	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound(sound, CHAN_ITEM);
 }
 
@@ -93,6 +93,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/28 22:45:45  dj_jl
 //  Replaced defines with constants.
 //

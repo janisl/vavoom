@@ -47,7 +47,7 @@ void A_FAxeAttack()
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
-	if (Player.Mana[HexenDefs::MANA_1] > 0)
+	if (Player(Player).Mana[HexenDefs::MANA_1] > 0)
 	{
 		damage <<= 1;
 		power = 6.0;
@@ -75,7 +75,7 @@ void A_FAxeAttack()
 			{
 				Owner.linetarget.Thrust(angles.yaw, power);
 			}
-			Player.AdjustPlayerAngle();
+			Player(Player).AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
@@ -93,7 +93,7 @@ void A_FAxeAttack()
 			{
 				Owner.linetarget.Thrust(angles.yaw, power);
 			}
-			Player.AdjustPlayerAngle();
+			Player(Player).AdjustPlayerAngle();
 			useMana++;
 			break;
 		}
@@ -112,9 +112,9 @@ void A_FAxeAttack()
 
 	if (useMana == 2)
 	{
-		Player.Mana[HexenDefs::MANA_1] -=
-			WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-		if (Player.Mana[HexenDefs::MANA_1] <= 0)
+		Player(Player).Mana[HexenDefs::MANA_1] -=
+			WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
+		if (Player(Player).Mana[HexenDefs::MANA_1] <= 0)
 		{
 			SetState(NoMoreManaState);
 		}
@@ -170,7 +170,7 @@ __states__
 
 int GetUpState()
 {
-	if (Player.Mana[HexenDefs::MANA_1])
+	if (Player(Player).Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEUP_G;
 	}
@@ -188,7 +188,7 @@ int GetUpState()
 
 int GetDownState()
 {
-	if (Player.Mana[HexenDefs::MANA_1])
+	if (Player(Player).Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEDOWN_G;
 	}
@@ -206,7 +206,7 @@ int GetDownState()
 
 int GetReadyState()
 {
-	if (Player.Mana[HexenDefs::MANA_1])
+	if (Player(Player).Mana[HexenDefs::MANA_1])
 	{
 		return S_FAXEREADY_G;
 	}
@@ -224,14 +224,14 @@ int GetReadyState()
 
 int GetAttackState()
 {
-	if (Player.Mana[HexenDefs::MANA_1] > 0)
+	if (Player(Player).Mana[HexenDefs::MANA_1] > 0)
 	{
 		// Glowing axe
 		return S_FAXEATK_G1;
 	}
 	else
 	{
-		return Player.Refire ? HoldAttackState : AttackState;
+		return Player(Player).Refire ? HoldAttackState : AttackState;
 	}
 }
 
@@ -265,6 +265,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

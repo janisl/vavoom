@@ -37,16 +37,16 @@ void A_FireShotgun()
 	TVec dir;
 
 	Player.MO.PlaySound('weapons/shotgf', CHAN_WEAPON);
-	Player.MO.SetState(Player.MO.MissileState);
+	Player.MO.SetState(Actor(Player.MO).MissileState);
 
-	Player.Ammo[Ammo]--;
+	Player(Player).Ammo[Ammo]--;
 
-	Player.SetPsprite(ps_flash, FlashState);
+	Player(Player).SetPsprite(ps_flash, FlashState);
 
-	dir = Player.MO.Aim(16.0 * 64.0);
+	dir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(Player.MO, false, dir);
+		GunShot(Actor(Player.MO), false, dir);
 	}
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

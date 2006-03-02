@@ -37,10 +37,10 @@ void A_FireMissile()
 
 	savedangle = Player.MO.Angles.yaw;
 	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
-		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player.Accuracy * 5 / 100)));
-	Player.Ammo[Ammo]--;
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.SpawnPlayerMissile(MiniMissile);
+		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
+	Player(Player).Ammo[Ammo]--;
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).SpawnPlayerMissile(MiniMissile);
 	Player.MO.Angles.yaw = savedangle;
 }
 
@@ -70,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

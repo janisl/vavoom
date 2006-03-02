@@ -104,10 +104,10 @@ void A_WeaponReady()
 	float angle;
 
 	// get out of attack state
-	if (Player.MO.StateNum == Player.MO.MeleeState ||
-		Player.MO.StateNum == Player.MO.MissileState)
+	if (Player.MO.StateNum == Actor(Player.MO).MeleeState ||
+		Player.MO.StateNum == Actor(Player.MO).MissileState)
 	{
-		Player.MO.SetState(Player.MO.IdleState);
+		Player.MO.SetState(Actor(Player.MO).IdleState);
 	}
 
 #ifdef DDF
@@ -116,7 +116,7 @@ void A_WeaponReady()
 		Player.MO.PlaySound(IdleSound, CHAN_WEAPON);
 	}
 #else
-	if (Player.ReadyWeapon == DoomDefs::wp_chainsaw && StateNum == ReadyState)
+	if (Player(Player).ReadyWeapon == DoomDefs::wp_chainsaw && StateNum == ReadyState)
 	{
 		Player.MO.PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
@@ -124,11 +124,11 @@ void A_WeaponReady()
 
 	// check for change
 	//  if player is dead, put the weapon away
-	if (Player.PendingWeapon != DoomDefs::wp_nochange || !Player.Health)
+	if (Player(Player).PendingWeapon != DoomDefs::wp_nochange || !Player.Health)
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		Player.SetPsprite(ps_weapon, DownState);
+		Player(Player).SetPsprite(ps_weapon, DownState);
 		return;
 	}
 
@@ -139,12 +139,12 @@ void A_WeaponReady()
 #ifdef DDF
 		if (!Player.bAttackDown || bAutoFire)
 #else
-		if (!Player.bAttackDown || (Player.ReadyWeapon != DoomDefs::wp_missile &&
-			Player.ReadyWeapon != DoomDefs::wp_bfg))
+		if (!Player.bAttackDown || (Player(Player).ReadyWeapon != DoomDefs::wp_missile &&
+			Player(Player).ReadyWeapon != DoomDefs::wp_bfg))
 #endif
 		{
 			Player.bAttackDown = true;
-			Player.FireWeapon();
+			Player(Player).FireWeapon();
 			return;
 		}
 	}
@@ -167,12 +167,12 @@ void A_WeaponReady()
 
 	// bob the weapon based on movement speed
 	angle = AngleMod360(180.0 * Player.Level.Game.level->time);
-	SX = 1.0 + Player.Bob * cos(angle);
+	SX = 1.0 + Player(Player).Bob * cos(angle);
 	if (angle >= 180.0)
 	{
 		angle -= 180.0;
 	}
-	SY = WEAPONTOP + Player.Bob * sin(angle);
+	SY = WEAPONTOP + Player(Player).Bob * sin(angle);
 }
 
 //===========================================================================
@@ -209,13 +209,13 @@ void A_Lower()
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Player.SetPsprite(ps_weapon, S_NULL);
+		Player(Player).SetPsprite(ps_weapon, S_NULL);
 		return;
 	}
 
-	Player.SetWeapon(Player.PendingWeapon);
+	Player(Player).SetWeapon(Player(Player).PendingWeapon);
 
-	Player.BringUpWeapon();
+	Player(Player).BringUpWeapon();
 }
 
 //===========================================================================
@@ -241,7 +241,7 @@ void A_Raise()
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	Player.SetPsprite(ps_weapon, ReadyState);
+	Player(Player).SetPsprite(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -257,15 +257,15 @@ void A_ReFire()
 	// check for fire
 	//  (if a weaponchange is pending, let it go through instead)
 	if ((Player.Buttons & BT_ATTACK)
-		&& Player.PendingWeapon == DoomDefs::wp_nochange && Player.Health)
+		&& Player(Player).PendingWeapon == DoomDefs::wp_nochange && Player.Health)
 	{
-		Player.Refire++;
-		Player.FireWeapon();
+		Player(Player).Refire++;
+		Player(Player).FireWeapon();
 	}
 	else
 	{
-		Player.Refire = 0;
-		Player.CheckAmmo();
+		Player(Player).Refire = 0;
+		Player(Player).CheckAmmo();
 	}
 }
 
@@ -277,7 +277,7 @@ void A_ReFire()
 
 void A_CheckReload()
 {
-	Player.CheckAmmo();
+	Player(Player).CheckAmmo();
 
 #ifdef DDF
 	if (ReloadState && AmmoFired >= Clip)
@@ -296,8 +296,8 @@ void A_CheckReload()
 
 void A_GunFlash()
 {
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.SetPsprite(ps_flash, FlashState);
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).SetPsprite(ps_flash, FlashState);
 }
 
 //===========================================================================
@@ -643,6 +643,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/02 18:28:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.9  2006/02/28 22:44:18  dj_jl
 //  Replaced defines with constants.
 //

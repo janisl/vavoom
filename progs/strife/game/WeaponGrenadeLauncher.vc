@@ -38,7 +38,7 @@ void A_FireGrenade()
 	float an;
 	float tworadii;
 
-	if (Player.ReadyWeapon == StrifeDefs::wp_grenade)
+	if (Player(Player).ReadyWeapon == StrifeDefs::wp_grenade)
 	{
 		grenadetype = HEGrenade;
 	}
@@ -46,15 +46,15 @@ void A_FireGrenade()
 	{
 		grenadetype = FireGrenade;
 	}
-	if (Player.Ammo[Ammo] < 1)
+	if (Player(Player).Ammo[Ammo] < 1)
 		return;
-	Player.Ammo[Ammo]--;
+	Player(Player).Ammo[Ammo]--;
 
 	// Make it flash
-	Player.SetPsprite(ps_flash, FlashState + (StateNum - AttackState));
+	Player(Player).SetPsprite(ps_flash, FlashState + (StateNum - AttackState));
 
 	Player.MO.Origin.z += 32.0;
-	grenade = Player.MO.SpawnSubMissile(grenadetype);
+	grenade = Actor(Player.MO).SpawnSubMissile(grenadetype);
 	Player.MO.Origin.z -= 32.0;
 	if (!grenade)
 		return;
@@ -134,6 +134,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

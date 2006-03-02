@@ -33,14 +33,14 @@ class WeaponClericHoly : Weapon;
 
 void A_CHolyAttack()
 {
-	Player.Mana[HexenDefs::MANA_1] -=
-		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-	Player.Mana[HexenDefs::MANA_2] -=
-		WeaponManaUse(Player.PClass, Player.ReadyWeapon);
-	Player.SpawnPlayerMissile(HolyMissile);
-	Player.DamageFlash = 0.0;
-	Player.BonusFlash = 0.0;
-	Player.WeaponPalette = Player::STARTHOLYPAL;
+	Player(Player).Mana[HexenDefs::MANA_1] -=
+		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
+	Player(Player).Mana[HexenDefs::MANA_2] -=
+		WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
+	Player(Player).SpawnPlayerMissile(HolyMissile);
+	Player(Player).DamageFlash = 0.0;
+	Player(Player).BonusFlash = 0.0;
+	Player(Player).WeaponPalette = Player::STARTHOLYPAL;
 	Player.MO.PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
@@ -52,7 +52,7 @@ void A_CHolyAttack()
 
 void A_CHolyPalette1()
 {
-	Player.WeaponPalette = Player::STARTHOLYPAL + 1;
+	Player(Player).WeaponPalette = Player::STARTHOLYPAL + 1;
 }
 
 //============================================================================
@@ -63,7 +63,7 @@ void A_CHolyPalette1()
 
 void A_CHolyPalette2()
 {
-	Player.WeaponPalette = Player::STARTHOLYPAL + 2;
+	Player(Player).WeaponPalette = Player::STARTHOLYPAL + 2;
 }
 
 //============================================================================
@@ -75,7 +75,7 @@ void A_CHolyPalette2()
 void A_CHolyPalette3()
 {
 	// reset back to original playpal
-	Player.WeaponPalette = 0;
+	Player(Player).WeaponPalette = 0;
 }
 
 __states__
@@ -108,6 +108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

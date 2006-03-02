@@ -37,15 +37,15 @@ bool HandlePickup(Actor Toucher)
 {
 	int i;
 
-	if (!Toucher.Player.Backpack)
+	if (!Player(Toucher.Player).Backpack)
 	{
-		Toucher.Player.Backpack = true;
+		Player(Toucher.Player).Backpack = true;
 		for (i = 0; i < DoomDefs::NUMAMMO; i++)
-			Toucher.Player.MaxAmmo[i] *= 2;
+			Player(Toucher.Player).MaxAmmo[i] *= 2;
 	}
 	for (i = 0; i < DoomDefs::NUMAMMO; i++)
 	{
-		Toucher.Player.GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
+		Player(Toucher.Player).GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
 	}
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
@@ -66,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

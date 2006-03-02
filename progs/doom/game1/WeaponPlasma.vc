@@ -33,9 +33,9 @@ class WeaponPlasma : Weapon;
 
 void A_FirePlasma()
 {
-	Player.Ammo[Ammo]--;
-	Player.SetPsprite(ps_flash, FlashState + (P_Random() & 1));
-	Player.SpawnPlayerMissile(PlasmaShot);
+	Player(Player).Ammo[Ammo]--;
+	Player(Player).SetPsprite(ps_flash, FlashState + (P_Random() & 1));
+	Player(Player).SpawnPlayerMissile(PlasmaShot);
 }
 
 __states__
@@ -70,6 +70,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

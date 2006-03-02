@@ -39,22 +39,22 @@ void A_Punch()
 
 	damage = (P_Random() % 10 + 1) << 1;
 
-	if (Player.Powers[pw_strength])
+	if (Player(Player).Powers[pw_strength])
 		damage *= 10;
 
 	aimAngles = Player.MO.Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	dir = Player.MO.AimLineAttack(aimAngles, Actor::MELEERANGE);
-	Player.MO.LineAttack(dir, Actor::MELEERANGE, damage);
+	dir = Actor(Player.MO).AimLineAttack(aimAngles, Actor::MELEERANGE);
+	Actor(Player.MO).LineAttack(dir, Actor::MELEERANGE, damage);
 
 	// turn to face target
-	if (Player.MO.linetarget)
+	if (Actor(Player.MO).linetarget)
 	{
 		Player.MO.PlaySound('*fist', CHAN_WEAPON);
 		Player.MO.Angles.yaw = atan2(
-			Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+			Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 }
@@ -78,10 +78,10 @@ void A_Saw()
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = Player.MO.AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
-	Player.MO.LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
+	dir = Actor(Player.MO).AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
+	Actor(Player.MO).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
 
-	if (!Player.MO.linetarget)
+	if (!Actor(Player.MO).linetarget)
 	{
 		Player.MO.PlaySound('weapons/sawfull', CHAN_WEAPON);
 		return;
@@ -89,8 +89,8 @@ void A_Saw()
 	Player.MO.PlaySound('weapons/sawhit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-		Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+	angle = atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+		Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Player.MO.Angles.yaw) < -90.0 / 20.0)
@@ -106,7 +106,7 @@ void A_Saw()
 			Player.MO.Angles.yaw += 90.0 / 20.0;
 	}
 	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw);
-	Player.MO.bJustAttacked = true;
+	Actor(Player.MO).bJustAttacked = true;
 	Player.bFixAngle = true;
 }
 
@@ -122,13 +122,13 @@ void A_FirePistol()
 
 	Player.MO.PlaySound('weapons/pistol', CHAN_WEAPON);
 
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.Ammo[Ammo]--;
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).Ammo[Ammo]--;
 
-	Player.SetPsprite(ps_flash, FlashState);
+	Player(Player).SetPsprite(ps_flash, FlashState);
 
-	dir = Player.MO.Aim(16.0 * 64.0);
-	GunShot(Player.MO, !Player.Refire, dir);
+	dir = Actor(Player.MO).Aim(16.0 * 64.0);
+	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
@@ -144,16 +144,16 @@ void A_FireShotgun()
 	TVec dir;
 
 	Player.MO.PlaySound('weapons/shotgf', CHAN_WEAPON);
-	Player.MO.SetState(Player.MO.MissileState);
+	Player.MO.SetState(Actor(Player.MO).MissileState);
 
-	Player.Ammo[Ammo]--;
+	Player(Player).Ammo[Ammo]--;
 
-	Player.SetPsprite(ps_flash, FlashState);
+	Player(Player).SetPsprite(ps_flash, FlashState);
 
-	dir = Player.MO.Aim(16.0 * 64.0);
+	dir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(Player.MO, false, dir);
+		GunShot(Actor(Player.MO), false, dir);
 	}
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
@@ -173,13 +173,13 @@ void A_FireShotgun2()
 	TVec dir;
 
 	Player.MO.PlaySound('weapons/sshotf', CHAN_WEAPON);
-	Player.MO.SetState(Player.MO.MissileState);
+	Player.MO.SetState(Actor(Player.MO).MissileState);
 
-	Player.Ammo[Ammo] -= 2;
+	Player(Player).Ammo[Ammo] -= 2;
 
-	Player.SetPsprite(ps_flash, FlashState);
+	Player(Player).SetPsprite(ps_flash, FlashState);
 
-	aimDir = Player.MO.Aim(16.0 * 64.0);
+	aimDir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -187,7 +187,7 @@ void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Player.MO.LineAttack(dir, Actor::MISSILERANGE, damage);
+		Actor(Player.MO).LineAttack(dir, Actor::MISSILERANGE, damage);
 	}
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
@@ -238,16 +238,16 @@ void A_FireCGun()
 
 	Player.MO.PlaySound('weapons/chngun', CHAN_WEAPON);
 
-	if (!Player.Ammo[Ammo])
+	if (!Player(Player).Ammo[Ammo])
 		return;
 
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.Ammo[Ammo]--;
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).Ammo[Ammo]--;
 
-	Player.SetPsprite(ps_flash, FlashState + StateNum - AttackState);//S_CHAIN1);
+	Player(Player).SetPsprite(ps_flash, FlashState + StateNum - AttackState);//S_CHAIN1);
 
-	dir = Player.MO.Aim(16.0 * 64.0);
-	GunShot(Player.MO, !Player.Refire, dir);
+	dir = Actor(Player.MO).Aim(16.0 * 64.0);
+	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
@@ -259,8 +259,8 @@ void A_FireCGun()
 
 void A_FireMissile()
 {
-	Player.Ammo[Ammo]--;
-	Player.SpawnPlayerMissile(Rocket);
+	Player(Player).Ammo[Ammo]--;
+	Player(Player).SpawnPlayerMissile(Rocket);
 }
 
 //===========================================================================
@@ -271,11 +271,11 @@ void A_FireMissile()
 
 void A_FirePlasma()
 {
-	Player.Ammo[Ammo]--;
+	Player(Player).Ammo[Ammo]--;
 
-	Player.SetPsprite(ps_flash, FlashState + (P_Random() & 1));
+	Player(Player).SetPsprite(ps_flash, FlashState + (P_Random() & 1));
 
-	Player.SpawnPlayerMissile(PlasmaShot);
+	Player(Player).SpawnPlayerMissile(PlasmaShot);
 }
 
 //===========================================================================
@@ -297,8 +297,8 @@ void A_BFGsound()
 
 void A_FireBFG()
 {
-	Player.Ammo[Ammo] -= BFGCELLS;
-	Player.SpawnPlayerMissile(BFGShot);
+	Player(Player).Ammo[Ammo] -= BFGCELLS;
+	Player(Player).SpawnPlayerMissile(BFGShot);
 }
 
 defaultproperties
@@ -308,6 +308,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/02 18:28:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.3  2006/02/28 22:44:18  dj_jl
 //  Replaced defines with constants.
 //

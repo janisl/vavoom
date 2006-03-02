@@ -74,7 +74,7 @@ void Died(Actor source)
 	{
 		if (!Instigator.ActiveMinotaur())
 		{
-			Instigator.Player.Powers[pw_minotaur] = 0.0;
+			Player(Instigator.Player).Powers[pw_minotaur] = 0.0;
 		}
 	}
 }
@@ -94,7 +94,7 @@ bool MorphMonster()
 		{
 			if (!Instigator.ActiveMinotaur())
 			{
-				Instigator.Player.Powers[pw_minotaur] = 0.0;
+				Player(Instigator.Player).Powers[pw_minotaur] = 0.0;
 			}
 		}
 		return true;
@@ -196,7 +196,7 @@ void A_MinotaurLook()
 		{
 			if (!Level.Game.Players[i] || !Level.Game.Players[i].bSpawned)
 				continue;
-			mo = Level.Game.Players[i].MO;
+			mo = Actor(Level.Game.Players[i].MO);
 			if (mo == Instigator)
 				continue;
 			if (mo.Health <= 0)
@@ -477,7 +477,7 @@ void A_MinotaurAtk3()
 		if (Enemy.bIsPlayer)
 		{
 			// Squish the player
-			Enemy.Player.DeltaViewHeight = -512.0;
+			Player(Enemy.Player).DeltaViewHeight = -512.0;
 		}
 	}
 	else
@@ -657,6 +657,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.8  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

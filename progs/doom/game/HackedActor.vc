@@ -126,13 +126,13 @@ bool HandlePickup(Actor Toucher)
 	// armor
 	if (SpriteName == 'ARM1')
 	{
-		if (!Toucher.Player.GiveArmor(1))
+		if (!Player(Toucher.Player).GiveArmor(1))
 			return false;
 		cprint(Toucher.Player, GOTARMOR);
 	}
 	else if (SpriteName == 'ARM2')
 	{
-		if (!Toucher.Player.GiveArmor(2))
+		if (!Player(Toucher.Player).GiveArmor(2))
 			return false;
 		cprint(Toucher.Player, GOTMEGA);
 	}
@@ -147,12 +147,12 @@ bool HandlePickup(Actor Toucher)
 	}
 	else if (SpriteName == 'BON2')
 	{
-		Toucher.Player.ArmorPoints++;	// can go over 100%
-		if (Toucher.Player.ArmorPoints > 200)
-			Toucher.Player.ArmorPoints = 200;
-		if (!Toucher.Player.ArmorType)
-			Toucher.Player.ArmorType = 1;
-		cprint(Toucher.Player, GOTARMBONUS);
+		Player(Toucher.Player).ArmorPoints++;	// can go over 100%
+		if (Player(Toucher.Player).ArmorPoints > 200)
+			Player(Toucher.Player).ArmorPoints = 200;
+		if (!Player(Toucher.Player).ArmorType)
+			Player(Toucher.Player).ArmorType = 1;
+		cprint(Player(Toucher.Player), GOTARMBONUS);
 	}
 	else if (SpriteName == 'SOUL')
 	{
@@ -167,7 +167,7 @@ bool HandlePickup(Actor Toucher)
 	{
 		Toucher.Player.Health = MEGASPHERE_HEALTH;
 		Toucher.Health = Toucher.Player.Health;
-		Toucher.Player.GiveArmor(2);
+		Player(Toucher.Player).GiveArmor(2);
 		cprint(Toucher.Player, GOTMSPHERE);
 		sound = 'misc/p_pkup';
 	}
@@ -175,42 +175,42 @@ bool HandlePickup(Actor Toucher)
 		// leave cards for everyone
 	else if (SpriteName == 'BKEY')
 	{
-		if (Toucher.Player.GiveCard(it_bluecard))
+		if (Player(Toucher.Player).GiveCard(it_bluecard))
 			cprint(Toucher.Player, GOTBLUECARD);
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'YKEY')
 	{
-		if (Toucher.Player.GiveCard(it_yellowcard))
+		if (Player(Toucher.Player).GiveCard(it_yellowcard))
 			cprint(Toucher.Player, GOTYELWCARD);
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'RKEY')
 	{
-		if (Toucher.Player.GiveCard(it_redcard))
+		if (Player(Toucher.Player).GiveCard(it_redcard))
 			cprint(Toucher.Player, GOTREDCARD);
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'BSKU')
 	{
-		if (Toucher.Player.GiveCard(it_blueskull))
+		if (Player(Toucher.Player).GiveCard(it_blueskull))
 			cprint(Toucher.Player, GOTBLUESKUL);
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'YSKU')
 	{
-		if (Toucher.Player.GiveCard(it_yellowskull))
+		if (Player(Toucher.Player).GiveCard(it_yellowskull))
 			cprint(Toucher.Player, GOTYELWSKUL);
 		if (Level.Game.netgame)
 			return false;
 	}
 	else if (SpriteName == 'RSKU')
 	{
-		if (Toucher.Player.GiveCard(it_redskull))
+		if (Player(Toucher.Player).GiveCard(it_redskull))
 			cprint(Toucher.Player, GOTREDSKULL);
 		if (Level.Game.netgame)
 			return false;
@@ -218,13 +218,13 @@ bool HandlePickup(Actor Toucher)
 		// medikits, heals
 	else if (SpriteName == 'STIM')
 	{
-		if (!Toucher.Player.GiveBody(10, Player::MAXHEALTH))
+		if (!Player(Toucher.Player).GiveBody(10, Player::MAXHEALTH))
 			return false;
 		cprint(Toucher.Player, GOTSTIM);
 	}
 	else if (SpriteName == 'MEDI')
 	{
-		if (!Toucher.Player.GiveBody(25, Player::MAXHEALTH))
+		if (!Player(Toucher.Player).GiveBody(25, Player::MAXHEALTH))
 			return false;
 
 		if (Toucher.Player.Health < 25)
@@ -235,35 +235,35 @@ bool HandlePickup(Actor Toucher)
 		// power ups
 	else if (SpriteName == 'PINV')
 	{
-		if (!Toucher.Player.GivePower(pw_invulnerability))
+		if (!Player(Toucher.Player).GivePower(pw_invulnerability))
 			return false;
 		cprint(Toucher.Player, GOTINVUL);
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'PSTR')
 	{
-		if (!Toucher.Player.GivePower(pw_strength))
+		if (!Player(Toucher.Player).GivePower(pw_strength))
 			return false;
 		cprint(Toucher.Player, GOTBERSERK);
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'PINS')
 	{
-		if (!Toucher.Player.GivePower(pw_invisibility))
+		if (!Player(Toucher.Player).GivePower(pw_invisibility))
 			return false;
 		cprint(Toucher.Player, GOTINVIS);
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'SUIT')
 	{
-		if (!Toucher.Player.GivePower(pw_ironfeet))
+		if (!Player(Toucher.Player).GivePower(pw_ironfeet))
 			return false;
 		cprint(Toucher.Player, GOTSUIT);
 		sound = 'misc/p_pkup';
 	}
 	else if (SpriteName == 'PVIS')
 	{
-		if (!Toucher.Player.GivePower(pw_infrared))
+		if (!Player(Toucher.Player).GivePower(pw_infrared))
 			return false;
 		cprint(Toucher.Player, GOTVISOR);
 		sound = 'misc/p_pkup';
@@ -271,7 +271,7 @@ bool HandlePickup(Actor Toucher)
 		//  Items
 	else if (SpriteName == 'PMAP')
 	{
-		if (!Toucher.Player.GiveItem(IT_ALL_MAP))
+		if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
 			return false;
 		cprint(Toucher.Player, GOTMAP);
 		sound = 'misc/p_pkup';
@@ -281,118 +281,118 @@ bool HandlePickup(Actor Toucher)
 	{
 		if (bDropped)
 		{
-			if (!Toucher.Player.GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip] / 2))
+			if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip] / 2))
 				return false;
 		}
 		else
 		{
-			if (!Toucher.Player.GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
+			if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
 				return false;
 		}
 		cprint(Toucher.Player, GOTCLIP);
 	}
 	else if (SpriteName == 'AMMO')
 	{
-		if (!Toucher.Player.GiveAmmo(DoomDefs::am_clip, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_clip, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_clip]))
 			return false;
 		cprint(Toucher.Player, GOTCLIPBOX);
 	}
 	else if (SpriteName == 'ROCK')
 	{
-		if (!Toucher.Player.GiveAmmo(DoomDefs::am_misl, MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKET);
 	}
 	else if (SpriteName == 'BROK')
 	{
-		if (!Toucher.Player.GiveAmmo(DoomDefs::am_misl, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_misl, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_misl]))
 			return false;
 		cprint(Toucher.Player, GOTROCKBOX);
 	}
 	else if (SpriteName == 'CELL')
 	{
-		if (!Toucher.Player.GiveAmmo(DoomDefs::am_cell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELL);
 	}
 	else if (SpriteName == 'CELP')
 	{
-		if (!Toucher.Player.GiveAmmo(DoomDefs::am_cell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_cell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_cell]))
 			return false;
 		cprint(Toucher.Player, GOTCELLBOX);
 	}
 	else if (SpriteName == 'SHEL')
 	{
-		if (!Toucher.Player.GiveAmmo(DoomDefs::am_shell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLS);
 	}
 	else if (SpriteName == 'SBOX')
 	{
-		if (!Toucher.Player.GiveAmmo(DoomDefs::am_shell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
+		if (!Player(Toucher.Player).GiveAmmo(DoomDefs::am_shell, 5 * MainGameInfo(Level.Game).clipammo[DoomDefs::am_shell]))
 			return false;
 		cprint(Toucher.Player, GOTSHELLBOX);
 	}
 	else if (SpriteName == 'BPAK')
 	{
-		if (!Toucher.Player.Backpack)
+		if (!Player(Toucher.Player).Backpack)
 		{
-			Toucher.Player.Backpack = true;
+			Player(Toucher.Player).Backpack = true;
 			for (i = 0; i < DoomDefs::NUMAMMO; i++)
-				Toucher.Player.MaxAmmo[i] *= 2;
+				Player(Toucher.Player).MaxAmmo[i] *= 2;
 		}
 		for (i = 0; i < DoomDefs::NUMAMMO; i++)
 		{
-			Toucher.Player.GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
+			Player(Toucher.Player).GiveAmmo(i, MainGameInfo(Level.Game).clipammo[i]);
 		}
 		cprint(Toucher.Player, GOTBACKPACK);
 	}
 		// weapons
 	else if (SpriteName == 'BFUG')
 	{
-		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_bfg, false))
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_bfg, false))
 			return false;
 		cprint(Toucher.Player, GOTBFG9000);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'MGUN')
 	{
-		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_chaingun, bDropped))
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chaingun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTCHAINGUN);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'CSAW')
 	{
-		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_chainsaw, false))
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_chainsaw, false))
 			return false;
 		cprint(Toucher.Player, GOTCHAINSAW);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'LAUN')
 	{
-		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_missile, false))
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_missile, false))
 			return false;
 		cprint(Toucher.Player, GOTLAUNCHER);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'PLAS')
 	{
-		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_plasma, false))
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_plasma, false))
 			return false;
 		cprint(Toucher.Player, GOTPLASMA);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'SHOT')
 	{
-		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_shotgun, bDropped))
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_shotgun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTSHOTGUN);
 		sound = 'misc/w_pkup';
 	}
 	else if (SpriteName == 'SGN2')
 	{
-		if (!Toucher.Player.GiveWeapon(DoomDefs::wp_supershotgun, bDropped))
+		if (!Player(Toucher.Player).GiveWeapon(DoomDefs::wp_supershotgun, bDropped))
 			return false;
 		cprint(Toucher.Player, GOTSHOTGUN2);
 		sound = 'misc/w_pkup';
@@ -1681,6 +1681,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:28:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/28 22:44:18  dj_jl
 //  Replaced defines with constants.
 //

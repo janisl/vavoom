@@ -34,7 +34,7 @@ class Communicator : Pickup
 
 bool HandlePickup(Actor Toucher)
 {
-	Toucher.Player.Communicator = true;
+	Player(Toucher.Player).Communicator = true;
 	return true;
 }
 
@@ -54,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.3  2003/11/12 16:51:33  dj_jl
 //  Changed player structure into a class
 //

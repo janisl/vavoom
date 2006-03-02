@@ -37,14 +37,14 @@ void A_FireBlasterPL1()
 	float bulletslope;
 	TVec dir;
 
-	Player.Ammo[am_blaster] -= USE_BLSR_AMMO_1;
-	dir = Player.MO.Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
+	Player(Player).Ammo[am_blaster] -= USE_BLSR_AMMO_1;
+	dir = Actor(Player.MO).Aim(Player.MO.Angles.yaw, 16.0 * 64.0);
 	damage = HITDICE(4);
-	if (Player.Refire)
+	if (Player(Player).Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	Player.MO.LineAttack(dir, MISSILERANGE, damage, BlasterPuff1);
+	Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, BlasterPuff1);
 	Player.MO.PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 
@@ -58,9 +58,9 @@ void A_FireBlasterPL2()
 {
 	Actor A;
 
-	Player.Ammo[am_blaster] -=
+	Player(Player).Ammo[am_blaster] -=
 		Player.Level.Game.deathmatch ? USE_BLSR_AMMO_1 : USE_BLSR_AMMO_2;
-	A = Player.MO.SpawnPlayerMissile(BlasterFX1);
+	A = Actor(Player.MO).SpawnPlayerMissile(BlasterFX1);
 	if (A)
 	{
 		A.bBlaster = true;
@@ -106,6 +106,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

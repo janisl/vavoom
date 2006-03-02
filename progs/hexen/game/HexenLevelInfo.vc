@@ -1103,14 +1103,14 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 //
 //==========================================================================
 
-void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
+void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
 	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
 	int arg4)
 {
 	PlaneWatcher	PW;
 
 	PW = PlaneWatcher(NewSpecialThinker(PlaneWatcher));
-	PW.Start(it, line, lineSide, ceiling, tag, height, special, arg0, arg1,
+	PW.Start(Actor(it), line, lineSide, ceiling, tag, height, special, arg0, arg1,
 		arg2, arg3, arg4);
 }
 
@@ -1130,7 +1130,7 @@ bool CheckLock(Actor A, int lock)
 	{
 		return true;
 	}
-	if (!(A.Player.Keys & (1 << (lock - 1))))
+	if (!(Player(A.Player).Keys & (1 << (lock - 1))))
 	{
 		centerprint(A.Player, "YOU NEED THE %s", MainGameInfo(Game).TextKeyMessages[lock - 1]);
 		A.PlaySound('DoorLocked', CHAN_ITEM);
@@ -3833,19 +3833,19 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 		return false;
 
 	// Search player's inventory for puzzle items
-	for (i = 0; i < A.Player.ArtifactCount; i++)
+	for (i = 0; i < Player(A.Player).ArtifactCount; i++)
 	{
-		arti = A.Player.Inventory[i].type;
+		arti = Player(A.Player).Inventory[i].type;
 		type = arti - HexenDefs::arti_firstpuzzitem;
 		if (type < 0)
 			continue;
 		if (type == Arg1)
 		{
 			// A puzzle item was found for the line
-			if (A.Player.UseArtifact(arti))
+			if (Player(A.Player).UseArtifact(arti))
 			{
 				// A puzzle item was found for the line
-				A.Player.PlayerRemoveArtifact(i);
+				Player(A.Player).PlayerRemoveArtifact(i);
 				if (arti < HexenDefs::arti_firstpuzzitem)
 				{
 					A.PlaySound('UseArtifact', CHAN_ITEM);
@@ -3854,7 +3854,7 @@ bool EV_LineSearchForPuzzleItem(int Arg1, int Arg2, int Arg3, int Arg4,
 				{
 					A.PlaySound('PuzzleSuccess', CHAN_ITEM);
 				}
-				A.Player.ArtifactFlash = 4;
+				Player(A.Player).ArtifactFlash = 4;
 				return true;
 			}
 		}
@@ -4102,6 +4102,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

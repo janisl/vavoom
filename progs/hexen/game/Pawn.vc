@@ -441,7 +441,7 @@ bool LookForPlayers(bool allaround)
 		if (c++ == 2)
 			return false;	// done looking
 
-		P = Level.Game.Players[LastLook];
+		P = Player(Level.Game.Players[LastLook]);
 		if (!P.bSpawned || !P.MO)
 			continue;	//  not spawned yet
 		if (P.Health <= 0)
@@ -483,7 +483,7 @@ bool LookForPlayers(bool allaround)
 				continue;	// Don't target master
 			}
 		}
-		Enemy = P.MO;
+		Enemy = Actor(P.MO);
 		return true;
 	}
 	return false;
@@ -936,9 +936,9 @@ void A_FreezeDeath()
 
 	if (bIsPlayer)
 	{
-		Player.DamageFlash = 0.0;
-		Player.PoisonCount = 0;
-		Player.BonusFlash = 0.0;
+		Player(Player).DamageFlash = 0.0;
+		Player(Player).PoisonCount = 0;
+		Player(Player).BonusFlash = 0.0;
 	}
 	else
 	{
@@ -1036,6 +1036,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.10  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

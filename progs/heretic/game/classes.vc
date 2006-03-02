@@ -23,14 +23,14 @@
 //**
 //**************************************************************************
 
+#include "Actor.vc"
 #include "MainGameInfo.vc"
 #include "HereticLevelInfo.vc"
-#include "Actor.vc"
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
 #include "Weapon.vc"
-#include "BotPlayer.vc"
 #include "Player.vc"
+#include "BotPlayer.vc"
 
 #include "Projectile.vc"
 #include "Effect.vc"
@@ -255,6 +255,9 @@
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.11  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

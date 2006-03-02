@@ -40,8 +40,8 @@ void WeaponLevel2Fade()
 	if (StateNum != ReadyState2 && StateNum != UpState2)
 	{
 		SetState(ReadyState);
-		Player.Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
-		Player.Refire = 0;
+		Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+		Player(Player).Refire = 0;
 	}
 }
 
@@ -55,8 +55,8 @@ void A_FirePhoenixPL1()
 {
 	TVec vforward;
 
-	Player.Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
-	Player.MO.SpawnPlayerMissile(PhoenixFX1);
+	Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_1;
+	Actor(Player.MO).SpawnPlayerMissile(PhoenixFX1);
 	AngleVector(&Player.MO.Angles, &vforward);
 	Player.MO.Velocity -= vforward * 140.0;
 }
@@ -90,7 +90,7 @@ void A_FirePhoenixPL2()
 	{
 		// Out of flame
 		SetState(Attack2ShutdownState);
-		Player.Refire = 0;
+		Player(Player).Refire = 0;
 		return;
 	}
 	org.x = Player.MO.Origin.x + (Random() - Random()) * 2.0;
@@ -98,12 +98,12 @@ void A_FirePhoenixPL2()
 	org.z = Player.MO.Origin.z + 26.0 - sin(Player.MO.Angles.pitch);
 	org.z -= Player.MO.FloorClip;
 	A = HereticLevelInfo(Player.Level).Spawn(PhoenixFX2, org);
-	A.Instigator = Player.MO;
+	A.Instigator = Actor(Player.MO);
 	A.Angles.yaw = Player.MO.Angles.yaw;
 	A.Angles.pitch = Player.MO.Angles.pitch;
 	AngleVector(&A.Angles, &dir);
 	A.Velocity = Player.MO.Velocity + A.Speed * dir;
-	if (!Player.Refire || !(Player.Level.Game.level->tictime % 38))
+	if (!Player(Player).Refire || !(Player.Level.Game.level->tictime % 38))
 	{
 		Player.MO.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
 	}
@@ -118,7 +118,7 @@ void A_FirePhoenixPL2()
 
 void A_ShutdownPhoenixPL2()
 {
-	Player.Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
+	Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
 }
 
 __states__
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

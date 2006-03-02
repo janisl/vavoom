@@ -37,10 +37,10 @@ void A_FireElectricArrow()
 
 	savedangle = Player.MO.Angles.yaw;
 	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
-		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player.Accuracy * 5 / 100)));
-	Player.Ammo[Ammo]--;
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.SpawnPlayerMissile(ElectricArrow);
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
+	Player(Player).Ammo[Ammo]--;
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).SpawnPlayerMissile(ElectricArrow);
 	Player.MO.Angles.yaw = savedangle;
 	Player.MO.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
@@ -57,10 +57,10 @@ void A_FirePoisonArrow()
 
 	savedangle = Player.MO.Angles.yaw;
 	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw +
-		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player.Accuracy * 5 / 100)));
-	Player.Ammo[Ammo]--;
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.SpawnPlayerMissile(PoisonArrow);
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
+	Player(Player).Ammo[Ammo]--;
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).SpawnPlayerMissile(PoisonArrow);
 	Player.MO.Angles.yaw = savedangle;
 	Player.MO.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
@@ -69,13 +69,13 @@ __states__
 {
 	S_XBOW('XBOW', 0, 1.0 / 35.0, S_XBOW_2)
 	{
-		Player.SetPsprite(ps_flash, S_XBOWFLASH1);
+		Player(Player).SetPsprite(ps_flash, S_XBOWFLASH1);
 		A_WeaponReady();
 	}
 	S_XBOW_2('XBOW', 0, 1.0 / 35.0, S_XBOW_2) { A_WeaponReady(); }
 	S_XBOWDOWN('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2)
 	{
-		Player.SetPsprite(ps_flash, S_NULL);
+		Player(Player).SetPsprite(ps_flash, S_NULL);
 		A_Lower();
 	}
 	S_XBOWDOWN_2('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2) { A_Lower(); }
@@ -127,6 +127,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

@@ -77,7 +77,7 @@ void A_FPunchAttack()
 			{
 				Owner.linetarget.Thrust(angles.yaw, power);
 			}
-			Player.AdjustPlayerAngle();
+			Player(Player).AdjustPlayerAngle();
 			break;
 		}
 		angles = Owner.Angles;
@@ -108,7 +108,7 @@ void A_FPunchAttack()
 			{
 				Owner.linetarget.Thrust(angles.yaw, power);
 			}
-			Player.AdjustPlayerAngle();
+			Player(Player).AdjustPlayerAngle();
 			break;
 		}
 	}
@@ -170,6 +170,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.8  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

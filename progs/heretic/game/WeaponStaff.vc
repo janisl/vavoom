@@ -44,7 +44,7 @@ void WeaponLevel2Init()
 
 void WeaponLevel2Fade()
 {
-	Player.PendingWeapon = Player.ReadyWeapon;
+	Player(Player).PendingWeapon = Player(Player).ReadyWeapon;
 }
 
 //===========================================================================
@@ -63,14 +63,14 @@ void A_StaffAttackPL1()
 	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Player.MO.AimLineAttack(angles, MELEERANGE);
-	Player.MO.LineAttack(dir, MELEERANGE, damage, StaffPuff);
-	if (Player.MO.linetarget)
+	dir = Actor(Player.MO).AimLineAttack(angles, MELEERANGE);
+	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, StaffPuff);
+	if (Actor(Player.MO).linetarget)
 	{
 		// turn to face target
 		Player.MO.Angles.yaw =
-			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 }
@@ -93,14 +93,14 @@ void A_StaffAttackPL2()
 	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	dir = Player.MO.AimLineAttack(angles, MELEERANGE);
-	Player.MO.LineAttack(dir, MELEERANGE, damage, StaffPuff2);
-	if (Player.MO.linetarget)
+	dir = Actor(Player.MO).AimLineAttack(angles, MELEERANGE);
+	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, StaffPuff2);
+	if (Actor(Player.MO).linetarget)
 	{
 		// turn to face target
 		Player.MO.Angles.yaw =
-			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 }
@@ -150,6 +150,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

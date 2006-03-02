@@ -1038,7 +1038,7 @@ void A_BossDeath()
 	{
 		//	Specter in ruined temple.
 		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
-		Enemy.Player.SetObjectives(95);
+		Player(Enemy.Player).SetObjectives(95);
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(StrifeDefs::svc_voice);
 		MSG_WriteShort(95);
@@ -1049,10 +1049,10 @@ void A_BossDeath()
 		if (!Enemy)
 			return;
 
-		Enemy.Player.GiveSigilPiece();
-		cprint(Enemy.Player, "You've Killed The Bishop!");
-		Enemy.Player.GiveQuest(QUEST_KilledBishop);
-		Enemy.Player.SetObjectives(74);
+		Player(Enemy.Player).GiveSigilPiece();
+		cprint(Enemy.Player, "You\'ve Killed The Bishop!");
+		Player(Enemy.Player).GiveQuest(QUEST_KilledBishop);
+		Player(Enemy.Player).SetObjectives(74);
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(StrifeDefs::svc_voice);
 		MSG_WriteShort(74);
@@ -1063,24 +1063,24 @@ void A_BossDeath()
 		if (!Enemy)
 			return;
 
-		Enemy.Player.GiveSigilPiece();
-		cprint(Enemy.Player, "You've Killed The Oracle!");
-		Enemy.Player.GiveQuest(QUEST_KilledOracle);
-		if (Enemy.Player.Quests & (1 << QUEST_KilledBishop))
+		Player(Enemy.Player).GiveSigilPiece();
+		cprint(Enemy.Player, "You\'ve Killed The Oracle!");
+		Player(Enemy.Player).GiveQuest(QUEST_KilledOracle);
+		if (Player(Enemy.Player).Quests & (1 << QUEST_KilledBishop))
 		{
 			//	If the Bishop is dead, set quest item 22
-			Enemy.Player.GiveQuest(QUEST_KillMacil);
+			Player(Enemy.Player).GiveQuest(QUEST_KillMacil);
 		}
-		if (Enemy.Player.Quests & (1 << QUEST_KilledLoremaster))
+		if (Player(Enemy.Player).Quests & (1 << QUEST_KilledLoremaster))
 		{
-			Enemy.Player.SetObjectives(85);
+			Player(Enemy.Player).SetObjectives(85);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(85);
 		}
 		else
 		{
-			Enemy.Player.SetObjectives(87);
+			Player(Enemy.Player).SetObjectives(87);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(87);
@@ -1093,19 +1093,19 @@ void A_BossDeath()
 		if (!Enemy)
 			return;
 
-		Enemy.Player.GiveSigilPiece();
-		Enemy.Player.GiveQuest(QUEST_KilledMacil);
+		Player(Enemy.Player).GiveSigilPiece();
+		Player(Enemy.Player).GiveQuest(QUEST_KilledMacil);
 		cprint(Enemy.Player, "You've Killed Macil!");
-		if (Enemy.Player.Quests & (1 << QUEST_Factory))
+		if (Player(Enemy.Player).Quests & (1 << QUEST_Factory))
 		{
-			Enemy.Player.SetObjectives(106);
+			Player(Enemy.Player).SetObjectives(106);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(106);
 		}
 		else
 		{
-			Enemy.Player.SetObjectives(79);
+			Player(Enemy.Player).SetObjectives(79);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(79);
@@ -1117,22 +1117,22 @@ void A_BossDeath()
 		if (!Enemy)
 			return;
 
-		Enemy.Player.GiveSigilPiece();
-		Enemy.Player.GiveQuest(QUEST_KilledLoremaster);
-		cprint(Enemy.Player, "You've Killed The LoreMaster!");
-		Enemy.Player.Accuracy += 10;
-		Enemy.Player.Stamina += 10;
-		Enemy.Player.GiveBody(200);
-		if (Enemy.Player.Sigil == 4)
+		Player(Enemy.Player).GiveSigilPiece();
+		Player(Enemy.Player).GiveQuest(QUEST_KilledLoremaster);
+		cprint(Enemy.Player, "You\'ve Killed The LoreMaster!");
+		Player(Enemy.Player).Accuracy += 10;
+		Player(Enemy.Player).Stamina += 10;
+		Player(Enemy.Player).GiveBody(200);
+		if (Player(Enemy.Player).Sigil == 4)
 		{
-			Enemy.Player.SetObjectives(85);
+			Player(Enemy.Player).SetObjectives(85);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(85);
 		}
 		else
 		{
-			Enemy.Player.SetObjectives(83);
+			Player(Enemy.Player).SetObjectives(83);
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(83);
@@ -1144,7 +1144,7 @@ void A_BossDeath()
 		if (!Enemy)
 			return;
 
-		if (Enemy.Player.Quests & (1 << QUEST_Factory))
+		if (Player(Enemy.Player).Quests & (1 << QUEST_Factory))
 		{
 			MSG_Select(MSG_SV_RELIABLE);
 			MSG_WriteByte(StrifeDefs::svc_finale_type);
@@ -1376,6 +1376,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.20  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

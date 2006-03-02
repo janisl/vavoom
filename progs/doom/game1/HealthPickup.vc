@@ -36,7 +36,7 @@ int HealthAmount;
 
 bool HandlePickup(Actor Toucher)
 {
-	if (!Toucher.Player.GiveBody(HealthAmount, Player::MAXHEALTH))
+	if (!Player(Toucher.Player).GiveBody(HealthAmount, Player::MAXHEALTH))
 		return false;
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('misc/i_pkup', CHAN_ITEM);
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/28 22:44:37  dj_jl
 //  Replaced defines with constants.
 //

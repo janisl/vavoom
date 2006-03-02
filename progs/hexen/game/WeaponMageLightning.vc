@@ -51,8 +51,8 @@ void A_MLightningAttack()
 	LightningFloor fmo;
 	LightningCeiling cmo;
 
-	fmo = LightningFloor(Player.SpawnPlayerMissile(LightningFloor));
-	cmo = LightningCeiling(Player.SpawnPlayerMissile(LightningCeiling));
+	fmo = LightningFloor(Player(Player).SpawnPlayerMissile(LightningFloor));
+	cmo = LightningCeiling(Player(Player).SpawnPlayerMissile(LightningCeiling));
 	if (fmo)
 	{
 		fmo.ZigZagCount = 0;
@@ -66,8 +66,8 @@ void A_MLightningAttack()
 		cmo.A_LightningZap();
 	}
 	Player.MO.PlaySound('MageLightningFire', CHAN_WEAPON);
-	Player.Mana[HexenDefs::MANA_2] -= WeaponManaUse(Player.PClass,
-		Player.ReadyWeapon);
+	Player(Player).Mana[HexenDefs::MANA_2] -= WeaponManaUse(Player.PClass,
+		Player(Player).ReadyWeapon);
 }
 
 __states__
@@ -125,6 +125,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

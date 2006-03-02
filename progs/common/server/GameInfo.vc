@@ -37,7 +37,7 @@ int				fastparm;
 int*			validcount;
 int				skyflatnum;
 
-Player			Players[MAXPLAYERS]; // Bookkeeping on players - state.
+BasePlayer		Players[MAXPLAYERS]; // Bookkeeping on players - state.
 
 level_t*		level;
 
@@ -137,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/02 18:27:26  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.2  2006/02/15 23:29:43  dj_jl
 //  Moved all server progs global variables to classes.
 //

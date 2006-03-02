@@ -35,7 +35,7 @@ class ItemComputerMap : Pickup
 
 bool HandlePickup(Actor Toucher)
 {
-	if (!Toucher.Player.GiveItem(IT_ALL_MAP))
+	if (!Player(Toucher.Player).GiveItem(IT_ALL_MAP))
 		return false;
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
@@ -74,6 +74,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

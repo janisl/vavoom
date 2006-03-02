@@ -49,8 +49,8 @@ void A_BeakReady()
 	{
 		// Chicken beak attack
 		Player.bAttackDown = true;
-		Player.MO.SetState(Player.MO.MissileState);
-		if (Player.Powers[pw_weaponlevel2])
+		Player.MO.SetState(Actor(Player.MO).MissileState);
+		if (Player(Player).Powers[pw_weaponlevel2])
 		{
 			SetState(AttackState2);
 		}
@@ -58,14 +58,14 @@ void A_BeakReady()
 		{
 			SetState(AttackState);
 		}
-		HereticLevelInfo(Player.MO.Level).NoiseAlert(Player.MO, Player.MO);
+		HereticLevelInfo(Player.MO.Level).NoiseAlert(Actor(Player.MO), Actor(Player.MO));
 	}
 	else
 	{
-		if (Player.MO.StateNum == Player.MO.MissileState)
+		if (Player.MO.StateNum == Actor(Player.MO).MissileState)
 		{
 			// Take out of attack state
-			Player.MO.SetState(Player.MO.IdleState);
+			Player.MO.SetState(Actor(Player.MO).IdleState);
 		}
 		Player.bAttackDown = false;
 	}
@@ -83,17 +83,17 @@ void A_BeakAttackPL1()
 	TVec dir;
 
 	damage = 1 + (P_Random() & 3);
-	dir = Player.MO.AimLineAttack(Player.MO.Angles, MELEERANGE);
-	Player.MO.LineAttack(dir, MELEERANGE, damage, BeakPuff);
-	if (Player.MO.linetarget)
+	dir = Actor(Player.MO).AimLineAttack(Player.MO.Angles, MELEERANGE);
+	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, BeakPuff);
+	if (Actor(Player.MO).linetarget)
 	{
 		Player.MO.Angles.yaw =
-			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
-	Player.ChickenPeck = 12;
+	Player(Player).ChickenPeck = 12;
 	StateTime -= Random() * 0.25;
 }
 
@@ -109,17 +109,17 @@ void A_BeakAttackPL2()
 	TVec dir;
 
 	damage = HITDICE(4);
-	dir = Player.MO.AimLineAttack(Player.MO.Angles, MELEERANGE);
-	Player.MO.LineAttack(dir, MELEERANGE, damage, BeakPuff);
-	if (Player.MO.linetarget)
+	dir = Actor(Player.MO).AimLineAttack(Player.MO.Angles, MELEERANGE);
+	Actor(Player.MO).LineAttack(dir, MELEERANGE, damage, BeakPuff);
+	if (Actor(Player.MO).linetarget)
 	{
 		Player.MO.Angles.yaw =
-			atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-			Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+			atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+			Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 		Player.bFixAngle = true;
 	}
 	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
-	Player.ChickenPeck = 12;
+	Player(Player).ChickenPeck = 12;
 	StateTime -= Random() * 0.125;
 }
 
@@ -151,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

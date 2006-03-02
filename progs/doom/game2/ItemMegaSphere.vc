@@ -39,7 +39,7 @@ bool HandlePickup(Actor Toucher)
 {
 	Toucher.Player.Health = MEGASPHERE_HEALTH;
 	Toucher.Health = Toucher.Player.Health;
-	Toucher.Player.GiveArmor(2);
+	Player(Toucher.Player).GiveArmor(2);
 	cprint(Toucher.Player, PickupMessage);
 	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
 	return true;
@@ -64,6 +64,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:30:51  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/28 22:44:53  dj_jl
 //  Replaced defines with constants.
 //

@@ -250,7 +250,7 @@ void SpawnClient()
 	}
 
 	// Destroy all things touching players
-	MO.TeleportMove(MO.Origin);
+	Actor(MO).TeleportMove(MO.Origin);
 }
 
 //==========================================================================
@@ -361,7 +361,7 @@ void DisconnectClient()
 	{
 		MO.Player = none;
 		MO.bIsPlayer = false;
-		MO.Damage(none, none, 10000);
+		Actor(MO).Damage(none, none, 10000);
 	}
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
@@ -654,7 +654,7 @@ void PlayerExitMap(bool clusterChange)
 
 	if (MorphTime)
 	{
-		SetWeapon(MO._Special1);	// Restore weapon
+		SetWeapon(Actor(MO)._Special1);	// Restore weapon
 		MorphTime = 0.0;
 	}
 	MO.Angles.pitch = 0.0;
@@ -826,10 +826,10 @@ bool GivePower(int power)
 			return false;
 		}
 		Powers[power] = INVULNTIME;
-		MO.bInvulnerable = true;
+		Actor(MO).bInvulnerable = true;
 		if (PClass == HexenDefs::PCLASS_MAGE)
 		{
-			MO.bReflective = true;
+			Actor(MO).bReflective = true;
 		}
 		return true;
 	}
@@ -1113,7 +1113,7 @@ void MovePlayer(float deltaTime)
 		side *= 1.5;
 	}
 	if ((!Powers[pw_flight] || MO.Origin.z <= MO.FloorZ) &&
-		(MO.GetFloorType() == FLOOR_ICE ||
+		(Actor(MO).GetFloorType() == FLOOR_ICE ||
 		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
 	{
 		forward *= 0.5;
@@ -1122,7 +1122,7 @@ void MovePlayer(float deltaTime)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = (MO.Origin.z <= MO.FloorZ) || MO.bOnMobj;
+	onground = (MO.Origin.z <= MO.FloorZ) || Actor(MO).bOnMobj;
 	if (!(onground || MO.bFly))
 	{
 		//  not on ground, so little effect on velocity
@@ -1190,7 +1190,7 @@ void MovePlayer(float deltaTime)
 		{
 			MO.Velocity.z = 9.5 * 35.0;
 		}
-		MO.bOnMobj = false;
+		Actor(MO).bOnMobj = false;
 		JumpTime = 0.5;
 	}
 }
@@ -1223,9 +1223,9 @@ void CheckWaterJump()
 		if (Level.TraceLine(start, end))
 		{
 			// open at eye level
-			MO.bWaterJump = true;
+			Actor(MO).bWaterJump = true;
 			MO.Velocity.z = 350.0;
-			MO.ReactionTime = 2.0;	// safety net
+			Actor(MO).ReactionTime = 2.0;	// safety net
 		}
 	}
 }
@@ -1247,7 +1247,7 @@ void WaterMove(float deltaTime)
 
 	// Do not let the player control movement
 	//  if not onground.
-	onground = (MO.Origin.z <= MO.FloorZ) || MO.bOnMobj;
+	onground = (MO.Origin.z <= MO.FloorZ) || Actor(MO).bOnMobj;
 
 	AngleVectors(&MO.Angles, &vforward, &vright, &vup);
 
@@ -1319,10 +1319,10 @@ void WaterMove(float deltaTime)
 
 void WaterJump()
 {
-	if (!MO.ReactionTime || !MO.WaterLevel)
+	if (!Actor(MO).ReactionTime || !MO.WaterLevel)
 	{
-		MO.bWaterJump = false;
-		MO.ReactionTime = 0.0;
+		Actor(MO).bWaterJump = false;
+		Actor(MO).ReactionTime = 0.0;
 	}
 	MO.Velocity.x = MoveDir.x;
 	MO.Velocity.y = MoveDir.y;
@@ -1339,7 +1339,7 @@ void WaterJump()
 void ThrustPlayer(float angle, float move, float deltaTime)
 {
 	if (!(Powers[pw_flight] && !(MO.Origin.z <= MO.FloorZ)) &&
-		(MO.GetFloorType() == FLOOR_ICE ||
+		(Actor(MO).GetFloorType() == FLOOR_ICE ||
 		(MO.Sector->special & SECSPEC_BASE_MASK) == SECSPEC_FrictionLow))
 	{
 		move *= 0.5;
@@ -1464,21 +1464,21 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 10);
+				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case SECSPEC_DamageSludge:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 4);
+				Actor(MO).Damage(none, none, 4);
 			}
 			break;
 		case SECSPEC_DamageNukage:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case SECSPEC_LightStrobeFastDamage:
@@ -1486,7 +1486,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 			break;
 		case SECSPEC_DamageSuperHellslimeExit:
@@ -1496,7 +1496,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 	
 			if (Health <= 10)
@@ -1508,7 +1508,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
 				//MO.HitFloorEffect();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
@@ -1517,7 +1517,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 8);
+				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 8);
 				//MO.HitFloorEffect();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
@@ -1527,7 +1527,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 16.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
+				Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 5);
 				//MO.HitFloorEffect();
 				MO.PlaySound('LavaSizzle', CHAN_BODY);
 			}
@@ -1536,7 +1536,7 @@ void PlayerInSpecialSector(float deltaTime)
 			HazardTime += 2.0 * deltaTime;
 			break;
 		case SECSPEC_DamageInstantDeath:
-			MO.Damage(none, none, 999);
+			Actor(MO).Damage(none, none, 999);
 			break;
 		case SECSPEC_DamageSuperHazard:
 			HazardTime += 4.0 * deltaTime;
@@ -1552,21 +1552,21 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 5);
+				Actor(MO).Damage(none, none, 5);
 			}
 			break;
 		case 0x0200:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 10);
+				Actor(MO).Damage(none, none, 10);
 			}
 			break;
 		case 0x0300:
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, 20);
+				Actor(MO).Damage(none, none, 20);
 			}
 			break;
 		}
@@ -1580,7 +1580,7 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, MO.Sector->Damage);
+				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (MO.Sector->Damage < 50)
@@ -1588,13 +1588,13 @@ void PlayerInSpecialSector(float deltaTime)
 			if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.Game.level->time;
-				MO.Damage(none, none, MO.Sector->Damage);
+				Actor(MO).Damage(none, none, MO.Sector->Damage);
 			}
 		}
 		else if (Level.Game.level->time - LastSectorDamageTime >= 1.0 / 35.0)
 		{
 			LastSectorDamageTime = Level.Game.level->time;
-			MO.Damage(none, none, MO.Sector->Damage);
+			Actor(MO).Damage(none, none, MO.Sector->Damage);
 		}
 	}
 
@@ -1707,7 +1707,7 @@ void PlayerOnSpecialFlat(int floorType)
 	case FLOOR_LAVA:
 		if (!(Level.Game.level->tictime & 31))
 		{
-			MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
+			Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
 			MO.PlaySound('LavaSizzle', CHAN_BODY);
 		}
 		break;
@@ -1733,7 +1733,7 @@ void PlayerInContents()
 	case CONTENTS_LAVA:
 		if (!(Level.Game.level->tictime & 31))
 		{
-			MO.Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
+			Actor(MO).Damage(HexenLevelInfo(Level).GLavaInflictor, none, 10);
 			MO.PlaySound('LavaSizzle', CHAN_BODY);
 		}
 		break;
@@ -1828,7 +1828,7 @@ void PlayerImpulse()
 	}
 	else if (impulse == 16)
 	{
-		MO.Damage(none, none, 10000);
+		Actor(MO).Damage(none, none, 10000);
 	}
 	else if (impulse == 17)
 	{
@@ -1975,7 +1975,7 @@ bool UndoPlayerMorph()
 	Health = A.Health;
 	PClass = BaseClass;
 	SetPlayerColor();
-	PostMorphWeapon(MO._Special1);
+	PostMorphWeapon(Actor(MO)._Special1);
 
 	fog = HexenLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
 		20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
@@ -1994,9 +1994,9 @@ bool UndoPlayerMorph()
 
 void SetPlayerRunState()
 {
-	if (MO.StateNum == MO.IdleState)
+	if (MO.StateNum == Actor(MO).IdleState)
 	{
-		MO.SetState(MO.SeeState);
+		MO.SetState(Actor(MO).SeeState);
 	}
 }
 
@@ -2047,7 +2047,7 @@ void DeathPlayerTick(float deltaTime)
 #endif
 		}
 	}
-	else if (!MO.bIceDamage)
+	else if (!Actor(MO).bIceDamage)
 	{
 		// Fall to ground (if not frozen)
 		DeltaViewHeight = 0.0;
@@ -2079,7 +2079,7 @@ void DeathPlayerTick(float deltaTime)
 	if (Attacker && Attacker != MO)
 	{
 		// Watch killer
-		dir = MO.FaceActor(Attacker, &delta);
+		dir = Actor(MO).FaceActor(Attacker, &delta);
 		if (delta < 10.0)
 		{
 			// Looking at killer, so fade damage and poison counters
@@ -2132,14 +2132,14 @@ void DeathPlayerTick(float deltaTime)
 		NewTorch = 0;
 		NewTorchDelta = 0;
 		PlayerState = PST_REBORN;
-		MO._Special1 = PClass;
-		if (MO._Special1 > 2)
+		Actor(MO)._Special1 = PClass;
+		if (Actor(MO)._Special1 > 2)
 		{
-			MO._Special1 = 0;
+			Actor(MO)._Special1 = 0;
 		}
 		// Let the mobj know the player has entered the reborn state.  Some
 		// mobjs need to know when it's ok to remove themselves.
-		MO._Special2 = 666;
+		Actor(MO)._Special2 = 666;
 	}
 }
 
@@ -2175,11 +2175,11 @@ void PlayerTick(float deltaTime)
 		MO.bColideWithWorld = true;
 	}
 
-	if (MO.bJustAttacked)
+	if (Actor(MO).bJustAttacked)
 	{
 		ForwardMove = 100.0;
 		SideMove = 0.0;
-		MO.bJustAttacked = false;
+		Actor(MO).bJustAttacked = false;
 	}
 
 	WorldTimer++;
@@ -2204,12 +2204,12 @@ void PlayerTick(float deltaTime)
 
 	//  Move around.
 	//  ReactionTime is used to prevent movement for a bit after a teleport.
-	if (MO.ReactionTime)
+	if (Actor(MO).ReactionTime)
 	{
-		MO.ReactionTime -= deltaTime;
-		if (MO.ReactionTime <= 0.0)
-			MO.ReactionTime = 0.0;
-		if (MO.bWaterJump)
+		Actor(MO).ReactionTime -= deltaTime;
+		if (Actor(MO).ReactionTime <= 0.0)
+			Actor(MO).ReactionTime = 0.0;
+		if (Actor(MO).bWaterJump)
 			WaterJump();
 	}
 	else
@@ -2226,7 +2226,7 @@ void PlayerTick(float deltaTime)
 			{
 				speedA.Angles.yaw = MO.Angles.yaw;
 				speedA.Translation = MO.Translation;
-				speedA.Instigator = MO;
+				speedA.Instigator = Actor(MO);
 				speedA._Special1 = PClass;
 				if (speedA._Special1 > 2)
 				{
@@ -2250,7 +2250,7 @@ void PlayerTick(float deltaTime)
 	{
 		PlayerInSpecialSector(deltaTime);
 	}
-	floorType = MO.GetFloorType();
+	floorType = Actor(MO).GetFloorType();
 	if (floorType != FLOOR_SOLID)
 	{
 		PlayerOnSpecialFlat(floorType);
@@ -2310,7 +2310,7 @@ void PlayerTick(float deltaTime)
 				if (!bAltShadow)
 				{
 					bDontDraw = true;
- 					MO.bNonShootable = true;
+ 					Actor(MO).bNonShootable = true;
 				}
 			}
 			if (!(Level.Game.level->tictime & 31))
@@ -2325,7 +2325,7 @@ void PlayerTick(float deltaTime)
 					else
 					{
 						bDontDraw = false;
- 						MO.bNonShootable = false;
+ 						Actor(MO).bNonShootable = false;
 					}
 				}
 				else
@@ -2355,11 +2355,11 @@ void PlayerTick(float deltaTime)
 		if (Powers[pw_invulnerability] <= 0.0)
 		{
 			Powers[pw_invulnerability] = 0.0;
-			MO.bInvulnerable = false;
-			MO.bReflective = false;
+			Actor(MO).bInvulnerable = false;
+			Actor(MO).bReflective = false;
 			if (PClass == HexenDefs::PCLASS_CLERIC)
 			{
-				MO.bNonShootable = false;
+				Actor(MO).bNonShootable = false;
 				MO.Translucency = 0;
 			}
 		}
@@ -2409,7 +2409,7 @@ void PlayerTick(float deltaTime)
 			PoisonCount = 0;
 		}
 		LastPoisonTime = Level.Game.level->time;
-		MO.PoisonDamage(Poisoner, 1, true);
+		Actor(MO).PoisonDamage(Poisoner, 1, true);
 	}
 
 	if (DamageFlash)
@@ -2435,7 +2435,7 @@ void PlayerTick(float deltaTime)
 			HazardTime > 16.0)
 		{
 			LastHazardTime = Level.Game.level->time;
-			MO.Damage(none, none, 5);
+			Actor(MO).Damage(none, none, 5);
 		}
 	}
 
@@ -2538,7 +2538,7 @@ void PaletteFlash()
 		}
 		Palette += STARTBONUSPALS;
 	}
-	else if (MO.bIceDamage)
+	else if (Actor(MO).bIceDamage)
 	{
 		// Frozen player
 		Palette = STARTICEPAL;
@@ -2916,7 +2916,7 @@ void UseArtiTele()
 		destY = Level.PlayerStarts[0].y;
 		destAngle = itof(45 * (Level.PlayerStarts[0].angle / 45));
 	}
-	MO.Teleport(vector(destX, destY, Actor::ONFLOORZ), destAngle, true, true,
+	Actor(MO).Teleport(vector(destX, destY, Actor::ONFLOORZ), destAngle, true, true,
 		false);
 	if (MorphTime)
 	{
@@ -2971,10 +2971,10 @@ bool UseArtiHealRadius()
 		switch (PClass)
 		{
 		case HexenDefs::PCLASS_FIGHTER:	// Radius armor boost
-			if ((P.Player.GiveArmor(HexenDefs::ARMOR_ARMOR, 1)) ||
-				(P.Player.GiveArmor(HexenDefs::ARMOR_SHIELD, 1)) ||
-				(P.Player.GiveArmor(HexenDefs::ARMOR_HELMET, 1)) ||
-				(P.Player.GiveArmor(HexenDefs::ARMOR_AMULET, 1)))
+			if ((Player(P.Player).GiveArmor(HexenDefs::ARMOR_ARMOR, 1)) ||
+				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_SHIELD, 1)) ||
+				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_HELMET, 1)) ||
+				(Player(P.Player).GiveArmor(HexenDefs::ARMOR_AMULET, 1)))
 			{
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);
@@ -2982,7 +2982,7 @@ bool UseArtiHealRadius()
 			break;
 		case HexenDefs::PCLASS_CLERIC:	// Radius heal
 			amount = 50 + (P_Random() % 50);
-			if (P.Player.GiveBody(amount))
+			if (Player(P.Player).GiveBody(amount))
 			{
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);
@@ -2990,8 +2990,8 @@ bool UseArtiHealRadius()
 			break;
 		case HexenDefs::PCLASS_MAGE:	// Radius mana boost
 			amount = 50 + (P_Random() % 50);
-			if ((P.Player.GiveMana(HexenDefs::MANA_1, amount)) ||
-				(P.Player.GiveMana(HexenDefs::MANA_2, amount)))
+			if ((Player(P.Player).GiveMana(HexenDefs::MANA_1, amount)) ||
+				(Player(P.Player).GiveMana(HexenDefs::MANA_2, amount)))
 			{
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);
@@ -3018,7 +3018,7 @@ void UseArtiSummon()
 	mo = SpawnPlayerMissile(SummonMissile);
 	if (mo)
 	{
-		mo.Instigator = MO;
+		mo.Instigator = Actor(MO);
 		mo.Velocity.z = 5.0 * 35.0;
 	}
 }
@@ -3037,7 +3037,7 @@ void UseArtiBlastRadius()
 	float dist;
 
 	MO.PlaySound('BlastRadius', CHAN_ITEM);
-	HexenLevelInfo(Level).NoiseAlert(MO, MO);
+	HexenLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 
 	FOREACH(Actor, mo)
 	{
@@ -3083,7 +3083,7 @@ void UseArtiBlastRadius()
 			// Out of range
 			continue;
 		}
-		mo.Blast(MO, BLAST_FULLSTRENGTH);
+		mo.Blast(Actor(MO), BLAST_FULLSTRENGTH);
 	}
 }
 
@@ -3105,7 +3105,7 @@ void UseArtiPoisonBag()
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - MO.FloorClip));
 		if (bomb)
 		{
-			bomb.Instigator = MO;
+			bomb.Instigator = Actor(MO);
 		}
 	}
 	else if (PClass == HexenDefs::PCLASS_MAGE)
@@ -3114,7 +3114,7 @@ void UseArtiPoisonBag()
 			vector(16.0 * cos(angle), 24.0 * sin(angle), 8.0 - MO.FloorClip));
 		if (bomb)
 		{
-			bomb.Instigator = MO;
+			bomb.Instigator = Actor(MO);
 		}
 	}
 	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
@@ -3131,7 +3131,7 @@ void UseArtiPoisonBag()
 			bomb.Thrust(bomb.Angles.yaw, bomb.Speed * Level.Game.frametime);
 			bomb.Velocity.x += MO.Velocity.x / 2.0;
 			bomb.Velocity.y += MO.Velocity.y / 2.0;
-			bomb.Instigator = MO;
+			bomb.Instigator = Actor(MO);
 			bomb.StateTime -= Random() * 0.1;
 			bomb.CheckMissileSpawn();
 		}
@@ -3151,7 +3151,7 @@ void UseArtiTeleportOther()
 	mo = SpawnPlayerMissile(TeleportOtherFX1);
 	if (mo)
 	{
-		mo.Instigator = MO;
+		mo.Instigator = Actor(MO);
 	}
 }
 
@@ -3172,16 +3172,16 @@ Actor SpawnPlayerMissile(classid type)
 
 	// Try to find a target
 	angles = MO.Angles;
-	MO.AimLineAttack(&angles, 16.0 * 64.0);
-	if (!MO.linetarget)
+	Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+	if (!Actor(MO).linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		MO.AimLineAttack(&angles, 16.0 * 64.0);
-		if (!MO.linetarget)
+		Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+		if (!Actor(MO).linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			MO.AimLineAttack(&angles, 16.0 * 64.0);
-			if (!MO.linetarget)
+			Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+			if (!Actor(MO).linetarget)
 			{
 				angles.yaw = MO.Angles.yaw;
 			}
@@ -3204,7 +3204,7 @@ Actor SpawnPlayerMissile(classid type)
 		org.z -= MO.FloorClip;
 	}
 	MissileMobj = HexenLevelInfo(Level).Spawn(type, org);
-	MissileMobj.Instigator = MO;
+	MissileMobj.Instigator = Actor(MO);
 	MissileMobj.Angles = angles;
 	AngleVector(&angles, &vforward);
 	MissileMobj.Velocity = vforward * MissileMobj.Speed;
@@ -3246,16 +3246,16 @@ Actor SpawnPlayerMissileAngle(classid type, float angle)
 	//
 	angles = MO.Angles;
 	angles.yaw = angle;
-	MO.AimLineAttack(&angles, 16.0 * 64.0);
-	if (!MO.linetarget)
+	Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+	if (!Actor(MO).linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		MO.AimLineAttack(&angles, 16.0 * 64.0);
-		if (!MO.linetarget)
+		Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+		if (!Actor(MO).linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			MO.AimLineAttack(&angles, 16.0 * 64.0);
-			if (!MO.linetarget)
+			Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+			if (!Actor(MO).linetarget)
 			{
 				angles.yaw = angle;
 			}
@@ -3265,7 +3265,7 @@ Actor SpawnPlayerMissileAngle(classid type, float angle)
 	org.z = MO.Origin.z + 4.0 * 8.0 - tan(MO.Angles.pitch);
 	org.z -= MO.FloorClip;
 	th = HexenLevelInfo(Level).Spawn(type, org);
-	th.Instigator = MO;
+	th.Instigator = Actor(MO);
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;
@@ -3289,16 +3289,16 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
 	//
 	angles = MO.Angles;
 	angles.yaw = angle;
-	MO.AimLineAttack(&angles, 16.0 * 64.0);
-	if (!MO.linetarget)
+	Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+	if (!Actor(MO).linetarget)
 	{
 		angles.yaw = AngleMod360(angles.yaw + 45.0 / 8.0);
-		MO.AimLineAttack(&angles, 16.0 * 64.0);
-		if (!MO.linetarget)
+		Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+		if (!Actor(MO).linetarget)
 		{
 			angles.yaw = AngleMod360(angles.yaw - 45.0 / 4.0);
-			MO.AimLineAttack(&angles, 16.0 * 64.0);
-			if (!MO.linetarget)
+			Actor(MO).AimLineAttack(&angles, 16.0 * 64.0);
+			if (!Actor(MO).linetarget)
 			{
 				angles.yaw = angle;
 			}
@@ -3307,7 +3307,7 @@ Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
 	org.z += 4.0 * 8.0 - tan(MO.Angles.pitch);
 	org.z -= MO.FloorClip;
 	th = HexenLevelInfo(Level).Spawn(type, org);
-	th.Instigator = MO;
+	th.Instigator = Actor(MO);
 	th.Angles = angles;
 	AngleVector(&angles, &vforward);
 	th.Velocity = vforward * th.Speed;
@@ -3325,8 +3325,8 @@ void AdjustPlayerAngle()
 	float angle;
 	float difference;
 
-	angle = atan2(MO.linetarget.Origin.y - MO.Origin.y,
-		MO.linetarget.Origin.x - MO.Origin.x);
+	angle = atan2(Actor(MO).linetarget.Origin.y - MO.Origin.y,
+		Actor(MO).linetarget.Origin.x - MO.Origin.x);
 	difference = AngleMod180(angle - MO.Angles.yaw);
 	if (fabs(difference) > 5.0)
 	{
@@ -3528,10 +3528,10 @@ void FireWeapon()
 	{
 		return;
 	}
-	MO.SetState(MO.MissileState);
+	MO.SetState(Actor(MO).MissileState);
 	ViewEnts[ps_weapon].SetState(
 		Weapon(ViewEnts[ps_weapon]).GetAttackState());
-	HexenLevelInfo(Level).NoiseAlert(MO, MO);
+	HexenLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 
 //==========================================================================
@@ -3620,7 +3620,7 @@ bool PTR_UseTraverse(intercept_t * in)
 		return line->backsector != NULL;
 	}
 
-	HexenLevelInfo(Level).ActivateLine(line, MO, 0, SPAC_USE);
+	HexenLevelInfo(Level).ActivateLine(line, Actor(MO), 0, SPAC_USE);
 
 	//WAS can't use more than one special line in a row
 	//jff 3/21/98 NOW multiple use allowed with enabling line flag
@@ -3922,7 +3922,7 @@ void Cheat_Morph()
 	}
 	else
 	{
-		MO.MorphPlayer();
+		Actor(MO).MorphPlayer();
 	}
 	cprint(self, "SQUEAL!!");
 }
@@ -3995,6 +3995,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.23  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

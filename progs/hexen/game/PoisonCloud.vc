@@ -38,7 +38,7 @@ int InflictorModifyDamage(Actor victim, Actor source, int damage)
 {
 	if (victim.bIsPlayer)
 	{
-		if (victim.Player.PoisonCount < 4)
+		if (Player(victim.Player).PoisonCount < 4)
 		{
 			victim.PoisonDamage(source, 15 + (P_Random() & 15), false);	// Don't play painsound
 			victim.PoisonPlayer(source, 50);
@@ -158,6 +158,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.4  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

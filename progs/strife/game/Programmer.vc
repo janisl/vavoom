@@ -58,7 +58,7 @@ void A_ProgrammerDeath()
 	TossUpObject(ProgrammersBase);
 
 	//	Give Silil piece to the player.
-	Enemy.Player.GiveSigilPiece();
+	Player(Enemy.Player).GiveSigilPiece();
 	cprint(Enemy.Player, "You\'ve Killed the Programmer!");
 }
 
@@ -129,6 +129,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

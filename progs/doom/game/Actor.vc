@@ -395,7 +395,7 @@ void TouchSpecial(Actor Toucher)
 		Level.Game.level->currentitems++;
 	}
 	HideSpecial();
-	Toucher.Player.BonusFlash += Player::BONUSADD;
+	Player(Toucher.Player).BonusFlash += Player::BONUSADD;
 }
 
 //==========================================================================
@@ -665,12 +665,12 @@ void Died(Actor source)
 #ifndef	NO_BOTS
 			if (source.Player.bIsBot)
 			{
-				source.Player.Bot.Killed(self);
+				Player(source.Player).Bot.Killed(self);
 			}
 
 			if (Player.bIsBot)
 			{
-				Player.Bot.Died(source);
+				Player(Player).Bot.Died(source);
 			}
 #endif
 
@@ -705,7 +705,7 @@ void Died(Actor source)
 
 		bSolid = false;
 		Player.PlayerState = PST_DEAD;
-		Player.DropWeapon();
+		Player(Player).DropWeapon();
 #ifdef FIXME
 		if (Player == Players[consoleplayer] && automapactive)
 		{
@@ -797,7 +797,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// thus kick away unless using the chainsaw.
 	if (inflictor && bColideWithThings &&
 		(!source || !source.bIsPlayer ||
-			source.Player.ReadyWeapon != DoomDefs::wp_chainsaw))
+			Player(source.Player).ReadyWeapon != DoomDefs::wp_chainsaw))
 	{
 		Velocity += (500.0 * itof(damage) / Mass) *
 			Normalise(MobjCenter(self) - MobjCenter(inflictor));
@@ -815,37 +815,37 @@ void Damage(Actor inflictor, Actor source, int damage)
 
 		// Below certain threshold,
 		// ignore damage in GOD mode, or with INVUL power.
-		if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE) ||
-			Player.Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE) ||
+			Player(Player).Powers[pw_invulnerability]))
 		{
 			return;
 		}
 
-		if (Player.ArmorType)
+		if (Player(Player).ArmorType)
 		{
-			if (Player.ArmorType == 1)
+			if (Player(Player).ArmorType == 1)
 				saved = damage / 3;
 			else
 				saved = damage / 2;
 
-			if (Player.ArmorPoints <= saved)
+			if (Player(Player).ArmorPoints <= saved)
 			{
 				// armor is used up
-				saved = Player.ArmorPoints;
-				Player.ArmorType = 0;
+				saved = Player(Player).ArmorPoints;
+				Player(Player).ArmorType = 0;
 			}
-			Player.ArmorPoints -= saved;
+			Player(Player).ArmorPoints -= saved;
 			damage -= saved;
 		}
 		Player.Health -= damage;	// mirror mobj health here for Dave
 		if (Player.Health < 0)
 			Player.Health = 0;
 
-		Player.Attacker = source;
-		Player.DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		Player(Player).Attacker = source;
+		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
 
-		if (Player.DamageFlash > 3.0)
-			Player.DamageFlash = 3.0;	// teleport stomp does 10k points...
+		if (Player(Player).DamageFlash > 3.0)
+			Player(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
 	}
 
 	// do the damage    
@@ -1360,8 +1360,8 @@ void ZMovement(float DeltaTime)
 	// check for smooth step up
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player(Player).ViewHeight -= FloorZ - Origin.z;
+		Player(Player).DeltaViewHeight = (Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 	}
 
 	// adjust height
@@ -1406,7 +1406,7 @@ void ZMovement(float DeltaTime)
 				// Decrease ViewHeight for a moment
 				// after hitting the ground (hard),
 				// and utter appropriate sound.
-				Player.DeltaViewHeight = vdot / 8.0;
+				Player(Player).DeltaViewHeight = vdot / 8.0;
 				PlaySound('*land', CHAN_VOICE);
 			}
 		}
@@ -1549,7 +1549,7 @@ float GetFriction()
 
 void PlayerLandedOnThing()
 {
-	Player.DeltaViewHeight = Velocity.z / 8.0;
+	Player(Player).DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -GRAVITY * 0.375)
 	{
 		PlaySound('*land', CHAN_VOICE);
@@ -1669,10 +1669,10 @@ bool Physics(float DeltaTime)
 				{
 					if (bIsPlayer)
 					{
-						Player.ViewHeight -=
+						Player(Player).ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
-						Player.DeltaViewHeight =
-							(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+						Player(Player).DeltaViewHeight =
+							(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 					}
 					Origin.z = onmo.Origin.z + onmo.Height;
 				}
@@ -2041,7 +2041,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 		return 0;
 
 	if (bIsPlayer)
-		Player.ViewOrg.z = Origin.z + Player.ViewHeight;
+		Player(Player).ViewOrg.z = Origin.z + Player(Player).ViewHeight;
 
 	if (SrcFog)
 	{
@@ -2330,7 +2330,7 @@ bool LookForPlayers(bool allaround)
 			return false;
 		}
 
-		P = Level.Game.Players[LastLook];
+		P = Player(Level.Game.Players[LastLook]);
 
 		if (!P)
 			continue;
@@ -2364,7 +2364,7 @@ bool LookForPlayers(bool allaround)
 			}
 		}
 
-		Enemy = P.MO;
+		Enemy = Actor(P.MO);
 		return true;
 	}
 
@@ -4734,6 +4734,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2006/03/02 18:28:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.27  2006/02/28 22:44:18  dj_jl
 //  Replaced defines with constants.
 //

@@ -44,8 +44,8 @@ void A_BFGsound()
 
 void A_FireBFG()
 {
-	Player.Ammo[Ammo] -= BFGCELLS;
-	Player.SpawnPlayerMissile(BFGShot);
+	Player(Player).Ammo[Ammo] -= BFGCELLS;
+	Player(Player).SpawnPlayerMissile(BFGShot);
 }
 
 __states__
@@ -75,6 +75,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

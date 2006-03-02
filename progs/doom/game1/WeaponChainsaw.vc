@@ -44,10 +44,10 @@ void A_Saw()
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	dir = Player.MO.AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
-	Player.MO.LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
+	dir = Actor(Player.MO).AimLineAttack(aimAng, Actor::MELEERANGE + 0.00001);
+	Actor(Player.MO).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage);
 
-	if (!Player.MO.linetarget)
+	if (!Actor(Player.MO).linetarget)
 	{
 		Player.MO.PlaySound('weapons/sawfull', CHAN_WEAPON);
 		return;
@@ -55,8 +55,8 @@ void A_Saw()
 	Player.MO.PlaySound('weapons/sawhit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(Player.MO.linetarget.Origin.y - Player.MO.Origin.y,
-		Player.MO.linetarget.Origin.x - Player.MO.Origin.x);
+	angle = atan2(Actor(Player.MO).linetarget.Origin.y - Player.MO.Origin.y,
+		Actor(Player.MO).linetarget.Origin.x - Player.MO.Origin.x);
 	if (AngleMod360(angle - Player.MO.Angles.yaw) > 180.0)
 	{
 		if (AngleMod360(angle - Player.MO.Angles.yaw) < -90.0 / 20.0)
@@ -72,7 +72,7 @@ void A_Saw()
 			Player.MO.Angles.yaw += 90.0 / 20.0;
 	}
 	Player.MO.Angles.yaw = AngleMod360(Player.MO.Angles.yaw);
-	Player.MO.bJustAttacked = true;
+	Actor(Player.MO).bJustAttacked = true;
 	Player.bFixAngle = true;
 }
 
@@ -100,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/28 22:44:37  dj_jl
 //  Replaced defines with constants.
 //

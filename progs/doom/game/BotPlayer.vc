@@ -160,7 +160,7 @@ TVec bottracedir;
 
 void BotTick(float deltaTime)
 {
-	botmo = player.MO;
+	botmo = Actor(player.MO);
 
 	player.ForwardMove = 0.0;
 	player.SideMove = 0.0;
@@ -898,7 +898,7 @@ Actor FindEnemy()
 			player.Level.Game.Players[i].MO.Health > 0 && botmo != player.Level.Game.Players[i].MO)
 		{
 			 //Here's a strange one, when bot is standing still, the CanSee within Check_LOS almost always returns false. tought it should be the same checksight as below but.. (below works) something must be fuckin wierd screded up.
-			if (Check_LOS(player.Level.Game.Players[i].MO, vangle))
+			if (Check_LOS(Actor(player.Level.Game.Players[i].MO), vangle))
 			{
 				if (botmo.CanSee(player.Level.Game.Players[i].MO))
 				{
@@ -906,7 +906,7 @@ Actor FindEnemy()
 					if (temp < closest_dist)
 					{
 						closest_dist = temp;
-						target = player.Level.Game.Players[i].MO;
+						target = Actor(player.Level.Game.Players[i].MO);
 					}
 				}
 			}
@@ -1452,6 +1452,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/03/02 18:28:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.11  2006/02/28 22:44:18  dj_jl
 //  Replaced defines with constants.
 //

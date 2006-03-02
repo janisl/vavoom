@@ -33,7 +33,7 @@ class WeaponMageWand : Weapon;
 
 void A_MWandAttack()
 {
-	Player.SpawnPlayerMissile(MageWandMissile);
+	Player(Player).SpawnPlayerMissile(MageWandMissile);
 	Player.MO.PlaySound('MageWandFire', CHAN_WEAPON);
 }
 
@@ -62,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

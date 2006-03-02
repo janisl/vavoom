@@ -47,7 +47,7 @@ void TouchSpecial(Actor Toucher)
 		// Toucher is dead
 		return;
 	}
-	if (!Toucher.Player.GiveMana(ManaType, ManaCount))
+	if (!Player(Toucher.Player).GiveMana(ManaType, ManaCount))
 	{
 		return;
 	}
@@ -66,7 +66,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		Remove();
 	}
-	Toucher.Player.BonusFlash += BONUSADD;
+	Player(Toucher.Player).BonusFlash += BONUSADD;
 	Toucher.PlaySound('PickupItem', CHAN_ITEM);
 }
 
@@ -80,6 +80,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.5  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

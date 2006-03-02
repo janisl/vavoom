@@ -1115,14 +1115,14 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 //
 //==========================================================================
 
-void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
+void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
 	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
 	int arg4)
 {
 	PlaneWatcher	PW;
 
 	PW = PlaneWatcher(NewSpecialThinker(PlaneWatcher));
-	PW.Start(it, line, lineSide, ceiling, tag, height, special, arg0, arg1,
+	PW.Start(Actor(it), line, lineSide, ceiling, tag, height, special, arg0, arg1,
 		arg2, arg3, arg4);
 }
 
@@ -1134,6 +1134,8 @@ void StartPlaneWatcher(Actor it, line_t* line, int lineSide, bool ceiling,
 
 bool CheckLock(Actor user, int lock)
 {
+	int		Keys;
+
 	if (!user.bIsPlayer)
 	{
 		return false;
@@ -1143,10 +1145,11 @@ bool CheckLock(Actor user, int lock)
 		return true;
 	}
 
+	Keys = Player(user.Player).Keys;
 	switch (lock)
 	{
 	case 2:	// Blue Lock
-		if (!(user.Player.Keys & (1 << it_bluecard)))
+		if (!(Keys & (1 << it_bluecard)))
 		{
 			centerprint(user.Player, "You need a blue keycard");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1155,7 +1158,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 1:	// Red Lock
-		if (!(user.Player.Keys & (1 << it_redcard)))
+		if (!(Keys & (1 << it_redcard)))
 		{
 			centerprint(user.Player, "You need a red keycard");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1164,7 +1167,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 3:	// Yellow Lock
-		if (!(user.Player.Keys & (1 << it_yellowcard)))
+		if (!(Keys & (1 << it_yellowcard)))
 		{
 			centerprint(user.Player, "You need a yellow keycard");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1173,7 +1176,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 5:	// Blue Lock
-		if (!(user.Player.Keys & (1 << it_blueskull)))
+		if (!(Keys & (1 << it_blueskull)))
 		{
 			centerprint(user.Player, "You need a blue skullkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1182,7 +1185,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 4:	// Red Lock
-		if (!(user.Player.Keys & (1 << it_redskull)))
+		if (!(Keys & (1 << it_redskull)))
 		{
 			centerprint(user.Player, "You need a red skullkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1191,7 +1194,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 6:	// Yellow Lock
-		if (!(user.Player.Keys & (1 << it_yellowskull)))
+		if (!(Keys & (1 << it_yellowskull)))
 		{
 			centerprint(user.Player, "You need a yellow skullkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1201,7 +1204,7 @@ bool CheckLock(Actor user, int lock)
 
 	case 100:	// Any key
 	case 128 + 100:	// Any key
-		if (!user.Player.Keys)
+		if (!Keys)
 		{
 			centerprint(user.Player, "You need any key");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1210,7 +1213,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 101:	// All keys
-		if (user.Player.Keys != 0x3f)
+		if (Keys != 0x3f)
 		{
 			centerprint(user.Player, "You need all keycards and skullkeys");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1219,7 +1222,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 2:	// Blue Lock
-		if (!(user.Player.Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
+		if (!(Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
 			centerprint(user.Player, "You need a blue key");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1228,7 +1231,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 1:	// Red Lock
-		if (!(user.Player.Keys & ((1 << it_redcard) | (1 << it_redskull))))
+		if (!(Keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
 			centerprint(user.Player, "You need a red key");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1237,7 +1240,7 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 3:	// Yellow Lock
-		if (!(user.Player.Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(user.Player, "You need a yellow key");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -1246,9 +1249,9 @@ bool CheckLock(Actor user, int lock)
 		break;
 
 	case 128 + 101:	// All keys
-		if (!(user.Player.Keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
-			!(user.Player.Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
-			!(user.Player.Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
+		if (!(Keys & ((1 << it_bluecard) | (1 << it_blueskull))) ||
+			!(Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
+			!(Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
 			centerprint(user.Player, "You need all keys");
 			user.PlaySound('*grunt', CHAN_VOICE);
@@ -4152,6 +4155,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:28:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/28 22:44:18  dj_jl
 //  Replaced defines with constants.
 //

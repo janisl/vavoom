@@ -40,13 +40,13 @@ void A_FireShotgun2()
 	TVec dir;
 
 	Player.MO.PlaySound('weapons/sshotf', CHAN_WEAPON);
-	Player.MO.SetState(Player.MO.MissileState);
+	Player.MO.SetState(Actor(Player.MO).MissileState);
 
-	Player.Ammo[Ammo] -= 2;
+	Player(Player).Ammo[Ammo] -= 2;
 
-	Player.SetPsprite(ps_flash, FlashState);
+	Player(Player).SetPsprite(ps_flash, FlashState);
 
-	aimDir = Player.MO.Aim(16.0 * 64.0);
+	aimDir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -54,7 +54,7 @@ void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Player.MO.LineAttack(dir, Actor::MISSILERANGE, damage);
+		Actor(Player.MO).LineAttack(dir, Actor::MISSILERANGE, damage);
 	}
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
@@ -128,6 +128,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/02 18:30:51  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.8  2006/02/28 22:44:53  dj_jl
 //  Replaced defines with constants.
 //

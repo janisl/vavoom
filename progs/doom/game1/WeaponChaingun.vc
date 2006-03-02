@@ -37,16 +37,16 @@ void A_FireCGun()
 
 	Player.MO.PlaySound('weapons/chngun', CHAN_WEAPON);
 
-	if (!Player.Ammo[Ammo])
+	if (!Player(Player).Ammo[Ammo])
 		return;
 
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.Ammo[Ammo]--;
+	Player.MO.SetState(Actor(Player.MO).MissileState);
+	Player(Player).Ammo[Ammo]--;
 
-	Player.SetPsprite(ps_flash, FlashState + StateNum - AttackState);
+	Player(Player).SetPsprite(ps_flash, FlashState + StateNum - AttackState);
 
-	dir = Player.MO.Aim(16.0 * 64.0);
-	GunShot(Player.MO, !Player.Refire, dir);
+	dir = Actor(Player.MO).Aim(16.0 * 64.0);
+	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
 	Player.MO.Effects |= DoomDefs::EF_DL_MUZZLEFLASH;
 }
 
@@ -76,6 +76,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/02 18:30:31  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

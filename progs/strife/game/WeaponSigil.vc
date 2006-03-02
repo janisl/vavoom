@@ -34,7 +34,7 @@ class WeaponSigil : Weapon;
 void A_SigilSound()
 {
 	Player.MO.PlaySound('weapons/sigil', CHAN_WEAPON);
-	SpriteFrame = Player.Sigil;
+	SpriteFrame = Player(Player).Sigil;
 }
 
 //==========================================================================
@@ -45,8 +45,8 @@ void A_SigilSound()
 
 void A_SigilShowFlash()
 {
-	Player.SetPsprite(ps_flash, FlashState);
-	SpriteFrame = Player.Sigil;
+	Player(Player).SetPsprite(ps_flash, FlashState);
+	SpriteFrame = Player(Player).Sigil;
 }
 
 //==========================================================================
@@ -62,34 +62,34 @@ void A_FireSigil()
 	Actor sigilspread;
 	int i;
 
-	Player.MO.Damage(none, Player.MO, (Player.Sigil + 1) * 4);
+	Actor(Player.MO).Damage(none, Actor(Player.MO), (Player(Player).Sigil + 1) * 4);
 	angle = Player.MO.Angles.yaw + 180.0;
 	Player.MO.Velocity.x += 4.0 * 35.0 * cos(angle);
 	Player.MO.Velocity.y += 4.0 * 35.0 * sin(angle);
-	StrifeLevelInfo(Player.MO.Level).NoiseAlert(Player.MO, Player.MO);
+	StrifeLevelInfo(Player.MO.Level).NoiseAlert(Actor(Player.MO), Actor(Player.MO));
 
-	if (Player.Sigil == 4)
+	if (Player(Player).Sigil == 4)
 	{
-		Player.SpawnPlayerMissile(SigilFX3);
+		Player(Player).SpawnPlayerMissile(SigilFX3);
 	}
-	else if (Player.Sigil == 3)
+	else if (Player(Player).Sigil == 3)
 	{
-		Player.SpawnPlayerMissile(SigilFX5);
+		Player(Player).SpawnPlayerMissile(SigilFX5);
 	}
-	else if (Player.Sigil == 2)
+	else if (Player(Player).Sigil == 2)
 	{
 		for (i = 0; i < 20; i++)
 		{
-			sigilspread = Player.SpawnPlayerMissileAngle(SigilFX2,
+			sigilspread = Player(Player).SpawnPlayerMissileAngle(SigilFX2,
 				Player.MO.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
 			angle = sigilspread.Angles.yaw;
 			sigilspread.Velocity.x = sigilspread.Speed * cos(angle);
 			sigilspread.Velocity.y = sigilspread.Speed * sin(angle);
 		}
 	}
-	else if (Player.Sigil == 1)
+	else if (Player(Player).Sigil == 1)
 	{
-		Player.SpawnPlayerMissile(SigilFX1);
+		Player(Player).SpawnPlayerMissile(SigilFX1);
 	}
 	else
 	{
@@ -98,21 +98,21 @@ void A_FireSigil()
 		if (sigil.SightSound)
 			sigil.PlaySound(sigil.SightSound, CHAN_VOICE);
 
-		sigil.Instigator = Player.MO;
+		sigil.Instigator = Actor(Player.MO);
 		sigil.Origin.z = sigil.FloorZ;
-		Player.MO.Aim(16.0 * 64.0);
-		if (!Player.MO.linetarget)
+		Actor(Player.MO).Aim(16.0 * 64.0);
+		if (!Actor(Player.MO).linetarget)
 		{
 			sigil.Origin.x = Player.MO.Origin.x;
 			sigil.Origin.y = Player.MO.Origin.y;
 		}
 		else
 		{
-			sigil.Origin.x = Player.MO.linetarget.Origin.x;
-			sigil.Origin.y = Player.MO.linetarget.Origin.y;
+			sigil.Origin.x = Actor(Player.MO).linetarget.Origin.x;
+			sigil.Origin.y = Actor(Player.MO).linetarget.Origin.y;
 		}
 	}
-	SpriteFrame = Player.Sigil;
+	SpriteFrame = Player(Player).Sigil;
 }
 
 //==========================================================================
@@ -124,7 +124,7 @@ void A_FireSigil()
 void A_SigilFlash()
 {
 	//Player.MiscTime = 10;
-	Player.MO.Damage(none, none, 5);
+	Actor(Player.MO).Damage(none, none, 5);
 	Player.FixedColormap = Player::INVERSECOLORMAP;
 }
 
@@ -133,7 +133,7 @@ __states__
 	S_SIGIL('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGIL)
 	{
 		A_WeaponReady();
-		SpriteFrame = Player.Sigil;
+		SpriteFrame = Player(Player).Sigil;
 	}
 	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, S_NULL) { }
 	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, S_NULL) { }
@@ -142,12 +142,12 @@ __states__
 	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN)
 	{
 		A_Lower();
-		SpriteFrame = Player.Sigil;
+		SpriteFrame = Player(Player).Sigil;
 	}
 	S_SIGILUP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILUP)
 	{
 		A_Raise();
-		SpriteFrame = Player.Sigil;
+		SpriteFrame = Player(Player).Sigil;
 	}
 	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_SigilSound(); }
 	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_SigilShowFlash(); }
@@ -155,7 +155,7 @@ __states__
 	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL)
 	{
 		A_ClearFlash();
-		SpriteFrame = Player.Sigil;
+		SpriteFrame = Player(Player).Sigil;
 	}
 	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
 	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
@@ -179,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/02 18:36:30  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.9  2006/02/28 22:47:55  dj_jl
 //  Replaced defines with constants.
 //

@@ -652,12 +652,12 @@ void Died(Actor source)
 		{
 			if (source.Player.bIsBot)
 			{
-				source.Player.Bot.Killed(self);
+				Player(source.Player).Bot.Killed(self);
 			}
 
 			if (Player.bIsBot)
 			{
-				Player.Bot.Died(source);
+				Player(Player).Bot.Died(source);
 			}
 
 			if (self == source)
@@ -686,9 +686,9 @@ void Died(Actor source)
 		}
 		bSolid = false;
 		bFly = false;
-		Player.Powers[pw_flight] = 0.0;
+		Player(Player).Powers[pw_flight] = 0.0;
 		Player.PlayerState = PST_DEAD;
-		Player.DropWeapon();
+		Player(Player).DropWeapon();
 		if (bFireDamage)
 		{
 			// Player flame death
@@ -814,12 +814,12 @@ bool MorphPlayer()
 	Actor beastMo;
 	int i;
 
-	if (Player.Powers[pw_invulnerability])
+	if (Player(Player).Powers[pw_invulnerability])
 	{
 		// Immune when invulnerable
 		return (false);
 	}
-	if (Player.MorphTime)
+	if (Player(Player).MorphTime)
 	{
 		// Player is already a beast
 		return false;
@@ -829,7 +829,7 @@ bool MorphPlayer()
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	beastMo = Spawn(PlayerPig, Origin);
-	beastMo._Special1 = Player.ReadyWeapon;
+	beastMo._Special1 = Player(Player).ReadyWeapon;
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;
 	beastMo.bIsPlayer = true;
@@ -838,12 +838,12 @@ bool MorphPlayer()
 	Player.MO = beastMo;
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
-		Player.ArmorPoints[i] = 0.0;
+		Player(Player).ArmorPoints[i] = 0.0;
 	}
 	Player.PClass = HexenDefs::PCLASS_PIG;
 	beastMo.bFly = bFly;
-	Player.MorphTime = MORPHTIME;
-	Player.ActivateMorphWeapon();
+	Player(Player).MorphTime = MORPHTIME;
+	Player(Player).ActivateMorphWeapon();
 
 	SetState(S_FREETARGMOBJ);
 
@@ -912,17 +912,17 @@ void AutoUseHealth(int saveHealth)
 
 	normalCount = 0;
 	superCount = 0;
-	for (i = 0; i < Player.InventorySlotNum; i++)
+	for (i = 0; i < Player(Player).InventorySlotNum; i++)
 	{
-		if (Player.Inventory[i].type == HexenDefs::arti_health)
+		if (Player(Player).Inventory[i].type == HexenDefs::arti_health)
 		{
 			normalSlot = i;
-			normalCount = Player.Inventory[i].count;
+			normalCount = Player(Player).Inventory[i].count;
 		}
-		else if (Player.Inventory[i].type == HexenDefs::arti_superhealth)
+		else if (Player(Player).Inventory[i].type == HexenDefs::arti_superhealth)
 		{
 			superSlot = i;
-			superCount = Player.Inventory[i].count;
+			superCount = Player(Player).Inventory[i].count;
 		}
 	}
 	if ((Level.Game.gameskill == sk_baby) && (normalCount * 25 >= saveHealth))
@@ -932,7 +932,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player.PlayerRemoveArtifact(normalSlot);
+			Player(Player).PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	else if (superCount * 100 >= saveHealth)
@@ -942,7 +942,7 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
-			Player.PlayerRemoveArtifact(superSlot);
+			Player(Player).PlayerRemoveArtifact(superSlot);
 		}
 	}
 	else if ((Level.Game.gameskill == sk_baby)
@@ -954,14 +954,14 @@ void AutoUseHealth(int saveHealth)
 		for (i = 0; i < count; i++)
 		{
 			Health += 25;
-			Player.PlayerRemoveArtifact(normalSlot);
+			Player(Player).PlayerRemoveArtifact(normalSlot);
 		}
 		count = (saveHealth + 99) / 100;
 		for (i = 0; i < count; i++)
 		{
 			Health += 100;
 			// The same as in HERETIC
-			Player.PlayerRemoveArtifact(normalSlot);
+			Player(Player).PlayerRemoveArtifact(normalSlot);
 		}
 	}
 	Player.Health = Health;
@@ -1016,8 +1016,8 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	if (bIsPlayer)
 	{
-		if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE)
-				|| Player.Powers[pw_invulnerability]))
+		if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE)
+				|| Player(Player).Powers[pw_invulnerability]))
 		{
 			return;
 		}
@@ -1070,10 +1070,10 @@ void Damage(Actor inflictor, Actor source, int damage)
 		}
 
 		savedPercent = MainGameInfo(Level.Game).AutoArmorSave[Player.PClass]
-			+ Player.ArmorPoints[HexenDefs::ARMOR_ARMOR]
-			+ Player.ArmorPoints[HexenDefs::ARMOR_SHIELD]
-			+ Player.ArmorPoints[HexenDefs::ARMOR_HELMET]
-			+ Player.ArmorPoints[HexenDefs::ARMOR_AMULET];
+			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_ARMOR]
+			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_SHIELD]
+			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_HELMET]
+			+ Player(Player).ArmorPoints[HexenDefs::ARMOR_AMULET];
 		if (savedPercent)
 		{
 			// armor absorbed some damage
@@ -1083,13 +1083,13 @@ void Damage(Actor inflictor, Actor source, int damage)
 			}
 			for (i = 0; i < HexenDefs::NUMARMOR; i++)
 			{
-				if (Player.ArmorPoints[i])
+				if (Player(Player).ArmorPoints[i])
 				{
-					Player.ArmorPoints[i] -= itof(damage) *
+					Player(Player).ArmorPoints[i] -= itof(damage) *
 						MainGameInfo(Level.Game).ArmorIncrement[Player.PClass * HexenDefs::NUMARMOR + i] / 300.0;
-					if (Player.ArmorPoints[i] < 2.0)
+					if (Player(Player).ArmorPoints[i] < 2.0)
 					{
-						Player.ArmorPoints[i] = 0.0;
+						Player(Player).ArmorPoints[i] = 0.0;
 					}
 				}
 			}
@@ -1101,7 +1101,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			damage -= ftoi(saved);
 		}
 		if (damage >= Player.Health
-			&& ((Level.Game.gameskill == sk_baby) || Level.Game.deathmatch) && !Player.MorphTime)
+			&& ((Level.Game.gameskill == sk_baby) || Level.Game.deathmatch) && !Player(Player).MorphTime)
 		{
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
@@ -1111,11 +1111,11 @@ void Damage(Actor inflictor, Actor source, int damage)
 		{
 			Player.Health = 0;
 		}
-		Player.Attacker = source;
-		Player.DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
-		if (Player.DamageFlash > 3.0)
+		Player(Player).Attacker = source;
+		Player(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		if (Player(Player).DamageFlash > 3.0)
 		{
-			Player.DamageFlash = 3.0;	// teleport stomp does 10k points...
+			Player(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
 		}
 	}
 
@@ -1131,7 +1131,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			// check for special fire damage or ice damage deaths
 			if (inflictor.bFireDamage)
 			{
-				if (bIsPlayer && !Player.MorphTime)
+				if (bIsPlayer && !Player(Player).MorphTime)
 				{
 					// Check for flame death
 					if (Health > -50 && damage > 25)
@@ -1160,7 +1160,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			}
 		}
 		if (source && (source.bIsPlayer) &&
-			(source.Player.ReadyWeapon == HexenDefs::WP_FOURTH))
+			(Player(source.Player).ReadyWeapon == HexenDefs::WP_FOURTH))
 		{
 			// Always extreme death from fourth weapon
 			Health = -5000;
@@ -1288,17 +1288,17 @@ void FallingDamage()
 
 void PoisonPlayer(Actor poisoner, int poison)
 {
-	if ((Player.Cheats & Player::CF_GODMODE) || Player.Powers[pw_invulnerability])
+	if ((Player(Player).Cheats & Player::CF_GODMODE) || Player(Player).Powers[pw_invulnerability])
 	{
 		return;
 	}
-	Player.PoisonCount += poison;
-	Player.Poisoner = poisoner;
-	if (Player.PoisonCount > 100)
+	Player(Player).PoisonCount += poison;
+	Player(Player).Poisoner = poisoner;
+	if (Player(Player).PoisonCount > 100)
 	{
-		Player.PoisonCount = 100;
+		Player(Player).PoisonCount = 100;
 	}
-	Player.LastPoisonTime = Level.Game.level->time;
+	Player(Player).LastPoisonTime = Level.Game.level->time;
 }
 
 //==========================================================================
@@ -1327,13 +1327,13 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 		// Take half damage in trainer mode
 		damage >>= 1;
 	}
-	if (damage < 1000 && ((Player.Cheats & Player::CF_GODMODE)
-			|| Player.Powers[pw_invulnerability]))
+	if (damage < 1000 && ((Player(Player).Cheats & Player::CF_GODMODE)
+			|| Player(Player).Powers[pw_invulnerability]))
 	{
 		return;
 	}
 	if (damage >= Player.Health && ((Level.Game.gameskill == sk_baby) || Level.Game.deathmatch) &&
-		!Player.MorphTime)
+		!Player(Player).MorphTime)
 	{
 		// Try to use some inventory health
 		AutoUseHealth(damage - Player.Health + 1);
@@ -1343,7 +1343,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 	{
 		Player.Health = 0;
 	}
-	Player.Attacker = source;
+	Player(Player).Attacker = source;
 
 	//
 	// do the damage
@@ -1353,7 +1353,7 @@ void PoisonDamage(Actor source, int damage, bool playPainSound)
 	{
 		// Death
 		_Special1 = damage;
-		if (bIsPlayer && inflictor && !Player.MorphTime)
+		if (bIsPlayer && inflictor && !Player(Player).MorphTime)
 		{
 			// Check for flame death
 			if (inflictor.bFireDamage && (Health > -50) && (damage > 25))
@@ -2278,22 +2278,22 @@ bool HitFloor()
 		}
 		if (bIsPlayer)
 		{
-			Player.JumpTime = 0.2;	// delay any jumping for a short time
+			Player(Player).JumpTime = 0.2;	// delay any jumping for a short time
 			if (vdot < -GRAVITY * 0.25 && !bFly)
 			{
 				// squat down
-				Player.DeltaViewHeight = vdot / 8.0;
+				Player(Player).DeltaViewHeight = vdot / 8.0;
 				if (vdot < -23.0 * 35.0)
 				{
 					FallingDamage();
 					HexenLevelInfo(Level).NoiseAlert(self, self);
 				}
-				else if (vdot < -GRAVITY * 0.375 && !Player.MorphTime)
+				else if (vdot < -GRAVITY * 0.375 && !Player(Player).MorphTime)
 				{
 					PlaySound('*land', CHAN_BODY);
 					PlaySound('*grunt', CHAN_VOICE);
 				}
-				else if (GetFloorType() < FLOOR_LIQUID && !Player.MorphTime)
+				else if (GetFloorType() < FLOOR_LIQUID && !Player(Player).MorphTime)
 				{
 					PlaySound('*land', CHAN_BODY);
 				}
@@ -2401,8 +2401,8 @@ bool ZMovement(float DeltaTime)
 	//
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
-		Player.ViewHeight -= FloorZ - Origin.z;
-		Player.DeltaViewHeight = (Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+		Player(Player).ViewHeight -= FloorZ - Origin.z;
+		Player(Player).DeltaViewHeight = (Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 	}
 	//
 	// adjust height
@@ -2466,18 +2466,18 @@ void ResetBlasted()
 
 void PlayerLandedOnThing()
 {
-	Player.DeltaViewHeight = Velocity.z / 8.0;
+	Player(Player).DeltaViewHeight = Velocity.z / 8.0;
 	if (Velocity.z < -23.0 * 35.0)
 	{
 		FallingDamage();
 		HexenLevelInfo(Level).NoiseAlert(self, self);
 	}
-	else if (Velocity.z < -GRAVITY * 0.375 && !Player.MorphTime)
+	else if (Velocity.z < -GRAVITY * 0.375 && !Player(Player).MorphTime)
 	{
 		PlaySound('*land', CHAN_BODY);
 		PlaySound('*grunt', CHAN_VOICE);
 	}
-	else if (!Player.MorphTime)
+	else if (!Player(Player).MorphTime)
 	{
 		PlaySound('*land', CHAN_BODY);
 	}
@@ -2699,10 +2699,10 @@ bool Physics(float DeltaTime)
 					}
 					if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 					{
-						Player.ViewHeight -=
+						Player(Player).ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
-						Player.DeltaViewHeight =
-							(Player::VIEWHEIGHT - Player.ViewHeight) * 4.0;
+						Player(Player).DeltaViewHeight =
+							(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 						Origin.z = onmo.Origin.z + onmo.Height;
 						bOnMobj = true;
 						Velocity.z = 0.0;
@@ -2983,18 +2983,18 @@ bool Teleport(TVec pos, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 	}
 	if (bIsPlayer)
 	{
-		if (Player.Powers[pw_flight] && aboveFloor)
+		if (Player(Player).Powers[pw_flight] && aboveFloor)
 		{
 			Origin.z = Origin.z + aboveFloor;
 			if (Origin.z + Height > CeilingZ)
 			{
 				Origin.z = CeilingZ - Height;
 			}
-			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
 		}
 		else
 		{
-			Player.ViewOrg.z = Origin.z + Player.ViewHeight;
+			Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
 			if (!KeepDir)
 			{
 				Angles.pitch = 0.0;
@@ -3024,7 +3024,7 @@ bool Teleport(TVec pos, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 	}
 	if (!KeepDir)
 	{
-		if (bIsPlayer && !Player.Powers[pw_speed])
+		if (bIsPlayer && !Player(Player).Powers[pw_speed])
 		{
 			// Freeze player for about .5 sec
 			ReactionTime = 0.5;
@@ -3962,7 +3962,7 @@ void A_UnSetInvulnerable()
 
 void A_Pain()
 {
-	if (bIsPlayer && !Player.MorphTime)
+	if (bIsPlayer && !Player(Player).MorphTime)
 	{
 		if (Health < 25)
 		{
@@ -4021,7 +4021,7 @@ void A_FreeTargMobj()
 void A_Scream()
 {
 	StopSound(CHAN_AUTO);
-	if (bIsPlayer && !Player.MorphTime)
+	if (bIsPlayer && !Player(Player).MorphTime)
 	{
 		// Handle the different player death screams
 		if (Velocity.z <= -39.0 * 35.0)
@@ -4303,6 +4303,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2006/03/02 18:35:14  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.28  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

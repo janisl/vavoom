@@ -36,17 +36,17 @@ void A_FireMacePL1B()
 	Actor ball;
 	float angle;
 
-	if (Player.Ammo[am_mace] < USE_MACE_AMMO_1)
+	if (Player(Player).Ammo[am_mace] < USE_MACE_AMMO_1)
 	{
 		return;
 	}
-	Player.Ammo[am_mace] -= USE_MACE_AMMO_1;
+	Player(Player).Ammo[am_mace] -= USE_MACE_AMMO_1;
 	ball = HereticLevelInfo(Player.Level).Spawn(MaceFX2, Player.MO.Origin +
 		vector(0.0, 0.0, 28.0 - Player.MO.FloorClip));
 	ball.Velocity.z =
 		(2.0 + 173.0 * -tan(Player.MO.Angles.pitch) / 32.0) * 35.0;
 	angle = Player.MO.Angles.yaw;
-	ball.Instigator = Player.MO;
+	ball.Instigator = Actor(Player.MO);
 	ball.Angles.yaw = angle;
 	ball.Origin.z += 173.0 * -tan(Player.MO.Angles.pitch) / 16.0;
 	ball.Velocity.x = Player.MO.Velocity.x / 2.0 + ball.Speed * cos(angle);
@@ -70,14 +70,14 @@ void A_FireMacePL1()
 		A_FireMacePL1B();
 		return;
 	}
-	if (Player.Ammo[am_mace] < USE_MACE_AMMO_1)
+	if (Player(Player).Ammo[am_mace] < USE_MACE_AMMO_1)
 	{
 		return;
 	}
-	Player.Ammo[am_mace] -= USE_MACE_AMMO_1;
+	Player(Player).Ammo[am_mace] -= USE_MACE_AMMO_1;
 	SX = Random() * 4.0 - 2.0;
 	SY = WEAPONTOP + Random() * 4.0;
-	ball = Player.MO.SpawnPlayerMissileAngle(MaceFX1,
+	ball = Actor(Player.MO).SpawnPlayerMissileAngle(MaceFX1,
 		AngleMod360(Player.MO.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
@@ -95,17 +95,17 @@ void A_FireMacePL2()
 {
 	Actor A;
 
-	Player.Ammo[am_mace] -= Player.Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
-	A = Player.MO.SpawnPlayerMissile(MaceFX4);
+	Player(Player).Ammo[am_mace] -= Player.Level.Game.deathmatch ? USE_MACE_AMMO_1 : USE_MACE_AMMO_2;
+	A = Actor(Player.MO).SpawnPlayerMissile(MaceFX4);
 	if (A)
 	{
 		A.Velocity.x += Player.MO.Velocity.x;
 		A.Velocity.y += Player.MO.Velocity.y;
 		A.Velocity.z =
 			(2.0 + 173.0 * -tan(Player.MO.Angles.pitch) / 32.0) * 35.0;
-		if (Player.MO.linetarget)
+		if (Actor(Player.MO).linetarget)
 		{
-			A.Enemy = Player.MO.linetarget;
+			A.Enemy = Actor(Player.MO).linetarget;
 		}
 	}
 	Player.MO.PlaySound('weapons/maceshoot', CHAN_WEAPON);
@@ -151,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/02 18:33:23  dj_jl
+//  Don't use game specific classes in common.
+//
 //  Revision 1.7  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //
