@@ -329,7 +329,7 @@ COMMAND(ScreenShot)
 	for (i = 0; i <= 9999; i++)
 	{
 		sprintf(filename, "shot%04d.%s", i, (char *)screenshot_type);
-		if (!Sys_FileExists(va("%s/%s", fl_gamedir, filename)))
+		if (!Sys_FileExists(fl_gamedir + "/" + (const char*)filename))
 			break;	//	File doesn't exist
 	}
 	if (i == 10000)
@@ -715,9 +715,12 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.32  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.31  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

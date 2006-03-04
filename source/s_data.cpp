@@ -334,10 +334,10 @@ void S_InitScript()
 	}
 
 	//	Optionally parse script file.
-	char filename[MAX_OSPATH];
-	if (fl_devmode && FL_FindFile("scripts/sndinfo.txt", filename))
+	VStr filename = FL_FindFile("scripts/sndinfo.txt");
+	if (fl_devmode && filename)
 	{
-		SC_OpenFile(filename);
+		SC_OpenFile(*filename);
 		S_ParseSndinfo();
 	}
 
@@ -843,9 +843,12 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.21  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.20  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

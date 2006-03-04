@@ -143,7 +143,7 @@ void WadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	GwaDir = AGwaDir;
 
 	// open the file and add to directory
-	Handle = Sys_FileOpenRead(*FileName);
+	Handle = Sys_FileOpenRead(FileName);
 	if (Handle == -1)
 	{
 		Sys_Error("Couldn't open %s", *FileName);
@@ -207,7 +207,7 @@ void WadFile::OpenSingleLump(const VStr& FileName)
 {
 	guard(WadFile::OpenSingleLump);
 	// open the file and add to directory
-	Handle = Sys_FileOpenRead(*FileName);
+	Handle = Sys_FileOpenRead(FileName);
 	if (Handle == -1)
 	{
 		Sys_Error("Couldn't open %s", *FileName);
@@ -222,9 +222,7 @@ void WadFile::OpenSingleLump(const VStr& FileName)
 	LumpInfo = Z_New<lumpinfo_t>();
 
 	// Fill in lumpinfo
-	char TmpName[12];
-	FL_ExtractFileBase(*FileName, TmpName);
-	LumpInfo->Name = VName(TmpName, VName::AddLower8);
+	LumpInfo->Name = VName(*FileName.ExtractFileBase(), VName::AddLower8);
 	LumpInfo->Position = 0;
 	LumpInfo->Size = Sys_FileSize(Handle);
 	
@@ -317,16 +315,15 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 {
 	guard(W_AddFile);
 	int wadtime;
-	char ext[8];
 
-	wadtime = Sys_FileTime(*FileName);
+	wadtime = Sys_FileTime(FileName);
 	if (wadtime == -1)
 	{
 		Sys_Error("Required file %s doesn't exist", *FileName);
 	}
 
-	FL_ExtractFileExtension(*FileName, ext);
-	if (stricmp(ext, "wad") && stricmp(ext, "gwa"))
+	VStr ext = FileName.ExtractFileExtension();
+	if (ext != "wad" && ext != "gwa")
 	{
 		wad_files[num_wad_files].OpenSingleLump(FileName);
 	}
@@ -337,18 +334,15 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 
 	num_wad_files++;
 
-	if (!stricmp(ext, "wad"))
+	if (ext == "wad")
 	{
-		char gl_name[1024];
+		VStr gl_name;
 
 		bool FoundGwa = false;
 		if (GwaDir)
 		{
-			strcpy(gl_name, *GwaDir);
-			strcat(gl_name, "/");
-			FL_ExtractFileName(*FileName, gl_name + strlen(gl_name));
-			FL_StripExtension(gl_name);
-			strcat(gl_name, ".gwa");
+			gl_name = GwaDir + "/" +
+				FileName.ExtractFileName().StripExtension() + ".gwa";
 			if (Sys_FileTime(gl_name) >= wadtime)
 			{
 				W_AddFile(gl_name, VStr(), false);
@@ -358,9 +352,7 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 
 		if (!FoundGwa)
 		{
-			strcpy(gl_name, *FileName);
-			FL_StripExtension(gl_name);
-			strcat(gl_name, ".gwa");
+			gl_name = FileName.StripExtension() + ".gwa";
 			if (Sys_FileTime(gl_name) >= wadtime)
 			{
 				W_AddFile(gl_name, VStr(), false);
@@ -441,30 +433,28 @@ void W_BuildGLNodes(int lump)
 	guard(W_BuildGLNodes);
 	int fi = FILE_INDEX(lump);
 
-	char gwaname[MAX_OSPATH];
+	VStr gwaname;
 	if (wad_files[fi].GwaDir)
 	{
-		FL_CreatePath(*wad_files[fi].GwaDir);
-		strcpy(gwaname, *wad_files[fi].GwaDir);
-		strcat(gwaname, "/");
-		FL_ExtractFileName(*wad_files[fi].Name, gwaname + strlen(gwaname));
+		FL_CreatePath(wad_files[fi].GwaDir);
+		gwaname = wad_files[fi].GwaDir + "/" +
+			wad_files[fi].Name.ExtractFileName();
 	}
 	else
-		strcpy(gwaname, *wad_files[fi].Name);
-	FL_StripExtension(gwaname);
-	strcat(gwaname, ".gwa");
+		gwaname = wad_files[fi].Name;
+	gwaname = gwaname.StripExtension() + ".gwa";
 
 	// Build GL nodes
-	if (!GLBSP_BuildNodes(*wad_files[fi].Name, gwaname))
+	if (!GLBSP_BuildNodes(*wad_files[fi].Name, *gwaname))
 	{
 		Sys_Error("Node build failed");
 	}
 
 	// Build PVS
-	GLVis_BuildPVS(*wad_files[fi].Name, gwaname);
+	GLVis_BuildPVS(*wad_files[fi].Name, *gwaname);
 
 	// Add GWA file
-	wad_files[fi + 1].Open(gwaname, NULL, false);
+	wad_files[fi + 1].Open(gwaname, VStr(), false);
 	unguard;
 }
 
@@ -478,16 +468,14 @@ void W_BuildPVS(int lump, int gllump)
 {
 	guard(W_BuildPVS);
 	int fi = FILE_INDEX(lump);
-	char name[MAX_OSPATH];
-	strcpy(name, *wad_files[fi].Name);
+	VStr name = wad_files[fi].Name;
 
 	int glfi = FILE_INDEX(gllump);
-	char glname[MAX_OSPATH];
-	strcpy(glname, *wad_files[glfi].Name);
+	VStr glname = wad_files[glfi].Name;
 
 	if (!wad_files[glfi].CanClose())
 	{
-		GCon->Logf("Can't close %s, some lumps are in use", glname);
+		GCon->Logf("Can't close %s, some lumps are in use", *glname);
 		GCon->Log("PVS build not performed");
 		return;
 	}
@@ -496,10 +484,10 @@ void W_BuildPVS(int lump, int gllump)
 	wad_files[glfi].Close();
 
 	// Build PVS
-	GLVis_BuildPVS(name, fi != glfi ? glname : NULL);
+	GLVis_BuildPVS(*name, fi != glfi ? *glname : NULL);
 
 	// Add GWA file
-	wad_files[glfi].Open(glname, NULL, false);
+	wad_files[glfi].Open(glname, VStr(), false);
 	unguard;
 }
 
@@ -1049,6 +1037,9 @@ void W_Profile()
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2006/03/04 16:01:34  dj_jl
+//  File system API now uses strings.
+//
 //  Revision 1.24  2006/03/02 23:24:36  dj_jl
 //  Wad lump names stored as names.
 //

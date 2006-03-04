@@ -27,45 +27,36 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_OSPATH		128
-#define MAX_VPATH		128
-
 // TYPES -------------------------------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void FL_Init(void);
+void FL_Init();
 
-void FL_DefaultPath(char *path, const char *basepath);
-void FL_DefaultExtension(char *path, const char *extension);
-void FL_StripFilename(char *path);
-void FL_StripExtension(char *path);
-void FL_ExtractFilePath(const char *path, char *dest);
-void FL_ExtractFileName(const char *path, char *dest);
-void FL_ExtractFileBase(const char *path, char *dest);
-void FL_ExtractFileExtension(const char *path, char *dest);
+VStr FL_FindFile(const VStr& fname);
+int FL_ReadFile(const VStr& name, void** buffer, int tag);
+bool FL_WriteFile(const VStr& name, const void* source, int length);
+void FL_CreatePath(const VStr& Path);
 
-bool FL_FindFile(const char *fname, char *dest);
-int FL_ReadFile(const char* name, void** buffer, int tag);
-bool FL_WriteFile(const char* name, const void* source, int length);
-void FL_CreatePath(const char* Path);
-
-VStream* FL_OpenFileRead(const char *Name);
-VStream* FL_OpenFileWrite(const char *Name);
+VStream* FL_OpenFileRead(const VStr& Name);
+VStream* FL_OpenFileWrite(const VStr& Name);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern bool		fl_devmode;
-extern char		fl_basedir[MAX_OSPATH];
-extern char		fl_savedir[MAX_OSPATH];
-extern char		fl_gamedir[MAX_OSPATH];
+extern VStr		fl_basedir;
+extern VStr		fl_savedir;
+extern VStr		fl_gamedir;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.10  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.9  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
 //	

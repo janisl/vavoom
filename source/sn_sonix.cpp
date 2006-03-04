@@ -185,10 +185,10 @@ void SN_InitSequenceScript()
 		}
 	}
 	//	Optionally parse script file.
-	char filename[MAX_OSPATH];
-	if (fl_devmode && FL_FindFile("scripts/sndseq.txt", filename))
+	VStr filename = FL_FindFile("scripts/sndseq.txt");
+	if (fl_devmode && filename)
 	{
-		SC_OpenFile(filename);
+		SC_OpenFile(*filename);
 		ParseSequenceScript();
 	}
 	unguard;
@@ -718,9 +718,12 @@ void SN_SerialiseSounds(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.17  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.16  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

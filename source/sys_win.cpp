@@ -106,9 +106,9 @@ static TCvarI		win_sys_keys("win_sys_keys", "1", CVAR_ARCHIVE);
 //
 //==========================================================================
 
-int Sys_FileOpenRead(const char* filename)
+int Sys_FileOpenRead(const VStr& filename)
 {
-	return open(filename, O_RDONLY | O_BINARY);
+	return open(*filename, O_RDONLY | O_BINARY);
 }
 
 //==========================================================================
@@ -117,9 +117,9 @@ int Sys_FileOpenRead(const char* filename)
 //
 //==========================================================================
 
-int Sys_FileOpenWrite(const char* filename)
+int Sys_FileOpenWrite(const VStr& filename)
 {
-	return open(filename, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
+	return open(*filename, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
 }
 
 //==========================================================================
@@ -183,9 +183,9 @@ int Sys_FileClose(int handle)
 //
 //==========================================================================
 
-int Sys_FileExists(const char* filename)
+int Sys_FileExists(const VStr& filename)
 {
-	return !access(filename, R_OK);
+	return !access(*filename, R_OK);
 }
 
 //==========================================================================
@@ -196,11 +196,11 @@ int Sys_FileExists(const char* filename)
 //
 //==========================================================================
 
-int	Sys_FileTime(const char *path)
+int	Sys_FileTime(const VStr& path)
 {
 	struct	stat	buf;
 	
-	if (stat(path, &buf) == -1)
+	if (stat(*path, &buf) == -1)
 		return -1;
 
 	return buf.st_mtime;
@@ -212,9 +212,9 @@ int	Sys_FileTime(const char *path)
 //
 //==========================================================================
 
-int Sys_CreateDirectory(const char* path)
+int Sys_CreateDirectory(const VStr& path)
 {
-	return mkdir(path);
+	return mkdir(*path);
 }
 
 //==========================================================================
@@ -223,15 +223,15 @@ int Sys_CreateDirectory(const char* path)
 //
 //==========================================================================
 
-int Sys_OpenDir(const char *dirname)
+int Sys_OpenDir(const VStr& dirname)
 {
-	dir_handle = FindFirstFile(va("%s/*.*", dirname), &dir_buf);
-    if (dir_handle == INVALID_HANDLE_VALUE)
-    {
-        return false;
-    }
-    dir_already_got = true;
-    return true;
+	dir_handle = FindFirstFile(va("%s/*.*", *dirname), &dir_buf);
+	if (dir_handle == INVALID_HANDLE_VALUE)
+	{
+		return false;
+	}
+	dir_already_got = true;
+	return true;
 }
 
 //==========================================================================
@@ -240,13 +240,13 @@ int Sys_OpenDir(const char *dirname)
 //
 //==========================================================================
 
-const char *Sys_ReadDir(void)
+VStr Sys_ReadDir()
 {
 	if (!dir_already_got)
 	{
 		if (FindNextFile(dir_handle, &dir_buf) != TRUE)
 		{
-			return NULL;
+			return VStr();
 		}
 	}
 	dir_already_got = false;
@@ -270,11 +270,11 @@ void Sys_CloseDir(void)
 //
 //==========================================================================
 
-bool Sys_DirExists(const char *path)
+bool Sys_DirExists(const VStr& path)
 {
 	struct stat s;
 	
-	if (stat(path, &s) == -1)
+	if (stat(*path, &s) == -1)
 		return false;
 	
 	return !!(s.st_mode & S_IFDIR);
@@ -876,9 +876,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.24  2006/02/26 14:45:57  dj_jl
 //	Fix compilation with newer version DirectX headers.
-//
+//	
 //	Revision 1.23  2005/10/02 23:13:22  dj_jl
 //	New Windows MIDI driver.
 //	

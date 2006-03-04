@@ -117,7 +117,7 @@ extern char			m_return_reason[32];
 #endif
 
 extern int			num_connected;
-extern const char	*wadfiles[];
+extern TArray<VStr>	wadfiles;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -638,8 +638,8 @@ static qsocket_t *_Datagram_CheckNewConnections(void)
 				<< (byte)svs.num_connected
             	<< (byte)svs.max_clients
 				<< (byte)NET_PROTOCOL_VERSION;
-	    for (const char **wadfile = wadfiles; *wadfile; wadfile++)
-			net_msg << *wadfile;
+	    for (int i = 0; i < wadfiles.Num(); i++)
+			net_msg << *wadfiles[i];
 		net_msg << "";
 
 		*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
@@ -1303,9 +1303,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.11  2005/11/12 11:59:02  dj_jl
 //	Little fix for checksumms.
-//
+//	
 //	Revision 1.10  2005/09/11 13:34:58  dj_jl
 //	Compressed packet size fix.
 //	

@@ -26,7 +26,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-bool FL_FindFile(const char *fname, char *dest);
 
 // MACROS ------------------------------------------------------------------
 
@@ -410,7 +409,6 @@ COMMAND(Echo)
 COMMAND(Exec)
 {
 	char	*buf;
-	char	path[MAX_OSPATH];
 
 	if (Argc() != 2)
 	{
@@ -418,15 +416,16 @@ COMMAND(Exec)
 		return;
 	}
 
-    if (!FL_FindFile(Argv(1), path))
-    {
+	VStr path = FL_FindFile(Argv(1));
+	if (!path)
+	{
 		GCon->Logf("Can't find \"%s\".", Argv(1));
-        return;
-    }
+		return;
+	}
 
-   	GCon->Logf("Executing \"%s\".", path);
+	GCon->Logf("Executing \"%s\".", *path);
 
-	M_ReadFile(path, (byte**)&buf);
+	M_ReadFile(*path, (byte**)&buf);
 	CmdBuf.Insert(buf);
 	Z_Free(buf);
 }
@@ -647,9 +646,12 @@ void Cmd_ForwardToServer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.12  2005/04/28 07:16:11  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.11  2003/12/19 17:36:58  dj_jl
 //	Dedicated server fix
 //	

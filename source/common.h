@@ -189,6 +189,28 @@ public:
 
 //==========================================================================
 //
+//	Assertion macros
+//
+//==========================================================================
+
+#if DO_CHECK
+#define check(e)	if (!(e)) throw VavoomError("Assertion failed: " #e)
+#define verify(e)	if (!(e)) throw VavoomError("Assertion failed: " #e)
+#else
+#define check(e)
+#define verify(e)	(e)
+#endif
+
+#if DO_CHECK_SLOW
+#define checkSlow(e)	check(e)
+#define verifySlow(e)	verify(e)
+#else
+#define checkSlow(e)
+#define verifySlow(e)	(e)
+#endif
+
+//==========================================================================
+//
 //	Forward declarations
 //
 //==========================================================================
@@ -206,9 +228,12 @@ class	VObject;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.23  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.22  2006/02/27 18:43:41  dj_jl
 //	Added definitions for common integer types.
 //	

@@ -60,14 +60,14 @@ boolean sc_Crossed;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char 	ScriptName[16];
-static char 	*ScriptBuffer;
-static char 	*ScriptPtr;
-static char 	*ScriptEndPtr;
-static char 	StringBuffer[MAX_STRING_SIZE];
-static boolean 	ScriptOpen = false;
-static int 		ScriptSize;
-static boolean 	AlreadyGot = false;
+static VStr		ScriptName;
+static char		*ScriptBuffer;
+static char		*ScriptPtr;
+static char		*ScriptEndPtr;
+static char		StringBuffer[MAX_STRING_SIZE];
+static bool		ScriptOpen = false;
+static int		ScriptSize;
+static bool		AlreadyGot = false;
 
 // CODE --------------------------------------------------------------------
 
@@ -80,11 +80,10 @@ static boolean 	AlreadyGot = false;
 void SC_Open(const char *name)
 {
 	guard(SC_Open);
-	char filename[MAX_OSPATH];
-
-	if (fl_devmode && FL_FindFile(va("scripts/%s.txt", name), filename))
+	VStr filename = FL_FindFile(va("scripts/%s.txt", name));
+	if (fl_devmode && filename)
 	{
-		SC_OpenFile(filename);
+		SC_OpenFile(*filename);
 	}
 	else
 	{
@@ -154,20 +153,20 @@ static void OpenScript(const char *name, int LumpNum, int type)
 		// Lump script
 		ScriptBuffer = (char*)W_CacheLumpName(VName(name, VName::AddLower8), PU_HIGH);
 		ScriptSize = W_LumpLength(W_GetNumForName(VName(name, VName::AddLower8)));
-		strcpy(ScriptName, name);
+		ScriptName = name;
 	}
 	else if (type == LUMP_NUM_SCRIPT)
 	{
 		// Lump num script
 		ScriptBuffer = (char*)W_CacheLumpNum(LumpNum, PU_HIGH);
 		ScriptSize = W_LumpLength(LumpNum);
-		strcpy(ScriptName, name);
+		ScriptName = name;
 	}
 	else if (type == FILE_ZONE_SCRIPT)
 	{
 		// File script
 		ScriptSize = M_ReadFile(name, (byte **)&ScriptBuffer);
-		FL_ExtractFileBase(name, ScriptName);
+		ScriptName = VStr(name).ExtractFileBase();
 	}
 	ScriptPtr = ScriptBuffer;
 	ScriptEndPtr = ScriptPtr+ScriptSize;
@@ -377,7 +376,7 @@ boolean SC_GetNumber(void)
 		if (*stopper != 0)
 		{
 			Sys_Error("SC_GetNumber: Bad numeric constant \"%s\".\n"
-				"Script %s, Line %d", sc_String, ScriptName, sc_Line);
+				"Script %s, Line %d", sc_String, *ScriptName, sc_Line);
 		}
 		return true;
 	}
@@ -451,7 +450,7 @@ boolean SC_GetFloat(void)
 		if (*stopper != 0)
 		{
 			Sys_Error("SC_GetFloat: Bad floating point constant \"%s\".\n"
-				"Script %s, Line %d", sc_String, ScriptName, sc_Line);
+				"Script %s, Line %d", sc_String, *ScriptName, sc_Line);
 		}
 		return true;
 	}
@@ -600,7 +599,7 @@ void SC_ScriptError(const char *message)
 {
 	guard(SC_ScriptError)
 	const char* Msg = message ? message : "Bad syntax.";
-	Sys_Error("Script error, \"%s\" line %d: %s", ScriptName,
+	Sys_Error("Script error, \"%s\" line %d: %s", *ScriptName,
 		sc_Line, Msg);
 	unguard;
 }
@@ -624,9 +623,12 @@ static void CheckOpen(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.9  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.8  2005/07/03 12:07:37  dj_jl
 //	Fixed opening of lump num scripts.
 //	

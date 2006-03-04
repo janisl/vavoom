@@ -42,14 +42,14 @@
 #define SAVEGAMENAME			"vavm"
 #define EMPTYSTRING				"empty slot"
 #define MOBJ_NULL 				-1
-#define SAVE_NAME(_name, _slot) \
-	sprintf(_name, "saves/savegame.vs%d", _slot)
-#define SAVE_MAP_NAME(_name, _slot, _map) \
-	sprintf(_name, "saves/%s.vs%d", _map, _slot)
-#define SAVE_NAME_ABS(_name, _slot) \
-	sprintf(_name, "%s/savegame.vs%d", SV_GetSavesDir(), _slot)
-#define SAVE_MAP_NAME_ABS(_name, _slot, _map) \
-	sprintf(_name, "%s/%s.vs%d", SV_GetSavesDir(), _map, _slot)
+#define SAVE_NAME(_slot) \
+	(VStr("saves/savegame.vs") + _slot)
+#define SAVE_MAP_NAME(_slot, _map) \
+	(VStr("saves/") + _map + ".vs" + _slot)
+#define SAVE_NAME_ABS(_slot) \
+	(SV_GetSavesDir() + "/savegame.vs" + _slot)
+#define SAVE_MAP_NAME_ABS(_slot, _map) \
+	(SV_GetSavesDir() + "/" + _map + ".vs" + _slot)
 
 #define SAVE_DESCRIPTION_LENGTH		24
 #define SAVE_VERSION_TEXT			"Version 1.19"
@@ -95,8 +95,8 @@ extern char			mapaftersecret[12];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char		SavesDir[MAX_OSPATH];
-static boolean 	SavingPlayers;
+static VStr			SavesDir;
+static boolean 		SavingPlayers;
 
 #define GET_BYTE	Streamer<byte>(*Loader)
 #define GET_WORD	Streamer<word>(*Loader)
@@ -309,14 +309,14 @@ static VSaveLoaderStream*	Loader;
 //
 //==========================================================================
 
-static const char* SV_GetSavesDir()
+static VStr SV_GetSavesDir()
 {
-	if (!SavesDir[0])
+	if (!SavesDir)
 	{
-		if (fl_savedir[0])
-			sprintf(SavesDir, "%s/%s/saves", fl_savedir, fl_gamedir);
+		if (fl_savedir)
+			SavesDir = fl_savedir + "/" + fl_gamedir + "/saves";
 		else
-			sprintf(SavesDir, "%s/%s/saves", fl_basedir, fl_gamedir);
+			SavesDir = fl_basedir + "/" + fl_gamedir + "/saves";
 	}
 	return SavesDir;
 }
@@ -330,11 +330,9 @@ static const char* SV_GetSavesDir()
 boolean	SV_GetSaveString(int slot, char* buf)
 {
 	guard(SV_GetSaveString);
-	char		fileName[MAX_OSPATH];
 	FILE*		f;
 
-	SAVE_NAME_ABS(fileName, slot);
-	f = fopen(fileName, "rb");
+	f = fopen(*SAVE_NAME_ABS(slot), "rb");
 	if (f)
 	{
 		fread(buf, 1, SAVE_DESCRIPTION_LENGTH, f);
@@ -355,7 +353,7 @@ boolean	SV_GetSaveString(int slot, char* buf)
 //
 //==========================================================================
 
-static void OpenStreamOut(char *fileName)
+static void OpenStreamOut(const char *fileName)
 {
 	Saver = new VSaveWriterStream(FL_OpenFileWrite(fileName));
 }
@@ -428,8 +426,7 @@ static void ClearSaveSlot(int slot)
 {
 	guard(ClearSaveSlot);
 	char slotExt[4];
-	const char *curName;
-	char fileName[MAX_OSPATH];
+	VStr curName;
 
 	sprintf(slotExt, "vs%d", slot);
 	if (!Sys_OpenDir(SV_GetSavesDir()))
@@ -437,15 +434,12 @@ static void ClearSaveSlot(int slot)
 		//  Directory doesn't exist ... yet
 		return;
 	}
-	while ((curName = Sys_ReadDir()) != NULL)
+	while ((curName = Sys_ReadDir()))
 	{
-		char ext[8];
-
-		FL_ExtractFileExtension(curName, ext);
-		if (!strcmp(ext, slotExt))
+		VStr ext = curName.ExtractFileExtension();
+		if (ext == slotExt)
 		{
-			sprintf(fileName, "%s/%s", SV_GetSavesDir(), curName);
-			remove(fileName);
+			remove(*(SV_GetSavesDir() + "/" + curName));
 		}
 	}
 	Sys_CloseDir();
@@ -463,37 +457,28 @@ static void ClearSaveSlot(int slot)
 static void CopySaveSlot(int sourceSlot, int destSlot)
 {
 	guard(CopySaveSlot);
-	char srcExt[4];
-	char dstExt[4];
-	const char *curName;
-	char sourceName[MAX_OSPATH];
-	char destName[MAX_OSPATH];
+	VStr curName;
 
-	sprintf(srcExt, "vs%d", sourceSlot);
-	sprintf(dstExt, "vs%d", destSlot);
+	VStr srcExt = VStr("vs") + sourceSlot;
+	VStr dstExt = VStr("vs") + destSlot;
 	if (!Sys_OpenDir(SV_GetSavesDir()))
 	{
 		//  Directory doesn't exist ... yet
 		return;
 	}
-	while ((curName = Sys_ReadDir()) != NULL)
+	while ((curName = Sys_ReadDir()))
 	{
-		char ext[8];
-
-		FL_ExtractFileExtension(curName, ext);
-		if (!strcmp(ext, srcExt))
+		VStr ext = VStr(curName).ExtractFileExtension();
+		if (ext == srcExt)
 		{
-			sprintf(sourceName, "%s/%s", SV_GetSavesDir(), curName);
-			strcpy(destName, sourceName);
-			FL_StripExtension(destName);
-			strcat(destName, ".");
-			strcat(destName, dstExt);
+			VStr sourceName = SV_GetSavesDir() + "/" + curName;
+			VStr destName = sourceName.StripExtension() + "." + dstExt;
 
 			int length;
 			byte *buffer;
 
-			length = M_ReadFile(sourceName, &buffer);
-			M_WriteFile(destName, buffer, length);
+			length = M_ReadFile(*sourceName, &buffer);
+			M_WriteFile(*destName, buffer, length);
 			Z_Free(buffer);
 		}
 	}
@@ -753,16 +738,13 @@ static void UnarchiveSounds()
 static void SV_SaveMap(int slot, boolean savePlayers)
 {
 	guard(SV_SaveMap);
-	char fileName[100];
-
 	// Make sure we don't have any garbage
 	VObject::CollectGarbage();
 
 	SavingPlayers = savePlayers;
 
 	// Open the output file
-	SAVE_MAP_NAME(fileName, slot, level.mapname);
-	OpenStreamOut(fileName);
+	OpenStreamOut(*SAVE_MAP_NAME(slot, (const char*)level.mapname));
 
 	StreamOutLong(ASEG_NAMES);
 	ArchiveNames(*Saver);
@@ -818,19 +800,14 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 //
 //==========================================================================
 
-static void SV_LoadMap(char *mapname, int slot)
+static void SV_LoadMap(const char *mapname, int slot)
 {
 	guard(SV_LoadMap);
-	char fileName[100];
-
 	// Load a base level
-	SV_SpawnServer(mapname, false);
-
-	// Create the name
-	SAVE_MAP_NAME(fileName, slot, mapname);
+	SV_SpawnServer(const_cast<char*>(mapname), false);
 
 	// Load the file
-	Loader = new VSaveLoaderStream(FL_OpenFileRead(fileName));
+	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_MAP_NAME(slot, mapname)));
 
 	// Load names
 	AssertSegment(ASEG_NAMES);
@@ -893,12 +870,10 @@ void SV_SaveGame(int slot, char* description)
 {
 	guard(SV_SaveGame);
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
-	char fileName[100];
 	int i;
 
 	// Open the output file
-	SAVE_NAME(fileName, BASE_SLOT);
-	OpenStreamOut(fileName);
+	OpenStreamOut(*SAVE_NAME(BASE_SLOT));
 
 	// Write game save description
 	StreamOutBuffer(description, SAVE_DESCRIPTION_LENGTH);
@@ -965,7 +940,6 @@ void SV_SaveGame(int slot, char* description)
 void SV_LoadGame(int slot)
 {
 	guard(SV_LoadGame);
-	char		fileName[100];
 	char		mapname[12];
 	int			i;
 
@@ -981,11 +955,8 @@ void SV_LoadGame(int slot)
 		CopySaveSlot(slot, BASE_SLOT);
 	}
 
-	// Create the name
-	SAVE_NAME(fileName, BASE_SLOT);
-
 	// Load the file
-	Loader = new VSaveLoaderStream(FL_OpenFileRead(fileName));
+	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_NAME(BASE_SLOT)));
 
 	// Set the save pointer and skip the description field
 	char desc[SAVE_DESCRIPTION_LENGTH];
@@ -1081,12 +1052,9 @@ int SV_GetRebornSlot(void)
 //
 //==========================================================================
 
-boolean SV_RebornSlotAvailable(void)
+boolean SV_RebornSlotAvailable()
 {
-	char fileName[100];
-
-	SAVE_NAME_ABS(fileName, REBORN_SLOT);
-	return Sys_FileExists(fileName);
+	return Sys_FileExists(SAVE_NAME_ABS(REBORN_SLOT));
 }
 
 //==========================================================================
@@ -1097,7 +1065,7 @@ boolean SV_RebornSlotAvailable(void)
 //
 //==========================================================================
 
-void SV_UpdateRebornSlot(void)
+void SV_UpdateRebornSlot()
 {
 	ClearSaveSlot(REBORN_SLOT);
 	CopySaveSlot(BASE_SLOT, REBORN_SLOT);
@@ -1124,7 +1092,6 @@ void SV_MapTeleport(char *map)
 {
 	guard(SV_MapTeleport);
 	char		mapname[12];
-	char		fileName[100];
 
 	//	Make a copy because SV_SpawnServer can modify it
 	strcpy(mapname, map);
@@ -1148,8 +1115,7 @@ void SV_MapTeleport(char *map)
 		}
 	}
 
-	SAVE_MAP_NAME_ABS(fileName, BASE_SLOT, mapname);
-	if (!deathmatch && Sys_FileExists(fileName))
+	if (!deathmatch && Sys_FileExists(SAVE_MAP_NAME_ABS(BASE_SLOT, (const char*)mapname)))
 	{
 		// Unarchive map
 		SV_LoadMap(mapname, BASE_SLOT);
@@ -1264,9 +1230,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.58  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.57  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
-//
+//	
 //	Revision 1.56  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

@@ -265,15 +265,12 @@ COMMAND(StopDemo)
 COMMAND(Record)
 {
 	guard(COMMAND Record);
-	int		c;
-	char	name[MAX_VPATH];
-
 	if (cmd_source != src_command)
 	{
 		return;
 	}
 
-	c = Argc();
+	int c = Argc();
 	if (c != 2 && c != 3)
 	{
 		GCon->Log("record <demoname> [<map>]");
@@ -293,8 +290,7 @@ COMMAND(Record)
 		return;
 	}
 
-	Sys_CreateDirectory(va("%s/demos", fl_gamedir));
-	sprintf(name, "demos/%s", Argv(1));
+	VStr name = VStr("demos/") + VStr(Argv(1)).DefaultExtension(".dem");
 
 	//
 	// start the map up
@@ -307,9 +303,8 @@ COMMAND(Record)
 	//
 	// open the demo file
 	//
-	FL_DefaultExtension(name, ".dem");
 
-	GCon->Logf("recording to %s.", name);
+	GCon->Logf("recording to %s.", *name);
 	cls.demofile = FL_OpenFileWrite(name);
 	if (!cls.demofile)
 	{
@@ -317,7 +312,7 @@ COMMAND(Record)
 		return;
 	}
 
-	cls.demofile->Serialise(const_cast<char *>("VDEM"), 4);
+	cls.demofile->Serialise(const_cast<char*>("VDEM"), 4);
 
 	cls.demorecording = true;
 	unguard;
@@ -334,7 +329,6 @@ COMMAND(Record)
 COMMAND(PlayDemo)
 {
 	guard(COMMAND PlayDemo);
-	char	name[256];
 	char	magic[8];
 
 	if (cmd_source != src_command)
@@ -356,10 +350,9 @@ COMMAND(PlayDemo)
 	//
 	// open the demo file
 	//
-	sprintf(name, "demos/%s", Argv(1));
-	FL_DefaultExtension(name, ".dem");
+	VStr name = VStr("demos/") + VStr(Argv(1)).DefaultExtension(".dem");
 
-	GCon->Logf("Playing demo from %s.", name);
+	GCon->Logf("Playing demo from %s.", *name);
 	cls.demofile = FL_OpenFileRead(name);
 	if (!cls.demofile)
 	{
@@ -419,9 +412,12 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.15  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.14  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

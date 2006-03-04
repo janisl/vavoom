@@ -80,9 +80,9 @@ static DIR *current_dir;
 //
 //==========================================================================
 
-int Sys_FileOpenRead(const char* filename)
+int Sys_FileOpenRead(const VStr& filename)
 {
-	return open(filename, O_RDONLY | O_BINARY);
+	return open(*filename, O_RDONLY | O_BINARY);
 }
 
 //==========================================================================
@@ -91,9 +91,9 @@ int Sys_FileOpenRead(const char* filename)
 //
 //==========================================================================
 
-int Sys_FileOpenWrite(const char* filename)
+int Sys_FileOpenWrite(const VStr& filename)
 {
-	return open(filename, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
+	return open(*filename, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
 }
 
 //==========================================================================
@@ -157,9 +157,9 @@ int Sys_FileClose(int handle)
 //
 //==========================================================================
 
-int Sys_FileExists(const char* filename)
+int Sys_FileExists(const VStr& filename)
 {
-	return !access(filename, R_OK);
+	return !access(*filename, R_OK);
 }
 
 //==========================================================================
@@ -170,11 +170,11 @@ int Sys_FileExists(const char* filename)
 //
 //==========================================================================
 
-int	Sys_FileTime(const char *path)
+int	Sys_FileTime(const VStr& path)
 {
 	struct	stat	buf;
 	
-	if (stat(path,&buf) == -1)
+	if (stat(*path, &buf) == -1)
 		return -1;
 	
 	return buf.st_mtime;
@@ -186,9 +186,9 @@ int	Sys_FileTime(const char *path)
 //
 //==========================================================================
 
-int Sys_CreateDirectory(const char* path)
+int Sys_CreateDirectory(const VStr& path)
 {
-	return mkdir(path, 0777);
+	return mkdir(*path, 0777);
 }
 
 //==========================================================================
@@ -197,9 +197,9 @@ int Sys_CreateDirectory(const char* path)
 //
 //==========================================================================
 
-int Sys_OpenDir(const char *path)
+int Sys_OpenDir(const VStr& path)
 {
-	current_dir = opendir(path);
+	current_dir = opendir(*path);
 	return current_dir != NULL;
 }
 
@@ -209,14 +209,14 @@ int Sys_OpenDir(const char *path)
 //
 //==========================================================================
 
-const char *Sys_ReadDir(void)
+VStr Sys_ReadDir()
 {
 	struct dirent *de = readdir(current_dir);
 	if (de)
 	{
 		return de->d_name;
 	}
-	return NULL;
+	return VStr;
 }
 
 //==========================================================================
@@ -236,11 +236,11 @@ void Sys_CloseDir(void)
 //
 //==========================================================================
 
-bool Sys_DirExists(const char *path)
+bool Sys_DirExists(const VStr& path)
 {
 	struct stat s;
 	
-	if (stat(path, &s) == -1)
+	if (stat(*path, &s) == -1)
 		return false;
 	
 	return !!S_ISDIR(s.st_mode);
@@ -706,9 +706,12 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.14  2006/03/02 23:24:36  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.13  2002/04/11 16:43:58  dj_jl
 //	Removed limiting of memory for OpenGL.
 //	

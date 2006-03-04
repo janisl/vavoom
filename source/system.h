@@ -27,44 +27,41 @@
 
 // MACROS ------------------------------------------------------------------
 
-// State updates, number of tics / second.
-#define TICRATE		35
-
 // TYPES -------------------------------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-int Sys_FileOpenRead(const char*);
-int Sys_FileOpenWrite(const char*);
+int Sys_FileOpenRead(const VStr&);
+int Sys_FileOpenWrite(const VStr&);
 int Sys_FileRead(int, void*, int);
 int Sys_FileWrite(int, const void*, int);
 int Sys_FileSize(int);
 int Sys_FileSeek(int, int);
 int Sys_FileClose(int);
-int Sys_FileExists(const char*);
-int Sys_FileTime(const char*);
+int Sys_FileExists(const VStr&);
+int Sys_FileTime(const VStr&);
 
-int Sys_CreateDirectory(const char*);
-int Sys_OpenDir(const char *);
-const char *Sys_ReadDir(void);
-void Sys_CloseDir(void);
-bool Sys_DirExists(const char *);
+int Sys_CreateDirectory(const VStr&);
+int Sys_OpenDir(const VStr&);
+VStr Sys_ReadDir();
+void Sys_CloseDir();
+bool Sys_DirExists(const VStr&);
 
 void* Sys_ZoneBase(int*);
 
 void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn) 
 	Sys_Error(const char*, ...);
-void __attribute__((noreturn)) __declspec(noreturn) Sys_Quit(void);
-void Sys_Shutdown(void);
+void __attribute__((noreturn)) __declspec(noreturn) Sys_Quit();
+void Sys_Shutdown();
 
-double Sys_Time(void);
+double Sys_Time();
 
-char *Sys_ConsoleInput(void);
+char *Sys_ConsoleInput();
 
 extern "C" {
 
-void Sys_LowFPPrecision(void);
-void Sys_HighFPPrecision(void);
+void Sys_LowFPPrecision();
+void Sys_HighFPPrecision();
 
 }
 
@@ -78,9 +75,12 @@ void Sys_MakeCodeWriteable(unsigned long, unsigned long);
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.8  2002/04/11 16:40:32  dj_jl
 //	Added __declspec modifiers.
-//
+//	
 //	Revision 1.7  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

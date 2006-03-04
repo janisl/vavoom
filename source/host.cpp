@@ -39,6 +39,9 @@ char *P_TranslateMap(int map);
 
 // MACROS ------------------------------------------------------------------
 
+// State updates, number of tics / second.
+#define TICRATE		35
+
 // TYPES -------------------------------------------------------------------
 
 class EndGame : public VavoomError
@@ -99,9 +102,15 @@ static char		*host_error_string;
 //
 //==========================================================================
 
-void Host_Init(void)
+void Host_Init()
 {
 	guard(Host_Init);
+	//  Memory must be initialised before anything else
+	void*	base;
+	int		size;
+	base = Sys_ZoneBase(&size);
+	Z_Init(base, size);
+
 #if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
 	const char* HomeDir = getenv("HOME");
 	if (HomeDir)
@@ -130,12 +139,6 @@ void Host_Init(void)
 	{
 		GMaxEntities = atoi(myargv[p + 1]);
 	}
-
-	//  Memory must be initialised before anything else
-	void*	base;
-	int		size;
-	base = Sys_ZoneBase(&size);
-	Z_Init(base, size);
 
 	VName::StaticInit();
 	VObject::StaticInit();
@@ -492,15 +495,15 @@ void Host_SaveConfiguration(void)
 		return;
 
 	FILE *f;
-	if (fl_savedir[0])
+	if (fl_savedir)
 	{
-		FL_CreatePath(va("%s/%s", fl_savedir, fl_gamedir));
-		f = fopen(va("%s/%s/%s", fl_savedir, fl_gamedir, (char*)configfile), "w");
+		FL_CreatePath(fl_savedir + "/" + fl_gamedir);
+		f = fopen(*(fl_savedir + "/" + fl_gamedir + "/" + (const char*)configfile), "w");
 	}
 	else
 	{
-		FL_CreatePath(va("%s/%s", fl_basedir, fl_gamedir));
-		f = fopen(va("%s/%s/%s", fl_basedir, fl_gamedir, (char*)configfile), "w");
+		FL_CreatePath(fl_basedir + "/" + fl_gamedir);
+		f = fopen(*(fl_basedir + "/" + fl_gamedir + "/" + (const char*)configfile), "w");
 	}
 	if (!f)
 	{
@@ -629,9 +632,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.32  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.31  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

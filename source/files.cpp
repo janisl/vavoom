@@ -29,8 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAXWADFILES 	20
-
 // TYPES -------------------------------------------------------------------
 
 struct search_path_t
@@ -54,24 +52,24 @@ struct version_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void SetupGameDir(const char *dirname);
+static void SetupGameDir(const VStr& dirname);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 bool	fl_devmode = false;
-char	fl_basedir[MAX_OSPATH];
-char	fl_savedir[MAX_OSPATH];
-char	fl_gamedir[MAX_OSPATH];
-char	fl_mainwad[MAX_OSPATH];
+VStr	fl_basedir;
+VStr	fl_savedir;
+VStr	fl_gamedir;
+VStr	fl_mainwad;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static search_path_t*	searchpaths;
 
-const char*				wadfiles[MAXWADFILES];
-const char*				gwadirs[MAXWADFILES];
+TArray<VStr>			wadfiles;
+TArray<VStr>			gwadirs;
 static bool				fl_fixvoices;
 
 // CODE --------------------------------------------------------------------
@@ -82,23 +80,11 @@ static bool				fl_fixvoices;
 //
 //==========================================================================
 
-void FL_AddFile(const char *file, const char* gwadir)
+void FL_AddFile(const VStr& file, const VStr& gwadir)
 {
 	guard(FL_AddFile);
-	int i = 0;
-	while (wadfiles[i])
-	{
-		i++;
-	}
-	char* newfile = (char*)Z_Malloc(strlen(file) + 1, PU_STATIC, 0);
-	strcpy(newfile, file);
-	wadfiles[i] = newfile;
-	if (gwadir)
-	{
-		char* newdir = (char*)Z_Malloc(strlen(gwadir) + 1, PU_STATIC, 0);
-		strcpy(newdir, gwadir);
-		gwadirs[i] = newdir;
-	}
+	wadfiles.AddItem(file);
+	gwadirs.AddItem(gwadir);
 	unguard;
 }
 
@@ -108,50 +94,46 @@ void FL_AddFile(const char *file, const char* gwadir)
 //
 //==========================================================================
 
-static void AddGameDir(const char *dir)
+static void AddGameDir(const VStr& dir)
 {
 	guard(AddGameDir);
 	search_path_t	*info;
 
 	info = (search_path_t*)Z_StrCalloc(sizeof(*info));
-	info->Path = VStr(fl_basedir) + "/" + dir;
+	info->Path = fl_basedir + "/" + dir;
 	info->Next = searchpaths;
 	searchpaths = info;
 
-	const char* gwadir = NULL;
-	if (fl_savedir[0])
+	VStr gwadir;
+	if (fl_savedir)
 	{
 		info = (search_path_t*)Z_StrCalloc(sizeof(*info));
-		info->Path = VStr(fl_savedir) + "/" + dir;
+		info->Path = fl_savedir + "/" + dir;
 		info->Next = searchpaths;
 		searchpaths = info;
-		gwadir = *info->Path;
+		gwadir = info->Path;
 	}
 
 	for (int i = 0; i < 1024; i++)
 	{
-		char	buf[128];
-
-		sprintf(buf, "%s/%s/wad%d.wad", fl_basedir, dir, i);
+		VStr buf = fl_basedir + "/" + dir + "/wad" + i + ".wad";
 		if (!Sys_FileExists(buf))
 			break;
 		FL_AddFile(buf, gwadir);
 	}
 
-	if (fl_savedir[0])
+	if (fl_savedir)
 	{
 		for (int i = 0; i < 1024; i++)
 		{
-			char	buf[128];
-	
-			sprintf(buf, "%s/%s/wad%d.wad", fl_savedir, dir, i);
+			VStr buf = fl_savedir + "/" + dir + "/wad" + i + ".wad";
 			if (!Sys_FileExists(buf))
 				break;
-			FL_AddFile(buf, NULL);
+			FL_AddFile(buf, VStr());
 		}
 	}
 
-	strcpy(fl_gamedir, dir);
+	fl_gamedir = dir;
 	unguard;
 }
 
@@ -161,20 +143,20 @@ static void AddGameDir(const char *dir)
 //
 //==========================================================================
 
-static void ParseBase(const char *name)
+static void ParseBase(const VStr& name)
 {
 	guard(ParseBase);
 	TArray<version_t>	games;
 	bool				select_game;
-	char				UseName[MAX_OSPATH];
+	VStr				UseName;
 
-	if (fl_savedir[0] && Sys_FileExists(va("%s/%s", fl_savedir, name)))
+	if (fl_savedir && Sys_FileExists(fl_savedir + "/" + name))
 	{
-		sprintf(UseName, "%s/%s", fl_savedir, name);
+		UseName = fl_savedir + "/" + name;
 	}
-	else if (Sys_FileExists(va("%s/%s", fl_basedir, name)))
+	else if (Sys_FileExists(fl_basedir + "/" + name))
 	{
-		sprintf(UseName, "%s/%s", fl_basedir, name);
+		UseName = fl_basedir + "/" + name;
 	}
 	else
 	{
@@ -182,7 +164,7 @@ static void ParseBase(const char *name)
 	}
 
 	select_game = false;
-	SC_OpenFile(UseName);
+	SC_OpenFile(*UseName);
 	while (SC_GetString())
 	{
 		version_t &dst = *new(games, 0) version_t;
@@ -235,16 +217,15 @@ static void ParseBase(const char *name)
 		{
 			continue;
 		}
-		if (fl_mainwad[0])
+		if (fl_mainwad)
 		{
 			if (!GIt->MainWad || GIt->MainWad == fl_mainwad)
 			{
 				for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
 				{
-					FL_AddFile(va("%s/%s", fl_basedir, **It),
-						fl_savedir[0] ? fl_savedir : NULL);
+					FL_AddFile(fl_basedir + "/" + *It, fl_savedir);
 				}
-				SetupGameDir(*GIt->GameDir);
+				SetupGameDir(GIt->GameDir);
 				fl_fixvoices = GIt->FixVoices;
 				return;
 			}
@@ -256,31 +237,29 @@ static void ParseBase(const char *name)
 		}
 
 		//	First look in the save directory.
-		if (fl_savedir[0] && Sys_FileExists(va("%s/%s", fl_savedir, *GIt->MainWad)))
+		if (fl_savedir && Sys_FileExists(fl_savedir + "/" + GIt->MainWad))
 		{
-			strcpy(fl_mainwad, *GIt->MainWad);
-			FL_AddFile(va("%s/%s", fl_savedir, fl_mainwad), NULL);
+			fl_mainwad = GIt->MainWad;
+			FL_AddFile(fl_savedir + "/" + fl_mainwad, VStr());
 			for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
 			{
-				FL_AddFile(va("%s/%s", fl_savedir, **It), NULL);
+				FL_AddFile(fl_savedir + "/" + *It, VStr());
 			}
-			SetupGameDir(*GIt->GameDir);
+			SetupGameDir(GIt->GameDir);
 			fl_fixvoices = GIt->FixVoices;
 			return;
 		}
 
 		//	Then in base directory.
-		if (Sys_FileExists(va("%s/%s", fl_basedir, *GIt->MainWad)))
+		if (Sys_FileExists(fl_basedir + "/" + GIt->MainWad))
 		{
-			strcpy(fl_mainwad, *GIt->MainWad);
-			FL_AddFile(va("%s/%s", fl_basedir, fl_mainwad),
-				fl_savedir[0] ? fl_savedir : NULL);
+			fl_mainwad = GIt->MainWad;
+			FL_AddFile(fl_basedir + "/" + fl_mainwad, fl_savedir);
 			for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
 			{
-				FL_AddFile(va("%s/%s", fl_basedir, **It),
-					fl_savedir[0] ? fl_savedir : NULL);
+				FL_AddFile(fl_basedir + "/" + *It, fl_savedir);
 			}
-			SetupGameDir(*GIt->GameDir);
+			SetupGameDir(GIt->GameDir);
 			fl_fixvoices = GIt->FixVoices;
 			return;
 		}
@@ -299,13 +278,10 @@ static void ParseBase(const char *name)
 //
 //==========================================================================
 
-static void SetupGameDir(const char *dirname)
+static void SetupGameDir(const VStr& dirname)
 {
 	guard(SetupGameDir);
-	char		tmp[256];
-
-	sprintf(tmp, "%s/base.txt", dirname);
-	ParseBase(tmp);
+	ParseBase(dirname + "/base.txt");
 	AddGameDir(dirname);
 	unguard;
 }
@@ -322,18 +298,18 @@ void FL_Init()
 	int p;
 
 	//	Set up base directory (main data files).
-	strcpy(fl_basedir, ".");
+	fl_basedir = ".";
 	p = M_CheckParm("-basedir");
 	if (p && p < myargc - 1)
 	{
-		strcpy(fl_basedir, myargv[p + 1]);
+		fl_basedir = myargv[p + 1];
 	}
 
 	//	Set up save directory (files written by engine).
 	p = M_CheckParm("-savedir");
 	if (p && p < myargc - 1)
 	{
-		strcpy(fl_savedir, myargv[p + 1]);
+		fl_savedir = myargv[p + 1];
 	}
 #if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
 	else
@@ -341,7 +317,7 @@ void FL_Init()
 		const char* HomeDir = getenv("HOME");
 		if (HomeDir)
 		{
-			sprintf(fl_savedir, "%s/.vavoom", HomeDir);
+			fl_savedir = VStr(HomeDir) + "/.vavoom";
 		}
 	}
 #endif
@@ -351,8 +327,8 @@ void FL_Init()
 	p = M_CheckParm("-iwad");
 	if (p && p < myargc - 1)
 	{
-		strcpy(fl_mainwad, myargv[p + 1]);
-		FL_AddFile(fl_mainwad, NULL);
+		fl_mainwad = myargv[p + 1];
+		FL_AddFile(fl_mainwad, VStr());
 	}
 
 	p =	M_CheckParm("-devgame");
@@ -383,16 +359,14 @@ void FL_Init()
 	{
 		while (++p != myargc && myargv[p][0] != '-' && myargv[p][0] != '+')
 		{
-			FL_AddFile(myargv[p], NULL);
+			FL_AddFile(myargv[p], VStr());
 		}
 	}
 
-	const char** filenames = wadfiles;
-	const char** gwanames = gwadirs;
 	// open all the files, load headers, and count lumps
-	for ( ; *filenames ; filenames++, gwanames++)
+	for (int i = 0; i < wadfiles.Num(); i++)
 	{
-		W_AddFile(*filenames, *gwanames, fl_fixvoices);
+		W_AddFile(wadfiles[i], gwadirs[i], fl_fixvoices);
 	}
 	unguard;
 }
@@ -403,22 +377,18 @@ void FL_Init()
 //
 //==========================================================================
 
-bool FL_FindFile(const char *fname, char *dest)
+VStr FL_FindFile(const VStr& fname)
 {
 	guard(FL_FindFile);
 	for (search_path_t* search = searchpaths; search; search = search->Next)
 	{
 		VStr tmp = search->Path + "/" + fname;
-		if (Sys_FileExists(*tmp))
+		if (Sys_FileExists(tmp))
 		{
-			if (dest)
-			{
-				strcpy(dest, *tmp);
-			}
-			return true;
+			return tmp;
 		}
 	}
-	return false;
+	return VStr();
 	unguard;
 }
 
@@ -428,39 +398,21 @@ bool FL_FindFile(const char *fname, char *dest)
 //
 //==========================================================================
 
-void FL_CreatePath(const char* Path)
+void FL_CreatePath(const VStr& Path)
 {
 	guard(FL_CreatePath);
-	char* Temp = (char*)Z_Malloc(strlen(Path) + 1);
-	strcpy(Temp, Path);
-	for (size_t i = 3; i <= strlen(Temp); i++)
+	VStr Temp = Path;
+	for (int i = 3; i <= Temp.Length(); i++)
 	{
 		if (Temp[i] == '/' || Temp[i] == '\\' || Temp[i] == 0)
 		{
 			char Save = Temp[i];
 			Temp[i] = 0;
-			if (!Sys_FileExists(Temp))
+			if (!Sys_DirExists(Temp))
 				Sys_CreateDirectory(Temp);
 			Temp[i] = Save;
 		}
 	}
-	Z_Free(Temp);
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_CreateFilePath
-//
-//==========================================================================
-
-static void FL_CreateFilePath(const char* Path)
-{
-	guard(FL_CreateFilePath);
-	char* Temp = (char*)Z_Malloc(strlen(Path) + 1);
-	FL_ExtractFilePath(Path, Temp);
-	FL_CreatePath(Temp);
-	Z_Free(Temp);
 	unguard;
 }
 
@@ -470,16 +422,17 @@ static void FL_CreateFilePath(const char* Path)
 //
 //==========================================================================
 
-int FL_ReadFile(const char* name, void** buffer, int tag)
+int FL_ReadFile(const VStr& name, void** buffer, int tag)
 {
 	guard(FL_ReadFile);
 	int			handle;
 	int			count;
 	int			length;
 	byte		*buf;
-	char		realname[MAX_OSPATH];
+	VStr		realname;
 
-	if (!FL_FindFile(name, realname))
+	realname = FL_FindFile(name);
+	if (!realname)
 	{
 		return -1;
 	}
@@ -487,7 +440,7 @@ int FL_ReadFile(const char* name, void** buffer, int tag)
 	handle = Sys_FileOpenRead(realname);
 	if (handle == -1)
 	{
-		Sys_Error("Couldn't open file %s", realname);
+		Sys_Error("Couldn't open file %s", *realname);
 	}
 	length = Sys_FileSize(handle);
 	buf = (byte*)Z_Malloc(length + 1, tag, buffer);
@@ -497,7 +450,7 @@ int FL_ReadFile(const char* name, void** buffer, int tag)
 	
 	if (count < length)
 	{
-		Sys_Error("Couldn't read file %s", realname);
+		Sys_Error("Couldn't read file %s", *realname);
 	}
 		
 	return length;
@@ -510,22 +463,22 @@ int FL_ReadFile(const char* name, void** buffer, int tag)
 //
 //==========================================================================
 
-bool FL_WriteFile(const char* name, const void* source, int length)
+bool FL_WriteFile(const VStr& name, const void* source, int length)
 {
 	guard(FL_WriteFile);
 	int		handle;
 	int		count;
-	const char*		RealName;
+	VStr	RealName;
 
-	if (fl_savedir[0])
+	if (fl_savedir)
 	{
-		RealName = va("%s/%s/%s", fl_savedir, fl_gamedir, name);
+		RealName = fl_savedir + "/" + fl_gamedir + "/" + name;
 	}
 	else
 	{
-		RealName = va("%s/%s/%s", fl_basedir, fl_gamedir, name);
+		RealName = fl_basedir + "/" + fl_gamedir + "/" + name;
 	}
-	FL_CreateFilePath(RealName);
+	FL_CreatePath(RealName.ExtractFilePath());
 	handle = Sys_FileOpenWrite(RealName);
 
 	if (handle == -1)
@@ -542,229 +495,6 @@ bool FL_WriteFile(const char* name, const void* source, int length)
 	}
 
 	return true;
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_DefaultPath
-//
-//==========================================================================
-
-void FL_DefaultPath(char *path, const char *basepath)
-{
-	guard(FL_DefaultPath);
-	char    temp[128];
-
-	if (path[0] == '/')
-	{
-		return;                   // absolute path location
-	}
-	strcpy(temp, path);
-	strcpy(path, basepath);
-	strcat(path, temp);
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_DefaultExtension
-//
-//==========================================================================
-
-void FL_DefaultExtension(char *path, const char *extension)
-{
-	guard(FL_DefaultExtension);
-	char    *src;
-
-	//
-	// if path doesn't have a .EXT, append extension
-	// (extension should include the .)
-	//
-	src = path + strlen(path) - 1;
-
-	while (*src != '/' && src != path)
-	{
-		if (*src == '.')
-        {
-			return;                 // it has an extension
-		}
-		src--;
-	}
-
-	strcat(path, extension);
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_StripFilename
-//
-//==========================================================================
-
-void FL_StripFilename(char *path)
-{
-	guard(FL_StripFilename);
-	int             length;
-
-	length = strlen(path)-1;
-	while (length > 0 && path[length] != '/')
-	{
-		length--;
-	}
-	path[length] = 0;
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_StripExtension
-//
-//==========================================================================
-
-void FL_StripExtension(char *path)
-{
-	guard(FL_StripExtension);
-	char *search;
-
-	search = path + strlen(path) - 1;
-	while (*search != '/' && search != path)
-	{
-		if (*search == '.')
-		{
-			*search = 0;
-			return;
-		}
-		search--;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_ExtractFilePath
-//
-//==========================================================================
-
-void FL_ExtractFilePath(const char *path, char *dest)
-{
-	guard(FL_ExtractFilePath);
-	const char    *src;
-
-	src = path + strlen(path) - 1;
-
-	//
-	// back up until a \ or the start
-	//
-	while (src != path && *(src-1) != '/' && *(src-1) != '\\')
-		src--;
-
-	memcpy(dest, path, src - path);
-	dest[src - path] = 0;
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_ExtractFileName
-//
-//==========================================================================
-
-void FL_ExtractFileName(const char *path, char *dest)
-{
-	guard(FL_ExtractFileName);
-	const char    *src;
-
-	src = path + strlen(path) - 1;
-
-	//
-	// back up until a \ or the start
-	//
-	while (src != path && *(src-1) != '/' && *(src-1) != '\\')
-		src--;
-
-	strcpy(dest, src);
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_ExtractFileBase
-//
-//==========================================================================
-
-void FL_ExtractFileBase(const char *path, char *dest)
-{
-	guard(FL_ExtractFileBase);
-#if 0
-	const char    *src;
-
-	src = path + strlen(path) - 1;
-
-	//
-	// back up until a \ or the start
-	//
-	while (src != path && *(src-1) != '/')
-		src--;
-
-	while (*src && *src != '.')
-	{
-		*dest++ = toupper(*src++);
-	}
-	*dest = 0;
-#else
-	int		i;
-    int		length;
-
-	i = strlen(path) - 1;
-    
-    // back up until a \ or the start
-    while (i && path[i - 1] != '\\' && path[i - 1] != '/')
-    {
-		i--;
-    }
-    
-    // copy up to eight characters
-    memset(dest, 0, 8);
-    length = 0;
-    
-    while (path[i] && path[i] != '.')
-    {
-		if (++length == 9)
-	    	Sys_Error("Filename base of %s >8 chars", path);
-
-		*dest++ = toupper((int)path[i]);
-		i++;
-    }
-#endif
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_ExtractFileExtension
-//
-//==========================================================================
-
-void FL_ExtractFileExtension(const char *path, char *dest)
-{
-	guard(FL_ExtractFileExtension);
-	const char    *src;
-
-	src = path + strlen(path) - 1;
-
-	//
-	// back up until a . or the start
-	//
-	while (src != path && *(src-1) != '.')
-		src--;
-	if (src == path)
-	{
-		*dest = 0;	// no extension
-		return;
-	}
-
-	strcpy(dest, src);
 	unguard;
 }
 
@@ -842,16 +572,21 @@ protected:
 	FOutputDevice *Error;
 };
 
-VStream* FL_OpenFileRead(const char *Name)
+//==========================================================================
+//
+//	FL_OpenFileRead
+//
+//==========================================================================
+
+VStream* FL_OpenFileRead(const VStr& Name)
 {
 	guard(FL_OpenFileRead);
-	char TmpName[256];
-
-	if (!FL_FindFile(Name, TmpName))
+	VStr TmpName = FL_FindFile(Name);
+	if (!TmpName)
 	{
 		return NULL;
 	}
-	FILE *File = fopen(TmpName, "rb");
+	FILE *File = fopen(*TmpName, "rb");
 	if (!File)
 	{
 		return NULL;
@@ -944,17 +679,23 @@ protected:
 	FOutputDevice *Error;
 };
 
-VStream* FL_OpenFileWrite(const char *Name)
+//==========================================================================
+//
+//	FL_OpenFileWrite
+//
+//==========================================================================
+
+VStream* FL_OpenFileWrite(const VStr& Name)
 {
 	guard(FL_OpenFileWrite);
-	char TmpName[1024];
+	VStr TmpName;
 
-	if (fl_savedir[0])
-		sprintf(TmpName, "%s/%s/%s", fl_savedir, fl_gamedir, Name);
+	if (fl_savedir)
+		TmpName = fl_savedir + "/" + fl_gamedir + "/" + Name;
 	else
-		sprintf(TmpName, "%s/%s/%s", fl_basedir, fl_gamedir, Name);
-	FL_CreateFilePath(TmpName);
-	FILE *File = fopen(TmpName, "wb");
+		TmpName = fl_basedir + "/" + fl_gamedir + "/" + Name;
+	FL_CreatePath(TmpName.ExtractFilePath());
+	FILE *File = fopen(*TmpName, "wb");
 	if (!File)
 	{
 		return NULL;
@@ -966,9 +707,12 @@ VStream* FL_OpenFileWrite(const char *Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.21  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.20  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
 //	

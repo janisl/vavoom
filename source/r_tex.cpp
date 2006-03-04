@@ -626,24 +626,22 @@ int TTextureManager::AddRawWithPal(VName Name, VName PalName)
 int TTextureManager::AddFileTexture(VName Name, int Type)
 {
 	guard(TTextureManager::AddFileTexture)
-	char Ext[8];
-
 	int i = CheckNumForName(Name, Type);
 	if (i >= 0)
 	{
 		return i;
 	}
 
-	FL_ExtractFileExtension(*Name, Ext);
-	if (!stricmp(Ext, "pcx"))
+	VStr Ext = VStr(Name).ExtractFileExtension();
+	if (Ext == "pcx")
 	{
 		return AddTexture(new(PU_STATIC) TPcxFileTexture(Type, Name));
 	}
-	else if (!stricmp(Ext, "tga"))
+	else if (Ext == "tga")
 	{
 		return AddTexture(new(PU_STATIC) TTgaFileTexture(Type, Name));
 	}
-	else if (!stricmp(Ext, "png"))
+	else if (Ext == "png")
 	{
 		return AddTexture(new(PU_STATIC) TPngFileTexture(Type, Name));
 	}
@@ -1166,7 +1164,7 @@ rgba_t* TTexture::GetHighResPixels(int& HRWidth, int& HRHeight)
 	}
 	char HighResName[80];
 	sprintf(HighResName, "textures/%s/%s.png", DirName, *Name);
-	if (!FL_FindFile(HighResName, NULL))
+	if (!FL_FindFile(HighResName))
 	{
 		return NULL;
 	}
@@ -2592,8 +2590,6 @@ static void ParseFTAnims()
 static void InitFTAnims()
 {
 	guard(InitFTAnims);
-	char filename[MAX_OSPATH];
-
 	//	Process all animdefs lumps.
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
@@ -2606,9 +2602,10 @@ static void InitFTAnims()
 	}
 
 	//	Optionally parse script file.
-	if (fl_devmode && FL_FindFile("scripts/animdefs.txt", filename))
+	VStr filename = FL_FindFile("scripts/animdefs.txt");
+	if (fl_devmode && filename)
 	{
-		SC_OpenFile(filename);
+		SC_OpenFile(*filename);
 		ParseFTAnims();
 	}
 
@@ -2747,9 +2744,12 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.37  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.36  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

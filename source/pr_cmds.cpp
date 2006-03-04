@@ -2691,7 +2691,7 @@ PF(InstallModel)
 	int			name;
 
 	name = Pop();
-	if (FL_FindFile((char*)name, NULL))
+	if (FL_FindFile((char*)name))
 	{
 		Push((int)Mod_FindName((char*)name));
 	}
@@ -3469,9 +3469,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.75  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.74  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.73  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
 //	

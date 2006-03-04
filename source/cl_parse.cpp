@@ -56,7 +56,7 @@ clmobj_t		cl_weapon_mobjs[MAXPLAYERS];
 
 static VModel*			model_precache[1024];
 static VModel*			weapon_model_precache[1024];
-static char				skin_list[256][MAX_VPATH];
+static VStr				skin_list[256];
 
 // CODE --------------------------------------------------------------------
 
@@ -179,7 +179,7 @@ static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base)
 		mobj.AliasSkinIndex = net_msg.ReadByte();
 		if (!mobj.AliasSkinIndex)
 		{
-			strcpy(mobj.Skin, skin_list[net_msg.ReadByte()]);
+			strcpy(mobj.Skin, *skin_list[net_msg.ReadByte()]);
 		}
 		else
 		{
@@ -592,28 +592,24 @@ static void CL_ParseSpriteList(void)
 //
 //==========================================================================
 
-static void CL_ParseModel(void)
+static void CL_ParseModel()
 {
 	int i = net_msg.ReadShort();
 	char *name = va("models/%s", net_msg.ReadString());
 	weapon_model_precache[i] = NULL;
-	if (FL_FindFile(name, NULL))
+	if (FL_FindFile(name))
 	{
 		model_precache[i] = Mod_FindName(name);
 		if (strstr(name, "tris.md2"))
 		{
-			char wpname[MAX_VPATH];
-
-			strcpy(wpname, name);
-			FL_StripFilename(wpname);
-			strcat(wpname, "/weapon.md2");
-			if (FL_FindFile(wpname, NULL))
+			VStr wpname = VStr(name).ExtractFilePath() + "/weapon.md2";
+			if (FL_FindFile(wpname))
 			{
-				weapon_model_precache[i] = Mod_FindName(wpname);
+				weapon_model_precache[i] = Mod_FindName(*wpname);
 			}
 			else
 			{
-				GCon->Logf("Can't find wepon info model %s", wpname);
+				GCon->Logf("Can't find wepon info model %s", *wpname);
 			}
 		}
 	}
@@ -629,10 +625,10 @@ static void CL_ParseModel(void)
 //
 //==========================================================================
 
-static void CL_ParseSkin(void)
+static void CL_ParseSkin()
 {
 	int i = net_msg.ReadByte();
-	strcpy(skin_list[i], va("models/%s", net_msg.ReadString()));
+	skin_list[i] = VStr("models/") + (const char*)net_msg.ReadString();
 }
 
 //==========================================================================
@@ -1066,9 +1062,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.39  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.38  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

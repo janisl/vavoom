@@ -58,6 +58,7 @@ public:
 			strcpy(Str, InStr.Str);
 		}
 	}
+	VStr(const VStr& InStr, int Start, int Len);
 	explicit VStr(char InChr)
 	: Str(NULL)
 	{
@@ -288,14 +289,25 @@ public:
 	{
 		return !!strcmp(*S1, *S2);
 	}
+
+	VStr ExtractFilePath() const;
+	VStr ExtractFileName() const;
+	VStr ExtractFileBase() const;
+	VStr ExtractFileExtension() const;
+	VStr StripExtension() const;
+	VStr DefaultPath(const VStr& basepath) const;
+	VStr DefaultExtension(const VStr& extension) const;
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.2  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.1  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
 //	

@@ -50,17 +50,22 @@
 //#define DEVELOPER		1
 
 #define DO_GUARD		1
+#define DO_CHECK		1
 
 #ifdef PARANOID
 #define DO_GUARD_SLOW	1
+#define DO_CHECK_SLOW	1
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.12  2005/12/29 17:26:01  dj_jl
 //	Changed version number.
-//
+//	
 //	Revision 1.11  2005/08/29 19:39:30  dj_jl
 //	Increased version number.
 //	

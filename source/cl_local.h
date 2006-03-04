@@ -227,7 +227,7 @@ void R_InstallSprite(const char *name, int index);
 void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 	int frame, const char *skin);
 
-VModel* Mod_FindName(char *name);
+VModel* Mod_FindName(const char* name);
 void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int frame);
 
 void SCR_SetVirtualScreen(int Width, int Height);
@@ -260,9 +260,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.19  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.18  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	

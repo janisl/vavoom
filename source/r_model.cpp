@@ -140,7 +140,7 @@ void *Mod_Extradata(VModel* mod)
 //
 //==========================================================================
 
-VModel* Mod_FindName(char *name)
+VModel* Mod_FindName(const char *name)
 {
 	guard(Mod_FindName);
 	int		i;
@@ -1024,18 +1024,16 @@ void LoadPNGLump(int LumpNum, void** bufptr)
 void Mod_LoadSkin(const char *name, void **bufptr)
 {
 	guard(Mod_LoadSkin);
-	char ext[8];
-
-	FL_ExtractFileExtension(name, ext);
-	if (!strcmp(ext, "pcx"))
+	VStr ext = VStr(name).ExtractFileExtension();
+	if (ext == "pcx")
 	{
 		LoadPCX(name, bufptr);
 	}
-	else if (!strcmp(ext, "tga"))
+	else if (ext == "tga")
 	{
 		LoadTGA(name, bufptr);
 	}
-	else if (!strcmp(ext, "png"))
+	else if (ext == "png")
 	{
 		LoadPNG(name, bufptr);
 	}
@@ -1086,9 +1084,12 @@ void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int InFrame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.17  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.16  2006/02/10 22:16:26  dj_jl
 //	Added missing byte swap.
 //	

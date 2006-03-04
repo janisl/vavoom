@@ -140,11 +140,11 @@ static TCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_ARCHIVE);
 static bool		mapteleport_issued;
 
 static int		numsprites;
-static char		sprites[MAX_SPRITES][MAX_VPATH];
+static VName	sprites[MAX_SPRITES];
 static int		nummodels;
-static char		models[MAX_MODELS][MAX_VPATH];
+static VName	models[MAX_MODELS];
 static int		numskins;
-static char		skins[MAX_SKINS][MAX_VPATH];
+static VStr		skins[MAX_SKINS];
 
 static TCvarI	split_frame("split_frame", "1", CVAR_ARCHIVE);
 
@@ -1936,20 +1936,20 @@ int NET_SendToAll(TSizeBuf *data, int blocktime)
 //
 //==========================================================================
 
-static void SV_InitModelLists(void)
+static void SV_InitModelLists()
 {
 	int i;
 
 	numsprites = svpr.NumSpriteNames;
 	for (i = 0; i < numsprites; i++)
 	{
-		strcpy(sprites[i], *svpr.SpriteNames[i]);
+		sprites[i] = svpr.SpriteNames[i];
 	}
 
 	nummodels = svpr.NumModelNames;
 	for (i = 1; i < nummodels; i++)
 	{
-		strcpy(models[i], *svpr.ModelNames[i]);
+		models[i] = svpr.ModelNames[i];
 	}
 
 	numskins = 1;
@@ -1972,12 +1972,12 @@ int SV_FindModel(const char *name)
 	}
 	for (i = 0; i < nummodels; i++)
 	{
-		if (!stricmp(name, models[i]))
+		if (models[i] == name)
 		{
 			return i;
 		}
 	}
-	strcpy(models[i], name);
+	models[i] = name;
 	nummodels++;
 	sv_reliable << (byte)svc_model
 				<< (short)i
@@ -2003,12 +2003,12 @@ int SV_GetModelIndex(const VName &Name)
 	}
 	for (i = 0; i < nummodels; i++)
 	{
-		if (!stricmp(*Name, models[i]))
+		if (Name == models[i])
 		{
 			return i;
 		}
 	}
-	strcpy(models[i], *Name);
+	models[i] = Name;
 	nummodels++;
 	sv_reliable << (byte)svc_model
 				<< (short)i
@@ -2034,12 +2034,12 @@ int SV_FindSkin(const char *name)
 	}
 	for (i = 0; i < numskins; i++)
 	{
-		if (!stricmp(name, skins[i]))
+		if (skins[i] == name)
 		{
 			return i;
 		}
 	}
-	strcpy(skins[i], name);
+	skins[i] = name;
 	numskins++;
 	sv_reliable << (byte)svc_skin
 				<< (byte)i
@@ -2093,21 +2093,21 @@ void SV_SendServerInfo(VBasePlayer *player)
 		<< (short)numsprites;
 	for (i = 0; i < numsprites; i++)
 	{
-		msg << sprites[i];
+		msg << *sprites[i];
 	}
 
 	for (i = 1; i < nummodels; i++)
 	{
 		msg << (byte)svc_model
 			<< (short)i
-			<< models[i];
+			<< *models[i];
 	}
 
 	for (i = 1; i < numskins; i++)
 	{
 		msg << (byte)svc_skin
 			<< (byte)i
-			<< skins[i];
+			<< *skins[i];
 	}
 
 	msg << (byte)svc_signonnum
@@ -3015,9 +3015,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.85  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.84  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
-//
+//	
 //	Revision 1.83  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

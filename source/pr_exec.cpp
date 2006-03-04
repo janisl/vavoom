@@ -192,7 +192,6 @@ void TProgs::Load(const char *AName)
 	guard(TProgs::Load);
 	int				i;
 	int				len;
-	char			progfilename[256];
 	int*			Statements;
 	dfunction_t	*	DFunctions;
 	dclassinfo_t*	ClassInfo;
@@ -214,10 +213,11 @@ void TProgs::Load(const char *AName)
 		//	Load PROGS from a specified file
 		len = M_ReadFile(va("%s%s.dat", myargv[i + 1], AName), (byte**)&Progs);
 	}
-	else if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName), progfilename))
+	else if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName)))
 	{
 		//	Load PROGS from a specified file
-		len = M_ReadFile(progfilename, (byte**)&Progs);
+		VStr progfilename = FL_FindFile(va("progs/%s.dat", AName));
+		len = M_ReadFile(*progfilename, (byte**)&Progs);
 	}
 	else
 	{
@@ -2085,9 +2085,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.45  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.44  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

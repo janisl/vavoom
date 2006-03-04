@@ -84,9 +84,8 @@ void VLevel::LoadMap(const char *mapname)
 		// if working with a devlopment map, reload it
 		if (fl_devmode)
 		{
-			char aux_file_name[MAX_OSPATH];
-
-			if (FL_FindFile(va("maps/%s.wad", mapname), aux_file_name))
+			VStr aux_file_name = FL_FindFile(va("maps/%s.wad", mapname));
+			if (aux_file_name)
 			{
 				W_OpenAuxiliary(aux_file_name);
 				AuxiliaryMap = true;
@@ -1555,9 +1554,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/03/04 16:01:34  dj_jl
+//	File system API now uses strings.
+//
 //	Revision 1.12  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.11  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	
