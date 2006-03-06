@@ -1054,19 +1054,19 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 //
 //==========================================================================
 
-void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
+void UpdateMobj(Entity mobj, int key, float DeltaTime)
 {
 	dlight_t *dl;
 	TVec fv;
 
-	switch (mobj->effects & DoomDefs::EF_DLIGHT_MASK)
+	switch (mobj.Effects & DoomDefs::EF_DLIGHT_MASK)
 	{
 	case DoomDefs::EF_DL_NONE:
 		break;
 
 	case DoomDefs::EF_DL_MISSILE:
 		dl = AllocDlight(key);
-		dl->origin = mobj->origin;
+		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->color = RGB(255, 255, 255);
 		dl->die = cl.time + 0.1;
@@ -1074,7 +1074,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 
 	case DoomDefs::EF_DL_RBALL:
 		dl = AllocDlight(key);
-		dl->origin = mobj->origin;
+		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->color = RGB(255, 0, 0);
 		dl->die = cl.time + 0.1;
@@ -1082,7 +1082,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 
 	case DoomDefs::EF_DL_GBALL:
 		dl = AllocDlight(key);
-		dl->origin = mobj->origin;
+		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->color = RGB(0, 255, 0);
 		dl->die = cl.time + 0.1;
@@ -1090,7 +1090,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 
 	case DoomDefs::EF_DL_PLASMA:
 		dl = AllocDlight(key);
-		dl->origin = mobj->origin;
+		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->color = RGB(0, 0, 255);
 		dl->die = cl.time + 0.1;
@@ -1098,9 +1098,9 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 
 	case DoomDefs::EF_DL_MUZZLEFLASH:
 		dl = AllocDlight(key);
-		dl->origin = mobj->origin;
+		dl->origin = mobj.Origin;
 		dl->origin.z += 48.0;
-		AngleVector(&mobj->angles, &fv);
+		AngleVector(&mobj.Angles, &fv);
 
 		dl->origin = dl->origin + 18.0 * fv;
 		dl->radius = 200.0 + Random() * 31.0;
@@ -1109,7 +1109,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 		dl->die = cl.time + 0.1;
 	}
 
-	if (mobj->effects & DoomDefs::EF_ROCKET)
+	if (mobj.Effects & DoomDefs::EF_ROCKET)
 	{
 		int i;
 		particle_t *p;
@@ -1123,7 +1123,7 @@ void UpdateMobj(clmobj_t * mobj, int key, float DeltaTime)
 			if (!p)
 				return;
 
-			p->org = mobj->origin;
+			p->org = mobj.Origin;
 			c = P_Random() >> 1;
 			p->color = RGB(c, c, c);
 			p->die = cl.time + 0.5 * Random();
@@ -1191,6 +1191,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/06 13:15:27  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.5  2006/02/28 22:43:55  dj_jl
 //  Replaced defines with constants.
 //

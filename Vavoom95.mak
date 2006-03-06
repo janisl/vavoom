@@ -23,6 +23,8 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
 	obj\net_dgrm.obj obj\net_loop.obj obj\net_main.obj obj\net_null.obj \
 	obj\net_win.obj obj\net_wins.obj obj\net_wipx.obj \
 	\
+	obj\p_thinker.obj \
+	\
 	obj\sv_acs.obj obj\sv_ent.obj \
 	obj\sv_main.obj obj\sv_poly.obj obj\sv_save.obj obj\sv_sight.obj \
 	obj\sv_swtch.obj obj\sv_user.obj obj\sv_tick.obj obj\sv_world.obj \

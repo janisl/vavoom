@@ -176,6 +176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.1  2006/03/06 13:13:55  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.7  2006/03/02 18:27:26  dj_jl
 //  Don't use game specific classes in common.
 //

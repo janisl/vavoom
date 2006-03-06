@@ -1939,6 +1939,15 @@ SOURCE=..\..\source\in_win32.cpp
 SOURCE=..\..\source\input.h
 # End Source File
 # End Group
+# Begin Group "Play"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\source\p_thinker.cpp
+# ADD CPP /W4
+# End Source File
+# End Group
 # Begin Group "Client"
 
 # PROP Default_Filter ""

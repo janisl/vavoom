@@ -249,8 +249,6 @@ const int MAX_TID_COUNT		= 200;
 //**
 //**************************************************************************
 
-#ifdef CLIENT
-
 //
 //  Types of graphics
 //
@@ -303,15 +301,18 @@ enum
 	SB_VIEW_FULLSCREEN
 };
 
-#endif
-
 //**************************************************************************
 //**
 //**    SERVER DEFINES
 //**
 //**************************************************************************
 
-#ifdef SERVER
+#define MobjCenter(mobj)\
+	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
+
+#define FOREACH(type, var) \
+	for (var = type(NextThinker(none, type)); var; \
+		var = type(NextThinker(var, type)))
 
 const int MAXNAME		= 32;
 const int MAX_MSGLEN	= 8000;
@@ -324,13 +325,6 @@ enum
 };
 
 const float GRAVITY			= 1225.0;
-
-#define MobjCenter(mobj)\
-	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
-
-#define FOREACH(type, var) \
-	for (var = type(NextThinker(none, type)); var; \
-		var = type(NextThinker(var, type)))
 
 enum
 {
@@ -637,8 +631,6 @@ enum
 
 	LNSPEC_Max
 };
-
-#endif
 
 //==========================================================================
 //
@@ -989,8 +981,6 @@ struct level_t
 //
 //**************************************************************************
 
-#ifdef SERVER
-
 //==========================================================================
 //
 //  Other stuff
@@ -1064,15 +1054,11 @@ struct tmtrace_t
 	Entity BlockingMobj;
 };
 
-#endif
-
 //**************************************************************************
 //
 //  Client types
 //
 //**************************************************************************
-
-#ifdef CLIENT
 
 struct model_t;
 
@@ -1166,29 +1152,6 @@ struct particle_t
 	addfields 7;
 };
 
-struct clmobj_t
-{
-	int in_use;
-
-	TVec origin;	// position
-	TAVec angles;	// orientation
-
-	int spritetype;	//  How to draw sprite
-	int sprite;	// used to find patch_t and flip value
-	int frame;	// might be ORed with FF_FULLBRIGHT
-
-	int ModelIndex;
-	model_t *__AliasModel;
-	int AliasFrame;
-	int AliasSkinIndex;
-	int Skin[64 / 4];
-
-	int translucency;
-	int translation;
-
-	int effects;
-};
-
 struct ClipRect
 {
 	float OriginX;		// X origin of rectangle, in absolute coordinates
@@ -1199,8 +1162,6 @@ struct ClipRect
 	float ClipWidth;	// Width of rectangle
 	float ClipHeight;	// Height of rectangle
 };
-
-#endif
 
 //**************************************************************************
 //
@@ -1328,7 +1289,6 @@ enum
 };
 
 //**************************************************************************
-#ifdef CLIENT
 
 //  Keys and buttons
 enum
@@ -1486,7 +1446,6 @@ struct event_t
 	int data2;	// mouse/joystick x move
 	int data3;	// mouse/joystick y move
 };
-#endif
 
 native int ObjectInternal[4];
 native classid Class;
@@ -1739,8 +1698,6 @@ native static classid FindClass(name Name);
 //
 //==========================================================================
 
-#ifdef CLIENT
-
 //
 //  Graphics
 //
@@ -1854,15 +1811,11 @@ native static void LoadTextLump(string Name, void *buf, int bufsize);
 native static dlight_t *AllocDlight(int key);
 native static particle_t *NewParticle();
 
-#endif
-
 //==========================================================================
 //
 //              SERVER BUILTINS
 //
 //==========================================================================
-
-#ifdef SERVER
 
 //
 //  Print functions
@@ -1998,8 +1951,6 @@ native static int FindSectorFromTag(int tag, int start);
 
 native static void MSG_SelectClientMsg(int msgtype, BasePlayer client);
 
-#endif
-
 defaultproperties
 {
 }
@@ -2007,6 +1958,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/06 13:13:55  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.9  2006/02/28 22:43:14  dj_jl
 //  Replaced defines with constants.
 //

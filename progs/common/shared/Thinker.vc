@@ -27,11 +27,11 @@ class Thinker : Object
 	native
 	abstract;
 
-native Level		XLevel;		//	Level object.
-native LevelInfo	Level;		//	Level info object.
+Level			XLevel;		//	Level object.
+LevelInfo		Level;		//	Level info object.
 
-native Thinker		Prev;
-native Thinker		Next;
+native Thinker	Prev;
+native Thinker	Next;
 
 void Tick(float deltaTime)
 {
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.1  2006/03/06 13:13:55  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.6  2006/02/28 21:05:38  dj_jl
 //  Put thinkers back in linked list.
 //

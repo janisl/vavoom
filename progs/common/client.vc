@@ -27,6 +27,12 @@
 
 class ModalWindow;
 class RootWindow;
+class Thinker;
+class Entity;
+class ViewEntity;
+class BasePlayer;
+class LevelInfo;
+class GameInfo;
 
 #include "shared/classes.vc"
 #include "client/classes.vc"
@@ -34,6 +40,9 @@ class RootWindow;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/06 13:12:35  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.9  2006/02/17 19:06:50  dj_jl
 //  Moved common defs to classes.
 //

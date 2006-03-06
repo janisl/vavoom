@@ -23,20 +23,17 @@
 //**
 //**************************************************************************
 
-#include "BasePlayer.vc"
-#include "Thinker.vc"
-#include "LevelInfo.vc"
-#include "Entity.vc"
-#include "ViewEntity.vc"
 #include "SectorThinker.vc"
 #include "SectorMover.vc"
 #include "Lighting.vc"
 #include "ACS.vc"
-#include "GameInfo.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/06 13:13:30  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.6  2006/02/13 18:30:15  dj_jl
 //  Moved all server progs global functions to classes.
 //

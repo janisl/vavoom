@@ -25,10 +25,19 @@
 
 #include "Object.vc"
 #include "Level.vc"
+#include "Thinker.vc"
+#include "LevelInfo.vc"
+#include "Entity.vc"
+#include "BasePlayer.vc"
+#include "ViewEntity.vc"
+#include "GameInfo.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/06 13:13:55  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //

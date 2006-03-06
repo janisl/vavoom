@@ -116,6 +116,7 @@ COMMON_OBJS = \
 	obj/net_main.$(OBJEXT) \
 	obj/net_null.$(OBJEXT) \
 	obj/p_setup.$(OBJEXT) \
+	obj/p_thinker.$(OBJEXT) \
 	obj/pr_cmds.$(OBJEXT) \
 	obj/pr_exec.$(OBJEXT) \
 	obj/pr_execa.$(OBJEXT) \
@@ -271,6 +272,7 @@ SV_COMMON_OBJ_FILES = \
 	obj/sv/net_main.$(OBJEXT) \
 	obj/sv/net_null.$(OBJEXT) \
 	obj/sv/p_setup.$(OBJEXT) \
+	obj/sv/p_thinker.$(OBJEXT) \
 	obj/sv/pr_cmds.$(OBJEXT) \
 	obj/sv/pr_exec.$(OBJEXT) \
 	obj/sv/pr_execa.$(OBJEXT) \

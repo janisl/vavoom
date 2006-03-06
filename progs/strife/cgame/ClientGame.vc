@@ -833,7 +833,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 //
 //==========================================================================
 
-void UpdateMobj(clmobj_t * mobj, int i, float DeltaTime)
+void UpdateMobj(Entity mobj, int i, float DeltaTime)
 {
 }
 
@@ -860,6 +860,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/06 13:16:31  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.4  2006/02/28 22:47:24  dj_jl
 //  Replaced defines with constants.
 //

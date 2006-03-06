@@ -22,7 +22,7 @@ OBJFILES = obj\sv\zone.obj obj\sv\crc.obj obj\sv\cvar.obj obj\sv\debug.obj \
     obj\sv\infostr.obj obj\sv\r_tex.obj obj\sv\files.obj obj\sv\s_data.obj \
     obj\sv\name.obj obj\sv\vobject.obj obj\sv\vclass.obj obj\sv\net_null.obj \
     obj\sv\pr_execa.obj obj\sv\level.obj obj\sv\sn_sonix.obj \
-    obj\sv\str.obj obj\sv\stream.obj
+    obj\sv\str.obj obj\sv\stream.obj obj\sv\p_thinker.obj \
 # ---------------------------------------------------------------------------
 .autodepend
 # ---------------------------------------------------------------------------

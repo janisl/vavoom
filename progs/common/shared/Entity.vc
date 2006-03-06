@@ -128,27 +128,6 @@ bool bSolid;		// Blocks.
 bool bHidden;		// don't update to clients (invisible but touchable)
 bool bNoBlockmap;	// don't use the BlockLinks (inert but displayable)
 bool bIsPlayer;		// PLayer or player-bot
-
-int Health;
-
-// For movement checking.
-float Radius;
-float Height;
-
-// Additional info record for player avatars only.
-// Only valid if type == MT_PLAYER
-BasePlayer Player;
-
-int TID;	// thing identifier
-int Special;	// special
-int Args[5];	// special arguments
-
-int NetID;
-
-name SpriteName;
-float StateTime;	// state tic counter
-int StateNum;
-int NextState;
 bool bFixedModel;
 
 bool bNoGravity;	// don't apply gravity every tic
@@ -166,6 +145,29 @@ bool bBlasted;		// missile will pass through ghosts
 bool bCantLeaveFloorpic;	// stay within a certain floor type
 bool bFloorClip;	// if feet are allowed to be clipped
 bool bIgnoreCeilingStep;	// continue walk without lowering itself
+
+int Health;
+
+// For movement checking.
+float Radius;
+float Height;
+
+// Additional info record for player avatars only.
+// Only valid if type == MT_PLAYER
+BasePlayer Player;
+
+int TID;	// thing identifier
+int Special;	// special
+int Args[5];	// special arguments
+
+int NetID;
+
+native int InUse;	//	Counter for client side
+
+name SpriteName;
+float StateTime;	// state tic counter
+int StateNum;
+int NextState;
 
 //  Params
 float Mass;
@@ -499,6 +501,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.1  2006/03/06 13:13:55  dj_jl
+//  Client now uses entity class.
+//
 //  Revision 1.14  2006/03/02 18:27:26  dj_jl
 //  Don't use game specific classes in common.
 //
