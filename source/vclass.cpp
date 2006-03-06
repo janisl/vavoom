@@ -164,12 +164,121 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 
 //==========================================================================
 //
+//	VField::CleanField
+//
+//==========================================================================
+
+void VField::CleanField(byte* Data, const VField::FType& Type)
+{
+	guard(CleanField);
+	VField::FType IntType;
+	int InnerSize;
+	switch (Type.Type)
+	{
+	case ev_reference:
+		if (*(VObject**)Data && (*(VObject**)Data)->GetFlags() & _OF_CleanupRef)
+		{
+			*(VObject**)Data = NULL;
+		}
+		break;
+
+	case ev_delegate:
+		if (*(VObject**)Data && (*(VObject**)Data)->GetFlags() & _OF_CleanupRef)
+		{
+			*(VObject**)Data = NULL;
+			((FFunction**)Data)[1] = NULL;
+		}
+		break;
+
+	case ev_struct:
+		Type.Struct->CleanObject(Data);
+		break;
+
+	case ev_array:
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.Type == ev_struct ? IntType.Struct->Size : 4;
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			CleanField(Data + i * InnerSize, IntType);
+		}
+		break;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStruct::InitReferences
+//
+//==========================================================================
+
+void VStruct::InitReferences()
+{
+	guard(VStruct::InitReferences);
+	if (ObjectFlags & CLASSOF_RefsInitialised)
+	{
+		return;
+	}
+
+	ReferenceFields = NULL;
+	if (ParentStruct)
+	{
+		ParentStruct->InitReferences();
+		ReferenceFields = ParentStruct->ReferenceFields;
+	}
+
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		switch (F->Type.Type)
+		{
+		case ev_reference:
+		case ev_delegate:
+			F->NextReference = ReferenceFields;
+			ReferenceFields = F;
+			break;
+		
+		case ev_struct:
+			F->Type.Struct->InitReferences();
+			if (F->Type.Struct->ReferenceFields)
+			{
+				F->NextReference = ReferenceFields;
+				ReferenceFields = F;
+			}
+			break;
+		
+		case ev_array:
+			if (F->Type.ArrayInnerType == ev_reference)
+			{
+				F->NextReference = ReferenceFields;
+				ReferenceFields = F;
+			}
+			else if (F->Type.ArrayInnerType == ev_struct)
+			{
+				F->Type.Struct->InitReferences();
+				if (F->Type.Struct->ReferenceFields)
+				{
+					F->NextReference = ReferenceFields;
+					ReferenceFields = F;
+				}
+			}
+			break;
+		}
+	}
+
+	ObjectFlags |= CLASSOF_RefsInitialised;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStruct::SerialiseObject
 //
 //==========================================================================
 
 void VStruct::SerialiseObject(VStream& Strm, byte* Data)
 {
+	guard(VStruct::SerialiseObject);
 	//	Serialise parent struct's fields.
 	if (ParentStruct)
 	{
@@ -185,6 +294,23 @@ void VStruct::SerialiseObject(VStream& Strm, byte* Data)
 		}
 		VField::SerialiseFieldValue(Strm, Data + F->Ofs, F->Type);
 	}
+	unguardf(("(%s)", *Name));
+}
+
+//==========================================================================
+//
+//	VStruct::CleanObject
+//
+//==========================================================================
+
+void VStruct::CleanObject(byte* Data)
+{
+	guard(VStruct::CleanObject);
+	for (VField* F = ReferenceFields; F; F = F->NextReference)
+	{
+		VField::CleanField(Data + F->Ofs, F->Type);
+	}
+	unguardf(("(%s)", *Name));
 }
 
 //==========================================================================
@@ -230,7 +356,7 @@ VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
 //
 //==========================================================================
 
-VClass::~VClass(void)
+VClass::~VClass()
 {
 	guard(VClass::~VClass);
 	if (!GObjInitialized)
@@ -266,7 +392,7 @@ VClass::~VClass(void)
 //
 //==========================================================================
 
-void VClass::StaticInit(void)
+void VClass::StaticInit()
 {
 	GObjInitialized = true;
 }
@@ -277,7 +403,7 @@ void VClass::StaticInit(void)
 //
 //==========================================================================
 
-void VClass::StaticExit(void)
+void VClass::StaticExit()
 {
 	GObjInitialized = false;
 }
@@ -366,6 +492,69 @@ int VClass::GetFunctionIndex(VName InName)
 
 //==========================================================================
 //
+//	VClass::InitReferences
+//
+//==========================================================================
+
+void VClass::InitReferences()
+{
+	guard(VClass::InitReferences);
+	if (ObjectFlags & CLASSOF_RefsInitialised)
+	{
+		return;
+	}
+
+	ReferenceFields = NULL;
+	if (GetSuperClass())
+	{
+		GetSuperClass()->InitReferences();
+		ReferenceFields = GetSuperClass()->ReferenceFields;
+	}
+
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		switch (F->Type.Type)
+		{
+		case ev_reference:
+		case ev_delegate:
+			F->NextReference = ReferenceFields;
+			ReferenceFields = F;
+			break;
+		
+		case ev_struct:
+			F->Type.Struct->InitReferences();
+			if (F->Type.Struct->ReferenceFields)
+			{
+				F->NextReference = ReferenceFields;
+				ReferenceFields = F;
+			}
+			break;
+		
+		case ev_array:
+			if (F->Type.ArrayInnerType == ev_reference)
+			{
+				F->NextReference = ReferenceFields;
+				ReferenceFields = F;
+			}
+			else if (F->Type.ArrayInnerType == ev_struct)
+			{
+				F->Type.Struct->InitReferences();
+				if (F->Type.Struct->ReferenceFields)
+				{
+					F->NextReference = ReferenceFields;
+					ReferenceFields = F;
+				}
+			}
+			break;
+		}
+	}
+
+	ObjectFlags |= CLASSOF_RefsInitialised;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::SerialiseObject
 //
 //==========================================================================
@@ -386,17 +575,38 @@ void VClass::SerialiseObject(VStream& Strm, VObject* Obj)
 		{
 			continue;
 		}
+		guard(Field);
 		VField::SerialiseFieldValue(Strm, (byte*)Obj + F->Ofs, F->Type);
+		unguardf(("(%s)", *F->Name));
 	}
-	unguard;
+	unguardf(("(%s)", GetName()));
+}
+
+//==========================================================================
+//
+//	VClass::CleanObject
+//
+//==========================================================================
+
+void VClass::CleanObject(VObject* Obj)
+{
+	guard(CleanObject);
+	for (VField* F = ReferenceFields; F; F = F->NextReference)
+	{
+		VField::CleanField((byte*)Obj + F->Ofs, F->Type);
+	}
+	unguardf(("(%s)", GetName()));
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/03/06 13:02:32  dj_jl
+//	Cleaning up references to destroyed objects.
+//
 //	Revision 1.7  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.6  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	

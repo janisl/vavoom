@@ -41,6 +41,8 @@ bool				VObject::GObjInitialized;
 TArray<VObject*>	VObject::GObjObjects;
 TArray<int>			VObject::GObjAvailable;
 VObject*			VObject::GObjHash[4096];
+static int			GNumDeleted;
+static bool			GInGarbageCollection;
 
 //==========================================================================
 //
@@ -48,7 +50,7 @@ VObject*			VObject::GObjHash[4096];
 //
 //==========================================================================
 
-VObject::VObject(void)
+VObject::VObject()
 {
 }
 
@@ -58,14 +60,29 @@ VObject::VObject(void)
 //
 //==========================================================================
 
-VObject::~VObject(void)
+VObject::~VObject()
 {
 	guard(VObject::~VObject);
 	ConditionalDestroy();
+	GNumDeleted--;
 	if (!GObjInitialized)
 	{
 		return;
 	}
+
+	if (!GInGarbageCollection)
+	{
+		SetFlags(_OF_CleanupRef);
+		for (int i = 0; i < GObjObjects.Num(); i++)
+		{
+			if (!GObjObjects[i] || GObjObjects[i]->GetFlags() & _OF_Destroyed)
+			{
+				continue;
+			}
+			GObjObjects[i]->GetClass()->CleanObject(GObjObjects[i]);
+		}
+	}
+
 	if (Index == GObjObjects.Num() - 1)
 	{
 		GObjObjects.Pop();
@@ -84,7 +101,7 @@ VObject::~VObject(void)
 //
 //==========================================================================
 
-void VObject::StaticInit(void)
+void VObject::StaticInit()
 {
 	VClass::StaticInit();
 	GObjInitialized = true;
@@ -96,7 +113,7 @@ void VObject::StaticInit(void)
 //
 //==========================================================================
 
-void VObject::StaticExit(void)
+void VObject::StaticExit()
 {
 	GObjInitialized = false;
 	VClass::StaticExit();
@@ -160,10 +177,11 @@ void VObject::Register()
 //
 //==========================================================================
 
-bool VObject::ConditionalDestroy(void)
+bool VObject::ConditionalDestroy()
 {
 	if (!(ObjectFlags & _OF_Destroyed))
 	{
+		GNumDeleted++;
 		SetFlags(_OF_Destroyed);
 		Destroy();
 	}
@@ -217,9 +235,40 @@ FFunction *VObject::GetVFunction(VName FuncName) const
 //
 //==========================================================================
 
-void VObject::CollectGarbage(void)
+void VObject::CollectGarbage()
 {
 	guard(VObject::CollectGarbage);
+	if (!GNumDeleted)
+	{
+		return;
+	}
+
+	GInGarbageCollection = true;
+	//	Mark objects to be cleaned.
+	for (int i = 0; i < GObjObjects.Num(); i++)
+	{
+		if (!GObjObjects[i])
+		{
+			continue;
+		}
+		VObject *Obj = GObjObjects[i];
+		if (Obj->GetFlags() & _OF_Destroyed)
+		{
+			Obj->SetFlags(_OF_CleanupRef);
+		}
+	}
+
+	//	Clean references.
+	for (int i = 0; i < GObjObjects.Num(); i++)
+	{
+		if (!GObjObjects[i] || GObjObjects[i]->GetFlags() & _OF_Destroyed)
+		{
+			continue;
+		}
+		GObjObjects[i]->GetClass()->CleanObject(GObjObjects[i]);
+	}
+
+	//	Now actually delete the objects.
 	for (int i = 0; i < GObjObjects.Num(); i++)
 	{
 		if (!GObjObjects[i])
@@ -232,6 +281,7 @@ void VObject::CollectGarbage(void)
 			delete Obj;
 		}
 	}
+	GInGarbageCollection = false;
 	unguard;
 }
 
@@ -252,7 +302,7 @@ VObject *VObject::GetIndexObject(int Index)
 //
 //==========================================================================
 
-int VObject::GetObjectsCount(void)
+int VObject::GetObjectsCount()
 {
 	return GObjObjects.Num();
 }
@@ -319,9 +369,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/03/06 13:02:32  dj_jl
+//	Cleaning up references to destroyed objects.
+//
 //	Revision 1.20  2006/02/28 18:04:36  dj_jl
 //	Added script execution helpers.
-//
+//	
 //	Revision 1.19  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

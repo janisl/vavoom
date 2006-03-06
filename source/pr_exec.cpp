@@ -546,6 +546,12 @@ void TProgs::Load(const char *AName)
 		i += OpcodeArgCount[Statements[i]];
 	}
 
+	//	Set up reference field links.
+	for (i = 0; i < Progs->num_classinfo; i++)
+	{
+		ClassList[i]->InitReferences();
+	}
+
 	Z_Free(ClassList);
 	Z_Free(NameRemap);
 	unguard;
@@ -2085,9 +2091,12 @@ COMMAND(ProgsTest)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2006/03/06 13:02:32  dj_jl
+//	Cleaning up references to destroyed objects.
+//
 //	Revision 1.46  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.45  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

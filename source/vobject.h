@@ -107,6 +107,7 @@ enum EObjectFlags
 {
 	_OF_Destroyed		= 0x00000001,	// Object Destroy has already been called.
 	_OF_DelayedDestroy	= 0x00000002,
+	_OF_CleanupRef		= 0x00000004,
 };
 
 // TYPES -------------------------------------------------------------------
@@ -405,7 +406,7 @@ public:
 //
 //	Macros for calling VavoomC methods with different return types.
 //
-#define EV_RET_VOID			TProgs::ExecuteFunction(GetVFunction(v))
+#define EV_RET_VOID(v)		TProgs::ExecuteFunction(GetVFunction(v))
 #define EV_RET_INT(v)		return TProgs::ExecuteFunction(GetVFunction(v))
 #define EV_RET_FLOAT(v)		int ret = TProgs::ExecuteFunction(GetVFunction(v)); return *(float*)&ret
 #define EV_RET_BOOL(v)		return !!TProgs::ExecuteFunction(GetVFunction(v))
@@ -443,9 +444,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/06 13:02:32  dj_jl
+//	Cleaning up references to destroyed objects.
+//
 //	Revision 1.18  2006/02/28 18:04:36  dj_jl
 //	Added script execution helpers.
-//
+//	
 //	Revision 1.17  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

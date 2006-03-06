@@ -54,7 +54,7 @@ IMPLEMENT_CLASS(V, Window);
 //
 //==========================================================================
 
-VWindow::VWindow(void)
+VWindow::VWindow()
 : WindowType(WIN_Normal)
 , bIsVisible(true)
 , bIsSensitive(true)
@@ -108,7 +108,7 @@ void VWindow::Destroy(void)
 	if (Parent)
 		Parent->RemoveChild(this);
 	if (WinGC)
-		delete WinGC;
+		WinGC->ConditionalDestroy();
 	Super::Destroy();
 	unguard;
 }
@@ -464,7 +464,7 @@ void VWindow::KillAllChildren(void)
 	guard(VWindow::KillAllChildren);
 	while (FirstChild)
 	{
-		delete FirstChild;
+		FirstChild->ConditionalDestroy();
 	}
 	unguard;
 }
@@ -794,9 +794,12 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/03/06 13:02:32  dj_jl
+//	Cleaning up references to destroyed objects.
+//
 //	Revision 1.7  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
-//
+//	
 //	Revision 1.6  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

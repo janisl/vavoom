@@ -29,6 +29,7 @@
 enum EClassObjectFlags
 {
 	CLASSOF_Native			= 0x00000001,   // Native
+	CLASSOF_RefsInitialised	= 0x00000002,	// Reference fields have been set up
 };
 
 enum ENativeConstructor		{EC_NativeConstructor};
@@ -60,11 +61,13 @@ public:
 
 	VName		Name;
 	VField*		Next;
+	VField*		NextReference;	//	Linked list of reference fields.
 	int			Ofs;
 	FType		Type;
 	int			Flags;
 
 	static void SerialiseFieldValue(VStream&, byte*, const VField::FType&);
+	static void CleanField(byte*, const VField::FType&);
 };
 
 //==========================================================================
@@ -76,13 +79,17 @@ public:
 class VStruct
 {
 public:
+	vint32			ObjectFlags;
 	VName			Name;
 	VClass*			OuterClass;
 	VStruct*		ParentStruct;
 	int				Size;
 	VField*			Fields;
+	VField*			ReferenceFields;
 
+	void InitReferences();
 	void SerialiseObject(VStream&, byte*);
+	void CleanObject(byte*);
 };
 
 //==========================================================================
@@ -114,6 +121,7 @@ public:
 	int				ClassNumMethods;
 
 	VField*			Fields;
+	VField*			ReferenceFields;
 
 	// Constructors.
 	VClass(VName AName, int ASize);
@@ -173,15 +181,20 @@ public:
 	FFunction *FindFunction(VName InName);
 	FFunction *FindFunctionChecked(VName InName);
 	int GetFunctionIndex(VName InName);
+	void InitReferences();
 	void SerialiseObject(VStream&, VObject*);
+	void CleanObject(VObject*);
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/06 13:02:32  dj_jl
+//	Cleaning up references to destroyed objects.
+//
 //	Revision 1.13  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.12  2006/02/26 20:52:49  dj_jl
 //	Proper serialisation of level and players.
 //	
