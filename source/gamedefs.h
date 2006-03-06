@@ -85,15 +85,23 @@
 #include "server.h"
 #include "protocol.h"
 #include "imission.h"
+#include "p_thinker.h"
+#include "p_levelinfo.h"
+#include "p_entity.h"
+#include "player.h"
+#include "p_gameinfo.h"
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.28  2006/02/25 17:15:13  dj_jl
 //	Implemented proper serialisation of the objects.
-//
+//	
 //	Revision 1.27  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

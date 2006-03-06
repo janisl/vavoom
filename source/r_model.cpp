@@ -1050,7 +1050,7 @@ void Mod_LoadSkin(const char *name, void **bufptr)
 //
 //==========================================================================
 
-void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int InFrame)
+void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 {
 	guard(R_PositionWeaponModel);
 	mmdl_t *pmdl = (mmdl_t*)Mod_Extradata(wpmodel);
@@ -1071,22 +1071,25 @@ void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int InFrame)
 		p[vi].z = pverts[ptris[0].vertindex[vi]].v[2] * pframe->scale[2] + pframe->scale_origin[2];
 	}
 	TVec md_forward, md_left, md_up;
-	AngleVectors(wpent.angles, md_forward, md_left, md_up);
+	AngleVectors(wpent->Angles, md_forward, md_left, md_up);
 	md_left = -md_left;
-	wpent.origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
+	wpent->Origin += md_forward * p[0].x + md_left * p[0].y + md_up * p[0].z;
 	TAVec wangles;
 	VectorAngles(p[1] - p[0], wangles);
-	wpent.angles.yaw = AngleMod(wpent.angles.yaw + wangles.yaw);
-	wpent.angles.pitch = AngleMod(wpent.angles.pitch + wangles.pitch);
+	wpent->Angles.yaw = AngleMod(wpent->Angles.yaw + wangles.yaw);
+	wpent->Angles.pitch = AngleMod(wpent->Angles.pitch + wangles.pitch);
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.18  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.17  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

@@ -22,14 +22,6 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**	
-//**	THINKERS
-//**
-//**	All thinkers should be allocated by Z_Malloc so they can be operated
-//**  on uniformly. The actual structures will vary in size, but the first
-//**  element must be VThinker.
-//**	
-//**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -50,14 +42,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VThinker*	VThinker::ThinkerHead;
-VThinker*	VThinker::ThinkerTail;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-IMPLEMENT_CLASS(V, Thinker)
-
-static int FIndex_Tick;
 
 // CODE --------------------------------------------------------------------
 
@@ -69,7 +54,7 @@ static int FIndex_Tick;
 
 void P_InitThinkers()
 {
-	FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex("Tick");
+	VThinker::FIndex_Tick = VThinker::StaticClass()->GetFunctionIndex("Tick");
 }
 
 //==========================================================================
@@ -81,49 +66,15 @@ void P_InitThinkers()
 void SV_DestroyAllThinkers()
 {
 	guard(SV_DestroyAllThinkers);
-	for (VThinker* Th = VThinker::ThinkerHead; Th; Th = Th->Next)
+	if (!GLevel)
+		return;
+	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{
 		Th->ConditionalDestroy();
 	}
-//	for (TObjectIterator<VThinker> It; It; ++It)
-//	{
-//		delete *It;
-//	}
 	VObject::CollectGarbage();
-	VThinker::ThinkerHead = NULL;
-	VThinker::ThinkerTail = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VThinker::Serialise
-//
-//==========================================================================
-
-void VThinker::Serialise(VStream& Strm)
-{
-	guard(VThinker::Serialise);
-	Super::Serialise(Strm);
-	if (Strm.IsLoading())
-	{
-		XLevel = GLevel;
-		Level = GLevelInfo;
-		AddThinker(this);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VThinker::Tick
-//
-//==========================================================================
-
-void VThinker::Tick(float DeltaTime)
-{
-	guard(VThinker::Tick);
-	svpr.Exec(GetVFunction(FIndex_Tick), (int)this, PassFloat(DeltaTime));
+	GLevel->ThinkerHead = NULL;
+	GLevel->ThinkerTail = NULL;
 	unguard;
 }
 
@@ -136,7 +87,7 @@ void VThinker::Tick(float DeltaTime)
 static void RunThinkers()
 {
 	guard(RunThinkers);
-	for (VThinker* Th = VThinker::ThinkerHead; Th; Th = Th->Next)
+	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{
 		if (!(Th->GetFlags() & _OF_DelayedDestroy))
 		{
@@ -144,7 +95,7 @@ static void RunThinkers()
 		}
 		else
 		{
-			VThinker::RemoveThinker(Th);
+			GLevel->RemoveThinker(Th);
 			Th->ConditionalDestroy();
 		}
 	}
@@ -181,13 +132,15 @@ void P_Ticker()
 
 //==========================================================================
 //
-//	VThinker::AddThinker
+//	VLevel::AddThinker
 //
 //==========================================================================
 
-void VThinker::AddThinker(VThinker* Th)
+void VLevel::AddThinker(VThinker* Th)
 {
-	guard(VThinker::AddThinker);
+	guard(VLevel::AddThinker);
+	Th->XLevel = this;
+	Th->Level = GLevelInfo;
 	Th->Prev = ThinkerTail;
 	Th->Next = NULL;
 	if (ThinkerTail)
@@ -200,14 +153,13 @@ void VThinker::AddThinker(VThinker* Th)
 
 //==========================================================================
 //
-//	VThinker::RemoveThinker
+//	VLevel::RemoveThinker
 //
 //==========================================================================
 
-void VThinker::RemoveThinker(VThinker* Th)
+void VLevel::RemoveThinker(VThinker* Th)
 {
-	guard(VThinker::RemoveThinker);
-dprintf("Remove %p %p %p %p %p\n", Th, ThinkerHead, ThinkerTail, Th->Prev, Th->Next);
+	guard(VLevel::RemoveThinker);
 	if (Th == ThinkerHead)
 		ThinkerHead = Th->Next;
 	else
@@ -222,9 +174,12 @@ dprintf("Remove %p %p %p %p %p\n", Th, ThinkerHead, ThinkerTail, Th->Prev, Th->N
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/03/06 13:05:51  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.25  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
-//
+//	
 //	Revision 1.24  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	

@@ -1278,11 +1278,11 @@ static void AM_drawThings(dword color)
 
 	for (i = 0; i < GMaxEntities; i++)
 	{
-		if (cl_mobjs[i].in_use)
+		if (cl_mobjs[i]->InUse)
 		{
 		    AM_drawLineCharacter(thintriangle_guy, NUMTHINTRIANGLEGUYLINES,
-				16.0, cl_mobjs[i].angles.yaw, color, cl_mobjs[i].origin.x,
-				cl_mobjs[i].origin.y);
+				16.0, cl_mobjs[i]->Angles.yaw, color, cl_mobjs[i]->Origin.x,
+				cl_mobjs[i]->Origin.y);
 		}
 	}
 }
@@ -1524,9 +1524,12 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.19  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.18  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

@@ -133,7 +133,7 @@ public:
 	}
 	void Seek(int Pos)
 	{
-		Seek(Pos);
+		Stream->Seek(Pos);
 	}
 	int Tell()
 	{
@@ -230,7 +230,7 @@ public:
 	}
 	void Seek(int Pos)
 	{
-		Seek(Pos);
+		Stream->Seek(Pos);
 	}
 	int Tell()
 	{
@@ -569,7 +569,7 @@ static void ArchiveThinkers()
 	}
 
 	//	Add thinkers.
-	for (VThinker* Th = VThinker::ThinkerHead; Th; Th = Th->Next)
+	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{
 		VEntity *mobj = Cast<VEntity>(Th);
 		if (mobj && mobj->bIsPlayer && !SavingPlayers)
@@ -1230,9 +1230,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.59  2006/03/06 13:05:51  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.58  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.57  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
 //	

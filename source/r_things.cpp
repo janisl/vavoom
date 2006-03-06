@@ -107,8 +107,8 @@ struct trans_sprite_t
 	int			translucency;
 	union
 	{
-		int		translation;
-		char	*skin;
+		int			translation;
+		const char*	skin;
 	};
 	int			type;
 	float		dist;
@@ -122,6 +122,9 @@ struct trans_sprite_t
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
+
+extern VModel*		model_precache[1024];
+extern VStr			skin_list[256];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -443,24 +446,24 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 
 extern TCvarI		r_chasecam;
 
-static void RenderSprite(clmobj_t *thing)
+static void RenderSprite(VEntity* thing)
 {
 	guard(RenderSprite);
-	if (thing == &cl_mobjs[cl->clientnum + 1] && !r_chasecam)
+	if (thing == cl_mobjs[cl->clientnum + 1] && !r_chasecam)
 	{
 		//	Don't draw client's mobj
 		return;
 	}
 
-	if (thing->translucency >= 95)
+	if (thing->Translucency >= 95)
 	{
 		// Never make a vissprite when MF2_DONTDRAW is flagged.
 		return;
 	}
 
-	int spr_type = thing->spritetype;
+	int spr_type = thing->SpriteType;
 
-	TVec sprorigin = thing->origin;
+	TVec sprorigin = thing->Origin;
 	TVec sprforward;
 	TVec sprright;
 	TVec sprup;
@@ -522,7 +525,7 @@ static void RenderSprite(clmobj_t *thing)
 	 case SPR_ORIENTED:
 		//	Generate the sprite's axes, according to the sprite's world
 		// orientation
-		AngleVectors(thing->angles, sprforward, sprright, sprup);
+		AngleVectors(thing->Angles, sprforward, sprright, sprup);
 		break;
 
 	 case SPR_VP_PARALLEL_ORIENTED:
@@ -530,8 +533,8 @@ static void RenderSprite(clmobj_t *thing)
 		// rotated in that plane around the center according to the sprite
 		// entity's roll angle. So sprforward stays the same, but sprright
 		// and sprup rotate
-		sr = msin(thing->angles.roll);
-		cr = mcos(thing->angles.roll);
+		sr = msin(thing->Angles.roll);
+		cr = mcos(thing->Angles.roll);
 
 		sprforward = viewforward;
 		sprright = TVec(viewright.x * cr + viewup.x * sr, viewright.y * cr +
@@ -554,8 +557,8 @@ static void RenderSprite(clmobj_t *thing)
 		if ((dot > 0.999848) || (dot < -0.999848))	// cos(1 degree) = 0.999848
 			return;
 
-		sr = msin(thing->angles.roll);
-		cr = mcos(thing->angles.roll);
+		sr = msin(thing->Angles.roll);
+		cr = mcos(thing->Angles.roll);
 
 		//	CrossProduct(TVec(0, 0, 1), viewforward)
 		tvec = Normalise(TVec(viewforward.y, -viewforward.x, 0));
@@ -574,15 +577,15 @@ static void RenderSprite(clmobj_t *thing)
 	spriteframe_t*	sprframe;
 
 	// decide which patch to use for sprite relative to player
-	if ((unsigned)thing->sprite >= MAX_SPRITE_MODELS)
+	if ((unsigned)thing->SpriteIndex >= MAX_SPRITE_MODELS)
 	{
 #ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite number %d", thing->sprite);
 #endif
 		return;
 	}
-	sprdef = &sprites[thing->sprite];
-	if ((thing->frame & FF_FRAMEMASK) >= sprdef->numframes)
+	sprdef = &sprites[thing->SpriteIndex];
+	if ((thing->SpriteFrame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",
@@ -590,7 +593,7 @@ static void RenderSprite(clmobj_t *thing)
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[thing->frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[thing->SpriteFrame & FF_FRAMEMASK];
 
 	int			lump;
 	boolean		flip;
@@ -599,9 +602,9 @@ static void RenderSprite(clmobj_t *thing)
 	{
 		// choose a different rotation based on player view
 		//FIXME must use sprforward here?
-		float ang = matan(thing->origin.y - vieworg.y,
-			thing->origin.x - vieworg.x);
-		ang = AngleMod(ang - thing->angles.yaw + 180.0 + 45.0 / 2.0);
+		float ang = matan(thing->Origin.y - vieworg.y,
+			thing->Origin.x - vieworg.x);
+		ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 2.0);
 		dword rot = (dword)(ang * 8 / 360.0) & 7;
 		lump = sprframe->lump[rot];
 		flip = (boolean)sprframe->flip[rot];
@@ -653,7 +656,7 @@ static void RenderSprite(clmobj_t *thing)
 	r_taxis = -sprup;
 
 	dword light;
-	if (thing->frame & FF_FULLBRIGHT || fixedlight)
+	if (thing->SpriteFrame & FF_FULLBRIGHT || fixedlight)
 	{
 		light = 0xffffffff;
 	}
@@ -662,15 +665,15 @@ static void RenderSprite(clmobj_t *thing)
 		light = R_LightPoint(sprorigin);
 	}
 
-	if (thing->translucency > 0 || r_sort_sprites)
+	if (thing->Translucency > 0 || r_sort_sprites)
 	{
 		R_DrawTranslucentPoly(sv, 4, lump,
-			thing->translucency, thing->translation, true, light);
+			thing->Translucency, thing->Translation, true, light);
 	}
 	else
 	{
-		Drawer->DrawSpritePolygon(sv, lump, thing->translucency,
-			thing->translation, light);
+		Drawer->DrawSpritePolygon(sv, lump, thing->Translucency,
+			thing->Translation, light);
 	}
 	unguard;
 }
@@ -681,12 +684,12 @@ static void RenderSprite(clmobj_t *thing)
 //
 //==========================================================================
 
-void RenderTranslucentAliasModel(clmobj_t *mobj, dword light)
+void RenderTranslucentAliasModel(VEntity* mobj, dword light)
 {
 	guard(RenderTranslucentAliasModel);
 	int i;
 
-	float dist = fabs(DotProduct(mobj->origin - vieworg, viewforward));
+	float dist = fabs(DotProduct(mobj->Origin - vieworg, viewforward));
 	int found = -1;
 	float best_dist = -1;
 	for (i = 0; i < MAX_TRANS_SPRITES; i++)
@@ -695,16 +698,16 @@ void RenderTranslucentAliasModel(clmobj_t *mobj, dword light)
 		if (!spr.translucency)
 		{
 			spr.dv = trans_sprite_verts + 4 * i;
-			spr.dv[0] = mobj->origin;
-			((TAVec *)spr.dv)[1] = mobj->angles;
-			spr.surf = (surface_t*)mobj->AliasModel;
-			spr.lump = mobj->AliasFrame;
-			spr.count = mobj->AliasSkinIndex;
+			spr.dv[0] = mobj->Origin;
+			((TAVec *)spr.dv)[1] = mobj->Angles;
+			spr.surf = (surface_t*)model_precache[mobj->ModelIndex];
+			spr.lump = mobj->ModelFrame;
+			spr.count = mobj->ModelSkinIndex;
 			spr.light = light;
-			spr.translucency = mobj->translucency + 1;
+			spr.translucency = mobj->Translucency + 1;
 			spr.dist = dist;
 			spr.type = 2;
-			spr.skin = mobj->Skin;
+			spr.skin = *skin_list[mobj->ModelSkinNum];
 			return;
 		}
 		if (spr.dist > best_dist)
@@ -742,21 +745,22 @@ void RenderTranslucentAliasModel(clmobj_t *mobj, dword light)
 				Z_Free(spr.dv);
 		}
 		spr.dv = trans_sprite_verts + 4 * i;
-		spr.dv[0] = mobj->origin;
-		((TAVec *)spr.dv)[1] = mobj->angles;
-		spr.surf = (surface_t*)mobj->AliasModel;
-		spr.lump = mobj->AliasFrame;
-		spr.count = mobj->AliasSkinIndex;
+		spr.dv[0] = mobj->Origin;
+		((TAVec *)spr.dv)[1] = mobj->Angles;
+		spr.surf = (surface_t*)model_precache[mobj->ModelIndex];
+		spr.lump = mobj->ModelFrame;
+		spr.count = mobj->ModelSkinIndex;
 		spr.light = light;
-		spr.translucency = mobj->translucency + 1;
-		spr.skin = mobj->Skin;
+		spr.translucency = mobj->Translucency + 1;
+		spr.skin = *skin_list[mobj->ModelSkinNum];
 		spr.dist = dist;
 		spr.type = 2;
 		return;
 	}
-	Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->AliasModel,
-		mobj->AliasFrame, mobj->AliasSkinIndex, mobj->Skin, light,
-		mobj->translucency, false);
+	Drawer->DrawAliasModel(mobj->Origin, mobj->Angles,
+		model_precache[mobj->ModelIndex], mobj->ModelFrame,
+		mobj->ModelSkinIndex, *skin_list[mobj->ModelSkinNum], light,
+		mobj->Translucency, false);
 	unguard;
 }
 
@@ -766,17 +770,17 @@ void RenderTranslucentAliasModel(clmobj_t *mobj, dword light)
 //
 //==========================================================================
 
-static void RenderAliasModel(clmobj_t *mobj)
+static void RenderAliasModel(VEntity* mobj)
 {
 	guard(RenderAliasModel);
-	if (!r_chasecam && (mobj == &cl_mobjs[cl->clientnum + 1] ||
-		mobj == &cl_weapon_mobjs[cl->clientnum + 1]))
+	if (!r_chasecam && (mobj == cl_mobjs[cl->clientnum + 1] ||
+		mobj == cl_weapon_mobjs[cl->clientnum + 1]))
 	{
 		//	Don't draw client's mobj
 		return;
 	}
 
-	if (mobj->translucency >= 95)
+	if (mobj->Translucency >= 95)
 	{
 		// Never make a vissprite when MF2_DONTDRAW is flagged.
 		return;
@@ -784,24 +788,25 @@ static void RenderAliasModel(clmobj_t *mobj)
 
 	//	Setup lighting
 	dword light;
-	if (mobj->frame & FF_FULLBRIGHT || fixedlight)
+	if (mobj->SpriteFrame & FF_FULLBRIGHT || fixedlight)
 	{
 		light = 0xffffffff;
 	}
 	else
 	{
-		light = R_LightPoint(mobj->origin);
+		light = R_LightPoint(mobj->Origin);
 	}
 
 	//	Draw it
-	if (mobj->translucency)
+	if (mobj->Translucency)
 	{
 		RenderTranslucentAliasModel(mobj, light);
 	}
 	else
 	{
-		Drawer->DrawAliasModel(mobj->origin, mobj->angles, mobj->AliasModel,
-			mobj->AliasFrame, mobj->AliasSkinIndex, mobj->Skin, light, 0,
+		Drawer->DrawAliasModel(mobj->Origin, mobj->Angles,
+			model_precache[mobj->ModelIndex], mobj->ModelFrame,
+			mobj->ModelSkinIndex, *skin_list[mobj->ModelSkinNum], light, 0,
 			false);
 	}
 	unguard;
@@ -813,7 +818,7 @@ static void RenderAliasModel(clmobj_t *mobj)
 //
 //==========================================================================
 
-void R_RenderMobjs(void)
+void R_RenderMobjs()
 {
 	guard(R_RenderMobjs);
 	int i;
@@ -825,15 +830,15 @@ void R_RenderMobjs(void)
 
 	for (i = 0; i < GMaxEntities; i++)
 	{
-		if (cl_mobjs[i].in_use)
+		if (cl_mobjs[i]->InUse)
 		{
-			if (cl_mobjs[i].AliasModel && r_models)
+			if (model_precache[cl_mobjs[i]->ModelIndex] && r_models)
 			{
-				RenderAliasModel(&cl_mobjs[i]);
+				RenderAliasModel(cl_mobjs[i]);
 			}
 			else
 			{
-	    	    RenderSprite(&cl_mobjs[i]);
+	    	    RenderSprite(cl_mobjs[i]);
 			}
 		}
 	}
@@ -842,9 +847,10 @@ void R_RenderMobjs(void)
 	{
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (cl_weapon_mobjs[i].in_use && cl_weapon_mobjs[i].AliasModel)
+			if (cl_weapon_mobjs[i]->InUse &&
+				model_precache[cl_weapon_mobjs[i]->ModelIndex])
 			{
-				RenderAliasModel(&cl_weapon_mobjs[i]);
+				RenderAliasModel(cl_weapon_mobjs[i]);
 			}
 		}
 	}
@@ -1179,9 +1185,12 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.26  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.25  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

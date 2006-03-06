@@ -1584,7 +1584,7 @@ PF(NextMobj)
 	th = (VThinker*)Pop();
 	if (!th)
 	{
-		th = VThinker::ThinkerHead;
+		th = GLevel->ThinkerHead;
 	}
 	else
 	{
@@ -1621,7 +1621,7 @@ PF(NewSpecialThinker)
 
 	Class = (VClass *)Pop();
 	spec = (VThinker*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
-	VThinker::AddThinker(spec);
+	GLevel->AddThinker(spec);
 	Push((int)spec);
 }
 
@@ -1670,7 +1670,7 @@ PF(NextThinker)
 	th = (VThinker*)Pop();
 	if (!th)
 	{
-		th = VThinker::ThinkerHead;
+		th = GLevel->ThinkerHead;
 	}
 	else
 	{
@@ -3469,9 +3469,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.76  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.75  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.74  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

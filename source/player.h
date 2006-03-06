@@ -29,8 +29,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VBasePlayer;
-
 //
 // Player states.
 //
@@ -237,9 +235,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.22  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.21  2006/02/20 22:52:15  dj_jl
 //	Removed player stats limit.
 //	

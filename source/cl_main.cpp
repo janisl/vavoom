@@ -84,7 +84,7 @@ void CL_Init(void)
 	guard(CL_Init);
 	clpr.Load("clprogs");
 
-	cl_mobjs = Z_CNew<clmobj_t>(GMaxEntities);
+	cl_mobjs = Z_CNew<VEntity*>(GMaxEntities);
 	cl_mo_base = Z_CNew<clmobjbase_t>(GMaxEntities);
 
 	cls.message.Alloc(NET_MAXMESSAGE);
@@ -213,14 +213,14 @@ void CL_DecayLights(void)
 //
 //==========================================================================
 
-void CL_UpdateMobjs(void)
+void CL_UpdateMobjs()
 {
 	guard(CL_UpdateMobjs);
 	for (int i = 0; i < GMaxEntities; i++)
 	{
-		if (cl_mobjs[i].in_use)
+		if (cl_mobjs[i]->InUse)
 		{
-			GClGame->eventUpdateMobj(&cl_mobjs[i], i, host_frametime);
+			GClGame->eventUpdateMobj(cl_mobjs[i], i, host_frametime);
 		}
 	}
 	unguard;
@@ -537,9 +537,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.19  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.18  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

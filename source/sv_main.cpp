@@ -152,11 +152,23 @@ static TCvarI	split_frame("split_frame", "1", CVAR_ARCHIVE);
 
 //==========================================================================
 //
+//	VLevelInfo::VLevelInfo
+//
+//==========================================================================
+
+VLevelInfo::VLevelInfo()
+{
+	Level = this;
+	Game = GGameInfo;
+}
+
+//==========================================================================
+//
 //	SV_Init
 //
 //==========================================================================
 
-void SV_Init(void)
+void SV_Init()
 {
 	guard(SV_Init);
 	int		i;
@@ -245,7 +257,7 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	int i;
 
 	Ent = (VEntity*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
-	VThinker::AddThinker(Ent);
+	GLevel->AddThinker(Ent);
 
 	//	Client treats first objects as player objects and will use
 	// models and skins from player info
@@ -364,22 +376,25 @@ void SV_WriteMobj(int bits, VEntity &mobj, TMessage &msg)
 //
 //==========================================================================
 
-void VEntity::Destroy(void)
+void VEntity::Destroy()
 {
 	guard(VEntity::Destroy);
-	if (sv_mobjs[NetID] != this)
-		Sys_Error("Invalid entity num %d", NetID);
+	if (XLevel == GLevel)
+	{
+		if (sv_mobjs[NetID] != this)
+			Sys_Error("Invalid entity num %d", NetID);
 
-	eventDestroyed();
+		eventDestroyed();
 
-	// unlink from sector and block lists
-	UnlinkFromWorld();
+		// unlink from sector and block lists
+		UnlinkFromWorld();
 
-	// stop any playing sound
-	SV_StopSound(this, 0);
+		// stop any playing sound
+		SV_StopSound(this, 0);
 
-	sv_mobjs[NetID] = NULL;
-	sv_mo_free_time[NetID] = level.time;
+		sv_mobjs[NetID] = NULL;
+		sv_mo_free_time[NetID] = level.time;
+	}
 
 	Super::Destroy();
 	unguard;
@@ -3015,9 +3030,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.86  2006/03/06 13:05:51  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.85  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.84  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
 //	

@@ -50,8 +50,12 @@
 //==========================================================================
 
 struct sector_t;
-class VThinker;
-class VEntity;
+
+class	VThinker;
+class		VLevelInfo;
+class		VEntity;
+class	VBasePlayer;
+class	VGameInfo;
 
 //
 //	Your plain vanilla vertex.
@@ -435,9 +439,9 @@ class VLevel : public VObject
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
 
 	//	Flags.
-	dword bForServer:1;		//	True if this level belongs to the server.
-	dword bExtended:1;		//	True if level was in Hexen format.
-	dword bGLNodesV5:1;		//	True if using version 5 GL nodes.
+	dword			bForServer:1;	//	True if this level belongs to the server.
+	dword			bExtended:1;	//	True if level was in Hexen format.
+	dword			bGLNodesV5:1;	//	True if using version 5 GL nodes.
 
 	//
 	//	MAP related Lookup tables.
@@ -445,32 +449,32 @@ class VLevel : public VObject
 	//
 
 	int				NumVertexes;
-	vertex_t		*Vertexes;
+	vertex_t*		Vertexes;
 
 	int				NumSectors;
-	sector_t		*Sectors;
+	sector_t*		Sectors;
 
 	int				NumSides;
-	side_t			*Sides;
+	side_t*			Sides;
 
 	int				NumLines;
-	line_t			*Lines;
+	line_t*			Lines;
 
 	int				NumSegs;
-	seg_t			*Segs;
+	seg_t*			Segs;
 
 	int				NumSubsectors;
-	subsector_t		*Subsectors;
+	subsector_t*	Subsectors;
 
 	int				NumNodes;
-	node_t			*Nodes;
+	node_t*			Nodes;
 
-	byte			*VisData;
-	byte			*NoVis;
+	byte*			VisData;
+	byte*			NoVis;
 
 	// !!! Used only during level loading
 	int				NumThings;
-	mthing_t		*Things;
+	mthing_t*		Things;
 
 	//
 	//	BLOCKMAP
@@ -478,14 +482,14 @@ class VLevel : public VObject
 	// array of blocks of size ...
 	// Used to speed up collision detection by spatial subdivision in 2D.
 	//
-	short			*BlockMapLump;	// offsets in blockmap are from here
-	word			*BlockMap;		// int for larger maps
+	short*			BlockMapLump;	// offsets in blockmap are from here
+	word*			BlockMap;		// int for larger maps
 	int				BlockMapWidth;	// Blockmap size.
 	int				BlockMapHeight;	// size in mapblocks
 	float			BlockMapOrgX;	// origin of block map
 	float			BlockMapOrgY;
-	VEntity			**BlockLinks;	// for thing chains
-	polyblock_t		**PolyBlockMap;
+	VEntity**		BlockLinks;		// for thing chains
+	polyblock_t**	PolyBlockMap;
 
 	//
 	//	REJECT
@@ -493,18 +497,21 @@ class VLevel : public VObject
 	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
 	// 	Without special effect, this could be used as a PVS lookup as well.
 	//
-	byte			*RejectMatrix;
+	byte*			RejectMatrix;
 
 	//	Strife conversations.
-	int				NumGenericSpeeches;
-	FRogueConSpeech	*GenericSpeeches;
+	int					NumGenericSpeeches;
+	FRogueConSpeech*	GenericSpeeches;
 
-	int				NumLevelSpeeches;
-	FRogueConSpeech	*LevelSpeeches;
+	int					NumLevelSpeeches;
+	FRogueConSpeech*	LevelSpeeches;
 
 	//	List of all poly-objects on the level.
 	int 			NumPolyObjs;
-	polyobj_t		*PolyObjs;
+	polyobj_t*		PolyObjs;
+
+	VThinker*		ThinkerHead;
+	VThinker*		ThinkerTail;
 
 	void Serialise(VStream& Strm);
 
@@ -513,6 +520,9 @@ class VLevel : public VObject
 
 	subsector_t* PointInSubsector(const TVec &point) const;
 	byte *LeafPVS(const subsector_t *ss) const;
+
+	void AddThinker(VThinker*);
+	void RemoveThinker(VThinker*);
 
 private:
 	//	Map loaders.
@@ -604,9 +614,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.35  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
-//
+//	
 //	Revision 1.34  2006/02/13 18:34:34  dj_jl
 //	Moved all server progs global functions to classes.
 //	

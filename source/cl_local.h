@@ -49,30 +49,6 @@ struct dlight_t
 };
 
 // Client side Map Object definition.
-struct clmobj_t
-{
-	int			in_use;
-
-	TVec		origin;	// position
-	TAVec		angles;	// orientation
-
-	int			spritetype;
-	int			sprite;	// used to find patch_t and flip value
-	int			frame;	// might be ORed with FF_FULLBRIGHT
-
-	int			ModelIndex;
-	VModel*		AliasModel;
-	int			AliasFrame;
-	int			AliasSkinIndex;
-	char		Skin[64];
-
-	int			translucency;
-	int			translation;
-
-	int			effects;
-};
-
-// Client side Map Object definition.
 struct clmobjbase_t
 {
 	TVec		origin;	// position
@@ -205,7 +181,7 @@ class VClientGameBase : public VObject
 	{
 		clpr.Exec(GetVFunction("UpdateParticle"), (int)this, (int)p, PassFloat(DeltaTime));
 	}
-	void eventUpdateMobj(clmobj_t* mobj, int key, float DeltaTime)
+	void eventUpdateMobj(VEntity* mobj, int key, float DeltaTime)
 	{
 		clpr.Exec(GetVFunction("UpdateMobj"), (int)this, (int)mobj, key, PassFloat(DeltaTime));
 	}
@@ -228,15 +204,15 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 	int frame, const char *skin);
 
 VModel* Mod_FindName(const char* name);
-void R_PositionWeaponModel(clmobj_t &wpent, VModel* wpmodel, int frame);
+void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int frame);
 
 void SCR_SetVirtualScreen(int Width, int Height);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern clmobj_t			*cl_mobjs;
-extern clmobjbase_t		*cl_mo_base;
-extern clmobj_t			cl_weapon_mobjs[MAXPLAYERS];
+extern VEntity**		cl_mobjs;
+extern clmobjbase_t*	cl_mo_base;
+extern VEntity*			cl_weapon_mobjs[MAXPLAYERS];
 
 extern VClientGameBase*	GClGame;
 
@@ -260,9 +236,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.20  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.19  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

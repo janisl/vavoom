@@ -364,7 +364,7 @@ static void R_SetupFrame(void)
 
 	if (r_chasecam)
 	{
-		vieworg = cl_mobjs[cl->clientnum + 1].origin + TVec(0.0, 0.0, 32.0)
+		vieworg = cl_mobjs[cl->clientnum + 1]->Origin + TVec(0.0, 0.0, 32.0)
 			- r_chase_dist * viewforward + r_chase_up * viewup
 			+ r_chase_right * viewright;
 	}
@@ -938,9 +938,12 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.34  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.33  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

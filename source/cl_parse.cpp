@@ -46,27 +46,33 @@ void CL_SignonReply(void);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-clmobj_t		*cl_mobjs;
-clmobjbase_t	*cl_mo_base;
-clmobj_t		cl_weapon_mobjs[MAXPLAYERS];
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+VEntity**		cl_mobjs;
+clmobjbase_t*	cl_mo_base;
+VEntity*		cl_weapon_mobjs[MAXPLAYERS];
+VModel*			model_precache[1024];
+VStr			skin_list[256];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VModel*			model_precache[1024];
 static VModel*			weapon_model_precache[1024];
-static VStr				skin_list[256];
 
 // CODE --------------------------------------------------------------------
 
 void CL_Clear()
 {
 	guard(CL_Clear);
-	memset(cl, 0, sizeof(*cl));
+	memset((byte*)cl + sizeof(VObject), 0, sizeof(*cl) - sizeof(VObject));
 	memset(&cl_level, 0, sizeof(cl_level));
-	memset(cl_mobjs, 0, sizeof(clmobj_t) * GMaxEntities);
+	for (int i = 0; i < GMaxEntities; i++)
+		if (cl_mobjs[i])
+			cl_mobjs[i]->ConditionalDestroy();
+	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
 	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
+	for (int i = 0; i < MAXPLAYERS; i++)
+		if (cl_weapon_mobjs[i])
+			cl_weapon_mobjs[i]->ConditionalDestroy();
 	memset(cl_weapon_mobjs, 0, sizeof(cl_weapon_mobjs));
 	memset(cl_dlights, 0, sizeof(cl_dlights));
 	memset(scores, 0, sizeof(scores));
@@ -79,6 +85,10 @@ void CL_Clear()
 	    S_StopAllSound();
 		Z_FreeTag(PU_LEVEL);
 	}
+	for (int i = 0; i < GMaxEntities; i++)
+		cl_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass(), PU_STATIC);
+	for (int i = 0; i < MAXPLAYERS; i++)
+		cl_weapon_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass(), PU_STATIC);
 	cls.signon = 0;
 	unguard;
 }
@@ -111,90 +121,88 @@ static void CL_ParseBaseline(void)
 	CL_ReadMobjBase(cl_mo_base[i]);
 }
 
-static void CL_ReadMobj(int bits, clmobj_t &mobj, const clmobjbase_t &base)
+static void CL_ReadMobj(int bits, VEntity* mobj, const clmobjbase_t &base)
 {
 	if (bits & MOB_X)
-		mobj.origin.x = net_msg.ReadShort();
+		mobj->Origin.x = net_msg.ReadShort();
 	else
-		mobj.origin.x = base.origin.x;
+		mobj->Origin.x = base.origin.x;
 	if (bits & MOB_Y)
-		mobj.origin.y = net_msg.ReadShort();
+		mobj->Origin.y = net_msg.ReadShort();
 	else
-		mobj.origin.y = base.origin.y;
+		mobj->Origin.y = base.origin.y;
 	if (bits & MOB_Z)
-		mobj.origin.z = net_msg.ReadShort();
+		mobj->Origin.z = net_msg.ReadShort();
 	else
-		mobj.origin.z = base.origin.z;
+		mobj->Origin.z = base.origin.z;
 	if (bits & MOB_ANGLE)
-		mobj.angles.yaw = ByteToAngle(net_msg.ReadByte());
+		mobj->Angles.yaw = ByteToAngle(net_msg.ReadByte());
 	else
-		mobj.angles.yaw = base.angles.yaw;
+		mobj->Angles.yaw = base.angles.yaw;
 	if (bits & MOB_ANGLEP)
-		mobj.angles.pitch = ByteToAngle(net_msg.ReadByte());
+		mobj->Angles.pitch = ByteToAngle(net_msg.ReadByte());
 	else
-		mobj.angles.pitch = base.angles.pitch;
+		mobj->Angles.pitch = base.angles.pitch;
 	if (bits & MOB_ANGLER)
-		mobj.angles.roll = ByteToAngle(net_msg.ReadByte());
+		mobj->Angles.roll = ByteToAngle(net_msg.ReadByte());
 	else
-		mobj.angles.roll = base.angles.roll;
+		mobj->Angles.roll = base.angles.roll;
 	if (bits & MOB_SPRITE)
 	{
-		mobj.sprite = (word)net_msg.ReadShort();
-		mobj.spritetype = mobj.sprite >> 10;
-		mobj.sprite &= 0x3ff;
+		mobj->SpriteIndex = (word)net_msg.ReadShort();
+		mobj->SpriteType = mobj->SpriteIndex >> 10;
+		mobj->SpriteIndex &= 0x3ff;
 	}
 	else
 	{
-		mobj.sprite = base.sprite;
-		mobj.spritetype = base.spritetype;
+		mobj->SpriteIndex = base.sprite;
+		mobj->SpriteType = base.spritetype;
 	}
 	if (bits & MOB_FRAME)
-		mobj.frame = (byte)net_msg.ReadByte();
+		mobj->SpriteFrame = (byte)net_msg.ReadByte();
 	else
-		mobj.frame = base.frame;
+		mobj->SpriteFrame = base.frame;
 	if (bits & MOB_TRANSLUC)
-		mobj.translucency = net_msg.ReadByte();
+		mobj->Translucency = net_msg.ReadByte();
 	else
-		mobj.translucency = base.translucency;
+		mobj->Translucency = base.translucency;
 	if (bits & MOB_TRANSL)
-		mobj.translation = net_msg.ReadByte();
+		mobj->Translation = net_msg.ReadByte();
 	else
-		mobj.translation = base.translation;
+		mobj->Translation = base.translation;
 	if (bits & MOB_EFFECTS)
-		mobj.effects = net_msg.ReadByte();
+		mobj->Effects = net_msg.ReadByte();
 	else
-		mobj.effects = base.effects;
+		mobj->Effects = base.effects;
 	if (bits & MOB_MODEL)
 	{
-		mobj.ModelIndex = net_msg.ReadShort();
-		mobj.AliasModel = model_precache[mobj.ModelIndex];
+		mobj->ModelIndex = net_msg.ReadShort();
 	}
 	else
 	{
-		mobj.ModelIndex = base.model_index;
-		mobj.AliasModel = model_precache[mobj.ModelIndex];
+		mobj->ModelIndex = base.model_index;
 	}
 	if (bits & MOB_SKIN)
 	{
-		mobj.AliasSkinIndex = net_msg.ReadByte();
-		if (!mobj.AliasSkinIndex)
+		mobj->ModelSkinIndex = net_msg.ReadByte();
+		if (!mobj->ModelSkinIndex)
 		{
-			strcpy(mobj.Skin, *skin_list[net_msg.ReadByte()]);
+			mobj->ModelSkinNum = net_msg.ReadByte();
 		}
 		else
 		{
-			mobj.Skin[0] = 0;
+			mobj->ModelSkinNum = 0;
 		}
 	}
 	else
 	{
-		mobj.AliasSkinIndex = 0;
-		mobj.Skin[0] = 0;
+		mobj->ModelSkinIndex = 0;
+		mobj->ModelSkinNum = 0;
 	}
-	if (mobj.ModelIndex && (bits & MOB_FRAME))
-		mobj.AliasFrame = net_msg.ReadByte();
+	if (mobj->ModelIndex && (bits & MOB_FRAME))
+		mobj->ModelFrame = net_msg.ReadByte();
 	else
-		mobj.AliasFrame = base.alias_frame;
+		mobj->ModelFrame = base.alias_frame;
 }
 
 static void CL_ParseUpdateMobj(void)
@@ -215,23 +223,23 @@ static void CL_ParseUpdateMobj(void)
 	CL_ReadMobj(bits, cl_mobjs[i], cl_mo_base[i]);
 
 	//	Marking mobj in use
-	cl_mobjs[i].in_use = 2;
+	cl_mobjs[i]->InUse = 2;
 
-	if (bits & MOB_WEAPON && cl_mobjs[i].AliasModel &&
-		weapon_model_precache[cl_mobjs[i].ModelIndex])
+	if (bits & MOB_WEAPON && model_precache[cl_mobjs[i]->ModelIndex] &&
+		weapon_model_precache[cl_mobjs[i]->ModelIndex])
 	{
-		clmobj_t &ent = cl_mobjs[i];
-		clmobj_t &wpent = cl_weapon_mobjs[i];
+		VEntity* ent = cl_mobjs[i];
+		VEntity* wpent = cl_weapon_mobjs[i];
 
-		wpent.in_use = true;
-		wpent.origin = ent.origin;
-		wpent.angles = ent.angles;
-		wpent.AliasModel = model_precache[net_msg.ReadShort()];
-		wpent.AliasFrame = 1;
-		wpent.translucency = ent.translucency;
+		wpent->InUse = true;
+		wpent->Origin = ent->Origin;
+		wpent->Angles = ent->Angles;
+		wpent->ModelIndex = net_msg.ReadShort();
+		wpent->ModelFrame = 1;
+		wpent->Translucency = ent->Translucency;
 
-		R_PositionWeaponModel(wpent, weapon_model_precache[ent.ModelIndex],
-			ent.AliasFrame);
+		R_PositionWeaponModel(wpent, weapon_model_precache[ent->ModelIndex],
+			ent->ModelFrame);
 	}
 	else if (bits & MOB_WEAPON)
 	{
@@ -424,17 +432,17 @@ static void CL_ParseTime()
 
 	for (i = 0; i < GMaxEntities; i++)
 	{
-		if (cl_mobjs[i].in_use)
+		if (cl_mobjs[i]->InUse)
 		{
-			cl_mobjs[i].in_use--;
+			cl_mobjs[i]->InUse--;
 		}
 	}
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (cl_weapon_mobjs[i].in_use)
+		if (cl_weapon_mobjs[i]->InUse)
 		{
-			cl_weapon_mobjs[i].in_use--;
+			cl_weapon_mobjs[i]->InUse--;
 		}
 	}
 
@@ -1062,9 +1070,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2006/03/06 13:05:50  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.40  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.39  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

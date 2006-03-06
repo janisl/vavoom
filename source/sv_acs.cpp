@@ -597,7 +597,7 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 {
 	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass(),
 		PU_LEVSPEC);
-	VThinker::AddThinker(script);
+	GLevel->AddThinker(script);
 	script->info = Info;
 	script->number = Info->number;
 	script->ip = Info->address;
@@ -4647,9 +4647,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2006/03/06 13:05:51  dj_jl
+//	Thunbker list in level, client now uses entity class.
+//
 //	Revision 1.45  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.44  2006/02/28 18:19:31  dj_jl
 //	Put thinkers back in linked list.
 //	
