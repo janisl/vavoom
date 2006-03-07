@@ -105,7 +105,7 @@ void VLevel::LoadMap(const char *mapname)
 		W_BuildGLNodes(lumpnum);
 		gl_lumpnum = FindGLNodes(mapname);
 	}
-	else if (W_LumpName(gl_lumpnum + ML_GL_PVS) == NAME_gl_pvs ||
+	else if (W_LumpName(gl_lumpnum + ML_GL_PVS) != NAME_gl_pvs ||
 		W_LumpLength(gl_lumpnum + ML_GL_PVS) == 0)
 	{
 		W_BuildPVS(lumpnum, gl_lumpnum);
@@ -1554,9 +1554,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/07 17:48:18  dj_jl
+//	Fixed vis data check.
+//
 //	Revision 1.13  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.12  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	
