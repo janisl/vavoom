@@ -498,19 +498,21 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 			"Function: %s.%s", *InClass->Name, *method->Name);
 	}
 
-	int num = functions.Num();
-	method->func_num = num;
-	TFunction& Func = *new(functions) TFunction;
-	Func.Name = method->Name;
-	Func.OuterClass = InClass;
-	Func.Flags = FuncFlags;
-	Func.ReturnType = t;
+	TFunction* Func = new TFunction;
+	Func->Index = functions.AddItem(Func);
+	method->func = Func;
+	Func->Name = method->Name;
+	Func->OuterClass = InClass;
+	Func->Flags = FuncFlags;
+	Func->ReturnType = t;
 
 	do
 	{
 		if (TK_Check(PU_VARARGS))
 		{
-			Func.NumParams |= PF_VARARGS;
+			if (!(FuncFlags & FUNC_Native))
+				ParseError("Only native methods can have varargs");
+			Func->Flags |= FUNC_VarArgs;
 			break;
 		}
 
@@ -518,7 +520,7 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 
 		if (type.type == ev_unknown)
 		{
-			if (Func.NumParams == 0)
+			if (Func->NumParams == 0)
 			{
 				break;
 			}
@@ -528,14 +530,14 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 		{
 			type = MakePointerType(type);
 		}
-		if (Func.NumParams == 0 && type.type == ev_void)
+		if (Func->NumParams == 0 && type.type == ev_void)
 		{
 //ParseWarning("This is ugly %d", un);
 			break;
 		}
 		type.CheckPassable();
 
-		if (Func.NumParams == MAX_PARAMS)
+		if (Func->NumParams == MAX_PARAMS)
 		{
 			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 		}
@@ -548,27 +550,27 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 		// it's hard to detect when assignment mask should not be swapped.
 		if (type.type == ev_bool)
 			type = TType(ev_int);
-		Func.ParamTypes[Func.NumParams] = type;
-		Func.NumParams++;
+		Func->ParamTypes[Func->NumParams] = type;
+		Func->NumParams++;
 		localsofs += type.GetSize() / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	Func.ParamsSize = localsofs;
+	Func->ParamsSize = localsofs;
 
 	method->type = TType(ev_method);
 	if (otherfield)
 	{
-		TFunction& BaseFunc = functions[otherfield->func_num];
-		if (!BaseFunc.ReturnType.Equals(Func.ReturnType))
+		TFunction* BaseFunc = otherfield->func;
+		if (!BaseFunc->ReturnType.Equals(Func->ReturnType))
 		{
 			ParseError("Method redefined with different return type");
 		}
-		else if (BaseFunc.NumParams != Func.NumParams)
+		else if (BaseFunc->NumParams != Func->NumParams)
 		{
 			ParseError("Method redefined with different number of arguments");
 		}
-		else for (int i = 0; i < Func.NumParams; i++)
-			if (!BaseFunc.ParamTypes[i].Equals(Func.ParamTypes[i]))
+		else for (int i = 0; i < Func->NumParams; i++)
+			if (!BaseFunc->ParamTypes[i].Equals(Func->ParamTypes[i]))
 			{
 				ParseError("Type of argument %d differs from base class", i + 1);
 			}
@@ -586,7 +588,7 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 
 	if (FuncFlags & FUNC_Native)
 	{
-		Func.FirstStatement = -numbuiltins;
+		Func->FirstStatement = -numbuiltins;
 		numbuiltins++;
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
@@ -613,28 +615,22 @@ void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
 
 	int localsofs = 1;
 
-	int num = functions.Num();
-	method->func_num = num;
-	TFunction& Func = *new(functions) TFunction;
-	Func.Name = NAME_None;
-	Func.OuterClass = InClass;
-	Func.Flags = FuncFlags;
-	Func.ReturnType = t;
+	TFunction* Func = new TFunction;
+	Func->Index = functions.AddItem(Func);
+	method->func = Func;
+	Func->Name = NAME_None;
+	Func->OuterClass = InClass;
+	Func->Flags = FuncFlags;
+	Func->ReturnType = t;
 
 	TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 	do
 	{
-		if (TK_Check(PU_VARARGS))
-		{
-			Func.NumParams |= PF_VARARGS;
-			break;
-		}
-
 		TType type = CheckForType(InClass);
 
 		if (type.type == ev_unknown)
 		{
-			if (Func.NumParams == 0)
+			if (Func->NumParams == 0)
 			{
 				break;
 			}
@@ -646,7 +642,7 @@ void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
 		}
 		type.CheckPassable();
 
-		if (Func.NumParams == MAX_PARAMS)
+		if (Func->NumParams == MAX_PARAMS)
 		{
 			ERR_Exit(ERR_PARAMS_OVERFLOW, true, NULL);
 		}
@@ -658,15 +654,15 @@ void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
 		// it's hard to detect when assignment mask should not be swapped.
 		if (type.type == ev_bool)
 			type = TType(ev_int);
-		Func.ParamTypes[Func.NumParams] = type;
-		Func.NumParams++;
+		Func->ParamTypes[Func->NumParams] = type;
+		Func->NumParams++;
 		localsofs += type.GetSize() / 4;
 	} while (TK_Check(PU_COMMA));
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	Func.ParamsSize = localsofs;
+	Func->ParamsSize = localsofs;
 
 	method->type = TType(ev_delegate);
-	method->type.FuncNum = num;
+	method->type.Function = Func;
 
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 }
@@ -677,20 +673,20 @@ void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
 //
 //==========================================================================
 
-int ParseStateCode(TClass* InClass)
+TFunction* ParseStateCode(TClass* InClass)
 {
 	numlocaldefs = 1;
 
-	int num = functions.Num();
-	new(functions) TFunction;
-	functions[num].Name = NAME_None;
-	functions[num].OuterClass = InClass;
-	functions[num].ReturnType = TType(ev_void);
-	functions[num].ParamsSize = 1;
+	TFunction* Func = new TFunction();
+	Func->Index = functions.AddItem(Func);
+	Func->Name = NAME_None;
+	Func->OuterClass = InClass;
+	Func->ReturnType = TType(ev_void);
+	Func->ParamsSize = 1;
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	SkipCompoundStatement();
-	return num;
+	return Func;
 }
 
 //==========================================================================
@@ -713,12 +709,12 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 			 "Function: %s.%s", *InClass->Name, *InClass->Name);
 	}
 
-	int num = functions.Num();
-	new(functions) TFunction;
-	method->func_num = num;
-	functions[num].OuterClass = InClass;
-	functions[num].ReturnType = TType(ev_void);
-	functions[num].ParamsSize = 1;
+	TFunction* Func = new TFunction();
+	method->func = Func;
+	Func->Index = functions.AddItem(Func);
+	Func->OuterClass = InClass;
+	Func->ReturnType = TType(ev_void);
+	Func->ParamsSize = 1;
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	SkipCompoundStatement();
@@ -832,9 +828,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.15  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.14  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
 //	

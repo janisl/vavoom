@@ -611,10 +611,10 @@ un++;
 	maxlocalsofs = localsofs;
 
 	int num = CheckForFunction(InClass, method->Name);
-	if (method->func_num != num)
+	if (method->func->Index != num)
 		ERR_Exit(ERR_NONE, true, "Found wrong function");
 
-	if (functions[num].Flags & FUNC_Native)
+	if (functions[num]->Flags & FUNC_Native)
 	{
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
@@ -634,7 +634,7 @@ un++;
 	{
 		AddStatement(OPC_Return);
 	}
-	functions[num].NumLocals = maxlocalsofs;
+	functions[num]->NumLocals = maxlocalsofs;
 	EndCode(num);
 }
 
@@ -677,13 +677,13 @@ void SkipDelegate(TClass* InClass)
 //
 //==========================================================================
 
-void CompileStateCode(TClass* InClass, int num)
+void CompileStateCode(TClass* InClass, TFunction* Func)
 {
 	numlocaldefs = 1;
 	localsofs = 1;
 	maxlocalsofs = 1;
 
-	BeginCode(num);
+	BeginCode(Func->Index);
 
 	SelfType = TType(InClass);
 	SelfClass = InClass;
@@ -694,8 +694,8 @@ void CompileStateCode(TClass* InClass, int num)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 	AddStatement(OPC_Return);
-	functions[num].NumLocals = maxlocalsofs;
-	EndCode(num);
+	Func->NumLocals = maxlocalsofs;
+	EndCode(Func->Index);
 }
 
 //==========================================================================
@@ -710,7 +710,7 @@ void CompileDefaultProperties(field_t *method, TClass* InClass)
 	localsofs = 1;
 	maxlocalsofs = 1;
 
-	int num = method->func_num;
+	int num = method->func->Index;
 
 	SelfType = TType(InClass);
 	SelfClass = InClass;
@@ -726,13 +726,13 @@ void CompileDefaultProperties(field_t *method, TClass* InClass)
 	{
 		AddStatement(OPC_LocalAddress, 0);
 		AddStatement(OPC_PushPointed);
-		AddStatement(OPC_Call, pcon->func_num);
+		AddStatement(OPC_Call, pcon->func->Index);
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 	AddStatement(OPC_Return);
-	functions[num].NumLocals = maxlocalsofs;
+	functions[num]->NumLocals = maxlocalsofs;
 	EndCode(num);
 }
 
@@ -825,9 +825,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.40  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.39  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.38  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
 //	

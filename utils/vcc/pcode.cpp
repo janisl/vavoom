@@ -59,14 +59,14 @@ void DumpAsmFunction(int num);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TArray<TFunction>	functions;
+TArray<TFunction*>	functions;
 int					numbuiltins;
 
 TArray<constant_t>	Constants;
 int					ConstantsHash[256];
 
 TArray<TClass*>		classtypes;
-TArray<int>			vtables;
+TArray<TFunction*>	vtables;
 
 TArray<TStruct*>	structtypes;
 
@@ -100,6 +100,15 @@ static struct
 };
 
 // CODE --------------------------------------------------------------------
+
+VStream& operator<<(VStream& Strm, field_t*& Obj)
+{ return Strm << *(VMemberBase**)&Obj; }
+VStream& operator<<(VStream& Strm, TFunction*& Obj)
+{ return Strm << *(VMemberBase**)&Obj; }
+VStream& operator<<(VStream& Strm, TStruct*& Obj)
+{ return Strm << *(VMemberBase**)&Obj; }
+VStream& operator<<(VStream& Strm, TClass*& Obj)
+{ return Strm << *(VMemberBase**)&Obj; }
 
 //==========================================================================
 //
@@ -342,7 +351,7 @@ void BeginCode(int)
 void EndCode(int FuncNum)
 {
 	int i;
-	functions[FuncNum].FirstStatement = CodeBuffer.Num();
+	functions[FuncNum]->FirstStatement = CodeBuffer.Num();
 
 	for (i = 0; i < Instructions.Num(); i++)
 	{
@@ -414,29 +423,102 @@ float LittleFloat(float f)
 
 //==========================================================================
 //
-//	ConvType
+//	VProgsWriter
 //
 //==========================================================================
 
-static void ConvType(const TType& T, dtype_t& dt)
+struct TExport
 {
-	dt.Type = T.type;
-	dt.InnerType = T.InnerType;
-	dt.ArrayInnerType = T.ArrayInnerType;
-	dt.PtrLevel = T.PtrLevel;
-	dt.ArrayDim = LittleLong(T.array_dim);
-	byte RealType = T.type;
-	if (RealType == ev_array)
-		RealType = T.ArrayInnerType;
-	if (RealType == ev_pointer)
-		RealType = T.InnerType;
-	if (RealType == ev_reference)
-		dt.Extra = LittleLong(T.Class->Index);
-	else if (RealType == ev_struct)
-		dt.Extra = LittleLong(T.Struct->Index);
-	else
-		dt.Extra = LittleLong(T.bit_mask);
-}
+	VMemberBase*	Obj;
+	vuint8			Type;
+
+	TExport(VMemberBase* InObj, vuint8 InType)
+	: Obj(InObj)
+	, Type(InType)
+	{}
+
+	friend VStream& operator<<(VStream& Strm, TExport& E)
+	{
+		return Strm << E.Type << E.Obj->Name;
+	}
+};
+
+class VProgsWriter : public VStream
+{
+private:
+	FILE*		File;
+
+public:
+	TArray<TExport>		Exports;
+
+	VProgsWriter(FILE* InFile)
+	: File(InFile)
+	{
+		bLoading = false;
+	}
+
+	//	VStream interface.
+	void Seek(int InPos)
+	{
+		if (fseek(File, InPos, SEEK_SET))
+		{
+			bError = true;
+		}
+	}
+	int Tell()
+	{
+		return ftell(File);
+	}
+	int TotalSize()
+	{
+		int CurPos = ftell(File);
+		fseek(File, 0, SEEK_END);
+		int Size = ftell(File);
+		fseek(File, CurPos, SEEK_SET);
+		return Size;
+	}
+	bool AtEnd()
+	{
+		return !!feof(File);
+	}
+	bool Close()
+	{
+		return !bError;
+	}
+	void Serialise(void* V, int Length)
+	{
+		if (fwrite(V, Length, 1, File) != 1)
+		{
+			bError = true;
+		}
+	}
+	void Flush()
+	{
+		if (fflush(File))
+		{
+			bError = true;
+		}
+	}
+
+	VStream& operator<<(VName& Name)
+	{
+		int TmpIdx = Name.GetIndex();
+		*this << STRM_INDEX(TmpIdx);
+		return *this;
+	}
+	VStream& operator<<(VMemberBase*& Ref)
+	{
+		int TmpIdx = Ref ? Ref->ExportIndex : 0;
+		*this << STRM_INDEX(TmpIdx);
+		return *this;
+	}
+
+	void AddExport(VMemberBase* Obj, vuint8 Type)
+	{
+		TExport* E = new(Exports) TExport(Obj, Type);
+		E->Obj->ExportIndex = Exports.Num();
+	}
+};
 
 //==========================================================================
 //
@@ -460,199 +542,144 @@ void PC_WriteObject(char *name)
 		ERR_Exit(ERR_CANT_OPEN_FILE, false, "File: \"%s\".", name);
 	}
 
-	memset(&progs, 0, sizeof(progs));
-	fwrite(&progs, 1, sizeof(progs), f);
+	VProgsWriter Writer(f);
 
-	progs.ofs_names = ftell(f);
+	for (i = 0; i < FieldList.Num(); i++)
+	{
+		Writer.AddExport(FieldList[i], MEMBER_Field);
+	}
+	for (i = 0; i < functions.Num(); i++)
+	{
+		Writer.AddExport(functions[i], MEMBER_Method);
+	}
+	for (i = 0; i < structtypes.Num(); i++)
+	{
+		Writer.AddExport(structtypes[i], MEMBER_Struct);
+	}
+	for (i = 0; i < classtypes.Num(); i++)
+	{
+		Writer.AddExport(classtypes[i], MEMBER_Class);
+	}
+	for (i = 0; i < states.Num(); i++)
+	{
+		Writer.AddExport(&states[i], MEMBER_State);
+	}
+	for (i = 0; i < Constants.Num(); i++)
+	{
+		Writer.AddExport(&Constants[i], MEMBER_Const);
+	}
+
+	memset(&progs, 0, sizeof(progs));
+	Writer.Serialise(&progs, sizeof(progs));
+
+	//	Serialise names.
+	progs.ofs_names = Writer.Tell();
 	progs.num_names = VName::GetNumNames();
 	for (i = 0; i < VName::GetNumNames(); i++)
 	{
-		VNameEntry *E = VName::GetEntry(i);
-		int len = strlen(E->Name);
-		fwrite(E->Name, 1, (len + 4) & ~3, f);
+		Writer << *VName::GetEntry(i);
 	}
 
-	progs.ofs_strings = ftell(f);
-	fwrite(&strings[0], 1, strings.Num(), f);
+	progs.ofs_strings = Writer.Tell();
+	progs.num_strings = strings.Num();
+	Writer.Serialise(&strings[0], strings.Num());
 
-	progs.ofs_statements = ftell(f);
+	progs.ofs_statements = Writer.Tell();
 	progs.num_statements = CodeBuffer.Num();
 	for (i = 0; i < CodeBuffer.Num(); i++)
 	{
-		int opc;
-		opc = LittleLong(CodeBuffer[i]);
-		fwrite(&opc, 1, 4, f);
+		Writer << CodeBuffer[i];
 	}
 
-	progs.ofs_functions = ftell(f);
-	progs.num_functions = functions.Num();
-	for (i = 0; i < functions.Num(); i++)
-	{
-		dfunction_t func;
-		func.name = LittleShort(functions[i].Name.GetIndex());
-		func.outer_class = LittleShort(functions[i].OuterClass ?
-			functions[i].OuterClass->Index : -1);
-		func.first_statement = LittleLong(functions[i].FirstStatement);
-		func.num_parms = LittleShort(functions[i].NumParams);
-		func.ParamsSize = LittleShort(functions[i].ParamsSize);
-		func.num_locals = LittleShort(functions[i].NumLocals);
-		func.flags = LittleShort(functions[i].Flags);
-		ConvType(functions[i].ReturnType, func.ReturnType);
-		for (int j = 0; j < MAX_PARAMS; j++)
-			ConvType(functions[i].ParamTypes[j], func.ParamTypes[j]);
-		fwrite(&func, 1, sizeof(dfunction_t), f);
-	}	
-
-	progs.ofs_classinfo = ftell(f);
-	progs.num_classinfo = classtypes.Num();
-	for (i = 0; i < classtypes.Num(); i++)
-	{
-		dclassinfo_t ci;
-		TClass& ct = *classtypes[i];
-
-		ci.name = LittleShort(ct.Name.GetIndex());
-		ci.fields = LittleShort(ct.Fields ? ct.Fields->Index : -1);
-		ci.vtable = LittleLong(ct.VTable);
-		ci.size = LittleShort(ct.Size);
-		ci.num_methods = LittleShort(ct.NumMethods);
-		ci.parent = LittleLong(ct.ParentClass ? ct.ParentClass->Index : 0);
-		fwrite(&ci, 1, sizeof(ci), f);
-	}
-
-	progs.ofs_vtables = ftell(f);
+	progs.ofs_vtables = Writer.Tell();
 	progs.num_vtables = vtables.Num();
 	for (i = 0; i < vtables.Num(); i++)
 	{
-		short gv;
-		gv = LittleShort(vtables[i]);
-		fwrite(&gv, 1, 2, f);
+		Writer << vtables[i];
 	}
 
-	progs.ofs_sprnames = ftell(f);
+	progs.ofs_sprnames = Writer.Tell();
 	progs.num_sprnames = sprite_names.Num();
 	for (i = 0; i < sprite_names.Num(); i++)
 	{
-		short n;
-		n = LittleShort(sprite_names[i].GetIndex());
-		fwrite(&n, 1, 2, f);
+		Writer << sprite_names[i];
 	}
 
-	progs.ofs_mdlnames = ftell(f);
+	progs.ofs_mdlnames = Writer.Tell();
 	progs.num_mdlnames = models.Num();
 	for (i = 0; i < models.Num(); i++)
 	{
-		short n;
-		n = LittleShort(models[i].GetIndex());
-		fwrite(&n, 1, 2, f);
+		Writer << models[i];
 	}
 
-	progs.ofs_states = ftell(f);
-	progs.num_states = states.Num();
-	for (i = 0; i < states.Num(); i++)
-	{
-		dstate_t s;
-		s.sprite = LittleShort(states[i].sprite);
-		s.frame = (byte)states[i].frame;
-		s.model_index = LittleShort(states[i].model_index);
-		s.model_frame = (byte)states[i].model_frame;
-		s.time = LittleFloat(states[i].time);
-		s.nextstate = LittleShort(states[i].nextstate);
-		s.function = LittleShort(states[i].function);
-		s.statename = LittleShort(states[i].statename.GetIndex());
-		s.outer_class = LittleShort(states[i].OuterClass->Index);
-		fwrite(&s, 1, sizeof(dstate_t), f);
-	}
-
-	progs.ofs_mobjinfo = ftell(f);
+	progs.ofs_mobjinfo = Writer.Tell();
 	progs.num_mobjinfo = mobj_info.Num();
 	for (i = 0; i < mobj_info.Num(); i++)
 	{
-		dmobjinfo_t m;
-		m.doomednum = LittleShort(mobj_info[i].doomednum);
-		m.class_id = LittleShort(mobj_info[i].class_id);
-		fwrite(&m, 1, sizeof(dmobjinfo_t), f);
+		Writer << STRM_INDEX(mobj_info[i].doomednum)
+			<< mobj_info[i].class_id;
 	}
 
-	progs.ofs_scriptids = ftell(f);
+	progs.ofs_scriptids = Writer.Tell();
 	progs.num_scriptids = script_ids.Num();
 	for (i = 0; i < script_ids.Num(); i++)
 	{
-		dmobjinfo_t m;
-		m.doomednum = LittleShort(script_ids[i].doomednum);
-		m.class_id = LittleShort(script_ids[i].class_id);
-		fwrite(&m, 1, sizeof(dmobjinfo_t), f);
+		Writer << STRM_INDEX(script_ids[i].doomednum)
+			<< script_ids[i].class_id;
 	}
 
-	progs.ofs_fields = ftell(f);
 	progs.num_fields = FieldList.Num();
-	for (i = 0; i < FieldList.Num(); i++)
-	{
-		dfield_t df;
-		df.name = LittleShort(FieldList[i]->Name.GetIndex());
-		df.next = LittleShort(FieldList[i]->Next ? FieldList[i]->Next->Index : -1);
-		df.ofs = LittleShort(FieldList[i]->ofs);
-		df.func_num = LittleShort(FieldList[i]->func_num);
-		df.flags = LittleShort(FieldList[i]->flags);
-		ConvType(FieldList[i]->type, df.type);
-		fwrite(&df, 1, sizeof(dfield_t), f);
-	}
-
-	progs.ofs_structs = ftell(f);
-	progs.num_structs = structtypes.Num();
-	for (i = 0; i < structtypes.Num(); i++)
-	{
-		TStruct* S = structtypes[i];
-		dstruct_t ds;
-		ds.Name = LittleShort(S->Name.GetIndex());
-		ds.OuterClass = LittleShort(S->OuterClass ? S->OuterClass->Index : -1);
-		ds.ParentStruct = LittleShort(S->ParentStruct ? S->ParentStruct->Index : -1);
-		ds.Size = LittleShort(S->Size);
-		ds.Fields = LittleShort(S->Fields ? S->Fields->Index : -1);
-		ds.AvailableSize = LittleShort(S->AvailableSize);
-		ds.AvailableOfs = LittleShort(S->AvailableOfs);
-		ds.IsVector = LittleShort(S->IsVector);
-		fwrite(&ds, 1, sizeof(dstruct_t), f);
-	}
-
-	progs.ofs_constants = ftell(f);
+	progs.num_functions = functions.Num();
+	progs.num_states = states.Num();
 	progs.num_constants = Constants.Num();
-	for (i = 0; i < Constants.Num(); i++)
+	progs.num_structs = structtypes.Num();
+	progs.num_classinfo = classtypes.Num();
+
+	//	Serialise object infos.
+	progs.ofs_exportinfo = Writer.Tell();
+	for (i = 0; i < FieldList.Num() + functions.Num() + structtypes.Num() +
+		classtypes.Num() + states.Num() + Constants.Num(); i++)
 	{
-		dconstant_t dc;
-		dc.Name = LittleShort(Constants[i].Name.GetIndex());
-		dc.OuterClass = LittleShort(Constants[i].OuterClass ? Constants[i].OuterClass->Index : -1);
-		dc.Value = LittleLong(Constants[i].value);
-		dc.Type = Constants[i].Type;
-		fwrite(&dc, 1, sizeof(dconstant_t), f);
+		Writer << Writer.Exports[i];
 	}
 
+	//	Serialise objects.
+	progs.ofs_exportdata = Writer.Tell();
+	for (i = 0; i < Writer.Exports.Num(); i++)
+	{
+		Writer.Exports[i].Obj->Serialise(Writer);
+	}
+
+	//	Print statistics.
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", VName::GetNumNames(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
-	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), CodeBuffer.Num() * 4);
-	dprintf("Functions  %6d %6ld\n", functions.Num(), functions.Num() * sizeof(dfunction_t));
+	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), progs.ofs_vtables - progs.ofs_statements);
 	dprintf("Builtins   %6d\n", numbuiltins);
-	dprintf("Class info %6d %6ld\n", classtypes.Num(), classtypes.Num() * sizeof(dclassinfo_t));
-	dprintf("VTables    %6d %6d\n", vtables.Num(), vtables.Num() * 2);
-	dprintf("Spr names  %6d %6d\n", sprite_names.Num(), sprite_names.Num() * 2);
-	dprintf("Mdl names  %6d %6d\n", models.Num(), models.Num() * 2);
-	dprintf("States     %6d %6d\n", states.Num(), states.Num() * sizeof(dstate_t));
-	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), mobj_info.Num() * sizeof(dmobjinfo_t));
-	dprintf("Script Ids %6d %6d\n", script_ids.Num(), script_ids.Num() * sizeof(dmobjinfo_t));
-	dprintf("Fields     %6d %6d\n", FieldList.Num(), FieldList.Num() * sizeof(dfield_t));
-	dprintf("Structs    %6d %6d\n", structtypes.Num(), structtypes.Num() * sizeof(dstruct_t));
-	dprintf("Constants  %6d %6d\n", Constants.Num(), Constants.Num() * sizeof(dconstant_t));
-	dprintf("TOTAL SIZE       %7d\n", (int)ftell(f));
+	dprintf("VTables    %6d %6d\n", vtables.Num(), progs.ofs_sprnames - progs.ofs_vtables);
+	dprintf("Spr names  %6d %6d\n", sprite_names.Num(), progs.ofs_mdlnames - progs.ofs_sprnames);
+	dprintf("Mdl names  %6d %6d\n", models.Num(), progs.ofs_mobjinfo - progs.ofs_mdlnames);
+	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
+	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_exportinfo - progs.ofs_scriptids);
+	dprintf("Exports    %6d %6d\n", Writer.Exports.Num(), progs.ofs_exportdata - progs.ofs_exportinfo);
+	dprintf("Fields     %6d\n", FieldList.Num());
+	dprintf("Methods    %6d\n", functions.Num());
+	dprintf("States     %6d\n", states.Num());
+	dprintf("Constants  %6d\n", Constants.Num());
+	dprintf("Structs    %6d\n", structtypes.Num());
+	dprintf("Classes    %6d\n", classtypes.Num());
+	dprintf("Type data  %6d %6d\n", Writer.Exports.Num(), Writer.Tell() - progs.ofs_exportdata);
+	dprintf("TOTAL SIZE       %7d\n", Writer.Tell());
 
+	//	Write header.
 	memcpy(progs.magic, PROG_MAGIC, 4);
 	progs.version = PROG_VERSION;
+	Writer.Seek(0);
 	for (i = 0; i < (int)sizeof(progs) / 4; i++)
 	{
-		((int *)&progs)[i] = LittleLong(((int *)&progs)[i]);
+		Writer << ((int*)&progs)[i];
 	}
-	fseek(f, 0, SEEK_SET);
-	fwrite(&progs, 1, sizeof(progs), f);
 
 	fclose(f);
 
@@ -680,10 +707,10 @@ void DumpAsmFunction(int num)
 	int		i;
 
 	dprintf("--------------------------------------------\n");
-	dprintf("Dump ASM function %s.%s\n\n", functions[num].OuterClass ?
-		*functions[num].OuterClass->Name : "None", *functions[num].Name);
-	s = functions[num].FirstStatement;
-	if (functions[num].Flags & FUNC_Native)
+	dprintf("Dump ASM function %s.%s\n\n", *functions[num]->OuterClass->Name,
+		*functions[num]->Name);
+	s = functions[num]->FirstStatement;
+	if (functions[num]->Flags & FUNC_Native)
 	{
 		//	Builtin function
 		dprintf("Builtin function.\n");
@@ -693,7 +720,7 @@ void DumpAsmFunction(int num)
 	{
 		//	Opcode
 		st = CodeBuffer[s];
-		dprintf("%6d (%4d): %s ", s, s - functions[num].FirstStatement, StatementInfo[st].name);
+		dprintf("%6d (%4d): %s ", s, s - functions[num]->FirstStatement, StatementInfo[st].name);
 		s++;
 		if (StatementInfo[st].params >= 1)
 		{
@@ -702,9 +729,8 @@ void DumpAsmFunction(int num)
 			if (st == OPC_Call)
 			{
 				//	Name of the function called
-				dprintf("(%s.%s)", functions[CodeBuffer[s]].OuterClass ?
-					*functions[CodeBuffer[s]].OuterClass->Name : "none",
-					*functions[CodeBuffer[s]].Name);
+				dprintf("(%s.%s)", *functions[CodeBuffer[s]]->OuterClass->Name,
+					*functions[CodeBuffer[s]]->Name);
 			}
 			else if (st == OPC_PushString)
 			{
@@ -728,7 +754,7 @@ void DumpAsmFunction(int num)
 		{
 			//	if next command is first statement of another function,
 			// then this function has ended.
-			if (s == functions[i].FirstStatement)
+			if (s == functions[i]->FirstStatement)
 			{
 				s = CodeBuffer.Num();
 			}
@@ -763,10 +789,8 @@ void PC_DumpAsm(char* name)
 	}
 	for (i = 0; i < functions.Num(); i++)
 	{
-		if (((!cname && !functions[i].OuterClass) ||
-			(cname && functions[i].OuterClass &&
-			!strcmp(cname, *functions[i].OuterClass->Name))) &&
-			!strcmp(fname, *functions[i].Name))
+		if (!strcmp(cname, *functions[i]->OuterClass->Name) &&
+			!strcmp(fname, *functions[i]->Name))
 		{
 			DumpAsmFunction(i);
 			return;
@@ -775,12 +799,174 @@ void PC_DumpAsm(char* name)
 	dprintf("Dump ASM: %s not found!\n", name);
 }
 
+//==========================================================================
+//
+//	operator VStream << TType
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, TType& T)
+{
+	Strm << T.type;
+	byte RealType = T.type;
+	if (RealType == ev_array)
+	{
+		Strm << T.ArrayInnerType
+			<< STRM_INDEX(T.array_dim);
+		RealType = T.ArrayInnerType;
+	}
+	if (RealType == ev_pointer)
+	{
+		Strm << T.InnerType
+			<< T.PtrLevel;
+		RealType = T.InnerType;
+	}
+	if (RealType == ev_reference)
+		Strm << T.Class;
+	else if (RealType == ev_struct || RealType == ev_vector)
+		Strm << T.Struct;
+	else if (RealType == ev_delegate)
+		Strm << T.Function;
+	else if (RealType == ev_bool)
+		Strm << T.bit_mask;
+	return Strm;
+}
+
+//==========================================================================
+//
+//	VMemberBase::Serialise
+//
+//==========================================================================
+
+void VMemberBase::Serialise(VStream& Strm)
+{
+}
+
+//==========================================================================
+//
+//	field_t::Serialise
+//
+//==========================================================================
+
+void field_t::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << Next
+		<< STRM_INDEX(ofs)
+		<< type
+		<< func
+		<< STRM_INDEX(flags);
+}
+
+//==========================================================================
+//
+//	TFunction::Serialise
+//
+//==========================================================================
+
+void TFunction::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << OuterClass
+		<< STRM_INDEX(FirstStatement)
+		<< STRM_INDEX(NumLocals)
+		<< STRM_INDEX(Flags)
+		<< ReturnType
+		<< STRM_INDEX(NumParams)
+		<< STRM_INDEX(ParamsSize);
+	for (int i = 0; i < NumParams; i++)
+		Strm << ParamTypes[i];
+}
+
+//==========================================================================
+//
+//	TStruct::Serialise
+//
+//==========================================================================
+
+void TStruct::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << OuterClass
+		<< ParentStruct
+		<< IsVector
+		<< STRM_INDEX(Size)
+		<< Fields
+		<< STRM_INDEX(AvailableSize)
+		<< STRM_INDEX(AvailableOfs);
+}
+
+//==========================================================================
+//
+//	TClass::Serialise
+//
+//==========================================================================
+
+void TClass::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << ParentClass
+		<< Fields
+		<< STRM_INDEX(VTable)
+		<< STRM_INDEX(NumMethods)
+		<< STRM_INDEX(Size);
+}
+
+//==========================================================================
+//
+//	state_t::Serialise
+//
+//==========================================================================
+
+void state_t::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << STRM_INDEX(sprite)
+		<< STRM_INDEX(frame)
+		<< STRM_INDEX(model_index)
+		<< STRM_INDEX(model_frame)
+		<< time
+		<< STRM_INDEX(nextstate)
+		<< function
+		<< OuterClass;
+}
+
+//==========================================================================
+//
+//	constant_t::Serialise
+//
+//==========================================================================
+
+void constant_t::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << OuterClass
+		<< Type;
+	switch (Type)
+	{
+	case ev_float:
+		Strm << *(float*)&value;
+		break;
+
+	case ev_name:
+		Strm << *(VName*)&value;
+		break;
+
+	default:
+		Strm << STRM_INDEX(value);
+		break;
+	}
+}
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.32  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.31  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
 //	

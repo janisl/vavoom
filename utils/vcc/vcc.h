@@ -39,6 +39,8 @@ using namespace VavoomUtils;
 #define Z_Malloc	Malloc
 #define Z_Free		Free
 
+class VMemberBase;
+
 #include "array.h"
 #include "stream.h"
 #include "names.h"
@@ -56,9 +58,6 @@ using namespace VavoomUtils;
 #define MAX_QUOTED_LENGTH		256
 #define MAX_IDENTIFIER_LENGTH	64
 #define MAX_LOCAL_DEFS			64
-
-#define PF_VARARGS				0x8000
-#define PF_COUNT_MASK			0x7fff
 
 // TYPES -------------------------------------------------------------------
 
@@ -237,6 +236,7 @@ enum EPunctuation
 
 class TClass;
 class TStruct;
+class TFunction;
 
 class TModifiers
 {
@@ -259,14 +259,20 @@ public:
 //
 // The base class of all objects.
 //
-class FField
+class VMemberBase
 {
 public:
 	VName		Name;
+	int			ExportIndex;
 
-	FField()
+	VMemberBase()
 	: Name(NAME_None)
+	, ExportIndex(0)
 	{}
+	virtual ~VMemberBase()
+	{}
+
+	virtual void Serialise(VStream&);
 };
 
 class TType
@@ -293,8 +299,10 @@ public:
 		int			bit_mask;
 		TClass*		Class;			//  Class of the reference
 		TStruct*	Struct;			//  Struct data.
-		int			FuncNum;		//  Function of the delegate type.
+		TFunction*	Function;		//  Function of the delegate type.
 	};
+
+	friend VStream& operator<<(VStream&, TType&);
 
 	bool Equals(const TType& Other) const;
 	TType GetPointerInnerType() const;
@@ -306,7 +314,7 @@ public:
 	void GetName(char* Dest) const;
 };
 
-class field_t : public FField
+class field_t : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native };
@@ -314,7 +322,7 @@ public:
 	field_t*	Next;
 	int			ofs;
 	TType		type;
-	int			func_num;	// Method's function
+	TFunction*	func;	// Method's function
 	int			flags;
 	int			Index;
 
@@ -322,13 +330,15 @@ public:
 	: Next(NULL)
 	, ofs(0)
 	, type(ev_void)
-	, func_num(0)
+	, func(0)
 	, flags(0)
 	, Index(0)
 	{}
+
+	void Serialise(VStream&);
 };
 
-class TFunction : public FField
+class TFunction : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static };
@@ -341,6 +351,7 @@ public:
 	int			NumParams;
 	int			ParamsSize;
 	TType		ParamTypes[MAX_PARAMS];
+	int			Index;
 
 	TFunction()
 	: OuterClass(0)
@@ -350,29 +361,36 @@ public:
 	, ReturnType(ev_void)
 	, NumParams(0)
 	, ParamsSize(0)
+	, Index(0)
 	{}
+
+	void Serialise(VStream&);
 };
 
-struct localvardef_t : public FField
+class localvardef_t : public VMemberBase
 {
+public:
 	int			ofs;
 	TType		type;
 };
 
-struct constant_t : public FField
+class constant_t : public VMemberBase
 {
+public:
 	TClass*		OuterClass;
-	EType		Type;
+	byte		Type;
 	int			value;
 	int			HashNext;
+
+	void Serialise(VStream&);
 };
 
-class TStruct : public FField
+class TStruct : public VMemberBase
 {
 public:
 	TClass*			OuterClass;
 	TStruct*		ParentStruct;
-	bool			IsVector;
+	vuint8			IsVector;
 	int				Size;
 	//	Structure fields
 	field_t*		Fields;
@@ -392,10 +410,12 @@ public:
 	, Index(0)
 	{}
 
+	void Serialise(VStream&);
+
 	void AddField(field_t* f);
 };
 
-class TClass : public FField
+class TClass : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
@@ -416,29 +436,44 @@ public:
 	, Index(0)
 	{}
 
+	void Serialise(VStream&);
+
 	void AddField(field_t* f);
 };
 
-struct state_t
+class state_t : public VMemberBase
 {
-	int		sprite;
-	int		frame;
-	int		model_index;
-	int		model_frame;
-	float	time;
-	int		nextstate;
-	int		function;
-	VName	statename;
-	TClass*	OuterClass;
+public:
+	int			sprite;
+	int			frame;
+	int			model_index;
+	int			model_frame;
+	float		time;
+	int			nextstate;
+	TFunction*	function;
+	TClass*		OuterClass;
+
+	state_t()
+	: sprite(0)
+	, frame(0)
+	, model_index(0)
+	, model_frame(0)
+	, time(0)
+	, nextstate(0)
+	, function(0)
+	, OuterClass(0)
+	{}
+
+	void Serialise(VStream&);
 };
 
 struct mobjinfo_t
 {
-    int		doomednum;
-	int		class_id;
+	int		doomednum;
+	TClass*	class_id;
 };
 
-class TPackage : public FField
+class TPackage : public VMemberBase
 {
 	TPackage()
 	{}
@@ -489,7 +524,7 @@ TType ParseExpression(bool = false);
 
 void ParseMethodDef(const TType&, field_t*, field_t*, TClass*, int);
 void ParseDelegate(const TType&, field_t*, field_t*, TClass*, int);
-int ParseStateCode(TClass*);
+TFunction* ParseStateCode(TClass*);
 void ParseDefaultProperties(field_t*, TClass*);
 void AddConstant(TClass* InClass, VName Name, int type, int value);
 void PA_Parse();
@@ -498,7 +533,7 @@ int CheckForLocalVar(VName);
 void ParseLocalVar(const TType&);
 void CompileMethodDef(const TType&, field_t*, field_t*, TClass*);
 void SkipDelegate(TClass*);
-void CompileStateCode(TClass*, int);
+void CompileStateCode(TClass*, TFunction*);
 void CompileDefaultProperties(field_t*, TClass*);
 void PA_Compile();
 
@@ -526,8 +561,8 @@ field_t* CheckForField(VName, TClass*, bool = true);
 
 void InitInfoTables();
 void ParseStates(TClass*);
-void AddToMobjInfo(int Index, int ClassID);
-void AddToScriptIds(int Index, int ClassID);
+void AddToMobjInfo(int Index, TClass* Class);
+void AddToScriptIds(int Index, TClass* Class);
 void SkipStates(TClass*);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -544,14 +579,14 @@ extern EKeyword			tk_Keyword;
 extern EPunctuation		tk_Punct;
 extern VName			tk_Name;
 
-extern TArray<TFunction>	functions;
+extern TArray<TFunction*>	functions;
 extern int					numbuiltins;
 
 extern TArray<constant_t>	Constants;
 extern int					ConstantsHash[256];
 
 extern TArray<TClass*>		classtypes;
-extern TArray<int>			vtables;
+extern TArray<TFunction*>	vtables;
 
 extern TArray<TStruct*>		structtypes;
 
@@ -637,9 +672,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.43  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.42  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
 //	

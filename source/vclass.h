@@ -36,11 +36,47 @@ enum ENativeConstructor		{EC_NativeConstructor};
 
 //==========================================================================
 //
+//	VMemberBase
+//
+//==========================================================================
+
+class VMemberBase
+{
+public:
+	//	Internal variables.
+	VName		Name;
+
+	//	New and delete operators.
+	void* operator new(size_t Size, int Tag)
+	{ return Z_Calloc(Size, Tag, 0); }
+	void operator delete(void* Object, size_t)
+	{ Z_Free(Object); }
+
+	//	Srtuctors.
+	VMemberBase()
+	{}
+	virtual ~VMemberBase();
+
+	//	Accessors.
+	const char *GetName() const
+	{
+		return *Name;
+	}
+	const VName GetVName() const
+	{
+		return Name;
+	}
+
+	virtual void Serialise(VStream&);
+};
+
+//==========================================================================
+//
 //	VField
 //
 //==========================================================================
 
-class VField
+class VField : public VMemberBase
 {
 public:
 	struct FType
@@ -55,19 +91,25 @@ public:
 			int			BitMask;
 			VClass*		Class;			//  Class of the reference
 			VStruct*	Struct;			//  Struct data.
-			int			FuncNum;		//  Function of the delegate type.
+			FFunction*	Function;		//  Function of the delegate type.
 		};
+
+		friend VStream& operator<<(VStream&, FType&);
 	};
 
-	VName		Name;
 	VField*		Next;
 	VField*		NextReference;	//	Linked list of reference fields.
 	int			Ofs;
 	FType		Type;
 	int			Flags;
 
+	void Serialise(VStream&);
+
 	static void SerialiseFieldValue(VStream&, byte*, const VField::FType&);
 	static void CleanField(byte*, const VField::FType&);
+
+	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 //==========================================================================
@@ -76,11 +118,10 @@ public:
 //
 //==========================================================================
 
-class VStruct
+class VStruct : public VMemberBase
 {
 public:
 	vint32			ObjectFlags;
-	VName			Name;
 	VClass*			OuterClass;
 	VStruct*		ParentStruct;
 	int				Size;
@@ -90,6 +131,91 @@ public:
 	void InitReferences();
 	void SerialiseObject(VStream&, byte*);
 	void CleanObject(byte*);
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, VStruct*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
+//	FFunction
+//
+//==========================================================================
+
+class FFunction : public VMemberBase
+{
+public:
+	int		FirstStatement;
+	short	NumParms;
+	short	NumLocals;
+    short	Type;
+	short	Flags;
+	dword	Profile1;
+	dword	Profile2;
+	VClass	*OuterClass;
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, FFunction*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
+//	VConstant
+//
+//==========================================================================
+
+class VConstant : public VMemberBase
+{
+public:
+	VClass*		OuterClass;
+	vuint8		Type;
+	vint32		Value;
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, VConstant*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
+//	state_t
+//
+//==========================================================================
+
+class state_t : public VMemberBase
+{
+public:
+	int			sprite;
+	int			frame;
+	int			model_index;
+	int			model_frame;
+	float		time;
+	int			nextstate;
+	FFunction*	function;
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, state_t*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
+//	mobjinfo_t
+//
+//==========================================================================
+
+struct mobjinfo_t
+{
+	int			doomednum;
+	VClass*		class_id;
+
+	friend VStream& operator<<(VStream&, mobjinfo_t&);
 };
 
 //==========================================================================
@@ -98,12 +224,11 @@ public:
 //
 //==========================================================================
 
-class VClass
+class VClass : public VMemberBase
 {
 private:
 	// Internal per-object variables.
 	dword			ObjectFlags;		// Private EObjectFlags used by object manager.
-	VName			Name;				// Name of the object.
 	VClass*			LinkNext;			// Next class in linked list
 
 	// Private systemwide variables.
@@ -119,21 +244,18 @@ public:
 	void			(*ClassConstructor)(void*);
 
 	int				ClassNumMethods;
+	int				VTableOffset;
 
 	VField*			Fields;
 	VField*			ReferenceFields;
 
 	// Constructors.
-	VClass(VName AName, int ASize);
+	VClass(VName AName);
 	VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
 		VClass *AParent, EName AName, void(*ACtor)(void*));
-	void* operator new(size_t Size, int Tag)
-		{ return Z_Calloc(Size, Tag, 0); }
 
 	// Destructors.
 	~VClass();
-	void operator delete(void* Object, size_t)
-		{ Z_Free(Object); }
 
 	bool IsChildOf(const VClass *SomeBaseClass) const
 	{
@@ -165,14 +287,6 @@ public:
 	{
 		ObjectFlags &= ~NewFlags;
 	}
-	const char *GetName() const
-	{
-		return *Name;
-	}
-	const VName GetVName() const
-	{
-		return Name;
-	}
 	VClass *GetSuperClass() const
 	{
 		return ParentClass;
@@ -184,14 +298,22 @@ public:
 	void InitReferences();
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.14  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
-//
+//	
 //	Revision 1.13  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

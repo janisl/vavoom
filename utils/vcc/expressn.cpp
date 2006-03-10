@@ -140,19 +140,19 @@ static TTree GetAddress(TTree op)
 //
 //==========================================================================
 
-static TTree ParseFunctionCall(int num, bool is_method)
+static TTree ParseFunctionCall(TFunction* Func, bool is_method)
 {
 	int arg = 0;
 	int argsize = 0;
 	int max_params;
-	int num_needed_params = functions[num].NumParams & PF_COUNT_MASK;
-	if (functions[num].NumParams & PF_VARARGS)
+	int num_needed_params = Func->NumParams;
+	if (Func->Flags & FUNC_VarArgs)
 	{
 		max_params = MAX_ARG_COUNT - 1;
 	}
 	else
 	{
-		max_params = functions[num].NumParams;
+		max_params = Func->NumParams;
 	}
 	if (is_method)
 	{
@@ -172,7 +172,7 @@ static TTree ParseFunctionCall(int num, bool is_method)
 			{
 				if (arg < num_needed_params)
 				{
-					op.Type.CheckMatch(functions[num].ParamTypes[arg]);
+					op.Type.CheckMatch(Func->ParamTypes[arg]);
 				}
 			}
 			arg++;
@@ -184,12 +184,12 @@ static TTree ParseFunctionCall(int num, bool is_method)
 	{
 		ParseError("Incorrect argument count %d, should be %d", arg, num_needed_params);
 	}
-	if (functions[num].NumParams & PF_VARARGS)
+	if (Func->Flags & FUNC_VarArgs)
 	{
 		AddStatement(OPC_PushNumber, argsize / 4 - num_needed_params);
 	}
-	AddStatement(OPC_Call, num);
-	TTree fop = TTree(functions[num].ReturnType);
+	AddStatement(OPC_Call, Func->Index);
+	TTree fop = TTree(Func->ReturnType);
 	if (fop.Type.type == ev_bool)
 		fop.Type = TType(ev_int);
 	return fop;
@@ -203,20 +203,20 @@ static TTree ParseFunctionCall(int num, bool is_method)
 
 static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 {
-	int num = field->func_num;
+	TFunction* Func = field->func;
 	int arg = 0;
 	int argsize = 0;
 	int max_params;
-	int num_needed_params = functions[num].NumParams & PF_COUNT_MASK;
-	if (functions[num].NumParams & PF_VARARGS)
+	int num_needed_params = Func->NumParams;
+	if (Func->Flags & FUNC_VarArgs)
 	{
 		max_params = MAX_ARG_COUNT - 1;
 	}
 	else
 	{
-		max_params = functions[num].NumParams;
+		max_params = Func->NumParams;
 	}
-	if (functions[num].Flags & FUNC_Static)
+	if (Func->Flags & FUNC_Static)
 	{
 		if (HaveSelf)
 			ParseError("Invalid static function call");
@@ -252,9 +252,9 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 			{
 				if (arg < num_needed_params)
 				{
-					op.Type.CheckMatch(functions[num].ParamTypes[arg]);
+					op.Type.CheckMatch(Func->ParamTypes[arg]);
 				}
-				if (!(functions[num].Flags & FUNC_Static))
+				if (!(Func->Flags & FUNC_Static))
 				{
 					if (op.Type.type == ev_vector)
 						AddStatement(OPC_Swap3);
@@ -271,23 +271,23 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 	{
 		ParseError("Incorrect argument count %d, should be %d", arg, num_needed_params);
 	}
-	if (functions[num].NumParams & PF_VARARGS)
+	if (Func->Flags & FUNC_VarArgs)
 	{
 		AddStatement(OPC_PushNumber, argsize / 4 - num_needed_params);
-		if (!(functions[num].Flags & FUNC_Static))
+		if (!(Func->Flags & FUNC_Static))
 		{
 			AddStatement(OPC_Swap);
 		}
 	}
-	if (functions[num].Flags & FUNC_Static)
+	if (Func->Flags & FUNC_Static)
 	{
-		AddStatement(OPC_Call, num);
+		AddStatement(OPC_Call, Func->Index);
 	}
 	else
 	{
 		AddStatement(OPC_ICall);
 	}
-	TTree fop = TTree(functions[num].ReturnType);
+	TTree fop = TTree(Func->ReturnType);
 	if (fop.Type.type == ev_bool)
 		fop.Type = TType(ev_int);
 	return fop;
@@ -359,7 +359,7 @@ static TTree ParseExpressionPriority0()
 				break;
 			}
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			return ParseFunctionCall(field->func_num, true);
+			return ParseFunctionCall(field->func, true);
 		}
 		break;
 
@@ -482,7 +482,7 @@ static TTree ParseExpressionPriority0()
 				{
 					TK_NextToken();
 					AddStatement(OPC_PushNumber, Constants[num].value);
-					op = TTree(Constants[num].Type);
+					op = TTree((EType)Constants[num].Type);
 					return op;
 				}
 			}
@@ -514,7 +514,7 @@ static TTree ParseExpressionPriority0()
 		if (num != -1)
 		{
 			AddStatement(OPC_PushNumber, Constants[num].value);
-			op = TTree(Constants[num].Type);
+			op = TTree((EType)Constants[num].Type);
 			return op;
 		}
 
@@ -530,7 +530,7 @@ static TTree ParseExpressionPriority0()
 				{
 					AddStatement(OPC_PushVFunc, field->ofs);
 					op = TTree(ev_delegate);
-					op.Type.FuncNum = field->func_num;
+					op.Type.Function = field->func;
 				}
 				else
 				{
@@ -618,7 +618,7 @@ static TTree ParseExpressionPriority1()
 						{
 							AddStatement(OPC_PushVFunc, field->ofs);
 							op = TTree(ev_delegate);
-							op.Type.FuncNum = field->func_num;
+							op.Type.Function = field->func;
 						}
 					}
 					else if (field->type.type == ev_delegate)
@@ -1732,9 +1732,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.41  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.40  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
 //	

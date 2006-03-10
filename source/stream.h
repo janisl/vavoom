@@ -73,6 +73,7 @@ public:
 	virtual VStream& operator<<(VName&);
 	virtual void SerialiseReference(VObject*&, VClass*);
 	virtual void SerialiseStructPointer(void*&, VStruct*);
+	virtual VStream& operator<<(VMemberBase*&);
 
 	//	Serialise integers in particular byte order.
 	void SerialiseLittleEndian(void*, int);
@@ -185,9 +186,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.4  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.3  2006/02/27 18:44:25  dj_jl
 //	Serialisation of indexes in a compact way.
 //	

@@ -373,7 +373,7 @@ int CheckForFunction(TClass* InClass, VName Name)
 	}
 	for (int i = 0; i < functions.Num(); i++)
 	{
-		if (functions[i].OuterClass == InClass && functions[i].Name == Name)
+		if (functions[i]->OuterClass == InClass && functions[i]->Name == Name)
 		{
 			return i;
 		}
@@ -527,8 +527,8 @@ void TType::CheckMatch(const TType& Other) const
 	}
 	if (type == ev_delegate && Other.type == ev_delegate)
 	{
-		TFunction& F1 = functions[FuncNum];
-		TFunction& F2 = functions[Other.FuncNum];
+		TFunction& F1 = *Function;
+		TFunction& F2 = *Other.Function;
 		if (F1.Flags & FUNC_Static || F2.Flags & FUNC_Static)
 		{
 			ParseError("Can't assign a static function to delegate");
@@ -1027,8 +1027,8 @@ static void AddVTable(TClass* InClass)
 		AddVTable(InClass->ParentClass);
 	}
 	InClass->VTable = vtables.Num();
-	int *vtable = &vtables[vtables.Add(InClass->NumMethods)];
-	memset(vtable, 0, InClass->NumMethods * 4);
+	TFunction** vtable = &vtables[vtables.Add(InClass->NumMethods)];
+	memset(vtable, 0, InClass->NumMethods * sizeof(TFunction*));
 	if (InClass->ParentClass)
 	{
 		memcpy(vtable, &vtables[InClass->ParentClass->VTable],
@@ -1040,11 +1040,7 @@ static void AddVTable(TClass* InClass)
 		{
 			continue;
 		}
-		if (f->func_num == -1)
-		{
-			ParseError("Method %s.%s not defined", *InClass->Name, *f->Name);
-		}
-		vtable[f->ofs] = f->func_num;
+		vtable[f->ofs] = f->func;
 	}
 	if (!vtable[0])
 	{
@@ -1497,13 +1493,13 @@ void ParseClass()
 		if (TK_Check(KW_MOBJINFO))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToMobjInfo(EvalConstExpression(NULL, ev_int), Class->Index);
+			AddToMobjInfo(EvalConstExpression(NULL, ev_int), Class);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
 		else if (TK_Check(KW_SCRIPTID))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToScriptIds(EvalConstExpression(NULL, ev_int), Class->Index);
+			AddToScriptIds(EvalConstExpression(NULL, ev_int), Class);
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
 		else
@@ -1706,9 +1702,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.46  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.45  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
 //	

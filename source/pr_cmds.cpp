@@ -1395,10 +1395,7 @@ PF(P_BlockThingsIterator)
 	SelfObj = (VObject*)Pop();
 	y = Pop();
 	x = Pop();
-	if (SelfObj)
-		func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	else
-		func = svpr.FindFunctionChecked(FuncName);
+	func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
 	Push(SV_BlockThingsIterator(x, y, NULL, SelfObj, func));
 }
 
@@ -1426,10 +1423,7 @@ PF(P_PathTraverse)
 	x2 = Popf();
 	y1 = Popf();
 	x1 = Popf();
-	if (SelfObj)
-		func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	else
-		func = svpr.FindFunctionChecked(FuncName);
+	func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
 	Push(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, SelfObj, func));
 }
 
@@ -3469,9 +3463,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.77  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.76  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.75  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

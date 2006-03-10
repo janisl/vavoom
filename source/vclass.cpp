@@ -31,6 +31,239 @@ VClass*			VClass::GClasses;
 
 //==========================================================================
 //
+//	VMemberBase::~VMemberBase
+//
+//==========================================================================
+
+VMemberBase::~VMemberBase()
+{
+}
+
+//==========================================================================
+//
+//	VMemberBase::Serialise
+//
+//==========================================================================
+
+void VMemberBase::Serialise(VStream&)
+{
+}
+
+//==========================================================================
+//
+//	VField::Serialise
+//
+//==========================================================================
+
+void VField::Serialise(VStream& Strm)
+{
+	guard(VField::Serialise);
+	VMemberBase::Serialise(Strm);
+	FFunction* func;
+	Strm << Next
+		<< STRM_INDEX(Ofs)
+		<< Type
+		<< func
+		<< STRM_INDEX(Flags);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStruct::Serialise
+//
+//==========================================================================
+
+void VStruct::Serialise(VStream& Strm)
+{
+	guard(VStruct::Serialise);
+	VMemberBase::Serialise(Strm);
+	vuint8 IsVector;
+	vint32 AvailableSize;
+	vint32 AvailableOfs;
+	Strm << OuterClass
+		<< ParentStruct
+		<< IsVector
+		<< STRM_INDEX(Size)
+		<< Fields
+		<< STRM_INDEX(AvailableSize)
+		<< STRM_INDEX(AvailableOfs);
+	unguard;
+}
+
+//==========================================================================
+//
+//	FFunction::Serialise
+//
+//==========================================================================
+
+void FFunction::Serialise(VStream& Strm)
+{
+	guard(FFunction::Serialise);
+	VMemberBase::Serialise(Strm);
+	VField::FType TmpType;
+	vint32 TmpNumParams;
+	vint32 TmpNumLocals;
+	vint32 TmpFlags;
+	vint32 ParamsSize;
+	Strm << OuterClass
+		<< STRM_INDEX(FirstStatement)
+		<< STRM_INDEX(TmpNumLocals)
+		<< STRM_INDEX(TmpFlags)
+		<< TmpType
+		<< STRM_INDEX(TmpNumParams)
+		<< STRM_INDEX(ParamsSize);
+	Type = TmpType.Type;
+	NumParms = ParamsSize;
+	NumLocals = TmpNumLocals;
+	Flags = TmpFlags;
+	for (int i = 0; i < TmpNumParams; i++)
+		Strm << TmpType;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VConstant::Serialise
+//
+//==========================================================================
+
+void VConstant::Serialise(VStream& Strm)
+{
+	VMemberBase::Serialise(Strm);
+	Strm << OuterClass
+		<< Type;
+	switch (Type)
+	{
+	case ev_float:
+		Strm << *(float*)&Value;
+		break;
+
+	case ev_name:
+		Strm << *(VName*)&Value;
+		break;
+
+	default:
+		Strm << STRM_INDEX(Value);
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	state_t::Serialise
+//
+//==========================================================================
+
+void state_t::Serialise(VStream& Strm)
+{
+	guard(state_t::Serialise);
+	VMemberBase::Serialise(Strm);
+VClass* OuterClass;
+	Strm << STRM_INDEX(sprite)
+		<< STRM_INDEX(frame)
+		<< STRM_INDEX(model_index)
+		<< STRM_INDEX(model_frame)
+		<< time
+		<< STRM_INDEX(nextstate)
+		<< function
+		<< OuterClass;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::Serialise
+//
+//==========================================================================
+
+void VClass::Serialise(VStream& Strm)
+{
+	guard(VClass::Serialise);
+	VMemberBase::Serialise(Strm);
+	int PrevSize = ClassSize;
+	VClass* PrevParent = ParentClass;
+	if (!ClassVTable)
+	{
+		Strm << ParentClass
+			<< Fields
+			<< STRM_INDEX(VTableOffset)
+			<< STRM_INDEX(ClassNumMethods)
+			<< STRM_INDEX(ClassSize);
+		if ((ObjectFlags & CLASSOF_Native) && ClassSize != PrevSize)
+		{
+			Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
+				GetName(), PrevSize, ClassSize);
+		}
+		if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
+		{
+			Sys_Error("Bad parent class, class %s, C++ %s, VavoomC %s)",
+				GetName(), PrevParent ? PrevParent->GetName() : "(none)",
+				ParentClass ? ParentClass->GetName() : "(none)");
+		}
+	}
+	else
+	{
+		//FIXME Class already has been loaded.
+		vint32 Dummy;
+		Strm << STRM_INDEX(Dummy)
+			<< STRM_INDEX(Dummy)
+			<< STRM_INDEX(Dummy)
+			<< STRM_INDEX(Dummy)
+			<< STRM_INDEX(Dummy);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	operator VStream << FType
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, VField::FType& T)
+{
+	guard(operator VStream << FType);
+	Strm << T.Type;
+	byte RealType = T.Type;
+	if (RealType == ev_array)
+	{
+		Strm << T.ArrayInnerType
+			<< STRM_INDEX(T.ArrayDim);
+		RealType = T.ArrayInnerType;
+	}
+	if (RealType == ev_pointer)
+	{
+		Strm << T.InnerType
+			<< T.PtrLevel;
+		RealType = T.InnerType;
+	}
+	if (RealType == ev_reference)
+		Strm << T.Class;
+	else if (RealType == ev_struct || RealType == ev_vector)
+		Strm << T.Struct;
+	else if (RealType == ev_delegate)
+		Strm << T.Function;
+	else if (RealType == ev_bool)
+		Strm << T.BitMask;
+	return Strm;
+	unguard;
+}
+
+//==========================================================================
+//
+//	operator VStream << mobjinfo_t
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, mobjinfo_t& MI)
+{
+	return Strm << STRM_INDEX(MI.doomednum)
+		<< MI.class_id;
+}
+
+//==========================================================================
+//
 //	VField::SerialiseFieldValue
 //
 //==========================================================================
@@ -319,11 +552,10 @@ void VStruct::CleanObject(byte* Data)
 //
 //==========================================================================
 
-VClass::VClass(VName AName, int ASize)
-: Name(AName)
-, ClassSize(ASize)
+VClass::VClass(VName AName)
 {
 	guard(VClass::VClass);
+	Name = AName;
 	LinkNext = GClasses;
 	GClasses = this;
 	unguard;
@@ -338,13 +570,13 @@ VClass::VClass(VName AName, int ASize)
 VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags, 
 	VClass *AParent, EName AName, void(*ACtor)(void*))
 : ObjectFlags(CLASSOF_Native)
-, Name(AName)
 , ParentClass(AParent)
 , ClassSize(ASize)
 , ClassFlags(AClassFlags)
 , ClassConstructor(ACtor)
 {
 	guard(native VClass::VClass);
+	Name = AName;
 	LinkNext = GClasses;
 	GClasses = this;
 	unguard;
@@ -601,9 +833,12 @@ void VClass::CleanObject(VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.8  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
-//
+//	
 //	Revision 1.7  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

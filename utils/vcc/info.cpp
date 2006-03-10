@@ -71,7 +71,7 @@ static int FindState(VName StateName, TClass* InClass)
 {
 	for (TArray<state_t>::TIterator It(states); It; ++It)
 	{
-		if (It->statename == StateName && It->OuterClass == InClass)
+		if (It->Name == StateName && It->OuterClass == InClass)
 		{
 			return It.GetIndex();
 		}
@@ -107,7 +107,6 @@ void ParseStates(TClass* InClass)
 	while (!TK_Check(PU_RBRACE))
 	{
 		state_t &s = *new(states) state_t;
-		memset(&s, 0, sizeof(s));
 		s.OuterClass = InClass;
 
 		//	State identifier
@@ -115,7 +114,7 @@ void ParseStates(TClass* InClass)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
-		s.statename = tk_Name;
+		s.Name = tk_Name;
 		AddConstant(InClass, tk_Name, ev_int, states.Num() - 1);
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
@@ -190,7 +189,6 @@ void ParseStates(TClass* InClass)
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
 		s.function = ParseStateCode(InClass);
-		functions[s.function].Name = va("%s_func", *s.statename);
 	}
 }
 
@@ -200,11 +198,11 @@ void ParseStates(TClass* InClass)
 //
 //==========================================================================
 
-void AddToMobjInfo(int Index, int ClassID)
+void AddToMobjInfo(int Index, TClass* Class)
 {
 	int i = mobj_info.Add();
 	mobj_info[i].doomednum = Index;
-	mobj_info[i].class_id = ClassID;
+	mobj_info[i].class_id = Class;
 }
 
 //==========================================================================
@@ -213,11 +211,11 @@ void AddToMobjInfo(int Index, int ClassID)
 //
 //==========================================================================
 
-void AddToScriptIds(int Index, int ClassID)
+void AddToScriptIds(int Index, TClass* Class)
 {
 	int i = script_ids.Add();
 	script_ids[i].doomednum = Index;
-	script_ids[i].class_id = ClassID;
+	script_ids[i].class_id = Class;
 }
 
 //==========================================================================
@@ -282,9 +280,12 @@ void SkipStates(TClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.32  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.31  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
 //	

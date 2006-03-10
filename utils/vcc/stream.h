@@ -70,6 +70,7 @@ public:
 
 	//	Interface functions for objects and classes streams.
 	virtual VStream& operator<<(VName&);
+	virtual VStream& operator<<(VMemberBase*&);
 
 	//	Serialise integers in particular byte order.
 	void SerialiseLittleEndian(void*, int);
@@ -182,9 +183,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2006/03/10 19:31:55  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.1  2006/02/27 21:24:33  dj_jl
 //	Added stream class.
-//
+//	
 //	Revision 1.4  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

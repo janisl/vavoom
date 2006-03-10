@@ -25,8 +25,6 @@
 
 #ifndef OPCODE_INFO
 
-// MACROS ------------------------------------------------------------------
-
 #define PROG_MAGIC		"VPRG"
 #define PROG_VERSION	19
 
@@ -53,7 +51,28 @@ enum EType
 	NUM_BASIC_TYPES
 };
 
-// TYPES -------------------------------------------------------------------
+enum
+{
+	FIELD_Native	= 0x0001,	//	Native serialisation.
+};
+
+enum
+{
+	FUNC_Native		= 0x0001,	// Native function
+	FUNC_Static		= 0x0002,	// Static function
+	FUNC_VarArgs	= 0x0004,	// Variable argument count
+};
+
+enum
+{
+	MEMBER_Package,
+	MEMBER_Field,
+	MEMBER_Method,
+	MEMBER_State,
+	MEMBER_Const,
+	MEMBER_Struct,
+	MEMBER_Class,
+};
 
 enum
 {
@@ -205,15 +224,14 @@ struct dprograms_t
 	int		ofs_names;
 	int		num_names;
 
-	int		ofs_strings;    //	First string is empty
+	int		num_strings;
+	int		ofs_strings;
 
 	int		ofs_statements;
-	int		num_statements;	//	Instruction 0 is error
+	int		num_statements;
 
-	int		ofs_functions;
-	int		num_functions;	//	Function 0 is empty
+	int		num_functions;
 	
-	int		ofs_classinfo;
 	int		num_classinfo;
 
 	int		ofs_vtables;
@@ -225,7 +243,6 @@ struct dprograms_t
 	int		ofs_mdlnames;
 	int		num_mdlnames;
 
-	int		ofs_states;
 	int		num_states;
 
 	int		ofs_mobjinfo;
@@ -234,122 +251,27 @@ struct dprograms_t
 	int		ofs_scriptids;
 	int		num_scriptids;
 
-	int		ofs_fields;
 	int		num_fields;
 
-	int		ofs_structs;
 	int		num_structs;
 
-	int		ofs_constants;
 	int		num_constants;
+
+	int		ofs_exportinfo;
+	int		ofs_exportdata;
 };
-
-enum
-{
-	FIELD_Native	= 0x0001,	//	Native serialisation.
-};
-
-enum
-{
-	FUNC_Native		= 0x0001,	// Native function
-	FUNC_Static		= 0x0002	// Static function
-};
-
-struct dtype_t
-{
-	byte		Type;
-	byte		InnerType;		//	For pointers
-	byte		ArrayInnerType;	//	For arrays
-	byte		PtrLevel;
-	int			ArrayDim;
-	int			Extra;
-};
-
-struct dfield_t
-{
-	short		name;
-	short		next;
-	short		ofs;
-	short		func_num;
-	short		flags;
-	dtype_t		type;
-};
-
-struct dfunction_t
-{
-	short	name;
-	short	outer_class;
-	int		first_statement;	//	Negative numbers are builtin functions
-	short	num_parms;
-	short	ParamsSize;
-	short	num_locals;
-	short	flags;
-	dtype_t	ReturnType;
-	dtype_t	ParamTypes[MAX_PARAMS];
-};
-
-struct dstruct_t
-{
-	short			Name;
-	short			OuterClass;
-	short			ParentStruct;
-	short			Size;
-	short			Fields;
-	short			AvailableSize;
-	short			AvailableOfs;
-	short			IsVector;
-};
-
-struct dclassinfo_t
-{
-	short	name;
-	short	fields;
-	int		vtable;
-	short	size;
-	short	num_methods;
-	int		parent;
-};
-
-struct dconstant_t
-{
-	short		Name;
-	short		OuterClass;
-	int			Value;
-	byte		Type;
-	byte		Pad[3];
-};
-
-struct dstate_t
-{
-	short			sprite;
-	short			model_index;
-	unsigned char	frame;
-	unsigned char	model_frame;
-	short			nextstate;
-	float			time;
-	short			function;
-	short			statename;
-	short			outer_class;
-};
-
-struct dmobjinfo_t
-{
-	short	doomednum;
-	short	class_id;
-};
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 #endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.27  2006/02/28 22:50:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.26  2006/02/25 17:09:35  dj_jl
 //	Import all progs type info.
 //	

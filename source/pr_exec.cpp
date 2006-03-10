@@ -181,6 +181,82 @@ static int SwapBits(int Val)
 	return Ret;
 }
 
+class VProgsReader : public VStream
+{
+private:
+	VStream*			Stream;
+
+public:
+	VName*				NameRemap;
+	int					NumExports;
+	VMemberBase**		Exports;
+
+	VProgsReader(VStream* InStream)
+	: Stream(InStream)
+	, NameRemap(0)
+	{
+		bLoading = true;
+	}
+	~VProgsReader()
+	{
+		Z_Free(NameRemap);
+		delete Stream;
+	}
+
+	//	Stream interface.
+	void Serialise(void* Data, int Len)
+	{
+		Stream->Serialise(Data, Len);
+	}
+	void Seek(int Pos)
+	{
+		Stream->Seek(Pos);
+	}
+	int Tell()
+	{
+		return Stream->Tell();
+	}
+	int TotalSize()
+	{
+		return Stream->TotalSize();
+	}
+	bool AtEnd()
+	{
+		return Stream->AtEnd();
+	}
+	void Flush()
+	{
+		Stream->Flush();
+	}
+	bool Close()
+	{
+		return Stream->Close();
+	}
+
+	VStream& operator<<(VName& Name)
+	{
+		int NameIndex;
+		*this << STRM_INDEX(NameIndex);
+		Name = NameRemap[NameIndex];
+		return *this;
+	}
+	VStream& operator<<(VMemberBase*& Ref)
+	{
+		int ObjIndex;
+		*this << STRM_INDEX(ObjIndex);
+		if (ObjIndex > 0)
+		{
+			check(ObjIndex <= NumExports);
+			Ref = Exports[ObjIndex - 1];
+		}
+		else
+		{
+			Ref = NULL;
+		}
+		return *this;
+	}
+};
+
 //==========================================================================
 //
 //	TProgs::Load
@@ -191,270 +267,187 @@ void TProgs::Load(const char *AName)
 {
 	guard(TProgs::Load);
 	int				i;
-	int				len;
 	int*			Statements;
-	dfunction_t	*	DFunctions;
-	dclassinfo_t*	ClassInfo;
 	VClass**		ClassList;
 	VName*			NameRemap;
-	char*			pName;
-	short*			DVTables;
-	short*			DSprNames;
-	short*			DMdlNames;
-	dstate_t*		DStates;
-	dmobjinfo_t*	DMobjInfo;
-	dmobjinfo_t*	DScriptIds;
-	dfield_t*		DFields;
-	dstruct_t*		DStructs;
+	dprograms_t		Progs;
 
-	i = M_CheckParm("-progs");
-	if (i && i < myargc - 1)
+	if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName)))
 	{
 		//	Load PROGS from a specified file
-		len = M_ReadFile(va("%s%s.dat", myargv[i + 1], AName), (byte**)&Progs);
-	}
-	else if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName)))
-	{
-		//	Load PROGS from a specified file
-		VStr progfilename = FL_FindFile(va("progs/%s.dat", AName));
-		len = M_ReadFile(*progfilename, (byte**)&Progs);
+		Reader = new VProgsReader(FL_OpenFileRead(va("progs/%s.dat", AName)));
 	}
 	else
 	{
 		//	Load PROGS from wad file
-		i = W_GetNumForName(VName(AName, VName::AddLower8), WADNS_Progs);
-		Progs = (dprograms_t*)W_CacheLumpNum(i, PU_STATIC);
-		len = W_LumpLength(i);
+		Reader = new VProgsReader(W_CreateLumpReader(VName(AName, VName::AddLower8), WADNS_Progs));
 	}
 
 	//	Calcutate CRC
 	crc.Init();
-	for (i = 0; i < len; i++)
+	for (i = 0; i < Reader->TotalSize(); i++)
 	{
-		crc + ((byte*)Progs)[i];
+		crc + Streamer<byte>(*Reader);
 	}
 
 	// byte swap the header
-	for (i = 0; i < (int)sizeof(*Progs) / 4; i++)
+	Reader->Seek(0);
+	for (i = 0; i < (int)sizeof(Progs) / 4; i++)
 	{
-		((int *)Progs)[i] = LittleLong(((int *)Progs)[i]);
+		*Reader << ((int*)&Progs)[i];
 	}
 
-	if (strncmp(Progs->magic, PROG_MAGIC, 4))
+	if (strncmp(Progs.magic, PROG_MAGIC, 4))
 		Sys_Error("Progs has wrong file ID, possibly older version");
-	if (Progs->version != PROG_VERSION)
+	if (Progs.version != PROG_VERSION)
 		Sys_Error("Progs has wrong version number (%i should be %i)",
-			Progs->version, PROG_VERSION);
+			Progs.version, PROG_VERSION);
 
-	Strings = (char*)Progs + Progs->ofs_strings;
-	Statements = (int*)((byte*)Progs + Progs->ofs_statements);
-	DFunctions = (dfunction_t *)((byte *)Progs + Progs->ofs_functions);
-	ClassInfo = (dclassinfo_t *)((byte *)Progs + Progs->ofs_classinfo);
-	DVTables = (short*)((byte*)Progs + Progs->ofs_vtables);
-	DSprNames = (short*)((byte*)Progs + Progs->ofs_sprnames);
-	DMdlNames = (short*)((byte*)Progs + Progs->ofs_mdlnames);
-	DStates = (dstate_t*)((byte*)Progs + Progs->ofs_states);
-	DMobjInfo = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_mobjinfo);
-	DScriptIds = (dmobjinfo_t*)((byte*)Progs + Progs->ofs_scriptids);
-	DFields = (dfield_t*)((byte*)Progs + Progs->ofs_fields);
-	DStructs = (dstruct_t*)((byte*)Progs + Progs->ofs_structs);
+	Strings = Z_CNew<char>(Progs.num_strings);
+	Statements = Z_CNew<int>(Progs.num_statements);
+	VTables = Z_CNew<FFunction*>(Progs.num_vtables);
 
-	Functions = Z_CNew<FFunction>(Progs->num_functions);
-	VTables = Z_CNew<FFunction*>(Progs->num_vtables);
-	Fields = Z_CNew<VField>(Progs->num_fields);
-	Structs = Z_CNew<VStruct>(Progs->num_structs);
-
-	NumSpriteNames = Progs->num_sprnames;
+	NumSpriteNames = Progs.num_sprnames;
 	SpriteNames = Z_CNew<VName>(NumSpriteNames);
-	NumModelNames = Progs->num_mdlnames;
+	NumModelNames = Progs.num_mdlnames;
 	ModelNames = Z_CNew<VName>(NumModelNames);
-	NumStates = Progs->num_states;
-	States = Z_CNew<state_t>(NumStates);
-	NumMobjInfo = Progs->num_mobjinfo;
+	NumStates = Progs.num_states;
+	NumMobjInfo = Progs.num_mobjinfo;
 	MobjInfo = Z_CNew<mobjinfo_t>(NumMobjInfo);
-	NumScriptIds = Progs->num_scriptids;
+	NumScriptIds = Progs.num_scriptids;
 	ScriptIds = Z_CNew<mobjinfo_t>(NumScriptIds);
+	NumStructs = Progs.num_structs;
+	NumFunctions = Progs.num_functions;
 
 	// Read names
-	NameRemap = Z_New<VName>(Progs->num_names);
-	pName = (char *)Progs + Progs->ofs_names;
-	for (i = 0; i < Progs->num_names; i++)
+	NameRemap = Z_New<VName>(Progs.num_names);
+	Reader->Seek(Progs.ofs_names);
+	for (i = 0; i < Progs.num_names; i++)
 	{
-		NameRemap[i] = pName;
-		pName += (strlen(pName) + 4) & ~3;
+		VNameEntry E;
+		*Reader << E;
+		NameRemap[i] = E.Name;
+	}
+	Reader->NameRemap = NameRemap;
+
+	//	Read strings.
+	Reader->Seek(Progs.ofs_strings);
+	Reader->Serialise(Strings, Progs.num_strings);
+
+	//	Read statements.
+	Reader->Seek(Progs.ofs_statements);
+	for (i = 0; i < Progs.num_statements; i++)
+	{
+		*Reader << Statements[i];
 	}
 
-	// byte swap the lumps
-	for (i = 0; i < Progs->num_statements; i++)
-	{
-		Statements[i] = LittleLong(Statements[i]);
-	}
-	for (i = 0; i < Progs->num_functions; i++)
-	{
-		DFunctions[i].name = LittleShort(DFunctions[i].name);
-		DFunctions[i].outer_class = LittleShort(DFunctions[i].outer_class);
-		DFunctions[i].first_statement = LittleLong(DFunctions[i].first_statement);
-		DFunctions[i].num_parms = LittleShort(DFunctions[i].num_parms);
-		DFunctions[i].ParamsSize = LittleShort(DFunctions[i].ParamsSize);
-		DFunctions[i].num_locals = LittleShort(DFunctions[i].num_locals);
-		DFunctions[i].flags = LittleShort(DFunctions[i].flags);
-	}
-	for (i = 0; i < Progs->num_classinfo; i++)
-	{
-		ClassInfo[i].name = LittleShort(ClassInfo[i].name);
-		ClassInfo[i].fields = LittleShort(ClassInfo[i].fields);
-		ClassInfo[i].vtable = LittleLong(ClassInfo[i].vtable);
-		ClassInfo[i].size = LittleShort(ClassInfo[i].size);
-		ClassInfo[i].num_methods = LittleShort(ClassInfo[i].num_methods);
-		ClassInfo[i].parent = LittleLong(ClassInfo[i].parent);
-	}
-	for (i = 0; i < Progs->num_vtables; i++)
-	{
-		DVTables[i] = LittleShort(DVTables[i]);
-	}
+	VMemberBase** Exports = Z_CNew<VMemberBase*>(Progs.num_fields +
+		Progs.num_functions + Progs.num_structs + Progs.num_states +
+		Progs.num_classinfo + Progs.num_constants);
+	Reader->Exports = Exports;
 
-	//	Setup classes
-	ClassList = Z_CNew<VClass *>(Progs->num_classinfo);
-	for (i = 0; i < Progs->num_classinfo; i++)
+	//	Create objects
+	Reader->Seek(Progs.ofs_exportinfo);
+	for (i = 0; i < Progs.num_fields + Progs.num_functions + Progs.num_structs +
+		Progs.num_classinfo + Progs.num_states + Progs.num_constants; i++)
 	{
-		ClassList[i] = VClass::FindClass(*NameRemap[ClassInfo[i].name]);
-		if (!ClassList[i])
-		{
-			ClassList[i] = new(PU_STRING) VClass(NameRemap[ClassInfo[i].name],
-				ClassInfo[i].size);
-		}
-		else if (ClassList[i]->ClassSize != ClassInfo[i].size)
-		{
-			Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
-				ClassList[i]->GetName(), ClassList[i]->ClassSize,
-				ClassInfo[i].size);
-		}
-		if (!ClassList[i]->ClassVTable)
-		{
-			ClassList[i]->ClassNumMethods = ClassInfo[i].num_methods;
-			ClassList[i]->ClassVTable = VTables + ClassInfo[i].vtable;
-		}
-		if (!ClassList[i]->Fields && ClassInfo[i].fields != -1)
-		{
-			ClassList[i]->Fields = &Fields[ClassInfo[i].fields];
-		}
-	}
-	for (i = 0; i < Progs->num_classinfo; i++)
-	{
-		if (!ClassList[i]->ParentClass && !(ClassList[i]->GetFlags() & CLASSOF_Native))
-		{
-			ClassList[i]->ParentClass = ClassList[ClassInfo[i].parent];
-		}
-	}
+		vuint8		Type;
+		VName		Name;
 
-	//	Setup functions
-	for (i = 0; i < Progs->num_functions; i++)
-	{
-		Functions[i].Name = NameRemap[DFunctions[i].name];
-		Functions[i].OuterClass = DFunctions[i].outer_class != -1 ?
-			ClassList[DFunctions[i].outer_class] : NULL;
-		Functions[i].FirstStatement = DFunctions[i].first_statement;
-		Functions[i].NumParms = DFunctions[i].ParamsSize;
-		Functions[i].NumLocals = DFunctions[i].num_locals;
-		Functions[i].Type = DFunctions[i].ReturnType.Type;
-		Functions[i].Flags = DFunctions[i].flags;
+		*Reader << Type << Name;
+		switch (Type)
+		{
+		case MEMBER_Field:
+			Exports[i] = new(PU_STATIC) VField();
+			Exports[i]->Name = Name;
+			break;
+		case MEMBER_Method:
+			Exports[i] = new(PU_STATIC) FFunction();
+			Exports[i]->Name = Name;
+			break;
+		case MEMBER_State:
+			Exports[i] = new(PU_STATIC) state_t();
+			Exports[i]->Name = Name;
+			break;
+		case MEMBER_Const:
+			Exports[i] = new(PU_STATIC) VConstant();
+			Exports[i]->Name = Name;
+			break;
+		case MEMBER_Struct:
+			Exports[i] = new(PU_STATIC) VStruct();
+			Exports[i]->Name = Name;
+			break;
+		case MEMBER_Class:
+			Exports[i] = VClass::FindClass(*Name);
+			if (!Exports[i])
+			{
+				Exports[i] = new(PU_STRING) VClass(Name);
+			}
+			break;
+		}
 	}
+	int NumExp = Progs.num_fields + Progs.num_functions + Progs.num_structs +
+		Progs.num_classinfo + Progs.num_states + Progs.num_constants;
+	Functions = (FFunction**)(Exports + Progs.num_fields);
+	Structs = (VStruct**)(Exports + Progs.num_fields + Progs.num_functions);
+	ClassList = (VClass**)(Exports + Progs.num_fields + Progs.num_functions +
+		Progs.num_structs);
+	States = (state_t**)(Exports + Progs.num_fields + Progs.num_functions +
+		Progs.num_structs + Progs.num_classinfo);
+	Reader->NumExports = NumExp;
 
-	//	Set up structures.
-	for (i = 0; i < Progs->num_structs; i++)
+	//	Serialise objects.
+	Reader->Seek(Progs.ofs_exportdata);
+	for (i = 0; i < Progs.num_fields + Progs.num_functions + Progs.num_structs +
+		Progs.num_classinfo + Progs.num_states + Progs.num_constants; i++)
 	{
-		Structs[i].Name = NameRemap[LittleShort(DStructs[i].Name)];
-		Structs[i].OuterClass = ClassList[LittleShort(DStructs[i].OuterClass)];
-		int TIdx = LittleShort(DStructs[i].ParentStruct);
-		Structs[i].ParentStruct = TIdx >= 0 ? &Structs[TIdx] : NULL;
-		Structs[i].Size = LittleShort(DStructs[i].Size);
-		TIdx = LittleShort(DStructs[i].Fields);
-		Structs[i].Fields = TIdx >= 0 ? &Fields[TIdx] : NULL;
-	}
-
-	//	Set up fields.
-	for (i = 0; i < Progs->num_fields; i++)
-	{
-		Fields[i].Name = NameRemap[LittleShort(DFields[i].name)];
-		int TIdx = LittleShort(DFields[i].next);
-		Fields[i].Next = TIdx >= 0 ? &Fields[TIdx] : NULL;
-		Fields[i].Ofs = LittleShort(DFields[i].ofs);
-		Fields[i].Flags = LittleShort(DFields[i].flags);
-		Fields[i].Type.Type = DFields[i].type.Type;
-		Fields[i].Type.InnerType = DFields[i].type.InnerType;
-		Fields[i].Type.ArrayInnerType = DFields[i].type.ArrayInnerType;
-		Fields[i].Type.PtrLevel = DFields[i].type.PtrLevel;
-		Fields[i].Type.ArrayDim = LittleLong(DFields[i].type.ArrayDim);
-		TIdx = LittleLong(DFields[i].type.Extra);
-		int RealType = Fields[i].Type.Type;
-		if (RealType == ev_array)
-			RealType = Fields[i].Type.ArrayInnerType;
-		if (RealType == ev_pointer)
-			RealType = Fields[i].Type.InnerType;
-		if (RealType == ev_reference)
-			Fields[i].Type.Class = TIdx >= 0 ? ClassList[TIdx] : NULL;
-		else if (RealType == ev_struct)
-			Fields[i].Type.Struct = TIdx >= 0 ? &Structs[TIdx] : NULL;
-		else
-			Fields[i].Type.BitMask = TIdx;
+		Exports[i]->Serialise(*Reader);
 	}
 
 	//	Set up info tables.
-	for (i = 0; i < Progs->num_sprnames; i++)
+	Reader->Seek(Progs.ofs_sprnames);
+	for (i = 0; i < Progs.num_sprnames; i++)
 	{
-		SpriteNames[i] = NameRemap[LittleShort(DSprNames[i])];
+		*Reader << SpriteNames[i];
 	}
-	for (i = 0; i < Progs->num_mdlnames; i++)
+	Reader->Seek(Progs.ofs_mdlnames);
+	for (i = 0; i < Progs.num_mdlnames; i++)
 	{
-		ModelNames[i] = NameRemap[LittleShort(DMdlNames[i])];
+		*Reader << ModelNames[i];
 	}
-	for (i = 0; i < Progs->num_states; i++)
+	Reader->Seek(Progs.ofs_mobjinfo);
+	for (i = 0; i < Progs.num_mobjinfo; i++)
 	{
-		States[i].sprite = LittleShort(DStates[i].sprite);
-		States[i].frame = DStates[i].frame;
-		States[i].model_index = LittleShort(DStates[i].model_index);
-		States[i].model_frame = DStates[i].model_frame;
-		States[i].time = LittleFloat(DStates[i].time);
-		States[i].nextstate = LittleShort(DStates[i].nextstate);
-		States[i].function = &Functions[LittleShort(DStates[i].function)];
-		States[i].statename = NameRemap[LittleShort(DStates[i].statename)];
+		*Reader << MobjInfo[i];
 	}
-	for (i = 0; i < Progs->num_mobjinfo; i++)
+	Reader->Seek(Progs.ofs_scriptids);
+	for (i = 0; i < Progs.num_scriptids; i++)
 	{
-		MobjInfo[i].doomednum = LittleShort(DMobjInfo[i].doomednum);
-		MobjInfo[i].class_id = ClassList[LittleShort(DMobjInfo[i].class_id)];
-	}
-	for (i = 0; i < Progs->num_scriptids; i++)
-	{
-		ScriptIds[i].doomednum = LittleShort(DScriptIds[i].doomednum);
-		ScriptIds[i].class_id = ClassList[LittleShort(DScriptIds[i].class_id)];
+		*Reader << ScriptIds[i];
 	}
 
 	//	Set up function pointers in vitual tables
-	for (i = 0; i < Progs->num_vtables; i++)
+	Reader->Seek(Progs.ofs_vtables);
+	for (i = 0; i < Progs.num_vtables; i++)
 	{
-		if (DVTables[i] < 0 || DVTables[i] >= Progs->num_functions)
-		{
-			Sys_Error("Virtual table has invalid function number");
-		}
-		VTables[i] = Functions + DVTables[i];
+		*Reader << VTables[i];
 	}
 
 	//	Set up builtins
-	for (i = 0; i < Progs->num_functions; i++)
+	for (i = 0; i < Progs.num_functions; i++)
 	{
 		FBuiltinInfo *B;
 
-		if (Functions[i].NumParms > 16)
+		if (Functions[i]->NumParms > 16)
 			Sys_Error("Function has more than 16 params");
 		for (B = FBuiltinInfo::Builtins; B; B = B->Next)
 		{
-			if (Functions[i].OuterClass == B->OuterClass &&
-				!strcmp(*Functions[i].Name, B->Name))
+			if (Functions[i]->OuterClass == B->OuterClass &&
+				!strcmp(*Functions[i]->Name, B->Name))
 			{
-				if (Functions[i].Flags & FUNC_Native)
+				if (Functions[i]->Flags & FUNC_Native)
 				{
-					Functions[i].FirstStatement = (int)B->Func;
+					Functions[i]->FirstStatement = (int)B->Func;
 					break;
 				}
 				else
@@ -463,22 +456,22 @@ void TProgs::Load(const char *AName)
 				}
 			}
 		}
-		if (!B && Functions[i].Flags & FUNC_Native)
+		if (!B && Functions[i]->Flags & FUNC_Native)
 		{
 			//	Default builtin
-			Functions[i].FirstStatement = (int)PF_Fixme;
+			Functions[i]->FirstStatement = (int)PF_Fixme;
 #if defined CLIENT && defined SERVER
 			//	Don't abort with error, because it will be done, when this
 			// function will be called (if it will be called).
 			GCon->Logf(NAME_Dev, "WARNING: Builtin %s.%s not found!",
-				Functions[i].OuterClass ? Functions[i].OuterClass->GetName() : "",
-				*Functions[i].Name);
+				Functions[i]->OuterClass ? Functions[i]->OuterClass->GetName() : "",
+				*Functions[i]->Name);
 #endif
 		}
-		if (!(Functions[i].Flags & FUNC_Native))
+		if (!(Functions[i]->Flags & FUNC_Native))
 		{
-			Functions[i].FirstStatement =
-				(int)(Statements + Functions[i].FirstStatement);
+			Functions[i]->FirstStatement =
+				(int)(Statements + Functions[i]->FirstStatement);
 		}
 	}
 
@@ -498,7 +491,7 @@ void TProgs::Load(const char *AName)
 	//	Patch code
 	//
 	int PrevOpc = OPC_Done;
-	for (i = 0; i < Progs->num_statements; i++)
+	for (i = 0; i < Progs.num_statements; i++)
 	{
 		switch (Statements[i])
 		{
@@ -506,7 +499,7 @@ void TProgs::Load(const char *AName)
 			Statements[i + 1] += (int)Strings;
 			break;
 		case OPC_PushFunction:
-			Statements[i + 1] = (int)(Functions + Statements[i + 1]);
+			Statements[i + 1] = (int)Functions[Statements[i + 1]];
 			break;
 		case OPC_PushClassId:
 		case OPC_DynamicCast:
@@ -534,7 +527,7 @@ void TProgs::Load(const char *AName)
 			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
 			break;
 		case OPC_Call:
-			Statements[i + 1] = (int)(Functions + Statements[i + 1]);
+			Statements[i + 1] = (int)Functions[Statements[i + 1]];
 			break;
 		case OPC_PushBool:
 		case OPC_AssignBool:
@@ -547,12 +540,15 @@ void TProgs::Load(const char *AName)
 	}
 
 	//	Set up reference field links.
-	for (i = 0; i < Progs->num_classinfo; i++)
+	for (i = 0; i < Progs.num_classinfo; i++)
 	{
+		if (!ClassList[i]->ClassVTable)
+		{
+			ClassList[i]->ClassVTable = VTables + ClassList[i]->VTableOffset;
+		}
 		ClassList[i]->InitReferences();
 	}
 
-	Z_Free(ClassList);
 	Z_Free(NameRemap);
 	unguard;
 }
@@ -565,71 +561,12 @@ void TProgs::Load(const char *AName)
 
 void TProgs::Unload()
 {
-	Z_Free(Progs);
-	Z_Free(Functions);
 	Z_Free(VTables);
-	Z_Free(PropInfos);
 	Z_Free(SpriteNames);
 	Z_Free(ModelNames);
-	Z_Free(States);
 	Z_Free(MobjInfo);
-	Z_Free(Fields);
-	Z_Free(Structs);
-}
-
-//==========================================================================
-//
-//	TProgs::CheckFuncForName
-//
-//==========================================================================
-
-FFunction *TProgs::CheckFuncForName(const char* name)
-{
-	for (int i = 0; i < Progs->num_functions; i++)
-    {
-    	if (!Functions[i].OuterClass && !strcmp(*Functions[i].Name, name))
-		{
-			return &Functions[i];
-		}
-    }
-	return NULL;
-}
-
-//==========================================================================
-//
-//	TProgs::FuncForName
-//
-//==========================================================================
-
-FFunction *TProgs::FuncForName(const char* name)
-{
-	FFunction *func;
-
-	func = CheckFuncForName(name);
-    if (!func)
-    {
-    	Sys_Error("FuncNumForName: function %s not found", name);
-    }
-    return func;
-}
-
-//==========================================================================
-//
-//	TProgs::FindFunctionChecked
-//
-//==========================================================================
-
-FFunction *TProgs::FindFunctionChecked(VName InName)
-{
-	for (int i = 0; i < Progs->num_functions; i++)
-    {
-    	if (!Functions[i].OuterClass && Functions[i].Name == InName)
-		{
-			return &Functions[i];
-		}
-    }
-	Sys_Error("Function %s not found", *InName);
-	return NULL;
+	Z_Free(Reader->Exports);
+	delete Reader;
 }
 
 //==========================================================================
@@ -641,9 +578,9 @@ FFunction *TProgs::FindFunctionChecked(VName InName)
 VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 {
 	guard(TProgs::FindStruct);
-	for (int i = 0; i < Progs->num_structs; i++)
-		if (Structs[i].Name == InName && Structs[i].OuterClass == InClass)
-			return &Structs[i];
+	for (int i = 0; i < NumStructs; i++)
+		if (Structs[i]->Name == InName && Structs[i]->OuterClass == InClass)
+			return Structs[i];
 	return NULL;
 	unguard;
 }
@@ -1507,10 +1444,10 @@ int TProgs::ExecuteFunction(FFunction *func)
 int TProgs::Exec(FFunction *func)
 {
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 0)
+    if (Functions[fnum]->NumParms != 0)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 0",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
     return ExecuteFunction(func);
@@ -1527,10 +1464,10 @@ int TProgs::Exec(FFunction *func, int parm1)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 1)
+    if (Functions[fnum]->NumParms != 1)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 1",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1550,10 +1487,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 2)
+    if (Functions[fnum]->NumParms != 2)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 2",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1574,10 +1511,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 3)
+    if (Functions[fnum]->NumParms != 3)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 3",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1599,10 +1536,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4)
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 4)
+    if (Functions[fnum]->NumParms != 4)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 4",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1626,10 +1563,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 5)
+    if (Functions[fnum]->NumParms != 5)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 5",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1654,10 +1591,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 6)
+    if (Functions[fnum]->NumParms != 6)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 6",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1683,10 +1620,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 7)
+    if (Functions[fnum]->NumParms != 7)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 7",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1713,10 +1650,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 8)
+    if (Functions[fnum]->NumParms != 8)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 8",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1744,10 +1681,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 9)
+    if (Functions[fnum]->NumParms != 9)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 9",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1776,10 +1713,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 10)
+    if (Functions[fnum]->NumParms != 10)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 10",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1810,10 +1747,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 11)
+    if (Functions[fnum]->NumParms != 11)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 11",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1845,10 +1782,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 12)
+    if (Functions[fnum]->NumParms != 12)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 12",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1881,10 +1818,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 13)
+    if (Functions[fnum]->NumParms != 13)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 13",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1918,10 +1855,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 14)
+    if (Functions[fnum]->NumParms != 14)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 14",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1956,10 +1893,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 15)
+    if (Functions[fnum]->NumParms != 15)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 15",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -1995,10 +1932,10 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 	int		*p;
 
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum].NumParms != 16)
+    if (Functions[fnum]->NumParms != 16)
     {
     	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 16",
-    		FuncName(fnum), Functions[fnum].NumParms);
+    		FuncName(fnum), Functions[fnum]->NumParms);
     }
 #endif
 	p = pr_stackPtr;
@@ -2028,24 +1965,24 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-void TProgs::DumpProfile(void)
+void TProgs::DumpProfile()
 {
 	#define MAX_PROF	100
 	int i;
 	int profsort[MAX_PROF];
 	int totalcount = 0;
 	memset(profsort, 0, sizeof(profsort));
-	for (i = 1; i < Progs->num_functions; i++)
+	for (i = 1; i < NumFunctions; i++)
 	{
-		if (!Functions[i].Profile1)
+		if (!Functions[i]->Profile1)
 		{
 			//	Never called
 			continue;
 		}
 		for (int j = 0; j < MAX_PROF; j++)
 		{
-			totalcount += Functions[i].Profile2;
-			if (Functions[profsort[j]].Profile2 <= Functions[i].Profile2)
+			totalcount += Functions[i]->Profile2;
+			if (Functions[profsort[j]]->Profile2 <= Functions[i]->Profile2)
 			{
 				for (int k = MAX_PROF - 1; k > j; k--)
 				{
@@ -2064,36 +2001,21 @@ void TProgs::DumpProfile(void)
 	{
 		int fnum = profsort[i];
 		GCon->Logf("%3.2f%% (%9d) %9d %s",
-			(double)Functions[fnum].Profile2 * 100.0 / (double)totalcount,
-			(int)Functions[fnum].Profile2, (int)Functions[fnum].Profile1,
-			*Functions[fnum].Name);
+			(double)Functions[fnum]->Profile2 * 100.0 / (double)totalcount,
+			(int)Functions[fnum]->Profile2, (int)Functions[fnum]->Profile1,
+			*Functions[fnum]->Name);
 	}
-}
-
-//==========================================================================
-//
-//	COMMAND ProgsTest
-//
-//==========================================================================
-
-COMMAND(ProgsTest)
-{
-	TProgs tst;
-
-	tst.Load("TSTPROGS");
-	if (Argc() > 1)
-	{
-		tst.Exec(Argv(1));
-	}
-	tst.Unload();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.47  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
-//
+//	
 //	Revision 1.46  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

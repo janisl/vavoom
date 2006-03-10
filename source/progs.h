@@ -29,28 +29,10 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VField;
-class VStruct;
-class VClass;
-
-struct FPropertyInfo;
-
+class VProgsReader;
 struct dprograms_t;
 
-struct FFunction
-{
-	VName	Name;
-	int		FirstStatement;
-	short	NumParms;
-	short	NumLocals;
-    short	Type;
-	short	Flags;
-	dword	Profile1;
-	dword	Profile2;
-	VClass	*OuterClass;
-};
-
-typedef void (*builtin_t)(void);
+typedef void (*builtin_t)();
 
 struct builtin_info_t
 {
@@ -79,24 +61,6 @@ public:
 	}
 };
 
-struct state_t
-{
-	int			sprite;
-	int			frame;
-	int			model_index;
-	int			model_frame;
-	float		time;
-	int			nextstate;
-	FFunction*	function;
-	VName		statename;
-};
-
-struct mobjinfo_t
-{
-    int			doomednum;
-	VClass*		class_id;
-};
-
 class TProgs
 {
 public:
@@ -107,7 +71,7 @@ public:
 	int			NumModelNames;
 	VName*		ModelNames;
 	int			NumStates;
-	state_t*	States;
+	state_t**	States;
 	int			NumMobjInfo;
 	mobjinfo_t*	MobjInfo;
 	int			NumScriptIds;
@@ -116,8 +80,6 @@ public:
 	void Load(const char*);
 	void Unload(void);
 
-	FFunction *FuncForName(const char* name);
-	FFunction *FindFunctionChecked(VName InName);
 	VStruct* FindStruct(VName InName, VClass* InClass);
 
 	static int Exec(FFunction *func);
@@ -159,108 +121,8 @@ public:
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10, int parm11, int parm12, int parm13, int parm14,
 		int parm15, int parm16);
-	int Exec(const char *name)
-	{
-		return Exec(FuncForName(name));
-	}
-	int Exec(const char *name, int parm1)
-	{
-		return Exec(FuncForName(name), parm1);
-	}
-	int Exec(const char *name, int parm1, int parm2)
-	{
-		return Exec(FuncForName(name), parm1, parm2);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9, parm10);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
-		int parm11)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9, parm10, parm11);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
-		int parm11, int parm12)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9, parm10, parm11, parm12);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
-		int parm11, int parm12, int parm13)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
-		int parm11, int parm12, int parm13, int parm14)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13,
-			parm14);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
-		int parm11, int parm12, int parm13, int parm14, int parm15)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13,
-			parm14, parm15);
-	}
-	int Exec(const char *name, int parm1, int parm2, int parm3, int parm4,
-		int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
-		int parm11, int parm12, int parm13, int parm14, int parm15, int parm16)
-	{
-		return Exec(FuncForName(name), parm1, parm2, parm3, parm4, parm5,
-			parm6, parm7, parm8, parm9, parm10, parm11, parm12, parm13,
-			parm14, parm15, parm16);
-	}
 	static int ExecuteFunction(FFunction *func);
-	void DumpProfile(void);
+	void DumpProfile();
 
 	int GetStringOffs(const char *Str)
 	{
@@ -272,23 +134,22 @@ public:
 	}
 
 private:
-	dprograms_t*	Progs;
+	VProgsReader*	Reader;
 	char*			Strings;
-	FFunction*		Functions;
+	FFunction**		Functions;
+	int				NumFunctions;
 	FFunction**		VTables;
-	FPropertyInfo*	PropInfos;
-	VField*			Fields;
-	VStruct*		Structs;
+	VStruct**		Structs;
+	int				NumStructs;
 
-	FFunction *CheckFuncForName(const char* name);
 	char* FuncName(int fnum);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void PR_Init(void);
-void PR_OnAbort(void);
-void PR_Traceback(void);
+void PR_Init();
+void PR_OnAbort();
+void PR_Traceback();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -351,9 +212,12 @@ inline VName PR_PopName()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.19  2006/02/28 18:04:36  dj_jl
 //	Added script execution helpers.
-//
+//	
 //	Revision 1.18  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

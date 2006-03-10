@@ -40,7 +40,7 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static state_t*		GStates;
+static state_t**	GStates;
 static int 			GNumStates;
 static mobjinfo_t*	GMobjInfo;
 static int			GNumMobjTypes;
@@ -123,7 +123,7 @@ bool VEntity::SetState(int InState)
 		}
 
 		StateNum = state;
-		st = &GStates[state];
+		st = GStates[state];
 		StateTime = st->time;
 		SpriteIndex = st->sprite;
 		SpriteName = GSpriteNames[st->sprite];
@@ -156,7 +156,7 @@ void VEntity::SetInitialState(int InState)
 {
 	guard(VEntity::SetInitialState);
 	StateNum = InState;
-	state_t* st = &GStates[InState];
+	state_t* st = GStates[InState];
 	StateTime = st->time;
 	SpriteIndex = st->sprite;
 	SpriteName = GSpriteNames[st->sprite];
@@ -178,7 +178,7 @@ int VEntity::FindState(VName StateName)
 	guard(VEntity::FindState);
 	for (int i = 0; i < GNumStates; i++)
 	{
-		if (GStates[i].statename == StateName)
+		if (GStates[i]->Name == StateName)
 		{
 			return i;
 		}
@@ -1808,7 +1808,7 @@ void VViewEntity::SetState(int InStnum)
 			break;
 		}
 		StateNum = stnum;
-		state = &GStates[stnum];
+		state = GStates[stnum];
 		StateTime = state->time;	// could be 0
 		SpriteIndex = state->sprite;
 		SpriteFrame = state->frame;
@@ -1921,9 +1921,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/03/10 19:31:25  dj_jl
+//	Use serialisation for progs files.
+//
 //	Revision 1.21  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.20  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	
