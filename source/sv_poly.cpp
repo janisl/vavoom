@@ -487,7 +487,7 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 		{
 			for (mobj = GLevel->BlockLinks[j + i]; mobj; mobj = mobj->BlockMapNext)
 			{
-				if (mobj->bSolid || mobj->bIsPlayer)
+				if (mobj->EntityFlags & VEntity::EF_Solid || mobj->EntityFlags & VEntity::EF_IsPlayer)
 				{
 					tmbbox[BOXTOP] = mobj->Origin.y + mobj->Radius;
 					tmbbox[BOXBOTTOM] = mobj->Origin.y - mobj->Radius;
@@ -633,7 +633,10 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 				PU_LEVEL, 0);
 			*(GLevel->PolyObjs[index].segs) = &GLevel->Segs[i]; // insert the first seg
 			IterFindPolySegs(*GLevel->Segs[i].v2, GLevel->PolyObjs[index].segs + 1);
-			GLevel->PolyObjs[index].bCrush = crush;
+			if (crush)
+				GLevel->PolyObjs[index].PolyFlags |= polyobj_t::PF_Crush;
+			else
+				GLevel->PolyObjs[index].PolyFlags &= ~polyobj_t::PF_Crush;
 			GLevel->PolyObjs[index].tag = tag;
 			GLevel->PolyObjs[index].seqType = GLevel->Segs[i].linedef->arg3;
 //			if (GLevel->PolyObjs[index].seqType < 0 ||
@@ -711,7 +714,10 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 		if (GLevel->PolyObjs[index].numsegs)
 		{
 			PolySegCount = GLevel->PolyObjs[index].numsegs; // PolySegCount used globally
-			GLevel->PolyObjs[index].bCrush = crush;
+			if (crush)
+				GLevel->PolyObjs[index].PolyFlags |= polyobj_t::PF_Crush;
+			else
+				GLevel->PolyObjs[index].PolyFlags &= ~polyobj_t::PF_Crush;
 			GLevel->PolyObjs[index].tag = tag;
 			GLevel->PolyObjs[index].segs = (seg_t**)Z_Malloc(GLevel->PolyObjs[index].numsegs
 				* sizeof(seg_t *), PU_LEVEL, 0);
@@ -894,9 +900,12 @@ boolean PO_Busy(int polyobj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.18  2005/12/27 22:24:00  dj_jl
 //	Created level info class, moved action special handling to it.
-//
+//	
 //	Revision 1.17  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

@@ -282,13 +282,17 @@ struct sector_t
 	fakefloor_t*	fakefloors;			//	Info for rendering.
 
 	//	Flags.
-	dword		bHasExtrafloors:1;		//	This sector has extrafloors.
-	dword		bExtrafloorSource:1;	//	This sector is a source of an extrafloor.
-	dword		bFakeFloorOnly:1;		//	When used as heightsec in R_FakeFlat, only copies floor
-	dword		bClipFakePlanes:1;		//	As a heightsec, clip planes to target sector's planes
-	dword		bNoFakeLight:1;			//	heightsec does not change lighting
-	dword		bIgnoreHeightSec:1;		//	heightsec is only for triggering sector actions
-	dword		bUnderWater:1;			//	Sector is underwater
+	enum
+	{
+		SF_HasExtrafloors	= 0x0001,	//	This sector has extrafloors.
+		SF_ExtrafloorSource	= 0x0002,	//	This sector is a source of an extrafloor.
+		SF_FakeFloorOnly	= 0x0004,	//	When used as heightsec in R_FakeFlat, only copies floor
+		SF_ClipFakePlanes	= 0x0008,	//	As a heightsec, clip planes to target sector's planes
+		SF_NoFakeLight		= 0x0010,	//	heightsec does not change lighting
+		SF_IgnoreHeightSec	= 0x0020,	//	heightsec is only for triggering sector actions
+		SF_UnderWater		= 0x0040,	//	Sector is underwater
+	};
+	vuint32		SectorFlags;
 
 	int			user_fields[14];
 };
@@ -307,7 +311,11 @@ struct polyobj_t
 	int 		tag;			// reference tag assigned in HereticEd
 	int			bbox[4];
 	int 		validcount;
-	dword	 	bCrush:1; 			// should the polyobj attempt to crush mobjs?
+	enum
+	{
+		PF_Crush	= 0x01,		// should the polyobj attempt to crush mobjs?
+	};
+	vuint32		PolyFlags;
 	int 		seqType;
 	subsector_t	*subsector;
 	float		base_x;
@@ -439,9 +447,13 @@ class VLevel : public VObject
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
 
 	//	Flags.
-	dword			bForServer:1;	//	True if this level belongs to the server.
-	dword			bExtended:1;	//	True if level was in Hexen format.
-	dword			bGLNodesV5:1;	//	True if using version 5 GL nodes.
+	enum
+	{
+		LF_ForServer	= 0x01,	//	True if this level belongs to the server.
+		LF_Extended		= 0x02,	//	True if level was in Hexen format.
+		LF_GLNodesV5	= 0x04,	//	True if using version 5 GL nodes.
+	};
+	vuint32			LevelFlags;
 
 	//
 	//	MAP related Lookup tables.
@@ -614,9 +626,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.36  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.35  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	

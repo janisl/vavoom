@@ -75,9 +75,9 @@ COMMAND(SetMenu)
 void MN_Init()
 {
 #ifdef SERVER
-	GClGame->local_server = true;
+	GClGame->ClientFlags |= VClientGameBase::CF_LocalServer;
 #else
-	GClGame->local_server = false;
+	GClGame->ClientFlags &= ~VClientGameBase::CF_LocalServer;
 #endif
 	VRootWindow::StaticInit();
 	GClGame->eventRootWindowCreated();
@@ -161,9 +161,12 @@ boolean MN_Active()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.14  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.13  2005/12/25 19:20:02  dj_jl
 //	Moved title screen into a class.
 //	

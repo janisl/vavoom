@@ -119,7 +119,8 @@ void P_Ticker()
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
+		if (GGameInfo->Players[i] &&
+			GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
 		{
 			GGameInfo->Players[i]->eventSetViewPos();
 		}
@@ -174,9 +175,12 @@ void VLevel::RemoveThinker(VThinker* Th)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.26  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.25  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
 //	

@@ -569,7 +569,10 @@ static void CL_ParseIntermission(void)
 	im.time = cl_level.time;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		scores[i].bActive = net_msg.ReadByte();
+		if (net_msg.ReadByte())
+			scores[i].Flags |= scores_t::SF_Active;
+		else
+			scores[i].Flags &= ~scores_t::SF_Active;
 		for (j = 0; j < MAXPLAYERS; j++)
 			scores[i].frags[j] = (char)net_msg.ReadByte();
 		scores[i].killcount = net_msg.ReadShort();
@@ -690,23 +693,23 @@ static void CL_ParseHeightSec()
 	ToSec->heightsec = HeightSec;
 	if (flags & 2)
 	{
-		HeightSec->bFakeFloorOnly = true;
+		HeightSec->SectorFlags |= sector_t::SF_FakeFloorOnly;
 	}
 	if (flags & 4)
 	{
-		HeightSec->bClipFakePlanes = true;
+		HeightSec->SectorFlags |= sector_t::SF_ClipFakePlanes;
 	}
 	if (flags & 8)
 	{
-		HeightSec->bUnderWater = true;
+		HeightSec->SectorFlags |= sector_t::SF_UnderWater;
 	}
 	if (flags & 16)
 	{
-		HeightSec->bIgnoreHeightSec = true;
+		HeightSec->SectorFlags |= sector_t::SF_IgnoreHeightSec;
 	}
 	if (flags & 32)
 	{
-		HeightSec->bNoFakeLight = true;
+		HeightSec->SectorFlags |= sector_t::SF_NoFakeLight;
 	}
 	R_SetupFakeFloors(ToSec);
 }
@@ -879,12 +882,17 @@ void CL_ParseServerMessage(void)
 			CL_ParseIntermission();
 			break;
 
-		 case svc_pause:
-		 	cl->bPaused = net_msg.ReadByte();
-   			if (cl->bPaused)
+			case svc_pause:
+			if (net_msg.ReadByte())
+			{
+				cl->ClientFlags |= VClientState::CF_Paused;
 				S_PauseSound();
-   			else
+			}
+			else
+			{
+				cl->ClientFlags &= ~VClientState::CF_Paused;
 				S_ResumeSound();
+			}
 			break;
 
 		 case svc_stats_long:
@@ -1070,9 +1078,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.41  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.40  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

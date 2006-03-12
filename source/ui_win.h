@@ -40,14 +40,18 @@ class VWindow : public VObject
 	int WindowType;				// Contains window type
 
 	// Booleans
-	dword bIsVisible:1;			// True if the window is visible
-	dword bIsSensitive:1;		// True if the window can take input
-	dword bIsSelectable:1;		// True if the window can have keyboard focus
-	dword bTickEnabled:1;		// True if () event should be called
-	dword bIsInitialized:1;		// True if the window has been initialized
+	enum
+	{
+		WF_IsVisible		= 0x0001,	// True if the window is visible
+		WF_IsSensitive		= 0x0002,	// True if the window can take input
+		WF_IsSelectable		= 0x0004,	// True if the window can have keyboard focus
+		WF_TickEnabled		= 0x0008,	// True if () event should be called
+		WF_IsInitialised	= 0x0010,	// True if the window has been initialized
 
-	// Destructor information
-	dword bBeingDestroyed:1;	// True if this window is going bye-bye
+		// Destructor information
+		WF_BeingDestroyed	= 0x0020,	// True if this window is going bye-bye
+	};
+	vuint32 WindowFlags;
 
 	int X;
 	int Y;
@@ -101,14 +105,14 @@ public:
 			VWindow *pParent = this;
 			while (pParent)
 			{
-				if (!pParent->bIsVisible)
+				if (!(pParent->WindowFlags & WF_IsVisible))
 					break;
 				pParent = pParent->Parent;
 			}
 			return (pParent ? false : true);
 		}
 		else
-			return bIsVisible;
+			return !!(WindowFlags & WF_IsVisible);
 	}
 
 	// Sensitivity routines
@@ -122,19 +126,19 @@ public:
 			VWindow *pParent = this;
 			while (pParent)
 			{
-				if (!pParent->bIsSensitive)
+				if (!(pParent->WindowFlags & WF_IsSensitive))
 					break;
 				pParent = pParent->Parent;
 			}
 			return (pParent ? false : true);
 		}
 		else
-			return bIsSensitive;
+			return !!(WindowFlags & WF_IsSensitive);
 	}
 
 	// Selectability routines
 	void SetSelectability(bool NewSelectability);
-	bool IsSelectable(void) { return bIsSelectable; }
+	bool IsSelectable(void) { return !!(WindowFlags & WF_IsSelectable); }
 	//bool IsTraversable(bool bCheckModal = true);
 	//bool IsFocusWindow(void);
 
@@ -257,9 +261,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.4  2003/03/08 12:08:05  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.3  2002/07/27 18:12:14  dj_jl
 //	Added Selectability flag.
 //	

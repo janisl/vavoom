@@ -73,10 +73,13 @@ class VClientGameBase : public VObject
 {
 	DECLARE_CLASS(VClientGameBase, VObject, 0)
 
-	dword				local_server:1;
-
-	// used to accelerate or skip a stage
-	dword				skipintermission:1;
+	enum
+	{
+		CF_LocalServer		= 0x01,
+		// used to accelerate or skip a stage
+		CF_SkipIntermission	= 0x02,
+	};
+	vuint32				ClientFlags;
 
 	VClientState*		cl;
 	level_t*			level;
@@ -236,9 +239,12 @@ extern dlight_t			cl_dlights[MAX_DLIGHTS];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.21  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.20  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

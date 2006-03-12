@@ -82,7 +82,7 @@ void LoadTextLump(char *name, char *buf, int bufsize)
 
 void IM_SkipIntermission()
 {
-	GClGame->skipintermission = true;
+	GClGame->ClientFlags |= VClientGameBase::CF_SkipIntermission;
 }
 
 //==========================================================================
@@ -107,9 +107,12 @@ void IM_Start(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.8  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.7  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

@@ -76,7 +76,7 @@ void VLevel::LoadMap(const char *mapname)
 {
 	guard(VLevel::LoadMap);
 #ifdef SERVER
-	if (bForServer || !sv.active)
+	if (LevelFlags & LF_ForServer || !sv.active)
 #endif
 	{
 		W_CloseAuxiliary();
@@ -117,17 +117,18 @@ void VLevel::LoadMap(const char *mapname)
 	{
 		Host_Error("Map %s is missing GL-Nodes\n", mapname);
 	}
-	bExtended = W_LumpName(lumpnum + ML_BEHAVIOR) == NAME_behavior;
+	if (W_LumpName(lumpnum + ML_BEHAVIOR) == NAME_behavior)
+		LevelFlags |= LF_Extended;
 
 	//
 	// Begin processing map lumps
 	// Note: most of this ordering is important
 	//
-	bGLNodesV5 = false;
+	LevelFlags &= ~LF_GLNodesV5;
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
 	LoadSectors(lumpnum + ML_SECTORS);
 	LoadSideDefsPass1(lumpnum + ML_SIDEDEFS);
-	if (!bExtended)
+	if (!(LevelFlags & LF_Extended))
 	{
 		LoadLineDefs1(lumpnum + ML_LINEDEFS);
 	}
@@ -139,11 +140,11 @@ void VLevel::LoadMap(const char *mapname)
 	LoadSubsectors(gl_lumpnum + ML_GL_SSECT);
    	LoadNodes(gl_lumpnum + ML_GL_NODES);
 	LoadPVS(gl_lumpnum + ML_GL_PVS);
-	if (bForServer)
+	if (LevelFlags & LF_ForServer)
 	{
 		LoadBlockMap(lumpnum + ML_BLOCKMAP);
 		RejectMatrix = (byte*)W_CacheLumpNum(lumpnum + ML_REJECT, PU_LEVEL);
-		if (bExtended)
+		if (LevelFlags & LF_Extended)
 		{
 			LoadThings2(lumpnum + ML_THINGS);
 #ifdef SERVER
@@ -172,7 +173,7 @@ void VLevel::LoadMap(const char *mapname)
 	}
 
 #ifdef SERVER
-	if (!bExtended)
+	if (!(LevelFlags & LF_Extended))
 	{
 		//	Translate level to Hexen format
 		GGameInfo->eventTranslateLevel(this);
@@ -194,7 +195,7 @@ void VLevel::LoadMap(const char *mapname)
 	// End of map lump processing
 	//
 #ifdef CLIENT
-	if (!bForServer && AuxiliaryMap)
+	if (!(LevelFlags & LF_ForServer) && AuxiliaryMap)
 #else
 	if (AuxiliaryMap)
 #endif
@@ -312,8 +313,7 @@ void VLevel::LoadVertexes(int Lump, int GLLump)
 
 		if (!strncmp((char*)Data, GL_V5_MAGIC, 4))
 		{
-GCon->Logf("Version5 nodes");
-			bGLNodesV5 = true;
+			LevelFlags |= LF_GLNodesV5;
 		}
 		NumGLVerts = (W_LumpLength(GLLump) - 4) / sizeof(gl_mapvertex_t);
 		NumVertexes = NumBaseVerts + NumGLVerts;
@@ -678,10 +678,10 @@ void VLevel::LoadGLSegs(int Lump)
 	Segs = Z_CNew<seg_t>(NumSegs, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
-	if (bGLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
+	if (LevelFlags & LF_GLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		int HdrSize = bGLNodesV5 ? 0 : 4;
-		dword GLVertFlag = bGLNodesV5 ? GL_VERTEX_V5 : GL_VERTEX_V3;
+		int HdrSize = (LevelFlags & LF_GLNodesV5) ? 0 : 4;
+		dword GLVertFlag = (LevelFlags & LF_GLNodesV5) ? GL_VERTEX_V5 : GL_VERTEX_V3;
 
 		NumSegs = (W_LumpLength(Lump) - HdrSize) / sizeof(mapglseg_v3_t);
 		Z_Resize((void**)&Segs, NumSegs * sizeof(seg_t));
@@ -820,9 +820,9 @@ void VLevel::LoadSubsectors(int Lump)
 	Subsectors = Z_CNew<subsector_t>(NumSubsectors, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
-	if (bGLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
+	if (LevelFlags & LF_GLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
-		int HdrSize = bGLNodesV5 ? 0 : 4;
+		int HdrSize = (LevelFlags & LF_GLNodesV5) ? 0 : 4;
 
 		NumSubsectors = (W_LumpLength(Lump) - HdrSize) /
 			sizeof(mapglsubsector_v3_t);
@@ -896,7 +896,7 @@ void VLevel::LoadNodes(int Lump)
 	byte *data;
 	node_t *no;
 
-	if (bGLNodesV5)
+	if (LevelFlags & LF_GLNodesV5)
 	{
 		NumNodes = W_LumpLength(Lump) / sizeof(mapglnode_v5_t);
 		Nodes = Z_CNew<node_t>(NumNodes, PU_LEVEL, 0);
@@ -1255,7 +1255,7 @@ void VLevel::GroupLines(void) const
 		sector->soundorg = TVec((bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2.0,
 			(bbox[BOXTOP] + bbox[BOXBOTTOM]) / 2.0, 0);
 
-		if (bForServer)
+		if (LevelFlags & LF_ForServer)
 		{
 			// adjust bounding box to map blocks
 			block = MapBlock(bbox[BOXTOP] - BlockMapOrgY + MAXRADIUS);
@@ -1554,9 +1554,12 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.14  2006/03/07 17:48:18  dj_jl
 //	Fixed vis data check.
-//
+//	
 //	Revision 1.13  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

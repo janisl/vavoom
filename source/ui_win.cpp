@@ -56,8 +56,7 @@ IMPLEMENT_CLASS(V, Window);
 
 VWindow::VWindow()
 : WindowType(WIN_Normal)
-, bIsVisible(true)
-, bIsSensitive(true)
+, WindowFlags(WF_IsVisible | WF_IsSensitive)
 {
 }
 
@@ -79,7 +78,7 @@ void VWindow::Init(VWindow *InParent)
 	ClipTree();
 	InitWindow();
 	WindowReady();
-	bIsInitialized = true;
+	WindowFlags |= WF_IsInitialised;
 	unguard;
 }
 
@@ -99,10 +98,10 @@ void VWindow::CleanUp(void)
 //
 //==========================================================================
 
-void VWindow::Destroy(void)
+void VWindow::Destroy()
 {
 	guard(VWindow::Destroy);
-	bBeingDestroyed = true;
+	WindowFlags |= WF_BeingDestroyed;
 	DestroyWindow();
 	KillAllChildren();
 	if (Parent)
@@ -172,7 +171,7 @@ VWindow *VWindow::GetBottomChild(bool bVisibleOnly)
 	VWindow *win = FirstChild;
 	if (bVisibleOnly)
 	{
-		while (win && !win->bIsVisible)
+		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
 			win = win->NextSibling;
 		}
@@ -193,7 +192,7 @@ VWindow *VWindow::GetTopChild(bool bVisibleOnly)
 	VWindow *win = LastChild;
 	if (bVisibleOnly)
 	{
-		while (win && !win->bIsVisible)
+		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
 			win = win->PrevSibling;
 		}
@@ -214,7 +213,7 @@ VWindow *VWindow::GetLowerSibling(bool bVisibleOnly)
 	VWindow *win = PrevSibling;
 	if (bVisibleOnly)
 	{
-		while (win && !win->bIsVisible)
+		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
 			win = win->PrevSibling;
 		}
@@ -235,7 +234,7 @@ VWindow *VWindow::GetHigherSibling(bool bVisibleOnly)
 	VWindow *win = NextSibling;
 	if (bVisibleOnly)
 	{
-		while (win && !win->bIsVisible)
+		while (win && !(win->WindowFlags & WF_IsVisible))
 		{
 			win = win->NextSibling;
 		}
@@ -325,9 +324,12 @@ void VWindow::Lower(void)
 void VWindow::SetVisibility(bool NewVisibility)
 {
 	guard(VWindow::SetVisibility);
-	if (!!bIsVisible != NewVisibility)
+	if (!!(WindowFlags & WF_IsVisible) != NewVisibility)
 	{
-		bIsVisible = NewVisibility;
+		if (NewVisibility)
+			WindowFlags |= WF_IsVisible;
+		else
+			WindowFlags &= ~WF_IsVisible;
 		VisibilityChanged(NewVisibility);
 	}
 	unguard;
@@ -342,9 +344,12 @@ void VWindow::SetVisibility(bool NewVisibility)
 void VWindow::SetSensitivity(bool NewSensitivity)
 {
 	guard(VWindow::SetSensitivity);
-	if (!!bIsSensitive != NewSensitivity)
+	if (!!(WindowFlags & WF_IsSensitive) != NewSensitivity)
 	{
-		bIsSensitive = NewSensitivity;
+		if (NewSensitivity)
+			WindowFlags |= WF_IsSensitive;
+		else
+			WindowFlags &= ~WF_IsSensitive;
 		SensitivityChanged(NewSensitivity);
 	}
 	unguard;
@@ -359,12 +364,15 @@ void VWindow::SetSensitivity(bool NewSensitivity)
 void VWindow::SetSelectability(bool NewSelectability)
 {
 	guard(VWindow::SetSelectability);
-	if (!!bIsSelectable != NewSelectability)
+	if (!!(WindowFlags & WF_IsSelectable) != NewSelectability)
 	{
-		bIsSelectable = NewSelectability;
-/*		if (bIsVisible && bIsSensitive)
+		if (NewSelectability)
+			WindowFlags |= WF_IsSelectable;
+		else
+			WindowFlags &= ~WF_IsSelectable;
+/*		if (WindowFlags & WF_IsVisible && WindowFlags & WF_IsSensitive)
 		{
-			if (bIsSelectable)
+			if (WindowFlags & WF_IsSelectable)
 				GetModalWindow()->AddWindowToTables(this);
 			else
 				GetModalWindow()->RemoveWindowFromTables(this);
@@ -542,7 +550,7 @@ void VWindow::RemoveChild(VWindow *InChild)
 void VWindow::DrawTree(void)
 {
 	guard(VWindow::DrawTree);
-	if (!bIsVisible || !ClipRect.HasArea())
+	if (!(WindowFlags & WF_IsVisible) || !ClipRect.HasArea())
 	{
 		//	Nowhere to draw.
 		return;
@@ -593,7 +601,7 @@ void VWindow::TickTree(float DeltaTime)
 {
 	guard(VWindow::TickTree);
 	Tick(DeltaTime);
-	if (bTickEnabled)
+	if (WindowFlags & WF_TickEnabled)
 	{
 		eventTick(DeltaTime);
 	}
@@ -794,9 +802,12 @@ IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.8  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
-//
+//	
 //	Revision 1.7  2005/11/24 20:09:23  dj_jl
 //	Removed unused fields from Object class.
 //	

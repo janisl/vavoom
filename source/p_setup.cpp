@@ -152,7 +152,7 @@ void SV_LoadLevel(const char *MapName)
 	}
 
 	GLevel = (VLevel*)VObject::StaticSpawnObject(VLevel::StaticClass(), PU_STATIC);
-	GLevel->bForServer = true;
+	GLevel->LevelFlags |= VLevel::LF_ForServer;
 
 	GLevel->LoadMap(MapName);
 	unguard;
@@ -199,8 +199,8 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 	sector_t *src;
 
 	src = line->frontsector;
-	src->bExtrafloorSource = true;
-	dst->bHasExtrafloors = true;
+	src->SectorFlags |= sector_t::SF_ExtrafloorSource;
+	dst->SectorFlags |= sector_t::SF_HasExtrafloors;
 	float floorz = src->floor.GetPointZ(dst->soundorg);
 	float ceilz = src->ceiling.GetPointZ(dst->soundorg);
 	for (inregion = dst->botregion; inregion; inregion = inregion->next)
@@ -339,6 +339,9 @@ void CalcSecMinMaxs(sector_t *sector)
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2006/03/12 12:54:49  dj_jl
+//  Removed use of bitfields for portability reasons.
+//
 //  Revision 1.30  2006/02/15 23:28:18  dj_jl
 //  Moved all server progs global variables to classes.
 //

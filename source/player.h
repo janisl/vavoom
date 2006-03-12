@@ -74,14 +74,18 @@ class VBasePlayer : public VObject
 
 	VLevelInfo*		Level;
 
-	dword			bActive:1;
-	dword			bSpawned:1;
-	dword			bIsBot:1;
-	dword			bFixAngle:1;
-	dword			bAttackDown:1;	// True if button down last tic.
-	dword			bUseDown:1;
-	dword			bDidSecret:1;	// True if secret level has been done.
-	dword			bNeedsUpdate:1;
+	enum
+	{
+		PF_Active		= 0x0001,
+		PF_Spawned		= 0x0002,
+		PF_IsBot		= 0x0004,
+		PF_FixAngle		= 0x0008,
+		PF_AttackDown	= 0x0010,	// True if button down last tic.
+		PF_UseDown		= 0x0020,
+		PF_DidSecret	= 0x0040,	// True if secret level has been done.
+		PF_NeedsUpdate	= 0x0080,
+	};
+	vuint32			PlayerFlags;
 
 	qsocket_t		*NetCon;
 	TMessage		Message;
@@ -235,9 +239,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.23  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.22  2006/02/26 20:52:48  dj_jl
 //	Proper serialisation of level and players.
 //	

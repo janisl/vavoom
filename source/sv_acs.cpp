@@ -2761,7 +2761,7 @@ int VACS::RunScript(float DeltaTime)
 
 		case PCD_EndPrint:
 			strbin(PrintBuffer);
-			if (Activator && Activator->bIsPlayer)
+			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
 				SV_ClientCenterPrintf(Activator->Player, "%s\n", PrintBuffer);
 			}
@@ -3064,11 +3064,11 @@ int VACS::RunScript(float DeltaTime)
 				{
 					player = GGameInfo->Players[stack[stackPtr - 1] - 1];
 				}
-				if (player && player->bSpawned)
+				if (player && player->PlayerFlags & VBasePlayer::PF_Spawned)
 				{
 					strcat(PrintBuffer, player->PlayerName);
 				}
-				else if (player && !player->bSpawned)
+				else if (player && !(player->PlayerFlags & VBasePlayer::PF_Spawned))
 				{
 					strcat(PrintBuffer, va("Player %d", stack[stackPtr - 1]));
 				}
@@ -3248,7 +3248,7 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_LocalSetMusic:
-			if (Activator && Activator->bIsPlayer)
+			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
 				SV_ChangeLocalMusic(Activator->Player,
 					FACScriptsObject::StaticGetString(stack[stackPtr - 3]));
@@ -3261,7 +3261,7 @@ int VACS::RunScript(float DeltaTime)
 				const char* SongName = FACScriptsObject::StaticGetString(PC_GET_INT);
 				PC_GET_INT;
 				PC_GET_INT;
-				if (Activator && Activator->bIsPlayer)
+				if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 				{
 					SV_ChangeLocalMusic(Activator->Player, SongName);
 				}
@@ -3304,7 +3304,7 @@ int VACS::RunScript(float DeltaTime)
 
 				//FIXME
 				if (cmd != PCD_EndHudMessageBold &&
-					Activator && Activator->bIsPlayer)
+					Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 				{
 					SV_ClientPrintf(Activator->Player, "%s\n", PrintBuffer);
 				}
@@ -4104,7 +4104,7 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_PlayerNumber:
-			if (!Activator || !Activator->bIsPlayer)
+			if (!Activator || !(Activator->EntityFlags & VEntity::EF_IsPlayer))
 			{
 				stack[stackPtr++] = -1;
 			}
@@ -4357,7 +4357,7 @@ int VACS::RunScript(float DeltaTime)
 			else
 			{
 				stack[stackPtr - 1] = GGameInfo->Players[stack[stackPtr - 1]] &&
-					GGameInfo->Players[stack[stackPtr - 1]]->bSpawned;
+					GGameInfo->Players[stack[stackPtr - 1]]->PlayerFlags & VBasePlayer::PF_Spawned;
 			}
 			break;
 
@@ -4369,8 +4369,8 @@ int VACS::RunScript(float DeltaTime)
 			else
 			{
 				stack[stackPtr - 1] = GGameInfo->Players[stack[stackPtr - 1]] &&
-					GGameInfo->Players[stack[stackPtr - 1]]->bSpawned &&
-					GGameInfo->Players[stack[stackPtr - 1]]->bIsBot;
+					GGameInfo->Players[stack[stackPtr - 1]]->PlayerFlags & VBasePlayer::PF_Spawned &&
+					GGameInfo->Players[stack[stackPtr - 1]]->PlayerFlags & VBasePlayer::PF_IsBot;
 			}
 			break;
 
@@ -4501,7 +4501,8 @@ static void GiveInventory(VEntity* Activator, const char* Type, int Amount)
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
+			if (GGameInfo->Players[i] &&
+				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
 				GGameInfo->Players[i]->MO->eventGiveInventory(Type, Amount);
 		}
 	}
@@ -4531,7 +4532,8 @@ static void TakeInventory(VEntity* Activator, const char* Type, int Amount)
 	{
 		for (int i = 0; i < MAXPLAYERS; i++)
 		{
-			if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
+			if (GGameInfo->Players[i] &&
+				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
 				GGameInfo->Players[i]->MO->eventTakeInventory(Type, Amount);
 		}
 	}
@@ -4647,9 +4649,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.46  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.45  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

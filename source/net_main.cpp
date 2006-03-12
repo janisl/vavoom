@@ -882,7 +882,11 @@ boolean NET_CanSendMessage(qsocket_t *sock)
 
 struct slist_t
 {
-	dword		bInProgress:1;
+	enum
+	{
+		SF_InProgress	= 0x01,
+	};
+	vuint32		Flags;
 	int			count;
 	hostcache_t	cache[HOSTCACHESIZE];
 	char		return_reason[32];
@@ -922,7 +926,10 @@ slist_t * GetSlist(void)
 		memset(m_return_reason, 0, sizeof(m_return_reason));
 	}
 
-	slist.bInProgress = slistInProgress;
+	if (slistInProgress)
+		slist.Flags |= slist_t::SF_InProgress;
+	else
+		slist.Flags &= ~slist_t::SF_InProgress;
 	slist.count = hostCacheCount;
 	memcpy(slist.cache, hostcache, sizeof(hostcache));
 	strcpy(slist.return_reason, m_return_reason);
@@ -935,9 +942,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.13  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.12  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

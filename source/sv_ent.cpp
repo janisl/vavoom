@@ -88,7 +88,7 @@ void VEntity::Serialise(VStream& Strm)
 	if (Strm.IsLoading())
 	{
 		sv_mobjs[NetID] = this;
-		if (bIsPlayer)
+		if (EntityFlags & EF_IsPlayer)
 		{
 			Player->MO = this;
 		}
@@ -128,7 +128,7 @@ bool VEntity::SetState(int InState)
 		SpriteIndex = st->sprite;
 		SpriteName = GSpriteNames[st->sprite];
 		SpriteFrame = st->frame;
-		if (!bFixedModel)
+		if (!(EntityFlags & EF_FixedModel))
 			ModelIndex = st->model_index;
 		ModelFrame = st->model_frame;
 		NextState = st->nextstate;
@@ -215,7 +215,7 @@ boolean VEntity::CheckWater(void)
 		if (cont > 0)
 		{
 			WaterLevel = 2;
-			if (bIsPlayer)
+			if (EntityFlags & EF_IsPlayer)
 			{
 				point = Player->ViewOrg;
 				cont = SV_PointContents(Sector, point);
@@ -259,7 +259,7 @@ static boolean PIT_CheckThing(VEntity *Other)
 	guardSlow(PIT_CheckThing);
 	float blockdist;
 
-	if (!Other->bSolid)
+	if (!(Other->EntityFlags & VEntity::EF_Solid))
 		return true;
 
 	blockdist = Other->Radius + cptrace.Thing->Radius;
@@ -275,7 +275,7 @@ static boolean PIT_CheckThing(VEntity *Other)
 	if (Other == cptrace.Thing)
 		return true;
 
-	if (!cptrace.Thing->bNoPassMobj)
+	if (!(cptrace.Thing->EntityFlags & VEntity::EF_NoPassMobj))
 	{
 		// check if a mobj passed over/under another object
 /*!		if ((cptrace.Thing.Class == Imp || cptrace.Thing.Class == Wizard) &&
@@ -342,19 +342,22 @@ static boolean PIT_CheckLine(line_t * ld)
 			return false;
 		}
 
-		if (cptrace.Thing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
+		if (cptrace.Thing->EntityFlags & VEntity::EF_CheckLineBlocking &&
+			ld->flags & ML_BLOCKING)
 		{
 			// Explicitly blocking everything
 			return false;
 		}
 
-		if (cptrace.Thing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
+		if (cptrace.Thing->EntityFlags & VEntity::EF_CheckLineBlockMonsters &&
+			ld->flags & ML_BLOCKMONSTERS)
 		{
 			// Block monsters only
 			return false;
 		}
 
-		if (cptrace.Thing->bFloat && ld->flags & ML_BLOCK_FLOATERS)
+		if (cptrace.Thing->EntityFlags & VEntity::EF_Float &&
+			ld->flags & ML_BLOCK_FLOATERS)
 		{
 			// Block floaters only
 			return false;
@@ -503,8 +506,12 @@ struct tmtrace_t
 	sec_plane_t *Floor;
 	sec_plane_t *Ceiling;
 
-	dword bFloatOk:1;	// if true, move would be ok if
-						// within tmtrace.FloorZ - tmtrace.CeilingZ
+	enum
+	{
+		TF_FloatOk = 0x01,	// if true, move would be ok if
+							// within tmtrace.FloorZ - tmtrace.CeilingZ
+	};
+	vuint32 TraceFlags;
 
 	// keep track of the line that lowers the ceiling,
 	// so missiles don't explode against sky hack walls
@@ -545,8 +552,8 @@ static boolean PIT_CheckRelThing(VEntity *Other)
 	if (Other == tmtrace.Thing)
 		return true;
 
-	//if (!tmtrace.Thing.bNoPassMobj || Actor(Other).bSpecial)
-	if (!tmtrace.Thing->bNoPassMobj)
+	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
+	if (!tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj)
 	{
 		// check if a mobj passed over/under another object
 /*		if ((tmtrace.Thing.Class == Imp || tmtrace.Thing.Class == Wizard)
@@ -625,21 +632,21 @@ static boolean PIT_CheckRelLine(line_t * ld)
 			return false;
 		}
 
-		if (tmtrace.Thing->bCheckLineBlocking && ld->flags & ML_BLOCKING)
+		if (tmtrace.Thing->EntityFlags & VEntity::EF_CheckLineBlocking && ld->flags & ML_BLOCKING)
 		{
 			// Explicitly blocking everything
 			tmtrace.Thing->eventBlockedByLine(ld);
 			return false;
 		}
 	
-		if (tmtrace.Thing->bCheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
+		if (tmtrace.Thing->EntityFlags & VEntity::EF_CheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
 		{
 			// Block monsters only
 			tmtrace.Thing->eventBlockedByLine(ld);
 			return false;
 		}
 
-		if (tmtrace.Thing->bFloat && ld->flags & ML_BLOCK_FLOATERS)
+		if (tmtrace.Thing->EntityFlags & VEntity::EF_Float && ld->flags & ML_BLOCK_FLOATERS)
 		{
 			// Block floaters only
 			tmtrace.Thing->eventBlockedByLine(ld);
@@ -784,7 +791,7 @@ boolean VEntity::CheckRelPosition(TVec Pos)
 	// because mobj_ts are grouped into mapblocks
 	// based on their origin point, and can overlap
 	// into adjacent blocks by up to MAXRADIUS units.
-	if (bColideWithThings)
+	if (EntityFlags & EF_ColideWithThings)
 	{
 		xl = MapBlock(tmtrace.BBox[BOXLEFT] - XLevel->BlockMapOrgX - MAXRADIUS);
 		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - XLevel->BlockMapOrgX + MAXRADIUS);
@@ -800,7 +807,7 @@ boolean VEntity::CheckRelPosition(TVec Pos)
 	}
 
 	// check lines
-	if (bColideWithWorld)
+	if (EntityFlags & EF_ColideWithWorld)
 	{
 		xl = MapBlock(tmtrace.BBox[BOXLEFT] - XLevel->BlockMapOrgX);
 		xh = MapBlock(tmtrace.BBox[BOXRIGHT] - XLevel->BlockMapOrgX);
@@ -834,11 +841,11 @@ boolean VEntity::TryMove(TVec newPos)
 	line_t *ld;
 
 	check = CheckRelPosition(newPos);
-	tmtrace.bFloatOk = false;
+	tmtrace.TraceFlags &= ~tmtrace_t::TF_FloatOk;
 	if (!check)
 	{
 		VEntity *O = tmtrace.BlockingMobj;
-		if (!O || O->bIsPlayer || !bIsPlayer || 
+		if (!O || O->EntityFlags & EF_IsPlayer || !(EntityFlags & EF_IsPlayer) ||
 			O->Origin.z + O->Height - Origin.z > MaxStepHeight ||
 			O->CeilingZ - (O->Origin.z + O->Height) < Height ||
 		   	tmtrace.CeilingZ - (O->Origin.z + O->Height) < Height)
@@ -848,7 +855,7 @@ boolean VEntity::TryMove(TVec newPos)
 		}
 	}
 
-	if (bColideWithWorld)
+	if (EntityFlags & EF_ColideWithWorld)
 	{
 		if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
 		{
@@ -857,16 +864,16 @@ boolean VEntity::TryMove(TVec newPos)
 			return false;
 		}
 
-		tmtrace.bFloatOk = true;
+		tmtrace.TraceFlags |= tmtrace_t::TF_FloatOk;
 
-		if (tmtrace.CeilingZ - Origin.z < Height && !bFly &&
-			!bIgnoreCeilingStep)
+		if (tmtrace.CeilingZ - Origin.z < Height && !(EntityFlags & EF_Fly) &&
+			!(EntityFlags & EF_IgnoreCeilingStep))
 		{
 			// mobj must lower itself to fit
 			eventPushLine();
 			return false;
 		}
-		if (bFly)
+		if (EntityFlags & EF_Fly)
 		{
 			if (Origin.z + Height > tmtrace.CeilingZ)
 			{
@@ -893,14 +900,15 @@ boolean VEntity::TryMove(TVec newPos)
 //		{
 //			eventPushLine();
 //		}
-		if (!bDropOff && !bFloat && !bBlasted &&
+		if (!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float) &&
+			!(EntityFlags & EF_Blasted) &&
 			(tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight))
 		{
 			// Can't move over a dropoff unless it's been blasted
 			return false;
 		}
-		if (bCantLeaveFloorpic && (tmtrace.Floor->pic != Floor->pic
-				|| tmtrace.FloorZ != Origin.z))
+		if (EntityFlags & EF_CantLeaveFloorpic &&
+			(tmtrace.Floor->pic != Floor->pic || tmtrace.FloorZ != Origin.z))
 		{
 			// must stay within a sector of a certain floor type
 			return false;
@@ -920,7 +928,7 @@ boolean VEntity::TryMove(TVec newPos)
 	Floor = tmtrace.Floor;
 	Ceiling = tmtrace.Ceiling;
 
-	if (bFloorClip)
+	if (EntityFlags & EF_FloorClip)
 	{
 		eventHandleFloorclip();
 	}
@@ -932,7 +940,7 @@ boolean VEntity::TryMove(TVec newPos)
 	//
 	// if any special lines were hit, do the effect
 	//
-	if (bColideWithWorld)
+	if (EntityFlags & EF_ColideWithWorld)
 	{
 		while (tmtrace.NumSpecHit > 0)
 		{
@@ -994,7 +1002,7 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 	TVec hit_point;
 	opening_t *open;
 
-	if (!in->bIsALine)
+	if (!(in->Flags & intercept_t::IF_IsALine))
 		Host_Error("PTR_SlideTraverse: not a line?");
 
 	li = in->line;
@@ -1174,7 +1182,7 @@ static boolean PTR_BounceTraverse(intercept_t * in)
 	TVec hit_point;
 	opening_t *open;
 
-	if (!in->bIsALine)
+	if (!(in->Flags & intercept_t::IF_IsALine))
 		Host_Error("PTR_BounceTraverse: not a line?");
 
 	li = in->line;
@@ -1245,7 +1253,7 @@ void VEntity::UpdateVelocity(void)
 {
 	guard(VEntity::UpdateVelocity);
 /*	if (Origin.z <= FloorZ && !Velocity.x && !Velocity.y &&
-		!Velocity.z && !bCountKill && !bIsPlayer)
+		!Velocity.z && !bCountKill && !(EntityFlags & EF_IsPlayer))
 	{
 		//  No gravity for non-moving things on ground to prevent
 		// static objects from sliding on slopes
@@ -1254,14 +1262,14 @@ void VEntity::UpdateVelocity(void)
 
 	//  Don't add gravity if standing on slope with normal.z > 0.7 (aprox
 	// 45 degrees)
-	if (!bNoGravity && (Origin.z > FloorZ || Floor->normal.z < 0.7))
+	if (!(EntityFlags & EF_NoGravity) && (Origin.z > FloorZ || Floor->normal.z < 0.7))
 	{
 		if (WaterLevel < 2)
 		{
 			//  Add gravity
 			Velocity.z -= Mass / 100.0 * GRAVITY * host_frametime;
 		}
-		else if (!bIsPlayer)
+		else if (!(EntityFlags & EF_IsPlayer))
 		{
 			//  Add gravity
 			Velocity.z = -Mass / 100.0 * 60.0;
@@ -1296,7 +1304,7 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 {
 	float blockdist;
 
-	if (!Other->bSolid)
+	if (!(Other->EntityFlags & VEntity::EF_Solid))
 	{
 		// Can't hit thing
 		return true;
@@ -1334,14 +1342,14 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 //
 //=============================================================================
 
-void VEntity::FakeZMovement(void)
+void VEntity::FakeZMovement()
 {
 	//
 	//  adjust height
 	//
 	tzorg.z += Velocity.z * host_frametime;
 #if 0
-	if (bFloat && Target)
+	if (EntityFlags & EF_Float && Target)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
@@ -1354,7 +1362,7 @@ void VEntity::FakeZMovement(void)
 				tzorg.z += FLOATSPEED * frametime;
 		}
 	}
-	if (bIsPlayer && bFly && !(tzorg.z <= FloorZ) && level->tictime & 2)
+	if (EntityFlags & EF_IsPlayer && EntityFlags & EF_Fly && !(tzorg.z <= FloorZ) && level->tictime & 2)
 	{
 		tzorg.z += sin(90.0 * 35.0 / 20.0 * level->time);
 	}
@@ -1383,11 +1391,11 @@ void VEntity::FakeZMovement(void)
 //
 //=============================================================================
 
-VEntity *VEntity::CheckOnmobj(void)
+VEntity *VEntity::CheckOnmobj()
 {
 	int xl, xh, yl, yh, bx, by;
 
-	if (!bColideWithThings)
+	if (!(EntityFlags & EF_ColideWithThings))
 		return NULL;
 
 	tzmthing = this;
@@ -1921,9 +1929,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.22  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.21  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

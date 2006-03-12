@@ -2096,11 +2096,11 @@ PF(ClearPlayer)
 	pl->MO = NULL;
 	pl->PlayerState = 0;
 	pl->ViewOrg = TVec(0, 0, 0);
-	pl->bFixAngle = false;
+	pl->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 	pl->Health = 0;
 	pl->Items = 0;
-	pl->bAttackDown = false;
-	pl->bUseDown = false;
+	pl->PlayerFlags &= ~VBasePlayer::PF_AttackDown;
+	pl->PlayerFlags &= ~VBasePlayer::PF_UseDown;
 	pl->ExtraLight = 0;
 	pl->FixedColormap = 0;
 	pl->Palette = 0;
@@ -3463,9 +3463,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.78  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.77  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.76  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

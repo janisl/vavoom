@@ -248,7 +248,7 @@ void VEntity::UnlinkFromWorld(void)
 		return;
 	}
 
-    if (!bNoBlockmap)
+    if (!(EntityFlags & EF_NoBlockmap))
     {
 		//	Inert things don't need to be in blockmap
 		//	Unlink from block map
@@ -316,7 +316,7 @@ void VEntity::LinkToWorld(void)
 	CeilingZ = r->ceiling->GetPointZ(Origin);
 
     // link into blockmap
-    if (!bNoBlockmap)
+    if (!(EntityFlags & EF_NoBlockmap))
     {
 		// inert things don't need to be in blockmap
 		int blockx = MapBlock(Origin.x - XLevel->BlockMapOrgX);
@@ -533,7 +533,7 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 	else
 	{
 		intercept_p->frac = frac;
-		intercept_p->bIsALine = true;
+		intercept_p->Flags |= intercept_t::IF_IsALine;
 		intercept_p->line = ld;
 		intercept_p++;
 	}
@@ -572,7 +572,7 @@ static boolean PIT_AddThingIntercepts(VEntity* thing)
 	else
 	{
 		intercept_p->frac = frac;
-		intercept_p->bIsALine = false;
+		intercept_p->Flags &= ~intercept_t::IF_IsALine;
 		intercept_p->thing = thing;
 		intercept_p++;
 	}
@@ -1074,12 +1074,12 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 			SV_BlockThingsIterator(x, y, PIT_ChangeSector, NULL, NULL);
 
 	ret = nofit;
-	if (sector->bExtrafloorSource)
+	if (sector->SectorFlags & sector_t::SF_ExtrafloorSource)
 	{
 		for (i = 0; i < GLevel->NumSectors; i++)
 		{
 			sec2 = &GLevel->Sectors[i];
-			if (sec2->bHasExtrafloors && sec2 != sector)
+			if (sec2->SectorFlags & sector_t::SF_HasExtrafloors && sec2 != sector)
 			{
 				for (reg = sec2->botregion; reg; reg = reg->next)
 				{
@@ -1099,9 +1099,12 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.22  2005/12/11 21:37:00  dj_jl
 //	Made path traversal callbacks class members.
-//
+//	
 //	Revision 1.21  2005/04/28 07:16:16  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

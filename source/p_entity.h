@@ -127,29 +127,32 @@ class VEntity : public VThinker
 	int				ValidCount;
 
 	//	Flags
-	dword			bSolid:1;		// Blocks.
-	dword			bHidden:1;		// don't update to clients
-									// (invisible but touchable)
-	dword			bNoBlockmap:1;	// don't use the blocklinks
-									// (inert but displayable)
-	dword			bIsPlayer:1;	// Player or player-bot
-	dword bFixedModel:1;
-
-	dword bNoGravity:1;		// don't apply gravity every tic
-	dword bNoPassMobj:1;	// Disable z block checking.  If on,
-							// this flag will prevent the mobj
-							// from passing over/under other mobjs.
-	dword bColideWithThings:1;
-	dword bColideWithWorld:1;
-	dword bCheckLineBlocking:1;
-	dword bCheckLineBlockMonsters:1;
-	dword bDropOff:1;		// allow jumps from high places
-	dword bFloat:1;			// allow moves to any height, no gravity
-	dword bFly:1;			// fly mode is active
-	dword bBlasted:1;		// missile will pass through ghosts
-	dword bCantLeaveFloorpic:1;	// stay within a certain floor type
-	dword bFloorClip:1;		// if feet are allowed to be clipped
-	dword bIgnoreCeilingStep:1;	// continue walk without lowering itself
+	enum
+	{
+		EF_Solid				= 0x00000001,	// Blocks.
+		EF_Hidden				= 0x00000002,	// don't update to clients
+												// (invisible but touchable)
+		EF_NoBlockmap			= 0x00000004,	// don't use the blocklinks
+												// (inert but displayable)
+		EF_IsPlayer				= 0x00000008,	// Player or player-bot
+		EF_FixedModel			= 0x00000010,
+		EF_NoGravity			= 0x00000020,	// don't apply gravity every tic
+		EF_NoPassMobj			= 0x00000040,	// Disable z block checking.  If on,
+												// this flag will prevent the mobj
+												// from passing over/under other mobjs.
+		EF_ColideWithThings		= 0x00000080,
+		EF_ColideWithWorld		= 0x00000100,
+		EF_CheckLineBlocking	= 0x00000200,
+		EF_CheckLineBlockMonsters	= 0x00000400,
+		EF_DropOff				= 0x00000800,	// allow jumps from high places
+		EF_Float				= 0x00001000,	// allow moves to any height, no gravity
+		EF_Fly					= 0x00002000,	// fly mode is active
+		EF_Blasted				= 0x00004000,	// missile will pass through ghosts
+		EF_CantLeaveFloorpic	= 0x00008000,	// stay within a certain floor type
+		EF_FloorClip			= 0x00010000,	// if feet are allowed to be clipped
+		EF_IgnoreCeilingStep	= 0x00020000,	// continue walk without lowering itself
+	};
+	vuint32			EntityFlags;
 
 	int				Health;
 
@@ -308,7 +311,10 @@ class VEntity : public VThinker
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.1  2006/03/06 13:12:12  dj_jl
 //	Client now uses entity class.
-//
+//	
 //**************************************************************************

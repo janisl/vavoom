@@ -572,7 +572,7 @@ static void ArchiveThinkers()
 	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{
 		VEntity *mobj = Cast<VEntity>(Th);
-		if (mobj && mobj->bIsPlayer && !SavingPlayers)
+		if (mobj && mobj->EntityFlags & VEntity::EF_IsPlayer && !SavingPlayers)
 		{
 			// Skipping player mobjs
 			continue;
@@ -1230,9 +1230,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.60  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.59  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.58  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

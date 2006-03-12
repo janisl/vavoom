@@ -1919,7 +1919,7 @@ void UpdateFakeFlats(sector_t* sec)
 	bool underwater = /*r_fakingunderwater ||*/
 		(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg));
 	bool doorunderwater = false;
-	int diffTex = s->bClipFakePlanes;
+	int diffTex = !!(s->SectorFlags & sector_t::SF_ClipFakePlanes);
 
 	// Replace sector being drawn with a copy to be hacked
 	fakefloor_t* ff = sec->fakefloors;
@@ -1934,12 +1934,12 @@ void UpdateFakeFlats(sector_t* sec)
 		{
 			ff->floorplane.pic = s->floor.pic;
 		}
-		else if (s->bFakeFloorOnly)
+		else if (s->SectorFlags & sector_t::SF_FakeFloorOnly)
 		{
 			if (underwater)
 			{
 //				tempsec->ColorMap = s->ColorMap;
-				if (!s->bNoFakeLight)
+				if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
 				{
 					ff->params.lightlevel = s->params.lightlevel;
 
@@ -1964,7 +1964,7 @@ void UpdateFakeFlats(sector_t* sec)
 		ff->floorplane.dist = s->floor.dist;
 	}
 
-	if (!s->bFakeFloorOnly)
+	if (!(s->SectorFlags & sector_t::SF_FakeFloorOnly))
 	{
 		if (diffTex)
 		{
@@ -2058,7 +2058,7 @@ void UpdateFakeFlats(sector_t* sec)
 //			ff->base_ceiling_yoffs	= s->base_ceiling_yoffs;
 		}
 
-		if (!s->bNoFakeLight)
+		if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
 		{
 			ff->params.lightlevel = s->params.lightlevel;
 
@@ -2073,7 +2073,8 @@ void UpdateFakeFlats(sector_t* sec)
 			}*/
 		}
 	}
-	else if (heightsec && orgceilz > refceilz && !s->bFakeFloorOnly &&
+	else if (heightsec && orgceilz > refceilz &&
+		!(s->SectorFlags & sector_t::SF_FakeFloorOnly) &&
 		vieworg.z >= heightsec->ceiling.GetPointZ(vieworg))
 	{
 		// Above-ceiling hack
@@ -2105,7 +2106,7 @@ void UpdateFakeFlats(sector_t* sec)
 //			ff->floorplane.angle	= s->floor.angle;
 		}
 
-		if (!s->bNoFakeLight)
+		if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
 		{
 			ff->params.lightlevel  = s->params.lightlevel;
 
@@ -2138,7 +2139,7 @@ void R_UpdateWorld()
 	for (int i = 0; i < GClLevel->NumSectors; i++)
 	{
 		if (GClLevel->Sectors[i].heightsec &&
-			!GClLevel->Sectors[i].heightsec->bIgnoreHeightSec)
+			!(GClLevel->Sectors[i].heightsec->SectorFlags & sector_t::SF_IgnoreHeightSec))
 		{
 			UpdateFakeFlats(&GClLevel->Sectors[i]);
 		}
@@ -2158,7 +2159,7 @@ void R_SetupFakeFloors(sector_t* Sec)
 {
 	sector_t* HeightSec = Sec->heightsec;
 
-	if (HeightSec->bIgnoreHeightSec)
+	if (HeightSec->SectorFlags & sector_t::SF_IgnoreHeightSec)
 	{
 		return;
 	}
@@ -2176,9 +2177,12 @@ void R_SetupFakeFloors(sector_t* Sec)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.17  2005/07/16 11:00:46  dj_jl
 //	Added fix for ceiling texture change to/from sky texture.
-//
+//	
 //	Revision 1.16  2005/06/30 20:20:55  dj_jl
 //	Implemented rendering of Boom fake flats.
 //	

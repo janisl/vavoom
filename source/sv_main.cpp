@@ -426,7 +426,7 @@ void SV_CreateBaseline(void)
 	{
 		if (!sv_mobjs[i])
 			continue;
-		if (sv_mobjs[i]->bHidden)
+		if (sv_mobjs[i]->EntityFlags & VEntity::EF_Hidden)
 			continue;
 
 		if (!sv_signon.CheckSpace(32))
@@ -485,7 +485,7 @@ int GetOriginNum(const VEntity *mobj)
 		return 0;
 	}
 
-	if (mobj->bIsPlayer)
+	if (mobj->EntityFlags & VEntity::EF_IsPlayer)
 	{
 		return SV_GetPlayerNum(mobj->Player) + 1;
 	}
@@ -843,9 +843,9 @@ void SV_WriteViewData(VBasePlayer &player, TMessage &msg)
 			msg << player.CShifts[i];
 
 	//	Update bam_angles (after teleportation)
-	if (player.bFixAngle)
+	if (player.PlayerFlags & VBasePlayer::PF_FixAngle)
 	{
-		player.bFixAngle = false;
+		player.PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 		msg << (byte)svc_set_angles
 			<< (byte)(AngleToByte(player.ViewAngles.pitch))
 			<< (byte)(AngleToByte(player.ViewAngles.yaw))
@@ -866,7 +866,7 @@ void SV_UpdateMobj(int i, TMessage &msg)
 	int bits;
 	int sendnum;
 
-	if (sv_mobjs[i]->bIsPlayer)
+	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
 	{
 		sendnum = SV_GetPlayerNum(sv_mobjs[i]->Player) + 1;
 	}
@@ -877,7 +877,7 @@ void SV_UpdateMobj(int i, TMessage &msg)
 
 	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[sendnum]);
 
-	if (sv_mobjs[i]->bIsPlayer)
+	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
 	{
 		//	Clear look angles, because they must not affect model orientation
 		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
@@ -955,7 +955,7 @@ void SV_UpdateLevel(TMessage &msg)
 		sector_t	*sec;
 
 		sec = &GLevel->Sectors[i];
-		if (!SV_SecCheckFatPVS(sec) && !sec->bExtrafloorSource)
+		if (!SV_SecCheckFatPVS(sec) && !(sec->SectorFlags & sector_t::SF_ExtrafloorSource))
 			continue;
 
 		bits = 0;
@@ -1065,9 +1065,9 @@ void SV_UpdateLevel(TMessage &msg)
 	{
 		if (!sv_mobjs[i])
 			continue;
-		if (sv_mobjs[i]->bHidden)
+		if (sv_mobjs[i]->EntityFlags & VEntity::EF_Hidden)
 			continue;
-		if (!sv_mobjs[i]->bIsPlayer)
+		if (!sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
 			continue;
 		if (!msg.CheckSpace(25))
 		{
@@ -1084,9 +1084,9 @@ void SV_UpdateLevel(TMessage &msg)
 		int index = (i + starti) % GMaxEntities;
 		if (!sv_mobjs[index])
 			continue;
-		if (sv_mobjs[index]->bHidden)
+		if (sv_mobjs[index]->EntityFlags & VEntity::EF_Hidden)
 			continue;
-		if (sv_mobjs[index]->bIsPlayer)
+		if (sv_mobjs[index]->EntityFlags & VEntity::EF_IsPlayer)
 			continue;
 		if (!SV_CheckFatPVS(sv_mobjs[index]->SubSector))
 			continue;
@@ -1164,7 +1164,7 @@ void SV_SendClientDatagram(void)
 
 		sv_player = GGameInfo->Players[i];
 
-		if (!sv_player->bSpawned)
+		if (!(sv_player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
 			// the player isn't totally in the game yet
 			// send small keepalive messages if too much time has passed
@@ -1178,7 +1178,7 @@ void SV_SendClientDatagram(void)
 			continue;
 		}
 
-		if (!sv_player->bNeedsUpdate)
+		if (!(sv_player->PlayerFlags & VBasePlayer::PF_NeedsUpdate))
 			continue;
 
 		msg.Clear();
@@ -1220,7 +1220,7 @@ void SV_SendReliable(void)
 
 		GGameInfo->Players[i]->Message << sv_reliable;
 
-		if (!GGameInfo->Players[i]->bSpawned)
+		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
 			continue;
 
 		Stats = (int*)((byte*)GGameInfo->Players[i] + sizeof(VBasePlayer));
@@ -1322,27 +1322,27 @@ static void CheckForSkip(void)
 		{
 			if (player->Buttons & BT_ATTACK)
 			{
-				if (!player->bAttackDown)
+				if (!(player->PlayerFlags & VBasePlayer::PF_AttackDown))
 				{
 					skip = true;
 				}
-				player->bAttackDown = true;
+				player->PlayerFlags |= VBasePlayer::PF_AttackDown;
 			}
 			else
 			{
-				player->bAttackDown = false;
+				player->PlayerFlags &= ~VBasePlayer::PF_AttackDown;
 			}
 			if (player->Buttons & BT_USE)
 			{
-				if (!player->bUseDown)
+				if (!(player->PlayerFlags & VBasePlayer::PF_UseDown))
 				{
 					skip = true;
 				}
-				player->bUseDown = true;
+				player->PlayerFlags |= VBasePlayer::PF_UseDown;
 			}
 			else
 			{
-				player->bUseDown = false;
+				player->PlayerFlags &= ~VBasePlayer::PF_UseDown;
 			}
 		}
 	}
@@ -1403,10 +1403,12 @@ void SV_RunClients(void)
 
 		// pause if in menu or console and at least one tic has been run
 #ifdef CLIENT
-		if (GGameInfo->Players[i]->bSpawned && !sv.intermission && !paused &&
+		if (GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned &&
+			!sv.intermission && !paused &&
 			(netgame || !(MN_Active() || C_Active())))
 #else
-		if (GGameInfo->Players[i]->bSpawned && !sv.intermission && !paused)
+		if (GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned &&
+			!sv.intermission && !paused)
 #endif
 		{
 			GGameInfo->Players[i]->eventPlayerTick(host_frametime);
@@ -1649,7 +1651,7 @@ static void G_DoCompleted(void)
 	{
 		return;
 	}
-	if (!netgame && (!GGameInfo->Players[0] || !GGameInfo->Players[0]->bSpawned))
+	if (!netgame && (!GGameInfo->Players[0] || !(GGameInfo->Players[0]->PlayerFlags & VBasePlayer::PF_Spawned)))
 	{
 		//FIXME Some ACS left from previous visit of the level
 		return;
@@ -1764,7 +1766,7 @@ void G_SecretExitLevel(int Position)
 	{
 		if (GGameInfo->Players[i])
 		{
-			GGameInfo->Players[i]->bDidSecret = true;
+			GGameInfo->Players[i]->PlayerFlags |= VBasePlayer::PF_DidSecret;
 		}
 	}
 	unguard;
@@ -1851,7 +1853,8 @@ COMMAND(TeleportNewMap)
 
 static void G_DoReborn(int playernum)
 {
-	if (!GGameInfo->Players[playernum] || !GGameInfo->Players[playernum]->bSpawned)
+	if (!GGameInfo->Players[playernum] ||
+		!(GGameInfo->Players[playernum]->PlayerFlags & VBasePlayer::PF_Spawned))
 		return;
 	if (!netgame && !deathmatch)// For fun now
 	{
@@ -2145,7 +2148,7 @@ void SV_SendServerInfoToClients()
 		{
 			GGameInfo->Players[i]->Level = GLevelInfo;
 			SV_SendServerInfo(GGameInfo->Players[i]);
-			if (GGameInfo->Players[i]->bIsBot)
+			if (GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_IsBot)
 			{
 				sv_player = GGameInfo->Players[i];
 				SV_RunClientCommand("PreSpawn\n");
@@ -2185,7 +2188,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 			GGameInfo->Players[i]->SecretCount = 0;
 			GGameInfo->Players[i]->ItemCount = 0;
 
-			GGameInfo->Players[i]->bSpawned = false;
+			GGameInfo->Players[i]->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 			GGameInfo->Players[i]->MO = NULL;
 			GGameInfo->Players[i]->Frags = 0;
 			memset(GGameInfo->Players[i]->FragsStats, 0, sizeof(GGameInfo->Players[i]->FragsStats));
@@ -2424,7 +2427,7 @@ COMMAND(Spawn)
 
 	if (!sv_loading)
 	{
-		if (sv_player->bSpawned)
+		if (sv_player->PlayerFlags & VBasePlayer::PF_Spawned)
 		{
 			GCon->Log(NAME_Dev, "Already spawned");
 		}
@@ -2447,7 +2450,7 @@ COMMAND(Spawn)
 						<< (byte)(AngleToByte(sv_player->ViewAngles.yaw))
 						<< (byte)0;
 	sv_player->Message << (byte)svc_signonnum << (byte)3;
-	sv_player->bFixAngle = false;
+	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 	memset(sv_player->OldStats, 0, num_stats * 4);
 	unguard;
 }
@@ -2472,7 +2475,7 @@ COMMAND(Begin)
 		sv_loading = false;
 	}
 
-	sv_player->bSpawned = true;
+	sv_player->PlayerFlags |= VBasePlayer::PF_Spawned;
 
 	// For single play, save immediately into the reborn slot
 	if (!netgame)
@@ -2491,13 +2494,13 @@ COMMAND(Begin)
 void SV_DropClient(boolean)
 {
 	guard(SV_DropClient);
-	if (sv_player->bSpawned)
+	if (sv_player->PlayerFlags & VBasePlayer::PF_Spawned)
 	{
 		sv_player->eventDisconnectClient();
 	}
-	sv_player->bActive = false;
+	sv_player->PlayerFlags &= ~VBasePlayer::PF_Active;
 	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
-	sv_player->bSpawned = false;
+	sv_player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 	NET_Close(sv_player->NetCon);
 	sv_player->NetCon = NULL;
 	svs.num_connected--;
@@ -2545,7 +2548,7 @@ void SV_ShutdownServer(boolean crash)
 		count = 0;
 		for (i=0, sv_player = svs.clients ; i<svs.maxclients ; i++, sv_player++)
 		{
-			if (sv_player->bActive && sv_player->Message.cursize)
+			if (sv_player->PlayerFlags & VBasePlayer::PF_Active && sv_player->Message.cursize)
 			{
 				if (NET_CanSendMessage (sv_player->netconnection))
 				{
@@ -2690,14 +2693,14 @@ void SV_ConnectClient(VBasePlayer *player)
 	GCon->Logf(NAME_Dev, "Client %s connected", player->NetCon->address);
 
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
-	player->bActive = true;
+	player->PlayerFlags |= VBasePlayer::PF_Active;
 
 	player->Message.Data = player->MsgBuf;
 	player->Message.MaxSize = MAX_MSGLEN;
 	player->Message.CurSize = 0;
 	player->Message.AllowOverflow = true;		// we can catch it
 	player->Message.Overflowed = false;
-	player->bSpawned = false;
+	player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
 	player->Level = GLevelInfo;
 	if (!sv_loading)
 	{
@@ -2779,7 +2782,7 @@ void SV_ConnectBot(const char *name)
 		Sys_Error("SV_ConnectBot: no free clients");
 
 	GPlayersBase[i]->NetCon = sock;
-	GPlayersBase[i]->bIsBot = true;
+	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
 	strcpy(GPlayersBase[i]->PlayerName, name);
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
@@ -3030,9 +3033,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.87  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.86  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.85  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

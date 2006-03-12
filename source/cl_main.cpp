@@ -371,12 +371,12 @@ void CL_KeepaliveMessage(void)
 //
 //==========================================================================
 
-void CL_Disconnect(void)
+void CL_Disconnect()
 {
 	guard(CL_Disconnect);
-    if (cl->bPaused)
+    if (cl->ClientFlags & VClientState::CF_Paused)
     { 
-		cl->bPaused = false;
+		cl->ClientFlags &= ~VClientState::CF_Paused;
 		S_ResumeSound();
     } 
 	
@@ -537,9 +537,12 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.20  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.19  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

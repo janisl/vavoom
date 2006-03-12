@@ -164,7 +164,7 @@ bool SV_ReadClientMessages(int clientnum)
 	byte		cmd_type;
 
 	sv_player = GGameInfo->Players[clientnum];
-	sv_player->bNeedsUpdate = false;
+	sv_player->PlayerFlags &= ~VBasePlayer::PF_NeedsUpdate;
 	do
 	{
 		ret = NET_GetMessage(sv_player->NetCon);
@@ -177,7 +177,7 @@ bool SV_ReadClientMessages(int clientnum)
 		if (ret == 0)
 			return true;
 
-		sv_player->bNeedsUpdate = true;
+		sv_player->PlayerFlags |= VBasePlayer::PF_NeedsUpdate;
 
 		net_msg.BeginReading();
 
@@ -257,9 +257,12 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.16  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
-//
+//	
 //	Revision 1.15  2004/12/27 12:23:17  dj_jl
 //	Multiple small changes for version 1.16
 //	

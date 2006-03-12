@@ -32,7 +32,11 @@
 struct scores_t
 {
 	char		name[64];
-	dword		bActive:1;
+	enum
+	{
+		SF_Active	= 0x01,
+	};
+	vuint32		Flags;
 	int			frags[MAXPLAYERS];
 	int			killcount;
 	int			itemcount;
@@ -68,9 +72,12 @@ extern im_t				im;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.6  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
-//
+//	
 //	Revision 1.5  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

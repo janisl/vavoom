@@ -73,9 +73,9 @@ struct sfxinfo_t
 	int		Link;
 	int*	Sounds;			// For random sounds, Link is count.
 
-	int		bRandomHeader:1;
-	int		bPlayerReserve:1;
-	int		bSingular:1;
+	bool	bRandomHeader;
+	bool	bPlayerReserve;
+	bool	bSingular;
 
 	dword	SampleRate;
 	int		SampleBits;
@@ -388,9 +388,12 @@ struct MIDheader
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.26  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.25  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

@@ -155,10 +155,14 @@ class VClientState : public VObject
 	cl_pspdef_t		psprites[NUMPSPRITES];
 	float			pspriteSY;
 
-	// True if secret level has been done.
-	dword			bDidSecret:1;
+	enum
+	{
+		// True if secret level has been done.
+		CF_DidSecret	= 0x01,
 
-	dword			bPaused:1;
+		CF_Paused		= 0x02,
+	};
+	vuint32			ClientFlags;
 
 	dword 			worldTimer;				// total time the player's been playing
 
@@ -190,9 +194,12 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/12 12:54:48  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.14  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.13  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

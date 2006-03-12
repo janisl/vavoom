@@ -168,18 +168,9 @@ static void PF_Fixme()
 
 //==========================================================================
 //
-//	SwapBits
+//	VProgsReader
 //
 //==========================================================================
-
-static int SwapBits(int Val)
-{
-	int Ret = 0;
-	for (int i = 0; i < 32; i++)
-		if (Val & (1 << i))
-			Ret |= 1 << (31 - i);
-	return Ret;
-}
 
 class VProgsReader : public VStream
 {
@@ -475,18 +466,6 @@ void TProgs::Load(const char *AName)
 		}
 	}
 
-	union
-	{
-		struct
-		{
-			int b1:1;
-		} b;
-		int i;
-	} a;
-	a.i = 0;
-	a.b.b1 = 1;
-	bool NeedBitSwap = a.i != 1;
-
 	//
 	//	Patch code
 	//
@@ -528,11 +507,6 @@ void TProgs::Load(const char *AName)
 			break;
 		case OPC_Call:
 			Statements[i + 1] = (int)Functions[Statements[i + 1]];
-			break;
-		case OPC_PushBool:
-		case OPC_AssignBool:
-			if (NeedBitSwap && PrevOpc != OPC_LocalAddress)
-				Statements[i + 1] = SwapBits(Statements[i + 1]);
 			break;
 		}
 		PrevOpc = Statements[i];
@@ -2010,9 +1984,12 @@ void TProgs::DumpProfile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.49  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.48  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.47  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
 //	

@@ -134,8 +134,12 @@ struct opening_t
 
 struct intercept_t
 {
-    float		frac;		// along trace line
-    dword		bIsALine:1;
+	float		frac;		// along trace line
+	enum
+	{
+		IF_IsALine = 0x01,
+	};
+	vuint32		Flags;
 	VEntity		*thing;
 	line_t		*line;
 };
@@ -317,9 +321,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.51  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.50  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.49  2006/02/28 18:06:28  dj_jl
 //	Put thinkers back in linked list.
 //	

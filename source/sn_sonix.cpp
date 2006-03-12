@@ -536,7 +536,7 @@ void SN_UpdateActiveSequences()
 	seqnode_t *node;
 	boolean sndPlaying;
 
-	if (!ActiveSequences || cl->bPaused)
+	if (!ActiveSequences || cl->ClientFlags & VClientState::CF_Paused)
 	{ // No sequences currently playing/game is paused
 		return;
 	}
@@ -718,9 +718,12 @@ void SN_SerialiseSounds(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/12 12:54:49  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.18  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.17  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	
