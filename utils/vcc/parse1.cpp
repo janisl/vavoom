@@ -546,10 +546,6 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 			numlocaldefs++;
 			TK_NextToken();
 		}
-		//FIXME Treat bool varaibles as ints because on big-endian systems 
-		// it's hard to detect when assignment mask should not be swapped.
-		if (type.type == ev_bool)
-			type = TType(ev_int);
 		Func->ParamTypes[Func->NumParams] = type;
 		Func->NumParams++;
 		localsofs += type.GetSize() / 4;
@@ -650,10 +646,6 @@ void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
 		{
 			TK_NextToken();
 		}
-		//FIXME Treat bool varaibles as ints because on big-endian systems 
-		// it's hard to detect when assignment mask should not be swapped.
-		if (type.type == ev_bool)
-			type = TType(ev_int);
 		Func->ParamTypes[Func->NumParams] = type;
 		Func->NumParams++;
 		localsofs += type.GetSize() / 4;
@@ -828,9 +820,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/03/12 13:03:22  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.16  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.15  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
 //	

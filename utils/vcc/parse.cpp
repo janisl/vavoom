@@ -595,10 +595,6 @@ un++;
 			{
 				ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
 			}
-			//FIXME Treat bool varaibles as ints because on big-endian systems 
-			// it's hard to detect when assignment mask should not be swapped.
-			if (type.type == ev_bool)
-				type = TType(ev_int);
 			localdefs[numlocaldefs].Name = tk_Name;
 			localdefs[numlocaldefs].type = type;
 			localdefs[numlocaldefs].ofs = localsofs;
@@ -825,9 +821,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.41  2006/03/12 13:03:22  dj_jl
+//	Removed use of bitfields for portability reasons.
+//
 //	Revision 1.40  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.39  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
 //	
