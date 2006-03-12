@@ -50,7 +50,7 @@ void KSpiritInit(Actor korax)
 	for (i = 1; i < 3; i++)
 	{
 		next = Spawn(HolyTail, Origin);
-		next.SetState(next.IdleState + 1);
+		next.SetState(HolyTail::S_HOLY_TAIL2);
 		HolyTail(tail).NextTail = HolyTail(next);
 		tail = next;
 	}
@@ -185,7 +185,7 @@ __states__
 	S_KSPIRIT_DEATH3('SPIR', 5, 5.0 / 35.0, S_KSPIRIT_DEATH4) { }
 	S_KSPIRIT_DEATH4('SPIR', 6, 5.0 / 35.0, S_KSPIRIT_DEATH5) { }
 	S_KSPIRIT_DEATH5('SPIR', 7, 5.0 / 35.0, S_KSPIRIT_DEATH6) { }
-	S_KSPIRIT_DEATH6('SPIR', 8, 5.0 / 35.0, S_NULL) { }
+	S_KSPIRIT_DEATH6('SPIR', 8, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -206,6 +206,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:56  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

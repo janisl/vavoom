@@ -32,7 +32,7 @@ __states__
 	S_AXEBLOOD3('FAXE', 7, 3.0 / 35.0, S_AXEBLOOD4) { }
 	S_AXEBLOOD4('FAXE', 8, 3.0 / 35.0, S_AXEBLOOD5) { }
 	S_AXEBLOOD5('FAXE', 9, 3.0 / 35.0, S_AXEBLOOD6) { }
-	S_AXEBLOOD6('FAXE', 10, 3.0 / 35.0, S_NULL) { }
+	S_AXEBLOOD6('FAXE', 10, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

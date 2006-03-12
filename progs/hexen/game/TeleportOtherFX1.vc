@@ -126,7 +126,7 @@ __states__
 	S_TELO_FX6('TRNG', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX7) { A_TeloSpawnB(); }
 	S_TELO_FX7('TRNG', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX8) { A_TeloSpawnC(); }
 	S_TELO_FX8('TRNG', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_TELO_FX3) { A_TeloSpawnD(); }
-	S_TELO_FX9('TRNG', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+	S_TELO_FX9('TRNG', 4 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -144,6 +144,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

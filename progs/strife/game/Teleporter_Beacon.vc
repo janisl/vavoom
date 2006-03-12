@@ -111,7 +111,7 @@ void A_SummonRebel()
 
 __states__
 {
-	S_BEACON('BEAC', 0, -1.0, S_NULL) { }
+	S_BEACON('BEAC', 0, -1.0, none) { }
 	S_BEACON_1('BEAC', 0, 30.0 / 35.0, S_BEACON_2) { }
 	S_BEACON_2('BEAC', 0, 160.0 / 35.0, S_BEACON_1) { A_SummonRebel(); }
 }
@@ -133,6 +133,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

@@ -29,7 +29,7 @@ class BrokenPowerCoupling : InventoryItem
 __states__
 {
 	// FIXME
-	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, S_NULL) { }
+	S_BROKEN_POWER_COUPLING('COUP', 2, -1.0, none) { }
 }
 
 defaultproperties
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

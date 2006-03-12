@@ -64,7 +64,7 @@ __states__
 	S_CLERIC_DIE6('CLER', 13, 6.0 / 35.0, S_CLERIC_DIE7) { }
 	S_CLERIC_DIE7('CLER', 14, 6.0 / 35.0, S_CLERIC_DIE8) { }
 	S_CLERIC_DIE8('CLER', 15, 6.0 / 35.0, S_CLERIC_DIE9) { }
-	S_CLERIC_DIE9('CLER', 16, -1.0, S_NULL) { }
+	S_CLERIC_DIE9('CLER', 16, -1.0, none) { }
 	S_CLERIC_XDIE1('CLER', 17, 5.0 / 35.0, S_CLERIC_XDIE2) { A_Scream(); }
 	S_CLERIC_XDIE2('CLER', 18, 5.0 / 35.0, S_CLERIC_XDIE3) { }
 	S_CLERIC_XDIE3('CLER', 19, 5.0 / 35.0, S_CLERIC_XDIE4) { A_NoBlocking(); }
@@ -74,7 +74,7 @@ __states__
 	S_CLERIC_XDIE7('CLER', 23, 5.0 / 35.0, S_CLERIC_XDIE8) { }
 	S_CLERIC_XDIE8('CLER', 24, 5.0 / 35.0, S_CLERIC_XDIE9) { }
 	S_CLERIC_XDIE9('CLER', 25, 5.0 / 35.0, S_CLERIC_XDIE10) { }
-	S_CLERIC_XDIE10('CLER', 26, -1.0, S_NULL) { }
+	S_CLERIC_XDIE10('CLER', 26, -1.0, none) { }
 	S_CLERIC_ICE('CLER', 27, 5.0 / 35.0, S_CLERIC_ICE2) { A_FreezeDeath(); }
 	S_CLERIC_ICE2('CLER', 27, 1.0 / 35.0, S_CLERIC_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -103,6 +103,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -60,7 +60,7 @@ __states__
 	S_PHOENIXFXI1_5('FX08', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_6) { }
 	S_PHOENIXFXI1_6('FX08', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_7) { }
 	S_PHOENIXFXI1_7('FX08', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI1_8) { }
-	S_PHOENIXFXI1_8('FX08', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_PHOENIXFXI1_8('FX08', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -81,6 +81,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

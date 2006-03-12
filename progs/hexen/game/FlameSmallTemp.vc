@@ -37,7 +37,7 @@ void A_FlameCheck()
 {
 	if (!Args[0]--)	// Called every 8 tics
 	{
-		SetState(S_NULL);
+		SetState(none);
 	}
 }
 
@@ -60,6 +60,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

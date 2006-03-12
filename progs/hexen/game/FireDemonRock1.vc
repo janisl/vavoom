@@ -44,7 +44,7 @@ __states__
 {
 	S_FIRED_RDROP1('FDMN', 18, 4.0 / 35.0, S_FIRED_RDROP1) { }
 	S_FIRED_RDEAD1_1('FDMN', 18, 5.0 / 35.0, S_FIRED_RDEAD1_2) { A_SmBounce(); }
-	S_FIRED_RDEAD1_2('FDMN', 18, 200.0 / 35.0, S_NULL) { }
+	S_FIRED_RDEAD1_2('FDMN', 18, 200.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -62,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

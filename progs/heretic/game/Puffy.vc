@@ -31,7 +31,7 @@ __states__
 	S_PUFFY2('FRB1', 4, 4.0 / 35.0, S_PUFFY3) { }
 	S_PUFFY3('FRB1', 5, 4.0 / 35.0, S_PUFFY4) { }
 	S_PUFFY4('FRB1', 6, 4.0 / 35.0, S_PUFFY5) { }
-	S_PUFFY5('FRB1', 7, 4.0 / 35.0, S_NULL) { }
+	S_PUFFY5('FRB1', 7, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

@@ -62,7 +62,7 @@ __states__
 	S_ZPOISONSHROOM_X1('SHRM', 2, 5.0 / 35.0, S_ZPOISONSHROOM_X2) { }
 	S_ZPOISONSHROOM_X2('SHRM', 3, 5.0 / 35.0, S_ZPOISONSHROOM_X3) { }
 	S_ZPOISONSHROOM_X3('SHRM', 4, 5.0 / 35.0, S_ZPOISONSHROOM_X4) { A_PoisonBagInit(); }
-	S_ZPOISONSHROOM_X4('SHRM', 5, -1.0, S_NULL) { }
+	S_ZPOISONSHROOM_X4('SHRM', 5, -1.0, none) { }
 }
 
 defaultproperties
@@ -85,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

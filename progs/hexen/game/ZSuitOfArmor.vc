@@ -43,7 +43,7 @@ void A_SoAExplode()
 	{
 		A = Spawn(ZArmorChunk, Origin + vector((Random() - 0.5) * 16.0,
 			(Random() - 0.5) * 16.0, Random() * Height));
-		A.SetState(A.IdleState + i);
+		A.SpriteFrame = i;
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -62,8 +62,8 @@ void A_SoAExplode()
 
 __states__
 {
-	S_ZSUITOFARMOR('SUIT', 0, -1.0, S_NULL) { }
-	S_ZSUITOFARMOR_X1('SUIT', 0, 1.0 / 35.0, S_NULL) { A_SoAExplode(); }
+	S_ZSUITOFARMOR('SUIT', 0, -1.0, none) { }
+	S_ZSUITOFARMOR_X1('SUIT', 0, 1.0 / 35.0, none) { A_SoAExplode(); }
 }
 
 defaultproperties
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

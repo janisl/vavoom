@@ -39,13 +39,13 @@ const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
 int Ammo;
-int UpState;
-int DownState;
-int ReadyState;
-int AttackState;
-int HoldAttackState;
-int FlashState;
-int FireDeathWaveState;
+state UpState;
+state DownState;
+state ReadyState;
+state AttackState;
+state HoldAttackState;
+state FlashState;
+state FireDeathWaveState;
 
 bool bRaiseNoiseAlert;
 
@@ -63,13 +63,13 @@ void A_WeaponReady()
 	float angle;
 
 	// get out of attack state
-	if (Player.MO.StateNum == Actor(Player.MO).MeleeState ||
-		Player.MO.StateNum == Actor(Player.MO).MissileState)
+	if (Player.MO.State == Actor(Player.MO).MeleeState ||
+		Player.MO.State == Actor(Player.MO).MissileState)
 	{
 		Player.MO.SetState(Actor(Player.MO).IdleState);
 	}
 
-	if (Player(Player).ReadyWeapon == StrifeDefs::wp_flame && StateNum == ReadyState)
+	if (Player(Player).ReadyWeapon == StrifeDefs::wp_flame && State == ReadyState)
 	{
 		Player.MO.PlaySound('weapons/flameidle', CHAN_WEAPON);
 	}
@@ -142,7 +142,7 @@ void A_Lower()
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Player(Player).SetPsprite(ps_weapon, S_NULL);
+		Player(Player).SetPsprite(ps_weapon, none);
 		return;
 	}
 
@@ -266,12 +266,12 @@ void A_Light2()
 
 void A_ClearFlash()
 {
-	Player(Player).SetPsprite(ps_flash, S_NULL);
+	Player(Player).SetPsprite(ps_flash, none);
 }
 
 __states__
 {
-	S_LIGHTDONE('', 0, 0.0 / 35.0, S_NULL) { A_Light0(); }
+	S_LIGHTDONE('', 0, 0.0 / 35.0, none) { A_Light0(); }
 	S_WAVE1('WAVE', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE2) { }
 	S_WAVE2('WAVE', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE3) { }
 	S_WAVE3('WAVE', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_WAVE4) { }
@@ -280,9 +280,9 @@ __states__
 	S_RBPY_2('RBPY', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_3) { }
 	S_RBPY_3('RBPY', 2 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_4) { }
 	S_RBPY_4('RBPY', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_RBPY_1) { }
-	S_TARGETER1('TRGT', 0, -1.0, S_NULL) { }
-	S_TARGETER2('TRGT', 1, -1.0, S_NULL) { }
-	S_TARGETER3('TRGT', 2, -1.0, S_NULL) { }
+	S_TARGETER1('TRGT', 0, -1.0, none) { }
+	S_TARGETER2('TRGT', 1, -1.0, none) { }
+	S_TARGETER3('TRGT', 2, -1.0, none) { }
 }
 
 defaultproperties
@@ -294,6 +294,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2006/03/12 20:01:25  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.12  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

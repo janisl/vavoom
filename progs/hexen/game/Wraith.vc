@@ -225,7 +225,7 @@ __states__
 	S_WRAITH_DEATH1_7('WRTH', 14, 4.0 / 35.0, S_WRAITH_DEATH1_8) { }
 	S_WRAITH_DEATH1_8('WRTH', 15, 5.0 / 35.0, S_WRAITH_DEATH1_9) { }
 	S_WRAITH_DEATH1_9('WRTH', 16, 5.0 / 35.0, S_WRAITH_DEATH1_0) { }
-	S_WRAITH_DEATH1_0('WRTH', 17, -1.0, S_NULL) { }
+	S_WRAITH_DEATH1_0('WRTH', 17, -1.0, none) { }
 	S_WRAITH_DEATH2_1('WRT2', 0, 5.0 / 35.0, S_WRAITH_DEATH2_2) { }
 	S_WRAITH_DEATH2_2('WRT2', 1, 5.0 / 35.0, S_WRAITH_DEATH2_3) { A_Scream(); }
 	S_WRAITH_DEATH2_3('WRT2', 2, 5.0 / 35.0, S_WRAITH_DEATH2_4) { }
@@ -233,7 +233,7 @@ __states__
 	S_WRAITH_DEATH2_5('WRT2', 4, 5.0 / 35.0, S_WRAITH_DEATH2_6) { A_NoBlocking(); }
 	S_WRAITH_DEATH2_6('WRT2', 5, 5.0 / 35.0, S_WRAITH_DEATH2_7) { A_QueueCorpse(); }
 	S_WRAITH_DEATH2_7('WRT2', 6, 5.0 / 35.0, S_WRAITH_DEATH2_8) { }
-	S_WRAITH_DEATH2_8('WRT2', 7, -1.0, S_NULL) { }
+	S_WRAITH_DEATH2_8('WRT2', 7, -1.0, none) { }
 	S_WRAITH_ICE('WRT2', 8, 5.0 / 35.0, S_WRAITH_ICE2) { A_FreezeDeath(); }
 	S_WRAITH_ICE2('WRT2', 8, 1.0 / 35.0, S_WRAITH_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -270,6 +270,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

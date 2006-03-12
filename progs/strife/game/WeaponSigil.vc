@@ -135,10 +135,10 @@ __states__
 		A_WeaponReady();
 		SpriteFrame = Player(Player).Sigil;
 	}
-	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_SIGIL03('SIGH', 3 | FF_FULLBRIGHT, -1.0, S_NULL) { }
-	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, none) { }
+	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, none) { }
+	S_SIGIL03('SIGH', 3 | FF_FULLBRIGHT, -1.0, none) { }
+	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, none) { }
 	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN)
 	{
 		A_Lower();
@@ -179,6 +179,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/12 20:01:25  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.10  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

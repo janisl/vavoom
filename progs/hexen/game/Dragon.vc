@@ -26,7 +26,7 @@
 class Dragon : Pawn
 	__mobjinfo__(254);
 
-int CrashedState;		//	Maybe it's safe to use CrashState?
+state CrashedState;		//	Maybe it's safe to use CrashState?
 Actor FlightTarget;
 
 //============================================================================
@@ -308,7 +308,7 @@ __states__
 	S_DRAGON_DEATH4('DRAG', 9, 4.0 / 35.0, S_DRAGON_DEATH4) { A_DragonCheckCrash(); }
 	S_DRAGON_CRASH1('DRAG', 10, 5.0 / 35.0, S_DRAGON_CRASH2) { }
 	S_DRAGON_CRASH2('DRAG', 11, 5.0 / 35.0, S_DRAGON_CRASH3) { }
-	S_DRAGON_CRASH3('DRAG', 12, -1.0, S_NULL) { }
+	S_DRAGON_CRASH3('DRAG', 12, -1.0, none) { }
 }
 
 defaultproperties
@@ -343,6 +343,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

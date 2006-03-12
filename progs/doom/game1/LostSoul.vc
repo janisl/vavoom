@@ -84,7 +84,7 @@ __states__
 	S_SKULL_DIE3('SKUL', 7 | FF_FULLBRIGHT, 'monsters/skull/death3.md2', 0, 6.0 / 35.0, S_SKULL_DIE4) { }
 	S_SKULL_DIE4('SKUL', 8 | FF_FULLBRIGHT, 'monsters/skull/death4.md2', 0, 6.0 / 35.0, S_SKULL_DIE5) { A_Fall(); Translucency = 25; }
 	S_SKULL_DIE5('SKUL', 9, 'monsters/skull/death4.md2', 0, 6.0 / 35.0, S_SKULL_DIE6) { Translucency = 50; }
-	S_SKULL_DIE6('SKUL', 10, 'monsters/skull/death4.md2', 0, 6.0 / 35.0, S_NULL) { Translucency = 75; }
+	S_SKULL_DIE6('SKUL', 10, 'monsters/skull/death4.md2', 0, 6.0 / 35.0, none) { Translucency = 75; }
 }
 
 defaultproperties
@@ -117,6 +117,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 19:54:10  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

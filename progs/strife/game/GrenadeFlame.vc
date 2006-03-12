@@ -92,7 +92,7 @@ __states__
 	S_GRENADE_FLAME_X1('FLBE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_X2) { }
 	S_GRENADE_FLAME_X2('FLBE', 8 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_X3) { A_Burnination(); }
 	S_GRENADE_FLAME_X3('FLBE', 9 | FF_FULLBRIGHT, 2.0 / 35.0, S_GRENADE_FLAME_X4) { }
-	S_GRENADE_FLAME_X4('FLBE', 10 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_GRENADE_FLAME_X4('FLBE', 10 | FF_FULLBRIGHT, 2.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -107,6 +107,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

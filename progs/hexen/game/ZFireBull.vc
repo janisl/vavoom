@@ -44,7 +44,7 @@ __states__
 	S_ZFIREBULL7('FBUL', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL1) { }
 	S_ZFIREBULL_DEATH('FBUL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL_DEATH2) { }
 	S_ZFIREBULL_DEATH2('FBUL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL_U) { }
-	S_ZFIREBULL_U('FBUL', 7, -1.0, S_NULL) { }
+	S_ZFIREBULL_U('FBUL', 7, -1.0, none) { }
 	S_ZFIREBULL_BIRTH('FBUL', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL_BIRTH2) { }
 	S_ZFIREBULL_BIRTH2('FBUL', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZFIREBULL1) { }
 }
@@ -85,6 +85,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

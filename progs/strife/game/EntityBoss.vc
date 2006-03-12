@@ -110,7 +110,7 @@ __states__
 	S_ENTITY_DIE4('MNAL', 14 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE5) { A_SpecterTossChunk(); }
 	S_ENTITY_DIE5('MNAL', 15 | FF_FULLBRIGHT, 7.0 / 35.0, S_ENTITY_DIE6) { A_SpecterTossHead(); }
 	S_ENTITY_DIE6('MNAL', 16 | FF_FULLBRIGHT, 64.0 / 35.0, S_ENTITY_DIE7) { A_SpecterTossChunk(); }
-	S_ENTITY_DIE7('MNAL', 16 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { A_EntityDeath(); }
+	S_ENTITY_DIE7('MNAL', 16 | FF_FULLBRIGHT, 6.0 / 35.0, none) { A_EntityDeath(); }
 }
 
 defaultproperties
@@ -146,6 +146,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

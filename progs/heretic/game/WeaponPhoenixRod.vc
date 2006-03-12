@@ -27,7 +27,7 @@ class WeaponPhoenixRod : Weapon;
 
 int FlameCount;	// for flame thrower duration
 
-int Attack2ShutdownState;
+state Attack2ShutdownState;
 
 //==========================================================================
 //
@@ -37,7 +37,7 @@ int Attack2ShutdownState;
 
 void WeaponLevel2Fade()
 {
-	if (StateNum != ReadyState2 && StateNum != UpState2)
+	if (State != ReadyState2 && State != UpState2)
 	{
 		SetState(ReadyState);
 		Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/03/02 18:33:23  dj_jl
 //  Don't use game specific classes in common.
 //

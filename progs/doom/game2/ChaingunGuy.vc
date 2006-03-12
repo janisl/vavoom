@@ -115,13 +115,13 @@ __states__
 	S_CPOS_DIE4('CPOS', 10, 'monsters/chainguy/death.md2', 3, 5.0 / 35.0, S_CPOS_DIE5) { }
 	S_CPOS_DIE5('CPOS', 11, 'monsters/chainguy/death.md2', 4, 5.0 / 35.0, S_CPOS_DIE6) { }
 	S_CPOS_DIE6('CPOS', 12, 'monsters/chainguy/death.md2', 5, 5.0 / 35.0, S_CPOS_DIE7) { }
-	S_CPOS_DIE7('CPOS', 13, 'monsters/chainguy/death.md2', 6, -1.0, S_NULL) { }
+	S_CPOS_DIE7('CPOS', 13, 'monsters/chainguy/death.md2', 6, -1.0, none) { }
 	S_CPOS_XDIE1('CPOS', 14, 'monsters/chainguy/gibs.md2', 0, 5.0 / 35.0, S_CPOS_XDIE2) { }
 	S_CPOS_XDIE2('CPOS', 15, 'monsters/chainguy/gibs.md2', 1, 5.0 / 35.0, S_CPOS_XDIE3) { A_XScream(); }
 	S_CPOS_XDIE3('CPOS', 16, 'monsters/chainguy/gibs.md2', 2, 5.0 / 35.0, S_CPOS_XDIE4) { A_Fall(); }
 	S_CPOS_XDIE4('CPOS', 17, 'monsters/chainguy/gibs.md2', 3, 5.0 / 35.0, S_CPOS_XDIE5) { }
 	S_CPOS_XDIE5('CPOS', 18, 'monsters/chainguy/gibs.md2', 4, 5.0 / 35.0, S_CPOS_XDIE6) { }
-	S_CPOS_XDIE6('CPOS', 19, 'monsters/chainguy/gibs.md2', 5, -1.0, S_NULL) { }
+	S_CPOS_XDIE6('CPOS', 19, 'monsters/chainguy/gibs.md2', 5, -1.0, none) { }
 	S_CPOS_RAISE1('CPOS', 13, 'monsters/chainguy/death.md2', 7, 5.0 / 35.0, S_CPOS_RAISE2) { }
 	S_CPOS_RAISE2('CPOS', 12, 'monsters/chainguy/death.md2', 8, 5.0 / 35.0, S_CPOS_RAISE3) { }
 	S_CPOS_RAISE3('CPOS', 11, 'monsters/chainguy/death.md2', 9, 5.0 / 35.0, S_CPOS_RAISE4) { }
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

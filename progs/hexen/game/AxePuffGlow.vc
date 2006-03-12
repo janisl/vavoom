@@ -33,7 +33,7 @@ __states__
 	S_AXEPUFF_GLOW4('FAXE', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW5) { }
 	S_AXEPUFF_GLOW5('FAXE', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW6) { }
 	S_AXEPUFF_GLOW6('FAXE', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_AXEPUFF_GLOW7) { }
-	S_AXEPUFF_GLOW7('FAXE', 23 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_AXEPUFF_GLOW7('FAXE', 23 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -46,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

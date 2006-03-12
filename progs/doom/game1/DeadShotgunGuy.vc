@@ -28,7 +28,7 @@ class DeadShotgunGuy:Decoration
 
 __states__
 {
-	S_SPOS_DEAD('SPOS', 11, 'monsters/sargeant/death.md2', 4, -1.0, S_NULL) { }
+	S_SPOS_DEAD('SPOS', 11, 'monsters/sargeant/death.md2', 4, -1.0, none) { }
 }
 
 defaultproperties
@@ -39,6 +39,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

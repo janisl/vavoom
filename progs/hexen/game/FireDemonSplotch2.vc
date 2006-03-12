@@ -29,7 +29,7 @@ __states__
 {
 	S_FIRED_CORPSE4('FDMN', 16, 3.0 / 35.0, S_FIRED_CORPSE5) { }
 	S_FIRED_CORPSE5('FDMN', 16, 6.0 / 35.0, S_FIRED_CORPSE6) { A_QueueCorpse(); }
-	S_FIRED_CORPSE6('FDMN', 25, -1.0, S_NULL) { }
+	S_FIRED_CORPSE6('FDMN', 25, -1.0, none) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

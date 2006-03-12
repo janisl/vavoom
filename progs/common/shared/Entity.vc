@@ -166,8 +166,8 @@ native int InUse;	//	Counter for client side
 
 name SpriteName;
 float StateTime;	// state tic counter
-int StateNum;
-int NextState;
+state State;
+state NextState;
 
 //  Params
 float Mass;
@@ -187,9 +187,9 @@ name SoundGender;
 
 native void Remove();
 
-native bool SetState(int state);
-native void SetInitialState(int state);
-native int FindState(name StateName);
+native bool SetState(state State);
+native void SetInitialState(state State);
+native state FindState(name StateName);
 
 native void PlaySound(name SoundName, int Channel);
 native void PlayFullVolumeSound(name SoundName, int Channel);
@@ -501,6 +501,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 20:02:31  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2006/03/06 13:13:55  dj_jl
 //  Client now uses entity class.
 //

@@ -45,7 +45,7 @@ __states__
 	S_MINOSMOKEXF('MNSM', 3, 3.0 / 35.0, S_MINOSMOKEXG) { }
 	S_MINOSMOKEXG('MNSM', 2, 3.0 / 35.0, S_MINOSMOKEXH) { }
 	S_MINOSMOKEXH('MNSM', 1, 3.0 / 35.0, S_MINOSMOKEXI) { }
-	S_MINOSMOKEXI('MNSM', 0, 3.0 / 35.0, S_NULL) { }
+	S_MINOSMOKEXI('MNSM', 0, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -58,6 +58,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

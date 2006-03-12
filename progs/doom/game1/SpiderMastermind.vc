@@ -176,7 +176,7 @@ __states__
 	S_SPID_DIE8('SPID', 16, 'monsters/spider/death.md2', 7, 10.0 / 35.0, S_SPID_DIE9) { }
 	S_SPID_DIE9('SPID', 17, 'monsters/spider/death.md2', 8, 10.0 / 35.0, S_SPID_DIE10) { }
 	S_SPID_DIE10('SPID', 18, 'monsters/spider/death.md2', 9, 30.0 / 35.0, S_SPID_DIE11) { }
-	S_SPID_DIE11('SPID', 18, 'monsters/spider/death.md2', 10, -1.0, S_NULL) { A_BossDeath(); }
+	S_SPID_DIE11('SPID', 18, 'monsters/spider/death.md2', 10, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -204,6 +204,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/12 19:54:10  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.10  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

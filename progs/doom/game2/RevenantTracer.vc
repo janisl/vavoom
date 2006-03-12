@@ -80,7 +80,7 @@ __states__
 	S_TRACER4('FATB', 1 | FF_FULLBRIGHT, 'missiles/revball.md2', 3, 1.0 / 35.0, S_TRACER) { }
 	S_TRACEEXP1('FBXP', 0 | FF_FULLBRIGHT, 8.0 / 35.0, S_TRACEEXP2) { }
 	S_TRACEEXP2('FBXP', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TRACEEXP3) { }
-	S_TRACEEXP3('FBXP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_TRACEEXP3('FBXP', 2 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -100,6 +100,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/02/28 22:44:53  dj_jl
 //  Replaced defines with constants.
 //

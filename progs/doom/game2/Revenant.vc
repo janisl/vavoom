@@ -123,7 +123,7 @@ __states__
 	S_SKEL_DIE3('SKEL', 13, 'monsters/revenant/death.md2', 2, 7.0 / 35.0, S_SKEL_DIE4) { A_Scream(); }
 	S_SKEL_DIE4('SKEL', 14, 'monsters/revenant/death.md2', 3, 7.0 / 35.0, S_SKEL_DIE5) { A_Fall(); }
 	S_SKEL_DIE5('SKEL', 15, 'monsters/revenant/death.md2', 4, 7.0 / 35.0, S_SKEL_DIE6) { }
-	S_SKEL_DIE6('SKEL', 16, 'monsters/revenant/death.md2', 5, -1.0, S_NULL) { }
+	S_SKEL_DIE6('SKEL', 16, 'monsters/revenant/death.md2', 5, -1.0, none) { }
 	S_SKEL_RAISE1('SKEL', 16, 'monsters/revenant/death.md2', 6, 5.0 / 35.0, S_SKEL_RAISE2) { }
 	S_SKEL_RAISE2('SKEL', 15, 'monsters/revenant/death.md2', 7, 5.0 / 35.0, S_SKEL_RAISE3) { }
 	S_SKEL_RAISE3('SKEL', 14, 'monsters/revenant/death.md2', 8, 5.0 / 35.0, S_SKEL_RAISE4) { }
@@ -158,6 +158,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:32:36  dj_jl
 //  Moved all server progs global variables to classes.
 //

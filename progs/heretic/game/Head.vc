@@ -128,7 +128,7 @@ __states__
 	S_HEAD_DIE4('HEAD', 5, 7.0 / 35.0, S_HEAD_DIE5) { }
 	S_HEAD_DIE5('HEAD', 6, 7.0 / 35.0, S_HEAD_DIE6) { A_NoBlocking(); }
 	S_HEAD_DIE6('HEAD', 7, 7.0 / 35.0, S_HEAD_DIE7) { }
-	S_HEAD_DIE7('HEAD', 8, -1.0, S_NULL) { A_BossDeath(); }
+	S_HEAD_DIE7('HEAD', 8, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -157,6 +157,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

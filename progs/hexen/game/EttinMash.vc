@@ -34,14 +34,17 @@ defaultproperties
 	bBlasted = true;
 	bTelestomp = false;
 	bNoPassMobj = false;
-	DeathState = S_NULL;
-	GibsDeathState = S_NULL;
-	IceDeathState = S_NULL;
+	DeathState = none;
+	GibsDeathState = none;
+	IceDeathState = none;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

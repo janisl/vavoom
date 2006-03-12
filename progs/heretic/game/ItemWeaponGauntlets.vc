@@ -29,7 +29,7 @@ class ItemWeaponGauntlets : WeaponPickup
 
 __states__
 {
-	S_WGNT('WGNT', 0, 'weapons/g_gauntl.md2', 0, -1.0, S_NULL) { }
+	S_WGNT('WGNT', 0, 'weapons/g_gauntl.md2', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -41,6 +41,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

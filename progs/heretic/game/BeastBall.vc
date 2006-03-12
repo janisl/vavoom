@@ -70,7 +70,7 @@ __states__
 	S_BEASTBALLX2('FRB1', 4, 4.0 / 35.0, S_BEASTBALLX3) { }
 	S_BEASTBALLX3('FRB1', 5, 4.0 / 35.0, S_BEASTBALLX4) { }
 	S_BEASTBALLX4('FRB1', 6, 4.0 / 35.0, S_BEASTBALLX5) { }
-	S_BEASTBALLX5('FRB1', 7, 4.0 / 35.0, S_NULL) { }
+	S_BEASTBALLX5('FRB1', 7, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -88,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

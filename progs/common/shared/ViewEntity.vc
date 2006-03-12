@@ -34,12 +34,12 @@ int ModelFrame;
 int ModelSkinNum;
 float SX;
 float SY;
-int StateNum;	// a 0 state means not active
-int NextState;
+state State;	// a 0 state means not active
+state NextState;
 float StateTime;
 BasePlayer Player;
 
-native void SetState(int stnum);
+native void SetState(state stnum);
 
 defaultproperties
 {
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 20:02:31  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2006/03/06 13:13:55  dj_jl
 //  Client now uses entity class.
 //

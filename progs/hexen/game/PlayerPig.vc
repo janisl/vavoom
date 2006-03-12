@@ -25,9 +25,24 @@
 
 class PlayerPig : PlayerPawn;
 
+//==========================================================================
+//
+//	StopMoving
+//
+//==========================================================================
+
+void StopMoving()
+{
+	if (State == S_PIGPLAY_RUN1 || State == S_PIGPLAY_RUN2 ||
+		State == S_PIGPLAY_RUN3 || State == S_PIGPLAY_RUN4)
+	{
+		SetState(IdleState);
+	}
+}
+
 __states__
 {
-	S_PIGPLAY('PIGY', 0, -1.0, S_NULL) { }
+	S_PIGPLAY('PIGY', 0, -1.0, none) { }
 	S_PIGPLAY_RUN1('PIGY', 0, 3.0 / 35.0, S_PIGPLAY_RUN2) { }
 	S_PIGPLAY_RUN2('PIGY', 1, 3.0 / 35.0, S_PIGPLAY_RUN3) { }
 	S_PIGPLAY_RUN3('PIGY', 2, 3.0 / 35.0, S_PIGPLAY_RUN4) { }
@@ -41,7 +56,7 @@ __states__
 	S_PIGPLAY_DIE5('PIGY', 8, 4.0 / 35.0, S_PIGPLAY_DIE6) { }
 	S_PIGPLAY_DIE6('PIGY', 9, 4.0 / 35.0, S_PIGPLAY_DIE7) { }
 	S_PIGPLAY_DIE7('PIGY', 10, 4.0 / 35.0, S_PIGPLAY_DIE8) { }
-	S_PIGPLAY_DIE8('PIGY', 11, -1.0, S_NULL) { }
+	S_PIGPLAY_DIE8('PIGY', 11, -1.0, none) { }
 	S_PIGPLAY_ICE('PIGY', 12, 5.0 / 35.0, S_PIGPLAY_ICE2) { A_FreezeDeath(); }
 	S_PIGPLAY_ICE2('PIGY', 12, 1.0 / 35.0, S_PIGPLAY_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -68,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2005/11/17 18:55:04  dj_jl
 //  Implemented support for sndinfo extensions.
 //

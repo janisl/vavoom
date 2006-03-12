@@ -34,7 +34,7 @@ __states__
 	S_MISSILE_X4('MISL', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X5) { }
 	S_MISSILE_X5('MISL', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X6) { }
 	S_MISSILE_X6('MISL', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_MISSILE_X7) { }
-	S_MISSILE_X7('MISL', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_MISSILE_X7('MISL', 6 | FF_FULLBRIGHT, 2.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -54,6 +54,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

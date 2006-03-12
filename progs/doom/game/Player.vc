@@ -2119,7 +2119,7 @@ void SetViewPos()
 
 void SetPlayerRunState()
 {
-	if (MO.StateNum == Actor(MO).IdleState)
+	if (MO.State == Actor(MO).IdleState)
 	{
 		MO.SetState(Actor(MO).SeeState);
 	}
@@ -2315,7 +2315,7 @@ void SetWeapon(int NewWeapon)
 //
 //===========================================================================
 
-void SetPsprite(int position, int stnum)
+void SetPsprite(int position, state stnum)
 {
 	ViewEnts[position].SetState(stnum);
 }
@@ -2456,7 +2456,7 @@ void SetupPsprites()
 	// remove all psprites
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		ViewEnts[i].StateNum = 0;
+		ViewEnts[i].State = none;
 	}
 
 	// spawn the gun
@@ -2480,7 +2480,7 @@ void MovePsprites()
 	{
 		e = ViewEnts[i];
 		// a null state means not active
-		if (e.StateNum)
+		if (e.State)
 		{
 			// drop tic count and possibly change state
 
@@ -3111,6 +3111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2006/03/12 19:51:04  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.22  2006/03/02 18:28:23  dj_jl
 //  Don't use game specific classes in common.
 //

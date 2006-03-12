@@ -28,7 +28,7 @@ class ZTombStoneBrianP : Decoration
 
 __states__
 {
-	S_ZTOMBSTONEBRIANP1('TMS7', 0, 'objects/tomb7.md2', 0, -1.0, S_NULL) { }
+	S_ZTOMBSTONEBRIANP1('TMS7', 0, 'objects/tomb7.md2', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2004/08/28 12:12:03  dj_jl
 //  New 3D models.
 //

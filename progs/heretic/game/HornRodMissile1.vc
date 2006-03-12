@@ -35,7 +35,7 @@ __states__
 	S_HRODFXI1_3('FX00', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_HRODFXI1_4) { }
 	S_HRODFXI1_4('FX00', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_HRODFXI1_5) { }
 	S_HRODFXI1_5('FX00', 11 | FF_FULLBRIGHT, 3.0 / 35.0, S_HRODFXI1_6) { }
-	S_HRODFXI1_6('FX00', 12 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+	S_HRODFXI1_6('FX00', 12 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -56,6 +56,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

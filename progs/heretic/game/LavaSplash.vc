@@ -32,7 +32,7 @@ __states__
 	S_LAVASPLASH3('LVAS', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH4) { }
 	S_LAVASPLASH4('LVAS', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH5) { }
 	S_LAVASPLASH5('LVAS', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASPLASH6) { }
-	S_LAVASPLASH6('LVAS', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+	S_LAVASPLASH6('LVAS', 5 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -65,9 +65,9 @@ __states__
 {
 	S_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_BRIDGE2) { }
 	S_BRIDGE2('TLGL', 0, 2.0 / 35.0, S_BRIDGE3) { A_BridgeInit(); }
-	S_BRIDGE3('TLGL', 0, -1.0, S_NULL) { }
+	S_BRIDGE3('TLGL', 0, -1.0, none) { }
 	S_FREE_BRIDGE1('TLGL', 0, 2.0 / 35.0, S_FREE_BRIDGE2) { }
-	S_FREE_BRIDGE2('TLGL', 0, 300.0 / 35.0, S_NULL) { }
+	S_FREE_BRIDGE2('TLGL', 0, 300.0 / 35.0, none) { }
 }
 
 //==========================================================================
@@ -99,6 +99,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

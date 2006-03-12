@@ -46,14 +46,14 @@ const float MELEERANGE		= 64.0;
 const float MISSILERANGE	= (32.0 * 64.0);
 
 //  States
-int IdleState;
-int SeeState;
-int PainState;
-int MeleeState;
-int MissileState;
-int DeathState;
-int GibsDeathState;
-int RaiseState;
+state IdleState;
+state SeeState;
+state PainState;
+state MeleeState;
+state MissileState;
+state DeathState;
+state GibsDeathState;
+state RaiseState;
 
 //	Sounds
 name SightSound;
@@ -296,7 +296,7 @@ __states__
 		bHidden = true;
 		bSpecial = false;
 	}
-	S_DORMANT_PICKUP2('', 0, -1.0, S_NULL)
+	S_DORMANT_PICKUP2('', 0, -1.0, none)
 	{
 		Actor A;
 
@@ -871,7 +871,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		// chase after this one
 		Enemy = source;
 		Threshold = BASETHRESHOLD;
-		if (StateNum == IdleState && SeeState != S_NULL)
+		if (State == IdleState && SeeState)
 		{
 			SetState(SeeState);
 		}
@@ -1502,12 +1502,7 @@ void ApplyFriction()
 		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
 		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
-		if (bIsPlayer)
-		{
-			// if in a walking frame, stop moving
-			if (StateNum >= SeeState && StateNum <= SeeState + 3)
-				SetState(IdleState);
-		}
+		StopMoving();
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	else
@@ -1515,6 +1510,16 @@ void ApplyFriction()
 		// slow down
 		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
 	}
+}
+
+//===========================================================================
+//
+//  StopMoving
+//
+//===========================================================================
+
+void StopMoving()
+{
 }
 
 //===========================================================================
@@ -3409,7 +3414,7 @@ bool PIT_VileCheck(Entity Other)
 	if (Actor(Other).StateTime != -1.0)
 		return true;	// not lying still yet
 
-	if (Actor(Other).RaiseState == S_NULL)
+	if (!Actor(Other).RaiseState)
 		return true;	// monster doesn't have a raise state
 
 	maxdist = Other.Radius + Radius;
@@ -4677,7 +4682,7 @@ void P_ActCheckMoving() { }
 #ifndef NO_BOTS
 __states__
 {
-	S_GIBS('POL5', 0, 'gibs/gibs.md2', 0, -1.0, S_NULL) { }
+	S_GIBS('POL5', 0, 'gibs/gibs.md2', 0, -1.0, none) { }
 }
 #endif
 
@@ -4734,6 +4739,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2006/03/12 19:51:04  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.28  2006/03/02 18:28:23  dj_jl
 //  Don't use game specific classes in common.
 //

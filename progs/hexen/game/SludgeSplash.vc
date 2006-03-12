@@ -30,7 +30,7 @@ __states__
 	S_SLUDGESPLASH1('SLDG', 4, 6.0 / 35.0, S_SLUDGESPLASH2) { }
 	S_SLUDGESPLASH2('SLDG', 5, 6.0 / 35.0, S_SLUDGESPLASH3) { }
 	S_SLUDGESPLASH3('SLDG', 6, 6.0 / 35.0, S_SLUDGESPLASH4) { }
-	S_SLUDGESPLASH4('SLDG', 7, 6.0 / 35.0, S_NULL) { }
+	S_SLUDGESPLASH4('SLDG', 7, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

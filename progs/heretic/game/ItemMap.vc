@@ -79,7 +79,7 @@ void TouchSpecial(Actor Toucher)
 
 __states__
 {
-	S_ITEM_SPMP1('SPMP', 0, 'items/map.md2', 0, -1.0, S_NULL) { }
+	S_ITEM_SPMP1('SPMP', 0, 'items/map.md2', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -92,6 +92,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/03/02 18:33:23  dj_jl
 //  Don't use game specific classes in common.
 //

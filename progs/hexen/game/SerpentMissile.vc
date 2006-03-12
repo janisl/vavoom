@@ -47,7 +47,7 @@ __states__
 	S_SERPENT_FX_X3('SSFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X4) { }
 	S_SERPENT_FX_X4('SSFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X5) { }
 	S_SERPENT_FX_X5('SSFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_SERPENT_FX_X6) { }
-	S_SERPENT_FX_X6('SSFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_SERPENT_FX_X6('SSFX', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -67,6 +67,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

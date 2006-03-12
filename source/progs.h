@@ -66,17 +66,6 @@ class TProgs
 public:
 	TCRC		crc;
 
-	int			NumSpriteNames;
-	VName*		SpriteNames;
-	int			NumModelNames;
-	VName*		ModelNames;
-	int			NumStates;
-	state_t**	States;
-	int			NumMobjInfo;
-	mobjinfo_t*	MobjInfo;
-	int			NumScriptIds;
-	mobjinfo_t*	ScriptIds;
-
 	void Load(const char*);
 	void Unload(void);
 
@@ -212,9 +201,12 @@ inline VName PR_PopName()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.20  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.19  2006/02/28 18:04:36  dj_jl
 //	Added script execution helpers.
 //	

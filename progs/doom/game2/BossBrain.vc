@@ -84,12 +84,12 @@ void A_BrainDie()
 
 __states__
 {
-	S_BRAIN('BBRN', 0, -1.0, S_NULL) { }
+	S_BRAIN('BBRN', 0, -1.0, none) { }
 	S_BRAIN_PAIN('BBRN', 1, 36.0 / 35.0, S_BRAIN) { A_BrainPain(); }
 	S_BRAIN_DIE1('BBRN', 0, 100.0 / 35.0, S_BRAIN_DIE2) { A_BrainScream(); }
 	S_BRAIN_DIE2('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE3) { }
 	S_BRAIN_DIE3('BBRN', 0, 10.0 / 35.0, S_BRAIN_DIE4) { }
-	S_BRAIN_DIE4('BBRN', 0, -1.0, S_NULL) { A_BrainDie(); }
+	S_BRAIN_DIE4('BBRN', 0, -1.0, none) { A_BrainDie(); }
 }
 
 defaultproperties
@@ -112,6 +112,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

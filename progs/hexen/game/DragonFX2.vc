@@ -37,7 +37,7 @@ __states__
 	S_DRAGON_FX2_8('CFCF', 22 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX2_9) { }
 	S_DRAGON_FX2_9('CFCF', 23 | FF_FULLBRIGHT, 3.0 / 35.0, S_DRAGON_FX2_10) { }
 	S_DRAGON_FX2_10('CFCF', 24 | FF_FULLBRIGHT, 4.0 / 35.0, S_DRAGON_FX2_11) { }
-	S_DRAGON_FX2_11('CFCF', 25 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+	S_DRAGON_FX2_11('CFCF', 25 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -55,6 +55,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

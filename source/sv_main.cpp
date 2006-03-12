@@ -802,7 +802,7 @@ void SV_WriteViewData(VBasePlayer &player, TMessage &msg)
 		<< (byte)player.Palette
 		<< (byte)player.MO->Translucency
 		<< (word)player.PSpriteSY;
-	if (player.ViewEnts[0] && player.ViewEnts[0]->StateNum)
+	if (player.ViewEnts[0] && player.ViewEnts[0]->State)
 	{
 		msg << (word)player.ViewEnts[0]->SpriteIndex
 			<< (byte)player.ViewEnts[0]->SpriteFrame
@@ -815,7 +815,7 @@ void SV_WriteViewData(VBasePlayer &player, TMessage &msg)
 	{
 		msg << (short)-1;
 	}
-	if (player.ViewEnts[1] && player.ViewEnts[1]->StateNum)
+	if (player.ViewEnts[1] && player.ViewEnts[1]->State)
 	{
 		msg << (word)player.ViewEnts[1]->SpriteIndex
 			<< (byte)player.ViewEnts[1]->SpriteFrame
@@ -1958,16 +1958,16 @@ static void SV_InitModelLists()
 {
 	int i;
 
-	numsprites = svpr.NumSpriteNames;
+	numsprites = VClass::GSpriteNames.Num();
 	for (i = 0; i < numsprites; i++)
 	{
-		sprites[i] = svpr.SpriteNames[i];
+		sprites[i] = VClass::GSpriteNames[i];
 	}
 
-	nummodels = svpr.NumModelNames;
+	nummodels = VClass::GModelNames.Num();
 	for (i = 1; i < nummodels; i++)
 	{
-		models[i] = svpr.ModelNames[i];
+		models[i] = VClass::GModelNames[i];
 	}
 
 	numskins = 1;
@@ -3033,9 +3033,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.88  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.87  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.86  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

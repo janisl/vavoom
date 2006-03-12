@@ -26,8 +26,8 @@
 class PlayerPawn : Pawn
 	abstract;
 
-int Attack2State;
-int FireDeathState;
+state Attack2State;
+state FireDeathState;
 
 bool bSafeToRemove;
 
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.8  2006/02/28 22:45:45  dj_jl
 //  Replaced defines with constants.
 //

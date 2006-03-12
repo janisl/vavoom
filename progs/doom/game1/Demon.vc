@@ -121,7 +121,7 @@ __states__
 	S_SARG_DIE3('SARG', 10, 'monsters/demon/death.md2', 2, 4.0 / 35.0, S_SARG_DIE4) { }
 	S_SARG_DIE4('SARG', 11, 'monsters/demon/death.md2', 3, 4.0 / 35.0, S_SARG_DIE5) { A_Fall(); }
 	S_SARG_DIE5('SARG', 12, 'monsters/demon/death.md2', 4, 4.0 / 35.0, S_SARG_DIE6) { }
-	S_SARG_DIE6('SARG', 13, 'monsters/demon/death.md2', 5, -1.0, S_NULL) { }
+	S_SARG_DIE6('SARG', 13, 'monsters/demon/death.md2', 5, -1.0, none) { }
 	S_SARG_RAISE1('SARG', 13, 'monsters/demon/death.md2', 6, 5.0 / 35.0, S_SARG_RAISE2) { }
 	S_SARG_RAISE2('SARG', 12, 'monsters/demon/death.md2', 7, 5.0 / 35.0, S_SARG_RAISE3) { }
 	S_SARG_RAISE3('SARG', 11, 'monsters/demon/death.md2', 8, 5.0 / 35.0, S_SARG_RAISE4) { }
@@ -154,6 +154,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

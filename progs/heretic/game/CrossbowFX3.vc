@@ -31,7 +31,7 @@ __states__
 	S_CRBOWFX3('FX03', 0 | FF_FULLBRIGHT, 'missiles/arrow.md2', 0, 1.0 / 35.0, S_CRBOWFX3) { }
 	S_CRBOWFXI3_1('FX03', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_2) { }
 	S_CRBOWFXI3_2('FX03', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_CRBOWFXI3_3) { }
-	S_CRBOWFXI3_3('FX03', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+	S_CRBOWFXI3_3('FX03', 4 | FF_FULLBRIGHT, 8.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

@@ -53,12 +53,31 @@
 
 void InitInfoTables()
 {
-	sprite_names.Empty(64);
-	models.Empty(64);
 	states.Empty(1024);
 	mobj_info.Empty(128);
 	script_ids.Empty(128);
-	models.AddItem(NAME_None);	// 0 indicates no-model
+}
+
+//==========================================================================
+//
+//	FindState
+//
+//==========================================================================
+
+int CheckForState(VName StateName, TClass* InClass)
+{
+	for (TArray<state_t*>::TIterator It(states); It; ++It)
+	{
+		if ((*It)->Name == StateName && (*It)->OuterClass == InClass)
+		{
+			return It.GetIndex();
+		}
+	}
+	if (InClass->ParentClass)
+	{
+		return CheckForState(StateName, InClass->ParentClass);
+	}
+	return -1;
 }
 
 //==========================================================================
@@ -69,9 +88,9 @@ void InitInfoTables()
 
 static int FindState(VName StateName, TClass* InClass)
 {
-	for (TArray<state_t>::TIterator It(states); It; ++It)
+	for (TArray<state_t*>::TIterator It(states); It; ++It)
 	{
-		if (It->Name == StateName && It->OuterClass == InClass)
+		if ((*It)->Name == StateName && (*It)->OuterClass == InClass)
 		{
 			return It.GetIndex();
 		}
@@ -92,8 +111,6 @@ static int FindState(VName StateName, TClass* InClass)
 
 void ParseStates(TClass* InClass)
 {
-	int i;
-
 	if (!InClass && TK_Check(PU_LPAREN))
 	{
 		InClass = CheckForClass();
@@ -106,89 +123,62 @@ void ParseStates(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		state_t &s = *new(states) state_t;
-		s.OuterClass = InClass;
+		state_t* s = new state_t;
+		states.AddItem(s);
+		s->OuterClass = InClass;
+		InClass->AddState(s);
 
 		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
-		s.Name = tk_Name;
-		AddConstant(InClass, tk_Name, ev_int, states.Num() - 1);
+		s->Name = tk_Name;
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 		//	Sprite name
 		if (tk_Token != TK_NAME)
 		{
-			ERR_Exit(ERR_NONE, true, "Sprite name expected");
+			ParseError(ERR_NONE, "Sprite name expected");
 		}
-		if (tk_Name != NAME_None)
+		if (tk_Name != NAME_None && strlen(*tk_Name) != 4)
 		{
-			if (strlen(*tk_Name) != 4)
-			{
-				ERR_Exit(ERR_NONE, true, "Invalid sprite name");
-			}
-			for (i = 0; i < sprite_names.Num(); i++)
-			{
-		   		if (sprite_names[i] == tk_Name)
-				{
-				   	break;
-				}
-			}
-			if (i == sprite_names.Num())
-			{
-			   	i = sprite_names.AddItem(tk_Name);
-			}
-			s.sprite = i;
+			ParseError(ERR_NONE, "Invalid sprite name");
 		}
-		else
-		{
-			s.sprite = 0;
-		}
+		s->SpriteName = tk_Name;
 		TK_NextToken();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  Frame
-		s.frame = EvalConstExpression(InClass, ev_int);
+		s->frame = EvalConstExpression(InClass, ev_int);
 		TK_Expect(PU_COMMA, ERR_NONE);
 		if (tk_Token == TK_NAME)
 		{
 			//	Model
-			for (i = 0; i < models.Num(); i++)
-			{
-		   		if (models[i] == tk_Name)
-				{
-				   	break;
-				}
-			}
-			if (i == models.Num())
-			{
-			   	i = models.AddItem(tk_Name);
-			}
-			s.model_index = i;
+			s->ModelName = tk_Name;
 			TK_NextToken();
 			TK_Expect(PU_COMMA, ERR_NONE);
 			//  Frame
-			s.model_frame = EvalConstExpression(InClass, ev_int);
+			s->model_frame = EvalConstExpression(InClass, ev_int);
 			TK_Expect(PU_COMMA, ERR_NONE);
 		}
 		else
 		{
-			s.model_index = 0;
-			s.model_frame = 0;
+			s->ModelName = NAME_None;
+			s->model_frame = 0;
 		}
 		//  Tics
-		s.time = ConstFloatExpression();
+		s->time = ConstFloatExpression();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  Next state
-		if (tk_Token != TK_IDENTIFIER)
+		if (tk_Token != TK_IDENTIFIER &&
+			(tk_Token != TK_KEYWORD || tk_Keyword != KW_NONE))
 		{
 			ERR_Exit(ERR_NONE, true, NULL);
 		}
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
-		s.function = ParseStateCode(InClass);
+		s->function = ParseStateCode(InClass);
 	}
 }
 
@@ -238,7 +228,7 @@ void SkipStates(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		state_t &s = states[FindState(tk_Name, InClass)];
+		state_t* s = states[FindState(tk_Name, InClass)];
 
 		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
@@ -265,24 +255,30 @@ void SkipStates(TClass* InClass)
 		ConstFloatExpression();
 		TK_Expect(PU_COMMA, ERR_NONE);
 		//  Next state
-		if (tk_Token != TK_IDENTIFIER)
+		if (tk_Token == TK_KEYWORD && tk_Keyword == KW_NONE)
 		{
-			ERR_Exit(ERR_NONE, true, NULL);
+			s->nextstate = NULL;
 		}
-		s.nextstate = FindState(tk_Name, InClass);
+		else
+		{
+			s->nextstate = states[FindState(tk_Name, InClass)];
+		}
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
-		CompileStateCode(InClass, s.function);
+		CompileStateCode(InClass, s->function);
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2006/03/12 20:04:50  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.33  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.32  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
 //	

@@ -36,7 +36,7 @@ __states__
 	S_FSWORD_FLAME7('FSFX', 19 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME8) { }
 	S_FSWORD_FLAME8('FSFX', 20 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME9) { }
 	S_FSWORD_FLAME9('FSFX', 21 | FF_FULLBRIGHT, 3.0 / 35.0, S_FSWORD_FLAME10) { }
-	S_FSWORD_FLAME10('FSFX', 22 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+	S_FSWORD_FLAME10('FSFX', 22 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

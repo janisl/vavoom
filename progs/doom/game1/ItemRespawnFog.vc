@@ -33,7 +33,7 @@ __states__
 	S_IFOG2('IFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG3) { }
 	S_IFOG3('IFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG4) { }
 	S_IFOG4('IFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_IFOG5) { }
-	S_IFOG5('IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_IFOG5('IFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

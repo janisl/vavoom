@@ -118,7 +118,7 @@ __states__
 	S_BOSS_DIE4('BOSS', 11, 'monsters/baron/death.md2', 3, 8.0 / 35.0, S_BOSS_DIE5) { A_Fall(); }
 	S_BOSS_DIE5('BOSS', 12, 'monsters/baron/death.md2', 4, 8.0 / 35.0, S_BOSS_DIE6) { }
 	S_BOSS_DIE6('BOSS', 13, 'monsters/baron/death.md2', 5, 8.0 / 35.0, S_BOSS_DIE7) { }
-	S_BOSS_DIE7('BOSS', 14, 'monsters/baron/death.md2', 6, -1.0, S_NULL) { A_BossDeath(); }
+	S_BOSS_DIE7('BOSS', 14, 'monsters/baron/death.md2', 6, -1.0, none) { A_BossDeath(); }
 	S_BOSS_RAISE1('BOSS', 14, 'monsters/baron/death.md2', 7, 8.0 / 35.0, S_BOSS_RAISE2) { }
 	S_BOSS_RAISE2('BOSS', 13, 'monsters/baron/death.md2', 8, 8.0 / 35.0, S_BOSS_RAISE3) { }
 	S_BOSS_RAISE3('BOSS', 12, 'monsters/baron/death.md2', 9, 8.0 / 35.0, S_BOSS_RAISE4) { }
@@ -153,6 +153,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

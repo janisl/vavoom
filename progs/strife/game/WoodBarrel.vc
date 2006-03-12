@@ -28,14 +28,14 @@ class WoodBarrel : Decoration
 
 __states__
 {
-	S_WOOD_BARREL('BARW', 0, -1.0, S_NULL) { }
+	S_WOOD_BARREL('BARW', 0, -1.0, none) { }
 	S_WOOD_BARREL_X1('BARW', 1, 2.0 / 35.0, S_WOOD_BARREL_X2) { A_Scream(); }
 	S_WOOD_BARREL_X2('BARW', 2, 2.0 / 35.0, S_WOOD_BARREL_X3) { }
 	S_WOOD_BARREL_X3('BARW', 3, 2.0 / 35.0, S_WOOD_BARREL_X4) { A_Fall(); }
 	S_WOOD_BARREL_X4('BARW', 4, 2.0 / 35.0, S_WOOD_BARREL_X5) { }
 	S_WOOD_BARREL_X5('BARW', 5, 2.0 / 35.0, S_WOOD_BARREL_X6) { }
 	S_WOOD_BARREL_X6('BARW', 6, 2.0 / 35.0, S_WOOD_BARREL_X7) { }
-	S_WOOD_BARREL_X7('BARW', 7, -1.0, S_NULL) { }
+	S_WOOD_BARREL_X7('BARW', 7, -1.0, none) { }
 }
 
 defaultproperties
@@ -55,6 +55,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 20:01:25  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

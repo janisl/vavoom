@@ -72,9 +72,7 @@ TArray<TStruct*>	structtypes;
 
 TArray<field_t*>	FieldList;
 
-TArray<VName>		sprite_names;
-TArray<VName>		models;
-TArray<state_t>		states;
+TArray<state_t*>	states;
 TArray<mobjinfo_t>	mobj_info;
 TArray<mobjinfo_t>	script_ids;
 
@@ -104,6 +102,8 @@ static struct
 VStream& operator<<(VStream& Strm, field_t*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
 VStream& operator<<(VStream& Strm, TFunction*& Obj)
+{ return Strm << *(VMemberBase**)&Obj; }
+VStream& operator<<(VStream& Strm, state_t*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
 VStream& operator<<(VStream& Strm, TStruct*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
@@ -562,7 +562,7 @@ void PC_WriteObject(char *name)
 	}
 	for (i = 0; i < states.Num(); i++)
 	{
-		Writer.AddExport(&states[i], MEMBER_State);
+		Writer.AddExport(states[i], MEMBER_State);
 	}
 	for (i = 0; i < Constants.Num(); i++)
 	{
@@ -596,20 +596,6 @@ void PC_WriteObject(char *name)
 	for (i = 0; i < vtables.Num(); i++)
 	{
 		Writer << vtables[i];
-	}
-
-	progs.ofs_sprnames = Writer.Tell();
-	progs.num_sprnames = sprite_names.Num();
-	for (i = 0; i < sprite_names.Num(); i++)
-	{
-		Writer << sprite_names[i];
-	}
-
-	progs.ofs_mdlnames = Writer.Tell();
-	progs.num_mdlnames = models.Num();
-	for (i = 0; i < models.Num(); i++)
-	{
-		Writer << models[i];
 	}
 
 	progs.ofs_mobjinfo = Writer.Tell();
@@ -657,9 +643,7 @@ void PC_WriteObject(char *name)
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
 	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), progs.ofs_vtables - progs.ofs_statements);
 	dprintf("Builtins   %6d\n", numbuiltins);
-	dprintf("VTables    %6d %6d\n", vtables.Num(), progs.ofs_sprnames - progs.ofs_vtables);
-	dprintf("Spr names  %6d %6d\n", sprite_names.Num(), progs.ofs_mdlnames - progs.ofs_sprnames);
-	dprintf("Mdl names  %6d %6d\n", models.Num(), progs.ofs_mobjinfo - progs.ofs_mdlnames);
+	dprintf("VTables    %6d %6d\n", vtables.Num(), progs.ofs_mobjinfo - progs.ofs_vtables);
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
 	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_exportinfo - progs.ofs_scriptids);
 	dprintf("Exports    %6d %6d\n", Writer.Exports.Num(), progs.ofs_exportdata - progs.ofs_exportinfo);
@@ -907,6 +891,7 @@ void TClass::Serialise(VStream& Strm)
 	VMemberBase::Serialise(Strm);
 	Strm << ParentClass
 		<< Fields
+		<< States
 		<< STRM_INDEX(VTable)
 		<< STRM_INDEX(NumMethods)
 		<< STRM_INDEX(Size);
@@ -921,14 +906,15 @@ void TClass::Serialise(VStream& Strm)
 void state_t::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << STRM_INDEX(sprite)
+	Strm << SpriteName
 		<< STRM_INDEX(frame)
-		<< STRM_INDEX(model_index)
+		<< ModelName
 		<< STRM_INDEX(model_frame)
 		<< time
-		<< STRM_INDEX(nextstate)
+		<< nextstate
 		<< function
-		<< OuterClass;
+		<< OuterClass
+		<< Next;
 }
 
 //==========================================================================
@@ -961,9 +947,12 @@ void constant_t::Serialise(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2006/03/12 20:04:50  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.33  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.32  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
 //	

@@ -190,13 +190,17 @@ public:
 class state_t : public VMemberBase
 {
 public:
-	int			sprite;
+	VName		SpriteName;
+	int			SpriteIndex;
 	int			frame;
-	int			model_index;
+	VName		ModelName;
+	int			ModelIndex;
 	int			model_frame;
 	float		time;
-	int			nextstate;
+	state_t*	nextstate;
 	FFunction*	function;
+	VClass*		OuterClass;
+	state_t*	Next;
 
 	void Serialise(VStream&);
 
@@ -248,6 +252,12 @@ public:
 
 	VField*			Fields;
 	VField*			ReferenceFields;
+	state_t*		States;
+
+	static TArray<mobjinfo_t>	GMobjInfos;
+	static TArray<mobjinfo_t>	GScriptIds;
+	static TArray<VName>		GSpriteNames;
+	static TArray<VName>		GModelNames;
 
 	// Constructors.
 	VClass(VName AName);
@@ -270,9 +280,11 @@ public:
 	}
 
 	// Systemwide functions.
-	static void StaticInit(void);
-	static void StaticExit(void);
+	static void StaticInit();
+	static void StaticExit();
 	static VClass *FindClass(const char *);
+	static int FindSprite(VName);
+	static int FindModel(VName);
 
 	// Accessors.
 	dword GetFlags(void) const
@@ -292,9 +304,11 @@ public:
 		return ParentClass;
 	}
 
-	FFunction *FindFunction(VName InName);
-	FFunction *FindFunctionChecked(VName InName);
+	FFunction* FindFunction(VName InName);
+	FFunction* FindFunctionChecked(VName InName);
 	int GetFunctionIndex(VName InName);
+	state_t* FindState(VName InName);
+	state_t* FindStateChecked(VName InName);
 	void InitReferences();
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
@@ -308,9 +322,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.15  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.14  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
 //	

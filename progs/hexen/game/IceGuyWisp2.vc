@@ -35,7 +35,7 @@ __states__
 	S_ICEGUY_WISP2_6('ICWS', 14, 2.0 / 35.0, S_ICEGUY_WISP2_7) { }
 	S_ICEGUY_WISP2_7('ICWS', 15, 2.0 / 35.0, S_ICEGUY_WISP2_8) { }
 	S_ICEGUY_WISP2_8('ICWS', 16, 2.0 / 35.0, S_ICEGUY_WISP2_9) { }
-	S_ICEGUY_WISP2_9('ICWS', 17, 2.0 / 35.0, S_NULL) { }
+	S_ICEGUY_WISP2_9('ICWS', 17, 2.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

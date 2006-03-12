@@ -28,8 +28,8 @@ class ZGemPedestal : Decoration
 
 __states__
 {
-	S_ZGEMPEDESTAL1('GMPD', 0, -1.0, S_NULL) { }
-	S_ZGEMPEDESTAL2('GMPD', 1, -1.0, S_NULL) { }
+	S_ZGEMPEDESTAL1('GMPD', 0, -1.0, none) { }
+	S_ZGEMPEDESTAL2('GMPD', 1, -1.0, none) { }
 }
 
 //==========================================================================
@@ -55,6 +55,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

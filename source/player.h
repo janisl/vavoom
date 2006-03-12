@@ -54,12 +54,12 @@ class VViewEntity : public VObject
 	int			ModelSkinNum;
 	float		SX;
 	float		SY;
-	int			StateNum;
-	int			NextState;
+	state_t*	State;
+	state_t*	NextState;
     float		StateTime;
 	VBasePlayer	*Player;
 
-	void SetState(int stnum);
+	void SetState(state_t* stnum);
 
 	DECLARE_FUNCTION(SetState)
 };
@@ -239,9 +239,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.24  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.23  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

@@ -40,7 +40,12 @@ void A_CorpseExplode()
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		A = Spawn(CorpseBit, Origin);
-		A.SetState(A.IdleState + (P_Random() % 3));
+		switch (P_Random() % 3)
+		{
+		case 0: A.SetState(CorpseBit::S_CORPSEBIT_1); break;
+		case 1: A.SetState(CorpseBit::S_CORPSEBIT_2); break;
+		case 2: A.SetState(CorpseBit::S_CORPSEBIT_3); break;
+		}
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -63,8 +68,8 @@ void A_CorpseExplode()
 
 __states__
 {
-	S_ZCORPSESITTING('CPS6', 0, -1.0, S_NULL) { }
-	S_ZCORPSESITTING_X('CPS6', 0, 1.0 / 35.0, S_NULL) { A_CorpseExplode(); }
+	S_ZCORPSESITTING('CPS6', 0, -1.0, none) { }
+	S_ZCORPSESITTING_X('CPS6', 0, 1.0 / 35.0, none) { A_CorpseExplode(); }
 }
 
 defaultproperties
@@ -82,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

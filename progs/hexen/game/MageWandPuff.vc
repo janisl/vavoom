@@ -31,7 +31,7 @@ __states__
 	S_MWANDPUFF2('MWND', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_MWANDPUFF3) { }
 	S_MWANDPUFF3('MWND', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MWANDPUFF4) { }
 	S_MWANDPUFF4('MWND', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_MWANDPUFF5) { }
-	S_MWANDPUFF5('MWND', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_MWANDPUFF5('MWND', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:57  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -65,7 +65,7 @@ __states__
 	S_MACEFXI1_2('FX02', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_3) { }
 	S_MACEFXI1_3('FX02', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_4) { }
 	S_MACEFXI1_4('FX02', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_MACEFXI1_5) { }
-	S_MACEFXI1_5('FX02', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_MACEFXI1_5('FX02', 9 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -86,6 +86,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -62,7 +62,7 @@ void A_BeakReady()
 	}
 	else
 	{
-		if (Player.MO.StateNum == Actor(Player.MO).MissileState)
+		if (Player.MO.State == Actor(Player.MO).MissileState)
 		{
 			// Take out of attack state
 			Player.MO.SetState(Actor(Player.MO).IdleState);
@@ -151,6 +151,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.8  2006/03/02 18:33:23  dj_jl
 //  Don't use game specific classes in common.
 //

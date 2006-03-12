@@ -63,7 +63,7 @@ __states__
 	S_MACIL_DIE15('LEAD', 20, 3.0 / 35.0, S_MACIL_DIE16) { }
 	S_MACIL_DIE16('LEAD', 21, 3.0 / 35.0, S_MACIL_DIE17) { }
 	S_MACIL_DIE17('LEAD', 22, 3.0 / 35.0, S_MACIL_DIE18) { A_MacilDeath(); }
-	S_MACIL_DIE18('LEAD', 23, -1.0, S_NULL) { }
+	S_MACIL_DIE18('LEAD', 23, -1.0, none) { }
 }
 
 defaultproperties
@@ -81,6 +81,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

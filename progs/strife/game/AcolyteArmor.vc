@@ -51,8 +51,8 @@ void A_HideDecepticon()
 
 __states__
 {
-	S_ACOLYTEARM_STAND('ARMR', 0, -1.0, S_NULL) { }
-	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, S_NULL) { A_HideDecepticon(); }
+	S_ACOLYTEARM_STAND('ARMR', 0, -1.0, none) { }
+	S_ACOLYTEARM_PAIN('ARMR', 0, -1.0, none) { A_HideDecepticon(); }
 }
 
 defaultproperties
@@ -71,6 +71,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

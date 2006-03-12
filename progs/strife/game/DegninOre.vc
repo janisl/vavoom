@@ -28,7 +28,7 @@ class DegninOre : InventoryItem
 
 __states__
 {
-	S_ORE('XPRK', 0, -1.0, S_NULL) { }
+	S_ORE('XPRK', 0, -1.0, none) { }
 	S_ORE_X('XPRK', 0, 1.0 / 35.0, S_ORE_X1) { A_RemoveForceField(); }
 	S_ORE_X1('BNG3', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X2) { A_Explode192(); }
 	S_ORE_X2('BNG3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X3) { }
@@ -37,7 +37,7 @@ __states__
 	S_ORE_X5('BNG3', 4 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X6) { }
 	S_ORE_X6('BNG3', 5 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X7) { }
 	S_ORE_X7('BNG3', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_ORE_X8) { }
-	S_ORE_X8('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+	S_ORE_X8('BNG3', 7 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //

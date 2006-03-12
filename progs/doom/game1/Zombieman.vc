@@ -92,7 +92,7 @@ __states__
 	S_POSS_DIE2('POSS', 8, 'monsters/trooper/death.md2', 1, 5.0 / 35.0, S_POSS_DIE3) { A_Scream(); }
 	S_POSS_DIE3('POSS', 9, 'monsters/trooper/death.md2', 2, 5.0 / 35.0, S_POSS_DIE4) { A_Fall(); }
 	S_POSS_DIE4('POSS', 10, 'monsters/trooper/death.md2', 3, 5.0 / 35.0, S_POSS_DIE5) { }
-	S_POSS_DIE5('POSS', 11, 'monsters/trooper/death.md2', 4, -1.0, S_NULL) { }
+	S_POSS_DIE5('POSS', 11, 'monsters/trooper/death.md2', 4, -1.0, none) { }
 	S_POSS_XDIE1('POSS', 12, 'monsters/trooper/gibs.md2', 0, 5.0 / 35.0, S_POSS_XDIE2) { }
 	S_POSS_XDIE2('POSS', 13, 'monsters/trooper/gibs.md2', 1, 5.0 / 35.0, S_POSS_XDIE3) { A_XScream(); }
 	S_POSS_XDIE3('POSS', 14, 'monsters/trooper/gibs.md2', 2, 5.0 / 35.0, S_POSS_XDIE4) { A_Fall(); }
@@ -101,7 +101,7 @@ __states__
 	S_POSS_XDIE6('POSS', 17, 'monsters/trooper/gibs.md2', 5, 5.0 / 35.0, S_POSS_XDIE7) { }
 	S_POSS_XDIE7('POSS', 18, 'monsters/trooper/gibs.md2', 6, 5.0 / 35.0, S_POSS_XDIE8) { }
 	S_POSS_XDIE8('POSS', 19, 'monsters/trooper/gibs.md2', 7, 5.0 / 35.0, S_POSS_XDIE9) { }
-	S_POSS_XDIE9('POSS', 20, 'monsters/trooper/gibs.md2', 8, -1.0, S_NULL) { }
+	S_POSS_XDIE9('POSS', 20, 'monsters/trooper/gibs.md2', 8, -1.0, none) { }
 	S_POSS_RAISE1('POSS', 10, 'monsters/trooper/death.md2', 5, 5.0 / 35.0, S_POSS_RAISE2) { }
 	S_POSS_RAISE2('POSS', 9, 'monsters/trooper/death.md2', 6, 5.0 / 35.0, S_POSS_RAISE3) { }
 	S_POSS_RAISE3('POSS', 8, 'monsters/trooper/death.md2', 7, 5.0 / 35.0, S_POSS_RAISE4) { }
@@ -134,6 +134,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:54:10  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

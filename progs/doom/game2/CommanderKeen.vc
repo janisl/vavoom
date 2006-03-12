@@ -60,7 +60,7 @@ __states__
 	S_COMMKEEN9('KEEN', 8, 6.0 / 35.0, S_COMMKEEN10) { }
 	S_COMMKEEN10('KEEN', 9, 6.0 / 35.0, S_COMMKEEN11) { }
 	S_COMMKEEN11('KEEN', 10, 6.0 / 35.0, S_COMMKEEN12) { A_KeenDie(); }
-	S_COMMKEEN12('KEEN', 11, -1.0, S_NULL) { }
+	S_COMMKEEN12('KEEN', 11, -1.0, none) { }
 	S_KEENPAIN('KEEN', 12, 4.0 / 35.0, S_KEENPAIN2) { }
 	S_KEENPAIN2('KEEN', 12, 8.0 / 35.0, S_KEENSTND) { A_Pain(); }
 }
@@ -84,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/12/27 22:22:27  dj_jl
 //  Created level info class, moved action special handling to it.
 //

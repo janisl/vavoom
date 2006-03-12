@@ -65,7 +65,7 @@ defaultproperties
 {
 	Health = 80;
 	GibsHealth = -40;
-	MeleeState = S_NULL;
+	MeleeState = none;
 	MissileState = S_IMP_MSATK2_1;
 	AttackSound = 'himp/leaderattack';
 }
@@ -73,6 +73,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

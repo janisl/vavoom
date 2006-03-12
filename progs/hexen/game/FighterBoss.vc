@@ -68,7 +68,7 @@ __states__
 	S_FIGHTER_DIE4('PLAY', 10, 6.0 / 35.0, S_FIGHTER_DIE5) { }
 	S_FIGHTER_DIE5('PLAY', 11, 6.0 / 35.0, S_FIGHTER_DIE6) { A_NoBlocking(); }
 	S_FIGHTER_DIE6('PLAY', 12, 6.0 / 35.0, S_FIGHTER_DIE7) { }
-	S_FIGHTER_DIE7('PLAY', 13, -1.0, S_NULL) { }
+	S_FIGHTER_DIE7('PLAY', 13, -1.0, none) { }
 	S_FIGHTER_XDIE1('PLAY', 14, 5.0 / 35.0, S_FIGHTER_XDIE2) { A_Scream(); }
 	S_FIGHTER_XDIE2('PLAY', 15, 5.0 / 35.0, S_FIGHTER_XDIE3) { }
 	S_FIGHTER_XDIE3('PLAY', 17, 5.0 / 35.0, S_FIGHTER_XDIE4) { A_NoBlocking(); }
@@ -76,7 +76,7 @@ __states__
 	S_FIGHTER_XDIE5('PLAY', 19, 5.0 / 35.0, S_FIGHTER_XDIE6) { }
 	S_FIGHTER_XDIE6('PLAY', 20, 5.0 / 35.0, S_FIGHTER_XDIE7) { }
 	S_FIGHTER_XDIE7('PLAY', 21, 5.0 / 35.0, S_FIGHTER_XDIE8) { }
-	S_FIGHTER_XDIE8('PLAY', 22, -1.0, S_NULL) { }
+	S_FIGHTER_XDIE8('PLAY', 22, -1.0, none) { }
 	S_FIGHTER_ICE('PLAY', 23, 5.0 / 35.0, S_FIGHTER_ICE2) { A_FreezeDeath(); }
 	S_FIGHTER_ICE2('PLAY', 23, 1.0 / 35.0, S_FIGHTER_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -105,6 +105,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

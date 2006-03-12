@@ -52,7 +52,7 @@ __states__
 	S_ENT_POD_OPEN2('PODD', 1, 9.0 / 35.0, S_ENT_POD_OPEN3) { A_Fall(); }
 	S_ENT_POD_OPEN3('PODD', 2, 9.0 / 35.0, S_ENT_POD_OPEN4) { }
 	S_ENT_POD_OPEN4('PODD', 3, 9.0 / 35.0, S_ENT_POD_OPEN5) { A_EntityBossRaise(); }
-	S_ENT_POD_OPEN5('PODD', 4, -1.0, S_NULL) { }
+	S_ENT_POD_OPEN5('PODD', 4, -1.0, none) { }
 }
 
 defaultproperties
@@ -69,6 +69,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

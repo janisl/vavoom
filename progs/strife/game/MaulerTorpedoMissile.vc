@@ -68,7 +68,7 @@ __states__
 	S_TORPEDO_X2('THIT', 1 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X3) { }
 	S_TORPEDO_X3('THIT', 2 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X4) { A_MaulerTorpedoExplode(); }
 	S_TORPEDO_X4('THIT', 3 | FF_FULLBRIGHT, 8.0 / 35.0, S_TORPEDO_X5) { }
-	S_TORPEDO_X5('THIT', 4 | FF_FULLBRIGHT, 8.0 / 35.0, S_NULL) { }
+	S_TORPEDO_X5('THIT', 4 | FF_FULLBRIGHT, 8.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

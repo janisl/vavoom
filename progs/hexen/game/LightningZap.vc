@@ -117,8 +117,8 @@ void A_ZapMimic()
 {
 	if (LightningOwner)
 	{
-		if (LightningOwner.StateNum >= LightningOwner.DeathState ||
-			LightningOwner.StateNum == S_FREETARGMOBJ)
+		if (!LightningOwner.bMissile ||
+			LightningOwner.State == S_FREETARGMOBJ)
 		{
 			ExplodeMissile();
 		}
@@ -144,7 +144,7 @@ __states__
 	S_LIGHTNING_ZAP_X5('MLFX', 17 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X6) { }
 	S_LIGHTNING_ZAP_X6('MLFX', 18 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X7) { }
 	S_LIGHTNING_ZAP_X7('MLFX', 19 | FF_FULLBRIGHT, 2.0 / 35.0, S_LIGHTNING_ZAP_X8) { }
-	S_LIGHTNING_ZAP_X8('MLFX', 20 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_LIGHTNING_ZAP_X8('MLFX', 20 | FF_FULLBRIGHT, 2.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -163,6 +163,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:58:56  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

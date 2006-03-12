@@ -40,7 +40,7 @@ void A_PotteryExplode()
 	for (i = (P_Random() & 3) + 3; i; i--)
 	{
 		A = Spawn(PotteryBit, Origin);
-		A.SetState(A.IdleState + (P_Random() % 5));
+		A.SpriteFrame = P_Random() % 5;
 		if (A)
 		{
 			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
@@ -58,8 +58,8 @@ void A_PotteryExplode()
 
 __states__
 {
-	S_ZPOTTERY1('POT1', 0, -1.0, S_NULL) { }
-	S_ZPOTTERY_EXPLODE('POT1', 0, 0.0 / 35.0, S_NULL) { A_PotteryExplode(); }
+	S_ZPOTTERY1('POT1', 0, -1.0, none) { }
+	S_ZPOTTERY_EXPLODE('POT1', 0, 0.0 / 35.0, none) { A_PotteryExplode(); }
 }
 
 defaultproperties
@@ -82,6 +82,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

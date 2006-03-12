@@ -25,8 +25,8 @@
 
 class BloodySkull : PlayerPawn;
 
-int FloorState;
-int RemoveState;
+state FloorState;
+state RemoveState;
 
 //============================================================================
 //
@@ -67,7 +67,7 @@ __states__
 	S_BLOODYSKULL6('BSKL', 6, 5.0 / 35.0, S_BLOODYSKULL7) { A_CheckSkullFloor(); }
 	S_BLOODYSKULL7('BSKL', 7, 5.0 / 35.0, S_BLOODYSKULL1) { A_CheckSkullFloor(); }
 	S_BLOODYSKULLX1('BSKL', 8, 16.0 / 35.0, S_BLOODYSKULLX1) { A_CheckSkullDone(); }
-	S_BLOODYSKULLX2('BSKL', 8, 1050.0 / 35.0, S_NULL) { }
+	S_BLOODYSKULLX2('BSKL', 8, 1050.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -95,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

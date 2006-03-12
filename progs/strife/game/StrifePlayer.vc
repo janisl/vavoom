@@ -25,9 +25,23 @@
 
 class StrifePlayer : PlayerPawn;
 
+//===========================================================================
+//
+//  StopMoving
+//
+//===========================================================================
+
+void StopMoving()
+{
+	// if in a walking frame, stop moving
+	if (State == S_PLAY_RUN1 || State == S_PLAY_RUN2 ||
+		State == S_PLAY_RUN3 || State == S_PLAY_RUN4)
+		SetState(IdleState);
+}
+
 __states__
 {
-	S_PLAY('PLAY', 0, -1.0, S_NULL) { }
+	S_PLAY('PLAY', 0, -1.0, none) { }
 	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) { }
 	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) { }
 	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) { }
@@ -53,7 +67,7 @@ __states__
 	S_PLAY_XDIE5('RGIB', 4, 5.0 / 35.0, S_PLAY_XDIE6) { A_XDying(); }
 	S_PLAY_XDIE6('RGIB', 5, 5.0 / 35.0, S_PLAY_XDIE7) { A_XDying(); }
 	S_PLAY_XDIE7('RGIB', 6, 5.0 / 35.0, S_PLAY_XDIE8) { A_XDying(); }
-	S_PLAY_XDIE8('RGIB', 7, 1400.0 / 35.0, S_NULL) { }
+	S_PLAY_XDIE8('RGIB', 7, 1400.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -82,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

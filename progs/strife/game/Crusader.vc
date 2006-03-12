@@ -156,7 +156,7 @@ __states__
 	S_CRUSADER_DIE7('ROB2', 12, 4.0 / 35.0, S_CRUSADER_DIE8) { A_XDying(); }
 	S_CRUSADER_DIE8('ROB2', 13, 4.0 / 35.0, S_CRUSADER_DIE9) { A_XDying(); }
 	S_CRUSADER_DIE9('ROB2', 14, 4.0 / 35.0, S_CRUSADER_DIE10) { A_Explode(); }
-	S_CRUSADER_DIE10('ROB2', 15, -1.0, S_NULL) { A_BossDeath(); }
+	S_CRUSADER_DIE10('ROB2', 15, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -183,6 +183,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

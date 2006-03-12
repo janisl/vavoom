@@ -136,7 +136,7 @@ __states__
 	S_POISONCLOUD_X1('PSBG', 7, 7.0 / 35.0, S_POISONCLOUD_X2) { }
 	S_POISONCLOUD_X2('PSBG', 6, 7.0 / 35.0, S_POISONCLOUD_X3) { }
 	S_POISONCLOUD_X3('PSBG', 5, 6.0 / 35.0, S_POISONCLOUD_X4) { }
-	S_POISONCLOUD_X4('PSBG', 3, 6.0 / 35.0, S_NULL) { }
+	S_POISONCLOUD_X4('PSBG', 3, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -158,6 +158,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

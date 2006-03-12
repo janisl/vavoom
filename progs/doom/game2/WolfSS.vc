@@ -65,7 +65,7 @@ __states__
 	S_SSWV_DIE2('SSWV', 9, 'monsters/ss/death.md2', 1, 5.0 / 35.0, S_SSWV_DIE3) { A_Scream(); }
 	S_SSWV_DIE3('SSWV', 10, 'monsters/ss/death.md2', 2, 5.0 / 35.0, S_SSWV_DIE4) { A_Fall(); }
 	S_SSWV_DIE4('SSWV', 11, 'monsters/ss/death.md2', 3, 5.0 / 35.0, S_SSWV_DIE5) { }
-	S_SSWV_DIE5('SSWV', 12, 'monsters/ss/death.md2', 4, -1.0, S_NULL) { }
+	S_SSWV_DIE5('SSWV', 12, 'monsters/ss/death.md2', 4, -1.0, none) { }
 	S_SSWV_XDIE1('SSWV', 13, 'monsters/ss/gibs.md2', 0, 5.0 / 35.0, S_SSWV_XDIE2) { }
 	S_SSWV_XDIE2('SSWV', 14, 'monsters/ss/gibs.md2', 1, 5.0 / 35.0, S_SSWV_XDIE3) { A_XScream(); }
 	S_SSWV_XDIE3('SSWV', 15, 'monsters/ss/gibs.md2', 2, 5.0 / 35.0, S_SSWV_XDIE4) { A_Fall(); }
@@ -74,7 +74,7 @@ __states__
 	S_SSWV_XDIE6('SSWV', 18, 'monsters/ss/gibs.md2', 5, 5.0 / 35.0, S_SSWV_XDIE7) { }
 	S_SSWV_XDIE7('SSWV', 19, 'monsters/ss/gibs.md2', 6, 5.0 / 35.0, S_SSWV_XDIE8) { }
 	S_SSWV_XDIE8('SSWV', 20, 'monsters/ss/gibs.md2', 7, 5.0 / 35.0, S_SSWV_XDIE9) { }
-	S_SSWV_XDIE9('SSWV', 21, 'monsters/ss/gibs.md2', 8, -1.0, S_NULL) { }
+	S_SSWV_XDIE9('SSWV', 21, 'monsters/ss/gibs.md2', 8, -1.0, none) { }
 	S_SSWV_RAISE1('SSWV', 12, 'monsters/ss/death.md2', 5, 5.0 / 35.0, S_SSWV_RAISE2) { }
 	S_SSWV_RAISE2('SSWV', 11, 'monsters/ss/death.md2', 6, 5.0 / 35.0, S_SSWV_RAISE3) { }
 	S_SSWV_RAISE3('SSWV', 10, 'monsters/ss/death.md2', 7, 5.0 / 35.0, S_SSWV_RAISE4) { }
@@ -103,6 +103,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:32:36  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -40,14 +40,6 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static state_t**	GStates;
-static int 			GNumStates;
-static mobjinfo_t*	GMobjInfo;
-static int			GNumMobjTypes;
-static mobjinfo_t*	GScriptIds;
-static int			GNumScriptIds;
-static VName*		GSpriteNames;
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern VEntity**	sv_mobjs;
@@ -106,30 +98,27 @@ void VEntity::Serialise(VStream& Strm)
 //
 //==========================================================================
 
-bool VEntity::SetState(int InState)
+bool VEntity::SetState(state_t* InState)
 {
 	guard(VEntity::SetState);
-	int state = InState;
-	state_t *st;
-
+	state_t *st = InState;
 	do
 	{
-		if (!state)
+		if (!st)
 		{
 			// Remove mobj
-			StateNum = 0;
+			State = NULL;
 			Remove();
 			return false;
 		}
 
-		StateNum = state;
-		st = GStates[state];
+		State = st;
 		StateTime = st->time;
-		SpriteIndex = st->sprite;
-		SpriteName = GSpriteNames[st->sprite];
+		SpriteIndex = st->SpriteIndex;
+		SpriteName = st->SpriteName;
 		SpriteFrame = st->frame;
 		if (!(EntityFlags & EF_FixedModel))
-			ModelIndex = st->model_index;
+			ModelIndex = st->ModelIndex;
 		ModelFrame = st->model_frame;
 		NextState = st->nextstate;
 
@@ -137,7 +126,7 @@ bool VEntity::SetState(int InState)
 		// Call action functions when the state is set
 		svpr.Exec(st->function, (int)this);
 
-		state = st->nextstate;
+		st = NextState;
 	}
 	while (!StateTime);
 	return true;
@@ -152,18 +141,20 @@ bool VEntity::SetState(int InState)
 //
 //==========================================================================
 
-void VEntity::SetInitialState(int InState)
+void VEntity::SetInitialState(state_t* InState)
 {
 	guard(VEntity::SetInitialState);
-	StateNum = InState;
-	state_t* st = GStates[InState];
-	StateTime = st->time;
-	SpriteIndex = st->sprite;
-	SpriteName = GSpriteNames[st->sprite];
-	SpriteFrame = st->frame;
-	ModelIndex = st->model_index;
-	ModelFrame = st->model_frame;
-	NextState = st->nextstate;
+	State = InState;
+	if (InState)
+	{
+		StateTime = InState->time;
+		SpriteIndex = InState->SpriteIndex;
+		SpriteName = InState->SpriteName;
+		SpriteFrame = InState->frame;
+		ModelIndex = InState->ModelIndex;
+		ModelFrame = InState->model_frame;
+		NextState = InState->nextstate;
+	}
 	unguard;
 }
 
@@ -173,18 +164,15 @@ void VEntity::SetInitialState(int InState)
 //
 //==========================================================================
 
-int VEntity::FindState(VName StateName)
+state_t* VEntity::FindState(VName StateName)
 {
 	guard(VEntity::FindState);
-	for (int i = 0; i < GNumStates; i++)
+	state_t* s = GetClass()->FindState(StateName);
+	if (!s)
 	{
-		if (GStates[i]->Name == StateName)
-		{
-			return i;
-		}
+		Host_Error("Can't find state %s", *StateName);
 	}
-	Host_Error("Can't find state %s", *StateName);
-	return 0;
+	return s;
 	unguard;
 }
 
@@ -194,7 +182,7 @@ int VEntity::FindState(VName StateName)
 //
 //==========================================================================
 
-boolean VEntity::CheckWater(void)
+bool VEntity::CheckWater()
 {
 	guard(VEntity::CheckWater);
 	TVec point;
@@ -417,7 +405,7 @@ static boolean PIT_CheckLine(line_t * ld)
 //
 //==========================================================================
 
-boolean VEntity::CheckPosition(TVec Pos)
+bool VEntity::CheckPosition(TVec Pos)
 {
 	guard(VEntity::CheckPosition);
 	int xl;
@@ -738,7 +726,7 @@ static boolean PIT_CheckRelLine(line_t * ld)
 //
 //==========================================================================
 
-boolean VEntity::CheckRelPosition(TVec Pos)
+bool VEntity::CheckRelPosition(TVec Pos)
 {
 	guard(VEntity::CheckRelPosition);
 	int xl;
@@ -832,7 +820,7 @@ boolean VEntity::CheckRelPosition(TVec Pos)
 //
 //==========================================================================
 
-boolean VEntity::TryMove(TVec newPos)
+bool VEntity::TryMove(TVec newPos)
 {
 	boolean check;
 	TVec oldorg;
@@ -1589,14 +1577,14 @@ IMPLEMENT_FUNCTION(VEntity, Remove)
 
 IMPLEMENT_FUNCTION(VEntity, SetState)
 {
-	int state = PR_Pop();
-	VEntity *Self = (VEntity *)PR_Pop();
+	state_t* state = (state_t*)PR_Pop();
+	VEntity *Self = (VEntity*)PR_Pop();
 	PR_Push(Self->SetState(state));
 }
 
 IMPLEMENT_FUNCTION(VEntity, SetInitialState)
 {
-	int state = PR_Pop();
+	state_t* state = (state_t*)PR_Pop();
 	VEntity *Self = (VEntity *)PR_Pop();
 	Self->SetInitialState(state);
 }
@@ -1605,7 +1593,7 @@ IMPLEMENT_FUNCTION(VEntity, FindState)
 {
 	VName StateName = PR_PopName();
 	VEntity *Self = (VEntity*)PR_Pop();
-	PR_Push(Self->FindState(StateName));
+	PR_Push((int)Self->FindState(StateName));
 }
 
 //==========================================================================
@@ -1801,33 +1789,31 @@ IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
 //
 //===========================================================================
 
-void VViewEntity::SetState(int InStnum)
+void VViewEntity::SetState(state_t* InState)
 {
 	guard(VViewEntity::SetState);
-	int stnum = InStnum;
-	state_t *state;
+	state_t *state = InState;
 
 	do
 	{
-		if (!stnum)
+		if (!state)
 		{
 			// Object removed itself.
-			StateNum = 0;
+			State = NULL;
 			break;
 		}
-		StateNum = stnum;
-		state = GStates[stnum];
+		State = state;
 		StateTime = state->time;	// could be 0
-		SpriteIndex = state->sprite;
+		SpriteIndex = state->SpriteIndex;
 		SpriteFrame = state->frame;
-		ModelIndex = state->model_index;
+		ModelIndex = state->ModelIndex;
 		ModelFrame = state->model_frame;
 		NextState = state->nextstate;
 		// Call action routine.
 		svpr.Exec(state->function, (int)this);
-		stnum = NextState;
+		state = NextState;
 	}
-	while (StateNum && !StateTime);	// An initial state of 0 could cycle through.
+	while (state && !StateTime);	// An initial state of 0 could cycle through.
 	unguard;
 }
 
@@ -1839,7 +1825,7 @@ void VViewEntity::SetState(int InStnum)
 
 IMPLEMENT_FUNCTION(VViewEntity, SetState)
 {
-	int state = PR_Pop();
+	state_t* state = (state_t*)PR_Pop();
 	VViewEntity *Self = (VViewEntity *)PR_Pop();
 	Self->SetState(state);
 }
@@ -1876,13 +1862,6 @@ void VEntity::InitFuncIndexes(void)
 void EntInit()
 {
 	GGameInfo->tmtrace = &tmtrace;
-	GStates = svpr.States;
-	GNumStates = svpr.NumStates;
-	GMobjInfo = svpr.MobjInfo;
-	GNumMobjTypes = svpr.NumMobjInfo;
-	GScriptIds = svpr.ScriptIds;
-	GNumScriptIds = svpr.NumScriptIds;
-	GSpriteNames = svpr.SpriteNames;
 	VEntity::InitFuncIndexes();
 }
 
@@ -1895,11 +1874,11 @@ void EntInit()
 VClass* SV_FindClassFromEditorId(int Id)
 {
 	guard(SV_FindClassFromEditorId);
-	for (int i = 0; i < GNumMobjTypes; i++)
+	for (int i = 0; i < VClass::GMobjInfos.Num(); i++)
 	{
-		if (Id == GMobjInfo[i].doomednum)
+		if (Id == VClass::GMobjInfos[i].doomednum)
 		{
-			return GMobjInfo[i].class_id;
+			return VClass::GMobjInfos[i].class_id;
 		}
 	}
 	return NULL;
@@ -1915,11 +1894,11 @@ VClass* SV_FindClassFromEditorId(int Id)
 VClass* SV_FindClassFromScriptId(int Id)
 {
 	guard(SV_FindClassFromScriptId);
-	for (int i = 0; i < GNumScriptIds; i++)
+	for (int i = 0; i < VClass::GScriptIds.Num(); i++)
 	{
-		if (Id == GScriptIds[i].doomednum)
+		if (Id == VClass::GScriptIds[i].doomednum)
 		{
-			return GScriptIds[i].class_id;
+			return VClass::GScriptIds[i].class_id;
 		}
 	}
 	return NULL;
@@ -1929,9 +1908,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.23  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.22  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	

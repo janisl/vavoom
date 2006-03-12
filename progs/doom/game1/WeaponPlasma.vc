@@ -34,7 +34,10 @@ class WeaponPlasma : Weapon;
 void A_FirePlasma()
 {
 	Player(Player).Ammo[Ammo]--;
-	Player(Player).SetPsprite(ps_flash, FlashState + (P_Random() & 1));
+	if (!(P_Random() & 1))
+		Player(Player).SetPsprite(ps_flash, FlashState);
+	else
+		Player(Player).SetPsprite(ps_flash, S_PLASMAFLASH2);
 	Player(Player).SpawnPlayerMissile(PlasmaShot);
 }
 
@@ -70,6 +73,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 19:54:10  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/03/02 18:30:31  dj_jl
 //  Don't use game specific classes in common.
 //

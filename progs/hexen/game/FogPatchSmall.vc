@@ -33,7 +33,7 @@ __states__
 	S_FOGPATCHS3('FOGS', 2, 7.0 / 35.0, S_FOGPATCHS4) { A_FogMove(); }
 	S_FOGPATCHS4('FOGS', 3, 7.0 / 35.0, S_FOGPATCHS5) { A_FogMove(); }
 	S_FOGPATCHS5('FOGS', 4, 7.0 / 35.0, S_FOGPATCHS1) { A_FogMove(); }
-	S_FOGPATCHS0('FOGS', 4, 5.0 / 35.0, S_NULL) { }
+	S_FOGPATCHS0('FOGS', 4, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

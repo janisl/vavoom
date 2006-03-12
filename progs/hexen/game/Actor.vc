@@ -59,15 +59,15 @@ const float MONS_LOOK_RANGE 	= (16.0 * 64.0);
 const int MONS_LOOK_LIMIT 		= 64;
 
 //  States
-int IdleState;
-int SeeState;
-int PainState;
-int MeleeState;
-int MissileState;
-int CrashState;
-int DeathState;
-int GibsDeathState;
-int IceDeathState;
+state IdleState;
+state SeeState;
+state PainState;
+state MeleeState;
+state MissileState;
+state CrashState;
+state DeathState;
+state GibsDeathState;
+state IceDeathState;
 
 //  Sounds
 name SightSound;
@@ -1231,7 +1231,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		}
 		Enemy = source;
 		Pawn(self).Threshold = BASETHRESHOLD;
-		if (StateNum == IdleState && SeeState != S_NULL)
+		if (State == IdleState && SeeState)
 		{
 			SetState(SeeState);
 		}
@@ -1902,22 +1902,23 @@ void ApplyFriction()
 		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
 		// If in a walking frame, stop moving
-		if (bIsPlayer)
-		{
-			int sn;
-
-			sn = StateNum - SeeState;
-			if (sn >= 0 && sn < 4)
-			{
-				SetState(IdleState);
-			}
-		}
+		StopMoving();
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	else
 	{
 		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
 	}
+}
+
+//==========================================================================
+//
+//	StopMoving
+//
+//==========================================================================
+
+void StopMoving()
+{
 }
 
 //==========================================================================
@@ -2840,7 +2841,7 @@ bool SectorChanged(int CrushChange)
 		}
 		else
 		{
-			if (StateNum != S_GIBS1)
+			if (State != S_GIBS1)
 			{
 				SetState(S_GIBS1);
 				Height = 0.0;
@@ -4256,7 +4257,7 @@ void A_PigPain()
 
 __states__
 {
-	S_FREETARGMOBJ('ACLO', 4, 1050.0 / 35.0, S_NULL) { A_FreeTargMobj(); }
+	S_FREETARGMOBJ('ACLO', 4, 1050.0 / 35.0, none) { A_FreeTargMobj(); }
 	S_ZTREEDES_X1('TRDT', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X2) { }
 	S_ZTREEDES_X2('TRDT', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X3) { }
 	S_ZTREEDES_X3('TRDT', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X4) { }
@@ -4266,8 +4267,8 @@ __states__
 	S_ZTREEDES_X7('TRDT', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_ZTREEDES_X8) { }
 	S_ZTREEDES_X8('TRDT', 14, 5.0 / 35.0, S_ZTREEDES_X9) { }
 	S_ZTREEDES_X9('TRDT', 15, 5.0 / 35.0, S_ZTREEDES_X10) { }
-	S_ZTREEDES_X10('TRDT', 16, -1.0, S_NULL) { }
-	S_GIBS1('GIBS', 0, -1.0, S_NULL) { }
+	S_ZTREEDES_X10('TRDT', 16, -1.0, none) { }
+	S_GIBS1('GIBS', 0, -1.0, none) { }
 	S_PLAY_F_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_F_FDTH2) { }
 	S_PLAY_F_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) { }
 	S_PLAY_C_FDTH1('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_C_FDTH2) { }
@@ -4291,7 +4292,7 @@ __states__
 	S_PLAY_FDTH17('FDTH', 20 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) { }
 	S_PLAY_FDTH18('FDTH', 21 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) { }
 	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) { A_CheckBurnGone(); }
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, S_NULL) { }
+	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -4303,6 +4304,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.29  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

@@ -173,6 +173,7 @@ enum EKeyword
 	KW_NULL,
 	KW_RETURN,
 	KW_SELF,
+	KW_STATE,
 	KW_STATIC,
 	KW_STRING,
 	KW_STRUCT,
@@ -415,53 +416,29 @@ public:
 	void AddField(field_t* f);
 };
 
-class TClass : public VMemberBase
-{
-public:
-	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
-
-	TClass*			ParentClass;
-	field_t*		Fields;
-	int				VTable;
-	int				NumMethods;
-	int				Size;
-	int				Index;
-
-	TClass()
-	: ParentClass(NULL)
-	, Fields(NULL)
-	, VTable(0)
-	, NumMethods(0)
-	, Size(0)
-	, Index(0)
-	{}
-
-	void Serialise(VStream&);
-
-	void AddField(field_t* f);
-};
-
 class state_t : public VMemberBase
 {
 public:
-	int			sprite;
+	VName		SpriteName;
 	int			frame;
-	int			model_index;
+	VName		ModelName;
 	int			model_frame;
 	float		time;
-	int			nextstate;
+	state_t*	nextstate;
 	TFunction*	function;
 	TClass*		OuterClass;
+	state_t*	Next;
 
 	state_t()
-	: sprite(0)
+	: SpriteName(NAME_None)
 	, frame(0)
-	, model_index(0)
+	, ModelName(NAME_None)
 	, model_frame(0)
 	, time(0)
 	, nextstate(0)
 	, function(0)
 	, OuterClass(0)
+	, Next(0)
 	{}
 
 	void Serialise(VStream&);
@@ -471,6 +448,35 @@ struct mobjinfo_t
 {
 	int		doomednum;
 	TClass*	class_id;
+};
+
+class TClass : public VMemberBase
+{
+public:
+	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
+
+	TClass*			ParentClass;
+	field_t*		Fields;
+	state_t*		States;
+	int				VTable;
+	int				NumMethods;
+	int				Size;
+	int				Index;
+
+	TClass()
+	: ParentClass(NULL)
+	, Fields(NULL)
+	, States(NULL)
+	, VTable(0)
+	, NumMethods(0)
+	, Size(0)
+	, Index(0)
+	{}
+
+	void Serialise(VStream&);
+
+	void AddField(field_t* f);
+	void AddState(state_t* s);
 };
 
 class TPackage : public VMemberBase
@@ -564,6 +570,7 @@ void ParseStates(TClass*);
 void AddToMobjInfo(int Index, TClass* Class);
 void AddToScriptIds(int Index, TClass* Class);
 void SkipStates(TClass*);
+int CheckForState(VName StateName, TClass* InClass);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -592,9 +599,7 @@ extern TArray<TStruct*>		structtypes;
 
 extern TArray<field_t*>		FieldList;
 
-extern TArray<VName>		sprite_names;
-extern TArray<VName>		models;
-extern TArray<state_t>		states;
+extern TArray<state_t*>		states;
 extern TArray<mobjinfo_t>	mobj_info;
 extern TArray<mobjinfo_t>	script_ids;
 
@@ -672,9 +677,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2006/03/12 20:04:50  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.44  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.43  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
 //	

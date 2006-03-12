@@ -150,7 +150,7 @@ __states__
 	S_CYBER_DIE7('CYBR', 13, 'monsters/cyber/death.md2', 6, 10.0 / 35.0, S_CYBER_DIE8) { }
 	S_CYBER_DIE8('CYBR', 14, 'monsters/cyber/death.md2', 7, 10.0 / 35.0, S_CYBER_DIE9) { }
 	S_CYBER_DIE9('CYBR', 15, 'monsters/cyber/death.md2', 8, 30.0 / 35.0, S_CYBER_DIE10) { }
-	S_CYBER_DIE10('CYBR', 15, 'monsters/cyber/death.md2', 9, -1.0, S_NULL) { A_BossDeath(); }
+	S_CYBER_DIE10('CYBR', 15, 'monsters/cyber/death.md2', 9, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -178,6 +178,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.8  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

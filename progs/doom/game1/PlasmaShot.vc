@@ -34,7 +34,7 @@ __states__
 	S_PLASEXP2('PLSE', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP3) { }
 	S_PLASEXP3('PLSE', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP4) { }
 	S_PLASEXP4('PLSE', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLASEXP5) { }
-	S_PLASEXP5('PLSE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_PLASEXP5('PLSE', 4 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -55,6 +55,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:54:10  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

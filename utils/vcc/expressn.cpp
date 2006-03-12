@@ -485,6 +485,15 @@ static TTree ParseExpressionPriority0()
 					op = TTree((EType)Constants[num].Type);
 					return op;
 				}
+
+				num = CheckForState(tk_Name, Class);
+				if (num != -1)
+				{
+					TK_NextToken();
+					AddStatement(OPC_PushState, num);
+					op = TTree(ev_state);
+					return op;
+				}
 			}
 
 			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
@@ -538,6 +547,14 @@ static TTree ParseExpressionPriority0()
 					AddStatement(OPC_Add);
 					op = EmitPushPointed(field->type);
 				}
+				return op;
+			}
+
+			int num = CheckForState(Name, SelfClass);
+			if (num != -1)
+			{
+				AddStatement(OPC_PushState, num);
+				op = TTree(ev_state);
 				return op;
 			}
 		}
@@ -749,31 +766,14 @@ static TTree ParseExpressionPriority2()
 		if (TK_Check(PU_NOT))
 		{
 			op = ParseExpressionPriority2();
-			if (op.Type.type == ev_int)
-			{
-				AddStatement(OPC_NegateLogical);
-			}
-			else if (op.Type.type == ev_float)
-			{
-				AddStatement(OPC_NegateLogical);
-			}
-			else if (op.Type.type == ev_name)
-			{
-				AddStatement(OPC_NegateLogical);
-			}
-			else if (op.Type.type == ev_string)
-			{
-				AddStatement(OPC_NegateLogical);
-			}
-			else if (op.Type.type == ev_pointer)
-			{
-				AddStatement(OPC_NegateLogical);
-			}
-			else if (op.Type.type == ev_reference)
-			{
-				AddStatement(OPC_NegateLogical);
-			}
-			else if (op.Type.type == ev_classid)
+			if (op.Type.type == ev_int ||
+				op.Type.type == ev_float ||
+				op.Type.type == ev_name ||
+				op.Type.type == ev_string ||
+				op.Type.type == ev_pointer ||
+				op.Type.type == ev_reference ||
+				op.Type.type == ev_classid ||
+				op.Type.type == ev_state)
 			{
 				AddStatement(OPC_NegateLogical);
 			}
@@ -1233,6 +1233,10 @@ static TTree ParseExpressionPriority7()
 			{
 				AddStatement(OPC_Equals);
 			}
+			else if (op1.Type.type == ev_state && op2.Type.type == ev_state)
+			{
+				AddStatement(OPC_Equals);
+			}
 			else if (op1.Type.type == ev_reference && op2.Type.type == ev_reference)
 			{
 				AddStatement(OPC_Equals);
@@ -1271,6 +1275,10 @@ static TTree ParseExpressionPriority7()
 				AddStatement(OPC_VNotEquals);
 			}
 			else if (op1.Type.type == ev_classid && op2.Type.type == ev_classid)
+			{
+				AddStatement(OPC_NotEquals);
+			}
+			else if (op1.Type.type == ev_state && op2.Type.type == ev_state)
 			{
 				AddStatement(OPC_NotEquals);
 			}
@@ -1482,7 +1490,13 @@ static TTree ParseExpressionPriority14()
 		{
 			AddStatement(OPC_VAssignDrop);
 		}
-		else if (type.type == ev_classid && op2.Type.type == ev_classid)
+		else if (type.type == ev_classid && (op2.Type.type == ev_classid ||
+			(op2.Type.type == ev_reference && op2.Type.Class == NULL)))
+		{
+			AddStatement(OPC_AssignDrop);
+		}
+		else if (type.type == ev_state && (op2.Type.type == ev_state ||
+			(op2.Type.type == ev_reference && op2.Type.Class == NULL)))
 		{
 			AddStatement(OPC_AssignDrop);
 		}
@@ -1732,9 +1746,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/03/12 20:04:50  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.42  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.41  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
 //	

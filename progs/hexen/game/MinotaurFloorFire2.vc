@@ -35,7 +35,7 @@ __states__
 	S_MNTRFX3_6('FX13', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_MNTRFX3_7) { }
 	S_MNTRFX3_7('FX13', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_8) { }
 	S_MNTRFX3_8('FX13', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_MNTRFX3_9) { }
-	S_MNTRFX3_9('FX13', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_MNTRFX3_9('FX13', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:57  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

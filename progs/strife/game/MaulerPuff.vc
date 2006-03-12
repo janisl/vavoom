@@ -33,7 +33,7 @@ __states__
 	S_POW1_2('POW1', 1, 4.0 / 35.0, S_POW1_3) { }
 	S_POW1_3('POW1', 2, 4.0 / 35.0, S_POW1_4) { }
 	S_POW1_4('POW1', 3, 4.0 / 35.0, S_POW1_5) { }
-	S_POW1_5('POW1', 4, 4.0 / 35.0, S_NULL) { }
+	S_POW1_5('POW1', 4, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

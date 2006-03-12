@@ -65,7 +65,7 @@ __states__
 	S_SPECTER_DIE15('AL1P', 14 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE16) { }
 	S_SPECTER_DIE16('AL1P', 15 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE17) { }
 	S_SPECTER_DIE17('AL1P', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_SPECTER_DIE18) { }
-	S_SPECTER_DIE18('AL1P', 17 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { A_BossDeath(); }
+	S_SPECTER_DIE18('AL1P', 17 | FF_FULLBRIGHT, 5.0 / 35.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -101,6 +101,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

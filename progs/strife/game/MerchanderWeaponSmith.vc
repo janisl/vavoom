@@ -105,6 +105,9 @@ defaultproperties
 	bActivateMCross = false;
 	bNoDeathmatch = true;
 	IdleState = S_MERCHANDER_STAND1;
+	IdleRightState = S_MERCHANDER_LOOK1;
+	IdleLeftState = S_MERCHANDER_LOOK2;
+	WalkState = S_MERCHANDER_BD1;
 	SeeState = S_MERCHANDER_PAIN1;
 	PainState = S_MERCHANDER_PAIN1;
 	PainSound = 'smith/pain';
@@ -113,6 +116,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/02/13 18:30:17  dj_jl
 //  Moved all server progs global functions to classes.
 //

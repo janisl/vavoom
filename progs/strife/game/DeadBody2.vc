@@ -30,7 +30,7 @@ class DeadBody2 : Decoration;
 
 __states__
 {
-	S_DEAD_BODY_2('DEAD', 0, -1.0, S_NULL) { }
+	S_DEAD_BODY_2('DEAD', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -41,6 +41,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2004/01/30 17:43:11  dj_jl
 //  Implemented many action functions.
 //

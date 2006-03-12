@@ -151,7 +151,7 @@ __states__
 		bHidden = true;
 		bSpecial = false;
 	}
-	S_DORMANT_PICKUP2('', 0, -1.0, S_NULL)
+	S_DORMANT_PICKUP2('', 0, -1.0, none)
 	{
 		Actor A;
 
@@ -176,6 +176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.11  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

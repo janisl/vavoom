@@ -76,7 +76,7 @@ __states__
 	S_TROO_DIE2('TROO', 9, 'monsters/imp/death.md2', 1, 8.0 / 35.0, S_TROO_DIE3) { A_Scream(); }
 	S_TROO_DIE3('TROO', 10, 'monsters/imp/death.md2', 2, 6.0 / 35.0, S_TROO_DIE4) { }
 	S_TROO_DIE4('TROO', 11, 'monsters/imp/death.md2', 3, 6.0 / 35.0, S_TROO_DIE5) { A_Fall(); }
-	S_TROO_DIE5('TROO', 12, 'monsters/imp/death.md2', 4, -1.0, S_NULL) { }
+	S_TROO_DIE5('TROO', 12, 'monsters/imp/death.md2', 4, -1.0, none) { }
 	S_TROO_XDIE1('TROO', 13, 'monsters/imp/gibs.md2', 0, 5.0 / 35.0, S_TROO_XDIE2) { }
 	S_TROO_XDIE2('TROO', 14, 'monsters/imp/gibs.md2', 1, 5.0 / 35.0, S_TROO_XDIE3) { A_XScream(); }
 	S_TROO_XDIE3('TROO', 15, 'monsters/imp/gibs.md2', 2, 5.0 / 35.0, S_TROO_XDIE4) { }
@@ -84,7 +84,7 @@ __states__
 	S_TROO_XDIE5('TROO', 17, 'monsters/imp/gibs.md2', 4, 5.0 / 35.0, S_TROO_XDIE6) { }
 	S_TROO_XDIE6('TROO', 18, 'monsters/imp/gibs.md2', 5, 5.0 / 35.0, S_TROO_XDIE7) { }
 	S_TROO_XDIE7('TROO', 19, 'monsters/imp/gibs.md2', 6, 5.0 / 35.0, S_TROO_XDIE8) { }
-	S_TROO_XDIE8('TROO', 20, 'monsters/imp/gibs.md2', 7, -1.0, S_NULL) { }
+	S_TROO_XDIE8('TROO', 20, 'monsters/imp/gibs.md2', 7, -1.0, none) { }
 	S_TROO_RAISE1('TROO', 12, 'monsters/imp/death.md2', 5, 8.0 / 35.0, S_TROO_RAISE2) { }
 	S_TROO_RAISE2('TROO', 11, 'monsters/imp/death.md2', 6, 8.0 / 35.0, S_TROO_RAISE3) { }
 	S_TROO_RAISE3('TROO', 10, 'monsters/imp/death.md2', 7, 6.0 / 35.0, S_TROO_RAISE4) { }
@@ -118,6 +118,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

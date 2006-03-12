@@ -215,6 +215,10 @@ static TType CheckForTypeKeyword()
 	{
 		return TType(ev_classid);
 	}
+	if (TK_Check(KW_STATE))
+	{
+		return TType(ev_state);
+	}
 	if (TK_Check(KW_BOOL))
 	{
 		TType ret(ev_bool);
@@ -354,6 +358,7 @@ int TType::GetSize() const
 						return (Struct->Size + 3) & ~3;
 	case ev_vector:		return 12;
 	case ev_classid:	return 4;
+	case ev_state:		return 4;
 	case ev_bool:		return 4;
 	}
 	return 0;
@@ -521,7 +526,9 @@ void TType::CheckMatch(const TType& Other) const
 	{
 		return;
 	}
-	if (type == ev_reference && Class == NULL && Other.type == ev_delegate)
+	//	Allow assigning none to states, classes and delegates
+	if (type == ev_reference && Class == NULL && (Other.type == ev_classid ||
+		Other.type == ev_state || Other.type == ev_delegate))
 	{
 		return;
 	}
@@ -577,6 +584,7 @@ void TType::GetName(char* Dest) const
 	case ev_struct:		strcpy(Dest, *Struct->Name); break;
 	case ev_vector:		strcpy(Dest, "vector"); break;
 	case ev_classid:	strcpy(Dest, "classid"); break;
+	case ev_state:		strcpy(Dest, "state"); break;
 	case ev_bool:		strcpy(Dest, "bool"); break;
 	default:			strcpy(Dest, "unknown"); break;
 	}
@@ -1127,6 +1135,26 @@ void TClass::AddField(field_t* f)
 	}
 	f->Next = NULL;
 	f->Index = FieldList.AddItem(f);
+}
+
+//==========================================================================
+//
+//	TClass::AddState
+//
+//==========================================================================
+
+void TClass::AddState(state_t* s)
+{
+	if (!States)
+		States = s;
+	else
+	{
+		state_t* Prev = States;
+		while (Prev->Next)
+			Prev = Prev->Next;
+		Prev->Next = s;
+	}
+	s->Next = NULL;
 }
 
 //==========================================================================
@@ -1702,9 +1730,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2006/03/12 20:04:50  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.47  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.46  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
 //	

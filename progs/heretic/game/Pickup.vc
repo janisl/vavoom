@@ -64,7 +64,7 @@ __states__
 	S_HIDESPECIAL8('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL9) { }
 	S_HIDESPECIAL9('ACLO', 3, 4.0 / 35.0, S_HIDESPECIAL10) { }
 	S_HIDESPECIAL10('ACLO', 2, 4.0 / 35.0, S_HIDESPECIAL11) { }
-	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, S_NULL) { A_RestoreSpecialThing2(); }
+	S_HIDESPECIAL11('ACLO', 3, 4.0 / 35.0, none) { A_RestoreSpecialThing2(); }
 }
 
 //==========================================================================
@@ -103,6 +103,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2005/11/30 23:52:04  dj_jl
 //  Switch statement requires integer.
 //

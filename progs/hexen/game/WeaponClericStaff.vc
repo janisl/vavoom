@@ -26,8 +26,8 @@
 class WeaponClericStaff : Weapon;
 
 int BlinkCount;
-int BlinkState;
-int Attack2State;
+state BlinkState;
+state Attack2State;
 
 //============================================================================
 //
@@ -201,6 +201,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.8  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

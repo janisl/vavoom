@@ -50,16 +50,16 @@ const int
 	USE_MACE_AMMO_2 = 5;
 
 int Ammo;
-int UpState;
-int DownState;
-int ReadyState;
-int AttackState;
-int HoldAttackState;
-int UpState2;
-int DownState2;
-int ReadyState2;
-int AttackState2;
-int HoldAttackState2;
+state UpState;
+state DownState;
+state ReadyState;
+state AttackState;
+state HoldAttackState;
+state UpState2;
+state DownState2;
+state ReadyState2;
+state AttackState2;
+state HoldAttackState2;
 float PSpriteSY;
 
 void WeaponLevel2Init() { }
@@ -97,8 +97,8 @@ void A_WeaponReady()
 		return;
 	}
 	// Change player from attack state
-	if (Player.MO.StateNum == Actor(Player.MO).MissileState ||
-		Player.MO.StateNum == PlayerPawn(Player.MO).Attack2State)
+	if (Player.MO.State == Actor(Player.MO).MissileState ||
+		Player.MO.State == PlayerPawn(Player.MO).Attack2State)
 	{
 		Player.MO.SetState(Actor(Player.MO).IdleState);
 	}
@@ -176,7 +176,7 @@ void A_Lower()
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
-		Player(Player).SetPsprite(ps_weapon, S_NULL);
+		Player(Player).SetPsprite(ps_weapon, none);
 		return;
 	}
 	Player(Player).ReadyWeapon = Player(Player).PendingWeapon;
@@ -251,7 +251,7 @@ void A_Light0()
 //
 __states__
 {
-	S_LIGHTDONE('STFF', 0, 0.0 / 35.0, S_NULL) { A_Light0(); }
+	S_LIGHTDONE('STFF', 0, 0.0 / 35.0, none) { A_Light0(); }
 }
 
 defaultproperties
@@ -261,6 +261,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.8  2006/03/02 18:33:23  dj_jl
 //  Don't use game specific classes in common.
 //

@@ -31,7 +31,7 @@ __states__
 	S_PHOENIXPUFF2('FX04', 2, 4.0 / 35.0, S_PHOENIXPUFF3) { }
 	S_PHOENIXPUFF3('FX04', 3, 4.0 / 35.0, S_PHOENIXPUFF4) { }
 	S_PHOENIXPUFF4('FX04', 4, 4.0 / 35.0, S_PHOENIXPUFF5) { }
-	S_PHOENIXPUFF5('FX04', 5, 4.0 / 35.0, S_NULL) { }
+	S_PHOENIXPUFF5('FX04', 5, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

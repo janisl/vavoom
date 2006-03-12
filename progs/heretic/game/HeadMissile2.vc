@@ -33,7 +33,7 @@ __states__
 	S_HEADFXI2_1('FX05', 3, 5.0 / 35.0, S_HEADFXI2_2) { }
 	S_HEADFXI2_2('FX05', 4, 5.0 / 35.0, S_HEADFXI2_3) { }
 	S_HEADFXI2_3('FX05', 5, 5.0 / 35.0, S_HEADFXI2_4) { }
-	S_HEADFXI2_4('FX05', 6, 5.0 / 35.0, S_NULL) { }
+	S_HEADFXI2_4('FX05', 6, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

@@ -30,8 +30,8 @@ __states__
 	S_SLUDGECHUNK1('SLDG', 0, 8.0 / 35.0, S_SLUDGECHUNK2) { }
 	S_SLUDGECHUNK2('SLDG', 1, 8.0 / 35.0, S_SLUDGECHUNK3) { }
 	S_SLUDGECHUNK3('SLDG', 2, 8.0 / 35.0, S_SLUDGECHUNK4) { }
-	S_SLUDGECHUNK4('SLDG', 3, 8.0 / 35.0, S_NULL) { }
-	S_SLUDGECHUNKX('SLDG', 3, 6.0 / 35.0, S_NULL) { }
+	S_SLUDGECHUNK4('SLDG', 3, 8.0 / 35.0, none) { }
+	S_SLUDGECHUNKX('SLDG', 3, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

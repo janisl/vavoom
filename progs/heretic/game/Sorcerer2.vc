@@ -26,9 +26,9 @@
 class Sorcerer2 : Pawn
 	__scriptid__(143);
 
-int RiseState;
-int TeleportState;
-int DeathLoopState;
+state RiseState;
+state TeleportState;
+state DeathLoopState;
 
 //==========================================================================
 //
@@ -330,7 +330,7 @@ __states__
 	S_SOR2_DIE12('SDTH', 11, 'monsters/dsparil/skel.md2', 5, 6.0 / 35.0, S_SOR2_DIE13) { }
 	S_SOR2_DIE13('SDTH', 12, 'monsters/dsparil/skel.md2', 6, 6.0 / 35.0, S_SOR2_DIE14) { }
 	S_SOR2_DIE14('SDTH', 13, 'monsters/dsparil/skel.md2', 7, 6.0 / 35.0, S_SOR2_DIE15) { }
-	S_SOR2_DIE15('SDTH', 14, 'monsters/dsparil/skel.md2', 8, -1.0, S_NULL) { A_BossDeath(); }
+	S_SOR2_DIE15('SDTH', 14, 'monsters/dsparil/skel.md2', 8, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -361,6 +361,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

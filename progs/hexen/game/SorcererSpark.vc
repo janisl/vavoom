@@ -33,7 +33,7 @@ __states__
 	S_SORCSPARK4('SBFX', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_SORCSPARK5) { }
 	S_SORCSPARK5('SBFX', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_SORCSPARK6) { }
 	S_SORCSPARK6('SBFX', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_SORCSPARK7) { }
-	S_SORCSPARK7('SBFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_SORCSPARK7('SBFX', 6 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

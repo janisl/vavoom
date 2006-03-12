@@ -27,7 +27,7 @@ class Imp : Pawn
 	__mobjinfo__(66)
 	__scriptid__(5);
 
-int XCrashState;
+state XCrashState;
 
 //==========================================================================
 //
@@ -197,10 +197,10 @@ __states__
 	S_IMP_CRASH1('IMPX', 8, 7.0 / 35.0, S_IMP_CRASH2) { A_ImpExplode(); }
 	S_IMP_CRASH2('IMPX', 9, 7.0 / 35.0, S_IMP_CRASH3) { A_Scream(); }
 	S_IMP_CRASH3('IMPX', 10, 7.0 / 35.0, S_IMP_CRASH4) { }
-	S_IMP_CRASH4('IMPX', 11, -1.0, S_NULL) { }
+	S_IMP_CRASH4('IMPX', 11, -1.0, none) { }
 	S_IMP_XCRASH1('IMPX', 23, 7.0 / 35.0, S_IMP_XCRASH2) { }
 	S_IMP_XCRASH2('IMPX', 24, 7.0 / 35.0, S_IMP_XCRASH3) { }
-	S_IMP_XCRASH3('IMPX', 25, -1.0, S_NULL) { }
+	S_IMP_XCRASH3('IMPX', 25, -1.0, none) { }
 }
 
 defaultproperties
@@ -235,6 +235,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -298,15 +298,6 @@ void TProgs::Load(const char *AName)
 	Statements = Z_CNew<int>(Progs.num_statements);
 	VTables = Z_CNew<FFunction*>(Progs.num_vtables);
 
-	NumSpriteNames = Progs.num_sprnames;
-	SpriteNames = Z_CNew<VName>(NumSpriteNames);
-	NumModelNames = Progs.num_mdlnames;
-	ModelNames = Z_CNew<VName>(NumModelNames);
-	NumStates = Progs.num_states;
-	NumMobjInfo = Progs.num_mobjinfo;
-	MobjInfo = Z_CNew<mobjinfo_t>(NumMobjInfo);
-	NumScriptIds = Progs.num_scriptids;
-	ScriptIds = Z_CNew<mobjinfo_t>(NumScriptIds);
 	NumStructs = Progs.num_structs;
 	NumFunctions = Progs.num_functions;
 
@@ -383,7 +374,7 @@ void TProgs::Load(const char *AName)
 	Structs = (VStruct**)(Exports + Progs.num_fields + Progs.num_functions);
 	ClassList = (VClass**)(Exports + Progs.num_fields + Progs.num_functions +
 		Progs.num_structs);
-	States = (state_t**)(Exports + Progs.num_fields + Progs.num_functions +
+	state_t** States = (state_t**)(Exports + Progs.num_fields + Progs.num_functions +
 		Progs.num_structs + Progs.num_classinfo);
 	Reader->NumExports = NumExp;
 
@@ -396,25 +387,19 @@ void TProgs::Load(const char *AName)
 	}
 
 	//	Set up info tables.
-	Reader->Seek(Progs.ofs_sprnames);
-	for (i = 0; i < Progs.num_sprnames; i++)
-	{
-		*Reader << SpriteNames[i];
-	}
-	Reader->Seek(Progs.ofs_mdlnames);
-	for (i = 0; i < Progs.num_mdlnames; i++)
-	{
-		*Reader << ModelNames[i];
-	}
 	Reader->Seek(Progs.ofs_mobjinfo);
 	for (i = 0; i < Progs.num_mobjinfo; i++)
 	{
-		*Reader << MobjInfo[i];
+		mobjinfo_t mi;
+		*Reader << mi;
+		VClass::GMobjInfos.AddItem(mi);
 	}
 	Reader->Seek(Progs.ofs_scriptids);
 	for (i = 0; i < Progs.num_scriptids; i++)
 	{
-		*Reader << ScriptIds[i];
+		mobjinfo_t si;
+		*Reader << si;
+		VClass::GScriptIds.AddItem(si);
 	}
 
 	//	Set up function pointers in vitual tables
@@ -508,6 +493,9 @@ void TProgs::Load(const char *AName)
 		case OPC_Call:
 			Statements[i + 1] = (int)Functions[Statements[i + 1]];
 			break;
+		case OPC_PushState:
+			Statements[i + 1] = (int)States[Statements[i + 1]];
+			break;
 		}
 		PrevOpc = Statements[i];
 		i += OpcodeArgCount[Statements[i]];
@@ -536,9 +524,6 @@ void TProgs::Load(const char *AName)
 void TProgs::Unload()
 {
 	Z_Free(VTables);
-	Z_Free(SpriteNames);
-	Z_Free(ModelNames);
-	Z_Free(MobjInfo);
 	Z_Free(Reader->Exports);
 	delete Reader;
 }
@@ -600,7 +585,7 @@ extern "C" void RunFunction(FFunction *func);
 
 static void RunFunction(FFunction *func)
 {
-	int			*current_statement;
+	int			*current_statement = NULL;
 	int			*sp;
 	int			*local_vars;
 
@@ -655,11 +640,12 @@ static void RunFunction(FFunction *func)
 		pr_stackPtr = local_vars + 3;
         return;
 
-	 case OPC_PushNumber:
-	 case OPC_PushString:
-	 case OPC_PushFunction:
-	 case OPC_PushClassId:
-	 case OPC_PushName:
+	case OPC_PushNumber:
+	case OPC_PushString:
+	case OPC_PushFunction:
+	case OPC_PushClassId:
+	case OPC_PushState:
+	case OPC_PushName:
 		*sp++ = *current_statement++;
 		break;
 
@@ -1984,9 +1970,12 @@ void TProgs::DumpProfile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.50  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.49  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.48  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	

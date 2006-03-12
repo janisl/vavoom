@@ -27,7 +27,7 @@ class Sorcerer1 : Pawn
 	__mobjinfo__(7)
 	__scriptid__(142);
 
-int ReAttackState;
+state ReAttackState;
 
 //==========================================================================
 //
@@ -187,7 +187,7 @@ __states__
 	S_SRCR1_DIE14('SRCR', 13, 'monsters/dsparil/base1.md2', 37, 5.0 / 35.0, S_SRCR1_DIE15) { }
 	S_SRCR1_DIE15('SRCR', 14, 'monsters/dsparil/base1.md2', 38, 4.0 / 35.0, S_SRCR1_DIE16) { }
 	S_SRCR1_DIE16('SRCR', 11, 'monsters/dsparil/base1.md2', 39, 12.0 / 35.0, S_SRCR1_DIE17) { }
-	S_SRCR1_DIE17('SRCR', 15, 'monsters/dsparil/base1.md2', 40, -1.0, S_NULL) { A_SorcererRise(); }
+	S_SRCR1_DIE17('SRCR', 15, 'monsters/dsparil/base1.md2', 40, -1.0, none) { A_SorcererRise(); }
 }
 
 defaultproperties
@@ -216,6 +216,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

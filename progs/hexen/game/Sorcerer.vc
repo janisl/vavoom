@@ -258,7 +258,7 @@ __states__
 	S_SORC_DIEF('SORC', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEG) { }
 	S_SORC_DIEG('SORC', 23 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEH) { }
 	S_SORC_DIEH('SORC', 24 | FF_FULLBRIGHT, 5.0 / 35.0, S_SORC_DIEI) { }
-	S_SORC_DIEI('SORC', 25 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_SORC_DIEI('SORC', 25 | FF_FULLBRIGHT, -1.0, none) { }
 }
 
 defaultproperties
@@ -287,6 +287,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

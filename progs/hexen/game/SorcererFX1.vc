@@ -76,7 +76,7 @@ __states__
 	S_SORCFX1_4('SBS1', 3 | FF_FULLBRIGHT, 3.0 / 35.0, S_SORCFX1_1) { A_SorcFX1Seek(); }
 	S_SORCFX1_D1('FHFX', 18 | FF_FULLBRIGHT, 2.0 / 35.0, S_SORCFX1_D2) { A_Explode(); }
 	S_SORCFX1_D2('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_SORCFX1_D3) { }
-	S_SORCFX1_D3('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_SORCFX1_D3('FHFX', 18 | FF_FULLBRIGHT, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -101,6 +101,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

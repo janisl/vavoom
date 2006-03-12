@@ -39,7 +39,7 @@ __states__
 	S_GATES_X6('PSTN', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X7) { }
 	S_GATES_X7('PSTN', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GATES_X8) { A_SpawnPuff(); }
 	S_GATES_X8('PSTN', 7, 4.0 / 35.0, S_GATES_X9) { }
-	S_GATES_X9('PSTN', 8, -1.0, S_NULL) { }
+	S_GATES_X9('PSTN', 8, -1.0, none) { }
 }
 
 defaultproperties
@@ -62,6 +62,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

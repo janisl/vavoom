@@ -27,7 +27,7 @@ class Bishop : Pawn
 	__mobjinfo__(114)
 	__scriptid__(19);
 
-int BlurState;
+state BlurState;
 int NumToSpawn;		//	Number of blurs/missiles to spawn
 int WeaveIndex;		//	Index into floatbob
 
@@ -236,7 +236,7 @@ __states__
 	S_BISHOP_DEATH7('BISH', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DEATH8) { }
 	S_BISHOP_DEATH8('BISH', 13, 4.0 / 35.0, S_BISHOP_DEATH9) { A_BishopPuff(); }
 	S_BISHOP_DEATH9('BISH', 14, 4.0 / 35.0, S_BISHOP_DEATH10) { A_QueueCorpse(); }
-	S_BISHOP_DEATH10('BISH', 15, -1.0, S_NULL) { }
+	S_BISHOP_DEATH10('BISH', 15, -1.0, none) { }
 	S_BISHOP_ICE('BISH', 23, 5.0 / 35.0, S_BISHOP_ICE2) { A_FreezeDeath(); }
 	S_BISHOP_ICE2('BISH', 23, 1.0 / 35.0, S_BISHOP_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -271,6 +271,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

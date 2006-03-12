@@ -113,7 +113,7 @@ __states__
 	S_LOREMASTER_DIE21('PDED', 16, 4.0 / 35.0, S_LOREMASTER_DIE22) { A_LoremasterDeath(); }
 	S_LOREMASTER_DIE22('PDED', 17, 4.0 / 35.0, S_LOREMASTER_DIE23) { }
 	S_LOREMASTER_DIE23('PDED', 18, 4.0 / 35.0, S_LOREMASTER_DIE24) { }
-	S_LOREMASTER_DIE24('PDED', 19, -1.0, S_NULL) { }
+	S_LOREMASTER_DIE24('PDED', 19, -1.0, none) { }
 }
 
 defaultproperties
@@ -145,6 +145,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

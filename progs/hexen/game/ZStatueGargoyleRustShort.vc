@@ -28,7 +28,7 @@ class ZStatueGargoyleRustShort:Decoration
 
 __states__
 {
-	S_ZSTATUEGARGOYLERUSTSHORT_1('GAR9', 0, -1.0, S_NULL) { }
+	S_ZSTATUEGARGOYLERUSTSHORT_1('GAR9', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

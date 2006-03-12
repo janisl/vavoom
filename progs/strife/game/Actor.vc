@@ -51,16 +51,16 @@ const float
 	FLOATSPEED		= 140.0;
 
 //  States
-int IdleState;
-int SeeState;
-int MeleeState;
-int MissileState;
-int PainState;
-int DyingState;
-int DeathState;
-int GibsDeathState;
-int FireDeathState;
-int DisruptDeathState;
+state IdleState;
+state SeeState;
+state MeleeState;
+state MissileState;
+state PainState;
+state DyingState;
+state DeathState;
+state GibsDeathState;
+state FireDeathState;
+state DisruptDeathState;
 
 //  Sounds
 name SightSound;
@@ -179,7 +179,7 @@ __states__
 		bHidden = true;
 		bSpecial = false;
 	}
-	S_HIDDEN_SPECIAL2('', 0, -1.0, S_NULL)
+	S_HIDDEN_SPECIAL2('', 0, -1.0, none)
 	{
 		Actor A;
 
@@ -530,7 +530,7 @@ void Died(Actor source)
 			Speech = &XLevel.LevelSpeeches[SpeechNum - 1];
 		}
 		DropItemType = StrifeLevelInfo(Level).GetClassFromID(Speech->DropItem);
-		if (DropItemType != classidNone)
+		if (DropItemType)
 		{
 			A = Spawn(DropItemType, vector(Origin.x, Origin.y, ONFLOORZ));
 			if (Pickup(A) && Pickup(A).bDropAutoGive)
@@ -708,7 +708,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		// chase after this one
 		Enemy = source;
 		Threshold = BASETHRESHOLD;
-		if (StateNum == IdleState && SeeState != S_NULL)
+		if (State == IdleState && SeeState)
 		{
 			SetState(SeeState);
 		}
@@ -1641,21 +1641,23 @@ void ApplyFriction()
 		Velocity.z > -STOPSPEED && Velocity.z < STOPSPEED &&
 		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
-		if (bIsPlayer)
-		{
-			int sn;
-
-			// if in a walking frame, stop moving
-			sn = StateNum - SeeState;
-			if (sn >= 0 && sn < 4)
-				SetState(IdleState);
-		}
+		StopMoving();
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	else
 	{
 		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
 	}
+}
+
+//===========================================================================
+//
+//  StopMoving
+//
+//===========================================================================
+
+void StopMoving()
+{
 }
 
 //===========================================================================
@@ -3432,27 +3434,27 @@ __states__
 	S_ZAP1_8('ZAP1', 3, 2.0 / 35.0, S_ZAP1_9) { }
 	S_ZAP1_9('ZAP1', 2, 2.0 / 35.0, S_ZAP1_10) { }
 	S_ZAP1_10('ZAP1', 1, 2.0 / 35.0, S_ZAP1_11) { }
-	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, S_NULL) { }
+	S_ZAP1_11('ZAP1', 0, 1.0 / 35.0, none) { }
 
 	S_BLOOD1('BLOD', 2, 8.0 / 35.0, S_BLOOD2) { }
 	S_BLOOD2('BLOD', 1, 8.0 / 35.0, S_BLOOD3) { }
-	S_BLOOD3('BLOD', 0, 8.0 / 35.0, S_NULL) { }
+	S_BLOOD3('BLOD', 0, 8.0 / 35.0, none) { }
 
-	S_SHARD_1('SHRD', 0, 128.0 / 35.0, S_NULL) { }
-	S_SHARD_2('SHRD', 1, 128.0 / 35.0, S_NULL) { }
-	S_SHARD_3('SHRD', 2, 128.0 / 35.0, S_NULL) { }
-	S_SHARD_4('SHRD', 3, 128.0 / 35.0, S_NULL) { }
-	S_SHARD_5('SHRD', 4, 128.0 / 35.0, S_NULL) { }
-	S_SHARD_6('SHRD', 5, 128.0 / 35.0, S_NULL) { }
+	S_SHARD_1('SHRD', 0, 128.0 / 35.0, none) { }
+	S_SHARD_2('SHRD', 1, 128.0 / 35.0, none) { }
+	S_SHARD_3('SHRD', 2, 128.0 / 35.0, none) { }
+	S_SHARD_4('SHRD', 3, 128.0 / 35.0, none) { }
+	S_SHARD_5('SHRD', 4, 128.0 / 35.0, none) { }
+	S_SHARD_6('SHRD', 5, 128.0 / 35.0, none) { }
 
 	S_MINI_MISSILE2_1('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_2) { A_Tracer(); }
 	S_MINI_MISSILE2_2('MICR', 0 | FF_FULLBRIGHT, 2.0 / 35.0, S_MINI_MISSILE2_1) { A_Tracer(); }
 
-	S_TOKENS('TOKN', 0, -1.0, S_NULL) { }
+	S_TOKENS('TOKN', 0, -1.0, none) { }
 
-	S_GIBS('DIE1', 0, -1.0, S_NULL) { }
+	S_GIBS('DIE1', 0, -1.0, none) { }
 
-	S_ANKH('ANKH', 0, -1.0, S_NULL) { }
+	S_ANKH('ANKH', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -3468,6 +3470,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.35  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.34  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

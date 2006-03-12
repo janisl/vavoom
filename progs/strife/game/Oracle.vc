@@ -48,7 +48,7 @@ void A_OracleDeath()
 
 __states__
 {
-	S_ORACLE('ORCL', 0, -1.0, S_NULL) { }
+	S_ORACLE('ORCL', 0, -1.0, none) { }
 	S_ORACLE_DIE1('ORCL', 1, 5.0 / 35.0, S_ORACLE_DIE2) { }
 	S_ORACLE_DIE2('ORCL', 2, 5.0 / 35.0, S_ORACLE_DIE3) { }
 	S_ORACLE_DIE3('ORCL', 3, 5.0 / 35.0, S_ORACLE_DIE4) { }
@@ -64,7 +64,7 @@ __states__
 	S_ORACLE_DIE13('ORCL', 13, 5.0 / 35.0, S_ORACLE_DIE14) { A_OracleDeath(); }
 	S_ORACLE_DIE14('ORCL', 14, 5.0 / 35.0, S_ORACLE_DIE15) { }
 	S_ORACLE_DIE15('ORCL', 15, 5.0 / 35.0, S_ORACLE_DIE16) { }
-	S_ORACLE_DIE16('ORCL', 16, -1.0, S_NULL) { }
+	S_ORACLE_DIE16('ORCL', 16, -1.0, none) { }
 }
 
 defaultproperties
@@ -84,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2004/10/18 06:35:21  dj_jl
 //  Implemented many monsters, sigil and some more.
 //

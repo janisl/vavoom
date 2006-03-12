@@ -51,7 +51,7 @@ void A_RestoreSpecialThing1()
 
 __states__
 {
-	S_WMCE('WMCE', 0, 'weapons/g_mace.md2', 0, -1.0, S_NULL) { }
+	S_WMCE('WMCE', 0, 'weapons/g_mace.md2', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -63,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/13 18:30:16  dj_jl
 //  Moved all server progs global functions to classes.
 //

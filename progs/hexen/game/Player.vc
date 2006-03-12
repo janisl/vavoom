@@ -1994,7 +1994,7 @@ bool UndoPlayerMorph()
 
 void SetPlayerRunState()
 {
-	if (MO.StateNum == Actor(MO).IdleState)
+	if (MO.State == Actor(MO).IdleState)
 	{
 		MO.SetState(Actor(MO).SeeState);
 	}
@@ -3372,7 +3372,7 @@ void SetWeapon(int NewWeapon)
 //
 //===========================================================================
 
-void SetPsprite(int position, int stnum)
+void SetPsprite(int position, state stnum)
 {
 	ViewEnts[position].SetState(stnum);
 }
@@ -3420,7 +3420,7 @@ void SetupPsprites()
 	// Remove all psprites
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		ViewEnts[i].StateNum = 0;
+		ViewEnts[i].State = none;
 	}
 	// Spawn the ready weapon
 	BringUpWeapon();
@@ -3442,7 +3442,7 @@ void MovePsprites()
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
 		e = ViewEnts[i];
-		if (e.StateNum)	// a null state means not active
+		if (e.State)	// a null state means not active
 		{
 			// drop tic count and possibly change state
 			if (e.StateTime != -1.0)	// a -1 tic count never changes
@@ -3995,6 +3995,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.24  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

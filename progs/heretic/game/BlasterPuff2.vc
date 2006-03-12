@@ -33,7 +33,7 @@ __states__
 	S_BLASTERPUFF2_4('FX17', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_5) { }
 	S_BLASTERPUFF2_5('FX17', 9 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_6) { }
 	S_BLASTERPUFF2_6('FX17', 10 | FF_FULLBRIGHT, 4.0 / 35.0, S_BLASTERPUFF2_7) { }
-	S_BLASTERPUFF2_7('FX17', 11 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_BLASTERPUFF2_7('FX17', 11 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

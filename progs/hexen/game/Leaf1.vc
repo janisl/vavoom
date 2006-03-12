@@ -25,7 +25,7 @@
 
 class Leaf1 : Fragment;
 
-int RestartState;
+state RestartState;
 int RestartCount;
 
 //============================================================================
@@ -54,7 +54,7 @@ void A_LeafCheck()
 	RestartCount++;
 	if (RestartCount >= 20)
 	{
-		SetState(S_NULL);
+		SetState(none);
 		return;
 	}
 	if (Random() > 0.25)
@@ -90,7 +90,7 @@ __states__
 	S_LEAF1_15('LEF1', 5, 4.0 / 35.0, S_LEAF1_16) { }
 	S_LEAF1_16('LEF1', 6, 4.0 / 35.0, S_LEAF1_17) { A_LeafThrust(); }
 	S_LEAF1_17('LEF1', 7, 4.0 / 35.0, S_LEAF1_18) { }
-	S_LEAF1_18('LEF1', 8, 4.0 / 35.0, S_NULL) { }
+	S_LEAF1_18('LEF1', 8, 4.0 / 35.0, none) { }
 	S_LEAF_X1('LEF3', 3, 10.0 / 35.0, S_LEAF_X1) { A_LeafCheck(); }
 }
 
@@ -110,6 +110,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:56  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

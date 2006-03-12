@@ -29,8 +29,8 @@ __states__
 {
 	S_BLOODSPLATTER1('BLOD', 2, 8.0 / 35.0, S_BLOODSPLATTER2) { }
 	S_BLOODSPLATTER2('BLOD', 1, 8.0 / 35.0, S_BLOODSPLATTER3) { }
-	S_BLOODSPLATTER3('BLOD', 0, 8.0 / 35.0, S_NULL) { }
-	S_BLOODSPLATTERX('BLOD', 0, 6.0 / 35.0, S_NULL) { }
+	S_BLOODSPLATTER3('BLOD', 0, 8.0 / 35.0, none) { }
+	S_BLOODSPLATTERX('BLOD', 0, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -47,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

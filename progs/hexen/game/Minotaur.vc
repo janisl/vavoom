@@ -34,12 +34,12 @@ bool bFloorFireRefired;		//  internal to minotaur AI
 //  Args[0]         minotaur start time
 //  Args[4]         charge duration countdown
 
-int LookState;
-int SeeStateNF;
-int RoamState;
-int FloorFireState;
-int FloorFireRefireState;
-int ChargeState;
+state LookState;
+state SeeStateNF;
+state RoamState;
+state FloorFireState;
+state FloorFireRefireState;
+state ChargeState;
 
 float MinotaurLookDist;
 float ChargeSpeed;
@@ -618,7 +618,7 @@ __states__
 	S_MNTR_DIE6('MNTR', 4, 'monsters/minotaur/base.md2', 41, 5.0 / 35.0, S_MNTR_DIE7) { }
 	S_MNTR_DIE7('MNTR', 4, 'monsters/minotaur/base.md2', 41, 5.0 / 35.0, S_MNTR_DIE8) { A_MinotaurFade1(); }
 	S_MNTR_DIE8('MNTR', 4, 'monsters/minotaur/base.md2', 41, 5.0 / 35.0, S_MNTR_DIE9) { A_MinotaurFade0(); }
-	S_MNTR_DIE9('MNTR', 4, 'monsters/minotaur/base.md2', 41, 10.0 / 35.0, S_NULL) { }
+	S_MNTR_DIE9('MNTR', 4, 'monsters/minotaur/base.md2', 41, 10.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -657,6 +657,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.9  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

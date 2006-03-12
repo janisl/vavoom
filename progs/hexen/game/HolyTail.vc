@@ -100,7 +100,7 @@ void A_CHolyTail()
 
 	if (parent)
 	{
-		if (parent.StateNum >= parent.DeathState)
+		if (!parent.bMissile)
 		{
 			// Ghost removed, so remove all tail parts
 			CHolyTailRemove();
@@ -119,7 +119,7 @@ void A_CHolyTail()
 __states__
 {
 	S_HOLY_TAIL1('SPIR', 2, 1.0 / 35.0, S_HOLY_TAIL1) { A_CHolyTail(); }
-	S_HOLY_TAIL2('SPIR', 3, -1.0, S_NULL) { }
+	S_HOLY_TAIL2('SPIR', 3, -1.0, none) { }
 }
 
 defaultproperties
@@ -137,6 +137,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

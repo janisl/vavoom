@@ -42,7 +42,7 @@ void FloorBounceMissile()
 	Velocity.z = Velocity.z * -0.3;
 	if (fabs(Velocity.z) < 0.5 * 35.0)
 	{
-		SetState(S_NULL);
+		SetState(none);
 		return;
 	}
 	Velocity.x = 2.0 * Velocity.x / 3.0;
@@ -60,7 +60,7 @@ __states__
 	S_SGSHARD1_3('SGSA', 2, 4.0 / 35.0, S_SGSHARD1_4) { }
 	S_SGSHARD1_4('SGSA', 3, 4.0 / 35.0, S_SGSHARD1_5) { }
 	S_SGSHARD1_5('SGSA', 4, 4.0 / 35.0, S_SGSHARD1_1) { }
-	S_SGSHARD1_D('SGSA', 4, 30.0 / 35.0, S_NULL) { }
+	S_SGSHARD1_D('SGSA', 4, 30.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -76,6 +76,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -91,7 +91,7 @@ __states__
 	S_BISHOP_DIE13('MLDR', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DIE14) { A_XDying(); }
 	S_BISHOP_DIE14('MLDR', 19 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DIE15) { }
 	S_BISHOP_DIE15('MLDR', 20 | FF_FULLBRIGHT, 4.0 / 35.0, S_BISHOP_DIE16) { A_XDying(); }
-	S_BISHOP_DIE16('MLDR', 21, 4.0 / 35.0, S_NULL) { A_BishopDeath(); }
+	S_BISHOP_DIE16('MLDR', 21, 4.0 / 35.0, none) { A_BishopDeath(); }
 }
 
 defaultproperties
@@ -119,6 +119,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

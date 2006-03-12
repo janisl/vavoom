@@ -95,7 +95,7 @@ __states__
 	S_TEMPLAR_DIE17('PGRD', 24, 3.0 / 35.0, S_TEMPLAR_DIE18) { }
 	S_TEMPLAR_DIE18('PGRD', 25, 3.0 / 35.0, S_TEMPLAR_DIE19) { }
 	S_TEMPLAR_DIE19('PGRD', 26, 3.0 / 35.0, S_TEMPLAR_DIE20) { }
-	S_TEMPLAR_DIE20('PGRD', 27, -1.0, S_NULL) { }
+	S_TEMPLAR_DIE20('PGRD', 27, -1.0, none) { }
 }
 
 defaultproperties
@@ -110,6 +110,9 @@ defaultproperties
 	PainChance = 0.390625;
 	bNoBlood = true;
 	IdleState = S_TEMPLAR_STAND;
+	IdleRightState = S_TEMPLAR_STAND_R;
+	IdleLeftState = S_TEMPLAR_STAND_L;
+	WalkState = S_TEMPLAR_WALK;
 	SeeState = S_TEMPLAR_RUN1;
 	MeleeState = S_TEMPLAR_ATK1_1;
 	MissileState = S_TEMPLAR_ATK2_1;
@@ -124,6 +127,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/01/10 19:54:01  dj_jl
 //  Many bug fixes.
 //

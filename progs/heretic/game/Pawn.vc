@@ -459,7 +459,17 @@ void A_Feathers()
 		mo.Velocity.x = (Random() - Random()) * 35.0;
 		mo.Velocity.y = (Random() - Random()) * 35.0;
 		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
-		mo.SetState(Feather::S_FEATHER1 + (P_Random() & 7));
+		switch (P_Random() & 7)
+		{
+		case 0: mo.SetState(Feather::S_FEATHER1); break;
+		case 1: mo.SetState(Feather::S_FEATHER2); break;
+		case 2: mo.SetState(Feather::S_FEATHER3); break;
+		case 3: mo.SetState(Feather::S_FEATHER4); break;
+		case 4: mo.SetState(Feather::S_FEATHER5); break;
+		case 5: mo.SetState(Feather::S_FEATHER6); break;
+		case 6: mo.SetState(Feather::S_FEATHER7); break;
+		case 7: mo.SetState(Feather::S_FEATHER8); break;
+		}
 	}
 }
 
@@ -479,6 +489,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.8  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -169,7 +169,7 @@ __states__
 	S_PIG_DIE5('PIGY', 8, 4.0 / 35.0, S_PIG_DIE6) { }
 	S_PIG_DIE6('PIGY', 9, 4.0 / 35.0, S_PIG_DIE7) { }
 	S_PIG_DIE7('PIGY', 10, 4.0 / 35.0, S_PIG_DIE8) { }
-	S_PIG_DIE8('PIGY', 11, -1.0, S_NULL) { }
+	S_PIG_DIE8('PIGY', 11, -1.0, none) { }
 	S_PIG_ICE('PIGY', 12, 5.0 / 35.0, S_PIG_ICE2) { A_FreezeDeath(); }
 	S_PIG_ICE2('PIGY', 12, 1.0 / 35.0, S_PIG_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -200,6 +200,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2005/11/30 23:52:53  dj_jl
 //  Switch statement requires integer.
 //

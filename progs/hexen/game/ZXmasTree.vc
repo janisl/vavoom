@@ -28,7 +28,7 @@ class ZXmasTree:BurnableTree
 
 __states__
 {
-	S_ZXMAS_TREE('XMAS', 0, -1.0, S_NULL) { }
+	S_ZXMAS_TREE('XMAS', 0, -1.0, none) { }
 	S_ZXMAS_TREE_DIE('XMAS', 0, 4.0 / 35.0, S_ZXMAS_TREE) { A_TreeDeath(); }
 	S_ZXMAS_TREE_X1('XMAS', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X2) { }
 	S_ZXMAS_TREE_X2('XMAS', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_ZXMAS_TREE_X3) { A_Scream(); }
@@ -39,7 +39,7 @@ __states__
 	S_ZXMAS_TREE_X7('XMAS', 7, 5.0 / 35.0, S_ZXMAS_TREE_X8) { }
 	S_ZXMAS_TREE_X8('XMAS', 8, 4.0 / 35.0, S_ZXMAS_TREE_X9) { A_NoBlocking(); }
 	S_ZXMAS_TREE_X9('XMAS', 9, 4.0 / 35.0, S_ZXMAS_TREE_X10) { }
-	S_ZXMAS_TREE_X10('XMAS', 10, -1.0, S_NULL) { }
+	S_ZXMAS_TREE_X10('XMAS', 10, -1.0, none) { }
 }
 
 defaultproperties
@@ -56,6 +56,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

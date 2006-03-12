@@ -35,7 +35,7 @@ __states__
 	S_FIREBALL1_X3('XPL1', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X4) { }
 	S_FIREBALL1_X4('XPL1', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X5) { }
 	S_FIREBALL1_X5('XPL1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_FIREBALL1_X6) { }
-	S_FIREBALL1_X6('XPL1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_FIREBALL1_X6('XPL1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -56,6 +56,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

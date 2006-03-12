@@ -58,12 +58,12 @@ __states__
 	S_PHOENIXFX2_7('FX09', 2 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_8) { }
 	S_PHOENIXFX2_8('FX09', 3 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_9) { }
 	S_PHOENIXFX2_9('FX09', 4 | FF_FULLBRIGHT, 2.0 / 35.0, S_PHOENIXFX2_10) { }
-	S_PHOENIXFX2_10('FX09', 5 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { }
+	S_PHOENIXFX2_10('FX09', 5 | FF_FULLBRIGHT, 2.0 / 35.0, none) { }
 	S_PHOENIXFXI2_1('FX09', 6 | FF_FULLBRIGHT, 3.0 / 35.0, S_PHOENIXFXI2_2) { }
 	S_PHOENIXFXI2_2('FX09', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_PHOENIXFXI2_3) { A_FloatPuff(); }
 	S_PHOENIXFXI2_3('FX09', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_PHOENIXFXI2_4) { }
 	S_PHOENIXFXI2_4('FX09', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_PHOENIXFXI2_5) { }
-	S_PHOENIXFXI2_5('FX09', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+	S_PHOENIXFXI2_5('FX09', 10 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -82,6 +82,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

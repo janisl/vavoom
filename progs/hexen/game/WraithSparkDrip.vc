@@ -34,7 +34,7 @@ __states__
 	S_WRTHFX_SIZZLE4('WRBL', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE5) { }
 	S_WRTHFX_SIZZLE5('WRBL', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE6) { }
 	S_WRTHFX_SIZZLE6('WRBL', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_SIZZLE7) { }
-	S_WRTHFX_SIZZLE7('WRBL', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_WRTHFX_SIZZLE7('WRBL', 15 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -52,6 +52,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -34,12 +34,12 @@ const float WEAPONTOP		= 32.0;
 const int BFGCELLS			= 40;
 
 int Ammo;
-int UpState;
-int DownState;
-int ReadyState;
-int AttackState;
-int HoldAttackState;
-int FlashState;
+state UpState;
+state DownState;
+state ReadyState;
+state AttackState;
+state HoldAttackState;
+state FlashState;
 name ThirdPersonModel;
 #ifdef DDF
 AttackType Attack;
@@ -104,19 +104,19 @@ void A_WeaponReady()
 	float angle;
 
 	// get out of attack state
-	if (Player.MO.StateNum == Actor(Player.MO).MeleeState ||
-		Player.MO.StateNum == Actor(Player.MO).MissileState)
+	if (Player.MO.State == Actor(Player.MO).MeleeState ||
+		Player.MO.State == Actor(Player.MO).MissileState)
 	{
 		Player.MO.SetState(Actor(Player.MO).IdleState);
 	}
 
 #ifdef DDF
-	if (IdleSound && StateNum == ReadyState)
+	if (IdleSound && State == ReadyState)
 	{
 		Player.MO.PlaySound(IdleSound, CHAN_WEAPON);
 	}
 #else
-	if (Player(Player).ReadyWeapon == DoomDefs::wp_chainsaw && StateNum == ReadyState)
+	if (Player(Player).ReadyWeapon == DoomDefs::wp_chainsaw && State == ReadyState)
 	{
 		Player.MO.PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
@@ -209,7 +209,7 @@ void A_Lower()
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Player(Player).SetPsprite(ps_weapon, S_NULL);
+		Player(Player).SetPsprite(ps_weapon, none);
 		return;
 	}
 
@@ -616,7 +616,7 @@ void GunShot(Actor A, int accurate, TVec dir)
 #ifndef NO_BOTS
 __states__
 {
-	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, S_NULL) { A_Light0(); }
+	S_LIGHTDONE('SHTG', 4, 0.0 / 35.0, none) { A_Light0(); }
 }
 #endif
 
@@ -643,6 +643,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/12 19:51:04  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.10  2006/03/02 18:28:23  dj_jl
 //  Don't use game specific classes in common.
 //

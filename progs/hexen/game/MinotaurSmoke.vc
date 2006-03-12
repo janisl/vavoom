@@ -43,7 +43,7 @@ __states__
 	S_MINOSMOKED('MNSM', 13, 3.0 / 35.0, S_MINOSMOKEE) { }
 	S_MINOSMOKEE('MNSM', 14, 3.0 / 35.0, S_MINOSMOKEF) { }
 	S_MINOSMOKEF('MNSM', 15, 3.0 / 35.0, S_MINOSMOKEG) { }
-	S_MINOSMOKEG('MNSM', 16, 3.0 / 35.0, S_NULL) { }
+	S_MINOSMOKEG('MNSM', 16, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -56,6 +56,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -25,6 +25,8 @@
 
 class WeaponGrenadeLauncher : Weapon;
 
+state FlashState2;
+
 //==========================================================================
 //
 //	A_FireGrenade
@@ -51,7 +53,10 @@ void A_FireGrenade()
 	Player(Player).Ammo[Ammo]--;
 
 	// Make it flash
-	Player(Player).SetPsprite(ps_flash, FlashState + (StateNum - AttackState));
+	if (State == AttackState)
+		Player(Player).SetPsprite(ps_flash, FlashState);
+	else
+		Player(Player).SetPsprite(ps_flash, FlashState2);
 
 	Player.MO.Origin.z += 32.0;
 	grenade = Actor(Player.MO).SpawnSubMissile(grenadetype);
@@ -71,7 +76,7 @@ void A_FireGrenade()
 	grenade.Origin.x += cos(an) * tworadii;
 	grenade.Origin.y += sin(an) * tworadii;
 
-	if (AttackState == StateNum)
+	if (AttackState == State)
 	{
 		an = Player.MO.Angles.yaw - 90.0;
 	}
@@ -117,6 +122,7 @@ defaultproperties
 	ReadyState = S_GRENADE;
 	AttackState = S_GRENADE1;
 	FlashState = S_GRENADEFLASH1;
+	FlashState2 = S_GRENADEFLASH3;
 }
 
 class WeaponGrenadeLauncher2 : WeaponGrenadeLauncher;
@@ -129,11 +135,15 @@ defaultproperties
 	ReadyState = S_GRENADEHIGH;
 	AttackState = S_GRENADEHIGH1;
 	FlashState = S_GRENADEHIGHFLASH1;
+	FlashState2 = S_GRENADEHIGHFLASH3;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 20:01:25  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

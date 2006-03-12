@@ -47,7 +47,7 @@ __states__
 	S_IMPFXI1('FX10', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_IMPFXI2) { }
 	S_IMPFXI2('FX10', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_IMPFXI3) { }
 	S_IMPFXI3('FX10', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_IMPFXI4) { }
-	S_IMPFXI4('FX10', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+	S_IMPFXI4('FX10', 6 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -65,6 +65,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

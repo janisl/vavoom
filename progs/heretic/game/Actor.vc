@@ -54,14 +54,14 @@ const float MONS_LOOK_RANGE	= (20.0 * 64.0);
 const int MONS_LOOK_LIMIT	= 64;
 
 //  States
-int IdleState;
-int SeeState;
-int PainState;
-int MeleeState;
-int MissileState;
-int CrashState;
-int DeathState;
-int GibsDeathState;
+state IdleState;
+state SeeState;
+state PainState;
+state MeleeState;
+state MissileState;
+state CrashState;
+state DeathState;
+state GibsDeathState;
 
 //  Sounds
 name SightSound;
@@ -1052,7 +1052,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		// so make him chase after source
 		Enemy = source;
 		Threshold = BASETHRESHOLD;
-		if (StateNum == IdleState && SeeState != S_NULL)
+		if (State == IdleState && SeeState)
 		{
 			SetState(SeeState);
 		}
@@ -1516,19 +1516,23 @@ void ApplyFriction()
 		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
 		// If in a walking frame, stop moving
-		if (bIsPlayer)
-		{
-			if (StateNum >= SeeState && StateNum <= SeeState + 3)
-			{
-				SetState(IdleState);
-			}
-		}
+		StopMoving();
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	else
 	{
 		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
 	}
+}
+
+//===========================================================================
+//
+//  StopMoving
+//
+//===========================================================================
+
+void StopMoving()
+{
 }
 
 //===========================================================================
@@ -3748,7 +3752,7 @@ void SpawnPuff(TVec org, classid PuffType)
 
 __states__
 {
-	S_FREETARGMOBJ('ACLO', 4, 30.0, S_NULL) { A_FreeTargMobj(); }
+	S_FREETARGMOBJ('ACLO', 4, 30.0, none) { A_FreeTargMobj(); }
 }
 
 defaultproperties
@@ -3761,6 +3765,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.27  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.26  2006/03/02 18:33:23  dj_jl
 //  Don't use game specific classes in common.
 //

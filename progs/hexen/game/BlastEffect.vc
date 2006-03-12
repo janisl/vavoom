@@ -35,7 +35,7 @@ __states__
 	S_BLASTEFFECT6('RADE', 5, 4.0 / 35.0, S_BLASTEFFECT7) { }
 	S_BLASTEFFECT7('RADE', 6, 4.0 / 35.0, S_BLASTEFFECT8) { }
 	S_BLASTEFFECT8('RADE', 7, 4.0 / 35.0, S_BLASTEFFECT9) { }
-	S_BLASTEFFECT9('RADE', 8, 4.0 / 35.0, S_NULL) { }
+	S_BLASTEFFECT9('RADE', 8, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

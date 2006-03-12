@@ -25,6 +25,8 @@
 
 class PotteryBit : Fragment;
 
+state BitState;
+
 //==========================================================================
 //
 //  A_PotteryChooseBit
@@ -33,7 +35,15 @@ class PotteryBit : Fragment;
 
 void A_PotteryChooseBit()
 {
-	SetState(DeathState + (P_Random() % 5) * 2 + 1);
+	switch (P_Random() % 5)
+	{
+	case 0: BitState = S_POTTERYBIT_EX1; break;
+	case 1: BitState = S_POTTERYBIT_EX2; break;
+	case 2: BitState = S_POTTERYBIT_EX3; break;
+	case 3: BitState = S_POTTERYBIT_EX4; break;
+	case 4: BitState = S_POTTERYBIT_EX5; break;
+	}
+	SetState(BitState);
 	StateTime = 8.0 + Random() * 16.0;
 }
 
@@ -59,7 +69,7 @@ void A_PotteryCheck()
 			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
 		{
 			// Previous state (pottery bit waiting state)
-			SetState(StateNum - 1);
+			SetState(BitState);
 			return;
 		}
 	}
@@ -67,22 +77,22 @@ void A_PotteryCheck()
 
 __states__
 {
-	S_POTTERYBIT_1('PBIT', 0, -1.0, S_NULL) { }
-	S_POTTERYBIT_2('PBIT', 1, -1.0, S_NULL) { }
-	S_POTTERYBIT_3('PBIT', 2, -1.0, S_NULL) { }
-	S_POTTERYBIT_4('PBIT', 3, -1.0, S_NULL) { }
-	S_POTTERYBIT_5('PBIT', 4, -1.0, S_NULL) { }
-	S_POTTERYBIT_EX0('PBIT', 5, 0.0 / 35.0, S_NULL) { A_PotteryChooseBit(); }
+	S_POTTERYBIT_1('PBIT', 0, -1.0, none) { }
+	S_POTTERYBIT_2('PBIT', 1, -1.0, none) { }
+	S_POTTERYBIT_3('PBIT', 2, -1.0, none) { }
+	S_POTTERYBIT_4('PBIT', 3, -1.0, none) { }
+	S_POTTERYBIT_5('PBIT', 4, -1.0, none) { }
+	S_POTTERYBIT_EX0('PBIT', 5, 0.0 / 35.0, none) { A_PotteryChooseBit(); }
 	S_POTTERYBIT_EX1('PBIT', 5, 140.0 / 35.0, S_POTTERYBIT_EX1_2) { }
-	S_POTTERYBIT_EX1_2('PBIT', 5, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX1_2('PBIT', 5, 1.0 / 35.0, none) { A_PotteryCheck(); }
 	S_POTTERYBIT_EX2('PBIT', 6, 140.0 / 35.0, S_POTTERYBIT_EX2_2) { }
-	S_POTTERYBIT_EX2_2('PBIT', 6, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX2_2('PBIT', 6, 1.0 / 35.0, none) { A_PotteryCheck(); }
 	S_POTTERYBIT_EX3('PBIT', 7, 140.0 / 35.0, S_POTTERYBIT_EX3_2) { }
-	S_POTTERYBIT_EX3_2('PBIT', 7, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX3_2('PBIT', 7, 1.0 / 35.0, none) { A_PotteryCheck(); }
 	S_POTTERYBIT_EX4('PBIT', 8, 140.0 / 35.0, S_POTTERYBIT_EX4_2) { }
-	S_POTTERYBIT_EX4_2('PBIT', 8, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX4_2('PBIT', 8, 1.0 / 35.0, none) { A_PotteryCheck(); }
 	S_POTTERYBIT_EX5('PBIT', 9, 140.0 / 35.0, S_POTTERYBIT_EX5_2) { }
-	S_POTTERYBIT_EX5_2('PBIT', 9, 1.0 / 35.0, S_NULL) { A_PotteryCheck(); }
+	S_POTTERYBIT_EX5_2('PBIT', 9, 1.0 / 35.0, none) { A_PotteryCheck(); }
 }
 
 defaultproperties
@@ -99,6 +109,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

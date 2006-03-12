@@ -26,10 +26,10 @@
 class Inquisitor : Pawn
 	__mobjinfo__(16);
 
-int SeeState2;
-int JumpState;
-int MissileState2;
-int GrenadeState;
+state SeeState2;
+state JumpState;
+state MissileState2;
+state GrenadeState;
 name JumpSound;
 float JumpSpeed;
 
@@ -218,7 +218,7 @@ __states__
 	S_INQUISITOR_DIE20('RBB3', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_INQUISITOR_DIE21) { A_XDying(); }
 	S_INQUISITOR_DIE21('RBB3', 2, 3.0 / 35.0, S_INQUISITOR_DIE22) { A_XDying(); }
 	S_INQUISITOR_DIE22('RBB3', 3, 3.0 / 35.0, S_INQUISITOR_DIE23) { A_XDying(); }
-	S_INQUISITOR_DIE23('RBB3', 4, -1.0, S_NULL) { A_BossDeath(); }
+	S_INQUISITOR_DIE23('RBB3', 4, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -248,6 +248,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

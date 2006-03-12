@@ -94,7 +94,7 @@ __states__
 	S_SPOS_DIE2('SPOS', 8, 'monsters/sargeant/death.md2', 1, 5.0 / 35.0, S_SPOS_DIE3) { A_Scream(); }
 	S_SPOS_DIE3('SPOS', 9, 'monsters/sargeant/death.md2', 2, 5.0 / 35.0, S_SPOS_DIE4) { A_Fall(); }
 	S_SPOS_DIE4('SPOS', 10, 'monsters/sargeant/death.md2', 3, 5.0 / 35.0, S_SPOS_DIE5) { }
-	S_SPOS_DIE5('SPOS', 11, 'monsters/sargeant/death.md2', 4, -1.0, S_NULL) { }
+	S_SPOS_DIE5('SPOS', 11, 'monsters/sargeant/death.md2', 4, -1.0, none) { }
 	S_SPOS_XDIE1('SPOS', 12, 'monsters/sargeant/gibs.md2', 0, 5.0 / 35.0, S_SPOS_XDIE2) { }
 	S_SPOS_XDIE2('SPOS', 13, 'monsters/sargeant/gibs.md2', 1, 5.0 / 35.0, S_SPOS_XDIE3) { A_XScream(); }
 	S_SPOS_XDIE3('SPOS', 14, 'monsters/sargeant/gibs.md2', 2, 5.0 / 35.0, S_SPOS_XDIE4) { A_Fall(); }
@@ -103,7 +103,7 @@ __states__
 	S_SPOS_XDIE6('SPOS', 17, 'monsters/sargeant/gibs.md2', 5, 5.0 / 35.0, S_SPOS_XDIE7) { }
 	S_SPOS_XDIE7('SPOS', 18, 'monsters/sargeant/gibs.md2', 6, 5.0 / 35.0, S_SPOS_XDIE8) { }
 	S_SPOS_XDIE8('SPOS', 19, 'monsters/sargeant/gibs.md2', 7, 5.0 / 35.0, S_SPOS_XDIE9) { }
-	S_SPOS_XDIE9('SPOS', 20, 'monsters/sargeant/gibs.md2', 8, -1.0, S_NULL) { }
+	S_SPOS_XDIE9('SPOS', 20, 'monsters/sargeant/gibs.md2', 8, -1.0, none) { }
 	S_SPOS_RAISE1('SPOS', 11, 'monsters/sargeant/death.md2', 5, 5.0 / 35.0, S_SPOS_RAISE2) { }
 	S_SPOS_RAISE2('SPOS', 10, 'monsters/sargeant/death.md2', 6, 5.0 / 35.0, S_SPOS_RAISE3) { }
 	S_SPOS_RAISE3('SPOS', 9, 'monsters/sargeant/death.md2', 7, 5.0 / 35.0, S_SPOS_RAISE4) { }
@@ -136,6 +136,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:54:10  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

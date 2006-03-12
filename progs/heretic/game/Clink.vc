@@ -114,7 +114,7 @@ __states__
 	S_CLINK_DIE11('CLNK', 13, 'monsters/clink/death.md2', 6, 0.1, S_CLINK_DIE12) { }
 	S_CLINK_DIE12('CLNK', 13, 'monsters/clink/death.md2', 7, 0.1, S_CLINK_DIE13) { }
 	S_CLINK_DIE13('CLNK', 14, 'monsters/clink/death.md2', 8, 0.1, S_CLINK_DIE14) { }
-	S_CLINK_DIE14('CLNK', 14, 'monsters/clink/death.md2', 9, -1.0, S_NULL) { }
+	S_CLINK_DIE14('CLNK', 14, 'monsters/clink/death.md2', 9, -1.0, none) { }
 }
 
 defaultproperties
@@ -141,6 +141,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

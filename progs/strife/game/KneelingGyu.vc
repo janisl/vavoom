@@ -41,7 +41,7 @@ __states__
 	S_PRAYER_DIE6('NEAL', 6, 5.0 / 35.0, S_PRAYER_DIE7) { A_Fall(); }
 	S_PRAYER_DIE7('NEAL', 7, 5.0 / 35.0, S_PRAYER_DIE8) { }
 	S_PRAYER_DIE8('NEAL', 8, 6.0 / 35.0, S_PRAYER_DIE9) { }
-	S_PRAYER_DIE9('NEAL', 9, -1.0, S_NULL) { }
+	S_PRAYER_DIE9('NEAL', 9, -1.0, none) { }
 }
 
 defaultproperties
@@ -66,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

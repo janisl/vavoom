@@ -46,7 +46,7 @@ __states__
 	S_SNAKEPRO_BX1('SNFX', 11 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_BX2) { }
 	S_SNAKEPRO_BX2('SNFX', 12 | FF_FULLBRIGHT, 5.0 / 35.0, S_SNAKEPRO_BX3) { }
 	S_SNAKEPRO_BX3('SNFX', 13 | FF_FULLBRIGHT, 4.0 / 35.0, S_SNAKEPRO_BX4) { }
-	S_SNAKEPRO_BX4('SNFX', 14 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+	S_SNAKEPRO_BX4('SNFX', 14 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -63,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

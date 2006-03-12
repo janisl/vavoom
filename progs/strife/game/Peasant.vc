@@ -67,6 +67,9 @@ defaultproperties
 	PainChance = 0.78125;
 	bNeutral = true;
 	IdleState = S_PEASANT_STAND;
+	IdleRightState = S_PEASANT_WALK1;
+	IdleLeftState = S_PEASANT_WALK2;
+	WalkState = S_PEASANT_WALK3;
 	SeeState = S_PEASANT_WALK1;
 	MeleeState = S_PEASANT_ATK1;
 	PainState = S_PEASANT_PAIN1;
@@ -85,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

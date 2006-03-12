@@ -975,7 +975,12 @@ void A_FreezeDeathChunks()
 			(Random() - 0.5) * 2.0 * Radius,
 			(Random() - 0.5) * 2.0 * Radius,
 			Random() * Height));
-		A.SetState(A.IdleState + (P_Random() % 3));
+		switch (P_Random() % 3)
+		{
+		case 0: A.SetState(IceChunk::S_ICECHUNK1); break;
+		case 1: A.SetState(IceChunk::S_ICECHUNK2); break;
+		case 2: A.SetState(IceChunk::S_ICECHUNK3); break;
+		}
 		if (A)
 		{
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
@@ -990,7 +995,12 @@ void A_FreezeDeathChunks()
 			(Random() - 0.5) * 2.0 * Radius,
 			(Random() - 0.5) * 2.0 * Radius,
 			Random() * Height));
-		A.SetState(A.IdleState + (P_Random() % 3));
+		switch (P_Random() % 3)
+		{
+		case 0: A.SetState(IceChunk::S_ICECHUNK1); break;
+		case 1: A.SetState(IceChunk::S_ICECHUNK2); break;
+		case 2: A.SetState(IceChunk::S_ICECHUNK3); break;
+		}
 		if (A)
 		{
 			A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;
@@ -1036,6 +1046,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.11  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

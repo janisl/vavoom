@@ -36,7 +36,7 @@ __states__
 	S_CENTAUR_SWORD7('CTDP', 16, 3.0 / 35.0, S_CENTAUR_SWORD3) { A_CheckFloor(); }
 	S_CENTAUR_SWORD_X1('CTDP', 17, 4.0 / 35.0, S_CENTAUR_SWORD_X2) { }
 	S_CENTAUR_SWORD_X2('CTDP', 18, 4.0 / 35.0, S_CENTAUR_SWORD_X3) { A_QueueCorpse(); }
-	S_CENTAUR_SWORD_X3('CTDP', 19, -1.0, S_NULL) { }
+	S_CENTAUR_SWORD_X3('CTDP', 19, -1.0, none) { }
 }
 
 defaultproperties
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -76,7 +76,7 @@ __states__
 	S_MSTAFF_FX_X7('MSP1', 12 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX_X8) { }
 	S_MSTAFF_FX_X8('MSP1', 13 | FF_FULLBRIGHT, 5.0 / 35.0, S_MSTAFF_FX_X9) { }
 	S_MSTAFF_FX_X9('MSP1', 14 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFF_FX_X10) { }
-	S_MSTAFF_FX_X10('MSP1', 15 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_MSTAFF_FX_X10('MSP1', 15 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -96,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:57  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

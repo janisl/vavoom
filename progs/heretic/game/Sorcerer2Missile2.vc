@@ -61,7 +61,7 @@ __states__
 	S_SOR2FXI2_2('FX11', 3 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_3) { }
 	S_SOR2FXI2_3('FX11', 4 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_4) { }
 	S_SOR2FXI2_4('FX11', 5 | FF_FULLBRIGHT, 5.0 / 35.0, S_SOR2FXI2_5) { }
-	S_SOR2FXI2_5('FX11', 6 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+	S_SOR2FXI2_5('FX11', 6 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -78,6 +78,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

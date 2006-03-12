@@ -49,7 +49,7 @@ __states__
 	S_BEGGAR_DIE6('BEGR', 10, 4.0 / 35.0, S_BEGGAR_DIE7) { }
 	S_BEGGAR_DIE7('BEGR', 11, 4.0 / 35.0, S_BEGGAR_DIE8) { }
 	S_BEGGAR_DIE8('BEGR', 12, 4.0 / 35.0, S_BEGGAR_DIE9) { }
-	S_BEGGAR_DIE9('BEGR', 13, -1.0, S_NULL) { }
+	S_BEGGAR_DIE9('BEGR', 13, -1.0, none) { }
 	S_BEGGAR_XDIE1('BEGR', 5, 5.0 / 35.0, S_PEASANT_XDIE2) { A_XDying(); }
 }
 
@@ -81,6 +81,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

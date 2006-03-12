@@ -38,7 +38,7 @@ __states__
 	S_TFOG7('TFOG', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
 	S_TFOG8('TFOG', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { }
 	S_TFOG9('TFOG', 8 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) { }
-	S_TFOG10('TFOG', 9 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_TFOG10('TFOG', 9 | FF_FULLBRIGHT, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -50,6 +50,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:54:10  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:20  dj_jl
 //  New style of defining classes.
 //

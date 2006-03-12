@@ -38,7 +38,7 @@ __states__
 	S_SERPENT_GIB3_9('SSXD', 19, 12.0 / 35.0, S_SERPENT_GIB3_10) { A_SinkGib(); }
 	S_SERPENT_GIB3_10('SSXD', 19, 8.0 / 35.0, S_SERPENT_GIB3_11) { A_SinkGib(); }
 	S_SERPENT_GIB3_11('SSXD', 19, 8.0 / 35.0, S_SERPENT_GIB3_12) { A_SinkGib(); }
-	S_SERPENT_GIB3_12('SSXD', 19, 8.0 / 35.0, S_NULL) { A_SinkGib(); }
+	S_SERPENT_GIB3_12('SSXD', 19, 8.0 / 35.0, none) { A_SinkGib(); }
 }
 
 defaultproperties
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

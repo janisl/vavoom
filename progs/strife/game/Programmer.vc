@@ -97,7 +97,7 @@ __states__
 	S_PROGRAMMER_DIE11('PRGR', 21 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE12) { }
 	S_PROGRAMMER_DIE12('PRGR', 22 | FF_FULLBRIGHT, 5.0 / 35.0, S_PROGRAMMER_DIE13) { }
 	S_PROGRAMMER_DIE13('PRGR', 23 | FF_FULLBRIGHT, 32.0 / 35.0, S_PROGRAMMER_DIE14) { }
-	S_PROGRAMMER_DIE14('PRGR', 23 | FF_FULLBRIGHT, -1.0, S_NULL) { A_BossDeath(); }
+	S_PROGRAMMER_DIE14('PRGR', 23 | FF_FULLBRIGHT, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties
@@ -129,6 +129,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.6  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

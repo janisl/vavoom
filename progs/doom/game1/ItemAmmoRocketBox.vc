@@ -29,7 +29,7 @@ class ItemAmmoRocketBox : AmmoPickup
 
 __states__
 {
-	S_BROK('BROK', 0, 'ammo/rocktbox.md2', 0, -1.0, S_NULL) { }
+	S_BROK('BROK', 0, 'ammo/rocktbox.md2', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -43,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/21 17:56:04  dj_jl
 //  Can't access game info from default properties.
 //

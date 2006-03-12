@@ -109,7 +109,7 @@ __states__
 	S_FIRE27('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE28) { A_Fire(); }
 	S_FIRE28('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE29) { A_Fire(); }
 	S_FIRE29('FIRE', 6 | FF_FULLBRIGHT, 2.0 / 35.0, S_FIRE30) { A_Fire(); }
-	S_FIRE30('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_NULL) { A_Fire(); }
+	S_FIRE30('FIRE', 7 | FF_FULLBRIGHT, 2.0 / 35.0, none) { A_Fire(); }
 }
 
 defaultproperties
@@ -122,6 +122,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

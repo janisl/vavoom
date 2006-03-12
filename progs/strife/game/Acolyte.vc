@@ -88,6 +88,9 @@ defaultproperties
 	StepSpeed = 7.0;
 	PainChance = 0.5859375;
 	IdleState = S_ACOLYTE_STAND;
+	IdleRightState = S_ACOLYTE_STAND_R;
+	IdleLeftState = S_ACOLYTE_STAND_L;
+	WalkState = S_ACOLYTE_WALK1;
 	SeeState = S_ACOLYTE_RUN1;
 	MissileState = S_ACOLYTE_ATK1;
 	PainState = S_ACOLYTE_PAIN;
@@ -105,6 +108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

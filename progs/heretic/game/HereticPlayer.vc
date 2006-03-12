@@ -25,6 +25,24 @@
 
 class HereticPlayer : PlayerPawn;
 
+//===========================================================================
+//
+//  StopMoving
+//
+//===========================================================================
+
+void StopMoving()
+{
+	if (bIsPlayer)
+	{
+		if (State == S_PLAY_RUN1 || State == S_PLAY_RUN2 ||
+			State == S_PLAY_RUN3 || State == S_PLAY_RUN4)
+		{
+			SetState(IdleState);
+		}
+	}
+}
+
 //==========================================================================
 //
 //  A_Scream
@@ -108,13 +126,13 @@ void A_CheckBurnGone()
 {
 	if (bSafeToRemove)
 	{
-		SetState(StateNum + 1);
+		SetState(S_PLAY_FDTH20);
 	}
 }
 
 __states__
 {
-	S_PLAY('PLAY', 0, -1.0, S_NULL) { }
+	S_PLAY('PLAY', 0, -1.0, none) { }
 	S_PLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_PLAY_RUN2) { }
 	S_PLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_PLAY_RUN3) { }
 	S_PLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_PLAY_RUN4) { }
@@ -131,7 +149,7 @@ __states__
 	S_PLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_PLAY_DIE7) { }
 	S_PLAY_DIE7('PLAY', 13, 6.0 / 35.0, S_PLAY_DIE8) { }
 	S_PLAY_DIE8('PLAY', 14, 6.0 / 35.0, S_PLAY_DIE9) { }
-	S_PLAY_DIE9('PLAY', 15, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_PLAY_DIE9('PLAY', 15, -1.0, none) { A_AddPlayerCorpse(); }
 	S_PLAY_XDIE1('PLAY', 16, 5.0 / 35.0, S_PLAY_XDIE2) { A_Scream(); }
 	S_PLAY_XDIE2('PLAY', 17, 5.0 / 35.0, S_PLAY_XDIE3) { A_SkullPop(); }
 	S_PLAY_XDIE3('PLAY', 18, 5.0 / 35.0, S_PLAY_XDIE4) { A_NoBlocking(); }
@@ -140,7 +158,7 @@ __states__
 	S_PLAY_XDIE6('PLAY', 21, 5.0 / 35.0, S_PLAY_XDIE7) { }
 	S_PLAY_XDIE7('PLAY', 22, 5.0 / 35.0, S_PLAY_XDIE8) { }
 	S_PLAY_XDIE8('PLAY', 23, 5.0 / 35.0, S_PLAY_XDIE9) { }
-	S_PLAY_XDIE9('PLAY', 24, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_PLAY_XDIE9('PLAY', 24, -1.0, none) { A_AddPlayerCorpse(); }
 	S_PLAY_FDTH1('FDTH', 0 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH2) { A_FlameSnd(); }
 	S_PLAY_FDTH2('FDTH', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH3) { }
 	S_PLAY_FDTH3('FDTH', 2 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH4) { }
@@ -160,7 +178,7 @@ __states__
 	S_PLAY_FDTH17('FDTH', 16 | FF_FULLBRIGHT, 5.0 / 35.0, S_PLAY_FDTH18) { }
 	S_PLAY_FDTH18('FDTH', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_PLAY_FDTH19) { }
 	S_PLAY_FDTH19('ACLO', 4, 35.0 / 35.0, S_PLAY_FDTH19) { A_CheckBurnGone(); }
-	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, S_NULL) { }
+	S_PLAY_FDTH20('ACLO', 4, 8.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -190,6 +208,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/03/02 18:33:23  dj_jl
 //  Don't use game specific classes in common.
 //

@@ -25,9 +25,26 @@
 
 class DoomPlayer : PlayerPawn;
 
+//===========================================================================
+//
+//  StopMoving
+//
+//===========================================================================
+
+void StopMoving()
+{
+	if (bIsPlayer)
+	{
+		// if in a walking frame, stop moving
+		if (State == S_PLAY_RUN1 || State == S_PLAY_RUN2 ||
+			State == S_PLAY_RUN3 || State == S_PLAY_RUN4)
+			SetState(IdleState);
+	}
+}
+
 __states__
 {
-	S_PLAY('PLAY', 0, 'players/doomguy/tris.md2', 0, -1.0, S_NULL) { }
+	S_PLAY('PLAY', 0, 'players/doomguy/tris.md2', 0, -1.0, none) { }
 	S_PLAY_RUN1('PLAY', 0, 'players/doomguy/tris.md2', 1, 4.0 / 35.0, S_PLAY_RUN2) { }
 	S_PLAY_RUN2('PLAY', 1, 'players/doomguy/tris.md2', 2, 4.0 / 35.0, S_PLAY_RUN3) { }
 	S_PLAY_RUN3('PLAY', 2, 'players/doomguy/tris.md2', 3, 4.0 / 35.0, S_PLAY_RUN4) { }
@@ -42,7 +59,7 @@ __states__
 	S_PLAY_DIE4('PLAY', 10, 'players/doomguy/tris.md2', 12, 10.0 / 35.0, S_PLAY_DIE5) { }
 	S_PLAY_DIE5('PLAY', 11, 'players/doomguy/tris.md2', 13, 10.0 / 35.0, S_PLAY_DIE6) { }
 	S_PLAY_DIE6('PLAY', 12, 'players/doomguy/tris.md2', 14, 10.0 / 35.0, S_PLAY_DIE7) { }
-	S_PLAY_DIE7('PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, S_NULL) { }
+	S_PLAY_DIE7('PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, none) { }
 	S_PLAY_XDIE1('PLAY', 14, 'players/doomguy/xplode.md2', 0, 5.0 / 35.0, S_PLAY_XDIE2) { }
 	S_PLAY_XDIE2('PLAY', 15, 'players/doomguy/xplode.md2', 1, 5.0 / 35.0, S_PLAY_XDIE3) { A_XScream(); }
 	S_PLAY_XDIE3('PLAY', 16, 'players/doomguy/xplode.md2', 2, 5.0 / 35.0, S_PLAY_XDIE4) { A_Fall(); }
@@ -51,7 +68,7 @@ __states__
 	S_PLAY_XDIE6('PLAY', 19, 'players/doomguy/xplode.md2', 5, 5.0 / 35.0, S_PLAY_XDIE7) { }
 	S_PLAY_XDIE7('PLAY', 20, 'players/doomguy/xplode.md2', 6, 5.0 / 35.0, S_PLAY_XDIE8) { }
 	S_PLAY_XDIE8('PLAY', 21, 'players/doomguy/xplode.md2', 7, 5.0 / 35.0, S_PLAY_XDIE9) { }
-	S_PLAY_XDIE9('PLAY', 22, 'players/doomguy/xplode.md2', 8, -1.0, S_NULL) { }
+	S_PLAY_XDIE9('PLAY', 22, 'players/doomguy/xplode.md2', 8, -1.0, none) { }
 }
 
 defaultproperties
@@ -78,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

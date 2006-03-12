@@ -37,9 +37,6 @@ class Object
 #error These are version 19 progs
 #endif
 
-//FIXME
-#define classidNone		Object
-
 const int MAX_INFO_STRING		= 1024;
 
 enum
@@ -1454,15 +1451,6 @@ native void Destroy();
 native bool IsA(name CheckName);
 native bool IsDestroyed();
 
-//
-//	States
-//
-
-__states__
-{
-	S_NULL('', 0, -1.0, S_NULL) { }
-}
-
 //==========================================================================
 //
 //              COMMON BUILTINS
@@ -1958,6 +1946,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/12 20:02:31  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.10  2006/03/06 13:13:55  dj_jl
 //  Client now uses entity class.
 //

@@ -30,7 +30,7 @@ __states__
 	S_DEMON2CHUNK2_1('DMBB', 0, 4.0 / 35.0, S_DEMON2CHUNK2_2) { }
 	S_DEMON2CHUNK2_2('DMBB', 0, 10.0 / 35.0, S_DEMON2CHUNK2_3) { A_QueueCorpse(); }
 	S_DEMON2CHUNK2_3('DMBB', 0, 20.0 / 35.0, S_DEMON2CHUNK2_3) { }
-	S_DEMON2CHUNK2_4('DMBB', 0, -1.0, S_NULL) { }
+	S_DEMON2CHUNK2_4('DMBB', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

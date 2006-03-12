@@ -77,7 +77,7 @@ __states__
 	S_SORCBALL2_D6('SBS3', 4, 5.0 / 35.0, S_SORCBALL2_D7) { }
 	S_SORCBALL2_D7('SBS3', 5, 6.0 / 35.0, S_SORCBALL2_D8) { }
 	S_SORCBALL2_D8('SBS3', 6, 6.0 / 35.0, S_SORCBALL2_D9) { }
-	S_SORCBALL2_D9('SBS3', 7, 6.0 / 35.0, S_NULL) { }
+	S_SORCBALL2_D9('SBS3', 7, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -91,6 +91,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/28 22:46:53  dj_jl
 //  Replaced defines with constants.
 //

@@ -25,6 +25,21 @@
 
 class PlayerFighter : PlayerPawn;
 
+//==========================================================================
+//
+//	StopMoving
+//
+//==========================================================================
+
+void StopMoving()
+{
+	if (State == S_FPLAY_RUN1 || State == S_FPLAY_RUN2 ||
+		State == S_FPLAY_RUN3 || State == S_FPLAY_RUN4)
+	{
+		SetState(IdleState);
+	}
+}
+
 //============================================================================
 //
 //  A_SkullPop
@@ -59,7 +74,7 @@ void A_SkullPop()
 
 __states__
 {
-	S_FPLAY('PLAY', 0, -1.0, S_NULL) { }
+	S_FPLAY('PLAY', 0, -1.0, none) { }
 	S_FPLAY_RUN1('PLAY', 0, 4.0 / 35.0, S_FPLAY_RUN2) { }
 	S_FPLAY_RUN2('PLAY', 1, 4.0 / 35.0, S_FPLAY_RUN3) { }
 	S_FPLAY_RUN3('PLAY', 2, 4.0 / 35.0, S_FPLAY_RUN4) { }
@@ -74,7 +89,7 @@ __states__
 	S_FPLAY_DIE4('PLAY', 10, 6.0 / 35.0, S_FPLAY_DIE5) { }
 	S_FPLAY_DIE5('PLAY', 11, 6.0 / 35.0, S_FPLAY_DIE6) { A_NoBlocking(); }
 	S_FPLAY_DIE6('PLAY', 12, 6.0 / 35.0, S_FPLAY_DIE7) { }
-	S_FPLAY_DIE7('PLAY', 13, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_FPLAY_DIE7('PLAY', 13, -1.0, none) { A_AddPlayerCorpse(); }
 	S_FPLAY_XDIE1('PLAY', 14, 5.0 / 35.0, S_FPLAY_XDIE2) { A_Scream(); }
 	S_FPLAY_XDIE2('PLAY', 15, 5.0 / 35.0, S_FPLAY_XDIE3) { A_SkullPop(); }
 	S_FPLAY_XDIE3('PLAY', 17, 5.0 / 35.0, S_FPLAY_XDIE4) { A_NoBlocking(); }
@@ -82,7 +97,7 @@ __states__
 	S_FPLAY_XDIE5('PLAY', 19, 5.0 / 35.0, S_FPLAY_XDIE6) { }
 	S_FPLAY_XDIE6('PLAY', 20, 5.0 / 35.0, S_FPLAY_XDIE7) { }
 	S_FPLAY_XDIE7('PLAY', 21, 5.0 / 35.0, S_FPLAY_XDIE8) { }
-	S_FPLAY_XDIE8('PLAY', 22, -1.0, S_NULL) { A_AddPlayerCorpse(); }
+	S_FPLAY_XDIE8('PLAY', 22, -1.0, none) { A_AddPlayerCorpse(); }
 	S_FPLAY_ICE('PLAY', 23, 5.0 / 35.0, S_FPLAY_ICE2) { A_FreezeDeath(); }
 	S_FPLAY_ICE2('PLAY', 23, 1.0 / 35.0, S_FPLAY_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -111,6 +126,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

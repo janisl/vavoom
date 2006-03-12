@@ -54,10 +54,10 @@ void A_SpawnBishop()
 	{
 		if (!A.TestLocation())
 		{
-			A.SetState(S_NULL);
+			A.SetState(none);
 		}
 	}
-	SetState(S_NULL);
+	SetState(none);
 }
 
 __states__
@@ -75,7 +75,7 @@ __states__
 	S_BISHMORPHG('BISH', 9, 3.0 / 35.0, S_BISHMORPHH) { }
 	S_BISHMORPHH('BISH', 8, 3.0 / 35.0, S_BISHMORPHI) { }
 	S_BISHMORPHI('BISH', 7, 3.0 / 35.0, S_BISHMORPHJ) { }
-	S_BISHMORPHJ('BISH', 6, 3.0 / 35.0, S_NULL) { A_SpawnBishop(); }
+	S_BISHMORPHJ('BISH', 6, 3.0 / 35.0, none) { A_SpawnBishop(); }
 }
 
 defaultproperties
@@ -96,6 +96,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.3  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

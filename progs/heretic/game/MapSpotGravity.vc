@@ -28,7 +28,7 @@ class MapSpotGravity : Actor
 
 __states__
 {
-	S_MAPSPOT_GRAV('TLGL', 0, -1.0, S_NULL) { }
+	S_MAPSPOT_GRAV('TLGL', 0, -1.0, none) { }
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2004/11/01 07:38:22  dj_jl
 //  Almost all Hexen line specials are available in all games.
 //

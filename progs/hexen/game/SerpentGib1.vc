@@ -71,7 +71,7 @@ __states__
 	S_SERPENT_GIB1_9('SSXD', 16, 12.0 / 35.0, S_SERPENT_GIB1_10) { A_SinkGib(); }
 	S_SERPENT_GIB1_10('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_11) { A_SinkGib(); }
 	S_SERPENT_GIB1_11('SSXD', 16, 8.0 / 35.0, S_SERPENT_GIB1_12) { A_SinkGib(); }
-	S_SERPENT_GIB1_12('SSXD', 16, 8.0 / 35.0, S_NULL) { A_SinkGib(); }
+	S_SERPENT_GIB1_12('SSXD', 16, 8.0 / 35.0, none) { A_SinkGib(); }
 }
 
 defaultproperties
@@ -84,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -29,7 +29,7 @@ __states__
 {
 	S_PODGOO1('PPOD', 6, 8.0 / 35.0, S_PODGOO2) { }
 	S_PODGOO2('PPOD', 7, 8.0 / 35.0, S_PODGOO1) { }
-	S_PODGOOX('PPOD', 6, 10.0 / 35.0, S_NULL) { }
+	S_PODGOOX('PPOD', 6, 10.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:23  dj_jl
 //  New style of defining classes.
 //

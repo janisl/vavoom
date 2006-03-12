@@ -113,6 +113,7 @@ static char* Keywords[] =
 	"NULL",
 	"return",
 	"self",
+	"state",
 	"static",
 	"string",
 	"struct",
@@ -664,6 +665,11 @@ static void ProcessLetterToken(void)
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_SELF;
 		}
+		else if (!strcmp(tk_String, "state"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_STATE;
+		}
 		else if (!strcmp(tk_String, "static"))
 		{
 			tk_Token = TK_KEYWORD;
@@ -1206,9 +1212,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/03/12 20:04:50  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.26  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.25  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
 //	

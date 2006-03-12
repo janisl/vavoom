@@ -39,7 +39,7 @@ __states__
 	S_BRBALL2('BAL7', 1 | FF_FULLBRIGHT, 'missiles/grenball.md2', 1, 4.0 / 35.0, S_BRBALL1) { }
 	S_BRBALLX1('BAL7', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX2) { }
 	S_BRBALLX2('BAL7', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_BRBALLX3) { }
-	S_BRBALLX3('BAL7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_BRBALLX3('BAL7', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -59,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

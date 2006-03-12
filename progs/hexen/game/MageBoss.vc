@@ -80,7 +80,7 @@ __states__
 	S_MAGE_DIE4('MAGE', 10, 6.0 / 35.0, S_MAGE_DIE5) { }
 	S_MAGE_DIE5('MAGE', 11, 6.0 / 35.0, S_MAGE_DIE6) { A_NoBlocking(); }
 	S_MAGE_DIE6('MAGE', 12, 6.0 / 35.0, S_MAGE_DIE7) { }
-	S_MAGE_DIE7('MAGE', 13, -1.0, S_NULL) { }
+	S_MAGE_DIE7('MAGE', 13, -1.0, none) { }
 	S_MAGE_XDIE1('MAGE', 14, 5.0 / 35.0, S_MAGE_XDIE2) { A_Scream(); }
 	S_MAGE_XDIE2('MAGE', 15, 5.0 / 35.0, S_MAGE_XDIE3) { }
 	S_MAGE_XDIE3('MAGE', 17, 5.0 / 35.0, S_MAGE_XDIE4) { A_NoBlocking(); }
@@ -89,7 +89,7 @@ __states__
 	S_MAGE_XDIE6('MAGE', 20, 5.0 / 35.0, S_MAGE_XDIE7) { }
 	S_MAGE_XDIE7('MAGE', 21, 5.0 / 35.0, S_MAGE_XDIE8) { }
 	S_MAGE_XDIE8('MAGE', 22, 5.0 / 35.0, S_MAGE_XDIE9) { }
-	S_MAGE_XDIE9('MAGE', 23, -1.0, S_NULL) { }
+	S_MAGE_XDIE9('MAGE', 23, -1.0, none) { }
 	S_MAGE_ICE('MAGE', 24, 5.0 / 35.0, S_MAGE_ICE2) { A_FreezeDeath(); }
 	S_MAGE_ICE2('MAGE', 24, 1.0 / 35.0, S_MAGE_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -118,6 +118,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:56  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

@@ -74,8 +74,8 @@ float CommandOffset;
 //  Special1    last teleport destination
 bool bDidBelowHalfHealth;	//  set if "below half" script not yet run
 
-int KoraxMissileState;
-int KoraxCommandState;
+state KoraxMissileState;
+state KoraxCommandState;
 
 //============================================================================
 //
@@ -471,7 +471,7 @@ __states__
 	S_KORAX_DEATHA('KORX', 18, 5.0 / 35.0, S_KORAX_DEATHB) { A_NoBlocking(); }
 	S_KORAX_DEATHB('KORX', 19, 5.0 / 35.0, S_KORAX_DEATHC) { }
 	S_KORAX_DEATHC('KORX', 20, 5.0 / 35.0, S_KORAX_DEATHD) { }
-	S_KORAX_DEATHD('KORX', 21, -1.0, S_NULL) { }
+	S_KORAX_DEATHD('KORX', 21, -1.0, none) { }
 }
 
 defaultproperties
@@ -515,6 +515,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/12 19:58:56  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.8  2006/02/26 20:56:25  dj_jl
 //  Proper serialisation of level and players.
 //

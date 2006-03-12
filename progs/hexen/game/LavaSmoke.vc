@@ -31,7 +31,7 @@ __states__
 	S_LAVASMOKE2('LVAS', 7 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE3) { }
 	S_LAVASMOKE3('LVAS', 8 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE4) { }
 	S_LAVASMOKE4('LVAS', 9 | FF_FULLBRIGHT, 5.0 / 35.0, S_LAVASMOKE5) { }
-	S_LAVASMOKE5('LVAS', 10 | FF_FULLBRIGHT, 5.0 / 35.0, S_NULL) { }
+	S_LAVASMOKE5('LVAS', 10 | FF_FULLBRIGHT, 5.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -43,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:56  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:26  dj_jl
 //  New style of defining classes.
 //

@@ -118,7 +118,7 @@ __states__
 	S_DEMN2_DEATH6('DEM2', 12, 'monsters/demon/base2.md2', 29, 6.0 / 35.0, S_DEMN2_DEATH7) { }
 	S_DEMN2_DEATH7('DEM2', 13, 'monsters/demon/base2.md2', 30, 6.0 / 35.0, S_DEMN2_DEATH8) { }
 	S_DEMN2_DEATH8('DEM2', 14, 'monsters/demon/base2.md2', 31, 6.0 / 35.0, S_DEMN2_DEATH9) { }
-	S_DEMN2_DEATH9('DEM2', 15, 'monsters/demon/base2.md2', 32, -1.0, S_NULL) { }
+	S_DEMN2_DEATH9('DEM2', 15, 'monsters/demon/base2.md2', 32, -1.0, none) { }
 	S_DEMN2_XDEATH1('DEM2', 7, 'monsters/demon/base2.md2', 24, 6.0 / 35.0, S_DEMN2_XDEATH2) { }
 	S_DEMN2_XDEATH2('DEM2', 8, 'monsters/demon/base2.md2', 25, 6.0 / 35.0, S_DEMN2_XDEATH3) { A_Demon2Death(); }
 	S_DEMN2_XDEATH3('DEM2', 9, 'monsters/demon/base2.md2', 26, 6.0 / 35.0, S_DEMN2_XDEATH4) { A_Scream(); }
@@ -127,7 +127,7 @@ __states__
 	S_DEMN2_XDEATH6('DEM2', 12, 'monsters/demon/base2.md2', 29, 6.0 / 35.0, S_DEMN2_XDEATH7) { }
 	S_DEMN2_XDEATH7('DEM2', 13, 'monsters/demon/base2.md2', 30, 6.0 / 35.0, S_DEMN2_XDEATH8) { }
 	S_DEMN2_XDEATH8('DEM2', 14, 'monsters/demon/base2.md2', 31, 6.0 / 35.0, S_DEMN2_XDEATH9) { }
-	S_DEMN2_XDEATH9('DEM2', 15, 'monsters/demon/base2.md2', 32, -1.0, S_NULL) { }
+	S_DEMN2_XDEATH9('DEM2', 15, 'monsters/demon/base2.md2', 32, -1.0, none) { }
 }
 
 defaultproperties
@@ -145,6 +145,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2005/08/13 15:38:49  dj_jl
 //  Models added.
 //

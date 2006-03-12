@@ -27,9 +27,9 @@ class Serpent : Pawn
 	__mobjinfo__(121)
 	__scriptid__(6);
 
-int HumpState;
-int WalkState;
-int AttackState;
+state HumpState;
+state WalkState;
+state AttackState;
 
 //==========================================================================
 //
@@ -546,7 +546,7 @@ __states__
 	S_SERPENT_DIE9('SSPT', 22, 4.0 / 35.0, S_SERPENT_DIE10) { }
 	S_SERPENT_DIE10('SSPT', 23, 4.0 / 35.0, S_SERPENT_DIE11) { }
 	S_SERPENT_DIE11('SSPT', 24, 4.0 / 35.0, S_SERPENT_DIE12) { }
-	S_SERPENT_DIE12('SSPT', 25, 4.0 / 35.0, S_NULL) { }
+	S_SERPENT_DIE12('SSPT', 25, 4.0 / 35.0, none) { }
 	S_SERPENT_XDIE1('SSXD', 0, 4.0 / 35.0, S_SERPENT_XDIE2) { }
 	S_SERPENT_XDIE2('SSXD', 1, 4.0 / 35.0, S_SERPENT_XDIE3) { A_SerpentHeadPop(); }
 	S_SERPENT_XDIE3('SSXD', 2, 4.0 / 35.0, S_SERPENT_XDIE4) { A_NoBlocking(); }
@@ -554,7 +554,7 @@ __states__
 	S_SERPENT_XDIE5('SSXD', 4, 4.0 / 35.0, S_SERPENT_XDIE6) { }
 	S_SERPENT_XDIE6('SSXD', 5, 3.0 / 35.0, S_SERPENT_XDIE7) { }
 	S_SERPENT_XDIE7('SSXD', 6, 3.0 / 35.0, S_SERPENT_XDIE8) { }
-	S_SERPENT_XDIE8('SSXD', 7, 3.0 / 35.0, S_NULL) { A_SerpentSpawnGibs(); }
+	S_SERPENT_XDIE8('SSXD', 7, 3.0 / 35.0, none) { A_SerpentSpawnGibs(); }
 	S_SERPENT_ICE('SSPT', 26, 5.0 / 35.0, S_SERPENT_ICE2) { A_FreezeDeath(); }
 	S_SERPENT_ICE2('SSPT', 26, 1.0 / 35.0, S_SERPENT_ICE2) { A_FreezeDeathChunks(); }
 }
@@ -595,6 +595,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //

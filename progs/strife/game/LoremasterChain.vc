@@ -61,7 +61,7 @@ void A_ChainTend()
 __states__
 {
 	S_LOREMASTER_CHAIN('OCLW', 0, 2.0 / 35.0, S_LOREMASTER_CHAIN) { A_ChainTend(); }
-	S_LOREMASTER_CHAIN_X('CCLW', 0, 6.0 / 35.0, S_NULL) { }
+	S_LOREMASTER_CHAIN_X('CCLW', 0, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -79,6 +79,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

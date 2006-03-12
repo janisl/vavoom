@@ -106,7 +106,7 @@ __states__
 	S_SNAKE_DIE7('SNKE', 12, 'monsters/snake/death.md2', 6, 5.0 / 35.0, S_SNAKE_DIE8) { A_NoBlocking(); }
 	S_SNAKE_DIE8('SNKE', 13, 'monsters/snake/death.md2', 7, 5.0 / 35.0, S_SNAKE_DIE9) { }
 	S_SNAKE_DIE9('SNKE', 14, 'monsters/snake/death.md2', 8, 5.0 / 35.0, S_SNAKE_DIE10) { }
-	S_SNAKE_DIE10('SNKE', 15, 'monsters/snake/death.md2', 9, -1.0, S_NULL) { }
+	S_SNAKE_DIE10('SNKE', 15, 'monsters/snake/death.md2', 9, -1.0, none) { }
 }
 
 defaultproperties
@@ -132,6 +132,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

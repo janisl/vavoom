@@ -1439,7 +1439,12 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			glass.bColideWithThings = false;
 			glass.bColideWithWorld = false;
 			glass.Origin.z += 24.0;
-			glass.SetState(Actor::S_SHARD_4 + P_Random() % 3);
+			switch (P_Random() % 3)
+			{
+			case 0: glass.SetState(Actor::S_SHARD_4); break;
+			case 1: glass.SetState(Actor::S_SHARD_5); break;
+			case 2: glass.SetState(Actor::S_SHARD_6); break;
+			}
 			an = Random() * 360.0;
 			glass.Angles.yaw = an;
 			speed = Random() * 4.0 * 35.0;
@@ -4223,7 +4228,7 @@ void SpawnMapThing(mthing_t * mthing)
 
 	// find which type to spawn
 	moClass = FindClassFromEditorId(mthing->type);
-	if (moClass && moClass != classidNone)
+	if (moClass)
 	{
 		// spawn it
 		A = Actor(NewMobjThinker(moClass));
@@ -4473,7 +4478,7 @@ classid GetClassFromID(int ID)
 	{
 		print("Unknown item %d", ID);
 	}
-	return classidNone;
+	return none;
 }
 
 //==========================================================================
@@ -4589,7 +4594,7 @@ void ConChoiceImpulse(int ChoiceNum)
 	if (Choice->GiveItem > 0)
 	{
 		ItemType = GetClassFromID(Choice->GiveItem);
-		if (ItemType != classidNone)
+		if (ItemType)
 		{
 			Item = Pickup(Spawn(ItemType, vector(0.0, 0.0, 0.0)));
 			GaveItem = Item.GiveItemTo(CurrentSpeakingTo);
@@ -4661,6 +4666,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 20:01:24  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

@@ -172,22 +172,22 @@ class VEntity : public VThinker
 
 	int				InUse;			//	Counter for client side
 
-	VName SpriteName;
-	float StateTime;	// state tic counter
-	int StateNum;
-	int NextState;
+	VName			SpriteName;
+	float			StateTime;	// state tic counter
+	state_t*		State;
+	state_t*		NextState;
 
 	//  Params
-	float Mass;
-	float MaxStepHeight;
+	float			Mass;
+	float			MaxStepHeight;
 
 	//  Water
-	int WaterLevel;
-	int WaterType;
+	int				WaterLevel;
+	int				WaterType;
 
 	//   For player sounds.
-	VName SoundClass;
-	VName SoundGender;
+	VName			SoundClass;
+	VName			SoundGender;
 
 	static int FIndex_Destroyed;
 	static int FIndex_Touch;
@@ -221,15 +221,15 @@ class VEntity : public VThinker
 	{
 		svpr.Exec(GetVFunction(FIndex_BlockedByLine), (int)this, (int)ld);
 	}
-	void eventApplyFriction(void)
+	void eventApplyFriction()
 	{
 		svpr.Exec(GetVFunction(FIndex_ApplyFriction), (int)this);
 	}
-	void eventPushLine(void)
+	void eventPushLine()
 	{
 		svpr.Exec(GetVFunction(FIndex_PushLine), (int)this);
 	}
-	void eventHandleFloorclip(void)
+	void eventHandleFloorclip()
 	{
 		svpr.Exec(GetVFunction(FIndex_HandleFloorclip), (int)this);
 	}
@@ -267,24 +267,24 @@ class VEntity : public VThinker
 		SetFlags(_OF_DelayedDestroy);
 	}
 
-	bool SetState(int state);
-	void SetInitialState(int state);
-	int FindState(VName StateName);
+	bool SetState(state_t* state);
+	void SetInitialState(state_t* state);
+	state_t* FindState(VName StateName);
 
-	boolean CheckWater(void);
-	boolean CheckPosition(TVec Pos);
-	boolean CheckRelPosition(TVec Pos);
-	boolean TryMove(TVec newPos);
-	void SlideMove(void);
+	bool CheckWater();
+	bool CheckPosition(TVec Pos);
+	bool CheckRelPosition(TVec Pos);
+	bool TryMove(TVec newPos);
+	void SlideMove();
 	void BounceWall(float overbounce);
-	void UpdateVelocity(void);
-	void FakeZMovement(void);
-	VEntity *CheckOnmobj(void);
+	void UpdateVelocity();
+	void FakeZMovement();
+	VEntity *CheckOnmobj();
 	VEntity *RoughBlockCheck(int index);
 	VEntity *RoughMonsterSearch(int distance);
 
-	void LinkToWorld(void);
-	void UnlinkFromWorld(void);
+	void LinkToWorld();
+	void UnlinkFromWorld();
 	bool CanSee(VEntity* Other);
 
 	DECLARE_FUNCTION(Remove)
@@ -311,9 +311,12 @@ class VEntity : public VThinker
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.2  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.1  2006/03/06 13:12:12  dj_jl
 //	Client now uses entity class.
 //	

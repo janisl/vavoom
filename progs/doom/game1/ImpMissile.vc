@@ -39,7 +39,7 @@ __states__
 	S_TBALL2('BAL1', 1 | FF_FULLBRIGHT, 'missiles/impball.md2', 1, 4.0 / 35.0, S_TBALL1) { }
 	S_TBALLX1('BAL1', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX2) { }
 	S_TBALLX2('BAL1', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TBALLX3) { }
-	S_TBALLX3('BAL1', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_NULL) { }
+	S_TBALLX3('BAL1', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -59,6 +59,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:54:09  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/02/17 19:06:51  dj_jl
 //  Moved common defs to classes.
 //

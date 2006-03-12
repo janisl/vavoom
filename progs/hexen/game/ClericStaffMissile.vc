@@ -73,7 +73,7 @@ __states__
 	S_CSTAFF_MISSILE_X1('CSSF', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_CSTAFF_MISSILE_X2) { }
 	S_CSTAFF_MISSILE_X2('CSSF', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_CSTAFF_MISSILE_X3) { }
 	S_CSTAFF_MISSILE_X3('CSSF', 7 | FF_FULLBRIGHT, 3.0 / 35.0, S_CSTAFF_MISSILE_X4) { }
-	S_CSTAFF_MISSILE_X4('CSSF', 8 | FF_FULLBRIGHT, 3.0 / 35.0, S_NULL) { }
+	S_CSTAFF_MISSILE_X4('CSSF', 8 | FF_FULLBRIGHT, 3.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -91,6 +91,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:58:55  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/17 19:06:52  dj_jl
 //  Moved common defs to classes.
 //

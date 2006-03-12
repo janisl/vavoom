@@ -54,7 +54,7 @@ __states__
 	S_CENTAUR_SHIELD_X1('CTDP', 6, 4.0 / 35.0, S_CENTAUR_SHIELD_X2) { }
 	S_CENTAUR_SHIELD_X2('CTDP', 7, 4.0 / 35.0, S_CENTAUR_SHIELD_X3) { A_QueueCorpse(); }
 	S_CENTAUR_SHIELD_X3('CTDP', 8, 4.0 / 35.0, S_CENTAUR_SHIELD_X4) { }
-	S_CENTAUR_SHIELD_X4('CTDP', 9, -1.0, S_NULL) { }
+	S_CENTAUR_SHIELD_X4('CTDP', 9, -1.0, none) { }
 }
 
 defaultproperties
@@ -67,6 +67,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:58:54  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

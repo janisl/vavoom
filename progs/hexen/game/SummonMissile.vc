@@ -43,7 +43,7 @@ void A_Summon()
 		if (!A.TestLocation() || !Instigator)
 		{
 			// Didn't fit - change back to artifact
-			A.SetState(S_NULL);
+			A.SetState(none);
 			A = Spawn(ArtifactSummonMaulator, Origin);
 			if (A)
 				A.bDropped = true;
@@ -69,7 +69,7 @@ __states__
 	S_SUMMON_FX1_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX1_1) { }
 	S_SUMMON_FX2_1('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_2) { }
 	S_SUMMON_FX2_2('SUMN', 0, 4.0 / 35.0, S_SUMMON_FX2_3) { }
-	S_SUMMON_FX2_3('SUMN', 0, 4.0 / 35.0, S_NULL) { A_Summon(); }
+	S_SUMMON_FX2_3('SUMN', 0, 4.0 / 35.0, none) { A_Summon(); }
 }
 
 defaultproperties
@@ -87,6 +87,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/12 19:58:58  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.5  2006/03/02 18:35:14  dj_jl
 //  Don't use game specific classes in common.
 //

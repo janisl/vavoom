@@ -152,7 +152,7 @@ __states__
 	S_BSPI_DIE4('BSPI', 12, 'monsters/arach/death.md2', 3, 7.0 / 35.0, S_BSPI_DIE5) { }
 	S_BSPI_DIE5('BSPI', 13, 'monsters/arach/death.md2', 4, 7.0 / 35.0, S_BSPI_DIE6) { }
 	S_BSPI_DIE6('BSPI', 14, 'monsters/arach/death.md2', 5, 7.0 / 35.0, S_BSPI_DIE7) { }
-	S_BSPI_DIE7('BSPI', 15, 'monsters/arach/death.md2', 6, -1.0, S_NULL) { A_BossDeath(); }
+	S_BSPI_DIE7('BSPI', 15, 'monsters/arach/death.md2', 6, -1.0, none) { A_BossDeath(); }
 	S_BSPI_RAISE1('BSPI', 15, 'monsters/arach/death.md2', 7, 5.0 / 35.0, S_BSPI_RAISE2) { }
 	S_BSPI_RAISE2('BSPI', 14, 'monsters/arach/death.md2', 8, 5.0 / 35.0, S_BSPI_RAISE3) { }
 	S_BSPI_RAISE3('BSPI', 13, 'monsters/arach/death.md2', 9, 5.0 / 35.0, S_BSPI_RAISE4) { }
@@ -185,6 +185,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/02/15 23:32:36  dj_jl
 //  Moved all server progs global variables to classes.
 //

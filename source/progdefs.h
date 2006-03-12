@@ -46,6 +46,7 @@ enum EType
 	ev_classid,
 	ev_bool,
 	ev_delegate,
+	ev_state,
 	ev_unknown,
 
 	NUM_BASIC_TYPES
@@ -210,6 +211,7 @@ enum
 	DECLARE_OPC(PushVFunc, 1),
 	DECLARE_OPC(PushPointedDelegate, 0),
 	DECLARE_OPC(AssignDelegate, 0),
+	DECLARE_OPC(PushState, 1),
 
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO
@@ -231,31 +233,20 @@ struct dprograms_t
 	int		num_statements;
 
 	int		num_functions;
-	
 	int		num_classinfo;
+	int		num_states;
+	int		num_fields;
+	int		num_structs;
+	int		num_constants;
 
 	int		ofs_vtables;
 	int		num_vtables;
-
-	int		ofs_sprnames;
-	int		num_sprnames;
-
-	int		ofs_mdlnames;
-	int		num_mdlnames;
-
-	int		num_states;
 
 	int		ofs_mobjinfo;
 	int		num_mobjinfo;
 
 	int		ofs_scriptids;
 	int		num_scriptids;
-
-	int		num_fields;
-
-	int		num_structs;
-
-	int		num_constants;
 
 	int		ofs_exportinfo;
 	int		ofs_exportdata;
@@ -266,9 +257,12 @@ struct dprograms_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.28  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.27  2006/02/28 22:50:20  dj_jl
 //	Added support for constants.
 //	

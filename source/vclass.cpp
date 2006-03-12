@@ -26,8 +26,12 @@
 #include "gamedefs.h"
 #include "progdefs.h"
 
-bool			VClass::GObjInitialized;
-VClass*			VClass::GClasses;
+bool				VClass::GObjInitialized;
+VClass*				VClass::GClasses;
+TArray<mobjinfo_t>	VClass::GMobjInfos;
+TArray<mobjinfo_t>	VClass::GScriptIds;
+TArray<VName>		VClass::GSpriteNames;
+TArray<VName>		VClass::GModelNames;
 
 //==========================================================================
 //
@@ -159,15 +163,20 @@ void state_t::Serialise(VStream& Strm)
 {
 	guard(state_t::Serialise);
 	VMemberBase::Serialise(Strm);
-VClass* OuterClass;
-	Strm << STRM_INDEX(sprite)
+	Strm << SpriteName
 		<< STRM_INDEX(frame)
-		<< STRM_INDEX(model_index)
+		<< ModelName
 		<< STRM_INDEX(model_frame)
 		<< time
-		<< STRM_INDEX(nextstate)
+		<< nextstate
 		<< function
-		<< OuterClass;
+		<< OuterClass
+		<< Next;
+	if (Strm.IsLoading())
+	{
+		SpriteIndex = VClass::FindSprite(SpriteName);
+		ModelIndex = VClass::FindModel(ModelName);
+	}
 	unguard;
 }
 
@@ -187,6 +196,7 @@ void VClass::Serialise(VStream& Strm)
 	{
 		Strm << ParentClass
 			<< Fields
+			<< States
 			<< STRM_INDEX(VTableOffset)
 			<< STRM_INDEX(ClassNumMethods)
 			<< STRM_INDEX(ClassSize);
@@ -207,6 +217,7 @@ void VClass::Serialise(VStream& Strm)
 		//FIXME Class already has been loaded.
 		vint32 Dummy;
 		Strm << STRM_INDEX(Dummy)
+			<< STRM_INDEX(Dummy)
 			<< STRM_INDEX(Dummy)
 			<< STRM_INDEX(Dummy)
 			<< STRM_INDEX(Dummy)
@@ -357,6 +368,34 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 				CName = (*(VClass**)Data)->GetVName();
 			}
 			Strm << CName;
+		}
+		break;
+
+	case ev_state:
+		if (Strm.IsLoading())
+		{
+			VName CName;
+			VName SName;
+			Strm << CName << SName;
+			if (SName != NAME_None)
+			{
+				*(state_t**)Data = VClass::FindClass(*CName)->FindStateChecked(SName);
+			}
+			else
+			{
+				*(state_t**)Data = NULL;
+			}
+		}
+		else
+		{
+			VName CName = NAME_None;
+			VName SName = NAME_None;
+			if (*(state_t**)Data)
+			{
+				CName = (*(state_t**)Data)->OuterClass->GetVName();
+				SName = (*(state_t**)Data)->Name;
+			}
+			Strm << CName << SName;
 		}
 		break;
 
@@ -626,6 +665,7 @@ VClass::~VClass()
 
 void VClass::StaticInit()
 {
+	GModelNames.AddItem(NAME_None);
 	GObjInitialized = true;
 }
 
@@ -662,6 +702,38 @@ VClass *VClass::FindClass(const char *AName)
 		}
 	}
 	return NULL;
+}
+
+//==========================================================================
+//
+//	VClass::FindSprite
+//
+//==========================================================================
+
+int VClass::FindSprite(VName Name)
+{
+	guard(VClass::FindSprite);
+	for (int i = 0; i < GSpriteNames.Num(); i++)
+		if (GSpriteNames[i] == Name)
+			return i;
+	return GSpriteNames.AddItem(Name);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindModel
+//
+//==========================================================================
+
+int VClass::FindModel(VName Name)
+{
+	guard(VClass::FindModel);
+	for (int i = 0; i < GModelNames.Num(); i++)
+		if (GModelNames[i] == Name)
+			return i;
+	return GModelNames.AddItem(Name);
+	unguard;
 }
 
 //==========================================================================
@@ -719,6 +791,48 @@ int VClass::GetFunctionIndex(VName InName)
 		}
 	}
 	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindState
+//
+//==========================================================================
+
+state_t* VClass::FindState(VName InName)
+{
+	guard(VClass::FindState);
+	for (state_t* s = States; s; s = s->Next)
+	{
+		if (s->Name == InName)
+		{
+			return s;
+		}
+	}
+	if (ParentClass)
+	{
+		return ParentClass->FindState(InName);
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindStateChecked
+//
+//==========================================================================
+
+state_t* VClass::FindStateChecked(VName InName)
+{
+	guard(VClass::FindStateChecked);
+	state_t* s = FindState(InName);
+	if (!s)
+	{
+		Sys_Error("State %s not found", *InName);
+	}
+	return s;
 	unguard;
 }
 
@@ -833,9 +947,12 @@ void VClass::CleanObject(VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/03/12 20:06:02  dj_jl
+//	States as objects, added state variable type.
+//
 //	Revision 1.9  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.8  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
 //	

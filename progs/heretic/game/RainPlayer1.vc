@@ -25,7 +25,7 @@
 
 class RainPlayer1 : Projectile;
 
-int AirDeathState;
+state AirDeathState;
 
 //===========================================================================
 //
@@ -47,15 +47,15 @@ void A_RainImpact()
 
 __states__
 {
-	S_RAINPLR1_1('FX20', 0 | FF_FULLBRIGHT, -1.0, S_NULL) { }
+	S_RAINPLR1_1('FX20', 0 | FF_FULLBRIGHT, -1.0, none) { }
 	S_RAINPLR1X_1('FX20', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_2) { A_RainImpact(); }
 	S_RAINPLR1X_2('FX20', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_3) { }
 	S_RAINPLR1X_3('FX20', 3 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_4) { }
 	S_RAINPLR1X_4('FX20', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINPLR1X_5) { }
-	S_RAINPLR1X_5('FX20', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINPLR1X_5('FX20', 5 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 	S_RAINAIRXPLR1_1('FX20', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_2) { }
 	S_RAINAIRXPLR1_2('FX20', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_RAINAIRXPLR1_3) { }
-	S_RAINAIRXPLR1_3('FX20', 8 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_RAINAIRXPLR1_3('FX20', 8 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -72,6 +72,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.2  2006/02/15 23:33:11  dj_jl
 //  Moved all server progs global variables to classes.
 //

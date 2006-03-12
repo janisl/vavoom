@@ -30,11 +30,11 @@ class Mancubus : Pawn
 float SpreadAngle;
 
 // Various idle states
-int Idle1State;
-int Idle2State;
-int Idle3State;
-int Idle4State;
-int Idle5State;
+state Idle1State;
+state Idle2State;
+state Idle3State;
+state Idle4State;
+state Idle5State;
 
 //==========================================================================
 //
@@ -356,7 +356,7 @@ __states__
 	S_FATT_DIE11('FATT', 16, 'monsters/mancubus/death4.md2', 2, 3.0 / 35.0, S_FATT_DIE12) { }
 	S_FATT_DIE12('FATT', 17, 'monsters/mancubus/death4.md2', 3, 6.0 / 35.0, S_FATT_DIE13) { }
 	S_FATT_DIE13('FATT', 18, 'monsters/mancubus/death5.md2', 0, 6.0 / 35.0, S_FATT_DIE14) { }
-	S_FATT_DIE14('FATT', 19, 'monsters/mancubus/death5.md2', 1, -1.0, S_NULL) { A_BossDeath(); }
+	S_FATT_DIE14('FATT', 19, 'monsters/mancubus/death5.md2', 1, -1.0, none) { A_BossDeath(); }
 	// Resurected by Arch-vile
 	S_FATT_RAISE1('FATT', 17, 'monsters/mancubus/death4.md2', 3, 5.0 / 35.0, S_FATT_RAISE2) { }
 	S_FATT_RAISE2('FATT', 16, 'monsters/mancubus/death4.md2', 2, 2.5 / 35.0, S_FATT_RAISE3) { }
@@ -401,6 +401,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 19:55:13  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/02/15 23:32:36  dj_jl
 //  Moved all server progs global variables to classes.
 //

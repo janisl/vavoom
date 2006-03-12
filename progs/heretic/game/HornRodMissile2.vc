@@ -117,7 +117,7 @@ void A_SkullRodStorm()
 
 	if (Health-- == 0)
 	{
-		SetState(S_NULL);
+		SetState(none);
 		player = Player(Instigator.Player);
 		if (!player || !player.bActive)
 		{
@@ -199,6 +199,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.7  2006/03/02 18:33:23  dj_jl
 //  Don't use game specific classes in common.
 //

@@ -30,7 +30,7 @@ __states__
 	S_WRTHFX_DROP1('WRBL', 16 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP2) { }
 	S_WRTHFX_DROP2('WRBL', 17 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP3) { }
 	S_WRTHFX_DROP3('WRBL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_WRTHFX_DROP1) { }
-	S_WRTHFX_DEAD1('WRBL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_WRTHFX_DEAD1('WRBL', 18 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

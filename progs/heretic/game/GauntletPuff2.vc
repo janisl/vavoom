@@ -30,7 +30,7 @@ __states__
 	S_GAUNTLETPUFF2_1('PUF1', 4 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_2) { }
 	S_GAUNTLETPUFF2_2('PUF1', 5 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_3) { }
 	S_GAUNTLETPUFF2_3('PUF1', 6 | FF_FULLBRIGHT, 4.0 / 35.0, S_GAUNTLETPUFF2_4) { }
-	S_GAUNTLETPUFF2_4('PUF1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_NULL) { }
+	S_GAUNTLETPUFF2_4('PUF1', 7 | FF_FULLBRIGHT, 4.0 / 35.0, none) { }
 }
 
 defaultproperties
@@ -42,6 +42,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/12 19:56:46  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

@@ -44,7 +44,7 @@ __states__
 	S_ZWALLTORCH6('WLTR', 5 | FF_FULLBRIGHT, 'lights/cflmtrch.md2', 5, 5.0 / 35.0, S_ZWALLTORCH7) { }
 	S_ZWALLTORCH7('WLTR', 6 | FF_FULLBRIGHT, 'lights/cflmtrch.md2', 6, 5.0 / 35.0, S_ZWALLTORCH8) { }
 	S_ZWALLTORCH8('WLTR', 7 | FF_FULLBRIGHT, 'lights/cflmtrch.md2', 7, 5.0 / 35.0, S_ZWALLTORCH1) { }
-	S_ZWALLTORCH_U('WLTR', 8, 'lights/castrch.md2', 0, -1.0, S_NULL) { }
+	S_ZWALLTORCH_U('WLTR', 8, 'lights/castrch.md2', 0, -1.0, none) { }
 }
 
 //==========================================================================
@@ -82,6 +82,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/12 19:58:59  dj_jl
+//  States as objects, added state variable type.
+//
 //  Revision 1.4  2006/02/15 23:33:55  dj_jl
 //  Moved all server progs global variables to classes.
 //
