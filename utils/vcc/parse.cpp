@@ -527,10 +527,8 @@ void ParseLocalVar(const TType& type)
 static void ParseCompoundStatement()
 {
 	int		num_local_defs_on_start;
-	int		num_locals_ofs_on_start;
 
 	num_local_defs_on_start = numlocaldefs;
-	num_locals_ofs_on_start = localsofs;
 	/*do
 	{
 		TType *type = CheckForType_();
@@ -548,7 +546,6 @@ static void ParseCompoundStatement()
 	if (maxlocalsofs < localsofs)
 		maxlocalsofs = localsofs;
 	numlocaldefs = num_local_defs_on_start;
-	localsofs	= num_locals_ofs_on_start;
 }
 
 //==========================================================================
@@ -821,9 +818,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.42  2006/03/13 19:30:46  dj_jl
+//	Clean function local variables.
+//
 //	Revision 1.41  2006/03/12 13:03:22  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.40  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
 //	

@@ -561,28 +561,6 @@ char* TProgs::FuncName(int fnum)
 //
 //==========================================================================
 
-//	Split out for asm
-extern "C" void PR_RFInvalidOpcode(void)
-{
-	Sys_Error("Empty function or invalid opcode");
-}
-
-extern "C" VObject *PR_DynamicCast(VObject *object, VClass *SomeClass)
-{
-	if (!object || !object->IsA(SomeClass))
-	{
-		return NULL;
-	}
-	return object;
-}
-
-#if 0//def USEASM
-
-//	Use asm version
-extern "C" void RunFunction(FFunction *func);
-
-#else
-
 static void RunFunction(FFunction *func)
 {
 	int			*current_statement = NULL;
@@ -603,7 +581,8 @@ static void RunFunction(FFunction *func)
 	sp = pr_stackPtr;
 
 	//	Setup local vars
-    local_vars = sp - func->NumParms;
+	local_vars = sp - func->NumParms;
+	memset(sp, 0, (func->NumLocals - func->NumParms) * 4);
 	sp += func->NumLocals - func->NumParms;
 
 	current_statement = (int *)func->FirstStatement;
@@ -621,7 +600,7 @@ static void RunFunction(FFunction *func)
 	switch (*current_statement++)
 	{
      case OPC_Done:
-		PR_RFInvalidOpcode();
+		Sys_Error("Empty function or invalid opcode");
 		break;
 
 	 case OPC_Return:
@@ -1288,7 +1267,7 @@ static void RunFunction(FFunction *func)
 		break;
 
 	 case OPC_DynamicCast:
-		sp[-1] = (int)PR_DynamicCast((VObject *)sp[-1], (VClass *)*current_statement++);
+		sp[-1] = sp[-1] && ((VObject*)sp[-1])->IsA((VClass*)*current_statement++) ? sp[-1] : 0;
 		break;
 
 	case OPC_PushBool:
@@ -1338,8 +1317,6 @@ static void RunFunction(FFunction *func)
 	unguardfSlow(("(%s.%s %d)", func->OuterClass->GetName(), *func->Name, 
 		current_statement - (int *)func->FirstStatement));
 }
-
-#endif
 
 //==========================================================================
 //
@@ -1970,9 +1947,12 @@ void TProgs::DumpProfile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.51  2006/03/13 19:29:57  dj_jl
+//	Clean function local variables.
+//
 //	Revision 1.50  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.49  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	
