@@ -119,7 +119,6 @@ COMMON_OBJS = \
 	obj/p_thinker.$(OBJEXT) \
 	obj/pr_cmds.$(OBJEXT) \
 	obj/pr_exec.$(OBJEXT) \
-	obj/pr_execa.$(OBJEXT) \
 	obj/r_bsp.$(OBJEXT) \
 	obj/r_light.$(OBJEXT) \
 	obj/r_main.$(OBJEXT) \
@@ -275,7 +274,6 @@ SV_COMMON_OBJ_FILES = \
 	obj/sv/p_thinker.$(OBJEXT) \
 	obj/sv/pr_cmds.$(OBJEXT) \
 	obj/sv/pr_exec.$(OBJEXT) \
-	obj/sv/pr_execa.$(OBJEXT) \
 	obj/sv/r_tex.$(OBJEXT) \
 	obj/sv/s_data.$(OBJEXT) \
 	obj/sv/sc_man.$(OBJEXT) \

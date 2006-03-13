@@ -395,39 +395,6 @@ SOURCE=..\..\source\vavoom_3.ico
 # PROP Default_Filter "s"
 # Begin Source File
 
-SOURCE=..\..\source\pr_execa.s
-
-!IF  "$(CFG)" == "Vavoom95 - Win32 Release"
-
-USERDEP__PR_EX="../../source/asm_i386.h"	
-# Begin Custom Build - Assembling $(InputPath)...
-IntDir=.\Release
-InputPath=..\..\source\pr_execa.s
-InputName=pr_execa
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
-
-# End Custom Build
-
-!ELSEIF  "$(CFG)" == "Vavoom95 - Win32 Debug"
-
-USERDEP__PR_EX="../../source/asm_i386.h"	
-# Begin Custom Build - Assembling $(InputPath)...
-IntDir=.\Debug
-InputPath=..\..\source\pr_execa.s
-InputName=pr_execa
-
-"$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
-
-# End Custom Build
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\template.s
 # End Source File
 # End Group
@@ -436,7 +403,7 @@ SOURCE=..\..\source\template.s
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\Makefile
+SOURCE=..\..\Makefile.in
 # End Source File
 # Begin Source File
 

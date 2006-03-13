@@ -60,7 +60,7 @@ OBJFILES = obj\chat.obj obj\cheats.obj \
 
 !if !$d(NOASM)
 OBJFILES = $(OBJFILES) \
-	obj\sys_i386.obj obj\pr_execa.obj \
+	obj\sys_i386.obj \
 	obj\d_aclipa.obj obj\d_aliasa.obj obj\d_edgea.obj obj\d_polysa.obj \
 	obj\d_varsa.obj obj\d_zspan.obj \
 	obj\d8_part.obj obj\d8_poly.obj obj\d8_s16.obj obj\d8_span.obj \
