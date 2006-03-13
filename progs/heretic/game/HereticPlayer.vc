@@ -25,24 +25,6 @@
 
 class HereticPlayer : PlayerPawn;
 
-//===========================================================================
-//
-//  StopMoving
-//
-//===========================================================================
-
-void StopMoving()
-{
-	if (bIsPlayer)
-	{
-		if (State == S_PLAY_RUN1 || State == S_PLAY_RUN2 ||
-			State == S_PLAY_RUN3 || State == S_PLAY_RUN4)
-		{
-			SetState(IdleState);
-		}
-	}
-}
-
 //==========================================================================
 //
 //  A_Scream
@@ -208,6 +190,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/13 18:46:37  dj_jl
+//  Added function to check if a state is in the range.
+//
 //  Revision 1.5  2006/03/12 19:56:46  dj_jl
 //  States as objects, added state variable type.
 //

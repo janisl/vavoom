@@ -1516,23 +1516,19 @@ void ApplyFriction()
 		(!bIsPlayer || (!Player.ForwardMove && !Player.SideMove)))
 	{
 		// If in a walking frame, stop moving
-		StopMoving();
+		if (bIsPlayer)
+		{
+			if (StateIsInRange(State, SeeState, none, 4))
+			{
+				SetState(IdleState);
+			}
+		}
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
 	else
 	{
 		Velocity -= Velocity * (GetFriction() * Level.Game.frametime);
 	}
-}
-
-//===========================================================================
-//
-//  StopMoving
-//
-//===========================================================================
-
-void StopMoving()
-{
 }
 
 //===========================================================================
@@ -3765,6 +3761,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2006/03/13 18:46:37  dj_jl
+//  Added function to check if a state is in the range.
+//
 //  Revision 1.27  2006/03/12 19:56:46  dj_jl
 //  States as objects, added state variable type.
 //

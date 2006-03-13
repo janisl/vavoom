@@ -110,8 +110,8 @@ void A_WeaponReady()
 	float angle;
 
 	// Change player from attack state
-	if (Player.MO.State == Actor(Player.MO).MissileState ||
-		Player.MO.State == PlayerPawn(Player.MO).AttackEndState)
+	if (StateIsInRange(Player.MO.State, Actor(Player.MO).MissileState,
+		PlayerPawn(Player.MO).AttackEndState, 3))
 	{
 		Player.MO.SetState(Actor(Player.MO).IdleState);
 	}
@@ -246,6 +246,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/13 18:48:49  dj_jl
+//  Added function to check if a state is in the range.
+//
 //  Revision 1.9  2006/03/12 19:58:59  dj_jl
 //  States as objects, added state variable type.
 //

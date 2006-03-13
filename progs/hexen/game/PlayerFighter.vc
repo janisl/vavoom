@@ -25,21 +25,6 @@
 
 class PlayerFighter : PlayerPawn;
 
-//==========================================================================
-//
-//	StopMoving
-//
-//==========================================================================
-
-void StopMoving()
-{
-	if (State == S_FPLAY_RUN1 || State == S_FPLAY_RUN2 ||
-		State == S_FPLAY_RUN3 || State == S_FPLAY_RUN4)
-	{
-		SetState(IdleState);
-	}
-}
-
 //============================================================================
 //
 //  A_SkullPop
@@ -126,6 +111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/13 18:48:49  dj_jl
+//  Added function to check if a state is in the range.
+//
 //  Revision 1.6  2006/03/12 19:58:58  dj_jl
 //  States as objects, added state variable type.
 //
