@@ -54,7 +54,10 @@ enum EType
 
 enum
 {
-	FIELD_Native	= 0x0001,	//	Native serialisation.
+	FIELD_Native	= 0x0001,	//	Native serialisation
+	FIELD_Transient	= 0x0002,	//	Not to be saved
+	FIELD_Private	= 0x0004,	//	Private field
+	FIELD_ReadOnly	= 0x0008,	//	Read-only field
 };
 
 enum
@@ -257,9 +260,12 @@ struct dprograms_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/03/13 21:22:20  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.29  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.28  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	

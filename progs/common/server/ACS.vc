@@ -26,15 +26,15 @@
 class ACS : Thinker
 	native;
 
-Entity		Activator;
-line_t*		Line;
-int			Side;
-int			Number;
-native int	Info;
-float		DelayTime;
-native int*	LocalVars;
-native int*	IP;
-native int*	activeObject;
+readonly private Entity			Activator;
+readonly private line_t*		Line;
+readonly private int			Side;
+readonly private int			Number;
+native readonly private int*	Info;
+readonly private float			DelayTime;
+native readonly private int*	LocalVars;
+native readonly private int*	IP;
+native readonly private int*	activeObject;
 
 defaultproperties
 {
@@ -43,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/13 21:27:42  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.6  2006/02/26 17:36:37  dj_jl
 //  Removed archiver functions.
 //

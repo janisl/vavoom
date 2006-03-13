@@ -583,8 +583,8 @@ void VStruct::SerialiseObject(VStream& Strm, byte* Data)
 	//	Serialise fields.
 	for (VField* F = Fields; F; F = F->Next)
 	{
-		//	Skip fields with native serialisation.
-		if (F->Flags & FIELD_Native)
+		//	Skip native and transient fields.
+		if (F->Flags & (FIELD_Native | FIELD_Transient))
 		{
 			continue;
 		}
@@ -940,8 +940,8 @@ void VClass::SerialiseObject(VStream& Strm, VObject* Obj)
 	//	Serialise fields.
 	for (VField* F = Fields; F; F = F->Next)
 	{
-		//	Skip fields with native serialisation.
-		if (F->Flags & FIELD_Native)
+		//	Skip native and transient fields.
+		if (F->Flags & (FIELD_Native | FIELD_Transient))
 		{
 			continue;
 		}
@@ -971,9 +971,12 @@ void VClass::CleanObject(VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/03/13 21:22:21  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.11  2006/03/13 18:32:45  dj_jl
 //	Added function to check if a state is in the range.
-//
+//	
 //	Revision 1.10  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	

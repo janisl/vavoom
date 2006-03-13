@@ -809,7 +809,7 @@ void CompileClass()
 			}
 			if (!fi)
 				ERR_Exit(ERR_NONE, true, "Method Field not found");
-			otherfield = CheckForField(Class);
+			otherfield = CheckForField(Class, false);
 			if (!otherfield)
 			{
 				TK_NextToken();
@@ -909,6 +909,10 @@ field_t* ParseClassField(TClass* InClass)
 	{
 		if (TK_Check(fi->Name))
 		{
+			if (fi->flags & FIELD_Private && InClass != SelfClass)
+			{
+				ParseError("Field %s is private", *fi->Name);
+			}
 			return fi;
 		}
 	}
@@ -930,7 +934,7 @@ field_t* ParseClassField(TClass* InClass)
 //
 //==========================================================================
 
-field_t* CheckForField(TClass* InClass, bool check_aux)
+field_t* CheckForField(TClass* InClass, bool CheckPrivate)
 {
 	if (!InClass)
 	{
@@ -948,14 +952,15 @@ field_t* CheckForField(TClass* InClass, bool check_aux)
 	{
 		if (TK_Check(fi->Name))
 		{
+			if (CheckPrivate && fi->flags & FIELD_Private &&
+				InClass != SelfClass)
+			{
+				ParseError("Field %s is private", *fi->Name);
+			}
 			return fi;
 		}
 	}
-	if (check_aux)
-	{
-		return CheckForField(InClass->ParentClass);
-	}
-	return NULL;
+	return CheckForField(InClass->ParentClass, CheckPrivate);
 }
 
 //==========================================================================
@@ -964,7 +969,7 @@ field_t* CheckForField(TClass* InClass, bool check_aux)
 //
 //==========================================================================
 
-field_t* CheckForField(VName Name, TClass* InClass, bool check_aux)
+field_t* CheckForField(VName Name, TClass* InClass, bool CheckPrivate)
 {
 	if (!InClass)
 	{
@@ -982,14 +987,15 @@ field_t* CheckForField(VName Name, TClass* InClass, bool check_aux)
 	{
 		if (Name == fi->Name)
 		{
+			if (CheckPrivate && fi->flags & FIELD_Private &&
+				InClass != SelfClass)
+			{
+				ParseError("Field %s is private", *fi->Name);
+			}
 			return fi;
 		}
 	}
-	if (check_aux)
-	{
-		return CheckForField(Name, InClass->ParentClass);
-	}
-	return NULL;
+	return CheckForField(Name, InClass->ParentClass, CheckPrivate);
 }
 
 //==========================================================================
@@ -1631,7 +1637,7 @@ void ParseClass()
 			}
 			fi = new field_t;
 			fi->Name = tk_Name;
-			otherfield = CheckForField(Class);
+			otherfield = CheckForField(Class, false);
 			if (otherfield)
 			{
 				ParseError("Redeclared field");
@@ -1670,7 +1676,7 @@ void ParseClass()
 			}
 			fi = new field_t;
 			fi->Name = tk_Name;
-			otherfield = CheckForField(Class);
+			otherfield = CheckForField(Class, false);
 			if (!otherfield)
 			{
 				TK_NextToken();
@@ -1730,9 +1736,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.49  2006/03/13 21:24:21  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.48  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.47  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
 //	

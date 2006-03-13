@@ -27,11 +27,11 @@ class Thinker : Object
 	native
 	abstract;
 
-Level			XLevel;		//	Level object.
-LevelInfo		Level;		//	Level info object.
+readonly Level			XLevel;		//	Level object.
+readonly LevelInfo		Level;		//	Level info object.
 
-native Thinker	Prev;
-native Thinker	Next;
+native readonly private Thinker	Prev;
+native readonly private Thinker	Next;
 
 void Tick(float deltaTime)
 {
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/13 21:24:53  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.1  2006/03/06 13:13:55  dj_jl
 //  Client now uses entity class.
 //

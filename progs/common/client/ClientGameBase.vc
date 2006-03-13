@@ -32,14 +32,14 @@ bool local_server;
 // used to accelerate or skip a stage
 bool skipintermission;
 
-ClientState cl;
-level_t* level;
-Level GLevel;
+readonly ClientState cl;
+readonly level_t* level;
+readonly Level GLevel;
 
-scores_t *scores;
-im_t *im;
+readonly scores_t *scores;
+readonly im_t *im;
 
-RootWindow GRoot;
+readonly RootWindow GRoot;
 
 int sb_height;
 
@@ -287,6 +287,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/13 21:28:11  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.4  2006/03/06 13:13:01  dj_jl
 //  Client now uses entity class.
 //

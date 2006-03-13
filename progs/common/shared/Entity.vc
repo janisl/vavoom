@@ -104,13 +104,13 @@ float FloorClip;	// value to use for floor clipping
 
 int Effects;
 
-native subsector_t *SubSector;
-native sector_t *Sector;
+native readonly subsector_t *SubSector;
+native readonly sector_t *Sector;
 
 // Interaction info, by BLOCKMAP.
 // Links in blocks (if needed).
-native Entity BlockMapNext;
-native Entity BlockMapPrev;
+native readonly private Entity BlockMapNext;
+native readonly private Entity BlockMapPrev;
 
 // The closest interval over all contacted Sectors.
 native float FloorZ;
@@ -160,14 +160,14 @@ int TID;	// thing identifier
 int Special;	// special
 int Args[5];	// special arguments
 
-int NetID;
+readonly private int NetID;
 
-native int InUse;	//	Counter for client side
+native readonly private int InUse;	//	Counter for client side
 
 name SpriteName;
 float StateTime;	// state tic counter
-state State;
-state NextState;
+readonly state State;
+readonly state NextState;
 
 //  Params
 float Mass;
@@ -501,6 +501,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/13 21:24:53  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.2  2006/03/12 20:02:31  dj_jl
 //  States as objects, added state variable type.
 //

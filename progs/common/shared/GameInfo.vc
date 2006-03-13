@@ -27,30 +27,30 @@ class GameInfo : Object
 	native
 	abstract;
 
-int				netgame;
-int				deathmatch;
-int				gameskill;
-int				respawn;
-int				nomonsters;
-int				fastparm;
+readonly int		netgame;
+readonly int		deathmatch;
+readonly int		gameskill;
+int					respawn;
+int					nomonsters;
+int					fastparm;
 
-int*			validcount;
-int				skyflatnum;
+readonly int*		validcount;
+readonly int		skyflatnum;
 
-BasePlayer		Players[MAXPLAYERS]; // Bookkeeping on players - state.
+readonly BasePlayer	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 
-level_t*		level;
+readonly level_t*	level;
 
-tmtrace_t*		tmtrace;
+readonly tmtrace_t*	tmtrace;
 
-int				RebornPosition;
+int					RebornPosition;
 
-float			frametime;
+readonly float		frametime;
 
-int				num_stats;
+int					num_stats;
 
-float			FloatBobOffsets[64];
-int				PhaseTable[64];
+float				FloatBobOffsets[64];
+int					PhaseTable[64];
 
 //==========================================================================
 //
@@ -105,8 +105,6 @@ void SpawnWorld(Level InLevel)
 
 defaultproperties
 {
-	frametime = 1.0 / 35.0;
-
 	FloatBobOffsets[0] = 0.0; FloatBobOffsets[1] = 0.7841339111; FloatBobOffsets[2] = 1.560714722; FloatBobOffsets[3] = 2.322265625;
 	FloatBobOffsets[4] = 3.061462402; FloatBobOffsets[5] = 3.77116394; FloatBobOffsets[6] = 4.444549561; FloatBobOffsets[7] = 5.075134277;
 	FloatBobOffsets[8] = 5.656845093; FloatBobOffsets[9] = 6.184082031; FloatBobOffsets[10] = 6.651748657; FloatBobOffsets[11] = 7.055358887;
@@ -137,6 +135,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/13 21:24:53  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.1  2006/03/06 13:13:55  dj_jl
 //  Client now uses entity class.
 //

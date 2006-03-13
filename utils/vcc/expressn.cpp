@@ -38,23 +38,33 @@ class TTree
 public:
 	TTree()
 	: Type(ev_void)
+	, Flags(0)
 	, RealType(ev_void)
 	{}
 	explicit TTree(EType InType)
 	: Type(InType)
+	, Flags(0)
 	, RealType(ev_void)
 	{}
 	explicit TTree(const TType& InType)
 	: Type(InType)
+	, Flags(0)
+	, RealType(ev_void)
+	{}
+	explicit TTree(const TType& InType, int InFlags)
+	: Type(InType)
+	, Flags(InFlags)
 	, RealType(ev_void)
 	{}
 	explicit TTree(const TType& InType, const TType& InRealType)
 	: Type(InType)
+	, Flags(0)
 	, RealType(InRealType)
 	{}
 
-	TType Type;
-	TType RealType;
+	TType	Type;
+	int		Flags;
+	TType	RealType;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -121,6 +131,10 @@ static TTree GetAddress(TTree op)
 	{
 		ParseError("Bad address operation");
 		return op;
+	}
+	if (op.Flags & FIELD_ReadOnly)
+	{
+		ParseError("Tried to assign to a read-only field");
 	}
 	int Opc = UndoStatement();
 	if (Opc != OPC_VPushPointed && Opc != OPC_PushBool &&
@@ -546,6 +560,7 @@ static TTree ParseExpressionPriority0()
 					AddStatement(OPC_PushNumber, field->ofs);
 					AddStatement(OPC_Add);
 					op = EmitPushPointed(field->type);
+					op.Flags = field->flags;
 				}
 				return op;
 			}
@@ -615,6 +630,7 @@ static TTree ParseExpressionPriority1()
 					AddStatement(OPC_PushNumber, field->ofs);
 					AddStatement(OPC_Add);
 					op = EmitPushPointed(field->type);
+					op.Flags = field->flags;
 				}
 			}
 		}
@@ -656,12 +672,15 @@ static TTree ParseExpressionPriority1()
 						AddStatement(OPC_PushNumber, field->ofs);
 						AddStatement(OPC_Add);
 						op = EmitPushPointed(field->type);
+						op.Flags = field->flags;
 					}
 				}
 			}
 			else if (op.Type.type == ev_struct || op.Type.type == ev_vector)
 			{
 				type = op.Type;
+				int Flags = op.Flags;
+				op.Flags &= ~FIELD_ReadOnly;
 				op = GetAddress(op);
 				field = ParseStructField(type.Struct);
 				if (field)
@@ -669,6 +688,7 @@ static TTree ParseExpressionPriority1()
 					AddStatement(OPC_PushNumber, field->ofs);
 					AddStatement(OPC_Add);
 					op = EmitPushPointed(field->type);
+					op.Flags |= Flags & FIELD_ReadOnly;
 				}
 			}
 			else
@@ -681,7 +701,10 @@ static TTree ParseExpressionPriority1()
 			if (op.Type.type == ev_array)
 			{
 				type = op.Type.GetArrayInnerType();
+				int Flags = op.Flags;
+				op.Flags &= ~FIELD_ReadOnly;
 				op = GetAddress(op);
+				op.Flags = Flags;
 			}
 			else if (op.Type.type == ev_pointer)
 			{
@@ -1746,9 +1769,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/03/13 21:24:21  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.43  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.42  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
 //	

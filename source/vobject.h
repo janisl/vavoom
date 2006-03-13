@@ -97,7 +97,8 @@ enum EInternal				{EC_Internal};
 enum EClassFlags
 {
 	// Base flags.
-	CLASS_Abstract		= 0x00001,  // Class is abstract and can't be instantiated directly.
+	CLASS_Native	= 0x0001,
+	CLASS_Abstract	= 0x0002,  // Class is abstract and can't be instantiated directly.
 };
 
 //
@@ -444,9 +445,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/13 21:22:21  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.19  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
-//
+//	
 //	Revision 1.18  2006/02/28 18:04:36  dj_jl
 //	Added script execution helpers.
 //	

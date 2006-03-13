@@ -171,6 +171,8 @@ enum EKeyword
 	KW_NATIVE,
 	KW_NONE,
 	KW_NULL,
+	KW_PRIVATE,
+	KW_READONLY,
 	KW_RETURN,
 	KW_SELF,
 	KW_STATE,
@@ -178,6 +180,7 @@ enum EKeyword
 	KW_STRING,
 	KW_STRUCT,
 	KW_SWITCH,
+	KW_TRANSIENT,
 	KW_TRUE,
 	KW_VECTOR,
 	KW_VOID,
@@ -247,6 +250,9 @@ public:
 		Native			= 0x0001,
 		Static			= 0x0002,
 		Abstract		= 0x0004,
+		Private			= 0x0008,
+		ReadOnly		= 0x0010,
+		Transient		= 0x0020,
 	};
 
 	static int Parse();
@@ -318,7 +324,8 @@ public:
 class field_t : public VMemberBase
 {
 public:
-	enum { AllowedModifiers = TModifiers::Native };
+	enum { AllowedModifiers = TModifiers::Native | TModifiers::Private |
+		TModifiers::ReadOnly | TModifiers::Transient };
 
 	field_t*	Next;
 	int			ofs;
@@ -677,9 +684,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2006/03/13 21:24:21  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.45  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.44  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
 //	

@@ -111,6 +111,8 @@ static char* Keywords[] =
 	"native",
 	"none",
 	"NULL",
+	"private",
+	"readonly",
 	"return",
 	"self",
 	"state",
@@ -118,6 +120,7 @@ static char* Keywords[] =
 	"string",
 	"struct",
 	"switch",
+	"transient",
 	"true",
 	"vector",
 	"void",
@@ -651,8 +654,21 @@ static void ProcessLetterToken(void)
 		}
 		break;*/
 
+	case 'p':
+		if (!strcmp(tk_String, "private"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_PRIVATE;
+		}
+		break;
+
 	case 'r':
-		if (!strcmp(tk_String, "return"))
+		if (!strcmp(tk_String, "readonly"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_READONLY;
+		}
+		else if (!strcmp(tk_String, "return"))
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_RETURN;
@@ -693,7 +709,12 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 't':
-		if (!strcmp(tk_String, "true"))
+		if (!strcmp(tk_String, "transient"))
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_TRANSIENT;
+		}
+		else if (!strcmp(tk_String, "true"))
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_TRUE;
@@ -1212,9 +1233,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/03/13 21:24:21  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.27  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.26  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
 //	

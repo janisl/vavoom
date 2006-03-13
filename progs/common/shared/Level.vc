@@ -27,67 +27,67 @@ class Level : Object
 	native;
 
 //	Flags.
-native bool			bForServer;	//	True if this level belongs to the server.
-native bool			bExtended;	//	True if level was in Hexen format.
-native bool			bGLNodesV5;	//	True if using version 5 GL nodes.
+native readonly private bool	bForServer;	//	True if this level belongs to the server.
+native readonly private bool	bExtended;	//	True if level was in Hexen format.
+native readonly private bool	bGLNodesV5;	//	True if using version 5 GL nodes.
 
 //
 //	MAP related Lookup tables.
 //	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
 //
 
-native int			NumVertexes;
-native TVec*		Vertexes;
+native readonly int				NumVertexes;
+native readonly TVec*			Vertexes;
 
-native int			NumSectors;
-native sector_t*	Sectors;
+native readonly int				NumSectors;
+native readonly sector_t*		Sectors;
 
-native int			NumSides;
-native side_t*		Sides;
+native readonly int				NumSides;
+native readonly side_t*			Sides;
 
-native int			NumLines;
-native line_t*		Lines;
+native readonly int				NumLines;
+native readonly line_t*			Lines;
 
-native int			__NumSegs;
-native void*		__Segs;
+native readonly private int		__NumSegs;
+native readonly private void*	__Segs;
 
-native int			__NumSubsectors;
-native void*		__Subsectors;
+native readonly private int		__NumSubsectors;
+native readonly private void*	__Subsectors;
 
-native int			__NumNodes;
-native void*		__Nodes;
+native readonly private int		__NumNodes;
+native readonly private void*	__Nodes;
 
-native void*		__VisData;
-native void*		__NoVis;
+native readonly private void*	__VisData;
+native readonly private void*	__NoVis;
 
 // !!! Used only during level loading
-native int			NumThings;
-native mthing_t*	Things;
+native readonly int				NumThings;
+native readonly mthing_t*		Things;
 
-native void*		__BlockMapLump;
-native void*		__BlockMap;
-native int			__BlockMapWidth;
-native int			__BlockMapHeight;
-native float		BlockMapOrgX;
-native float		BlockMapOrgY;
-native void*		__BlockLinks;
-native void*		__PolyBlockMap;
+native readonly private void*	__BlockMapLump;
+native readonly private void*	__BlockMap;
+native readonly private int		__BlockMapWidth;
+native readonly private int		__BlockMapHeight;
+native readonly float			BlockMapOrgX;
+native readonly float			BlockMapOrgY;
+native readonly private void*	__BlockLinks;
+native readonly private void*	__PolyBlockMap;
 
-native void*		__RejectMatrix;
+native readonly private void*	__RejectMatrix;
 
 //	Strife conversations.
-native int				NumGenericSpeeches;
-native RogueConSpeech*	GenericSpeeches;
+native readonly int				NumGenericSpeeches;
+native readonly RogueConSpeech*	GenericSpeeches;
 
-native int				NumLevelSpeeches;
-native RogueConSpeech*	LevelSpeeches;
+native readonly int				NumLevelSpeeches;
+native readonly RogueConSpeech*	LevelSpeeches;
 
 //	List of all poly-objects on the level.
-native int			__NumPolyObjs;
-native void*		__PolyObjs;
+native readonly private int		__NumPolyObjs;
+native readonly private void*	__PolyObjs;
 
-native Thinker		__ThinkerHead;
-native Thinker		__ThinkerTail;
+native readonly private Thinker	__ThinkerHead;
+native readonly private Thinker	__ThinkerTail;
 
 //
 //	Natives
@@ -102,6 +102,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/13 21:24:53  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.5  2006/03/06 13:10:00  dj_jl
 //  Thunker list in level.
 //

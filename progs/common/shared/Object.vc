@@ -1444,8 +1444,8 @@ struct event_t
 	int data3;	// mouse/joystick y move
 };
 
-native int ObjectInternal[4];
-native classid Class;
+native readonly private int ObjectInternal[4];
+native readonly classid Class;
 
 native void Destroy();
 native bool IsA(name CheckName);
@@ -1947,6 +1947,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2006/03/13 21:24:53  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.12  2006/03/13 18:33:52  dj_jl
 //  Added function to check if a state is in the range.
 //

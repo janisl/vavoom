@@ -71,6 +71,18 @@ int TModifiers::Parse()
 		{
 			Modifiers |= Abstract;
 		}
+		else if (TK_Check(KW_PRIVATE))
+		{
+			Modifiers |= Private;
+		}
+		else if (TK_Check(KW_READONLY))
+		{
+			Modifiers |= ReadOnly;
+		}
+		else if (TK_Check(KW_TRANSIENT))
+		{
+			Modifiers |= Transient;
+		}
 		else
 		{
 			done = true;
@@ -164,15 +176,24 @@ int TModifiers::FieldAttr(int Modifiers)
 	int Attributes = 0;
 	if (Modifiers & Native)
 		Attributes |= FIELD_Native;
+	if (Modifiers & Transient)
+		Attributes |= FIELD_Transient;
+	if (Modifiers & Private)
+		Attributes |= FIELD_Private;
+	if (Modifiers & ReadOnly)
+		Attributes |= FIELD_ReadOnly;
 	return Attributes;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/03/13 21:24:21  dj_jl
+//	Added support for read-only, private and transient fields.
+//
 //	Revision 1.2  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
-//
+//	
 //	Revision 1.1  2006/02/20 19:34:32  dj_jl
 //	Created modifiers class.
 //	

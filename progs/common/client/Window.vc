@@ -27,33 +27,33 @@ class Window:Object
 	native;
 
 // Quick class reference
-int WindowType;			// Contains window type
+readonly int WindowType;			// Contains window type
 
 // Booleans
-bool bIsVisible;		// True if the window is visible
-bool bIsSensitive;		// True if the window can take input
-bool bIsSelectable;		// True if the window can have keyboard focus
+readonly bool bIsVisible;		// True if the window is visible
+readonly bool bIsSensitive;		// True if the window can take input
+readonly bool bIsSelectable;		// True if the window can have keyboard focus
 bool bTickEnabled;		// True if Tick() event should be called
-bool bIsInitialized;	// True if the window has been initialized
+readonly bool bIsInitialized;	// True if the window has been initialized
 
 // Destructor information
-bool bBeingDestroyed;	// TRUE if this window is going bye-bye
+readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye
 
 int X;
 int Y;
 int Width;
 int Height;
 
-ClipRect ClipRect;
+readonly ClipRect ClipRect;
 
-GC WinGC;
+readonly GC WinGC;
 
 // Relatives
-Window Parent;			// Parent window; NULL if this is root
-Window FirstChild;		// "Lowest" child (first one drawn)
-Window LastChild;		// "Highest" child (last one drawn)
-Window PrevSibling;		// Next "lowest" sibling (previous one drawn)
-Window NextSibling;		// Next "highest" sibling (next one drawn)
+readonly Window Parent;			// Parent window; NULL if this is root
+readonly Window FirstChild;		// "Lowest" child (first one drawn)
+readonly Window LastChild;		// "Highest" child (last one drawn)
+readonly Window PrevSibling;		// Next "lowest" sibling (previous one drawn)
+readonly Window NextSibling;		// Next "highest" sibling (next one drawn)
 
 native void Destroy(void);
 native Window NewChild(classid ChildClass);
@@ -84,7 +84,7 @@ native Window GetTopChild(bool bVisibleOnly);
 native Window GetLowerSibling(bool bVisibleOnly);
 native Window GetHigherSibling(bool bVisibleOnly);
 
-native void DestroyAllChildren(void);
+native void DestroyAllChildren();
 
 //==========================================================================
 //
@@ -94,7 +94,7 @@ native void DestroyAllChildren(void);
 //
 //==========================================================================
 
-void InitWindow(void)
+void InitWindow()
 {
 }
 
@@ -106,7 +106,7 @@ void InitWindow(void)
 //
 //==========================================================================
 
-void DestroyWindow(void)
+void DestroyWindow()
 {
 }
 
@@ -118,7 +118,7 @@ void DestroyWindow(void)
 //
 //==========================================================================
 
-void WindowReady(void)
+void WindowReady()
 {
 }
 
@@ -178,7 +178,7 @@ void DescendantRemoved(Window Descendant)
 //
 //==========================================================================
 
-void ConfigurationChanged(void)
+void ConfigurationChanged()
 {
 }
 
@@ -249,6 +249,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/13 21:28:11  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.1  2002/10/26 16:32:17  dj_jl
 //  New style of defining classes.
 //

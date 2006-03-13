@@ -29,22 +29,22 @@
 
 class BasePlayer : Object;
 
-LevelInfo		Level;
+readonly LevelInfo		Level;
 
-bool bActive;
-bool bSpawned;
-bool bIsBot;
+readonly bool bActive;
+readonly bool bSpawned;
+readonly bool bIsBot;
 bool bFixAngle;
 bool bAttackDown;	// True if button down last tic.
 bool bUseDown;
 bool bDidSecret;	// True if secret level has been done.
-bool bNeedsUpdate;
+readonly private bool bNeedsUpdate;
 
-native void *__NetCon;
-native int __Message[7];
-native int __MsgBuf[MAX_MSGLEN / 4];
-native int __MobjUpdateStart;
-native float __LastMessage;
+native readonly private void *__NetCon;
+native readonly private int __Message[7];
+native readonly private int __MsgBuf[MAX_MSGLEN / 4];
+native readonly private int __MobjUpdateStart;
+native readonly private float __LastMessage;
 
 int UserInfo[MAX_INFO_STRING / 4];
 
@@ -107,7 +107,7 @@ float PSpriteSY;
 
 int WorldTimer;	// total time the player's been playing
 
-native int* OldStats;
+native readonly private int* OldStats;
 
 void PutClientIntoServer()
 {
@@ -176,6 +176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/03/13 21:24:53  dj_jl
+//  Added support for read-only, private and transient fields.
+//
 //  Revision 1.1  2006/03/06 13:13:55  dj_jl
 //  Client now uses entity class.
 //
