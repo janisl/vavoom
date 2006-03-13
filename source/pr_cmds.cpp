@@ -3226,6 +3226,15 @@ PF(NewParticle)
 
 #endif
 
+PF(StateIsInRange)
+{
+	int MaxDepth = Pop();
+	state_t* End = (state_t*)Pop();
+	state_t* Start = (state_t*)Pop();
+	state_t* State = (state_t*)Pop();
+	Push(State->IsInRange(Start, End, MaxDepth));
+}
+
 //**************************************************************************
 //
 //		BUILTIN INFO TABLE
@@ -3322,6 +3331,7 @@ builtin_info_t BuiltinInfo[] =
 	_(WadLumpPresent),
 	_(SpawnObject),
 	_(FindClass),
+	_(StateIsInRange),
 
 #ifdef CLIENT
 	_(P_GetMapName),
@@ -3463,9 +3473,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.79  2006/03/13 18:32:45  dj_jl
+//	Added function to check if a state is in the range.
+//
 //	Revision 1.78  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.77  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	

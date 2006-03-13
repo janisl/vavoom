@@ -481,6 +481,30 @@ void VField::CleanField(byte* Data, const VField::FType& Type)
 
 //==========================================================================
 //
+//	state_t::IsInRange
+//
+//==========================================================================
+
+bool state_t::IsInRange(state_t* Start, state_t* End, int MaxDepth)
+{
+	guard(state_t::IsInRange);
+	int Depth = 0;
+	state_t* check = Start;
+	do
+	{
+		if (check == this)
+			return true;
+		if (check)
+			check = check->Next;
+		Depth++;
+	}
+	while (Depth < MaxDepth && check != End);
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStruct::InitReferences
 //
 //==========================================================================
@@ -947,9 +971,12 @@ void VClass::CleanObject(VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/03/13 18:32:45  dj_jl
+//	Added function to check if a state is in the range.
+//
 //	Revision 1.10  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.9  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	

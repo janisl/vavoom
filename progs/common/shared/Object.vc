@@ -1679,6 +1679,7 @@ native static bool WadLumpPresent(string Name);
 native static Object SpawnObject(classid cid);
 
 native static classid FindClass(name Name);
+native static bool StateIsInRange(state State, state Start, state End, int MaxDepth);
 
 //==========================================================================
 //
@@ -1946,6 +1947,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/03/13 18:33:52  dj_jl
+//  Added function to check if a state is in the range.
+//
 //  Revision 1.11  2006/03/12 20:02:31  dj_jl
 //  States as objects, added state variable type.
 //

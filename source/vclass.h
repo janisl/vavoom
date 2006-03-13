@@ -204,6 +204,8 @@ public:
 
 	void Serialise(VStream&);
 
+	bool IsInRange(state_t*, state_t*, int);
+
 	friend inline VStream& operator<<(VStream& Strm, state_t*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };
@@ -322,9 +324,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/03/13 18:32:45  dj_jl
+//	Added function to check if a state is in the range.
+//
 //	Revision 1.16  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.15  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	
