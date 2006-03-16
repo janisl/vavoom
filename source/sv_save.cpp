@@ -60,7 +60,6 @@
 enum gameArchiveSegment_t
 {
 	ASEG_GAME_HEADER = 101,
-	ASEG_NAMES,
 	ASEG_MAP_HEADER,
 	ASEG_BASELINE,
 	ASEG_WORLD,
@@ -74,7 +73,7 @@ enum gameArchiveSegment_t
 void SV_SpawnServer(char *mapname, boolean spawn_thinkers);
 void SV_SendServerInfoToClients();
 void SV_ShutdownServer(boolean);
-void CL_Disconnect(void);
+void CL_Disconnect();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -97,11 +96,6 @@ extern char			mapaftersecret[12];
 
 static VStr			SavesDir;
 static boolean 		SavingPlayers;
-
-#define GET_BYTE	Streamer<byte>(*Loader)
-#define GET_WORD	Streamer<word>(*Loader)
-#define GET_LONG	Streamer<int>(*Loader)
-#define GET_FLOAT	Streamer<float>(*Loader)
 
 // CODE --------------------------------------------------------------------
 
@@ -210,13 +204,20 @@ private:
 	VStream*			Stream;
 
 public:
+	TArray<VName>		Names;
 	TArray<VObject*>	Exports;
-	int*				ObjectsMap;
+	vint32*				NamesMap;
+	vint32*				ObjectsMap;
 
 	VSaveWriterStream(VStream* InStream)
 	: Stream(InStream)
 	{
 		bLoading = false;
+		NamesMap = Z_New<vint32>(VName::GetNumNames());
+		for (int i = 0; i < VName::GetNumNames(); i++)
+		{
+			NamesMap[i] = -1;
+		}
 	}
 	~VSaveWriterStream()
 	{
@@ -255,8 +256,11 @@ public:
 
 	VStream& operator<<(VName& Name)
 	{
-		int TmpIdx = Name.GetIndex();
-		*this << STRM_INDEX(TmpIdx);
+		if (NamesMap[Name.GetIndex()] == -1)
+		{
+			NamesMap[Name.GetIndex()] = Names.AddItem(Name);
+		}
+		*this << STRM_INDEX(NamesMap[Name.GetIndex()]);
 		return *this;
 	}
 	void SerialiseReference(VObject*& Ref, VClass*)
@@ -335,6 +339,7 @@ boolean	SV_GetSaveString(int slot, char* buf)
 	f = fopen(*SAVE_NAME_ABS(slot), "rb");
 	if (f)
 	{
+		fseek(f, 4, SEEK_SET);
 		fread(buf, 1, SAVE_DESCRIPTION_LENGTH, f);
 		fclose(f);
 		return true;
@@ -345,73 +350,6 @@ boolean	SV_GetSaveString(int slot, char* buf)
 		return false;
 	}
 	unguard;
-}
-
-//==========================================================================
-//
-//	OpenStreamOut
-//
-//==========================================================================
-
-static void OpenStreamOut(const char *fileName)
-{
-	Saver = new VSaveWriterStream(FL_OpenFileWrite(fileName));
-}
-
-//==========================================================================
-//
-//	StreamOutByte
-//
-//==========================================================================
-
-static void StreamOutByte(byte val)
-{
-	*Saver << val;
-}
-
-//==========================================================================
-//
-//	StreamOutLong
-//
-//==========================================================================
-
-static void StreamOutLong(int val)
-{
-	*Saver << val;
-}
-
-//==========================================================================
-//
-//	StreamOutFloat
-//
-//==========================================================================
-
-static void StreamOutFloat(float val)
-{
-	*Saver << val;
-}
-
-//==========================================================================
-//
-//	StreamOutBuffer
-//
-//==========================================================================
-
-static void StreamOutBuffer(const void *buffer, int size)
-{
-	Saver->Serialise(const_cast<void *>(buffer), size);
-}
-
-//==========================================================================
-//
-//	CloseStreamOut
-//
-//==========================================================================
-
-static void CloseStreamOut(void)
-{
-	Saver->Close();
-	delete Saver;
 }
 
 //==========================================================================
@@ -495,7 +433,7 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
 static void AssertSegment(gameArchiveSegment_t segType)
 {
 	guard(AssertSegment);
-	if (GET_LONG != (int)segType)
+	if (Streamer<int>(*Loader) != (int)segType)
 	{
 		Host_Error("Corrupt save game: Segment [%d] failed alignment check",
 			segType);
@@ -511,11 +449,18 @@ static void AssertSegment(gameArchiveSegment_t segType)
 
 static void ArchiveNames(VStream &Strm)
 {
-	vint32 Count = VName::GetNumNames();
+	//	Write offset to the names in the beginning of the file.
+	vint32 NamesOffset = Strm.Tell();
+	Strm.Seek(0);
+	Strm << NamesOffset;
+	Strm.Seek(NamesOffset);
+
+	//	Serialise names.
+	vint32 Count = Saver->Names.Num();
 	Strm << STRM_INDEX(Count);
 	for (int i = 0; i < Count; i++)
 	{
-		Strm << *VName::GetEntry(i);
+		Strm << *VName::GetEntry(Saver->Names[i].GetIndex());
 	}
 }
 
@@ -527,6 +472,11 @@ static void ArchiveNames(VStream &Strm)
 
 static void UnarchiveNames(VStream &Strm)
 {
+	vint32 NamesOffset;
+	*Loader << NamesOffset;
+
+	vint32 TmpOffset = Strm.Tell();
+	Strm.Seek(NamesOffset);
 	vint32 Count;
 	Strm << STRM_INDEX(Count);
 	Loader->NameRemap = (VName*)Z_StrMalloc(Count * 4);
@@ -536,6 +486,7 @@ static void UnarchiveNames(VStream &Strm)
 		Strm << E;
 		Loader->NameRemap[i] = VName(E.Name);
 	}
+	Strm.Seek(TmpOffset);
 }
 
 //==========================================================================
@@ -547,7 +498,8 @@ static void UnarchiveNames(VStream &Strm)
 static void ArchiveThinkers()
 {
 	guard(ArchiveThinkers);
-	StreamOutLong(ASEG_WORLD);
+	vint32 Seg = ASEG_WORLD;
+	*Saver << Seg;
 
 	Saver->ObjectsMap = (int*)Z_Calloc(VObject::GetObjectsCount() * 4);
 
@@ -558,8 +510,9 @@ static void ArchiveThinkers()
 	//	Add players.
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		StreamOutByte((byte)(SavingPlayers && GGameInfo->Players[i]));
-		if (!SavingPlayers || !GGameInfo->Players[i])
+		byte Active = (byte)(SavingPlayers && GGameInfo->Players[i]);
+		*Saver << Active;
+		if (!Active)
 		{
 			continue;
 		}
@@ -569,6 +522,7 @@ static void ArchiveThinkers()
 	}
 
 	//	Add thinkers.
+	int ThinkersStart = Saver->Exports.Num();
 	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{
 		VEntity *mobj = Cast<VEntity>(Th);
@@ -578,9 +532,6 @@ static void ArchiveThinkers()
 			continue;
 		}
 
-		StreamOutByte(1);
-		VName CName = Th->GetClass()->GetVName();
-		*Saver << CName;
 		Saver->Exports.AddItem(Th);
 		Saver->ObjectsMap[Th->GetIndex()] = Saver->Exports.Num();
 	}
@@ -597,19 +548,19 @@ static void ArchiveThinkers()
 		{
 			if (GGameInfo->Players[i]->ViewEnts[pi])
 			{
-				StreamOutByte(1);
-				VName CName = GGameInfo->Players[i]->ViewEnts[pi]->GetClass()->GetVName();
-				*Saver << CName;
 				Saver->Exports.AddItem(GGameInfo->Players[i]->ViewEnts[pi]);
 				Saver->ObjectsMap[GGameInfo->Players[i]->ViewEnts[pi]->GetIndex()] = Saver->Exports.Num();
 			}
 		}
 	}
 
-	//
-	//  End marker
-	//
-	StreamOutByte(0);
+	vint32 NumObjects = Saver->Exports.Num() - ThinkersStart;
+	*Saver << STRM_INDEX(NumObjects);
+	for (int i = ThinkersStart; i < Saver->Exports.Num(); i++)
+	{
+		VName CName = Saver->Exports[i]->GetClass()->GetVName();
+		*Saver << CName;
+	}
 
 	//	Serialise objects.
 	for (int i = 0; i < Saver->Exports.Num(); i++)
@@ -639,7 +590,8 @@ static void UnarchiveThinkers()
 	sv_load_num_players = 0;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		byte Active = GET_BYTE;
+		byte Active;
+		*Loader << Active;
 		if (Active)
 		{
 			sv_load_num_players++;
@@ -647,7 +599,9 @@ static void UnarchiveThinkers()
 		}
 	}
 
-	while (GET_BYTE)
+	vint32 NumObjects;
+	*Loader << STRM_INDEX(NumObjects);
+	for (int i = 0; i < NumObjects; i++)
 	{
 		//  Get params
 		VName CName;
@@ -687,9 +641,10 @@ static void UnarchiveThinkers()
 //
 //==========================================================================
 
-static void ArchiveScripts(void)
+static void ArchiveScripts()
 {
-	StreamOutLong(ASEG_SCRIPTS);
+	vint32 Seg = ASEG_SCRIPTS;
+	*Saver << Seg;
 	P_SerialiseScripts(*Saver);
 }
 
@@ -699,7 +654,7 @@ static void ArchiveScripts(void)
 //
 //==========================================================================
 
-static void UnarchiveScripts(void)
+static void UnarchiveScripts()
 {
 	AssertSegment(ASEG_SCRIPTS);
 	P_SerialiseScripts(*Loader);
@@ -713,7 +668,8 @@ static void UnarchiveScripts(void)
 
 static void ArchiveSounds()
 {
-	StreamOutLong(ASEG_SOUNDS);
+	vint32 Seg = ASEG_SOUNDS;
+	*Saver << Seg;
 	SN_SerialiseSounds(*Saver);
 }
 
@@ -744,53 +700,91 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	SavingPlayers = savePlayers;
 
 	// Open the output file
-	OpenStreamOut(*SAVE_MAP_NAME(slot, (const char*)level.mapname));
+	Saver = new VSaveWriterStream(FL_OpenFileWrite(*SAVE_MAP_NAME(slot,
+		(const char*)level.mapname)));
 
-	StreamOutLong(ASEG_NAMES);
-	ArchiveNames(*Saver);
+	int NamesOffset = 0;
+	*Saver << NamesOffset;
 
 	// Place a header marker
-	StreamOutLong(ASEG_MAP_HEADER);
+	vint32 Seg = ASEG_MAP_HEADER;
+	*Saver << Seg;
 
 	// Write the level timer
-	StreamOutFloat(level.time);
-	StreamOutLong(level.tictime);
+	*Saver << level.time
+		<< level.tictime;
 
 	//	Write totals, because when thinkers are not spawned, they are not
 	// counted
-	StreamOutLong(level.totalkills);
-	StreamOutLong(level.totalitems);
-	StreamOutLong(level.totalsecret);
-	StreamOutLong(level.currentkills);
-	StreamOutLong(level.currentitems);
-	StreamOutLong(level.currentsecret);
+	*Saver << level.totalkills
+		<< level.totalitems
+		<< level.totalsecret
+		<< level.currentkills
+		<< level.currentitems
+		<< level.currentsecret;
 
-	StreamOutLong(level.sky1Texture);
-	StreamOutLong(level.sky2Texture);
-	StreamOutFloat(level.sky1ScrollDelta);
-	StreamOutFloat(level.sky2ScrollDelta);
-	StreamOutByte(level.doubleSky);
-	StreamOutByte(level.lightning);
-	StreamOutBuffer(level.skybox, sizeof(level.skybox));
+	*Saver << level.sky1Texture
+		<< level.sky2Texture
+		<< level.sky1ScrollDelta
+		<< level.sky2ScrollDelta
+		<< level.doubleSky
+		<< level.lightning;
+	Saver->Serialise(level.skybox, sizeof(level.skybox));
 
-	StreamOutBuffer(level.songLump, sizeof(level.songLump));
-	StreamOutLong(level.cdTrack);
+	Saver->Serialise(level.songLump, sizeof(level.songLump));
+	*Saver << level.cdTrack;
 
 	//	Save baseline
-	StreamOutLong(ASEG_BASELINE);
-	StreamOutLong(sv_signon.CurSize);
-	StreamOutBuffer(sv_signon.Data, sv_signon.CurSize);
-	StreamOutBuffer(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
+	Seg = ASEG_BASELINE;
+	*Saver << Seg;
+	*Saver << STRM_INDEX(sv_signon.CurSize);
+	Saver->Serialise(sv_signon.Data, sv_signon.CurSize);
+	for (int i = 0; i < GMaxEntities; i++)
+	{
+		if (sv_mo_base[i].Origin.x ||
+			sv_mo_base[i].Origin.y ||
+			sv_mo_base[i].Origin.z ||
+			sv_mo_base[i].Angles.pitch ||
+			sv_mo_base[i].Angles.yaw ||
+			sv_mo_base[i].Angles.roll ||
+			sv_mo_base[i].SpriteType ||
+			sv_mo_base[i].SpriteIndex ||
+			sv_mo_base[i].SpriteFrame ||
+			sv_mo_base[i].ModelIndex ||
+			sv_mo_base[i].ModelFrame ||
+			sv_mo_base[i].Translucency ||
+			sv_mo_base[i].Translation ||
+			sv_mo_base[i].Effects)
+		{
+			*Saver << STRM_INDEX(i)
+				<< sv_mo_base[i].Origin
+				<< sv_mo_base[i].Angles
+				<< STRM_INDEX(sv_mo_base[i].SpriteType)
+				<< STRM_INDEX(sv_mo_base[i].SpriteIndex)
+				<< STRM_INDEX(sv_mo_base[i].SpriteFrame)
+				<< STRM_INDEX(sv_mo_base[i].ModelIndex)
+				<< STRM_INDEX(sv_mo_base[i].ModelFrame)
+				<< STRM_INDEX(sv_mo_base[i].Translucency)
+				<< STRM_INDEX(sv_mo_base[i].Translation)
+				<< STRM_INDEX(sv_mo_base[i].Effects);
+		}
+	}
+	int Term = -1;
+	*Saver << STRM_INDEX(Term);
 
 	ArchiveThinkers();
 	ArchiveScripts();
 	ArchiveSounds();
 
 	// Place a termination marker
-	StreamOutLong(ASEG_END);
+	Seg = ASEG_END;
+	*Saver << Seg;
+
+	ArchiveNames(*Saver);
 
 	// Close the output file
-	CloseStreamOut();
+	Saver->Close();
+	delete Saver;
 	unguard;
 }
 
@@ -810,40 +804,56 @@ static void SV_LoadMap(const char *mapname, int slot)
 	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_MAP_NAME(slot, mapname)));
 
 	// Load names
-	AssertSegment(ASEG_NAMES);
 	UnarchiveNames(*Loader);
 
 	AssertSegment(ASEG_MAP_HEADER);
 
 	// Read the level timer
-	level.time = GET_FLOAT;
-	level.tictime = GET_LONG;
+	*Loader << level.time
+		<< level.tictime;
 
-	level.totalkills = GET_LONG;
-	level.totalitems = GET_LONG;
-	level.totalsecret = GET_LONG;
-	level.currentkills = GET_LONG;
-	level.currentitems = GET_LONG;
-	level.currentsecret = GET_LONG;
+	*Loader << level.totalkills
+		<< level.totalitems
+		<< level.totalsecret
+		<< level.currentkills
+		<< level.currentitems
+		<< level.currentsecret;
 
-	level.sky1Texture = GET_LONG;
-	level.sky2Texture = GET_LONG;
-	level.sky1ScrollDelta = GET_FLOAT;
-	level.sky2ScrollDelta = GET_FLOAT;
-	level.doubleSky = GET_BYTE;
-	level.lightning = GET_BYTE;
+	*Loader << level.sky1Texture
+		<< level.sky2Texture
+		<< level.sky1ScrollDelta
+		<< level.sky2ScrollDelta
+		<< level.doubleSky
+		<< level.lightning;
 	Loader->Serialise(level.skybox, sizeof(level.skybox));
 
 	Loader->Serialise(level.songLump, sizeof(level.songLump));
-	level.cdTrack = GET_LONG;
+	*Loader << level.cdTrack;
 
 	AssertSegment(ASEG_BASELINE);
-	int len = GET_LONG;
+	int len;
+	*Loader << STRM_INDEX(len);
 	sv_signon.Clear();
 	void *tmp = Z_StrMalloc(len);
 	Loader->Serialise(tmp, len);
 	sv_signon.Write(tmp, len);
-	Loader->Serialise(sv_mo_base, sizeof(mobj_base_t) * GMaxEntities);
+	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
+	int Idx;
+	*Loader << STRM_INDEX(Idx);
+	while (Idx != -1)
+	{
+		*Loader << sv_mo_base[Idx].Origin
+			<< sv_mo_base[Idx].Angles
+			<< STRM_INDEX(sv_mo_base[Idx].SpriteType)
+			<< STRM_INDEX(sv_mo_base[Idx].SpriteIndex)
+			<< STRM_INDEX(sv_mo_base[Idx].SpriteFrame)
+			<< STRM_INDEX(sv_mo_base[Idx].ModelIndex)
+			<< STRM_INDEX(sv_mo_base[Idx].ModelFrame)
+			<< STRM_INDEX(sv_mo_base[Idx].Translucency)
+			<< STRM_INDEX(sv_mo_base[Idx].Translation)
+			<< STRM_INDEX(sv_mo_base[Idx].Effects)
+			<< STRM_INDEX(Idx);
+	}
 
 	UnarchiveThinkers();
 	UnarchiveScripts();
@@ -873,34 +883,45 @@ void SV_SaveGame(int slot, char* description)
 	int i;
 
 	// Open the output file
-	OpenStreamOut(*SAVE_NAME(BASE_SLOT));
+	Saver = new VSaveWriterStream(FL_OpenFileWrite(*SAVE_NAME(BASE_SLOT)));
+
+	int NamesOffset = 0;
+	*Saver << NamesOffset;
 
 	// Write game save description
-	StreamOutBuffer(description, SAVE_DESCRIPTION_LENGTH);
+	char desc[SAVE_DESCRIPTION_LENGTH];
+	memset(desc, 0, sizeof(desc));
+	strncpy(desc, description, SAVE_DESCRIPTION_LENGTH - 1);
+	Saver->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
 
 	// Write version info
 	memset(versionText, 0, SAVE_VERSION_TEXT_LENGTH);
 	strcpy(versionText, SAVE_VERSION_TEXT);
-	StreamOutBuffer(versionText, SAVE_VERSION_TEXT_LENGTH);
-
-	// Write names
-	StreamOutLong(ASEG_NAMES);
-	ArchiveNames(*Saver);
+	Saver->Serialise(versionText, SAVE_VERSION_TEXT_LENGTH);
 
 	// Place a header marker
-	StreamOutLong(ASEG_GAME_HEADER);
+	vint32 Seg = ASEG_GAME_HEADER;
+	*Saver << Seg;
 
 	// Write current map and difficulty
-	StreamOutByte((byte)gameskill);
-	StreamOutBuffer(level.mapname, 8);
+	byte Skill = (byte)gameskill;
+	*Saver << Skill;
+	Saver->Serialise(level.mapname, 8);
 
 	// Write secret level info
-	StreamOutByte(in_secret);
-	StreamOutBuffer(mapaftersecret, 8);
+	byte InSec = in_secret;
+	*Saver << InSec;
+	Saver->Serialise(mapaftersecret, 8);
 
 	// Write global script info
-	StreamOutBuffer(WorldVars, sizeof(WorldVars));
-	StreamOutBuffer(GlobalVars, sizeof(GlobalVars));
+	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
+	{
+		*Saver << STRM_INDEX(WorldVars[i]);
+	}
+	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+	{
+		*Saver << STRM_INDEX(GlobalVars[i]);
+	}
 	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
 	{
 		WorldArrays[i].Serialise(*Saver);
@@ -909,13 +930,31 @@ void SV_SaveGame(int slot, char* description)
 	{
 		GlobalArrays[i].Serialise(*Saver);
 	}
-	StreamOutBuffer(ACSStore, sizeof(ACSStore));
+	vint32 NumAcsStore = 0;
+	for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
+		if (store->map[0] != '-')
+			NumAcsStore++;
+	*Saver << STRM_INDEX(NumAcsStore);
+	for (acsstore_t* store = ACSStore; store->map[0] != 0; store++)
+		if (store->map[0] != '-')
+		{
+			Saver->Serialise(ACSStore[i].map, 9);
+			*Saver << STRM_INDEX(ACSStore[i].script)
+				<< STRM_INDEX(ACSStore[i].args[0])
+				<< STRM_INDEX(ACSStore[i].args[1])
+				<< STRM_INDEX(ACSStore[i].args[2]);
+		}
 
 	// Place a termination marker
-	StreamOutLong(ASEG_END);
+	Seg = ASEG_END;
+	*Saver << Seg;
+
+	// Write names
+	ArchiveNames(*Saver);
 
 	// Close the output file
-	CloseStreamOut();
+	Saver->Close();
+	delete Saver;
 
 	// Save out the current map
 	SV_SaveMap(BASE_SLOT, true); // true = save player info
@@ -958,6 +997,9 @@ void SV_LoadGame(int slot)
 	// Load the file
 	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_NAME(BASE_SLOT)));
 
+	// Load names
+	UnarchiveNames(*Loader);
+
 	// Set the save pointer and skip the description field
 	char desc[SAVE_DESCRIPTION_LENGTH];
 	Loader->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
@@ -974,13 +1016,9 @@ void SV_LoadGame(int slot)
 		return;
 	}
 
-	// Load names
-	AssertSegment(ASEG_NAMES);
-	UnarchiveNames(*Loader);
-
 	AssertSegment(ASEG_GAME_HEADER);
 
-	gameskill = (skill_t)GET_BYTE;
+	gameskill = (skill_t)Streamer<byte>(*Loader);
 	Loader->Serialise(mapname, 8);
 	mapname[8] = 0;
 
@@ -988,13 +1026,19 @@ void SV_LoadGame(int slot)
 	GGameInfo->eventInitNewGame(gameskill);
 
 	// Read secret level info
-	in_secret = GET_BYTE;
+	in_secret = Streamer<byte>(*Loader);
 	Loader->Serialise(mapaftersecret, 8);
 	mapaftersecret[8] = 0;
 
 	// Read global script info
-	Loader->Serialise(WorldVars, sizeof(WorldVars));
-	Loader->Serialise(GlobalVars, sizeof(GlobalVars));
+	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
+	{
+		*Loader << STRM_INDEX(WorldVars[i]);
+	}
+	for (i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+	{
+		*Loader << STRM_INDEX(GlobalVars[i]);
+	}
 	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
 	{
 		WorldArrays[i].Serialise(*Loader);
@@ -1003,7 +1047,17 @@ void SV_LoadGame(int slot)
 	{
 		GlobalArrays[i].Serialise(*Loader);
 	}
-	Loader->Serialise(ACSStore, sizeof(ACSStore));
+	memset(ACSStore, 0, sizeof(ACSStore));
+	vint32 NumAcsStore = 0;
+	*Loader << STRM_INDEX(NumAcsStore);
+	for (i = 0; i < NumAcsStore; i++)
+	{
+		Loader->Serialise(ACSStore[i].map, 9);
+		*Loader << STRM_INDEX(ACSStore[i].script)
+			<< STRM_INDEX(ACSStore[i].args[0])
+			<< STRM_INDEX(ACSStore[i].args[1])
+			<< STRM_INDEX(ACSStore[i].args[2]);
+	}
 
 	AssertSegment(ASEG_END);
 
@@ -1028,7 +1082,7 @@ void SV_LoadGame(int slot)
 //
 //==========================================================================
 
-void SV_InitBaseSlot(void)
+void SV_InitBaseSlot()
 {
 	ClearSaveSlot(BASE_SLOT);
 }
@@ -1039,7 +1093,7 @@ void SV_InitBaseSlot(void)
 //
 //==========================================================================
 
-int SV_GetRebornSlot(void)
+int SV_GetRebornSlot()
 {
 	return REBORN_SLOT;
 }
@@ -1077,7 +1131,7 @@ void SV_UpdateRebornSlot()
 //
 //==========================================================================
 
-void SV_ClearRebornSlot(void)
+void SV_ClearRebornSlot()
 {
 	ClearSaveSlot(REBORN_SLOT);
 }
@@ -1136,8 +1190,8 @@ void SV_MapTeleport(char *map)
 
 #ifdef CLIENT
 
-void Draw_SaveIcon(void);
-void Draw_LoadIcon(void);
+void Draw_SaveIcon();
+void Draw_LoadIcon();
 
 //==========================================================================
 //
@@ -1230,9 +1284,12 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.61  2006/03/16 00:37:55  dj_jl
+//	Savegame size optimisations.
+//
 //	Revision 1.60  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.59  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

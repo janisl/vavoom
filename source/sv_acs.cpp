@@ -412,7 +412,7 @@ struct acsInfo_t
 	int 	*address;
 	word	Flags;
 	word	VarCount;
-	aste_t 	state;
+	vuint8	state;
 	int 	waitValue;
 };
 
@@ -1339,10 +1339,13 @@ void FACScriptsObject::Serialise(VStream& Strm)
 	guard(FACScriptsObject::Serialise);
 	for (int i = 0; i < NumScripts; i++)
 	{
-		Strm << *(int*)&Scripts[i].state;
-		Strm << Scripts[i].waitValue;
+		Strm << Scripts[i].state;
+		Strm << STRM_INDEX(Scripts[i].waitValue);
 	}
-	Strm.Serialise(MapVarStore, sizeof(MapVarStore));
+	for (int i = 0; i < MAX_ACS_MAP_VARS; i++)
+	{
+		Strm << STRM_INDEX(MapVarStore[i]);
+	}
 	unguard;
 }
 
@@ -1785,16 +1788,16 @@ void FACSGrowingArray::Serialise(VStream& Strm)
 	if (Strm.IsLoading())
 	{
 		int NewSize;
-		Strm << NewSize;
+		Strm << STRM_INDEX(NewSize);
 		Redim(NewSize);
 	}
 	else
 	{
-		Strm << Size;
+		Strm << STRM_INDEX(Size);
 	}
 	for (int i = 0; i < Size; i++)
 	{
-		Strm << Data[i];
+		Strm << STRM_INDEX(Data[i]);
 	}
 	unguard;
 }
@@ -2043,6 +2046,10 @@ void P_ACSInitNewGame()
 	memset(WorldVars, 0, sizeof(WorldVars));
 	memset(GlobalVars, 0, sizeof(GlobalVars));
 	memset(ACSStore, 0, sizeof(ACSStore));
+	for (int i = 0; i < MAX_ACS_WORLD_VARS; i++)
+		WorldArrays[i].Redim(0);
+	for (int i = 0; i < MAX_ACS_GLOBAL_VARS; i++)
+		GlobalArrays[i].Redim(0);
 	unguard;
 }
 
@@ -4649,9 +4656,12 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2006/03/16 00:37:55  dj_jl
+//	Savegame size optimisations.
+//
 //	Revision 1.47  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.46  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	
