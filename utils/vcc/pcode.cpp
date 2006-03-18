@@ -588,7 +588,38 @@ void PC_WriteObject(char *name)
 	progs.num_statements = CodeBuffer.Num();
 	for (i = 0; i < CodeBuffer.Num(); i++)
 	{
-		Writer << CodeBuffer[i];
+		vuint8 Tmp = CodeBuffer[i];
+		Writer << Tmp;
+		if (StatementInfo[CodeBuffer[i]].params >= 1)
+		{
+			switch (CodeBuffer[i])
+			{
+			case OPC_PushName:
+			case OPC_CaseGotoName:
+				Writer << *(VName*)&CodeBuffer[i + 1];
+				break;
+			case OPC_PushFunction:
+			case OPC_Call:
+				Writer << functions[CodeBuffer[i + 1]];
+				break;
+			case OPC_PushClassId:
+			case OPC_DynamicCast:
+			case OPC_CaseGotoClassId:
+				Writer << classtypes[CodeBuffer[i + 1]];
+				break;
+			case OPC_PushState:
+				Writer << states[CodeBuffer[i + 1]];
+				break;
+			default:
+				Writer << CodeBuffer[i + 1];
+				break;
+			}
+		}
+		if (StatementInfo[CodeBuffer[i]].params >= 2)
+		{
+			Writer << CodeBuffer[i + 2];
+		}
+		i += StatementInfo[CodeBuffer[i]].params;
 	}
 
 	progs.ofs_vtables = Writer.Tell();
@@ -614,17 +645,11 @@ void PC_WriteObject(char *name)
 			<< script_ids[i].class_id;
 	}
 
-	progs.num_fields = FieldList.Num();
-	progs.num_functions = functions.Num();
-	progs.num_states = states.Num();
-	progs.num_constants = Constants.Num();
-	progs.num_structs = structtypes.Num();
-	progs.num_classinfo = classtypes.Num();
+	progs.num_exports = Writer.Exports.Num();
 
 	//	Serialise object infos.
 	progs.ofs_exportinfo = Writer.Tell();
-	for (i = 0; i < FieldList.Num() + functions.Num() + structtypes.Num() +
-		classtypes.Num() + states.Num() + Constants.Num(); i++)
+	for (i = 0; i < Writer.Exports.Num(); i++)
 	{
 		Writer << Writer.Exports[i];
 	}
@@ -660,7 +685,8 @@ void PC_WriteObject(char *name)
 	memcpy(progs.magic, PROG_MAGIC, 4);
 	progs.version = PROG_VERSION;
 	Writer.Seek(0);
-	for (i = 0; i < (int)sizeof(progs) / 4; i++)
+	Writer.Serialise(progs.magic, 4);
+	for (i = 1; i < (int)sizeof(progs) / 4; i++)
 	{
 		Writer << ((int*)&progs)[i];
 	}
@@ -947,9 +973,12 @@ void constant_t::Serialise(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/03/18 16:52:21  dj_jl
+//	Better code serialisation.
+//
 //	Revision 1.34  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.33  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
 //	
