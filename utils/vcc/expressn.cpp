@@ -244,8 +244,7 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 		}
 		if (field->type.type == ev_delegate)
 		{
-			AddStatement(OPC_PushNumber, field->ofs);
-			AddStatement(OPC_Add);
+			AddStatement(OPC_Offset, field->ofs);
 			AddStatement(OPC_PushPointedDelegate);
 		}
 		else
@@ -557,8 +556,7 @@ static TTree ParseExpressionPriority0()
 				}
 				else
 				{
-					AddStatement(OPC_PushNumber, field->ofs);
-					AddStatement(OPC_Add);
+					AddStatement(OPC_Offset, field->ofs);
 					op = EmitPushPointed(field->type);
 					op.Flags = field->flags;
 				}
@@ -627,8 +625,7 @@ static TTree ParseExpressionPriority1()
 				}
 				else
 				{
-					AddStatement(OPC_PushNumber, field->ofs);
-					AddStatement(OPC_Add);
+					AddStatement(OPC_Offset, field->ofs);
 					op = EmitPushPointed(field->type);
 					op.Flags = field->flags;
 				}
@@ -662,15 +659,13 @@ static TTree ParseExpressionPriority1()
 						}
 						else
 						{
-							AddStatement(OPC_PushNumber, field->ofs);
-							AddStatement(OPC_Add);
+							AddStatement(OPC_Offset, field->ofs);
 							op = EmitPushPointed(field->type);
 						}
 					}
 					else
 					{
-						AddStatement(OPC_PushNumber, field->ofs);
-						AddStatement(OPC_Add);
+						AddStatement(OPC_Offset, field->ofs);
 						op = EmitPushPointed(field->type);
 						op.Flags = field->flags;
 					}
@@ -685,8 +680,7 @@ static TTree ParseExpressionPriority1()
 				field = ParseStructField(type.Struct);
 				if (field)
 				{
-					AddStatement(OPC_PushNumber, field->ofs);
-					AddStatement(OPC_Add);
+					AddStatement(OPC_Offset, field->ofs);
 					op = EmitPushPointed(field->type);
 					op.Flags |= Flags & FIELD_ReadOnly;
 				}
@@ -1769,9 +1763,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2006/03/18 16:53:24  dj_jl
+//	Use offset opcode.
+//
 //	Revision 1.44  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
-//
+//	
 //	Revision 1.43  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
 //	
