@@ -50,7 +50,7 @@ class FBuiltinInfo
 
 	static FBuiltinInfo *Builtins;
 
-	friend class TProgs;
+	friend class VMethod;
 
 public:
 	FBuiltinInfo(const char *InName, VClass *InClass, builtin_t InFunc)
@@ -71,46 +71,46 @@ public:
 
 	VStruct* FindStruct(VName InName, VClass* InClass);
 
-	static int Exec(FFunction *func);
-	static int Exec(FFunction *func, int parm1);
-	static int Exec(FFunction *func, int parm1, int parm2);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func);
+	static int Exec(VMethod *func, int parm1);
+	static int Exec(VMethod *func, int parm1, int parm2);
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3);
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10, int parm11);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10, int parm11, int parm12);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10, int parm11, int parm12, int parm13);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10, int parm11, int parm12, int parm13, int parm14);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10, int parm11, int parm12, int parm13, int parm14,
 		int parm15);
-	static int Exec(FFunction *func, int parm1, int parm2, int parm3,
+	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
 		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
 		int parm10, int parm11, int parm12, int parm13, int parm14,
 		int parm15, int parm16);
-	static int ExecuteFunction(FFunction *func);
+	static int ExecuteFunction(VMethod *func);
 	void DumpProfile();
 
 	int GetStringOffs(const char *Str)
@@ -125,11 +125,7 @@ public:
 private:
 	VProgsReader*	Reader;
 	char*			Strings;
-	FFunction**		Functions;
-	int				NumFunctions;
-	FFunction**		VTables;
-	VStruct**		Structs;
-	int				NumStructs;
+	VMethod**		VTables;
 
 	char* FuncName(int fnum);
 };
@@ -201,9 +197,12 @@ inline VName PR_PopName()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.21  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.20  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	
@@ -235,7 +234,7 @@ inline VName PR_PopName()
 //	Added support for defining native functions outside pr_cmds
 //	
 //	Revision 1.10  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
+//	VMethod pointers used instead of the function numbers
 //	
 //	Revision 1.9  2002/01/11 08:07:18  dj_jl
 //	Added names to progs

@@ -34,7 +34,7 @@
 // 	The refresh uses the next and prev links to follow lists of things in
 // sectors as they are being drawn. The sprite, frame, and angle elements
 // determine which patch_t is used to draw the sprite if it is visible.
-// The sprite and frame values are allmost allways set from state_t
+// The sprite and frame values are allmost allways set from VState
 // structures. The statescr.exe utility generates the states.h and states.c
 // files that contain the sprite/frame numbers from the statescr.txt source
 // file. The xyz origin point represents a point at the bottom middle of the
@@ -174,8 +174,8 @@ class VEntity : public VThinker
 
 	VName			SpriteName;
 	float			StateTime;	// state tic counter
-	state_t*		State;
-	state_t*		NextState;
+	VState*			State;
+	VState*			NextState;
 
 	//  Params
 	float			Mass;
@@ -267,9 +267,9 @@ class VEntity : public VThinker
 		SetFlags(_OF_DelayedDestroy);
 	}
 
-	bool SetState(state_t* state);
-	void SetInitialState(state_t* state);
-	state_t* FindState(VName StateName);
+	bool SetState(VState* state);
+	void SetInitialState(VState* state);
+	VState* FindState(VName StateName);
 
 	bool CheckWater();
 	bool CheckPosition(TVec Pos);
@@ -311,9 +311,12 @@ class VEntity : public VThinker
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.3  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.2  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	

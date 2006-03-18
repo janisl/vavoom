@@ -88,7 +88,7 @@ enum
 	DECLARE_OPC(PushNumber, 1),
 	DECLARE_OPC(PushPointed, 0),
 	DECLARE_OPC(LocalAddress, 1),
-	DECLARE_OPC(__UNUSED__1__, 0),
+	DECLARE_OPC(Offset, 1),
 	DECLARE_OPC(Add, 0),
 	DECLARE_OPC(Subtract, 0),
 	DECLARE_OPC(Multiply, 0),
@@ -235,13 +235,6 @@ struct dprograms_t
 	int		ofs_statements;
 	int		num_statements;
 
-	int		num_functions;
-	int		num_classinfo;
-	int		num_states;
-	int		num_fields;
-	int		num_structs;
-	int		num_constants;
-
 	int		ofs_vtables;
 	int		num_vtables;
 
@@ -253,6 +246,7 @@ struct dprograms_t
 
 	int		ofs_exportinfo;
 	int		ofs_exportdata;
+	int		num_exports;
 };
 
 #endif
@@ -260,9 +254,12 @@ struct dprograms_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.30  2006/03/13 21:22:20  dj_jl
 //	Added support for read-only, private and transient fields.
-//
+//	
 //	Revision 1.29  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	

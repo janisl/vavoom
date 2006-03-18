@@ -103,7 +103,7 @@ VObject::~VObject()
 
 void VObject::StaticInit()
 {
-	VClass::StaticInit();
+	VMemberBase::StaticInit();
 	GObjInitialized = true;
 }
 
@@ -116,7 +116,7 @@ void VObject::StaticInit()
 void VObject::StaticExit()
 {
 	GObjInitialized = false;
-	VClass::StaticExit();
+	VMemberBase::StaticExit();
 }
 
 //==========================================================================
@@ -222,7 +222,7 @@ bool VObject::IsA(VClass *SomeBaseClass) const
 //
 //==========================================================================
 
-FFunction *VObject::GetVFunction(VName FuncName) const
+VMethod *VObject::GetVFunction(VName FuncName) const
 {
 	guardSlow(VObject::GetVFunction);
 	return vtable[Class->GetFunctionIndex(FuncName)];
@@ -369,9 +369,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.21  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
-//
+//	
 //	Revision 1.20  2006/02/28 18:04:36  dj_jl
 //	Added script execution helpers.
 //	

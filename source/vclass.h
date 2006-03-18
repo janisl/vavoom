@@ -44,7 +44,12 @@ class VMemberBase
 {
 public:
 	//	Internal variables.
+	vuint8		MemberType;
 	VName		Name;
+
+	static bool						GObjInitialized;
+	static VClass*					GClasses;	// Linked list of all classes.
+	static TArray<VMemberBase*>		GMembers;
 
 	//	New and delete operators.
 	void* operator new(size_t Size, int Tag)
@@ -53,8 +58,7 @@ public:
 	{ Z_Free(Object); }
 
 	//	Srtuctors.
-	VMemberBase()
-	{}
+	VMemberBase(vuint8, VName);
 	virtual ~VMemberBase();
 
 	//	Accessors.
@@ -67,7 +71,27 @@ public:
 		return Name;
 	}
 
+	static void StaticInit();
+	static void StaticExit();
+
 	virtual void Serialise(VStream&);
+};
+
+//==========================================================================
+//
+//	VPackage
+//
+//==========================================================================
+
+class VPackage : public VMemberBase
+{
+public:
+	VPackage(VName);
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, VPackage*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 //==========================================================================
@@ -91,7 +115,7 @@ public:
 			int			BitMask;
 			VClass*		Class;			//  Class of the reference
 			VStruct*	Struct;			//  Struct data.
-			FFunction*	Function;		//  Function of the delegate type.
+			VMethod*	Function;		//  Function of the delegate type.
 		};
 
 		friend VStream& operator<<(VStream&, FType&);
@@ -103,12 +127,92 @@ public:
 	FType		Type;
 	int			Flags;
 
+	VField(VName);
+
 	void Serialise(VStream&);
 
 	static void SerialiseFieldValue(VStream&, byte*, const VField::FType&);
 	static void CleanField(byte*, const VField::FType&);
 
 	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
+//	VMethod
+//
+//==========================================================================
+
+class VMethod : public VMemberBase
+{
+public:
+	int		FirstStatement;
+	short	NumParms;
+	short	NumLocals;
+    short	Type;
+	short	Flags;
+	dword	Profile1;
+	dword	Profile2;
+	VClass	*OuterClass;
+
+	VMethod(VName);
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, VMethod*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
+//	VState
+//
+//==========================================================================
+
+class VState : public VMemberBase
+{
+public:
+	VName		SpriteName;
+	int			SpriteIndex;
+	int			frame;
+	VName		ModelName;
+	int			ModelIndex;
+	int			model_frame;
+	float		time;
+	VState*	nextstate;
+	VMethod*	function;
+	VClass*		OuterClass;
+	VState*	Next;
+
+	VState(VName);
+
+	void Serialise(VStream&);
+
+	bool IsInRange(VState*, VState*, int);
+
+	friend inline VStream& operator<<(VStream& Strm, VState*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
+
+//==========================================================================
+//
+//	VConstant
+//
+//==========================================================================
+
+class VConstant : public VMemberBase
+{
+public:
+	VClass*		OuterClass;
+	vuint8		Type;
+	vint32		Value;
+
+	VConstant(VName);
+
+	void Serialise(VStream&);
+
+	friend inline VStream& operator<<(VStream& Strm, VConstant*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
@@ -128,85 +232,15 @@ public:
 	VField*			Fields;
 	VField*			ReferenceFields;
 
+	VStruct(VName);
+
+	void Serialise(VStream&);
+
 	void InitReferences();
 	void SerialiseObject(VStream&, byte*);
 	void CleanObject(byte*);
 
-	void Serialise(VStream&);
-
 	friend inline VStream& operator<<(VStream& Strm, VStruct*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
-
-//==========================================================================
-//
-//	FFunction
-//
-//==========================================================================
-
-class FFunction : public VMemberBase
-{
-public:
-	int		FirstStatement;
-	short	NumParms;
-	short	NumLocals;
-    short	Type;
-	short	Flags;
-	dword	Profile1;
-	dword	Profile2;
-	VClass	*OuterClass;
-
-	void Serialise(VStream&);
-
-	friend inline VStream& operator<<(VStream& Strm, FFunction*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
-
-//==========================================================================
-//
-//	VConstant
-//
-//==========================================================================
-
-class VConstant : public VMemberBase
-{
-public:
-	VClass*		OuterClass;
-	vuint8		Type;
-	vint32		Value;
-
-	void Serialise(VStream&);
-
-	friend inline VStream& operator<<(VStream& Strm, VConstant*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
-};
-
-//==========================================================================
-//
-//	state_t
-//
-//==========================================================================
-
-class state_t : public VMemberBase
-{
-public:
-	VName		SpriteName;
-	int			SpriteIndex;
-	int			frame;
-	VName		ModelName;
-	int			ModelIndex;
-	int			model_frame;
-	float		time;
-	state_t*	nextstate;
-	FFunction*	function;
-	VClass*		OuterClass;
-	state_t*	Next;
-
-	void Serialise(VStream&);
-
-	bool IsInRange(state_t*, state_t*, int);
-
-	friend inline VStream& operator<<(VStream& Strm, state_t*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
@@ -237,16 +271,13 @@ private:
 	dword			ObjectFlags;		// Private EObjectFlags used by object manager.
 	VClass*			LinkNext;			// Next class in linked list
 
-	// Private systemwide variables.
-	static bool		GObjInitialized;
-	static VClass*	GClasses;			// Linked list of all classes.
-
+	friend class VMemberBase;
 public:
 	VClass*			ParentClass;
 
 	int				ClassSize;
 	dword			ClassFlags;
-	FFunction		**ClassVTable;
+	VMethod**		ClassVTable;
 	void			(*ClassConstructor)(void*);
 
 	int				ClassNumMethods;
@@ -254,7 +285,7 @@ public:
 
 	VField*			Fields;
 	VField*			ReferenceFields;
-	state_t*		States;
+	VState*			States;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
@@ -282,8 +313,6 @@ public:
 	}
 
 	// Systemwide functions.
-	static void StaticInit();
-	static void StaticExit();
 	static VClass *FindClass(const char *);
 	static int FindSprite(VName);
 	static int FindModel(VName);
@@ -306,11 +335,11 @@ public:
 		return ParentClass;
 	}
 
-	FFunction* FindFunction(VName InName);
-	FFunction* FindFunctionChecked(VName InName);
+	VMethod* FindFunction(VName InName);
+	VMethod* FindFunctionChecked(VName InName);
 	int GetFunctionIndex(VName InName);
-	state_t* FindState(VName InName);
-	state_t* FindStateChecked(VName InName);
+	VState* FindState(VName InName);
+	VState* FindStateChecked(VName InName);
 	void InitReferences();
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
@@ -324,9 +353,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.17  2006/03/13 18:32:45  dj_jl
 //	Added function to check if a state is in the range.
-//
+//	
 //	Revision 1.16  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	
@@ -364,10 +396,10 @@ public:
 //	Importing special property info from progs and using it in saving.
 //	
 //	Revision 1.4  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
+//	VMethod pointers used instead of the function numbers
 //	
 //	Revision 1.3  2002/01/11 08:15:40  dj_jl
-//	Removed FFunction
+//	Removed VMethod
 //	
 //	Revision 1.2  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year

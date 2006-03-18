@@ -1389,7 +1389,7 @@ PF(P_BlockThingsIterator)
 	int			y;
 	VObject*	SelfObj;
 	VName		FuncName;
-	FFunction*	func = NULL;
+	VMethod*	func = NULL;
 
 	FuncName = PopName();
 	SelfObj = (VObject*)Pop();
@@ -1414,7 +1414,7 @@ PF(P_PathTraverse)
 	int			flags;
 	VName		FuncName;
 	VObject*	SelfObj;
-	FFunction*	func;
+	VMethod*	func;
 
 	FuncName = PopName();
 	SelfObj = (VObject*)Pop();
@@ -3229,9 +3229,9 @@ PF(NewParticle)
 PF(StateIsInRange)
 {
 	int MaxDepth = Pop();
-	state_t* End = (state_t*)Pop();
-	state_t* Start = (state_t*)Pop();
-	state_t* State = (state_t*)Pop();
+	VState* End = (VState*)Pop();
+	VState* Start = (VState*)Pop();
+	VState* State = (VState*)Pop();
 	Push(State->IsInRange(Start, End, MaxDepth));
 }
 
@@ -3473,9 +3473,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.80  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.79  2006/03/13 18:32:45  dj_jl
 //	Added function to check if a state is in the range.
-//
+//	
 //	Revision 1.78  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	
@@ -3618,7 +3621,7 @@ builtin_info_t BuiltinInfo[] =
 //	Property namig style change
 //	
 //	Revision 1.31  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
+//	VMethod pointers used instead of the function numbers
 //	
 //	Revision 1.30  2002/01/29 18:17:27  dj_jl
 //	Fixed saving of mobj pointers

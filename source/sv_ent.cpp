@@ -98,10 +98,10 @@ void VEntity::Serialise(VStream& Strm)
 //
 //==========================================================================
 
-bool VEntity::SetState(state_t* InState)
+bool VEntity::SetState(VState* InState)
 {
 	guard(VEntity::SetState);
-	state_t *st = InState;
+	VState *st = InState;
 	do
 	{
 		if (!st)
@@ -141,7 +141,7 @@ bool VEntity::SetState(state_t* InState)
 //
 //==========================================================================
 
-void VEntity::SetInitialState(state_t* InState)
+void VEntity::SetInitialState(VState* InState)
 {
 	guard(VEntity::SetInitialState);
 	State = InState;
@@ -164,10 +164,10 @@ void VEntity::SetInitialState(state_t* InState)
 //
 //==========================================================================
 
-state_t* VEntity::FindState(VName StateName)
+VState* VEntity::FindState(VName StateName)
 {
 	guard(VEntity::FindState);
-	state_t* s = GetClass()->FindState(StateName);
+	VState* s = GetClass()->FindState(StateName);
 	if (!s)
 	{
 		Host_Error("Can't find state %s", *StateName);
@@ -1577,14 +1577,14 @@ IMPLEMENT_FUNCTION(VEntity, Remove)
 
 IMPLEMENT_FUNCTION(VEntity, SetState)
 {
-	state_t* state = (state_t*)PR_Pop();
+	VState* state = (VState*)PR_Pop();
 	VEntity *Self = (VEntity*)PR_Pop();
 	PR_Push(Self->SetState(state));
 }
 
 IMPLEMENT_FUNCTION(VEntity, SetInitialState)
 {
-	state_t* state = (state_t*)PR_Pop();
+	VState* state = (VState*)PR_Pop();
 	VEntity *Self = (VEntity *)PR_Pop();
 	Self->SetInitialState(state);
 }
@@ -1789,10 +1789,10 @@ IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
 //
 //===========================================================================
 
-void VViewEntity::SetState(state_t* InState)
+void VViewEntity::SetState(VState* InState)
 {
 	guard(VViewEntity::SetState);
-	state_t *state = InState;
+	VState *state = InState;
 
 	do
 	{
@@ -1825,7 +1825,7 @@ void VViewEntity::SetState(state_t* InState)
 
 IMPLEMENT_FUNCTION(VViewEntity, SetState)
 {
-	state_t* state = (state_t*)PR_Pop();
+	VState* state = (VState*)PR_Pop();
 	VViewEntity *Self = (VViewEntity *)PR_Pop();
 	Self->SetState(state);
 }
@@ -1908,9 +1908,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.24  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.23  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	

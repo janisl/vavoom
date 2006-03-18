@@ -144,7 +144,7 @@ class VObject : public VVirtualObjectBase
 
 private:
 	// Internal per-object variables.
-	FFunction**				vtable;
+	VMethod**				vtable;
 	vint32					Index;				// Index of object into table.
 	vuint32					ObjectFlags;		// Private EObjectFlags used by object manager.
 	VClass*					Class;	  			// Class the object belongs to.
@@ -204,11 +204,11 @@ public:
 	{
 		return Index;
 	}
-	FFunction *GetVFunction(int InIndex) const
+	VMethod *GetVFunction(int InIndex) const
 	{
 		return vtable[InIndex];
 	}
-	FFunction *GetVFunction(VName FuncName) const;
+	VMethod *GetVFunction(VName FuncName) const;
 
 	int ProcessEvent(VName FuncName)
 	{
@@ -445,9 +445,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.20  2006/03/13 21:22:21  dj_jl
 //	Added support for read-only, private and transient fields.
-//
+//	
 //	Revision 1.19  2006/03/06 13:02:32  dj_jl
 //	Cleaning up references to destroyed objects.
 //	
@@ -476,7 +479,7 @@ public:
 //	API fixes.
 //	
 //	Revision 1.10  2002/05/29 16:53:52  dj_jl
-//	Added GetVFunction.
+//	Added GetVMethod.
 //	
 //	Revision 1.9  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
@@ -485,7 +488,7 @@ public:
 //	Added support for defining native functions outside pr_cmds
 //	
 //	Revision 1.7  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
+//	VMethod pointers used instead of the function numbers
 //	
 //	Revision 1.6  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year

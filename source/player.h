@@ -54,12 +54,12 @@ class VViewEntity : public VObject
 	int			ModelSkinNum;
 	float		SX;
 	float		SY;
-	state_t*	State;
-	state_t*	NextState;
+	VState*		State;
+	VState*		NextState;
     float		StateTime;
 	VBasePlayer	*Player;
 
-	void SetState(state_t* stnum);
+	void SetState(VState* stnum);
 
 	DECLARE_FUNCTION(SetState)
 };
@@ -239,9 +239,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.25  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.24  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	

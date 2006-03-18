@@ -67,7 +67,7 @@ FBuiltinInfo *FBuiltinInfo::Builtins;
 
 extern "C" { 
 int				*pr_stackPtr; 
-FFunction		*current_func = NULL;
+VMethod			*current_func = NULL;
 }
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -153,17 +153,6 @@ void PR_Traceback()
 		Host_CoreDump("(%s.%s)", current_func->OuterClass ? 
 			current_func->OuterClass->GetName() : "", *current_func->Name);
 	}
-}
-
-//==========================================================================
-//
-//  PF_Fixme
-//
-//==========================================================================
-
-static void PF_Fixme()
-{
-	Sys_Error("unimplemented bulitin");
 }
 
 //==========================================================================
@@ -259,7 +248,6 @@ void TProgs::Load(const char *AName)
 	guard(TProgs::Load);
 	int				i;
 	int*			Statements;
-	VClass**		ClassList;
 	VName*			NameRemap;
 	dprograms_t		Progs;
 
@@ -283,7 +271,8 @@ void TProgs::Load(const char *AName)
 
 	// byte swap the header
 	Reader->Seek(0);
-	for (i = 0; i < (int)sizeof(Progs) / 4; i++)
+	Reader->Serialise(Progs.magic, 4);
+	for (i = 1; i < (int)sizeof(Progs) / 4; i++)
 	{
 		*Reader << ((int*)&Progs)[i];
 	}
@@ -296,10 +285,7 @@ void TProgs::Load(const char *AName)
 
 	Strings = Z_CNew<char>(Progs.num_strings);
 	Statements = Z_CNew<int>(Progs.num_statements);
-	VTables = Z_CNew<FFunction*>(Progs.num_vtables);
-
-	NumStructs = Progs.num_structs;
-	NumFunctions = Progs.num_functions;
+	VTables = Z_CNew<VMethod*>(Progs.num_vtables);
 
 	// Read names
 	NameRemap = Z_New<VName>(Progs.num_names);
@@ -316,22 +302,13 @@ void TProgs::Load(const char *AName)
 	Reader->Seek(Progs.ofs_strings);
 	Reader->Serialise(Strings, Progs.num_strings);
 
-	//	Read statements.
-	Reader->Seek(Progs.ofs_statements);
-	for (i = 0; i < Progs.num_statements; i++)
-	{
-		*Reader << Statements[i];
-	}
-
-	VMemberBase** Exports = Z_CNew<VMemberBase*>(Progs.num_fields +
-		Progs.num_functions + Progs.num_structs + Progs.num_states +
-		Progs.num_classinfo + Progs.num_constants);
+	VMemberBase** Exports = Z_CNew<VMemberBase*>(Progs.num_exports);
 	Reader->Exports = Exports;
+	Reader->NumExports = Progs.num_exports;
 
 	//	Create objects
 	Reader->Seek(Progs.ofs_exportinfo);
-	for (i = 0; i < Progs.num_fields + Progs.num_functions + Progs.num_structs +
-		Progs.num_classinfo + Progs.num_states + Progs.num_constants; i++)
+	for (i = 0; i < Progs.num_exports; i++)
 	{
 		vuint8		Type;
 		VName		Name;
@@ -339,25 +316,23 @@ void TProgs::Load(const char *AName)
 		*Reader << Type << Name;
 		switch (Type)
 		{
+		case MEMBER_Package:
+			Exports[i] = new(PU_STATIC) VPackage(Name);
+			break;
 		case MEMBER_Field:
-			Exports[i] = new(PU_STATIC) VField();
-			Exports[i]->Name = Name;
+			Exports[i] = new(PU_STATIC) VField(Name);
 			break;
 		case MEMBER_Method:
-			Exports[i] = new(PU_STATIC) FFunction();
-			Exports[i]->Name = Name;
+			Exports[i] = new(PU_STATIC) VMethod(Name);
 			break;
 		case MEMBER_State:
-			Exports[i] = new(PU_STATIC) state_t();
-			Exports[i]->Name = Name;
+			Exports[i] = new(PU_STATIC) VState(Name);
 			break;
 		case MEMBER_Const:
-			Exports[i] = new(PU_STATIC) VConstant();
-			Exports[i]->Name = Name;
+			Exports[i] = new(PU_STATIC) VConstant(Name);
 			break;
 		case MEMBER_Struct:
-			Exports[i] = new(PU_STATIC) VStruct();
-			Exports[i]->Name = Name;
+			Exports[i] = new(PU_STATIC) VStruct(Name);
 			break;
 		case MEMBER_Class:
 			Exports[i] = VClass::FindClass(*Name);
@@ -368,20 +343,10 @@ void TProgs::Load(const char *AName)
 			break;
 		}
 	}
-	int NumExp = Progs.num_fields + Progs.num_functions + Progs.num_structs +
-		Progs.num_classinfo + Progs.num_states + Progs.num_constants;
-	Functions = (FFunction**)(Exports + Progs.num_fields);
-	Structs = (VStruct**)(Exports + Progs.num_fields + Progs.num_functions);
-	ClassList = (VClass**)(Exports + Progs.num_fields + Progs.num_functions +
-		Progs.num_structs);
-	state_t** States = (state_t**)(Exports + Progs.num_fields + Progs.num_functions +
-		Progs.num_structs + Progs.num_classinfo);
-	Reader->NumExports = NumExp;
 
 	//	Serialise objects.
 	Reader->Seek(Progs.ofs_exportdata);
-	for (i = 0; i < Progs.num_fields + Progs.num_functions + Progs.num_structs +
-		Progs.num_classinfo + Progs.num_states + Progs.num_constants; i++)
+	for (i = 0; i < Progs.num_exports; i++)
 	{
 		Exports[i]->Serialise(*Reader);
 	}
@@ -409,106 +374,79 @@ void TProgs::Load(const char *AName)
 		*Reader << VTables[i];
 	}
 
-	//	Set up builtins
-	for (i = 0; i < Progs.num_functions; i++)
-	{
-		FBuiltinInfo *B;
-
-		if (Functions[i]->NumParms > 16)
-			Sys_Error("Function has more than 16 params");
-		for (B = FBuiltinInfo::Builtins; B; B = B->Next)
-		{
-			if (Functions[i]->OuterClass == B->OuterClass &&
-				!strcmp(*Functions[i]->Name, B->Name))
-			{
-				if (Functions[i]->Flags & FUNC_Native)
-				{
-					Functions[i]->FirstStatement = (int)B->Func;
-					break;
-				}
-				else
-				{
-					Sys_Error("PR_LoadProgs: Builtin %s redefined", B->Name);
-				}
-			}
-		}
-		if (!B && Functions[i]->Flags & FUNC_Native)
-		{
-			//	Default builtin
-			Functions[i]->FirstStatement = (int)PF_Fixme;
-#if defined CLIENT && defined SERVER
-			//	Don't abort with error, because it will be done, when this
-			// function will be called (if it will be called).
-			GCon->Logf(NAME_Dev, "WARNING: Builtin %s.%s not found!",
-				Functions[i]->OuterClass ? Functions[i]->OuterClass->GetName() : "",
-				*Functions[i]->Name);
-#endif
-		}
-		if (!(Functions[i]->Flags & FUNC_Native))
-		{
-			Functions[i]->FirstStatement =
-				(int)(Statements + Functions[i]->FirstStatement);
-		}
-	}
-
 	//
-	//	Patch code
+	//	Read statements and patch code
 	//
-	int PrevOpc = OPC_Done;
+	Reader->Seek(Progs.ofs_statements);
 	for (i = 0; i < Progs.num_statements; i++)
 	{
-		switch (Statements[i])
+		vuint8 Tmp;
+		*Reader << Tmp;
+		Statements[i] = Tmp;
+		if (OpcodeArgCount[Statements[i]] >= 1)
 		{
-		case OPC_PushString:
-			Statements[i + 1] += (int)Strings;
-			break;
-		case OPC_PushFunction:
-			Statements[i + 1] = (int)Functions[Statements[i + 1]];
-			break;
-		case OPC_PushClassId:
-		case OPC_DynamicCast:
-			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
-			break;
-		case OPC_PushName:
-			Statements[i + 1] = NameRemap[Statements[i + 1]].GetIndex();
-			break;
-		case OPC_Goto:
-		case OPC_IfGoto:
-		case OPC_IfNotGoto:
-		case OPC_IfTopGoto:
-		case OPC_IfNotTopGoto:
-			Statements[i + 1] = (int)(Statements + Statements[i + 1]);
-			break;
-		case OPC_CaseGoto:
-			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
-			break;
-		case OPC_CaseGotoClassId:
-			Statements[i + 1] = (int)ClassList[Statements[i + 1]];
-			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
-			break;
-		case OPC_CaseGotoName:
-			Statements[i + 1] = NameRemap[Statements[i + 1]].GetIndex();
-			Statements[i + 2] = (int)(Statements + Statements[i + 2]);
-			break;
-		case OPC_Call:
-			Statements[i + 1] = (int)Functions[Statements[i + 1]];
-			break;
-		case OPC_PushState:
-			Statements[i + 1] = (int)States[Statements[i + 1]];
-			break;
+			switch (Statements[i])
+			{
+			case OPC_PushString:
+				*Reader << Statements[i + 1];
+				Statements[i + 1] += (int)Strings;
+				break;
+			case OPC_PushName:
+			case OPC_CaseGotoName:
+				*Reader << *(VName*)&Statements[i + 1];
+				break;
+			case OPC_PushFunction:
+			case OPC_Call:
+			case OPC_PushClassId:
+			case OPC_DynamicCast:
+			case OPC_CaseGotoClassId:
+			case OPC_PushState:
+				*Reader << *(VMemberBase**)&Statements[i + 1];
+				break;
+			case OPC_Goto:
+			case OPC_IfGoto:
+			case OPC_IfNotGoto:
+			case OPC_IfTopGoto:
+			case OPC_IfNotTopGoto:
+				*Reader << Statements[i + 1];
+				Statements[i + 1] = (int)(Statements + Statements[i + 1]);
+				break;
+			default:
+				*Reader << Statements[i + 1];
+				break;
+			}
 		}
-		PrevOpc = Statements[i];
+		if (OpcodeArgCount[Statements[i]] >= 2)
+		{
+			*Reader << Statements[i + 2];
+			switch (Statements[i])
+			{
+			case OPC_CaseGoto:
+			case OPC_CaseGotoClassId:
+			case OPC_CaseGotoName:
+				Statements[i + 2] = (int)(Statements + Statements[i + 2]);
+				break;
+			}
+		}
 		i += OpcodeArgCount[Statements[i]];
 	}
 
-	//	Set up reference field links.
-	for (i = 0; i < Progs.num_classinfo; i++)
+	for (i = 0; i < Progs.num_exports; i++)
 	{
-		if (!ClassList[i]->ClassVTable)
+		if (Exports[i]->MemberType == MEMBER_Method &&
+			!(((VMethod*)Exports[i])->Flags & FUNC_Native))
 		{
-			ClassList[i]->ClassVTable = VTables + ClassList[i]->VTableOffset;
+			((VMethod*)Exports[i])->FirstStatement =
+				(int)(Statements + ((VMethod*)Exports[i])->FirstStatement);
 		}
-		ClassList[i]->InitReferences();
+		if (Exports[i]->MemberType == MEMBER_Class)
+		{
+			if (!((VClass*)Exports[i])->ClassVTable)
+			{
+				((VClass*)Exports[i])->ClassVTable = VTables + ((VClass*)Exports[i])->VTableOffset;
+			}
+			((VClass*)Exports[i])->InitReferences();
+		}
 	}
 
 	Z_Free(NameRemap);
@@ -537,9 +475,11 @@ void TProgs::Unload()
 VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 {
 	guard(TProgs::FindStruct);
-	for (int i = 0; i < NumStructs; i++)
-		if (Structs[i]->Name == InName && Structs[i]->OuterClass == InClass)
-			return Structs[i];
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Struct &&
+			VMemberBase::GMembers[i]->Name == InName && 
+			((VStruct*)VMemberBase::GMembers[i])->OuterClass == InClass)
+			return (VStruct*)VMemberBase::GMembers[i];
 	return NULL;
 	unguard;
 }
@@ -552,7 +492,7 @@ VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 
 char* TProgs::FuncName(int fnum)
 {
-	return const_cast<char*>(*((FFunction *)fnum)->Name);
+	return const_cast<char*>(*((VMethod *)fnum)->Name);
 }
 
 //==========================================================================
@@ -561,7 +501,7 @@ char* TProgs::FuncName(int fnum)
 //
 //==========================================================================
 
-static void RunFunction(FFunction *func)
+static void RunFunction(VMethod *func)
 {
 	int			*current_statement = NULL;
 	int			*sp;
@@ -642,13 +582,17 @@ static void RunFunction(FFunction *func)
 		*sp++ = (int)&local_vars[*current_statement++];
 		break;
 
-	 case OPC_Add:
-        sp--;
+	case OPC_Offset:
+		sp[-1] += *current_statement++;
+		break;
+
+	case OPC_Add:
+		sp--;
 		sp[-1] += *sp;
 		break;
 
-	 case OPC_Subtract:
-        sp--;
+	case OPC_Subtract:
+		sp--;
 		sp[-1] -= *sp;
 		break;
 
@@ -746,7 +690,7 @@ static void RunFunction(FFunction *func)
 
 	 case OPC_Call:
 		pr_stackPtr = sp;
-	    RunFunction((FFunction *)*current_statement++);
+	    RunFunction((VMethod *)*current_statement++);
 		current_func = func;
 		sp = pr_stackPtr;
 		break;
@@ -1135,7 +1079,7 @@ static void RunFunction(FFunction *func)
 	 case OPC_ICall:
 		sp--;
 		pr_stackPtr = sp;
-	    RunFunction((FFunction *)*sp);
+	    RunFunction((VMethod *)*sp);
 		current_func = func;
 		sp = pr_stackPtr;
 		break;
@@ -1324,10 +1268,10 @@ static void RunFunction(FFunction *func)
 //
 //==========================================================================
 
-int TProgs::ExecuteFunction(FFunction *func)
+int TProgs::ExecuteFunction(VMethod *func)
 {
 	guard(TProgs::ExecuteFunction);
-	FFunction		*prev_func;
+	VMethod		*prev_func;
 	int				ret = 0;
 
 	//	Run function
@@ -1378,7 +1322,7 @@ int TProgs::ExecuteFunction(FFunction *func)
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func)
+int TProgs::Exec(VMethod *func)
 {
 #ifdef CHECK_PARM_COUNT
     if (Functions[fnum]->NumParms != 0)
@@ -1396,7 +1340,7 @@ int TProgs::Exec(FFunction *func)
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1)
+int TProgs::Exec(VMethod *func, int parm1)
 {
 	int		*p;
 
@@ -1419,7 +1363,7 @@ int TProgs::Exec(FFunction *func, int parm1)
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2)
+int TProgs::Exec(VMethod *func, int parm1, int parm2)
 {
 	int		*p;
 
@@ -1443,7 +1387,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2)
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3)
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3)
 {
 	int		*p;
 
@@ -1468,7 +1412,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3)
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4)
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4)
 {
 	int		*p;
 
@@ -1494,7 +1438,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4)
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5)
 {
 	int		*p;
@@ -1522,7 +1466,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6)
 {
 	int		*p;
@@ -1551,7 +1495,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7)
 {
 	int		*p;
@@ -1581,7 +1525,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8)
 {
 	int		*p;
@@ -1612,7 +1556,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9)
 {
 	int		*p;
@@ -1644,7 +1588,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10)
 {
 	int		*p;
@@ -1677,7 +1621,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11)
 {
@@ -1712,7 +1656,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12)
 {
@@ -1748,7 +1692,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13)
 {
@@ -1785,7 +1729,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13, int parm14)
 {
@@ -1823,7 +1767,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13, int parm14, int parm15)
 {
@@ -1862,7 +1806,7 @@ int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
 //
 //==========================================================================
 
-int TProgs::Exec(FFunction *func, int parm1, int parm2, int parm3, int parm4,
+int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13, int parm14, int parm15, int parm16)
 {
@@ -1909,17 +1853,22 @@ void TProgs::DumpProfile()
 	int profsort[MAX_PROF];
 	int totalcount = 0;
 	memset(profsort, 0, sizeof(profsort));
-	for (i = 1; i < NumFunctions; i++)
+	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (!Functions[i]->Profile1)
+		if (VMemberBase::GMembers[i]->MemberType != MEMBER_Method)
+		{
+			continue;
+		}
+		VMethod* Func = (VMethod*)VMemberBase::GMembers[i];
+		if (!Func->Profile1)
 		{
 			//	Never called
 			continue;
 		}
 		for (int j = 0; j < MAX_PROF; j++)
 		{
-			totalcount += Functions[i]->Profile2;
-			if (Functions[profsort[j]]->Profile2 <= Functions[i]->Profile2)
+			totalcount += Func->Profile2;
+			if (((VMethod*)VMemberBase::GMembers[profsort[j]])->Profile2 <= Func->Profile2)
 			{
 				for (int k = MAX_PROF - 1; k > j; k--)
 				{
@@ -1936,20 +1885,23 @@ void TProgs::DumpProfile()
 	}
 	for (i = 0; i < MAX_PROF && profsort[i]; i++)
 	{
-		int fnum = profsort[i];
-		GCon->Logf("%3.2f%% (%9d) %9d %s",
-			(double)Functions[fnum]->Profile2 * 100.0 / (double)totalcount,
-			(int)Functions[fnum]->Profile2, (int)Functions[fnum]->Profile1,
-			*Functions[fnum]->Name);
+		VMethod* Func = (VMethod*)VMemberBase::GMembers[profsort[i]];
+		GCon->Logf("%3.2f%% (%9d) %9d %s.%s",
+			(double)Func->Profile2 * 100.0 / (double)totalcount,
+			(int)Func->Profile2, (int)Func->Profile1,
+			Func->OuterClass->GetName(), Func->GetName());
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.52  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.51  2006/03/13 19:29:57  dj_jl
 //	Clean function local variables.
-//
+//	
 //	Revision 1.50  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	
@@ -2035,7 +1987,7 @@ void TProgs::DumpProfile()
 //	Added support for bool variables
 //	
 //	Revision 1.22  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
+//	VMethod pointers used instead of the function numbers
 //	
 //	Revision 1.21  2002/01/28 18:44:44  dj_jl
 //	Fixed dynamic cast

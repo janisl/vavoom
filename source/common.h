@@ -220,11 +220,13 @@ class	VStr;
 class	VStream;
 
 class	VMemberBase;
+class	VPackage;
 class	VField;
+class	VMethod;
+class	VState;
+class	VConstant;
 class	VStruct;
 class	VClass;
-class	FFunction;
-class	state_t;
 struct	mobjinfo_t;
 
 class	VObject;
@@ -232,9 +234,12 @@ class	VObject;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.25  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.24  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

@@ -150,9 +150,9 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld);
 
 boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*));
 boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
-	VObject* PrSelf, FFunction *prfunc);
+	VObject* PrSelf, VMethod *prfunc);
 boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
-	int flags, boolean(*trav)(intercept_t *), VObject* PrSelf, FFunction *prtrav);
+	int flags, boolean(*trav)(intercept_t *), VObject* PrSelf, VMethod *prtrav);
 
 sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, float z2);
 opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2);
@@ -321,9 +321,12 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.52  2006/03/18 16:51:15  dj_jl
+//	Renamed type class names, better code serialisation.
+//
 //	Revision 1.51  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.50  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	
@@ -424,7 +427,7 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 //	Replaced Actor flags with boolean variables.
 //	
 //	Revision 1.17  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
+//	VMethod pointers used instead of the function numbers
 //	
 //	Revision 1.16  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
