@@ -36,7 +36,7 @@ int PunchCount;
 
 void A_FPunchAttack()
 {
-	Actor Owner = Player.MO;
+	Actor Owner = Actor(Player.MO);
 	int damage;
 	float power;
 	int i;
@@ -170,6 +170,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/19 20:49:32  dj_jl
+//  Added missing type casts.
+//
 //  Revision 1.10  2006/03/12 19:58:58  dj_jl
 //  States as objects, added state variable type.
 //
