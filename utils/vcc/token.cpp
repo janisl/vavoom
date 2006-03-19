@@ -50,7 +50,7 @@ enum chr_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void NextChr(void);
+static void NextChr();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -135,7 +135,7 @@ static char* Keywords[] =
 //
 //==========================================================================
 
-void TK_Init(void)
+void TK_Init()
 {
 	int i;
 
@@ -183,10 +183,10 @@ void TK_Init(void)
 
 void TK_OpenSource(void *buf, size_t size)
 {
-	//	PrincipÆ nav vajadzØgs aizvñrt
+	//	Actually we don't need to close it.
 	TK_CloseSource();
 
-	//	IelÆdñ failu un sagatavojas kompilÆcijai
+	//	Read file and prepare for compilation.
 	SourceOpen = true;
 	FileStart = (char *)buf;
 	FileEnd = FileStart + size;
@@ -203,7 +203,7 @@ void TK_OpenSource(void *buf, size_t size)
 //
 //==========================================================================
 
-void TK_Restart(void)
+void TK_Restart()
 {
 	FilePtr = FileStart;
 	tk_Line = 1;
@@ -218,7 +218,7 @@ void TK_Restart(void)
 //
 //==========================================================================
 
-void TK_CloseSource(void)
+void TK_CloseSource()
 {
 	if (SourceOpen)
 	{
@@ -233,7 +233,7 @@ void TK_CloseSource(void)
 //
 //==========================================================================
 
-static void NextChr(void)
+static void NextChr()
 {
 	if (FilePtr >= FileEnd)
 	{
@@ -263,7 +263,7 @@ static void NextChr(void)
 //
 //==========================================================================
 
-static void ProcessNumberToken(void)
+static void ProcessNumberToken()
 {
 	char c;
 
@@ -290,7 +290,7 @@ static void ProcessNumberToken(void)
 	if (Chr == '.')
 	{
 		tk_Token = TK_FLOAT;
-		NextChr(); // Punkts
+		NextChr(); // Point
 		tk_Float = tk_Number;
 		float	fmul = 0.1;
 		while (ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
@@ -306,7 +306,7 @@ static void ProcessNumberToken(void)
 		int radix;
 		int digit;
 
-		NextChr(); // PasvØtroýanas zØmi
+		NextChr(); // Underscore
 		radix = tk_Number;
 		if (radix < 2 || radix > 36)
 		{
@@ -347,7 +347,7 @@ static void ProcessNumberToken(void)
 //
 //==========================================================================
 
-static void ProcessChar(void)
+static void ProcessChar()
 {
 	if (Chr == EOF_CHARACTER)
 	{
@@ -359,7 +359,7 @@ static void ProcessChar(void)
 	}
 	if (Chr == '\\')
 	{
-		// speciÆlais simbols
+		//	Special symbol
 		NextChr();
 		if (Chr == EOF_CHARACTER)
 		{
@@ -390,7 +390,7 @@ static void ProcessChar(void)
 //
 //==========================================================================
 
-static void ProcessQuoteToken(void)
+static void ProcessQuoteToken()
 {
 	int len;
 
@@ -419,7 +419,7 @@ static void ProcessQuoteToken(void)
 //
 //==========================================================================
 
-static void ProcessSingleQuoteToken(void)
+static void ProcessSingleQuoteToken()
 {
 	int len;
 
@@ -448,7 +448,7 @@ static void ProcessSingleQuoteToken(void)
 //
 //==========================================================================
 
-static void ProcessLetterToken(void)
+static void ProcessLetterToken()
 {
 	int		len;
 
@@ -467,50 +467,48 @@ static void ProcessLetterToken(void)
 	}
 	TokenStringBuffer[len] = 0;
 
-	switch (TokenStringBuffer[0])
+	register const char* s = tk_String;
+	switch (s[0])
 	{
 	case '_':
-		if (tk_String[1] == '_')
+		if (s[1] == '_')
 		{
-			if (tk_String[2] == 's' && tk_String[3] == 't' &&
-				tk_String[4] == 'a' && tk_String[5] == 't' &&
-				tk_String[6] == 'e' && tk_String[7] == 's' &&
-				tk_String[8] == '_' && tk_String[9] == '_' &&
-				tk_String[10] == 0)
-			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_STATES;
-			}
-			else if (tk_String[2] == 'm' && tk_String[3] == 'o' &&
-				tk_String[4] == 'b' && tk_String[5] == 'j' &&
-				tk_String[6] == 'i' && tk_String[7] == 'n' &&
-				tk_String[8] == 'f' && tk_String[9] == 'o' &&
-				tk_String[10] == '_' && tk_String[11] == '_' &&
-				tk_String[12] == 0)
+			if (s[2] == 'm' && s[3] == 'o' && s[4] == 'b' && s[5] == 'j' &&
+				s[6] == 'i' && s[7] == 'n' && s[8] == 'f' && s[9] == 'o' &&
+				s[10] == '_' && s[11] == '_' && s[12] == 0)
 			{
 				tk_Token = TK_KEYWORD;
 				tk_Keyword = KW_MOBJINFO;
 			}
-			else if (tk_String[2] == 's' && tk_String[3] == 'c' &&
-				tk_String[4] == 'r' && tk_String[5] == 'i' &&
-				tk_String[6] == 'p' && tk_String[7] == 't' &&
-				tk_String[8] == 'i' && tk_String[9] == 'd' &&
-				tk_String[10] == '_' && tk_String[11] == '_' &&
-				tk_String[12] == 0)
+			else if (s[2] == 's')
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_SCRIPTID;
+				if (s[3] == 't' && s[4] == 'a' && s[5] == 't' && s[6] == 'e' &&
+					s[7] == 's' && s[8] == '_' && s[9] == '_' && s[10] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_STATES;
+				}
+				else if (s[3] == 'c' && s[4] == 'r' && s[5] == 'i' &&
+					s[6] == 'p' && s[7] == 't' && s[8] == 'i' && s[9] == 'd' &&
+					s[10] == '_' && s[11] == '_' && s[12] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_SCRIPTID;
+				}
 			}
 		}
 		break;
 
 	case 'a':
-		if (!strcmp(tk_String, "abstract"))
+		if (s[1] == 'b' && s[2] == 's' && s[3] == 't' && s[4] == 'r' &&
+			s[5] == 'a' && s[6] == 'c' && s[7] == 't' && s[8] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_ABSTRACT;
 		}
-		else if (!strcmp(tk_String, "addfields"))
+		else if (s[1] == 'd' && s[2] == 'd' && s[3] == 'f' && s[4] == 'i' &&
+			s[5] == 'e' && s[6] == 'l' && s[7] == 'd' && s[8] == 's' &&
+			s[9] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_ADDFIELDS;
@@ -518,12 +516,13 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'b':
-		if (!strcmp(tk_String, "bool"))
+		if (s[1] == 'o' && s[2] == 'o' && s[3] == 'l' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_BOOL;
 		}
-		else if (!strcmp(tk_String, "break"))
+		else if (s[1] == 'r' && s[2] == 'e' && s[3] == 'a' && s[4] == 'k' &&
+			s[5] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_BREAK;
@@ -531,50 +530,68 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'c':
-		if (!strcmp(tk_String, "case"))
+		if (s[1] == 'a' && s[2] == 's' && s[3] == 'e' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_CASE;
 		}
-		else if (!strcmp(tk_String, "class"))
+		else if (s[1] == 'l' && s[2] == 'a' && s[3] == 's' && s[4] == 's')
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_CLASS;
+			if (s[5] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_CLASS;
+			}
+			else if (s[5] == 'i' && s[6] == 'd' && s[7] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_CLASSID;
+			}
 		}
-		else if (!strcmp(tk_String, "classid"))
+		else if (s[1] == 'o' && s[2] == 'n')
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_CLASSID;
-		}
-		else if (!strcmp(tk_String, "const"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_CONST;
-		}
-		else if (!strcmp(tk_String, "continue"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_CONTINUE;
+			if (s[3] == 's' && s[4] == 't' && s[5] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_CONST;
+			}
+			else if (s[3] == 't' && s[4] == 'i' && s[5] == 'n' &&
+				s[6] == 'u' && s[7] == 'e' && s[8] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_CONTINUE;
+			}
 		}
 		break;
 
 	case 'd':
-		if (!strcmp(tk_String, "default"))
+		if (s[1] == 'e')
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_DEFAULT;
+			if (s[2] == 'f' && s[3] == 'a' && s[4] == 'u' && s[5] == 'l' &&
+				s[6] == 't')
+			{
+				if (s[7] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_DEFAULT;
+				}
+				else if (s[7] == 'p' && s[8] == 'r' && s[9] == 'o' &&
+					s[10] == 'p' && s[11] == 'e' && s[12] == 'r' &&
+					s[13] == 't' && s[14] == 'i' && s[15] == 'e' &&
+					s[16] == 's' && s[17] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_DEFAULTPROPERTIES;
+				}
+			}
+			else if (s[2] == 'l' && s[3] == 'e' && s[4] == 'g' &&
+				s[5] == 'a' && s[6] == 't' && s[7] == 'e' && s[8] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_DELEGATE;
+			}
 		}
-		else if (!strcmp(tk_String, "defaultproperties"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_DEFAULTPROPERTIES;
-		}
-		else if (!strcmp(tk_String, "delegate"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_DELEGATE;
-		}
-		else if (!strcmp(tk_String, "do"))
+		else if (s[1] == 'o' && s[2] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_DO;
@@ -582,12 +599,12 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'e':
-		if (!strcmp(tk_String, "else"))
+		if (s[1] == 'l' && s[2] == 's' && s[3] == 'e' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_ELSE;
 		}
-		else if (!strcmp(tk_String, "enum"))
+		else if (s[1] == 'n' && s[2] == 'u' && s[3] == 'm' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_ENUM;
@@ -595,17 +612,19 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'f':
-		if (!strcmp(tk_String, "false"))
+		if (s[1] == 'a' && s[2] == 'l' && s[3] == 's' && s[4] == 'e' &&
+			s[5] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_FALSE;
 		}
-		if (!strcmp(tk_String, "float"))
+		else if (s[1] == 'l' && s[2] == 'o' && s[3] == 'a' && s[4] == 't' &&
+			s[5] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_FLOAT;
 		}
-		else if (!strcmp(tk_String, "for"))
+		else if (s[1] == 'o' && s[2] == 'r' && s[3] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_FOR;
@@ -613,12 +632,12 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'i':
-		if (!strcmp(tk_String, "if"))
+		if (s[1] == 'f' && s[2] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_IF;
 		}
-		else if (!strcmp(tk_String, "int"))
+		else if (s[1] == 'n' && s[2] == 't' && s[3] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_INT;
@@ -626,19 +645,18 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'n':
-		if (tk_String[1] == 'a' && tk_String[2] == 'm' &&
-			tk_String[3] == 'e' && tk_String[4] == 0)
+		if (s[1] == 'a' && s[2] == 'm' && s[3] == 'e' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_NAME;
 		}
-		else if (tk_String[1] == 'o' && tk_String[2] == 'n' &&
-			tk_String[3] == 'e' && tk_String[4] == 0)
+		else if (s[1] == 'o' && s[2] == 'n' && s[3] == 'e' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_NONE;
 		}
-		else if (!strcmp(tk_String, "native"))
+		else if (s[1] == 'a' && s[2] == 't' && s[3] == 'i' && s[4] == 'v' &&
+			s[5] == 'e' && s[6] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_NATIVE;
@@ -646,8 +664,8 @@ static void ProcessLetterToken(void)
 		break;
 
 /*	case 'N':
-		if (tk_String[1] == 'U' && tk_String[2] == 'L' &&
-			tk_String[3] == 'L' && tk_String[4] == 0)
+		if (s[1] == 'U' && s[2] == 'L' &&
+			s[3] == 'L' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_NULL;
@@ -655,7 +673,8 @@ static void ProcessLetterToken(void)
 		break;*/
 
 	case 'p':
-		if (!strcmp(tk_String, "private"))
+		if (s[1] == 'r' && s[2] == 'i' && s[3] == 'v' && s[4] == 'a' &&
+			s[5] == 't' && s[6] == 'e' && s[7] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_PRIVATE;
@@ -663,45 +682,61 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'r':
-		if (!strcmp(tk_String, "readonly"))
+		if (s[1] == 'e')
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_READONLY;
-		}
-		else if (!strcmp(tk_String, "return"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_RETURN;
+			if (s[2] == 'a' && s[3] == 'd' && s[4] == 'o' && s[5] == 'n' &&
+				s[6] == 'l' && s[7] == 'y' && s[8] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_READONLY;
+			}
+			else if (s[2] == 't' && s[3] == 'u' && s[4] == 'r' &&
+				s[5] == 'n' && s[6] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_RETURN;
+			}
 		}
 		break;
 
 	case 's':
-		if (!strcmp(tk_String, "self"))
+		if (s[1] == 'e' && s[2] == 'l' && s[3] == 'f' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_SELF;
 		}
-		else if (!strcmp(tk_String, "state"))
+		else if (s[1] == 't')
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_STATE;
+			if (s[2] == 'a' && s[3] == 't')
+			{
+				if (s[4] == 'e' && s[5] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_STATE;
+				}
+				else if (s[4] == 'i' && s[5] == 'c' && s[6] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_STATIC;
+				}
+			}
+			else if (s[2] == 'r')
+			{
+				if (s[3] == 'i' && s[4] == 'n' && s[5] == 'g' && s[6] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_STRING;
+				}
+				else if (s[3] == 'u' && s[4] == 'c' && s[5] == 't' &&
+					s[6] == 0)
+				{
+					tk_Token = TK_KEYWORD;
+					tk_Keyword = KW_STRUCT;
+				}
+			}
 		}
-		else if (!strcmp(tk_String, "static"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_STATIC;
-		}
-		else if (!strcmp(tk_String, "string"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_STRING;
-		}
-		else if (!strcmp(tk_String, "struct"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_STRUCT;
-		}
-		else if (!strcmp(tk_String, "switch"))
+		else if (s[1] == 'w' && s[2] == 'i' && s[3] == 't' && s[4] == 'c' &&
+			s[5] == 'h' && s[6] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_SWITCH;
@@ -709,25 +744,30 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 't':
-		if (!strcmp(tk_String, "transient"))
+		if (s[1] == 'r')
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_TRANSIENT;
-		}
-		else if (!strcmp(tk_String, "true"))
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_TRUE;
+			if (s[2] == 'a' && s[3] == 'n' && s[4] == 's' && s[5] == 'i' &&
+				s[6] == 'e' && s[7] == 'n' && s[8] == 't' && s[9] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_TRANSIENT;
+			}
+			else if (s[2] == 'u' && s[3] == 'e' && s[4] == 0)
+			{
+				tk_Token = TK_KEYWORD;
+				tk_Keyword = KW_TRUE;
+			}
 		}
 		break;
 
 	case 'v':
-		if (!strcmp(tk_String, "vector"))
+		if (s[1] == 'e' && s[2] == 'c' && s[3] == 't' && s[4] == 'o' &&
+			s[5] == 'r' && s[6] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_VECTOR;
 		}
-		else if (!strcmp(tk_String, "void"))
+		else if (s[1] == 'o' && s[2] == 'i' && s[3] == 'd' && s[4] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_VOID;
@@ -735,15 +775,15 @@ static void ProcessLetterToken(void)
 		break;
 
 	case 'w':
-		if (!strcmp(tk_String, "while"))
+		if (s[1] == 'h' && s[2] == 'i' && s[3] == 'l' && s[4] == 'e' &&
+			s[5] == 0)
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_WHILE;
 		}
 		break;
 	}
-	if (tk_String[0] == 'N' && tk_String[1] == 'U' && tk_String[2] == 'L' &&
-		tk_String[3] == 'L' && tk_String[4] == 0)
+	if (s[0] == 'N' && s[1] == 'U' && s[2] == 'L' && s[3] == 'L' && s[4] == 0)
 	{
 		tk_Token = TK_KEYWORD;
 		tk_Keyword = KW_NULL;
@@ -761,7 +801,7 @@ static void ProcessLetterToken(void)
 //
 //==========================================================================
 
-static void ProcessSpecialToken(void)
+static void ProcessSpecialToken()
 {
 	char c = Chr;
    	NextChr();
@@ -1039,7 +1079,7 @@ static void ProcessSpecialToken(void)
 //
 //==========================================================================
 
-static void ProcessFileName(void)
+static void ProcessFileName()
 {
 	int len = 0;
 	NextChr();
@@ -1071,7 +1111,7 @@ static void ProcessFileName(void)
 //
 //==========================================================================
 
-void TK_NextToken(void)
+void TK_NextToken()
 {
 	do
 	{
@@ -1091,7 +1131,7 @@ void TK_NextToken(void)
 				}
 				NextChr();
 
-				//	Nolasa lØnijas numuru
+				//	Read line number
 				while (Chr == ' ') NextChr();
 				if (ASCIIToChrCode[(byte)Chr] != CHR_NUMBER)
 				{
@@ -1100,7 +1140,7 @@ void TK_NextToken(void)
 				ProcessNumberToken();
 				tk_Line = tk_Number - 1;
 
-				//	Nolasa faila vÆrdu
+				//	Read file name
 				while (Chr == ' ') NextChr();
 				if (ASCIIToChrCode[(byte)Chr] != CHR_QUOTE)
 				{
@@ -1109,7 +1149,7 @@ void TK_NextToken(void)
 				ProcessFileName();
 				strcpy(tk_SourceName, tk_String);
 
-				//	Karodzi·us ignorñ
+				//	Ignore flags
 				while (!NewLine)
 				{
 					NextChr();
@@ -1146,8 +1186,8 @@ void TK_NextToken(void)
 //
 //  TK_Check
 //
-//	Atgrie÷ true un pa·em nÆkoýo gabalu ja tekoýais sakrØt at string
-//  Atgrie÷ false un neko nedara citos gadØjumos
+//	Return true and take next token if current matches string.
+//  Return false and do nothing otherwise.
 //
 //==========================================================================
 
@@ -1171,8 +1211,8 @@ bool TK_Check(const char *string)
 //
 //	TK_Expect
 //
-//  Izdod kõÝdu, ja tekoýais gabals nesakrØt ar string.
-//  Pa·em nÆkoýo gabalu
+//  Report error, if current token is not equals to string.
+//  Take next token.
 //
 //==========================================================================
 
@@ -1194,8 +1234,8 @@ void TK_Expect(const char *string, ECompileError error)
 //
 //	TK_Expect
 //
-//  Izdod kõÝdu, ja tekoýais gabals nesakrØt ar string.
-//  Pa·em nÆkoýo gabalu
+//  Report error, if current token is not equals to kwd.
+//  Take next token.
 //
 //==========================================================================
 
@@ -1216,8 +1256,8 @@ void TK_Expect(EKeyword kwd, ECompileError error)
 //
 //	TK_Expect
 //
-//  Izdod kõÝdu, ja tekoýais gabals nesakrØt ar string.
-//  Pa·em nÆkoýo gabalu
+//  Report error, if current token is not equals to punct.
+//  Take next token.
 //
 //==========================================================================
 
@@ -1233,9 +1273,12 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/03/19 13:15:29  dj_jl
+//	Per character keyword checks.
+//
 //	Revision 1.28  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
-//
+//	
 //	Revision 1.27  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
 //	
