@@ -133,7 +133,7 @@ void InitNewGame(int skill)
 
 LevelInfo CreateLevelInfo()
 {
-	return NewSpecialThinker(HereticLevelInfo);
+	return LevelInfo(NewSpecialThinker(HereticLevelInfo));
 }
 
 //==========================================================================
@@ -1536,6 +1536,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/19 17:22:56  dj_jl
+//  Added explicit type casts.
+//
 //  Revision 1.5  2006/02/28 22:45:45  dj_jl
 //  Replaced defines with constants.
 //

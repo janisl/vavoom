@@ -167,7 +167,7 @@ void QueueStairSector(sector_t* sec, float height)
 {
 	StairStepMover	Other;
 
-	Other = NewSpecialThinker(StairStepMover);
+	Other = StairStepMover(NewSpecialThinker(StairStepMover));
 	Other.QueueInit(sec, QueueType ^ 1, height, StairsType,
 		StairStepDelta, Direction, StairSpeed, StairTexture,
 		StairStartHeight, DelayTotal, ResetDelay);
@@ -298,6 +298,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/19 17:23:55  dj_jl
+//  Added explicit type casts.
+//
 //  Revision 1.5  2005/11/20 12:40:55  dj_jl
 //  Implemented support for sound sequence extensions.
 //

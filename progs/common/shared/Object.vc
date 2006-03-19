@@ -1863,7 +1863,7 @@ native static Entity NewMobjThinker(classid cid);
 //  Special thinker utilites
 //
 
-native static Object NewSpecialThinker(classid);
+native static Thinker NewSpecialThinker(classid);
 native static void RemoveSpecialThinker(Thinker spec);
 native static void P_ChangeSwitchTexture(line_t * line, int useAgain);
 native static Thinker NextThinker(Thinker last, classid id);
@@ -1947,6 +1947,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2006/03/19 17:19:38  dj_jl
+//  Added explicit type casts.
+//
 //  Revision 1.13  2006/03/13 21:24:53  dj_jl
 //  Added support for read-only, private and transient fields.
 //

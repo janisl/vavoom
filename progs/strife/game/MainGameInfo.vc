@@ -115,7 +115,7 @@ void InitNewGame(int skill)
 
 LevelInfo CreateLevelInfo()
 {
-	return NewSpecialThinker(StrifeLevelInfo);
+	return StrifeLevelInfo(NewSpecialThinker(StrifeLevelInfo));
 }
 
 //==========================================================================
@@ -1521,6 +1521,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/19 17:24:29  dj_jl
+//  Added explicit type casts.
+//
 //  Revision 1.5  2006/02/28 22:47:55  dj_jl
 //  Replaced defines with constants.
 //

@@ -1459,7 +1459,7 @@ int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		}
 	
 		// new door thinker
-		Door = NewSpecialThinker(VerticalDoor);
+		Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
 		Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		RetCode = true;
 	}
@@ -1475,7 +1475,7 @@ int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 			}
 			// Add new door thinker
 			RetCode = true;
-			Door = NewSpecialThinker(VerticalDoor);
+			Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
 			Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		}
 	}
@@ -1544,7 +1544,7 @@ void SpawnDoorCloseIn30(sector_t * sec)
 {
 	VerticalDoor	Door;
 
-	Door = NewSpecialThinker(VerticalDoor);
+	Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
 	Door.InitCloseIn30(sec);
 	sec->special = 0;
 }
@@ -1562,7 +1562,7 @@ void SpawnDoorRaiseIn5Mins(sector_t * sec)
 	VerticalDoor Door;
 
 	sec->special = 0;
-	Door = NewSpecialThinker(VerticalDoor);
+	Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
 	Door.Init(sec, 0, 16, 150, 0, 0, VerticalDoor::DOOREV_RaiseIn5Mins);
 }
 
@@ -1592,7 +1592,7 @@ int EV_DoFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		{
 			// new floor thinker
 			Rtn = true;
-			Floor = NewSpecialThinker(FloorMover);
+			Floor = FloorMover(NewSpecialThinker(FloorMover));
 			Floor.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Type,
 				Line);
 		}
@@ -1610,7 +1610,7 @@ int EV_DoFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 
 			// new floor thinker
 			Rtn = true;
-			Floor = NewSpecialThinker(FloorMover);
+			Floor = FloorMover(NewSpecialThinker(FloorMover));
 			Floor.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 		}
 	}
@@ -1694,7 +1694,7 @@ int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		Rtn = 1;
 		Height = GetPlanePointZ(&Sec->floor, vector(0.0, 0.0, 0.0)) +
 			StairSize;
-		Floor = NewSpecialThinker(FloorMover);
+		Floor = FloorMover(NewSpecialThinker(FloorMover));
 		Floor.InitStair(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Generic, Height);
 
 		Texture = Sec->floor.pic;
@@ -1737,7 +1737,7 @@ int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 						break;
 					}
 				}
-				Floor = NewSpecialThinker(FloorMover);
+				Floor = FloorMover(NewSpecialThinker(FloorMover));
 				Floor.InitStair(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Generic,
 					Height);
 				Ok = true;
@@ -1794,11 +1794,11 @@ int EV_DoDonut(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 			s3 = s2->lines[i]->backsector;
 
 			//  Spawn rising slime
-			Floor = NewSpecialThinker(FloorMover);
+			Floor = FloorMover(NewSpecialThinker(FloorMover));
 			Floor.InitDonut(s2, s3, Arg2);
 
 			//  Spawn lowering donut-hole
-			Floor = NewSpecialThinker(FloorMover);
+			Floor = FloorMover(NewSpecialThinker(FloorMover));
 			Floor.InitDonut2(s1, s3, Arg3);
 			break;
 		}
@@ -1841,7 +1841,7 @@ int EV_BuildStairs(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		if (Sec->FloorData)
 			continue;
 
-		StairStep = NewSpecialThinker(StairStepMover);
+		StairStep = StairStepMover(NewSpecialThinker(StairStepMover));
 		StairStep.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5,
 			StairsType);
 		if (StairQueueHead)
@@ -1890,7 +1890,7 @@ int EV_BuildPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		if (Sec->FloorData || Sec->CeilingData)
 			continue;	// already moving
 		Rtn = true;
-		pillar = NewSpecialThinker(Pillar);
+		pillar = Pillar(NewSpecialThinker(Pillar));
 		pillar.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Crush);
 	}
 	return Rtn;
@@ -1917,7 +1917,7 @@ int EV_OpenPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		if (Sec->FloorData || Sec->CeilingData)
 			continue;	// already moving
 		Rtn = true;
-		pillar = NewSpecialThinker(Pillar);
+		pillar = Pillar(NewSpecialThinker(Pillar));
 		pillar.InitOpen(Sec, Arg1, Arg2, Arg3, Arg4, Arg5);
 	}
 	return Rtn;
@@ -1953,7 +1953,7 @@ bool EV_StartFloorWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 			continue;
 		}
 		RetCode = true;
-		Waggle = NewSpecialThinker(FloorWaggle);
+		Waggle = FloorWaggle(NewSpecialThinker(FloorWaggle));
 		Waggle.Init(Sector, Arg1, Arg2, Arg3, Arg4, Arg5);
 	}
 	return RetCode;
@@ -2054,7 +2054,7 @@ int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 
 		//	New elevator thinker
 		Rtn = true;
-		Elev = NewSpecialThinker(Elevator);
+		Elev = Elevator(NewSpecialThinker(Elevator));
 		Elev.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 	}
 	return Rtn;
@@ -2103,7 +2103,7 @@ int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		{
 			// new ceiling thinker
 			Rtn = true;
-			Ceiling = NewSpecialThinker(CeilingMover);
+			Ceiling = CeilingMover(NewSpecialThinker(CeilingMover));
 			Ceiling.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5,
 				Type, Line);
 		}
@@ -2129,7 +2129,7 @@ int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 
 			// new ceiling thinker
 			Rtn = true;
-			Ceiling = NewSpecialThinker(CeilingMover);
+			Ceiling = CeilingMover(NewSpecialThinker(CeilingMover));
 			Ceiling.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 		}
 	}
@@ -2185,7 +2185,7 @@ bool EV_StartCeilingWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 			continue;
 		}
 		RetCode = true;
-		Waggle = NewSpecialThinker(CeilingWaggle);
+		Waggle = CeilingWaggle(NewSpecialThinker(CeilingWaggle));
 		Waggle.Init(Sector, Arg1, Arg2, Arg3, Arg4, Arg5);
 	}
 	return RetCode;
@@ -2237,7 +2237,7 @@ int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		{
 			// Find lowest & highest floors around sector
 			Rtn = 1;
-			Plat = NewSpecialThinker(Platform);
+			Plat = Platform(NewSpecialThinker(Platform));
 			Plat.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		}
 	}
@@ -2268,7 +2268,7 @@ int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 
 			// Find lowest & highest floors around sector
 			Rtn = 1;
-			Plat = NewSpecialThinker(Platform);
+			Plat = Platform(NewSpecialThinker(Platform));
 			Plat.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		}
 	}
@@ -2321,7 +2321,7 @@ bool EV_RotatePoly(line_t* line, int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 		Error("EV_RotatePoly:  Invalid polyobj num");	//: %d\n", polyNum);
 	}
-	pe = NewSpecialThinker(PolyobjRotator);
+	pe = PolyobjRotator(NewSpecialThinker(PolyobjRotator));
 	pe.polyobj = polyNum;
 	if (Arg3)
 	{
@@ -2354,7 +2354,7 @@ bool EV_RotatePoly(line_t* line, int Arg1, int Arg2, int Arg3, int Arg4,
 		{	// mirroring poly is already in motion
 			break;
 		}
-		pe = NewSpecialThinker(PolyobjRotator);
+		pe = PolyobjRotator(NewSpecialThinker(PolyobjRotator));
 		poly->SpecialData = pe;
 		pe.polyobj = mirror;
 		if (Arg3)
@@ -2421,7 +2421,7 @@ bool EV_MovePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 		Error("EV_MovePoly:  Invalid polyobj num");	//: %d\n", polyNum);
 	}
-	pe = NewSpecialThinker(PolyobjMover);
+	pe = PolyobjMover(NewSpecialThinker(PolyobjMover));
 	pe.polyobj = polyNum;
 	if (timesEight)
 	{
@@ -2451,7 +2451,7 @@ bool EV_MovePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 		{	// mirroring poly is already in motion
 			break;
 		}
-		pe = NewSpecialThinker(PolyobjMover);
+		pe = PolyobjMover(NewSpecialThinker(PolyobjMover));
 		pe.polyobj = mirror;
 		poly->SpecialData = pe;
 		if (timesEight)
@@ -2503,7 +2503,7 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 		Error("EV_OpenPolyDoor:  Invalid polyobj num");	//: %d\n", polyNum);
 	}
-	pd = NewSpecialThinker(PolyobjDoor);
+	pd = PolyobjDoor(NewSpecialThinker(PolyobjDoor));
 	pd.type = type;
 	pd.polyobj = polyNum;
 	if (type == PolyobjDoor::PODOOR_SLIDE)
@@ -2544,7 +2544,7 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 		{	// mirroring poly is already in motion
 			break;
 		}
-		pd = NewSpecialThinker(PolyobjDoor);
+		pd = PolyobjDoor(NewSpecialThinker(PolyobjDoor));
 		pd.polyobj = mirror;
 		pd.type = type;
 		poly->SpecialData = pd;
@@ -2596,7 +2596,7 @@ void SpawnFireFlicker(sector_t* sector)
 {
 	FireFlicker Flick;
 
-	Flick = NewSpecialThinker(FireFlicker);
+	Flick = FireFlicker(NewSpecialThinker(FireFlicker));
 	Flick.Init(sector);
 }
 
@@ -2612,7 +2612,7 @@ void SpawnGlowingLight(sector_t* sector)
 {
 	GlowingLight G;
 
-	G = NewSpecialThinker(GlowingLight);
+	G = GlowingLight(NewSpecialThinker(GlowingLight));
 	G.Init(sector);
 }
 
@@ -2626,7 +2626,7 @@ void SpawnLightFlash(sector_t* sector)
 {
 	LightFlash Flash;
 
-	Flash = NewSpecialThinker(LightFlash);
+	Flash = LightFlash(NewSpecialThinker(LightFlash));
 	Flash.Init(sector);
 }
 
@@ -2641,7 +2641,7 @@ void SpawnStrobeFlash(sector_t* sector, int fastOrSlow, int maxtime,
 {
 	Strobe Flash;
 
-	Flash = NewSpecialThinker(Strobe);
+	Flash = Strobe(NewSpecialThinker(Strobe));
 	Flash.Init(sector, fastOrSlow, maxtime, inSync);
 }
 
@@ -2655,7 +2655,7 @@ void SpawnPhasedLight(sector_t * sector, int base, int index)
 {
 	PhasedLight Phase;
 
-	Phase = NewSpecialThinker(PhasedLight);
+	Phase = PhasedLight(NewSpecialThinker(PhasedLight));
 	Phase.Init(sector, base, index);
 }
 
@@ -2769,7 +2769,7 @@ int EV_StartLightStrobing(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 			continue;
 
 		Ret = true;
-		Flash = NewSpecialThinker(Strobe);
+		Flash = Strobe(NewSpecialThinker(Strobe));
 		Flash.Init(Sec, Arg3, Arg2, Arg4);
 	}
 	return Ret;
@@ -2948,7 +2948,7 @@ bool EV_SpawnLight(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type)
 		SecNum = FindSectorFromTag(Arg1, SecNum))
 	{
 		Sec = &XLevel.Sectors[SecNum];
-		Light = NewSpecialThinker(LightEffect);
+		Light = LightEffect(NewSpecialThinker(LightEffect));
 		Light.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
 		Rtn = true;
 	}
@@ -2987,7 +2987,7 @@ void SpawnScrollingFloor(sector_t* Sector, int XDir, int YDir, int Speed)
 {
 	Scroller	Scroll;
 
-	Scroll = NewSpecialThinker(Scroller);
+	Scroll = Scroller(NewSpecialThinker(Scroller));
 	Scroll.InitFloor(Sector, XDir, YDir, Speed);
 }
 
@@ -3001,7 +3001,7 @@ void SpawnWallScroller(line_t* Line, int XDir, int YDir)
 {
 	Scroller	Scroll;
 
-	Scroll = NewSpecialThinker(Scroller);
+	Scroll = Scroller(NewSpecialThinker(Scroller));
 	Scroll.InitWall(Line, XDir, YDir);
 }
 
@@ -3015,7 +3015,7 @@ void SpawnWallOffsetsScroller(line_t* Line)
 {
 	Scroller	Scroll;
 
-	Scroll = NewSpecialThinker(Scroller);
+	Scroll = Scroller(NewSpecialThinker(Scroller));
 	Scroll.InitWallOffsets(Line);
 }
 
@@ -3029,7 +3029,7 @@ void SpawnTextureBothScroller(line_t* Line)
 {
 	Scroller	Scroll;
 
-	Scroll = NewSpecialThinker(Scroller);
+	Scroll = Scroller(NewSpecialThinker(Scroller));
 	Scroll.InitTextureBoth(Line);
 }
 
@@ -3047,7 +3047,7 @@ void SpawnScrollCeiling(line_t* Line)
 	for (SecNum = FindSectorFromTag(Line->arg1, -1); SecNum >= 0;
 		SecNum = FindSectorFromTag(Line->arg1, SecNum))
 	{
-		Scroll = NewSpecialThinker(Scroller);
+		Scroll = Scroller(NewSpecialThinker(Scroller));
 		Scroll.InitGen(Scroller::SCROLLEV_Ceiling, Line, SecNum);
 	}
 }
@@ -3069,14 +3069,14 @@ void SpawnScrollFloor(line_t* Line)
 		if (Line->arg3 != 1)
 		{
 			//	Scroll the floor texture
-			Scroll = NewSpecialThinker(Scroller);
+			Scroll = Scroller(NewSpecialThinker(Scroller));
 			Scroll.InitGen(Scroller::SCROLLEV_Floor, Line, SecNum);
 		}
 
 		if (Line->arg3 > 0)
 		{
 			//	Carry objects on the floor
-			Scroll = NewSpecialThinker(Scroller);
+			Scroll = Scroller(NewSpecialThinker(Scroller));
 			Scroll.InitGen(Scroller::SCROLLEV_Carry, Line, SecNum);
 		}
 	}
@@ -3103,7 +3103,7 @@ void SpawnScrollTextureModel(line_t* Line)
 	{
 		if (Line != Other)
 		{
-			Scroll = NewSpecialThinker(Scroller);
+			Scroll = Scroller(NewSpecialThinker(Scroller));
 			Scroll.InitTextureModel(Other, Line);
 		}
 	}
@@ -4155,6 +4155,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/19 17:20:35  dj_jl
+//  Added explicit type casts.
+//
 //  Revision 1.8  2006/03/12 19:51:04  dj_jl
 //  States as objects, added state variable type.
 //

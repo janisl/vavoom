@@ -173,14 +173,14 @@ BotPlayer Bot;
 
 void PutClientIntoServer()
 {
-	ViewEnts[ps_weapon] = SpawnObject(Weapon);
+	ViewEnts[ps_weapon] = Weapon(SpawnObject(Weapon));
 	ViewEnts[ps_weapon].Player = self;
-	ViewEnts[ps_flash] = SpawnObject(Weapon);
+	ViewEnts[ps_flash] = Weapon(SpawnObject(Weapon));
 	ViewEnts[ps_flash].Player = self;
 #ifndef	NO_BOTS
 	if (bIsBot)
 	{
-		Bot = SpawnObject(BotPlayer);
+		Bot = BotPlayer(SpawnObject(BotPlayer));
 		Bot.player = self;
 		Bot.OnBeginPlay();
 	}
@@ -2303,7 +2303,7 @@ void SetWeapon(int NewWeapon)
 	{
 		ViewEnts[ps_weapon].Destroy();
 	}
-	ViewEnts[ps_weapon] = SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]);
+	ViewEnts[ps_weapon] = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
 	ViewEnts[ps_weapon].Player = self;
 	WeaponModel =
 		GetModelIndex(Weapon(ViewEnts[ps_weapon]).ThirdPersonModel);
@@ -3111,6 +3111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/03/19 17:20:35  dj_jl
+//  Added explicit type casts.
+//
 //  Revision 1.23  2006/03/12 19:51:04  dj_jl
 //  States as objects, added state variable type.
 //
