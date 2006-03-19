@@ -56,8 +56,7 @@ static void NextChr();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-char				tk_SourceName[MAX_FILE_NAME_LENGTH];
-int 				tk_Line;
+TLocation			tk_Location;
 
 ETokenType	 		tk_Token;
 char*				tk_String;
@@ -80,6 +79,10 @@ static char*		FileStart;
 static char*		FilePtr;
 static char*		FileEnd;
 static char			Chr;
+
+static TArray<char*>	SourceFiles;
+static int 				tk_SourceIdx;
+static int 				tk_Line;
 
 static char* Keywords[] =
 {
@@ -192,6 +195,7 @@ void TK_OpenSource(void *buf, size_t size)
 	FileEnd = FileStart + size;
 	FilePtr = FileStart;
 	tk_Line = 1;
+	tk_Location = TLocation(tk_SourceIdx, tk_Line);
 	tk_Token = TK_NONE;
 	NewLine = true;
 	NextChr();
@@ -207,6 +211,7 @@ void TK_Restart()
 {
 	FilePtr = FileStart;
 	tk_Line = 1;
+	tk_Location = TLocation(tk_SourceIdx, tk_Line);
 	tk_Token = TK_NONE;
 	NewLine = true;
 	NextChr();
@@ -243,6 +248,7 @@ static void NextChr()
 	if (IncLineNumber)
 	{
 		tk_Line++;
+		tk_Location = TLocation(tk_SourceIdx, tk_Line);
 		IncLineNumber = false;
 	}
 	Chr = *FilePtr++;
@@ -351,11 +357,12 @@ static void ProcessChar()
 {
 	if (Chr == EOF_CHARACTER)
 	{
-		ERR_Exit(ERR_EOF_IN_STRING, true, NULL);
+		ParseError(ERR_EOF_IN_STRING);
+		BailOut();
 	}
 	if (IncLineNumber)
 	{
-		ERR_Exit(ERR_NEW_LINE_INSIDE_QUOTE, true, NULL);
+		ParseError(ERR_NEW_LINE_INSIDE_QUOTE);
 	}
 	if (Chr == '\\')
 	{
@@ -363,11 +370,12 @@ static void ProcessChar()
 		NextChr();
 		if (Chr == EOF_CHARACTER)
 		{
-			ERR_Exit(ERR_EOF_IN_STRING, true, NULL);
+			ParseError(ERR_EOF_IN_STRING);
+			BailOut();
 		}
 		if (IncLineNumber)
 	   	{
-			ERR_Exit(ERR_NEW_LINE_INSIDE_QUOTE, true, NULL);
+			ParseError(ERR_NEW_LINE_INSIDE_QUOTE);
 		}
 		if (Chr == 'n')
 			Chr = '\n';
@@ -380,7 +388,7 @@ static void ProcessChar()
 		else if (Chr == '\\')
 			Chr = '\\';
 		else
-			ERR_Exit(ERR_UNKNOWN_ESC_CHAR, true, NULL);
+			ParseError(ERR_UNKNOWN_ESC_CHAR);
 	}
 }
 
@@ -401,7 +409,9 @@ static void ProcessQuoteToken()
 	{
 		if (len >= MAX_QUOTED_LENGTH - 1)
 		{
-			ERR_Exit(ERR_STRING_TOO_LONG, true, NULL);
+			ParseError(ERR_STRING_TOO_LONG);
+			NextChr();
+			continue;
 		}
 		ProcessChar();
 		TokenStringBuffer[len] = Chr;
@@ -430,7 +440,9 @@ static void ProcessSingleQuoteToken()
 	{
 		if (len >= MAX_IDENTIFIER_LENGTH - 1)
 		{
-			ERR_Exit(ERR_STRING_TOO_LONG, true, NULL);
+			ParseError(ERR_STRING_TOO_LONG);
+			NextChr();
+			continue;
 		}
 		ProcessChar();
 		TokenStringBuffer[len] = Chr;
@@ -459,7 +471,9 @@ static void ProcessLetterToken()
 	{
 		if (len == MAX_IDENTIFIER_LENGTH - 1)
 		{
-			ERR_Exit(ERR_IDENTIFIER_TOO_LONG, true, NULL);
+			ParseError(ERR_IDENTIFIER_TOO_LONG);
+			NextChr();
+			continue;
 		}
 		TokenStringBuffer[len] = Chr;
 		len++;
@@ -1069,7 +1083,8 @@ static void ProcessSpecialToken()
 		break;
 
 	default:
-		ERR_Exit(ERR_BAD_CHARACTER, true, "Unknown punctuation \'%c\'", Chr);
+		ParseError(ERR_BAD_CHARACTER, "Unknown punctuation \'%c\'", Chr);
+		tk_Token = TK_NONE;
 	}
 }
 
@@ -1087,15 +1102,18 @@ static void ProcessFileName()
 	{
 		if (len >= MAX_QUOTED_LENGTH - 1)
 		{
-			ERR_Exit(ERR_STRING_TOO_LONG, true, NULL);
+			ParseError(ERR_STRING_TOO_LONG);
+			NextChr();
+			continue;
 		}
 		if (Chr == EOF_CHARACTER)
 		{
-			ERR_Exit(ERR_EOF_IN_STRING, true, NULL);
+			ParseError(ERR_EOF_IN_STRING);
+			break;
 		}
 		if (IncLineNumber)
 		{
-			ERR_Exit(ERR_NEW_LINE_INSIDE_QUOTE, true, NULL);
+			ParseError(ERR_NEW_LINE_INSIDE_QUOTE);
 		}
 		TokenStringBuffer[len] = Chr;
 		NextChr();
@@ -1103,6 +1121,25 @@ static void ProcessFileName()
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
+}
+
+//==========================================================================
+//
+//	AddSourceFile
+//
+//==========================================================================
+
+static int AddSourceFile(const char* SName)
+{
+	//	Find it.
+	for (int i = 0; i < SourceFiles.Num(); i++)
+		if (!strcmp(SName, SourceFiles[i]))
+			return i;
+
+	//	Not found, add it.
+	char* NewName = new char[strlen(SName) + 1];
+	strcpy(NewName, SName);
+	return SourceFiles.AddItem(NewName);
 }
 
 //==========================================================================
@@ -1147,7 +1184,8 @@ void TK_NextToken()
 					ERR_Exit(ERR_NONE, false, "Bad directive.");
 				}
 				ProcessFileName();
-				strcpy(tk_SourceName, tk_String);
+				tk_SourceIdx = AddSourceFile(tk_String);
+				tk_Location = TLocation(tk_SourceIdx, tk_Line);
 
 				//	Ignore flags
 				while (!NewLine)
@@ -1221,11 +1259,11 @@ void TK_Expect(const char *string, ECompileError error)
 	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
 		tk_Token != TK_PUNCT)
 	{
-		ERR_Exit(error, true, "invalid token type");
+		ParseError(error, "invalid token type");
 	}
 	if (strcmp(string, TokenStringBuffer))
 	{
-		ERR_Exit(error, true, "expected %s, found %s", string, TokenStringBuffer);
+		ParseError(error, "expected %s, found %s", string, TokenStringBuffer);
 	}
 	TK_NextToken();
 }
@@ -1243,11 +1281,11 @@ void TK_Expect(EKeyword kwd, ECompileError error)
 {
 	if (tk_Token != TK_KEYWORD)
 	{
-		ERR_Exit(error, true, "invalid token type");
+		ParseError(error, "invalid token type");
 	}
 	if (tk_Keyword != kwd)
 	{
-		ERR_Exit(error, true, "expected %s, found %s", Keywords[kwd], TokenStringBuffer);
+		ParseError(error, "expected %s, found %s", Keywords[kwd], TokenStringBuffer);
 	}
 	TK_NextToken();
 }
@@ -1265,17 +1303,33 @@ void TK_Expect(EPunctuation punct, ECompileError error)
 {
 	if (tk_Token != TK_PUNCT || tk_Punct != punct)
 	{
-		ERR_Exit(error, true, NULL);
+		ParseError(error);
 	}
 	TK_NextToken();
+}
+
+//==========================================================================
+//
+//	TLocation::GetSource
+//
+//==========================================================================
+
+const char* TLocation::GetSource() const
+{
+	if (!Loc)
+		return "(external)";
+	return SourceFiles[Loc >> 16];
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/03/19 14:45:49  dj_jl
+//	Added code location object.
+//
 //	Revision 1.29  2006/03/19 13:15:29  dj_jl
 //	Per character keyword checks.
-//
+//	
 //	Revision 1.28  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
 //	

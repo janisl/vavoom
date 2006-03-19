@@ -39,7 +39,7 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static char *ErrorFileName(void);
+static char *ErrorFileName();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -139,7 +139,8 @@ void ERR_Exit(ECompileError error, bool info, char *text, ...)
 	}
 	if (info)
 	{
-		sprintf(workString, "%s:%d: ", tk_SourceName, tk_Line);
+		sprintf(workString, "%s:%d: ", tk_Location.GetSource(),
+			tk_Location.GetLine());
 		fprintf(stderr, workString);
 		if (errFile)
 		{
@@ -185,7 +186,8 @@ void ParseError(ECompileError error)
 {
 	NumErrors++;
 
-	fprintf(stderr, "%s:%d: ", tk_SourceName, tk_Line);
+	fprintf(stderr, "%s:%d: ", tk_Location.GetSource(),
+		tk_Location.GetLine());
 	if (error != ERR_NONE)
 	{
 		fprintf(stderr, "Error #%d - %s", error, ErrorNames[error]);
@@ -211,7 +213,8 @@ void ParseError(ECompileError error, const char *text, ...)
 
 	NumErrors++;
 
-	fprintf(stderr, "%s:%d: ", tk_SourceName, tk_Line);
+	fprintf(stderr, "%s:%d: ", tk_Location.GetSource(),
+		tk_Location.GetLine());
 	if (error != ERR_NONE)
 	{
 		fprintf(stderr, "Error #%d - %s", error, ErrorNames[error]);
@@ -240,7 +243,33 @@ void ParseError(const char *text, ...)
 
 	NumErrors++;
 
-	fprintf(stderr, "%s:%d: ", tk_SourceName, tk_Line);
+	fprintf(stderr, "%s:%d: ", tk_Location.GetSource(),
+		tk_Location.GetLine());
+	va_start(argPtr, text);
+	vfprintf(stderr, text, argPtr);
+	va_end(argPtr);
+	fputc('\n', stderr);
+
+	if (NumErrors >= 64)
+	{
+		TK_CloseSource();
+		exit(1);
+	}
+}
+
+//==========================================================================
+//
+//	ParseError
+//
+//==========================================================================
+
+void ParseError(TLocation l, const char *text, ...)
+{
+	va_list	argPtr;
+
+	NumErrors++;
+
+	fprintf(stderr, "%s:%d: ", l.GetSource(), l.GetLine());
 	va_start(argPtr, text);
 	vfprintf(stderr, text, argPtr);
 	va_end(argPtr);
@@ -263,7 +292,25 @@ void ParseWarning(const char *text, ...)
 {
 	va_list	argPtr;
 
-	fprintf(stderr, "%s:%d: warning: ", tk_SourceName, tk_Line);
+	fprintf(stderr, "%s:%d: warning: ", tk_Location.GetSource(),
+		tk_Location.GetLine());
+	va_start(argPtr, text);
+	vfprintf(stderr, text, argPtr);
+	va_end(argPtr);
+	fputc('\n', stderr);
+}
+
+//==========================================================================
+//
+//	ParseWarning
+//
+//==========================================================================
+
+void ParseWarning(TLocation l, const char *text, ...)
+{
+	va_list	argPtr;
+
+	fprintf(stderr, "%s:%d: warning: ", l.GetSource(), l.GetLine());
 	va_start(argPtr, text);
 	vfprintf(stderr, text, argPtr);
 	va_end(argPtr);
@@ -276,9 +323,10 @@ void ParseWarning(const char *text, ...)
 //
 //==========================================================================
 
-void BailOut(void)
+void BailOut()
 {
-	fprintf(stderr, "%s:%d: Confused by previous errors, bailing out\n", tk_SourceName, tk_Line);
+	fprintf(stderr, "%s:%d: Confused by previous errors, bailing out\n",
+		tk_Location.GetSource(), tk_Location.GetLine());
 	TK_CloseSource();
 	exit(1);
 }
@@ -289,7 +337,7 @@ void BailOut(void)
 //
 //==========================================================================
 
-void ERR_RemoveErrorFile(void)
+void ERR_RemoveErrorFile()
 {
 	remove(ErrorFileName());
 }
@@ -300,7 +348,7 @@ void ERR_RemoveErrorFile(void)
 //
 //==========================================================================
 
-static char *ErrorFileName(void)
+static char *ErrorFileName()
 {
 	static char errFileName[MAX_FILE_NAME_LENGTH];
 
@@ -313,9 +361,12 @@ static char *ErrorFileName(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/03/19 14:45:49  dj_jl
+//	Added code location object.
+//
 //	Revision 1.9  2006/02/17 19:25:00  dj_jl
 //	Removed support for progs global variables and functions.
-//
+//	
 //	Revision 1.8  2005/12/12 20:58:47  dj_jl
 //	Removed compiler limitations.
 //	

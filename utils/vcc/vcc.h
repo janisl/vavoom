@@ -263,6 +263,24 @@ public:
 	static int FieldAttr(int);
 };
 
+class TLocation
+{
+private:
+	int		Loc;
+public:
+	TLocation()
+	: Loc(0)
+	{}
+	TLocation(int SrcIdx, int Line)
+	: Loc((SrcIdx << 16) | Line)
+	{}
+	int GetLine() const
+	{
+		return Loc & 0xffff;
+	}
+	const char* GetSource() const;
+};
+
 //
 // The base class of all objects.
 //
@@ -500,23 +518,25 @@ void ERR_Exit(ECompileError error, bool info, char *text, ...) __attribute__((no
 void ParseError(ECompileError error);
 void ParseError(ECompileError error, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseError(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
+void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void ParseWarning(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
-void BailOut(void) __attribute__((noreturn));
-void ERR_RemoveErrorFile(void);
+void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
+void BailOut() __attribute__((noreturn));
+void ERR_RemoveErrorFile();
 
 int dprintf(const char *text, ...);
 
-void TK_Init(void);
+void TK_Init();
 void TK_OpenSource(void *buf, size_t size);
-void TK_Restart(void);
-void TK_CloseSource(void);
-void TK_NextToken(void);
+void TK_Restart();
+void TK_CloseSource();
+void TK_NextToken();
 bool TK_Check(const char *string);
 void TK_Expect(const char *string, ECompileError error);
 void TK_Expect(EKeyword kwd, ECompileError error);
 void TK_Expect(EPunctuation punct, ECompileError error);
 
-void PC_Init(void);
+void PC_Init();
 int FindString(const char *str);
 int AddStatement(int statement);
 int AddStatement(int statement, int parm1);
@@ -531,7 +551,7 @@ void PC_WriteObject(char *name);
 void PC_DumpAsm(char* name);
 
 int EvalConstExpression(TClass*InClass, int type);
-float ConstFloatExpression(void);
+float ConstFloatExpression();
 
 TType ParseExpression(bool = false);
 
@@ -581,10 +601,9 @@ int CheckForState(VName StateName, TClass* InClass);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern char				tk_SourceName[MAX_FILE_NAME_LENGTH];
+extern TLocation		tk_Location;
 extern int				tk_IncludedLines;
 extern ETokenType		tk_Token;
-extern int				tk_Line;
 extern int				tk_Number;
 extern float			tk_Float;
 extern char*			tk_String;
@@ -684,9 +703,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2006/03/19 14:45:49  dj_jl
+//	Added code location object.
+//
 //	Revision 1.46  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
-//
+//	
 //	Revision 1.45  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
 //	
