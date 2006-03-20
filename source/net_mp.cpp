@@ -40,8 +40,8 @@
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 extern "C" {
-int WSAGetLastError(void);
-void sockets_flush(void);
+int WSAGetLastError();
+void sockets_flush();
 }
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -71,7 +71,7 @@ static dword		myAddr;
 //
 //==========================================================================
 
-int MPATH_Init(void)
+int MPATH_Init()
 {
 	guard(MPATH_Init);
 	hostent		*local = NULL;
@@ -154,7 +154,7 @@ int MPATH_Init(void)
 //
 //==========================================================================
 
-void MPATH_Shutdown(void)
+void MPATH_Shutdown()
 {
 	guard(MPATH_Shutdown);
 	MPATH_Listen(false);
@@ -263,7 +263,7 @@ int MPATH_Connect(int , sockaddr_t *)
 //
 //==========================================================================
 
-int MPATH_CheckNewConnections(void)
+int MPATH_CheckNewConnections()
 {
 	guard(MPATH_CheckNewConnections);
 	char	buf[4];
@@ -271,7 +271,7 @@ int MPATH_CheckNewConnections(void)
 	if (net_acceptsocket == -1)
 		return -1;
 
-	if (recvfrom(net_acceptsocket, buf, 4, MSG_PEEK, NULL, NULL) > 0)
+	if (recvfrom(net_acceptsocket, buf, 4, MSG_PEEK, NULL, NULL) >= 0)
 		return net_acceptsocket;
 	return -1;
 	unguard;
@@ -577,9 +577,12 @@ int MPATH_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/03/20 20:02:21  dj_jl
+//	Accept zero length packets.
+//
 //	Revision 1.7  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.6  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

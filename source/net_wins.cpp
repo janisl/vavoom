@@ -69,7 +69,7 @@ static double		blocktime;
 //
 //==========================================================================
 
-int WINS_Init(void)
+int WINS_Init()
 {
 	guard(WINS_Init);
 	int		i;
@@ -168,7 +168,7 @@ int WINS_Init(void)
 //
 //==========================================================================
 
-void WINS_Shutdown(void)
+void WINS_Shutdown()
 {
 	guard(WINS_Shutdown);
 	WINS_Listen(false);
@@ -184,7 +184,7 @@ void WINS_Shutdown(void)
 //
 //==========================================================================
 
-static BOOL PASCAL FAR BlockingHook(void)
+static BOOL PASCAL FAR BlockingHook()
 {
 	guard(BlockingHook);
 	MSG		msg;
@@ -217,7 +217,7 @@ static BOOL PASCAL FAR BlockingHook(void)
 //
 //==========================================================================
 
-static void WINS_GetLocalAddress(void)
+static void WINS_GetLocalAddress()
 {
 	guard(WINS_GetLocalAddress);
 	hostent		*local;
@@ -343,7 +343,7 @@ int WINS_Connect(int , sockaddr_t *)
 //
 //==========================================================================
 
-int WINS_CheckNewConnections(void)
+int WINS_CheckNewConnections()
 {
 	guard(WINS_CheckNewConnections);
 	char	buf[4096];
@@ -351,7 +351,7 @@ int WINS_CheckNewConnections(void)
 	if (net_acceptsocket == -1)
 		return -1;
 
-	if (recvfrom(net_acceptsocket, buf, sizeof(buf), MSG_PEEK, NULL, NULL) > 0)
+	if (recvfrom(net_acceptsocket, buf, sizeof(buf), MSG_PEEK, NULL, NULL) >= 0)
 	{
 		return net_acceptsocket;
 	}
@@ -659,9 +659,12 @@ int WINS_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/03/20 20:02:21  dj_jl
+//	Accept zero length packets.
+//
 //	Revision 1.9  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.8  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

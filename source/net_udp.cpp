@@ -82,7 +82,7 @@ static dword		myAddr;
 //
 //==========================================================================
 
-int UDP_Init(void)
+int UDP_Init()
 {
 	guard(UDP_Init);
 	hostent		*local;
@@ -138,7 +138,7 @@ int UDP_Init(void)
 //
 //==========================================================================
 
-void UDP_Shutdown(void)
+void UDP_Shutdown()
 {
 	guard(UDP_Shutdown);
 	UDP_Listen(false);
@@ -246,18 +246,18 @@ int UDP_Connect(int , sockaddr_t *)
 //
 //==========================================================================
 
-int UDP_CheckNewConnections(void)
+int UDP_CheckNewConnections()
 {
 	guard(UDP_CheckNewConnections);
-	dword		available;
+	char	buf[4096];
 
 	if (net_acceptsocket == -1)
 		return -1;
 
-	if (ioctl(net_acceptsocket, FIONREAD, &available) == -1)
-		Sys_Error("UDP: ioctlsocket (FIONREAD) failed\n");
-	if (available)
+	if (recvfrom(net_acceptsocket, buf, sizeof(buf), MSG_PEEK, NULL, NULL) >= 0)
+	{
 		return net_acceptsocket;
+	}
 	return -1;
 	unguard;
 }
@@ -555,9 +555,12 @@ int UDP_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/03/20 20:02:21  dj_jl
+//	Accept zero length packets.
+//
 //	Revision 1.8  2005/03/16 15:06:16  dj_jl
 //	Abort if can't get loal IP from host name.
-//
+//	
 //	Revision 1.7  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	
