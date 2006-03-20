@@ -125,10 +125,10 @@ extern TArray<VStr>	wadfiles;
 
 static struct
 {
-	dword		length;
-	dword		sequence;
-	word		crc;
-	byte		data[MAX_DATAGRAM];
+	vuint32		length;
+	vuint32		sequence;
+	vuint16		crc;
+	vuint8		data[MAX_DATAGRAM];
 } packetBuffer;
 
 /* statistic counters */
@@ -149,7 +149,7 @@ static int		net_landriverlevel = 0;
 //
 //==========================================================================
 
-static word NetbufferChecksum(const byte *buf, int len)
+static vuint16 NetbufferChecksum(const vuint8* buf, int len)
 {
 	guardSlow(NetbufferChecksum);
 	TCRC	crc;
@@ -192,7 +192,7 @@ static char *StrAddr(sockaddr_t *addr)
 //
 //==========================================================================
 
-int Datagram_Init(void)
+int Datagram_Init()
 {
 	guard(Datagram_Init);
 	int		i;
@@ -585,7 +585,7 @@ qsocket_t *Datagram_Connect(char *host)
 //
 //==========================================================================
 
-static qsocket_t *_Datagram_CheckNewConnections(void)
+static qsocket_t *_Datagram_CheckNewConnections()
 {
 	guard(_Datagram_CheckNewConnections);
 #ifdef SERVER
@@ -761,7 +761,7 @@ static qsocket_t *_Datagram_CheckNewConnections(void)
 //
 //==========================================================================
 
-qsocket_t *Datagram_CheckNewConnections(void)
+qsocket_t *Datagram_CheckNewConnections()
 {
 	guard(Datagram_CheckNewConnections);
 	qsocket_t *ret;
@@ -866,6 +866,11 @@ int Datagram_GetMessage(qsocket_t *sock)
 
 			if (comprMethod == NETFLAG_COMPR_ZIP)
 			{
+				if (comprLength > MAX_DATAGRAM)
+				{
+					GCon->Logf(NAME_DevNet, "Bad decompressed length");
+					continue;
+				}
 				byte CompressedData[MAX_DATAGRAM];
 				memcpy(CompressedData, packetBuffer.data, length - NET_HEADERSIZE);
 				uLongf DecomprLength = comprLength;
@@ -984,12 +989,11 @@ int Datagram_GetMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-static int BuildNetPacket(dword Flags, dword Sequence, byte* Data,
-	dword DataLen)
+static int BuildNetPacket(vuint32 Flags, vuint32 Sequence, vuint8* Data,
+	vuint32 DataLen)
 {
-	dword OutDataLen = DataLen;
-	dword ComprLength = DataLen;
-	dword ComprMethod = NETFLAG_COMPR_NONE;
+	vuint32 ComprMethod = NETFLAG_COMPR_NONE;
+	vuint32 ComprLength = DataLen;
 
 	//	Try to compress
 	uLongf ZipLen = MAX_DATAGRAM;
@@ -998,7 +1002,7 @@ static int BuildNetPacket(dword Flags, dword Sequence, byte* Data,
 		if (ZipLen < DataLen)
 		{
 			ComprMethod = NETFLAG_COMPR_ZIP;
-			OutDataLen = ZipLen;
+			ComprLength = ZipLen;
 		}
 	}
 
@@ -1008,9 +1012,9 @@ static int BuildNetPacket(dword Flags, dword Sequence, byte* Data,
 		memcpy(packetBuffer.data, Data, DataLen);
 	}
 
-	dword PacketLen = NET_HEADERSIZE + OutDataLen;
-	word CRC = NetbufferChecksum(packetBuffer.data, OutDataLen);
-	packetBuffer.length = BigLong(ComprLength | ComprMethod |
+	vuint32 PacketLen = NET_HEADERSIZE + ComprLength;
+	vuint16 CRC = NetbufferChecksum(packetBuffer.data, ComprLength);
+	packetBuffer.length = BigLong(DataLen | ComprMethod |
 		(PacketLen << 16) | Flags);
 	packetBuffer.sequence = BigLong(Sequence);
 	packetBuffer.crc = BigShort(CRC);
@@ -1220,7 +1224,7 @@ void Datagram_Close(qsocket_t *sock)
 //
 //==========================================================================
 
-void Datagram_Shutdown(void)
+void Datagram_Shutdown()
 {
 	guard(Datagram_Shutdown);
 	int i;
@@ -1303,9 +1307,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/03/20 20:01:30  dj_jl
+//	Check decompressed data size.
+//
 //	Revision 1.12  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.11  2005/11/12 11:59:02  dj_jl
 //	Little fix for checksumms.
 //	
