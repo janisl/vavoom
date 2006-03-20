@@ -541,7 +541,7 @@ static boolean PIT_CheckRelThing(VEntity *Other)
 		return true;
 
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if (!tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj)
+	if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj))
 	{
 		// check if a mobj passed over/under another object
 /*		if ((tmtrace.Thing.Class == Imp || tmtrace.Thing.Class == Wizard)
@@ -1908,9 +1908,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/03/20 17:44:18  dj_jl
+//	Fixed clipping.
+//
 //	Revision 1.25  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.24  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	
