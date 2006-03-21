@@ -154,6 +154,8 @@ void A_SkullRodStorm()
 	case 3: rain_type = RainPlayer4; break;
 	}
 	A = Spawn(rain_type, vector(x, y, ONCEILINGZ));
+	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
+		A.Origin.z = CeilingZ - A.Height;
 	A.Instigator = Instigator;
 	A.Velocity.x = 0.00001;	// Force collision detection
 	A.Velocity.z = -A.Speed;
@@ -199,6 +201,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/21 15:07:54  firebrand_kh
+//  Added 3d floor checks
+//
 //  Revision 1.8  2006/03/12 19:56:46  dj_jl
 //  States as objects, added state variable type.
 //
