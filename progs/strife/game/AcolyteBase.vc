@@ -37,6 +37,9 @@ void A_AcolyteDeath()
 	int i;
 	Actor Other;
 
+	//	Remove any shadowy effects on the Acolyte.
+	Translucency = 0;
+
 	//	Only the Blue Acolyte does extra stuff on death.
 	if (Class != Acolyte8)
 		return;
@@ -92,6 +95,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/03/21 15:11:06  firebrand_kh
+//  Made translucency return to 0 when dying
+//
 //  Revision 1.9  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
