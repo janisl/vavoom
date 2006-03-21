@@ -39,6 +39,7 @@ defaultproperties
 	Speed = 1225.0;
 	MissileDamage = 10;
 	bActivateImpact = true;
+	bDisruptDamage = true;
 	IdleState = S_TORPEDO_WAV1;
 	DeathState = S_TORPEDO_WAV3;
 }
@@ -46,6 +47,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/21 15:13:59  firebrand_kh
+//  Added disrupting damage flag
+//
 //  Revision 1.3  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

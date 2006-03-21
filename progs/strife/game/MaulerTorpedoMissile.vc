@@ -78,6 +78,7 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 1;
 	bActivateImpact = true;
+	bDisruptDamage = true;
 	IdleState = S_TORPEDO_1;
 	DeathState = S_TORPEDO_X1;
 	SightSound = 'weapons/mauler2fire';
@@ -87,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/21 15:12:17  firebrand_kh
+//  Added disrupting damage flag
+//
 //  Revision 1.5  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
