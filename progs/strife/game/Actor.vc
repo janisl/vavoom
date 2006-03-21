@@ -1799,19 +1799,25 @@ bool Physics(float DeltaTime)
 				{
 					PlayerLandedOnThing();
 				}
-				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
+			}
+			if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
+			{
+				if (bIsPlayer)
 				{
-					Player(Player).ViewHeight -= onmo.Origin.z + onmo.Height
-						- Origin.z;
+					Player(Player).ViewHeight -=
+						onmo.Origin.z + onmo.Height - Origin.z;
 					Player(Player).DeltaViewHeight =
 						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
-					Origin.z = onmo.Origin.z + onmo.Height;
-					bOnMobj = true;
-					Velocity.z = 0.0;
 				}
-				else
+				Origin.z = onmo.Origin.z + onmo.Height;
+				bOnMobj = true;
+				Velocity.z = 0.0;
+			}
+			else
+			{
+				if (bIsPlayer)
 				{
-					// hit the bottom of the blocking actor
+					// hit the bottom of the blocking mobj
 					Velocity.z = 0.0;
 				}
 			}
@@ -3465,6 +3471,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2006/03/21 15:09:34  firebrand_kh
+//  Fixes for onmobj checks
+//
 //  Revision 1.36  2006/03/13 18:52:38  dj_jl
 //  Added function to check if a state is in the range.
 //

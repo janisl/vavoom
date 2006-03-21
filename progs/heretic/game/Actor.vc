@@ -2006,26 +2006,35 @@ bool Physics(float DeltaTime)
 					bOnMobj = false;
 				}
 			}
-			else if (bIsPlayer)
+			else
 			{
-				if (Velocity.z < -GRAVITY * 0.25 && !bFly)
+				if (bIsPlayer)
 				{
-					PlayerLandedOnThing();
+					if (Velocity.z < -GRAVITY * 0.25 && !bFly)
+					{
+						PlayerLandedOnThing();
+					}
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					Player(Player).ViewHeight -=
-						onmo.Origin.z + onmo.Height - Origin.z;
-					Player(Player).DeltaViewHeight =
-						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
+					if(bIsPlayer)
+					{
+						Player(Player).ViewHeight -=
+							onmo.Origin.z + onmo.Height - Origin.z;
+						Player(Player).DeltaViewHeight =
+							(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
+					}
 					Origin.z = onmo.Origin.z + onmo.Height;
 					bOnMobj = true;
 					Velocity.z = 0.0;
 				}
 				else
 				{
-					// hit the bottom of the blocking mobj
-					Velocity.z = 0.0;
+					if(bIsPlayer)
+					{
+						// hit the bottom of the blocking mobj
+						Velocity.z = 0.0;
+					}
 				}
 				if (onmo.bIsPlayer || onmo.Class == Pod)
 				{
@@ -3761,6 +3770,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.29  2006/03/21 15:07:40  firebrand_kh
+//  Fixes for onmobj checks
+//
 //  Revision 1.28  2006/03/13 18:46:37  dj_jl
 //  Added function to check if a state is in the range.
 //
