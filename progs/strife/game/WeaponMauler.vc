@@ -82,7 +82,7 @@ void A_FireBlaster2()
 	Player(Player).Ammo[Ammo] -= 30;
 	Player(Player).SpawnPlayerMissile(MaulerTorpedoMissile);
 	Actor(Player.MO).Damage(none, Actor(Player.MO), 20);
-	Actor(Player.MO).Thrust(Player.MO.Angles.yaw + 180.0, 125.0 / 16.0 * 35.0);
+	Actor(Player.MO).Thrust(Player.MO.Angles.yaw + 180.0, 125.0 / 16.0);
 }
 
 __states__
@@ -138,6 +138,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/21 15:16:48  firebrand_kh
+//  Reduced kickback thrust
+//
 //  Revision 1.10  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //
