@@ -155,6 +155,16 @@ void VEntity::SetInitialState(VState* InState)
 		ModelFrame = InState->model_frame;
 		NextState = InState->nextstate;
 	}
+	else
+	{
+		StateTime = -1.0;
+		SpriteIndex = 0;
+		SpriteName = NAME_None;
+		SpriteFrame = 0;
+		ModelIndex = 0;
+		ModelFrame = 0;
+		NextState = NULL;
+	}
 	unguard;
 }
 
@@ -1908,9 +1918,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/03/21 20:04:12  dj_jl
+//	Fix setting initial sate, if state is null.
+//
 //	Revision 1.26  2006/03/20 17:44:18  dj_jl
 //	Fixed clipping.
-//
+//	
 //	Revision 1.25  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
 //	
