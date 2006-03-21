@@ -2250,6 +2250,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	if (spawn_thinkers)
 	{
 		GLevelInfo = GGameInfo->eventCreateLevelInfo();
+		GLevelInfo->Level = GLevelInfo;
 		for (i = 0; i < GLevel->NumThings; i++)
 		{
 			GLevelInfo->eventSpawnMapThing(&GLevel->Things[i]);
@@ -3033,9 +3034,12 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.89  2006/03/21 17:49:51  dj_jl
+//	Fixed missing pointer to level info in level info itself.
+//
 //	Revision 1.88  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.87  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	
