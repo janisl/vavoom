@@ -44,8 +44,9 @@ class VMemberBase
 {
 public:
 	//	Internal variables.
-	vuint8		MemberType;
-	VName		Name;
+	vuint8			MemberType;
+	VMemberBase*	Outer;
+	VName			Name;
 
 	static bool						GObjInitialized;
 	static VClass*					GClasses;	// Linked list of all classes.
@@ -70,6 +71,7 @@ public:
 	{
 		return Name;
 	}
+	VStr GetFullName() const;
 
 	static void StaticInit();
 	static void StaticExit();
@@ -154,7 +156,6 @@ public:
 	short	Flags;
 	dword	Profile1;
 	dword	Profile2;
-	VClass	*OuterClass;
 
 	VMethod(VName);
 
@@ -180,10 +181,9 @@ public:
 	int			ModelIndex;
 	int			model_frame;
 	float		time;
-	VState*	nextstate;
+	VState*		nextstate;
 	VMethod*	function;
-	VClass*		OuterClass;
-	VState*	Next;
+	VState*		Next;
 
 	VState(VName);
 
@@ -204,7 +204,6 @@ public:
 class VConstant : public VMemberBase
 {
 public:
-	VClass*		OuterClass;
 	vuint8		Type;
 	vint32		Value;
 
@@ -226,7 +225,6 @@ class VStruct : public VMemberBase
 {
 public:
 	vint32			ObjectFlags;
-	VClass*			OuterClass;
 	VStruct*		ParentStruct;
 	int				Size;
 	VField*			Fields;
@@ -353,9 +351,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/23 18:31:59  dj_jl
+//	Members tree.
+//
 //	Revision 1.18  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.17  2006/03/13 18:32:45  dj_jl
 //	Added function to check if a state is in the range.
 //	

@@ -150,8 +150,7 @@ void PR_Traceback()
 {
 	if (current_func)
 	{
-		Host_CoreDump("(%s.%s)", current_func->OuterClass ? 
-			current_func->OuterClass->GetName() : "", *current_func->Name);
+		Host_CoreDump("(%s)", *current_func->GetFullName());
 	}
 }
 
@@ -478,7 +477,7 @@ VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Struct &&
 			VMemberBase::GMembers[i]->Name == InName && 
-			((VStruct*)VMemberBase::GMembers[i])->OuterClass == InClass)
+			((VStruct*)VMemberBase::GMembers[i])->Outer == InClass)
 			return (VStruct*)VMemberBase::GMembers[i];
 	return NULL;
 	unguard;
@@ -1258,7 +1257,7 @@ static void RunFunction(VMethod *func)
 	}
 
     goto func_loop;
-	unguardfSlow(("(%s.%s %d)", func->OuterClass->GetName(), *func->Name, 
+	unguardfSlow(("(%s %d)", *func->GetFullName(),
 		current_statement - (int *)func->FirstStatement));
 }
 
@@ -1312,8 +1311,7 @@ int TProgs::ExecuteFunction(VMethod *func)
 
 	//	All done
 	return ret;
-	unguardf(("(%s.%s)", func->OuterClass ? func->OuterClass->GetName() :
-		"",*func->Name));
+	unguardf(("(%s)", *func->GetFullName()));
 }
 
 //==========================================================================
@@ -1886,19 +1884,21 @@ void TProgs::DumpProfile()
 	for (i = 0; i < MAX_PROF && profsort[i]; i++)
 	{
 		VMethod* Func = (VMethod*)VMemberBase::GMembers[profsort[i]];
-		GCon->Logf("%3.2f%% (%9d) %9d %s.%s",
+		GCon->Logf("%3.2f%% (%9d) %9d %s",
 			(double)Func->Profile2 * 100.0 / (double)totalcount,
-			(int)Func->Profile2, (int)Func->Profile1,
-			Func->OuterClass->GetName(), Func->GetName());
+			(int)Func->Profile2, (int)Func->Profile1, *Func->GetFullName());
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.53  2006/03/23 18:31:59  dj_jl
+//	Members tree.
+//
 //	Revision 1.52  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.51  2006/03/13 19:29:57  dj_jl
 //	Clean function local variables.
 //	

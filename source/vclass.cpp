@@ -63,12 +63,26 @@ VMemberBase::~VMemberBase()
 
 //==========================================================================
 //
+//	VMemberBase::GetFullName
+//
+//==========================================================================
+
+VStr VMemberBase::GetFullName() const
+{
+	if (Outer)
+		return Outer->GetFullName() + "." + Name;
+	return VStr(Name);
+}
+
+//==========================================================================
+//
 //	VMemberBase::Serialise
 //
 //==========================================================================
 
-void VMemberBase::Serialise(VStream&)
+void VMemberBase::Serialise(VStream& Strm)
 {
+	Strm << Outer;
 }
 
 //==========================================================================
@@ -306,7 +320,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 			VName SName = NAME_None;
 			if (*(VState**)Data)
 			{
-				CName = (*(VState**)Data)->OuterClass->GetVName();
+				CName = (*(VState**)Data)->Outer->GetVName();
 				SName = (*(VState**)Data)->Name;
 			}
 			Strm << CName << SName;
@@ -430,8 +444,7 @@ void VMethod::Serialise(VStream& Strm)
 	vint32 TmpNumLocals;
 	vint32 TmpFlags;
 	vint32 ParamsSize;
-	Strm << OuterClass
-		<< STRM_INDEX(FirstStatement)
+	Strm << STRM_INDEX(FirstStatement)
 		<< STRM_INDEX(TmpNumLocals)
 		<< STRM_INDEX(TmpFlags)
 		<< TmpType
@@ -449,7 +462,7 @@ void VMethod::Serialise(VStream& Strm)
 		Sys_Error("Function has more than 16 params");
 	for (FBuiltinInfo* B = FBuiltinInfo::Builtins; B; B = B->Next)
 	{
-		if (OuterClass == B->OuterClass && !strcmp(*Name, B->Name))
+		if (Outer == B->OuterClass && !strcmp(*Name, B->Name))
 		{
 			if (Flags & FUNC_Native)
 			{
@@ -469,8 +482,8 @@ void VMethod::Serialise(VStream& Strm)
 #if defined CLIENT && defined SERVER
 		//	Don't abort with error, because it will be done, when this
 		// function will be called (if it will be called).
-		GCon->Logf(NAME_Dev, "WARNING: Builtin %s.%s not found!",
-			OuterClass->GetName(), *Name);
+		GCon->Logf(NAME_Dev, "WARNING: Builtin %s not found!",
+			*GetFullName());
 #endif
 	}
 	unguard;
@@ -504,7 +517,6 @@ void VState::Serialise(VStream& Strm)
 		<< time
 		<< nextstate
 		<< function
-		<< OuterClass
 		<< Next;
 	if (Strm.IsLoading())
 	{
@@ -558,8 +570,7 @@ VConstant::VConstant(VName AName)
 void VConstant::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << OuterClass
-		<< Type;
+	Strm << Type;
 	switch (Type)
 	{
 	case ev_float:
@@ -600,8 +611,7 @@ void VStruct::Serialise(VStream& Strm)
 	vuint8 IsVector;
 	vint32 AvailableSize;
 	vint32 AvailableOfs;
-	Strm << OuterClass
-		<< ParentStruct
+	Strm << ParentStruct
 		<< IsVector
 		<< STRM_INDEX(Size)
 		<< Fields
@@ -1113,9 +1123,12 @@ void VClass::CleanObject(VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/23 18:31:59  dj_jl
+//	Members tree.
+//
 //	Revision 1.13  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.12  2006/03/13 21:22:21  dj_jl
 //	Added support for read-only, private and transient fields.
 //	
