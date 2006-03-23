@@ -59,10 +59,10 @@ static void 	ParseCompoundStatement();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-localvardef_t			localdefs[MAX_LOCAL_DEFS];
+VLocalVarDef			localdefs[MAX_LOCAL_DEFS];
 
 TType					SelfType;
-TClass*					SelfClass;
+VClass*					SelfClass;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -493,12 +493,12 @@ void ParseLocalVar(const TType& type)
 			t = MakeArrayType(t, size);
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
-		//  inicializÆcija
+		//  Initialisation
 		else if (TK_Check(PU_ASSIGN))
 		{
 			AddStatement(OPC_LocalAddress, localsofs);
 			TType t1 = ParseExpression();
-			t.CheckMatch(t1);
+			t1.CheckMatch(t);
 			if (t1.type == ev_vector)
 				AddStatement(OPC_VAssignDrop);
 			else
@@ -506,8 +506,8 @@ void ParseLocalVar(const TType& type)
 		}
 		localdefs[numlocaldefs].type = t;
 		localdefs[numlocaldefs].ofs = localsofs;
-		//  MainØgo skaitu palielina pñc izteiksmes, lai ýo mainØgo
-		// nebÝtu iespñjams izmantot izteiksmñ
+		//  Increase variable count after expression so you can't use
+		// the variable in expression.
 		numlocaldefs++;
 		localsofs += t.GetSize() / 4;
 		if (localsofs > 1024)
@@ -554,8 +554,8 @@ static void ParseCompoundStatement()
 //
 //==========================================================================
 
-void CompileMethodDef(const TType& t, field_t* method, field_t* otherfield,
-	TClass* InClass)
+void CompileMethodDef(const TType& t, VField* method, VField* otherfield,
+	VClass* InClass)
 {
 	numlocaldefs = 1;
 	localsofs = 1;
@@ -603,11 +603,11 @@ un++;
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	maxlocalsofs = localsofs;
 
-	int num = CheckForFunction(InClass, method->Name);
-	if (method->func->Index != num)
+	VMethod* Func = CheckForFunction(InClass, method->Name);
+	if (method->func != Func)
 		ERR_Exit(ERR_NONE, true, "Found wrong function");
 
-	if (functions[num]->Flags & FUNC_Native)
+	if (Func->Flags & FUNC_Native)
 	{
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
@@ -619,7 +619,7 @@ un++;
 	ContinueLevel = 0;
 	FuncRetType = t;
 
-	BeginCode(num);
+	BeginCode(Func);
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 
@@ -627,8 +627,8 @@ un++;
 	{
 		AddStatement(OPC_Return);
 	}
-	functions[num]->NumLocals = maxlocalsofs;
-	EndCode(num);
+	Func->NumLocals = maxlocalsofs;
+	EndCode(Func);
 }
 
 //==========================================================================
@@ -637,7 +637,7 @@ un++;
 //
 //==========================================================================
 
-void SkipDelegate(TClass* InClass)
+void SkipDelegate(VClass* InClass)
 {
 	TK_NextToken();
 	while (TK_Check(PU_ASTERISK));
@@ -670,13 +670,13 @@ void SkipDelegate(TClass* InClass)
 //
 //==========================================================================
 
-void CompileStateCode(TClass* InClass, TFunction* Func)
+void CompileStateCode(VClass* InClass, VMethod* Func)
 {
 	numlocaldefs = 1;
 	localsofs = 1;
 	maxlocalsofs = 1;
 
-	BeginCode(Func->Index);
+	BeginCode(Func);
 
 	SelfType = TType(InClass);
 	SelfClass = InClass;
@@ -688,7 +688,7 @@ void CompileStateCode(TClass* InClass, TFunction* Func)
 	ParseCompoundStatement();
 	AddStatement(OPC_Return);
 	Func->NumLocals = maxlocalsofs;
-	EndCode(Func->Index);
+	EndCode(Func);
 }
 
 //==========================================================================
@@ -697,13 +697,11 @@ void CompileStateCode(TClass* InClass, TFunction* Func)
 //
 //==========================================================================
 
-void CompileDefaultProperties(field_t *method, TClass* InClass)
+void CompileDefaultProperties(VField *method, VClass* InClass)
 {
 	numlocaldefs = 1;
 	localsofs = 1;
 	maxlocalsofs = 1;
-
-	int num = method->func->Index;
 
 	SelfType = TType(InClass);
 	SelfClass = InClass;
@@ -711,22 +709,22 @@ void CompileDefaultProperties(field_t *method, TClass* InClass)
 	ContinueLevel = 0;
 	FuncRetType = TType(ev_void);
 
-	BeginCode(num);
+	BeginCode(method->func);
 
 	//  Call parent constructor
-	field_t *pcon = FindConstructor(InClass->ParentClass);
+	VField *pcon = FindConstructor(InClass->ParentClass);
 	if (pcon)
 	{
 		AddStatement(OPC_LocalAddress, 0);
 		AddStatement(OPC_PushPointed);
-		AddStatement(OPC_Call, pcon->func->Index);
+		AddStatement(OPC_Call, pcon->func->MemberIndex);
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 	AddStatement(OPC_Return);
-	functions[num]->NumLocals = maxlocalsofs;
-	EndCode(num);
+	method->func->NumLocals = maxlocalsofs;
+	EndCode(method->func);
 }
 
 //==========================================================================
@@ -740,11 +738,6 @@ void PA_Compile()
 	bool		done;
 
 	dprintf("Compiling pass 2\n");
-
-	//  Add empty function for default constructors
-	BeginCode(1);
-	AddStatement(OPC_Return);
-	EndCode(1);
 
 	TK_NextToken();
 	done = false;
@@ -818,9 +811,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/03/23 18:30:54  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.42  2006/03/13 19:30:46  dj_jl
 //	Clean function local variables.
-//
+//	
 //	Revision 1.41  2006/03/12 13:03:22  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	

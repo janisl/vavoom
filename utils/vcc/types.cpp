@@ -59,11 +59,25 @@ void InitTypes()
 
 //==========================================================================
 //
+//	VMemberBase::IsIn
+//
+//==========================================================================
+
+bool VMemberBase::IsIn(VMemberBase* SomeOuter) const
+{
+	for (VMemberBase* Tst = Outer; Tst; Tst = Tst->Outer)
+		if (Tst == SomeOuter)
+			return true;
+	return !SomeOuter;
+}
+
+//==========================================================================
+//
 //	TType::TType
 //
 //==========================================================================
 
-TType::TType(TClass* InClass) :
+TType::TType(VClass* InClass) :
 	type(ev_reference), InnerType(ev_void), ArrayInnerType(ev_void),
 	PtrLevel(0), array_dim(0), Class(InClass)
 {
@@ -75,7 +89,7 @@ TType::TType(TClass* InClass) :
 //
 //==========================================================================
 
-TType::TType(TStruct* InStruct) :
+TType::TType(VStruct* InStruct) :
 	type(InStruct->IsVector ? ev_vector : ev_struct), InnerType(ev_void),
 	ArrayInnerType(ev_void), PtrLevel(0), array_dim(0), Struct(InStruct)
 {
@@ -234,25 +248,29 @@ static TType CheckForTypeKeyword()
 //
 //==========================================================================
 
-TType CheckForType(TClass* InClass)
+TType CheckForType(VClass* InClass)
 {
 	if (tk_Token == TK_KEYWORD)
 	{
 		return CheckForTypeKeyword();
 	}
 
-	for (int i = 0; i < classtypes.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (TK_Check(classtypes[i]->Name))
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
+			TK_Check(VMemberBase::GMembers[i]->Name))
 		{
-			return TType(classtypes[i]);
+			return TType((VClass*)VMemberBase::GMembers[i]);
 		}
 	}
-	for (int i = 0; i < structtypes.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (structtypes[i]->OuterClass == InClass && TK_Check(structtypes[i]->Name))
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Struct &&
+			(InClass ? VMemberBase::GMembers[i]->Outer == InClass :
+			VMemberBase::GMembers[i]->Outer->MemberType == MEMBER_Package) &&
+			TK_Check(VMemberBase::GMembers[i]->Name))
 		{
-			return TType(structtypes[i]);
+			return TType((VStruct*)VMemberBase::GMembers[i]);
 		}
 	}
 	if (InClass)
@@ -268,25 +286,29 @@ TType CheckForType(TClass* InClass)
 //
 //==========================================================================
 
-TType CheckForType(TClass* InClass, VName Name)
+TType CheckForType(VClass* InClass, VName Name)
 {
 	if (Name == NAME_None)
 	{
 		return TType(ev_unknown);
 	}
 
-	for (int i = 0; i < classtypes.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (Name == classtypes[i]->Name)
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
+			Name == VMemberBase::GMembers[i]->Name)
 		{
-			return TType(classtypes[i]);
+			return TType((VClass*)VMemberBase::GMembers[i]);
 		}
 	}
-	for (int i = 0; i < structtypes.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (structtypes[i]->OuterClass == InClass && Name == structtypes[i]->Name)
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Struct &&
+			(InClass ? VMemberBase::GMembers[i]->Outer == InClass :
+			VMemberBase::GMembers[i]->Outer->MemberType == MEMBER_Package) &&
+			Name == VMemberBase::GMembers[i]->Name)
 		{
-			return TType(structtypes[i]);
+			return TType((VStruct*)VMemberBase::GMembers[i]);
 		}
 	}
 	if (InClass)
@@ -302,18 +324,19 @@ TType CheckForType(TClass* InClass, VName Name)
 //
 //==========================================================================
 
-TClass* CheckForClass()
+VClass* CheckForClass()
 {
 	if (tk_Token == TK_KEYWORD)
 	{
 		return NULL;
 	}
 
-	for (int i = 0; i < classtypes.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (TK_Check(classtypes[i]->Name))
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
+			TK_Check(VMemberBase::GMembers[i]->Name))
 		{
-			return classtypes[i];
+			return (VClass*)VMemberBase::GMembers[i];
 		}
 	}
 	return NULL;
@@ -325,13 +348,14 @@ TClass* CheckForClass()
 //
 //==========================================================================
 
-TClass* CheckForClass(VName Name)
+VClass* CheckForClass(VName Name)
 {
-	for (int i = 0; i < classtypes.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (classtypes[i]->Name == Name)
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
+			VMemberBase::GMembers[i]->Name == Name)
 		{
-			return classtypes[i];
+			return (VClass*)VMemberBase::GMembers[i];
 		}
 	}
 	return NULL;
@@ -370,20 +394,22 @@ int TType::GetSize() const
 //
 //==========================================================================
 
-int CheckForFunction(TClass* InClass, VName Name)
+VMethod* CheckForFunction(VClass* InClass, VName Name)
 {
 	if (Name == NAME_None)
 	{
-		return -1;
+		return NULL;
 	}
-	for (int i = 0; i < functions.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (functions[i]->OuterClass == InClass && functions[i]->Name == Name)
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method &&
+			VMemberBase::GMembers[i]->Outer == InClass &&
+			VMemberBase::GMembers[i]->Name == Name)
 		{
-			return i;
+			return (VMethod*)VMemberBase::GMembers[i];
 		}
 	}
-	return -1;
+	return NULL;
 }
 
 //==========================================================================
@@ -392,25 +418,27 @@ int CheckForFunction(TClass* InClass, VName Name)
 //
 //==========================================================================
 
-int CheckForConstant(TClass* InClass, VName Name)
+VConstant* CheckForConstant(VClass* InClass, VName Name)
 {
 #if 1
 	for (int i = ConstantsHash[GetTypeHash(Name) & 255];
-		i != -1; i = Constants[i].HashNext)
+		i != -1; i = ((VConstant*)VMemberBase::GMembers[i])->HashNext)
 #else
 	for (int i = 0; i < numconstants; i++)
 #endif
 	{
-		if (Constants[i].OuterClass == InClass && Constants[i].Name == Name)
+		if ((InClass ? VMemberBase::GMembers[i]->Outer == InClass :
+			VMemberBase::GMembers[i]->Outer->MemberType == MEMBER_Package) &&
+			VMemberBase::GMembers[i]->Name == Name)
 		{
-			return i;
+			return (VConstant*)VMemberBase::GMembers[i];
 		}
 	}
 	if (InClass)
 	{
 		return CheckForConstant(InClass->ParentClass, Name);
 	}
-	return -1;
+	return NULL;
 }
 
 //==========================================================================
@@ -486,9 +514,9 @@ void TType::CheckMatch(const TType& Other) const
 		}
 		if (it1.type == ev_struct && it2.type == ev_struct)
 		{
-			TStruct* s1 = it1.Struct;
-			TStruct* s2 = it2.Struct;
-			for (TStruct* st1 = s1->ParentStruct; st1; st1 = st1->ParentStruct)
+			VStruct* s1 = it1.Struct;
+			VStruct* s2 = it2.Struct;
+			for (VStruct* st1 = s1->ParentStruct; st1; st1 = st1->ParentStruct)
 			{
 				if (st1 == s2)
 				{
@@ -499,8 +527,8 @@ void TType::CheckMatch(const TType& Other) const
 	}
 	if (type == ev_reference && Other.type == ev_reference)
 	{
-		TClass* c1 = Class;
-		TClass* c2 = Other.Class;
+		VClass* c1 = Class;
+		VClass* c2 = Other.Class;
 		if (!c1 || !c2)
 		{
 			//	none reference can be assigned to any reference.
@@ -510,11 +538,7 @@ void TType::CheckMatch(const TType& Other) const
 		{
 			return;
 		}
-		if ((c1 == classtypes[0]) || (c2 == classtypes[0]))
-		{
-			return;
-		}
-		for (TClass* pc1 = c1->ParentClass; pc1; pc1 = pc1->ParentClass)
+		for (VClass* pc1 = c1->ParentClass; pc1; pc1 = pc1->ParentClass)
 		{
 			if (pc1 == c2)
 			{
@@ -534,8 +558,8 @@ void TType::CheckMatch(const TType& Other) const
 	}
 	if (type == ev_delegate && Other.type == ev_delegate)
 	{
-		TFunction& F1 = *Function;
-		TFunction& F2 = *Other.Function;
+		VMethod& F1 = *Function;
+		VMethod& F2 = *Other.Function;
 		if (F1.Flags & FUNC_Static || F2.Flags & FUNC_Static)
 		{
 			ParseError("Can't assign a static function to delegate");
@@ -596,7 +620,7 @@ void TType::GetName(char* Dest) const
 //
 //==========================================================================
 
-void SkipStruct(TClass* InClass)
+void SkipStruct(VClass* InClass)
 {
 	TK_NextToken();
 	if (TK_Check(PU_SEMICOLON))
@@ -641,7 +665,7 @@ void SkipStruct(TClass* InClass)
 //
 //==========================================================================
 
-void SkipAddFields(TClass* InClass)
+void SkipAddFields(VClass* InClass)
 {
 	TK_NextToken();
 
@@ -673,12 +697,12 @@ void SkipAddFields(TClass* InClass)
 
 void CompileClass()
 {
-	field_t*	fi = NULL;
-	field_t*	otherfield;
+	VField*	fi = NULL;
+	VField*	otherfield;
 	TType		t;
 	TType		type;
 
-	TClass* Class = CheckForClass();
+	VClass* Class = CheckForClass();
 	if (!Class)
 	{
 		ParseError("Not a class type");
@@ -851,7 +875,7 @@ void CompileClass()
 //
 //==========================================================================
 
-field_t* ParseStructField(TStruct* InStruct)
+VField* ParseStructField(VStruct* InStruct)
 {
 	if (!InStruct)
 	{
@@ -868,7 +892,7 @@ field_t* ParseStructField(TStruct* InStruct)
 		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
 		return NULL;
 	}
-	for (field_t* fi = InStruct->Fields; fi; fi = fi->Next)
+	for (VField* fi = InStruct->Fields; fi; fi = fi->Next)
 	{
 		if (TK_Check(fi->Name))
 		{
@@ -893,7 +917,7 @@ field_t* ParseStructField(TStruct* InStruct)
 //
 //==========================================================================
 
-field_t* ParseClassField(TClass* InClass)
+VField* ParseClassField(VClass* InClass)
 {
 	if (InClass->Size == -1)
 	{
@@ -905,7 +929,7 @@ field_t* ParseClassField(TClass* InClass)
 		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
 		return NULL;
 	}
-	for (field_t* fi = InClass->Fields; fi; fi = fi->Next)
+	for (VField* fi = InClass->Fields; fi; fi = fi->Next)
 	{
 		if (TK_Check(fi->Name))
 		{
@@ -934,7 +958,7 @@ field_t* ParseClassField(TClass* InClass)
 //
 //==========================================================================
 
-field_t* CheckForField(TClass* InClass, bool CheckPrivate)
+VField* CheckForField(VClass* InClass, bool CheckPrivate)
 {
 	if (!InClass)
 	{
@@ -948,7 +972,7 @@ field_t* CheckForField(TClass* InClass, bool CheckPrivate)
 	{
 		return NULL;
 	}
-	for (field_t *fi = InClass->Fields; fi; fi = fi->Next)
+	for (VField *fi = InClass->Fields; fi; fi = fi->Next)
 	{
 		if (TK_Check(fi->Name))
 		{
@@ -969,7 +993,7 @@ field_t* CheckForField(TClass* InClass, bool CheckPrivate)
 //
 //==========================================================================
 
-field_t* CheckForField(VName Name, TClass* InClass, bool CheckPrivate)
+VField* CheckForField(VName Name, VClass* InClass, bool CheckPrivate)
 {
 	if (!InClass)
 	{
@@ -983,7 +1007,7 @@ field_t* CheckForField(VName Name, TClass* InClass, bool CheckPrivate)
 	{
 		return NULL;
 	}
-	for (field_t *fi = InClass->Fields; fi; fi = fi->Next)
+	for (VField *fi = InClass->Fields; fi; fi = fi->Next)
 	{
 		if (Name == fi->Name)
 		{
@@ -1004,7 +1028,7 @@ field_t* CheckForField(VName Name, TClass* InClass, bool CheckPrivate)
 //
 //==========================================================================
 
-field_t* FindConstructor(TClass* InClass)
+VField* FindConstructor(VClass* InClass)
 {
 	if (!InClass)
 	{
@@ -1014,7 +1038,7 @@ field_t* FindConstructor(TClass* InClass)
 	{
 		return NULL;
 	}
-	for (field_t *fi = InClass->Fields; fi; fi = fi->Next)
+	for (VField *fi = InClass->Fields; fi; fi = fi->Next)
 	{
 		if (fi->type.type == ev_method && fi->ofs == 0)
 		{
@@ -1030,7 +1054,7 @@ field_t* FindConstructor(TClass* InClass)
 //
 //==========================================================================
 
-static void AddVTable(TClass* InClass)
+static void AddVTable(VClass* InClass)
 {
 	if (InClass->VTable)
 	{
@@ -1041,14 +1065,14 @@ static void AddVTable(TClass* InClass)
 		AddVTable(InClass->ParentClass);
 	}
 	InClass->VTable = vtables.Num();
-	TFunction** vtable = &vtables[vtables.Add(InClass->NumMethods)];
-	memset(vtable, 0, InClass->NumMethods * sizeof(TFunction*));
+	VMethod** vtable = &vtables[vtables.Add(InClass->NumMethods)];
+	memset(vtable, 0, InClass->NumMethods * sizeof(VMethod*));
 	if (InClass->ParentClass)
 	{
 		memcpy(vtable, &vtables[InClass->ParentClass->VTable],
 			InClass->ParentClass->NumMethods * 4);
 	}
-	for (field_t* f = InClass->Fields; f; f = f->Next)
+	for (VField* f = InClass->Fields; f; f = f->Next)
 	{
 		if (f->type.type != ev_method || f->ofs == -1)
 		{
@@ -1071,10 +1095,11 @@ static void AddVTable(TClass* InClass)
 void AddVirtualTables()
 {
 	dprintf("Adding virtual tables\n");
-	int i;
-	for (i = 0; i < classtypes.Num(); i++)
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		AddVTable(classtypes[i]);
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
+			VMemberBase::GMembers[i]->IsIn(CurrentPackage))
+			AddVTable((VClass*)VMemberBase::GMembers[i]);
 	}
 }
 
@@ -1090,7 +1115,7 @@ void AddVirtualTables()
 //
 //==========================================================================
 
-static TType ParsePropArrayDims(TClass* Class, const TType& t)
+static TType ParsePropArrayDims(VClass* Class, const TType& t)
 {
 	if (TK_Check(PU_LINDEX))
 	{
@@ -1103,59 +1128,57 @@ static TType ParsePropArrayDims(TClass* Class, const TType& t)
 
 //==========================================================================
 //
-//	TStruct::AddField
+//	VStruct::AddField
 //
 //==========================================================================
 
-void TStruct::AddField(field_t* f)
+void VStruct::AddField(VField* f)
 {
 	if (!Fields)
 		Fields = f;
 	else
 	{
-		field_t* Prev = Fields;
+		VField* Prev = Fields;
 		while (Prev->Next)
 			Prev = Prev->Next;
 		Prev->Next = f;
 	}
 	f->Next = NULL;
-	f->Index = FieldList.AddItem(f);
 }
 
 //==========================================================================
 //
-//	TClass::AddField
+//	VClass::AddField
 //
 //==========================================================================
 
-void TClass::AddField(field_t* f)
+void VClass::AddField(VField* f)
 {
 	if (!Fields)
 		Fields = f;
 	else
 	{
-		field_t* Prev = Fields;
+		VField* Prev = Fields;
 		while (Prev->Next)
 			Prev = Prev->Next;
 		Prev->Next = f;
 	}
 	f->Next = NULL;
-	f->Index = FieldList.AddItem(f);
 }
 
 //==========================================================================
 //
-//	TClass::AddState
+//	VClass::AddState
 //
 //==========================================================================
 
-void TClass::AddState(state_t* s)
+void VClass::AddState(VState* s)
 {
 	if (!States)
 		States = s;
 	else
 	{
-		state_t* Prev = States;
+		VState* Prev = States;
 		while (Prev->Next)
 			Prev = Prev->Next;
 		Prev->Next = s;
@@ -1169,14 +1192,14 @@ void TClass::AddState(state_t* s)
 //
 //==========================================================================
 
-void ParseStruct(TClass* InClass, bool IsVector)
+void ParseStruct(VClass* InClass, bool IsVector)
 {
-	field_t*	fi;
+	VField*	fi;
 	int			size;
 	TType		t;
 	TType		type;
 	TType		struct_type;
-	TStruct*	Struct;
+	VStruct*	Struct;
 
 	struct_type = CheckForType(InClass);
 	if (struct_type.type != ev_unknown)
@@ -1192,6 +1215,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			ParseError("Struct type already completed");
 			return;
 		}
+		Struct->Loc = tk_Location;
 	}
 	else
 	{
@@ -1200,10 +1224,8 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			ParseError("Struct name expected");
 		}
 		//	New struct
-		Struct = new TStruct;
-		Struct->Index = structtypes.AddItem(Struct);
-		Struct->Name = tk_Name;
-		Struct->OuterClass = InClass;
+		Struct = new VStruct(tk_Name, InClass ? (VMemberBase*)InClass :
+			(VMemberBase*)CurrentPackage, tk_Location);
 		Struct->IsVector = IsVector;
 		//  Add to types
 		TK_NextToken();
@@ -1258,7 +1280,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 		}
 
 		int Modifiers = TModifiers::Parse();
-		Modifiers = TModifiers::Check(Modifiers, field_t::AllowedModifiers);
+		Modifiers = TModifiers::Check(Modifiers, VField::AllowedModifiers);
 
 		type = CheckForType(InClass);
 		if (type.type == ev_unknown)
@@ -1287,7 +1309,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			if (IsVector)
 			{
 				int fc = 0;
-				for (field_t* f = Struct->Fields; f; f = f->Next)
+				for (VField* f = Struct->Fields; f; f = f->Next)
 					fc++;
 				if (fc == 3)
 				{
@@ -1299,13 +1321,12 @@ void ParseStruct(TClass* InClass, bool IsVector)
 			{
 				ParseError("Field name expected");
 			}
-			fi = new field_t;
-			fi->Name = tk_Name;
+			fi = new VField(tk_Name, Struct, tk_Location);
 			fi->flags = TModifiers::FieldAttr(Modifiers);
 			TK_NextToken();
 			if (t.type == ev_bool && Struct->Fields)
 			{
-				field_t* prevbool = Struct->Fields;
+				VField* prevbool = Struct->Fields;
 				while (prevbool->Next)
 					prevbool = prevbool->Next;
 				if (prevbool->type.type == ev_bool &&
@@ -1333,7 +1354,7 @@ void ParseStruct(TClass* InClass, bool IsVector)
 	if (IsVector)
 	{
 		int fc = 0;
-		for (field_t* f = Struct->Fields; f; f = f->Next)
+		for (VField* f = Struct->Fields; f; f = f->Next)
 			fc++;
 		if (fc != 3)
 		{
@@ -1350,11 +1371,11 @@ void ParseStruct(TClass* InClass, bool IsVector)
 //
 //==========================================================================
 
-void AddFields(TClass* InClass)
+void AddFields(VClass* InClass)
 {
 	TType			struct_type;
 	TType			type;
-	field_t*		fi;
+	VField*		fi;
 	int				size;
 	int				ofs;
 	TType			t;
@@ -1374,7 +1395,7 @@ void AddFields(TClass* InClass)
 		return;
 	}
 
-	TStruct* Struct = struct_type.Struct;
+	VStruct* Struct = struct_type.Struct;
 
 	//  Check if type has reserved memory for additional fields
 	if (!Struct->AvailableSize)
@@ -1392,7 +1413,7 @@ void AddFields(TClass* InClass)
 	while (!TK_Check(PU_RBRACE))
 	{
 		int Modifiers = TModifiers::Parse();
-		Modifiers = TModifiers::Check(Modifiers, field_t::AllowedModifiers);
+		Modifiers = TModifiers::Check(Modifiers, VField::AllowedModifiers);
 
 		type = CheckForType(InClass);
 		if (type.type == ev_unknown)
@@ -1415,13 +1436,12 @@ void AddFields(TClass* InClass)
 			{
 				ParseError("Field name expected");
 			}
-			fi = new field_t;
-			fi->Name = tk_Name;
+			fi = new VField(tk_Name, Struct, tk_Location);
 			fi->flags = TModifiers::FieldAttr(Modifiers);
 			TK_NextToken();
 			if (t.type == ev_bool && Struct->Fields)
 			{
-				field_t* prevbool = Struct->Fields;
+				VField* prevbool = Struct->Fields;
 				while (prevbool->Next)
 					prevbool = prevbool->Next;
 				if (prevbool->type.type == ev_bool &&
@@ -1462,13 +1482,13 @@ void AddFields(TClass* InClass)
 
 void ParseClass()
 {
-	field_t*			fi;
-	field_t*			otherfield;
+	VField*			fi;
+	VField*			otherfield;
 	int					size;
 	TType				t;
 	TType				type;
 
-	TClass* Class = CheckForClass();
+	VClass* Class = CheckForClass();
 	if (Class)
 	{
 		if (Class->Size != -1)
@@ -1476,6 +1496,7 @@ void ParseClass()
 			ParseError("Class definition already completed");
 			return;
 		}
+		Class->Loc = tk_Location;
 	}
 	else
 	{
@@ -1484,9 +1505,7 @@ void ParseClass()
 			ParseError("Class name expected");
 		}
 		//	New class.
-		Class = new TClass;
-		Class->Index = classtypes.AddItem(Class);
-		Class->Name = tk_Name;
+		Class = new VClass(tk_Name, CurrentPackage, tk_Location);
 		TK_NextToken();
 	}
 
@@ -1502,7 +1521,7 @@ void ParseClass()
 
 	if (TK_Check(PU_COLON))
 	{
-		TClass* Parent = CheckForClass();
+		VClass* Parent = CheckForClass();
 		if (!Parent)
 		{
 			ParseError("Parent class type expected");
@@ -1518,9 +1537,13 @@ void ParseClass()
 			size = Parent->Size;
 		}
 	}
+	else if (Class->Name != NAME_Object)
+	{
+		ParseError("Parent class expected");
+	}
 
 	int ClassModifiers = TModifiers::Parse();
-	ClassModifiers = TModifiers::Check(ClassModifiers, TClass::AllowedModifiers);
+	ClassModifiers = TModifiers::Check(ClassModifiers, VClass::AllowedModifiers);
 	int ClassAttr = TModifiers::ClassAttr(ClassModifiers);
 	do
 	{
@@ -1635,8 +1658,7 @@ void ParseClass()
 				ParseError("Field name expected");
 				continue;
 			}
-			fi = new field_t;
-			fi->Name = tk_Name;
+			fi = new VField(tk_Name, Class, tk_Location);
 			otherfield = CheckForField(Class, false);
 			if (otherfield)
 			{
@@ -1674,8 +1696,7 @@ void ParseClass()
 				ParseError("Field name expected");
 				continue;
 			}
-			fi = new field_t;
-			fi->Name = tk_Name;
+			fi = new VField(tk_Name, Class, tk_Location);
 			otherfield = CheckForField(Class, false);
 			if (!otherfield)
 			{
@@ -1697,11 +1718,11 @@ void ParseClass()
 			{
 				ParseError("Field cannot have void type.");
 			}
-			Modifiers = TModifiers::Check(Modifiers, field_t::AllowedModifiers);
+			Modifiers = TModifiers::Check(Modifiers, VField::AllowedModifiers);
 			fi->flags = TModifiers::FieldAttr(Modifiers);
 			if (t.type == ev_bool && Class->Fields)
 			{
-				field_t* prevbool = Class->Fields;
+				VField* prevbool = Class->Fields;
 				while (prevbool->Next)
 					prevbool = prevbool->Next;
 				if (prevbool->type.type == ev_bool &&
@@ -1726,7 +1747,7 @@ void ParseClass()
 		}
 	}
 
-	fi = new field_t;
+	fi = new VField(NAME_None, Class, tk_Location);
 	ParseDefaultProperties(fi, Class);
 	Class->AddField(fi);
 
@@ -1736,9 +1757,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.50  2006/03/23 18:30:54  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.49  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
-//
+//	
 //	Revision 1.48  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
 //	

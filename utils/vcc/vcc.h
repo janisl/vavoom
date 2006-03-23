@@ -238,9 +238,9 @@ enum EPunctuation
 	PU_RBRACE,
 };
 
-class TClass;
-class TStruct;
-class TFunction;
+class VClass;
+class VStruct;
+class VMethod;
 
 class TModifiers
 {
@@ -287,17 +287,28 @@ public:
 class VMemberBase
 {
 public:
-	VName		Name;
-	int			ExportIndex;
+	vuint8			MemberType;
+	vint32			MemberIndex;
+	VName			Name;
+	VMemberBase*	Outer;
+	TLocation		Loc;
+	int				ExportIndex;
 
-	VMemberBase()
-	: Name(NAME_None)
+	static TArray<VMemberBase*>		GMembers;
+
+	VMemberBase(vuint8 InType, VName InName, VMemberBase* InOuter, TLocation InLoc)
+	: MemberType(InType)
+	, MemberIndex(GMembers.AddItem(this))
+	, Name(InName)
+	, Outer(InOuter)
+	, Loc(InLoc)
 	, ExportIndex(0)
 	{}
 	virtual ~VMemberBase()
 	{}
 
 	virtual void Serialise(VStream&);
+	bool IsIn(VMemberBase*) const;
 };
 
 class TType
@@ -311,8 +322,8 @@ public:
 		type(Atype), InnerType(ev_void), ArrayInnerType(ev_void),
 		PtrLevel(0), array_dim(0), bit_mask(0)
 	{}
-	explicit TType(TClass* InClass);
-	explicit TType(TStruct* InStruct);
+	explicit TType(VClass* InClass);
+	explicit TType(VStruct* InStruct);
 
 	byte		type;
 	byte		InnerType;		//	For pointers
@@ -322,9 +333,9 @@ public:
 	union
 	{
 		int			bit_mask;
-		TClass*		Class;			//  Class of the reference
-		TStruct*	Struct;			//  Struct data.
-		TFunction*	Function;		//  Function of the delegate type.
+		VClass*		Class;			//  Class of the reference
+		VStruct*	Struct;			//  Struct data.
+		VMethod*	Function;		//  Function of the delegate type.
 	};
 
 	friend VStream& operator<<(VStream&, TType&);
@@ -339,37 +350,35 @@ public:
 	void GetName(char* Dest) const;
 };
 
-class field_t : public VMemberBase
+class VField : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Private |
 		TModifiers::ReadOnly | TModifiers::Transient };
 
-	field_t*	Next;
+	VField*		Next;
 	int			ofs;
 	TType		type;
-	TFunction*	func;	// Method's function
+	VMethod*	func;	// Method's function
 	int			flags;
-	int			Index;
 
-	field_t()
-	: Next(NULL)
+	VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
+	: VMemberBase(MEMBER_Field, InName, InOuter, InLoc)
+	, Next(NULL)
 	, ofs(0)
 	, type(ev_void)
 	, func(0)
 	, flags(0)
-	, Index(0)
 	{}
 
 	void Serialise(VStream&);
 };
 
-class TFunction : public VMemberBase
+class VMethod : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static };
 
-	TClass*		OuterClass;
 	int			FirstStatement;	//	Negative numbers are builtin functions
 	int			NumLocals;
 	int			Flags;
@@ -377,71 +386,73 @@ public:
 	int			NumParams;
 	int			ParamsSize;
 	TType		ParamTypes[MAX_PARAMS];
-	int			Index;
 
-	TFunction()
-	: OuterClass(0)
+	VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
+	: VMemberBase(MEMBER_Method, InName, InOuter, InLoc)
 	, FirstStatement(0)
 	, NumLocals(0)
 	, Flags(0)
 	, ReturnType(ev_void)
 	, NumParams(0)
 	, ParamsSize(0)
-	, Index(0)
 	{}
 
 	void Serialise(VStream&);
 };
 
-class localvardef_t : public VMemberBase
+class VLocalVarDef : public VMemberBase
 {
 public:
 	int			ofs;
 	TType		type;
+
+	VLocalVarDef()
+	: VMemberBase(MEMBER_Field, NAME_None, NULL, TLocation())
+	{}
 };
 
-class constant_t : public VMemberBase
+class VConstant : public VMemberBase
 {
 public:
-	TClass*		OuterClass;
 	byte		Type;
 	int			value;
 	int			HashNext;
 
+	VConstant(VName InName, VMemberBase* InOuter, TLocation InLoc)
+	: VMemberBase(MEMBER_Const, InName, InOuter, InLoc)
+	{}
+
 	void Serialise(VStream&);
 };
 
-class TStruct : public VMemberBase
+class VStruct : public VMemberBase
 {
 public:
-	TClass*			OuterClass;
-	TStruct*		ParentStruct;
+	VStruct*		ParentStruct;
 	vuint8			IsVector;
 	int				Size;
 	//	Structure fields
-	field_t*		Fields;
+	VField*			Fields;
 	//	Addfield info
 	int				AvailableSize;
 	int				AvailableOfs;
-	int				Index;
 
-	TStruct()
-	: OuterClass(0)
+	VStruct(VName InName, VMemberBase* InOuter, TLocation InLoc)
+	: VMemberBase(MEMBER_Struct, InName, InOuter, InLoc)
 	, ParentStruct(0)
 	, IsVector(false)
 	, Size(0)
 	, Fields(0)
 	, AvailableSize(0)
 	, AvailableOfs(0)
-	, Index(0)
 	{}
 
 	void Serialise(VStream&);
 
-	void AddField(field_t* f);
+	void AddField(VField* f);
 };
 
-class state_t : public VMemberBase
+class VState : public VMemberBase
 {
 public:
 	VName		SpriteName;
@@ -449,20 +460,19 @@ public:
 	VName		ModelName;
 	int			model_frame;
 	float		time;
-	state_t*	nextstate;
-	TFunction*	function;
-	TClass*		OuterClass;
-	state_t*	Next;
+	VState*		nextstate;
+	VMethod*	function;
+	VState*		Next;
 
-	state_t()
-	: SpriteName(NAME_None)
+	VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
+	: VMemberBase(MEMBER_State, InName, InOuter, InLoc)
+	, SpriteName(NAME_None)
 	, frame(0)
 	, ModelName(NAME_None)
 	, model_frame(0)
 	, time(0)
 	, nextstate(0)
 	, function(0)
-	, OuterClass(0)
 	, Next(0)
 	{}
 
@@ -472,41 +482,42 @@ public:
 struct mobjinfo_t
 {
 	int		doomednum;
-	TClass*	class_id;
+	VClass*	class_id;
 };
 
-class TClass : public VMemberBase
+class VClass : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
 
-	TClass*			ParentClass;
-	field_t*		Fields;
-	state_t*		States;
-	int				VTable;
-	int				NumMethods;
-	int				Size;
-	int				Index;
+	VClass*		ParentClass;
+	VField*		Fields;
+	VState*		States;
+	int			VTable;
+	int			NumMethods;
+	int			Size;
 
-	TClass()
-	: ParentClass(NULL)
+	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
+	: VMemberBase(MEMBER_Class, InName, InOuter, InLoc)
+	, ParentClass(NULL)
 	, Fields(NULL)
 	, States(NULL)
 	, VTable(0)
 	, NumMethods(0)
 	, Size(0)
-	, Index(0)
 	{}
 
 	void Serialise(VStream&);
 
-	void AddField(field_t* f);
-	void AddState(state_t* s);
+	void AddField(VField* f);
+	void AddState(VState* s);
 };
 
 class TPackage : public VMemberBase
 {
+public:
 	TPackage()
+	: VMemberBase(MEMBER_Package, NAME_None, NULL, TLocation())
 	{}
 };
 
@@ -545,59 +556,59 @@ int UndoStatement();
 int GetNumInstructions();
 void FixupJump(int Pos, int JmpPos);
 void FixupJump(int Pos);
-void BeginCode(int);
-void EndCode(int);
+void BeginCode(VMethod*);
+void EndCode(VMethod*);
 void PC_WriteObject(char *name);
 void PC_DumpAsm(char* name);
 
-int EvalConstExpression(TClass*InClass, int type);
+int EvalConstExpression(VClass*InClass, int type);
 float ConstFloatExpression();
 
 TType ParseExpression(bool = false);
 
-void ParseMethodDef(const TType&, field_t*, field_t*, TClass*, int);
-void ParseDelegate(const TType&, field_t*, field_t*, TClass*, int);
-TFunction* ParseStateCode(TClass*);
-void ParseDefaultProperties(field_t*, TClass*);
-void AddConstant(TClass* InClass, VName Name, int type, int value);
+void ParseMethodDef(const TType&, VField*, VField*, VClass*, int);
+void ParseDelegate(const TType&, VField*, VField*, VClass*, int);
+VMethod* ParseStateCode(VClass*, VState*);
+void ParseDefaultProperties(VField*, VClass*);
+void AddConstant(VClass* InClass, VName Name, int type, int value);
 void PA_Parse();
 
 int CheckForLocalVar(VName);
 void ParseLocalVar(const TType&);
-void CompileMethodDef(const TType&, field_t*, field_t*, TClass*);
-void SkipDelegate(TClass*);
-void CompileStateCode(TClass*, TFunction*);
-void CompileDefaultProperties(field_t*, TClass*);
+void CompileMethodDef(const TType&, VField*, VField*, VClass*);
+void SkipDelegate(VClass*);
+void CompileStateCode(VClass*, VMethod*);
+void CompileDefaultProperties(VField*, VClass*);
 void PA_Compile();
 
 void InitTypes();
 TType MakePointerType(const TType& type);
 TType MakeArrayType(const TType& type, int elcount);
-TType CheckForType(TClass* InClass);
-TType CheckForType(TClass* InClass, VName Name);
-TClass* CheckForClass();
-TClass* CheckForClass(VName Name);
-int CheckForFunction(TClass*, VName);
-int CheckForConstant(TClass* InClass, VName);
-void SkipStruct(TClass*);
-void SkipAddFields(TClass*);
+TType CheckForType(VClass* InClass);
+TType CheckForType(VClass* InClass, VName Name);
+VClass* CheckForClass();
+VClass* CheckForClass(VName Name);
+VMethod* CheckForFunction(VClass*, VName);
+VConstant* CheckForConstant(VClass* InClass, VName);
+void SkipStruct(VClass*);
+void SkipAddFields(VClass*);
 void CompileClass();
-field_t* ParseStructField(TStruct*);
-field_t* ParseClassField(TClass*);
-field_t* FindConstructor(TClass*);
+VField* ParseStructField(VStruct*);
+VField* ParseClassField(VClass*);
+VField* FindConstructor(VClass*);
 void AddVirtualTables();
-void ParseStruct(TClass*, bool);
-void AddFields(TClass*);
+void ParseStruct(VClass*, bool);
+void AddFields(VClass*);
 void ParseClass();
-field_t* CheckForField(TClass*, bool = true);
-field_t* CheckForField(VName, TClass*, bool = true);
+VField* CheckForField(VClass*, bool = true);
+VField* CheckForField(VName, VClass*, bool = true);
 
 void InitInfoTables();
-void ParseStates(TClass*);
-void AddToMobjInfo(int Index, TClass* Class);
-void AddToScriptIds(int Index, TClass* Class);
-void SkipStates(TClass*);
-int CheckForState(VName StateName, TClass* InClass);
+void ParseStates(VClass*);
+void AddToMobjInfo(int Index, VClass* Class);
+void AddToScriptIds(int Index, VClass* Class);
+void SkipStates(VClass*);
+VState* CheckForState(VName StateName, VClass* InClass);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -612,20 +623,12 @@ extern EKeyword			tk_Keyword;
 extern EPunctuation		tk_Punct;
 extern VName			tk_Name;
 
-extern TArray<TFunction*>	functions;
+extern TPackage*			CurrentPackage;
 extern int					numbuiltins;
 
-extern TArray<constant_t>	Constants;
 extern int					ConstantsHash[256];
 
-extern TArray<TClass*>		classtypes;
-extern TArray<TFunction*>	vtables;
-
-extern TArray<TStruct*>		structtypes;
-
-extern TArray<field_t*>		FieldList;
-
-extern TArray<state_t*>		states;
+extern TArray<VMethod*>		vtables;
 extern TArray<mobjinfo_t>	mobj_info;
 extern TArray<mobjinfo_t>	script_ids;
 
@@ -634,9 +637,9 @@ extern int				NumErrors;
 extern int				CurrentPass;
 
 extern TType			SelfType;
-extern TClass*			SelfClass;
+extern VClass*			SelfClass;
 
-extern localvardef_t	localdefs[MAX_LOCAL_DEFS];
+extern VLocalVarDef	localdefs[MAX_LOCAL_DEFS];
 
 // INLINE CODE -------------------------------------------------------------
 
@@ -703,9 +706,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.48  2006/03/23 18:30:54  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.47  2006/03/19 14:45:49  dj_jl
 //	Added code location object.
-//
+//	
 //	Revision 1.46  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
 //	

@@ -473,8 +473,8 @@ static void SkipCompoundStatement()
 //
 //==========================================================================
 
-void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
-	TClass* InClass, int Modifiers)
+void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
+	VClass* InClass, int Modifiers)
 {
 	if (t.type != ev_void)
 	{
@@ -485,24 +485,21 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 	numlocaldefs = 1;
 	int localsofs = 1;
 
-	Modifiers = TModifiers::Check(Modifiers, TFunction::AllowedModifiers);
+	Modifiers = TModifiers::Check(Modifiers, VMethod::AllowedModifiers);
 	int FuncFlags = TModifiers::MethodAttr(Modifiers);
 
 	if ((FuncFlags & FUNC_Static) && !(FuncFlags & FUNC_Native))
 	{
 		ParseError("Currently only native functions can be static");
 	}
-	if (CheckForFunction(InClass, method->Name) != -1)
+	if (CheckForFunction(InClass, method->Name))
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
 			"Function: %s.%s", *InClass->Name, *method->Name);
 	}
 
-	TFunction* Func = new TFunction;
-	Func->Index = functions.AddItem(Func);
+	VMethod* Func = new VMethod(method->Name, InClass, method->Loc);
 	method->func = Func;
-	Func->Name = method->Name;
-	Func->OuterClass = InClass;
 	Func->Flags = FuncFlags;
 	Func->ReturnType = t;
 
@@ -556,7 +553,7 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 	method->type = TType(ev_method);
 	if (otherfield)
 	{
-		TFunction* BaseFunc = otherfield->func;
+		VMethod* BaseFunc = otherfield->func;
 		if (!BaseFunc->ReturnType.Equals(Func->ReturnType))
 		{
 			ParseError("Method redefined with different return type");
@@ -600,8 +597,8 @@ void ParseMethodDef(const TType& t, field_t* method, field_t* otherfield,
 //
 //==========================================================================
 
-void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
-	TClass* InClass, int FuncFlags)
+void ParseDelegate(const TType& t, VField* method, VField* otherfield,
+	VClass* InClass, int FuncFlags)
 {
 	if (t.type != ev_void)
 	{
@@ -611,11 +608,8 @@ void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
 
 	int localsofs = 1;
 
-	TFunction* Func = new TFunction;
-	Func->Index = functions.AddItem(Func);
+	VMethod* Func = new VMethod(NAME_None, method, method->Loc);
 	method->func = Func;
-	Func->Name = NAME_None;
-	Func->OuterClass = InClass;
 	Func->Flags = FuncFlags;
 	Func->ReturnType = t;
 
@@ -665,14 +659,11 @@ void ParseDelegate(const TType& t, field_t* method, field_t* otherfield,
 //
 //==========================================================================
 
-TFunction* ParseStateCode(TClass* InClass)
+VMethod* ParseStateCode(VClass* InClass, VState* InState)
 {
 	numlocaldefs = 1;
 
-	TFunction* Func = new TFunction();
-	Func->Index = functions.AddItem(Func);
-	Func->Name = NAME_None;
-	Func->OuterClass = InClass;
+	VMethod* Func = new VMethod(NAME_None, InState, InState->Loc);
 	Func->ReturnType = TType(ev_void);
 	Func->ParamsSize = 1;
 
@@ -687,7 +678,7 @@ TFunction* ParseStateCode(TClass* InClass)
 //
 //==========================================================================
 
-void ParseDefaultProperties(field_t *method, TClass* InClass)
+void ParseDefaultProperties(VField *method, VClass* InClass)
 {
 	numlocaldefs = 1;
 
@@ -695,16 +686,8 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 	method->ofs = 0;
 	method->Name = NAME_None;
 
-	if (CheckForFunction(InClass, InClass->Name) != -1)
-	{
-		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			 "Function: %s.%s", *InClass->Name, *InClass->Name);
-	}
-
-	TFunction* Func = new TFunction();
+	VMethod* Func = new VMethod(NAME_None, InClass, method->Loc);
 	method->func = Func;
-	Func->Index = functions.AddItem(Func);
-	Func->OuterClass = InClass;
 	Func->ReturnType = TType(ev_void);
 	Func->ParamsSize = 1;
 
@@ -718,22 +701,21 @@ void ParseDefaultProperties(field_t *method, TClass* InClass)
 //
 //==========================================================================
 
-void AddConstant(TClass* InClass, VName Name, int type, int value)
+void AddConstant(VClass* InClass, VName Name, int type, int value)
 {
 	if (CurrentPass == 2)
 		ParseError("Add constant in pass 2");
-	if (CheckForConstant(InClass, Name) != -1)
+	if (CheckForConstant(InClass, Name))
 	{
 		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
 	}
-	constant_t* cDef = new(Constants) constant_t;
-	cDef->OuterClass = InClass;
-	cDef->Name = Name;
+	VConstant* cDef = new VConstant(Name, InClass ?
+		(VMemberBase*)InClass : (VMemberBase*)CurrentPackage, tk_Location);
 	cDef->Type = (EType)type;
 	cDef->value = value;
 	int hash = GetTypeHash(Name) & 255;
 	cDef->HashNext = ConstantsHash[hash];
-	ConstantsHash[hash] = Constants.Num() - 1;
+	ConstantsHash[hash] = cDef->MemberIndex;
 }
 
 //==========================================================================
@@ -820,9 +802,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/03/23 18:30:54  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.17  2006/03/12 13:03:22  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.16  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
 //	

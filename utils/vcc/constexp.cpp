@@ -43,7 +43,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TClass*			ConstExprClass;
+static VClass*			ConstExprClass;
 
 // CODE --------------------------------------------------------------------
 
@@ -55,9 +55,9 @@ static TClass*			ConstExprClass;
 
 static int ConstExprFactor()
 {
-	int		num;
-	int		ret = 0;
-	VName	Name;
+	VConstant*	Const;
+	int			ret = 0;
+	VName		Name;
 
 	switch(tk_Token)
 	{
@@ -87,7 +87,7 @@ static int ConstExprFactor()
 		TK_NextToken();
 		if (TK_Check(PU_DCOLON))
 		{
-			TClass* Class = CheckForClass(Name);
+			VClass* Class = CheckForClass(Name);
 			if (!Class)
 			{
 				ParseError("Class name expected");
@@ -96,13 +96,13 @@ static int ConstExprFactor()
 
 			if (tk_Token == TK_IDENTIFIER)
 			{
-				num = CheckForConstant(Class, tk_Name);
-				if (num != -1)
+				Const = CheckForConstant(Class, tk_Name);
+				if (Const)
 				{
-					if (Constants[num].Type != ev_int)
+					if (Const->Type != ev_int)
 						ParseError(ERR_EXPR_TYPE_MISTMATCH);
 					TK_NextToken();
-					ret = Constants[num].value;
+					ret = Const->value;
 					break;
 				}
 			}
@@ -111,12 +111,12 @@ static int ConstExprFactor()
 			break;
 		}
 
-		num = CheckForConstant(ConstExprClass, Name);
-		if (num != -1)
+		Const = CheckForConstant(ConstExprClass, Name);
+		if (Const)
 		{
-			if (Constants[num].Type != ev_int)
+			if (Const->Type != ev_int)
 				ParseError(ERR_EXPR_TYPE_MISTMATCH);
-			ret = Constants[num].value;
+			ret = Const->value;
 		}
 		else
 		{
@@ -183,7 +183,7 @@ static int CExprLevJ()
 }
 
 // Operatori: + -
-static int CExprLevI(void)
+static int CExprLevI()
 {
 	int		ret;
 
@@ -206,7 +206,7 @@ static int CExprLevI(void)
 }
 
 // Operatori: << >>
-static int CExprLevH(void)
+static int CExprLevH()
 {
 	int		ret;
 
@@ -229,7 +229,7 @@ static int CExprLevH(void)
 }
 
 // Operatori: < <= > >=
-static int CExprLevG(void)
+static int CExprLevG()
 {
 	int		ret;
 
@@ -260,7 +260,7 @@ static int CExprLevG(void)
 }
 
 // Operatori: == !=
-static int CExprLevF(void)
+static int CExprLevF()
 {
 	int		ret;
 
@@ -283,7 +283,7 @@ static int CExprLevF(void)
 }
 
 // Operators: &
-static int CExprLevE(void)
+static int CExprLevE()
 {
 	int		ret;
 
@@ -296,7 +296,7 @@ static int CExprLevE(void)
 }
 
 // Operators: ^
-static int CExprLevD(void)
+static int CExprLevD()
 {
 	int		ret;
 
@@ -309,7 +309,7 @@ static int CExprLevD(void)
 }
 
 // Operators: |
-static int CExprLevC(void)
+static int CExprLevC()
 {
 	int		ret;
 
@@ -322,7 +322,7 @@ static int CExprLevC(void)
 }
 
 // Operators: &&
-static int CExprLevB(void)
+static int CExprLevB()
 {
 	int		ret;
 
@@ -335,7 +335,7 @@ static int CExprLevB(void)
 }
 
 // Operators: ||
-static int CExprLevA(void)
+static int CExprLevA()
 {
 	int		ret;
 
@@ -353,10 +353,10 @@ static int CExprLevA(void)
 //
 //**************************************************************************
 
-static float FConstExprFactor(void)
+static float FConstExprFactor()
 {
+	VConstant*	Const;
 	float		ret = 0.0;
-	int			num;
 	VName		Name;
 
 	switch (tk_Token)
@@ -381,7 +381,7 @@ static float FConstExprFactor(void)
 		TK_NextToken();
 		if (TK_Check(PU_DCOLON))
 		{
-			TClass* Class = CheckForClass(Name);
+			VClass* Class = CheckForClass(Name);
 			if (!Class)
 			{
 				ParseError("Class name expected");
@@ -390,13 +390,13 @@ static float FConstExprFactor(void)
 
 			if (tk_Token == TK_IDENTIFIER)
 			{
-				num = CheckForConstant(Class, tk_Name);
-				if (num != -1)
+				Const = CheckForConstant(Class, tk_Name);
+				if (Const)
 				{
-					if (Constants[num].Type != ev_float)
+					if (Const->Type != ev_float)
 						ParseError(ERR_EXPR_TYPE_MISTMATCH);
 					TK_NextToken();
-					ret = Constants[num].value;
+					ret = Const->value;
 					break;
 				}
 			}
@@ -405,12 +405,12 @@ static float FConstExprFactor(void)
 			break;
 		}
 
-		num = CheckForConstant(ConstExprClass, Name);
-		if (num != -1)
+		Const = CheckForConstant(ConstExprClass, Name);
+		if (Const)
 		{
-			if (Constants[num].Type != ev_float)
+			if (Const->Type != ev_float)
 				ParseError(ERR_EXPR_TYPE_MISTMATCH);
-			ret = Constants[num].value;
+			ret = Const->value;
 		}
 		else
 		{
@@ -425,7 +425,7 @@ static float FConstExprFactor(void)
 }
 
 // Operatori: * / %
-static float FCExprLevJ(void)
+static float FCExprLevJ()
 {
 	bool	unaryMinus;
 	float	ret;
@@ -458,7 +458,7 @@ static float FCExprLevJ(void)
 }
 
 // Operatori: + -
-static float FCExprLevI(void)
+static float FCExprLevI()
 {
 	float		ret;
 
@@ -482,10 +482,10 @@ static float FCExprLevI(void)
 
 //=====================
 
-int EvalConstExpression(TClass*InClass, int type)
+int EvalConstExpression(VClass*InClass, int type)
 {
 	int		ret;
-	TClass*	c;
+	VClass*	c;
 
 	ConstExprClass = InClass;
 	switch (type)
@@ -505,8 +505,8 @@ int EvalConstExpression(TClass*InClass, int type)
 		TK_NextToken();
 		return ret;
 
-	 case ev_string:
-	 	if (tk_Token != TK_STRING)
+	case ev_string:
+		if (tk_Token != TK_STRING)
 		{
 			ERR_Exit(ERR_BAD_CONST_EXPR, true, "String expected");
 		}
@@ -514,11 +514,11 @@ int EvalConstExpression(TClass*InClass, int type)
 		TK_NextToken();
 		return ret;
 
-	 case ev_classid:
+	case ev_classid:
 		c = CheckForClass();
 		if (c)
 		{
-			return c->Index;
+			return c->MemberIndex;
 		}
 		else
 		{
@@ -528,8 +528,8 @@ int EvalConstExpression(TClass*InClass, int type)
 	 case ev_bool:
 		return !!CExprLevA();
 
-	 default:
-	 	ERR_Exit(ERR_NONE, true, "Constant value of this variable type cannot be defined.");
+	default:
+		ERR_Exit(ERR_NONE, true, "Constant value of this variable type cannot be defined.");
 	}
 
 	return 0;
@@ -541,7 +541,7 @@ int EvalConstExpression(TClass*InClass, int type)
 //
 //==========================================================================
 
-float ConstFloatExpression(void)
+float ConstFloatExpression()
 {
    	return FCExprLevI();
 }
@@ -549,9 +549,12 @@ float ConstFloatExpression(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/23 18:30:53  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.19  2006/02/28 19:17:20  dj_jl
 //	Added support for constants.
-//
+//	
 //	Revision 1.18  2006/02/27 21:23:54  dj_jl
 //	Rewrote names class.
 //	

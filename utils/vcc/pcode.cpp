@@ -53,26 +53,20 @@ struct FInstruction
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-void DumpAsmFunction(int num);
+void DumpAsmFunction(VMethod*);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TArray<TFunction*>	functions;
+TArray<VMemberBase*>	VMemberBase::GMembers;
+
+TPackage*			CurrentPackage;
 int					numbuiltins;
 
-TArray<constant_t>	Constants;
 int					ConstantsHash[256];
 
-TArray<TClass*>		classtypes;
-TArray<TFunction*>	vtables;
-
-TArray<TStruct*>	structtypes;
-
-TArray<field_t*>	FieldList;
-
-TArray<state_t*>	states;
+TArray<VMethod*>	vtables;
 TArray<mobjinfo_t>	mobj_info;
 TArray<mobjinfo_t>	script_ids;
 
@@ -99,15 +93,15 @@ static struct
 
 // CODE --------------------------------------------------------------------
 
-VStream& operator<<(VStream& Strm, field_t*& Obj)
+VStream& operator<<(VStream& Strm, VField*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
-VStream& operator<<(VStream& Strm, TFunction*& Obj)
+VStream& operator<<(VStream& Strm, VMethod*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
-VStream& operator<<(VStream& Strm, state_t*& Obj)
+VStream& operator<<(VStream& Strm, VState*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
-VStream& operator<<(VStream& Strm, TStruct*& Obj)
+VStream& operator<<(VStream& Strm, VStruct*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
-VStream& operator<<(VStream& Strm, TClass*& Obj)
+VStream& operator<<(VStream& Strm, VClass*& Obj)
 { return Strm << *(VMemberBase**)&Obj; }
 
 //==========================================================================
@@ -120,6 +114,8 @@ void PC_Init()
 {
 	memset(ConstantsHash, -1, sizeof(ConstantsHash));
 
+	CurrentPackage = new TPackage();
+
 	//	Strings
 	memset(StringLookup, 0, 256 * 4);
 	//	1-st string is empty
@@ -127,11 +123,6 @@ void PC_Init()
 	StringInfo[0].offs = 0;
 	StringInfo[0].next = 0;
 	strings.AddZeroed(4);
-
-	//	Classes
-	classtypes.AddItem(new TClass);
-	classtypes[0]->Name = NAME_Object;
-	classtypes[0]->Size = -1;
 }
 
 //==========================================================================
@@ -149,7 +140,7 @@ static int StringHashFunc(const char *str)
 //
 //  FindString
 //
-//  Atrie÷ nobØdi simbolu virk·u masØvÆ
+//  Return offset in strings array.
 //
 //==========================================================================
 
@@ -337,7 +328,7 @@ int UndoStatement()
 //
 //==========================================================================
 
-void BeginCode(int)
+void BeginCode(VMethod*)
 {
 	Instructions.Empty(1024);
 }
@@ -348,10 +339,10 @@ void BeginCode(int)
 //
 //==========================================================================
 
-void EndCode(int FuncNum)
+void EndCode(VMethod* Func)
 {
 	int i;
-	functions[FuncNum]->FirstStatement = CodeBuffer.Num();
+	Func->FirstStatement = CodeBuffer.Num();
 
 	for (i = 0; i < Instructions.Num(); i++)
 	{
@@ -513,9 +504,9 @@ public:
 		return *this;
 	}
 
-	void AddExport(VMemberBase* Obj, vuint8 Type)
+	void AddExport(VMemberBase* Obj)
 	{
-		TExport* E = new(Exports) TExport(Obj, Type);
+		TExport* E = new(Exports) TExport(Obj, Obj->MemberType);
 		E->Obj->ExportIndex = Exports.Num();
 	}
 };
@@ -544,29 +535,10 @@ void PC_WriteObject(char *name)
 
 	VProgsWriter Writer(f);
 
-	for (i = 0; i < FieldList.Num(); i++)
+	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		Writer.AddExport(FieldList[i], MEMBER_Field);
-	}
-	for (i = 0; i < functions.Num(); i++)
-	{
-		Writer.AddExport(functions[i], MEMBER_Method);
-	}
-	for (i = 0; i < structtypes.Num(); i++)
-	{
-		Writer.AddExport(structtypes[i], MEMBER_Struct);
-	}
-	for (i = 0; i < classtypes.Num(); i++)
-	{
-		Writer.AddExport(classtypes[i], MEMBER_Class);
-	}
-	for (i = 0; i < states.Num(); i++)
-	{
-		Writer.AddExport(states[i], MEMBER_State);
-	}
-	for (i = 0; i < Constants.Num(); i++)
-	{
-		Writer.AddExport(&Constants[i], MEMBER_Const);
+		if (VMemberBase::GMembers[i]->IsIn(CurrentPackage))
+			Writer.AddExport(VMemberBase::GMembers[i]);
 	}
 
 	memset(&progs, 0, sizeof(progs));
@@ -600,15 +572,11 @@ void PC_WriteObject(char *name)
 				break;
 			case OPC_PushFunction:
 			case OPC_Call:
-				Writer << functions[CodeBuffer[i + 1]];
-				break;
 			case OPC_PushClassId:
 			case OPC_DynamicCast:
 			case OPC_CaseGotoClassId:
-				Writer << classtypes[CodeBuffer[i + 1]];
-				break;
 			case OPC_PushState:
-				Writer << states[CodeBuffer[i + 1]];
+				Writer << VMemberBase::GMembers[CodeBuffer[i + 1]];
 				break;
 			default:
 				Writer << CodeBuffer[i + 1];
@@ -672,12 +640,6 @@ void PC_WriteObject(char *name)
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
 	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_exportinfo - progs.ofs_scriptids);
 	dprintf("Exports    %6d %6d\n", Writer.Exports.Num(), progs.ofs_exportdata - progs.ofs_exportinfo);
-	dprintf("Fields     %6d\n", FieldList.Num());
-	dprintf("Methods    %6d\n", functions.Num());
-	dprintf("States     %6d\n", states.Num());
-	dprintf("Constants  %6d\n", Constants.Num());
-	dprintf("Structs    %6d\n", structtypes.Num());
-	dprintf("Classes    %6d\n", classtypes.Num());
 	dprintf("Type data  %6d %6d\n", Writer.Exports.Num(), Writer.Tell() - progs.ofs_exportdata);
 	dprintf("TOTAL SIZE       %7d\n", Writer.Tell());
 
@@ -710,17 +672,17 @@ void PC_WriteObject(char *name)
 //
 //==========================================================================
 
-void DumpAsmFunction(int num)
+void DumpAsmFunction(VMethod* Func)
 {
 	int		s;
 	int		st;
 	int		i;
 
 	dprintf("--------------------------------------------\n");
-	dprintf("Dump ASM function %s.%s\n\n", *functions[num]->OuterClass->Name,
-		*functions[num]->Name);
-	s = functions[num]->FirstStatement;
-	if (functions[num]->Flags & FUNC_Native)
+	dprintf("Dump ASM function %s.%s\n\n", *Func->Outer->Name,
+		*Func->Name);
+	s = Func->FirstStatement;
+	if (Func->Flags & FUNC_Native)
 	{
 		//	Builtin function
 		dprintf("Builtin function.\n");
@@ -730,7 +692,7 @@ void DumpAsmFunction(int num)
 	{
 		//	Opcode
 		st = CodeBuffer[s];
-		dprintf("%6d (%4d): %s ", s, s - functions[num]->FirstStatement, StatementInfo[st].name);
+		dprintf("%6d (%4d): %s ", s, s - Func->FirstStatement, StatementInfo[st].name);
 		s++;
 		if (StatementInfo[st].params >= 1)
 		{
@@ -739,8 +701,8 @@ void DumpAsmFunction(int num)
 			if (st == OPC_Call)
 			{
 				//	Name of the function called
-				dprintf("(%s.%s)", *functions[CodeBuffer[s]]->OuterClass->Name,
-					*functions[CodeBuffer[s]]->Name);
+				dprintf("(%s.%s)", *VMemberBase::GMembers[CodeBuffer[s]]->Outer->Name,
+					*VMemberBase::GMembers[CodeBuffer[s]]->Name);
 			}
 			else if (st == OPC_PushString)
 			{
@@ -760,11 +722,12 @@ void DumpAsmFunction(int num)
 			s++;
 		}
 		dprintf("\n");
-		for (i = 0; i < functions.Num(); i++)
+		for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 		{
 			//	if next command is first statement of another function,
 			// then this function has ended.
-			if (s == functions[i]->FirstStatement)
+			if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method &&
+				s == ((VMethod*)VMemberBase::GMembers[i])->FirstStatement)
 			{
 				s = CodeBuffer.Num();
 			}
@@ -797,12 +760,13 @@ void PC_DumpAsm(char* name)
 		cname = NULL;
 		fname = buf;
 	}
-	for (i = 0; i < functions.Num(); i++)
+	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (!strcmp(cname, *functions[i]->OuterClass->Name) &&
-			!strcmp(fname, *functions[i]->Name))
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method &&
+			!strcmp(cname, *VMemberBase::GMembers[i]->Outer->Name) &&
+			!strcmp(fname, *VMemberBase::GMembers[i]->Name))
 		{
-			DumpAsmFunction(i);
+			DumpAsmFunction((VMethod*)VMemberBase::GMembers[i]);
 			return;
 		}
 	}
@@ -850,15 +814,16 @@ VStream& operator<<(VStream& Strm, TType& T)
 
 void VMemberBase::Serialise(VStream& Strm)
 {
+	Strm << Outer;
 }
 
 //==========================================================================
 //
-//	field_t::Serialise
+//	VField::Serialise
 //
 //==========================================================================
 
-void field_t::Serialise(VStream& Strm)
+void VField::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
 	Strm << Next
@@ -870,15 +835,14 @@ void field_t::Serialise(VStream& Strm)
 
 //==========================================================================
 //
-//	TFunction::Serialise
+//	VMethod::Serialise
 //
 //==========================================================================
 
-void TFunction::Serialise(VStream& Strm)
+void VMethod::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << OuterClass
-		<< STRM_INDEX(FirstStatement)
+	Strm << STRM_INDEX(FirstStatement)
 		<< STRM_INDEX(NumLocals)
 		<< STRM_INDEX(Flags)
 		<< ReturnType
@@ -890,15 +854,14 @@ void TFunction::Serialise(VStream& Strm)
 
 //==========================================================================
 //
-//	TStruct::Serialise
+//	VStruct::Serialise
 //
 //==========================================================================
 
-void TStruct::Serialise(VStream& Strm)
+void VStruct::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << OuterClass
-		<< ParentStruct
+	Strm << ParentStruct
 		<< IsVector
 		<< STRM_INDEX(Size)
 		<< Fields
@@ -908,11 +871,11 @@ void TStruct::Serialise(VStream& Strm)
 
 //==========================================================================
 //
-//	TClass::Serialise
+//	VClass::Serialise
 //
 //==========================================================================
 
-void TClass::Serialise(VStream& Strm)
+void VClass::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
 	Strm << ParentClass
@@ -925,11 +888,11 @@ void TClass::Serialise(VStream& Strm)
 
 //==========================================================================
 //
-//	state_t::Serialise
+//	VState::Serialise
 //
 //==========================================================================
 
-void state_t::Serialise(VStream& Strm)
+void VState::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
 	Strm << SpriteName
@@ -939,21 +902,19 @@ void state_t::Serialise(VStream& Strm)
 		<< time
 		<< nextstate
 		<< function
-		<< OuterClass
 		<< Next;
 }
 
 //==========================================================================
 //
-//	constant_t::Serialise
+//	VConstant::Serialise
 //
 //==========================================================================
 
-void constant_t::Serialise(VStream& Strm)
+void VConstant::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << OuterClass
-		<< Type;
+	Strm << Type;
 	switch (Type)
 	{
 	case ev_float:
@@ -973,9 +934,12 @@ void constant_t::Serialise(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/03/23 18:30:54  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.35  2006/03/18 16:52:21  dj_jl
 //	Better code serialisation.
-//
+//	
 //	Revision 1.34  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
 //	

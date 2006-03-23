@@ -53,9 +53,6 @@
 
 void InitInfoTables()
 {
-	states.Empty(1024);
-	mobj_info.Empty(128);
-	script_ids.Empty(128);
 }
 
 //==========================================================================
@@ -64,20 +61,21 @@ void InitInfoTables()
 //
 //==========================================================================
 
-int CheckForState(VName StateName, TClass* InClass)
+VState* CheckForState(VName StateName, VClass* InClass)
 {
-	for (TArray<state_t*>::TIterator It(states); It; ++It)
+	for (TArray<VMemberBase*>::TIterator It(VMemberBase::GMembers); It; ++It)
 	{
-		if ((*It)->Name == StateName && (*It)->OuterClass == InClass)
+		if ((*It)->MemberType == MEMBER_State && (*It)->Name == StateName &&
+			(*It)->Outer == InClass)
 		{
-			return It.GetIndex();
+			return (VState*)*It;
 		}
 	}
 	if (InClass->ParentClass)
 	{
 		return CheckForState(StateName, InClass->ParentClass);
 	}
-	return -1;
+	return NULL;
 }
 
 //==========================================================================
@@ -86,13 +84,14 @@ int CheckForState(VName StateName, TClass* InClass)
 //
 //==========================================================================
 
-static int FindState(VName StateName, TClass* InClass)
+static VState* FindState(VName StateName, VClass* InClass)
 {
-	for (TArray<state_t*>::TIterator It(states); It; ++It)
+	for (TArray<VMemberBase*>::TIterator It(VMemberBase::GMembers); It; ++It)
 	{
-		if ((*It)->Name == StateName && (*It)->OuterClass == InClass)
+		if ((*It)->MemberType == MEMBER_State && (*It)->Name == StateName &&
+			(*It)->Outer == InClass)
 		{
-			return It.GetIndex();
+			return (VState*)*It;
 		}
 	}
 	if (InClass->ParentClass)
@@ -100,7 +99,7 @@ static int FindState(VName StateName, TClass* InClass)
 		return FindState(StateName, InClass->ParentClass);
 	}
 	ParseError("No such state %s", *StateName);
-	return 0;
+	return NULL;
 }
 
 //==========================================================================
@@ -109,7 +108,7 @@ static int FindState(VName StateName, TClass* InClass)
 //
 //==========================================================================
 
-void ParseStates(TClass* InClass)
+void ParseStates(VClass* InClass)
 {
 	if (!InClass && TK_Check(PU_LPAREN))
 	{
@@ -123,17 +122,13 @@ void ParseStates(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		state_t* s = new state_t;
-		states.AddItem(s);
-		s->OuterClass = InClass;
-		InClass->AddState(s);
-
 		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 		}
-		s->Name = tk_Name;
+		VState* s = new VState(tk_Name, InClass, tk_Location);
+		InClass->AddState(s);
 		TK_NextToken();
 		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 		//	Sprite name
@@ -178,7 +173,7 @@ void ParseStates(TClass* InClass)
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
 		//	Code
-		s->function = ParseStateCode(InClass);
+		s->function = ParseStateCode(InClass, s);
 	}
 }
 
@@ -188,7 +183,7 @@ void ParseStates(TClass* InClass)
 //
 //==========================================================================
 
-void AddToMobjInfo(int Index, TClass* Class)
+void AddToMobjInfo(int Index, VClass* Class)
 {
 	int i = mobj_info.Add();
 	mobj_info[i].doomednum = Index;
@@ -201,7 +196,7 @@ void AddToMobjInfo(int Index, TClass* Class)
 //
 //==========================================================================
 
-void AddToScriptIds(int Index, TClass* Class)
+void AddToScriptIds(int Index, VClass* Class)
 {
 	int i = script_ids.Add();
 	script_ids[i].doomednum = Index;
@@ -214,7 +209,7 @@ void AddToScriptIds(int Index, TClass* Class)
 //
 //==========================================================================
 
-void SkipStates(TClass* InClass)
+void SkipStates(VClass* InClass)
 {
 	if (!InClass && TK_Check(PU_LPAREN))
 	{
@@ -228,7 +223,7 @@ void SkipStates(TClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		state_t* s = states[FindState(tk_Name, InClass)];
+		VState* s = FindState(tk_Name, InClass);
 
 		//	State identifier
 		if (tk_Token != TK_IDENTIFIER)
@@ -261,7 +256,7 @@ void SkipStates(TClass* InClass)
 		}
 		else
 		{
-			s->nextstate = states[FindState(tk_Name, InClass)];
+			s->nextstate = FindState(tk_Name, InClass);
 		}
 		TK_NextToken();
 		TK_Expect(PU_RPAREN, ERR_NONE);
@@ -273,9 +268,12 @@ void SkipStates(TClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/03/23 18:30:54  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.34  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
-//
+//	
 //	Revision 1.33  2006/03/10 19:31:55  dj_jl
 //	Use serialisation for progs files.
 //	

@@ -154,7 +154,7 @@ static TTree GetAddress(TTree op)
 //
 //==========================================================================
 
-static TTree ParseFunctionCall(TFunction* Func, bool is_method)
+static TTree ParseFunctionCall(VMethod* Func, bool is_method)
 {
 	int arg = 0;
 	int argsize = 0;
@@ -202,7 +202,7 @@ static TTree ParseFunctionCall(TFunction* Func, bool is_method)
 	{
 		AddStatement(OPC_PushNumber, argsize / 4 - num_needed_params);
 	}
-	AddStatement(OPC_Call, Func->Index);
+	AddStatement(OPC_Call, Func->MemberIndex);
 	TTree fop = TTree(Func->ReturnType);
 	if (fop.Type.type == ev_bool)
 		fop.Type = TType(ev_int);
@@ -215,9 +215,9 @@ static TTree ParseFunctionCall(TFunction* Func, bool is_method)
 //
 //==========================================================================
 
-static TTree ParseMethodCall(field_t* field, bool HaveSelf)
+static TTree ParseMethodCall(VField* field, bool HaveSelf)
 {
-	TFunction* Func = field->func;
+	VMethod* Func = field->func;
 	int arg = 0;
 	int argsize = 0;
 	int max_params;
@@ -294,7 +294,7 @@ static TTree ParseMethodCall(field_t* field, bool HaveSelf)
 	}
 	if (Func->Flags & FUNC_Static)
 	{
-		AddStatement(OPC_Call, Func->Index);
+		AddStatement(OPC_Call, Func->MemberIndex);
 	}
 	else
 	{
@@ -316,10 +316,12 @@ static TTree ParseExpressionPriority0()
 {
 	TTree		op;
 	int			num;
-	field_t*	field;
+	VField*		field;
 	VName		Name;
 	bool		bLocals;
-	TClass*		Class;
+	VClass*		Class;
+	VConstant*	Const;
+	VState*		State;
 
 	bLocals = CheckForLocal;
 	CheckForLocal = false;
@@ -411,7 +413,7 @@ static TTree ParseExpressionPriority0()
 		if (TK_Check(KW_NONE))
 		{
 			AddStatement(OPC_PushNumber, 0);
-			op = TTree(TType((TClass*)NULL));
+			op = TTree(TType((VClass*)NULL));
 			return op;
 		}
 		if (TK_Check(KW_NULL))
@@ -437,10 +439,6 @@ static TTree ParseExpressionPriority0()
 			TType type = CheckForType(SelfClass);
 			if (type.type != ev_unknown)
 			{
-				//FIXME Treat bool varaibles as ints because on big-endian systems 
-				// it's hard to detect when assignment mask should not be swapped.
-				if (type.type == ev_bool)
-					type = TType(ev_int);
 				ParseLocalVar(type);
 				return TTree();
 			}
@@ -452,7 +450,7 @@ static TTree ParseExpressionPriority0()
 		TK_NextToken();
 		if (TK_Check(PU_LPAREN))
 		{
-			TClass* Class = CheckForClass(Name);
+			VClass* Class = CheckForClass(Name);
 			if (Class)
 			{
 				op = ParseExpressionPriority13();
@@ -461,7 +459,7 @@ static TTree ParseExpressionPriority0()
 					ParseError(ERR_BAD_EXPR, "Class reference required");
 				}
 				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
-				AddStatement(OPC_DynamicCast, Class->Index);
+				AddStatement(OPC_DynamicCast, Class->MemberIndex);
 				op = TTree(TType(Class));
 				return op;
 			}
@@ -481,7 +479,7 @@ static TTree ParseExpressionPriority0()
 
 		if (TK_Check(PU_DCOLON))
 		{
-			TClass* Class = CheckForClass(Name);
+			VClass* Class = CheckForClass(Name);
 			if (!Class)
 			{
 				ParseError("Class name expected");
@@ -490,20 +488,20 @@ static TTree ParseExpressionPriority0()
 
 			if (tk_Token == TK_IDENTIFIER)
 			{
-				num = CheckForConstant(Class, tk_Name);
-				if (num != -1)
+				Const = CheckForConstant(Class, tk_Name);
+				if (Const)
 				{
 					TK_NextToken();
-					AddStatement(OPC_PushNumber, Constants[num].value);
-					op = TTree((EType)Constants[num].Type);
+					AddStatement(OPC_PushNumber, Const->value);
+					op = TTree((EType)Const->Type);
 					return op;
 				}
 
-				num = CheckForState(tk_Name, Class);
-				if (num != -1)
+				State = CheckForState(tk_Name, Class);
+				if (State)
 				{
 					TK_NextToken();
-					AddStatement(OPC_PushState, num);
+					AddStatement(OPC_PushState, State->MemberIndex);
 					op = TTree(ev_state);
 					return op;
 				}
@@ -532,11 +530,11 @@ static TTree ParseExpressionPriority0()
 			return op;
 		}
 
-		num = CheckForConstant(SelfClass, Name);
-		if (num != -1)
+		Const = CheckForConstant(SelfClass, Name);
+		if (Const)
 		{
-			AddStatement(OPC_PushNumber, Constants[num].value);
-			op = TTree((EType)Constants[num].Type);
+			AddStatement(OPC_PushNumber, Const->value);
+			op = TTree((EType)Const->Type);
 			return op;
 		}
 
@@ -563,10 +561,10 @@ static TTree ParseExpressionPriority0()
 				return op;
 			}
 
-			int num = CheckForState(Name, SelfClass);
-			if (num != -1)
+			State = CheckForState(Name, SelfClass);
+			if (State)
 			{
-				AddStatement(OPC_PushState, num);
+				AddStatement(OPC_PushState, State->MemberIndex);
 				op = TTree(ev_state);
 				return op;
 			}
@@ -575,7 +573,7 @@ static TTree ParseExpressionPriority0()
 		Class = CheckForClass(Name);
 		if (Class)
 		{
-			AddStatement(OPC_PushClassId, Class->Index);
+			AddStatement(OPC_PushClassId, Class->MemberIndex);
 			op = TTree(ev_classid);
 			return op;
 		}
@@ -602,7 +600,7 @@ static TTree ParseExpressionPriority1()
 	bool		done;
 	TTree		op;
 	TType		type;
-	field_t*	field;
+	VField*	field;
 
 	op = ParseExpressionPriority0();
 	done = false;
@@ -1763,9 +1761,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.46  2006/03/23 18:30:53  dj_jl
+//	Use single list of all members, members tree.
+//
 //	Revision 1.45  2006/03/18 16:53:24  dj_jl
 //	Use offset opcode.
-//
+//	
 //	Revision 1.44  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
 //	
