@@ -166,6 +166,7 @@ enum EKeyword
 	KW_ELSE,
 	KW_ENUM,
 	KW_FALSE,
+	KW_FINAL,
 	KW_FLOAT,
 	KW_FOR,
 	KW_IF,
@@ -256,6 +257,7 @@ public:
 		Private			= 0x0008,
 		ReadOnly		= 0x0010,
 		Transient		= 0x0020,
+		Final			= 0x0040,
 	};
 
 	static int Parse();
@@ -377,7 +379,8 @@ public:
 class VMethod : public VMemberBase
 {
 public:
-	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static };
+	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static |
+		TModifiers::Final };
 
 	int			FirstStatement;	//	Negative numbers are builtin functions
 	int			NumLocals;
@@ -704,9 +707,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.50  2006/03/23 23:11:27  dj_jl
+//	Added support for final methods.
+//
 //	Revision 1.49  2006/03/23 22:22:02  dj_jl
 //	Hashing of members for faster search.
-//
+//	
 //	Revision 1.48  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
 //	

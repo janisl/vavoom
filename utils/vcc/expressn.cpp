@@ -150,74 +150,16 @@ static TTree GetAddress(TTree op)
 
 //==========================================================================
 //
-//	ParseFunctionCall
-//
-//==========================================================================
-
-static TTree ParseFunctionCall(VMethod* Func, bool is_method)
-{
-	int arg = 0;
-	int argsize = 0;
-	int max_params;
-	int num_needed_params = Func->NumParams;
-	if (Func->Flags & FUNC_VarArgs)
-	{
-		max_params = MAX_ARG_COUNT - 1;
-	}
-	else
-	{
-		max_params = Func->NumParams;
-	}
-	if (is_method)
-	{
-		AddStatement(OPC_LocalAddress, 0);
-		AddStatement(OPC_PushPointed);
-	}
-	if (!TK_Check(PU_RPAREN))
-	{
-		do
-		{
-			TTree op = ParseExpressionPriority13();
-			if (arg >= max_params)
-			{
-				ParseError("Incorrect number of arguments, need %d, got %d.", max_params, arg + 1);
-			}
-			else
-			{
-				if (arg < num_needed_params)
-				{
-					op.Type.CheckMatch(Func->ParamTypes[arg]);
-				}
-			}
-			arg++;
-			argsize += op.Type.GetSize();
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	}
-	if (arg < num_needed_params)
-	{
-		ParseError("Incorrect argument count %d, should be %d", arg, num_needed_params);
-	}
-	if (Func->Flags & FUNC_VarArgs)
-	{
-		AddStatement(OPC_PushNumber, argsize / 4 - num_needed_params);
-	}
-	AddStatement(OPC_Call, Func->MemberIndex);
-	TTree fop = TTree(Func->ReturnType);
-	if (fop.Type.type == ev_bool)
-		fop.Type = TType(ev_int);
-	return fop;
-}
-
-//==========================================================================
-//
 //	ParseMethodCall
 //
 //==========================================================================
 
-static TTree ParseMethodCall(VField* field, bool HaveSelf)
+static TTree ParseMethodCall(VField* field, bool HaveSelf, bool BaseCall)
 {
 	VMethod* Func = field->func;
+	bool DirectCall = BaseCall || (Func->Flags & FUNC_Final);
+
+	//	Determine parameter count.
 	int arg = 0;
 	int argsize = 0;
 	int max_params;
@@ -230,6 +172,7 @@ static TTree ParseMethodCall(VField* field, bool HaveSelf)
 	{
 		max_params = Func->NumParams;
 	}
+
 	if (Func->Flags & FUNC_Static)
 	{
 		if (HaveSelf)
@@ -247,11 +190,12 @@ static TTree ParseMethodCall(VField* field, bool HaveSelf)
 			AddStatement(OPC_Offset, field->ofs);
 			AddStatement(OPC_PushPointedDelegate);
 		}
-		else
+		else if (!DirectCall)
 		{
 			AddStatement(OPC_PushVFunc, field->ofs);
 		}
 	}
+
 	if (!TK_Check(PU_RPAREN))
 	{
 		do
@@ -267,7 +211,7 @@ static TTree ParseMethodCall(VField* field, bool HaveSelf)
 				{
 					op.Type.CheckMatch(Func->ParamTypes[arg]);
 				}
-				if (!(Func->Flags & FUNC_Static))
+				if (!DirectCall)
 				{
 					if (op.Type.type == ev_vector)
 						AddStatement(OPC_Swap3);
@@ -287,12 +231,12 @@ static TTree ParseMethodCall(VField* field, bool HaveSelf)
 	if (Func->Flags & FUNC_VarArgs)
 	{
 		AddStatement(OPC_PushNumber, argsize / 4 - num_needed_params);
-		if (!(Func->Flags & FUNC_Static))
+		if (!DirectCall)
 		{
 			AddStatement(OPC_Swap);
 		}
 	}
-	if (Func->Flags & FUNC_Static)
+	if (DirectCall)
 	{
 		AddStatement(OPC_Call, Func->MemberIndex);
 	}
@@ -325,7 +269,7 @@ static TTree ParseExpressionPriority0()
 
 	bLocals = CheckForLocal;
 	CheckForLocal = false;
-   	switch (tk_Token)
+	switch (tk_Token)
 	{
 	case TK_INTEGER:
 		AddStatement(OPC_PushNumber, tk_Number);
@@ -374,7 +318,7 @@ static TTree ParseExpressionPriority0()
 				break;
 			}
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			return ParseFunctionCall(field->func, true);
+			return ParseMethodCall(field, false, true);
 		}
 		break;
 
@@ -469,7 +413,7 @@ static TTree ParseExpressionPriority0()
 				field = CheckForField(Name, SelfClass);
 				if (field && (field->type.type == ev_method || field->type.type == ev_delegate))
 				{
-					return ParseMethodCall(field, false);
+					return ParseMethodCall(field, false, false);
 				}
 			}
 
@@ -640,7 +584,7 @@ static TTree ParseExpressionPriority1()
 					{
 						if (TK_Check(PU_LPAREN))
 						{
-							op = ParseMethodCall(field, true);
+							op = ParseMethodCall(field, true, false);
 						}
 						else
 						{
@@ -653,7 +597,7 @@ static TTree ParseExpressionPriority1()
 					{
 						if (TK_Check(PU_LPAREN))
 						{
-							op = ParseMethodCall(field, true);
+							op = ParseMethodCall(field, true, false);
 						}
 						else
 						{
@@ -1447,7 +1391,7 @@ static TTree ParseExpressionPriority13()
 	TTree			op2;
 
 	op = ParseExpressionPriority12();
-   	if (TK_Check(PU_QUEST))
+	if (TK_Check(PU_QUEST))
 	{
 		op.Type.CheckSizeIs4();
 		int jumppos1 = AddStatement(OPC_IfNotGoto, 0);
@@ -1761,9 +1705,12 @@ TType ParseExpression(bool bLocals)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.47  2006/03/23 23:11:27  dj_jl
+//	Added support for final methods.
+//
 //	Revision 1.46  2006/03/23 18:30:53  dj_jl
 //	Use single list of all members, members tree.
-//
+//	
 //	Revision 1.45  2006/03/18 16:53:24  dj_jl
 //	Use offset opcode.
 //	

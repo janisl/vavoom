@@ -488,9 +488,16 @@ void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
 	Modifiers = TModifiers::Check(Modifiers, VMethod::AllowedModifiers);
 	int FuncFlags = TModifiers::MethodAttr(Modifiers);
 
-	if ((FuncFlags & FUNC_Static) && !(FuncFlags & FUNC_Native))
+	if (FuncFlags & FUNC_Static)
 	{
-		ParseError("Currently only native functions can be static");
+		if (!(FuncFlags & FUNC_Native))
+		{
+			ParseError("Currently only native methods can be static");
+		}
+		if (!(FuncFlags & FUNC_Final))
+		{
+			ParseError("Currently static methods must be final.");
+		}
 	}
 	if (CheckForFunction(InClass, method->Name))
 	{
@@ -554,6 +561,10 @@ void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
 	if (otherfield)
 	{
 		VMethod* BaseFunc = otherfield->func;
+		if (BaseFunc->Flags & FUNC_Final)
+		{
+			ParseError("Method already has been declared as final and cannot be overriden.");
+		}
 		if (!BaseFunc->ReturnType.Equals(Func->ReturnType))
 		{
 			ParseError("Method redefined with different return type");
@@ -713,7 +724,6 @@ void AddConstant(VClass* InClass, VName Name, int type, int value)
 		(VMemberBase*)InClass : (VMemberBase*)CurrentPackage, tk_Location);
 	cDef->Type = (EType)type;
 	cDef->value = value;
-	int hash = GetTypeHash(Name) & 255;
 }
 
 //==========================================================================
@@ -800,9 +810,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/23 23:11:27  dj_jl
+//	Added support for final methods.
+//
 //	Revision 1.19  2006/03/23 22:22:02  dj_jl
 //	Hashing of members for faster search.
-//
+//	
 //	Revision 1.18  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
 //	

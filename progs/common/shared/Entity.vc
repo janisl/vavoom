@@ -185,35 +185,35 @@ name SoundGender;
 //	Natives
 //
 
-native void Remove();
+native final void Remove();
 
-native bool SetState(state State);
-native void SetInitialState(state State);
-native state FindState(name StateName);
+native final bool SetState(state State);
+native final void SetInitialState(state State);
+native final state FindState(name StateName);
 
-native void PlaySound(name SoundName, int Channel);
-native void PlayFullVolumeSound(name SoundName, int Channel);
-native void StopSound(int Channel);
+native final void PlaySound(name SoundName, int Channel);
+native final void PlayFullVolumeSound(name SoundName, int Channel);
+native final void StopSound(int Channel);
 
-native bool CheckPosition(TVec Pos);
-native bool CheckRelPosition(TVec Pos);
-native bool TryMove(TVec newPos);
+native final bool CheckPosition(TVec Pos);
+native final bool CheckRelPosition(TVec Pos);
+native final bool TryMove(TVec newPos);
 
-native void SlideMove();
-native void BounceWall(float overbounce);
+native final void SlideMove();
+native final void BounceWall(float overbounce);
 
-native bool CheckWater();
+native final bool CheckWater();
 
-native void UpdateVelocity();
+native final void UpdateVelocity();
 
-native Entity CheckOnmobj();
+native final Entity CheckOnmobj();
 
-native void LinkToWorld();
-native void UnlinkFromWorld();
+native final void LinkToWorld();
+native final void UnlinkFromWorld();
 
-native bool CanSee(Entity Other);
+native final bool CanSee(Entity Other);
 
-native Entity RoughMonsterSearch(int distance);
+native final Entity RoughMonsterSearch(int distance);
 
 //==========================================================================
 //
@@ -501,6 +501,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/23 23:11:50  dj_jl
+//  Added support for final methods.
+//
 //  Revision 1.3  2006/03/13 21:24:53  dj_jl
 //  Added support for read-only, private and transient fields.
 //

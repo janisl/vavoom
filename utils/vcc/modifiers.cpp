@@ -83,6 +83,10 @@ int TModifiers::Parse()
 		{
 			Modifiers |= Transient;
 		}
+		else if (TK_Check(KW_FINAL))
+		{
+			Modifiers |= Final;
+		}
 		else
 		{
 			done = true;
@@ -106,6 +110,10 @@ const char* TModifiers::Name(int Modifier)
 	case Native:	return "native";
 	case Static:	return "static";
 	case Abstract:	return "abstract";
+	case Private:	return "private";
+	case ReadOnly:	return "readonly";
+	case Transient:	return "transient";
+	case Final:		return "final";
 	}
 	return "";
 }
@@ -146,6 +154,8 @@ int TModifiers::MethodAttr(int Modifiers)
 		Attributes |= FUNC_Native;
 	if (Modifiers & Static)
 		Attributes |= FUNC_Static;
+	if (Modifiers & Final)
+		Attributes |= FUNC_Final;
 	return Attributes;
 }
 
@@ -188,9 +198,12 @@ int TModifiers::FieldAttr(int Modifiers)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/03/23 23:11:27  dj_jl
+//	Added support for final methods.
+//
 //	Revision 1.3  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
-//
+//	
 //	Revision 1.2  2006/02/25 17:07:57  dj_jl
 //	Linked list of fields, export all type info.
 //	

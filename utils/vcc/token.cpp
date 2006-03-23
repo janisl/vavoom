@@ -106,6 +106,7 @@ static char* Keywords[] =
 	"else",
 	"enum",
 	"false",
+	"final",
 	"float",
 	"for",
 	"if",
@@ -631,6 +632,12 @@ static void ProcessLetterToken()
 		{
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_FALSE;
+		}
+		else if (s[1] == 'i' && s[2] == 'n' && s[3] == 'a' && s[4] == 'l' &&
+			s[5] == 0)
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_FINAL;
 		}
 		else if (s[1] == 'l' && s[2] == 'o' && s[3] == 'a' && s[4] == 't' &&
 			s[5] == 0)
@@ -1324,9 +1331,12 @@ const char* TLocation::GetSource() const
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/03/23 23:11:27  dj_jl
+//	Added support for final methods.
+//
 //	Revision 1.30  2006/03/19 14:45:49  dj_jl
 //	Added code location object.
-//
+//	
 //	Revision 1.29  2006/03/19 13:15:29  dj_jl
 //	Per character keyword checks.
 //	

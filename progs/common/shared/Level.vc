@@ -93,7 +93,7 @@ native readonly private Thinker	__ThinkerTail;
 //	Natives
 //
 
-native sector_t *PointInSector(TVec Point);
+native final sector_t *PointInSector(TVec Point);
 
 defaultproperties
 {
@@ -102,6 +102,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/23 23:11:50  dj_jl
+//  Added support for final methods.
+//
 //  Revision 1.6  2006/03/13 21:24:53  dj_jl
 //  Added support for read-only, private and transient fields.
 //

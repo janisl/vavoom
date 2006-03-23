@@ -62,9 +62,10 @@ enum
 
 enum
 {
-	FUNC_Native		= 0x0001,	// Native function
-	FUNC_Static		= 0x0002,	// Static function
+	FUNC_Native		= 0x0001,	// Native method
+	FUNC_Static		= 0x0002,	// Static method
 	FUNC_VarArgs	= 0x0004,	// Variable argument count
+	FUNC_Final		= 0x0008,	// Final version of a method
 };
 
 enum
@@ -254,9 +255,12 @@ struct dprograms_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/03/23 23:10:55  dj_jl
+//	Added support for final methods.
+//
 //	Revision 1.31  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.30  2006/03/13 21:22:20  dj_jl
 //	Added support for read-only, private and transient fields.
 //	

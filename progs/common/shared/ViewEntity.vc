@@ -39,7 +39,7 @@ state NextState;
 float StateTime;
 BasePlayer Player;
 
-native void SetState(state stnum);
+native final void SetState(state stnum);
 
 defaultproperties
 {
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/03/23 23:11:50  dj_jl
+//  Added support for final methods.
+//
 //  Revision 1.2  2006/03/12 20:02:31  dj_jl
 //  States as objects, added state variable type.
 //
