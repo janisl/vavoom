@@ -59,6 +59,26 @@ void InitTypes()
 
 //==========================================================================
 //
+//	VMemberBase::VMemberBase
+//
+//==========================================================================
+
+VMemberBase::VMemberBase(vuint8 InType, VName InName, VMemberBase* InOuter,
+	TLocation InLoc)
+: MemberType(InType)
+, MemberIndex(GMembers.AddItem(this))
+, Name(InName)
+, Outer(InOuter)
+, Loc(InLoc)
+, ExportIndex(0)
+{
+	int HashIndex = Name.GetIndex() & 4095;
+	HashNext = GMembersHash[HashIndex];
+	GMembersHash[HashIndex] = this;
+}
+
+//==========================================================================
+//
 //	VMemberBase::IsIn
 //
 //==========================================================================
@@ -69,6 +89,28 @@ bool VMemberBase::IsIn(VMemberBase* SomeOuter) const
 		if (Tst == SomeOuter)
 			return true;
 	return !SomeOuter;
+}
+
+//==========================================================================
+//
+//	VMemberBase::StaticFindMember
+//
+//==========================================================================
+
+VMemberBase* VMemberBase::StaticFindMember(VName InName,
+	VMemberBase* InOuter, vuint8 InType)
+{
+	int HashIndex = InName.GetIndex() & 4095;
+	for (VMemberBase* m = GMembersHash[HashIndex]; m; m = m->HashNext)
+	{
+		if (m->Name == InName && (m->Outer == InOuter ||
+			(InOuter == ANY_PACKAGE && m->Outer->MemberType == MEMBER_Package)) &&
+			(InType == ANY_MEMBER || m->MemberType == InType))
+		{
+			return m;
+		}
+	}
+	return NULL;
 }
 
 //==========================================================================
@@ -254,24 +296,24 @@ TType CheckForType(VClass* InClass)
 	{
 		return CheckForTypeKeyword();
 	}
-
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	if (tk_Token != TK_IDENTIFIER)
 	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
-			TK_Check(VMemberBase::GMembers[i]->Name))
-		{
-			return TType((VClass*)VMemberBase::GMembers[i]);
-		}
+		return TType(ev_unknown);
 	}
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+
+	VMemberBase* m = VMemberBase::StaticFindMember(tk_Name, ANY_PACKAGE,
+		MEMBER_Class);
+	if (m)
 	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Struct &&
-			(InClass ? VMemberBase::GMembers[i]->Outer == InClass :
-			VMemberBase::GMembers[i]->Outer->MemberType == MEMBER_Package) &&
-			TK_Check(VMemberBase::GMembers[i]->Name))
-		{
-			return TType((VStruct*)VMemberBase::GMembers[i]);
-		}
+		TK_NextToken();
+		return TType((VClass*)m);
+	}
+	m = VMemberBase::StaticFindMember(tk_Name, InClass ?
+		(VMemberBase*)InClass : (VMemberBase*)ANY_PACKAGE, MEMBER_Struct);
+	if (m)
+	{
+		TK_NextToken();
+		return TType((VStruct*)m);
 	}
 	if (InClass)
 	{
@@ -293,23 +335,17 @@ TType CheckForType(VClass* InClass, VName Name)
 		return TType(ev_unknown);
 	}
 
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	VMemberBase* m = VMemberBase::StaticFindMember(Name, ANY_PACKAGE,
+		MEMBER_Class);
+	if (m)
 	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
-			Name == VMemberBase::GMembers[i]->Name)
-		{
-			return TType((VClass*)VMemberBase::GMembers[i]);
-		}
+		return TType((VClass*)m);
 	}
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	m = VMemberBase::StaticFindMember(Name, InClass ?
+		(VMemberBase*)InClass : (VMemberBase*)ANY_PACKAGE, MEMBER_Struct);
+	if (m)
 	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Struct &&
-			(InClass ? VMemberBase::GMembers[i]->Outer == InClass :
-			VMemberBase::GMembers[i]->Outer->MemberType == MEMBER_Package) &&
-			Name == VMemberBase::GMembers[i]->Name)
-		{
-			return TType((VStruct*)VMemberBase::GMembers[i]);
-		}
+		return TType((VStruct*)m);
 	}
 	if (InClass)
 	{
@@ -331,13 +367,12 @@ VClass* CheckForClass()
 		return NULL;
 	}
 
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	VMemberBase* m = VMemberBase::StaticFindMember(tk_Name, ANY_PACKAGE,
+		MEMBER_Class);
+	if (m)
 	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
-			TK_Check(VMemberBase::GMembers[i]->Name))
-		{
-			return (VClass*)VMemberBase::GMembers[i];
-		}
+		TK_NextToken();
+		return (VClass*)m;
 	}
 	return NULL;
 }
@@ -350,13 +385,11 @@ VClass* CheckForClass()
 
 VClass* CheckForClass(VName Name)
 {
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	VMemberBase* m = VMemberBase::StaticFindMember(Name, ANY_PACKAGE,
+		MEMBER_Class);
+	if (m)
 	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
-			VMemberBase::GMembers[i]->Name == Name)
-		{
-			return (VClass*)VMemberBase::GMembers[i];
-		}
+		return (VClass*)m;
 	}
 	return NULL;
 }
@@ -400,16 +433,8 @@ VMethod* CheckForFunction(VClass* InClass, VName Name)
 	{
 		return NULL;
 	}
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
-	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method &&
-			VMemberBase::GMembers[i]->Outer == InClass &&
-			VMemberBase::GMembers[i]->Name == Name)
-		{
-			return (VMethod*)VMemberBase::GMembers[i];
-		}
-	}
-	return NULL;
+	return (VMethod*)VMemberBase::StaticFindMember(Name, InClass,
+		MEMBER_Method);
 }
 
 //==========================================================================
@@ -420,19 +445,11 @@ VMethod* CheckForFunction(VClass* InClass, VName Name)
 
 VConstant* CheckForConstant(VClass* InClass, VName Name)
 {
-#if 1
-	for (int i = ConstantsHash[GetTypeHash(Name) & 255];
-		i != -1; i = ((VConstant*)VMemberBase::GMembers[i])->HashNext)
-#else
-	for (int i = 0; i < numconstants; i++)
-#endif
+	VMemberBase* m = VMemberBase::StaticFindMember(Name, InClass ?
+		(VMemberBase*)InClass : (VMemberBase*)ANY_PACKAGE, MEMBER_Const);
+	if (m)
 	{
-		if ((InClass ? VMemberBase::GMembers[i]->Outer == InClass :
-			VMemberBase::GMembers[i]->Outer->MemberType == MEMBER_Package) &&
-			VMemberBase::GMembers[i]->Name == Name)
-		{
-			return (VConstant*)VMemberBase::GMembers[i];
-		}
+		return (VConstant*)m;
 	}
 	if (InClass)
 	{
@@ -1757,9 +1774,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.51  2006/03/23 22:22:02  dj_jl
+//	Hashing of members for faster search.
+//
 //	Revision 1.50  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
-//
+//	
 //	Revision 1.49  2006/03/13 21:24:21  dj_jl
 //	Added support for read-only, private and transient fields.
 //	

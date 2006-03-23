@@ -714,8 +714,6 @@ void AddConstant(VClass* InClass, VName Name, int type, int value)
 	cDef->Type = (EType)type;
 	cDef->value = value;
 	int hash = GetTypeHash(Name) & 255;
-	cDef->HashNext = ConstantsHash[hash];
-	ConstantsHash[hash] = cDef->MemberIndex;
 }
 
 //==========================================================================
@@ -802,9 +800,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/23 22:22:02  dj_jl
+//	Hashing of members for faster search.
+//
 //	Revision 1.18  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
-//
+//	
 //	Revision 1.17  2006/03/12 13:03:22  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	

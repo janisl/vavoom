@@ -63,13 +63,11 @@ void InitInfoTables()
 
 VState* CheckForState(VName StateName, VClass* InClass)
 {
-	for (TArray<VMemberBase*>::TIterator It(VMemberBase::GMembers); It; ++It)
+	VMemberBase* m = VMemberBase::StaticFindMember(StateName, InClass,
+		MEMBER_State);
+	if (m)
 	{
-		if ((*It)->MemberType == MEMBER_State && (*It)->Name == StateName &&
-			(*It)->Outer == InClass)
-		{
-			return (VState*)*It;
-		}
+		return (VState*)m;
 	}
 	if (InClass->ParentClass)
 	{
@@ -86,13 +84,11 @@ VState* CheckForState(VName StateName, VClass* InClass)
 
 static VState* FindState(VName StateName, VClass* InClass)
 {
-	for (TArray<VMemberBase*>::TIterator It(VMemberBase::GMembers); It; ++It)
+	VMemberBase* m = VMemberBase::StaticFindMember(StateName, InClass,
+		MEMBER_State);
+	if (m)
 	{
-		if ((*It)->MemberType == MEMBER_State && (*It)->Name == StateName &&
-			(*It)->Outer == InClass)
-		{
-			return (VState*)*It;
-		}
+		return (VState*)m;
 	}
 	if (InClass->ParentClass)
 	{
@@ -268,9 +264,12 @@ void SkipStates(VClass* InClass)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/03/23 22:22:02  dj_jl
+//	Hashing of members for faster search.
+//
 //	Revision 1.35  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
-//
+//	
 //	Revision 1.34  2006/03/12 20:04:50  dj_jl
 //	States as objects, added state variable type.
 //	

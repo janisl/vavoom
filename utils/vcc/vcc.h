@@ -59,6 +59,9 @@ class VMemberBase;
 #define MAX_IDENTIFIER_LENGTH	64
 #define MAX_LOCAL_DEFS			64
 
+#define ANY_PACKAGE				((VPackage*)-1)
+#define ANY_MEMBER				255
+
 // TYPES -------------------------------------------------------------------
 
 enum ECompileError
@@ -293,22 +296,19 @@ public:
 	VMemberBase*	Outer;
 	TLocation		Loc;
 	int				ExportIndex;
+	VMemberBase*	HashNext;
 
 	static TArray<VMemberBase*>		GMembers;
+	static VMemberBase*				GMembersHash[4096];
 
-	VMemberBase(vuint8 InType, VName InName, VMemberBase* InOuter, TLocation InLoc)
-	: MemberType(InType)
-	, MemberIndex(GMembers.AddItem(this))
-	, Name(InName)
-	, Outer(InOuter)
-	, Loc(InLoc)
-	, ExportIndex(0)
-	{}
+	VMemberBase(vuint8, VName, VMemberBase*, TLocation);
 	virtual ~VMemberBase()
 	{}
 
 	virtual void Serialise(VStream&);
 	bool IsIn(VMemberBase*) const;
+
+	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
 };
 
 class TType
@@ -416,7 +416,6 @@ class VConstant : public VMemberBase
 public:
 	byte		Type;
 	int			value;
-	int			HashNext;
 
 	VConstant(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Const, InName, InOuter, InLoc)
@@ -513,10 +512,10 @@ public:
 	void AddState(VState* s);
 };
 
-class TPackage : public VMemberBase
+class VPackage : public VMemberBase
 {
 public:
-	TPackage()
+	VPackage()
 	: VMemberBase(MEMBER_Package, NAME_None, NULL, TLocation())
 	{}
 };
@@ -548,6 +547,7 @@ void TK_Expect(EKeyword kwd, ECompileError error);
 void TK_Expect(EPunctuation punct, ECompileError error);
 
 void PC_Init();
+void AddPackagePath(const char* Path);
 int FindString(const char *str);
 int AddStatement(int statement);
 int AddStatement(int statement, int parm1);
@@ -623,10 +623,8 @@ extern EKeyword			tk_Keyword;
 extern EPunctuation		tk_Punct;
 extern VName			tk_Name;
 
-extern TPackage*			CurrentPackage;
+extern VPackage*			CurrentPackage;
 extern int					numbuiltins;
-
-extern int					ConstantsHash[256];
 
 extern TArray<VMethod*>		vtables;
 extern TArray<mobjinfo_t>	mobj_info;
@@ -706,9 +704,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.49  2006/03/23 22:22:02  dj_jl
+//	Hashing of members for faster search.
+//
 //	Revision 1.48  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
-//
+//	
 //	Revision 1.47  2006/03/19 14:45:49  dj_jl
 //	Added code location object.
 //	

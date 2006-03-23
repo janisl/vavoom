@@ -60,17 +60,18 @@ void DumpAsmFunction(VMethod*);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 TArray<VMemberBase*>	VMemberBase::GMembers;
+VMemberBase*			VMemberBase::GMembersHash[4096];
 
-TPackage*			CurrentPackage;
+VPackage*			CurrentPackage;
 int					numbuiltins;
-
-int					ConstantsHash[256];
 
 TArray<VMethod*>	vtables;
 TArray<mobjinfo_t>	mobj_info;
 TArray<mobjinfo_t>	script_ids;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static TArray<const char*>	PackagePath;
 
 static TArray<FInstruction>	Instructions;
 static TArray<int>			CodeBuffer;
@@ -112,9 +113,7 @@ VStream& operator<<(VStream& Strm, VClass*& Obj)
 
 void PC_Init()
 {
-	memset(ConstantsHash, -1, sizeof(ConstantsHash));
-
-	CurrentPackage = new TPackage();
+	CurrentPackage = new VPackage();
 
 	//	Strings
 	memset(StringLookup, 0, 256 * 4);
@@ -123,6 +122,17 @@ void PC_Init()
 	StringInfo[0].offs = 0;
 	StringInfo[0].next = 0;
 	strings.AddZeroed(4);
+}
+
+//==========================================================================
+//
+//	AddPackagePath
+//
+//==========================================================================
+
+void AddPackagePath(const char* Path)
+{
+	PackagePath.AddItem(Path);
 }
 
 //==========================================================================
@@ -757,8 +767,8 @@ void PC_DumpAsm(char* name)
 	}
 	else
 	{
-		cname = NULL;
-		fname = buf;
+		dprintf("Dump ASM: Bad name %s\n", name);
+		return;
 	}
 	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
@@ -934,9 +944,12 @@ void VConstant::Serialise(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.37  2006/03/23 22:22:02  dj_jl
+//	Hashing of members for faster search.
+//
 //	Revision 1.36  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
-//
+//	
 //	Revision 1.35  2006/03/18 16:52:21  dj_jl
 //	Better code serialisation.
 //	
