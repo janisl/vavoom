@@ -34,12 +34,24 @@ class AlarmIndicator : Decoration
 
 void A_AlarmActive()
 {
-	PlaySound('misc/alarm', CHAN_VOICE);
 	ReactionCount--;
-	if (!ReactionCount)
+	if (ReactionCount <= 0)
 	{
-		SetState(IdleState);
+		Enemy = none;
 		ReactionCount = 60;
+		if(Enemy == none)
+		{
+			SetState(IdleState);
+		}
+	}
+	if (ReactionCount == 2)
+	{
+		// Should make enemies go to Idle state again
+		Sector->SoundTarget = none;
+	}
+	else if (ReactionCount > 50)
+	{
+		PlaySound('misc/alarm', CHAN_VOICE);
 	}
 }
 
@@ -64,6 +76,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/24 15:41:46  firebrand_kh
+//  Made alarms shut down properly
+//
 //  Revision 1.4  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //
