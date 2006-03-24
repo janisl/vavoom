@@ -624,6 +624,14 @@ void Damage(Actor inflictor, Actor source, int damage)
 			Normalise(MobjCenter(self) - MobjCenter(inflictor));
 	}
 
+	if (inflictor && inflictor.bPoisonDamage && Class == Templar || Class == Inquisitor || 
+		Class == Programmer || Class == Loremaster || Class == DegninOre ||
+		Class == WoodBarrel || Class == TechBarrel)
+	{
+		// Don't damage these actors
+		return;
+	}
+
 	// player specific
 	if (bIsPlayer)
 	{
@@ -3471,6 +3479,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2006/03/24 15:41:09  firebrand_kh
+//  Made poison arrows don't damage certain actors
+//
 //  Revision 1.37  2006/03/21 15:09:34  firebrand_kh
 //  Fixes for onmobj checks
 //
