@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "flame thrower";
 	IdleState = S_FLAME_THROWER;
 	WeaponType = StrifeDefs::wp_flame;
-	Ammo1Count = 40;
+	Ammo1Count = 100;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/24 15:42:47  firebrand_kh
+//  Fixed ammo amount of the pickup
+//
 //  Revision 1.4  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

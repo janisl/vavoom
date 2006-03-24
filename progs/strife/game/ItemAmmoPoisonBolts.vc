@@ -37,12 +37,15 @@ defaultproperties
 	PickupString = "poison bolts";
 	IdleState = S_ARROWS_POISON;
 	AmmoType = StrifeDefs::am_poison_arrow;
-	AmmoCount = 20;
+	AmmoCount = 10;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/24 15:42:47  firebrand_kh
+//  Fixed ammo amount of the pickup
+//
 //  Revision 1.4  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

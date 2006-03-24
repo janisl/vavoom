@@ -36,13 +36,13 @@ class Ammo_satchel : Pickup
 bool HandlePickup(Actor Toucher)
 {
 	Player(Toucher.Player).Backpack = true;
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_clip, 20);
+	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_clip, 10);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_electric_arrow, 4);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_poison_arrow, 2);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_cell, 20);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_misl, 4);
 	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_grenade1, 6);
-	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_grenade2, 2);
+	Player(Toucher.Player).GiveAmmo(StrifeDefs::am_grenade2, 4);
 	return true;
 }
 
@@ -61,6 +61,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/24 15:42:47  firebrand_kh
+//  Fixed ammo amount of the pickup
+//
 //  Revision 1.8  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

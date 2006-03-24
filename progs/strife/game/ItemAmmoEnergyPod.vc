@@ -39,12 +39,15 @@ defaultproperties
 	PickupString = "energy pod";
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = StrifeDefs::am_cell;
-	AmmoCount = 40;
+	AmmoCount = 20;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/24 15:42:47  firebrand_kh
+//  Fixed ammo amount of the pickup
+//
 //  Revision 1.4  2006/02/17 19:06:53  dj_jl
 //  Moved common defs to classes.
 //
