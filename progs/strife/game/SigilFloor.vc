@@ -43,6 +43,8 @@ void A_SigilFloorAttack()
 
 	//	Spawn bolt in the center.
 	lightning1 = Spawn(SigilFX4, vector(Origin.x, Origin.y, ONCEILINGZ));
+	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
+		lightning1.Origin.z = CeilingZ - lightning1.Height;
 	lightning1.Instigator = Instigator;
 	lightning1.bNoGravity = false;
 	if (Programmer(Instigator) || Specter1(Instigator))
@@ -55,6 +57,8 @@ void A_SigilFloorAttack()
 
 	//	Spawn a random bolt.
 	lightning2 = Spawn(SpecterFX4, vector(x, y, ONCEILINGZ));
+	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
+		lightning2.Origin.z = CeilingZ - lightning2.Height;
 	lightning2.Instigator = Instigator;
 	lightning2.bNoGravity = false;
 	if (Programmer(Instigator) || Specter1(Instigator))
@@ -87,6 +91,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/24 15:43:22  firebrand_kh
+//  Added 3d floor checks
+//
 //  Revision 1.4  2005/03/28 07:45:29  dj_jl
 //  Some Boom line specials, fixed multiple bugs.
 //
