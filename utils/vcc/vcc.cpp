@@ -35,20 +35,20 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void cpp_init(void);
-size_t cpp_main(char *, void **);
-void cpp_add_include(char *);
-void cpp_add_define(int, char *);
+void cpp_init();
+size_t cpp_main(char*, void**);
+void cpp_add_include(char*);
+void cpp_add_define(int, char*);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void SignalHandler(int s);
-static void Init(void);
+static void Init();
 static void ProcessArgs(int ArgCount, char **ArgVector);
 static void OpenDebugFile(char *name);
-static void DumpAsm(void);
+static void DumpAsm();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -141,11 +141,11 @@ static void SignalHandler(int s)
 //
 //==========================================================================
 
-static void Init(void)
+static void Init()
 {
 	char		pvbuf[32];
 
-	//	Izveido apstr∆des programmas komandlÿniju
+	//	Add define of the progs version.
 	memset(pvbuf, 0, 32);
 	sprintf(pvbuf, "PROG_VERSION=%d", PROG_VERSION);
 	cpp_add_define('D', pvbuf);
@@ -166,9 +166,9 @@ static void Init(void)
 //
 //==========================================================================
 
-static void DisplayUsage(void)
+static void DisplayUsage()
 {
-	//	Druk∆ virsrakstu
+	//	Print usage.
 	printf("\n");
 	printf("VCC Version 1.%d. Copyright (c)2000-2001 by JL.          ("__DATE__" "__TIME__")\n", PROG_VERSION);
 	printf("Usage: vcc [options] source[.c] [object[.dat]]\n");
@@ -177,6 +177,7 @@ static void DisplayUsage(void)
 	printf("    -D<name>[=<value>] Define macro\n");
 	printf("    -U<name>           Unefine macro\n");
 	printf("    -I<directory>      Include files directory\n");
+	printf("    -P<directory>      Package import files directory\n");
 	exit(1);
 }
 
@@ -227,6 +228,9 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 			case 'D':
 			case 'U':
 				cpp_add_define(option, text);
+				break;
+			case 'P':
+				AddPackagePath(text);
 				break;
 			default:
 				DisplayUsage();
@@ -295,7 +299,7 @@ static void OpenDebugFile(char *name)
 //
 //==========================================================================
 
-static void DumpAsm(void)
+static void DumpAsm()
 {
 	int		i;
 
@@ -332,9 +336,12 @@ int dprintf(const char *text, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/03/26 13:06:49  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.18  2006/02/27 21:23:55  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.17  2005/11/29 19:31:43  dj_jl
 //	Class and struct classes, removed namespaces, beautification.
 //	

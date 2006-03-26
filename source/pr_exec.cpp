@@ -156,88 +156,6 @@ void PR_Traceback()
 
 //==========================================================================
 //
-//	VProgsReader
-//
-//==========================================================================
-
-class VProgsReader : public VStream
-{
-private:
-	VStream*			Stream;
-
-public:
-	VName*				NameRemap;
-	int					NumExports;
-	VMemberBase**		Exports;
-
-	VProgsReader(VStream* InStream)
-	: Stream(InStream)
-	, NameRemap(0)
-	{
-		bLoading = true;
-	}
-	~VProgsReader()
-	{
-		Z_Free(NameRemap);
-		delete Stream;
-	}
-
-	//	Stream interface.
-	void Serialise(void* Data, int Len)
-	{
-		Stream->Serialise(Data, Len);
-	}
-	void Seek(int Pos)
-	{
-		Stream->Seek(Pos);
-	}
-	int Tell()
-	{
-		return Stream->Tell();
-	}
-	int TotalSize()
-	{
-		return Stream->TotalSize();
-	}
-	bool AtEnd()
-	{
-		return Stream->AtEnd();
-	}
-	void Flush()
-	{
-		Stream->Flush();
-	}
-	bool Close()
-	{
-		return Stream->Close();
-	}
-
-	VStream& operator<<(VName& Name)
-	{
-		int NameIndex;
-		*this << STRM_INDEX(NameIndex);
-		Name = NameRemap[NameIndex];
-		return *this;
-	}
-	VStream& operator<<(VMemberBase*& Ref)
-	{
-		int ObjIndex;
-		*this << STRM_INDEX(ObjIndex);
-		if (ObjIndex > 0)
-		{
-			check(ObjIndex <= NumExports);
-			Ref = Exports[ObjIndex - 1];
-		}
-		else
-		{
-			Ref = NULL;
-		}
-		return *this;
-	}
-};
-
-//==========================================================================
-//
 //	TProgs::Load
 //
 //==========================================================================
@@ -245,210 +163,7 @@ public:
 void TProgs::Load(const char *AName)
 {
 	guard(TProgs::Load);
-	int				i;
-	int*			Statements;
-	VName*			NameRemap;
-	dprograms_t		Progs;
-
-	if (fl_devmode && FL_FindFile(va("progs/%s.dat", AName)))
-	{
-		//	Load PROGS from a specified file
-		Reader = new VProgsReader(FL_OpenFileRead(va("progs/%s.dat", AName)));
-	}
-	else
-	{
-		//	Load PROGS from wad file
-		Reader = new VProgsReader(W_CreateLumpReader(VName(AName, VName::AddLower8), WADNS_Progs));
-	}
-
-	//	Calcutate CRC
-	crc.Init();
-	for (i = 0; i < Reader->TotalSize(); i++)
-	{
-		crc + Streamer<byte>(*Reader);
-	}
-
-	// byte swap the header
-	Reader->Seek(0);
-	Reader->Serialise(Progs.magic, 4);
-	for (i = 1; i < (int)sizeof(Progs) / 4; i++)
-	{
-		*Reader << ((int*)&Progs)[i];
-	}
-
-	if (strncmp(Progs.magic, PROG_MAGIC, 4))
-		Sys_Error("Progs has wrong file ID, possibly older version");
-	if (Progs.version != PROG_VERSION)
-		Sys_Error("Progs has wrong version number (%i should be %i)",
-			Progs.version, PROG_VERSION);
-
-	Strings = Z_CNew<char>(Progs.num_strings);
-	Statements = Z_CNew<int>(Progs.num_statements);
-	VTables = Z_CNew<VMethod*>(Progs.num_vtables);
-
-	// Read names
-	NameRemap = Z_New<VName>(Progs.num_names);
-	Reader->Seek(Progs.ofs_names);
-	for (i = 0; i < Progs.num_names; i++)
-	{
-		VNameEntry E;
-		*Reader << E;
-		NameRemap[i] = E.Name;
-	}
-	Reader->NameRemap = NameRemap;
-
-	//	Read strings.
-	Reader->Seek(Progs.ofs_strings);
-	Reader->Serialise(Strings, Progs.num_strings);
-
-	VMemberBase** Exports = Z_CNew<VMemberBase*>(Progs.num_exports);
-	Reader->Exports = Exports;
-	Reader->NumExports = Progs.num_exports;
-
-	//	Create objects
-	Reader->Seek(Progs.ofs_exportinfo);
-	for (i = 0; i < Progs.num_exports; i++)
-	{
-		vuint8		Type;
-		VName		Name;
-
-		*Reader << Type << Name;
-		switch (Type)
-		{
-		case MEMBER_Package:
-			Exports[i] = new(PU_STATIC) VPackage(Name);
-			break;
-		case MEMBER_Field:
-			Exports[i] = new(PU_STATIC) VField(Name);
-			break;
-		case MEMBER_Method:
-			Exports[i] = new(PU_STATIC) VMethod(Name);
-			break;
-		case MEMBER_State:
-			Exports[i] = new(PU_STATIC) VState(Name);
-			break;
-		case MEMBER_Const:
-			Exports[i] = new(PU_STATIC) VConstant(Name);
-			break;
-		case MEMBER_Struct:
-			Exports[i] = new(PU_STATIC) VStruct(Name);
-			break;
-		case MEMBER_Class:
-			Exports[i] = VClass::FindClass(*Name);
-			if (!Exports[i])
-			{
-				Exports[i] = new(PU_STRING) VClass(Name);
-			}
-			break;
-		}
-	}
-
-	//	Serialise objects.
-	Reader->Seek(Progs.ofs_exportdata);
-	for (i = 0; i < Progs.num_exports; i++)
-	{
-		Exports[i]->Serialise(*Reader);
-	}
-
-	//	Set up info tables.
-	Reader->Seek(Progs.ofs_mobjinfo);
-	for (i = 0; i < Progs.num_mobjinfo; i++)
-	{
-		mobjinfo_t mi;
-		*Reader << mi;
-		VClass::GMobjInfos.AddItem(mi);
-	}
-	Reader->Seek(Progs.ofs_scriptids);
-	for (i = 0; i < Progs.num_scriptids; i++)
-	{
-		mobjinfo_t si;
-		*Reader << si;
-		VClass::GScriptIds.AddItem(si);
-	}
-
-	//	Set up function pointers in vitual tables
-	Reader->Seek(Progs.ofs_vtables);
-	for (i = 0; i < Progs.num_vtables; i++)
-	{
-		*Reader << VTables[i];
-	}
-
-	//
-	//	Read statements and patch code
-	//
-	Reader->Seek(Progs.ofs_statements);
-	for (i = 0; i < Progs.num_statements; i++)
-	{
-		vuint8 Tmp;
-		*Reader << Tmp;
-		Statements[i] = Tmp;
-		if (OpcodeArgCount[Statements[i]] >= 1)
-		{
-			switch (Statements[i])
-			{
-			case OPC_PushString:
-				*Reader << Statements[i + 1];
-				Statements[i + 1] += (int)Strings;
-				break;
-			case OPC_PushName:
-			case OPC_CaseGotoName:
-				*Reader << *(VName*)&Statements[i + 1];
-				break;
-			case OPC_PushFunction:
-			case OPC_Call:
-			case OPC_PushClassId:
-			case OPC_DynamicCast:
-			case OPC_CaseGotoClassId:
-			case OPC_PushState:
-				*Reader << *(VMemberBase**)&Statements[i + 1];
-				break;
-			case OPC_Goto:
-			case OPC_IfGoto:
-			case OPC_IfNotGoto:
-			case OPC_IfTopGoto:
-			case OPC_IfNotTopGoto:
-				*Reader << Statements[i + 1];
-				Statements[i + 1] = (int)(Statements + Statements[i + 1]);
-				break;
-			default:
-				*Reader << Statements[i + 1];
-				break;
-			}
-		}
-		if (OpcodeArgCount[Statements[i]] >= 2)
-		{
-			*Reader << Statements[i + 2];
-			switch (Statements[i])
-			{
-			case OPC_CaseGoto:
-			case OPC_CaseGotoClassId:
-			case OPC_CaseGotoName:
-				Statements[i + 2] = (int)(Statements + Statements[i + 2]);
-				break;
-			}
-		}
-		i += OpcodeArgCount[Statements[i]];
-	}
-
-	for (i = 0; i < Progs.num_exports; i++)
-	{
-		if (Exports[i]->MemberType == MEMBER_Method &&
-			!(((VMethod*)Exports[i])->Flags & FUNC_Native))
-		{
-			((VMethod*)Exports[i])->FirstStatement =
-				(int)(Statements + ((VMethod*)Exports[i])->FirstStatement);
-		}
-		if (Exports[i]->MemberType == MEMBER_Class)
-		{
-			if (!((VClass*)Exports[i])->ClassVTable)
-			{
-				((VClass*)Exports[i])->ClassVTable = VTables + ((VClass*)Exports[i])->VTableOffset;
-			}
-			((VClass*)Exports[i])->InitReferences();
-		}
-	}
-
-	Z_Free(NameRemap);
+	Pkg = VMemberBase::StaticLoadPackage(VName(AName, VName::AddLower8));
 	unguard;
 }
 
@@ -460,9 +175,9 @@ void TProgs::Load(const char *AName)
 
 void TProgs::Unload()
 {
-	Z_Free(VTables);
-	Z_Free(Reader->Exports);
-	delete Reader;
+	Z_Free(Pkg->VTables);
+//	Z_Free(Pkg->Reader->Exports);
+//	delete Pkg->Reader;
 }
 
 //==========================================================================
@@ -481,17 +196,6 @@ VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 			return (VStruct*)VMemberBase::GMembers[i];
 	return NULL;
 	unguard;
-}
-
-//==========================================================================
-//
-//  TProgs::FuncName
-//
-//==========================================================================
-
-char* TProgs::FuncName(int fnum)
-{
-	return const_cast<char*>(*((VMethod *)fnum)->Name);
 }
 
 //==========================================================================
@@ -1890,12 +1594,24 @@ void TProgs::DumpProfile()
 	}
 }
 
+int TProgs::GetStringOffs(const char *Str)
+{
+	return Str - Pkg->Strings;
+}
+
+char *TProgs::StrAtOffs(int Offs)
+{
+	return Pkg->Strings + Offs;
+}
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.54  2006/03/26 13:06:18  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.53  2006/03/23 18:31:59  dj_jl
 //	Members tree.
-//
+//	
 //	Revision 1.52  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
 //	

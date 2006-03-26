@@ -248,6 +248,9 @@ struct dprograms_t
 	int		ofs_exportinfo;
 	int		ofs_exportdata;
 	int		num_exports;
+
+	int		ofs_imports;
+	int		num_imports;
 };
 
 #endif
@@ -255,9 +258,12 @@ struct dprograms_t
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.33  2006/03/26 13:06:18  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.32  2006/03/23 23:10:55  dj_jl
 //	Added support for final methods.
-//
+//	
 //	Revision 1.31  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
 //	

@@ -322,7 +322,7 @@ void FL_Init()
 	}
 #endif
 
-	AddGameDir("basev");
+	AddGameDir("basev/common");
 
 	p = M_CheckParm("-iwad");
 	if (p && p < myargc - 1)
@@ -707,9 +707,12 @@ VStream* FL_OpenFileWrite(const VStr& Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/03/26 13:06:18  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.22  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.21  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

@@ -29,11 +29,172 @@
 bool					VMemberBase::GObjInitialized;
 VClass*					VMemberBase::GClasses;
 TArray<VMemberBase*>	VMemberBase::GMembers;
+TArray<VPackage*>		VMemberBase::GLoadedPackages;
 
 TArray<mobjinfo_t>		VClass::GMobjInfos;
 TArray<mobjinfo_t>		VClass::GScriptIds;
 TArray<VName>			VClass::GSpriteNames;
 TArray<VName>			VClass::GModelNames;
+
+#define DECLARE_OPC(name, argcount)		argcount
+#define OPCODE_INFO
+static int OpcodeArgCount[NUM_OPCODES] =
+{
+#include "progdefs.h"
+};
+
+//==========================================================================
+//
+//	VProgsImport
+//
+//==========================================================================
+
+struct VProgsImport
+{
+	vuint8			Type;
+	VName			Name;
+	vint32			OuterIndex;
+
+	VMemberBase*	Obj;
+
+	VProgsImport()
+	: Type(0)
+	, OuterIndex(0)
+	, Obj(0)
+	{}
+
+	friend VStream& operator<<(VStream& Strm, VProgsImport& I)
+	{
+		return Strm << I.Type << I.Name << STRM_INDEX(I.OuterIndex);
+	}
+};
+
+//==========================================================================
+//
+//	VProgsExport
+//
+//==========================================================================
+
+struct VProgsExport
+{
+	vuint8			Type;
+	VName			Name;
+
+	VMemberBase*	Obj;
+
+	friend VStream& operator<<(VStream& Strm, VProgsExport& E)
+	{
+		return Strm << E.Type << E.Name;
+	}
+};
+
+//==========================================================================
+//
+//	VProgsReader
+//
+//==========================================================================
+
+class VProgsReader : public VStream
+{
+private:
+	VStream*			Stream;
+
+public:
+	VName*				NameRemap;
+	int					NumImports;
+	VProgsImport*		Imports;
+	int					NumExports;
+	VProgsExport*		Exports;
+
+	VProgsReader(VStream* InStream)
+	: Stream(InStream)
+	, NameRemap(0)
+	{
+		bLoading = true;
+	}
+	~VProgsReader()
+	{
+		Z_Free(NameRemap);
+		delete Stream;
+	}
+
+	//	Stream interface.
+	void Serialise(void* Data, int Len)
+	{
+		Stream->Serialise(Data, Len);
+	}
+	void Seek(int Pos)
+	{
+		Stream->Seek(Pos);
+	}
+	int Tell()
+	{
+		return Stream->Tell();
+	}
+	int TotalSize()
+	{
+		return Stream->TotalSize();
+	}
+	bool AtEnd()
+	{
+		return Stream->AtEnd();
+	}
+	void Flush()
+	{
+		Stream->Flush();
+	}
+	bool Close()
+	{
+		return Stream->Close();
+	}
+
+	VStream& operator<<(VName& Name)
+	{
+		int NameIndex;
+		*this << STRM_INDEX(NameIndex);
+		Name = NameRemap[NameIndex];
+		return *this;
+	}
+	VStream& operator<<(VMemberBase*& Ref)
+	{
+		int ObjIndex;
+		*this << STRM_INDEX(ObjIndex);
+		if (ObjIndex > 0)
+		{
+			check(ObjIndex <= NumExports);
+			Ref = Exports[ObjIndex - 1].Obj;
+		}
+		else if (ObjIndex < 0)
+		{
+			check(-ObjIndex <= NumImports);
+			Ref = Imports[-ObjIndex - 1].Obj;
+		}
+		else
+		{
+			Ref = NULL;
+		}
+		return *this;
+	}
+
+	VMemberBase* GetImport(int Index)
+	{
+		VProgsImport& I = Imports[Index];
+		if (!I.Obj)
+		{
+			if (I.Type == MEMBER_Package)
+				I.Obj = VMemberBase::StaticLoadPackage(I.Name);
+			else
+				I.Obj = VMemberBase::StaticFindMember(I.Name,
+					GetImport(-I.OuterIndex - 1), I.Type);
+		}
+		return I.Obj;
+	}
+	void ResolveImports()
+	{
+		for (int i = 0; i < NumImports; i++)
+			GetImport(i);
+	}
+};
 
 //==========================================================================
 //
@@ -76,6 +237,23 @@ VStr VMemberBase::GetFullName() const
 
 //==========================================================================
 //
+//	VMemberBase::GetPackage
+//
+//==========================================================================
+
+VPackage* VMemberBase::GetPackage() const
+{
+	guard(VMemberBase::GetPackage);
+	for (const VMemberBase* p = this; p; p = p->Outer)
+		if (p->MemberType == MEMBER_Package)
+			return (VPackage*)p;
+	Sys_Error("Member object %s not in a package", *GetFullName());
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VMemberBase::Serialise
 //
 //==========================================================================
@@ -83,6 +261,16 @@ VStr VMemberBase::GetFullName() const
 void VMemberBase::Serialise(VStream& Strm)
 {
 	Strm << Outer;
+}
+
+//==========================================================================
+//
+//	VMemberBase::PostLoad
+//
+//==========================================================================
+
+void VMemberBase::PostLoad()
+{
 }
 
 //==========================================================================
@@ -110,6 +298,247 @@ void VMemberBase::StaticInit()
 void VMemberBase::StaticExit()
 {
 	GObjInitialized = false;
+}
+
+//==========================================================================
+//
+//	VMemberBase::StaticLoadPackage
+//
+//==========================================================================
+
+VPackage* VMemberBase::StaticLoadPackage(VName InName)
+{
+	guard(VMemberBase::StaticLoadPackage);
+	int				i;
+	VName*			NameRemap;
+	dprograms_t		Progs;
+	TCRC			crc;
+	VProgsReader*	Reader;
+
+	//	Check if already loaded.
+	for (i = 0; i < GLoadedPackages.Num(); i++)
+		if (GLoadedPackages[i]->Name == InName)
+			return GLoadedPackages[i];
+
+	if (fl_devmode && FL_FindFile(va("progs/%s.dat", *InName)))
+	{
+		//	Load PROGS from a specified file
+		Reader = new VProgsReader(FL_OpenFileRead(va("progs/%s.dat", *InName)));
+	}
+	else
+	{
+		//	Load PROGS from wad file
+		Reader = new VProgsReader(W_CreateLumpReader(InName, WADNS_Progs));
+	}
+
+	//	Calcutate CRC
+	crc.Init();
+	for (i = 0; i < Reader->TotalSize(); i++)
+	{
+		crc + Streamer<byte>(*Reader);
+	}
+
+	// byte swap the header
+	Reader->Seek(0);
+	Reader->Serialise(Progs.magic, 4);
+	for (i = 1; i < (int)sizeof(Progs) / 4; i++)
+	{
+		*Reader << ((int*)&Progs)[i];
+	}
+
+	if (strncmp(Progs.magic, PROG_MAGIC, 4))
+		Sys_Error("Progs has wrong file ID, possibly older version");
+	if (Progs.version != PROG_VERSION)
+		Sys_Error("Progs has wrong version number (%i should be %i)",
+			Progs.version, PROG_VERSION);
+
+	// Read names
+	NameRemap = Z_New<VName>(Progs.num_names);
+	Reader->Seek(Progs.ofs_names);
+	for (i = 0; i < Progs.num_names; i++)
+	{
+		VNameEntry E;
+		*Reader << E;
+		NameRemap[i] = E.Name;
+	}
+	Reader->NameRemap = NameRemap;
+
+	Reader->Imports = Z_CNew<VProgsImport>(Progs.num_imports);
+	Reader->NumImports = Progs.num_imports;
+	Reader->Seek(Progs.ofs_imports);
+	for (i = 0; i < Progs.num_imports; i++)
+	{
+		*Reader << Reader->Imports[i];
+	}
+	Reader->ResolveImports();
+
+	VProgsExport* Exports = Z_CNew<VProgsExport>(Progs.num_exports);
+	Reader->Exports = Exports;
+	Reader->NumExports = Progs.num_exports;
+
+	VPackage* Pkg = new(PU_STATIC) VPackage(InName);
+	GLoadedPackages.AddItem(Pkg);
+	Pkg->Checksum = crc;
+	Pkg->Reader = Reader;
+
+	//	Create objects
+	Reader->Seek(Progs.ofs_exportinfo);
+	for (i = 0; i < Progs.num_exports; i++)
+	{
+		*Reader << Exports[i];
+		switch (Exports[i].Type)
+		{
+		case MEMBER_Package:
+			Exports[i].Obj = new(PU_STATIC) VPackage(Exports[i].Name);
+			break;
+		case MEMBER_Field:
+			Exports[i].Obj = new(PU_STATIC) VField(Exports[i].Name);
+			break;
+		case MEMBER_Method:
+			Exports[i].Obj = new(PU_STATIC) VMethod(Exports[i].Name);
+			break;
+		case MEMBER_State:
+			Exports[i].Obj = new(PU_STATIC) VState(Exports[i].Name);
+			break;
+		case MEMBER_Const:
+			Exports[i].Obj = new(PU_STATIC) VConstant(Exports[i].Name);
+			break;
+		case MEMBER_Struct:
+			Exports[i].Obj = new(PU_STATIC) VStruct(Exports[i].Name);
+			break;
+		case MEMBER_Class:
+			Exports[i].Obj = VClass::FindClass(*Exports[i].Name);
+			if (!Exports[i].Obj)
+			{
+				Exports[i].Obj = new(PU_STRING) VClass(Exports[i].Name);
+			}
+			break;
+		}
+	}
+
+	//	Read strings.
+	Pkg->Strings = Z_CNew<char>(Progs.num_strings);
+	Reader->Seek(Progs.ofs_strings);
+	Reader->Serialise(Pkg->Strings, Progs.num_strings);
+
+	Pkg->Statements = Z_CNew<int>(Progs.num_statements);
+	Pkg->VTables = Z_CNew<VMethod*>(Progs.num_vtables);
+
+	//	Serialise objects.
+	Reader->Seek(Progs.ofs_exportdata);
+	for (i = 0; i < Progs.num_exports; i++)
+	{
+		Exports[i].Obj->Serialise(*Reader);
+		if (!Exports[i].Obj->Outer)
+			Exports[i].Obj->Outer = Pkg;
+	}
+
+	//	Set up info tables.
+	Reader->Seek(Progs.ofs_mobjinfo);
+	for (i = 0; i < Progs.num_mobjinfo; i++)
+	{
+		mobjinfo_t mi;
+		*Reader << mi;
+		VClass::GMobjInfos.AddItem(mi);
+	}
+	Reader->Seek(Progs.ofs_scriptids);
+	for (i = 0; i < Progs.num_scriptids; i++)
+	{
+		mobjinfo_t si;
+		*Reader << si;
+		VClass::GScriptIds.AddItem(si);
+	}
+
+	//	Set up function pointers in vitual tables
+	Reader->Seek(Progs.ofs_vtables);
+	for (i = 0; i < Progs.num_vtables; i++)
+	{
+		*Reader << Pkg->VTables[i];
+	}
+
+	//
+	//	Read statements and patch code
+	//
+	Reader->Seek(Progs.ofs_statements);
+	for (i = 0; i < Progs.num_statements; i++)
+	{
+		vuint8 Tmp;
+		*Reader << Tmp;
+		Pkg->Statements[i] = Tmp;
+		if (OpcodeArgCount[Pkg->Statements[i]] >= 1)
+		{
+			switch (Pkg->Statements[i])
+			{
+			case OPC_PushString:
+				*Reader << Pkg->Statements[i + 1];
+				Pkg->Statements[i + 1] += (int)Pkg->Strings;
+				break;
+			case OPC_PushName:
+			case OPC_CaseGotoName:
+				*Reader << *(VName*)&Pkg->Statements[i + 1];
+				break;
+			case OPC_PushFunction:
+			case OPC_Call:
+			case OPC_PushClassId:
+			case OPC_DynamicCast:
+			case OPC_CaseGotoClassId:
+			case OPC_PushState:
+				*Reader << *(VMemberBase**)&Pkg->Statements[i + 1];
+				break;
+			case OPC_Goto:
+			case OPC_IfGoto:
+			case OPC_IfNotGoto:
+			case OPC_IfTopGoto:
+			case OPC_IfNotTopGoto:
+				*Reader << Pkg->Statements[i + 1];
+				Pkg->Statements[i + 1] = (int)(Pkg->Statements + Pkg->Statements[i + 1]);
+				break;
+			default:
+				*Reader << Pkg->Statements[i + 1];
+				break;
+			}
+		}
+		if (OpcodeArgCount[Pkg->Statements[i]] >= 2)
+		{
+			*Reader << Pkg->Statements[i + 2];
+			switch (Pkg->Statements[i])
+			{
+			case OPC_CaseGoto:
+			case OPC_CaseGotoClassId:
+			case OPC_CaseGotoName:
+				Pkg->Statements[i + 2] = (int)(Pkg->Statements + Pkg->Statements[i + 2]);
+				break;
+			}
+		}
+		i += OpcodeArgCount[Pkg->Statements[i]];
+	}
+
+	for (i = 0; i < Progs.num_exports; i++)
+	{
+		Exports[i].Obj->PostLoad();
+	}
+
+	Z_Free(NameRemap);
+	return Pkg;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMemberBase::StaticFindMember
+//
+//==========================================================================
+
+VMemberBase* VMemberBase::StaticFindMember(VName InName,
+	VMemberBase* InOuter, vuint8 InType)
+{
+	guard(VMemberBase::StaticFindMember);
+	for (int i = 0; i < GMembers.Num(); i++)
+		if (GMembers[i]->MemberType == InType &&
+			GMembers[i]->Name == InName && GMembers[i]->Outer == InOuter)
+			return GMembers[i];
+	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -491,6 +920,20 @@ void VMethod::Serialise(VStream& Strm)
 
 //==========================================================================
 //
+//	VMethod::PostLoad
+//
+//==========================================================================
+
+void VMethod::PostLoad()
+{
+	if (!(Flags & FUNC_Native))
+	{
+		FirstStatement = (int)(GetPackage()->Statements + FirstStatement);
+	}
+}
+
+//==========================================================================
+//
 //	VState::VState
 //
 //==========================================================================
@@ -618,6 +1061,17 @@ void VStruct::Serialise(VStream& Strm)
 		<< STRM_INDEX(AvailableSize)
 		<< STRM_INDEX(AvailableOfs);
 	unguard;
+}
+
+//==========================================================================
+//
+//	VStruct::PostLoad
+//
+//==========================================================================
+
+void VStruct::PostLoad()
+{
+	InitReferences();
 }
 
 //==========================================================================
@@ -822,36 +1276,22 @@ void VClass::Serialise(VStream& Strm)
 	VMemberBase::Serialise(Strm);
 	int PrevSize = ClassSize;
 	VClass* PrevParent = ParentClass;
-	if (!ClassVTable)
+	Strm << ParentClass
+		<< Fields
+		<< States
+		<< STRM_INDEX(VTableOffset)
+		<< STRM_INDEX(ClassNumMethods)
+		<< STRM_INDEX(ClassSize);
+	if ((ObjectFlags & CLASSOF_Native) && ClassSize != PrevSize)
 	{
-		Strm << ParentClass
-			<< Fields
-			<< States
-			<< STRM_INDEX(VTableOffset)
-			<< STRM_INDEX(ClassNumMethods)
-			<< STRM_INDEX(ClassSize);
-		if ((ObjectFlags & CLASSOF_Native) && ClassSize != PrevSize)
-		{
-			Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
-				GetName(), PrevSize, ClassSize);
-		}
-		if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
-		{
-			Sys_Error("Bad parent class, class %s, C++ %s, VavoomC %s)",
-				GetName(), PrevParent ? PrevParent->GetName() : "(none)",
-				ParentClass ? ParentClass->GetName() : "(none)");
-		}
+		Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
+			GetName(), PrevSize, ClassSize);
 	}
-	else
+	if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
 	{
-		//FIXME Class already has been loaded.
-		vint32 Dummy;
-		Strm << STRM_INDEX(Dummy)
-			<< STRM_INDEX(Dummy)
-			<< STRM_INDEX(Dummy)
-			<< STRM_INDEX(Dummy)
-			<< STRM_INDEX(Dummy)
-			<< STRM_INDEX(Dummy);
+		Sys_Error("Bad parent class, class %s, C++ %s, VavoomC %s)",
+			GetName(), PrevParent ? PrevParent->GetName() : "(none)",
+			ParentClass ? ParentClass->GetName() : "(none)");
 	}
 	unguard;
 }
@@ -1014,6 +1454,21 @@ VState* VClass::FindStateChecked(VName AName)
 
 //==========================================================================
 //
+//	VClass::PostLoad
+//
+//==========================================================================
+
+void VClass::PostLoad()
+{
+	if (!ClassVTable)
+	{
+		ClassVTable = GetPackage()->VTables + VTableOffset;
+	}
+	InitReferences();
+}
+
+//==========================================================================
+//
 //	VClass::InitReferences
 //
 //==========================================================================
@@ -1097,9 +1552,7 @@ void VClass::SerialiseObject(VStream& Strm, VObject* Obj)
 		{
 			continue;
 		}
-		guard(Field);
 		VField::SerialiseFieldValue(Strm, (byte*)Obj + F->Ofs, F->Type);
-		unguardf(("(%s)", *F->Name));
 	}
 	unguardf(("(%s)", GetName()));
 }
@@ -1123,9 +1576,12 @@ void VClass::CleanObject(VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/26 13:06:18  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.14  2006/03/23 18:31:59  dj_jl
 //	Members tree.
-//
+//	
 //	Revision 1.13  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
 //	

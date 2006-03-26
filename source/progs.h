@@ -64,12 +64,10 @@ public:
 class TProgs
 {
 public:
-	TCRC		crc;
-
 	void Load(const char*);
 	void Unload(void);
 
-	VStruct* FindStruct(VName InName, VClass* InClass);
+	static VStruct* FindStruct(VName InName, VClass* InClass);
 
 	static int Exec(VMethod *func);
 	static int Exec(VMethod *func, int parm1);
@@ -111,23 +109,13 @@ public:
 		int parm10, int parm11, int parm12, int parm13, int parm14,
 		int parm15, int parm16);
 	static int ExecuteFunction(VMethod *func);
-	void DumpProfile();
+	static void DumpProfile();
 
-	int GetStringOffs(const char *Str)
-	{
-		return Str - Strings;
-	}
-	char *StrAtOffs(int Offs)
-	{
-		return Strings + Offs;
-	}
+	int GetStringOffs(const char *Str);
+	char *StrAtOffs(int Offs);
 
 private:
-	VProgsReader*	Reader;
-	char*			Strings;
-	VMethod**		VTables;
-
-	char* FuncName(int fnum);
+	VPackage*		Pkg;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -197,9 +185,12 @@ inline VName PR_PopName()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/03/26 13:06:18  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.22  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.21  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	

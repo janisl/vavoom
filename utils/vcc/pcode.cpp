@@ -72,6 +72,7 @@ TArray<mobjinfo_t>	script_ids;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<const char*>	PackagePath;
+static TArray<VPackage*>	LoadedPackages;
 
 static TArray<FInstruction>	Instructions;
 static TArray<int>			CodeBuffer;
@@ -424,25 +425,190 @@ float LittleFloat(float f)
 
 //==========================================================================
 //
-//	VProgsWriter
+//	VProgsImport
 //
 //==========================================================================
 
-struct TExport
+struct VProgsImport
 {
-	VMemberBase*	Obj;
 	vuint8			Type;
+	VName			Name;
+	vint32			OuterIndex;
 
-	TExport(VMemberBase* InObj, vuint8 InType)
-	: Obj(InObj)
-	, Type(InType)
+	VMemberBase*	Obj;
+
+	VProgsImport()
+	: Type(0)
+	, OuterIndex(0)
+	, Obj(0)
+	{}
+	VProgsImport(VMemberBase* InObj, vint32 InOuterIndex)
+	: Type(InObj->MemberType)
+	, Name(InObj->Name)
+	, OuterIndex(InOuterIndex)
+	, Obj(InObj)
 	{}
 
-	friend VStream& operator<<(VStream& Strm, TExport& E)
+	friend VStream& operator<<(VStream& Strm, VProgsImport& I)
 	{
-		return Strm << E.Type << E.Obj->Name;
+		return Strm << I.Type << I.Name << STRM_INDEX(I.OuterIndex);
 	}
 };
+
+//==========================================================================
+//
+//	VProgsExport
+//
+//==========================================================================
+
+struct VProgsExport
+{
+	vuint8			Type;
+	VName			Name;
+
+	VMemberBase*	Obj;
+
+	VProgsExport()
+	: Type(0)
+	, Obj(0)
+	{}
+	VProgsExport(VMemberBase* InObj)
+	: Type(InObj->MemberType)
+	, Name(InObj->Name)
+	, Obj(InObj)
+	{}
+
+	friend VStream& operator<<(VStream& Strm, VProgsExport& E)
+	{
+		return Strm << E.Type << E.Name;
+	}
+};
+
+//==========================================================================
+//
+//	VProgsReader
+//
+//==========================================================================
+
+class VProgsReader : public VStream
+{
+private:
+	FILE*				File;
+
+public:
+	VName*				NameRemap;
+	int					NumImports;
+	VProgsImport*		Imports;
+	int					NumExports;
+	VProgsExport*		Exports;
+
+	VProgsReader(FILE* InFile)
+	: File(InFile)
+	, NameRemap(0)
+	, NumExports(0)
+	, Exports(0)
+	{
+		bLoading = true;
+	}
+	~VProgsReader()
+	{
+		fclose(File);
+	}
+
+	//	Stream interface.
+	void Serialise(void* V, int Length)
+	{
+		if (fread(V, Length, 1, File) != 1)
+		{
+			bError = true;
+		}
+	}
+	void Seek(int InPos)
+	{
+		if (fseek(File, InPos, SEEK_SET))
+		{
+			bError = true;
+		}
+	}
+	int Tell()
+	{
+		return ftell(File);
+	}
+	int TotalSize()
+	{
+		int CurPos = ftell(File);
+		fseek(File, 0, SEEK_END);
+		int Size = ftell(File);
+		fseek(File, CurPos, SEEK_SET);
+		return Size;
+	}
+	bool AtEnd()
+	{
+		return !!feof(File);
+	}
+	void Flush()
+	{
+		if (fflush(File))
+		{
+			bError = true;
+		}
+	}
+	bool Close()
+	{
+		return !bError;
+	}
+
+	VStream& operator<<(VName& Name)
+	{
+		int NameIndex;
+		*this << STRM_INDEX(NameIndex);
+		Name = NameRemap[NameIndex];
+		return *this;
+	}
+	VStream& operator<<(VMemberBase*& Ref)
+	{
+		int ObjIndex;
+		*this << STRM_INDEX(ObjIndex);
+		if (ObjIndex > 0)
+		{
+			Ref = Exports[ObjIndex - 1].Obj;
+		}
+		else if (ObjIndex < 0)
+		{
+			Ref = Imports[-ObjIndex - 1].Obj;
+		}
+		else
+		{
+			Ref = NULL;
+		}
+		return *this;
+	}
+
+	VMemberBase* GetImport(int Index)
+	{
+		VProgsImport& I = Imports[Index];
+		if (!I.Obj)
+		{
+			if (I.Type == MEMBER_Package)
+				I.Obj = LoadPackage(I.Name);
+			else
+				I.Obj = VMemberBase::StaticFindMember(I.Name,
+					GetImport(-I.OuterIndex - 1), I.Type);
+		}
+		return I.Obj;
+	}
+	void ResolveImports()
+	{
+		for (int i = 0; i < NumImports; i++)
+			GetImport(i);
+	}
+};
+
+//==========================================================================
+//
+//	VProgsWriter
+//
+//==========================================================================
 
 class VProgsWriter : public VStream
 {
@@ -450,12 +616,20 @@ private:
 	FILE*		File;
 
 public:
-	TArray<TExport>		Exports;
+	vint32*					NamesMap;
+	vint32*					MembersMap;
+	TArray<VProgsImport>	Imports;
+	TArray<VProgsExport>	Exports;
 
 	VProgsWriter(FILE* InFile)
 	: File(InFile)
 	{
 		bLoading = false;
+		NamesMap = new vint32[VName::GetNumNames()];
+		for (int i = 0; i < VName::GetNumNames(); i++)
+			NamesMap[i] = -1;
+		MembersMap = new vint32[VMemberBase::GMembers.Num()];
+		memset(MembersMap, 0, VMemberBase::GMembers.Num() * sizeof(vint32));
 	}
 
 	//	VStream interface.
@@ -509,17 +683,170 @@ public:
 	}
 	VStream& operator<<(VMemberBase*& Ref)
 	{
-		int TmpIdx = Ref ? Ref->ExportIndex : 0;
+		int TmpIdx = Ref ? MembersMap[Ref->MemberIndex] : 0;
 		*this << STRM_INDEX(TmpIdx);
 		return *this;
+	}
+	int GetMemberIndex(VMemberBase* Obj)
+	{
+		if (!Obj)
+			return 0;
+		if (!MembersMap[Obj->MemberIndex])
+		{
+			MembersMap[Obj->MemberIndex] = -Imports.AddItem(VProgsImport(Obj,
+				GetMemberIndex(Obj->Outer))) - 1;
+		}
+		return MembersMap[Obj->MemberIndex];
 	}
 
 	void AddExport(VMemberBase* Obj)
 	{
-		TExport* E = new(Exports) TExport(Obj, Obj->MemberType);
-		E->Obj->ExportIndex = Exports.Num();
+		MembersMap[Obj->MemberIndex] = Exports.AddItem(VProgsExport(Obj)) + 1;
 	}
 };
+
+//==========================================================================
+//
+//	LoadPackage
+//
+//==========================================================================
+
+VPackage* LoadPackage(VName InName)
+{
+	int				i;
+	VName*			NameRemap;
+	dprograms_t		Progs;
+	VProgsReader*	Reader;
+
+	//	Check if already loaded.
+	for (i = 0; i < LoadedPackages.Num(); i++)
+		if (LoadedPackages[i]->Name == InName)
+			return LoadedPackages[i];
+
+	//	Load PROGS from a specified file
+	FILE* f = fopen(va("%s.dat", *InName), "rb");
+	if (!f)
+	{
+		for (i = 0; i < PackagePath.Num(); i++)
+		{
+			f = fopen(va("%s/%s.dat", PackagePath[i], *InName), "rb");
+			if (f)
+				break;
+		}
+	}
+	if (!f)
+	{
+		ParseError("Can't find package");
+		return NULL;
+	}
+	Reader = new VProgsReader(f);
+
+	// byte swap the header
+	Reader->Seek(0);
+	Reader->Serialise(Progs.magic, 4);
+	for (i = 1; i < (int)sizeof(Progs) / 4; i++)
+	{
+		*Reader << ((int*)&Progs)[i];
+	}
+
+	if (strncmp(Progs.magic, PROG_MAGIC, 4))
+	{
+		ParseError("Progs has wrong file ID, possibly older version");
+		BailOut();
+	}
+	if (Progs.version != PROG_VERSION)
+	{
+		ParseError("Progs has wrong version number (%i should be %i)",
+			Progs.version, PROG_VERSION);
+		BailOut();
+	}
+
+	// Read names
+	NameRemap = new VName[Progs.num_names];
+	Reader->Seek(Progs.ofs_names);
+	for (i = 0; i < Progs.num_names; i++)
+	{
+		VNameEntry E;
+		*Reader << E;
+		NameRemap[i] = E.Name;
+	}
+	Reader->NameRemap = NameRemap;
+
+	Reader->Imports = new VProgsImport[Progs.num_imports];
+	Reader->NumImports = Progs.num_imports;
+	Reader->Seek(Progs.ofs_imports);
+	for (i = 0; i < Progs.num_imports; i++)
+	{
+		*Reader << Reader->Imports[i];
+	}
+	Reader->ResolveImports();
+
+	VProgsExport* Exports = new VProgsExport[Progs.num_exports];
+	Reader->Exports = Exports;
+	Reader->NumExports = Progs.num_exports;
+
+	VPackage* Pkg = new VPackage(InName);
+	LoadedPackages.AddItem(Pkg);
+
+	//	Create objects
+	Reader->Seek(Progs.ofs_exportinfo);
+	for (i = 0; i < Progs.num_exports; i++)
+	{
+		*Reader << Exports[i];
+		switch (Exports[i].Type)
+		{
+		case MEMBER_Package:
+			Exports[i].Obj = new VPackage(Exports[i].Name);
+			break;
+		case MEMBER_Field:
+			Exports[i].Obj = new VField(Exports[i].Name, NULL, TLocation());
+			break;
+		case MEMBER_Method:
+			Exports[i].Obj = new VMethod(Exports[i].Name, NULL, TLocation());
+			break;
+		case MEMBER_State:
+			Exports[i].Obj = new VState(Exports[i].Name, NULL, TLocation());
+			break;
+		case MEMBER_Const:
+			Exports[i].Obj = new VConstant(Exports[i].Name, NULL, TLocation());
+			break;
+		case MEMBER_Struct:
+			Exports[i].Obj = new VStruct(Exports[i].Name, NULL, TLocation());
+			break;
+		case MEMBER_Class:
+			Exports[i].Obj = new VClass(Exports[i].Name, NULL, TLocation());
+			break;
+		}
+	}
+
+	//	Serialise objects.
+	Reader->Seek(Progs.ofs_exportdata);
+	for (i = 0; i < Progs.num_exports; i++)
+	{
+		Exports[i].Obj->Serialise(*Reader);
+		if (!Exports[i].Obj->Outer)
+			Exports[i].Obj->Outer = Pkg;
+	}
+
+	//	Serailse virtual tables.
+	VMethod** VTables = new VMethod*[Progs.num_vtables];
+	Reader->Seek(Progs.ofs_vtables);
+	for (i = 0; i < Progs.num_vtables; i++)
+	{
+		*Reader << VTables[i];
+	}
+	for (i = 0; i < Progs.num_exports; i++)
+	{
+		if (Exports[i].Type == MEMBER_Class)
+			((VClass*)Exports[i].Obj)->VTable = VTables +
+				((VClass*)Exports[i].Obj)->VTableOffset;
+	}
+
+	delete[] NameRemap;
+	delete[] Exports;
+	delete Reader;
+	return Pkg;
+}
 
 //==========================================================================
 //
@@ -549,6 +876,14 @@ void PC_WriteObject(char *name)
 	{
 		if (VMemberBase::GMembers[i]->IsIn(CurrentPackage))
 			Writer.AddExport(VMemberBase::GMembers[i]);
+		else if (VMemberBase::GMembers[i] != CurrentPackage &&
+			(VMemberBase::GMembers[i]->Outer ||
+			VMemberBase::GMembers[i]->MemberType == MEMBER_Package))
+		{
+			Writer.GetMemberIndex(VMemberBase::GMembers[i]);
+			if (!VMemberBase::GMembers[i]->IsIn(LoadedPackages[0]))
+				dprintf("What is %s?\n", *VMemberBase::GMembers[i]->Name);
+		}
 	}
 
 	memset(&progs, 0, sizeof(progs));
@@ -623,6 +958,14 @@ void PC_WriteObject(char *name)
 			<< script_ids[i].class_id;
 	}
 
+	//	Serialise imports.
+	progs.num_imports = Writer.Imports.Num();
+	progs.ofs_imports = Writer.Tell();
+	for (i = 0; i < Writer.Imports.Num(); i++)
+	{
+		Writer << Writer.Imports[i];
+	}
+
 	progs.num_exports = Writer.Exports.Num();
 
 	//	Serialise object infos.
@@ -648,7 +991,8 @@ void PC_WriteObject(char *name)
 	dprintf("Builtins   %6d\n", numbuiltins);
 	dprintf("VTables    %6d %6d\n", vtables.Num(), progs.ofs_mobjinfo - progs.ofs_vtables);
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
-	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_exportinfo - progs.ofs_scriptids);
+	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_imports - progs.ofs_scriptids);
+	dprintf("Imports    %6d %6d\n", Writer.Imports.Num(), progs.ofs_exportinfo - progs.ofs_imports);
 	dprintf("Exports    %6d %6d\n", Writer.Exports.Num(), progs.ofs_exportdata - progs.ofs_exportinfo);
 	dprintf("Type data  %6d %6d\n", Writer.Exports.Num(), Writer.Tell() - progs.ofs_exportdata);
 	dprintf("TOTAL SIZE       %7d\n", Writer.Tell());
@@ -891,7 +1235,7 @@ void VClass::Serialise(VStream& Strm)
 	Strm << ParentClass
 		<< Fields
 		<< States
-		<< STRM_INDEX(VTable)
+		<< STRM_INDEX(VTableOffset)
 		<< STRM_INDEX(NumMethods)
 		<< STRM_INDEX(Size);
 }
@@ -944,9 +1288,12 @@ void VConstant::Serialise(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/03/26 13:06:49  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.37  2006/03/23 22:22:02  dj_jl
 //	Hashing of members for faster search.
-//
+//	
 //	Revision 1.36  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
 //	

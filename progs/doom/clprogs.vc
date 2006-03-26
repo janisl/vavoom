@@ -27,19 +27,23 @@
 //**
 //**************************************************************************
 
-#include <client.vc>
+#include <macros.vc>
+
+import shared;
+import clcommon;
 
 class ClientGame;
 class MenuScreen;
 class MenuControlKey;
-
-#include "doomdefs.vc"
 
 #include "cgame/classes.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/26 13:07:33  dj_jl
+//  Implemented support for modular progs.
+//
 //  Revision 1.4  2006/02/28 22:43:32  dj_jl
 //  Replaced defines with constants.
 //

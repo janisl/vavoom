@@ -658,6 +658,12 @@ static void ProcessLetterToken()
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_IF;
 		}
+		else if (s[1] == 'm' && s[2] == 'p' && s[3] == 'o' && s[4] == 'r' &&
+			s[5] == 't' && s[6] == 0)
+		{
+			tk_Token = TK_KEYWORD;
+			tk_Keyword = KW_IMPORT;
+		}
 		else if (s[1] == 'n' && s[2] == 't' && s[3] == 0)
 		{
 			tk_Token = TK_KEYWORD;
@@ -1331,9 +1337,12 @@ const char* TLocation::GetSource() const
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.32  2006/03/26 13:06:49  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.31  2006/03/23 23:11:27  dj_jl
 //	Added support for final methods.
-//
+//	
 //	Revision 1.30  2006/03/19 14:45:49  dj_jl
 //	Added code location object.
 //	

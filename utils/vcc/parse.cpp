@@ -749,7 +749,12 @@ void PA_Compile()
 			done = true;
 			break;
 		case TK_KEYWORD:
-			if (TK_Check(KW_ENUM))
+			if (TK_Check(KW_IMPORT))
+			{
+				TK_NextToken();
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
+			else if (TK_Check(KW_ENUM))
 			{
 				int val;
 				VName Name;
@@ -811,9 +816,12 @@ void PA_Compile()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/03/26 13:06:49  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.43  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
-//
+//	
 //	Revision 1.42  2006/03/13 19:30:46  dj_jl
 //	Clean function local variables.
 //	

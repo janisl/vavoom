@@ -27,9 +27,10 @@
 //**
 //**************************************************************************
 
-#include <server.vc>
+#include <macros.vc>
 
-#include "doomdefs.vc"
+import shared;
+import svcommon;
 
 //#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
 #define POLY_SEQ_NAME(num)		'Sequence0'
@@ -252,6 +253,9 @@ struct botinfo_t
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/03/26 13:07:33  dj_jl
+//  Implemented support for modular progs.
+//
 //  Revision 1.4  2006/02/28 22:43:32  dj_jl
 //  Replaced defines with constants.
 //

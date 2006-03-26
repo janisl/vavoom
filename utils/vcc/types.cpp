@@ -70,7 +70,6 @@ VMemberBase::VMemberBase(vuint8 InType, VName InName, VMemberBase* InOuter,
 , Name(InName)
 , Outer(InOuter)
 , Loc(InLoc)
-, ExportIndex(0)
 {
 	int HashIndex = Name.GetIndex() & 4095;
 	HashNext = GMembersHash[HashIndex];
@@ -1073,7 +1072,7 @@ VField* FindConstructor(VClass* InClass)
 
 static void AddVTable(VClass* InClass)
 {
-	if (InClass->VTable)
+	if (InClass->VTableOffset != -1)
 	{
 		return;
 	}
@@ -1081,13 +1080,15 @@ static void AddVTable(VClass* InClass)
 	{
 		AddVTable(InClass->ParentClass);
 	}
-	InClass->VTable = vtables.Num();
+	InClass->VTableOffset = vtables.Num();
 	VMethod** vtable = &vtables[vtables.Add(InClass->NumMethods)];
 	memset(vtable, 0, InClass->NumMethods * sizeof(VMethod*));
 	if (InClass->ParentClass)
 	{
-		memcpy(vtable, &vtables[InClass->ParentClass->VTable],
-			InClass->ParentClass->NumMethods * 4);
+		memcpy(vtable, InClass->ParentClass->VTable ?
+			InClass->ParentClass->VTable :
+			&vtables[InClass->ParentClass->VTableOffset],
+			InClass->ParentClass->NumMethods * sizeof(VMethod*));
 	}
 	for (VField* f = InClass->Fields; f; f = f->Next)
 	{
@@ -1774,9 +1775,12 @@ void ParseClass()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.52  2006/03/26 13:06:49  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.51  2006/03/23 22:22:02  dj_jl
 //	Hashing of members for faster search.
-//
+//	
 //	Revision 1.50  2006/03/23 18:30:54  dj_jl
 //	Use single list of all members, members tree.
 //	

@@ -23,19 +23,23 @@
 //**
 //**************************************************************************
 
-#include <client.vc>
+#include <macros.vc>
+
+import shared;
+import clcommon;
 
 class ClientGame;
 class MenuScreen;
 class MenuControlKey;
-
-#include "herdefs.vc"
 
 #include "cgame/classes.vc"
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/03/26 13:08:05  dj_jl
+//  Implemented support for modular progs.
+//
 //  Revision 1.3  2006/02/28 22:45:11  dj_jl
 //  Replaced defines with constants.
 //

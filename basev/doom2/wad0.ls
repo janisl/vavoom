@@ -1,4 +1,5 @@
 $label pr_start
+progs/shared.dat
 progs/clprogs.dat
 progs/svprogs.dat
 $label pr_end

@@ -748,7 +748,17 @@ void PA_Parse()
 			done = true;
 			break;
 		case TK_KEYWORD:
-			if (TK_Check(KW_ENUM))
+			if (TK_Check(KW_IMPORT))
+			{
+				if (tk_Token != TK_IDENTIFIER)
+				{
+					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+				}
+				LoadPackage(tk_Name);
+				TK_NextToken();
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			}
+			else if (TK_Check(KW_ENUM))
 			{
 				int val;
 				VName Name;
@@ -810,9 +820,12 @@ void PA_Parse()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/03/26 13:06:49  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.20  2006/03/23 23:11:27  dj_jl
 //	Added support for final methods.
-//
+//	
 //	Revision 1.19  2006/03/23 22:22:02  dj_jl
 //	Hashing of members for faster search.
 //	

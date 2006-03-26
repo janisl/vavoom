@@ -10,33 +10,23 @@ ifndef COMMON_DIR
 COMMON_DIR=../common
 endif
 
-all: $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+ifndef COMMON_PROGS_DIR
+COMMON_PROGS_DIR=../../basev/common/progs
+endif
+
+all: $(OUTDIR)/shared.dat $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+clprogs: $(OUTDIR)/shared.dat
 clprogs: $(OUTDIR)/clprogs.dat
 svprogs: $(OUTDIR)/svprogs.dat
 
 del:
-	rm $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+	rm $(OUTDIR)/shared.dat $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+
+$(OUTDIR)/shared.dat: $(VCC) *.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc
+	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) hexndefs.vc $@
 
 $(OUTDIR)/clprogs.dat: $(VCC) *.vc cgame/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/client/*.vc
-	$(VCC) -I$(COMMON_DIR) clprogs.vc $@
+	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) clprogs.vc $@
 
 $(OUTDIR)/svprogs.dat: $(VCC) *.vc game/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc
-	$(VCC) -I$(COMMON_DIR) svprogs.vc $@
-
-#---------------------------------------
-# Debugging
-#---------------------------------------
-
-debug: clprogs.dat svprogs.dat
-debugcl: clprogs.dat
-debugsv: svprogs.dat
-
-deldebug:
-	rm clprogs.dat svprogs.dat
-
-clprogs.dat:
-	$(VCC) -I$(COMMON_DIR) clprogs.vc $@ -dclprogs.txt $(DUMP_ASM)
-
-svprogs.dat:
-	$(VCC) -I$(COMMON_DIR) svprogs.vc $@ -dsvprogs.txt $(DUMP_ASM)
-
+	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) svprogs.vc $@

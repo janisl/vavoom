@@ -51,6 +51,7 @@ public:
 	static bool						GObjInitialized;
 	static VClass*					GClasses;	// Linked list of all classes.
 	static TArray<VMemberBase*>		GMembers;
+	static TArray<VPackage*>		GLoadedPackages;
 
 	//	New and delete operators.
 	void* operator new(size_t Size, int Tag)
@@ -72,11 +73,15 @@ public:
 		return Name;
 	}
 	VStr GetFullName() const;
+	VPackage* GetPackage() const;
+
+	virtual void Serialise(VStream&);
+	virtual void PostLoad();
 
 	static void StaticInit();
 	static void StaticExit();
-
-	virtual void Serialise(VStream&);
+	static VPackage* StaticLoadPackage(VName);
+	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
 };
 
 //==========================================================================
@@ -89,6 +94,12 @@ class VPackage : public VMemberBase
 {
 public:
 	VPackage(VName);
+
+	vuint16			Checksum;
+	char*			Strings;
+	int*			Statements;
+	VMethod**		VTables;
+	VProgsReader*	Reader;
 
 	void Serialise(VStream&);
 
@@ -160,6 +171,7 @@ public:
 	VMethod(VName);
 
 	void Serialise(VStream&);
+	void PostLoad();
 
 	friend inline VStream& operator<<(VStream& Strm, VMethod*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -233,6 +245,7 @@ public:
 	VStruct(VName);
 
 	void Serialise(VStream&);
+	void PostLoad();
 
 	void InitReferences();
 	void SerialiseObject(VStream&, byte*);
@@ -343,6 +356,7 @@ public:
 	void CleanObject(VObject*);
 
 	void Serialise(VStream&);
+	void PostLoad();
 
 	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -351,9 +365,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/03/26 13:06:18  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.19  2006/03/23 18:31:59  dj_jl
 //	Members tree.
-//
+//	
 //	Revision 1.18  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
 //	

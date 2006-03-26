@@ -23,6 +23,8 @@
 //**
 //**************************************************************************
 
+import common;
+
 class HereticDefs : Object;
 
 enum
@@ -79,6 +81,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/03/26 13:08:05  dj_jl
+//  Implemented support for modular progs.
+//
 //  Revision 1.11  2006/02/20 22:57:17  dj_jl
 //  Changed client state structure to class.
 //

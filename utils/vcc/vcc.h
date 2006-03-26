@@ -170,6 +170,7 @@ enum EKeyword
 	KW_FLOAT,
 	KW_FOR,
 	KW_IF,
+	KW_IMPORT,
 	KW_INT,
 	KW_NAME,
 	KW_NATIVE,
@@ -297,7 +298,6 @@ public:
 	VName			Name;
 	VMemberBase*	Outer;
 	TLocation		Loc;
-	int				ExportIndex;
 	VMemberBase*	HashNext;
 
 	static TArray<VMemberBase*>		GMembers;
@@ -495,7 +495,8 @@ public:
 	VClass*		ParentClass;
 	VField*		Fields;
 	VState*		States;
-	int			VTable;
+	int			VTableOffset;
+	VMethod**	VTable;
 	int			NumMethods;
 	int			Size;
 
@@ -504,6 +505,7 @@ public:
 	, ParentClass(NULL)
 	, Fields(NULL)
 	, States(NULL)
+	, VTableOffset(-1)
 	, VTable(0)
 	, NumMethods(0)
 	, Size(0)
@@ -518,8 +520,13 @@ public:
 class VPackage : public VMemberBase
 {
 public:
+	TArray<VPackage*>	ImportedPackages;
+
 	VPackage()
 	: VMemberBase(MEMBER_Package, NAME_None, NULL, TLocation())
+	{}
+	VPackage(VName InName)
+	: VMemberBase(MEMBER_Package, InName, NULL, TLocation())
 	{}
 };
 
@@ -563,6 +570,7 @@ void BeginCode(VMethod*);
 void EndCode(VMethod*);
 void PC_WriteObject(char *name);
 void PC_DumpAsm(char* name);
+VPackage* LoadPackage(VName InName);
 
 int EvalConstExpression(VClass*InClass, int type);
 float ConstFloatExpression();
@@ -707,9 +715,12 @@ inline bool TK_Check(EPunctuation punct)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.51  2006/03/26 13:06:49  dj_jl
+//	Implemented support for modular progs.
+//
 //	Revision 1.50  2006/03/23 23:11:27  dj_jl
 //	Added support for final methods.
-//
+//	
 //	Revision 1.49  2006/03/23 22:22:02  dj_jl
 //	Hashing of members for faster search.
 //	
