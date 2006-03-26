@@ -41,11 +41,6 @@ struct spec_trans_t
 	int repeat;
 };
 
-addfields polyobj_t
-{
-	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
-};
-
 struct tagged_line_t
 {
 	line_t *line;
@@ -1521,6 +1516,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/26 13:01:52  dj_jl
+//  Moved added fields to Object.
+//
 //  Revision 1.6  2006/03/19 17:24:29  dj_jl
 //  Added explicit type casts.
 //

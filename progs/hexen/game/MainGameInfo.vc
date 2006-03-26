@@ -30,11 +30,6 @@ const int MAX_TAGGED_LINES	= 64;
 const int NUMTOTALBOTS		= 24;
 const int NUMBOTTYPES		= 24;
 
-addfields polyobj_t
-{
-	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
-};
-
 struct tagged_line_t
 {
 	line_t *line;
@@ -1350,6 +1345,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/26 12:58:49  dj_jl
+//  Moved added fields to Object.
+//
 //  Revision 1.6  2006/03/19 17:23:55  dj_jl
 //  Added explicit type casts.
 //

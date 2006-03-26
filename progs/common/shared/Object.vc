@@ -1023,6 +1023,16 @@ addfields sector_t
 	float		MoveFactor;
 };
 
+addfields polyobj_t
+{
+	Thinker SpecialData;	// pointer a thinker, if the poly is moving
+};
+
+addfields line_t
+{
+	int			LineTag;
+};
+
 const int MAXSPECIALCROSS	= 32;
 
 struct tmtrace_t
@@ -1158,6 +1168,12 @@ struct ClipRect
 	float ClipY;		// Topmost edge of rectangle relative to origin
 	float ClipWidth;	// Width of rectangle
 	float ClipHeight;	// Height of rectangle
+};
+
+addfields particle_t
+{
+	int type;
+	float ramp;
 };
 
 //**************************************************************************
@@ -1947,6 +1963,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.16  2006/03/26 12:56:30  dj_jl
+//  Moved added fields to Object.
+//
 //  Revision 1.15  2006/03/23 23:11:50  dj_jl
 //  Added support for final methods.
 //

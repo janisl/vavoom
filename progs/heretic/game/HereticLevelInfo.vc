@@ -323,7 +323,7 @@ void PolyThrustMobj(Entity A, TVec thrustDir, polyobj_t * po)
 		return;
 	}
 
-	pe = po->SpecialData;
+	pe = PolyobjThinker(po->SpecialData);
 	if (pe)
 	{
 		force = pe.thrust_force;
@@ -4511,6 +4511,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/03/26 12:58:22  dj_jl
+//  Moved added fields to Object.
+//
 //  Revision 1.8  2006/03/19 17:22:56  dj_jl
 //  Added explicit type casts.
 //

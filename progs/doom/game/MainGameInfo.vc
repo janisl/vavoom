@@ -47,16 +47,6 @@ struct tagged_line_t
 	int lineTag;
 };
 
-addfields polyobj_t
-{
-	PolyobjThinker SpecialData;	// pointer a thinker, if the poly is moving
-};
-
-addfields line_t
-{
-	int			LineTag;
-};
-
 enum
 {
 	PO_ANCHOR_TYPE = 9300,
@@ -2186,6 +2176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/26 12:57:12  dj_jl
+//  Moved added fields to Object.
+//
 //  Revision 1.6  2006/03/19 17:20:35  dj_jl
 //  Added explicit type casts.
 //
