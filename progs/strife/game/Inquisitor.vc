@@ -47,16 +47,17 @@ void A_InquisitorChase()
 		return;
 
 	PlaySound('inquisitor/walk', CHAN_BODY);
+	A_Chase();
 	ZSpeed = fabs(Velocity.z);
 	if (Origin.z < Enemy.Origin.z)
 	{
 		A_FaceTarget();
 		Origin.z = FloorZ + 80.0;
-		if (Radius && Origin.z > (CeilingZ - Height))
+		if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
+			SetState(JumpState);
+		else
 			//	Don't let him jump while under a low ceiling
 			Origin.z = FloorZ;
-		else
-			SetState(JumpState);
 	}
 	else if (Origin.z != Enemy.Origin.z && Origin.z != FloorZ && 
 		ZSpeed > 21.0)
@@ -98,22 +99,22 @@ void A_InquisitorGrenade()
 	Actor A;
 	float an;
 
-	if	(Origin.z != FloorZ)
+	if (!Enemy || Origin.z != FloorZ)
 		return;
 
 	A_FaceTarget();
-
-	A = SpawnMissileZAimed(76.0, Enemy, InquisitorGrenade);
-	A.Angles.yaw += 45.0 / 16.0;
-	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
-	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
-	A.Velocity.z += 15.0;	//weeeeeeeeeee!!!!
 
 	A = SpawnMissileZAimed(76.0, Enemy, InquisitorGrenade);
 	A.Angles.yaw -= 45.0 / 16.0;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
 	A.Velocity.z += 4.0;
+
+	A = SpawnMissileZAimed(76.0, Enemy, InquisitorGrenade);
+	A.Angles.yaw += 45.0 / 16.0;
+	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
+	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
+	A.Velocity.z += 170.0;	//weeeeeeeeeee!!!!
 }
 
 //==========================================================================
@@ -132,16 +133,18 @@ void A_InquisitorInitJump()
 
 	bNoGravity = true;
 	bFloat = false;
+	PlaySound(JumpSound, CHAN_BODY);
 	A_FaceTarget();
-	Velocity.x = JumpSpeed * cos(Angles.yaw);
-	Velocity.y = JumpSpeed * sin(Angles.yaw);
+	Velocity.x += JumpSpeed * cos(Angles.yaw);
+	Velocity.y += JumpSpeed * sin(Angles.yaw);
 	dist = DistTo2(Enemy);
-	dist = dist / JumpSpeed;
+	dist /= JumpSpeed;
 	if (dist < 1.0)
 	{
 		dist = 1.0;
 	}
 	Velocity.z = (Enemy.Origin.z - Origin.z) / dist;
+	ReactionCount = 60;
 }
 
 //==========================================================================
@@ -152,14 +155,16 @@ void A_InquisitorInitJump()
 
 void A_InquisitorJump()
 {
-	PlaySound(JumpSound, CHAN_BODY);
-	if (Velocity.x == 0.0 && Velocity.y == 0.0 ||
-		Origin.z == FloorZ ||
-		fabs(Velocity.x) > JumpSpeed && fabs(Velocity.y) > JumpSpeed)
+	ReactionCount--;
+	if (ReactionCount < 0 || Velocity.x == 0.0 || Velocity.y == 0.0 ||
+		Origin.z <= FloorZ ||
+		fabs(Velocity.x) > JumpSpeed || fabs(Velocity.y) > JumpSpeed)
 	{
 		SetState(SeeState2);
+		ReactionCount = 0;
 		bNoGravity = false;
 	}
+	PlaySound(JumpSound, CHAN_BODY);
 }
 
 //==========================================================================
@@ -248,6 +253,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/03/28 15:03:40  firebrand_kh
+//  Fixed grenade Z speed value, other small fixes
+//
 //  Revision 1.6  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
