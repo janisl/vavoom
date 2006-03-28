@@ -573,7 +573,7 @@ void RandomChaseDir()
 
 bool CheckRobotRange()
 {
-	return Enemy && !(bFriendly && Enemy.bFriendly) &&
+	return ReactionCount == 0 && Enemy && !(bFriendly && Enemy.bFriendly) &&
 		(DistTo2(Enemy) < ROBOTRANGE - 20.0 + Enemy.Radius) &&
     	CanSee(Enemy);
 }
@@ -965,7 +965,7 @@ void A_FlightChase()
 	{
 		Velocity.z += 1.0 * 35.0;
 	}
-	ReactionCount = (minz == Origin.z) ? 4 : 0;
+	ReactionCount = (minz >= Origin.z) ? 4 : 0;
 }
 
 //==========================================================================
@@ -1382,6 +1382,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.23  2006/03/28 15:04:53  firebrand_kh
+//  Fixes for Inquisitor decide method
+//
 //  Revision 1.22  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
