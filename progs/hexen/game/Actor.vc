@@ -2681,10 +2681,7 @@ bool Physics(float DeltaTime)
 				{
 					return false;
 				}
-				if (bIsPlayer && bOnMobj)
-				{
-					bOnMobj = false;
-				}
+				bOnMobj = false;
 			}
 			else
 			{
@@ -2705,17 +2702,9 @@ bool Physics(float DeltaTime)
 							(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 					}
 					Origin.z = onmo.Origin.z + onmo.Height;
-					bOnMobj = true;
-					Velocity.z = 0.0;
 				}
-				else
-				{
-					if(bIsPlayer)
-					{
-						// hit the bottom of the blocking mobj
-						Velocity.z = 0.0;
-					}
-				}
+				bOnMobj = true;
+				Velocity.z = 0.0;
 			}
 		}
 		else
@@ -4306,6 +4295,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2006/03/28 14:36:52  firebrand_kh
+//  Properly remove onmobj flag
+//
 //  Revision 1.32  2006/03/21 15:08:39  firebrand_kh
 //  Fixes for onmobj checks
 //

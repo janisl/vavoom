@@ -2001,10 +2001,7 @@ bool Physics(float DeltaTime)
 			if (!onmo)
 			{
 				ZMovement(DeltaTime);
-				if (bIsPlayer && bOnMobj)
-				{
-					bOnMobj = false;
-				}
+				bOnMobj = false;
 			}
 			else
 			{
@@ -2025,17 +2022,10 @@ bool Physics(float DeltaTime)
 							(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 					}
 					Origin.z = onmo.Origin.z + onmo.Height;
-					bOnMobj = true;
-					Velocity.z = 0.0;
 				}
-				else
-				{
-					if(bIsPlayer)
-					{
-						// hit the bottom of the blocking mobj
-						Velocity.z = 0.0;
-					}
-				}
+				bOnMobj = true;
+				Velocity.z = 0.0;
+
 				if (onmo.bIsPlayer || onmo.Class == Pod)
 				{
 					Velocity.x = onmo.Velocity.x;
@@ -3770,6 +3760,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.30  2006/03/28 14:36:12  firebrand_kh
+//  Properly remove onmobj flag
+//
 //  Revision 1.29  2006/03/21 15:07:40  firebrand_kh
 //  Fixes for onmobj checks
 //
