@@ -90,11 +90,15 @@ __states__
 
 defaultproperties
 {
+	bTakePoisonDamage = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/03/28 15:02:24  firebrand_kh
+//  Added bTakePoisonDamage flag
+//
 //  Revision 1.10  2006/03/21 15:11:06  firebrand_kh
 //  Made translucency return to 0 when dying
 //
