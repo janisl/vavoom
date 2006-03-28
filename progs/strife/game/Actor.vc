@@ -87,10 +87,12 @@ bool bInFloat;			// floating to a height for a move, don't
 						// auto float to target's height
 bool bSkullFly;			// skull in flight
 bool bCountKill;		// count towards intermission kill total
+bool bFloorBounce;		// bounces off the floor
 bool bCountItem;		//COUNTITEM	800000
 bool bFriendly;			// Will fight on player's side
 bool bUnknown2;			//8000000
 bool bSpectral;			// Can be killed only with Sigil
+bool bTakePoisonDamage;		// it's affected by poison damage
 bool bOnMobj;
 bool bActivateImpact;	// an MF_MISSILE mobj can activate
 						// SPAC_IMPACT
@@ -624,11 +626,15 @@ void Damage(Actor inflictor, Actor source, int damage)
 			Normalise(MobjCenter(self) - MobjCenter(inflictor));
 	}
 
-	if (inflictor && inflictor.bPoisonDamage && Class == Templar || Class == Inquisitor || 
-		Class == Programmer || Class == Loremaster || Class == DegninOre ||
-		Class == WoodBarrel || Class == TechBarrel)
+	if (inflictor && inflictor.bPoisonDamage && !bTakePoisonDamage)
 	{
-		// Don't damage these actors
+		// Don't damage actors that don't take poison damage
+		return;
+	}
+
+	if (inflictor && inflictor.Class == InquisitorGrenade && Class == Inquisitor)
+	{
+		// Inquisitor grenades don't damage inquisitors
 		return;
 	}
 
@@ -1411,21 +1417,20 @@ void XYMovement(float DeltaTime)
 			}
 			else if (bMissile)
 			{
-#if 0
-				if (Flags & MF_BOUNCE)
+				if (bFloorBounce)
 				{
 					//  Bounce against walls and non-killable ofjects
-					if (BlockingMobj)
+					if (Level.Game.tmtrace->BlockingMobj)
 					{
-						if ((!BlockingMobj->bIsPlayer) &&
-							(!(BlockingMobj->Flags & MF_COUNTKILL)))
+						if ((!Level.Game.tmtrace->BlockingMobj.bIsPlayer) &&
+							(!Actor(Level.Game.tmtrace->BlockingMobj).bCountKill))
 						{
 							float speed;
 							float angle;
 
 							angle = AngleMod360(
-								atan2(Origin.y - BlockingMobj->Origin.y,
-								Origin.x - BlockingMobj->Origin.x) +
+								atan2(Origin.y - Level.Game.tmtrace->BlockingMobj.Origin.y,
+								Origin.x - Level.Game.tmtrace->BlockingMobj.Origin.x) +
 								(Random() * 16.0 - 8.0));
 							speed = Length(Velocity);
 							speed = speed * 0.75;
@@ -1440,7 +1445,7 @@ void XYMovement(float DeltaTime)
 						else
 						{
 							// Struck a player/creature
-							P_ExplodeMissile(this);
+							ExplodeMissile();
 						}
 					}
 					else
@@ -1452,13 +1457,12 @@ void XYMovement(float DeltaTime)
 							PlaySound(PainSound, CHAN_VOICE);
 						}
 					}
-					if (destroyed)
+					if (IsDestroyed())
 					{
-						return false;	// mobj was removed
+						return;	// mobj was removed
 					}
-					return true;
+//					return true;
 				}
-#endif
 
 				// explode a missile
 				if (Level.Game.tmtrace->CeilingLine && Level.Game.tmtrace->CeilingLine->backsector &&
@@ -1552,17 +1556,15 @@ void ZMovement(float DeltaTime)
 		if (bMissile)
 		{
 //			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
-			if (bColideWithWorld)
+			if (bColideWithWorld && !bFloorBounce)
 			{
 				ExplodeMissile();
 				return;
 			}
-#if 0
-			if (Flags & MF_BOUNCE && PainSound && Length(Velocity) > 256.0)
+			if (bFloorBounce && PainSound && Length(Velocity) > 256.0)
 			{
 				PlaySound(PainSound, CHAN_VOICE);
 			}
-#endif
 		}
 	}
 
@@ -1584,17 +1586,15 @@ void ZMovement(float DeltaTime)
 		if (bMissile)
 		{
 //			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
-			if (bColideWithWorld)
+			if (bColideWithWorld && !bFloorBounce)
 			{
 				ExplodeMissile();
 				return;
 			}
-#if 0
-			if (Flags & MF_BOUNCE && PainSound && Length(Velocity) > 256.0)
+			if (bFloorBounce && PainSound && Length(Velocity) > 256.0)
 			{
 				PlaySound(PainSound, CHAN_VOICE);
 			}
-#endif
 		}
 	}
 }
@@ -1623,12 +1623,10 @@ void ApplyFriction()
 		dot = DotProduct(Velocity, Floor->normal);
 		if (dot < 0.0)
 		{
-#if 0
-			if (Flags & MF_BOUNCE)
+			if (bFloorBounce)
 			{
 				dot *= BOUNCE_VAL;
 			}
-#endif
 			Velocity -= dot * Floor->normal;
 		}
 	}
@@ -1790,45 +1788,41 @@ bool Physics(float DeltaTime)
 	if ((Origin.z != FloorZ) || Velocity.z || Level.Game.tmtrace->BlockingMobj)
 	{
 		// Handle Z momentum and gravity
-		onmo = Actor(CheckOnmobj());
-		if (!onmo || bMissile)
+		if (!bNoPassMobj)
 		{
-			ZMovement(DeltaTime);
-			if (bIsPlayer && bOnMobj)
+			onmo = Actor(CheckOnmobj());
+			if (!onmo || bMissile)
 			{
+				ZMovement(DeltaTime);
 				bOnMobj = false;
-			}
-		}
-		else
-		{
-			if (bIsPlayer)
-			{
-				if (Velocity.z < -GRAVITY * 0.25)
-				{
-					PlayerLandedOnThing();
-				}
-			}
-			if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
-			{
-				if (bIsPlayer)
-				{
-					Player(Player).ViewHeight -=
-						onmo.Origin.z + onmo.Height - Origin.z;
-					Player(Player).DeltaViewHeight =
-						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
-				}
-				Origin.z = onmo.Origin.z + onmo.Height;
-				bOnMobj = true;
-				Velocity.z = 0.0;
 			}
 			else
 			{
 				if (bIsPlayer)
 				{
-					// hit the bottom of the blocking mobj
-					Velocity.z = 0.0;
+					if (Velocity.z < -GRAVITY * 0.25)
+					{
+						PlayerLandedOnThing();
+					}
 				}
+				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
+				{
+					if (bIsPlayer)
+					{
+						Player(Player).ViewHeight -=
+							onmo.Origin.z + onmo.Height - Origin.z;
+						Player(Player).DeltaViewHeight =
+							(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
+					}
+					Origin.z = onmo.Origin.z + onmo.Height;
+				}
+				bOnMobj = true;
+				Velocity.z = 0.0;
 			}
+		}
+		else
+		{
+			ZMovement(DeltaTime);
 		}
 		if (IsDestroyed())
 		{
@@ -3479,6 +3473,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2006/03/28 15:02:57  firebrand_kh
+//  Lots of fixes and improvements
+//
 //  Revision 1.38  2006/03/24 15:41:09  firebrand_kh
 //  Made poison arrows don't damage certain actors
 //
