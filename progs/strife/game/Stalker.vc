@@ -59,10 +59,15 @@ void A_StalkerChase2()
 	bInFloat = true;
 	bFloat = true;
 
-	if (bNoGravity)
+	if (!bNoGravity)
+	{
+		//	Walking on floor.
+		SetState(S_STALKER_F_RUN1);
+	}
+	else
 	{
 		//	Check for falling down.
-		if (Origin.z + Height < CeilingZ)
+		if (CeilingZ - Height > Origin.z)
 		{
 			SetState(S_STALKER_LAND1);
 		}
@@ -70,11 +75,6 @@ void A_StalkerChase2()
 		{
 			A_Chase();
 		}
-	}
-	else
-	{
-		//	Walking on floor.
-		SetState(S_STALKER_F_RUN1);
 	}
 }
 
@@ -202,6 +202,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/28 15:05:13  firebrand_kh
+//  Fixes for dropping from ceiling
+//
 //  Revision 1.5  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
