@@ -1,2 +1,3 @@
-vcc -I../common -Icommon clprogs.vc clprogs.dat
-vcc -I../common -Icommon svprogs.vc svprogs.dat
+vcc -I../common -P../../basev/common/progs doomdefs.vc shared.dat
+vcc -I../common -P../../basev/common/progs clprogs.vc clprogs.dat
+vcc -I../common -P../../basev/common/progs svprogs.vc svprogs.dat
