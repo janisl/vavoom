@@ -237,18 +237,22 @@ BOOL VMikModAudioCodec::ArchiveReader_Seek(MREADER* rd, long offset, int whence)
 {
 	guard(VMikModAudioCodec::ArchiveReader_Seek);
 	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
+	int NewPos = 0;
 	switch (whence)
 	{
 	case SEEK_SET:
-		Strm->Seek(offset);
+		NewPos = offset;
 		break;
 	case SEEK_CUR:
-		Strm->Seek(Strm->Tell() + offset);
+		NewPos = Strm->Tell() + offset;
 		break;
 	case SEEK_END:
-		Strm->Seek(Strm->TotalSize() + offset);
+		NewPos = Strm->TotalSize() + offset;
 		break;
 	}
+	if (NewPos > Strm->TotalSize())
+		return false;
+	Strm->Seek(NewPos);
 	return !Strm->IsError();
 	unguard;
 }
@@ -277,6 +281,8 @@ BOOL VMikModAudioCodec::ArchiveReader_Read(MREADER* rd, void *dest, size_t lengt
 {
 	guard(VMikModAudioCodec::ArchiveReader_Read);
 	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
+	if (Strm->Tell() + (int)length > Strm->TotalSize())
+		return false;
 	Strm->Serialise(dest, length);
 	return !Strm->IsError();
 	unguard;
@@ -380,9 +386,12 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/03/29 20:32:54  dj_jl
+//	Avoid setting source stream to error.
+//
 //	Revision 1.4  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.3  2005/11/12 09:43:35  dj_jl
 //	Fixed conflict with SDL mixer.
 //	
