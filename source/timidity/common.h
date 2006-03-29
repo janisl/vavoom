@@ -45,7 +45,7 @@ struct PathList
 #define OF_VERBOSE	2
 
 extern FILE *open_file(char *name, int decompress, int noise_mode);
-extern void add_to_pathlist(char *s);
+extern void add_to_pathlist(const char *s);
 extern void close_file(FILE *fp);
 extern void skip(FILE *fp, size_t len);
 extern void *safe_malloc(size_t count);

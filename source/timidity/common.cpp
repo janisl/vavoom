@@ -165,7 +165,7 @@ void *safe_malloc(size_t count)
 }
 
 /* This adds a directory to the path list */
-void add_to_pathlist(char *s)
+void add_to_pathlist(const char *s)
 {
   PathList *plp=(PathList*)safe_malloc(sizeof(PathList));
   strcpy((plp->path=(char*)safe_malloc(strlen(s)+1)),s);
