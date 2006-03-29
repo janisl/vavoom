@@ -137,6 +137,17 @@ TMessage &TMessage::operator << (const char *s)
 
 //==========================================================================
 //
+//  TMessage::WriteString
+//
+//==========================================================================
+
+TMessage &TMessage::operator << (const VStr& s)
+{
+	return *this << *s;
+}
+
+//==========================================================================
+//
 //
 //
 //==========================================================================
@@ -277,6 +288,18 @@ TMessage &TMessage::operator >> (char *&s)
 //
 //==========================================================================
 
+TMessage &TMessage::operator >> (VStr& s)
+{
+	s = ReadString();
+	return *this;
+}
+
+//==========================================================================
+//
+//  TMessage::ReadString
+//
+//==========================================================================
+
 char *TMessage::ReadString(void)
 {
 	static char     string[2048];
@@ -402,9 +425,12 @@ float MSG_ReadAngle (void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

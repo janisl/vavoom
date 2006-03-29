@@ -633,7 +633,7 @@ static qsocket_t *_Datagram_CheckNewConnections()
 		// save space for the header, filled in later
    		net_msg << 0
 				<< (byte)CCREP_SERVER_INFO
-				<< (char *)hostname
+				<< (const char*)hostname
 				<< level.mapname
 				<< (byte)svs.num_connected
             	<< (byte)svs.max_clients
@@ -1307,9 +1307,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.13  2006/03/20 20:01:30  dj_jl
 //	Check decompressed data size.
-//
+//	
 //	Revision 1.12  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

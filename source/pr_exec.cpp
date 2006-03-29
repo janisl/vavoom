@@ -74,13 +74,6 @@ VMethod			*current_func = NULL;
 
 static int				pr_stack[MAX_PROG_STACK];
 
-#define DECLARE_OPC(name, argcount)		argcount
-#define OPCODE_INFO
-static int OpcodeArgCount[NUM_OPCODES] =
-{
-#include "progdefs.h"
-};
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -1606,9 +1599,12 @@ char *TProgs::StrAtOffs(int Offs)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.55  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.54  2006/03/26 13:06:18  dj_jl
 //	Implemented support for modular progs.
-//
+//	
 //	Revision 1.53  2006/03/23 18:31:59  dj_jl
 //	Members tree.
 //	

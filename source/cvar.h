@@ -23,15 +23,18 @@
 //**
 //**************************************************************************
 
-#define CVAR_ARCHIVE		1	//	Set to cause it to be saved to vavoom.cfg
-#define	CVAR_USERINFO		2	//	Added to userinfo  when changed
-#define	CVAR_SERVERINFO		4	//	Added to serverinfo when changed
-#define	CVAR_INIT			8	//	Don't allow change from console at all,
-								// but can be set from the command line
-#define	CVAR_LATCH			16	//	Save changes until server restart
-#define	CVAR_ROM			32	//	Display only, cannot be set by user at all
-#define CVAR_CHEAT			64	//	Can not be changed if cheats are disabled
-#define CVAR_MODIFIED		128	//	Set each time the cvar is changed
+enum
+{
+	CVAR_ARCHIVE	= 1,	//	Set to cause it to be saved to config.cfg
+	CVAR_USERINFO	= 2,	//	Added to userinfo  when changed
+	CVAR_SERVERINFO	= 4,	//	Added to serverinfo when changed
+	CVAR_INIT		= 8,	//	Don't allow change from console at all,
+							// but can be set from the command line
+	CVAR_LATCH		= 16,	//	Save changes until server restart
+	CVAR_ROM		= 32,	//	Display only, cannot be set by user at all
+	CVAR_CHEAT		= 64,	//	Can not be changed if cheats are disabled
+	CVAR_MODIFIED	= 128,	//	Set each time the cvar is changed
+};
 
 //
 //	Console variable
@@ -39,62 +42,64 @@
 class TCvar
 {
 protected:
-	const char	*name;				//	Variable's name
-	const char	*default_string;	//	Default value
-	char		*string;			//	Current value
-	int			flags;				//	CVAR_ flags
-	int			value;				//	atoi(string)
-	float		fvalue;				//	atof(string)
-	TCvar		*next;				//	For linked list if variables
-	char		*latched_string;	//	For CVAR_LATCH variables
+	const char*	Name;				//	Variable's name
+	const char*	DefaultString;		//	Default value
+	VStr		StringValue;		//	Current value
+	int			Flags;				//	CVAR_ flags
+	int			IntValue;			//	atoi(string)
+	float		FloatValue;			//	atof(string)
+	TCvar*		Next;				//	For linked list if variables
+	VStr		LatchedString;		//	For CVAR_LATCH variables
 
 public:
-	TCvar(const char *AName, const char *ADefault, int AFlags = 0);
-	void Register(void);
+	TCvar(const char* AName, const char* ADefault, int AFlags = 0);
+	void Register();
 	void Set(int value);
 	void Set(float value);
-	void Set(const char *value);
+	void Set(const VStr& value);
+	bool IsModified();
 
-	static void Init(void);
+	static void Init();
 
-	static int Value(const char *var_name);
-	static float Float(const char *var_name);
-	static char *String(const char *var_name);
+	static int GetInt(const char* var_name);
+	static float GetFloat(const char* var_name);
+	static const char* GetCharp(const char* var_name);
+	static VStr GetString(const char* var_name);
 
-	static void Set(const char *var_name, int value);
-	static void Set(const char *var_name, float value);
-	static void Set(const char *var_name, const char *value);
+	static void Set(const char* var_name, int value);
+	static void Set(const char* var_name, float value);
+	static void Set(const char* var_name, const VStr& value);
 
-	static bool Command(int argc, const char **argv);
-	static void WriteVariables(FILE *f);
+	static bool Command(int argc, const char** argv);
+	static void WriteVariables(FILE* f);
 
-	static void Unlatch(void);
+	static void Unlatch();
 	static void SetCheating(bool);
 
 	friend class TCmdCvarList;
 
 private:
-	void DoSet(const char *value);
+	void DoSet(const VStr& value);
 
-	static TCvar	*Variables;
-	static bool		Initialized;
+	static TCvar*	Variables;
+	static bool		Initialised;
 	static bool		Cheating;
 
-	static TCvar *FindVariable(const char* name);
+	static TCvar* FindVariable(const char* name);
 };
 
 //	Cvar, that can be used as int variable
 class TCvarI : public TCvar
 {
 public:
-	TCvarI(const char *AName, const char *ADefault, int AFlags = 0)
+	TCvarI(const char* AName, const char* ADefault, int AFlags = 0)
 		: TCvar(AName, ADefault, AFlags)
 	{
 	}
 
-	operator int(void) const
+	operator int() const
 	{
-		return value;
+		return IntValue;
 	}
 
 	TCvarI &operator = (int AValue)
@@ -108,14 +113,14 @@ public:
 class TCvarF : public TCvar
 {
 public:
-	TCvarF(const char *AName, const char *ADefault, int AFlags = 0)
+	TCvarF(const char* AName, const char* ADefault, int AFlags = 0)
 		: TCvar(AName, ADefault, AFlags)
 	{
 	}
 
-	operator float(void) const
+	operator float() const
 	{
-		return fvalue;
+		return FloatValue;
 	}
 
 	TCvarF &operator = (float AValue)
@@ -129,17 +134,17 @@ public:
 class TCvarS : public TCvar
 {
 public:
-	TCvarS(const char *AName, const char *ADefault, int AFlags = 0)
+	TCvarS(const char* AName, const char* ADefault, int AFlags = 0)
 		: TCvar(AName, ADefault, AFlags)
 	{
 	}
 
-	operator char*(void) const
+	operator const char*() const
 	{
-		return string;
+		return *StringValue;
 	}
 
-	TCvarS &operator = (const char *AValue)
+	TCvarS &operator = (const char* AValue)
 	{
 		Set(AValue);
 		return *this;
@@ -149,9 +154,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.9  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

@@ -325,8 +325,8 @@ PF(GetCvar)
 {
 	int		name;
 
-    name = Pop();
-    Push(TCvar::Value((char*)name));
+	name = Pop();
+	Push(TCvar::GetInt((char*)name));
 }
 
 //==========================================================================
@@ -355,8 +355,8 @@ PF(GetCvarF)
 {
 	int		name;
 
-    name = Pop();
-    Pushf(TCvar::Float((char*)name));
+	name = Pop();
+	Pushf(TCvar::GetFloat((char*)name));
 }
 
 //==========================================================================
@@ -386,7 +386,7 @@ PF(GetCvarS)
 	int		name;
 
     name = Pop();
-    Push((int)TCvar::String((char*)name));
+    Push((int)TCvar::GetCharp((char*)name));
 }
 
 //==========================================================================
@@ -3473,9 +3473,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.81  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.80  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.79  2006/03/13 18:32:45  dj_jl
 //	Added function to check if a state is in the range.
 //	

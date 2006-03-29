@@ -717,9 +717,9 @@ void S_StartSong(VName song, int track, boolean loop)
 	if (CDMusic)
 	{
 		if (loop)
-			CmdBuf << "CD Loop " << track << "\n";
+			CmdBuf << "CD Loop " << VStr(track) << "\n";
 		else
-			CmdBuf << "CD Play " << track << "\n";
+			CmdBuf << "CD Play " << VStr(track) << "\n";
 	}
 	else
 	{
@@ -1853,9 +1853,12 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.29  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.28  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

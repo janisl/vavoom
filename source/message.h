@@ -53,21 +53,23 @@ class TMessage : public TSizeBuf
 	TMessage &operator << (dword c) { return operator << ((int)c); }
 	TMessage &operator << (float c);
 	TMessage &operator << (const char *c);
+	TMessage &operator << (const VStr& c);
 	TMessage &operator << (const TMessage &msg);
 
 	//
 	//	reading functions
 	//
-	void BeginReading(void);
-	TMessage &operator >> (char &c);
-	TMessage &operator >> (byte &c)  { return operator >> ((char&)c); }
-	TMessage &operator >> (short &c);
-	TMessage &operator >> (word &c)  { return operator >> ((short&)c); }
-	TMessage &operator >> (int &c);
-	TMessage &operator >> (long &c)  { return operator >> ((int&)c); }
-	TMessage &operator >> (dword &c) { return operator >> ((int&)c); }
-	TMessage &operator >> (float &f);
-	TMessage &operator >> (char *&s);
+	void BeginReading();
+	TMessage &operator >> (char& c);
+	TMessage &operator >> (byte& c)  { return operator >> ((char&)c); }
+	TMessage &operator >> (short& c);
+	TMessage &operator >> (word& c)  { return operator >> ((short&)c); }
+	TMessage &operator >> (int& c);
+	TMessage &operator >> (long& c)  { return operator >> ((int&)c); }
+	TMessage &operator >> (dword& c) { return operator >> ((int&)c); }
+	TMessage &operator >> (float& f);
+	TMessage &operator >> (char*& s);
+	TMessage &operator >> (VStr& s);
 	TMessage &operator >> (TMessage &msg);
 
 	byte ReadByte(void);
@@ -95,9 +97,12 @@ inline byte AngleToByte(float angle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/22 17:25:55  dj_jl
 //	Floatification of angles
 //	

@@ -498,17 +498,19 @@ void Host_SaveConfiguration(void)
 	if (fl_savedir)
 	{
 		FL_CreatePath(fl_savedir + "/" + fl_gamedir);
-		f = fopen(*(fl_savedir + "/" + fl_gamedir + "/" + (const char*)configfile), "w");
+		f = fopen(*(fl_savedir + "/" + fl_gamedir + "/" +
+			(const char*)configfile), "w");
 	}
 	else
 	{
 		FL_CreatePath(fl_basedir + "/" + fl_gamedir);
-		f = fopen(*(fl_basedir + "/" + fl_gamedir + "/" + (const char*)configfile), "w");
+		f = fopen(*(fl_basedir + "/" + fl_gamedir + "/" +
+			(const char*)configfile), "w");
 	}
 	if (!f)
 	{
 		GCon->Logf("Host_SaveConfiguration: Failed to open config file \"%s\"",
-			(char *)configfile);
+			(const char*)configfile);
 		return; // can't write the file, but don't complain
 	}
 
@@ -632,9 +634,12 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.34  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.33  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.32  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

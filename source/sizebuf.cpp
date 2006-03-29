@@ -126,48 +126,15 @@ void TSizeBuf::Write(const void *data, int length)
 	memcpy(GetSpace(length), data, length);
 }
 
-//==========================================================================
-//
-//  TSizeBuf::Print
-//
-//==========================================================================
-
-void TTextBuf::Print(const char *data)
-{
-	int             len;
-
-	len = strlen(data) + 1;
-
-	if (!CurSize || Data[CurSize - 1])
-	{
-		memcpy((byte *)GetSpace(len), data, len); // no trailing 0
-	}
-	else
-	{
-		memcpy((byte *)GetSpace(len - 1) - 1, data, len); // write over trailing 0
-	}
-}
-
-//==========================================================================
-//
-//  TSizeBuf::PrintInt
-//
-//==========================================================================
-
-void TTextBuf::PrintInt(int data)
-{
-	char		buf[16];
-
-	sprintf(buf, "%d", data);
-    Print(buf);
-}
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.5  2002/07/23 16:29:56  dj_jl
 //	Replaced console streams with output device class.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

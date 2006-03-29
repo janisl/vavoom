@@ -30,12 +30,12 @@
 #define COMMAND(name) \
 static class TCmd ## name : public TCommand \
 { \
- public: \
-	TCmd ## name(void) : TCommand(#name) { } \
-    void Run(void); \
+public: \
+	TCmd ## name() : TCommand(#name) { } \
+	void Run(); \
 } name ## _f; \
 \
-void TCmd ## name::Run(void)
+void TCmd ## name::Run()
 
 // TYPES -------------------------------------------------------------------
 
@@ -45,40 +45,61 @@ enum cmd_source_t
 	src_client
 };
 
-class TCmdBuf : public TTextBuf
+//
+//	A command buffer.
+//
+class TCmdBuf
 {
- public:
-	void Init(void);
-	void Insert(const char*);
-	void Exec(void);
+private:
+	VStr		Buffer;
 
- private:
-	TTextBuf			ParsedCmd;
+public:
+	void Init();
+	void Insert(const char*);
+	void Insert(const VStr&);
+	void Print(const char*);
+	void Print(const VStr&);
+	void Exec();
+
+	TCmdBuf& operator << (const char* data)
+	{
+		Print(data);
+		return *this;
+	}
+
+	TCmdBuf& operator << (const VStr& data)
+	{
+		Print(data);
+		return *this;
+	}
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void Cmd_Init(void);
+void Cmd_Init();
 void Cmd_WriteAlias(FILE *f);
 
-void Cmd_TokenizeString(const char *str);
-int Cmd_Argc(void);
+void Cmd_TokeniseString(const char *str);
+int Cmd_Argc();
 char **Cmd_Argv();
 char *Cmd_Argv(int parm);
-char *Cmd_Args(void);
+char *Cmd_Args();
 int Cmd_CheckParm(const char *check);
 
 void Cmd_ExecuteString(const char *cmd, cmd_source_t src);
-void Cmd_ForwardToServer(void);
+void Cmd_ForwardToServer();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern TCmdBuf		CmdBuf;
 extern cmd_source_t	cmd_source;
 
+//
+//	A console command.
+//
 class TCommand
 {
- public:
+public:
 	TCommand(const char *name);
 	virtual ~TCommand();
 
@@ -101,16 +122,19 @@ class TCommand
 		return Cmd_CheckParm(check);
 	}
 
-	const char	*Name;
-	TCommand	*Next;
+	const char*	Name;
+	TCommand*	Next;
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.8  2005/04/28 07:16:11  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.7  2003/10/22 06:24:35  dj_jl
 //	Access to the arguments vector
 //	

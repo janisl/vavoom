@@ -341,7 +341,7 @@ void IN_ProcessEvents(void)
 				if (kb[0] == '+' || kb[0] == '-')
 				{
 					// button commands add keynum as a parm
-					CmdBuf << kb << " " << ev->data1 << "\n";
+					CmdBuf << kb << " " << VStr(ev->data1) << "\n";
 				}
 				else
 				{
@@ -358,7 +358,7 @@ void IN_ProcessEvents(void)
 		    	if (kb[0] == '+' || kb[0] == '-')
 				{
 					// button commands add keynum as a parm
-					CmdBuf << kb << " " << ev->data1 << "\n";
+					CmdBuf << kb << " " << VStr(ev->data1) << "\n";
 		        }
 				else
 				{
@@ -689,9 +689,12 @@ int IN_TranslateKey(int ch)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.14  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.13  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

@@ -290,6 +290,24 @@ public:
 		return !!strcmp(*S1, *S2);
 	}
 
+	//	Comparison functions.
+	int Cmp(const char* S2)
+	{
+		return strcmp(**this, S2);
+	}
+	int Cmp(const VStr& S2)
+	{
+		return strcmp(**this, *S2);
+	}
+	int ICmp(const char* S2)
+	{
+		return stricmp(**this, S2);
+	}
+	int ICmp(const VStr& S2)
+	{
+		return stricmp(**this, *S2);
+	}
+
 	VStr ExtractFilePath() const;
 	VStr ExtractFileName() const;
 	VStr ExtractFileBase() const;
@@ -302,9 +320,12 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.3  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.2  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

@@ -624,7 +624,7 @@ static void CL_ParseModel()
 			}
 		}
 	}
-	else if (TCvar::Value("r_models"))
+	else if (TCvar::GetInt("r_models"))
 	{
 		GCon->Logf("Can't find %s", name);
 	}
@@ -1078,9 +1078,12 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.43  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.42  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.41  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

@@ -68,31 +68,6 @@ class TSizeBuf
 	int		CurSize;
 };
 
-class TTextBuf : public TSizeBuf
-{
- public:
-	void Print(const char *data);	// strcats onto the sizebuf
-	void PrintInt(int data);		// strcats onto the sizebuf
-
-	TTextBuf& operator << (byte data)
-	{
-    	*(byte*)GetSpace(1) = data;
-		return *this;
-	}
-
-	TTextBuf& operator << (const char *data)
-	{
-		Print(data);
-		return *this;
-	}
-
-	TTextBuf& operator << (int data)
-	{
-		PrintInt(data);
-		return *this;
-	}
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -100,9 +75,12 @@ class TTextBuf : public TSizeBuf
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/03/29 22:32:27  dj_jl
+//	Changed console variables and command buffer to use dynamic strings.
+//
 //	Revision 1.5  2002/07/13 07:43:03  dj_jl
 //	Added space checking.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	
