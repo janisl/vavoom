@@ -47,7 +47,7 @@ void A_AlarmActive()
 	if (ReactionCount == 2)
 	{
 		// Should make enemies go to Idle state again
-		Sector->SoundTarget = none;
+		StrifeLevelInfo(Level).NoiseAlert(none, self);
 	}
 	else if (ReactionCount > 50)
 	{
@@ -76,6 +76,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/29 14:37:08  firebrand_kh
+//  Made the alarm call NoiseAlert when shutting up
+//
 //  Revision 1.5  2006/03/24 15:41:46  firebrand_kh
 //  Made alarms shut down properly
 //
