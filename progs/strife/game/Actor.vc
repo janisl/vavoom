@@ -372,6 +372,8 @@ void ExplodeMissile()
 		StateTime = 0.1;
 
 	bMissile = false;
+	if (bFloorBounce)
+		bFloorBounce = false;
 
 	if (DeathSound)
 		PlaySound(DeathSound, CHAN_VOICE);
@@ -555,6 +557,11 @@ void Died(Actor source)
 	if (Class == Crusader)
 	{
 		A = Spawn(ItemAmmoEnergyPod, vector(Origin.x, Origin.y, ONFLOORZ));
+		A.bDropped = true;	// special versions of items
+	}
+	if (Class == Bishop)
+	{
+		A = Spawn(ItemAmmoCrateOfMissiles, vector(Origin.x, Origin.y, ONFLOORZ));
 		A.bDropped = true;	// special versions of items
 	}
 }
@@ -1417,13 +1424,12 @@ void XYMovement(float DeltaTime)
 			}
 			else if (bMissile)
 			{
-				if (bFloorBounce)
+				if (bFloorBounce && ReactionCount > 0)
 				{
-					//  Bounce against walls and non-killable ofjects
+					//  Bounce against walls and ofjects
 					if (Level.Game.tmtrace->BlockingMobj)
 					{
-						if ((!Level.Game.tmtrace->BlockingMobj.bIsPlayer) &&
-							(!Actor(Level.Game.tmtrace->BlockingMobj).bCountKill))
+						if ((!Level.Game.tmtrace->BlockingMobj.bIsPlayer))
 						{
 							float speed;
 							float angle;
@@ -1441,11 +1447,11 @@ void XYMovement(float DeltaTime)
 							{
 								PlaySound(PainSound, CHAN_VOICE);
 							}
-						}
-						else
-						{
-							// Struck a player/creature
-							ExplodeMissile();
+							A_DecReactionCount();
+							// Hit killable objects, but don't explode
+							if (Actor(Level.Game.tmtrace->BlockingMobj).bCountKill)
+								Damage(self, self.Instigator, MissileDamage);
+
 						}
 					}
 					else
@@ -1456,12 +1462,14 @@ void XYMovement(float DeltaTime)
 						{
 							PlaySound(PainSound, CHAN_VOICE);
 						}
+						A_DecReactionCount();
 					}
 					if (IsDestroyed())
 					{
 						return;	// mobj was removed
 					}
-//					return true;
+					A_DecReactionCount();
+					return;
 				}
 
 				// explode a missile
@@ -1555,15 +1563,21 @@ void ZMovement(float DeltaTime)
 
 		if (bMissile)
 		{
-//			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
 			if (bColideWithWorld && !bFloorBounce)
 			{
 				ExplodeMissile();
 				return;
 			}
-			if (bFloorBounce && PainSound && Length(Velocity) > 256.0)
+			if (bFloorBounce)
 			{
-				PlaySound(PainSound, CHAN_VOICE);
+				Velocity.z = Velocity.z * -0.7;
+				Velocity.x = 2.0 * Velocity.x / 3.0;
+				Velocity.y = 2.0 * Velocity.y / 3.0;
+				if (PainSound && Length(Velocity) > 256.0)
+				{
+					PlaySound(PainSound, CHAN_VOICE);
+				}
+				A_DecReactionCount();
 			}
 		}
 	}
@@ -1585,15 +1599,20 @@ void ZMovement(float DeltaTime)
 
 		if (bMissile)
 		{
-//			if (!(Flags & (MF_NOCLIP | MF_BOUNCE)))
 			if (bColideWithWorld && !bFloorBounce)
 			{
 				ExplodeMissile();
 				return;
 			}
-			if (bFloorBounce && PainSound && Length(Velocity) > 256.0)
+			if (bFloorBounce)
 			{
-				PlaySound(PainSound, CHAN_VOICE);
+				// Reverse momentum here for ceiling bounce
+				Velocity -= vdot * Ceiling->normal;
+				if (PainSound && Length(Velocity) > 256.0)
+				{
+					PlaySound(PainSound, CHAN_VOICE);
+				}
+				A_DecReactionCount();
 			}
 		}
 	}
@@ -1626,6 +1645,7 @@ void ApplyFriction()
 			if (bFloorBounce)
 			{
 				dot *= BOUNCE_VAL;
+				A_DecReactionCount();
 			}
 			Velocity -= dot * Floor->normal;
 		}
@@ -3128,59 +3148,32 @@ void A_BeShadowyFoe()
 //
 //==========================================================================
 
-const float TRACEANGLE	= (7.0 * 45.0 / 16.0);
+const float TRACEADJUST = 0.2865921825;
 
 void A_Tracer()
 {
-	Actor dest;
-	float exact;
-	float dist;
-	float slope;
+	Actor A;
+	TVec wishdir;
+	TVec currdir;
+	TVec delta;
+	float adjustlen;
 
-	dest = Enemy;
-
-	if (!dest || dest.Health <= 0)
+	if (Level.Game.level->tictime & 3)
 		return;
 
-	// change angle
-	exact = atan2(dest.Origin.y - Origin.y, dest.Origin.x - Origin.x);
+	// adjust direction
+	if (!Enemy || Enemy.Health <= 0)
+		return;
 
-	if (exact != Angles.yaw)
-	{
-		if (AngleMod360(exact - Angles.yaw) > 180.0)
-		{
-			Angles.yaw = AngleMod360(Angles.yaw - TRACEANGLE);
-			if (AngleMod360(exact - Angles.yaw) < 180.0)
-				Angles.yaw = exact;
-		}
-		else
-		{
-			Angles.yaw = AngleMod360(Angles.yaw + TRACEANGLE);
-			if (AngleMod360(exact - Angles.yaw) > 180.0)
-				Angles.yaw = exact;
-		}
-	}
-
-	Velocity.x = Speed * cos(Angles.yaw);
-	Velocity.y = Speed * sin(Angles.yaw);
-
-	// change slope
-	dist = DistTo2(dest);
-	dist /= Speed;
-
-	if (dist < 1.0)
-	{
-		dist = 1.0;
-	}
-	slope = (dest.Origin.z + 40.0 - Origin.z) / dist;
-	if (slope < Velocity.z)
-	{
-		Velocity.z -= 1.0 / 8.0 * 35.0;
-	}
-	else
-	{
-		Velocity.z += 1.0 / 8.0 * 35.0;
-	}
+	wishdir = Normalise(MobjCenter(Enemy) - Origin);
+	currdir = Normalise(Velocity);
+	delta = wishdir - currdir;
+	adjustlen = Length(delta);
+	if (adjustlen > TRACEADJUST)
+		adjustlen = TRACEADJUST;
+	wishdir = currdir + delta * adjustlen;
+	Velocity = wishdir * Speed;
+	VectorAngles(&wishdir, &Angles);
 }
 
 //==========================================================================
@@ -3473,6 +3466,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.40  2006/03/29 14:36:30  firebrand_kh
+//  Added bouncing flags / Changed Improved A_Tracer method
+//
 //  Revision 1.39  2006/03/28 15:02:57  firebrand_kh
 //  Lots of fixes and improvements
 //
