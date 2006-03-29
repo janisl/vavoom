@@ -55,6 +55,7 @@ defaultproperties
 	MissileDamage = 1;
 	bNoGravity = false;
 	bActivateImpact = true;
+	bFloorBounce = true;
 	IdleState = S_GRENADE_HE_1;
 	DeathState = S_GRENADE_HE_X1;
 	SightSound = 'weapons/hegrenadeshoot';
@@ -64,6 +65,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/29 14:37:30  firebrand_kh
+//  Added bouncing flag
+//
 //  Revision 1.5  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

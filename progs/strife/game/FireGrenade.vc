@@ -51,6 +51,7 @@ defaultproperties
 	Speed = 525.0;
 	ReactionCount = 40;
 	MissileDamage = 1;
+	bFloorBounce = true;
 	bNoGravity = false;
 	bActivateImpact = true;
 	IdleState = S_GRENADE_FIRE_1;
@@ -62,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/29 14:37:45  firebrand_kh
+//  Added bouncing flag
+//
 //  Revision 1.5  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
