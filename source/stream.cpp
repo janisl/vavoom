@@ -396,7 +396,7 @@ void VMemoryStream::Serialise(void* Data, int Len)
 void VMemoryStream::Seek(int InPos)
 {
 	guard(VMemoryStream::Seek);
-	if (InPos < 0 || Pos > Array.Num())
+	if (InPos < 0 || InPos > Array.Num())
 	{
 		bError = true;
 	}
@@ -432,9 +432,12 @@ int VMemoryStream::TotalSize()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/03/29 20:31:59  dj_jl
+//	Fixed validity check in seek.
+//
 //	Revision 1.5  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
-//
+//	
 //	Revision 1.4  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	
