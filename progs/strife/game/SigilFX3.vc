@@ -71,6 +71,7 @@ void A_Unknown91()
 	A.Enemy = Enemy;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
+	A_Tracer();
 }
 
 __states__
@@ -98,6 +99,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/03/29 14:34:45  firebrand_kh
+//  Added tracer call for this projectile
+//
 //  Revision 1.5  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //
