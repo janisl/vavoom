@@ -37,7 +37,7 @@ void Died(Actor source)
 {
 	int i;
 
-	Died(source);
+	::Died(source);
 
 	for (i = 0; i < MAXPLAYERS; ++i)
 	{
@@ -90,6 +90,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/04/05 17:30:52  dj_jl
+//  Fixed infinite recursion.
+//
 //  Revision 1.8  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //
