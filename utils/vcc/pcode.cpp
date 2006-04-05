@@ -407,24 +407,6 @@ static void WriteCode()
 
 //==========================================================================
 //
-//	LittleFloat
-//
-//==========================================================================
-
-float LittleFloat(float f)
-{
-	union
-	{
-		int i;
-		float f;
-	} fi;
-	fi.f = f;
-	fi.i = LittleLong(fi.i);
-	return fi.f;
-}
-
-//==========================================================================
-//
 //	VProgsImport
 //
 //==========================================================================
@@ -618,6 +600,7 @@ private:
 public:
 	vint32*					NamesMap;
 	vint32*					MembersMap;
+	TArray<VName>			Names;
 	TArray<VProgsImport>	Imports;
 	TArray<VProgsExport>	Exports;
 
@@ -677,7 +660,7 @@ public:
 
 	VStream& operator<<(VName& Name)
 	{
-		int TmpIdx = Name.GetIndex();
+		int TmpIdx = NamesMap[Name.GetIndex()];
 		*this << STRM_INDEX(TmpIdx);
 		return *this;
 	}
@@ -702,6 +685,36 @@ public:
 	void AddExport(VMemberBase* Obj)
 	{
 		MembersMap[Obj->MemberIndex] = Exports.AddItem(VProgsExport(Obj)) + 1;
+	}
+};
+
+//==========================================================================
+//
+//	VProgsWriter
+//
+//==========================================================================
+
+class VImportsCollector : public VStream
+{
+	VProgsWriter		&Writer;
+
+public:
+	VImportsCollector(VProgsWriter& InWriter)
+	: Writer(InWriter)
+	{
+		bLoading = false;
+	}
+	VStream& operator<<(VName& Name)
+	{
+		if (Writer.NamesMap[Name.GetIndex()] == -1)
+			Writer.NamesMap[Name.GetIndex()] = Writer.Names.AddItem(Name);
+		return *this;
+	}
+	VStream& operator<<(VMemberBase*& Ref)
+	{
+		if (Ref != CurrentPackage)
+			Writer.GetMemberIndex(Ref);
+		return *this;
 	}
 };
 
@@ -850,6 +863,47 @@ VPackage* LoadPackage(VName InName)
 
 //==========================================================================
 //
+//	WriteCode
+//
+//==========================================================================
+
+static void WriteCode(VStream& Strm)
+{
+	for (int i = 0; i < CodeBuffer.Num(); i++)
+	{
+		vuint8 Tmp = CodeBuffer[i];
+		Strm << Tmp;
+		if (StatementInfo[CodeBuffer[i]].params >= 1)
+		{
+			switch (CodeBuffer[i])
+			{
+			case OPC_PushName:
+			case OPC_CaseGotoName:
+				Strm << *(VName*)&CodeBuffer[i + 1];
+				break;
+			case OPC_PushFunction:
+			case OPC_Call:
+			case OPC_PushClassId:
+			case OPC_DynamicCast:
+			case OPC_CaseGotoClassId:
+			case OPC_PushState:
+				Strm << VMemberBase::GMembers[CodeBuffer[i + 1]];
+				break;
+			default:
+				Strm << CodeBuffer[i + 1];
+				break;
+			}
+		}
+		if (StatementInfo[CodeBuffer[i]].params >= 2)
+		{
+			Strm << CodeBuffer[i + 2];
+		}
+		i += StatementInfo[CodeBuffer[i]].params;
+	}
+}
+
+//==========================================================================
+//
 //	PC_WriteObject
 //
 //==========================================================================
@@ -876,25 +930,42 @@ void PC_WriteObject(char *name)
 	{
 		if (VMemberBase::GMembers[i]->IsIn(CurrentPackage))
 			Writer.AddExport(VMemberBase::GMembers[i]);
-		else if (VMemberBase::GMembers[i] != CurrentPackage &&
-			(VMemberBase::GMembers[i]->Outer ||
-			VMemberBase::GMembers[i]->MemberType == MEMBER_Package))
-		{
-			Writer.GetMemberIndex(VMemberBase::GMembers[i]);
-			if (!VMemberBase::GMembers[i]->IsIn(LoadedPackages[0]))
-				dprintf("What is %s?\n", *VMemberBase::GMembers[i]->Name);
-		}
 	}
 
+	//
+	//	Collect list of imported objects and used names.
+	//
+	VImportsCollector Collector(Writer);
+	for (i = 0; i < Writer.Exports.Num(); i++)
+	{
+		Collector << Writer.Exports[i];
+	}
+	for (i = 0; i < Writer.Exports.Num(); i++)
+	{
+		Writer.Exports[i].Obj->Serialise(Collector);
+	}
+	WriteCode(Collector);
+	for (i = 0; i < vtables.Num(); i++)
+	{
+		Collector << vtables[i];
+	}
+	for (i = 0; i < Writer.Imports.Num(); i++)
+	{
+		Collector << Writer.Imports[i];
+	}
+
+	//
+	//	Now write the object file.
+	//
 	memset(&progs, 0, sizeof(progs));
 	Writer.Serialise(&progs, sizeof(progs));
 
 	//	Serialise names.
 	progs.ofs_names = Writer.Tell();
-	progs.num_names = VName::GetNumNames();
-	for (i = 0; i < VName::GetNumNames(); i++)
+	progs.num_names = Writer.Names.Num();
+	for (i = 0; i < Writer.Names.Num(); i++)
 	{
-		Writer << *VName::GetEntry(i);
+		Writer << *VName::GetEntry(Writer.Names[i].GetIndex());
 	}
 
 	progs.ofs_strings = Writer.Tell();
@@ -903,37 +974,7 @@ void PC_WriteObject(char *name)
 
 	progs.ofs_statements = Writer.Tell();
 	progs.num_statements = CodeBuffer.Num();
-	for (i = 0; i < CodeBuffer.Num(); i++)
-	{
-		vuint8 Tmp = CodeBuffer[i];
-		Writer << Tmp;
-		if (StatementInfo[CodeBuffer[i]].params >= 1)
-		{
-			switch (CodeBuffer[i])
-			{
-			case OPC_PushName:
-			case OPC_CaseGotoName:
-				Writer << *(VName*)&CodeBuffer[i + 1];
-				break;
-			case OPC_PushFunction:
-			case OPC_Call:
-			case OPC_PushClassId:
-			case OPC_DynamicCast:
-			case OPC_CaseGotoClassId:
-			case OPC_PushState:
-				Writer << VMemberBase::GMembers[CodeBuffer[i + 1]];
-				break;
-			default:
-				Writer << CodeBuffer[i + 1];
-				break;
-			}
-		}
-		if (StatementInfo[CodeBuffer[i]].params >= 2)
-		{
-			Writer << CodeBuffer[i + 2];
-		}
-		i += StatementInfo[CodeBuffer[i]].params;
-	}
+	WriteCode(Writer);
 
 	progs.ofs_vtables = Writer.Tell();
 	progs.num_vtables = vtables.Num();
@@ -985,7 +1026,7 @@ void PC_WriteObject(char *name)
 	//	Print statistics.
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
-	dprintf("Names      %6d %6d\n", VName::GetNumNames(), progs.ofs_strings - progs.ofs_names);
+	dprintf("Names      %6d %6d\n", Writer.Names.Num(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
 	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), progs.ofs_vtables - progs.ofs_statements);
 	dprintf("Builtins   %6d\n", numbuiltins);
@@ -1288,9 +1329,12 @@ void VConstant::Serialise(VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/04/05 17:26:10  dj_jl
+//	Write only used imports and names.
+//
 //	Revision 1.38  2006/03/26 13:06:49  dj_jl
 //	Implemented support for modular progs.
-//
+//	
 //	Revision 1.37  2006/03/23 22:22:02  dj_jl
 //	Hashing of members for faster search.
 //	
