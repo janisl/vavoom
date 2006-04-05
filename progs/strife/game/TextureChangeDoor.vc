@@ -118,8 +118,7 @@ void StartAnim()
 		CloseSound = 'DoorCloseLargeMetal';
 	}
 	SectorStartSequence(Sector, opensound);
-	SetLineTexture(Line->sidenum[0], 1, texTop);
-	SetLineTexture(Line->sidenum[1], 1, texTop);
+	SetAnimTexture(texTop);
 }
 
 //==========================================================================
@@ -158,8 +157,7 @@ void Tick(float deltaTime)
 			}
 		}
 		NewMidTexture = texTop + ftoi(CurrentFrame);
-		SetLineTexture(Line->sidenum[0], 1, NewMidTexture);
-		SetLineTexture(Line->sidenum[1], 1, NewMidTexture);
+		SetAnimTexture(NewMidTexture);
 		break;
 
 	case 0:
@@ -181,8 +179,7 @@ void Tick(float deltaTime)
 			CurrentFrame = 0.0;
 		}
 		NewMidTexture = texTop + ftoi(CurrentFrame);
-		SetLineTexture(Line->sidenum[0], 1, NewMidTexture);
-		SetLineTexture(Line->sidenum[1], 1, NewMidTexture);
+		SetAnimTexture(NewMidTexture);
 
 		//	Try to close door. If it crushes it means that there's something
 		// inside the door so go back.
@@ -194,8 +191,7 @@ void Tick(float deltaTime)
 		else if (CurrentFrame == 0.0)
 		{
 			//	Clear mid texture in a case door will be open from other side.
-			SetLineTexture(Line->sidenum[0], 1, 0);
-			SetLineTexture(Line->sidenum[1], 1, 0);
+			SetAnimTexture(0);
 			for (i = 0; i < Sector->linecount; i++)
 			{
 				if (Sector->lines[i]->backsector)
@@ -215,6 +211,26 @@ void Tick(float deltaTime)
 	}
 }
 
+//==========================================================================
+//
+//	SetAnimTexture
+//
+//==========================================================================
+
+void SetAnimTexture(int NewTex)
+{
+	int		i;
+
+	for (i = 0; i < Sector->linecount; i++)
+	{
+		if (Sector->lines[i]->flags & ML_TWOSIDED)
+		{
+			SetLineTexture(Sector->lines[i]->sidenum[0], 1, NewTex);
+			SetLineTexture(Sector->lines[i]->sidenum[1], 1, NewTex);
+		}
+	}
+}
+
 defaultproperties
 {
 }
@@ -222,6 +238,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/04/05 17:30:07  dj_jl
+//  Better way of setting current animation texture.
+//
 //  Revision 1.8  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //
