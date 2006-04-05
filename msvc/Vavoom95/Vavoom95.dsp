@@ -94,6 +94,11 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\source\args.cpp
+# ADD CPP /W4
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\cheats.cpp
 # ADD CPP /W4
 # End Source File
@@ -183,11 +188,6 @@ SOURCE=..\..\source\sc_man.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\sizebuf.cpp
-# ADD CPP /W4
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\str.cpp
 # ADD CPP /W4
 # End Source File
@@ -225,6 +225,10 @@ SOURCE=..\..\source\zone.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\source\args.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\source\array.h
@@ -328,10 +332,6 @@ SOURCE=..\..\source\save.h
 # Begin Source File
 
 SOURCE=..\..\source\scripts.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\sizebuf.h
 # End Source File
 # Begin Source File
 

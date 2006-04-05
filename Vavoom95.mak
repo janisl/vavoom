@@ -10,13 +10,12 @@ AFLAGS = /ml /zn
 LFLAGS = -Iobj -aa -Tpe -x -Gn -w -q
 
 PROJECT = Vavoom95.exe
-OBJFILES = obj\chat.obj obj\cheats.obj \
-	obj\cmd.obj obj\crc.obj obj\cvar.obj obj\debug.obj \
-	obj\host.obj obj\sys_win.obj \
-	obj\misc.obj obj\mapinfo.obj obj\p_setup.obj obj\level.obj \
-	obj\pr_cmds.obj obj\pr_exec.obj obj\str.obj obj\stream.obj \
-	obj\sc_man.obj obj\maths.obj obj\sizebuf.obj obj\name.obj \
+OBJFILES = obj\chat.obj obj\cheats.obj obj\cmd.obj obj\crc.obj obj\cvar.obj \
+	obj\debug.obj obj\host.obj obj\sys_win.obj obj\misc.obj obj\mapinfo.obj \
+	obj\p_setup.obj obj\level.obj obj\pr_cmds.obj obj\pr_exec.obj \
+	obj\str.obj obj\stream.obj obj\sc_man.obj obj\maths.obj obj\name.obj \
 	obj\wad.obj obj\zone.obj obj\message.obj obj\infostr.obj obj\files.obj \
+	obj\args.obj \
 	\
 	obj\vobject.obj obj\vclass.obj \
 	\

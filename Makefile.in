@@ -45,6 +45,7 @@ LINK_ARGS = -Wall $(LDFLAGS)
 #-- Common files --
 COMMON_OBJS = \
 	obj/am_map.$(OBJEXT) \
+	obj/args.$(OBJEXT) \
 	obj/chat.$(OBJEXT) \
 	obj/cheats.$(OBJEXT) \
 	obj/cl_demo.$(OBJEXT) \
@@ -135,7 +136,6 @@ COMMON_OBJS = \
 	obj/sbar.$(OBJEXT) \
 	obj/sc_man.$(OBJEXT) \
 	obj/screen.$(OBJEXT) \
-	obj/sizebuf.$(OBJEXT) \
 	obj/sn_sonix.$(OBJEXT) \
 	obj/str.$(OBJEXT) \
 	obj/stream.$(OBJEXT) \
@@ -253,6 +253,7 @@ GL_SYS_OBJ_WIN32 = obj/gl_win32.$(OBJEXT)
 #---------------------------------------
 
 SV_COMMON_OBJ_FILES = \
+	obj/sv/args.$(OBJEXT) \
 	obj/sv/cmd.$(OBJEXT) \
 	obj/sv/crc.$(OBJEXT) \
 	obj/sv/cvar.$(OBJEXT) \
@@ -277,7 +278,6 @@ SV_COMMON_OBJ_FILES = \
 	obj/sv/r_tex.$(OBJEXT) \
 	obj/sv/s_data.$(OBJEXT) \
 	obj/sv/sc_man.$(OBJEXT) \
-	obj/sv/sizebuf.$(OBJEXT) \
 	obj/sv/sn_sonix.$(OBJEXT) \
 	obj/sv/str.$(OBJEXT) \
 	obj/sv/stream.$(OBJEXT) \

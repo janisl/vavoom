@@ -14,14 +14,14 @@ OBJFILES = obj\sv\zone.obj obj\sv\crc.obj obj\sv\cvar.obj obj\sv\debug.obj \
     obj\sv\net_dgrm.obj obj\sv\net_loop.obj obj\sv\net_main.obj \
     obj\sv\net_win.obj obj\sv\net_wins.obj obj\sv\net_wipx.obj \
     obj\sv\mapinfo.obj obj\sv\p_setup.obj obj\sv\pr_cmds.obj \
-    obj\sv\pr_exec.obj obj\sv\sc_man.obj obj\sv\sizebuf.obj \
-    obj\sv\sv_main.obj obj\sv\sv_save.obj obj\sv\wad.obj obj\sv\cmd.obj \
+    obj\sv\pr_exec.obj obj\sv\sc_man.obj obj\sv\sv_main.obj \
+    obj\sv\sv_save.obj obj\sv\wad.obj obj\sv\cmd.obj \
     obj\sv\sys_wind.obj obj\sv\sv_user.obj obj\sv\sv_poly.obj \
     obj\sv\sv_sight.obj obj\sv\sv_swtch.obj obj\sv\sv_tick.obj \
     obj\sv\sv_acs.obj obj\sv\sv_ent.obj obj\sv\sv_world.obj \
     obj\sv\infostr.obj obj\sv\r_tex.obj obj\sv\files.obj obj\sv\s_data.obj \
     obj\sv\name.obj obj\sv\vobject.obj obj\sv\vclass.obj obj\sv\net_null.obj \
-    obj\sv\level.obj obj\sv\sn_sonix.obj \
+    obj\sv\level.obj obj\sv\sn_sonix.obj obj\sv\args.obj \
     obj\sv\str.obj obj\sv\stream.obj obj\sv\p_thinker.obj \
 # ---------------------------------------------------------------------------
 .autodepend
