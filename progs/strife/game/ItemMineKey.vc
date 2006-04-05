@@ -34,7 +34,7 @@ __states__
 defaultproperties
 {
 	ConversationID = 158;
-	PickupString = "Minre Key";
+	PickupString = "Mine Key";
 	bNoDeathmatch = true;
 	IdleState = S_MINE_KEY;
 	KeyType = StrifeDefs::KEY_MineKey;
@@ -43,6 +43,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/05 18:17:12  firebrand_kh
+//  Fixed typo
+//
 //  Revision 1.3  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
