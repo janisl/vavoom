@@ -44,14 +44,14 @@
 IMPLEMENT_DRAWER(VDirect3DDrawer, DRAWER_Direct3D, "Direct3D",
 	"Direct3D rasterizer device", "-d3d");
 
-TCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_ARCHIVE);
-TCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_ARCHIVE);
-TCvarI VDirect3DDrawer::tex_linear("d3d_tex_linear", "2", CVAR_ARCHIVE);
-TCvarI VDirect3DDrawer::dither("d3d_dither", "0", CVAR_ARCHIVE);
-TCvarI VDirect3DDrawer::blend_sprites("d3d_blend_sprites", "0", CVAR_ARCHIVE);
-TCvarF VDirect3DDrawer::maxdist("d3d_maxdist", "8192.0", CVAR_ARCHIVE);
-TCvarI VDirect3DDrawer::model_lighting("d3d_model_lighting", "0", CVAR_ARCHIVE);
-TCvarI VDirect3DDrawer::specular_highlights("d3d_specular_highlights", "1", CVAR_ARCHIVE);
+VCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_Archive);
+VCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_Archive);
+VCvarI VDirect3DDrawer::tex_linear("d3d_tex_linear", "2", CVAR_Archive);
+VCvarI VDirect3DDrawer::dither("d3d_dither", "0", CVAR_Archive);
+VCvarI VDirect3DDrawer::blend_sprites("d3d_blend_sprites", "0", CVAR_Archive);
+VCvarF VDirect3DDrawer::maxdist("d3d_maxdist", "8192.0", CVAR_Archive);
+VCvarI VDirect3DDrawer::model_lighting("d3d_model_lighting", "0", CVAR_Archive);
+VCvarI VDirect3DDrawer::specular_highlights("d3d_specular_highlights", "1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -65,7 +65,7 @@ static bool					Windowed;
 //
 //==========================================================================
 
-VDirect3DDrawer::VDirect3DDrawer(void) :
+VDirect3DDrawer::VDirect3DDrawer() :
 	IdentityMatrix(	1, 0, 0, 0,
 					0, 1, 0, 0,
 					0, 0, 1, 0,
@@ -81,11 +81,11 @@ VDirect3DDrawer::VDirect3DDrawer(void) :
 //
 //==========================================================================
 
-void VDirect3DDrawer::Init(void)
+void VDirect3DDrawer::Init()
 {
 	guard(VDirect3DDrawer::Init);
 
-	Windowed = !!M_CheckParm("-window");
+	Windowed = !!GArgs.CheckParm("-window");
 #if DIRECT3D_VERSION >= 0x0800
 	typedef IDirect3D8* (WINAPI*fp_Direct3DCreate8)(UINT SDKVersion);
 
@@ -144,7 +144,7 @@ void VDirect3DDrawer::Init(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::InitData(void)
+void VDirect3DDrawer::InitData()
 {
 }
 
@@ -351,7 +351,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 	D3DCAPS8 DeviceCaps;
 	RenderDevice->GetDeviceCaps(&DeviceCaps);
-//	TCvar::Set("r_sort_sprites", int((DeviceCaps.DevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
+//	VCvar::Set("r_sort_sprites", int((DeviceCaps.DevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
 	square_textures = (DeviceCaps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
 	maxTexSize = MAX(DeviceCaps.MaxTextureWidth, DeviceCaps.MaxTextureHeight);
 	if (square_textures)
@@ -489,7 +489,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 	D3DDEVICEDESC7	DeviceDesc;
 	RenderDevice->GetCaps(&DeviceDesc);
-	TCvar::Set("r_sort_sprites", int((DeviceDesc.dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
+	VCvar::Set("r_sort_sprites", int((DeviceDesc.dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
 	square_textures = (DeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
 	// needed?
 	//minTexSize = MAX(DeviceDesc.dwMinTextureWidth, DeviceDesc.dwMinTextureHeight);
@@ -545,7 +545,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 //
 //==========================================================================
 
-void VDirect3DDrawer::InitResolution(void)
+void VDirect3DDrawer::InitResolution()
 {
 	guard(VDirect3DDrawer::InitResolution);
 #if DIRECT3D_VERSION >= 0x0800
@@ -575,7 +575,7 @@ void VDirect3DDrawer::InitResolution(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::NewMap(void)
+void VDirect3DDrawer::NewMap()
 {
 	FlushCaches(false);
 }
@@ -586,7 +586,7 @@ void VDirect3DDrawer::NewMap(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::StartUpdate(void)
+void VDirect3DDrawer::StartUpdate()
 {
 	guard(VDirect3DDrawer::StartUpdate);
 #if DIRECT3D_VERSION < 0x0800
@@ -702,7 +702,7 @@ void VDirect3DDrawer::StartUpdate(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::Setup2D(void)
+void VDirect3DDrawer::Setup2D()
 {
 	guard(VDirect3DDrawer::Setup2D);
 	//	Setup viewport
@@ -843,7 +843,7 @@ void VDirect3DDrawer::SetupView(const refdef_t *rd)
 //
 //==========================================================================
 
-void VDirect3DDrawer::EndView(void)
+void VDirect3DDrawer::EndView()
 {
 	guard(VDirect3DDrawer::EndView);
 	Setup2D();
@@ -888,7 +888,7 @@ void VDirect3DDrawer::EndView(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::Update(void)
+void VDirect3DDrawer::Update()
 {
 	guard(VDirect3DDrawer::Update);
 	// End the scene.
@@ -924,7 +924,7 @@ void VDirect3DDrawer::Update(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::BeginDirectUpdate(void)
+void VDirect3DDrawer::BeginDirectUpdate()
 {
 	guard(VDirect3DDrawer::BeginDirectUpdate);
 #if DIRECT3D_VERSION < 0x0800
@@ -946,7 +946,7 @@ void VDirect3DDrawer::BeginDirectUpdate(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::EndDirectUpdate(void)
+void VDirect3DDrawer::EndDirectUpdate()
 {
 	Update();
 }
@@ -959,7 +959,7 @@ void VDirect3DDrawer::EndDirectUpdate(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::Shutdown(void)
+void VDirect3DDrawer::Shutdown()
 {
 	guard(VDirect3DDrawer::Shutdown);
 	ReleaseTextures();
@@ -1144,9 +1144,13 @@ void VDirect3DDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.27  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.26  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	
@@ -1172,7 +1176,7 @@ void VDirect3DDrawer::SetPalette(int pnum)
 //	Changed copyright year
 //	
 //	Revision 1.18  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
+//	Made VCvar a pure C++ class
 //	
 //	Revision 1.17  2001/11/09 14:18:40  dj_jl
 //	Added specular highlights

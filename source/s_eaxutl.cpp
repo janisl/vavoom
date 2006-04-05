@@ -47,7 +47,7 @@ extern int			cl_validcount;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarF		eax_distance_unit("eax_distance_unit", "32.0", CVAR_ARCHIVE);
+static VCvarF		eax_distance_unit("eax_distance_unit", "32.0", CVAR_Archive);
 
 static TVec			trace_start;
 static TVec			trace_end;
@@ -430,9 +430,13 @@ float EAX_CalcEnvSize(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.3  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.2  2002/09/07 16:31:51  dj_jl
 //	Added Level class.
 //	

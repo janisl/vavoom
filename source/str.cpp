@@ -59,9 +59,9 @@ VStr::VStr(const VStr& InStr, int Start, int Len)
 : Str(NULL)
 {
 	check(Start >= 0);
-	check(Start <= InStr.Length());
+	check(Start <= (int)InStr.Length());
 	check(Len >= 0);
-	check(Start + Len <= InStr.Length());
+	check(Start + Len <= (int)InStr.Length());
 	if (Len)
 	{
 		Resize(Len);
@@ -277,9 +277,13 @@ VStr VStr::DefaultExtension(const VStr& extension) const
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.2  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.1  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
 //	

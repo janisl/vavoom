@@ -95,8 +95,8 @@ static HANDLE		tevent;
 
 boolean		ActiveApp, Minimized;
 
-static TCvarI		win_priority("win_priority", "0", CVAR_ARCHIVE);
-static TCvarI		win_sys_keys("win_sys_keys", "1", CVAR_ARCHIVE);
+static VCvarI		win_priority("win_priority", "0", CVAR_Archive);
+static VCvarI		win_sys_keys("win_sys_keys", "1", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -365,9 +365,8 @@ double Sys_Time(void)
 //
 //==========================================================================
 
-static void Sys_InitTime(void)
+static void Sys_InitTime()
 {
-	int		        j;
 	LARGE_INTEGER	PerformanceFreq;
 	LARGE_INTEGER	PerformanceCount;
 	dword			lowpart, highpart;
@@ -398,11 +397,11 @@ static void Sys_InitTime(void)
 			  ((dword)PerformanceCount.u.HighPart << (32 - lowshift));
 
 	//	Set start time
-	j = M_CheckParm("-starttime");
+	const char* p = GArgs.CheckValue("-starttime");
 
-	if (j)
+	if (p)
 	{
-		curtime = (double)(atof(myargv[j + 1]));
+		curtime = (double)atof(p);
 	}
 	else
 	{
@@ -515,13 +514,12 @@ void* Sys_ZoneBase(int* size)
 	void*		ptr;
 	// Maximum allocated for zone heap (64meg default)
 	int			maxzone = 0x4000000;
-	int			p;
 	MEMORYSTATUS	lpBuffer;
 
-	p = M_CheckParm("-maxzone");
-	if (p && p < myargc - 1)
+	const char* p = GArgs.CheckValue("-maxzone");
+	if (p)
 	{
-		maxzone = (int)(atof(myargv[p + 1]) * 0x100000);
+		maxzone = (int)(atof(p) * 0x100000);
 		if (maxzone < MINIMUM_HEAP_SIZE)
 			maxzone = MINIMUM_HEAP_SIZE;
 		if (maxzone > MAXIMUM_HEAP_SIZE)
@@ -735,7 +733,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 	try
 	{
-		M_InitArgs(__argc, __argv);
+		GArgs.Init(__argc, __argv);
 
 		hInst = hInstance;
 
@@ -762,7 +760,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		//	Create window
 		hwnd = CreateWindowEx(WS_EX_APPWINDOW,
 			"VAVOOM", "VAVOOM for Windows'95", 
-			M_CheckParm("-window") ? WS_OVERLAPPEDWINDOW : WS_POPUP,
+			GArgs.CheckParm("-window") ? WS_OVERLAPPEDWINDOW : WS_POPUP,
 			0, 0, 2, 2, NULL, NULL, hInst, NULL);
 		if (!hwnd)
 		{
@@ -876,9 +874,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.26  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.25  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.24  2006/02/26 14:45:57  dj_jl
 //	Fix compilation with newer version DirectX headers.
 //	

@@ -63,12 +63,12 @@ private:
 	ALuint		StrmSource;
 	short		StrmDataBuffer[STRM_BUFFER_SIZE * 2];
 
-	static TCvarF		doppler_factor;
-	static TCvarF		doppler_velocity;
-	static TCvarF		rolloff_factor;
-	static TCvarF		reference_distance;
-	static TCvarF		max_distance;
-	static TCvarI		eax_environment;
+	static VCvarF		doppler_factor;
+	static VCvarF		doppler_velocity;
+	static VCvarF		rolloff_factor;
+	static VCvarF		reference_distance;
+	static VCvarF		max_distance;
+	static VCvarI		eax_environment;
 
 public:
 	//	VSoundDevice interface.
@@ -99,12 +99,12 @@ public:
 IMPLEMENT_SOUND_DEVICE(VOpenALDevice, SNDDRV_OpenAL, "OpenAL",
 	"OpenAL sound device", "-openal");
 
-TCvarF VOpenALDevice::doppler_factor("al_doppler_factor", "1.0", CVAR_ARCHIVE);
-TCvarF VOpenALDevice::doppler_velocity("al_doppler_velocity", "10000.0", CVAR_ARCHIVE);
-TCvarF VOpenALDevice::rolloff_factor("al_rolloff_factor", "1.0", CVAR_ARCHIVE);
-TCvarF VOpenALDevice::reference_distance("al_reference_distance", "64.0", CVAR_ARCHIVE);
-TCvarF VOpenALDevice::max_distance("al_max_distance", "2024.0", CVAR_ARCHIVE);
-TCvarI VOpenALDevice::eax_environment("al_eax_environment", "0");
+VCvarF VOpenALDevice::doppler_factor("al_doppler_factor", "1.0", CVAR_Archive);
+VCvarF VOpenALDevice::doppler_velocity("al_doppler_velocity", "10000.0", CVAR_Archive);
+VCvarF VOpenALDevice::rolloff_factor("al_rolloff_factor", "1.0", CVAR_Archive);
+VCvarF VOpenALDevice::reference_distance("al_reference_distance", "64.0", CVAR_Archive);
+VCvarF VOpenALDevice::max_distance("al_max_distance", "2024.0", CVAR_Archive);
+VCvarI VOpenALDevice::eax_environment("al_eax_environment", "0");
 
 //==========================================================================
 //
@@ -629,9 +629,13 @@ void VOpenALDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.16  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.15  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
 //	

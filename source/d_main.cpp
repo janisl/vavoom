@@ -132,10 +132,10 @@ int						d_minmip;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarI			d_subdiv("d_subdiv", "1", CVAR_ARCHIVE);
+static VCvarI			d_subdiv("d_subdiv", "1", CVAR_Archive);
 
-static TCvarI			d_mipcap("d_mipcap", "0");
-static TCvarF			d_mipscale("d_mipscale", "1");
+static VCvarI			d_mipcap("d_mipcap", "0");
+static VCvarF			d_mipscale("d_mipscale", "1");
 
 static float			basemip[NUM_MIPS - 1] = {1.0, 0.5 * 0.8, 0.25 * 0.8};
 
@@ -645,9 +645,13 @@ void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.19  2004/08/21 17:22:15  dj_jl
 //	Changed rendering driver declaration.
-//
+//	
 //	Revision 1.18  2004/08/21 15:03:07  dj_jl
 //	Remade VClass to be standalone class.
 //	

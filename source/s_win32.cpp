@@ -108,12 +108,12 @@ IMPLEMENT_SOUND_DEVICE(VDirectSoundDevice, SNDDRV_Default, "Default",
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarF		s3d_distance_unit("s3d_distance_unit", "32.0", CVAR_ARCHIVE);
-static TCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_ARCHIVE);
-static TCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_ARCHIVE);
-static TCvarF		s3d_min_distance("s3d_min_distance", "64.0", CVAR_ARCHIVE);
-static TCvarF		s3d_max_distance("s3d_max_distance", "2024.0", CVAR_ARCHIVE);
-static TCvarI		eax_environment("eax_environment", "0");
+static VCvarF		s3d_distance_unit("s3d_distance_unit", "32.0", CVAR_Archive);
+static VCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_Archive);
+static VCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_Archive);
+static VCvarF		s3d_min_distance("s3d_min_distance", "64.0", CVAR_Archive);
+static VCvarF		s3d_max_distance("s3d_max_distance", "2024.0", CVAR_Archive);
+static VCvarI		eax_environment("eax_environment", "0");
 
 // CODE --------------------------------------------------------------------
 
@@ -174,7 +174,7 @@ bool VDirectSoundDevice::Init()
 	caps.dwSize = sizeof(caps);
 	DSound->GetCaps(&caps);
 	if (caps.dwFreeHw3DStaticBuffers && caps.dwFreeHwMixingStaticBuffers && 
-		!M_CheckParm("-no3dsound"))
+		!GArgs.CheckParm("-no3dsound"))
 	{
 		Sound3D = true;
 		GCon->Log(NAME_Init, "3D sound on");
@@ -980,9 +980,13 @@ void VDirectSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.34  2006/02/26 14:45:57  dj_jl
 //	Fix compilation with newer version DirectX headers.
-//
+//	
 //	Revision 1.33  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
 //	

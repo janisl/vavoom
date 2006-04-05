@@ -326,12 +326,11 @@ void* Sys_ZoneBase(int* size)
     void*		ptr;
 	// Maximum allocated for zone heap (13meg default)
 	int			maxzone = 0xd00000;
-	int			p;
 
-	p = M_CheckParm("-maxzone");
-	if (p && p < myargc - 1)
+	const char* p = GArgs.CheckValue("-maxzone");
+	if (p)
     {
-		maxzone = (int)(atof(myargv[p + 1]) * 0x100000);
+		maxzone = (int)(atof(p) * 0x100000);
 		if (maxzone < MINIMUM_HEAP_SIZE)
 			maxzone = MINIMUM_HEAP_SIZE;
 		if (maxzone > MAXIMUM_HEAP_SIZE)
@@ -493,33 +492,33 @@ int main(int argc, char** argv)
 	{
 		printf("Vavoom dedicated server "VERSION_TEXT"\n");
 
-		M_InitArgs(argc, argv);
+		GArgs.Init(argc, argv);
 
 		//	Install signal handlers
-   		signal(SIGABRT, signal_handler);
-	   	signal(SIGFPE,  signal_handler);
-   		signal(SIGILL,  signal_handler);
-	   	signal(SIGSEGV, signal_handler);
-   		signal(SIGTERM, signal_handler);
-	   	signal(SIGINT,  signal_handler);
+		signal(SIGABRT, signal_handler);
+		signal(SIGFPE,  signal_handler);
+		signal(SIGILL,  signal_handler);
+		signal(SIGSEGV, signal_handler);
+		signal(SIGTERM, signal_handler);
+		signal(SIGINT,  signal_handler);
 #ifdef SIGKILL
-	   	signal(SIGKILL, signal_handler);
+		signal(SIGKILL, signal_handler);
 #endif
 #ifdef SIGQUIT
-	   	signal(SIGQUIT, signal_handler);
+		signal(SIGQUIT, signal_handler);
 #endif
 #ifdef SIGNOFP
-	   	signal(SIGNOFP, signal_handler);
+		signal(SIGNOFP, signal_handler);
 #endif
 
 		//	Initialize
 		Host_Init();
 
 		//	Play game
-	    while (1)
-	    {
+		while (1)
+		{
 			Host_Frame();
-	    }
+		}
 	}
 	catch (VavoomError &e)
 	{
@@ -543,9 +542,13 @@ int main(int argc, char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.9  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.8  2003/10/22 06:15:00  dj_jl
 //	Safer handling of signals in Linux
 //	

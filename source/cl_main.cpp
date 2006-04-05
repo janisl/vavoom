@@ -56,11 +56,11 @@ TProgs				clpr;
 
 VClientGameBase*	GClGame;
 
-TCvarS			cl_name("name", "PLAYER", CVAR_ARCHIVE | CVAR_USERINFO);
-TCvarI			cl_color("color", "0", CVAR_ARCHIVE | CVAR_USERINFO);
-TCvarI			cl_class("class", "0", CVAR_ARCHIVE | CVAR_USERINFO);
-TCvarS			cl_model("model", "", CVAR_ARCHIVE | CVAR_USERINFO);
-TCvarS			cl_skin("skin", "", CVAR_ARCHIVE | CVAR_USERINFO);
+VCvarS			cl_name("name", "PLAYER", CVAR_Archive | CVAR_UserInfo);
+VCvarI			cl_color("color", "0", CVAR_Archive | CVAR_UserInfo);
+VCvarI			cl_class("class", "0", CVAR_Archive | CVAR_UserInfo);
+VCvarS			cl_model("model", "", CVAR_Archive | CVAR_UserInfo);
+VCvarS			cl_skin("skin", "", CVAR_Archive | CVAR_UserInfo);
 
 dlight_t		cl_dlights[MAX_DLIGHTS];
 
@@ -311,7 +311,7 @@ void CL_KeepaliveMessage(void)
 	float			time;
 	static float	lastmsg;
 	int				ret;
-	TMessage		old;
+	VMessage		old;
 	byte			olddata[8192];
 
 #ifdef SERVER
@@ -428,7 +428,7 @@ void CL_Disconnect()
 //
 //==========================================================================
 
-void CL_EstablishConnection(char *host)
+void CL_EstablishConnection(const char* host)
 {
 	guard(CL_EstablishConnection);
 	if (cls.state == ca_dedicated)
@@ -469,7 +469,7 @@ void CL_EstablishConnection(char *host)
 
 COMMAND(Connect)
 {
-	CL_EstablishConnection(Argv(1));
+	CL_EstablishConnection(Args.Num() > 1 ? *Args[1] : "");
 }
 
 //==========================================================================
@@ -496,7 +496,7 @@ COMMAND(Disconnect)
 
 COMMAND(Pause)
 {
-	Cmd_ForwardToServer();
+	ForwardToServer();
 }
 
 //==========================================================================
@@ -507,7 +507,7 @@ COMMAND(Pause)
 
 COMMAND(Stats)
 {
-	Cmd_ForwardToServer();
+	ForwardToServer();
 }
 
 //==========================================================================
@@ -518,7 +518,7 @@ COMMAND(Stats)
 
 COMMAND(TeleportNewMap)
 {
-	Cmd_ForwardToServer();
+	ForwardToServer();
 }
 
 //==========================================================================
@@ -529,7 +529,7 @@ COMMAND(TeleportNewMap)
 
 COMMAND(Say)
 {
-	Cmd_ForwardToServer();
+	ForwardToServer();
 }
 
 #endif
@@ -537,9 +537,13 @@ COMMAND(Say)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.22  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.21  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.20  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

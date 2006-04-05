@@ -272,9 +272,8 @@ static double	oldtime = 0.0;
 //
 //==========================================================================
 
-static void Sys_InitTime(void)
+static void Sys_InitTime()
 {
-	int			j;
     int			r;
     dword		t;
     dword		tick;
@@ -305,11 +304,11 @@ static void Sys_InitTime(void)
 	//
 	//	Set start time
 	//
-	j = M_CheckParm("-starttime");
+	const char* p = GArgs.CheckValue("-starttime");
 
-	if (j)
+	if (p)
 	{
-		curtime = (double)(atof(myargv[j + 1]));
+		curtime = (double)atof(p);
 	}
 	else
 	{
@@ -498,12 +497,11 @@ void* Sys_ZoneBase(int* size)
     void*		ptr;
 	// Maximum allocated for zone heap (64meg default)
 	int			maxzone = 0x4000000;
-	int			p;
 
-	p = M_CheckParm("-mem");
-	if (p && p < myargc - 1)
+	const char* p = GArgs.CheckValue("-mem");
+	if (p)
 	{
-		heap = (int)(atof(myargv[p + 1]) * 0x100000);
+		heap = (int)(atof(p) * 0x100000);
 		ptr = malloc(heap);
 		if (!ptr)
 		{
@@ -512,10 +510,10 @@ void* Sys_ZoneBase(int* size)
 	}
 	else
 	{
-		p = M_CheckParm("-maxzone");
-		if (p && p < myargc - 1)
+		p = GArgs.CheckValue("-maxzone");
+		if (p)
 	    {
-			maxzone = (int)(atof(myargv[p + 1]) * 0x100000);
+			maxzone = (int)(atof(p) * 0x100000);
 			if (maxzone < MINIMUM_HEAP_SIZE)
 				maxzone = MINIMUM_HEAP_SIZE;
 			if (maxzone > MAXIMUM_HEAP_SIZE)
@@ -648,7 +646,7 @@ int main(int argc,char** argv)
 {
 	try
 	{
-		M_InitArgs(argc, argv);
+		GArgs.Init(argc, argv);
 
 		//	Startup Allegro
     	allegro_init();
@@ -688,7 +686,7 @@ int main(int argc,char** argv)
 		dprintf("\n\nERROR: %s\n", e.message);
 		fprintf(stderr, "\n%s\n", e.message);
 
-		if (M_CheckParm("-RHIDE") || M_CheckParm("-debug"))
+		if (GArgs.CheckParm("-RHIDE") || GArgs.CheckParm("-debug"))
 			__djgpp_traceback_exit(SIGABRT);
 		exit(1);
 	}
@@ -706,9 +704,13 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.15  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.14  2006/03/02 23:24:36  dj_jl
 //	Wad lump names stored as names.
 //	

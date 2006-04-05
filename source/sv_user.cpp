@@ -46,7 +46,7 @@ extern bool			sv_loading;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarI		sv_maxmove("sv_maxmove", "400", CVAR_ARCHIVE);
+static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ static TCvarI		sv_maxmove("sv_maxmove", "400", CVAR_ARCHIVE);
 //
 //==========================================================================
 
-void SV_ReadMove(void)
+void SV_ReadMove()
 {
 	guard(SV_ReadMove);
     ticcmd_t	cmd;
@@ -108,7 +108,7 @@ void SV_ReadMove(void)
 void SV_RunClientCommand(const char *cmd)
 {
 	guard(SV_RunClientCommand);
-	Cmd_ExecuteString(cmd, src_client);
+	VCommand::ExecuteString(cmd, VCommand::SRC_Client);
 	unguard;
 }
 
@@ -118,7 +118,7 @@ void SV_RunClientCommand(const char *cmd)
 //
 //==========================================================================
 
-void SV_ReadFromUserInfo(void)
+void SV_ReadFromUserInfo()
 {
 	guard(SV_ReadFromUserInfo);
 	if (!sv_loading)
@@ -183,7 +183,7 @@ bool SV_ReadClientMessages(int clientnum)
 
 		while (1)
 		{
-			if (net_msg.badread)
+			if (net_msg.BadRead)
 			{
 				GCon->Log(NAME_DevNet, "Packet corupted");
 				return false;
@@ -191,7 +191,7 @@ bool SV_ReadClientMessages(int clientnum)
 
 			net_msg >> cmd_type;
 
-			if (net_msg.badread)
+			if (net_msg.BadRead)
 				break; // Here this means end of packet
 
 			switch (cmd_type)
@@ -234,22 +234,22 @@ bool SV_ReadClientMessages(int clientnum)
 COMMAND(SetInfo)
 {
 	guard(COMMAND SetInfo);
-	if (cmd_source != src_client)
+	if (Source != SRC_Client)
 	{
 		GCon->Log("SetInfo is not valid from console");
 		return;
 	}
 
-	if (Argc() != 3)
+	if (Args.Num() != 3)
 	{
 		return;
 	}
 
-	Info_SetValueForKey(sv_player->UserInfo, Argv(1), Argv(2));
+	Info_SetValueForKey(sv_player->UserInfo, *Args[1], *Args[2]);
 	sv_reliable << (byte)svc_setinfo
 				<< (byte)SV_GetPlayerNum(sv_player)
-				<< Argv(1)
-				<< Argv(2);
+				<< Args[1]
+				<< Args[2];
 	SV_ReadFromUserInfo();
 	unguard;
 }
@@ -257,9 +257,13 @@ COMMAND(SetInfo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.18  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.17  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.16  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
 //	

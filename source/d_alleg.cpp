@@ -137,7 +137,7 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	FreeMemory();
 
 	set_color_depth(BPP);
-	if (set_gfx_mode(M_CheckParm("-window") ? GFX_AUTODETECT_WINDOWED :
+	if (set_gfx_mode(GArgs.CheckParm("-window") ? GFX_AUTODETECT_WINDOWED :
 		GFX_AUTODETECT, Width, Height, 0, 0))
 	{
 		GCon->Log(NAME_Init, "Failed to set video mode:");
@@ -236,7 +236,7 @@ void VSoftwareDrawer::SetPalette8(byte *palette)
 //==========================================================================
 
 #ifdef DJGPP
-static TCvarI d_blt_func("d_blt_func", "0", CVAR_ARCHIVE);
+static VCvarI d_blt_func("d_blt_func", "0", CVAR_Archive);
 
 static void Blit_LBL()
 {
@@ -308,9 +308,13 @@ void VSoftwareDrawer::Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.14  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.13  2005/10/02 23:15:44  dj_jl
 //	Changed default resolution.
 //	

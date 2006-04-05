@@ -2496,7 +2496,7 @@ static void ParseSwitchDef()
 		VName::AddLower8), TEXTYPE_Wall, true, false);
 	int t2 = -1;
 	char SndName[64];
-	strcpy(SndName, "Switch");
+	strcpy(SndName, "switches/normbutn");
 
 	//	Currently only basic switch definition is supported.
 	while (SC_GetString())
@@ -2652,7 +2652,7 @@ void P_InitSwitchList()
 				continue;
 			}
 			TSwitch *sw = new(Switches) TSwitch;
-			sw->Sound = S_GetSoundID("Switch");
+			sw->Sound = S_GetSoundID("switches/normbutn");
 			sw->Tex1 = t1;
 			sw->Tex2 = t2;
 		}
@@ -2744,9 +2744,13 @@ void R_InitTexture()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.39  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.38  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.37  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

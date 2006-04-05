@@ -4177,7 +4177,7 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_GetCvar:
-			stack[stackPtr - 1] = TCvar::GetInt(FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
+			stack[stackPtr - 1] = VCvar::GetInt(FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
 			break;
 
 		case PCD_CaseGotoSorted:
@@ -4656,9 +4656,13 @@ static void strbin(char *str)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.50  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.49  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.48  2006/03/16 00:37:55  dj_jl
 //	Savegame size optimisations.
 //	

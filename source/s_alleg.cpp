@@ -111,7 +111,7 @@ bool VAllegroSoundDevice::Init()
 	int music_card = MIDI_AUTODETECT;
 
 	// Check parametters
-	if (M_CheckParm("-nomusic"))
+	if (GArgs.CheckParm("-nomusic"))
 		music_card = MIDI_NONE;
 
 	// Init sound device
@@ -487,9 +487,13 @@ void VAllegroSoundDevice::ResumeStream()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.25  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.24  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.23  2005/11/06 15:31:32  dj_jl
 //	Fix for 16 bit sound conversion.
 //	

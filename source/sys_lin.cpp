@@ -333,7 +333,7 @@ static void PutEndText(VName name)
 	char *col;
 
 	//	If option -noendtxt is set, don't print the text.
-	if (M_CheckParm("-noendtxt"))
+	if (GArgs.CheckParm("-noendtxt"))
 		return;
 
 	//	If the xterm has more then 80 columns we need to add nl's
@@ -551,12 +551,11 @@ void* Sys_ZoneBase(int* size)
     void*		ptr;
 	// Maximum allocated for zone heap (64meg default)
 	int			maxzone = 0x4000000;
-	int			p;
 
-	p = M_CheckParm("-maxzone");
-	if (p && p < myargc - 1)
+	const char* p = GArgs.CheckValue("-maxzone");
+	if (p)
     {
-		maxzone = (int)(atof(myargv[p + 1]) * 0x100000);
+		maxzone = (int)(atof(p) * 0x100000);
 		if (maxzone < MINIMUM_HEAP_SIZE)
 			maxzone = MINIMUM_HEAP_SIZE;
 		if (maxzone > MAXIMUM_HEAP_SIZE)
@@ -702,7 +701,7 @@ int main(int argc,char** argv)
 {
 	try
 	{
-		M_InitArgs(argc, argv);
+		GArgs.Init(argc, argv);
 
 #ifdef __i386__
 		Sys_SetFPCW();
@@ -750,9 +749,13 @@ END_OF_MAIN()	//	For Allegro
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.19  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.18  2006/03/02 23:24:36  dj_jl
 //	Wad lump names stored as names.
 //	

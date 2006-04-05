@@ -29,8 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAXARGVS        100
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -39,16 +37,9 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-#ifndef DJGPP
-static void M_FindResponseFile(void);
-#endif
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
-
-int 	myargc;
-char**	myargv;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -56,158 +47,6 @@ static char va_buffer[4][1024];
 static int va_bufnum;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	M_InitArgs
-//
-//==========================================================================
-
-void M_InitArgs(int argc, char **argv)
-{
-	//	Save args
-	myargc = argc;
-	myargv = argv;
-
-#ifndef DJGPP
-	M_FindResponseFile();
-#endif
-}
-
-//==========================================================================
-//
-//	M_FindResponseFile
-//
-// 	Find a Response File. We don't do this in DJGPP because it does this
-// in startup code.
-//
-//==========================================================================
-
-#ifndef DJGPP
-static void M_FindResponseFile(void)
-{
-	for (int i = 1;i < myargc;i++)
-	{
-		if (myargv[i][0] != '@')
-		{
-			continue;
-		}
-
-		//	Read the response file into memory
-		FILE *handle = fopen(&myargv[i][1], "rb");
-		if (!handle)
-		{
-			printf("\nNo such response file %s!", &myargv[i][1]);
-			exit(1);
-		}
-		dprintf("Found response file %s!\n", &myargv[i][1]);
-		fseek(handle, 0, SEEK_END);
-		int size = ftell(handle);
-		fseek(handle, 0, SEEK_SET);
-		char *file = (char*)malloc(size + 1);
-		fread(file, size, 1, handle);
-		fclose(handle);
-		file[size] = 0;
-
-		//	Keep all other cmdline args
-		char **oldargv = myargv;
-
-		myargv = (char**)malloc(sizeof(char *) * MAXARGVS);
-		memset(myargv, 0, sizeof(char *) * MAXARGVS);
-
-		//	Keep args before response file
-		int indexinfile;
-		for (indexinfile = 0; indexinfile < i; indexinfile++)
-		{
-			myargv[indexinfile] = oldargv[indexinfile];
-		}
-
-		//	Read response file
-		char *infile = file;
-		int k = 0;
-		while (k < size)
-		{
-			//	Skip whitespace.
-			if (infile[k] <= ' ')
-			{
-				k++;
-				continue;
-			}
-
-			if (infile[k] == '\"')
-			{
-				//	Parse quoted string.
-				k++;
-				myargv[indexinfile++] = infile + k;
-				char CurChar;
-				char* OutBuf = infile + k;
-				do
-				{
-					CurChar = infile[k];
-					if (CurChar == '\\' && infile[k + 1] == '\"')
-					{
-						CurChar = '\"';
-						k++;
-					}
-					else if (CurChar == '\"')
-					{
-						CurChar = 0;
-					}
-					else if (CurChar == 0)
-					{
-						k--;
-					}
-					*OutBuf = CurChar;
-					k++;
-					OutBuf++;
-				} while (CurChar);
-				*(infile + k) = 0;
-			}
-			else
-			{
-				//	Parse unquoted string.
-				myargv[indexinfile++] = infile + k;
-				while (k < size && infile[k] > ' ' && infile[k] != '\"')
-					k++;
-				*(infile + k) = 0;
-			}
-		}
-
-		//	Keep args following response file
-		for (k = i + 1; k < myargc; k++)
-			myargv[indexinfile++] = oldargv[k];
-		myargc = indexinfile;
-	
-		//	Display args
-	    dprintf("%d command-line args:\n", myargc);
-		for (k = 1; k < myargc; k++)
-			dprintf("%s\n", myargv[k]);
-		i--;
-	}
-}
-#endif
-
-//==========================================================================
-//
-//  M_CheckParm
-//
-//  Checks for the given parameter in the program's command line arguments.
-//  Returns the argument number (1 to argc-1) or 0 if not present
-//
-//==========================================================================
-
-int M_CheckParm(const char *check)
-{
-	int		i;
-
-	for (i = 1; i < myargc; i++)
-	{
-		if (!stricmp(check, myargv[i]) )
-			return i;
-	}
-
-	return 0;
-}
 
 //==========================================================================
 //
@@ -257,7 +96,7 @@ static float FloatNoSwap(float x)
 	return x;
 }
 
-void M_InitByteOrder(void)
+void M_InitByteOrder()
 {
 	byte    swaptest[2] = {1, 0};
 
@@ -424,9 +263,13 @@ int PassFloat(float f)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.11  2005/07/29 17:50:19  dj_jl
 //	Support for quoted strings in response file.
-//
+//	
 //	Revision 1.10  2002/02/15 19:10:32  dj_jl
 //	Added GBigEndian
 //	

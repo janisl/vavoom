@@ -148,11 +148,11 @@ extern int				r_visframecount;
 extern subsector_t		*r_viewleaf;
 
 extern byte				light_remap[256];
-extern TCvarI			r_darken;
+extern VCvarI			r_darken;
 
 extern refdef_t			refdef;
 
-extern TCvarI			old_aspect;
+extern VCvarI			old_aspect;
 
 extern int				SkinWidth;
 extern int				SkinHeight;
@@ -165,9 +165,13 @@ extern rgba_t			SkinPal[256];
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.14  2005/06/30 20:20:55  dj_jl
 //	Implemented rendering of Boom fake flats.
-//
+//	
 //	Revision 1.13  2005/05/30 18:34:03  dj_jl
 //	Added support for IMGZ and PNG lump textures
 //	

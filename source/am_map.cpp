@@ -142,21 +142,21 @@ static dword	GridColor;
 static dword	ThingColor;
 static dword	PlayerColor;
 
-static TCvarS	am_color_wall("am_color_wall", "d0 b0 85", CVAR_ARCHIVE);
-static TCvarS	am_color_tswall("am_color_tswall", "61 64 5f", CVAR_ARCHIVE);
-static TCvarS	am_color_fdwall("am_color_fdwall", "a0 6c 40", CVAR_ARCHIVE);
-static TCvarS	am_color_cdwall("am_color_cdwall", "94 94 ac", CVAR_ARCHIVE);
-static TCvarS	am_color_secretwall("am_color_secretwall", "00 00 00", CVAR_ARCHIVE);
-static TCvarS	am_color_power("am_color_power", "7d 83 79", CVAR_ARCHIVE);
-static TCvarS	am_color_grid("am_color_grid", "4d 9d 42", CVAR_ARCHIVE);
-static TCvarS	am_color_thing("am_color_thing", "2d 2d 2d", CVAR_ARCHIVE);
-static TCvarS	am_color_player("am_color_player", "e6 e6 e6", CVAR_ARCHIVE);
+static VCvarS	am_color_wall("am_color_wall", "d0 b0 85", CVAR_Archive);
+static VCvarS	am_color_tswall("am_color_tswall", "61 64 5f", CVAR_Archive);
+static VCvarS	am_color_fdwall("am_color_fdwall", "a0 6c 40", CVAR_Archive);
+static VCvarS	am_color_cdwall("am_color_cdwall", "94 94 ac", CVAR_Archive);
+static VCvarS	am_color_secretwall("am_color_secretwall", "00 00 00", CVAR_Archive);
+static VCvarS	am_color_power("am_color_power", "7d 83 79", CVAR_Archive);
+static VCvarS	am_color_grid("am_color_grid", "4d 9d 42", CVAR_Archive);
+static VCvarS	am_color_thing("am_color_thing", "2d 2d 2d", CVAR_Archive);
+static VCvarS	am_color_player("am_color_player", "e6 e6 e6", CVAR_Archive);
 
-static TCvarI	am_player_arrow("am_player_arrow", "1", CVAR_ARCHIVE);
-static TCvarI	followplayer("followplayer", "1", CVAR_ARCHIVE); // specifies whether to follow the player around
-static TCvarI	ShowKills("ShowKills", "0");
+static VCvarI	am_player_arrow("am_player_arrow", "1", CVAR_Archive);
+static VCvarI	followplayer("followplayer", "1", CVAR_Archive); // specifies whether to follow the player around
+static VCvarI	ShowKills("ShowKills", "0");
 
-static TCvarI	am_cheating("am_cheating", "0", CVAR_CHEAT);
+static VCvarI	am_cheating("am_cheating", "0", CVAR_Cheat);
 
 static int 		grid = 0;
 
@@ -1524,9 +1524,13 @@ void AM_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.20  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.19  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

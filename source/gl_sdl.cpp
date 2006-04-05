@@ -56,7 +56,7 @@ static SDL_Surface	*hw_screen = NULL;
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init(void)
+void VOpenGLDrawer::Init()
 {
 }
 
@@ -95,7 +95,7 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	Shutdown();
 
 	Uint32 flags = SDL_OPENGL;
-	if (!M_CheckParm("-window"))
+	if (!GArgs.CheckParm("-window"))
 	{
 		flags |= SDL_FULLSCREEN;
 	}
@@ -134,7 +134,7 @@ void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update(void)
+void VOpenGLDrawer::Update()
 {
 	guard(VOpenGLDrawer::Update);
 	SDL_GL_SwapBuffers();
@@ -149,7 +149,7 @@ void VOpenGLDrawer::Update(void)
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown(void)
+void VOpenGLDrawer::Shutdown()
 {
 	guard(VOpenGLDrawer::Shutdown);
 	if (hw_screen != NULL)
@@ -160,9 +160,13 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.5  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.4  2004/10/08 12:39:01  dj_jl
 //	Added windowing mode.
 //	

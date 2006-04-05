@@ -125,7 +125,7 @@ public:
 		Resize(0);
 	}
 	//	Return length of the string.
-	int Length() const
+	size_t Length() const
 	{
 		return Str ? ((int*)Str)[-1] : 0;
 	}
@@ -291,19 +291,19 @@ public:
 	}
 
 	//	Comparison functions.
-	int Cmp(const char* S2)
+	int Cmp(const char* S2) const
 	{
 		return strcmp(**this, S2);
 	}
-	int Cmp(const VStr& S2)
+	int Cmp(const VStr& S2) const
 	{
 		return strcmp(**this, *S2);
 	}
-	int ICmp(const char* S2)
+	int ICmp(const char* S2) const
 	{
 		return stricmp(**this, S2);
 	}
-	int ICmp(const VStr& S2)
+	int ICmp(const VStr& S2) const
 	{
 		return stricmp(**this, *S2);
 	}
@@ -320,9 +320,13 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.4  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.3  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

@@ -23,115 +23,122 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
+//
+//	A console command.
+//
+class VCommand
+{
+public:
+	enum ECmdSource
+	{
+		SRC_Command,
+		SRC_Client
+	};
 
-// MACROS ------------------------------------------------------------------
+private:
+	//	Console command alias.
+	struct VAlias
+	{
+		VStr		Name;
+		VStr		CmdLine;
+		VAlias*		Next;
+	};
 
+	const char*					Name;
+	VCommand*					Next;
+
+	static bool					Initialised;
+	static VStr					Original;
+
+	static TArray<const char*>	AutoCompleteTable;
+
+	static VCommand*			Cmds;
+	static VAlias*				Alias;
+
+	static void TokeniseString(const VStr&);
+
+protected:
+	static TArray<VStr>			Args;
+	static ECmdSource			Source;
+
+public:
+	VCommand(const char*);
+	virtual ~VCommand();
+
+	virtual void Run() = 0;
+
+	static void Init();
+	static void WriteAlias(FILE*);
+
+	static void AddToAutoComplete(const char*);
+	static VStr GetAutoComplete(const VStr&, int&, bool);
+
+	static void ExecuteString(const VStr&, ECmdSource);
+	static void ForwardToServer();
+	static int CheckParm(const char*);
+
+	friend class VCmdBuf;
+	friend class TCmdCmdList;
+	friend class TCmdAlias;
+};
+
+//
+//	Macro for declaring a console command.
+//
 #define COMMAND(name) \
-static class TCmd ## name : public TCommand \
+static class TCmd ## name : public VCommand \
 { \
 public: \
-	TCmd ## name() : TCommand(#name) { } \
+	TCmd ## name() : VCommand(#name) { } \
 	void Run(); \
 } name ## _f; \
 \
 void TCmd ## name::Run()
 
-// TYPES -------------------------------------------------------------------
-
-enum cmd_source_t
-{
-	src_command,
-	src_client
-};
-
 //
 //	A command buffer.
 //
-class TCmdBuf
+class VCmdBuf
 {
 private:
 	VStr		Buffer;
+	bool		Wait;
 
 public:
-	void Init();
 	void Insert(const char*);
 	void Insert(const VStr&);
 	void Print(const char*);
 	void Print(const VStr&);
 	void Exec();
 
-	TCmdBuf& operator << (const char* data)
+	VCmdBuf& operator << (const char* data)
 	{
 		Print(data);
 		return *this;
 	}
 
-	TCmdBuf& operator << (const VStr& data)
+	VCmdBuf& operator << (const VStr& data)
 	{
 		Print(data);
 		return *this;
 	}
+
+	friend class TCmdWait;
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void Cmd_Init();
-void Cmd_WriteAlias(FILE *f);
-
-void Cmd_TokeniseString(const char *str);
-int Cmd_Argc();
-char **Cmd_Argv();
-char *Cmd_Argv(int parm);
-char *Cmd_Args();
-int Cmd_CheckParm(const char *check);
-
-void Cmd_ExecuteString(const char *cmd, cmd_source_t src);
-void Cmd_ForwardToServer();
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern TCmdBuf		CmdBuf;
-extern cmd_source_t	cmd_source;
-
-//
-//	A console command.
-//
-class TCommand
-{
-public:
-	TCommand(const char *name);
-	virtual ~TCommand();
-
-	virtual void Run() = 0;
-
-	int Argc()
-	{
-		return Cmd_Argc();
-	}
-	char *Argv(int parm)
-	{
-		return Cmd_Argv(parm);
-	}
-	char *Args()
-	{
-		return Cmd_Args();
-	}
-	int CheckParm(const char *check)
-	{
-		return Cmd_CheckParm(check);
-	}
-
-	const char*	Name;
-	TCommand*	Next;
-};
+//	Main command buffer.
+extern VCmdBuf		GCmdBuf;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.9  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.8  2005/04/28 07:16:11  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

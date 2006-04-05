@@ -58,9 +58,9 @@ static HWND			RenderWindow;
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init(void)
+void VOpenGLDrawer::Init()
 {
-	Windowed = !!M_CheckParm("-window");
+	Windowed = !!GArgs.CheckParm("-window");
 }
 
 //==========================================================================
@@ -261,7 +261,7 @@ void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update(void)
+void VOpenGLDrawer::Update()
 {
 	guard(VOpenGLDrawer::Update);
 	SwapBuffers(DeviceContext);
@@ -276,7 +276,7 @@ void VOpenGLDrawer::Update(void)
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown(void)
+void VOpenGLDrawer::Shutdown()
 {
 	guard(VOpenGLDrawer::Shutdown);
 	DeleteTextures();
@@ -320,9 +320,13 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.14  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.13  2004/09/24 10:54:11  dj_jl
 //	MinGW support.
 //	

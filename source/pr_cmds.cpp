@@ -70,7 +70,7 @@ VClass* SV_FindClassFromScriptId(int Id);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TMessage			*pr_msg;
+static VMessage			*pr_msg;
 
 // CODE --------------------------------------------------------------------
 
@@ -312,7 +312,7 @@ PF(CreateCvar)
 	flags = Pop();
 	def = Pop();
 	name = Pop();
-	new TCvar((char*)name, (char*)def, flags);
+	new VCvar((char*)name, (char*)def, flags);
 }
 
 //==========================================================================
@@ -326,7 +326,7 @@ PF(GetCvar)
 	int		name;
 
 	name = Pop();
-	Push(TCvar::GetInt((char*)name));
+	Push(VCvar::GetInt((char*)name));
 }
 
 //==========================================================================
@@ -342,7 +342,7 @@ PF(SetCvar)
 
     value = Pop();
     name = Pop();
-    TCvar::Set((char*)name, value);
+    VCvar::Set((char*)name, value);
 }
 
 //==========================================================================
@@ -356,7 +356,7 @@ PF(GetCvarF)
 	int		name;
 
 	name = Pop();
-	Pushf(TCvar::GetFloat((char*)name));
+	Pushf(VCvar::GetFloat((char*)name));
 }
 
 //==========================================================================
@@ -372,7 +372,7 @@ PF(SetCvarF)
 
     value = Popf();
     name = Pop();
-    TCvar::Set((char*)name, value);
+    VCvar::Set((char*)name, value);
 }
 
 //==========================================================================
@@ -386,7 +386,7 @@ PF(GetCvarS)
 	int		name;
 
     name = Pop();
-    Push((int)TCvar::GetCharp((char*)name));
+    Push((int)VCvar::GetCharp((char*)name));
 }
 
 //==========================================================================
@@ -402,7 +402,7 @@ PF(SetCvarS)
 
     value = Pop();
     name = Pop();
-    TCvar::Set((char*)name, (char*)value);
+    VCvar::Set((char*)name, (char*)value);
 }
 
 //**************************************************************************
@@ -3031,8 +3031,8 @@ PF(Cmd_CheckParm)
 {
 	int		str;
 
-    str = Pop();
-    Push(Cmd_CheckParm((char*)str));
+	str = Pop();
+	Push(VCommand::CheckParm((char*)str));
 }
 
 //==========================================================================
@@ -3043,7 +3043,7 @@ PF(Cmd_CheckParm)
 
 PF(CmdBuf_AddText)
 {
-	CmdBuf << PF_FormatString();
+	GCmdBuf << PF_FormatString();
 }
 
 //==========================================================================
@@ -3473,9 +3473,13 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.82  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.81  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.80  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
 //	

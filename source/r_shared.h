@@ -145,13 +145,13 @@ extern TVec				viewup;
 } // extern "C"
 extern TAVec			viewangles;
 
-extern TCvarI			r_fog;
-extern TCvarF			r_fog_r;
-extern TCvarF			r_fog_g;
-extern TCvarF			r_fog_b;
-extern TCvarF			r_fog_start;
-extern TCvarF			r_fog_end;
-extern TCvarF			r_fog_density;
+extern VCvarI			r_fog;
+extern VCvarF			r_fog_r;
+extern VCvarF			r_fog_g;
+extern VCvarF			r_fog_b;
+extern VCvarF			r_fog_start;
+extern VCvarF			r_fog_end;
+extern VCvarF			r_fog_density;
 
 extern int				extralight;
 extern int				fixedlight;
@@ -192,9 +192,13 @@ extern float			PixelAspect;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.20  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.19  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
 //	

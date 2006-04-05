@@ -85,7 +85,7 @@ extern VEntity		**sv_mobjs;
 extern mobj_base_t	*sv_mo_base;
 extern bool			sv_loading;
 extern int			sv_load_num_players;
-extern TMessage		sv_signon;
+extern VMessage		sv_signon;
 
 extern boolean		in_secret;
 extern char			mapaftersecret[12];
@@ -876,7 +876,7 @@ static void SV_LoadMap(const char *mapname, int slot)
 //
 //==========================================================================
 
-void SV_SaveGame(int slot, char* description)
+void SV_SaveGame(int slot, const char* description)
 {
 	guard(SV_SaveGame);
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
@@ -1071,7 +1071,7 @@ void SV_LoadGame(int slot)
 
 #ifdef CLIENT
 	if (cls.state != ca_dedicated)
-		CmdBuf << "Connect local\n";
+		GCmdBuf << "Connect local\n";
 #endif
 	unguard;
 }
@@ -1204,7 +1204,7 @@ void Draw_LoadIcon();
 COMMAND(Save)
 {
 	guard(COMMAND Save)
-	if (Argc() != 3)
+	if (Args.Num() != 3)
 	{
 		return;
 	}
@@ -1227,7 +1227,7 @@ COMMAND(Save)
 		return;
 	}
 
-	if (strlen(Argv(2)) >= 32)
+	if (Args[2].Length() >= 32)
 	{
 		GCon->Log("Description too long");
 		return;
@@ -1235,7 +1235,7 @@ COMMAND(Save)
 
 	Draw_SaveIcon();
 
-	SV_SaveGame(atoi(Argv(1)), Argv(2));
+	SV_SaveGame(atoi(*Args[1]), *Args[2]);
 
 	GCon->Log("Game saved");
 	unguard;
@@ -1250,7 +1250,7 @@ COMMAND(Save)
 COMMAND(Load)
 {
 	guard(COMMAND Load);
-	if (Argc() != 2)
+	if (Args.Num() != 2)
 	{
 		return;
 	}
@@ -1260,7 +1260,7 @@ COMMAND(Load)
 		return;
 	}
 
-	int slot = atoi(Argv(1));
+	int slot = atoi(*Args[1]);
 	char	desc[32];
 	if (!SV_GetSaveString(slot, desc))
 	{
@@ -1284,9 +1284,13 @@ COMMAND(Load)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.62  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.61  2006/03/16 00:37:55  dj_jl
 //	Savegame size optimisations.
-//
+//	
 //	Revision 1.60  2006/03/12 12:54:49  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	

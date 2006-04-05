@@ -72,14 +72,14 @@ static byte					scan2key[256] =
 };
 
 static LPDIRECTINPUTDEVICE	lpMouse = NULL;
-static boolean				mousepresent = false;
+static bool					mousepresent = false;
 static int					old_mouse_x;
 static int					old_mouse_y;
 static int					old_mouse_z;
-static TCvarI				m_filter("m_filter", "1", CVAR_ARCHIVE);
+static VCvarI				m_filter("m_filter", "1", CVAR_Archive);
 
 static LPDIRECTINPUTDEVICE2	lpJoystick = NULL;
-static boolean				joystick_started = false;
+static bool					joystick_started = false;
 
 static DIOBJECTDATAFORMAT rgodf_Keyboard[] =
 {
@@ -457,7 +457,7 @@ static DIDATAFORMAT	df_Joystick =
 //
 //==========================================================================
 
-static void StartupKeyboard(void)
+static void StartupKeyboard()
 {
 	guard(StartupKeyboard);
 	HRESULT		Result;
@@ -499,7 +499,7 @@ static void StartupKeyboard(void)
 //
 //==========================================================================
 
-static void ReadKeyboard(void)
+static void ReadKeyboard()
 {
 	guard(ReadKeyboard);
 
@@ -547,7 +547,7 @@ static void ReadKeyboard(void)
 //
 //==========================================================================
 
-static void ShutdownKeyboard(void)
+static void ShutdownKeyboard()
 {
 	guard(ShutdownKeyboard);
 	if (lpKeyboard)
@@ -573,12 +573,12 @@ static void ShutdownKeyboard(void)
 //
 //==========================================================================
 
-static void StartupMouse(void)
+static void StartupMouse()
 {
 	guard(StartupMouse);
 	HRESULT		Result;
 
-	if (M_CheckParm("-nomouse"))
+	if (GArgs.CheckParm("-nomouse"))
 		return;
 
 	Result = DInput->CreateDevice(GUID_SysMouse, &lpMouse, NULL);
@@ -607,7 +607,7 @@ static void StartupMouse(void)
 //
 //==========================================================================
 
-static void ReadMouse(void)
+static void ReadMouse()
 {
 	guard(ReadMouse);
 
@@ -714,7 +714,7 @@ static void ReadMouse(void)
 //
 //==========================================================================
 
-static void ShutdownMouse(void)
+static void ShutdownMouse()
 {
 	guard(ShutdownMouse);
 	if (lpMouse)
@@ -811,10 +811,10 @@ static int FAR PASCAL JoystickEnumCallback(
 //
 //==========================================================================
 
-static void StartupJoystick(void)
+static void StartupJoystick()
 {
 	guard(StartupJoystick);
-  	if (M_CheckParm("-nojoy"))
+  	if (GArgs.CheckParm("-nojoy"))
 		return;
 
 	DInput->EnumDevices(DIDEVTYPE_JOYSTICK, JoystickEnumCallback, NULL, DIEDFL_ATTACHEDONLY);
@@ -827,7 +827,7 @@ static void StartupJoystick(void)
 //
 //==========================================================================
 
-static void ReadJoystick(void)
+static void ReadJoystick()
 {
 	guard(StartupJoystick);
 
@@ -902,7 +902,7 @@ static void ReadJoystick(void)
 //
 //==========================================================================
 
-static void ShutdownJoystick(void)
+static void ShutdownJoystick()
 {
 	guard(ShutdownJoystick);
 	if (lpJoystick)
@@ -927,7 +927,7 @@ static void ShutdownJoystick(void)
 //
 //==========================================================================
 
-void IN_Init(void)
+void IN_Init()
 {
 	guard(IN_Init);
 	HRESULT		result;
@@ -990,7 +990,7 @@ void IN_SetActiveWindow(HWND window)
 //
 //==========================================================================
 
-void IN_ReadInput(void)
+void IN_ReadInput()
 {
 	ReadKeyboard();
 	ReadMouse();
@@ -1003,7 +1003,7 @@ void IN_ReadInput(void)
 //
 //==========================================================================
 
-void IN_Shutdown(void)
+void IN_Shutdown()
 {
 	guard(IN_Shutdown);
 	ShutdownJoystick();
@@ -1021,9 +1021,13 @@ void IN_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.11  2004/04/19 06:50:36  dj_jl
 //	Mousewheel support.
-//
+//	
 //	Revision 1.10  2002/11/16 17:14:22  dj_jl
 //	Some changes for release.
 //	

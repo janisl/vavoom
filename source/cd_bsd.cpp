@@ -86,24 +86,23 @@ void VBsdCDAudioDevice::Init()
 	guard(VBsdCDAudioDevice::Init);
 	int i;
 
-	if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
+	if (GArgs.CheckParm("-nosound") || GArgs.CheckParm("-nocdaudio"))
 	{
 		return;
 	}
 
-	char cd_dev[64] = "/dev/cdrom";
-	i = M_CheckParm("-cddev");
-	if (i && i < myargc - 1)
+	VStr cd_dev = "/dev/cdrom";
+	const char* p = GArgs.CheckValue("-cddev");
+	if (p)
 	{
-		strncpy(cd_dev, myargv[i + 1], sizeof(cd_dev));
-		cd_dev[sizeof(cd_dev) - 1] = 0;
+		cd_dev = p;
 	}
 
-	CDFile = open(cd_dev, O_RDONLY);
+	CDFile = open(*cd_dev, O_RDONLY);
 	if (CDFile == -1)
 	{
 		GCon->Logf(NAME_Init, "CD_Init: open of \"%s\" failed (%d)",
-			cd_dev, errno);
+			*cd_dev, errno);
 		CDFile = -1;
 		return;
 	}
@@ -374,9 +373,13 @@ void VBsdCDAudioDevice::CloseDoor()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.4  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.3  2006/02/02 22:55:30  dj_jl
 //	Some FreeBSD fixes.
-//
+//	
 //	Revision 1.2  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
 //	

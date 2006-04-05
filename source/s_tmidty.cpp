@@ -119,11 +119,11 @@ PlayMode		VTimidityAudioCodec::MyPlayMode =
 	DEFAULT_RATE, PE_16BIT | PE_SIGNED, "Vavoom audio"
 };
 
-static TCvarI	s_timidity("s_timidity", "0", CVAR_ARCHIVE);
+static VCvarI	s_timidity("s_timidity", "0", CVAR_Archive);
 #if defined(DJGPP) || defined(_WIN32)
-static TCvarS	s_timidity_patches("s_timidity_patches", "\\TIMIDITY", CVAR_ARCHIVE);
+static VCvarS	s_timidity_patches("s_timidity_patches", "\\TIMIDITY", CVAR_Archive);
 #else
-static TCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_ARCHIVE);
+static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_Archive);
 #endif
 
 // CODE --------------------------------------------------------------------
@@ -318,9 +318,13 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.4  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
-//
+//	
 //	Revision 1.3  2005/11/12 09:47:54  dj_jl
 //	Created LibTimidity namespace to avoid conflicts.
 //	

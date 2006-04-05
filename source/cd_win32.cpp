@@ -85,7 +85,7 @@ void VWin32CDAudioDevice::Init()
 	DWORD				result;
 	int					i;
 
-	if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
+	if (GArgs.CheckParm("-nosound") || GArgs.CheckParm("-nocdaudio"))
 	{
 		return;
 	}
@@ -449,9 +449,13 @@ void VWin32CDAudioDevice::CloseDoor()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.7  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
-//
+//	
 //	Revision 1.6  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

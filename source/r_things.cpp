@@ -143,15 +143,15 @@ static const char		*spritename;
 // and range check thing_t sprites patches
 static spritedef_t		sprites[MAX_SPRITE_MODELS];
 
-static TCvarI			r_draw_mobjs("r_draw_mobjs", "1", CVAR_ARCHIVE);
-static TCvarI			r_draw_psprites("r_draw_psprites", "1", CVAR_ARCHIVE);
-static TCvarI			r_models("r_models", "1", CVAR_ARCHIVE);
-static TCvarI			r_view_models("r_view_models", "1", CVAR_ARCHIVE);
-static TCvarI			r_sort_sprites("r_sort_sprites", "0");
-static TCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_ARCHIVE);
-static TCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_ARCHIVE);
-static TCvarI			croshair("croshair", "0", CVAR_ARCHIVE);
-static TCvarI			croshair_trans("croshair_trans", "0", CVAR_ARCHIVE);
+static VCvarI			r_draw_mobjs("r_draw_mobjs", "1", CVAR_Archive);
+static VCvarI			r_draw_psprites("r_draw_psprites", "1", CVAR_Archive);
+static VCvarI			r_models("r_models", "1", CVAR_Archive);
+static VCvarI			r_view_models("r_view_models", "1", CVAR_Archive);
+static VCvarI			r_sort_sprites("r_sort_sprites", "0");
+static VCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_Archive);
+static VCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_Archive);
+static VCvarI			croshair("croshair", "0", CVAR_Archive);
+static VCvarI			croshair_trans("croshair_trans", "0", CVAR_Archive);
 
 static trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 static TVec				trans_sprite_verts[4 * MAX_TRANS_SPRITES];
@@ -444,7 +444,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 //
 //==========================================================================
 
-extern TCvarI		r_chasecam;
+extern VCvarI		r_chasecam;
 
 static void RenderSprite(VEntity* thing)
 {
@@ -1185,9 +1185,13 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.27  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.26  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
 //	

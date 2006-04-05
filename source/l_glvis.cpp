@@ -78,8 +78,8 @@ static float bary2;
 static float barborderw;
 static float barborderh;
 
-static TCvarI glvis_fast("glvis_fast", "1", CVAR_ARCHIVE);
-static TCvarI glvis_noreject("glvis_noreject", "1", CVAR_ARCHIVE);
+static VCvarI glvis_fast("glvis_fast", "1", CVAR_Archive);
+static VCvarI glvis_noreject("glvis_noreject", "1", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -239,18 +239,22 @@ void GLVis_BuildPVS(const char *srcfile, const char* gwafile)
 
 COMMAND(glVIS)
 {
-	if (Argc() > 1)
+	if (Args.Num() > 1)
 	{
-		GLVis_BuildPVS(Argv(1), NULL);
+		GLVis_BuildPVS(*Args[1], NULL);
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.8  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
-//
+//	
 //	Revision 1.7  2003/03/08 12:08:04  dj_jl
 //	Beautification.
 //	

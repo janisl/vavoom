@@ -693,10 +693,10 @@ void Z_Init(void* base, int size)
 	{
 		minsize = 256 * 1024;
 	}
-	int p = M_CheckParm("-minzone");
-	if (p && p < myargc - 1)
+	const char* p = GArgs.CheckValue("-minzone");
+	if (p)
 	{
-		minsize = (int)(1024 * atof(myargv[p + 1]));
+		minsize = (int)(1024 * atof(p));
 	}
 	mainzone = new(base) TMemZone(size);
 	minizone = new(Z_Malloc(minsize)) TMemZone(minsize);
@@ -895,9 +895,13 @@ COMMAND(DumpHeap)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.14  2005/05/26 16:57:25  dj_jl
 //	Added "free memory" console command
-//
+//	
 //	Revision 1.13  2004/01/30 17:33:36  dj_jl
 //	Better minzone size
 //	

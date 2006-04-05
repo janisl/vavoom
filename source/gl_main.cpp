@@ -48,15 +48,15 @@
 IMPLEMENT_DRAWER(VOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
 	"OpenGL rasterizer device", "-opengl");
 
-TCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_ARCHIVE);
-TCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_ARCHIVE);
-TCvarI VOpenGLDrawer::blend_sprites("gl_blend_sprites", "0", CVAR_ARCHIVE);
-TCvarI VOpenGLDrawer::ext_multitexture("gl_ext_multitexture", "1", CVAR_ARCHIVE);
-TCvarI VOpenGLDrawer::ext_point_parameters("gl_ext_point_parameters", "1", CVAR_ARCHIVE);
-TCvarI VOpenGLDrawer::ext_anisotropy("gl_ext_anisotropy", "1", CVAR_ARCHIVE);
-TCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_ARCHIVE);
-TCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_ARCHIVE);
-TCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_ARCHIVE);
+VCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_Archive);
+VCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_Archive);
+VCvarI VOpenGLDrawer::blend_sprites("gl_blend_sprites", "0", CVAR_Archive);
+VCvarI VOpenGLDrawer::ext_multitexture("gl_ext_multitexture", "1", CVAR_Archive);
+VCvarI VOpenGLDrawer::ext_point_parameters("gl_ext_point_parameters", "1", CVAR_Archive);
+VCvarI VOpenGLDrawer::ext_anisotropy("gl_ext_anisotropy", "1", CVAR_Archive);
+VCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_Archive);
+VCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_Archive);
+VCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -484,9 +484,13 @@ void VOpenGLDrawer::SetPalette(int pnum)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.26  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
-//
+//	
 //	Revision 1.25  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

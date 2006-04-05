@@ -54,16 +54,20 @@ struct server_static_t
 extern server_t			sv;
 extern server_static_t	svs;
 
-extern TMessage			sv_reliable;
-extern TMessage			sv_datagram;
-extern TMessage			sv_signon;
+extern VMessage			sv_reliable;
+extern VMessage			sv_datagram;
+extern VMessage			sv_signon;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/10/12 17:31:13  dj_jl
 //	no message
 //	

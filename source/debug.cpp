@@ -64,10 +64,10 @@ void OpenDebugFile(const char* name)
 	fclose(df);
 #else
 #ifndef DEVELOPER
-	if (M_CheckParm("-debug"))
+	if (GArgs.CheckParm("-debug"))
 #endif
 	{
-		if (M_CheckParm("-RHIDE"))
+		if (GArgs.CheckParm("-RHIDE"))
     		df = stderr;
 		else
 			df = fopen(debug_file_name, "w");
@@ -107,9 +107,13 @@ int dprintf(const char *s, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:30  dj_jl
 //	Just moved Log to the end of file
 //	

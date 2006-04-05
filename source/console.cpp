@@ -90,15 +90,12 @@ static int				c_history_current;
 
 static float			cons_h = 0;
 
-static TCvarF			con_height("con_height", "100", CVAR_ARCHIVE);
-static TCvarF			con_speed("con_speed", "200", CVAR_ARCHIVE);
+static VCvarF			con_height("con_height", "100", CVAR_Archive);
+static VCvarF			con_speed("con_speed", "200", CVAR_Archive);
 
 //	Autocomplete
 static int				c_autocompleteIndex = -1;
-static char				c_autocompleteString[MAX_ILINE_LENGTH];
-
-static const char**		c_ac_Table = NULL;
-static int				c_ac_Count = 0;
+static VStr				c_autocompleteString;
 
 // CODE --------------------------------------------------------------------
 
@@ -153,45 +150,6 @@ void C_Init()
 {
     c_history_last = 0;
     c_history_size = 0;
-}
-
-//==========================================================================
-//
-//	C_AddToAutoComplete
-//
-//==========================================================================
-
-void C_AddToAutoComplete(const char* string)
-{
-	int			i;
-	const char*	Swap;
-
-#ifdef PARANOID
-	for (i=0; i<c_ac_Count; i++)
-    {
-    	if (!stricmp(string, c_ac_Table[i]))
-	    	Sys_Error("C_AddToAutoComplete: %s is allready registered.", string);
-	}
-#endif
-
-	if (!c_ac_Count)
-    {
-		c_ac_Table = (const char**)Z_StrMalloc(128 * sizeof(char*));
-    }
-    else if (c_ac_Count >= 128)
-    {
-		Z_Resize((void**)&c_ac_Table, (c_ac_Count + 1) * sizeof(char*));
-	}
-	c_ac_Table[c_ac_Count] = string;
-
-    // Alphabetic sort
-	for (i = c_ac_Count; i && (stricmp(c_ac_Table[i - 1], c_ac_Table[i]) > 0); i--)
-	{
-		Swap = c_ac_Table[i];
-		c_ac_Table[i] = c_ac_Table[i - 1];
-		c_ac_Table[i - 1] = Swap;
-	}
-	c_ac_Count++;
 }
 
 //==========================================================================
@@ -378,22 +336,23 @@ void C_Drawer(void)
 
 boolean C_Responder(event_t* ev)
 {
-    const char*	cp;
-    int			i;
+	const char*	cp;
+	VStr		str;
+	int			i;
 	bool		eat;
 
 	//  Respond to events only when console is active
-    if (!C_Active())
-        return false;
+	if (!C_Active())
+		return false;
 
 	//	We are iterested only in key down events
 	if (ev->type != ev_keydown)
 		return false;
 
-    switch (ev->data1)
+	switch (ev->data1)
 	{
-    // Close console
-    case K_ESCAPE:
+	// Close console
+	case K_ESCAPE:
 		if (consolestate != cons_open)
 			return false;
 
@@ -404,26 +363,26 @@ boolean C_Responder(event_t* ev)
 			C_Stop();
 		return true;
 
-    // Execute entered command
+	// Execute entered command
 	case K_ENTER:
 	case K_PADENTER:
-   		//	Print it
+		//	Print it
 		GCon->Logf(">%s", c_iline.Data);
 
 		//	Add to history
-        c_history_last = (MAXHISTORY + c_history_last - 1) % MAXHISTORY;
-        if (c_history_size < MAXHISTORY)
-           	c_history_size++;
-        strcpy(c_history[c_history_last], c_iline.Data);
-        c_history_current = -1;
+		c_history_last = (MAXHISTORY + c_history_last - 1) % MAXHISTORY;
+		if (c_history_size < MAXHISTORY)
+			c_history_size++;
+		strcpy(c_history[c_history_last], c_iline.Data);
+		c_history_current = -1;
 
 		//	Add to command buffer
-        CmdBuf << c_iline.Data << "\n";
+		GCmdBuf << c_iline.Data << "\n";
 
 		//	Clear line
 		c_iline.Init();
 		c_autocompleteIndex = -1;
-        return true;
+		return true;
 
 	// Scroll lines up
 	case K_PAGEUP:
@@ -434,7 +393,7 @@ boolean C_Responder(event_t* ev)
 				last_line--;
 			}
 		}
-       	return true;
+		return true;
 
 	// Scroll lines down
 	case K_PAGEDOWN:
@@ -445,17 +404,17 @@ boolean C_Responder(event_t* ev)
 				last_line++;
 			}
 		}
-       	return true;
+		return true;
 
 	// Go to first line
 	case K_HOME:
 		last_line = 1;
-       	return true;
+		return true;
 
 	// Go to last line
 	case K_END:
 		last_line = num_lines;
-       	return true;
+		return true;
 
 	// Command history up
 	case K_UPARROW:
@@ -463,79 +422,61 @@ boolean C_Responder(event_t* ev)
 		c_iline.Init();
 		if (c_history_current >= c_history_size)
 		{
-           	c_history_current = c_history_size;
-		}
-        else
-		{
-           	cp = c_history[(c_history_last +
-                   c_history_current) % MAXHISTORY];
-            while (*cp) c_iline.AddChar(*cp++);
-		}
-		c_autocompleteIndex = -1;
-       	return true;
-
-	// Command history down
-	case K_DOWNARROW:
-        c_history_current--;
-		c_iline.Init();
-        if (c_history_current < 0)
-        {
-           	c_history_current = -1;
-        }
-        else
-        {
-          	cp = c_history[(c_history_last +
-                   c_history_current) % MAXHISTORY];
-            while (*cp) c_iline.AddChar(*cp++);
-        }
-		c_autocompleteIndex = -1;
-       	return true;
-
-	// Auto complete
-	case K_TAB:
-        if (!c_iline.Data[0])
-			return true;
-
-        if (c_autocompleteIndex == -1)
-		{
-			strcpy(c_autocompleteString, c_iline.Data);
-           	if (shiftdown)
-				i = c_ac_Count - 1;
-			else
-				i = 0;
+			c_history_current = c_history_size;
 		}
 		else
 		{
-           	if (shiftdown)
-				i = c_autocompleteIndex - 1;
-			else
-				i = c_autocompleteIndex + 1;
+			cp = c_history[(c_history_last +
+				c_history_current) % MAXHISTORY];
+			while (*cp) c_iline.AddChar(*cp++);
 		}
+		c_autocompleteIndex = -1;
+		return true;
 
-		while ((i < c_ac_Count) && (i >= 0))
+	// Command history down
+	case K_DOWNARROW:
+		c_history_current--;
+		c_iline.Init();
+		if (c_history_current < 0)
 		{
-            if (strlen(c_autocompleteString) <= strlen(c_ac_Table[i]) &&
-            	!strnicmp(c_autocompleteString, c_ac_Table[i], strlen(c_autocompleteString)))
-			{
-				c_autocompleteIndex = i;
-				c_iline.Init();
-               	cp = c_ac_Table[i];
-                while (*cp)
-                	c_iline.AddChar(*cp++);
-				c_iline.AddChar(' ');
-				break;
-			}
-			if (shiftdown) i--; else i++;
+			c_history_current = -1;
 		}
-       	return true;
+		else
+		{
+			cp = c_history[(c_history_last +
+				c_history_current) % MAXHISTORY];
+			while (*cp) c_iline.AddChar(*cp++);
+		}
+		c_autocompleteIndex = -1;
+		return true;
+
+	// Auto complete
+	case K_TAB:
+		if (!c_iline.Data[0])
+			return true;
+
+		if (c_autocompleteIndex == -1)
+		{
+			c_autocompleteString = c_iline.Data;
+		}
+		str = VCommand::GetAutoComplete(c_autocompleteString,
+			c_autocompleteIndex, shiftdown);
+		if (str)
+		{
+			c_iline.Init();
+			for (i = 0; i < (int)str.Length(); i++)
+				c_iline.AddChar(str[i]);
+			c_iline.AddChar(' ');
+		}
+		return true;
 
 	// Add character to input line
 	default:
-    	eat = c_iline.Key((byte)ev->data1);
-        if (eat)
+		eat = c_iline.Key((byte)ev->data1);
+		if (eat)
 			c_autocompleteIndex = -1;
 		return eat;
-    }
+	}
 }
 
 //==========================================================================
@@ -548,7 +489,7 @@ COMMAND(Cls)
 {
 	num_lines = 0;
 	first_line = 0;
-    last_line = 0;
+	last_line = 0;
 }
 
 //==========================================================================
@@ -562,13 +503,13 @@ COMMAND(Cls)
 static void AddLine(char* Data)
 {
 	if (num_lines >= MAX_LINES)
-    {
-    	num_lines--;
-        first_line++;
+	{
+		num_lines--;
+		first_line++;
 	}
-    strncpy(clines[(num_lines + first_line) % MAX_LINES], Data, MAX_LINE_LENGTH);
-    clines[(num_lines + first_line) % MAX_LINES][MAX_LINE_LENGTH - 1] = 0;
-    num_lines++;
+	strncpy(clines[(num_lines + first_line) % MAX_LINES], Data, MAX_LINE_LENGTH);
+	clines[(num_lines + first_line) % MAX_LINES][MAX_LINE_LENGTH - 1] = 0;
+	num_lines++;
 	if (last_line == num_lines - 1)
 	{
 		last_line = num_lines;
@@ -682,8 +623,8 @@ static char				notify_lines[NUM_NOTIFY_LINES][MAX_NOTIFY_LINE_LENGTH];
 static double			notify_times[NUM_NOTIFY_LINES];
 static int				num_notify = 0;
 static int				first_notify = 0;
-static TCvarF			notify_time("notify_time", "5", CVAR_ARCHIVE);
-static TCvarI			msg_echo("msg_echo", "1", CVAR_ARCHIVE);
+static VCvarF			notify_time("notify_time", "5", CVAR_Archive);
+static VCvarI			msg_echo("msg_echo", "1", CVAR_Archive);
 
 //==========================================================================
 //
@@ -763,7 +704,7 @@ void C_DrawNotify(void)
 
 static char				center_message[256];
 static float			center_time;
-static TCvarF			center_msg_time("center_message_time", "7", CVAR_ARCHIVE);
+static VCvarF			center_msg_time("center_message_time", "7", CVAR_Archive);
 
 //==========================================================================
 //
@@ -801,9 +742,13 @@ void C_DrawCenterMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.26  2006/02/27 20:45:26  dj_jl
 //	Rewrote names class.
-//
+//	
 //	Revision 1.25  2006/02/21 22:31:44  dj_jl
 //	Created dynamic string class.
 //	

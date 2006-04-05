@@ -47,17 +47,17 @@ boolean					chatmodeon;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TILine			w_chat;
-static TCvarS ChatMacro0("Chatmacro0", "No", CVAR_ARCHIVE);
-static TCvarS ChatMacro1("Chatmacro1", "I'm ready to kick butt!", CVAR_ARCHIVE);
-static TCvarS ChatMacro2("Chatmacro2", "I'm OK.", CVAR_ARCHIVE);
-static TCvarS ChatMacro3("Chatmacro3", "I'm not looking too good!", CVAR_ARCHIVE);
-static TCvarS ChatMacro4("Chatmacro4", "Help!", CVAR_ARCHIVE);
-static TCvarS ChatMacro5("Chatmacro5", "You suck!", CVAR_ARCHIVE);
-static TCvarS ChatMacro6("Chatmacro6", "Next time, scumbag...", CVAR_ARCHIVE);
-static TCvarS ChatMacro7("Chatmacro7", "Come here!", CVAR_ARCHIVE);
-static TCvarS ChatMacro8("Chatmacro8", "I'll take care of it.", CVAR_ARCHIVE);
-static TCvarS ChatMacro9("Chatmacro9", "Yes", CVAR_ARCHIVE);
-static TCvarS *chat_macros[10] =
+static VCvarS ChatMacro0("Chatmacro0", "No", CVAR_Archive);
+static VCvarS ChatMacro1("Chatmacro1", "I'm ready to kick butt!", CVAR_Archive);
+static VCvarS ChatMacro2("Chatmacro2", "I'm OK.", CVAR_Archive);
+static VCvarS ChatMacro3("Chatmacro3", "I'm not looking too good!", CVAR_Archive);
+static VCvarS ChatMacro4("Chatmacro4", "Help!", CVAR_Archive);
+static VCvarS ChatMacro5("Chatmacro5", "You suck!", CVAR_Archive);
+static VCvarS ChatMacro6("Chatmacro6", "Next time, scumbag...", CVAR_Archive);
+static VCvarS ChatMacro7("Chatmacro7", "Come here!", CVAR_Archive);
+static VCvarS ChatMacro8("Chatmacro8", "I'll take care of it.", CVAR_Archive);
+static VCvarS ChatMacro9("Chatmacro9", "Yes", CVAR_Archive);
+static VCvarS *chat_macros[10] =
 {
     &ChatMacro0,
     &ChatMacro1,
@@ -116,7 +116,7 @@ boolean CT_Responder(event_t *ev)
 	{
 		if (ev->data1 >= '0' && ev->data1 <= '9')
 		{
-			CmdBuf << "Say " << *chat_macros[ev->data1 - '0'] << "\n";
+			GCmdBuf << "Say " << *chat_macros[ev->data1 - '0'] << "\n";
 			CT_Stop();
 			return true;
 		}
@@ -125,7 +125,7 @@ boolean CT_Responder(event_t *ev)
    	eatkey = w_chat.Key((byte)ev->data1);
 	if (ev->data1 == K_ENTER || ev->data1 == K_PADENTER)
 	{
-		CmdBuf << "Say " << w_chat.Data << "\n";
+		GCmdBuf << "Say " << w_chat.Data << "\n";
 		CT_Stop();
 		return true;
 	}
@@ -169,9 +169,13 @@ void CT_Drawer(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.7  2002/03/02 17:30:34  dj_jl
 //	Added suport for Pad-Enter.
-//
+//	
 //	Revision 1.6  2002/01/07 12:16:41  dj_jl
 //	Changed copyright year
 //	

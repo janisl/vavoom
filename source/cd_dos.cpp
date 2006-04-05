@@ -80,7 +80,7 @@ IMPLEMENT_CD_AUDIO_DEVICE(VDosCDAudioDevice, CDDRV_Default, "Default",
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarI		cd_volume("cd_volume", "255", CVAR_ARCHIVE);
+static VCvarI		cd_volume("cd_volume", "255", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -93,7 +93,7 @@ static TCvarI		cd_volume("cd_volume", "255", CVAR_ARCHIVE);
 void VDosCDAudioDevice::Init()
 {
 	guard(VDosCDAudioDevice::Init);
-	if (M_CheckParm("-nosound") || M_CheckParm("-nocdaudio"))
+	if (GArgs.CheckParm("-nosound") || GArgs.CheckParm("-nocdaudio"))
 	{
 		return;
 	}
@@ -905,9 +905,13 @@ static int bcd_audio_busy()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.7  2005/09/13 17:32:45  dj_jl
 //	Created CD audio device class.
-//
+//	
 //	Revision 1.6  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	

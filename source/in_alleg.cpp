@@ -77,12 +77,12 @@ static byte					scantokey[KEY_MAX] =
 	K_LWIN, K_RWIN, K_MENU, K_SCROLLLOCK, K_NUMLOCK, K_CAPSLOCK
 };
 
-static boolean				mouse_started    = false;
+static bool					mouse_started    = false;
 static int					old_mouse_x;
 static int					old_mouse_y;
-static TCvarI				m_filter("m_filter", "1", CVAR_ARCHIVE);
+static VCvarI				m_filter("m_filter", "1", CVAR_Archive);
 
-static boolean				joystick_started = false;
+static bool					joystick_started = false;
 static int					joy_oldx = 0;
 static int					joy_oldy = 0;
 static int					joy_oldb[MAX_JOYSTICK_BUTTONS];
@@ -195,7 +195,7 @@ static void StartupMouse()
 	guard(StartupMouse);
 	int		buts;
 
-	if (M_CheckParm("-nomouse"))
+	if (GArgs.CheckParm("-nomouse"))
 		return;
 
 	buts = install_mouse();
@@ -308,7 +308,7 @@ static void ShutdownMouse()
 static void StartupJoystick()
 {
 	guard(StartupJoystick);
-	if (M_CheckParm("-nojoy"))
+	if (GArgs.CheckParm("-nojoy"))
 		return;
 
 	//	Detect the joystick type
@@ -459,9 +459,13 @@ void IN_Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.10  2005/03/01 15:58:28  dj_jl
 //	Beautification.
-//
+//	
 //	Revision 1.9  2002/11/16 17:13:09  dj_jl
 //	Some compatibility changes.
 //	

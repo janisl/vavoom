@@ -93,11 +93,11 @@ IMPLEMENT_SOUND_DEVICE(VSDLSoundDevice, SNDDRV_Default, "Default",
 
 bool							sdl_mixer_initialised;
 
-static TCvarI mix_frequency		("mix_frequency", "44100", CVAR_ARCHIVE);
-static TCvarI mix_bits			("mix_bits",      "16",    CVAR_ARCHIVE);
-static TCvarI mix_channels		("mix_channels",  "2",     CVAR_ARCHIVE);
+static VCvarI mix_frequency		("mix_frequency", "44100", CVAR_Archive);
+static VCvarI mix_bits			("mix_bits",      "16",    CVAR_Archive);
+static VCvarI mix_channels		("mix_channels",  "2",     CVAR_Archive);
 
-static TCvarI mix_chunksize		("mix_chunksize", "4096",  CVAR_ARCHIVE);
+static VCvarI mix_chunksize		("mix_chunksize", "4096",  CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -119,7 +119,7 @@ static const int	voices[] = {        4,     8,    16,   32,   64, 0};
 bool VSDLSoundDevice::Init()
 {
 	guard(VSDLSoundDevice::Init);
-	int i;
+	const char*	p;
 	int    freq;
 	Uint16 fmt;
 	int    ch;  /* audio */
@@ -131,29 +131,33 @@ bool VSDLSoundDevice::Init()
 	StrmBufferUsed = 0;
 	StrmVol = 1;
 
-	if ( (i = M_CheckParm("-mix_frequency")) )
-		mix_frequency = atoi(myargv[i+1]);
+	p = GArgs.CheckValue("-mix_frequency");
+	if (p)
+		mix_frequency = atoi(p);
 	if (know_value(mix_frequency, frequencies))
 		freq = mix_frequency;
 	else
 		freq = 44100;
 
-	if ( (i = M_CheckParm("-mix_bits")) )
-		mix_bits = atoi(myargv[i+1]);
+	p = GArgs.CheckValue("-mix_bits");
+	if (p)
+		mix_bits = atoi(p);
 	if (mix_bits == 8)
 		fmt = AUDIO_U8;
 	else
 		fmt = AUDIO_S16;
 
-	if ( (i = M_CheckParm("-mix_channels")) )
-		mix_channels = atoi(myargv[i+1]);
+	p = GArgs.CheckValue("-mix_channels");
+	if (p)
+		mix_channels = atoi(p);
 	if (mix_channels == 1 || mix_channels == 2 || mix_channels == 4 || mix_channels == 6)
 		ch = mix_channels;
 	else
 		ch = 2;
 
-	if ( (i = M_CheckParm("-mix_chunksize")) )
-		mix_chunksize = atoi(myargv[i+1]);
+	p = GArgs.CheckValue("-mix_chunksize");
+	if (p)
+		mix_chunksize = atoi(p);
 	if (know_value(mix_chunksize, chunksizes))
 		cksz = mix_chunksize;
 	else
@@ -606,9 +610,13 @@ void VSDLSoundDevice::StrmCallback(void* ptr, Uint8* stream, int len)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.22  2005/11/13 14:36:22  dj_jl
 //	Moved common sound functions to main sound module.
-//
+//	
 //	Revision 1.21  2005/11/06 15:27:09  dj_jl
 //	Added support for 16 bit sounds.
 //	

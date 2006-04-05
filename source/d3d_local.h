@@ -381,14 +381,14 @@ private:
 	surfcache_t					blockbuf[NUM_CACHE_BLOCKS];
 	dword						cacheframecount;
 
-	static TCvarI device;
-	static TCvarI clear;
-	static TCvarI tex_linear;
-	static TCvarI dither;
-	static TCvarI blend_sprites;
-	static TCvarF maxdist;
-	static TCvarI model_lighting;
-	static TCvarI specular_highlights;
+	static VCvarI device;
+	static VCvarI clear;
+	static VCvarI tex_linear;
+	static VCvarI dither;
+	static VCvarI blend_sprites;
+	static VCvarF maxdist;
+	static VCvarI model_lighting;
+	static VCvarI specular_highlights;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -400,9 +400,13 @@ private:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.29  2006/02/05 14:11:00  dj_jl
 //	Fixed conflict with Solaris.
-//
+//	
 //	Revision 1.28  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
 //	

@@ -125,7 +125,7 @@ MDRIVER			VMikModAudioCodec::Driver =
 	VC_VoiceRealVolume
 };
 
-static TCvarI	s_mikmod_hqmixer("s_mikmod_hqmixer", "0", CVAR_ARCHIVE);
+static VCvarI	s_mikmod_hqmixer("s_mikmod_hqmixer", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -386,9 +386,13 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.5  2006/03/29 20:32:54  dj_jl
 //	Avoid setting source stream to error.
-//
+//	
 //	Revision 1.4  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	

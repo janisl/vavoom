@@ -262,7 +262,7 @@ void IN_KeyEvent(int key, int press)
 //
 //==========================================================================
 
-void IN_ProcessEvents(void)
+void IN_ProcessEvents()
 {
 	guard(IN_ProcessEvents);
     event_t*	ev;
@@ -341,11 +341,11 @@ void IN_ProcessEvents(void)
 				if (kb[0] == '+' || kb[0] == '-')
 				{
 					// button commands add keynum as a parm
-					CmdBuf << kb << " " << VStr(ev->data1) << "\n";
+					GCmdBuf << kb << " " << VStr(ev->data1) << "\n";
 				}
 				else
 				{
-		        	CmdBuf << kb << "\n";
+		        	GCmdBuf << kb << "\n";
 				}
 	            continue;
 	        }
@@ -358,11 +358,11 @@ void IN_ProcessEvents(void)
 		    	if (kb[0] == '+' || kb[0] == '-')
 				{
 					// button commands add keynum as a parm
-					CmdBuf << kb << " " << VStr(ev->data1) << "\n";
+					GCmdBuf << kb << " " << VStr(ev->data1) << "\n";
 		        }
 				else
 				{
-		        	CmdBuf << kb << "\n";
+		        	GCmdBuf << kb << "\n";
 				}
             	continue;
 			}
@@ -379,7 +379,7 @@ void IN_ProcessEvents(void)
 //
 //==========================================================================
 
-int IN_ReadKey(void)
+int IN_ReadKey()
 {
 	guard(IN_ReadKey);
 	int		ret = 0;
@@ -407,7 +407,7 @@ int IN_ReadKey(void)
 //
 //==========================================================================
 #if 0
-void CheckAbort(void)
+void CheckAbort()
 {
     event_t*	ev;
     int			stoptic;
@@ -436,27 +436,31 @@ void CheckAbort(void)
 //
 //==========================================================================
 
-static int KeyNumForName(char* Name)
+static int KeyNumForName(const VStr& Name)
 {
 	guard(KeyNumForName);
 	int		i;
 
-    if (!Name || !Name[0])
-      return -1;
+	if (!Name)
+		return -1;
 
-    if (!Name[1])
+	//	Single character.
+	if (!Name[1])
 		return tolower(Name[0]);
 
-    if (!stricmp(Name, "Space"))
+	//	Special cases that you can't enter in console.
+	if (!Name.ICmp("Space"))
 		return ' ';
 
-    if (!stricmp(Name, "Tilde"))
+	if (!Name.ICmp("Tilde"))
 		return '`';
 
-    for (i=0; i<SCANCODECOUNT; i++)
-		if (!stricmp(Name, KeyNames[i]))
+	//	Check special key names.
+	for (i = 0; i < SCANCODECOUNT; i++)
+		if (!Name.ICmp(KeyNames[i]))
 			return i + 0x80;
 
+	//	Not found.
 	return -1;
 	unguard;
 }
@@ -536,16 +540,16 @@ COMMAND(Unbind)
 	guard(COMMAND Unbind);
 	int		b;
 
-	if (Argc() != 2)
+	if (Args.Num() != 2)
 	{
 		GCon->Log("unbind <key> : remove commands from a key");
 		return;
 	}
-	
-	b = KeyNumForName(Argv(1));
+
+	b = KeyNumForName(Args[1]);
 	if (b == -1)
 	{
-		GCon->Logf("\"%s\" isn't a valid key", Argv(1));
+		GCon->Log(VStr("\"") + Args[1] + "\" isn\'t a valid key");
 		return;
 	}
 
@@ -581,17 +585,17 @@ COMMAND(Bind)
 	guard(COMMAND Bind);
 	int			c, b;
 	
-	c = Argc();
+	c = Args.Num();
 
 	if (c != 2 && c != 3 && c != 4)
 	{
 		GCon->Log("bind <key> [down_command] [up_command]: attach a command to a key");
 		return;
 	}
-	b = KeyNumForName(Argv(1));
+	b = KeyNumForName(Args[1]);
 	if (b == -1)
 	{
-		GCon->Logf("\"%s\" isn't a valid key", Argv(1));
+		GCon->Log(VStr("\"") + Args[1] + "\" isn\'t a valid key");
 		return;
 	}
 
@@ -599,22 +603,12 @@ COMMAND(Bind)
 	{
 		if (keybindings_down[b] || keybindings_up[b])
 			GCon->Logf("\"%s\" = \"%s\" / \"%s\"",
-				Argv(1), keybindings_down[b], keybindings_up[b]);
+				*Args[1], keybindings_down[b], keybindings_up[b]);
 		else
-			GCon->Logf("\"%s\" is not bound", Argv(1));
+			GCon->Logf("\"%s\" is not bound", *Args[1]);
 		return;
 	}
-	if (c == 3 && Argv(2)[0] == '+')
-	{
-		char on_up[256];
-		strcpy(on_up, Argv(2));
-		on_up[0] = '-';
-		IN_SetBinding(b, Argv(2), on_up);
-	}
-	else
-	{
-		IN_SetBinding(b, Argv(2), Argv(3));
-	}
+	IN_SetBinding(b, *Args[2], c > 3 ? *Args[3] : "");
 	unguard;
 }
 
@@ -682,16 +676,21 @@ void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
 int IN_TranslateKey(int ch)
 {
 	guard(IN_TranslateKey);
-	return shiftdown ? shiftxform[ch] : ch;
+	int Tmp = ch;
+	return shiftdown ? shiftxform[Tmp] : Tmp;
 	unguard;
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.15  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.14  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

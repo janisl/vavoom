@@ -335,7 +335,7 @@ bool GLBSP_BuildNodes(const char *name, const char* gwafile)
 
 COMMAND(glBSP)
 {
-	if (Argc() > 1)
+	if (Args.Num() > 1)
 	{
 		nodebuildinfo_t nb_info;
 		nodebuildcomms_t nb_comms;
@@ -343,8 +343,11 @@ COMMAND(glBSP)
 		nb_info = default_buildinfo;
 		nb_comms = default_buildcomms;
 
-		if (GlbspParseArgs(&nb_info, &nb_comms, (const char**)Cmd_Argv() + 1,
-			Argc() - 1) == GLBSP_E_OK)
+		const char** TmpArgs = Z_New<const char*>(Args.Num() - 1);
+		for (int i = 0; i < Args.Num() - 1; i++)
+			TmpArgs[i] = *Args[i + 1];
+		if (GlbspParseArgs(&nb_info, &nb_comms, TmpArgs,
+			Args.Num() - 1) == GLBSP_E_OK)
 		{
 			bars[0].x = BARX * fScaleX;
 			bars[0].w = BARW * fScaleX;
@@ -370,15 +373,20 @@ COMMAND(glBSP)
 		{
 			GCon->Log("Bad arguments");
 		}
+		Z_Free(TmpArgs);
 	}
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.7  2006/01/29 20:41:30  dj_jl
 //	On Unix systems use ~/.vavoom for generated files.
-//
+//	
 //	Revision 1.6  2003/10/23 06:36:15  dj_jl
 //	Parsing all args
 //	

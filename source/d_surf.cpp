@@ -156,7 +156,7 @@ static void	(*surfmiptable32RGB[4])(void) =
 
 int					c_surf;
 
-static TCvarI d_colored_lights("d_colored_lights", "1", CVAR_ARCHIVE);
+static VCvarI d_colored_lights("d_colored_lights", "1", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -2255,9 +2255,13 @@ void D_DrawDoubleSkySurf_32(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.15  2005/05/26 16:50:14  dj_jl
 //	Created texture manager class
-//
+//	
 //	Revision 1.14  2004/10/08 12:37:47  dj_jl
 //	Better rendering of old skies.
 //	

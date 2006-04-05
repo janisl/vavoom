@@ -46,13 +46,13 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void Draw_TeleportIcon(void);
-void CL_Disconnect(void);
+void Draw_TeleportIcon();
+void CL_Disconnect();
 void SV_MapTeleport(char *mapname);
 bool SV_ReadClientMessages(int i);
-void SV_DestroyAllThinkers(void);
+void SV_DestroyAllThinkers();
 void SV_RunClientCommand(const char *cmd);
-void EntInit(void);
+void EntInit();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -61,7 +61,7 @@ void SV_DropClient(boolean crash);
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void G_DoReborn(int playernum);
-static void G_DoCompleted(void);
+static void G_DoCompleted();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -72,7 +72,7 @@ IMPLEMENT_CLASS(V, GameInfo)
 IMPLEMENT_CLASS(V, BasePlayer)
 IMPLEMENT_CLASS(V, ViewEntity)
 
-TCvarI			real_time("real_time", "1");
+VCvarI			real_time("real_time", "1");
 
 server_t		sv;
 server_static_t	svs;
@@ -98,11 +98,11 @@ mobj_base_t*	sv_mo_base;
 double*			sv_mo_free_time;
 
 byte			sv_reliable_buf[MAX_MSGLEN];
-TMessage		sv_reliable(sv_reliable_buf, MAX_MSGLEN);
+VMessage		sv_reliable(sv_reliable_buf, MAX_MSGLEN);
 byte			sv_datagram_buf[MAX_DATAGRAM];
-TMessage		sv_datagram(sv_datagram_buf, MAX_DATAGRAM);
+VMessage		sv_datagram(sv_datagram_buf, MAX_DATAGRAM);
 byte			sv_signon_buf[MAX_MSGLEN];
-TMessage		sv_signon(sv_signon_buf, MAX_MSGLEN);
+VMessage		sv_signon(sv_signon_buf, MAX_MSGLEN);
 
 VBasePlayer*	sv_player;
 
@@ -127,15 +127,15 @@ static bool		completed;
 
 static int		num_stats;
 
-static TCvarI	TimeLimit("TimeLimit", "0");
-static TCvarI	DeathMatch("DeathMatch", "0", CVAR_SERVERINFO);
-static TCvarI  	NoMonsters("NoMonsters", "0");
-static TCvarI	Skill("Skill", "2");
+static VCvarI	TimeLimit("TimeLimit", "0");
+static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
+static VCvarI  	NoMonsters("NoMonsters", "0");
+static VCvarI	Skill("Skill", "2");
 
-static TCvarI	sv_cheats("sv_cheats", "0", CVAR_SERVERINFO | CVAR_LATCH);
+static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 
 static byte		*fatpvs;
-static TCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_ARCHIVE);
+static VCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_Archive);
 
 static bool		mapteleport_issued;
 
@@ -146,7 +146,7 @@ static VName	models[MAX_MODELS];
 static int		numskins;
 static VStr		skins[MAX_SKINS];
 
-static TCvarI	split_frame("split_frame", "1", CVAR_ARCHIVE);
+static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -211,7 +211,7 @@ void SV_Init()
 //
 //==========================================================================
 
-void SV_Clear(void)
+void SV_Clear()
 {
 	guard(SV_Clear);
 	SV_DestroyAllThinkers();
@@ -237,7 +237,7 @@ void SV_Clear(void)
 //
 //==========================================================================
 
-void SV_ClearDatagram(void)
+void SV_ClearDatagram()
 {
 	guard(SV_ClearDatagram);
 	sv_datagram.Clear();
@@ -332,7 +332,7 @@ int	SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 //
 //==========================================================================
 
-void SV_WriteMobj(int bits, VEntity &mobj, TMessage &msg)
+void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 {
 	guard(SV_WriteMobj);
 	if (bits & MOB_X)
@@ -406,7 +406,7 @@ void VEntity::Destroy()
 //
 //==========================================================================
 
-void SV_CreateBaseline(void)
+void SV_CreateBaseline()
 {
 	guard(SV_CreateBaseline);
 	int		i;
@@ -788,7 +788,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 //
 //==========================================================================
 
-void SV_WriteViewData(VBasePlayer &player, TMessage &msg)
+void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 {
 	guard(SV_WriteViewData);
 	int		i;
@@ -860,7 +860,7 @@ void SV_WriteViewData(VBasePlayer &player, TMessage &msg)
 //
 //==========================================================================
 
-void SV_UpdateMobj(int i, TMessage &msg)
+void SV_UpdateMobj(int i, VMessage &msg)
 {
 	guard(SV_UpdateMobj);
 	int bits;
@@ -942,7 +942,7 @@ bool SV_SecCheckFatPVS(sector_t *sec)
 //
 //==========================================================================
 
-void SV_UpdateLevel(TMessage &msg)
+void SV_UpdateLevel(VMessage &msg)
 {
 	guard(SV_UpdateLevel);
 	int		i;
@@ -1122,7 +1122,7 @@ void SV_UpdateLevel(TMessage &msg)
 void SV_SendNop(VBasePlayer *client)
 {
 	guard(SV_SendNop);
-	TMessage	msg;
+	VMessage	msg;
 	byte		buf[4];
 
 	msg.Data = buf;
@@ -1143,11 +1143,11 @@ void SV_SendNop(VBasePlayer *client)
 //
 //==========================================================================
 
-void SV_SendClientDatagram(void)
+void SV_SendClientDatagram()
 {
 	guard(SV_SendClientDatagram);
 	byte		buf[4096];
-	TMessage	msg(buf, MAX_DATAGRAM);
+	VMessage	msg(buf, MAX_DATAGRAM);
 
 	if (!netgame)
 	{
@@ -1207,7 +1207,7 @@ void SV_SendClientDatagram(void)
 //
 //==========================================================================
 
-void SV_SendReliable(void)
+void SV_SendReliable()
 {
 	guard(SV_SendReliable);
 	int		i, j;
@@ -1293,7 +1293,7 @@ void SV_SendReliable(void)
 //
 //==========================================================================
 
-void SV_SendClientMessages(void)
+void SV_SendClientMessages()
 {
 	SV_SendClientDatagram();
 
@@ -1308,7 +1308,7 @@ void SV_SendClientMessages(void)
 //
 //========================================================================
 
-static void CheckForSkip(void)
+static void CheckForSkip()
 {
 	int   			i;
 	VBasePlayer		*player;
@@ -1376,7 +1376,7 @@ static void CheckForSkip(void)
 //
 //==========================================================================
 
-void SV_RunClients(void)
+void SV_RunClients()
 {
 	guard(SV_RunClients);
 	int			i;
@@ -1429,7 +1429,7 @@ void SV_RunClients(void)
 //
 //==========================================================================
 
-void SV_Ticker(void)
+void SV_Ticker()
 {
 	guard(SV_Ticker);
 	float	saved_frametime;
@@ -1497,7 +1497,7 @@ void SV_Ticker(void)
 //
 //==========================================================================
 
-void SV_ForceLightning(void)
+void SV_ForceLightning()
 {
 	sv_datagram << (byte)svc_force_lightning;
 }
@@ -1639,7 +1639,7 @@ void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
 //
 //==========================================================================
 
-static void G_DoCompleted(void)
+static void G_DoCompleted()
 {
 	int			i;
 	int			j;
@@ -1674,7 +1674,7 @@ static void G_DoCompleted(void)
 	if (!deathmatch && old_info.cluster &&
 		old_info.cluster == new_info.cluster)
 	{
-		CmdBuf << "TeleportNewMap\n";
+		GCmdBuf << "TeleportNewMap\n";
 		return;
 	}
 
@@ -1813,10 +1813,10 @@ void G_Completed(int InMap, int InPosition, int SaveAngle)
 COMMAND(TeleportNewMap)
 {
 	guard(COMMAND TeleportNewMap);
-	if (cmd_source == src_command)
+	if (Source == SRC_Command)
 	{
 #ifdef CLIENT
-		Cmd_ForwardToServer();
+		ForwardToServer();
 #endif
 		return;
 	}
@@ -1826,10 +1826,10 @@ COMMAND(TeleportNewMap)
 		return;
 	}
 
-	if (Argc() == 3)
+	if (Args.Num() == 3)
 	{
-		strcpy(sv_next_map, Argv(1));
-		LeavePosition = atoi(Argv(2));
+		strcpy(sv_next_map, *Args[1]);
+		LeavePosition = atoi(*Args[2]);
 	}
 	else if (sv.intermission != 1)
 	{
@@ -1858,7 +1858,7 @@ static void G_DoReborn(int playernum)
 		return;
 	if (!netgame && !deathmatch)// For fun now
 	{
-		CmdBuf << "Restart\n";
+		GCmdBuf << "Restart\n";
 		GGameInfo->Players[playernum]->PlayerState = PST_LIVE;
 	}
 	else
@@ -1873,14 +1873,14 @@ static void G_DoReborn(int playernum)
 //
 //==========================================================================
 
-int NET_SendToAll(TSizeBuf *data, int blocktime)
+int NET_SendToAll(VMessage* data, int blocktime)
 {
 	guard(NET_SendToAll);
 	double		start;
 	int			i;
 	int			count = 0;
-	boolean		state1[MAXPLAYERS];
-	boolean		state2[MAXPLAYERS];
+	bool		state1[MAXPLAYERS];
+	bool		state2[MAXPLAYERS];
 
 	for (i = 0; i < svs.max_clients; i++)
 	{
@@ -2076,7 +2076,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 {
 	guard(SV_SendServerInfo);
 	int			i;
-	TMessage	&msg = player->Message;
+	VMessage	&msg = player->Message;
 
 	msg << (byte)svc_server_info
 		<< (byte)PROTOCOL_VERSION
@@ -2204,7 +2204,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	}
 
 	SV_Clear();
-	TCvar::Unlatch();
+	VCvar::Unlatch();
 
 	sv.active = true;
 
@@ -2346,7 +2346,7 @@ const char *SV_GetMapName(int num)
 //
 //==========================================================================
 
-static void SV_WriteChangedTextures(TMessage &msg)
+static void SV_WriteChangedTextures(VMessage &msg)
 {
 	int			i;
 
@@ -2400,7 +2400,7 @@ static void SV_WriteChangedTextures(TMessage &msg)
 COMMAND(PreSpawn)
 {
 	guard(COMMAND PreSpawn);
-	if (cmd_source == src_command)
+	if (Source == SRC_Command)
 	{
 		GCon->Log("PreSpawn is not valid from console");
 		return;
@@ -2420,7 +2420,7 @@ COMMAND(PreSpawn)
 COMMAND(Spawn)
 {
 	guard(COMMAND Spawn);
-	if (cmd_source == src_command)
+	if (Source == SRC_Command)
 	{
 		GCon->Log("Spawn is not valid from console");
 		return;
@@ -2465,7 +2465,7 @@ COMMAND(Spawn)
 COMMAND(Begin)
 {
 	guard(COMMAND Begin);
-	if (cmd_source == src_command)
+	if (Source == SRC_Command)
 	{
 		GCon->Log("Begin is not valid from console");
 		return;
@@ -2524,7 +2524,7 @@ void SV_ShutdownServer(boolean crash)
 {
 	guard(SV_ShutdownServer);
 	byte		buf[128];
-	TMessage	msg(buf, 128);
+	VMessage	msg(buf, 128);
 	int			i;
 	int			count;
 
@@ -2643,10 +2643,10 @@ COMMAND(Restart)
 COMMAND(Pause)
 {
 	guard(COMMAND Pause);
-	if (cmd_source == src_command)
+	if (Source == SRC_Command)
 	{
 #ifdef CLIENT
-		Cmd_ForwardToServer();
+		ForwardToServer();
 #endif
 		return;
 	}
@@ -2665,10 +2665,10 @@ COMMAND(Pause)
 COMMAND(Stats)
 {
 	guard(COMMAND Stats);
-	if (cmd_source == src_command)
+	if (Source == SRC_Command)
 	{
 #ifdef CLIENT
-		Cmd_ForwardToServer();
+		ForwardToServer();
 #endif
 		return;
 	}
@@ -2722,7 +2722,7 @@ void SV_ConnectClient(VBasePlayer *player)
 //
 //==========================================================================
 
-void SV_CheckForNewClients(void)
+void SV_CheckForNewClients()
 {
 	guard(SV_CheckForNewClients);
 	qsocket_t	*sock;
@@ -2808,7 +2808,7 @@ void SV_ConnectBot(const char *name)
 
 COMMAND(AddBot)
 {
-	SV_ConnectBot(Argv(1));
+	SV_ConnectBot(Args.Num() > 1 ? *Args[1] : "");
 }
 
 //==========================================================================
@@ -2822,12 +2822,12 @@ COMMAND(Map)
 	guard(COMMAND Map);
 	char	mapname[12];
 
-	if (Argc() != 2)
+	if (Args.Num() != 2)
 	{
 		GCon->Log("map <mapname> : change level");
 	 	return;
 	}
-	strcpy(mapname, Argv(1));
+	strcpy(mapname, *Args[1]);
 
 	SV_ShutdownServer(false);
 #ifdef CLIENT
@@ -2853,7 +2853,7 @@ COMMAND(Map)
 	SV_SpawnServer(mapname, true);
 #ifdef CLIENT
 	if (cls.state != ca_dedicated)
-		CmdBuf << "Connect local\n";
+		GCmdBuf << "Connect local\n";
 #endif
 	unguard;
 }
@@ -2869,7 +2869,7 @@ COMMAND(MaxPlayers)
 	guard(COMMAND MaxPlayers);
 	int 	n;
 
-	if (Argc () != 2)
+	if (Args.Num() != 2)
 	{
 		GCon->Logf("maxplayers is %d", svs.max_clients);
 		return;
@@ -2881,7 +2881,7 @@ COMMAND(MaxPlayers)
 		return;
 	}
 
-	n = atoi(Argv(1));
+	n = atoi(*Args[1]);
 	if (n < 1)
 		n = 1;
 	if (n > MAXPLAYERS)
@@ -2894,7 +2894,7 @@ COMMAND(MaxPlayers)
 	if (n == 1)
 	{
 #ifdef CLIENT
-		CmdBuf << "listen 0\n";
+		GCmdBuf << "listen 0\n";
 #endif
 		DeathMatch = 0;
 		NoMonsters = 0;
@@ -2902,7 +2902,7 @@ COMMAND(MaxPlayers)
 	else
 	{
 #ifdef CLIENT
-		CmdBuf << "listen 1\n";
+		GCmdBuf << "listen 1\n";
 #endif
 		DeathMatch = 2;
 		NoMonsters = 1;
@@ -2954,17 +2954,24 @@ void ServerFrame(int realtics)
 COMMAND(Say)
 {
 	guard(COMMAND Say);
-	if (cmd_source == src_command)
+	if (Source == SRC_Command)
 	{
 #ifdef CLIENT
-		Cmd_ForwardToServer();
+		ForwardToServer();
 #endif
 		return;
 	}
-	if (Argc() < 2)
+	if (Args.Num() < 2)
 		return;
 
-	SV_BroadcastPrintf("%s: %s", sv_player->PlayerName, Args());
+	VStr Text = sv_player->PlayerName;
+	Text += ":";
+	for (int i = 1; i < Args.Num(); i++)
+	{
+		Text += " ";
+		Text += Args[i];
+	}
+	SV_BroadcastPrintf(*Text);
 	SV_StartSound(NULL, S_GetSoundID("misc/chat"), 0, 127);
 	unguard;
 }
@@ -3034,9 +3041,13 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.90  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.89  2006/03/21 17:49:51  dj_jl
 //	Fixed missing pointer to level info in level info itself.
-//
+//	
 //	Revision 1.88  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	

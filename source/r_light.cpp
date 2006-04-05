@@ -64,14 +64,14 @@ dword				blockaddlightsg[18 * 18];
 dword				blockaddlightsb[18 * 18];
 
 byte				light_remap[256];
-TCvarI				r_darken("r_darken", "0", CVAR_ARCHIVE);
-TCvarI				r_ambient("r_ambient", "0");
+VCvarI				r_darken("r_darken", "0", CVAR_Archive);
+VCvarI				r_ambient("r_ambient", "0");
 int					light_mem;
-TCvarI				r_extrasamples("r_extrasamples", "0", CVAR_ARCHIVE);
-TCvarI				r_dynamic("r_dynamic", "1", CVAR_ARCHIVE);
-TCvarI				r_static_lights("r_static_lights", "1", CVAR_ARCHIVE);
-TCvarI				r_static_add("r_static_add", "0", CVAR_ARCHIVE);
-TCvarF				r_specular("r_specular", "0.1", CVAR_ARCHIVE);
+VCvarI				r_extrasamples("r_extrasamples", "0", CVAR_Archive);
+VCvarI				r_dynamic("r_dynamic", "1", CVAR_Archive);
+VCvarI				r_static_lights("r_static_lights", "1", CVAR_Archive);
+VCvarI				r_static_add("r_static_add", "0", CVAR_Archive);
+VCvarF				r_specular("r_specular", "0.1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1075,9 +1075,13 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.21  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.20  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.19  2005/11/13 18:54:10  dj_jl
 //	CVar to disable static lights.
 //	

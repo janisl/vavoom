@@ -105,7 +105,7 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	allegro_gl_clear_settings();
 	allegro_gl_set(AGL_COLOR_DEPTH, BPP);
 	allegro_gl_set(AGL_Z_DEPTH, 8);
-	allegro_gl_set(AGL_WINDOWED, !!M_CheckParm("-window"));
+	allegro_gl_set(AGL_WINDOWED, !!GArgs.CheckParm("-window"));
 	allegro_gl_set(AGL_DOUBLEBUFFER, 1);
 	allegro_gl_set(AGL_RENDERMETHOD, 1);
 	allegro_gl_set(AGL_SUGGEST, AGL_COLOR_DEPTH | AGL_DOUBLEBUFFER
@@ -184,9 +184,13 @@ void VOpenGLDrawer::Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.2  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.1  2005/03/28 07:26:54  dj_jl
 //	New OpenGL driver for Allegro.
 //	

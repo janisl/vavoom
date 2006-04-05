@@ -307,12 +307,11 @@ void* Sys_ZoneBase(int* size)
 	void*		ptr;
 	// Maximum allocated for zone heap (8meg default)
 	int			maxzone = 0x800000;
-	int			p;
 
-	p = M_CheckParm("-maxzone");
-	if (p && p < myargc - 1)
+	const char* p = GArgs.CheckValue("-maxzone");
+	if (p)
 	{
-		maxzone = (int)(atof(myargv[p + 1]) * 0x100000);
+		maxzone = (int)(atof(p) * 0x100000);
 		if (maxzone < MINIMUM_HEAP_SIZE)
 			maxzone = MINIMUM_HEAP_SIZE;
 		if (maxzone > MAXIMUM_HEAP_SIZE)
@@ -444,7 +443,7 @@ int main(int argc, char **argv)
 	{
 		printf("Vavoom dedicated server "VERSION_TEXT"\n");
 
-		M_InitArgs(argc, argv);
+		GArgs.Init(argc, argv);
 
 		//Install signal handler
 		signal(SIGINT,  signal_handler);
@@ -482,9 +481,13 @@ int main(int argc, char **argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.9  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.8  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

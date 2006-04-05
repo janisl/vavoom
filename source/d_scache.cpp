@@ -71,9 +71,10 @@ int VSoftwareDrawer::SurfaceCacheForRes(int width, int height, int bpp)
 	guard(VSoftwareDrawer::SurfaceCacheForRes);
 	int             size, pix, pixbytes;
 
-	if (M_CheckParm("-surfcachesize"))
+	const char* p = GArgs.CheckValue("-surfcachesize");
+	if (p)
 	{
-		size = atoi(myargv[M_CheckParm("-surfcachesize") + 1]) * 1024;
+		size = atoi(p) * 1024;
 		return size;
 	}
 	
@@ -303,9 +304,13 @@ void VSoftwareDrawer::SCDump(FOutputDevice& Ar)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.7  2002/11/16 17:11:15  dj_jl
 //	Improving software driver class.
-//
+//	
 //	Revision 1.6  2002/07/13 07:38:00  dj_jl
 //	Added drawers to the object tree.
 //	

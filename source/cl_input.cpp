@@ -61,25 +61,25 @@ class TKButton
 	int		down[2];		// key nums holding it down
 	int		state;			// low bit is down state
 
-	void KeyDown(char *c);
-	void KeyUp(char *c);
-	float KeyState(void);
+	void KeyDown(const char* c);
+	void KeyUp(const char* c);
+	float KeyState();
 };
 
-class TCmdKeyDown : public TCommand
+class TCmdKeyDown : public VCommand
 {
- public:
-	TCmdKeyDown(const char *AName, TKButton &AKey) : TCommand(AName), Key(AKey) { }
-    void Run(void);
+public:
+	TCmdKeyDown(const char *AName, TKButton &AKey) : VCommand(AName), Key(AKey) { }
+	void Run();
 
 	TKButton	&Key;
 };
 
-class TCmdKeyUp : public TCommand
+class TCmdKeyUp : public VCommand
 {
- public:
-	TCmdKeyUp(const char *AName, TKButton &AKey) : TCommand(AName), Key(AKey)	{ }
-    void Run(void);
+public:
+	TCmdKeyUp(const char *AName, TKButton &AKey) : VCommand(AName), Key(AKey)	{ }
+	void Run();
 
 	TKButton	&Key;
 };
@@ -105,38 +105,38 @@ static int		joyymove;
 
 static int		impulse_cmd;
 
-static TCvarI	allways_run("allways_run", "1", CVAR_ARCHIVE);
-static TCvarI	artiskip("artiskip", "1", CVAR_ARCHIVE);	// whether shift-enter skips an artifact
+static VCvarI	allways_run("allways_run", "1", CVAR_Archive);
+static VCvarI	artiskip("artiskip", "1", CVAR_Archive);	// whether shift-enter skips an artifact
 
-static TCvarF	cl_forwardspeed("cl_forwardspeed", "200", CVAR_ARCHIVE);
-static TCvarF	cl_backspeed("cl_backspeed", "200", CVAR_ARCHIVE);
-static TCvarF	cl_sidespeed("cl_sidespeed", "350", CVAR_ARCHIVE);
-static TCvarF	cl_flyspeed("cl_flyspeed", "80", CVAR_ARCHIVE);
+static VCvarF	cl_forwardspeed("cl_forwardspeed", "200", CVAR_Archive);
+static VCvarF	cl_backspeed("cl_backspeed", "200", CVAR_Archive);
+static VCvarF	cl_sidespeed("cl_sidespeed", "350", CVAR_Archive);
+static VCvarF	cl_flyspeed("cl_flyspeed", "80", CVAR_Archive);
 
-static TCvarF	cl_movespeedkey("cl_movespeedkey", "2.0", CVAR_ARCHIVE);
+static VCvarF	cl_movespeedkey("cl_movespeedkey", "2.0", CVAR_Archive);
 
-static TCvarF	cl_yawspeed("cl_yawspeed", "140", CVAR_ARCHIVE);
-static TCvarF	cl_pitchspeed("cl_pitchspeed", "150", CVAR_ARCHIVE);
-static TCvarF	cl_pitchdriftspeed("cl_pitchdriftspeed", "270", CVAR_ARCHIVE);
+static VCvarF	cl_yawspeed("cl_yawspeed", "140", CVAR_Archive);
+static VCvarF	cl_pitchspeed("cl_pitchspeed", "150", CVAR_Archive);
+static VCvarF	cl_pitchdriftspeed("cl_pitchdriftspeed", "270", CVAR_Archive);
 
-static TCvarF	cl_anglespeedkey("cl_anglespeedkey", "1.5", CVAR_ARCHIVE);
+static VCvarF	cl_anglespeedkey("cl_anglespeedkey", "1.5", CVAR_Archive);
 
-static TCvarF	cl_deathroll("cl_deathroll", "75", CVAR_ARCHIVE);
-static TCvarF	cl_deathrollspeed("cl_deathrollspeed", "80", CVAR_ARCHIVE);
+static VCvarF	cl_deathroll("cl_deathroll", "75", CVAR_Archive);
+static VCvarF	cl_deathrollspeed("cl_deathrollspeed", "80", CVAR_Archive);
 
-static TCvarF	mouse_x_sensitivity("mouse_x_sensitivity", "3.0", CVAR_ARCHIVE);
-static TCvarF	mouse_y_sensitivity("mouse_y_sensitivity", "3.0", CVAR_ARCHIVE);
-static TCvarI	mouse_look("mouse_look", "1", CVAR_ARCHIVE);
-static TCvarI	invert_mouse("invert_mouse", "0", CVAR_ARCHIVE);
-static TCvarI	lookstrafe("lookstrafe", "0", CVAR_ARCHIVE);
-static TCvarI	lookspring("lookspring", "0", CVAR_ARCHIVE);
+static VCvarF	mouse_x_sensitivity("mouse_x_sensitivity", "3.0", CVAR_Archive);
+static VCvarF	mouse_y_sensitivity("mouse_y_sensitivity", "3.0", CVAR_Archive);
+static VCvarI	mouse_look("mouse_look", "1", CVAR_Archive);
+static VCvarI	invert_mouse("invert_mouse", "0", CVAR_Archive);
+static VCvarI	lookstrafe("lookstrafe", "0", CVAR_Archive);
+static VCvarI	lookspring("lookspring", "0", CVAR_Archive);
 
-static TCvarF	m_yaw("m_yaw", "0.022", CVAR_ARCHIVE);
-static TCvarF	m_pitch("m_pitch", "0.022", CVAR_ARCHIVE);
-static TCvarF	m_forward("m_forward", "1.0", CVAR_ARCHIVE);
-static TCvarF	m_side("m_side", "0.8", CVAR_ARCHIVE);
+static VCvarF	m_yaw("m_yaw", "0.022", CVAR_Archive);
+static VCvarF	m_pitch("m_pitch", "0.022", CVAR_Archive);
+static VCvarF	m_forward("m_forward", "1.0", CVAR_Archive);
+static VCvarF	m_side("m_side", "0.8", CVAR_Archive);
 
-static TCvarF	joy_yaw("joy_yaw", "140", CVAR_ARCHIVE);
+static VCvarF	joy_yaw("joy_yaw", "140", CVAR_Archive);
 
 BUTTON(Forward)
 BUTTON(Backward)
@@ -170,7 +170,7 @@ BUTTON(MouseLook)
 //
 //==========================================================================
 
-void TKButton::KeyDown(char *c)
+void TKButton::KeyDown(const char* c)
 {
 	guard(TKButton::KeyDown);
 	int		k;
@@ -205,7 +205,7 @@ void TKButton::KeyDown(char *c)
 //
 //==========================================================================
 
-void TKButton::KeyUp(char *c)
+void TKButton::KeyUp(const char* c)
 {
 	guard(TKButton::KeyUp);
 	int		k;
@@ -246,7 +246,7 @@ void TKButton::KeyUp(char *c)
 //
 //==========================================================================
 
-float TKButton::KeyState(void)
+float TKButton::KeyState()
 {
 	guard(TKButton::KeyState);
 	static const float newVal[8] =
@@ -274,10 +274,10 @@ float TKButton::KeyState(void)
 //
 //==========================================================================
 
-void TCmdKeyDown::Run(void)
+void TCmdKeyDown::Run()
 {
 	guard(TCmdKeyDown::Run);
-	Key.KeyDown(Argv(1));
+	Key.KeyDown(Args.Num() > 1 ? *Args[1] : "");
 	unguard;
 }
 
@@ -287,10 +287,10 @@ void TCmdKeyDown::Run(void)
 //
 //==========================================================================
 
-void TCmdKeyUp::Run(void)
+void TCmdKeyUp::Run()
 {
 	guard(TCmdKeyUp::Run);
-	Key.KeyUp(Argv(1));
+	Key.KeyUp(Args.Num() > 1 ? *Args[1] : "");
 	unguard;
 }
 
@@ -303,7 +303,9 @@ void TCmdKeyUp::Run(void)
 COMMAND(Impulse)
 {
 	guard(COMMAND Impulse);
-	impulse_cmd = atoi(Argv(1));
+	if (Args.Num() < 2)
+		return;
+	impulse_cmd = atoi(*Args[1]);
 	unguard;
 }
 
@@ -326,11 +328,11 @@ COMMAND(ToggleAlwaysRun)
 //
 //==========================================================================
 
-void V_StartPitchDrift(void)
+void V_StartPitchDrift()
 {
 	cl->centering = true;
 }
-void V_StopPitchDrift(void)
+void V_StopPitchDrift()
 {
 	cl->centering = false;
 }
@@ -341,7 +343,7 @@ void V_StopPitchDrift(void)
 //
 //==========================================================================
 
-static void AdjustAngles(void)
+static void AdjustAngles()
 {
 	guard(AdjustAngles);
 	float speed;
@@ -594,11 +596,11 @@ static void BuildTiccmd(ticcmd_t* cmd)
 //
 //==========================================================================
 
-void CL_SendMove(void)
+void CL_SendMove()
 {
 	guard(CL_SendMove);
 	byte		buf[MAX_DATAGRAM];
-	TMessage	msg(buf, MAX_DATAGRAM);
+	VMessage	msg(buf, MAX_DATAGRAM);
 	ticcmd_t	cmd;
 
 	if (cls.state != ca_connected)
@@ -690,7 +692,7 @@ boolean CL_Responder(event_t* ev)
 //
 //==========================================================================
 
-void CL_ClearInput(void)
+void CL_ClearInput()
 {
 	guard(CL_ClearInput);
 	// clear cmd building stuff
@@ -703,9 +705,13 @@ void CL_ClearInput(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.12  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
-//
+//	
 //	Revision 1.11  2004/10/11 07:57:30  dj_jl
 //	Joystick yaw speed fixed.
 //	

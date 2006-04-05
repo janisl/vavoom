@@ -68,7 +68,7 @@ void VSoftwareDrawer::Init()
 	guard(VSoftwareDrawer::Init);
 	HRESULT			result;
 
-	Windowed = !!M_CheckParm("-window");
+	Windowed = !!GArgs.CheckParm("-window");
 
 	// Create DirectDraw object
 	result = CoCreateInstance(CLSID_DirectDraw, NULL,
@@ -355,9 +355,13 @@ void VSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.12  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.11  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.10  2004/04/08 15:19:40  dj_jl
 //	Windowed mode
 //	

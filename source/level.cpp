@@ -61,8 +61,8 @@ static int numglvertexes;
 
 static bool AuxiliaryMap;
 
-static TCvarI ignore_missing_textures("ignore_missing_textures", "0");
-static TCvarI strict_level_errors("strict_level_errors", "1");
+static VCvarI ignore_missing_textures("ignore_missing_textures", "0");
+static VCvarI strict_level_errors("strict_level_errors", "1");
 
 // CODE --------------------------------------------------------------------
 
@@ -1554,9 +1554,13 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.15  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.14  2006/03/07 17:48:18  dj_jl
 //	Fixed vis data check.
 //	

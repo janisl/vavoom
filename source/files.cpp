@@ -192,7 +192,7 @@ static void ParseBase(const VStr& name)
 		if (SC_Compare("param"))
 		{
 			SC_MustGetString();
-			dst.ParmFound = M_CheckParm(sc_String);
+			dst.ParmFound = GArgs.CheckParm(sc_String);
 			if (dst.ParmFound)
 			{
 				select_game = true;
@@ -295,21 +295,21 @@ static void SetupGameDir(const VStr& dirname)
 void FL_Init()
 {
 	guard(FL_Init);
-	int p;
+	const char* p;
 
 	//	Set up base directory (main data files).
 	fl_basedir = ".";
-	p = M_CheckParm("-basedir");
-	if (p && p < myargc - 1)
+	p = GArgs.CheckValue("-basedir");
+	if (p)
 	{
-		fl_basedir = myargv[p + 1];
+		fl_basedir = p;
 	}
 
 	//	Set up save directory (files written by engine).
-	p = M_CheckParm("-savedir");
-	if (p && p < myargc - 1)
+	p = GArgs.CheckValue("-savedir");
+	if (p)
 	{
-		fl_savedir = myargv[p + 1];
+		fl_savedir = p;
 	}
 #if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
 	else
@@ -324,26 +324,26 @@ void FL_Init()
 
 	AddGameDir("basev/common");
 
-	p = M_CheckParm("-iwad");
-	if (p && p < myargc - 1)
+	p = GArgs.CheckValue("-iwad");
+	if (p)
 	{
-		fl_mainwad = myargv[p + 1];
+		fl_mainwad = p;
 		FL_AddFile(fl_mainwad, VStr());
 	}
 
-	p =	M_CheckParm("-devgame");
-	if (p && p < myargc - 1)
+	p = GArgs.CheckValue("-devgame");
+	if (p)
 	{
 		fl_devmode = true;
 	}
 	else
 	{
-		p =	M_CheckParm("-game");
+		p = GArgs.CheckValue("-game");
 	}
 
-	if (p && p < myargc - 1)
+	if (p)
 	{
-		SetupGameDir(myargv[p + 1]);
+		SetupGameDir(p);
 	}
 	else
 	{
@@ -354,12 +354,12 @@ void FL_Init()
 #endif
 	}
 
-	p = M_CheckParm("-file");
-	if (p)
+	int fp = GArgs.CheckParm("-file");
+	if (fp)
 	{
-		while (++p != myargc && myargv[p][0] != '-' && myargv[p][0] != '+')
+		while (++fp != GArgs.Count() && GArgs[fp][0] != '-' && GArgs[fp][0] != '+')
 		{
-			FL_AddFile(myargv[p], VStr());
+			FL_AddFile(GArgs[fp], VStr());
 		}
 	}
 
@@ -402,7 +402,7 @@ void FL_CreatePath(const VStr& Path)
 {
 	guard(FL_CreatePath);
 	VStr Temp = Path;
-	for (int i = 3; i <= Temp.Length(); i++)
+	for (size_t i = 3; i <= Temp.Length(); i++)
 	{
 		if (Temp[i] == '/' || Temp[i] == '\\' || Temp[i] == 0)
 		{
@@ -707,9 +707,13 @@ VStream* FL_OpenFileWrite(const VStr& Name)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.24  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.23  2006/03/26 13:06:18  dj_jl
 //	Implemented support for modular progs.
-//
+//	
 //	Revision 1.22  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

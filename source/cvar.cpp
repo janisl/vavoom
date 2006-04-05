@@ -33,10 +33,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-#ifdef CLIENT
-void C_AddToAutoComplete(const char* string);
-#endif
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -47,27 +43,27 @@ void C_AddToAutoComplete(const char* string);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-TCvar*	TCvar::Variables = NULL;
-bool	TCvar::Initialised = false;
-bool	TCvar::Cheating;
+VCvar*	VCvar::Variables = NULL;
+bool	VCvar::Initialised = false;
+bool	VCvar::Cheating;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  TCvar::TCvar
+//  VCvar::VCvar
 //
 //==========================================================================
 
-TCvar::TCvar(const char* AName, const char* ADefault, int AFlags)
+VCvar::VCvar(const char* AName, const char* ADefault, int AFlags)
 {
-	guard(TCvar::TCvar);
+	guard(VCvar::VCvar);
 	Name = AName;
 	DefaultString = ADefault;
 	Flags = AFlags;
 
-	TCvar *prev = NULL;
-	for (TCvar *var = Variables; var; var = var->Next)
+	VCvar *prev = NULL;
+	for (VCvar *var = Variables; var; var = var->Next)
 	{
 		if (stricmp(var->Name, Name) < 0)
 		{
@@ -95,62 +91,60 @@ TCvar::TCvar(const char* AName, const char* ADefault, int AFlags)
 
 //==========================================================================
 //
-//  TCvar::Register
+//  VCvar::Register
 //
 //==========================================================================
 
-void TCvar::Register()
+void VCvar::Register()
 {
-	guard(TCvar::Register);
-#ifdef CLIENT
-	C_AddToAutoComplete(Name);
-#endif
+	guard(VCvar::Register);
+	VCommand::AddToAutoComplete(Name);
 	DoSet(DefaultString);
 	unguard;
 }
 
 //==========================================================================
 //
-//  TCvar::Set
+//  VCvar::Set
 //
 //==========================================================================
 
-void TCvar::Set(int value)
+void VCvar::Set(int value)
 {
-	guard(TCvar::Set);
+	guard(VCvar::Set);
 	Set(VStr(value));
 	unguard;
 }
 
 //==========================================================================
 //
-//  TCvar::Set
+//  VCvar::Set
 //
 //==========================================================================
 
-void TCvar::Set(float value)
+void VCvar::Set(float value)
 {
-	guard(TCvar::Set);
+	guard(VCvar::Set);
 	Set(VStr(value));
 	unguard;
 }
 
 //==========================================================================
 //
-//  TCvar::Set
+//  VCvar::Set
 //
 //==========================================================================
 
-void TCvar::Set(const VStr& AValue)
+void VCvar::Set(const VStr& AValue)
 {
-	guard(TCvar::Set);
-	if (Flags & CVAR_LATCH)
+	guard(VCvar::Set);
+	if (Flags & CVAR_Latch)
 	{
 		LatchedString = AValue;
 		return;
 	}
 
-	if (Flags & CVAR_CHEAT && !Cheating)
+	if (Flags & CVAR_Cheat && !Cheating)
 	{
 		GCon->Log(VStr(Name) + " cannot be changed while cheating is disabled");
 		return;
@@ -158,27 +152,27 @@ void TCvar::Set(const VStr& AValue)
 
 	DoSet(AValue);
 
-	Flags |= CVAR_MODIFIED;
+	Flags |= CVAR_Modified;
 	unguard;
 }
 
 //==========================================================================
 //
-//	TCvar::DoSet
+//	VCvar::DoSet
 //
 //	Does the actual value assignement
 //
 //==========================================================================
 
-void TCvar::DoSet(const VStr& AValue)
+void VCvar::DoSet(const VStr& AValue)
 {
-	guard(TCvar::DoSet);
+	guard(VCvar::DoSet);
 	StringValue = AValue;
 	IntValue = superatoi(*StringValue);
 	FloatValue = atof(*StringValue);
 
 #ifdef CLIENT
-	if (Flags & CVAR_USERINFO)
+	if (Flags & CVAR_UserInfo)
 	{
 		Info_SetValueForKey(cls.userinfo, Name, *StringValue);
 		if (cls.state >= ca_connected)
@@ -191,7 +185,7 @@ void TCvar::DoSet(const VStr& AValue)
 #endif
 
 #ifdef SERVER
-	if (Flags & CVAR_SERVERINFO)
+	if (Flags & CVAR_ServerInfo)
 	{
 		Info_SetValueForKey(svs.serverinfo, Name, *StringValue);
 		if (sv.active)
@@ -205,30 +199,30 @@ void TCvar::DoSet(const VStr& AValue)
 
 //==========================================================================
 //
-//	TCvar::IsModified
+//	VCvar::IsModified
 //
 //==========================================================================
 
-bool TCvar::IsModified()
+bool VCvar::IsModified()
 {
-	guard(TCvar::IsModified);
-	bool ret = !!(Flags & CVAR_MODIFIED);
+	guard(VCvar::IsModified);
+	bool ret = !!(Flags & CVAR_Modified);
 	//	Clear modified flag.
-	Flags &= ~CVAR_MODIFIED;
+	Flags &= ~CVAR_Modified;
 	return ret;
 	unguard;
 }
 
 //==========================================================================
 //
-//	TCvar::Init
+//	VCvar::Init
 //
 //==========================================================================
 
-void TCvar::Init()
+void VCvar::Init()
 {
-	guard(TCvar::Init);
-	for (TCvar *var = Variables; var; var = var->Next)
+	guard(VCvar::Init);
+	for (VCvar *var = Variables; var; var = var->Next)
 	{
 		var->Register();
 	}
@@ -238,14 +232,14 @@ void TCvar::Init()
 
 //==========================================================================
 //
-//	TCvar::Unlatch
+//	VCvar::Unlatch
 //
 //==========================================================================
 
-void TCvar::Unlatch()
+void VCvar::Unlatch()
 {
-	guard(TCvar::Unlatch);
-	for (TCvar* cvar = Variables; cvar; cvar = cvar->Next)
+	guard(VCvar::Unlatch);
+	for (VCvar* cvar = Variables; cvar; cvar = cvar->Next)
 	{
 		if (cvar->LatchedString)
 		{
@@ -258,19 +252,19 @@ void TCvar::Unlatch()
 
 //==========================================================================
 //
-//	TCvar::SetCheating
+//	VCvar::SetCheating
 //
 //==========================================================================
 
-void TCvar::SetCheating(bool new_state)
+void VCvar::SetCheating(bool new_state)
 {
-	guard(TCvar::SetCheating);
+	guard(VCvar::SetCheating);
 	Cheating = new_state;
 	if (!Cheating)
 	{
-		for (TCvar *cvar = Variables; cvar; cvar = cvar->Next)
+		for (VCvar *cvar = Variables; cvar; cvar = cvar->Next)
 		{
-			if (cvar->Flags & CVAR_CHEAT)
+			if (cvar->Flags & CVAR_Cheat)
 			{
 				cvar->DoSet(cvar->DefaultString);
 			}
@@ -281,14 +275,14 @@ void TCvar::SetCheating(bool new_state)
 
 //==========================================================================
 //
-//  TCvar::FindVariable
+//  VCvar::FindVariable
 //
 //==========================================================================
 
-TCvar* TCvar::FindVariable(const char* name)
+VCvar* VCvar::FindVariable(const char* name)
 {
-	guard(TCvar::FindVariable);
-	for (TCvar* cvar = Variables; cvar; cvar = cvar->Next)
+	guard(VCvar::FindVariable);
+	for (VCvar* cvar = Variables; cvar; cvar = cvar->Next)
 	{
 		if (!stricmp(name, cvar->Name))
 		{
@@ -301,14 +295,14 @@ TCvar* TCvar::FindVariable(const char* name)
 
 //==========================================================================
 //
-//  TCvar::GetInt
+//  VCvar::GetInt
 //
 //==========================================================================
 
-int TCvar::GetInt(const char* var_name)
+int VCvar::GetInt(const char* var_name)
 {
-	guard(TCvar::GetInt);
-	TCvar* var = FindVariable(var_name);
+	guard(VCvar::GetInt);
+	VCvar* var = FindVariable(var_name);
 	if (!var)
 		return 0;
 	return var->IntValue;
@@ -317,14 +311,14 @@ int TCvar::GetInt(const char* var_name)
 
 //==========================================================================
 //
-//  TCvar::GetFloat
+//  VCvar::GetFloat
 //
 //==========================================================================
 
-float TCvar::GetFloat(const char* var_name)
+float VCvar::GetFloat(const char* var_name)
 {
-	guard(TCvar::GetFloat);
-	TCvar* var = FindVariable(var_name);
+	guard(VCvar::GetFloat);
+	VCvar* var = FindVariable(var_name);
 	if (!var)
 		return 0;
 	return var->FloatValue;
@@ -337,10 +331,10 @@ float TCvar::GetFloat(const char* var_name)
 //
 //==========================================================================
 
-const char* TCvar::GetCharp(const char* var_name)
+const char* VCvar::GetCharp(const char* var_name)
 {
-	guard(TCvar::GetCharp);
-	TCvar* var = FindVariable(var_name);
+	guard(VCvar::GetCharp);
+	VCvar* var = FindVariable(var_name);
 	if (!var)
 	{
 		return "";
@@ -351,14 +345,14 @@ const char* TCvar::GetCharp(const char* var_name)
 
 //==========================================================================
 //
-//  TCvar::GetString
+//  VCvar::GetString
 //
 //==========================================================================
 
-VStr TCvar::GetString(const char* var_name)
+VStr VCvar::GetString(const char* var_name)
 {
-	guard(TCvar::GetString);
-	TCvar* var = FindVariable(var_name);
+	guard(VCvar::GetString);
+	VCvar* var = FindVariable(var_name);
 	if (!var)
 	{
 		return VStr();
@@ -369,14 +363,14 @@ VStr TCvar::GetString(const char* var_name)
 
 //==========================================================================
 //
-//  TCvar::Set
+//  VCvar::Set
 //
 //==========================================================================
 
-void TCvar::Set(const char* var_name, int value)
+void VCvar::Set(const char* var_name, int value)
 {
-	guard(TCvar::Set);
-	TCvar* var = FindVariable(var_name);
+	guard(VCvar::Set);
+	VCvar* var = FindVariable(var_name);
 	if (!var)
 	{
 		Sys_Error("Cvar_Set: variable %s not found\n", var_name);
@@ -387,14 +381,14 @@ void TCvar::Set(const char* var_name, int value)
 
 //==========================================================================
 //
-//  TCvar::Set
+//  VCvar::Set
 //
 //==========================================================================
 
-void TCvar::Set(const char* var_name, float value)
+void VCvar::Set(const char* var_name, float value)
 {
-	guard(TCvar::Set);
-	TCvar* var = FindVariable(var_name);
+	guard(VCvar::Set);
+	VCvar* var = FindVariable(var_name);
 	if (!var)
 	{
 		Sys_Error("Cvar_Set: variable %s not found\n", var_name);
@@ -405,14 +399,14 @@ void TCvar::Set(const char* var_name, float value)
 
 //==========================================================================
 //
-//  TCvar::Set
+//  VCvar::Set
 //
 //==========================================================================
 
-void TCvar::Set(const char* var_name, const VStr& value)
+void VCvar::Set(const char* var_name, const VStr& value)
 {
-	guard(TCvar::Set);
-	TCvar* var = FindVariable(var_name);
+	guard(VCvar::Set);
+	VCvar* var = FindVariable(var_name);
 	if (!var)
 	{
 		Sys_Error("Cvar_SetString: variable %s not found\n", var_name);
@@ -423,39 +417,39 @@ void TCvar::Set(const char* var_name, const VStr& value)
 
 //==========================================================================
 //
-//	TCvar::Command
+//	VCvar::Command
 //
 //==========================================================================
 
-bool TCvar::Command(int argc, const char** argv)
+bool VCvar::Command(const TArray<VStr>& Args)
 {
-	guard(TCvar::Command);
-	TCvar* cvar = FindVariable(argv[0]);
+	guard(VCvar::Command);
+	VCvar* cvar = FindVariable(*Args[0]);
 	if (!cvar)
 	{
 		return false;
 	}
 
 	// perform a variable print or set
-	if (argc == 1)
+	if (Args.Num() == 1)
 	{
 		GCon->Log(VStr(cvar->Name) + " is \"" + cvar->StringValue + "\"");
-		if (cvar->Flags & CVAR_LATCH && cvar->LatchedString)
+		if (cvar->Flags & CVAR_Latch && cvar->LatchedString)
 			GCon->Log(VStr("Latched \"") + cvar->LatchedString + "\"");
 	}
 	else
 	{
-		if (cvar->Flags & CVAR_ROM)
+		if (cvar->Flags & CVAR_Rom)
 		{
 			GCon->Logf("%s is read-only", cvar->Name);
 		}
-		else if (cvar->Flags & CVAR_INIT && host_initialized)
+		else if (cvar->Flags & CVAR_Init && host_initialized)
 		{
 			GCon->Logf("%s can be set only from command-line", cvar->Name);
 		}
 		else
 		{
-			cvar->Set(argv[1]);
+			cvar->Set(Args[1]);
 		}
 	}
 	return true;
@@ -464,16 +458,16 @@ bool TCvar::Command(int argc, const char** argv)
 
 //==========================================================================
 //
-//	TCvar::WriteVariables
+//	VCvar::WriteVariables
 //
 //==========================================================================
 
-void TCvar::WriteVariables(FILE* f)
+void VCvar::WriteVariables(FILE* f)
 {
-	guard(TCvar::WriteVariables);
-	for (TCvar* cvar = Variables; cvar; cvar = cvar->Next)
+	guard(VCvar::WriteVariables);
+	for (VCvar* cvar = Variables; cvar; cvar = cvar->Next)
 	{
-		if (cvar->Flags & CVAR_ARCHIVE)
+		if (cvar->Flags & CVAR_Archive)
 		{
 			fprintf(f, "%s\t\t\"%s\"\n", cvar->Name, *cvar->StringValue);
 		}
@@ -491,7 +485,7 @@ COMMAND(CvarList)
 {
 	guard(COMMAND CvarList);
 	int count = 0;
-	for (TCvar *cvar = TCvar::Variables; cvar; cvar = cvar->Next)
+	for (VCvar *cvar = VCvar::Variables; cvar; cvar = cvar->Next)
 	{
 		GCon->Log(VStr(cvar->Name) + " - \"" + cvar->StringValue + "\"");
 		count++;
@@ -503,9 +497,13 @@ COMMAND(CvarList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.10  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.9  2003/09/24 16:41:59  dj_jl
 //	Fixed cvar constructor
 //	
@@ -516,7 +514,7 @@ COMMAND(CvarList)
 //	Changed copyright year
 //	
 //	Revision 1.6  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
+//	Made VCvar a pure C++ class
 //	
 //	Revision 1.5  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags

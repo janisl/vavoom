@@ -107,7 +107,7 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	{
 		flags |= SDL_HWPALETTE;
 	}
-	if (!M_CheckParm("-window"))
+	if (!GArgs.CheckParm("-window"))
 	{
 		flags |= SDL_FULLSCREEN;
 	}
@@ -242,9 +242,13 @@ void VSoftwareDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.5  2005/04/28 07:16:12  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.4  2004/10/08 12:39:01  dj_jl
 //	Added windowing mode.
 //	

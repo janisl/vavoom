@@ -28,13 +28,13 @@
 #include "gamedefs.h"
 #include "cl_local.h"
 
-void CL_Init(void);
-void SV_Init(void);
-void CL_SendMove(void);
+void CL_Init();
+void SV_Init();
+void CL_SendMove();
 void ServerFrame(int realtics);
-void CL_ReadFromServer(void);
+void CL_ReadFromServer();
 void SV_ShutdownServer(boolean crash);
-void CL_Disconnect(void);
+void CL_Disconnect();
 char *P_TranslateMap(int map);
 
 // MACROS ------------------------------------------------------------------
@@ -52,8 +52,8 @@ public:
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-int Z_FreeMemory(void);
-void G_DoLoadGame(void);
+int Z_FreeMemory();
+void G_DoLoadGame();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -64,9 +64,9 @@ void G_DoLoadGame(void);
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 #ifdef DEVELOPER
-TCvarI			developer("developer", "1", CVAR_ARCHIVE);
+VCvarI			developer("developer", "1", CVAR_Archive);
 #else
-TCvarI			developer("developer", "0", CVAR_ARCHIVE);
+VCvarI			developer("developer", "0", CVAR_Archive);
 #endif
 
 int				host_frametics;
@@ -80,17 +80,17 @@ boolean			host_initialized = false;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCvarF	host_framerate("framerate", "0");
+static VCvarF	host_framerate("framerate", "0");
 
 static double	last_time;
 
-static TCvarI	respawnparm("RespawnMonsters", "0");	// checkparm of -respawn
-static TCvarI	randomclass("RandomClass", "0");		// checkparm of -randclass
-static TCvarI	fastparm("Fast", "0");				// checkparm of -fast
+static VCvarI	respawnparm("RespawnMonsters", "0");	// checkparm of -respawn
+static VCvarI	randomclass("RandomClass", "0");		// checkparm of -randclass
+static VCvarI	fastparm("Fast", "0");				// checkparm of -fast
 
-static TCvarI	show_time("show_time", "0");
+static VCvarI	show_time("show_time", "0");
 
-static TCvarS	configfile("configfile", "config.cfg", CVAR_ARCHIVE);
+static VCvarS	configfile("configfile", "config.cfg", CVAR_Archive);
 
 static char		*host_error_string;
 
@@ -134,17 +134,17 @@ void Host_Init()
 	cls.state = ca_disconnected;
 #endif
 
-	int p = M_CheckParm("-maxents");
-	if (p && p < myargc - 1)
+	const char* p = GArgs.CheckValue("-maxents");
+	if (p)
 	{
-		GMaxEntities = atoi(myargv[p + 1]);
+		GMaxEntities = atoi(p);
 	}
 
 	VName::StaticInit();
 	VObject::StaticInit();
 
-	TCvar::Init();
-	Cmd_Init();
+	VCvar::Init();
+	VCommand::Init();
 
 	FL_Init();
 
@@ -184,7 +184,7 @@ void Host_Init()
 
 	Z_FreeMemory();
 
-	CmdBuf.Exec();
+	GCmdBuf.Exec();
 
 #ifndef CLIENT
 	if (!sv.active)
@@ -206,7 +206,7 @@ void Host_Init()
 //
 //==========================================================================
 
-static void Host_GetConsoleCommands(void)
+static void Host_GetConsoleCommands()
 {
 	guard(Host_GetConsoleCommands);
 	char	*cmd;
@@ -218,7 +218,7 @@ static void Host_GetConsoleCommands(void)
 
 	for (cmd = Sys_ConsoleInput(); cmd; cmd = Sys_ConsoleInput())
 	{
-		CmdBuf << cmd << "\n";
+		GCmdBuf << cmd << "\n";
 	}
 	unguard;
 }
@@ -231,9 +231,9 @@ static void Host_GetConsoleCommands(void)
 //
 //==========================================================================
 
-extern TCvarI real_time;
+extern VCvarI real_time;
 
-static bool FilterTime(void)
+static bool FilterTime()
 {
 	guard(FilterTime);
 	double curr_time = Sys_Time();
@@ -291,7 +291,7 @@ static bool FilterTime(void)
 //
 //==========================================================================
 
-void Host_Frame(void)
+void Host_Frame()
 {
 	guard(Host_Frame);
 	static double time1 = 0;
@@ -324,7 +324,7 @@ void Host_Frame(void)
 		Host_GetConsoleCommands();
 
 		//	Process console commands
-		CmdBuf.Exec();
+		GCmdBuf.Exec();
 
 		NET_Poll();
 
@@ -489,7 +489,7 @@ COMMAND(Version)
 //==========================================================================
 
 #ifdef CLIENT
-void Host_SaveConfiguration(void)
+void Host_SaveConfiguration()
 {
 	if (!host_initialized)
 		return;
@@ -518,9 +518,9 @@ void Host_SaveConfiguration(void)
 	fprintf(f, "//\n// Bindings\n//\n");
 	IN_WriteBindings(f);
 	fprintf(f, "//\n// Aliases\n//\n");
-	Cmd_WriteAlias(f);
+	VCommand::WriteAlias(f);
 	fprintf(f, "//\n// Variables\n//\n");
-	TCvar::WriteVariables(f);
+	VCvar::WriteVariables(f);
 
 	fclose(f);
 }
@@ -592,7 +592,7 @@ void Host_CoreDump(const char *fmt, ...)
 //
 //==========================================================================
 
-const char *Host_GetCoreDump(void)
+const char *Host_GetCoreDump()
 {
 	return host_error_string ? host_error_string : "";
 }
@@ -605,7 +605,7 @@ const char *Host_GetCoreDump(void)
 //
 //==========================================================================
 
-void Host_Shutdown(void)
+void Host_Shutdown()
 {
 	static boolean		shutting_down = false;
 
@@ -634,9 +634,13 @@ void Host_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.35  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.34  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.33  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	
@@ -695,7 +699,7 @@ void Host_Shutdown(void)
 //	Added garbage collection
 //	
 //	Revision 1.14  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
+//	Made VCvar a pure C++ class
 //	
 //	Revision 1.13  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification

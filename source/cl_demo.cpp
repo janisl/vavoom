@@ -240,7 +240,7 @@ void CL_StopRecording(void)
 COMMAND(StopDemo)
 {
 	guard(COMMAND StopDemo);
-	if (cmd_source != src_command)
+	if (Source != SRC_Command)
 	{
 		return;
 	}
@@ -265,19 +265,19 @@ COMMAND(StopDemo)
 COMMAND(Record)
 {
 	guard(COMMAND Record);
-	if (cmd_source != src_command)
+	if (Source != SRC_Command)
 	{
 		return;
 	}
 
-	int c = Argc();
+	int c = Args.Num();
 	if (c != 2 && c != 3)
 	{
 		GCon->Log("record <demoname> [<map>]");
 		return;
 	}
 
-	if (strstr(Argv(1), ".."))
+	if (strstr(*Args[1], ".."))
 	{
 		GCon->Log("Relative pathnames are not allowed.");
 		return;
@@ -290,14 +290,14 @@ COMMAND(Record)
 		return;
 	}
 
-	VStr name = VStr("demos/") + VStr(Argv(1)).DefaultExtension(".dem");
+	VStr name = VStr("demos/") + Args[1].DefaultExtension(".dem");
 
 	//
 	// start the map up
 	//
 	if (c > 2)
 	{
-		Cmd_ExecuteString(va("map %s", Argv(2)), src_command);
+		VCommand::ExecuteString(VStr("map ") + Args[2], SRC_Command);
 	}
 	
 	//
@@ -331,12 +331,12 @@ COMMAND(PlayDemo)
 	guard(COMMAND PlayDemo);
 	char	magic[8];
 
-	if (cmd_source != src_command)
+	if (Source != SRC_Command)
 	{
 		return;
 	}
 
-	if (Argc() != 2)
+	if (Args.Num() != 2)
 	{
 		GCon->Log("play <demoname> : plays a demo");
 		return;
@@ -350,7 +350,7 @@ COMMAND(PlayDemo)
 	//
 	// open the demo file
 	//
-	VStr name = VStr("demos/") + VStr(Argv(1)).DefaultExtension(".dem");
+	VStr name = VStr("demos/") + Args[1].DefaultExtension(".dem");
 
 	GCon->Logf("Playing demo from %s.", *name);
 	cls.demofile = FL_OpenFileRead(name);
@@ -387,12 +387,12 @@ COMMAND(PlayDemo)
 COMMAND(TimeDemo)
 {
 	guard(COMMAND TimeDemo);
-	if (cmd_source != src_command)
+	if (Source != SRC_Command)
 	{
 		return;
 	}
 
-	if (Argc() != 2)
+	if (Args.Num() != 2)
 	{
 		GCon->Log("timedemo <demoname> : gets demo speeds");
 		return;
@@ -412,9 +412,13 @@ COMMAND(TimeDemo)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.16  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.15  2006/02/20 22:52:56  dj_jl
 //	Changed client state to a class.
 //	

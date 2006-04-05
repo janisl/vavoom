@@ -63,7 +63,7 @@ void CL_Disconnect(void);
 
 COMMAND(SetMenu)
 {
-	GClGame->eventSetMenu(Argv(1));
+	GClGame->eventSetMenu(Args.Num() > 1 ? *Args[1] : "");
 }
 
 //==========================================================================
@@ -161,9 +161,13 @@ boolean MN_Active()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.15  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.14  2006/02/09 22:35:54  dj_jl
 //	Moved all client game code to classes.
 //	

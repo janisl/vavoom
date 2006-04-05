@@ -83,12 +83,12 @@ static byte					scantokey[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static boolean				mouse_started    = false;
+static bool					mouse_started    = false;
 static int					old_mouse_x;
 static int					old_mouse_y;
-static TCvarI				m_filter("m_filter", "1", CVAR_ARCHIVE);
+static VCvarI				m_filter("m_filter", "1", CVAR_Archive);
 
-static boolean				joystick_started = false;
+static bool					joystick_started = false;
 static int					joy_oldx = 0;
 static int					joy_oldy = 0;
 static int					joy_oldb[MAX_JOYSTICK_BUTTONS];
@@ -109,7 +109,7 @@ static int					joy_oldb[MAX_JOYSTICK_BUTTONS];
 //
 //==========================================================================
 
-static void KeyboardHandler(void)
+static void KeyboardHandler()
 {
 	//	Get the scan code
 	keyboardque[kbdhead & (KBDQUESIZE - 1)] = inportb(0x60);
@@ -125,39 +125,39 @@ static void KeyboardHandler(void)
 //
 //==========================================================================
 
-static void ReadKeyboard(void)
+static void ReadKeyboard()
 {
 	guard(ReadKeyboard);
-    unsigned char 	ch;
+	unsigned char 	ch;
 
-    if (!keyboard_started)
-    	return;
+	if (!keyboard_started)
+		return;
 
 	while (kbdtail < kbdhead)
 	{
-	    ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
+		ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
 		kbdtail++;
 
 		if (pause_garbage)
-        {
-        	pause_garbage--;
-            continue;
-        }
+		{
+			pause_garbage--;
+			continue;
+		}
 
-	    if (ch == 0xe1)
-	    {
-        	IN_KeyEvent(K_PAUSE, true);
-            pause_garbage = 5;
-            continue;
-	    }
-	    if (ch == 0xe0)
-	    {
-	      	nextkeyextended = true;
-            continue;
-	    }
+		if (ch == 0xe1)
+		{
+			IN_KeyEvent(K_PAUSE, true);
+			pause_garbage = 5;
+			continue;
+		}
+		if (ch == 0xe0)
+		{
+			nextkeyextended = true;
+			continue;
+		}
 
 		IN_KeyEvent(scantokey[nextkeyextended ? (ch | 0x80) : (ch & 0x7f)],
-            !(ch & 0x80));
+			!(ch & 0x80));
 		nextkeyextended = false;
 	}
 	unguard;
@@ -171,7 +171,7 @@ static void ReadKeyboard(void)
 //
 //==========================================================================
 
-static void StartupKeyboard(void)
+static void StartupKeyboard()
 {
 	guard(StartupKeyboard);
 	nextkeyextended = false;
@@ -214,16 +214,16 @@ static void StartupKeyboard(void)
 //
 //==========================================================================
 
-static void ShutdownKeyboard(void)
+static void ShutdownKeyboard()
 {
 	guard(ShutdownKeyboard);
-    if (keyboard_started)
-    {
+	if (keyboard_started)
+	{
 		keyboard_started = false;
-	    asm("cli");
-	    _go32_dpmi_set_protected_mode_interrupt_vector(9, &oldkeyinfo);
-	    _go32_dpmi_free_iret_wrapper(&newkeyinfo);
-	    asm("sti");
+		asm("cli");
+		_go32_dpmi_set_protected_mode_interrupt_vector(9, &oldkeyinfo);
+		_go32_dpmi_free_iret_wrapper(&newkeyinfo);
+		asm("sti");
 		_unlock_dpmi_data(keyboardque, sizeof(keyboardque));
 		_unlock_dpmi_data(&kbdhead, sizeof(kbdhead));
 	}
@@ -244,31 +244,31 @@ static void ShutdownKeyboard(void)
 //
 //==========================================================================
 
-static void StartupMouse(void)
+static void StartupMouse()
 {
 	guard(StartupMouse);
-    __dpmi_regs r;
+	__dpmi_regs r;
 
-    if (M_CheckParm("-nomouse"))
-    {
-    	return;
-    }
+	if (GArgs.CheckParm("-nomouse"))
+	{
+		return;
+	}
 
-    r.x.ax = 0;
-    __dpmi_int(0x33, &r);
+	r.x.ax = 0;
+	__dpmi_int(0x33, &r);
 
-    if (r.x.ax == 0)
-    	return;
+	if (r.x.ax == 0)
+		return;
 
-   	mouse_started = true;
+	mouse_started = true;
 
-    //hide cursor
-    r.x.ax = 2;
-    __dpmi_int(0x33,&r);
+	//hide cursor
+	r.x.ax = 2;
+	__dpmi_int(0x33,&r);
 
-    //reset mickey count
-    r.x.ax = 0x0b;
-    __dpmi_int(0x33,&r);
+	//reset mickey count
+	r.x.ax = 0x0b;
+	__dpmi_int(0x33,&r);
 	unguard;
 }
 
@@ -280,29 +280,29 @@ static void StartupMouse(void)
 //
 //==========================================================================
 
-static void ReadMouse(void)
+static void ReadMouse()
 {
 	guard(ReadMouse);
 	int			i;
-    __dpmi_regs r;
-    event_t 	event;
-    int 		xmickeys;
-    int			ymickeys;
-    int			mouse_x;
-    int			mouse_y;
-    int			buttons;
-    static int 	lastbuttons = 0;
+	__dpmi_regs r;
+	event_t 	event;
+	int 		xmickeys;
+	int			ymickeys;
+	int			mouse_x;
+	int			mouse_y;
+	int			buttons;
+	static int 	lastbuttons = 0;
 
-    if (!mouse_started)
+	if (!mouse_started)
 		return;
 
-    r.x.ax = 0x0b;
-    __dpmi_int(0x33, &r);
-    xmickeys = (signed short)r.x.cx;
-    ymickeys = (signed short)r.x.dx;
-    r.x.ax=0x03;
-    __dpmi_int(0x33, &r);
-    buttons = r.x.bx;
+	r.x.ax = 0x0b;
+	__dpmi_int(0x33, &r);
+	xmickeys = (signed short)r.x.cx;
+	ymickeys = (signed short)r.x.dx;
+	r.x.ax=0x03;
+	__dpmi_int(0x33, &r);
+	buttons = r.x.bx;
 
 	if (m_filter == 2)
 	{
@@ -326,23 +326,23 @@ static void ReadMouse(void)
 		old_mouse_y = 0;
 	}
 
-    if (mouse_x || mouse_y)
-    {
-      	event.type  = ev_mouse;
-      	event.data1 = 0;
-      	event.data2 = mouse_x;
-      	event.data3 = -mouse_y;
+	if (mouse_x || mouse_y)
+	{
+		event.type  = ev_mouse;
+		event.data1 = 0;
+		event.data2 = mouse_x;
+		event.data3 = -mouse_y;
 
-      	IN_PostEvent(&event);
-    }
+		IN_PostEvent(&event);
+	}
 	for (i = 0; i < 3; i++)
-    {
-	    if ((buttons ^ lastbuttons) & (1 << i))
-    	{
-    		IN_KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
-	    }
-    }
-  	lastbuttons = buttons;
+	{
+		if ((buttons ^ lastbuttons) & (1 << i))
+		{
+			IN_KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
+		}
+	}
+	lastbuttons = buttons;
 	unguard;
 }
 
@@ -352,16 +352,16 @@ static void ReadMouse(void)
 //
 //==========================================================================
 
-static void ShutdownMouse(void)
+static void ShutdownMouse()
 {
 	guard(ShutdownMouse);
 	if (mouse_started)
-    {
-    	__dpmi_regs r;
+	{
+		__dpmi_regs r;
 
-    	mouse_started = false;
-	    r.x.ax = 0;
-	    __dpmi_int(0x33, &r);
+		mouse_started = false;
+		r.x.ax = 0;
+		__dpmi_int(0x33, &r);
 	}
 	unguard;
 }
@@ -380,12 +380,12 @@ static void ShutdownMouse(void)
 //
 //==========================================================================
 
-static void StartupJoystick(void)
+static void StartupJoystick()
 {
 	guard(StartupJoystick);
-	if (M_CheckParm("-nojoy"))
-    {
-    	return;
+	if (GArgs.CheckParm("-nojoy"))
+	{
+		return;
 	}
 
 	// Initialize the joystick driver
@@ -401,7 +401,7 @@ static void StartupJoystick(void)
 	}
 
 	if (joy[0].flags & JOYFLAG_CALIBRATE)
-    {
+	{
 		remove_joystick();
 
 		printf("CENTER the joystick and press a key:\n");
@@ -412,13 +412,13 @@ static void StartupJoystick(void)
 		{
 			Sys_Error("Error initialising joystick\n%s\n", allegro_error);
 		}
-    }
+	}
 
 	//	Calibrate joystick num_joysticks
 	while (joy[0].flags & JOYFLAG_CALIBRATE)
 	{
-	   	printf("%s and press a key:\n", calibrate_joystick_name(0));
-	    IN_ReadKey();
+		printf("%s and press a key:\n", calibrate_joystick_name(0));
+		IN_ReadKey();
 
 		if (calibrate_joystick(0))
 		{
@@ -427,7 +427,7 @@ static void StartupJoystick(void)
 	}
 
 	memset(joy_oldb, 0, sizeof(joy_oldb));
-    joystick_started = true;
+	joystick_started = true;
 	unguard;
 }
 
@@ -437,34 +437,34 @@ static void StartupJoystick(void)
 //
 //==========================================================================
 
-static void ReadJoystick(void)
+static void ReadJoystick()
 {
 	guard(ReadJoystick);
 	int			i;
-    event_t 	event;
+	event_t 	event;
 
-    if (!joystick_started)
-    	return;
+	if (!joystick_started)
+		return;
 
-    poll_joystick();
+	poll_joystick();
 
-    if ((joy_oldx != joy_x) || (joy_oldy != joy_y))
-    {
+	if ((joy_oldx != joy_x) || (joy_oldy != joy_y))
+	{
 		event.type = ev_joystick;
 		event.data1 = 0;
 		event.data2 = (abs(joy_x) < 4)? 0 : joy_x;
 		event.data3 = (abs(joy_y) < 4)? 0 : joy_y;
 		IN_PostEvent(&event);
-	    joy_oldx = joy_x;
-    	joy_oldy = joy_y;
-    }
-    for (i = 0; i < joy[0].num_buttons; i++)
-    {
+		joy_oldx = joy_x;
+		joy_oldy = joy_y;
+	}
+	for (i = 0; i < joy[0].num_buttons; i++)
+	{
 		if (joy[0].button[i].b != joy_oldb[i])
-    	{
-        	IN_KeyEvent(K_JOY1 + i, joy[0].button[i].b);
-            joy_oldb[i] = joy[0].button[i].b;
-    	}
+		{
+			IN_KeyEvent(K_JOY1 + i, joy[0].button[i].b);
+			joy_oldb[i] = joy[0].button[i].b;
+		}
 	}
 	unguard;
 }
@@ -475,14 +475,14 @@ static void ReadJoystick(void)
 //
 //==========================================================================
 
-static void ShutdownJoystick(void)
+static void ShutdownJoystick()
 {
 	guard(ShutdownJoystick);
 	if (joystick_started)
-    {
-    	joystick_started = false;
-    	remove_joystick();
-    }
+	{
+		joystick_started = false;
+		remove_joystick();
+	}
 	unguard;
 }
 
@@ -498,9 +498,9 @@ static void ShutdownJoystick(void)
 //
 //==========================================================================
 
-void IN_Init(void)
+void IN_Init()
 {
-    StartupMouse();
+	StartupMouse();
 	StartupJoystick();
 	StartupKeyboard();
 }
@@ -516,9 +516,9 @@ void IN_Init(void)
 //
 //==========================================================================
 
-void IN_ReadInput(void)
+void IN_ReadInput()
 {
-    ReadKeyboard();
+	ReadKeyboard();
 	ReadMouse();
 	ReadJoystick();
 }
@@ -529,19 +529,23 @@ void IN_ReadInput(void)
 //
 //==========================================================================
 
-void IN_Shutdown(void)
+void IN_Shutdown()
 {
-    ShutdownJoystick();
-    ShutdownMouse();
-    ShutdownKeyboard();
+	ShutdownJoystick();
+	ShutdownMouse();
+	ShutdownKeyboard();
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.8  2002/11/16 17:13:09  dj_jl
 //	Some compatibility changes.
-//
+//	
 //	Revision 1.7  2002/01/11 08:12:01  dj_jl
 //	Added guard macros
 //	

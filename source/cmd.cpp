@@ -29,23 +29,9 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define CMD_LINE_SIZE	1024
-#define CMD_NUM_ARGS	40
-
 // TYPES -------------------------------------------------------------------
 
-struct alias_t
-{
-	VStr		Name;
-	VStr		CmdLine;
-	alias_t*	Next;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-#ifdef CLIENT
-void C_AddToAutoComplete(const char* string);
-#endif
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -55,22 +41,20 @@ void C_AddToAutoComplete(const char* string);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TCmdBuf				CmdBuf;
-cmd_source_t		cmd_source;
+VCmdBuf				GCmdBuf;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TCommand*	Cmds = NULL;
-static alias_t*		alias = NULL;
+bool					VCommand::Initialised = false;
+VStr					VCommand::Original;
 
-static bool			cmd_wait = false;
-static bool			cmd_initialised = false;
+TArray<VStr>			VCommand::Args;
+VCommand::ECmdSource	VCommand::Source;
 
-static char			cmd_line[CMD_LINE_SIZE];
-static const char*	cmd_original;
-static int			cmd_argc;
-static char*		cmd_argv[CMD_NUM_ARGS];
-static char*		cmd_args;
+TArray<const char*>		VCommand::AutoCompleteTable;
+
+VCommand*				VCommand::Cmds = NULL;
+VCommand::VAlias*		VCommand::Alias = NULL;
 
 // CODE --------------------------------------------------------------------
 
@@ -82,57 +66,175 @@ static char*		cmd_args;
 
 //==========================================================================
 //
-//  Cmd_Init
+//  VCommand::VCommand
 //
 //==========================================================================
 
-void Cmd_Init()
+VCommand::VCommand(const char *name)
 {
-	int			i;
-	boolean		in_cmd = false;
-
-#ifdef CLIENT
-	for (TCommand *cmd = Cmds; cmd; cmd = cmd->Next)
+	guard(VCommand::VCommand);
+	Next = Cmds;
+	Name = name;
+	Cmds = this;
+	if (Initialised)
 	{
-		C_AddToAutoComplete(cmd->Name);
+		AddToAutoComplete(Name);
 	}
-#endif
+	unguard;
+}
 
-	CmdBuf.Init();
+//==========================================================================
+//
+//  VCommand::~VCommand
+//
+//==========================================================================
+
+VCommand::~VCommand()
+{
+}
+
+//==========================================================================
+//
+//  VCommand::Init
+//
+//==========================================================================
+
+void VCommand::Init()
+{
+	guard(VCommand::Init);
+	bool		in_cmd = false;
+
+	for (VCommand *cmd = Cmds; cmd; cmd = cmd->Next)
+	{
+		AddToAutoComplete(cmd->Name);
+	}
 
 	//	Add configuration file execution
-	CmdBuf << "exec startup.vs\n";
+	GCmdBuf << "exec startup.vs\n";
 
 	//	Add consloe commands from command line
 	// These are params, that start with + and continues untill the end
 	// or untill next param, that starts with - or +
-	for (i = 1; i < myargc; i++)
+	for (int i = 1; i < GArgs.Count(); i++)
 	{
 		if (in_cmd)
 		{
-			if (!myargv[i] || myargv[i][0] == '-' || myargv[i][0] == '+')
+			if (!GArgs[i] || GArgs[i][0] == '-' || GArgs[i][0] == '+')
 			{
 				in_cmd = false;
-				CmdBuf << "\n";
+				GCmdBuf << "\n";
 			}
 			else
 			{
-				CmdBuf << " " << myargv[i];
+				GCmdBuf << " " << GArgs[i];
 				continue;
 			}
 		}
-		if (myargv[i][0] == '+')
+		if (GArgs[i][0] == '+')
 		{
 			in_cmd = true;
-			CmdBuf << (myargv[i] + 1);
+			GCmdBuf << (GArgs[i] + 1);
 		}
 	}
 	if (in_cmd)
 	{
-		CmdBuf << "\n";
+		GCmdBuf << "\n";
 	}
 
-	cmd_initialised = true;
+	Initialised = true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VCommand::WriteAlias
+//
+//==========================================================================
+
+void VCommand::WriteAlias(FILE* f)
+{
+	guard(VCommand::WriteAlias);
+	for (VAlias *a = Alias; a; a = a->Next)
+	{
+		fprintf(f, "alias %s \"%s\"\n", *a->Name, *a->CmdLine);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VCommand::AddToAutoComplete
+//
+//==========================================================================
+
+void VCommand::AddToAutoComplete(const char* string)
+{
+	guard(VCommand::AddToAutoComplete);
+#ifdef PARANOID
+	for (int i = 0; i < AutoCompleteTable.Num(); i++)
+	{
+		if (!AutoCompleteTable[i].ICmp(string))
+			Sys_Error("C_AddToAutoComplete: %s is allready registered.", string);
+	}
+#endif
+
+	if (!AutoCompleteTable.Num())
+	{
+		AutoCompleteTable.Empty(256);
+	}
+	AutoCompleteTable.AddItem(string);
+
+	// Alphabetic sort
+	for (int i = AutoCompleteTable.Num() - 1; i &&
+		(stricmp(AutoCompleteTable[i - 1], AutoCompleteTable[i]) > 0); i--)
+	{
+		const char* Swap = AutoCompleteTable[i];
+		AutoCompleteTable[i] = AutoCompleteTable[i - 1];
+		AutoCompleteTable[i - 1] = Swap;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VCommand::GetAutoComplete
+//
+//==========================================================================
+
+VStr VCommand::GetAutoComplete(const VStr& String, int& Index, bool Backward)
+{
+	guard(VCommand::GetAutoComplete);
+	int i;
+	if (Index == -1)
+	{
+		if (Backward)
+			i = AutoCompleteTable.Num() - 1;
+		else
+			i = 0;
+	}
+	else
+	{
+		if (Backward)
+			i = Index - 1;
+		else
+			i = Index + 1;
+	}
+
+	while (i < AutoCompleteTable.Num() && i >= 0)
+	{
+		if (String.Length() <= strlen(AutoCompleteTable[i]) &&
+			!strnicmp(*String, AutoCompleteTable[i], String.Length()))
+		{
+			Index = i;
+			return AutoCompleteTable[i];
+		}
+		if (Backward)
+			i--;
+		else
+			i++;
+	}
+	return VStr();
+	unguard;
 }
 
 //**************************************************************************
@@ -143,321 +245,149 @@ void Cmd_Init()
 
 //==========================================================================
 //
-//	Cmd_TokenizeString
+//	VCommand::TokeniseString
 //
 //==========================================================================
 
-void Cmd_TokeniseString(const char *str)
+void VCommand::TokeniseString(const VStr& str)
 {
-	char		*p;
-
-	cmd_original = str;
-	cmd_argc = 0;
-	cmd_argv[0] = NULL;
-	cmd_args = NULL;
-	strcpy(cmd_line, str);
-	p = cmd_line;
-
-	while (*p)
+	guard(VCommand::TokeniseString);
+	Args.Empty(8);
+	Original = str;
+	size_t i = 0;
+	while (i < str.Length())
 	{
 		//	Whitespace
-		if (*p <= ' ')
+		if (str[i] <= ' ')
 		{
-			*p = 0;
-			p++;
+			i++;
 			continue;
 		}
 
-		if (cmd_argc == 1)
-		{
-			cmd_args = (char*)cmd_original + (p - cmd_line);
-		}
-
 		// String
-		if (*p == '\"')
+		if (str[i] == '\"')
 		{
-			p++;
-			cmd_argv[cmd_argc] = p;
+			i++;
+			int Start = i;
 			// Checks for end of string
-			while (*p && *p != '\"')
+			while (i < str.Length() && str[i] != '\"')
 			{
-				p++;
+				i++;
 			}
-			if (!*p)
+			if (i == str.Length())
 			{
 				GCon->Log("ERROR: Missing closing quote!");
 				return;
 			}
-			//	Erase closing quote
-			*p = 0;
-			p++;
+			new(Args) VStr(str, Start, i - Start);
+			//	Skip closing quote
+			i++;
 		}
 		else
 		{
 			// Simple arg
-			cmd_argv[cmd_argc] = p;
-			p++;
-			while (*p > ' ')
+			int Start = i;
+			while (str[i] > ' ')
 			{
-				p++;
+				i++;
 			}
+			new(Args) VStr(str, Start, i - Start);
 		}
-		// Next will be NULL
-		cmd_argc++;
-		cmd_argv[cmd_argc] = NULL;
 	}
+	unguard;
 }
 
 //==========================================================================
 //
-//  Cmd_CheckParm
+//	VCommand::ExecuteString
 //
 //==========================================================================
 
-int Cmd_CheckParm(const char *check)
+void VCommand::ExecuteString(const VStr& Acmd, ECmdSource src)
 {
-	int		i;
+	guard(VCommand::ExecuteString);
+	TokeniseString(Acmd);
+	Source = src;
 
-	for (i = 1; i < cmd_argc; i++)
+	if (!Args.Num())
+		return;
+
+	//
+	//	Check for command
+	//
+	for (VCommand* cmd = Cmds; cmd; cmd = cmd->Next)
 	{
-		if (!stricmp(check, cmd_argv[i]))
+		if (!Args[0].ICmp(cmd->Name))
+		{
+			cmd->Run();
+			return;
+		}
+	}
+
+	//
+	//	Cvar
+	//
+	if (VCvar::Command(Args))
+		return;
+
+	//
+	// Command defined with ALIAS.
+	//
+	for (VAlias* a = Alias; a; a = a->Next)
+	{
+		if (!Args[0].ICmp(a->Name))
+		{
+			GCmdBuf.Insert("\n");
+			GCmdBuf.Insert(a->CmdLine);
+			return;
+		}
+	}
+
+	//
+	// Unknown command.
+	//
+#ifndef CLIENT
+	if (host_initialized)
+#endif
+		GCon->Log(VStr("Unknown command ") + Args[0]);
+	unguard;
+}
+
+
+//==========================================================================
+//
+//	VCommand::ForwardToServer
+//
+//==========================================================================
+
+void VCommand::ForwardToServer()
+{
+	guard(VCommand::ForwardToServer);
+#ifdef CLIENT
+	cls.message << (vuint8)clc_stringcmd << Original;
+#endif
+	unguard;
+}
+
+
+//==========================================================================
+//
+//  VCommand::CheckParm
+//
+//==========================================================================
+
+int VCommand::CheckParm(const char* check)
+{
+	guard(VCommand::CheckParm);
+	for (int i = 1; i < Args.Num(); i++)
+	{
+		if (!Args[i].ICmp(check))
+		{
 			return i;
+		}
 	}
-
 	return 0;
-}
-
-//==========================================================================
-//
-//  Cmd_Argc
-//
-//==========================================================================
-
-int Cmd_Argc()
-{
-	return cmd_argc;
-}
-
-//==========================================================================
-//
-//  Cmd_Argv
-//
-//==========================================================================
-
-char **Cmd_Argv()
-{
-	return cmd_argv;
-}
-
-//==========================================================================
-//
-//  Cmd_Argv
-//
-//==========================================================================
-
-char *Cmd_Argv(int parm)
-{
-	static char		null_string[] = "";
-
-	if (parm < 0 || parm >= cmd_argc)
-		return null_string;
-	return cmd_argv[parm];
-}
-
-//==========================================================================
-//
-//	Cmd_Args
-//
-//==========================================================================
-
-char *Cmd_Args()
-{
-	static char		null_string[] = "";
-	if (cmd_args)
-		return cmd_args;
-	else
-		return null_string;
-}
-
-//**************************************************************************
-//
-//	Some commands
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	COMMAND CmdList
-//
-//==========================================================================
-
-COMMAND(CmdList)
-{
-	const char *prefix = Argv(1);
-	int pref_len = strlen(prefix);
-	int count = 0;
-	for (TCommand *cmd = Cmds; cmd; cmd = cmd->Next)
-	{
-		if (pref_len && strnicmp(cmd->Name, prefix, pref_len))
-			continue;
-		GCon->Logf(" %s", cmd->Name);
-		count++;
-	}
-	GCon->Logf("%d commands.", count);
-}
-
-//==========================================================================
-//
-//  Alias_f
-//
-//==========================================================================
-
-COMMAND(Alias)
-{
-	alias_t*	a;
-	VStr		tmp;
-	int			i;
-	int			c;
-
-	if (Argc() == 1)
-	{
-		GCon->Log("Current alias:");
-		for (a = alias; a; a = a->Next)
-		{
-			GCon->Log(a->Name + ": " + a->CmdLine);
-		}
-		return;
-	}
-
-	c = Argc();
-	for (i = 2; i < c; i++)
-	{
-		if (i != 2)
-			tmp += " ";
-		tmp += Argv(i);
-	}
-
-	for (a = alias; a; a = a->Next)
-	{
-		if (!a->Name.ICmp(Argv(1)))
-		{
-			break;
-		}
-	}
-
-	if (!a)
-	{
-		a = new(PU_STRING) alias_t;
-		a->Name = Argv(1);
-		a->Next = alias;
-		alias = a;
-	}
-	a->CmdLine = tmp;
-}
-
-//==========================================================================
-//
-//	Cmd_WriteAlias
-//
-//==========================================================================
-
-void Cmd_WriteAlias(FILE *f)
-{
-	for (alias_t *a = alias; a; a = a->Next)
-	{
-		fprintf(f, "alias %s \"%s\"\n", *a->Name, *a->CmdLine);
-	}
-}
-
-//==========================================================================
-//
-//  Echo_f
-//
-//==========================================================================
-
-COMMAND(Echo)
-{
-#ifdef CLIENT
-	C_NotifyMessage(Args());
-#else
-	GCon->Log(Args());
-#endif
-}
-
-//==========================================================================
-//
-//  Exec_f
-//
-//==========================================================================
-
-COMMAND(Exec)
-{
-	char	*buf;
-
-	if (Argc() != 2)
-	{
-		GCon->Log("Exec <filename> : execute script file");
-		return;
-	}
-
-	VStr path = FL_FindFile(Argv(1));
-	if (!path)
-	{
-		GCon->Logf("Can't find \"%s\".", Argv(1));
-		return;
-	}
-
-	GCon->Logf("Executing \"%s\".", *path);
-
-	M_ReadFile(*path, (byte**)&buf);
-	CmdBuf.Insert(buf);
-	Z_Free(buf);
-}
-
-//==========================================================================
-//
-//	COMMAND Wait
-//
-//==========================================================================
-
-COMMAND(Wait)
-{
-	cmd_wait = true;
-}
-
-//**************************************************************************
-//
-//	Commands
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  TCommand::TCommand
-//
-//==========================================================================
-
-TCommand::TCommand(const char *name)
-{
-	Next = Cmds;
-	Name = name;
-	Cmds = this;
-#ifdef CLIENT
-	if (cmd_initialised)
-	{
-		C_AddToAutoComplete(Name);
-	}
-#endif
-}
-
-//==========================================================================
-//
-//  TCommand::~TCommand
-//
-//==========================================================================
-
-TCommand::~TCommand()
-{
+	unguard;
 }
 
 //**************************************************************************
@@ -468,67 +398,66 @@ TCommand::~TCommand()
 
 //==========================================================================
 //
-//  TCmdBuf::Init
+//	VCmdBuf::Insert
 //
 //==========================================================================
 
-void TCmdBuf::Init()
+void VCmdBuf::Insert(const char* text)
 {
-}
-
-//==========================================================================
-//
-//	TCmdBuf::Insert
-//
-//==========================================================================
-
-void TCmdBuf::Insert(const char* text)
-{
+	guard(VCmdBuf::Insert);
 	Buffer = VStr(text) + Buffer;
+	unguard;
 }
 
 //==========================================================================
 //
-//	TCmdBuf::Insert
+//	VCmdBuf::Insert
 //
 //==========================================================================
 
-void TCmdBuf::Insert(const VStr& text)
+void VCmdBuf::Insert(const VStr& text)
 {
+	guard(VCmdBuf::Insert);
 	Buffer = text + Buffer;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TCmdBuf::Print
+//  VCmdBuf::Print
 //
 //==========================================================================
 
-void TCmdBuf::Print(const char* data)
+void VCmdBuf::Print(const char* data)
 {
+	guard(VCmdBuf::Print);
 	Buffer += data;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TCmdBuf::Print
+//  VCmdBuf::Print
 //
 //==========================================================================
 
-void TCmdBuf::Print(const VStr& data)
+void VCmdBuf::Print(const VStr& data)
 {
+	guard(VCmdBuf::Print);
 	Buffer += data;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TCmdBuf::Exec
+//  VCmdBuf::Exec
 //
 //==========================================================================
 
-void TCmdBuf::Exec()
+void VCmdBuf::Exec()
 {
-	int			len;
+	guard(VCmdBuf::Exec);
+	size_t		len;
 	int			quotes;
 	bool		comment;
 	VStr		ParsedCmd;
@@ -565,99 +494,178 @@ void TCmdBuf::Exec()
 
 		Buffer = VStr(Buffer, len, Buffer.Length() - len);
 
-		Cmd_ExecuteString(*ParsedCmd, src_command);
+		VCommand::ExecuteString(ParsedCmd, VCommand::SRC_Command);
 		
-		if (cmd_wait)
+		if (Wait)
 		{
-			// skip out while text still remains in buffer, leaving it
+			//	Skip out while text still remains in buffer, leaving it
 			// for next frame
-			cmd_wait = false;
+			Wait = false;
 			break;
 		}
 	} while (len);
+	unguard;
 }
 
 //**************************************************************************
 //
-//  Parsed command
+//	Some commands
 //
 //**************************************************************************
 
 //==========================================================================
 //
-//	Cmd_ExecuteString
+//	COMMAND CmdList
 //
 //==========================================================================
 
-void Cmd_ExecuteString(const char* Acmd, cmd_source_t src)
+COMMAND(CmdList)
 {
-	Cmd_TokeniseString(Acmd);
-	cmd_source = src;
-
-	if (!cmd_argc)
-		return;
-
-	//
-	//	Check for command
-	//
-	for (TCommand *cmd = Cmds; cmd; cmd = cmd->Next)
+	guard(COMMAND CmdList);
+	const char *prefix = Args.Num() > 1 ? *Args[1] : "";
+	int pref_len = strlen(prefix);
+	int count = 0;
+	for (VCommand *cmd = Cmds; cmd; cmd = cmd->Next)
 	{
-		if (!stricmp(cmd_argv[0], cmd->Name))
-		{
-			cmd->Run();
-			return;
-		}
+		if (pref_len && strnicmp(cmd->Name, prefix, pref_len))
+			continue;
+		GCon->Logf(" %s", cmd->Name);
+		count++;
 	}
-
-	//
-	//	Cvar
-	//
-	if (TCvar::Command(cmd_argc, (const char **)cmd_argv))
-		return;
-
-	//
-	// Command defined with ALIAS.
-	//
-	for (alias_t *a = alias; a; a = a->Next)
-	{
-		if (!stricmp(cmd_argv[0], *a->Name))
-		{
-			CmdBuf.Insert("\n");
-			CmdBuf.Insert(a->CmdLine);
-			return;
-		}
-	}
-
-	//
-	// Unknown command.
-	//
-#ifndef CLIENT
-	if (host_initialized)
-#endif
-		GCon->Logf("Unknown command \"%s\".", cmd_argv[0]);
+	GCon->Logf("%d commands.", count);
+	unguard;
 }
 
+//==========================================================================
+//
+//  Alias_f
+//
+//==========================================================================
+
+COMMAND(Alias)
+{
+	guard(COMMAND Alias);
+	VCommand::VAlias*	a;
+	VStr		tmp;
+	int			i;
+	int			c;
+
+	if (Args.Num() == 1)
+	{
+		GCon->Log("Current alias:");
+		for (a = VCommand::Alias; a; a = a->Next)
+		{
+			GCon->Log(a->Name + ": " + a->CmdLine);
+		}
+		return;
+	}
+
+	c = Args.Num();
+	for (i = 2; i < c; i++)
+	{
+		if (i != 2)
+			tmp += " ";
+		tmp += Args[i];
+	}
+
+	for (a = VCommand::Alias; a; a = a->Next)
+	{
+		if (!a->Name.ICmp(Args[1]))
+		{
+			break;
+		}
+	}
+
+	if (!a)
+	{
+		a = new(PU_STRING) VAlias;
+		a->Name = Args[1];
+		a->Next = VCommand::Alias;
+		VCommand::Alias = a;
+	}
+	a->CmdLine = tmp;
+	unguard;
+}
+
+//==========================================================================
+//
+//  Echo_f
+//
+//==========================================================================
+
+COMMAND(Echo)
+{
+	guard(COMMAND Echo);
+	if (Args.Num() < 2)
+		return;
+
+	VStr Text = Args[1];
+	for (int i = 2; i < Args.Num(); i++)
+	{
+		Text += " ";
+		Text += Args[i];
+	}
 #ifdef CLIENT
-
-//==========================================================================
-//
-//	Cmd_ForwardToServer
-//
-//==========================================================================
-
-void Cmd_ForwardToServer()
-{
-	cls.message << (byte)clc_stringcmd << cmd_original;
+	C_NotifyMessage(*Text);
+#else
+	GCon->Log(Text);
+#endif
+	unguard;
 }
 
-#endif
+//==========================================================================
+//
+//  Exec_f
+//
+//==========================================================================
+
+COMMAND(Exec)
+{
+	guard(COMMAND Exec);
+	char*		buf;
+
+	if (Args.Num() != 2)
+	{
+		GCon->Log("Exec <filename> : execute script file");
+		return;
+	}
+
+	VStr path = FL_FindFile(Args[1]);
+	if (!path)
+	{
+		GCon->Log(VStr("Can't find ") + Args[1]);
+		return;
+	}
+
+	GCon->Log(VStr("Executing ") + path);
+
+	M_ReadFile(*path, (byte**)&buf);
+	GCmdBuf.Insert(buf);
+	Z_Free(buf);
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND Wait
+//
+//==========================================================================
+
+COMMAND(Wait)
+{
+	GCmdBuf.Wait = true;
+}
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.14  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.13  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	
@@ -680,7 +688,7 @@ void Cmd_ForwardToServer()
 //	Changed copyright year
 //	
 //	Revision 1.6  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
+//	Made VCvar a pure C++ class
 //	
 //	Revision 1.5  2001/10/04 17:20:25  dj_jl
 //	Saving config using streams

@@ -194,10 +194,13 @@ COMMAND(Script)
     {
 		int 	script;
 
-        if (Argc() != 2) return;
-		script = atoi(Argv(1));
-		if (script < 1) return;
-		if (script > 99) return;
+        if (Args.Num() != 2)
+			return;
+		script = atoi(*Args[1]);
+		if (script < 1)
+			return;
+		if (script > 99)
+			return;
 
 		if (P_StartACS(script, 0, 0, 0, 0, GGameInfo->Players[0]->MO, NULL, 0,
 			false, false))
@@ -227,9 +230,13 @@ COMMAND(MyPos)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.13  2006/02/15 23:28:18  dj_jl
 //	Moved all server progs global variables to classes.
-//
+//	
 //	Revision 1.12  2004/12/27 12:23:16  dj_jl
 //	Multiple small changes for version 1.16
 //	

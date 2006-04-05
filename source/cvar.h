@@ -25,21 +25,21 @@
 
 enum
 {
-	CVAR_ARCHIVE	= 1,	//	Set to cause it to be saved to config.cfg
-	CVAR_USERINFO	= 2,	//	Added to userinfo  when changed
-	CVAR_SERVERINFO	= 4,	//	Added to serverinfo when changed
-	CVAR_INIT		= 8,	//	Don't allow change from console at all,
+	CVAR_Archive	= 1,	//	Set to cause it to be saved to config.cfg
+	CVAR_UserInfo	= 2,	//	Added to userinfo  when changed
+	CVAR_ServerInfo	= 4,	//	Added to serverinfo when changed
+	CVAR_Init		= 8,	//	Don't allow change from console at all,
 							// but can be set from the command line
-	CVAR_LATCH		= 16,	//	Save changes until server restart
-	CVAR_ROM		= 32,	//	Display only, cannot be set by user at all
-	CVAR_CHEAT		= 64,	//	Can not be changed if cheats are disabled
-	CVAR_MODIFIED	= 128,	//	Set each time the cvar is changed
+	CVAR_Latch		= 16,	//	Save changes until server restart
+	CVAR_Rom		= 32,	//	Display only, cannot be set by user at all
+	CVAR_Cheat		= 64,	//	Can not be changed if cheats are disabled
+	CVAR_Modified	= 128,	//	Set each time the cvar is changed
 };
 
 //
 //	Console variable
 //
-class TCvar
+class VCvar
 {
 protected:
 	const char*	Name;				//	Variable's name
@@ -48,11 +48,11 @@ protected:
 	int			Flags;				//	CVAR_ flags
 	int			IntValue;			//	atoi(string)
 	float		FloatValue;			//	atof(string)
-	TCvar*		Next;				//	For linked list if variables
+	VCvar*		Next;				//	For linked list if variables
 	VStr		LatchedString;		//	For CVAR_LATCH variables
 
 public:
-	TCvar(const char* AName, const char* ADefault, int AFlags = 0);
+	VCvar(const char* AName, const char* ADefault, int AFlags = 0);
 	void Register();
 	void Set(int value);
 	void Set(float value);
@@ -70,7 +70,7 @@ public:
 	static void Set(const char* var_name, float value);
 	static void Set(const char* var_name, const VStr& value);
 
-	static bool Command(int argc, const char** argv);
+	static bool Command(const TArray<VStr>& Args);
 	static void WriteVariables(FILE* f);
 
 	static void Unlatch();
@@ -81,19 +81,19 @@ public:
 private:
 	void DoSet(const VStr& value);
 
-	static TCvar*	Variables;
+	static VCvar*	Variables;
 	static bool		Initialised;
 	static bool		Cheating;
 
-	static TCvar* FindVariable(const char* name);
+	static VCvar* FindVariable(const char* name);
 };
 
 //	Cvar, that can be used as int variable
-class TCvarI : public TCvar
+class VCvarI : public VCvar
 {
 public:
-	TCvarI(const char* AName, const char* ADefault, int AFlags = 0)
-		: TCvar(AName, ADefault, AFlags)
+	VCvarI(const char* AName, const char* ADefault, int AFlags = 0)
+		: VCvar(AName, ADefault, AFlags)
 	{
 	}
 
@@ -102,7 +102,7 @@ public:
 		return IntValue;
 	}
 
-	TCvarI &operator = (int AValue)
+	VCvarI &operator = (int AValue)
 	{
 		Set(AValue);
 		return *this;
@@ -110,11 +110,11 @@ public:
 };
 
 //	Cvar, that can be used as float variable
-class TCvarF : public TCvar
+class VCvarF : public VCvar
 {
 public:
-	TCvarF(const char* AName, const char* ADefault, int AFlags = 0)
-		: TCvar(AName, ADefault, AFlags)
+	VCvarF(const char* AName, const char* ADefault, int AFlags = 0)
+		: VCvar(AName, ADefault, AFlags)
 	{
 	}
 
@@ -123,7 +123,7 @@ public:
 		return FloatValue;
 	}
 
-	TCvarF &operator = (float AValue)
+	VCvarF &operator = (float AValue)
 	{
 		Set(AValue);
 		return *this;
@@ -131,11 +131,11 @@ public:
 };
 
 //	Cvar, that can be used as char* variable
-class TCvarS : public TCvar
+class VCvarS : public VCvar
 {
 public:
-	TCvarS(const char* AName, const char* ADefault, int AFlags = 0)
-		: TCvar(AName, ADefault, AFlags)
+	VCvarS(const char* AName, const char* ADefault, int AFlags = 0)
+		: VCvar(AName, ADefault, AFlags)
 	{
 	}
 
@@ -144,7 +144,7 @@ public:
 		return *StringValue;
 	}
 
-	TCvarS &operator = (const char* AValue)
+	VCvarS &operator = (const char* AValue)
 	{
 		Set(AValue);
 		return *this;
@@ -154,9 +154,13 @@ public:
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.10  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.9  2002/07/23 16:29:55  dj_jl
 //	Replaced console streams with output device class.
 //	
@@ -164,7 +168,7 @@ public:
 //	Changed copyright year
 //	
 //	Revision 1.7  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
+//	Made VCvar a pure C++ class
 //	
 //	Revision 1.6  2001/10/04 17:18:23  dj_jl
 //	Implemented the rest of cvar flags

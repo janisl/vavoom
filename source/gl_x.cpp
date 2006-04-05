@@ -185,7 +185,7 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	}
 
 #ifdef USE_FULLSCREEN
-	if (vidmode_ext && !M_CheckParm("-window"))
+	if (vidmode_ext && !GArgs.CheckParm("-window"))
 	{
 		int best_fit;
 
@@ -393,7 +393,7 @@ void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update(void)
+void VOpenGLDrawer::Update()
 {
 	guard(VOpenGLDrawer::Update);
 	glFlush();
@@ -409,7 +409,7 @@ void VOpenGLDrawer::Update(void)
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown(void)
+void VOpenGLDrawer::Shutdown()
 {
 	guard(VOpenGLDrawer::Shutdown);
 	XLOCK();
@@ -463,9 +463,13 @@ void VOpenGLDrawer::Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.13  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
-//
+//	
 //	Revision 1.12  2005/03/28 07:26:54  dj_jl
 //	New OpenGL driver for Allegro.
 //	

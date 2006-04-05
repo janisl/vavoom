@@ -68,17 +68,17 @@ TClipPlane				view_clipplanes[4];
 
 int						r_visframecount;
 
-TCvarI					r_fog("r_fog", "0");
-TCvarF					r_fog_r("r_fog_r", "0.5");
-TCvarF					r_fog_g("r_fog_g", "0.5");
-TCvarF					r_fog_b("r_fog_b", "0.5");
-TCvarF					r_fog_start("r_fog_start", "1.0");
-TCvarF					r_fog_end("r_fog_end", "2048.0");
-TCvarF					r_fog_density("r_fog_density", "0.5");
+VCvarI					r_fog("r_fog", "0");
+VCvarF					r_fog_r("r_fog_r", "0.5");
+VCvarF					r_fog_g("r_fog_g", "0.5");
+VCvarF					r_fog_b("r_fog_b", "0.5");
+VCvarF					r_fog_start("r_fog_start", "1.0");
+VCvarF					r_fog_end("r_fog_end", "2048.0");
+VCvarF					r_fog_density("r_fog_density", "0.5");
 
-TCvarI					r_draw_particles("r_draw_particles", "1", CVAR_ARCHIVE);
+VCvarI					r_draw_particles("r_draw_particles", "1", CVAR_Archive);
 
-TCvarI					old_aspect("r_old_aspect_ratio", "0", CVAR_ARCHIVE);
+VCvarI					old_aspect("r_old_aspect_ratio", "0", CVAR_Archive);
 
 VDrawer					*Drawer;
 
@@ -90,11 +90,11 @@ float					PixelAspect;
 
 static FDrawerDesc		*DrawerList[DRAWER_MAX];
 
-static TCvarI			screen_size("screen_size", "10", CVAR_ARCHIVE);
+static VCvarI			screen_size("screen_size", "10", CVAR_Archive);
 static boolean			set_resolutioon_needed = true;
 
 // Angles in the SCREENWIDTH wide window.
-static TCvarF			fov("fov", "90");
+static VCvarF			fov("fov", "90");
 static float			old_fov = 90.0;
 
 static int				prev_old_aspect;
@@ -105,9 +105,9 @@ subsector_t				*r_viewleaf;
 subsector_t				*r_oldviewleaf;
 
 // if true, load all graphics at start
-static TCvarI			precache("precache", "1", CVAR_ARCHIVE);
+static VCvarI			precache("precache", "1", CVAR_Archive);
 
-static TCvarI			_driver("_driver", "0", CVAR_ROM);
+static VCvarI			_driver("_driver", "0", CVAR_Rom);
 
 // CODE --------------------------------------------------------------------
 
@@ -336,11 +336,11 @@ static void R_TransformFrustum(void)
 //
 //==========================================================================
 
-TCvarI			r_chasecam("r_chasecam", "0", CVAR_ARCHIVE);
-TCvarF			r_chase_dist("r_chase_dist", "32.0", CVAR_ARCHIVE);
-TCvarF			r_chase_up("r_chase_up", "32.0", CVAR_ARCHIVE);
-TCvarF			r_chase_right("r_chase_right", "0", CVAR_ARCHIVE);
-TCvarI			r_chase_front("r_chase_front", "0", CVAR_ARCHIVE);
+VCvarI			r_chasecam("r_chasecam", "0", CVAR_Archive);
+VCvarF			r_chase_dist("r_chase_dist", "32.0", CVAR_Archive);
+VCvarF			r_chase_up("r_chase_up", "32.0", CVAR_Archive);
+VCvarF			r_chase_right("r_chase_right", "0", CVAR_Archive);
+VCvarI			r_chase_front("r_chase_front", "0", CVAR_Archive);
 
 static void R_SetupFrame(void)
 {
@@ -457,16 +457,14 @@ int			r_numparticles;
 //
 //==========================================================================
 
-void R_InitParticles(void)
+void R_InitParticles()
 {
 	guard(R_InitParticles);
-	int		i;
+	const char* p = GArgs.CheckValue("-particles");
 
-	i = M_CheckParm("-particles");
-
-	if (i)
+	if (p)
 	{
-		r_numparticles = atoi(myargv[i + 1]);
+		r_numparticles = atoi(p);
 		if (r_numparticles < ABSOLUTE_MIN_PARTICLES)
 			r_numparticles = ABSOLUTE_MIN_PARTICLES;
 	}
@@ -904,7 +902,7 @@ void V_Init(void)
 		if (DIdx == -1)
 			DIdx = i;
 		//	Check for user driver selection.
-		if (DrawerList[i]->CmdLineArg && M_CheckParm(DrawerList[i]->CmdLineArg))
+		if (DrawerList[i]->CmdLineArg && GArgs.CheckParm(DrawerList[i]->CmdLineArg))
 			DIdx = i;
 	}
 	if (DIdx == -1)
@@ -938,9 +936,13 @@ void V_Shutdown(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.35  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.34  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

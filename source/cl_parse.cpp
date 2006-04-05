@@ -34,11 +34,11 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_ClearInput(void);
+void CL_ClearInput();
 void CL_PO_SpawnPolyobj(float x, float y, int tag);
 void CL_PO_TranslateToStartSpot(float originX, float originY, int tag);
 void CL_PO_Update(int i, float x, float y, float angle);
-void CL_SignonReply(void);
+void CL_SignonReply();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -112,7 +112,7 @@ static void CL_ReadMobjBase(clmobjbase_t &mobj)
 	mobj.sprite &= 0x3ff;
 }
 
-static void CL_ParseBaseline(void)
+static void CL_ParseBaseline()
 {
 	int		i;
 
@@ -205,7 +205,7 @@ static void CL_ReadMobj(int bits, VEntity* mobj, const clmobjbase_t &base)
 		mobj->ModelFrame = base.alias_frame;
 }
 
-static void CL_ParseUpdateMobj(void)
+static void CL_ParseUpdateMobj()
 {
 	guard(CL_ParseUpdateMobj);
 	int		i;
@@ -248,7 +248,7 @@ static void CL_ParseUpdateMobj(void)
 	unguard;
 }
 
-static void CL_ParseSecUpdate(void)
+static void CL_ParseSecUpdate()
 {
 	int			bits;
 	int			i;
@@ -277,7 +277,7 @@ static void CL_ParseSecUpdate(void)
 		CalcSecMinMaxs(&GClLevel->Sectors[i]);
 }
 
-static void CL_ParseViewData(void)
+static void CL_ParseViewData()
 {
 	int		i;
 	int		bits;
@@ -325,7 +325,7 @@ static void CL_ParseViewData(void)
 	}
 }
 
-static void CL_ParseStartSound(void)
+static void CL_ParseStartSound()
 {
 	word		sound_id;
 	word		origin_id;
@@ -352,7 +352,7 @@ static void CL_ParseStartSound(void)
 	S_StartSound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id, channel, volume);
 }
 
-static void CL_ParseStopSound(void)
+static void CL_ParseStopSound()
 {
 	word	origin_id;
 	int		channel;
@@ -365,13 +365,13 @@ static void CL_ParseStopSound(void)
 	S_StopSound(origin_id, channel);
 }
 
-static void CL_ParseStartSeq(void)
+static void CL_ParseStartSeq()
 {
 	int			origin_id;
 	float		x;
 	float		y;
 	float		z;
-	char		*name;
+	const char*	name;
 
 	origin_id = net_msg.ReadShort();
 	x = net_msg.ReadShort();
@@ -382,7 +382,7 @@ static void CL_ParseStartSeq(void)
 	SN_StartSequenceName(origin_id, TVec(x, y, z), name);
 }
 
-static void CL_ParseStopSeq(void)
+static void CL_ParseStopSeq()
 {
 	word	origin_id;
 
@@ -401,7 +401,7 @@ static void CL_ParseTime()
 	{
 		cls.signon = SIGNONS;
 		CL_SignonReply();
-		CmdBuf << "HideConsole\n";
+		GCmdBuf << "HideConsole\n";
 	}
 
 	if (cls.signon != SIGNONS)
@@ -461,9 +461,9 @@ static void CL_ParseTime()
 //
 //==========================================================================
 
-static void CL_ReadFromServerInfo(void)
+static void CL_ReadFromServerInfo()
 {
-	TCvar::SetCheating(!!atoi(Info_ValueForKey(cl->serverinfo, "sv_cheats")));
+	VCvar::SetCheating(!!atoi(Info_ValueForKey(cl->serverinfo, "sv_cheats")));
 }
 
 //==========================================================================
@@ -472,9 +472,9 @@ static void CL_ReadFromServerInfo(void)
 //
 //==========================================================================
 
-void CL_SetupLevel(void);
+void CL_SetupLevel();
 
-static void CL_ParseServerInfo(void)
+static void CL_ParseServerInfo()
 {
 	guard(CL_ParseServerInfo);
 	byte		ver;
@@ -545,12 +545,12 @@ static void CL_ParseServerInfo(void)
 //
 //==========================================================================
 
-static void CL_ParseIntermission(void)
+static void CL_ParseIntermission()
 {
 	int			i;
 	int			j;
 	mapInfo_t	ninfo;
-	char		*nextmap;
+	const char*	nextmap;
 
 	strcpy(im.leavemap, cl_level.mapname);
 	strcpy(im.leave_name, cl_level.level_name);
@@ -588,7 +588,7 @@ static void CL_ParseIntermission(void)
 //
 //==========================================================================
 
-static void CL_ParseSpriteList(void)
+static void CL_ParseSpriteList()
 {
 	int count = net_msg.ReadShort();
 	for (int i = 0; i < count; i++)
@@ -624,7 +624,7 @@ static void CL_ParseModel()
 			}
 		}
 	}
-	else if (TCvar::GetInt("r_models"))
+	else if (VCvar::GetInt("r_models"))
 	{
 		GCon->Logf("Can't find %s", name);
 	}
@@ -658,7 +658,7 @@ static void CL_ReadFromUserInfo(int)
 //
 //==========================================================================
 
-static void CL_ParseLineTransuc(void)
+static void CL_ParseLineTransuc()
 {
 	int i = net_msg.ReadShort();
 	int fuzz = net_msg.ReadByte();
@@ -671,7 +671,7 @@ static void CL_ParseLineTransuc(void)
 //
 //==========================================================================
 
-static void CL_ParseExtraFloor(void)
+static void CL_ParseExtraFloor()
 {
 	int i = net_msg.ReadShort();
 	int j = net_msg.ReadShort();
@@ -720,7 +720,7 @@ static void CL_ParseHeightSec()
 //
 //==========================================================================
 
-void CL_ParseServerMessage(void)
+void CL_ParseServerMessage()
 {
 	guard(CL_ParseServerMessage);
 	int			i;
@@ -742,7 +742,7 @@ void CL_ParseServerMessage(void)
 	// update command store from the packet
 	while (1)
 	{
-		if (net_msg.badread)
+		if (net_msg.BadRead)
 		{
 			GCon->Logf(NAME_Dev, "Length %d", net_msg.CurSize);
 			for (i = 0; i < net_msg.CurSize; i++)
@@ -752,7 +752,7 @@ void CL_ParseServerMessage(void)
 
 		net_msg >> cmd_type;
 
-		if (net_msg.badread)
+		if (net_msg.BadRead)
 			break; // Here this means end of packet
 
 		switch (cmd_type)
@@ -911,7 +911,7 @@ void CL_ParseServerMessage(void)
 			break;
 
 		 case svc_stringcmd:
-		 	CmdBuf << net_msg.ReadString();
+		 	GCmdBuf << net_msg.ReadString();
 			break;
 
 		 case svc_signonnum:
@@ -1067,7 +1067,7 @@ void CL_ParseServerMessage(void)
 			{
 				GCon->Logf(NAME_Dev, "  %d", (int)net_msg.Data[i]);
 			}
-			GCon->Logf(NAME_Dev, "ReadCount %d", net_msg.readcount);
+			GCon->Logf(NAME_Dev, "ReadCount %d", net_msg.ReadCount);
 			Host_Error("Invalid packet %d", cmd_type);
 			break;
 		}
@@ -1078,9 +1078,13 @@ void CL_ParseServerMessage(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.44  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.43  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.42  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	
@@ -1154,7 +1158,7 @@ void CL_ParseServerMessage(void)
 //	Some speedup
 //	
 //	Revision 1.18  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
+//	Made VCvar a pure C++ class
 //	
 //	Revision 1.17  2001/12/12 19:28:49  dj_jl
 //	Some little changes, beautification

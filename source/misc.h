@@ -33,13 +33,8 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-// Returns the position of the given parameter
-// in the arg list (0 if not found).
-void M_InitArgs(int argc, char **argv);
-int M_CheckParm(const char* check);
-
 //	Endianess handling
-void M_InitByteOrder(void);
+void M_InitByteOrder();
 extern bool GBigEndian;
 extern short (*LittleShort)(short);
 extern short (*BigShort)(short);
@@ -58,15 +53,16 @@ int PassFloat(float f);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern int		myargc;
-extern char**	myargv;
-
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.6  2002/02/15 19:10:32  dj_jl
 //	Added GBigEndian
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

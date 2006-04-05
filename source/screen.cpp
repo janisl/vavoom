@@ -184,15 +184,15 @@ static int		setwidth;
 static int		setheight;
 static int		setbpp;
 
-static TCvarI	menu_darkening("menu_darkening", "16", CVAR_ARCHIVE);
-static TCvarI	draw_pause("draw_pause", "1");
+static VCvarI	menu_darkening("menu_darkening", "16", CVAR_Archive);
+static VCvarI	draw_pause("draw_pause", "1");
 
-static TCvarI	screen_width("screen_width", "0", CVAR_ARCHIVE);
-static TCvarI	screen_height("screen_height", "0", CVAR_ARCHIVE);
-static TCvarI	screen_bpp("screen_bpp", "0", CVAR_ARCHIVE);
-static TCvarI	brightness("brightness", "0", CVAR_ARCHIVE);
+static VCvarI	screen_width("screen_width", "0", CVAR_Archive);
+static VCvarI	screen_height("screen_height", "0", CVAR_Archive);
+static VCvarI	screen_bpp("screen_bpp", "0", CVAR_Archive);
+static VCvarI	brightness("brightness", "0", CVAR_Archive);
 
-static TCvarI	draw_fps("draw_fps", "0", CVAR_ARCHIVE);
+static VCvarI	draw_fps("draw_fps", "0", CVAR_Archive);
 static double	fps_start = 0.0;
 static int		fps_frames = 0;
 static int		show_fps = 0;
@@ -205,7 +205,7 @@ static int		show_fps = 0;
 //
 //**************************************************************************
 
-static TCvarS screenshot_type("screenshot_type", "pcx", CVAR_ARCHIVE);
+static VCvarS screenshot_type("screenshot_type", "pcx", CVAR_Archive);
 
 void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	byte* palette, bool bot2top);
@@ -529,18 +529,18 @@ static void CheckResolutionChange(void)
 
 COMMAND(SetResolution)
 {
-   	if (Argc() == 3)
+   	if (Args.Num() == 3)
 	{
-     	setwidth = superatoi(Argv(1));
-		setheight = superatoi(Argv(2));
+     	setwidth = superatoi(*Args[1]);
+		setheight = superatoi(*Args[2]);
 		setbpp = ScreenBPP;
 		setresolutionneeded = true;
 	}
-   	else if (Argc() == 4)
+   	else if (Args.Num() == 4)
 	{
-     	setwidth = superatoi(Argv(1));
-		setheight = superatoi(Argv(2));
-		setbpp = superatoi(Argv(3));
+     	setwidth = superatoi(*Args[1]);
+		setheight = superatoi(*Args[2]);
+		setbpp = superatoi(*Args[3]);
 		setresolutionneeded = true;
 	}
     else
@@ -716,9 +716,13 @@ void SCR_SetVirtualScreen(int Width, int Height)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.35  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.34  2006/03/06 13:05:51  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

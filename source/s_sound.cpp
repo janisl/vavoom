@@ -96,10 +96,10 @@ static int qmus2mid(VStream& InStrm, VStream& OutStrm);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TCvarF					sfx_volume("sfx_volume", "0.5", CVAR_ARCHIVE);
-TCvarF					music_volume("music_volume", "0.5", CVAR_ARCHIVE);
-TCvarI					swap_stereo("swap_stereo", "0", CVAR_ARCHIVE);
-TCvarI					s_channels("s_channels", "16", CVAR_ARCHIVE);
+VCvarF					sfx_volume("sfx_volume", "0.5", CVAR_Archive);
+VCvarF					music_volume("music_volume", "0.5", CVAR_Archive);
+VCvarI					swap_stereo("swap_stereo", "0", CVAR_Archive);
+VCvarI					s_channels("s_channels", "16", CVAR_Archive);
 
 VSoundDevice*			GSoundDevice;
 VMidiDevice*			GMidiDevice;
@@ -119,7 +119,7 @@ static byte*				SoundCurve;
 static VName				MapSong;
 static int					MapCDTrack;
 
-static TCvarI				cd_music("use_cd_music", "0", CVAR_ARCHIVE);
+static VCvarI				cd_music("use_cd_music", "0", CVAR_Archive);
 static boolean				CDMusic = false;
 
 static FSoundDeviceDesc*	SoundDeviceList[SNDDRV_MAX];
@@ -202,7 +202,7 @@ void S_Init()
 	guard(S_Init);
 	//	Initialise sound driver.
 	int SIdx = -1;
-	if (!M_CheckParm("-nosound") && !M_CheckParm("-nosfx"))
+	if (!GArgs.CheckParm("-nosound") && !GArgs.CheckParm("-nosfx"))
 	{
 		for (int i = 0; i < SNDDRV_MAX; i++)
 		{
@@ -213,7 +213,7 @@ void S_Init()
 				SIdx = i;
 			//	Check for user selection.
 			if (SoundDeviceList[i]->CmdLineArg &&
-				M_CheckParm(SoundDeviceList[i]->CmdLineArg))
+				GArgs.CheckParm(SoundDeviceList[i]->CmdLineArg))
 				SIdx = i;
 		}
 	}
@@ -230,7 +230,7 @@ void S_Init()
 
 	//	Initialise MIDI driver.
 	int MIdx = -1;
-	if (!M_CheckParm("-nosound") && !M_CheckParm("-nomusic"))
+	if (!GArgs.CheckParm("-nosound") && !GArgs.CheckParm("-nomusic"))
 	{
 		for (int i = 0; i < MIDIDRV_MAX; i++)
 		{
@@ -241,7 +241,7 @@ void S_Init()
 				MIdx = i;
 			//	Check for user selection.
 			if (MidiDeviceList[i]->CmdLineArg &&
-				M_CheckParm(MidiDeviceList[i]->CmdLineArg))
+				GArgs.CheckParm(MidiDeviceList[i]->CmdLineArg))
 				MIdx = i;
 		}
 	}
@@ -259,7 +259,7 @@ void S_Init()
 
 	//	Initialise CD audio driver.
 	int CDIdx = -1;
-	if (!M_CheckParm("-nosound") && !M_CheckParm("-nocdaudio"))
+	if (!GArgs.CheckParm("-nosound") && !GArgs.CheckParm("-nocdaudio"))
 	{
 		for (int i = 0; i < CDDRV_MAX; i++)
 		{
@@ -270,7 +270,7 @@ void S_Init()
 				CDIdx = i;
 			//	Check for user selection.
 			if (CDAudioDeviceList[i]->CmdLineArg &&
-				M_CheckParm(CDAudioDeviceList[i]->CmdLineArg))
+				GArgs.CheckParm(CDAudioDeviceList[i]->CmdLineArg))
 				CDIdx = i;
 		}
 	}
@@ -287,7 +287,7 @@ void S_Init()
 	}
 
 	//	Initialise stream music player.
-	if (GSoundDevice && !M_CheckParm("-nomusic"))
+	if (GSoundDevice && !GArgs.CheckParm("-nomusic"))
 	{
 		GStreamMusicPlayer = new(PU_STATIC) VStreamMusicPlayer();
 		GStreamMusicPlayer->Init();
@@ -717,16 +717,16 @@ void S_StartSong(VName song, int track, boolean loop)
 	if (CDMusic)
 	{
 		if (loop)
-			CmdBuf << "CD Loop " << VStr(track) << "\n";
+			GCmdBuf << "CD Loop " << VStr(track) << "\n";
 		else
-			CmdBuf << "CD Play " << VStr(track) << "\n";
+			GCmdBuf << "CD Play " << VStr(track) << "\n";
 	}
 	else
 	{
 		if (loop)
-			CmdBuf << "Music Loop " << *song << "\n";
+			GCmdBuf << "Music Loop " << *song << "\n";
 		else
-			CmdBuf << "Music Play " << *song << "\n";
+			GCmdBuf << "Music Play " << *song << "\n";
 	}
 	unguard;
 }
@@ -737,16 +737,16 @@ void S_StartSong(VName song, int track, boolean loop)
 //
 //==========================================================================
 
-void S_PauseSound(void)
+void S_PauseSound()
 {
 	guard(S_PauseSound);
 	if (CDMusic)
 	{
-		CmdBuf << "CD Pause\n";
+		GCmdBuf << "CD Pause\n";
 	}
 	else
 	{
-		CmdBuf << "Music Pause\n";
+		GCmdBuf << "Music Pause\n";
 	}
 	unguard;
 }
@@ -757,16 +757,16 @@ void S_PauseSound(void)
 //
 //==========================================================================
 
-void S_ResumeSound(void)
+void S_ResumeSound()
 {
 	guard(S_ResumeSound);
 	if (CDMusic)
 	{
-		CmdBuf << "CD resume\n";
+		GCmdBuf << "CD resume\n";
 	}
 	else
 	{
-		CmdBuf << "Music resume\n";
+		GCmdBuf << "Music resume\n";
 	}
 	unguard;
 }
@@ -828,7 +828,7 @@ void S_MusicChanged()
 //
 //==========================================================================
 
-void S_UpdateSounds(void)
+void S_UpdateSounds()
 {
 	guard(S_UpdateSounds);
 	//	Check sound volume.
@@ -854,13 +854,13 @@ void S_UpdateSounds(void)
 	//	Check for CD music change.
 	if (cd_music && !CDMusic)
 	{
-		CmdBuf << "Music Stop\n";
+		GCmdBuf << "Music Stop\n";
 		CDMusic = true;
 		StartMusic();
 	}
 	if (!cd_music && CDMusic)
 	{
-		CmdBuf << "CD Stop\n";
+		GCmdBuf << "CD Stop\n";
 		CDMusic = false;
 		StartMusic();
 	}
@@ -1040,12 +1040,12 @@ COMMAND(Music)
 		return;
 	}
 
-	if (Argc() < 2)
+	if (Args.Num() < 2)
 	{
 		return;
 	}
 
-	const char* command = Argv(1);
+	const char* command = *Args[1];
 
 	if (!stricmp(command, "on"))
 	{
@@ -1070,13 +1070,23 @@ COMMAND(Music)
 
 	if (!stricmp(command, "play"))
 	{
-		PlaySong(*VName(Argv(2), VName::AddLower8), false);
+		if (Args.Num() < 3)
+		{
+			GCon->Log("Please enter name of the song.");
+			return;
+		}
+		PlaySong(*VName(*Args[2], VName::AddLower8), false);
 		return;
 	}
 
 	if (!stricmp(command, "loop"))
 	{
-		PlaySong(*VName(Argv(2), VName::AddLower8), true);
+		if (Args.Num() < 3)
+		{
+			GCon->Log("Please enter name of the song.");
+			return;
+		}
+		PlaySong(*VName(*Args[2], VName::AddLower8), true);
 		return;
 	}
 
@@ -1137,15 +1147,15 @@ COMMAND(Music)
 COMMAND(CD)
 {
 	guard(COMMAND CD);
-	char	*command;
+	const char*		command;
 
 	if (!GCDAudioDevice)
 		return;
 
-	if (Argc() < 2)
+	if (Args.Num() < 2)
 		return;
 
-	command = Argv(1);
+	command = *Args[1];
 
 	if (!stricmp(command, "on"))
 	{
@@ -1179,7 +1189,7 @@ COMMAND(CD)
 		int		n;
 		int		ret;
 
-		ret = Argc() - 2;
+		ret = Args.Num() - 2;
 		if (ret <= 0)
 		{
 			for (n = 1; n < 100; n++)
@@ -1188,7 +1198,7 @@ COMMAND(CD)
 			return;
 		}
 		for (n = 1; n <= ret; n++)
-			GCDAudioDevice->Remap[n] = atoi(Argv(n + 1));
+			GCDAudioDevice->Remap[n] = atoi(*Args[n + 1]);
 		return;
 	}
 
@@ -1224,13 +1234,23 @@ COMMAND(CD)
 
 	if (!stricmp(command, "play"))
 	{
-		GCDAudioDevice->Play(atoi(Argv(2)), false);
+		if (Args.Num() < 2)
+		{
+			GCon->Log("Please enter CD track number");
+			return;
+		}
+		GCDAudioDevice->Play(atoi(*Args[2]), false);
 		return;
 	}
 
 	if (!stricmp(command, "loop"))
 	{
-		GCDAudioDevice->Play(atoi(Argv(2)), true);
+		if (Args.Num() < 2)
+		{
+			GCon->Log("Please enter CD track number");
+			return;
+		}
+		GCDAudioDevice->Play(atoi(*Args[2]), true);
 		return;
 	}
 
@@ -1853,9 +1873,13 @@ bool VStreamMusicPlayer::IsPlaying()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.31  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.30  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.29  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

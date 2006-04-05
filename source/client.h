@@ -110,7 +110,7 @@ struct client_static_t
 	// connection information
 	int				signon;			// 0 to SIGNONS
 	qsocket_t		*netcon;
-	TMessage		message;		// writing buffer to send to server
+	VMessage		message;		// writing buffer to send to server
 };
 
 class VClientState : public VObject
@@ -194,9 +194,13 @@ extern TProgs			clpr;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/05 17:23:37  dj_jl
+//	More dynamic string usage in console command class.
+//	Added class for handling command line arguments.
+//
 //	Revision 1.15  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.14  2006/02/22 20:33:51  dj_jl
 //	Created stream class.
 //	
