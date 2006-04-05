@@ -23,25 +23,28 @@
 //**
 //**************************************************************************
 
-int			Loop_Init(void);
-void		Loop_Listen(boolean state);
-void		Loop_SearchForHosts(boolean xmit);
-qsocket_t 	*Loop_Connect(char *host);
-qsocket_t 	*Loop_CheckNewConnections(void);
-int			Loop_GetMessage(qsocket_t *sock);
-int			Loop_SendMessage(qsocket_t *sock, TSizeBuf *data);
-int			Loop_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data);
-boolean		Loop_CanSendMessage(qsocket_t *sock);
-boolean		Loop_CanSendUnreliableMessage(qsocket_t *sock);
-void		Loop_Close(qsocket_t *sock);
-void		Loop_Shutdown(void);
+int			Loop_Init();
+void		Loop_Listen(bool state);
+void		Loop_SearchForHosts(bool xmit);
+qsocket_t*	Loop_Connect(const char* host);
+qsocket_t*	Loop_CheckNewConnections();
+int			Loop_GetMessage(qsocket_t* sock);
+int			Loop_SendMessage(qsocket_t* sock, VMessage* data);
+int			Loop_SendUnreliableMessage(qsocket_t* sock, VMessage* data);
+bool		Loop_CanSendMessage(qsocket_t* sock);
+bool		Loop_CanSendUnreliableMessage(qsocket_t* sock);
+void		Loop_Close(qsocket_t* sock);
+void		Loop_Shutdown();
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -70,7 +70,7 @@ static char			packetBuffer[NET_DATAGRAMSIZE + 4];
 //
 //==========================================================================
 
-int WIPX_Init(void)
+int WIPX_Init()
 {
 	guard(WIPX_Init);
 	int			i;
@@ -79,7 +79,7 @@ int WIPX_Init(void)
 	char		*p;
 	int			r;
 
-	if (M_CheckParm("-noipx"))
+	if (GArgs.CheckParm("-noipx"))
 		return -1;
 
 	if (winsock_initialized == 0)
@@ -153,7 +153,7 @@ int WIPX_Init(void)
 //
 //==========================================================================
 
-void WIPX_Shutdown(void)
+void WIPX_Shutdown()
 {
 	guard(WIPX_Shutdown);
 	WIPX_Listen(false);
@@ -169,7 +169,7 @@ void WIPX_Shutdown(void)
 //
 //==========================================================================
 
-void WIPX_Listen(boolean state)
+void WIPX_Listen(bool state)
 {
 	guard(WIPX_Listen);
 	// enable listening
@@ -277,7 +277,7 @@ int WIPX_Connect(int, sockaddr_t*)
 //
 //==========================================================================
 
-int WIPX_CheckNewConnections(void)
+int WIPX_CheckNewConnections()
 {
 	guard(WIPX_CheckNewConnections);
 	dword		available;
@@ -400,7 +400,7 @@ char *WIPX_AddrToString(sockaddr_t *addr)
 //
 //==========================================================================
 
-int WIPX_StringToAddr(char *string, sockaddr_t *addr)
+int WIPX_StringToAddr(const char* string, sockaddr_t* addr)
 {
 	guard(WIPX_StringToAddr);
 	int  val;
@@ -442,7 +442,7 @@ int WIPX_StringToAddr(char *string, sockaddr_t *addr)
 //
 //==========================================================================
 
-int WIPX_GetSocketAddr(int handle, sockaddr_t *addr)
+int WIPX_GetSocketAddr(int handle, sockaddr_t* addr)
 {
 	guard(WIPX_GetSocketAddr);
 	int 	socket = ipxsocket[handle];
@@ -464,7 +464,7 @@ int WIPX_GetSocketAddr(int handle, sockaddr_t *addr)
 //
 //==========================================================================
 
-int WIPX_GetNameFromAddr(sockaddr_t *addr, char *name)
+int WIPX_GetNameFromAddr(sockaddr_t* addr, char* name)
 {
 	guard(WIPX_GetNameFromAddr);
 	strcpy(name, WIPX_AddrToString(addr));
@@ -478,7 +478,7 @@ int WIPX_GetNameFromAddr(sockaddr_t *addr, char *name)
 //
 //==========================================================================
 
-int WIPX_GetAddrFromName(char *name, sockaddr_t *addr)
+int WIPX_GetAddrFromName(const char* name, sockaddr_t* addr)
 {
 	guard(WIPX_GetAddrFromName);
 	int		n;
@@ -509,7 +509,7 @@ int WIPX_GetAddrFromName(char *name, sockaddr_t *addr)
 //
 //==========================================================================
 
-int WIPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
+int WIPX_AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
 	guard(WIPX_AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
@@ -534,7 +534,7 @@ int WIPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 //
 //==========================================================================
 
-int WIPX_GetSocketPort(sockaddr_t *addr)
+int WIPX_GetSocketPort(sockaddr_t* addr)
 {
 	guard(WIPX_GetSocketPort);
 	return ntohs(((sockaddr_ipx *)addr)->sa_socket);
@@ -547,7 +547,7 @@ int WIPX_GetSocketPort(sockaddr_t *addr)
 //
 //==========================================================================
 
-int WIPX_SetSocketPort(sockaddr_t *addr, int port)
+int WIPX_SetSocketPort(sockaddr_t* addr, int port)
 {
 	guard(WIPX_SetSocketPort);
 	((sockaddr_ipx *)addr)->sa_socket = htons((word)port);
@@ -558,9 +558,12 @@ int WIPX_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.9  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.8  2002/05/18 16:56:35  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

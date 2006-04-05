@@ -47,387 +47,467 @@
 
 //==========================================================================
 //
-//  TMessage::WriteChar
+//  VMessage::Alloc
 //
 //==========================================================================
 
-TMessage &TMessage::operator << (char c)
+void VMessage::Alloc(vint32 startsize)
 {
-	byte    *buf;
-	
-	buf = (byte*)GetSpace(1);
-	buf[0] = c;
-
-	return *this;
+	guard(VMessage::Alloc);
+	int AllocSize = startsize;
+	if (AllocSize < 256)
+		AllocSize = 256;
+	Data = (vuint8*)Z_Malloc(AllocSize, PU_STATIC, 0);
+	MaxSize = AllocSize;
+	CurSize = 0;
+	Overflowed = false;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::WriteShort
+//  VMessage::Free
 //
 //==========================================================================
 
-TMessage &TMessage::operator << (short c)
+void VMessage::Free()
 {
-	byte    *buf;
-	
-	buf = (byte*)GetSpace(2);
+	guard(VMessage::Free);
+	Z_Free(Data);
+	Data = NULL;
+	MaxSize = 0;
+	CurSize = 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessage::Clear
+//
+//==========================================================================
+
+void VMessage::Clear()
+{
+	CurSize = 0;
+}
+
+//==========================================================================
+//
+//  VMessage::GetSpace
+//
+//==========================================================================
+
+void* VMessage::GetSpace(vint32 length)
+{
+	guard(VMessage::GetSpace);
+	if (CurSize + length > MaxSize)
+	{
+		if (!AllowOverflow)
+			Sys_Error("TSizeBuf::GetSpace: overflow without allowoverflow set");
+
+		if (length > MaxSize)
+			Sys_Error("TSizeBuf::GetSpace: %i is > full buffer size", length);
+
+		Overflowed = true;
+		GCon->Log("TSizeBuf::GetSpace: overflow");
+		Clear();
+	}
+
+	void* data = Data + CurSize;
+	CurSize += length;
+
+	return data;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessage::Write
+//
+//==========================================================================
+
+void VMessage::Write(const void* data, vint32 length)
+{
+	guard(VMessage::Write);
+	memcpy(GetSpace(length), data, length);
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessage::operator << vint8
+//
+//==========================================================================
+
+VMessage& VMessage::operator << (vint8 c)
+{
+	guard(VMessage::operator << vint8);
+	vuint8* buf = (vuint8*)GetSpace(1);
+	buf[0] = c;
+
+	return *this;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessage::operator << vint16
+//
+//==========================================================================
+
+VMessage& VMessage::operator << (vint16 c)
+{
+	guard(VMessage::operator << vint16);
+	vuint8* buf = (vuint8*)GetSpace(2);
 	buf[0] = c & 0xff;
 	buf[1] = (c >> 8) & 0xff;
 
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::WriteLong
+//  VMessage::operator << vint32
 //
 //==========================================================================
 
-TMessage &TMessage::operator << (int c)
+VMessage& VMessage::operator << (vint32 c)
 {
-	byte    *buf;
-	
-	buf = (byte*)GetSpace(4);
+	guard(VMessage::operator << vint32);
+	vuint8* buf = (vuint8*)GetSpace(4);
 	buf[0] =  c        & 0xff;
 	buf[1] = (c >>  8) & 0xff;
 	buf[2] = (c >> 16) & 0xff;
 	buf[3] = (c >> 24) & 0xff;
 
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::WriteFloat
+//  VMessage::operator << float
 //
 //==========================================================================
 
-TMessage &TMessage::operator << (float f)
+VMessage& VMessage::operator << (float f)
 {
-	union
-	{
-		float   f;
-		int     l;
-	} dat;
-	
-	dat.f = f;
-	dat.l = LittleLong(dat.l);
-	
-	Write(&dat.l, 4);
+	guard(VMessage::operator << float);
+	vint32 c = *(vint32*)&f;
+	vuint8* buf = (vuint8*)GetSpace(4);
+	buf[0] =  c        & 0xff;
+	buf[1] = (c >>  8) & 0xff;
+	buf[2] = (c >> 16) & 0xff;
+	buf[3] = (c >> 24) & 0xff;
 
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::WriteString
+//  VMessage::operator << const char*
 //
 //==========================================================================
 
-TMessage &TMessage::operator << (const char *s)
+VMessage& VMessage::operator << (const char* s)
 {
+	guard(VMessage::operator << const char*);
 	if (!s)
 		Write("", 1);
 	else
 		Write(s, strlen(s) + 1);
 
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::WriteString
+//  VMessage::operator << VStr
 //
 //==========================================================================
 
-TMessage &TMessage::operator << (const VStr& s)
+VMessage& VMessage::operator << (const VStr& s)
 {
+	guard(VMessage::operator << VStr);
 	return *this << *s;
+	unguard;
 }
 
 //==========================================================================
 //
-//
+//	VMessage::operator << VMessage
 //
 //==========================================================================
 
-TMessage &TMessage::operator << (const TMessage &msg)
+VMessage& VMessage::operator << (const VMessage &msg)
 {
+	guard(VMessage::operator << VMessage);
 	Write(msg.Data, msg.CurSize);
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::BeginReading
+//  VMessage::BeginReading
 //
 //==========================================================================
 
-void TMessage::BeginReading(void)
+void VMessage::BeginReading()
 {
-	readcount = 0;
-	badread = false;
+	ReadCount = 0;
+	BadRead = false;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadChar
+//  VMessage::operator >> vint8
+//
+//	Returns -1 and sets msg_badread if no more characters are available.
 //
 //==========================================================================
 
-// returns -1 and sets msg_badread if no more characters are available
-TMessage &TMessage::operator >> (char &c)
+VMessage& VMessage::operator >> (vint8& c)
 {
-	if (readcount + 1 > CurSize)
+	guard(VMessage::operator >> vint8);
+	if (ReadCount + 1 > CurSize)
 	{
-		badread = true;
+		BadRead = true;
 		c = -1;
 	}
 	else
 	{
-		c = (signed char)Data[readcount];
-		readcount++;
+		c = (vint8)Data[ReadCount];
+		ReadCount++;
 	}
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadShort
+//  VMessage::operator >> vint16
 //
 //==========================================================================
 
-TMessage &TMessage::operator >> (short &c)
+VMessage& VMessage::operator >> (vint16& c)
 {
-	if (readcount + 2 > CurSize)
+	guard(VMessage::operator >> vint16);
+	if (ReadCount + 2 > CurSize)
 	{
-		badread = true;
-		c = -1;
-	}
-	else
-    {
-		c = (short)(Data[readcount] + (Data[readcount + 1] << 8));
-		readcount += 2;
-	}
-	return *this;
-}
-
-//==========================================================================
-//
-//  TMessage::ReadLong
-//
-//==========================================================================
-
-TMessage &TMessage::operator >> (int &c)
-{
-	if (readcount + 4 > CurSize)
-	{
-		badread = true;
+		BadRead = true;
 		c = -1;
 	}
 	else
 	{
-		c = Data[readcount]
-			+ (Data[readcount + 1] << 8)
-			+ (Data[readcount + 2] << 16)
-			+ (Data[readcount + 3] << 24);
-		readcount += 4;
+		c = (vint16)(Data[ReadCount] + (Data[ReadCount + 1] << 8));
+		ReadCount += 2;
 	}
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadFloat
+//  VMessage::operator >> vint32
 //
 //==========================================================================
 
-TMessage &TMessage::operator >> (float &f)
+VMessage& VMessage::operator >> (vint32& c)
 {
-	if (readcount + 4 > CurSize)
+	guard(VMessage::operator >> vint32);
+	if (ReadCount + 4 > CurSize)
 	{
-		badread = true;
+		BadRead = true;
+		c = -1;
+	}
+	else
+	{
+		c = Data[ReadCount]
+			+ (Data[ReadCount + 1] << 8)
+			+ (Data[ReadCount + 2] << 16)
+			+ (Data[ReadCount + 3] << 24);
+		ReadCount += 4;
+	}
+	return *this;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VMessage::operator >> float
+//
+//==========================================================================
+
+VMessage& VMessage::operator >> (float& f)
+{
+	guard(VMessage::operator >> float);
+	if (ReadCount + 4 > CurSize)
+	{
+		BadRead = true;
 		f = -1;
 	}
 	else
 	{
-		union
-		{
-			byte    b[4];
-			float   f;
-			int     l;
-		} dat;
-	
-		dat.b[0] = Data[readcount];
-		dat.b[1] = Data[readcount + 1];
-		dat.b[2] = Data[readcount + 2];
-		dat.b[3] = Data[readcount + 3];
-		readcount += 4;
-		dat.l = LittleLong(dat.l);
-		f = dat.f;
+		vint32 c = Data[ReadCount]
+				+ (Data[ReadCount + 1] << 8)
+				+ (Data[ReadCount + 2] << 16)
+				+ (Data[ReadCount + 3] << 24);
+		ReadCount += 4;
+		f = *(float*)&c;
 	}
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadString
+//  VMessage::operator >> const char*
 //
 //==========================================================================
 
-TMessage &TMessage::operator >> (char *&s)
+VMessage& VMessage::operator >> (const char*& s)
 {
+	guard(VMessage::operator >> const char*);
 	s = ReadString();
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadString
+//  VMessage::operator >> VStr
 //
 //==========================================================================
 
-TMessage &TMessage::operator >> (VStr& s)
+VMessage& VMessage::operator >> (VStr& s)
 {
+	guard(VMessage::operator >> VStr);
 	s = ReadString();
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadString
+//  VMessage::ReadString
 //
 //==========================================================================
 
-char *TMessage::ReadString(void)
+const char* VMessage::ReadString()
 {
-	static char     string[2048];
-	int             l, c;
-	
+	guard(VMessage::ReadString);
+	static char		string[2048];
+	vint32			l, c;
+
 	l = 0;
 	do
 	{
-		if (readcount + 1 > CurSize)
+		if (ReadCount + 1 > CurSize)
 		{
-			badread = true;
+			BadRead = true;
 			c = -1;
 		}
 		else
 		{
-			c = (signed char)Data[readcount];
-			readcount++;
+			c = (signed char)Data[ReadCount];
+			ReadCount++;
 		}
 		if (c == -1 || c == 0)
 			break;
 		string[l] = c;
 		l++;
-	} while (l < (int)sizeof(string) - 1);
-	
+	} while (l < (vint32)sizeof(string) - 1);
+
 	string[l] = 0;
-	
+
 	return string;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadString
+//  VMessage::operator >> VMessage
 //
 //==========================================================================
 
-TMessage &TMessage::operator >> (TMessage &msg)
+VMessage& VMessage::operator >> (VMessage& msg)
 {
+	guard(VMessage::operator >> VMessage);
 	msg.Clear();
-	if (!badread)
+	if (!BadRead)
 	{
-		msg.Write(Data + readcount, CurSize - readcount);
-		readcount = CurSize;
+		msg.Write(Data + ReadCount, CurSize - ReadCount);
+		ReadCount = CurSize;
 	}
 	return *this;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadChar
+//  VMessage::ReadChar
+//
+//	Returns -1 and sets msg_badread if no more characters are available.
 //
 //==========================================================================
 
-// returns -1 and sets msg_badread if no more characters are available
-byte TMessage::ReadByte(void)
+vuint8 VMessage::ReadByte()
 {
-	byte	c;
+	guard(VMessage::ReadByte);
+	vuint8	c;
 
-	if (readcount + 1 > CurSize)
+	if (ReadCount + 1 > CurSize)
 	{
-		badread = true;
+		BadRead = true;
 		c = 0xff;
 	}
 	else
 	{
-		c = Data[readcount];
-		readcount++;
+		c = Data[ReadCount];
+		ReadCount++;
 	}
 	return c;
+	unguard;
 }
 
 //==========================================================================
 //
-//  TMessage::ReadShort
+//  VMessage::ReadShort
 //
 //==========================================================================
 
-short TMessage::ReadShort(void)
+vint16 VMessage::ReadShort()
 {
-	short	c;
+	guard(VMessage::ReadShort);
+	vint16	c;
 
-	if (readcount + 2 > CurSize)
+	if (ReadCount + 2 > CurSize)
 	{
-		badread = true;
+		BadRead = true;
 		c = -1;
 	}
 	else
-    {
-		c = (short)(Data[readcount] + (Data[readcount + 1] << 8));
-		readcount += 2;
+	{
+		c = (vint16)(Data[ReadCount] + (Data[ReadCount + 1] << 8));
+		ReadCount += 2;
 	}
 	return c;
+	unguard;
 }
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
-
-#if 0
-void MSG_WriteCoord (sizebuf_t *sb, float f)
-{
-	MSG_WriteShort (sb, (int)(f*8));
-}
-
-void MSG_WriteAngle (sizebuf_t *sb, float f)
-{
-	MSG_WriteByte (sb, ((int)f*256/360) & 255);
-}
-
-float MSG_ReadCoord (void)
-{
-	return MSG_ReadShort() * (1.0/8);
-}
-
-float MSG_ReadAngle (void)
-{
-	return MSG_ReadChar() * (360.0/256);
-}
-
-#endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/04/05 17:21:00  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.5  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

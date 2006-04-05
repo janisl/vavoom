@@ -77,7 +77,7 @@ int WINS_Init()
 	char	*p;
 	int		r;
 
-	if (M_CheckParm("-noudp"))
+	if (GArgs.CheckParm("-noudp"))
 		return -1;
 
 	if (winsock_initialized == 0)
@@ -121,20 +121,13 @@ int WINS_Init()
 		hostname = buff;
 	}
 
-	i = M_CheckParm("-ip");
-	if (i)
+	const char* pp = GArgs.CheckValue("-ip");
+	if (pp)
 	{
-		if (i < myargc-1)
-		{
-			myAddr = inet_addr(myargv[i + 1]);
-			if (myAddr == INADDR_NONE)
-				Sys_Error("%s is not a valid IP address", myargv[i + 1]);
-			strcpy(my_tcpip_address, myargv[i + 1]);
-		}
-		else
-		{
-			Sys_Error ("NET_Init: you must specify an IP address after -ip");
-		}
+		myAddr = inet_addr(pp);
+		if (myAddr == INADDR_NONE)
+			Sys_Error("%s is not a valid IP address", pp);
+		strcpy(my_tcpip_address, pp);
 	}
 	else
 	{
@@ -250,7 +243,7 @@ static void WINS_GetLocalAddress()
 //
 //==========================================================================
 
-void WINS_Listen(boolean state)
+void WINS_Listen(bool state)
 {
 	guard(WINS_Listen);
 	if (state)
@@ -460,7 +453,7 @@ char *WINS_AddrToString(sockaddr_t *addr)
 //
 //==========================================================================
 
-int WINS_StringToAddr(char *string, sockaddr_t *addr)
+int WINS_StringToAddr(const char *string, sockaddr_t *addr)
 {
 	guard(WINS_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
@@ -530,7 +523,7 @@ int WINS_GetNameFromAddr(sockaddr_t *addr, char *name)
 //
 //==========================================================================
 
-static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
+static int PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 {
 	guard(PartialIPAddress);
 	char buff[256];
@@ -587,7 +580,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 //
 //==========================================================================
 
-int WINS_GetAddrFromName(char *name, sockaddr_t *addr)
+int WINS_GetAddrFromName(const char *name, sockaddr_t *addr)
 {
 	guard(WINS_GetAddrFromName);
 	hostent *hostentry;
@@ -659,9 +652,12 @@ int WINS_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.10  2006/03/20 20:02:21  dj_jl
 //	Accept zero length packets.
-//
+//	
 //	Revision 1.9  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

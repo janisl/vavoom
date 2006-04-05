@@ -59,24 +59,24 @@ int				DEFAULTnet_hostport = 26000;
 char    		my_ipx_address[NET_NAMELEN];
 char    		my_tcpip_address[NET_NAMELEN];
 
-boolean			serialAvailable;
-boolean			ipxAvailable;
-boolean			tcpipAvailable;
+bool			serialAvailable;
+bool			ipxAvailable;
+bool			tcpipAvailable;
 
 int				net_driverlevel;
 
 double			net_time;
 
-TMessage		net_msg;
+VMessage		net_msg;
 
 int				hostCacheCount;
 hostcache_t		hostcache[HOSTCACHESIZE];
 
-qsocket_t		*net_activeSockets = NULL;
-qsocket_t		*net_freeSockets = NULL;
+qsocket_t*		net_activeSockets = NULL;
+qsocket_t*		net_freeSockets = NULL;
 
-TCvarS			hostname("hostname", "UNNAMED");
-TCvarF			net_messagetimeout("net_messagetimeout", "300");
+VCvarS			hostname("hostname", "UNNAMED");
+VCvarF			net_messagetimeout("net_messagetimeout", "300");
 
 int messagesSent = 0;
 int messagesReceived = 0;
@@ -84,10 +84,10 @@ int unreliableMessagesSent = 0;
 int unreliableMessagesReceived = 0;
 
 #ifdef CLIENT
-boolean			slistInProgress = false;
-boolean			slistSilent = false;
-boolean			slistLocal = true;
-boolean			slistSorted = true;
+bool			slistInProgress = false;
+bool			slistSilent = false;
+bool			slistLocal = true;
+bool			slistSorted = true;
 static double	slistStartTime;
 static int		slistLastShown;
 
@@ -97,7 +97,7 @@ PollProcedure	slistPollProcedure = {NULL, 0.0, Slist_Poll, NULL};
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static PollProcedure	*pollProcedureList = NULL;
+static PollProcedure*	pollProcedureList = NULL;
 
 static boolean			listening = false;
 
@@ -109,24 +109,21 @@ static boolean			listening = false;
 //
 //==========================================================================
 
-void NET_Init(void)
+void NET_Init()
 {
 	guard(NET_Init);
 	int			i;
-	qsocket_t	*s;
+	qsocket_t*	s;
 
-	i = M_CheckParm("-port");
-	if (i)
+	const char* p = GArgs.CheckValue("-port");
+	if (p)
 	{
-		if (i <	myargc - 1)
-			DEFAULTnet_hostport = atoi(myargv[i + 1]);
-		else
-			Sys_Error("NET_Init: you must specify a number after -port");
+		DEFAULTnet_hostport = atoi(p);
 	}
 	net_hostport = DEFAULTnet_hostport;
 
 #ifdef CLIENT
-/*	if (COM_CheckParm("-listen") || cls.state == ca_dedicated)
+/*	if (GArgs.CheckParm("-listen") || cls.state == ca_dedicated)
 		listening = true;
 	net_numsockets = svs.maxclientslimit;
 	if (cls.state != ca_dedicated)
@@ -154,7 +151,7 @@ void NET_Init(void)
 	{
 		if (net_drivers[net_driverlevel].Init() != -1)
 		{
-			net_drivers[net_driverlevel].initialized = true;
+			net_drivers[net_driverlevel].initialised = true;
 			if (listening)
 				net_drivers[net_driverlevel].Listen(true);
 		}
@@ -173,7 +170,7 @@ void NET_Init(void)
 //
 //==========================================================================
 
-void NET_Shutdown(void)
+void NET_Shutdown()
 {
 	guard(NET_Shutdown);
 	qsocket_t	*sock;
@@ -188,10 +185,10 @@ void NET_Shutdown(void)
 	//
 	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
 	{
-		if (net_drivers[net_driverlevel].initialized)
+		if (net_drivers[net_driverlevel].initialised)
 		{
 			net_drivers[net_driverlevel].Shutdown();
-			net_drivers[net_driverlevel].initialized = false;
+			net_drivers[net_driverlevel].initialised = false;
 		}
 	}
 	unguard;
@@ -203,7 +200,7 @@ void NET_Shutdown(void)
 //
 //==========================================================================
 
-double SetNetTime(void)
+double SetNetTime()
 {
 	guard(SetNetTime);
 	net_time = Sys_Time();
@@ -217,7 +214,7 @@ double SetNetTime(void)
 //
 //==========================================================================
 
-void NET_Poll(void)
+void NET_Poll()
 {
 	guard(NET_Poll);
 	SetNetTime();
@@ -238,7 +235,7 @@ void NET_Poll(void)
 //
 //==========================================================================
 
-void SchedulePollProcedure(PollProcedure *proc, double timeOffset)
+void SchedulePollProcedure(PollProcedure* proc, double timeOffset)
 {
 	guard(SchedulePollProcedure);
 	PollProcedure *pp, *prev;
@@ -273,10 +270,10 @@ void SchedulePollProcedure(PollProcedure *proc, double timeOffset)
 //
 //==========================================================================
 
-qsocket_t *NET_NewQSocket(void)
+qsocket_t* NET_NewQSocket()
 {
 	guard(NET_NewQSocket);
-	qsocket_t	*sock;
+	qsocket_t*	sock;
 
 	if (net_freeSockets == NULL)
 		return NULL;
@@ -321,7 +318,7 @@ qsocket_t *NET_NewQSocket(void)
 //
 //==========================================================================
 
-void NET_FreeQSocket(qsocket_t *sock)
+void NET_FreeQSocket(qsocket_t* sock)
 {
 	guard(NET_FreeQSocket);
 	qsocket_t	*s;
@@ -365,17 +362,17 @@ void NET_FreeQSocket(qsocket_t *sock)
 COMMAND(Listen)
 {
 	guard(COMMAND Listen);
-	if (Argc() != 2)
+	if (Args.Num() != 2)
 	{
 		GCon->Logf("\"listen\" is \"%d\"", listening ? 1 : 0);
 		return;
 	}
 
-	listening = atoi(Argv(1)) ? true : false;
+	listening = atoi(*Args[1]) ? true : false;
 
 	for (net_driverlevel=0 ; net_driverlevel<net_numdrivers; net_driverlevel++)
 	{
-		if (net_drivers[net_driverlevel].initialized == false)
+		if (net_drivers[net_driverlevel].initialised == false)
 			continue;
 		dfunc.Listen(listening);
 	}
@@ -395,13 +392,13 @@ COMMAND(Port)
 	guard(COMMAND Port);
 	int 	n;
 
-	if (Argc() != 2)
+	if (Args.Num() != 2)
 	{
 		GCon->Logf("\"port\" is \"%d\"", net_hostport);
 		return;
 	}
 
-	n = atoi(Argv(1));
+	n = atoi(*Args[1]);
 	if (n < 1 || n > 65534)
 	{
 		GCon->Log("Bad value, must be between 1 and 65534");
@@ -414,8 +411,8 @@ COMMAND(Port)
 	if (listening)
 	{
 		// force a change to the new port
-		CmdBuf << "listen 0\n";
-		CmdBuf << "listen 1\n";
+		GCmdBuf << "listen 0\n";
+		GCmdBuf << "listen 1\n";
 	}
 	unguard;
 }
@@ -428,7 +425,7 @@ COMMAND(Port)
 //
 //==========================================================================
 
-static void PrintSlistHeader(void)
+static void PrintSlistHeader()
 {
 	GCon->Log("Server          Map             Users");
 	GCon->Log("--------------- --------------- -----");
@@ -441,7 +438,7 @@ static void PrintSlistHeader(void)
 //
 //==========================================================================
 
-static void PrintSlist(void)
+static void PrintSlist()
 {
 	int n;
 
@@ -462,7 +459,7 @@ static void PrintSlist(void)
 //
 //==========================================================================
 
-static void PrintSlistTrailer(void)
+static void PrintSlistTrailer()
 {
 	if (hostCacheCount)
 		GCon->Log("== end list ==");
@@ -484,7 +481,7 @@ static void Slist_Send(void*)
 	{
 		if (!slistLocal && net_driverlevel == 0)
 			continue;
-		if (net_drivers[net_driverlevel].initialized == false)
+		if (net_drivers[net_driverlevel].initialised == false)
 			continue;
 		dfunc.SearchForHosts(true);
 	}
@@ -507,7 +504,7 @@ static void Slist_Poll(void*)
 	{
 		if (!slistLocal && net_driverlevel == 0)
 			continue;
-		if (net_drivers[net_driverlevel].initialized == false)
+		if (net_drivers[net_driverlevel].initialised == false)
 			continue;
 		dfunc.SearchForHosts (false);
 	}
@@ -536,7 +533,7 @@ static void Slist_Poll(void*)
 //
 //==========================================================================
 
-void NET_Slist(void)
+void NET_Slist()
 {
 	guard(NET_Slist);
 	if (slistInProgress)
@@ -577,10 +574,10 @@ COMMAND(Slist)
 //
 //==========================================================================
 
-qsocket_t *NET_Connect(char* InHost)
+qsocket_t* NET_Connect(const char* InHost)
 {
 	guard(NET_Connect);
-	char* host = InHost;
+	const char* host = InHost;
 	qsocket_t	*ret;
 	int			numdrivers = net_numdrivers;
 	int			n;
@@ -644,7 +641,7 @@ qsocket_t *NET_Connect(char* InHost)
 JustDoIt:
 	for (net_driverlevel = 0; net_driverlevel < numdrivers; net_driverlevel++)
 	{
-		if (net_drivers[net_driverlevel].initialized == false)
+		if (net_drivers[net_driverlevel].initialised == false)
 			continue;
 		ret = dfunc.Connect(host);
 		if (ret)
@@ -673,7 +670,7 @@ JustDoIt:
 //
 //==========================================================================
 
-qsocket_t *NET_CheckNewConnections(void)
+qsocket_t* NET_CheckNewConnections()
 {
 	guard(NET_CheckNewConnections);
 	qsocket_t	*ret;
@@ -682,7 +679,7 @@ qsocket_t *NET_CheckNewConnections(void)
 
 	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
 	{
-		if (net_drivers[net_driverlevel].initialized == false)
+		if (net_drivers[net_driverlevel].initialised == false)
 			continue;
 		if (net_driverlevel && listening == false)
 			continue;
@@ -705,7 +702,7 @@ qsocket_t *NET_CheckNewConnections(void)
 //
 //==========================================================================
 
-void NET_Close(qsocket_t *sock)
+void NET_Close(qsocket_t* sock)
 {
 	guard(NET_Close);
 	if (!sock)
@@ -736,7 +733,7 @@ void NET_Close(qsocket_t *sock)
 //
 //==========================================================================
 
-int	NET_GetMessage(qsocket_t *sock)
+int	NET_GetMessage(qsocket_t* sock)
 {
 	guard(NET_GetMessage);
 	int			ret;
@@ -792,7 +789,7 @@ int	NET_GetMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-int NET_SendMessage(qsocket_t *sock, TSizeBuf *data)
+int NET_SendMessage(qsocket_t* sock, VMessage* data)
 {
 	guard(NET_SendMessage);
 	int		r;
@@ -821,7 +818,7 @@ int NET_SendMessage(qsocket_t *sock, TSizeBuf *data)
 //
 //==========================================================================
 
-int NET_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
+int NET_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 {
 	guard(NET_SendUnreliableMessage);
 	int		r;
@@ -853,7 +850,7 @@ int NET_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 //
 //==========================================================================
 
-boolean NET_CanSendMessage(qsocket_t *sock)
+bool NET_CanSendMessage(qsocket_t* sock)
 {
 	guard(NET_CanSendMessage);
 	int		r;
@@ -896,14 +893,14 @@ slist_t slist;
 
 char			m_return_reason[32];
 
-void StartSearch(void)
+void StartSearch()
 {
 	slistSilent = true;
 	slistLocal = false;
 	NET_Slist();
 }
 
-slist_t * GetSlist(void)
+slist_t* GetSlist()
 {
 	guard(GetSlist);
 	int		i, j;
@@ -942,9 +939,12 @@ slist_t * GetSlist(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.14  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.13  2005/04/28 07:16:15  dj_jl
 //	Fixed some warnings, other minor fixes.
 //	

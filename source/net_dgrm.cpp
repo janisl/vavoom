@@ -106,9 +106,9 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static word NetbufferChecksum(const byte *buf, int len);
-static int ReSendMessage(qsocket_t *sock);
-static int SendMessageNext(qsocket_t *sock);
+static vuint16 NetbufferChecksum(const vuint8* buf, int len);
+static int ReSendMessage(qsocket_t* sock);
+static int SendMessageNext(qsocket_t* sock);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -172,7 +172,7 @@ static vuint16 NetbufferChecksum(const vuint8* buf, int len)
 //==========================================================================
 
 #ifdef DEBUG
-static char *StrAddr(sockaddr_t *addr)
+static char* StrAddr(sockaddr_t* addr)
 {
 	guardSlow(StrAddr);
 	static char buf[34];
@@ -198,7 +198,7 @@ int Datagram_Init()
 	int		i;
 	int		csock;
 
-	if (M_CheckParm("-nolan"))
+	if (GArgs.CheckParm("-nolan"))
 		return -1;
 
 	for (i = 0; i < net_numlandrivers; i++)
@@ -206,7 +206,7 @@ int Datagram_Init()
 		csock = net_landrivers[i].Init();
 		if (csock == -1)
 			continue;
-		net_landrivers[i].initialized = true;
+		net_landrivers[i].initialised = true;
 		net_landrivers[i].controlSock = csock;
 	}
 
@@ -220,13 +220,13 @@ int Datagram_Init()
 //
 //==========================================================================
 
-void Datagram_Listen(boolean state)
+void Datagram_Listen(bool state)
 {
 	guard(Datagram_Listen);
 	int i;
 
 	for (i = 0; i < net_numlandrivers; i++)
-		if (net_landrivers[i].initialized)
+		if (net_landrivers[i].initialised)
 			net_landrivers[i].Listen (state);
 	unguard;
 }
@@ -237,7 +237,7 @@ void Datagram_Listen(boolean state)
 //
 //==========================================================================
 
-static void _Datagram_SearchForHosts(boolean xmit)
+static void _Datagram_SearchForHosts(bool xmit)
 {
 	guard(_Datagram_SearchForHosts);
 	sockaddr_t	myaddr;
@@ -291,8 +291,8 @@ static void _Datagram_SearchForHosts(boolean xmit)
 		if (msgtype != CCREP_SERVER_INFO)
 			continue;
 
-		char	*addr;
-		char	*str;
+		char*			addr;
+		const char*		str;
 
 		addr = dfunc.AddrToString(&readaddr);
 
@@ -358,14 +358,14 @@ static void _Datagram_SearchForHosts(boolean xmit)
 //
 //==========================================================================
 
-void Datagram_SearchForHosts(boolean xmit)
+void Datagram_SearchForHosts(bool xmit)
 {
 	guard(Datagram_SearchForHosts);
 	for (net_landriverlevel = 0; net_landriverlevel < net_numlandrivers; net_landriverlevel++)
 	{
 		if (hostCacheCount == HOSTCACHESIZE)
 			break;
-		if (net_landrivers[net_landriverlevel].initialized)
+		if (net_landrivers[net_landriverlevel].initialised)
 			_Datagram_SearchForHosts(xmit);
 	}
 	unguard;
@@ -377,7 +377,7 @@ void Datagram_SearchForHosts(boolean xmit)
 //
 //==========================================================================
 
-static qsocket_t *_Datagram_Connect(char *host)
+static qsocket_t* _Datagram_Connect(const char* host)
 {
 	guard(_Datagram_Connect);
 #ifdef CLIENT
@@ -389,7 +389,7 @@ static qsocket_t *_Datagram_Connect(char *host)
 	int				reps;
 	int				ret;
 	int				control;
-	char			*reason;
+	const char*		reason;
 	byte			msgtype;
 	int				newport;
 
@@ -557,7 +557,7 @@ ErrorReturn2:
 //
 //==========================================================================
 
-qsocket_t *Datagram_Connect(char *host)
+qsocket_t* Datagram_Connect(const char* host)
 {
 	guard(Datagram_Connect);
 	qsocket_t *ret;
@@ -566,7 +566,7 @@ qsocket_t *Datagram_Connect(char *host)
 		net_landriverlevel < net_numlandrivers;
 		net_landriverlevel++)
 	{
-		if (net_landrivers[net_landriverlevel].initialized)
+		if (net_landrivers[net_landriverlevel].initialised)
 		{
 			ret = _Datagram_Connect(host);
 			if (ret)
@@ -585,7 +585,7 @@ qsocket_t *Datagram_Connect(char *host)
 //
 //==========================================================================
 
-static qsocket_t *_Datagram_CheckNewConnections()
+static qsocket_t* _Datagram_CheckNewConnections()
 {
 	guard(_Datagram_CheckNewConnections);
 #ifdef SERVER
@@ -599,7 +599,7 @@ static qsocket_t *_Datagram_CheckNewConnections()
 	qsocket_t	*sock;
 	qsocket_t	*s;
 	int			ret;
-	char		*gamename;
+	const char*	gamename;
 
 	acceptsock = dfunc.CheckNewConnections();
 	if (acceptsock == -1)
@@ -761,14 +761,14 @@ static qsocket_t *_Datagram_CheckNewConnections()
 //
 //==========================================================================
 
-qsocket_t *Datagram_CheckNewConnections()
+qsocket_t* Datagram_CheckNewConnections()
 {
 	guard(Datagram_CheckNewConnections);
 	qsocket_t *ret;
 
 	for (net_landriverlevel = 0; net_landriverlevel < net_numlandrivers; net_landriverlevel++)
 	{
-		if (net_landrivers[net_landriverlevel].initialized)
+		if (net_landrivers[net_landriverlevel].initialised)
 		{
 			ret = _Datagram_CheckNewConnections();
 			if (ret != NULL)
@@ -785,7 +785,7 @@ qsocket_t *Datagram_CheckNewConnections()
 //
 //==========================================================================
 
-int Datagram_GetMessage(qsocket_t *sock)
+int Datagram_GetMessage(qsocket_t* sock)
 {
 	guard(Datagram_GetMessage);
 	dword		sequence;
@@ -1027,12 +1027,12 @@ static int BuildNetPacket(vuint32 Flags, vuint32 Sequence, vuint8* Data,
 //
 //==========================================================================
 
-int Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data)
+int Datagram_SendMessage(qsocket_t* sock, VMessage* data)
 {
 	guard(Datagram_SendMessage);
-	dword		packetLen;
-	dword		dataLen;
-	dword		eom;
+	vuint32		packetLen;
+	vuint32		dataLen;
+	vuint32		eom;
 
 #ifdef DEBUG
 	if (data->CurSize == 0)
@@ -1079,12 +1079,12 @@ int Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data)
 //
 //==========================================================================
 
-static int SendMessageNext(qsocket_t *sock)
+static int SendMessageNext(qsocket_t* sock)
 {
 	guard(SendMessageNext);
-	dword		packetLen;
-	dword		dataLen;
-	dword		eom;
+	vuint32		packetLen;
+	vuint32		dataLen;
+	vuint32		eom;
 
 	if (sock->sendMessageLength <= MAX_DATAGRAM)
 	{
@@ -1117,12 +1117,12 @@ static int SendMessageNext(qsocket_t *sock)
 //
 //==========================================================================
 
-static int ReSendMessage(qsocket_t *sock)
+static int ReSendMessage(qsocket_t* sock)
 {
 	guard(ReSendMessage);
-	dword		packetLen;
-	dword		dataLen;
-	dword		eom;
+	vuint32		packetLen;
+	vuint32		dataLen;
+	vuint32		eom;
 
 	if (sock->sendMessageLength <= MAX_DATAGRAM)
 	{
@@ -1154,10 +1154,10 @@ static int ReSendMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-int Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
+int Datagram_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 {
 	guard(Datagram_SendUnreliableMessage);
-	dword		packetLen;
+	vuint32		packetLen;
 
 #ifdef PARANOID
 	if (data->CurSize == 0)
@@ -1184,7 +1184,7 @@ int Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 //
 //==========================================================================
 
-boolean Datagram_CanSendMessage(qsocket_t *sock)
+bool Datagram_CanSendMessage(qsocket_t* sock)
 {
 	guard(Datagram_CanSendMessage);
 	if (sock->sendNext)
@@ -1200,7 +1200,7 @@ boolean Datagram_CanSendMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-boolean Datagram_CanSendUnreliableMessage(qsocket_t *)
+bool Datagram_CanSendUnreliableMessage(qsocket_t*)
 {
 	return true;
 }
@@ -1211,7 +1211,7 @@ boolean Datagram_CanSendUnreliableMessage(qsocket_t *)
 //
 //==========================================================================
 
-void Datagram_Close(qsocket_t *sock)
+void Datagram_Close(qsocket_t* sock)
 {
 	guard(Datagram_Close);
 	sfunc.CloseSocket(sock->socket);
@@ -1234,10 +1234,10 @@ void Datagram_Shutdown()
 	//
 	for (i = 0; i < net_numlandrivers; i++)
 	{
-		if (net_landrivers[i].initialized)
+		if (net_landrivers[i].initialised)
 		{
 			net_landrivers[i].Shutdown();
-			net_landrivers[i].initialized = false;
+			net_landrivers[i].initialised = false;
 		}
 	}
 	unguard;
@@ -1249,7 +1249,7 @@ void Datagram_Shutdown()
 //
 //==========================================================================
 
-static void PrintStats(qsocket_t *s)
+static void PrintStats(qsocket_t* s)
 {
 	GCon->Logf("canSend = %4d", s->canSend);
 	GCon->Logf("sendSeq = %4d", s->sendSequence);
@@ -1268,7 +1268,7 @@ COMMAND(NetStats)
 	guard(COMMAND NetStats);
 	qsocket_t	*s;
 
-	if (Argc() == 1)
+	if (Args.Num() == 1)
 	{
 		GCon->Logf("unreliable messages sent   = %d", unreliableMessagesSent);
 		GCon->Logf("unreliable messages recv   = %d", unreliableMessagesReceived);
@@ -1281,7 +1281,7 @@ COMMAND(NetStats)
 		GCon->Logf("shortPacketCount           = %d", shortPacketCount);
 		GCon->Logf("droppedDatagrams           = %d", droppedDatagrams);
 	}
-	else if (strcmp(Argv(1), "*") == 0)
+	else if (Args[1] == "*")
 	{
 		for (s = net_activeSockets; s; s = s->next)
 			PrintStats(s);
@@ -1291,11 +1291,11 @@ COMMAND(NetStats)
 	else
 	{
 		for (s = net_activeSockets; s; s = s->next)
-			if (stricmp(Argv(1), s->address) == 0)
+			if (Args[1].ICmp(s->address) == 0)
 				break;
 		if (s == NULL)
 			for (s = net_freeSockets; s; s = s->next)
-				if (stricmp(Argv(1), s->address) == 0)
+				if (Args[1].ICmp(s->address) == 0)
 					break;
 		if (s == NULL)
 			return;
@@ -1307,9 +1307,12 @@ COMMAND(NetStats)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.14  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.13  2006/03/20 20:01:30  dj_jl
 //	Check decompressed data size.
 //	

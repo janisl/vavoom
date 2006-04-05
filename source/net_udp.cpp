@@ -90,7 +90,7 @@ int UDP_Init()
 	sockaddr_t	addr;
 	char		*colon;
 	
-	if (M_CheckParm("-noudp"))
+	if (GArgs.CheckParm("-noudp"))
 		return -1;
 
 	//	determine my name & address
@@ -152,7 +152,7 @@ void UDP_Shutdown()
 //
 //==========================================================================
 
-void UDP_Listen(boolean state)
+void UDP_Listen(bool state)
 {
 	guard(UDP_Listen);
 	if (state)
@@ -235,7 +235,7 @@ int UDP_CloseSocket(int socket)
 //
 //==========================================================================
 
-int UDP_Connect(int , sockaddr_t *)
+int UDP_Connect(int, sockaddr_t*)
 {
 	return 0;
 }
@@ -268,7 +268,7 @@ int UDP_CheckNewConnections()
 //
 //==========================================================================
 
-int UDP_Read(int socket, byte *buf, int len, sockaddr_t *addr)
+int UDP_Read(int socket, byte* buf, int len, sockaddr_t* addr)
 {
 	guard(UDP_Read);
 	socklen_t	addrlen = sizeof(sockaddr_t);
@@ -287,7 +287,7 @@ int UDP_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 //
 //==========================================================================
 
-int UDP_Write(int socket, byte *buf, int len, sockaddr_t *addr)
+int UDP_Write(int socket, byte* buf, int len, sockaddr_t* addr)
 {
 	guard(UDP_Write);
 	int ret;
@@ -305,7 +305,7 @@ int UDP_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 //
 //==========================================================================
 
-int UDP_Broadcast(int socket, byte *buf, int len)
+int UDP_Broadcast(int socket, byte* buf, int len)
 {
 	guard(UDP_Broadcast);
 	int			i = 1;
@@ -336,7 +336,7 @@ int UDP_Broadcast(int socket, byte *buf, int len)
 //
 //==========================================================================
 
-char *UDP_AddrToString(sockaddr_t *addr)
+char *UDP_AddrToString(sockaddr_t* addr)
 {
 	guard(UDP_AddrToString);
 	static char buffer[22];
@@ -356,7 +356,7 @@ char *UDP_AddrToString(sockaddr_t *addr)
 //
 //==========================================================================
 
-int UDP_StringToAddr(char *string, sockaddr_t *addr)
+int UDP_StringToAddr(const char* string, sockaddr_t* addr)
 {
 	guard(UDP_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
@@ -378,7 +378,7 @@ int UDP_StringToAddr(char *string, sockaddr_t *addr)
 //
 //==========================================================================
 
-int UDP_GetSocketAddr(int socket, sockaddr_t *addr)
+int UDP_GetSocketAddr(int socket, sockaddr_t* addr)
 {
 	guard(UDP_GetSocketAddr);
 	socklen_t	addrlen = sizeof(sockaddr_t);
@@ -400,7 +400,7 @@ int UDP_GetSocketAddr(int socket, sockaddr_t *addr)
 //
 //==========================================================================
 
-int UDP_GetNameFromAddr(sockaddr_t *addr, char *name)
+int UDP_GetNameFromAddr(sockaddr_t* addr, char* name)
 {
 	guard(UDP_GetNameFromAddr);
 	hostent		*hostentry;
@@ -426,7 +426,7 @@ int UDP_GetNameFromAddr(sockaddr_t *addr, char *name)
 //
 //==========================================================================
 
-static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
+static int PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 {
 	guard(PartialIPAddress);
 	char buff[256];
@@ -483,7 +483,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 //
 //==========================================================================
 
-int UDP_GetAddrFromName(char *name, sockaddr_t *addr)
+int UDP_GetAddrFromName(const char* name, sockaddr_t* addr)
 {
 	guard(UDP_GetAddrFromName);
 	hostent		*hostentry;
@@ -509,7 +509,7 @@ int UDP_GetAddrFromName(char *name, sockaddr_t *addr)
 //
 //==========================================================================
 
-int UDP_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
+int UDP_AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
 	guard(UDP_AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
@@ -531,7 +531,7 @@ int UDP_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 //
 //==========================================================================
 
-int UDP_GetSocketPort(sockaddr_t *addr)
+int UDP_GetSocketPort(sockaddr_t* addr)
 {
 	guard(UDP_GetSocketPort);
 	return ntohs(((sockaddr_in *)addr)->sin_port);
@@ -544,7 +544,7 @@ int UDP_GetSocketPort(sockaddr_t *addr)
 //
 //==========================================================================
 
-int UDP_SetSocketPort(sockaddr_t *addr, int port)
+int UDP_SetSocketPort(sockaddr_t* addr, int port)
 {
 	guard(UDP_SetSocketPort);
 	((sockaddr_in *)addr)->sin_port = htons(port);
@@ -555,9 +555,12 @@ int UDP_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.9  2006/03/20 20:02:21  dj_jl
 //	Accept zero length packets.
-//
+//	
 //	Revision 1.8  2005/03/16 15:06:16  dj_jl
 //	Abort if can't get loal IP from host name.
 //	

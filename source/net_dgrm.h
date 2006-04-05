@@ -23,25 +23,28 @@
 //**
 //**************************************************************************
 
-int			Datagram_Init(void);
-void		Datagram_Listen(boolean state);
-void		Datagram_SearchForHosts(boolean xmit);
-qsocket_t	*Datagram_Connect(char *host);
-qsocket_t 	*Datagram_CheckNewConnections(void);
-int			Datagram_GetMessage(qsocket_t *sock);
-int			Datagram_SendMessage(qsocket_t *sock, TSizeBuf *data);
-int			Datagram_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data);
-boolean		Datagram_CanSendMessage(qsocket_t *sock);
-boolean		Datagram_CanSendUnreliableMessage(qsocket_t *sock);
-void		Datagram_Close(qsocket_t *sock);
-void		Datagram_Shutdown(void);
+int			Datagram_Init();
+void		Datagram_Listen(bool state);
+void		Datagram_SearchForHosts(bool xmit);
+qsocket_t*	Datagram_Connect(const char* host);
+qsocket_t*	Datagram_CheckNewConnections();
+int			Datagram_GetMessage(qsocket_t* sock);
+int			Datagram_SendMessage(qsocket_t* sock, VMessage* data);
+int			Datagram_SendUnreliableMessage(qsocket_t* sock, VMessage* data);
+bool		Datagram_CanSendMessage(qsocket_t* sock);
+bool		Datagram_CanSendUnreliableMessage(qsocket_t* sock);
+void		Datagram_Close(qsocket_t* sock);
+void		Datagram_Shutdown();
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

@@ -88,7 +88,7 @@ class VBasePlayer : public VObject
 	vuint32			PlayerFlags;
 
 	qsocket_t		*NetCon;
-	TMessage		Message;
+	VMessage		Message;
 	byte			MsgBuf[MAX_MSGLEN];
 	int				MobjUpdateStart;
 	float			LastMessage;
@@ -239,9 +239,12 @@ class VBasePlayer : public VObject
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.27  2006/04/05 17:21:00  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.26  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.25  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	

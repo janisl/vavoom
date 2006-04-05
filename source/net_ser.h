@@ -23,25 +23,28 @@
 //**
 //**************************************************************************
 
-//int			Serial_Init (void);
-//void		Serial_Listen (qboolean state);
-//void		Serial_SearchForHosts (qboolean xmit);
-qsocket_t	*Serial_Connect(char *host);
-//qsocket_t 	*Serial_CheckNewConnections (void);
-int			Serial_GetMessage(qsocket_t *sock);
-int			Serial_SendMessage(qsocket_t *sock, TSizeBuf *data);
-int			Serial_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data);
-boolean		Serial_CanSendMessage(qsocket_t *sock);
-boolean		Serial_CanSendUnreliableMessage(qsocket_t *sock);
-//void		Serial_Close (qsocket_t *sock);
-//void		Serial_Shutdown (void);
+//int			Serial_Init();
+//void		Serial_Listen(bool state);
+//void		Serial_SearchForHosts(bool xmit);
+qsocket_t	*Serial_Connect(const char* host);
+//qsocket_t 	*Serial_CheckNewConnections();
+int			Serial_GetMessage(qsocket_t* sock);
+int			Serial_SendMessage(qsocket_t* sock, VMessage* data);
+int			Serial_SendUnreliableMessage(qsocket_t* sock, VMessage* data);
+bool		Serial_CanSendMessage(qsocket_t* sock);
+bool		Serial_CanSendUnreliableMessage(qsocket_t* sock);
+//void		Serial_Close (qsocket_t* sock);
+//void		Serial_Shutdown();
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

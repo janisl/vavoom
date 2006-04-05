@@ -29,77 +29,99 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-class TMessage : public TSizeBuf
+class VMessage
 {
- public:
-	TMessage(void) { }
-	TMessage(byte *AData, int ASize) : TSizeBuf(AData, ASize) { }
+public:
+	VMessage()
+	{
+		AllowOverflow = false;
+		Overflowed = false;
+		Data = NULL;
+		MaxSize = 0;
+		CurSize = 0;
+	}
+	VMessage(vuint8* AData, vint32 ASize)
+	{
+		AllowOverflow = false;
+		Overflowed = false;
+		Data = AData;
+		MaxSize = ASize;
+		CurSize = 0;
+	}
+
+	void Alloc(vint32 startsize);
+	void Free();
+	void Clear();
+	void* GetSpace(vint32 length);
+	void Write(const void* data, vint32 length);
+	bool CheckSpace(vint32 length) const
+	{
+		return CurSize + length <= MaxSize;
+	}
 
 	//
 	//	writing functions
 	//
-	TMessage &operator << (char c);
-	TMessage &operator << (byte c)  { return operator << ((char)c); }
-	TMessage &operator << (short c);
-	TMessage &operator << (word c)  { return operator << ((short)c); }
-	TMessage &operator << (int c);
-	TMessage &operator << (long c)  { return operator << ((int)c); }
-	TMessage &operator << (dword c) { return operator << ((int)c); }
-	TMessage &operator << (float c);
-	TMessage &operator << (const char *c);
-	TMessage &operator << (const VStr& c);
-	TMessage &operator << (const TMessage &msg);
+	VMessage& operator << (vint8 c);
+	VMessage& operator << (vuint8 c)  { return operator << ((vint8)c); }
+	VMessage& operator << (vint16 c);
+	VMessage& operator << (vuint16 c)  { return operator << ((vint16)c); }
+	VMessage& operator << (vint32 c);
+	VMessage& operator << (vuint32 c) { return operator << ((vint32)c); }
+	VMessage& operator << (dword c) { return operator << ((vint32)c); }
+	VMessage& operator << (float c);
+	VMessage& operator << (const char* c);
+	VMessage& operator << (const VStr& c);
+	VMessage& operator << (const VMessage& msg);
 
 	//
 	//	reading functions
 	//
 	void BeginReading();
-	TMessage &operator >> (char& c);
-	TMessage &operator >> (byte& c)  { return operator >> ((char&)c); }
-	TMessage &operator >> (short& c);
-	TMessage &operator >> (word& c)  { return operator >> ((short&)c); }
-	TMessage &operator >> (int& c);
-	TMessage &operator >> (long& c)  { return operator >> ((int&)c); }
-	TMessage &operator >> (dword& c) { return operator >> ((int&)c); }
-	TMessage &operator >> (float& f);
-	TMessage &operator >> (char*& s);
-	TMessage &operator >> (VStr& s);
-	TMessage &operator >> (TMessage &msg);
+	VMessage& operator >> (vint8& c);
+	VMessage& operator >> (vuint8& c)  { return operator >> ((vint8&)c); }
+	VMessage& operator >> (vint16& c);
+	VMessage& operator >> (vuint16& c)  { return operator >> ((vint16&)c); }
+	VMessage& operator >> (vint32& c);
+	VMessage& operator >> (vuint32& c) { return operator >> ((vint32&)c); }
+	VMessage& operator >> (dword& c) { return operator >> ((vint32&)c); }
+	VMessage& operator >> (float& f);
+	VMessage& operator >> (const char*& s);
+	VMessage& operator >> (VStr& s);
+	VMessage& operator >> (VMessage& msg);
 
-	byte ReadByte(void);
-	short ReadShort(void);
-	char *ReadString(void);
+	vuint8 ReadByte();
+	vint16 ReadShort();
+	const char* ReadString();
 
-	int			readcount;
-	boolean		badread;
+	bool	AllowOverflow;	// if false, do a Sys_Error
+	bool	Overflowed;		// set to true if the buffer size failed
+	bool	BadRead;
+	vuint8*	Data;
+	vint32	MaxSize;
+	vint32	CurSize;
+	vint32	ReadCount;
 };
 
-inline float ByteToAngle(byte angle)
+inline float ByteToAngle(vuint8 angle)
 {
 	return (float)angle * 360.0 / 256.0;
 }
 
-inline byte AngleToByte(float angle)
+inline vuint8 AngleToByte(float angle)
 {
-	return (byte)(angle * 256.0 / 360.0);
+	return (vuint8)(angle * 256.0 / 360.0);
 }
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/04/05 17:21:00  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.6  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

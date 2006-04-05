@@ -23,31 +23,34 @@
 //**
 //**************************************************************************
 
-int  WIPX_Init(void);
-void WIPX_Shutdown(void);
-void WIPX_Listen(boolean state);
+int  WIPX_Init();
+void WIPX_Shutdown();
+void WIPX_Listen(bool state);
 int  WIPX_OpenSocket(int port);
 int  WIPX_CloseSocket(int socket);
-int  WIPX_Connect(int socket, sockaddr_t *addr);
-int  WIPX_CheckNewConnections(void);
-int  WIPX_Read(int socket, byte *buf, int len, sockaddr_t *addr);
-int  WIPX_Write(int socket, byte *buf, int len, sockaddr_t *addr);
-int  WIPX_Broadcast(int socket, byte *buf, int len);
-char *WIPX_AddrToString(sockaddr_t *addr);
-int  WIPX_StringToAddr(char *string, sockaddr_t *addr);
-int  WIPX_GetSocketAddr(int socket, sockaddr_t *addr);
-int  WIPX_GetNameFromAddr(sockaddr_t *addr, char *name);
-int  WIPX_GetAddrFromName(char *name, sockaddr_t *addr);
-int  WIPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2);
-int  WIPX_GetSocketPort(sockaddr_t *addr);
-int  WIPX_SetSocketPort(sockaddr_t *addr, int port);
+int  WIPX_Connect(int socket, sockaddr_t* addr);
+int  WIPX_CheckNewConnections();
+int  WIPX_Read(int socket, byte* buf, int len, sockaddr_t* addr);
+int  WIPX_Write(int socket, byte* buf, int len, sockaddr_t* addr);
+int  WIPX_Broadcast(int socket, byte* buf, int len);
+char *WIPX_AddrToString(sockaddr_t* addr);
+int  WIPX_StringToAddr(const char* string, sockaddr_t* addr);
+int  WIPX_GetSocketAddr(int socket, sockaddr_t* addr);
+int  WIPX_GetNameFromAddr(sockaddr_t* addr, char* name);
+int  WIPX_GetAddrFromName(const char* name, sockaddr_t* addr);
+int  WIPX_AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2);
+int  WIPX_GetSocketPort(sockaddr_t* addr);
+int  WIPX_SetSocketPort(sockaddr_t* addr, int port);
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.4  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.3  2001/07/31 17:16:31  dj_jl
 //	Just moved Log to the end of file
 //	

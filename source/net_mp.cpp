@@ -81,7 +81,7 @@ int MPATH_Init()
 	char		*p;
 	int			i;
 	
-	if (M_CheckParm("-mpath") == 0)
+	if (!GArgs.CheckParm("-mpath"))
 		return -1;
 
 	flat_selector = __dpmi_allocate_ldt_descriptors(1);
@@ -168,7 +168,7 @@ void MPATH_Shutdown()
 //
 //==========================================================================
 
-void MPATH_Listen(boolean state)
+void MPATH_Listen(bool state)
 {
 	guard(MPATH_Listen);
 	if (state)
@@ -378,7 +378,7 @@ char *MPATH_AddrToString(sockaddr_t *addr)
 //
 //==========================================================================
 
-int MPATH_StringToAddr(char *string, sockaddr_t *addr)
+int MPATH_StringToAddr(const char *string, sockaddr_t *addr)
 {
 	guard(MPATH_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
@@ -448,7 +448,7 @@ int MPATH_GetNameFromAddr(sockaddr_t *addr, char *name)
 //
 //==========================================================================
 
-static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
+static int PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 {
 	guard(PartialIPAddress);
 	char buff[256];
@@ -505,7 +505,7 @@ static int PartialIPAddress(char *in, sockaddr_t *hostaddr)
 //
 //==========================================================================
 
-int MPATH_GetAddrFromName(char *name, sockaddr_t *addr)
+int MPATH_GetAddrFromName(const char *name, sockaddr_t *addr)
 {
 	guard(MPATH_GetAddrFromName);
 	hostent		*hostentry;
@@ -577,9 +577,12 @@ int MPATH_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.8  2006/03/20 20:02:21  dj_jl
 //	Accept zero length packets.
-//
+//	
 //	Revision 1.7  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
 //	

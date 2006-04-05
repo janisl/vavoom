@@ -270,7 +270,7 @@ static int BW_TranslateError(int error)
 //
 //==========================================================================
 
-static int GetEthdevinfo(void)
+static int GetEthdevinfo()
 {
 	guard(GetEthdevinfo);
 	int fd;
@@ -311,13 +311,13 @@ static int GetEthdevinfo(void)
 //
 //==========================================================================
 
-int BW_Init(void)
+int BW_Init()
 {
 	guard(BW_Init);
 	sockaddr_t	addr;
 	char		*colon;
 
-	if (M_CheckParm("-noudp"))
+	if (GArgs.CheckParm("-noudp"))
 		return -1;
 
 	if (GetEthdevinfo())
@@ -353,7 +353,7 @@ int BW_Init(void)
 //
 //==========================================================================
 
-void BW_Shutdown(void)
+void BW_Shutdown()
 {
 	guard(BW_Shutdown);
 	BW_Listen(false);
@@ -367,7 +367,7 @@ void BW_Shutdown(void)
 //
 //==========================================================================
 
-void BW_Listen(boolean state)
+void BW_Listen(bool state)
 {
 	guard(BW_Listen);
 	if (state)
@@ -513,7 +513,7 @@ int BW_Connect(int, sockaddr_t *)
 //
 //==========================================================================
 
-int BW_CheckNewConnections(void)
+int BW_CheckNewConnections()
 {
 	guard(BW_CheckNewConnections);
 	if (net_acceptsocket == 0)
@@ -705,7 +705,7 @@ char *BW_AddrToString(sockaddr_t *addr)
 //
 //==========================================================================
 
-int BW_StringToAddr(char *string, sockaddr_t *addr)
+int BW_StringToAddr(const char *string, sockaddr_t *addr)
 {
 	guard(BW_StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
@@ -767,7 +767,7 @@ int BW_GetNameFromAddr(sockaddr_t *addr, char *name)
 //
 //==========================================================================
 
-int BW_GetAddrFromName(char *name, sockaddr_t *hostaddr)
+int BW_GetAddrFromName(const char *name, sockaddr_t *hostaddr)
 {
 	guard(BW_GetAddrFromName);
 	char buff[MAXHOSTNAMELEN];
@@ -876,9 +876,12 @@ int BW_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/04/05 17:20:36  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.6  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

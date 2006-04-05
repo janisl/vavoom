@@ -175,7 +175,7 @@ static int				net_controlsocket;
 //
 //==========================================================================
 
-static int _IPX_GetFunction(void)
+static int _IPX_GetFunction()
 {
 	//	Find the IPX far call entry point
 	regs.x.ax = 0x7a00;
@@ -328,7 +328,7 @@ static void _IPX_GetLocalAddress(IPXAddr *addr)
 //
 //==========================================================================
 
-static void _IPX_RelinquishControl(void)
+static void _IPX_RelinquishControl()
 {
 	regs.x.cs = ipx_cs;
 	regs.x.ip = ipx_ip;
@@ -437,7 +437,7 @@ static byte _PacketCompletionCode(int index)
 //
 //==========================================================================
 
-static void _FreeDOSMemory(void)
+static void _FreeDOSMemory()
 {
 	if (packets_offset)
 	{
@@ -471,14 +471,14 @@ void IPX_PollProcedure(void*)
 //
 //==========================================================================
 
-int IPX_Init(void)
+int IPX_Init()
 {
 	guard(IPX_Init);
 	size_t		i;
 	sockaddr_t	addr;
-	char		*colon;
+	char*		colon;
 
-	if (M_CheckParm("-noipx"))
+	if (GArgs.CheckParm("-noipx"))
 		return -1;
 
 	// find the IPX far call entry point
@@ -525,7 +525,7 @@ int IPX_Init(void)
 //
 //==========================================================================
 
-void IPX_Shutdown(void)
+void IPX_Shutdown()
 {
 	guard(IPX_Shutdown);
 	IPX_Listen(false);
@@ -540,7 +540,7 @@ void IPX_Shutdown(void)
 //
 //==========================================================================
 
-void IPX_Listen(boolean state)
+void IPX_Listen(bool state)
 {
 	guard(IPX_Listen);
 	if (state)
@@ -678,7 +678,7 @@ int IPX_Connect(int handle, sockaddr_t *addr)
 //
 //==========================================================================
 
-int IPX_CheckNewConnections(void)
+int IPX_CheckNewConnections()
 {
 	guard(IPX_CheckNewConnections);
 	int n;
@@ -909,7 +909,7 @@ char *IPX_AddrToString(sockaddr_t *addr)
 //
 //==========================================================================
 
-int IPX_StringToAddr(char *string, sockaddr_t *addr)
+int IPX_StringToAddr(const char *string, sockaddr_t *addr)
 {
 	guard(IPX_StringToAddr);
 	int		val;
@@ -982,7 +982,7 @@ int IPX_GetNameFromAddr(sockaddr_t *addr, char *name)
 //
 //==========================================================================
 
-int IPX_GetAddrFromName(char *name, sockaddr_t *addr)
+int IPX_GetAddrFromName(const char *name, sockaddr_t *addr)
 {
 	guard(IPX_GetAddrFromName);
 	int		n;
@@ -1059,9 +1059,12 @@ int IPX_SetSocketPort(sockaddr_t *addr, int port)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.6  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

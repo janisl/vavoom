@@ -23,25 +23,28 @@
 //**
 //**************************************************************************
 
-int			NetNull_Init(void);
-void		NetNull_Listen(boolean state);
-void		NetNull_SearchForHosts(boolean xmit);
-qsocket_t 	*NetNull_Connect(char *host);
-qsocket_t 	*NetNull_CheckNewConnections(void);
-int			NetNull_GetMessage(qsocket_t *sock);
-int			NetNull_SendMessage(qsocket_t *sock, TSizeBuf *data);
-int			NetNull_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data);
-boolean		NetNull_CanSendMessage(qsocket_t *sock);
-boolean		NetNull_CanSendUnreliableMessage(qsocket_t *sock);
-void		NetNull_Close(qsocket_t *sock);
-void		NetNull_Shutdown(void);
+int			NetNull_Init();
+void		NetNull_Listen(bool state);
+void		NetNull_SearchForHosts(bool xmit);
+qsocket_t*	NetNull_Connect(const char* host);
+qsocket_t*	NetNull_CheckNewConnections();
+int			NetNull_GetMessage(qsocket_t* sock);
+int			NetNull_SendMessage(qsocket_t* sock, VMessage* data);
+int			NetNull_SendUnreliableMessage(qsocket_t* sock, VMessage* data);
+bool		NetNull_CanSendMessage(qsocket_t* sock);
+bool		NetNull_CanSendUnreliableMessage(qsocket_t* sock);
+void		NetNull_Close(qsocket_t* sock);
+void		NetNull_Shutdown();
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.3  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.2  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.1  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //	

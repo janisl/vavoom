@@ -34,69 +34,68 @@
 
 #define HOSTCACHESIZE		8
 
-#define NET_HEADERSIZE		(2 * sizeof(unsigned int) + sizeof(unsigned short))
+#define NET_HEADERSIZE		(2 * sizeof(vuint32) + sizeof(vuint16))
 #define NET_DATAGRAMSIZE	(MAX_DATAGRAM + NET_HEADERSIZE)
 
 // TYPES -------------------------------------------------------------------
 
 struct net_driver_t
 {
-	char		*name;
-	boolean		initialized;
-	int			(*Init)(void);
-	void		(*Listen)(boolean state);
-	void		(*SearchForHosts)(boolean xmit);
-	qsocket_t	*(*Connect)(char *host);
-	qsocket_t 	*(*CheckNewConnections)(void);
-	int			(*QGetMessage)(qsocket_t *sock);
-	int			(*QSendMessage)(qsocket_t *sock, TSizeBuf *data);
-	int			(*SendUnreliableMessage)(qsocket_t *sock, TSizeBuf *data);
-	boolean		(*CanSendMessage)(qsocket_t *sock);
-	boolean		(*CanSendUnreliableMessage)(qsocket_t *sock);
-	void		(*Close)(qsocket_t *sock);
-	void		(*Shutdown)(void);
-//	int			controlSock;
+	char*		name;
+	bool		initialised;
+	int			(*Init)();
+	void		(*Listen)(bool state);
+	void		(*SearchForHosts)(bool xmit);
+	qsocket_t*	(*Connect)(const char* host);
+	qsocket_t*	(*CheckNewConnections)();
+	int			(*QGetMessage)(qsocket_t* sock);
+	int			(*QSendMessage)(qsocket_t* sock, VMessage* data);
+	int			(*SendUnreliableMessage)(qsocket_t* sock, VMessage* data);
+	bool		(*CanSendMessage)(qsocket_t* sock);
+	bool		(*CanSendUnreliableMessage)(qsocket_t* sock);
+	void		(*Close)(qsocket_t* sock);
+	void		(*Shutdown)();
 };
 
 struct net_landriver_t
 {
-	char		*name;
-	boolean		initialized;
+	char*		name;
+	bool		initialised;
 	int			controlSock;
-	int			(*Init) (void);
-	void		(*Shutdown) (void);
-	void		(*Listen) (boolean state);
-	int 		(*OpenSocket) (int port);
-	int 		(*CloseSocket) (int socket);
-	int 		(*Connect) (int socket, sockaddr_t *addr);
-	int 		(*CheckNewConnections) (void);
-	int 		(*Read) (int socket, byte *buf, int len, sockaddr_t *addr);
-	int 		(*Write) (int socket, byte *buf, int len, sockaddr_t *addr);
-	int 		(*Broadcast) (int socket, byte *buf, int len);
-	char *		(*AddrToString) (sockaddr_t *addr);
-	int 		(*StringToAddr) (char *string, sockaddr_t *addr);
-	int 		(*GetSocketAddr) (int socket, sockaddr_t *addr);
-	int 		(*GetNameFromAddr) (sockaddr_t *addr, char *name);
-	int 		(*GetAddrFromName) (char *name, sockaddr_t *addr);
-	int			(*AddrCompare) (sockaddr_t *addr1, sockaddr_t *addr2);
-	int			(*GetSocketPort) (sockaddr_t *addr);
-	int			(*SetSocketPort) (sockaddr_t *addr, int port);
+	int			(*Init)();
+	void		(*Shutdown)();
+	void		(*Listen)(bool state);
+	int 		(*OpenSocket)(int port);
+	int 		(*CloseSocket)(int socket);
+	int 		(*Connect)(int socket, sockaddr_t* addr);
+	int 		(*CheckNewConnections)();
+	int 		(*Read)(int socket, byte* buf, int len, sockaddr_t* addr);
+	int 		(*Write)(int socket, byte* buf, int len, sockaddr_t* addr);
+	int 		(*Broadcast)(int socket, byte* buf, int len);
+	char*		(*AddrToString)(sockaddr_t* addr);
+	int 		(*StringToAddr)(const char* string, sockaddr_t* addr);
+	int 		(*GetSocketAddr)(int socket, sockaddr_t* addr);
+	int 		(*GetNameFromAddr)(sockaddr_t* addr, char* name);
+	int 		(*GetAddrFromName)(const char* name, sockaddr_t* addr);
+	int			(*AddrCompare)(sockaddr_t* addr1, sockaddr_t* addr2);
+	int			(*GetSocketPort)(sockaddr_t* addr);
+	int			(*SetSocketPort)(sockaddr_t* addr, int port);
 };
 
 struct PollProcedure
 {
-	PollProcedure	*next;
+	PollProcedure*	next;
 	double			nextTime;
-	void			(*procedure)(void *);
-	void			*arg;
+	void			(*procedure)(void*);
+	void*			arg;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-qsocket_t *NET_NewQSocket(void);
-void NET_FreeQSocket(qsocket_t *sock);
-double SetNetTime(void);
-void SchedulePollProcedure(PollProcedure *pp, double timeOffset);
+qsocket_t *NET_NewQSocket();
+void NET_FreeQSocket(qsocket_t* sock);
+double SetNetTime();
+void SchedulePollProcedure(PollProcedure* pp, double timeOffset);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -109,25 +108,25 @@ extern int				net_numlandrivers;
 extern int				net_driverlevel;
 extern double			net_time;
 
-extern qsocket_t		*net_activeSockets;
-extern qsocket_t		*net_freeSockets;
+extern qsocket_t*		net_activeSockets;
+extern qsocket_t*		net_freeSockets;
 
-extern boolean			slistInProgress;
-extern boolean			slistSilent;
-extern boolean			slistLocal;
+extern bool				slistInProgress;
+extern bool				slistSilent;
+extern bool				slistLocal;
 
 extern int				hostCacheCount;
 extern hostcache_t		hostcache[HOSTCACHESIZE];
 
 extern int				net_hostport;
-extern TCvarS			hostname;
+extern VCvarS			hostname;
 
 extern char				my_ipx_address[NET_NAMELEN];
 extern char				my_tcpip_address[NET_NAMELEN];
 
-extern boolean			serialAvailable;
-extern boolean			ipxAvailable;
-extern boolean			tcpipAvailable;
+extern bool				serialAvailable;
+extern bool				ipxAvailable;
+extern bool				tcpipAvailable;
 
 extern int				messagesSent;
 extern int				messagesReceived;
@@ -139,9 +138,12 @@ extern int				unreliableMessagesReceived;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.6  2005/08/29 19:29:37  dj_jl
 //	Implemented network packet compression.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

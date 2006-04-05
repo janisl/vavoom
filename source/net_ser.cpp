@@ -41,7 +41,7 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CheckAbort(void);
+void CheckAbort();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -53,7 +53,7 @@ void CheckAbort(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TComPort	*ComPort;
+static TComPort*	ComPort;
 
 static char		startup[256], shutdown[256], baudrate[256];
 
@@ -76,7 +76,7 @@ static int		uartType = -1;
 //
 //==========================================================================
 
-static void write_buffer( char *buffer, unsigned int count )
+static void write_buffer(char* buffer, unsigned int count)
 {
 	// if this would overrun the buffer, throw everything else out
 //	if (FULL(ComPort->OutputQueue))
@@ -94,7 +94,7 @@ static void write_buffer( char *buffer, unsigned int count )
 //
 //==========================================================================
 
-static bool ReadPacket(void)
+static bool ReadPacket()
 {
 	int	c;
 
@@ -147,7 +147,7 @@ static bool ReadPacket(void)
 //
 //==========================================================================
 
-static void WritePacket(char *buffer, int len)
+static void WritePacket(char* buffer, int len)
 {
 	int				b;
 	static char		localbuffer[MAXPACKET*2+2];
@@ -177,7 +177,7 @@ static void WritePacket(char *buffer, int len)
 //
 //==========================================================================
 
-void Ser_Connect(void)
+void Ser_Connect()
 {
 	struct time	time;
 	int			oldsec;
@@ -202,9 +202,9 @@ void Ser_Connect(void)
 	// build a (hopefully) unique id string by hashing up the current
 	// milliseconds and the interrupt table
 	//
-	if (M_CheckParm ("-player1"))
+	if (GArgs.CheckParm("-player1"))
 		idnum = 0;
-	else if (M_CheckParm ("-player2"))
+	else if (GArgs.CheckParm("-player2"))
 		idnum = 999999;
 	else
 	{
@@ -293,7 +293,7 @@ void Ser_Connect(void)
 //
 //==========================================================================
 
-static void ReadLine(FILE *f, char *dest)
+static void ReadLine(FILE* f, char* dest)
 {
 	int	c;
 
@@ -313,7 +313,7 @@ static void ReadLine(FILE *f, char *dest)
 //
 //==========================================================================
 
-static void ReadModemCfg(void)
+static void ReadModemCfg()
 {
 	FILE		*f;
 	unsigned	modem_baud;
@@ -344,16 +344,14 @@ static void ReadModemCfg(void)
 //
 //==========================================================================
 
-static void Dial(void)
+static void Dial()
 {
-	int		p;
-
 	GCon->Log("");
 	GCon->Log("Dialing...");
 	GCon->Log("");
-	p = M_CheckParm ("-dial");
-	if (ComPort->Connect(myargv[p + 1]))
-    	I_Error("Dial failed\n");
+	const char* p = GArgs.CheckValue("-dial");
+	if (ComPort->Connect(p))
+		Sys_Error("Dial failed\n");
 
 #ifdef FIXME
 	consoleplayer = 1;
@@ -366,7 +364,7 @@ static void Dial(void)
 //
 //==========================================================================
 
-static void Answer(void)
+static void Answer()
 {
 	GCon->Log("");
 	GCon->Log("Waiting for ring...");
@@ -386,24 +384,22 @@ static void Answer(void)
 //
 //==========================================================================
 
-void Serial_Init(void)
+void Serial_Init()
 {
 	//
 	// set network characteristics
 	//
 	num_net_players = 2;
 
-	int			i;
-
 	//
 	// find the irq and io address of the port
 	//
 	int	   		comport;
-	if (M_CheckParm ("-com2"))
+	if (GArgs.CheckParm("-com2"))
 		comport = 2;
-	else if (M_CheckParm ("-com3"))
+	else if (GArgs.CheckParm("-com3"))
 		comport = 3;
-	else if (M_CheckParm ("-com4"))
+	else if (GArgs.CheckParm("-com4"))
 		comport = 4;
 	else
 		comport = 1;
@@ -413,41 +409,41 @@ void Serial_Init(void)
 	// establish communications
 	//
 
-    //	Modem config
-	if (M_CheckParm ("-dial") || M_CheckParm ("-answer") )
-		ReadModemCfg ();		// may set baudbits
+	//	Modem config
+	if (GArgs.CheckParm("-dial") || GArgs.CheckParm("-answer"))
+		ReadModemCfg();		// may set baudbits
 
-    //	Uart
-	i = M_CheckParm("-uart");
-    if (i && i < myargc - 1)
-    	uart = atoi(myargv[i + 1]);
+	//	Uart
+	const char* p = GArgs.CheckValue("-uart");
+	if (p)
+		uart = atoi(p);
 
-    //	IRQ
-	i = M_CheckParm("-irq");
-    if (i && i < myargc - 1)
-    	irq = atoi(myargv[i + 1]);
+	//	IRQ
+	p = GArgs.CheckValue("-irq");
+	if (p)
+		irq = atoi(p);
 
 	//
 	// allow command-line override of modem.cfg baud rate
 	//
-	if (M_CheckParm ("-9600")) baud = 9600;
-	else if (M_CheckParm ("-14400")) baud = 14400;
-	else if (M_CheckParm ("-19200")) baud = 19200;
-	else if (M_CheckParm ("-38400")) baud = 38400;
-	else if (M_CheckParm ("-57600")) baud = 57600;
-	else if (M_CheckParm ("-115200")) baud = 115200;
+	if (GArgs.CheckParm("-9600")) baud = 9600;
+	else if (GArgs.CheckParm("-14400")) baud = 14400;
+	else if (GArgs.CheckParm("-19200")) baud = 19200;
+	else if (GArgs.CheckParm("-38400")) baud = 38400;
+	else if (GArgs.CheckParm("-57600")) baud = 57600;
+	else if (GArgs.CheckParm("-115200")) baud = 115200;
 
 	//	allow a forced 8250
-	if (M_CheckParm("-8250"))
+	if (GArgs.CheckParm("-8250"))
 		uartType = UART_8250;
 
 	ComPort->SetConfig(uart, irq, baud, lineCtl, uartType);
 
-    ComPort->Init();
+	ComPort->Init();
 
-	if (M_CheckParm ("-dial"))
+	if (GArgs.CheckParm("-dial"))
 		Dial();
-	else if (M_CheckParm ("-answer"))
+	else if (GArgs.CheckParm("-answer"))
 		Answer();
 
 	Ser_Connect();
@@ -459,7 +455,7 @@ void Serial_Init(void)
 //
 //==========================================================================
 
-static word NetbufferChecksum(const byte *buf, int len)
+static word NetbufferChecksum(const byte* buf, int len)
 {
 	TCRC	crc;
 
@@ -479,29 +475,29 @@ static word NetbufferChecksum(const byte *buf, int len)
 //
 //==========================================================================
 
-int Serial_SendMessage(qsocket_t *sock, TSizeBuf *message)
+int Serial_SendMessage(qsocket_t* sock, VMessage* message)
 {
 	if (!sock->canSend)
-    {
+	{
 		I_Error("Can't send\n");
 	}
 
-    memcpy(sock->sendMessage, message->Data, message->CurSize);
-    sock->sendMessageLength = message->CurSize;
+	memcpy(sock->sendMessage, message->Data, message->CurSize);
+	sock->sendMessageLength = message->CurSize;
 
 	word		crc;
 	byte		buf[MAX_MSGLEN];
-    TMessage	msg(buf, MAX_MSGLEN);
+	VMessage	msg(buf, MAX_MSGLEN);
 
 	crc = NetbufferChecksum(message->Data, message->CurSize);
 
-    msg << (int)BigLong(((message->CurSize + 8) << 16) | crc)
-    	<< (int)BigLong(sock->sendSequence);
+	msg << (int)BigLong(((message->CurSize + 8) << 16) | crc)
+		<< (int)BigLong(sock->sendSequence);
 	msg.Write(message->Data, message->CurSize);
 
 	WritePacket((char*)msg.Data, msg.CurSize);
 
-    sock->lastSendTime = Sys_Time();
+	sock->lastSendTime = Sys_Time();
 	sock->canSend = false;
 	sock->sendSequence++;
 	return 1;
@@ -513,16 +509,16 @@ int Serial_SendMessage(qsocket_t *sock, TSizeBuf *message)
 //
 //==========================================================================
 
-int Serial_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *message)
+int Serial_SendUnreliableMessage(qsocket_t* sock, VMessage* message)
 {
 	word		crc;
 	byte		buf[MAX_MSGLEN];
-    TMessage	msg(buf, MAX_MSGLEN);
+	VMessage	msg(buf, MAX_MSGLEN);
 
 	crc = NetbufferChecksum(message->Data, message->CurSize);
 
-    msg << (int)BigLong(((message->CurSize + 8) << 16) | crc)
-    	<< (int)BigLong(sock->unreliableSendSequence++);
+	msg << (int)BigLong(((message->CurSize + 8) << 16) | crc)
+		<< (int)BigLong(sock->unreliableSendSequence++);
 	msg.Write(message->Data, message->CurSize);
 
 	WritePacket((char*)msg.Data, msg.CurSize);
@@ -535,25 +531,25 @@ int Serial_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *message)
 //
 //==========================================================================
 
-static void ResendSer(qsocket_t *sock)
+static void ResendSer(qsocket_t* sock)
 {
 	word	crc;
-   	int		len;
+	int		len;
 
 	len = sock->sendMessageLength;
 
 	byte		buf[MAX_MSGLEN];
-    TMessage	msg(buf, MAX_MSGLEN);
+	VMessage	msg(buf, MAX_MSGLEN);
 
 	crc = NetbufferChecksum(sock->sendMessage, len);
 
-    msg << (int)BigLong(((len + 8) << 16) | crc)
-    	<< (int)BigLong(sock->sendSequence - 1);
-    msg.Write(sock->sendMessage, len);
+	msg << (int)BigLong(((len + 8) << 16) | crc)
+		<< (int)BigLong(sock->sendSequence - 1);
+	msg.Write(sock->sendMessage, len);
 
 	WritePacket((char*)msg.Data, msg.CurSize);
 
-    sock->lastSendTime = Sys_Time();
+	sock->lastSendTime = Sys_Time();
 }
 
 //==========================================================================
@@ -562,23 +558,23 @@ static void ResendSer(qsocket_t *sock)
 //
 //==========================================================================
 
-int Serial_GetMessage(qsocket_t *sock)
+int Serial_GetMessage(qsocket_t* sock)
 {
 	byte		buf[MAX_MSGLEN];
-    TMessage	msg(buf, MAX_MSGLEN);
+	VMessage	msg(buf, MAX_MSGLEN);
 	int		len;
-    dword	seq;
+	dword	seq;
 	int		flags;
 	int		crc;
 
 	if (!sock->canSend && Sys_Time() - sock->lastSendTime > 0.5)
 		ResendSer(sock);
 
- try_again:
+try_again:
 
 	if (ReadPacket () && packetlen <= msg.MaxSize)
 	{
-    	msg.Clear();
+		msg.Clear();
 		msg.Write(&packet, packetlen);
 	}
 	else
@@ -587,22 +583,22 @@ int Serial_GetMessage(qsocket_t *sock)
 	}
 
 	msg.BeginReading();
-    msg >> len >> seq;
-    len = BigLong(len);
-    seq = BigLong(seq);
+	msg >> len >> seq;
+	len = BigLong(len);
+	seq = BigLong(seq);
 	flags = len & 0xf0000000;
 	crc = len & 0x0000ffff;
 	len = (len & 0x0fff0000) >> 16;
 
 	if (msg.CurSize != len)
-    {
+	{
 		GCon->Log(NAME_DevNet, "Bad len");
-    	goto try_again;
+		goto try_again;
 	}
-    len -= 8;
+	len -= 8;
 
-    if (flags & NFLAG_ACK)
-    {
+	if (flags & NFLAG_ACK)
+	{
 		if (seq != sock->sendSequence - 1)
 		{
 			GCon->Log(NAME_DevNet, "Stale ACK received");
@@ -620,25 +616,25 @@ int Serial_GetMessage(qsocket_t *sock)
 			goto try_again;
 		}
 
-        sock->sendMessageLength = 0;
+		sock->sendMessageLength = 0;
 		sock->canSend = true;
 
 		goto try_again;
-    }
+	}
 
 	word buf_crc = NetbufferChecksum(msg.Data + 8, len);
-    if (buf_crc != crc)
-    {
-    	GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04x", buf_crc, crc);
+	if (buf_crc != crc)
+	{
+		GCon->Logf(NAME_DevNet, "bad packet checksum %04x %04x", buf_crc, crc);
 		goto try_again;
-    }
+	}
 
 	net_msg.Clear();
 	net_msg.Write(msg.Data + 8, len);
 
-    msg.Clear();
-    msg << (int)BigLong(NFLAG_ACK | (8 << 16))
-    	<< (int)BigLong(seq);
+	msg.Clear();
+	msg << (int)BigLong(NFLAG_ACK | (8 << 16))
+		<< (int)BigLong(seq);
 	WritePacket((char*)msg.Data, msg.CurSize);
 
 	if (seq != sock->receiveSequence)
@@ -657,7 +653,7 @@ int Serial_GetMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-boolean Serial_CanSendMessage(qsocket_t *sock)
+bool Serial_CanSendMessage(qsocket_t* sock)
 {
 	return sock->canSend;
 }
@@ -668,7 +664,7 @@ boolean Serial_CanSendMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-boolean Serial_CanSendUnreliableMessage(qsocket_t *)
+bool Serial_CanSendUnreliableMessage(qsocket_t*)
 {
 	return true;
 }
@@ -679,21 +675,27 @@ boolean Serial_CanSendUnreliableMessage(qsocket_t *)
 //
 //==========================================================================
 
-void Serial_Shutdown(void)
+void Serial_Shutdown()
 {
 	ComPort->Close();
-	
+
 	delete ComPort;
 }
 
-qsocket_t *Serial_Connect(char *) { return NULL; }
+qsocket_t *Serial_Connect(const char*)
+{
+	return NULL;
+}
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.5  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
-//
+//	
 //	Revision 1.4  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
 //	

@@ -45,9 +45,9 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean		localconnectpending = false;
-static qsocket_t	*loop_client = NULL;
-static qsocket_t	*loop_server = NULL;
+static bool			localconnectpending = false;
+static qsocket_t*	loop_client = NULL;
+static qsocket_t*	loop_server = NULL;
 
 // CODE --------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ static qsocket_t	*loop_server = NULL;
 //
 //==========================================================================
 
-int Loop_Init(void)
+int Loop_Init()
 {
 #ifdef CLIENT
 	if (cls.state == ca_dedicated)
@@ -74,7 +74,7 @@ int Loop_Init(void)
 //
 //==========================================================================
 
-void Loop_Listen(boolean)
+void Loop_Listen(bool)
 {
 }
 
@@ -84,7 +84,7 @@ void Loop_Listen(boolean)
 //
 //==========================================================================
 
-void Loop_SearchForHosts(boolean)
+void Loop_SearchForHosts(bool)
 {
 	guard(Loop_SearchForHosts);
 #ifdef SERVER
@@ -110,7 +110,7 @@ void Loop_SearchForHosts(boolean)
 //
 //==========================================================================
 
-qsocket_t *Loop_Connect(char *host)
+qsocket_t* Loop_Connect(const char* host)
 {
 	guard(Loop_Connect);
 	if (strcmp(host,"local") != 0)
@@ -159,7 +159,7 @@ qsocket_t *Loop_Connect(char *host)
 //
 //==========================================================================
 
-qsocket_t *Loop_CheckNewConnections(void)
+qsocket_t* Loop_CheckNewConnections()
 {
 	guard(Loop_CheckNewConnections);
 	if (!localconnectpending)
@@ -193,7 +193,7 @@ static int IntAlign(int value)
 //
 //==========================================================================
 
-int Loop_GetMessage(qsocket_t *sock)
+int Loop_GetMessage(qsocket_t* sock)
 {
 	guard(Loop_GetMessage);
 	int		ret;
@@ -227,7 +227,7 @@ int Loop_GetMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-int Loop_SendMessage(qsocket_t *sock, TSizeBuf *data)
+int Loop_SendMessage(qsocket_t* sock, VMessage* data)
 {
 	guard(Loop_SendMessage);
 	byte	*buffer;
@@ -268,7 +268,7 @@ int Loop_SendMessage(qsocket_t *sock, TSizeBuf *data)
 //
 //==========================================================================
 
-int Loop_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
+int Loop_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 {
 	guard(Loop_SendUnreliableMessage);
 	byte	*buffer;
@@ -307,7 +307,7 @@ int Loop_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data)
 //
 //==========================================================================
 
-boolean Loop_CanSendMessage(qsocket_t *sock)
+bool Loop_CanSendMessage(qsocket_t* sock)
 {
 	guard(Loop_CanSendMessage);
 	if (!sock->driverdata)
@@ -322,7 +322,7 @@ boolean Loop_CanSendMessage(qsocket_t *sock)
 //
 //==========================================================================
 
-boolean Loop_CanSendUnreliableMessage(qsocket_t *)
+bool Loop_CanSendUnreliableMessage(qsocket_t*)
 {
 	return true;
 }
@@ -333,7 +333,7 @@ boolean Loop_CanSendUnreliableMessage(qsocket_t *)
 //
 //==========================================================================
 
-void Loop_Close(qsocket_t *sock)
+void Loop_Close(qsocket_t* sock)
 {
 	guard(Loop_Close);
 	if (sock->driverdata)
@@ -354,16 +354,19 @@ void Loop_Close(qsocket_t *sock)
 //
 //==========================================================================
 
-void Loop_Shutdown(void)
+void Loop_Shutdown()
 {
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.9  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.8  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.7  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	

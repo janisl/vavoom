@@ -43,19 +43,19 @@ struct sockaddr_t
 
 struct qsocket_t
 {
-	qsocket_t	*next;
+	qsocket_t*	next;
 	double		connecttime;
 	double		lastMessageTime;
 	double		lastSendTime;
 
-	boolean		disconnected;
-	boolean		canSend;
-	boolean		sendNext;
+	bool		disconnected;
+	bool		canSend;
+	bool		sendNext;
 	
 	int			driver;
 	int			landriver;
 	int			socket;
-	void		*driverdata;
+	void*		driverdata;
 
 	dword		ackSequence;
 	dword		sendSequence;
@@ -84,28 +84,31 @@ struct hostcache_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void NET_Init(void);
-void NET_Shutdown(void);
-void NET_Slist(void);
-qsocket_t *NET_Connect(char *host);
-qsocket_t *NET_CheckNewConnections(void);
-int NET_GetMessage(qsocket_t *sock);
-int NET_SendMessage(qsocket_t *sock, TSizeBuf *data);
-int NET_SendUnreliableMessage(qsocket_t *sock, TSizeBuf *data);
-boolean NET_CanSendMessage(qsocket_t *sock);
-void NET_Close(qsocket_t *sock);
-void NET_Poll(void);
+void NET_Init();
+void NET_Shutdown();
+void NET_Slist();
+qsocket_t* NET_Connect(const char* host);
+qsocket_t* NET_CheckNewConnections();
+int NET_GetMessage(qsocket_t* sock);
+int NET_SendMessage(qsocket_t* sock, VMessage* data);
+int NET_SendUnreliableMessage(qsocket_t* sock, VMessage* data);
+bool NET_CanSendMessage(qsocket_t* sock);
+void NET_Close(qsocket_t* sock);
+void NET_Poll();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern TMessage		net_msg;
+extern VMessage		net_msg;
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.6  2005/08/29 19:29:37  dj_jl
 //	Implemented network packet compression.
-//
+//	
 //	Revision 1.5  2002/01/07 12:16:43  dj_jl
 //	Changed copyright year
 //	

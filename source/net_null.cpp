@@ -55,7 +55,7 @@ bool		net_connect_bot = false;
 //
 //==========================================================================
 
-int NetNull_Init(void)
+int NetNull_Init()
 {
 	return 0;
 }
@@ -66,7 +66,7 @@ int NetNull_Init(void)
 //
 //==========================================================================
 
-void NetNull_Listen(boolean)
+void NetNull_Listen(bool)
 {
 }
 
@@ -76,7 +76,7 @@ void NetNull_Listen(boolean)
 //
 //==========================================================================
 
-void NetNull_SearchForHosts(boolean)
+void NetNull_SearchForHosts(bool)
 {
 }
 
@@ -86,7 +86,7 @@ void NetNull_SearchForHosts(boolean)
 //
 //==========================================================================
 
-qsocket_t *NetNull_Connect(char *)
+qsocket_t *NetNull_Connect(const char*)
 {
 	return NULL;
 }
@@ -97,7 +97,7 @@ qsocket_t *NetNull_Connect(char *)
 //
 //==========================================================================
 
-qsocket_t *NetNull_CheckNewConnections(void)
+qsocket_t *NetNull_CheckNewConnections()
 {
 	guard(NetNull_CheckNewConnections);
 	qsocket_t *sock;
@@ -123,7 +123,7 @@ qsocket_t *NetNull_CheckNewConnections(void)
 //
 //==========================================================================
 
-int NetNull_GetMessage(qsocket_t *)
+int NetNull_GetMessage(qsocket_t*)
 {
 	return 0;
 }
@@ -134,7 +134,7 @@ int NetNull_GetMessage(qsocket_t *)
 //
 //==========================================================================
 
-int NetNull_SendMessage(qsocket_t *, TSizeBuf *)
+int NetNull_SendMessage(qsocket_t*, VMessage*)
 {
 	return 1;
 }
@@ -145,7 +145,7 @@ int NetNull_SendMessage(qsocket_t *, TSizeBuf *)
 //
 //==========================================================================
 
-int NetNull_SendUnreliableMessage(qsocket_t *, TSizeBuf *)
+int NetNull_SendUnreliableMessage(qsocket_t*, VMessage*)
 {
 	return 1;
 }
@@ -156,7 +156,7 @@ int NetNull_SendUnreliableMessage(qsocket_t *, TSizeBuf *)
 //
 //==========================================================================
 
-boolean NetNull_CanSendMessage(qsocket_t *)
+bool NetNull_CanSendMessage(qsocket_t*)
 {
 	return true;
 }
@@ -167,7 +167,7 @@ boolean NetNull_CanSendMessage(qsocket_t *)
 //
 //==========================================================================
 
-boolean NetNull_CanSendUnreliableMessage(qsocket_t *)
+bool NetNull_CanSendUnreliableMessage(qsocket_t*)
 {
 	return true;
 }
@@ -178,7 +178,7 @@ boolean NetNull_CanSendUnreliableMessage(qsocket_t *)
 //
 //==========================================================================
 
-void NetNull_Close(qsocket_t *)
+void NetNull_Close(qsocket_t*)
 {
 }
 
@@ -188,16 +188,19 @@ void NetNull_Close(qsocket_t *)
 //
 //==========================================================================
 
-void NetNull_Shutdown(void)
+void NetNull_Shutdown()
 {
 }
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/05 17:20:37  dj_jl
+//	Merged size buffer with message class.
+//
 //	Revision 1.4  2002/08/05 17:20:00  dj_jl
 //	Added guarding.
-//
+//	
 //	Revision 1.3  2002/05/18 16:56:34  dj_jl
 //	Added FArchive and FOutputDevice classes.
 //	
