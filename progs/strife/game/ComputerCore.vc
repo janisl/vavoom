@@ -51,7 +51,8 @@ defaultproperties
 {
 	Health = 80;
 	Radius = 26.0;
-	Height = 128.0;
+	//	Temporary adjusted to fix problem with floor not lowering.
+	Height = 112.0;//128.0;
 	Mass = 100000.0;
 	bSolid = true;
 	bShootable = true;
@@ -67,6 +68,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/05 17:27:19  dj_jl
+//  Temporary height fix.
+//
 //  Revision 1.5  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
