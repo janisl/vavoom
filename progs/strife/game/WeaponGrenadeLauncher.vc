@@ -59,7 +59,7 @@ void A_FireGrenade()
 		Player(Player).SetPsprite(ps_flash, FlashState2);
 
 	Player.MO.Origin.z += 32.0;
-	grenade = Actor(Player.MO).SpawnSubMissile(grenadetype);
+	grenade = Actor(Player.MO).SpawnSubMissile(grenadetype, Actor(Player.MO));
 	Player.MO.Origin.z -= 32.0;
 	if (!grenade)
 		return;
@@ -141,6 +141,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/04/05 17:29:24  dj_jl
+//  Fix for missiles imediately exploding and having wrong instigator.
+//
 //  Revision 1.8  2006/03/12 20:01:25  dj_jl
 //  States as objects, added state variable type.
 //

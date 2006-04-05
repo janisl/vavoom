@@ -2413,7 +2413,7 @@ bool LookForPlayers(bool allaround)
 //
 //==========================================================================
 
-Actor SpawnSubMissile(classid type)
+Actor SpawnSubMissile(classid type, Actor AInstigator)
 {
 	Actor other;
 	TVec dir;
@@ -2424,7 +2424,7 @@ Actor SpawnSubMissile(classid type)
 		return none;
 	}
 
-	other.Instigator = self;
+	other.Instigator = AInstigator;
 	other.Angles = Angles;
 
 	other.Velocity.x = other.Speed * cos(Angles.yaw);
@@ -3466,6 +3466,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.41  2006/04/05 17:29:24  dj_jl
+//  Fix for missiles imediately exploding and having wrong instigator.
+//
 //  Revision 1.40  2006/03/29 14:36:30  firebrand_kh
 //  Added bouncing flags / Changed Improved A_Tracer method
 //

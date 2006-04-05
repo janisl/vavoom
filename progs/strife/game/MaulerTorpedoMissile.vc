@@ -49,11 +49,7 @@ void A_MaulerTorpedoExplode()
 	for (i = 0; i < 80; i++)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + 45.0 / 10.0);
-		wave = SpawnSubMissile(MaulerTorpedoWav);
-		if (wave)
-		{
-			wave.Instigator = Instigator;
-		}
+		wave = SpawnSubMissile(MaulerTorpedoWav, Instigator);
 	}
 	Origin.z = savedz;
 }
@@ -88,6 +84,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/05 17:29:24  dj_jl
+//  Fix for missiles imediately exploding and having wrong instigator.
+//
 //  Revision 1.6  2006/03/21 15:12:17  firebrand_kh
 //  Added disrupting damage flag
 //
