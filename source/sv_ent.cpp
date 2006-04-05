@@ -832,6 +832,7 @@ bool VEntity::CheckRelPosition(TVec Pos)
 
 bool VEntity::TryMove(TVec newPos)
 {
+	guard(VEntity::TryMove);
 	boolean check;
 	TVec oldorg;
 	int side;
@@ -958,6 +959,7 @@ bool VEntity::TryMove(TVec newPos)
 	}
 
 	return true;
+	unguard;
 }
 
 //**************************************************************************
@@ -996,6 +998,7 @@ static TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 
 static boolean PTR_SlideTraverse(intercept_t * in)
 {
+	guard(PTR_SlideTraverse);
 	line_t *li;
 	TVec hit_point;
 	opening_t *open;
@@ -1039,6 +1042,7 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 	}
 
 	return false;	// stop
+	unguard;
 }
 
 //==========================================================================
@@ -1065,8 +1069,9 @@ static void SlidePathTraverse(float x, float y)
 //
 //==========================================================================
 
-void VEntity::SlideMove(void)
+void VEntity::SlideMove()
 {
+	guard(VEntity::SlideMove);
 	float leadx;
 	float leady;
 	float trailx;
@@ -1158,6 +1163,7 @@ void VEntity::SlideMove(void)
 	}
 	while (!TryMove(TVec(Origin.x + Velocity.x * host_frametime,
 			Origin.y + Velocity.y * host_frametime, Origin.z)));
+	unguard;
 }
 
 //**************************************************************************
@@ -1176,6 +1182,7 @@ void VEntity::SlideMove(void)
 
 static boolean PTR_BounceTraverse(intercept_t * in)
 {
+	guard(PTR_BounceTraverse);
 	line_t *li;
 	TVec hit_point;
 	opening_t *open;
@@ -1191,7 +1198,8 @@ static boolean PTR_BounceTraverse(intercept_t * in)
 		open = SV_FindOpening(open, slidemo->Origin.z,
 			slidemo->Origin.z + slidemo->Height);
 		if (open && open->range >= slidemo->Height &&	// fits
-			open->top - slidemo->Origin.z >= slidemo->Height)	// mobj is not too high
+			slidemo->Origin.z + slidemo->Height <= open->top &&
+			slidemo->Origin.z >= open->bottom)	// mobj is not too high
 		{
 			return true;	// this line doesn't block movement
 		}
@@ -1206,6 +1214,7 @@ static boolean PTR_BounceTraverse(intercept_t * in)
 
 	bestslideline = li;
 	return false;	// stop
+	unguard;
 }
 
 //============================================================================
@@ -1216,6 +1225,7 @@ static boolean PTR_BounceTraverse(intercept_t * in)
 
 void VEntity::BounceWall(float overbounce)
 {
+	guard(VEntity::BounceWall);
 	slidemo = this;
 	if (Velocity.x > 0.0)
 	{
@@ -1235,10 +1245,15 @@ void VEntity::BounceWall(float overbounce)
 	}
 	slideorg.z = Origin.z;
 	slidedir = Velocity * host_frametime;
+	bestslideline = NULL;
 	SV_PathTraverse(slideorg.x, slideorg.y,
 		slideorg.x + slidedir.x, slideorg.y + slidedir.y,
 		PT_ADDLINES, PTR_BounceTraverse, NULL, NULL);
-	Velocity = ClipVelocity(Velocity, bestslideline->normal, overbounce);
+	if (bestslideline)
+	{
+		Velocity = ClipVelocity(Velocity, bestslideline->normal, overbounce);
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -1247,7 +1262,7 @@ void VEntity::BounceWall(float overbounce)
 //
 //==========================================================================
 
-void VEntity::UpdateVelocity(void)
+void VEntity::UpdateVelocity()
 {
 	guard(VEntity::UpdateVelocity);
 /*	if (Origin.z <= FloorZ && !Velocity.x && !Velocity.y &&
@@ -1300,6 +1315,7 @@ static VEntity *onmobj;	//generic global onmobj...used for landing on pods/playe
 
 static boolean PIT_CheckOnmobjZ(VEntity *Other)
 {
+	guard(PIT_CheckOnmobjZ);
 	float blockdist;
 
 	if (!(Other->EntityFlags & VEntity::EF_Solid))
@@ -1330,6 +1346,7 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 	}
 	onmobj = Other;
 	return false;
+	unguard;
 }
 
 //=============================================================================
@@ -1342,6 +1359,7 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 
 void VEntity::FakeZMovement()
 {
+	guard(VEntity::FakeZMovement);
 	//
 	//  adjust height
 	//
@@ -1379,6 +1397,7 @@ void VEntity::FakeZMovement()
 		// hit the ceiling
 		tzorg.z = CeilingZ - Height;
 	}
+	unguard;
 }
 
 //=============================================================================
@@ -1389,8 +1408,9 @@ void VEntity::FakeZMovement()
 //
 //=============================================================================
 
-VEntity *VEntity::CheckOnmobj()
+VEntity* VEntity::CheckOnmobj()
 {
+	guard(VEntity::CheckOnmobj);
 	int xl, xh, yl, yh, bx, by;
 
 	if (!(EntityFlags & EF_ColideWithThings))
@@ -1422,6 +1442,7 @@ VEntity *VEntity::CheckOnmobj()
 		}
 	}
 	return NULL;
+	unguard;
 }
 
 //===========================================================================
@@ -1430,8 +1451,9 @@ VEntity *VEntity::CheckOnmobj()
 //
 //===========================================================================
 
-VEntity *VEntity::RoughBlockCheck(int index)
+VEntity* VEntity::RoughBlockCheck(int index)
 {
+	guard(VEntity::RoughBlockCheck);
 	VEntity *link;
 
 	for (link = XLevel->BlockLinks[index]; link; link = link->BlockMapNext)
@@ -1442,6 +1464,7 @@ VEntity *VEntity::RoughBlockCheck(int index)
 		}
 	}
 	return NULL;
+	unguard;
 }
 
 //===========================================================================
@@ -1453,8 +1476,9 @@ VEntity *VEntity::RoughBlockCheck(int index)
 //
 //===========================================================================
 
-VEntity *VEntity::RoughMonsterSearch(int distance)
+VEntity* VEntity::RoughMonsterSearch(int distance)
 {
+	guard(VEntity::RoughMonsterSearch);
 	int blockX;
 	int blockY;
 	int startX, startY;
@@ -1565,6 +1589,7 @@ VEntity *VEntity::RoughMonsterSearch(int distance)
 		}
 	}
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -1846,8 +1871,9 @@ IMPLEMENT_FUNCTION(VViewEntity, SetState)
 //
 //==========================================================================
 
-void VEntity::InitFuncIndexes(void)
+void VEntity::InitFuncIndexes()
 {
+	guard(VEntity::InitFuncIndexes);
 	FIndex_Destroyed = StaticClass()->GetFunctionIndex("Destroyed");
 	FIndex_Touch = StaticClass()->GetFunctionIndex("Touch");
 	FIndex_BlockedByLine = StaticClass()->GetFunctionIndex("BlockedByLine");
@@ -1861,6 +1887,7 @@ void VEntity::InitFuncIndexes(void)
 	FIndex_TakeInventory = StaticClass()->GetFunctionIndex("TakeInventory");
 	FIndex_CheckInventory = StaticClass()->GetFunctionIndex("CheckInventory");
 	FIndex_GetSigilPieces = StaticClass()->GetFunctionIndex("GetSigilPieces");
+	unguard;
 }
 
 //==========================================================================
@@ -1918,9 +1945,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.28  2006/04/05 18:38:07  dj_jl
+//	Fixed bouncing at back side of a line.
+//
 //	Revision 1.27  2006/03/21 20:04:12  dj_jl
 //	Fix setting initial sate, if state is null.
-//
+//	
 //	Revision 1.26  2006/03/20 17:44:18  dj_jl
 //	Fixed clipping.
 //	
