@@ -92,7 +92,6 @@ bool bCountItem;		//COUNTITEM	800000
 bool bFriendly;			// Will fight on player's side
 bool bUnknown2;			//8000000
 bool bSpectral;			// Can be killed only with Sigil
-bool bTakePoisonDamage;		// it's affected by poison damage
 bool bOnMobj;
 bool bActivateImpact;	// an MF_MISSILE mobj can activate
 						// SPAC_IMPACT
@@ -288,6 +287,15 @@ void OnMapSpawn(mthing_t * mthing)
 		{
 			bCheckLineBlockMonsters = true;
 		}
+	}
+
+	if (bMissile)
+	{
+		MaxStepHeight = 4.0;
+	}
+	else if (bNoBlood)
+	{
+		MaxStepHeight = 24.0;
 	}
 
 	if (Level.Game.gameskill == sk_nightmare)
@@ -548,8 +556,8 @@ void Died(Actor source)
 			}
 		}
 	}
-	//  This class of rebel always drops a clip.
-	if (Class == Rebel)
+	//  This class of rebel always drops a clip, unless it already did.
+	if (Class == Rebel && !ItemAmmoClipOfBullets(A))
 	{
 		A = Spawn(ItemAmmoClipOfBullets, vector(Origin.x, Origin.y, ONFLOORZ));
 		A.bDropped = true;	// special versions of items
@@ -562,7 +570,6 @@ void Died(Actor source)
 	if (Class == Bishop)
 	{
 		A = Spawn(ItemAmmoCrateOfMissiles, vector(Origin.x, Origin.y, ONFLOORZ));
-		A.bDropped = true;	// special versions of items
 	}
 }
 
@@ -623,6 +630,11 @@ void Damage(Actor inflictor, Actor source, int damage)
 			return;
 		}
 	}
+	damage = TakeSpecialDamage(inflictor, source, damage);
+	if (damage == -1)
+	{
+		return;
+	}
 
 	// Some close combat weapons should not
 	// inflict thrust and push the victim out of reach,
@@ -633,7 +645,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			Normalise(MobjCenter(self) - MobjCenter(inflictor));
 	}
 
-	if (inflictor && inflictor.bPoisonDamage && !bTakePoisonDamage)
+	if (inflictor && inflictor.bPoisonDamage && bNoBlood)
 	{
 		// Don't damage actors that don't take poison damage
 		return;
@@ -743,6 +755,17 @@ void Damage(Actor inflictor, Actor source, int damage)
 //==========================================================================
 
 int DoSpecialDamage(Actor Victim, int damage)
+{
+	return damage;
+}
+
+//==========================================================================
+//
+//  TakeSpecialDamage
+//
+//==========================================================================
+
+int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
 {
 	return damage;
 }
@@ -884,6 +907,12 @@ bool Touch(Entity InOther)
 				// Let players missile other players.
 				return false;
 			}
+		}
+
+		//	Don't hit spectres with non-sigil weapons.
+		if (Other.bSpectral && !bSpectral)
+		{
+			return true;
 		}
 
 		if (!Other.bShootable)
@@ -3061,6 +3090,10 @@ void A_Pain()
 void A_Explode()
 {
 	RadiusAttack(64, 0, 0);
+	if (Instigator && Instigator.bIsPlayer)
+	{
+		StrifeLevelInfo(Level).NoiseAlert(Instigator, self);
+	}
 }
 
 //==========================================================================
@@ -3460,12 +3493,16 @@ defaultproperties
 	Height = 16.0;
 	Mass = 100.0;
 	MaxStepHeight = 16.0;
+	MaxDropoffHeight = 32.0;
 	ReactionCount = 8;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.42  2006/04/06 11:47:46  dj_jl
+//  Added maximal dropoff parameter.
+//
 //  Revision 1.41  2006/04/05 17:29:24  dj_jl
 //  Fix for missiles imediately exploding and having wrong instigator.
 //

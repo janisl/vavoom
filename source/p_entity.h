@@ -180,6 +180,7 @@ class VEntity : public VThinker
 	//  Params
 	float			Mass;
 	float			MaxStepHeight;
+	float			MaxDropoffHeight;
 
 	//  Water
 	int				WaterLevel;
@@ -311,9 +312,12 @@ class VEntity : public VThinker
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/06 11:47:46  dj_jl
+//	Added maximal dropoff parameter.
+//
 //	Revision 1.4  2006/03/18 16:51:15  dj_jl
 //	Renamed type class names, better code serialisation.
-//
+//	
 //	Revision 1.3  2006/03/12 20:06:02  dj_jl
 //	States as objects, added state variable type.
 //	

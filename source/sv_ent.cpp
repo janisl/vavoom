@@ -888,7 +888,7 @@ bool VEntity::TryMove(TVec newPos)
 				return false;
 			}
 		}
-		if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
+		if (tmtrace.FloorZ - Origin.z > MaxDropoffHeight)
 		{
 			// Too big a step up
 			eventPushLine();
@@ -1945,9 +1945,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.29  2006/04/06 11:47:46  dj_jl
+//	Added maximal dropoff parameter.
+//
 //	Revision 1.28  2006/04/05 18:38:07  dj_jl
 //	Fixed bouncing at back side of a line.
-//
+//	
 //	Revision 1.27  2006/03/21 20:04:12  dj_jl
 //	Fix setting initial sate, if state is null.
 //	

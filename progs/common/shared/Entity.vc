@@ -172,6 +172,7 @@ readonly state NextState;
 //  Params
 float Mass;
 float MaxStepHeight;
+float MaxDropoffHeight;
 
 //  Water
 int WaterLevel;
@@ -494,6 +495,7 @@ defaultproperties
 {
 	bColideWithThings = true;
 	bColideWithWorld = true;
+	MaxDropoffHeight = 24.0;
 	SoundClass = 'player';
 	SoundGender = 'male';
 }
@@ -501,6 +503,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 11:47:45  dj_jl
+//  Added maximal dropoff parameter.
+//
 //  Revision 1.4  2006/03/23 23:11:50  dj_jl
 //  Added support for final methods.
 //
