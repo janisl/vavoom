@@ -4027,7 +4027,7 @@ void SpawnMapThing(mthing_t * mthing)
 	if (!Game.netgame)
 	{
 		// Single player
-		if (!(mthing->options & MainGameInfo(Game).classFlags[GetCvar("Class")]))
+		if (!(mthing->options & MainGameInfo(Game).classFlags[GetCvar('class')]))
 		{
 			// Not for current class
 			return;
@@ -4102,6 +4102,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.10  2006/03/26 12:58:49  dj_jl
 //  Moved added fields to Object.
 //

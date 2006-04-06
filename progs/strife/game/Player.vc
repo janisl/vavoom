@@ -1063,7 +1063,8 @@ void GiveQuest(int QuestID)
 	cprint(self, "Got quest %d, quests %x", QuestID, Quests);
 	QClass = StrifeLevelInfo(Level).GetClassFromID(312 + QuestID);
 	QInfo = QuestInfo(StrifeLevelInfo(Level).Spawn(QClass, vector(0.0, 0.0, 0.0)));
-	cprint(self, QInfo.QuestMessage);
+	if (QInfo.QuestMessage)
+		cprint(self, QInfo.QuestMessage);
 	QInfo.Remove();
 }
 
@@ -1080,7 +1081,7 @@ void SetObjectives(int NewObjectives)
 		return;
 	}
 	//	Check if log text lump exists in wad file.
-	if (!WadLumpPresent(va("LOG%d", NewObjectives)))
+	if (!WadLumpPresent(StrToName(va("log%d", NewObjectives))))
 	{
 		return;
 	}
@@ -2643,6 +2644,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.37  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.36  2006/04/06 11:48:52  dj_jl
 //  Fixed several bugs.
 //

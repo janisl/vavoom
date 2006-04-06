@@ -1410,7 +1410,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		Line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING);
 	}
 	quest1 = false;
-	if (XLevel.Sides[Line->sidenum[0]].midtexture == TextureNumForName("BRNSCN01"))
+	if (XLevel.Sides[Line->sidenum[0]].midtexture == TextureNumForName('brnscn01'))
 		quest1 = true;
 	P_ChangeSwitchTexture(Line, false);
 	switched = true;
@@ -4666,6 +4666,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.11  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.10  2006/03/26 13:01:52  dj_jl
 //  Moved added fields to Object.
 //

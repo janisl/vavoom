@@ -46,7 +46,7 @@ int f_map;
 int FinaleStage;
 float FinaleTime;
 float FinaleEndTime;
-string FinaleFlat;
+name FinaleFlat;
 
 int FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
 
@@ -72,20 +72,20 @@ void StartFinale()
 	switch (f_episode)
 	{
 	case 1:
-		FinaleFlat = "FLOOR4_8";
-		F_GetFinaleText("FIN1TEXT");
+		FinaleFlat = 'floor4_8';
+		F_GetFinaleText('fin1text');
 		break;
 	case 2:
-		FinaleFlat = "SFLR6_1";
-		F_GetFinaleText("FIN2TEXT");
+		FinaleFlat = 'sflr6_1';
+		F_GetFinaleText('fin2text');
 		break;
 	case 3:
-		FinaleFlat = "MFLR8_4";
-		F_GetFinaleText("FIN3TEXT");
+		FinaleFlat = 'mflr8_4';
+		F_GetFinaleText('fin3text');
 		break;
 	case 4:
-		FinaleFlat = "MFLR8_3";
-		F_GetFinaleText("FIN4TEXT");
+		FinaleFlat = 'mflr8_3';
+		F_GetFinaleText('fin4text');
 		break;
 	default:
 		// Ouch.
@@ -116,19 +116,19 @@ void Tick(float DeltaTime)
 		switch (f_episode)
 		{
 		case 1:
-			if (WadLumpPresent("E4M1"))
-				fpage1 = R_RegisterPic("CREDIT", PIC_PATCH);
+			if (WadLumpPresent('e4m1'))
+				fpage1 = R_RegisterPic('credit', PIC_PATCH);
 			else
-				fpage1 = R_RegisterPic("HELP2", PIC_PATCH);
+				fpage1 = R_RegisterPic('help2', PIC_PATCH);
 			break;
 		case 2:
-			fpage1 = R_RegisterPic("VICTORY2", PIC_PATCH);
+			fpage1 = R_RegisterPic('victory2', PIC_PATCH);
 			break;
 		case 3:
 			F_InitBunnyScroll();
 			break;
 		case 4:
-			fpage1 = R_RegisterPic("ENDPIC", PIC_PATCH);
+			fpage1 = R_RegisterPic('endpic', PIC_PATCH);
 			break;
 		}
 	}
@@ -175,7 +175,7 @@ bool Responder(event_t * event)
 //
 //==========================================================================
 
-void F_GetFinaleText(string msgLumpName)
+void F_GetFinaleText(name msgLumpName)
 {
 	LoadTextLump(msgLumpName, &FinaleText[0], MAX_FINALE_MESSAGE_SIZE);
 	FinaleEndTime = itof(strlen(ARR2STR(FinaleText))) * TEXTSPEED + TEXTWAIT;
@@ -187,7 +187,7 @@ void F_GetFinaleText(string msgLumpName)
 //
 //===========================================================================
 
-void F_TextWrite(void)
+void F_TextWrite()
 {
 	int count;
 
@@ -210,20 +210,20 @@ void F_TextWrite(void)
 //
 //==========================================================================
 
-void F_InitBunnyScroll(void)
+void F_InitBunnyScroll()
 {
 	int i;
 
-	fpage1 = R_RegisterPic("PFUB1", PIC_PATCH);
-	fpage2 = R_RegisterPic("PFUB2", PIC_PATCH);
+	fpage1 = R_RegisterPic('pfub1', PIC_PATCH);
+	fpage2 = R_RegisterPic('pfub2', PIC_PATCH);
 	for (i = 0; i < 7; i++)
 	{
-		fend[i] = R_RegisterPic(va("END%d", i), PIC_PATCH);
+		fend[i] = R_RegisterPic(StrToName(va("end%d", i)), PIC_PATCH);
 	}
 #ifdef FIXME
-	S_StartSong("D_BUNNY", P_GetCDEnd2Track(), true);
+	S_StartSong("d_bunny", P_GetCDEnd2Track(), true);
 #else
-	CmdBuf_AddText("music loop D_BUNNY\n");
+	CmdBuf_AddText("music loop d_bunny\n");
 #endif
 }
 
@@ -424,11 +424,11 @@ bool Responder(event_t * event)
 void F_StartCast()
 {
 #ifdef FIXME
-	S_StartSong("D_EVIL", P_GetCDEnd2Track(), true);
+	S_StartSong("d_evil", P_GetCDEnd2Track(), true);
 #else
-	CmdBuf_AddText("music loop D_EVIL\n");
+	CmdBuf_AddText("music loop d_evil\n");
 #endif
-	fpage1 = R_RegisterPic("BOSSBACK", PIC_PATCH);
+	fpage1 = R_RegisterPic('bossback', PIC_PATCH);
 
 #if 0
 	castnum = 0;
@@ -684,6 +684,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/28 22:43:55  dj_jl
 //  Replaced defines with constants.
 //

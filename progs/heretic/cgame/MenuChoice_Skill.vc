@@ -29,7 +29,7 @@ int SkillLevel;
 
 void ActivateEvent()
 {
-	SetCvar("Skill", SkillLevel);
+	SetCvar('Skill', SkillLevel);
 
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers 1\n");
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/09 22:33:10  dj_jl
 //  Moved all client game code to classes.
 //

@@ -550,7 +550,7 @@ void MessageBoxDrawer()
 	// Horiz. & Vertically center string and print it.
 	if (messageToPrint)
 	{
-		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, "FLAT20");
+		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'flat20');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcenter, vcenter);
@@ -728,7 +728,7 @@ void VerifyNightmare(int ch)
 
 void NewGame(int skill)
 {
-	SetCvar("Skill", skill);
+	SetCvar('Skill', skill);
 
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers 1\n");
@@ -748,16 +748,16 @@ void NewGame(int skill)
 //
 //==========================================================================
 
-void InitBorder(void)
+void InitBorder()
 {
-	pic_brdr_t = R_RegisterPic("brdr_t", PIC_PATCH);
-	pic_brdr_b = R_RegisterPic("brdr_b", PIC_PATCH);
-	pic_brdr_l = R_RegisterPic("brdr_l", PIC_PATCH);
-	pic_brdr_r = R_RegisterPic("brdr_r", PIC_PATCH);
-	pic_brdr_tl = R_RegisterPic("brdr_tl", PIC_PATCH);
-	pic_brdr_tr = R_RegisterPic("brdr_tr", PIC_PATCH);
-	pic_brdr_bl = R_RegisterPic("brdr_bl", PIC_PATCH);
-	pic_brdr_br = R_RegisterPic("brdr_br", PIC_PATCH);
+	pic_brdr_t = R_RegisterPic('brdr_t', PIC_PATCH);
+	pic_brdr_b = R_RegisterPic('brdr_b', PIC_PATCH);
+	pic_brdr_l = R_RegisterPic('brdr_l', PIC_PATCH);
+	pic_brdr_r = R_RegisterPic('brdr_r', PIC_PATCH);
+	pic_brdr_tl = R_RegisterPic('brdr_tl', PIC_PATCH);
+	pic_brdr_tr = R_RegisterPic('brdr_tr', PIC_PATCH);
+	pic_brdr_bl = R_RegisterPic('brdr_bl', PIC_PATCH);
+	pic_brdr_br = R_RegisterPic('brdr_br', PIC_PATCH);
 }
 
 //==========================================================================
@@ -805,9 +805,9 @@ void DrawBorder(int x, int y, int w, int h)
 void DrawViewBorder(int x, int y, int w, int h)
 {
 #ifdef DOOM2
-	R_FillRectWithFlat(0, 0, 320, 200 - 32, "GRNROCK");
+	R_FillRectWithFlat(0, 0, 320, 200 - 32, 'grnrock');
 #else
-	R_FillRectWithFlat(0, 0, 320, 200 - 32, "FLOOR7_2");
+	R_FillRectWithFlat(0, 0, 320, 200 - 32, 'floor7_2');
 #endif
 	DrawBorder(x, y, w, h);
 }
@@ -1185,6 +1185,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.7  2006/03/26 12:57:31  dj_jl
 //  Moved added fields to Object.
 //

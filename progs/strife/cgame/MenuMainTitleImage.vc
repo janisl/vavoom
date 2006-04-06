@@ -29,12 +29,15 @@ defaultproperties
 {
 	X = 94;
 	Y = 2;
-	PicName = "M_STRIFE";
+	PicName = 'm_strife';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

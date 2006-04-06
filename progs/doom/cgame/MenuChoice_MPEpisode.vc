@@ -30,7 +30,7 @@ MenuChoice_MPLevel Levels;
 void InitWindow()
 {
 	::InitWindow();
-	MaxValue = !WadLumpPresent("E2M1") ? 1 : WadLumpPresent("E4M1") ? 4 : 3;
+	MaxValue = !WadLumpPresent('e2m1') ? 1 : WadLumpPresent('e4m1') ? 4 : 3;
 }
 
 bool SetNewValue(int newValue)
@@ -51,6 +51,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

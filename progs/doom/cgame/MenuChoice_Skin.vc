@@ -23,22 +23,22 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Skin:MenuChoiceEnum;
+class MenuChoice_Skin : MenuChoiceEnum;
 
 int SkinBuf[64 / 4];
 
 void SetSkin(int skinNum)
 {
-	sprint(ARR2STR(SkinBuf), "models/players/%s/%s", GetCvarS("model"),
+	sprint(ARR2STR(SkinBuf), "models/players/%s/%s", GetCvarS('model'),
 		EnumNames[skinNum]);
 }
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
 	int i;
 	string curskin;
 
-	curskin = GetCvarS("skin");
+	curskin = GetCvarS('skin');
 	for (i = 0; i < MaxValue; i++)
 	{
 		if (!strcmp(curskin, EnumNames[i]))
@@ -49,14 +49,14 @@ int GetInitialValue(void)
 	if (i == MaxValue)
 	{
 		i = 0;
-		SetCvarS("skin", EnumNames[0]);
+		SetCvarS('skin', EnumNames[0]);
 	}
 	return i;
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvarS("skin", EnumNames[newValue]);
+	SetCvarS('skin', EnumNames[newValue]);
 	SetSkin(newValue);
 	return true;
 }
@@ -101,6 +101,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

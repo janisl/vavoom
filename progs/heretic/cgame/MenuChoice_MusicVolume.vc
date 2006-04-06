@@ -27,12 +27,12 @@ class MenuChoice_MusicVolume : MenuChoiceSlider;
 
 float GetInitialValue()
 {
-	return GetCvarF("music_volume");
+	return GetCvarF('music_volume');
 }
 
 bool SetNewValue(float newValue)
 {
-	SetCvarF("music_volume", newValue);
+	SetCvarF('music_volume', newValue);
 	return true;
 }
 
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2005/09/12 19:48:18  dj_jl
 //  Changed sound volumes to be floats.
 //

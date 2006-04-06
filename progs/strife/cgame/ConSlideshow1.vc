@@ -52,7 +52,7 @@ void PlayPage()
 	switch (PageNum)
 	{
 	case 0:
-		BackPic.Handle = R_RegisterPic("SS2F1", PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss2f1', PIC_PATCH);
 		CmdBuf_AddText("music loop d_dark");
 		LocalSound('svox/mac10');
 		PicTimer = 9.0;
@@ -60,21 +60,21 @@ void PlayPage()
 		break;
 
 	case 1:
-		BackPic.Handle = R_RegisterPic("SS2F2", PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss2f2', PIC_PATCH);
 		LocalSound('svox/mac11');
 		PicTimer = 10.0;
 		PageNum = 2;
 		break;
 
 	case 2:
-		BackPic.Handle = R_RegisterPic("SS2F3", PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss2f3', PIC_PATCH);
 		LocalSound('svox/mac12');
 		PicTimer = 12.0;
 		PageNum = 3;
 		break;
 
 	case 3:
-		BackPic.Handle = R_RegisterPic("SS2F4", PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss2f4', PIC_PATCH);
 		LocalSound('svox/mac13');
 		PicTimer = 17.0;
 		PageNum = -1;
@@ -108,6 +108,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.4  2006/02/09 22:33:11  dj_jl
 //  Moved all client game code to classes.
 //

@@ -23,18 +23,21 @@
 //**
 //**************************************************************************
 
-class MenuMainTitleImage:MenuStaticBitmap;
+class MenuMainTitleImage : MenuStaticBitmap;
 
 defaultproperties
 {
 	X = 88;
 	Y = 0;
-	PicName = "M_HTIC";
+	PicName = 'm_htic';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:22  dj_jl
 //  New style of defining classes.
 //

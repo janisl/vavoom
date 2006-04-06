@@ -97,7 +97,7 @@ bool respawnmonsters;
 void Init()
 {
 #ifndef DOOM2
-	shareware = !WadLumpPresent("E2M1");
+	shareware = !WadLumpPresent('e2m1');
 #endif
 	InitTranslationTables();
 	InitBotTypes();
@@ -111,9 +111,9 @@ void Init()
 
 void InitNewGame(int skill)
 {
-	respawnmonsters = skill == sk_nightmare || GetCvar("RespawnMonsters");
-	nomonsters = GetCvar("NoMonsters");
-	fastparm = skill == sk_nightmare || GetCvar("Fast");
+	respawnmonsters = skill == sk_nightmare || GetCvar('RespawnMonsters');
+	nomonsters = GetCvar('NoMonsters');
+	fastparm = skill == sk_nightmare || GetCvar('Fast');
 }
 
 //==========================================================================
@@ -2176,6 +2176,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.7  2006/03/26 12:57:12  dj_jl
 //  Moved added fields to Object.
 //

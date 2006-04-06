@@ -29,7 +29,7 @@ int EpisodeNum;
 
 void ActivateEvent()
 {
-	if (!WadLumpPresent("E2M1") && EpisodeNum > 1)
+	if (!WadLumpPresent('e2m1') && EpisodeNum > 1)
 	{
 		GetClGame().MessageBoxStartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
 			ClientGame::MB_Shareware, false);
@@ -48,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

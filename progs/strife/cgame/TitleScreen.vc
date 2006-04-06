@@ -50,50 +50,50 @@ void AdvanceDemo()
 	{
 	case 0:
 		pagetime = 12.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
+		page_pic = R_RegisterPic('titlepic', PIC_PATCH);
 		CmdBuf_AddText("music play d_logo");
 		break;
 
 	case 1:
 		pagetime = 5.0;
-		page_pic = R_RegisterPic("RGELOGO", PIC_PATCH);
+		page_pic = R_RegisterPic('rgelogo', PIC_PATCH);
 		LocalSound('crusader/active');
 		break;
 
 	case 2:
 		pagetime = 7.0;
-		page_pic = R_RegisterPic("PANEL1", PIC_PATCH);
+		page_pic = R_RegisterPic('panel1', PIC_PATCH);
 		CmdBuf_AddText("music play d_intro");
 		LocalSound('svox/pro1');
 		break;
 
 	case 3:
 		pagetime = 9.0;
-		page_pic = R_RegisterPic("PANEL2", PIC_PATCH);
+		page_pic = R_RegisterPic('panel2', PIC_PATCH);
 		LocalSound('svox/pro2');
 		break;
 
 	case 4:
 		pagetime = 12.0;
-		page_pic = R_RegisterPic("PANEL3", PIC_PATCH);
+		page_pic = R_RegisterPic('panel3', PIC_PATCH);
 		LocalSound('svox/pro3');
 		break;
 
 	case 5:
 		pagetime = 11.0;
-		page_pic = R_RegisterPic("PANEL4", PIC_PATCH);
+		page_pic = R_RegisterPic('panel4', PIC_PATCH);
 		LocalSound('svox/pro4');
 		break;
 
 	case 6:
 		pagetime = 10.0;
-		page_pic = R_RegisterPic("PANEL5", PIC_PATCH);
+		page_pic = R_RegisterPic('panel5', PIC_PATCH);
 		LocalSound('svox/pro5');
 		break;
 
 	case 7:
 		pagetime = 16.0;
-		page_pic = R_RegisterPic("PANEL6", PIC_PATCH);
+		page_pic = R_RegisterPic('panel6', PIC_PATCH);
 		LocalSound('svox/pro6');
 		break;
 
@@ -103,7 +103,7 @@ void AdvanceDemo()
 
 	case 9:
 		pagetime = 6.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
+		page_pic = R_RegisterPic('credit', PIC_PATCH);
 		break;
 	}
 }
@@ -117,7 +117,7 @@ void AdvanceDemo()
 void ForceTitle()
 {
 	pagetime = 11.0;
-	page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
+	page_pic = R_RegisterPic('titlepic', PIC_PATCH);
 }
 
 //==========================================================================
@@ -204,6 +204,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.3  2006/02/09 22:33:11  dj_jl
 //  Moved all client game code to classes.
 //

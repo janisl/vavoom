@@ -59,16 +59,16 @@ im_t			im;
 //
 //==========================================================================
 
-void LoadTextLump(char *name, char *buf, int bufsize)
+void LoadTextLump(VName name, char *buf, int bufsize)
 {
 	int		msgSize;
 	int		msgLump;
 
-	msgLump = W_GetNumForName(VName(name, VName::AddLower8));
+	msgLump = W_GetNumForName(name);
 	msgSize = W_LumpLength(msgLump);
 	if (msgSize >= bufsize)
 	{
-		Sys_Error("Message lump too long (%s)", name);
+		Sys_Error("Message lump too long (%s)", *name);
 	}
 	W_ReadLump(msgLump, buf);
 	buf[msgSize] = 0; // Append terminator
@@ -107,9 +107,12 @@ void IM_Start(void)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.10  2006/04/06 21:50:51  dj_jl
+//	For some builtins changed string arguments to names.
+//
 //	Revision 1.9  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.8  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

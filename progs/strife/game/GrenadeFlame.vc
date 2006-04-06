@@ -102,11 +102,15 @@ defaultproperties
 	bFireDamage = true;
 	IdleState = S_GRENADE_FLAME_1;
 	DeathState = S_GRENADE_FLAME_X1;
+	Effects = StrifeDefs::EF_DL_MISSILE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.6  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

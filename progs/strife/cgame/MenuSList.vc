@@ -54,7 +54,7 @@ void DrawTextBox(GC gc, string text)
 	x = (320 - w) / 2;
 	y = (200 - h) / 2;
 
-	R_FillRectWithFlat(x, y, w, h, "F_PAVE01");
+	R_FillRectWithFlat(x, y, w, h, 'f_pave01');
 	GetClGame().DrawBorder(x, y, w, h);
 
 	gc.DrawText(160, 100, text);
@@ -171,6 +171,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.4  2006/02/19 14:25:38  dj_jl
 //  Some changes because of compiler changes.
 //

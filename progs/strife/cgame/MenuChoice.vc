@@ -48,9 +48,9 @@ ClientGame GetClGame()
 
 void InitSlot()
 {
-	pic_M_LSLEFT = R_RegisterPic("M_LSLEFT", PIC_PATCH);
-	pic_M_LSCNTR = R_RegisterPic("M_LSCNTR", PIC_PATCH);
-	pic_M_LSRGHT = R_RegisterPic("M_LSRGHT", PIC_PATCH);
+	pic_M_LSLEFT = R_RegisterPic('m_lsleft', PIC_PATCH);
+	pic_M_LSCNTR = R_RegisterPic('m_lscntr', PIC_PATCH);
+	pic_M_LSRGHT = R_RegisterPic('m_lsrght', PIC_PATCH);
 }
 
 //==========================================================================
@@ -88,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/09 22:33:11  dj_jl
 //  Moved all client game code to classes.
 //

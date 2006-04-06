@@ -527,7 +527,7 @@ void MessageBoxDrawer()
 	// Horiz. & Vertically center string and print it.
 	if (messageToPrint)
 	{
-		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, "FLOOR04");
+		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'floor04');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcenter, vcenter);
@@ -663,16 +663,16 @@ void SharewareResponse(int key)
 //
 //==========================================================================
 
-void InitBorder(void)
+void InitBorder()
 {
-	pic_bordt = R_RegisterPic("bordt", PIC_PATCH);
-	pic_bordb = R_RegisterPic("bordb", PIC_PATCH);
-	pic_bordl = R_RegisterPic("bordl", PIC_PATCH);
-	pic_bordr = R_RegisterPic("bordr", PIC_PATCH);
-	pic_bordtl = R_RegisterPic("bordtl", PIC_PATCH);
-	pic_bordtr = R_RegisterPic("bordtr", PIC_PATCH);
-	pic_bordbl = R_RegisterPic("bordbl", PIC_PATCH);
-	pic_bordbr = R_RegisterPic("bordbr", PIC_PATCH);
+	pic_bordt = R_RegisterPic('bordt', PIC_PATCH);
+	pic_bordb = R_RegisterPic('bordb', PIC_PATCH);
+	pic_bordl = R_RegisterPic('bordl', PIC_PATCH);
+	pic_bordr = R_RegisterPic('bordr', PIC_PATCH);
+	pic_bordtl = R_RegisterPic('bordtl', PIC_PATCH);
+	pic_bordtr = R_RegisterPic('bordtr', PIC_PATCH);
+	pic_bordbl = R_RegisterPic('bordbl', PIC_PATCH);
+	pic_bordbr = R_RegisterPic('bordbr', PIC_PATCH);
 }
 
 //==========================================================================
@@ -720,7 +720,7 @@ void DrawBorder(int x, int y, int w, int h)
 void DrawViewBorder(int x, int y, int w, int h)
 {
 	R_FillRectWithFlat(0, 0, 320, 200 - 42,
-		!WadLumpPresent("E2M1") ? "FLOOR04" : "FLAT513");
+		!WadLumpPresent('e2m1') ? 'floor04' : 'flat513');
 	DrawBorder(x, y, w, h);
 }
 
@@ -926,6 +926,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.5  2006/03/06 13:15:48  dj_jl
 //  Client now uses entity class.
 //

@@ -134,61 +134,61 @@ void StartMap()
 	string Name = ARR2STR(namebuf);
 	int i;
 
-	pic_bar = R_RegisterPic("STBAR", PIC_PATCH);
-	pic_arms = R_RegisterPic("STARMS", PIC_PATCH);
+	pic_bar = R_RegisterPic('stbar', PIC_PATCH);
+	pic_arms = R_RegisterPic('starms', PIC_PATCH);
 
 	for (i = 0; i < 10; i++)
 	{
-		sprint(Name, "STTNUM%d", i);
-		pic_tallnum[i] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STYSNUM%d", i);
-		pic_yellownum[i] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STGNUM%d", i);
-		pic_graynum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "sttnum%d", i);
+		pic_tallnum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stysnum%d", i);
+		pic_yellownum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stgnum%d", i);
+		pic_graynum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
-	pic_minus = R_RegisterPic("STTMINUS", PIC_PATCH);
-	pic_percent = R_RegisterPic("STTPRCNT", PIC_PATCH);
+	pic_minus = R_RegisterPic('sttminus', PIC_PATCH);
+	pic_percent = R_RegisterPic('sttprcnt', PIC_PATCH);
 
-	sprint(Name, "STFB%d", cl.clientnum);
-	pic_faceback = R_RegisterPic(Name, PIC_PATCH);
+	sprint(Name, "stfb%d", cl.clientnum);
+	pic_faceback = R_RegisterPic(StrToName(Name), PIC_PATCH);
 
 	for (i = 0; i < 6; i++)
 	{
-		sprint(Name, "STKEYS%d", i);
-		pic_keys[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "stkeys%d", i);
+		pic_keys[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
 
 	for (i = 0; i < DoomDefs::ST_NUMPAINFACES; i++)
 	{
-		sprint(Name, "STFST%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STFST%d1", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STFST%d2", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STFTR%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STFTL%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STFOUCH%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STFEVL%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "STFKILL%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "stfst%d0", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stfst%d1", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stfst%d2", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stftr%d0", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stftl%d0", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stfouch%d", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stfevl%d", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "stfkill%d", i);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
-	pic_faces[DoomDefs::ST_GODFACE] = R_RegisterPic("STFGOD0", PIC_PATCH);
-	pic_faces[DoomDefs::ST_DEADFACE] = R_RegisterPic("STFDEAD0", PIC_PATCH);
+	pic_faces[DoomDefs::ST_GODFACE] = R_RegisterPic('stfgod0', PIC_PATCH);
+	pic_faces[DoomDefs::ST_DEADFACE] = R_RegisterPic('stfdead0', PIC_PATCH);
 
-	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
+	pic_pause = R_RegisterPic('m_pause', PIC_PATCH);
 
 	// Fullscreen HUD stuff
-	pic_ammoicon[0] = R_RegisterPic("CLIPA0", PIC_PATCH);
-	pic_ammoicon[1] = R_RegisterPic("SBOXA0", PIC_PATCH);
-	pic_ammoicon[2] = R_RegisterPic("CELLA0", PIC_PATCH);
-	pic_ammoicon[3] = R_RegisterPic("ROCKA0", PIC_PATCH);
-	pic_health = R_RegisterPic("STIMA0", PIC_PATCH);
-	pic_armor2 = R_RegisterPic("ARM2A0", PIC_PATCH);
+	pic_ammoicon[0] = R_RegisterPic('clipa0', PIC_PATCH);
+	pic_ammoicon[1] = R_RegisterPic('sboxa0', PIC_PATCH);
+	pic_ammoicon[2] = R_RegisterPic('cella0', PIC_PATCH);
+	pic_ammoicon[3] = R_RegisterPic('rocka0', PIC_PATCH);
+	pic_health = R_RegisterPic('stima0', PIC_PATCH);
+	pic_armor2 = R_RegisterPic('arm2a0', PIC_PATCH);
 }
 
 //==========================================================================
@@ -451,9 +451,9 @@ void SB_DrawFullscreenStats(void)
 //
 //==========================================================================
 
-void SB_DrawPause(void)
+void SB_DrawPause()
 {
-	if (cl.bPaused && GetCvar("draw_pause"))
+	if (cl.bPaused && GetCvar('draw_pause'))
 	{
 		R_DrawPic(126, 4, pic_pause);
 	}
@@ -509,6 +509,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.4  2006/02/28 22:43:55  dj_jl
 //  Replaced defines with constants.
 //

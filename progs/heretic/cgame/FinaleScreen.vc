@@ -38,7 +38,7 @@ int f_map;
 int FinaleStage;
 float FinaleTime;
 float FinaleEndTime;
-string FinaleFlat;
+name FinaleFlat;
 
 int FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
 
@@ -61,31 +61,31 @@ void StartFinale()
 	switch (f_episode)
 	{
 	case 1:
-		FinaleFlat = "FLOOR25";
-		F_GetFinaleText("fin1text");
+		FinaleFlat = 'floor25';
+		F_GetFinaleText('fin1text');
 		break;
 	case 2:
-		FinaleFlat = "FLATHUH1";
-		F_GetFinaleText("fin2text");
+		FinaleFlat = 'flathuh1';
+		F_GetFinaleText('fin2text');
 		break;
 	case 3:
-		FinaleFlat = "FLTWAWA2";
-		F_GetFinaleText("fin3text");
+		FinaleFlat = 'fltwawa2';
+		F_GetFinaleText('fin3text');
 		break;
 	case 4:
-		FinaleFlat = "FLOOR28";
-		F_GetFinaleText("fin4text");
+		FinaleFlat = 'floor28';
+		F_GetFinaleText('fin4text');
 		break;
 	case 5:
-		FinaleFlat = "FLOOR08";
-		F_GetFinaleText("fin5text");
+		FinaleFlat = 'floor08';
+		F_GetFinaleText('fin5text');
 		break;
 	}
 
 #ifdef FIXME
-	S_StartSong("MUS_CPTD", P_GetCDEnd1Track(), true);
+	S_StartSong("mus_cptd", P_GetCDEnd1Track(), true);
 #else
-	CmdBuf_AddText("music loop MUS_CPTD\n");
+	CmdBuf_AddText("music loop mus_cptd\n");
 #endif
 }
 
@@ -106,25 +106,25 @@ void Tick(float DeltaTime)
 		switch (f_episode)
 		{
 		case 1:
-			if (!WadLumpPresent("E2M1"))
+			if (!WadLumpPresent('e2m1'))
 			{
-				fpage1 = R_RegisterPic("ORDER", PIC_RAW);
+				fpage1 = R_RegisterPic('order', PIC_RAW);
 			}
 			else
 			{
-				fpage1 = R_RegisterPic("CREDIT", PIC_RAW);
+				fpage1 = R_RegisterPic('credit', PIC_RAW);
 			}
 			break;
 		case 2:
-			fpage1 = R_RegisterPicPal("E2END", PIC_RAW, "E2PAL");
+			fpage1 = R_RegisterPicPal('e2end', PIC_RAW, 'e2pal');
 			break;
 		case 3:
-			fpage1 = R_RegisterPic("FINAL1", PIC_RAW);
-			fpage2 = R_RegisterPic("FINAL2", PIC_RAW);
+			fpage1 = R_RegisterPic('final1', PIC_RAW);
+			fpage2 = R_RegisterPic('final2', PIC_RAW);
 			break;
 		case 4:	// Just show credits screen for extended episodes
 		case 5:
-			fpage1 = R_RegisterPic("CREDIT", PIC_RAW);
+			fpage1 = R_RegisterPic('credit', PIC_RAW);
 			break;
 		}
 	}
@@ -188,7 +188,7 @@ void FindEpisodeAndMap(string Name, int *epi, int *map)
 //
 //==========================================================================
 
-void F_GetFinaleText(string msgLumpName)
+void F_GetFinaleText(name msgLumpName)
 {
 	LoadTextLump(msgLumpName, &FinaleText[0], MAX_FINALE_MESSAGE_SIZE);
 	FinaleEndTime = itof(strlen(ARR2STR(FinaleText))) * TEXTSPEED + TEXTWAIT;
@@ -266,6 +266,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/28 22:45:25  dj_jl
 //  Replaced defines with constants.
 //

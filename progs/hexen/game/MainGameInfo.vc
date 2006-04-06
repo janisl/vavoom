@@ -126,9 +126,9 @@ void Init()
 
 void InitNewGame(int skill)
 {
-	nomonsters = GetCvar("NoMonsters");
-	fastparm = gameskill == sk_nightmare || GetCvar("Fast");
-	randomclass = GetCvar("RandomClass");
+	nomonsters = GetCvar('NoMonsters');
+	fastparm = gameskill == sk_nightmare || GetCvar('Fast');
+	randomclass = GetCvar('RandomClass');
 }
 
 //==========================================================================
@@ -1345,6 +1345,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.7  2006/03/26 12:58:49  dj_jl
 //  Moved added fields to Object.
 //

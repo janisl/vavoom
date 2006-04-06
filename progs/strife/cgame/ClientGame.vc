@@ -68,6 +68,8 @@ int pic_brdr_tr;
 int pic_brdr_bl;
 int pic_brdr_br;
 
+int ecolors[8];
+
 //==========================================================================
 //
 //  RootWindowCreated
@@ -76,9 +78,9 @@ int pic_brdr_br;
 
 void RootWindowCreated()
 {
-	CreateCvar("sb_show_weapons", "0", 0);
-	CreateCvar("sb_show_keys", "0", 0);
-	CreateCvar("sb_show_objectives", "0", 0);
+	CreateCvar('sb_show_weapons', "0", 0);
+	CreateCvar('sb_show_keys', "0", 0);
+	CreateCvar('sb_show_objectives', "0", 0);
 
 	GTitle = TitleScreen(GRoot.NewChild(TitleScreen));
 	GSBar = StatusBarScreen(GRoot.NewChild(StatusBarScreen));
@@ -524,7 +526,7 @@ void MessageBoxDrawer()
 	// Horiz. & Vertically center string and print it.
 	if (messageToPrint)
 	{
-		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, "F_PAVE01");
+		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'f_pave01');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcenter, vcenter);
@@ -645,16 +647,16 @@ void ControlResponse(int key)
 //
 //==========================================================================
 
-void InitBorder(void)
+void InitBorder()
 {
-	pic_brdr_t = R_RegisterPic("brdr_t", PIC_PATCH);
-	pic_brdr_b = R_RegisterPic("brdr_b", PIC_PATCH);
-	pic_brdr_l = R_RegisterPic("brdr_l", PIC_PATCH);
-	pic_brdr_r = R_RegisterPic("brdr_r", PIC_PATCH);
-	pic_brdr_tl = R_RegisterPic("brdr_tl", PIC_PATCH);
-	pic_brdr_tr = R_RegisterPic("brdr_tr", PIC_PATCH);
-	pic_brdr_bl = R_RegisterPic("brdr_bl", PIC_PATCH);
-	pic_brdr_br = R_RegisterPic("brdr_br", PIC_PATCH);
+	pic_brdr_t = R_RegisterPic('brdr_t', PIC_PATCH);
+	pic_brdr_b = R_RegisterPic('brdr_b', PIC_PATCH);
+	pic_brdr_l = R_RegisterPic('brdr_l', PIC_PATCH);
+	pic_brdr_r = R_RegisterPic('brdr_r', PIC_PATCH);
+	pic_brdr_tl = R_RegisterPic('brdr_tl', PIC_PATCH);
+	pic_brdr_tr = R_RegisterPic('brdr_tr', PIC_PATCH);
+	pic_brdr_bl = R_RegisterPic('brdr_bl', PIC_PATCH);
+	pic_brdr_br = R_RegisterPic('brdr_br', PIC_PATCH);
 }
 
 //==========================================================================
@@ -701,7 +703,7 @@ void DrawBorder(int x, int y, int w, int h)
 
 void DrawViewBorder(int x, int y, int w, int h)
 {
-	R_FillRectWithFlat(0, 0, 320, 200 - 32, "F_PAVE01");
+	R_FillRectWithFlat(0, 0, 320, 200 - 32, 'f_pave01');
 	DrawBorder(x, y, w, h);
 }
 
@@ -775,6 +777,31 @@ void ParseBlood()
 
 //==========================================================================
 //
+//  ParseExplosion
+//
+//==========================================================================
+
+void ParseExplosion()
+{
+	TVec org;
+	dlight_t* dl;
+	int etype;
+
+	etype = MSG_ReadByte();
+	org.x = itof(MSG_ReadShort());
+	org.y = itof(MSG_ReadShort());
+	org.z = itof(MSG_ReadShort());
+
+	dl = AllocDlight(0);
+	dl->origin = org;
+	dl->radius = 350.0;
+	dl->color = ecolors[etype];
+	dl->die = cl.time + 0.5;
+	dl->decay = 300.0;
+}
+
+//==========================================================================
+//
 //  ParseServerCommand
 //
 //==========================================================================
@@ -789,6 +816,10 @@ bool ParseServerCommand(int cmd_type)
 
 	case StrifeDefs::svc_blood:
 		ParseBlood();
+		break;
+
+	case StrifeDefs::svc_explosion:
+		ParseExplosion();
 		break;
 
 	case StrifeDefs::svc_speech:
@@ -833,8 +864,60 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 //
 //==========================================================================
 
-void UpdateMobj(Entity mobj, int i, float DeltaTime)
+void UpdateMobj(Entity mobj, int key, float DeltaTime)
 {
+	dlight_t* dl;
+	TVec fv;
+
+	switch (mobj.Effects & StrifeDefs::EF_DLIGHT_MASK)
+	{
+	case StrifeDefs::EF_DL_NONE:
+		break;
+
+	case StrifeDefs::EF_DL_MISSILE:
+		dl = AllocDlight(key);
+		dl->origin = mobj.Origin;
+		dl->radius = 200.0;
+		dl->color = RGB(255, 255, 255);
+		dl->die = cl.time + 0.1;
+		break;
+
+	case StrifeDefs::EF_DL_RED:
+		dl = AllocDlight(key);
+		dl->origin = mobj.Origin;
+		dl->radius = 200.0;
+		dl->color = RGB(255, 0, 0);
+		dl->die = cl.time + 0.1;
+		break;
+
+	case StrifeDefs::EF_DL_GREEN:
+		dl = AllocDlight(key);
+		dl->origin = mobj.Origin;
+		dl->radius = 200.0;
+		dl->color = RGB(0, 255, 0);
+		dl->die = cl.time + 0.1;
+		break;
+
+	case StrifeDefs::EF_DL_BLUE:
+		dl = AllocDlight(key);
+		dl->origin = mobj.Origin;
+		dl->radius = 200.0;
+		dl->color = RGB(0, 0, 255);
+		dl->die = cl.time + 0.1;
+		break;
+
+	case StrifeDefs::EF_DL_MUZZLEFLASH:
+		dl = AllocDlight(key);
+		dl->origin = mobj.Origin;
+		dl->origin.z += 48.0;
+		AngleVector(&mobj.Angles, &fv);
+
+		dl->origin = dl->origin + 18.0 * fv;
+		dl->radius = 200.0 + Random() * 31.0;
+		dl->color = 0xffffffff;
+		dl->minlight = 32.0;
+		dl->die = cl.time + 0.1;
+	}
 }
 
 //==========================================================================
@@ -855,11 +938,20 @@ void StartSpeech(int SpeechNum)
 defaultproperties
 {
 	sb_height = 32;
+	ecolors[0] = 0;	// EF_DL_NONE
+	ecolors[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
+	ecolors[2] = RGB(255, 32, 32);	// EF_DL_RED
+	ecolors[3] = RGB(32, 255, 32);	// EF_DL_GREEN
+	ecolors[4] = RGB(32, 32, 255);	// EF_DL_BLUE
+	ecolors[5] = 0;	// EF_DL_MUZZLEFLASH
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.5  2006/03/06 13:16:31  dj_jl
 //  Client now uses entity class.
 //

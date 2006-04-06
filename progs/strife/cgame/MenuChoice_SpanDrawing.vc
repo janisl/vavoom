@@ -23,16 +23,16 @@
 //**
 //**************************************************************************
 
-class MenuChoice_SpanDrawing:MenuChoiceEnum;
+class MenuChoice_SpanDrawing : MenuChoiceEnum;
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
-	return GetCvar("d_subdiv") - 1;
+	return GetCvar('d_subdiv') - 1;
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvar("d_subdiv", newValue + 1);
+	SetCvar('d_subdiv', newValue + 1);
 	return true;
 }
 
@@ -46,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/11/02 08:20:52  dj_jl
 //  New style classes.
 //

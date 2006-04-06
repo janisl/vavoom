@@ -23,16 +23,16 @@
 //**
 //**************************************************************************
 
-class MenuChoice_MouseXSensitivity:MenuChoiceSlider;
+class MenuChoice_MouseXSensitivity : MenuChoiceSlider;
 
-float GetInitialValue(void)
+float GetInitialValue()
 {
-	return GetCvarF("mouse_x_sensitivity");
+	return GetCvarF('mouse_x_sensitivity');
 }
 
 bool SetNewValue(float newValue)
 {
-	SetCvarF("mouse_x_sensitivity", newValue);
+	SetCvarF('mouse_x_sensitivity', newValue);
 	return true;
 }
 
@@ -46,6 +46,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

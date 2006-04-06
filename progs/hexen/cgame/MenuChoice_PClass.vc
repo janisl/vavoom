@@ -23,16 +23,16 @@
 //**
 //**************************************************************************
 
-class MenuChoice_PClass:MenuChoiceEnum;
+class MenuChoice_PClass : MenuChoiceEnum;
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
-	return GetCvar("class");
+	return GetCvar('class');
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvar("class", newValue);
+	SetCvar('class', newValue);
 	MenuScreenPlayerSetup(Parent).SetPClass(newValue);
 	return true;
 }
@@ -55,6 +55,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

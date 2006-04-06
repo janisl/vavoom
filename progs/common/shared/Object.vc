@@ -1488,25 +1488,25 @@ native static final void FatalError(string format, ...);
 //
 
 //  Create a new cvar
-native static final void CreateCvar(string Name, string default_value, int flags);
+native static final void CreateCvar(name Name, string default_value, int flags);
 
 //  Read value
-native static final int GetCvar(string Name);
+native static final int GetCvar(name Name);
 
 //  Set cvar value
-native static final void SetCvar(string Name, int value);
+native static final void SetCvar(name Name, int value);
 
 //  Read float value
-native static final float GetCvarF(string Name);
+native static final float GetCvarF(name Name);
 
 //  Set cvar float value
-native static final void SetCvarF(string Name, float value);
+native static final void SetCvarF(name Name, float value);
 
 //  Read string value
-native static final string GetCvarS(string Name);
+native static final string GetCvarS(name Name);
 
 //  Set cvar string value
-native static final void SetCvarS(string Name, string value);
+native static final void SetCvarS(name Name, string value);
 
 //
 //  Math functions
@@ -1651,10 +1651,10 @@ native static final void dprint(string format, ...);
 //  Texture / flat number retrieval
 //
 
-native static final int CheckTextureNumForName(string Name);
-native static final int TextureNumForName(string Name);
-native static final int CheckFlatNumForName(string Name);
-native static final int FlatNumForName(string Name);
+native static final int CheckTextureNumForName(name Name);
+native static final int TextureNumForName(name Name);
+native static final int CheckFlatNumForName(name Name);
+native static final int FlatNumForName(name Name);
 native static final float TextureHeight(int pic);
 
 //
@@ -1690,7 +1690,7 @@ native static final void CmdBuf_AddText(string format, ...);
 native static final string Info_ValueForKey(string info, string key);
 
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
-native static final bool WadLumpPresent(string Name);
+native static final bool WadLumpPresent(name Name);
 
 native static final Object SpawnObject(classid cid);
 
@@ -1710,10 +1710,10 @@ native static final bool StateIsInRange(state State, state Start, state End, int
 native static final void SetVirtualScreen(int Width, int Height);
 
 //  Registers a graphic, returns handle
-native static final int R_RegisterPic(string Name, int type);
+native static final int R_RegisterPic(name Name, int type);
 
 //  Registers a graphic with custom palette, returns handle
-native static final int R_RegisterPicPal(string Name, int type, string palname);
+native static final int R_RegisterPicPal(name Name, int type, name palname);
 
 //  Retrieves pic info
 native static final void R_GetPicInfo(int handle, picinfo_t * info);
@@ -1735,7 +1735,7 @@ native static final void R_DrawSpritePatch(int x, int y, int sprite, int frame, 
 	int translation);
 
 //  Installs model
-native static final model_t *InstallModel(string Name);
+native static final model_t* InstallModel(string Name);
 
 //  Draws a model
 native static final void R_DrawModelFrame(TVec origin, float angle, model_t * model,
@@ -1743,7 +1743,7 @@ native static final void R_DrawModelFrame(TVec origin, float angle, model_t * mo
 
 //  Draws a rectangle filled with a flat
 native static final void R_FillRectWithFlat(int x, int y, int width, int height,
-	string Name);
+	name Name);
 
 //  Darkens a screen region
 native static final void R_ShadeRect(int x, int y, int w, int h, int shade);
@@ -1811,7 +1811,7 @@ native static final void KeyNameForNum(int KeyNr, string NameString);
 native static final void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 native static final void IN_SetBinding(int key, string ondown, string onup);
 
-native static final void LoadTextLump(string Name, void *buf, int bufsize);
+native static final void LoadTextLump(name Name, void *buf, int bufsize);
 
 native static final dlight_t *AllocDlight(int key);
 native static final particle_t *NewParticle();
@@ -1963,6 +1963,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.17  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.16  2006/03/26 12:56:30  dj_jl
 //  Moved added fields to Object.
 //

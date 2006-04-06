@@ -216,7 +216,7 @@ bool Key(int key)
 
 void DrawWindow(GC gc)
 {
-	R_ShadeRect(0, 0, 320, 200, GetCvar("menu_darkening"));
+	R_ShadeRect(0, 0, 320, 200, GetCvar('menu_darkening'));
 }
 
 defaultproperties
@@ -228,6 +228,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.5  2006/02/28 22:47:24  dj_jl
 //  Replaced defines with constants.
 //

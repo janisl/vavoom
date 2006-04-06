@@ -45,7 +45,7 @@ void AdvanceDemo()
 {
 	demosequence++;
 #ifndef DOOM2
-	if (WadLumpPresent("E4M1"))
+	if (WadLumpPresent('e4m1'))
 		demosequence %= 7;
 	else
 #endif
@@ -54,15 +54,15 @@ void AdvanceDemo()
 	switch (demosequence)
 	{
 	case 0:
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
+		page_pic = R_RegisterPic('titlepic', PIC_PATCH);
 #ifndef DOOM2
 		pagetime = 170.0 / 35.0;
 //      S_StartSong("D_INTRO", P_GetCDTitleTrack(), false);
-		CmdBuf_AddText("music play D_INTRO\n");
+		CmdBuf_AddText("music play d_intro\n");
 #else
 		pagetime = 11.0;
 //      S_StartSong("D_DM2TTL", P_GetCDTitleTrack(), false);
-		CmdBuf_AddText("music play D_DM2TTL\n");
+		CmdBuf_AddText("music play d_dm2ttl\n");
 #endif
 		break;
 
@@ -72,7 +72,7 @@ void AdvanceDemo()
 
 	case 2:
 		pagetime = 200.0 / 35.0;
-		page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
+		page_pic = R_RegisterPic('credit', PIC_PATCH);
 		break;
 
 	case 3:
@@ -82,18 +82,18 @@ void AdvanceDemo()
 	case 4:
 #ifndef DOOM2
 		pagetime = 200.0 / 35.0;
-		if (WadLumpPresent("E4M1"))
+		if (WadLumpPresent('e4m1'))
 		{
-			page_pic = R_RegisterPic("CREDIT", PIC_PATCH);
+			page_pic = R_RegisterPic('credit', PIC_PATCH);
 		}
 		else
 		{
-			page_pic = R_RegisterPic("HELP2", PIC_PATCH);
+			page_pic = R_RegisterPic('help2', PIC_PATCH);
 		}
 #else
 		pagetime = 11.0;
-		page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
-		CmdBuf_AddText("music play D_DM2TTL\n");
+		page_pic = R_RegisterPic('titlepic', PIC_PATCH);
+		CmdBuf_AddText("music play d_dm2ttl\n");
 #endif
 		break;
 
@@ -123,7 +123,7 @@ void ForceTitle()
 #else
 	pagetime = 11.0;
 #endif
-	page_pic = R_RegisterPic("TITLEPIC", PIC_PATCH);
+	page_pic = R_RegisterPic('titlepic', PIC_PATCH);
 }
 
 //==========================================================================
@@ -210,6 +210,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

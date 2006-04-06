@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-class MenuMainTitleImage:MenuStaticBitmap;
+class MenuMainTitleImage : MenuStaticBitmap;
 
 defaultproperties
 {
-	PicName = "M_DOOM";
+	PicName = 'm_doom';
 	X = 94;
 	Y = 2;
 }
@@ -35,6 +35,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:19  dj_jl
 //  New style of defining classes.
 //

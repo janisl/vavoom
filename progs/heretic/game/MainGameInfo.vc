@@ -102,7 +102,7 @@ bool respawnmonsters;
 
 void Init()
 {
-	shareware = !WadLumpPresent("E2M1");
+	shareware = !WadLumpPresent('e2m1');
 	InitTranslationTables();
 	InitBotTypes();
 }
@@ -115,9 +115,9 @@ void Init()
 
 void InitNewGame(int skill)
 {
-	respawnmonsters = GetCvar("RespawnMonsters");
-	nomonsters = GetCvar("NoMonsters");
-	fastparm = gameskill == sk_nightmare || GetCvar("Fast");
+	respawnmonsters = GetCvar('RespawnMonsters');
+	nomonsters = GetCvar('NoMonsters');
+	fastparm = gameskill == sk_nightmare || GetCvar('Fast');
 }
 
 //==========================================================================
@@ -1531,6 +1531,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.7  2006/03/26 12:58:22  dj_jl
 //  Moved added fields to Object.
 //

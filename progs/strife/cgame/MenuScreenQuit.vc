@@ -35,9 +35,9 @@ void CreateChoices()
 {
 	::CreateChoices();
 	Page = MenuHelpPage(NewChild(MenuHelpPage));
-	Page.SetPage("PANEL7");
+	Page.SetPage('panel7');
 
-	if (!WadLumpPresent("MAP01"))
+	if (!WadLumpPresent('map01'))
 		QuitSound = TeaserQuitSounds[P_Random() % 5];
 	else
 		QuitSound = QuitSounds[P_Random() % 8];
@@ -79,6 +79,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.4  2006/02/09 22:33:11  dj_jl
 //  Moved all client game code to classes.
 //

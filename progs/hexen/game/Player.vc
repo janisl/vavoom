@@ -3985,7 +3985,7 @@ void Cheat_Class()
 	}
 	BaseClass = pclass;
 	PostMorphWeapon(HexenDefs::WP_FIRST);
-	SetCvar("class", pclass);
+	SetCvar('class', pclass);
 	SB_Start();
 }
 
@@ -3996,6 +3996,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.28  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.27  2006/04/05 18:24:32  dj_jl
 //  Fixed initial speed of throwing bomb.
 //

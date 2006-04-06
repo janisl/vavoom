@@ -27,7 +27,7 @@ class MenuScreenEpisode : MenuScreen;
 
 void CreateChoices()
 {
-	if (WadLumpPresent("EXTENDED"))
+	if (WadLumpPresent('extended'))
 	{
 		Choices[3] = MenuChoice_Episode4;
 		Choices[4] = MenuChoice_Episode5;
@@ -49,6 +49,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2006/02/09 22:33:10  dj_jl
 //  Moved all client game code to classes.
 //

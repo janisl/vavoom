@@ -68,7 +68,7 @@ int tallylft;
 
 bool showTotals;
 
-string ClusMsgLumpNames[5];
+name ClusMsgLumpNames[5];
 
 //==========================================================================
 //
@@ -155,13 +155,13 @@ void DrawWindow(GC gc)
 //
 //========================================================================
 
-void IM_LoadPics(void)
+void IM_LoadPics()
 {
 	if (HubCount || ClGame.cl.deathmatch)
 	{
-		patchINTERPIC = R_RegisterPic("INTERPIC", PIC_RAW);
-		tallytop = R_RegisterPic("tallytop", PIC_PATCH);
-		tallylft = R_RegisterPic("tallylft", PIC_PATCH);
+		patchINTERPIC = R_RegisterPic('interpic', PIC_RAW);
+		tallytop = R_RegisterPic('tallytop', PIC_PATCH);
+		tallylft = R_RegisterPic('tallylft', PIC_PATCH);
 	}
 }
 
@@ -171,7 +171,7 @@ void IM_LoadPics(void)
 //
 //========================================================================
 
-void IM_UnloadPics(void)
+void IM_UnloadPics()
 {
 }
 
@@ -183,7 +183,7 @@ void IM_UnloadPics(void)
 //
 //========================================================================
 
-void IM_InitStats(void)
+void IM_InitStats()
 {
 	int i;
 	int j;
@@ -191,7 +191,7 @@ void IM_InitStats(void)
 	int posnum;
 	int slaughtercount;
 	int playercount;
-	string msgLumpName;
+	name msgLumpName;
 
 	if (!ClGame.cl.deathmatch)
 	{
@@ -265,7 +265,7 @@ void IM_InitStats(void)
 //
 //===========================================================================
 
-void IM_DrawHubText(void)
+void IM_DrawHubText()
 {
 	int count;
 
@@ -327,7 +327,7 @@ void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 //
 //========================================================================
 
-void IM_DrawDeathTally(void)
+void IM_DrawDeathTally()
 {
 	int i, j;
 	float xPos, yPos;
@@ -422,16 +422,19 @@ defaultproperties
 	Height = 200;
 	TextSpeed = 0.1;
 	TextWait = 4.0;
-	ClusMsgLumpNames[0] = "clus1msg";
-	ClusMsgLumpNames[1] = "clus2msg";
-	ClusMsgLumpNames[2] = "clus3msg";
-	ClusMsgLumpNames[3] = "clus4msg";
-	ClusMsgLumpNames[4] = "clus5msg";
+	ClusMsgLumpNames[0] = 'clus1msg';
+	ClusMsgLumpNames[1] = 'clus2msg';
+	ClusMsgLumpNames[2] = 'clus3msg';
+	ClusMsgLumpNames[3] = 'clus4msg';
+	ClusMsgLumpNames[4] = 'clus5msg';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.3  2006/02/28 22:46:25  dj_jl
 //  Replaced defines with constants.
 //

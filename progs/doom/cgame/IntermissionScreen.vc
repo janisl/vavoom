@@ -647,29 +647,29 @@ void IM_LoadData()
 
 	// background
 #ifdef DOOM2
-	patchINTERPIC = R_RegisterPic("INTERPIC", PIC_PATCH);
+	patchINTERPIC = R_RegisterPic('interpic', PIC_PATCH);
 #else
 	int j;
 	anim_t *a;
 
 	if (im_episode > 3)
 	{
-		patchINTERPIC = R_RegisterPic("INTERPIC", PIC_PATCH);
+		patchINTERPIC = R_RegisterPic('interpic', PIC_PATCH);
 	}
 	else
 	{
 		patchINTERPIC =
-			R_RegisterPic(va("WIMAP%d", im_episode - 1), PIC_PATCH);
+			R_RegisterPic(StrToName(va("wimap%d", im_episode - 1)), PIC_PATCH);
 	}
 
 	// you are here
-	yah[0] = R_RegisterPic("WIURH0", PIC_PATCH);
+	yah[0] = R_RegisterPic('wiurh0', PIC_PATCH);
 
 	// you are here (alt.)
-	yah[1] = R_RegisterPic("WIURH1", PIC_PATCH);
+	yah[1] = R_RegisterPic('wiurh1', PIC_PATCH);
 
 	// splat
-	splat = R_RegisterPic("WISPLAT", PIC_PATCH);
+	splat = R_RegisterPic('wisplat', PIC_PATCH);
 
 	if (im_episode < 4)
 	{
@@ -682,9 +682,8 @@ void IM_LoadData()
 				if (im_episode != 2 || j != 8)
 				{
 					// animations
-					a->p[i] =
-						R_RegisterPic(va("WIA%d0%d0%d", im_episode - 1, j, i),
-						PIC_PATCH);
+					a->p[i] = R_RegisterPic(StrToName(va("wia%d0%d0%d",
+						im_episode - 1, j, i)), PIC_PATCH);
 				}
 				else
 				{
@@ -699,25 +698,25 @@ void IM_LoadData()
 	if (ClGame.cl.maxclients > 1 || ClGame.cl.deathmatch)
 	{
 		// "killers" (vertical)
-		killers = R_RegisterPic("WIKILRS", PIC_PATCH);
+		killers = R_RegisterPic('wikilrs', PIC_PATCH);
 
 		// "victims" (horiz)
-		victims = R_RegisterPic("WIVCTMS", PIC_PATCH);
+		victims = R_RegisterPic('wivctms', PIC_PATCH);
 
 		// face backgrounds
 //      for (i = 0; i < MAXPLAYERS; i++)
 		for (i = 0; i < 4; i++)
 		{
-			p[i] = R_RegisterPic(va("STPB%i", i), PIC_PATCH);
+			p[i] = R_RegisterPic(StrToName(va("stpb%i", i)), PIC_PATCH);
 		}
 
 		// your face
-		star = R_RegisterPic("STFST01", PIC_PATCH);
+		star = R_RegisterPic('stfst01', PIC_PATCH);
 		R_GetPicInfo(star, &info);
 		star_width = info.width;
 
 		// dead face
-		bstar = R_RegisterPic("STFDEAD0", PIC_PATCH);
+		bstar = R_RegisterPic('stfdead0', PIC_PATCH);
 	}
 }
 
@@ -1633,7 +1632,7 @@ int ClusterMessage[MAX_INTRMSN_MESSAGE_SIZE / 4];
 float HubCount;
 string HubText;
 
-string TextFlat;
+name TextFlat;
 
 //==========================================================================
 //
@@ -1643,7 +1642,7 @@ string TextFlat;
 
 void IM_InitText()
 {
-	string textLump;
+	name textLump;
 
 	if (ClGame.cl.deathmatch)
 	{
@@ -1654,35 +1653,35 @@ void IM_InitText()
 
 	if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP06"))
 	{
-		TextFlat = "SLIME16";
-		textLump = "FIN1TEXT";
+		TextFlat = 'slime16';
+		textLump = 'fin1text';
 	}
 	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP11"))
 	{
-		TextFlat = "RROCK14";
-		textLump = "FIN2TEXT";
+		TextFlat = 'rrock14';
+		textLump = 'fin2text';
 	}
 	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP20"))
 	{
-		TextFlat = "RROCK07";
-		textLump = "FIN3TEXT";
+		TextFlat = 'rrock07';
+		textLump = 'fin3text';
 	}
 	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP30"))
 	{
-		TextFlat = "RROCK17";
-		textLump = "FIN4TEXT";
+		TextFlat = 'rrock17';
+		textLump = 'fin4text';
 	}
 	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP15") &&
 		!strcmp(ARR2STR(ClGame.im->entermap), "MAP31"))
 	{
-		TextFlat = "RROCK13";
-		textLump = "SEC1TEXT";
+		TextFlat = 'rrock13';
+		textLump = 'sec1text';
 	}
 	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP31") &&
 		!strcmp(ARR2STR(ClGame.im->entermap), "MAP32"))
 	{
-		TextFlat = "RROCK19";
-		textLump = "SEC2TEXT";
+		TextFlat = 'rrock19';
+		textLump = 'sec2text';
 	}
 	else
 	{
@@ -1777,6 +1776,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.4  2006/02/28 22:43:55  dj_jl
 //  Replaced defines with constants.
 //

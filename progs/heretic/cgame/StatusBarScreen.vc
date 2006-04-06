@@ -83,91 +83,91 @@ void StartMap()
 	string Name = ARR2STR(namebuf);
 	picinfo_t info;
 
-	pic_barback = R_RegisterPic("BARBACK", PIC_PATCH);
-	pic_god1 = R_RegisterPic("GOD1", PIC_PATCH);
-	pic_god2 = R_RegisterPic("GOD2", PIC_PATCH);
-	pic_barltop = R_RegisterPic("LTFCTOP", PIC_PATCH);
-	pic_barrtop = R_RegisterPic("RTFCTOP", PIC_PATCH);
-	pic_chain = R_RegisterPic("CHAIN", PIC_PATCH);
+	pic_barback = R_RegisterPic('barback', PIC_PATCH);
+	pic_god1 = R_RegisterPic('god1', PIC_PATCH);
+	pic_god2 = R_RegisterPic('god2', PIC_PATCH);
+	pic_barltop = R_RegisterPic('ltfctop', PIC_PATCH);
+	pic_barrtop = R_RegisterPic('rtfctop', PIC_PATCH);
+	pic_chain = R_RegisterPic('chain', PIC_PATCH);
 	if (cl.maxclients == 1)
 	{
 		// single player game uses red life gem
-		pic_lifegem = R_RegisterPic("LIFEGEM2", PIC_PATCH);
+		pic_lifegem = R_RegisterPic('lifegem2', PIC_PATCH);
 	}
 	else
 	{
-		sprint(Name, "LIFEGEM%d", cl.clientnum);
-		pic_lifegem = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "lifegem%d", cl.clientnum);
+		pic_lifegem = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
-	pic_ltface = R_RegisterPic("LTFACE", PIC_PATCH);
-	pic_rtface = R_RegisterPic("RTFACE", PIC_PATCH);
+	pic_ltface = R_RegisterPic('ltface', PIC_PATCH);
+	pic_rtface = R_RegisterPic('rtface', PIC_PATCH);
 
 	if (cl.deathmatch)
 	{
-		pic_mainbar = R_RegisterPic("STATBAR", PIC_PATCH);
+		pic_mainbar = R_RegisterPic('statbar', PIC_PATCH);
 	}
 	else
 	{
-		pic_mainbar = R_RegisterPic("LIFEBAR", PIC_PATCH);
+		pic_mainbar = R_RegisterPic('lifebar', PIC_PATCH);
 	}
 	for (i = 0; i < 10; i++)
 	{
-		sprint(Name, "IN%d", i);
-		pic_innum[i] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "SMALLIN%d", i);
-		pic_smallinnum[i] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "FONTB%d", 16 + i);
-		pic_bignum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "in%d", i);
+		pic_innum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "smallin%d", i);
+		pic_smallinnum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "fontb%d", 16 + i);
+		pic_bignum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 		R_GetPicInfo(pic_bignum[i], &info);
 		bignumwidth[i] = info.width;
 	}
-	pic_minus = R_RegisterPic("NEGNUM", PIC_PATCH);
-	pic_lame = R_RegisterPic("LAME", PIC_PATCH);
-	pic_ammoicon[0] = R_RegisterPic("INAMGLD", PIC_PATCH);
-	pic_ammoicon[1] = R_RegisterPic("INAMBOW", PIC_PATCH);
-	pic_ammoicon[2] = R_RegisterPic("INAMBST", PIC_PATCH);
-	pic_ammoicon[3] = R_RegisterPic("INAMRAM", PIC_PATCH);
-	pic_ammoicon[4] = R_RegisterPic("INAMPNX", PIC_PATCH);
-	pic_ammoicon[5] = R_RegisterPic("INAMLOB", PIC_PATCH);
-	pic_ykey = R_RegisterPic("YKEYICON", PIC_PATCH);
-	pic_gkey = R_RegisterPic("GKEYICON", PIC_PATCH);
-	pic_bkey = R_RegisterPic("BKEYICON", PIC_PATCH);
+	pic_minus = R_RegisterPic('negnum', PIC_PATCH);
+	pic_lame = R_RegisterPic('lame', PIC_PATCH);
+	pic_ammoicon[0] = R_RegisterPic('inamgld', PIC_PATCH);
+	pic_ammoicon[1] = R_RegisterPic('inambow', PIC_PATCH);
+	pic_ammoicon[2] = R_RegisterPic('inambst', PIC_PATCH);
+	pic_ammoicon[3] = R_RegisterPic('inamram', PIC_PATCH);
+	pic_ammoicon[4] = R_RegisterPic('inampnx', PIC_PATCH);
+	pic_ammoicon[5] = R_RegisterPic('inamlob', PIC_PATCH);
+	pic_ykey = R_RegisterPic('ykeyicon', PIC_PATCH);
+	pic_gkey = R_RegisterPic('gkeyicon', PIC_PATCH);
+	pic_bkey = R_RegisterPic('bkeyicon', PIC_PATCH);
 
-	pic_artiflash[0] = R_RegisterPic("USEARTIA", PIC_PATCH);
-	pic_artiflash[1] = R_RegisterPic("USEARTIB", PIC_PATCH);
-	pic_artiflash[2] = R_RegisterPic("USEARTIC", PIC_PATCH);
-	pic_artiflash[3] = R_RegisterPic("USEARTID", PIC_PATCH);
-	pic_arti[0] = R_RegisterPic("ARTIINVU", PIC_PATCH);	// invulnerability
-	pic_arti[1] = R_RegisterPic("ARTIINVS", PIC_PATCH);	// invisibility
-	pic_arti[2] = R_RegisterPic("ARTIPTN2", PIC_PATCH);	// health
-	pic_arti[3] = R_RegisterPic("ARTISPHL", PIC_PATCH);	// superhealth
-	pic_arti[4] = R_RegisterPic("ARTIPWBK", PIC_PATCH);	// tomeofpower
-	pic_arti[5] = R_RegisterPic("ARTITRCH", PIC_PATCH);	// torch
-	pic_arti[6] = R_RegisterPic("ARTIFBMB", PIC_PATCH);	// firebomb
-	pic_arti[7] = R_RegisterPic("ARTIEGGC", PIC_PATCH);	// egg
-	pic_arti[8] = R_RegisterPic("ARTISOAR", PIC_PATCH);	// fly
-	pic_arti[9] = R_RegisterPic("ARTIATLP", PIC_PATCH);	// teleport
-	pic_artibox = R_RegisterPic("ARTIBOX", PIC_PATCH);
-	pic_invbar = R_RegisterPic("INVBAR", PIC_PATCH);
-	pic_selectbox = R_RegisterPic("SELECTBO", PIC_PATCH);
-	pic_invgeml[0] = R_RegisterPic("INVGEML1", PIC_PATCH);
-	pic_invgeml[1] = R_RegisterPic("INVGEML2", PIC_PATCH);
-	pic_invgemr[0] = R_RegisterPic("INVGEMR1", PIC_PATCH);
-	pic_invgemr[1] = R_RegisterPic("INVGEMR2", PIC_PATCH);
+	pic_artiflash[0] = R_RegisterPic('useartia', PIC_PATCH);
+	pic_artiflash[1] = R_RegisterPic('useartib', PIC_PATCH);
+	pic_artiflash[2] = R_RegisterPic('useartic', PIC_PATCH);
+	pic_artiflash[3] = R_RegisterPic('useartid', PIC_PATCH);
+	pic_arti[0] = R_RegisterPic('artiinvu', PIC_PATCH);	// invulnerability
+	pic_arti[1] = R_RegisterPic('artiinvs', PIC_PATCH);	// invisibility
+	pic_arti[2] = R_RegisterPic('artiptn2', PIC_PATCH);	// health
+	pic_arti[3] = R_RegisterPic('artisphl', PIC_PATCH);	// superhealth
+	pic_arti[4] = R_RegisterPic('artipwbk', PIC_PATCH);	// tomeofpower
+	pic_arti[5] = R_RegisterPic('artitrch', PIC_PATCH);	// torch
+	pic_arti[6] = R_RegisterPic('artifbmb', PIC_PATCH);	// firebomb
+	pic_arti[7] = R_RegisterPic('artieggc', PIC_PATCH);	// egg
+	pic_arti[8] = R_RegisterPic('artisoar', PIC_PATCH);	// fly
+	pic_arti[9] = R_RegisterPic('artiatlp', PIC_PATCH);	// teleport
+	pic_artibox = R_RegisterPic('artibox', PIC_PATCH);
+	pic_invbar = R_RegisterPic('invbar', PIC_PATCH);
+	pic_selectbox = R_RegisterPic('selectbo', PIC_PATCH);
+	pic_invgeml[0] = R_RegisterPic('invgeml1', PIC_PATCH);
+	pic_invgeml[1] = R_RegisterPic('invgeml2', PIC_PATCH);
+	pic_invgemr[0] = R_RegisterPic('invgemr1', PIC_PATCH);
+	pic_invgemr[1] = R_RegisterPic('invgemr2', PIC_PATCH);
 
 	for (i = 0; i < 16; i++)
 	{
-		sprint(Name, "SPFLY%d", i);
-		pic_flight[i] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "SPINBK%d", i);
-		pic_book[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "spfly%d", i);
+		pic_flight[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "spinbk%d", i);
+		pic_book[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
 
-	pic_paused = R_RegisterPic("PAUSED", PIC_PATCH);
+	pic_paused = R_RegisterPic('paused', PIC_PATCH);
 
 	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
-	pic_health = R_RegisterPic("PTN1A0", PIC_PATCH);
-	pic_armor2 = R_RegisterPic("SHD2A0", PIC_PATCH);
+	pic_health = R_RegisterPic('ptn1a0', PIC_PATCH);
+	pic_armor2 = R_RegisterPic('shd2a0', PIC_PATCH);
 }
 
 //==========================================================================
@@ -521,9 +521,9 @@ void SB_DrawIcons(void)
 //
 //==========================================================================
 
-void SB_DrawPause(void)
+void SB_DrawPause()
 {
-	if (cl.bPaused && GetCvar("draw_pause"))
+	if (cl.bPaused && GetCvar('draw_pause'))
 	{
 		R_DrawPic(160, cl.maxclients > 1 ? 70 : 20, pic_paused);
 	}
@@ -620,6 +620,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.3  2006/02/20 22:57:17  dj_jl
 //  Changed client state structure to class.
 //

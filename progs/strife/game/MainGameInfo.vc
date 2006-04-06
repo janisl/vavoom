@@ -97,9 +97,9 @@ void Init()
 
 void InitNewGame(int skill)
 {
-	respawnmonsters = skill == sk_nightmare || GetCvar("RespawnMonsters");
-	nomonsters = GetCvar("NoMonsters");
-	fastparm = skill == sk_nightmare || GetCvar("Fast");
+	respawnmonsters = skill == sk_nightmare || GetCvar('RespawnMonsters');
+	nomonsters = GetCvar('NoMonsters');
+	fastparm = skill == sk_nightmare || GetCvar('Fast');
 }
 
 //==========================================================================
@@ -1516,6 +1516,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.7  2006/03/26 13:01:52  dj_jl
 //  Moved added fields to Object.
 //

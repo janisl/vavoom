@@ -39,8 +39,8 @@ int GetInitialValue()
 	int h;
 	int mi;
 
-	w = GetCvar("screen_width");
-	h = GetCvar("screen_height");
+	w = GetCvar('screen_width');
+	h = GetCvar('screen_height');
 
 	for (mi = 0; mi < 9; mi++)
 	{
@@ -92,6 +92,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.3  2006/02/09 22:33:09  dj_jl
 //  Moved all client game code to classes.
 //

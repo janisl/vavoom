@@ -23,23 +23,26 @@
 //**
 //**************************************************************************
 
-class MenuMainAnim:MenuStaticAnim;
+class MenuMainAnim : MenuStaticAnim;
 
 defaultproperties
 {
 	Speed = 7;
-	FrameNames[0] = "FBULA0";
-	FrameNames[1] = "FBULB0";
-	FrameNames[2] = "FBULC0";
-	FrameNames[3] = "FBULD0";
-	FrameNames[4] = "FBULE0";
-	FrameNames[5] = "FBULF0";
-	FrameNames[6] = "FBULG0";
+	FrameNames[0] = 'fbula0';
+	FrameNames[1] = 'fbulb0';
+	FrameNames[2] = 'fbulc0';
+	FrameNames[3] = 'fbuld0';
+	FrameNames[4] = 'fbule0';
+	FrameNames[5] = 'fbulf0';
+	FrameNames[6] = 'fbulg0';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

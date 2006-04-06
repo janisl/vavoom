@@ -23,18 +23,18 @@
 //**
 //**************************************************************************
 
-class MenuChoice_PlayerName:MenuInputLine;
+class MenuChoice_PlayerName : MenuInputLine;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
-	strcpy(ARR2STR(Value), GetCvarS("Name"));
+	strcpy(ARR2STR(Value), GetCvarS('Name'));
 }
 
-void ValueChanged(void)
+void ValueChanged()
 {
 	::ValueChanged();
-	SetCvarS("Name", ARR2STR(Value));
+	SetCvarS('Name', ARR2STR(Value));
 }
 
 defaultproperties
@@ -45,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

@@ -82,32 +82,32 @@ void StartAnim()
 	name	opensound;
 
 	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;	
-	if (texTop == TextureNumForName("DORALN01"))
+	if (texTop == TextureNumForName('doraln01'))
 	{
 		opensound = 'DoorOpenAirlock';
 		CloseSound = 'DoorCloseAirlock';
 	}
-	else if (texTop == TextureNumForName("DORCHN01"))
+	else if (texTop == TextureNumForName('dorchn01'))
 	{
 		opensound = 'DoorOpenChain';
 		CloseSound = 'DoorCloseChain';
 	}
-	else if (texTop == TextureNumForName("DORCRG01"))
+	else if (texTop == TextureNumForName('dorcrg01'))
 	{
 		opensound = 'DoorOpenSmallMetal';
 		CloseSound = 'DoorCloseSmallMetal';
 	}
-	else if (texTop == TextureNumForName("DORIRS01"))
+	else if (texTop == TextureNumForName('dorirs01'))
 	{
 		opensound = 'DoorOpenAirlock';
 		CloseSound = 'DoorCloseAirlock';
 	}
-	else if (texTop == TextureNumForName("DORQTR01"))
+	else if (texTop == TextureNumForName('dorqtr01'))
 	{
 		opensound = 'DoorOpenAirlock';
 		CloseSound = 'DoorCloseAirlock';
 	}
-	else if (texTop == TextureNumForName("DORSTN01"))
+	else if (texTop == TextureNumForName('dorstn01'))
 	{
 		opensound = 'DoorOpenStone';
 		CloseSound = 'DoorCloseStone';
@@ -238,6 +238,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.9  2006/04/05 17:30:07  dj_jl
 //  Better way of setting current animation texture.
 //

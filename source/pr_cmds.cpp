@@ -305,14 +305,14 @@ PF(FatalError)
 
 PF(CreateCvar)
 {
-	int name;
+	VName name;
 	int def;
 	int flags;
 
 	flags = Pop();
 	def = Pop();
-	name = Pop();
-	new VCvar((char*)name, (char*)def, flags);
+	name = PopName();
+	new VCvar(*name, (char*)def, flags);
 }
 
 //==========================================================================
@@ -323,10 +323,10 @@ PF(CreateCvar)
 
 PF(GetCvar)
 {
-	int		name;
+	VName	name;
 
-	name = Pop();
-	Push(VCvar::GetInt((char*)name));
+	name = PopName();
+	Push(VCvar::GetInt(*name));
 }
 
 //==========================================================================
@@ -337,12 +337,12 @@ PF(GetCvar)
 
 PF(SetCvar)
 {
-	int		name;
+	VName	name;
 	int		value;
 
     value = Pop();
-    name = Pop();
-    VCvar::Set((char*)name, value);
+    name = PopName();
+    VCvar::Set(*name, value);
 }
 
 //==========================================================================
@@ -353,10 +353,10 @@ PF(SetCvar)
 
 PF(GetCvarF)
 {
-	int		name;
+	VName	name;
 
-	name = Pop();
-	Pushf(VCvar::GetFloat((char*)name));
+	name = PopName();
+	Pushf(VCvar::GetFloat(*name));
 }
 
 //==========================================================================
@@ -367,12 +367,12 @@ PF(GetCvarF)
 
 PF(SetCvarF)
 {
-	int		name;
+	VName	name;
 	float	value;
 
     value = Popf();
-    name = Pop();
-    VCvar::Set((char*)name, value);
+    name = PopName();
+    VCvar::Set(*name, value);
 }
 
 //==========================================================================
@@ -383,10 +383,10 @@ PF(SetCvarF)
 
 PF(GetCvarS)
 {
-	int		name;
+	VName	name;
 
-    name = Pop();
-    Push((int)VCvar::GetCharp((char*)name));
+    name = PopName();
+    Push((int)VCvar::GetCharp(*name));
 }
 
 //==========================================================================
@@ -397,12 +397,12 @@ PF(GetCvarS)
 
 PF(SetCvarS)
 {
-	int		name;
+	VName	name;
 	int		value;
 
     value = Pop();
-    name = Pop();
-    VCvar::Set((char*)name, (char*)value);
+    name = PopName();
+    VCvar::Set(*name, (char*)value);
 }
 
 //**************************************************************************
@@ -1020,11 +1020,10 @@ PF(P_Random)
 
 PF(CheckTextureNumForName)
 {
-	int		name;
+	VName	name;
 
-	name = Pop();
-	Push(GTextureManager.CheckNumForName(VName((char*)name, VName::AddLower8),
-		TEXTYPE_Wall, true, false));
+	name = PopName();
+	Push(GTextureManager.CheckNumForName(name, TEXTYPE_Wall, true, false));
 }
 
 //==========================================================================
@@ -1035,11 +1034,10 @@ PF(CheckTextureNumForName)
 
 PF(TextureNumForName)
 {
-	int		name;
+	VName	name;
 
-	name = Pop();
-	Push(GTextureManager.NumForName(VName((char*)name, VName::AddLower8),
-		TEXTYPE_Wall, true, false));
+	name = PopName();
+	Push(GTextureManager.NumForName(name, TEXTYPE_Wall, true, false));
 }
 
 //==========================================================================
@@ -1050,11 +1048,10 @@ PF(TextureNumForName)
 
 PF(CheckFlatNumForName)
 {
-	int		name;
+	VName	name;
 
-	name = Pop();
-	Push(GTextureManager.CheckNumForName(VName((char*)name,
-		VName::AddLower8), TEXTYPE_Flat, true, false));
+	name = PopName();
+	Push(GTextureManager.CheckNumForName(name, TEXTYPE_Flat, true, false));
 }
 
 //==========================================================================
@@ -1065,11 +1062,10 @@ PF(CheckFlatNumForName)
 
 PF(FlatNumForName)
 {
-	int		name;
+	VName	name;
 
-	name = Pop();
-	Push(GTextureManager.NumForName(VName((char*)name, VName::AddLower8),
-		TEXTYPE_Flat, true, false));
+	name = PopName();
+	Push(GTextureManager.NumForName(name, TEXTYPE_Flat, true, false));
 }
 
 //==========================================================================
@@ -2534,13 +2530,12 @@ PF(SetVirtualScreen)
 
 PF(R_RegisterPic)
 {
-	int name;
+	VName name;
 	int type;
 
 	type = Pop();
-	name = Pop();
-	Push(GTextureManager.AddPatch(VName((char*)name, VName::AddLower8),
-		TEXTYPE_Pic));
+	name = PopName();
+	Push(GTextureManager.AddPatch(name, TEXTYPE_Pic));
 }
 
 //==========================================================================
@@ -2551,15 +2546,14 @@ PF(R_RegisterPic)
 
 PF(R_RegisterPicPal)
 {
-	int name;
+	VName name;
 	int type;
-	int palname;
+	VName palname;
 
-	palname = Pop();
+	palname = PopName();
 	type = Pop();
-	name = Pop();
-	Push(GTextureManager.AddRawWithPal(VName((char*)name, VName::AddLower8),
-		VName((char*)palname, VName::AddLower8)));
+	name = PopName();
+	Push(GTextureManager.AddRawWithPal(name, palname));
 }
 
 //==========================================================================
@@ -2729,14 +2723,14 @@ PF(R_FillRectWithFlat)
 	int		y;
 	int		width;
 	int		height;
-	int		name;
+	VName	name;
 
-	name = Pop();
+	name = PopName();
 	height = Pop();
 	width = Pop();
 	y = Pop();
 	x = Pop();
-	R_FillRectWithFlat(x, y, width, height, (char*)name);
+	R_FillRectWithFlat(x, y, width, height, *name);
 }
 
 //==========================================================================
@@ -3098,10 +3092,10 @@ PF(ftoi)
 
 PF(WadLumpPresent)
 {
-	int			name;
+	VName		name;
 
-	name = Pop();
-	Push(W_CheckNumForName(VName((char*)name, VName::AddLower8)) >= 0);
+	name = PopName();
+	Push(W_CheckNumForName(name) >= 0);
 }
 
 //==========================================================================
@@ -3199,18 +3193,18 @@ PF(GetSlist)
 	Push((int)GetSlist());
 }
 
-void LoadTextLump(char *name, char *buf, int bufsize);
+void LoadTextLump(VName name, char *buf, int bufsize);
 
 PF(LoadTextLump)
 {
-	int			name;
+	VName		name;
 	char		*buf;
 	int			bufsize;
 
 	bufsize = Pop();
 	buf = (char*)Pop();
-	name = Pop();
-	LoadTextLump((char*)name, buf, bufsize);
+	name = PopName();
+	LoadTextLump(name, buf, bufsize);
 }
 
 PF(AllocDlight)
@@ -3473,10 +3467,13 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.83  2006/04/06 21:50:51  dj_jl
+//	For some builtins changed string arguments to names.
+//
 //	Revision 1.82  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //	Revision 1.81  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
 //	

@@ -73,100 +73,100 @@ void StartMap()
 	string Name = ARR2STR(namebuf);
 	int i;
 
-	pic_invback = R_RegisterPic("INVBACK", PIC_PATCH);
-	pic_invtop = R_RegisterPic("INVTOP", PIC_PATCH);
-	pic_invpop = R_RegisterPic("INVPOP", PIC_PATCH);
-	pic_invpop2 = R_RegisterPic("INVPOP2", PIC_PATCH);
-	pic_invpbak = R_RegisterPic("INVPBAK", PIC_PATCH);
-	pic_invpbak2 = R_RegisterPic("INVPBAK2", PIC_PATCH);
+	pic_invback = R_RegisterPic('invback', PIC_PATCH);
+	pic_invtop = R_RegisterPic('invtop', PIC_PATCH);
+	pic_invpop = R_RegisterPic('invpop', PIC_PATCH);
+	pic_invpop2 = R_RegisterPic('invpop2', PIC_PATCH);
+	pic_invpbak = R_RegisterPic('invpbak', PIC_PATCH);
+	pic_invpbak2 = R_RegisterPic('invpbak2', PIC_PATCH);
 
 	for (i = 0; i < 10; i++)
 	{
-		sprint(Name, "INVFONY%d", i);
-		pic_yellownum[i] = R_RegisterPic(Name, PIC_PATCH);
-		sprint(Name, "INVFONG%d", i);
-		pic_graynum[i] = R_RegisterPic(Name, PIC_PATCH);
+		sprint(Name, "invfony%d", i);
+		pic_yellownum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		sprint(Name, "invfong%d", i);
+		pic_graynum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
-	pic_yellownum[10] = R_RegisterPic("INVFONY%", PIC_PATCH);
-	pic_graynum[10] = R_RegisterPic("INVFONG%", PIC_PATCH);
+	pic_yellownum[10] = R_RegisterPic('invfony%', PIC_PATCH);
+	pic_graynum[10] = R_RegisterPic('invfong%', PIC_PATCH);
 
-	pic_inv[0] = R_RegisterPic("I_STMP", PIC_PATCH);
-	pic_inv[1] = R_RegisterPic("I_MDKT", PIC_PATCH);
-	pic_inv[2] = R_RegisterPic("I_FULL", PIC_PATCH);
-	pic_inv[3] = R_RegisterPic("I_XPRK", PIC_PATCH);
-	pic_inv[4] = R_RegisterPic("I_ARM1", PIC_PATCH);
-	pic_inv[5] = R_RegisterPic("I_ARM2", PIC_PATCH);
-	pic_inv[6] = R_RegisterPic("I_SHD1", PIC_PATCH);
-	pic_inv[7] = R_RegisterPic("I_MASK", PIC_PATCH);
-	pic_inv[8] = R_RegisterPic("I_UNIF", PIC_PATCH);
-	pic_inv[9] = R_RegisterPic("I_OFIC", PIC_PATCH);
-	pic_inv[10] = R_RegisterPic("I_PMUP", PIC_PATCH);//"I_PMAP", - pic doesn't exist.
-	pic_inv[11] = R_RegisterPic("I_PMUP", PIC_PATCH);
-	pic_inv[12] = R_RegisterPic("I_BEAC", PIC_PATCH);
-	pic_inv[13] = R_RegisterPic("I_TARG", PIC_PATCH);
-	pic_inv[14] = R_RegisterPic("I_COIN", PIC_PATCH);
-	pic_inv[15] = R_RegisterPic("I_RING", PIC_PATCH);
-	pic_inv[16] = R_RegisterPic("I_RELC", PIC_PATCH);
-	pic_inv[17] = R_RegisterPic("I_EARS", PIC_PATCH);
-	pic_inv[18] = R_RegisterPic("I_BFLM", PIC_PATCH);
-	pic_inv[19] = R_RegisterPic("I_COUP", PIC_PATCH);
-	pic_inv[20] = R_RegisterPic("I_TOKN", PIC_PATCH);
-	pic_inv[21] = R_RegisterPic("I_TOKN", PIC_PATCH);
-	pic_inv[22] = R_RegisterPic("I_HELT", PIC_PATCH);
-	pic_inv[23] = R_RegisterPic("I_GUNT", PIC_PATCH);
-	pic_inv[24] = R_RegisterPic("I_OTOK", PIC_PATCH);
-	pic_invcurs = R_RegisterPic("INVCURS", PIC_PATCH);
+	pic_inv[0] = R_RegisterPic('i_stmp', PIC_PATCH);
+	pic_inv[1] = R_RegisterPic('i_mdkt', PIC_PATCH);
+	pic_inv[2] = R_RegisterPic('i_full', PIC_PATCH);
+	pic_inv[3] = R_RegisterPic('i_xprk', PIC_PATCH);
+	pic_inv[4] = R_RegisterPic('i_arm1', PIC_PATCH);
+	pic_inv[5] = R_RegisterPic('i_arm2', PIC_PATCH);
+	pic_inv[6] = R_RegisterPic('i_shd1', PIC_PATCH);
+	pic_inv[7] = R_RegisterPic('i_mask', PIC_PATCH);
+	pic_inv[8] = R_RegisterPic('i_unif', PIC_PATCH);
+	pic_inv[9] = R_RegisterPic('i_ofic', PIC_PATCH);
+	pic_inv[10] = R_RegisterPic('i_pmup', PIC_PATCH);//"I_PMAP', - pic doesn't exist.
+	pic_inv[11] = R_RegisterPic('i_pmup', PIC_PATCH);
+	pic_inv[12] = R_RegisterPic('i_beac', PIC_PATCH);
+	pic_inv[13] = R_RegisterPic('i_targ', PIC_PATCH);
+	pic_inv[14] = R_RegisterPic('i_coin', PIC_PATCH);
+	pic_inv[15] = R_RegisterPic('i_ring', PIC_PATCH);
+	pic_inv[16] = R_RegisterPic('i_relc', PIC_PATCH);
+	pic_inv[17] = R_RegisterPic('i_ears', PIC_PATCH);
+	pic_inv[18] = R_RegisterPic('i_bflm', PIC_PATCH);
+	pic_inv[19] = R_RegisterPic('i_coup', PIC_PATCH);
+	pic_inv[20] = R_RegisterPic('i_tokn', PIC_PATCH);
+	pic_inv[21] = R_RegisterPic('i_tokn', PIC_PATCH);
+	pic_inv[22] = R_RegisterPic('i_helt', PIC_PATCH);
+	pic_inv[23] = R_RegisterPic('i_gunt', PIC_PATCH);
+	pic_inv[24] = R_RegisterPic('i_otok', PIC_PATCH);
+	pic_invcurs = R_RegisterPic('invcurs', PIC_PATCH);
 
-	pic_key[0] = R_RegisterPic("I_FUSL", PIC_PATCH);
-	pic_key[1] = R_RegisterPic("I_REBL", PIC_PATCH);
-	pic_key[2] = R_RegisterPic("I_TPAS", PIC_PATCH);
-	pic_key[3] = R_RegisterPic("I_CRD1", PIC_PATCH);
-	pic_key[4] = R_RegisterPic("I_PRIS", PIC_PATCH);
-	pic_key[5] = R_RegisterPic("I_HAND", PIC_PATCH);
-	pic_key[6] = R_RegisterPic("I_PWR1", PIC_PATCH);
-	pic_key[7] = R_RegisterPic("I_PWR2", PIC_PATCH);
-	pic_key[8] = R_RegisterPic("I_KY1G", PIC_PATCH);
-	pic_key[9] = R_RegisterPic("I_PWR3", PIC_PATCH);
-	pic_key[10] = R_RegisterPic("I_CRD2", PIC_PATCH);
-	pic_key[11] = R_RegisterPic("I_KY2S", PIC_PATCH);
-	pic_key[12] = R_RegisterPic("I_ORAC", PIC_PATCH);
-	pic_key[13] = R_RegisterPic("I_GYID", PIC_PATCH);
-	pic_key[14] = R_RegisterPic("I_FUBR", PIC_PATCH);
-	pic_key[15] = R_RegisterPic("I_WARE", PIC_PATCH);
-	pic_key[16] = R_RegisterPic("I_KY3B", PIC_PATCH);
-	pic_key[17] = R_RegisterPic("I_RCRY", PIC_PATCH);
-	pic_key[18] = R_RegisterPic("I_BCRY", PIC_PATCH);
-	pic_key[19] = R_RegisterPic("I_CHAP", PIC_PATCH);
-	pic_key[20] = R_RegisterPic("I_TUNL", PIC_PATCH);
-	pic_key[21] = R_RegisterPic("I_SECK", PIC_PATCH);
-	pic_key[22] = R_RegisterPic("I_GOID", PIC_PATCH);
-	pic_key[23] = R_RegisterPic("I_BLTK", PIC_PATCH);
-	pic_key[24] = R_RegisterPic("I_PROC", PIC_PATCH);
-	pic_key[25] = R_RegisterPic("I_MINE", PIC_PATCH);
-	pic_key[26] = R_RegisterPic("I_BLTK", PIC_PATCH);
+	pic_key[0] = R_RegisterPic('i_fusl', PIC_PATCH);
+	pic_key[1] = R_RegisterPic('i_rebl', PIC_PATCH);
+	pic_key[2] = R_RegisterPic('i_tpas', PIC_PATCH);
+	pic_key[3] = R_RegisterPic('i_crd1', PIC_PATCH);
+	pic_key[4] = R_RegisterPic('i_pris', PIC_PATCH);
+	pic_key[5] = R_RegisterPic('i_hand', PIC_PATCH);
+	pic_key[6] = R_RegisterPic('i_pwr1', PIC_PATCH);
+	pic_key[7] = R_RegisterPic('i_pwr2', PIC_PATCH);
+	pic_key[8] = R_RegisterPic('i_ky1g', PIC_PATCH);
+	pic_key[9] = R_RegisterPic('i_pwr3', PIC_PATCH);
+	pic_key[10] = R_RegisterPic('i_crd2', PIC_PATCH);
+	pic_key[11] = R_RegisterPic('i_ky2s', PIC_PATCH);
+	pic_key[12] = R_RegisterPic('i_orac', PIC_PATCH);
+	pic_key[13] = R_RegisterPic('i_gyid', PIC_PATCH);
+	pic_key[14] = R_RegisterPic('i_fubr', PIC_PATCH);
+	pic_key[15] = R_RegisterPic('i_ware', PIC_PATCH);
+	pic_key[16] = R_RegisterPic('i_ky3b', PIC_PATCH);
+	pic_key[17] = R_RegisterPic('i_rcry', PIC_PATCH);
+	pic_key[18] = R_RegisterPic('i_bcry', PIC_PATCH);
+	pic_key[19] = R_RegisterPic('i_chap', PIC_PATCH);
+	pic_key[20] = R_RegisterPic('i_tunl', PIC_PATCH);
+	pic_key[21] = R_RegisterPic('i_seck', PIC_PATCH);
+	pic_key[22] = R_RegisterPic('i_goid', PIC_PATCH);
+	pic_key[23] = R_RegisterPic('i_bltk', PIC_PATCH);
+	pic_key[24] = R_RegisterPic('i_proc', PIC_PATCH);
+	pic_key[25] = R_RegisterPic('i_mine', PIC_PATCH);
+	pic_key[26] = R_RegisterPic('i_bltk', PIC_PATCH);
 
-	pic_crossbow = R_RegisterPic("CBOWA0", PIC_PATCH);
-	pic_riffle = R_RegisterPic("RIFLA0", PIC_PATCH);
-	pic_missile = R_RegisterPic("MMSLA0", PIC_PATCH);
-	pic_grenade = R_RegisterPic("GRNDA0", PIC_PATCH);
-	pic_flame = R_RegisterPic("FLAMA0", PIC_PATCH);
-	pic_blaster = R_RegisterPic("TRPDA0", PIC_PATCH);
-	pic_sigil[0] = R_RegisterPic("I_SGL1", PIC_PATCH);
-	pic_sigil[1] = R_RegisterPic("I_SGL2", PIC_PATCH);
-	pic_sigil[2] = R_RegisterPic("I_SGL3", PIC_PATCH);
-	pic_sigil[3] = R_RegisterPic("I_SGL4", PIC_PATCH);
-	pic_sigil[4] = R_RegisterPic("I_SGL5", PIC_PATCH);
-	pic_i_comm = R_RegisterPic("I_COMM", PIC_PATCH);
-	pic_ammo[StrifeDefs::am_clip] = R_RegisterPic("I_BLIT", PIC_PATCH);
-	pic_ammo[StrifeDefs::am_electric_arrow] = R_RegisterPic("I_XQRL", PIC_PATCH);
-	pic_ammo[StrifeDefs::am_poison_arrow] = R_RegisterPic("I_PQRL", PIC_PATCH);
-	pic_ammo[StrifeDefs::am_cell] = R_RegisterPic("I_BRY1", PIC_PATCH);
-	pic_ammo[StrifeDefs::am_misl] = R_RegisterPic("I_ROKT", PIC_PATCH);
-	pic_ammo[StrifeDefs::am_grenade1] = R_RegisterPic("I_GRN1", PIC_PATCH);
-	pic_ammo[StrifeDefs::am_grenade2] = R_RegisterPic("I_GRN2", PIC_PATCH);
-	pic_backpack = R_RegisterPic("I_BKPK", PIC_PATCH);
+	pic_crossbow = R_RegisterPic('cbowa0', PIC_PATCH);
+	pic_riffle = R_RegisterPic('rifla0', PIC_PATCH);
+	pic_missile = R_RegisterPic('mmsla0', PIC_PATCH);
+	pic_grenade = R_RegisterPic('grnda0', PIC_PATCH);
+	pic_flame = R_RegisterPic('flama0', PIC_PATCH);
+	pic_blaster = R_RegisterPic('trpda0', PIC_PATCH);
+	pic_sigil[0] = R_RegisterPic('i_sgl1', PIC_PATCH);
+	pic_sigil[1] = R_RegisterPic('i_sgl2', PIC_PATCH);
+	pic_sigil[2] = R_RegisterPic('i_sgl3', PIC_PATCH);
+	pic_sigil[3] = R_RegisterPic('i_sgl4', PIC_PATCH);
+	pic_sigil[4] = R_RegisterPic('i_sgl5', PIC_PATCH);
+	pic_i_comm = R_RegisterPic('i_comm', PIC_PATCH);
+	pic_ammo[StrifeDefs::am_clip] = R_RegisterPic('i_blit', PIC_PATCH);
+	pic_ammo[StrifeDefs::am_electric_arrow] = R_RegisterPic('i_xqrl', PIC_PATCH);
+	pic_ammo[StrifeDefs::am_poison_arrow] = R_RegisterPic('i_pqrl', PIC_PATCH);
+	pic_ammo[StrifeDefs::am_cell] = R_RegisterPic('i_bry1', PIC_PATCH);
+	pic_ammo[StrifeDefs::am_misl] = R_RegisterPic('i_rokt', PIC_PATCH);
+	pic_ammo[StrifeDefs::am_grenade1] = R_RegisterPic('i_grn1', PIC_PATCH);
+	pic_ammo[StrifeDefs::am_grenade2] = R_RegisterPic('i_grn2', PIC_PATCH);
+	pic_backpack = R_RegisterPic('i_bkpk', PIC_PATCH);
 
-	pic_pause = R_RegisterPic("M_PAUSE", PIC_PATCH);
+	pic_pause = R_RegisterPic('m_pause', PIC_PATCH);
 
 	LoadedLog = 0;
 	strcpy(ARR2STR(LogText), "Find help");
@@ -368,7 +368,7 @@ void SB_DrawMainBar()
 		R_DrawPic(0, 56, pic_invpop2);
 		if (LoadedLog != cl.Objectives)
 		{
-			LoadTextLump(va("LOG%d", cl.Objectives), &LogText[0], 1024);
+			LoadTextLump(StrToName(va("log%d", cl.Objectives)), &LogText[0], 1024);
 			LoadedLog = cl.Objectives;
 		}
 		T_SetFont(font_yellow);
@@ -385,7 +385,7 @@ void SB_DrawMainBar()
 
 void SB_DrawPause()
 {
-	if (cl.bPaused && GetCvar("draw_pause"))
+	if (cl.bPaused && GetCvar('draw_pause'))
 	{
 		//  Pause
 		R_DrawPic(126, 4, pic_pause);
@@ -416,13 +416,13 @@ void SB_Drawer(int sb_view)
 
 void SB_UpdateWidgets()
 {
-	if (bShowKeys && !GetCvar("sb_show_keys"))
+	if (bShowKeys && !GetCvar('sb_show_keys'))
 	{
 		KeysPage = (KeysPage + 1) % 3;
 	}
-	bShowWeapons = GetCvar("sb_show_weapons");
-	bShowKeys = GetCvar("sb_show_keys");
-	bShowObjectives = GetCvar("sb_show_objectives");
+	bShowWeapons = GetCvar('sb_show_weapons');
+	bShowKeys = GetCvar('sb_show_keys');
+	bShowObjectives = GetCvar('sb_show_objectives');
 }
 
 //==========================================================================
@@ -480,6 +480,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.4  2006/04/05 19:02:09  dj_jl
 //  Fixed health bar for more than 100 health.
 //

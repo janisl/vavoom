@@ -23,16 +23,16 @@
 //**
 //**************************************************************************
 
-class MenuChoice_InvertMouse:MenuChoice_OnOff;
+class MenuChoice_InvertMouse : MenuChoice_OnOff;
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
-	return GetCvar("invert_mouse");
+	return GetCvar('invert_mouse');
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvar("invert_mouse", newValue);
+	SetCvar('invert_mouse', newValue);
 	return true;
 }
 
@@ -44,6 +44,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.1  2002/10/26 16:32:24  dj_jl
 //  New style of defining classes.
 //

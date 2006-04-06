@@ -57,9 +57,9 @@ void A_AlarmActive()
 
 __states__
 {
-	S_KLAX('KLAX', 0, 5.0 / 35.0, S_KLAX) { A_CheckAlarm(); }
-	S_KLAX_ACT1('KLAX', 1, 6.0 / 35.0, S_KLAX_ACT2) { A_AlarmActive(); }
-	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { }
+	S_KLAX('KLAX', 0, 5.0 / 35.0, S_KLAX) { Effects = 0; A_CheckAlarm(); }
+	S_KLAX_ACT1('KLAX', 1, 6.0 / 35.0, S_KLAX_ACT2) { Effects = 0; A_AlarmActive(); }
+	S_KLAX_ACT2('KLAX', 2, 60.0 / 35.0, S_KLAX_ACT1) { Effects = StrifeDefs::EF_DL_RED; }
 }
 
 defaultproperties
@@ -76,6 +76,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.6  2006/03/29 14:37:08  firebrand_kh
 //  Made the alarm call NoiseAlert when shutting up
 //

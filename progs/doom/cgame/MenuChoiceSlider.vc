@@ -47,7 +47,7 @@ bool SetNewValue(float newValue)
 	return true;
 }
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 
@@ -57,10 +57,10 @@ void InitWindow(void)
 	if (Value > MaxValue)
 		Value = MaxValue;
 
-	pic_M_THERML = R_RegisterPic("M_THERML", PIC_PATCH);
-	pic_M_THERMM = R_RegisterPic("M_THERMM", PIC_PATCH);
-	pic_M_THERMR = R_RegisterPic("M_THERMR", PIC_PATCH);
-	pic_M_THERMO = R_RegisterPic("M_THERMO", PIC_PATCH);
+	pic_M_THERML = R_RegisterPic('m_therml', PIC_PATCH);
+	pic_M_THERMM = R_RegisterPic('m_thermm', PIC_PATCH);
+	pic_M_THERMR = R_RegisterPic('m_thermr', PIC_PATCH);
+	pic_M_THERMO = R_RegisterPic('m_thermo', PIC_PATCH);
 }
 
 void DrawWindow(GC gc)
@@ -132,6 +132,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:22  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2005/11/17 23:05:22  dj_jl
 //  Renamed sounds.
 //

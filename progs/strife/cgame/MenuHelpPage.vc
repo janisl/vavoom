@@ -25,19 +25,22 @@
 
 class MenuHelpPage : MenuStaticBitmap;
 
-void SetPage(string pageName)
+void SetPage(name pageName)
 {
 	Handle = R_RegisterPic(pageName, PicType);
 }
 
 defaultproperties
 {
-	PicName = "HELP1";
+	PicName = 'help1';
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:50:23  dj_jl
+//  For some builtins changed string arguments to names.
+//
 //  Revision 1.2  2004/02/18 17:38:01  dj_jl
 //  Fixed crash in help screens.
 //

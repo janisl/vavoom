@@ -888,7 +888,7 @@ bool VEntity::TryMove(TVec newPos)
 				return false;
 			}
 		}
-		if (tmtrace.FloorZ - Origin.z > MaxDropoffHeight)
+		if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
 		{
 			// Too big a step up
 			eventPushLine();
@@ -901,7 +901,7 @@ bool VEntity::TryMove(TVec newPos)
 //		}
 		if (!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float) &&
 			!(EntityFlags & EF_Blasted) &&
-			(tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight))
+			(tmtrace.FloorZ - tmtrace.DropOffZ > MaxDropoffHeight))
 		{
 			// Can't move over a dropoff unless it's been blasted
 			return false;
@@ -1945,9 +1945,12 @@ VClass* SV_FindClassFromScriptId(int Id)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.30  2006/04/06 21:50:51  dj_jl
+//	For some builtins changed string arguments to names.
+//
 //	Revision 1.29  2006/04/06 11:47:46  dj_jl
 //	Added maximal dropoff parameter.
-//
+//	
 //	Revision 1.28  2006/04/05 18:38:07  dj_jl
 //	Fixed bouncing at back side of a line.
 //	
