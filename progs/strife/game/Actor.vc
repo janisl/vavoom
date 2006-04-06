@@ -660,6 +660,13 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// player specific
 	if (bIsPlayer)
 	{
+		if (inflictor && inflictor.bFireDamage && Player(Player).Powers[pw_ironfeet])
+		{
+			// If the player wears an environmental suit it's not
+			// damaged by fire damage
+			return;
+		}
+
 		//	End of game hell hack.
 		if ((Sector->special & SECSPEC_BASE_MASK) ==
 			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
@@ -3500,6 +3507,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.43  2006/04/06 15:54:01  firebrand_kh
+//  Made fire damage don't affect a player with environmental suit activated
+//
 //  Revision 1.42  2006/04/06 11:47:46  dj_jl
 //  Added maximal dropoff parameter.
 //
