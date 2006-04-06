@@ -46,14 +46,17 @@ defaultproperties
 	bActivateImpact = true;
 	IdleState = S_MINI_MISSILE;
 	DeathState = S_MISSILE_X1;
-
 	SightSound = 'weapons/minimissile';
 	DeathSound = 'weapons/minimissilehit';
+	Effects = StrifeDefs::EF_DL_MISSILE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:49:06  dj_jl
+//  Added some lighting effects.
+//
 //  Revision 1.4  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

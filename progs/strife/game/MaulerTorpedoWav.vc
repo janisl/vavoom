@@ -42,11 +42,15 @@ defaultproperties
 	bDisruptDamage = true;
 	IdleState = S_TORPEDO_WAV1;
 	DeathState = S_TORPEDO_WAV3;
+	Effects = StrifeDefs::EF_DL_GREEN;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:49:06  dj_jl
+//  Added some lighting effects.
+//
 //  Revision 1.4  2006/03/21 15:13:59  firebrand_kh
 //  Added disrupting damage flag
 //

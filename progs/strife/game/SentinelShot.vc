@@ -30,11 +30,15 @@ defaultproperties
 	MissileDamage = 1;
 	DeathState = S_SENTINEL_SHOT_X1;
 	SightSound = 'sentinel/plasma';
+	Effects = StrifeDefs::EF_DL_RED;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/06 21:49:06  dj_jl
+//  Added some lighting effects.
+//
 //  Revision 1.2  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

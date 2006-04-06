@@ -79,11 +79,15 @@ defaultproperties
 	DeathState = S_TORPEDO_X1;
 	SightSound = 'weapons/mauler2fire';
 	DeathSound = 'weapons/mauler2hit';
+	Effects = StrifeDefs::EF_DL_GREEN;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/06 21:49:06  dj_jl
+//  Added some lighting effects.
+//
 //  Revision 1.7  2006/04/05 17:29:24  dj_jl
 //  Fix for missiles imediately exploding and having wrong instigator.
 //

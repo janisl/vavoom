@@ -45,11 +45,15 @@ defaultproperties
 	DeathState = S_ZAP1_0;
 	SightSound = 'weapons/sigil';
 	DeathSound = 'weapons/sigilhit';
+	Effects = StrifeDefs::EF_DL_MISSILE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/06 21:49:06  dj_jl
+//  Added some lighting effects.
+//
 //  Revision 1.4  2005/11/19 13:43:51  dj_jl
 //  Renamed sounds.
 //

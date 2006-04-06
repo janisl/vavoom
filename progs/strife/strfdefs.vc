@@ -31,6 +31,7 @@ enum
 {
 	svc_gun_shot = USER_PROTOCOL_START,
 	svc_blood,
+	svc_explosion,
 	svc_speech,
 	svc_voice,
 	svc_slideshow1,
@@ -147,6 +148,19 @@ enum
 	CF_GODMODE		= 2		// No damage, no health loss.
 };
 
+//  Dynamic light effects
+enum
+{
+	EF_DL_NONE,
+	EF_DL_MISSILE,
+	EF_DL_RED,
+	EF_DL_GREEN,
+	EF_DL_BLUE,
+	EF_DL_MUZZLEFLASH,
+
+	EF_DLIGHT_MASK	= 0x07
+};
+
 defaultproperties
 {
 }
@@ -154,6 +168,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.21  2006/04/06 21:49:17  dj_jl
+//  Added some lighting effects.
+//
 //  Revision 1.20  2006/03/26 13:08:41  dj_jl
 //  Implemented support for modular progs.
 //
