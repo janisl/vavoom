@@ -55,26 +55,15 @@ void A_StalkerLook()
 
 void A_StalkerChase2()
 {
-	//	Movement code must assume stalker is floating.
-	bInFloat = true;
-	bFloat = true;
-
 	if (!bNoGravity)
 	{
 		//	Walking on floor.
 		SetState(S_STALKER_F_RUN1);
 	}
-	else
+	else if (CeilingZ - Height > Origin.z)
 	{
-		//	Check for falling down.
-		if (CeilingZ - Height > Origin.z)
-		{
-			SetState(S_STALKER_LAND1);
-		}
-		else
-		{
-			A_Chase();
-		}
+		//	Falling down.
+		SetState(S_STALKER_LAND1);
 	}
 }
 
@@ -98,11 +87,6 @@ void A_StalkerChase()
 
 void A_StalkerAttack()
 {
-	if (!Enemy)
-		return;
-
-	A_FaceTarget();
-
 	if (bNoGravity)
 	{
 		//	Land if we are on ceiling.
@@ -110,9 +94,14 @@ void A_StalkerAttack()
 	}
 	else
 	{
+		if (!Enemy)
+			return;
+
+		A_FaceTarget();
+
 		if (CheckMeleeRange())
 		{
-			Enemy.Damage(self, self, (P_Random() & 7) * 2);
+			Enemy.Damage(self, self, (P_Random() & 7) * 2 + 2);
 		}
 	}
 }
@@ -126,9 +115,42 @@ void A_StalkerAttack()
 void A_StalkerLand()
 {
 	bNoGravity = false;
-	bInFloat = false;
-	bFloat = false;
-	PlaySound(WalkSound, CHAN_BODY);
+}
+
+//==========================================================================
+//
+//	CheckMeleeRange
+//
+//==========================================================================
+
+bool CheckMeleeRange()
+{
+	float	dist;
+
+	if (!bNoGravity)
+	{
+		return ::CheckMeleeRange();
+	}
+
+	//	When walking on ceiling, ignore height difference.
+	if (!Enemy)
+	{
+		return false;
+	}
+
+	dist = DistTo2(Enemy);
+
+	if (dist >= MELEERANGE - 20.0 + Enemy.Radius)
+	{
+		return false;
+	}
+
+	if (!CanSee(Enemy))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 __states__
@@ -202,6 +224,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/06 11:48:52  dj_jl
+//  Fixed several bugs.
+//
 //  Revision 1.6  2006/03/28 15:05:13  firebrand_kh
 //  Fixes for dropping from ceiling
 //

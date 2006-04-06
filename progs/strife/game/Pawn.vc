@@ -195,7 +195,7 @@ Actor SpawnMissileZAimed(float z, Actor dest, classid type)
 //
 //==========================================================================
 
-int CheckMeleeRange()
+bool CheckMeleeRange()
 {
 	float dist;
 
@@ -225,7 +225,7 @@ int CheckMeleeRange()
 //
 //==========================================================================
 
-int CheckMissileRange()
+bool CheckMissileRange()
 {
 	float dist;
 
@@ -253,32 +253,8 @@ int CheckMissileRange()
 	if (!MeleeState)
 		dist -= 128.0;	// no melee attack, so fire more
 
-/*    if (actor->type == MT_VILE)
-    {
-		if (dist > 14.0 * 64.0)
-		    return false;	// too far away
-    }
-	
-
-    if (actor->type == MT_UNDEAD)
-    {
-		if (dist < 196.0)
-		    return false;	// close for fist attack
-		dist /= 2.0;
-    }
-	
-    if (actor->type == MT_CYBORG ||
-    	actor->type == MT_SPIDER ||
-    	actor->type == MT_SKULL)
-    {
-		dist /= 2.0;
-    }*/
-
 	if (dist > 200.0)
 		dist = 200.0;
-
-//    if (actor->type == MT_CYBORG && dist > 160.0)
-//      dist = 160.0;
 
 	if (Random() * 256.0 < dist)
 		return false;
@@ -1056,7 +1032,6 @@ void A_BossDeath()
 			return;
 
 		Player(Enemy.Player).GiveSigilPiece();
-		cprint(Enemy.Player, "You\'ve Killed The Bishop!");
 		Player(Enemy.Player).GiveQuest(QUEST_KilledBishop);
 		Player(Enemy.Player).SetObjectives(74);
 		MSG_Select(MSG_SV_RELIABLE);
@@ -1070,7 +1045,6 @@ void A_BossDeath()
 			return;
 
 		Player(Enemy.Player).GiveSigilPiece();
-		cprint(Enemy.Player, "You\'ve Killed The Oracle!");
 		Player(Enemy.Player).GiveQuest(QUEST_KilledOracle);
 		if (Player(Enemy.Player).Quests & (1 << QUEST_KilledBishop))
 		{
@@ -1101,7 +1075,6 @@ void A_BossDeath()
 
 		Player(Enemy.Player).GiveSigilPiece();
 		Player(Enemy.Player).GiveQuest(QUEST_KilledMacil);
-		cprint(Enemy.Player, "You've Killed Macil!");
 		if (Player(Enemy.Player).Quests & (1 << QUEST_Factory))
 		{
 			Player(Enemy.Player).SetObjectives(106);
@@ -1125,7 +1098,6 @@ void A_BossDeath()
 
 		Player(Enemy.Player).GiveSigilPiece();
 		Player(Enemy.Player).GiveQuest(QUEST_KilledLoremaster);
-		cprint(Enemy.Player, "You\'ve Killed The LoreMaster!");
 		Player(Enemy.Player).Accuracy += 10;
 		Player(Enemy.Player).Stamina += 10;
 		Player(Enemy.Player).GiveBody(200);
@@ -1382,6 +1354,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.24  2006/04/06 11:48:52  dj_jl
+//  Fixed several bugs.
+//
 //  Revision 1.23  2006/03/28 15:04:53  firebrand_kh
 //  Fixes for Inquisitor decide method
 //

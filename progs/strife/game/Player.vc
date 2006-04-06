@@ -1054,10 +1054,17 @@ bool GivePower(int power)
 
 void GiveQuest(int QuestID)
 {
+	classid		QClass;
+	QuestInfo	QInfo;
+	
 	if (Quests & (1 << QuestID))
 		cprint(self, "Already have quest %d", QuestID);
 	Quests |= 1 << QuestID;
 	cprint(self, "Got quest %d, quests %x", QuestID, Quests);
+	QClass = StrifeLevelInfo(Level).GetClassFromID(312 + QuestID);
+	QInfo = QuestInfo(StrifeLevelInfo(Level).Spawn(QClass, vector(0.0, 0.0, 0.0)));
+	cprint(self, QInfo.QuestMessage);
+	QInfo.Remove();
 }
 
 //==========================================================================
@@ -2636,6 +2643,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.36  2006/04/06 11:48:52  dj_jl
+//  Fixed several bugs.
+//
 //  Revision 1.35  2006/03/19 17:24:29  dj_jl
 //  Added explicit type casts.
 //

@@ -26,6 +26,20 @@
 class Macil : Pawn
 	__mobjinfo__(64);
 
+//============================================================================
+//
+//	TakeSpecialDamage
+//
+//	Before you storm the castle, Macil is a god and unkillable. The effort
+// required to take the castle apparently drops him to mere godlike status.
+//
+//============================================================================
+
+int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
+{
+	return -1;
+}
+
 __states__
 {
 	S_MACIL_STAND('LEDR', 2, 5.0 / 35.0, S_MACIL_STAND) { A_Stand(); }
@@ -77,6 +91,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/06 11:48:52  dj_jl
+//  Fixed several bugs.
+//
 //  Revision 1.3  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

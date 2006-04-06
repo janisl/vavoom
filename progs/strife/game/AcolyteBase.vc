@@ -90,12 +90,14 @@ __states__
 
 defaultproperties
 {
-	bTakePoisonDamage = true;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/04/06 11:48:52  dj_jl
+//  Fixed several bugs.
+//
 //  Revision 1.11  2006/03/28 15:02:24  firebrand_kh
 //  Added bTakePoisonDamage flag
 //
