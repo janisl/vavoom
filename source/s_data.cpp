@@ -771,11 +771,17 @@ bool S_LoadSound(int sound_id)
 		}
 
 		for (VSampleLoader* Ldr = VSampleLoader::List;
-			!S_sfx[sound_id].Data; Ldr = Ldr->Next)
+			Ldr && !S_sfx[sound_id].Data; Ldr = Ldr->Next)
 		{
 			Ldr->Load(S_sfx[sound_id], *Strm);
 		}
 		delete Strm;
+		if (!S_sfx[sound_id].Data)
+		{
+			GCon->Logf(NAME_Dev, "Failed to load sound %s",
+				*S_sfx[sound_id].TagName);
+			return false;
+		}
 	}
 	Z_ChangeTag(S_sfx[sound_id].Data, PU_SOUND);
 	S_sfx[sound_id].UseCount++;
@@ -843,9 +849,12 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.23  2006/04/08 14:55:35  dj_jl
+//	Fixed crash with bad format sounds.
+//
 //	Revision 1.22  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.21  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	
