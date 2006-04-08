@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib" /libpath:"C:\Gamma\Microsoft Visual C++ Toolkit 2003\lib"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib /nologo /subsystem:windows /machine:I386 /nodefaultlib:"libc.lib" /nodefaultlib:"msvcrt.lib" /nodefaultlib:"libcd.lib" /nodefaultlib:"libcmtd.lib" /nodefaultlib:"msvcrtd.lib"
 # SUBTRACT LINK32 /pdb:none
 
 !ELSEIF  "$(CFG)" == "Vavoom95 - Win32 Debug"
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib /nologo /subsystem:windows /debug /machine:I386
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib ole32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"msvcrt.lib" /nodefaultlib:"msvcrtd.lib" /nodefaultlib:"libcd.lib"
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
