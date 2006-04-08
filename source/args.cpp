@@ -210,7 +210,7 @@ const char* VArgs::CheckValue(const char *check) const
 {
 	guard(VArgs::CheckValue);
 	int a = CheckParm(check);
-	if (a && a < Argc - 1 && Argv[a = 1][0] != '-' && Argv[a = 1][0] != '+')
+	if (a && a < Argc - 1 && Argv[a + 1][0] != '-' && Argv[a + 1][0] != '+')
 	{
 		return Argv[a + 1];
 	}
@@ -221,8 +221,11 @@ const char* VArgs::CheckValue(const char *check) const
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2006/04/08 12:14:25  dj_jl
+//	Fixed value check.
+//
 //	Revision 1.1  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //**************************************************************************
