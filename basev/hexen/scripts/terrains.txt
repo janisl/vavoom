@@ -1,4 +1,4 @@
-//  !!! If these are changes, you also must change defs in progs!
+//  !!! If these are changed, you also must change defs in progs!
 // 0 - SOLID
 // 1 - ICE
 // 2 - LIQUID
