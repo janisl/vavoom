@@ -54,7 +54,10 @@ void A_InquisitorChase()
 		A_FaceTarget();
 		Origin.z = FloorZ + 80.0;
 		if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
+		{
 			SetState(JumpState);
+			Effects = StrifeDefs::EF_DL_BLUE;
+		}
 		else
 			//	Don't let him jump while under a low ceiling
 			Origin.z = FloorZ;
@@ -64,6 +67,7 @@ void A_InquisitorChase()
 	{
 		A_FaceTarget();
 		SetState(JumpState);
+		Effects = StrifeDefs::EF_DL_BLUE;
 	}
 }
 
@@ -163,6 +167,7 @@ void A_InquisitorJump()
 		SetState(SeeState2);
 		ReactionCount = 0;
 		bNoGravity = false;
+		Effects = StrifeDefs::EF_DL_NONE;
 	}
 	PlaySound(JumpSound, CHAN_BODY);
 }
@@ -248,11 +253,15 @@ defaultproperties
 	ActiveSound = 'inquisitor/active';
 	JumpSound = 'inquisitor/jump';
 	DeathSound = 'inquisitor/death';
+	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.7  2006/03/28 15:03:40  firebrand_kh
 //  Fixed grenade Z speed value, other small fixes
 //

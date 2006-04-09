@@ -110,6 +110,7 @@ bool bFireDamage;		// Causes fire damage.
 bool bDisruptDamage;	// Disrupts enemies.
 bool bInCombat;			// Actors in combat won't talk
 bool bLookAllAround;	// Actor can see all around.
+bool bStaticLight;		// Static light source.
 
 //  Params
 float Speed;
@@ -172,6 +173,12 @@ int la_damage;
 classid shootPuffType;
 TVec shoot_linestart;
 TVec shoot_lineend;
+
+// Static light parameters.
+TVec LightOffset;
+int LightColour;
+float LightRadius;
+int ExplodeEffect;
 
 __states__
 {
@@ -359,6 +366,20 @@ void OnMapSpawn(mthing_t * mthing)
 	else
 	{
 		SetOrigin2(Origin);
+	}
+
+	if (bStaticLight)
+	{
+		if (LightColour == 0xffffffff)
+		{
+			Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius);
+		}
+		else
+		{
+			Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
+		}
 	}
 }
 
@@ -1834,12 +1855,14 @@ bool Physics(float DeltaTime)
 	UpdateVelocity();
 
 	// momentum movement
+	Level.Game.tmtrace->BlockingMobj = none;
 	if (Velocity.x || Velocity.y)
 	{
 		XYMovement(DeltaTime);
 		if (IsDestroyed())
 		{
-			return false;	// mobj was removed
+			// mobj was removed
+			return false;
 		}
 	}
 	else if (bSkullFly)
@@ -1855,10 +1878,10 @@ bool Physics(float DeltaTime)
 	if ((Origin.z != FloorZ) || Velocity.z || Level.Game.tmtrace->BlockingMobj)
 	{
 		// Handle Z momentum and gravity
-		if (!bNoPassMobj)
+		if (!bNoPassMobj && !bMissile)
 		{
 			onmo = Actor(CheckOnmobj());
-			if (!onmo || bMissile)
+			if (!onmo)
 			{
 				ZMovement(DeltaTime);
 				bOnMobj = false;
@@ -1867,7 +1890,7 @@ bool Physics(float DeltaTime)
 			{
 				if (bIsPlayer)
 				{
-					if (Velocity.z < -GRAVITY * 0.25)
+					if (Velocity.z < -GRAVITY * 0.25 && !bFly)
 					{
 						PlayerLandedOnThing();
 					}
@@ -3077,7 +3100,7 @@ void A_Look()
 
 void A_ActiveSound()
 {
-	if (ActiveSound)
+	if (ActiveSound && !GetSoundPlayingInfo(self, GetSoundID(ActiveSound)))
 	{
 		PlaySound(ActiveSound, CHAN_VOICE);
 	}
@@ -3112,6 +3135,16 @@ void A_Explode()
 	{
 		StrifeLevelInfo(Level).NoiseAlert(Instigator, self);
 	}
+
+	if (ExplodeEffect)
+	{
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(StrifeDefs::svc_explosion);
+		MSG_WriteByte(ExplodeEffect);
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z));
+	}
 }
 
 //==========================================================================
@@ -3125,6 +3158,16 @@ void A_Explode()
 void A_Explode2()
 {
 	RadiusAttack(128, 0, 0);
+
+	if (ExplodeEffect)
+	{
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(StrifeDefs::svc_explosion);
+		MSG_WriteByte(ExplodeEffect);
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z));
+	}
 }
 
 //==========================================================================
@@ -3137,6 +3180,12 @@ void A_Explode2()
 
 void A_Scream()
 {
+	//  Remove muzzle flash & other light effects
+	if (Effects & StrifeDefs::EF_DLIGHT_MASK)
+	{
+		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
+	}
+
 	if (DeathSound)
 	{
 		PlaySound(DeathSound, CHAN_VOICE);
@@ -3153,6 +3202,12 @@ void A_Scream()
 
 void A_Fall()
 {
+	//  Remove muzzle flash
+	if ((Effects & StrifeDefs::EF_DLIGHT_MASK) == StrifeDefs::EF_DL_MUZZLEFLASH)
+	{
+		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
+	}
+
 	// actor is on ground, it can be walked over
 	bSolid = false;
 }
@@ -3378,6 +3433,16 @@ void A_Explode32()
 	RadiusAttack(32, 32, false);
 	if (DeathSound)
 		PlaySound(DeathSound, CHAN_VOICE);
+
+	if (ExplodeEffect)
+	{
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(StrifeDefs::svc_explosion);
+		MSG_WriteByte(ExplodeEffect);
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z));
+	}
 }
 
 //==========================================================================
@@ -3391,6 +3456,16 @@ void A_Explode192()
 	RadiusAttack(192, 192, false);
 	if (DeathSound)
 		PlaySound(DeathSound, CHAN_VOICE);
+
+	if (ExplodeEffect)
+	{
+		MSG_Select(MSG_SV_DATAGRAM);
+		MSG_WriteByte(StrifeDefs::svc_explosion);
+		MSG_WriteByte(ExplodeEffect);
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z));
+	}
 }
 
 //==========================================================================
@@ -3513,11 +3588,17 @@ defaultproperties
 	MaxStepHeight = 16.0;
 	MaxDropoffHeight = 32.0;
 	ReactionCount = 8;
+	LightOffset = vector(0.0, 0.0, 0.0);
+	LightColour = 0xffffffff;
+	LightRadius = 128.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.46  2006/04/09 15:35:16  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.45  2006/04/09 11:22:00  dj_jl
 //  Properly remove current lighting special.
 //

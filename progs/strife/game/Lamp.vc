@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Lamp:Decoration
+class Lamp : Decoration
 	__mobjinfo__(43);
 
 __states__
@@ -37,11 +37,17 @@ defaultproperties
 	Height = 80.0;
 	bSolid = true;
 	IdleState = S_LAMP;
+	bStaticLight = true;
+	LightOffset = vector(0.0, 0.0, 70.0);
+	LightRadius = 200.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.2  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

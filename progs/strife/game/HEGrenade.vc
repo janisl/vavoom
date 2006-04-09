@@ -60,11 +60,15 @@ defaultproperties
 	DeathState = S_GRENADE_HE_X1;
 	SightSound = 'weapons/hegrenadeshoot';
 	DeathSound = 'weapons/hegrenadebang';
+	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.6  2006/03/29 14:37:30  firebrand_kh
 //  Added bouncing flag
 //

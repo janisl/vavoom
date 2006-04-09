@@ -234,6 +234,7 @@ void A_GunFlash()
 void A_Light0()
 {
 	Player.ExtraLight = 0;
+	Player.MO.Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
 }
 
 //===========================================================================
@@ -294,6 +295,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.14  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.13  2006/03/12 20:01:25  dj_jl
 //  States as objects, added state variable type.
 //

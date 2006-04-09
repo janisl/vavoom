@@ -55,7 +55,7 @@ void A_FireRiffle()
 	}
 	damage = 4 * (P_Random() % 3 + 1);
 	Actor(Player.MO).LineAttack(dir, MISSILERANGE, damage, Puff);
-	//Player.MO.Effects |= EF_DL_MUZZLEFLASH;
+	Player.MO.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
 
 __states__
@@ -67,7 +67,7 @@ __states__
 	S_RIFFLE2('RIFF', 1, 3.0 / 35.0, S_RIFFLE3) { A_FireRiffle(); }
 	S_RIFFLE3('RIFG', 3, 3.0 / 35.0, S_RIFFLE4) { A_FireRiffle(); }
 	S_RIFFLE4('RIFG', 2, 0.0 / 35.0, S_RIFFLE5) { A_ReFire(); }
-	S_RIFFLE5('RIFG', 1, 2.0 / 35.0, S_RIFFLE) { }
+	S_RIFFLE5('RIFG', 1, 2.0 / 35.0, S_RIFFLE) { A_Light0(); }
 }
 
 defaultproperties
@@ -83,6 +83,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.8  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //

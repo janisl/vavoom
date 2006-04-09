@@ -40,11 +40,18 @@ defaultproperties
 	bSolid = true;
 	IdleState = S_SPDL_1;
 	ActiveSound = 'ambient/alien1';
+	bStaticLight = true;
+	LightColour = 0xff00ff00;
+	LightOffset = vector(0.0, 0.0, 32.0);
+	LightRadius = 160.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/09 15:35:16  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.2  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

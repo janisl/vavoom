@@ -62,11 +62,15 @@ defaultproperties
 	DeathSound = 'misc/explosion';
 	bGiveQuest = true;
 	QuestID = QUEST_BlownUpComputer;
+	Effects = StrifeDefs::EF_DL_GREEN;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/09 15:35:16  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.7  2006/04/09 11:22:00  dj_jl
 //  Properly remove current lighting special.
 //

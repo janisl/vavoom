@@ -178,11 +178,15 @@ defaultproperties
 	ActiveSound = 'crusader/active';
 	PainSound = 'crusader/pain';
 	DeathSound = 'crusader/death';
+	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.8  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

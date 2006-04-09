@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TallLamp2:Decoration
+class TallLamp2 : Decoration
 	__mobjinfo__(197);
 
 __states__
@@ -37,11 +37,18 @@ defaultproperties
 	Height = 64.0;
 	bSolid = true;
 	IdleState = S_TLAMP_2;
+	bStaticLight = true;
+	LightColour = 0xffafaf7f;
+	LightOffset = vector(0.0, 0.0, 32.0);
+	LightRadius = 160.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.2  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

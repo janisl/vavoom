@@ -114,11 +114,15 @@ defaultproperties
 	ActiveSound = 'bishop/active';
 	PainSound = 'bishop/pain';
 	DeathSound = 'bishop/death';
+	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/09 15:35:16  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.6  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

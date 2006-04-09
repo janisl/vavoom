@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Latern:Decoration
+class Latern : Decoration
 	__mobjinfo__(111);
 
 __states__
@@ -40,11 +40,18 @@ defaultproperties
 	Height = 72.0;
 	bSolid = true;
 	IdleState = S_LATERN_1;
+	bStaticLight = true;
+	LightColour = 0xffffaf7f;
+	LightOffset = vector(0.0, 0.0, 64.0);
+	LightRadius = 160.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

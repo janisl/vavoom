@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Lite1:Decoration
+class Lite1 : Decoration
 	__mobjinfo__(2028);
 
 __states__
@@ -37,11 +37,17 @@ defaultproperties
 	Height = 16.0;
 	bSolid = true;
 	IdleState = S_LITE_4;
+	bStaticLight = true;
+	LightOffset = vector(0.0, 0.0, 64.0);
+	LightRadius = 200.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.2  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

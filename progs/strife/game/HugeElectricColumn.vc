@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HugeElectricColumn:Decoration
+class HugeElectricColumn : Decoration
 	__mobjinfo__(57);
 
 __states__
@@ -40,11 +40,18 @@ defaultproperties
 	Height = 192.0;
 	bSolid = true;
 	IdleState = S_HUGE_COLUMN_1;
+	bStaticLight = true;
+	LightColour = 0xff7fff7f;
+	LightOffset = vector(0.0, 0.0, 96.0);
+	LightRadius = 200.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.1  2002/11/02 08:20:56  dj_jl
 //  New style classes.
 //

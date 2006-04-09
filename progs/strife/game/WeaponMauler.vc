@@ -55,6 +55,7 @@ void A_FireBlaster1()
 		Actor(Player.MO).LineAttack(dir, MAULERRANGE, damage, MaulerPuff);
 		Actor(Player.MO).bDisruptDamage = false;
 	}
+	Player.MO.Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -138,6 +139,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.12  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.11  2006/03/21 15:16:48  firebrand_kh
 //  Reduced kickback thrust
 //

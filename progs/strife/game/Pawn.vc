@@ -614,6 +614,12 @@ void A_Walk()
 {
 	float delta;
 
+	//  Remove muzzle flash
+	if ((Effects & StrifeDefs::EF_DLIGHT_MASK) == StrifeDefs::EF_DL_MUZZLEFLASH)
+	{
+		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
+	}
+
 	if (bStanding)
 		return;
 
@@ -661,6 +667,12 @@ void A_Chase()
 	if (ReactionCount)
 	{
 		ReactionCount--;
+	}
+
+	//  Remove muzzle flash
+	if ((Effects & StrifeDefs::EF_DLIGHT_MASK) == StrifeDefs::EF_DL_MUZZLEFLASH)
+	{
+		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
 	}
 
 	// modify target threshold
@@ -792,6 +804,12 @@ void A_FaceTarget()
 
 void A_XScream()
 {
+	//  Remove muzzle flash
+	if ((Effects & StrifeDefs::EF_DLIGHT_MASK) == StrifeDefs::EF_DL_MUZZLEFLASH)
+	{
+		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
+	}
+
 	if (bNoBlood && DeathSound)
 	{
 		PlaySound(DeathSound, CHAN_VOICE);
@@ -822,6 +840,7 @@ void A_RiffleAttack()
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	damage = ((P_Random() % 5) + 1) * 3;
 	LineAttack(dir, MISSILERANGE, damage, Puff);
+	Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -912,6 +931,7 @@ void A_RobotMissile()
 		damage = ((P_Random() % 8) + 1) * 3;
 		LineAttack(dir, MISSILERANGE, damage, Puff);
 	}
+	Effects |= StrifeDefs::EF_DL_MUZZLEFLASH;
 }
 
 //==========================================================================
@@ -1354,6 +1374,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2006/04/09 15:34:39  dj_jl
+//  Added static lights and other lighting effects.
+//
 //  Revision 1.24  2006/04/06 11:48:52  dj_jl
 //  Fixed several bugs.
 //
