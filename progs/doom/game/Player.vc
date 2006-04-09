@@ -2392,7 +2392,7 @@ void ChangeWeapon(int newweapon)
 	}
 #else //---------
 	if (newweapon == DoomDefs::wp_fist && WeaponOwned[DoomDefs::wp_chainsaw] &&
-		!(ReadyWeapon == DoomDefs::wp_chainsaw && Powers[pw_strength]))
+		ReadyWeapon != DoomDefs::wp_chainsaw)
 	{
 		newweapon = DoomDefs::wp_chainsaw;
 	}
@@ -3111,6 +3111,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.25  2006/04/09 11:20:03  dj_jl
+//  Allow switching from chainsaw to fists.
+//
 //  Revision 1.24  2006/03/19 17:20:35  dj_jl
 //  Added explicit type casts.
 //
