@@ -88,12 +88,14 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 			else
 			{
 				flag = P_ChangeSector(sector, crush);
-				if (flag)
+				//	This is completely illigical and aparently in Strife they
+				// fixed this one.
+				/*if (flag)
 				{
 					sector->floor.dist = lastpos;
 					P_ChangeSector(sector, crush);
 					return RES_CRUSHED;
-				}
+				}*/
 			}
 			break;
 
@@ -216,6 +218,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/09 11:21:12  dj_jl
+//  Removed useless crush test when moving down a floor.
+//
 //  Revision 1.4  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //
