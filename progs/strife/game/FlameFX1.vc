@@ -27,6 +27,25 @@ class FlameFX1 : Projectile;
 
 //==========================================================================
 //
+//	Physics
+//
+//==========================================================================
+
+bool Physics(float DeltaTime)
+{
+	//	Add more gravity to simulate original behavior.
+	if (!bNoGravity)
+	{
+		if (WaterLevel < 2)
+		{
+			Velocity.z -= 90.0 / 100.0 * 1225.0 * DeltaTime;
+		}
+	}
+	return ::Physics(DeltaTime);
+}
+
+//==========================================================================
+//
 //	A_FlameFXExplode
 //
 //==========================================================================
@@ -69,6 +88,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.8  2006/04/09 11:22:00  dj_jl
+//  Properly remove current lighting special.
+//
 //  Revision 1.7  2006/04/06 21:50:23  dj_jl
 //  For some builtins changed string arguments to names.
 //

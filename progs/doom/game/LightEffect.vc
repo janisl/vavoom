@@ -134,12 +134,16 @@ void Tick(float DeltaTime)
 			if (Sector->params.lightlevel >= Value1)
 			{
 				Sector->params.lightlevel = Value1;
+				if (Sector->LightingData == self)
+					Sector->LightingData = none;
 				RemoveSpecialThinker(self);
 			}
 		}
 		else if (Sector->params.lightlevel <= Value1)
 		{
 			Sector->params.lightlevel = Value1;
+				if (Sector->LightingData == self)
+					Sector->LightingData = none;
 			RemoveSpecialThinker(self);
 		}
 		break;
@@ -198,6 +202,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/09 11:21:59  dj_jl
+//  Properly remove current lighting special.
+//
 //  Revision 1.4  2006/02/19 14:19:33  dj_jl
 //  Some changes because of compiler changes.
 //

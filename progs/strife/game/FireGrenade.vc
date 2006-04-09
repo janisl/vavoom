@@ -33,7 +33,10 @@ class FireGrenade : Projectile;
 
 void A_FireGrenadeExplode()
 {
-	Spawn(GrenadeFlame, Origin);
+	Actor A;
+
+	A = Spawn(GrenadeFlame, Origin);
+	A.Instigator = Instigator;
 }
 
 __states__
@@ -63,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/09 11:22:00  dj_jl
+//  Properly remove current lighting special.
+//
 //  Revision 1.6  2006/03/29 14:37:45  firebrand_kh
 //  Added bouncing flag
 //

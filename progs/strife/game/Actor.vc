@@ -652,7 +652,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	// thus kick away unless using the chainsaw.
 	if (inflictor && bColideWithThings)
 	{
-		Velocity += (500.0 * itof(damage) / Mass) *
+		Velocity += (500.0 * itof(damage > 100 ? 100 : damage) / Mass) *
 			Normalise(MobjCenter(self) - MobjCenter(inflictor));
 	}
 
@@ -3518,6 +3518,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.45  2006/04/09 11:22:00  dj_jl
+//  Properly remove current lighting special.
+//
 //  Revision 1.44  2006/04/06 21:50:23  dj_jl
 //  For some builtins changed string arguments to names.
 //
