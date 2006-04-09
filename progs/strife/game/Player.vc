@@ -710,7 +710,6 @@ bool GiveKey(int key)
 	if (Keys & (1 << key))
 		return false;
 
-	BonusFlash = BONUSADD;
 	Keys |= 1 << key;
 	return true;
 }
@@ -2203,13 +2202,16 @@ void BringUpWeapon()
 
 void ChangeWeapon(int newweapon)
 {
+	int ammo;
+	int count;
+
 	if (newweapon == StrifeDefs::wp_crossbow && WeaponOwned[StrifeDefs::wp_crossbow2] &&
-		ReadyWeapon == StrifeDefs::wp_crossbow)
+		(ReadyWeapon == StrifeDefs::wp_crossbow || !Ammo[StrifeDefs::am_electric_arrow]))
 	{
 		newweapon = StrifeDefs::wp_crossbow2;
 	}
 	if (newweapon == StrifeDefs::wp_grenade && WeaponOwned[StrifeDefs::wp_grenade2] &&
-		ReadyWeapon == StrifeDefs::wp_grenade)
+		(ReadyWeapon == StrifeDefs::wp_grenade || !Ammo[StrifeDefs::am_grenade1]))
 	{
 		newweapon = StrifeDefs::wp_grenade2;
 	}
@@ -2219,13 +2221,20 @@ void ChangeWeapon(int newweapon)
 		newweapon = StrifeDefs::wp_blaster2;
 	}
 
+	//	Check if we have ammo.
+	ammo = MainGameInfo(Level.Game).weapon_ammo_type[newweapon];
+	if (newweapon == StrifeDefs::wp_blaster)
+		count = 20;
+	else if (newweapon == StrifeDefs::wp_blaster2)
+		count = 30;
+	else
+		count = 1;
+	if (ammo != StrifeDefs::am_noammo && Ammo[ammo] < count)
+		return;
+
 	if (WeaponOwned[newweapon] && newweapon != ReadyWeapon)
 	{
-		// Do not go to ??? in shareware, even if cheated.
-//FIXME     if ((newweapon != wp_plasma && newweapon != wp_bfg) || !shareware)
-		{
-			PendingWeapon = newweapon;
-		}
+		PendingWeapon = newweapon;
 	}
 }
 
@@ -2644,6 +2653,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.38  2006/04/09 11:19:13  dj_jl
+//  Don't allow switching to weapon with no ammo.
+//
 //  Revision 1.37  2006/04/06 21:50:23  dj_jl
 //  For some builtins changed string arguments to names.
 //
