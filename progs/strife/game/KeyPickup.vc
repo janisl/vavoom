@@ -36,7 +36,8 @@ int KeyType;
 
 bool HandlePickup(Actor Toucher)
 {
-	return Player(Toucher.Player).GiveKey(KeyType);
+	Player(Toucher.Player).GiveKey(KeyType);
+	return true;
 }
 
 defaultproperties
@@ -47,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/09 11:19:33  dj_jl
+//  Fixed multiple key pickups.
+//
 //  Revision 1.4  2006/03/02 18:36:30  dj_jl
 //  Don't use game specific classes in common.
 //
