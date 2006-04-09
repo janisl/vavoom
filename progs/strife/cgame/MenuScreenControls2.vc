@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuScreenControls2:MenuScreenControls;
+class MenuScreenControls2 : MenuScreenControls;
 
-void CreateControlKeyChoices(void)
+void CreateControlKeyChoices()
 {
 	AddControl("Fly up", "+FlyUp", "-FlyUp");
 	AddControl("Fly down", "+FlyDown", "-FlyDown");
@@ -45,11 +45,15 @@ void CreateControlKeyChoices(void)
 
 defaultproperties
 {
+	ChoicesStartX = 131;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/09 11:06:44  dj_jl
+//  Fixed position.
+//
 //  Revision 1.5  2006/01/18 19:14:07  dj_jl
 //  Switch to previous and next weapon.
 //
