@@ -1960,6 +1960,7 @@ bool Physics(float DeltaTime)
 	}
 
 	// Handle X and Y momentums
+	Level.Game.tmtrace->BlockingMobj = none;
 	if (Velocity.x || Velocity.y)
 	{
 		XYMovement(DeltaTime);
@@ -1992,7 +1993,7 @@ bool Physics(float DeltaTime)
 		}
 		Origin.z = FloorZ + Special1f + Level.Game.FloatBobOffsets[(Health++) & 63];
 	}
-	else if ((Origin.z != FloorZ) || Velocity.z)
+	else if ((Origin.z != FloorZ) || Velocity.z || Level.Game.tmtrace->BlockingMobj)
 	{
 		// Handle Z momentum and gravity
 		if (!bNoPassMobj && !bMissile)
@@ -2014,7 +2015,7 @@ bool Physics(float DeltaTime)
 				}
 				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
 				{
-					if(bIsPlayer)
+					if (bIsPlayer)
 					{
 						Player(Player).ViewHeight -=
 							onmo.Origin.z + onmo.Height - Origin.z;
@@ -3760,6 +3761,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.31  2006/04/09 15:36:11  dj_jl
+//  Fixed uninitialised blocking mobj pointer.
+//
 //  Revision 1.30  2006/03/28 14:36:12  firebrand_kh
 //  Properly remove onmobj flag
 //

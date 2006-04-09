@@ -1624,6 +1624,7 @@ bool Physics(float DeltaTime)
 	UpdateVelocity();
 
 	// momentum movement
+	Level.Game.tmtrace->BlockingMobj = none;
 	if (Velocity.x || Velocity.y)
 	{
 		XYMovement(DeltaTime);
@@ -4731,6 +4732,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.33  2006/04/09 15:36:10  dj_jl
+//  Fixed uninitialised blocking mobj pointer.
+//
 //  Revision 1.32  2006/03/28 14:31:59  firebrand_kh
 //  Properly remove onmobj flag
 //
