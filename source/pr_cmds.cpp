@@ -1951,13 +1951,13 @@ PF(SectorStopSound)
 
 PF(GetSoundPlayingInfo)
 {
-	int			mobj;
+	VEntity*	mobj;
     int			id;
 
     id = Pop();
-    mobj = Pop();
+	mobj = (VEntity*)Pop();
 #ifdef CLIENT
-	Push(S_GetSoundPlayingInfo(mobj, id));
+	Push(S_GetSoundPlayingInfo(mobj->NetID, id));
 #else
 	Push(0);
 #endif
@@ -3467,9 +3467,12 @@ builtin_info_t BuiltinInfo[] =
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.84  2006/04/10 17:45:22  dj_jl
+//	Fixed get sound info builtin.
+//
 //	Revision 1.83  2006/04/06 21:50:51  dj_jl
 //	For some builtins changed string arguments to names.
-//
+//	
 //	Revision 1.82  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
