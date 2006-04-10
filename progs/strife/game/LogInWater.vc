@@ -37,6 +37,7 @@ __states__
 defaultproperties
 {
 	bNoBlockmap = true;
+	bFloorClip = true;
 	IdleState = S_LOGG_1;
 	ActiveSound = 'world/river';
 }
@@ -44,6 +45,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/10 19:22:18  dj_jl
+//  Added floor clipping in liquids.
+//
 //  Revision 1.2  2005/11/19 13:43:50  dj_jl
 //  Renamed sounds.
 //

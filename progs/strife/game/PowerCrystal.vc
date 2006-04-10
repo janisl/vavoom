@@ -126,6 +126,7 @@ defaultproperties
 	bShootable = true;
 	bNoGravity = true;
 	bNoBlood = true;
+	bFloorClip = true;
 	IdleState = S_CRYSTAL_1;
 	DeathState = S_CRYSTAL_X1;
 	ActiveSound = 'misc/reactor';
@@ -137,6 +138,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.10  2006/04/10 19:22:18  dj_jl
+//  Added floor clipping in liquids.
+//
 //  Revision 1.9  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

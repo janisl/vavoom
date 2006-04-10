@@ -169,6 +169,7 @@ defaultproperties
 {
 	Height = 8.0;
 	bSpecial = true;
+	bFloorClip = true;
 	PickupSound = 'misc/i_pkup';
 	PickupString = "Item";
 }
@@ -176,6 +177,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.13  2006/04/10 19:22:18  dj_jl
+//  Added floor clipping in liquids.
+//
 //  Revision 1.12  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

@@ -52,6 +52,7 @@ defaultproperties
 	bShootable = true;
 	bInCombat = true;
 	bNoBlood = true;
+	bFloorClip = true;
 	IdleState = S_GATES_1;
 	DeathState = S_GATES_X1;
 	DeathSound = 'misc/explosion';
@@ -62,6 +63,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/10 19:22:18  dj_jl
+//  Added floor clipping in liquids.
+//
 //  Revision 1.5  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
