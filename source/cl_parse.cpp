@@ -63,7 +63,7 @@ static VModel*			weapon_model_precache[1024];
 void CL_Clear()
 {
 	guard(CL_Clear);
-	memset((byte*)cl + sizeof(VObject), 0, sizeof(*cl) - sizeof(VObject));
+	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
 	memset(&cl_level, 0, sizeof(cl_level));
 	for (int i = 0; i < GMaxEntities; i++)
 		if (cl_mobjs[i])
@@ -1078,10 +1078,13 @@ void CL_ParseServerMessage()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.45  2006/04/10 19:40:45  dj_jl
+//	Fixed clearng of client state object.
+//
 //	Revision 1.44  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //	Revision 1.43  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
 //	
