@@ -96,7 +96,7 @@ enum
 	QUEST_GovDerwin,
 	QUEST_BrokePowerCoupling,
 	QUEST_7,
-	QUEST_8,
+	QUEST_GotBrokenPowerCoupling,
 	QUEST_GotDerwinsEar,
 	QUEST_GotPrisonPass,//10
 	QUEST_GotPrisonKey,
@@ -279,6 +279,9 @@ class PolyobjThinker;
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/11 18:27:40  dj_jl
+//  Removed Strife specific mapinfo extensions.
+//
 //  Revision 1.4  2006/03/26 13:08:41  dj_jl
 //  Implemented support for modular progs.
 //

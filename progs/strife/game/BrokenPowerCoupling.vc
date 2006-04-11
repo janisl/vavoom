@@ -45,11 +45,16 @@ defaultproperties
 	bDropped = true;
 	IdleState = S_BROKEN_POWER_COUPLING;
 	ItemType = StrifeDefs::ITEM_BrokenPowerCoupling;
+	bGiveQuest = true;
+	QuestID = QUEST_GotBrokenPowerCoupling;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.7  2006/04/11 18:27:40  dj_jl
+//  Removed Strife specific mapinfo extensions.
+//
 //  Revision 1.6  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //

@@ -560,14 +560,14 @@ private:
 	void SetupLineSides(line_t *ld) const;
 
 	//	Post-loading routines.
-	void GroupLines(void) const;
+	void GroupLines() const;
 	void LinkNode(int BSPNum, node_t *pParent) const;
 	void ClearBox(float *box) const;
 	void AddToBox(float* box, float x, float y) const;
 
 	//	Loader of the Strife conversations.
-	void LoadRogueConScript(const char *LumpName,
-		FRogueConSpeech *&SpeechList, int &NumSpeeches) const;
+	void LoadRogueConScript(VName LumpName, FRogueConSpeech *&SpeechList,
+		int &NumSpeeches) const;
 
 	DECLARE_FUNCTION(PointInSector)
 };
@@ -626,9 +626,12 @@ extern VLevel*			GClLevel;
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.38  2006/04/11 18:28:20  dj_jl
+//	Removed Strife specific mapinfo extensions.
+//
 //	Revision 1.37  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
-//
+//	
 //	Revision 1.36  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
 //	

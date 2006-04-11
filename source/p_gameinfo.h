@@ -29,6 +29,9 @@ class VGameInfo : public VObject
 {
 	DECLARE_CLASS(VGameInfo, VObject, 0)
 
+	VName			AcsHelper;
+	VName			GenericConScript;
+
 	int				netgame;
 	int				deathmatch;
 	int				gameskill;
@@ -77,12 +80,20 @@ class VGameInfo : public VObject
 	{
 		svpr.Exec(GetVFunction("SpawnWorld"), (int)this, (int)InLevel);
 	}
+	VName eventGetConScriptName(VName LevelName)
+	{
+		vint32 Tmp = svpr.Exec(GetVFunction("GetConScriptName"), (int)this, LevelName.GetIndex());
+		return *(VName*)&Tmp;
+	}
 };
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.2  2006/04/11 18:28:20  dj_jl
+//	Removed Strife specific mapinfo extensions.
+//
 //	Revision 1.1  2006/03/06 13:12:12  dj_jl
 //	Client now uses entity class.
-//
+//	
 //**************************************************************************

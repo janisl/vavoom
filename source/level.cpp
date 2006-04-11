@@ -156,12 +156,10 @@ void VLevel::LoadMap(const char *mapname)
 		{
 			LoadThings1(lumpnum + ML_THINGS);
 #ifdef SERVER
-			mapInfo_t mi;
-			P_GetMapInfo(mapname, mi);
-			if (mi.acsLump[0])
+			if (GGameInfo->AcsHelper != NAME_None)
 			{
 				//	ACS object code
-				P_LoadACScripts(W_GetNumForName(VName(mi.acsLump, VName::AddLower8), WADNS_ACSLibrary));
+				P_LoadACScripts(W_GetNumForName(GGameInfo->AcsHelper, WADNS_ACSLibrary));
 			}
 			else
 			{
@@ -188,8 +186,10 @@ void VLevel::LoadMap(const char *mapname)
 	//	Load conversations.
 	mapInfo_t info;
 	P_GetMapInfo(mapname, info);
-	LoadRogueConScript("SCRIPT00", GenericSpeeches, NumGenericSpeeches);
-	LoadRogueConScript(info.speechLump, LevelSpeeches, NumLevelSpeeches);
+	LoadRogueConScript(GGameInfo->GenericConScript, GenericSpeeches,
+		NumGenericSpeeches);
+	LoadRogueConScript(GGameInfo->eventGetConScriptName(VName(mapname,
+		VName::AddLower8)), LevelSpeeches, NumLevelSpeeches);
 
 	//
 	// End of map lump processing
@@ -1318,19 +1318,19 @@ void VLevel::LinkNode(int BSPNum, node_t *pParent) const
 //
 //==========================================================================
 
-void VLevel::LoadRogueConScript(const char *LumpName,
-	FRogueConSpeech *&SpeechList, int &NumSpeeches) const
+void VLevel::LoadRogueConScript(VName LumpName, FRogueConSpeech *&SpeechList,
+	int &NumSpeeches) const
 {
 	//	Clear variables.
 	SpeechList = NULL;
 	NumSpeeches = 0;
 
 	//	Check for empty name.
-	if (!LumpName || !*LumpName)
+	if (LumpName == NAME_None)
 		return;
 
 	//	Get lump num.
-	int LumpNum = W_CheckNumForName(VName(LumpName, VName::AddLower8));
+	int LumpNum = W_CheckNumForName(LumpName);
 	if (LumpNum < 0)
 		return;	//	Not here.
 
@@ -1554,10 +1554,13 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/04/11 18:28:20  dj_jl
+//	Removed Strife specific mapinfo extensions.
+//
 //	Revision 1.16  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //	Revision 1.15  2006/03/12 12:54:48  dj_jl
 //	Removed use of bitfields for portability reasons.
 //	

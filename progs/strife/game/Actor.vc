@@ -1139,7 +1139,7 @@ void GiveInventory(name ItemName, int Amount)
 	}
 	if (ItemName == 'QuestItem8')
 	{
-		Player(Player).GiveQuest(QUEST_8);
+		Player(Player).GiveQuest(QUEST_GotBrokenPowerCoupling);
 	}
 	if (ItemName == 'QuestItem9')
 	{
@@ -3273,9 +3273,6 @@ void A_Tracer()
 	TVec delta;
 	float adjustlen;
 
-	if (Level.Game.level->tictime & 3)
-		return;
-
 	// adjust direction
 	if (!Enemy || Enemy.Health <= 0)
 		return;
@@ -3605,6 +3602,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.48  2006/04/11 18:27:40  dj_jl
+//  Removed Strife specific mapinfo extensions.
+//
 //  Revision 1.47  2006/04/10 19:22:18  dj_jl
 //  Added floor clipping in liquids.
 //

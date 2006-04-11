@@ -27,6 +27,9 @@ class GameInfo : Object
 	native
 	abstract;
 
+name				AcsHelper;
+name				GenericConScript;
+
 readonly int		netgame;
 readonly int		deathmatch;
 readonly int		gameskill;
@@ -103,6 +106,17 @@ void SpawnWorld(Level InLevel)
 {
 }
 
+//==========================================================================
+//
+//  GetConScriptName
+//
+//==========================================================================
+
+name GetConScriptName(name LevelName)
+{
+	return '';
+}
+
 defaultproperties
 {
 	FloatBobOffsets[0] = 0.0; FloatBobOffsets[1] = 0.7841339111; FloatBobOffsets[2] = 1.560714722; FloatBobOffsets[3] = 2.322265625;
@@ -135,6 +149,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/11 18:27:39  dj_jl
+//  Removed Strife specific mapinfo extensions.
+//
 //  Revision 1.2  2006/03/13 21:24:53  dj_jl
 //  Added support for read-only, private and transient fields.
 //

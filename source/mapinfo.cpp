@@ -50,8 +50,6 @@ enum
 	MCMD_MAPALIAS,
 	MCMD_MUSIC,
 	MCMD_CDTRACK,
-	MCMD_ROGUECONSCRIPT,
-	MCMD_ACSHELPER,
 	MCMD_CD_STARTTRACK,
 	MCMD_CD_END1TRACK,
 	MCMD_CD_END2TRACK,
@@ -102,8 +100,6 @@ static const char *MapCmdNames[] =
 	"MAPALIAS",
     "MUSIC",
 	"CDTRACK",
-	"ROGUECONSCRIPT",
-	"ACSHELPER",
 	"CD_START_TRACK",
 	"CD_END1_TRACK",
 	"CD_END2_TRACK",
@@ -348,14 +344,6 @@ static void ParseMapInfo()
 					SC_MustGetString();
 					strcpy(info->songLump, sc_String);
 					break;
-				case MCMD_ROGUECONSCRIPT:
-					SC_MustGetString();
-					strcpy(info->speechLump, sc_String);
-					break;
-				case MCMD_ACSHELPER:
-					SC_MustGetString();
-					strcpy(info->acsLump, sc_String);
-					break;
 				case MCMD_CD_STARTTRACK:
 				case MCMD_CD_END1TRACK:
 				case MCMD_CD_END2TRACK:
@@ -591,9 +579,12 @@ COMMAND(MapList)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.19  2006/04/11 18:28:20  dj_jl
+//	Removed Strife specific mapinfo extensions.
+//
 //	Revision 1.18  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.17  2006/03/02 23:24:35  dj_jl
 //	Wad lump names stored as names.
 //	

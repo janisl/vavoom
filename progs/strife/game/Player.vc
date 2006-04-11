@@ -2608,6 +2608,11 @@ void Cheat_Gimme()
 	{
 		GiveSigilPiece();
 	}
+
+	// Quest items.
+	for (i = 0; i < NUMQUESTS; i++)
+		if (Cmd_CheckParm(va("Quest%d", i + 1)))
+			GiveQuest(i);
 }
 
 //==========================================================================
@@ -2653,6 +2658,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.39  2006/04/11 18:27:40  dj_jl
+//  Removed Strife specific mapinfo extensions.
+//
 //  Revision 1.38  2006/04/09 11:19:13  dj_jl
 //  Don't allow switching to weapon with no ammo.
 //

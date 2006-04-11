@@ -1380,8 +1380,34 @@ void SpawnWorld(Level InLevel)
 	}
 }
 
+//==========================================================================
+//
+//  GetConScriptName
+//
+//==========================================================================
+
+name GetConScriptName(name LevelName)
+{
+	int i;
+
+	//	Since we don't have advanced format specifiers we need two loops.
+	for (i = 1; i < 9; i++)
+	{
+		if (LevelName == StrToName(va("map0%d", i)))
+			return StrToName(va("script0%d", i));
+	}
+	for (i = 10; i < 99; i++)
+	{
+		if (LevelName == StrToName(va("map%d", i)))
+			return StrToName(va("script%d", i));
+	}
+	return '';
+}
+
 defaultproperties
 {
+	AcsHelper = 'strfhelp';
+	GenericConScript = 'script00';
 	num_stats = 2 * StrifeDefs::NUMAMMO + StrifeDefs::NUMWEAPONS + StrifeDefs::NUMINVITEMS + 12;
 
 	WeaponClasses[0] = WeaponPunch;
@@ -1516,6 +1542,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.9  2006/04/11 18:27:40  dj_jl
+//  Removed Strife specific mapinfo extensions.
+//
 //  Revision 1.8  2006/04/06 21:50:23  dj_jl
 //  For some builtins changed string arguments to names.
 //
