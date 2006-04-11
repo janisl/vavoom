@@ -48,7 +48,7 @@ defaultproperties
 {
 	Health = 51;
 	Radius = 6.0;
-	Height = 6.0;
+	Height = 17.0;
 	Mass = 50000.0;
 	PainChance = 1.0;
 	bInCombat = true;
@@ -66,6 +66,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/11 02:23:54  firebrand_kh
+//  Fixed height
+//
 //  Revision 1.5  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
