@@ -189,8 +189,8 @@ void Host_Init()
 #ifndef CLIENT
 	if (!sv.active)
 	{
-		CmdBuf << "MaxPlayers 4\n";
-		CmdBuf << "Map " << P_TranslateMap(1) << "\n";
+		GCmdBuf << "MaxPlayers 4\n";
+		GCmdBuf << "Map " << P_TranslateMap(1) << "\n";
 	}
 #endif
 
@@ -634,10 +634,13 @@ void Host_Shutdown()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.36  2006/04/12 18:53:19  dj_jl
+//	Dedicated server fix.
+//
 //	Revision 1.35  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //	Revision 1.34  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
 //	
