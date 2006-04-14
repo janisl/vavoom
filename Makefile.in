@@ -4,6 +4,7 @@
 #
 #---------------------------------------
 
+ASMFLAGS=@ASMFLAGS@
 CC=@CC@
 CFLAGS=@CFLAGS@
 CXX=@CXX@
@@ -33,7 +34,7 @@ INSTALL_DIRPARMS = @INSTALL_DIRPARMS@
 
 C_ARGS   = -c -W -Wall $(CFLAGS)
 CPP_ARGS = -c -W -Wall $(CXXFLAGS) $(MAIN_CFLAGS)
-ASM_ARGS = -c -W -Wall -x assembler-with-cpp
+ASM_ARGS = -c -W -Wall -x assembler-with-cpp $(ASMFLAGS)
 LINK_ARGS = -Wall $(LDFLAGS)
 
 #---------------------------------------

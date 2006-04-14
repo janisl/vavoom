@@ -27,13 +27,13 @@
 
 #define USEASM
 
-#if defined(__linux__) || defined(__FreeBSD__)
-#define C(label)	label		//	ELF format
+#ifdef ASM_PREFIX
+#define C(label)	ASM_PREFIX##label
 #else
-#define C(label)	_##label	//	COFF format
+#define C(label)	label
 #endif
 
-#if !defined GAS2TASM && (defined DJGPP || defined __linux__ || defined __FreeBSD__)
+#if !defined GAS2TASM
 #define Align4		.p2align 2
 #define Align8		.p2align 3
 #define Align16		.p2align 4
@@ -384,9 +384,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/14 18:40:58  dj_jl
+//	Added configure check for asm prefix.
+//
 //	Revision 1.14  2004/12/22 07:39:08  dj_jl
 //	Applied BSD patches.
-//
+//	
 //	Revision 1.13  2002/11/16 17:11:14  dj_jl
 //	Improving software driver class.
 //	

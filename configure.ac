@@ -117,19 +117,27 @@ dnl ---------------- Other *NIX platforms ----------------
 	fi
 
 	if test "x$allegro_config" != "x"; then
-		AC_MSG_NOTICE(['Using Allegro'])
+		AC_MSG_NOTICE([Using Allegro])
 		MAIN_PLATFORM='UNIX_ALLEGRO'
 		MAIN_CFLAGS="`${allegro_config} --cflags`"
 		MAIN_LIBS="`${allegro_config} --libs` -lpng -lz -lm -lstdc++"
 	else
 	if test "x$sdl_config" != "x"; then
-		AC_MSG_NOTICE(['Using SDL'])
+		AC_MSG_NOTICE([Using SDL])
 		MAIN_PLATFORM='UNIX_SDL'
 		MAIN_CFLAGS="`${sdl_config} --cflags`"
 		MAIN_LIBS="-lSDL_mixer `${sdl_config} --libs` -lpng -lz -lm -lstdc++"
 	fi
 	fi
 	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_${MAIN_PLATFORM})"
+
+	dnl FIXME This sucks a bit.
+	VAVOOM_SAVED_LIBS=$LIBS
+	LIBS=$MAIN_LIBS
+	AC_SEARCH_LIBS([recvfrom], [socket], [], [AC_ERROR([Library containing recvfrom not found])])
+	AC_SEARCH_LIBS([gethostbyname], [nsl], [], [AC_ERROR([Library containing gethostbyname not found])])
+	MAIN_LIBS=$LIBS
+	LIBS=$VAVOOM_SAVED_LIBS
 
 	AC_CHECK_HEADER([linux/cdrom.h], [
 		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_LINUX)"
@@ -163,6 +171,33 @@ dnl ---------------- Other *NIX platforms ----------------
 	SV_LIBS='-lz -lm -lstdc++'
 	;;
 esac
+
+dnl
+dnl Test for prefix prepended by compiler to global symbols.
+dnl
+AC_MSG_CHECKING([for asm prefix before symbols])
+AC_CACHE_VAL(vavoom_cv_asm_prefix,
+[
+	AC_TRY_LINK([int test_for_underscore(void);
+		asm (".globl _test_for_underscore\n"
+		"_test_for_underscore:");], [test_for_underscore ();],
+		vavoom_cv_asm_prefix=_,
+		vavoom_cv_asm_prefix=no)
+	if test "$vavoom_cv_asm_prefix" = no; then
+		AC_TRY_LINK([int test_for_underscore(void);
+			asm (".globl test_for_undercore\n"
+			"test_for_underscore:");], [test_for_underscore ();],
+			vavoom_cv_asm_prefix=,
+			vavoom_cv_asm_prefix=no)
+	fi
+	if test "$vavoom_cv_asm_prefix" = no; then
+		vavoom_cv_asm_prefix=
+	fi
+])
+AC_MSG_RESULT(\"$vavoom_cv_asm_prefix\")
+if test "$vavoom_cv_asm_prefix" != ""; then
+	ASMFLAGS="-DASM_PREFIX=$vavoom_cv_asm_prefix"
+fi
 
 LIB_FILES="source/timidity/libtimidity.a utils/glvis/libglvis.a"
 
@@ -233,6 +268,7 @@ else
 	INSTALL_DIRPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0755 -d"
 fi
 
+AC_SUBST([ASMFLAGS])
 AC_SUBST([LIB_STDCXX])
 AC_SUBST([MAIN_EXE])
 AC_SUBST([SERVER_EXE])
