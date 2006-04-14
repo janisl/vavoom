@@ -28,13 +28,6 @@ class FlameLarge : Decoration
 	__scriptid__(99)
 	__scriptid__(67);
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	::OnMapSpawn(mthing);
-	if (mthing && !TID)
-		Level.AddStaticLight(Origin, 128.0);
-}
-
 __states__
 {
 	S_FLAME_LDORM1('FFLG', 3, 2.0 / 35.0, S_FLAME_LDORM2) { }
@@ -72,6 +65,7 @@ bool Activate()
 {
 	PlaySound('Ignite', CHAN_VOICE);
 	SetState(S_FLAME_LARGE1);
+	bStaticLight = true;
 	return true;
 }
 
@@ -84,6 +78,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetState(S_FLAME_LDORM1);
+	bStaticLight = false;
 	return true;
 }
 
@@ -92,11 +87,16 @@ defaultproperties
 	Translucency = 100;
 	bNoTeleport = true;
 	IdleState = S_FLAME_LARGE1;
+	bStaticLight = true;
+	LightColour = RGB(255, 255, 0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.4  2006/02/15 23:33:54  dj_jl
 //  Moved all server progs global variables to classes.
 //

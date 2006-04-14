@@ -26,13 +26,6 @@
 class ZChandelier : Decoration
 	__mobjinfo__(17);
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	::OnMapSpawn(mthing);
-	if (mthing && !TID)
-		Level.AddStaticLight(Origin, 128.0);
-}
-
 __states__
 {
 	S_ZCHANDELIER1('CDLR', 0, 'lights/chandelr.md2', 0, 4.0 / 35.0, S_ZCHANDELIER2) { }
@@ -46,12 +39,18 @@ defaultproperties
 	Height = 60.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;
+	bStaticLight = true;
 	IdleState = S_ZCHANDELIER1;
+	LightColour = RGB(255, 255, 128);
+	LightOffset = vector(0.0, 0.0, 52.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.3  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

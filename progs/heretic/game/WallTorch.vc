@@ -26,13 +26,6 @@
 class WallTorch : Decoration
 	__mobjinfo__(50);
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	::OnMapSpawn(mthing);
-	Level.AddStaticLight(Origin + vector(0.0, 0.0, 80.0),
-		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);
-}
-
 __states__
 {
 	S_WALLTORCH1('WTRH', 0 | FF_FULLBRIGHT, 'lights/torch.md2', 0, 6.0 / 35.0, S_WALLTORCH2) { }
@@ -46,11 +39,18 @@ defaultproperties
 	Height = 16.0;
 	bNoGravity = true;
 	IdleState = S_WALLTORCH1;
+	bStaticLight = true;
+	LightColour = RGB(255, 255, 0);
+	LightOffset = vector(0.0, 0.0, 8.0);
+	LightRadius = 200.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.3  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.2  2006/02/05 18:50:55  dj_jl
 //  Moved common utils to level info class or built-in.
 //

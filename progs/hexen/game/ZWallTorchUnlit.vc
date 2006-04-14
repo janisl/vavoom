@@ -29,11 +29,15 @@ class ZWallTorchUnlit:ZWallTorch
 defaultproperties
 {
 	IdleState = S_ZWALLTORCH_U;
+	bStaticLight = false;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.2  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.1  2002/10/26 16:32:27  dj_jl
 //  New style of defining classes.
 //

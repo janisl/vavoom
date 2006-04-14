@@ -26,13 +26,6 @@
 class ZCauldron : Decoration
 	__mobjinfo__(8069);
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	::OnMapSpawn(mthing);
-	if (mthing && !TID && Class == ZCauldron)
-		Level.AddStaticLight(Origin, 128.0);
-}
-
 __states__
 {
 	S_ZCAULDRON1('CDRN', 1 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZCAULDRON2) { }
@@ -55,6 +48,7 @@ bool Activate()
 {
 	SetState(S_ZCAULDRON1);
 	PlaySound('Ignite', CHAN_VOICE);
+	bStaticLight = true;
 	return true;
 }
 
@@ -67,6 +61,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetState(S_ZCAULDRON_U);
+	bStaticLight = false;
 	return true;
 }
 
@@ -75,12 +70,18 @@ defaultproperties
 	Radius = 12.0;
 	Height = 26.0;
 	bSolid = true;
+	bStaticLight = true;
 	IdleState = S_ZCAULDRON1;
+	LightColour = RGB(255, 255, 0);
+	LightOffset = vector(0.0, 0.0, 18.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.5  2006/03/12 19:58:59  dj_jl
 //  States as objects, added state variable type.
 //

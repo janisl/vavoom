@@ -377,7 +377,7 @@ void OnMapSpawn(mthing_t * mthing)
 		SetOrigin2(Origin);
 	}
 
-	if (bStaticLight)
+	if (bStaticLight && mthing && !TID)
 	{
 		if (LightColour == 0xffffffff)
 		{
@@ -1657,6 +1657,9 @@ void ZMovement(float DeltaTime)
 				A_DecReactionCount();
 			}
 		}
+
+		if(TerrainType(Floor->pic) == 3 && Origin.z - Velocity.z * DeltaTime > FloorZ)
+			PlaySound('world/watersplash', CHAN_VOICE);
 	}
 
 	if (Origin.z + Height > CeilingZ)
@@ -3602,6 +3605,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.49  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.48  2006/04/11 18:27:40  dj_jl
 //  Removed Strife specific mapinfo extensions.
 //

@@ -26,13 +26,6 @@
 class ZTWinedTorch : Decoration
 	__mobjinfo__(116);
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	::OnMapSpawn(mthing);
-	if (mthing && Class == ZTWinedTorch)
-		Level.AddStaticLight(Origin + vector(0.0, 0.0, 64.0), 200.0);
-}
-
 __states__
 {
 	S_ZTWINEDTORCH_1('TWTR', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_ZTWINEDTORCH_2) { }
@@ -56,6 +49,7 @@ bool Activate()
 {
 	SetState(S_ZTWINEDTORCH_1);
 	PlaySound('Ignite', CHAN_VOICE);
+	bStaticLight = true;
 	return true;
 }
 
@@ -68,6 +62,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetState(S_ZTWINEDTORCH_UNLIT);
+	bStaticLight = false;
 	return true;
 }
 
@@ -76,12 +71,19 @@ defaultproperties
 	Radius = 10.0;
 	Height = 64.0;
 	bSolid = true;
+	bStaticLight = true;
 	IdleState = S_ZTWINEDTORCH_1;
+	LightColour = RGB(255, 255, 0);
+	LightOffset = vector(0.0, 0.0, 64.0);
+	LightRadius = 200.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.5  2006/03/12 19:58:59  dj_jl
 //  States as objects, added state variable type.
 //

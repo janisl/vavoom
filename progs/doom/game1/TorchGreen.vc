@@ -26,13 +26,6 @@
 class TorchGreen : Decoration
 	__mobjinfo__(45);
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	::OnMapSpawn(mthing);
-	Level.AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),
-		mthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));
-}
-
 void Tick(float DeltaTime)
 {
 	ModelSkinIndex = ftoi(Level.Game.level->time * 32.0) & 7;
@@ -53,11 +46,18 @@ defaultproperties
 	Height = 64.0;
 	bSolid = true;
 	IdleState = S_GREENTORCH;
+	bStaticLight = true;
+	LightColour = RGB(0, 255, 0);
+	LightOffset = vector(0.0, 0.0, 32.0);
+	LightRadius = 200.0;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/14 14:57:25  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.4  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

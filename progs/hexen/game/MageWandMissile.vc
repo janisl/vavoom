@@ -50,12 +50,15 @@ defaultproperties
 	bBlaster = true;
 	IdleState = S_MWAND_MISSILE1;
 	DeathState = S_MWANDPUFF1;
-	Effects = HexenDefs::EF_DL_WHITE;
+	Effects = HexenDefs::EF_DL_BLUE;
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.4  2006/03/12 19:58:57  dj_jl
 //  States as objects, added state variable type.
 //

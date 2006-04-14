@@ -46,11 +46,17 @@ defaultproperties
 	Height = 32.0;
 	bSolid = true;
 	IdleState = S_BBAR1;
+	bStaticLight = true;
+	LightColour = RGB(255, 255, 0);
+	LightOffset = vector(0.0, 0.0, 24.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.5  2006/04/14 14:57:25  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.4  2006/02/15 23:32:09  dj_jl
 //  Moved all server progs global variables to classes.
 //

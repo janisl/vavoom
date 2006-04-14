@@ -26,14 +26,6 @@
 class ZWallTorch : Decoration
 	__mobjinfo__(54);
 
-void OnMapSpawn(mthing_t *mthing)
-{
-	::OnMapSpawn(mthing);
-	if (mthing && !TID && Class == ZWallTorch)
-		Level.AddStaticLight(Origin + vector(0.0, 0.0, 48.0),
-			mthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);
-}
-
 __states__
 {
 	S_ZWALLTORCH1('WLTR', 0 | FF_FULLBRIGHT, 'lights/cflmtrch.md2', 0, 5.0 / 35.0, S_ZWALLTORCH2) { }
@@ -57,6 +49,7 @@ bool Activate()
 {
 	SetState(S_ZWALLTORCH1);
 	PlaySound('Ignite', CHAN_VOICE);
+	bStaticLight = true;
 	return true;
 }
 
@@ -69,6 +62,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetState(S_ZWALLTORCH_U);
+	bStaticLight = false;
 	return true;
 }
 
@@ -76,12 +70,19 @@ defaultproperties
 {
 	bNoBlockmap = true;
 	bNoGravity = true;
+	bStaticLight = true;
 	IdleState = S_ZWALLTORCH1;
+	LightColour = RGB(255, 255, 0);
+	LightRadius = 128.0;
+	LightOffset = vector(0.0, 0.0, 48.0);
 }
 
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.6  2006/04/14 14:57:30  firebrand_kh
+//  Added static light flag and properties
+//
 //  Revision 1.5  2006/03/12 19:58:59  dj_jl
 //  States as objects, added state variable type.
 //
