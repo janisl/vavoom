@@ -122,13 +122,13 @@ dnl ---------------- Other *NIX platforms ----------------
 		AC_MSG_NOTICE([Using Allegro])
 		MAIN_PLATFORM='UNIX_ALLEGRO'
 		MAIN_CFLAGS="`${allegro_config} --cflags`"
-		MAIN_LIBS="`${allegro_config} --libs` -lpng -lz -lm -lstdc++"
+		MAIN_LIBS="`${allegro_config} --libs` -lpng -lz -lstdc++"
 	else
 	if test "x$sdl_config" != "x"; then
 		AC_MSG_NOTICE([Using SDL])
 		MAIN_PLATFORM='UNIX_SDL'
 		MAIN_CFLAGS="`${sdl_config} --cflags`"
-		MAIN_LIBS="-lSDL_mixer `${sdl_config} --libs` -lpng -lz -lm -lstdc++"
+		MAIN_LIBS="-lSDL_mixer `${sdl_config} --libs` -lpng -lz -lstdc++"
 	fi
 	fi
 	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_${MAIN_PLATFORM})"
@@ -177,7 +177,7 @@ dnl ---------------- Other *NIX platforms ----------------
 
 	SERVER_EXE='VavoomSV$(EXEEXT)'
 	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_UNIX)'
-	SV_LIBS='-lz -lm -lstdc++'
+	SV_LIBS='-lz $LIB_MATH -lstdc++'
 	;;
 esac
 
