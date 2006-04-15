@@ -32,6 +32,9 @@
 #include <png.h>
 #include "gamedefs.h"
 #include "r_local.h"
+#ifndef png_jmpbuf
+#define png_jmpbuf(png_ptr)		((png_ptr)->jmpbuf)
+#endif
 
 // MACROS ------------------------------------------------------------------
 
@@ -1084,9 +1087,12 @@ void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.20  2006/04/15 12:36:51  dj_jl
+//	Fixes for compiling on BeOS.
+//
 //	Revision 1.19  2006/03/06 13:05:50  dj_jl
 //	Thunbker list in level, client now uses entity class.
-//
+//	
 //	Revision 1.18  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

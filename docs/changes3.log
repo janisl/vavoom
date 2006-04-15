@@ -956,4 +956,174 @@
   Added Firebrand's fix for Hexen's mage lightning on 3D floors.
   Fixed doublesky.
 22.01.2006
-  In Strife continue conversation if failed to give the item.
+  In Strife continue conversation if failed to give the item, slideshow music
+ change.
+31.01.2006
+  In UNIX systems savegames, config files and some gwa files are stored in home
+ directory.
+04.02.2006
+  Lately I was playing with VMware, got Vavoom working on FreeBSD, Solaris 10
+ and BeOS.
+05.02.2006
+  Moved most of the common utilities to the level info class, some to other
+ classes, others made to be builtin functions.
+06.02.2006
+  Created intermission screen classes and moved all intermission code.
+07.02.2006
+  Moved finale screens and status bars to classes, created client game class
+ for global data and methods.
+08.02.2006
+  In client progs moved all global functions to classes.
+09.02.2006
+  Moved global client progs variables to classes, client progs have no more
+ global functions and variables.
+10.02.2006
+  Some platform fixes, got it working on Darwin.
+12.02.2006
+  Created GameInfo class. Started to move server progs functions to classes.
+13.02.2006
+  Moved all server progs functions to classes, started to move varaibles.
+14.02.2006
+  Continued with variables.
+15.02.2006
+  Finished with progs global variables.
+16.02.2006
+  Changed builtins to be static methods of Object class, moved other common
+ enums, structs and defines to Object class. Game specific common enums moved
+ to corresponding class. Removed support for global variables from compiler.
+17.02.2006
+  In compiler started to make types to be single class that contains all info
+ and the rest of compiler to use types as objects instead of the pointers.
+18.02.2006
+  Finished changing compiler type handling. We don't have support for multi
+ dimensional arrays, but that's a small price to pay.
+19.02.2006
+  Made true and false keywords.
+  Implemented delegates. As a test made main Doom menu use them.
+  Moved some special enums to classes.
+20.02.2006
+  Change client state struct to be a class. Removed player stats limit.
+  Created modifiers class that handles all modifiers.
+21.02.2006
+  Fixed Doom ammo pickups.
+  Wrote from scratch a dyamic string class.
+22.02.2006
+  Wrote a stream class. This replaces FArchive and uses similar interface.
+  Progs now exports all fields, structs and constants. Classes, functions and
+ states now include full info.
+23.02.2006
+  Started to change saving of the game using type info.
+24.02.2006
+  Working saving using type info, removed old property infos.
+26.02.2006
+  Finished implementation of proper serialisation of the objects. Added native
+ property to the fields with native serialisation.
+27.02.2006
+  Rewrote names class.
+  Put thinkers back in a linked list.
+  Added macros for implementing builtins and events.
+  Added stream class to compiler.
+28.02.2006
+  Implemented support for VavoomC constants. This will get rid of most of the
+ macros in progs code.
+01.03.2006
+  In common started to change Player and Actor reference types to BasePlayer
+ and Entity, to avoid using game specific lasses in common.
+  In engine made Thinker class global.
+02.03.2006
+  Finished type replacements.
+  Wad lump names are now stored as names. Added name constants for all names
+ used by engine.
+03.03.2006
+  Started to change files API to use dynamic strings.
+04.03.2006
+  Finished changing files API. Functions dealing with file names made members
+ of the string class.
+  Added check macros.
+05.03.2006
+  Made Entity, ViewEntity, Player, LevelInfo and GameInfo classes shared by
+ client and server. On client side replaced client mobj struct with Entity.
+ Moved thinker add/remove to Level class.
+06.03.2006
+  Implemented cleaning references to destroyed objects. Initial attempt with
+ a stream was very slow. After some optimisations it's very fast now.
+  Created base class for all type info objects.
+  Started to use streaming for reading and writing progs.
+07.03.2006
+  Most of the type objects use serialisation.
+08.03.2006
+  All type objects data is serialised.
+09.03.2006
+  More generalisation of the progs serialisation. Other progs data is now read
+ using stream.
+10.03.2006
+  All of the progs is now read and written using sream.
+11.03.2006
+  In engine replaced usage of bitfields with flags to avoid problems on big
+ endian systems where bits are packed other way.
+12.03.2006
+  Changed states from index in the table to pointers, created state VavoomC
+ type.
+13.03.2006
+  Implemented support for private, read-only and transient fields.
+  Removed asm version of progs interpreter. It wasn't used in last release and
+ since there's gonna be many changes there, it would be very big hastle to do
+ all of the changes there. Also using gcc's jump table feature C++ code should
+ be fast enough.
+  In VavoomC local variables are now initialised to 0.
+15.03.2006
+  Optimised savegame size by saving only used names and non-empty entries in
+ server baseline. Also ACS data is saved more efficient.
+18.03.2006
+  Renamed type info class names. Loading of progs doesn't need individual
+ arrays, other serialisation improvements.
+  Added Offset progs opcode.
+  In compiler keyword checks done in per-character basis.
+19.03.2006
+  In progs added explicit type casts.
+  For all members added outer object.
+  In vcc implemented code location object, more abstract way of serialisation.
+20.03.2006
+  Fixed two network vulnerabilities - added missing compressed data length
+ check and correct handling of zero length packets.
+21.03.2006
+  Firebrand fixed physics of flying ojects and some Strife bugs.
+  I fixed bug with objects with no states and level info object pointer in
+ level info itself.
+23.03.2006
+  In VavoomC added support for final methods, compiler improvements.
+24.03.2006
+  Moved loading of the progs to members base class, added post load method that
+ sets up things after everything has been loaded.
+25.03.2006
+  Implemented support for progs to import another progs file, in other words I
+ have basic support for modular progs. In basev directory created new diretory
+ common for shared progs, common config files moved there.
+26.03.2006
+  Fully implemented modular progs, split progs into modules.
+  Firebrand did some more Strife fixes.
+28.03.2006
+  In progs file write only used imports and names.
+29.03.2006
+  Made console variables and console command buffer and some console command
+ functions to use dynamic strings.
+  In MikMod driver added checks to avoid setting source stream to error.
+30.03.2006
+  Merged size buffer and message class.
+01.04.2006
+  Made console command arguments to be array of strings. Moved all console
+ command execution in static class methods.
+02.04.2006
+  Renamed several classes.
+  Moved console autocompletition to command class.
+  Created class for command line arguments.
+03.04.2006
+  Fixed some Strife bugs.
+04.04.2006
+  SourceForge had problem with CVS server for last few days and it made me
+ consider switching to Subversion. Probably I will do this after release.
+05.04.2006
+  More bug fixes, mostly in Strife.
+06.04.2006
+  For several builtins changed string arguments to names.
+  In Strife added some lighting effects.

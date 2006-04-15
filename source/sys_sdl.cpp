@@ -28,7 +28,9 @@
 #include <sys/time.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#ifndef __BEOS__
 #include <sys/mman.h>
+#endif
 #include <unistd.h>
 #include <signal.h>
 #include <dirent.h>
@@ -257,6 +259,7 @@ bool Sys_DirExists(const VStr& path)
 
 void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
 {
+#ifndef __BEOS__
 	int r;
 	unsigned long addr;
 	int psize = getpagesize();
@@ -269,6 +272,7 @@ void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
 	{
 		Sys_Error("Protection change failed\n");
 	}
+#endif
 }
 
 //**************************************************************************
@@ -593,6 +597,9 @@ void* Sys_ZoneBase(int* size)
 
 char *Sys_ConsoleInput()
 {
+#ifdef __BEOS__
+	return NULL;
+#else
 	static char text[256];
 	int     len;
 	fd_set	fdset;
@@ -611,6 +618,7 @@ char *Sys_ConsoleInput()
 	text[len-1] = 0;    // rip off the /n and terminate
 
 	return text;
+#endif
 }
 
 //==========================================================================
@@ -680,7 +688,7 @@ static void signal_handler(int s)
 //
 //==========================================================================
 
-#ifndef __i386__
+#ifndef USEASM
 
 extern "C" {
 
@@ -705,7 +713,7 @@ int main(int argc,char** argv)
 	{
 		GArgs.Init(argc, argv);
 
-#ifdef __i386__
+#ifdef USEASM
 		Sys_SetFPCW();
 #endif
 
@@ -754,10 +762,13 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.13  2006/04/15 12:36:51  dj_jl
+//	Fixes for compiling on BeOS.
+//
 //	Revision 1.12  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //	Revision 1.11  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	

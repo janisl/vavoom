@@ -33,6 +33,10 @@
 #define SERVER
 #endif
 
+#ifdef __BEOS__
+#define NOASM
+#endif
+
 #if (defined __i386__ || defined _M_IX86) && !defined NOASM
 #define USEASM
 #endif
@@ -60,9 +64,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.14  2006/04/15 12:36:51  dj_jl
+//	Fixes for compiling on BeOS.
+//
 //	Revision 1.13  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
-//
+//	
 //	Revision 1.12  2005/12/29 17:26:01  dj_jl
 //	Changed version number.
 //	

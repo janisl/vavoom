@@ -388,18 +388,14 @@ Custom games and development
 -DEVGAME like -game, but also sets Vavoom in development mode
 -devgame <directory>
 
--PROGS specifies directory where to look for progs. Server progs are loaded
-from file svprogs.dat, client progs - clprogs.dat. Path must include ending
-slash.
--progs <directory>  ex. -progs progs/myprogs/
-
 -FILE specifies additional files
 -file <file1> [<file2> ...]
 
 Debugging
 ---------
 
--DEBUG creates a debug file basev/debug.txt with all console messages.
+-DEBUG creates a debug file basev/debug.txt on DOS and Windows,
+~/.vavoom/debug.txt on Unix-like systems with all console messages.
 -debug
 
 -STARTTIME sets start time, not in LINUX version and dedicated servers

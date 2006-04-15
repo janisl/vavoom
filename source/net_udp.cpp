@@ -23,6 +23,9 @@
 //**
 //**************************************************************************
 
+//FIXME put this in configure
+#ifndef __BEOS__
+
 // HEADER FILES ------------------------------------------------------------
 
 #include <sys/types.h>
@@ -552,12 +555,17 @@ int UDP_SetSocketPort(sockaddr_t* addr, int port)
 	unguard;
 }
 
+#endif // __BEOS__
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.11  2006/04/15 12:36:51  dj_jl
+//	Fixes for compiling on BeOS.
+//
 //	Revision 1.10  2006/04/05 17:20:37  dj_jl
 //	Merged size buffer with message class.
-//
+//	
 //	Revision 1.9  2006/03/20 20:02:21  dj_jl
 //	Accept zero length packets.
 //	

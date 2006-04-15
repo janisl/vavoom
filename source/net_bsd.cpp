@@ -90,6 +90,7 @@ int net_numdrivers = 3;
 
 net_landriver_t	net_landrivers[MAX_NET_DRIVERS] =
 {
+#ifndef __BEOS__
 	{
 	"UDP",
 	false,
@@ -113,16 +114,24 @@ net_landriver_t	net_landrivers[MAX_NET_DRIVERS] =
 	UDP_GetSocketPort,
 	UDP_SetSocketPort
 	}
+#endif
 };
 
+#ifdef __BEOS__
+int net_numlandrivers = 0;
+#else
 int net_numlandrivers = 1;
+#endif
 
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.6  2006/04/15 12:36:51  dj_jl
+//	Fixes for compiling on BeOS.
+//
 //	Revision 1.5  2002/01/07 12:16:42  dj_jl
 //	Changed copyright year
-//
+//	
 //	Revision 1.4  2001/12/01 17:40:41  dj_jl
 //	Added support for bots
 //	

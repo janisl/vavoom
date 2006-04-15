@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#if defined __i386__
+#if defined __i386__ && !defined __BEOS__
 
 #define USEASM
 
@@ -384,9 +384,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/15 12:36:51  dj_jl
+//	Fixes for compiling on BeOS.
+//
 //	Revision 1.15  2006/04/14 18:40:58  dj_jl
 //	Added configure check for asm prefix.
-//
+//	
 //	Revision 1.14  2004/12/22 07:39:08  dj_jl
 //	Applied BSD patches.
 //	

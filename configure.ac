@@ -29,6 +29,7 @@ case $host in
 dnl ---------------- DJGPP ----------------
 *-*-msdos* | *-*-go32*)
 	LIB_STDCXX='-lstdcxx'
+	LIB_MATH='-lm'
 
 	MAIN_EXE='Vavoom$(EXEEXT)'
 	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_DJGPP)"
@@ -51,6 +52,7 @@ dnl ---------------- Windows ----------------
 	CFLAGS="-mno-cygwin $CFLAGS"
 	CXXFLAGS="-mno-cygwin $CXXFLAGS"
 	LIB_STDCXX='-lstdc++'
+	LIB_MATH='-lm'
 
 	MAIN_EXE='Vavoom95$(EXEEXT)'
 	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_WIN32)"
@@ -133,7 +135,14 @@ dnl ---------------- Other *NIX platforms ----------------
 
 	dnl FIXME This sucks a bit.
 	VAVOOM_SAVED_LIBS=$LIBS
+	LIBS=""
+	AC_SEARCH_LIBS([sin], [m], [ LIB_MATH=$LIBS ])
+	LIBS=$VAVOOM_SAVED_LIBS
+
+	dnl FIXME This sucks a bit.
+	VAVOOM_SAVED_LIBS=$LIBS
 	LIBS=$MAIN_LIBS
+	AC_SEARCH_LIBS([sin], [m], [], [AC_ERROR([Library containing sin not found])])
 	AC_SEARCH_LIBS([recvfrom], [socket], [], [AC_ERROR([Library containing recvfrom not found])])
 	AC_SEARCH_LIBS([gethostbyname], [nsl], [], [AC_ERROR([Library containing gethostbyname not found])])
 	MAIN_LIBS=$LIBS
@@ -269,6 +278,7 @@ else
 fi
 
 AC_SUBST([ASMFLAGS])
+AC_SUBST([LIB_MATH])
 AC_SUBST([LIB_STDCXX])
 AC_SUBST([MAIN_EXE])
 AC_SUBST([SERVER_EXE])
