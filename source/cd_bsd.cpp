@@ -25,6 +25,9 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+//  This is not compatible with Solaris
+#ifndef __sun__
+
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/file.h>
@@ -370,13 +373,18 @@ void VBsdCDAudioDevice::CloseDoor()
 	unguard;
 }
 
+#endif
+
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.5  2006/04/15 10:53:51  dj_jl
+//	Don't compile this on Solaris
+//
 //	Revision 1.4  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //	Revision 1.3  2006/02/02 22:55:30  dj_jl
 //	Some FreeBSD fixes.
 //	
