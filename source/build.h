@@ -24,9 +24,9 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	19
+#define VERSION_MINOR	20
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.19"
+#define VERSION_TEXT	"1.20"
 
 #if !defined CLIENT && !defined SERVER
 #define CLIENT
@@ -64,9 +64,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.15  2006/04/16 16:27:17  dj_jl
+//	Changed version number.
+//
 //	Revision 1.14  2006/04/15 12:36:51  dj_jl
 //	Fixes for compiling on BeOS.
-//
+//	
 //	Revision 1.13  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	
