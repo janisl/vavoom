@@ -41,7 +41,6 @@ defaultproperties
 	bSolid = true;
 	IdleState = S_TECHLAMP;
 	bStaticLight = true;
-	LightColour = RGB(115, 115, 255);
 	LightOffset = vector(0.0, 0.0, 64.0);
 	LightRadius = 200.0;
 }
@@ -49,6 +48,9 @@ defaultproperties
 //**************************************************************************
 //
 //  $Log$
+//  Revision 1.4  2006/04/16 16:35:59  dj_jl
+//  Changed colour.
+//
 //  Revision 1.3  2006/04/14 14:57:25  firebrand_kh
 //  Added static light flag and properties
 //
