@@ -188,7 +188,7 @@ void VStream::SerialiseLittleEndian(void* Val, int Len)
 	if (GBigEndian)
 	{
 		//	Swap byte order.
-		for (int i = Len - 1; i >= 0; i++)
+		for (int i = Len - 1; i >= 0; i--)
 			Serialise((byte*)Val + i, 1);
 	}
 	else
@@ -211,7 +211,7 @@ void VStream::SerialiseBigEndian(void* Val, int Len)
 	if (!GBigEndian)
 	{
 		//	Swap byte order.
-		for (int i = Len - 1; i >= 0; i++)
+		for (int i = Len - 1; i >= 0; i--)
 			Serialise((byte*)Val + i, 1);
 	}
 	else
@@ -432,9 +432,12 @@ int VMemoryStream::TotalSize()
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.7  2006/04/16 09:17:42  dj_jl
+//	Fixed byte swapping of integers.
+//
 //	Revision 1.6  2006/03/29 20:31:59  dj_jl
 //	Fixed validity check in seek.
-//
+//	
 //	Revision 1.5  2006/03/10 19:31:25  dj_jl
 //	Use serialisation for progs files.
 //	
