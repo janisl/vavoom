@@ -216,7 +216,7 @@ VStr Sys_ReadDir()
 	{
 		return de->d_name;
 	}
-	return VStr;
+	return VStr();
 }
 
 //==========================================================================
@@ -704,10 +704,13 @@ int main(int argc,char** argv)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/04/16 17:29:43  dj_jl
+//	Fixed compilation.
+//
 //	Revision 1.16  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
-//
+//	
 //	Revision 1.15  2006/03/04 16:01:34  dj_jl
 //	File system API now uses strings.
 //	
