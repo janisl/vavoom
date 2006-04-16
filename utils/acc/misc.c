@@ -316,7 +316,7 @@ boolean MS_StripFilename(char *name)
 		{ // No directory delimiter
 			return NO;
 		}
-	} while(*c != DIRECTORY_DELIMITER_CHAR);
+	} while(*c != DIRECTORY_DELIMITER_CHAR && *c != '/');
 	*c = 0;
 	return YES;
 }
