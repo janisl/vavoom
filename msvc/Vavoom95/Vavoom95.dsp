@@ -433,7 +433,7 @@ InputPath=..\..\source\d16_part.s
 InputName=d16_part
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -446,7 +446,7 @@ InputPath=..\..\source\d16_part.s
 InputName=d16_part
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -466,7 +466,7 @@ InputPath=..\..\source\d16_poly.s
 InputName=d16_poly
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -479,7 +479,7 @@ InputPath=..\..\source\d16_poly.s
 InputName=d16_poly
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -499,7 +499,7 @@ InputPath=..\..\source\d16_s16.s
 InputName=d16_s16
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -512,7 +512,7 @@ InputPath=..\..\source\d16_s16.s
 InputName=d16_s16
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -532,7 +532,7 @@ InputPath=..\..\source\d16_span.s
 InputName=d16_span
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -545,7 +545,7 @@ InputPath=..\..\source\d16_span.s
 InputName=d16_span
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -565,7 +565,7 @@ InputPath=..\..\source\d16_spr.s
 InputName=d16_spr
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -578,7 +578,7 @@ InputPath=..\..\source\d16_spr.s
 InputName=d16_spr
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -598,7 +598,7 @@ InputPath=..\..\source\d16_surf.s
 InputName=d16_surf
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -611,7 +611,7 @@ InputPath=..\..\source\d16_surf.s
 InputName=d16_surf
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -631,7 +631,7 @@ InputPath=..\..\source\d32_part.s
 InputName=d32_part
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -644,7 +644,7 @@ InputPath=..\..\source\d32_part.s
 InputName=d32_part
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -664,7 +664,7 @@ InputPath=..\..\source\d32_poly.s
 InputName=d32_poly
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -677,7 +677,7 @@ InputPath=..\..\source\d32_poly.s
 InputName=d32_poly
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -697,7 +697,7 @@ InputPath=..\..\source\d32_s16.s
 InputName=d32_s16
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -710,7 +710,7 @@ InputPath=..\..\source\d32_s16.s
 InputName=d32_s16
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -730,7 +730,7 @@ InputPath=..\..\source\d32_span.s
 InputName=d32_span
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -743,7 +743,7 @@ InputPath=..\..\source\d32_span.s
 InputName=d32_span
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -763,7 +763,7 @@ InputPath=..\..\source\d32_spr.s
 InputName=d32_spr
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -776,7 +776,7 @@ InputPath=..\..\source\d32_spr.s
 InputName=d32_spr
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -796,7 +796,7 @@ InputPath=..\..\source\d32_surf.s
 InputName=d32_surf
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -809,7 +809,7 @@ InputPath=..\..\source\d32_surf.s
 InputName=d32_surf
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -829,7 +829,7 @@ InputPath=..\..\source\d8_part.s
 InputName=d8_part
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -842,7 +842,7 @@ InputPath=..\..\source\d8_part.s
 InputName=d8_part
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -862,7 +862,7 @@ InputPath=..\..\source\d8_poly.s
 InputName=d8_poly
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -875,7 +875,7 @@ InputPath=..\..\source\d8_poly.s
 InputName=d8_poly
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -895,7 +895,7 @@ InputPath=..\..\source\d8_s16.s
 InputName=d8_s16
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -908,7 +908,7 @@ InputPath=..\..\source\d8_s16.s
 InputName=d8_s16
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -928,7 +928,7 @@ InputPath=..\..\source\d8_span.s
 InputName=d8_span
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -941,7 +941,7 @@ InputPath=..\..\source\d8_span.s
 InputName=d8_span
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -961,7 +961,7 @@ InputPath=..\..\source\d8_spr.s
 InputName=d8_spr
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -974,7 +974,7 @@ InputPath=..\..\source\d8_spr.s
 InputName=d8_spr
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -994,7 +994,7 @@ InputPath=..\..\source\d8_surf.s
 InputName=d8_surf
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1007,7 +1007,7 @@ InputPath=..\..\source\d8_surf.s
 InputName=d8_surf
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1032,7 +1032,7 @@ InputPath=..\..\source\d_aclipa.s
 InputName=d_aclipa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1045,7 +1045,7 @@ InputPath=..\..\source\d_aclipa.s
 InputName=d_aclipa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1070,7 +1070,7 @@ InputPath=..\..\source\d_aliasa.s
 InputName=d_aliasa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1083,7 +1083,7 @@ InputPath=..\..\source\d_aliasa.s
 InputName=d_aliasa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1123,7 +1123,7 @@ InputPath=..\..\source\d_edgea.s
 InputName=d_edgea
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1136,7 +1136,7 @@ InputPath=..\..\source\d_edgea.s
 InputName=d_edgea
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1170,7 +1170,7 @@ InputPath=..\..\source\d_polysa.s
 InputName=d_polysa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1183,7 +1183,7 @@ InputPath=..\..\source\d_polysa.s
 InputName=d_polysa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1238,7 +1238,7 @@ InputPath=..\..\source\d_varsa.s
 InputName=d_varsa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1251,7 +1251,7 @@ InputPath=..\..\source\d_varsa.s
 InputName=d_varsa
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1276,7 +1276,7 @@ InputPath=..\..\source\d_zspan.s
 InputName=d_zspan
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -1289,7 +1289,7 @@ InputPath=..\..\source\d_zspan.s
 InputName=d_zspan
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -2053,7 +2053,7 @@ InputPath=..\..\source\sys_i386.s
 InputName=sys_i386
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
@@ -2066,7 +2066,7 @@ InputPath=..\..\source\sys_i386.s
 InputName=sys_i386
 
 "$(IntDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj
+	gcc -c -x assembler-with-cpp $(InputPath) -o $(IntDir)\$(InputName).obj -DASM_PREFIX=_
 
 # End Custom Build
 
