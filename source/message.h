@@ -94,9 +94,9 @@ public:
 	vint16 ReadShort();
 	const char* ReadString();
 
-	bool	AllowOverflow;	// if false, do a Sys_Error
-	bool	Overflowed;		// set to true if the buffer size failed
-	bool	BadRead;
+	vint8	AllowOverflow;	// if false, do a Sys_Error
+	vint8	Overflowed;		// set to true if the buffer size failed
+	vint8	BadRead;
 	vuint8*	Data;
 	vint32	MaxSize;
 	vint32	CurSize;
@@ -116,9 +116,12 @@ inline vuint8 AngleToByte(float angle)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.8  2006/04/16 09:16:37  dj_jl
+//	Size fix for platforms where bool is 4 bytes.
+//
 //	Revision 1.7  2006/04/05 17:21:00  dj_jl
 //	Merged size buffer with message class.
-//
+//	
 //	Revision 1.6  2006/03/29 22:32:27  dj_jl
 //	Changed console variables and command buffer to use dynamic strings.
 //	
