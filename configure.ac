@@ -177,7 +177,16 @@ dnl ---------------- Other *NIX platforms ----------------
 
 	SERVER_EXE='VavoomSV$(EXEEXT)'
 	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_UNIX)'
-	SV_LIBS='-lz $LIB_MATH -lstdc++'
+	SV_LIBS='-lz -lstdc++'
+
+	dnl FIXME This sucks a bit.
+	VAVOOM_SAVED_LIBS=$LIBS
+	LIBS=$SV_LIBS
+	AC_SEARCH_LIBS([sin], [m], [], [AC_ERROR([Library containing sin not found])])
+	AC_SEARCH_LIBS([recvfrom], [socket], [], [AC_ERROR([Library containing recvfrom not found])])
+	AC_SEARCH_LIBS([gethostbyname], [nsl], [], [AC_ERROR([Library containing gethostbyname not found])])
+	SV_LIBS=$LIBS
+	LIBS=$VAVOOM_SAVED_LIBS
 	;;
 esac
 
