@@ -28,7 +28,13 @@
 #define USEASM
 
 #ifdef ASM_PREFIX
-#define C(label)	ASM_PREFIX##label
+//	This doesn't work
+//#define C(label)	ASM_PREFIX##label
+#if ASM_PREFIX == _
+#define C(label)	_##label
+#else
+#error Unknown prefix ASM_PREFIX
+#endif
 #else
 #define C(label)	label
 #endif
@@ -384,9 +390,12 @@
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.17  2006/04/16 17:00:22  dj_jl
+//	Fixed asm prefix concatenation.
+//
 //	Revision 1.16  2006/04/15 12:36:51  dj_jl
 //	Fixes for compiling on BeOS.
-//
+//	
 //	Revision 1.15  2006/04/14 18:40:58  dj_jl
 //	Added configure check for asm prefix.
 //	
