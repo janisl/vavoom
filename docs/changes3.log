@@ -1127,3 +1127,26 @@
 06.04.2006
   For several builtins changed string arguments to names.
   In Strife added some lighting effects.
+08.04.2006
+  Fixed lighting specials not removing reference to thinker from sector.
+  In Doom allow switching to fists while having chainsaw.
+  In Strife fixed extrema damage kickback from poison arrows, for flamethrower
+ projectiles added fake gravity to simulate original behavior.
+  Fixed a typo in args class, fixed crash with bad format sounds.
+09.04.2006
+  In physics code properly initialise blocking mobj pointer.
+  Added more lighting effects to Strife, some other fixes.
+  Fixed sound playback check builtin.
+10.04.2006
+  In Strife added feet clipping for objects in water, added cheat that gives a
+ quest item.
+11.04.2006
+  Removed Strife's helper and conversation script commands from mapinfo, they
+ are now handled by game info class.
+14.04.2006
+  Implemented Strife-like definition of static lights in other games.
+  Added fixes for compiling on other platforms.
+
+******************************************************************************
+                            VERSION 1.20
+******************************************************************************

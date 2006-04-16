@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                  version 1.19.1
+                                                    version 1.20
 
 Contents:
     0. Disclaimer
@@ -938,10 +938,27 @@ Version 1.19
 * Renamed sounds to ZDoom names.
 
 ==============================================================================
-Version 1.19
+Version 1.19.1
 ==============================================================================
 
 * Fixed multiple bugs (some were quite serious).
+
+==============================================================================
+Version 1.20
+==============================================================================
+
+* Implemented support for modular progs, a lots of other changes in compiler
+ and in VavoomC language.
+* A lots of changes and improvements in the core of the engine.
+* Ported to FreeBSD, Solaris 10, BeOS and Darwin (PowerPC).
+* In UNIX systems savegames, config files and some gwa files are stored in home
+ directory.
+* Fixed anisotropic texture filtering in OpenGL.
+* Fixed multiple bugs in Strife.
+* Fixed doublesky.
+* Fixed two network vulnerabilities.
+* Added lighting effects to Strife.
+* Implemented previous / next weapon commands.
 
 *****************************************************************************
 8. Licencing
