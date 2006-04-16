@@ -453,7 +453,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->Seek(Progs.ofs_vtables);
 	for (i = 0; i < Progs.num_vtables; i++)
 	{
-		*Reader << Pkg->VTables[i];
+		*(VStream*)Reader << Pkg->VTables[i];
 	}
 
 	//
@@ -1576,9 +1576,12 @@ void VClass::CleanObject(VObject* Obj)
 //**************************************************************************
 //
 //	$Log$
+//	Revision 1.16  2006/04/16 17:29:19  dj_jl
+//	Fixed compilation with Borland's compiler.
+//
 //	Revision 1.15  2006/03/26 13:06:18  dj_jl
 //	Implemented support for modular progs.
-//
+//	
 //	Revision 1.14  2006/03/23 18:31:59  dj_jl
 //	Members tree.
 //	
