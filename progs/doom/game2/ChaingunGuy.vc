@@ -87,7 +87,10 @@ void DropStuff()
 {
 	Actor A;
 
-	A = Spawn(ItemWeaponChaingun, vector(Origin.x, Origin.y, FloorZ));
+	A = Spawn(ItemWeaponChaingun, Origin + vector(0.0, 0.0, Height / 2.0));
+	A.Velocity.x = (Random() - Random()) * 35.0;
+	A.Velocity.y = (Random() - Random()) * 35.0;
+	A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
 	A.bDropped = true;	// special versions of items
 }
 
@@ -156,7 +159,7 @@ defaultproperties
 
 //**************************************************************************
 //
-//  $Log$
+//  $Log: ChaingunGuy.vc,v $
 //  Revision 1.6  2006/03/12 19:55:13  dj_jl
 //  States as objects, added state variable type.
 //
