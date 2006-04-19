@@ -25,6 +25,27 @@
 
 class TeleportFog:Effect;
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+void A_Lights()
+{
+	MSG_Select(MSG_SV_DATAGRAM);
+	MSG_WriteByte(DoomDefs::svc_explosion2);
+	MSG_WriteByte(Effects);
+	MSG_WriteShort(ftoi(Origin.x));
+	MSG_WriteShort(ftoi(Origin.y));
+	MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
+
+	//  Clear old dynamic light effect
+	Effects &= ~DoomDefs::EF_DLIGHT_MASK;
+}
+
 __states__
 {
 	S_TFOG('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG01) { }
@@ -32,7 +53,7 @@ __states__
 	S_TFOG02('TFOG', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
 	S_TFOG2('TFOG', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG3) { }
 	S_TFOG3('TFOG', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG4) { }
-	S_TFOG4('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) { }
+	S_TFOG4('TFOG', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG5) { A_Lights(); }
 	S_TFOG5('TFOG', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) { }
 	S_TFOG6('TFOG', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) { }
 	S_TFOG7('TFOG', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
@@ -45,11 +66,12 @@ defaultproperties
 {
 	Translucency = 33;
 	IdleState = S_TFOG;
+	Effects = DoomDefs::EF_DL_GBALL;
 }
 
 //**************************************************************************
 //
-//  $Log$
+//  $Log: TeleportFog.vc,v $
 //  Revision 1.2  2006/03/12 19:54:10  dj_jl
 //  States as objects, added state variable type.
 //

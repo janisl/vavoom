@@ -25,6 +25,27 @@
 
 class TeleportFog:Effect;
 
+//==========================================================================
+//
+//  A_Lights
+//
+//  Just spawn some dynamic light
+//
+//==========================================================================
+
+void A_Lights()
+{
+	MSG_Select(MSG_SV_DATAGRAM);
+	MSG_WriteByte(HereticDefs::svc_explosion);
+	MSG_WriteByte(Effects);
+	MSG_WriteShort(ftoi(Origin.x));
+	MSG_WriteShort(ftoi(Origin.y));
+	MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
+
+	//  Clear old dynamic light effect
+	Effects &= ~HereticDefs::EF_DLIGHT_MASK;
+}
+
 __states__
 {
 	S_TFOG1('TELE', 0 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG2) { }
@@ -34,7 +55,7 @@ __states__
 	S_TFOG5('TELE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG6) { }
 	S_TFOG6('TELE', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG7) { }
 	S_TFOG7('TELE', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG8) { }
-	S_TFOG8('TELE', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { }
+	S_TFOG8('TELE', 7 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG9) { A_Lights(); }
 	S_TFOG9('TELE', 6 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG10) { }
 	S_TFOG10('TELE', 5 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG11) { }
 	S_TFOG11('TELE', 4 | FF_FULLBRIGHT, 6.0 / 35.0, S_TFOG12) { }
@@ -45,11 +66,12 @@ __states__
 defaultproperties
 {
 	IdleState = S_TFOG1;
+	Effects = HereticDefs::EF_DL_BLUE;
 }
 
 //**************************************************************************
 //
-//  $Log$
+//  $Log: TeleportFog.vc,v $
 //  Revision 1.2  2006/03/12 19:56:46  dj_jl
 //  States as objects, added state variable type.
 //
