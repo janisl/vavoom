@@ -38,9 +38,9 @@ void A_OracleDeath()
 
 	FOREACH(Specter3, A)
 	{
-		if (A.bCountKill && A.Health > 0)
+		if (A && A.bCountKill && A.Health > 0)
 		{
-			A.LookForPlayers(true);
+			A.Enemy = Enemy;
 			A.SetState(A.SeeState);
 		}
 	}
@@ -83,7 +83,7 @@ defaultproperties
 
 //**************************************************************************
 //
-//  $Log$
+//  $Log: Oracle.vc,v $
 //  Revision 1.3  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
