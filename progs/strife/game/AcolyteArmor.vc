@@ -57,6 +57,7 @@ __states__
 
 defaultproperties
 {
+	ConversationID = 6;
 	Health = 61;
 	Radius = 20.0;
 	Height = 56.0;
@@ -70,7 +71,7 @@ defaultproperties
 
 //**************************************************************************
 //
-//  $Log$
+//  $Log: AcolyteArmor.vc,v $
 //  Revision 1.7  2006/03/12 20:01:24  dj_jl
 //  States as objects, added state variable type.
 //
