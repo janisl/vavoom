@@ -37,6 +37,8 @@ void A_Unknown91()
 	Actor A;
 	float dir;
 
+	A_Tracer();
+
 	dir = Angles.yaw;
 
 	A = Spawn(SpecterFX1_2, Origin);
@@ -71,7 +73,6 @@ void A_Unknown91()
 	A.Enemy = Enemy;
 	A.Velocity.x = A.Speed * cos(A.Angles.yaw);
 	A.Velocity.y = A.Speed * sin(A.Angles.yaw);
-	A_Tracer();
 }
 
 __states__
@@ -99,7 +100,7 @@ defaultproperties
 
 //**************************************************************************
 //
-//  $Log$
+//  $Log: SigilFX3.vc,v $
 //  Revision 1.7  2006/04/06 21:49:06  dj_jl
 //  Added some lighting effects.
 //
