@@ -1530,7 +1530,7 @@ void XYMovement(float DeltaTime)
 								Origin.x - Level.Game.tmtrace->BlockingMobj.Origin.x) +
 								(Random() * 16.0 - 8.0));
 							speed = Length(Velocity);
-							speed = speed * 0.75;
+							speed = speed * 0.50;
 							Angles.yaw = angle;
 							Velocity.x = speed * cos(angle);
 							Velocity.y = speed * sin(angle);
@@ -1661,6 +1661,10 @@ void ZMovement(float DeltaTime)
 			}
 			if (bFloorBounce)
 			{
+				// Bouncing Missiles explode on water surfaces
+				if(TerrainType(Floor->pic) == 3)
+					ExplodeMissile();
+
 				Velocity.z = Velocity.z * -0.7;
 				Velocity.x = 2.0 * Velocity.x / 3.0;
 				Velocity.y = 2.0 * Velocity.y / 3.0;
