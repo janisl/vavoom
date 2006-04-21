@@ -43,7 +43,7 @@ void A_FireFlamethrower()
 	A = Player(Player).SpawnPlayerMissile(FlameFX1);
 	if (A)
 	{
-		A.Velocity.z += 5.0 * 35.0 / 10.0;
+		A.Velocity.z += 20.0 * 35.0 / 5.0;
 	}
 }
 
