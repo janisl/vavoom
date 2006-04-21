@@ -37,6 +37,11 @@ class Macil : Pawn
 
 int TakeSpecialDamage(Actor inflictor, Actor source, int damage)
 {
+	if ((Random() < PainChance))
+	{
+		SetState(PainState);
+	}
+
 	return -1;
 }
 
