@@ -1909,6 +1909,12 @@ void PlayerTick(float deltaTime)
 
 	if (Powers[pw_ironfeet])
 	{
+		if(P_Random() < 10)
+		{
+			if(P_Random() < 5 || !(Level.Game.level->tictime & 0x1f))
+				MO.PlaySound('misc/mask', CHAN_VOICE);
+		}
+
 		Powers[pw_ironfeet] -= deltaTime;
 		if (Powers[pw_ironfeet] <= 0.0)
 			Powers[pw_ironfeet] = 0.0;
@@ -2027,8 +2033,7 @@ void PaletteFlash()
 
 		Palette += STARTBONUSPALS;
 	}
-	else if (HazardTime > 16.0 || ftoi(4.0 * HazardTime) & 1 ||
-		Powers[pw_ironfeet] > 4.0 || ftoi(4.0 * Powers[pw_ironfeet]) & 1)
+	else if (HazardTime > 16.0 || ftoi(4.0 * HazardTime) & 1)
 	{
 		Palette = RADIATIONPAL;
 	}
