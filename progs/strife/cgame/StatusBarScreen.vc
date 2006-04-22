@@ -54,6 +54,11 @@ int pic_i_comm;
 int pic_key[StrifeDefs::NUMKEYS];
 int pic_ammo[StrifeDefs::NUMAMMO];
 int pic_backpack;
+//For Icons in Fullscreen HUD
+int pic_tallnum[11];
+int pic_medpack;
+int pic_armor1;
+int pic_armor2;
 
 int LoadedLog;
 int LogText[1024 / 4];
@@ -82,11 +87,14 @@ void StartMap()
 
 	for (i = 0; i < 10; i++)
 	{
+		sprint(Name, "sttnum%d", i);
+		pic_tallnum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 		sprint(Name, "invfony%d", i);
 		pic_yellownum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 		sprint(Name, "invfong%d", i);
 		pic_graynum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
+	pic_tallnum[10] = R_RegisterPic('sttnum%', PIC_PATCH);
 	pic_yellownum[10] = R_RegisterPic('invfony%', PIC_PATCH);
 	pic_graynum[10] = R_RegisterPic('invfong%', PIC_PATCH);
 
@@ -165,6 +173,10 @@ void StartMap()
 	pic_ammo[StrifeDefs::am_grenade1] = R_RegisterPic('i_grn1', PIC_PATCH);
 	pic_ammo[StrifeDefs::am_grenade2] = R_RegisterPic('i_grn2', PIC_PATCH);
 	pic_backpack = R_RegisterPic('i_bkpk', PIC_PATCH);
+	//For Icons in Fullscreen HUD
+	pic_medpack = R_RegisterPic('mdkta0', PIC_PATCH);
+	pic_armor1 = R_RegisterPic('arm1a0', PIC_PATCH);
+	pic_armor2 = R_RegisterPic('arm2a0', PIC_PATCH);
 
 	pic_pause = R_RegisterPic('m_pause', PIC_PATCH);
 
@@ -202,6 +214,40 @@ void SB_DrawSmallNum(int x, int y, int num)
 	{
 		x -= w;
 		R_DrawPic(x, y, pic_yellownum[num % 10]);
+		num /= 10;
+	}
+}
+
+//==========================================================================
+//
+//	SB_DrawTallNum
+//
+//==========================================================================
+
+void SB_DrawTallNum(int x, int y, int num)
+{
+	int w;
+	picinfo_t info;
+
+	if (num < 0)
+	{
+		num = -num;
+	}
+
+	R_GetPicInfo(pic_tallnum[0], &info);
+	w = info.width;
+
+	// in the special case of 0, you draw 0
+	if (!num)
+	{
+		R_DrawPic(x - w, y, pic_tallnum[0]);
+	}
+
+	// draw the new number
+	while (num)
+	{
+		x -= w;
+		R_DrawPic(x, y, pic_tallnum[num % 10]);
 		num /= 10;
 	}
 }
@@ -379,6 +425,146 @@ void SB_DrawMainBar()
 
 //==========================================================================
 //
+//	SB_DrawFullscreenStats
+//
+//==========================================================================
+
+void SB_DrawFullscreenStats(void)
+{
+	int Idx;
+	int i;
+	int NumKeys;
+
+	// health
+	SB_DrawTallNum(64, 180, cl.health);
+	R_DrawPic(10, 195, pic_medpack);
+
+	// armor
+	if (cl.ArmorPoints > 0)
+	{
+		SB_DrawTallNum(64, 155, cl.ArmorPoints);
+
+		// armor type
+		if (cl.ArmorType == 2)
+		{
+			R_DrawPic(10, 170, pic_armor2);
+		}
+		else
+		{
+			R_DrawPic(10, 170, pic_armor1);
+		}
+	}
+
+	// ready weapon ammo with icon
+	if (cl.ReadyAmmo != StrifeDefs::am_noammo)
+	{
+		SB_DrawTallNum(315, 160, cl.Ammo[cl.ReadyAmmo]);
+		R_DrawPic(255, 160, pic_ammo[cl.ReadyAmmo]);
+	}
+
+	Idx = 0;
+	for (i = cl.InvFirst; Idx < 6 && i < StrifeDefs::NUMINVITEMS; i++)
+	{
+		if (cl.Inventory[i])
+		{
+			if (cl.InvCursor == i)
+			{
+				R_DrawPic(65 + 35 * Idx, 180, pic_invcurs);
+			}
+			R_DrawPic(71 + Idx * 35, 182, pic_inv[i]);
+			SB_DrawSmallNum(99 + Idx * 35, 192, cl.Inventory[i]);
+			Idx++;
+		}
+	}
+
+	if (cl.WeaponOwned[StrifeDefs::wp_sigil])
+	{
+		R_DrawPic(300, 130, pic_sigil[cl.Sigil]);
+	}
+
+	if (bShowWeapons)
+	{
+		R_DrawPic2(0, 56, pic_invpbak, 33);
+		R_DrawPic(0, 56, pic_invpop);
+		if (cl.WeaponOwned[StrifeDefs::wp_crossbow])
+		{
+			R_DrawPic(38, 86, pic_crossbow);
+		}
+		if (cl.WeaponOwned[StrifeDefs::wp_riffle])
+		{
+			R_DrawPic(40, 107, pic_riffle);
+		}
+		if (cl.WeaponOwned[StrifeDefs::wp_missile])
+		{
+			R_DrawPic(39, 131, pic_missile);
+		}
+		if (cl.WeaponOwned[StrifeDefs::wp_grenade])
+		{
+			R_DrawPic(78, 87, pic_grenade);
+		}
+		if (cl.WeaponOwned[StrifeDefs::wp_flame])
+		{
+			R_DrawPic(80, 117, pic_flame);
+		}
+		if (cl.WeaponOwned[StrifeDefs::wp_blaster])
+		{
+			R_DrawPic(75, 142, pic_blaster);
+		}
+		for (i = 0; i < StrifeDefs::NUMAMMO; i++)
+		{
+			SB_DrawSmallNum(205, AmmoPosY[i], cl.Ammo[i]);
+			SB_DrawSmallNum(238, AmmoPosY[i], cl.MaxAmmo[i] * (cl.Backpack ? 2 : 1));
+		}
+		SB_DrawSmallNum(267, 84, cl.Accuracy);
+		SB_DrawSmallNum(267, 108, cl.Stamina);
+		NumKeys = 0;
+		for (i = 0; i < StrifeDefs::NUMKEYS; i++)
+		{
+			if (cl.Keys & (1 << i))
+			{
+				NumKeys++;
+			}
+		}
+		SB_DrawSmallNum(267, 132, NumKeys);
+		if (cl.Communicator)
+		{
+			R_DrawPic(280, 130, pic_i_comm);
+		}
+	}
+	else if (bShowKeys)
+	{
+		R_DrawPic2(0, 56, pic_invpbak2, 33);
+		R_DrawPic(0, 56, pic_invpop2);
+		for (i = 0; i < 10; i++)
+		{
+			if (cl.Keys & (1 << (i + KeysPage * 10)))
+			{
+				R_DrawPic(20 + (i / 5) * 140, 60 + (i % 5) * 18,
+					pic_key[i + KeysPage * 10]);
+				T_SetFont(font_yellow);
+				T_SetAlign(hleft, vtop);
+				T_DrawText(40 + (i / 5) * 140, 64 + (i % 5) * 18,
+					KeyNames[i + KeysPage * 10]);
+			}
+		}
+	}
+	else if (bShowObjectives)
+	{
+		R_DrawPic2(0, 56, pic_invpbak2, 33);
+		R_DrawPic(0, 56, pic_invpop2);
+		if (LoadedLog != cl.Objectives)
+		{
+			LoadTextLump(StrToName(va("log%d", cl.Objectives)), &LogText[0], 1024);
+			LoadedLog = cl.Objectives;
+		}
+		T_SetFont(font_yellow);
+		T_SetAlign(hleft, vtop);
+		T_DrawTextW(20, 60, ARR2STR(LogText), 280);
+	}
+}
+
+//==========================================================================
+//
 //	SB_DrawPause
 //
 //==========================================================================
@@ -404,6 +590,10 @@ void SB_Drawer(int sb_view)
 		bShowWeapons || bShowKeys || bShowObjectives)
 	{
 		SB_DrawMainBar();
+	}
+	else
+	{
+		SB_DrawFullscreenStats();
 	}
 	SB_DrawPause();
 }
