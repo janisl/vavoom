@@ -55,7 +55,7 @@ int pic_key[StrifeDefs::NUMKEYS];
 int pic_ammo[StrifeDefs::NUMAMMO];
 int pic_backpack;
 //For Icons in Fullscreen HUD
-int pic_tallnum[11];
+int pic_tallnum[10];
 int pic_medpack;
 int pic_armor1;
 int pic_armor2;
@@ -94,7 +94,6 @@ void StartMap()
 		sprint(Name, "invfong%d", i);
 		pic_graynum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
 	}
-	pic_tallnum[10] = R_RegisterPic('sttnum%', PIC_PATCH);
 	pic_yellownum[10] = R_RegisterPic('invfony%', PIC_PATCH);
 	pic_graynum[10] = R_RegisterPic('invfong%', PIC_PATCH);
 
@@ -224,7 +223,7 @@ void SB_DrawSmallNum(int x, int y, int num)
 //
 //==========================================================================
 
-void SB_DrawTallNum(int x, int y, int num)
+void SB_DrawTallNum(int x, int y, int num, int trans)
 {
 	int w;
 	picinfo_t info;
@@ -240,14 +239,14 @@ void SB_DrawTallNum(int x, int y, int num)
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		R_DrawPic(x - w, y, pic_tallnum[0]);
+		R_DrawPic2(x - w, y, pic_tallnum[0], trans);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= w;
-		R_DrawPic(x, y, pic_tallnum[num % 10]);
+		R_DrawPic2(x, y, pic_tallnum[num % 10], trans);
 		num /= 10;
 	}
 }
@@ -436,13 +435,13 @@ void SB_DrawFullscreenStats(void)
 	int NumKeys;
 
 	// health
-	SB_DrawTallNum(64, 180, cl.health);
+	SB_DrawTallNum(64, 180, cl.health, 40);
 	R_DrawPic(10, 195, pic_medpack);
 
 	// armor
 	if (cl.ArmorPoints > 0)
 	{
-		SB_DrawTallNum(64, 155, cl.ArmorPoints);
+		SB_DrawTallNum(64, 155, cl.ArmorPoints, 40);
 
 		// armor type
 		if (cl.ArmorType == 2)
@@ -458,7 +457,7 @@ void SB_DrawFullscreenStats(void)
 	// ready weapon ammo with icon
 	if (cl.ReadyAmmo != StrifeDefs::am_noammo)
 	{
-		SB_DrawTallNum(315, 160, cl.Ammo[cl.ReadyAmmo]);
+		SB_DrawTallNum(315, 160, cl.Ammo[cl.ReadyAmmo], 40);
 		R_DrawPic(255, 160, pic_ammo[cl.ReadyAmmo]);
 	}
 
@@ -469,7 +468,7 @@ void SB_DrawFullscreenStats(void)
 		{
 			if (cl.InvCursor == i)
 			{
-				R_DrawPic(65 + 35 * Idx, 180, pic_invcurs);
+				R_DrawPic2(65 + 35 * Idx, 180, pic_invcurs, 40);
 			}
 			R_DrawPic(71 + Idx * 35, 182, pic_inv[i]);
 			SB_DrawSmallNum(99 + Idx * 35, 192, cl.Inventory[i]);
@@ -479,7 +478,7 @@ void SB_DrawFullscreenStats(void)
 
 	if (cl.WeaponOwned[StrifeDefs::wp_sigil])
 	{
-		R_DrawPic(300, 130, pic_sigil[cl.Sigil]);
+		R_DrawPic2(300, 130, pic_sigil[cl.Sigil], 40);
 	}
 
 	if (bShowWeapons)
