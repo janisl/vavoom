@@ -218,6 +218,10 @@ For Windows you need:
       * EAX 2.0 SDK (http://developer.creative.com/).
       * OpenAL SDK (http://developer.creative.com), you must create directory
     AL in your compier's include directory and copy OpenAL include files here.
+      * libvorbis (http://www.vorbis.com)
+      * libmad (http://www.underbit.com/products/mad/)
+      * mikmod (http://mikmod.raphnet.net/)
+      * FLAC (http://flac.sourceforge.net/)
 
   The Makefile-s are for DOS and LINUX, for Windows the makefiles are files
 with extension .mak. For DOS there's also RHIDE project files.
