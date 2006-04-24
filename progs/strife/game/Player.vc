@@ -452,8 +452,10 @@ void PlayerExitMap(bool clusterChange)
 
 	for (i = 0; i < NUMPOWERS; i++)
 	{
-		Powers[i] = 0.0;
+		if(i != pw_ironfeet || pw_invisibility/*|| ITEM_Targeter*/)
+			Powers[i] = 0.0;
 	}
+
 	if (clusterChange)
 	{
 		Keys = 0;
@@ -461,7 +463,7 @@ void PlayerExitMap(bool clusterChange)
 
 	Items = 0;
 	MO.Angles.pitch = 0.0;
-	MO.Translucency = 0;	// cancel invisibility
+//	MO.Translucency = 0;		// cancel invisibility
 	ExtraLight = 0;			// cancel gun flashes
 	FixedColormap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes
@@ -885,8 +887,11 @@ void InvUse()
 		}
 		break;
 
-/*	ITEM_Map,
-	ITEM_Scanner,
+	case StrifeDefs::ITEM_Map:
+		itemUsed = GiveItem(IT_ALL_MAP);
+		break;
+
+/*	ITEM_Scanner,
 	ITEM_Targeter,*/
 	}
 	//	Remove item if it was used.
@@ -1189,10 +1194,22 @@ void MovePlayer(float deltaTime)
 
 	if (forward)
 	{
+		// When the player has less than 25 health points, he's unable to run
+		if(MO.Health < 25)
+		{
+			if(forward > 1000.0)
+				forward = 1000.0;
+		}
 		ThrustPlayer(MO.Angles.yaw, forward, deltaTime);
 	}
 	if (side)
 	{
+		// When the player has less than 25 health points, he's unable to run
+		if(MO.Health < 25)
+		{
+			if(side > 1000.0)
+				side = 1000.0;
+		}
 		ThrustPlayer(AngleMod360(MO.Angles.yaw - 90.0), side, deltaTime);
 	}
 
