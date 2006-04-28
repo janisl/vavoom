@@ -4292,6 +4292,7 @@ bool StartConversation(Actor User, Actor UseOn)
 		OldSpeakerAngle = UseOn.Angles.yaw;
 		UseOn.Angles.yaw = atan2(User.Origin.y - UseOn.Origin.y,
 			User.Origin.x - UseOn.Origin.x);
+		User.PlaySound('misc/chat', CHAN_VOICE);
 		StartSpeech(SpeechNum);
 	}
 	return true;
