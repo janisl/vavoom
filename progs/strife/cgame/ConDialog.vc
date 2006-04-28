@@ -79,7 +79,56 @@ void SetSpeech(int SpeechNum)
 		BackPic = R_RegisterPic(StrToName(TempStr), PIC_PATCH);
 	}
 
-	SpeakerName = ARR2STR(Speech->Name);
+	if (Speech->Name[0])
+	{
+		SpeakerName = ARR2STR(Speech->Name);
+	}
+	else
+	{
+		// FIXME: Make this some other way
+		switch(Speech->SpeakerID)
+		{
+			case 38:
+			case 39:
+			case 40:
+			case 41:
+			case 42:
+			{
+				SpeakerName = "Beggar";
+				break;
+			}
+			case 43:
+			case 44:
+			case 45:
+			case 46:
+			case 47:
+			case 48:
+			{
+				SpeakerName = "Rebel";
+				break;
+			}
+			case 53:
+			case 54:
+			case 55:
+			case 56:
+			case 57:
+			case 58:
+			case 59:
+			case 60:
+			{
+				SpeakerName = "Acolyte";
+				break;
+			}
+			case 62:
+			{
+				SpeakerName = "Templar";
+				break;
+			}
+		}				
+
+		if(!SpeakerName)
+			SpeakerName = "Person";
+	}
 	SpeechText = ARR2STR(Speech->Text);
 
 	//	Check for random conversation text.
