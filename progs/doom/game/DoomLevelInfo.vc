@@ -1376,6 +1376,9 @@ bool EV_NoiseAlert(Actor A, int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 bool EV_ForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, Actor A)
 {
 	A.Damage(none, none, 10);
+	A.Velocity.x += 5.0 * cos(A.Angles.yaw + 180.0) * 35.0;
+	A.Velocity.y += 5.0 * sin(A.Angles.yaw + 180.0) * 35.0;
+
 	return true;
 }
 
