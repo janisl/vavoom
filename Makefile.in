@@ -463,7 +463,7 @@ installsv: installdata
 installdata:
 	$(INSTALL) $(INSTALL_DIRPARMS) $(INSTALL_DIRS)
 	$(INSTALL) $(INSTALL_PARMS) basev/games.txt $(INSTALL_DIR)/basev
-	$(INSTALL) $(INSTALL_PARMS) basev/common/default.cfg basev/common/startup.vs basev/wad0.wad $(INSTALL_DIR)/basev/common
+	$(INSTALL) $(INSTALL_PARMS) basev/common/default.cfg basev/common/startup.vs basev/common/wad0.wad $(INSTALL_DIR)/basev/common
 	$(INSTALL) $(INSTALL_PARMS) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
 	$(INSTALL) $(INSTALL_PARMS) basev/doom1/wad0.wad basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
 	$(INSTALL) $(INSTALL_PARMS) basev/doom2/wad0.wad basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
