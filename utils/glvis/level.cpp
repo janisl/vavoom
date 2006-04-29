@@ -33,8 +33,6 @@ namespace VavoomUtils {
 
 // MACROS ------------------------------------------------------------------
 
-#define TEMP_FILE	"$glvis$$.$$$"
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -864,6 +862,7 @@ void TVisBuilder::Run(const char *srcfile, const char* gwafile)
 {
 	char filename[1024];
 	char destfile[1024];
+	char tempfile[1024];
 	char bakext[8];
 
 	if (Owner.Malloc && Owner.Free)
@@ -907,7 +906,12 @@ void TVisBuilder::Run(const char *srcfile, const char* gwafile)
 		strcpy(bakext, ".~wa");
 	}
 
-	outwad.Open(TEMP_FILE, glwad->wadid);
+	strcpy(tempfile, destfile);
+	StripFilename(tempfile);
+	if (tempfile[0])
+		strcat(tempfile, "/");
+	strcat(tempfile, "$glvis$$.$$$");
+	outwad.Open(tempfile, glwad->wadid);
 
 	//	Process lumps
 	if (mainwad == glwad)
@@ -931,7 +935,7 @@ void TVisBuilder::Run(const char *srcfile, const char* gwafile)
 	strcat(filename, bakext);
 	remove(filename);
 	rename(destfile, filename);
-	rename(TEMP_FILE, destfile);
+	rename(tempfile, destfile);
 }
 
 } // namespace VavoomUtils
