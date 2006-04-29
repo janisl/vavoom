@@ -120,6 +120,7 @@ int pic_pause;
 //For Icons in Fullscreen HUD
 int pic_ammoicon[4];
 int pic_health;
+int pic_armor;
 int pic_armor2;
 
 //==========================================================================
@@ -183,11 +184,12 @@ void StartMap()
 	pic_pause = R_RegisterPic('m_pause', PIC_PATCH);
 
 	// Fullscreen HUD stuff
-	pic_ammoicon[0] = R_RegisterPic('clipa0', PIC_PATCH);
+	pic_ammoicon[0] = R_RegisterPic('ammoa0', PIC_PATCH);
 	pic_ammoicon[1] = R_RegisterPic('sboxa0', PIC_PATCH);
 	pic_ammoicon[2] = R_RegisterPic('cella0', PIC_PATCH);
 	pic_ammoicon[3] = R_RegisterPic('rocka0', PIC_PATCH);
 	pic_health = R_RegisterPic('stima0', PIC_PATCH);
+	pic_armor = R_RegisterPic('arm1a0', PIC_PATCH);
 	pic_armor2 = R_RegisterPic('arm2a0', PIC_PATCH);
 }
 
@@ -388,26 +390,34 @@ void SB_DrawFullscreenStats(void)
 	if (cl.ArmorPoints)
 	{
 		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, cl.ArmorPoints, 40, false);
-		R_DrawPic(80, 195, pic_armor2);
+
+		if (cl.ArmorPoints > 100)
+		{
+			R_DrawPic(80, 195, pic_armor2);
+		}
+		else
+		{
+			R_DrawPic(80, 195, pic_armor);
+		}
 	}
 
 	// ready weapon ammo with icon
 	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyAmmo, 40, false);
 	if ((cl.ReadyWeapon == DoomDefs::wp_pistol) || (cl.ReadyWeapon == DoomDefs::wp_chaingun))
 	{
-		R_DrawPic(260, 195, pic_ammoicon[0]);
+		R_DrawPic(255, 195, pic_ammoicon[0]);
 	}
 	else if ((cl.ReadyWeapon == DoomDefs::wp_shotgun) || (cl.ReadyWeapon == DoomDefs::wp_supershotgun))
 	{
-		R_DrawPic(260, 195, pic_ammoicon[1]);
+		R_DrawPic(255, 195, pic_ammoicon[1]);
 	}
 	else if ((cl.ReadyWeapon == DoomDefs::wp_plasma) || (cl.ReadyWeapon == DoomDefs::wp_bfg))
 	{
-		R_DrawPic(260, 195, pic_ammoicon[2]);
+		R_DrawPic(255, 195, pic_ammoicon[2]);
 	}
 	else if ((cl.ReadyWeapon == DoomDefs::wp_missile)) //|| (cl.ReadyWeapon & wp_grenade))
 	{
-		R_DrawPic(260, 195, pic_ammoicon[3]);
+		R_DrawPic(255, 195, pic_ammoicon[3]);
 	}
 
 	// keys
