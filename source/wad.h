@@ -68,8 +68,8 @@ void W_ReadLump(int lump, void *dest);
 void W_ReadFromLump(int lump, void *dest, int pos, int size);
 void* W_CacheLumpNum(int lump, int tag);
 void* W_CacheLumpName(VName Name, int tag, EWadNamespace NS = WADNS_Global);
-VStream* W_CreateLumpReader(int lump);
-VStream* W_CreateLumpReader(VName Name, EWadNamespace NS = WADNS_Global);
+VStream* W_CreateLumpReaderNum(int lump);
+VStream* W_CreateLumpReaderName(VName Name, EWadNamespace NS = WADNS_Global);
 
 int W_IterateNS(int Prev, EWadNamespace NS);
 

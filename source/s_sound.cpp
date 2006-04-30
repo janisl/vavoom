@@ -961,7 +961,7 @@ static void PlaySong(const char* Song, bool Loop)
 			GCon->Logf("Can't find song %s", Song);
 			return;
 		}
-		Strm = W_CreateLumpReader(Lump);
+		Strm = W_CreateLumpReaderNum(Lump);
 	}
 
 	byte Hdr[4];

@@ -328,7 +328,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	else
 	{
 		//	Load PROGS from wad file
-		Reader = new VProgsReader(W_CreateLumpReader(InName, WADNS_Progs));
+		Reader = new VProgsReader(W_CreateLumpReaderName(InName, WADNS_Progs));
 	}
 
 	//	Calcutate CRC

@@ -823,13 +823,13 @@ protected:
 
 //==========================================================================
 //
-//  W_CreateLumpReader
+//  W_CreateLumpReaderNum
 //
 //==========================================================================
 
-VStream* W_CreateLumpReader(int lump)
+VStream* W_CreateLumpReaderNum(int lump)
 {
-	guard(W_CreateLumpReader);
+	guard(W_CreateLumpReaderNum);
 	return new VStreamLumpReader((byte *)W_CacheLumpNum(lump, PU_STATIC),
 		W_LumpLength(lump));
 	unguard;
@@ -837,14 +837,14 @@ VStream* W_CreateLumpReader(int lump)
 
 //==========================================================================
 //
-//  W_CreateLumpReader
+//  W_CreateLumpReaderName
 //
 //==========================================================================
 
-VStream* W_CreateLumpReader(VName Name, EWadNamespace NS)
+VStream* W_CreateLumpReaderName(VName Name, EWadNamespace NS)
 {
-	guard(W_CreateLumpReader);
-	return W_CreateLumpReader(W_GetNumForName(Name, NS));
+	guard(W_CreateLumpReaderName);
+	return W_CreateLumpReaderNum(W_GetNumForName(Name, NS));
 	unguard;
 }
 

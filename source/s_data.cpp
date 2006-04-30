@@ -767,7 +767,7 @@ bool S_LoadSound(int sound_id)
 					*S_sfx[sound_id].TagName);
 				return false;
 			}
-			Strm = W_CreateLumpReader(S_sfx[sound_id].LumpNum);
+			Strm = W_CreateLumpReaderNum(S_sfx[sound_id].LumpNum);
 		}
 
 		for (VSampleLoader* Ldr = VSampleLoader::List;
