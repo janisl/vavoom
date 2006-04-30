@@ -1477,6 +1477,8 @@ void SV_Ticker()
 						completed = true;
 					}
 				}
+				if (i)
+					VObject::CollectGarbage();
 				P_Ticker();
 			}
 		}
@@ -2585,6 +2587,11 @@ void SV_ShutdownServer(boolean crash)
 	//
 	// clear structures
 	//
+	if (GLevel)
+	{
+		delete GLevel;
+		GLevel = NULL;
+	}
 	SV_DestroyAllThinkers();
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
