@@ -27,6 +27,25 @@ class FireGrenade : Projectile;
 
 //==========================================================================
 //
+//	Physics
+//
+//==========================================================================
+
+bool Physics(float DeltaTime)
+{
+	//	Add more gravity to simulate original behavior.
+	if (!bNoGravity)
+	{
+		if (WaterLevel < 2)
+		{
+			Velocity.z -= 45.0 / 50.0 * 627.5 * DeltaTime;
+		}
+	}
+	return ::Physics(DeltaTime);
+}
+
+//==========================================================================
+//
 //	A_FireGrenadeExplode
 //
 //==========================================================================

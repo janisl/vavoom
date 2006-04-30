@@ -180,26 +180,6 @@ int LightColour;
 float LightRadius;
 int ExplodeEffect;
 
-__states__
-{
-	S_HIDDEN_SPECIAL1('', 0, 30.0, S_HIDDEN_SPECIAL2)
-	{
-		bHidden = true;
-		bSpecial = false;
-	}
-	S_HIDDEN_SPECIAL2('', 0, -1.0, none)
-	{
-		Actor A;
-
-		bHidden = false;
-		bSpecial = true;
-
-		// spawn a teleport fog at the new spot
-		A = Spawn(ItemRespawnFog, Origin);
-		A.PlaySound('misc/spawn', CHAN_VOICE);
-	}
-}
-
 //===========================================================================
 //
 //  Spawn
@@ -219,27 +199,7 @@ Actor Spawn(classid type, TVec AOrigin)
 
 //==========================================================================
 //
-//	HideSpecial
-//
-//==========================================================================
-
-void HideSpecial()
-{
-	// only respawn items in deathmatch
-	if ((Level.Game.deathmatch == 2 || Level.Game.deathmatch == 3) &&
-		!bDropped)
-	{
-		SetState(S_HIDDEN_SPECIAL1);
-	}
-	else
-	{
-		Remove();
-	}
-}
-
-//==========================================================================
-//
-//	TouchSpecial
+//  TouchSpecial
 //
 //==========================================================================
 
@@ -1730,9 +1690,11 @@ void ZMovement(float DeltaTime)
 			{
 				// Bouncing Missiles explode on water surfaces
 				if(TerrainType(Floor->pic) == 3)
+				{
 					ExplodeMissile();
-
-				Velocity.z = Velocity.z * -0.7;
+					return;
+				}
+				Velocity.z = Velocity.z * -0.5;
 				Velocity.x = 2.0 * Velocity.x / 3.0;
 				Velocity.y = 2.0 * Velocity.y / 3.0;
 				if (PainSound && Length(Velocity) > 256.0)
@@ -3534,6 +3496,7 @@ void A_CheckAlarm()
 	Actor targ;
 	int sound;
 
+	Threshold = 0;
 	targ = Actor(Sector->SoundTarget);
 	if (targ && targ.bShootable)
 	{
@@ -3543,6 +3506,7 @@ void A_CheckAlarm()
 		{
 			PlaySound(SightSound, CHAN_VOICE);
 		}
+		Threshold = 10;
 		SetState(SeeState);
 	}
 }
