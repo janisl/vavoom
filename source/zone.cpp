@@ -57,6 +57,15 @@ struct memblock_t
 	memblock_t*	prev;
 };
 
+struct MemDebug_t
+{
+	const char*		FileName;
+	int				LineNumber;
+	int				Size;
+	MemDebug_t*		Prev;
+	MemDebug_t*		Next;
+};
+
 class TMemZone
 {
  public:
@@ -85,6 +94,8 @@ class TMemZone
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static void Z_MemDebugDump();
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -92,9 +103,7 @@ class TMemZone
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TMemZone*	mainzone;
-
-#define TEST(a)		a
-#define TEST(a, b)	a, b
+static MemDebug_t*	MemDebug;
 
 // CODE --------------------------------------------------------------------
 
@@ -189,7 +198,11 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 				// free the rover block (adding the size to base)
 				// the rover can be the base block
 				base = base->prev;
+#ifdef ZONE_DEBUG
+				Z_Free((char*)rover + sizeof(memblock_t) + sizeof(MemDebug_t));
+#else
 				Z_Free((char*)rover + sizeof(memblock_t));
+#endif
 				base = base->next;
 				rover = base->next;
 			}
@@ -303,7 +316,11 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 				// free the rover block (adding the size to base)
 				// the rover can be the base block
 				base = base->next;
+#ifdef ZONE_DEBUG
+				Z_Free((char*)rover + sizeof(memblock_t) + sizeof(MemDebug_t));
+#else
 				Z_Free((char*)rover + sizeof(memblock_t));
+#endif
 				base = base->prev;
 				rover = base->prev;
 			}
@@ -388,14 +405,22 @@ void TMemZone::Resize(void** ptr, int size)
 		other = block->next;
 		// if next block can be purged, then free it
 		if (other->tag >= PU_PURGELEVEL)
+#ifdef ZONE_DEBUG
+			Z_Free((char*)other + sizeof(memblock_t) + sizeof(MemDebug_t));
+#else
 			Z_Free((char*)other + sizeof(memblock_t));
+#endif
 		// If next block is free, while size is not enough and
 		// block after next block can be purged, free more space
 		if (!other->tag)
 		{
 			while ((block->size + other->size < size)
 				&& (other->next->tag >= PU_PURGELEVEL))
+#ifdef ZONE_DEBUG
+				Z_Free((char*)other->next + sizeof(memblock_t) + sizeof(MemDebug_t));
+#else
 				Z_Free((char*)other->next + sizeof(memblock_t));
+#endif
 		}
 		// There is enough size to resize without moving data
 		if (!other->tag && (block->size + other->size >= size))
@@ -431,10 +456,10 @@ void TMemZone::Resize(void** ptr, int size)
 		else
 		{
 			// We have to allocate another block and move data
-			p = Z_Malloc(size - sizeof(memblock_t), block->tag, block->user);
+			p = Malloc(size - sizeof(memblock_t), block->tag, block->user, false);
 			memcpy(p, *ptr, block->size - sizeof(memblock_t));
 			block->user = NULL;// So Z_Free doesn't clear user's mark
-			Z_Free(*ptr);
+			Free(*ptr);
 			*ptr = p;
 		}
 	}
@@ -549,7 +574,11 @@ void TMemZone::FreeTag(int tag)
 		next = block->next;
 		if (block->tag == tag)
 		{
+#ifdef ZONE_DEBUG
+			Z_Free((char*)block + sizeof(memblock_t) + sizeof(MemDebug_t));
+#else
 			Z_Free((char*)block + sizeof(memblock_t));
+#endif
 		}
 	}
 
@@ -687,6 +716,225 @@ void Z_Init(void* base, int size)
 
 //==========================================================================
 //
+//  Z_Shutdown
+//
+//==========================================================================
+
+void Z_Shutdown()
+{
+#ifdef ZONE_DEBUG
+	mainzone->DumpHeap(*GCon);
+	Z_MemDebugDump();
+#endif
+}
+
+#ifdef ZONE_DEBUG
+
+#undef Z_Malloc
+#undef Z_Calloc
+#undef Z_Resize
+#undef Z_ChangeTag
+#undef Z_Free
+
+//==========================================================================
+//
+//	Z_Malloc
+//
+//	You can pass a NULL user if the tag is < PU_PURGELEVEL.
+//
+//==========================================================================
+
+void *Z_Malloc(int size, int tag, void** user, const char* FileName, int LineNumber)
+{
+	guard(Z_Malloc);
+	void *ptr;
+	if (tag == PU_VIDEO || tag == PU_HIGH || tag == PU_TEMP)
+	{
+		ptr = mainzone->MallocHigh(size + sizeof(MemDebug_t), tag, user);
+	}
+	else
+	{
+		ptr = mainzone->Malloc(size + sizeof(MemDebug_t), tag, user, false);
+	}
+	if (!ptr)
+	{
+		if (tag == PU_LEVEL || tag == PU_LEVSPEC)
+		{
+			Host_Error("Z_Malloc: failed on allocation of %d bytes", size);
+		}
+		else if (tag != PU_VIDEO)
+		{
+			mainzone->DumpHeap(*GCon);
+			Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
+		}
+	}
+
+	MemDebug_t* m = (MemDebug_t*)ptr;
+	m->FileName = FileName;
+	m->LineNumber = LineNumber;
+	m->Size = size;
+	m->Next = MemDebug;
+	if (MemDebug)
+		MemDebug->Prev = m;
+	MemDebug = m;
+
+	//	Re-adjust user pointer.
+	if (user)
+	{
+		*user = (void*)((char*)ptr + sizeof(MemDebug_t));
+	}
+	return (byte*)ptr + sizeof(MemDebug_t);
+	unguard;
+}
+
+//==========================================================================
+//
+//  Z_Calloc
+//
+//==========================================================================
+
+void *Z_Calloc(int size, int tag, void **user, const char* FileName, int LineNumber)
+{
+	guard(Z_Calloc);
+	return memset(Z_Malloc(size, tag, user, FileName, LineNumber), 0, size);
+	unguard;
+}
+
+//==========================================================================
+//
+//	Z_Resize
+//
+//	Resizes block
+//
+//==========================================================================
+
+void Z_Resize(void** ptr, int size, const char* FileName, int LineNumber)
+{
+	guard(Z_Resize);
+	memblock_t*	block;
+	MemDebug_t*	m;
+
+	//	Check.
+	block = (memblock_t*)((char*)(*ptr) - sizeof(memblock_t) - sizeof(MemDebug_t));
+	if (block->id != ZONEID)
+		Sys_Error("Z_Resize: resize a pointer without ZONEID");
+
+	//	Unlink debug info.
+	m = (MemDebug_t*)((char*)(*ptr) - sizeof(MemDebug_t));
+	if (m->Next)
+		m->Next->Prev = m->Prev;
+	if (m == MemDebug)
+		MemDebug = m->Next;
+	else
+		m->Prev->Next = m->Next;
+
+	mainzone->Resize((void**)&m, size + sizeof(MemDebug_t));
+
+	//	New debug info.
+	m->FileName = FileName;
+	m->LineNumber = LineNumber;
+	m->Size = size;
+	m->Next = MemDebug;
+	if (MemDebug)
+		MemDebug->Prev = m;
+	MemDebug = m;
+
+	//	Re-adjust user pointer.
+	block = (memblock_t*)((char*)m - sizeof(memblock_t));
+	if (block->user)
+	{
+		*block->user = (byte*)m + sizeof(MemDebug_t);
+	}
+
+	*ptr = (byte*)m + sizeof(MemDebug_t);
+	unguard;
+}
+
+//==========================================================================
+//
+//	Z_ChangeTag
+//
+//==========================================================================
+
+void Z_ChangeTag(void* ptr,int tag, const char*, int)
+{
+	guard(Z_ChangeTag);
+	memblock_t*	block;
+
+	block = (memblock_t *)((char*)ptr - sizeof(memblock_t) - sizeof(MemDebug_t));
+
+	if (block->id != ZONEID)
+		Sys_Error("Z_ChangeTag: freed a pointer without ZONEID");
+
+	if (tag >= PU_PURGELEVEL && !block->user)
+		Sys_Error("Z_ChangeTag: an owner is required for purgable blocks");
+
+	block->tag = tag;
+	unguard;
+}
+
+//==========================================================================
+//
+//	Z_Free
+//
+//==========================================================================
+
+void Z_Free(void* ptr, const char* FileName, int LineNumber)
+{
+	guard(Z_Free);
+	memblock_t*		block;
+
+	block = (memblock_t *)((char*)ptr - sizeof(memblock_t) - sizeof(MemDebug_t));
+	if (block->id != ZONEID)
+		Sys_Error("Z_Free: freed a pointer without ZONEID from %s:%d", FileName, LineNumber);
+
+	//	Unlink debug info.
+	MemDebug_t* m = (MemDebug_t*)((char*)ptr - sizeof(MemDebug_t));
+	if (m->Next)
+		m->Next->Prev = m->Prev;
+	if (m == MemDebug)
+		MemDebug = m->Next;
+	else
+		m->Prev->Next = m->Next;
+
+	mainzone->Free((char*)ptr - sizeof(MemDebug_t));
+	unguard;
+}
+
+//==========================================================================
+//
+//	Z_MemDebugDump
+//
+//==========================================================================
+
+static void Z_MemDebugDump()
+{
+	int NumBlocks = 0;
+	for (MemDebug_t* m = MemDebug; m; m = m->Next)
+	{
+		memblock_t* b = (memblock_t*)((byte*)m - sizeof(memblock_t));
+		GCon->Logf("size %8d tag %3d at %s:%d", m->Size, b->tag,
+			m->FileName, m->LineNumber);
+		NumBlocks++;
+	}
+	GCon->Logf("%d blocks allocated", NumBlocks);
+}
+
+//==========================================================================
+//
+//	COMMAND MemDebugDump
+//
+//==========================================================================
+
+COMMAND(MemDebugDump)
+{
+	Z_MemDebugDump();
+}
+
+#else
+
+//==========================================================================
+//
 //	Z_Malloc
 //
 //	You can pass a NULL user if the tag is < PU_PURGELEVEL.
@@ -703,8 +951,7 @@ void *Z_Malloc(int size, int tag, void** user)
 	}
 	else
 	{
-		ptr = mainzone->Malloc(size, tag, user,
-			/*tag == PU_LEVEL || tag == PU_LEVSPEC || */tag == PU_LOW);
+		ptr = mainzone->Malloc(size, tag, user, false);
 	}
 	if (!ptr)
 	{
@@ -797,6 +1044,8 @@ void Z_Free(void* ptr)
 	mainzone->Free(ptr);
 	unguard;
 }
+
+#endif
 
 //==========================================================================
 //

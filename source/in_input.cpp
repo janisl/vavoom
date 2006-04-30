@@ -516,13 +516,13 @@ void IN_SetBinding(int keynum, const char *binding_down, const char *binding_up)
 			
 	// allocate memory for new binding
 	l = strlen(binding_down);
-	str = (char*)Z_Malloc(l + 1);
+	str = (char*)Z_Malloc(l + 1, PU_STATIC, 0);
 	strcpy(str, binding_down);
 	str[l] = 0;
 	keybindings_down[keynum] = str;
 
 	l = strlen(binding_up);
-	str = (char*)Z_Malloc(l + 1);
+	str = (char*)Z_Malloc(l + 1, PU_STATIC, 0);
 	strcpy(str, binding_up);
 	str[l] = 0;
 	keybindings_up[keynum] = str;

@@ -84,8 +84,8 @@ void CL_Init(void)
 	guard(CL_Init);
 	clpr.Load("clprogs");
 
-	cl_mobjs = Z_CNew<VEntity*>(GMaxEntities);
-	cl_mo_base = Z_CNew<clmobjbase_t>(GMaxEntities);
+	cl_mobjs = Z_CNew(VEntity*, GMaxEntities, PU_STATIC, 0);
+	cl_mo_base = Z_CNew(clmobjbase_t, GMaxEntities, PU_STATIC, 0);
 
 	cls.message.Alloc(NET_MAXMESSAGE);
 

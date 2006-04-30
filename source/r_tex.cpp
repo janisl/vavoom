@@ -1173,7 +1173,7 @@ rgba_t* TTexture::GetHighResPixels(int& HRWidth, int& HRHeight)
 	HRHeight = SkinHeight;
 	if (SkinBPP == 8)
 	{
-		rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4);
+		rgba_t *buf = (rgba_t*)Z_Malloc(SkinWidth * SkinHeight * 4, PU_STATIC, 0);
 		for (int i = 0; i < SkinWidth * SkinHeight; i++)
 		{
 			buf[i] = SkinPal[SkinData[i]];
@@ -1378,7 +1378,7 @@ TMultiPatchTexture::TMultiPatchTexture(VName InName, int InWidth,
 	SScale = InSScale;
 	TScale = InTScale;
 	PatchCount = InPatchCount;
-	Patches = (texpatch_t*)Z_Calloc(PatchCount * sizeof(texpatch_t));
+	Patches = (texpatch_t*)Z_Calloc(PatchCount * sizeof(texpatch_t), PU_STATIC, 0);
 }
 
 //==========================================================================
@@ -2256,7 +2256,7 @@ void P_InitAnimated()
 		return;
 	}
 
-	char *animdefs = (char*)W_CacheLumpName(NAME_animated, PU_STRING);
+	char *animdefs = (char*)W_CacheLumpName(NAME_animated, PU_STATIC);
 	char *anim_p;
 	int pic1, pic2;
 

@@ -578,7 +578,7 @@ COMMAND(Alias)
 
 	if (!a)
 	{
-		a = new(PU_STRING) VAlias;
+		a = new(PU_STATIC) VAlias;
 		a->Name = Args[1];
 		a->Next = VCommand::Alias;
 		VCommand::Alias = a;

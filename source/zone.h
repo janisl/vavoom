@@ -29,9 +29,7 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
+#define ZONE_DEBUG		1
 
 // PU - purge tags.
 enum EZoneTag
@@ -40,113 +38,93 @@ enum EZoneTag
 	PU_STATIC		= 1,	// static entire execution time
 	PU_SOUND		= 2,	// static while playing
 	PU_MUSIC		= 3,	// static while playing
-	PU_STRING		= 4,	// in minizone
 	PU_VIDEO		= 5,	// high, return NULL on failure
-	PU_LOW			= 6,	// low (allocated from start of memory)
 	PU_HIGH			= 7,	// high (allocated from end of memory)
-	PU_LEVEL		= 50,	// low, static until level exited
-	PU_LEVSPEC		= 51,	// low, a special thinker in a level
+	PU_LEVEL		= 50,	// static until level exited
+	PU_LEVSPEC		= 51,	// a special thinker in a level
 	// Tags >= 100 are purgable whenever needed.
 	PU_PURGELEVEL	= 100,
 	PU_CACHE		= 101,
 	PU_TEMP			= 102,	// high
 };
 
-// TYPES -------------------------------------------------------------------
-
 class ZoneError : public VavoomError
 {
 public:
-	explicit ZoneError(const char *text) : VavoomError(text) { }
+	explicit ZoneError(const char* text) : VavoomError(text) { }
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
 void Z_Init(void* base, int size);
+void Z_Shutdown();
 
-void *Z_Malloc(int size, int tag, void** ptr);
-void *Z_Calloc(int size, int tag, void** user);
+void Z_CheckHeap();
+int Z_FreeMemory();
 
-void Z_Resize(void** ptr, int size);
-void Z_ChangeTag(void *ptr, int tag);
-
-void Z_Free(void *ptr);
 void Z_FreeTag(int tag);
 
-void Z_CheckHeap(void);
-int Z_FreeMemory(void);
+#ifdef ZONE_DEBUG
 
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
+void* Z_Malloc(int size, int tag, void** ptr, const char* FileName, int LineNumber);
+void* Z_Calloc(int size, int tag, void** user, const char* FileName, int LineNumber);
 
-// INLINE FUNCTIONS AND TEMPLATES ------------------------------------------
+void Z_Resize(void** ptr, int size, const char* FileName, int LineNumber);
+void Z_ChangeTag(void* ptr, int tag, const char* FileName, int LineNumber);
 
-inline void *Z_Malloc(int size)
+void Z_Free(void* ptr, const char* FileName, int LineNumber);
+
+inline void* Z_New(int size, int tag, void** ptr, const char* FileName, int LineNumber)
 {
-	return Z_Malloc(size, PU_STATIC, 0);
+	return Z_Malloc(size, tag, ptr, FileName, LineNumber);
 }
 
-inline void *Z_Calloc(int size)
+inline void* Z_CNew(int size, int tag, void** ptr, const char* FileName, int LineNumber)
 {
-	return Z_Calloc(size, PU_STATIC, 0);
+	return Z_Calloc(size, tag, ptr, FileName, LineNumber);
 }
 
-inline void *Z_StrMalloc(int size)
-{
-	return Z_Malloc(size, PU_STRING, 0);
-}
-
-inline void *Z_StrCalloc(int size)
-{
-	return Z_Calloc(size, PU_STRING, 0);
-}
-
-inline char *Z_StrDup(const char *src)
+inline char *Z_StrDup(const char *src, const char* FileName, int LineNumber)
 {
 	int len = strlen(src);
-	char *buf = (char*)Z_Malloc(len + 1, PU_STRING, 0);
+	char *buf = (char*)Z_Malloc(len + 1, PU_STATIC, 0, FileName, LineNumber);
 	strcpy(buf, src);
 	return buf;
 }
 
-template<class T> T* Z_New(void)
+#define Z_Malloc(size, tag, ptr)	Z_Malloc(size, tag, ptr, __FILE__, __LINE__)
+#define Z_Calloc(size, tag, user)	Z_Calloc(size, tag, user, __FILE__, __LINE__)
+
+#define Z_Resize(ptr, size)			Z_Resize(ptr, size, __FILE__, __LINE__)
+#define Z_ChangeTag(ptr, tag)		Z_ChangeTag(ptr, tag, __FILE__, __LINE__)
+
+#define Z_Free(ptr)					Z_Free(ptr, __FILE__, __LINE__)
+
+#define Z_New(T, elem_count, tag, owner)	(T*)Z_New(elem_count * sizeof(T), tag, owner, __FILE__, __LINE__)
+#define Z_CNew(T, elem_count, tag, owner)	(T*)Z_CNew(elem_count * sizeof(T), tag, owner, __FILE__, __LINE__)
+
+#define Z_StrDup(src)				Z_StrDup(src, __FILE__, __LINE__)
+
+#else
+
+void* Z_Malloc(int size, int tag, void** ptr);
+void* Z_Calloc(int size, int tag, void** user);
+
+void Z_Resize(void** ptr, int size);
+void Z_ChangeTag(void* ptr, int tag);
+
+void Z_Free(void* ptr);
+
+inline char *Z_StrDup(const char *src)
 {
-	return (T*)Z_Malloc(sizeof(T));
+	int len = strlen(src);
+	char *buf = (char*)Z_Malloc(len + 1, PU_STATIC, 0);
+	strcpy(buf, src);
+	return buf;
 }
 
-template<class T> T* Z_New(int elem_count)
-{
-	return (T*)Z_Malloc(elem_count * sizeof(T));
-}
+#define Z_New(T, elem_count, tag, owner)	(T*)Z_Malloc(elem_count * sizeof(T), tag, owner)
+#define Z_CNew(T, elem_count, tag, owner)	(T*)Z_Calloc(elem_count * sizeof(T), tag, owner)
 
-template<class T> T* Z_New(int tag, void** owner)
-{
-	return (T*)Z_Malloc(sizeof(T), tag, owner);
-}
-
-template<class T> T* Z_New(int elem_count, int tag, void** owner)
-{
-	return (T*)Z_Malloc(elem_count * sizeof(T), tag, owner);
-}
-
-template<class T> T* Z_CNew(void)
-{
-	return (T*)Z_Calloc(sizeof(T));
-}
-
-template<class T> T* Z_CNew(int elem_count)
-{
-	return (T*)Z_Calloc(elem_count * sizeof(T));
-}
-
-template<class T> T* Z_CNew(int tag, void** owner)
-{
-	return (T*)Z_Calloc(sizeof(T), tag, owner);
-}
-
-template<class T> T* Z_CNew(int elem_count, int tag, void** owner)
-{
-	return (T*)Z_Calloc(elem_count * sizeof(T), tag, owner);
-}
+#endif
 
 inline void* operator new(size_t Size, EZoneTag Tag)
 {

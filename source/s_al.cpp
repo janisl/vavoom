@@ -165,7 +165,7 @@ bool VOpenALDevice::Init()
 	}
 
 	//	Allocate array for buffers.
-	Buffers = Z_CNew<ALuint>(S_sfx.Num());
+	Buffers = Z_CNew(ALuint, S_sfx.Num(), PU_STATIC, 0);
 	Sound3D = true;
 	return true;
 	unguard;

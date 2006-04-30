@@ -209,7 +209,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 		float inceilz = inregion->ceiling->GetPointZ(dst->soundorg);
 		if (infloorz <= ceilz && inceilz >= floorz)
 		{
-			region = Z_CNew<sec_region_t>(PU_LEVEL, 0);
+			region = Z_CNew(sec_region_t, 1, PU_LEVEL, 0);
 			region->floor = inregion->floor;
 			region->ceiling = &src->ceiling;
 			region->params = &src->params;

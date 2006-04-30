@@ -285,7 +285,7 @@ void VLevel::LoadVertexes(int Lump, int GLLump)
 	NumVertexes = NumBaseVerts + NumGLVerts;
 
 	// Allocate zone memory for buffer.
-	Vertexes = Z_CNew<vertex_t>(NumVertexes, PU_LEVEL, 0);
+	Vertexes = Z_CNew(vertex_t, NumVertexes, PU_LEVEL, 0);
 
 	// Load data into cache.
 	Data = W_CacheLumpNum(Lump, PU_STATIC);
@@ -360,7 +360,7 @@ void VLevel::LoadSectors(int Lump)
 	sec_region_t *region;
 
 	NumSectors = W_LumpLength(Lump) / sizeof(mapsector_t);
-	Sectors = Z_CNew<sector_t>(NumSectors, PU_LEVEL, 0);
+	Sectors = Z_CNew(sector_t, NumSectors, PU_LEVEL, 0);
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 
 	ms = (mapsector_t *)data;
@@ -393,7 +393,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->params.LightColor = 0x00ffffff;
 
 		//	Region
-		region = Z_CNew<sec_region_t>(PU_LEVEL, 0);
+		region = Z_CNew(sec_region_t, 1, PU_LEVEL, 0);
 		region->floor = &ss->floor;
 		region->ceiling = &ss->ceiling;
 		region->params = &ss->params;
@@ -430,7 +430,7 @@ void VLevel::LoadSideDefsPass1(int Lump)
 	side_t *sd;
 
 	NumSides = W_LumpLength(Lump) / sizeof(mapsidedef_t);
-	Sides = Z_CNew<side_t>(NumSides, PU_LEVEL, 0);
+	Sides = Z_CNew(side_t, NumSides, PU_LEVEL, 0);
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 
 	msd = (mapsidedef_t *)data;
@@ -592,7 +592,7 @@ void VLevel::LoadLineDefs1(int Lump)
 	line_t *ld;
 
 	NumLines = W_LumpLength(Lump) / sizeof(maplinedef1_t);
-	Lines = Z_CNew<line_t>(NumLines, PU_LEVEL, 0);
+	Lines = Z_CNew(line_t, NumLines, PU_LEVEL, 0);
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 
 	mld = (maplinedef1_t *)data;
@@ -630,7 +630,7 @@ void VLevel::LoadLineDefs2(int Lump)
 	line_t *ld;
 
 	NumLines = W_LumpLength(Lump) / sizeof(maplinedef2_t);
-	Lines = Z_CNew<line_t>(NumLines, PU_LEVEL, 0);
+	Lines = Z_CNew(line_t, NumLines, PU_LEVEL, 0);
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 
 	mld = (maplinedef2_t *)data;
@@ -675,7 +675,7 @@ void VLevel::LoadGLSegs(int Lump)
 	int side;
 
 	NumSegs = W_LumpLength(Lump) / sizeof(mapglseg_t);
-	Segs = Z_CNew<seg_t>(NumSegs, PU_LEVEL, 0);
+	Segs = Z_CNew(seg_t, NumSegs, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
 	if (LevelFlags & LF_GLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
@@ -817,7 +817,7 @@ void VLevel::LoadSubsectors(int Lump)
 	seg_t *seg;
 
 	NumSubsectors = W_LumpLength(Lump) / sizeof(mapsubsector_t);
-	Subsectors = Z_CNew<subsector_t>(NumSubsectors, PU_LEVEL, 0);
+	Subsectors = Z_CNew(subsector_t, NumSubsectors, PU_LEVEL, 0);
 	data = W_CacheLumpNum(Lump, PU_STATIC);
 
 	if (LevelFlags & LF_GLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
@@ -899,7 +899,7 @@ void VLevel::LoadNodes(int Lump)
 	if (LevelFlags & LF_GLNodesV5)
 	{
 		NumNodes = W_LumpLength(Lump) / sizeof(mapglnode_v5_t);
-		Nodes = Z_CNew<node_t>(NumNodes, PU_LEVEL, 0);
+		Nodes = Z_CNew(node_t, NumNodes, PU_LEVEL, 0);
 		data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 		mapglnode_v5_t* mn = (mapglnode_v5_t*)data;
 		no = Nodes;
@@ -924,7 +924,7 @@ void VLevel::LoadNodes(int Lump)
 	else
 	{
 		NumNodes = W_LumpLength(Lump) / sizeof(mapnode_t);
-		Nodes = Z_CNew<node_t>(NumNodes, PU_LEVEL, 0);
+		Nodes = Z_CNew(node_t, NumNodes, PU_LEVEL, 0);
 		data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 		mapnode_t* mn = (mapnode_t *)data;
 		no = Nodes;
@@ -968,7 +968,7 @@ void VLevel::LoadPVS(int Lump)
 	{
 		GCon->Logf(NAME_Dev, "Empty or missing PVS lump");
 		VisData = NULL;
-		NoVis = Z_New<byte>((NumSubsectors + 7) / 8);
+		NoVis = Z_New(byte, (NumSubsectors + 7) / 8, PU_LEVEL, 0);
 		memset(NoVis, 0xff, (NumSubsectors + 7) / 8);
 	}
 	else
@@ -1010,7 +1010,7 @@ void VLevel::LoadBlockMap(int Lump)
 
 	// clear out mobj chains
 	count = BlockMapWidth * BlockMapHeight;
-	BlockLinks = Z_CNew<VEntity*>(count, PU_LEVEL, 0);
+	BlockLinks = Z_CNew(VEntity*, count, PU_LEVEL, 0);
 	unguard;
 }
 
@@ -1030,7 +1030,7 @@ void VLevel::LoadThings1(int Lump)
 
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 	NumThings = W_LumpLength(Lump) / sizeof(mapthing1_t);
-	Things = Z_CNew<mthing_t>(NumThings, PU_HIGH, 0);
+	Things = Z_CNew(mthing_t, NumThings, PU_HIGH, 0);
 
 	mt = (mapthing1_t *)data;
 	mth = Things;
@@ -1062,7 +1062,7 @@ void VLevel::LoadThings2(int Lump)
 
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 	NumThings = W_LumpLength(Lump) / sizeof(mapthing2_t);
-	Things = Z_CNew<mthing_t>(NumThings, PU_HIGH, 0);
+	Things = Z_CNew(mthing_t, NumThings, PU_HIGH, 0);
 
 	mt = (mapthing2_t *)data;
 	mth = Things;
@@ -1232,7 +1232,7 @@ void VLevel::GroupLines(void) const
 	}
 
 	// build line tables for each sector
-	linebuffer = Z_New<line_t*>(total, PU_LEVEL, 0);
+	linebuffer = Z_New(line_t*, total, PU_LEVEL, 0);
 	sector = Sectors;
 	for (i = 0; i < NumSectors; i++, sector++)
 	{

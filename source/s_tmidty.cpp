@@ -297,7 +297,7 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 
 	//	Load song.
 	int Size = InStrm->TotalSize();
-	void* Data = Z_Malloc(Size);
+	void* Data = Z_Malloc(Size, PU_STATIC, 0);
 	InStrm->Seek(0);
 	InStrm->Serialise(Data, Size);
 	MidiSong* Song = Timidity_LoadSongMem(Data, Size);

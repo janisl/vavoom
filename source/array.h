@@ -164,7 +164,7 @@ protected:
 //
 // Templated dynamic array.
 //
-template<class T, EZoneTag Tag = PU_STRING> class TArray : public FArray
+template<class T, EZoneTag Tag = PU_STATIC> class TArray : public FArray
 {
 public:
 	typedef T ElementType;

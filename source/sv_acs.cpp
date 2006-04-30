@@ -966,13 +966,13 @@ void FACScriptsObject::LoadEnhancedObject()
 	if (buffer)
 	{
 		NumArrays = LittleLong(buffer[1]) / 8;
-		ArrayStore = Z_New<FArrayInfo>(NumArrays);
+		ArrayStore = Z_New(FArrayInfo, NumArrays, PU_STATIC, 0);
 		memset(ArrayStore, 0, sizeof(*ArrayStore) * NumArrays);
 		for (i = 0; i < NumArrays; ++i)
 		{
 			MapVarStore[LittleLong(buffer[2 + i * 2])] = i;
 			ArrayStore[i].Size = LittleLong(buffer[3 + i * 2]);
-			ArrayStore[i].Data = Z_New<int>(ArrayStore[i].Size);
+			ArrayStore[i].Data = Z_New(int, ArrayStore[i].Size, PU_STATIC, 0);
 			memset(ArrayStore[i].Data, 0, ArrayStore[i].Size * sizeof(int));
 		}
 	}
@@ -1005,7 +1005,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	}
 	if (NumTotalArrays)
 	{
-		Arrays = Z_New<FArrayInfo*>(NumTotalArrays);
+		Arrays = Z_New(FArrayInfo*, NumTotalArrays, PU_STATIC, 0);
 		for (i = 0; i < NumArrays; ++i)
 		{
 			Arrays[i] = &ArrayStore[i];
@@ -1729,7 +1729,7 @@ void FACSGrowingArray::Redim(int NewSize)
 	}
 	else if (NewSize && !Data)
 	{
-		Data = Z_New<int>(NewSize);
+		Data = Z_New(int, NewSize, PU_STATIC, 0);
 	}
 	else if (NewSize && Data)
 	{

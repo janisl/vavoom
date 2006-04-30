@@ -137,7 +137,7 @@ void NET_Init()
 /*	for (i = 0; i < net_numsockets; i++)*/
 	for (i = 0; i < MAXPLAYERS + 1; i++)
 	{
-		s = (qsocket_t *)Z_Malloc(sizeof(qsocket_t));
+		s = (qsocket_t *)Z_Malloc(sizeof(qsocket_t), PU_STATIC, 0);
 		s->next = net_freeSockets;
 		net_freeSockets = s;
 		s->disconnected = true;

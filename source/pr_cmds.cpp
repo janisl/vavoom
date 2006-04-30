@@ -1270,7 +1270,7 @@ PF(SpawnObject)
 	VClass *Class;
 
 	Class = (VClass *)Pop();
-	Push((int)VObject::StaticSpawnObject(Class, PU_STRING));
+	Push((int)VObject::StaticSpawnObject(Class, PU_STATIC));
 }
 
 //==========================================================================

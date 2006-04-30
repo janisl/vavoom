@@ -368,7 +368,7 @@ void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 	// Generate The Texture
 	byte* Pixels = Tex->GetPixels8();
-	byte* block = (byte*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight());
+	byte* block = (byte*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight(), PU_STATIC, 0);
 	byte* trtab = translationtables + translation * 256;
 	for (int i = 0; i < Tex->GetWidth() * Tex->GetHeight(); i++)
 	{

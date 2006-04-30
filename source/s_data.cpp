@@ -435,7 +435,7 @@ static void S_ParseSndinfo()
 				{
 					// Only add non-empty random lists
 					S_sfx[id].Link = list.Num();
-					S_sfx[id].Sounds = Z_CNew<int>(list.Num());
+					S_sfx[id].Sounds = Z_CNew(int, list.Num(), PU_STATIC, 0);
 					memcpy(S_sfx[id].Sounds, &list[0], sizeof(int) * list.Num());
 					S_sfx[id].bRandomHeader = true;
 				}

@@ -313,7 +313,7 @@ void R_InstallSprite(const char *name, int index)
 	// allocate space for the frames present and copy sprtemp to it
 	sprites[index].numframes = maxframe;
 	sprites[index].spriteframes = (spriteframe_t*)
-		Z_StrMalloc(maxframe * sizeof(spriteframe_t));
+		Z_Malloc(maxframe * sizeof(spriteframe_t), PU_STATIC, 0);
 	memcpy(sprites[index].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
 	unguard;
 }
@@ -348,7 +348,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 			if (count <= 4)
 				spr.dv = trans_sprite_verts + 4 * i;
 			else
-				spr.dv = (TVec*)Z_StrMalloc(sizeof(TVec) * count);
+				spr.dv = (TVec*)Z_Malloc(sizeof(TVec) * count, PU_STATIC, 0);
 			memcpy(spr.dv, sv, sizeof(TVec) * count);
 			spr.count = count;
 			spr.dist = dist;
@@ -408,7 +408,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		if (count <= 4)
 			spr.dv = trans_sprite_verts + 4 * found;
 		else
-			spr.dv = (TVec*)Z_StrMalloc(sizeof(TVec) * count);
+			spr.dv = (TVec*)Z_Malloc(sizeof(TVec) * count, PU_STATIC, 0);
 		memcpy(spr.dv, sv, sizeof(TVec) * count);
 		spr.count = count;
 		spr.dist = dist;

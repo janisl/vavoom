@@ -328,7 +328,7 @@ void VSoftwareDrawer::InitViewBorder(const refdef_t *rd)
     if (rd->width == ScreenWidth)
 		return;
 
-    r_backscreen = (byte*)Z_Malloc(ScreenWidth * (ScreenHeight - SB_REALHEIGHT) * PixelBytes);
+	r_backscreen = (byte*)Z_Malloc(ScreenWidth * (ScreenHeight - SB_REALHEIGHT) * PixelBytes, PU_STATIC, 0);
 
 	R_DrawViewBorder();
 

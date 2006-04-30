@@ -97,7 +97,7 @@ VNameEntry* AllocateNameEntry(const char* Name, vint32 Index,
 {
 	guard(AllocateNameEntry);
 	int Size = sizeof(VNameEntry) - NAME_SIZE + strlen(Name) + 1;
-	VNameEntry* E = (VNameEntry*)Z_Malloc(Size);
+	VNameEntry* E = (VNameEntry*)Z_Malloc(Size, PU_STATIC, 0);
 	memset(E, 0, Size);
 	strcpy(E->Name, Name);
 	E->Index = Index;

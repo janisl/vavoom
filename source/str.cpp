@@ -94,7 +94,7 @@ void VStr::Resize(int NewLen)
 		int AllocLen = sizeof(int) + NewLen + 1;
 		if (!Str)
 		{
-			Str = (char*)Z_Malloc(AllocLen, PU_STRING, NULL) + sizeof(int);
+			Str = (char*)Z_Malloc(AllocLen, PU_STATIC, NULL) + sizeof(int);
 		}
 		else
 		{

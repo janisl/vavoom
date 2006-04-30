@@ -473,7 +473,7 @@ void R_InitParticles()
 		r_numparticles = MAX_PARTICLES;
 	}
 
-	particles = (particle_t *)Z_Malloc(r_numparticles * sizeof(particle_t));
+	particles = (particle_t *)Z_Malloc(r_numparticles * sizeof(particle_t), PU_STATIC, 0);
 	unguard;
 }
 

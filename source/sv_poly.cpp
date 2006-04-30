@@ -526,7 +526,7 @@ static void InitBlockMap(void)
 	guard(InitBlockMap);
 	int		i;
 
-	GLevel->PolyBlockMap = Z_CNew<polyblock_t *>(GLevel->BlockMapWidth *
+	GLevel->PolyBlockMap = Z_CNew(polyblock_t*, GLevel->BlockMapWidth *
 		GLevel->BlockMapHeight, PU_LEVEL, 0);
 
 	for (i = 0; i < GLevel->NumPolyObjs; i++)

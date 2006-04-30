@@ -175,9 +175,9 @@ void SV_Init()
 
 	svs.max_clients = 1;
 
-	sv_mobjs = Z_CNew<VEntity *>(GMaxEntities);
-	sv_mo_base = Z_CNew<mobj_base_t>(GMaxEntities);
-	sv_mo_free_time = Z_CNew<double>(GMaxEntities);
+	sv_mobjs = Z_CNew(VEntity*, GMaxEntities, PU_STATIC, 0);
+	sv_mo_base = Z_CNew(mobj_base_t, GMaxEntities, PU_STATIC, 0);
+	sv_mo_free_time = Z_CNew(double, GMaxEntities, PU_STATIC, 0);
 
 	svpr.Load("svprogs");
 
@@ -192,7 +192,7 @@ void SV_Init()
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
 			PlayerClass, PU_STATIC);
-		GPlayersBase[i]->OldStats = Z_CNew<int>(num_stats);
+		GPlayersBase[i]->OldStats = Z_CNew(int, num_stats, PU_STATIC, 0);
 	}
 
 	GGameInfo->validcount = &validcount;

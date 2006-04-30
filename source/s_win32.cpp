@@ -303,7 +303,7 @@ int VDirectSoundDevice::SetChannels(int InNumChannels)
 		GCon->Log(NAME_Init, "No HW channels available");
 		NumBuffers = 8;
 	}
-	Buffers = Z_CNew<FBuffer>(NumBuffers);
+	Buffers = Z_CNew(FBuffer, NumBuffers, PU_STATIC, 0);
 	GCon->Logf(NAME_Init, "Using %d sound buffers", NumBuffers);
 
 	int Ret = InNumChannels;

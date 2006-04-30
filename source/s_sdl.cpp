@@ -172,7 +172,7 @@ bool VSDLSoundDevice::Init()
 	Mix_QuerySpec(&CurFrequency, &CurFormat, &CurChannels);
 
 	//	Allocate array for chunks.
-	Chunks = Z_CNew<Mix_Chunk*>(S_sfx.Num());
+	Chunks = Z_CNew(Mix_Chunk*, S_sfx.Num(), PU_STATIC, 0);
 
 	GCon->Logf(NAME_Init, "Configured audio device");
 	GCon->Logf(NAME_Init, "Driver: %s", SDL_AudioDriverName(dname, 32));
@@ -457,7 +457,7 @@ bool VSDLSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 	}
 
 	//	Set up buffer.
-	StrmBuffer = (byte*)Z_Malloc(STRM_LEN * 4 * StrmCvt.len_mult);
+	StrmBuffer = (byte*)Z_Malloc(STRM_LEN * 4 * StrmCvt.len_mult, PU_STATIC, 0);
 	StrmBufferUsed = 0;
 
 	//	Set up music callback.

@@ -343,7 +343,7 @@ COMMAND(glBSP)
 		nb_info = default_buildinfo;
 		nb_comms = default_buildcomms;
 
-		const char** TmpArgs = Z_New<const char*>(Args.Num() - 1);
+		const char** TmpArgs = Z_New(const char*, Args.Num() - 1, PU_STATIC, 0);
 		for (int i = 0; i < Args.Num() - 1; i++)
 			TmpArgs[i] = *Args[i + 1];
 		if (GlbspParseArgs(&nb_info, &nb_comms, TmpArgs,

@@ -629,6 +629,7 @@ void Host_Shutdown()
 
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())
+	SAFE_SHUTDOWN(Z_Shutdown, ())
 }
 
 //**************************************************************************

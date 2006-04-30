@@ -116,7 +116,7 @@ void R_InitSkyBoxes()
 	guard(R_InitSkyBoxes);
 	SC_Open("skyboxes");
 
-	skyboxinfo = (skyboxinfo_t *)Z_StrMalloc(1);
+	skyboxinfo = (skyboxinfo_t *)Z_Malloc(1, PU_STATIC, 0);
 	numskyboxes = 0;
 	while (SC_GetString())
 	{

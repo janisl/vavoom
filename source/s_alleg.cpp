@@ -120,7 +120,7 @@ bool VAllegroSoundDevice::Init()
 		Sys_Error("ALLEGRO SOUND INIT ERROR!!!!\n%s\n", allegro_error);
 	}
 	allegro_sound_initialised = true;
-	Samples = Z_CNew<SAMPLE*>(S_sfx.Num());
+	Samples = Z_CNew(SAMPLE*, S_sfx.Num(), PU_STATIC, 0);
 
 	GCon->Logf(NAME_Init, "configured audio device");
 	GCon->Logf(NAME_Init, "SFX   : %s", digi_driver->desc);

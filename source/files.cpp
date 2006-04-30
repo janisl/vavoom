@@ -99,7 +99,7 @@ static void AddGameDir(const VStr& dir)
 	guard(AddGameDir);
 	search_path_t	*info;
 
-	info = (search_path_t*)Z_StrCalloc(sizeof(*info));
+	info = (search_path_t*)Z_Calloc(sizeof(*info), PU_STATIC, 0);
 	info->Path = fl_basedir + "/" + dir;
 	info->Next = searchpaths;
 	searchpaths = info;
@@ -107,7 +107,7 @@ static void AddGameDir(const VStr& dir)
 	VStr gwadir;
 	if (fl_savedir)
 	{
-		info = (search_path_t*)Z_StrCalloc(sizeof(*info));
+		info = (search_path_t*)Z_Calloc(sizeof(*info), PU_STATIC, 0);
 		info->Path = fl_savedir + "/" + dir;
 		info->Next = searchpaths;
 		searchpaths = info;

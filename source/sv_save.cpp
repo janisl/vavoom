@@ -213,7 +213,7 @@ public:
 	: Stream(InStream)
 	{
 		bLoading = false;
-		NamesMap = Z_New<vint32>(VName::GetNumNames());
+		NamesMap = (vint32*)Z_Malloc(sizeof(vint32) * VName::GetNumNames(), PU_STATIC, 0);
 		for (int i = 0; i < VName::GetNumNames(); i++)
 		{
 			NamesMap[i] = -1;
@@ -479,7 +479,7 @@ static void UnarchiveNames(VStream &Strm)
 	Strm.Seek(NamesOffset);
 	vint32 Count;
 	Strm << STRM_INDEX(Count);
-	Loader->NameRemap = (VName*)Z_StrMalloc(Count * 4);
+	Loader->NameRemap = (VName*)Z_Malloc(Count * 4, PU_STATIC, 0);
 	for (int i = 0; i < Count; i++)
 	{
 		VNameEntry E;
@@ -501,7 +501,7 @@ static void ArchiveThinkers()
 	vint32 Seg = ASEG_WORLD;
 	*Saver << Seg;
 
-	Saver->ObjectsMap = (int*)Z_Calloc(VObject::GetObjectsCount() * 4);
+	Saver->ObjectsMap = (int*)Z_Calloc(VObject::GetObjectsCount() * 4, PU_STATIC, 0);
 
 	//	Add level
 	Saver->Exports.AddItem(GLevel);
@@ -834,7 +834,7 @@ static void SV_LoadMap(const char *mapname, int slot)
 	int len;
 	*Loader << STRM_INDEX(len);
 	sv_signon.Clear();
-	void *tmp = Z_StrMalloc(len);
+	void *tmp = Z_Malloc(len, PU_STATIC, 0);
 	Loader->Serialise(tmp, len);
 	sv_signon.Write(tmp, len);
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);

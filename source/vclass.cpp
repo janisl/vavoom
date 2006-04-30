@@ -353,7 +353,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 			Progs.version, PROG_VERSION);
 
 	// Read names
-	NameRemap = Z_New<VName>(Progs.num_names);
+	NameRemap = Z_New(VName, Progs.num_names, PU_STATIC, 0);
 	Reader->Seek(Progs.ofs_names);
 	for (i = 0; i < Progs.num_names; i++)
 	{
@@ -363,7 +363,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	}
 	Reader->NameRemap = NameRemap;
 
-	Reader->Imports = Z_CNew<VProgsImport>(Progs.num_imports);
+	Reader->Imports = Z_CNew(VProgsImport, Progs.num_imports, PU_STATIC, 0);
 	Reader->NumImports = Progs.num_imports;
 	Reader->Seek(Progs.ofs_imports);
 	for (i = 0; i < Progs.num_imports; i++)
@@ -372,7 +372,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	}
 	Reader->ResolveImports();
 
-	VProgsExport* Exports = Z_CNew<VProgsExport>(Progs.num_exports);
+	VProgsExport* Exports = Z_CNew(VProgsExport, Progs.num_exports, PU_STATIC, 0);
 	Reader->Exports = Exports;
 	Reader->NumExports = Progs.num_exports;
 
@@ -410,19 +410,19 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 			Exports[i].Obj = VClass::FindClass(*Exports[i].Name);
 			if (!Exports[i].Obj)
 			{
-				Exports[i].Obj = new(PU_STRING) VClass(Exports[i].Name);
+				Exports[i].Obj = new(PU_STATIC) VClass(Exports[i].Name);
 			}
 			break;
 		}
 	}
 
 	//	Read strings.
-	Pkg->Strings = Z_CNew<char>(Progs.num_strings);
+	Pkg->Strings = Z_CNew(char, Progs.num_strings, PU_STATIC, 0);
 	Reader->Seek(Progs.ofs_strings);
 	Reader->Serialise(Pkg->Strings, Progs.num_strings);
 
-	Pkg->Statements = Z_CNew<int>(Progs.num_statements);
-	Pkg->VTables = Z_CNew<VMethod*>(Progs.num_vtables);
+	Pkg->Statements = Z_CNew(int, Progs.num_statements, PU_STATIC, 0);
+	Pkg->VTables = Z_CNew(VMethod*, Progs.num_vtables, PU_STATIC, 0);
 
 	//	Serialise objects.
 	Reader->Seek(Progs.ofs_exportdata);

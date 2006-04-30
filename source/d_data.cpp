@@ -288,14 +288,14 @@ static void InitColormaps()
 	// Load in the light tables,
 	colormaps = (byte*)W_CacheLumpName(NAME_colormap, PU_STATIC);
 	fadetable = colormaps;
-	fadetable16 = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable16r = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable16g = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable16b = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable32 = (dword*)Z_Malloc(32 * 256 * 4);
-	fadetable32r = (byte*)Z_Malloc(32 * 256);
-	fadetable32g = (byte*)Z_Malloc(32 * 256);
-	fadetable32b = (byte*)Z_Malloc(32 * 256);
+	fadetable16 = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
+	fadetable16r = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
+	fadetable16g = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
+	fadetable16b = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
+	fadetable32 = (dword*)Z_Malloc(32 * 256 * 4, PU_STATIC, 0);
+	fadetable32r = (byte*)Z_Malloc(32 * 256, PU_STATIC, 0);
+	fadetable32g = (byte*)Z_Malloc(32 * 256, PU_STATIC, 0);
+	fadetable32b = (byte*)Z_Malloc(32 * 256, PU_STATIC, 0);
 	unguard;
 }
 

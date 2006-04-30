@@ -188,7 +188,7 @@ void TGLVisGUI::DisplayMapDone(int accepts, int total)
 
 static void *GLVisMalloc(size_t size)
 {
-	return Z_Calloc(size);
+	return Z_Calloc(size, PU_STATIC, 0);
 }
 
 //==========================================================================

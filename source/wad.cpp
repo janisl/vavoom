@@ -165,7 +165,7 @@ void WadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	header.infotableofs = LittleLong(header.infotableofs);
 	NumLumps = header.numlumps;
 	//	Moved here to make static data less fragmented
-	LumpInfo = Z_New<lumpinfo_t>(NumLumps);
+	LumpInfo = Z_New(lumpinfo_t, NumLumps, PU_STATIC, 0);
 	length = header.numlumps * sizeof(filelump_t);
 	fi_p = fileinfo = (filelump_t*)Z_Malloc(length, PU_STATIC, 0);
 	Sys_FileSeek(Handle, header.infotableofs);
@@ -193,7 +193,7 @@ void WadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	}
 
 	// set up caching
-	LumpCache = Z_CNew<void*>(NumLumps);
+	LumpCache = Z_CNew(void*, NumLumps, PU_STATIC, 0);
 	unguard;
 }
 
@@ -219,7 +219,7 @@ void WadFile::OpenSingleLump(const VStr& FileName)
 
 	// single lump file
 	NumLumps = 1;
-	LumpInfo = Z_New<lumpinfo_t>();
+	LumpInfo = Z_New(lumpinfo_t, 1, PU_STATIC, 0);
 
 	// Fill in lumpinfo
 	LumpInfo->Name = VName(*FileName.ExtractFileBase(), VName::AddLower8);
@@ -227,7 +227,7 @@ void WadFile::OpenSingleLump(const VStr& FileName)
 	LumpInfo->Size = Sys_FileSize(Handle);
 	
 	// set up caching
-	LumpCache = Z_CNew<void*>();
+	LumpCache = Z_CNew(void*, 1, PU_STATIC, 0);
 	unguard;
 }
 

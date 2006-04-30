@@ -553,7 +553,7 @@ void VFlacAudioCodec::FStream::metadata_callback(
 		PoolSize = metadata->data.stream_info.max_blocksize * 2;
 
 		SamplePool[0] = (FLAC__int32*)Z_Malloc(sizeof(FLAC__int32) *
-			PoolSize * NumChannels);
+			PoolSize * NumChannels, PU_STATIC, 0);
 		SamplePool[1] = SamplePool[0] + PoolSize;
 	}
 	unguard;
