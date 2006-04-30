@@ -43,20 +43,18 @@
 
 // TYPES -------------------------------------------------------------------
 
-inline void* operator new(size_t size, void* p) { return p; }
+inline void* operator new(size_t, void* p) { return p; }
 
 class TMemZone;
 
 struct memblock_t
 {
 	int			size;	// including the header and possibly tiny fragments
-	void		**user;	// NULL if a free block
+	void**		user;	// NULL if a free block
 	int			tag;	// purgelevel, 0 if a free block
 	int			id;		// should be ZONEID
-	TMemZone	*zone;	// Zone, to which this block belongs to
-	int			align;
-	memblock_t	*next;
-	memblock_t	*prev;
+	memblock_t*	next;
+	memblock_t*	prev;
 };
 
 class TMemZone
@@ -70,14 +68,14 @@ class TMemZone
 	{
 		Init();
 	}
-	void Init(void);
+	void Init();
 	void *Malloc(int size, int tag, void** user, bool);
 	void *MallocHigh(int size, int tag, void** user);
 	void Resize(void** ptr, int size);
 	void Free(void* ptr);
 	void FreeTag(int tag);
-	void CheckHeap(void);
-	int FreeMemory(void);
+	void CheckHeap();
+	int FreeMemory();
 	void DumpHeap(FOutputDevice &Ar);
 };
 
@@ -94,7 +92,9 @@ class TMemZone
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TMemZone*	mainzone;
-static TMemZone*	minizone;
+
+#define TEST(a)		a
+#define TEST(a, b)	a, b
 
 // CODE --------------------------------------------------------------------
 
@@ -104,24 +104,21 @@ static TMemZone*	minizone;
 //
 //==========================================================================
 
-void TMemZone::Init(void)
+void TMemZone::Init()
 {
 	guard(TMemZone::Init);
-    memblock_t*	block;
+	// set the entire zone to one free block
+	memblock_t* block = (memblock_t*)((char*)this + sizeof(TMemZone));
+	BlockList.next = block;
+	BlockList.prev = block;
+	BlockList.user = (void**)this;
+	BlockList.tag = PU_STATIC;
+	Rover = block;
 
-    // set the entire zone to one free block
-    BlockList.next =
-    BlockList.prev =
-	block = (memblock_t *)((char*)this + sizeof(TMemZone));
-
-    BlockList.user = (void **)this;
-    BlockList.tag = PU_STATIC;
-    Rover = block;
-	
-    block->prev = block->next = &BlockList;
-    block->user = NULL;
+	block->prev = block->next = &BlockList;
+	block->user = NULL;
 	block->tag = 0; // 0 indicates a free block.
-    block->size = Size - sizeof(TMemZone);
+	block->size = Size - sizeof(TMemZone);
 	unguard;
 }
 
@@ -136,24 +133,24 @@ void TMemZone::Init(void)
 void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 {
 	guard(TMemZone::Malloc);
-    int			extra;
-    memblock_t*	start;
-    memblock_t* rover;
-    memblock_t* newblock;
-    memblock_t*	base;
+	int			extra;
+	memblock_t*	start;
+	memblock_t* rover;
+	memblock_t* newblock;
+	memblock_t*	base;
 
 //	if (!size) Sys_Error("Z_Malloc: Size = 0");
 	if (!tag) Sys_Error("Z_Malloc: Tried to use tag 0");
 
 	size = (size + 3) & ~3;
-    
-    // scan through the block list,
-    // looking for the first free block
-    // of sufficient size,
-    // throwing out any purgable blocks along the way.
 
-    // account for size of block header
-    size += sizeof(memblock_t);
+	// scan through the block list,
+	// looking for the first free block
+	// of sufficient size,
+	// throwing out any purgable blocks along the way.
+
+	// account for size of block header
+	size += sizeof(memblock_t);
 
 	if (alloc_low)
 	{
@@ -161,56 +158,56 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 	}
 	else
 	{
-	    base = Rover;
-	    // if there is a free block behind the rover,
-    	//  back up over them
+		base = Rover;
+		// if there is a free block behind the rover,
+		//  back up over them
 		if (!base->prev->tag)
 			base = base->prev;
 	}
-	
-    rover = base;
-    start = base->prev;
-	
-    do
-    {
+
+	rover = base;
+	start = base->prev;
+
+	do
+	{
 		if (rover == start)
 		{
-	    	// scanned all the way around the list
+			// scanned all the way around the list
 			return NULL;
 		}
-	
+
 		if (rover->tag)
 		{
-	    	if (rover->tag < PU_PURGELEVEL)
-	    	{
+			if (rover->tag < PU_PURGELEVEL)
+			{
 				// hit a block that can't be purged,
 				//  so move base past it
 				base = rover = rover->next;
-	    	}
-	    	else
-	    	{
+			}
+			else
+			{
 				// free the rover block (adding the size to base)
 				// the rover can be the base block
 				base = base->prev;
 				Z_Free((char*)rover + sizeof(memblock_t));
 				base = base->next;
 				rover = base->next;
-	    	}
+			}
 		}
 		else
-	    	rover = rover->next;
-    } while (base->tag || base->size < size);
+			rover = rover->next;
+	} while (base->tag || base->size < size);
 
-    
-    // found a block big enough
-    extra = base->size - size;
-    
-    if (extra > MINFRAGMENT)
-    {
+	
+	// found a block big enough
+	extra = base->size - size;
+
+	if (extra > MINFRAGMENT)
+	{
 		// there will be a free fragment after the allocated block
 		newblock = (memblock_t*)((char*)base + size);
 		newblock->size = extra;
-	
+
 		// 0 indicates free block.
 		newblock->tag = 0;
 		newblock->user = NULL;
@@ -220,21 +217,21 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 
 		base->next = newblock;
 		base->size = size;
-    }
-	
-    if (user)
-    {
+	}
+
+	if (user)
+	{
 		// mark as an in use block
-		*user = (void *)((char*)base + sizeof(memblock_t));
-    }
-    else
-    {
+		*user = (void*)((char*)base + sizeof(memblock_t));
+	}
+	else
+	{
 		if (tag >= PU_PURGELEVEL)
 		{
 			Sys_Error("Z_Malloc: an owner is required for purgable blocks");
 		}
-    }
-    base->tag = tag;
+	}
+	base->tag = tag;
 	base->user = user;
 
 	if (!alloc_low || Rover == base)
@@ -242,11 +239,10 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 		// next allocation will start looking here
 		Rover = base->next;
 	}
-	
-    base->id = ZONEID;
-	base->zone = this;
-    
-    return (void *)((char*)base + sizeof(memblock_t));
+
+	base->id = ZONEID;
+
+	return (void*)((char*)base + sizeof(memblock_t));
 	unguard;
 }
 
@@ -261,10 +257,10 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 void *TMemZone::MallocHigh(int size, int tag, void** user)
 {
 	guard(TMemZone::MallocHigh);
-    int			extra;
-    memblock_t* rover;
-    memblock_t* newblock;
-    memblock_t*	base;
+	int			extra;
+	memblock_t* rover;
+	memblock_t* newblock;
+	memblock_t*	base;
 
 #ifdef PARANOID
 	CheckHeap();
@@ -274,56 +270,56 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 	if (!tag) Sys_Error("Z_Malloc: Tried to use tag 0");
 
 	size = (size + 3) & ~3;
-    
-    // scan through the block list,
-    // looking for the first free block
-    // of sufficient size,
-    // throwing out any purgable blocks along the way.
+	
+	// scan through the block list,
+	// looking for the first free block
+	// of sufficient size,
+	// throwing out any purgable blocks along the way.
 
-    // account for size of block header
-    size += sizeof(memblock_t);
+	// account for size of block header
+	size += sizeof(memblock_t);
 
 	base = BlockList.prev;
-    rover = base;
-	
-    do
-    {
+	rover = base;
+
+	do
+	{
 		if (rover == &BlockList)
 		{
-	    	// scanned all the way around the list
+			// scanned all the way around the list
 			return NULL;
 		}
-	
+
 		if (rover->tag)
 		{
-	    	if (rover->tag < PU_PURGELEVEL)
-	    	{
+			if (rover->tag < PU_PURGELEVEL)
+			{
 				// hit a block that can't be purged,
 				//  so move base past it
 				base = rover = rover->prev;
-	    	}
-	    	else
-	    	{
+			}
+			else
+			{
 				// free the rover block (adding the size to base)
 				// the rover can be the base block
 				base = base->next;
 				Z_Free((char*)rover + sizeof(memblock_t));
 				base = base->prev;
 				rover = base->prev;
-	    	}
+			}
 		}
 		else
 		{
-	    	rover = rover->prev;
+			rover = rover->prev;
 		}
-    } while (base->tag || base->size < size);
+	} while (base->tag || base->size < size);
 
-    
-    // found a block big enough
-    extra = base->size - size;
-    
-    if (extra > MINFRAGMENT)
-    {
+	
+	// found a block big enough
+	extra = base->size - size;
+	
+	if (extra > MINFRAGMENT)
+	{
 		// there will be a free fragment before the allocated block
 		newblock = (memblock_t*)((char*)base + extra);
 		newblock->size = size;
@@ -335,26 +331,25 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 		base->next = newblock;
 		base->size = extra;
 		base = newblock;
-    }
-	
-    if (user)
-    {
+	}
+
+	if (user)
+	{
 		// mark as an in use block
 		*user = (void *)((char*)base + sizeof(memblock_t));
-    }
-    else
-    {
+	}
+	else
+	{
 		if (tag >= PU_PURGELEVEL)
 		{
 			Sys_Error("Z_Malloc: an owner is required for purgable blocks");
 		}
-    }
-    base->tag = tag;
+	}
+	base->tag = tag;
 	base->user = user;
-    base->id = ZONEID;
-	base->zone = this;
-    
-    return (void *)((char*)base + sizeof(memblock_t));
+	base->id = ZONEID;
+
+	return (void *)((char*)base + sizeof(memblock_t));
 	unguard;
 }
 
@@ -369,52 +364,52 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 void TMemZone::Resize(void** ptr, int size)
 {
 	guard(TMemZone::Resize);
-    memblock_t	*block;
-    memblock_t	*other;
-    void*		p;
-    int			extra;
+	memblock_t	*block;
+	memblock_t	*other;
+	void*		p;
+	int			extra;
 
-    block = (memblock_t *)((char*)(*ptr) - sizeof(memblock_t));
+	block = (memblock_t *)((char*)(*ptr) - sizeof(memblock_t));
 
 	//FIXME already chacked
-    if (block->id != ZONEID)
+	if (block->id != ZONEID)
 		Sys_Error("Z_Resize: resize a pointer without ZONEID");
 	if (block->tag >= PU_PURGELEVEL)
-      	Sys_Error("Z_Resize: Cannot resize purgable block");
+		Sys_Error("Z_Resize: Cannot resize purgable block");
 
-    size = (size + 3) & ~3;
-    size += sizeof(memblock_t);
-    if (size > block->size)
+	size = (size + 3) & ~3;
+	size += sizeof(memblock_t);
+	if (size > block->size)
 	{
-    	//
-        //	We need a bigger block
-        //
+		//
+		//	We need a bigger block
+		//
 
-        other = block->next;
+		other = block->next;
 		// if next block can be purged, then free it
-   		if (other->tag >= PU_PURGELEVEL)
+		if (other->tag >= PU_PURGELEVEL)
 			Z_Free((char*)other + sizeof(memblock_t));
 		// If next block is free, while size is not enough and
-        // block after next block can be purged, free more space
+		// block after next block can be purged, free more space
 		if (!other->tag)
 		{
-          	while ((block->size + other->size < size)
-                 && (other->next->tag >= PU_PURGELEVEL))
-            	Z_Free((char*)other->next + sizeof(memblock_t));
+			while ((block->size + other->size < size)
+				&& (other->next->tag >= PU_PURGELEVEL))
+				Z_Free((char*)other->next + sizeof(memblock_t));
 		}
 		// There is enough size to resize without moving data
 		if (!other->tag && (block->size + other->size >= size))
 		{
 			//Merge blocks
-           	block->size += other->size;
-            block->next = other->next;
-            block->next->prev = block;
+			block->size += other->size;
+			block->next = other->next;
+			block->next->prev = block;
 			if (Rover == other)
 				Rover = block;
 
-    		// If block is too big
-    		extra = block->size - size;
-    		if (extra > MINFRAGMENT)
+			// If block is too big
+			extra = block->size - size;
+			if (extra > MINFRAGMENT)
 			{
 				// there will be a free fragment after the resized block
 				other = (memblock_t *)((char*)block + size );
@@ -435,22 +430,22 @@ void TMemZone::Resize(void** ptr, int size)
 		}
 		else
 		{
-          	// We have to allocate another block and move data
-            p = Z_Malloc(size - sizeof(memblock_t), block->tag, block->user);
-            memcpy(p, *ptr, block->size - sizeof(memblock_t));
+			// We have to allocate another block and move data
+			p = Z_Malloc(size - sizeof(memblock_t), block->tag, block->user);
+			memcpy(p, *ptr, block->size - sizeof(memblock_t));
 			block->user = NULL;// So Z_Free doesn't clear user's mark
-            Z_Free(*ptr);
-            *ptr = p;
+			Z_Free(*ptr);
+			*ptr = p;
 		}
 	}
 	else
 	{
-    	//
-        //	We need a smaller block or size is the same
-        //
+		//
+		//	We need a smaller block or size is the same
+		//
 
-   		extra = block->size - size;
-   		if (extra > MINFRAGMENT)
+		extra = block->size - size;
+		if (extra > MINFRAGMENT)
 		{
 			// there will be a free fragment after the resized block
 			other = (memblock_t *)((char*)block + size );
@@ -466,14 +461,14 @@ void TMemZone::Resize(void** ptr, int size)
 			block->next = other;
 			block->size = size;
 
-            block = other;
-            other = block->next;
+			block = other;
+			other = block->next;
 			if (!other->tag)
 			{
 				//	Merge two contiguous free blocks
-           		block->size += other->size;
-            	block->next = other->next;
-            	block->next->prev = block;
+				block->size += other->size;
+				block->next = other->next;
+				block->next->prev = block;
 				if (Rover == other)
 					Rover = block;
 			}
@@ -491,25 +486,25 @@ void TMemZone::Resize(void** ptr, int size)
 void TMemZone::Free(void* ptr)
 {
 	guard(TMemZone::Free);
-    memblock_t*		block;
-    memblock_t*		other;
-	
-    block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
+	memblock_t*		block;
+	memblock_t*		other;
 
-    if (block->id != ZONEID)
+	block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
+
+	if (block->id != ZONEID)
 		Sys_Error("Z_Free: freed a pointer without ZONEID");
 		
-    if (block->user)
-    {
+	if (block->user)
+	{
 		// clear the user's mark
 		*block->user = 0;
-    }
+	}
 
 	// mark as free
 	block->id = 0;
 	block->tag = 0;
 	block->user = NULL;
-	
+
 	other = block->next;
 	if (!other->tag)
 	{
@@ -522,7 +517,7 @@ void TMemZone::Free(void* ptr)
 			Rover = block;
 	}
 	
-    other = block->prev;
+	other = block->prev;
 	if (!other->tag)
 	{
 		// merge with previous free block
@@ -547,7 +542,7 @@ void TMemZone::FreeTag(int tag)
 	guard(TMemZone::FreeTag);
 	memblock_t*	block;
 	memblock_t*	next;
-	
+
 	for (block = BlockList.next; block != &BlockList; block = next)
 	{
 		// get link before freeing
@@ -556,7 +551,7 @@ void TMemZone::FreeTag(int tag)
 		{
 			Z_Free((char*)block + sizeof(memblock_t));
 		}
-    }
+	}
 
 	//	Reset rover to start of the heap
 	Rover = BlockList.next;
@@ -569,22 +564,22 @@ void TMemZone::FreeTag(int tag)
 //
 //==========================================================================
 
-void TMemZone::CheckHeap(void)
+void TMemZone::CheckHeap()
 {
 	guard(TMemZone::CheckHeap);
-    memblock_t*	block;
-	
-    for (block = BlockList.next; block->next != &BlockList; block = block->next)
-    {
+	memblock_t*	block;
+
+	for (block = BlockList.next; block->next != &BlockList; block = block->next)
+	{
 		if ((char*)block + block->size != (char*)block->next)
-	    	Sys_Error("Z_CheckHeap: block size does not touch the next block\n");
+			Sys_Error("Z_CheckHeap: block size does not touch the next block\n");
 
 		if ( block->next->prev != block)
-	    	Sys_Error("Z_CheckHeap: next block doesn't have proper back link\n");
+			Sys_Error("Z_CheckHeap: next block doesn't have proper back link\n");
 
 		if (!block->tag && !block->next->tag)
-	    	Sys_Error("Z_CheckHeap: two consecutive free blocks\n");
-    }
+			Sys_Error("Z_CheckHeap: two consecutive free blocks\n");
+	}
 	unguard;
 }
 
@@ -594,43 +589,43 @@ void TMemZone::CheckHeap(void)
 //
 //==========================================================================
 
-int TMemZone::FreeMemory(void)
+int TMemZone::FreeMemory()
 {
 	guard(TMemZone::FreeMemory);
-    memblock_t*		block;
-    int				free = 0;
+	memblock_t*		block;
+	int				free = 0;
 	int				largest = 0;
 	int				numblocks = 0;
 	int				purgable = 0;
 	int				largestpurgable = 0;
 	int				purgableblocks = 0;
 
-    for (block = BlockList.next; block != &BlockList; block = block->next)
-    {
+	for (block = BlockList.next; block != &BlockList; block = block->next)
+	{
 		if (!block->tag)
 		{
-	    	free += block->size;
+			free += block->size;
 			if (block->size > largest)
-            {
-            	largest = block->size;
+			{
+				largest = block->size;
 			}
 			numblocks++;
 		}
 		if (block->tag >= PU_PURGELEVEL)
 		{
-	    	purgable += block->size;
+			purgable += block->size;
 			if (block->size > largest)
-            {
-            	largestpurgable = block->size;
+			{
+				largestpurgable = block->size;
 			}
 			purgableblocks++;
 		}
-    }
+	}
 	GCon->Logf(NAME_Dev, "Free memory %d, largest block %d, free blocks %d",
 		free, largest, numblocks);
 	GCon->Logf(NAME_Dev, "Purgable memory %d, largest block %d, total blocks %d",
 		purgable, largestpurgable, purgableblocks);
-    return free;
+	return free;
 	unguard;
 }
 
@@ -644,14 +639,14 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 {
 	guard(TMemZone::DumpHeap);
 	memblock_t*	block;
-	
+
 	Ar.Logf("zone size: %d  location: %p", Size, this);
 
 	for (block = BlockList.next; ; block = block->next)
 	{
 		Ar.Logf("block:%p    size:%7i    user:%8p    tag:%3i",
 			block, block->size, block->user, block->tag);
-		
+
 		if (block->next == &BlockList)
 		{
 			// all blocks have been hit
@@ -665,7 +660,7 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 
 		if (block->next->prev != block)
 		{
-	    	Ar.Log("ERROR: next block doesn't have proper back link");
+			Ar.Log("ERROR: next block doesn't have proper back link");
 		}
 
 		if (!block->tag && !block->next->tag)
@@ -686,20 +681,7 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 void Z_Init(void* base, int size)
 {
 	guard(Z_Init);
-	int			minsize;
-
-	minsize = size / 32;
-	if (minsize < 256 * 1024)
-	{
-		minsize = 256 * 1024;
-	}
-	const char* p = GArgs.CheckValue("-minzone");
-	if (p)
-	{
-		minsize = (int)(1024 * atof(p));
-	}
 	mainzone = new(base) TMemZone(size);
-	minizone = new(Z_Malloc(minsize)) TMemZone(minsize);
 	unguard;
 }
 
@@ -715,11 +697,7 @@ void *Z_Malloc(int size, int tag, void** user)
 {
 	guard(Z_Malloc);
 	void *ptr;
-	if (tag == PU_STRING)
-	{
-		ptr = minizone->Malloc(size, tag, user, false);
-	}
-	else if (tag == PU_VIDEO || tag == PU_HIGH || tag == PU_TEMP)
+	if (tag == PU_VIDEO || tag == PU_HIGH || tag == PU_TEMP)
 	{
 		ptr = mainzone->MallocHigh(size, tag, user);
 	}
@@ -732,14 +710,12 @@ void *Z_Malloc(int size, int tag, void** user)
 	{
 		if (tag == PU_LEVEL || tag == PU_LEVSPEC)
 		{
-	    	Host_Error("Z_Malloc: failed on allocation of %d bytes", size);
+			Host_Error("Z_Malloc: failed on allocation of %d bytes", size);
 		}
 		else if (tag != PU_VIDEO)
 		{
 			mainzone->DumpHeap(*GCon);
-			GCon->Log("");
-			minizone->DumpHeap(*GCon);
-    		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
+			Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
 		}
 	}
 	return ptr;
@@ -755,7 +731,7 @@ void *Z_Malloc(int size, int tag, void** user)
 void *Z_Calloc(int size, int tag, void **user)
 {
 	guard(Z_Calloc);
- 	return memset(Z_Malloc(size, tag, user), 0, size);
+	return memset(Z_Malloc(size, tag, user), 0, size);
 	unguard;
 }
 
@@ -770,13 +746,13 @@ void *Z_Calloc(int size, int tag, void **user)
 void Z_Resize(void** ptr, int size)
 {
 	guard(Z_Resize);
-    memblock_t	*block;
+	memblock_t	*block;
 
-    block = (memblock_t *)((char*)(*ptr) - sizeof(memblock_t));
+	block = (memblock_t *)((char*)(*ptr) - sizeof(memblock_t));
 
-    if (block->id != ZONEID)
+	if (block->id != ZONEID)
 		Sys_Error("Z_Resize: resize a pointer without ZONEID");
-	block->zone->Resize(ptr, size);
+	mainzone->Resize(ptr, size);
 	unguard;
 }
 
@@ -789,17 +765,17 @@ void Z_Resize(void** ptr, int size)
 void Z_ChangeTag(void* ptr,int tag)
 {
 	guard(Z_ChangeTag);
-    memblock_t*	block;
-	
-    block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
+	memblock_t*	block;
 
-    if (block->id != ZONEID)
+	block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
+
+	if (block->id != ZONEID)
 		Sys_Error("Z_ChangeTag: freed a pointer without ZONEID");
 
-    if (tag >= PU_PURGELEVEL && !block->user)
+	if (tag >= PU_PURGELEVEL && !block->user)
 		Sys_Error("Z_ChangeTag: an owner is required for purgable blocks");
 
-    block->tag = tag;
+	block->tag = tag;
 	unguard;
 }
 
@@ -812,13 +788,13 @@ void Z_ChangeTag(void* ptr,int tag)
 void Z_Free(void* ptr)
 {
 	guard(Z_Free);
-    memblock_t*		block;
-	
-    block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
+	memblock_t*		block;
 
-    if (block->id != ZONEID)
+	block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
+
+	if (block->id != ZONEID)
 		Sys_Error("Z_Free: freed a pointer without ZONEID");
-	block->zone->Free(ptr);
+	mainzone->Free(ptr);
 	unguard;
 }
 
@@ -841,7 +817,7 @@ void Z_FreeTag(int tag)
 //
 //==========================================================================
 
-void Z_CheckHeap(void)
+void Z_CheckHeap()
 {
 	guard(Z_CheckHeap);
 	mainzone->CheckHeap();
@@ -854,7 +830,7 @@ void Z_CheckHeap(void)
 //
 //==========================================================================
 
-int Z_FreeMemory(void)
+int Z_FreeMemory()
 {
 	guard(Z_FreeMemory);
 	return mainzone->FreeMemory();
@@ -870,10 +846,7 @@ int Z_FreeMemory(void)
 COMMAND(FreeMemory)
 {
 	guard(COMMAND FreeMemory);
-	GCon->Log("-- Main zone --");
 	mainzone->FreeMemory();
-	GCon->Log("-- Mini zone --");
-	minizone->FreeMemory();
 	unguard;
 }
 
@@ -887,14 +860,12 @@ COMMAND(DumpHeap)
 {
 	guard(COMMAND DumpHeap);
 	mainzone->DumpHeap(*GCon);
-	GCon->Log("");
-	minizone->DumpHeap(*GCon);
 	unguard;
 }
 
 //**************************************************************************
 //
-//	$Log$
+//	$Log:$
 //	Revision 1.15  2006/04/05 17:23:37  dj_jl
 //	More dynamic string usage in console command class.
 //	Added class for handling command line arguments.
