@@ -64,16 +64,17 @@ struct TSwitch
 	int Sound;
 };
 
-class TTexture;
+class VTexture;
 
-class TTextureManager
+class VTextureManager
 {
 public:
-	TArray<TTexture*>	Textures;
+	TArray<VTexture*>	Textures;
 
-	TTextureManager();
+	VTextureManager();
 	void Init();
-	int AddTexture(TTexture* Tex);
+	void Shutdown();
+	int AddTexture(VTexture* Tex);
 	int	CheckNumForName(VName Name, int Type, bool bOverload = false,
 		bool bCheckAny = false);
 	int	NumForName(VName Name, int Type, bool bOverload = false,
@@ -88,9 +89,7 @@ public:
 	int AddFileTexture(VName Name, int Type);
 
 private:
-	bool IsStrifeTexture();
 	void InitTextures();
-	void InitTextures2();
 	void InitFlats();
 	void InitOverloads();
 	void InitSpriteLumps();
@@ -128,7 +127,7 @@ void R_FillRectWithFlat(int DestX,int DestY,int width,int height,const char* fna
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern TTextureManager	GTextureManager;
+extern VTextureManager	GTextureManager;
 
 extern int				validcount;
 
@@ -136,38 +135,3 @@ extern int				skyflatnum;
 
 //	Switches
 extern TArray<TSwitch>	Switches;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.10  2005/06/30 20:20:55  dj_jl
-//	Implemented rendering of Boom fake flats.
-//	
-//	Revision 1.9  2005/05/26 16:50:15  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.8  2005/05/03 15:00:11  dj_jl
-//	Moved switch list, animdefs enhancements.
-//	
-//	Revision 1.7  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.6  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/11/09 14:25:15  dj_jl
-//	Cleaned up
-//	
-//	Revision 1.4  2001/08/23 17:47:22  dj_jl
-//	Started work on pics with custom palettes
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

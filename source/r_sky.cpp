@@ -418,7 +418,7 @@ static void R_InitSkyBox()
 		//	Precache texture
 		Drawer->SetTexture(sky[j].texture1);
 
-		TTexture* STex = GTextureManager.Textures[sky[j].texture1];
+		VTexture* STex = GTextureManager.Textures[sky[j].texture1];
 
 		sky[j].surf.extents[0] = STex->GetWidth();
 		sky[j].surf.extents[1] = STex->GetHeight();
@@ -697,62 +697,3 @@ void R_DrawSky()
 	Drawer->EndSky();
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.19  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.18  2005/11/20 10:39:20  dj_jl
-//	Renamed sound.
-//	
-//	Revision 1.17  2005/10/18 21:09:49  dj_jl
-//	Fixed levels with lightning and skybox.
-//	
-//	Revision 1.16  2005/05/26 16:50:15  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.15  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.14  2004/11/22 07:36:29  dj_jl
-//	Implemented all sector specials in all games.
-//	
-//	Revision 1.13  2004/10/08 12:37:47  dj_jl
-//	Better rendering of old skies.
-//	
-//	Revision 1.12  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.11  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.10  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.9  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.8  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/11/02 18:35:55  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.6  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.5  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.4  2001/10/09 17:21:39  dj_jl
-//	Added sky begining and ending functions
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -264,7 +264,7 @@ void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	guard(VDirect3DDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
 
-	TTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager.Textures[lump];
 	float s1, s2;
 	if (flip)
 	{
@@ -342,44 +342,3 @@ void VDirect3DDrawer::EndAutomap(void)
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.13  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.12  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.11  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.10  2002/01/11 18:24:44  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.9  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.8  2001/09/14 16:48:22  dj_jl
-//	Switched to DirectX 8
-//	
-//	Revision 1.7  2001/09/12 17:31:27  dj_jl
-//	Rectangle drawing and direct update for plugins
-//	
-//	Revision 1.6  2001/08/29 17:49:01  dj_jl
-//	Line colors in RGBA format
-//	
-//	Revision 1.5  2001/08/15 17:15:55  dj_jl
-//	Drawer API changes, removed wipes
-//	
-//	Revision 1.4  2001/08/01 17:33:58  dj_jl
-//	Fixed drawing of spite lump for player setup menu, beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

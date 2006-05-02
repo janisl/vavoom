@@ -731,7 +731,7 @@ void R_PrecacheLevel()
 #ifdef __GNUC__
 	char texturepresent[GTextureManager.Textures.Num()];
 #else
-	char* texturepresent = (char*)Z_StrMalloc(GTextureManager.Textures.Num());
+	char* texturepresent = (char*)Z_Malloc(GTextureManager.Textures.Num(), PU_STATIC, 0);
 #endif
 	memset(texturepresent, 0, GTextureManager.Textures.Num());
 
@@ -812,14 +812,14 @@ void R_InitData()
 	// with modified graphics.
 	//	Strife uses color 0 as transparent. I already had problems with fact
 	// that colour 255 is normal color, now there shouldn't be any problems.
-	byte* psrc = (byte*)W_CacheLumpName(NAME_playpal, PU_TEMP);
+	VStream* Strm = W_CreateLumpReaderName(NAME_playpal);
 	rgba_t* pal = r_palette;
 	int best_dist = 0x10000;
 	for (int i = 0; i < 256; i++)
 	{
-		pal[i].r = *psrc++;
-		pal[i].g = *psrc++;
-		pal[i].b = *psrc++;
+		*Strm << pal[i].r
+			<< pal[i].g
+			<< pal[i].b;
 		if (i == 0)
 		{
 			pal[i].a = 0;
@@ -836,6 +836,7 @@ void R_InitData()
 			}
 		}
 	}
+	delete Strm;
 
 	InitTranslationTables();
 	unguard;
@@ -890,7 +891,7 @@ COMMAND(TimeRefresh)
 //
 //==========================================================================
 
-void V_Init(void)
+void V_Init()
 {
 	guard(V_Init);
 	int DIdx = -1;
@@ -921,7 +922,7 @@ void V_Init(void)
 //
 //==========================================================================
 
-void V_Shutdown(void)
+void V_Shutdown()
 {
 	guard(V_Shutdown);
 	if (Drawer)
@@ -932,114 +933,3 @@ void V_Shutdown(void)
 	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.36  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.35  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.34  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.33  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.32  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.31  2005/12/25 19:20:02  dj_jl
-//	Moved title screen into a class.
-//	
-//	Revision 1.30  2005/12/06 17:49:08  dj_jl
-//	Renamed sounds.
-//	
-//	Revision 1.29  2005/11/13 18:44:55  dj_jl
-//	CVar to disable drawing of particles.
-//	
-//	Revision 1.28  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.27  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.26  2004/08/21 17:22:15  dj_jl
-//	Changed rendering driver declaration.
-//	
-//	Revision 1.25  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.24  2003/03/08 12:10:13  dj_jl
-//	API fixes.
-//	
-//	Revision 1.23  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.22  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.21  2002/07/15 17:51:09  dj_jl
-//	Made VSubsystem global.
-//	
-//	Revision 1.20  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.19  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.18  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.17  2002/01/25 18:08:19  dj_jl
-//	Beautification
-//	
-//	Revision 1.16  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.15  2001/12/27 17:36:47  dj_jl
-//	Some speedup
-//	
-//	Revision 1.14  2001/11/09 14:22:09  dj_jl
-//	R_InitTexture now called from Host_init
-//	
-//	Revision 1.13  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.12  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.11  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.10  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.9  2001/08/30 17:39:51  dj_jl
-//	Moved view border and message box to progs
-//	
-//	Revision 1.8  2001/08/23 17:47:22  dj_jl
-//	Started work on pics with custom palettes
-//	
-//	Revision 1.7  2001/08/21 17:43:49  dj_jl
-//	Moved precache to r_main.cpp
-//	
-//	Revision 1.6  2001/08/15 17:29:05  dj_jl
-//	Beautification
-//	
-//	Revision 1.5  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.4  2001/08/04 17:28:26  dj_jl
-//	Removed game.h
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -206,7 +206,7 @@ byte* VSoftwareDrawer::SetPic(int handle)
 void VSoftwareDrawer::GenerateTexture(int texnum)
 {
 	guard(VSoftwareDrawer::GenerateTexture);
-	TTexture* Tex = GTextureManager.Textures[texnum];
+	VTexture* Tex = GTextureManager.Textures[texnum];
 
 	byte* block = Tex->GetPixels8();
 
@@ -233,7 +233,7 @@ void VSoftwareDrawer::GenerateTexture(int texnum)
 	{
 		memcpy((byte*)mip + sizeof(miptexture_t), block, mipw * miph);
 	}
-	Tex->MakePurgable();
+	Tex->Unload();
 	MakeMips(mip);
 
 	// Now that the texture has been built in column cache,
@@ -352,7 +352,7 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 void VSoftwareDrawer::LoadSkyMap(int texnum)
 {
 	guard(VSoftwareDrawer::LoadSkyMap);
-	TTexture* Tex = GTextureManager.Textures[texnum];
+	VTexture* Tex = GTextureManager.Textures[texnum];
 	int j;
 
 	byte* Pixels = Tex->GetPixels();
@@ -442,7 +442,7 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 		}
 	}
 	Z_ChangeTag(Tex->DriverData, PU_CACHE);
-	Tex->MakePurgable();
+	Tex->Unload();
 	unguard;
 }
 
@@ -455,7 +455,7 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int translation)
 {
 	guard(VSoftwareDrawer::GenerateSprite);
-	TTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager.Textures[lump];
 
 	int w = Tex->GetWidth();
 	int h = Tex->GetHeight();
@@ -586,7 +586,6 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int transl
 			dest++;
 		}
 	}
-	Tex->MakePurgable();
 	unguard;
 }
 
@@ -599,56 +598,12 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int transl
 void VSoftwareDrawer::GeneratePic(int texnum)
 {
 	guard(GeneratePic);
-	TTexture* Tex = GTextureManager.Textures[texnum];
+	VTexture* Tex = GTextureManager.Textures[texnum];
 	byte* Pixels = Tex->GetPixels8();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
 	byte* Block = (byte*)Z_Malloc(NumPixels, PU_STATIC, &Tex->DriverData);
 	memcpy(Block, Pixels, NumPixels);
-	Tex->MakePurgable();
+	Tex->Unload();
 	Z_ChangeTag(Block, PU_CACHE);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.14  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//
-//	Revision 1.13  2005/04/28 07:16:12  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.12  2004/11/23 12:43:10  dj_jl
-//	Wad file lump namespaces.
-//	
-//	Revision 1.11  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.10  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.9  2002/03/20 19:09:53  dj_jl
-//	DeepSea tall patches support.
-//	
-//	Revision 1.8  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/11/02 18:35:55  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.6  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.5  2001/08/23 17:47:22  dj_jl
-//	Started work on pics with custom palettes
-//	
-//	Revision 1.4  2001/08/21 17:46:08  dj_jl
-//	Added R_TextureAnimation, made SetTexture recognize flats
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -43,7 +43,7 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static byte ptex[8][8] =
+static vuint8 ptex[8][8] =
 {
 	{ 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -103,7 +103,7 @@ void VOpenGLDrawer::GenerateTextures()
 			pbuf[j][i].r = 255;
 			pbuf[j][i].g = 255;
 			pbuf[j][i].b = 255;
-			pbuf[j][i].a = byte(ptex[j][i] * 255);
+			pbuf[j][i].a = vuint8(ptex[j][i] * 255);
 		}
 	}
 	glBindTexture(GL_TEXTURE_2D, particle_texture);
@@ -300,36 +300,30 @@ void VOpenGLDrawer::SetPic(int handle)
 void VOpenGLDrawer::GenerateTexture(int texnum)
 {
 	guard(VOpenGLDrawer::GenerateTexture);
-	TTexture* Tex = GTextureManager.Textures[texnum];
+	VTexture* Tex = GTextureManager.Textures[texnum];
 
 	glGenTextures(1, (GLuint*)&Tex->DriverHandle);
 	glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
 
 	//	Try to load high resolution version.
-	int HRWidth;
-	int HRHeight;
-	rgba_t* HRPixels = Tex->GetHighResPixels(HRWidth, HRHeight);
-	if (HRPixels)
+	VTexture* SrcTex = Tex->GetHighResolutionTexture();
+	if (!SrcTex)
 	{
-		//	Use high resolution version.
-		UploadTexture(HRWidth, HRHeight, HRPixels);
-		Z_Free(HRPixels);
+		SrcTex = Tex;
+	}
+
+	//	Upload data.
+	vuint8* block = SrcTex->GetPixels();
+	if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
+	{
+		UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(), block,
+			SrcTex->GetPalette());
 	}
 	else
 	{
-		//	Use normal version.
-		byte* block = Tex->GetPixels();
-		if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal)
-		{
-			UploadTexture8(Tex->GetWidth(), Tex->GetHeight(), block,
-				Tex->GetPalette());
-		}
-		else
-		{
-			UploadTexture(Tex->GetWidth(), Tex->GetHeight(), (rgba_t*)block);
-		}
-		Tex->Unload();
+		UploadTexture(SrcTex->GetWidth(), SrcTex->GetHeight(), (rgba_t*)block);
 	}
+	SrcTex->Unload();
 
 	//	Set up texture wrapping.
 	if (Tex->Type == TEXTYPE_Wall || Tex->Type == TEXTYPE_Flat ||
@@ -360,16 +354,16 @@ void VOpenGLDrawer::GenerateTexture(int texnum)
 void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation)
 {
 	guard(VOpenGLDrawer::GenerateTranslatedSprite);
-	TTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager.Textures[lump];
 
 	trspr_lump[slot] = lump;
 	trspr_tnum[slot] = translation;
 	trspr_sent[slot] = true;
 
 	// Generate The Texture
-	byte* Pixels = Tex->GetPixels8();
-	byte* block = (byte*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight(), PU_STATIC, 0);
-	byte* trtab = translationtables + translation * 256;
+	vuint8* Pixels = Tex->GetPixels8();
+	vuint8* block = (vuint8*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight(), PU_STATIC, 0);
+	vuint8* trtab = translationtables + translation * 256;
 	for (int i = 0; i < Tex->GetWidth() * Tex->GetHeight(); i++)
 	{
 		block[i] = trtab[Pixels[i]];
@@ -399,7 +393,7 @@ void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 void VOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
 {
 	guard(VOpenGLDrawer::AdjustGamma);
-	byte *gt = gammatable[usegamma];
+	vuint8* gt = gammatable[usegamma];
 	for (int i = 0; i < size; i++)
 	{
 		data[i].r = gt[data[i].r];
@@ -419,7 +413,7 @@ void VOpenGLDrawer::AdjustGamma(rgba_t *data, int size)
 //==========================================================================
 
 void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
-	const byte *datain, int widthout, int heightout, byte *dataout)
+	const vuint8* datain, int widthout, int heightout, vuint8* dataout)
 {
 	guard(VOpenGLDrawer::ResampleTexture);
 	int i, j, k;
@@ -443,8 +437,8 @@ void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 		{
 			int jj = int(j * sx);
 
-			const byte *src = datain + (ii * widthin + jj) * 4;
-			byte *dst = dataout + (i * widthout + j) * 4;
+			const vuint8* src = datain + (ii * widthin + jj) * 4;
+			vuint8* dst = dataout + (i * widthout + j) * 4;
 
 			for (k = 0; k < 4; k++)
 			{
@@ -458,9 +452,9 @@ void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 		/* magnify both width and height:  use weighted sample of 4 pixels */
 		int i0, i1, j0, j1;
 		float alpha, beta;
-		const byte *src00, *src01, *src10, *src11;
+		const vuint8 *src00, *src01, *src10, *src11;
 		float s1, s2;
-		byte *dst;
+		vuint8* dst;
 
 		for (i = 0; i < heightout; i++)
 		{
@@ -487,7 +481,7 @@ void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 				{
 					s1 = *src00++ * (1.0-beta) + *src01++ * beta;
 					s2 = *src10++ * (1.0-beta) + *src11++ * beta;
-					*dst++ = byte(s1 * (1.0-alpha) + s2 * alpha);
+					*dst++ = vuint8(s1 * (1.0-alpha) + s2 * alpha);
 				}
 			}
 		}
@@ -499,7 +493,7 @@ void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 		int j0, j1;
 		int ii, jj;
 		int sum;
-		byte *dst;
+		vuint8* dst;
 
 		for (i = 0; i < heightout; i++)
 		{
@@ -526,7 +520,7 @@ void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 						}
 					}
 					sum /= (j1 - j0 + 1) * (i1 - i0 + 1);
-					*dst++ = byte(sum);
+					*dst++ = vuint8(sum);
 				}
 			}
 		}
@@ -543,12 +537,12 @@ void VOpenGLDrawer::ResampleTexture(int widthin, int heightin,
 //
 //==========================================================================
 
-void VOpenGLDrawer::MipMap(int width, int height, byte* InIn)
+void VOpenGLDrawer::MipMap(int width, int height, vuint8* InIn)
 {
 	guard(VOpenGLDrawer::MipMap);
-	byte* in = InIn;
+	vuint8* in = InIn;
 	int		i, j;
-	byte	*out = in;
+	vuint8* out = in;
 
 	if (width == 1 || height == 1)
 	{
@@ -556,10 +550,10 @@ void VOpenGLDrawer::MipMap(int width, int height, byte* InIn)
 		int total = width * height / 2;
 		for (i = 0; i < total; i++, in += 8, out += 4)
 		{
-			out[0] = byte((in[0] + in[4]) >> 1);
-			out[1] = byte((in[1] + in[5]) >> 1);
-			out[2] = byte((in[2] + in[6]) >> 1);
-			out[3] = byte((in[3] + in[7]) >> 1);
+			out[0] = vuint8((in[0] + in[4]) >> 1);
+			out[1] = vuint8((in[1] + in[5]) >> 1);
+			out[2] = vuint8((in[2] + in[6]) >> 1);
+			out[3] = vuint8((in[3] + in[7]) >> 1);
 		}
 		return;
 	}
@@ -571,10 +565,10 @@ void VOpenGLDrawer::MipMap(int width, int height, byte* InIn)
 	{
 		for (j = 0; j < width; j += 8, in += 8, out += 4)
 		{
-			out[0] = byte((in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2);
-			out[1] = byte((in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2);
-			out[2] = byte((in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2);
-			out[3] = byte((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
+			out[0] = vuint8((in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2);
+			out[1] = vuint8((in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2);
+			out[2] = vuint8((in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2);
+			out[3] = vuint8((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
 		}
 	}
 	unguard;
@@ -586,7 +580,7 @@ void VOpenGLDrawer::MipMap(int width, int height, byte* InIn)
 //
 //==========================================================================
 
-void VOpenGLDrawer::UploadTexture8(int Width, int Height, byte* Data,
+void VOpenGLDrawer::UploadTexture8(int Width, int Height, vuint8* Data,
 	rgba_t* Pal)
 {
 	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4, PU_STATIC, 0);
@@ -609,9 +603,9 @@ void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 {
 	guard(VOpenGLDrawer::UploadTexture);
 	int		w, h;
-	byte	*image;
+	vuint8*	image;
 	int		level;
-	byte	stackbuf[256 * 128 * 4];
+	vuint8	stackbuf[256 * 128 * 4];
 
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
@@ -630,12 +624,12 @@ void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 	}
 	else
 	{
-		image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
+		image = (vuint8*)Z_Malloc(w * h * 4, PU_HIGH, 0);
 	}
 	if (w != width || h != height)
 	{
 		/* must rescale image to get "top" mipmap texture image */
-		ResampleTexture(width, height, (byte*)data, w, h, image);
+		ResampleTexture(width, height, (vuint8*)data, w, h, image);
 	}
 	else
 	{
@@ -661,89 +655,3 @@ void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.28  2006/01/03 19:57:45  dj_jl
-//	Fixed anisotropic texture filtering.
-//
-//	Revision 1.27  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.26  2005/05/03 14:57:06  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.25  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.24  2005/03/28 07:25:40  dj_jl
-//	Changed location of hi-res 2D graphics.
-//	
-//	Revision 1.23  2005/01/24 12:53:54  dj_jl
-//	Skybox fixes.
-//	
-//	Revision 1.22  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.21  2004/11/30 07:19:00  dj_jl
-//	Support for high resolution textures.
-//	
-//	Revision 1.20  2004/11/23 12:43:10  dj_jl
-//	Wad file lump namespaces.
-//	
-//	Revision 1.19  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.18  2002/04/11 16:44:44  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.17  2002/03/20 19:09:53  dj_jl
-//	DeepSea tall patches support.
-//	
-//	Revision 1.16  2002/01/11 18:24:44  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.15  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.14  2001/11/09 14:18:40  dj_jl
-//	Added specular highlights
-//	
-//	Revision 1.13  2001/10/27 07:45:01  dj_jl
-//	Added gamma controls
-//	
-//	Revision 1.12  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.11  2001/10/04 17:23:29  dj_jl
-//	Got rid of some warnings
-//	
-//	Revision 1.10  2001/09/24 17:36:21  dj_jl
-//	Added clamping
-//	
-//	Revision 1.9  2001/09/20 15:59:43  dj_jl
-//	Fixed resampling when one dimansion doesn't change
-//	
-//	Revision 1.8  2001/08/30 17:37:39  dj_jl
-//	Using linear texture resampling
-//	
-//	Revision 1.7  2001/08/24 17:05:44  dj_jl
-//	Beautification
-//	
-//	Revision 1.6  2001/08/23 17:51:12  dj_jl
-//	My own mipmap creation code, glu not used anymore
-//	
-//	Revision 1.5  2001/08/21 17:46:08  dj_jl
-//	Added R_TextureAnimation, made SetTexture recognize flats
-//	
-//	Revision 1.4  2001/08/01 17:30:31  dj_jl
-//	Fixed translated sprites
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

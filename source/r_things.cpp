@@ -171,7 +171,7 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 	guard(InstallSpriteLump);
 	int			r;
 
-	TTexture* Tex = GTextureManager.Textures[lumpnr];
+	VTexture* Tex = GTextureManager.Textures[lumpnr];
 	if ((dword)frame >= 30 || (dword)rotation > 8)
 	{
 		Sys_Error("InstallSpriteLump: Bad frame characters in lump %s",
@@ -616,7 +616,7 @@ static void RenderSprite(VEntity* thing)
 		flip = (boolean)sprframe->flip[0];
 	}
 
-	TTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager.Textures[lump];
 	int TexWidth = Tex->GetWidth();
 	int TexHeight = Tex->GetHeight();
 	int TexSOffset = Tex->SOffset;
@@ -952,7 +952,7 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 
 	lump = sprframe->lump[0];
 	flip = (boolean)sprframe->flip[0];
-	TTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager.Textures[lump];
 
 	int TexWidth = Tex->GetWidth();
 	int TexHeight = Tex->GetHeight();
@@ -1124,7 +1124,7 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int transla
 	spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & FF_FRAMEMASK];
 	flip = (boolean)sprframe->flip[rot];
 	lump = sprframe->lump[rot];
-	TTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager.Textures[lump];
 
 	Tex->GetWidth();
 
@@ -1181,90 +1181,3 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 	Drawer->EndView();
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.28  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.27  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.26  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.25  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.24  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//	
-//	Revision 1.23  2005/11/02 22:29:26  dj_jl
-//	Offset fix enabled by default.
-//	
-//	Revision 1.22  2005/05/26 16:50:15  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.21  2005/05/03 14:57:06  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.20  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.19  2004/11/22 07:33:17  dj_jl
-//	Always check for valid sprite numbers and frames.
-//	
-//	Revision 1.18  2003/12/23 07:15:43  dj_jl
-//	Sprite offset fix
-//	
-//	Revision 1.17  2003/10/23 06:36:47  dj_jl
-//	PSprites drawn at different depths
-//	
-//	Revision 1.16  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.15  2002/07/13 07:51:49  dj_jl
-//	Replacing console's iostream with output device.
-//	
-//	Revision 1.14  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.13  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.12  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.11  2001/10/27 07:46:14  dj_jl
-//	Fixed sprite rotations
-//	
-//	Revision 1.10  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.9  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.8  2001/08/31 17:28:47  dj_jl
-//	Tried to fix weapon model position when dead
-//	
-//	Revision 1.7  2001/08/15 17:21:47  dj_jl
-//	Added model drawing for menu
-//	
-//	Revision 1.6  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.5  2001/08/04 17:29:11  dj_jl
-//	Added depth hack for weapon models
-//	
-//	Revision 1.4  2001/08/01 17:33:58  dj_jl
-//	Fixed drawing of spite lump for player setup menu, beautification
-//	
-//	Revision 1.3  2001/07/31 17:11:56  dj_jl
-//	Some fixes in model rendering
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -175,20 +175,20 @@ void VDirect3DDrawer::InitTextures()
 	guard(VDirect3DDrawer::InitTextures);
 #if DIRECT3D_VERSION >= 0x0800
 	//	Sprite lumps
-	trsprdata = (LPDIRECT3DTEXTURE8*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4);
+	trsprdata = (LPDIRECT3DTEXTURE8*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4, PU_STATIC, 0);
 
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
-	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
-	add_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
+	add_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
 #else
 	//	Sprite lumps
-	trsprdata = (LPDIRECTDRAWSURFACE7*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4);
+	trsprdata = (LPDIRECTDRAWSURFACE7*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4, PU_STATIC, 0);
 
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
-	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
-	add_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
+	add_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
 #endif
 	unguard;
 }
@@ -391,30 +391,26 @@ void VDirect3DDrawer::SetPic(int handle)
 void VDirect3DDrawer::GenerateTexture(int texnum)
 {
 	guard(VDirect3DDrawer::GenerateTexture);
-	TTexture* Tex = GTextureManager.Textures[texnum];
+	VTexture* Tex = GTextureManager.Textures[texnum];
 
-	int HRWidth;
-	int HRHeight;
-	rgba_t* HRPixels = Tex->GetHighResPixels(HRWidth, HRHeight);
-	if (HRPixels)
+	VTexture* SrcTex = Tex->GetHighResolutionTexture();
+	if (!SrcTex)
 	{
-		Tex->DriverData = UploadTexture(HRWidth, HRHeight, HRPixels);
-		Z_Free(HRPixels);
-		return;
+		SrcTex = Tex;
 	}
 
-	byte* block = Tex->GetPixels();
-	if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal)
+	byte* block = SrcTex->GetPixels();
+	if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
 	{
-		Tex->DriverData = UploadTexture8(Tex->GetWidth(),
-			Tex->GetHeight(), block, Tex->GetPalette());
+		Tex->DriverData = UploadTexture8(SrcTex->GetWidth(),
+			SrcTex->GetHeight(), block, SrcTex->GetPalette());
 	}
 	else
 	{
-		Tex->DriverData = UploadTexture(Tex->GetWidth(),
-			Tex->GetHeight(), (rgba_t*)block);
+		Tex->DriverData = UploadTexture(SrcTex->GetWidth(),
+			SrcTex->GetHeight(), (rgba_t*)block);
 	}
-	Tex->Unload();
+	SrcTex->Unload();
 	unguard;
 }
 
@@ -428,7 +424,7 @@ void VDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot,
 	int translation)
 {
 	guard(VDirect3DDrawer::GenerateTranslatedSprite);
-	TTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager.Textures[lump];
 
 	trsprlump[slot] = lump;
 	trsprtnum[slot] = translation;
@@ -738,7 +734,7 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture8(int Width, int Height,
 	byte* Data, rgba_t* Pal)
 #endif
 {
-	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4, PU_STATIC, 0);
+	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4, PU_STATIC, 0, PU_STATIC, 0);
 	for (int i = 0; i < Width * Height; i++)
 	{
 		if (Data[i])
@@ -865,89 +861,3 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, rgba_
 	return surf;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.28  2005/08/13 14:17:45  dj_jl
-//	Fixed freeing of translated sprite.
-//
-//	Revision 1.27  2005/07/05 22:52:10  dj_jl
-//	Fixes to compile under M$VC
-//	
-//	Revision 1.26  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.25  2005/03/28 07:25:40  dj_jl
-//	Changed location of hi-res 2D graphics.
-//	
-//	Revision 1.24  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.23  2004/11/30 07:19:00  dj_jl
-//	Support for high resolution textures.
-//	
-//	Revision 1.22  2004/11/23 12:43:10  dj_jl
-//	Wad file lump namespaces.
-//	
-//	Revision 1.21  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.20  2002/03/28 17:55:08  dj_jl
-//	Added wrapping/clamping.
-//	
-//	Revision 1.19  2002/03/20 19:09:53  dj_jl
-//	DeepSea tall patches support.
-//	
-//	Revision 1.18  2002/01/15 18:30:43  dj_jl
-//	Some fixes and improvements suggested by Malcolm Nixon
-//	
-//	Revision 1.17  2002/01/11 18:24:44  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.16  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.15  2001/11/09 14:18:40  dj_jl
-//	Added specular highlights
-//	
-//	Revision 1.14  2001/11/02 18:35:54  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.13  2001/10/27 07:45:01  dj_jl
-//	Added gamma controls
-//	
-//	Revision 1.12  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.11  2001/10/04 17:22:05  dj_jl
-//	My overloaded matrix, beautification
-//	
-//	Revision 1.10  2001/09/20 15:59:43  dj_jl
-//	Fixed resampling when one dimansion doesn't change
-//	
-//	Revision 1.9  2001/09/14 16:48:22  dj_jl
-//	Switched to DirectX 8
-//	
-//	Revision 1.8  2001/08/30 17:37:39  dj_jl
-//	Using linear texture resampling
-//	
-//	Revision 1.7  2001/08/24 17:03:57  dj_jl
-//	Added mipmapping, removed bumpmap test code
-//	
-//	Revision 1.6  2001/08/23 17:47:57  dj_jl
-//	Started work on mipmapping
-//	
-//	Revision 1.5  2001/08/21 17:46:08  dj_jl
-//	Added R_TextureAnimation, made SetTexture recognize flats
-//	
-//	Revision 1.4  2001/08/02 17:47:44  dj_jl
-//	Support skins with non-power of 2 dimensions
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

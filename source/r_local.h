@@ -99,11 +99,6 @@ struct fakefloor_t
 void R_RenderWorld();
 
 //
-//	r_model
-//
-void LoadPNGLump(int LumpNum, void** bufptr);
-
-//
 // R_Things
 //
 void R_RenderMobjs();
@@ -145,7 +140,7 @@ dword R_LightPoint(const TVec &p);
 //
 extern int      		screenblocks;
 extern int				r_visframecount;
-extern subsector_t		*r_viewleaf;
+extern subsector_t*		r_viewleaf;
 
 extern byte				light_remap[256];
 extern VCvarI			r_darken;
@@ -154,58 +149,4 @@ extern refdef_t			refdef;
 
 extern VCvarI			old_aspect;
 
-extern int				SkinWidth;
-extern int				SkinHeight;
-extern int				SkinBPP;
-extern byte*			SkinData;
-extern rgba_t			SkinPal[256];
-
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.14  2005/06/30 20:20:55  dj_jl
-//	Implemented rendering of Boom fake flats.
-//	
-//	Revision 1.13  2005/05/30 18:34:03  dj_jl
-//	Added support for IMGZ and PNG lump textures
-//	
-//	Revision 1.12  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.11  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.10  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.9  2002/07/13 07:39:08  dj_jl
-//	Removed back to front drawing.
-//	
-//	Revision 1.8  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.7  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/11/09 14:22:09  dj_jl
-//	R_InitTexture now called from Host_init
-//	
-//	Revision 1.5  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.4  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
