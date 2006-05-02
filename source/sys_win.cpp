@@ -60,10 +60,10 @@
 
 extern "C" {
 
-void MaskExceptions(void);
-void Sys_SetFPCW(void);
-void Sys_PushFPCW_SetHigh(void);
-void Sys_PopFPCW(void);
+void MaskExceptions();
+void Sys_SetFPCW();
+void Sys_PushFPCW_SetHigh();
+void Sys_PopFPCW();
 
 } // extern "C"
 
@@ -259,7 +259,7 @@ VStr Sys_ReadDir()
 //
 //==========================================================================
 
-void Sys_CloseDir(void)
+void Sys_CloseDir()
 {
     FindClose(dir_handle);
 }
@@ -308,7 +308,7 @@ void Sys_MakeCodeWriteable(unsigned long startaddr, unsigned long length)
 //
 //==========================================================================
 
-double Sys_Time(void)
+double Sys_Time()
 {
 	static int			sametimecount;
 	LARGE_INTEGER		PerformanceCount;
@@ -417,7 +417,7 @@ static void Sys_InitTime()
 //
 //==========================================================================
 
-void Sys_Shutdown(void)
+void Sys_Shutdown()
 {
 	CoUninitialize();
 	ShowCursor(TRUE);
@@ -437,7 +437,7 @@ void Sys_Shutdown(void)
 //
 //==========================================================================
 
-void Sys_Quit(void)
+void Sys_Quit(const char*)
 {
 	dprintf("==========================================================================\n");
 	dprintf("			Shuting down VAVOOM\n");
@@ -588,7 +588,7 @@ static void signal_handler(int s)
 //
 //==========================================================================
 
-char *Sys_ConsoleInput(void)
+char *Sys_ConsoleInput()
 {
 //FIXME
 	return NULL;
@@ -676,27 +676,27 @@ void SleepUntilInput(int time)
 
 #ifndef USEASM
 
-void MaskExceptions(void)
+void MaskExceptions()
 {
 }
 
-void Sys_SetFPCW(void)
+void Sys_SetFPCW()
 {
 }
 
-void Sys_PushFPCW_SetHigh(void)
+void Sys_PushFPCW_SetHigh()
 {
 }
 
-void Sys_PopFPCW(void)
+void Sys_PopFPCW()
 {
 }
 
-void Sys_LowFPPrecision(void)
+void Sys_LowFPPrecision()
 {
 }
 
-void Sys_HighFPPrecision(void)
+void Sys_HighFPPrecision()
 {
 }
 
@@ -816,7 +816,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 				if (msg.message == WM_QUIT)
 				{
 					dprintf("Quit message\n");
-					Sys_Quit();
+					Sys_Quit(NULL);
 				}
 				else if (!win_sys_keys && (msg.message == WM_SYSKEYDOWN ||
 					msg.message == WM_SYSKEYUP))
@@ -870,84 +870,3 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 	}
 #endif
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.26  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.25  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.24  2006/02/26 14:45:57  dj_jl
-//	Fix compilation with newer version DirectX headers.
-//	
-//	Revision 1.23  2005/10/02 23:13:22  dj_jl
-//	New Windows MIDI driver.
-//	
-//	Revision 1.22  2005/09/14 12:04:21  dj_jl
-//	Created CD audio device class.
-//	
-//	Revision 1.21  2005/05/26 16:59:45  dj_jl
-//	Lowercased include
-//	
-//	Revision 1.20  2002/11/02 17:09:55  dj_jl
-//	Some debugging stuff.
-//	
-//	Revision 1.19  2002/07/23 13:12:00  dj_jl
-//	Some compatibility fixes, beautification.
-//	
-//	Revision 1.18  2002/06/14 15:38:52  dj_jl
-//	All GUIDs are declared here.
-//	
-//	Revision 1.17  2002/04/11 16:40:57  dj_jl
-//	Safe core dumps.
-//	
-//	Revision 1.16  2002/02/22 18:09:52  dj_jl
-//	Some improvements, beautification.
-//	
-//	Revision 1.15  2002/01/11 18:25:14  dj_jl
-//	Beautification
-//	
-//	Revision 1.14  2002/01/11 08:12:49  dj_jl
-//	Changes for MinGW
-//	
-//	Revision 1.13  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.12  2002/01/03 18:38:25  dj_jl
-//	Added guard macros and core dumps
-//	
-//	Revision 1.11  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.10  2001/12/04 18:11:59  dj_jl
-//	Fixes for compiling with MSVC
-//	
-//	Revision 1.9  2001/12/01 17:52:52  dj_jl
-//	no message
-//	
-//	Revision 1.8  2001/11/09 14:19:42  dj_jl
-//	Functions for directory listing
-//	
-//	Revision 1.7  2001/10/08 17:26:17  dj_jl
-//	Started to use exceptions
-//	
-//	Revision 1.6  2001/10/04 17:23:29  dj_jl
-//	Got rid of some warnings
-//	
-//	Revision 1.5  2001/09/20 16:27:43  dj_jl
-//	Improved zone allocation
-//	
-//	Revision 1.4  2001/08/29 17:49:36  dj_jl
-//	Added file time functions
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

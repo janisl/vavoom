@@ -188,10 +188,10 @@ int Sys_FileExists(const VStr& filename)
 int	Sys_FileTime(const VStr& path)
 {
 	struct	stat	buf;
-	
+
 	if (stat(*path, &buf) == -1)
 		return -1;
-	
+
 	return buf.st_mtime;
 }
 
@@ -240,7 +240,7 @@ VStr Sys_ReadDir()
 //
 //==========================================================================
 
-void Sys_CloseDir(void)
+void Sys_CloseDir()
 {
 	closedir(current_dir);
 }
@@ -254,10 +254,10 @@ void Sys_CloseDir(void)
 bool Sys_DirExists(const VStr& path)
 {
 	struct stat s;
-	
+
 	if (stat(*path, &s) == -1)
 		return false;
-	
+
 	return !!S_ISDIR(s.st_mode);
 }
 
@@ -267,20 +267,20 @@ bool Sys_DirExists(const VStr& path)
 //
 //==========================================================================
 
-double Sys_Time(void)
+double Sys_Time()
 {
-    struct timeval		tp;
-    struct timezone		tzp;
-    static int			secbase = 0;
+	struct timeval		tp;
+	struct timezone		tzp;
+	static int			secbase = 0;
 
-    gettimeofday(&tp, &tzp);  
+	gettimeofday(&tp, &tzp);  
 
-    if (!secbase)
-    {
-        secbase = tp.tv_sec;
-    }
+	if (!secbase)
+	{
+		secbase = tp.tv_sec;
+	}
 
-    return (tp.tv_sec - secbase) + tp.tv_usec / 1000000.0;
+	return (tp.tv_sec - secbase) + tp.tv_usec / 1000000.0;
 }
 
 //==========================================================================
@@ -289,12 +289,12 @@ double Sys_Time(void)
 //
 //==========================================================================
 
-char *Sys_ConsoleInput(void)
+char *Sys_ConsoleInput()
 {
-    static char		text[256];
-    int				len;
+	static char		text[256];
+	int				len;
 	fd_set			fdset;
-    struct timeval	timeout;
+	struct timeval	timeout;
 
 	FD_ZERO(&fdset);
 	FD_SET(0, &fdset); // stdin
@@ -323,13 +323,13 @@ char *Sys_ConsoleInput(void)
 void* Sys_ZoneBase(int* size)
 {
 	int			heap;
-    void*		ptr;
+	void*		ptr;
 	// Maximum allocated for zone heap (13meg default)
 	int			maxzone = 0xd00000;
 
 	const char* p = GArgs.CheckValue("-maxzone");
 	if (p)
-    {
+	{
 		maxzone = (int)(atof(p) * 0x100000);
 		if (maxzone < MINIMUM_HEAP_SIZE)
 			maxzone = MINIMUM_HEAP_SIZE;
@@ -359,7 +359,7 @@ void* Sys_ZoneBase(int* size)
 		Sys_Error("Insufficient memory!");
 
 	*size = heap;
-    return ptr;
+	return ptr;
 }
 
 //==========================================================================
@@ -371,12 +371,12 @@ void* Sys_ZoneBase(int* size)
 //
 //==========================================================================
 
-void Sys_Quit(void)
+void Sys_Quit(const char*)
 {
-    // Shutdown system
+	// Shutdown system
 	Host_Shutdown();
 
-    // Exit
+	// Exit
 	exit(0);
 }
 
@@ -406,7 +406,7 @@ void Sys_Error(const char *error, ...)
 //
 //==========================================================================
 
-void Sys_Shutdown(void)
+void Sys_Shutdown()
 {
 }
 
@@ -538,36 +538,3 @@ int main(int argc, char** argv)
 		throw;
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.9  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.8  2003/10/22 06:15:00  dj_jl
-//	Safer handling of signals in Linux
-//	
-//	Revision 1.7  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/11/09 14:19:42  dj_jl
-//	Functions for directory listing
-//	
-//	Revision 1.5  2001/10/08 17:26:17  dj_jl
-//	Started to use exceptions
-//	
-//	Revision 1.4  2001/08/29 17:49:36  dj_jl
-//	Added file time functions
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

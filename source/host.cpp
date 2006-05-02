@@ -544,7 +544,44 @@ COMMAND(Quit)
 	// Save game configyration
 	Host_SaveConfiguration();
 #endif
-	Sys_Quit();
+
+	//	Get the lump with the end text.
+	//	If option -noendtxt is set, don't print the text.
+	bool GotEndText = false;
+	char EndText[80 * 25 * 2];
+	if (!GArgs.CheckParm("-noendtxt"))
+	{
+		//	Find end text lump.
+		VStream* Strm = NULL;
+		if (W_CheckNumForName(NAME_endoom) >= 0)
+		{
+			Strm = W_CreateLumpReaderName(NAME_endoom);
+		}
+		else if (W_CheckNumForName(NAME_endtext) >= 0)
+		{
+			Strm = W_CreateLumpReaderName(NAME_endtext);
+		}
+		else if (W_CheckNumForName(NAME_endstrf) >= 0)
+		{
+			Strm = W_CreateLumpReaderName(NAME_endstrf);
+		}
+
+		//	Read it, if found.
+		if (Strm)
+		{
+			int Len = 80 * 25 * 2;
+			if (Strm->TotalSize() < Len)
+			{
+				memset(EndText, 0, Len);
+				Len = Strm->TotalSize();
+			}
+			Strm->Serialise(EndText, Len);
+			delete Strm;
+			GotEndText = true;
+		}
+	}
+
+	Sys_Quit(GotEndText ? EndText : NULL);
 }
 
 //==========================================================================
@@ -631,115 +668,3 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(VName::StaticExit, ())
 	SAFE_SHUTDOWN(Z_Shutdown, ())
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.36  2006/04/12 18:53:19  dj_jl
-//	Dedicated server fix.
-//
-//	Revision 1.35  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//	Revision 1.34  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.33  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.32  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.31  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.30  2006/01/29 20:41:30  dj_jl
-//	On Unix systems use ~/.vavoom for generated files.
-//	
-//	Revision 1.29  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.28  2005/11/05 14:57:36  dj_jl
-//	Putting Strife shareware voices in correct namespace.
-//	
-//	Revision 1.27  2005/05/26 16:54:21  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.26  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.25  2002/08/28 16:42:04  dj_jl
-//	Configurable entity limit.
-//	
-//	Revision 1.24  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.23  2002/07/23 13:10:37  dj_jl
-//	Some fixes for switching to floating-point time.
-//	
-//	Revision 1.22  2002/05/29 16:53:27  dj_jl
-//	Got rid of a warning.
-//	
-//	Revision 1.21  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.20  2002/04/11 16:40:57  dj_jl
-//	Safe core dumps.
-//	
-//	Revision 1.19  2002/02/22 18:09:51  dj_jl
-//	Some improvements, beautification.
-//	
-//	Revision 1.18  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.17  2002/01/04 18:22:13  dj_jl
-//	Beautification
-//	
-//	Revision 1.16  2002/01/03 18:38:25  dj_jl
-//	Added guard macros and core dumps
-//	
-//	Revision 1.15  2001/12/27 17:37:42  dj_jl
-//	Added garbage collection
-//	
-//	Revision 1.14  2001/12/18 19:05:03  dj_jl
-//	Made VCvar a pure C++ class
-//	
-//	Revision 1.13  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.12  2001/11/09 14:22:09  dj_jl
-//	R_InitTexture now called from Host_init
-//	
-//	Revision 1.11  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.10  2001/10/08 17:26:17  dj_jl
-//	Started to use exceptions
-//	
-//	Revision 1.9  2001/10/04 17:20:25  dj_jl
-//	Saving config using streams
-//	
-//	Revision 1.8  2001/09/24 17:35:24  dj_jl
-//	Support for thinker classes
-//	
-//	Revision 1.7  2001/08/31 17:28:00  dj_jl
-//	Removed RANGECHECK
-//	
-//	Revision 1.6  2001/08/30 17:46:21  dj_jl
-//	Removed game dependency
-//	
-//	Revision 1.5  2001/08/21 17:41:33  dj_jl
-//	Removed -devmaps option
-//	
-//	Revision 1.4  2001/08/04 17:25:14  dj_jl
-//	Moved title / demo loop to progs
-//	Removed shareware / ExtendedWAD from engine
-//	
-//	Revision 1.3  2001/07/31 17:07:41  dj_jl
-//	Changes for filesystem and localising demo loop
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -223,7 +223,7 @@ VStr Sys_ReadDir()
 //
 //==========================================================================
 
-void Sys_CloseDir(void)
+void Sys_CloseDir()
 {
     FindClose(dir_handle);
 }
@@ -250,7 +250,7 @@ bool Sys_DirExists(const VStr& path)
 //
 //==========================================================================
 
-void Sys_Shutdown(void)
+void Sys_Shutdown()
 {
 }
 
@@ -263,12 +263,12 @@ void Sys_Shutdown(void)
 //
 //==========================================================================
 
-void Sys_Quit(void)
+void Sys_Quit(const char*)
 {
 	// Shutdown system
 	Host_Shutdown();
 
-    // Exit
+	// Exit
 	exit(0);
 }
 
@@ -369,7 +369,7 @@ void signal_handler(int s)
 //
 //==========================================================================
 
-double Sys_Time(void)
+double Sys_Time()
 {
 	double t;
     struct timeb tstruct;
@@ -390,7 +390,7 @@ double Sys_Time(void)
 //
 //==========================================================================
 
-char *Sys_ConsoleInput(void)
+char *Sys_ConsoleInput()
 {
 	static char	text[256];
 	static int		len;
@@ -477,36 +477,3 @@ int main(int argc, char **argv)
 		throw;
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.9  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.8  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.6  2001/11/09 14:19:42  dj_jl
-//	Functions for directory listing
-//	
-//	Revision 1.5  2001/10/08 17:26:17  dj_jl
-//	Started to use exceptions
-//	
-//	Revision 1.4  2001/08/29 17:49:36  dj_jl
-//	Added file time functions
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

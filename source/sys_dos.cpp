@@ -54,9 +54,9 @@ extern "C" {
 
 void	__djgpp_traceback_exit(int _sig) __attribute__((noreturn));
 
-void Sys_SetFPCW(void);
-void Sys_PushFPCW_SetHigh(void);
-void Sys_PopFPCW(void);
+void Sys_SetFPCW();
+void Sys_PushFPCW_SetHigh();
+void Sys_PopFPCW();
 
 }
 
@@ -225,7 +225,7 @@ VStr Sys_ReadDir()
 //
 //==========================================================================
 
-void Sys_CloseDir(void)
+void Sys_CloseDir()
 {
 	closedir(current_dir);
 }
@@ -322,7 +322,7 @@ static void Sys_InitTime()
 //
 //==========================================================================
 
-double Sys_Time(void)
+double Sys_Time()
 {
     int				r;
     unsigned		t, tick;
@@ -366,7 +366,7 @@ double Sys_Time(void)
 //
 //==========================================================================
 
-char *Sys_ConsoleInput(void)
+char *Sys_ConsoleInput()
 {
 	static char	text[256];
 	static int	len = 0;
@@ -413,7 +413,7 @@ char *Sys_ConsoleInput(void)
 //
 //==========================================================================
 
-void Sys_Shutdown(void)
+void Sys_Shutdown()
 {
 	allegro_exit();
 
@@ -432,30 +432,16 @@ void Sys_Shutdown(void)
 //
 //==========================================================================
 
-void Sys_Quit()
+void Sys_Quit(const char* EndText)
 {
 	// Shutdown system
 	Host_Shutdown();
 
 	// Throw the end text at the screen
-	if (W_CheckNumForName(NAME_endoom) >= 0)
+	if (EndText)
 	{
-		puttext(1, 1, 80, 25, W_CacheLumpName(NAME_endoom, PU_CACHE));
+		puttext(1, 1, 80, 25, EndText);
 		gotoxy(1, 24);
-	}
-	else if (W_CheckNumForName(NAME_endtext) >= 0)
-	{
-		puttext(1, 1, 80, 25, W_CacheLumpName(NAME_endtext, PU_CACHE));
-		gotoxy(1, 24);
-	}
-	else if (W_CheckNumForName(NAME_endstrf) >= 0)
-	{
-		puttext(1, 1, 80, 25, W_CacheLumpName(NAME_endstrf, PU_CACHE));
-		gotoxy(1, 24);
-	}
-	else
-	{
-		printf("\nHexen: Beyound Heretic");
 	}
 
 	// Exit
@@ -553,53 +539,53 @@ void* Sys_ZoneBase(int* size)
 static void signal_handler(int s)
 {
 #ifdef DEVELOPER
-    // Ignore future instances of this signal.
+	// Ignore future instances of this signal.
 	signal(s, SIG_IGN);
 
 	//	Print signal type in debug file
 	switch (s)
-    {
-       case SIGABRT:
-            dprintf("Aborted\n");
-            break;
-       case SIGFPE:
-            dprintf("Floating Point Exception\n");
-            break;
-       case SIGILL:
-            dprintf("Illegal Instruction\n");
-            break;
-       case SIGINT:
-            dprintf("Interrupted by User\n");
-            break;
-       case SIGSEGV:
-            dprintf("Segmentation Violation\n");
-            break;
-       case SIGTERM:
-            dprintf("Terminated\n");
-            break;
-       case SIGKILL:
-            dprintf("Killed\n");
-            break;
-       case SIGQUIT:
-            dprintf("Quited\n");
-            break;
-       case SIGNOFP:
-            dprintf("VAVOOM requires a floating-point processor\n");
-            break;
-       default:
-            dprintf("Terminated by signal\n");
-    }
+	{
+	case SIGABRT:
+		dprintf("Aborted\n");
+		break;
+	case SIGFPE:
+		dprintf("Floating Point Exception\n");
+		break;
+	case SIGILL:
+		dprintf("Illegal Instruction\n");
+		break;
+	case SIGINT:
+		dprintf("Interrupted by User\n");
+		break;
+	case SIGSEGV:
+		dprintf("Segmentation Violation\n");
+		break;
+	case SIGTERM:
+		dprintf("Terminated\n");
+		break;
+	case SIGKILL:
+		dprintf("Killed\n");
+		break;
+	case SIGQUIT:
+		dprintf("Quited\n");
+		break;
+	case SIGNOFP:
+		dprintf("VAVOOM requires a floating-point processor\n");
+		break;
+	default:
+		dprintf("Terminated by signal\n");
+	}
 
-    //	Shutdown game
+	//	Shutdown game
 	Host_Shutdown();
 
-    //	Set default signal handlers
+	//	Set default signal handlers
 	__djgpp_exception_toggle();
 
-    //	Exit with default signal handler (with traceback)
+	//	Exit with default signal handler (with traceback)
 	raise(s);
 
-    //	In a case if default signal handler doesn't exit from program
+	//	In a case if default signal handler doesn't exit from program
 	exit(1);
 #else
 	// Ignore future instances of this signal.
@@ -608,27 +594,27 @@ static void signal_handler(int s)
 	//	Exit with error message
 	switch (s)
 	{
-	 case SIGABRT:
+	case SIGABRT:
 		throw VavoomError("Aborted");
-	 case SIGFPE:
+	case SIGFPE:
 		throw VavoomError("Floating Point Exception");
-	 case SIGILL:
+	case SIGILL:
 		throw VavoomError("Illegal Instruction");
-	 case SIGINT:
+	case SIGINT:
 		throw VavoomError("Interrupted by User");
-	 case SIGSEGV:
+	case SIGSEGV:
 		throw VavoomError("Segmentation Violation");
-	 case SIGTERM:
+	case SIGTERM:
 		throw VavoomError("Terminated");
-	 case SIGKILL:
+	case SIGKILL:
 		throw VavoomError("Killed");
-	 case SIGQUIT:
+	case SIGQUIT:
 		throw VavoomError("Quited");
-	 case SIGNOFP:
+	case SIGNOFP:
 		throw VavoomError("VAVOOM requires a floating-point processor");
-	 default:
+	default:
 		throw VavoomError("Terminated by signal");
-    }
+	}
 #endif
 }
 
@@ -640,7 +626,7 @@ static void signal_handler(int s)
 //
 //==========================================================================
 
-extern "C" void PR_Profile2(void);
+extern "C" void PR_Profile2();
 
 int main(int argc,char** argv)
 {
@@ -700,57 +686,3 @@ int main(int argc,char** argv)
 
     return 0;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.17  2006/04/16 17:29:43  dj_jl
-//	Fixed compilation.
-//
-//	Revision 1.16  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//	Revision 1.15  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.14  2006/03/02 23:24:36  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.13  2002/04/11 16:43:58  dj_jl
-//	Removed limiting of memory for OpenGL.
-//	
-//	Revision 1.12  2002/01/25 18:06:53  dj_jl
-//	Little changes for progs profiling
-//	
-//	Revision 1.11  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.10  2001/12/18 19:08:12  dj_jl
-//	Beautification
-//	
-//	Revision 1.9  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.8  2001/11/09 14:19:42  dj_jl
-//	Functions for directory listing
-//	
-//	Revision 1.7  2001/10/08 17:26:17  dj_jl
-//	Started to use exceptions
-//	
-//	Revision 1.6  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.5  2001/08/29 17:49:36  dj_jl
-//	Added file time functions
-//	
-//	Revision 1.4  2001/08/15 17:28:11  dj_jl
-//	Added -mem option
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

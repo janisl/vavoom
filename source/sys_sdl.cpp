@@ -327,12 +327,11 @@ void Sys_Shutdown()
 //
 //==========================================================================
 
-static void PutEndText(VName name)
+static void PutEndText(const char* text)
 {
 	int i, j;
 	int att = -1;
 	int nlflag = 0;
-	char *text;
 	char *col;
 
 	//	If option -noendtxt is set, don't print the text.
@@ -348,9 +347,6 @@ static void PutEndText(VName name)
 	}
 	else
 		nlflag++;
-
-	//	Get the lump with the text.
-	text = (char*)W_CacheLumpName(name, PU_CACHE);
 
 	/* print 80x25 text and deal with the attributes too */
 	for (i = 1; i <= 80 * 25; i++, text += 2)
@@ -398,7 +394,7 @@ static void PutEndText(VName name)
 //
 //==========================================================================
 
-void Sys_Quit()
+void Sys_Quit(const char* EndText)
 {
 	// Shutdown system
 	Host_Shutdown();
@@ -406,21 +402,9 @@ void Sys_Quit()
 	SDL_Quit();
 
 	// Throw the end text at the screen
-	if (W_CheckNumForName(NAME_endoom) >= 0)
+	if (EndText)
 	{
-		PutEndText(NAME_endoom);
-	}
-	else if (W_CheckNumForName(NAME_endtext) >= 0)
-	{
-		PutEndText(NAME_endtext);
-	}
-	else if (W_CheckNumForName(NAME_endstrf) >= 0)
-	{
-		PutEndText(NAME_endstrf);
-	}
-	else
-	{
-		printf("\nHexen: Beyound Heretic\n");
+		PutEndText(EndText);
 	}
 
 	// Exit
@@ -442,7 +426,7 @@ void Sys_Quit()
 #define handle_stack_address(X) \
 	if (continue_stack_trace && ((unsigned long)__builtin_frame_address((X)) != 0L) && ((X) < MAX_STACK_ADDR)) \
 	{ \
-		stack_addr[(X)]= (unsigned long)__builtin_return_address((X)); \
+		stack_addr[(X)]= __builtin_return_address((X)); \
 		dprintf("stack %d %8p frame %d %8p\n", \
 			(X), __builtin_return_address((X)), (X), __builtin_frame_address((X))); \
 	} \
@@ -455,14 +439,14 @@ static void stack_trace()
 {
 	FILE			*fff;
 	int				i;
-	static dword	stack_addr[MAX_STACK_ADDR];
+	static void*	stack_addr[MAX_STACK_ADDR];
 	// can we still print entries on the calling stack or have we finished?
 	static bool		continue_stack_trace = true;
 
 	// clean the stack addresses if necessary
 	for (i = 0; i < MAX_STACK_ADDR; i++)
 	{
-		stack_addr[i] = (unsigned long)0;
+		stack_addr[i] = 0;
 	}
 
 	dprintf("STACK TRACE:\n\n");
@@ -509,7 +493,7 @@ static void stack_trace()
 	handle_stack_address(39);
 
 	// Give a warning
-	//	fprintf(stderr, "You suddenly see a gruesome SOFTWARE BUG leap for your throat!\n");
+	//fprintf(stderr, "You suddenly see a gruesome SOFTWARE BUG leap for your throat!\n");
 
 	// Open the non-existing file
 	fff = fopen("crash.txt", "w");
@@ -520,7 +504,7 @@ static void stack_trace()
 		// dump stack frame
 		for (i = (MAX_STACK_ADDR - 1); i >= 0 ; i--)
 		{
-			fprintf(fff,"%x\n", stack_addr[i]);
+			fprintf(fff,"%8p\n", stack_addr[i]);
 		}
 		fclose(fff);
 	}
@@ -758,48 +742,3 @@ int main(int argc,char** argv)
 		throw;
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.13  2006/04/15 12:36:51  dj_jl
-//	Fixes for compiling on BeOS.
-//
-//	Revision 1.12  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//	Revision 1.11  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.10  2006/03/02 23:24:36  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.9  2006/02/10 22:17:00  dj_jl
-//	Some platform fixes.
-//	
-//	Revision 1.8  2006/02/02 22:55:30  dj_jl
-//	Some FreeBSD fixes.
-//	
-//	Revision 1.7  2005/05/26 16:59:21  dj_jl
-//	Initial heap size
-//	
-//	Revision 1.6  2005/04/28 07:16:16  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.5  2004/12/27 12:23:17  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.4  2004/10/11 06:53:16  dj_jl
-//	In end text characters below space are replaced with dots.
-//	
-//	Revision 1.3  2003/10/22 06:15:00  dj_jl
-//	Safer handling of signals in Linux
-//	
-//	Revision 1.2  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2002/01/03 18:39:42  dj_jl
-//	Added SDL port
-//	
-//**************************************************************************
