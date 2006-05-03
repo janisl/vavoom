@@ -1003,7 +1003,7 @@ static void PlaySong(const char* Song, bool Loop)
 	else if (GMidiDevice)
 	{
 		int Length = Strm->TotalSize();
-		void* Data = Z_Malloc(Length, PU_MUSIC, NULL);
+		void* Data = Z_Malloc(Length, PU_STATIC, NULL);
 		Strm->Seek(0);
 		Strm->Serialise(Data, Length);
 		Strm->Close();
@@ -1506,7 +1506,7 @@ static bool convert(VStream& Strm)
 
 	Strm.Seek((word)LittleShort(MUSh.ScoreStart));
 
-	tracks[0].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_MUSIC, 0);
+	tracks[0].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_STATIC, 0);
 	TWriteBuf(0, midikey, 6);
 	TWriteBuf(0, miditempo, 7);
 
@@ -1522,7 +1522,7 @@ static bool convert(VStream& Strm)
 			MIDIchannel = MUS2MIDchannel[MUSchannel] =
 				(MUSchannel == 15 ? 9 : FirstChannelAvailable());
 			MIDItrack = MIDIchan2track[MIDIchannel] = TrackCnt++;
-			tracks[MIDItrack].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_MUSIC, 0);
+			tracks[MIDItrack].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_STATIC, 0);
 		}
 		else
 		{
@@ -1869,99 +1869,3 @@ bool VStreamMusicPlayer::IsPlaying()
 	return false;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.31  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.30  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.29  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.28  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.27  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.26  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.25  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.24  2005/11/17 18:53:21  dj_jl
-//	Implemented support for sndinfo extensions.
-//	
-//	Revision 1.23  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.22  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.21  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.20  2005/11/02 22:28:09  dj_jl
-//	Added support for FLAC music.
-//	
-//	Revision 1.19  2005/10/29 15:05:13  dj_jl
-//	Added MikMod driver.
-//	
-//	Revision 1.18  2005/10/28 17:50:01  dj_jl
-//	Added Timidity driver.
-//	
-//	Revision 1.17  2005/10/22 11:30:07  dj_jl
-//	Fixed looping of streams.
-//	
-//	Revision 1.16  2005/10/18 20:53:04  dj_jl
-//	Implemented basic support for streamed music.
-//	
-//	Revision 1.15  2005/09/13 17:32:45  dj_jl
-//	Created CD audio device class.
-//	
-//	Revision 1.14  2005/09/12 19:45:16  dj_jl
-//	Created midi device class.
-//	
-//	Revision 1.13  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.12  2004/11/30 07:17:17  dj_jl
-//	Made string pointers const.
-//	
-//	Revision 1.11  2004/08/21 19:10:44  dj_jl
-//	Changed sound driver declaration.
-//	
-//	Revision 1.10  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.9  2003/03/08 12:10:13  dj_jl
-//	API fixes.
-//	
-//	Revision 1.8  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.7  2002/07/23 13:12:00  dj_jl
-//	Some compatibility fixes, beautification.
-//	
-//	Revision 1.6  2002/07/20 14:49:41  dj_jl
-//	Implemented sound drivers.
-//	
-//	Revision 1.5  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.4  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

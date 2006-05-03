@@ -151,10 +151,7 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			(((long)&finalstverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
 	pauxverts = &auxverts[0];
 
-	pmdl = (mmdl_t *)Mod_Extradata(model);
-
-	// Hack to make sure that skin loading doesn't free model
-	Z_ChangeTag(pmdl, PU_STATIC);
+	pmdl = (mmdl_t*)Mod_Extradata(model);
 
 	AliasSetupSkin(skin_index, skin);
 	AliasSetUpTransform(angles, frame, a_trivial_accept);
@@ -173,9 +170,6 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		AliasPrepareUnclippedPoints();
 	else
 		AliasPreparePoints();
-
-	// Make it cachable again
-	Z_ChangeTag(pmdl, PU_CACHE);
 	unguard;
 }
 
@@ -531,7 +525,7 @@ void VSoftwareDrawer::AliasSetupFrame(int frame)
 //
 //==========================================================================
 
-void VSoftwareDrawer::AliasPrepareUnclippedPoints(void)
+void VSoftwareDrawer::AliasPrepareUnclippedPoints()
 {
 	mstvert_t	*pstverts;
 	finalvert_t	*fv;
@@ -565,7 +559,7 @@ void VSoftwareDrawer::AliasPrepareUnclippedPoints(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::AliasPreparePoints(void)
+void VSoftwareDrawer::AliasPreparePoints()
 {
 	int			i;
 	mstvert_t	*pstverts;
@@ -799,62 +793,3 @@ extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.19  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.18  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//	
-//	Revision 1.17  2005/11/20 10:39:57  dj_jl
-//	Fixed skin index check.
-//	
-//	Revision 1.16  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.15  2005/05/03 14:57:00  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.14  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.13  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.12  2002/03/20 19:11:20  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.11  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.10  2001/12/18 19:01:34  dj_jl
-//	Changes for MSVC asm
-//	
-//	Revision 1.9  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.8  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.7  2001/08/15 17:12:23  dj_jl
-//	Optimized model drawing
-//	
-//	Revision 1.6  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.5  2001/08/04 17:29:11  dj_jl
-//	Added depth hack for weapon models
-//	
-//	Revision 1.4  2001/08/02 17:45:37  dj_jl
-//	Added support for colored lit and translucent models
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

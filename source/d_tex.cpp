@@ -86,6 +86,7 @@ void VSoftwareDrawer::FlushTextureCaches()
 		if (sprite_cache[i].data)
 		{
 			Z_Free(sprite_cache[i].data);
+			sprite_cache[i].data = NULL;
 		}
 	}
 
@@ -169,6 +170,7 @@ void VSoftwareDrawer::SetSpriteLump(int lump, dword light, int translation)
 	if (avail < 0)
 	{
 		Z_Free(sprite_cache[sprite_cache_count].data);
+		sprite_cache[sprite_cache_count].data = NULL;
 		avail = sprite_cache_count;
 		sprite_cache_count = (sprite_cache_count + 1) % SPRITE_CACHE_SIZE;
 	}
@@ -235,10 +237,6 @@ void VSoftwareDrawer::GenerateTexture(int texnum)
 	}
 	Tex->Unload();
 	MakeMips(mip);
-
-	// Now that the texture has been built in column cache,
-	//  it is purgable from zone memory.
-	Z_ChangeTag(mip, PU_CACHE);
 	unguard;
 }
 
@@ -357,7 +355,7 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 
 	byte* Pixels = Tex->GetPixels();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	Z_Malloc(NumPixels * PixelBytes, PU_STATIC, &Tex->DriverData);
+	Tex->DriverData = Z_Malloc(NumPixels * PixelBytes, PU_STATIC, 0);
 	if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal)
 	{
 		// Load paletted skymap
@@ -441,7 +439,6 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 			}
 		}
 	}
-	Z_ChangeTag(Tex->DriverData, PU_CACHE);
 	Tex->Unload();
 	unguard;
 }
@@ -462,8 +459,8 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int transl
 
 	byte* SrcBlock = Tex->GetPixels8();
 
-    void *block = (byte*)Z_Calloc(w * h * PixelBytes, PU_CACHE,
-    	&sprite_cache[slot].data);
+	void *block = (byte*)Z_Calloc(w * h * PixelBytes, PU_STATIC, 0);
+	sprite_cache[slot].data = block;
 	sprite_cache[slot].light = light;
 	sprite_cache[slot].lump = lump;
 	sprite_cache[slot].tnum = translation;
@@ -601,9 +598,8 @@ void VSoftwareDrawer::GeneratePic(int texnum)
 	VTexture* Tex = GTextureManager.Textures[texnum];
 	byte* Pixels = Tex->GetPixels8();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	byte* Block = (byte*)Z_Malloc(NumPixels, PU_STATIC, &Tex->DriverData);
-	memcpy(Block, Pixels, NumPixels);
+	Tex->DriverData = (byte*)Z_Malloc(NumPixels, PU_STATIC, 0);
+	memcpy(Tex->DriverData, Pixels, NumPixels);
 	Tex->Unload();
-	Z_ChangeTag(Block, PU_CACHE);
 	unguard;
 }

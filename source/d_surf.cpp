@@ -399,9 +399,6 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface, int texture1,
 
 	if (texture2)
 	{
-		// Make sure that texture will be not freed
-		Z_ChangeTag(dsky_mt1, PU_STATIC);
-
 		SetTexture(texture2);
 		dsky_mt2 = miptexture;
 		dsky_offs2 = (-(int)offs2) & (dsky_mt2->width - 1);

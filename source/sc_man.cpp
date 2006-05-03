@@ -44,7 +44,7 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void CheckOpen(void);
+static void CheckOpen();
 static void OpenScript(const char *name, int LumpNum, int type);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -151,14 +151,14 @@ static void OpenScript(const char *name, int LumpNum, int type)
 	if (type == LUMP_SCRIPT)
 	{
 		// Lump script
-		ScriptBuffer = (char*)W_CacheLumpName(VName(name, VName::AddLower8), PU_HIGH);
+		ScriptBuffer = (char*)W_CacheLumpName(VName(name, VName::AddLower8), PU_STATIC);
 		ScriptSize = W_LumpLength(W_GetNumForName(VName(name, VName::AddLower8)));
 		ScriptName = name;
 	}
 	else if (type == LUMP_NUM_SCRIPT)
 	{
 		// Lump num script
-		ScriptBuffer = (char*)W_CacheLumpNum(LumpNum, PU_HIGH);
+		ScriptBuffer = (char*)W_CacheLumpNum(LumpNum, PU_STATIC);
 		ScriptSize = W_LumpLength(LumpNum);
 		ScriptName = name;
 	}
@@ -184,7 +184,7 @@ static void OpenScript(const char *name, int LumpNum, int type)
 //
 //==========================================================================
 
-void SC_Close(void)
+void SC_Close()
 {
 	guard(SC_Close);
 	if (ScriptOpen)
@@ -201,7 +201,7 @@ void SC_Close(void)
 //
 //==========================================================================
 
-boolean SC_GetString(void)
+boolean SC_GetString()
 {
 	guard(SC_GetString);
 	char 	*text;
@@ -302,7 +302,7 @@ boolean SC_GetString(void)
 //
 //==========================================================================
 
-void SC_MustGetString(void)
+void SC_MustGetString()
 {
 	guard(SC_MustGetString);
 	if (SC_GetString() == false)
@@ -335,7 +335,7 @@ void SC_MustGetStringName(const char *name)
 //
 //==========================================================================
 
-boolean SC_CheckNumber(void)
+boolean SC_CheckNumber()
 {
 	guard(SC_CheckNumber);
 	char *stopper;
@@ -364,7 +364,7 @@ boolean SC_CheckNumber(void)
 //
 //==========================================================================
 
-boolean SC_GetNumber(void)
+boolean SC_GetNumber()
 {
 	guard(SC_GetNumber);
 	char *stopper;
@@ -393,7 +393,7 @@ boolean SC_GetNumber(void)
 //
 //==========================================================================
 
-void SC_MustGetNumber(void)
+void SC_MustGetNumber()
 {
 	guard(SC_MustGetNumber);
 	if (SC_GetNumber() == false)
@@ -409,7 +409,7 @@ void SC_MustGetNumber(void)
 //
 //==========================================================================
 
-boolean SC_CheckFloat(void)
+boolean SC_CheckFloat()
 {
 	guard(SC_CheckFloat);
 	char *stopper;
@@ -438,7 +438,7 @@ boolean SC_CheckFloat(void)
 //
 //==========================================================================
 
-boolean SC_GetFloat(void)
+boolean SC_GetFloat()
 {
 	guard(SC_GetFloat);
 	char *stopper;
@@ -467,7 +467,7 @@ boolean SC_GetFloat(void)
 //
 //==========================================================================
 
-void SC_MustGetFloat(void)
+void SC_MustGetFloat()
 {
 	guard(SC_MustGetFloat);
 	if (SC_GetFloat() == false)
@@ -485,7 +485,7 @@ void SC_MustGetFloat(void)
 //
 //==========================================================================
 
-void SC_UnGet(void)
+void SC_UnGet()
 {
 	guard(SC_UnGet);
 	AlreadyGot = true;
@@ -501,7 +501,7 @@ void SC_UnGet(void)
 //==========================================================================
 
 /*
-boolean SC_Check(void)
+boolean SC_Check()
 {
 	char *text;
 
@@ -610,7 +610,7 @@ void SC_ScriptError(const char *message)
 //
 //==========================================================================
 
-static void CheckOpen(void)
+static void CheckOpen()
 {
 	guard(CheckOpen);
 	if (ScriptOpen == false)
@@ -619,35 +619,3 @@ static void CheckOpen(void)
 	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//
-//	Revision 1.9  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.8  2005/07/03 12:07:37  dj_jl
-//	Fixed opening of lump num scripts.
-//	
-//	Revision 1.7  2005/05/03 15:00:11  dj_jl
-//	Moved switch list, animdefs enhancements.
-//	
-//	Revision 1.6  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.4  2001/08/04 17:27:39  dj_jl
-//	Added consts to script functions
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -1030,7 +1030,7 @@ void VLevel::LoadThings1(int Lump)
 
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 	NumThings = W_LumpLength(Lump) / sizeof(mapthing1_t);
-	Things = Z_CNew(mthing_t, NumThings, PU_HIGH, 0);
+	Things = Z_CNew(mthing_t, NumThings, PU_STATIC, 0);
 
 	mt = (mapthing1_t *)data;
 	mth = Things;
@@ -1062,7 +1062,7 @@ void VLevel::LoadThings2(int Lump)
 
 	data = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
 	NumThings = W_LumpLength(Lump) / sizeof(mapthing2_t);
-	Things = Z_CNew(mthing_t, NumThings, PU_HIGH, 0);
+	Things = Z_CNew(mthing_t, NumThings, PU_STATIC, 0);
 
 	mt = (mapthing2_t *)data;
 	mth = Things;
@@ -1202,7 +1202,7 @@ inline void VLevel::AddToBox(float* box, float x, float y) const
 //
 //==========================================================================
 
-void VLevel::GroupLines(void) const
+void VLevel::GroupLines() const
 {
 	guard(VLevel::GroupLines);
 	line_t ** linebuffer;
@@ -1336,8 +1336,10 @@ void VLevel::LoadRogueConScript(VName LumpName, FRogueConSpeech *&SpeechList,
 
 	//	Load them.
 	SpeechList = (FRogueConSpeech *)Z_Malloc(W_LumpLength(LumpNum), PU_LEVEL, 0);
-	memcpy(SpeechList, W_CacheLumpNum(LumpNum, PU_CACHE), W_LumpLength(LumpNum));
+	void* Src = W_CacheLumpNum(LumpNum, PU_STATIC);
+	memcpy(SpeechList, Src, W_LumpLength(LumpNum));
 	NumSpeeches = W_LumpLength(LumpNum) / sizeof(FRogueConSpeech);
+	Z_Free(Src);
 
 	for (int i = 0; i < NumSpeeches; i++)
 	{
@@ -1550,60 +1552,3 @@ IMPLEMENT_FUNCTION(VLevel, PointInSector)
 	VLevel *Self = (VLevel *)PR_Pop();
     PR_Push((int)Self->PointInSubsector(Point)->sector);
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.17  2006/04/11 18:28:20  dj_jl
-//	Removed Strife specific mapinfo extensions.
-//
-//	Revision 1.16  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//	Revision 1.15  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.14  2006/03/07 17:48:18  dj_jl
-//	Fixed vis data check.
-//	
-//	Revision 1.13  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.12  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.11  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.10  2006/02/26 20:52:48  dj_jl
-//	Proper serialisation of level and players.
-//	
-//	Revision 1.9  2006/02/13 18:34:34  dj_jl
-//	Moved all server progs global functions to classes.
-//	
-//	Revision 1.8  2006/02/11 12:21:10  dj_jl
-//	Byte swap Strife conversation lumps.
-//	
-//	Revision 1.7  2005/11/14 19:34:16  dj_jl
-//	Added support for version 5 GL nodes.
-//	
-//	Revision 1.6  2005/05/26 16:52:29  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.5  2005/03/28 07:28:19  dj_jl
-//	Transfer lighting and other BOOM stuff.
-//	
-//	Revision 1.4  2004/12/03 16:15:46  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.3  2004/10/11 15:55:43  dj_jl
-//	Support for version 3 GL nodes and ACS helpers.
-//	
-//	Revision 1.2  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.1  2002/09/07 16:34:23  dj_jl
-//	Added Level class.
-//	
-//**************************************************************************

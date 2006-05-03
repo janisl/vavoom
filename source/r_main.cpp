@@ -39,14 +39,14 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void R_InitData(void);
+void R_InitData();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-void R_InitParticles(void);
-void R_ClearParticles(void);
+void R_InitParticles();
+void R_ClearParticles();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -85,6 +85,8 @@ VDrawer					*Drawer;
 refdef_t				refdef;
 
 float					PixelAspect;
+
+vuint8*					r_playpal;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -135,7 +137,7 @@ FDrawerDesc::FDrawerDesc(int Type, const char* AName, const char* ADescription,
 //
 //==========================================================================
 
-void R_Init(void)
+void R_Init()
 {
 	guard(R_Init);
 	R_InitSkyBoxes();
@@ -226,7 +228,7 @@ COMMAND(SizeUp)
 //
 //==========================================================================
 
-static void R_ExecuteSetViewSize(void)
+static void R_ExecuteSetViewSize()
 {
 	guard(R_ExecuteSetViewSize);
     set_resolutioon_needed = false;
@@ -310,7 +312,7 @@ void R_DrawViewBorder()
 //
 //==========================================================================
 
-static void R_TransformFrustum(void)
+static void R_TransformFrustum()
 {
 	guard(R_TransformFrustum);
 	for (int i = 0; i < 4; i++)
@@ -342,7 +344,7 @@ VCvarF			r_chase_up("r_chase_up", "32.0", CVAR_Archive);
 VCvarF			r_chase_right("r_chase_right", "0", CVAR_Archive);
 VCvarI			r_chase_front("r_chase_front", "0", CVAR_Archive);
 
-static void R_SetupFrame(void)
+static void R_SetupFrame()
 {
 	guard(R_SetupFrame);
     // change the view size if needed
@@ -401,7 +403,7 @@ static void R_SetupFrame(void)
 //
 //==========================================================================
 
-static void R_MarkLeaves(void)
+static void R_MarkLeaves()
 {
 	guard(R_MarkLeaves);
 	byte	*vis;
@@ -483,7 +485,7 @@ void R_InitParticles()
 //
 //==========================================================================
 
-void R_ClearParticles(void)
+void R_ClearParticles()
 {
 	guard(R_ClearParticles);
 	int		i;
@@ -503,7 +505,7 @@ void R_ClearParticles(void)
 //
 //==========================================================================
 
-particle_t *R_NewParticle(void)
+particle_t *R_NewParticle()
 {
 	guard(R_NewParticle);
 	if (!free_particles)
@@ -836,6 +838,12 @@ void R_InitData()
 			}
 		}
 	}
+
+	//	Load entire palette for palette effects.
+	r_playpal = (vuint8*)Z_Malloc(Strm->TotalSize(), PU_STATIC, 0);
+	Strm->Seek(0);
+	Strm->Serialise(r_playpal, Strm->TotalSize());
+
 	delete Strm;
 
 	InitTranslationTables();

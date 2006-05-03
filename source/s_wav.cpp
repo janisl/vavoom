@@ -179,7 +179,7 @@ void VWaveSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 	Sfx.SampleRate = SampleRate;
 	Sfx.SampleBits = WavBits;
 	Sfx.DataSize = (DataSize / BlockAlign) * (WavBits/ 8);
-	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_SOUND, &Sfx.Data);
+	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_STATIC, 0);
 
 	//	Read wav data.
 	void* WavData = Z_Malloc(DataSize, PU_STATIC, 0);
@@ -364,20 +364,3 @@ VAudioCodec* VWavAudioCodec::Create(VStream* InStrm)
 	return NULL;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//
-//	Revision 1.3  2005/11/06 15:27:46  dj_jl
-//	Added support for wave format sounds.
-//	
-//	Revision 1.2  2005/11/03 23:59:15  dj_jl
-//	Properly implemented wave reading.
-//	
-//	Revision 1.1  2005/10/18 20:53:04  dj_jl
-//	Implemented basic support for streamed music.
-//	
-//**************************************************************************

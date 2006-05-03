@@ -624,7 +624,7 @@ void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 	}
 	else
 	{
-		image = (vuint8*)Z_Malloc(w * h * 4, PU_HIGH, 0);
+		image = (vuint8*)Z_Malloc(w * h * 4, PU_STATIC, 0);
 	}
 	if (w != width || h != height)
 	{

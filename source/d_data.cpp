@@ -248,7 +248,7 @@ void VSoftwareDrawer::SetPalette(int InNum)
 		GCon->Logf(NAME_Dev, "Invalid palette num %d", num);
 		num = 0;
 	}
-	byte *pal = (byte*)W_CacheLumpName(NAME_playpal, PU_CACHE) + num * 768;
+	vuint8 *pal = r_playpal + num * 768;
 	if (ScreenBPP == 8)
 	{
 		SetPalette8(pal);
@@ -345,7 +345,7 @@ void VSoftwareDrawer::InitData()
 //
 //==========================================================================
 
-void VSoftwareDrawer::UpdatePalette(void)
+void VSoftwareDrawer::UpdatePalette()
 {
 	guard(VSoftwareDrawer::UpdatePalette);
 	int		i, j;
@@ -425,12 +425,12 @@ void VSoftwareDrawer::UpdatePalette(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::NewMap(void)
+void VSoftwareDrawer::NewMap()
 {
 	guard(VSoftwareDrawer::NewMap);
 	if (fadetable != colormaps)
 	{
-		Z_ChangeTag(fadetable, PU_CACHE);
+		Z_Free(fadetable);
 	}
 
 	if (r_fog)
@@ -463,50 +463,3 @@ void VSoftwareDrawer::NewMap(void)
 	FlushCaches(false);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//
-//	Revision 1.14  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.13  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.12  2005/04/28 07:16:12  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.11  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.10  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.9  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.8  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/11/02 18:35:54  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.6  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.5  2001/08/23 17:47:22  dj_jl
-//	Started work on pics with custom palettes
-//	
-//	Revision 1.4  2001/08/15 17:27:17  dj_jl
-//	Truecolor translucency with lookup table
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -783,7 +783,6 @@ bool S_LoadSound(int sound_id)
 			return false;
 		}
 	}
-	Z_ChangeTag(S_sfx[sound_id].Data, PU_SOUND);
 	S_sfx[sound_id].UseCount++;
 	return true;
 	unguard;
@@ -810,9 +809,6 @@ void S_DoneWithLump(int sound_id)
 		//	still used
 		return;
 	}
-
-	//	Make data cachable
-	Z_ChangeTag(sfx.Data, PU_CACHE);
 	unguard;
 }
 
@@ -839,7 +835,7 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 	Sfx.SampleBits = 8;
 	Sfx.SampleRate = LittleShort(Hdr.SampleRate);
 	Sfx.DataSize = LittleLong(Hdr.DataSize);
-	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_SOUND, &Sfx.Data);
+	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_STATIC, 0);
 	Strm.Serialise(Sfx.Data, Sfx.DataSize);
 	unguard;
 }

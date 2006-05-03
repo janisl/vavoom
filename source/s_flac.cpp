@@ -138,7 +138,7 @@ void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	guard(VFlacSampleLoader::Load);
 	//	Create reader sream.
 	FStream* Strm = new FStream(Stream);
-	Strm->Data = Z_Malloc(1, PU_SOUND, &Sfx.Data);
+	Strm->Data = Z_Malloc(1, PU_STATIC, 0);
 	Strm->init();
 	Strm->process_until_end_of_metadata();
 	if (!Strm->SampleRate)
@@ -588,23 +588,3 @@ VAudioCodec* VFlacAudioCodec::Create(VStream* InStream)
 	return new VFlacAudioCodec(Strm);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/02/26 14:13:04  dj_jl
-//	Renamed variable to avoid conflicts.
-//
-//	Revision 1.4  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.3  2005/11/06 15:28:16  dj_jl
-//	Added support for FLAC format sounds.
-//	
-//	Revision 1.2  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.1  2005/11/02 22:28:09  dj_jl
-//	Added support for FLAC music.
-//	
-//**************************************************************************

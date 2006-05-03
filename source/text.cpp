@@ -93,7 +93,7 @@ static int				LastY;
 //
 //==========================================================================
 
-void T_Init(void)
+void T_Init()
 {
 	guard(T_Init);
 	// Load fonts
@@ -158,7 +158,6 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 			}
 		}
 	}
-	Z_FreeTag(PU_CACHE);
 }
 
 //==========================================================================
@@ -203,7 +202,6 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 			}
 		}
 	}
-	Z_FreeTag(PU_CACHE);
 }
 
 //==========================================================================
@@ -582,7 +580,7 @@ int T_DrawTextW(int x, int y, const char* String, int w)
 //
 //==========================================================================
 
-void T_DrawCursor(void)
+void T_DrawCursor()
 {
  	T_DrawCursorAt(LastX, LastY);
 }
@@ -661,59 +659,3 @@ void T_DrawString8(int x, int y, const char* String)
 	LastY = cy;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.18  2006/03/02 23:24:36  dj_jl
-//	Wad lump names stored as names.
-//
-//	Revision 1.17  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.16  2006/01/10 19:32:27  dj_jl
-//	Fix for long notify messages.
-//	
-//	Revision 1.15  2005/05/26 16:52:29  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.14  2004/08/18 18:05:47  dj_jl
-//	Support for higher virtual screen resolutions.
-//	
-//	Revision 1.13  2003/09/26 16:58:42  dj_jl
-//	Wrapped text printing
-//	
-//	Revision 1.12  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.11  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.10  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.9  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.8  2001/10/12 17:30:25  dj_jl
-//	Seperate function for drawing text to virtual 640x480 screen
-//	
-//	Revision 1.7  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.6  2001/09/27 17:34:22  dj_jl
-//	Fixed bug with input line
-//	
-//	Revision 1.5  2001/09/12 17:34:09  dj_jl
-//	Added consts
-//	
-//	Revision 1.4  2001/08/30 17:44:07  dj_jl
-//	Removed memory leaks after startup
-//	
-//	Revision 1.3  2001/07/31 17:12:43  dj_jl
-//	Fixed cursor for empty strings
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

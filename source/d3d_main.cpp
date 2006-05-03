@@ -1124,7 +1124,7 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 void VDirect3DDrawer::SetPalette(int pnum)
 {
 	guard(VDirect3DDrawer::SetPalette);
-	rgb_t* pal = (rgb_t*)W_CacheLumpName(NAME_playpal, PU_CACHE);
+	rgb_t* pal = (rgb_t*)r_playpal;
 
 	pal += 256 * pnum;
 	int cmax = MAX(MAX(pal[0].r, pal[0].g), pal[0].b);
@@ -1140,90 +1140,3 @@ void VDirect3DDrawer::SetPalette(int pnum)
 	cl->prev_cshifts[7] = cl->cshifts[7];
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.28  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.27  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.26  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.25  2004/08/21 17:22:15  dj_jl
-//	Changed rendering driver declaration.
-//	
-//	Revision 1.24  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.23  2004/04/08 15:19:40  dj_jl
-//	Windowed mode
-//	
-//	Revision 1.22  2003/10/22 06:13:52  dj_jl
-//	Freeing old blocks on overflow
-//	
-//	Revision 1.21  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.20  2002/01/11 18:24:44  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.19  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.18  2001/12/18 19:05:03  dj_jl
-//	Made VCvar a pure C++ class
-//	
-//	Revision 1.17  2001/11/09 14:18:40  dj_jl
-//	Added specular highlights
-//	
-//	Revision 1.16  2001/10/27 07:45:01  dj_jl
-//	Added gamma controls
-//	
-//	Revision 1.15  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.14  2001/10/12 17:28:26  dj_jl
-//	Blending of sprite borders
-//	
-//	Revision 1.13  2001/10/04 17:22:05  dj_jl
-//	My overloaded matrix, beautification
-//	
-//	Revision 1.12  2001/09/14 16:48:22  dj_jl
-//	Switched to DirectX 8
-//	
-//	Revision 1.11  2001/09/12 17:31:27  dj_jl
-//	Rectangle drawing and direct update for plugins
-//	
-//	Revision 1.10  2001/08/31 17:25:38  dj_jl
-//	Anisotropy filtering
-//	
-//	Revision 1.9  2001/08/29 17:47:55  dj_jl
-//	Added texture filtering variables
-//	
-//	Revision 1.8  2001/08/24 17:03:57  dj_jl
-//	Added mipmapping, removed bumpmap test code
-//	
-//	Revision 1.7  2001/08/15 17:15:55  dj_jl
-//	Drawer API changes, removed wipes
-//	
-//	Revision 1.6  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.5  2001/08/04 17:29:54  dj_jl
-//	Fixed fog, beautification
-//	
-//	Revision 1.4  2001/08/01 17:40:09  dj_jl
-//	Fixed check for sprite sorting, beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

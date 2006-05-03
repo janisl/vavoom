@@ -243,7 +243,7 @@ static VModel* Mod_LoadModel(VModel* mod)
 	//
 	// load the file
 	//
-	if (FL_ReadFile(mod->name, &mod->data, PU_CACHE) < 0)
+	if (FL_ReadFile(mod->name, &mod->data, PU_STATIC) < 0)
 		Sys_Error("Couldn't load %s", mod->name);
 	
 	if (LittleLong(*(unsigned *)mod->data) != IDPOLY2HEADER)

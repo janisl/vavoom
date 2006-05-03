@@ -799,7 +799,7 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, rgba_
 	}
 	else
 	{
-		image = (byte*)Z_Malloc(w * h * 4, PU_HIGH, 0);
+		image = (byte*)Z_Malloc(w * h * 4, PU_STATIC, 0);
 	}
 	if (w != width || h != height)
 	{

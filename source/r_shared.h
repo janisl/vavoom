@@ -192,4 +192,6 @@ extern byte				gammatable[5][256];
 
 extern float			PixelAspect;
 
+extern vuint8*			r_playpal;
+
 #endif

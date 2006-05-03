@@ -68,7 +68,7 @@ VCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_Ar
 //
 //==========================================================================
 
-void VOpenGLDrawer::InitResolution(void)
+void VOpenGLDrawer::InitResolution()
 {
 	guard(VOpenGLDrawer::InitResolution);
 	GCon->Logf(NAME_Init, "GL_VENDOR: %s", glGetString(GL_VENDOR));
@@ -205,7 +205,7 @@ bool VOpenGLDrawer::CheckExtension(const char *ext)
 //
 //==========================================================================
 
-void VOpenGLDrawer::NewMap(void)
+void VOpenGLDrawer::NewMap()
 {
 	FlushCaches(false);
 }
@@ -216,7 +216,7 @@ void VOpenGLDrawer::NewMap(void)
 //
 //==========================================================================
 
-void VOpenGLDrawer::Setup2D(void)
+void VOpenGLDrawer::Setup2D()
 {
 	guard(VOpenGLDrawer::Setup2D);
 	glViewport(0, 0, ScreenWidth, ScreenHeight);
@@ -246,7 +246,7 @@ void VOpenGLDrawer::Setup2D(void)
 //
 //==========================================================================
 
-void VOpenGLDrawer::StartUpdate(void)
+void VOpenGLDrawer::StartUpdate()
 {
 	guard(VOpenGLDrawer::StartUpdate);
 	glFinish();
@@ -296,7 +296,7 @@ void VOpenGLDrawer::StartUpdate(void)
 //
 //==========================================================================
 
-void VOpenGLDrawer::BeginDirectUpdate(void)
+void VOpenGLDrawer::BeginDirectUpdate()
 {
 	guard(VOpenGLDrawer::BeginDirectUpdate);
 	glFinish();
@@ -310,7 +310,7 @@ void VOpenGLDrawer::BeginDirectUpdate(void)
 //
 //==========================================================================
 
-void VOpenGLDrawer::EndDirectUpdate(void)
+void VOpenGLDrawer::EndDirectUpdate()
 {
 	guard(VOpenGLDrawer::EndDirectUpdate);
 	glDrawBuffer(GL_BACK);
@@ -400,7 +400,7 @@ void VOpenGLDrawer::SetupView(const refdef_t *rd)
 //
 //==========================================================================
 
-void VOpenGLDrawer::EndView(void)
+void VOpenGLDrawer::EndView()
 {
 	guard(VOpenGLDrawer::EndView);
 	Setup2D();
@@ -466,7 +466,7 @@ void *VOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 void VOpenGLDrawer::SetPalette(int pnum)
 {
 	guard(VOpenGLDrawer::SetPalette);
-	byte* pal = (byte*)W_CacheLumpName(NAME_playpal, PU_CACHE) + 768 * pnum;
+	vuint8* pal = r_playpal + 768 * pnum;
 	int cmax = MAX(MAX(pal[0], pal[1]), pal[2]);
 	if (!cmax)
 	{
@@ -480,88 +480,3 @@ void VOpenGLDrawer::SetPalette(int pnum)
 	cl->prev_cshifts[7] = cl->cshifts[7];
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.27  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.26  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.25  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.24  2006/01/03 19:57:45  dj_jl
-//	Fixed anisotropic texture filtering.
-//	
-//	Revision 1.23  2005/01/24 12:53:54  dj_jl
-//	Skybox fixes.
-//	
-//	Revision 1.22  2004/08/21 17:22:15  dj_jl
-//	Changed rendering driver declaration.
-//	
-//	Revision 1.21  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.20  2003/10/22 06:13:52  dj_jl
-//	Freeing old blocks on overflow
-//	
-//	Revision 1.19  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.18  2002/01/11 18:24:44  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.17  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.16  2001/12/01 17:47:23  dj_jl
-//	Forced GL_POLYGON_SMOOTH to be disabled (possibly this caused those white
-//	dots around polygons)
-//	
-//	Revision 1.15  2001/11/09 14:18:40  dj_jl
-//	Added specular highlights
-//	
-//	Revision 1.14  2001/10/27 07:45:01  dj_jl
-//	Added gamma controls
-//	
-//	Revision 1.13  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.12  2001/10/12 17:28:26  dj_jl
-//	Blending of sprite borders
-//	
-//	Revision 1.11  2001/09/14 16:53:17  dj_jl
-//	Added glFinish to direct update
-//	
-//	Revision 1.10  2001/09/12 17:31:27  dj_jl
-//	Rectangle drawing and direct update for plugins
-//	
-//	Revision 1.9  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.8  2001/08/31 17:25:38  dj_jl
-//	Anisotropy filtering
-//	
-//	Revision 1.7  2001/08/23 17:50:15  dj_jl
-//	Texture filtering mode set in globals
-//	
-//	Revision 1.6  2001/08/15 17:15:55  dj_jl
-//	Drawer API changes, removed wipes
-//	
-//	Revision 1.5  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.4  2001/08/04 17:32:04  dj_jl
-//	Added support for multitexture extensions
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

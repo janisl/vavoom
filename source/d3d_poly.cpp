@@ -512,7 +512,7 @@ void VDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 //
 //==========================================================================
 
-void VDirect3DDrawer::WorldDrawing(void)
+void VDirect3DDrawer::WorldDrawing()
 {
 	guard(VDirect3DDrawer::WorldDrawing);
 	MyD3DVertex		out[256];
@@ -746,7 +746,7 @@ void VDirect3DDrawer::WorldDrawing(void)
 //
 //==========================================================================
 
-void VDirect3DDrawer::BeginSky(void)
+void VDirect3DDrawer::BeginSky()
 {
 	guard(VDirect3DDrawer::BeginSky);
 #if DIRECT3D_VERSION >= 0x0800
@@ -866,7 +866,7 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 //
 //==========================================================================
 
-void VDirect3DDrawer::EndSky(void)
+void VDirect3DDrawer::EndSky()
 {
 	guard(VDirect3DDrawer::EndSky);
 	if (r_fog)
@@ -1053,9 +1053,6 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 	pmdl = (mmdl_t *)Mod_Extradata(model);
 
-	// Hack to make sure that skin loading doesn't free model
-	Z_ChangeTag(pmdl, PU_STATIC);
-
 	//
 	// draw all the triangles
 	//
@@ -1176,9 +1173,6 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 #endif
 		RenderDevice->SetViewport(&viewData);
 	}
-
-	// Make it cachable again
-	Z_ChangeTag(pmdl, PU_CACHE);
 	unguard;
 }
 
@@ -1188,7 +1182,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 //
 //==========================================================================
 
-void VDirect3DDrawer::StartParticles(void)
+void VDirect3DDrawer::StartParticles()
 {
 	guard(VDirect3DDrawer::StartParticles);
 	if (!particle_texture)
@@ -1247,7 +1241,7 @@ void VDirect3DDrawer::DrawParticle(particle_t *p)
 //
 //==========================================================================
 
-void VDirect3DDrawer::EndParticles(void)
+void VDirect3DDrawer::EndParticles()
 {
 	guard(VDirect3DDrawer::EndParticles);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
@@ -1255,101 +1249,3 @@ void VDirect3DDrawer::EndParticles(void)
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.32  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.31  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//	
-//	Revision 1.30  2005/11/20 10:39:57  dj_jl
-//	Fixed skin index check.
-//	
-//	Revision 1.29  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.28  2005/05/03 14:57:00  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.27  2005/01/24 12:53:54  dj_jl
-//	Skybox fixes.
-//	
-//	Revision 1.26  2004/10/08 12:37:39  dj_jl
-//	Better rendering of old skies.
-//	
-//	Revision 1.25  2004/02/09 17:29:26  dj_jl
-//	Old blocks free fix
-//	
-//	Revision 1.24  2003/10/22 06:13:52  dj_jl
-//	Freeing old blocks on overflow
-//	
-//	Revision 1.23  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.22  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.21  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.20  2002/03/02 17:32:33  dj_jl
-//	Fixed specular lights when fog is enabled.
-//	
-//	Revision 1.19  2002/01/11 18:24:44  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.18  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.17  2001/11/09 14:18:40  dj_jl
-//	Added specular highlights
-//	
-//	Revision 1.16  2001/11/02 18:35:54  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.15  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.14  2001/10/12 17:28:26  dj_jl
-//	Blending of sprite borders
-//	
-//	Revision 1.13  2001/10/09 17:21:39  dj_jl
-//	Added sky begining and ending functions
-//	
-//	Revision 1.12  2001/10/04 17:22:05  dj_jl
-//	My overloaded matrix, beautification
-//	
-//	Revision 1.11  2001/09/14 16:48:22  dj_jl
-//	Switched to DirectX 8
-//	
-//	Revision 1.10  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.9  2001/08/29 17:47:55  dj_jl
-//	Added texture filtering variables
-//	
-//	Revision 1.8  2001/08/24 17:03:57  dj_jl
-//	Added mipmapping, removed bumpmap test code
-//	
-//	Revision 1.7  2001/08/21 17:46:08  dj_jl
-//	Added R_TextureAnimation, made SetTexture recognize flats
-//	
-//	Revision 1.6  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.5  2001/08/04 17:29:11  dj_jl
-//	Added depth hack for weapon models
-//	
-//	Revision 1.4  2001/08/01 17:36:11  dj_jl
-//	Added alpha test to the particle drawing
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

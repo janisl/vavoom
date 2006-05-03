@@ -2325,7 +2325,7 @@ vuint8* VTgaTexture::GetPixels()
 	else
 	{
 		Format = TEXFMT_RGBA;
-		Pixels = (byte*)Z_Malloc(Width * Height * 4, PU_HIGH, 0);
+		Pixels = (byte*)Z_Malloc(Width * Height * 4, PU_STATIC, 0);
 	}
 
 	if (hdr.img_type == 1 && hdr.bpp == 8 && hdr.pal_type == 1)
@@ -2910,14 +2910,14 @@ void VPngTexture::Unload()
 #ifdef CLIENT
 //==========================================================================
 //
-//  WritePCXfile
+//  WritePCX
 //
 //==========================================================================
 
-void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
-				  byte* palette, bool bot2top)
+void WritePCX(char* filename, void* data, int width, int height, int bpp,
+	bool bot2top)
 {
-	guard(WritePCXfile);
+	guard(WritePCX);
 	int i;
 	int j;
 
@@ -2966,7 +2966,12 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 		// write the palette
 		byte PalId = 0x0c;	// palette ID byte
 		*Strm << PalId;
-		Strm->Serialise(palette, 768);
+		for (i = 0; i < 256; i++)
+		{
+			*Strm << r_palette[i].r
+				<< r_palette[i].g
+				<< r_palette[i].b;
+		}
 	}
 	else if	(bpp == 24)
 	{
@@ -3014,7 +3019,7 @@ void WritePCXfile(char* filename, void* data, int width, int height, int bpp,
 //==========================================================================
 
 void WriteTGA(char* filename, void* data, int width, int height, int bpp,
-			  byte* palette, bool bot2top)
+	bool bot2top)
 {
 	guard(WriteTGA);
 	VStream* Strm = FL_OpenFileWrite(filename);
@@ -3043,9 +3048,9 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	{
 		for (int i = 0; i < 256; i++)
 		{
-			*Strm << palette[i * 3 + 2]
-				<< palette[i * 3 + 1]
-				<< palette[i * 3];
+			*Strm << r_palette[i].b
+				<< r_palette[i].g
+				<< r_palette[i].r;
 		}
 	}
 
