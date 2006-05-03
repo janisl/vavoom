@@ -155,7 +155,7 @@ static void StartupJoystick()
 	if (!joystick)
 		return;
 
-	joy_num_buttons = 3;
+	joy_num_buttons = SDL_JoystickNumButtons(joystick);
 	joystick_started = true;
 	memset(joy_oldb, 0, sizeof(joy_oldb));
 	memset(joy_newb, 0, sizeof(joy_newb));
@@ -364,27 +364,3 @@ void IN_Shutdown(void)
 		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.5  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.4  2004/10/18 06:36:45  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.3  2004/10/11 06:49:57  dj_jl
-//	SDL patches.
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2002/01/03 18:39:42  dj_jl
-//	Added SDL port
-//	
-//**************************************************************************
