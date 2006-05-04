@@ -43,18 +43,16 @@ public: \
 	private: static VClass PrivateStaticClass; public: \
 	typedef TSuperClass Super;\
 	typedef TClass ThisClass;\
-	static VClass* StaticClass(void) \
-		{ return &PrivateStaticClass; } \
-	void* operator new(size_t, EInternal* Mem) \
-		{ return (void *)Mem; }
+	static VClass* StaticClass() \
+		{ return &PrivateStaticClass; }
 
 // Declare a concrete class.
 #define DECLARE_CLASS(TClass, TSuperClass, TStaticFlags) \
 	DECLARE_BASE_CLASS(TClass, TSuperClass, TStaticFlags) \
 	virtual ~TClass() \
 		{ ConditionalDestroy(); } \
-	static void InternalConstructor(void* X) \
-		{ new((EInternal *)X)TClass(); }
+	static void InternalConstructor() \
+		{ new TClass(); }
 
 // Declare an abstract class.
 #define DECLARE_ABSTRACT_CLASS(TClass, TSuperClass, TStaticFlags) \
@@ -71,25 +69,20 @@ public: \
 		Pre##TClass::StaticClassFlags, \
 		Pre##TClass::Super::StaticClass(), \
 		NAME_##TClass, \
-		(void(*)(void*))Pre##TClass::InternalConstructor \
+		Pre##TClass::InternalConstructor \
 	); \
 	VClass* autoclass##Pre##TClass = Pre##TClass::StaticClass();
 
 #define DECLARE_FUNCTION(func) \
 	static FBuiltinInfo funcinfo##func; \
-	static void exec##func(void);
+	static void exec##func();
 
 #define IMPLEMENT_FUNCTION(TClass, Func) \
 	FBuiltinInfo TClass::funcinfo##Func(#Func, TClass::StaticClass(), \
 		TClass::exec##Func); \
-	void TClass::exec##Func(void)
+	void TClass::exec##Func()
 
 // ENUMERATIONS ------------------------------------------------------------
-
-//
-// Internal enums.
-//
-enum EInternal				{EC_Internal};
 
 //
 // Flags describing a class.
@@ -127,7 +120,7 @@ enum EObjectFlags
 class VVirtualObjectBase
 {
 public:
-	virtual ~VVirtualObjectBase(void) { }
+	virtual ~VVirtualObjectBase() { }
 };
 
 //
@@ -136,9 +129,6 @@ public:
 class VObject : public VVirtualObjectBase
 {
 	// Declarations.
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_BASE_CLASS(VObject, VObject, CLASS_Abstract)
 
 	// Friends.
@@ -157,20 +147,29 @@ private:
 	static TArray<VObject*>	GObjObjects;		// List of all objects.
 	static TArray<int>		GObjAvailable;		// Available object indices.
 	static VObject*			GObjHash[4096];		// Object hash.
+	static int				GNumDeleted;
+	static bool				GInGarbageCollection;
+	static void*			GNewObject;			// For internal constructors.
 
 public:
 	// Constructors.
 	VObject();
-	static void InternalConstructor(void* X)
-		{ new((EInternal*)X)VObject(); }
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
+	static void InternalConstructor()
+		{ new VObject(); }
 
 	// Destructors.
 	virtual ~VObject();
-	void operator delete(void* Object, size_t)
-		{ Z_Free(Object); }
+
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
+	void* operator new(size_t);
+	void* operator new(size_t, const char*, int);
+	void operator delete(void*);
+	void operator delete(void*, const char*, int);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	// VObject interface.
 	virtual void Register();

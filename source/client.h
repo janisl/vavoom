@@ -115,13 +115,7 @@ struct client_static_t
 
 class VClientState : public VObject
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VClientState, VObject, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	int				clientnum;		// cl_mobjs[cl.clientnum] = player
 

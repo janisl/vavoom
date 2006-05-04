@@ -33,7 +33,7 @@ VClass VObject::PrivateStaticClass
 	VObject::StaticClassFlags,
 	NULL,
 	NAME_Object,
-	(void(*)(void*))VObject::InternalConstructor
+	VObject::InternalConstructor
 );
 VClass* autoclassVObject = VObject::StaticClass();
 
@@ -41,8 +41,9 @@ bool				VObject::GObjInitialized;
 TArray<VObject*>	VObject::GObjObjects;
 TArray<int>			VObject::GObjAvailable;
 VObject*			VObject::GObjHash[4096];
-static int			GNumDeleted;
-static bool			GInGarbageCollection;
+int					VObject::GNumDeleted;
+bool				VObject::GInGarbageCollection;
+void*				VObject::GNewObject;
 
 //==========================================================================
 //
@@ -101,6 +102,60 @@ VObject::~VObject()
 //
 //==========================================================================
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
+
+void* VObject::operator new(size_t)
+{
+	check(GNewObject);
+	return GNewObject;
+}
+
+//==========================================================================
+//
+//	VObject::StaticInit
+//
+//==========================================================================
+
+void* VObject::operator new(size_t, const char*, int)
+{
+	check(GNewObject);
+	return GNewObject;
+}
+
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
+
+//==========================================================================
+//
+//	VObject::StaticInit
+//
+//==========================================================================
+
+void VObject::operator delete(void* Object)
+{
+	Z_Free(Object);
+}
+
+//==========================================================================
+//
+//	VObject::StaticInit
+//
+//==========================================================================
+
+void VObject::operator delete(void* Object, const char*, int)
+{
+	Z_Free(Object);
+}
+
+//==========================================================================
+//
+//	VObject::StaticInit
+//
+//==========================================================================
+
 void VObject::StaticInit()
 {
 	VMemberBase::StaticInit();
@@ -138,7 +193,9 @@ VObject *VObject::StaticSpawnObject(VClass *AClass, int tag)
 	{
 		Sys_Error("No native base class");
 	}
-	NativeClass->ClassConstructor(Obj);
+	GNewObject = Obj;
+	NativeClass->ClassConstructor();
+	GNewObject = NULL;
 	Obj->Class = AClass;
 	Obj->vtable = AClass->ClassVTable;
 	Obj->Register();
@@ -365,74 +422,3 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 	P_GET_SELF;
 	RET_BOOL(Self->GetFlags() & _OF_Destroyed);
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.22  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//
-//	Revision 1.21  2006/03/06 13:02:32  dj_jl
-//	Cleaning up references to destroyed objects.
-//	
-//	Revision 1.20  2006/02/28 18:04:36  dj_jl
-//	Added script execution helpers.
-//	
-//	Revision 1.19  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.18  2006/02/26 20:52:49  dj_jl
-//	Proper serialisation of level and players.
-//	
-//	Revision 1.17  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.16  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.15  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.14  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.13  2004/08/21 19:10:44  dj_jl
-//	Changed sound driver declaration.
-//	
-//	Revision 1.12  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.11  2003/03/08 11:36:03  dj_jl
-//	API fixes.
-//	
-//	Revision 1.10  2002/08/28 16:43:13  dj_jl
-//	Fixed object registration.
-//	
-//	Revision 1.9  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.8  2002/07/15 17:51:09  dj_jl
-//	Made VSubsystem global.
-//	
-//	Revision 1.7  2002/05/29 16:53:52  dj_jl
-//	Added GetVFunction.
-//	
-//	Revision 1.6  2002/03/28 18:02:11  dj_jl
-//	Changed native IsA to take name as argument.
-//	
-//	Revision 1.5  2002/03/09 18:05:34  dj_jl
-//	Added support for defining native functions outside pr_cmds
-//	
-//	Revision 1.4  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2002/01/03 18:36:40  dj_jl
-//	Added GObjInitialized
-//	
-//	Revision 1.2  2001/12/27 17:35:42  dj_jl
-//	Split VClass in seperate module
-//	
-//	Revision 1.1  2001/12/18 19:03:17  dj_jl
-//	A lots of work on VObject
-//	
-//**************************************************************************

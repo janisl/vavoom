@@ -443,14 +443,8 @@ struct FRogueConSpeech
 
 class VLevel : public VObject
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VLevel, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	//	Flags.
 	enum

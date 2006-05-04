@@ -25,13 +25,7 @@
 
 class VLevelInfo : public VThinker
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	enum { MAX_TID_COUNT = 200 };
 

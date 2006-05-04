@@ -537,14 +537,8 @@ struct CallReturn
 
 class VACS : public VThinker
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VACS, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VACS)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	VEntity*			Activator;
 	line_t*				line;

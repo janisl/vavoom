@@ -27,13 +27,7 @@ struct tmtrace_t;
 
 class VGameInfo : public VObject
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VGameInfo, VObject, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	VName			AcsHelper;
 	VName			GenericConScript;

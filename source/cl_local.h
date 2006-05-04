@@ -71,13 +71,7 @@ class VRootWindow;
 
 class VClientGameBase : public VObject
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VClientGameBase, VObject, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	enum
 	{

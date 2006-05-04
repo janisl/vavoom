@@ -25,13 +25,7 @@
 
 class VModalWindow : public VWindow
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VModalWindow, VWindow, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	VModalWindow();
 };

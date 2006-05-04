@@ -283,7 +283,7 @@ public:
 	vint32			ClassSize;
 	vuint32			ClassFlags;
 	VMethod**		ClassVTable;
-	void			(*ClassConstructor)(void*);
+	void			(*ClassConstructor)();
 
 	vint32			ClassNumMethods;
 	vint32			VTableOffset;
@@ -300,7 +300,7 @@ public:
 	// Constructors.
 	VClass(VName AName);
 	VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
-		VClass *AParent, EName AName, void(*ACtor)(void*));
+		VClass *AParent, EName AName, void(*ACtor)());
 
 	// Destructors.
 	~VClass();

@@ -30,13 +30,7 @@
 //
 class VThinker : public VObject
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VThinker, VObject, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	VLevel*			XLevel;		//	Level object.
 	VLevelInfo*		Level;		//	Level info object.

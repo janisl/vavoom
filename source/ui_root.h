@@ -25,13 +25,7 @@
 
 class VRootWindow : public VModalWindow
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VRootWindow, VModalWindow, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	VRootWindow(void);
 	void Init(void);

@@ -79,14 +79,8 @@
 
 class VEntity : public VThinker
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VEntity, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VEntity)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	// Info for drawing: position.
 	TVec			Origin;

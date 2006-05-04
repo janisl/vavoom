@@ -32,13 +32,7 @@ enum EWinType
 
 class VWindow : public VObject
 {
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 	DECLARE_CLASS(VWindow, VObject, 0)
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	friend class VRootWindow;
 
