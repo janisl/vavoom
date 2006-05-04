@@ -178,7 +178,13 @@ public:
 	{
 		ArrayNum = 0;
 		for (int i = 0; i < Other.ArrayNum; i++)
-			new (*this)T(Other[i]);
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
+			new(*this) T(Other[i]);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 	}
 	TArray(ENoInit) : FArray(E_NoInit)
 	{}
@@ -260,7 +266,13 @@ public:
 		{
 			Empty(Other.ArrayNum);
 			for(int i = 0; i < Other.ArrayNum; i++ )
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 				new(*this) T(Other[i]);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 		}
 		return *this;
 	}
@@ -313,6 +325,9 @@ public:
 //
 // Array operator news.
 //
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 template <class T, EZoneTag Tag> void* operator new(size_t, TArray<T, Tag>& Array)
 {
 	int Index = Array.FArray::Add(1, sizeof(T), Tag);
@@ -323,38 +338,6 @@ template <class T, EZoneTag Tag> void* operator new(size_t, TArray<T, Tag>& Arra
 	Array.FArray::Insert(Index, 1, sizeof(T), Tag);
 	return &Array[Index];
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//
-//	Revision 1.9  2006/02/21 22:31:44  dj_jl
-//	Created dynamic string class.
-//	
-//	Revision 1.8  2004/12/03 16:15:46  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.7  2004/08/21 14:54:06  dj_jl
-//	Fix.
-//	
-//	Revision 1.6  2003/09/26 16:59:23  dj_jl
-//	Added zone tag to array
-//	
-//	Revision 1.5  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.4  2002/01/12 18:03:28  dj_jl
-//	Removed zone tag
-//	
-//	Revision 1.3  2002/01/11 18:24:01  dj_jl
-//	Added dynamic strings
-//	
-//	Revision 1.2  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/12/12 19:26:40  dj_jl
-//	Added dynamic arrays
-//	
-//**************************************************************************
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif

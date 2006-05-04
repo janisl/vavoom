@@ -443,8 +443,14 @@ struct FRogueConSpeech
 
 class VLevel : public VObject
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VLevel, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	//	Flags.
 	enum
@@ -622,119 +628,3 @@ extern level_t			cl_level;
 
 extern VLevel*			GLevel;
 extern VLevel*			GClLevel;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.38  2006/04/11 18:28:20  dj_jl
-//	Removed Strife specific mapinfo extensions.
-//
-//	Revision 1.37  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.36  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.35  2006/02/26 20:52:48  dj_jl
-//	Proper serialisation of level and players.
-//	
-//	Revision 1.34  2006/02/13 18:34:34  dj_jl
-//	Moved all server progs global functions to classes.
-//	
-//	Revision 1.33  2005/11/14 19:34:16  dj_jl
-//	Added support for version 5 GL nodes.
-//	
-//	Revision 1.32  2005/06/30 20:20:54  dj_jl
-//	Implemented rendering of Boom fake flats.
-//	
-//	Revision 1.31  2005/06/04 13:59:02  dj_jl
-//	Adding support for Boom fake sectors.
-//	
-//	Revision 1.30  2005/03/28 07:28:19  dj_jl
-//	Transfer lighting and other BOOM stuff.
-//	
-//	Revision 1.29  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.28  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.27  2003/10/22 06:23:46  dj_jl
-//	Increased maximal start spot count
-//	
-//	Revision 1.26  2003/07/03 18:11:13  dj_jl
-//	Moving extrafloors
-//	
-//	Revision 1.25  2003/03/08 11:33:39  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.24  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.23  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.22  2002/08/24 14:51:50  dj_jl
-//	Fixes for large blockmaps.
-//	
-//	Revision 1.21  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.20  2002/03/28 17:59:54  dj_jl
-//	Increased maximal object count.
-//	
-//	Revision 1.19  2002/01/25 18:08:19  dj_jl
-//	Beautification
-//	
-//	Revision 1.18  2002/01/11 08:09:34  dj_jl
-//	Added sector plane swapping
-//	
-//	Revision 1.17  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.16  2001/12/27 17:33:29  dj_jl
-//	Removed thinker list
-//	
-//	Revision 1.15  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.14  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.13  2001/12/04 18:14:46  dj_jl
-//	Renamed thinker_t to VThinker
-//	
-//	Revision 1.12  2001/12/01 17:43:12  dj_jl
-//	Renamed ClassBase to VObject
-//	
-//	Revision 1.11  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.10  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.9  2001/10/09 17:29:47  dj_jl
-//	Removed some mobj fields not used by engine
-//	
-//	Revision 1.8  2001/10/08 17:33:01  dj_jl
-//	Different client and server level structures
-//	
-//	Revision 1.7  2001/10/02 17:43:50  dj_jl
-//	Added addfields to lines, sectors and polyobjs
-//	
-//	Revision 1.6  2001/09/24 17:35:24  dj_jl
-//	Support for thinker classes
-//	
-//	Revision 1.5  2001/09/20 16:30:28  dj_jl
-//	Started to use object-oriented stuff in progs
-//	
-//	Revision 1.4  2001/08/02 17:46:38  dj_jl
-//	Added sending info about changed textures to new clients
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

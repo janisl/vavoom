@@ -25,7 +25,13 @@
 
 class VRootWindow : public VModalWindow
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VRootWindow, VModalWindow, 0)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	VRootWindow(void);
 	void Init(void);
@@ -38,20 +44,3 @@ class VRootWindow : public VModalWindow
 };
 
 extern VRootWindow *GRoot;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2003/03/08 12:08:05  dj_jl
-//	Beautification.
-//
-//	Revision 1.2  2002/06/14 15:39:22  dj_jl
-//	Some fixes for Borland.
-//	
-//	Revision 1.1  2002/05/29 16:51:50  dj_jl
-//	Started a work on native Window classes.
-//	
-//	Revision 1.4  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//**************************************************************************

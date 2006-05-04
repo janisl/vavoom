@@ -69,8 +69,14 @@ extern bool					sdl_mixer_initialised;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_MIDI_DEVICE(VSDLMidiDevice, MIDIDRV_Default, "Default",
 	"SDL midi device", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -268,35 +274,3 @@ bool VSDLMidiDevice::IsPlaying()
 	return !!music;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.8  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.7  2005/09/12 19:45:16  dj_jl
-//	Created midi device class.
-//	
-//	Revision 1.6  2005/05/26 17:00:46  dj_jl
-//	Working MUS to MID conversion
-//	
-//	Revision 1.5  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.4  2004/10/11 06:49:57  dj_jl
-//	SDL patches.
-//	
-//	Revision 1.3  2002/01/11 08:13:13  dj_jl
-//	Added command Music
-//	
-//	Revision 1.2  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2002/01/03 18:39:42  dj_jl
-//	Added SDL port
-//	
-//**************************************************************************

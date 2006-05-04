@@ -279,6 +279,9 @@ void VCommand::TokeniseString(const VStr& str)
 				GCon->Log("ERROR: Missing closing quote!");
 				return;
 			}
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 			new(Args) VStr(str, Start, i - Start);
 			//	Skip closing quote
 			i++;
@@ -292,6 +295,9 @@ void VCommand::TokeniseString(const VStr& str)
 				i++;
 			}
 			new(Args) VStr(str, Start, i - Start);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 		}
 	}
 	unguard;
@@ -578,7 +584,7 @@ COMMAND(Alias)
 
 	if (!a)
 	{
-		a = new(PU_STATIC) VAlias;
+		a = new VAlias;
 		a->Name = Args[1];
 		a->Next = VCommand::Alias;
 		VCommand::Alias = a;

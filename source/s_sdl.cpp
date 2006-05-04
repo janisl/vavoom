@@ -88,8 +88,14 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_SOUND_DEVICE(VSDLSoundDevice, SNDDRV_Default, "Default",
 	"SDL sound device", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 bool							sdl_mixer_initialised;
 
@@ -606,78 +612,3 @@ void VSDLSoundDevice::StrmCallback(void* ptr, Uint8* stream, int len)
 	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.23  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.22  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.21  2005/11/06 15:27:09  dj_jl
-//	Added support for 16 bit sounds.
-//	
-//	Revision 1.20  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.19  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.18  2005/10/18 20:53:04  dj_jl
-//	Implemented basic support for streamed music.
-//	
-//	Revision 1.17  2005/09/19 23:00:19  dj_jl
-//	Streaming support.
-//	
-//	Revision 1.16  2005/09/12 19:45:16  dj_jl
-//	Created midi device class.
-//	
-//	Revision 1.15  2005/09/04 14:43:45  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.14  2005/05/26 17:00:14  dj_jl
-//	Disabled pitching
-//	
-//	Revision 1.13  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.12  2004/11/30 07:17:17  dj_jl
-//	Made string pointers const.
-//	
-//	Revision 1.11  2004/10/18 06:36:45  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.10  2004/10/11 06:49:57  dj_jl
-//	SDL patches.
-//	
-//	Revision 1.9  2004/08/21 19:10:44  dj_jl
-//	Changed sound driver declaration.
-//	
-//	Revision 1.8  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.7  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.6  2002/08/24 14:50:05  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.5  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.4  2002/07/20 14:49:41  dj_jl
-//	Implemented sound drivers.
-//	
-//	Revision 1.3  2002/01/21 18:27:48  dj_jl
-//	Fixed volume
-//	
-//	Revision 1.2  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2002/01/03 18:39:42  dj_jl
-//	Added SDL port
-//	
-//**************************************************************************

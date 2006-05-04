@@ -45,8 +45,14 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_DRAWER(VOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
 	"OpenGL rasterizer device", "-opengl");
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 VCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_Archive);
 VCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_Archive);

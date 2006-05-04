@@ -41,8 +41,14 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_DRAWER(VDirect3DDrawer, DRAWER_Direct3D, "Direct3D",
 	"Direct3D rasterizer device", "-d3d");
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 VCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_Archive);

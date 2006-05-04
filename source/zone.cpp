@@ -43,7 +43,13 @@
 
 // TYPES -------------------------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 inline void* operator new(size_t, void* p) { return p; }
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 class TMemZone;
 
@@ -135,8 +141,6 @@ void TMemZone::Init()
 //
 //	TMemZone::Malloc
 //
-//	You can pass a NULL user if the tag is < PU_PURGELEVEL.
-//
 //==========================================================================
 
 void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
@@ -187,28 +191,13 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 
 		if (rover->tag)
 		{
-			if (rover->tag < PU_PURGELEVEL)
-			{
-				// hit a block that can't be purged,
-				//  so move base past it
-				base = rover = rover->next;
-			}
-			else
-			{
-				// free the rover block (adding the size to base)
-				// the rover can be the base block
-				base = base->prev;
-#ifdef ZONE_DEBUG
-				Z_Free((char*)rover + sizeof(memblock_t) + sizeof(MemDebug_t));
-#else
-				Z_Free((char*)rover + sizeof(memblock_t));
-#endif
-				base = base->next;
-				rover = base->next;
-			}
+			// hit a block so move base past it
+			base = rover = rover->next;
 		}
 		else
+		{
 			rover = rover->next;
+		}
 	} while (base->tag || base->size < size);
 
 	
@@ -237,13 +226,6 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 		// mark as an in use block
 		*user = (void*)((char*)base + sizeof(memblock_t));
 	}
-	else
-	{
-		if (tag >= PU_PURGELEVEL)
-		{
-			Sys_Error("Z_Malloc: an owner is required for purgable blocks");
-		}
-	}
 	base->tag = tag;
 	base->user = user;
 
@@ -262,8 +244,6 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 //==========================================================================
 //
 //	TMemZone::MallocHigh
-//
-//	You can pass a NULL user if the tag is < PU_PURGELEVEL.
 //
 //==========================================================================
 
@@ -305,25 +285,8 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 
 		if (rover->tag)
 		{
-			if (rover->tag < PU_PURGELEVEL)
-			{
-				// hit a block that can't be purged,
-				//  so move base past it
-				base = rover = rover->prev;
-			}
-			else
-			{
-				// free the rover block (adding the size to base)
-				// the rover can be the base block
-				base = base->next;
-#ifdef ZONE_DEBUG
-				Z_Free((char*)rover + sizeof(memblock_t) + sizeof(MemDebug_t));
-#else
-				Z_Free((char*)rover + sizeof(memblock_t));
-#endif
-				base = base->prev;
-				rover = base->prev;
-			}
+			// hit a block so move base past it
+			base = rover = rover->prev;
 		}
 		else
 		{
@@ -355,13 +318,6 @@ void *TMemZone::MallocHigh(int size, int tag, void** user)
 		// mark as an in use block
 		*user = (void *)((char*)base + sizeof(memblock_t));
 	}
-	else
-	{
-		if (tag >= PU_PURGELEVEL)
-		{
-			Sys_Error("Z_Malloc: an owner is required for purgable blocks");
-		}
-	}
 	base->tag = tag;
 	base->user = user;
 	base->id = ZONEID;
@@ -391,8 +347,6 @@ void TMemZone::Resize(void** ptr, int size)
 	//FIXME already chacked
 	if (block->id != ZONEID)
 		Sys_Error("Z_Resize: resize a pointer without ZONEID");
-	if (block->tag >= PU_PURGELEVEL)
-		Sys_Error("Z_Resize: Cannot resize purgable block");
 
 	size = (size + 3) & ~3;
 	size += sizeof(memblock_t);
@@ -403,25 +357,6 @@ void TMemZone::Resize(void** ptr, int size)
 		//
 
 		other = block->next;
-		// if next block can be purged, then free it
-		if (other->tag >= PU_PURGELEVEL)
-#ifdef ZONE_DEBUG
-			Z_Free((char*)other + sizeof(memblock_t) + sizeof(MemDebug_t));
-#else
-			Z_Free((char*)other + sizeof(memblock_t));
-#endif
-		// If next block is free, while size is not enough and
-		// block after next block can be purged, free more space
-		if (!other->tag)
-		{
-			while ((block->size + other->size < size)
-				&& (other->next->tag >= PU_PURGELEVEL))
-#ifdef ZONE_DEBUG
-				Z_Free((char*)other->next + sizeof(memblock_t) + sizeof(MemDebug_t));
-#else
-				Z_Free((char*)other->next + sizeof(memblock_t));
-#endif
-		}
 		// There is enough size to resize without moving data
 		if (!other->tag && (block->size + other->size >= size))
 		{
@@ -640,15 +575,6 @@ int TMemZone::FreeMemory()
 			}
 			numblocks++;
 		}
-		if (block->tag >= PU_PURGELEVEL)
-		{
-			purgable += block->size;
-			if (block->size > largest)
-			{
-				largestpurgable = block->size;
-			}
-			purgableblocks++;
-		}
 	}
 	GCon->Logf(NAME_Dev, "Free memory %d, largest block %d, free blocks %d",
 		free, largest, numblocks);
@@ -710,7 +636,13 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 void Z_Init(void* base, int size)
 {
 	guard(Z_Init);
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	mainzone = new(base) TMemZone(size);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 	unguard;
 }
 
@@ -740,15 +672,13 @@ void Z_Shutdown()
 //
 //	Z_Malloc
 //
-//	You can pass a NULL user if the tag is < PU_PURGELEVEL.
-//
 //==========================================================================
 
 void *Z_Malloc(int size, int tag, void** user, const char* FileName, int LineNumber)
 {
 	guard(Z_Malloc);
 	void *ptr;
-	if (tag == PU_VIDEO || tag == PU_HIGH || tag == PU_TEMP)
+	if (tag == PU_VIDEO)
 	{
 		ptr = mainzone->MallocHigh(size + sizeof(MemDebug_t), tag, user);
 	}
@@ -866,9 +796,6 @@ void Z_ChangeTag(void* ptr,int tag, const char*, int)
 	if (block->id != ZONEID)
 		Sys_Error("Z_ChangeTag: freed a pointer without ZONEID");
 
-	if (tag >= PU_PURGELEVEL && !block->user)
-		Sys_Error("Z_ChangeTag: an owner is required for purgable blocks");
-
 	block->tag = tag;
 	unguard;
 }
@@ -937,15 +864,13 @@ COMMAND(MemDebugDump)
 //
 //	Z_Malloc
 //
-//	You can pass a NULL user if the tag is < PU_PURGELEVEL.
-//
 //==========================================================================
 
 void *Z_Malloc(int size, int tag, void** user)
 {
 	guard(Z_Malloc);
 	void *ptr;
-	if (tag == PU_VIDEO || tag == PU_HIGH || tag == PU_TEMP)
+	if (tag == PU_VIDEO)
 	{
 		ptr = mainzone->MallocHigh(size, tag, user);
 	}
@@ -1018,9 +943,6 @@ void Z_ChangeTag(void* ptr,int tag)
 
 	if (block->id != ZONEID)
 		Sys_Error("Z_ChangeTag: freed a pointer without ZONEID");
-
-	if (tag >= PU_PURGELEVEL && !block->user)
-		Sys_Error("Z_ChangeTag: an owner is required for purgable blocks");
 
 	block->tag = tag;
 	unguard;
@@ -1111,51 +1033,3 @@ COMMAND(DumpHeap)
 	mainzone->DumpHeap(*GCon);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log:$
-//	Revision 1.15  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.14  2005/05/26 16:57:25  dj_jl
-//	Added "free memory" console command
-//	
-//	Revision 1.13  2004/01/30 17:33:36  dj_jl
-//	Better minzone size
-//	
-//	Revision 1.12  2003/12/19 17:37:33  dj_jl
-//	Got rid of new header
-//	
-//	Revision 1.11  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.10  2002/07/13 07:46:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.9  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.8  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/12/27 17:36:47  dj_jl
-//	Some speedup
-//	
-//	Revision 1.6  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.5  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.4  2001/08/30 17:44:45  dj_jl
-//	Print heap dump on Z_Malloc failure
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

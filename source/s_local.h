@@ -93,10 +93,16 @@ class VSoundDevice
 public:
 	bool		Sound3D;
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	void* operator new(size_t Size, int Tag)
 	{ return Z_Calloc(Size, Tag, 0); }
 	void operator delete(void* Object, size_t)
 	{ Z_Free(Object); }
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 	VSoundDevice()
 	: Sound3D(false)
 	{}
@@ -160,10 +166,16 @@ public:
 	bool		CurrLoop;
 	VName		CurrSong;
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	void* operator new(size_t Size, int Tag)
 	{ return Z_Calloc(Size, Tag, 0); }
 	void operator delete(void* Object, size_t)
 	{ Z_Free(Object); }
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 	VMidiDevice()
 	: Initialised(false)
 	, CurrLoop(false)
@@ -221,10 +233,16 @@ public:
 	int			MaxTrack;
 	int		 	Remap[100];
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	void* operator new(size_t Size, int Tag)
 	{ return Z_Calloc(Size, Tag, 0); }
 	void operator delete(void* Object, size_t)
 	{ Z_Free(Object); }
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 	VCDAudioDevice()
 	: Initialised(false)
 	, Enabled(false)
@@ -384,87 +402,3 @@ struct MIDheader
 #pragma pack()
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.27  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//
-//	Revision 1.26  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.25  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.24  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.23  2005/11/17 18:53:21  dj_jl
-//	Implemented support for sndinfo extensions.
-//	
-//	Revision 1.22  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.21  2005/11/06 15:27:09  dj_jl
-//	Added support for 16 bit sounds.
-//	
-//	Revision 1.20  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.19  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.18  2005/10/28 17:50:01  dj_jl
-//	Added Timidity driver.
-//	
-//	Revision 1.17  2005/10/20 22:31:27  dj_jl
-//	Removed Hexen's devsnd support.
-//	
-//	Revision 1.16  2005/10/18 20:53:04  dj_jl
-//	Implemented basic support for streamed music.
-//	
-//	Revision 1.15  2005/09/19 23:00:19  dj_jl
-//	Streaming support.
-//	
-//	Revision 1.14  2005/09/13 17:32:45  dj_jl
-//	Created CD audio device class.
-//	
-//	Revision 1.13  2005/09/12 19:45:16  dj_jl
-//	Created midi device class.
-//	
-//	Revision 1.12  2004/11/30 07:17:17  dj_jl
-//	Made string pointers const.
-//	
-//	Revision 1.11  2004/08/21 19:10:44  dj_jl
-//	Changed sound driver declaration.
-//	
-//	Revision 1.10  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.9  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.8  2002/07/23 13:12:00  dj_jl
-//	Some compatibility fixes, beautification.
-//	
-//	Revision 1.7  2002/07/20 14:49:41  dj_jl
-//	Implemented sound drivers.
-//	
-//	Revision 1.6  2002/01/11 08:11:05  dj_jl
-//	Changes in sound list
-//	Added guard macros
-//	
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/08/29 17:55:42  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

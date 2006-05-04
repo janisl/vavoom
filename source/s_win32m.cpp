@@ -183,8 +183,14 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_MIDI_DEVICE(VMMSystemMidiDevice, MIDIDRV_Default, "Default",
 	"Windows multimedia system midi device", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1253,53 +1259,3 @@ dword VMMSystemMidiDevice::GetVDword(const byte* ImagePtr, dword Left,
 	return NumUsed;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.16  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.15  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.14  2005/10/06 23:09:20  dj_jl
-//	Some cleanup.
-//	
-//	Revision 1.13  2005/10/02 23:12:51  dj_jl
-//	New Windows MIDI driver.
-//	
-//	Revision 1.12  2005/09/12 19:45:16  dj_jl
-//	Created midi device class.
-//	
-//	Revision 1.11  2004/09/24 10:54:11  dj_jl
-//	MinGW support.
-//	
-//	Revision 1.10  2002/11/16 17:14:22  dj_jl
-//	Some changes for release.
-//	
-//	Revision 1.9  2002/08/24 14:49:20  dj_jl
-//	Added MP3 test.
-//	
-//	Revision 1.8  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.7  2002/07/20 14:53:02  dj_jl
-//	Got rid of warnings.
-//	
-//	Revision 1.6  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

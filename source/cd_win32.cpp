@@ -64,8 +64,14 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_CD_AUDIO_DEVICE(VWin32CDAudioDevice, CDDRV_Default, "Default",
 	"Windows CD audio device", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -445,30 +451,3 @@ void VWin32CDAudioDevice::CloseDoor()
 		GCon->Log(NAME_Dev, "MCI_SET_DOOR_CLOSED failed");
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.7  2005/09/13 17:32:45  dj_jl
-//	Created CD audio device class.
-//	
-//	Revision 1.6  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.5  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.4  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

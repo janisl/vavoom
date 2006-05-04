@@ -376,6 +376,9 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->Exports = Exports;
 	Reader->NumExports = Progs.num_exports;
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	VPackage* Pkg = new(PU_STATIC) VPackage(InName);
 	GLoadedPackages.AddItem(Pkg);
 	Pkg->Checksum = crc;
@@ -415,6 +418,9 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 			break;
 		}
 	}
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	//	Read strings.
 	Pkg->Strings = Z_CNew(char, Progs.num_strings, PU_STATIC, 0);

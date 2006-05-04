@@ -71,8 +71,14 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_CD_AUDIO_DEVICE(VBsdCDAudioDevice, CDDRV_Default, "Default",
 	"BSD CD audio device", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -374,24 +380,3 @@ void VBsdCDAudioDevice::CloseDoor()
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/04/15 10:53:51  dj_jl
-//	Don't compile this on Solaris
-//
-//	Revision 1.4  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//	Revision 1.3  2006/02/02 22:55:30  dj_jl
-//	Some FreeBSD fixes.
-//	
-//	Revision 1.2  2005/09/13 17:32:45  dj_jl
-//	Created CD audio device class.
-//	
-//	Revision 1.1  2004/12/22 07:39:08  dj_jl
-//	Applied BSD patches.
-//	
-//**************************************************************************

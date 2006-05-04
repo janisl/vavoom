@@ -382,7 +382,7 @@ void VTextureManager::Init()
 {
 	guard(VTextureManager::Init);
 	//	Add a dummy texture.
-	AddTexture(new(PU_STATIC) VDummyTexture);
+	AddTexture(new VDummyTexture);
 
 	//	Initialise wall textures.
 	InitTextures();
@@ -604,28 +604,28 @@ int VTextureManager::CreatePatch(int Type, int LumpNum)
 	if (LumpHeader[0] == 'I' && LumpHeader[1] == 'M' &&
 		LumpHeader[2] == 'G' && LumpHeader[3] == 'Z')
 	{
-		return AddTexture(new(PU_STATIC) VImgzTexture(Type, LumpNum));
+		return AddTexture(new VImgzTexture(Type, LumpNum));
 	}
 
 	//	Check for PNG image.
 	if (LumpHeader[0] == 137 && LumpHeader[1] == 'P' &&
 		LumpHeader[2] == 'N' && LumpHeader[3] == 'G')
 	{
-		return AddTexture(new(PU_STATIC) VPngTexture(Type, LumpNum));
+		return AddTexture(new VPngTexture(Type, LumpNum));
 	}
 
 	//	Check for automap background.
 	if (W_LumpName(LumpNum) == NAME_autopage)
 	{
-		return AddTexture(new(PU_STATIC) VRawPicTexture(LumpNum, -1));
+		return AddTexture(new VRawPicTexture(LumpNum, -1));
 	}
 
 	if (W_LumpLength(LumpNum) == 64000)
 	{
-		return AddTexture(new(PU_STATIC) VRawPicTexture(LumpNum, -1));
+		return AddTexture(new VRawPicTexture(LumpNum, -1));
 	}
 
-	return AddTexture(new(PU_STATIC) TPatchTexture(Type, LumpNum));
+	return AddTexture(new TPatchTexture(Type, LumpNum));
 	unguard;
 }
 
@@ -662,7 +662,7 @@ int VTextureManager::AddRawWithPal(VName Name, VName PalName)
 		return i;
 	}
 
-	return AddTexture(new(PU_STATIC) VRawPicTexture(LumpNum,
+	return AddTexture(new VRawPicTexture(LumpNum,
 		W_GetNumForName(PalName)));
 	unguard;
 }
@@ -685,15 +685,15 @@ int VTextureManager::AddFileTexture(VName Name, int Type)
 	VStr Ext = VStr(Name).ExtractFileExtension();
 	if (Ext == "pcx")
 	{
-		return AddTexture(new(PU_STATIC) VPcxTexture(Type, Name));
+		return AddTexture(new VPcxTexture(Type, Name));
 	}
 	else if (Ext == "tga")
 	{
-		return AddTexture(new(PU_STATIC) VTgaTexture(Type, Name));
+		return AddTexture(new VTgaTexture(Type, Name));
 	}
 	else if (Ext == "png")
 	{
-		return AddTexture(new(PU_STATIC) VPngTexture(Type, Name));
+		return AddTexture(new VPngTexture(Type, Name));
 	}
 	else
 	{
@@ -769,7 +769,7 @@ void VTextureManager::InitTextures()
 
 	for (int i = 0; i < NumTex; i++)
 	{
-		AddTexture(new(PU_STATIC) VMultiPatchTexture(*Strm, i,
+		AddTexture(new VMultiPatchTexture(*Strm, i,
 			patchtexlookup, nummappatches, IsStrife));
 	}
 	delete Strm;
@@ -781,7 +781,7 @@ void VTextureManager::InitTextures()
 		NumTex = Streamer<vint32>(*Strm);
 		for (int i = 0; i < NumTex; i++)
 		{
-			AddTexture(new(PU_STATIC) VMultiPatchTexture(*Strm, i,
+			AddTexture(new VMultiPatchTexture(*Strm, i,
 				patchtexlookup, nummappatches, IsStrife));
 		}
 		delete Strm;
@@ -803,7 +803,7 @@ void VTextureManager::InitFlats()
 	for (int Lump = W_IterateNS(-1, WADNS_Flats); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Flats))
 	{
-		AddTexture(new(PU_STATIC) VFlatTexture(Lump));
+		AddTexture(new VFlatTexture(Lump));
 	}
 	unguard;
 }
@@ -3405,7 +3405,13 @@ static void ParseSwitchDef()
 	{
 		return;
 	}
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	TSwitch *sw = new(Switches) TSwitch;
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 	sw->Sound = S_GetSoundID(SndName);
 	sw->Tex1 = t1;
 	sw->Tex2 = t2;
@@ -3531,7 +3537,13 @@ void P_InitSwitchList()
 			{
 				continue;
 			}
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 			TSwitch *sw = new(Switches) TSwitch;
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 			sw->Sound = S_GetSoundID("switches/normbutn");
 			sw->Tex1 = t1;
 			sw->Tex2 = t2;

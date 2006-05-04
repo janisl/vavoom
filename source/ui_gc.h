@@ -151,8 +151,14 @@ struct VClipRect
 
 class VGC : public VObject
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VGC, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VGC)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	friend class VWindow;
 
@@ -160,17 +166,3 @@ class VGC : public VObject
 
 	void SetClipRect(const VClipRect &NewClipRect);
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2003/03/08 12:08:05  dj_jl
-//	Beautification.
-//
-//	Revision 1.2  2002/06/14 15:39:22  dj_jl
-//	Some fixes for Borland.
-//	
-//	Revision 1.1  2002/05/29 16:51:50  dj_jl
-//	Started a work on native Window classes.
-//	
-//**************************************************************************

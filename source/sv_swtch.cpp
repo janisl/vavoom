@@ -118,7 +118,13 @@ static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 		}
     }
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
     TButton *but = new(ButtonList) TButton;
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 	but->Side = sidenum;
 	but->Where = w;
 	but->Texture = texture;
@@ -246,7 +252,13 @@ void P_InitTerrainTypes(void)
 		SC_MustGetNumber();
 		if (pic != -1)
 		{
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 			TTerrainType *tt = new(TerrainTypes) TTerrainType;
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 			tt->Pic = pic;
 			tt->Type = sc_Number;
 		}
@@ -275,41 +287,3 @@ int SV_TerrainType(int pic)
 	return 0;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.12  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.11  2005/05/26 16:53:59  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.10  2005/05/03 15:00:11  dj_jl
-//	Moved switch list, animdefs enhancements.
-//	
-//	Revision 1.9  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.8  2002/07/13 07:50:58  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.7  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/12/12 19:26:40  dj_jl
-//	Added dynamic arrays
-//	
-//	Revision 1.5  2001/10/09 17:20:42  dj_jl
-//	Fixed switch sounds
-//	
-//	Revision 1.4  2001/08/29 17:55:42  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

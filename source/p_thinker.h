@@ -30,7 +30,13 @@
 //
 class VThinker : public VObject
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VThinker, VObject, 0)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	VLevel*			XLevel;		//	Level object.
 	VLevelInfo*		Level;		//	Level info object.
@@ -47,11 +53,3 @@ class VThinker : public VObject
 	//	VThinker interface.
 	virtual void Tick(float DeltaTime);
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.1  2006/03/06 13:12:12  dj_jl
-//	Client now uses entity class.
-//
-//**************************************************************************

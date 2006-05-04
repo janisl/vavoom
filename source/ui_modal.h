@@ -25,18 +25,13 @@
 
 class VModalWindow : public VWindow
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VModalWindow, VWindow, 0)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
-	VModalWindow(void);
+	VModalWindow();
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.2  2003/03/08 12:08:05  dj_jl
-//	Beautification.
-//
-//	Revision 1.1  2002/06/14 15:45:57  dj_jl
-//	Added modal window class.
-//	
-//**************************************************************************

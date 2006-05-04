@@ -167,7 +167,13 @@ static void ParseBase(const VStr& name)
 	SC_OpenFile(*UseName);
 	while (SC_GetString())
 	{
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 		version_t &dst = *new(games, 0) version_t;
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 		dst.ParmFound = 0;
 		dst.FixVoices = false;
 		if (!SC_Compare("game"))
@@ -186,7 +192,13 @@ static void ParseBase(const VStr& name)
 		while (SC_Compare("addfile"))
 		{
 			SC_MustGetString();
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 			new(dst.AddFiles) VStr(sc_String);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 			SC_MustGetString();
 		}
 		if (SC_Compare("param"))
@@ -703,79 +715,3 @@ VStream* FL_OpenFileWrite(const VStr& Name)
 	return new VStreamFileWriter(File, GCon);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.24  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.23  2006/03/26 13:06:18  dj_jl
-//	Implemented support for modular progs.
-//	
-//	Revision 1.22  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.21  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.20  2006/02/21 22:31:44  dj_jl
-//	Created dynamic string class.
-//	
-//	Revision 1.19  2006/02/06 21:46:10  dj_jl
-//	Fixed missing validity check, added guard macros.
-//	
-//	Revision 1.18  2006/01/29 20:41:30  dj_jl
-//	On Unix systems use ~/.vavoom for generated files.
-//	
-//	Revision 1.17  2005/11/05 14:57:36  dj_jl
-//	Putting Strife shareware voices in correct namespace.
-//	
-//	Revision 1.16  2004/12/03 16:15:46  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.15  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.14  2002/11/16 17:13:09  dj_jl
-//	Some compatibility changes.
-//	
-//	Revision 1.13  2002/08/24 14:52:16  dj_jl
-//	Fixed screenshots.
-//	
-//	Revision 1.12  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.11  2002/02/22 18:09:49  dj_jl
-//	Some improvements, beautification.
-//	
-//	Revision 1.10  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.8  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.7  2001/08/31 17:21:01  dj_jl
-//	Finished base game script
-//	
-//	Revision 1.6  2001/08/30 17:46:21  dj_jl
-//	Removed game dependency
-//	
-//	Revision 1.5  2001/08/21 17:40:54  dj_jl
-//	Added devgame mode
-//	
-//	Revision 1.4  2001/08/04 17:26:59  dj_jl
-//	Removed shareware / ExtendedWAD from engine
-//	Added support for script base.txt in game directory
-//	
-//	Revision 1.3  2001/07/31 17:08:37  dj_jl
-//	Reworking filesystem
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

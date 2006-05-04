@@ -27,7 +27,13 @@ struct tmtrace_t;
 
 class VGameInfo : public VObject
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VGameInfo, VObject, 0)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	VName			AcsHelper;
 	VName			GenericConScript;
@@ -86,14 +92,3 @@ class VGameInfo : public VObject
 		return *(VName*)&Tmp;
 	}
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.2  2006/04/11 18:28:20  dj_jl
-//	Removed Strife specific mapinfo extensions.
-//
-//	Revision 1.1  2006/03/06 13:12:12  dj_jl
-//	Client now uses entity class.
-//	
-//**************************************************************************

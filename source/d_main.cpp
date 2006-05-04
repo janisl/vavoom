@@ -81,8 +81,14 @@ extern surfcache_t		*sc_base;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_DRAWER(VSoftwareDrawer, DRAWER_Software, "Software",
 	"Software reaserizer", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 byte					*scrn;
 short					*zbuffer;
@@ -641,66 +647,3 @@ void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 	return dst;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.20  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.19  2004/08/21 17:22:15  dj_jl
-//	Changed rendering driver declaration.
-//	
-//	Revision 1.18  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.17  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.16  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.15  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.14  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.13  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.12  2001/12/18 19:01:34  dj_jl
-//	Changes for MSVC asm
-//	
-//	Revision 1.11  2001/12/01 17:52:52  dj_jl
-//	no message
-//	
-//	Revision 1.10  2001/11/02 18:35:54  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.9  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.8  2001/09/12 17:31:27  dj_jl
-//	Rectangle drawing and direct update for plugins
-//	
-//	Revision 1.7  2001/08/21 17:50:55  dj_jl
-//	Beautification
-//	
-//	Revision 1.6  2001/08/15 17:15:55  dj_jl
-//	Drawer API changes, removed wipes
-//	
-//	Revision 1.5  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.4  2001/08/02 17:45:37  dj_jl
-//	Added support for colored lit and translucent models
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -32,7 +32,13 @@ enum EWinType
 
 class VWindow : public VObject
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VWindow, VObject, 0)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	friend class VRootWindow;
 
@@ -257,23 +263,3 @@ public:
 
 	DECLARE_FUNCTION(DestroyAllChildren)
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//
-//	Revision 1.4  2003/03/08 12:08:05  dj_jl
-//	Beautification.
-//	
-//	Revision 1.3  2002/07/27 18:12:14  dj_jl
-//	Added Selectability flag.
-//	
-//	Revision 1.2  2002/06/14 15:39:22  dj_jl
-//	Some fixes for Borland.
-//	
-//	Revision 1.1  2002/05/29 16:51:50  dj_jl
-//	Started a work on native Window classes.
-//	
-//**************************************************************************

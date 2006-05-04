@@ -53,11 +53,17 @@ public:
 	static TArray<VMemberBase*>		GMembers;
 	static TArray<VPackage*>		GLoadedPackages;
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	//	New and delete operators.
 	void* operator new(size_t Size, int Tag)
 	{ return Z_Calloc(Size, Tag, 0); }
 	void operator delete(void* Object, size_t)
 	{ Z_Free(Object); }
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	//	Srtuctors.
 	VMemberBase(vuint8, VName);
@@ -361,68 +367,3 @@ public:
 	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.20  2006/03/26 13:06:18  dj_jl
-//	Implemented support for modular progs.
-//
-//	Revision 1.19  2006/03/23 18:31:59  dj_jl
-//	Members tree.
-//	
-//	Revision 1.18  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//	
-//	Revision 1.17  2006/03/13 18:32:45  dj_jl
-//	Added function to check if a state is in the range.
-//	
-//	Revision 1.16  2006/03/12 20:06:02  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.15  2006/03/10 19:31:25  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.14  2006/03/06 13:02:32  dj_jl
-//	Cleaning up references to destroyed objects.
-//	
-//	Revision 1.13  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.12  2006/02/26 20:52:49  dj_jl
-//	Proper serialisation of level and players.
-//	
-//	Revision 1.11  2006/02/25 17:09:35  dj_jl
-//	Import all progs type info.
-//	
-//	Revision 1.10  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.9  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.8  2003/03/08 12:08:05  dj_jl
-//	Beautification.
-//	
-//	Revision 1.7  2002/05/03 17:06:23  dj_jl
-//	Mangling of string pointers.
-//	
-//	Revision 1.6  2002/03/09 18:05:34  dj_jl
-//	Added support for defining native functions outside pr_cmds
-//	
-//	Revision 1.5  2002/02/26 17:54:26  dj_jl
-//	Importing special property info from progs and using it in saving.
-//	
-//	Revision 1.4  2002/02/02 19:20:41  dj_jl
-//	VMethod pointers used instead of the function numbers
-//	
-//	Revision 1.3  2002/01/11 08:15:40  dj_jl
-//	Removed VMethod
-//	
-//	Revision 1.2  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/12/27 17:35:42  dj_jl
-//	Split VClass in seperate module
-//	
-//**************************************************************************

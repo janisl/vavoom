@@ -66,8 +66,14 @@ public:
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_CD_AUDIO_DEVICE(VLinuxCDAudioDevice, CDDRV_Default, "Default",
 	"Linux CD audio device", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

@@ -96,8 +96,14 @@ public:
 	bool LoadSound(int);
 };
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_SOUND_DEVICE(VOpenALDevice, SNDDRV_OpenAL, "OpenAL",
 	"OpenAL sound device", "-openal");
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 VCvarF VOpenALDevice::doppler_factor("al_doppler_factor", "1.0", CVAR_Archive);
 VCvarF VOpenALDevice::doppler_velocity("al_doppler_velocity", "10000.0", CVAR_Archive);
@@ -625,60 +631,3 @@ void VOpenALDevice::ResumeStream()
 	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.17  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.16  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.15  2005/11/06 15:27:09  dj_jl
-//	Added support for 16 bit sounds.
-//	
-//	Revision 1.14  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.13  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.12  2005/10/18 20:53:04  dj_jl
-//	Implemented basic support for streamed music.
-//	
-//	Revision 1.11  2005/09/19 23:00:19  dj_jl
-//	Streaming support.
-//	
-//	Revision 1.10  2005/09/12 19:45:16  dj_jl
-//	Created midi device class.
-//	
-//	Revision 1.9  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.8  2004/11/30 07:17:16  dj_jl
-//	Made string pointers const.
-//	
-//	Revision 1.7  2004/08/21 19:10:44  dj_jl
-//	Changed sound driver declaration.
-//	
-//	Revision 1.6  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.5  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.4  2002/08/08 18:05:20  dj_jl
-//	Release fixes.
-//	
-//	Revision 1.3  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.2  2002/07/23 13:12:00  dj_jl
-//	Some compatibility fixes, beautification.
-//	
-//	Revision 1.1  2002/07/20 14:50:47  dj_jl
-//	Added OpenAL driver.
-//	
-//**************************************************************************

@@ -44,8 +44,14 @@ enum playerstate_t
 
 class VViewEntity : public VObject
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VViewEntity, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	int			SpriteIndex;	// a -1 sprite means not active
 	int			SpriteFrame;
@@ -69,8 +75,14 @@ class VViewEntity : public VObject
 //
 class VBasePlayer : public VObject
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VBasePlayer, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VBasePlayer)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	VLevelInfo*		Level;
 

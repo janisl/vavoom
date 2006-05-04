@@ -70,8 +70,14 @@ extern bool				allegro_sound_initialised;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 IMPLEMENT_MIDI_DEVICE(VAllegroMidiDevice, MIDIDRV_Default, "Default",
 	"Allegro midi device", NULL);
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -332,32 +338,3 @@ bool VAllegroMidiDevice::IsPlaying()
 	return midi_pos >= 0;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.8  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.7  2005/09/12 19:45:16  dj_jl
-//	Created midi device class.
-//	
-//	Revision 1.6  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.5  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.4  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

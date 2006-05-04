@@ -136,6 +136,9 @@ public:
 class VObject : public VVirtualObjectBase
 {
 	// Declarations.
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_BASE_CLASS(VObject, VObject, CLASS_Abstract)
 
 	// Friends.
@@ -160,6 +163,9 @@ public:
 	VObject();
 	static void InternalConstructor(void* X)
 		{ new((EInternal*)X)VObject(); }
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	// Destructors.
 	virtual ~VObject();
@@ -441,71 +447,3 @@ public:
 #define RET_AVEC(v)			PR_Pushv(*(TVec*)&(v))
 #define RET_REF(v)			PR_Push((int)v)
 #define RET_PTR(v)			PR_Push((int)v)
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.21  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//
-//	Revision 1.20  2006/03/13 21:22:21  dj_jl
-//	Added support for read-only, private and transient fields.
-//	
-//	Revision 1.19  2006/03/06 13:02:32  dj_jl
-//	Cleaning up references to destroyed objects.
-//	
-//	Revision 1.18  2006/02/28 18:04:36  dj_jl
-//	Added script execution helpers.
-//	
-//	Revision 1.17  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.16  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.15  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.14  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.13  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.12  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.11  2003/03/08 11:36:03  dj_jl
-//	API fixes.
-//	
-//	Revision 1.10  2002/05/29 16:53:52  dj_jl
-//	Added GetVMethod.
-//	
-//	Revision 1.9  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.8  2002/03/09 18:05:34  dj_jl
-//	Added support for defining native functions outside pr_cmds
-//	
-//	Revision 1.7  2002/02/02 19:20:41  dj_jl
-//	VMethod pointers used instead of the function numbers
-//	
-//	Revision 1.6  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2002/01/03 18:36:40  dj_jl
-//	Added GObjInitialized
-//	
-//	Revision 1.4  2001/12/27 17:35:42  dj_jl
-//	Split VClass in seperate module
-//	
-//	Revision 1.3  2001/12/18 19:03:17  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.2  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.1  2001/12/01 17:43:13  dj_jl
-//	Renamed ClassBase to VObject
-//	
-//**************************************************************************

@@ -25,7 +25,13 @@
 
 class VLevelInfo : public VThinker
 {
+#ifdef ZONE_DEBUG_NEW
+#undef new
+#endif
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
+#ifdef ZONE_DEBUG_NEW
+#define new ZONE_DEBUG_NEW
+#endif
 
 	enum { MAX_TID_COUNT = 200 };
 
@@ -111,11 +117,3 @@ class VLevelInfo : public VThinker
 		svpr.Exec(GetVFunction("SpawnMapThing"), (int)this, (int)mthing);
 	}
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.1  2006/03/06 13:12:12  dj_jl
-//	Client now uses entity class.
-//
-//**************************************************************************
