@@ -81,14 +81,8 @@ extern surfcache_t		*sc_base;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_DRAWER(VSoftwareDrawer, DRAWER_Software, "Software",
 	"Software reaserizer", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 byte					*scrn;
 short					*zbuffer;

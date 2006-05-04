@@ -47,7 +47,7 @@ public:
 	Mix_Chunk**		Chunks;
 
 	SDL_AudioCVT	StrmCvt;
-	byte*			StrmBuffer;
+	vuint8*			StrmBuffer;
 	int				StrmBufferUsed;
 	float			StrmVol;
 
@@ -88,14 +88,8 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_SOUND_DEVICE(VSDLSoundDevice, SNDDRV_Default, "Default",
 	"SDL sound device", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 bool							sdl_mixer_initialised;
 
@@ -178,7 +172,8 @@ bool VSDLSoundDevice::Init()
 	Mix_QuerySpec(&CurFrequency, &CurFormat, &CurChannels);
 
 	//	Allocate array for chunks.
-	Chunks = Z_CNew(Mix_Chunk*, S_sfx.Num(), PU_STATIC, 0);
+	Chunks = new Mix_Chunk*[S_sfx.Num()];
+	memset(Chunks, 0, sizeof(Mix_Chunk*) * S_sfx.Num());
 
 	GCon->Logf(NAME_Init, "Configured audio device");
 	GCon->Logf(NAME_Init, "Driver: %s", SDL_AudioDriverName(dname, 32));
@@ -243,7 +238,7 @@ void VSDLSoundDevice::Shutdown()
 				Mix_FreeChunk(Chunks[i]);
 			}
 		}
-		Z_Free(Chunks);
+		delete[] Chunks;
 		Chunks = NULL;
 	}
 	if (sdl_mixer_initialised)
@@ -463,7 +458,7 @@ bool VSDLSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 	}
 
 	//	Set up buffer.
-	StrmBuffer = (byte*)Z_Malloc(STRM_LEN * 4 * StrmCvt.len_mult, PU_STATIC, 0);
+	StrmBuffer = new vuint8[STRM_LEN * 4 * StrmCvt.len_mult];
 	StrmBufferUsed = 0;
 
 	//	Set up music callback.
@@ -484,7 +479,7 @@ void VSDLSoundDevice::CloseStream()
 	Mix_HookMusic(NULL, NULL);
 	if (StrmBuffer)
 	{
-		Z_Free(StrmBuffer);
+		delete[] StrmBuffer;
 		StrmBuffer = NULL;
 	}
 	unguard;

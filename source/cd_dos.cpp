@@ -75,14 +75,8 @@ static void bcd_resume();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_CD_AUDIO_DEVICE(VDosCDAudioDevice, CDDRV_Default, "Default",
 	"DOS CD audio device", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

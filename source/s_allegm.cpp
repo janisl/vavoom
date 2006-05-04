@@ -70,14 +70,8 @@ extern bool				allegro_sound_initialised;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_MIDI_DEVICE(VAllegroMidiDevice, MIDIDRV_Default, "Default",
 	"Allegro midi device", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

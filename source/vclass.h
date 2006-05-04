@@ -53,18 +53,6 @@ public:
 	static TArray<VMemberBase*>		GMembers;
 	static TArray<VPackage*>		GLoadedPackages;
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	//	New and delete operators.
-	void* operator new(size_t Size, int Tag)
-	{ return Z_Calloc(Size, Tag, 0); }
-	void operator delete(void* Object, size_t)
-	{ Z_Free(Object); }
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
-
 	//	Srtuctors.
 	VMemberBase(vuint8, VName);
 	virtual ~VMemberBase();
@@ -103,7 +91,7 @@ public:
 
 	vuint16			Checksum;
 	char*			Strings;
-	int*			Statements;
+	vint32*			Statements;
 	VMethod**		VTables;
 	VProgsReader*	Reader;
 
@@ -124,14 +112,14 @@ class VField : public VMemberBase
 public:
 	struct FType
 	{
-		byte		Type;
-		byte		InnerType;		//	For pointers
-		byte		ArrayInnerType;	//	For arrays
-		byte		PtrLevel;
-		int			ArrayDim;
+		vuint8		Type;
+		vuint8		InnerType;		//	For pointers
+		vuint8		ArrayInnerType;	//	For arrays
+		vuint8		PtrLevel;
+		vint32		ArrayDim;
 		union
 		{
-			int			BitMask;
+			vint32		BitMask;
 			VClass*		Class;			//  Class of the reference
 			VStruct*	Struct;			//  Struct data.
 			VMethod*	Function;		//  Function of the delegate type.
@@ -142,9 +130,9 @@ public:
 
 	VField*		Next;
 	VField*		NextReference;	//	Linked list of reference fields.
-	int			Ofs;
+	vint32		Ofs;
 	FType		Type;
-	int			Flags;
+	vint32		Flags;
 
 	VField(VName);
 
@@ -166,13 +154,13 @@ public:
 class VMethod : public VMemberBase
 {
 public:
-	int		FirstStatement;
-	short	NumParms;
-	short	NumLocals;
-    short	Type;
-	short	Flags;
-	dword	Profile1;
-	dword	Profile2;
+	vint32		FirstStatement;
+	vint16		NumParms;
+	vint16		NumLocals;
+	vint16		Type;
+	vint16		Flags;
+	vuint32		Profile1;
+	vuint32		Profile2;
 
 	VMethod(VName);
 
@@ -193,11 +181,11 @@ class VState : public VMemberBase
 {
 public:
 	VName		SpriteName;
-	int			SpriteIndex;
-	int			frame;
+	vint32		SpriteIndex;
+	vint32		frame;
 	VName		ModelName;
-	int			ModelIndex;
-	int			model_frame;
+	vint32		ModelIndex;
+	vint32		model_frame;
 	float		time;
 	VState*		nextstate;
 	VMethod*	function;
@@ -244,7 +232,7 @@ class VStruct : public VMemberBase
 public:
 	vint32			ObjectFlags;
 	VStruct*		ParentStruct;
-	int				Size;
+	vint32			Size;
 	VField*			Fields;
 	VField*			ReferenceFields;
 
@@ -269,7 +257,7 @@ public:
 
 struct mobjinfo_t
 {
-	int			doomednum;
+	vint32		doomednum;
 	VClass*		class_id;
 
 	friend VStream& operator<<(VStream&, mobjinfo_t&);
@@ -285,20 +273,20 @@ class VClass : public VMemberBase
 {
 private:
 	// Internal per-object variables.
-	dword			ObjectFlags;		// Private EObjectFlags used by object manager.
+	vuint32			ObjectFlags;		// Private EObjectFlags used by object manager.
 	VClass*			LinkNext;			// Next class in linked list
 
 	friend class VMemberBase;
 public:
 	VClass*			ParentClass;
 
-	int				ClassSize;
-	dword			ClassFlags;
+	vint32			ClassSize;
+	vuint32			ClassFlags;
 	VMethod**		ClassVTable;
 	void			(*ClassConstructor)(void*);
 
-	int				ClassNumMethods;
-	int				VTableOffset;
+	vint32			ClassNumMethods;
+	vint32			VTableOffset;
 
 	VField*			Fields;
 	VField*			ReferenceFields;
@@ -335,7 +323,7 @@ public:
 	static int FindModel(VName);
 
 	// Accessors.
-	dword GetFlags(void) const
+	dword GetFlags() const
 	{
 		return ObjectFlags;
 	}

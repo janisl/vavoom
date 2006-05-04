@@ -41,14 +41,8 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_DRAWER(VDirect3DDrawer, DRAWER_Direct3D, "Direct3D",
 	"Direct3D rasterizer device", "-d3d");
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 VCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_Archive);
@@ -71,12 +65,54 @@ static bool					Windowed;
 //
 //==========================================================================
 
-VDirect3DDrawer::VDirect3DDrawer() :
-	IdentityMatrix(	1, 0, 0, 0,
-					0, 1, 0, 0,
-					0, 0, 1, 0,
-					0, 0, 0, 1)
+VDirect3DDrawer::VDirect3DDrawer()
+#if DIRECT3D_VERSION >= 0x0800
+: DLLHandle(0)
+, Direct3D(0)
+, RenderDevice(0)
+#else
+: DDraw(0)
+, PrimarySurface(0)
+, RenderSurface(0)
+, ZBuffer(0)
+, Direct3D(0)
+, RenderDevice(0)
+#endif
+, IdentityMatrix(1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1)
+, TexStage(0)
+, lastgamma(0)
+#if DIRECT3D_VERSION >= 0x0800
+, trsprdata(0)
+, particle_texture(0)
+#else
+, trsprdata(0)
+, particle_texture(0)
+#endif
+, tscount(0)
+#if DIRECT3D_VERSION >= 0x0800
+, light_surf(0)
+#else
+, light_surf(0)
+#endif
+#if DIRECT3D_VERSION >= 0x0800
+, add_surf(0)
+#else
+, add_surf(0)
+#endif
+, freeblocks(0)
+, cacheframecount(0)
 {
+	memset(light_block, 0, sizeof(light_block));
+	memset(block_changed, 0, sizeof(block_changed));
+	memset(light_chain, 0, sizeof(light_chain));
+	memset(add_block, 0, sizeof(add_block));
+	memset(add_changed, 0, sizeof(add_changed));
+	memset(add_chain, 0, sizeof(add_chain));
+	memset(cacheblocks, 0, sizeof(cacheblocks));
+	memset(blockbuf, 0, sizeof(blockbuf));
 }
 
 //==========================================================================

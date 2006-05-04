@@ -96,14 +96,8 @@ public:
 	bool LoadSound(int);
 };
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_SOUND_DEVICE(VOpenALDevice, SNDDRV_OpenAL, "OpenAL",
 	"OpenAL sound device", "-openal");
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 VCvarF VOpenALDevice::doppler_factor("al_doppler_factor", "1.0", CVAR_Archive);
 VCvarF VOpenALDevice::doppler_velocity("al_doppler_velocity", "10000.0", CVAR_Archive);
@@ -124,6 +118,15 @@ bool VOpenALDevice::Init()
 {
 	guard(VOpenALDevice::Init);
 	ALenum E;
+
+	Device = NULL;
+	Context = NULL;
+	Buffers = NULL;
+	supportEAX = false;
+	pEAXGet = NULL;
+	pEAXSet = NULL;
+	StrmSource = 0;
+	StrmNumAvailableBuffers = 0;
 
 	//	Connect to a device.
 	Device = alcOpenDevice(NULL);
@@ -171,7 +174,8 @@ bool VOpenALDevice::Init()
 	}
 
 	//	Allocate array for buffers.
-	Buffers = Z_CNew(ALuint, S_sfx.Num(), PU_STATIC, 0);
+	Buffers = new ALuint[S_sfx.Num()];
+	memset(Buffers, 0, sizeof(ALuint) * S_sfx.Num());
 	Sound3D = true;
 	return true;
 	unguard;
@@ -206,7 +210,7 @@ void VOpenALDevice::Shutdown()
 	if (Buffers)
 	{
 		alDeleteBuffers(S_sfx.Num(), Buffers);
-		Z_Free(Buffers);
+		delete[] Buffers;
 		Buffers = NULL;
 	}
 
@@ -580,7 +584,9 @@ void VOpenALDevice::SetStreamData(short* Data, int Len)
 	alSourceQueueBuffers(StrmSource, 1, &Buf);
 	alGetSourcei(StrmSource, AL_SOURCE_STATE, &State);
 	if (State != AL_PLAYING)
+	{
 		alSourcePlay(StrmSource);
+	}
 	unguard;
 }
 

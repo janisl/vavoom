@@ -69,14 +69,8 @@ extern bool					sdl_mixer_initialised;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_MIDI_DEVICE(VSDLMidiDevice, MIDIDRV_Default, "Default",
 	"SDL midi device", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

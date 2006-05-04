@@ -71,14 +71,8 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_CD_AUDIO_DEVICE(VBsdCDAudioDevice, CDDRV_Default, "Default",
 	"BSD CD audio device", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

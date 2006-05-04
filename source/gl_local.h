@@ -113,6 +113,7 @@ public:
 	//
 	// VDrawer interface
 	//
+	VOpenGLDrawer();
 	void Init();
 	void InitData();
 	bool SetResolution(int, int, int);

@@ -80,16 +80,6 @@ class VDrawer
 public:
 	virtual ~VDrawer()
 	{}
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	void* operator new(size_t Size, int Tag)
-	{ return Z_Calloc(Size, Tag, 0); }
-	void operator delete(void* Object, size_t)
-	{ Z_Free(Object); }
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	virtual void Init() = 0;
 	virtual void InitData() = 0;
@@ -169,7 +159,7 @@ struct FDrawerDesc
 #define IMPLEMENT_DRAWER(TClass, Type, Name, Description, CmdLineArg) \
 static VDrawer* Create##TClass() \
 { \
-	return new(PU_STATIC) TClass(); \
+	return new TClass(); \
 } \
 FDrawerDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 

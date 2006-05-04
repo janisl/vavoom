@@ -183,14 +183,8 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_MIDI_DEVICE(VMMSystemMidiDevice, MIDIDRV_Default, "Default",
 	"Windows multimedia system midi device", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

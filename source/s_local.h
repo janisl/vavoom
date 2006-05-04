@@ -93,16 +93,6 @@ class VSoundDevice
 public:
 	bool		Sound3D;
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	void* operator new(size_t Size, int Tag)
-	{ return Z_Calloc(Size, Tag, 0); }
-	void operator delete(void* Object, size_t)
-	{ Z_Free(Object); }
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 	VSoundDevice()
 	: Sound3D(false)
 	{}
@@ -149,7 +139,7 @@ struct FSoundDeviceDesc
 #define IMPLEMENT_SOUND_DEVICE(TClass, Type, Name, Description, CmdLineArg) \
 VSoundDevice* Create##TClass() \
 { \
-	return new(PU_STATIC) TClass(); \
+	return new TClass(); \
 } \
 FSoundDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
@@ -166,16 +156,6 @@ public:
 	bool		CurrLoop;
 	VName		CurrSong;
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	void* operator new(size_t Size, int Tag)
-	{ return Z_Calloc(Size, Tag, 0); }
-	void operator delete(void* Object, size_t)
-	{ Z_Free(Object); }
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 	VMidiDevice()
 	: Initialised(false)
 	, CurrLoop(false)
@@ -211,7 +191,7 @@ struct FMidiDeviceDesc
 #define IMPLEMENT_MIDI_DEVICE(TClass, Type, Name, Description, CmdLineArg) \
 VMidiDevice* Create##TClass() \
 { \
-	return new(PU_STATIC) TClass(); \
+	return new TClass(); \
 } \
 FMidiDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
@@ -233,16 +213,6 @@ public:
 	int			MaxTrack;
 	int		 	Remap[100];
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	void* operator new(size_t Size, int Tag)
-	{ return Z_Calloc(Size, Tag, 0); }
-	void operator delete(void* Object, size_t)
-	{ Z_Free(Object); }
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 	VCDAudioDevice()
 	: Initialised(false)
 	, Enabled(false)
@@ -285,7 +255,7 @@ struct FCDAudioDeviceDesc
 #define IMPLEMENT_CD_AUDIO_DEVICE(TClass, Type, Name, Description, CmdLineArg) \
 VCDAudioDevice* Create##TClass() \
 { \
-	return new(PU_STATIC) TClass(); \
+	return new TClass(); \
 } \
 FCDAudioDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 

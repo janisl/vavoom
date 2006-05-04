@@ -204,6 +204,7 @@ public:
 
 VMemberBase::VMemberBase(vuint8 InMemberType, VName AName)
 : MemberType(InMemberType)
+, Outer(0)
 , Name(AName)
 {
 	if (GObjInitialized)
@@ -376,10 +377,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->Exports = Exports;
 	Reader->NumExports = Progs.num_exports;
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	VPackage* Pkg = new(PU_STATIC) VPackage(InName);
+	VPackage* Pkg = new VPackage(InName);
 	GLoadedPackages.AddItem(Pkg);
 	Pkg->Checksum = crc;
 	Pkg->Reader = Reader;
@@ -392,35 +390,32 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 		switch (Exports[i].Type)
 		{
 		case MEMBER_Package:
-			Exports[i].Obj = new(PU_STATIC) VPackage(Exports[i].Name);
+			Exports[i].Obj = new VPackage(Exports[i].Name);
 			break;
 		case MEMBER_Field:
-			Exports[i].Obj = new(PU_STATIC) VField(Exports[i].Name);
+			Exports[i].Obj = new VField(Exports[i].Name);
 			break;
 		case MEMBER_Method:
-			Exports[i].Obj = new(PU_STATIC) VMethod(Exports[i].Name);
+			Exports[i].Obj = new VMethod(Exports[i].Name);
 			break;
 		case MEMBER_State:
-			Exports[i].Obj = new(PU_STATIC) VState(Exports[i].Name);
+			Exports[i].Obj = new VState(Exports[i].Name);
 			break;
 		case MEMBER_Const:
-			Exports[i].Obj = new(PU_STATIC) VConstant(Exports[i].Name);
+			Exports[i].Obj = new VConstant(Exports[i].Name);
 			break;
 		case MEMBER_Struct:
-			Exports[i].Obj = new(PU_STATIC) VStruct(Exports[i].Name);
+			Exports[i].Obj = new VStruct(Exports[i].Name);
 			break;
 		case MEMBER_Class:
 			Exports[i].Obj = VClass::FindClass(*Exports[i].Name);
 			if (!Exports[i].Obj)
 			{
-				Exports[i].Obj = new(PU_STATIC) VClass(Exports[i].Name);
+				Exports[i].Obj = new VClass(Exports[i].Name);
 			}
 			break;
 		}
 	}
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 	//	Read strings.
 	Pkg->Strings = Z_CNew(char, Progs.num_strings, PU_STATIC, 0);
@@ -555,6 +550,11 @@ VMemberBase* VMemberBase::StaticFindMember(VName InName,
 
 VPackage::VPackage(VName AName)
 : VMemberBase(MEMBER_Package, AName)
+, Checksum(0)
+, Strings(0)
+, Statements(0)
+, VTables(0)
+, Reader(0)
 {
 }
 
@@ -579,7 +579,12 @@ void VPackage::Serialise(VStream& Strm)
 
 VField::VField(VName AName)
 : VMemberBase(MEMBER_Field, AName)
+, Next(0)
+, NextReference(0)
+, Ofs(0)
+, Flags(0)
 {
+	memset(&Type, 0, sizeof(Type));
 }
 
 //==========================================================================
@@ -850,6 +855,13 @@ void VField::CleanField(byte* Data, const VField::FType& Type)
 
 VMethod::VMethod(VName AName)
 : VMemberBase(MEMBER_Method, AName)
+, FirstStatement(0)
+, NumParms(0)
+, NumLocals(0)
+, Type(0)
+, Flags(0)
+, Profile1(0)
+, Profile2(0)
 {
 }
 
@@ -946,6 +958,16 @@ void VMethod::PostLoad()
 
 VState::VState(VName AName)
 : VMemberBase(MEMBER_State, AName)
+, SpriteName(NAME_None)
+, SpriteIndex(0)
+, frame(0)
+, ModelName(NAME_None)
+, ModelIndex(0)
+, model_frame(0)
+, time(0)
+, nextstate(0)
+, function(0)
+, Next(0)
 {
 }
 
@@ -1007,6 +1029,8 @@ bool VState::IsInRange(VState* Start, VState* End, int MaxDepth)
 
 VConstant::VConstant(VName AName)
 : VMemberBase(MEMBER_Const, AName)
+, Type(0)
+, Value(0)
 {
 }
 
@@ -1044,6 +1068,11 @@ void VConstant::Serialise(VStream& Strm)
 
 VStruct::VStruct(VName AName)
 : VMemberBase(MEMBER_Struct, AName)
+, ObjectFlags(0)
+, ParentStruct(0)
+, Size(0)
+, Fields(0)
+, ReferenceFields(0)
 {
 }
 
@@ -1206,6 +1235,18 @@ VStream& operator<<(VStream& Strm, mobjinfo_t& MI)
 
 VClass::VClass(VName AName)
 : VMemberBase(MEMBER_Class, AName)
+, ObjectFlags(0)
+, LinkNext(0)
+, ParentClass(0)
+, ClassSize(0)
+, ClassFlags(0)
+, ClassVTable(0)
+, ClassConstructor(0)
+, ClassNumMethods(0)
+, VTableOffset(0)
+, Fields(0)
+, ReferenceFields(0)
+, States(0)
 {
 	guard(VClass::VClass);
 	LinkNext = GClasses;
@@ -1223,10 +1264,17 @@ VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
 	VClass *AParent, EName AName, void(*ACtor)(void*))
 : VMemberBase(MEMBER_Class, AName)
 , ObjectFlags(CLASSOF_Native)
+, LinkNext(0)
 , ParentClass(AParent)
 , ClassSize(ASize)
 , ClassFlags(AClassFlags)
+, ClassVTable(0)
 , ClassConstructor(ACtor)
+, ClassNumMethods(0)
+, VTableOffset(0)
+, Fields(0)
+, ReferenceFields(0)
+, States(0)
 {
 	guard(native VClass::VClass);
 	LinkNext = GClasses;

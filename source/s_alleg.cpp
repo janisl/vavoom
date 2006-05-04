@@ -82,14 +82,8 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
 IMPLEMENT_SOUND_DEVICE(VAllegroSoundDevice, SNDDRV_Default, "Default",
 	"Allegro sound device", NULL);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 bool				allegro_sound_initialised;
 
@@ -126,7 +120,8 @@ bool VAllegroSoundDevice::Init()
 		Sys_Error("ALLEGRO SOUND INIT ERROR!!!!\n%s\n", allegro_error);
 	}
 	allegro_sound_initialised = true;
-	Samples = Z_CNew(SAMPLE*, S_sfx.Num(), PU_STATIC, 0);
+	Samples = new SAMPLE*[S_sfx.Num()];
+	memset(Samples, 0, sizeof(SAMPLE*) * S_sfx.Num());
 
 	GCon->Logf(NAME_Init, "configured audio device");
 	GCon->Logf(NAME_Init, "SFX   : %s", digi_driver->desc);
@@ -169,7 +164,7 @@ void VAllegroSoundDevice::Shutdown()
 				destroy_sample(Samples[i]);
 			}
 		}
-		Z_Free(Samples);
+		delete[] Samples;
 	}
 	remove_sound();
 	unguard;
