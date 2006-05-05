@@ -329,6 +329,11 @@ bool S_LoadSound(int);
 void S_DoneWithLump(int);
 
 //
+//	Sequences
+//
+void SN_FreeSequenceData();
+
+//
 //	EAX utilites
 //
 float EAX_CalcEnvSize();

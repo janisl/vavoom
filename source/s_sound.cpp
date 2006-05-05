@@ -110,7 +110,7 @@ TVec					listener_up;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static byte*				SoundCurve;
+static vuint8*				SoundCurve;
 
 static VName				MapSong;
 static int					MapCDTrack;
@@ -289,7 +289,7 @@ void S_Init()
 		GStreamMusicPlayer->Init();
 	}
 
-	SoundCurve = (byte*)W_CacheLumpName(NAME_sndcurve, PU_STATIC);
+	SoundCurve = (vuint8*)W_CacheLumpName(NAME_sndcurve, PU_STATIC);
 	snd_MaxVolume = -1;
 
 	//	Free all channels for use.
@@ -309,6 +309,9 @@ void S_Init()
 void S_Shutdown()
 {
 	guard(S_Shutdown);
+	SN_StopAllSequences();
+	S_StopAllSound();
+
 	if (GStreamMusicPlayer)
 	{
 		GStreamMusicPlayer->Shutdown();
@@ -334,6 +337,11 @@ void S_Shutdown()
 		GSoundDevice->Shutdown();
 		delete GSoundDevice;
 		GSoundDevice = NULL;
+	}
+	if (SoundCurve)
+	{
+		Z_Free(SoundCurve);
+		SoundCurve = NULL;
 	}
 	unguard;
 }

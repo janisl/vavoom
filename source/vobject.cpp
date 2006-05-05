@@ -170,6 +170,9 @@ void VObject::StaticInit()
 
 void VObject::StaticExit()
 {
+	CollectGarbage();
+	GObjObjects.Empty();
+	GObjAvailable.Empty();
 	GObjInitialized = false;
 	VMemberBase::StaticExit();
 }

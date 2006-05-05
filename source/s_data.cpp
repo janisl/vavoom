@@ -30,21 +30,14 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define NUM_AMBIENT_SOUNDS		256
+
 // TYPES -------------------------------------------------------------------
 
 #ifdef CLIENT
 class VRawSampleLoader : public VSampleLoader
 {
 public:
-#pragma pack(1)
-	struct FRawSoundHeader
-	{
-		word	Unknown;
-		word	SampleRate;
-		dword	DataSize;
-	};
-#pragma pack()
-
 	void Load(sfxinfo_t&, VStream&);
 };
 #endif
@@ -105,7 +98,7 @@ static TArray<VName>		PlayerGenders;
 static TArray<FPlayerSound>	PlayerSounds;
 static int					NumPlayerReserves;
 static float				CurrentChangePitch = 7.0 / 255.0;
-static FAmbientSound*		AmbientSounds[256];
+static FAmbientSound*		AmbientSounds[NUM_AMBIENT_SOUNDS];
 
 // CODE --------------------------------------------------------------------
 
@@ -172,7 +165,7 @@ static int AddSound(VName TagName, int Lump)
 		//}
 		if (sfx->bRandomHeader)
 		{
-			Z_Free(sfx->Sounds);
+			delete[] sfx->Sounds;
 			sfx->Sounds = NULL;
 		}
 		sfx->LumpNum = Lump;
@@ -435,7 +428,7 @@ static void S_ParseSndinfo()
 				{
 					// Only add non-empty random lists
 					S_sfx[id].Link = list.Num();
-					S_sfx[id].Sounds = Z_CNew(int, list.Num(), PU_STATIC, 0);
+					S_sfx[id].Sounds = new int[list.Num()];
 					memcpy(S_sfx[id].Sounds, &list[0], sizeof(int) * list.Num());
 					S_sfx[id].bRandomHeader = true;
 				}
@@ -517,7 +510,7 @@ static void S_ParseSndinfo()
 				FAmbientSound* ambient, dummy;
 
 				SC_MustGetNumber();
-				if (sc_Number < 0 || sc_Number > 255)
+				if (sc_Number < 0 || sc_Number >= NUM_AMBIENT_SOUNDS)
 				{
 					GCon->Logf("Bad ambient index (%d)", sc_Number);
 					ambient = &dummy;
@@ -822,19 +815,23 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 {
 	guard(VRawSampleLoader::Load);
 	//	Read header and see if it's a valid raw sample.
-	FRawSoundHeader Hdr;
+	vuint16		Unknown;
+	vuint16		SampleRate;
+	vuint32		DataSize;
+
 	Strm.Seek(0);
-	Strm.Serialise(&Hdr, 8);
-	int Rate = LittleShort(Hdr.SampleRate);
-	if ((Rate != 11025 && Rate != 22050 && Rate != 44100) ||
-		LittleLong(Hdr.DataSize) != Strm.TotalSize() - 8)
+	Strm << Unknown
+		<< SampleRate
+		<< DataSize;
+	if ((SampleRate != 11025 && SampleRate != 22050 && SampleRate != 44100) ||
+		(vint32)DataSize != Strm.TotalSize() - 8)
 	{
 		return;
 	}
 
 	Sfx.SampleBits = 8;
-	Sfx.SampleRate = LittleShort(Hdr.SampleRate);
-	Sfx.DataSize = LittleLong(Hdr.DataSize);
+	Sfx.SampleRate = SampleRate;
+	Sfx.DataSize = DataSize;
 	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_STATIC, 0);
 	Strm.Serialise(Sfx.Data, Sfx.DataSize);
 	unguard;
@@ -842,74 +839,40 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 
 #endif
 
-//**************************************************************************
+//==========================================================================
 //
-//	$Log$
-//	Revision 1.23  2006/04/08 14:55:35  dj_jl
-//	Fixed crash with bad format sounds.
+//	S_ShutdownData
 //
-//	Revision 1.22  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.21  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.20  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.19  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.18  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.17  2005/11/17 18:53:21  dj_jl
-//	Implemented support for sndinfo extensions.
-//	
-//	Revision 1.16  2005/11/07 22:57:09  dj_jl
-//	Some M$VC fixes.
-//	
-//	Revision 1.15  2005/11/06 15:27:09  dj_jl
-//	Added support for 16 bit sounds.
-//	
-//	Revision 1.14  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.13  2005/10/20 22:31:27  dj_jl
-//	Removed Hexen's devsnd support.
-//	
-//	Revision 1.12  2004/11/30 07:17:17  dj_jl
-//	Made string pointers const.
-//	
-//	Revision 1.11  2004/11/23 12:43:10  dj_jl
-//	Wad file lump namespaces.
-//	
-//	Revision 1.10  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.9  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.8  2002/07/20 14:50:24  dj_jl
-//	Missing sound data will not crash game anymore.
-//	
-//	Revision 1.7  2002/01/12 18:05:00  dj_jl
-//	Beautification
-//	
-//	Revision 1.6  2002/01/11 08:11:05  dj_jl
-//	Changes in sound list
-//	Added guard macros
-//	
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+//==========================================================================
+
+void S_ShutdownData()
+{
+	guard(S_ShutdownData);
+	SN_FreeSequenceData();
+
+	for (int i = 0; i < S_sfx.Num(); i++)
+	{
+		if (S_sfx[i].Data)
+		{
+			Z_Free(S_sfx[i].Data);
+		}
+		if (S_sfx[i].Sounds)
+		{
+			delete[] S_sfx[i].Sounds;
+		}
+	}
+
+	S_sfx.Empty();
+	PlayerClasses.Empty();
+	PlayerGenders.Empty();
+	PlayerSounds.Empty();
+
+	for (int i = 0; i < NUM_AMBIENT_SOUNDS; i++)
+	{
+		if (AmbientSounds[i])
+		{
+			delete AmbientSounds[i];
+		}
+	}
+	unguard;
+}

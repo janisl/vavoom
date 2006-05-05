@@ -29,7 +29,9 @@
 #include "cl_local.h"
 
 void CL_Init();
+void CL_Shutdown();
 void SV_Init();
+void SV_Shutdown();
 void CL_SendMove();
 void ServerFrame(int realtics);
 void CL_ReadFromServer();
@@ -656,6 +658,12 @@ void Host_Shutdown()
 #define SAFE_SHUTDOWN(name, args) \
 	try { name args; } catch (...) { GCon->Log(#name" failed"); }
 
+#ifdef CLIENT
+	SAFE_SHUTDOWN(CL_Shutdown, ())
+#endif
+#ifdef SERVER
+	SAFE_SHUTDOWN(SV_Shutdown, ())
+#endif
 	SAFE_SHUTDOWN(NET_Shutdown, ())
 #ifdef CLIENT
 	SAFE_SHUTDOWN(IN_Shutdown, ())
@@ -663,6 +671,9 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(S_Shutdown, ())
 #endif
 	SAFE_SHUTDOWN(Sys_Shutdown, ())
+
+	SAFE_SHUTDOWN(S_ShutdownData, ())
+	SAFE_SHUTDOWN(R_ShutdownTexture, ())
 
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())

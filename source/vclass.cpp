@@ -298,6 +298,20 @@ void VMemberBase::StaticInit()
 
 void VMemberBase::StaticExit()
 {
+	for (int i = 0; i < GMembers.Num(); i++)
+	{
+		if (GMembers[i]->MemberType != MEMBER_Class ||
+			!(((VClass*)GMembers[i])->ObjectFlags & CLASSOF_Native))
+		{
+			delete GMembers[i];
+		}
+	}
+	GMembers.Empty();
+	GLoadedPackages.Empty();
+	VClass::GMobjInfos.Empty();
+	VClass::GScriptIds.Empty();
+	VClass::GSpriteNames.Empty();
+	VClass::GModelNames.Empty();
 	GObjInitialized = false;
 }
 

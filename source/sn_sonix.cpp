@@ -618,7 +618,7 @@ void SN_UpdateActiveSequences()
 //
 //==========================================================================
 
-void SN_StopAllSequences(void)
+void SN_StopAllSequences()
 {
 	guard(SN_StopAllSequences);
 	seqnode_t *node;
@@ -715,62 +715,18 @@ void SN_SerialiseSounds(VStream& Strm)
 	}
 }
 
-//**************************************************************************
+//==========================================================================
 //
-//	$Log$
-//	Revision 1.19  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
+//	SN_FreeSequenceData
 //
-//	Revision 1.18  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.17  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.16  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.15  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.14  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.13  2005/11/20 15:50:40  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.12  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.11  2005/11/18 20:09:31  dj_jl
-//	Properly initialise current sound.
-//	
-//	Revision 1.10  2005/11/08 18:38:01  dj_jl
-//	Parse all sequence scripts.
-//	
-//	Revision 1.9  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.8  2004/11/30 07:17:17  dj_jl
-//	Made string pointers const.
-//	
-//	Revision 1.7  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.6  2002/01/11 08:11:05  dj_jl
-//	Changes in sound list
-//	Added guard macros
-//	
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/08/30 17:41:42  dj_jl
-//	Added entity sound channels
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+//==========================================================================
+
+void SN_FreeSequenceData()
+{
+	guard(SN_FreeSequenceData);
+	for (int i = 0; i < NumSequences; i++)
+	{
+		Z_Free(SeqInfo[i].data);
+	}
+	unguard;
+}

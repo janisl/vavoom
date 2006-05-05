@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
+#include "ui.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -35,12 +36,12 @@
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void SV_ShutdownServer(boolean crash);
-void CL_Disconnect(void);
+void CL_Disconnect();
 
-void CL_ParseServerMessage(void);
-int CL_GetMessage(void);
-void CL_StopPlayback(void);
-void CL_StopRecording(void);
+void CL_ParseServerMessage();
+int CL_GetMessage();
+void CL_StopPlayback();
+void CL_StopRecording();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -79,7 +80,7 @@ static bool UserInfoSent;
 //
 //==========================================================================
 
-void CL_Init(void)
+void CL_Init()
 {
 	guard(CL_Init);
 	clpr.Load("clprogs");
@@ -104,7 +105,7 @@ void CL_Init(void)
 //
 //==========================================================================
 
-void CL_Ticker(void)
+void CL_Ticker()
 {
 	guard(CL_Ticker);
     // do main actions
@@ -115,6 +116,37 @@ void CL_Ticker(void)
 		AM_Ticker();
 		break;
     }
+	unguard;
+}
+
+//==========================================================================
+//
+//	CL_Shutdown
+//
+//==========================================================================
+
+void CL_Shutdown()
+{
+	guard(CL_Shutdown);
+	//	Disconnect.
+	CL_Disconnect();
+
+	//	Free up memory.
+	for (int i = 0; i < GMaxEntities; i++)
+		if (cl_mobjs[i])
+			cl_mobjs[i]->ConditionalDestroy();
+	for (int i = 0; i < MAXPLAYERS; i++)
+		if (cl_weapon_mobjs[i])
+			cl_weapon_mobjs[i]->ConditionalDestroy();
+	Z_Free(cl_mobjs);
+	Z_Free(cl_mo_base);
+	cls.message.Free();
+	if (GClLevel)
+		GClLevel->ConditionalDestroy();
+	GClGame->ConditionalDestroy();
+	cl->ConditionalDestroy();
+	GRoot->ConditionalDestroy();
+	Z_FreeTag(PU_LEVEL);
 	unguard;
 }
 
@@ -185,7 +217,7 @@ dlight_t *CL_AllocDlight(int key)
 //
 //==========================================================================
 
-void CL_DecayLights(void)
+void CL_DecayLights()
 {
 	guard(CL_DecayLights);
 	int			i;
@@ -234,7 +266,7 @@ void CL_UpdateMobjs()
 //
 //==========================================================================
 
-void CL_ReadFromServer(void)
+void CL_ReadFromServer()
 {
 	guard(CL_ReadFromServer);
 	int		ret;
@@ -270,7 +302,7 @@ void CL_ReadFromServer(void)
 //
 //==========================================================================
 
-void CL_SignonReply(void)
+void CL_SignonReply()
 {
 	guard(CL_SignonReply);
 	switch (cls.signon)
@@ -305,7 +337,7 @@ void CL_SignonReply(void)
 //
 //==========================================================================
 
-void CL_KeepaliveMessage(void)
+void CL_KeepaliveMessage()
 {
 	guard(CL_KeepaliveMessage);
 	float			time;
@@ -533,73 +565,3 @@ COMMAND(Say)
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.22  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.21  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.20  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.19  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.18  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.17  2005/12/25 19:20:02  dj_jl
-//	Moved title screen into a class.
-//	
-//	Revision 1.16  2002/09/07 16:31:50  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.15  2002/08/28 16:42:04  dj_jl
-//	Configurable entity limit.
-//	
-//	Revision 1.14  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.13  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.12  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.11  2002/01/17 18:21:40  dj_jl
-//	Fixed Hexen class bug
-//	
-//	Revision 1.10  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/12/28 16:23:04  dj_jl
-//	Full user info sent only when establishing connection
-//	
-//	Revision 1.8  2001/12/27 17:36:47  dj_jl
-//	Some speedup
-//	
-//	Revision 1.7  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.6  2001/08/21 17:43:49  dj_jl
-//	Moved precache to r_main.cpp
-//	
-//	Revision 1.5  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.4  2001/08/04 17:25:14  dj_jl
-//	Moved title / demo loop to progs
-//	Removed shareware / ExtendedWAD from engine
-//	
-//	Revision 1.3  2001/07/31 17:10:21  dj_jl
-//	Localizing demo loop
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

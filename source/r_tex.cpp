@@ -3632,3 +3632,22 @@ void R_InitTexture()
 	InitFTAnims(); // Init flat and texture animations
 	unguard;
 }
+
+//==========================================================================
+//
+//	R_ShutdownTexture
+//
+//==========================================================================
+
+void R_ShutdownTexture()
+{
+	guard(R_ShutdownTexture);
+	//	Clean up animation and switch definitions.
+	Switches.Empty();
+	AnimDefs.Empty();
+	FrameDefs.Empty();
+
+	//	Shut down texture manager.
+	GTextureManager.Shutdown();
+	unguard;
+}

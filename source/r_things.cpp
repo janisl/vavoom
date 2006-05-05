@@ -320,6 +320,21 @@ void R_InstallSprite(const char *name, int index)
 
 //==========================================================================
 //
+//	R_FreeSpriteData
+//
+//==========================================================================
+
+void R_FreeSpriteData()
+{
+	guard(R_FreeSpriteData);
+	for (int i = 0; i < MAX_SPRITE_MODELS; i++)
+		if (sprites[i].spriteframes)
+			Z_Free(sprites[i].spriteframes);
+	unguard;
+}
+
+//==========================================================================
+//
 //	R_AddTranslucentPoly
 //
 //==========================================================================
@@ -863,7 +878,7 @@ void R_RenderMobjs()
 //
 //==========================================================================
 
-void R_DrawTranslucentPolys(void)
+void R_DrawTranslucentPolys()
 {
 	guard(R_DrawTranslucentPolys);
 	int i, found;
@@ -1054,7 +1069,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 //
 //==========================================================================
 
-void R_DrawPlayerSprites(void)
+void R_DrawPlayerSprites()
 {
 	guard(R_DrawPlayerSprites);
     int         i;
@@ -1089,7 +1104,7 @@ void R_DrawPlayerSprites(void)
 //
 //==========================================================================
 
-void R_DrawCroshair(void)
+void R_DrawCroshair()
 {
 	guard(R_DrawCroshair);
 	if (croshair)

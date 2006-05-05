@@ -57,6 +57,7 @@ void EntInit();
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void SV_DropClient(boolean crash);
+void SV_ShutdownServer(boolean);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
@@ -202,6 +203,27 @@ void SV_Init()
 
 	P_InitSwitchList();
 	P_InitTerrainTypes();
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_Shutdown
+//
+//==========================================================================
+
+void SV_Shutdown()
+{
+	guard(SV_Shutdown);
+	SV_ShutdownServer(false);
+	GGameInfo->ConditionalDestroy();
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		GPlayersBase[i]->ConditionalDestroy();
+	}
+	Z_Free(sv_mobjs);
+	Z_Free(sv_mo_base);
+	Z_Free(sv_mo_free_time);
 	unguard;
 }
 
@@ -379,7 +401,7 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 void VEntity::Destroy()
 {
 	guard(VEntity::Destroy);
-	if (XLevel == GLevel)
+	if (XLevel == GLevel && GLevel)
 	{
 		if (sv_mobjs[NetID] != this)
 			Sys_Error("Invalid entity num %d", NetID);
@@ -2587,12 +2609,12 @@ void SV_ShutdownServer(boolean crash)
 	//
 	// clear structures
 	//
+	SV_DestroyAllThinkers();
 	if (GLevel)
 	{
 		delete GLevel;
 		GLevel = NULL;
 	}
-	SV_DestroyAllThinkers();
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		//	Save old stats pointer

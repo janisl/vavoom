@@ -101,6 +101,7 @@ void R_RenderWorld();
 //
 // R_Things
 //
+void R_FreeSpriteData();
 void R_RenderMobjs();
 void R_DrawPlayerSprites();
 void R_DrawCroshair();

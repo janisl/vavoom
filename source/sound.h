@@ -55,6 +55,7 @@ int S_GetSoundID(VName Name);
 int S_GetSoundID(const char *name);
 int S_ResolveEntitySound(VName, VName, VName);
 void S_Shutdown();
+void S_ShutdownData();
 
 //
 //	Sound playback

@@ -939,5 +939,6 @@ void V_Shutdown()
 		delete Drawer;
 		Drawer = NULL;
 	}
+	R_FreeSpriteData();
 	unguard;
 }

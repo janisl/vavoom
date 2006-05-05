@@ -105,6 +105,7 @@ void R_RenderPlayerView();
 
 // r_tex
 void R_InitTexture();
+void R_ShutdownTexture();
 void R_AnimateSurfaces();
 
 // r_surf
