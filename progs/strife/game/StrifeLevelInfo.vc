@@ -4119,7 +4119,12 @@ void RecursiveSound(sector_t * sec, int soundblocks, Actor soundtarget)
 	for (i = 0; i < sec->linecount; i++)
 	{
 		check = sec->lines[i];
-		if (!(check->flags & ML_TWOSIDED))
+		if (check->sidenum[1] == -1	||
+		    !(check->flags & ML_TWOSIDED))
+			continue;
+
+		// Early out for intra-sector lines
+		if (XLevel.Sides[check->sidenum[0]].sector == XLevel.Sides[check->sidenum[1]].sector)
 			continue;
 
 		if (!LineOpenings(check, *check->v1))

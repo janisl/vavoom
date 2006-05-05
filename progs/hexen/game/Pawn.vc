@@ -499,8 +499,14 @@ bool LookForPlayers(bool allaround)
 
 bool StepMove()
 {
-	float tryx;
-	float tryy;
+	float tryx, deltax, origx;
+	float tryy, deltay, origy;
+	float maxmove;
+	int steps;
+	float xspeed;
+	float yspeed;
+	int i;
+	bool try_ok;
 
 	line_t *ld;
 	bool good;
@@ -515,10 +521,52 @@ bool StepMove()
 		Error("Weird actor->MoveDir!");
 #endif
 
-	tryx = Origin.x + StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
-	tryy = Origin.y + StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
+	origx = Origin.x;
+	origy = Origin.y;
+	deltax = StepSpeed * MainGameInfo(Level.Game).xspeed[MoveDir];
+	deltay = StepSpeed * MainGameInfo(Level.Game).yspeed[MoveDir];
+	tryx = origx + deltax;
+	tryy = origy + deltay;
 
-	if (!TryMove(vector(tryx, tryy, Origin.z)))
+	// Like P_XYMovement this should do multiple moves if the step size is too large
+	maxmove = Radius;
+	steps = 1;
+
+	if (maxmove > 0.0)
+	{ 
+		xspeed = fabs(deltax);
+		yspeed = fabs(deltay);
+
+		if (xspeed > yspeed)
+		{
+			if (xspeed > maxmove)
+			{
+				steps = 1 + ftoi(xspeed / maxmove);
+			}
+		}
+		else
+		{
+			if (yspeed > maxmove)
+			{
+				steps = 1 + ftoi(yspeed / maxmove);
+			}
+		}
+	}
+
+	try_ok = true;
+	for(i=1; i < steps; i++)
+	{
+		try_ok = TryMove(vector(origx + (deltax / itof(steps * i)), origy +
+					(deltay / itof(steps * i)), Origin.z));
+		if (!try_ok)
+			break;
+	}
+
+	// killough 3/15/98: don't jump over dropoffs:
+	if (try_ok)
+		try_ok = TryMove (vector(tryx, tryy, Origin.z));
+
+	if (!try_ok)
 	{
 		// open any specials
 		if (bFloat && Level.Game.tmtrace->bFloatOk)
