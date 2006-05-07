@@ -218,6 +218,7 @@ void SV_Shutdown()
 	GGameInfo->ConditionalDestroy();
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
+		Z_Free(GPlayersBase[i]->OldStats);
 		GPlayersBase[i]->ConditionalDestroy();
 	}
 	Z_Free(sv_mobjs);

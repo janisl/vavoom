@@ -60,6 +60,7 @@ public:
 	bool IsModified();
 
 	static void Init();
+	static void Shutdown();
 
 	static int GetInt(const char* var_name);
 	static float GetFloat(const char* var_name);
@@ -150,39 +151,3 @@ public:
 		return *this;
 	}
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.10  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.9  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.8  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/12/18 19:05:03  dj_jl
-//	Made VCvar a pure C++ class
-//	
-//	Revision 1.6  2001/10/04 17:18:23  dj_jl
-//	Implemented the rest of cvar flags
-//	
-//	Revision 1.5  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.4  2001/08/29 17:50:42  dj_jl
-//	Implemented CVAR_LATCH
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

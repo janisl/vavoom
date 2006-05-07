@@ -115,6 +115,8 @@ public:
 	~VProgsReader()
 	{
 		Z_Free(NameRemap);
+		Z_Free(Imports);
+		Z_Free(Exports);
 		delete Stream;
 	}
 
@@ -533,7 +535,8 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 		Exports[i].Obj->PostLoad();
 	}
 
-	Z_Free(NameRemap);
+	delete Reader;
+	Pkg->Reader = NULL;
 	return Pkg;
 	unguard;
 }
@@ -570,6 +573,24 @@ VPackage::VPackage(VName AName)
 , VTables(0)
 , Reader(0)
 {
+}
+
+//==========================================================================
+//
+//	VPackage::~VPackage
+//
+//==========================================================================
+
+VPackage::~VPackage()
+{
+	guard(VPackage::~VPackage);
+	if (Strings)
+		Z_Free(Strings);
+	if (Statements)
+		Z_Free(Statements);
+	if (VTables)
+		Z_Free(VTables);
+	unguard;
 }
 
 //==========================================================================

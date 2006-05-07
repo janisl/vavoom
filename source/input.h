@@ -174,6 +174,7 @@ void IN_GetBindingKeys(const char *, int &, int &);
 void IN_GetBindingKeyNames(const char *, char *, char *);
 void IN_SetBinding(int, const char *, const char *);
 void IN_WriteBindings(FILE *f);
+void IN_FreeBindings();
 
 int IN_TranslateKey(int);
 
@@ -182,32 +183,3 @@ int IN_TranslateKey(int);
 extern int		shiftdown;
 extern int		ctrldown;
 extern int		altdown;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2004/04/16 06:25:42  dj_jl
-//	Added mousewheel key codes
-//
-//	Revision 1.8  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.7  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/11/09 14:26:48  dj_jl
-//	Moved here shift-key table
-//	
-//	Revision 1.5  2001/10/04 17:20:25  dj_jl
-//	Saving config using streams
-//	
-//	Revision 1.4  2001/08/31 17:24:52  dj_jl
-//	Added some new keys
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

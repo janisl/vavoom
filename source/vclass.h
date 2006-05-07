@@ -88,6 +88,7 @@ class VPackage : public VMemberBase
 {
 public:
 	VPackage(VName);
+	~VPackage();
 
 	vuint16			Checksum;
 	char*			Strings;

@@ -680,3 +680,22 @@ int IN_TranslateKey(int ch)
 	return shiftdown ? shiftxform[Tmp] : Tmp;
 	unguard;
 }
+
+//==========================================================================
+//
+//	IN_FreeBindings
+//
+//==========================================================================
+
+void IN_FreeBindings()
+{
+	guard(IN_FreeBindings);
+	for (int i = 0; i < 256; i++)
+	{
+		if (keybindings_down[i])
+			Z_Free(keybindings_down[i]);
+		if (keybindings_up[i])
+			Z_Free(keybindings_up[i]);
+	}
+	unguard;
+}

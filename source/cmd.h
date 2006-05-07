@@ -69,6 +69,7 @@ public:
 
 	static void Init();
 	static void WriteAlias(FILE*);
+	static void Shutdown();
 
 	static void AddToAutoComplete(const char*);
 	static VStr GetAutoComplete(const VStr&, int&, bool);
@@ -128,36 +129,3 @@ public:
 
 //	Main command buffer.
 extern VCmdBuf		GCmdBuf;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.9  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.8  2005/04/28 07:16:11  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.7  2003/10/22 06:24:35  dj_jl
-//	Access to the arguments vector
-//	
-//	Revision 1.6  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.5  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/10/04 17:20:25  dj_jl
-//	Saving config using streams
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

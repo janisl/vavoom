@@ -191,6 +191,13 @@ void NET_Shutdown()
 			net_drivers[net_driverlevel].initialised = false;
 		}
 	}
+
+	for (sock = net_freeSockets; sock;)
+	{
+		qsocket_t* Next = sock->next;
+		Z_Free(sock);
+		sock = Next;
+	}
 	unguard;
 }
 

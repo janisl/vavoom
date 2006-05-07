@@ -163,6 +163,25 @@ void VCommand::WriteAlias(FILE* f)
 
 //==========================================================================
 //
+//  VCommand::Shutdown
+//
+//==========================================================================
+
+void VCommand::Shutdown()
+{
+	guard(VCommand::Shutdown);
+	for (VAlias *a = Alias; a;)
+	{
+		VAlias* Next = a->Next;
+		delete a;
+		a = Next;
+	}
+	AutoCompleteTable.Empty();
+	unguard;
+}
+
+//==========================================================================
+//
 //	VCommand::AddToAutoComplete
 //
 //==========================================================================
@@ -661,51 +680,3 @@ COMMAND(Wait)
 {
 	GCmdBuf.Wait = true;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.14  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.13  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.12  2005/04/28 07:16:11  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.11  2003/12/19 17:36:58  dj_jl
-//	Dedicated server fix
-//	
-//	Revision 1.10  2003/10/31 07:49:52  dj_jl
-//	echo uses notify messages
-//	
-//	Revision 1.9  2003/10/22 06:24:35  dj_jl
-//	Access to the arguments vector
-//	
-//	Revision 1.8  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.7  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/12/18 19:05:03  dj_jl
-//	Made VCvar a pure C++ class
-//	
-//	Revision 1.5  2001/10/04 17:20:25  dj_jl
-//	Saving config using streams
-//	
-//	Revision 1.4  2001/08/29 17:50:09  dj_jl
-//	Renamed command Commands to CmdList
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
