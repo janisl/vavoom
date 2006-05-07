@@ -115,6 +115,7 @@ void R_InitSkyBoxes();
 void R_InitSky();
 void R_AnimateSky();
 void R_DrawSky();
+void R_FreeLevelSkyData();
 
 //
 //	R_Tex

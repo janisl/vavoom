@@ -46,7 +46,7 @@ static void ThrustMobj(VEntity *mobj, seg_t *seg, polyobj_t *po);
 static void UnLinkPolyobj(polyobj_t *po);
 static void LinkPolyobj(polyobj_t *po);
 static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po);
-static void InitBlockMap(void);
+static void InitBlockMap();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -521,7 +521,7 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 //
 //==========================================================================
 
-static void InitBlockMap(void)
+static void InitBlockMap()
 {
 	guard(InitBlockMap);
 	int		i;
@@ -858,18 +858,18 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 //
 //==========================================================================
 
-void PO_Init(void)
+void PO_Init()
 {
 	guard(PO_Init);
 	int				i;
 
-	for (i=0; i<NumAnchorPoints; i++)
-    {
+	for (i = 0; i < NumAnchorPoints; i++)
+	{
 		TranslateToStartSpot(AnchorPoints[i].x, AnchorPoints[i].y,
 			AnchorPoints[i].tag);
-    }
+	}
 
-    NumAnchorPoints = 0;
+	NumAnchorPoints = 0;
 
 	// check for a startspot without an anchor point
 	for (i = 0; i < GLevel->NumPolyObjs; i++)
@@ -897,61 +897,19 @@ boolean PO_Busy(int polyobj)
 	unguard;
 }
 
-//**************************************************************************
+//==========================================================================
 //
-//	$Log$
-//	Revision 1.19  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
+//	PO_FreePolyobjData
 //
-//	Revision 1.18  2005/12/27 22:24:00  dj_jl
-//	Created level info class, moved action special handling to it.
-//	
-//	Revision 1.17  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.16  2002/08/28 16:41:09  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.15  2002/08/08 18:05:20  dj_jl
-//	Release fixes.
-//	
-//	Revision 1.14  2002/07/13 07:50:58  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.13  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.12  2002/02/06 17:30:36  dj_jl
-//	Replaced Actor flags with boolean variables.
-//	
-//	Revision 1.11  2002/01/15 18:30:43  dj_jl
-//	Some fixes and improvements suggested by Malcolm Nixon
-//	
-//	Revision 1.10  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.8  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.7  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.6  2001/10/04 17:16:54  dj_jl
-//	Removed some unused code
-//	
-//	Revision 1.5  2001/10/02 17:43:50  dj_jl
-//	Added addfields to lines, sectors and polyobjs
-//	
-//	Revision 1.4  2001/09/20 16:27:02  dj_jl
-//	Removed degenmobj
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+//==========================================================================
+
+void PO_FreePolyobjData()
+{
+	guard(PO_FreePolyobjData);
+	if (AnchorPoints)
+	{
+		Z_Free(AnchorPoints);
+	}
+	AnchorPoints = NULL;
+	unguard;
+}

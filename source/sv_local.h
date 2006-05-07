@@ -84,6 +84,7 @@ struct acsstore_t
 };
 
 void P_LoadACScripts(int Lump);
+void P_UnloadACScripts();
 void P_StartTypedACScripts(int Type);
 bool P_StartACS(int number, int map, int arg1, int arg2, int arg3,
 	VEntity* activator, line_t* line, int side, bool Always,
@@ -205,6 +206,7 @@ void PO_Init(void);
 boolean PO_Busy(int polyobj);
 polyobj_t *PO_GetPolyobj(int polyNum);
 int PO_GetPolyobjMirror(int poly);
+void PO_FreePolyobjData();
 
 //==========================================================================
 //
@@ -317,162 +319,3 @@ inline int SV_GetPlayerNum(VBasePlayer* player)
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.52  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//
-//	Revision 1.51  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.50  2006/03/06 13:05:51  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.49  2006/02/28 18:06:28  dj_jl
-//	Put thinkers back in linked list.
-//	
-//	Revision 1.48  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.47  2006/02/26 20:52:48  dj_jl
-//	Proper serialisation of level and players.
-//	
-//	Revision 1.46  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.45  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.44  2006/02/15 23:28:18  dj_jl
-//	Moved all server progs global variables to classes.
-//	
-//	Revision 1.43  2006/02/13 18:34:34  dj_jl
-//	Moved all server progs global functions to classes.
-//	
-//	Revision 1.42  2006/02/05 18:52:44  dj_jl
-//	Moved common utils to level info class or built-in.
-//	
-//	Revision 1.41  2005/12/27 22:24:00  dj_jl
-//	Created level info class, moved action special handling to it.
-//	
-//	Revision 1.40  2005/12/11 21:37:00  dj_jl
-//	Made path traversal callbacks class members.
-//	
-//	Revision 1.39  2005/12/07 22:53:26  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.38  2005/11/17 18:53:21  dj_jl
-//	Implemented support for sndinfo extensions.
-//	
-//	Revision 1.37  2005/10/18 21:33:13  dj_jl
-//	Fixed ceiling lightninfg.
-//	
-//	Revision 1.36  2005/05/03 14:57:07  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.35  2005/03/16 15:04:44  dj_jl
-//	More work on line specials.
-//	
-//	Revision 1.34  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.33  2004/12/22 07:49:13  dj_jl
-//	More extended ACS support, more linedef flags.
-//	
-//	Revision 1.32  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.31  2003/11/12 16:47:40  dj_jl
-//	Changed player structure into a class
-//	
-//	Revision 1.30  2003/09/24 16:42:31  dj_jl
-//	Fixed rough block checking
-//	
-//	Revision 1.29  2003/07/11 16:45:20  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.28  2003/03/08 12:10:13  dj_jl
-//	API fixes.
-//	
-//	Revision 1.27  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.26  2002/08/28 16:41:09  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.25  2002/07/23 13:10:37  dj_jl
-//	Some fixes for switching to floating-point time.
-//	
-//	Revision 1.24  2002/03/28 18:05:25  dj_jl
-//	Added SV_GetModelIndex.
-//	
-//	Revision 1.23  2002/03/09 18:05:34  dj_jl
-//	Added support for defining native functions outside pr_cmds
-//	
-//	Revision 1.22  2002/02/22 18:09:52  dj_jl
-//	Some improvements, beautification.
-//	
-//	Revision 1.21  2002/02/16 16:29:26  dj_jl
-//	Added support for bool variables
-//	
-//	Revision 1.20  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.19  2002/02/14 19:23:58  dj_jl
-//	Beautification
-//	
-//	Revision 1.18  2002/02/06 17:30:36  dj_jl
-//	Replaced Actor flags with boolean variables.
-//	
-//	Revision 1.17  2002/02/02 19:20:41  dj_jl
-//	VMethod pointers used instead of the function numbers
-//	
-//	Revision 1.16  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.15  2001/12/27 17:33:29  dj_jl
-//	Removed thinker list
-//	
-//	Revision 1.14  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.13  2001/12/04 18:14:46  dj_jl
-//	Renamed thinker_t to VThinker
-//	
-//	Revision 1.12  2001/10/27 07:49:29  dj_jl
-//	Fixed map block stuff
-//	
-//	Revision 1.11  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.10  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.9  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.8  2001/09/24 17:35:24  dj_jl
-//	Support for thinker classes
-//	
-//	Revision 1.7  2001/09/20 16:30:28  dj_jl
-//	Started to use object-oriented stuff in progs
-//	
-//	Revision 1.6  2001/08/29 17:56:11  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.5  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.4  2001/08/04 17:25:14  dj_jl
-//	Moved title / demo loop to progs
-//	Removed shareware / ExtendedWAD from engine
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

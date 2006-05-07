@@ -70,8 +70,12 @@ static float		skyheight;
 
 static int			c_subdivides;
 
-static surface_t	*free_wsurfs;
+static surface_t*	free_wsurfs;
 static int			c_seg_div;
+static void*		AllocatedWSurfBlocks;
+static subregion_t*	AllocatedSubRegions;
+static drawseg_t*	AllocatedDrawSegs;
+static segpart_t*	AllocatedSegParts;
 
 // CODE --------------------------------------------------------------------
 
@@ -115,7 +119,7 @@ inline float TextureTScale(int pic)
 //
 //==========================================================================
 
-static void	SetupSky(void)
+static void	SetupSky()
 {
 	guard(SetupSky);
 	skyheight = -99999.0;
@@ -504,13 +508,16 @@ static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
 //
 //==========================================================================
 
-static surface_t *NewWSurf(void)
+static surface_t *NewWSurf()
 {
 	guard(NewWSurf);
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
-		byte *tmp = (byte*)Z_Malloc(WSURFSIZE * 32, PU_LEVEL, 0);
+		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * 32 + sizeof(void*), PU_LEVEL, 0);
+		*(void**)tmp = AllocatedWSurfBlocks;
+		AllocatedWSurfBlocks = tmp;
+		tmp += sizeof(void*);
 		for (int i = 0; i < 32; i++)
 		{
 			((surface_t*)tmp)->next = free_wsurfs;
@@ -543,6 +550,10 @@ static void	FreeWSurfs(surface_t* InSurfs)
 		if (surfs->lightmap)
 		{
 			Z_Free(surfs->lightmap);
+		}
+		if (surfs->lightmap_rgb)
+		{
+			Z_Free(surfs->lightmap_rgb);
 		}
 		surface_t *next = surfs->next;
 		surfs->next = free_wsurfs;
@@ -1680,6 +1691,9 @@ void R_PreRender()
 	sreg = (subregion_t*)Z_Calloc(count * sizeof(subregion_t), PU_LEVEL, 0);
 	pds = (drawseg_t*)Z_Calloc(dscount * sizeof(drawseg_t), PU_LEVEL, 0);
 	pspart = (segpart_t*)Z_Calloc(spcount * sizeof(segpart_t), PU_LEVEL, 0);
+	AllocatedSubRegions = sreg;
+	AllocatedDrawSegs = pds;
+	AllocatedSegParts = pspart;
 
 	//	Add dplanes
 	for (i = 0; i < GClLevel->NumSubsectors; i++)
@@ -2174,58 +2188,109 @@ void R_SetupFakeFloors(sector_t* Sec)
 	Sec->topregion->params = &Sec->fakefloors->params;
 }
 
-//**************************************************************************
+//==========================================================================
 //
-//	$Log$
-//	Revision 1.18  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
+//	FreeSurfaces
 //
-//	Revision 1.17  2005/07/16 11:00:46  dj_jl
-//	Added fix for ceiling texture change to/from sky texture.
-//	
-//	Revision 1.16  2005/06/30 20:20:55  dj_jl
-//	Implemented rendering of Boom fake flats.
-//	
-//	Revision 1.15  2005/05/26 16:50:15  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.14  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.13  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.12  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.11  2002/07/13 07:51:48  dj_jl
-//	Replacing console's iostream with output device.
-//	
-//	Revision 1.10  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.9  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.8  2002/01/25 18:08:19  dj_jl
-//	Beautification
-//	
-//	Revision 1.7  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/12/01 17:51:46  dj_jl
-//	Little changes to compile with MSVC
-//	
-//	Revision 1.5  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.4  2001/08/30 17:36:47  dj_jl
-//	Faster compares
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//==========================================================================
+
+static void FreeSurfaces(surface_t* InSurf)
+{
+	guard(FreeSurfaces);
+	surface_t* next;
+	for (surface_t* s = InSurf; s; s = next)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (s->cachespots[i])
+			{
+				Drawer->FreeSurfCache(s->cachespots[i]);
+			}
+		}
+		if (s->lightmap)
+		{
+			Z_Free(s->lightmap);
+		}
+		if (s->lightmap_rgb)
+		{
+			Z_Free(s->lightmap_rgb);
+		}
+		next = s->next;
+		Z_Free(s);
+	}
+	unguard;
+}
+
+//==========================================================================
 //
-//**************************************************************************
+//	FreeSegParts
+//
+//==========================================================================
+
+static void FreeSegParts(segpart_t* InSP)
+{
+	guard(FreeSegParts);
+	for (segpart_t* sp = InSP; sp; sp = sp->next)
+	{
+		FreeWSurfs(sp->surfs);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_FreeLevelData
+//
+//==========================================================================
+
+void R_FreeLevelData()
+{
+	guard(R_FreeLevelData);
+	//	Free fake floor data.
+	for (int i = 0; i < GClLevel->NumSectors; i++)
+	{
+		if (GClLevel->Sectors[i].fakefloors)
+		{
+			Z_Free(GClLevel->Sectors[i].fakefloors);
+		}
+	}
+
+	for (int i = 0; i < GClLevel->NumSubsectors; i++)
+	{
+		for (subregion_t* r = GClLevel->Subsectors[i].regions; r; r = r->next)
+		{
+			FreeSurfaces(r->floor->surfs);
+			Z_Free(r->floor);
+			FreeSurfaces(r->ceil->surfs);
+			Z_Free(r->ceil);
+		}
+	}
+
+	//	Free seg parts.
+	for (int i = 0; i < GClLevel->NumSegs; i++)
+	{
+		for (drawseg_t* ds = GClLevel->Segs[i].drawsegs; ds; ds = ds->next)
+		{
+			FreeSegParts(ds->top);
+			FreeSegParts(ds->mid);
+			FreeSegParts(ds->bot);
+			FreeSegParts(ds->topsky);
+			FreeSegParts(ds->extra);
+		}
+	}
+	//	Free allocated wall surface blocks.
+	for (void* Block = AllocatedWSurfBlocks; Block;)
+	{
+		void* Next = *(void**)Block;
+		Z_Free(Block);
+		Block = Next;
+	}
+
+	//	Free big blocks.
+	Z_Free(AllocatedSubRegions);
+	Z_Free(AllocatedDrawSegs);
+	Z_Free(AllocatedSegParts);
+
+	R_FreeLevelSkyData();
+	unguard;
+}

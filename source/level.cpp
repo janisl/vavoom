@@ -973,7 +973,10 @@ void VLevel::LoadPVS(int Lump)
 	}
 	else
 	{
-		VisData = (byte*)W_CacheLumpNum(Lump, PU_LEVEL);
+		VisData = (byte*)Z_Malloc(W_LumpLength(Lump), PU_LEVEL, 0);
+		byte* TmpData = (byte*)W_CacheLumpNum(Lump, PU_LEVEL);
+		memcpy(VisData, TmpData, W_LumpLength(Lump));
+		Z_Free(TmpData);
 	}
 	unguard;
 }
@@ -996,12 +999,14 @@ void VLevel::LoadBlockMap(int Lump)
 		Host_Error("Missing a blockmap");
 	}
 
-   	BlockMapLump = (short *)W_CacheLumpNum(Lump, PU_LEVEL);
-   	BlockMap = (word *)BlockMapLump + 4;
-   	count = W_LumpLength(Lump) / 2;
+	BlockMapLump = (short*)Z_Malloc(W_LumpLength(Lump), PU_LEVEL, 0);
+	short* TmpLump = (short*)W_CacheLumpNum(Lump, PU_STATIC);
+	BlockMap = (word*)BlockMapLump + 4;
+	count = W_LumpLength(Lump) / 2;
 
-   	for (i = 0; i < count; i++)
-		BlockMapLump[i] = LittleShort(BlockMapLump[i]);
+	for (i = 0; i < count; i++)
+		BlockMapLump[i] = LittleShort(TmpLump[i]);
+	Z_Free(TmpLump);
 
 	BlockMapOrgX = BlockMapLump[0];
 	BlockMapOrgY = BlockMapLump[1];
@@ -1537,6 +1542,114 @@ void VLevel::Serialise(VStream& Strm)
 			}
 		}
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::Destroy
+//
+//==========================================================================
+
+void VLevel::Destroy()
+{
+	guard(VLevel::Destroy);
+	//	Destroy all thinkers.
+	DestroyAllThinkers();
+
+	//	Free level data.
+#ifdef CLIENT
+	if (this == GClLevel)
+	{
+		R_FreeLevelData();
+	}
+#endif
+	for (int i = 0; i < NumSectors; i++)
+	{
+		sec_region_t* Next;
+		for (sec_region_t* r = Sectors[i].topregion; r; r = Next)
+		{
+			Next = r->next;
+			Z_Free(r);
+		}
+	}
+	Z_Free(Sectors[0].lines);
+	Z_Free(Vertexes);
+	Z_Free(Sectors);
+	Z_Free(Sides);
+	Z_Free(Lines);
+	Z_Free(Segs);
+	Z_Free(Subsectors);
+	Z_Free(Nodes);
+	for (int i = 0; i < NumPolyObjs; i++)
+	{
+		Z_Free(PolyObjs[i].segs);
+		Z_Free(PolyObjs[i].originalPts);
+		if (PolyObjs[i].prevPts)
+		{
+			Z_Free(PolyObjs[i].prevPts);
+		}
+	}
+	if (PolyBlockMap)
+	{
+		for (int i = 0; i < BlockMapWidth * BlockMapHeight; i++)
+		{
+			for (polyblock_t* pb = PolyBlockMap[i]; pb;)
+			{
+				polyblock_t* Next = pb->next;
+				Z_Free(pb);
+				pb = Next;
+			}
+		}
+		Z_Free(PolyBlockMap);
+	}
+#ifdef SERVER
+	if (this == GLevel)
+	{
+		PO_FreePolyobjData();
+	}
+#endif
+	if (PolyObjs)
+	{
+		Z_Free(PolyObjs);
+	}
+	if (VisData)
+	{
+		Z_Free(VisData);
+	}
+	else
+	{
+		Z_Free(NoVis);
+	}
+	if (BlockLinks)
+	{
+		Z_Free(BlockLinks);
+	}
+	if (BlockMapLump)
+	{
+		Z_Free(BlockMapLump);
+	}
+	if (RejectMatrix)
+	{
+		Z_Free(RejectMatrix);
+	}
+#ifdef SERVER
+	if (this == GLevel)
+	{
+		P_UnloadACScripts();
+	}
+#endif
+	if (GenericSpeeches)
+	{
+		Z_Free(GenericSpeeches);
+	}
+	if (LevelSpeeches)
+	{
+		Z_Free(LevelSpeeches);
+	}
+
+	//	Call parent class's Destroy method.
+	Super::Destroy();
 	unguard;
 }
 

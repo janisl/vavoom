@@ -697,3 +697,20 @@ void R_DrawSky()
 	Drawer->EndSky();
 	unguard;
 }
+
+//==========================================================================
+//
+//	R_FreeLevelSkyData
+//
+//==========================================================================
+
+void R_FreeLevelSkyData()
+{
+	guard(R_FreeLevelSkyData);
+	if (LightningLightLevels)
+	{
+		Z_Free(LightningLightLevels);
+		LightningLightLevels = NULL;
+	}
+	unguard;
+}

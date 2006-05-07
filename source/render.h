@@ -112,6 +112,7 @@ void R_AnimateSurfaces();
 void R_PreRender();
 void R_SegMoved(seg_t *seg);
 void R_SetupFakeFloors(sector_t* Sec);
+void R_FreeLevelData();
 
 // r_things
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int = 0);

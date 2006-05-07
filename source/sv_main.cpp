@@ -50,7 +50,6 @@ void Draw_TeleportIcon();
 void CL_Disconnect();
 void SV_MapTeleport(char *mapname);
 bool SV_ReadClientMessages(int i);
-void SV_DestroyAllThinkers();
 void SV_RunClientCommand(const char *cmd);
 void EntInit();
 
@@ -236,7 +235,12 @@ void SV_Shutdown()
 void SV_Clear()
 {
 	guard(SV_Clear);
-	SV_DestroyAllThinkers();
+	if (GLevel)
+	{
+		GLevel->ConditionalDestroy();
+		GLevel = NULL;
+		VObject::CollectGarbage();
+	}
 	memset(&sv, 0, sizeof(sv));
 	memset(&level, 0, sizeof(level));
 	memset(sv_mobjs, 0, sizeof(VEntity *) * GMaxEntities);
@@ -2609,7 +2613,6 @@ void SV_ShutdownServer(boolean crash)
 	//
 	// clear structures
 	//
-	SV_DestroyAllThinkers();
 	if (GLevel)
 	{
 		delete GLevel;

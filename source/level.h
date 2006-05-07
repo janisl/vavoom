@@ -526,6 +526,7 @@ class VLevel : public VObject
 	VThinker*		ThinkerTail;
 
 	void Serialise(VStream& Strm);
+	void Destroy();
 
 	//	Map loader.
 	void LoadMap(const char *MapName);
@@ -535,6 +536,7 @@ class VLevel : public VObject
 
 	void AddThinker(VThinker*);
 	void RemoveThinker(VThinker*);
+	void DestroyAllThinkers();
 
 private:
 	//	Map loaders.

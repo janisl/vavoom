@@ -510,6 +510,9 @@ void TMemZone::FreeTag(int tag)
 		if (block->tag == tag)
 		{
 #ifdef ZONE_DEBUG
+			MemDebug_t* m = (MemDebug_t*)((char*)block + sizeof(memblock_t));
+			GCon->Logf("Freeing %d allocated at %s:%d",
+				m->Size, m->FileName, m->LineNumber);
 			Z_Free((char*)block + sizeof(memblock_t) + sizeof(MemDebug_t));
 #else
 			Z_Free((char*)block + sizeof(memblock_t));

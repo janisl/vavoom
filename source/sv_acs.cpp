@@ -486,6 +486,7 @@ public:
 	int*				MapVars[MAX_ACS_MAP_VARS];
 
 	FACScriptsObject(int Lump);
+	~FACScriptsObject();
 
 	int* OffsetToPtr(int Offs);
 	int PtrToOffset(int* Ptr);
@@ -763,6 +764,26 @@ FACScriptsObject::FACScriptsObject(int Lump)
 	{
 		LoadEnhancedObject();
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	FACScriptsObject::~FACScriptsObject
+//
+//==========================================================================
+
+FACScriptsObject::~FACScriptsObject()
+{
+	guard(FACScriptsObject::~FACScriptsObject);
+	Z_Free(Scripts);
+	for (int i = 0; i < NumArrays; i++)
+		Z_Free(ArrayStore[i].Data);
+	if (ArrayStore)
+		Z_Free(ArrayStore);
+	if (Arrays)
+		Z_Free(Arrays);
+	Z_Free(Data);
 	unguard;
 }
 
@@ -1811,14 +1832,25 @@ void FACSGrowingArray::Serialise(VStream& Strm)
 void P_LoadACScripts(int Lump)
 {
 	guard(P_LoadACScripts);
-	FACScriptsObject::StaticUnloadObjects();
-
 	if (Lump < 0)
 	{
 		return;
 	}
 
 	FACScriptsObject::StaticLoadObject(Lump);
+	unguard;
+}
+
+//==========================================================================
+//
+//	P_UnloadACScripts
+//
+//==========================================================================
+
+void P_UnloadACScripts()
+{
+	guard(P_UnloadACScripts);
+	FACScriptsObject::StaticUnloadObjects();
 	unguard;
 }
 
