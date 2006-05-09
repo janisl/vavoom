@@ -276,6 +276,7 @@ class VEntity : public VThinker
 	bool CheckPosition(TVec Pos);
 	bool CheckRelPosition(TVec Pos);
 	bool TryMove(TVec newPos);
+	bool TestMobjZ();
 	void SlideMove();
 	void BounceWall(float overbounce);
 	void UpdateVelocity();
@@ -299,6 +300,7 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(CheckPosition)
 	DECLARE_FUNCTION(CheckRelPosition)
 	DECLARE_FUNCTION(TryMove)
+	DECLARE_FUNCTION(TestMobjZ)
 	DECLARE_FUNCTION(SlideMove)
 	DECLARE_FUNCTION(BounceWall)
 	DECLARE_FUNCTION(UpdateVelocity)

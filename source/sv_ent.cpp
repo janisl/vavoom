@@ -838,6 +838,7 @@ bool VEntity::TryMove(TVec newPos)
 	int side;
 	int oldside;
 	line_t *ld;
+	boolean good;
 
 	check = CheckRelPosition(newPos);
 	tmtrace.TraceFlags &= ~tmtrace_t::TF_FloatOk;
@@ -874,6 +875,8 @@ bool VEntity::TryMove(TVec newPos)
 		}
 		if (EntityFlags & EF_Fly)
 		{
+			// When flying, slide up or down blocking lines until the actor
+			// is not blocked.
 			if (Origin.z + Height > tmtrace.CeilingZ)
 			{
 				Velocity.z = -8.0 * 35.0;
@@ -893,6 +896,17 @@ bool VEntity::TryMove(TVec newPos)
 			// Too big a step up
 			eventPushLine();
 			return false;
+		}
+		else if (Origin.z < tmtrace.FloorZ)
+		{
+			// Check to make sure there's nothing in the way for the step up
+			good = TestMobjZ();
+
+			if(!good)
+			{
+				eventPushLine();
+				return false;
+			}
 		}
 // Only Heretic
 //		if (bMissile && tmtrace->FloorZ > Origin.z)
@@ -1002,11 +1016,18 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 	line_t *li;
 	TVec hit_point;
 	opening_t *open;
+	boolean good;
 
 	if (!(in->Flags & intercept_t::IF_IsALine))
 		Host_Error("PTR_SlideTraverse: not a line?");
 
 	li = in->line;
+
+	// set openrange, opentop, openbottom
+	hit_point = slideorg + in->frac * slidedir;
+	open = SV_LineOpenings(li, hit_point);
+	open = SV_FindOpening(open, slidemo->Origin.z,
+		slidemo->Origin.z + slidemo->Height);
 
 	if (li->flags & ML_TWOSIDED)
 	{
@@ -1023,6 +1044,15 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 			// this line doesn't block movement
 			return true;
 		}
+		if (open && (slidemo->Origin.z < open->bottom))
+		{
+			// Check to make sure there's nothing in the way for the step up
+			good = slidemo->TestMobjZ();
+			if (good)
+			{
+				return true;
+			}
+		}
 	}
 	else
 	{
@@ -1033,7 +1063,7 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 		}
 	}
 
-	// the line does block movement,
+	// the line blocks movement,
 	// see if it is closer than best so far
 	if (in->frac < bestslidefrac)
 	{
@@ -1351,6 +1381,39 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 
 //=============================================================================
 //
+// TestMobjZ
+//
+//=============================================================================
+
+bool VEntity::TestMobjZ()
+{
+	guard(VEntity::TestMobjZ);
+	int xl, xh, yl, yh, bx, by;
+
+	if (!(EntityFlags & EF_ColideWithThings))
+		return true;
+
+	//
+	// the bounding box is extended by MAXRADIUS because mobj_ts are grouped
+	// into mapblocks based on their origin point, and can overlap into adjacent
+	// blocks by up to MAXRADIUS units
+	//
+	xl = MapBlock(Origin.x - Radius - XLevel->BlockMapOrgX - MAXRADIUS);
+	xh = MapBlock(Origin.x + Radius - XLevel->BlockMapOrgX + MAXRADIUS);
+	yl = MapBlock(Origin.y - Radius - XLevel->BlockMapOrgY - MAXRADIUS);
+	yh = MapBlock(Origin.y + Radius - XLevel->BlockMapOrgY + MAXRADIUS);
+
+	for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, NULL, NULL))
+				return false;
+
+	return true;
+	unguard;
+}
+
+//=============================================================================
+//
 //  VEntity::FakeZMovement
 //
 //  Fake the zmovement so that we can check if a move is legal
@@ -1411,38 +1474,18 @@ void VEntity::FakeZMovement()
 VEntity* VEntity::CheckOnmobj()
 {
 	guard(VEntity::CheckOnmobj);
-	int xl, xh, yl, yh, bx, by;
-
-	if (!(EntityFlags & EF_ColideWithThings))
-		return NULL;
+	boolean good;
 
 	tzmthing = this;
 	tzorg = Origin;
 	FakeZMovement();
+	good = TestMobjZ();
 
-	//
-	// check things first, possibly picking things up
-	// the bounding box is extended by MAXRADIUS because mobj_ts are grouped
-	// into mapblocks based on their origin point, and can overlap into adjacent
-	// blocks by up to MAXRADIUS units
-	//
-	xl = MapBlock(Origin.x - Radius - XLevel->BlockMapOrgX - MAXRADIUS);
-	xh = MapBlock(Origin.x + Radius - XLevel->BlockMapOrgX + MAXRADIUS);
-	yl = MapBlock(Origin.y - Radius - XLevel->BlockMapOrgY - MAXRADIUS);
-	yh = MapBlock(Origin.y + Radius - XLevel->BlockMapOrgY + MAXRADIUS);
-
-	for (bx = xl; bx <= xh; bx++)
-	{
-		for (by = yl; by <= yh; by++)
-		{
-			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, NULL, NULL))
-			{
-				return onmobj;
-			}
-		}
-	}
-	return NULL;
-	unguard;
+	if (good)
+		return NULL;
+	else
+		return onmobj;
+ 	unguard;
 }
 
 //===========================================================================
@@ -1723,6 +1766,18 @@ IMPLEMENT_FUNCTION(VEntity, TryMove)
 	TVec Pos = PR_Popv();
 	VEntity *Self = (VEntity *)PR_Pop();
 	PR_Push(Self->TryMove(Pos));
+}
+
+//==========================================================================
+//
+//	Entity.TestMobjZ
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, TestMobjZ)
+{
+	VEntity *Self = (VEntity *)PR_Pop();
+	Self->TestMobjZ();
 }
 
 //==========================================================================
