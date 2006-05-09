@@ -2422,10 +2422,11 @@ bool StepMove()
 	line_t *ld;
 	bool good;
 
+
 	if (MoveDir == DI_NODIR)
 		return false;
 
-	// [RH] Instead of yanking non-floating monsters to the ground,
+	// Instead of yanking non-floating monsters to the ground,
 	// let gravity drop them down, unless they're moving down a step.
 	if (!bNoGravity && Origin.z > FloorZ && !bOnMobj)
 	{
@@ -2500,8 +2501,12 @@ bool StepMove()
 			else
 				Origin.z -= FLOATSPEED * Level.Game.frametime;
 
-			bInFloat = true;
-			return true;
+			// Check to make sure there's nothing in the way of the float
+			if(TestMobjZ())
+			{
+				bInFloat = true;
+				return true;
+			}
 		}
 
 		if (!Level.Game.tmtrace->NumSpecHit)
