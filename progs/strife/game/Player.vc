@@ -1222,6 +1222,7 @@ void MovePlayer(float deltaTime)
 	{
 		//  Jump
 		MO.Velocity.z = 9.0 * 35.0;
+		Actor(MO).bOnMobj = false;
 		JumpTime = 0.5;
 	}
 }
