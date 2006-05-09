@@ -577,8 +577,12 @@ bool StepMove()
 			else
 				Origin.z -= FLOATSPEED * Level.Game.frametime;
 
-			bInFloat = true;
-			return true;
+			// Check to make sure there's nothing in the way of the float
+			if(TestMobjZ())
+			{
+				bInFloat = true;
+				return true;
+			}
 		}
 
 		if (!Level.Game.tmtrace->NumSpecHit)
