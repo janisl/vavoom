@@ -460,32 +460,32 @@ class VLevel : public VObject
 	//	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
 	//
 
-	int				NumVertexes;
+	vint32			NumVertexes;
 	vertex_t*		Vertexes;
 
-	int				NumSectors;
+	vint32			NumSectors;
 	sector_t*		Sectors;
 
-	int				NumSides;
+	vint32			NumSides;
 	side_t*			Sides;
 
-	int				NumLines;
+	vint32			NumLines;
 	line_t*			Lines;
 
-	int				NumSegs;
+	vint32			NumSegs;
 	seg_t*			Segs;
 
-	int				NumSubsectors;
+	vint32			NumSubsectors;
 	subsector_t*	Subsectors;
 
-	int				NumNodes;
+	vint32			NumNodes;
 	node_t*			Nodes;
 
-	byte*			VisData;
-	byte*			NoVis;
+	vuint8*			VisData;
+	vuint8*			NoVis;
 
 	// !!! Used only during level loading
-	int				NumThings;
+	vint32			NumThings;
 	mthing_t*		Things;
 
 	//
@@ -494,10 +494,10 @@ class VLevel : public VObject
 	// array of blocks of size ...
 	// Used to speed up collision detection by spatial subdivision in 2D.
 	//
-	short*			BlockMapLump;	// offsets in blockmap are from here
-	word*			BlockMap;		// int for larger maps
-	int				BlockMapWidth;	// Blockmap size.
-	int				BlockMapHeight;	// size in mapblocks
+	vint16*			BlockMapLump;	// offsets in blockmap are from here
+	vuint16*		BlockMap;		// int for larger maps
+	vint32			BlockMapWidth;	// Blockmap size.
+	vint32			BlockMapHeight;	// size in mapblocks
 	float			BlockMapOrgX;	// origin of block map
 	float			BlockMapOrgY;
 	VEntity**		BlockLinks;		// for thing chains
@@ -509,17 +509,17 @@ class VLevel : public VObject
 	//	Speeds up enemy AI by skipping detailed LineOf Sight calculation.
 	// 	Without special effect, this could be used as a PVS lookup as well.
 	//
-	byte*			RejectMatrix;
+	vuint8*			RejectMatrix;
 
 	//	Strife conversations.
-	int					NumGenericSpeeches;
+	vint32				NumGenericSpeeches;
 	FRogueConSpeech*	GenericSpeeches;
 
-	int					NumLevelSpeeches;
+	vint32				NumLevelSpeeches;
 	FRogueConSpeech*	LevelSpeeches;
 
 	//	List of all poly-objects on the level.
-	int 			NumPolyObjs;
+	vint32			NumPolyObjs;
 	polyobj_t*		PolyObjs;
 
 	VThinker*		ThinkerHead;
@@ -529,10 +529,10 @@ class VLevel : public VObject
 	void Destroy();
 
 	//	Map loader.
-	void LoadMap(const char *MapName);
+	void LoadMap(VName MapName);
 
-	subsector_t* PointInSubsector(const TVec &point) const;
-	byte *LeafPVS(const subsector_t *ss) const;
+	subsector_t* PointInSubsector(const TVec& point) const;
+	vuint8* LeafPVS(const subsector_t* ss) const;
 
 	void AddThinker(VThinker*);
 	void RemoveThinker(VThinker*);
@@ -540,36 +540,35 @@ class VLevel : public VObject
 
 private:
 	//	Map loaders.
-	void LoadVertexes(int Lump, int GLLump);
+	void LoadVertexes(int Lump, int GLLump, int& NumBaseVerts);
 	void LoadSectors(int Lump);
 	void LoadSideDefsPass1(int Lump);
 	void LoadSideDefsPass2(int Lump);
-	void LoadLineDefs1(int Lump);
-	void LoadLineDefs2(int Lump);
-	void LoadGLSegs(int Lump);
+	void LoadLineDefs1(int Lump, int NumBaseVerts);
+	void LoadLineDefs2(int Lump, int NumBaseVerts);
+	void LoadGLSegs(int Lump, int NumBaseVerts);
 	void LoadSubsectors(int Lump);
 	void LoadNodes(int Lump);
 	void LoadPVS(int Lump);
 	void LoadBlockMap(int Lump);
+	void LoadReject(int Lump);
 	void LoadThings1(int Lump);
 	void LoadThings2(int Lump);
 
 	//	Map loading helpers.
-	int FindGLNodes(const char* name) const;
-	int FTNumForName(const char *name) const;
-	int TFNumForName(const char *name) const;
-	int CMapTFNumForName(const char *name) const;
-	void SetupLineSides(line_t *ld) const;
+	int FindGLNodes(VName name) const;
+	int TexNumForName(const char* name, int Type, bool CMap = false) const;
+	void SetupLineSides(line_t* ld) const;
 
 	//	Post-loading routines.
 	void GroupLines() const;
-	void LinkNode(int BSPNum, node_t *pParent) const;
-	void ClearBox(float *box) const;
+	void LinkNode(int BSPNum, node_t* pParent) const;
+	void ClearBox(float* box) const;
 	void AddToBox(float* box, float x, float y) const;
 
 	//	Loader of the Strife conversations.
-	void LoadRogueConScript(VName LumpName, FRogueConSpeech *&SpeechList,
-		int &NumSpeeches) const;
+	void LoadRogueConScript(VName LumpName, FRogueConSpeech*& SpeechList,
+		int& NumSpeeches) const;
 
 	DECLARE_FUNCTION(PointInSector)
 };

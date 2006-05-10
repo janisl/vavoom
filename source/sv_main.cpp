@@ -2289,7 +2289,6 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 			Host_Error("Level needs more deathmatch start spots");
 		}
 	}
-	Z_Free(GLevel->Things);
 	PO_Init(); // Initialise the polyobjs
 
 	if (deathmatch)
