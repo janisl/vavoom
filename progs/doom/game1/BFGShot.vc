@@ -60,11 +60,14 @@ void A_BFGSpray()
 			vector(0.0, 0.0, Instigator.linetarget.Height / 4.0));
 
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(DoomDefs::svc_explosion2);
-		MSG_WriteByte(DoomDefs::EF_DL_GBALL);
-		MSG_WriteShort(ftoi(emo.Origin.x));
-		MSG_WriteShort(ftoi(emo.Origin.y));
-		MSG_WriteShort(ftoi(emo.Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(DoomDefs::svc_explosion2);
+			MSG_WriteByte(DoomDefs::EF_DL_GBALL);
+			MSG_WriteShort(ftoi(emo.Origin.x));
+			MSG_WriteShort(ftoi(emo.Origin.y));
+			MSG_WriteShort(ftoi(emo.Origin.z));
+		}
 
 		damage = 0;
 		for (j = 0; j < 15; j++)

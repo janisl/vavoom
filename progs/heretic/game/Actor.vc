@@ -448,11 +448,14 @@ void ExplodeMissile()
 	if (Effects & HereticDefs::EF_DLIGHT_MASK)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(HereticDefs::svc_explosion);
-		MSG_WriteByte(Effects & HereticDefs::EF_DLIGHT_MASK);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(HereticDefs::svc_explosion);
+			MSG_WriteByte(Effects & HereticDefs::EF_DLIGHT_MASK);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 		Effects &= ~HereticDefs::EF_DLIGHT_MASK;
 	}
 }
@@ -3640,11 +3643,14 @@ bool PTR_ShootTraverse(intercept_t * in)
 		A.PlaySound('weapons/blastershoot', CHAN_VOICE);
 
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(HereticDefs::svc_explosion);
-		MSG_WriteByte(HereticDefs::EF_DL_BLUE);
-		MSG_WriteShort(ftoi(hit_point.x));
-		MSG_WriteShort(ftoi(hit_point.y));
-		MSG_WriteShort(ftoi(hit_point.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(HereticDefs::svc_explosion);
+			MSG_WriteByte(HereticDefs::EF_DL_BLUE);
+			MSG_WriteShort(ftoi(hit_point.x));
+			MSG_WriteShort(ftoi(hit_point.y));
+			MSG_WriteShort(ftoi(hit_point.z));
+		}
 	}
 	else
 	{
@@ -3655,11 +3661,14 @@ bool PTR_ShootTraverse(intercept_t * in)
 		if (!th.bNoBlood && P_Random() < 192)
 		{
 			MSG_Select(MSG_SV_DATAGRAM);
-			MSG_WriteByte(HereticDefs::svc_blood);
-			MSG_WriteShort(ftoi(hit_point.x));
-			MSG_WriteShort(ftoi(hit_point.y));
-			MSG_WriteShort(ftoi(hit_point.z));
-			MSG_WriteByte(la_damage > 255 ? 255 : la_damage);
+			if (MSG_CheckSpace(8))
+			{
+				MSG_WriteByte(HereticDefs::svc_blood);
+				MSG_WriteShort(ftoi(hit_point.x));
+				MSG_WriteShort(ftoi(hit_point.y));
+				MSG_WriteShort(ftoi(hit_point.z));
+				MSG_WriteByte(la_damage > 255 ? 255 : la_damage);
+			}
 
 			th.SpawnBloodSplatter(hit_point);
 		}
@@ -3777,29 +3786,38 @@ void A_Explode()
 	if (Class == FireBomb)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(HereticDefs::svc_explosion);
-		MSG_WriteByte(HereticDefs::EF_DL_WHITE);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(HereticDefs::svc_explosion);
+			MSG_WriteByte(HereticDefs::EF_DL_WHITE);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 	}
 	if (Class == Pod)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(HereticDefs::svc_explosion);
-		MSG_WriteByte(HereticDefs::EF_DL_GREEN);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(HereticDefs::svc_explosion);
+			MSG_WriteByte(HereticDefs::EF_DL_GREEN);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 	}
 	if (ExplodeEffect)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(HereticDefs::svc_explosion);
-		MSG_WriteByte(ExplodeEffect);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(HereticDefs::svc_explosion);
+			MSG_WriteByte(ExplodeEffect);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 	}
 }
 
@@ -3830,20 +3848,26 @@ void SpawnPuff(TVec org, classid PuffType)
 	if (PuffType == GoldWandPuff1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(HereticDefs::svc_explosion);
-		MSG_WriteByte(HereticDefs::EF_DL_WHITE);
-		MSG_WriteShort(ftoi(org.x));
-		MSG_WriteShort(ftoi(org.y));
-		MSG_WriteShort(ftoi(org.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(HereticDefs::svc_explosion);
+			MSG_WriteByte(HereticDefs::EF_DL_WHITE);
+			MSG_WriteShort(ftoi(org.x));
+			MSG_WriteShort(ftoi(org.y));
+			MSG_WriteShort(ftoi(org.z));
+		}
 	}
 	if (PuffType == BlasterPuff1)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(HereticDefs::svc_explosion);
-		MSG_WriteByte(HereticDefs::EF_DL_BLUE);
-		MSG_WriteShort(ftoi(org.x));
-		MSG_WriteShort(ftoi(org.y));
-		MSG_WriteShort(ftoi(org.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(HereticDefs::svc_explosion);
+			MSG_WriteByte(HereticDefs::EF_DL_BLUE);
+			MSG_WriteShort(ftoi(org.x));
+			MSG_WriteShort(ftoi(org.y));
+			MSG_WriteShort(ftoi(org.z));
+		}
 	}
 }
 

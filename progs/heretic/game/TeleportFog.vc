@@ -36,11 +36,14 @@ class TeleportFog:Effect;
 void A_Lights()
 {
 	MSG_Select(MSG_SV_DATAGRAM);
-	MSG_WriteByte(HereticDefs::svc_explosion);
-	MSG_WriteByte(Effects);
-	MSG_WriteShort(ftoi(Origin.x));
-	MSG_WriteShort(ftoi(Origin.y));
-	MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
+	if (MSG_CheckSpace(8))
+	{
+		MSG_WriteByte(HereticDefs::svc_explosion);
+		MSG_WriteByte(Effects);
+		MSG_WriteShort(ftoi(Origin.x));
+		MSG_WriteShort(ftoi(Origin.y));
+		MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
+	}
 
 	//  Clear old dynamic light effect
 	Effects &= ~HereticDefs::EF_DLIGHT_MASK;

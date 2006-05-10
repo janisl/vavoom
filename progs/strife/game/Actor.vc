@@ -379,11 +379,14 @@ void ExplodeMissile()
 	if (Effects & StrifeDefs::EF_DLIGHT_MASK)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(StrifeDefs::svc_explosion);
-		MSG_WriteByte(Effects & StrifeDefs::EF_DLIGHT_MASK);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(StrifeDefs::svc_explosion);
+			MSG_WriteByte(Effects & StrifeDefs::EF_DLIGHT_MASK);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 		Effects &= ~StrifeDefs::EF_DLIGHT_MASK;
 	}
 }
@@ -3096,11 +3099,14 @@ void SpawnBlood(float x, float y, float z, int damage)
 	Actor A;
 
 	MSG_Select(MSG_SV_DATAGRAM);
-	MSG_WriteByte(StrifeDefs::svc_blood);
-	MSG_WriteShort(ftoi(x));
-	MSG_WriteShort(ftoi(y));
-	MSG_WriteShort(ftoi(z));
-	MSG_WriteByte(damage > 255 ? 255 : damage);
+	if (MSG_CheckSpace(8))
+	{
+		MSG_WriteByte(StrifeDefs::svc_blood);
+		MSG_WriteShort(ftoi(x));
+		MSG_WriteShort(ftoi(y));
+		MSG_WriteShort(ftoi(z));
+		MSG_WriteByte(damage > 255 ? 255 : damage);
+	}
 
 	z += (Random() - Random()) * 4.0;
 	A = Spawn(Blood, vector(x, y, z));
@@ -3198,11 +3204,14 @@ void A_Explode()
 	if (ExplodeEffect)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(StrifeDefs::svc_explosion);
-		MSG_WriteByte(ExplodeEffect);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(StrifeDefs::svc_explosion);
+			MSG_WriteByte(ExplodeEffect);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 	}
 }
 
@@ -3221,11 +3230,14 @@ void A_Explode2()
 	if (ExplodeEffect)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(StrifeDefs::svc_explosion);
-		MSG_WriteByte(ExplodeEffect);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(StrifeDefs::svc_explosion);
+			MSG_WriteByte(ExplodeEffect);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 	}
 }
 
@@ -3526,11 +3538,14 @@ void A_Explode32()
 	if (ExplodeEffect)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(StrifeDefs::svc_explosion);
-		MSG_WriteByte(ExplodeEffect);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(StrifeDefs::svc_explosion);
+			MSG_WriteByte(ExplodeEffect);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 	}
 }
 
@@ -3549,11 +3564,14 @@ void A_Explode192()
 	if (ExplodeEffect)
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(StrifeDefs::svc_explosion);
-		MSG_WriteByte(ExplodeEffect);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(StrifeDefs::svc_explosion);
+			MSG_WriteByte(ExplodeEffect);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 	}
 }
 

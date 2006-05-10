@@ -295,7 +295,6 @@ TVec shoot_lineend;
 TVec LightOffset;
 int LightColour;
 float LightRadius;
-int ExplodeEffect;
 
 __states__
 {
@@ -574,11 +573,14 @@ void ExplodeMissile()
 	if (!(Effects & DoomDefs::EF_ROCKET) && (Effects & DoomDefs::EF_DLIGHT_MASK))
 	{
 		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(DoomDefs::svc_explosion2);
-		MSG_WriteByte(Effects & DoomDefs::EF_DLIGHT_MASK);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z));
+		if (MSG_CheckSpace(8))
+		{
+			MSG_WriteByte(DoomDefs::svc_explosion2);
+			MSG_WriteByte(Effects & DoomDefs::EF_DLIGHT_MASK);
+			MSG_WriteShort(ftoi(Origin.x));
+			MSG_WriteShort(ftoi(Origin.y));
+			MSG_WriteShort(ftoi(Origin.z));
+		}
 		Effects &= ~DoomDefs::EF_DLIGHT_MASK;
 	}
 	Effects &= ~DoomDefs::EF_ROCKET;
@@ -3371,18 +3373,9 @@ void A_Explode()
 	RadiusAttack(128, 0, 0);
 
 	//  Spawn explosion effects - dynamic light and particles
-	if (ExplodeEffect)
+	MSG_Select(MSG_SV_DATAGRAM);
+	if (MSG_CheckSpace(7))
 	{
-		MSG_Select(MSG_SV_DATAGRAM);
-		MSG_WriteByte(DoomDefs::svc_explosion);
-		MSG_WriteByte(ExplodeEffect);
-		MSG_WriteShort(ftoi(Origin.x));
-		MSG_WriteShort(ftoi(Origin.y));
-		MSG_WriteShort(ftoi(Origin.z + Height * 0.5));
-	}
-	else
-	{
-		MSG_Select(MSG_SV_DATAGRAM);
 		MSG_WriteByte(DoomDefs::svc_explosion);
 		MSG_WriteShort(ftoi(Origin.x));
 		MSG_WriteShort(ftoi(Origin.y));
@@ -3586,11 +3579,14 @@ void P_SpawnBlood(TVec Org, int damage)
 	Actor A;
 
 	MSG_Select(MSG_SV_DATAGRAM);
-	MSG_WriteByte(DoomDefs::svc_blood);
-	MSG_WriteShort(ftoi(Org.x));
-	MSG_WriteShort(ftoi(Org.y));
-	MSG_WriteShort(ftoi(Org.z));
-	MSG_WriteByte(damage > 255 ? 255 : damage);
+	if (MSG_CheckSpace(8))
+	{
+		MSG_WriteByte(DoomDefs::svc_blood);
+		MSG_WriteShort(ftoi(Org.x));
+		MSG_WriteShort(ftoi(Org.y));
+		MSG_WriteShort(ftoi(Org.z));
+		MSG_WriteByte(damage > 255 ? 255 : damage);
+	}
 
 	Org.z += (Random() - Random()) * 4.0;
 	A = Spawn(Blood, Org);
