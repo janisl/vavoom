@@ -689,7 +689,7 @@ bool GiveMana(int mana, int count)
 		// Use bitwise or to make sure bot types are given.
 		return GiveMana(HexenDefs::MANA_1, count) | GiveMana(HexenDefs::MANA_2, count);
 	}
-	if (mana < 0 || mana > HexenDefs::NUMMANA)
+	if (mana < 0 || mana >= HexenDefs::NUMMANA)
 	{
 		Error("Actor::GiveMana: bad type %i", mana);
 	}
@@ -3992,92 +3992,3 @@ void Cheat_Class()
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.28  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.27  2006/04/05 18:24:32  dj_jl
-//  Fixed initial speed of throwing bomb.
-//
-//  Revision 1.26  2006/03/19 17:23:55  dj_jl
-//  Added explicit type casts.
-//
-//  Revision 1.25  2006/03/12 19:58:58  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.24  2006/03/02 18:35:14  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.23  2006/02/28 22:46:53  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.22  2006/02/26 20:56:25  dj_jl
-//  Proper serialisation of level and players.
-//
-//  Revision 1.21  2006/02/17 19:06:52  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.20  2006/02/15 23:33:54  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.19  2006/02/13 18:30:17  dj_jl
-//  Moved all server progs global functions to classes.
-//
-//  Revision 1.18  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.17  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.16  2006/01/18 19:14:07  dj_jl
-//  Switch to previous and next weapon.
-//
-//  Revision 1.15  2006/01/03 20:17:50  dj_jl
-//  Fixed missing sound renaming.
-//
-//  Revision 1.14  2005/12/27 22:22:28  dj_jl
-//  Created level info class, moved action special handling to it.
-//
-//  Revision 1.13  2005/12/14 20:52:32  dj_jl
-//  State names belong to a class.
-//
-//  Revision 1.12  2005/12/11 21:31:40  dj_jl
-//  Made path traversal callbacks class members.
-//
-//  Revision 1.11  2005/11/24 20:17:57  dj_jl
-//  Removed unused fields from Object class.
-//
-//  Revision 1.10  2005/11/19 15:15:08  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.9  2005/07/16 10:15:06  dj_jl
-//  Increased jump velocity.
-//
-//  Revision 1.8  2005/03/28 07:44:09  dj_jl
-//  Some Boom line specials and other improvements.
-//
-//  Revision 1.7  2005/03/16 15:04:39  dj_jl
-//  More work on line specials.
-//
-//  Revision 1.6  2004/12/27 12:23:13  dj_jl
-//  Multiple small changes for version 1.16
-//
-//  Revision 1.5  2004/11/22 07:36:27  dj_jl
-//  Implemented all sector specials in all games.
-//
-//  Revision 1.4  2004/08/28 12:35:23  dj_jl
-//  Move general client functions to player class.
-//
-//  Revision 1.3  2004/08/23 19:23:59  dj_jl
-//  Moved weapon utilites to player class.
-//
-//  Revision 1.2  2004/08/22 19:23:26  dj_jl
-//  Moved many functions to player class.
-//
-//  Revision 1.1  2003/11/12 16:50:47  dj_jl
-//  Changed player structure into a class
-//
-//**************************************************************************
