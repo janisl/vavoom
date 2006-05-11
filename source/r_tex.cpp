@@ -1032,19 +1032,28 @@ VTexture* VTexture::GetHighResolutionTexture()
 	default:
 		return NULL;
 	}
+
+	//	First try PNG.
 	char HighResName[80];
 	sprintf(HighResName, "textures/%s/%s.png", DirName, *Name);
-	if (!FL_FindFile(HighResName))
+	if (FL_FindFile(HighResName))
 	{
-		return NULL;
+		//	Create new high-resolution texture.
+		HiResTexture = new VPngTexture(Type, HighResName);
+		return HiResTexture;
 	}
 
-	//	Create new high-resolution texture.
-	HiResTexture = new VPngTexture(Type, HighResName);
-	return HiResTexture;
-#else
-	return NULL;
+	//	Then try TGA.
+	sprintf(HighResName, "textures/%s/%s.tga", DirName, *Name);
+	if (!FL_FindFile(HighResName))
+	{
+		//	Create new high-resolution texture.
+		HiResTexture = new VTgaTexture(Type, HighResName);
+		return HiResTexture;
+	}
 #endif
+	//	No hi-res texture found.
+	return NULL;
 	unguard;
 }
 
