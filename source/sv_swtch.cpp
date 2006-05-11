@@ -91,10 +91,10 @@ static TArray<TTerrainType>	TerrainTypes;
 //
 //==========================================================================
 
-void P_ClearButtons(void)
+void P_ClearButtons()
 {
 	guard(P_ClearButtons);
-	ButtonList.Empty();
+	ButtonList.Clear();
 	unguard;
 }
 
@@ -110,25 +110,19 @@ static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 {
 	guard(P_StartButton);
     // See if button is already pressed
-    for (TArray<TButton>::TIterator b(ButtonList); b; ++b)
+	for (int i = 0; i < ButtonList.Num(); i++)
     {
-		if (b->Side == sidenum)
+		if (ButtonList[i].Side == sidenum)
 		{
 		    return;
 		}
     }
 
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-    TButton *but = new(ButtonList) TButton;
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
-	but->Side = sidenum;
-	but->Where = w;
-	but->Texture = texture;
-	but->Timer = time;
+    TButton& but = ButtonList.Alloc();
+	but.Side = sidenum;
+	but.Where = w;
+	but.Texture = texture;
+	but.Timer = time;
 	unguard;
 }
 
@@ -145,15 +139,16 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 {
 	guard(P_ChangeSwitchTexture);
 	int sidenum = line->sidenum[0];
-    int texTop = GLevel->Sides[sidenum].toptexture;
-    int texMid = GLevel->Sides[sidenum].midtexture;
-    int texBot = GLevel->Sides[sidenum].bottomtexture;
+	int texTop = GLevel->Sides[sidenum].toptexture;
+	int texMid = GLevel->Sides[sidenum].midtexture;
+	int texBot = GLevel->Sides[sidenum].bottomtexture;
 
-    for (TArray<TSwitch>::TIterator sw(Switches); sw; ++sw)
-    {
+	for (int  i = 0; i < Switches.Num(); i++)
+	{
 		int fromTex;
 		int toTex;
 		EBWhere where;
+		TSwitch* sw = &Switches[i];
 
 		if (sw->Tex1 == texTop)
 		{
@@ -162,12 +157,12 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 			where = SWITCH_TOP;
 		}
 		else if (sw->Tex1 == texMid)
-	    {
+		{
 			fromTex = sw->Tex1;
 			toTex = sw->Tex2;
 			where = SWITCH_MIDDLE;
-	    }
-	    else if (sw->Tex1 == texBot)
+		}
+		else if (sw->Tex1 == texBot)
 		{
 			fromTex = sw->Tex1;
 			toTex = sw->Tex2;
@@ -180,12 +175,12 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 			where = SWITCH_TOP;
 		}
 		else if (sw->Tex2 == texMid)
-	    {
+		{
 			fromTex = sw->Tex2;
 			toTex = sw->Tex1;
 			where = SWITCH_MIDDLE;
-	    }
-	    else if (sw->Tex2 == texBot)
+		}
+		else if (sw->Tex2 == texBot)
 		{
 			fromTex = sw->Tex2;
 			toTex = sw->Tex1;
@@ -198,12 +193,12 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 
 		SV_SectorStartSound(GLevel->Sides[sidenum].sector, sw->Sound, 0, 127);
 		SV_SetLineTexture(sidenum, where, toTex);
-	    if (useAgain)
+		if (useAgain)
 		{
 			P_StartButton(sidenum, where, fromTex, BUTTONTIME);
 		}
-	    return;
-    }
+		return;
+	}
 	unguard;
 }
 
@@ -213,17 +208,19 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 //
 //==========================================================================
 
-void P_UpdateButtons(void)
+void P_UpdateButtons()
 {
 	guard(P_UpdateButtons);
 	//  DO BUTTONS
-	for (TArray<TButton>::TIterator b(ButtonList); b; ++b)
+	for (int i = 0; i < ButtonList.Num(); i++)
 	{
-		b->Timer -= host_frametime;
-		if (b->Timer <= 0.0)
+		TButton& b = ButtonList[i];
+		b.Timer -= host_frametime;
+		if (b.Timer <= 0.0)
 		{
-			SV_SetLineTexture(b->Side, b->Where, b->Texture);
-			b.RemoveCurrent();
+			SV_SetLineTexture(b.Side, b.Where, b.Texture);
+			ButtonList.RemoveIndex(i);
+			i--;
 		}
 	}
 	unguard;
@@ -241,7 +238,7 @@ void P_UpdateButtons(void)
 //
 //==========================================================================
 
-void P_InitTerrainTypes(void)
+void P_InitTerrainTypes()
 {
 	guard(P_InitTerrainTypes);
 	SC_Open("TERRAINS");
@@ -252,19 +249,13 @@ void P_InitTerrainTypes(void)
 		SC_MustGetNumber();
 		if (pic != -1)
 		{
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-			TTerrainType *tt = new(TerrainTypes) TTerrainType;
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
-			tt->Pic = pic;
-			tt->Type = sc_Number;
+			TTerrainType& tt = TerrainTypes.Alloc();
+			tt.Pic = pic;
+			tt.Type = sc_Number;
 		}
 	}
 	SC_Close();
-	TerrainTypes.Shrink();
+	TerrainTypes.Condense();
 	unguard;
 }
 
@@ -277,13 +268,26 @@ void P_InitTerrainTypes(void)
 int SV_TerrainType(int pic)
 {
 	guard(SV_TerrainType);
-	for (TArray<TTerrainType>::TIterator tt(TerrainTypes); tt; ++tt)
+	for (int i = 0; i < TerrainTypes.Num(); i++)
 	{
-		if (tt->Pic == pic)
+		if (TerrainTypes[i].Pic == pic)
 		{
-			return tt->Type;
+			return TerrainTypes[i].Type;
 		}
 	}
 	return 0;
+	unguard;
+}
+
+//==========================================================================
+//
+// P_FreeTerrainTypes
+//
+//==========================================================================
+
+void P_FreeTerrainTypes()
+{
+	guard(P_FreeTerrainTypes);
+	TerrainTypes.Clear();
 	unguard;
 }

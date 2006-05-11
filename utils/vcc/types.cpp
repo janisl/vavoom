@@ -66,7 +66,7 @@ void InitTypes()
 VMemberBase::VMemberBase(vuint8 InType, VName InName, VMemberBase* InOuter,
 	TLocation InLoc)
 : MemberType(InType)
-, MemberIndex(GMembers.AddItem(this))
+, MemberIndex(GMembers.Append(this))
 , Name(InName)
 , Outer(InOuter)
 , Loc(InLoc)
@@ -1081,7 +1081,8 @@ static void AddVTable(VClass* InClass)
 		AddVTable(InClass->ParentClass);
 	}
 	InClass->VTableOffset = vtables.Num();
-	VMethod** vtable = &vtables[vtables.Add(InClass->NumMethods)];
+	vtables.SetNum(vtables.Num() + InClass->NumMethods);
+	VMethod** vtable = &vtables[InClass->VTableOffset];
 	memset(vtable, 0, InClass->NumMethods * sizeof(VMethod*));
 	if (InClass->ParentClass)
 	{

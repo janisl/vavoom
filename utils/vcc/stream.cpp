@@ -329,7 +329,7 @@ VMemoryStream::VMemoryStream(void* InData, int InLen)
 {
 	guard(VMemoryStream::VMemoryStream);
 	bLoading = true;
-	Array.Add(InLen);
+	Array.SetNum(InLen);
 	memcpy(&Array[0], InData, InLen);
 	unguard;
 }
@@ -375,7 +375,7 @@ void VMemoryStream::Serialise(void* Data, int Len)
 	else
 	{
 		if (Pos + Len > Array.Num())
-			Array.Add(Pos + Len - Array.Num());
+			Array.SetNum(Pos + Len);
 		memcpy(&Array[Pos], Data, Len);
 		Pos += Len;
 	}

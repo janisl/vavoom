@@ -1152,7 +1152,7 @@ static int AddSourceFile(const char* SName)
 	//	Not found, add it.
 	char* NewName = new char[strlen(SName) + 1];
 	strcpy(NewName, SName);
-	return SourceFiles.AddItem(NewName);
+	return SourceFiles.Append(NewName);
 }
 
 //==========================================================================
@@ -1333,105 +1333,3 @@ const char* TLocation::GetSource() const
 		return "(external)";
 	return SourceFiles[Loc >> 16];
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.32  2006/03/26 13:06:49  dj_jl
-//	Implemented support for modular progs.
-//
-//	Revision 1.31  2006/03/23 23:11:27  dj_jl
-//	Added support for final methods.
-//	
-//	Revision 1.30  2006/03/19 14:45:49  dj_jl
-//	Added code location object.
-//	
-//	Revision 1.29  2006/03/19 13:15:29  dj_jl
-//	Per character keyword checks.
-//	
-//	Revision 1.28  2006/03/13 21:24:21  dj_jl
-//	Added support for read-only, private and transient fields.
-//	
-//	Revision 1.27  2006/03/12 20:04:50  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.26  2006/02/28 19:17:20  dj_jl
-//	Added support for constants.
-//	
-//	Revision 1.25  2006/02/27 21:23:55  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.24  2006/02/19 20:37:02  dj_jl
-//	Implemented support for delegates.
-//	
-//	Revision 1.23  2006/02/19 14:37:36  dj_jl
-//	Changed type handling.
-//	
-//	Revision 1.22  2006/02/17 19:25:00  dj_jl
-//	Removed support for progs global variables and functions.
-//	
-//	Revision 1.21  2006/02/15 23:27:07  dj_jl
-//	Added script ID class attribute.
-//	
-//	Revision 1.20  2005/04/28 07:14:03  dj_jl
-//	Fixed some warnings.
-//	
-//	Revision 1.19  2003/03/08 12:47:52  dj_jl
-//	Code cleanup.
-//	
-//	Revision 1.18  2002/09/07 16:36:38  dj_jl
-//	Support bool in function args and return type.
-//	Removed support for typedefs.
-//	
-//	Revision 1.17  2002/03/12 19:17:30  dj_jl
-//	Added keyword abstract
-//	
-//	Revision 1.16  2002/02/16 16:28:36  dj_jl
-//	Added support for bool variables
-//	
-//	Revision 1.15  2002/01/17 18:19:52  dj_jl
-//	New style of adding to mobjinfo, some fixes
-//	
-//	Revision 1.14  2002/01/15 18:29:36  dj_jl
-//	no message
-//	
-//	Revision 1.13  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//	Revision 1.12  2002/01/07 12:31:36  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.11  2001/12/18 19:09:41  dj_jl
-//	Some extra info in progs and other small changes
-//	
-//	Revision 1.10  2001/12/12 19:22:22  dj_jl
-//	Support for method usage as state functions, dynamic cast
-//	Added dynamic arrays
-//	
-//	Revision 1.9  2001/12/04 18:19:03  dj_jl
-//	Escape character for \ symbol
-//	
-//	Revision 1.8  2001/12/03 19:25:44  dj_jl
-//	Fixed calling of parent function
-//	Added defaultproperties
-//	Fixed vectors as arguments to methods
-//	
-//	Revision 1.7  2001/12/01 18:17:09  dj_jl
-//	Fixed calling of parent method, speedup
-//	
-//	Revision 1.6  2001/11/09 14:42:29  dj_jl
-//	References, beautification
-//	
-//	Revision 1.5  2001/10/02 17:44:52  dj_jl
-//	Some optimizations
-//	
-//	Revision 1.4  2001/09/20 16:09:55  dj_jl
-//	Added basic object-oriented support
-//	
-//	Revision 1.3  2001/08/21 17:52:54  dj_jl
-//	Added support for real string pointers, beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -93,8 +93,8 @@ boolean P_TerminateACS(int number, int map);
 boolean P_SuspendACS(int number, int map);
 void P_TagFinished(int tag);
 void P_PolyobjFinished(int po);
-void P_ACSInitNewGame(void);
-void P_CheckACSStore(void);
+void P_ACSInitNewGame();
+void P_CheckACSStore();
 void P_SerialiseScripts(VStream& Strm);
 
 extern int				WorldVars[MAX_ACS_WORLD_VARS];
@@ -169,13 +169,14 @@ bool P_ChangeSector(sector_t * sector, int crunch);
 //
 //==========================================================================
 
-void P_InitSwitchList(void);
-void P_ClearButtons(void);
+void P_InitSwitchList();
+void P_ClearButtons();
 void P_ChangeSwitchTexture(line_t* line, int useAgain);
-void P_UpdateButtons(void);
+void P_UpdateButtons();
 
-void P_InitTerrainTypes(void);
+void P_InitTerrainTypes();
 int SV_TerrainType(int pic);
+void P_FreeTerrainTypes();
 
 //==========================================================================
 //
@@ -185,8 +186,8 @@ int SV_TerrainType(int pic);
 //
 //==========================================================================
 
-void P_InitThinkers(void);
-void P_Ticker(void);
+void P_InitThinkers();
+void P_Ticker();
 
 extern int 			TimerGame; // tic countdown for deathmatch
 
@@ -202,7 +203,7 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush);
 void PO_AddAnchorPoint(float x, float y, int tag);
 boolean PO_MovePolyobj(int num, float x, float y);
 boolean PO_RotatePolyobj(int num, float angle);
-void PO_Init(void);
+void PO_Init();
 boolean PO_Busy(int polyobj);
 polyobj_t *PO_GetPolyobj(int polyNum);
 int PO_GetPolyobjMirror(int poly);
@@ -253,7 +254,7 @@ void SV_ChangeSky(const char* Sky1, const char* Sky2);
 void SV_ChangeMusic(const char* SongName);
 void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName);
 
-void SV_ReadMove(void);
+void SV_ReadMove();
 
 extern VBasePlayer*		sv_player;
 
@@ -277,9 +278,9 @@ void G_ExitLevel(int Position);
 void G_SecretExitLevel(int Position);
 void G_Completed(int Map, int Position, int SaveAngle);
 void G_TeleportNewMap(int map, int position);
-void G_WorldDone(void);
+void G_WorldDone();
 void G_PlayerReborn(int player);
-void G_StartNewInit(void);
+void G_StartNewInit();
 
 int GetMobjNum(VEntity *mobj);
 VEntity* SetMobjPtr(int archiveNum);

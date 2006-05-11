@@ -334,8 +334,8 @@ VMemoryStream::VMemoryStream(void* InData, int InLen)
 {
 	guard(VMemoryStream::VMemoryStream);
 	bLoading = true;
-	Array.Add(InLen);
-	memcpy(&Array[0], InData, InLen);
+	Array.SetNum(InLen);
+	memcpy(Array.Ptr(), InData, InLen);
 	unguard;
 }
 
@@ -345,7 +345,7 @@ VMemoryStream::VMemoryStream(void* InData, int InLen)
 //
 //==========================================================================
 
-VMemoryStream::VMemoryStream(const TArray<byte, PU_STATIC>& InArray)
+VMemoryStream::VMemoryStream(const TArray<vuint8>& InArray)
 : Pos(0)
 {
 	guard(VMemoryStream::VMemoryStream);
@@ -380,7 +380,7 @@ void VMemoryStream::Serialise(void* Data, int Len)
 	else
 	{
 		if (Pos + Len > Array.Num())
-			Array.Add(Pos + Len - Array.Num());
+			Array.SetNum(Pos + Len);
 		memcpy(&Array[Pos], Data, Len);
 		Pos += Len;
 	}
@@ -428,29 +428,3 @@ int VMemoryStream::TotalSize()
 {
 	return Array.Num();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.7  2006/04/16 09:17:42  dj_jl
-//	Fixed byte swapping of integers.
-//
-//	Revision 1.6  2006/03/29 20:31:59  dj_jl
-//	Fixed validity check in seek.
-//	
-//	Revision 1.5  2006/03/10 19:31:25  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.4  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.3  2006/02/27 18:44:25  dj_jl
-//	Serialisation of indexes in a compact way.
-//	
-//	Revision 1.2  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.1  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//**************************************************************************

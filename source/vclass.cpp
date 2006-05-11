@@ -211,7 +211,7 @@ VMemberBase::VMemberBase(vuint8 InMemberType, VName AName)
 {
 	if (GObjInitialized)
 	{
-		GMembers.AddItem(this);
+		GMembers.Append(this);
 	}
 }
 
@@ -285,9 +285,9 @@ void VMemberBase::PostLoad()
 void VMemberBase::StaticInit()
 {
 	guard(VMemberBase::StaticInit);
-	VClass::GModelNames.AddItem(NAME_None);
+	VClass::GModelNames.Append(NAME_None);
 	for (VClass* C = GClasses; C; C = C->LinkNext)
-		GMembers.AddItem(C);
+		GMembers.Append(C);
 	GObjInitialized = true;
 	unguard;
 }
@@ -308,12 +308,12 @@ void VMemberBase::StaticExit()
 			delete GMembers[i];
 		}
 	}
-	GMembers.Empty();
-	GLoadedPackages.Empty();
-	VClass::GMobjInfos.Empty();
-	VClass::GScriptIds.Empty();
-	VClass::GSpriteNames.Empty();
-	VClass::GModelNames.Empty();
+	GMembers.Clear();
+	GLoadedPackages.Clear();
+	VClass::GMobjInfos.Clear();
+	VClass::GScriptIds.Clear();
+	VClass::GSpriteNames.Clear();
+	VClass::GModelNames.Clear();
 	GObjInitialized = false;
 }
 
@@ -394,7 +394,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->NumExports = Progs.num_exports;
 
 	VPackage* Pkg = new VPackage(InName);
-	GLoadedPackages.AddItem(Pkg);
+	GLoadedPackages.Append(Pkg);
 	Pkg->Checksum = crc;
 	Pkg->Reader = Reader;
 
@@ -454,16 +454,12 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->Seek(Progs.ofs_mobjinfo);
 	for (i = 0; i < Progs.num_mobjinfo; i++)
 	{
-		mobjinfo_t mi;
-		*Reader << mi;
-		VClass::GMobjInfos.AddItem(mi);
+		*Reader << VClass::GMobjInfos.Alloc();
 	}
 	Reader->Seek(Progs.ofs_scriptids);
 	for (i = 0; i < Progs.num_scriptids; i++)
 	{
-		mobjinfo_t si;
-		*Reader << si;
-		VClass::GScriptIds.AddItem(si);
+		*Reader << VClass::GScriptIds.Alloc();
 	}
 
 	//	Set up function pointers in vitual tables
@@ -1421,7 +1417,7 @@ int VClass::FindSprite(VName Name)
 	for (int i = 0; i < GSpriteNames.Num(); i++)
 		if (GSpriteNames[i] == Name)
 			return i;
-	return GSpriteNames.AddItem(Name);
+	return GSpriteNames.Append(Name);
 	unguard;
 }
 
@@ -1437,7 +1433,7 @@ int VClass::FindModel(VName Name)
 	for (int i = 0; i < GModelNames.Num(); i++)
 		if (GModelNames[i] == Name)
 			return i;
-	return GModelNames.AddItem(Name);
+	return GModelNames.Append(Name);
 	unguard;
 }
 

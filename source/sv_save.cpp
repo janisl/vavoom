@@ -105,18 +105,16 @@ private:
 	VStream*			Stream;
 
 public:
-	VName*				NameRemap;
+	TArray<VName>		NameRemap;
 	TArray<VObject*>	Exports;
 
 	VSaveLoaderStream(VStream* InStream)
 	: Stream(InStream)
-	, NameRemap(0)
 	{
 		bLoading = true;
 	}
 	~VSaveLoaderStream()
 	{
-		Z_Free(NameRemap);
 		delete Stream;
 	}
 
@@ -206,14 +204,14 @@ private:
 public:
 	TArray<VName>		Names;
 	TArray<VObject*>	Exports;
-	vint32*				NamesMap;
-	vint32*				ObjectsMap;
+	TArray<vint32>		NamesMap;
+	TArray<vint32>		ObjectsMap;
 
 	VSaveWriterStream(VStream* InStream)
 	: Stream(InStream)
 	{
 		bLoading = false;
-		NamesMap = (vint32*)Z_Malloc(sizeof(vint32) * VName::GetNumNames(), PU_STATIC, 0);
+		NamesMap.SetNum(VName::GetNumNames());
 		for (int i = 0; i < VName::GetNumNames(); i++)
 		{
 			NamesMap[i] = -1;
@@ -258,7 +256,7 @@ public:
 	{
 		if (NamesMap[Name.GetIndex()] == -1)
 		{
-			NamesMap[Name.GetIndex()] = Names.AddItem(Name);
+			NamesMap[Name.GetIndex()] = Names.Append(Name);
 		}
 		*this << STRM_INDEX(NamesMap[Name.GetIndex()]);
 		return *this;
@@ -479,7 +477,7 @@ static void UnarchiveNames(VStream &Strm)
 	Strm.Seek(NamesOffset);
 	vint32 Count;
 	Strm << STRM_INDEX(Count);
-	Loader->NameRemap = (VName*)Z_Malloc(Count * 4, PU_STATIC, 0);
+	Loader->NameRemap.SetNum(Count);
 	for (int i = 0; i < Count; i++)
 	{
 		VNameEntry E;
@@ -501,10 +499,10 @@ static void ArchiveThinkers()
 	vint32 Seg = ASEG_WORLD;
 	*Saver << Seg;
 
-	Saver->ObjectsMap = (int*)Z_Calloc(VObject::GetObjectsCount() * 4, PU_STATIC, 0);
+	Saver->ObjectsMap.SetNum(VObject::GetObjectsCount());
 
 	//	Add level
-	Saver->Exports.AddItem(GLevel);
+	Saver->Exports.Append(GLevel);
 	Saver->ObjectsMap[GLevel->GetIndex()] = Saver->Exports.Num();
 
 	//	Add players.
@@ -517,7 +515,7 @@ static void ArchiveThinkers()
 			continue;
 		}
 
-		Saver->Exports.AddItem(GGameInfo->Players[i]);
+		Saver->Exports.Append(GGameInfo->Players[i]);
 		Saver->ObjectsMap[GGameInfo->Players[i]->GetIndex()] = Saver->Exports.Num();
 	}
 
@@ -532,7 +530,7 @@ static void ArchiveThinkers()
 			continue;
 		}
 
-		Saver->Exports.AddItem(Th);
+		Saver->Exports.Append(Th);
 		Saver->ObjectsMap[Th->GetIndex()] = Saver->Exports.Num();
 	}
 
@@ -548,7 +546,7 @@ static void ArchiveThinkers()
 		{
 			if (GGameInfo->Players[i]->ViewEnts[pi])
 			{
-				Saver->Exports.AddItem(GGameInfo->Players[i]->ViewEnts[pi]);
+				Saver->Exports.Append(GGameInfo->Players[i]->ViewEnts[pi]);
 				Saver->ObjectsMap[GGameInfo->Players[i]->ViewEnts[pi]->GetIndex()] = Saver->Exports.Num();
 			}
 		}
@@ -584,7 +582,7 @@ static void UnarchiveThinkers()
 	AssertSegment(ASEG_WORLD);
 
 	//	Add level.
-	Loader->Exports.AddItem(GLevel);
+	Loader->Exports.Append(GLevel);
 
 	//	Add players.
 	sv_load_num_players = 0;
@@ -595,7 +593,7 @@ static void UnarchiveThinkers()
 		if (Active)
 		{
 			sv_load_num_players++;
-			Loader->Exports.AddItem(GPlayersBase[i]);
+			Loader->Exports.Append(GPlayersBase[i]);
 		}
 	}
 
@@ -621,7 +619,7 @@ static void UnarchiveThinkers()
 			GLevelInfo = (VLevelInfo*)Obj;
 		}
 
-		Loader->Exports.AddItem(Obj);
+		Loader->Exports.Append(Obj);
 	}
 
 	GLevelInfo->Game = GGameInfo;
@@ -837,6 +835,7 @@ static void SV_LoadMap(const char *mapname, int slot)
 	void *tmp = Z_Malloc(len, PU_STATIC, 0);
 	Loader->Serialise(tmp, len);
 	sv_signon.Write(tmp, len);
+	Z_Free(tmp);
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	int Idx;
 	*Loader << STRM_INDEX(Idx);
@@ -1280,192 +1279,3 @@ COMMAND(Load)
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.62  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.61  2006/03/16 00:37:55  dj_jl
-//	Savegame size optimisations.
-//	
-//	Revision 1.60  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.59  2006/03/06 13:05:51  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.58  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.57  2006/02/28 18:06:28  dj_jl
-//	Put thinkers back in linked list.
-//	
-//	Revision 1.56  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.55  2006/02/27 18:44:25  dj_jl
-//	Serialisation of indexes in a compact way.
-//	
-//	Revision 1.54  2006/02/26 20:52:48  dj_jl
-//	Proper serialisation of level and players.
-//	
-//	Revision 1.53  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.52  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.51  2006/02/21 17:54:13  dj_jl
-//	Save pointer to old stats.
-//	
-//	Revision 1.50  2006/02/15 23:28:18  dj_jl
-//	Moved all server progs global variables to classes.
-//	
-//	Revision 1.49  2006/02/13 18:34:34  dj_jl
-//	Moved all server progs global functions to classes.
-//	
-//	Revision 1.48  2006/02/05 18:52:44  dj_jl
-//	Moved common utils to level info class or built-in.
-//	
-//	Revision 1.47  2006/01/29 20:41:30  dj_jl
-//	On Unix systems use ~/.vavoom for generated files.
-//	
-//	Revision 1.46  2005/12/29 19:50:24  dj_jl
-//	Fixed loading.
-//	
-//	Revision 1.45  2005/12/29 17:26:01  dj_jl
-//	Changed version number.
-//	
-//	Revision 1.44  2005/12/27 22:24:00  dj_jl
-//	Created level info class, moved action special handling to it.
-//	
-//	Revision 1.43  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.42  2005/11/20 15:50:40  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.41  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.40  2005/04/04 07:48:13  dj_jl
-//	Fix for loading level variables.
-//	
-//	Revision 1.39  2005/03/28 07:24:36  dj_jl
-//	Saving a net game.
-//	
-//	Revision 1.38  2005/01/24 12:56:58  dj_jl
-//	Saving of level time.
-//	
-//	Revision 1.37  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.36  2004/12/22 07:50:51  dj_jl
-//	Fixed loading of ACS arrays.
-//	
-//	Revision 1.35  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.34  2004/01/30 17:32:59  dj_jl
-//	Fixed loading
-//	
-//	Revision 1.33  2003/11/12 16:47:40  dj_jl
-//	Changed player structure into a class
-//	
-//	Revision 1.32  2003/10/22 06:16:53  dj_jl
-//	Secret level info saved in savegame
-//	
-//	Revision 1.31  2003/07/11 16:45:20  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.30  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.29  2002/08/28 16:41:09  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.28  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.27  2002/07/13 07:50:58  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.26  2002/06/14 15:36:35  dj_jl
-//	Changed version number.
-//	
-//	Revision 1.25  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.24  2002/05/03 17:06:23  dj_jl
-//	Mangling of string pointers.
-//	
-//	Revision 1.23  2002/02/26 17:54:26  dj_jl
-//	Importing special property info from progs and using it in saving.
-//	
-//	Revision 1.22  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.21  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.20  2002/01/12 18:04:01  dj_jl
-//	Added unarchieving of names
-//	
-//	Revision 1.19  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.18  2001/12/28 16:25:32  dj_jl
-//	Fixed loading of ViewEnts
-//	
-//	Revision 1.17  2001/12/27 17:33:29  dj_jl
-//	Removed thinker list
-//	
-//	Revision 1.16  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.15  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.14  2001/12/04 18:14:46  dj_jl
-//	Renamed thinker_t to VThinker
-//	
-//	Revision 1.13  2001/11/09 18:16:10  dj_jl
-//	Fixed copying and deleting when save directory doesn't exist
-//	
-//	Revision 1.12  2001/11/09 14:32:00  dj_jl
-//	Copy and delete using directory listing
-//	
-//	Revision 1.11  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.10  2001/10/02 17:43:50  dj_jl
-//	Added addfields to lines, sectors and polyobjs
-//	
-//	Revision 1.9  2001/09/24 17:35:24  dj_jl
-//	Support for thinker classes
-//	
-//	Revision 1.8  2001/09/20 16:30:28  dj_jl
-//	Started to use object-oriented stuff in progs
-//	
-//	Revision 1.7  2001/08/30 17:46:21  dj_jl
-//	Removed game dependency
-//	
-//	Revision 1.6  2001/08/23 17:48:43  dj_jl
-//	NULL pointer is valid thinker, so no warnings
-//	
-//	Revision 1.5  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.4  2001/08/04 17:32:39  dj_jl
-//	Beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

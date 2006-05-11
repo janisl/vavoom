@@ -86,12 +86,12 @@ VObject::~VObject()
 
 	if (Index == GObjObjects.Num() - 1)
 	{
-		GObjObjects.Pop();
+		GObjObjects.RemoveIndex(Index);
 	}
 	else
 	{
 		GObjObjects[Index] = NULL;
-		GObjAvailable.AddItem(Index);
+		GObjAvailable.Append(Index);
 	}
 	unguard;
 }
@@ -171,8 +171,8 @@ void VObject::StaticInit()
 void VObject::StaticExit()
 {
 	CollectGarbage();
-	GObjObjects.Empty();
-	GObjAvailable.Empty();
+	GObjObjects.Clear();
+	GObjAvailable.Clear();
 	GObjInitialized = false;
 	VMemberBase::StaticExit();
 }
@@ -221,12 +221,13 @@ void VObject::Register()
 	guard(VObject::Register);
 	if (GObjAvailable.Num())
 	{
-		Index = GObjAvailable.Pop();
+		Index = GObjAvailable[GObjAvailable.Num() - 1];
+		GObjAvailable.RemoveIndex(GObjAvailable.Num() - 1);
 		GObjObjects[Index] = this;
 	}
 	else
 	{
-		Index = GObjObjects.AddItem(this);
+		Index = GObjObjects.Append(this);
 	}
 	unguard;
 }

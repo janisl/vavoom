@@ -176,7 +176,8 @@ void VCommand::Shutdown()
 		delete a;
 		a = Next;
 	}
-	AutoCompleteTable.Empty();
+	AutoCompleteTable.Clear();
+	Args.Clear();
 	unguard;
 }
 
@@ -197,11 +198,7 @@ void VCommand::AddToAutoComplete(const char* string)
 	}
 #endif
 
-	if (!AutoCompleteTable.Num())
-	{
-		AutoCompleteTable.Empty(256);
-	}
-	AutoCompleteTable.AddItem(string);
+	AutoCompleteTable.Append(string);
 
 	// Alphabetic sort
 	for (int i = AutoCompleteTable.Num() - 1; i &&
@@ -271,7 +268,7 @@ VStr VCommand::GetAutoComplete(const VStr& String, int& Index, bool Backward)
 void VCommand::TokeniseString(const VStr& str)
 {
 	guard(VCommand::TokeniseString);
-	Args.Empty(8);
+	Args.Clear();
 	Original = str;
 	size_t i = 0;
 	while (i < str.Length())
@@ -298,10 +295,7 @@ void VCommand::TokeniseString(const VStr& str)
 				GCon->Log("ERROR: Missing closing quote!");
 				return;
 			}
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-			new(Args) VStr(str, Start, i - Start);
+			Args.Append(VStr(str, Start, i - Start));
 			//	Skip closing quote
 			i++;
 		}
@@ -313,10 +307,7 @@ void VCommand::TokeniseString(const VStr& str)
 			{
 				i++;
 			}
-			new(Args) VStr(str, Start, i - Start);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
+			Args.Append(VStr(str, Start, i - Start));
 		}
 	}
 	unguard;

@@ -83,8 +83,8 @@ static bool				fl_fixvoices;
 void FL_AddFile(const VStr& file, const VStr& gwadir)
 {
 	guard(FL_AddFile);
-	wadfiles.AddItem(file);
-	gwadirs.AddItem(gwadir);
+	wadfiles.Append(file);
+	gwadirs.Append(gwadir);
 	unguard;
 }
 
@@ -167,13 +167,7 @@ static void ParseBase(const VStr& name)
 	SC_OpenFile(*UseName);
 	while (SC_GetString())
 	{
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-		version_t &dst = *new(games, 0) version_t;
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
+		version_t &dst = games.Alloc();
 		dst.ParmFound = 0;
 		dst.FixVoices = false;
 		if (!SC_Compare("game"))
@@ -192,13 +186,7 @@ static void ParseBase(const VStr& name)
 		while (SC_Compare("addfile"))
 		{
 			SC_MustGetString();
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-			new(dst.AddFiles) VStr(sc_String);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
+			dst.AddFiles.Append(sc_String);
 			SC_MustGetString();
 		}
 		if (SC_Compare("param"))
@@ -223,56 +211,57 @@ static void ParseBase(const VStr& name)
 	}
 	SC_Close();
 
-	for (TArray<version_t>::TIterator GIt(games); GIt; ++GIt)
+	for (int gi = games.Num() - 1; gi >= 0; gi--)
 	{
-		if (select_game && !GIt->ParmFound)
+		version_t& G = games[gi];
+		if (select_game && !G.ParmFound)
 		{
 			continue;
 		}
 		if (fl_mainwad)
 		{
-			if (!GIt->MainWad || GIt->MainWad == fl_mainwad)
+			if (!G.MainWad || G.MainWad == fl_mainwad)
 			{
-				for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
+				for (int j = 0; j < G.AddFiles.Num(); j++)
 				{
-					FL_AddFile(fl_basedir + "/" + *It, fl_savedir);
+					FL_AddFile(fl_basedir + "/" + G.AddFiles[j], fl_savedir);
 				}
-				SetupGameDir(GIt->GameDir);
-				fl_fixvoices = GIt->FixVoices;
+				SetupGameDir(G.GameDir);
+				fl_fixvoices = G.FixVoices;
 				return;
 			}
 			continue;
 		}
-		if (!GIt->MainWad)
+		if (!G.MainWad)
 		{
 			continue;
 		}
 
 		//	First look in the save directory.
-		if (fl_savedir && Sys_FileExists(fl_savedir + "/" + GIt->MainWad))
+		if (fl_savedir && Sys_FileExists(fl_savedir + "/" + G.MainWad))
 		{
-			fl_mainwad = GIt->MainWad;
+			fl_mainwad = G.MainWad;
 			FL_AddFile(fl_savedir + "/" + fl_mainwad, VStr());
-			for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
+			for (int j = 0; j < G.AddFiles.Num(); j++)
 			{
-				FL_AddFile(fl_savedir + "/" + *It, VStr());
+				FL_AddFile(fl_savedir + "/" + G.AddFiles[j], VStr());
 			}
-			SetupGameDir(GIt->GameDir);
-			fl_fixvoices = GIt->FixVoices;
+			SetupGameDir(G.GameDir);
+			fl_fixvoices = G.FixVoices;
 			return;
 		}
 
 		//	Then in base directory.
-		if (Sys_FileExists(fl_basedir + "/" + GIt->MainWad))
+		if (Sys_FileExists(fl_basedir + "/" + G.MainWad))
 		{
-			fl_mainwad = GIt->MainWad;
+			fl_mainwad = G.MainWad;
 			FL_AddFile(fl_basedir + "/" + fl_mainwad, fl_savedir);
-			for (TArray<VStr>::TIterator It(GIt->AddFiles); It; ++It)
+			for (int j = 0; j < G.AddFiles.Num(); j++)
 			{
-				FL_AddFile(fl_basedir + "/" + *It, fl_savedir);
+				FL_AddFile(fl_basedir + "/" + G.AddFiles[j], fl_savedir);
 			}
-			SetupGameDir(GIt->GameDir);
-			fl_fixvoices = GIt->FixVoices;
+			SetupGameDir(G.GameDir);
+			fl_fixvoices = G.FixVoices;
 			return;
 		}
 	}

@@ -155,8 +155,8 @@ VName::VName(const char* Name, ENameFindType FindType)
 	//	Add new name if not found.
 	if (!TempHash && (FindType == Add || FindType == AddLower8))
 	{
-		Index = Names.Add();
-		Names[Index] = AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]);
+		Index = Names.Num();
+		Names.Append(AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]));
 		HashTable[HashIndex] = Names[Index];
 	}
 	unguard;
@@ -174,7 +174,7 @@ void VName::StaticInit()
 	//	Register hardcoded names.
 	for (int i = 0; i < (int)ARRAY_COUNT(AutoNames); i++)
 	{
-		Names.AddItem(&AutoNames[i]);
+		Names.Append(&AutoNames[i]);
 		int HashIndex = GetTypeHash(AutoNames[i].Name) & 4095;
 		AutoNames[i].HashNext = HashTable[HashIndex];
 		HashTable[HashIndex] = &AutoNames[i];
@@ -197,24 +197,7 @@ void VName::StaticExit()
 	{
 		Z_Free(Names[i]);
 	}
-	Names.Empty();
+	Names.Clear();
 	Initialised = false;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2006/02/27 21:23:54  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.3  2005/11/24 20:41:07  dj_jl
-//	Cleaned up a bit.
-//	
-//	Revision 1.2  2002/01/25 18:05:58  dj_jl
-//	Better string hash function
-//	
-//	Revision 1.1  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//**************************************************************************

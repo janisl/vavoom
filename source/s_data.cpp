@@ -110,15 +110,16 @@ static FAmbientSound*		AmbientSounds[NUM_AMBIENT_SOUNDS];
 
 static int AddSoundLump(VName TagName, int Lump)
 {
-	int id = S_sfx.AddZeroed();
-	S_sfx[id].TagName = TagName;
-	S_sfx[id].Data = NULL;
-	S_sfx[id].Priority = 127;
-	S_sfx[id].NumChannels = 2;
-	S_sfx[id].ChangePitch = CurrentChangePitch;
-	S_sfx[id].LumpNum = Lump;
-	S_sfx[id].Link = -1;
-	return id;
+	sfxinfo_t S;
+	memset(&S, 0, sizeof(S));
+	S.TagName = TagName;
+	S.Data = NULL;
+	S.Priority = 127;
+	S.NumChannels = 2;
+	S.ChangePitch = CurrentChangePitch;
+	S.LumpNum = Lump;
+	S.Link = -1;
+	return S_sfx.Append(S);
 }
 
 //==========================================================================
@@ -129,11 +130,11 @@ static int AddSoundLump(VName TagName, int Lump)
 
 static int FindSound(VName TagName)
 {
-	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
+	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-		if (It->TagName == TagName)
+		if (S_sfx[i].TagName == TagName)
 		{
-			return It.GetIndex();
+			return i;
 		}
 	}
 	return 0;
@@ -216,7 +217,7 @@ static int FindPlayerClass(VName CName)
 static int AddPlayerClass(VName CName)
 {
 	int idx = FindPlayerClass(CName);
-	return idx == -1 ? PlayerClasses.AddItem(CName) : idx;
+	return idx == -1 ? PlayerClasses.Append(CName) : idx;
 }
 
 //==========================================================================
@@ -242,7 +243,7 @@ static int FindPlayerGender(VName GName)
 static int AddPlayerGender(VName GName)
 {
 	int idx = FindPlayerGender(GName);
-	return idx == -1 ? PlayerGenders.AddItem(GName) : idx;
+	return idx == -1 ? PlayerGenders.Append(GName) : idx;
 }
 
 //==========================================================================
@@ -334,7 +335,7 @@ void S_InitScript()
 		S_ParseSndinfo();
 	}
 
-	S_sfx.Shrink();
+	S_sfx.Condense();
 	unguard;
 }
 
@@ -410,14 +411,14 @@ static void S_ParseSndinfo()
 			else if (!stricmp(sc_String, "$random"))
 			{
 				// $random <logical name> { <logical name> ... }
-				list.Empty();
+				list.Clear();
 				SC_MustGetString();
 				int id = AddSound(sc_String, -1);
 				SC_MustGetStringName("{");
 				while (SC_GetString() && !SC_Compare("}"))
 				{
 					int sfxto = FindOrAddSound(sc_String);
-					list.AddItem(sfxto);
+					list.Append(sfxto);
 				}
 				if (list.Num() == 1)
 				{
@@ -458,11 +459,11 @@ static void S_ParseSndinfo()
 
 				id = AddSoundLump(FakeName, W_CheckNumForName(
 					VName(sc_String, VName::AddLower8)));
-				int PlrSndId = PlayerSounds.Add();
-				PlayerSounds[PlrSndId].ClassId = PClass;
-				PlayerSounds[PlrSndId].GenderId = Gender;
-				PlayerSounds[PlrSndId].RefId = RefId;
-				PlayerSounds[PlrSndId].SoundId = id;
+				FPlayerSound& PlrSnd = PlayerSounds.Alloc();
+				PlrSnd.ClassId = PClass;
+				PlrSnd.GenderId = Gender;
+				PlrSnd.RefId = RefId;
+				PlrSnd.SoundId = id;
 			}
 			else if (!stricmp(sc_String, "$playersounddup"))
 			{
@@ -476,11 +477,11 @@ static void S_ParseSndinfo()
 					SC_ScriptError(va("%s is not a player sound", sc_String));
 				}
 				int AliasTo = FindPlayerSound(PClass, Gender, TargId);
-				int PlrSndId = PlayerSounds.Add();
-				PlayerSounds[PlrSndId].ClassId = PClass;
-				PlayerSounds[PlrSndId].GenderId = Gender;
-				PlayerSounds[PlrSndId].RefId = RefId;
-				PlayerSounds[PlrSndId].SoundId = AliasTo;
+				FPlayerSound& PlrSnd = PlayerSounds.Alloc();
+				PlrSnd.ClassId = PClass;
+				PlrSnd.GenderId = Gender;
+				PlrSnd.RefId = RefId;
+				PlrSnd.SoundId = AliasTo;
 			}
 			else if (!stricmp(sc_String, "$playeralias"))
 			{
@@ -489,11 +490,11 @@ static void S_ParseSndinfo()
 
 				ParsePlayerSoundCommon(PClass, Gender, RefId);
 				int AliasTo = FindOrAddSound(sc_String);
-				int PlrSndId = PlayerSounds.Add();
-				PlayerSounds[PlrSndId].ClassId = PClass;
-				PlayerSounds[PlrSndId].GenderId = Gender;
-				PlayerSounds[PlrSndId].RefId = RefId;
-				PlayerSounds[PlrSndId].SoundId = AliasTo;
+				FPlayerSound& PlrSnd = PlayerSounds.Alloc();
+				PlrSnd.ClassId = PClass;
+				PlrSnd.GenderId = Gender;
+				PlrSnd.RefId = RefId;
+				PlrSnd.SoundId = AliasTo;
 			}
 			else if (!stricmp(sc_String, "$singular"))
 			{
@@ -613,11 +614,11 @@ static void S_ParseSndinfo()
 int S_GetSoundID(VName Name)
 {
 	guard(S_GetSoundID);
-	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
+	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-		if (It->TagName == Name)
+		if (S_sfx[i].TagName == Name)
 		{
-			return It.GetIndex();
+			return i;
 		}
 	}
 	GCon->Logf("WARNING! Can't find sound %s", *Name);
@@ -634,12 +635,11 @@ int S_GetSoundID(VName Name)
 int S_GetSoundID(const char *name)
 {
 	guard(S_GetSoundID);
-	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
+	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-//FIXME really case sensitive? What about ACS?
-		if (!strcmp(*It->TagName, name))
+		if (!strcmp(*S_sfx[i].TagName, name))
 		{
-			return It.GetIndex();
+			return i;
 		}
 	}
 	GCon->Logf("WARNING! Can't find sound named %s", name);
@@ -862,10 +862,10 @@ void S_ShutdownData()
 		}
 	}
 
-	S_sfx.Empty();
-	PlayerClasses.Empty();
-	PlayerGenders.Empty();
-	PlayerSounds.Empty();
+	S_sfx.Clear();
+	PlayerClasses.Clear();
+	PlayerGenders.Clear();
+	PlayerSounds.Clear();
 
 	for (int i = 0; i < NUM_AMBIENT_SOUNDS; i++)
 	{

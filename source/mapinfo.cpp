@@ -254,11 +254,11 @@ static void ParseMapInfo()
 		strcpy(info->name, sc_String);
 
 		//	Set song lump name from SNDINFO script
-		for (TArray<FMapSongInfo>::TIterator SongIt(MapSongList); SongIt; ++SongIt)
+		for (int i = 0; i < MapSongList.Num(); i++)
 		{
-			if (!stricmp(SongIt->MapName, info->lumpname))
+			if (!stricmp(MapSongList[i].MapName, info->lumpname))
 			{
-				strcpy(info->songLump, SongIt->SongName);
+				strcpy(info->songLump, MapSongList[i].SongName);
 			}
 		}
 
@@ -476,9 +476,9 @@ char *P_TranslateMap(int map)
 void P_PutMapSongLump(int map, const char *lumpName)
 {
 	guard(P_PutMapSongLump);
-	int i = MapSongList.Add();
-	sprintf(MapSongList[i].MapName, "MAP%02d", map);
-	strcpy(MapSongList[i].SongName, lumpName);
+	FMapSongInfo& ms = MapSongList.Alloc();
+	sprintf(ms.MapName, "MAP%02d", map);
+	strcpy(ms.SongName, lumpName);
 	unguard;
 }
 
@@ -566,83 +566,3 @@ COMMAND(MapList)
 	}
 	unguard;
 }
-
-/*
-	int		cluster;    // Defines what cluster level belongs to
-	int		warpTrans;  // Actual map number in case maps are not sequential
-	int		nextMap;    // Map to teleport to upon exit of timed deathmatch
-	int		cdTrack;    // CD track to play during level
-	char	fadetable[12];// Fade table {fogmap}
-	char	songLump[12];// Background music (MUS or MIDI)
-*/
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.19  2006/04/11 18:28:20  dj_jl
-//	Removed Strife specific mapinfo extensions.
-//
-//	Revision 1.18  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.17  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.16  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.15  2006/01/18 19:55:26  dj_jl
-//	Fixed doublesky.
-//	
-//	Revision 1.14  2006/01/03 18:36:12  dj_jl
-//	Fixed map infos redefining maps.
-//	
-//	Revision 1.13  2005/11/08 18:36:43  dj_jl
-//	Parse all mapinfo scripts.
-//	
-//	Revision 1.12  2005/05/26 16:52:29  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.11  2004/10/11 06:50:54  dj_jl
-//	ACS helper scripts lump.
-//	
-//	Revision 1.10  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.9  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.8  2002/03/12 19:22:22  dj_jl
-//	Fixed next maps in Hexen.
-//	
-//	Revision 1.7  2002/03/02 17:31:28  dj_jl
-//	Added P_GetMapLumpName for Hexen net menu.
-//	
-//	Revision 1.6  2002/02/26 17:53:08  dj_jl
-//	Fixes for menus.
-//	
-//	Revision 1.5  2002/01/28 18:41:43  dj_jl
-//	Fixed Hexen music
-//	
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.2  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.1  2001/10/08 17:30:23  dj_jl
-//	Renamed to mapinfo.*
-//	
-//	Revision 1.4  2001/08/04 17:27:39  dj_jl
-//	Added consts to script functions
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

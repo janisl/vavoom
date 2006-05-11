@@ -416,7 +416,7 @@ void VTextureManager::Shutdown()
 	guard(VTextureManager::Shutdown);
 	for (int i = 0; i < Textures.Num(); i++)
 		delete Textures[i];
-	Textures.Empty();
+	Textures.Clear();
 	unguard;
 }
 
@@ -429,7 +429,7 @@ void VTextureManager::Shutdown()
 int VTextureManager::AddTexture(VTexture* Tex)
 {
 	guard(VTextureManager::AddTexture);
-	Textures.AddItem(Tex);
+	Textures.Append(Tex);
 	Tex->TextureTranslation = Textures.Num() - 1;
 	return Textures.Num() - 1;
 	unguard;
@@ -717,7 +717,7 @@ void VTextureManager::InitTextures()
 	//	Load the patch names from pnames.lmp.
 	VStream* Strm = W_CreateLumpReaderName(NAME_pnames);
 	vint32 nummappatches = Streamer<vint32>(*Strm);
-	VTexture** patchtexlookup = Z_New(VTexture*, nummappatches, PU_STATIC, 0);
+	VTexture** patchtexlookup = new VTexture*[nummappatches];
 	for (int i = 0; i < nummappatches; i++)
 	{
 		//	Read patch name.
@@ -787,7 +787,7 @@ void VTextureManager::InitTextures()
 		delete Strm;
 	}
 
-	Z_Free(patchtexlookup);
+	delete[] patchtexlookup;
 	unguard;
 }
 
@@ -1045,7 +1045,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 
 	//	Then try TGA.
 	sprintf(HighResName, "textures/%s/%s.tga", DirName, *Name);
-	if (!FL_FindFile(HighResName))
+	if (FL_FindFile(HighResName))
 	{
 		//	Create new high-resolution texture.
 		HiResTexture = new VTgaTexture(Type, HighResName);
@@ -1386,7 +1386,8 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 
 	//	Create list of patches.
 	PatchCount = Streamer<vint16>(Strm);
-	Patches = Z_CNew(VTexPatch, PatchCount, PU_STATIC, 0);
+	Patches = new VTexPatch[PatchCount];
+	memset(Patches, 0, sizeof(VTexPatch) * PatchCount);
 
 	//	Read patches.
 	VTexPatch* patch = Patches;
@@ -1439,7 +1440,7 @@ VMultiPatchTexture::~VMultiPatchTexture()
 	guard(VMultiPatchTexture::~VMultiPatchTexture);
 	if (Patches)
 	{
-		Z_Free(Patches);
+		delete[] Patches;
 	}
 	if (Pixels)
 	{
@@ -3181,13 +3182,13 @@ void P_InitAnimated()
 		
 		fd.baseTime = BaseTime;
 		fd.randomRange = 0;
-		FrameDefs.AddItem(fd);
+		FrameDefs.Append(fd);
 
 		ad.endFrameDef = FrameDefs.Num() - 1;
 		ad.CurrentRangeFrame = FrameDefs[ad.startFrameDef].index - ad.index;
 		ad.currentFrameDef = ad.endFrameDef;
 		ad.time = 0.01; // Force 1st game tic to animate
-		AnimDefs.AddItem(ad);
+		AnimDefs.Append(ad);
 	}
 	delete Strm;
 }
@@ -3313,7 +3314,7 @@ static void ParseFTAnim(int IsFlat)
 		}
 		if (ignore == false)
 		{
-			FrameDefs.AddItem(fd);
+			FrameDefs.Append(fd);
 		}
 	}
 
@@ -3329,7 +3330,7 @@ static void ParseFTAnim(int IsFlat)
 		ad.CurrentRangeFrame = FrameDefs[ad.startFrameDef].index - ad.index;
 		ad.currentFrameDef = ad.endFrameDef;
 		ad.time = 0.01; // Force 1st game tic to animate
-		AnimDefs.AddItem(ad);
+		AnimDefs.Append(ad);
 	}
 }
 
@@ -3414,16 +3415,10 @@ static void ParseSwitchDef()
 	{
 		return;
 	}
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	TSwitch *sw = new(Switches) TSwitch;
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
-	sw->Sound = S_GetSoundID(SndName);
-	sw->Tex1 = t1;
-	sw->Tex2 = t2;
+	TSwitch& sw = Switches.Alloc();
+	sw.Sound = S_GetSoundID(SndName);
+	sw.Tex1 = t1;
+	sw.Tex2 = t2;
 }
 
 //==========================================================================
@@ -3493,8 +3488,8 @@ static void InitFTAnims()
 	//	Read Boom's animated lump if present.
 	P_InitAnimated();
 
-	FrameDefs.Shrink();
-	AnimDefs.Shrink();
+	FrameDefs.Condense();
+	AnimDefs.Condense();
 	unguard;
 }
 
@@ -3546,20 +3541,14 @@ void P_InitSwitchList()
 			{
 				continue;
 			}
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-			TSwitch *sw = new(Switches) TSwitch;
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
-			sw->Sound = S_GetSoundID("switches/normbutn");
-			sw->Tex1 = t1;
-			sw->Tex2 = t2;
+			TSwitch& sw = Switches.Alloc();
+			sw.Sound = S_GetSoundID("switches/normbutn");
+			sw.Tex1 = t1;
+			sw.Tex2 = t2;
 		}
 		delete Strm;
 	}
-	Switches.Shrink();
+	Switches.Condense();
 	unguard;
 }
 
@@ -3574,8 +3563,9 @@ void R_AnimateSurfaces()
 {
 	guard(R_AnimateSurfaces);
 	//	Animate flats and textures
-	for (TArray<animDef_t>::TIterator ad(AnimDefs); ad; ++ad)
+	for (int i = 0; i < AnimDefs.Num(); i++)
 	{
+		animDef_t* ad = &AnimDefs[i];
 		ad->time -= host_frametime;
 		if (ad->time <= 0.0)
 		{
@@ -3652,9 +3642,9 @@ void R_ShutdownTexture()
 {
 	guard(R_ShutdownTexture);
 	//	Clean up animation and switch definitions.
-	Switches.Empty();
-	AnimDefs.Empty();
-	FrameDefs.Empty();
+	Switches.Clear();
+	AnimDefs.Clear();
+	FrameDefs.Clear();
 
 	//	Shut down texture manager.
 	GTextureManager.Shutdown();

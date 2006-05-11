@@ -150,11 +150,11 @@ static void VerifySequencePtr(int *base, int *ptr)
 static int GetSoundOffset(const char *name)
 {
 	guard(GetSoundOffset);
-	for (TArray<sfxinfo_t>::TIterator It(S_sfx); It; ++It)
+	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-		if (!stricmp(name, *It->TagName))
+		if (!stricmp(name, *S_sfx[i].TagName))
 		{
-			return It.GetIndex();
+			return i;
 		}
 	}
 	SC_ScriptError("GetSoundOffset:  Unknown sound name\n");

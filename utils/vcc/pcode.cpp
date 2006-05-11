@@ -119,10 +119,11 @@ void PC_Init()
 	//	Strings
 	memset(StringLookup, 0, 256 * 4);
 	//	1-st string is empty
-	StringInfo.Add();
+	StringInfo.Alloc();
 	StringInfo[0].offs = 0;
 	StringInfo[0].next = 0;
-	strings.AddZeroed(4);
+	strings.SetNum(4);
+	memset(strings.Ptr(), 0, 4);
 }
 
 //==========================================================================
@@ -133,7 +134,7 @@ void PC_Init()
 
 void AddPackagePath(const char* Path)
 {
-	PackagePath.AddItem(Path);
+	PackagePath.Append(Path);
 }
 
 //==========================================================================
@@ -171,13 +172,16 @@ int FindString(const char *str)
 	}
 
 	//  Add new string
-	int Idx = StringInfo.Add();
-	int Ofs = strings.AddZeroed((strlen(str) + 4) & ~3);
-	StringInfo[Idx].offs = Ofs;
-	StringInfo[Idx].next = StringLookup[hash];
-	StringLookup[hash] = Idx;
+	TStringInfo& SI = StringInfo.Alloc();
+	int AddLen = (strlen(str) + 4) & ~3;
+	int Ofs = strings.Num();
+	strings.SetNum(strings.Num() + AddLen);
+	memset(&strings[Ofs], 0, AddLen);
+	SI.offs = Ofs;
+	SI.next = StringLookup[hash];
+	StringLookup[hash] = StringInfo.Num() - 1;
 	strcpy(&strings[Ofs], str);
-	return StringInfo[Idx].offs;
+	return SI.offs;
 }
 
 //==========================================================================
@@ -222,12 +226,12 @@ int AddStatement(int statement)
 		}
 	}
 
-	int i = Instructions.Add();
-	Instructions[i].Opcode = statement;
-	Instructions[i].Arg1 = 0;
-	Instructions[i].Arg2 = 0;
+	FInstruction& I = Instructions.Alloc();
+	I.Opcode = statement;
+	I.Arg1 = 0;
+	I.Arg2 = 0;
 
-	return i;
+	return Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -248,12 +252,12 @@ int AddStatement(int statement, int parm1)
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 1 params");
 	}
 
-	int i = Instructions.Add();
-	Instructions[i].Opcode = statement;
-	Instructions[i].Arg1 = parm1;
-	Instructions[i].Arg2 = 0;
+	FInstruction& I = Instructions.Alloc();
+	I.Opcode = statement;
+	I.Arg1 = parm1;
+	I.Arg2 = 0;
 
-	return i;
+	return Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -274,12 +278,12 @@ int AddStatement(int statement, int parm1, int parm2)
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 2 params");
 	}
 
-	int i = Instructions.Add();
-	Instructions[i].Opcode = statement;
-	Instructions[i].Arg1 = parm1;
-	Instructions[i].Arg2 = parm2;
+	FInstruction& I = Instructions.Alloc();
+	I.Opcode = statement;
+	I.Arg1 = parm1;
+	I.Arg2 = parm2;
 
-	return i;
+	return Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -328,8 +332,8 @@ int UndoStatement()
 		dprintf("UndoStatement in pass 1\n");
 	}
 
-	int Ret = Instructions.Last().Opcode;
-	Instructions.Pop();
+	int Ret = Instructions[Instructions.Num() - 1].Opcode;
+	Instructions.RemoveIndex(Instructions.Num() - 1);
 	return Ret;
 }
 
@@ -341,7 +345,8 @@ int UndoStatement()
 
 void BeginCode(VMethod*)
 {
-	Instructions.Empty(1024);
+	Instructions.Clear();
+	Instructions.Resize(1024);
 }
 
 //==========================================================================
@@ -358,16 +363,16 @@ void EndCode(VMethod* Func)
 	for (i = 0; i < Instructions.Num(); i++)
 	{
 		Instructions[i].Address = CodeBuffer.Num();
-		CodeBuffer.AddItem(Instructions[i].Opcode);
+		CodeBuffer.Append(Instructions[i].Opcode);
 		if (StatementInfo[Instructions[i].Opcode].params > 0)
-			CodeBuffer.AddItem(Instructions[i].Arg1);
+			CodeBuffer.Append(Instructions[i].Arg1);
 		if (StatementInfo[Instructions[i].Opcode].params > 1)
-			CodeBuffer.AddItem(Instructions[i].Arg2);
+			CodeBuffer.Append(Instructions[i].Arg2);
 #ifdef OPCODE_STATS
 		StatementInfo[Instructions[i].Opcode].usecount++;
 #endif
 	}
-	Instructions[Instructions.Add()].Address = CodeBuffer.Num();
+	Instructions.Alloc().Address = CodeBuffer.Num();
 
 	for (i = 0; i < Instructions.Num() - 1; i++)
 	{
@@ -676,7 +681,7 @@ public:
 			return 0;
 		if (!MembersMap[Obj->MemberIndex])
 		{
-			MembersMap[Obj->MemberIndex] = -Imports.AddItem(VProgsImport(Obj,
+			MembersMap[Obj->MemberIndex] = -Imports.Append(VProgsImport(Obj,
 				GetMemberIndex(Obj->Outer))) - 1;
 		}
 		return MembersMap[Obj->MemberIndex];
@@ -684,7 +689,7 @@ public:
 
 	void AddExport(VMemberBase* Obj)
 	{
-		MembersMap[Obj->MemberIndex] = Exports.AddItem(VProgsExport(Obj)) + 1;
+		MembersMap[Obj->MemberIndex] = Exports.Append(VProgsExport(Obj)) + 1;
 	}
 };
 
@@ -707,7 +712,7 @@ public:
 	VStream& operator<<(VName& Name)
 	{
 		if (Writer.NamesMap[Name.GetIndex()] == -1)
-			Writer.NamesMap[Name.GetIndex()] = Writer.Names.AddItem(Name);
+			Writer.NamesMap[Name.GetIndex()] = Writer.Names.Append(Name);
 		return *this;
 	}
 	VStream& operator<<(VMemberBase*& Ref)
@@ -799,7 +804,7 @@ VPackage* LoadPackage(VName InName)
 	Reader->NumExports = Progs.num_exports;
 
 	VPackage* Pkg = new VPackage(InName);
-	LoadedPackages.AddItem(Pkg);
+	LoadedPackages.Append(Pkg);
 
 	//	Create objects
 	Reader->Seek(Progs.ofs_exportinfo);
@@ -1325,125 +1330,3 @@ void VConstant::Serialise(VStream& Strm)
 		break;
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.39  2006/04/05 17:26:10  dj_jl
-//	Write only used imports and names.
-//
-//	Revision 1.38  2006/03/26 13:06:49  dj_jl
-//	Implemented support for modular progs.
-//	
-//	Revision 1.37  2006/03/23 22:22:02  dj_jl
-//	Hashing of members for faster search.
-//	
-//	Revision 1.36  2006/03/23 18:30:54  dj_jl
-//	Use single list of all members, members tree.
-//	
-//	Revision 1.35  2006/03/18 16:52:21  dj_jl
-//	Better code serialisation.
-//	
-//	Revision 1.34  2006/03/12 20:04:50  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.33  2006/03/10 19:31:55  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.32  2006/02/28 19:17:20  dj_jl
-//	Added support for constants.
-//	
-//	Revision 1.31  2006/02/27 21:23:55  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.30  2006/02/25 17:07:57  dj_jl
-//	Linked list of fields, export all type info.
-//	
-//	Revision 1.29  2006/02/19 20:37:02  dj_jl
-//	Implemented support for delegates.
-//	
-//	Revision 1.28  2006/02/19 14:37:36  dj_jl
-//	Changed type handling.
-//	
-//	Revision 1.27  2006/02/17 19:25:00  dj_jl
-//	Removed support for progs global variables and functions.
-//	
-//	Revision 1.26  2006/02/15 23:27:06  dj_jl
-//	Added script ID class attribute.
-//	
-//	Revision 1.25  2005/12/12 20:58:47  dj_jl
-//	Removed compiler limitations.
-//	
-//	Revision 1.24  2005/12/07 22:52:55  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.23  2005/11/30 23:55:05  dj_jl
-//	Directly use with-drop statements.
-//	
-//	Revision 1.22  2005/11/30 13:14:53  dj_jl
-//	Implemented instruction buffer.
-//	
-//	Revision 1.21  2005/11/29 19:31:43  dj_jl
-//	Class and struct classes, removed namespaces, beautification.
-//	
-//	Revision 1.20  2005/11/24 20:42:05  dj_jl
-//	Renamed opcodes, cleanup and improvements.
-//	
-//	Revision 1.19  2003/09/24 16:44:26  dj_jl
-//	Fixed asm dump of class members
-//	
-//	Revision 1.18  2002/08/24 14:45:38  dj_jl
-//	2 pass compiling.
-//	
-//	Revision 1.17  2002/02/26 17:52:20  dj_jl
-//	Exporting special property info into progs.
-//	
-//	Revision 1.16  2002/02/16 16:28:36  dj_jl
-//	Added support for bool variables
-//	
-//	Revision 1.15  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//	Revision 1.14  2002/01/07 12:31:36  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.13  2001/12/27 17:44:02  dj_jl
-//	Removed support for C++ style constructors and destructors, some fixes
-//	
-//	Revision 1.12  2001/12/18 19:09:41  dj_jl
-//	Some extra info in progs and other small changes
-//	
-//	Revision 1.11  2001/12/12 19:22:22  dj_jl
-//	Support for method usage as state functions, dynamic cast
-//	Added dynamic arrays
-//	
-//	Revision 1.10  2001/12/03 19:25:44  dj_jl
-//	Fixed calling of parent function
-//	Added defaultproperties
-//	Fixed vectors as arguments to methods
-//	
-//	Revision 1.9  2001/12/01 18:17:09  dj_jl
-//	Fixed calling of parent method, speedup
-//	
-//	Revision 1.8  2001/11/09 14:42:28  dj_jl
-//	References, beautification
-//	
-//	Revision 1.7  2001/10/27 07:54:59  dj_jl
-//	Added support for constructors and destructors
-//	
-//	Revision 1.6  2001/10/02 17:44:52  dj_jl
-//	Some optimizations
-//	
-//	Revision 1.5  2001/09/27 17:05:24  dj_jl
-//	Increased strings limit
-//	
-//	Revision 1.4  2001/09/20 16:09:55  dj_jl
-//	Added basic object-oriented support
-//	
-//	Revision 1.3  2001/08/21 17:52:54  dj_jl
-//	Added support for real string pointers, beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

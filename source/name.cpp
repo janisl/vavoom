@@ -155,8 +155,8 @@ VName::VName(const char* Name, ENameFindType FindType)
 	//	Add new name if not found.
 	if (!TempHash && (FindType == Add || FindType == AddLower8))
 	{
-		Index = Names.Add();
-		Names[Index] = AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]);
+		Index = Names.Num();
+		Names.Append(AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]));
 		HashTable[HashIndex] = Names[Index];
 	}
 	unguard;
@@ -174,7 +174,7 @@ void VName::StaticInit()
 	//	Register hardcoded names.
 	for (int i = 0; i < (int)ARRAY_COUNT(AutoNames); i++)
 	{
-		Names.AddItem(&AutoNames[i]);
+		Names.Append(&AutoNames[i]);
 		int HashIndex = GetTypeHash(AutoNames[i].Name) & 4095;
 		AutoNames[i].HashNext = HashTable[HashIndex];
 		HashTable[HashIndex] = &AutoNames[i];
@@ -197,7 +197,7 @@ void VName::StaticExit()
 	{
 		Z_Free(Names[i]);
 	}
-	Names.Empty();
+	Names.Clear();
 	Initialised = false;
 	unguard;
 }

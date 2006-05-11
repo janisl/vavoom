@@ -211,6 +211,27 @@ public:
 
 //==========================================================================
 //
+//	Basic templates
+//
+//==========================================================================
+
+template<class T> T Min(T val1, T val2)
+{
+	return val1 < val2 ? val1 : val2;
+}
+
+template<class T> T Max(T val1, T val2)
+{
+	return val1 > val2 ? val1 : val2;
+}
+
+template<class T> T Clamp(T val, T low, T high)
+{
+	return val < low ? low : val > high ? high : val;
+}
+
+//==========================================================================
+//
 //	Forward declarations
 //
 //==========================================================================
@@ -230,83 +251,3 @@ class	VClass;
 struct	mobjinfo_t;
 
 class	VObject;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.26  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//
-//	Revision 1.25  2006/03/10 19:31:25  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.24  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.23  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.22  2006/02/27 18:43:41  dj_jl
-//	Added definitions for common integer types.
-//	
-//	Revision 1.21  2006/02/26 14:43:39  dj_jl
-//	Added workaround to for statement variable scoping.
-//	
-//	Revision 1.20  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.19  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.18  2006/02/10 22:17:00  dj_jl
-//	Some platform fixes.
-//	
-//	Revision 1.17  2003/10/22 06:15:00  dj_jl
-//	Safer handling of signals in Linux
-//	
-//	Revision 1.16  2003/03/08 11:33:39  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.15  2002/11/16 17:14:22  dj_jl
-//	Some changes for release.
-//	
-//	Revision 1.14  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.13  2002/07/20 14:47:25  dj_jl
-//	Changed function name in guard macros from pointer to static array.
-//	
-//	Revision 1.12  2002/05/29 16:52:42  dj_jl
-//	Disabled another warnong.
-//	
-//	Revision 1.11  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.10  2002/04/11 16:40:06  dj_jl
-//	Added __declspec modifiers.
-//	
-//	Revision 1.9  2002/03/28 18:05:51  dj_jl
-//	Disabled some Borland warnings.
-//	
-//	Revision 1.8  2002/01/21 18:23:56  dj_jl
-//	Disabled some MSVC warnings
-//	
-//	Revision 1.7  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2002/01/03 18:38:25  dj_jl
-//	Added guard macros and core dumps
-//	
-//	Revision 1.5  2001/12/12 19:27:08  dj_jl
-//	Added some macros
-//	
-//	Revision 1.4  2001/10/08 17:26:17  dj_jl
-//	Started to use exceptions
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

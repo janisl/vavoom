@@ -27,317 +27,169 @@
 //**
 //**************************************************************************
 
-template<class T> T Clamp(T val, T low, T high)
-{
-	return val < low ? low : val > high ? high : val;
-}
-
-//
-// Base dynamic array.
-//
-class FArray
+template<class T> class TArray
 {
 public:
-	void* GetData(void)
+	TArray()
+	: ArrData(0)
 	{
-		return Data;
+		Clear();
 	}
-	const void* GetData(void) const
-	{
-		return Data;
-	}
-	bool IsValidIndex(int i) const
-	{
-		return i >= 0 && i < ArrayNum;
-	}
-	int Num(void) const
-	{
-		return ArrayNum;
-	}
-	void InsertZeroed(int Index, int Count, int ElementSize, EZoneTag Tag)
-	{
-		Insert(Index, Count, ElementSize, Tag);
-		memset((byte *)Data + Index * ElementSize, 0, Count * ElementSize);
-	}
-	void Insert(int Index, int Count, int ElementSize, EZoneTag Tag)
-	{
-		int OldNum = ArrayNum;
-		if ((ArrayNum += Count) > ArrayMax)
-		{
-			ArrayMax = ArrayNum + 3 * ArrayNum / 8 + 32;
-			Realloc(ElementSize, Tag);
-		}
-		memmove((byte *)Data + (Index + Count) * ElementSize,
-			(byte *)Data + Index * ElementSize, 
-			(OldNum - Index) * ElementSize);
-	}
-	int Add(int Count, int ElementSize, EZoneTag Tag)
-	{
-		int Index = ArrayNum;
-		if ((ArrayNum += Count) > ArrayMax)
-		{
-			ArrayMax = ArrayNum + 3 * ArrayNum / 8 + 32;
-			Realloc(ElementSize, Tag);
-		}
-
-		return Index;
-	}
-	int AddZeroed(int ElementSize, EZoneTag Tag, int n = 1)
-	{
-		int Index = Add(n, ElementSize, Tag);
-		memset((byte *)Data + Index * ElementSize, 0, n * ElementSize);
-		return Index;
-	}
-	void Shrink(int ElementSize, EZoneTag Tag)
-	{
-		if (ArrayMax != ArrayNum)
-		{
-			ArrayMax = ArrayNum;
-			Realloc(ElementSize, Tag);
-		}
-	}
-	void Empty(int ElementSize, EZoneTag Tag, int Slack = 0)
-	{
-		ArrayNum = 0;
-		ArrayMax = Slack;
-		Realloc(ElementSize, Tag);
-	}
-	FArray(void) : Data(NULL), ArrayNum(0), ArrayMax(0)
+	TArray(ENoInit)
 	{}
-	FArray(ENoInit)
-	{}
-	~FArray(void)
+	TArray(const TArray<T>& Other)
+	: ArrData(0)
 	{
-		if (Data)
-			Z_Free(Data);
-		Data = NULL;
-		ArrayNum = ArrayMax = 0;
+		*this = Other;
 	}
-	void Remove(int Index, int Count, int ElementSize, EZoneTag Tag)
-	{
-		if (ArrayNum > Index + Count)
-		{
-			memmove((byte *)Data + Index * ElementSize,
-				(byte *)Data + (Index + Count) * ElementSize,
-				(ArrayNum - (Index + Count)) * ElementSize);
-		}
-		ArrayNum -= Count;
-		if (ArrayNum + ArrayNum / 2 + 32 < ArrayMax)
-		{
-			ArrayMax = ArrayNum + 3 * ArrayNum / 8 + 32;
-			Realloc(ElementSize, Tag);
-		}
-	}
-protected:
-	void Realloc(int ElementSize, EZoneTag Tag)
-	{
-		if (ArrayMax)
-		{
-			if (Data)
-			{
-				Z_Resize(&Data, ArrayMax * ElementSize);
-			}
-			else
-			{
-				Data = Z_Malloc(ArrayMax * ElementSize, Tag, 0);
-			}
-		}
-		else
-		{
-			if (Data)
-			{
-				Z_Free(Data);
-				Data = NULL;
-			}
-		}
-	}
-	FArray(int InNum, int ElementSize, EZoneTag Tag)
-		: Data(NULL), ArrayNum(InNum), ArrayMax(InNum)
-	{
-		Realloc(ElementSize, Tag);
-	}
-	void *Data;
-	int ArrayNum;
-	int ArrayMax;
-};
-
-//
-// Templated dynamic array.
-//
-template<class T, EZoneTag Tag = PU_STATIC> class TArray : public FArray
-{
-public:
-	typedef T ElementType;
-	TArray(void) : FArray()
-	{}
-	TArray(int InNum) 
-		: FArray(InNum, sizeof(T), Tag)
-	{}
-	TArray(const TArray& Other)
-		: FArray(Other.ArrayNum, sizeof(T), Tag)
-	{
-		ArrayNum = 0;
-		for (int i = 0; i < Other.ArrayNum; i++)
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-			new(*this) T(Other[i]);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
-	}
-	TArray(ENoInit) : FArray(E_NoInit)
-	{}
 	~TArray()
 	{
-		Remove(0, ArrayNum);
-	}
-	T& operator[](int i)
-	{
-		return ((T*)Data)[i];
-	}
-	const T& operator[](int i) const
-	{
-		return ((T*)Data)[i];
-	}
-	T Pop()
-	{
-		T Result = ((T*)Data)[ArrayNum - 1];
-		Remove(ArrayNum - 1);
-		return Result;
-	}
-	T& Last(int c = 0)
-	{
-		return ((T*)Data)[ArrayNum - c - 1];
-	}
-	const T& Last(int c = 0) const
-	{
-		return ((T*)Data)[ArrayNum - c - 1];
-	}
-	void Shrink()
-	{
-		FArray::Shrink(sizeof(T), Tag);
-	}
-	bool FindItem(const T& Item, int& Index) const
-	{
-		for (Index = 0; Index < ArrayNum; Index++)
-			if ((*this)[Index] == Item)
-				return 1;
-		return 0;
-	}
-	int FindItemIndex(const T& Item) const
-	{
-		for (int Index = 0; Index < ArrayNum; Index++ )
-			if ((*this)[Index] == Item)
-				return Index;
-		return -1;
+		Clear();
 	}
 
-	// Add, Insert, Remove, Empty interface.
-	int Add(int n = 1)
+	void Clear()
 	{
-		return FArray::Add(n, sizeof(T), Tag);
-	}
-	void Insert(int Index, int Count = 1)
-	{
-		FArray::Insert(Index, Count, sizeof(T), Tag);
-	}
-	void InsertZeroed(int Index, int Count = 1)
-	{
-		FArray::InsertZeroed(Index, Count, sizeof(T), Tag);
-	}
-	void Remove(int Index, int Count = 1)
-	{
-		for (int i = Index; i < Index + Count; i++)
-			(&(*this)[i])->~T();
-		FArray::Remove(Index, Count, sizeof(T), Tag);
-	}
-	void Empty(int Slack = 0)
-	{
-		for (int i = 0; i < ArrayNum; i++ )
-			(&(*this)[i])->~T();
-		FArray::Empty(sizeof(T), Tag, Slack);
-	}
-
-	// Functions dependent on Add, Remove.
-	TArray& operator = (const TArray& Other)
-	{
-		if (this != &Other)
+		if (ArrData)
 		{
-			Empty(Other.ArrayNum);
-			for(int i = 0; i < Other.ArrayNum; i++ )
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-				new(*this) T(Other[i]);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
+			delete[] ArrData;
+		}
+		ArrData = NULL;
+		ArrNum = 0;
+		ArrSize = 0;
+	}
+	int Num() const
+	{
+		return ArrNum;
+	}
+	int NumAllocated() const
+	{
+		return ArrSize;
+	}
+	T* Ptr()
+	{
+		return ArrData;
+	}
+	const T* Ptr() const
+	{
+		return ArrData;
+	}
+
+	void Resize(int NewSize)
+	{
+		check(NewSize >= 0);
+
+		if (NewSize <= 0)
+		{
+			Clear();
+			return;
+		}
+
+		if (NewSize == ArrSize)
+		{
+			return;
+		}
+		T* OldData = ArrData;
+		ArrSize = NewSize;
+		if (ArrNum > NewSize)
+		{
+			ArrNum = NewSize;
+		}
+
+		ArrData = new T[ArrSize];
+		for (int i = 0; i < ArrNum; i++)
+		{
+			ArrData[i] = OldData[i];
+		}
+
+		if (OldData)
+		{
+			delete[] OldData;
+		}
+	}
+	void SetNum(int NewNum, bool bResize = true)
+	{
+		check(NewNum >= 0);
+		if (bResize || NewNum > ArrSize)
+		{
+			Resize(NewNum);
+		}
+		ArrNum = NewNum;
+	}
+	void Condense()
+	{
+		Resize(ArrNum);
+	}
+
+	TArray<T>& operator=(const TArray<T>& Other)
+	{
+		Clear();
+
+		ArrNum = Other.ArrNum;
+		ArrSize = Other.ArrSize;
+		if (ArrSize)
+		{
+			ArrData = new T[ArrSize];
+			for (int i = 0; i < ArrNum; i++)
+			{
+				ArrData[i] = Other.ArrData[i];
+			}
 		}
 		return *this;
 	}
-	int AddItem(const T& Item)
+	T& operator[](int Index)
 	{
-		int Index = Add();
-		(*this)[Index] = Item;
-		return Index;
+		check(index >= 0);
+		check(Index < ArrNum);
+		return ArrData[Index];
 	}
-	int AddZeroed(int n = 1)
+	const T& operator[](int Index) const
 	{
-		return FArray::AddZeroed(sizeof(T), Tag, n);
-	}
-	int AddUniqueItem(const T& Item)
-	{
-		for (int Index = 0; Index < ArrayNum; Index++)
-			if ((*this)[Index] == Item)
-				return Index;
-		return AddItem(Item);
-	}
-	int RemoveItem(const T& Item)
-	{
-		int OriginalNum = ArrayNum;
-		for (int Index = 0; Index < ArrayNum; Index++)
-			if ((*this)[Index] == Item)
-				Remove(Index--);
-		return OriginalNum - ArrayNum;
+		check(index >= 0);
+		check(Index < ArrNum);
+		return ArrData[Index];
 	}
 
-	// Iterator.
-	class TIterator
+	int Append(const T& Item)
 	{
-	public:
-		TIterator(TArray<T>& InArray) : Array(InArray), Index(-1) { ++*this; }
-		void operator++(void) { ++Index; }
-		void RemoveCurrent(void) { Array.Remove(Index--); }
-		int GetIndex(void) const { return Index; }
-		operator bool(void) const { return Index < Array.Num(); }
-		T& operator*(void) const { return Array[Index]; }
-		T* operator->(void) const { return &Array[Index]; }
-		T& GetCurrent(void) const { return Array[Index]; }
-		T& GetPrev(void) const { return Array[Index ? Index - 1 : Array.Num() - 1]; }
-		T& GetNext(void) const { return Array[Index < Array.Num() - 1 ? Index + 1 : 0]; }
-	private:
-		TArray<T>& Array;
-		int Index;
-	};
+		if (ArrNum == ArrSize)
+		{
+			Resize(ArrSize + ArrSize * 3 / 8 + 32);
+		}
+		ArrData[ArrNum] = Item;
+		ArrNum++;
+		return ArrNum - 1;
+	}
+	T& Alloc()
+	{
+		if (ArrNum == ArrSize)
+		{
+			Resize(ArrSize + ArrSize * 3 / 8 + 32);
+		}
+
+		return ArrData[ArrNum++];
+	}
+	bool RemoveIndex(int Index)
+	{
+		check(ArrData != NULL);
+		check(Index >= 0);
+		check(Index < ArrNum);
+	
+		if (Index < 0 || Index >= ArrNum)
+		{
+			return false;
+		}
+	
+		ArrNum--;
+		for (int i = Index; i < ArrNum; i++)
+		{
+			ArrData[i] = ArrData[i + 1];
+		}
+	
+		return true;
+	}
+
+private:
+	int ArrNum;
+	int ArrSize;
+	T* ArrData;
 };
-
-//
-// Array operator news.
-//
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-template <class T, EZoneTag Tag> void* operator new(size_t, TArray<T, Tag>& Array)
-{
-	int Index = Array.FArray::Add(1, sizeof(T), Tag);
-	return &Array[Index];
-}
-template <class T, EZoneTag Tag> void* operator new(size_t, TArray<T, Tag>& Array, int Index)
-{
-	Array.FArray::Insert(Index, 1, sizeof(T), Tag);
-	return &Array[Index];
-}
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif

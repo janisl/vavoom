@@ -119,29 +119,3 @@ inline vuint32 GetTypeHash(const VName N)
 {
 	return N.GetIndex();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.7  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.6  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.5  2005/11/22 19:10:38  dj_jl
-//	Cleaned up a bit.
-//	
-//	Revision 1.4  2005/05/26 16:49:14  dj_jl
-//	Added lowercased max 8 chars names.
-//	
-//	Revision 1.3  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/12/18 18:57:11  dj_jl
-//	Added global name subsystem
-//	
-//**************************************************************************

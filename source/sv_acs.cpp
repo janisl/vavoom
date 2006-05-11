@@ -841,7 +841,7 @@ void FACScriptsObject::LoadOldObject()
 	}
 
 	//	Add to loaded objects.
-	LibraryID = LoadedObjects.AddItem(this) << 16;
+	LibraryID = LoadedObjects.Append(this) << 16;
 	unguard;
 }
 
@@ -1039,7 +1039,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	// module. The only things that can be exported are functions and map
 	// variables, which must already be present if they're exported, so this
 	// is okay.
-	LibraryID = LoadedObjects.AddItem(this) << 16;
+	LibraryID = LoadedObjects.Append(this) << 16;
 
 	//	Tag the library ID to any map variables that are initialized with
 	// strings.
@@ -1092,7 +1092,7 @@ void FACScriptsObject::LoadEnhancedObject()
 				{
 					Object = StaticLoadObject(Lump);
 				}
-				Imports.AddItem(Object);
+				Imports.Append(Object);
 				do ; while (parse[++i]);
 			}
 		}
@@ -1525,7 +1525,7 @@ void FACScriptsObject::StaticUnloadObjects()
 	guard(FACScriptsObject::StaticUnloadObjects);
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 		delete LoadedObjects[i];
-	LoadedObjects.Empty();
+	LoadedObjects.Clear();
 	unguard;
 }
 

@@ -237,6 +237,7 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 
 	base->id = ZONEID;
 
+	memset((void*)((char*)base + sizeof(memblock_t)), 0x6a, size - sizeof(memblock_t));
 	return (void*)((char*)base + sizeof(memblock_t));
 	unguard;
 }

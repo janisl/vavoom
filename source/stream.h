@@ -154,15 +154,15 @@ public:
 class VMemoryStream : public VStream
 {
 protected:
-	TArray<byte, PU_STATIC>	Array;
-	int						Pos;
+	TArray<vuint8>	Array;
+	int				Pos;
 
 public:
 	//	Initialise empty writing stream.
 	VMemoryStream();
 	//	Initialise reading streams.
 	VMemoryStream(void*, int);
-	VMemoryStream(const TArray<byte, PU_STATIC>&);
+	VMemoryStream(const TArray<vuint8>&);
 
 	void Serialise(void*, int);
 	void Seek(int);
@@ -177,28 +177,8 @@ public:
 	{
 		bLoading = false;
 	}
-	TArray<byte, PU_STATIC>& GetArray()
+	TArray<vuint8>& GetArray()
 	{
 		return Array;
 	}
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/03/10 19:31:25  dj_jl
-//	Use serialisation for progs files.
-//
-//	Revision 1.4  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.3  2006/02/27 18:44:25  dj_jl
-//	Serialisation of indexes in a compact way.
-//	
-//	Revision 1.2  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.1  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//**************************************************************************

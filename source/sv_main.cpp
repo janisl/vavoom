@@ -224,6 +224,8 @@ void SV_Shutdown()
 	Z_Free(sv_mobjs);
 	Z_Free(sv_mo_base);
 	Z_Free(sv_mo_free_time);
+	
+	P_FreeTerrainTypes();
 	unguard;
 }
 
