@@ -55,13 +55,32 @@ void A_PainShootSkull(float angle)
 		return;
 
 	// okay, there's place for another one
+	prestep = 4.0 + 3.0 * (Radius + 16.0) / 2.0;
+				
+	// Check whether the Lost Soul is being fired through a 1-sided
+	// wall or an impassible line, or a "monsters can't cross" line.
+	// If it is, then we don't allow the spawn.
+	if (CheckSides(Origin + vector(
+	    prestep * cos(angle), prestep * sin(angle), 8.0)))
+	{
+		return;
+	}
+
 	newSkull = LostSoul(Spawn(LostSoul, Origin));
 
-	prestep = 4.0 + 3.0 * (Radius + newSkull.Radius) / 2.0;
+	// Check to see if the new Lost Soul's z value is above the
+	// ceiling of its new sector, or below the floor. If so, kill it.
+	if ((newSkull.Origin.z > (newSkull.CeilingZ - newSkull.Height)) ||
+        (newSkull.Origin.z < newSkull.FloorZ))
+	{
+		// kill it immediately
+		newSkull.Damage(self, self, 10000);
+		return;
+	}
 
 	// Check for movements.
 	if (!newSkull.TryMove(newSkull.Origin + vector(
-		prestep * cos(angle), prestep * sin(angle), 8.0)))
+	    prestep * cos(angle), prestep * sin(angle), 8.0)))
 	{
 		// kill it immediately
 		newSkull.Damage(self, self, 10000);

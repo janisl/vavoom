@@ -273,6 +273,7 @@ class VEntity : public VThinker
 	VState* FindState(VName StateName);
 
 	bool CheckWater();
+	bool CheckSides(TVec lsPos);
 	bool CheckPosition(TVec Pos);
 	bool CheckRelPosition(TVec Pos);
 	bool TryMove(TVec newPos);
@@ -297,6 +298,7 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(PlayFullVolumeSound)
 	DECLARE_FUNCTION(StopSound)
 	DECLARE_FUNCTION(CheckWater)
+	DECLARE_FUNCTION(CheckSides)
 	DECLARE_FUNCTION(CheckPosition)
 	DECLARE_FUNCTION(CheckRelPosition)
 	DECLARE_FUNCTION(TryMove)

@@ -402,6 +402,98 @@ static boolean PIT_CheckLine(line_t * ld)
 	unguardSlow;
 }
 
+static float tmbbox[4];
+static TVec pe_pos;	// Pain Elemental position for Lost Soul checks	// phares
+static TVec ls_pos;	// Lost Soul position for Lost Soul checks		// phares
+
+//==========================================================================
+//																	// phares
+// PIT_CrossLine													//   |
+// Checks to see if a PE->LS trajectory line crosses a blocking		//   V
+// line. Returns false if it does.
+//
+// tmbbox holds the bounding box of the trajectory. If that box
+// does not touch the bounding box of the line in question,
+// then the trajectory is not blocked. If the PE is on one side
+// of the line and the LS is on the other side, then the
+// trajectory is blocked.
+//
+// Currently this assumes an infinite line, which is not quite
+// correct. A more correct solution would be to check for an
+// intersection of the trajectory and the line, but that takes
+// longer and probably really isn't worth the effort.
+//
+//
+//==========================================================================
+
+ // killough 3/26/98: make static
+static boolean PIT_CrossLine(line_t* ld)
+{
+	guardSlow(PIT_CrossLine);
+
+	if ((ld->flags & ML_BLOCKING) || (ld->flags & ML_BLOCKMONSTERS) ||
+		(ld->flags & ML_BLOCKEVERYTHING))
+		if (!(tmbbox[BOXLEFT] > ld->bbox[BOXRIGHT] ||
+			  tmbbox[BOXRIGHT] < ld->bbox[BOXLEFT] ||
+			  tmbbox[BOXTOP] < ld->bbox[BOXBOTTOM] ||
+			  tmbbox[BOXBOTTOM] > ld->bbox[BOXTOP]))
+			if (ld->PointOnSide(pe_pos) != ld->PointOnSide(ls_pos))
+					return false;  // line blocks trajectory
+
+	return true; // line doesn't block trajectory
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//  VEntity::CheckSides
+//
+// This routine checks for Lost Souls trying to be spawned		// phares
+// across 1-sided lines, impassible lines, or "monsters can't	//   |
+// cross" lines. Draw an imaginary line between the PE			//   V
+// and the new Lost Soul spawn spot. If that line crosses
+// a 'blocking' line, then disallow the spawn. Only search
+// lines in the blocks of the blockmap where the bounding box
+// of the trajectory line resides. Then check bounding box
+// of the trajectory vs. the bounding box of each blocking
+// line to see if the trajectory and the blocking line cross.
+// Then check the PE and LS to see if they're on different
+// sides of the blocking line. If so, return true, otherwise
+// false.
+//
+//==========================================================================
+
+bool VEntity::CheckSides(TVec lsPos)
+{
+	guard(VEntity::CheckSides);
+	int bx,by,xl,xh,yl,yh;
+
+	pe_pos = Origin;
+	ls_pos = lsPos;
+
+	// Here is the bounding box of the trajectory
+	tmbbox[BOXLEFT] = pe_pos.x < ls_pos.x ? pe_pos.x : ls_pos.x;
+	tmbbox[BOXRIGHT] = pe_pos.x > ls_pos.x ? pe_pos.x : ls_pos.x;
+	tmbbox[BOXTOP] = pe_pos.y > ls_pos.y ? pe_pos.y : ls_pos.y;
+	tmbbox[BOXBOTTOM] = pe_pos.y < ls_pos.y ? pe_pos.y : ls_pos.y;
+
+	// Determine which blocks to look in for blocking lines
+	xl = MapBlock(tmbbox[BOXLEFT] - XLevel->BlockMapOrgX);
+	xh = MapBlock(tmbbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+	yl = MapBlock(tmbbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+	yh = MapBlock(tmbbox[BOXTOP] - XLevel->BlockMapOrgY);
+
+	// xl->xh, yl->yh determine the mapblock set to search
+	validcount++; // prevents checking same line twice
+	for (bx = xl; bx <= xh; bx++)
+		for (by = yl; by <= yh; by++)
+			if (!SV_BlockLinesIterator(bx, by, PIT_CrossLine))
+				return true;
+
+	return false;
+	unguard;
+}
+
 //==========================================================================
 //
 //  VEntity::CheckPosition
@@ -901,7 +993,6 @@ bool VEntity::TryMove(TVec newPos)
 		{
 			// Check to make sure there's nothing in the way for the step up
 			good = TestMobjZ();
-
 			if(!good)
 			{
 				eventPushLine();
@@ -1345,7 +1436,7 @@ static VEntity *onmobj;	//generic global onmobj...used for landing on pods/playe
 
 static boolean PIT_CheckOnmobjZ(VEntity *Other)
 {
-	guard(PIT_CheckOnmobjZ);
+	guardSlow(PIT_CheckOnmobjZ);
 	float blockdist;
 
 	if (!(Other->EntityFlags & VEntity::EF_Solid))
@@ -1376,12 +1467,14 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 	}
 	onmobj = Other;
 	return false;
-	unguard;
+	unguardSlow;
 }
 
 //=============================================================================
 //
 // TestMobjZ
+//
+//  Checks if the new Z position is legal
 //
 //=============================================================================
 
@@ -1390,6 +1483,7 @@ bool VEntity::TestMobjZ()
 	guard(VEntity::TestMobjZ);
 	int xl, xh, yl, yh, bx, by;
 
+	// Can't hit thing
 	if (!(EntityFlags & EF_ColideWithThings))
 		return true;
 
@@ -1403,6 +1497,7 @@ bool VEntity::TestMobjZ()
 	yl = MapBlock(Origin.y - Radius - XLevel->BlockMapOrgY - MAXRADIUS);
 	yh = MapBlock(Origin.y + Radius - XLevel->BlockMapOrgY + MAXRADIUS);
 
+	// xl->xh, yl->yh determine the mapblock set to search
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
 			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, NULL, NULL))
@@ -1467,7 +1562,7 @@ void VEntity::FakeZMovement()
 //
 //  VEntity::CheckOnmobj
 //
-//  Checks if the new Z position is legal
+//  Checks if an object is above another object
 //
 //=============================================================================
 
@@ -1481,10 +1576,11 @@ VEntity* VEntity::CheckOnmobj()
 	FakeZMovement();
 	good = TestMobjZ();
 
-	if (good)
+	return good ? NULL : onmobj;
+/*	if (good)
 		return NULL;
 	else
-		return onmobj;
+		return onmobj;*/
  	unguard;
 }
 
@@ -1757,6 +1853,19 @@ IMPLEMENT_FUNCTION(VEntity, CheckRelPosition)
 
 //==========================================================================
 //
+//	Entity.CheckSides
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, CheckSides)
+{
+	TVec lsPos = PR_Popv();
+	VEntity *Self = (VEntity *)PR_Pop();
+	PR_Push(Self->CheckSides(lsPos));
+}
+
+//==========================================================================
+//
 //	Entity.TryMove
 //
 //==========================================================================
@@ -1777,7 +1886,7 @@ IMPLEMENT_FUNCTION(VEntity, TryMove)
 IMPLEMENT_FUNCTION(VEntity, TestMobjZ)
 {
 	VEntity *Self = (VEntity *)PR_Pop();
-	Self->TestMobjZ();
+	PR_Push(Self->TestMobjZ());
 }
 
 //==========================================================================

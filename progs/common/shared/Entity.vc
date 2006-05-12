@@ -196,6 +196,7 @@ native final void PlaySound(name SoundName, int Channel);
 native final void PlayFullVolumeSound(name SoundName, int Channel);
 native final void StopSound(int Channel);
 
+native final bool CheckSides(TVec lsPos);
 native final bool CheckPosition(TVec Pos);
 native final bool CheckRelPosition(TVec Pos);
 native final bool TryMove(TVec newPos);
