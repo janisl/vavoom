@@ -140,13 +140,13 @@ public:
 	}
 	T& operator[](int Index)
 	{
-		check(index >= 0);
+		check(Index >= 0);
 		check(Index < ArrNum);
 		return ArrData[Index];
 	}
 	const T& operator[](int Index) const
 	{
-		check(index >= 0);
+		check(Index >= 0);
 		check(Index < ArrNum);
 		return ArrData[Index];
 	}
