@@ -70,7 +70,7 @@ void VWindow::Init(VWindow *InParent)
 {
 	guard(VWindow::Init);
 	Parent = InParent;
-	WinGC = (VGC*)StaticSpawnObject(VGC::StaticClass(), PU_STATIC);
+	WinGC = (VGC*)StaticSpawnObject(VGC::StaticClass());
 	if (Parent)
 	{
 		Parent->AddChild(this);
@@ -623,7 +623,7 @@ VWindow *VWindow::CreateNewWindow(VClass *NewClass, VWindow *ParentWindow)
 	guard(VWindow::CreateNewWindow);
 	VWindow *win;
 
-	win = (VWindow *)StaticSpawnObject(NewClass, PU_STATIC);
+	win = (VWindow *)StaticSpawnObject(NewClass);
 	win->Init(ParentWindow);
 	return win;
 	unguardf(("(%s)", NewClass->GetName()));

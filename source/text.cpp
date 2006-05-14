@@ -118,6 +118,25 @@ void T_Init()
 
 //==========================================================================
 //
+//	T_Shutdown
+//
+//==========================================================================
+
+void T_Shutdown()
+{
+	guard(T_Shutdown);
+	for (int i = 0; i < NUMFONTTYPES; i++)
+	{
+		if (Fonts[i])
+		{
+			delete Fonts[i];
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	T_LoadFont
 //
 //==========================================================================
@@ -127,7 +146,7 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	int		i;
 	char   	buffer[10];
 
-	Fonts[FontNr] = (font_t*)Z_Malloc(sizeof(font_t), PU_STATIC, 0);
+	Fonts[FontNr] = new font_t;
 	memset(Fonts[FontNr], 0, sizeof(font_t));
 	Fonts[FontNr]->SpaceWidth = SpaceW;
 	Fonts[FontNr]->SpaceHeight = SpaceH;
@@ -171,7 +190,7 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	int		i;
 	char   	buffer[10];
 
-	Fonts[FontNr] = (font_t*)Z_Malloc(sizeof(font_t), PU_STATIC, 0);
+	Fonts[FontNr] = new font_t;
 	memset(Fonts[FontNr], 0, sizeof(font_t));
 	Fonts[FontNr]->SpaceWidth = SpaceW;
 	Fonts[FontNr]->SpaceHeight = SpaceH;

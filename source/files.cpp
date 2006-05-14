@@ -99,7 +99,7 @@ static void AddGameDir(const VStr& dir)
 	guard(AddGameDir);
 	search_path_t	*info;
 
-	info = (search_path_t*)Z_Calloc(sizeof(*info), PU_STATIC, 0);
+	info = new search_path_t;
 	info->Path = fl_basedir + "/" + dir;
 	info->Next = searchpaths;
 	searchpaths = info;
@@ -107,7 +107,7 @@ static void AddGameDir(const VStr& dir)
 	VStr gwadir;
 	if (fl_savedir)
 	{
-		info = (search_path_t*)Z_Calloc(sizeof(*info), PU_STATIC, 0);
+		info = new search_path_t;
 		info->Path = fl_savedir + "/" + dir;
 		info->Next = searchpaths;
 		searchpaths = info;
@@ -374,6 +374,30 @@ void FL_Init()
 
 //==========================================================================
 //
+//	FL_Shutdown
+//
+//==========================================================================
+
+void FL_Shutdown()
+{
+	guard(FL_Shutdown);
+	for (search_path_t* search = searchpaths; search;)
+	{
+		search_path_t* Next = search->Next;
+		delete search;
+		search = Next;
+	}
+	fl_basedir.Clean();
+	fl_savedir.Clean();
+	fl_gamedir.Clean();
+	fl_mainwad.Clean();
+	wadfiles.Clear();
+	gwadirs.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
 //	FL_FindFile
 //
 //==========================================================================
@@ -423,7 +447,7 @@ void FL_CreatePath(const VStr& Path)
 //
 //==========================================================================
 
-int FL_ReadFile(const VStr& name, void** buffer, int tag)
+int FL_ReadFile(const VStr& name, void** buffer)
 {
 	guard(FL_ReadFile);
 	int			handle;
@@ -444,7 +468,8 @@ int FL_ReadFile(const VStr& name, void** buffer, int tag)
 		Sys_Error("Couldn't open file %s", *realname);
 	}
 	length = Sys_FileSize(handle);
-	buf = (byte*)Z_Malloc(length + 1, tag, buffer);
+	buf = (byte*)Z_Malloc(length + 1);
+	*buffer = buf;
 	count = Sys_FileRead(handle, buf, length);
 	buf[length] = 0;
 	Sys_FileClose(handle);

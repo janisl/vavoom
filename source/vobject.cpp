@@ -183,11 +183,11 @@ void VObject::StaticExit()
 //
 //==========================================================================
 
-VObject *VObject::StaticSpawnObject(VClass *AClass, int tag)
+VObject* VObject::StaticSpawnObject(VClass* AClass)
 {
 	guard(VObject::StaticSpawnObject);
-	VObject *Obj = (VObject *)Z_Calloc(AClass->ClassSize, tag, 0);
-	VClass *NativeClass = AClass;
+	VObject* Obj = (VObject*)Z_Calloc(AClass->ClassSize);
+	VClass* NativeClass = AClass;
 	while (NativeClass && !(NativeClass->GetFlags() & CLASSOF_Native))
 	{
 		NativeClass = NativeClass->GetSuperClass();

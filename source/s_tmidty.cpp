@@ -297,7 +297,7 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 
 	//	Load song.
 	int Size = InStrm->TotalSize();
-	void* Data = Z_Malloc(Size, PU_STATIC, 0);
+	void* Data = Z_Malloc(Size);
 	InStrm->Seek(0);
 	InStrm->Serialise(Data, Size);
 	MidiSong* Song = Timidity_LoadSongMem(Data, Size);
@@ -314,24 +314,3 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 	return new VTimidityAudioCodec(Song);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.4  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.3  2005/11/12 09:47:54  dj_jl
-//	Created LibTimidity namespace to avoid conflicts.
-//	
-//	Revision 1.2  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.1  2005/10/28 17:50:01  dj_jl
-//	Added Timidity driver.
-//	
-//**************************************************************************

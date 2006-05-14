@@ -81,14 +81,13 @@ void CL_Clear()
 	if (!sv.active)
 #endif
 	{
-	    // Make sure all sounds are stopped before Z_FreeTags.
+	    // Make sure all sounds are stopped.
 	    S_StopAllSound();
-		Z_FreeTag(PU_LEVEL);
 	}
 	for (int i = 0; i < GMaxEntities; i++)
-		cl_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass(), PU_STATIC);
+		cl_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass());
 	for (int i = 0; i < MAXPLAYERS; i++)
-		cl_weapon_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass(), PU_STATIC);
+		cl_weapon_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass());
 	cls.signon = 0;
 	unguard;
 }

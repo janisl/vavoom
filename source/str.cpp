@@ -84,7 +84,7 @@ void VStr::Resize(int NewLen)
 		//	Free string.
 		if (Str)
 		{
-			Z_Free((int*)Str - 1);
+			delete[] (Str - sizeof(int));
 			Str = NULL;
 		}
 	}
@@ -92,16 +92,14 @@ void VStr::Resize(int NewLen)
 	{
 		//	Allocate memory.
 		int AllocLen = sizeof(int) + NewLen + 1;
-		if (!Str)
+		char* NewStr = (new char[AllocLen]) + sizeof(int);
+		if (Str)
 		{
-			Str = (char*)Z_Malloc(AllocLen, PU_STATIC, NULL) + sizeof(int);
+			size_t Len = Min(Length(), (size_t)NewLen);
+			strncpy(NewStr, Str, Len);
+			delete[] (Str - sizeof(int));
 		}
-		else
-		{
-			void* BasePtr = (int*)Str - 1;
-			Z_Resize(&BasePtr, AllocLen);
-			Str = (char*)((int*)BasePtr + 1);
-		}
+		Str = NewStr;
 		//	Set length.
 		((int*)Str)[-1] = NewLen;
 		//	Set terminator.

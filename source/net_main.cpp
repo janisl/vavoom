@@ -137,7 +137,7 @@ void NET_Init()
 /*	for (i = 0; i < net_numsockets; i++)*/
 	for (i = 0; i < MAXPLAYERS + 1; i++)
 	{
-		s = (qsocket_t *)Z_Malloc(sizeof(qsocket_t), PU_STATIC, 0);
+		s = (qsocket_t *)Z_Malloc(sizeof(qsocket_t));
 		s->next = net_freeSockets;
 		net_freeSockets = s;
 		s->disconnected = true;
@@ -198,6 +198,7 @@ void NET_Shutdown()
 		Z_Free(sock);
 		sock = Next;
 	}
+	net_msg.Free();
 	unguard;
 }
 
@@ -942,50 +943,3 @@ slist_t* GetSlist()
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.14  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.13  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.12  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.11  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.10  2002/06/14 15:41:35  dj_jl
-//	Got rid of a warning.
-//	
-//	Revision 1.9  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.8  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/12/01 17:40:41  dj_jl
-//	Added support for bots
-//	
-//	Revision 1.6  2001/10/09 17:25:02  dj_jl
-//	Finished slist moving stuff
-//	
-//	Revision 1.5  2001/10/08 17:27:53  dj_jl
-//	Moved slist menu builtins here
-//	
-//	Revision 1.4  2001/10/04 17:23:29  dj_jl
-//	Got rid of some warnings
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

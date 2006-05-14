@@ -78,9 +78,7 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 	if (!vtable)
 		return NULL;
 
-	bitmap = (BITMAP*)Z_Malloc(sizeof(BITMAP) + (sizeof(char *) * height), PU_VIDEO, 0);
-	if (!bitmap)
-		return NULL;
+	bitmap = (BITMAP*)Z_Malloc(sizeof(BITMAP) + (sizeof(char *) * height));
 
 	bitmap->dat = scrn;
 
@@ -270,7 +268,7 @@ static void Blit_Banked()
 }
 #endif
 
-void VSoftwareDrawer::Update(void)
+void VSoftwareDrawer::Update()
 {
 	guard(VSoftwareDrawer::Update);
 #ifdef DJGPP
@@ -303,52 +301,5 @@ void VSoftwareDrawer::Update(void)
 void VSoftwareDrawer::Shutdown()
 {
 	set_gfx_mode(GFX_TEXT, 80, 25, 0, 0);
+	FreeAllMemory();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.14  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.13  2005/10/02 23:15:44  dj_jl
-//	Changed default resolution.
-//	
-//	Revision 1.12  2005/04/28 07:16:11  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.11  2005/03/01 15:56:54  dj_jl
-//	Windowed mode, beautification.
-//	
-//	Revision 1.10  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.9  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.8  2002/01/03 18:38:25  dj_jl
-//	Added guard macros and core dumps
-//	
-//	Revision 1.7  2001/12/01 17:41:33  dj_jl
-//	Changes for Allegro 3.9.40
-//	
-//	Revision 1.6  2001/10/27 07:47:52  dj_jl
-//	Public gamma variables
-//	
-//	Revision 1.5  2001/09/12 17:32:10  dj_jl
-//	Made my_create_bitmap static
-//	
-//	Revision 1.4  2001/08/17 17:43:40  dj_jl
-//	LINUX fixes
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

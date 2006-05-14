@@ -1035,11 +1035,7 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
 	guard(VDirect3DDrawer::ReadScreen);
 	//	Allocate buffer
-	void *dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t), PU_VIDEO, 0);
-	if (!dst)
-	{
-		return NULL;
-	}
+	void* dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t));
 
 #if DIRECT3D_VERSION >= 0x0800
 	LPDIRECT3DSURFACE8 surf;

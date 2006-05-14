@@ -522,7 +522,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	{
 		if (!surf->lightmap_rgb)
 		{
-			surf->lightmap_rgb = (rgb_t*)Z_Malloc(w * h * 3, PU_LEVEL, 0);
+			surf->lightmap_rgb = (rgb_t*)Z_Malloc(w * h * 3);
 			light_mem += w * h * 3;
 		}
 		else
@@ -600,7 +600,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 
 	if (!surf->lightmap)
 	{
-		surf->lightmap = (byte*)Z_Malloc(w * h, PU_LEVEL, 0);
+		surf->lightmap = (byte*)Z_Malloc(w * h);
 		light_mem += w * h;
 	}
 	else
@@ -1071,69 +1071,3 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	return is_colored;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.21  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.20  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.19  2005/11/13 18:54:10  dj_jl
-//	CVar to disable static lights.
-//	
-//	Revision 1.18  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.17  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.16  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.15  2002/07/13 07:51:48  dj_jl
-//	Replacing console's iostream with output device.
-//	
-//	Revision 1.14  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.13  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.12  2002/02/22 18:09:52  dj_jl
-//	Some improvements, beautification.
-//	
-//	Revision 1.11  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.10  2001/11/09 14:18:40  dj_jl
-//	Added specular highlights
-//	
-//	Revision 1.9  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.8  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.7  2001/08/30 17:36:21  dj_jl
-//	Fixed memory allocation bug
-//	
-//	Revision 1.6  2001/08/24 17:04:32  dj_jl
-//	Added extra sampling
-//	
-//	Revision 1.5  2001/08/21 17:47:05  dj_jl
-//	Made r_darked off by default
-//	
-//	Revision 1.4  2001/08/07 16:48:54  dj_jl
-//	Beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

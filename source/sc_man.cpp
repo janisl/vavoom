@@ -151,14 +151,14 @@ static void OpenScript(const char *name, int LumpNum, int type)
 	if (type == LUMP_SCRIPT)
 	{
 		// Lump script
-		ScriptBuffer = (char*)W_CacheLumpName(VName(name, VName::AddLower8), PU_STATIC);
+		ScriptBuffer = (char*)W_CacheLumpName(VName(name, VName::AddLower8));
 		ScriptSize = W_LumpLength(W_GetNumForName(VName(name, VName::AddLower8)));
 		ScriptName = name;
 	}
 	else if (type == LUMP_NUM_SCRIPT)
 	{
 		// Lump num script
-		ScriptBuffer = (char*)W_CacheLumpNum(LumpNum, PU_STATIC);
+		ScriptBuffer = (char*)W_CacheLumpNum(LumpNum);
 		ScriptSize = W_LumpLength(LumpNum);
 		ScriptName = name;
 	}
@@ -192,6 +192,7 @@ void SC_Close()
 		Z_Free(ScriptBuffer);
 		ScriptOpen = false;
 	}
+	ScriptName.Clean();
 	unguard;
 }
 

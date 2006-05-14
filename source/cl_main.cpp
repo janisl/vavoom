@@ -49,6 +49,8 @@ void CL_StopRecording();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern VStr			skin_list[256];
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 client_static_t		cls;
@@ -85,15 +87,17 @@ void CL_Init()
 	guard(CL_Init);
 	clpr.Load("clprogs");
 
-	cl_mobjs = Z_CNew(VEntity*, GMaxEntities, PU_STATIC, 0);
-	cl_mo_base = Z_CNew(clmobjbase_t, GMaxEntities, PU_STATIC, 0);
+	cl_mobjs = new VEntity*[GMaxEntities];
+	cl_mo_base = new clmobjbase_t[GMaxEntities];
+	memset(cl_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
+	memset(cl_mo_base, 0, sizeof(clmobjbase_t) * GMaxEntities);
 
 	cls.message.Alloc(NET_MAXMESSAGE);
 
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
-		VClass::FindClass("ClientGame"), PU_STATIC);
+		VClass::FindClass("ClientGame"));
 	cl = (VClientState*)VObject::StaticSpawnObject(
-		VClass::FindClass("MainClientState"), PU_STATIC);
+		VClass::FindClass("MainClientState"));
 	GClGame->cl = cl;
 	GClGame->level = &cl_level;
 	unguard;
@@ -146,7 +150,10 @@ void CL_Shutdown()
 	GClGame->ConditionalDestroy();
 	cl->ConditionalDestroy();
 	GRoot->ConditionalDestroy();
-	Z_FreeTag(PU_LEVEL);
+	for (int i = 0; i < 256; i++)
+	{
+		skin_list[i].Clean();
+	}
 	unguard;
 }
 

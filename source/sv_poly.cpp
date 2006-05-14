@@ -412,7 +412,7 @@ static void LinkPolyobj(polyobj_t *po)
 				if (!(*link))
 				{ 
 					// Create a new link at the current block cell
-					*link = (polyblock_t*)Z_Malloc(sizeof(polyblock_t), PU_LEVEL, 0);
+					*link = new polyblock_t;
 					(*link)->next = NULL;
 					(*link)->prev = NULL;
 					(*link)->polyobj = po;
@@ -433,8 +433,7 @@ static void LinkPolyobj(polyobj_t *po)
 				}
 				else
 				{
-					tempLink->next = (polyblock_t*)Z_Malloc(sizeof(polyblock_t),
-						PU_LEVEL, 0);
+					tempLink->next = new polyblock_t;
 					tempLink->next->next = NULL;
 					tempLink->next->prev = tempLink;
 					tempLink->next->polyobj = po;
@@ -524,12 +523,12 @@ static boolean CheckMobjBlocking(seg_t *seg, polyobj_t *po)
 static void InitBlockMap()
 {
 	guard(InitBlockMap);
-	int		i;
+	GLevel->PolyBlockMap = new polyblock_t*[GLevel->BlockMapWidth *
+		GLevel->BlockMapHeight];
+	memset(GLevel->PolyBlockMap, 0, sizeof(polyblock_t*) *
+		GLevel->BlockMapWidth * GLevel->BlockMapHeight);
 
-	GLevel->PolyBlockMap = Z_CNew(polyblock_t*, GLevel->BlockMapWidth *
-		GLevel->BlockMapHeight, PU_LEVEL, 0);
-
-	for (i = 0; i < GLevel->NumPolyObjs; i++)
+	for (int i = 0; i < GLevel->NumPolyObjs; i++)
 	{
 		LinkPolyobj(&GLevel->PolyObjs[i]);
 	}
@@ -599,7 +598,7 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 	index = GLevel->NumPolyObjs++;
 	if (GLevel->NumPolyObjs == 1)
     {
-		GLevel->PolyObjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t), PU_LEVEL, 0);
+		GLevel->PolyObjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t));
 	}
     else
     {
@@ -629,8 +628,7 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 			IterFindPolySegs(*GLevel->Segs[i].v2, NULL);
 
 			GLevel->PolyObjs[index].numsegs = PolySegCount;
-			GLevel->PolyObjs[index].segs = (seg_t**)Z_Malloc(PolySegCount*sizeof(seg_t *),
-				PU_LEVEL, 0);
+			GLevel->PolyObjs[index].segs = new seg_t*[PolySegCount];
 			*(GLevel->PolyObjs[index].segs) = &GLevel->Segs[i]; // insert the first seg
 			IterFindPolySegs(*GLevel->Segs[i].v2, GLevel->PolyObjs[index].segs + 1);
 			if (crush)
@@ -719,8 +717,7 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 			else
 				GLevel->PolyObjs[index].PolyFlags &= ~polyobj_t::PF_Crush;
 			GLevel->PolyObjs[index].tag = tag;
-			GLevel->PolyObjs[index].segs = (seg_t**)Z_Malloc(GLevel->PolyObjs[index].numsegs
-				* sizeof(seg_t *), PU_LEVEL, 0);
+			GLevel->PolyObjs[index].segs = new seg_t*[GLevel->PolyObjs[index].numsegs];
 			for(i = 0; i < GLevel->PolyObjs[index].numsegs; i++)
 			{
 				GLevel->PolyObjs[index].segs[i] = polySegList[i];
@@ -749,7 +746,7 @@ void PO_AddAnchorPoint(float x, float y, int tag)
     index = NumAnchorPoints++;
 	if (NumAnchorPoints == 1)
     {
-    	AnchorPoints = (AnchorPoint_t*)Z_Malloc(sizeof(*AnchorPoints), PU_LEVEL, 0);
+    	AnchorPoints = (AnchorPoint_t*)Z_Malloc(sizeof(*AnchorPoints));
 	}
     else
     {
@@ -803,8 +800,8 @@ static void TranslateToStartSpot(float originX, float originY, int tag)
 	{
 		Sys_Error("TranslateToStartSpot:  Anchor point located without a StartSpot point: %d\n", tag);
 	}
-	po->originalPts = (vertex_t*)Z_Malloc(po->numsegs*sizeof(vertex_t), PU_LEVEL, 0);
-	po->prevPts = (vertex_t*)Z_Malloc(po->numsegs*sizeof(vertex_t), PU_LEVEL, 0);
+	po->originalPts = new vertex_t[po->numsegs];
+	po->prevPts = new vertex_t[po->numsegs];
 	deltaX = originX - po->startSpot.x;
 	deltaY = originY - po->startSpot.y;
 

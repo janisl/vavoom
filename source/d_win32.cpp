@@ -274,7 +274,7 @@ void VSoftwareDrawer::SetPalette8(byte* palette)
 //
 //==========================================================================
 
-void VSoftwareDrawer::Update(void)
+void VSoftwareDrawer::Update()
 {
 	guard(VSoftwareDrawer::Update);
 	DDSURFACEDESC	ddsd;
@@ -333,7 +333,7 @@ void VSoftwareDrawer::Update(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::Shutdown(void)
+void VSoftwareDrawer::Shutdown()
 {
 	if (DDraw)
 	{
@@ -350,43 +350,5 @@ void VSoftwareDrawer::Shutdown(void)
 		DDraw->Release();
 	}
 	DDraw = NULL;
+	FreeAllMemory();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.12  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.11  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.10  2004/04/08 15:19:40  dj_jl
-//	Windowed mode
-//	
-//	Revision 1.9  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.8  2002/01/21 18:24:22  dj_jl
-//	Fixed 32 bit mode
-//	
-//	Revision 1.7  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2002/01/03 18:38:25  dj_jl
-//	Added guard macros and core dumps
-//	
-//	Revision 1.5  2001/10/27 07:47:52  dj_jl
-//	Public gamma variables
-//	
-//	Revision 1.4  2001/10/04 17:23:29  dj_jl
-//	Got rid of some warnings
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

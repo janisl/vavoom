@@ -832,7 +832,7 @@ void VRawSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 	Sfx.SampleBits = 8;
 	Sfx.SampleRate = SampleRate;
 	Sfx.DataSize = DataSize;
-	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_STATIC, 0);
+	Sfx.Data = Z_Malloc(Sfx.DataSize);
 	Strm.Serialise(Sfx.Data, Sfx.DataSize);
 	unguard;
 }

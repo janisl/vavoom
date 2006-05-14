@@ -179,9 +179,9 @@ public:
 	// Systemwide functions.
 	static void StaticInit();
 	static void StaticExit();
-	static VObject *StaticSpawnObject(VClass*, int);
+	static VObject* StaticSpawnObject(VClass*);
 	static void CollectGarbage();
-	static VObject *GetIndexObject(int Index);
+	static VObject* GetIndexObject(int Index);
 	static int GetObjectsCount();
 
 	// Functions.

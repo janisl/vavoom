@@ -63,7 +63,8 @@ enum valign_e
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void T_Init(void);
+void T_Init();
+void T_Shutdown();
 
 void T_SetFont(font_e);
 void T_SetDist(int, int);
@@ -84,33 +85,7 @@ int T_DrawTextW(int x, int y, const char* String, int w);
 void T_DrawNString(int, int, const char*, int);
 void T_DrawNText(int, int, const char*, int);
 
-void T_DrawCursor(void);
+void T_DrawCursor();
 void T_DrawCursorAt(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2006/01/10 19:32:27  dj_jl
-//	Fix for long notify messages.
-//
-//	Revision 1.7  2005/05/26 16:52:29  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.6  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/09/12 17:34:09  dj_jl
-//	Added consts
-//	
-//	Revision 1.4  2001/08/15 17:20:06  dj_jl
-//	Moved prototype of T_DrawString8 from console.cpp
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

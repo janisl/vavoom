@@ -142,7 +142,7 @@ int M_ReadFile(const char* name, byte** buffer)
 		Sys_Error("Couldn't open file %s", name);
 	}
 	length = Sys_FileSize(handle);
-	buf = (byte*)Z_Malloc(length + 1, PU_STATIC, NULL);
+	buf = (byte*)Z_Malloc(length + 1);
 	count = Sys_FileRead(handle, buf, length);
 	buf[length] = 0;
 	Sys_FileClose(handle);
@@ -259,43 +259,3 @@ int PassFloat(float f)
 	v.f = f;
 	return v.i;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.12  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.11  2005/07/29 17:50:19  dj_jl
-//	Support for quoted strings in response file.
-//	
-//	Revision 1.10  2002/02/15 19:10:32  dj_jl
-//	Added GBigEndian
-//	
-//	Revision 1.9  2002/01/28 18:41:16  dj_jl
-//	Fixed response files
-//	
-//	Revision 1.8  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/10/08 17:33:40  dj_jl
-//	Four va buffers
-//	
-//	Revision 1.6  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.5  2001/08/30 17:42:04  dj_jl
-//	Cleanup
-//	
-//	Revision 1.4  2001/08/04 17:25:14  dj_jl
-//	Moved title / demo loop to progs
-//	Removed shareware / ExtendedWAD from engine
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

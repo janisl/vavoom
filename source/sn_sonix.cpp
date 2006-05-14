@@ -258,8 +258,7 @@ static void ParseSequenceScript()
 					SC_ScriptError("Number of SS Scripts >= SS_MAX_SCRIPTS");
 				}
 			}
-			tempDataStart = (int *)Z_Malloc(SS_TEMPBUFFER_SIZE, 
-				PU_STATIC, NULL);
+			tempDataStart = (int *)Z_Malloc(SS_TEMPBUFFER_SIZE);
 			memset(tempDataStart, 0, SS_TEMPBUFFER_SIZE);
 			tempDataPtr = tempDataStart;
             inSequence = true;
@@ -369,8 +368,7 @@ static void ParseSequenceScript()
 		{
 			*tempDataPtr++ = SS_CMD_END;
 			int dataSize = (tempDataPtr-tempDataStart)*sizeof(int);
-			SeqInfo[SeqId].data = (int *)Z_Malloc(dataSize, PU_STATIC,
-				NULL);
+			SeqInfo[SeqId].data = (int*)Z_Malloc(dataSize);
 			memcpy(SeqInfo[SeqId].data, tempDataStart, dataSize);
 			Z_Free(tempDataStart);
 			inSequence = false;
@@ -435,7 +433,7 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 	seqnode_t *node;
 
 	SN_StopSequence(origin_id); // Stop any previous sequence
-	node = (seqnode_t *)Z_Malloc(sizeof(seqnode_t), PU_STATIC, NULL);
+	node = new seqnode_t;
 	node->sequencePtr = SeqInfo[sequence].data;
 	node->sequence = sequence;
 	node->origin_id = origin_id;
@@ -517,7 +515,7 @@ void SN_StopSequence(int origin_id)
 			{
 				node->next->prev = node->prev;
 			}
-			Z_Free(node);
+			delete node;
 			ActiveSequences--;
 		}
 	}

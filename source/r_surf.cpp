@@ -346,12 +346,12 @@ static surface_t* SubdivideFace(surface_t* InF, const TVec &axis,
 	Z_Free(f);
 
 	surface_t *back = (surface_t*)Z_Calloc(sizeof(surface_t) +
-		(count2 - 1) * sizeof(TVec), PU_LEVEL, 0);
+		(count2 - 1) * sizeof(TVec));
 	back->count = count2;
 	memcpy(back->verts, verts2, count2 * sizeof(TVec));
 
 	surface_t *front = (surface_t*)Z_Calloc(sizeof(surface_t) +
-		(count1 - 1) * sizeof(TVec), PU_LEVEL, 0);
+		(count1 - 1) * sizeof(TVec));
 	front->count = count1;
 	memcpy(front->verts, verts1, count1 * sizeof(TVec));
 
@@ -378,9 +378,10 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 	sec_surface_t	*ssurf;
 	surface_t		*surf;
 
-	ssurf = (sec_surface_t*)Z_Calloc(sizeof(sec_surface_t), PU_LEVEL, 0);
+	ssurf = new sec_surface_t;
+	memset(ssurf, 0, sizeof(sec_surface_t));
 	surf = (surface_t*)Z_Calloc(sizeof(surface_t) +
-		(sub->numlines - 1) * sizeof(TVec), PU_LEVEL, 0);
+		(sub->numlines - 1) * sizeof(TVec));
 
 	if (splane->pic == skyflatnum && splane->normal.z < 0.0)
 	{
@@ -514,7 +515,7 @@ static surface_t *NewWSurf()
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
-		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * 32 + sizeof(void*), PU_LEVEL, 0);
+		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * 32 + sizeof(void*));
 		*(void**)tmp = AllocatedWSurfBlocks;
 		AllocatedWSurfBlocks = tmp;
 		tmp += sizeof(void*);
@@ -1688,9 +1689,12 @@ void R_PreRender()
 	}
 
 	//	Get some memory
-	sreg = (subregion_t*)Z_Calloc(count * sizeof(subregion_t), PU_LEVEL, 0);
-	pds = (drawseg_t*)Z_Calloc(dscount * sizeof(drawseg_t), PU_LEVEL, 0);
-	pspart = (segpart_t*)Z_Calloc(spcount * sizeof(segpart_t), PU_LEVEL, 0);
+	sreg = new subregion_t[count];
+	pds = new drawseg_t[dscount];
+	pspart = new segpart_t[spcount];
+	memset(sreg, 0, sizeof(subregion_t) * count);
+	memset(pds, 0, sizeof(drawseg_t) * dscount);
+	memset(pspart, 0, sizeof(segpart_t) * spcount);
 	AllocatedSubRegions = sreg;
 	AllocatedDrawSegs = pds;
 	AllocatedSegParts = pspart;
@@ -2178,7 +2182,8 @@ void R_SetupFakeFloors(sector_t* Sec)
 		return;
 	}
 
-	Sec->fakefloors = (fakefloor_t*)Z_Calloc(sizeof(fakefloor_t), PU_LEVEL, NULL);
+	Sec->fakefloors = new fakefloor_t;
+	memset(Sec->fakefloors, 0, sizeof(fakefloor_t));
 	Sec->fakefloors->floorplane = Sec->floor;
 	Sec->fakefloors->ceilplane = Sec->ceiling;
 	Sec->fakefloors->params = Sec->params;
@@ -2251,7 +2256,7 @@ void R_FreeLevelData()
 	{
 		if (GClLevel->Sectors[i].fakefloors)
 		{
-			Z_Free(GClLevel->Sectors[i].fakefloors);
+			delete GClLevel->Sectors[i].fakefloors;
 		}
 	}
 
@@ -2260,9 +2265,9 @@ void R_FreeLevelData()
 		for (subregion_t* r = GClLevel->Subsectors[i].regions; r; r = r->next)
 		{
 			FreeSurfaces(r->floor->surfs);
-			Z_Free(r->floor);
+			delete r->floor;
 			FreeSurfaces(r->ceil->surfs);
-			Z_Free(r->ceil);
+			delete r->ceil;
 		}
 	}
 
@@ -2287,9 +2292,9 @@ void R_FreeLevelData()
 	}
 
 	//	Free big blocks.
-	Z_Free(AllocatedSubRegions);
-	Z_Free(AllocatedDrawSegs);
-	Z_Free(AllocatedSegParts);
+	delete[] AllocatedSubRegions;
+	delete[] AllocatedDrawSegs;
+	delete[] AllocatedSegParts;
 
 	R_FreeLevelSkyData();
 	unguard;

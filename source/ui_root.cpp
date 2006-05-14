@@ -105,7 +105,7 @@ void VRootWindow::TickWindows(float DeltaTime)
 void VRootWindow::StaticInit()
 {
 	guard(VRootWindow::StaticInit);
-	GRoot = (VRootWindow*)StaticSpawnObject(StaticClass(), PU_STATIC);
+	GRoot = (VRootWindow*)StaticSpawnObject(StaticClass());
 	GRoot->Init();
 	GClGame->GRoot = GRoot;
 	unguard;

@@ -670,6 +670,7 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(IN_FreeBindings, ())
 	SAFE_SHUTDOWN(V_Shutdown, ())
 	SAFE_SHUTDOWN(S_Shutdown, ())
+	SAFE_SHUTDOWN(T_Shutdown, ())
 #endif
 	SAFE_SHUTDOWN(Sys_Shutdown, ())
 
@@ -677,6 +678,9 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(R_ShutdownTexture, ())
 	SAFE_SHUTDOWN(VCommand::Shutdown, ())
 	SAFE_SHUTDOWN(VCvar::Shutdown, ())
+	SAFE_SHUTDOWN(ShutdownMapInfo, ())
+	SAFE_SHUTDOWN(FL_Shutdown, ())
+	SAFE_SHUTDOWN(W_Shutdown, ())
 
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())

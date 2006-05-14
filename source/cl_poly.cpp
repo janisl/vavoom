@@ -225,7 +225,7 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
 	index = GClLevel->NumPolyObjs++;
 	if (GClLevel->NumPolyObjs == 1)
     {
-		GClLevel->PolyObjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t), PU_LEVEL, 0);
+		GClLevel->PolyObjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t));
 	}
     else
     {
@@ -254,8 +254,7 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
 			IterFindPolySegs(*GClLevel->Segs[i].v2, NULL);
 
 			GClLevel->PolyObjs[index].numsegs = PolySegCount;
-			GClLevel->PolyObjs[index].segs = (seg_t**)Z_Malloc(PolySegCount*sizeof(seg_t *),
-				PU_LEVEL, 0);
+			GClLevel->PolyObjs[index].segs = new seg_t*[PolySegCount];
 			*(GClLevel->PolyObjs[index].segs) = &GClLevel->Segs[i]; // insert the first seg
 			GClLevel->Segs[i].frontsector->linecount = 0;
 			IterFindPolySegs(*GClLevel->Segs[i].v2, GClLevel->PolyObjs[index].segs + 1);
@@ -333,8 +332,7 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
 		{
 			PolySegCount = GClLevel->PolyObjs[index].numsegs; // PolySegCount used globally
 			GClLevel->PolyObjs[index].tag = tag;
-			GClLevel->PolyObjs[index].segs = (seg_t**)Z_Malloc(GClLevel->PolyObjs[index].numsegs
-				* sizeof(seg_t *), PU_LEVEL, 0);
+			GClLevel->PolyObjs[index].segs = new seg_t*[GClLevel->PolyObjs[index].numsegs];
 			for(i = 0; i < GClLevel->PolyObjs[index].numsegs; i++)
 			{
 				GClLevel->PolyObjs[index].segs[i] = polySegList[i];
@@ -386,7 +384,7 @@ void CL_PO_TranslateToStartSpot(float originX, float originY, int tag)
 	{
 		Sys_Error("TranslateToStartSpot:  Anchor point located without a StartSpot point: %d\n", tag);
 	}
-	po->originalPts = (vertex_t*)Z_Malloc(po->numsegs*sizeof(vertex_t), PU_LEVEL, 0);
+	po->originalPts = new vertex_t[po->numsegs];
 	deltaX = originX - po->startSpot.x;
 	deltaY = originY - po->startSpot.y;
 
@@ -443,35 +441,3 @@ void CL_PO_Update(int i, float x, float y, float angle)
 	MovePolyobj(i, x, y);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2002/09/07 16:31:50  dj_jl
-//	Added Level class.
-//
-//	Revision 1.9  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.8  2002/01/15 18:30:43  dj_jl
-//	Some fixes and improvements suggested by Malcolm Nixon
-//	
-//	Revision 1.7  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.5  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.4  2001/09/20 16:27:02  dj_jl
-//	Removed degenmobj
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

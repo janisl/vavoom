@@ -38,25 +38,25 @@
 #ifdef USEASM
 extern "C"
 {
-void D_Surf8Start(void);
-void D_Surf8End(void);
-void D_Surf8Patch(void);
-void D_Surf16Start(void);
-void D_Surf16End(void);
-void D_Surf16Patch(void);
-void D_Surf32Start(void);
-void D_Surf32End(void);
-void D_Surf32Patch(void);
+void D_Surf8Start();
+void D_Surf8End();
+void D_Surf8Patch();
+void D_Surf16Start();
+void D_Surf16End();
+void D_Surf16Patch();
+void D_Surf32Start();
+void D_Surf32End();
+void D_Surf32Patch();
 
-void D_PolysetAff8Start(void);
-void D_PolysetAff8End(void);
-void D_Aff8Patch(void);
-void D_PolysetAff16Start(void);
-void D_PolysetAff16End(void);
-void D_Aff16Patch(void);
-void D_PolysetAff32Start(void);
-void D_PolysetAff32End(void);
-void D_Aff32Patch(void);
+void D_PolysetAff8Start();
+void D_PolysetAff8End();
+void D_Aff8Patch();
+void D_PolysetAff16Start();
+void D_PolysetAff16End();
+void D_Aff16Patch();
+void D_PolysetAff32Start();
+void D_PolysetAff32End();
+void D_Aff32Patch();
 }
 #endif
 
@@ -153,22 +153,12 @@ static int				viewarea;
 bool VSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 {
 	guard(VSoftwareDrawer::AllocMemory);
-	scrn = (byte*)Z_Malloc(width * height * ((bpp + 7) >> 3), PU_VIDEO, 0);
-	if (!scrn)
-	{
-		GCon->Log(NAME_Init, "Not enough memory for screen buffer");
-		return false;
-	}
+	scrn = (byte*)Z_Malloc(width * height * ((bpp + 7) >> 3));
 
-	zbuffer = (short*)Z_Malloc(width * height * 2, PU_VIDEO, 0);
-	if (!zbuffer)
-	{
-		GCon->Log(NAME_Init, "Not enough memory for Z-buffer");
-		return false;
-	}
+	zbuffer = (short*)Z_Malloc(width * height * 2);
 
 	int size = SurfaceCacheForRes(width, height, bpp);
-	void *buffer = Z_Malloc(size, PU_VIDEO, 0);
+	void *buffer = Z_Malloc(size);
 	if (!buffer)
 	{
 		GCon->Log(NAME_Init, "Not enough memory for cache");
@@ -186,12 +176,11 @@ bool VSoftwareDrawer::AllocMemory(int width, int height, int bpp)
 //
 //==========================================================================
 
-void VSoftwareDrawer::FreeMemory(void)
+void VSoftwareDrawer::FreeMemory()
 {
 	guard(VSoftwareDrawer::FreeMemory);
 	FlushCaches(true);
 	FlushTextureCaches();
-//FIXME use Z_FreeTag(PU_VIDEO)
 	if (sc_base)
 	{
 		Z_Free(sc_base);
@@ -218,7 +207,7 @@ void VSoftwareDrawer::FreeMemory(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::InitResolution(void)
+void VSoftwareDrawer::InitResolution()
 {
 	guard(VSoftwareDrawer::InitResolution);
 	if (ScreenBPP == 8)
@@ -328,7 +317,7 @@ void VSoftwareDrawer::InitViewBorder(const refdef_t *rd)
     if (rd->width == ScreenWidth)
 		return;
 
-	r_backscreen = (byte*)Z_Malloc(ScreenWidth * (ScreenHeight - SB_REALHEIGHT) * PixelBytes, PU_STATIC, 0);
+	r_backscreen = (byte*)Z_Malloc(ScreenWidth * (ScreenHeight - SB_REALHEIGHT) * PixelBytes);
 
 	R_DrawViewBorder();
 
@@ -398,7 +387,7 @@ void VSoftwareDrawer::EraseViewBorder(const refdef_t *rd)
 //
 //==========================================================================
 
-void VSoftwareDrawer::StartUpdate(void)
+void VSoftwareDrawer::StartUpdate()
 {
 }
 
@@ -408,7 +397,7 @@ void VSoftwareDrawer::StartUpdate(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::BeginDirectUpdate(void)
+void VSoftwareDrawer::BeginDirectUpdate()
 {
 }
 
@@ -418,7 +407,7 @@ void VSoftwareDrawer::BeginDirectUpdate(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::EndDirectUpdate(void)
+void VSoftwareDrawer::EndDirectUpdate()
 {
 	Update();
 }
@@ -564,7 +553,7 @@ void VSoftwareDrawer::SetupView(const refdef_t *rd)
 //
 //==========================================================================
 
-void VSoftwareDrawer::EndView(void)
+void VSoftwareDrawer::EndView()
 {
 	guard(VSoftwareDrawer::EndView);
 	// back to high floating-point precision
@@ -585,27 +574,19 @@ void VSoftwareDrawer::EndView(void)
 //
 //==========================================================================
 
-void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
+void* VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
 	guard(VSoftwareDrawer::ReadScreen);
 	void *dst;
 	if (ScreenBPP == 8)
 	{
-		dst = Z_Malloc(ScreenWidth * ScreenHeight * PixelBytes, PU_VIDEO, 0);
-		if (!dst)
-		{
-			return NULL;
-		}
+		dst = Z_Malloc(ScreenWidth * ScreenHeight * PixelBytes);
 		memcpy(dst, scrn, ScreenWidth * ScreenHeight * PixelBytes);
 		*bpp = ScreenBPP;
 	}
 	else if (PixelBytes == 2)
 	{
-		dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t), PU_VIDEO, 0);
-		if (!dst)
-		{
-			return NULL;
-		}
+		dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t));
 		word *psrc = (word*)scrn;
 		rgb_t *pdst = (rgb_t*)dst;
 		for (int i = 0; i < ScreenWidth * ScreenHeight; i++)
@@ -620,11 +601,7 @@ void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 	}
 	else
 	{
-		dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t), PU_VIDEO, 0);
-		if (!dst)
-		{
-			return NULL;
-		}
+		dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t));
 		dword *psrc = (dword*)scrn;
 		rgb_t *pdst = (rgb_t*)dst;
 		for (int i = 0; i < ScreenWidth * ScreenHeight; i++)
@@ -639,5 +616,45 @@ void *VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
 	}
 	*bot2top = false;
 	return dst;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::FreeAllMemory
+//
+//==========================================================================
+
+void VSoftwareDrawer::FreeAllMemory()
+{
+	guard(VSoftwareDrawer::FreeAllMemory);
+	FreeMemory();
+	for (int i = 0; i < GTextureManager.Textures.Num(); i++)
+	{
+		if (GTextureManager.Textures[i]->DriverData)
+		{
+			Z_Free(GTextureManager.Textures[i]->DriverData);
+			GTextureManager.Textures[i]->DriverData = NULL;
+		}
+	}
+
+	Z_Free(colormaps);
+	Z_Free(fadetable16);
+	Z_Free(fadetable16r);
+	Z_Free(fadetable16g);
+	Z_Free(fadetable16b);
+	Z_Free(fadetable32);
+	Z_Free(fadetable32r);
+	Z_Free(fadetable32g);
+	Z_Free(fadetable32b);
+
+	Z_Free(tinttables[0]);
+	Z_Free(tinttables[1]);
+	Z_Free(tinttables[2]);
+	Z_Free(tinttables[3]);
+	Z_Free(tinttables[4]);
+
+	Z_Free(d_rgbtable);
+
 	unguard;
 }

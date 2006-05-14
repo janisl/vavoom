@@ -56,7 +56,6 @@ class TMemZone;
 struct memblock_t
 {
 	int			size;	// including the header and possibly tiny fragments
-	void**		user;	// NULL if a free block
 	int			tag;	// purgelevel, 0 if a free block
 	int			id;		// should be ZONEID
 	memblock_t*	next;
@@ -84,11 +83,9 @@ class TMemZone
 		Init();
 	}
 	void Init();
-	void *Malloc(int size, int tag, void** user, bool);
-	void *MallocHigh(int size, int tag, void** user);
+	void *Malloc(int size);
 	void Resize(void** ptr, int size);
 	void Free(void* ptr);
-	void FreeTag(int tag);
 	void CheckHeap();
 	int FreeMemory();
 	void DumpHeap(FOutputDevice &Ar);
@@ -126,12 +123,10 @@ void TMemZone::Init()
 	memblock_t* block = (memblock_t*)((char*)this + sizeof(TMemZone));
 	BlockList.next = block;
 	BlockList.prev = block;
-	BlockList.user = (void**)this;
-	BlockList.tag = PU_STATIC;
+	BlockList.tag = 1;
 	Rover = block;
 
 	block->prev = block->next = &BlockList;
-	block->user = NULL;
 	block->tag = 0; // 0 indicates a free block.
 	block->size = Size - sizeof(TMemZone);
 	unguard;
@@ -143,7 +138,7 @@ void TMemZone::Init()
 //
 //==========================================================================
 
-void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
+void *TMemZone::Malloc(int size)
 {
 	guard(TMemZone::Malloc);
 	int			extra;
@@ -152,8 +147,8 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 	memblock_t* newblock;
 	memblock_t*	base;
 
-//	if (!size) Sys_Error("Z_Malloc: Size = 0");
-	if (!tag) Sys_Error("Z_Malloc: Tried to use tag 0");
+	if (!size)
+		size = 4;
 
 	size = (size + 3) & ~3;
 
@@ -165,18 +160,11 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 	// account for size of block header
 	size += sizeof(memblock_t);
 
-	if (alloc_low)
-	{
-		base = BlockList.next;
-	}
-	else
-	{
-		base = Rover;
-		// if there is a free block behind the rover,
-		//  back up over them
-		if (!base->prev->tag)
-			base = base->prev;
-	}
+	base = Rover;
+	// if there is a free block behind the rover,
+	//  back up over them
+	if (!base->prev->tag)
+		base = base->prev;
 
 	rover = base;
 	start = base->prev;
@@ -212,7 +200,6 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 
 		// 0 indicates free block.
 		newblock->tag = 0;
-		newblock->user = NULL;
 		newblock->prev = base;
 		newblock->next = base->next;
 		newblock->next->prev = newblock;
@@ -221,15 +208,9 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 		base->size = size;
 	}
 
-	if (user)
-	{
-		// mark as an in use block
-		*user = (void*)((char*)base + sizeof(memblock_t));
-	}
-	base->tag = tag;
-	base->user = user;
+	base->tag = 1;
 
-	if (!alloc_low || Rover == base)
+	if (Rover == base)
 	{
 		// next allocation will start looking here
 		Rover = base->next;
@@ -239,91 +220,6 @@ void *TMemZone::Malloc(int size, int tag, void** user, bool alloc_low)
 
 	memset((void*)((char*)base + sizeof(memblock_t)), 0x6a, size - sizeof(memblock_t));
 	return (void*)((char*)base + sizeof(memblock_t));
-	unguard;
-}
-
-//==========================================================================
-//
-//	TMemZone::MallocHigh
-//
-//==========================================================================
-
-void *TMemZone::MallocHigh(int size, int tag, void** user)
-{
-	guard(TMemZone::MallocHigh);
-	int			extra;
-	memblock_t* rover;
-	memblock_t* newblock;
-	memblock_t*	base;
-
-#ifdef PARANOID
-	CheckHeap();
-#endif
-
-	if (!size) Sys_Error("Z_Malloc: Size = 0");
-	if (!tag) Sys_Error("Z_Malloc: Tried to use tag 0");
-
-	size = (size + 3) & ~3;
-	
-	// scan through the block list,
-	// looking for the first free block
-	// of sufficient size,
-	// throwing out any purgable blocks along the way.
-
-	// account for size of block header
-	size += sizeof(memblock_t);
-
-	base = BlockList.prev;
-	rover = base;
-
-	do
-	{
-		if (rover == &BlockList)
-		{
-			// scanned all the way around the list
-			return NULL;
-		}
-
-		if (rover->tag)
-		{
-			// hit a block so move base past it
-			base = rover = rover->prev;
-		}
-		else
-		{
-			rover = rover->prev;
-		}
-	} while (base->tag || base->size < size);
-
-	
-	// found a block big enough
-	extra = base->size - size;
-	
-	if (extra > MINFRAGMENT)
-	{
-		// there will be a free fragment before the allocated block
-		newblock = (memblock_t*)((char*)base + extra);
-		newblock->size = size;
-	
-		newblock->prev = base;
-		newblock->next = base->next;
-		newblock->next->prev = newblock;
-
-		base->next = newblock;
-		base->size = extra;
-		base = newblock;
-	}
-
-	if (user)
-	{
-		// mark as an in use block
-		*user = (void *)((char*)base + sizeof(memblock_t));
-	}
-	base->tag = tag;
-	base->user = user;
-	base->id = ZONEID;
-
-	return (void *)((char*)base + sizeof(memblock_t));
 	unguard;
 }
 
@@ -378,7 +274,6 @@ void TMemZone::Resize(void** ptr, int size)
 	
 				// 0 indicates free block.
 				other->tag = 0;
-				other->user = NULL;
 				other->prev = block;
 				other->next = block->next;
 				other->next->prev = other;
@@ -392,9 +287,8 @@ void TMemZone::Resize(void** ptr, int size)
 		else
 		{
 			// We have to allocate another block and move data
-			p = Malloc(size - sizeof(memblock_t), block->tag, block->user, false);
+			p = Malloc(size - sizeof(memblock_t));
 			memcpy(p, *ptr, block->size - sizeof(memblock_t));
-			block->user = NULL;// So Z_Free doesn't clear user's mark
 			Free(*ptr);
 			*ptr = p;
 		}
@@ -414,7 +308,6 @@ void TMemZone::Resize(void** ptr, int size)
 	
 			// 0 indicates free block.
 			other->tag = 0;
-			other->user = NULL;
 			other->prev = block;
 			other->next = block->next;
 			other->next->prev = other;
@@ -455,16 +348,9 @@ void TMemZone::Free(void* ptr)
 	if (block->id != ZONEID)
 		Sys_Error("Z_Free: freed a pointer without ZONEID");
 		
-	if (block->user)
-	{
-		// clear the user's mark
-		*block->user = 0;
-	}
-
 	// mark as free
 	block->id = 0;
 	block->tag = 0;
-	block->user = NULL;
 
 	other = block->next;
 	if (!other->tag)
@@ -489,40 +375,6 @@ void TMemZone::Free(void* ptr)
 		if (block == Rover)
 			Rover = other;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	TMemZone::FreeTag
-//
-//==========================================================================
-
-void TMemZone::FreeTag(int tag)
-{
-	guard(TMemZone::FreeTag);
-	memblock_t*	block;
-	memblock_t*	next;
-
-	for (block = BlockList.next; block != &BlockList; block = next)
-	{
-		// get link before freeing
-		next = block->next;
-		if (block->tag == tag)
-		{
-#ifdef ZONE_DEBUG
-			MemDebug_t* m = (MemDebug_t*)((char*)block + sizeof(memblock_t));
-			GCon->Logf("Freeing %d allocated at %s:%d",
-				m->Size, m->FileName, m->LineNumber);
-			Z_Free((char*)block + sizeof(memblock_t) + sizeof(MemDebug_t));
-#else
-			Z_Free((char*)block + sizeof(memblock_t));
-#endif
-		}
-	}
-
-	//	Reset rover to start of the heap
-	Rover = BlockList.next;
 	unguard;
 }
 
@@ -603,8 +455,8 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 
 	for (block = BlockList.next; ; block = block->next)
 	{
-		Ar.Logf("block:%p    size:%7i    user:%8p    tag:%3i",
-			block, block->size, block->user, block->tag);
+		Ar.Logf("block:%p    size:%7i    tag:%3i",
+			block, block->size, block->tag);
 
 		if (block->next == &BlockList)
 		{
@@ -669,7 +521,6 @@ void Z_Shutdown()
 #undef Z_Malloc
 #undef Z_Calloc
 #undef Z_Resize
-#undef Z_ChangeTag
 #undef Z_Free
 
 //==========================================================================
@@ -678,29 +529,14 @@ void Z_Shutdown()
 //
 //==========================================================================
 
-void *Z_Malloc(int size, int tag, void** user, const char* FileName, int LineNumber)
+void *Z_Malloc(int size, const char* FileName, int LineNumber)
 {
 	guard(Z_Malloc);
-	void *ptr;
-	if (tag == PU_VIDEO)
-	{
-		ptr = mainzone->MallocHigh(size + sizeof(MemDebug_t), tag, user);
-	}
-	else
-	{
-		ptr = mainzone->Malloc(size + sizeof(MemDebug_t), tag, user, false);
-	}
+	void* ptr = mainzone->Malloc(size + sizeof(MemDebug_t));
 	if (!ptr)
 	{
-		if (tag == PU_LEVEL || tag == PU_LEVSPEC)
-		{
-			Host_Error("Z_Malloc: failed on allocation of %d bytes", size);
-		}
-		else if (tag != PU_VIDEO)
-		{
-			mainzone->DumpHeap(*GCon);
-			Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
-		}
+		mainzone->DumpHeap(*GCon);
+		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
 	}
 
 	MemDebug_t* m = (MemDebug_t*)ptr;
@@ -712,11 +548,6 @@ void *Z_Malloc(int size, int tag, void** user, const char* FileName, int LineNum
 		MemDebug->Prev = m;
 	MemDebug = m;
 
-	//	Re-adjust user pointer.
-	if (user)
-	{
-		*user = (void*)((char*)ptr + sizeof(MemDebug_t));
-	}
 	return (byte*)ptr + sizeof(MemDebug_t);
 	unguard;
 }
@@ -727,10 +558,10 @@ void *Z_Malloc(int size, int tag, void** user, const char* FileName, int LineNum
 //
 //==========================================================================
 
-void *Z_Calloc(int size, int tag, void **user, const char* FileName, int LineNumber)
+void *Z_Calloc(int size, const char* FileName, int LineNumber)
 {
 	guard(Z_Calloc);
-	return memset(Z_Malloc(size, tag, user, FileName, LineNumber), 0, size);
+	return memset(Z_Malloc(size, FileName, LineNumber), 0, size);
 	unguard;
 }
 
@@ -773,34 +604,7 @@ void Z_Resize(void** ptr, int size, const char* FileName, int LineNumber)
 		MemDebug->Prev = m;
 	MemDebug = m;
 
-	//	Re-adjust user pointer.
-	block = (memblock_t*)((char*)m - sizeof(memblock_t));
-	if (block->user)
-	{
-		*block->user = (byte*)m + sizeof(MemDebug_t);
-	}
-
 	*ptr = (byte*)m + sizeof(MemDebug_t);
-	unguard;
-}
-
-//==========================================================================
-//
-//	Z_ChangeTag
-//
-//==========================================================================
-
-void Z_ChangeTag(void* ptr,int tag, const char*, int)
-{
-	guard(Z_ChangeTag);
-	memblock_t*	block;
-
-	block = (memblock_t *)((char*)ptr - sizeof(memblock_t) - sizeof(MemDebug_t));
-
-	if (block->id != ZONEID)
-		Sys_Error("Z_ChangeTag: freed a pointer without ZONEID");
-
-	block->tag = tag;
 	unguard;
 }
 
@@ -870,29 +674,14 @@ COMMAND(MemDebugDump)
 //
 //==========================================================================
 
-void *Z_Malloc(int size, int tag, void** user)
+void *Z_Malloc(int size)
 {
 	guard(Z_Malloc);
-	void *ptr;
-	if (tag == PU_VIDEO)
-	{
-		ptr = mainzone->MallocHigh(size, tag, user);
-	}
-	else
-	{
-		ptr = mainzone->Malloc(size, tag, user, false);
-	}
+	void* ptr = mainzone->Malloc(size);
 	if (!ptr)
 	{
-		if (tag == PU_LEVEL || tag == PU_LEVSPEC)
-		{
-			Host_Error("Z_Malloc: failed on allocation of %d bytes", size);
-		}
-		else if (tag != PU_VIDEO)
-		{
-			mainzone->DumpHeap(*GCon);
-			Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
-		}
+		mainzone->DumpHeap(*GCon);
+		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
 	}
 	return ptr;
 	unguard;
@@ -904,10 +693,10 @@ void *Z_Malloc(int size, int tag, void** user)
 //
 //==========================================================================
 
-void *Z_Calloc(int size, int tag, void **user)
+void *Z_Calloc(int size)
 {
 	guard(Z_Calloc);
-	return memset(Z_Malloc(size, tag, user), 0, size);
+	return memset(Z_Malloc(size), 0, size);
 	unguard;
 }
 
@@ -934,26 +723,6 @@ void Z_Resize(void** ptr, int size)
 
 //==========================================================================
 //
-//	Z_ChangeTag
-//
-//==========================================================================
-
-void Z_ChangeTag(void* ptr,int tag)
-{
-	guard(Z_ChangeTag);
-	memblock_t*	block;
-
-	block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
-
-	if (block->id != ZONEID)
-		Sys_Error("Z_ChangeTag: freed a pointer without ZONEID");
-
-	block->tag = tag;
-	unguard;
-}
-
-//==========================================================================
-//
 //	Z_Free
 //
 //==========================================================================
@@ -972,19 +741,6 @@ void Z_Free(void* ptr)
 }
 
 #endif
-
-//==========================================================================
-//
-//	Z_FreeTag
-//
-//==========================================================================
-
-void Z_FreeTag(int tag)
-{
-	guard(Z_FreeTag);
-	mainzone->FreeTag(tag);
-	unguard;
-}
 
 //==========================================================================
 //

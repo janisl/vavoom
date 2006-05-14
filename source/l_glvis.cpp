@@ -67,9 +67,9 @@ class TGLVisGUI : public TGLVis
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TGLVisGUI	GLVis;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static TGLVisGUI	GLVis;
 
 static float barx;
 static float barw;
@@ -182,28 +182,6 @@ void TGLVisGUI::DisplayMapDone(int accepts, int total)
 
 //==========================================================================
 //
-//	GLVisMalloc
-//
-//==========================================================================
-
-static void *GLVisMalloc(size_t size)
-{
-	return Z_Calloc(size, PU_STATIC, 0);
-}
-
-//==========================================================================
-//
-//	GLVisFree
-//
-//==========================================================================
-
-static void GLVisFree(void *ptr)
-{
-	Z_Free(ptr);
-}
-
-//==========================================================================
-//
 //	GLVis_BuildPVS
 //
 //==========================================================================
@@ -219,8 +197,6 @@ void GLVis_BuildPVS(const char *srcfile, const char* gwafile)
 		barborderw = 2 * fScaleX;
 		barborderh = 2 * fScaleY;
 
-		GLVis.Malloc = GLVisMalloc;
-		GLVis.Free = GLVisFree;
 		GLVis.fastvis = !!glvis_fast;
 		GLVis.no_reject = !!glvis_noreject;
 		GLVis.Build(srcfile, gwafile);
@@ -244,36 +220,3 @@ COMMAND(glVIS)
 		GLVis_BuildPVS(*Args[1], NULL);
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.8  2006/01/29 20:41:30  dj_jl
-//	On Unix systems use ~/.vavoom for generated files.
-//	
-//	Revision 1.7  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.6  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.5  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/10/27 07:47:21  dj_jl
-//	Noreject option, fast mode warning
-//	
-//	Revision 1.3  2001/09/20 16:23:40  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/09/14 16:52:14  dj_jl
-//	Added dynamic build of GWA file
-//	
-//	Revision 1.1  2001/09/12 17:37:47  dj_jl
-//	Added glBSP and glVIS plugins
-//	
-//**************************************************************************

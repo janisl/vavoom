@@ -50,6 +50,7 @@ enum EWadNamespace
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices);
+void W_Shutdown();
 
 void W_OpenAuxiliary(const VStr& FileName);
 void W_CloseAuxiliaryFile();
@@ -66,8 +67,8 @@ VName W_LumpName(int lump);
 
 void W_ReadLump(int lump, void *dest);
 void W_ReadFromLump(int lump, void *dest, int pos, int size);
-void* W_CacheLumpNum(int lump, int tag);
-void* W_CacheLumpName(VName Name, int tag, EWadNamespace NS = WADNS_Global);
+void* W_CacheLumpNum(int lump);
+void* W_CacheLumpName(VName Name, EWadNamespace NS = WADNS_Global);
 VStream* W_CreateLumpReaderNum(int lump);
 VStream* W_CreateLumpReaderName(VName Name, EWadNamespace NS = WADNS_Global);
 

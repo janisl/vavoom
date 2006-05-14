@@ -278,24 +278,24 @@ void VSoftwareDrawer::SetPalette(int InNum)
 
 //==========================================================================
 //
-//	InitColormaps
+//	InitColourmaps
 //
 //==========================================================================
 
-static void InitColormaps()
+static void InitColourmaps()
 {
-	guard(InitColormaps);
+	guard(InitColourmaps);
 	// Load in the light tables,
-	colormaps = (byte*)W_CacheLumpName(NAME_colormap, PU_STATIC);
+	colormaps = (byte*)W_CacheLumpName(NAME_colormap);
 	fadetable = colormaps;
-	fadetable16 = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
-	fadetable16r = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
-	fadetable16g = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
-	fadetable16b = (word*)Z_Malloc(32 * 256 * 2, PU_STATIC, 0);
-	fadetable32 = (dword*)Z_Malloc(32 * 256 * 4, PU_STATIC, 0);
-	fadetable32r = (byte*)Z_Malloc(32 * 256, PU_STATIC, 0);
-	fadetable32g = (byte*)Z_Malloc(32 * 256, PU_STATIC, 0);
-	fadetable32b = (byte*)Z_Malloc(32 * 256, PU_STATIC, 0);
+	fadetable16 = (word*)Z_Malloc(32 * 256 * 2);
+	fadetable16r = (word*)Z_Malloc(32 * 256 * 2);
+	fadetable16g = (word*)Z_Malloc(32 * 256 * 2);
+	fadetable16b = (word*)Z_Malloc(32 * 256 * 2);
+	fadetable32 = (dword*)Z_Malloc(32 * 256 * 4);
+	fadetable32r = (byte*)Z_Malloc(32 * 256);
+	fadetable32g = (byte*)Z_Malloc(32 * 256);
+	fadetable32b = (byte*)Z_Malloc(32 * 256);
 	unguard;
 }
 
@@ -308,11 +308,11 @@ static void InitColormaps()
 static void InitTranslucencyTables()
 {
 	guard(InitTranslucencyTables);
-	tinttables[0] = (byte*)W_CacheLumpName(NAME_transp10, PU_STATIC);
-	tinttables[1] = (byte*)W_CacheLumpName(NAME_transp20, PU_STATIC);
-	tinttables[2] = (byte*)W_CacheLumpName(NAME_transp30, PU_STATIC);
-	tinttables[3] = (byte*)W_CacheLumpName(NAME_transp40, PU_STATIC);
-	tinttables[4] = (byte*)W_CacheLumpName(NAME_transp50, PU_STATIC);
+	tinttables[0] = (byte*)W_CacheLumpName(NAME_transp10);
+	tinttables[1] = (byte*)W_CacheLumpName(NAME_transp20);
+	tinttables[2] = (byte*)W_CacheLumpName(NAME_transp30);
+	tinttables[3] = (byte*)W_CacheLumpName(NAME_transp40);
+	tinttables[4] = (byte*)W_CacheLumpName(NAME_transp50);
 
 	for (int t = 0; t < 32; t++)
 	{
@@ -333,8 +333,8 @@ static void InitTranslucencyTables()
 void VSoftwareDrawer::InitData()
 {
 	guard(VSoftwareDrawer::InitData);
-	d_rgbtable = (byte*)W_CacheLumpName(NAME_rgbtable, PU_STATIC);
-	InitColormaps();
+	d_rgbtable = (byte*)W_CacheLumpName(NAME_rgbtable);
+	InitColourmaps();
 	InitTranslucencyTables();
 	unguard;
 }
@@ -435,7 +435,7 @@ void VSoftwareDrawer::NewMap()
 
 	if (r_fog)
 	{
-		fadetable = (byte*)W_CacheLumpName(NAME_fogmap, PU_STATIC);
+		fadetable = (byte*)W_CacheLumpName(NAME_fogmap);
 	}
 	else
 	{

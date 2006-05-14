@@ -362,7 +362,7 @@ void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 
 	// Generate The Texture
 	vuint8* Pixels = Tex->GetPixels8();
-	vuint8* block = (vuint8*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight(), PU_STATIC, 0);
+	vuint8* block = (vuint8*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight());
 	vuint8* trtab = translationtables + translation * 256;
 	for (int i = 0; i < Tex->GetWidth() * Tex->GetHeight(); i++)
 	{
@@ -583,7 +583,7 @@ void VOpenGLDrawer::MipMap(int width, int height, vuint8* InIn)
 void VOpenGLDrawer::UploadTexture8(int Width, int Height, vuint8* Data,
 	rgba_t* Pal)
 {
-	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4, PU_STATIC, 0);
+	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4);
 	for (int i = 0; i < Width * Height; i++)
 	{
 		if (Data[i])
@@ -624,7 +624,7 @@ void VOpenGLDrawer::UploadTexture(int width, int height, rgba_t *data)
 	}
 	else
 	{
-		image = (vuint8*)Z_Malloc(w * h * 4, PU_STATIC, 0);
+		image = (vuint8*)Z_Malloc(w * h * 4);
 	}
 	if (w != width || h != height)
 	{

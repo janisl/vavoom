@@ -342,11 +342,6 @@ VTextureManager		GTextureManager;
 int					skyflatnum;			// sky mapping
 
 //
-//	Translation tables
-//
-vuint8*				translationtables;
-
-//
 //	Main palette
 //
 rgba_t				r_palette[256];
@@ -880,7 +875,7 @@ VTexture::~VTexture()
 {
 	if (Pixels8Bit)
 	{
-		Z_Free(Pixels8Bit);
+		delete[] Pixels8Bit;
 	}
 	if (HiResTexture)
 	{
@@ -938,7 +933,7 @@ vuint8* VTexture::GetPixels8()
 		//	Remap to game palette
 		if (!RGBTable)
 		{
-			RGBTable = (vuint8*)W_CacheLumpName(NAME_rgbtable, PU_STATIC);
+			RGBTable = (vuint8*)W_CacheLumpName(NAME_rgbtable);
 		}
 		int NumPixels = Width * Height;
 		rgba_t* Pal = GetPalette();
@@ -951,7 +946,7 @@ vuint8* VTexture::GetPixels8()
 				((Pal[i].g << 2) & 0x3e0) + ((Pal[i].b >> 3) & 0x1f)];
 		}
 
-		Pixels8Bit = (vuint8*)Z_Malloc(NumPixels, PU_STATIC, 0);
+		Pixels8Bit = new vuint8[NumPixels];
 		vuint8* pSrc = Pixels;
 		vuint8* pDst = Pixels8Bit;
 		for (i = 0; i < NumPixels; i++, pSrc++, pDst++)
@@ -964,10 +959,10 @@ vuint8* VTexture::GetPixels8()
 	{
 		if (!RGBTable)
 		{
-			RGBTable = (vuint8*)W_CacheLumpName(NAME_rgbtable, PU_STATIC);
+			RGBTable = (vuint8*)W_CacheLumpName(NAME_rgbtable);
 		}
 		int NumPixels = Width * Height;
-		Pixels8Bit = (vuint8*)Z_Malloc(NumPixels, PU_STATIC, 0);
+		Pixels8Bit = new vuint8[NumPixels];
 		rgba_t* pSrc = (rgba_t*)Pixels;
 		vuint8* pDst = Pixels8Bit;
 		for (int i = 0; i < NumPixels; i++, pSrc++, pDst++)
@@ -1161,7 +1156,7 @@ TPatchTexture::~TPatchTexture()
 	guard(TPatchTexture::~TPatchTexture);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	unguard;
 }
@@ -1210,7 +1205,7 @@ vuint8* TPatchTexture::GetPixels()
 		Height = 1;
 		SOffset = 0;
 		TOffset = 0;
-		Pixels = (vuint8*)Z_Calloc(1, PU_STATIC, 0);
+		Pixels = new vuint8[1];
 		Pixels[0] = 0;
 		return Pixels;
 	}
@@ -1222,7 +1217,8 @@ vuint8* TPatchTexture::GetPixels()
 	TOffset = Streamer<vint16>(*Strm);
 
 	//	Allocate image data.
-	Pixels = (vuint8*)Z_Calloc(Width * Height, PU_STATIC, 0);
+	Pixels = new vuint8[Width * Height];
+	memset(Pixels, 0, Width * Height);
 
 	//	Make sure all column offsets are there.
 	if (Strm->TotalSize() < 8 + Width * 4)
@@ -1328,7 +1324,7 @@ void TPatchTexture::Unload()
 	guard(TPatchTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	unguard;
@@ -1444,7 +1440,7 @@ VMultiPatchTexture::~VMultiPatchTexture()
 	}
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	unguard;
 }
@@ -1498,7 +1494,8 @@ vuint8* VMultiPatchTexture::GetPixels()
 
 	if (Format == TEXFMT_8)
 	{
-		Pixels = (vuint8*)Z_Calloc(Width * Height, PU_STATIC, 0);
+		Pixels = new vuint8[Width * Height];
+		memset(Pixels, 0, Width * Height);
 
 		// Composite the columns together.
 		VTexPatch* patch = Patches;
@@ -1527,7 +1524,8 @@ vuint8* VMultiPatchTexture::GetPixels()
 	}
 	else
 	{
-		Pixels = (vuint8*)Z_Calloc(Width * Height * 4, PU_STATIC, 0);
+		Pixels = new vuint8[Width * Height * 4];
+		memset(Pixels, 0, Width * Height * 4);
 
 		// Composite the columns together.
 		VTexPatch* patch = Patches;
@@ -1605,7 +1603,7 @@ void VMultiPatchTexture::Unload()
 	guard(VMultiPatchTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	unguard;
@@ -1653,7 +1651,7 @@ VFlatTexture::~VFlatTexture()
 	guard(VFlatTexture::~VFlatTexture);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	unguard;
 }
@@ -1674,7 +1672,7 @@ vuint8* VFlatTexture::GetPixels()
 	}
 
 	//	Allocate memory buffer.
-	Pixels = (vuint8*)Z_Malloc(Width * Height, PU_STATIC, 0);
+	Pixels = new vuint8[Width * Height];
 
 	//	A flat must be at least 64x64, if it's smaller, then ignore it.
 	if (W_LumpLength(LumpNum) < 64 * 64)
@@ -1708,7 +1706,7 @@ void VFlatTexture::Unload()
 	guard(VFlatTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	unguard;
@@ -1748,11 +1746,11 @@ VRawPicTexture::~VRawPicTexture()
 	guard(VRawPicTexture::~VRawPicTexture);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 	}
 	unguard;
 }
@@ -1775,7 +1773,7 @@ vuint8* VRawPicTexture::GetPixels()
 	int len = W_LumpLength(LumpNum);
 	Height = len / 320;
 
-	Pixels = (vuint8*)Z_Malloc(len, PU_STATIC, 0);
+	Pixels = new vuint8[len];
 
 	//	Set up palette.
 	int black;
@@ -1786,7 +1784,7 @@ vuint8* VRawPicTexture::GetPixels()
 	else
 	{
 		//	Load palette and find black colour for remaping.
-		Palette = (rgba_t*)Z_Malloc(256 * 4, PU_STATIC, 0);
+		Palette = new rgba_t[256];
 		VStream* PStrm = W_CreateLumpReaderNum(PalLumpNum);
 		int best_dist = 0x10000;
 		black = 0;
@@ -1853,12 +1851,12 @@ void VRawPicTexture::Unload()
 	guard(VRawPicTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 		Palette = NULL;
 	}
 	unguard;
@@ -1894,7 +1892,7 @@ VImgzTexture::~VImgzTexture()
 	guard(VImgzTexture::~VImgzTexture);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	unguard;
 }
@@ -1946,7 +1944,8 @@ vuint8* VImgzTexture::GetPixels()
 	Strm->Seek(24);	//	Skip reserved space.
 
 	//	Read data.
-	Pixels = (vuint8*)Z_Calloc(Width * Height, PU_STATIC, (void**)&Pixels);
+	Pixels = new vuint8[Width * Height];
+	memset(Pixels, 0, Width * Height);
 	if (!Compression)
 	{
 		Strm->Serialise(Pixels, Width * Height);
@@ -2010,7 +2009,7 @@ void VImgzTexture::Unload()
 	guard(VImgzTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	unguard;
@@ -2045,11 +2044,11 @@ VPcxTexture::~VPcxTexture()
 	guard(VPcxTexture::~VPcxTexture);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 	}
 	unguard;
 }
@@ -2114,7 +2113,7 @@ vuint8* VPcxTexture::GetPixels()
 
 	bytes_per_line = pcx.bytes_per_line;
 
-	Pixels = (byte*)Z_Malloc(Width * Height, PU_STATIC, 0);
+	Pixels = new vuint8[Width * Height];
 
 	for (int y = 0; y < Height; y++)
 	{
@@ -2151,7 +2150,7 @@ vuint8* VPcxTexture::GetPixels()
 	}
 
 	//	Read palette.
-	Palette = (rgba_t*)Z_Malloc(256 * 4, PU_STATIC, 0);
+	Palette = new rgba_t[256];
 	for (c = 0; c < 256; c++)
 	{
 		*Strm << Palette[c].r
@@ -2190,12 +2189,12 @@ void VPcxTexture::Unload()
 	guard(VPcxTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 		Palette = NULL;
 	}
 	unguard;
@@ -2230,11 +2229,11 @@ VTgaTexture::~VTgaTexture()
 	guard(VTgaTexture::~VTgaTexture);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 	}
 	unguard;
 }
@@ -2287,7 +2286,7 @@ vuint8* VTgaTexture::GetPixels()
 
 	if (hdr.pal_type == 1)
 	{
-		Palette = (rgba_t*)Z_Malloc(256 * 4, PU_STATIC, 0);
+		Palette = new rgba_t[256];
 		for (int i = 0; i < hdr.pal_colours; i++)
 		{
 			vuint16 col;
@@ -2330,12 +2329,12 @@ vuint8* VTgaTexture::GetPixels()
 		hdr.img_type == 9 || hdr.img_type == 11)
 	{
 		Format = TEXFMT_8Pal;
-		Pixels = (byte*)Z_Malloc(Width * Height, PU_STATIC, 0);
+		Pixels = new vuint8[Width * Height];
 	}
 	else
 	{
 		Format = TEXFMT_RGBA;
-		Pixels = (byte*)Z_Malloc(Width * Height * 4, PU_STATIC, 0);
+		Pixels = new vuint8[Width * Height * 4];
 	}
 
 	if (hdr.img_type == 1 && hdr.bpp == 8 && hdr.pal_type == 1)
@@ -2660,12 +2659,12 @@ void VTgaTexture::Unload()
 	guard(VTgaTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 		Palette = NULL;
 	}
 	unguard;
@@ -2717,11 +2716,11 @@ VPngTexture::~VPngTexture()
 	guard(VPngTexture::~VPngTexture);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 	}
 	unguard;
 }
@@ -2859,8 +2858,8 @@ vuint8* VPngTexture::GetPixels()
 
 	//	Set up unpacking buffer and row pointers.
 	Format = TEXFMT_RGBA;
-	Pixels = (byte*)Z_Malloc(Width * Height * 4, PU_STATIC, 0);
-	png_bytep* RowPtrs = Z_New(png_bytep, Height, PU_STATIC, 0);
+	Pixels = new vuint8[Width * Height * 4];
+	png_bytep* RowPtrs = new png_bytep[Height];
 	for (int i = 0; i < Height; i++)
 	{
 		RowPtrs[i] = Pixels + i * Width * 4;
@@ -2871,7 +2870,7 @@ vuint8* VPngTexture::GetPixels()
 	png_read_end(png_ptr, end_info);
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 
-	Z_Free(RowPtrs);
+	delete[] RowPtrs;
 
 	//	Free memory.
 	delete Strm;
@@ -2906,12 +2905,12 @@ void VPngTexture::Unload()
 	guard(VPngTexture::Unload);
 	if (Pixels)
 	{
-		Z_Free(Pixels);
+		delete[] Pixels;
 		Pixels = NULL;
 	}
 	if (Palette)
 	{
-		Z_Free(Palette);
+		delete[] Palette;
 		Palette = NULL;
 	}
 	unguard;

@@ -243,7 +243,7 @@ static VModel* Mod_LoadModel(VModel* mod)
 	//
 	// load the file
 	//
-	if (FL_ReadFile(mod->name, &mod->data, PU_STATIC) < 0)
+	if (FL_ReadFile(mod->name, &mod->data) < 0)
 		Sys_Error("Couldn't load %s", mod->name);
 	
 	if (LittleLong(*(unsigned *)mod->data) != IDPOLY2HEADER)
@@ -290,5 +290,20 @@ void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int InFrame)
 	VectorAngles(p[1] - p[0], wangles);
 	wpent->Angles.yaw = AngleMod(wpent->Angles.yaw + wangles.yaw);
 	wpent->Angles.pitch = AngleMod(wpent->Angles.pitch + wangles.pitch);
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_FreeModels
+//
+//==========================================================================
+
+void R_FreeModels()
+{
+	guard(R_FreeModels);
+	for (int i = 0; i < mod_numknown; i++)
+		if (mod_known[i].data)
+			Z_Free(mod_known[i].data);
 	unguard;
 }

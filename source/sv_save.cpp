@@ -94,7 +94,6 @@ extern char			mapaftersecret[12];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VStr			SavesDir;
 static boolean 		SavingPlayers;
 
 // CODE --------------------------------------------------------------------
@@ -313,14 +312,10 @@ static VSaveLoaderStream*	Loader;
 
 static VStr SV_GetSavesDir()
 {
-	if (!SavesDir)
-	{
-		if (fl_savedir)
-			SavesDir = fl_savedir + "/" + fl_gamedir + "/saves";
-		else
-			SavesDir = fl_basedir + "/" + fl_gamedir + "/saves";
-	}
-	return SavesDir;
+	if (fl_savedir)
+		return fl_savedir + "/" + fl_gamedir + "/saves";
+	else
+		return fl_basedir + "/" + fl_gamedir + "/saves";
 }
 
 //==========================================================================
@@ -611,7 +606,7 @@ static void UnarchiveThinkers()
 		}
 	
 		//  Allocate object and copy data
-		Obj = VObject::StaticSpawnObject(Class, PU_LEVSPEC);
+		Obj = VObject::StaticSpawnObject(Class);
 
 		//  Handle level info
 		if (Obj->IsA(VLevelInfo::StaticClass()))
@@ -832,7 +827,7 @@ static void SV_LoadMap(const char *mapname, int slot)
 	int len;
 	*Loader << STRM_INDEX(len);
 	sv_signon.Clear();
-	void *tmp = Z_Malloc(len, PU_STATIC, 0);
+	void *tmp = Z_Malloc(len);
 	Loader->Serialise(tmp, len);
 	sv_signon.Write(tmp, len);
 	Z_Free(tmp);

@@ -175,20 +175,20 @@ void VDirect3DDrawer::InitTextures()
 	guard(VDirect3DDrawer::InitTextures);
 #if DIRECT3D_VERSION >= 0x0800
 	//	Sprite lumps
-	trsprdata = (LPDIRECT3DTEXTURE8*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4, PU_STATIC, 0);
+	trsprdata = (LPDIRECT3DTEXTURE8*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4);
 
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
-	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
-	add_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
+	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+	add_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 #else
 	//	Sprite lumps
-	trsprdata = (LPDIRECTDRAWSURFACE7*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4, PU_STATIC, 0);
+	trsprdata = (LPDIRECTDRAWSURFACE7*)Z_Calloc(MAX_TRANSLATED_SPRITES * 4);
 
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
-	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
-	add_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4, PU_STATIC, 0);
+	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
+	add_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 #endif
 	unguard;
 }
@@ -430,7 +430,7 @@ void VDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot,
 	trsprtnum[slot] = translation;
 
 	byte* Pixels = Tex->GetPixels8();
-	byte* block = (byte*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight(), PU_STATIC, 0);
+	byte* block = (byte*)Z_Malloc(Tex->GetWidth() * Tex->GetHeight());
 	byte *trtab = translationtables + translation * 256;
 	for (int i = 0; i < Tex->GetWidth() * Tex->GetHeight(); i++)
 	{
@@ -734,7 +734,7 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture8(int Width, int Height,
 	byte* Data, rgba_t* Pal)
 #endif
 {
-	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4, PU_STATIC, 0, PU_STATIC, 0);
+	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4);
 	for (int i = 0; i < Width * Height; i++)
 	{
 		if (Data[i])
@@ -799,7 +799,7 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, rgba_
 	}
 	else
 	{
-		image = (byte*)Z_Malloc(w * h * 4, PU_STATIC, 0);
+		image = (byte*)Z_Malloc(w * h * 4);
 	}
 	if (w != width || h != height)
 	{

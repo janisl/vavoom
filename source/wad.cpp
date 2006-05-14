@@ -58,22 +58,19 @@ public:
 	int			Handle;
 	int			NumLumps;
 	lumpinfo_t*	LumpInfo;	// Location of each lump on disk.
-	void**		LumpCache;
 	VStr		GwaDir;
 
-	WadFile() : Handle(-1),
-		NumLumps(0), LumpInfo(NULL), LumpCache(NULL)
+	WadFile() : Handle(-1), NumLumps(0), LumpInfo(NULL)
 	{
 	}
 	void Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices);
 	void OpenSingleLump(const VStr& FileName);
 	void CloseFile();
-	bool CanClose();
 	void Close();
 	int CheckNumForName(VName LumpName, EWadNamespace NS);
 	void ReadLump(int lump, void* dest);
 	void ReadFromLump(int lump, void* dest, int pos, int size);
-	void* CacheLumpNum(int lump, int tag);
+	void* CacheLumpNum(int lump);
 	void InitNamespaces();
 	void FixVoiceNamespaces();
 	void InitNamespace(EWadNamespace NS, VName Start, VName End,
@@ -165,9 +162,9 @@ void WadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	header.infotableofs = LittleLong(header.infotableofs);
 	NumLumps = header.numlumps;
 	//	Moved here to make static data less fragmented
-	LumpInfo = Z_New(lumpinfo_t, NumLumps, PU_STATIC, 0);
+	LumpInfo = new lumpinfo_t[NumLumps];
 	length = header.numlumps * sizeof(filelump_t);
-	fi_p = fileinfo = (filelump_t*)Z_Malloc(length, PU_STATIC, 0);
+	fi_p = fileinfo = (filelump_t*)Z_Malloc(length);
 	Sys_FileSeek(Handle, header.infotableofs);
 	Sys_FileRead(Handle, fileinfo, length);
 
@@ -191,9 +188,6 @@ void WadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	{
 		FixVoiceNamespaces();
 	}
-
-	// set up caching
-	LumpCache = Z_CNew(void*, NumLumps, PU_STATIC, 0);
 	unguard;
 }
 
@@ -219,15 +213,12 @@ void WadFile::OpenSingleLump(const VStr& FileName)
 
 	// single lump file
 	NumLumps = 1;
-	LumpInfo = Z_New(lumpinfo_t, 1, PU_STATIC, 0);
+	LumpInfo = new lumpinfo_t[1];
 
 	// Fill in lumpinfo
 	LumpInfo->Name = VName(*FileName.ExtractFileBase(), VName::AddLower8);
 	LumpInfo->Position = 0;
 	LumpInfo->Size = Sys_FileSize(Handle);
-	
-	// set up caching
-	LumpCache = Z_CNew(void*, 1, PU_STATIC, 0);
 	unguard;
 }
 
@@ -250,26 +241,6 @@ void WadFile::CloseFile()
 
 //==========================================================================
 //
-//	WadFile::CanClose
-//
-//==========================================================================
-
-bool WadFile::CanClose()
-{
-	guard(WadFile::CanClose);
-	for (int i = 0; i < NumLumps; i++)
-	{
-		if (LumpCache[i])
-		{
-			return false;
-		}
-	}
-	return true;
-	unguard;
-}
-
-//==========================================================================
-//
 //	WadFile::Close
 //
 //==========================================================================
@@ -277,25 +248,14 @@ bool WadFile::CanClose()
 void WadFile::Close()
 {
 	guard(WadFile::Close);
-	if (LumpCache)
-	{
-		for (int i = 0; i < NumLumps; i++)
-		{
-			if (LumpCache[i])
-			{
-				Z_Free(LumpCache[i]);
-			}
-		}
-		Z_Free(LumpCache);
-		LumpCache = NULL;
-	}
 	if (LumpInfo)
 	{
-		Z_Free(LumpInfo);
+		delete[] LumpInfo;
 		LumpInfo = NULL;
 	}
 	NumLumps = 0;
-	Name[0] = 0;
+	Name.Clean();
+	GwaDir.Clean();
 	CloseFile();
 	unguard;
 }
@@ -472,13 +432,6 @@ void W_BuildPVS(int lump, int gllump)
 
 	int glfi = FILE_INDEX(gllump);
 	VStr glname = wad_files[glfi].Name;
-
-	if (!wad_files[glfi].CanClose())
-	{
-		GCon->Logf("Can't close %s, some lumps are in use", *glname);
-		GCon->Log("PVS build not performed");
-		return;
-	}
 
 	// Close old file
 	wad_files[glfi].Close();
@@ -707,7 +660,7 @@ void W_ReadFromLump(int lump, void* dest, int pos, int size)
 //
 //==========================================================================
 
-void* WadFile::CacheLumpNum(int lump, int tag)
+void* WadFile::CacheLumpNum(int lump)
 {
 	guard(WadFile::CacheLumpNum);
 	if ((unsigned)lump >= (unsigned)NumLumps)
@@ -715,19 +668,11 @@ void* WadFile::CacheLumpNum(int lump, int tag)
 		Sys_Error("W_CacheLumpNum: %i >= numlumps", lump);
 	}
 		
-	if (!LumpCache[lump])
-	{
-		// read the lump in
-		byte *ptr = (byte*)Z_Malloc(LumpInfo[lump].Size + 1, tag, &LumpCache[lump]);
-		ReadLump(lump, LumpCache[lump]);
-		ptr[LumpInfo[lump].Size] = 0;
-	}
-	else
-	{
-		Z_ChangeTag(LumpCache[lump], tag);
-	}
-	
-	return LumpCache[lump];
+	// read the lump in
+	byte *ptr = (byte*)Z_Malloc(LumpInfo[lump].Size + 1);
+	ReadLump(lump, ptr);
+	ptr[LumpInfo[lump].Size] = 0;
+	return ptr;
 	unguard;
 }
 
@@ -737,7 +682,7 @@ void* WadFile::CacheLumpNum(int lump, int tag)
 //
 //==========================================================================
 
-void* W_CacheLumpNum(int lump, int tag)
+void* W_CacheLumpNum(int lump)
 {
 	guard(W_CacheLumpNum);
 	if (FILE_INDEX(lump) >= num_wad_files)
@@ -747,7 +692,7 @@ void* W_CacheLumpNum(int lump, int tag)
 
 	WadFile &w = GET_LUMP_FILE(lump);
 	int lumpindex = LUMP_INDEX(lump);
-	return w.CacheLumpNum(lumpindex, tag);
+	return w.CacheLumpNum(lumpindex);
 	unguard;
 }
 
@@ -757,10 +702,10 @@ void* W_CacheLumpNum(int lump, int tag)
 //
 //==========================================================================
 
-void* W_CacheLumpName(VName Name,int tag, EWadNamespace NS)
+void* W_CacheLumpName(VName Name, EWadNamespace NS)
 {
 	guard(W_CacheLumpName);
-	return W_CacheLumpNum(W_GetNumForName(Name, NS), tag);
+	return W_CacheLumpNum(W_GetNumForName(Name, NS));
 	unguard;
 }
 
@@ -788,6 +733,7 @@ public:
 		if (Length > Size - Pos)
 		{
 			bError = true;
+			Length = Size - Pos;
 		}
 		memcpy(V, Data + Pos, Length);
 		Pos += Length;
@@ -806,6 +752,11 @@ public:
 	}
 	void Seek(int InPos)
 	{
+		if (InPos < 0 || InPos > Size)
+		{
+			bError = true;
+			return;
+		}
 		Pos = InPos;
 	}
 	bool Close()
@@ -830,7 +781,7 @@ protected:
 VStream* W_CreateLumpReaderNum(int lump)
 {
 	guard(W_CreateLumpReaderNum);
-	return new VStreamLumpReader((byte *)W_CacheLumpNum(lump, PU_STATIC),
+	return new VStreamLumpReader((vuint8*)W_CacheLumpNum(lump),
 		W_LumpLength(lump));
 	unguard;
 }
@@ -1034,79 +985,18 @@ void W_Profile()
 }
 #endif
 
-//**************************************************************************
+//==========================================================================
 //
-//  $Log$
-//  Revision 1.25  2006/03/04 16:01:34  dj_jl
-//  File system API now uses strings.
+//  W_Shutdown
 //
-//  Revision 1.24  2006/03/02 23:24:36  dj_jl
-//  Wad lump names stored as names.
-//
-//  Revision 1.23  2006/02/22 20:33:51  dj_jl
-//  Created stream class.
-//
-//  Revision 1.22  2006/01/29 20:41:30  dj_jl
-//  On Unix systems use ~/.vavoom for generated files.
-//
-//  Revision 1.21  2005/11/24 20:07:36  dj_jl
-//  Aded namespace for progs.
-//
-//  Revision 1.20  2005/11/06 15:28:40  dj_jl
-//  Some cleanup.
-//
-//  Revision 1.19  2005/11/05 15:49:14  dj_jl
-//  Putting Strife shareware voices in correct namespace.
-//
-//  Revision 1.18  2005/11/05 14:57:36  dj_jl
-//  Putting Strife shareware voices in correct namespace.
-//
-//  Revision 1.17  2005/10/20 22:22:39  dj_jl
-//  Fixed double destruction of reader archive.
-//
-//  Revision 1.16  2005/10/18 20:53:04  dj_jl
-//  Implemented basic support for streamed music.
-//
-//  Revision 1.15  2005/05/26 16:55:43  dj_jl
-//  New lump namespace iterator
-//
-//  Revision 1.14  2004/12/03 16:15:47  dj_jl
-//  Implemented support for extended ACS format scripts, functions, libraries and more.
-//
-//  Revision 1.13  2004/11/23 12:43:10  dj_jl
-//  Wad file lump namespaces.
-//
-//  Revision 1.12  2003/03/08 12:08:05  dj_jl
-//  Beautification.
-//
-//  Revision 1.11  2002/07/23 16:29:56  dj_jl
-//  Replaced console streams with output device class.
-//
-//  Revision 1.10  2002/05/18 16:56:35  dj_jl
-//  Added FArchive and FOutputDevice classes.
-//
-//  Revision 1.9  2002/01/07 12:16:43  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.8  2001/10/08 17:34:57  dj_jl
-//  A lots of small changes and cleanups
-//
-//  Revision 1.7  2001/09/25 17:07:06  dj_jl
-//  Safe PVS build
-//
-//  Revision 1.6  2001/09/14 16:51:46  dj_jl
-//  Object oriented wad files, added dynamic build of GWA file
-//
-//  Revision 1.5  2001/08/30 17:42:31  dj_jl
-//  Using file times
-//
-//  Revision 1.4  2001/08/21 17:50:17  dj_jl
-//  Made W_UseAuxiliary safe
-//
-//  Revision 1.3  2001/07/31 17:16:31  dj_jl
-//  Just moved Log to the end of file
-//
-//  Revision 1.2  2001/07/27 14:27:54  dj_jl
-//  Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+//==========================================================================
+
+void W_Shutdown()
+{
+	guard(W_Shutdown);
+	for (int i = 0; i < num_wad_files; i++)
+	{
+		wad_files[i].Close();
+	}
+	unguard;
+}

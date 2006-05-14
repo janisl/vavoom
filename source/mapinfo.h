@@ -60,43 +60,15 @@ struct mapInfo_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void InitMapInfo(void);
+void InitMapInfo();
+void ShutdownMapInfo();
 void P_GetMapInfo(const char *map, mapInfo_t &info);
 void P_PutMapSongLump(int map, const char *lumpName);
-int P_GetCDStartTrack(void);
-int P_GetCDEnd1Track(void);
-int P_GetCDEnd2Track(void);
-int P_GetCDEnd3Track(void);
-int P_GetCDIntermissionTrack(void);
-int P_GetCDTitleTrack(void);
+int P_GetCDStartTrack();
+int P_GetCDEnd1Track();
+int P_GetCDEnd2Track();
+int P_GetCDEnd3Track();
+int P_GetCDIntermissionTrack();
+int P_GetCDTitleTrack();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2006/04/11 18:28:20  dj_jl
-//	Removed Strife specific mapinfo extensions.
-//
-//	Revision 1.5  2004/10/11 06:50:54  dj_jl
-//	ACS helper scripts lump.
-//	
-//	Revision 1.4  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.3  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.2  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.1  2001/10/08 17:30:23  dj_jl
-//	Renamed to mapinfo.*
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

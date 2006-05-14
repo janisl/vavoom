@@ -40,6 +40,8 @@
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void R_InitData();
+void R_FreeModels();
+void R_FreeSkyboxData();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -87,6 +89,11 @@ refdef_t				refdef;
 float					PixelAspect;
 
 vuint8*					r_playpal;
+
+//
+//	Translation tables
+//
+vuint8*					translationtables;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -475,7 +482,7 @@ void R_InitParticles()
 		r_numparticles = MAX_PARTICLES;
 	}
 
-	particles = (particle_t *)Z_Malloc(r_numparticles * sizeof(particle_t), PU_STATIC, 0);
+	particles = new particle_t[r_numparticles];
 	unguard;
 }
 
@@ -648,6 +655,7 @@ void R_DrawPic(int x, int y, int handle, int trans)
 	GTextureManager.GetTextureInfo(handle, &info);
 	x -= info.xoffset;
 	y -= info.yoffset;
+	GTextureManager.Textures[handle]->GetPixels();
 	Drawer->DrawPic(fScaleX * x, fScaleY * y,
 		fScaleX * (x + info.width), fScaleY * (y + info.height),
 		0, 0, info.width, info.height, handle, trans);
@@ -733,7 +741,7 @@ void R_PrecacheLevel()
 #ifdef __GNUC__
 	char texturepresent[GTextureManager.Textures.Num()];
 #else
-	char* texturepresent = (char*)Z_Malloc(GTextureManager.Textures.Num(), PU_STATIC, 0);
+	char* texturepresent = (char*)Z_Malloc(GTextureManager.Textures.Num());
 #endif
 	memset(texturepresent, 0, GTextureManager.Textures.Num());
 
@@ -775,7 +783,7 @@ static void InitTranslationTables()
 {
 	guard(InitTranslationTables);
 	int Lump = W_GetNumForName(NAME_translat);
-	translationtables = (byte*)W_CacheLumpNum(Lump, PU_STATIC);
+	translationtables = (vuint8*)W_CacheLumpNum(Lump);
 	int TabLen = W_LumpLength(Lump);
 	for (int i = 0; i < TabLen; i++)
 	{
@@ -840,7 +848,7 @@ void R_InitData()
 	}
 
 	//	Load entire palette for palette effects.
-	r_playpal = (vuint8*)Z_Malloc(Strm->TotalSize(), PU_STATIC, 0);
+	r_playpal = (vuint8*)Z_Malloc(Strm->TotalSize());
 	Strm->Seek(0);
 	Strm->Serialise(r_playpal, Strm->TotalSize());
 
@@ -940,5 +948,19 @@ void V_Shutdown()
 		Drawer = NULL;
 	}
 	R_FreeSpriteData();
+	R_FreeModels();
+	if (particles)
+	{
+		delete[] particles;
+	}
+	if (r_playpal)
+	{
+		Z_Free(r_playpal);
+	}
+	if (translationtables)
+	{
+		Z_Free(translationtables);
+	}
+	R_FreeSkyboxData();
 	unguard;
 }

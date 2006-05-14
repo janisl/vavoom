@@ -205,6 +205,7 @@ private:
 	//	Main.
 	bool AllocMemory(int, int, int);
 	void FreeMemory();
+	void FreeAllMemory();
 	void InitViewBorder(const refdef_t *rd);
 	void VideoErase(unsigned ofs, int count);
 	void EraseViewBorder(const refdef_t *rd);

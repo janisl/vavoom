@@ -57,7 +57,7 @@ void VMessage::Alloc(vint32 startsize)
 	int AllocSize = startsize;
 	if (AllocSize < 256)
 		AllocSize = 256;
-	Data = (vuint8*)Z_Malloc(AllocSize, PU_STATIC, 0);
+	Data = (vuint8*)Z_Malloc(AllocSize);
 	MaxSize = AllocSize;
 	CurSize = 0;
 	Overflowed = false;
@@ -498,23 +498,3 @@ vint16 VMessage::ReadShort()
 	return c;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2006/04/05 17:21:00  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.5  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

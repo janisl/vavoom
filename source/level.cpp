@@ -260,11 +260,11 @@ void VLevel::Destroy()
 
 	for (int i = 0; i < NumPolyObjs; i++)
 	{
-		Z_Free(PolyObjs[i].segs);
-		Z_Free(PolyObjs[i].originalPts);
+		delete[] PolyObjs[i].segs;
+		delete[] PolyObjs[i].originalPts;
 		if (PolyObjs[i].prevPts)
 		{
-			Z_Free(PolyObjs[i].prevPts);
+			delete[] PolyObjs[i].prevPts;
 		}
 	}
 	if (PolyBlockMap)
@@ -274,11 +274,11 @@ void VLevel::Destroy()
 			for (polyblock_t* pb = PolyBlockMap[i]; pb;)
 			{
 				polyblock_t* Next = pb->next;
-				Z_Free(pb);
+				delete pb;
 				pb = Next;
 			}
 		}
-		Z_Free(PolyBlockMap);
+		delete[] PolyBlockMap;
 	}
 #ifdef SERVER
 	if (this == GLevel)
@@ -438,7 +438,7 @@ void SV_LoadLevel(const char *MapName)
 		GLevel = NULL;
 	}
 
-	GLevel = (VLevel*)VObject::StaticSpawnObject(VLevel::StaticClass(), PU_STATIC);
+	GLevel = (VLevel*)VObject::StaticSpawnObject(VLevel::StaticClass());
 	GLevel->LevelFlags |= VLevel::LF_ForServer;
 
 	GLevel->LoadMap(VName(MapName, VName::AddLower8));
@@ -463,7 +463,7 @@ void CL_LoadLevel(const char *MapName)
 		GClLevel = NULL;
 	}
 
-	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass(), PU_STATIC);
+	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass());
 	GClGame->GLevel = GClLevel;
 
 	GClLevel->LoadMap(VName(MapName, VName::AddLower8));

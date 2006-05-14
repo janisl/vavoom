@@ -183,7 +183,7 @@ void VSoftwareDrawer::SetPalette8(byte *palette)
 //
 //==========================================================================
 
-void VSoftwareDrawer::Update(void)
+void VSoftwareDrawer::Update()
 {
 	guard(VSoftwareDrawer::Update);
 	int i;
@@ -225,7 +225,7 @@ void VSoftwareDrawer::Update(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::Shutdown(void)
+void VSoftwareDrawer::Shutdown()
 {
 	if (hw_screen != NULL)
 	{
@@ -237,28 +237,5 @@ void VSoftwareDrawer::Shutdown(void)
 			hw_palette.colors = NULL;
 		}
 	}
+	FreeAllMemory();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.5  2005/04/28 07:16:12  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.4  2004/10/08 12:39:01  dj_jl
-//	Added windowing mode.
-//	
-//	Revision 1.3  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2002/01/03 18:39:42  dj_jl
-//	Added SDL port
-//	
-//**************************************************************************

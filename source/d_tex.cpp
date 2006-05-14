@@ -215,7 +215,8 @@ void VSoftwareDrawer::GenerateTexture(int texnum)
 	int mipw = (Tex->GetWidth() + 15) & ~15;
 	int miph = (Tex->GetHeight() + 15) & ~15;
 	miptexture_t* mip = (miptexture_t*)Z_Calloc(sizeof(miptexture_t) +
-		mipw * miph / 64 * 85, PU_STATIC, &Tex->DriverData);
+		mipw * miph / 64 * 85);
+	Tex->DriverData = mip;
 	mip->width = mipw;
 	mip->height = miph;
 	if (Tex->GetWidth() < 16 || Tex->GetHeight() < 16)
@@ -355,7 +356,7 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 
 	byte* Pixels = Tex->GetPixels();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	Tex->DriverData = Z_Malloc(NumPixels * PixelBytes, PU_STATIC, 0);
+	Tex->DriverData = Z_Malloc(NumPixels * PixelBytes);
 	if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal)
 	{
 		// Load paletted skymap
@@ -459,7 +460,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int transl
 
 	byte* SrcBlock = Tex->GetPixels8();
 
-	void *block = (byte*)Z_Calloc(w * h * PixelBytes, PU_STATIC, 0);
+	void *block = (byte*)Z_Calloc(w * h * PixelBytes);
 	sprite_cache[slot].data = block;
 	sprite_cache[slot].light = light;
 	sprite_cache[slot].lump = lump;
@@ -598,7 +599,7 @@ void VSoftwareDrawer::GeneratePic(int texnum)
 	VTexture* Tex = GTextureManager.Textures[texnum];
 	byte* Pixels = Tex->GetPixels8();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	Tex->DriverData = (byte*)Z_Malloc(NumPixels, PU_STATIC, 0);
+	Tex->DriverData = (byte*)Z_Malloc(NumPixels);
 	memcpy(Tex->DriverData, Pixels, NumPixels);
 	Tex->Unload();
 	unguard;

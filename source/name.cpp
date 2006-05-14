@@ -97,7 +97,7 @@ VNameEntry* AllocateNameEntry(const char* Name, vint32 Index,
 {
 	guard(AllocateNameEntry);
 	int Size = sizeof(VNameEntry) - NAME_SIZE + strlen(Name) + 1;
-	VNameEntry* E = (VNameEntry*)Z_Malloc(Size, PU_STATIC, 0);
+	VNameEntry* E = (VNameEntry*)Z_Malloc(Size);
 	memset(E, 0, Size);
 	strcpy(E->Name, Name);
 	E->Index = Index;
@@ -201,38 +201,3 @@ void VName::StaticExit()
 	Initialised = false;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.9  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.8  2005/11/22 19:10:36  dj_jl
-//	Cleaned up a bit.
-//	
-//	Revision 1.7  2005/05/26 16:49:14  dj_jl
-//	Added lowercased max 8 chars names.
-//	
-//	Revision 1.6  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.5  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.4  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.3  2002/01/11 08:10:12  dj_jl
-//	Map empty strings to NAME_None
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/12/18 18:57:11  dj_jl
-//	Added global name subsystem
-//	
-//**************************************************************************

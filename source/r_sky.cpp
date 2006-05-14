@@ -84,7 +84,7 @@ struct sky_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void R_LightningFlash(void);
+static void R_LightningFlash();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -92,13 +92,12 @@ static void R_LightningFlash(void);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static skyboxinfo_t	*skyboxinfo;
-static int			numskyboxes;
+static TArray<skyboxinfo_t>		skyboxinfo;
 
-static boolean		LevelHasLightning;
+static bool			LevelHasLightning;
 static int			NextLightningFlash;
 static int			LightningFlash;
-static int			*LightningLightLevels;
+static int*			LightningLightLevels;
 
 static sky_t		sky[HDIVS * VDIVS];
 static int			NumSkySurfs;
@@ -116,13 +115,9 @@ void R_InitSkyBoxes()
 	guard(R_InitSkyBoxes);
 	SC_Open("skyboxes");
 
-	skyboxinfo = (skyboxinfo_t *)Z_Malloc(1, PU_STATIC, 0);
-	numskyboxes = 0;
 	while (SC_GetString())
 	{
-		numskyboxes++;
-		Z_Resize((void **)&skyboxinfo, numskyboxes * sizeof(skyboxinfo_t));
-		skyboxinfo_t &info = skyboxinfo[numskyboxes - 1];
+		skyboxinfo_t& info = skyboxinfo.Alloc();
 		memset(&info, 0, sizeof(info));
 
 		strcpy(info.name, sc_String);
@@ -173,8 +168,7 @@ static void R_InitOldSky()
 		if (secCount)
 		{
 			LevelHasLightning = true;
-			LightningLightLevels = (int *)Z_Malloc(secCount * sizeof(int),
-				PU_LEVEL, NULL);
+			LightningLightLevels = new int[secCount];
 			NextLightningFlash = ((rand() & 15) + 5) * 35; // don't flash at level start
 		}
 	}
@@ -301,14 +295,14 @@ static void R_InitSkyBox()
 	guard(R_InitSkyBox);
 	int num;
 
-	for (num = 0; num < numskyboxes; num++)
+	for (num = 0; num < skyboxinfo.Num(); num++)
 	{
 		if (!strcmp(cl_level.skybox, skyboxinfo[num].name))
 		{
 			break;
 		}
 	}
-	if (num == numskyboxes)
+	if (num == skyboxinfo.Num())
 	{
 		Host_Error("No such skybox %s", cl_level.skybox);
 	}
@@ -335,8 +329,7 @@ static void R_InitSkyBox()
 		if (secCount)
 		{
 			LevelHasLightning = true;
-			LightningLightLevels = (int *)Z_Malloc(secCount * sizeof(int),
-				PU_LEVEL, NULL);
+			LightningLightLevels = new int[secCount];
 			NextLightningFlash = ((rand() & 15) + 5) * 35; // don't flash at level start
 		}
 	}
@@ -709,8 +702,21 @@ void R_FreeLevelSkyData()
 	guard(R_FreeLevelSkyData);
 	if (LightningLightLevels)
 	{
-		Z_Free(LightningLightLevels);
+		delete[] LightningLightLevels;
 		LightningLightLevels = NULL;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_FreeSkyboxData
+//
+//==========================================================================
+
+void R_FreeSkyboxData()
+{
+	guard(R_FreeSkyboxData);
+	skyboxinfo.Clear();
 	unguard;
 }

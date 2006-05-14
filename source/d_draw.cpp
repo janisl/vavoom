@@ -235,7 +235,7 @@ void VSoftwareDrawer::DrawConsoleBackground_8(int h)
 	static byte *consbgmap = NULL;
 	if (!consbgmap)
 	{
-		consbgmap = (byte*)W_CacheLumpName(NAME_consmap, PU_STATIC);
+		consbgmap = (byte*)W_CacheLumpName(NAME_consmap);
 	}
 
 	int w = ScreenWidth >> 2;

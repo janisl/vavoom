@@ -175,14 +175,17 @@ void SV_Init()
 
 	svs.max_clients = 1;
 
-	sv_mobjs = Z_CNew(VEntity*, GMaxEntities, PU_STATIC, 0);
-	sv_mo_base = Z_CNew(mobj_base_t, GMaxEntities, PU_STATIC, 0);
-	sv_mo_free_time = Z_CNew(double, GMaxEntities, PU_STATIC, 0);
+	sv_mobjs = new VEntity*[GMaxEntities];
+	sv_mo_base = new mobj_base_t[GMaxEntities];
+	sv_mo_free_time = new double[GMaxEntities];
+	memset(sv_mobjs, 0, sizeof(VEntity*) * GMaxEntities);
+	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
+	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
 
 	svpr.Load("svprogs");
 
 	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
-		VClass::FindClass("MainGameInfo"), PU_STATIC);
+		VClass::FindClass("MainGameInfo"));
 	GGameInfo->eventInit();
 
 	num_stats = GGameInfo->num_stats;
@@ -191,8 +194,9 @@ void SV_Init()
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
-			PlayerClass, PU_STATIC);
-		GPlayersBase[i]->OldStats = Z_CNew(int, num_stats, PU_STATIC, 0);
+			PlayerClass);
+		GPlayersBase[i]->OldStats = new vint32[num_stats];
+		memset(GPlayersBase[i]->OldStats, 0, sizeof(vint32) * num_stats);
 	}
 
 	GGameInfo->validcount = &validcount;
@@ -218,12 +222,12 @@ void SV_Shutdown()
 	GGameInfo->ConditionalDestroy();
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		Z_Free(GPlayersBase[i]->OldStats);
+		delete[] GPlayersBase[i]->OldStats;
 		GPlayersBase[i]->ConditionalDestroy();
 	}
-	Z_Free(sv_mobjs);
-	Z_Free(sv_mo_base);
-	Z_Free(sv_mo_free_time);
+	delete[] sv_mobjs;
+	delete[] sv_mo_base;
+	delete[] sv_mo_free_time;
 	
 	P_FreeTerrainTypes();
 	unguard;
@@ -253,10 +257,9 @@ void SV_Clear()
 	sv_reliable.Clear();
 	sv_datagram.Clear();
 #ifdef CLIENT
-	// Make sure all sounds are stopped before Z_FreeTags.
+	// Make sure all sounds are stopped.
 	S_StopAllSound();
 #endif
-	Z_FreeTag(PU_LEVEL);
 	unguard;
 }
 
@@ -285,7 +288,7 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	VEntity *Ent;
 	int i;
 
-	Ent = (VEntity*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
+	Ent = (VEntity*)VObject::StaticSpawnObject(Class);
 	GLevel->AddThinker(Ent);
 
 	//	Client treats first objects as player objects and will use

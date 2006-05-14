@@ -433,8 +433,8 @@ class FACScriptsObject
 private:
 	struct FArrayInfo
 	{
-		int		Size;
-		int*	Data;
+		vint32		Size;
+		vint32*		Data;
 	};
 
 	EACSFormat			Format;
@@ -543,14 +543,15 @@ class VACS : public VThinker
 
 	VEntity*			Activator;
 	line_t*				line;
-	int 				side;
-	int 				number;
+	vint32 				side;
+	vint32 				number;
 	acsInfo_t*			info;
 	float				DelayTime;
-	int*				LocalVars;
-	int*				ip;
+	vint32*				LocalVars;
+	vint32*				ip;
 	FACScriptsObject*	activeObject;
 
+	void Destroy();
 	void Serialise(VStream&);
 	int RunScript(float DeltaTime);
 	void Tick(float DeltaTime);
@@ -596,8 +597,7 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
 	bool Delayed)
 {
-	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass(),
-		PU_LEVSPEC);
+	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass());
 	GLevel->AddThinker(script);
 	script->info = Info;
 	script->number = Info->number;
@@ -606,7 +606,7 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 	script->Activator = Activator;
 	script->line = Line;
 	script->side = Side;
-	script->LocalVars = (int*)Z_Malloc(Info->VarCount * 4, PU_LEVSPEC, 0);
+	script->LocalVars = new vint32[Info->VarCount];
 	script->LocalVars[0] = Arg1;
 	script->LocalVars[1] = Arg2;
 	script->LocalVars[2] = Arg3;
@@ -707,7 +707,7 @@ FACScriptsObject::FACScriptsObject(int Lump)
 		return;
     }
 
-	Data = (byte*)W_CacheLumpNum(Lump, PU_LEVEL);
+	Data = (vuint8*)W_CacheLumpNum(Lump);
 	acsHeader_t* header = (acsHeader_t*)Data;
 
 	//	Check header.
@@ -776,13 +776,13 @@ FACScriptsObject::FACScriptsObject(int Lump)
 FACScriptsObject::~FACScriptsObject()
 {
 	guard(FACScriptsObject::~FACScriptsObject);
-	Z_Free(Scripts);
+	delete[] Scripts;
 	for (int i = 0; i < NumArrays; i++)
-		Z_Free(ArrayStore[i].Data);
+		delete[] ArrayStore[i].Data;
 	if (ArrayStore)
-		Z_Free(ArrayStore);
+		delete[] ArrayStore;
 	if (Arrays)
-		Z_Free(Arrays);
+		delete[] Arrays;
 	Z_Free(Data);
 	unguard;
 }
@@ -811,7 +811,7 @@ void FACScriptsObject::LoadOldObject()
 		//	Empty behavior lump
 		return;
 	}
-	Scripts = (acsInfo_t*)Z_Malloc(NumScripts * sizeof(acsInfo_t), PU_LEVEL, 0);
+	Scripts = new acsInfo_t[NumScripts];
 	memset(Scripts, 0, NumScripts * sizeof(acsInfo_t));
 	for (i = 0, info = Scripts; i < NumScripts; i++, info++)
 	{
@@ -863,7 +863,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	if (Data[3] != 0)
 	{
 		NumScripts = LittleLong(buffer[1]) / 12;
-		Scripts = (acsInfo_t*)Z_Malloc(NumScripts * sizeof(acsInfo_t), PU_LEVEL, 0);
+		Scripts = new acsInfo_t[NumScripts];
 		memset(Scripts, 0, NumScripts * sizeof(acsInfo_t));
 		buffer += 2;
 
@@ -882,7 +882,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	else
 	{
 		NumScripts = LittleLong(buffer[1]) / 8;
-		Scripts = (acsInfo_t*)Z_Malloc(NumScripts * sizeof(acsInfo_t), PU_LEVEL, 0);
+		Scripts = new acsInfo_t[NumScripts];
 		memset(Scripts, 0, NumScripts * sizeof(acsInfo_t));
 		buffer += 2;
 
@@ -987,14 +987,14 @@ void FACScriptsObject::LoadEnhancedObject()
 	if (buffer)
 	{
 		NumArrays = LittleLong(buffer[1]) / 8;
-		ArrayStore = Z_New(FArrayInfo, NumArrays, PU_STATIC, 0);
+		ArrayStore = new FArrayInfo[NumArrays];
 		memset(ArrayStore, 0, sizeof(*ArrayStore) * NumArrays);
 		for (i = 0; i < NumArrays; ++i)
 		{
 			MapVarStore[LittleLong(buffer[2 + i * 2])] = i;
 			ArrayStore[i].Size = LittleLong(buffer[3 + i * 2]);
-			ArrayStore[i].Data = Z_New(int, ArrayStore[i].Size, PU_STATIC, 0);
-			memset(ArrayStore[i].Data, 0, ArrayStore[i].Size * sizeof(int));
+			ArrayStore[i].Data = new vint32[ArrayStore[i].Size];
+			memset(ArrayStore[i].Data, 0, ArrayStore[i].Size * sizeof(vint32));
 		}
 	}
 
@@ -1026,7 +1026,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	}
 	if (NumTotalArrays)
 	{
-		Arrays = Z_New(FArrayInfo*, NumTotalArrays, PU_STATIC, 0);
+		Arrays = new FArrayInfo*[NumTotalArrays];
 		for (i = 0; i < NumArrays; ++i)
 		{
 			Arrays[i] = &ArrayStore[i];
@@ -1750,7 +1750,7 @@ void FACSGrowingArray::Redim(int NewSize)
 	}
 	else if (NewSize && !Data)
 	{
-		Data = Z_New(int, NewSize, PU_STATIC, 0);
+		Data = (int*)Z_Malloc(sizeof(int) * NewSize);
 	}
 	else if (NewSize && Data)
 	{
@@ -2098,6 +2098,22 @@ void P_SerialiseScripts(VStream& Strm)
 
 //==========================================================================
 //
+//	VACS::Destroy
+//
+//==========================================================================
+
+void VACS::Destroy()
+{
+	guard(VACS::Destroy);
+	if (LocalVars)
+	{
+		delete[] LocalVars;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VACS::Serialise
 //
 //==========================================================================
@@ -2115,7 +2131,7 @@ void VACS::Serialise(VStream& Strm)
 		Strm << TmpInt;
 		ip = activeObject->OffsetToPtr(TmpInt);
 		info = activeObject->FindScript(number);
-		LocalVars = (int*)Z_Malloc(info->VarCount * 4, PU_LEVSPEC, 0);
+		LocalVars = new vint32[info->VarCount];
 	}
 	else
 	{
@@ -2171,7 +2187,6 @@ int VACS::RunScript(float DeltaTime)
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		SetFlags(_OF_DelayedDestroy);
-		Z_Free(LocalVars);
 		return resultValue;
 	}
 	if (info->state != ASTE_RUNNING)
@@ -4458,7 +4473,6 @@ int VACS::RunScript(float DeltaTime)
 		info->state = ASTE_INACTIVE;
 		FACScriptsObject::StaticScriptFinished(number);
 		SetFlags(_OF_DelayedDestroy);
-		Z_Free(LocalVars);
 	}
 	return resultValue;
 	unguard;

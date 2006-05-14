@@ -32,9 +32,10 @@
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void FL_Init();
+void FL_Shutdown();
 
 VStr FL_FindFile(const VStr& fname);
-int FL_ReadFile(const VStr& name, void** buffer, int tag);
+int FL_ReadFile(const VStr& name, void** buffer);
 bool FL_WriteFile(const VStr& name, const void* source, int length);
 void FL_CreatePath(const VStr& Path);
 
@@ -47,38 +48,3 @@ extern bool		fl_devmode;
 extern VStr		fl_basedir;
 extern VStr		fl_savedir;
 extern VStr		fl_gamedir;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//
-//	Revision 1.10  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.9  2006/01/29 20:41:30  dj_jl
-//	On Unix systems use ~/.vavoom for generated files.
-//	
-//	Revision 1.8  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.7  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/11/09 14:34:24  dj_jl
-//	Added MAX_VPATH
-//	
-//	Revision 1.5  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.4  2001/08/21 17:40:54  dj_jl
-//	Added devgame mode
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

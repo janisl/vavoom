@@ -1270,7 +1270,7 @@ PF(SpawnObject)
 	VClass *Class;
 
 	Class = (VClass *)Pop();
-	Push((int)VObject::StaticSpawnObject(Class, PU_STATIC));
+	Push((int)VObject::StaticSpawnObject(Class));
 }
 
 //==========================================================================
@@ -1610,7 +1610,7 @@ PF(NewSpecialThinker)
 	VThinker	*spec;
 
 	Class = (VClass *)Pop();
-	spec = (VThinker*)VObject::StaticSpawnObject(Class, PU_LEVSPEC);
+	spec = (VThinker*)VObject::StaticSpawnObject(Class);
 	GLevel->AddThinker(spec);
 	Push((int)spec);
 }

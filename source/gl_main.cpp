@@ -465,11 +465,7 @@ void VOpenGLDrawer::EndView()
 void *VOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 {
 	guard(VOpenGLDrawer::ReadScreen);
-	void *dst = Z_Malloc(ScreenWidth * ScreenHeight * 3, PU_VIDEO, 0);
-	if (!dst)
-	{
-		return NULL;
-	}
+	void* dst = Z_Malloc(ScreenWidth * ScreenHeight * 3);
 	glReadBuffer(GL_FRONT);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glReadPixels(0, 0, ScreenWidth, ScreenHeight, GL_RGB, GL_UNSIGNED_BYTE, dst);

@@ -488,7 +488,7 @@ void P_PutMapSongLump(int map, const char *lumpName)
 //
 //==========================================================================
 
-int P_GetCDStartTrack(void)
+int P_GetCDStartTrack()
 {
 	return cd_NonLevelTracks[MCMD_CD_STARTTRACK-MCMD_CD_STARTTRACK];
 }
@@ -499,7 +499,7 @@ int P_GetCDStartTrack(void)
 //
 //==========================================================================
 
-int P_GetCDEnd1Track(void)
+int P_GetCDEnd1Track()
 {
 	return cd_NonLevelTracks[MCMD_CD_END1TRACK-MCMD_CD_STARTTRACK];
 }
@@ -510,7 +510,7 @@ int P_GetCDEnd1Track(void)
 //
 //==========================================================================
 
-int P_GetCDEnd2Track(void)
+int P_GetCDEnd2Track()
 {
 	return cd_NonLevelTracks[MCMD_CD_END2TRACK-MCMD_CD_STARTTRACK];
 }
@@ -521,7 +521,7 @@ int P_GetCDEnd2Track(void)
 //
 //==========================================================================
 
-int P_GetCDEnd3Track(void)
+int P_GetCDEnd3Track()
 {
 	return cd_NonLevelTracks[MCMD_CD_END3TRACK-MCMD_CD_STARTTRACK];
 }
@@ -532,7 +532,7 @@ int P_GetCDEnd3Track(void)
 //
 //==========================================================================
 
-int P_GetCDIntermissionTrack(void)
+int P_GetCDIntermissionTrack()
 {
 	return cd_NonLevelTracks[MCMD_CD_INTERTRACK-MCMD_CD_STARTTRACK];
 }
@@ -543,7 +543,7 @@ int P_GetCDIntermissionTrack(void)
 //
 //==========================================================================
 
-int P_GetCDTitleTrack(void)
+int P_GetCDTitleTrack()
 {
 	return cd_NonLevelTracks[MCMD_CD_TITLETRACK-MCMD_CD_STARTTRACK];
 }
@@ -564,5 +564,18 @@ COMMAND(MapList)
 			GCon->Logf("%s - %s", MapInfo[i].lumpname, MapInfo[i].name);
 		}
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ShutdownMapInfo
+//
+//==========================================================================
+
+void ShutdownMapInfo()
+{
+	guard(ShutdownMapInfo);
+	MapSongList.Clear();
 	unguard;
 }

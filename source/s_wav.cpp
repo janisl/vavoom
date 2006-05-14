@@ -179,10 +179,10 @@ void VWaveSampleLoader::Load(sfxinfo_t& Sfx, VStream& Strm)
 	Sfx.SampleRate = SampleRate;
 	Sfx.SampleBits = WavBits;
 	Sfx.DataSize = (DataSize / BlockAlign) * (WavBits/ 8);
-	Sfx.Data = Z_Malloc(Sfx.DataSize, PU_STATIC, 0);
+	Sfx.Data = Z_Malloc(Sfx.DataSize);
 
 	//	Read wav data.
-	void* WavData = Z_Malloc(DataSize, PU_STATIC, 0);
+	void* WavData = Z_Malloc(DataSize);
 	Strm.Serialise(WavData, DataSize);
 
 	//	Copy sample data.

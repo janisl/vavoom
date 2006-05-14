@@ -289,7 +289,7 @@ void S_Init()
 		GStreamMusicPlayer->Init();
 	}
 
-	SoundCurve = (vuint8*)W_CacheLumpName(NAME_sndcurve, PU_STATIC);
+	SoundCurve = (vuint8*)W_CacheLumpName(NAME_sndcurve);
 	snd_MaxVolume = -1;
 
 	//	Free all channels for use.
@@ -1007,7 +1007,7 @@ static void PlaySong(const char* Song, bool Loop)
 	else if (GMidiDevice)
 	{
 		int Length = Strm->TotalSize();
-		void* Data = Z_Malloc(Length, PU_STATIC, NULL);
+		void* Data = Z_Malloc(Length);
 		Strm->Seek(0);
 		Strm->Serialise(Data, Length);
 		Strm->Close();
@@ -1510,7 +1510,7 @@ static bool convert(VStream& Strm)
 
 	Strm.Seek((word)LittleShort(MUSh.ScoreStart));
 
-	tracks[0].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_STATIC, 0);
+	tracks[0].data = (char*)Z_Malloc(TRACKBUFFERSIZE);
 	TWriteBuf(0, midikey, 6);
 	TWriteBuf(0, miditempo, 7);
 
@@ -1526,7 +1526,7 @@ static bool convert(VStream& Strm)
 			MIDIchannel = MUS2MIDchannel[MUSchannel] =
 				(MUSchannel == 15 ? 9 : FirstChannelAvailable());
 			MIDItrack = MIDIchan2track[MIDIchannel] = TrackCnt++;
-			tracks[MIDItrack].data = (char*)Z_Malloc(TRACKBUFFERSIZE, PU_STATIC, 0);
+			tracks[MIDItrack].data = (char*)Z_Malloc(TRACKBUFFERSIZE);
 		}
 		else
 		{

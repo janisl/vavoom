@@ -138,7 +138,7 @@ void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	guard(VFlacSampleLoader::Load);
 	//	Create reader sream.
 	FStream* Strm = new FStream(Stream);
-	Strm->Data = Z_Malloc(1, PU_STATIC, 0);
+	Strm->Data = Z_Malloc(1);
 	Strm->init();
 	Strm->process_until_end_of_metadata();
 	if (!Strm->SampleRate)
@@ -553,7 +553,7 @@ void VFlacAudioCodec::FStream::metadata_callback(
 		PoolSize = metadata->data.stream_info.max_blocksize * 2;
 
 		SamplePool[0] = (FLAC__int32*)Z_Malloc(sizeof(FLAC__int32) *
-			PoolSize * NumChannels, PU_STATIC, 0);
+			PoolSize * NumChannels);
 		SamplePool[1] = SamplePool[0] + PoolSize;
 	}
 	unguard;
