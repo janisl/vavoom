@@ -108,10 +108,7 @@ void Host_Init()
 {
 	guard(Host_Init);
 	//  Memory must be initialised before anything else
-	void*	base;
-	int		size;
-	base = Sys_ZoneBase(&size);
-	Z_Init(base, size);
+	Z_Init();
 
 #if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
 	const char* HomeDir = getenv("HOME");

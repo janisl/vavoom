@@ -38,7 +38,8 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define ZONEID				0x1d4a11
+#define ZONEID				0x11
+#define SMALLID				0x22
 #define MINFRAGMENT			64
 
 // TYPES -------------------------------------------------------------------
@@ -51,15 +52,22 @@ inline void* operator new(size_t, void* p) { return p; }
 #define new ZONE_DEBUG_NEW
 #endif
 
-class TMemZone;
+enum
+{
+	ALIGN = 4
+};
+
+#define SMALL_HEADER_SIZE	(sizeof(vuint8) + sizeof(vuint8))
+
+#define ALIGN_SIZE(size)	(((size) + ALIGN - 1) & ~(ALIGN - 1))
 
 struct memblock_t
 {
-	int			size;	// including the header and possibly tiny fragments
-	int			tag;	// purgelevel, 0 if a free block
-	int			id;		// should be ZONEID
 	memblock_t*	next;
 	memblock_t*	prev;
+	vint32		size;	// including the header and possibly tiny fragments
+	vuint8		pad[3];
+	vuint8		id;		// should be ZONEID
 };
 
 struct MemDebug_t
@@ -84,7 +92,6 @@ class TMemZone
 	}
 	void Init();
 	void *Malloc(int size);
-	void Resize(void** ptr, int size);
 	void Free(void* ptr);
 	void CheckHeap();
 	int FreeMemory();
@@ -92,6 +99,8 @@ class TMemZone
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+void* Sys_ZoneBase(int*);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -123,11 +132,11 @@ void TMemZone::Init()
 	memblock_t* block = (memblock_t*)((char*)this + sizeof(TMemZone));
 	BlockList.next = block;
 	BlockList.prev = block;
-	BlockList.tag = 1;
+	BlockList.id = ZONEID;
 	Rover = block;
 
 	block->prev = block->next = &BlockList;
-	block->tag = 0; // 0 indicates a free block.
+	block->id = 0; // 0 indicates a free block.
 	block->size = Size - sizeof(TMemZone);
 	unguard;
 }
@@ -163,7 +172,7 @@ void *TMemZone::Malloc(int size)
 	base = Rover;
 	// if there is a free block behind the rover,
 	//  back up over them
-	if (!base->prev->tag)
+	if (!base->prev->id)
 		base = base->prev;
 
 	rover = base;
@@ -177,7 +186,7 @@ void *TMemZone::Malloc(int size)
 			return NULL;
 		}
 
-		if (rover->tag)
+		if (rover->id)
 		{
 			// hit a block so move base past it
 			base = rover = rover->next;
@@ -186,7 +195,7 @@ void *TMemZone::Malloc(int size)
 		{
 			rover = rover->next;
 		}
-	} while (base->tag || base->size < size);
+	} while (base->id || base->size < size);
 
 	
 	// found a block big enough
@@ -199,7 +208,7 @@ void *TMemZone::Malloc(int size)
 		newblock->size = extra;
 
 		// 0 indicates free block.
-		newblock->tag = 0;
+		newblock->id = 0;
 		newblock->prev = base;
 		newblock->next = base->next;
 		newblock->next->prev = newblock;
@@ -207,8 +216,6 @@ void *TMemZone::Malloc(int size)
 		base->next = newblock;
 		base->size = size;
 	}
-
-	base->tag = 1;
 
 	if (Rover == base)
 	{
@@ -220,114 +227,6 @@ void *TMemZone::Malloc(int size)
 
 	memset((void*)((char*)base + sizeof(memblock_t)), 0x6a, size - sizeof(memblock_t));
 	return (void*)((char*)base + sizeof(memblock_t));
-	unguard;
-}
-
-//==========================================================================
-//
-//	TMemZone::Resize
-//
-//	Resizes block
-//
-//==========================================================================
-
-void TMemZone::Resize(void** ptr, int size)
-{
-	guard(TMemZone::Resize);
-	memblock_t	*block;
-	memblock_t	*other;
-	void*		p;
-	int			extra;
-
-	block = (memblock_t *)((char*)(*ptr) - sizeof(memblock_t));
-
-	//FIXME already chacked
-	if (block->id != ZONEID)
-		Sys_Error("Z_Resize: resize a pointer without ZONEID");
-
-	size = (size + 3) & ~3;
-	size += sizeof(memblock_t);
-	if (size > block->size)
-	{
-		//
-		//	We need a bigger block
-		//
-
-		other = block->next;
-		// There is enough size to resize without moving data
-		if (!other->tag && (block->size + other->size >= size))
-		{
-			//Merge blocks
-			block->size += other->size;
-			block->next = other->next;
-			block->next->prev = block;
-			if (Rover == other)
-				Rover = block;
-
-			// If block is too big
-			extra = block->size - size;
-			if (extra > MINFRAGMENT)
-			{
-				// there will be a free fragment after the resized block
-				other = (memblock_t *)((char*)block + size );
-				other->size = extra;
-	
-				// 0 indicates free block.
-				other->tag = 0;
-				other->prev = block;
-				other->next = block->next;
-				other->next->prev = other;
-
-				block->next = other;
-				block->size = size;
-				if (Rover == block)
-					Rover = other;
-			}
-		}
-		else
-		{
-			// We have to allocate another block and move data
-			p = Malloc(size - sizeof(memblock_t));
-			memcpy(p, *ptr, block->size - sizeof(memblock_t));
-			Free(*ptr);
-			*ptr = p;
-		}
-	}
-	else
-	{
-		//
-		//	We need a smaller block or size is the same
-		//
-
-		extra = block->size - size;
-		if (extra > MINFRAGMENT)
-		{
-			// there will be a free fragment after the resized block
-			other = (memblock_t *)((char*)block + size );
-			other->size = extra;
-	
-			// 0 indicates free block.
-			other->tag = 0;
-			other->prev = block;
-			other->next = block->next;
-			other->next->prev = other;
-
-			block->next = other;
-			block->size = size;
-
-			block = other;
-			other = block->next;
-			if (!other->tag)
-			{
-				//	Merge two contiguous free blocks
-				block->size += other->size;
-				block->next = other->next;
-				block->next->prev = block;
-				if (Rover == other)
-					Rover = block;
-			}
-		}
-	}
 	unguard;
 }
 
@@ -350,10 +249,9 @@ void TMemZone::Free(void* ptr)
 		
 	// mark as free
 	block->id = 0;
-	block->tag = 0;
 
 	other = block->next;
-	if (!other->tag)
+	if (!other->id)
 	{
 		// merge the next free block onto the end
 		block->size += other->size;
@@ -365,7 +263,7 @@ void TMemZone::Free(void* ptr)
 	}
 	
 	other = block->prev;
-	if (!other->tag)
+	if (!other->id)
 	{
 		// merge with previous free block
 		other->size += block->size;
@@ -397,7 +295,7 @@ void TMemZone::CheckHeap()
 		if ( block->next->prev != block)
 			Sys_Error("Z_CheckHeap: next block doesn't have proper back link\n");
 
-		if (!block->tag && !block->next->tag)
+		if (!block->id && !block->next->id)
 			Sys_Error("Z_CheckHeap: two consecutive free blocks\n");
 	}
 	unguard;
@@ -422,7 +320,7 @@ int TMemZone::FreeMemory()
 
 	for (block = BlockList.next; block != &BlockList; block = block->next)
 	{
-		if (!block->tag)
+		if (!block->id)
 		{
 			free += block->size;
 			if (block->size > largest)
@@ -455,8 +353,8 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 
 	for (block = BlockList.next; ; block = block->next)
 	{
-		Ar.Logf("block:%p    size:%7i    tag:%3i",
-			block, block->size, block->tag);
+		Ar.Logf("block:%p    size:%7i    id:%3i",
+			block, block->size, block->id);
 
 		if (block->next == &BlockList)
 		{
@@ -474,7 +372,7 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 			Ar.Log("ERROR: next block doesn't have proper back link");
 		}
 
-		if (!block->tag && !block->next->tag)
+		if (!block->id && !block->next->id)
 		{
 			Ar.Log("ERROR: two consecutive free blocks");
 		}
@@ -489,9 +387,12 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 //
 //==========================================================================
 
-void Z_Init(void* base, int size)
+void Z_Init()
 {
 	guard(Z_Init);
+	void* base;
+	int size;
+	base = Sys_ZoneBase(&size);
 #ifdef ZONE_DEBUG_NEW
 #undef new
 #endif
@@ -567,49 +468,6 @@ void *Z_Calloc(int size, const char* FileName, int LineNumber)
 
 //==========================================================================
 //
-//	Z_Resize
-//
-//	Resizes block
-//
-//==========================================================================
-
-void Z_Resize(void** ptr, int size, const char* FileName, int LineNumber)
-{
-	guard(Z_Resize);
-	memblock_t*	block;
-	MemDebug_t*	m;
-
-	//	Check.
-	block = (memblock_t*)((char*)(*ptr) - sizeof(memblock_t) - sizeof(MemDebug_t));
-	if (block->id != ZONEID)
-		Sys_Error("Z_Resize: resize a pointer without ZONEID");
-
-	//	Unlink debug info.
-	m = (MemDebug_t*)((char*)(*ptr) - sizeof(MemDebug_t));
-	if (m->Next)
-		m->Next->Prev = m->Prev;
-	if (m == MemDebug)
-		MemDebug = m->Next;
-	else
-		m->Prev->Next = m->Next;
-
-	mainzone->Resize((void**)&m, size + sizeof(MemDebug_t));
-
-	//	New debug info.
-	m->FileName = FileName;
-	m->LineNumber = LineNumber;
-	m->Size = size;
-	m->Next = MemDebug;
-	if (MemDebug)
-		MemDebug->Prev = m;
-	MemDebug = m;
-
-	*ptr = (byte*)m + sizeof(MemDebug_t);
-	unguard;
-}
-
-//==========================================================================
-//
 //	Z_Free
 //
 //==========================================================================
@@ -647,8 +505,7 @@ static void Z_MemDebugDump()
 	int NumBlocks = 0;
 	for (MemDebug_t* m = MemDebug; m; m = m->Next)
 	{
-		memblock_t* b = (memblock_t*)((byte*)m - sizeof(memblock_t));
-		GCon->Logf("size %8d tag %3d at %s:%d", m->Size, b->tag,
+		GCon->Logf("size %8d at %s:%d", m->Size,
 			m->FileName, m->LineNumber);
 		NumBlocks++;
 	}
@@ -697,27 +554,6 @@ void *Z_Calloc(int size)
 {
 	guard(Z_Calloc);
 	return memset(Z_Malloc(size), 0, size);
-	unguard;
-}
-
-//==========================================================================
-//
-//	Z_Resize
-//
-//	Resizes block
-//
-//==========================================================================
-
-void Z_Resize(void** ptr, int size)
-{
-	guard(Z_Resize);
-	memblock_t	*block;
-
-	block = (memblock_t *)((char*)(*ptr) - sizeof(memblock_t));
-
-	if (block->id != ZONEID)
-		Sys_Error("Z_Resize: resize a pointer without ZONEID");
-	mainzone->Resize(ptr, size);
 	unguard;
 }
 
@@ -792,4 +628,52 @@ COMMAND(DumpHeap)
 	guard(COMMAND DumpHeap);
 	mainzone->DumpHeap(*GCon);
 	unguard;
+}
+
+//==========================================================================
+//
+//	Sys_ZoneBase
+//
+// 	Called by startup code to get the ammount of memory to malloc for the
+// zone management.
+//
+//==========================================================================
+
+void* Sys_ZoneBase(int* size)
+{
+#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
+#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
+
+	int			heap;
+	void*		ptr;
+	// Maximum allocated for zone heap (64meg default)
+	int			maxzone = 0x4000000;
+
+	const char* p = GArgs.CheckValue("-maxzone");
+	if (p)
+	{
+		maxzone = (int)(atof(p) * 0x100000);
+		if (maxzone < MINIMUM_HEAP_SIZE)
+			maxzone = MINIMUM_HEAP_SIZE;
+		if (maxzone > MAXIMUM_HEAP_SIZE)
+			maxzone = MAXIMUM_HEAP_SIZE;
+	}
+
+	heap = maxzone + 0x10000;
+	do
+	{
+		heap -= 0x10000;                // leave 64k alone
+		if (heap > maxzone)
+			heap = maxzone;
+		ptr = malloc(heap);
+	} while (!ptr);
+
+	dprintf("0x%x (%f meg) allocated for zone, Zone base 0x%p\n",
+		heap, (float)heap / (float)(1024 * 1024), ptr);
+
+	if (heap < 0x180000)
+		Sys_Error("Insufficient memory!");
+
+	*size = heap;
+	return ptr;
 }

@@ -39,8 +39,6 @@ VStr Sys_ReadDir();
 void Sys_CloseDir();
 bool Sys_DirExists(const VStr&);
 
-void* Sys_ZoneBase(int*);
-
 void __attribute__((noreturn, format(printf, 1, 2))) __declspec(noreturn) 
 	Sys_Error(const char*, ...);
 void __attribute__((noreturn)) __declspec(noreturn) Sys_Quit(const char*);

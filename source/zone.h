@@ -37,7 +37,7 @@ public:
 	explicit ZoneError(const char* text) : VavoomError(text) { }
 };
 
-void Z_Init(void* base, int size);
+void Z_Init();
 void Z_Shutdown();
 
 void Z_CheckHeap();
@@ -47,7 +47,6 @@ int Z_FreeMemory();
 
 void* Z_Malloc(int size, const char* FileName, int LineNumber);
 void* Z_Calloc(int size, const char* FileName, int LineNumber);
-void Z_Resize(void** ptr, int size, const char* FileName, int LineNumber);
 void Z_Free(void* ptr, const char* FileName, int LineNumber);
 
 inline void* operator new(size_t Size, const char* FileName, int LineNumber)
@@ -100,7 +99,6 @@ inline char *Z_StrDup(const char *src, const char* FileName, int LineNumber)
 
 #define Z_Malloc(size)				Z_Malloc(size, __FILE__, __LINE__)
 #define Z_Calloc(size)				Z_Calloc(size, __FILE__, __LINE__)
-#define Z_Resize(ptr, size)			Z_Resize(ptr, size, __FILE__, __LINE__)
 #define Z_Free(ptr)					Z_Free(ptr, __FILE__, __LINE__)
 
 #define Z_StrDup(src)				Z_StrDup(src, __FILE__, __LINE__)
@@ -113,8 +111,6 @@ inline char *Z_StrDup(const char *src, const char* FileName, int LineNumber)
 
 void* Z_Malloc(int size);
 void* Z_Calloc(int size);
-
-void Z_Resize(void** ptr, int size);
 void Z_Free(void* ptr);
 
 inline void* operator new(size_t Size)

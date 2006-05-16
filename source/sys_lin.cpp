@@ -47,7 +47,7 @@
 #ifdef __i386__
 extern "C" {
 
-void Sys_SetFPCW(void);
+void Sys_SetFPCW();
 
 }
 #endif
@@ -519,61 +519,11 @@ void Sys_Error(const char *error, ...)
 
 //==========================================================================
 //
-//	Sys_ZoneBase
-//
-// 	Called by startup code to get the ammount of memory to malloc for the
-// zone management.
-//
-//==========================================================================
-
-void* Sys_ZoneBase(int* size)
-{
-	#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
-	#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
-
-	int			heap;
-    void*		ptr;
-	// Maximum allocated for zone heap (64meg default)
-	int			maxzone = 0x4000000;
-
-	const char* p = GArgs.CheckValue("-maxzone");
-	if (p)
-    {
-		maxzone = (int)(atof(p) * 0x100000);
-		if (maxzone < MINIMUM_HEAP_SIZE)
-			maxzone = MINIMUM_HEAP_SIZE;
-		if (maxzone > MAXIMUM_HEAP_SIZE)
-			maxzone = MAXIMUM_HEAP_SIZE;
-	}
-
-	heap = maxzone + 0x10000;
-
-	do
-	{
-		heap -= 0x10000;                // leave 64k alone
-		if (heap > maxzone)
-			heap = maxzone;
-		ptr = malloc(heap);
-	} while (!ptr);
-
-	dprintf("  0x%x (%f meg) allocated for zone, ", heap,
-				(float)heap / (float)(1024 * 1024));
-	dprintf("ZoneBase: 0x%X\n", (int)ptr);
-
-	if (heap < 0x180000)
-		Sys_Error("Insufficient memory!");
-
-	*size = heap;
-    return ptr;
-}
-
-//==========================================================================
-//
 //	Sys_ConsoleInput
 //
 //==========================================================================
 
-char *Sys_ConsoleInput(void)
+char *Sys_ConsoleInput()
 {
     static char text[256];
     int     len;
@@ -666,8 +616,8 @@ static void signal_handler(int s)
 
 extern "C" {
 
-void Sys_LowFPPrecision(void){}
-void Sys_HighFPPrecision(void){}
+void Sys_LowFPPrecision(){}
+void Sys_HighFPPrecision(){}
 
 }
 

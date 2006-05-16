@@ -48,9 +48,6 @@
 
 #define R_OK	4
 
-#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
-#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
-
 #define PAUSE_SLEEP		50				// sleep time on pause or minimization
 #define NOT_FOCUS_SLEEP	20				// sleep time when not focus
 
@@ -469,92 +466,6 @@ void Sys_Error(const char *error, ...)
 	va_end(argptr);
 
 	throw VavoomError(buf);
-}
-
-//==========================================================================
-//
-//	Sys_PageIn
-//
-//==========================================================================
-
-volatile int sys_checksum;
-
-void Sys_PageIn(void *ptr, int size)
-{
-	byte	*x;
-	int		m, n;
-
-	// touch all the memory to make sure it's there. The 16-page skip is to
-	// keep Win 95 from thinking we're trying to page ourselves in (we are
-	// doing that, of course, but there's no reason we shouldn't)
-	x = (byte *)ptr;
-
-	for (n = 0; n < 4; n++)
-	{
-		for (m = 0; m < (size - 16 * 0x1000); m += 4)
-		{
-			sys_checksum += *(int *)&x[m];
-			sys_checksum += *(int *)&x[m + 16 * 0x1000];
-		}
-	}
-}
-
-//==========================================================================
-//
-//	Sys_ZoneBase
-//
-// 	Called by startup code to get the ammount of memory to malloc for the
-// zone management.
-//
-//==========================================================================
-
-void* Sys_ZoneBase(int* size)
-{
-	int			heap;
-	void*		ptr;
-	// Maximum allocated for zone heap (64meg default)
-	int			maxzone = 0x4000000;
-	MEMORYSTATUS	lpBuffer;
-
-	const char* p = GArgs.CheckValue("-maxzone");
-	if (p)
-	{
-		maxzone = (int)(atof(p) * 0x100000);
-		if (maxzone < MINIMUM_HEAP_SIZE)
-			maxzone = MINIMUM_HEAP_SIZE;
-		if (maxzone > MAXIMUM_HEAP_SIZE)
-			maxzone = MAXIMUM_HEAP_SIZE;
-	}
-
-	lpBuffer.dwLength = sizeof(MEMORYSTATUS);
-	GlobalMemoryStatus (&lpBuffer);
-
-	// take the greater of all the available memory or half the total memory,
-	// but at least 8 Mb
-	heap = lpBuffer.dwAvailPhys;
-
-	if (heap < MINIMUM_HEAP_SIZE)
-		heap = MINIMUM_HEAP_SIZE;
-
-	if (heap < int(lpBuffer.dwTotalPhys >> 1))
-		heap = lpBuffer.dwTotalPhys >> 1;
-
-	if (heap > maxzone)
-		heap = maxzone;
-
-	ptr = malloc(heap);
-	if (!ptr)
-	{
-		Sys_Error("Not enough memory");
-	}
-
-	dprintf("  0x%x (%f meg) allocated for zone, ZoneBase: 0x%X\n",
-		heap, (float)heap / (float)(1024 * 1024), (int)ptr);
-
-	Sys_PageIn(ptr, heap);
-
-	*size = heap;
-	return ptr;
 }
 
 //==========================================================================

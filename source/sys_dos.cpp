@@ -43,9 +43,6 @@
 
 //#define PROGS_PROFILE
 
-#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
-#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -466,66 +463,6 @@ void Sys_Error(const char *error, ...)
 	va_end(argptr);
 
 	throw VavoomError(buf);
-}
-
-//==========================================================================
-//
-//	Sys_ZoneBase
-//
-// 	Called by startup code to get the ammount of memory to malloc for the
-// zone management.
-//
-//==========================================================================
-
-void* Sys_ZoneBase(int* size)
-{
-	int			heap;
-    void*		ptr;
-	// Maximum allocated for zone heap (64meg default)
-	int			maxzone = 0x4000000;
-
-	const char* p = GArgs.CheckValue("-mem");
-	if (p)
-	{
-		heap = (int)(atof(p) * 0x100000);
-		ptr = malloc(heap);
-		if (!ptr)
-		{
-			Sys_Error("Couldn't alloc %d bytes", heap);
-		}
-	}
-	else
-	{
-		p = GArgs.CheckValue("-maxzone");
-		if (p)
-	    {
-			maxzone = (int)(atof(p) * 0x100000);
-			if (maxzone < MINIMUM_HEAP_SIZE)
-				maxzone = MINIMUM_HEAP_SIZE;
-			if (maxzone > MAXIMUM_HEAP_SIZE)
-				maxzone = MAXIMUM_HEAP_SIZE;
-		}
-
-		// 	Get available memory size
-		heap = _go32_dpmi_remaining_physical_memory();
-
-		do
-		{
-			heap -= 0x10000;                // leave 64k alone
-			if (heap > maxzone)
-				heap = maxzone;
-			ptr = malloc(heap);
-		} while (!ptr);
-	}
-
-	dprintf("0x%x (%f meg) allocated for zone, Zone base 0x%X\n",
-		heap, (float)heap / (float)(1024 * 1024), (int)ptr);
-
-	if (heap < 0x180000)
-		Sys_Error("Insufficient DPMI memory!");
-
-	*size = heap;
-    return ptr;
 }
 
 //==========================================================================
