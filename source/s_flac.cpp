@@ -227,22 +227,26 @@ VFlacSampleLoader::FStream::FStream(VStream& InStream)
 	const ::FLAC__Frame* frame, const FLAC__int32* const buffer[])
 {
 	guard(VFlacSampleLoader::FStream::write_callback);
-	Z_Resize(&Data, DataSize + frame->header.blocksize * SampleBits / 8);
+	void* Temp = Data;
+	Data = Z_Malloc(DataSize + frame->header.blocksize * SampleBits / 8);
+	memcpy(Data, Temp, DataSize);
+	Z_Free(Temp);
+
 	const FLAC__int32* pSrc = buffer[0];
 	if (SampleBits == 8)
 	{
-		byte* pDst = (byte*)Data + DataSize;
+		vuint8* pDst = (vuint8*)Data + DataSize;
 		for (size_t j = 0; j < frame->header.blocksize; j++, pSrc++, pDst++)
 		{
-			*pDst = byte(*pSrc) ^ 0x80;
+			*pDst = vuint8(*pSrc) ^ 0x80;
 		}
 	}
 	else
 	{
-		short* pDst = (short*)((byte*)Data + DataSize);
+		vint16* pDst = (vint16*)((vuint8*)Data + DataSize);
 		for (size_t j = 0; j < frame->header.blocksize; j++, pSrc++, pDst++)
 		{
-			*pDst = short(*pSrc);
+			*pDst = vint16(*pSrc);
 		}
 	}
 	DataSize += frame->header.blocksize * SampleBits / 8;

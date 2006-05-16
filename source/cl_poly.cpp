@@ -220,17 +220,19 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
 	int psIndex;
 	int psIndexOld;
 	seg_t *polySegList[PO_MAXPOLYSEGS];
-    int index;
+	int index;
 
 	index = GClLevel->NumPolyObjs++;
-	if (GClLevel->NumPolyObjs == 1)
-    {
-		GClLevel->PolyObjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t));
+	polyobj_t* Temp = GClLevel->PolyObjs;
+	GClLevel->PolyObjs = new polyobj_t[GClLevel->NumPolyObjs];
+	if (Temp)
+	{
+		for (i = 0; i < GClLevel->NumPolyObjs - 1; i++)
+		{
+			GClLevel->PolyObjs[i] = Temp[i];
+		}
+		delete[] Temp;
 	}
-    else
-    {
-    	Z_Resize((void**)&GClLevel->PolyObjs, GClLevel->NumPolyObjs * sizeof(polyobj_t));
-    }
 	memset(&GClLevel->PolyObjs[index], 0, sizeof(polyobj_t));
 
 	GClLevel->PolyObjs[index].startSpot.x = x;
@@ -244,7 +246,7 @@ void CL_PO_SpawnPolyobj(float x, float y, int tag)
 		{
 			if (GClLevel->PolyObjs[index].segs)
 			{
-            	//	Immpossible, because it is just cleared out
+				//	Immpossible, because it is just cleared out
 				Sys_Error("CL_PO_SpawnPolyobj:  Polyobj %d already spawned.\n", tag);
 			}
 			GClLevel->Segs[i].linedef->special = 0;

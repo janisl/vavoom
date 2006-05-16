@@ -38,6 +38,13 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct AnchorPoint_t
+{
+	float		x;
+	float		y;
+	int			tag;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -57,13 +64,7 @@ static void InitBlockMap();
 static int 		PolySegCount;
 static float	PolyStartX;
 static float	PolyStartY;
-static int		NumAnchorPoints = 0;
-static struct AnchorPoint_t
-{
-	float		x;
-	float		y;
-    int			tag;
-} *AnchorPoints;
+static TArray<AnchorPoint_t>	AnchorPoints;
 
 // CODE --------------------------------------------------------------------
 
@@ -596,13 +597,15 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 				<< (byte)tag;
 
 	index = GLevel->NumPolyObjs++;
-	if (GLevel->NumPolyObjs == 1)
+	polyobj_t* Temp = GLevel->PolyObjs;
+	GLevel->PolyObjs = new polyobj_t[GLevel->NumPolyObjs];
+	if (Temp)
     {
-		GLevel->PolyObjs = (polyobj_t*)Z_Malloc(sizeof(polyobj_t));
-	}
-    else
-    {
-    	Z_Resize((void**)&GLevel->PolyObjs, GLevel->NumPolyObjs * sizeof(polyobj_t));
+		for (i = 0; i < GLevel->NumPolyObjs - 1; i++)
+		{
+			GLevel->PolyObjs[i] = Temp[i];
+		}
+		delete[] Temp;
     }
 	memset(&GLevel->PolyObjs[index], 0, sizeof(polyobj_t));
 
@@ -741,20 +744,10 @@ void PO_SpawnPolyobj(float x, float y, int tag, int crush)
 void PO_AddAnchorPoint(float x, float y, int tag)
 {
 	guard(PO_AddAnchorPoint);
-	int		index;
-
-    index = NumAnchorPoints++;
-	if (NumAnchorPoints == 1)
-    {
-    	AnchorPoints = (AnchorPoint_t*)Z_Malloc(sizeof(*AnchorPoints));
-	}
-    else
-    {
-    	Z_Resize((void**)&AnchorPoints, NumAnchorPoints * sizeof(*AnchorPoints));
-    }
-	AnchorPoints[index].x = x;
-    AnchorPoints[index].y = y;
-    AnchorPoints[index].tag = tag;
+	AnchorPoint_t& A = AnchorPoints.Alloc();
+	A.x = x;
+	A.y = y;
+	A.tag = tag;
 	unguard;
 }
 
@@ -860,13 +853,11 @@ void PO_Init()
 	guard(PO_Init);
 	int				i;
 
-	for (i = 0; i < NumAnchorPoints; i++)
+	for (i = 0; i < AnchorPoints.Num(); i++)
 	{
 		TranslateToStartSpot(AnchorPoints[i].x, AnchorPoints[i].y,
 			AnchorPoints[i].tag);
 	}
-
-	NumAnchorPoints = 0;
 
 	// check for a startspot without an anchor point
 	for (i = 0; i < GLevel->NumPolyObjs; i++)
@@ -903,10 +894,6 @@ boolean PO_Busy(int polyobj)
 void PO_FreePolyobjData()
 {
 	guard(PO_FreePolyobjData);
-	if (AnchorPoints)
-	{
-		Z_Free(AnchorPoints);
-	}
-	AnchorPoints = NULL;
+	AnchorPoints.Clear();
 	unguard;
 }

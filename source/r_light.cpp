@@ -520,16 +520,12 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	// we must allocate a new block
 	if (is_colored)
 	{
-		if (!surf->lightmap_rgb)
+		if (surf->lightmap_rgb)
 		{
-			surf->lightmap_rgb = (rgb_t*)Z_Malloc(w * h * 3);
-			light_mem += w * h * 3;
+			Z_Free(surf->lightmap_rgb);
 		}
-		else
-		{
-			//	Must do this, because with scrolling textures extents can change
-			Z_Resize((void**)&surf->lightmap_rgb, w * h * 3);
-		}
+		surf->lightmap_rgb = (rgb_t*)Z_Malloc(w * h * 3);
+		light_mem += w * h * 3;
 
 		i = 0;
 		for (t = 0; t < h; t++)
@@ -598,16 +594,12 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 		}
 	}
 
-	if (!surf->lightmap)
+	if (surf->lightmap)
 	{
-		surf->lightmap = (byte*)Z_Malloc(w * h);
-		light_mem += w * h;
+		Z_Free(surf->lightmap);
 	}
-	else
-	{
-		//	Must do this, because with scrolling textures extents can change
-		Z_Resize((void**)&surf->lightmap, w * h);
-	}
+	surf->lightmap = (byte*)Z_Malloc(w * h);
+	light_mem += w * h;
 
 	i = 0;
 	for (t = 0; t < h; t++)

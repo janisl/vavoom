@@ -1745,21 +1745,23 @@ void FACSGrowingArray::Redim(int NewSize)
 	guard(FACSGrowingArray::Redim);
 	if (!NewSize && Data)
 	{
-		Z_Free(Data);
+		delete[] Data;
 		Data = NULL;
 	}
-	else if (NewSize && !Data)
+	else if (NewSize)
 	{
-		Data = (int*)Z_Malloc(sizeof(int) * NewSize);
-	}
-	else if (NewSize && Data)
-	{
-		Z_Resize((void**)&Data, NewSize * sizeof(int));
-	}
-	//	Clear newly allocated elements.
-	if (NewSize > Size)
-	{
-		memset(Data + Size, 0, (NewSize - Size) * sizeof(int));
+		int* Temp = Data;
+		Data = new int[NewSize];
+		if (Temp)
+		{
+			memcpy(Data, Temp, Min(Size, NewSize) * sizeof(int));
+			delete[] Temp;
+		}
+		//	Clear newly allocated elements.
+		if (NewSize > Size)
+		{
+			memset(Data + Size, 0, (NewSize - Size) * sizeof(int));
+		}
 	}
 	Size = NewSize;
 	unguard;
@@ -4698,156 +4700,3 @@ static void strbin(char *str)
 	}
 	*str = 0;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.50  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.49  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.48  2006/03/16 00:37:55  dj_jl
-//	Savegame size optimisations.
-//	
-//	Revision 1.47  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.46  2006/03/06 13:05:51  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.45  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.44  2006/02/28 18:19:31  dj_jl
-//	Put thinkers back in linked list.
-//	
-//	Revision 1.43  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.42  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.41  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.40  2006/02/15 23:28:18  dj_jl
-//	Moved all server progs global variables to classes.
-//	
-//	Revision 1.39  2006/02/05 18:52:44  dj_jl
-//	Moved common utils to level info class or built-in.
-//	
-//	Revision 1.38  2005/12/29 19:51:54  dj_jl
-//	Fixed missing return.
-//	
-//	Revision 1.37  2005/12/27 22:24:00  dj_jl
-//	Created level info class, moved action special handling to it.
-//	
-//	Revision 1.36  2005/12/22 19:05:27  dj_jl
-//	Added extra licence.
-//	
-//	Revision 1.35  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.34  2005/05/26 16:53:59  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.33  2005/03/28 07:29:24  dj_jl
-//	Temporary fix for save/load of local vars.
-//	
-//	Revision 1.32  2005/01/24 12:56:30  dj_jl
-//	Fixed inc/dec of map variables.
-//	
-//	Revision 1.31  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.30  2004/12/22 07:49:13  dj_jl
-//	More extended ACS support, more linedef flags.
-//	
-//	Revision 1.29  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.28  2004/11/01 07:31:15  dj_jl
-//	Replaced function pointer array with big swutch statement.
-//	
-//	Revision 1.27  2004/10/07 06:47:11  dj_jl
-//	Behavior lump size check.
-//	
-//	Revision 1.26  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.25  2003/11/12 16:47:40  dj_jl
-//	Changed player structure into a class
-//	
-//	Revision 1.24  2003/07/11 16:45:20  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.23  2003/03/08 12:10:13  dj_jl
-//	API fixes.
-//	
-//	Revision 1.22  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.21  2002/08/28 16:41:09  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.20  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.19  2002/07/23 13:10:37  dj_jl
-//	Some fixes for switching to floating-point time.
-//	
-//	Revision 1.18  2002/07/13 07:50:58  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.17  2002/04/11 16:42:09  dj_jl
-//	Renamed Think to Tick.
-//	
-//	Revision 1.16  2002/03/16 17:55:11  dj_jl
-//	Some small changes.
-//	
-//	Revision 1.15  2002/03/09 18:05:34  dj_jl
-//	Added support for defining native functions outside pr_cmds
-//	
-//	Revision 1.14  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.13  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.12  2002/01/11 08:13:35  dj_jl
-//	Fixed sector sound
-//	
-//	Revision 1.11  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.10  2001/12/27 17:33:29  dj_jl
-//	Removed thinker list
-//	
-//	Revision 1.9  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.8  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.7  2001/10/09 17:28:41  dj_jl
-//	Moved thing counting to progs
-//	
-//	Revision 1.6  2001/10/02 17:43:50  dj_jl
-//	Added addfields to lines, sectors and polyobjs
-//	
-//	Revision 1.5  2001/09/20 16:30:28  dj_jl
-//	Started to use object-oriented stuff in progs
-//	
-//	Revision 1.4  2001/08/29 17:55:42  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
