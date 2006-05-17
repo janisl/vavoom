@@ -2319,8 +2319,6 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 		GLevelInfo->eventSpawnSpecials();
 	}
 
-	Z_CheckHeap();
-
 	SV_InitModelLists();
 
 	if (!spawn_thinkers)

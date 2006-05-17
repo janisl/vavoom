@@ -38,37 +38,22 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define ZONEID				0x11
 #define SMALLID				0x22
-#define MINFRAGMENT			64
+#define LARGEID				0x33
 
 // TYPES -------------------------------------------------------------------
-
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-inline void* operator new(size_t, void* p) { return p; }
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
 
 enum
 {
 	ALIGN = 4
 };
 
-#define SMALL_HEADER_SIZE	(sizeof(vuint8) + sizeof(vuint8))
+#define ALIGN_SIZE(bytes)	(((bytes) + ALIGN - 1) & ~(ALIGN - 1))
 
-#define ALIGN_SIZE(size)	(((size) + ALIGN - 1) & ~(ALIGN - 1))
+#define SMALL_HEADER_SIZE	ALIGN_SIZE(sizeof(vuint8) + sizeof(vuint8))
+#define LARGE_HEADER_SIZE	ALIGN_SIZE(sizeof(void*) + sizeof(vuint8))
 
-struct memblock_t
-{
-	memblock_t*	next;
-	memblock_t*	prev;
-	vint32		size;	// including the header and possibly tiny fragments
-	vuint8		pad[3];
-	vuint8		id;		// should be ZONEID
-};
+#define SMALL_ALIGN(bytes)	(ALIGN_SIZE((bytes) + SMALL_HEADER_SIZE) - SMALL_HEADER_SIZE)
 
 struct MemDebug_t
 {
@@ -81,26 +66,43 @@ struct MemDebug_t
 
 class TMemZone
 {
- public:
-	int			Size;   	// total bytes malloced, including header
-	memblock_t	BlockList;  // start / end cap for linked list
-	memblock_t*	Rover;
-
-	TMemZone(int Asize) : Size(Asize)
-	{
-		Init();
-	}
+public:
 	void Init();
-	void *Malloc(int size);
-	void Free(void* ptr);
-	void CheckHeap();
-	int FreeMemory();
-	void DumpHeap(FOutputDevice &Ar);
+	void Shutdown();
+
+	void* Alloc(size_t Bytes);
+	void Free(void* Ptr);
+
+private:
+	struct VPage
+	{
+		void*		Data;
+		size_t		Size;
+
+		VPage*		Prev;
+		VPage*		Next;
+	};
+
+	size_t			PageSize;
+
+	void*			SmallFirstFree[256 / ALIGN + 1];
+	VPage*			SmallPage;
+	size_t			SmallOffset;
+	VPage*			SmallUsedPages;
+
+	VPage*			LargeFirstUsedPage;
+
+	VPage* AllocPage(size_t Bytes);
+	void FreePage(VPage* Page);
+
+	void* SmallAlloc(size_t Bytes);
+	void SmallFree(void* Ptr);
+
+	void* LargeAlloc(size_t Bytes);
+	void LargeFree(void* Ptr);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-void* Sys_ZoneBase(int*);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -128,105 +130,59 @@ static MemDebug_t*	MemDebug;
 void TMemZone::Init()
 {
 	guard(TMemZone::Init);
-	// set the entire zone to one free block
-	memblock_t* block = (memblock_t*)((char*)this + sizeof(TMemZone));
-	BlockList.next = block;
-	BlockList.prev = block;
-	BlockList.id = ZONEID;
-	Rover = block;
+	PageSize = 65536 - sizeof(VPage);
 
-	block->prev = block->next = &BlockList;
-	block->id = 0; // 0 indicates a free block.
-	block->size = Size - sizeof(TMemZone);
+	memset(SmallFirstFree, 0, sizeof(SmallFirstFree));
+	SmallPage = AllocPage(PageSize);
+	SmallOffset = 0;
+	SmallUsedPages = NULL;
+
+	LargeFirstUsedPage = NULL;
 	unguard;
 }
 
 //==========================================================================
 //
-//	TMemZone::Malloc
+//	TMemZone::Shutdown
 //
 //==========================================================================
 
-void *TMemZone::Malloc(int size)
+void TMemZone::Shutdown()
 {
-	guard(TMemZone::Malloc);
-	int			extra;
-	memblock_t*	start;
-	memblock_t* rover;
-	memblock_t* newblock;
-	memblock_t*	base;
-
-	if (!size)
-		size = 4;
-
-	size = (size + 3) & ~3;
-
-	// scan through the block list,
-	// looking for the first free block
-	// of sufficient size,
-	// throwing out any purgable blocks along the way.
-
-	// account for size of block header
-	size += sizeof(memblock_t);
-
-	base = Rover;
-	// if there is a free block behind the rover,
-	//  back up over them
-	if (!base->prev->id)
-		base = base->prev;
-
-	rover = base;
-	start = base->prev;
-
-	do
+	guard(TMemZone::Shutdown);
+	//	Free small allocation pages.
+	for (VPage* Page = SmallUsedPages; Page;)
 	{
-		if (rover == start)
-		{
-			// scanned all the way around the list
-			return NULL;
-		}
-
-		if (rover->id)
-		{
-			// hit a block so move base past it
-			base = rover = rover->next;
-		}
-		else
-		{
-			rover = rover->next;
-		}
-	} while (base->id || base->size < size);
-
-	
-	// found a block big enough
-	extra = base->size - size;
-
-	if (extra > MINFRAGMENT)
-	{
-		// there will be a free fragment after the allocated block
-		newblock = (memblock_t*)((char*)base + size);
-		newblock->size = extra;
-
-		// 0 indicates free block.
-		newblock->id = 0;
-		newblock->prev = base;
-		newblock->next = base->next;
-		newblock->next->prev = newblock;
-
-		base->next = newblock;
-		base->size = size;
+		VPage* Next = Page->Next;
+		FreePage(Page);
+		Page = Next;
 	}
+	FreePage(SmallPage);
 
-	if (Rover == base)
+	//	Free large allocation pages.
+	for (VPage* Page = LargeFirstUsedPage; Page;)
 	{
-		// next allocation will start looking here
-		Rover = base->next;
+		VPage* Next = Page->Next;
+		FreePage(Page);
+		Page = Next;
 	}
+	unguard;
+}
 
-	base->id = ZONEID;
+//==========================================================================
+//
+//	TMemZone::Alloc
+//
+//==========================================================================
 
-	memset((void*)((char*)base + sizeof(memblock_t)), 0x6a, size - sizeof(memblock_t));
-	return (void*)((char*)base + sizeof(memblock_t));
+void* TMemZone::Alloc(size_t Bytes)
+{
+	guard(TMemZone::Alloc);
+	if (Bytes < 256)
+	{
+		return SmallAlloc(Bytes);
+	}
+	return LargeAlloc(Bytes);
 	unguard;
 }
 
@@ -236,148 +192,183 @@ void *TMemZone::Malloc(int size)
 //
 //==========================================================================
 
-void TMemZone::Free(void* ptr)
+void TMemZone::Free(void* Ptr)
 {
 	guard(TMemZone::Free);
-	memblock_t*		block;
-	memblock_t*		other;
-
-	block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
-
-	if (block->id != ZONEID)
-		Sys_Error("Z_Free: freed a pointer without ZONEID");
-		
-	// mark as free
-	block->id = 0;
-
-	other = block->next;
-	if (!other->id)
+	switch (((vuint8*)Ptr)[-1])
 	{
-		// merge the next free block onto the end
-		block->size += other->size;
-		block->next = other->next;
-		block->next->prev = block;
-
-		if (other == Rover)
-			Rover = block;
-	}
-	
-	other = block->prev;
-	if (!other->id)
-	{
-		// merge with previous free block
-		other->size += block->size;
-		other->next = block->next;
-		other->next->prev = other;
-
-		if (block == Rover)
-			Rover = other;
+	case SMALLID:
+		SmallFree(Ptr);
+		break;
+	case LARGEID:
+		LargeFree(Ptr);
+		break;
+	default:
+		Sys_Error("Invalid memory block");
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	TMemZone::CheckHeap
+//	TMemZone::AllocPage
 //
 //==========================================================================
 
-void TMemZone::CheckHeap()
+TMemZone::VPage* TMemZone::AllocPage(size_t Bytes)
 {
-	guard(TMemZone::CheckHeap);
-	memblock_t*	block;
-
-	for (block = BlockList.next; block->next != &BlockList; block = block->next)
+	guard(TMemZone::AllocPage);
+	size_t Size = Bytes + sizeof(VPage);
+	VPage* P = (VPage*)::malloc(Size);
+	if (!P)
 	{
-		if ((char*)block + block->size != (char*)block->next)
-			Sys_Error("Z_CheckHeap: block size does not touch the next block\n");
-
-		if ( block->next->prev != block)
-			Sys_Error("Z_CheckHeap: next block doesn't have proper back link\n");
-
-		if (!block->id && !block->next->id)
-			Sys_Error("Z_CheckHeap: two consecutive free blocks\n");
+		Sys_Error("Failed to allocate %d bytes", Bytes);
 	}
+	P->Data = P + 1;
+	P->Size = Bytes;
+	P->Prev = NULL;
+	P->Next = NULL;
+	return P;
 	unguard;
 }
 
 //==========================================================================
 //
-//	TMemZone::FreeMemory
+//	TMemZone::FreePage
 //
 //==========================================================================
 
-int TMemZone::FreeMemory()
+void TMemZone::FreePage(TMemZone::VPage* Page)
 {
-	guard(TMemZone::FreeMemory);
-	memblock_t*		block;
-	int				free = 0;
-	int				largest = 0;
-	int				numblocks = 0;
-	int				purgable = 0;
-	int				largestpurgable = 0;
-	int				purgableblocks = 0;
-
-	for (block = BlockList.next; block != &BlockList; block = block->next)
-	{
-		if (!block->id)
-		{
-			free += block->size;
-			if (block->size > largest)
-			{
-				largest = block->size;
-			}
-			numblocks++;
-		}
-	}
-	GCon->Logf(NAME_Dev, "Free memory %d, largest block %d, free blocks %d",
-		free, largest, numblocks);
-	GCon->Logf(NAME_Dev, "Purgable memory %d, largest block %d, total blocks %d",
-		purgable, largestpurgable, purgableblocks);
-	return free;
+	guard(TMemZone::FreePage);
+	check(Page);
+	::free(Page);
 	unguard;
 }
 
 //==========================================================================
 //
-//	TMemZone::DumpHeap
+//	TMemZone::SmallAlloc
 //
 //==========================================================================
 
-void TMemZone::DumpHeap(FOutputDevice &Ar)
+void* TMemZone::SmallAlloc(size_t Bytes)
 {
-	guard(TMemZone::DumpHeap);
-	memblock_t*	block;
-
-	Ar.Logf("zone size: %d  location: %p", Size, this);
-
-	for (block = BlockList.next; ; block = block->next)
+	guard(TMemZone::SmallAlloc);
+	//	We need enough memory for the free list.
+	if (Bytes < sizeof(void*))
 	{
-		Ar.Logf("block:%p    size:%7i    id:%3i",
-			block, block->size, block->id);
-
-		if (block->next == &BlockList)
-		{
-			// all blocks have been hit
-			break;
-		}
-	
-		if ((byte *)block + block->size != (byte *)block->next)
-		{
-			Ar.Log("ERROR: block size does not touch the next block");
-		}
-
-		if (block->next->prev != block)
-		{
-			Ar.Log("ERROR: next block doesn't have proper back link");
-		}
-
-		if (!block->id && !block->next->id)
-		{
-			Ar.Log("ERROR: two consecutive free blocks");
-		}
+		Bytes = sizeof(void*);
 	}
-	return;
+
+	//	Align the size.
+	Bytes = SMALL_ALIGN(Bytes);
+	vuint8* SmallBlock = (vuint8*)SmallFirstFree[Bytes / ALIGN];
+	if (SmallBlock)
+	{
+		vuint8* Ptr = SmallBlock + SMALL_HEADER_SIZE;
+		SmallFirstFree[Bytes / ALIGN] = *(void**)Ptr;
+		Ptr[-1] = SMALLID;
+		return Ptr;
+	}
+
+	size_t BytesLeft = PageSize - SmallOffset;
+	if (BytesLeft < Bytes + SMALL_HEADER_SIZE)
+	{
+		//	Add current page to the used ones.
+		SmallPage->Next = SmallUsedPages;
+		SmallUsedPages = SmallPage;
+		SmallPage = AllocPage(PageSize);
+		SmallOffset = 0;
+	}
+
+	SmallBlock = (vuint8*)SmallPage->Data + SmallOffset;
+	vuint8* Ptr = SmallBlock + SMALL_HEADER_SIZE;
+	SmallBlock[0] = (vuint8)(Bytes / ALIGN);
+	Ptr[-1] = SMALLID;
+	SmallOffset += Bytes + SMALL_HEADER_SIZE;
+	return Ptr;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TMemZone::SmallFree
+//
+//==========================================================================
+
+void TMemZone::SmallFree(void* Ptr)
+{
+	guard(TMemZone::SmallFree);
+	((vuint8*)Ptr)[-1] = 0;
+
+	vuint8* Block = (vuint8*)Ptr - SMALL_HEADER_SIZE;
+	size_t Idx = *Block;
+	check(Idx <= 256 / ALIGN);
+
+	*((void**)Ptr) = SmallFirstFree[Idx];
+	SmallFirstFree[Idx] = Block;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TMemZone::LargeAlloc
+//
+//==========================================================================
+
+void* TMemZone::LargeAlloc(size_t Bytes)
+{
+	guard(TMemZone::LargeAlloc);
+	VPage* P = AllocPage(Bytes + LARGE_HEADER_SIZE);
+
+	vuint8* Ptr = (vuint8*)P->Data + LARGE_HEADER_SIZE;
+	*(void**)P->Data = P;
+	Ptr[-1] = LARGEID;
+
+	//	Link to 'large used page list'
+	P->Prev = NULL;
+	P->Next = LargeFirstUsedPage;
+	if (P->Next)
+	{
+		P->Next->Prev = P;
+	}
+	LargeFirstUsedPage = P;
+
+	return Ptr;
+	unguard;
+}
+
+//==========================================================================
+//
+//	TMemZone::LargeFree
+//
+//==========================================================================
+
+void TMemZone::LargeFree(void* Ptr)
+{
+	guard(TMemZone::LargeFree);
+	((vuint8*)Ptr)[-1] = 0;
+
+	//	Get page pointer
+	VPage* P = (VPage*)(*((void**)(((vuint8*)Ptr) - LARGE_HEADER_SIZE)));
+
+	//	Unlink from doubly linked list
+	if (P->Prev)
+	{
+		P->Prev->Next = P->Next;
+	}
+	if (P->Next)
+	{
+		P->Next->Prev = P->Prev;
+	}
+	if (P == LargeFirstUsedPage)
+	{
+		LargeFirstUsedPage = P->Next;
+	}
+	P->Next = P->Prev = NULL;
+
+	FreePage(P);
 	unguard;
 }
 
@@ -390,16 +381,8 @@ void TMemZone::DumpHeap(FOutputDevice &Ar)
 void Z_Init()
 {
 	guard(Z_Init);
-	void* base;
-	int size;
-	base = Sys_ZoneBase(&size);
-#ifdef ZONE_DEBUG_NEW
-#undef new
-#endif
-	mainzone = new(base) TMemZone(size);
-#ifdef ZONE_DEBUG_NEW
-#define new ZONE_DEBUG_NEW
-#endif
+	mainzone = (TMemZone*)::malloc(sizeof(TMemZone));
+	mainzone->Init();
 	unguard;
 }
 
@@ -412,9 +395,11 @@ void Z_Init()
 void Z_Shutdown()
 {
 #ifdef ZONE_DEBUG
-	mainzone->DumpHeap(*GCon);
 	Z_MemDebugDump();
 #endif
+	mainzone->Shutdown();
+	::free(mainzone);
+	mainzone = NULL;
 }
 
 #ifdef ZONE_DEBUG
@@ -433,10 +418,18 @@ void Z_Shutdown()
 void *Z_Malloc(int size, const char* FileName, int LineNumber)
 {
 	guard(Z_Malloc);
-	void* ptr = mainzone->Malloc(size + sizeof(MemDebug_t));
+	if (!size)
+	{
+		return NULL;
+	}
+	if (!mainzone)
+	{
+		return ::malloc(size);
+	}
+
+	void* ptr = mainzone->Alloc(size + sizeof(MemDebug_t));
 	if (!ptr)
 	{
-		mainzone->DumpHeap(*GCon);
 		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
 	}
 
@@ -475,11 +468,16 @@ void *Z_Calloc(int size, const char* FileName, int LineNumber)
 void Z_Free(void* ptr, const char* FileName, int LineNumber)
 {
 	guard(Z_Free);
-	memblock_t*		block;
-
-	block = (memblock_t *)((char*)ptr - sizeof(memblock_t) - sizeof(MemDebug_t));
-	if (block->id != ZONEID)
-		Sys_Error("Z_Free: freed a pointer without ZONEID from %s:%d", FileName, LineNumber);
+	if (!ptr)
+	{
+		return;
+	}
+	if (!mainzone)
+	{
+		//::free(ptr);
+		dprintf("Z_Free after Z_Shutdown at %s:%d\n", FileName, LineNumber);
+		return;
+	}
 
 	//	Unlink debug info.
 	MemDebug_t* m = (MemDebug_t*)((char*)ptr - sizeof(MemDebug_t));
@@ -505,7 +503,7 @@ static void Z_MemDebugDump()
 	int NumBlocks = 0;
 	for (MemDebug_t* m = MemDebug; m; m = m->Next)
 	{
-		GCon->Logf("size %8d at %s:%d", m->Size,
+		GCon->Logf("block %p size %8d at %s:%d", m + 1, m->Size,
 			m->FileName, m->LineNumber);
 		NumBlocks++;
 	}
@@ -534,10 +532,18 @@ COMMAND(MemDebugDump)
 void *Z_Malloc(int size)
 {
 	guard(Z_Malloc);
-	void* ptr = mainzone->Malloc(size);
+	if (!size)
+	{
+		return NULL;
+	}
+	if (!mainzone)
+	{
+		return ::malloc(size);
+	}
+
+	void* ptr = mainzone->Alloc(size);
 	if (!ptr)
 	{
-		mainzone->DumpHeap(*GCon);
 		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
 	}
 	return ptr;
@@ -566,114 +572,18 @@ void *Z_Calloc(int size)
 void Z_Free(void* ptr)
 {
 	guard(Z_Free);
-	memblock_t*		block;
+	if (!ptr)
+	{
+		return;
+	}
+	if (!mainzone)
+	{
+		::free(ptr);
+		return;
+	}
 
-	block = (memblock_t *)((char*)ptr - sizeof(memblock_t));
-
-	if (block->id != ZONEID)
-		Sys_Error("Z_Free: freed a pointer without ZONEID");
 	mainzone->Free(ptr);
 	unguard;
 }
 
 #endif
-
-//==========================================================================
-//
-//	Z_CheckHeap
-//
-//==========================================================================
-
-void Z_CheckHeap()
-{
-	guard(Z_CheckHeap);
-	mainzone->CheckHeap();
-	unguard;
-}
-
-//==========================================================================
-//
-//	Z_FreeMemory
-//
-//==========================================================================
-
-int Z_FreeMemory()
-{
-	guard(Z_FreeMemory);
-	return mainzone->FreeMemory();
-	unguard;
-}
-
-//==========================================================================
-//
-//	COMMAND FreeMemory
-//
-//==========================================================================
-
-COMMAND(FreeMemory)
-{
-	guard(COMMAND FreeMemory);
-	mainzone->FreeMemory();
-	unguard;
-}
-
-//==========================================================================
-//
-//	COMMAND DumpHeap
-//
-//==========================================================================
-
-COMMAND(DumpHeap)
-{
-	guard(COMMAND DumpHeap);
-	mainzone->DumpHeap(*GCon);
-	unguard;
-}
-
-//==========================================================================
-//
-//	Sys_ZoneBase
-//
-// 	Called by startup code to get the ammount of memory to malloc for the
-// zone management.
-//
-//==========================================================================
-
-void* Sys_ZoneBase(int* size)
-{
-#define MINIMUM_HEAP_SIZE	0x800000		//   8 meg
-#define MAXIMUM_HEAP_SIZE	0x8000000		// 128 meg
-
-	int			heap;
-	void*		ptr;
-	// Maximum allocated for zone heap (64meg default)
-	int			maxzone = 0x4000000;
-
-	const char* p = GArgs.CheckValue("-maxzone");
-	if (p)
-	{
-		maxzone = (int)(atof(p) * 0x100000);
-		if (maxzone < MINIMUM_HEAP_SIZE)
-			maxzone = MINIMUM_HEAP_SIZE;
-		if (maxzone > MAXIMUM_HEAP_SIZE)
-			maxzone = MAXIMUM_HEAP_SIZE;
-	}
-
-	heap = maxzone + 0x10000;
-	do
-	{
-		heap -= 0x10000;                // leave 64k alone
-		if (heap > maxzone)
-			heap = maxzone;
-		ptr = malloc(heap);
-	} while (!ptr);
-
-	dprintf("0x%x (%f meg) allocated for zone, Zone base 0x%p\n",
-		heap, (float)heap / (float)(1024 * 1024), ptr);
-
-	if (heap < 0x180000)
-		Sys_Error("Insufficient memory!");
-
-	*size = heap;
-	return ptr;
-}

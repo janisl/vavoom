@@ -40,9 +40,6 @@ public:
 void Z_Init();
 void Z_Shutdown();
 
-void Z_CheckHeap();
-int Z_FreeMemory();
-
 #ifdef ZONE_DEBUG
 
 void* Z_Malloc(int size, const char* FileName, int LineNumber);

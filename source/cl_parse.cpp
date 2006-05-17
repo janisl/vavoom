@@ -532,8 +532,6 @@ static void CL_ParseServerInfo()
 
 	SB_Start();
 
-	Z_CheckHeap();
-
 	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
 }

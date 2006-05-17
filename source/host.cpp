@@ -54,9 +54,6 @@ public:
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-int Z_FreeMemory();
-void G_DoLoadGame();
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -180,8 +177,6 @@ void Host_Init()
 #endif
 
 	NET_Init();
-
-	Z_FreeMemory();
 
 	GCmdBuf.Exec();
 
