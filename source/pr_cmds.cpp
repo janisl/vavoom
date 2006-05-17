@@ -2989,7 +2989,7 @@ PF(TranslateKey)
 	int ch;
 
 	ch = Pop();
-	Push(IN_TranslateKey(ch));
+	Push(GInput->TranslateKey(ch));
 }
 
 #endif
@@ -3112,7 +3112,6 @@ struct slist_t;
 char* P_GetMapName(int map);
 char* P_GetMapLumpName(int map);
 char *P_TranslateMap(int map);
-void KeyNameForNum(int KeyNr, char* NameString);
 
 void StartSearch(void);
 slist_t * GetSlist(void);
@@ -3148,7 +3147,7 @@ PF(KeyNameForNum)
 
 	str = Pop();
 	keynum = Pop();
-	KeyNameForNum(keynum, (char*)str);
+	strcpy((char*)str, *GInput->KeyNameForNum(keynum));
 }
 
 PF(IN_GetBindingKeys)
@@ -3160,7 +3159,7 @@ PF(IN_GetBindingKeys)
 	key2 = (int*)Pop();
 	key1 = (int*)Pop();
 	name = Pop();
-	IN_GetBindingKeys((char*)name, *key1, *key2);
+	GInput->GetBindingKeys((char*)name, *key1, *key2);
 }
 
 PF(IN_SetBinding)
@@ -3172,7 +3171,7 @@ PF(IN_SetBinding)
 	onup = Pop();
 	ondown = Pop();
 	keynum = Pop();
-	IN_SetBinding(keynum, (char*)ondown, (char*)onup);
+	GInput->SetBinding(keynum, (char*)ondown, (char*)onup);
 }
 
 PF(SV_GetSaveString)
@@ -3464,260 +3463,3 @@ builtin_info_t BuiltinInfo[] =
 #endif
 	{NULL, NULL, NULL}
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.84  2006/04/10 17:45:22  dj_jl
-//	Fixed get sound info builtin.
-//
-//	Revision 1.83  2006/04/06 21:50:51  dj_jl
-//	For some builtins changed string arguments to names.
-//	
-//	Revision 1.82  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//	Revision 1.81  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.80  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//	
-//	Revision 1.79  2006/03/13 18:32:45  dj_jl
-//	Added function to check if a state is in the range.
-//	
-//	Revision 1.78  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.77  2006/03/10 19:31:25  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.76  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.75  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.74  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.73  2006/02/28 18:06:28  dj_jl
-//	Put thinkers back in linked list.
-//	
-//	Revision 1.72  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.71  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.70  2006/02/17 19:22:46  dj_jl
-//	Builtins belong to object class.
-//	
-//	Revision 1.69  2006/02/15 23:27:40  dj_jl
-//	Added script ID class attribute.
-//	
-//	Revision 1.68  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.67  2006/02/05 18:52:44  dj_jl
-//	Moved common utils to level info class or built-in.
-//	
-//	Revision 1.66  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//	
-//	Revision 1.65  2006/01/10 19:47:00  dj_jl
-//	Added builtin for changing the music.
-//	
-//	Revision 1.64  2005/12/11 21:37:00  dj_jl
-//	Made path traversal callbacks class members.
-//	
-//	Revision 1.63  2005/12/07 22:53:26  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.62  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.61  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.60  2005/11/08 20:57:15  dj_jl
-//	Removed playing sound till done.
-//	
-//	Revision 1.59  2005/11/05 16:01:32  dj_jl
-//	Added builtin to stop local sounds.
-//	
-//	Revision 1.58  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.57  2005/11/03 22:47:17  dj_jl
-//	Builtin for drawing coloured rectangles.
-//	
-//	Revision 1.56  2005/06/04 13:59:02  dj_jl
-//	Adding support for Boom fake sectors.
-//	
-//	Revision 1.55  2005/05/26 16:53:59  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.54  2005/03/28 07:28:19  dj_jl
-//	Transfer lighting and other BOOM stuff.
-//	
-//	Revision 1.53  2005/03/16 15:04:44  dj_jl
-//	More work on line specials.
-//	
-//	Revision 1.52  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.51  2004/12/22 07:49:13  dj_jl
-//	More extended ACS support, more linedef flags.
-//	
-//	Revision 1.50  2004/08/18 18:05:46  dj_jl
-//	Support for higher virtual screen resolutions.
-//	
-//	Revision 1.49  2003/11/12 16:47:40  dj_jl
-//	Changed player structure into a class
-//	
-//	Revision 1.48  2003/10/31 07:50:44  dj_jl
-//	Line texture setting function
-//	
-//	Revision 1.47  2003/09/26 16:58:42  dj_jl
-//	Wrapped text printing
-//	
-//	Revision 1.46  2003/07/11 16:45:20  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.45  2003/03/08 12:10:13  dj_jl
-//	API fixes.
-//	
-//	Revision 1.44  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.43  2002/08/28 16:41:09  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.42  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.41  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.40  2002/07/13 07:48:08  dj_jl
-//	Moved some global functions to Entity class.
-//	
-//	Revision 1.39  2002/06/22 07:10:42  dj_jl
-//	Added FindClass.
-//	
-//	Revision 1.38  2002/04/11 16:44:44  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.37  2002/03/28 18:03:53  dj_jl
-//	Added SV_GetModelIndex
-//	
-//	Revision 1.36  2002/03/09 18:05:34  dj_jl
-//	Added support for defining native functions outside pr_cmds
-//	
-//	Revision 1.35  2002/03/02 17:27:48  dj_jl
-//	Renamed builtin Spawn to SpawnObject
-//	
-//	Revision 1.34  2002/02/26 17:53:08  dj_jl
-//	Fixes for menus.
-//	
-//	Revision 1.33  2002/02/22 18:09:52  dj_jl
-//	Some improvements, beautification.
-//	
-//	Revision 1.32  2002/02/15 19:12:03  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.31  2002/02/02 19:20:41  dj_jl
-//	VMethod pointers used instead of the function numbers
-//	
-//	Revision 1.30  2002/01/29 18:17:27  dj_jl
-//	Fixed saving of mobj pointers
-//	
-//	Revision 1.29  2002/01/12 18:04:01  dj_jl
-//	Added unarchieving of names
-//	
-//	Revision 1.28  2002/01/11 18:22:41  dj_jl
-//	Started to use names in progs
-//	
-//	Revision 1.27  2002/01/11 08:08:26  dj_jl
-//	Added names to progs
-//	Added sector plane swapping
-//	
-//	Revision 1.26  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.25  2001/12/27 17:33:29  dj_jl
-//	Removed thinker list
-//	
-//	Revision 1.24  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.23  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.22  2001/12/04 18:16:28  dj_jl
-//	Player models and skins handled by server
-//	
-//	Revision 1.21  2001/12/01 17:43:13  dj_jl
-//	Renamed ClassBase to VObject
-//	
-//	Revision 1.20  2001/11/09 14:33:35  dj_jl
-//	Moved input line to progs
-//	Builtins for accessing and changing characters in strings
-//	
-//	Revision 1.19  2001/10/27 07:50:55  dj_jl
-//	Some new builtins
-//	
-//	Revision 1.18  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.17  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.16  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.15  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.14  2001/10/02 17:36:08  dj_jl
-//	Removed status bar widgets
-//	
-//	Revision 1.13  2001/09/27 17:34:22  dj_jl
-//	Fixed bug with input line
-//	
-//	Revision 1.12  2001/09/27 17:03:20  dj_jl
-//	Support for multiple mobj classes
-//	
-//	Revision 1.11  2001/09/25 17:05:34  dj_jl
-//	Added stricmp
-//	
-//	Revision 1.10  2001/09/24 17:35:24  dj_jl
-//	Support for thinker classes
-//	
-//	Revision 1.9  2001/09/20 16:30:28  dj_jl
-//	Started to use object-oriented stuff in progs
-//	
-//	Revision 1.8  2001/08/30 17:45:35  dj_jl
-//	Sound channels, moving messsage box to progs
-//	
-//	Revision 1.7  2001/08/23 17:47:22  dj_jl
-//	Started work on pics with custom palettes
-//	
-//	Revision 1.6  2001/08/21 17:39:22  dj_jl
-//	Real string pointers in progs
-//	
-//	Revision 1.5  2001/08/17 17:43:40  dj_jl
-//	LINUX fixes
-//	
-//	Revision 1.4  2001/08/15 17:21:47  dj_jl
-//	Added model drawing for menu
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -386,7 +386,7 @@ boolean C_Responder(event_t* ev)
 
 	// Scroll lines up
 	case K_PAGEUP:
-		for (i = 0; i < (shiftdown ? 1 : 5); i++)
+		for (i = 0; i < (GInput->ShiftDown ? 1 : 5); i++)
 		{
 			if (last_line > 1)
 			{
@@ -397,7 +397,7 @@ boolean C_Responder(event_t* ev)
 
 	// Scroll lines down
 	case K_PAGEDOWN:
-		for (i = 0; i < (shiftdown ? 1 : 5); i++)
+		for (i = 0; i < (GInput->ShiftDown ? 1 : 5); i++)
 		{
 			if (last_line < num_lines)
 			{
@@ -460,7 +460,7 @@ boolean C_Responder(event_t* ev)
 			c_autocompleteString = c_iline.Data;
 		}
 		str = VCommand::GetAutoComplete(c_autocompleteString,
-			c_autocompleteIndex, shiftdown);
+			c_autocompleteIndex, GInput->ShiftDown);
 		if (str)
 		{
 			c_iline.Init();

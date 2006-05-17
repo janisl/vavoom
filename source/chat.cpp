@@ -81,7 +81,7 @@ static VCvarS *chat_macros[10] =
 //
 //===========================================================================
 
-void CT_Init(void)
+void CT_Init()
 {
 	chatmodeon = false;
 }
@@ -92,7 +92,7 @@ void CT_Init(void)
 //
 //===========================================================================
 
-static void CT_Stop(void)
+static void CT_Stop()
 {
 	chatmodeon = false;
 }
@@ -105,14 +105,14 @@ static void CT_Stop(void)
 
 boolean CT_Responder(event_t *ev)
 {
-    boolean		eatkey;
+	boolean		eatkey;
 
 	if (!chatmodeon || ev->type != ev_keydown)
 	{
 		return false;
 	}
 
-	if (altdown)
+	if (GInput->AltDown)
 	{
 		if (ev->data1 >= '0' && ev->data1 <= '9')
 		{
@@ -122,7 +122,7 @@ boolean CT_Responder(event_t *ev)
 		}
 	}
 
-   	eatkey = w_chat.Key((byte)ev->data1);
+	eatkey = w_chat.Key((byte)ev->data1);
 	if (ev->data1 == K_ENTER || ev->data1 == K_PADENTER)
 	{
 		GCmdBuf << "Say " << w_chat.Data << "\n";
@@ -155,40 +155,13 @@ COMMAND(ChatMode)
 //
 //===========================================================================
 
-void CT_Drawer(void)
+void CT_Drawer()
 {
 	if (chatmodeon)
 	{
 		T_SetFont(font_small);
-        T_SetAlign(hleft, vtop);
-        T_DrawString(25, 10, w_chat.Data);
-       	T_DrawCursor();
+		T_SetAlign(hleft, vtop);
+		T_DrawString(25, 10, w_chat.Data);
+		T_DrawCursor();
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.7  2002/03/02 17:30:34  dj_jl
-//	Added suport for Pad-Enter.
-//	
-//	Revision 1.6  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/12/04 18:11:59  dj_jl
-//	Fixes for compiling with MSVC
-//	
-//	Revision 1.4  2001/10/04 17:23:29  dj_jl
-//	Got rid of some warnings
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

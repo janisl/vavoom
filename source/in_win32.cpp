@@ -34,6 +34,52 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VDirectInputDevice : public VInputDevice
+{
+public:
+	VDirectInputDevice();
+	~VDirectInputDevice();
+
+	void ReadInput();
+	void SetActiveWindow(HWND window);
+
+private:
+	LPDIRECTINPUT			DInput;
+
+	LPDIRECTINPUTDEVICE		lpKeyboard;
+
+	LPDIRECTINPUTDEVICE		lpMouse;
+	bool					mousepresent;
+	int						old_mouse_x;
+	int						old_mouse_y;
+	int						old_mouse_z;
+
+	LPDIRECTINPUTDEVICE2	lpJoystick;
+	bool					joystick_started;
+
+	static const vuint8			scan2key[256];
+	static DIOBJECTDATAFORMAT	rgodf_Keyboard[];
+	static DIDATAFORMAT			df_Keyboard;
+	static DIOBJECTDATAFORMAT	rgodf_Mouse[];
+	static DIDATAFORMAT			df_Mouse;
+	static DIOBJECTDATAFORMAT	rgodf_Joy[];
+	static DIDATAFORMAT			df_Joystick;
+
+	void StartupKeyboard();
+	void ReadKeyboard();
+	void ShutdownKeyboard();
+
+	void StartupMouse();
+	void ReadMouse();
+	void ShutdownMouse();
+
+	void StartupJoystick();
+	static int FAR PASCAL JoystickEnumCallback(LPCDIDEVICEINSTANCE, LPVOID);
+	int JoystickEnumCallback(LPCDIDEVICEINSTANCE);
+	void ReadJoystick();
+	void ShutdownJoystick();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -46,12 +92,8 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static LPDIRECTINPUT		DInput = NULL;
-
-static LPDIRECTINPUTDEVICE	lpKeyboard = NULL;
-
 // Key code translation table
-static byte					scan2key[256] =
+const vuint8 VDirectInputDevice::scan2key[256] =
 {
 	0, K_ESCAPE, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', K_BACKSPACE, K_TAB,
 	'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', K_ENTER, K_LCTRL, 'a', 's',
@@ -71,17 +113,7 @@ static byte					scan2key[256] =
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
 };
 
-static LPDIRECTINPUTDEVICE	lpMouse = NULL;
-static bool					mousepresent = false;
-static int					old_mouse_x;
-static int					old_mouse_y;
-static int					old_mouse_z;
-static VCvarI				m_filter("m_filter", "1", CVAR_Archive);
-
-static LPDIRECTINPUTDEVICE2	lpJoystick = NULL;
-static bool					joystick_started = false;
-
-static DIOBJECTDATAFORMAT rgodf_Keyboard[] =
+DIOBJECTDATAFORMAT VDirectInputDevice::rgodf_Keyboard[] =
 {
 	{ &GUID_Key,   0, 0x8000000c, 0},
 	{ &GUID_Key,   1, 0x8000010c, 0},
@@ -341,14 +373,15 @@ static DIOBJECTDATAFORMAT rgodf_Keyboard[] =
 	{ &GUID_Key, 255, 0x8000ff0c, 0}
 };
 
-static DIDATAFORMAT	df_Keyboard =
+DIDATAFORMAT	VDirectInputDevice::df_Keyboard =
 {
-	sizeof(DIDATAFORMAT),		// this structure
-	sizeof(DIOBJECTDATAFORMAT),	// size of object data format
-	DIDF_RELAXIS,				// absolute axis coordinates
-	256,						// device data size
-	sizeof(rgodf_Keyboard) / sizeof(rgodf_Keyboard[0]),	// number of objects
-	rgodf_Keyboard,				// and here they are
+	sizeof(DIDATAFORMAT),				// this structure
+	sizeof(DIOBJECTDATAFORMAT),			// size of object data format
+	DIDF_RELAXIS,						// absolute axis coordinates
+	256,								// device data size
+	sizeof(VDirectInputDevice::rgodf_Keyboard) /
+		sizeof(VDirectInputDevice::rgodf_Keyboard[0]),	// number of objects
+	VDirectInputDevice::rgodf_Keyboard,	// and here they are
 };
 
 typedef struct
@@ -362,7 +395,7 @@ typedef struct
 	BYTE  bButtonD;				// Another button goes here
 } MOUSE_DATA;
 
-static DIOBJECTDATAFORMAT rgodf_Mouse[] =
+DIOBJECTDATAFORMAT VDirectInputDevice::rgodf_Mouse[] =
 {
 	{ &GUID_XAxis,	FIELD_OFFSET(MOUSE_DATA, lX),		DIDFT_AXIS | DIDFT_ANYINSTANCE, 0},
 	{ &GUID_YAxis,	FIELD_OFFSET(MOUSE_DATA, lY),		DIDFT_AXIS | DIDFT_ANYINSTANCE, 0},
@@ -373,17 +406,18 @@ static DIOBJECTDATAFORMAT rgodf_Mouse[] =
 	{ 0,			FIELD_OFFSET(MOUSE_DATA, bButtonD),	0x80000000 | DIDFT_BUTTON | DIDFT_ANYINSTANCE, 0}
 };
 
-static DIDATAFORMAT	df_Mouse =
+DIDATAFORMAT	VDirectInputDevice::df_Mouse =
 {
-	sizeof(DIDATAFORMAT),		// this structure
-	sizeof(DIOBJECTDATAFORMAT),	// size of object data format
-	DIDF_RELAXIS,				// absolute axis coordinates
-	sizeof(MOUSE_DATA),			// device data size
-	sizeof(rgodf_Mouse) / sizeof(rgodf_Mouse[0]),	// number of objects
-	rgodf_Mouse,				// and here they are
+	sizeof(DIDATAFORMAT),				// this structure
+	sizeof(DIOBJECTDATAFORMAT),			// size of object data format
+	DIDF_RELAXIS,						// absolute axis coordinates
+	sizeof(MOUSE_DATA),					// device data size
+	sizeof(VDirectInputDevice::rgodf_Mouse) /
+		sizeof(VDirectInputDevice::rgodf_Mouse[0]),	// number of objects
+	VDirectInputDevice::rgodf_Mouse,	// and here they are
 };
 
-static DIOBJECTDATAFORMAT rgodf_Joy[] =
+DIOBJECTDATAFORMAT VDirectInputDevice::rgodf_Joy[] =
 {
 	{ &GUID_XAxis,   0, 0x80ffff03, 256},
 	{ &GUID_YAxis,   4, 0x80ffff03, 256},
@@ -431,17 +465,129 @@ static DIOBJECTDATAFORMAT rgodf_Joy[] =
 	{ 0,			79, 0x80ffff0c, 0},
 };
 
-static DIDATAFORMAT	df_Joystick =
+DIDATAFORMAT	VDirectInputDevice::df_Joystick =
 {
-	sizeof(DIDATAFORMAT),		// this structure
-	sizeof(DIOBJECTDATAFORMAT),	// size of object data format
-	DIDF_ABSAXIS,				// absolute axis coordinates
-	80,							// device data size
-	sizeof(rgodf_Joy) / sizeof(rgodf_Joy[0]),	// number of objects
-	rgodf_Joy,					// and here they are
+	sizeof(DIDATAFORMAT),			// this structure
+	sizeof(DIOBJECTDATAFORMAT),		// size of object data format
+	DIDF_ABSAXIS,					// absolute axis coordinates
+	80,								// device data size
+	sizeof(VDirectInputDevice::rgodf_Joy) /
+		sizeof(VDirectInputDevice::rgodf_Joy[0]),	// number of objects
+	VDirectInputDevice::rgodf_Joy,	// and here they are
 };
 
+static VCvarI				m_filter("m_filter", "1", CVAR_Archive);
+
+static VDirectInputDevice*	CurrentDevice;
+
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VDirectInputDevice::VDirectInputDevice
+//
+//==========================================================================
+
+VDirectInputDevice::VDirectInputDevice()
+: DInput(NULL)
+, lpKeyboard(NULL)
+, lpMouse(NULL)
+, mousepresent(false)
+, old_mouse_x(0)
+, old_mouse_y(0)
+, old_mouse_z(0)
+, lpJoystick(NULL)
+, joystick_started(false)
+{
+	guard(VDirectInputDevice::VDirectInputDevice);
+	HRESULT		result;
+
+	result = CoCreateInstance(CLSID_DirectInput, NULL,
+		CLSCTX_INPROC_SERVER, IID_IDirectInput, (void**)&DInput);
+	if (result != DI_OK)
+		Sys_Error("Failed to create DirectInput object");
+
+	result = DInput->Initialize(hInst, DIRECTINPUT_VERSION);
+	if (result != DI_OK)
+		Sys_Error("Failed to initialize DirectInput object");
+
+	StartupKeyboard();
+	StartupMouse();
+	StartupJoystick();
+
+	CurrentDevice = this;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectInputDevice::~VDirectInputDevice
+//
+//==========================================================================
+
+VDirectInputDevice::~VDirectInputDevice()
+{
+	guard(VDirectInputDevice::~VDirectInputDevice);
+	ShutdownJoystick();
+	ShutdownMouse();
+	ShutdownKeyboard();
+
+	if (DInput)
+	{
+		DInput->Release();
+		DInput = NULL; 
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VDirectInputDevice::ReadInput
+//
+//	Reads input from the input devices.
+//
+//==========================================================================
+
+void VDirectInputDevice::ReadInput()
+{
+	guard(VDirectInputDevice::ReadInput);
+	ReadKeyboard();
+	ReadMouse();
+	ReadJoystick();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirectInputDevice::SetActiveWindow
+//
+//==========================================================================
+
+void VDirectInputDevice::SetActiveWindow(HWND window)
+{
+	guard(VDirectInputDevice::SetActiveWindow);
+	if (lpKeyboard)
+	{
+		lpKeyboard->Unacquire();
+		lpKeyboard->SetCooperativeLevel(window, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+		lpKeyboard->Acquire();
+	}
+
+	if (mousepresent)
+	{
+		lpMouse->Unacquire();
+		lpMouse->SetCooperativeLevel(window, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
+		lpMouse->Acquire();
+	}
+
+	if (joystick_started)
+	{
+		lpJoystick->Unacquire();
+		lpJoystick->SetCooperativeLevel(window, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
+		lpJoystick->Acquire();
+	}
+	unguard;
+}
 
 //**************************************************************************
 //**
@@ -451,15 +597,15 @@ static DIDATAFORMAT	df_Joystick =
 
 //==========================================================================
 //
-//	StartupKeyboard
+//	VDirectInputDevice::StartupKeyboard
 //
 //	Installs the keyboard handler.
 //
 //==========================================================================
 
-static void StartupKeyboard()
+void VDirectInputDevice::StartupKeyboard()
 {
-	guard(StartupKeyboard);
+	guard(VDirectInputDevice::StartupKeyboard);
 	HRESULT		Result;
 
 	//	Create keyboard device
@@ -495,13 +641,13 @@ static void StartupKeyboard()
 
 //==========================================================================
 //
-//  ReadKeyboard
+//  VDirectInputDevice::ReadKeyboard
 //
 //==========================================================================
 
-static void ReadKeyboard()
+void VDirectInputDevice::ReadKeyboard()
 {
-	guard(ReadKeyboard);
+	guard(VDirectInputDevice::ReadKeyboard);
 
 	// Attempt to get the device data.
 	DIDEVICEOBJECTDATA DevData[32];
@@ -534,22 +680,22 @@ static void ReadKeyboard()
 	// Process the data.
 	for (size_t i = 0; i < NumItems; i++)
 	{
-		IN_KeyEvent(scan2key[DevData[i].dwOfs], DevData[i].dwData & 0x80);
+		GInput->KeyEvent(scan2key[DevData[i].dwOfs], DevData[i].dwData & 0x80);
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//  ShutdownKeyboard
+//  VDirectInputDevice::ShutdownKeyboard
 //
 // 	Removes the keyboard handler.
 //
 //==========================================================================
 
-static void ShutdownKeyboard()
+void VDirectInputDevice::ShutdownKeyboard()
 {
-	guard(ShutdownKeyboard);
+	guard(VDirectInputDevice::ShutdownKeyboard);
 	if (lpKeyboard)
 	{
 		lpKeyboard->Unacquire();
@@ -567,15 +713,15 @@ static void ShutdownKeyboard()
 
 //==========================================================================
 //
-// 	StartupMouse
+// 	VDirectInputDevice::StartupMouse
 //
 //	Initializes mouse
 //
 //==========================================================================
 
-static void StartupMouse()
+void VDirectInputDevice::StartupMouse()
 {
-	guard(StartupMouse);
+	guard(VDirectInputDevice::StartupMouse);
 	HRESULT		Result;
 
 	if (GArgs.CheckParm("-nomouse"))
@@ -601,15 +747,15 @@ static void StartupMouse()
 
 //==========================================================================
 //
-//  ReadMouse
+//  VDirectInputDevice::ReadMouse
 //
 // 	Reads mouse.
 //
 //==========================================================================
 
-static void ReadMouse()
+void VDirectInputDevice::ReadMouse()
 {
-	guard(ReadMouse);
+	guard(VDirectInputDevice::ReadMouse);
 
 	// Static mouse last button state.
 	static byte lastbuttons[4] = {0, 0, 0, 0};
@@ -679,10 +825,10 @@ static void ReadMouse()
 		// Build and post mouse event.
 		event_t event;
 		event.type  = ev_mouse;
-	  	event.data1 = 0;
-	  	event.data2 = mouse_x;
-	  	event.data3 = -mouse_y;
-	  	IN_PostEvent(&event);
+		event.data1 = 0;
+		event.data2 = mouse_x;
+		event.data3 = -mouse_y;
+		GInput->PostEvent(&event);
 	}
 
 	// Handle mouse buttons.
@@ -690,7 +836,7 @@ static void ReadMouse()
 	{
 		if ((MouseState.rgbButtons[i] ^ lastbuttons[i]) & 0x80)
 		{
-			IN_KeyEvent(K_MOUSE1 + i, MouseState.rgbButtons[i] & 0x80);
+			GInput->KeyEvent(K_MOUSE1 + i, MouseState.rgbButtons[i] & 0x80);
 		}
 		lastbuttons[i] = MouseState.rgbButtons[i];
 	}
@@ -698,11 +844,11 @@ static void ReadMouse()
 	//	Handle mouse wheel.
 	if (MouseState.lZ > 0 || old_mouse_z > 0)
 	{
-		IN_KeyEvent(K_MWHEELUP, MouseState.lZ > 0);
+		GInput->KeyEvent(K_MWHEELUP, MouseState.lZ > 0);
 	}
 	if (MouseState.lZ < 0 || old_mouse_z < 0)
 	{
-		IN_KeyEvent(K_MWHEELDOWN, MouseState.lZ < 0);
+		GInput->KeyEvent(K_MWHEELDOWN, MouseState.lZ < 0);
 	}
 	old_mouse_z = MouseState.lZ;
 	unguard;
@@ -710,13 +856,13 @@ static void ReadMouse()
 
 //==========================================================================
 //
-//	ShutdownMouse
+//	VDirectInputDevice::ShutdownMouse
 //
 //==========================================================================
 
-static void ShutdownMouse()
+void VDirectInputDevice::ShutdownMouse()
 {
-	guard(ShutdownMouse);
+	guard(VDirectInputDevice::ShutdownMouse);
 	if (lpMouse)
 	{
 		lpMouse->Unacquire();
@@ -735,12 +881,42 @@ static void ShutdownMouse()
 
 //==========================================================================
 //
+//	VDirectInputDevice::StartupJoystick
+//
+// 	Initializes joystick
+//
+//==========================================================================
+
+void VDirectInputDevice::StartupJoystick()
+{
+	guard(VDirectInputDevice::StartupJoystick);
+  	if (GArgs.CheckParm("-nojoy"))
+		return;
+
+	DInput->EnumDevices(DIDEVTYPE_JOYSTICK, JoystickEnumCallback, this,
+		DIEDFL_ATTACHEDONLY);
+	unguard;
+}
+
+//==========================================================================
+//
 //	JoystickEnumCallback
 //
 //==========================================================================
 
-static int FAR PASCAL JoystickEnumCallback(
-			LPCDIDEVICEINSTANCE pdinst, LPVOID) 
+int FAR PASCAL VDirectInputDevice::JoystickEnumCallback(
+		LPCDIDEVICEINSTANCE pdinst, LPVOID UsrPtr)
+{
+	return ((VDirectInputDevice*)UsrPtr)->JoystickEnumCallback(pdinst);
+}
+
+//==========================================================================
+//
+//	JoystickEnumCallback
+//
+//==========================================================================
+
+int VDirectInputDevice::JoystickEnumCallback(LPCDIDEVICEINSTANCE pdinst)
 {
 	HRESULT					Result;
 	LPDIRECTINPUTDEVICE		lpJoystick1;
@@ -805,31 +981,13 @@ static int FAR PASCAL JoystickEnumCallback(
 
 //==========================================================================
 //
-//	StartupJoystick
-//
-// 	Initializes joystick
+//  VDirectInputDevice::ReadJoystick
 //
 //==========================================================================
 
-static void StartupJoystick()
+void VDirectInputDevice::ReadJoystick()
 {
-	guard(StartupJoystick);
-  	if (GArgs.CheckParm("-nojoy"))
-		return;
-
-	DInput->EnumDevices(DIDEVTYPE_JOYSTICK, JoystickEnumCallback, NULL, DIEDFL_ATTACHEDONLY);
-	unguard;
-}
-
-//==========================================================================
-//
-//  ReadJoystick
-//
-//==========================================================================
-
-static void ReadJoystick()
-{
-	guard(StartupJoystick);
+	guard(VDirectInputDevice::StartupJoystick);
 
 	// Static previous joystick state.
 	static int oldx = 0;
@@ -879,7 +1037,7 @@ static void ReadJoystick()
 		event.data1 = 0;
 		event.data2 = JoyState.lX;
 		event.data3 = JoyState.lY;
-		IN_PostEvent(&event);
+		GInput->PostEvent(&event);
 	}
 	oldx = JoyState.lX;
 	oldy = JoyState.lY;
@@ -889,7 +1047,7 @@ static void ReadJoystick()
 	{
 		if ((JoyState.rgbButtons[i] ^ oldb[i]) & 0x80)
 		{
-			IN_KeyEvent(K_JOY1 + i, JoyState.rgbButtons[i] & 0x80);
+			GInput->KeyEvent(K_JOY1 + i, JoyState.rgbButtons[i] & 0x80);
 		}
 		oldb[i] = JoyState.rgbButtons[i];
 	}
@@ -898,13 +1056,13 @@ static void ReadJoystick()
 
 //==========================================================================
 //
-//	ShutdownJoystick
+//	VDirectInputDevice::ShutdownJoystick
 //
 //==========================================================================
 
-static void ShutdownJoystick()
+void VDirectInputDevice::ShutdownJoystick()
 {
-	guard(ShutdownJoystick);
+	guard(VDirectInputDevice::ShutdownJoystick);
 	if (lpJoystick)
 	{
 		lpJoystick->Unacquire();
@@ -923,28 +1081,13 @@ static void ShutdownJoystick()
 
 //==========================================================================
 //
-//  IN_Init
+//  VInput::CreateDevice
 //
 //==========================================================================
 
-void IN_Init()
+VInputDevice* VInput::CreateDevice()
 {
-	guard(IN_Init);
-	HRESULT		result;
-
-	result = CoCreateInstance(CLSID_DirectInput, NULL,
-		CLSCTX_INPROC_SERVER, IID_IDirectInput, (void**)&DInput);
-	if (result != DI_OK)
-		Sys_Error("Failed to create DirectInput object");
-
-	result = DInput->Initialize(hInst, DIRECTINPUT_VERSION);
-	if (result != DI_OK)
-		Sys_Error("Failed to initialize DirectInput object");
-
-	StartupKeyboard();
-	StartupMouse();
-	StartupJoystick();
-	unguard;
+	return new VDirectInputDevice();
 }
 
 //==========================================================================
@@ -955,104 +1098,5 @@ void IN_Init()
 
 void IN_SetActiveWindow(HWND window)
 {
-	guard(IN_SetActiveWindow);
-	if (lpKeyboard)
-	{
-		lpKeyboard->Unacquire();
-		lpKeyboard->SetCooperativeLevel(window, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-		lpKeyboard->Acquire();
-	}
-
-	if (mousepresent)
-	{
-		lpMouse->Unacquire();
-		lpMouse->SetCooperativeLevel(window, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
-		lpMouse->Acquire();
-	}
-
-	if (joystick_started)
-	{
-		lpJoystick->Unacquire();
-		lpJoystick->SetCooperativeLevel(window, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
-		lpJoystick->Acquire();
-	}
-	unguard;
+	CurrentDevice->SetActiveWindow(window);
 }
-
-//==========================================================================
-//
-//  IN_ReadInput
-//
-// 	Called by D_DoomLoop before processing each tic in a frame.
-// 	Can call D_PostEvent.
-// 	Asyncronous interrupt functions should maintain private ques that are
-// read by the syncronous functions to be converted into events.
-//
-//==========================================================================
-
-void IN_ReadInput()
-{
-	ReadKeyboard();
-	ReadMouse();
-	ReadJoystick();
-}
-
-//==========================================================================
-//
-//  IN_Shutdown
-//
-//==========================================================================
-
-void IN_Shutdown()
-{
-	guard(IN_Shutdown);
-	ShutdownJoystick();
-	ShutdownMouse();
-	ShutdownKeyboard();
-
-	if (DInput)
-	{
-		DInput->Release();
-		DInput = NULL; 
-	}
-	unguard;
-}
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.12  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.11  2004/04/19 06:50:36  dj_jl
-//	Mousewheel support.
-//	
-//	Revision 1.10  2002/11/16 17:14:22  dj_jl
-//	Some changes for release.
-//	
-//	Revision 1.9  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.8  2002/01/15 18:30:43  dj_jl
-//	Some fixes and improvements suggested by Malcolm Nixon
-//	
-//	Revision 1.7  2002/01/11 18:23:34  dj_jl
-//	Added support for 16 joystick buttons
-//	
-//	Revision 1.6  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.5  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/08/29 17:51:49  dj_jl
-//	Changes for OpenGL window
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

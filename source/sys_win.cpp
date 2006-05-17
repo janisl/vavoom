@@ -519,14 +519,14 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg,
 	 case WM_KEYDOWN:
 		if (!(lParam & 0x40000000) && wParam == VK_PAUSE)
 		{
-			IN_KeyEvent(K_PAUSE, true);
+			GInput->KeyEvent(K_PAUSE, true);
 		}
 		return 0;
 
 	 case WM_KEYUP:
 		if (wParam == VK_PAUSE)
 		{
-			IN_KeyEvent(K_PAUSE, false);
+			GInput->KeyEvent(K_PAUSE, false);
 		}
 		return 0;
 

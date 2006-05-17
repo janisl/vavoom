@@ -36,13 +36,9 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAXEVENTS		64
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-boolean F_CheckPal(event_t *event);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -52,28 +48,22 @@ boolean F_CheckPal(event_t *event);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int				shiftdown = 0;
-int				ctrldown = 0;
-int				altdown = 0;
+VInput*			GInput;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static event_t	events[MAXEVENTS];
-static int		eventhead = 0;
-static int		eventtail = 0;
-
-static char*	KeyNames[SCANCODECOUNT] =
+const char*		VInput::KeyNames[SCANCODECOUNT] =
 {
 	"UP",
 	"LEFT",
 	"RIGHT",
 	"DOWN",
-    "INSERT",
-    "DELETE",
-    "HOME",
-    "END",
-    "PAGEUP",
-    "PAGEDOWN",
+	"INSERT",
+	"DELETE",
+	"HOME",
+	"END",
+	"PAGEUP",
+	"PAGEDOWN",
 
 	"PAD0",
 	"PAD1",
@@ -124,7 +114,7 @@ static char*	KeyNames[SCANCODECOUNT] =
 	"RWIN",
 	"MENU",
 
-    "PRINTSCREEN",
+	"PRINTSCREEN",
 	"SCROLLLOCK",
 	"PAUSE",
 
@@ -168,147 +158,213 @@ static char*	KeyNames[SCANCODECOUNT] =
 };
 
 //  Key shifting
-static const char	shiftxform[] =
+const char		VInput::ShiftXForm[] =
 {
-
-    0,
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-    31,
-    ' ', '!', '"', '#', '$', '%', '&',
-    '"', // shift-'
-    '(', ')', '*', '+',
-    '<', // shift-,
-    '_', // shift--
-    '>', // shift-.
-    '?', // shift-/
-    ')', // shift-0
-    '!', // shift-1
-    '@', // shift-2
-    '#', // shift-3
-    '$', // shift-4
-    '%', // shift-5
-    '^', // shift-6
-    '&', // shift-7
-    '*', // shift-8
-    '(', // shift-9
-    ':',
-    ':', // shift-;
-    '<',
-    '+', // shift-=
-    '>', '?', '@',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '{', // shift-[
-    '|', // shift-backslash - OH MY GOD DOES WATCOM SUCK
-    '}', // shift-]
-    '"', '_',
-    '\'', // shift-`
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '{', '|', '}', '~', 127
+	0,
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+	21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+	31,
+	' ', '!', '"', '#', '$', '%', '&',
+	'"', // shift-'
+	'(', ')', '*', '+',
+	'<', // shift-,
+	'_', // shift--
+	'>', // shift-.
+	'?', // shift-/
+	')', // shift-0
+	'!', // shift-1
+	'@', // shift-2
+	'#', // shift-3
+	'$', // shift-4
+	'%', // shift-5
+	'^', // shift-6
+	'&', // shift-7
+	'*', // shift-8
+	'(', // shift-9
+	':',
+	':', // shift-;
+	'<',
+	'+', // shift-=
+	'>', '?', '@',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+	'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+	'{', // shift-[
+	'|', // shift-backslash - OH MY GOD DOES WATCOM SUCK
+	'}', // shift-]
+	'"', '_',
+	'\'', // shift-`
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+	'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+	'{', '|', '}', '~', 127
 };
-
-static char			*keybindings_down[256];
-static char			*keybindings_up[256];
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  IN_PostEvent
+//	VInputDevice::~VInputDevice
+//
+//==========================================================================
+
+VInputDevice::~VInputDevice()
+{
+}
+
+//==========================================================================
+//
+//	VInput::VInput
+//
+//==========================================================================
+
+VInput::VInput()
+: ShiftDown(0)
+, CtrlDown(0)
+, AltDown(0)
+, Device(0)
+, EventHead(0)
+, EventTail(0)
+{
+}
+
+//==========================================================================
+//
+//	VInput::~VInput
+//
+//==========================================================================
+
+VInput::~VInput()
+{
+	Shutdown();
+}
+
+//==========================================================================
+//
+//  VInput::Init
+//
+//==========================================================================
+
+void VInput::Init()
+{
+	guard(VInput::Init);
+	Device = CreateDevice();
+	unguard;
+}
+
+//==========================================================================
+//
+//  VInput::Shutdown
+//
+//==========================================================================
+
+void VInput::Shutdown()
+{
+	guard(VInput::Shutdown);
+	if (Device)
+	{
+		delete Device;
+		Device = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VInput::PostEvent
 //
 // 	Called by the I/O functions when input is detected
 //
 //==========================================================================
 
-void IN_PostEvent(event_t* ev)
+void VInput::PostEvent(event_t* ev)
 {
-	guard(IN_PostEvent);
-    events[eventhead] = *ev;
-    eventhead = (eventhead + 1) & (MAXEVENTS - 1);
+	guard(VInput::PostEvent);
+	Events[EventHead] = *ev;
+	EventHead = (EventHead + 1) & (MAXEVENTS - 1);
 	unguard;
 }
 
 //==========================================================================
 //
-//  IN_KeyEvent
+//	VInput::KeyEvent
 //
 // 	Called by the I/O functions when a key or button is pressed or released
 //
 //==========================================================================
 
-void IN_KeyEvent(int key, int press)
+void VInput::KeyEvent(int key, int press)
 {
-	guard(IN_KeyEvent);
+	guard(VInput::KeyEvent);
 	if (!key)
-    {
-    	return;
-    }
-    events[eventhead].type = press ? ev_keydown : ev_keyup;
-    events[eventhead].data1 = key;
-    events[eventhead].data2 = 0;
-    events[eventhead].data3 = 0;
-    eventhead = (eventhead + 1) & (MAXEVENTS - 1);
+	{
+		return;
+	}
+	Events[EventHead].type = press ? ev_keydown : ev_keyup;
+	Events[EventHead].data1 = key;
+	Events[EventHead].data2 = 0;
+	Events[EventHead].data3 = 0;
+	EventHead = (EventHead + 1) & (MAXEVENTS - 1);
 	unguard;
 }
 
 //==========================================================================
 //
-//  IN_ProcessEvents
+//	VInput::ProcessEvents
 //
-// 	Send all the events of the given timestamp down the responder chain
+// 	Send all the Events of the given timestamp down the responder chain
 //
 //==========================================================================
 
-void IN_ProcessEvents()
+void VInput::ProcessEvents()
 {
-	guard(IN_ProcessEvents);
-    event_t*	ev;
-	char		*kb;
+	guard(VInput::ProcessEvents);
+	Device->ReadInput();
 
-   	IN_ReadInput();
-
-    for (; eventtail != eventhead; eventtail = (eventtail + 1) & (MAXEVENTS - 1))
-    {
-		ev = &events[eventtail];
+	for (; EventTail != EventHead; EventTail = (EventTail + 1) & (MAXEVENTS - 1))
+	{
+		event_t* ev = &Events[EventTail];
 
 		// Shift key state
-	    if (ev->data1 == K_RSHIFT)
-	    {
-			shiftdown &= ~1;
-			if (ev->type == ev_keydown) shiftdown |= 1;
-	    }
-	    if (ev->data1 == K_LSHIFT)
-	    {
-			shiftdown &= ~2;
-			if (ev->type == ev_keydown) shiftdown |= 2;
-	    }
+		if (ev->data1 == K_RSHIFT)
+		{
+			ShiftDown &= ~1;
+			if (ev->type == ev_keydown)
+				ShiftDown |= 1;
+		}
+		if (ev->data1 == K_LSHIFT)
+		{
+			ShiftDown &= ~2;
+			if (ev->type == ev_keydown)
+				ShiftDown |= 2;
+		}
 
 		// Ctrl key state
 		if (ev->data1 == K_RCTRL)
-	    {
-			ctrldown &= ~1;
-			if (ev->type == ev_keydown) ctrldown |= 1;
-	    }
+		{
+			CtrlDown &= ~1;
+			if (ev->type == ev_keydown)
+				CtrlDown |= 1;
+		}
 		if (ev->data1 == K_LCTRL)
-	    {
-			ctrldown &= ~2;
-			if (ev->type == ev_keydown) ctrldown |= 2;;
-	    }
+		{
+			CtrlDown &= ~2;
+			if (ev->type == ev_keydown)
+				CtrlDown |= 2;;
+		}
 
 		// Alt key state
 		if (ev->data1 == K_RALT)
-	    {
-			altdown &= ~1;
-			if (ev->type == ev_keydown) altdown |= 1;
-	    }
+		{
+			AltDown &= ~1;
+			if (ev->type == ev_keydown)
+				AltDown |= 1;
+		}
 		if (ev->data1 == K_LALT)
-	    {
-			altdown &= ~2;
-			if (ev->type == ev_keydown) altdown |= 2;;
-	    }
+		{
+			AltDown &= ~2;
+			if (ev->type == ev_keydown)
+				AltDown |= 2;;
+		}
 
 		if (C_Responder(ev))
 			continue;
@@ -319,25 +375,25 @@ void IN_ProcessEvents()
 		if (MN_Responder(ev))
 			continue;
 
-	    if (cls.state == ca_connected && !cl->intermission)
-    	{
+		if (cls.state == ca_connected && !cl->intermission)
+		{
 			if (SB_Responder(ev))
-		    	continue;	// status window ate it
+				continue;	// status window ate it
 			if (AM_Responder(ev))
-		    	continue;	// automap ate it
-	    }
+				continue;	// automap ate it
+		}
 
 		if (F_Responder(ev))
 			continue;
 
-	    //
-    	//	Key bindings
-	    //
-    	if (ev->type == ev_keydown)
-	    {
-			kb = keybindings_down[ev->data1];
-	    	if (kb && *kb)
-	        {
+		//
+		//	Key bindings
+		//
+		if (ev->type == ev_keydown)
+		{
+			VStr kb = KeyBindingsDown[ev->data1];
+			if (kb)
+			{
 				if (kb[0] == '+' || kb[0] == '-')
 				{
 					// button commands add keynum as a parm
@@ -345,57 +401,57 @@ void IN_ProcessEvents()
 				}
 				else
 				{
-		        	GCmdBuf << kb << "\n";
+					GCmdBuf << kb << "\n";
 				}
-	            continue;
-	        }
+				continue;
+			}
 		}
-	    if (ev->type == ev_keyup)
-	    {
-			kb = keybindings_up[ev->data1];
-	    	if (kb && *kb)
+		if (ev->type == ev_keyup)
+		{
+			VStr kb = KeyBindingsUp[ev->data1];
+			if (kb)
 			{
-		    	if (kb[0] == '+' || kb[0] == '-')
+				if (kb[0] == '+' || kb[0] == '-')
 				{
 					// button commands add keynum as a parm
 					GCmdBuf << kb << " " << VStr(ev->data1) << "\n";
-		        }
+				}
 				else
 				{
-		        	GCmdBuf << kb << "\n";
+					GCmdBuf << kb << "\n";
 				}
-            	continue;
+				continue;
 			}
 		}
 		if (CL_Responder(ev))
 			continue;
-    }
+	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	IN_ReadKey
+//	VInput::ReadKey
 //
 //==========================================================================
 
-int IN_ReadKey()
+int VInput::ReadKey()
 {
-	guard(IN_ReadKey);
+	guard(VInput::ReadKey);
 	int		ret = 0;
 
 	do
-    {
-    	IN_ReadInput();
-	    while (eventtail != eventhead && !ret)
-        {
-			if (events[eventtail].type == ev_keydown)
-            {
-                ret = events[eventtail].data1;
-            }
-			eventtail = (eventtail + 1) & (MAXEVENTS - 1);
-        }
-    } while (!ret);
+	{
+		Device->ReadInput();
+		while (EventTail != EventHead && !ret)
+		{
+			if (Events[EventTail].type == ev_keydown)
+			{
+				ret = Events[EventTail].data1;
+			}
+			EventTail = (EventTail + 1) & (MAXEVENTS - 1);
+		}
+	} while (!ret);
 
 	return ret;
 	unguard;
@@ -403,44 +459,110 @@ int IN_ReadKey()
 
 //==========================================================================
 //
-// 	CheckAbort
+//	VInput::GetBindingKeys
 //
 //==========================================================================
-#if 0
-void CheckAbort()
+
+void VInput::GetBindingKeys(const VStr& Binding, int& Key1, int& Key2)
 {
-    event_t*	ev;
-    int			stoptic;
-	
-    stoptic = I_GetTime () + 2; 
-    while (I_GetTime() < stoptic) 
-		IN_ReadInput();
-	
-    IN_ReadInput();
-    for ( ; eventtail != eventhead 
-	      ; eventtail = (++eventtail) & (MAXEVENTS - 1))
-    { 
-		ev = &events[eventtail];
-		if (ev->type == ev_keydown && ev->data1 == K_ESCAPE)
-	    	I_Error("Network game synchronization aborted.");
-    }
+	guard(VInput::GetBindingKeys);
+	Key1 = -1;
+	Key2 = -1;
+	for (int i = 0; i < 256; i++)
+	{
+		if (!Binding.ICmp(KeyBindingsDown[i]))
+		{
+			if (Key1 != -1)
+			{
+				Key2 = i;
+				return;
+			}
+			Key1 = i;
+		}
+	}
+	unguard;
 }
-#endif
 
 //==========================================================================
 //
-//	KeyNumForName
+//	VInput::SetBinding
+//
+//==========================================================================
+
+void VInput::GetBinding(int KeyNum, VStr& Down, VStr& Up)
+{
+	guard(VInput::SetBinding);
+	Down = KeyBindingsDown[KeyNum];
+	Up = KeyBindingsUp[KeyNum];
+	unguard;
+}
+
+//==========================================================================
+//
+//	VInput::SetBinding
+//
+//==========================================================================
+
+void VInput::SetBinding(int KeyNum, const VStr& Down, const VStr& Up)
+{
+	guard(VInput::SetBinding);
+	if (KeyNum == -1)
+		return;
+
+	KeyBindingsDown[KeyNum] = Down;
+	KeyBindingsUp[KeyNum] = Up;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VInput::WriteBindings
+//
+//	Writes lines containing "bind key value"
+//
+//==========================================================================
+
+void VInput::WriteBindings(FILE* f)
+{
+	guard(VInput::WriteBindings);
+	fprintf(f, "UnbindAll\n");
+	for (int i = 0; i < 256; i++)
+	{
+		if (KeyBindingsDown[i] || KeyBindingsUp[i])
+		{
+			fprintf(f, "bind \"%s\" \"%s\" \"%s\"\n", *KeyNameForNum(i),
+				*KeyBindingsDown[i], *KeyBindingsUp[i]);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VInput::TranslateKey
+//
+//==========================================================================
+
+int VInput::TranslateKey(int ch)
+{
+	guard(VInput::TranslateKey);
+	int Tmp = ch;
+	return ShiftDown ? ShiftXForm[Tmp] : Tmp;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VInput::KeyNumForName
 //
 //  Searches in key names for given name
 // return key code
 //
 //==========================================================================
 
-static int KeyNumForName(const VStr& Name)
+int VInput::KeyNumForName(const VStr& Name)
 {
-	guard(KeyNumForName);
-	int		i;
-
+	guard(VInput::KeyNumForName);
 	if (!Name)
 		return -1;
 
@@ -456,7 +578,7 @@ static int KeyNumForName(const VStr& Name)
 		return '`';
 
 	//	Check special key names.
-	for (i = 0; i < SCANCODECOUNT; i++)
+	for (int i = 0; i < SCANCODECOUNT; i++)
 		if (!Name.ICmp(KeyNames[i]))
 			return i + 0x80;
 
@@ -467,65 +589,23 @@ static int KeyNumForName(const VStr& Name)
 
 //==========================================================================
 //
-//	KeyNameForNum
+//	VInput::KeyNameForNum
 //
-//  Writes into given string key name
+//	Writes into given string key name
 //
 //==========================================================================
 
-void KeyNameForNum(int KeyNr, char* NameString)
+VStr VInput::KeyNameForNum(int KeyNr)
 {
-	guard(KeyNameForNum);
+	guard(VInput::KeyNameForNum);
 	if (KeyNr == ' ')
-		sprintf(NameString, "SPACE");
+		return "SPACE";
 	else if (KeyNr >= 0x80)
-		sprintf(NameString, "%s", KeyNames[KeyNr - 0x80]);
+		return KeyNames[KeyNr - 0x80];
 	else if (KeyNr)
-		sprintf(NameString, "%c", KeyNr);
+		return VStr((char)KeyNr);
 	else
-      	NameString[0] = 0;
-	unguard;
-}
-
-//==========================================================================
-//
-//	IN_SetBinding
-//
-//==========================================================================
-
-void IN_SetBinding(int keynum, const char *binding_down, const char *binding_up)
-{
-	guard(IN_SetBinding);
-	char	*str;
-	int		l;
-			
-	if (keynum == -1)
-		return;
-
-	// free old bindings
-	if (keybindings_down[keynum])
-	{
-		Z_Free(keybindings_down[keynum]);
-		keybindings_down[keynum] = NULL;
-	}
-	if (keybindings_up[keynum])
-	{
-		Z_Free(keybindings_up[keynum]);
-		keybindings_up[keynum] = NULL;
-	}
-			
-	// allocate memory for new binding
-	l = strlen(binding_down);
-	str = (char*)Z_Malloc(l + 1);
-	strcpy(str, binding_down);
-	str[l] = 0;
-	keybindings_down[keynum] = str;
-
-	l = strlen(binding_up);
-	str = (char*)Z_Malloc(l + 1);
-	strcpy(str, binding_up);
-	str[l] = 0;
-	keybindings_up[keynum] = str;
+		return VStr();
 	unguard;
 }
 
@@ -538,22 +618,20 @@ void IN_SetBinding(int keynum, const char *binding_down, const char *binding_up)
 COMMAND(Unbind)
 {
 	guard(COMMAND Unbind);
-	int		b;
-
 	if (Args.Num() != 2)
 	{
 		GCon->Log("unbind <key> : remove commands from a key");
 		return;
 	}
 
-	b = KeyNumForName(Args[1]);
+	int b = GInput->KeyNumForName(Args[1]);
 	if (b == -1)
 	{
 		GCon->Log(VStr("\"") + Args[1] + "\" isn\'t a valid key");
 		return;
 	}
 
-	IN_SetBinding(b, "", "");
+	GInput->SetBinding(b, VStr(), VStr());
 	unguard;
 }
 
@@ -566,11 +644,10 @@ COMMAND(Unbind)
 COMMAND(UnbindAll)
 {
 	guard(COMMAND UnbindAll);
-	int		i;
-	
-	for (i = 0; i < 256; i++)
-		if (keybindings_down[i])
-			IN_SetBinding(i, "", "");
+	for (int i = 0; i < 256; i++)
+	{
+		GInput->SetBinding(i, VStr(), VStr());
+	}
 	unguard;
 }
 
@@ -583,16 +660,14 @@ COMMAND(UnbindAll)
 COMMAND(Bind)
 {
 	guard(COMMAND Bind);
-	int			c, b;
-	
-	c = Args.Num();
+	int c = Args.Num();
 
 	if (c != 2 && c != 3 && c != 4)
 	{
 		GCon->Log("bind <key> [down_command] [up_command]: attach a command to a key");
 		return;
 	}
-	b = KeyNumForName(Args[1]);
+	int b = GInput->KeyNumForName(Args[1]);
 	if (b == -1)
 	{
 		GCon->Log(VStr("\"") + Args[1] + "\" isn\'t a valid key");
@@ -601,101 +676,14 @@ COMMAND(Bind)
 
 	if (c == 2)
 	{
-		if (keybindings_down[b] || keybindings_up[b])
-			GCon->Logf("\"%s\" = \"%s\" / \"%s\"",
-				*Args[1], keybindings_down[b], keybindings_up[b]);
+		VStr Down, Up;
+		GInput->GetBinding(b, Down, Up);
+		if (Down || Up)
+			GCon->Log(Args[1] + " = \"" + Down + "\" / \"" + Up + "\"");
 		else
-			GCon->Logf("\"%s\" is not bound", *Args[1]);
+			GCon->Logf("%s is not bound", *Args[1]);
 		return;
 	}
-	IN_SetBinding(b, *Args[2], c > 3 ? *Args[3] : "");
-	unguard;
-}
-
-//==========================================================================
-//
-//	IN_WriteBindings
-//
-//	Writes lines containing "bind key value"
-//
-//==========================================================================
-
-void IN_WriteBindings(FILE *f)
-{
-	guard(IN_WriteBindings);
-	int i;
-	char name[32];
-
-	fprintf(f, "UnbindAll\n");
-	for (i = 0; i < 256; i++)
-	{
-		if (keybindings_down[i] && (*keybindings_down[i] || *keybindings_up[i]))
-		{
-			KeyNameForNum(i, name);
-			fprintf(f, "bind \"%s\" \"%s\" \"%s\"\n",
-				name, keybindings_down[i], keybindings_up[i]);
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	IN_GetBindingKeys
-//
-//==========================================================================
-
-void IN_GetBindingKeys(const char *binding, int &key1, int &key2)
-{
-	guard(IN_GetBindingKeys);
-	int		i;
-
-	key1 = -1;
-	key2 = -1;
-	for (i = 0; i < 256; i++)
-	{
-		if (keybindings_down[i] && !stricmp(binding, keybindings_down[i]))
-		{
-			if (key1 != -1)
-			{
-				key2 = i;
-				return;
-			}
-			key1 = i;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	IN_TranslateKey
-//
-//==========================================================================
-
-int IN_TranslateKey(int ch)
-{
-	guard(IN_TranslateKey);
-	int Tmp = ch;
-	return shiftdown ? shiftxform[Tmp] : Tmp;
-	unguard;
-}
-
-//==========================================================================
-//
-//	IN_FreeBindings
-//
-//==========================================================================
-
-void IN_FreeBindings()
-{
-	guard(IN_FreeBindings);
-	for (int i = 0; i < 256; i++)
-	{
-		if (keybindings_down[i])
-			Z_Free(keybindings_down[i]);
-		if (keybindings_up[i])
-			Z_Free(keybindings_up[i]);
-	}
+	GInput->SetBinding(b, Args[2], c > 3 ? Args[3] : VStr());
 	unguard;
 }

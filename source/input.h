@@ -23,14 +23,6 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-#define SCANCODECOUNT	(KEY_COUNT - 0x80)
-
-// TYPES -------------------------------------------------------------------
-
 //	Keys and buttons
 enum
 {
@@ -136,7 +128,8 @@ enum
 	K_JOY15,
 	K_JOY16,
 
-	KEY_COUNT
+	KEY_COUNT,
+	SCANCODECOUNT = KEY_COUNT - 0x80
 };
 
 //	Input event types.
@@ -157,29 +150,69 @@ struct event_t
 	int			data3;		// mouse/joystick y move
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+//
+//	Input device class, handles actual reading of the input.
+//
+class VInputDevice
+{
+public:
+	//	VInputDevice interface.
+	virtual ~VInputDevice();
+	virtual void ReadInput() = 0;
+};
 
-//	In system module
-void IN_Init(void);
-void IN_ReadInput(void);
-void IN_Shutdown(void);
+//
+//	Input subsystem, handles all input events.
+//
+class VInput
+{
+public:
+	int				ShiftDown;
+	int				CtrlDown;
+	int				AltDown;
 
-//	In main module
-void IN_PostEvent(event_t* ev);
-void IN_KeyEvent(int key, int press);
-void IN_ProcessEvents(void);
-int IN_ReadKey(void);
+	VInput();
+	~VInput();
 
-void IN_GetBindingKeys(const char *, int &, int &);
-void IN_GetBindingKeyNames(const char *, char *, char *);
-void IN_SetBinding(int, const char *, const char *);
-void IN_WriteBindings(FILE *f);
-void IN_FreeBindings();
+	//	System device related functions.
+	void Init();
+	void Shutdown();
 
-int IN_TranslateKey(int);
+	//	Input event handling.
+	void PostEvent(event_t*);
+	void KeyEvent(int, int);
+	void ProcessEvents();
+	int ReadKey();
 
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
+	//	Handling of key bindings.
+	void GetBindingKeys(const VStr&, int&, int&);
+	void GetBinding(int, VStr&, VStr&);
+	void SetBinding(int, const VStr&, const VStr&);
+	void WriteBindings(FILE*);
 
-extern int		shiftdown;
-extern int		ctrldown;
-extern int		altdown;
+	int TranslateKey(int);
+
+	int KeyNumForName(const VStr& Name);
+	VStr KeyNameForNum(int KeyNr);
+
+private:
+	enum { MAXEVENTS = 64 };
+
+	VInputDevice*	Device;
+
+	event_t			Events[MAXEVENTS];
+	int				EventHead;
+	int				EventTail;
+
+	VStr			KeyBindingsDown[256];
+	VStr			KeyBindingsUp[256];
+
+	static const char*	KeyNames[SCANCODECOUNT];
+	static const char	ShiftXForm[];
+
+	//	Implemented in corresponding system module.
+	VInputDevice* CreateDevice();
+};
+
+//	Global input handler.
+extern VInput*	GInput;

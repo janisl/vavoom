@@ -30,7 +30,41 @@
 
 // MACROS ------------------------------------------------------------------
 
+#ifndef MAX_JOYSTICK_BUTTONS
+#define MAX_JOYSTICK_BUTTONS 100
+#endif
+
 // TYPES -------------------------------------------------------------------
+
+class VSdlInputDevice : public VInputDevice
+{
+public:
+	VSdlInputDevice();
+	~VSdlInputDevice();
+
+	void ReadInput();
+
+private:
+	int				mouse;
+
+	int				mouse_oldx;
+	int				mouse_oldy;
+
+	SDL_Joystick*	joystick;
+	bool			joystick_started;
+	int				joy_num_buttons;
+	int				joy_x;
+	int				joy_y;
+	int				joy_newb[MAX_JOYSTICK_BUTTONS];
+	int				joy_oldx;
+	int				joy_oldy;
+	int				joy_oldb[MAX_JOYSTICK_BUTTONS];
+
+	static const vuint8		sym2key[SDLK_LAST];
+
+	void StartupJoystick();
+	void PostJoystick();
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -42,179 +76,86 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// static VCvarI m_filter("m_filter", "1", CVAR_Archive);
+static VCvarI m_filter("m_filter", "1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int mouse;
-
-static int mouse_oldx;
-static int mouse_oldy;
-
-#ifndef MAX_JOYSTICK_BUTTONS
-#define MAX_JOYSTICK_BUTTONS 100
-#endif
-
-static SDL_Joystick		*joystick;
-static bool				joystick_started = false;
-static int				joy_num_buttons = 0;
-static int				joy_x = 0;
-static int				joy_y = 0;
-static int				joy_newb[MAX_JOYSTICK_BUTTONS];
-static int				joy_oldx = 0;
-static int				joy_oldy = 0;
-static int				joy_oldb[MAX_JOYSTICK_BUTTONS];
-
 // tested with SDL 1.2.2
-static int sym2key[SDLK_LAST] = {
-//0,
-0,
-//1,  2,  3,  4,  5,  6,  7,  8,            9,     10, 11, 12, 13,      14, 15, 16,
-1,  2,  3,  4,  5,  6,  7,  K_BACKSPACE,  K_TAB, 10, 11, 12, K_ENTER, 14, 15, 16,
-//17, 18, 19,      20, 21, 22, 23, 24, 25, 26, 27,       28, 29, 30, 31, 32,
-17, 18, K_PAUSE, 20, 21, 22, 23, 24, 25, 26, K_ESCAPE, 28, 29, 30, 31, ' ',
-//33, 34, 35, 36, 37, 38, 39,   40, 41, 42, 43, 44,  45,  46,  47,  48,
-33, 34, 35, 36, 37, 38, '\'', 40, 41, 42, 43, ',', '-', '.', '/', '0',
-//49,  50,  51,  52,  53,  54,  55,  56,  57,  58, 59,  60, 61,  62, 63, 64,
-'1', '2', '3', '4', '5', '6', '7', '8', '9', 58, ';', 60, '=', 62, 63, 64,
-//65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
-65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
-//81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,  92, 93,  94, 95, 96,
-81, 82, 83, 84, 85, 86, 87, 88, 89, 90, '[', '\\', ']', 94, 95, '`',
-//97,  98,  99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
-'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-//113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,      128,
-'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 123, 124, 125, 126, K_DELETE, 128,
-//129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,
-129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,
-//145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,
-145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,
-//161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,
-161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,
-//177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,
-177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,
-//193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,
-193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,
-//209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,
-209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,
-//225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,
-225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,
-//241,242,243,244,245,246,247,248,
-241,242,243,244,245,246,247,248,
-//249,250,251,252,253,254,255, 256,
-249,250,251,252,253,254,255, K_PAD0,
-//257,    258,    259,    260,    261,    262,    263,    264,
-K_PAD1, K_PAD2, K_PAD3, K_PAD4, K_PAD5, K_PAD6, K_PAD7, K_PAD8,
-//265,    266,      267,         268,           269,        270,       271,        272,
-K_PAD9, K_PADDOT, K_PADDIVIDE, K_PADMULTIPLE, K_PADMINUS, K_PADPLUS, K_PADENTER, '=',
-//273,       274,         275,          276,         277,      278,    279,   280,
-K_UPARROW, K_DOWNARROW, K_RIGHTARROW, K_LEFTARROW, K_INSERT, K_HOME, K_END, K_PAGEUP,
-//281,        282,  283,  284,  285,  286,  287,  288,
-K_PAGEDOWN, K_F1, K_F2, K_F3, K_F4, K_F5, K_F6, K_F7,
-//289,  290,  291,   292,   293,   294, 295, 296, 297, 298, 299, 300,       301,        302,          303,      304,
-K_F8, K_F9, K_F10, K_F11, K_F12, 0,   0,   0,   0,   0,   0,   K_NUMLOCK, K_CAPSLOCK, K_SCROLLLOCK, K_RSHIFT, K_LSHIFT,
-//305,     306,     307,    308,    309, 310, 311,    312,    313, 314, 315, 316,         317, 318,     319,    320,
-K_RCTRL, K_LCTRL, K_RALT, K_LALT, 0,   0,   K_LWIN, K_RWIN, 0,   0,   0,   K_PRINTSCRN, 0,   K_PAUSE, K_MENU, 0,
-//321
-0
+const vuint8 VSdlInputDevice::sym2key[SDLK_LAST] =
+{
+	//0,
+	0,
+	//1,  2,  3,  4,  5,  6,  7,  8,            9,     10, 11, 12, 13,      14, 15, 16,
+	1,  2,  3,  4,  5,  6,  7,  K_BACKSPACE,  K_TAB, 10, 11, 12, K_ENTER, 14, 15, 16,
+	//17, 18, 19,      20, 21, 22, 23, 24, 25, 26, 27,       28, 29, 30, 31, 32,
+	17, 18, K_PAUSE, 20, 21, 22, 23, 24, 25, 26, K_ESCAPE, 28, 29, 30, 31, ' ',
+	//33, 34, 35, 36, 37, 38, 39,   40, 41, 42, 43, 44,  45,  46,  47,  48,
+	33, 34, 35, 36, 37, 38, '\'', 40, 41, 42, 43, ',', '-', '.', '/', '0',
+	//49,  50,  51,  52,  53,  54,  55,  56,  57,  58, 59,  60, 61,  62, 63, 64,
+	'1', '2', '3', '4', '5', '6', '7', '8', '9', 58, ';', 60, '=', 62, 63, 64,
+	//65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+	65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+	//81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,  92, 93,  94, 95, 96,
+	81, 82, 83, 84, 85, 86, 87, 88, 89, 90, '[', '\\', ']', 94, 95, '`',
+	//97,  98,  99,  100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+	//113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,      128,
+	'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 123, 124, 125, 126, K_DELETE, 128,
+	//129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,
+	129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,
+	//145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,
+	145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,
+	//161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,
+	161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,
+	//177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,
+	177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,
+	//193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,
+	193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,
+	//209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,
+	209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,
+	//225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,
+	225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,
+	//241,242,243,244,245,246,247,248,
+	241,242,243,244,245,246,247,248,
+	//249,250,251,252,253,254,255, 256,
+	249,250,251,252,253,254,255, K_PAD0,
+	//257,    258,    259,    260,    261,    262,    263,    264,
+	K_PAD1, K_PAD2, K_PAD3, K_PAD4, K_PAD5, K_PAD6, K_PAD7, K_PAD8,
+	//265,    266,      267,         268,           269,        270,       271,        272,
+	K_PAD9, K_PADDOT, K_PADDIVIDE, K_PADMULTIPLE, K_PADMINUS, K_PADPLUS, K_PADENTER, '=',
+	//273,       274,         275,          276,         277,      278,    279,   280,
+	K_UPARROW, K_DOWNARROW, K_RIGHTARROW, K_LEFTARROW, K_INSERT, K_HOME, K_END, K_PAGEUP,
+	//281,        282,  283,  284,  285,  286,  287,  288,
+	K_PAGEDOWN, K_F1, K_F2, K_F3, K_F4, K_F5, K_F6, K_F7,
+	//289,  290,  291,   292,   293,   294, 295, 296, 297, 298, 299, 300,       301,        302,          303,      304,
+	K_F8, K_F9, K_F10, K_F11, K_F12, 0,   0,   0,   0,   0,   0,   K_NUMLOCK, K_CAPSLOCK, K_SCROLLLOCK, K_RSHIFT, K_LSHIFT,
+	//305,     306,     307,    308,    309, 310, 311,    312,    313, 314, 315, 316,         317, 318,     319,    320,
+	K_RCTRL, K_LCTRL, K_RALT, K_LALT, 0,   0,   K_LWIN, K_RWIN, 0,   0,   0,   K_PRINTSCRN, 0,   K_PAUSE, K_MENU, 0,
+	//321
+	0
 };
 
 // CODE --------------------------------------------------------------------
 
-//**************************************************************************
-//**
-//**	JOYSTICK
-//**
-//**************************************************************************
-
 //==========================================================================
 //
-//	StartupJoystick
-//
-// 	Initializes joystick
+//	VSdlInputDevice::VSdlInputDevice
 //
 //==========================================================================
 
-static void StartupJoystick()
+VSdlInputDevice::VSdlInputDevice()
+: mouse(0)
+, mouse_oldx(0)
+, mouse_oldy(0)
+, joystick(NULL)
+, joystick_started(false)
+, joy_num_buttons(0)
+, joy_x(0)
+, joy_y(0)
+, joy_oldx(0)
+, joy_oldy(0)
 {
-	guard(StartupJoystick);
-	if (GArgs.CheckParm("-nojoy"))
-		return;
-
-	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
-	{
-		GCon->Log(NAME_Init, "sdl init joystick failed.");
-		return;
-	}
-//	else
-//	{
-//		SDL_JoystickEventState(SDL_IGNORE);
-//		// we are on our own now...
-//	}
-	joystick = SDL_JoystickOpen(0);
-	if (!joystick)
-		return;
-
-	joy_num_buttons = SDL_JoystickNumButtons(joystick);
-	joystick_started = true;
-	memset(joy_oldb, 0, sizeof(joy_oldb));
-	memset(joy_newb, 0, sizeof(joy_newb));
-	unguard;
-}
-
-//==========================================================================
-//
-//  PostJoystick
-//
-//==========================================================================
-
-static void PostJoystick()
-{
-	guard(PostJoystick);
-	int		i;
-	event_t event;
-
-	if (!joystick_started)
-		return;
-
-	if ((joy_oldx != joy_x) || (joy_oldy != joy_y))
-	{
-		event.type = ev_joystick;
-		event.data1 = 0;
-		event.data2 = joy_x;
-		event.data3 = joy_y;
-		IN_PostEvent(&event);
-
-		joy_oldx = joy_x;
-		joy_oldy = joy_y;
-	}
-
-	for (i = 0; i < joy_num_buttons; i++)
-	{
-		if (joy_newb[i] != joy_oldb[i])
-		{
-			IN_KeyEvent(K_JOY1 + i, joy_newb[i]);
-			joy_oldb[i] = joy_newb[i];
-		}
-	}
-	unguard;
-}
-
-//**************************************************************************
-//**
-//**    INPUT
-//**
-//**************************************************************************
-
-//==========================================================================
-//
-//  IN_Init
-//
-//==========================================================================
-
-void IN_Init()
-{
-	guard(IN_Init);
+	guard(VSdlInputDevice::VSdlInputDevice);
 	// always off
 	SDL_ShowCursor(0);
 	// mouse and keyboard are setup using SDL's video interface
@@ -237,24 +178,39 @@ void IN_Init()
 
 	// initialize joystick
 	StartupJoystick();
-
 	unguard;
 }
 
 //==========================================================================
 //
-//  IN_ReadInput
-//
-//      Called by D_DoomLoop before processing each tic in a frame.
-//      Can call D_PostEvent.
-//      Asyncronous interrupt functions should maintain private ques that are
-// read by the syncronous functions to be converted into events.
+//	VSdlInputDevice::~VSdlInputDevice
 //
 //==========================================================================
 
-void IN_ReadInput()
+VSdlInputDevice::~VSdlInputDevice()
 {
-	guard(IN_ReadInput);
+	guard(VSdlInputDevice::~VSdlInputDevice);
+	// on
+	SDL_ShowCursor(1);
+	if (joystick_started)
+	{
+		SDL_JoystickClose(joystick);
+		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VSdlInputDevice::ReadInput
+//
+//	Reads input from the input devices.
+//
+//==========================================================================
+
+void VSdlInputDevice::ReadInput()
+{
+	guard(VSdlInputDevice::ReadInput);
 	SDL_Event ev;
 	event_t vev;
 	//int rel_x;
@@ -270,7 +226,7 @@ void IN_ReadInput()
 		{
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
-			IN_KeyEvent(sym2key[ev.key.keysym.sym],
+			GInput->KeyEvent(sym2key[ev.key.keysym.sym],
 				(ev.key.state == SDL_PRESSED) ? 1 : 0);
 			break;
 #if 0
@@ -279,7 +235,7 @@ void IN_ReadInput()
 			vev.data1 = 0;
 			vev.data2 = ev.motion.xrel;
 			vev.data3 = ev.motion.yrel;
-			IN_PostEvent(&vev);
+			GInput->PostEvent(&vev);
 			break;
 #endif /* 0 */
 		case SDL_MOUSEBUTTONDOWN:
@@ -299,7 +255,7 @@ void IN_ReadInput()
 				break;
 			vev.data2 = 0;
 			vev.data3 = 0;
-			IN_PostEvent(&vev);
+			GInput->PostEvent(&vev);
 			break;
 		case SDL_JOYAXISMOTION:
 			normal_value = ev.jaxis.value * 127 / 32767;
@@ -331,7 +287,7 @@ void IN_ReadInput()
 		vev.data1 = 0;
 		vev.data2 = mouse_x - ScreenWidth / 2;
 		vev.data3 = ScreenHeight / 2 - mouse_y;
-		IN_PostEvent(&vev);
+		GInput->PostEvent(&vev);
 		SDL_WarpMouse(ScreenWidth / 2, ScreenHeight / 2);
 #if 0
 		SDL_GetRelativeMouseState(&rel_x, &rel_y);
@@ -339,7 +295,7 @@ void IN_ReadInput()
 		vev.data1 = 0;
 		vev.data2 = rel_x;
 		vev.data3 = rel_y;
-		IN_PostEvent(&vev);
+		GInput->PostEvent(&vev);
 #endif
 	}
 
@@ -348,19 +304,98 @@ void IN_ReadInput()
 	unguard;
 }
 
+//**************************************************************************
+//**
+//**	JOYSTICK
+//**
+//**************************************************************************
+
 //==========================================================================
 //
-//  IN_Shutdown
+//	VSdlInputDevice::StartupJoystick
+//
+// 	Initializes joystick
 //
 //==========================================================================
 
-void IN_Shutdown(void)
+void VSdlInputDevice::StartupJoystick()
 {
-	// on
-	SDL_ShowCursor(1);
-	if (joystick_started)
+	guard(VSdlInputDevice::StartupJoystick);
+	if (GArgs.CheckParm("-nojoy"))
+		return;
+
+	if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) < 0)
 	{
-		SDL_JoystickClose(joystick);
-		SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+		GCon->Log(NAME_Init, "sdl init joystick failed.");
+		return;
 	}
+//	else
+//	{
+//		SDL_JoystickEventState(SDL_IGNORE);
+//		// we are on our own now...
+//	}
+	joystick = SDL_JoystickOpen(0);
+	if (!joystick)
+		return;
+
+	joy_num_buttons = SDL_JoystickNumButtons(joystick);
+	joystick_started = true;
+	memset(joy_oldb, 0, sizeof(joy_oldb));
+	memset(joy_newb, 0, sizeof(joy_newb));
+	unguard;
+}
+
+//==========================================================================
+//
+//  VSdlInputDevice::PostJoystick
+//
+//==========================================================================
+
+void VSdlInputDevice::PostJoystick()
+{
+	guard(VSdlInputDevice::PostJoystick);
+	int		i;
+	event_t event;
+
+	if (!joystick_started)
+		return;
+
+	if ((joy_oldx != joy_x) || (joy_oldy != joy_y))
+	{
+		event.type = ev_joystick;
+		event.data1 = 0;
+		event.data2 = joy_x;
+		event.data3 = joy_y;
+		GInput->PostEvent(&event);
+
+		joy_oldx = joy_x;
+		joy_oldy = joy_y;
+	}
+
+	for (i = 0; i < joy_num_buttons; i++)
+	{
+		if (joy_newb[i] != joy_oldb[i])
+		{
+			GInput->KeyEvent(K_JOY1 + i, joy_newb[i]);
+			joy_oldb[i] = joy_newb[i];
+		}
+	}
+	unguard;
+}
+
+//**************************************************************************
+//**
+//**    INPUT
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//  VInput::CreateDevice
+//
+//==========================================================================
+
+VInputDevice* VInput::CreateDevice()
+{
+	return new VSdlInputDevice();
 }

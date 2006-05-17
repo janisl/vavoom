@@ -98,35 +98,15 @@ void TILine::DelChar(void)
 
 bool TILine::Key(byte ch)
 {
-    if (ch >= ' ' && ch < 128)
+	if (ch >= ' ' && ch < 128)
 	{
-		ch = IN_TranslateKey(ch);
-  		AddChar((char)ch);
+		ch = GInput->TranslateKey(ch);
+		AddChar((char)ch);
 	}
-    else if (ch == K_BACKSPACE)
-	    DelChar();
+	else if (ch == K_BACKSPACE)
+		DelChar();
 	else if (ch != K_ENTER && ch != K_PADENTER)
 		return false; // did not eat key
 
-    return true; // ate the key
+	return true; // ate the key
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2002/03/02 17:30:34  dj_jl
-//	Added suport for Pad-Enter.
-//
-//	Revision 1.5  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/11/09 14:32:26  dj_jl
-//	Cleaned up
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

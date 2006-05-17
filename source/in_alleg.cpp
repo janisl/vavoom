@@ -39,6 +39,41 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VAllegroInputDevice : public VInputDevice
+{
+public:
+	VAllegroInputDevice();
+	~VAllegroInputDevice();
+
+	void ReadInput();
+
+private:
+	bool				keyboard_started;
+
+	bool				mouse_started;
+	int					old_mouse_x;
+	int					old_mouse_y;
+
+	bool				joystick_started;
+	int					joy_oldx;
+	int					joy_oldy;
+	int					joy_oldb[MAX_JOYSTICK_BUTTONS];
+
+	static const vuint8	scantokey[KEY_MAX];
+
+	void StartupKeyboard();
+	void ReadKeyboard();
+	void ShutdownKeyboard();
+
+	void StartupMouse();
+	void ReadMouse();
+	void ShutdownMouse();
+
+	void StartupJoystick();
+	void ReadJoystick();
+	void ShutdownJoystick();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -51,11 +86,11 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean 				keyboard_started = false;
-static byte					keyboardque[KBDQUESIZE];
+static vuint8				keyboardque[KBDQUESIZE];
 static int 					kbdtail = 0;
 static int					kbdhead = 0;
-static byte					scantokey[KEY_MAX] =
+
+const vuint8				VAllegroInputDevice::scantokey[KEY_MAX] =
 {
 	0,
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -77,17 +112,63 @@ static byte					scantokey[KEY_MAX] =
 	K_LWIN, K_RWIN, K_MENU, K_SCROLLLOCK, K_NUMLOCK, K_CAPSLOCK
 };
 
-static bool					mouse_started    = false;
-static int					old_mouse_x;
-static int					old_mouse_y;
 static VCvarI				m_filter("m_filter", "1", CVAR_Archive);
 
-static bool					joystick_started = false;
-static int					joy_oldx = 0;
-static int					joy_oldy = 0;
-static int					joy_oldb[MAX_JOYSTICK_BUTTONS];
-
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VAllegroInputDevice::VAllegroInputDevice
+//
+//==========================================================================
+
+VAllegroInputDevice::VAllegroInputDevice()
+: keyboard_started(false)
+, mouse_started(false)
+, old_mouse_x(0)
+, old_mouse_y(0)
+, joystick_started(false)
+, joy_oldx(0)
+, joy_oldy(0)
+{
+	guard(VAllegroInputDevice::VAllegroInputDevice);
+	StartupKeyboard();
+	StartupMouse();
+	StartupJoystick();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroInputDevice::~VAllegroInputDevice
+//
+//==========================================================================
+
+VAllegroInputDevice::~VAllegroInputDevice()
+{
+	guard(VAllegroInputDevice::~VAllegroInputDevice);
+	ShutdownJoystick();
+	ShutdownMouse();
+	ShutdownKeyboard();
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAllegroInputDevice::ReadInput
+//
+//	Reads input from the input devices.
+//
+//==========================================================================
+
+void VAllegroInputDevice::ReadInput()
+{
+	guard(VAllegroInputDevice::ReadInput);
+	ReadKeyboard();
+	ReadMouse();
+	ReadJoystick();
+	unguard;
+}
 
 //**************************************************************************
 //**
@@ -112,39 +193,15 @@ END_OF_FUNCTION(KeyboardHandler)
 
 //==========================================================================
 //
-//  ReadKeyboard
-//
-//==========================================================================
-
-static void ReadKeyboard()
-{
-	guard(ReadKeyboard);
-	unsigned char 	ch;
-
-	if (!keyboard_started)
-		return;
-
-	while (kbdtail < kbdhead)
-	{
-		ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
-		kbdtail++;
-
-		IN_KeyEvent(scantokey[ch & 0x7f], !(ch & 0x80));
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	StartupKeyboard
+//	VAllegroInputDevice::StartupKeyboard
 //
 //	Installs the keyboard handler.
 //
 //==========================================================================
 
-static void StartupKeyboard()
+void VAllegroInputDevice::StartupKeyboard()
 {
-	guard(StartupKeyboard);
+	guard(VAllegroInputDevice::StartupKeyboard);
 	LOCK_FUNCTION((void*)KeyboardHandler);
 	LOCK_DATA(keyboardque, sizeof(keyboardque));
 	LOCK_VARIABLE(kbdhead);
@@ -160,15 +217,39 @@ static void StartupKeyboard()
 
 //==========================================================================
 //
-//  ShutdownKeyboard
+//  VAllegroInputDevice::ReadKeyboard
+//
+//==========================================================================
+
+void VAllegroInputDevice::ReadKeyboard()
+{
+	guard(VAllegroInputDevice::ReadKeyboard);
+	unsigned char 	ch;
+
+	if (!keyboard_started)
+		return;
+
+	while (kbdtail < kbdhead)
+	{
+		ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
+		kbdtail++;
+
+		GInput->KeyEvent(scantokey[ch & 0x7f], !(ch & 0x80));
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAllegroInputDevice::ShutdownKeyboard
 //
 // 	Removes the keyboard handler.
 //
 //==========================================================================
 
-static void ShutdownKeyboard()
+void VAllegroInputDevice::ShutdownKeyboard()
 {
-	guard(ShutdownKeyboard);
+	guard(VAllegroInputDevice::ShutdownKeyboard);
 	if (keyboard_started)
 	{
 		remove_keyboard();
@@ -184,15 +265,15 @@ static void ShutdownKeyboard()
 
 //==========================================================================
 //
-// 	StartupMouse
+//	VAllegroInputDevice::StartupMouse
 //
-//	Initializes mouse
+//	Initialises mouse
 //
 //==========================================================================
 
-static void StartupMouse()
+void VAllegroInputDevice::StartupMouse()
 {
-	guard(StartupMouse);
+	guard(VAllegroInputDevice::StartupMouse);
 	int		buts;
 
 	if (GArgs.CheckParm("-nomouse"))
@@ -209,15 +290,15 @@ static void StartupMouse()
 
 //==========================================================================
 //
-//  ReadMouse
+//	VAllegroInputDevice::ReadMouse
 //
 // 	Reads mouse.
 //
 //==========================================================================
 
-static void ReadMouse()
+void VAllegroInputDevice::ReadMouse()
 {
-	guard(ReadMouse);
+	guard(VAllegroInputDevice::ReadMouse);
 	int			i;
 	event_t 	event;
 	int 		xmickeys;
@@ -263,13 +344,13 @@ static void ReadMouse()
 		event.data2 = mouse_x;
 		event.data3 = -mouse_y;
 
-		IN_PostEvent(&event);
+		GInput->PostEvent(&event);
 	}
 	for (i = 0; i < 3; i++)
 	{
 		if ((buttons ^ lastbuttons) & (1 << i))
 		{
-			IN_KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
+			GInput->KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
 		}
 	}
 	lastbuttons = buttons;
@@ -278,13 +359,13 @@ static void ReadMouse()
 
 //==========================================================================
 //
-//	ShutdownMouse
+//	VAllegroInputDevice::ShutdownMouse
 //
 //==========================================================================
 
-static void ShutdownMouse()
+void VAllegroInputDevice::ShutdownMouse()
 {
-	guard(ShutdownMouse);
+	guard(VAllegroInputDevice::ShutdownMouse);
 	if (!mouse_started)
 		return;
 	remove_mouse();
@@ -299,15 +380,15 @@ static void ShutdownMouse()
 
 //==========================================================================
 //
-//	StartupJoystick
+//	VAllegroInputDevice::StartupJoystick
 //
-// 	Initializes joystick
+//	Initialises joystick
 //
 //==========================================================================
 
-static void StartupJoystick()
+void VAllegroInputDevice::StartupJoystick()
 {
-	guard(StartupJoystick);
+	guard(VAllegroInputDevice::StartupJoystick);
 	if (GArgs.CheckParm("-nojoy"))
 		return;
 
@@ -331,7 +412,7 @@ static void StartupJoystick()
 		remove_joystick();
 
 		printf("CENTER the joystick and press a key:\n");
-		IN_ReadKey();
+		GInput->ReadKey();
 
 		// Initialize the joystick driver
 		if (install_joystick(JOY_TYPE_AUTODETECT))
@@ -344,7 +425,7 @@ static void StartupJoystick()
 	while (joy[0].flags & JOYFLAG_CALIBRATE)
 	{
 		printf("%s and press a key:\n", calibrate_joystick_name(0));
-		IN_ReadKey();
+		GInput->ReadKey();
 
 		if (calibrate_joystick(0))
 		{
@@ -359,13 +440,13 @@ static void StartupJoystick()
 
 //==========================================================================
 //
-//  ReadJoystick
+//	VAllegroInputDevice::ReadJoystick
 //
 //==========================================================================
 
-static void ReadJoystick()
+void VAllegroInputDevice::ReadJoystick()
 {
-	guard(ReadJoystick);
+	guard(VAllegroInputDevice::ReadJoystick);
 	int			i;
 	event_t		event;
 
@@ -380,7 +461,7 @@ static void ReadJoystick()
 		event.data1 = 0;
 		event.data2 = (abs(joy_x) < 4)? 0 : joy_x;
 		event.data3 = (abs(joy_y) < 4)? 0 : joy_y;
-		IN_PostEvent(&event);
+		GInput->PostEvent(&event);
 
 		joy_oldx = joy_x;
 		joy_oldy = joy_y;
@@ -389,7 +470,7 @@ static void ReadJoystick()
 	{
 		if (joy[0].button[i].b != joy_oldb[i])
 		{
-			IN_KeyEvent(K_JOY1 + i, joy[0].button[i].b);
+			GInput->KeyEvent(K_JOY1 + i, joy[0].button[i].b);
 			joy_oldb[i] = joy[0].button[i].b;
 		}
 	}
@@ -398,13 +479,13 @@ static void ReadJoystick()
 
 //==========================================================================
 //
-//	ShutdownJoystick
+//	VAllegroInputDevice::ShutdownJoystick
 //
 //==========================================================================
 
-static void ShutdownJoystick()
+void VAllegroInputDevice::ShutdownJoystick()
 {
-	guard(ShutdownJoystick);
+	guard(VAllegroInputDevice::ShutdownJoystick);
 	if (joystick_started)
 	{
 		remove_joystick();
@@ -414,80 +495,11 @@ static void ShutdownJoystick()
 
 //==========================================================================
 //
-//  IN_Init
+//  VInput::CreateDevice
 //
 //==========================================================================
 
-void IN_Init()
+VInputDevice* VInput::CreateDevice()
 {
-	StartupKeyboard();
-	StartupMouse();
-	StartupJoystick();
+	return new VAllegroInputDevice();
 }
-
-//==========================================================================
-//
-//  IN_ReadInput
-//
-// 	Called by D_DoomLoop before processing each tic in a frame.
-// 	Can call D_PostEvent.
-// 	Asyncronous interrupt functions should maintain private ques that are
-// read by the syncronous functions to be converted into events.
-//
-//==========================================================================
-
-void IN_ReadInput()
-{
-	ReadKeyboard();
-	ReadMouse();
-	ReadJoystick();
-}
-
-//==========================================================================
-//
-//  IN_Shutdown
-//
-//==========================================================================
-
-void IN_Shutdown()
-{
-	ShutdownJoystick();
-	ShutdownMouse();
-	ShutdownKeyboard();
-}
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.10  2005/03/01 15:58:28  dj_jl
-//	Beautification.
-//	
-//	Revision 1.9  2002/11/16 17:13:09  dj_jl
-//	Some compatibility changes.
-//	
-//	Revision 1.8  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.7  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/08/31 17:24:52  dj_jl
-//	Added some new keys
-//	
-//	Revision 1.5  2001/08/23 17:42:06  dj_jl
-//	Added new keys
-//	
-//	Revision 1.4  2001/08/07 16:48:54  dj_jl
-//	Beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

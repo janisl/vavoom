@@ -43,6 +43,45 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VDosInputDevice : public VInputDevice
+{
+public:
+	VDosInputDevice();
+	~VDosInputDevice();
+
+	void ReadInput();
+
+private:
+	bool 			    keyboard_started;
+	_go32_dpmi_seginfo	oldkeyinfo;
+	_go32_dpmi_seginfo	newkeyinfo;
+	bool 				nextkeyextended;
+	int					pause_garbage;
+
+	bool				mouse_started;
+	int					old_mouse_x;
+	int					old_mouse_y;
+
+	bool				joystick_started;
+	int					joy_oldx;
+	int					joy_oldy;
+	int					joy_oldb[MAX_JOYSTICK_BUTTONS];
+
+	static const vuint8	scantokey[256];
+
+	void StartupKeyboard();
+	void ReadKeyboard();
+	void ShutdownKeyboard();
+
+	void StartupMouse();
+	void ReadMouse();
+	void ShutdownMouse();
+
+	void StartupJoystick();
+	void ReadJoystick();
+	void ShutdownJoystick();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -55,15 +94,11 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean 			    keyboard_started = false;
-static _go32_dpmi_seginfo	oldkeyinfo;
-static _go32_dpmi_seginfo	newkeyinfo;
-static boolean 				nextkeyextended;
-static byte					keyboardque[KBDQUESIZE];
+static vuint8				keyboardque[KBDQUESIZE];
 static int 					kbdtail = 0;
 static int					kbdhead = 0;
-static int					pause_garbage;
-static byte					scantokey[256] =
+
+const vuint8				VDosInputDevice::scantokey[256] =
 {
 	0, K_ESCAPE, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', K_BACKSPACE, K_TAB,
 	'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', K_ENTER, K_LCTRL, 'a', 's',
@@ -83,17 +118,63 @@ static byte					scantokey[256] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-static bool					mouse_started    = false;
-static int					old_mouse_x;
-static int					old_mouse_y;
 static VCvarI				m_filter("m_filter", "1", CVAR_Archive);
 
-static bool					joystick_started = false;
-static int					joy_oldx = 0;
-static int					joy_oldy = 0;
-static int					joy_oldb[MAX_JOYSTICK_BUTTONS];
-
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VDosInputDevice::VDosInputDevice
+//
+//==========================================================================
+
+VDosInputDevice::VDosInputDevice()
+: keyboard_started(false)
+, mouse_started(false)
+, old_mouse_x(0)
+, old_mouse_y(0)
+, joystick_started(false)
+, joy_oldx(0)
+, joy_oldy(0)
+{
+	guard(VDosInputDevice::VDosInputDevice);
+	StartupMouse();
+	StartupJoystick();
+	StartupKeyboard();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDosInputDevice::~VDosInputDevice
+//
+//==========================================================================
+
+VDosInputDevice::~VDosInputDevice()
+{
+	guard(VDosInputDevice::~VDosInputDevice);
+	ShutdownJoystick();
+	ShutdownMouse();
+	ShutdownKeyboard();
+	unguard;
+}
+
+//==========================================================================
+//
+//  VDosInputDevice::ReadInput
+//
+//	Reads input from the input devices.
+//
+//==========================================================================
+
+void VDosInputDevice::ReadInput()
+{
+	guard(VDosInputDevice::ReadInput);
+	ReadKeyboard();
+	ReadMouse();
+	ReadJoystick();
+	unguard;
+}
 
 //**************************************************************************
 //
@@ -118,62 +199,20 @@ static void KeyboardHandler()
 	//	Acknowledge the interrupt
 	outportb(0x20, 0x20);
 }
+static void KeyboardHandlerEnd()
+{}
 
 //==========================================================================
 //
-//  ReadKeyboard
-//
-//==========================================================================
-
-static void ReadKeyboard()
-{
-	guard(ReadKeyboard);
-	unsigned char 	ch;
-
-	if (!keyboard_started)
-		return;
-
-	while (kbdtail < kbdhead)
-	{
-		ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
-		kbdtail++;
-
-		if (pause_garbage)
-		{
-			pause_garbage--;
-			continue;
-		}
-
-		if (ch == 0xe1)
-		{
-			IN_KeyEvent(K_PAUSE, true);
-			pause_garbage = 5;
-			continue;
-		}
-		if (ch == 0xe0)
-		{
-			nextkeyextended = true;
-			continue;
-		}
-
-		IN_KeyEvent(scantokey[nextkeyextended ? (ch | 0x80) : (ch & 0x7f)],
-			!(ch & 0x80));
-		nextkeyextended = false;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//  StartupKeyboard
+//  VDosInputDevice::StartupKeyboard
 //
 //	Installs the keyboard handler.
 //
 //==========================================================================
 
-static void StartupKeyboard()
+void VDosInputDevice::StartupKeyboard()
 {
-	guard(StartupKeyboard);
+	guard(VDosInputDevice::StartupKeyboard);
 	nextkeyextended = false;
 	pause_garbage = 0;
 
@@ -198,7 +237,8 @@ static void StartupKeyboard()
 	}
 	asm("sti");
 
-	_go32_dpmi_lock_code((void*)KeyboardHandler, (long)ReadKeyboard - (long)KeyboardHandler);
+	_go32_dpmi_lock_code((void*)KeyboardHandler,
+		(long)KeyboardHandlerEnd - (long)KeyboardHandler);
 	_go32_dpmi_lock_data(keyboardque, sizeof(keyboardque));
 	_go32_dpmi_lock_data(&kbdhead, sizeof(kbdhead));
 
@@ -208,15 +248,59 @@ static void StartupKeyboard()
 
 //==========================================================================
 //
-//  ShutdownKeyboard
+//  VDosInputDevice::ReadKeyboard
+//
+//==========================================================================
+
+void VDosInputDevice::ReadKeyboard()
+{
+	guard(VDosInputDevice::ReadKeyboard);
+	unsigned char 	ch;
+
+	if (!keyboard_started)
+		return;
+
+	while (kbdtail < kbdhead)
+	{
+		ch = keyboardque[kbdtail & (KBDQUESIZE - 1)];
+		kbdtail++;
+
+		if (pause_garbage)
+		{
+			pause_garbage--;
+			continue;
+		}
+
+		if (ch == 0xe1)
+		{
+			GInput->KeyEvent(K_PAUSE, true);
+			pause_garbage = 5;
+			continue;
+		}
+		if (ch == 0xe0)
+		{
+			nextkeyextended = true;
+			continue;
+		}
+
+		GInput->KeyEvent(scantokey[nextkeyextended ? (ch | 0x80) : (ch & 0x7f)],
+			!(ch & 0x80));
+		nextkeyextended = false;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VDosInputDevice::ShutdownKeyboard
 //
 // 	Removes the keyboard handler.
 //
 //==========================================================================
 
-static void ShutdownKeyboard()
+void VDosInputDevice::ShutdownKeyboard()
 {
-	guard(ShutdownKeyboard);
+	guard(VDosInputDevice::ShutdownKeyboard);
 	if (keyboard_started)
 	{
 		keyboard_started = false;
@@ -238,15 +322,15 @@ static void ShutdownKeyboard()
 
 //==========================================================================
 //
-//  StartupMouse
+//  VDosInputDevice::StartupMouse
 //
 //	Initializes mouse
 //
 //==========================================================================
 
-static void StartupMouse()
+void VDosInputDevice::StartupMouse()
 {
-	guard(StartupMouse);
+	guard(VDosInputDevice::StartupMouse);
 	__dpmi_regs r;
 
 	if (GArgs.CheckParm("-nomouse"))
@@ -274,15 +358,15 @@ static void StartupMouse()
 
 //==========================================================================
 //
-//  ReadMouse
+//  VDosInputDevice::ReadMouse
 //
 // 	Reads mouse.
 //
 //==========================================================================
 
-static void ReadMouse()
+void VDosInputDevice::ReadMouse()
 {
-	guard(ReadMouse);
+	guard(VDosInputDevice::ReadMouse);
 	int			i;
 	__dpmi_regs r;
 	event_t 	event;
@@ -333,13 +417,13 @@ static void ReadMouse()
 		event.data2 = mouse_x;
 		event.data3 = -mouse_y;
 
-		IN_PostEvent(&event);
+		GInput->PostEvent(&event);
 	}
 	for (i = 0; i < 3; i++)
 	{
 		if ((buttons ^ lastbuttons) & (1 << i))
 		{
-			IN_KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
+			GInput->KeyEvent(K_MOUSE1 + i, buttons & (1 << i));
 		}
 	}
 	lastbuttons = buttons;
@@ -348,13 +432,13 @@ static void ReadMouse()
 
 //==========================================================================
 //
-//  ShutdownMouse
+//  VDosInputDevice::ShutdownMouse
 //
 //==========================================================================
 
-static void ShutdownMouse()
+void VDosInputDevice::ShutdownMouse()
 {
-	guard(ShutdownMouse);
+	guard(VDosInputDevice::ShutdownMouse);
 	if (mouse_started)
 	{
 		__dpmi_regs r;
@@ -374,15 +458,15 @@ static void ShutdownMouse()
 
 //==========================================================================
 //
-//  StartupJoystick
+//  VDosInputDevice::StartupJoystick
 //
 // 	Initializes joystick
 //
 //==========================================================================
 
-static void StartupJoystick()
+void VDosInputDevice::StartupJoystick()
 {
-	guard(StartupJoystick);
+	guard(VDosInputDevice::StartupJoystick);
 	if (GArgs.CheckParm("-nojoy"))
 	{
 		return;
@@ -405,7 +489,7 @@ static void StartupJoystick()
 		remove_joystick();
 
 		printf("CENTER the joystick and press a key:\n");
-		IN_ReadKey();
+		GInput->ReadKey();
 
 		// Initialize the joystick driver
 		if (install_joystick(JOY_TYPE_AUTODETECT))
@@ -418,7 +502,7 @@ static void StartupJoystick()
 	while (joy[0].flags & JOYFLAG_CALIBRATE)
 	{
 		printf("%s and press a key:\n", calibrate_joystick_name(0));
-		IN_ReadKey();
+		GInput->ReadKey();
 
 		if (calibrate_joystick(0))
 		{
@@ -433,13 +517,13 @@ static void StartupJoystick()
 
 //==========================================================================
 //
-//  ReadJoystick
+//  VDosInputDevice::ReadJoystick
 //
 //==========================================================================
 
-static void ReadJoystick()
+void VDosInputDevice::ReadJoystick()
 {
-	guard(ReadJoystick);
+	guard(VDosInputDevice::ReadJoystick);
 	int			i;
 	event_t 	event;
 
@@ -454,7 +538,7 @@ static void ReadJoystick()
 		event.data1 = 0;
 		event.data2 = (abs(joy_x) < 4)? 0 : joy_x;
 		event.data3 = (abs(joy_y) < 4)? 0 : joy_y;
-		IN_PostEvent(&event);
+		GInput->PostEvent(&event);
 		joy_oldx = joy_x;
 		joy_oldy = joy_y;
 	}
@@ -462,7 +546,7 @@ static void ReadJoystick()
 	{
 		if (joy[0].button[i].b != joy_oldb[i])
 		{
-			IN_KeyEvent(K_JOY1 + i, joy[0].button[i].b);
+			GInput->KeyEvent(K_JOY1 + i, joy[0].button[i].b);
 			joy_oldb[i] = joy[0].button[i].b;
 		}
 	}
@@ -471,13 +555,13 @@ static void ReadJoystick()
 
 //==========================================================================
 //
-//  ShutdownJoystick
+//  VDosInputDevice::ShutdownJoystick
 //
 //==========================================================================
 
-static void ShutdownJoystick()
+void VDosInputDevice::ShutdownJoystick()
 {
-	guard(ShutdownJoystick);
+	guard(VDosInputDevice::ShutdownJoystick);
 	if (joystick_started)
 	{
 		joystick_started = false;
@@ -494,74 +578,11 @@ static void ShutdownJoystick()
 
 //==========================================================================
 //
-//  IN_Init
+//  VInput::CreateDevice
 //
 //==========================================================================
 
-void IN_Init()
+VInputDevice* VInput::CreateDevice()
 {
-	StartupMouse();
-	StartupJoystick();
-	StartupKeyboard();
+	return new VAllegroInputDevice();
 }
-
-//==========================================================================
-//
-//  IN_ReadInput
-//
-// 	Called by D_DoomLoop before processing each tic in a frame.
-// 	Can call D_PostEvent.
-// 	Asyncronous interrupt functions should maintain private ques that are
-// read by the syncronous functions to be converted into events.
-//
-//==========================================================================
-
-void IN_ReadInput()
-{
-	ReadKeyboard();
-	ReadMouse();
-	ReadJoystick();
-}
-
-//==========================================================================
-//
-//  IN_Shutdown
-//
-//==========================================================================
-
-void IN_Shutdown()
-{
-	ShutdownJoystick();
-	ShutdownMouse();
-	ShutdownKeyboard();
-}
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.8  2002/11/16 17:13:09  dj_jl
-//	Some compatibility changes.
-//	
-//	Revision 1.7  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.6  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/08/15 17:24:49  dj_jl
-//	Added keyboard init error checking
-//	
-//	Revision 1.4  2001/08/07 16:48:54  dj_jl
-//	Beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
