@@ -1640,9 +1640,10 @@ PF(P_ChangeSwitchTexture)
 	line_t* 	line;
 	int 		useAgain;
 
-    useAgain = Pop();
-    line = (line_t*)Pop();
-	P_ChangeSwitchTexture(line, useAgain);
+	P_GET_NAME(DefaultSound);
+	useAgain = Pop();
+	line = (line_t*)Pop();
+	P_ChangeSwitchTexture(line, useAgain, DefaultSound);
 }
 
 //==========================================================================

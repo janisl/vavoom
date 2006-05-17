@@ -171,7 +171,7 @@ bool P_ChangeSector(sector_t * sector, int crunch);
 
 void P_InitSwitchList();
 void P_ClearButtons();
-void P_ChangeSwitchTexture(line_t* line, int useAgain);
+void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound);
 void P_UpdateButtons();
 
 void P_InitTerrainTypes();

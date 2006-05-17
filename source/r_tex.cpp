@@ -3370,8 +3370,7 @@ static void ParseSwitchDef()
 	int t1 = GTextureManager.CheckNumForName(VName(sc_String,
 		VName::AddLower8), TEXTYPE_Wall, true, false);
 	int t2 = -1;
-	char SndName[64];
-	strcpy(SndName, "switches/normbutn");
+	VName SndName = NAME_None;
 
 	//	Currently only basic switch definition is supported.
 	while (SC_GetString())
@@ -3386,7 +3385,7 @@ static void ParseSwitchDef()
 				if (SC_Compare("sound"))
 				{
 					SC_MustGetString();
-					strcpy(SndName, sc_String);
+					SndName = sc_String;
 				}
 				else if (SC_Compare("pic"))
 				{
@@ -3415,7 +3414,10 @@ static void ParseSwitchDef()
 		return;
 	}
 	TSwitch& sw = Switches.Alloc();
-	sw.Sound = S_GetSoundID(SndName);
+	if (SndName == NAME_None)
+		sw.Sound = 0;
+	else
+		sw.Sound = S_GetSoundID(SndName);
 	sw.Tex1 = t1;
 	sw.Tex2 = t2;
 }
@@ -3541,7 +3543,7 @@ void P_InitSwitchList()
 				continue;
 			}
 			TSwitch& sw = Switches.Alloc();
-			sw.Sound = S_GetSoundID("switches/normbutn");
+			sw.Sound = 0;
 			sw.Tex1 = t1;
 			sw.Tex2 = t2;
 		}

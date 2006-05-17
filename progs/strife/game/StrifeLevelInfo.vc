@@ -1122,19 +1122,24 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 	buttonSuccess = ExecuteActionSpecial(Line->special, Line->arg1,
 		Line->arg2, Line->arg3, Line->arg4, Line->arg5, Line, Side, A);
 	changeBack = Line->special == 49 && (Line->flags & ML_TWOSIDED) && buttonSuccess;
-	if (!repeat && buttonSuccess)
-	{
-		// clear the special on non-retriggerable lines
-		Line->special = 0;
-	}
 	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
 		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
 	{
-		P_ChangeSwitchTexture(Line, repeat);
+		P_ChangeSwitchTexture(Line, repeat,
+			Line->special == LNSPEC_ExitNormal ||
+			Line->special == LNSPEC_ExitSecret ||
+			Line->special == LNSPEC_TeleportNewMap ||
+			Line->special == LNSPEC_TeleportEndGame
+			? 'switches/exitbutn' : 'switches/normbutn');
 	}
 	if (changeBack)
 	{
 		SetLineTexture(Line->sidenum[1], 1, XLevel.Sides[Line->sidenum[0]].midtexture);
+	}
+	if (!repeat && buttonSuccess)
+	{
+		// clear the special on non-retriggerable lines
+		Line->special = 0;
 	}
 	return true;
 }
@@ -1414,7 +1419,7 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	quest1 = false;
 	if (XLevel.Sides[Line->sidenum[0]].midtexture == TextureNumForName('brnscn01'))
 		quest1 = true;
-	P_ChangeSwitchTexture(Line, false);
+	P_ChangeSwitchTexture(Line, false, 'switches/normbutn');
 	switched = true;
 	Line->special = 0;
 	if (Line->sidenum[1] != -1)

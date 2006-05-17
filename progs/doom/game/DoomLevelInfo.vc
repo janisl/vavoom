@@ -1096,15 +1096,20 @@ bool ActivateLine(line_t* Line, Actor A, int Side, int ActivationType)
 	repeat = Line->flags & ML_REPEAT_SPECIAL;
 	buttonSuccess = ExecuteActionSpecial(Line->special, Line->arg1,
 		Line->arg2, Line->arg3, Line->arg4, Line->arg5, Line, Side, A);
+	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
+		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
+	{
+		P_ChangeSwitchTexture(Line, repeat,
+			Line->special == LNSPEC_ExitNormal ||
+			Line->special == LNSPEC_ExitSecret ||
+			Line->special == LNSPEC_TeleportNewMap ||
+			Line->special == LNSPEC_TeleportEndGame
+			? 'switches/exitbutn' : 'switches/normbutn');
+	}
 	if (!repeat && buttonSuccess)
 	{
 		// clear the special on non-retriggerable lines
 		Line->special = 0;
-	}
-	if ((lineActivation == SPAC_USE || lineActivation == SPAC_IMPACT ||
-		lineActivation == SPAC_USETHROUGH) && buttonSuccess)
-	{
-		P_ChangeSwitchTexture(Line, repeat);
 	}
 	return true;
 }

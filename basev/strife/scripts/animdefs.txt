@@ -43,7 +43,7 @@ switch GLASS07  on pic GLASS08  tics 0 sound world/glassbreak
 switch GLASS17  on pic GLASS18  tics 0 sound world/glassbreak
 switch GLASS19  on pic GLASS20  tics 0 sound world/glassbreak
 switch SWKNOB01 on pic SWKNOB02 tics 0 sound switches/knob
-switch SWLITE01 on pic SWLITE02 tics 0 sound switches/normbutn
+switch SWLITE01 on pic SWLITE02 tics 0
 switch SWCHN01  on pic SWCHN02  tics 0 sound switches/chain
 switch COMP01   on pic COMP04B  tics 0 sound world/glassbreak
 switch COMP05   on pic COMP12B  tics 0 sound world/glassbreak
@@ -55,53 +55,53 @@ switch COMP21   on pic COMP28B  tics 0 sound world/glassbreak
 switch WALTEK09 on pic WALTEKB1 tics 0 sound world/glassbreak
 switch WALTEK10 on pic WALTEKB1 tics 0 sound world/glassbreak
 switch WALTEK15 on pic WALTEKB1 tics 0 sound world/glassbreak
-switch SWFORC01 on pic SWFORC02 tics 0 sound switches/normbutn
-switch SWEXIT01 on pic SWEXIT02 tics 0 sound switches/normbutn
+switch SWFORC01 on pic SWFORC02 tics 0
+switch SWEXIT01 on pic SWEXIT02 tics 0
 switch DORSBK01 on pic DORSBK02 tics 0 sound switches/stone
-switch SWSLD01  on pic SWSLD02  tics 0 sound switches/normbutn
+switch SWSLD01  on pic SWSLD02  tics 0
 switch DORWS04  on pic DORWS05  tics 0 sound switches/bolt
-switch SWIRON01 on pic SWIRON02 tics 0 sound switches/normbutn
+switch SWIRON01 on pic SWIRON02 tics 0
 switch GLASS09  on pic GLASS10  tics 0 sound world/glassbreak
 switch GLASS11  on pic GLASS12  tics 0 sound world/glassbreak
 switch GLASS13  on pic GLASS14  tics 0 sound world/glassbreak
 switch GLASS15  on pic GLASS16  tics 0 sound world/glassbreak
-switch SWFORC03 on pic SWFORC04 tics 0 sound switches/normbutn
-switch SWCIT01  on pic SWCIT02  tics 0 sound switches/normbutn
-switch SWTRMG01 on pic SWTRMG04 tics 0 sound switches/normbutn
-switch SWMETL01 on pic SWMETL02 tics 0 sound switches/normbutn
-switch SWWOOD01 on pic SWWOOD02 tics 0 sound switches/normbutn
-switch SWTKBL01 on pic SWTKBL02 tics 0 sound switches/normbutn
+switch SWFORC03 on pic SWFORC04 tics 0
+switch SWCIT01  on pic SWCIT02  tics 0
+switch SWTRMG01 on pic SWTRMG04 tics 0
+switch SWMETL01 on pic SWMETL02 tics 0
+switch SWWOOD01 on pic SWWOOD02 tics 0
+switch SWTKBL01 on pic SWTKBL02 tics 0
 switch AZWAL21  on pic AZWAL22  tics 0 sound world/glassbreak
-switch SWINDT01 on pic SWINDT02 tics 0 sound switches/normbutn
-switch SWRUST01 on pic SWRUST02 tics 0 sound switches/normbutn
-switch SWCHAP01 on pic SWCHAP02 tics 0 sound switches/normbutn
-switch SWALIN01 on pic SWALIN02 tics 0 sound switches/normbutn
-switch SWWALG01 on pic SWWALG02 tics 0 sound switches/normbutn
-switch SWWALG03 on pic SWWALG04 tics 0 sound switches/normbutn
-switch SWTRAM01 on pic SWTRAM02 tics 0 sound switches/normbutn
-switch SWTRAM03 on pic SWTRAM04 tics 0 sound switches/normbutn
-switch SWORC01  on pic SWORC02  tics 0 sound switches/normbutn
-switch SWBRIK01 on pic SWBRIK02 tics 0 sound switches/normbutn
-switch SWIRON03 on pic SWIRON04 tics 0 sound switches/normbutn
-switch SWIRON05 on pic SWIRON06 tics 0 sound switches/normbutn
-switch SWIRON07 on pic SWIRON08 tics 0 sound switches/normbutn
+switch SWINDT01 on pic SWINDT02 tics 0
+switch SWRUST01 on pic SWRUST02 tics 0
+switch SWCHAP01 on pic SWCHAP02 tics 0
+switch SWALIN01 on pic SWALIN02 tics 0
+switch SWWALG01 on pic SWWALG02 tics 0
+switch SWWALG03 on pic SWWALG04 tics 0
+switch SWTRAM01 on pic SWTRAM02 tics 0
+switch SWTRAM03 on pic SWTRAM04 tics 0
+switch SWORC01  on pic SWORC02  tics 0
+switch SWBRIK01 on pic SWBRIK02 tics 0
+switch SWIRON03 on pic SWIRON04 tics 0
+switch SWIRON05 on pic SWIRON06 tics 0
+switch SWIRON07 on pic SWIRON08 tics 0
 switch SWCARD01 on pic SWCARD02 tics 0 sound switches/keycard
-switch SWSIGN01 on pic SWSIGN02 tics 0 sound switches/normbutn
-switch SWLEV01  on pic SWLEV02  tics 0 sound switches/normbutn
-switch SWLEV03  on pic SWLEV04  tics 0 sound switches/normbutn
-switch SWLEV05  on pic SWLEV06  tics 0 sound switches/normbutn
+switch SWSIGN01 on pic SWSIGN02 tics 0
+switch SWLEV01  on pic SWLEV02  tics 0
+switch SWLEV03  on pic SWLEV04  tics 0
+switch SWLEV05  on pic SWLEV06  tics 0
 switch SWBRN01  on pic SWBRN02  tics 0 sound switches/keycard
 switch SWPIP01  on pic SWPIP02  tics 0 sound switches/valve
 switch SWPALM01 on pic SWPALM02 tics 0 sound switches/scanner
 switch SWKNOB03 on pic SWKNOB04 tics 0 sound switches/knob
-switch ALTSW01  on pic ALTSW02  tics 0 sound switches/normbutn
+switch ALTSW01  on pic ALTSW02  tics 0
 switch COMP25   on pic COMP28B  tics 0 sound world/glassbreak
 switch COMP29   on pic COMP20B  tics 0 sound world/glassbreak
 switch COMP33   on pic COMP50   tics 0 sound world/glassbreak
 switch COMP42   on pic COMP51   tics 0 sound world/glassbreak
 switch GODSCRN1 on pic GODSCRN2 tics 0 sound switches/fool
-switch ALIEN04  on pic ALIEN05  tics 0 sound switches/normbutn
-switch CITADL04 on pic CITADL05 tics 0 sound switches/normbutn
-switch SWITE03  on pic SWITE04  tics 0 sound switches/normbutn
-switch SWTELP01 on pic SWTELP02 tics 0 sound switches/normbutn
+switch ALIEN04  on pic ALIEN05  tics 0
+switch CITADL04 on pic CITADL05 tics 0
+switch SWITE03  on pic SWITE04  tics 0
+switch SWTELP01 on pic SWTELP02 tics 0
 switch BRNSCN01 on pic BRNSCN05 tics 0 sound switches/sizzle quest

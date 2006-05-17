@@ -135,7 +135,7 @@ static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 //
 //==========================================================================
 
-void P_ChangeSwitchTexture(line_t* line, int useAgain)
+void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 {
 	guard(P_ChangeSwitchTexture);
 	int sidenum = line->sidenum[0];
@@ -191,7 +191,12 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 			continue;
 		}
 
-		SV_SectorStartSound(GLevel->Sides[sidenum].sector, sw->Sound, 0, 127);
+		int Sound = sw->Sound;
+		if (!Sound)
+		{
+			Sound = S_GetSoundID(DefaultSound);
+		}
+		SV_SectorStartSound(GLevel->Sides[sidenum].sector, Sound, 0, 127);
 		SV_SetLineTexture(sidenum, where, toTex);
 		if (useAgain)
 		{
