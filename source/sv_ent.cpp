@@ -1478,7 +1478,7 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 //
 //=============================================================================
 
-bool VEntity::TestMobjZ()
+bool VEntity::TestMobjZ(bool AlreadySetUp)
 {
 	guard(VEntity::TestMobjZ);
 	int xl, xh, yl, yh, bx, by;
@@ -1487,6 +1487,11 @@ bool VEntity::TestMobjZ()
 	if (!(EntityFlags & EF_ColideWithThings))
 		return true;
 
+	if (!AlreadySetUp)
+	{
+		tzmthing = this;
+		tzorg = Origin;
+	}
 	//
 	// the bounding box is extended by MAXRADIUS because mobj_ts are grouped
 	// into mapblocks based on their origin point, and can overlap into adjacent
@@ -1574,7 +1579,7 @@ VEntity* VEntity::CheckOnmobj()
 	tzmthing = this;
 	tzorg = Origin;
 	FakeZMovement();
-	good = TestMobjZ();
+	good = TestMobjZ(true);
 
 	return good ? NULL : onmobj;
 /*	if (good)
@@ -2105,98 +2110,3 @@ VClass* SV_FindClassFromScriptId(int Id)
 	return NULL;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.30  2006/04/06 21:50:51  dj_jl
-//	For some builtins changed string arguments to names.
-//
-//	Revision 1.29  2006/04/06 11:47:46  dj_jl
-//	Added maximal dropoff parameter.
-//	
-//	Revision 1.28  2006/04/05 18:38:07  dj_jl
-//	Fixed bouncing at back side of a line.
-//	
-//	Revision 1.27  2006/03/21 20:04:12  dj_jl
-//	Fix setting initial sate, if state is null.
-//	
-//	Revision 1.26  2006/03/20 17:44:18  dj_jl
-//	Fixed clipping.
-//	
-//	Revision 1.25  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//	
-//	Revision 1.24  2006/03/12 20:06:02  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.23  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.22  2006/03/10 19:31:25  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.21  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.20  2006/02/26 20:52:48  dj_jl
-//	Proper serialisation of level and players.
-//	
-//	Revision 1.19  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.18  2006/02/15 23:27:41  dj_jl
-//	Added script ID class attribute.
-//	
-//	Revision 1.17  2005/12/11 21:37:00  dj_jl
-//	Made path traversal callbacks class members.
-//	
-//	Revision 1.16  2005/12/07 22:53:26  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.15  2005/11/17 18:53:21  dj_jl
-//	Implemented support for sndinfo extensions.
-//	
-//	Revision 1.14  2005/10/18 21:33:13  dj_jl
-//	Fixed ceiling lightninfg.
-//	
-//	Revision 1.13  2005/04/28 07:16:16  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.12  2004/12/22 07:49:13  dj_jl
-//	More extended ACS support, more linedef flags.
-//	
-//	Revision 1.11  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.10  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.9  2002/08/28 16:41:09  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.8  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.7  2002/07/13 07:48:08  dj_jl
-//	Moved some global functions to Entity class.
-//	
-//	Revision 1.6  2002/06/22 07:08:45  dj_jl
-//	Made sliding and bouncing functions native.
-//	
-//	Revision 1.5  2002/06/14 15:40:09  dj_jl
-//	Added state name to the state.
-//	
-//	Revision 1.4  2002/04/27 17:01:08  dj_jl
-//	Fixed clipping when walking over/under other things.
-//	
-//	Revision 1.3  2002/04/11 16:46:06  dj_jl
-//	Made TryMove native.
-//	
-//	Revision 1.2  2002/03/16 17:55:12  dj_jl
-//	Some small changes.
-//	
-//	Revision 1.1  2002/03/09 18:06:25  dj_jl
-//	Made Entity class and most of it's functions native
-//	
-//**************************************************************************
