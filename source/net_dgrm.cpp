@@ -94,10 +94,6 @@
 #define CCREP_REJECT			12
 #define CCREP_SERVER_INFO		13
 
-// these two macros are to make the code more readable
-#define sfunc	net_landrivers[sock->landriver]
-#define dfunc	net_landrivers[net_landriverlevel]
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -138,8 +134,6 @@ static int		packetsReceived = 0;
 static int		receivedDuplicateCount = 0;
 static int		shortPacketCount = 0;
 static int		droppedDatagrams;
-
-static int		net_landriverlevel = 0;
 
 // CODE --------------------------------------------------------------------
 
@@ -203,11 +197,11 @@ int Datagram_Init()
 
 	for (i = 0; i < net_numlandrivers; i++)
 	{
-		csock = net_landrivers[i].Init();
+		csock = net_landrivers[i]->Init();
 		if (csock == -1)
 			continue;
-		net_landrivers[i].initialised = true;
-		net_landrivers[i].controlSock = csock;
+		net_landrivers[i]->initialised = true;
+		net_landrivers[i]->controlSock = csock;
 	}
 
 	return 0;
@@ -223,11 +217,9 @@ int Datagram_Init()
 void Datagram_Listen(bool state)
 {
 	guard(Datagram_Listen);
-	int i;
-
-	for (i = 0; i < net_numlandrivers; i++)
-		if (net_landrivers[i].initialised)
-			net_landrivers[i].Listen (state);
+	for (int i = 0; i < net_numlandrivers; i++)
+		if (net_landrivers[i]->initialised)
+			net_landrivers[i]->Listen(state);
 	unguard;
 }
 
@@ -237,7 +229,7 @@ void Datagram_Listen(bool state)
 //
 //==========================================================================
 
-static void _Datagram_SearchForHosts(bool xmit)
+static void _Datagram_SearchForHosts(VNetLanDriver* Drv, bool xmit)
 {
 	guard(_Datagram_SearchForHosts);
 	sockaddr_t	myaddr;
@@ -248,7 +240,7 @@ static void _Datagram_SearchForHosts(bool xmit)
 	int			n;
 	int			i;
 
-	dfunc.GetSocketAddr(dfunc.controlSock, &myaddr);
+	Drv->GetSocketAddr(Drv->controlSock, &myaddr);
 	if (xmit)
 	{
 		net_msg.Clear();
@@ -258,18 +250,18 @@ static void _Datagram_SearchForHosts(bool xmit)
 				<< "VAVOOM"
 				<< (byte)NET_PROTOCOL_VERSION;
 		*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
-		dfunc.Broadcast(dfunc.controlSock, net_msg.Data, net_msg.CurSize);
+		Drv->Broadcast(Drv->controlSock, net_msg.Data, net_msg.CurSize);
 		net_msg.Clear();
 	}
 
-	while ((len = dfunc.Read(dfunc.controlSock, net_msg.Data, net_msg.MaxSize, &readaddr)) > 0)
+	while ((len = Drv->Read(Drv->controlSock, net_msg.Data, net_msg.MaxSize, &readaddr)) > 0)
 	{
 		if (len < (int)sizeof(int))
 			continue;
 		net_msg.CurSize = len;
 
 		// don't answer our own query
-		if (dfunc.AddrCompare(&readaddr, &myaddr) >= 0)
+		if (Drv->AddrCompare(&readaddr, &myaddr) >= 0)
 			continue;
 
 		// is the cache full?
@@ -279,7 +271,7 @@ static void _Datagram_SearchForHosts(bool xmit)
 		net_msg.BeginReading();
 
 		net_msg >> control;
-		control = BigLong(*((int *)net_msg.Data));
+		control = BigLong(*((vint32*)net_msg.Data));
 		if (control == -1)
 			continue;
 		if ((control & NETFLAG_FLAGS_MASK) != NETFLAG_CTL)
@@ -294,7 +286,7 @@ static void _Datagram_SearchForHosts(bool xmit)
 		char*			addr;
 		const char*		str;
 
-		addr = dfunc.AddrToString(&readaddr);
+		addr = Drv->AddrToString(&readaddr);
 
 		// search the cache for this server
 		for (n = 0; n < hostCacheCount; n++)
@@ -361,12 +353,12 @@ static void _Datagram_SearchForHosts(bool xmit)
 void Datagram_SearchForHosts(bool xmit)
 {
 	guard(Datagram_SearchForHosts);
-	for (net_landriverlevel = 0; net_landriverlevel < net_numlandrivers; net_landriverlevel++)
+	for (int i = 0; i < net_numlandrivers; i++)
 	{
 		if (hostCacheCount == HOSTCACHESIZE)
 			break;
-		if (net_landrivers[net_landriverlevel].initialised)
-			_Datagram_SearchForHosts(xmit);
+		if (net_landrivers[i]->initialised)
+			_Datagram_SearchForHosts(net_landrivers[i], xmit);
 	}
 	unguard;
 }
@@ -377,7 +369,7 @@ void Datagram_SearchForHosts(bool xmit)
 //
 //==========================================================================
 
-static qsocket_t* _Datagram_Connect(const char* host)
+static qsocket_t* _Datagram_Connect(VNetLanDriver* Drv, const char* host)
 {
 	guard(_Datagram_Connect);
 #ifdef CLIENT
@@ -394,10 +386,10 @@ static qsocket_t* _Datagram_Connect(const char* host)
 	int				newport;
 
 	// see if we can resolve the host name
-	if (dfunc.GetAddrFromName(host, &sendaddr) == -1)
+	if (Drv->GetAddrFromName(host, &sendaddr) == -1)
 		return NULL;
 
-	newsock = dfunc.OpenSocket(0);
+	newsock = Drv->OpenSocket(0);
 	if (newsock == -1)
 		return NULL;
 
@@ -405,10 +397,10 @@ static qsocket_t* _Datagram_Connect(const char* host)
 	if (sock == NULL)
 		goto ErrorReturn2;
 	sock->socket = newsock;
-	sock->landriver = net_landriverlevel;
+	sock->landriver = Drv;
 
 	// connect to the host
-	if (dfunc.Connect(newsock, &sendaddr) == -1)
+	if (Drv->Connect(newsock, &sendaddr) == -1)
 		goto ErrorReturn;
 
 	// send the connection request
@@ -424,17 +416,17 @@ static qsocket_t* _Datagram_Connect(const char* host)
 				<< "VAVOOM"
 				<< (byte)NET_PROTOCOL_VERSION;
 		*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
-		dfunc.Write(newsock, net_msg.Data, net_msg.CurSize, &sendaddr);
+		Drv->Write(newsock, net_msg.Data, net_msg.CurSize, &sendaddr);
 		net_msg.Clear();
 
 		do
 		{
-			ret = dfunc.Read(newsock, net_msg.Data, net_msg.MaxSize, &readaddr);
+			ret = Drv->Read(newsock, net_msg.Data, net_msg.MaxSize, &readaddr);
 			// if we got something, validate it
 			if (ret > 0)
 			{
 				// is it from the right place?
-				if (sfunc.AddrCompare(&readaddr, &sendaddr) != 0)
+				if (sock->landriver->AddrCompare(&readaddr, &sendaddr) != 0)
 				{
 #ifdef DEBUG
 					Con_Printf("wrong reply address\n");
@@ -517,15 +509,15 @@ static qsocket_t* _Datagram_Connect(const char* host)
 	net_msg >> newport;
 
 	memcpy(&sock->addr, &readaddr, sizeof(sockaddr_t));
-	dfunc.SetSocketPort(&sock->addr, newport);
+	Drv->SetSocketPort(&sock->addr, newport);
 
-	dfunc.GetNameFromAddr(&sendaddr, sock->address);
+	Drv->GetNameFromAddr(&sendaddr, sock->address);
 
 	GCon->Log("Connection accepted");
 	sock->lastMessageTime = SetNetTime();
 
 	// switch the connection to the specified address
-	if (dfunc.Connect(newsock, &sock->addr) == -1)
+	if (Drv->Connect(newsock, &sock->addr) == -1)
 	{
 		reason = "Connect to Game failed";
 		GCon->Log(reason);
@@ -539,7 +531,7 @@ static qsocket_t* _Datagram_Connect(const char* host)
 ErrorReturn:
 	NET_FreeQSocket(sock);
 ErrorReturn2:
-	dfunc.CloseSocket(newsock);
+	Drv->CloseSocket(newsock);
 //	if (m_return_onerror)
 //	{
 //		key_dest = key_menu;
@@ -560,15 +552,11 @@ ErrorReturn2:
 qsocket_t* Datagram_Connect(const char* host)
 {
 	guard(Datagram_Connect);
-	qsocket_t *ret;
-
-	for (net_landriverlevel = 0;
-		net_landriverlevel < net_numlandrivers;
-		net_landriverlevel++)
+	for (int i = 0; i < net_numlandrivers; i++)
 	{
-		if (net_landrivers[net_landriverlevel].initialised)
+		if (net_landrivers[i]->initialised)
 		{
-			ret = _Datagram_Connect(host);
+			qsocket_t* ret = _Datagram_Connect(net_landrivers[i], host);
 			if (ret)
 			{
 				return ret;
@@ -585,7 +573,7 @@ qsocket_t* Datagram_Connect(const char* host)
 //
 //==========================================================================
 
-static qsocket_t* _Datagram_CheckNewConnections()
+static qsocket_t* _Datagram_CheckNewConnections(VNetLanDriver* Drv)
 {
 	guard(_Datagram_CheckNewConnections);
 #ifdef SERVER
@@ -601,13 +589,13 @@ static qsocket_t* _Datagram_CheckNewConnections()
 	int			ret;
 	const char*	gamename;
 
-	acceptsock = dfunc.CheckNewConnections();
+	acceptsock = Drv->CheckNewConnections();
 	if (acceptsock == -1)
 		return NULL;
 
 	net_msg.Clear();
 
-	len = dfunc.Read(acceptsock, net_msg.Data, net_msg.MaxSize, &clientaddr);
+	len = Drv->Read(acceptsock, net_msg.Data, net_msg.MaxSize, &clientaddr);
 	if (len < (int)sizeof(int))
 		return NULL;
 	net_msg.CurSize = len;
@@ -643,7 +631,7 @@ static qsocket_t* _Datagram_CheckNewConnections()
 		net_msg << "";
 
 		*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
-		dfunc.Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
+		Drv->Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
 		net_msg.Clear();
 		return NULL;
 	}
@@ -663,7 +651,7 @@ static qsocket_t* _Datagram_CheckNewConnections()
 		MSG_WriteByte(&net_message, CCREP_REJECT);
 		MSG_WriteString(&net_message, "Incompatible version.\n");
 		*((int *)net_message.data) = BigLong(NETFLAG_CTL | (net_message.cursize & NETFLAG_LENGTH_MASK));
-		dfunc.Write (acceptsock, net_message.data, net_message.cursize, &clientaddr);
+		Drv.Write (acceptsock, net_message.data, net_message.cursize, &clientaddr);
 		SZ_Clear(&net_message);
 		return NULL;
 	}
@@ -673,7 +661,7 @@ static qsocket_t* _Datagram_CheckNewConnections()
 	{
 		if (s->driver != net_driverlevel)
 			continue;
-		ret = dfunc.AddrCompare(&clientaddr, &s->addr);
+		ret = Drv->AddrCompare(&clientaddr, &s->addr);
 		if (ret >= 0)
 		{
 			// is this a duplicate connection reqeust?
@@ -681,13 +669,13 @@ static qsocket_t* _Datagram_CheckNewConnections()
 			{
 				// yes, so send a duplicate reply
 				net_msg.Clear();
-				dfunc.GetSocketAddr(s->socket, &newaddr);
+				Drv->GetSocketAddr(s->socket, &newaddr);
 				// save space for the header, filled in later
     	   		net_msg << 0
 						<< (byte)CCREP_ACCEPT
-						<< (int)dfunc.GetSocketPort(&newaddr);
+						<< (int)Drv->GetSocketPort(&newaddr);
 				*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
-				dfunc.Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
+				Drv->Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
 				net_msg.Clear();
 				return NULL;
 			}
@@ -709,13 +697,13 @@ static qsocket_t* _Datagram_CheckNewConnections()
 				<< (byte)CCREP_REJECT
 				<< "Server is full.\n";
 		*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
-		dfunc.Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
+		Drv->Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
 		net_msg.Clear();
 		return NULL;
 	}
 
 	// allocate a network socket
-	newsock = dfunc.OpenSocket(0);
+	newsock = Drv->OpenSocket(0);
 	if (newsock == -1)
 	{
 		NET_FreeQSocket(sock);
@@ -723,29 +711,29 @@ static qsocket_t* _Datagram_CheckNewConnections()
 	}
 
 	// connect to the client
-	if (dfunc.Connect(newsock, &clientaddr) == -1)
+	if (Drv->Connect(newsock, &clientaddr) == -1)
 	{
-		dfunc.CloseSocket(newsock);
+		Drv->CloseSocket(newsock);
 		NET_FreeQSocket(sock);
 		return NULL;
 	}
 
 	// everything is allocated, just fill in the details	
 	sock->socket = newsock;
-	sock->landriver = net_landriverlevel;
+	sock->landriver = Drv;
 	sock->addr = clientaddr;
-	strcpy(sock->address, dfunc.AddrToString(&clientaddr));
+	strcpy(sock->address, Drv->AddrToString(&clientaddr));
 
-	dfunc.GetSocketAddr(newsock, &newaddr);
+	Drv->GetSocketAddr(newsock, &newaddr);
 
 	// send him back the info about the server connection he has been allocated
 	net_msg.Clear();
 	// save space for the header, filled in later
 	net_msg << 0
 			<< (byte)CCREP_ACCEPT
-			<< (int)dfunc.GetSocketPort(&newaddr);
+			<< (int)Drv->GetSocketPort(&newaddr);
 	*((int *)net_msg.Data) = BigLong(NETFLAG_CTL | (net_msg.CurSize << 16));
-	dfunc.Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
+	Drv->Write(acceptsock, net_msg.Data, net_msg.CurSize, &clientaddr);
 	net_msg.Clear();
 
 	return sock;
@@ -764,13 +752,11 @@ static qsocket_t* _Datagram_CheckNewConnections()
 qsocket_t* Datagram_CheckNewConnections()
 {
 	guard(Datagram_CheckNewConnections);
-	qsocket_t *ret;
-
-	for (net_landriverlevel = 0; net_landriverlevel < net_numlandrivers; net_landriverlevel++)
+	for (int i = 0; i < net_numlandrivers; i++)
 	{
-		if (net_landrivers[net_landriverlevel].initialised)
+		if (net_landrivers[i]->initialised)
 		{
-			ret = _Datagram_CheckNewConnections();
+			qsocket_t* ret = _Datagram_CheckNewConnections(net_landrivers[i]);
 			if (ret != NULL)
 				return ret;
 		}
@@ -805,7 +791,7 @@ int Datagram_GetMessage(qsocket_t* sock)
 	while(1)
 	{
 		//	Read message.
-		length = sfunc.Read(sock->socket, (byte *)&packetBuffer, NET_DATAGRAMSIZE, &readaddr);
+		length = sock->landriver->Read(sock->socket, (byte *)&packetBuffer, NET_DATAGRAMSIZE, &readaddr);
 
 //		if ((rand() & 255) > 220)
 //			continue;
@@ -819,7 +805,7 @@ int Datagram_GetMessage(qsocket_t* sock)
 			return -1;
 		}
 
-		if (sfunc.AddrCompare(&readaddr, &sock->addr) != 0)
+		if (sock->landriver->AddrCompare(&readaddr, &sock->addr) != 0)
 		{
 #ifdef DEBUG
 			Con_DPrintf("Forged packet received\n");
@@ -948,7 +934,7 @@ int Datagram_GetMessage(qsocket_t* sock)
 			packetBuffer.length = BigLong(NETFLAG_ACK | (NET_HEADERSIZE << 16));
 			packetBuffer.sequence = BigLong(sequence);
 			packetBuffer.crc = 0;
-			sfunc.Write(sock->socket, (byte *)&packetBuffer, NET_HEADERSIZE, &readaddr);
+			sock->landriver->Write(sock->socket, (byte *)&packetBuffer, NET_HEADERSIZE, &readaddr);
 
 			if (sequence != sock->receiveSequence)
 			{
@@ -1064,7 +1050,7 @@ int Datagram_SendMessage(qsocket_t* sock, VMessage* data)
 	sock->sendSequence++;
 	sock->canSend = false;
 
-	if (sfunc.Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
+	if (sock->landriver->Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
 		return -1;
 
 	sock->lastSendTime = net_time;
@@ -1102,7 +1088,7 @@ static int SendMessageNext(qsocket_t* sock)
 	sock->sendSequence++;
 	sock->sendNext = false;
 
-	if (sfunc.Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
+	if (sock->landriver->Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
 		return -1;
 
 	sock->lastSendTime = net_time;
@@ -1139,7 +1125,7 @@ static int ReSendMessage(qsocket_t* sock)
 
 	sock->sendNext = false;
 
-	if (sfunc.Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
+	if (sock->landriver->Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
 		return -1;
 
 	sock->lastSendTime = net_time;
@@ -1170,7 +1156,7 @@ int Datagram_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 	packetLen = BuildNetPacket(NETFLAG_UNRELIABLE,
 		sock->unreliableSendSequence++, data->Data, data->CurSize);
 
-	if (sfunc.Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
+	if (sock->landriver->Write(sock->socket, (byte *)&packetBuffer, packetLen, &sock->addr) == -1)
 		return -1;
 
 	packetsSent++;
@@ -1214,7 +1200,7 @@ bool Datagram_CanSendUnreliableMessage(qsocket_t*)
 void Datagram_Close(qsocket_t* sock)
 {
 	guard(Datagram_Close);
-	sfunc.CloseSocket(sock->socket);
+	sock->landriver->CloseSocket(sock->socket);
 	unguard;
 }
 
@@ -1227,17 +1213,15 @@ void Datagram_Close(qsocket_t* sock)
 void Datagram_Shutdown()
 {
 	guard(Datagram_Shutdown);
-	int i;
-
 	//
 	// shutdown the lan drivers
 	//
-	for (i = 0; i < net_numlandrivers; i++)
+	for (int i = 0; i < net_numlandrivers; i++)
 	{
-		if (net_landrivers[i].initialised)
+		if (net_landrivers[i]->initialised)
 		{
-			net_landrivers[i].Shutdown();
-			net_landrivers[i].initialised = false;
+			net_landrivers[i]->Shutdown();
+			net_landrivers[i]->initialised = false;
 		}
 	}
 	unguard;
@@ -1304,49 +1288,28 @@ COMMAND(NetStats)
 	unguard;
 }
 
-//**************************************************************************
+//==========================================================================
 //
-//	$Log$
-//	Revision 1.15  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
+//	VNetLanDriver::VNetLanDriver
 //
-//	Revision 1.14  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.13  2006/03/20 20:01:30  dj_jl
-//	Check decompressed data size.
-//	
-//	Revision 1.12  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.11  2005/11/12 11:59:02  dj_jl
-//	Little fix for checksumms.
-//	
-//	Revision 1.10  2005/09/11 13:34:58  dj_jl
-//	Compressed packet size fix.
-//	
-//	Revision 1.9  2005/08/29 19:29:36  dj_jl
-//	Implemented network packet compression.
-//	
-//	Revision 1.8  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.7  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.6  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
-//	
-//	Revision 1.4  2001/08/30 17:46:21  dj_jl
-//	Removed game dependency
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//==========================================================================
+
+VNetLanDriver::VNetLanDriver(int Level, const char* AName)
+: name(AName)
+, initialised(false)
+, controlSock(0)
+{
+	net_landrivers[Level] = this;
+	if (net_numlandrivers <= Level)
+		net_numlandrivers = Level + 1;
+}
+
+//==========================================================================
 //
-//**************************************************************************
+//	VNetLanDriver::~VNetLanDriver
+//
+//==========================================================================
+
+VNetLanDriver::~VNetLanDriver()
+{
+}

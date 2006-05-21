@@ -48,13 +48,45 @@
 
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_udp.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define MAXHOSTNAMELEN		256
-
 // TYPES -------------------------------------------------------------------
+
+class VUdpDriver : public VNetLanDriver
+{
+public:
+	enum { MAXHOSTNAMELEN = 256 };
+
+	int			net_acceptsocket;		// socket for fielding new connections
+	int			net_controlsocket;
+	int			net_broadcastsocket;
+	sockaddr_t	broadcastaddr;
+
+	dword		myAddr;
+
+	VUdpDriver();
+	int Init();
+	void Shutdown();
+	void Listen(bool);
+	int OpenSocket(int);
+	int CloseSocket(int);
+	int Connect(int, sockaddr_t*);
+	int CheckNewConnections();
+	int Read(int, vuint8*, int, sockaddr_t*);
+	int Write(int, vuint8*, int, sockaddr_t*);
+	int Broadcast(int, vuint8*, int);
+	char* AddrToString(sockaddr_t*);
+	int StringToAddr(const char*, sockaddr_t*);
+	int GetSocketAddr(int, sockaddr_t*);
+	int GetNameFromAddr(sockaddr_t*, char*);
+	int GetAddrFromName(const char*, sockaddr_t*);
+	int AddrCompare(sockaddr_t*, sockaddr_t*);
+	int GetSocketPort(sockaddr_t*);
+	int SetSocketPort(sockaddr_t*, int);
+
+	int PartialIPAddress(const char*, sockaddr_t*);
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -70,24 +102,35 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			net_acceptsocket = -1;		// socket for fielding new connections
-static int			net_controlsocket;
-static int			net_broadcastsocket = 0;
-static sockaddr_t	broadcastaddr;
-
-static dword		myAddr;
+static VUdpDriver	Impl;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  UDP_Init
+//	VUdpDriver::VUdpDriver
 //
 //==========================================================================
 
-int UDP_Init()
+VUdpDriver::VUdpDriver()
+: VNetLanDriver(0, "UDP")
+, net_acceptsocket(-1)
+, net_controlsocket(0)
+, net_broadcastsocket(0)
+, myAddr(0)
 {
-	guard(UDP_Init);
+	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
+}
+
+//==========================================================================
+//
+//  VUdpDriver::Init
+//
+//==========================================================================
+
+int VUdpDriver::Init()
+{
+	guard(VUdpDriver::Init);
 	hostent		*local;
 	char		buff[MAXHOSTNAMELEN];
 	sockaddr_t	addr;
@@ -114,21 +157,21 @@ int UDP_Init()
 		hostname = buff;
 	}
 
-	if ((net_controlsocket = UDP_OpenSocket(0)) == -1)
+	if ((net_controlsocket = OpenSocket(0)) == -1)
 		Sys_Error("UDP_Init: Unable to open control socket\n");
 
 	((sockaddr_in *)&broadcastaddr)->sin_family = AF_INET;
 	((sockaddr_in *)&broadcastaddr)->sin_addr.s_addr = INADDR_BROADCAST;
 	((sockaddr_in *)&broadcastaddr)->sin_port = htons(net_hostport);
 
-	UDP_GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_tcpip_address, UDP_AddrToString(&addr));
+	GetSocketAddr(net_controlsocket, &addr);
+	strcpy(my_tcpip_address, AddrToString(&addr));
 	colon = strrchr(my_tcpip_address, ':');
 	if (colon)
 		*colon = 0;
 	GCon->Logf(NAME_Init, "My TCP/IP address: %s", my_tcpip_address);
 
-	GCon->Log(NAME_Init, "UDP Initialized");
+	GCon->Log(NAME_Init, "UDP Initialised");
 	tcpipAvailable = true;
 
 	return net_controlsocket;
@@ -137,33 +180,33 @@ int UDP_Init()
 
 //==========================================================================
 //
-//  UDP_Shutdown
+//  VUdpDriver::Shutdown
 //
 //==========================================================================
 
-void UDP_Shutdown()
+void VUdpDriver::Shutdown()
 {
-	guard(UDP_Shutdown);
-	UDP_Listen(false);
-	UDP_CloseSocket(net_controlsocket);
+	guard(VUdpDriver::Shutdown);
+	Listen(false);
+	CloseSocket(net_controlsocket);
 	unguard;
 }
 
 //==========================================================================
 //
-//  UDP_Listen
+//  VUdpDriver::Listen
 //
 //==========================================================================
 
-void UDP_Listen(bool state)
+void VUdpDriver::Listen(bool state)
 {
-	guard(UDP_Listen);
+	guard(VUdpDriver::Listen);
 	if (state)
 	{
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = UDP_OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 				Sys_Error("UDP_Listen: Unable to open accept socket\n");
 		}
@@ -173,26 +216,27 @@ void UDP_Listen(bool state)
 		// disable listening
 		if (net_acceptsocket != -1)
 		{
-			UDP_CloseSocket(net_acceptsocket);
+			CloseSocket(net_acceptsocket);
 			net_acceptsocket = -1;
 		}
 	}
 	unguard;
 }
+
 //==========================================================================
 //
-//  UDP_OpenSocket
+//  VUdpDriver::OpenSocket
 //
 //==========================================================================
 
-int UDP_OpenSocket(int port)
+int VUdpDriver::OpenSocket(int port)
 {
 	guard(UDP_OpenSocket);
 	int			newsocket;
 	sockaddr_in	address;
 	boolean		trueval = true;
 
-    newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (newsocket == -1)
 	{
 		return -1;
@@ -219,13 +263,13 @@ int UDP_OpenSocket(int port)
 
 //==========================================================================
 //
-//  UDP_CloseSocket
+//  VUdpDriver::CloseSocket
 //
 //==========================================================================
 
-int UDP_CloseSocket(int socket)
+int VUdpDriver::CloseSocket(int socket)
 {
-	guard(UDP_CloseSocket);
+	guard(VUdpDriver::CloseSocket);
 	if (socket == net_broadcastsocket)
 		net_broadcastsocket = 0;
 	return close(socket);
@@ -234,24 +278,24 @@ int UDP_CloseSocket(int socket)
 
 //==========================================================================
 //
-//  UDP_Connect
+//  VUdpDriver::Connect
 //
 //==========================================================================
 
-int UDP_Connect(int, sockaddr_t*)
+int VUdpDriver::Connect(int, sockaddr_t*)
 {
 	return 0;
 }
 
 //==========================================================================
 //
-//  UDP_CheckNewConnections
+//  VUdpDriver::CheckNewConnections
 //
 //==========================================================================
 
-int UDP_CheckNewConnections()
+int VUdpDriver::CheckNewConnections()
 {
-	guard(UDP_CheckNewConnections);
+	guard(VUdpDriver::CheckNewConnections);
 	char	buf[4096];
 
 	if (net_acceptsocket == -1)
@@ -267,17 +311,17 @@ int UDP_CheckNewConnections()
 
 //==========================================================================
 //
-//  UDP_Read
+//  VUdpDriver::Read
 //
 //==========================================================================
 
-int UDP_Read(int socket, byte* buf, int len, sockaddr_t* addr)
+int VUdpDriver::Read(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(UDP_Read);
+	guard(VUdpDriver::Read);
 	socklen_t	addrlen = sizeof(sockaddr_t);
 	int		ret;
 
-	ret = recvfrom(socket, buf, len, 0, (sockaddr *)addr, &addrlen);
+	ret = recvfrom(socket, buf, len, 0, (sockaddr*)addr, &addrlen);
 	if (ret == -1 && (errno == EWOULDBLOCK || errno == ECONNREFUSED))
 		return 0;
 	return ret;
@@ -286,13 +330,13 @@ int UDP_Read(int socket, byte* buf, int len, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  UDP_Write
+//  VUdpDriver::Write
 //
 //==========================================================================
 
-int UDP_Write(int socket, byte* buf, int len, sockaddr_t* addr)
+int VUdpDriver::Write(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(UDP_Write);
+	guard(VUdpDriver::Write);
 	int ret;
 
 	ret = sendto(socket, buf, len, 0, (sockaddr *)addr, sizeof(sockaddr));
@@ -304,13 +348,13 @@ int UDP_Write(int socket, byte* buf, int len, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  UDP_Broadcast
+//  VUdpDriver::Broadcast
 //
 //==========================================================================
 
-int UDP_Broadcast(int socket, byte* buf, int len)
+int VUdpDriver::Broadcast(int socket, vuint8* buf, int len)
 {
-	guard(UDP_Broadcast);
+	guard(VUdpDriver::Broadcast);
 	int			i = 1;
 
 
@@ -329,19 +373,19 @@ int UDP_Broadcast(int socket, byte* buf, int len)
 		net_broadcastsocket = socket;
 	}
 
-	return UDP_Write(socket, buf, len, &broadcastaddr);
+	return Write(socket, buf, len, &broadcastaddr);
 	unguard;
 }
 
 //==========================================================================
 //
-//  UDP_AddrToString
+//  VUdpDriver::AddrToString
 //
 //==========================================================================
 
-char *UDP_AddrToString(sockaddr_t* addr)
+char* VUdpDriver::AddrToString(sockaddr_t* addr)
 {
-	guard(UDP_AddrToString);
+	guard(VUdpDriver::AddrToString);
 	static char buffer[22];
 	int haddr;
 
@@ -355,13 +399,13 @@ char *UDP_AddrToString(sockaddr_t* addr)
 
 //==========================================================================
 //
-//  UDP_StringToAddr
+//  VUdpDriver::StringToAddr
 //
 //==========================================================================
 
-int UDP_StringToAddr(const char* string, sockaddr_t* addr)
+int VUdpDriver::StringToAddr(const char* string, sockaddr_t* addr)
 {
-	guard(UDP_StringToAddr);
+	guard(VUdpDriver::StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -377,13 +421,13 @@ int UDP_StringToAddr(const char* string, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  UDP_GetSocketAddr
+//  VUdpDriver::GetSocketAddr
 //
 //==========================================================================
 
-int UDP_GetSocketAddr(int socket, sockaddr_t* addr)
+int VUdpDriver::GetSocketAddr(int socket, sockaddr_t* addr)
 {
-	guard(UDP_GetSocketAddr);
+	guard(VUdpDriver::GetSocketAddr);
 	socklen_t	addrlen = sizeof(sockaddr_t);
 	dword	a;
 
@@ -399,14 +443,14 @@ int UDP_GetSocketAddr(int socket, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  UDP_GetNameFromAddr
+//  VUdpDriver::GetNameFromAddr
 //
 //==========================================================================
 
-int UDP_GetNameFromAddr(sockaddr_t* addr, char* name)
+int VUdpDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
 {
-	guard(UDP_GetNameFromAddr);
-	hostent		*hostentry;
+	guard(VUdpDriver::GetNameFromAddr);
+	hostent*		hostentry;
 
 	hostentry = gethostbyaddr((char *)&((sockaddr_in *)addr)->sin_addr, sizeof(in_addr), AF_INET);
 	if (hostentry)
@@ -415,23 +459,23 @@ int UDP_GetNameFromAddr(sockaddr_t* addr, char* name)
 		return 0;
 	}
 
-	strcpy(name, UDP_AddrToString(addr));
+	strcpy(name, AddrToString(addr));
 	return 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//	PartialIPAddress
+//	VUdpDriver::PartialIPAddress
 //
 //	This lets you type only as much of the net address as required, using
 // the local network components to fill in the rest
 //
 //==========================================================================
 
-static int PartialIPAddress(const char* in, sockaddr_t* hostaddr)
+int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 {
-	guard(PartialIPAddress);
+	guard(VUdpDriver::PartialIPAddress);
 	char buff[256];
 	char *b;
 	int addr;
@@ -482,14 +526,14 @@ static int PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 
 //==========================================================================
 //
-//  UDP_GetAddrFromName
+//  VUdpDriver::GetAddrFromName
 //
 //==========================================================================
 
-int UDP_GetAddrFromName(const char* name, sockaddr_t* addr)
+int VUdpDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 {
-	guard(UDP_GetAddrFromName);
-	hostent		*hostentry;
+	guard(VUdpDriver::GetAddrFromName);
+	hostent*		hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
 		return PartialIPAddress(name, addr);
@@ -499,8 +543,8 @@ int UDP_GetAddrFromName(const char* name, sockaddr_t* addr)
 		return -1;
 
 	addr->sa_family = AF_INET;
-	((sockaddr_in *)addr)->sin_port = htons(net_hostport);	
-	((sockaddr_in *)addr)->sin_addr.s_addr = *(int *)hostentry->h_addr_list[0];
+	((sockaddr_in*)addr)->sin_port = htons(net_hostport);	
+	((sockaddr_in*)addr)->sin_addr.s_addr = *(int*)hostentry->h_addr_list[0];
 
 	return 0;
 	unguard;
@@ -508,13 +552,13 @@ int UDP_GetAddrFromName(const char* name, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  UDP_AddrCompare
+//  VUdpDriver::AddrCompare
 //
 //==========================================================================
 
-int UDP_AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
+int VUdpDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
-	guard(UDP_AddrCompare);
+	guard(VUdpDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -530,64 +574,29 @@ int UDP_AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 
 //==========================================================================
 //
-//  UDP_GetSocketPort
+//  VUdpDriver::GetSocketPort
 //
 //==========================================================================
 
-int UDP_GetSocketPort(sockaddr_t* addr)
+int VUdpDriver::GetSocketPort(sockaddr_t* addr)
 {
-	guard(UDP_GetSocketPort);
-	return ntohs(((sockaddr_in *)addr)->sin_port);
+	guard(VUdpDriver::GetSocketPort);
+	return ntohs(((sockaddr_in*)addr)->sin_port);
 	unguard;
 }
 
 //==========================================================================
 //
-//  UDP_SetSocketPort
+//  VUdpDriver::SetSocketPort
 //
 //==========================================================================
 
-int UDP_SetSocketPort(sockaddr_t* addr, int port)
+int VUdpDriver::SetSocketPort(sockaddr_t* addr, int port)
 {
-	guard(UDP_SetSocketPort);
-	((sockaddr_in *)addr)->sin_port = htons(port);
+	guard(VUdpDriver::SetSocketPort);
+	((sockaddr_in*)addr)->sin_port = htons(port);
 	return 0;
 	unguard;
 }
 
 #endif // __BEOS__
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/04/15 12:36:51  dj_jl
-//	Fixes for compiling on BeOS.
-//
-//	Revision 1.10  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//	
-//	Revision 1.9  2006/03/20 20:02:21  dj_jl
-//	Accept zero length packets.
-//	
-//	Revision 1.8  2005/03/16 15:06:16  dj_jl
-//	Abort if can't get loal IP from host name.
-//	
-//	Revision 1.7  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.6  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.5  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

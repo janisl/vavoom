@@ -200,11 +200,11 @@ RTQ_NODE* rtq_fetch(RTQ_NODE*, RTQ_NODE*); // To, From
 
 //#include "mplib.h"
 // give up time slice
-void Yield(void);
-void MGenWakeupDll(void);
+void Yield();
+void MGenWakeupDll();
 
 // post a message to win32 side
-void PostWindowsMessage(void);
+void PostWindowsMessage();
 
 // get # of items on qNo
 int MGenGetQueueCtr(int qNo);
@@ -226,7 +226,7 @@ RTQ_NODE *MGenFlushNodes(int qFrom, int qTo);
 int MGenMCount(unsigned lowerOrderBits, unsigned upperOrderBits);
 
 // perform consistency check on chunnel address space
-int MGenSanityCheck(void);
+int MGenSanityCheck();
 
 #include <stdio.h>
 #include <sys/farptr.h>
@@ -332,7 +332,7 @@ fstrncpyfrom(char *to, const char *from, int len)
 }
 
 void
-GetSocketMap(void)
+GetSocketMap()
 {
    RTQ_NODE *n = MGenGetNode(SOCKET_MAP_QUEUE);
 
@@ -711,7 +711,7 @@ socket(int af, int type, int protocol)
 }
 
 void
-sockets_flush(void)
+sockets_flush()
 {
    RTQ_NODE *n = MGenGetNode(IDLE_QUEUE);
    LPCData  *p;
@@ -915,7 +915,7 @@ setsockopt(SOCKET s, int level, int optname, const char *optval, int optlen)
 }
 
 int
-WSAGetLastError(void)
+WSAGetLastError()
 {
    RTQ_NODE *n = MGenGetNode(IDLE_QUEUE);
    LPCData  *p;
@@ -1005,17 +1005,3 @@ char *inet_ntoa (struct in_addr in)
 	sprintf(buf, "%u.%u.%u.%u", in.S_un.S_un_b.s_b1, in.S_un.S_un_b.s_b2, in.S_un.S_un_b.s_b3, in.S_un.S_un_b.s_b4);
 	return buf;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

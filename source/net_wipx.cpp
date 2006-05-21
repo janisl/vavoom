@@ -29,14 +29,46 @@
 #include <wsipx.h>
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_wipx.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define MAXHOSTNAMELEN		256
-#define IPXSOCKETS			18
-
 // TYPES -------------------------------------------------------------------
+
+class VWinIpxDriver : public VNetLanDriver
+{
+public:
+	enum { MAXHOSTNAMELEN = 256 };
+	enum { IPXSOCKETS = 18 };
+
+	int			net_acceptsocket;
+	int			net_controlsocket;
+	sockaddr_t	broadcastaddr;
+
+	int			ipxsocket[IPXSOCKETS];
+	int			sequence[IPXSOCKETS];
+
+	char		packetBuffer[NET_DATAGRAMSIZE + 4];
+
+	VWinIpxDriver();
+	int Init();
+	void Shutdown();
+	void Listen(bool);
+	int OpenSocket(int);
+	int CloseSocket(int);
+	int Connect(int, sockaddr_t*);
+	int CheckNewConnections();
+	int Read(int, vuint8*, int, sockaddr_t*);
+	int Write(int, vuint8*, int, sockaddr_t*);
+	int Broadcast(int, vuint8*, int);
+	char* AddrToString(sockaddr_t*);
+	int StringToAddr(const char*, sockaddr_t*);
+	int GetSocketAddr(int, sockaddr_t*);
+	int GetNameFromAddr(sockaddr_t*, char*);
+	int GetAddrFromName(const char*, sockaddr_t*);
+	int AddrCompare(sockaddr_t*, sockaddr_t*);
+	int GetSocketPort(sockaddr_t*);
+	int SetSocketPort(sockaddr_t*, int);
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -46,33 +78,42 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean		winsock_initialized;
+extern int			winsock_initialised;
 extern WSADATA		winsockdata;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			net_acceptsocket = -1;		// socket for fielding new connections
-static int			net_controlsocket;
-static sockaddr_t	broadcastaddr;
-
-static int			ipxsocket[IPXSOCKETS];
-static int			sequence[IPXSOCKETS];
-
-static char			packetBuffer[NET_DATAGRAMSIZE + 4];
+static VWinIpxDriver	Impl;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  WIPX_Init
+//	VWinIpxDriver::VWinIpxDriver
 //
 //==========================================================================
 
-int WIPX_Init()
+VWinIpxDriver::VWinIpxDriver()
+: VNetLanDriver(1, "Winsock IPX")
+, net_acceptsocket(-1)
+, net_controlsocket(0)
 {
-	guard(WIPX_Init);
+	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
+	memset(ipxsocket, 0, sizeof(ipxsocket));
+	memset(sequence, 0, sizeof(sequence));
+}
+
+//==========================================================================
+//
+//  VWinIpxDriver::Init
+//
+//==========================================================================
+
+int VWinIpxDriver::Init()
+{
+	guard(VWinIpxDriver::Init);
 	int			i;
 	char		buff[MAXHOSTNAMELEN];
 	sockaddr_t	addr;
@@ -82,17 +123,17 @@ int WIPX_Init()
 	if (GArgs.CheckParm("-noipx"))
 		return -1;
 
-	if (winsock_initialized == 0)
+	if (winsock_initialised == 0)
 	{
 		r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
 
 		if (r)
 		{
-			GCon->Log(NAME_Init, "Winsock initialization failed.");
+			GCon->Log(NAME_Init, "Winsock initialisation failed.");
 			return -1;
 		}
 	}
-	winsock_initialized++;
+	winsock_initialised++;
 
 	for (i = 0; i < IPXSOCKETS; i++)
 		ipxsocket[i] = 0;
@@ -120,11 +161,11 @@ int WIPX_Init()
 		}
 	}
 
-    net_controlsocket = WIPX_OpenSocket(0);
+	net_controlsocket = OpenSocket(0);
 	if (net_controlsocket == -1)
 	{
 		GCon->Log(NAME_Init, "WIPX_Init: Unable to open control socket");
-		if (--winsock_initialized == 0)
+		if (--winsock_initialised == 0)
 			WSACleanup();
 		return -1;
 	}
@@ -134,13 +175,13 @@ int WIPX_Init()
 	memset(((sockaddr_ipx *)&broadcastaddr)->sa_nodenum, 0xff, 6);
 	((sockaddr_ipx *)&broadcastaddr)->sa_socket = htons((word)net_hostport);
 
-	WIPX_GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_ipx_address, WIPX_AddrToString(&addr));
+	GetSocketAddr(net_controlsocket, &addr);
+	strcpy(my_ipx_address, AddrToString(&addr));
 	p = strrchr(my_ipx_address, ':');
 	if (p)
 		*p = 0;
 
-	GCon->Log(NAME_Init, "Winsock IPX Initialized");
+	GCon->Log(NAME_Init, "Winsock IPX Initialised");
 	ipxAvailable = true;
 
 	return net_controlsocket;
@@ -149,45 +190,45 @@ int WIPX_Init()
 
 //==========================================================================
 //
-//  WIPX_Shutdown
+//  VWinIpxDriver::Shutdown
 //
 //==========================================================================
 
-void WIPX_Shutdown()
+void VWinIpxDriver::Shutdown()
 {
 	guard(WIPX_Shutdown);
-	WIPX_Listen(false);
-	WIPX_CloseSocket(net_controlsocket);
-	if (--winsock_initialized == 0)
+	Listen(false);
+	CloseSocket(net_controlsocket);
+	if (--winsock_initialised == 0)
 		WSACleanup();
 	unguard;
 }
 
 //==========================================================================
 //
-//  WIPX_Listen
+//  VWinIpxDriver::Listen
 //
 //==========================================================================
 
-void WIPX_Listen(bool state)
+void VWinIpxDriver::Listen(bool state)
 {
-	guard(WIPX_Listen);
+	guard(VWinIpxDriver::Listen);
 	// enable listening
 	if (state)
 	{
 		if (net_acceptsocket == -1)
 		{
-	        net_acceptsocket = WIPX_OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 				Sys_Error("WIPX_Listen: Unable to open accept socket\n");
 		}
 	}
 	else
-    {
+	{
 		// disable listening
 		if (net_acceptsocket != -1)
 		{
-			WIPX_CloseSocket (net_acceptsocket);
+			CloseSocket(net_acceptsocket);
 			net_acceptsocket = -1;
 		}
 	}
@@ -196,13 +237,13 @@ void WIPX_Listen(bool state)
 
 //==========================================================================
 //
-//  WIPX_OpenSocket
+//  VWinIpxDriver::OpenSocket
 //
 //==========================================================================
 
-int WIPX_OpenSocket(int port)
+int VWinIpxDriver::OpenSocket(int port)
 {
-	guard(WIPX_OpenSocket);
+	guard(VWinIpxDriver::OpenSocket);
 	int				handle;
 	int				newsocket;
 	sockaddr_ipx	address;
@@ -244,13 +285,13 @@ ErrorReturn:
 
 //==========================================================================
 //
-//  WIPX_CloseSocket
+//  VWinIpxDriver::CloseSocket
 //
 //==========================================================================
 
-int WIPX_CloseSocket(int handle)
+int VWinIpxDriver::CloseSocket(int handle)
 {
-	guard(WIPX_CloseSocket);
+	guard(VWinIpxDriver::CloseSocket);
 	int socket = ipxsocket[handle];
 	int ret;
 
@@ -262,24 +303,24 @@ int WIPX_CloseSocket(int handle)
 
 //==========================================================================
 //
-//  WIPX_Connect
+//  VWinIpxDriver::Connect
 //
 //==========================================================================
 
-int WIPX_Connect(int, sockaddr_t*)
+int VWinIpxDriver::Connect(int, sockaddr_t*)
 {
 	return 0;
 }
 
 //==========================================================================
 //
-//  WIPX_CheckNewConnections
+//  VWinIpxDriver::CheckNewConnections
 //
 //==========================================================================
 
-int WIPX_CheckNewConnections()
+int VWinIpxDriver::CheckNewConnections()
 {
-	guard(WIPX_CheckNewConnections);
+	guard(VWinIpxDriver::CheckNewConnections);
 	dword		available;
 
 	if (net_acceptsocket == -1)
@@ -295,13 +336,13 @@ int WIPX_CheckNewConnections()
 
 //==========================================================================
 //
-//  WIPX_Read
+//  VWinIpxDriver::Read
 //
 //==========================================================================
 
-int WIPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
+int VWinIpxDriver::Read(int handle, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(WIPX_Read);
+	guard(VWinIpxDriver::Read);
 	int 	addrlen = sizeof(sockaddr_t);
 	int 	socket = ipxsocket[handle];
 	int 	ret;
@@ -328,13 +369,13 @@ int WIPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WIPX_Write
+//  VWinIpxDriver::Write
 //
 //==========================================================================
 
-int WIPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
+int VWinIpxDriver::Write(int handle, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(WIPX_Write);
+	guard(VWinIpxDriver::Write);
 	int 	socket = ipxsocket[handle];
 	int 	ret;
 
@@ -344,7 +385,7 @@ int WIPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 	memcpy(&packetBuffer[4], buf, len);
 	len += 4;
 
-	ret = sendto(socket, packetBuffer, len, 0, (sockaddr *)addr, sizeof(sockaddr_t));
+	ret = sendto(socket, packetBuffer, len, 0, (sockaddr*)addr, sizeof(sockaddr_t));
 	if (ret == -1)
 		if (WSAGetLastError() == WSAEWOULDBLOCK)
 			return 0;
@@ -355,26 +396,26 @@ int WIPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WIPX_Broadcast
+//  VWinIpxDriver::Broadcast
 //
 //==========================================================================
 
-int WIPX_Broadcast(int handle, byte *buf, int len)
+int VWinIpxDriver::Broadcast(int handle, vuint8* buf, int len)
 {
 	guard(WIPX_Broadcast);
-	return WIPX_Write(handle, buf, len, &broadcastaddr);
+	return Write(handle, buf, len, &broadcastaddr);
 	unguard;
 }
 
 //==========================================================================
 //
-//  WIPX_AddrToString
+//  VWinIpxDriver::AddrToString
 //
 //==========================================================================
 
-char *WIPX_AddrToString(sockaddr_t *addr)
+char* VWinIpxDriver::AddrToString(sockaddr_t* addr)
 {
-	guard(WIPX_AddrToString);
+	guard(VWinIpxDriver::AddrToString);
 	static char buf[28];
 
 	sprintf(buf, "%02x%02x%02x%02x:%02x%02x%02x%02x%02x%02x:%u",
@@ -396,13 +437,13 @@ char *WIPX_AddrToString(sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WIPX_StringToAddr
+//  VWinIpxDriver::StringToAddr
 //
 //==========================================================================
 
-int WIPX_StringToAddr(const char* string, sockaddr_t* addr)
+int VWinIpxDriver::StringToAddr(const char* string, sockaddr_t* addr)
 {
-	guard(WIPX_StringToAddr);
+	guard(VWinIpxDriver::StringToAddr);
 	int  val;
 	char buf[3];
 
@@ -438,13 +479,13 @@ int WIPX_StringToAddr(const char* string, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  WIPX_GetSocketAddr
+//  VWinIpxDriver::GetSocketAddr
 //
 //==========================================================================
 
-int WIPX_GetSocketAddr(int handle, sockaddr_t* addr)
+int VWinIpxDriver::GetSocketAddr(int handle, sockaddr_t* addr)
 {
-	guard(WIPX_GetSocketAddr);
+	guard(VWinIpxDriver::GetSocketAddr);
 	int 	socket = ipxsocket[handle];
 	int 	addrlen = sizeof(sockaddr_t);
 
@@ -460,27 +501,27 @@ int WIPX_GetSocketAddr(int handle, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  WIPX_GetNameFromAddr
+//  VWinIpxDriver::GetNameFromAddr
 //
 //==========================================================================
 
-int WIPX_GetNameFromAddr(sockaddr_t* addr, char* name)
+int VWinIpxDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
 {
-	guard(WIPX_GetNameFromAddr);
-	strcpy(name, WIPX_AddrToString(addr));
+	guard(VWinIpxDriver::GetNameFromAddr);
+	strcpy(name, AddrToString(addr));
 	return 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//  WIPX_GetAddrFromName
+//  VWinIpxDriver::GetAddrFromName
 //
 //==========================================================================
 
-int WIPX_GetAddrFromName(const char* name, sockaddr_t* addr)
+int VWinIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 {
-	guard(WIPX_GetAddrFromName);
+	guard(VWinIpxDriver::GetAddrFromName);
 	int		n;
 	char	buf[32];
 
@@ -505,23 +546,23 @@ int WIPX_GetAddrFromName(const char* name, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  WIPX_AddrCompare
+//  VWinIpxDriver::AddrCompare
 //
 //==========================================================================
 
-int WIPX_AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
+int VWinIpxDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
-	guard(WIPX_AddrCompare);
+	guard(VWinIpxDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
-	if (*((sockaddr_ipx *)addr1)->sa_netnum && *((sockaddr_ipx *)addr2)->sa_netnum)
-		if (memcmp(((sockaddr_ipx *)addr1)->sa_netnum, ((sockaddr_ipx *)addr2)->sa_netnum, 4) != 0)
+	if (*((sockaddr_ipx*)addr1)->sa_netnum && *((sockaddr_ipx*)addr2)->sa_netnum)
+		if (memcmp(((sockaddr_ipx*)addr1)->sa_netnum, ((sockaddr_ipx*)addr2)->sa_netnum, 4) != 0)
 			return -1;
-	if (memcmp(((sockaddr_ipx *)addr1)->sa_nodenum, ((sockaddr_ipx *)addr2)->sa_nodenum, 6) != 0)
+	if (memcmp(((sockaddr_ipx*)addr1)->sa_nodenum, ((sockaddr_ipx*)addr2)->sa_nodenum, 6) != 0)
 		return -1;
 
-	if (((sockaddr_ipx *)addr1)->sa_socket != ((sockaddr_ipx *)addr2)->sa_socket)
+	if (((sockaddr_ipx*)addr1)->sa_socket != ((sockaddr_ipx*)addr2)->sa_socket)
 		return 1;
 
 	return 0;
@@ -530,59 +571,27 @@ int WIPX_AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 
 //==========================================================================
 //
-//  WIPX_GetSocketPort
+//  VWinIpxDriver::GetSocketPort
 //
 //==========================================================================
 
-int WIPX_GetSocketPort(sockaddr_t* addr)
+int VWinIpxDriver::GetSocketPort(sockaddr_t* addr)
 {
-	guard(WIPX_GetSocketPort);
-	return ntohs(((sockaddr_ipx *)addr)->sa_socket);
+	guard(VWinIpxDriver::GetSocketPort);
+	return ntohs(((sockaddr_ipx*)addr)->sa_socket);
 	unguard;
 }
 
 //==========================================================================
 //
-//  WIPX_SetSocketPort
+//  VWinIpxDriver::SetSocketPort
 //
 //==========================================================================
 
-int WIPX_SetSocketPort(sockaddr_t* addr, int port)
+int VWinIpxDriver::SetSocketPort(sockaddr_t* addr, int port)
 {
-	guard(WIPX_SetSocketPort);
-	((sockaddr_ipx *)addr)->sa_socket = htons((word)port);
+	guard(VWinIpxDriver::SetSocketPort);
+	((sockaddr_ipx*)addr)->sa_socket = htons((word)port);
 	return 0;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.9  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.8  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.7  2002/01/11 08:12:49  dj_jl
-//	Changes for MinGW
-//	
-//	Revision 1.6  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
-//	
-//	Revision 1.4  2001/10/09 17:28:12  dj_jl
-//	no message
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

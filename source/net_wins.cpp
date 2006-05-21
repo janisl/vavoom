@@ -29,13 +29,48 @@
 #include <errno.h>
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_wins.h"
 
 // MACROS ------------------------------------------------------------------
 
 #define MAXHOSTNAMELEN		256
 
 // TYPES -------------------------------------------------------------------
+
+class VWinSockDriver : public VNetLanDriver
+{
+public:
+	int				net_acceptsocket;	// socket for fielding new connections
+	int				net_controlsocket;
+	int				net_broadcastsocket;
+	sockaddr_t		broadcastaddr;
+
+	dword			myAddr;
+
+	static double	blocktime;
+
+	VWinSockDriver();
+	int Init();
+	void Shutdown();
+	void Listen(bool);
+	int OpenSocket(int);
+	int CloseSocket(int);
+	int Connect(int, sockaddr_t*);
+	int CheckNewConnections();
+	int Read(int, vuint8*, int, sockaddr_t*);
+	int Write(int, vuint8*, int, sockaddr_t*);
+	int Broadcast(int, vuint8*, int);
+	char* AddrToString(sockaddr_t*);
+	int StringToAddr(const char*, sockaddr_t*);
+	int GetSocketAddr(int, sockaddr_t*);
+	int GetNameFromAddr(sockaddr_t*, char*);
+	int GetAddrFromName(const char*, sockaddr_t*);
+	int AddrCompare(sockaddr_t*, sockaddr_t*);
+	int GetSocketPort(sockaddr_t*);
+	int SetSocketPort(sockaddr_t*, int);
+
+	static BOOL PASCAL FAR BlockingHook();
+	void GetLocalAddress();
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -47,31 +82,44 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int			winsock_initialized = 0;
+//	These are shared with IPX driver to make sure we intialise and shut
+// down WinSock only once.
+int			winsock_initialised = 0;
 WSADATA		winsockdata;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			net_acceptsocket = -1;		// socket for fielding new connections
-static int			net_controlsocket;
-static int			net_broadcastsocket = 0;
-static sockaddr_t	broadcastaddr;
+double		VWinSockDriver::blocktime;
 
-static dword		myAddr;
-
-static double		blocktime;
+static VWinSockDriver	Impl;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  WINS_Init
+//	VWinSockDriver::VWinSockDriver
 //
 //==========================================================================
 
-int WINS_Init()
+VWinSockDriver::VWinSockDriver()
+: VNetLanDriver(0, "Winsock TCPIP")
+, net_acceptsocket(-1)
+, net_controlsocket(0)
+, net_broadcastsocket(0)
+, myAddr(0)
 {
-	guard(WINS_Init);
+	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
+}
+
+//==========================================================================
+//
+//  VWinSockDriver::Init
+//
+//==========================================================================
+
+int VWinSockDriver::Init()
+{
+	guard(VWinSockDriver::Init);
 	int		i;
 	char	buff[MAXHOSTNAMELEN];
 	char	*p;
@@ -80,24 +128,24 @@ int WINS_Init()
 	if (GArgs.CheckParm("-noudp"))
 		return -1;
 
-	if (winsock_initialized == 0)
+	if (winsock_initialised == 0)
 	{
 		//MAKEWORD(2, 2)
 		r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
 
 		if (r)
 		{
-			GCon->Log(NAME_Init, "Winsock initialization failed.");
+			GCon->Log(NAME_Init, "Winsock initialisation failed.");
 			return -1;
 		}
 	}
-	winsock_initialized++;
+	winsock_initialised++;
 
 	// determine my name
 	if (gethostname(buff, MAXHOSTNAMELEN) == SOCKET_ERROR)
 	{
-		GCon->Log(NAME_DevNet, "Winsock TCP/IP Initialization failed.");
-		if (--winsock_initialized == 0)
+		GCon->Log(NAME_DevNet, "Winsock TCP/IP Initialisation failed.");
+		if (--winsock_initialised == 0)
 			WSACleanup();
 		return -1;
 	}
@@ -135,11 +183,11 @@ int WINS_Init()
 		strcpy(my_tcpip_address, "INADDR_ANY");
 	}
 
-    net_controlsocket = WINS_OpenSocket(0);
+    net_controlsocket = OpenSocket(0);
 	if (net_controlsocket == -1)
 	{
 		GCon->Log(NAME_Init, "WINS_Init: Unable to open control socket");
-		if (--winsock_initialized == 0)
+		if (--winsock_initialised == 0)
 			WSACleanup();
 		return -1;
 	}
@@ -148,7 +196,7 @@ int WINS_Init()
 	((sockaddr_in *)&broadcastaddr)->sin_addr.s_addr = INADDR_BROADCAST;
 	((sockaddr_in *)&broadcastaddr)->sin_port = htons((word)net_hostport);
 
-	GCon->Log(NAME_Init, "Winsock TCP/IP Initialized");
+	GCon->Log(NAME_Init, "Winsock TCP/IP Initialised");
 	tcpipAvailable = true;
 
 	return net_controlsocket;
@@ -157,29 +205,29 @@ int WINS_Init()
 
 //==========================================================================
 //
-//  WINS_Shutdown
+//  VWinSockDriver::Shutdown
 //
 //==========================================================================
 
-void WINS_Shutdown()
+void VWinSockDriver::Shutdown()
 {
-	guard(WINS_Shutdown);
-	WINS_Listen(false);
-	WINS_CloseSocket(net_controlsocket);
-	if (--winsock_initialized == 0)
+	guard(VWinSockDriver::Shutdown);
+	Listen(false);
+	CloseSocket(net_controlsocket);
+	if (--winsock_initialised == 0)
 		WSACleanup();
 	unguard;
 }
 
 //==========================================================================
 //
-//  BlockingHook
+//  VWinSockDriver::BlockingHook
 //
 //==========================================================================
 
-static BOOL PASCAL FAR BlockingHook()
+BOOL PASCAL FAR VWinSockDriver::BlockingHook()
 {
-	guard(BlockingHook);
+	guard(VWinSockDriver::BlockingHook);
 	MSG		msg;
 	BOOL	ret;
 
@@ -206,13 +254,13 @@ static BOOL PASCAL FAR BlockingHook()
 
 //==========================================================================
 //
-//  WINS_GetLocalAddress
+//  VWinSockDriver::GetLocalAddress
 //
 //==========================================================================
 
-static void WINS_GetLocalAddress()
+void VWinSockDriver::GetLocalAddress()
 {
-	guard(WINS_GetLocalAddress);
+	guard(VWinSockDriver::GetLocalAddress);
 	hostent		*local;
 	char		buff[MAXHOSTNAMELEN];
 	dword		addr;
@@ -239,30 +287,30 @@ static void WINS_GetLocalAddress()
 
 //==========================================================================
 //
-//  WINS_Listen
+//  VWinSockDriver::Listen
 //
 //==========================================================================
 
-void WINS_Listen(bool state)
+void VWinSockDriver::Listen(bool state)
 {
-	guard(WINS_Listen);
+	guard(VWinSockDriver::Listen);
 	if (state)
 	{
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
 			WINS_GetLocalAddress();
-            net_acceptsocket = WINS_OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 				Sys_Error("WINS_Listen: Unable to open accept socket\n");
 		}
 	}
 	else
-    {
+	{
 		// disable listening
 		if (net_acceptsocket != -1)
 		{
-			WINS_CloseSocket(net_acceptsocket);
+			CloseSocket(net_acceptsocket);
 			net_acceptsocket = -1;
 		}
 	}
@@ -272,18 +320,18 @@ void WINS_Listen(bool state)
 
 //==========================================================================
 //
-//  WINS_OpenSocket
+//  VWinSockDriver::OpenSocket
 //
 //==========================================================================
 
-int WINS_OpenSocket(int port)
+int VWinSockDriver::OpenSocket(int port)
 {
-	guard(WINS_OpenSocket);
+	guard(VWinSockDriver::OpenSocket);
 	int				newsocket;
 	sockaddr_in		address;
 	dword			trueval = 1;
 
-    newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (newsocket == -1)
 		return -1;
 
@@ -306,13 +354,13 @@ ErrorReturn:
 
 //==========================================================================
 //
-//  WINS_CloseSocket
+//  VWinSockDriver::CloseSocket
 //
 //==========================================================================
 
-int WINS_CloseSocket(int socket)
+int VWinSockDriver::CloseSocket(int socket)
 {
-	guard(WINS_CloseSocket);
+	guard(VWinSockDriver::CloseSocket);
 	if (socket == net_broadcastsocket)
 		net_broadcastsocket = 0;
 	return closesocket(socket);
@@ -321,24 +369,24 @@ int WINS_CloseSocket(int socket)
 
 //==========================================================================
 //
-//  WINS_Connect
+//  VWinSockDriver::Connect
 //
 //==========================================================================
 
-int WINS_Connect(int , sockaddr_t *)
+int VWinSockDriver::Connect(int , sockaddr_t *)
 {
 	return 0;
 }
 
 //==========================================================================
 //
-//  WINS_CheckNewConnections
+//  VWinSockDriver::CheckNewConnections
 //
 //==========================================================================
 
-int WINS_CheckNewConnections()
+int VWinSockDriver::CheckNewConnections()
 {
-	guard(WINS_CheckNewConnections);
+	guard(VWinSockDriver::CheckNewConnections);
 	char	buf[4096];
 
 	if (net_acceptsocket == -1)
@@ -354,17 +402,17 @@ int WINS_CheckNewConnections()
 
 //==========================================================================
 //
-//  WINS_Read
+//  VWinSockDriver::Read
 //
 //==========================================================================
 
-int WINS_Read(int socket, byte *buf, int len, sockaddr_t *addr)
+int VWinSockDriver::Read(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(WINS_Read);
+	guard(VWinSockDriver::Read);
 	int addrlen = sizeof(sockaddr_t);
 	int ret;
 
-	ret = recvfrom(socket, (char*)buf, len, 0, (sockaddr *)addr, &addrlen);
+	ret = recvfrom(socket, (char*)buf, len, 0, (sockaddr*)addr, &addrlen);
 	if (ret == -1)
 	{
 		int e = WSAGetLastError();
@@ -378,16 +426,14 @@ int WINS_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WINS_Write
+//  VWinSockDriver::Write
 //
 //==========================================================================
 
-int WINS_Write(int socket, byte *buf, int len, sockaddr_t *addr)
+int VWinSockDriver::Write(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(WINS_Write);
-	int ret;
-
-	ret = sendto(socket, (char*)buf, len, 0, (sockaddr *)addr, sizeof(sockaddr_t));
+	guard(VWinSockDriver::Write);
+	int ret = sendto(socket, (char*)buf, len, 0, (sockaddr*)addr, sizeof(sockaddr_t));
 	if (ret == -1)
 		if (WSAGetLastError() == WSAEWOULDBLOCK)
 			return 0;
@@ -398,13 +444,13 @@ int WINS_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WINS_Broadcast
+//  VWinSockDriver::Broadcast
 //
 //==========================================================================
 
-int WINS_Broadcast(int socket, byte *buf, int len)
+int VWinSockDriver::Broadcast(int socket, vuint8* buf, int len)
 {
-	guard(WINS_Broadcast);
+	guard(VWinSockDriver::Broadcast);
 	int	i = 1;
 
 	if (socket != net_broadcastsocket)
@@ -420,22 +466,22 @@ int WINS_Broadcast(int socket, byte *buf, int len)
 			GCon->Log(NAME_DevNet, "Unable to make socket broadcast capable");
 			return -1;
 		}
-	net_broadcastsocket = socket;
+		net_broadcastsocket = socket;
 	}
 
-	return WINS_Write(socket, buf, len, &broadcastaddr);
+	return Write(socket, buf, len, &broadcastaddr);
 	unguard;
 }
 
 //==========================================================================
 //
-//  WINS_AddrToString
+//  VWinSockDriver::AddrToString
 //
 //==========================================================================
 
-char *WINS_AddrToString(sockaddr_t *addr)
+char* VWinSockDriver::AddrToString(sockaddr_t* addr)
 {
-	guard(WINS_AddrToString);
+	guard(VWinSockDriver::AddrToString);
 	static char buffer[22];
 	int haddr;
 
@@ -449,13 +495,13 @@ char *WINS_AddrToString(sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WINS_StringToAddr
+//  VWinSockDriver::StringToAddr
 //
 //==========================================================================
 
-int WINS_StringToAddr(const char *string, sockaddr_t *addr)
+int VWinSockDriver::StringToAddr(const char* string, sockaddr_t* addr)
 {
-	guard(WINS_StringToAddr);
+	guard(VWinSockDriver::StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -471,13 +517,13 @@ int WINS_StringToAddr(const char *string, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WINS_GetSocketAddr
+//  VWinSockDriver::GetSocketAddr
 //
 //==========================================================================
 
-int WINS_GetSocketAddr(int socket, sockaddr_t *addr)
+int VWinSockDriver::GetSocketAddr(int socket, sockaddr_t *addr)
 {
-	guard(WINS_GetSocketAddr);
+	guard(VWinSockDriver::GetSocketAddr);
 	int		addrlen = sizeof(sockaddr_t);
 	dword	a;
 
@@ -493,13 +539,13 @@ int WINS_GetSocketAddr(int socket, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WINS_GetNameFromAddr
+//  VWinSockDriver::GetNameFromAddr
 //
 //==========================================================================
 
-int WINS_GetNameFromAddr(sockaddr_t *addr, char *name)
+int VWinSockDriver::GetNameFromAddr(sockaddr_t *addr, char *name)
 {
-	guard(WINS_GetNameFromAddr);
+	guard(VWinSockDriver::GetNameFromAddr);
 	hostent *hostentry;
 
 	hostentry = gethostbyaddr((char *)&((sockaddr_in *)addr)->sin_addr, sizeof(struct in_addr), AF_INET);
@@ -509,7 +555,7 @@ int WINS_GetNameFromAddr(sockaddr_t *addr, char *name)
 		return 0;
 	}
 
-	strcpy(name, WINS_AddrToString(addr));
+	strcpy(name, AddrToString(addr));
 	return 0;
 	unguard;
 }
@@ -576,14 +622,14 @@ static int PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 
 //==========================================================================
 //
-//  WINS_GetAddrFromName
+//  VWinSockDriver::GetAddrFromName
 //
 //==========================================================================
 
-int WINS_GetAddrFromName(const char *name, sockaddr_t *addr)
+int VWinSockDriver::GetAddrFromName(const char *name, sockaddr_t *addr)
 {
-	guard(WINS_GetAddrFromName);
-	hostent *hostentry;
+	guard(VWinSockDriver::GetAddrFromName);
+	hostent*	hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
 		return PartialIPAddress(name, addr);
@@ -602,13 +648,13 @@ int WINS_GetAddrFromName(const char *name, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  WINS_AddrCompare
+//  VWinSockDriver::AddrCompare
 //
 //==========================================================================
 
-int WINS_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
+int VWinSockDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
-	guard(WINS_AddrCompare);
+	guard(VWinSockDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -624,62 +670,27 @@ int WINS_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 //==========================================================================
 //
-//  WINS_GetSocketPort
+//  VWinSockDriver::GetSocketPort
 //
 //==========================================================================
 
-int WINS_GetSocketPort(sockaddr_t *addr)
+int VWinSockDriver::GetSocketPort(sockaddr_t* addr)
 {
-	guard(WINS_GetSocketPort);
-	return ntohs(((sockaddr_in *)addr)->sin_port);
+	guard(VWinSockDriver::GetSocketPort);
+	return ntohs(((sockaddr_in*)addr)->sin_port);
 	unguard;
 }
 
 //==========================================================================
 //
-//  WINS_SetSocketPort
+//  VWinSockDriver::SetSocketPort
 //
 //==========================================================================
 
-int WINS_SetSocketPort(sockaddr_t *addr, int port)
+int VWinSockDriver::SetSocketPort(sockaddr_t* addr, int port)
 {
-	guard(WINS_SetSocketPort);
-	((sockaddr_in *)addr)->sin_port = htons((word)port);
+	guard(VWinSockDriver::SetSocketPort);
+	((sockaddr_in*)addr)->sin_port = htons((word)port);
 	return 0;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.10  2006/03/20 20:02:21  dj_jl
-//	Accept zero length packets.
-//	
-//	Revision 1.9  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.8  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.7  2002/01/11 08:12:49  dj_jl
-//	Changes for MinGW
-//	
-//	Revision 1.6  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
-//	
-//	Revision 1.4  2001/10/04 17:23:29  dj_jl
-//	Got rid of some warnings
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

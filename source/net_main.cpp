@@ -101,6 +101,69 @@ static PollProcedure*	pollProcedureList = NULL;
 
 static boolean			listening = false;
 
+#include "net_loop.h"
+#include "net_null.h"
+#include "net_dgrm.h"
+
+net_driver_t net_drivers[MAX_NET_DRIVERS] =
+{
+	{
+	"Loopback",
+	false,
+	Loop_Init,
+	Loop_Listen,
+	Loop_SearchForHosts,
+	Loop_Connect,
+	Loop_CheckNewConnections,
+	Loop_GetMessage,
+	Loop_SendMessage,
+	Loop_SendUnreliableMessage,
+	Loop_CanSendMessage,
+	Loop_CanSendUnreliableMessage,
+	Loop_Close,
+	Loop_Shutdown
+	}
+	,
+	{
+	"Null",
+	false,
+	NetNull_Init,
+	NetNull_Listen,
+	NetNull_SearchForHosts,
+	NetNull_Connect,
+	NetNull_CheckNewConnections,
+	NetNull_GetMessage,
+	NetNull_SendMessage,
+	NetNull_SendUnreliableMessage,
+	NetNull_CanSendMessage,
+	NetNull_CanSendUnreliableMessage,
+	NetNull_Close,
+	NetNull_Shutdown
+	}
+	,
+	{
+	"Datagram",
+	false,
+	Datagram_Init,
+	Datagram_Listen,
+	Datagram_SearchForHosts,
+	Datagram_Connect,
+	Datagram_CheckNewConnections,
+	Datagram_GetMessage,
+	Datagram_SendMessage,
+	Datagram_SendUnreliableMessage,
+	Datagram_CanSendMessage,
+	Datagram_CanSendUnreliableMessage,
+	Datagram_Close,
+	Datagram_Shutdown
+	}
+};
+
+int net_numdrivers = 3;
+
+VNetLanDriver* net_landrivers[MAX_NET_DRIVERS];
+int net_numlandrivers = 0;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================

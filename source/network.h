@@ -35,41 +35,43 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VNetLanDriver;
+
 struct sockaddr_t
 {
-    short		sa_family;
-    char		sa_data[14];
+	vint16		sa_family;
+	vint8		sa_data[14];
 };
 
 struct qsocket_t
 {
-	qsocket_t*	next;
-	double		connecttime;
-	double		lastMessageTime;
-	double		lastSendTime;
+	qsocket_t*		next;
+	double			connecttime;
+	double			lastMessageTime;
+	double			lastSendTime;
 
-	bool		disconnected;
-	bool		canSend;
-	bool		sendNext;
+	bool			disconnected;
+	bool			canSend;
+	bool			sendNext;
 	
-	int			driver;
-	int			landriver;
-	int			socket;
-	void*		driverdata;
+	int				driver;
+	VNetLanDriver*	landriver;
+	int				socket;
+	void*			driverdata;
 
-	dword		ackSequence;
-	dword		sendSequence;
-	dword		unreliableSendSequence;
-	int			sendMessageLength;
-	byte		sendMessage[NET_MAXMESSAGE];
+	vuint32			ackSequence;
+	vuint32			sendSequence;
+	vuint32			unreliableSendSequence;
+	int				sendMessageLength;
+	vuint8			sendMessage[NET_MAXMESSAGE];
 
-	dword		receiveSequence;
-	dword		unreliableReceiveSequence;
-	int			receiveMessageLength;
-	byte		receiveMessage[NET_MAXMESSAGE];
+	vuint32			receiveSequence;
+	vuint32			unreliableReceiveSequence;
+	int				receiveMessageLength;
+	vuint8			receiveMessage[NET_MAXMESSAGE];
 
-	sockaddr_t	addr;
-	char		address[NET_NAMELEN];
+	sockaddr_t		addr;
+	char			address[NET_NAMELEN];
 };
 
 struct hostcache_t
@@ -99,26 +101,3 @@ void NET_Poll();
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern VMessage		net_msg;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.7  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.6  2005/08/29 19:29:37  dj_jl
-//	Implemented network packet compression.
-//	
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/10/08 17:27:53  dj_jl
-//	Moved slist menu builtins here
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

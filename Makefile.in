@@ -195,7 +195,6 @@ SYS_OBJS_DJGPP = \
 	obj/mplib.$(OBJEXT) \
 	obj/mplpc.$(OBJEXT) \
 	obj/net_bw.$(OBJEXT) \
-	obj/net_dos.$(OBJEXT) \
 	obj/net_ipx.$(OBJEXT) \
 	obj/net_mp.$(OBJEXT) \
 	obj/npxsetup.$(OBJEXT) \
@@ -209,7 +208,6 @@ GL_SYS_OBJ_DJGPP = obj/gl_alleg.$(OBJEXT)
 SYS_OBJS_UNIX_ALLEGRO = \
 	obj/d_alleg.$(OBJEXT) \
 	obj/in_alleg.$(OBJEXT) \
-	obj/net_bsd.$(OBJEXT) \
 	obj/net_udp.$(OBJEXT) \
 	obj/s_alleg.$(OBJEXT) \
 	obj/s_allegm.$(OBJEXT) \
@@ -221,7 +219,6 @@ GL_SYS_OBJ_UNIX_ALLEGRO = obj/gl_agl.$(OBJEXT)
 SYS_OBJS_UNIX_SDL = \
 	obj/d_sdl.$(OBJEXT) \
 	obj/in_sdl.$(OBJEXT) \
-	obj/net_bsd.$(OBJEXT) \
 	obj/net_udp.$(OBJEXT) \
 	obj/s_sdl.$(OBJEXT) \
 	obj/s_sdlm.$(OBJEXT) \
@@ -238,7 +235,6 @@ SYS_OBJS_WIN32 = \
 	obj/cd_win32.$(OBJEXT) \
 	obj/d_win32.$(OBJEXT) \
 	obj/in_win32.$(OBJEXT) \
-	obj/net_win.$(OBJEXT) \
 	obj/net_wins.$(OBJEXT) \
 	obj/net_wipx.$(OBJEXT) \
 	obj/s_win32.$(OBJEXT) \
@@ -301,19 +297,16 @@ SV_SYS_OBJS_DJGPP = \
 	obj/sv/mplib.$(OBJEXT) \
 	obj/sv/mplpc.$(OBJEXT) \
 	obj/sv/net_bw.$(OBJEXT) \
-	obj/sv/net_dos.$(OBJEXT) \
 	obj/sv/net_ipx.$(OBJEXT) \
 	obj/sv/net_mp.$(OBJEXT) \
 	obj/sv/npxsetup.$(OBJEXT) \
 	obj/sv/sys_bsd.$(OBJEXT)
 
 SV_SYS_OBJS_UNIX = \
-	obj/sv/net_bsd.$(OBJEXT) \
 	obj/sv/net_udp.$(OBJEXT) \
 	obj/sv/sys_bsd.$(OBJEXT)
 
 SV_SYS_OBJS_WIN32 = \
-	obj/sv/net_win.$(OBJEXT) \
 	obj/sv/net_wins.$(OBJEXT) \
 	obj/sv/net_wipx.$(OBJEXT) \
 	obj/sv/sys_wind.$(OBJEXT)

@@ -114,13 +114,13 @@ int _int86(int vector, __dpmi_regs *iregs, __dpmi_regs *oregs);
 #define REGISTERS	__dpmi_regs
 
 void
-Yield(void)
+Yield()
 {
 	__dpmi_yield();
 }
 
 void
-PostWindowsMessage(void)
+PostWindowsMessage()
 {
    REGISTERS regs;
 
@@ -131,7 +131,7 @@ PostWindowsMessage(void)
 }
 
 int
-MGenWait(void)
+MGenWait()
 {
    REGISTERS regs;
 
@@ -209,7 +209,7 @@ int MGenMCount(unsigned lowerOrderBits, unsigned upperOrderBits)
    return regs.d.eax;
 }
 
-int MGenSanityCheck(void)
+int MGenSanityCheck()
 {
    REGISTERS   regs;
 
@@ -219,24 +219,10 @@ int MGenSanityCheck(void)
    return regs.d.eax;
 }
 
-void MGenWakeupDll(void)
+void MGenWakeupDll()
 {
    REGISTERS   regs;
 
    regs.d.eax = MGENVXD_WAKEUPDLL_ORD << 16 | MGENVXD_DEVICE_ID;
    int386(CHUNNEL_INT, &regs, &regs);
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

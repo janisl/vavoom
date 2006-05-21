@@ -39,7 +39,6 @@
 #include <sys/farptr.h>
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_ipx.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -75,40 +74,40 @@
 
 struct IPXAddr
 {
-	byte	network[4]; /* high-low */
-	byte	node[6];    /* high-low */
-	word	socket;		/* high-low */
+	vuint8		network[4]; /* high-low */
+	vuint8		node[6];    /* high-low */
+	vuint16		socket;		/* high-low */
 };
 
 struct sockaddr_ipx
 {
-    short		sipx_family;
+    vint16		sipx_family;
 	IPXAddr		sipx_addr;
-    char		sipx_zero[2];
+    vint8		sipx_zero[2];
 };
 
 struct ECB
 {
-	word		Link[2];                /* offset-segment */
-	word		ESRAddress[2];          /* offset-segment */
-	byte		InUseFlag;
-	byte		CompletionCode;
-	word		ECBSocket;              /* high-low */
-	byte		IPXWorkspace[4];        /* N/A */
-	byte		DriverWorkspace[12];    /* N/A */
-	byte		ImmediateAddress[6];    /* high-low */
-	word		FragmentCount;          /* low-high */
+	vuint16		Link[2];                /* offset-segment */
+	vuint16		ESRAddress[2];          /* offset-segment */
+	vuint8		InUseFlag;
+	vuint8		CompletionCode;
+	vuint16		ECBSocket;              /* high-low */
+	vuint8		IPXWorkspace[4];        /* N/A */
+	vuint8		DriverWorkspace[12];    /* N/A */
+	vuint8		ImmediateAddress[6];    /* high-low */
+	vuint16		FragmentCount;          /* low-high */
 
-	word    	fAddress[2];            /* offset-segment */
-	word    	fSize;                  /* low-high */
+	vuint16    	fAddress[2];            /* offset-segment */
+	vuint16    	fSize;                  /* low-high */
 };
 
 struct IPXPacket
 {
-	word		PacketCheckSum;         /* high-low */
-	word		PacketLength;           /* high-low */
-	byte		PacketTransportControl;
-	byte		PacketType;
+	vuint16		PacketCheckSum;         /* high-low */
+	vuint16		PacketLength;           /* high-low */
+	vuint8		PacketTransportControl;
+	vuint8		PacketType;
 
 	IPXAddr		destination;
 	IPXAddr		source;
@@ -124,7 +123,70 @@ struct packet_t
 	ECB			ecb;
 	IPXPacket	ipx;
 	long		sequence;
-	byte		data[NET_DATAGRAMSIZE];
+	vuint8		data[NET_DATAGRAMSIZE];
+};
+
+class VIpxDriver : public VNetLanDriver
+{
+public:
+	vuint16			ipx_cs;
+	vuint16			ipx_ip;
+
+	__dpmi_regs		regs;
+
+	_go32_dpmi_seginfo		packets_info;
+	int						packets_offset;
+
+	vuint16			Socket[IPXSOCKETS];
+	int				BasePacket[IPXSOCKETS];
+	long			Sequence[IPXSOCKETS];	// for time stamp in packets
+	int          	handlesInUse;
+
+	PollProcedure	pollProcedure;
+
+	int				net_acceptsocket;
+	int				net_controlsocket;
+
+	VIpxDriver();
+	int Init();
+	void Shutdown();
+	void Listen(bool);
+	int OpenSocket(int);
+	int CloseSocket(int);
+	int Connect(int, sockaddr_t*);
+	int CheckNewConnections();
+	int Read(int, vuint8*, int, sockaddr_t*);
+	int Write(int, vuint8*, int, sockaddr_t*);
+	int Broadcast(int, vuint8*, int);
+	char* AddrToString(sockaddr_t*);
+	int StringToAddr(const char*, sockaddr_t*);
+	int GetSocketAddr(int, sockaddr_t*);
+	int GetNameFromAddr(sockaddr_t*, char*);
+	int GetAddrFromName(const char*, sockaddr_t*);
+	int AddrCompare(sockaddr_t*, sockaddr_t*);
+	int GetSocketPort(sockaddr_t*);
+	int SetSocketPort(sockaddr_t*, int);
+
+	static void IPX_PollProcedure(void*);
+
+	//	Low level IPX functions.
+	int IPX_GetFunction();
+	int IPX_OpenSocket(vuint16 port);
+	void IPX_CloseSocket(vuint16 socket);
+	int IPX_GetLocalTarget(IPXAddr *addr, vuint8 *localTarget);
+	int IPX_SendPacket(unsigned int offset);
+	int IPX_ListenForPacket(unsigned int offset);
+	void IPX_GetLocalAddress(IPXAddr *addr);
+	void IPX_RelinquishControl();
+
+	//	DOS memory handling.
+	int InitDOSMemory();
+	int PacketOffset(int index);
+	void GetPacket(int index, packet_t *packet);
+	void PutPacket(int index, packet_t *packet);
+	vuint8 PacketInUse(int index);
+	vuint8 PacketCompletionCode(int index);
+	void FreeDOSMemory();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -133,317 +195,15 @@ struct packet_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static int _PacketOffset(int index);
-static void _PutPacket(int index, packet_t *packet);
-static void IPX_PollProcedure(void*);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static word				ipx_cs;
-static word				ipx_ip;
-
-static __dpmi_regs		regs;
-
-static _go32_dpmi_seginfo		packets_info;
-static int						packets_offset = 0;
-
-static word				Socket[IPXSOCKETS];
-static int				BasePacket[IPXSOCKETS];
-static long				Sequence[IPXSOCKETS];	// for time stamp in packets
-static int          	handlesInUse;
-
-static PollProcedure	pollProcedure = {NULL, 0.0, IPX_PollProcedure, NULL};
-
-static int				net_acceptsocket = -1;
-static int				net_controlsocket;
+static VIpxDriver		Impl;
 
 // CODE --------------------------------------------------------------------
-
-//**************************************************************************
-//
-//	Low level IPX functions
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  _IPX_GetFunction
-//
-//==========================================================================
-
-static int _IPX_GetFunction()
-{
-	//	Find the IPX far call entry point
-	regs.x.ax = 0x7a00;
-	__dpmi_simulate_real_mode_interrupt(0x2f, &regs);
-	if (regs.h.al != 0xff)
-	{
-		GCon->Log(NAME_Init, "IPX not detected");
-		return -1;
-	}
-	ipx_cs = regs.x.es;
-	ipx_ip = regs.x.di;
-	return 0;
-}
-
-//==========================================================================
-//
-//  _IPX_OpenSocket
-//
-//==========================================================================
-
-static int _IPX_OpenSocket(word port)
-{
-	// open the IPX socket
-	regs.x.cs = ipx_cs;
-	regs.x.ip = ipx_ip;
-	regs.x.bx = IPX_OPEN;
-	regs.h.al = 0;
-	regs.x.dx = BigShort(port);
-	__dpmi_simulate_real_mode_procedure_retf(&regs);
-	if (regs.h.al == 0xfe)
-	{
-		GCon->Log(NAME_DevNet, "_IPX_OpenSocket: all sockets in use");
-		return -1;
-	}
-	if (regs.h.al == 0xff)
-	{
-		GCon->Log(NAME_DevNet, "_IPX_OpenSocket: socket already open");
-		return -1;
-	}
-	if (regs.h.al)
-	{
-		GCon->Logf(NAME_DevNet, "_IPX_OpenSocket: error %02x", regs.h.al);
-		return -1;
-	}
-    return regs.x.dx;
-}
-
-//==========================================================================
-//
-//  _IPX_CloseSocket
-//
-//==========================================================================
-
-static void _IPX_CloseSocket(word socket)
-{
-	// close the socket (all pending sends/received are cancelled)
-	regs.x.cs = ipx_cs;
-	regs.x.ip = ipx_ip;
-	regs.x.bx = IPX_CLOSE;
-	regs.x.dx = socket;
-	__dpmi_simulate_real_mode_procedure_retf(&regs);
-}
-
-//==========================================================================
-//
-//  _IPX_GetLocalTarget
-//
-//==========================================================================
-
-static int _IPX_GetLocalTarget(IPXAddr *addr, byte *localTarget)
-{
-	regs.x.cs = ipx_cs;
-	regs.x.ip = ipx_ip;
-	regs.x.bx = IPX_GETROUTE;
-	regs.x.es = __tb >> 4;
-	regs.x.si = __tb & 0x0f;
-	regs.x.di = (__tb & 0x0f) + sizeof(IPXAddr);
-	dosmemput(addr, sizeof(IPXAddr), __tb);
-	__dpmi_simulate_real_mode_procedure_retf(&regs);
-	if (regs.h.al)
-		return -1;
-	dosmemget(__tb + sizeof(IPXAddr), 6, localTarget);
-	return 0;
-}
-
-//==========================================================================
-//
-//  _IPX_SendPacket
-//
-//==========================================================================
-
-static int _IPX_SendPacket(unsigned int offset)
-{
-	regs.x.cs = ipx_cs;
-	regs.x.ip = ipx_ip;
-	regs.x.bx = IPX_SEND;
-	regs.x.es = offset >> 4;
-	regs.x.si = offset & 0xf;
-	__dpmi_simulate_real_mode_procedure_retf(&regs);
-	if (regs.h.al)
-	{
-		GCon->Logf(NAME_DevNet, "_IPX_SendPacket: 0x%02x", regs.h.al);
-		return -1;
-	}
-	return 0;
-}
-
-//==========================================================================
-//
-//  _IPX_ListenForPacket
-//
-//==========================================================================
-
-static int _IPX_ListenForPacket(unsigned int offset)
-{
-	regs.x.cs = ipx_cs;
-	regs.x.ip = ipx_ip;
-	regs.x.bx = IPX_LISTEN;
-	regs.x.es = offset >> 4;
-	regs.x.si = offset & 0xf;
-	__dpmi_simulate_real_mode_procedure_retf(&regs);
-	if (regs.h.al)
-	{
-		GCon->Logf(NAME_DevNet, "_IPX_ListenForPacket: 0x%02x", regs.h.al);
-        return -1;
-	}
-    return 0;
-}
-
-//==========================================================================
-//
-//  _IPX_GetLocalAddress
-//
-//==========================================================================
-
-static void _IPX_GetLocalAddress(IPXAddr *addr)
-{
-	regs.x.cs = ipx_cs;
-	regs.x.ip = ipx_ip;
-	regs.x.bx = IPX_GETADDRESS;
-	regs.x.es = __tb >> 4;
-	regs.x.si = __tb & 0x0f;
-	__dpmi_simulate_real_mode_procedure_retf(&regs);
-	dosmemget(__tb, 10, addr);
-}
-
-//==========================================================================
-//
-//  _IPX_RelinquishControl
-//
-//==========================================================================
-
-static void _IPX_RelinquishControl()
-{
-	regs.x.cs = ipx_cs;
-	regs.x.ip = ipx_ip;
-	regs.x.bx = IPX_RELINQUISH;
-	__dpmi_simulate_real_mode_procedure_retf(&regs);
-}
-
-//**************************************************************************
-//
-//	DOS memory handling
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  _InitDOSMemory
-//
-//==========================================================================
-
-static int _InitDOSMemory()
-{
-	//	Grab a chunk of memory down in DOS land
-	packets_info.size = (LOWMEMSIZE + 15) / 16;
-	if (_go32_dpmi_allocate_dos_memory(&packets_info))
-	{
-		GCon->Log(NAME_Init, "Not enough low memory");
-		return -1;
-	}
-    packets_offset = packets_info.rm_segment << 4;
-
-	//	Set default data in packets
-   	packet_t	packet;
-	memset(&packet, 0, sizeof(packet_t));
-	for (size_t i = 0; i < IPXBUFFERS; i++)
-	{
-		packet.ecb.InUseFlag = 0xff;
-		packet.ecb.FragmentCount = 1;
-		packet.ecb.fAddress[0] = (_PacketOffset(i) + sizeof(ECB)) & 0x0f;
-		packet.ecb.fAddress[1] = (_PacketOffset(i) + sizeof(ECB)) >> 4;
-		packet.ecb.fSize = sizeof(packet_t) - sizeof(ECB);
-
-		_PutPacket(i, &packet);
-	}
-
-	return 0;
-}
-
-//==========================================================================
-//
-//	_PacketOffset
-//
-//==========================================================================
-
-static int _PacketOffset(int index)
-{
-	return packets_offset + index * sizeof(packet_t);
-}
-
-//==========================================================================
-//
-//	_GetPacket
-//
-//==========================================================================
-
-static void _GetPacket(int index, packet_t *packet)
-{
-	dosmemget(_PacketOffset(index), sizeof(packet_t), packet);
-}
-
-//==========================================================================
-//
-//	_PutPacket
-//
-//==========================================================================
-
-static void _PutPacket(int index, packet_t *packet)
-{
-	dosmemput(packet, sizeof(packet_t), _PacketOffset(index));
-}
-
-//==========================================================================
-//
-//	_PacketInUse
-//
-//==========================================================================
-
-static byte _PacketInUse(int index)
-{
-	return _farpeekb(_dos_ds, _PacketOffset(index) + 8);
-}
-
-//==========================================================================
-//
-//	_PacketCompletionCode
-//
-//==========================================================================
-
-static byte _PacketCompletionCode(int index)
-{
-	return _farpeekb(_dos_ds, _PacketOffset(index) + 9);
-}
-
-//==========================================================================
-//
-//  _FreeDOSMemory
-//
-//==========================================================================
-
-static void _FreeDOSMemory()
-{
-	if (packets_offset)
-	{
-		_go32_dpmi_free_dos_memory(&packets_info);
-	}
-}
 
 //**************************************************************************
 //
@@ -453,27 +213,38 @@ static void _FreeDOSMemory()
 
 //==========================================================================
 //
-//  IPX_PollProcedure
+//	VIpxDriver::VIpxDriver
 //
 //==========================================================================
 
-void IPX_PollProcedure(void*)
+VIpxDriver::VIpxDriver()
+: VNetLanDriver(1, "IPX")
+, ipx_cs(0)
+, ipx_ip(0)
+, packets_offset(0)
+, handlesInUse(0)
+, net_acceptsocket(-1)
+, net_controlsocket(0)
 {
-	guard(IPX_PollProcedure);
-	_IPX_RelinquishControl();
-	SchedulePollProcedure(&pollProcedure, 0.01);
-	unguard;
+	memset(&regs, 0, sizeof(regs));
+	memset(&packets_info, 0, sizeof(packets_info));
+	memset(&Socket, 0, sizeof(Socket));
+	memset(&BasePacket, 0, sizeof(BasePacket));
+	memset(&Sequence, 0, sizeof(Sequence));
+	memset(&pollProcedure, 0, sizeof(pollProcedure));
+	pollProcedure.procedure = IPX_PollProcedure;
+	pollProcedure.arg = this;
 }
 
 //==========================================================================
 //
-//  IPX_Init
+//  VIpxDriver::Init
 //
 //==========================================================================
 
-int IPX_Init()
+int VIpxDriver::Init()
 {
-	guard(IPX_Init);
+	guard(VIpxDriver::Init);
 	size_t		i;
 	sockaddr_t	addr;
 	char*		colon;
@@ -482,12 +253,12 @@ int IPX_Init()
 		return -1;
 
 	// find the IPX far call entry point
-	if (_IPX_GetFunction())
-    	return -1;
+	if (IPX_GetFunction())
+		return -1;
 
 	// grab a chunk of memory down in DOS land
-	if (_InitDOSMemory())
-    	return -1;
+	if (InitDOSMemory())
+		return -1;
 
 	// init socket handles
 	handlesInUse = 0;
@@ -497,18 +268,18 @@ int IPX_Init()
 	}
 
 	// allocate a control socket
-    net_controlsocket = IPX_OpenSocket(0);
+	net_controlsocket = OpenSocket(0);
 	if (net_controlsocket == -1)
 	{
-	    _FreeDOSMemory();
+		FreeDOSMemory();
 		GCon->Log(NAME_DevNet, "IPX_Init: Unable to open control socket");
 		return -1;
 	}
 
 	SchedulePollProcedure(&pollProcedure, 0.01);
 
-	IPX_GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_ipx_address, IPX_AddrToString(&addr));
+	GetSocketAddr(net_controlsocket, &addr);
+	strcpy(my_ipx_address, AddrToString(&addr));
 	colon = strrchr(my_ipx_address, ':');
 	if (colon)
 		*colon = 0;
@@ -521,34 +292,49 @@ int IPX_Init()
 
 //==========================================================================
 //
-//  IPX_Shutdown
+//  VIpxDriver::Shutdown
 //
 //==========================================================================
 
-void IPX_Shutdown()
+void VIpxDriver::Shutdown()
 {
-	guard(IPX_Shutdown);
-	IPX_Listen(false);
-	IPX_CloseSocket(net_controlsocket);
-    _FreeDOSMemory();
+	guard(VIpxDriver::Shutdown);
+	Listen(false);
+	CloseSocket(net_controlsocket);
+	FreeDOSMemory();
 	unguard;
 }
 
 //==========================================================================
 //
-//  IPX_Listen
+//  VIpxDriver::IPX_PollProcedure
 //
 //==========================================================================
 
-void IPX_Listen(bool state)
+void VIpxDriver::IPX_PollProcedure(void* arg)
 {
-	guard(IPX_Listen);
+	guard(VIpxDriver::IPX_PollProcedure);
+	VIpxDriver* Self = (VIpxDriver*)arg;
+	Self->IPX_RelinquishControl();
+	SchedulePollProcedure(&Self->pollProcedure, 0.01);
+	unguard;
+}
+
+//==========================================================================
+//
+//  VIpxDriver::Listen
+//
+//==========================================================================
+
+void VIpxDriver::Listen(bool state)
+{
+	guard(VIpxDriver::Listen);
 	if (state)
 	{
 		// enable listening
 		if (net_acceptsocket == -1)
-        {
-			net_acceptsocket = IPX_OpenSocket(net_hostport);
+		{
+			net_acceptsocket = OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 			{
 				Sys_Error("IPX_Listen: Unable to open accept socket\n");
@@ -559,8 +345,8 @@ void IPX_Listen(bool state)
 	{
 		// disable listening
 		if (net_acceptsocket != -1)
-        {
-			IPX_CloseSocket(net_acceptsocket);
+		{
+			CloseSocket(net_acceptsocket);
 			net_acceptsocket = -1;
 		}
 	}
@@ -569,13 +355,13 @@ void IPX_Listen(bool state)
 
 //==========================================================================
 //
-//  IPX_OpenSocket
+//  VIpxDriver::OpenSocket
 //
 //==========================================================================
 
-int IPX_OpenSocket(int port)
+int VIpxDriver::OpenSocket(int port)
 {
-	guard(IPX_OpenSocket);
+	guard(VIpxDriver::OpenSocket);
 	int		handle;
 	int		socket;
 
@@ -583,11 +369,11 @@ int IPX_OpenSocket(int port)
 		return -1;
 
 	// open the IPX socket
-	socket = _IPX_OpenSocket(port);
+	socket = IPX_OpenSocket(port);
 	if (socket < 0)
-    {
-        return -1;
-    }
+	{
+		return -1;
+	}
 
 	// grab a handle; fill in the ECBs, and get them listening
 	for (handle = 0; handle < (int)IPXSOCKETS; handle++)
@@ -595,7 +381,7 @@ int IPX_OpenSocket(int port)
 		if (Socket[handle] == 0)
 		{
 			Socket[handle] = socket;
-		    BasePacket[handle] = handle * IPXSOCKBUFFERS;
+			BasePacket[handle] = handle * IPXSOCKBUFFERS;
 			Sequence[handle] = 0;
 			//
 			// set up several receiving ECBs
@@ -604,12 +390,12 @@ int IPX_OpenSocket(int port)
 			{
 				packet_t	packet;
 
-				_GetPacket(BasePacket[handle] + i, &packet);
+				GetPacket(BasePacket[handle] + i, &packet);
 				packet.ecb.ECBSocket = socket;
 				packet.ecb.InUseFlag = 0;
-				_PutPacket(BasePacket[handle] + i, &packet);
+				PutPacket(BasePacket[handle] + i, &packet);
 				if (i)
-					_IPX_ListenForPacket(_PacketOffset(BasePacket[handle] + i));
+					IPX_ListenForPacket(PacketOffset(BasePacket[handle] + i));
 			}
 			handlesInUse++;
 			return handle;
@@ -623,21 +409,21 @@ int IPX_OpenSocket(int port)
 
 //==========================================================================
 //
-//  IPX_CloseSocket
+//  VIpxDriver::CloseSocket
 //
 //==========================================================================
 
-int IPX_CloseSocket(int handle)
+int VIpxDriver::CloseSocket(int handle)
 {
-	guard(IPX_CloseSocket);
+	guard(VIpxDriver::CloseSocket);
 	// if there's a send in progress, give it one last chance
-	if (_PacketInUse(BasePacket[handle]))
-    {
-		_IPX_RelinquishControl();
+	if (PacketInUse(BasePacket[handle]))
+	{
+		IPX_RelinquishControl();
 	}
 
 	// close the socket (all pending sends/received are cancelled)
-	_IPX_CloseSocket(Socket[handle]);
+	IPX_CloseSocket(Socket[handle]);
 
 	Socket[handle] = 0;
 	handlesInUse--;
@@ -648,25 +434,25 @@ int IPX_CloseSocket(int handle)
 
 //==========================================================================
 //
-//  IPX_Connect
+//  VIpxDriver::Connect
 //
 //==========================================================================
 
-int IPX_Connect(int handle, sockaddr_t *addr)
+int VIpxDriver::Connect(int handle, sockaddr_t *addr)
 {
-	guard(IPX_Connect);
+	guard(VIpxDriver::Connect);
 	IPXAddr		ipxaddr;
 	packet_t	packet;
 
 	memcpy(&ipxaddr, &((sockaddr_ipx *)addr)->sipx_addr, sizeof(IPXAddr));
 
-	_GetPacket(BasePacket[handle], &packet);
-	if (_IPX_GetLocalTarget(&ipxaddr, packet.ecb.ImmediateAddress))
+	GetPacket(BasePacket[handle], &packet);
+	if (IPX_GetLocalTarget(&ipxaddr, packet.ecb.ImmediateAddress))
 	{
 		GCon->Log(NAME_DevNet, "Get Local Target failed");
 		return -1;
 	}
-	_PutPacket(BasePacket[handle], &packet);
+	PutPacket(BasePacket[handle], &packet);
 
 	return 0;
 	unguard;
@@ -674,20 +460,18 @@ int IPX_Connect(int handle, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  IPX_CheckNewConnections
+//  VIpxDriver::CheckNewConnections
 //
 //==========================================================================
 
-int IPX_CheckNewConnections()
+int VIpxDriver::CheckNewConnections()
 {
-	guard(IPX_CheckNewConnections);
-	int n;
-
+	guard(VIpxDriver::CheckNewConnections);
 	if (net_acceptsocket == -1)
 		return -1;
 
-	for (n = 1; n < IPXSOCKBUFFERS; n++)
-		if (_PacketInUse(BasePacket[net_acceptsocket] + n) == 0)
+	for (int n = 1; n < IPXSOCKBUFFERS; n++)
+		if (PacketInUse(BasePacket[net_acceptsocket] + n) == 0)
 			return net_acceptsocket;
 	return -1;
 	unguard;
@@ -695,13 +479,13 @@ int IPX_CheckNewConnections()
 
 //==========================================================================
 //
-//  IPX_Read
+//  VIpxDriver::Read
 //
 //==========================================================================
 
-int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
+int VIpxDriver::Read(int handle, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(IPX_Read);
+	guard(VIpxDriver::Read);
 	int				packetnum;
 	long			besttic;
 	int				copylen;
@@ -709,17 +493,17 @@ int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 	packet_t		send_packet;
 
 	// if multiple packets are waiting, return them in order by time
- tryagain:
+tryagain:
 
-	besttic = MAXLONG;
+		besttic = MAXLONG;
 	packetnum = -1;
 
 	for (int i = BasePacket[handle] + 1;
-		i < BasePacket[handle] + IPXSOCKBUFFERS; i++)
+			i < BasePacket[handle] + IPXSOCKBUFFERS; i++)
 	{
-		if (!_PacketInUse(i))
+		if (!PacketInUse(i))
 		{
-			_GetPacket(i, &packet);
+			GetPacket(i, &packet);
 			if (packet.sequence < besttic)
 			{
 				besttic = packet.sequence;
@@ -736,14 +520,14 @@ int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 	//
 	// got a good packet
 	//
-	_GetPacket(packetnum, &packet);
+	GetPacket(packetnum, &packet);
 
 	if (packet.ecb.CompletionCode)
 	{
 		GCon->Logf(NAME_Init, "Warning: IPX_Read error %d", packet.ecb.CompletionCode);
 		packet.ecb.fSize = sizeof(packet_t) - sizeof(ECB);
-		_PutPacket(packetnum, &packet);
-		_IPX_ListenForPacket(_PacketOffset(packetnum));
+		PutPacket(packetnum, &packet);
+		IPX_ListenForPacket(PacketOffset(packetnum));
 		goto tryagain;
 	}
 
@@ -763,14 +547,14 @@ int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 	}
 
 	// update the send ecb's immediate address
-	_GetPacket(BasePacket[handle], &send_packet);
+	GetPacket(BasePacket[handle], &send_packet);
 	memcpy(send_packet.ecb.ImmediateAddress, packet.ecb.ImmediateAddress, 6);
-	_PutPacket(BasePacket[handle], &send_packet);
+	PutPacket(BasePacket[handle], &send_packet);
 
 	// get this ecb listening again
 	packet.ecb.fSize = sizeof(packet_t) - sizeof(ECB);
-	_PutPacket(packetnum, &packet);
-	_IPX_ListenForPacket(_PacketOffset(packetnum));
+	PutPacket(packetnum, &packet);
+	IPX_ListenForPacket(PacketOffset(packetnum));
 
 	return copylen;
 	unguard;
@@ -778,51 +562,51 @@ int IPX_Read(int handle, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  IPX_Write
+//  VIpxDriver::Write
 //
 //==========================================================================
 
-int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
+int VIpxDriver::Write(int handle, vuint8* buf, int len, sockaddr_t* addr)
 {
 	guard(IPX_Write);
 	packet_t	packet;
 
 	// has the previous send completed?
-	while (_PacketInUse(BasePacket[handle]))
+	while (PacketInUse(BasePacket[handle]))
 	{
-		_IPX_RelinquishControl();
+		IPX_RelinquishControl();
 	}
 
-	switch (_PacketCompletionCode(BasePacket[handle]))
+	switch (PacketCompletionCode(BasePacket[handle]))
 	{
 		case 0x00: // success
-		case 0xfc: // request cancelled
-			break;
+			case 0xfc: // request cancelled
+				break;
 
-		case 0xfd: // malformed packet
+				case 0xfd: // malformed packet
 		default:
 			GCon->Logf(NAME_DevNet, "IPX driver send failure: %d", 
-				(int)_PacketCompletionCode(BasePacket[handle]));
+					   (int)PacketCompletionCode(BasePacket[handle]));
 			break;
 
-		case 0xfe: // packet undeliverable
-		case 0xff: // unable to send packet
-			GCon->Log(NAME_DevNet, "IPX lost route, trying to re-establish");
+			case 0xfe: // packet undeliverable
+				case 0xff: // unable to send packet
+					GCon->Log(NAME_DevNet, "IPX lost route, trying to re-establish");
 
 			// look for a new route
-			_GetPacket(BasePacket[handle], &packet);
-			if (_IPX_GetLocalTarget(&packet.ipx.destination, packet.ecb.ImmediateAddress))
-				return -1;
-			_PutPacket(BasePacket[handle], &packet);
+					GetPacket(BasePacket[handle], &packet);
+					if (IPX_GetLocalTarget(&packet.ipx.destination, packet.ecb.ImmediateAddress))
+						return -1;
+					PutPacket(BasePacket[handle], &packet);
 
 			// re-send the one that failed
-			_IPX_SendPacket(_PacketOffset(BasePacket[handle]));
+					IPX_SendPacket(PacketOffset(BasePacket[handle]));
 
 			// report that we did not send the current one
-			return 0;
+					return 0;
 	}
 
-	_GetPacket(BasePacket[handle], &packet);
+	GetPacket(BasePacket[handle], &packet);
 
 	// set the length (ipx + sequence + datalength)
 	packet.ecb.fSize = sizeof(IPXPacket) + sizeof(long) + len;
@@ -836,16 +620,16 @@ int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 	memcpy(packet.ecb.ImmediateAddress, ((sockaddr_ipx*)addr)->sipx_addr.node, 6);
 
 	// sequence number
-    packet.sequence = Sequence[handle];
+	packet.sequence = Sequence[handle];
 	Sequence[handle]++;
 
 	// copy down the data
 	memcpy(packet.data, buf, len);
 
-	_PutPacket(BasePacket[handle], &packet);
+	PutPacket(BasePacket[handle], &packet);
 
 	// send the packet
-	_IPX_SendPacket(_PacketOffset(BasePacket[handle]));
+	IPX_SendPacket(PacketOffset(BasePacket[handle]));
 
 	return len;
 	unguard;
@@ -853,13 +637,13 @@ int IPX_Write(int handle, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  IPX_Broadcast
+//  VIpxDriver::Broadcast
 //
 //==========================================================================
 
-int IPX_Broadcast(int handle, byte *buf, int len)
+int VIpxDriver::Broadcast(int handle, vuint8* buf, int len)
 {
-	guard(IPX_Broadcast);
+	guard(VIpxDriver::Broadcast);
 	sockaddr_ipx	addr;
 	packet_t		packet;
 
@@ -867,51 +651,51 @@ int IPX_Broadcast(int handle, byte *buf, int len)
 	memset(addr.sipx_addr.node, 0xff, 6);
 	addr.sipx_addr.socket = BigShort(net_hostport);
 
-	_GetPacket(BasePacket[handle], &packet);
+	GetPacket(BasePacket[handle], &packet);
 	memset(packet.ecb.ImmediateAddress, 0xff, 6);
-	_PutPacket(BasePacket[handle], &packet);
+	PutPacket(BasePacket[handle], &packet);
 
-	return IPX_Write(handle, buf, len, (sockaddr_t *)&addr);
+	return Write(handle, buf, len, (sockaddr_t *)&addr);
 	unguard;
 }
 
 //==========================================================================
 //
-//  IPX_AddrToString
+//  VIpxDriver::AddrToString
 //
 //==========================================================================
 
-char *IPX_AddrToString(sockaddr_t *addr)
+char* VIpxDriver::AddrToString(sockaddr_t* addr)
 {
 	guard(IPX_AddrToString);
 	static char buf[28];
 
 	sprintf(buf, "%02x%02x%02x%02x:%02x%02x%02x%02x%02x%02x:%u",
-		((sockaddr_ipx *)addr)->sipx_addr.network[0],
-		((sockaddr_ipx *)addr)->sipx_addr.network[1],
-		((sockaddr_ipx *)addr)->sipx_addr.network[2],
-		((sockaddr_ipx *)addr)->sipx_addr.network[3],
-		((sockaddr_ipx *)addr)->sipx_addr.node[0],
-		((sockaddr_ipx *)addr)->sipx_addr.node[1],
-		((sockaddr_ipx *)addr)->sipx_addr.node[2],
-		((sockaddr_ipx *)addr)->sipx_addr.node[3],
-		((sockaddr_ipx *)addr)->sipx_addr.node[4],
-		((sockaddr_ipx *)addr)->sipx_addr.node[5],
-		(word)BigShort(((sockaddr_ipx *)addr)->sipx_addr.socket)
-		);
+			((sockaddr_ipx *)addr)->sipx_addr.network[0],
+			((sockaddr_ipx *)addr)->sipx_addr.network[1],
+			((sockaddr_ipx *)addr)->sipx_addr.network[2],
+			((sockaddr_ipx *)addr)->sipx_addr.network[3],
+			((sockaddr_ipx *)addr)->sipx_addr.node[0],
+			((sockaddr_ipx *)addr)->sipx_addr.node[1],
+			((sockaddr_ipx *)addr)->sipx_addr.node[2],
+			((sockaddr_ipx *)addr)->sipx_addr.node[3],
+			((sockaddr_ipx *)addr)->sipx_addr.node[4],
+			((sockaddr_ipx *)addr)->sipx_addr.node[5],
+			(vuint16)BigShort(((sockaddr_ipx *)addr)->sipx_addr.socket)
+		   );
 	return buf;
 	unguard;
 }
 
 //==========================================================================
 //
-//  IPX_StringToAddr
+//  VIpxDriver::StringToAddr
 //
 //==========================================================================
 
-int IPX_StringToAddr(const char *string, sockaddr_t *addr)
+int VIpxDriver::StringToAddr(const char *string, sockaddr_t *addr)
 {
-	guard(IPX_StringToAddr);
+	guard(VIpxDriver::StringToAddr);
 	int		val;
 	char	buf[3];
 
@@ -947,16 +731,16 @@ int IPX_StringToAddr(const char *string, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  IPX_GetSocketAddr
+//  VIpxDriver::GetSocketAddr
 //
 //==========================================================================
 
-int IPX_GetSocketAddr(int handle, sockaddr_t *addr)
+int VIpxDriver::GetSocketAddr(int handle, sockaddr_t* addr)
 {
-	guard(IPX_GetSocketAddr);
+	guard(VIpxDriver::GetSocketAddr);
 	memset(addr, 0, sizeof(sockaddr_t));
 	addr->sa_family = AF_NETWARE;
-	_IPX_GetLocalAddress(&((sockaddr_ipx *)addr)->sipx_addr);
+	IPX_GetLocalAddress(&((sockaddr_ipx *)addr)->sipx_addr);
 	((sockaddr_ipx *)addr)->sipx_addr.socket = Socket[handle];
 	return 0;
 	unguard;
@@ -964,27 +748,27 @@ int IPX_GetSocketAddr(int handle, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  IPX_GetNameFromAddr
+//  VIpxDriver::GetNameFromAddr
 //
 //==========================================================================
 
-int IPX_GetNameFromAddr(sockaddr_t *addr, char *name)
+int VIpxDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
 {
-	guard(IPX_GetNameFromAddr);
-	strcpy(name, IPX_AddrToString(addr));
+	guard(VIpxDriver::GetNameFromAddr);
+	strcpy(name, AddrToString(addr));
 	return 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//  IPX_GetAddrFromName
+//  VIpxDriver::GetAddrFromName
 //
 //==========================================================================
 
-int IPX_GetAddrFromName(const char *name, sockaddr_t *addr)
+int VIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 {
-	guard(IPX_GetAddrFromName);
+	guard(VIpxDriver::GetAddrFromName);
 	int		n;
 	char	buf[32];
 
@@ -1009,13 +793,13 @@ int IPX_GetAddrFromName(const char *name, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  IPX_AddrCompare
+//  VIpxDriver::AddrCompare
 //
 //==========================================================================
 
-int IPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
+int VIpxDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
-	guard(IPX_AddrCompare);
+	guard(VIpxDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -1031,50 +815,309 @@ int IPX_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 //==========================================================================
 //
-//  IPX_GetSocketPort
+//  VIpxDriver::GetSocketPort
 //
 //==========================================================================
 
-int IPX_GetSocketPort(sockaddr_t *addr)
+int VIpxDriver::GetSocketPort(sockaddr_t* addr)
 {
-	guard(IPX_GetSocketPort);
-	return (word)BigShort(((sockaddr_ipx *)addr)->sipx_addr.socket);
+	guard(VIpxDriver::GetSocketPort);
+	return (vuint16)BigShort(((sockaddr_ipx*)addr)->sipx_addr.socket);
 	unguard;
 }
 
 //==========================================================================
 //
-//  IPX_SetSocketPort
+//  VIpxDriver::SetSocketPort
 //
 //==========================================================================
 
-int IPX_SetSocketPort(sockaddr_t *addr, int port)
+int VIpxDriver::SetSocketPort(sockaddr_t* addr, int port)
 {
-	guard(IPX_SetSocketPort);
-	((sockaddr_ipx *)addr)->sipx_addr.socket = (word)BigShort(port);
+	guard(VIpxDriver::SetSocketPort);
+	((sockaddr_ipx*)addr)->sipx_addr.socket = (vuint16)BigShort(port);
 	return 0;
 	unguard;
 }
 
 //**************************************************************************
 //
-//	$Log$
-//	Revision 1.7  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.6  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.5  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//	Low level IPX functions
 //
 //**************************************************************************
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_GetFunction
+//
+//==========================================================================
+
+int VIpxDriver::IPX_GetFunction()
+{
+	//	Find the IPX far call entry point
+	regs.x.ax = 0x7a00;
+	__dpmi_simulate_real_mode_interrupt(0x2f, &regs);
+	if (regs.h.al != 0xff)
+	{
+		GCon->Log(NAME_Init, "IPX not detected");
+		return -1;
+	}
+	ipx_cs = regs.x.es;
+	ipx_ip = regs.x.di;
+	return 0;
+}
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_OpenSocket
+//
+//==========================================================================
+
+int VIpxDriver::IPX_OpenSocket(vuint16 port)
+{
+	// open the IPX socket
+	regs.x.cs = ipx_cs;
+	regs.x.ip = ipx_ip;
+	regs.x.bx = IPX_OPEN;
+	regs.h.al = 0;
+	regs.x.dx = BigShort(port);
+	__dpmi_simulate_real_mode_procedure_retf(&regs);
+	if (regs.h.al == 0xfe)
+	{
+		GCon->Log(NAME_DevNet, "IPX_OpenSocket: all sockets in use");
+		return -1;
+	}
+	if (regs.h.al == 0xff)
+	{
+		GCon->Log(NAME_DevNet, "IPX_OpenSocket: socket already open");
+		return -1;
+	}
+	if (regs.h.al)
+	{
+		GCon->Logf(NAME_DevNet, "IPX_OpenSocket: error %02x", regs.h.al);
+		return -1;
+	}
+    return regs.x.dx;
+}
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_CloseSocket
+//
+//==========================================================================
+
+void VIpxDriver::IPX_CloseSocket(vuint16 socket)
+{
+	// close the socket (all pending sends/received are cancelled)
+	regs.x.cs = ipx_cs;
+	regs.x.ip = ipx_ip;
+	regs.x.bx = IPX_CLOSE;
+	regs.x.dx = socket;
+	__dpmi_simulate_real_mode_procedure_retf(&regs);
+}
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_GetLocalTarget
+//
+//==========================================================================
+
+int VIpxDriver::IPX_GetLocalTarget(IPXAddr *addr, vuint8 *localTarget)
+{
+	regs.x.cs = ipx_cs;
+	regs.x.ip = ipx_ip;
+	regs.x.bx = IPX_GETROUTE;
+	regs.x.es = __tb >> 4;
+	regs.x.si = __tb & 0x0f;
+	regs.x.di = (__tb & 0x0f) + sizeof(IPXAddr);
+	dosmemput(addr, sizeof(IPXAddr), __tb);
+	__dpmi_simulate_real_mode_procedure_retf(&regs);
+	if (regs.h.al)
+		return -1;
+	dosmemget(__tb + sizeof(IPXAddr), 6, localTarget);
+	return 0;
+}
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_SendPacket
+//
+//==========================================================================
+
+int VIpxDriver::IPX_SendPacket(unsigned int offset)
+{
+	regs.x.cs = ipx_cs;
+	regs.x.ip = ipx_ip;
+	regs.x.bx = IPX_SEND;
+	regs.x.es = offset >> 4;
+	regs.x.si = offset & 0xf;
+	__dpmi_simulate_real_mode_procedure_retf(&regs);
+	if (regs.h.al)
+	{
+		GCon->Logf(NAME_DevNet, "IPX_SendPacket: 0x%02x", regs.h.al);
+		return -1;
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_ListenForPacket
+//
+//==========================================================================
+
+int VIpxDriver::IPX_ListenForPacket(unsigned int offset)
+{
+	regs.x.cs = ipx_cs;
+	regs.x.ip = ipx_ip;
+	regs.x.bx = IPX_LISTEN;
+	regs.x.es = offset >> 4;
+	regs.x.si = offset & 0xf;
+	__dpmi_simulate_real_mode_procedure_retf(&regs);
+	if (regs.h.al)
+	{
+		GCon->Logf(NAME_DevNet, "IPX_ListenForPacket: 0x%02x", regs.h.al);
+        return -1;
+	}
+    return 0;
+}
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_GetLocalAddress
+//
+//==========================================================================
+
+void VIpxDriver::IPX_GetLocalAddress(IPXAddr *addr)
+{
+	regs.x.cs = ipx_cs;
+	regs.x.ip = ipx_ip;
+	regs.x.bx = IPX_GETADDRESS;
+	regs.x.es = __tb >> 4;
+	regs.x.si = __tb & 0x0f;
+	__dpmi_simulate_real_mode_procedure_retf(&regs);
+	dosmemget(__tb, 10, addr);
+}
+
+//==========================================================================
+//
+//  VIpxDriver::IPX_RelinquishControl
+//
+//==========================================================================
+
+void VIpxDriver::IPX_RelinquishControl()
+{
+	regs.x.cs = ipx_cs;
+	regs.x.ip = ipx_ip;
+	regs.x.bx = IPX_RELINQUISH;
+	__dpmi_simulate_real_mode_procedure_retf(&regs);
+}
+
+//**************************************************************************
+//
+//	DOS memory handling
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  VIpxDriver::InitDOSMemory
+//
+//==========================================================================
+
+int VIpxDriver::InitDOSMemory()
+{
+	//	Grab a chunk of memory down in DOS land
+	packets_info.size = (LOWMEMSIZE + 15) / 16;
+	if (_go32_dpmi_allocate_dos_memory(&packets_info))
+	{
+		GCon->Log(NAME_Init, "Not enough low memory");
+		return -1;
+	}
+	packets_offset = packets_info.rm_segment << 4;
+
+	//	Set default data in packets
+	packet_t	packet;
+	memset(&packet, 0, sizeof(packet_t));
+	for (size_t i = 0; i < IPXBUFFERS; i++)
+	{
+		packet.ecb.InUseFlag = 0xff;
+		packet.ecb.FragmentCount = 1;
+		packet.ecb.fAddress[0] = (PacketOffset(i) + sizeof(ECB)) & 0x0f;
+		packet.ecb.fAddress[1] = (PacketOffset(i) + sizeof(ECB)) >> 4;
+		packet.ecb.fSize = sizeof(packet_t) - sizeof(ECB);
+
+		PutPacket(i, &packet);
+	}
+
+	return 0;
+}
+
+//==========================================================================
+//
+//	VIpxDriver::PacketOffset
+//
+//==========================================================================
+
+int VIpxDriver::PacketOffset(int index)
+{
+	return packets_offset + index * sizeof(packet_t);
+}
+
+//==========================================================================
+//
+//	VIpxDriver::GetPacket
+//
+//==========================================================================
+
+void VIpxDriver::GetPacket(int index, packet_t *packet)
+{
+	dosmemget(PacketOffset(index), sizeof(packet_t), packet);
+}
+
+//==========================================================================
+//
+//	VIpxDriver::PutPacket
+//
+//==========================================================================
+
+void VIpxDriver::PutPacket(int index, packet_t *packet)
+{
+	dosmemput(packet, sizeof(packet_t), PacketOffset(index));
+}
+
+//==========================================================================
+//
+//	VIpxDriver::PacketInUse
+//
+//==========================================================================
+
+vuint8 VIpxDriver::PacketInUse(int index)
+{
+	return _farpeekb(_dos_ds, PacketOffset(index) + 8);
+}
+
+//==========================================================================
+//
+//	VIpxDriver::PacketCompletionCode
+//
+//==========================================================================
+
+vuint8 VIpxDriver::PacketCompletionCode(int index)
+{
+	return _farpeekb(_dos_ds, PacketOffset(index) + 9);
+}
+
+//==========================================================================
+//
+//  VIpxDriver::FreeDOSMemory
+//
+//==========================================================================
+
+void VIpxDriver::FreeDOSMemory()
+{
+	if (packets_offset)
+	{
+		_go32_dpmi_free_dos_memory(&packets_info);
+	}
+}

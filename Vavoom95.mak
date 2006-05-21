@@ -20,7 +20,7 @@ OBJFILES = obj\chat.obj obj\cheats.obj obj\cmd.obj obj\crc.obj obj\cvar.obj \
 	obj\vobject.obj obj\vclass.obj \
 	\
 	obj\net_dgrm.obj obj\net_loop.obj obj\net_main.obj obj\net_null.obj \
-	obj\net_win.obj obj\net_wins.obj obj\net_wipx.obj \
+	obj\net_wins.obj obj\net_wipx.obj \
 	\
 	obj\p_thinker.obj \
 	\

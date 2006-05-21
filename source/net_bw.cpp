@@ -36,7 +36,6 @@
 
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_bw.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -91,9 +90,9 @@ struct in_addr
 {
 	union
 	{
-		struct { byte s_b1, s_b2, s_b3, s_b4; } S_un_b;
-		struct { word s_w1, s_w2; } S_un_w;
-		dword S_addr;
+		struct { vuint8 s_b1, s_b2, s_b3, s_b4; } S_un_b;
+		struct { vuint16 s_w1, s_w2; } S_un_w;
+		vuint32 S_addr;
 	} S_un;
 };
 #define	s_addr	S_un.S_addr	/* can be used for most tcp & ip code */
@@ -105,10 +104,10 @@ struct in_addr
 
 struct sockaddr_in
 {
-    short		sin_family;
-    word		sin_port;
+    vint16		sin_family;
+    vuint16		sin_port;
 	in_addr		sin_addr;
-    char		sin_zero[8];
+    vint8		sin_zero[8];
 };
 
 #pragma pack(1)
@@ -126,7 +125,7 @@ struct BW_UDPinfo_t
 struct BW_UDPreadInfo1_t
 {
 	char			reserved1[6];
-	word			info2Offset;
+	vuint16			info2Offset;
 	char			reserved2[18];
 	in_addr			remoteAddr;
 };
@@ -135,7 +134,7 @@ struct BW_UDPreadInfo2_t
 {
 	short			remotePort;
 	char			reserved1[2];
-	word			dataLenPlus8;
+	vuint16			dataLenPlus8;
 	char			reserved2[2];
 	char			data[1];			// actual size is <dataLenPlus8> - 8		
 };
@@ -144,7 +143,7 @@ struct BW_writeInfo_t
 {
 	char			reserved1[2];
 	short			remotePort;
-	word			dataLen;
+	vuint16			dataLen;
 	in_addr			remoteAddr;
 	char			reserved2[42];
 	char			data[1];			// actual size is <datalen>
@@ -153,16 +152,16 @@ struct BW_writeInfo_t
 struct BW_ethdevinfo_t
 {
 	short	ioport;
-	byte	dma;
-	byte	vector;
-	byte	irq;
+	vuint8	dma;
+	vuint8	vector;
+	vuint8	irq;
 	short	bufferSize;
 	short	maxWindow;
 	short	timeZone;
-	byte	myType;
+	vuint8	myType;
 	int		inetAddr;
 	short	value;
-	byte	subnetMask;
+	vuint8	subnetMask;
 	short	etherPointer;
 	short	logserverPointer;
 	short	nameserverPointer;
@@ -170,11 +169,49 @@ struct BW_ethdevinfo_t
 	short	timeserverPointer;
 	short	gatewayPointer;
 	short	driverSegment;
-	byte	transferSize;
+	vuint8	transferSize;
 	char	cardName[9];
 };
 
 #pragma pack()
+
+class VBeameWhitesideDriver : public VNetLanDriver
+{
+public:
+	BW_ethdevinfo_t	ethdevinfo;
+	int				netmask;
+	in_addr 		bcastaddr;
+
+	__dpmi_regs		regs;
+
+	int				net_acceptsocket;	// socket for fielding new connections
+	int				net_controlsocket;
+
+	VBeameWhitesideDriver();
+	int Init();
+	void Shutdown();
+	void Listen(bool);
+	int OpenSocket(int);
+	int CloseSocket(int);
+	int Connect(int, sockaddr_t*);
+	int CheckNewConnections();
+	int Read(int, vuint8*, int, sockaddr_t*);
+	int Write(int, vuint8*, int, sockaddr_t*);
+	int Broadcast(int, vuint8*, int);
+	char* AddrToString(sockaddr_t*);
+	int StringToAddr(const char*, sockaddr_t*);
+	int GetSocketAddr(int, sockaddr_t*);
+	int GetNameFromAddr(sockaddr_t*, char*);
+	int GetAddrFromName(const char*, sockaddr_t*);
+	int AddrCompare(sockaddr_t*, sockaddr_t*);
+	int GetSocketPort(sockaddr_t*);
+	int SetSocketPort(sockaddr_t*, int);
+
+	static int dos_int86(int, __dpmi_regs*);
+	int BW_ioctl(int, char*, int);
+	static int BW_TranslateError(int);
+	int GetEthdevinfo();
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -188,132 +225,36 @@ struct BW_ethdevinfo_t
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static BW_ethdevinfo_t	ethdevinfo;
-static int				netmask;
-static in_addr 			bcastaddr;
-
-static __dpmi_regs		regs;
-
-static int				net_acceptsocket = -1;	// socket for fielding new connections
-static int				net_controlsocket = 0;
+static VBeameWhitesideDriver	Impl;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  dos_int86
-//
-//	Returns 0 on success
+//	VBeameWhitesideDriver::VBeameWhitesideDriver
 //
 //==========================================================================
 
-static int dos_int86(int vec, __dpmi_regs *)
+VBeameWhitesideDriver::VBeameWhitesideDriver()
+: VNetLanDriver(0, "Beame & Whiteside TCP/IP")
+, netmask(0)
+, net_acceptsocket(-1)
+, net_controlsocket(0)
 {
-	guardSlow(dos_int86);
-    int rc;
-    regs.x.ss = regs.x.sp = 0;
-    rc = _go32_dpmi_simulate_int(vec, &regs);
-    return rc || (regs.x.flags & 1);
-	unguardSlow;
+	memset(&ethdevinfo, 0, sizeof(ethdevinfo));
+	memset(&bcastaddr, 0, sizeof(bcastaddr));
+	memset(&regs, 0, sizeof(regs));
 }
 
 //==========================================================================
 //
-//  BW_ioctl
+//  VBeameWhitesideDriver::Init
 //
 //==========================================================================
 
-static int BW_ioctl(int s, char *msg, int msglen)
+int VBeameWhitesideDriver::Init()
 {
-	guardSlow(BW_ioctl);
-	dosmemput(msg, msglen, __tb);
-
-	regs.x.ax = 0x4403;
-	regs.x.bx = s;
-	regs.x.cx = msglen;
-	regs.x.dx = __tb & 0xf;
-	regs.x.ds = __tb >> 4;
-	if (dos_int86(0x21, &regs))
-		return regs.x.ax;
-	return 0;
-	unguardSlow;
-}
-
-//==========================================================================
-//
-//  BW_TranslateError
-//
-//==========================================================================
-
-static int BW_TranslateError(int error)
-{
-	guardSlow(BW_TranslateError);
-	switch (error)
-	{
-		case BW_ERR_USR_HANGUP:	return ECONNABORTED;
-		case BW_ERR_HANGUP:		return EISCONN;
-		case BW_ERR_NET_ERR:	return ENOTCONN;
-		case BW_ERR_IS_CLOSED:	return ENOTCONN;
-		case BW_ERR_TIME_OUT:	return ETIMEDOUT;
-		case BW_ERR_RESET:		return ECONNREFUSED;
-		case BW_ERR_FULL:		return ETOOMANYREFS;
-		case BW_ERR_BLOCK:		return EWOULDBLOCK;
-		case BW_ERR_SHUTDOWN:	return ESHUTDOWN;
-	}
-	return EIO;
-	unguardSlow;
-}
-
-//==========================================================================
-//
-//  GetEthdevinfo
-//
-//==========================================================================
-
-static int GetEthdevinfo()
-{
-	guard(GetEthdevinfo);
-	int fd;
-
-	dosmemput("ETHDEV27", 9, __tb);
-	regs.x.ax = 0x3d42;
-	regs.x.ds = __tb >> 4;
-	regs.x.dx = __tb & 0xf;
-	if (dos_int86(0x21, &regs))
-		return -1;
-	fd = regs.x.ax;
-
-	regs.x.ax = 0x4401;
-	regs.x.bx = fd;
-	regs.x.dx = 0x60;
-	dos_int86(0x21, &regs);
-
-	regs.h.ah = 0x3f;
-	regs.x.cx = sizeof(ethdevinfo);
-	regs.x.es = regs.x.ds = __tb >> 4;
-	regs.x.dx = __tb & 0xf;
-	regs.x.bx = fd;
-	if (dos_int86(0x21, &regs))
-		return -1;
-	dosmemget(__tb, regs.x.ax, &ethdevinfo);
-
-	regs.h.ah = 0x3e;
-	regs.x.bx = fd;
-	dos_int86(0x21, &regs);
-
-	return 0;
-	unguard;
-}
-
-//==========================================================================
-//
-//  BW_Init
-//
-//==========================================================================
-
-int BW_Init()
-{
-	guard(BW_Init);
+	guard(VBeameWhitesideDriver::Init);
 	sockaddr_t	addr;
 	char		*colon;
 
@@ -328,14 +269,14 @@ int BW_Init()
 	netmask = 0xffffffff >> (32 - ethdevinfo.subnetMask);
 	bcastaddr.s_addr = (ethdevinfo.inetAddr & netmask) | (~netmask);
 
-	if ((net_controlsocket = BW_OpenSocket(0)) == -1)
+	if ((net_controlsocket = OpenSocket(0)) == -1)
 	{
 		GCon->Log(NAME_DevNet, "BW_Init unable to open control socket; disabled");
 		return -1;
 	}
 
-	BW_GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_tcpip_address, BW_AddrToString(&addr));
+	GetSocketAddr(net_controlsocket, &addr);
+	strcpy(my_tcpip_address, AddrToString(&addr));
 	colon = strrchr(my_tcpip_address, ':');
 	if (colon)
 		*colon = 0;
@@ -349,33 +290,33 @@ int BW_Init()
 
 //==========================================================================
 //
-//  BW_Shutdown
+//  VBeameWhitesideDriver::Shutdown
 //
 //==========================================================================
 
-void BW_Shutdown()
+void VBeameWhitesideDriver::Shutdown()
 {
-	guard(BW_Shutdown);
-	BW_Listen(false);
-	BW_CloseSocket(net_controlsocket);
+	guard(VBeameWhitesideDriver::Shutdown);
+	Listen(false);
+	CloseSocket(net_controlsocket);
 	unguard;
 }
 
 //==========================================================================
 //
-//  BW_Listen
+//  VBeameWhitesideDriver::Listen
 //
 //==========================================================================
 
-void BW_Listen(bool state)
+void VBeameWhitesideDriver::Listen(bool state)
 {
-	guard(BW_Listen);
+	guard(VBeameWhitesideDriver::Listen);
 	if (state)
 	{
 		// enable listening
 		if (net_acceptsocket == -1)
-        {
-            net_acceptsocket = BW_OpenSocket(net_hostport);
+		{
+			net_acceptsocket = OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 				Sys_Error("BW_Listen: Unable to open accept socket\n");
 		}
@@ -385,7 +326,7 @@ void BW_Listen(bool state)
 		// disable listening
 		if (net_acceptsocket != -1)
 		{
-			BW_CloseSocket(net_acceptsocket);
+			CloseSocket(net_acceptsocket);
 			net_acceptsocket = -1;
 		}
 	}
@@ -394,7 +335,7 @@ void BW_Listen(bool state)
 
 //==========================================================================
 //
-//  BW_OpenSocket
+//  VBeameWhitesideDriver::OpenSocket
 //
 //  OpenSocket returns a handle to a network socket that has been opened,
 // set to nonblocking, and bound to <port>.  Additional socket options
@@ -402,9 +343,9 @@ void BW_Listen(bool state)
 //
 //==========================================================================
 
-int BW_OpenSocket(int port)
+int VBeameWhitesideDriver::OpenSocket(int port)
 {
-	guard(BW_OpenSocket);
+	guard(VBeameWhitesideDriver::OpenSocket);
 	int s;
 	int ret;
 	int deadman = 3 * 1024;
@@ -475,18 +416,19 @@ int BW_OpenSocket(int port)
 
 //==========================================================================
 //
-//  BW_CloseSocket
+//  VBeameWhitesideDriver::CloseSocket
 //
 //==========================================================================
 
-int BW_CloseSocket(int socket)
+int VBeameWhitesideDriver::CloseSocket(int socket)
 {
-	guard(BW_CloseSocket);
+	guard(VBeameWhitesideDriver::CloseSocket);
 	regs.h.ah = 0x3e;
 	regs.x.bx = socket;
 	if (dos_int86(0x21, &regs))
 	{
-		GCon->Logf(NAME_DevNet, "BW_CloseSocket %d failed: %d", socket, 
+		GCon->Logf(NAME_DevNet,
+			"VBeameWhitesideDriver::CloseSocket %d failed: %d", socket,
 			BW_TranslateError(regs.x.ax));
 		return -1;
 	}
@@ -496,26 +438,24 @@ int BW_CloseSocket(int socket)
 
 //==========================================================================
 //
-//  BW_Connect
+//  VBeameWhitesideDriver::Connect
 //
 //==========================================================================
 
-int BW_Connect(int, sockaddr_t *)
+int VBeameWhitesideDriver::Connect(int, sockaddr_t *)
 {
-	guard(BW_Connect);
 	return 0;
-	unguard;
 }
 
 //==========================================================================
 //
-//  BW_CheckNewConnections
+//  VBeameWhitesideDriver::CheckNewConnections
 //
 //==========================================================================
 
-int BW_CheckNewConnections()
+int VBeameWhitesideDriver::CheckNewConnections()
 {
-	guard(BW_CheckNewConnections);
+	guard(VBeameWhitesideDriver::CheckNewConnections);
 	if (net_acceptsocket == 0)
 		return -1;
 
@@ -531,11 +471,11 @@ int BW_CheckNewConnections()
 
 //==========================================================================
 //
-//  BW_Read
+//  VBeameWhitesideDriver::Read
 //
 //==========================================================================
 
-int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
+int VBeameWhitesideDriver::Read(int s, vuint8* buf, int len, sockaddr_t* from)
 {
 	guard(BW_Read);
 	BW_UDPreadInfo1_t *info1;
@@ -562,8 +502,8 @@ int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
 		return -1;
 	}
 
-	byte buffer[LOWMEM_SIZE];
-    dosmemget(__tb, LOWMEM_SIZE, buffer);
+	vuint8 buffer[LOWMEM_SIZE];
+	dosmemget(__tb, LOWMEM_SIZE, buffer);
 
 	info1 = (BW_UDPreadInfo1_t *)buffer;
 	info2 = (BW_UDPreadInfo2_t *)(buffer + info1->info2Offset);
@@ -589,13 +529,13 @@ int BW_Read(int s, byte *buf, int len, sockaddr_t *from)
 
 //==========================================================================
 //
-//  BW_Write
+//  VBeameWhitesideDriver::Write
 //
 //==========================================================================
 
-int BW_Write(int s, byte *msg, int len, sockaddr_t *to)
+int VBeameWhitesideDriver::Write(int s, vuint8* msg, int len, sockaddr_t* to)
 {
-	guard(BW_Write);
+	guard(VBeameWhitesideDriver::Write);
 	BW_writeInfo_t *writeInfo;
 
 	// ask if we're clear to send
@@ -606,7 +546,7 @@ int BW_Write(int s, byte *msg, int len, sockaddr_t *to)
 		return 0;
 
 	// yes, let's do it
-	byte buffer[LOWMEM_SIZE];
+	vuint8 buffer[LOWMEM_SIZE];
 	writeInfo = (BW_writeInfo_t *)buffer;
 
 	writeInfo->remoteAddr = ((sockaddr_in *)to)->sin_addr;
@@ -634,11 +574,11 @@ int BW_Write(int s, byte *msg, int len, sockaddr_t *to)
 
 //==========================================================================
 //
-//  BW_Broadcast
+//  VBeameWhitesideDriver::Broadcast
 //
 //==========================================================================
 
-int BW_Broadcast(int s, byte *msg, int len)
+int VBeameWhitesideDriver::Broadcast(int s, vuint8* msg, int len)
 {
 	guard(BW_Broadcast);
 	BW_writeInfo_t *writeInfo;
@@ -651,7 +591,7 @@ int BW_Broadcast(int s, byte *msg, int len)
 		return 0;
 
 	// yes, let's do it
-    byte buffer[LOWMEM_SIZE];
+	vuint8 buffer[LOWMEM_SIZE];
 	writeInfo = (BW_writeInfo_t *)buffer;
 	writeInfo->remoteAddr = bcastaddr;
 	writeInfo->remotePort = net_hostport;
@@ -660,7 +600,7 @@ int BW_Broadcast(int s, byte *msg, int len)
 		Sys_Error("BW UDP write packet too large: %u\n", len);
 	memcpy(writeInfo->data, msg, len);
 	writeInfo->data[len] = 0;
-    dosmemput(buffer, LOWMEM_SIZE, __tb);
+	dosmemput(buffer, LOWMEM_SIZE, __tb);
 	regs.h.ah = 0x40;
 	regs.x.bx = s;
 	regs.x.cx = len + sizeof(BW_writeInfo_t);
@@ -679,21 +619,21 @@ int BW_Broadcast(int s, byte *msg, int len)
 
 //==========================================================================
 //
-//  BW_AddrToString
+//  VBeameWhitesideDriver::AddrToString
 //
 //==========================================================================
 
-char *BW_AddrToString(sockaddr_t *addr)
+char* VBeameWhitesideDriver::AddrToString(sockaddr_t *addr)
 {
-	guard(BW_AddrToString);
+	guard(VBeameWhitesideDriver::AddrToString);
 	static char buffer[22];
 
 	sprintf(buffer, "%d.%d.%d.%d:%d",
-		((sockaddr_in *)addr)->sin_addr.s_net,
-		((sockaddr_in *)addr)->sin_addr.s_host,
-		((sockaddr_in *)addr)->sin_addr.s_lh,
-		((sockaddr_in *)addr)->sin_addr.s_impno,
-		(word)BigShort(((sockaddr_in *)addr)->sin_port)
+		((sockaddr_in*)addr)->sin_addr.s_net,
+		((sockaddr_in*)addr)->sin_addr.s_host,
+		((sockaddr_in*)addr)->sin_addr.s_lh,
+		((sockaddr_in*)addr)->sin_addr.s_impno,
+		(vuint16)BigShort(((sockaddr_in*)addr)->sin_port)
 		);
 	return buffer;
 	unguard;
@@ -701,13 +641,13 @@ char *BW_AddrToString(sockaddr_t *addr)
 
 //==========================================================================
 //
-//  BW_StringToAddr
+//  VBeameWhitesideDriver::StringToAddr
 //
 //==========================================================================
 
-int BW_StringToAddr(const char *string, sockaddr_t *addr)
+int VBeameWhitesideDriver::StringToAddr(const char* string, sockaddr_t* addr)
 {
-	guard(BW_StringToAddr);
+	guard(VBeameWhitesideDriver::StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -715,21 +655,21 @@ int BW_StringToAddr(const char *string, sockaddr_t *addr)
 	ipaddr = (ha1 << 24) | (ha2 << 16) | (ha3 << 8) | ha4;
 
 	addr->sa_family = AF_INET;
-	((sockaddr_in *)addr)->sin_addr.s_addr = BigLong(ipaddr);
-	((sockaddr_in *)addr)->sin_port = BigShort((short)hp);
+	((sockaddr_in*)addr)->sin_addr.s_addr = BigLong(ipaddr);
+	((sockaddr_in*)addr)->sin_port = BigShort((short)hp);
 	return 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//  BW_GetSocketAddr
+//  VBeameWhitesideDriver::GetSocketAddr
 //
 //==========================================================================
 
-int BW_GetSocketAddr(int socket, sockaddr_t *addr)
+int VBeameWhitesideDriver::GetSocketAddr(int socket, sockaddr_t* addr)
 {
-	guard(BW_GetSocketAddr);
+	guard(VBeameWhitesideDriver::GetSocketAddr);
 	regs.x.ax = 0x4402;
 	regs.x.bx = socket;
 	regs.x.cx = sizeof(BW_UDPinfo_t);
@@ -737,11 +677,11 @@ int BW_GetSocketAddr(int socket, sockaddr_t *addr)
 	regs.x.ds = __tb >> 4;
 	dos_int86(0x21, &regs);
 
-    BW_UDPinfo_t	buffer;
-    dosmemget(__tb, sizeof(buffer), &buffer);
+	BW_UDPinfo_t	buffer;
+	dosmemget(__tb, sizeof(buffer), &buffer);
 	addr->sa_family = AF_INET;
-	((sockaddr_in *)addr)->sin_addr.s_addr = buffer.localAddr.s_addr;
-	((sockaddr_in *)addr)->sin_port = BigShort(buffer.localPort);
+	((sockaddr_in*)addr)->sin_addr.s_addr = buffer.localAddr.s_addr;
+	((sockaddr_in*)addr)->sin_port = BigShort(buffer.localPort);
 
 	return 0;
 	unguard;
@@ -749,27 +689,27 @@ int BW_GetSocketAddr(int socket, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  BW_GetNameFromAddr
+//  VBeameWhitesideDriver::GetNameFromAddr
 //
 //==========================================================================
 
-int BW_GetNameFromAddr(sockaddr_t *addr, char *name)
+int VBeameWhitesideDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
 {
-	guard(BW_GetNameFromAddr);
-	strcpy(name, BW_AddrToString(addr));
+	guard(VBeameWhitesideDriver::GetNameFromAddr);
+	strcpy(name, AddrToString(addr));
 	return 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//  BW_GetAddrFromName
+//  VBeameWhitesideDriver::GetAddrFromName
 //
 //==========================================================================
 
-int BW_GetAddrFromName(const char *name, sockaddr_t *hostaddr)
+int VBeameWhitesideDriver::GetAddrFromName(const char* name, sockaddr_t* hostaddr)
 {
-	guard(BW_GetAddrFromName);
+	guard(VBeameWhitesideDriver::GetAddrFromName);
 	char buff[MAXHOSTNAMELEN];
 	char *b;
 	int addr;
@@ -796,9 +736,9 @@ int BW_GetAddrFromName(const char *name, sockaddr_t *hostaddr)
 		run = 0;
 		while (!( *b < '0' || *b > '9'))
 		{
-		  num = num*10 + *b++ - '0';
-		  if (++run > 3)
-		  	return -1;
+			num = num * 10 + *b++ - '0';
+			if (++run > 3)
+				return -1;
 		}
 		if ((*b < '0' || *b > '9') && *b != '.' && *b != ':' && *b != 0)
 			return -1;
@@ -816,8 +756,8 @@ int BW_GetAddrFromName(const char *name, sockaddr_t *hostaddr)
 		port = net_hostport;
 
 	hostaddr->sa_family = AF_INET;
-	((sockaddr_in *)hostaddr)->sin_port = BigShort((short)port);
-	((sockaddr_in *)hostaddr)->sin_addr.s_addr =
+	((sockaddr_in*)hostaddr)->sin_port = BigShort((short)port);
+	((sockaddr_in*)hostaddr)->sin_addr.s_addr =
 	((ethdevinfo.inetAddr & mask) | addr);
 
 	return 0;
@@ -826,20 +766,20 @@ int BW_GetAddrFromName(const char *name, sockaddr_t *hostaddr)
 
 //==========================================================================
 //
-//  BW_AddrCompare
+//  VBeameWhitesideDriver::AddrCompare
 //
 //==========================================================================
 
-int BW_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
+int VBeameWhitesideDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
-	guard(BW_AddrCompare);
+	guard(VBeameWhitesideDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
-	if (((sockaddr_in *)addr1)->sin_addr.s_addr != ((sockaddr_in *)addr2)->sin_addr.s_addr)
+	if (((sockaddr_in*)addr1)->sin_addr.s_addr != ((sockaddr_in*)addr2)->sin_addr.s_addr)
 		return -1;
 
-	if (((sockaddr_in *)addr1)->sin_port != ((sockaddr_in *)addr2)->sin_port)
+	if (((sockaddr_in*)addr1)->sin_port != ((sockaddr_in*)addr2)->sin_port)
 		return 1;
 
 	return 0;
@@ -848,50 +788,132 @@ int BW_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 //==========================================================================
 //
-//  BW_GetSocketPort
+//  VBeameWhitesideDriver::GetSocketPort
 //
 //==========================================================================
 
-int BW_GetSocketPort(sockaddr_t *addr)
+int VBeameWhitesideDriver::GetSocketPort(sockaddr_t* addr)
 {
-	guard(BW_GetSocketPort);
-	return BigShort(((sockaddr_in *)addr)->sin_port);
+	guard(VBeameWhitesideDriver::GetSocketPort);
+	return BigShort(((sockaddr_in*)addr)->sin_port);
 	unguard;
 }
 
 //==========================================================================
 //
-//  BW_SetSocketPort
+//  VBeameWhitesideDriver::SetSocketPort
 //
 //==========================================================================
 
-int BW_SetSocketPort(sockaddr_t *addr, int port)
+int VBeameWhitesideDriver::SetSocketPort(sockaddr_t* addr, int port)
 {
-	guard(BW_SetSocketPort);
-	((sockaddr_in *)addr)->sin_port = BigShort(port);
+	guard(VBeameWhitesideDriver::SetSocketPort);
+	((sockaddr_in*)addr)->sin_port = BigShort(port);
 	return 0;
 	unguard;
 }
 
-//**************************************************************************
+//==========================================================================
 //
-//	$Log$
-//	Revision 1.7  2006/04/05 17:20:36  dj_jl
-//	Merged size buffer with message class.
+//  VBeameWhitesideDriver::dos_int86
 //
-//	Revision 1.6  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.5  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
+//	Returns 0 on success
 //
-//**************************************************************************
+//==========================================================================
+
+int VBeameWhitesideDriver::dos_int86(int vec, __dpmi_regs* regs)
+{
+	guardSlow(VBeameWhitesideDriver::dos_int86);
+	regs->x.ss = regs->x.sp = 0;
+	int rc = _go32_dpmi_simulate_int(vec, regs);
+	return rc || (regs->x.flags & 1);
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//  VBeameWhitesideDriver::BW_ioctl
+//
+//==========================================================================
+
+int VBeameWhitesideDriver::BW_ioctl(int s, char *msg, int msglen)
+{
+	guardSlow(VBeameWhitesideDriver::BW_ioctl);
+	dosmemput(msg, msglen, __tb);
+
+	regs.x.ax = 0x4403;
+	regs.x.bx = s;
+	regs.x.cx = msglen;
+	regs.x.dx = __tb & 0xf;
+	regs.x.ds = __tb >> 4;
+	if (dos_int86(0x21, &regs))
+		return regs.x.ax;
+	return 0;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//  VBeameWhitesideDriver::BW_TranslateError
+//
+//==========================================================================
+
+int VBeameWhitesideDriver::BW_TranslateError(int error)
+{
+	guardSlow(VBeameWhitesideDriver::BW_TranslateError);
+	switch (error)
+	{
+	case BW_ERR_USR_HANGUP:	return ECONNABORTED;
+	case BW_ERR_HANGUP:		return EISCONN;
+	case BW_ERR_NET_ERR:	return ENOTCONN;
+	case BW_ERR_IS_CLOSED:	return ENOTCONN;
+	case BW_ERR_TIME_OUT:	return ETIMEDOUT;
+	case BW_ERR_RESET:		return ECONNREFUSED;
+	case BW_ERR_FULL:		return ETOOMANYREFS;
+	case BW_ERR_BLOCK:		return EWOULDBLOCK;
+	case BW_ERR_SHUTDOWN:	return ESHUTDOWN;
+	}
+	return EIO;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//  VBeameWhitesideDriver::GetEthdevinfo
+//
+//==========================================================================
+
+int VBeameWhitesideDriver::GetEthdevinfo()
+{
+	guard(VBeameWhitesideDriver::GetEthdevinfo);
+	int fd;
+
+	dosmemput("ETHDEV27", 9, __tb);
+	regs.x.ax = 0x3d42;
+	regs.x.ds = __tb >> 4;
+	regs.x.dx = __tb & 0xf;
+	if (dos_int86(0x21, &regs))
+		return -1;
+	fd = regs.x.ax;
+
+	regs.x.ax = 0x4401;
+	regs.x.bx = fd;
+	regs.x.dx = 0x60;
+	dos_int86(0x21, &regs);
+
+	regs.h.ah = 0x3f;
+	regs.x.cx = sizeof(ethdevinfo);
+	regs.x.es = regs.x.ds = __tb >> 4;
+	regs.x.dx = __tb & 0xf;
+	regs.x.bx = fd;
+	if (dos_int86(0x21, &regs))
+		return -1;
+	dosmemget(__tb, regs.x.ax, &ethdevinfo);
+
+	regs.h.ah = 0x3e;
+	regs.x.bx = fd;
+	dos_int86(0x21, &regs);
+
+	return 0;
+	unguard;
+}

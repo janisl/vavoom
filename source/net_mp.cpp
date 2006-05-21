@@ -29,13 +29,45 @@
 #include "mpdosock.h"
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_mp.h"
 
 // MACROS ------------------------------------------------------------------
 
 #define MAXHOSTNAMELEN		256
 
 // TYPES -------------------------------------------------------------------
+
+class VMPathDriver : public VNetLanDriver
+{
+public:
+	int			net_acceptsocket;		// socket for fielding new connections
+	int			net_controlsocket;
+	int			net_broadcastsocket;
+	sockaddr_t	broadcastaddr;
+
+	dword		myAddr;
+
+	VMPathDriver();
+	int Init();
+	void Shutdown();
+	void Listen(bool);
+	int OpenSocket(int);
+	int CloseSocket(int);
+	int Connect(int, sockaddr_t*);
+	int CheckNewConnections();
+	int Read(int, vuint8*, int, sockaddr_t*);
+	int Write(int, vuint8*, int, sockaddr_t*);
+	int Broadcast(int, vuint8*, int);
+	char* AddrToString(sockaddr_t*);
+	int StringToAddr(const char*, sockaddr_t*);
+	int GetSocketAddr(int, sockaddr_t*);
+	int GetNameFromAddr(sockaddr_t*, char*);
+	int GetAddrFromName(const char*, sockaddr_t*);
+	int AddrCompare(sockaddr_t*, sockaddr_t*);
+	int GetSocketPort(sockaddr_t*);
+	int SetSocketPort(sockaddr_t*, int);
+
+	int PartialIPAddress(const char*, sockaddr_t*);
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -56,24 +88,35 @@ short				flat_selector;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			net_acceptsocket = -1;		// socket for fielding new connections
-static int			net_controlsocket;
-static int			net_broadcastsocket = 0;
-static sockaddr_t	broadcastaddr;
-
-static dword		myAddr;
+static VMPathDriver	Impl;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  MPATH_Init
+//	VMPathDriver::VMPathDriver
 //
 //==========================================================================
 
-int MPATH_Init()
+VMPathDriver::VMPathDriver()
+: VNetLanDriver(2, "Win95 TCP/IP")
+, net_acceptsocket(-1)
+, net_controlsocket(0)
+, net_broadcastsocket(0)
+, myAddr(0)
 {
-	guard(MPATH_Init);
+	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
+}
+
+//==========================================================================
+//
+//  VMPathDriver::Init
+//
+//==========================================================================
+
+int VMPathDriver::Init()
+{
+	guard(VMPathDriver::Init);
 	hostent		*local = NULL;
 	char		buff[MAXHOSTNAMELEN];
 	sockaddr_t	addr;
@@ -128,20 +171,20 @@ int MPATH_Init()
 		}
 	}
 
-	if ((net_controlsocket = MPATH_OpenSocket(0)) == -1)
+	if ((net_controlsocket = OpenSocket(0)) == -1)
 		Sys_Error("MPATH_Init: Unable to open control socket\n");
 
 	((sockaddr_in *)&broadcastaddr)->sin_family = AF_INET;
 	((sockaddr_in *)&broadcastaddr)->sin_addr.s_addr = INADDR_BROADCAST;
 	((sockaddr_in *)&broadcastaddr)->sin_port = htons(net_hostport);
 
-	MPATH_GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_tcpip_address, MPATH_AddrToString(&addr));
+	GetSocketAddr(net_controlsocket, &addr);
+	strcpy(my_tcpip_address, AddrToString(&addr));
 	colon = strrchr(my_tcpip_address, ':');
 	if (colon)
 		*colon = 0;
 
-	GCon->Log(NAME_Init, "MPath Initialized");
+	GCon->Log(NAME_Init, "MPath Initialised");
 	tcpipAvailable = true;
 
 	return net_controlsocket;
@@ -150,33 +193,33 @@ int MPATH_Init()
 
 //==========================================================================
 //
-//  MPATH_Shutdown
+//  VMPathDriver::Shutdown
 //
 //==========================================================================
 
-void MPATH_Shutdown()
+void VMPathDriver::Shutdown()
 {
-	guard(MPATH_Shutdown);
-	MPATH_Listen(false);
-	MPATH_CloseSocket(net_controlsocket);
+	guard(VMPathDriver::Shutdown);
+	Listen(false);
+	CloseSocket(net_controlsocket);
 	unguard;
 }
 
 //==========================================================================
 //
-//  MPATH_Listen
+//  VMPathDriver::Listen
 //
 //==========================================================================
 
-void MPATH_Listen(bool state)
+void VMPathDriver::Listen(bool state)
 {
-	guard(MPATH_Listen);
+	guard(VMPathDriver::Listen);
 	if (state)
 	{
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-            net_acceptsocket = MPATH_OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 				Sys_Error("MPATH_Listen: Unable to open accept socket\n");
 		}
@@ -186,7 +229,7 @@ void MPATH_Listen(bool state)
 		// disable listening
 		if (net_acceptsocket != -1)
 		{
-			MPATH_CloseSocket(net_acceptsocket);
+			CloseSocket(net_acceptsocket);
 			net_acceptsocket = -1;
 		}
 	}
@@ -195,18 +238,18 @@ void MPATH_Listen(bool state)
 
 //==========================================================================
 //
-//  MPATH_OpenSocket
+//  VMPathDriver::OpenSocket
 //
 //==========================================================================
 
-int MPATH_OpenSocket(int port)
+int VMPathDriver::OpenSocket(int port)
 {
-	guard(MPATH_OpenSocket);
+	guard(VMPathDriver::OpenSocket);
 	int			newsocket;
 	sockaddr_in	address;
 	u_long		trueval = true;
 
-    newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (newsocket == -1)
 	{
 		return -1;
@@ -233,13 +276,13 @@ int MPATH_OpenSocket(int port)
 
 //==========================================================================
 //
-//  MPATH_CloseSocket
+//  VMPathDriver::CloseSocket
 //
 //==========================================================================
 
-int MPATH_CloseSocket(int socket)
+int VMPathDriver::CloseSocket(int socket)
 {
-	guard(MPATH_CloseSocket);
+	guard(VMPathDriver::CloseSocket);
 	if (socket == net_broadcastsocket)
 		net_broadcastsocket = 0;
 	return closesocket(socket);
@@ -248,24 +291,24 @@ int MPATH_CloseSocket(int socket)
 
 //==========================================================================
 //
-//  MPATH_Connect
+//  VMPathDriver::Connect
 //
 //==========================================================================
 
-int MPATH_Connect(int , sockaddr_t *)
+int VMPathDriver::Connect(int , sockaddr_t *)
 {
 	return 0;
 }
 
 //==========================================================================
 //
-//  MPATH_CheckNewConnections
+//  VMPathDriver::CheckNewConnections
 //
 //==========================================================================
 
-int MPATH_CheckNewConnections()
+int VMPathDriver::CheckNewConnections()
 {
-	guard(MPATH_CheckNewConnections);
+	guard(VMPathDriver::CheckNewConnections);
 	char	buf[4];
 
 	if (net_acceptsocket == -1)
@@ -279,19 +322,19 @@ int MPATH_CheckNewConnections()
 
 //==========================================================================
 //
-//  MPATH_Read
+//  VMPathDriver::Read
 //
 //==========================================================================
 
-int MPATH_Read(int socket, byte *buf, int len, sockaddr_t *addr)
+int VMPathDriver::Read(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(MPATH_Read);
+	guard(VMPathDriver::Read);
 	int		addrlen = sizeof(sockaddr_t);
 	int		ret;
 
 	ret = recvfrom(socket, (char*)buf, len, 0, (sockaddr *)addr, &addrlen);
 	if (ret == -1)
- 	{
+	{
 		int errno = WSAGetLastError();
 
 		if (errno == WSAEWOULDBLOCK || errno == WSAECONNREFUSED)
@@ -303,16 +346,16 @@ int MPATH_Read(int socket, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  MPATH_Write
+//  VMPathDriver::Write
 //
 //==========================================================================
 
-int MPATH_Write(int socket, byte *buf, int len, sockaddr_t *addr)
+int VMPathDriver::Write(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(MPATH_Write);
+	guard(VMPathDriver::Write);
 	int ret;
 
-	ret = sendto(socket, (char*)buf, len, 0, (sockaddr *)addr, sizeof(sockaddr));
+	ret = sendto(socket, (char*)buf, len, 0, (sockaddr*)addr, sizeof(sockaddr));
 	if (ret == -1 && WSAGetLastError() == WSAEWOULDBLOCK)
 		return 0;
 
@@ -324,13 +367,13 @@ int MPATH_Write(int socket, byte *buf, int len, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  MPATH_Broadcast
+//  VMPathDriver::Broadcast
 //
 //==========================================================================
 
-int MPATH_Broadcast(int socket, byte *buf, int len)
+int VMPathDriver::Broadcast(int socket, vuint8* buf, int len)
 {
-	guard(MPATH_Broadcast);
+	guard(VMPathDriver::Broadcast);
 	int			i = 1;
 
 	if (socket != net_broadcastsocket)
@@ -339,7 +382,7 @@ int MPATH_Broadcast(int socket, byte *buf, int len)
 			Sys_Error("Attempted to use multiple broadcasts sockets\n");
 
 		// make this socket broadcast capable
-		if (setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) < 0)
+		if (setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char*)&i, sizeof(i)) < 0)
 		{
 			GCon->Log(NAME_DevNet, "Unable to make socket broadcast capable");
 			return -1;
@@ -348,19 +391,19 @@ int MPATH_Broadcast(int socket, byte *buf, int len)
 		net_broadcastsocket = socket;
 	}
 
-	return MPATH_Write(socket, buf, len, &broadcastaddr);
+	return Write(socket, buf, len, &broadcastaddr);
 	unguard;
 }
 
 //==========================================================================
 //
-//  MPATH_AddrToString
+//  VMPathDriver::AddrToString
 //
 //==========================================================================
 
-char *MPATH_AddrToString(sockaddr_t *addr)
+char* VMPathDriver::AddrToString(sockaddr_t* addr)
 {
-	guard(MPATH_AddrToString);
+	guard(VMPathDriver::AddrToString);
 	static char buffer[22];
 	int haddr;
 
@@ -374,13 +417,13 @@ char *MPATH_AddrToString(sockaddr_t *addr)
 
 //==========================================================================
 //
-//  MPATH_StringToAddr
+//  VMPathDriver::StringToAddr
 //
 //==========================================================================
 
-int MPATH_StringToAddr(const char *string, sockaddr_t *addr)
+int VMPathDriver::StringToAddr(const char* string, sockaddr_t* addr)
 {
-	guard(MPATH_StringToAddr);
+	guard(VMPathDriver::StringToAddr);
 	int ha1, ha2, ha3, ha4, hp;
 	int ipaddr;
 
@@ -396,13 +439,13 @@ int MPATH_StringToAddr(const char *string, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  MPATH_GetSocketAddr
+//  VMPathDriver::GetSocketAddr
 //
 //==========================================================================
 
-int MPATH_GetSocketAddr(int socket, sockaddr_t *addr)
+int VMPathDriver::GetSocketAddr(int socket, sockaddr_t* addr)
 {
-	guard(MPATH_GetSocketAddr);
+	guard(VMPathDriver::GetSocketAddr);
 	int		addrlen = sizeof(sockaddr_t);
 	dword	a;
 
@@ -418,14 +461,14 @@ int MPATH_GetSocketAddr(int socket, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  MPATH_GetNameFromAddr
+//  VMPathDriver::GetNameFromAddr
 //
 //==========================================================================
 
-int MPATH_GetNameFromAddr(sockaddr_t *addr, char *name)
+int VMPathDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
 {
-	guard(MPATH_GetNameFromAddr);
-	hostent		*hostentry;
+	guard(VMPathDriver::GetNameFromAddr);
+	hostent*		hostentry;
 
 	hostentry = gethostbyaddr((char *)&((sockaddr_in *)addr)->sin_addr, sizeof(in_addr), AF_INET);
 	if (hostentry)
@@ -434,23 +477,23 @@ int MPATH_GetNameFromAddr(sockaddr_t *addr, char *name)
 		return 0;
 	}
 
-	strcpy(name, MPATH_AddrToString(addr));
+	strcpy(name, AddrToString(addr));
 	return 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//	PartialIPAddress
+//	VMPathDriver::PartialIPAddress
 //
 //	This lets you type only as much of the net address as required, using
 // the local network components to fill in the rest
 //
 //==========================================================================
 
-static int PartialIPAddress(const char *in, sockaddr_t *hostaddr)
+int VMPathDriver::PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 {
-	guard(PartialIPAddress);
+	guard(VMPathDriver::PartialIPAddress);
 	char buff[256];
 	char *b;
 	int addr;
@@ -501,14 +544,14 @@ static int PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 
 //==========================================================================
 //
-//  MPATH_GetAddrFromName
+//  VMPathDriver::GetAddrFromName
 //
 //==========================================================================
 
-int MPATH_GetAddrFromName(const char *name, sockaddr_t *addr)
+int VMPathDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 {
-	guard(MPATH_GetAddrFromName);
-	hostent		*hostentry;
+	guard(VMPathDriver::GetAddrFromName);
+	hostent*		hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
 		return PartialIPAddress(name, addr);
@@ -519,7 +562,7 @@ int MPATH_GetAddrFromName(const char *name, sockaddr_t *addr)
 
 	addr->sa_family = AF_INET;
 	((sockaddr_in *)addr)->sin_port = htons(net_hostport);	
-	((sockaddr_in *)addr)->sin_addr.s_addr = *(int *)hostentry->h_addr_list[0];
+	((sockaddr_in *)addr)->sin_addr.s_addr = *(int*)hostentry->h_addr_list[0];
 
 	return 0;
 	unguard;
@@ -527,13 +570,13 @@ int MPATH_GetAddrFromName(const char *name, sockaddr_t *addr)
 
 //==========================================================================
 //
-//  MPATH_AddrCompare
+//  VMPathDriver::AddrCompare
 //
 //==========================================================================
 
-int MPATH_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
+int VMPathDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
-	guard(MPATH_AddrCompare);
+	guard(VMPathDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 
@@ -549,56 +592,27 @@ int MPATH_AddrCompare(sockaddr_t *addr1, sockaddr_t *addr2)
 
 //==========================================================================
 //
-//  MPATH_GetSocketPort
+//  VMPathDriver::GetSocketPort
 //
 //==========================================================================
 
-int MPATH_GetSocketPort(sockaddr_t *addr)
+int VMPathDriver::GetSocketPort(sockaddr_t* addr)
 {
-	guard(MPATH_GetSocketPort);
+	guard(VMPathDriver::GetSocketPort);
 	return ntohs(((sockaddr_in *)addr)->sin_port);
 	unguard;
 }
 
 //==========================================================================
 //
-//  MPATH_SetSocketPort
+//  VMPathDriver::SetSocketPort
 //
 //==========================================================================
 
-int MPATH_SetSocketPort(sockaddr_t *addr, int port)
+int VMPathDriver::SetSocketPort(sockaddr_t* addr, int port)
 {
-	guard(MPATH_SetSocketPort);
-	((sockaddr_in *)addr)->sin_port = htons(port);
+	guard(VMPathDriver::SetSocketPort);
+	((sockaddr_in*)addr)->sin_port = htons(port);
 	return 0;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.8  2006/03/20 20:02:21  dj_jl
-//	Accept zero length packets.
-//	
-//	Revision 1.7  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.6  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.5  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -1464,10 +1464,6 @@ SOURCE=..\..\source\render.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\source\comport.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\mpdosock.h
 # End Source File
 # Begin Source File
@@ -1482,21 +1478,7 @@ SOURCE=..\..\source\mplpc.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\net_bsd.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\net_bw.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_bw.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_comm.cpp
 # PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
@@ -1510,17 +1492,8 @@ SOURCE=..\..\source\net_dgrm.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\net_dos.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\net_ipx.cpp
 # PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_ipx.h
 # End Source File
 # Begin Source File
 
@@ -1547,15 +1520,6 @@ SOURCE=..\..\source\net_mp.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\net_mp.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_none.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\net_null.cpp
 # ADD CPP /W4
 # End Source File
@@ -1565,26 +1529,8 @@ SOURCE=..\..\source\net_null.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\net_ser.cpp
-# PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_ser.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\net_udp.cpp
 # PROP Exclude_From_Build 1
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_udp.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_win.cpp
-# ADD CPP /W4
 # End Source File
 # Begin Source File
 
@@ -1593,16 +1539,8 @@ SOURCE=..\..\source\net_wins.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\net_wins.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\net_wipx.cpp
 # ADD CPP /W4
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\net_wipx.h
 # End Source File
 # Begin Source File
 
