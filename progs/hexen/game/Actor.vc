@@ -76,20 +76,20 @@ name AttackSound;
 name PainSound;
 name DeathSound;
 
-//	Flags
+//	FLAGS
 bool bSpecial;			// call P_SpecialThing when touched
 bool bShootable;		// Can be hit.
 bool bAmbush;
 bool bJustHit;			// try to attack right back
 bool bJustAttacked;		// take at least one step before attacking
 bool bSpawnCeiling;		// hang from ceiling instead of floor
-// movement flags
+//	MOVEMENT FLAGS
 bool bPickUp;			// for players to pick up items
 bool bMissile;			// don't hit same species, explode on block
 bool bNoBlood;			// don't bleed when shot (use puff)
 bool bCorpse;			// don't stop moving halfway off a step
 bool bInFloat;			// floating to a height for a move, don't
-						// auto float to target's height
+				// auto float to target's height
 bool bSkullFly;			// skull in flight
 bool bCountKill;		// count towards intermission kill total
 bool bIceCorpse;		// a frozen corpse (for blasting)
@@ -97,28 +97,27 @@ bool bWindThrust;		// gets pushed around by the wind specials
 bool bFloorBounce;		// bounces off the floor
 bool bSpawnFloat;		// spawn random float z
 bool bNoTeleport;		// does not teleport
-bool bRip;				// missile rips through solid targets
+bool bRip;			// missile rips through solid targets
 bool bPushable;			// can be pushed by other moving mobjs
 bool bSlide;			// slides against walls
-bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCannotPush;		// cannot push other pushable mobjs
 bool bDropped;			// dropped by a demon
-bool bBoss;				// mobj is a major boss
+bool bBoss;			// mobj is a major boss
 bool bFireDamage;		// does fire damage
-bool bNoDamageThrust;	// does not thrust target when damaging
+bool bNoDamageThrust;		// does not thrust target when damaging
 bool bTelestomp;		// mobj can stomp another
 bool bFloatBob;			// use float bobbing z movement
-bool bActivateImpact;	// an MF_MISSILE mobj can activate
-						// SPAC_IMPACT
-bool bActivatePushWall;	// mobj can push walls
-bool bActivateMCross;	// can activate monster cross lines
-bool bActivatePCross;	// can activate projectile cross lines
+bool bActivateImpact;		// an MF_MISSILE mobj can activate
+				// SPAC_IMPACT
+bool bActivatePushWall;		// mobj can push walls
+bool bActivateMCross;		// can activate monster cross lines
+bool bActivatePCross;		// can activate projectile cross lines
 bool bNonShootable;		// mobj is totally non-shootable,
-						// but still considered solid
+				// but still considered solid
 bool bInvulnerable;		// mobj is invulnerable
 bool bDormant;			// thing is dormant
 bool bIceDamage;		// does ice damage
-bool bSeekerMissile;	// is a seeker (for reflection)
+bool bSeekerMissile;		// is a seeker (for reflection)
 bool bReflective;		// reflects missiles
 bool bWaterJump;
 bool bBlaster;

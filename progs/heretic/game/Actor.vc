@@ -70,21 +70,21 @@ name AttackSound;
 name PainSound;
 name DeathSound;
 
-//	Flags
+//	FLAGS
 bool bSpecial;		// call P_SpecialThing when touched
 bool bShootable;	// Can be hit.
 bool bAmbush;		// Ambush
 bool bJustHit;		// try to attack right back
 bool bJustAttacked;	// take at least one step before attacking
 bool bSpawnCeiling;	// hang from ceiling instead of floor
-// movement flags
+//	MOVEMENT FLAGS
 bool bPickUp;		// for players to pick up items
 bool bMissile;		// don't hit same species, explode on block
 bool bDropped;		// dropped by a demon, not level spawned
 bool bNoBlood;		// don't bleed when shot (use puff)
 bool bCorpse;		// don't stop moving halfway off a step
 bool bInFloat;		// floating to a height for a move, don't
-					// auto float to target's height
+			// auto float to target's height
 bool bSkullFly;		// skull in flight
 bool bCountKill;	// count towards intermission kill total
 bool bCountItem;	// count towards intermission item total
@@ -93,26 +93,25 @@ bool bFloorBounce;	// bounces off the floor
 bool bThruGhost;	// missile will pass through ghosts
 bool bSpawnFloat;	// spawn random float z
 bool bNoTeleport;	// does not teleport
-bool bRip;			// missile rips through solid targets
+bool bRip;		// missile rips through solid targets
 bool bPushable;		// can be pushed by other moving mobjs
 bool bSlide;		// slides against walls
-bool bOnMobj;		// mobj is resting on top of another mobj
 bool bCannotPush;	// cannot push other pushable mobjs
-bool bBoss;			// mobj is a major boss
+bool bBoss;		// mobj is a major boss
 bool bFireDamage;	// does fire damage
 bool bNoDamageThrust;	// does not thrust target when damaging
 bool bTelestomp;	// mobj can stomp another
 bool bFloatBob;		// use float bobbing z movement
 bool bActivateImpact;	// an MF_MISSILE mobj can activate
-						// SPAC_IMPACT
+			// SPAC_IMPACT
 bool bActivatePushWall;	// mobj can push walls
 bool bActivateMCross;	// can activate monster cross lines
 bool bActivatePCross;	// can activate projectile cross lines
 bool bDormant;		// thing is dormant
 bool bWaterJump;
 bool bBlaster;
-bool bNoMorph;			// Don't morph into chicken.
-bool bStaticLight;		// Static light source.
+bool bNoMorph;		// Don't morph into chicken.
+bool bStaticLight;	// Static light source.
 
 //  Params
 float Speed;
@@ -3120,24 +3119,22 @@ bool TryWalk()
 
 //==========================================================================
 //
-//  NewChaseDir
+//  DO_NewChaseDir
 //
 //==========================================================================
 
-void NewChaseDir()
+void DO_NewChaseDir(float deltax, float deltay)
 {
-	float deltax, deltay;
 	int d[3];
-	int tdir, olddir, turnaround;
 
-	if (!Enemy)
-		Error("NewChaseDir: called with no Enemy");
+	int tdir;
+	int olddir;
+
+	int turnaround;
 
 	olddir = MoveDir;
 	turnaround = MainGameInfo(Level.Game).opposite[olddir];
 
-	deltax = Enemy.Origin.x - Origin.x;
-	deltay = Enemy.Origin.y - Origin.y;
 	if (deltax > 10.0)
 		d[1] = DI_EAST;
 	else if (deltax < -10.0)
@@ -3228,6 +3225,63 @@ void NewChaseDir()
 	}
 
 	MoveDir = DI_NODIR;	// can't move
+}
+
+//=============================================================================
+//
+// NewChaseDir
+//
+// killough 9/8/98: Split into two functions
+//
+//=============================================================================
+
+void NewChaseDir()
+{
+	float deltax, deltaxx;
+	float deltay, deltayy;
+	float angle;
+
+	deltax = Enemy.Origin.x - Origin.x;
+	deltay = Enemy.Origin.y - Origin.y;
+	deltaxx = 0.0;
+	deltayy = 0.0;
+
+	if(!Enemy)
+		Error("NewChaseDir: called with no Enemy");
+	
+	// Try to move away from a dropoff
+	if (FloorZ - Level.Game.tmtrace->DropOffZ > MaxDropoffHeight && 
+		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
+	{
+		// We call the CheckDropoff here to determine if the
+		// bounding box actually needs to be used below
+		angle = CheckDropOff();
+
+		if (angle)
+		{
+			// [Graf Zahl] I have changed TryMove to only apply this logic when
+			// being called from here. bAavoidingDropoff activates the code that
+			// allows monsters to move away from a dropoff. This is different from
+			// MBF which requires unconditional use of the altered logic and therefore
+			// forcing a massive change in the monster behavior to use this.
+
+			// Move away from dropoff at a standard speed.
+			// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
+			deltaxx -= sin(angle) * 32.0;
+			deltayy += cos(angle) * 32.0;
+
+			// use different dropoff movement logic in TryMove
+			bAvoidingDropoff = true;
+			DO_NewChaseDir(deltaxx, deltayy);
+			bAvoidingDropoff = false;
+		
+			// If moving away from dropoff, set MoveCount to 1 so that
+			// small steps are taken to get monster away from dropoff.
+			MoveCount = 1;
+			return;
+		}
+	}
+	DO_NewChaseDir(deltax, deltay);
 }
 
 //**************************************************************************

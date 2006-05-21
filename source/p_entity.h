@@ -118,6 +118,7 @@ class VEntity : public VThinker
 	// The closest interval over all contacted Sectors.
 	float			FloorZ;
 	float			CeilingZ;
+	float			DropOffZ;
 
 	//	Closest floor and ceiling, source of floorz and ceilingz
 	sec_plane_t		*Floor;
@@ -151,6 +152,8 @@ class VEntity : public VThinker
 		EF_CantLeaveFloorpic	= 0x00008000,	// stay within a certain floor type
 		EF_FloorClip			= 0x00010000,	// if feet are allowed to be clipped
 		EF_IgnoreCeilingStep	= 0x00020000,	// continue walk without lowering itself
+		EF_AvoidingDropoff		= 0x00040000,	// used to move monsters away from dropoffs
+		EF_OnMobj				= 0x00080000,	// mobj is resting on top of another mobj
 	};
 	vuint32			EntityFlags;
 
@@ -274,6 +277,7 @@ class VEntity : public VThinker
 
 	bool CheckWater();
 	bool CheckSides(TVec lsPos);
+	float CheckDropOff();
 	bool CheckPosition(TVec Pos);
 	bool CheckRelPosition(TVec Pos);
 	bool TryMove(TVec newPos);
@@ -299,6 +303,7 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(StopSound)
 	DECLARE_FUNCTION(CheckWater)
 	DECLARE_FUNCTION(CheckSides)
+	DECLARE_FUNCTION(CheckDropOff)
 	DECLARE_FUNCTION(CheckPosition)
 	DECLARE_FUNCTION(CheckRelPosition)
 	DECLARE_FUNCTION(TryMove)
