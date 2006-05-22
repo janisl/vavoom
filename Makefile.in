@@ -4,6 +4,12 @@
 #
 #---------------------------------------
 
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+datadir=@datadir@
+libexecdir=@libexecdir@
+
 ASMFLAGS=@ASMFLAGS@
 CC=@CC@
 CFLAGS=@CFLAGS@
@@ -11,13 +17,19 @@ CXX=@CXX@
 CXXFLAGS=@CXXFLAGS@
 EXEEXT=@EXEEXT@
 INSTALL=@INSTALL@
+INSTALL_DATA=@INSTALL_DATA@
+INSTALL_PROGRAM=@INSTALL_PROGRAM@
+INSTALL_SCRIPT=@INSTALL_SCRIPT@
+INSTALL_TARGETS=@INSTALL_TARGETS@
 LDFLAGS=@LDFLAGS@
 LIB_STDCXX=@LIB_STDCXX@
 MAIN_CFLAGS=@MAIN_CFLAGS@
 MAIN_EXE=@MAIN_EXE@
 OBJEXT=@OBJEXT@
 SERVER_EXE=@SERVER_EXE@
-prefix=@prefix@
+TARGETS=@TARGETS@
+
+@SET_MAKE@
 
 OBJ_FILES = @OBJ_FILES@
 LIBS = @MAIN_LIBS@
@@ -25,12 +37,7 @@ LIB_FILES = @LIB_FILES@
 SV_LIBS = @SV_LIBS@
 SV_OBJ_FILES = @SV_OBJ_FILES@
 
-INSTALL_DIR = @INSTALL_DIR@
-INSTALL_GROUP = @INSTALL_GROUP@
-INSTALL_OWNER = @INSTALL_OWNER@
-INSTALL_PARMS = @INSTALL_PARMS@
-INSTALL_EXEPARMS = @INSTALL_EXEPARMS@
-INSTALL_DIRPARMS = @INSTALL_DIRPARMS@
+INSTALL_DIR = ${datadir}/vavoom
 
 C_ARGS   = -c -W -Wall $(CFLAGS)
 CPP_ARGS = -c -W -Wall $(CXXFLAGS) $(MAIN_CFLAGS)
@@ -334,9 +341,9 @@ WAD_FILES = \
 
 # ---------------------------------------
 
-all: exe utils data
+all: $(TARGETS)
 
-exe: $(MAIN_EXE)
+exe: $(MAIN_EXE) utils/vavoom
 
 $(MAIN_EXE): $(OBJ_FILES) $(LIB_FILES)
 	$(CXX) $(LINK_ARGS) -o $@ $^ $(LIBS)
@@ -357,6 +364,14 @@ obj/%.$(OBJEXT) : source/%.cpp source/*.h
 obj/%.$(OBJEXT) : source/%.s source/asm_i386.h
 	$(CC) $(ASM_ARGS) -o $@ $<
 
+utils/vavoom: Makefile
+	echo "#!/bin/sh" > $@
+	echo "# Needed to make symlinks/shortcuts work." >> $@
+	echo "# the binaries must run with correct working directory" >> $@
+	echo "cd \"$(datadir)/vavoom\"" >> $@
+	echo "\"$(bindir)/$(MAIN_EXE)\" \$$*" >> $@
+	echo "exit \$$?" >> $@
+
 # ---------------------------------------
 
 source/timidity/libtimidity.a: source/timidity/*.cpp source/timidity/*.h
@@ -372,7 +387,7 @@ utils/glvis/libglvis.a:
 
 sv: svexe data
 
-svexe: $(SERVER_EXE)
+svexe: $(SERVER_EXE) utils/vavoom-dedicated
 
 $(SERVER_EXE): $(SV_OBJ_FILES)
 	$(CXX) $(LINK_ARGS) -o $@ $(SV_OBJ_FILES) $(SV_LIBS)
@@ -385,6 +400,14 @@ obj/sv/%.$(OBJEXT) : source/%.cpp source/*.h
 
 obj/sv/%.$(OBJEXT) : source/%.s
 	$(CC) $(ASM_ARGS) -DSERVER -o $@ $<
+
+utils/vavoom-dedicated: Makefile
+	echo "#!/bin/sh" > $@
+	echo "# Needed to make symlinks/shortcuts work." >> $@
+	echo "# the binaries must run with correct working directory" >> $@
+	echo "cd \"$(datadir)/vavoom\"" >> $@
+	echo "\"$(bindir)/$(SERVER_EXE)\" \$$*" >> $@
+	echo "exit \$$?" >> $@
 
 # ---------------------------------------
 
@@ -447,24 +470,31 @@ INSTALL_DIRS = $(INSTALL_DIR) \
 		$(INSTALL_DIR)/basev/hexen \
 		$(INSTALL_DIR)/basev/strife
 
-install: installdata
-	$(INSTALL) $(INSTALL_EXEPARMS) Vavoom$(EXEEXT) $(INSTALL_DIR)
+install: $(INSTALL_TARGETS)
 
-installsv: installdata
-	$(INSTALL) $(INSTALL_PARMS) VavoomSV$(EXEEXT) $(INSTALL_DIR)
+installexe:
+	$(INSTALL) -d $(bindir)
+	$(INSTALL_PROGRAM) $(MAIN_EXE) $(bindir)
+	$(INSTALL_SCRIPT) utils/vavoom $(bindir)
+
+installsvexe:
+	$(INSTALL) -d $(bindir)
+	$(INSTALL_PROGRAM) $(SERVER_EXE) $(bindir)
+	$(INSTALL_SCRIPT) utils/vavoom-dedicated $(bindir)
 
 installdata:
-	$(INSTALL) $(INSTALL_DIRPARMS) $(INSTALL_DIRS)
-	$(INSTALL) $(INSTALL_PARMS) basev/games.txt $(INSTALL_DIR)/basev
-	$(INSTALL) $(INSTALL_PARMS) basev/common/default.cfg basev/common/startup.vs basev/common/wad0.wad $(INSTALL_DIR)/basev/common
-	$(INSTALL) $(INSTALL_PARMS) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
-	$(INSTALL) $(INSTALL_PARMS) basev/doom1/wad0.wad basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
-	$(INSTALL) $(INSTALL_PARMS) basev/doom2/wad0.wad basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
-	$(INSTALL) $(INSTALL_PARMS) basev/tnt/wad0.wad basev/tnt/base.txt $(INSTALL_DIR)/basev/tnt
-	$(INSTALL) $(INSTALL_PARMS) basev/plutonia/wad0.wad basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
-	$(INSTALL) $(INSTALL_PARMS) basev/heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
-	$(INSTALL) $(INSTALL_PARMS) basev/hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
-	$(INSTALL) $(INSTALL_PARMS) basev/strife/wad0.wad $(INSTALL_DIR)/basev/strife
+	$(INSTALL) -d $(INSTALL_DIRS)
+	$(INSTALL_DATA) basev/games.txt $(INSTALL_DIR)/basev
+	$(INSTALL_DATA) basev/common/default.cfg basev/common/startup.vs basev/common/wad0.wad $(INSTALL_DIR)/basev/common
+	$(INSTALL_DATA) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
+	$(INSTALL_DATA) basev/doom1/wad0.wad basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
+	$(INSTALL_DATA) basev/doom2/wad0.wad basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
+	$(INSTALL_DATA) basev/tnt/wad0.wad basev/tnt/base.txt $(INSTALL_DIR)/basev/tnt
+	$(INSTALL_DATA) basev/plutonia/wad0.wad basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
+	$(INSTALL_DATA) basev/heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
+	$(INSTALL_DATA) basev/hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
+	$(INSTALL_DATA) basev/strife/wad0.wad $(INSTALL_DIR)/basev/strife
+	$(INSTALL_DATA) source/vavoom.png $(INSTALL_DIR)
 
 # ---------------------------------------
 

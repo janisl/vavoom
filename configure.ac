@@ -9,6 +9,7 @@ AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_RANLIB
 AC_PROG_INSTALL
+AC_PROG_MAKE_SET
 
 if test "x$AR" = "x"; then
 	AR="ar"
@@ -22,6 +23,9 @@ AC_ARG_WITH([sdl-config], AS_HELP_STRING([--with-sdl-config=<path>], [Set SDL co
 AC_ARG_WITH([opengl], AS_HELP_STRING([--with-opengl], [use OpenGL library]))
 AC_ARG_WITH([openal], AS_HELP_STRING([--with-openal], [use OpenAL library]))
 AC_ARG_WITH([openal-config], AS_HELP_STRING([--with-openal-config], [Set OpenAL config script]))
+
+AC_ARG_ENABLE([client], AS_HELP_STRING([--disable-client], [Don't build client executable]))
+AC_ARG_ENABLE([server], AS_HELP_STRING([--disable-server], [Don't build dedicated server executable]))
 
 OBJ_FILES='$(COMMON_OBJS)'
 
@@ -79,7 +83,7 @@ dnl ---------------- Other *NIX platforms ----------------
 *)
 	LIB_STDCXX=-lstdc++
 
-	MAIN_EXE='Vavoom$(EXEEXT)'
+	MAIN_EXE="vavoom.$host_cpu$EXEEXT"
 
 	if test "x$with_allegro" = "xyes"; then
 		if test "x$with_allegro_config" = "x"; then
@@ -175,7 +179,7 @@ dnl ---------------- Other *NIX platforms ----------------
 		fi
 	fi
 
-	SERVER_EXE='VavoomSV$(EXEEXT)'
+	SERVER_EXE="vavoom-dedicated.$host_cpu$EXEEXT"
 	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_UNIX)'
 	SV_LIBS='-lz -lstdc++'
 
@@ -266,25 +270,18 @@ if test "x$with_flac" != "xno"; then
 	])
 fi
 
-if test "x$INSTALL_DIR" == "x"; then
-	INSTALL_DIR="\$(prefix)/games/Vavoom"
+TARGETS="utils"
+INSTALL_TARGETS=""
+if test "x$enable_client" != "xno"; then
+	TARGETS="$TARGETS exe"
+	INSTALL_TARGETS="$INSTALL_TARGETS installexe"
 fi
-if test "x$INSTALL_GROUP" == "x"; then
-	INSTALL_GROUP=root
+if test "x$enable_server" != "xno"; then
+	TARGETS="$TARGETS svexe"
+	INSTALL_TARGETS="$INSTALL_TARGETS installsvexe"
 fi
-if test "x$INSTALL_OWNER" == "x"; then
-	INSTALL_OWNER=root
-fi
-
-if test "x$INSTALL_GROUP_ONLY" != "x"; then
-	INSTALL_PARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0640"
-	INSTALL_EXEPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0750"
-	INSTALL_DIRPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0750 -d"
-else
-	INSTALL_PARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0644"
-	INSTALL_EXEPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0755"
-	INSTALL_DIRPARMS="-g \$(INSTALL_GROUP) -o \$(INSTALL_OWNER) -m 0755 -d"
-fi
+TARGETS="$TARGETS data"
+INSTALL_TARGETS="$INSTALL_TARGETS installdata"
 
 AC_SUBST([ASMFLAGS])
 AC_SUBST([LIB_MATH])
@@ -297,12 +294,8 @@ AC_SUBST([MAIN_LIBS])
 AC_SUBST([LIB_FILES])
 AC_SUBST([SV_OBJ_FILES])
 AC_SUBST([SV_LIBS])
-AC_SUBST([INSTALL_DIR])
-AC_SUBST([INSTALL_GROUP])
-AC_SUBST([INSTALL_OWNER])
-AC_SUBST([INSTALL_PARMS])
-AC_SUBST([INSTALL_EXEPARMS])
-AC_SUBST([INSTALL_DIRPARMS])
+AC_SUBST([TARGETS])
+AC_SUBST([INSTALL_TARGETS])
 
 AC_OUTPUT([
 	Makefile
