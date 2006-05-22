@@ -21,6 +21,7 @@ INSTALL_DATA=@INSTALL_DATA@
 INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_SCRIPT=@INSTALL_SCRIPT@
 INSTALL_TARGETS=@INSTALL_TARGETS@
+IWADDIR_PARM=@IWADDIR_PARM@
 LDFLAGS=@LDFLAGS@
 LIB_STDCXX=@LIB_STDCXX@
 MAIN_CFLAGS=@MAIN_CFLAGS@
@@ -369,7 +370,7 @@ utils/vavoom: Makefile
 	echo "# Needed to make symlinks/shortcuts work." >> $@
 	echo "# the binaries must run with correct working directory" >> $@
 	echo "cd \"$(datadir)/vavoom\"" >> $@
-	echo "\"$(bindir)/$(MAIN_EXE)\" \$$*" >> $@
+	echo "\"$(bindir)/$(MAIN_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
 	echo "exit \$$?" >> $@
 
 # ---------------------------------------
@@ -406,7 +407,7 @@ utils/vavoom-dedicated: Makefile
 	echo "# Needed to make symlinks/shortcuts work." >> $@
 	echo "# the binaries must run with correct working directory" >> $@
 	echo "cd \"$(datadir)/vavoom\"" >> $@
-	echo "\"$(bindir)/$(SERVER_EXE)\" \$$*" >> $@
+	echo "\"$(bindir)/$(SERVER_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
 	echo "exit \$$?" >> $@
 
 # ---------------------------------------

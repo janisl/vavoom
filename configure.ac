@@ -283,6 +283,11 @@ fi
 TARGETS="$TARGETS data"
 INSTALL_TARGETS="$INSTALL_TARGETS installdata"
 
+AC_ARG_WITH([iwaddir], AS_HELP_STRING([--with-iwaddir], [Specify IWAD directories]))
+if test "x$with_iwaddir" != "x"; then
+	IWADDIR_PARM="-iwaddir $with_iwaddir"
+fi
+
 AC_SUBST([ASMFLAGS])
 AC_SUBST([LIB_MATH])
 AC_SUBST([LIB_STDCXX])
@@ -296,6 +301,7 @@ AC_SUBST([SV_OBJ_FILES])
 AC_SUBST([SV_LIBS])
 AC_SUBST([TARGETS])
 AC_SUBST([INSTALL_TARGETS])
+AC_SUBST([IWADDIR_PARM])
 
 AC_OUTPUT([
 	Makefile

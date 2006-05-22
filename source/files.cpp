@@ -71,6 +71,7 @@ static search_path_t*	searchpaths;
 TArray<VStr>			wadfiles;
 TArray<VStr>			gwadirs;
 static bool				fl_fixvoices;
+static TArray<VStr>		IWadDirs;
 
 // CODE --------------------------------------------------------------------
 
@@ -135,6 +136,38 @@ static void AddGameDir(const VStr& dir)
 
 	fl_gamedir = dir;
 	unguard;
+}
+
+//==========================================================================
+//
+//	FindMainWad
+//
+//==========================================================================
+
+static VStr FindMainWad(VStr MainWad)
+{
+	//	First check in IWAD directories.
+	for (int i = 0; i < IWadDirs.Num(); i++)
+	{
+		if (Sys_FileExists(IWadDirs[i] + "/" + MainWad))
+		{
+			return IWadDirs[i] + "/" + MainWad;
+		}
+	}
+
+	//	Then look in the save directory.
+	if (fl_savedir && Sys_FileExists(fl_savedir + "/" + MainWad))
+	{
+		return fl_savedir + "/" + MainWad;
+	}
+
+	//	Finally in base directory.
+	if (Sys_FileExists(fl_basedir + "/" + MainWad))
+	{
+		return fl_basedir + "/" + MainWad;
+	}
+
+	return VStr();
 }
 
 //==========================================================================
@@ -237,28 +270,20 @@ static void ParseBase(const VStr& name)
 			continue;
 		}
 
-		//	First look in the save directory.
-		if (fl_savedir && Sys_FileExists(fl_savedir + "/" + G.MainWad))
+		//	Look for the main wad file.
+		VStr MainWadPath = FindMainWad(G.MainWad);
+		if (MainWadPath)
 		{
 			fl_mainwad = G.MainWad;
-			FL_AddFile(fl_savedir + "/" + fl_mainwad, VStr());
+			FL_AddFile(MainWadPath, fl_savedir);
 			for (int j = 0; j < G.AddFiles.Num(); j++)
 			{
-				FL_AddFile(fl_savedir + "/" + G.AddFiles[j], VStr());
-			}
-			SetupGameDir(G.GameDir);
-			fl_fixvoices = G.FixVoices;
-			return;
-		}
-
-		//	Then in base directory.
-		if (Sys_FileExists(fl_basedir + "/" + G.MainWad))
-		{
-			fl_mainwad = G.MainWad;
-			FL_AddFile(fl_basedir + "/" + fl_mainwad, fl_savedir);
-			for (int j = 0; j < G.AddFiles.Num(); j++)
-			{
-				FL_AddFile(fl_basedir + "/" + G.AddFiles[j], fl_savedir);
+				VStr FName = FindMainWad(G.AddFiles[j]);
+				if (!FName)
+				{
+					Sys_Error("Required file %s not found", *G.AddFiles[j]);
+				}
+				FL_AddFile(FName, fl_savedir);
 			}
 			SetupGameDir(G.GameDir);
 			fl_fixvoices = G.FixVoices;
@@ -322,6 +347,16 @@ void FL_Init()
 		}
 	}
 #endif
+
+	//	Set up additional directories where to look for IWAD files.
+	int iwp = GArgs.CheckParm("-iwaddir");
+	if (iwp)
+	{
+		while (++iwp != GArgs.Count() && GArgs[iwp][0] != '-' && GArgs[iwp][0] != '+')
+		{
+			IWadDirs.Append(GArgs[iwp]);
+		}
+	}
 
 	AddGameDir("basev/common");
 
@@ -393,6 +428,7 @@ void FL_Shutdown()
 	fl_mainwad.Clean();
 	wadfiles.Clear();
 	gwadirs.Clear();
+	IWadDirs.Clear();
 	unguard;
 }
 

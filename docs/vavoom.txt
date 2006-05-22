@@ -134,9 +134,7 @@ convert text files to UNIX format:
 
   Here are some configure parameters you may want to use:
 
-    --prefix=PATH       - specify prefix of installation. Vavoom will be
-                        installed in {prefix}/games/Vavoom. Default is
-                        /usr/local
+    --prefix=PATH       - specify prefix of installation. Default is /usr/local
     --with-allegro      - use Allegro for hardware API. This is the default.
     --with-sdl          - use SDL for hardware API.
     --without-opengl    - compile without OpenGL support.
@@ -395,6 +393,9 @@ Custom games and development
 -FILE specifies additional files
 -file <file1> [<file2> ...]
 
+-IWADDIR specifies additional directories where to look for IWAD files.
+-iwaddir <dir1> [<dir2> ...]
+
 Debugging
 ---------
 
@@ -408,15 +409,6 @@ Debugging
 -RHIDE prints debugfile to stderr, in DOS version Sys_Error exits with call
 frame traceback
 -rhide
-
-Misc
-----
-
--MAXZONE sets maximal amount of memory, that Vavoom will try to allocate
--maxzone <size>   ex. -maxzone 14.5
-
--MINZONE sets amount of mini-zone (used for strings and small structures)
--minzone <size>
 
 *****************************************************************************
 6. Differences from original game
