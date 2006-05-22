@@ -27,11 +27,28 @@
 
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_null.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
+
+class VNullNetDriver : public VNetDriver
+{
+public:
+	VNullNetDriver();
+	int Init();
+	void Listen(bool);
+	void SearchForHosts(bool);
+	qsocket_t* Connect(const char*);
+	qsocket_t* CheckNewConnections();
+	int GetMessage(qsocket_t*);
+	int SendMessage(qsocket_t*, VMessage*);
+	int SendUnreliableMessage(qsocket_t*, VMessage*);
+	bool CanSendMessage(qsocket_t*);
+	bool CanSendUnreliableMessage(qsocket_t*);
+	void Close(qsocket_t*);
+	void Shutdown();
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -43,70 +60,79 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-bool		net_connect_bot = false;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static VNullNetDriver	Impl;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	NetNull_Init
+//	VNullNetDriver::VNullNetDriver
 //
 //==========================================================================
 
-int NetNull_Init()
+VNullNetDriver::VNullNetDriver()
+: VNetDriver(1, "Null")
+{
+}
+
+//==========================================================================
+//
+//	VNullNetDriver::Init
+//
+//==========================================================================
+
+int VNullNetDriver::Init()
 {
 	return 0;
 }
 
 //==========================================================================
 //
-//	NetNull_Listen
+//	VNullNetDriver::Listen
 //
 //==========================================================================
 
-void NetNull_Listen(bool)
+void VNullNetDriver::Listen(bool)
 {
 }
 
 //==========================================================================
 //
-//	NetNull_SearchForHosts
+//	VNullNetDriver::SearchForHosts
 //
 //==========================================================================
 
-void NetNull_SearchForHosts(bool)
+void VNullNetDriver::SearchForHosts(bool)
 {
 }
 
 //==========================================================================
 //
-//	NetNull_Connect
+//	VNullNetDriver::Connect
 //
 //==========================================================================
 
-qsocket_t *NetNull_Connect(const char*)
+qsocket_t* VNullNetDriver::Connect(const char*)
 {
 	return NULL;
 }
 
 //==========================================================================
 //
-//	NetNull_CheckNewConnections
+//	VNullNetDriver::CheckNewConnections
 //
 //==========================================================================
 
-qsocket_t *NetNull_CheckNewConnections()
+qsocket_t* VNullNetDriver::CheckNewConnections()
 {
-	guard(NetNull_CheckNewConnections);
-	qsocket_t *sock;
-
+	guard(VNullNetDriver::CheckNewConnections);
 	if (!net_connect_bot)
 		return NULL;
 
 	net_connect_bot = false;
-	sock = NET_NewQSocket();
+	qsocket_t* sock = NET_NewQSocket(this);
 	if (!sock)
 	{
 		GCon->Log("Server is full");
@@ -119,101 +145,75 @@ qsocket_t *NetNull_CheckNewConnections()
 
 //==========================================================================
 //
-//	NetNull_GetMessage
+//	VNullNetDriver::GetMessage
 //
 //==========================================================================
 
-int NetNull_GetMessage(qsocket_t*)
+int VNullNetDriver::GetMessage(qsocket_t*)
 {
 	return 0;
 }
 
 //==========================================================================
 //
-//	NetNull_SendMessage
+//	VNullNetDriver::SendMessage
 //
 //==========================================================================
 
-int NetNull_SendMessage(qsocket_t*, VMessage*)
+int VNullNetDriver::SendMessage(qsocket_t*, VMessage*)
 {
 	return 1;
 }
 
 //==========================================================================
 //
-//	NetNull_SendUnreliableMessage
+//	VNullNetDriver::SendUnreliableMessage
 //
 //==========================================================================
 
-int NetNull_SendUnreliableMessage(qsocket_t*, VMessage*)
+int VNullNetDriver::SendUnreliableMessage(qsocket_t*, VMessage*)
 {
 	return 1;
 }
 
 //==========================================================================
 //
-//	NetNull_CanSendMessage
+//	VNullNetDriver::CanSendMessage
 //
 //==========================================================================
 
-bool NetNull_CanSendMessage(qsocket_t*)
+bool VNullNetDriver::CanSendMessage(qsocket_t*)
 {
 	return true;
 }
 
 //==========================================================================
 //
-//	NetNull_CanSendUnreliableMessage
+//	VNullNetDriver::CanSendUnreliableMessage
 //
 //==========================================================================
 
-bool NetNull_CanSendUnreliableMessage(qsocket_t*)
+bool VNullNetDriver::CanSendUnreliableMessage(qsocket_t*)
 {
 	return true;
 }
 
 //==========================================================================
 //
-//	NetNull_Close
+//	VNullNetDriver::Close
 //
 //==========================================================================
 
-void NetNull_Close(qsocket_t*)
+void VNullNetDriver::Close(qsocket_t*)
 {
 }
 
 //==========================================================================
 //
-//	NetNull_Shutdown
+//	VNullNetDriver::Shutdown
 //
 //==========================================================================
 
-void NetNull_Shutdown()
+void VNullNetDriver::Shutdown()
 {
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.4  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.3  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/12/01 17:40:41  dj_jl
-//	Added support for bots
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

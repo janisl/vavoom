@@ -27,11 +27,34 @@
 
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_loop.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
+
+class VLoopbackDriver : public VNetDriver
+{
+public:
+	bool		localconnectpending;
+	qsocket_t*	loop_client;
+	qsocket_t*	loop_server;
+
+	VLoopbackDriver();
+	int Init();
+	void Listen(bool);
+	void SearchForHosts(bool);
+	qsocket_t* Connect(const char*);
+	qsocket_t* CheckNewConnections();
+	int GetMessage(qsocket_t*);
+	int SendMessage(qsocket_t*, VMessage*);
+	int SendUnreliableMessage(qsocket_t*, VMessage*);
+	bool CanSendMessage(qsocket_t*);
+	bool CanSendUnreliableMessage(qsocket_t*);
+	void Close(qsocket_t*);
+	void Shutdown();
+
+	static int IntAlign(int);
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -45,19 +68,31 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static bool			localconnectpending = false;
-static qsocket_t*	loop_client = NULL;
-static qsocket_t*	loop_server = NULL;
+static VLoopbackDriver	Impl;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	Loop_Init
+//	VLoopbackDriver::VLoopbackDriver
 //
 //==========================================================================
 
-int Loop_Init()
+VLoopbackDriver::VLoopbackDriver()
+: VNetDriver(0, "Loopback")
+, localconnectpending(false)
+, loop_client(NULL)
+, loop_server(NULL)
+{
+}
+
+//==========================================================================
+//
+//	VLoopbackDriver::Init
+//
+//==========================================================================
+
+int VLoopbackDriver::Init()
 {
 #ifdef CLIENT
 	if (cls.state == ca_dedicated)
@@ -70,23 +105,23 @@ int Loop_Init()
 
 //==========================================================================
 //
-//	Loop_Listen
+//	VLoopbackDriver::Listen
 //
 //==========================================================================
 
-void Loop_Listen(bool)
+void VLoopbackDriver::Listen(bool)
 {
 }
 
 //==========================================================================
 //
-//	Loop_SearchForHosts
+//	VLoopbackDriver::SearchForHosts
 //
 //==========================================================================
 
-void Loop_SearchForHosts(bool)
+void VLoopbackDriver::SearchForHosts(bool)
 {
-	guard(Loop_SearchForHosts);
+	guard(VLoopbackDriver::SearchForHosts);
 #ifdef SERVER
 	if (!sv.active)
 		return;
@@ -106,13 +141,13 @@ void Loop_SearchForHosts(bool)
 
 //==========================================================================
 //
-//	Loop_Connect
+//	VLoopbackDriver::Connect
 //
 //==========================================================================
 
-qsocket_t* Loop_Connect(const char* host)
+qsocket_t* VLoopbackDriver::Connect(const char* host)
 {
-	guard(Loop_Connect);
+	guard(VLoopbackDriver::Connect);
 	if (strcmp(host,"local") != 0)
 		return NULL;
 	
@@ -120,7 +155,7 @@ qsocket_t* Loop_Connect(const char* host)
 
 	if (!loop_client)
 	{
-		loop_client = NET_NewQSocket();
+		loop_client = NET_NewQSocket(this);
 		if (loop_client == NULL)
 		{
 			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
@@ -134,7 +169,7 @@ qsocket_t* Loop_Connect(const char* host)
 
 	if (!loop_server)
 	{
-		loop_server = NET_NewQSocket();
+		loop_server = NET_NewQSocket(this);
 		if (loop_server == NULL)
 		{
 			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
@@ -146,8 +181,8 @@ qsocket_t* Loop_Connect(const char* host)
 	loop_server->sendMessageLength = 0;
 	loop_server->canSend = true;
 
-	loop_client->driverdata = (void *)loop_server;
-	loop_server->driverdata = (void *)loop_client;
+	loop_client->driverdata = (void*)loop_server;
+	loop_server->driverdata = (void*)loop_client;
 	
 	return loop_client;	
 	unguard;
@@ -155,13 +190,13 @@ qsocket_t* Loop_Connect(const char* host)
 
 //==========================================================================
 //
-//	Loop_CheckNewConnections
+//	VLoopbackDriver::CheckNewConnections
 //
 //==========================================================================
 
-qsocket_t* Loop_CheckNewConnections()
+qsocket_t* VLoopbackDriver::CheckNewConnections()
 {
-	guard(Loop_CheckNewConnections);
+	guard(VLoopbackDriver::CheckNewConnections);
 	if (!localconnectpending)
 		return NULL;
 
@@ -178,24 +213,24 @@ qsocket_t* Loop_CheckNewConnections()
 
 //==========================================================================
 //
-//	IntAlign
+//	VLoopbackDriver::IntAlign
 //
 //==========================================================================
 
-static int IntAlign(int value)
+int VLoopbackDriver::IntAlign(int value)
 {
 	return (value + (sizeof(int) - 1)) & (~(sizeof(int) - 1));
 }
 
 //==========================================================================
 //
-//	Loop_GetMessage
+//	VLoopbackDriver::GetMessage
 //
 //==========================================================================
 
-int Loop_GetMessage(qsocket_t* sock)
+int VLoopbackDriver::GetMessage(qsocket_t* sock)
 {
-	guard(Loop_GetMessage);
+	guard(VLoopbackDriver::GetMessage);
 	int		ret;
 	int		length;
 
@@ -215,7 +250,7 @@ int Loop_GetMessage(qsocket_t* sock)
 		memcpy(sock->receiveMessage, &sock->receiveMessage[length], sock->receiveMessageLength);
 
 	if (sock->driverdata && ret == 1)
-		((qsocket_t *)sock->driverdata)->canSend = true;
+		((qsocket_t*)sock->driverdata)->canSend = true;
 
 	return ret;
 	unguard;
@@ -223,25 +258,25 @@ int Loop_GetMessage(qsocket_t* sock)
 
 //==========================================================================
 //
-//	Loop_SendMessage
+//	VLoopbackDriver::SendMessage
 //
 //==========================================================================
 
-int Loop_SendMessage(qsocket_t* sock, VMessage* data)
+int VLoopbackDriver::SendMessage(qsocket_t* sock, VMessage* data)
 {
-	guard(Loop_SendMessage);
-	byte	*buffer;
-	int		*bufferLength;
+	guard(VLoopbackDriver::SendMessage);
+	vuint8*		buffer;
+	int*		bufferLength;
 
 	if (!sock->driverdata)
 		return -1;
 
-	bufferLength = &((qsocket_t *)sock->driverdata)->receiveMessageLength;
+	bufferLength = &((qsocket_t*)sock->driverdata)->receiveMessageLength;
 
 	if ((*bufferLength + data->CurSize + 4) > NET_MAXMESSAGE)
 		Sys_Error("Loop_SendMessage: overflow\n");
 
-	buffer = ((qsocket_t *)sock->driverdata)->receiveMessage + *bufferLength;
+	buffer = ((qsocket_t*)sock->driverdata)->receiveMessage + *bufferLength;
 
 	// message type
 	*buffer++ = 1;
@@ -264,25 +299,25 @@ int Loop_SendMessage(qsocket_t* sock, VMessage* data)
 
 //==========================================================================
 //
-//	Loop_SendUnreliableMessage
+//	VLoopbackDriver::SendUnreliableMessage
 //
 //==========================================================================
 
-int Loop_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
+int VLoopbackDriver::SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 {
-	guard(Loop_SendUnreliableMessage);
-	byte	*buffer;
-	int		*bufferLength;
+	guard(VLoopbackDriver::SendUnreliableMessage);
+	vuint8*		buffer;
+	int*		bufferLength;
 
 	if (!sock->driverdata)
 		return -1;
 
-	bufferLength = &((qsocket_t *)sock->driverdata)->receiveMessageLength;
+	bufferLength = &((qsocket_t*)sock->driverdata)->receiveMessageLength;
 
 	if ((*bufferLength + data->CurSize + sizeof(byte) + sizeof(short)) > NET_MAXMESSAGE)
 		return 0;
 
-	buffer = ((qsocket_t *)sock->driverdata)->receiveMessage + *bufferLength;
+	buffer = ((qsocket_t*)sock->driverdata)->receiveMessage + *bufferLength;
 
 	// message type
 	*buffer++ = 2;
@@ -303,13 +338,13 @@ int Loop_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 
 //==========================================================================
 //
-//	Loop_CanSendMessage
+//	VLoopbackDriver::CanSendMessage
 //
 //==========================================================================
 
-bool Loop_CanSendMessage(qsocket_t* sock)
+bool VLoopbackDriver::CanSendMessage(qsocket_t* sock)
 {
-	guard(Loop_CanSendMessage);
+	guard(VLoopbackDriver::CanSendMessage);
 	if (!sock->driverdata)
 		return false;
 	return sock->canSend;
@@ -318,26 +353,26 @@ bool Loop_CanSendMessage(qsocket_t* sock)
 
 //==========================================================================
 //
-//	Loop_CanSendUnreliableMessage
+//	VLoopbackDriver::CanSendUnreliableMessage
 //
 //==========================================================================
 
-bool Loop_CanSendUnreliableMessage(qsocket_t*)
+bool VLoopbackDriver::CanSendUnreliableMessage(qsocket_t*)
 {
 	return true;
 }
 
 //==========================================================================
 //
-//	Loop_Close
+//	VLoopbackDriver::Close
 //
 //==========================================================================
 
-void Loop_Close(qsocket_t* sock)
+void VLoopbackDriver::Close(qsocket_t* sock)
 {
-	guard(Loop_Close);
+	guard(VLoopbackDriver::Close);
 	if (sock->driverdata)
-		((qsocket_t *)sock->driverdata)->driverdata = NULL;
+		((qsocket_t*)sock->driverdata)->driverdata = NULL;
 	sock->receiveMessageLength = 0;
 	sock->sendMessageLength = 0;
 	sock->canSend = true;
@@ -350,39 +385,10 @@ void Loop_Close(qsocket_t* sock)
 
 //==========================================================================
 //
-//	Loop_Shutdown
+//	VLoopbackDriver::Shutdown
 //
 //==========================================================================
 
-void Loop_Shutdown()
+void VLoopbackDriver::Shutdown()
 {
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2006/04/05 17:20:37  dj_jl
-//	Merged size buffer with message class.
-//
-//	Revision 1.8  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.7  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.6  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
-//	
-//	Revision 1.4  2001/12/01 17:40:41  dj_jl
-//	Added support for bots
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

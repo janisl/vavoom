@@ -2794,7 +2794,6 @@ void SV_CheckForNewClients()
 //
 //==========================================================================
 
-extern bool net_connect_bot;
 void SV_SetUserInfo(const char *info);
 
 void SV_ConnectBot(const char *name)

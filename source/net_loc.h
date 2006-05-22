@@ -39,22 +39,26 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct net_driver_t
+class VNetDriver
 {
-	char*		name;
+public:
+	const char*	name;
 	bool		initialised;
-	int			(*Init)();
-	void		(*Listen)(bool state);
-	void		(*SearchForHosts)(bool xmit);
-	qsocket_t*	(*Connect)(const char* host);
-	qsocket_t*	(*CheckNewConnections)();
-	int			(*QGetMessage)(qsocket_t* sock);
-	int			(*QSendMessage)(qsocket_t* sock, VMessage* data);
-	int			(*SendUnreliableMessage)(qsocket_t* sock, VMessage* data);
-	bool		(*CanSendMessage)(qsocket_t* sock);
-	bool		(*CanSendUnreliableMessage)(qsocket_t* sock);
-	void		(*Close)(qsocket_t* sock);
-	void		(*Shutdown)();
+
+	VNetDriver(int, const char*);
+	virtual ~VNetDriver();
+	virtual int Init() = 0;
+	virtual void Listen(bool) = 0;
+	virtual void SearchForHosts(bool) = 0;
+	virtual qsocket_t* Connect(const char*) = 0;
+	virtual qsocket_t* CheckNewConnections() = 0;
+	virtual int GetMessage(qsocket_t*) = 0;
+	virtual int SendMessage(qsocket_t*, VMessage*) = 0;
+	virtual int SendUnreliableMessage(qsocket_t*, VMessage*) = 0;
+	virtual bool CanSendMessage(qsocket_t*) = 0;
+	virtual bool CanSendUnreliableMessage(qsocket_t*) = 0;
+	virtual void Close(qsocket_t*) = 0;
+	virtual void Shutdown() = 0;
 };
 
 class VNetLanDriver
@@ -96,20 +100,19 @@ struct PollProcedure
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-qsocket_t *NET_NewQSocket();
+qsocket_t* NET_NewQSocket(VNetDriver*);
 void NET_FreeQSocket(qsocket_t* sock);
 double SetNetTime();
 void SchedulePollProcedure(PollProcedure* pp, double timeOffset);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern net_driver_t		net_drivers[MAX_NET_DRIVERS];
+extern VNetDriver*		net_drivers[MAX_NET_DRIVERS];
 extern int				net_numdrivers;
 
 extern VNetLanDriver*	net_landrivers[MAX_NET_DRIVERS];
 extern int				net_numlandrivers;
 
-extern int				net_driverlevel;
 extern double			net_time;
 
 extern qsocket_t*		net_activeSockets;

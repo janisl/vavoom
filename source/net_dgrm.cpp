@@ -62,49 +62,96 @@
 
 #include "gamedefs.h"
 #include "net_loc.h"
-#include "net_dgrm.h"
 #include "zlib.h"
 
 // MACROS ------------------------------------------------------------------
 
-// I don't think that communication protocol will change, but just in a case
-#define NET_PROTOCOL_VERSION	1
-
-#define IPPORT_USERRESERVED		26000
-
-//	NetHeader flags
-#define NETFLAG_COMPR_LEN_MASK	0x000007ff
-#define NETFLAG_COMPR_MODE_MASK	0x0000f800
-#define NETFLAG_LENGTH_MASK		0x07ff0000
-#define NETFLAG_FLAGS_MASK		0xf8000000
-#define NETFLAG_COMPR_NONE		0x00000000
-#define NETFLAG_COMPR_ZIP		0x00000800
-#define NETFLAG_EOM				0x08000000
-#define NETFLAG_ACK				0x10000000
-#define NETFLAG_DATA			0x20000000
-#define NETFLAG_UNRELIABLE		0x40000000
-#define NETFLAG_CTL				0x80000000
-
-//	Client request
-#define CCREQ_CONNECT			1
-#define CCREQ_SERVER_INFO		2
-
-//	Server reply
-#define CCREP_ACCEPT			11
-#define CCREP_REJECT			12
-#define CCREP_SERVER_INFO		13
-
 // TYPES -------------------------------------------------------------------
+
+class VDatagramDriver : public VNetDriver
+{
+public:
+	// I don't think that communication protocol will change, but just in a
+	// case
+	enum { NET_PROTOCOL_VERSION = 1 };
+
+	enum { IPPORT_USERRESERVED = 26000 };
+
+	//	NetHeader flags
+	enum
+	{
+		NETFLAG_COMPR_LEN_MASK	= 0x000007ff,
+		NETFLAG_COMPR_MODE_MASK	= 0x0000f800,
+		NETFLAG_LENGTH_MASK		= 0x07ff0000,
+		NETFLAG_FLAGS_MASK		= 0xf8000000,
+		NETFLAG_COMPR_NONE		= 0x00000000,
+		NETFLAG_COMPR_ZIP		= 0x00000800,
+		NETFLAG_EOM				= 0x08000000,
+		NETFLAG_ACK				= 0x10000000,
+		NETFLAG_DATA			= 0x20000000,
+		NETFLAG_UNRELIABLE		= 0x40000000,
+		NETFLAG_CTL				= 0x80000000
+	};
+
+	//	Client request
+	enum
+	{
+		CCREQ_CONNECT			= 1,
+		CCREQ_SERVER_INFO		= 2
+	};
+
+	//	Server reply
+	enum
+	{
+		CCREP_ACCEPT			= 11,
+		CCREP_REJECT			= 12,
+		CCREP_SERVER_INFO		= 13
+	};
+
+	struct
+	{
+		vuint32		length;
+		vuint32		sequence;
+		vuint16		crc;
+		vuint8		data[MAX_DATAGRAM];
+	} packetBuffer;
+
+	//	Statistic counters.
+	static int		packetsSent;
+	static int		packetsReSent;
+	static int		packetsReceived;
+	static int		receivedDuplicateCount;
+	static int		shortPacketCount;
+	static int		droppedDatagrams;
+
+	VDatagramDriver();
+	int Init();
+	void Listen(bool);
+	void SearchForHosts(bool);
+	qsocket_t* Connect(const char*);
+	qsocket_t* CheckNewConnections();
+	int GetMessage(qsocket_t*);
+	int SendMessage(qsocket_t*, VMessage*);
+	int SendUnreliableMessage(qsocket_t*, VMessage*);
+	bool CanSendMessage(qsocket_t*);
+	bool CanSendUnreliableMessage(qsocket_t*);
+	void Close(qsocket_t*);
+	void Shutdown();
+
+	static vuint16 NetbufferChecksum(const vuint8*, int);
+	void SearchForHosts(VNetLanDriver*, bool);
+	qsocket_t* Connect(VNetLanDriver*, const char*);
+	qsocket_t* CheckNewConnections(VNetLanDriver*);
+	int BuildNetPacket(vuint32, vuint32, vuint8*, vuint32);
+	int SendMessageNext(qsocket_t*);
+	int ReSendMessage(qsocket_t*);
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-static vuint16 NetbufferChecksum(const vuint8* buf, int len);
-static int ReSendMessage(qsocket_t* sock);
-static int SendMessageNext(qsocket_t* sock);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -119,31 +166,37 @@ extern TArray<VStr>	wadfiles;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static struct
-{
-	vuint32		length;
-	vuint32		sequence;
-	vuint16		crc;
-	vuint8		data[MAX_DATAGRAM];
-} packetBuffer;
+static VDatagramDriver	Impl;
 
-/* statistic counters */
-static int		packetsSent = 0;
-static int		packetsReSent = 0;
-static int		packetsReceived = 0;
-static int		receivedDuplicateCount = 0;
-static int		shortPacketCount = 0;
-static int		droppedDatagrams;
+//	Statistic counters.
+int		VDatagramDriver::packetsSent = 0;
+int		VDatagramDriver::packetsReSent = 0;
+int		VDatagramDriver::packetsReceived = 0;
+int		VDatagramDriver::receivedDuplicateCount = 0;
+int		VDatagramDriver::shortPacketCount = 0;
+int		VDatagramDriver::droppedDatagrams;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  NetbufferChecksum
+//	VDatagramDriver::VDatagramDriver
 //
 //==========================================================================
 
-static vuint16 NetbufferChecksum(const vuint8* buf, int len)
+VDatagramDriver::VDatagramDriver()
+: VNetDriver(2, "Datagram")
+{
+	memset(&packetBuffer, 0, sizeof(packetBuffer));
+}
+
+//==========================================================================
+//
+//  VDatagramDriver::NetbufferChecksum
+//
+//==========================================================================
+
+vuint16 VDatagramDriver::NetbufferChecksum(const vuint8* buf, int len)
 {
 	guardSlow(NetbufferChecksum);
 	TCRC	crc;
@@ -161,43 +214,19 @@ static vuint16 NetbufferChecksum(const vuint8* buf, int len)
 
 //==========================================================================
 //
-//	StrAddr
+//	VDatagramDriver::Init
 //
 //==========================================================================
 
-#ifdef DEBUG
-static char* StrAddr(sockaddr_t* addr)
-{
-	guardSlow(StrAddr);
-	static char buf[34];
-	byte *p = (byte *)addr;
-	int n;
-
-	for (n = 0; n < 16; n++)
-		sprintf(buf + n * 2, "%02x", *p++);
-	return buf;
-	unguardSlow;
-}
-#endif
-
-//==========================================================================
-//
-//	Datagram_Init
-//
-//==========================================================================
-
-int Datagram_Init()
+int VDatagramDriver::Init()
 {
 	guard(Datagram_Init);
-	int		i;
-	int		csock;
-
 	if (GArgs.CheckParm("-nolan"))
 		return -1;
 
-	for (i = 0; i < net_numlandrivers; i++)
+	for (int i = 0; i < net_numlandrivers; i++)
 	{
-		csock = net_landrivers[i]->Init();
+		int csock = net_landrivers[i]->Init();
 		if (csock == -1)
 			continue;
 		net_landrivers[i]->initialised = true;
@@ -210,13 +239,13 @@ int Datagram_Init()
 
 //==========================================================================
 //
-//	Datagram_Listen
+//	VDatagramDriver::Listen
 //
 //==========================================================================
 
-void Datagram_Listen(bool state)
+void VDatagramDriver::Listen(bool state)
 {
-	guard(Datagram_Listen);
+	guard(VDatagramDriver::Listen);
 	for (int i = 0; i < net_numlandrivers; i++)
 		if (net_landrivers[i]->initialised)
 			net_landrivers[i]->Listen(state);
@@ -225,13 +254,13 @@ void Datagram_Listen(bool state)
 
 //==========================================================================
 //
-//	_Datagram_SearchForHosts
+//	VDatagramDriver::SearchForHosts
 //
 //==========================================================================
 
-static void _Datagram_SearchForHosts(VNetLanDriver* Drv, bool xmit)
+void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 {
-	guard(_Datagram_SearchForHosts);
+	guard(VDatagramDriver::SearchForHosts);
 	sockaddr_t	myaddr;
 	sockaddr_t	readaddr;
 	int			len;
@@ -276,7 +305,7 @@ static void _Datagram_SearchForHosts(VNetLanDriver* Drv, bool xmit)
 			continue;
 		if ((control & NETFLAG_FLAGS_MASK) != NETFLAG_CTL)
 			continue;
-		if (((control & NETFLAG_LENGTH_MASK) >> 16) != len)
+		if (((vint32)(control & NETFLAG_LENGTH_MASK) >> 16) != len)
 			continue;
 
 		net_msg >> msgtype;
@@ -346,11 +375,11 @@ static void _Datagram_SearchForHosts(VNetLanDriver* Drv, bool xmit)
 
 //==========================================================================
 //
-//	Datagram_SearchForHosts
+//	VDatagramDriver::SearchForHosts
 //
 //==========================================================================
 
-void Datagram_SearchForHosts(bool xmit)
+void VDatagramDriver::SearchForHosts(bool xmit)
 {
 	guard(Datagram_SearchForHosts);
 	for (int i = 0; i < net_numlandrivers; i++)
@@ -358,20 +387,20 @@ void Datagram_SearchForHosts(bool xmit)
 		if (hostCacheCount == HOSTCACHESIZE)
 			break;
 		if (net_landrivers[i]->initialised)
-			_Datagram_SearchForHosts(net_landrivers[i], xmit);
+			SearchForHosts(net_landrivers[i], xmit);
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	_Datagram_Connect
+//	VDatagramDriver::Connect
 //
 //==========================================================================
 
-static qsocket_t* _Datagram_Connect(VNetLanDriver* Drv, const char* host)
+qsocket_t* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 {
-	guard(_Datagram_Connect);
+	guard(VDatagramDriver::Connect);
 #ifdef CLIENT
 	sockaddr_t		sendaddr;
 	sockaddr_t		readaddr;
@@ -393,7 +422,7 @@ static qsocket_t* _Datagram_Connect(VNetLanDriver* Drv, const char* host)
 	if (newsock == -1)
 		return NULL;
 
-	sock = NET_NewQSocket();
+	sock = NET_NewQSocket(this);
 	if (sock == NULL)
 		goto ErrorReturn2;
 	sock->socket = newsock;
@@ -428,12 +457,6 @@ static qsocket_t* _Datagram_Connect(VNetLanDriver* Drv, const char* host)
 				// is it from the right place?
 				if (sock->landriver->AddrCompare(&readaddr, &sendaddr) != 0)
 				{
-#ifdef DEBUG
-					Con_Printf("wrong reply address\n");
-					Con_Printf("Expected: %s\n", StrAddr (&sendaddr));
-					Con_Printf("Received: %s\n", StrAddr (&readaddr));
-					SCR_UpdateScreen ();
-#endif
 					ret = 0;
 					continue;
 				}
@@ -459,7 +482,7 @@ static qsocket_t* _Datagram_Connect(VNetLanDriver* Drv, const char* host)
 					ret = 0;
 					continue;
 				}
-				if (((control & NETFLAG_LENGTH_MASK) >> 16) != ret)
+				if (((vint32)(control & NETFLAG_LENGTH_MASK) >> 16) != ret)
 				{
 					ret = 0;
 					continue;
@@ -545,18 +568,18 @@ ErrorReturn2:
 
 //==========================================================================
 //
-//	Datagram_Connect
+//	VDatagramDriver::Connect
 //
 //==========================================================================
 
-qsocket_t* Datagram_Connect(const char* host)
+qsocket_t* VDatagramDriver::Connect(const char* host)
 {
 	guard(Datagram_Connect);
 	for (int i = 0; i < net_numlandrivers; i++)
 	{
 		if (net_landrivers[i]->initialised)
 		{
-			qsocket_t* ret = _Datagram_Connect(net_landrivers[i], host);
+			qsocket_t* ret = Connect(net_landrivers[i], host);
 			if (ret)
 			{
 				return ret;
@@ -569,13 +592,13 @@ qsocket_t* Datagram_Connect(const char* host)
 
 //==========================================================================
 //
-//	_Datagram_CheckNewConnections
+//	VDatagramDriver::CheckNewConnections
 //
 //==========================================================================
 
-static qsocket_t* _Datagram_CheckNewConnections(VNetLanDriver* Drv)
+qsocket_t* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 {
-	guard(_Datagram_CheckNewConnections);
+	guard(VDatagramDriver::CheckNewConnections);
 #ifdef SERVER
 	sockaddr_t	clientaddr;
 	sockaddr_t	newaddr;
@@ -607,7 +630,7 @@ static qsocket_t* _Datagram_CheckNewConnections(VNetLanDriver* Drv)
 		return NULL;
 	if ((control & NETFLAG_FLAGS_MASK) != NETFLAG_CTL)
 		return NULL;
-	if (((control & NETFLAG_LENGTH_MASK) >> 16) != len)
+	if (((vint32)(control & NETFLAG_LENGTH_MASK) >> 16) != len)
 		return NULL;
 
 	net_msg >> command;
@@ -659,7 +682,7 @@ static qsocket_t* _Datagram_CheckNewConnections(VNetLanDriver* Drv)
 	// see if this guy is already connected
 	for (s = net_activeSockets; s; s = s->next)
 	{
-		if (s->driver != net_driverlevel)
+		if (s->driver != this)
 			continue;
 		ret = Drv->AddrCompare(&clientaddr, &s->addr);
 		if (ret >= 0)
@@ -687,7 +710,7 @@ static qsocket_t* _Datagram_CheckNewConnections(VNetLanDriver* Drv)
 	}
 
 	// allocate a QSocket
-	sock = NET_NewQSocket();
+	sock = NET_NewQSocket(this);
 	if (sock == NULL)
 	{
 		// no room; try to let him know
@@ -745,18 +768,18 @@ static qsocket_t* _Datagram_CheckNewConnections(VNetLanDriver* Drv)
 
 //==========================================================================
 //
-//	Datagram_CheckNewConnections
+//	VDatagramDriver::CheckNewConnections
 //
 //==========================================================================
 
-qsocket_t* Datagram_CheckNewConnections()
+qsocket_t* VDatagramDriver::CheckNewConnections()
 {
-	guard(Datagram_CheckNewConnections);
+	guard(VDatagramDriver::CheckNewConnections);
 	for (int i = 0; i < net_numlandrivers; i++)
 	{
 		if (net_landrivers[i]->initialised)
 		{
-			qsocket_t* ret = _Datagram_CheckNewConnections(net_landrivers[i]);
+			qsocket_t* ret = CheckNewConnections(net_landrivers[i]);
 			if (ret != NULL)
 				return ret;
 		}
@@ -767,13 +790,13 @@ qsocket_t* Datagram_CheckNewConnections()
 
 //==========================================================================
 //
-//	Datagram_GetMessage
+//	VDatagramDriver::GetMessage
 //
 //==========================================================================
 
-int Datagram_GetMessage(qsocket_t* sock)
+int VDatagramDriver::GetMessage(qsocket_t* sock)
 {
-	guard(Datagram_GetMessage);
+	guard(VDatagramDriver::GetMessage);
 	dword		sequence;
 	dword		length;
 	dword		flags;
@@ -971,13 +994,14 @@ int Datagram_GetMessage(qsocket_t* sock)
 
 //==========================================================================
 //
-//	BuildNetPacket
+//	VDatagramDriver::BuildNetPacket
 //
 //==========================================================================
 
-static int BuildNetPacket(vuint32 Flags, vuint32 Sequence, vuint8* Data,
-	vuint32 DataLen)
+int VDatagramDriver::BuildNetPacket(vuint32 Flags, vuint32 Sequence,
+	vuint8* Data, vuint32 DataLen)
 {
+	guard(VDatagramDriver::BuildNetPacket);
 	vuint32 ComprMethod = NETFLAG_COMPR_NONE;
 	vuint32 ComprLength = DataLen;
 
@@ -1005,17 +1029,18 @@ static int BuildNetPacket(vuint32 Flags, vuint32 Sequence, vuint8* Data,
 	packetBuffer.sequence = BigLong(Sequence);
 	packetBuffer.crc = BigShort(CRC);
 	return PacketLen;
+	unguard;
 }
 
 //==========================================================================
 //
-//	Datagram_SendMessage
+//	VDatagramDriver::SendMessage
 //
 //==========================================================================
 
-int Datagram_SendMessage(qsocket_t* sock, VMessage* data)
+int VDatagramDriver::SendMessage(qsocket_t* sock, VMessage* data)
 {
-	guard(Datagram_SendMessage);
+	guard(VDatagramDriver::SendMessage);
 	vuint32		packetLen;
 	vuint32		dataLen;
 	vuint32		eom;
@@ -1061,13 +1086,13 @@ int Datagram_SendMessage(qsocket_t* sock, VMessage* data)
 
 //==========================================================================
 //
-//	SendMessageNext
+//	VDatagramDriver::SendMessageNext
 //
 //==========================================================================
 
-static int SendMessageNext(qsocket_t* sock)
+int VDatagramDriver::SendMessageNext(qsocket_t* sock)
 {
-	guard(SendMessageNext);
+	guard(VDatagramDriver::SendMessageNext);
 	vuint32		packetLen;
 	vuint32		dataLen;
 	vuint32		eom;
@@ -1099,13 +1124,13 @@ static int SendMessageNext(qsocket_t* sock)
 
 //==========================================================================
 //
-//	ReSendMessage
+//	VDatagramDriver::ReSendMessage
 //
 //==========================================================================
 
-static int ReSendMessage(qsocket_t* sock)
+int VDatagramDriver::ReSendMessage(qsocket_t* sock)
 {
-	guard(ReSendMessage);
+	guard(VDatagramDriver::ReSendMessage);
 	vuint32		packetLen;
 	vuint32		dataLen;
 	vuint32		eom;
@@ -1136,13 +1161,13 @@ static int ReSendMessage(qsocket_t* sock)
 
 //==========================================================================
 //
-//	Datagram_SendUnreliableMessage
+//	VDatagramDriver::SendUnreliableMessage
 //
 //==========================================================================
 
-int Datagram_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
+int VDatagramDriver::SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 {
-	guard(Datagram_SendUnreliableMessage);
+	guard(VDatagramDriver::SendUnreliableMessage);
 	vuint32		packetLen;
 
 #ifdef PARANOID
@@ -1166,13 +1191,13 @@ int Datagram_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 
 //==========================================================================
 //
-//	Datagram_CanSendMessage
+//	VDatagramDriver::CanSendMessage
 //
 //==========================================================================
 
-bool Datagram_CanSendMessage(qsocket_t* sock)
+bool VDatagramDriver::CanSendMessage(qsocket_t* sock)
 {
-	guard(Datagram_CanSendMessage);
+	guard(VDatagramDriver::CanSendMessage);
 	if (sock->sendNext)
 		SendMessageNext(sock);
 
@@ -1182,37 +1207,37 @@ bool Datagram_CanSendMessage(qsocket_t* sock)
 
 //==========================================================================
 //
-//	Datagram_CanSendUnreliableMessage
+//	VDatagramDriver::CanSendUnreliableMessage
 //
 //==========================================================================
 
-bool Datagram_CanSendUnreliableMessage(qsocket_t*)
+bool VDatagramDriver::CanSendUnreliableMessage(qsocket_t*)
 {
 	return true;
 }
 
 //==========================================================================
 //
-//	Datagram_Close
+//	VDatagramDriver::Close
 //
 //==========================================================================
 
-void Datagram_Close(qsocket_t* sock)
+void VDatagramDriver::Close(qsocket_t* sock)
 {
-	guard(Datagram_Close);
+	guard(VDatagramDriver::Close);
 	sock->landriver->CloseSocket(sock->socket);
 	unguard;
 }
 
 //==========================================================================
 //
-//	Datagram_Shutdown
+//	VDatagramDriver::Shutdown
 //
 //==========================================================================
 
-void Datagram_Shutdown()
+void VDatagramDriver::Shutdown()
 {
-	guard(Datagram_Shutdown);
+	guard(VDatagramDriver::Shutdown);
 	//
 	// shutdown the lan drivers
 	//
@@ -1258,12 +1283,12 @@ COMMAND(NetStats)
 		GCon->Logf("unreliable messages recv   = %d", unreliableMessagesReceived);
 		GCon->Logf("reliable messages sent     = %d", messagesSent);
 		GCon->Logf("reliable messages received = %d", messagesReceived);
-		GCon->Logf("packetsSent                = %d", packetsSent);
-		GCon->Logf("packetsReSent              = %d", packetsReSent);
-		GCon->Logf("packetsReceived            = %d", packetsReceived);
-		GCon->Logf("receivedDuplicateCount     = %d", receivedDuplicateCount);
-		GCon->Logf("shortPacketCount           = %d", shortPacketCount);
-		GCon->Logf("droppedDatagrams           = %d", droppedDatagrams);
+		GCon->Logf("packetsSent                = %d", VDatagramDriver::packetsSent);
+		GCon->Logf("packetsReSent              = %d", VDatagramDriver::packetsReSent);
+		GCon->Logf("packetsReceived            = %d", VDatagramDriver::packetsReceived);
+		GCon->Logf("receivedDuplicateCount     = %d", VDatagramDriver::receivedDuplicateCount);
+		GCon->Logf("shortPacketCount           = %d", VDatagramDriver::shortPacketCount);
+		GCon->Logf("droppedDatagrams           = %d", VDatagramDriver::droppedDatagrams);
 	}
 	else if (Args[1] == "*")
 	{
@@ -1286,30 +1311,4 @@ COMMAND(NetStats)
 		PrintStats(s);
 	}
 	unguard;
-}
-
-//==========================================================================
-//
-//	VNetLanDriver::VNetLanDriver
-//
-//==========================================================================
-
-VNetLanDriver::VNetLanDriver(int Level, const char* AName)
-: name(AName)
-, initialised(false)
-, controlSock(0)
-{
-	net_landrivers[Level] = this;
-	if (net_numlandrivers <= Level)
-		net_numlandrivers = Level + 1;
-}
-
-//==========================================================================
-//
-//	VNetLanDriver::~VNetLanDriver
-//
-//==========================================================================
-
-VNetLanDriver::~VNetLanDriver()
-{
 }

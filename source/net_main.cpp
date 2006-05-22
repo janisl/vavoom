@@ -30,10 +30,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-// these two macros are to make the code more readable
-#define sfunc	net_drivers[sock->driver]
-#define dfunc	net_drivers[net_driverlevel]
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -62,8 +58,6 @@ char    		my_tcpip_address[NET_NAMELEN];
 bool			serialAvailable;
 bool			ipxAvailable;
 bool			tcpipAvailable;
-
-int				net_driverlevel;
 
 double			net_time;
 
@@ -95,74 +89,19 @@ PollProcedure	slistSendProcedure = {NULL, 0.0, Slist_Send, NULL};
 PollProcedure	slistPollProcedure = {NULL, 0.0, Slist_Poll, NULL};
 #endif
 
+VNetDriver*		net_drivers[MAX_NET_DRIVERS];
+int				net_numdrivers = 0;
+
+VNetLanDriver*	net_landrivers[MAX_NET_DRIVERS];
+int				net_numlandrivers = 0;
+
+bool			net_connect_bot = false;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static PollProcedure*	pollProcedureList = NULL;
 
 static boolean			listening = false;
-
-#include "net_loop.h"
-#include "net_null.h"
-#include "net_dgrm.h"
-
-net_driver_t net_drivers[MAX_NET_DRIVERS] =
-{
-	{
-	"Loopback",
-	false,
-	Loop_Init,
-	Loop_Listen,
-	Loop_SearchForHosts,
-	Loop_Connect,
-	Loop_CheckNewConnections,
-	Loop_GetMessage,
-	Loop_SendMessage,
-	Loop_SendUnreliableMessage,
-	Loop_CanSendMessage,
-	Loop_CanSendUnreliableMessage,
-	Loop_Close,
-	Loop_Shutdown
-	}
-	,
-	{
-	"Null",
-	false,
-	NetNull_Init,
-	NetNull_Listen,
-	NetNull_SearchForHosts,
-	NetNull_Connect,
-	NetNull_CheckNewConnections,
-	NetNull_GetMessage,
-	NetNull_SendMessage,
-	NetNull_SendUnreliableMessage,
-	NetNull_CanSendMessage,
-	NetNull_CanSendUnreliableMessage,
-	NetNull_Close,
-	NetNull_Shutdown
-	}
-	,
-	{
-	"Datagram",
-	false,
-	Datagram_Init,
-	Datagram_Listen,
-	Datagram_SearchForHosts,
-	Datagram_Connect,
-	Datagram_CheckNewConnections,
-	Datagram_GetMessage,
-	Datagram_SendMessage,
-	Datagram_SendUnreliableMessage,
-	Datagram_CanSendMessage,
-	Datagram_CanSendUnreliableMessage,
-	Datagram_Close,
-	Datagram_Shutdown
-	}
-};
-
-int net_numdrivers = 3;
-
-VNetLanDriver* net_landrivers[MAX_NET_DRIVERS];
-int net_numlandrivers = 0;
 
 // CODE --------------------------------------------------------------------
 
@@ -210,13 +149,13 @@ void NET_Init()
 	net_msg.Alloc(NET_MAXMESSAGE);
 
 	// initialize all the drivers
-	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
+	for (i = 0; i < net_numdrivers; i++)
 	{
-		if (net_drivers[net_driverlevel].Init() != -1)
+		if (net_drivers[i]->Init() != -1)
 		{
-			net_drivers[net_driverlevel].initialised = true;
+			net_drivers[i]->initialised = true;
 			if (listening)
-				net_drivers[net_driverlevel].Listen(true);
+				net_drivers[i]->Listen(true);
 		}
 	}
 
@@ -246,12 +185,12 @@ void NET_Shutdown()
 	//
 	// shutdown the drivers
 	//
-	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
+	for (int i = 0; i < net_numdrivers; i++)
 	{
-		if (net_drivers[net_driverlevel].initialised)
+		if (net_drivers[i]->initialised)
 		{
-			net_drivers[net_driverlevel].Shutdown();
-			net_drivers[net_driverlevel].initialised = false;
+			net_drivers[i]->Shutdown();
+			net_drivers[i]->initialised = false;
 		}
 	}
 
@@ -341,7 +280,7 @@ void SchedulePollProcedure(PollProcedure* proc, double timeOffset)
 //
 //==========================================================================
 
-qsocket_t* NET_NewQSocket()
+qsocket_t* NET_NewQSocket(VNetDriver* Drv)
 {
 	guard(NET_NewQSocket);
 	qsocket_t*	sock;
@@ -365,7 +304,7 @@ qsocket_t* NET_NewQSocket()
 	sock->disconnected = false;
 	sock->connecttime = net_time;
 	strcpy(sock->address, "UNSET ADDRESS");
-	sock->driver = net_driverlevel;
+	sock->driver = Drv;
 	sock->socket = 0;
 	sock->driverdata = NULL;
 	sock->canSend = true;
@@ -441,11 +380,11 @@ COMMAND(Listen)
 
 	listening = atoi(*Args[1]) ? true : false;
 
-	for (net_driverlevel=0 ; net_driverlevel<net_numdrivers; net_driverlevel++)
+	for (int i = 0; i < net_numdrivers; i++)
 	{
-		if (net_drivers[net_driverlevel].initialised == false)
+		if (net_drivers[i]->initialised == false)
 			continue;
-		dfunc.Listen(listening);
+		net_drivers[i]->Listen(listening);
 	}
 	unguard;
 }
@@ -548,13 +487,13 @@ static void PrintSlistTrailer()
 static void Slist_Send(void*)
 {
 	guard(Slist_Send);
-	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
+	for (int i = 0; i < net_numdrivers; i++)
 	{
-		if (!slistLocal && net_driverlevel == 0)
+		if (!slistLocal && i == 0)
 			continue;
-		if (net_drivers[net_driverlevel].initialised == false)
+		if (net_drivers[i]->initialised == false)
 			continue;
-		dfunc.SearchForHosts(true);
+		net_drivers[i]->SearchForHosts(true);
 	}
 
 	if ((Sys_Time() - slistStartTime) < 0.5)
@@ -571,13 +510,13 @@ static void Slist_Send(void*)
 static void Slist_Poll(void*)
 {
 	guard(Slist_Poll);
-	for (net_driverlevel=0; net_driverlevel < net_numdrivers; net_driverlevel++)
+	for (int i = 0; i < net_numdrivers; i++)
 	{
-		if (!slistLocal && net_driverlevel == 0)
+		if (!slistLocal && i == 0)
 			continue;
-		if (net_drivers[net_driverlevel].initialised == false)
+		if (net_drivers[i]->initialised == false)
 			continue;
-		dfunc.SearchForHosts (false);
+		net_drivers[i]->SearchForHosts(false);
 	}
 
 	if (! slistSilent)
@@ -710,11 +649,11 @@ qsocket_t* NET_Connect(const char* InHost)
 	}
 
 JustDoIt:
-	for (net_driverlevel = 0; net_driverlevel < numdrivers; net_driverlevel++)
+	for (int i = 0; i < numdrivers; i++)
 	{
-		if (net_drivers[net_driverlevel].initialised == false)
+		if (net_drivers[i]->initialised == false)
 			continue;
-		ret = dfunc.Connect(host);
+		ret = net_drivers[i]->Connect(host);
 		if (ret)
 		{
 			return ret;
@@ -744,17 +683,15 @@ JustDoIt:
 qsocket_t* NET_CheckNewConnections()
 {
 	guard(NET_CheckNewConnections);
-	qsocket_t	*ret;
-
 	SetNetTime();
 
-	for (net_driverlevel = 0; net_driverlevel < net_numdrivers; net_driverlevel++)
+	for (int i = 0; i < net_numdrivers; i++)
 	{
-		if (net_drivers[net_driverlevel].initialised == false)
+		if (net_drivers[i]->initialised == false)
 			continue;
-		if (net_driverlevel && listening == false)
+		if (i && listening == false)
 			continue;
-		ret = dfunc.CheckNewConnections();
+		qsocket_t* ret = net_drivers[i]->CheckNewConnections();
 		if (ret)
 		{
 			return ret;
@@ -785,7 +722,7 @@ void NET_Close(qsocket_t* sock)
 	SetNetTime();
 
 	// call the driver_Close function
-	sfunc.Close(sock);
+	sock->driver->Close(sock);
 
 	NET_FreeQSocket(sock);
 	unguard;
@@ -820,10 +757,11 @@ int	NET_GetMessage(qsocket_t* sock)
 
 	SetNetTime();
 
-	ret = sfunc.QGetMessage(sock);
+	ret = sock->driver->GetMessage(sock);
 
 	// see if this connection has timed out
-	if (ret == 0 && sock->driver > 1)
+	if (ret == 0 && sock->driver != net_drivers[0] &&
+		sock->driver != net_drivers[1])
 	{
 		if (net_time - sock->lastMessageTime > net_messagetimeout)
 		{
@@ -875,7 +813,7 @@ int NET_SendMessage(qsocket_t* sock, VMessage* data)
 	}
 
 	SetNetTime();
-	r = sfunc.QSendMessage(sock, data);
+	r = sock->driver->SendMessage(sock, data);
 	if (r == 1 && sock->driver)
 		messagesSent++;
 
@@ -893,7 +831,7 @@ int NET_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 {
 	guard(NET_SendUnreliableMessage);
 	int		r;
-	
+
 	if (!sock)
 		return -1;
 
@@ -904,7 +842,7 @@ int NET_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 	}
 
 	SetNetTime();
-	r = sfunc.SendUnreliableMessage(sock, data);
+	r = sock->driver->SendUnreliableMessage(sock, data);
 	if (r == 1 && sock->driver)
 		unreliableMessagesSent++;
 
@@ -924,8 +862,6 @@ int NET_SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 bool NET_CanSendMessage(qsocket_t* sock)
 {
 	guard(NET_CanSendMessage);
-	int		r;
-	
 	if (!sock)
 		return false;
 
@@ -934,9 +870,7 @@ bool NET_CanSendMessage(qsocket_t* sock)
 
 	SetNetTime();
 
-	r = sfunc.CanSendMessage(sock);
-	
-	return r;
+	return sock->driver->CanSendMessage(sock);
 	unguard;
 }
 
@@ -1006,3 +940,54 @@ slist_t* GetSlist()
 }
 
 #endif
+
+//==========================================================================
+//
+//	VNetDriver::VNetDriver
+//
+//==========================================================================
+
+VNetDriver::VNetDriver(int Level, const char* AName)
+: name(AName)
+, initialised(false)
+{
+	net_drivers[Level] = this;
+	if (net_numdrivers <= Level)
+		net_numdrivers = Level + 1;
+}
+
+//==========================================================================
+//
+//	VNetDriver::~VNetDriver
+//
+//==========================================================================
+
+VNetDriver::~VNetDriver()
+{
+}
+
+//==========================================================================
+//
+//	VNetLanDriver::VNetLanDriver
+//
+//==========================================================================
+
+VNetLanDriver::VNetLanDriver(int Level, const char* AName)
+: name(AName)
+, initialised(false)
+, controlSock(0)
+{
+	net_landrivers[Level] = this;
+	if (net_numlandrivers <= Level)
+		net_numlandrivers = Level + 1;
+}
+
+//==========================================================================
+//
+//	VNetLanDriver::~VNetLanDriver
+//
+//==========================================================================
+
+VNetLanDriver::~VNetLanDriver()
+{
+}

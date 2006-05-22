@@ -35,6 +35,7 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VNetDriver;
 class VNetLanDriver;
 
 struct sockaddr_t
@@ -54,7 +55,7 @@ struct qsocket_t
 	bool			canSend;
 	bool			sendNext;
 	
-	int				driver;
+	VNetDriver*		driver;
 	VNetLanDriver*	landriver;
 	int				socket;
 	void*			driverdata;
@@ -101,3 +102,4 @@ void NET_Poll();
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern VMessage		net_msg;
+extern bool			net_connect_bot;
