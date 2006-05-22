@@ -2747,8 +2747,10 @@ void VPngTexture::GetDimensions()
 void VPngTexture::ReadFunc(png_structp png, png_bytep data, png_size_t len)
 {
 	guard(ReadFunc);
+#ifdef CLIENT
 	VStream* Strm = (VStream*)png_get_io_ptr(png);
 	Strm->Serialise(data, len);
+#endif
 	unguard;
 }
 
