@@ -57,8 +57,6 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern builtin_info_t	BuiltinInfo[];
-
 extern "C" void TestCaller();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -88,11 +86,6 @@ void PR_Init()
 	pr_stack[0] = STACK_ID;
 	pr_stack[MAX_PROG_STACK - 1] = STACK_ID;
 	pr_stackPtr = pr_stack + 1;
-	for (int i = 0; BuiltinInfo[i].name; i++)
-	{
-		new FBuiltinInfo(BuiltinInfo[i].name, BuiltinInfo[i].OuterClass,
-				BuiltinInfo[i].func);
-	}
 }
 
 //==========================================================================

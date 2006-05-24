@@ -202,7 +202,7 @@ void SpawnClient()
 	else
 	{
 		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			P_GetPlayerNum(self)]);
+			GetPlayerNum()]);
 	}
 }
 
@@ -234,10 +234,10 @@ void NetGameReborn()
 	}
 
 	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		P_GetPlayerNum(self)]))
+		GetPlayerNum()]))
 	{
 		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			P_GetPlayerNum(self)]);
+			GetPlayerNum()]);
 		return;
 	}
 
@@ -252,7 +252,7 @@ void NetGameReborn()
 		// he's going to be inside something.  Too bad.
 	}
 	SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		P_GetPlayerNum(self)]);
+		GetPlayerNum()]);
 }
 
 //==========================================================================
@@ -363,7 +363,7 @@ void DeathMatchSpawnPlayer()
 	}
 
 	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(&Level.PlayerStarts[P_GetPlayerNum(self)]);
+	SpawnPlayer(&Level.PlayerStarts[GetPlayerNum()]);
 }
 
 //==========================================================================
@@ -515,7 +515,7 @@ void PlayerReborn()
 #ifndef	NO_BOTS
 	b = Bot;
 #endif
-	ClearPlayer(self);
+	ClearPlayer();
 #ifndef	NO_BOTS
 	Bot = b;
 #endif
@@ -1147,7 +1147,7 @@ void PlayerInSpecialSector(float deltaTime)
 		SecretCount++;
 		Level.Game.level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
-		centerprint(self, "You found a secret area");
+		centerprint("You found a secret area");
 	}
 
 	// Has hitten ground.
@@ -2805,10 +2805,10 @@ void Cheat_God()
 		if (MO)
 			MO.Health = GOD_HEALTH;
 		Health = GOD_HEALTH;
-		cprint(self, "Degreelessness Mode On");
+		cprint("Degreelessness Mode On");
 	}
 	else
-		cprint(self, "Degreelessness Mode Off");
+		cprint("Degreelessness Mode Off");
 }
 
 //==========================================================================
@@ -2821,9 +2821,9 @@ void Cheat_NoClip()
 {
 	Cheats ^= CF_NOCLIP;
 	if (Cheats & CF_NOCLIP)
-		cprint(self, "No Clipping Mode ON");
+		cprint("No Clipping Mode ON");
 	else
-		cprint(self, "No Clipping Mode OFF");
+		cprint("No Clipping Mode OFF");
 }
 
 //==========================================================================
@@ -3066,7 +3066,7 @@ void Cheat_Gimme()
 		ArmorType = 2;
 		ArmorPoints = 200;
 	}
-	cprint(self, "YOU GOT IT");
+	cprint("YOU GOT IT");
 }
 
 //==========================================================================
@@ -3102,89 +3102,9 @@ int P_Massacre()
 
 void Cheat_KillAll()
 {
-	cprint(self, "%d MONSTERS KILLED", P_Massacre());
+	cprint("%d MONSTERS KILLED", P_Massacre());
 }
 
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.25  2006/04/09 11:20:03  dj_jl
-//  Allow switching from chainsaw to fists.
-//
-//  Revision 1.24  2006/03/19 17:20:35  dj_jl
-//  Added explicit type casts.
-//
-//  Revision 1.23  2006/03/12 19:51:04  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.22  2006/03/02 18:28:23  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.21  2006/02/28 22:44:18  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.20  2006/02/26 20:55:26  dj_jl
-//  Proper serialisation of level and players.
-//
-//  Revision 1.19  2006/02/17 19:06:51  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.18  2006/02/15 23:29:43  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.17  2006/02/13 18:30:16  dj_jl
-//  Moved all server progs global functions to classes.
-//
-//  Revision 1.16  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.15  2006/01/18 19:14:06  dj_jl
-//  Switch to previous and next weapon.
-//
-//  Revision 1.14  2005/12/27 22:22:27  dj_jl
-//  Created level info class, moved action special handling to it.
-//
-//  Revision 1.13  2005/12/22 19:06:20  dj_jl
-//  Fixed status bar face.
-//
-//  Revision 1.12  2005/12/11 21:31:39  dj_jl
-//  Made path traversal callbacks class members.
-//
-//  Revision 1.11  2005/11/24 20:24:26  dj_jl
-//  Removed unused fields from Object class.
-//
-//  Revision 1.10  2005/11/17 23:05:22  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.9  2005/03/28 07:34:49  dj_jl
-//  Some Boom line specials and other improvements.
-//
-//  Revision 1.8  2005/03/16 15:04:20  dj_jl
-//  More work on line specials.
-//
-//  Revision 1.7  2004/12/27 12:23:11  dj_jl
-//  Multiple small changes for version 1.16
-//
-//  Revision 1.6  2004/11/22 07:36:24  dj_jl
-//  Implemented all sector specials in all games.
-//
-//  Revision 1.5  2004/11/01 07:38:21  dj_jl
-//  Almost all Hexen line specials are available in all games.
-//
-//  Revision 1.4  2004/08/28 12:35:20  dj_jl
-//  Move general client functions to player class.
-//
-//  Revision 1.3  2004/08/23 19:23:42  dj_jl
-//  Moved weapon utilites to player class.
-//
-//  Revision 1.2  2004/08/22 19:23:04  dj_jl
-//  Moved many functions to player class.
-//
-//  Revision 1.1  2003/11/12 16:49:08  dj_jl
-//  Changed player structure into a class
-//
-//**************************************************************************

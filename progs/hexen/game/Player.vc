@@ -224,7 +224,7 @@ void SpawnClient()
 	else
 	{
 		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			P_GetPlayerNum(self)]);
+			GetPlayerNum()]);
 	}
 
 	if (Level.Game.netgame && !Level.Game.deathmatch && playerWasReborn)
@@ -293,11 +293,11 @@ void NetGameReborn()
 
 	foundSpot = false;
 	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		P_GetPlayerNum(self)]))
+		GetPlayerNum()]))
 	{
 		// Appropriate player start spot is open
 		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			P_GetPlayerNum(self)]);
+			GetPlayerNum()]);
 		foundSpot = true;
 	}
 	else
@@ -319,7 +319,7 @@ void NetGameReborn()
 	{
 		// Player's going to be inside something
 		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			P_GetPlayerNum(self)]);
+			GetPlayerNum()]);
 	}
 
 	// Restore keys and weapons
@@ -444,7 +444,7 @@ void DeathMatchSpawnPlayer()
 	}
 
 	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(&Level.PlayerStarts[P_GetPlayerNum(self)]);
+	SpawnPlayer(&Level.PlayerStarts[GetPlayerNum()]);
 }
 
 //==========================================================================
@@ -597,7 +597,7 @@ void PlayerReborn()
 	BotPlayer B;
 
 	B = Bot;
-	ClearPlayer(self);
+	ClearPlayer();
 	Bot = B;
 
 	PClass = BaseClass;
@@ -1452,7 +1452,7 @@ void PlayerInSpecialSector(float deltaTime)
 		SecretCount++;
 		Level.Game.level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
-		centerprint(self, "You found a secret area");
+		centerprint("You found a secret area");
 	}
 
 	if (MO.Sector->special <= SECSPEC_LightFlicker &&
@@ -2880,7 +2880,7 @@ bool UseArtifact(int arti)
 		}
 		else
 		{
-			centerprint(self, "YOU CANNOT USE THIS HERE");
+			centerprint("YOU CANNOT USE THIS HERE");
 			return false;
 		}
 		break;
@@ -3771,11 +3771,11 @@ void Cheat_God()
 	Cheats ^= CF_GODMODE;
 	if (Cheats & CF_GODMODE)
 	{
-		cprint(self, "GOD MODE ON");
+		cprint("GOD MODE ON");
 	}
 	else
 	{
-		cprint(self, "GOD MODE OFF");
+		cprint("GOD MODE OFF");
 	}
 }
 
@@ -3790,11 +3790,11 @@ void Cheat_NoClip()
 	Cheats ^= CF_NOCLIP;
 	if (Cheats & CF_NOCLIP)
 	{
-		cprint(self, "NO CLIPPING ON");
+		cprint("NO CLIPPING ON");
 	}
 	else
 	{
-		cprint(self, "NO CLIPPING OFF");
+		cprint("NO CLIPPING OFF");
 	}
 }
 
@@ -3823,7 +3823,7 @@ void Cheat_Gimme()
 			Mana[i] = HexenDefs::MAX_MANA;
 		}
 		Pieces = 7;
-		cprint(self, "ALL WEAPONS");
+		cprint("ALL WEAPONS");
 	}
 	if (Cmd_CheckParm("health"))
 	{
@@ -3837,12 +3837,12 @@ void Cheat_Gimme()
 			MO.Health = MAXHEALTH;
 			Health = MO.Health;
 		}
-		cprint(self, "FULL HEALTH");
+		cprint("FULL HEALTH");
 	}
 	if (Cmd_CheckParm("keys"))
 	{
 		Keys = 2047;
-		cprint(self, "ALL KEYS");
+		cprint("ALL KEYS");
 	}
 	if (Cmd_CheckParm("artifacts"))
 	{
@@ -3856,7 +3856,7 @@ void Cheat_Gimme()
 				GiveArtifact(i);
 			}
 		}
-		cprint(self, "ALL ARTIFACTS");
+		cprint("ALL ARTIFACTS");
 	}
 	if (Cmd_CheckParm("puzzles"))
 	{
@@ -3866,7 +3866,7 @@ void Cheat_Gimme()
 		{
 			GiveArtifact(i);
 		}
-		cprint(self, "ALL ARTIFACTS");
+		cprint("ALL ARTIFACTS");
 	}
 }
 
@@ -3906,7 +3906,7 @@ int P_Massacre()
 
 void Cheat_KillAll()
 {
-	cprint(self, "%d MONSTERS KILLED", P_Massacre());
+	cprint("%d MONSTERS KILLED", P_Massacre());
 }
 
 //==========================================================================
@@ -3925,7 +3925,7 @@ void Cheat_Morph()
 	{
 		Actor(MO).MorphPlayer();
 	}
-	cprint(self, "SQUEAL!!");
+	cprint("SQUEAL!!");
 }
 
 //==========================================================================
@@ -3948,7 +3948,7 @@ void Cheat_NoWeapons()
 	}
 	PendingWeapon = HexenDefs::WP_FIRST;
 	Pieces = 0;
-	cprint(self, "CHEATER - YOU DON'T DESERVE WEAPONS");
+	cprint("CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
 //==========================================================================
@@ -3975,7 +3975,7 @@ void Cheat_Class()
 		pclass = HexenDefs::PCLASS_MAGE;
 	else
 	{
-		cprint(self, "INVALID PLAYER CLASS");
+		cprint("INVALID PLAYER CLASS");
 		return;
 	}
 	PClass = pclass;

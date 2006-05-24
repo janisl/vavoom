@@ -415,6 +415,135 @@ public:
 	DECLARE_FUNCTION(FindClass)
 	DECLARE_FUNCTION(StateIsInRange)
 
+#ifdef CLIENT
+	DECLARE_FUNCTION(P_GetMapName)
+	DECLARE_FUNCTION(P_GetMapLumpName)
+	DECLARE_FUNCTION(P_TranslateMap)
+	DECLARE_FUNCTION(KeyNameForNum)
+	DECLARE_FUNCTION(IN_GetBindingKeys)
+	DECLARE_FUNCTION(IN_SetBinding)
+	DECLARE_FUNCTION(SV_GetSaveString)
+	DECLARE_FUNCTION(StartSearch)
+	DECLARE_FUNCTION(GetSlist)
+
+	DECLARE_FUNCTION(LoadTextLump)
+	DECLARE_FUNCTION(AllocDlight)
+	DECLARE_FUNCTION(NewParticle)
+
+	//	Graphics
+	DECLARE_FUNCTION(SetVirtualScreen)
+	DECLARE_FUNCTION(R_RegisterPic)
+	DECLARE_FUNCTION(R_RegisterPicPal)
+	DECLARE_FUNCTION(R_GetPicInfo)
+	DECLARE_FUNCTION(R_DrawPic)
+	DECLARE_FUNCTION(R_DrawPic2)
+	DECLARE_FUNCTION(R_DrawShadowedPic)
+	DECLARE_FUNCTION(R_InstallSprite)
+	DECLARE_FUNCTION(R_DrawSpritePatch)
+	DECLARE_FUNCTION(InstallModel)
+	DECLARE_FUNCTION(R_DrawModelFrame)
+	DECLARE_FUNCTION(R_FillRectWithFlat)
+	DECLARE_FUNCTION(R_ShadeRect)
+	DECLARE_FUNCTION(R_FillRect)
+
+	//	Text
+	DECLARE_FUNCTION(T_SetFont)
+	DECLARE_FUNCTION(T_SetAlign)
+	DECLARE_FUNCTION(T_SetDist)
+	DECLARE_FUNCTION(T_SetShadow)
+	DECLARE_FUNCTION(T_TextWidth)
+	DECLARE_FUNCTION(T_TextHeight)
+	DECLARE_FUNCTION(T_DrawText)
+	DECLARE_FUNCTION(T_DrawNText)
+	DECLARE_FUNCTION(T_DrawTextW)
+	DECLARE_FUNCTION(T_DrawCursor)
+
+	//	Client side sound
+	DECLARE_FUNCTION(LocalSound)
+	DECLARE_FUNCTION(IsLocalSoundPlaying)
+	DECLARE_FUNCTION(StopLocalSounds)
+
+	DECLARE_FUNCTION(TranslateKey)
+#endif
+#ifdef SERVER
+	//	Print functions
+	DECLARE_FUNCTION(bprint)
+
+	//	Map utilites
+	DECLARE_FUNCTION(LineOpenings)
+	DECLARE_FUNCTION(P_BoxOnLineSide)
+	DECLARE_FUNCTION(P_BlockThingsIterator)
+	DECLARE_FUNCTION(P_PathTraverse)
+	DECLARE_FUNCTION(FindThingGap)
+	DECLARE_FUNCTION(FindOpening)
+	DECLARE_FUNCTION(PointInRegion)
+	DECLARE_FUNCTION(AddExtraFloor)
+	DECLARE_FUNCTION(SwapPlanes)
+	DECLARE_FUNCTION(MapBlock)
+	DECLARE_FUNCTION(P_ChangeSector)
+
+	//	Mobj utilites
+	DECLARE_FUNCTION(NewMobjThinker)
+	DECLARE_FUNCTION(NextMobj)
+
+	//	Special thinker utilites
+	DECLARE_FUNCTION(NewSpecialThinker)
+	DECLARE_FUNCTION(RemoveSpecialThinker)
+	DECLARE_FUNCTION(P_ChangeSwitchTexture)
+	DECLARE_FUNCTION(NextThinker)
+
+	//	Polyobj functions
+	DECLARE_FUNCTION(SpawnPolyobj)
+	DECLARE_FUNCTION(AddAnchorPoint)
+	DECLARE_FUNCTION(GetPolyobj)
+	DECLARE_FUNCTION(GetPolyobjMirror)
+	DECLARE_FUNCTION(PO_MovePolyobj)
+	DECLARE_FUNCTION(PO_RotatePolyobj)
+
+	//	ACS functions
+	DECLARE_FUNCTION(StartACS)
+	DECLARE_FUNCTION(SuspendACS)
+	DECLARE_FUNCTION(TerminateACS)
+	DECLARE_FUNCTION(TagFinished)
+	DECLARE_FUNCTION(PolyobjFinished)
+
+	//	Sound functions
+	DECLARE_FUNCTION(StartSoundAtVolume)
+	DECLARE_FUNCTION(SectorStartSound)
+	DECLARE_FUNCTION(SectorStopSound)
+	DECLARE_FUNCTION(GetSoundPlayingInfo)
+	DECLARE_FUNCTION(GetSoundID)
+	DECLARE_FUNCTION(SetSeqTrans)
+	DECLARE_FUNCTION(GetSeqTrans)
+	DECLARE_FUNCTION(SectorStartSequence)
+	DECLARE_FUNCTION(SectorStopSequence)
+	DECLARE_FUNCTION(PolyobjStartSequence)
+	DECLARE_FUNCTION(PolyobjStopSequence)
+
+	DECLARE_FUNCTION(G_ExitLevel)
+	DECLARE_FUNCTION(G_SecretExitLevel)
+	DECLARE_FUNCTION(G_Completed)
+	DECLARE_FUNCTION(SB_Start)
+	DECLARE_FUNCTION(TerrainType)
+	DECLARE_FUNCTION(P_ForceLightning)
+	DECLARE_FUNCTION(SetFloorPic)
+	DECLARE_FUNCTION(SetCeilPic)
+	DECLARE_FUNCTION(SetLineTexture)
+	DECLARE_FUNCTION(SetLineTransluc)
+	DECLARE_FUNCTION(SendFloorSlope)
+	DECLARE_FUNCTION(SendCeilingSlope)
+	DECLARE_FUNCTION(SetSecLightColor)
+	DECLARE_FUNCTION(SetFloorLightSector)
+	DECLARE_FUNCTION(SetCeilingLightSector)
+	DECLARE_FUNCTION(SetHeightSector)
+	DECLARE_FUNCTION(FindModel)
+	DECLARE_FUNCTION(GetModelIndex)
+	DECLARE_FUNCTION(FindSkin)
+	DECLARE_FUNCTION(FindClassFromEditorId)
+	DECLARE_FUNCTION(FindClassFromScriptId)
+	DECLARE_FUNCTION(ChangeMusic)
+	DECLARE_FUNCTION(FindSectorFromTag)
+#endif
 };
 
 // Dynamically cast an object type-safely.

@@ -29,17 +29,19 @@
 
 // TYPES -------------------------------------------------------------------
 
+enum
+{
+	MSG_SV_DATAGRAM,
+	MSG_SV_RELIABLE,
+	MSG_SV_SIGNON,
+	MSG_SV_CLIENT,
+	MSG_CL_MESSAGE
+};
+
 class VProgsReader;
 struct dprograms_t;
 
 typedef void (*builtin_t)();
-
-struct builtin_info_t
-{
-	char*		name;
-    builtin_t	func;
-	VClass		*OuterClass;
-};
 
 class FBuiltinInfo
 {

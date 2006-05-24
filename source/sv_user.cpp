@@ -254,59 +254,68 @@ COMMAND(SetInfo)
 	unguard;
 }
 
-//**************************************************************************
+//==========================================================================
 //
-//	$Log$
-//	Revision 1.18  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
+//	Natives.
 //
-//	Revision 1.17  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.16  2006/02/15 23:28:18  dj_jl
-//	Moved all server progs global variables to classes.
-//	
-//	Revision 1.15  2004/12/27 12:23:17  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.14  2003/11/12 16:47:40  dj_jl
-//	Changed player structure into a class
-//	
-//	Revision 1.13  2003/07/11 16:45:20  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.12  2003/03/08 16:02:53  dj_jl
-//	A little multiplayer fix.
-//	
-//	Revision 1.11  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.10  2002/07/13 07:50:58  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.9  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.8  2002/01/17 18:21:40  dj_jl
-//	Fixed Hexen class bug
-//	
-//	Revision 1.7  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/12/01 17:40:41  dj_jl
-//	Added support for bots
-//	
-//	Revision 1.5  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.4  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VBasePlayer, cprint)
+{
+	const char* msg = PF_FormatString();
+	P_GET_SELF;
+	SV_ClientPrintf(Self, msg);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, centerprint)
+{
+	const char* msg = PF_FormatString();
+	P_GET_SELF;
+	SV_ClientCenterPrintf(Self, msg);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, GetPlayerNum)
+{
+	P_GET_SELF;
+	RET_INT(SV_GetPlayerNum(Self));
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
+{
+	P_GET_SELF;
+
+	Self->PClass = 0;
+	Self->ForwardMove = 0;
+	Self->SideMove = 0;
+	Self->FlyMove = 0;
+	Self->Buttons = 0;
+	Self->Impulse = 0;
+	Self->MO = NULL;
+	Self->PlayerState = 0;
+	Self->ViewOrg = TVec(0, 0, 0);
+	Self->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
+	Self->Health = 0;
+	Self->Items = 0;
+	Self->PlayerFlags &= ~VBasePlayer::PF_AttackDown;
+	Self->PlayerFlags &= ~VBasePlayer::PF_UseDown;
+	Self->ExtraLight = 0;
+	Self->FixedColormap = 0;
+	Self->Palette = 0;
+	memset(Self->CShifts, 0, sizeof(Self->CShifts));
+	Self->PSpriteSY = 0;
+	memset((vuint8*)Self + sizeof(VBasePlayer), 0,
+		Self->GetClass()->ClassSize - sizeof(VBasePlayer));
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, SelectClientMsg)
+{
+	P_GET_INT(msgtype);
+	P_GET_SELF;
+	switch (msgtype)
+	{
+	case MSG_SV_CLIENT:
+		pr_msg = &Self->Message;
+		break;
+	}
+}
+

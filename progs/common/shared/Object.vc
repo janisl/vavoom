@@ -1479,7 +1479,6 @@ native final bool IsDestroyed();
 
 //  Shut down client and server, go to title
 native static final void Error(string format, ...);
-
 //  Exit programm with error
 native static final void FatalError(string format, ...);
 
@@ -1489,22 +1488,16 @@ native static final void FatalError(string format, ...);
 
 //  Create a new cvar
 native static final void CreateCvar(name Name, string default_value, int flags);
-
 //  Read value
 native static final int GetCvar(name Name);
-
 //  Set cvar value
 native static final void SetCvar(name Name, int value);
-
 //  Read float value
 native static final float GetCvarF(name Name);
-
 //  Set cvar float value
 native static final void SetCvarF(name Name, float value);
-
 //  Read string value
 native static final string GetCvarS(name Name);
-
 //  Set cvar string value
 native static final void SetCvarS(name Name, string value);
 
@@ -1514,63 +1507,44 @@ native static final void SetCvarS(name Name, string value);
 
 //  Normalises angle in range 0..360
 native static final float AngleMod360(float angle);
-
 //  Normalises angle in range -180..180
 native static final float AngleMod180(float angle);
-
 //  Absolute value
 native static final int abs(int val);
-
 //  Absolute value
 native static final float fabs(float val);
-
 //  Sine
 native static final float sin(float angle);
-
 //  Cosine
 native static final float cos(float angle);
-
 //  Tangent
 native static final float tan(float angle);
-
 //  Arctangent
 native static final float atan(float slope);
-
 //  Arctangent
 native static final float atan2(float y, float x);
-
 //  Vector length
 native static final float Length(TVec vec);
-
 //  Normalises vector
 native static final TVec Normalise(TVec vec);
-
 //  Dot product
 native static final float DotProduct(TVec v1, TVec v2);
-
 //  Cross product (perpendicular vector)
 native static final TVec CrossProduct(TVec v1, TVec v2);
-
 //  Creates vectors for given angle vector
 native static final void AngleVectors(TAVec * angles, TVec * forward, TVec * right,
 	TVec * up);
-
 //  Simplified version of AngleVectors, creates only forward vector
 native static final void AngleVector(TAVec * angles, TVec * forward);
-
 //  Create angle vector for a vector
 native static final void VectorAngles(TVec * vec, TAVec * angles);
-
 //  Get z of point with given x and y coords
 // Don't try to use it on a vertical plane
 native static final float GetPlanePointZ(TPlane * plane, TVec point);
-
 //  Returns side 0 (front) or 1 (back).
 native static final int PointOnPlaneSide(TVec point, TPlane * plane);
-
 //  Rotates a direction vector
 native static final TVec RotateDirectionVector(TVec vec, TAVec rot);
-
 //  Rotates vector around Z axis
 native static final void VectorRotateAroundZ(TVec * vec, float angle);
 
@@ -1580,7 +1554,6 @@ native static final void VectorRotateAroundZ(TVec * vec, float angle);
 
 //  Floating random number 0.0 ... 0.999999
 native static final float Random();
-
 //  Integer random number 1 .. 255
 native static final int P_Random();
 
@@ -1591,51 +1564,34 @@ native static final int P_Random();
 //  Pointer to string hack
 native static final string ptrtos(void *ptr);
 #define ARR2STR(array)	ptrtos(&array[0])
-
 //  Get char s[i]
 native static final int strgetchar(string s, int i);
-
 //  Set char s[i]
 native static final void strsetchar(string s, int i, int c);
-
 //  String length
 native static final int strlen(string s);
-
 //  Compare strings
 native static final int strcmp(string s1, string s2);
-
 //  Compare strings ingnoring case
 native static final int stricmp(string s1, string s2);
-
 //  Copy string
 native static final void strcpy(string s1, string s2);
-
 //  Clear string
 native static final void strclr(string s);
-
 //  Append string to string
 native static final void strcat(string s1, string s2);
-
 //  Convert string to lowercase
 native static final void strlwr(string s);
-
 //  Convert string to uppercase
 native static final void strupr(string s);
-
 //  Print into a string
 native static final void sprint(string dest, string format, ...);
-
 //  Does varargs print into a temporary buffer
 native static final string va(string format, ...);
-
 //  Converts string to integer
 native static final int atoi(string str);
-
 //  Converts string to float
 native static final float atof(string str);
-
-//  Converts string to name
-native static final name StrToName(string Str);
 
 //
 //  Printing to console
@@ -1643,7 +1599,6 @@ native static final name StrToName(string Str);
 
 //  Print to console
 native static final void print(string format, ...);
-
 //  Print to console only when developer == 1
 native static final void dprint(string format, ...);
 
@@ -1673,29 +1628,36 @@ native static final int MSG_ReadWord();
 native static final int MSG_ReadLong();
 
 //
-//  Misc
+//  Type conversions
 //
 
 //  float -> int
 native static final int ftoi(float f);
-
 //  int -> float
 native static final float itof(int f);
-native static final int Cmd_CheckParm(string str);
+//  Converts string to name
+native static final name StrToName(string Str);
 
+//
+//  Console command functions
+//
+
+native static final int Cmd_CheckParm(string str);
 //  Adds text to command buffer, same as typing it in console
 native static final void CmdBuf_AddText(string format, ...);
 
+//
+//  Misc
+//
+
 //  Reads key value from info string (userinfo or serverinfo)
 native static final string Info_ValueForKey(string info, string key);
-
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
 native static final bool WadLumpPresent(name Name);
-
 native static final Object SpawnObject(classid cid);
-
 native static final classid FindClass(name Name);
-native static final bool StateIsInRange(state State, state Start, state End, int MaxDepth);
+native static final bool StateIsInRange(state State, state Start, state End,
+	int MaxDepth);
 
 //==========================================================================
 //
@@ -1708,46 +1670,33 @@ native static final bool StateIsInRange(state State, state Start, state End, int
 //
 
 native static final void SetVirtualScreen(int Width, int Height);
-
 //  Registers a graphic, returns handle
 native static final int R_RegisterPic(name Name, int type);
-
 //  Registers a graphic with custom palette, returns handle
 native static final int R_RegisterPicPal(name Name, int type, name palname);
-
 //  Retrieves pic info
 native static final void R_GetPicInfo(int handle, picinfo_t * info);
-
 //  Draws a pic
 native static final void R_DrawPic(int x, int y, int handle);
-
 //  Draws a translucent pic
 native static final void R_DrawPic2(int x, int y, int handle, int trans);
-
 //  Draws a shadowed pic
 native static final void R_DrawShadowedPic(int x, int y, int handle);
-
 //  Installs a sprite model
 native static final void R_InstallSprite(string Name, int index);
-
 //  Draws a sprite
 native static final void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
 	int translation);
-
 //  Installs model
 native static final model_t* InstallModel(string Name);
-
 //  Draws a model
 native static final void R_DrawModelFrame(TVec origin, float angle, model_t * model,
 	int frame, string skin);
-
 //  Draws a rectangle filled with a flat
 native static final void R_FillRectWithFlat(int x, int y, int width, int height,
 	name Name);
-
 //  Darkens a screen region
 native static final void R_ShadeRect(int x, int y, int w, int h, int shade);
-
 //  Draws a coloured rectangle
 native static final void R_FillRect(int x, int y, int w, int h, int colour);
 
@@ -1757,31 +1706,22 @@ native static final void R_FillRect(int x, int y, int w, int h, int colour);
 
 //  Selects active font
 native static final void T_SetFont(int font);
-
 //  Changes text alignement
 native static final void T_SetAlign(int halign, int valign);
-
 //  Changes text spacing
 native static final void T_SetDist(int hdist, int vdist);
-
 //  Enable/disable text shadow
 native static final void T_SetShadow(bool on);
-
 //  Calculates text width
 native static final int T_TextWidth(string text);
-
 //  Calculates text height
 native static final int T_TextHeight(string text);
-
 //  Draws text
 native static final void T_DrawText(int x, int y, string text);
-
 //  Draws text, but no more than n characters
 native static final void T_DrawNText(int x, int y, string text, int n);
-
 //  Draws text wrapping at the width w
 native static final void T_DrawTextW(int x, int y, string text, int w);
-
 //  Draws a cursor at the end of last drawn string
 native static final void T_DrawCursor();
 
@@ -1791,16 +1731,13 @@ native static final void T_DrawCursor();
 
 //  Plays a sound
 native static final void LocalSound(name Name);
-
 //  Checks if sound is still playing.
 native static final bool IsLocalSoundPlaying(name Name);
-
 //  Stops all local sounds.
 native static final void StopLocalSounds();
 
 //  Handle shift+key
 native static final int TranslateKey(int c);
-
 native static final string P_GetMapName(int map);
 native static final string P_GetMapLumpName(int map);
 native static final string P_TranslateMap(int map);
@@ -1810,9 +1747,7 @@ native static final slist_t * GetSlist();
 native static final void KeyNameForNum(int KeyNr, string NameString);
 native static final void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 native static final void IN_SetBinding(int key, string ondown, string onup);
-
 native static final void LoadTextLump(name Name, void *buf, int bufsize);
-
 native static final dlight_t *AllocDlight(int key);
 native static final particle_t *NewParticle();
 
@@ -1829,40 +1764,25 @@ native static final particle_t *NewParticle();
 //  Broadcast message (print to all clients)
 native static final void bprint(string format, ...);
 
-//  Print to client
-native static final void cprint(BasePlayer player, string format, ...);
-
-//  Client's center message
-native static final void centerprint(BasePlayer player, string format, ...);
-
 //
 //  Map utilites
 //
 
 native static final opening_t *LineOpenings(line_t * linedef, TVec point);
-
 //  Returns 0 - front, 1 - back, -1 - on
 native static final int P_BoxOnLineSide(float *tmbox, line_t * ld);
-
-//
 native static final bool P_BlockThingsIterator(int x, int y, Object SelfObj, name FuncName);
-
-//
 native static final bool P_PathTraverse(float x1, float y1, float x2, float y2,
 	int flags, Object SelfObj, name FuncName);
-
 //  Find the best gap that the thing could fit in, given a certain Z
 // position (z1 is foot, z2 is head).
 native static final sec_region_t *FindThingGap(sec_region_t * gaps, TVec point, float z1,
 	float z2);
-
 //  Find the best opening
 native static final opening_t *FindOpening(opening_t * gaps, float z1, float z2);
-
 //  Find best region in sector for a given point
 native static final sec_region_t *PointInRegion(sector_t * sector, TVec p);
 native static final sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
-
 //	Swap sector's floor and ceiling, it's used by level converter to support
 // EDGE and Legacy 3D floors.
 native static final void SwapPlanes(sector_t *s);
@@ -1928,8 +1848,6 @@ native static final void PolyobjStopSequence(polyobj_t * mobj);
 native static final void G_ExitLevel(int Position);
 native static final void G_SecretExitLevel(int Position);
 
-native static final int P_GetPlayerNum(BasePlayer player);
-native static final void ClearPlayer(BasePlayer p);
 native static final void G_Completed(int Map, int Position, int SaveAngle);
 native static final int TerrainType(int pic);
 native static final void P_ForceLightning();
@@ -1954,64 +1872,6 @@ native static final void ChangeMusic(string SongName);
 //  Return next sector # that line tag refers to
 native static final int FindSectorFromTag(int tag, int start);
 
-native static final void MSG_SelectClientMsg(int msgtype, BasePlayer client);
-
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.17  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.16  2006/03/26 12:56:30  dj_jl
-//  Moved added fields to Object.
-//
-//  Revision 1.15  2006/03/23 23:11:50  dj_jl
-//  Added support for final methods.
-//
-//  Revision 1.14  2006/03/19 17:19:38  dj_jl
-//  Added explicit type casts.
-//
-//  Revision 1.13  2006/03/13 21:24:53  dj_jl
-//  Added support for read-only, private and transient fields.
-//
-//  Revision 1.12  2006/03/13 18:33:52  dj_jl
-//  Added function to check if a state is in the range.
-//
-//  Revision 1.11  2006/03/12 20:02:31  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.10  2006/03/06 13:13:55  dj_jl
-//  Client now uses entity class.
-//
-//  Revision 1.9  2006/02/28 22:43:14  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.8  2006/02/25 17:15:55  dj_jl
-//  Implemented proper serialisation of the objects.
-//
-//  Revision 1.7  2006/02/20 22:57:16  dj_jl
-//  Changed client state structure to class.
-//
-//  Revision 1.6  2006/02/19 20:37:42  dj_jl
-//  Made true and false keywords.
-//
-//  Revision 1.5  2006/02/19 14:17:10  dj_jl
-//  Some changes because of compiler changes.
-//
-//  Revision 1.4  2006/02/17 19:06:51  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.3  2005/12/14 20:52:32  dj_jl
-//  State names belong to a class.
-//
-//  Revision 1.2  2005/11/24 20:27:00  dj_jl
-//  Removed unused fields from Object class.
-//
-//  Revision 1.1  2002/10/26 16:32:17  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

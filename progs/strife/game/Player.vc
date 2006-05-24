@@ -168,7 +168,7 @@ void SpawnClient()
 	else
 	{
 		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			P_GetPlayerNum(self)]);
+			GetPlayerNum()]);
 	}
 }
 
@@ -198,10 +198,10 @@ void NetGameReborn()
 	}
 
 	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		P_GetPlayerNum(self)]))
+		GetPlayerNum()]))
 	{
 		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			P_GetPlayerNum(self)]);
+			GetPlayerNum()]);
 		return;
 	}
 
@@ -216,7 +216,7 @@ void NetGameReborn()
 		// he's going to be inside something.  Too bad.
 	}
 	SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		P_GetPlayerNum(self)]);
+		GetPlayerNum()]);
 }
 
 //==========================================================================
@@ -287,7 +287,7 @@ void DeathMatchSpawnPlayer()
 	}
 
 	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(&Level.PlayerStarts[P_GetPlayerNum(self)]);
+	SpawnPlayer(&Level.PlayerStarts[GetPlayerNum()]);
 }
 
 //==========================================================================
@@ -418,7 +418,7 @@ void SpawnPlayer(mthing_t * mthing)
 void PlayerReborn()
 {
 	//  Clear player struct
-	ClearPlayer(self);
+	ClearPlayer();
 
 	//  Set initial data
 	bUseDown = true;	// don't do anything immediately
@@ -1062,13 +1062,13 @@ void GiveQuest(int QuestID)
 	QuestInfo	QInfo;
 	
 	if (Quests & (1 << QuestID))
-		cprint(self, "Already have quest %d", QuestID);
+		cprint("Already have quest %d", QuestID);
 	Quests |= 1 << QuestID;
-	cprint(self, "Got quest %d, quests %x", QuestID, Quests);
+	cprint("Got quest %d, quests %x", QuestID, Quests);
 	QClass = StrifeLevelInfo(Level).GetClassFromID(312 + QuestID);
 	QInfo = QuestInfo(StrifeLevelInfo(Level).Spawn(QClass, vector(0.0, 0.0, 0.0)));
 	if (QInfo.QuestMessage)
-		cprint(self, QInfo.QuestMessage);
+		cprint(QInfo.QuestMessage);
 	QInfo.Remove();
 }
 
@@ -1347,7 +1347,7 @@ void PlayerInSpecialSector(float deltaTime)
 		SecretCount++;
 		Level.Game.level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
-		centerprint(self, "You found a secret area");
+		centerprint("You found a secret area");
 		MO.PlaySound('misc/secret', CHAN_VOICE);
 	}
 
@@ -2552,10 +2552,10 @@ void Cheat_God()
 		if (MO)
 			MO.Health = GOD_HEALTH;
 		Health = GOD_HEALTH;
-		cprint(self, "Degreelessness Mode On");
+		cprint("Degreelessness Mode On");
 	}
 	else
-		cprint(self, "Degreelessness Mode Off");
+		cprint("Degreelessness Mode Off");
 }
 
 //==========================================================================
@@ -2568,9 +2568,9 @@ void Cheat_NoClip()
 {
 	Cheats ^= StrifeDefs::CF_NOCLIP;
 	if (Cheats & StrifeDefs::CF_NOCLIP)
-		cprint(self, "No Clipping Mode ON");
+		cprint("No Clipping Mode ON");
 	else
-		cprint(self, "No Clipping Mode OFF");
+		cprint("No Clipping Mode OFF");
 }
 
 //==========================================================================
@@ -2671,131 +2671,9 @@ int P_Massacre()
 
 void Cheat_KillAll()
 {
-	cprint(self, "%d MONSTERS KILLED", P_Massacre());
+	cprint("%d MONSTERS KILLED", P_Massacre());
 }
 
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.39  2006/04/11 18:27:40  dj_jl
-//  Removed Strife specific mapinfo extensions.
-//
-//  Revision 1.38  2006/04/09 11:19:13  dj_jl
-//  Don't allow switching to weapon with no ammo.
-//
-//  Revision 1.37  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.36  2006/04/06 11:48:52  dj_jl
-//  Fixed several bugs.
-//
-//  Revision 1.35  2006/03/19 17:24:29  dj_jl
-//  Added explicit type casts.
-//
-//  Revision 1.34  2006/03/12 20:01:24  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.33  2006/03/02 18:36:30  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.32  2006/02/28 22:47:55  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.31  2006/02/26 20:56:54  dj_jl
-//  Proper serialisation of level and players.
-//
-//  Revision 1.30  2006/02/17 19:06:53  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.29  2006/02/15 23:34:27  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.28  2006/02/13 18:30:17  dj_jl
-//  Moved all server progs global functions to classes.
-//
-//  Revision 1.27  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.26  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.25  2006/01/18 19:14:07  dj_jl
-//  Switch to previous and next weapon.
-//
-//  Revision 1.24  2006/01/10 19:54:01  dj_jl
-//  Many bug fixes.
-//
-//  Revision 1.23  2006/01/03 20:17:50  dj_jl
-//  Fixed missing sound renaming.
-//
-//  Revision 1.22  2005/12/27 22:22:28  dj_jl
-//  Created level info class, moved action special handling to it.
-//
-//  Revision 1.21  2005/12/22 23:06:00  dj_jl
-//  Fixed ammo and weapon pickups.
-//
-//  Revision 1.20  2005/12/11 21:31:40  dj_jl
-//  Made path traversal callbacks class members.
-//
-//  Revision 1.19  2005/11/24 20:16:24  dj_jl
-//  Removed unused fields from Object class.
-//
-//  Revision 1.18  2005/11/19 13:43:51  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.17  2005/11/07 22:58:23  dj_jl
-//  Fixed hazard palette flash.
-//
-//  Revision 1.16  2005/11/03 22:49:20  dj_jl
-//  Implemented health bars and ammo type icons.
-//
-//  Revision 1.15  2005/04/28 06:57:05  dj_jl
-//  Some cheat fixes.
-//
-//  Revision 1.14  2005/03/28 07:45:29  dj_jl
-//  Some Boom line specials, fixed multiple bugs.
-//
-//  Revision 1.13  2005/03/16 15:04:43  dj_jl
-//  More work on line specials.
-//
-//  Revision 1.12  2004/12/27 12:23:14  dj_jl
-//  Multiple small changes for version 1.16
-//
-//  Revision 1.11  2004/12/22 07:56:47  dj_jl
-//  Fully working Strife support.
-//
-//  Revision 1.10  2004/11/22 07:36:28  dj_jl
-//  Implemented all sector specials in all games.
-//
-//  Revision 1.9  2004/11/01 07:38:23  dj_jl
-//  Almost all Hexen line specials are available in all games.
-//
-//  Revision 1.8  2004/10/18 06:35:21  dj_jl
-//  Implemented many monsters, sigil and some more.
-//
-//  Revision 1.7  2004/10/14 06:21:35  dj_jl
-//  Implemented Programmer.
-//
-//  Revision 1.6  2004/10/13 06:36:30  dj_jl
-//  Implemented items also giving quests.
-//
-//  Revision 1.5  2004/10/12 06:39:07  dj_jl
-//  Various improvements.
-//
-//  Revision 1.4  2004/08/28 12:35:24  dj_jl
-//  Move general client functions to player class.
-//
-//  Revision 1.3  2004/08/23 19:24:01  dj_jl
-//  Moved weapon utilites to player class.
-//
-//  Revision 1.2  2004/08/22 19:23:27  dj_jl
-//  Moved many functions to player class.
-//
-//  Revision 1.1  2003/11/12 16:51:33  dj_jl
-//  Changed player structure into a class
-//
-//**************************************************************************

@@ -35,26 +35,12 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define PF(name)			static void PF_##name(void)
-#define PF_M(cname, name)	static void PF_##cname##__##name(void)
-#define _(name)				{#name, PF_##name, VObject::StaticClass()}
-#define __(name)			{#name, name, VObject::StaticClass()}
-
 // TYPES -------------------------------------------------------------------
-
-enum
-{
-	MSG_SV_DATAGRAM,
-	MSG_SV_RELIABLE,
-	MSG_SV_SIGNON,
-	MSG_SV_CLIENT,
-	MSG_CL_MESSAGE
-};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 VEntity *SV_SpawnMobj(VClass *Class);
-void SV_ForceLightning(void);
+void SV_ForceLightning();
 void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
 VClass* SV_FindClassFromEditorId(int Id);
@@ -76,71 +62,6 @@ VMessage			*pr_msg;
 
 //**************************************************************************
 //
-//	Stack routines
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	Push
-//
-//==========================================================================
-
-static void Push(int value)
-{
-	*(pr_stackPtr++) = value;
-}
-
-//==========================================================================
-//
-// Pop
-//
-//==========================================================================
-
-static int Pop(void)
-{
-	return *(--pr_stackPtr);
-}
-
-//==========================================================================
-//
-//	Popf
-//
-//==========================================================================
-
-static float Popf(void)
-{
-	return *((float*)--pr_stackPtr);
-}
-
-//==========================================================================
-//
-//	Popv
-//
-//==========================================================================
-
-static TVec Popv(void)
-{
-	TVec v;
-	v.z = Popf();
-	v.y = Popf();
-	v.x = Popf();
-	return v;
-}
-
-//==========================================================================
-//
-//	Popf
-//
-//==========================================================================
-
-static VName PopName()
-{
-	return *((VName*)--pr_stackPtr);
-}
-
-//**************************************************************************
-//
 //	Vararg strings
 //
 //**************************************************************************
@@ -149,17 +70,15 @@ static char		vastring[1024];
 
 const char* PF_FormatString()
 {
-	int		count;
 	int		params[16];
-	char*	str;
 	int		pi;
 
-	count = Pop();
+	P_GET_INT(count);
 	for (pi = count - 1; pi >= 0; pi--)
 	{
-		params[pi] = Pop();
+		params[pi] = *(--pr_stackPtr);
 	}
-	str = (char*)Pop();
+	P_GET_PTR(char, str);
 
 	char *src = str;
 	char *dst = vastring;
@@ -172,48 +91,48 @@ const char* PF_FormatString()
 			src++;
 			switch (*src)
 			{
-			 case '%':
+			case '%':
 				*dst = *src;
 				break;
 
-			 case 'i':
-			 case 'd':
+			case 'i':
+			case 'd':
 				strcat(vastring, va("%d", params[pi]));
 				pi++;
 				break;
 
-			 case 'x':
+			case 'x':
 				strcat(vastring, va("%x", params[pi]));
 				pi++;
 				break;
 
-			 case 'f':
+			case 'f':
 				strcat(vastring, va("%f", ((float*)params)[pi]));
 				pi++;
 				break;
 
-			 case 'n':
+			case 'n':
 				strcat(vastring, *((VName*)params)[pi]);
 				pi++;
 				break;
 
-			 case 's':
+			case 's':
 				strcat(vastring, (char*)params[pi]);
 				pi++;
 				break;
 
-			 case 'p':
+			case 'p':
 				strcat(vastring, va("%p", ((void**)params)[pi]));
 				pi++;
 				break;
 
-			 case 'v':
+			case 'v':
 				strcat(vastring, va("(%f,%f,%f)", ((float*)params)[pi],
 					((float*)params)[pi + 1], ((float*)params)[pi + 2]));
 				pi += 3;
 				break;
 
-			 default:
+			default:
 				GCon->Logf(NAME_Dev, "PF_FormatString: Unknown format identifier %s", *src);
 				src--;
 				*dst = *src;
@@ -239,28 +158,7 @@ const char* PF_FormatString()
 	return vastring;
 }
 
-//==========================================================================
-//
-//	PF_MSG_SelectClientMsg
-//
-//==========================================================================
-
 #ifdef SERVER
-
-PF(MSG_SelectClientMsg)
-{
-	int			msgtype;
-	VBasePlayer	*client;
-
-	client = (VBasePlayer*)Pop();
-	msgtype = Pop();
-	switch (msgtype)
-	{
-		case MSG_SV_CLIENT:
-			pr_msg = &client->Message;
-			break;
-	}
-}
 
 //**************************************************************************
 //
@@ -274,39 +172,9 @@ PF(MSG_SelectClientMsg)
 //
 //==========================================================================
 
-PF(bprint)
+IMPLEMENT_FUNCTION(VObject, bprint)
 {
 	SV_BroadcastPrintf(PF_FormatString());
-}
-
-//==========================================================================
-//
-//	PF_cprint
-//
-//==========================================================================
-
-PF(cprint)
-{
-	VBasePlayer*	player;
-
-	PF_FormatString();
-    player = (VBasePlayer*)Pop();
-	SV_ClientPrintf(player, vastring);
-}
-
-//==========================================================================
-//
-//	PF_centerprint
-//
-//==========================================================================
-
-PF(centerprint)
-{
-	VBasePlayer*	player;
-
-	PF_FormatString();
-    player = (VBasePlayer*)Pop();
-	SV_ClientCenterPrintf(player, vastring);
 }
 
 //**************************************************************************
@@ -321,14 +189,11 @@ PF(centerprint)
 //
 //==========================================================================
 
-PF(LineOpenings)
+IMPLEMENT_FUNCTION(VObject, LineOpenings)
 {
-	line_t	*linedef;
-	TVec	point;
-
-	point = Popv();
-	linedef = (line_t*)Pop();
-	Push((int)SV_LineOpenings(linedef, point));
+	P_GET_VEC(point);
+	P_GET_PTR(line_t, linedef);
+	RET_PTR(SV_LineOpenings(linedef, point));
 }
 
 //==========================================================================
@@ -337,14 +202,11 @@ PF(LineOpenings)
 //
 //==========================================================================
 
-PF(P_BoxOnLineSide)
+IMPLEMENT_FUNCTION(VObject, P_BoxOnLineSide)
 {
-	float	*tmbox;
-	line_t	*ld;
-
-	ld = (line_t*)Pop();
-	tmbox = (float*)Pop();
-	Push(P_BoxOnLineSide(tmbox, ld));
+	P_GET_PTR(line_t, ld);
+	P_GET_PTR(float, tmbox);
+	RET_INT(P_BoxOnLineSide(tmbox, ld));
 }
 
 //==========================================================================
@@ -353,20 +215,14 @@ PF(P_BoxOnLineSide)
 //
 //==========================================================================
 
-PF(P_BlockThingsIterator)
+IMPLEMENT_FUNCTION(VObject, P_BlockThingsIterator)
 {
-	int			x;
-	int			y;
-	VObject*	SelfObj;
-	VName		FuncName;
-	VMethod*	func = NULL;
-
-	FuncName = PopName();
-	SelfObj = (VObject*)Pop();
-	y = Pop();
-	x = Pop();
-	func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	Push(SV_BlockThingsIterator(x, y, NULL, SelfObj, func));
+	P_GET_NAME(FuncName);
+	P_GET_REF(VObject, SelfObj);
+	P_GET_INT(y);
+	P_GET_INT(x);
+	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
+	RET_BOOL(SV_BlockThingsIterator(x, y, NULL, SelfObj, func));
 }
 
 //==========================================================================
@@ -375,26 +231,17 @@ PF(P_BlockThingsIterator)
 //
 //==========================================================================
 
-PF(P_PathTraverse)
+IMPLEMENT_FUNCTION(VObject, P_PathTraverse)
 {
-	float		x1;
-	float		y1;
-	float		x2;
-	float		y2;
-	int			flags;
-	VName		FuncName;
-	VObject*	SelfObj;
-	VMethod*	func;
-
-	FuncName = PopName();
-	SelfObj = (VObject*)Pop();
-	flags = Pop();
-	y2 = Popf();
-	x2 = Popf();
-	y1 = Popf();
-	x1 = Popf();
-	func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	Push(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, SelfObj, func));
+	P_GET_NAME(FuncName);
+	P_GET_REF(VObject, SelfObj);
+	P_GET_INT(flags);
+	P_GET_FLOAT(y2);
+	P_GET_FLOAT(x2);
+	P_GET_FLOAT(y1);
+	P_GET_FLOAT(x1);
+	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
+	RET_BOOL(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, SelfObj, func));
 }
 
 //==========================================================================
@@ -403,18 +250,13 @@ PF(P_PathTraverse)
 //
 //==========================================================================
 
-PF(FindThingGap)
+IMPLEMENT_FUNCTION(VObject, FindThingGap)
 {
-	sec_region_t	*gaps;
-	TVec			point;
-	float			z1;
-	float			z2;
-
-	z2 = Popf();
-	z1 = Popf();
-	point = Popv();
-	gaps = (sec_region_t*)Pop();
-	Push((int)SV_FindThingGap(gaps, point, z1, z2));
+	P_GET_FLOAT(z2);
+	P_GET_FLOAT(z1);
+	P_GET_VEC(point);
+	P_GET_PTR(sec_region_t, gaps);
+	RET_PTR(SV_FindThingGap(gaps, point, z1, z2));
 }
 
 //==========================================================================
@@ -423,16 +265,12 @@ PF(FindThingGap)
 //
 //==========================================================================
 
-PF(FindOpening)
+IMPLEMENT_FUNCTION(VObject, FindOpening)
 {
-	opening_t	*gaps;
-	float		z1;
-	float		z2;
-
-	z2 = Popf();
-	z1 = Popf();
-	gaps = (opening_t*)Pop();
-	Push((int)SV_FindOpening(gaps, z1, z2));
+	P_GET_FLOAT(z2);
+	P_GET_FLOAT(z1);
+	P_GET_PTR(opening_t, gaps);
+	RET_PTR(SV_FindOpening(gaps, z1, z2));
 }
 
 //==========================================================================
@@ -441,14 +279,11 @@ PF(FindOpening)
 //
 //==========================================================================
 
-PF(PointInRegion)
+IMPLEMENT_FUNCTION(VObject, PointInRegion)
 {
-	sector_t	*sector;
-	TVec		p;
-
-	p = Popv();
-	sector = (sector_t*)Pop();
-	Push((int)SV_PointInRegion(sector, p));
+	P_GET_VEC(p);
+	P_GET_PTR(sector_t, sector);
+	RET_PTR(SV_PointInRegion(sector, p));
 }
 
 //==========================================================================
@@ -457,14 +292,11 @@ PF(PointInRegion)
 //
 //==========================================================================
 
-PF(AddExtraFloor)
+IMPLEMENT_FUNCTION(VObject, AddExtraFloor)
 {
-	line_t		*line;
-	sector_t	*dst;
-
-	dst = (sector_t*)Pop();
-	line = (line_t*)Pop();
-	Push((int)AddExtraFloor(line, dst));
+	P_GET_PTR(sector_t, dst);
+	P_GET_PTR(line_t, line);
+	RET_PTR(AddExtraFloor(line, dst));
 	sv_signon << (byte)svc_extra_floor
 				<< (short)(line - GLevel->Lines)
 				<< (short)(dst - GLevel->Sectors);
@@ -476,11 +308,9 @@ PF(AddExtraFloor)
 //
 //==========================================================================
 
-PF(SwapPlanes)
+IMPLEMENT_FUNCTION(VObject, SwapPlanes)
 {
-	sector_t	*s;
-
-	s = (sector_t *)Pop();
+	P_GET_PTR(sector_t, s);
 	SwapPlanes(s);
 	sv_signon << (byte)svc_swap_planes << (short)(s - GLevel->Sectors);
 }
@@ -491,12 +321,10 @@ PF(SwapPlanes)
 //
 //==========================================================================
 
-PF(MapBlock)
+IMPLEMENT_FUNCTION(VObject, MapBlock)
 {
-	float x;
-
-	x = Popf();
-	Push(MapBlock(x));
+	P_GET_FLOAT(x);
+	RET_INT(MapBlock(x));
 }
 
 //==========================================================================
@@ -505,14 +333,11 @@ PF(MapBlock)
 //
 //==========================================================================
 
-PF(P_ChangeSector)
+IMPLEMENT_FUNCTION(VObject, P_ChangeSector)
 {
-	sector_t*	sec;
-	int			crunch;
-
-	crunch = Pop();
-	sec = (sector_t *)Pop();
-	Push(P_ChangeSector(sec, crunch));
+	P_GET_INT(crunch);
+	P_GET_PTR(sector_t, sec);
+	RET_BOOL(P_ChangeSector(sec, crunch));
 }
 
 //**************************************************************************
@@ -527,12 +352,10 @@ PF(P_ChangeSector)
 //
 //==========================================================================
 
-PF(NewMobjThinker)
+IMPLEMENT_FUNCTION(VObject, NewMobjThinker)
 {
-	VClass *Class;
-
-	Class = (VClass *)Pop();
-	Push((int)SV_SpawnMobj(Class));
+	P_GET_PTR(VClass, Class);
+	RET_REF(SV_SpawnMobj(Class));
 }
 
 //==========================================================================
@@ -541,11 +364,9 @@ PF(NewMobjThinker)
 //
 //==========================================================================
 
-PF(NextMobj)
+IMPLEMENT_FUNCTION(VObject, NextMobj)
 {
-	VThinker*	th;
-
-	th = (VThinker*)Pop();
+	P_GET_REF(VThinker, th);
 	if (!th)
 	{
 		th = GLevel->ThinkerHead;
@@ -558,12 +379,12 @@ PF(NextMobj)
 	{
 		if (th->IsA(VEntity::StaticClass()))
 		{
-			Push((int)th);
+			RET_REF(th);
 			return;
 		}
 		th = th->Next;
 	}
-	Push(0);
+	RET_REF(0);
 }
 
 //**************************************************************************
@@ -578,15 +399,14 @@ PF(NextMobj)
 //
 //==========================================================================
 
-PF(NewSpecialThinker)
+IMPLEMENT_FUNCTION(VObject, NewSpecialThinker)
 {
-	VClass		*Class;
 	VThinker	*spec;
 
-	Class = (VClass *)Pop();
+	P_GET_PTR(VClass, Class);
 	spec = (VThinker*)VObject::StaticSpawnObject(Class);
 	GLevel->AddThinker(spec);
-	Push((int)spec);
+	RET_REF(spec);
 }
 
 //==========================================================================
@@ -595,12 +415,10 @@ PF(NewSpecialThinker)
 //
 //==========================================================================
 
-PF(RemoveSpecialThinker)
+IMPLEMENT_FUNCTION(VObject, RemoveSpecialThinker)
 {
-	VThinker	*spec;
-
-    spec = (VThinker*)Pop();
-    spec->SetFlags(_OF_DelayedDestroy);
+	P_GET_REF(VThinker, spec);
+	spec->SetFlags(_OF_DelayedDestroy);
 }
 
 //==========================================================================
@@ -609,14 +427,11 @@ PF(RemoveSpecialThinker)
 //
 //==========================================================================
 
-PF(P_ChangeSwitchTexture)
+IMPLEMENT_FUNCTION(VObject, P_ChangeSwitchTexture)
 {
-	line_t* 	line;
-	int 		useAgain;
-
 	P_GET_NAME(DefaultSound);
-	useAgain = Pop();
-	line = (line_t*)Pop();
+	P_GET_BOOL(useAgain);
+	P_GET_PTR(line_t, line);
 	P_ChangeSwitchTexture(line, useAgain, DefaultSound);
 }
 
@@ -626,13 +441,10 @@ PF(P_ChangeSwitchTexture)
 //
 //==========================================================================
 
-PF(NextThinker)
+IMPLEMENT_FUNCTION(VObject, NextThinker)
 {
-	VThinker*	th;
-	VClass*		Class;
-
-	Class = (VClass*)Pop();
-	th = (VThinker*)Pop();
+	P_GET_PTR(VClass, Class);
+	P_GET_REF(VThinker, th);
 	if (!th)
 	{
 		th = GLevel->ThinkerHead;
@@ -645,12 +457,12 @@ PF(NextThinker)
 	{
 		if (th->IsA(Class))
 		{
-			Push((int)th);
+			RET_REF(th);
 			return;
 		}
 		th = th->Next;
 	}
-	Push(0);
+	RET_REF(0);
 }
 
 //**************************************************************************
@@ -665,17 +477,12 @@ PF(NextThinker)
 //
 //==========================================================================
 
-PF(SpawnPolyobj)
+IMPLEMENT_FUNCTION(VObject, SpawnPolyobj)
 {
-	float 	x;
-	float 	y;
-	int 	tag;
-	int 	flags;
-
-   	flags = Pop();
-    tag = Pop();
-    y = Popf();
-    x = Popf();
+	P_GET_INT(flags);
+	P_GET_INT(tag);
+	P_GET_FLOAT(y);
+	P_GET_FLOAT(x);
 	PO_SpawnPolyobj(x, y, tag, flags);
 }
 
@@ -685,15 +492,11 @@ PF(SpawnPolyobj)
 //
 //==========================================================================
 
-PF(AddAnchorPoint)
+IMPLEMENT_FUNCTION(VObject, AddAnchorPoint)
 {
-	float 	x;
-	float 	y;
-	int 	tag;
-
-    tag = Pop();
-    y = Popf();
-    x = Popf();
+	P_GET_INT(tag);
+	P_GET_FLOAT(y);
+	P_GET_FLOAT(x);
 	PO_AddAnchorPoint(x, y, tag);
 }
 
@@ -703,12 +506,10 @@ PF(AddAnchorPoint)
 //
 //==========================================================================
 
-PF(GetPolyobj)
+IMPLEMENT_FUNCTION(VObject, GetPolyobj)
 {
-	int 	polyNum;
-
-    polyNum = Pop();
-	Push((int)PO_GetPolyobj(polyNum));
+	P_GET_INT(polyNum);
+	RET_PTR(PO_GetPolyobj(polyNum));
 }
 
 //==========================================================================
@@ -717,12 +518,10 @@ PF(GetPolyobj)
 //
 //==========================================================================
 
-PF(GetPolyobjMirror)
+IMPLEMENT_FUNCTION(VObject, GetPolyobjMirror)
 {
-	int 	polyNum;
-
-    polyNum = Pop();
-	Push(PO_GetPolyobjMirror(polyNum));
+	P_GET_INT(polyNum);
+	RET_INT(PO_GetPolyobjMirror(polyNum));
 }
 
 //==========================================================================
@@ -731,16 +530,12 @@ PF(GetPolyobjMirror)
 //
 //==========================================================================
 
-PF(PO_MovePolyobj)
+IMPLEMENT_FUNCTION(VObject, PO_MovePolyobj)
 {
-	int 	num;
-	float 	x;
-	float 	y;
-
-	y = Popf();
-    x = Popf();
-    num = Pop();
-	Push(PO_MovePolyobj(num, x, y));
+	P_GET_FLOAT(y);
+	P_GET_FLOAT(x);
+	P_GET_INT(num);
+	RET_BOOL(PO_MovePolyobj(num, x, y));
 }
 
 //==========================================================================
@@ -749,14 +544,11 @@ PF(PO_MovePolyobj)
 //
 //==========================================================================
 
-PF(PO_RotatePolyobj)
+IMPLEMENT_FUNCTION(VObject, PO_RotatePolyobj)
 {
-	int num;
-	float angle;
-
-	angle = Popf();
-    num = Pop();
-	Push(PO_RotatePolyobj(num, angle));
+	P_GET_FLOAT(angle);
+	P_GET_INT(num);
+	RET_BOOL(PO_RotatePolyobj(num, angle));
 }
 
 //**************************************************************************
@@ -771,30 +563,19 @@ PF(PO_RotatePolyobj)
 //
 //==========================================================================
 
-PF(StartACS)
+IMPLEMENT_FUNCTION(VObject, StartACS)
 {
-	int		num;
-    int		map;
-	int 	arg1;
-	int 	arg2;
-	int 	arg3;
-    VEntity	*activator;
-    line_t	*line;
-    int		side;
-	bool	Always;
-	bool	WantResult;
-
-	WantResult = !!Pop();
-	Always = !!Pop();
-    side = Pop();
-	line = (line_t*)Pop();
-    activator = (VEntity*)Pop();
-	arg3 = Pop();
-	arg2 = Pop();
-	arg1 = Pop();
-    map = Pop();
-    num = Pop();
-	Push(P_StartACS(num, map, arg1, arg2, arg3, activator, line, side,
+	P_GET_BOOL(WantResult);
+	P_GET_BOOL(Always);
+	P_GET_INT(side);
+	P_GET_PTR(line_t, line);
+	P_GET_REF(VEntity, activator);
+	P_GET_INT(arg3);
+	P_GET_INT(arg2);
+	P_GET_INT(arg1);
+	P_GET_INT(map);
+	P_GET_INT(num);
+	RET_BOOL(P_StartACS(num, map, arg1, arg2, arg3, activator, line, side,
 		Always, WantResult));
 }
 
@@ -804,14 +585,11 @@ PF(StartACS)
 //
 //==========================================================================
 
-PF(SuspendACS)
+IMPLEMENT_FUNCTION(VObject, SuspendACS)
 {
-	int 	number;
-	int 	map;
-
-    map = Pop();
-    number = Pop();
-	Push(P_SuspendACS(number, map));
+	P_GET_INT(map);
+	P_GET_INT(number);
+	RET_BOOL(P_SuspendACS(number, map));
 }
 
 //==========================================================================
@@ -820,14 +598,11 @@ PF(SuspendACS)
 //
 //==========================================================================
 
-PF(TerminateACS)
+IMPLEMENT_FUNCTION(VObject, TerminateACS)
 {
-	int 	number;
-	int 	map;
-
-    map = Pop();
-    number = Pop();
-	Push(P_TerminateACS(number, map));
+	P_GET_INT(map);
+	P_GET_INT(number);
+	RET_BOOL(P_TerminateACS(number, map));
 }
 
 //==========================================================================
@@ -836,11 +611,9 @@ PF(TerminateACS)
 //
 //==========================================================================
 
-PF(TagFinished)
+IMPLEMENT_FUNCTION(VObject, TagFinished)
 {
-	int		tag;
-
-    tag = Pop();
+	P_GET_INT(tag);
 	P_TagFinished(tag);
 }
 
@@ -850,11 +623,9 @@ PF(TagFinished)
 //
 //==========================================================================
 
-PF(PolyobjFinished)
+IMPLEMENT_FUNCTION(VObject, PolyobjFinished)
 {
-	int		tag;
-
-    tag = Pop();
+	P_GET_INT(tag);
 	P_PolyobjFinished(tag);
 }
 
@@ -870,18 +641,13 @@ PF(PolyobjFinished)
 //
 //==========================================================================
 
-PF(StartSoundAtVolume)
+IMPLEMENT_FUNCTION(VObject, StartSoundAtVolume)
 {
-	VEntity*	mobj;
-    int			sound;
-	int			channel;
-    int			vol;
-
-    vol = Pop();
-	channel = Pop();
-    sound = Pop();
-    mobj = (VEntity*)Pop();
-    SV_StartSound(mobj, sound, channel, vol);
+	P_GET_INT(vol);
+	P_GET_INT(channel);
+	P_GET_INT(sound);
+	P_GET_REF(VEntity, mobj);
+	SV_StartSound(mobj, sound, channel, vol);
 }
 
 //==========================================================================
@@ -890,15 +656,11 @@ PF(StartSoundAtVolume)
 //
 //==========================================================================
 
-PF(SectorStartSound)
+IMPLEMENT_FUNCTION(VObject, SectorStartSound)
 {
-	sector_t*	sec;
-    int			sound;
-	int			channel;
-
-	channel = Pop();
-    sound = Pop();
-    sec = (sector_t*)Pop();
+	P_GET_INT(channel);
+	P_GET_INT(sound);
+	P_GET_PTR(sector_t, sec);
 	SV_SectorStartSound(sec, sound, channel, 127);
 }
 
@@ -908,14 +670,11 @@ PF(SectorStartSound)
 //
 //==========================================================================
 
-PF(SectorStopSound)
+IMPLEMENT_FUNCTION(VObject, SectorStopSound)
 {
-	sector_t*	sec;
-	int			channel;
-
-	channel = Pop();
-    sec = (sector_t*)Pop();
-    SV_SectorStopSound(sec, channel);
+	P_GET_INT(channel);
+	P_GET_PTR(sector_t, sec);
+	SV_SectorStopSound(sec, channel);
 }
 
 //==========================================================================
@@ -924,17 +683,14 @@ PF(SectorStopSound)
 //
 //==========================================================================
 
-PF(GetSoundPlayingInfo)
+IMPLEMENT_FUNCTION(VObject, GetSoundPlayingInfo)
 {
-	VEntity*	mobj;
-    int			id;
-
-    id = Pop();
-	mobj = (VEntity*)Pop();
+	P_GET_INT(id);
+	P_GET_REF(VEntity, mobj);
 #ifdef CLIENT
-	Push(S_GetSoundPlayingInfo(mobj->NetID, id));
+	RET_BOOL(S_GetSoundPlayingInfo(mobj->NetID, id));
 #else
-	Push(0);
+	RET_BOOL(false);
 #endif
 }
 
@@ -944,12 +700,10 @@ PF(GetSoundPlayingInfo)
 //
 //==========================================================================
 
-PF(GetSoundID)
+IMPLEMENT_FUNCTION(VObject, GetSoundID)
 {
-	VName	Name;
-
-    Name = PopName();
-	Push(S_GetSoundID(Name));
+	P_GET_NAME(Name);
+	RET_INT(S_GetSoundID(Name));
 }
 
 //==========================================================================
@@ -958,15 +712,11 @@ PF(GetSoundID)
 //
 //==========================================================================
 
-PF(SetSeqTrans)
+IMPLEMENT_FUNCTION(VObject, SetSeqTrans)
 {
-	VName	Name;
-	int		Num;
-	int		SeqType;
-
-	SeqType = Pop();
-	Num = Pop();
-	Name = PopName();
+	P_GET_INT(SeqType);
+	P_GET_INT(Num);
+	P_GET_NAME(Name);
 	SN_SetSeqTrans(Name, Num, SeqType);
 }
 
@@ -976,14 +726,11 @@ PF(SetSeqTrans)
 //
 //==========================================================================
 
-PF(GetSeqTrans)
+IMPLEMENT_FUNCTION(VObject, GetSeqTrans)
 {
-	int		Num;
-	int		SeqType;
-
-	SeqType = Pop();
-	Num = Pop();
-	Push(SN_GetSeqTrans(Num, SeqType).GetIndex());
+	P_GET_INT(SeqType);
+	P_GET_INT(Num);
+	RET_NAME(SN_GetSeqTrans(Num, SeqType));
 }
 
 //==========================================================================
@@ -992,13 +739,10 @@ PF(GetSeqTrans)
 //
 //==========================================================================
 
-PF(SectorStartSequence)
+IMPLEMENT_FUNCTION(VObject, SectorStartSequence)
 {
-	sector_t*	sec;
-	VName		name;
-
-    name = PopName();
-    sec = (sector_t*)Pop();
+	P_GET_NAME(name);
+	P_GET_PTR(sector_t, sec);
 	SV_SectorStartSequence(sec, *name);
 }
 
@@ -1008,11 +752,9 @@ PF(SectorStartSequence)
 //
 //==========================================================================
 
-PF(SectorStopSequence)
+IMPLEMENT_FUNCTION(VObject, SectorStopSequence)
 {
-	sector_t*	sec;
-
-    sec = (sector_t*)Pop();
+	P_GET_PTR(sector_t, sec);
 	SV_SectorStopSequence(sec);
 }
 
@@ -1022,13 +764,10 @@ PF(SectorStopSequence)
 //
 //==========================================================================
 
-PF(PolyobjStartSequence)
+IMPLEMENT_FUNCTION(VObject, PolyobjStartSequence)
 {
-	polyobj_t*	poly;
-	VName		name;
-
-    name = PopName();
-    poly = (polyobj_t*)Pop();
+	P_GET_NAME(name);
+	P_GET_PTR(polyobj_t, poly);
 	SV_PolyobjStartSequence(poly, *name);
 }
 
@@ -1038,47 +777,10 @@ PF(PolyobjStartSequence)
 //
 //==========================================================================
 
-PF(PolyobjStopSequence)
+IMPLEMENT_FUNCTION(VObject, PolyobjStopSequence)
 {
-	polyobj_t*	poly;
-
-    poly = (polyobj_t*)Pop();
+	P_GET_PTR(polyobj_t, poly);
 	SV_PolyobjStopSequence(poly);
-}
-
-//==========================================================================
-//
-//	PF_ClearPlayer
-//
-//==========================================================================
-
-PF(ClearPlayer)
-{
-	VBasePlayer	*pl;
-
-    pl = (VBasePlayer*)Pop();
-
-	pl->PClass = 0;
-	pl->ForwardMove = 0;
-	pl->SideMove = 0;
-	pl->FlyMove = 0;
-	pl->Buttons = 0;
-	pl->Impulse = 0;
-	pl->MO = NULL;
-	pl->PlayerState = 0;
-	pl->ViewOrg = TVec(0, 0, 0);
-	pl->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-	pl->Health = 0;
-	pl->Items = 0;
-	pl->PlayerFlags &= ~VBasePlayer::PF_AttackDown;
-	pl->PlayerFlags &= ~VBasePlayer::PF_UseDown;
-	pl->ExtraLight = 0;
-	pl->FixedColormap = 0;
-	pl->Palette = 0;
-	memset(pl->CShifts, 0, sizeof(pl->CShifts));
-	pl->PSpriteSY = 0;
-	memset((byte*)pl + sizeof(VBasePlayer), 0,
-		pl->GetClass()->ClassSize - sizeof(VBasePlayer));
 }
 
 //==========================================================================
@@ -1087,11 +789,9 @@ PF(ClearPlayer)
 //
 //==========================================================================
 
-PF(G_ExitLevel)
+IMPLEMENT_FUNCTION(VObject, G_ExitLevel)
 {
-	int Position;
-
-	Position = Pop();
+	P_GET_INT(Position);
 	G_ExitLevel(Position);
 }
 
@@ -1101,11 +801,9 @@ PF(G_ExitLevel)
 //
 //==========================================================================
 
-PF(G_SecretExitLevel)
+IMPLEMENT_FUNCTION(VObject, G_SecretExitLevel)
 {
-	int Position;
-
-	Position = Pop();
+	P_GET_INT(Position);
 	G_SecretExitLevel(Position);
 }
 
@@ -1115,15 +813,11 @@ PF(G_SecretExitLevel)
 //
 //==========================================================================
 
-PF(G_Completed)
+IMPLEMENT_FUNCTION(VObject, G_Completed)
 {
-	int		map;
-	int		pos;
-	int		SaveAngle;
-
-	SaveAngle = Pop();
-	pos = Pop();
-	map = Pop();
+	P_GET_INT(SaveAngle);
+	P_GET_INT(pos);
+	P_GET_INT(map);
 	G_Completed(map, pos, SaveAngle);
 }
 
@@ -1133,26 +827,10 @@ PF(G_Completed)
 //
 //==========================================================================
 
-PF(TerrainType)
+IMPLEMENT_FUNCTION(VObject, TerrainType)
 {
-	int			pic;
-
-	pic = Pop();
-	Push(SV_TerrainType(pic));
-}
-
-//==========================================================================
-//
-//	PF_P_GetPlayerNum
-//
-//==========================================================================
-
-PF(P_GetPlayerNum)
-{
-	VBasePlayer*	player;
-
-	player = (VBasePlayer*)Pop();
-	Push(SV_GetPlayerNum(player));
+	P_GET_INT(pic);
+	RET_INT(SV_TerrainType(pic));
 }
 
 //==========================================================================
@@ -1161,7 +839,7 @@ PF(P_GetPlayerNum)
 //
 //==========================================================================
 
-PF(SB_Start)
+IMPLEMENT_FUNCTION(VObject, SB_Start)
 {
 #ifdef CLIENT
 //	SB_Start();
@@ -1174,7 +852,7 @@ PF(SB_Start)
 //
 //==========================================================================
 
-PF(P_ForceLightning)
+IMPLEMENT_FUNCTION(VObject, P_ForceLightning)
 {
 	SV_ForceLightning();
 }
@@ -1185,13 +863,10 @@ PF(P_ForceLightning)
 //
 //==========================================================================
 
-PF(SetFloorPic)
+IMPLEMENT_FUNCTION(VObject, SetFloorPic)
 {
-	sector_t	*sec;
-	int 		texture;
-
-	texture = Pop();
-	sec = (sector_t*)Pop();
+	P_GET_INT(texture);
+	P_GET_PTR(sector_t, sec);
 	SV_SetFloorPic(sec - GLevel->Sectors, texture);
 }
 
@@ -1201,13 +876,10 @@ PF(SetFloorPic)
 //
 //==========================================================================
 
-PF(SetCeilPic)
+IMPLEMENT_FUNCTION(VObject, SetCeilPic)
 {
-	sector_t	*sec;
-	int			texture;
-
-	texture = Pop();
-	sec = (sector_t*)Pop();
+	P_GET_INT(texture);
+	P_GET_PTR(sector_t, sec);
 	SV_SetCeilPic(sec - GLevel->Sectors, texture);
 }
 
@@ -1217,15 +889,11 @@ PF(SetCeilPic)
 //
 //==========================================================================
 
-PF(SetLineTexture)
+IMPLEMENT_FUNCTION(VObject, SetLineTexture)
 {
-	int side;
-	int position;
-	int texture;
-
-	texture = Pop();
-	position = Pop();
-	side = Pop();
+	P_GET_INT(texture);
+	P_GET_INT(position);
+	P_GET_INT(side);
 	SV_SetLineTexture(side, position, texture);
 }
 
@@ -1235,13 +903,10 @@ PF(SetLineTexture)
 //
 //==========================================================================
 
-PF(SetLineTransluc)
+IMPLEMENT_FUNCTION(VObject, SetLineTransluc)
 {
-	line_t	*line;
-	int		trans;
-
-	trans = Pop();
-	line = (line_t*)Pop();
+	P_GET_INT(trans);
+	P_GET_PTR(line_t, line);
 	SV_SetLineTransluc(line, trans);
 }
 
@@ -1251,11 +916,9 @@ PF(SetLineTransluc)
 //
 //==========================================================================
 
-PF(SendFloorSlope)
+IMPLEMENT_FUNCTION(VObject, SendFloorSlope)
 {
-	sector_t	*sector;
-
-	sector = (sector_t*)Pop();
+	P_GET_PTR(sector_t, sector);
 	sector->floor.CalcBits();
 	sv_signon << (byte)svc_sec_floor_plane
 			<< (word)(sector - GLevel->Sectors)
@@ -1271,11 +934,9 @@ PF(SendFloorSlope)
 //
 //==========================================================================
 
-PF(SendCeilingSlope)
+IMPLEMENT_FUNCTION(VObject, SendCeilingSlope)
 {
-	sector_t	*sector;
-
-	sector = (sector_t*)Pop();
+	P_GET_PTR(sector_t, sector);
 	sector->ceiling.CalcBits();
 	sv_signon << (byte)svc_sec_ceil_plane
 			<< (word)(sector - GLevel->Sectors)
@@ -1291,13 +952,10 @@ PF(SendCeilingSlope)
 //
 //==========================================================================
 
-PF(SetSecLightColor)
+IMPLEMENT_FUNCTION(VObject, SetSecLightColor)
 {
-	sector_t	*sector;
-	int			Col;
-
-	Col = Pop();
-	sector = (sector_t*)Pop();
+	P_GET_INT(Col);
+	P_GET_PTR(sector_t, sector);
 	sector->params.LightColor = Col;
 	sv_signon << (byte)svc_sec_light_color
 			<< (word)(sector - GLevel->Sectors)
@@ -1312,13 +970,10 @@ PF(SetSecLightColor)
 //
 //==========================================================================
 
-PF(SetFloorLightSector)
+IMPLEMENT_FUNCTION(VObject, SetFloorLightSector)
 {
-	sector_t	*Sector;
-	sector_t	*SrcSector;
-
-	SrcSector = (sector_t*)Pop();
-	Sector = (sector_t*)Pop();
+	P_GET_PTR(sector_t, SrcSector);
+	P_GET_PTR(sector_t, Sector);
 	Sector->floor.LightSourceSector = SrcSector - GLevel->Sectors;
 	sv_signon << (byte)svc_set_floor_light_sec
 			<< (word)(Sector - GLevel->Sectors)
@@ -1331,13 +986,10 @@ PF(SetFloorLightSector)
 //
 //==========================================================================
 
-PF(SetCeilingLightSector)
+IMPLEMENT_FUNCTION(VObject, SetCeilingLightSector)
 {
-	sector_t	*Sector;
-	sector_t	*SrcSector;
-
-	SrcSector = (sector_t*)Pop();
-	Sector = (sector_t*)Pop();
+	P_GET_PTR(sector_t, SrcSector);
+	P_GET_PTR(sector_t, Sector);
 	Sector->ceiling.LightSourceSector = SrcSector - GLevel->Sectors;
 	sv_signon << (byte)svc_set_ceil_light_sec
 			<< (word)(Sector - GLevel->Sectors)
@@ -1350,15 +1002,11 @@ PF(SetCeilingLightSector)
 //
 //==========================================================================
 
-PF(SetHeightSector)
+IMPLEMENT_FUNCTION(VObject, SetHeightSector)
 {
-	sector_t	*Sector;
-	sector_t	*SrcSector;
-	int			Flags;
-
-	Flags = Pop();
-	SrcSector = (sector_t*)Pop();
-	Sector = (sector_t*)Pop();
+	P_GET_INT(Flags);
+	P_GET_PTR(sector_t, SrcSector);
+	P_GET_PTR(sector_t, Sector);
 	sv_signon << (byte)svc_set_heightsec
 			<< (word)(Sector - GLevel->Sectors)
 			<< (word)(SrcSector - GLevel->Sectors)
@@ -1371,12 +1019,10 @@ PF(SetHeightSector)
 //
 //==========================================================================
 
-PF(FindModel)
+IMPLEMENT_FUNCTION(VObject, FindModel)
 {
-	char *name;
-
-	name = (char*)Pop();
-	Push(SV_FindModel(name));
+	P_GET_PTR(char, name);
+	RET_INT(SV_FindModel(name));
 }
 
 //==========================================================================
@@ -1385,12 +1031,10 @@ PF(FindModel)
 //
 //==========================================================================
 
-PF(GetModelIndex)
+IMPLEMENT_FUNCTION(VObject, GetModelIndex)
 {
-	VName Name;
-
-	Name = PopName();
-	Push(SV_GetModelIndex(Name));
+	P_GET_NAME(Name);
+	RET_INT(SV_GetModelIndex(Name));
 }
 
 //==========================================================================
@@ -1399,12 +1043,10 @@ PF(GetModelIndex)
 //
 //==========================================================================
 
-PF(FindSkin)
+IMPLEMENT_FUNCTION(VObject, FindSkin)
 {
-	char *name;
-
-	name = (char*)Pop();
-	Push(SV_FindSkin(name));
+	P_GET_PTR(char, name);
+	RET_INT(SV_FindSkin(name));
 }
 
 //==========================================================================
@@ -1413,12 +1055,10 @@ PF(FindSkin)
 //
 //==========================================================================
 
-PF(FindClassFromEditorId)
+IMPLEMENT_FUNCTION(VObject, FindClassFromEditorId)
 {
-	int		Id;
-
-	Id = Pop();
-	Push((int)SV_FindClassFromEditorId(Id));
+	P_GET_INT(Id);
+	RET_PTR(SV_FindClassFromEditorId(Id));
 }
 
 //==========================================================================
@@ -1427,12 +1067,10 @@ PF(FindClassFromEditorId)
 //
 //==========================================================================
 
-PF(FindClassFromScriptId)
+IMPLEMENT_FUNCTION(VObject, FindClassFromScriptId)
 {
-	int		Id;
-
-	Id = Pop();
-	Push((int)SV_FindClassFromScriptId(Id));
+	P_GET_INT(Id);
+	RET_PTR(SV_FindClassFromScriptId(Id));
 }
 
 //==========================================================================
@@ -1441,11 +1079,9 @@ PF(FindClassFromScriptId)
 //
 //==========================================================================
 
-PF(ChangeMusic)
+IMPLEMENT_FUNCTION(VObject, ChangeMusic)
 {
-	const char*		SongName;
-
-	SongName = (const char*)Pop();
+	P_GET_PTR(const char, SongName);
 	SV_ChangeMusic(SongName);
 }
 
@@ -1455,13 +1091,10 @@ PF(ChangeMusic)
 //
 //==========================================================================
 
-PF(FindSectorFromTag)
+IMPLEMENT_FUNCTION(VObject, FindSectorFromTag)
 {
-	int		tag;
-	int		start;
-
-	start = Pop();
-	tag = Pop();
+	P_GET_INT(start);
+	P_GET_INT(tag);
 	int Ret = -1;
 	for (int i = start + 1; i < GLevel->NumSectors; i++)
 		if (GLevel->Sectors[i].tag == tag)
@@ -1469,7 +1102,7 @@ PF(FindSectorFromTag)
 			Ret = i;
 			break;
 		}
-	Push(Ret);
+	RET_INT(Ret);
 }
 
 #endif
@@ -1487,13 +1120,10 @@ PF(FindSectorFromTag)
 //
 //==========================================================================
 
-PF(SetVirtualScreen)
+IMPLEMENT_FUNCTION(VObject, SetVirtualScreen)
 {
-	int			Width;
-	int			Height;
-
-	Height = Pop();
-	Width = Pop();
+	P_GET_INT(Height);
+	P_GET_INT(Width);
 	SCR_SetVirtualScreen(Width, Height);
 }
 
@@ -1503,14 +1133,11 @@ PF(SetVirtualScreen)
 //
 //==========================================================================
 
-PF(R_RegisterPic)
+IMPLEMENT_FUNCTION(VObject, R_RegisterPic)
 {
-	VName name;
-	int type;
-
-	type = Pop();
-	name = PopName();
-	Push(GTextureManager.AddPatch(name, TEXTYPE_Pic));
+	P_GET_INT(type);
+	P_GET_NAME(name);
+	RET_INT(GTextureManager.AddPatch(name, TEXTYPE_Pic));
 }
 
 //==========================================================================
@@ -1519,16 +1146,12 @@ PF(R_RegisterPic)
 //
 //==========================================================================
 
-PF(R_RegisterPicPal)
+IMPLEMENT_FUNCTION(VObject, R_RegisterPicPal)
 {
-	VName name;
-	int type;
-	VName palname;
-
-	palname = PopName();
-	type = Pop();
-	name = PopName();
-	Push(GTextureManager.AddRawWithPal(name, palname));
+	P_GET_NAME(palname);
+	P_GET_INT(type);
+	P_GET_NAME(name);
+	RET_INT(GTextureManager.AddRawWithPal(name, palname));
 }
 
 //==========================================================================
@@ -1537,13 +1160,10 @@ PF(R_RegisterPicPal)
 //
 //==========================================================================
 
-PF(R_GetPicInfo)
+IMPLEMENT_FUNCTION(VObject, R_GetPicInfo)
 {
-	int			handle;
-	picinfo_t	*info;
-
-	info = (picinfo_t*)Pop();
-	handle = Pop();
+	P_GET_PTR(picinfo_t, info);
+	P_GET_INT(handle);
 	GTextureManager.GetTextureInfo(handle, info);
 }
 
@@ -1553,15 +1173,11 @@ PF(R_GetPicInfo)
 //
 //==========================================================================
 
-PF(R_DrawPic)
+IMPLEMENT_FUNCTION(VObject, R_DrawPic)
 {
-	int			x;
-	int			y;
-	int			handle;
-
-	handle = Pop();
-	y = Pop();
-	x = Pop();
+	P_GET_INT(handle);
+	P_GET_INT(y);
+	P_GET_INT(x);
 	R_DrawPic(x, y, handle);
 }
 
@@ -1571,17 +1187,12 @@ PF(R_DrawPic)
 //
 //==========================================================================
 
-PF(R_DrawPic2)
+IMPLEMENT_FUNCTION(VObject, R_DrawPic2)
 {
-	int			x;
-	int			y;
-	int			handle;
-	int			trans;
-
-	trans = Pop();
-	handle = Pop();
-	y = Pop();
-	x = Pop();
+	P_GET_INT(trans);
+	P_GET_INT(handle);
+	P_GET_INT(y);
+	P_GET_INT(x);
 	R_DrawPic(x, y, handle, trans);
 }
 
@@ -1591,15 +1202,11 @@ PF(R_DrawPic2)
 //
 //==========================================================================
 
-PF(R_DrawShadowedPic)
+IMPLEMENT_FUNCTION(VObject, R_DrawShadowedPic)
 {
-	int			x;
-	int			y;
-	int			handle;
-
-	handle = Pop();
-	y = Pop();
-	x = Pop();
+	P_GET_INT(handle);
+	P_GET_INT(y);
+	P_GET_INT(x);
 	R_DrawShadowedPic(x, y, handle);
 }
 
@@ -1609,14 +1216,11 @@ PF(R_DrawShadowedPic)
 //
 //==========================================================================
 
-PF(R_InstallSprite)
+IMPLEMENT_FUNCTION(VObject, R_InstallSprite)
 {
-	int		name;
-	int		index;
-
-	index = Pop();
-	name = Pop();
-	R_InstallSprite((char*)name, index);
+	P_GET_INT(index);
+	P_GET_PTR(char, name);
+	R_InstallSprite(name, index);
 }
 
 //==========================================================================
@@ -1625,21 +1229,14 @@ PF(R_InstallSprite)
 //
 //==========================================================================
 
-PF(R_DrawSpritePatch)
+IMPLEMENT_FUNCTION(VObject, R_DrawSpritePatch)
 {
-	int		x;
-	int		y;
-	int		sprite;
-	int		frame;
-	int		rot;
-	int		translation;
-
-	translation = Pop();
-	rot = Pop();
-	frame = Pop();
-	sprite = Pop();
-	y = Pop();
-	x = Pop();
+	P_GET_INT(translation);
+	P_GET_INT(rot);
+	P_GET_INT(frame);
+	P_GET_INT(sprite);
+	P_GET_INT(y);
+	P_GET_INT(x);
 	R_DrawSpritePatch(x, y, sprite, frame, rot, translation);
 }
 
@@ -1649,18 +1246,16 @@ PF(R_DrawSpritePatch)
 //
 //==========================================================================
 
-PF(InstallModel)
+IMPLEMENT_FUNCTION(VObject, InstallModel)
 {
-	int			name;
-
-	name = Pop();
-	if (FL_FindFile((char*)name))
+	P_GET_PTR(char, name);
+	if (FL_FindFile(name))
 	{
-		Push((int)Mod_FindName((char*)name));
+		RET_PTR(Mod_FindName(name));
 	}
 	else
 	{
-		Push(0);
+		RET_PTR(0);
 	}
 }
 
@@ -1670,20 +1265,14 @@ PF(InstallModel)
 //
 //==========================================================================
 
-PF(R_DrawModelFrame)
+IMPLEMENT_FUNCTION(VObject, R_DrawModelFrame)
 {
-	TVec		origin;
-	float		angle;
-	VModel		*model;
-	int			frame;
-	int			skin;
-
-	skin = Pop();
-	frame = Pop();
-	model = (VModel*)Pop();
-	angle = Popf();
-	origin = Popv();
-	R_DrawModelFrame(origin, angle, model, frame, (char*)skin);
+	P_GET_PTR(char, skin);
+	P_GET_INT(frame);
+	P_GET_PTR(VModel, model);
+	P_GET_FLOAT(angle);
+	P_GET_VEC(origin);
+	R_DrawModelFrame(origin, angle, model, frame, skin);
 }
 
 //==========================================================================
@@ -1692,19 +1281,13 @@ PF(R_DrawModelFrame)
 //
 //==========================================================================
 
-PF(R_FillRectWithFlat)
+IMPLEMENT_FUNCTION(VObject, R_FillRectWithFlat)
 {
-	int		x;
-	int		y;
-	int		width;
-	int		height;
-	VName	name;
-
-	name = PopName();
-	height = Pop();
-	width = Pop();
-	y = Pop();
-	x = Pop();
+	P_GET_NAME(name);
+	P_GET_INT(height);
+	P_GET_INT(width);
+	P_GET_INT(y);
+	P_GET_INT(x);
 	R_FillRectWithFlat(x, y, width, height, *name);
 }
 
@@ -1716,19 +1299,13 @@ PF(R_FillRectWithFlat)
 
 void R_ShadeRect(int x, int y, int width, int height, int shade);
 
-PF(R_ShadeRect)
+IMPLEMENT_FUNCTION(VObject, R_ShadeRect)
 {
-	int		x;
-	int		y;
-	int		width;
-	int		height;
-	int		shade;
-
-	shade = Pop();
-	height = Pop();
-	width = Pop();
-	y = Pop();
-	x = Pop();
+	P_GET_INT(shade);
+	P_GET_INT(height);
+	P_GET_INT(width);
+	P_GET_INT(y);
+	P_GET_INT(x);
 	R_ShadeRect(x, y, width, height, shade);
 }
 
@@ -1738,19 +1315,13 @@ PF(R_ShadeRect)
 //
 //==========================================================================
 
-PF(R_FillRect)
+IMPLEMENT_FUNCTION(VObject, R_FillRect)
 {
-	int		x;
-	int		y;
-	int		width;
-	int		height;
-	int		coulor;
-
-	coulor = Pop();
-	height = Pop();
-	width = Pop();
-	y = Pop();
-	x = Pop();
+	P_GET_INT(coulor);
+	P_GET_INT(height);
+	P_GET_INT(width);
+	P_GET_INT(y);
+	P_GET_INT(x);
 	Drawer->FillRect(x * fScaleX, y * fScaleY, (x + width) * fScaleX,
 		(y + height) * fScaleY, coulor);
 }
@@ -1767,11 +1338,9 @@ PF(R_FillRect)
 //
 //==========================================================================
 
-PF(T_SetFont)
+IMPLEMENT_FUNCTION(VObject, T_SetFont)
 {
-	int font;
-
-	font = Pop();
+	P_GET_INT(font);
 	T_SetFont((font_e)font);
 }
 
@@ -1781,13 +1350,10 @@ PF(T_SetFont)
 //
 //==========================================================================
 
-PF(T_SetAlign)
+IMPLEMENT_FUNCTION(VObject, T_SetAlign)
 {
-	int			halign;
-	int			valign;
-
-	valign = Pop();
-	halign = Pop();
+	P_GET_INT(valign);
+	P_GET_INT(halign);
 	T_SetAlign((halign_e)halign, (valign_e)valign);
 }
 
@@ -1797,13 +1363,10 @@ PF(T_SetAlign)
 //
 //==========================================================================
 
-PF(T_SetDist)
+IMPLEMENT_FUNCTION(VObject, T_SetDist)
 {
-	int			hdist;
-	int			vdist;
-
-	vdist = Pop();
-	hdist = Pop();
+	P_GET_INT(vdist);
+	P_GET_INT(hdist);
 	T_SetDist(hdist, vdist);
 }
 
@@ -1813,11 +1376,9 @@ PF(T_SetDist)
 //
 //==========================================================================
 
-PF(T_SetShadow)
+IMPLEMENT_FUNCTION(VObject, T_SetShadow)
 {
-	bool		state;
-
-	state = !!Pop();
+	P_GET_BOOL(state);
 	T_SetShadow(state);
 }
 
@@ -1827,12 +1388,10 @@ PF(T_SetShadow)
 //
 //==========================================================================
 
-PF(T_TextWidth)
+IMPLEMENT_FUNCTION(VObject, T_TextWidth)
 {
-	int			text;
-
-	text = Pop();
-	Push(T_TextWidth((char*)text));
+	P_GET_PTR(char, text);
+	RET_INT(T_TextWidth(text));
 }
 
 //==========================================================================
@@ -1841,12 +1400,10 @@ PF(T_TextWidth)
 //
 //==========================================================================
 
-PF(T_TextHeight)
+IMPLEMENT_FUNCTION(VObject, T_TextHeight)
 {
-	int			text;
-
-	text = Pop();
-	Push(T_TextHeight((char*)text));
+	P_GET_PTR(char, text);
+	RET_INT(T_TextHeight(text));
 }
 
 //==========================================================================
@@ -1855,16 +1412,12 @@ PF(T_TextHeight)
 //
 //==========================================================================
 
-PF(T_DrawText)
+IMPLEMENT_FUNCTION(VObject, T_DrawText)
 {
-	int			x;
-	int			y;
-	int			txt;
-
-	txt = Pop();
-	y = Pop();
-	x = Pop();
-	T_DrawText(x, y, (char*)txt);
+	P_GET_PTR(char, txt);
+	P_GET_INT(y);
+	P_GET_INT(x);
+	T_DrawText(x, y, txt);
 }
 
 //==========================================================================
@@ -1873,18 +1426,13 @@ PF(T_DrawText)
 //
 //==========================================================================
 
-PF(T_DrawNText)
+IMPLEMENT_FUNCTION(VObject, T_DrawNText)
 {
-	int			x;
-	int			y;
-	int			txt;
-	int			n;
-
-	n = Pop();
-	txt = Pop();
-	y = Pop();
-	x = Pop();
-	T_DrawNText(x, y, (char*)txt, n);
+	P_GET_INT(n);
+	P_GET_PTR(char, txt);
+	P_GET_INT(y);
+	P_GET_INT(x);
+	T_DrawNText(x, y, txt, n);
 }
 
 //==========================================================================
@@ -1893,18 +1441,13 @@ PF(T_DrawNText)
 //
 //==========================================================================
 
-PF(T_DrawTextW)
+IMPLEMENT_FUNCTION(VObject, T_DrawTextW)
 {
-	int			x;
-	int			y;
-	int			txt;
-	int			w;
-
-	w = Pop();
-	txt = Pop();
-	y = Pop();
-	x = Pop();
-	T_DrawTextW(x, y, (char*)txt, w);
+	P_GET_INT(w);
+	P_GET_PTR(char, txt);
+	P_GET_INT(y);
+	P_GET_INT(x);
+	T_DrawTextW(x, y, txt, w);
 }
 
 //**************************************************************************
@@ -1919,12 +1462,10 @@ PF(T_DrawTextW)
 //
 //==========================================================================
 
-PF(LocalSound)
+IMPLEMENT_FUNCTION(VObject, LocalSound)
 {
-	VName	name;
-
-	name = PopName();
-	S_StartSoundName(*name);
+	P_GET_NAME(name);
+	S_StartSoundName(name);
 }
 
 //==========================================================================
@@ -1933,12 +1474,10 @@ PF(LocalSound)
 //
 //==========================================================================
 
-PF(IsLocalSoundPlaying)
+IMPLEMENT_FUNCTION(VObject, IsLocalSoundPlaying)
 {
-	VName	name;
-
-	name = PopName();
-	Push(S_GetSoundPlayingInfo(0, S_GetSoundID(*name)));
+	P_GET_NAME(name);
+	RET_BOOL(S_GetSoundPlayingInfo(0, S_GetSoundID(name)));
 }
 
 //==========================================================================
@@ -1947,7 +1486,7 @@ PF(IsLocalSoundPlaying)
 //
 //==========================================================================
 
-PF(StopLocalSounds)
+IMPLEMENT_FUNCTION(VObject, StopLocalSounds)
 {
 	S_StopSound(0, 0);
 }
@@ -1958,15 +1497,11 @@ PF(StopLocalSounds)
 //
 //==========================================================================
 
-PF(TranslateKey)
+IMPLEMENT_FUNCTION(VObject, TranslateKey)
 {
-	int ch;
-
-	ch = Pop();
-	Push(GInput->TranslateKey(ch));
+	P_GET_INT(ch);
+	RET_INT(GInput->TranslateKey(ch));
 }
-
-#endif
 
 //==========================================================================
 //
@@ -1974,117 +1509,101 @@ PF(TranslateKey)
 //
 //==========================================================================
 
-#ifdef CLIENT
-
 struct slist_t;
 
 char* P_GetMapName(int map);
 char* P_GetMapLumpName(int map);
 char *P_TranslateMap(int map);
 
-void StartSearch(void);
-slist_t * GetSlist(void);
+void StartSearch();
+slist_t * GetSlist();
 
-PF(P_GetMapName)
+IMPLEMENT_FUNCTION(VObject, P_GetMapName)
 {
-	int		map;
-
-	map = Pop();
-	Push((int)P_GetMapName(map));
+	P_GET_INT(map);
+	RET_PTR(P_GetMapName(map));
 }
 
-PF(P_GetMapLumpName)
+IMPLEMENT_FUNCTION(VObject, P_GetMapLumpName)
 {
-	int		map;
-
-	map = Pop();
-	Push((int)P_GetMapLumpName(map));
+	P_GET_INT(map);
+	RET_PTR(P_GetMapLumpName(map));
 }
 
-PF(P_TranslateMap)
+IMPLEMENT_FUNCTION(VObject, P_TranslateMap)
 {
-	int map;
-
-	map = Pop();
-	Push((int)P_TranslateMap(map));
+	P_GET_INT(map);
+	RET_PTR(P_TranslateMap(map));
 }
 
-PF(KeyNameForNum)
+IMPLEMENT_FUNCTION(VObject, KeyNameForNum)
 {
-	int		keynum;
-	int		str;
-
-	str = Pop();
-	keynum = Pop();
-	strcpy((char*)str, *GInput->KeyNameForNum(keynum));
+	P_GET_PTR(char, str);
+	P_GET_INT(keynum);
+	strcpy(str, *GInput->KeyNameForNum(keynum));
 }
 
-PF(IN_GetBindingKeys)
+IMPLEMENT_FUNCTION(VObject, IN_GetBindingKeys)
 {
-	int			name;
-	int			*key1;
-	int			*key2;
-
-	key2 = (int*)Pop();
-	key1 = (int*)Pop();
-	name = Pop();
-	GInput->GetBindingKeys((char*)name, *key1, *key2);
+	P_GET_PTR(int, key2);
+	P_GET_PTR(int, key1);
+	P_GET_PTR(char, name);
+	GInput->GetBindingKeys(name, *key1, *key2);
 }
 
-PF(IN_SetBinding)
+IMPLEMENT_FUNCTION(VObject, IN_SetBinding)
 {
-	int			keynum;
-	int			ondown;
-	int			onup;
-
-	onup = Pop();
-	ondown = Pop();
-	keynum = Pop();
-	GInput->SetBinding(keynum, (char*)ondown, (char*)onup);
+	P_GET_PTR(char, onup);
+	P_GET_PTR(char, ondown);
+	P_GET_INT(keynum);
+	GInput->SetBinding(keynum, ondown, onup);
 }
 
-PF(SV_GetSaveString)
+IMPLEMENT_FUNCTION(VObject, SV_GetSaveString)
 {
-	int		i;
-	int		buf;
-
-	buf = Pop();
-	i = Pop();
+	P_GET_PTR(char, buf);
+	P_GET_INT(i);
 #ifdef SERVER
-	Push(SV_GetSaveString(i, (char*)buf));
+	RET_INT(SV_GetSaveString(i, buf));
 #else
-	Push(0);
+	RET_INT(0);
 #endif
 }
 
-PF(GetSlist)
+IMPLEMENT_FUNCTION(VObject, GetSlist)
 {
-	Push((int)GetSlist());
+	RET_PTR(GetSlist());
 }
 
 void LoadTextLump(VName name, char *buf, int bufsize);
 
-PF(LoadTextLump)
+IMPLEMENT_FUNCTION(VObject, LoadTextLump)
 {
-	VName		name;
-	char		*buf;
-	int			bufsize;
-
-	bufsize = Pop();
-	buf = (char*)Pop();
-	name = PopName();
+	P_GET_INT(bufsize);
+	P_GET_PTR(char, buf);
+	P_GET_NAME(name);
 	LoadTextLump(name, buf, bufsize);
 }
 
-PF(AllocDlight)
+IMPLEMENT_FUNCTION(VObject, AllocDlight)
 {
-	int key = Pop();
-	Push((int)CL_AllocDlight(key));
+	P_GET_INT(key);
+	RET_PTR(CL_AllocDlight(key));
 }
 
-PF(NewParticle)
+IMPLEMENT_FUNCTION(VObject, NewParticle)
 {
-	Push((int)R_NewParticle());
+	RET_PTR(R_NewParticle());
+}
+
+IMPLEMENT_FUNCTION(VObject, StartSearch)
+{
+	StartSearch();
+}
+
+IMPLEMENT_FUNCTION(VObject, T_DrawCursor)
+{
+	T_DrawCursor();
 }
 
 #endif
@@ -2111,148 +1630,3 @@ void PR_MSG_Select(int msgtype)
 #endif
 	}
 }
-
-//**************************************************************************
-//
-//		BUILTIN INFO TABLE
-//
-//**************************************************************************
-
-builtin_info_t BuiltinInfo[] =
-{
-#ifdef CLIENT
-	_(P_GetMapName),
-	_(P_GetMapLumpName),
-	_(P_TranslateMap),
-	_(KeyNameForNum),
-	_(IN_GetBindingKeys),
-	_(IN_SetBinding),
-	_(SV_GetSaveString),
-	__(StartSearch),
-	_(GetSlist),
-
-	_(LoadTextLump),
-	_(AllocDlight),
-	_(NewParticle),
-
-	//	Graphics
-	_(SetVirtualScreen),
-	_(R_RegisterPic),
-	_(R_RegisterPicPal),
-	_(R_GetPicInfo),
-	_(R_DrawPic),
-	_(R_DrawPic2),
-	_(R_DrawShadowedPic),
-	_(R_InstallSprite),
-	_(R_DrawSpritePatch),
-	_(InstallModel),
-	_(R_DrawModelFrame),
-	_(R_FillRectWithFlat),
-	_(R_ShadeRect),
-	_(R_FillRect),
-
-	//	Text
-	_(T_SetFont),
-	_(T_SetAlign),
-	_(T_SetDist),
-	_(T_SetShadow),
-	_(T_TextWidth),
-	_(T_TextHeight),
-	_(T_DrawText),
-	_(T_DrawNText),
-	_(T_DrawTextW),
-	__(T_DrawCursor),
-
-	//	Client side sound
-	_(LocalSound),
-	_(IsLocalSoundPlaying),
-	_(StopLocalSounds),
-
-	_(TranslateKey),
-#endif
-#ifdef SERVER
-	//	Print functions
-	_(bprint),
-	_(cprint),
-	_(centerprint),
-
-	//	Map utilites
-	_(LineOpenings),
-	_(P_BoxOnLineSide),
-	_(P_BlockThingsIterator),
-	_(P_PathTraverse),
-	_(FindThingGap),
-	_(FindOpening),
-	_(PointInRegion),
-	_(AddExtraFloor),
-	_(SwapPlanes),
-	_(MapBlock),
-	_(P_ChangeSector),
-
-	//	Mobj utilites
-	_(NewMobjThinker),
-	_(NextMobj),
-
-	//	Special thinker utilites
-	_(NewSpecialThinker),
-	_(RemoveSpecialThinker),
-	_(P_ChangeSwitchTexture),
-	_(NextThinker),
-
-	//	Polyobj functions
-	_(SpawnPolyobj),
-	_(AddAnchorPoint),
-	_(GetPolyobj),
-	_(GetPolyobjMirror),
-	_(PO_MovePolyobj),
-	_(PO_RotatePolyobj),
-
-	//	ACS functions
-	_(StartACS),
-	_(SuspendACS),
-	_(TerminateACS),
-	_(TagFinished),
-	_(PolyobjFinished),
-
-	//	Sound functions
-	_(StartSoundAtVolume),
-	_(SectorStartSound),
-	_(SectorStopSound),
-	_(GetSoundPlayingInfo),
-	_(GetSoundID),
-	_(SetSeqTrans),
-	_(GetSeqTrans),
-	_(SectorStartSequence),
-	_(SectorStopSequence),
-	_(PolyobjStartSequence),
-	_(PolyobjStopSequence),
-
-	_(G_ExitLevel),
-	_(G_SecretExitLevel),
-	_(G_Completed),
-	_(P_GetPlayerNum),
-	_(SB_Start),
-	_(ClearPlayer),
-	_(TerrainType),
-	_(P_ForceLightning),
-	_(SetFloorPic),
-	_(SetCeilPic),
-	_(SetLineTexture),
-	_(SetLineTransluc),
-	_(SendFloorSlope),
-	_(SendCeilingSlope),
-	_(SetSecLightColor),
-	_(SetFloorLightSector),
-	_(SetCeilingLightSector),
-	_(SetHeightSector),
-	_(FindModel),
-	_(GetModelIndex),
-	_(FindSkin),
-	_(FindClassFromEditorId),
-	_(FindClassFromScriptId),
-	_(MSG_SelectClientMsg),
-	_(ChangeMusic),
-	_(FindSectorFromTag),
-#endif
-	{NULL, NULL, NULL}
-};

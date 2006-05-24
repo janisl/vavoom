@@ -38,7 +38,7 @@ bool HandlePickup(Actor Toucher)
 {
 	if (!Player(Toucher.Player).GivePower(PowerType))
 		return false;
-	cprint(Toucher.Player, PickupMessage);
+	Toucher.Player.cprint(PickupMessage);
 	Toucher.PlaySound('misc/p_pkup', CHAN_ITEM);
 	return true;
 }
@@ -46,20 +46,3 @@ bool HandlePickup(Actor Toucher)
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.4  2006/03/02 18:30:31  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.3  2005/11/17 23:05:22  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.2  2004/08/22 19:23:24  dj_jl
-//  Moved many functions to player class.
-//
-//  Revision 1.1  2002/10/26 16:32:20  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

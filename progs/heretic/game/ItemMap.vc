@@ -53,7 +53,7 @@ void TouchSpecial(Actor Toucher)
 	{
 		return;
 	}
-	cprint(Toucher.Player, "MAP SCROLL");
+	Toucher.Player.cprint("MAP SCROLL");
 	if (Special)
 	{
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],

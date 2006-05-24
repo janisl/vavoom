@@ -59,7 +59,7 @@ void A_ProgrammerDeath()
 
 	//	Give Silil piece to the player.
 	Player(Enemy.Player).GiveSigilPiece();
-	cprint(Enemy.Player, "You\'ve Killed the Programmer!");
+	Enemy.Player.cprint("You\'ve Killed the Programmer!");
 }
 
 __states__
@@ -125,29 +125,3 @@ defaultproperties
 	PainSound = 'programmer/pain';
 	DeathSound = 'programmer/death';
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.7  2006/03/12 20:01:24  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.6  2006/03/02 18:36:30  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.5  2005/11/19 13:43:51  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.4  2005/03/28 07:45:29  dj_jl
-//  Some Boom line specials, fixed multiple bugs.
-//
-//  Revision 1.3  2004/10/18 06:35:21  dj_jl
-//  Implemented many monsters, sigil and some more.
-//
-//  Revision 1.2  2004/10/14 06:21:35  dj_jl
-//  Implemented Programmer.
-//
-//  Revision 1.1  2002/11/02 08:20:56  dj_jl
-//  New style classes.
-//
-//**************************************************************************
