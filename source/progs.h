@@ -65,7 +65,7 @@ class TProgs
 {
 public:
 	void Load(const char*);
-	void Unload(void);
+	void Unload();
 
 	static VStruct* FindStruct(VName InName, VClass* InClass);
 
@@ -130,6 +130,8 @@ extern TProgs			svpr;
 
 extern "C" { extern int	*pr_stackPtr; }
 
+extern VMessage*		pr_msg;
+
 //**************************************************************************
 //
 //	Stack routines
@@ -141,7 +143,7 @@ inline void PR_Push(int value)
 	*(pr_stackPtr++) = value;
 }
 
-inline int PR_Pop(void)
+inline int PR_Pop()
 {
 	return *(--pr_stackPtr);
 }
@@ -151,7 +153,7 @@ inline void PR_Pushf(float value)
 	*((float*)pr_stackPtr++) = value;
 }
 
-inline float PR_Popf(void)
+inline float PR_Popf()
 {
 	return *((float*)--pr_stackPtr);
 }
@@ -163,7 +165,7 @@ inline void PR_Pushv(const TVec &v)
 	PR_Pushf(v.z);
 }
 
-inline TVec PR_Popv(void)
+inline TVec PR_Popv()
 {
 	TVec v;
 	v.z = PR_Popf();
@@ -182,73 +184,5 @@ inline VName PR_PopName()
 	return *((VName*)--pr_stackPtr);
 }
 
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.23  2006/03/26 13:06:18  dj_jl
-//	Implemented support for modular progs.
-//
-//	Revision 1.22  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//	
-//	Revision 1.21  2006/03/12 20:06:02  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.20  2006/03/10 19:31:25  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.19  2006/02/28 18:04:36  dj_jl
-//	Added script execution helpers.
-//	
-//	Revision 1.18  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.17  2006/02/25 17:09:35  dj_jl
-//	Import all progs type info.
-//	
-//	Revision 1.16  2006/02/17 19:23:47  dj_jl
-//	Removed support for progs global variables.
-//	
-//	Revision 1.15  2006/02/15 23:27:41  dj_jl
-//	Added script ID class attribute.
-//	
-//	Revision 1.14  2005/12/07 22:53:26  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.13  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.12  2002/05/03 17:06:23  dj_jl
-//	Mangling of string pointers.
-//	
-//	Revision 1.11  2002/03/09 18:05:34  dj_jl
-//	Added support for defining native functions outside pr_cmds
-//	
-//	Revision 1.10  2002/02/02 19:20:41  dj_jl
-//	VMethod pointers used instead of the function numbers
-//	
-//	Revision 1.9  2002/01/11 08:07:18  dj_jl
-//	Added names to progs
-//	
-//	Revision 1.8  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.6  2001/12/01 17:43:13  dj_jl
-//	Renamed ClassBase to VObject
-//	
-//	Revision 1.5  2001/09/20 16:30:28  dj_jl
-//	Started to use object-oriented stuff in progs
-//	
-//	Revision 1.4  2001/08/21 17:39:22  dj_jl
-//	Real string pointers in progs
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+const char* PF_FormatString();
+void PR_MSG_Select(int);

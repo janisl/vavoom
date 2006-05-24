@@ -426,3 +426,547 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 	P_GET_SELF;
 	RET_BOOL(Self->GetFlags() & _OF_Destroyed);
 }
+
+//**************************************************************************
+//
+//  Error functions
+//
+//**************************************************************************
+
+IMPLEMENT_FUNCTION(VObject, Error)
+{
+	Host_Error(PF_FormatString());
+}
+
+IMPLEMENT_FUNCTION(VObject, FatalError)
+{
+	Sys_Error(PF_FormatString());
+}
+
+//**************************************************************************
+//
+//	Cvar functions
+//
+//**************************************************************************
+
+IMPLEMENT_FUNCTION(VObject, CreateCvar)
+{
+	P_GET_INT(flags);
+	P_GET_PTR(char, def);
+	P_GET_NAME(name);
+	new VCvar(*name, def, flags);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetCvar)
+{
+	P_GET_NAME(name);
+	RET_INT(VCvar::GetInt(*name));
+}
+
+IMPLEMENT_FUNCTION(VObject, SetCvar)
+{
+	P_GET_INT(value);
+	P_GET_NAME(name);
+	VCvar::Set(*name, value);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetCvarF)
+{
+	P_GET_NAME(name);
+	RET_FLOAT(VCvar::GetFloat(*name));
+}
+
+IMPLEMENT_FUNCTION(VObject, SetCvarF)
+{
+	P_GET_FLOAT(value);
+	P_GET_NAME(name);
+	VCvar::Set(*name, value);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetCvarS)
+{
+	P_GET_NAME(name);
+	RET_PTR(VCvar::GetCharp(*name));
+}
+
+IMPLEMENT_FUNCTION(VObject, SetCvarS)
+{
+	P_GET_PTR(char, value);
+	P_GET_NAME(name);
+	VCvar::Set(*name, value);
+}
+
+//**************************************************************************
+//
+//	Math functions
+//
+//**************************************************************************
+
+IMPLEMENT_FUNCTION(VObject, AngleMod360)
+{
+	P_GET_FLOAT(an);
+	RET_FLOAT(AngleMod(an));
+}
+
+IMPLEMENT_FUNCTION(VObject, AngleMod180)
+{
+	P_GET_FLOAT(an);
+	RET_FLOAT(AngleMod180(an));
+}
+
+IMPLEMENT_FUNCTION(VObject, abs)
+{
+	P_GET_INT(i);
+	RET_INT(abs(i));
+}
+
+IMPLEMENT_FUNCTION(VObject, fabs)
+{
+	P_GET_FLOAT(i);
+	RET_FLOAT(fabs(i));
+}
+
+IMPLEMENT_FUNCTION(VObject, sin)
+{
+	P_GET_FLOAT(an);
+	RET_FLOAT(msin(an));
+}
+
+IMPLEMENT_FUNCTION(VObject, cos)
+{
+	P_GET_FLOAT(an);
+	RET_FLOAT(mcos(an));
+}
+
+IMPLEMENT_FUNCTION(VObject, tan)
+{
+	P_GET_FLOAT(an);
+	RET_FLOAT(mtan(an));
+}
+
+IMPLEMENT_FUNCTION(VObject, atan)
+{
+	P_GET_FLOAT(slope);
+	RET_FLOAT(RAD2DEG(atan(slope)));
+}
+
+IMPLEMENT_FUNCTION(VObject, atan2)
+{
+	P_GET_FLOAT(x);
+	P_GET_FLOAT(y);
+	RET_FLOAT(matan(y, x));
+}
+
+IMPLEMENT_FUNCTION(VObject, Length)
+{
+	P_GET_VEC(vec);
+	RET_FLOAT(Length(vec));
+}
+
+IMPLEMENT_FUNCTION(VObject, Normalise)
+{
+	P_GET_VEC(vec);
+	RET_VEC(Normalise(vec));
+}
+
+IMPLEMENT_FUNCTION(VObject, DotProduct)
+{
+	P_GET_VEC(v2);
+	P_GET_VEC(v1);
+	RET_FLOAT(DotProduct(v1, v2));
+}
+
+IMPLEMENT_FUNCTION(VObject, CrossProduct)
+{
+	P_GET_VEC(v2);
+	P_GET_VEC(v1);
+	RET_VEC(CrossProduct(v1, v2));
+}
+
+IMPLEMENT_FUNCTION(VObject, AngleVectors)
+{
+	P_GET_PTR(TVec, vup);
+	P_GET_PTR(TVec, vright);
+	P_GET_PTR(TVec, vforward);
+	P_GET_PTR(TAVec, angles);
+	AngleVectors(*angles, *vforward, *vright, *vup);
+}
+
+IMPLEMENT_FUNCTION(VObject, AngleVector)
+{
+	P_GET_PTR(TVec, vec);
+	P_GET_PTR(TAVec, angles);
+	AngleVector(*angles, *vec);
+}
+
+IMPLEMENT_FUNCTION(VObject, VectorAngles)
+{
+	P_GET_PTR(TAVec, angles);
+	P_GET_PTR(TVec, vec);
+	VectorAngles(*vec, *angles);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetPlanePointZ)
+{
+	P_GET_VEC(point);
+	P_GET_PTR(TPlane, plane);
+	RET_FLOAT(plane->GetPointZ(point));
+}
+
+IMPLEMENT_FUNCTION(VObject, PointOnPlaneSide)
+{
+	P_GET_PTR(TPlane, plane);
+	P_GET_VEC(point);
+	RET_INT(plane->PointOnSide(point));
+}
+
+IMPLEMENT_FUNCTION(VObject, RotateDirectionVector)
+{
+	P_GET_AVEC(rot);
+	P_GET_VEC(vec);
+
+	TAVec angles;
+	TVec out;
+
+	VectorAngles(vec, angles);
+	angles.pitch += rot.pitch;
+	angles.yaw += rot.yaw;
+	angles.roll += rot.roll;
+	AngleVector(angles, out);
+	RET_VEC(out);
+}
+
+IMPLEMENT_FUNCTION(VObject, VectorRotateAroundZ)
+{
+	P_GET_FLOAT(angle);
+	P_GET_PTR(TVec, vec);
+
+	float dstx = vec->x * mcos(angle) - vec->y * msin(angle);
+	float dsty = vec->x * msin(angle) + vec->y * mcos(angle);
+
+	vec->x = dstx;
+	vec->y = dsty;
+}
+
+//**************************************************************************
+//
+//	String functions
+//
+//**************************************************************************
+
+IMPLEMENT_FUNCTION(VObject, ptrtos)
+{
+	//	Nothing to do
+}
+
+IMPLEMENT_FUNCTION(VObject, strgetchar)
+{
+	P_GET_INT(i);
+	P_GET_PTR(char, str);
+	RET_INT(vuint8(str[i]));
+}
+
+IMPLEMENT_FUNCTION(VObject, strsetchar)
+{
+	P_GET_INT(chr);
+	P_GET_INT(i);
+	P_GET_PTR(char, str);
+	str[i] = chr;
+}
+
+IMPLEMENT_FUNCTION(VObject, strlen)
+{
+	P_GET_PTR(char, s);
+	RET_INT(strlen(s));
+}
+
+IMPLEMENT_FUNCTION(VObject, strcmp)
+{
+	P_GET_PTR(char, s2);
+	P_GET_PTR(char, s1);
+	RET_INT(strcmp(s1, s2));
+}
+
+IMPLEMENT_FUNCTION(VObject, stricmp)
+{
+	P_GET_PTR(char, s2);
+	P_GET_PTR(char, s1);
+	RET_INT(stricmp(s1, s2));
+}
+
+IMPLEMENT_FUNCTION(VObject, strcpy)
+{
+	P_GET_PTR(char, s2);
+	P_GET_PTR(char, s1);
+	strcpy(s1, s2);
+}
+
+IMPLEMENT_FUNCTION(VObject, strclr)
+{
+	P_GET_PTR(char, s);
+	s[0] = 0;
+}
+
+IMPLEMENT_FUNCTION(VObject, strcat)
+{
+	P_GET_PTR(char, s2);
+	P_GET_PTR(char, s1);
+	strcat(s1, s2);
+}
+
+IMPLEMENT_FUNCTION(VObject, strlwr)
+{
+	P_GET_PTR(char, s);
+	while (*s)
+	{
+		*s = tolower(*s);
+		s++;
+	}
+}
+
+IMPLEMENT_FUNCTION(VObject, strupr)
+{
+	P_GET_PTR(char, s);
+	while (*s)
+	{
+		*s = toupper(*s);
+		s++;
+	}
+}
+
+IMPLEMENT_FUNCTION(VObject, sprint)
+{
+	const char* val = PF_FormatString();
+	P_GET_PTR(char, dst);
+	strcpy(dst, val);
+}
+
+IMPLEMENT_FUNCTION(VObject, va)
+{
+	RET_PTR(PF_FormatString());
+}
+
+IMPLEMENT_FUNCTION(VObject, atoi)
+{
+	P_GET_PTR(char, str);
+	RET_INT(atoi(str));
+}
+
+IMPLEMENT_FUNCTION(VObject, atof)
+{
+	P_GET_PTR(char, str);
+	RET_FLOAT(atof(str));
+}
+
+//**************************************************************************
+//
+//	Random numbers
+//
+//**************************************************************************
+
+IMPLEMENT_FUNCTION(VObject, Random)
+{
+	RET_FLOAT(Random());
+}
+
+IMPLEMENT_FUNCTION(VObject, P_Random)
+{
+	RET_INT(rand() & 0xff);
+}
+
+//**************************************************************************
+//
+//	Texture utils
+//
+//**************************************************************************
+
+IMPLEMENT_FUNCTION(VObject, CheckTextureNumForName)
+{
+	P_GET_NAME(name);
+	RET_INT(GTextureManager.CheckNumForName(name, TEXTYPE_Wall, true, false));
+}
+
+IMPLEMENT_FUNCTION(VObject, TextureNumForName)
+{
+	P_GET_NAME(name);
+	RET_INT(GTextureManager.NumForName(name, TEXTYPE_Wall, true, false));
+}
+
+IMPLEMENT_FUNCTION(VObject, CheckFlatNumForName)
+{
+	P_GET_NAME(name);
+	RET_INT(GTextureManager.CheckNumForName(name, TEXTYPE_Flat, true, false));
+}
+
+IMPLEMENT_FUNCTION(VObject, FlatNumForName)
+{
+	P_GET_NAME(name);
+	RET_INT(GTextureManager.NumForName(name, TEXTYPE_Flat, true, false));
+}
+
+IMPLEMENT_FUNCTION(VObject, TextureHeight)
+{
+	P_GET_INT(pic);
+	RET_FLOAT(GTextureManager.TextureHeight(pic));
+}
+
+//**************************************************************************
+//
+//	Message IO functions
+//
+//**************************************************************************
+
+IMPLEMENT_FUNCTION(VObject, MSG_Select)
+{
+	P_GET_INT(msgtype);
+	PR_MSG_Select(msgtype);
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_CheckSpace)
+{
+	P_GET_INT(len);
+	RET_BOOL(pr_msg->CheckSpace(len));
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_WriteByte)
+{
+	P_GET_INT(d);
+	*pr_msg << (vuint8)d;
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_WriteShort)
+{
+	P_GET_INT(d);
+	*pr_msg << (vint16)d;
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_WriteLong)
+{
+	P_GET_INT(d);
+	*pr_msg << d;
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_ReadChar)
+{
+	RET_INT((vint8)net_msg.ReadByte());
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_ReadByte)
+{
+	RET_INT((vuint8)net_msg.ReadByte());
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_ReadShort)
+{
+	RET_INT((vint16)net_msg.ReadShort());
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_ReadWord)
+{
+	RET_INT((vuint16)net_msg.ReadShort());
+}
+
+IMPLEMENT_FUNCTION(VObject, MSG_ReadLong)
+{
+	int l;
+	net_msg >> l;
+	RET_INT(l);
+}
+
+//==========================================================================
+//
+//	Printing in console
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, print)
+{
+	GCon->Log(PF_FormatString());
+}
+
+IMPLEMENT_FUNCTION(VObject, dprint)
+{
+	GCon->Log(NAME_Dev, PF_FormatString());
+}
+
+//==========================================================================
+//
+//	PF_itof
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, itof)
+{
+	P_GET_INT(x);
+	RET_FLOAT((float)x);
+}
+
+IMPLEMENT_FUNCTION(VObject, ftoi)
+{
+	P_GET_FLOAT(x);
+	RET_INT((vint32)x);
+}
+
+IMPLEMENT_FUNCTION(VObject, StrToName)
+{
+	P_GET_PTR(char, str);
+	RET_NAME(VName(str));
+}
+
+//==========================================================================
+//
+//	Console command functions
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, Cmd_CheckParm)
+{
+	P_GET_PTR(char, str);
+	RET_INT(VCommand::CheckParm(str));
+}
+
+IMPLEMENT_FUNCTION(VObject, CmdBuf_AddText)
+{
+	GCmdBuf << PF_FormatString();
+}
+
+//==========================================================================
+//
+//	Misc
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, Info_ValueForKey)
+{
+	P_GET_PTR(char, key);
+	P_GET_PTR(char, info);
+	RET_PTR(Info_ValueForKey(info, key));
+}
+
+IMPLEMENT_FUNCTION(VObject, WadLumpPresent)
+{
+	P_GET_NAME(name);
+	RET_BOOL(W_CheckNumForName(name) >= 0);
+}
+
+IMPLEMENT_FUNCTION(VObject, SpawnObject)
+{
+	P_GET_PTR(VClass, Class);
+	RET_REF(VObject::StaticSpawnObject(Class));
+}
+
+IMPLEMENT_FUNCTION(VObject, FindClass)
+{
+	P_GET_NAME(Name);
+	RET_PTR(VClass::FindClass(*Name));
+}
+
+IMPLEMENT_FUNCTION(VObject, StateIsInRange)
+{
+	P_GET_INT(MaxDepth);
+	P_GET_PTR(VState, End);
+	P_GET_PTR(VState, Start);
+	P_GET_PTR(VState, State);
+	RET_BOOL(State->IsInRange(Start, End, MaxDepth));
+}
+
