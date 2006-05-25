@@ -70,6 +70,8 @@ public:
 
 	static BOOL PASCAL FAR BlockingHook();
 	void GetLocalAddress();
+
+	int PartialIPAddress(const char*, sockaddr_t*);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -299,7 +301,7 @@ void VWinSockDriver::Listen(bool state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			WINS_GetLocalAddress();
+			GetLocalAddress();
 			net_acceptsocket = OpenSocket(net_hostport);
 			if (net_acceptsocket == -1)
 				Sys_Error("WINS_Listen: Unable to open accept socket\n");
@@ -344,7 +346,7 @@ int VWinSockDriver::OpenSocket(int port)
 	if (bind(newsocket, (sockaddr *)&address, sizeof(address)) == 0)
 		return newsocket;
 
-	Sys_Error("Unable to bind to %s", WINS_AddrToString((sockaddr_t *)&address));
+	Sys_Error("Unable to bind to %s", AddrToString((sockaddr_t *)&address));
 
 ErrorReturn:
 	closesocket(newsocket);
@@ -458,7 +460,7 @@ int VWinSockDriver::Broadcast(int socket, vuint8* buf, int len)
 		if (net_broadcastsocket != 0)
 			Sys_Error("Attempted to use multiple broadcasts sockets\n");
 
-		WINS_GetLocalAddress();
+		GetLocalAddress();
 
 		// make this socket broadcast capable
 		if (setsockopt(socket, SOL_SOCKET, SO_BROADCAST, (char *)&i, sizeof(i)) < 0)
@@ -562,14 +564,14 @@ int VWinSockDriver::GetNameFromAddr(sockaddr_t *addr, char *name)
 
 //==========================================================================
 //
-//	PartialIPAddress
+//	VWinSockDriver::PartialIPAddress
 //
 //	This lets you type only as much of the net address as required, using
 // the local network components to fill in the rest
 //
 //==========================================================================
 
-static int PartialIPAddress(const char *in, sockaddr_t *hostaddr)
+int VWinSockDriver::PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 {
 	guard(PartialIPAddress);
 	char buff[256];

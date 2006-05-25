@@ -530,15 +530,15 @@ int VWinIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 	if (n == 12)
 	{
 		sprintf(buf, "00000000:%s:%u", name, net_hostport);
-		return WIPX_StringToAddr(buf, addr);
+		return StringToAddr(buf, addr);
 	}
 	if (n == 21)
 	{
 		sprintf(buf, "%s:%u", name, net_hostport);
-		return WIPX_StringToAddr(buf, addr);
+		return StringToAddr(buf, addr);
 	}
 	if (n > 21 && n <= 27)
-		return WIPX_StringToAddr(name, addr);
+		return StringToAddr(name, addr);
 
 	return -1;
 	unguard;
