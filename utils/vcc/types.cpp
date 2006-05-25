@@ -1064,64 +1064,6 @@ VField* FindConstructor(VClass* InClass)
 	return FindConstructor(InClass->ParentClass);
 }
 
-//==========================================================================
-//
-//	AddVTable
-//
-//==========================================================================
-
-static void AddVTable(VClass* InClass)
-{
-	if (InClass->VTableOffset != -1)
-	{
-		return;
-	}
-	if (InClass->ParentClass)
-	{
-		AddVTable(InClass->ParentClass);
-	}
-	InClass->VTableOffset = vtables.Num();
-	vtables.SetNum(vtables.Num() + InClass->NumMethods);
-	VMethod** vtable = &vtables[InClass->VTableOffset];
-	memset(vtable, 0, InClass->NumMethods * sizeof(VMethod*));
-	if (InClass->ParentClass)
-	{
-		memcpy(vtable, InClass->ParentClass->VTable ?
-			InClass->ParentClass->VTable :
-			&vtables[InClass->ParentClass->VTableOffset],
-			InClass->ParentClass->NumMethods * sizeof(VMethod*));
-	}
-	for (VField* f = InClass->Fields; f; f = f->Next)
-	{
-		if (f->type.type != ev_method || f->ofs == -1)
-		{
-			continue;
-		}
-		vtable[f->ofs] = f->func;
-	}
-	if (!vtable[0])
-	{
-		ERR_Exit(ERR_NONE, false, "Missing defaultproperties for %s", *InClass->Name);
-	}
-}
-
-//==========================================================================
-//
-//	AddVirtualTables
-//
-//==========================================================================
-
-void AddVirtualTables()
-{
-	dprintf("Adding virtual tables\n");
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
-	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class &&
-			VMemberBase::GMembers[i]->IsIn(CurrentPackage))
-			AddVTable((VClass*)VMemberBase::GMembers[i]);
-	}
-}
-
 //**************************************************************************
 //**
 //**

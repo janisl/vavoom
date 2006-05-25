@@ -496,8 +496,6 @@ public:
 	VClass*		ParentClass;
 	VField*		Fields;
 	VState*		States;
-	int			VTableOffset;
-	VMethod**	VTable;
 	int			NumMethods;
 	int			Size;
 
@@ -506,8 +504,6 @@ public:
 	, ParentClass(NULL)
 	, Fields(NULL)
 	, States(NULL)
-	, VTableOffset(-1)
-	, VTable(0)
 	, NumMethods(0)
 	, Size(0)
 	{}
@@ -608,7 +604,6 @@ void CompileClass();
 VField* ParseStructField(VStruct*);
 VField* ParseClassField(VClass*);
 VField* FindConstructor(VClass*);
-void AddVirtualTables();
 void ParseStruct(VClass*, bool);
 void AddFields(VClass*);
 void ParseClass();
@@ -638,7 +633,6 @@ extern VName			tk_Name;
 extern VPackage*			CurrentPackage;
 extern int					numbuiltins;
 
-extern TArray<VMethod*>		vtables;
 extern TArray<mobjinfo_t>	mobj_info;
 extern TArray<mobjinfo_t>	script_ids;
 

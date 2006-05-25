@@ -29,7 +29,7 @@
 enum EClassObjectFlags
 {
 	CLASSOF_Native			= 0x00000001,   // Native
-	CLASSOF_RefsInitialised	= 0x00000002,	// Reference fields have been set up
+	CLASSOF_PostLoaded		= 0x00000002,	// PostLoad has been called
 };
 
 enum ENativeConstructor		{EC_NativeConstructor};
@@ -93,7 +93,6 @@ public:
 	vuint16			Checksum;
 	char*			Strings;
 	vint32*			Statements;
-	VMethod**		VTables;
 	VProgsReader*	Reader;
 
 	void Serialise(VStream&);
@@ -133,6 +132,7 @@ public:
 	VField*		NextReference;	//	Linked list of reference fields.
 	vint32		Ofs;
 	FType		Type;
+	VMethod*	Func;
 	vint32		Flags;
 
 	VField(VName);
@@ -287,7 +287,6 @@ public:
 	void			(*ClassConstructor)();
 
 	vint32			ClassNumMethods;
-	vint32			VTableOffset;
 
 	VField*			Fields;
 	VField*			ReferenceFields;
@@ -347,6 +346,7 @@ public:
 	VState* FindState(VName InName);
 	VState* FindStateChecked(VName InName);
 	void InitReferences();
+	void CreateVTable();
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
 

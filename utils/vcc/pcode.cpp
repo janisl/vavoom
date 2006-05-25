@@ -65,7 +65,6 @@ VMemberBase*			VMemberBase::GMembersHash[4096];
 VPackage*			CurrentPackage;
 int					numbuiltins;
 
-TArray<VMethod*>	vtables;
 TArray<mobjinfo_t>	mobj_info;
 TArray<mobjinfo_t>	script_ids;
 
@@ -846,20 +845,6 @@ VPackage* LoadPackage(VName InName)
 			Exports[i].Obj->Outer = Pkg;
 	}
 
-	//	Serailse virtual tables.
-	VMethod** VTables = new VMethod*[Progs.num_vtables];
-	Reader->Seek(Progs.ofs_vtables);
-	for (i = 0; i < Progs.num_vtables; i++)
-	{
-		*Reader << VTables[i];
-	}
-	for (i = 0; i < Progs.num_exports; i++)
-	{
-		if (Exports[i].Type == MEMBER_Class)
-			((VClass*)Exports[i].Obj)->VTable = VTables +
-				((VClass*)Exports[i].Obj)->VTableOffset;
-	}
-
 	delete[] NameRemap;
 	delete[] Exports;
 	delete Reader;
@@ -950,10 +935,6 @@ void PC_WriteObject(char *name)
 		Writer.Exports[i].Obj->Serialise(Collector);
 	}
 	WriteCode(Collector);
-	for (i = 0; i < vtables.Num(); i++)
-	{
-		Collector << vtables[i];
-	}
 	for (i = 0; i < Writer.Imports.Num(); i++)
 	{
 		Collector << Writer.Imports[i];
@@ -980,13 +961,6 @@ void PC_WriteObject(char *name)
 	progs.ofs_statements = Writer.Tell();
 	progs.num_statements = CodeBuffer.Num();
 	WriteCode(Writer);
-
-	progs.ofs_vtables = Writer.Tell();
-	progs.num_vtables = vtables.Num();
-	for (i = 0; i < vtables.Num(); i++)
-	{
-		Writer << vtables[i];
-	}
 
 	progs.ofs_mobjinfo = Writer.Tell();
 	progs.num_mobjinfo = mobj_info.Num();
@@ -1033,9 +1007,8 @@ void PC_WriteObject(char *name)
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", Writer.Names.Num(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
-	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), progs.ofs_vtables - progs.ofs_statements);
+	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), progs.ofs_mobjinfo - progs.ofs_statements);
 	dprintf("Builtins   %6d\n", numbuiltins);
-	dprintf("VTables    %6d %6d\n", vtables.Num(), progs.ofs_mobjinfo - progs.ofs_vtables);
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
 	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_imports - progs.ofs_scriptids);
 	dprintf("Imports    %6d %6d\n", Writer.Imports.Num(), progs.ofs_exportinfo - progs.ofs_imports);
@@ -1281,7 +1254,6 @@ void VClass::Serialise(VStream& Strm)
 	Strm << ParentClass
 		<< Fields
 		<< States
-		<< STRM_INDEX(VTableOffset)
 		<< STRM_INDEX(NumMethods)
 		<< STRM_INDEX(Size);
 }

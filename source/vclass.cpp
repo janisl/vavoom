@@ -446,7 +446,6 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->Serialise(Pkg->Strings, Progs.num_strings);
 
 	Pkg->Statements = new int[Progs.num_statements];
-	Pkg->VTables = new VMethod*[Progs.num_vtables];
 
 	//	Serialise objects.
 	Reader->Seek(Progs.ofs_exportdata);
@@ -467,13 +466,6 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	for (i = 0; i < Progs.num_scriptids; i++)
 	{
 		*Reader << VClass::GScriptIds.Alloc();
-	}
-
-	//	Set up function pointers in vitual tables
-	Reader->Seek(Progs.ofs_vtables);
-	for (i = 0; i < Progs.num_vtables; i++)
-	{
-		*(VStream*)Reader << Pkg->VTables[i];
 	}
 
 	//
@@ -573,7 +565,6 @@ VPackage::VPackage(VName AName)
 , Checksum(0)
 , Strings(0)
 , Statements(0)
-, VTables(0)
 , Reader(0)
 {
 }
@@ -588,11 +579,9 @@ VPackage::~VPackage()
 {
 	guard(VPackage::~VPackage);
 	if (Strings)
-		Z_Free(Strings);
+		delete[] Strings;
 	if (Statements)
-		Z_Free(Statements);
-	if (VTables)
-		Z_Free(VTables);
+		delete[] Statements;
 	unguard;
 }
 
@@ -620,6 +609,7 @@ VField::VField(VName AName)
 , Next(0)
 , NextReference(0)
 , Ofs(0)
+, Func(0)
 , Flags(0)
 {
 	memset(&Type, 0, sizeof(Type));
@@ -635,11 +625,10 @@ void VField::Serialise(VStream& Strm)
 {
 	guard(VField::Serialise);
 	VMemberBase::Serialise(Strm);
-	VMethod* func;
 	Strm << Next
 		<< STRM_INDEX(Ofs)
 		<< Type
-		<< func
+		<< Func
 		<< STRM_INDEX(Flags);
 	unguard;
 }
@@ -1144,7 +1133,22 @@ void VStruct::Serialise(VStream& Strm)
 
 void VStruct::PostLoad()
 {
+	if (ObjectFlags & CLASSOF_PostLoaded)
+	{
+		//	Already done.
+		return;
+	}
+
+	//	Make sure parent struct has been set up.
+	if (ParentStruct)
+	{
+		ParentStruct->PostLoad();
+	}
+
+	//	Set up list of reference fields.
 	InitReferences();
+
+	ObjectFlags |= CLASSOF_PostLoaded;
 }
 
 //==========================================================================
@@ -1156,15 +1160,9 @@ void VStruct::PostLoad()
 void VStruct::InitReferences()
 {
 	guard(VStruct::InitReferences);
-	if (ObjectFlags & CLASSOF_RefsInitialised)
-	{
-		return;
-	}
-
 	ReferenceFields = NULL;
 	if (ParentStruct)
 	{
-		ParentStruct->InitReferences();
 		ReferenceFields = ParentStruct->ReferenceFields;
 	}
 
@@ -1179,7 +1177,7 @@ void VStruct::InitReferences()
 			break;
 		
 		case ev_struct:
-			F->Type.Struct->InitReferences();
+			F->Type.Struct->PostLoad();
 			if (F->Type.Struct->ReferenceFields)
 			{
 				F->NextReference = ReferenceFields;
@@ -1195,7 +1193,7 @@ void VStruct::InitReferences()
 			}
 			else if (F->Type.ArrayInnerType == ev_struct)
 			{
-				F->Type.Struct->InitReferences();
+				F->Type.Struct->PostLoad();
 				if (F->Type.Struct->ReferenceFields)
 				{
 					F->NextReference = ReferenceFields;
@@ -1205,8 +1203,6 @@ void VStruct::InitReferences()
 			break;
 		}
 	}
-
-	ObjectFlags |= CLASSOF_RefsInitialised;
 	unguard;
 }
 
@@ -1281,7 +1277,6 @@ VClass::VClass(VName AName)
 , ClassVTable(0)
 , ClassConstructor(0)
 , ClassNumMethods(0)
-, VTableOffset(0)
 , Fields(0)
 , ReferenceFields(0)
 , States(0)
@@ -1309,7 +1304,6 @@ VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
 , ClassVTable(0)
 , ClassConstructor(ACtor)
 , ClassNumMethods(0)
-, VTableOffset(0)
 , Fields(0)
 , ReferenceFields(0)
 , States(0)
@@ -1329,10 +1323,16 @@ VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
 VClass::~VClass()
 {
 	guard(VClass::~VClass);
+	if (ClassVTable)
+	{
+		delete[] ClassVTable;
+	}
+
 	if (!GObjInitialized)
 	{
 		return;
 	}
+	//	Unlink from classes list.
 	if (GClasses == this)
 	{
 		GClasses = LinkNext;
@@ -1371,7 +1371,6 @@ void VClass::Serialise(VStream& Strm)
 	Strm << ParentClass
 		<< Fields
 		<< States
-		<< STRM_INDEX(VTableOffset)
 		<< STRM_INDEX(ClassNumMethods)
 		<< STRM_INDEX(ClassSize);
 	if ((ObjectFlags & CLASSOF_Native) && ClassSize != PrevSize)
@@ -1552,11 +1551,25 @@ VState* VClass::FindStateChecked(VName AName)
 
 void VClass::PostLoad()
 {
-	if (!ClassVTable)
+	if (ObjectFlags & CLASSOF_PostLoaded)
 	{
-		ClassVTable = GetPackage()->VTables + VTableOffset;
+		//	Already set up.
+		return;
 	}
+
+	//	Make sure parent class has been set up.
+	if (GetSuperClass())
+	{
+		GetSuperClass()->PostLoad();
+	}
+
+	//	Initialise reference fields.
 	InitReferences();
+
+	//	Create virtual table.
+	CreateVTable();
+
+	ObjectFlags |= CLASSOF_PostLoaded;
 }
 
 //==========================================================================
@@ -1568,15 +1581,9 @@ void VClass::PostLoad()
 void VClass::InitReferences()
 {
 	guard(VClass::InitReferences);
-	if (ObjectFlags & CLASSOF_RefsInitialised)
-	{
-		return;
-	}
-
 	ReferenceFields = NULL;
 	if (GetSuperClass())
 	{
-		GetSuperClass()->InitReferences();
 		ReferenceFields = GetSuperClass()->ReferenceFields;
 	}
 
@@ -1591,7 +1598,7 @@ void VClass::InitReferences()
 			break;
 		
 		case ev_struct:
-			F->Type.Struct->InitReferences();
+			F->Type.Struct->PostLoad();
 			if (F->Type.Struct->ReferenceFields)
 			{
 				F->NextReference = ReferenceFields;
@@ -1607,7 +1614,7 @@ void VClass::InitReferences()
 			}
 			else if (F->Type.ArrayInnerType == ev_struct)
 			{
-				F->Type.Struct->InitReferences();
+				F->Type.Struct->PostLoad();
 				if (F->Type.Struct->ReferenceFields)
 				{
 					F->NextReference = ReferenceFields;
@@ -1617,8 +1624,33 @@ void VClass::InitReferences()
 			break;
 		}
 	}
+	unguard;
+}
 
-	ObjectFlags |= CLASSOF_RefsInitialised;
+//==========================================================================
+//
+//	VClass::CreateVTable
+//
+//==========================================================================
+
+void VClass::CreateVTable()
+{
+	guard(VClass::CreateVTable);
+	ClassVTable = new VMethod*[ClassNumMethods];
+	memset(ClassVTable, 0, ClassNumMethods * sizeof(VMethod*));
+	if (ParentClass)
+	{
+		memcpy(ClassVTable, ParentClass->ClassVTable,
+			ParentClass->ClassNumMethods * sizeof(VMethod*));
+	}
+	for (VField* f = Fields; f; f = f->Next)
+	{
+		if (f->Type.Type != ev_method || f->Ofs == -1)
+		{
+			continue;
+		}
+		ClassVTable[f->Ofs] = f->Func;
+	}
 	unguard;
 }
 

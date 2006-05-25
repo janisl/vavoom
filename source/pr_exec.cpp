@@ -161,9 +161,6 @@ void TProgs::Load(const char *AName)
 
 void TProgs::Unload()
 {
-	Z_Free(Pkg->VTables);
-//	Z_Free(Pkg->Reader->Exports);
-//	delete Pkg->Reader;
 }
 
 //==========================================================================
