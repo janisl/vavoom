@@ -71,6 +71,7 @@ public:
 
 	virtual void Serialise(VStream&);
 	virtual void PostLoad();
+	virtual void Shutdown();
 
 	static void StaticInit();
 	static void StaticExit();
@@ -92,7 +93,6 @@ public:
 
 	vuint16			Checksum;
 	char*			Strings;
-	vint32*			Statements;
 	VProgsReader*	Reader;
 
 	void Serialise(VStream&);
@@ -152,21 +152,34 @@ public:
 //
 //==========================================================================
 
+struct FInstruction
+{
+	vint32		Address;
+	vint32		Opcode;
+	vint32		Arg1;
+	vint32		Arg2;
+};
+
 class VMethod : public VMemberBase
 {
 public:
-	vint32		FirstStatement;
-	vint16		NumParms;
-	vint16		NumLocals;
-	vint16		Type;
-	vint16		Flags;
-	vuint32		Profile1;
-	vuint32		Profile2;
+	vint16			NumParms;
+	vint16			NumLocals;
+	vint16			Type;
+	vint16			Flags;
+	vuint32			Profile1;
+	vuint32			Profile2;
+	TArray<vint32>	Statements;
+	builtin_t		NativeFunc;
+	vint32			NumInstructions;
+	FInstruction*	Instructions;
 
 	VMethod(VName);
+	~VMethod();
 
 	void Serialise(VStream&);
 	void PostLoad();
+	void CompileCode();
 
 	friend inline VStream& operator<<(VStream& Strm, VMethod*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -352,6 +365,7 @@ public:
 
 	void Serialise(VStream&);
 	void PostLoad();
+	void Shutdown();
 
 	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }

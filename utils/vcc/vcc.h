@@ -288,6 +288,14 @@ public:
 	const char* GetSource() const;
 };
 
+struct FInstruction
+{
+	vint32		Address;
+	vint32		Opcode;
+	vint32		Arg1;
+	vint32		Arg2;
+};
+
 //
 // The base class of all objects.
 //
@@ -383,17 +391,16 @@ public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static |
 		TModifiers::Final };
 
-	int			FirstStatement;	//	Negative numbers are builtin functions
 	int			NumLocals;
 	int			Flags;
 	TType		ReturnType;
 	int			NumParams;
 	int			ParamsSize;
 	TType		ParamTypes[MAX_PARAMS];
+	TArray<FInstruction>	Instructions;
 
 	VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Method, InName, InOuter, InLoc)
-	, FirstStatement(0)
 	, NumLocals(0)
 	, Flags(0)
 	, ReturnType(ev_void)

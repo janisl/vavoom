@@ -233,9 +233,6 @@ struct dprograms_t
 	int		num_strings;
 	int		ofs_strings;
 
-	int		ofs_statements;
-	int		num_statements;
-
 	int		ofs_mobjinfo;
 	int		num_mobjinfo;
 

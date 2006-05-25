@@ -285,6 +285,16 @@ void VMemberBase::PostLoad()
 
 //==========================================================================
 //
+//	VMemberBase::Shutdown
+//
+//==========================================================================
+
+void VMemberBase::Shutdown()
+{
+}
+
+//==========================================================================
+//
 //	VMemberBase::StaticInit
 //
 //==========================================================================
@@ -313,6 +323,10 @@ void VMemberBase::StaticExit()
 			!(((VClass*)GMembers[i])->ObjectFlags & CLASSOF_Native))
 		{
 			delete GMembers[i];
+		}
+		else
+		{
+			GMembers[i]->Shutdown();
 		}
 	}
 	GMembers.Clear();
@@ -445,8 +459,6 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Reader->Seek(Progs.ofs_strings);
 	Reader->Serialise(Pkg->Strings, Progs.num_strings);
 
-	Pkg->Statements = new int[Progs.num_statements];
-
 	//	Serialise objects.
 	Reader->Seek(Progs.ofs_exportdata);
 	for (i = 0; i < Progs.num_exports; i++)
@@ -466,63 +478,6 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	for (i = 0; i < Progs.num_scriptids; i++)
 	{
 		*Reader << VClass::GScriptIds.Alloc();
-	}
-
-	//
-	//	Read statements and patch code
-	//
-	Reader->Seek(Progs.ofs_statements);
-	for (i = 0; i < Progs.num_statements; i++)
-	{
-		vuint8 Tmp;
-		*Reader << Tmp;
-		Pkg->Statements[i] = Tmp;
-		if (OpcodeArgCount[Pkg->Statements[i]] >= 1)
-		{
-			switch (Pkg->Statements[i])
-			{
-			case OPC_PushString:
-				*Reader << Pkg->Statements[i + 1];
-				Pkg->Statements[i + 1] += (int)Pkg->Strings;
-				break;
-			case OPC_PushName:
-			case OPC_CaseGotoName:
-				*Reader << *(VName*)&Pkg->Statements[i + 1];
-				break;
-			case OPC_PushFunction:
-			case OPC_Call:
-			case OPC_PushClassId:
-			case OPC_DynamicCast:
-			case OPC_CaseGotoClassId:
-			case OPC_PushState:
-				*Reader << *(VMemberBase**)&Pkg->Statements[i + 1];
-				break;
-			case OPC_Goto:
-			case OPC_IfGoto:
-			case OPC_IfNotGoto:
-			case OPC_IfTopGoto:
-			case OPC_IfNotTopGoto:
-				*Reader << Pkg->Statements[i + 1];
-				Pkg->Statements[i + 1] = (int)(Pkg->Statements + Pkg->Statements[i + 1]);
-				break;
-			default:
-				*Reader << Pkg->Statements[i + 1];
-				break;
-			}
-		}
-		if (OpcodeArgCount[Pkg->Statements[i]] >= 2)
-		{
-			*Reader << Pkg->Statements[i + 2];
-			switch (Pkg->Statements[i])
-			{
-			case OPC_CaseGoto:
-			case OPC_CaseGotoClassId:
-			case OPC_CaseGotoName:
-				Pkg->Statements[i + 2] = (int)(Pkg->Statements + Pkg->Statements[i + 2]);
-				break;
-			}
-		}
-		i += OpcodeArgCount[Pkg->Statements[i]];
 	}
 
 	for (i = 0; i < Progs.num_exports; i++)
@@ -564,7 +519,6 @@ VPackage::VPackage(VName AName)
 : VMemberBase(MEMBER_Package, AName)
 , Checksum(0)
 , Strings(0)
-, Statements(0)
 , Reader(0)
 {
 }
@@ -580,8 +534,6 @@ VPackage::~VPackage()
 	guard(VPackage::~VPackage);
 	if (Strings)
 		delete[] Strings;
-	if (Statements)
-		delete[] Statements;
 	unguard;
 }
 
@@ -882,14 +834,30 @@ void VField::CleanField(byte* Data, const VField::FType& Type)
 
 VMethod::VMethod(VName AName)
 : VMemberBase(MEMBER_Method, AName)
-, FirstStatement(0)
 , NumParms(0)
 , NumLocals(0)
 , Type(0)
 , Flags(0)
 , Profile1(0)
 , Profile2(0)
+, NativeFunc(0)
+, NumInstructions(0)
+, Instructions(0)
 {
+}
+
+//==========================================================================
+//
+//  VMethod::~VMethod
+//
+//==========================================================================
+
+VMethod::~VMethod()
+{
+	guard(VMethod::~VMethod);
+	if (Instructions)
+		delete[] Instructions;
+	unguard;
 }
 
 //==========================================================================
@@ -918,8 +886,7 @@ void VMethod::Serialise(VStream& Strm)
 	vint32 TmpNumLocals;
 	vint32 TmpFlags;
 	vint32 ParamsSize;
-	Strm << STRM_INDEX(FirstStatement)
-		<< STRM_INDEX(TmpNumLocals)
+	Strm << STRM_INDEX(TmpNumLocals)
 		<< STRM_INDEX(TmpFlags)
 		<< TmpType
 		<< STRM_INDEX(TmpNumParams)
@@ -940,7 +907,7 @@ void VMethod::Serialise(VStream& Strm)
 		{
 			if (Flags & FUNC_Native)
 			{
-				FirstStatement = (int)B->Func;
+				NativeFunc = B->Func;
 				break;
 			}
 			else
@@ -949,16 +916,57 @@ void VMethod::Serialise(VStream& Strm)
 			}
 		}
 	}
-	if (!FirstStatement && Flags & FUNC_Native)
+	if (!NativeFunc && Flags & FUNC_Native)
 	{
 		//	Default builtin
-		FirstStatement = (int)PF_Fixme;
+		NativeFunc = PF_Fixme;
 #if defined CLIENT && defined SERVER
 		//	Don't abort with error, because it will be done, when this
 		// function will be called (if it will be called).
 		GCon->Logf(NAME_Dev, "WARNING: Builtin %s not found!",
 			*GetFullName());
 #endif
+	}
+
+	//
+	//	Read instructions
+	//
+	Strm << STRM_INDEX(NumInstructions);
+	Instructions = new FInstruction[NumInstructions];
+	for (int i = 0; i < NumInstructions; i++)
+	{
+		vuint8 Opc;
+		Strm << Opc;
+		Instructions[i].Opcode = Opc;
+		if (OpcodeArgCount[Opc] >= 1)
+		{
+			switch (Opc)
+			{
+			case OPC_PushString:
+				Strm << Instructions[i].Arg1;
+				Instructions[i].Arg1 += (int)GetPackage()->Strings;
+				break;
+			case OPC_PushName:
+			case OPC_CaseGotoName:
+				Strm << *(VName*)&Instructions[i].Arg1;
+				break;
+			case OPC_PushFunction:
+			case OPC_Call:
+			case OPC_PushClassId:
+			case OPC_DynamicCast:
+			case OPC_CaseGotoClassId:
+			case OPC_PushState:
+				Strm << *(VMemberBase**)&Instructions[i].Arg1;
+				break;
+			default:
+				Strm << Instructions[i].Arg1;
+				break;
+			}
+		}
+		if (OpcodeArgCount[Opc] >= 2)
+		{
+			Strm << Instructions[i].Arg2;
+		}
 	}
 	unguard;
 }
@@ -971,10 +979,66 @@ void VMethod::Serialise(VStream& Strm)
 
 void VMethod::PostLoad()
 {
-	if (!(Flags & FUNC_Native))
+	guard(VMethod::PostLoad);
+	//FIXME It should be called only once so it's safe for now.
+	//if (ObjectFlags & CLASSOF_PostLoaded)
+	//{
+	//	return;
+	//}
+
+	CompileCode();
+
+	//ObjectFlags |= CLASSOF_PostLoaded;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMethod::CompileCode
+//
+//==========================================================================
+
+void VMethod::CompileCode()
+{
+	guard(VMethod::CompileCode);
+	Statements.Clear();
+	if (!NumInstructions)
 	{
-		FirstStatement = (int)(GetPackage()->Statements + FirstStatement);
+		return;
 	}
+
+	for (int i = 0; i < NumInstructions - 1; i++)
+	{
+		Instructions[i].Address = Statements.Num();
+		Statements.Append(Instructions[i].Opcode);
+		if (OpcodeArgCount[Instructions[i].Opcode] > 0)
+			Statements.Append(Instructions[i].Arg1);
+		if (OpcodeArgCount[Instructions[i].Opcode] > 1)
+			Statements.Append(Instructions[i].Arg2);
+	}
+	Instructions[NumInstructions - 1].Address = Statements.Num();
+
+	for (int i = 0; i < NumInstructions - 1; i++)
+	{
+		switch (Instructions[i].Opcode)
+		{
+		case OPC_Goto:
+		case OPC_IfGoto:
+		case OPC_IfNotGoto:
+		case OPC_IfTopGoto:
+		case OPC_IfNotTopGoto:
+			Statements[Instructions[i].Address + 1] =
+				(int)(Statements.Ptr() + Instructions[Instructions[i].Arg1].Address);
+			break;
+		case OPC_CaseGoto:
+		case OPC_CaseGotoName:
+		case OPC_CaseGotoClassId:
+			Statements[Instructions[i].Address + 2] =
+				(int)(Statements.Ptr() + Instructions[Instructions[i].Arg2].Address);
+			break;
+		}
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -1352,6 +1416,22 @@ VClass::~VClass()
 		{
 			GCon->Log(NAME_Dev, "VClass Unlink: Class not in list");
 		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::Shutdown
+//
+//==========================================================================
+
+void VClass::Shutdown()
+{
+	guard(VClass::Shutdown);
+	if (ClassVTable)
+	{
+		delete[] ClassVTable;
 	}
 	unguard;
 }

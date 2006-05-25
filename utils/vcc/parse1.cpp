@@ -592,7 +592,6 @@ void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
 
 	if (FuncFlags & FUNC_Native)
 	{
-		Func->FirstStatement = -numbuiltins;
 		numbuiltins++;
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;

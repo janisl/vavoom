@@ -39,14 +39,6 @@ struct TStringInfo
 	int next;
 };
 
-struct FInstruction
-{
-	int			Address;
-	int			Opcode;
-	int			Arg1;
-	int			Arg2;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -73,12 +65,11 @@ TArray<mobjinfo_t>	script_ids;
 static TArray<const char*>	PackagePath;
 static TArray<VPackage*>	LoadedPackages;
 
-static TArray<FInstruction>	Instructions;
-static TArray<int>			CodeBuffer;
-
 static TArray<char>			strings;
 static TArray<TStringInfo>	StringInfo;
 static int					StringLookup[256];
+
+static VMethod*				CurrentFunc;
 
 static struct
 {
@@ -203,7 +194,7 @@ int AddStatement(int statement)
 
 	if (statement == OPC_Drop)
 	{
-		switch (Instructions[Instructions.Num() - 1].Opcode)
+		switch (CurrentFunc->Instructions[CurrentFunc->Instructions.Num() - 1].Opcode)
 		{
 		case OPC_PreInc:
 		case OPC_PostInc:
@@ -225,12 +216,12 @@ int AddStatement(int statement)
 		}
 	}
 
-	FInstruction& I = Instructions.Alloc();
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Arg1 = 0;
 	I.Arg2 = 0;
 
-	return Instructions.Num() - 1;
+	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -251,12 +242,12 @@ int AddStatement(int statement, int parm1)
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 1 params");
 	}
 
-	FInstruction& I = Instructions.Alloc();
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Arg1 = parm1;
 	I.Arg2 = 0;
 
-	return Instructions.Num() - 1;
+	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -277,12 +268,12 @@ int AddStatement(int statement, int parm1, int parm2)
 		ERR_Exit(ERR_NONE, false, "Opcode does.t have 2 params");
 	}
 
-	FInstruction& I = Instructions.Alloc();
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Arg1 = parm1;
 	I.Arg2 = parm2;
 
-	return Instructions.Num() - 1;
+	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -293,7 +284,7 @@ int AddStatement(int statement, int parm1, int parm2)
 
 void FixupJump(int Pos, int JmpPos)
 {
-	Instructions[Pos].Arg1 = JmpPos;
+	CurrentFunc->Instructions[Pos].Arg1 = JmpPos;
 }
 
 //==========================================================================
@@ -304,7 +295,7 @@ void FixupJump(int Pos, int JmpPos)
 
 void FixupJump(int Pos)
 {
-	Instructions[Pos].Arg1 = Instructions.Num();
+	CurrentFunc->Instructions[Pos].Arg1 = CurrentFunc->Instructions.Num();
 }
 
 //==========================================================================
@@ -315,7 +306,7 @@ void FixupJump(int Pos)
 
 int GetNumInstructions()
 {
-	return Instructions.Num();
+	return CurrentFunc->Instructions.Num();
 }
 
 //==========================================================================
@@ -331,8 +322,8 @@ int UndoStatement()
 		dprintf("UndoStatement in pass 1\n");
 	}
 
-	int Ret = Instructions[Instructions.Num() - 1].Opcode;
-	Instructions.RemoveIndex(Instructions.Num() - 1);
+	int Ret = CurrentFunc->Instructions[CurrentFunc->Instructions.Num() - 1].Opcode;
+	CurrentFunc->Instructions.RemoveIndex(CurrentFunc->Instructions.Num() - 1);
 	return Ret;
 }
 
@@ -342,10 +333,11 @@ int UndoStatement()
 //
 //==========================================================================
 
-void BeginCode(VMethod*)
+void BeginCode(VMethod* Func)
 {
-	Instructions.Clear();
-	Instructions.Resize(1024);
+	CurrentFunc = Func;
+	CurrentFunc->Instructions.Clear();
+	CurrentFunc->Instructions.Resize(1024);
 }
 
 //==========================================================================
@@ -356,57 +348,14 @@ void BeginCode(VMethod*)
 
 void EndCode(VMethod* Func)
 {
-	int i;
-	Func->FirstStatement = CodeBuffer.Num();
-
-	for (i = 0; i < Instructions.Num(); i++)
-	{
-		Instructions[i].Address = CodeBuffer.Num();
-		CodeBuffer.Append(Instructions[i].Opcode);
-		if (StatementInfo[Instructions[i].Opcode].params > 0)
-			CodeBuffer.Append(Instructions[i].Arg1);
-		if (StatementInfo[Instructions[i].Opcode].params > 1)
-			CodeBuffer.Append(Instructions[i].Arg2);
 #ifdef OPCODE_STATS
-		StatementInfo[Instructions[i].Opcode].usecount++;
-#endif
-	}
-	Instructions.Alloc().Address = CodeBuffer.Num();
-
-	for (i = 0; i < Instructions.Num() - 1; i++)
+	for (int i = 0; i < Func->Instructions.Num(); i++)
 	{
-		switch (Instructions[i].Opcode)
-		{
-		case OPC_Goto:
-		case OPC_IfGoto:
-		case OPC_IfNotGoto:
-		case OPC_IfTopGoto:
-		case OPC_IfNotTopGoto:
-			CodeBuffer[Instructions[i].Address + 1] =
-				Instructions[Instructions[i].Arg1].Address;
-			break;
-		case OPC_CaseGoto:
-		case OPC_CaseGotoName:
-		case OPC_CaseGotoClassId:
-			CodeBuffer[Instructions[i].Address + 2] =
-				Instructions[Instructions[i].Arg2].Address;
-			break;
-		}
+		StatementInfo[Func->Instructions[i].Opcode].usecount++;
 	}
-}
-
-//==========================================================================
-//
-//	WriteCode
-//
-//==========================================================================
-
-static void WriteCode()
-{
-//	for (int i = 0; i < numfunctions; i++)
-//	{
-//		DumpAsmFunction(i);
-//	}
+#endif
+	FInstruction& Dummy = Func->Instructions.Alloc();
+	Dummy.Opcode = OPC_Done;
 }
 
 //==========================================================================
@@ -853,47 +802,6 @@ VPackage* LoadPackage(VName InName)
 
 //==========================================================================
 //
-//	WriteCode
-//
-//==========================================================================
-
-static void WriteCode(VStream& Strm)
-{
-	for (int i = 0; i < CodeBuffer.Num(); i++)
-	{
-		vuint8 Tmp = CodeBuffer[i];
-		Strm << Tmp;
-		if (StatementInfo[CodeBuffer[i]].params >= 1)
-		{
-			switch (CodeBuffer[i])
-			{
-			case OPC_PushName:
-			case OPC_CaseGotoName:
-				Strm << *(VName*)&CodeBuffer[i + 1];
-				break;
-			case OPC_PushFunction:
-			case OPC_Call:
-			case OPC_PushClassId:
-			case OPC_DynamicCast:
-			case OPC_CaseGotoClassId:
-			case OPC_PushState:
-				Strm << VMemberBase::GMembers[CodeBuffer[i + 1]];
-				break;
-			default:
-				Strm << CodeBuffer[i + 1];
-				break;
-			}
-		}
-		if (StatementInfo[CodeBuffer[i]].params >= 2)
-		{
-			Strm << CodeBuffer[i + 2];
-		}
-		i += StatementInfo[CodeBuffer[i]].params;
-	}
-}
-
-//==========================================================================
-//
 //	PC_WriteObject
 //
 //==========================================================================
@@ -905,8 +813,6 @@ void PC_WriteObject(char *name)
 	dprograms_t		progs;
 
 	dprintf("Writing object\n");
-
-	WriteCode();
 
 	f = fopen(name, "wb");
 	if (!f)
@@ -934,7 +840,6 @@ void PC_WriteObject(char *name)
 	{
 		Writer.Exports[i].Obj->Serialise(Collector);
 	}
-	WriteCode(Collector);
 	for (i = 0; i < Writer.Imports.Num(); i++)
 	{
 		Collector << Writer.Imports[i];
@@ -957,10 +862,6 @@ void PC_WriteObject(char *name)
 	progs.ofs_strings = Writer.Tell();
 	progs.num_strings = strings.Num();
 	Writer.Serialise(&strings[0], strings.Num());
-
-	progs.ofs_statements = Writer.Tell();
-	progs.num_statements = CodeBuffer.Num();
-	WriteCode(Writer);
 
 	progs.ofs_mobjinfo = Writer.Tell();
 	progs.num_mobjinfo = mobj_info.Num();
@@ -1007,7 +908,6 @@ void PC_WriteObject(char *name)
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", Writer.Names.Num(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
-	dprintf("Statements %6d %6d\n", CodeBuffer.Num(), progs.ofs_mobjinfo - progs.ofs_statements);
 	dprintf("Builtins   %6d\n", numbuiltins);
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
 	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_imports - progs.ofs_scriptids);
@@ -1047,65 +947,52 @@ void PC_WriteObject(char *name)
 
 void DumpAsmFunction(VMethod* Func)
 {
-	int		s;
-	int		st;
-	int		i;
-
 	dprintf("--------------------------------------------\n");
 	dprintf("Dump ASM function %s.%s\n\n", *Func->Outer->Name,
 		*Func->Name);
-	s = Func->FirstStatement;
 	if (Func->Flags & FUNC_Native)
 	{
 		//	Builtin function
 		dprintf("Builtin function.\n");
 		return;
 	}
-	do
+	for (int s = 0; s < Func->Instructions.Num();)
 	{
 		//	Opcode
-		st = CodeBuffer[s];
-		dprintf("%6d (%4d): %s ", s, s - Func->FirstStatement, StatementInfo[st].name);
-		s++;
+		int st = Func->Instructions[s].Opcode;
+		dprintf("%6d: %s ", s, StatementInfo[st].name);
 		if (StatementInfo[st].params >= 1)
 		{
 			//	1-st argument
-			dprintf("%6d ", CodeBuffer[s]);
+			dprintf("%6d ", Func->Instructions[s].Arg1);
 			if (st == OPC_Call)
 			{
 				//	Name of the function called
-				dprintf("(%s.%s)", *VMemberBase::GMembers[CodeBuffer[s]]->Outer->Name,
-					*VMemberBase::GMembers[CodeBuffer[s]]->Name);
+				dprintf("(%s.%s)", *VMemberBase::GMembers[Func->Instructions[s].Arg1]->Outer->Name,
+					*VMemberBase::GMembers[Func->Instructions[s].Arg1]->Name);
 			}
 			else if (st == OPC_PushString)
 			{
 				//  String
-				dprintf("(%s)", &strings[CodeBuffer[s]]);
+				dprintf("(%s)", &strings[Func->Instructions[s].Arg1]);
+			}
+			else if (st == OPC_PushName)
+			{
+				//  Name
+				dprintf("(%s)", **(VName*)&Func->Instructions[s].Arg1);
 			}
 			else if (st == OPC_PushBool || st == OPC_AssignBool)
 			{
-				dprintf("(%x)", CodeBuffer[s]);
+				dprintf("(%x)", Func->Instructions[s].Arg1);
 			}
-			s++;
 		}
 		if (StatementInfo[st].params >= 2)
 		{
 			//	2-nd argument
-			dprintf("%6d ", CodeBuffer[s]);
-			s++;
+			dprintf("%6d ", Func->Instructions[s].Arg2);
 		}
 		dprintf("\n");
-		for (i = 0; i < VMemberBase::GMembers.Num(); i++)
-		{
-			//	if next command is first statement of another function,
-			// then this function has ended.
-			if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method &&
-				s == ((VMethod*)VMemberBase::GMembers[i])->FirstStatement)
-			{
-				s = CodeBuffer.Num();
-			}
-		}
-	} while (s < CodeBuffer.Num());
+	}
 }
 
 //==========================================================================
@@ -1215,14 +1102,88 @@ void VField::Serialise(VStream& Strm)
 void VMethod::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
-	Strm << STRM_INDEX(FirstStatement)
-		<< STRM_INDEX(NumLocals)
+	Strm << STRM_INDEX(NumLocals)
 		<< STRM_INDEX(Flags)
 		<< ReturnType
 		<< STRM_INDEX(NumParams)
 		<< STRM_INDEX(ParamsSize);
 	for (int i = 0; i < NumParams; i++)
 		Strm << ParamTypes[i];
+
+	if (Strm.IsLoading())
+	{
+		int NumInstructions;
+		Strm << STRM_INDEX(NumInstructions);
+		Instructions.SetNum(NumInstructions);
+		for (int i = 0; i < NumInstructions; i++)
+		{
+			vuint8 Opc;
+			Strm << Opc;
+			Instructions[i].Opcode = Opc;
+			if (StatementInfo[Opc].params >= 1)
+			{
+				VMemberBase* TmpRef;
+				switch (Opc)
+				{
+				case OPC_PushName:
+				case OPC_CaseGotoName:
+					Strm << *(VName*)&Instructions[i].Arg1;
+					break;
+				case OPC_PushFunction:
+				case OPC_Call:
+				case OPC_PushClassId:
+				case OPC_DynamicCast:
+				case OPC_CaseGotoClassId:
+				case OPC_PushState:
+					Strm << TmpRef;
+					Instructions[i].Arg1 = TmpRef->MemberIndex;
+					break;
+				default:
+					Strm << Instructions[i].Arg1;
+					break;
+				}
+			}
+			if (StatementInfo[Opc].params >= 2)
+			{
+				Strm << Instructions[i].Arg2;
+			}
+		}
+	}
+	else
+	{
+		int NumInstructions = Instructions.Num();
+		Strm << STRM_INDEX(NumInstructions);
+		for (int i = 0; i < Instructions.Num(); i++)
+		{
+			vuint8 Opc = Instructions[i].Opcode;
+			Strm << Opc;
+			if (StatementInfo[Opc].params >= 1)
+			{
+				switch (Opc)
+				{
+				case OPC_PushName:
+				case OPC_CaseGotoName:
+					Strm << *(VName*)&Instructions[i].Arg1;
+					break;
+				case OPC_PushFunction:
+				case OPC_Call:
+				case OPC_PushClassId:
+				case OPC_DynamicCast:
+				case OPC_CaseGotoClassId:
+				case OPC_PushState:
+					Strm << VMemberBase::GMembers[Instructions[i].Arg1];
+					break;
+				default:
+					Strm << Instructions[i].Arg1;
+					break;
+				}
+			}
+			if (StatementInfo[Opc].params >= 2)
+			{
+				Strm << Instructions[i].Arg2;
+			}
+		}
+	}
 }
 
 //==========================================================================

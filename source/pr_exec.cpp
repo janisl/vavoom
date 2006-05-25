@@ -199,7 +199,7 @@ static void RunFunction(VMethod *func)
 	if (func->Flags & FUNC_Native)
 	{
 		//	Native function, first statement is pointer to function.
-		((void(*)(void))func->FirstStatement)();
+		func->NativeFunc();
 		return;
 	}
 
@@ -211,14 +211,14 @@ static void RunFunction(VMethod *func)
 	memset(sp, 0, (func->NumLocals - func->NumParms) * 4);
 	sp += func->NumLocals - func->NumParms;
 
-	current_statement = (int *)func->FirstStatement;
+	current_statement = func->Statements.Ptr();
 
 	//
     //	The main function loop
     //
     //	I realy hate using goto in a C program, but this is the only way
     // how to force gcc to create a jump directly here. while(1) would be
-    // better, but then gcc, even with optimizations, creates an dummy check,
+    // better, but then gcc, even with optimisations, creates an dummy check,
     // which only takes time.
     //
  func_loop:
@@ -945,7 +945,7 @@ static void RunFunction(VMethod *func)
 
     goto func_loop;
 	unguardfSlow(("(%s %d)", *func->GetFullName(),
-		current_statement - (int *)func->FirstStatement));
+		current_statement - func->Statements.Ptr()));
 }
 
 //==========================================================================
