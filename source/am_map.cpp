@@ -285,7 +285,7 @@ static mline_t thintriangle_guy[] =
 //
 //==========================================================================
 
-void AM_Init(void)
+void AM_Init()
 {
 }
 
@@ -295,7 +295,7 @@ void AM_Init(void)
 //
 //==========================================================================
 
-static void AM_activateNewScale(void)
+static void AM_activateNewScale()
 {
     m_x += m_w / 2.0;
     m_y += m_h / 2.0;
@@ -313,7 +313,7 @@ static void AM_activateNewScale(void)
 //
 //==========================================================================
 
-static void AM_saveScaleAndLoc(void)
+static void AM_saveScaleAndLoc()
 {
     old_m_x = m_x;
     old_m_y = m_y;
@@ -358,7 +358,7 @@ static void AM_restoreScaleAndLoc()
 //
 //==========================================================================
 
-static void AM_findMinMaxBoundaries(void)
+static void AM_findMinMaxBoundaries()
 {
 	int		i;
 	float	a;
@@ -399,7 +399,7 @@ static void AM_findMinMaxBoundaries(void)
 //
 //==========================================================================
 
-static void AM_changeWindowLoc(void)
+static void AM_changeWindowLoc()
 {
     if (m_paninc.x || m_paninc.y)
     {
@@ -439,11 +439,16 @@ static void AM_changeWindowLoc(void)
 //
 //==========================================================================
 
-static void AM_addMark(void)
+static bool AM_addMark()
 {
-    markpoints[markpointnum].x = m_x + m_w / 2.0;
-    markpoints[markpointnum].y = m_y + m_h / 2.0;
-    markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
+	if (marknums[0] != -1)
+	{
+	    markpoints[markpointnum].x = m_x + m_w / 2.0;
+	    markpoints[markpointnum].y = m_y + m_h / 2.0;
+	    markpointnum = (markpointnum + 1) % AM_NUMMARKPOINTS;
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================
@@ -452,13 +457,14 @@ static void AM_addMark(void)
 //
 //==========================================================================
 
-static void AM_clearMarks(void)
+static bool AM_clearMarks()
 {
-    int		i;
+	int	i;
 
-    for (i=0; i<AM_NUMMARKPOINTS; i++)
+	for (i = AM_NUMMARKPOINTS; i >= 0; i--)
 		markpoints[i].x = -1.0; // means empty
-    markpointnum = 0;
+	markpointnum = 0;
+	return marknums[0] != -1;
 }
 
 //==========================================================================
@@ -467,7 +473,7 @@ static void AM_clearMarks(void)
 //
 //==========================================================================
 
-static void AM_initVariables(void)
+static void AM_initVariables()
 {
     automapactive = true;
 
@@ -526,7 +532,7 @@ static void AM_loadPics()
 //
 //==========================================================================
 
-static void AM_LevelInit(void)
+static void AM_LevelInit()
 {
     leveljuststarted = 0;
 
@@ -551,7 +557,7 @@ static void AM_LevelInit(void)
 //
 //==========================================================================
 
-void AM_Stop(void)
+void AM_Stop()
 {
     automapactive = false;
     stopped = true;
@@ -563,7 +569,7 @@ void AM_Stop(void)
 //
 //==========================================================================
 
-static void AM_Start(void)
+static void AM_Start()
 {
     static char lastmap[12] = "";
 
@@ -587,7 +593,7 @@ static void AM_Start(void)
 //
 //==========================================================================
 
-static void AM_minOutWindowScale(void)
+static void AM_minOutWindowScale()
 {
     scale_mtof = min_scale_mtof;
     scale_ftom = 1.0 / scale_mtof;
@@ -602,7 +608,7 @@ static void AM_minOutWindowScale(void)
 //
 //==========================================================================
 
-static void AM_maxOutWindowScale(void)
+static void AM_maxOutWindowScale()
 {
     scale_mtof = max_scale_mtof;
     scale_ftom = 1.0 / scale_mtof;
@@ -747,7 +753,7 @@ boolean AM_Responder(event_t* ev)
 //
 //==========================================================================
 
-static void AM_changeWindowScale(void)
+static void AM_changeWindowScale()
 {
     // Change the scaling multipliers
     scale_mtof = scale_mtof * mtof_zoommul;
@@ -767,7 +773,7 @@ static void AM_changeWindowScale(void)
 //
 //==========================================================================
 
-static void AM_doFollowPlayer(void)
+static void AM_doFollowPlayer()
 {
     if (f_oldloc.x != cl->vieworg.x || f_oldloc.y != cl->vieworg.y)
     {
@@ -788,7 +794,7 @@ static void AM_doFollowPlayer(void)
 //
 //==========================================================================
 
-void AM_Ticker(void)
+void AM_Ticker()
 {
     if (!automapactive)
 		return;
@@ -813,7 +819,7 @@ void AM_Ticker(void)
 //
 //==========================================================================
 
-static void AM_clearFB(void)
+static void AM_clearFB()
 {
 	int dmapx;
 	int dmapy;
@@ -1085,7 +1091,7 @@ static void AM_drawGrid(dword color)
 //
 //==========================================================================
 
-static void AM_drawWalls(void)
+static void AM_drawWalls()
 {
     int 			i;
     static mline_t	l;
@@ -1097,6 +1103,15 @@ static void AM_drawWalls(void)
 		l.a.y = line.v1->y;
 		l.b.x = line.v2->x;
 		l.b.y = line.v2->y;
+
+#ifdef FIXME
+		if (am_rotate)
+		{
+			AM_rotatePoint (&l.a.x, &l.a.y);
+			AM_rotatePoint (&l.b.x, &l.b.y);
+		}
+#endif
+
 		if (am_cheating || (line.flags & ML_MAPPED))
 		{
 		    if ((line.flags & LINE_NEVERSEE) && !am_cheating)
@@ -1143,7 +1158,6 @@ static void AM_drawWalls(void)
 //
 //==========================================================================
 
-#if 0
 static void AM_rotate(float* x, float* y, float a)
 {
 	float	tmpx;
@@ -1152,7 +1166,26 @@ static void AM_rotate(float* x, float* y, float a)
     *y   = *x * msin(a) + *y * mcos(a);
     *x = tmpx;
 }
-#endif
+
+//==========================================================================
+//
+//  AM_rotate
+//
+//==========================================================================
+
+void AM_rotatePoint (float *x, float *y)
+{
+/*	*x -= players[consoleplayer].camera->x >> FRACTOMAPBITS;
+	*y -= players[consoleplayer].camera->y >> FRACTOMAPBITS;
+	AM_rotate (x, y, ANG90 - players[consoleplayer].camera->angle);
+	*x += players[consoleplayer].camera->x >> FRACTOMAPBITS;
+	*y += players[consoleplayer].camera->y >> FRACTOMAPBITS;*/
+	*x -= cl->vieworg.x;
+	*y -= cl->vieworg.y;
+	AM_rotate (x, y, 90.0 - cl->viewangles.yaw);
+	*x += cl->vieworg.x;
+	*y += cl->vieworg.y;
+}
 
 //==========================================================================
 //
@@ -1206,7 +1239,7 @@ static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
 //
 //==========================================================================
 
-static void AM_drawPlayers(void)
+static void AM_drawPlayers()
 {
 	mline_t		*player_arrow;
 	int			NUMPLYRLINES;
@@ -1293,9 +1326,10 @@ static void AM_drawThings(dword color)
 //
 //==========================================================================
 
-static void AM_drawMarks(void)
+static void AM_drawMarks()
 {
     int i, fx, fy, w, h;
+	mpoint_t pt;
 
     for (i = 0; i < AM_NUMMARKPOINTS; i++)
     {
@@ -1305,12 +1339,22 @@ static void AM_drawMarks(void)
 		    //      h = LittleShort(marknums[i]->height);
 		    w = 5; // because something's wrong with the wad, i guess
 		    h = 6; // because something's wrong with the wad, i guess
-		    fx = (int)(CXMTOF(markpoints[i].x) * fScaleXI);
-		    fy = (int)(CYMTOF(markpoints[i].y) * fScaleXI);
-		    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
+			pt.x = markpoints[i].x;
+			pt.y = markpoints[i].y;
+
+#ifdef FIXME
+			if (am_rotate == 1 || (am_rotate == 2 && viewactive))
+				AM_rotatePoint (&pt.x, &pt.y);
+#endif
+
+			fx = (int)(CXMTOF(pt.x) * fScaleXI);
+			fy = (int)((CYMTOF(pt.y) - 3.0) * fScaleXI);
+/*		    fx = (int)(CXMTOF(markpoints[i].x) * fScaleXI);
+		    fy = (int)(CYMTOF(markpoints[i].y) * fScaleXI);*/
+			if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
 				R_DrawPic(fx, fy, marknums[i]);
 		}
-    }
+	}
 }
 
 //===========================================================================
@@ -1330,27 +1374,28 @@ static void DrawWorldTimer(void)
 	char dayBuffer[20];
 
 //FIXME
-	worldTimer = 0;//GPlayers[consoleplayer]->worldTimer;
+	worldTimer = cl->worldTimer;//GPlayers[consoleplayer]->worldTimer;
 
-	if (!worldTimer) return;
+	if (!worldTimer)
+		return;
 
 	worldTimer /= 35;
-	days = worldTimer/86400;
-	worldTimer -= days*86400;
-	hours = worldTimer/3600;
-	worldTimer -= hours*3600;
-	minutes = worldTimer/60;
-	worldTimer -= minutes*60;
+	days = worldTimer / 86400;
+	worldTimer -= days * 86400;
+	hours = worldTimer / 3600;
+	worldTimer -= hours * 3600;
+	minutes = worldTimer / 60;
+	worldTimer -= minutes * 60;
 	seconds = worldTimer;
 
 	T_SetFont(font_small);
     T_SetAlign(hleft, vtop);
-	sprintf(timeBuffer, "%.2d : %.2d : %.2d", hours, minutes,seconds);
+	sprintf(timeBuffer, "%.2d : %.2d : %.2d", hours, minutes, seconds);
     T_DrawString(240, 8, timeBuffer);
 
 	if (days)
 	{
-		if (days==1)
+		if (days == 1)
 		{
 			sprintf(dayBuffer, "%.2d DAY", days);
 		}
@@ -1372,7 +1417,7 @@ static void DrawWorldTimer(void)
 //
 //===========================================================================
 
-static void AM_DrawDeathmatchStats(void)
+static void AM_DrawDeathmatchStats()
 {
 #ifdef FIXME
 	int i, j, k, m;
@@ -1448,7 +1493,7 @@ static dword StringToColor(const char *str)
 //
 //==========================================================================
 
-static void AM_CheckVariables(void)
+static void AM_CheckVariables()
 {
 	float		a;
 	float		b;
@@ -1497,7 +1542,7 @@ static void AM_CheckVariables(void)
 //
 //==========================================================================
 
-void AM_Drawer(void)
+void AM_Drawer()
 {
     if (!automapactive)
     	return;
@@ -1520,69 +1565,3 @@ void AM_Drawer(void)
 		AM_DrawDeathmatchStats();
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.21  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.20  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.19  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.18  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.17  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.16  2005/05/26 16:52:29  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.15  2003/07/11 16:45:19  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.14  2002/09/07 16:31:50  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.13  2002/08/28 16:42:04  dj_jl
-//	Configurable entity limit.
-//	
-//	Revision 1.12  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.11  2002/06/29 16:00:45  dj_jl
-//	Added total frags count.
-//	
-//	Revision 1.10  2002/01/25 18:08:19  dj_jl
-//	Beautification
-//	
-//	Revision 1.9  2002/01/15 18:30:43  dj_jl
-//	Some fixes and improvements suggested by Malcolm Nixon
-//	
-//	Revision 1.8  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.6  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.5  2001/10/04 17:18:23  dj_jl
-//	Implemented the rest of cvar flags
-//	
-//	Revision 1.4  2001/08/29 17:51:20  dj_jl
-//	RGB colors, no game dependency
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

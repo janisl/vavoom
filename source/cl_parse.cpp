@@ -451,6 +451,7 @@ static void CL_ParseTime()
 	cl_level.time = new_time;
 	cl->mtime[1] = cl->mtime[0];
 	cl->mtime[0] = new_time;
+	cl->worldTimer = cl_level.tictime;
 	unguard;
 }
 
