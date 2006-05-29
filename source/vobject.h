@@ -630,9 +630,9 @@ public:
 #define P_PASS_NAME(v)		PR_PushName(v)
 #define P_PASS_VEC(v)		PR_Pushv(v)
 #define P_PASS_AVEC(v)		PR_Pushv(*(TVec*)&(v))
-#define P_PASS_REF(v)		PR_Push((int)v)
-#define P_PASS_PTR(v)		PR_Push((int)v)
-#define P_PASS_SELF			PR_Push((int)this)
+#define P_PASS_REF(v)		PR_PushPtr(v)
+#define P_PASS_PTR(v)		PR_PushPtr(v)
+#define P_PASS_SELF			PR_PushPtr(this)
 
 //
 //	Macros for calling VavoomC methods with different return types.
@@ -656,9 +656,9 @@ public:
 #define P_GET_NAME(v)		VName v = PR_PopName()
 #define P_GET_VEC(v)		TVec v = PR_Popv()
 #define P_GET_AVEC(v)		TAVec v; v.roll = PR_Popf(); v.yaw = PR_Popf(); v.pitch = PR_Popf()
-#define P_GET_REF(c, v)		c* v = (c*)PR_Pop()
-#define P_GET_PTR(t, v)		t* v = (t*)PR_Pop()
-#define P_GET_SELF			ThisClass* Self = (ThisClass*)PR_Pop()
+#define P_GET_REF(c, v)		c* v = (c*)PR_PopPtr()
+#define P_GET_PTR(t, v)		t* v = (t*)PR_PopPtr()
+#define P_GET_SELF			ThisClass* Self = (ThisClass*)PR_PopPtr()
 
 //
 //	Method return macros.
@@ -669,5 +669,5 @@ public:
 #define RET_NAME(v)			PR_PushName(v)
 #define RET_VEC(v)			PR_Pushv(v)
 #define RET_AVEC(v)			PR_Pushv(*(TVec*)&(v))
-#define RET_REF(v)			PR_Push((int)v)
-#define RET_PTR(v)			PR_Push((int)v)
+#define RET_REF(v)			PR_PushPtr(v)
+#define RET_PTR(v)			PR_PushPtr(v)

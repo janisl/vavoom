@@ -63,6 +63,13 @@ public:
 	}
 };
 
+union VStack
+{
+	int		i;
+	float	f;
+	void*	p;
+};
+
 class TProgs
 {
 public:
@@ -130,7 +137,7 @@ void PR_Traceback();
 
 extern TProgs			svpr;
 
-extern "C" { extern int	*pr_stackPtr; }
+extern VStack*			pr_stackPtr;
 
 extern VMessage*		pr_msg;
 
@@ -142,22 +149,26 @@ extern VMessage*		pr_msg;
 
 inline void PR_Push(int value)
 {
-	*(pr_stackPtr++) = value;
+	pr_stackPtr->i = value;
+	pr_stackPtr++;
 }
 
 inline int PR_Pop()
 {
-	return *(--pr_stackPtr);
+	--pr_stackPtr;
+	return pr_stackPtr->i;
 }
 
 inline void PR_Pushf(float value)
 {
-	*((float*)pr_stackPtr++) = value;
+	pr_stackPtr->f = value;
+	pr_stackPtr++;
 }
 
 inline float PR_Popf()
 {
-	return *((float*)--pr_stackPtr);
+	--pr_stackPtr;
+	return pr_stackPtr->f;
 }
 
 inline void PR_Pushv(const TVec &v)
@@ -178,12 +189,26 @@ inline TVec PR_Popv()
 
 inline void PR_PushName(VName value)
 {
-	*((VName*)pr_stackPtr++) = value;
+	pr_stackPtr->i = value.GetIndex();
+	pr_stackPtr++;
 }
 
 inline VName PR_PopName()
 {
-	return *((VName*)--pr_stackPtr);
+	--pr_stackPtr;
+	return *(VName*)&pr_stackPtr->i;
+}
+
+inline void PR_PushPtr(void* value)
+{
+	pr_stackPtr->p = value;
+	pr_stackPtr++;
+}
+
+inline void* PR_PopPtr()
+{
+	--pr_stackPtr;
+	return pr_stackPtr->p;
 }
 
 const char* PF_FormatString();

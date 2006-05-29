@@ -74,11 +74,12 @@ static VMethod*				CurrentFunc;
 static struct
 {
 	char*	name;
+	int		Args;
 	int		params;
 	int		usecount;
 } StatementInfo[NUM_OPCODES] =
 {
-#define DECLARE_OPC(name, argcount)		{ #name, argcount, 0}
+#define DECLARE_OPC(name, args, argcount)		{ #name, OPCARGS_##args, argcount, 0}
 #define OPCODE_INFO
 #include "../../source/progdefs.h"
 };
@@ -1126,14 +1127,11 @@ void VMethod::Serialise(VStream& Strm)
 				switch (Opc)
 				{
 				case OPC_PushName:
-				case OPC_CaseGotoName:
 					Strm << *(VName*)&Instructions[i].Arg1;
 					break;
-				case OPC_PushFunction:
 				case OPC_Call:
 				case OPC_PushClassId:
 				case OPC_DynamicCast:
-				case OPC_CaseGotoClassId:
 				case OPC_PushState:
 					Strm << TmpRef;
 					Instructions[i].Arg1 = TmpRef->MemberIndex;
@@ -1162,14 +1160,11 @@ void VMethod::Serialise(VStream& Strm)
 				switch (Opc)
 				{
 				case OPC_PushName:
-				case OPC_CaseGotoName:
 					Strm << *(VName*)&Instructions[i].Arg1;
 					break;
-				case OPC_PushFunction:
 				case OPC_Call:
 				case OPC_PushClassId:
 				case OPC_DynamicCast:
-				case OPC_CaseGotoClassId:
 				case OPC_PushState:
 					Strm << VMemberBase::GMembers[Instructions[i].Arg1];
 					break;

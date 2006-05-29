@@ -36,9 +36,13 @@ TArray<mobjinfo_t>		VClass::GScriptIds;
 TArray<VName>			VClass::GSpriteNames;
 TArray<VName>			VClass::GModelNames;
 
-#define DECLARE_OPC(name, argcount)		argcount
+#define DECLARE_OPC(name, args, argcount)	{ OPCARGS_##args, argcount }
 #define OPCODE_INFO
-static int OpcodeArgCount[NUM_OPCODES] =
+static struct
+{
+	int		Args;
+	int		ArgCount;
+} OpcodeInfo[NUM_OPCODES] =
 {
 #include "progdefs.h"
 };
@@ -938,34 +942,30 @@ void VMethod::Serialise(VStream& Strm)
 		vuint8 Opc;
 		Strm << Opc;
 		Instructions[i].Opcode = Opc;
-		if (OpcodeArgCount[Opc] >= 1)
+		switch (OpcodeInfo[Opc].Args)
 		{
-			switch (Opc)
-			{
-			case OPC_PushString:
-				Strm << Instructions[i].Arg1;
-				Instructions[i].Arg1 += (int)GetPackage()->Strings;
-				break;
-			case OPC_PushName:
-			case OPC_CaseGotoName:
-				Strm << *(VName*)&Instructions[i].Arg1;
-				break;
-			case OPC_PushFunction:
-			case OPC_Call:
-			case OPC_PushClassId:
-			case OPC_DynamicCast:
-			case OPC_CaseGotoClassId:
-			case OPC_PushState:
-				Strm << *(VMemberBase**)&Instructions[i].Arg1;
-				break;
-			default:
-				Strm << Instructions[i].Arg1;
-				break;
-			}
-		}
-		if (OpcodeArgCount[Opc] >= 2)
-		{
+		case OPCARGS_None:
+			break;
+		case OPCARGS_Member:
+			Strm << Instructions[i].Member;
+			break;
+		case OPCARGS_BranchTarget:
+			Strm << Instructions[i].Arg1;
+			break;
+		case OPCARGS_IntBranchTarget:
+			Strm << Instructions[i].Arg1;
 			Strm << Instructions[i].Arg2;
+			break;
+		case OPCARGS_Int:
+			Strm << Instructions[i].Arg1;
+			break;
+		case OPCARGS_Name:
+			Strm << *(VName*)&Instructions[i].Arg1;
+			break;
+		case OPCARGS_String:
+			Strm << Instructions[i].Arg1;
+			Instructions[i].Arg1 += (int)GetPackage()->Strings;
+			break;
 		}
 	}
 	unguard;
@@ -998,6 +998,9 @@ void VMethod::PostLoad()
 //
 //==========================================================================
 
+#define WriteInt32(p)	Statements.Append(p)
+#define WritePtr(p)		Statements.Append((int)p)
+
 void VMethod::CompileCode()
 {
 	guard(VMethod::CompileCode);
@@ -1011,28 +1014,42 @@ void VMethod::CompileCode()
 	{
 		Instructions[i].Address = Statements.Num();
 		Statements.Append(Instructions[i].Opcode);
-		if (OpcodeArgCount[Instructions[i].Opcode] > 0)
-			Statements.Append(Instructions[i].Arg1);
-		if (OpcodeArgCount[Instructions[i].Opcode] > 1)
-			Statements.Append(Instructions[i].Arg2);
+		switch (OpcodeInfo[Instructions[i].Opcode].Args)
+		{
+		case OPCARGS_None:
+			break;
+		case OPCARGS_Member:
+			WritePtr(Instructions[i].Member);
+			break;
+		case OPCARGS_BranchTarget:
+			WriteInt32(Instructions[i].Arg1);
+			break;
+		case OPCARGS_IntBranchTarget:
+			WriteInt32(Instructions[i].Arg1);
+			WriteInt32(Instructions[i].Arg2);
+			break;
+		case OPCARGS_Int:
+			WriteInt32(Instructions[i].Arg1);
+			break;
+		case OPCARGS_Name:
+			WriteInt32(Instructions[i].Arg1);
+			break;
+		case OPCARGS_String:
+			WriteInt32(Instructions[i].Arg1);
+			break;
+		}
 	}
 	Instructions[NumInstructions - 1].Address = Statements.Num();
 
 	for (int i = 0; i < NumInstructions - 1; i++)
 	{
-		switch (Instructions[i].Opcode)
+		switch (OpcodeInfo[Instructions[i].Opcode].Args)
 		{
-		case OPC_Goto:
-		case OPC_IfGoto:
-		case OPC_IfNotGoto:
-		case OPC_IfTopGoto:
-		case OPC_IfNotTopGoto:
+		case OPCARGS_BranchTarget:
 			Statements[Instructions[i].Address + 1] =
 				(int)(Statements.Ptr() + Instructions[Instructions[i].Arg1].Address);
 			break;
-		case OPC_CaseGoto:
-		case OPC_CaseGotoName:
-		case OPC_CaseGotoClassId:
+		case OPCARGS_IntBranchTarget:
 			Statements[Instructions[i].Address + 2] =
 				(int)(Statements.Ptr() + Instructions[Instructions[i].Arg2].Address);
 			break;

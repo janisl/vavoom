@@ -486,7 +486,7 @@ IMPLEMENT_FUNCTION(VObject, SetCvarF)
 IMPLEMENT_FUNCTION(VObject, GetCvarS)
 {
 	P_GET_NAME(name);
-	RET_PTR(VCvar::GetCharp(*name));
+	RET_PTR(const_cast<char*>(VCvar::GetCharp(*name)));
 }
 
 IMPLEMENT_FUNCTION(VObject, SetCvarS)
@@ -743,7 +743,7 @@ IMPLEMENT_FUNCTION(VObject, sprint)
 
 IMPLEMENT_FUNCTION(VObject, va)
 {
-	RET_PTR(PF_FormatString());
+	RET_PTR(const_cast<char*>(PF_FormatString()));
 }
 
 IMPLEMENT_FUNCTION(VObject, atoi)

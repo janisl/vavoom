@@ -57,20 +57,16 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern "C" void TestCaller();
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 FBuiltinInfo *FBuiltinInfo::Builtins;
 
-extern "C" { 
-int				*pr_stackPtr; 
-VMethod			*current_func = NULL;
-}
+VStack*				pr_stackPtr; 
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int				pr_stack[MAX_PROG_STACK];
+static VMethod*		current_func = NULL;
+static VStack		pr_stack[MAX_PROG_STACK];
 
 // CODE --------------------------------------------------------------------
 
@@ -83,8 +79,8 @@ static int				pr_stack[MAX_PROG_STACK];
 void PR_Init()
 {
 	//	Set stack ID for overflow / underflow checks
-	pr_stack[0] = STACK_ID;
-	pr_stack[MAX_PROG_STACK - 1] = STACK_ID;
+	pr_stack[0].i = STACK_ID;
+	pr_stack[MAX_PROG_STACK - 1].i = STACK_ID;
 	pr_stackPtr = pr_stack + 1;
 }
 
@@ -187,14 +183,33 @@ VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 //
 //==========================================================================
 
+#ifdef __GNUC__
+#define USE_COMPUTED_GOTO 1
+#endif
+
+#if USE_COMPUTED_GOTO
+#define PR_VM_SWITCH(op)	goto *vm_labels[op];
+#define PR_VM_CASE(x)		Lbl_ ## x:
+#define PR_VM_BREAK			Opc = *(int*)ip; ip += 3; goto *vm_labels[Opc];//*ip];
+#define PR_VM_DEFAULT
+#else
+#define PR_VM_SWITCH(op)	switch(op)
+#define PR_VM_CASE(x)		case x:
+#define PR_VM_BREAK			break
+#define PR_VM_DEFAULT		default:
+#endif
+
+#define ReadInt32(ip)		(*(int*)(ip))
+#define ReadPtr(ip)			(*(void**)(ip))
+
 static void RunFunction(VMethod *func)
 {
-	int			*current_statement = NULL;
-	int			*sp;
-	int			*local_vars;
+	vuint8*		ip = NULL;
+	VStack*		sp;
+	VStack*		local_vars;
 
 	guardSlow(RunFunction);
-    current_func = func;
+	current_func = func;
 
 	if (func->Flags & FUNC_Native)
 	{
@@ -208,744 +223,653 @@ static void RunFunction(VMethod *func)
 
 	//	Setup local vars
 	local_vars = sp - func->NumParms;
-	memset(sp, 0, (func->NumLocals - func->NumParms) * 4);
+	memset(sp, 0, (func->NumLocals - func->NumParms) * sizeof(VStack));
 	sp += func->NumLocals - func->NumParms;
 
-	current_statement = func->Statements.Ptr();
+	ip = (vuint8*)func->Statements.Ptr();
 
 	//
-    //	The main function loop
-    //
-    //	I realy hate using goto in a C program, but this is the only way
-    // how to force gcc to create a jump directly here. while(1) would be
-    // better, but then gcc, even with optimisations, creates an dummy check,
-    // which only takes time.
-    //
- func_loop:
-
-	switch (*current_statement++)
+	//	The main function loop
+	//
+	while (1)
 	{
-     case OPC_Done:
-		Sys_Error("Empty function or invalid opcode");
-		break;
+func_loop:
 
-	 case OPC_Return:
-		pr_stackPtr = local_vars;
-        return;
-
-	 case OPC_ReturnL:
-		local_vars[0] = sp[-1];
-		pr_stackPtr = local_vars + 1;
-        return;
-
-	 case OPC_ReturnV:
-		local_vars[0] = sp[-3];
-		local_vars[1] = sp[-2];
-		local_vars[2] = sp[-1];
-		pr_stackPtr = local_vars + 3;
-        return;
-
-	case OPC_PushNumber:
-	case OPC_PushString:
-	case OPC_PushFunction:
-	case OPC_PushClassId:
-	case OPC_PushState:
-	case OPC_PushName:
-		*sp++ = *current_statement++;
-		break;
-
-	 case OPC_PushPointed:
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_LocalAddress:
-#ifdef CHECK_VALID_VAR_NUM
-		if (*current_statement < 0 || *current_statement >= MAX_LOCALS)
-	    {
-	    	Sys_Error("Bad local num %d", *current_statement);
-		}
+#if USE_COMPUTED_GOTO
+		static void* vm_labels[] = {
+#define DECLARE_OPC(name, args, argcount)	&&Lbl_OPC_ ## name
+#define OPCODE_INFO
+#include "progdefs.h"
+		0 };
 #endif
-		*sp++ = (int)&local_vars[*current_statement++];
-		break;
 
-	case OPC_Offset:
-		sp[-1] += *current_statement++;
-		break;
-
-	case OPC_Add:
-		sp--;
-		sp[-1] += *sp;
-		break;
-
-	case OPC_Subtract:
-		sp--;
-		sp[-1] -= *sp;
-		break;
-
-	 case OPC_Multiply:
-        sp--;
-		sp[-1] *= *sp;
-		break;
-
-	 case OPC_Divide:
-        sp--;
-		sp[-1] /= *sp;
-		break;
-
-	 case OPC_Modulus:
-        sp--;
-		sp[-1] %= *sp;
-		break;
-
-	 case OPC_Equals:
-        sp--;
-		sp[-1] = sp[-1] == *sp;
-		break;
-
-	 case OPC_NotEquals:
-        sp--;
-		sp[-1] = sp[-1] != *sp;
-		break;
-
-	 case OPC_Less:
-        sp--;
-		sp[-1] = sp[-1] < *sp;
-		break;
-
-	 case OPC_Greater:
-        sp--;
-		sp[-1] = sp[-1] > *sp;
-		break;
-
-	 case OPC_LessEquals:
-        sp--;
-		sp[-1] = sp[-1] <= *sp;
-		break;
-
-	 case OPC_GreaterEquals:
-        sp--;
-		sp[-1] = sp[-1] >= *sp;
-		break;
-
-	 case OPC_AndLogical:
-        sp--;
-		sp[-1] = sp[-1] && *sp;
-		break;
-
-	 case OPC_OrLogical:
-        sp--;
-		sp[-1] = sp[-1] || *sp;
-		break;
-
-	 case OPC_NegateLogical:
-		sp[-1] = !sp[-1];
-		break;
-
-	 case OPC_AndBitwise:
-        sp--;
-		sp[-1] &= *sp;
-		break;
-
-	 case OPC_OrBitwise:
-        sp--;
-		sp[-1] |= *sp;
-		break;
-
-	 case OPC_XOrBitwise:
-        sp--;
-		sp[-1] ^= *sp;
-		break;
-
-	 case OPC_LShift:
-        sp--;
-		sp[-1] <<= *sp;
-		break;
-
-	 case OPC_RShift:
-        sp--;
-		sp[-1] >>= *sp;
-		break;
-
-	 case OPC_UnaryMinus:
-		sp[-1] = -sp[-1];
-		break;
-
-	 case OPC_BitInverse:
-		sp[-1] = ~sp[-1];
-		break;
-
-	 case OPC_Call:
-		pr_stackPtr = sp;
-	    RunFunction((VMethod *)*current_statement++);
-		current_func = func;
-		sp = pr_stackPtr;
-		break;
-
-	 case OPC_Goto:
-		current_statement = (int *)*current_statement;
-		break;
-
-	 case OPC_IfGoto:
-        sp--;
-		if (*sp)
+		int Opc = *(int*)ip;
+		ip += 3;
+		PR_VM_SWITCH(Opc)
 		{
-			current_statement = (int *)*current_statement;
-		}
-		else
-	    {
-	        current_statement++;
-	    }
-		break;
+		PR_VM_CASE(OPC_Done)
+			Sys_Error("Empty function or invalid opcode");
+			PR_VM_BREAK;
 
-	 case OPC_IfNotGoto:
-        sp--;
-	    if (!*sp)
-	    {
-	    	current_statement = (int *)*current_statement;
-		}
-		else
-	    {
-	        current_statement++;
-	    }
-		break;
+		PR_VM_CASE(OPC_Call)
+			pr_stackPtr = sp;
+			RunFunction((VMethod*)ReadPtr(ip + 1));
+			current_func = func;
+			ip += 1 + sizeof(void*);
+			sp = pr_stackPtr;
+			PR_VM_BREAK;
 
-	 case OPC_CaseGoto:
-	 case OPC_CaseGotoClassId:
-	 case OPC_CaseGotoName:
-		if (*current_statement++ == sp[-1])
-	    {
-	    	current_statement = (int *)*current_statement;
+		PR_VM_CASE(OPC_PushVFunc)
+			sp[0].p = ((VObject*)sp[-1].p)->GetVFunction(ReadInt32(ip + 1));
+			ip += 5;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ICall)
 			sp--;
-		}
-		else
-	    {
-	        current_statement++;
-	    }
-		break;
-
-	 case OPC_Drop:
-		sp--;
-		break;
-
-	 case OPC_Assign:
-        sp--;
-		*(int*)sp[-1] = *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_AddVar:
-        sp--;
-		*(int*)sp[-1] += *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_SubVar:
-        sp--;
-		*(int*)sp[-1] -= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_MulVar:
-        sp--;
-		*(int*)sp[-1] *= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_DivVar:
-        sp--;
-		*(int*)sp[-1] /= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_ModVar:
-        sp--;
-		*(int*)sp[-1] %= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_AndVar:
-        sp--;
-		*(int*)sp[-1] &= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_OrVar:
-        sp--;
-		*(int*)sp[-1] |= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_XOrVar:
-        sp--;
-		*(int*)sp[-1] ^= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_LShiftVar:
-        sp--;
-		*(int*)sp[-1] <<= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_RShiftVar:
-        sp--;
-		*(int*)sp[-1] >>= *sp;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_PreInc:
-#ifdef __GNUC__
-		sp[-1] = ++(*(int*)sp[-1]);
-#else
-		{
-			int		*ptr;
-
-			ptr = (int*)sp[-1];
-			++(*ptr);
-			sp[-1] = *ptr;
-		}
-#endif
-		break;
-
-	 case OPC_PreDec:
-#ifdef __GNUC__
-		sp[-1] = --(*(int*)sp[-1]);
-#else
-		{
-			int		*ptr;
-
-			ptr = (int*)sp[-1];
-			--(*ptr);
-			sp[-1] = *ptr;
-		}
-#endif
-		break;
-
-	 case OPC_PostInc:
-#ifdef __GNUC__
-		sp[-1] = (*(int*)sp[-1])++;
-#else
-		{
-			int		*ptr;
-
-			ptr = (int*)sp[-1];
-			sp[-1] = *ptr;
-			(*ptr)++;
-		}
-#endif
-		break;
-
-	 case OPC_PostDec:
-#ifdef __GNUC__
-		sp[-1] = (*(int*)sp[-1])--;
-#else
-		{
-			int		*ptr;
-
-			ptr = (int*)sp[-1];
-			sp[-1] = *ptr;
-			(*ptr)--;
-		}
-#endif
-		break;
-
-	 case OPC_IfTopGoto:
-	    if (sp[-1])
-	    {
-	    	current_statement = (int *)*current_statement;
-	    }
-		else
-	    {
-	        current_statement++;
-	    }
-		break;
-
-	 case OPC_IfNotTopGoto:
-	    if (!sp[-1])
-	    {
-	    	current_statement = (int *)*current_statement;
-		}
-	    else
-	    {
-	        current_statement++;
-	    }
-		break;
-
-	 case OPC_AssignDrop:
-        sp--;
-		*(int*)sp[-1] = *sp;
-		sp--;
-		break;
-
-	 case OPC_AddVarDrop:
-        sp--;
-		*(int*)sp[-1] += *sp;
-		sp--;
-		break;
-
-	 case OPC_SubVarDrop:
-        sp--;
-		*(int*)sp[-1] -= *sp;
-		sp--;
-		break;
-
-	 case OPC_MulVarDrop:
-        sp--;
-		*(int*)sp[-1] *= *sp;
-		sp--;
-		break;
-
-	 case OPC_DivVarDrop:
-        sp--;
-		*(int*)sp[-1] /= *sp;
-		sp--;
-		break;
-
-	 case OPC_ModVarDrop:
-        sp--;
-		*(int*)sp[-1] %= *sp;
-		sp--;
-		break;
-
-	 case OPC_AndVarDrop:
-        sp--;
-		*(int*)sp[-1] &= *sp;
-		sp--;
-		break;
-
-	 case OPC_OrVarDrop:
-        sp--;
-		*(int*)sp[-1] |= *sp;
-		sp--;
-		break;
-
-	 case OPC_XOrVarDrop:
-        sp--;
-		*(int*)sp[-1] ^= *sp;
-		sp--;
-		break;
-
-	 case OPC_LShiftVarDrop:
-        sp--;
-		*(int*)sp[-1] <<= *sp;
-		sp--;
-		break;
-
-	 case OPC_RShiftVarDrop:
-        sp--;
-		*(int*)sp[-1] >>= *sp;
-		sp--;
-		break;
-
-	 case OPC_IncDrop:
-		(*(int*)sp[-1])++;
-		sp--;
-		break;
-
-	 case OPC_DecDrop:
-		(*(int*)sp[-1])--;
-		sp--;
-		break;
-
-#define spf	((float*)sp)
-
-//=====================================
-	 case OPC_FAdd:
-        sp--;
-		spf[-1] += *spf;
-		break;
-
-	 case OPC_FSubtract:
-        sp--;
-		spf[-1] -= *spf;
-		break;
-
-	 case OPC_FMultiply:
-        sp--;
-		spf[-1] *= *spf;
-		break;
-
-	 case OPC_FDivide:
-        sp--;
-		spf[-1] /= *spf;
-		break;
-
-	 case OPC_FEquals:
-        sp--;
-		sp[-1] = spf[-1] == *spf;
-		break;
-
-	 case OPC_FNotEquals:
-        sp--;
-		sp[-1] = spf[-1] != *spf;
-		break;
-
-	 case OPC_FLess:
-        sp--;
-		sp[-1] = spf[-1] < *spf;
-		break;
-
-	 case OPC_FGreater:
-        sp--;
-		sp[-1] = spf[-1] > *spf;
-		break;
-
-	 case OPC_FLessEquals:
-        sp--;
-		sp[-1] = spf[-1] <= *spf;
-		break;
-
-	 case OPC_FGreaterEquals:
-        sp--;
-		sp[-1] = spf[-1] >= *spf;
-		break;
-
-	 case OPC_FUnaryMinus:
-		spf[-1] = -spf[-1];
-		break;
-
-	 case OPC_FAddVar:
-        sp--;
-		*(float*)sp[-1] += *spf;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_FSubVar:
-        sp--;
-		*(float*)sp[-1] -= *spf;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_FMulVar:
-        sp--;
-		*(float*)sp[-1] *= *spf;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_FDivVar:
-        sp--;
-		*(float*)sp[-1] /= *spf;
-		sp[-1] = *(int*)sp[-1];
-		break;
-
-	 case OPC_FAddVarDrop:
-        sp--;
-		*(float*)sp[-1] += *spf;
-		sp--;
-		break;
-
-	 case OPC_FSubVarDrop:
-        sp--;
-		*(float*)sp[-1] -= *spf;
-		sp--;
-		break;
-
-	 case OPC_FMulVarDrop:
-        sp--;
-		*(float*)sp[-1] *= *spf;
-		sp--;
-		break;
-
-	 case OPC_FDivVarDrop:
-        sp--;
-		*(float*)sp[-1] /= *spf;
-		sp--;
-		break;
-
-//=====================================
-
-	 case OPC_Swap:
-		{
-			int tmp = sp[-2];
-			sp[-2] = sp[-1];
-			sp[-1] = tmp;
-		}
-		break;
-
-	 case OPC_ICall:
-		sp--;
-		pr_stackPtr = sp;
-	    RunFunction((VMethod *)*sp);
-		current_func = func;
-		sp = pr_stackPtr;
-		break;
-
-//=====================================
-
-#define top_vec1	(*(TVec*)(sp - 6))
-#define top_vec2	(*(TVec*)(sp - 3))
-#define dec_top_vec	(*(TVec*)(sp - 4))
-
-	 case OPC_VPushPointed:
-		sp += 2;
-		top_vec2 = *(TVec*)sp[-3];
-		break;
-
-	 case OPC_VAdd:
-		top_vec1 = top_vec1 + top_vec2;
-		sp -= 3;
-		break;
-
-	 case OPC_VSubtract:
-		top_vec1 = top_vec1 - top_vec2;
-		sp -= 3;
-		break;
-
-	 case OPC_VPreScale:
-		dec_top_vec = spf[-4] * top_vec2;
-		sp--;
-		break;
-
-	 case OPC_VPostScale:
-		dec_top_vec = dec_top_vec * spf[-1];
-		sp--;
-		break;
-
-	 case OPC_VIScale:
-		dec_top_vec = dec_top_vec / spf[-1];
-		sp--;
-		break;
-
-	 case OPC_VEquals:
-		sp[-6] = top_vec1 == top_vec2;
-		sp -= 5;
-		break;
-
-	 case OPC_VNotEquals:
-		sp[-6] = top_vec1 != top_vec2;
-		sp -= 5;
-		break;
-
-	 case OPC_VUnaryMinus:
-		top_vec2 = -top_vec2;
-		break;
-
-	 case OPC_VDrop:
-		sp -= 3;
-		break;
-
-	 case OPC_VAssign:
-		*(TVec*)sp[-4] = top_vec2;
-		dec_top_vec = *(TVec*)sp[-4];
-        sp--;
-		break;
-
-	 case OPC_VAddVar:
-		*(TVec*)sp[-4] += top_vec2;
-		dec_top_vec = *(TVec*)sp[-4];
-        sp--;
-		break;
-
-	 case OPC_VSubVar:
-		*(TVec*)sp[-4] -= top_vec2;
-		dec_top_vec = *(TVec*)sp[-4];
-        sp--;
-		break;
-
-	 case OPC_VScaleVar:
-		sp++;
-		*(TVec*)sp[-3] *= spf[-2];
-		top_vec2 = *(TVec*)sp[-3];
-		break;
-
-	 case OPC_VIScaleVar:
-		sp++;
-		*(TVec*)sp[-3] /= spf[-2];
-		top_vec2 = *(TVec*)sp[-3];
-		break;
-
-	 case OPC_VAssignDrop:
-		*(TVec*)sp[-4] = top_vec2;
-        sp -= 4;
-		break;
-
-	 case OPC_VAddVarDrop:
-		*(TVec*)sp[-4] += top_vec2;
-        sp -= 4;
-		break;
-
-	 case OPC_VSubVarDrop:
-		*(TVec*)sp[-4] -= top_vec2;
-        sp -= 4;
-		break;
-
-	 case OPC_VScaleVarDrop:
-		*(TVec*)sp[-2] *= spf[-1];
-		sp -= 2;
-		break;
-
-	 case OPC_VIScaleVarDrop:
-		*(TVec*)sp[-2] /= spf[-1];
-		sp -= 2;
-		break;
-
-//=====================================
-
-	 case OPC_Copy:
-		*sp = sp[-1];
-		sp++;
-		break;
-
-	 case OPC_Swap3:
-		{
-			int tmp = sp[-4];
-			sp[-4] = sp[-3];
-			sp[-3] = sp[-2];
-			sp[-2] = sp[-1];
-			sp[-1] = tmp;
-		}
-		break;
-
-	 case OPC_DynamicCast:
-		sp[-1] = sp[-1] && ((VObject*)sp[-1])->IsA((VClass*)*current_statement++) ? sp[-1] : 0;
-		break;
-
-	case OPC_PushBool:
-		{
-			int mask = *current_statement++;
-			sp[-1] = !!(*(int*)sp[-1] & mask);
-		}
-		break;
-
-	case OPC_AssignBool:
-		{
-			int mask = *current_statement++;
-			sp--;
-			if (*sp)
-				*(int*)sp[-1] |= mask;
+			pr_stackPtr = sp;
+			RunFunction((VMethod*)sp->p);
+			current_func = func;
+			ip++;
+			sp = pr_stackPtr;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Return)
+			pr_stackPtr = local_vars;
+			return;
+
+		PR_VM_CASE(OPC_ReturnL)
+			((VStack*)local_vars)[0] = sp[-1];
+			pr_stackPtr = local_vars + 1;
+			return;
+
+		PR_VM_CASE(OPC_ReturnV)
+			((VStack*)local_vars)[0] = sp[-3];
+			((VStack*)local_vars)[1] = sp[-2];
+			((VStack*)local_vars)[2] = sp[-1];
+			pr_stackPtr = local_vars + 3;
+			return;
+
+		PR_VM_CASE(OPC_Goto)
+			ip = (vuint8*)ReadPtr(ip + 1);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfGoto)
+			if (sp[-1].i)
+			{
+				ip = (vuint8*)ReadPtr(ip + 1);
+			}
 			else
-				*(int*)sp[-1] &= ~mask;
+			{
+				ip += 1 + sizeof(void*);
+			}
 			sp--;
-		}
-		break;
+			PR_VM_BREAK;
 
-	case OPC_PushVFunc:
-		*sp = (int)((VObject*)sp[-1])->GetVFunction(*current_statement++);
-		sp++;
-		break;
+		PR_VM_CASE(OPC_IfNotGoto)
+			if (!sp[-1].i)
+			{
+				ip = (vuint8*)ReadPtr(ip + 1);
+			}
+			else
+			{
+				ip += 1 + sizeof(void*);
+			}
+			sp--;
+			PR_VM_BREAK;
 
-	case OPC_PushPointedDelegate:
-		sp[0] = ((int*)sp[-1])[1];
-		sp[-1] = ((int*)sp[-1])[0];
-		sp++;
-		break;
+		PR_VM_CASE(OPC_IfTopGoto)
+			if (sp[-1].i)
+			{
+				ip = (vuint8*)ReadPtr(ip + 1);
+			}
+			else
+			{
+				ip += 1 + sizeof(void*);
+			}
+			PR_VM_BREAK;
 
-	case OPC_AssignDelegate:
-		((int*)sp[-3])[0] = sp[-2];
-		((int*)sp[-3])[1] = sp[-1];
-		sp -= 3;
-		break;
+		PR_VM_CASE(OPC_IfNotTopGoto)
+			if (!sp[-1].i)
+			{
+				ip = (vuint8*)ReadPtr(ip + 1);
+			}
+			else
+			{
+				ip += 1 + sizeof(void*);
+			}
+			PR_VM_BREAK;
 
-	default:
-#ifdef CHECK_VALID_OPCODE
-		Sys_Error("Invalid opcode %d", current_statement[-1]);
+		PR_VM_CASE(OPC_CaseGoto)
+			if (ReadInt32(ip + 1) == sp[-1].i)
+			{
+				ip = (vuint8*)ReadPtr(ip + 5);
+				sp--;
+			}
+			else
+			{
+				ip += 5 + sizeof(void*);
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushNumber)
+			sp->i = ReadInt32(ip + 1);
+			ip += 5;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushName)
+			sp->i = ReadInt32(ip + 1);
+			ip += 5;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushString)
+			sp->p = ReadPtr(ip + 1);
+			ip += 1 + sizeof(void*);
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushClassId)
+		PR_VM_CASE(OPC_PushState)
+			sp->p = ReadPtr(ip + 1);
+			ip += 1 + sizeof(void*);
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress)
+			sp->p = &local_vars[ReadInt32(ip + 1)];
+			ip += 5;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Offset)
+			sp[-1].p = (vuint8*)sp[-1].p + ReadInt32(ip + 1);
+			ip += 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ArrayElement)
+			sp[-2].p = (vuint8*)sp[-2].p + sp[-1].i * ReadInt32(ip + 1);
+			ip += 5;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushPointed)
+			ip++;
+			sp[-1].i = *(vint32*)sp[-1].p;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VPushPointed)
+			ip++;
+			sp[1].f = ((TVec*)sp[-1].p)->z;
+			sp[0].f = ((TVec*)sp[-1].p)->y;
+			sp[-1].f = ((TVec*)sp[-1].p)->x;
+			sp += 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushBool)
+			{
+				vint32 mask = ReadInt32(ip + 1);
+				ip += 5;
+				sp[-1].i = !!(*(vint32*)sp[-1].p & mask);
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushPointedDelegate)
+			ip++;
+			sp[0].p = ((void**)sp[-1].p)[1];
+			sp[-1].p = ((void**)sp[-1].p)[0];
+			sp++;
+			PR_VM_BREAK;
+
+#define BINOP(mem, op) \
+	ip++; \
+	sp[-2].mem = sp[-2].mem op sp[-1].mem; \
+	sp--;
+#define BINOP_Q(mem, op) \
+	ip++; \
+	sp[-2].mem op sp[-1].mem; \
+	sp--;
+
+		PR_VM_CASE(OPC_Add)
+			BINOP_Q(i, +=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Subtract)
+			BINOP_Q(i, -=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Multiply)
+			BINOP_Q(i, *=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Divide)
+			BINOP(i, /=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Modulus)
+			BINOP_Q(i, %=);
+			PR_VM_BREAK;
+
+#define BOOLOP(mem, op) \
+	ip++; \
+	sp[-2].i = sp[-2].mem op sp[-1].mem; \
+	sp--;
+
+		PR_VM_CASE(OPC_Equals)
+			BOOLOP(i, ==);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_NotEquals)
+			BOOLOP(i, !=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Less)
+			BOOLOP(i, <);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Greater)
+			BOOLOP(i, >);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LessEquals)
+			BOOLOP(i, <=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_GreaterEquals)
+			BOOLOP(i, >=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AndLogical)
+			BOOLOP(i, &&);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_OrLogical)
+			BOOLOP(i, ||);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_NegateLogical)
+			ip++;
+			sp[-1].i = !sp[-1].i;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AndBitwise)
+			BINOP_Q(i, &=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_OrBitwise)
+			BINOP_Q(i, |=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_XOrBitwise)
+			BINOP_Q(i, ^=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LShift)
+			BINOP_Q(i, <<=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_RShift)
+			BINOP_Q(i, >>=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_UnaryMinus)
+			ip++;
+			sp[-1].i = -sp[-1].i;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_BitInverse)
+			ip++;
+			sp[-1].i = ~sp[-1].i;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PreInc)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = ++(*(vint32*)sp[-1].p);
+#else
+			{
+				vint32* ptr = (vint32*)sp[-1].p;
+				++(*ptr);
+				sp[-1].i = *ptr;
+			}
 #endif
-		break;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PreDec)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = --(*(vint32*)sp[-1].p);
+#else
+			{
+				vint32* ptr = (vint32*)sp[-1].p;
+				--(*ptr);
+				sp[-1].i = *ptr;
+			}
+#endif
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PostInc)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = (*(vint32*)sp[-1].p)++;
+#else
+			{
+				vint32* ptr = (vint32*)sp[-1].p;
+				sp[-1].i = *ptr;
+				(*ptr)++;
+			}
+#endif
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PostDec)
+			ip++;
+#ifdef __GNUC__
+			sp[-1].i = (*(vint32*)sp[-1].p)--;
+#else
+			{
+				vint32* ptr = (vint32*)sp[-1].p;
+				sp[-1].i = *ptr;
+				(*ptr)--;
+			}
+#endif
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IncDrop)
+			ip++;
+			(*(vint32*)sp[-1].p)++;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DecDrop)
+			ip++;
+			(*(vint32*)sp[-1].p)--;
+			sp--;
+			PR_VM_BREAK;
+
+#define ASSIGNOP(type, mem, op) \
+	ip++; \
+	*(type*)sp[-2].p op sp[-1].mem; \
+	sp -= 2;
+
+		PR_VM_CASE(OPC_AssignDrop)
+			ASSIGNOP(vint32, i, =);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AddVarDrop)
+			ASSIGNOP(vint32, i, +=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_SubVarDrop)
+			ASSIGNOP(vint32, i, -=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_MulVarDrop)
+			ASSIGNOP(vint32, i, *=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DivVarDrop)
+			ASSIGNOP(vint32, i, /=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ModVarDrop)
+			ASSIGNOP(vint32, i, %=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AndVarDrop)
+			ASSIGNOP(vint32, i, &=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_OrVarDrop)
+			ASSIGNOP(vint32, i, |=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_XOrVarDrop)
+			ASSIGNOP(vint32, i, ^=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LShiftVarDrop)
+			ASSIGNOP(vint32, i, <<=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_RShiftVarDrop)
+			ASSIGNOP(vint32, i, >>=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FAdd)
+			BINOP_Q(f, +=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FSubtract)
+			BINOP_Q(f, -=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FMultiply)
+			BINOP_Q(f, *=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FDivide)
+			BINOP_Q(f, /=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FEquals)
+			BOOLOP(f, ==);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FNotEquals)
+			BOOLOP(f, !=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FLess)
+			BOOLOP(f, <);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FGreater)
+			BOOLOP(f, >);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FLessEquals)
+			BOOLOP(f, <=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FGreaterEquals)
+			BOOLOP(f, >=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FUnaryMinus)
+			ip++;
+			sp[-1].f = -sp[-1].f;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FAddVarDrop)
+			ASSIGNOP(float, f, +=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FSubVarDrop)
+			ASSIGNOP(float, f, -=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FMulVarDrop)
+			ASSIGNOP(float, f, *=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FDivVarDrop)
+			ASSIGNOP(float, f, /=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VAdd)
+			ip++;
+			sp[-6].f += sp[-3].f;
+			sp[-5].f += sp[-2].f;
+			sp[-4].f += sp[-1].f;
+			sp -= 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VSubtract)
+			ip++;
+			sp[-6].f -= sp[-3].f;
+			sp[-5].f -= sp[-2].f;
+			sp[-4].f -= sp[-1].f;
+			sp -= 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VPreScale)
+			{
+				ip++;
+				float scale = sp[-4].f;
+				sp[-4].f = scale * sp[-3].f;
+				sp[-3].f = scale * sp[-2].f;
+				sp[-2].f = scale * sp[-1].f;
+				sp--;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VPostScale)
+			ip++;
+			sp[-4].f *= sp[-1].f;
+			sp[-3].f *= sp[-1].f;
+			sp[-2].f *= sp[-1].f;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VIScale)
+			ip++;
+			sp[-4].f /= sp[-1].f;
+			sp[-3].f /= sp[-1].f;
+			sp[-2].f /= sp[-1].f;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VEquals)
+			ip++;
+			sp[-6].i = sp[-6].f == sp[-3].f && sp[-5].f == sp[-2].f &&
+				sp[-4].f == sp[-1].f;
+			sp -= 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VNotEquals)
+			ip++;
+			sp[-6].i = sp[-6].f != sp[-3].f || sp[-5].f != sp[-2].f ||
+				sp[-4].f != sp[-1].f;
+			sp -= 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VUnaryMinus)
+			ip++;
+			sp[-3].f = -sp[-3].f;
+			sp[-2].f = -sp[-2].f;
+			sp[-1].f = -sp[-1].f;
+			PR_VM_BREAK;
+
+#define VASSIGNOP(op) \
+	{ \
+		ip++; \
+		TVec* ptr = (TVec*)sp[-4].p; \
+		ptr->x op sp[-3].f; \
+		ptr->y op sp[-2].f; \
+		ptr->z op sp[-1].f; \
+		sp -= 4; \
 	}
 
-    goto func_loop;
+		PR_VM_CASE(OPC_VAssignDrop)
+			VASSIGNOP(=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VAddVarDrop)
+			VASSIGNOP(+=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VSubVarDrop)
+			VASSIGNOP(-=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VScaleVarDrop)
+			ip++;
+			*(TVec*)sp[-2].p *= sp[-1].f;
+			sp -= 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VIScaleVarDrop)
+			ip++;
+			*(TVec*)sp[-2].p /= sp[-1].f;
+			sp -= 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PtrEquals)
+			BOOLOP(p, ==);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PtrNotEquals)
+			BOOLOP(p, !=);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Drop)
+			ip++;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VDrop)
+			ip++;
+			sp -= 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Swap)
+			{
+				ip++;
+				vint32 tmp = sp[-2].i;
+				sp[-2].i = sp[-1].i;
+				sp[-1].i = tmp;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Swap3)
+			{
+				ip++;
+				vint32 tmp = sp[-4].i;
+				sp[-4].i = sp[-3].i;
+				sp[-3].i = sp[-2].i;
+				sp[-2].i = sp[-1].i;
+				sp[-1].i = tmp;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AssignPtrDrop)
+			ASSIGNOP(void*, p, =);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AssignBool)
+			{
+				vint32 mask = ReadInt32(ip + 1);
+				if (sp[-1].i)
+					*(vint32*)sp[-2].p |= mask;
+				else
+					*(vint32*)sp[-2].p &= ~mask;
+				ip += 5;
+				sp -= 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AssignDelegate)
+			ip++;
+			((void**)sp[-3].p)[0] = sp[-2].p;
+			((void**)sp[-3].p)[1] = sp[-1].p;
+			sp -= 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DynamicCast)
+			sp[-1].p = sp[-1].p && ((VObject*)sp[-1].p)->IsA(
+				(VClass*)ReadPtr(ip + 1)) ? sp[-1].p : 0;
+			ip += 1 + sizeof(void*);
+			PR_VM_BREAK;
+
+		PR_VM_DEFAULT
+			Sys_Error("Invalid opcode %d", *ip);
+		}
+	}
+
+	goto func_loop;
 	unguardfSlow(("(%s %d)", *func->GetFullName(),
-		current_statement - func->Statements.Ptr()));
+		(vint32*)ip - func->Statements.Ptr()));
 }
 
 //==========================================================================
@@ -967,33 +891,34 @@ int TProgs::ExecuteFunction(VMethod *func)
 
 	//	Get return value
 	if (func->Type)
-    {
-		ret = *(--pr_stackPtr);
+	{
+		--pr_stackPtr;
+		ret = pr_stackPtr->i;
 	}
 
 #ifdef CHECK_FOR_EMPTY_STACK
 	//	After executing base function stack must be empty
-    if (!current_func && pr_stackPtr != pr_stack + 1)
-    {
-    	Sys_Error("ExecuteFunction: Stack is not empty after executing function:\n%s\nstack = %p, sp = %p",
-            *func->Name, pr_stack, pr_stackPtr);
-    }
+	if (!current_func && pr_stackPtr != pr_stack + 1)
+	{
+		Sys_Error("ExecuteFunction: Stack is not empty after executing function:\n%s\nstack = %p, oldsp = %p",
+			*func->Name, pr_stack, pr_stackPtr);
+	}
 #endif
 
 #ifdef CHECK_STACK_UNDERFLOW
 	//	Check, if stack wasn't underflowed
-	if (pr_stack[0] != STACK_ID)
-   	{
-   		Sys_Error("ExecuteFunction: Stack underflow in %s", *func->Name);
-    }
+	if (pr_stack[0].i != STACK_ID)
+	{
+		Sys_Error("ExecuteFunction: Stack underflow in %s", *func->Name);
+	}
 #endif
 
 #ifdef CHECK_STACK_OVERFLOW
 	//	Check, if stack wasn't overflowed
-	if (pr_stack[MAX_PROG_STACK - 1] != STACK_ID)
-   	{
-   		Sys_Error("ExecuteFunction: Stack overflow in %s", *func->Name);
-    }
+	if (pr_stack[MAX_PROG_STACK - 1].i != STACK_ID)
+	{
+		Sys_Error("ExecuteFunction: Stack overflow in %s", *func->Name);
+	}
 #endif
 
 	//	All done
@@ -1010,13 +935,13 @@ int TProgs::ExecuteFunction(VMethod *func)
 int TProgs::Exec(VMethod *func)
 {
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 0)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 0",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 0)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 0",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-    return ExecuteFunction(func);
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1027,19 +952,17 @@ int TProgs::Exec(VMethod *func)
 
 int TProgs::Exec(VMethod *func, int parm1)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 1)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 1",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 1)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 1",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 1;
-	p[0] = parm1;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1050,20 +973,18 @@ int TProgs::Exec(VMethod *func, int parm1)
 
 int TProgs::Exec(VMethod *func, int parm1, int parm2)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 2)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 2",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 2)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 2",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 2;
-	p[0] = parm1;
-	p[1] = parm2;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1074,21 +995,19 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2)
 
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 3)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 3",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 3)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 3",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 3;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1099,22 +1018,20 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3)
 
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 4)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 4",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 4)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 4",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 4;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1126,23 +1043,21 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4)
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 5)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 5",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 5)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 5",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 5;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1154,24 +1069,22 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 6)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 6",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 6)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 6",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 6;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1183,25 +1096,23 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 7)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 7",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 7)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 7",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 7;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1213,26 +1124,24 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 8)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 8",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 8)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 8",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 8;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1244,27 +1153,25 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 9)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 9",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 9)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 9",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 9;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1276,28 +1183,26 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 10)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 10",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 10)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 10",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 10;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-	p[9] = parm10;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	p[9].i = parm10;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1310,29 +1215,27 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 11)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 11",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 11)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 11",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 11;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-	p[9] = parm10;
-	p[10] = parm11;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	p[9].i = parm10;
+	p[10].i = parm11;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1345,30 +1248,28 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 12)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 12",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 12)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 12",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 12;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-	p[9] = parm10;
-	p[10] = parm11;
-	p[11] = parm12;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	p[9].i = parm10;
+	p[10].i = parm11;
+	p[11].i = parm12;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1381,31 +1282,29 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 13)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 13",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 13)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 13",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 13;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-	p[9] = parm10;
-	p[10] = parm11;
-	p[11] = parm12;
-	p[12] = parm13;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	p[9].i = parm10;
+	p[10].i = parm11;
+	p[11].i = parm12;
+	p[12].i = parm13;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1418,32 +1317,30 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13, int parm14)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 14)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 14",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 14)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 14",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 14;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-	p[9] = parm10;
-	p[10] = parm11;
-	p[11] = parm12;
-	p[12] = parm13;
-	p[13] = parm14;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	p[9].i = parm10;
+	p[10].i = parm11;
+	p[11].i = parm12;
+	p[12].i = parm13;
+	p[13].i = parm14;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1456,33 +1353,31 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13, int parm14, int parm15)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 15)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 15",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 15)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 15",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 15;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-	p[9] = parm10;
-	p[10] = parm11;
-	p[11] = parm12;
-	p[12] = parm13;
-	p[13] = parm14;
-	p[14] = parm15;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	p[9].i = parm10;
+	p[10].i = parm11;
+	p[11].i = parm12;
+	p[12].i = parm13;
+	p[13].i = parm14;
+	p[14].i = parm15;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================
@@ -1495,34 +1390,32 @@ int TProgs::Exec(VMethod *func, int parm1, int parm2, int parm3, int parm4,
 	int parm5, int parm6, int parm7, int parm8, int parm9, int parm10,
 	int parm11, int parm12, int parm13, int parm14, int parm15, int parm16)
 {
-	int		*p;
-
 #ifdef CHECK_PARM_COUNT
-    if (Functions[fnum]->NumParms != 16)
-    {
-    	Sys_Error("TProgs::Exec: Function %s haves %d parms, not 16",
-    		FuncName(fnum), Functions[fnum]->NumParms);
-    }
+	if (Functions[fnum]->NumParms != 16)
+	{
+		Sys_Error("TProgs::Exec: Function %s haves %d parms, not 16",
+			FuncName(fnum), Functions[fnum]->NumParms);
+	}
 #endif
-	p = pr_stackPtr;
+	VStack* p = pr_stackPtr;
 	pr_stackPtr += 16;
-	p[0] = parm1;
-	p[1] = parm2;
-	p[2] = parm3;
-	p[3] = parm4;
-	p[4] = parm5;
-	p[5] = parm6;
-	p[6] = parm7;
-	p[7] = parm8;
-	p[8] = parm9;
-	p[9] = parm10;
-	p[10] = parm11;
-	p[11] = parm12;
-	p[12] = parm13;
-	p[13] = parm14;
-	p[14] = parm15;
-	p[15] = parm16;
-    return ExecuteFunction(func);
+	p[0].i = parm1;
+	p[1].i = parm2;
+	p[2].i = parm3;
+	p[3].i = parm4;
+	p[4].i = parm5;
+	p[5].i = parm6;
+	p[6].i = parm7;
+	p[7].i = parm8;
+	p[8].i = parm9;
+	p[9].i = parm10;
+	p[10].i = parm11;
+	p[11].i = parm12;
+	p[12].i = parm13;
+	p[13].i = parm14;
+	p[14].i = parm15;
+	p[15].i = parm16;
+	return ExecuteFunction(func);
 }
 
 //==========================================================================

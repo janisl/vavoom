@@ -501,6 +501,9 @@ void ParseLocalVar(const TType& type)
 			t1.CheckMatch(t);
 			if (t1.type == ev_vector)
 				AddStatement(OPC_VAssignDrop);
+			else if (t1.type == ev_pointer || t1.type == ev_reference ||
+				t1.type == ev_classid || t1.type == ev_state || t1.type == ev_string)
+				AddStatement(OPC_AssignPtrDrop);
 			else
 				AddStatement(OPC_AssignDrop);
 		}

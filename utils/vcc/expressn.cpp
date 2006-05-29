@@ -656,9 +656,7 @@ static TTree ParseExpressionPriority1()
 				ParseError(ERR_EXPR_TYPE_MISTMATCH);
 			}
 			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
-			AddStatement(OPC_PushNumber, type.GetSize());
-			AddStatement(OPC_Multiply);
-			AddStatement(OPC_Add);
+			AddStatement(OPC_ArrayElement, type.GetSize());
 			op = EmitPushPointed(type);
 		}
 		else if (TK_Check(PU_LPAREN))
@@ -1178,11 +1176,11 @@ static TTree ParseExpressionPriority7()
 			}
 			else if (op1.Type.type == ev_string && op2.Type.type == ev_string)
 			{
-				AddStatement(OPC_Equals);
+				AddStatement(OPC_PtrEquals);
 			}
 			else if (op1.Type.type == ev_pointer && op2.Type.type == ev_pointer)
 			{
-				AddStatement(OPC_Equals);
+				AddStatement(OPC_PtrEquals);
 			}
 			else if (op1.Type.type == ev_vector && op2.Type.type == ev_vector)
 			{
@@ -1190,15 +1188,15 @@ static TTree ParseExpressionPriority7()
 			}
 			else if (op1.Type.type == ev_classid && op2.Type.type == ev_classid)
 			{
-				AddStatement(OPC_Equals);
+				AddStatement(OPC_PtrEquals);
 			}
 			else if (op1.Type.type == ev_state && op2.Type.type == ev_state)
 			{
-				AddStatement(OPC_Equals);
+				AddStatement(OPC_PtrEquals);
 			}
 			else if (op1.Type.type == ev_reference && op2.Type.type == ev_reference)
 			{
-				AddStatement(OPC_Equals);
+				AddStatement(OPC_PtrEquals);
 			}
 			else
 			{
@@ -1223,11 +1221,11 @@ static TTree ParseExpressionPriority7()
 			}
 			else if (op1.Type.type == ev_string && op2.Type.type == ev_string)
 			{
-				AddStatement(OPC_NotEquals);
+				AddStatement(OPC_PtrNotEquals);
 			}
 			else if (op1.Type.type == ev_pointer && op2.Type.type == ev_pointer)
 			{
-				AddStatement(OPC_NotEquals);
+				AddStatement(OPC_PtrNotEquals);
 			}
 			else if (op1.Type.type == ev_vector && op2.Type.type == ev_vector)
 			{
@@ -1235,15 +1233,15 @@ static TTree ParseExpressionPriority7()
 			}
 			else if (op1.Type.type == ev_classid && op2.Type.type == ev_classid)
 			{
-				AddStatement(OPC_NotEquals);
+				AddStatement(OPC_PtrNotEquals);
 			}
 			else if (op1.Type.type == ev_state && op2.Type.type == ev_state)
 			{
-				AddStatement(OPC_NotEquals);
+				AddStatement(OPC_PtrNotEquals);
 			}
 			else if (op1.Type.type == ev_reference && op2.Type.type == ev_reference)
 			{
-				AddStatement(OPC_NotEquals);
+				AddStatement(OPC_PtrNotEquals);
 			}
 			else
 			{
@@ -1439,11 +1437,11 @@ static TTree ParseExpressionPriority14()
 		}
 		else if (type.type == ev_string && op2.Type.type == ev_string)
 		{
-			AddStatement(OPC_AssignDrop);
+			AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (type.type == ev_pointer && op2.Type.type == ev_pointer)
 		{
-			AddStatement(OPC_AssignDrop);
+			AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (type.type == ev_vector && op2.Type.type == ev_vector)
 		{
@@ -1452,16 +1450,16 @@ static TTree ParseExpressionPriority14()
 		else if (type.type == ev_classid && (op2.Type.type == ev_classid ||
 			(op2.Type.type == ev_reference && op2.Type.Class == NULL)))
 		{
-			AddStatement(OPC_AssignDrop);
+			AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (type.type == ev_state && (op2.Type.type == ev_state ||
 			(op2.Type.type == ev_reference && op2.Type.Class == NULL)))
 		{
-			AddStatement(OPC_AssignDrop);
+			AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (type.type == ev_reference && op2.Type.type == ev_reference)
 		{
-			AddStatement(OPC_AssignDrop);
+			AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (type.type == ev_bool && op2.Type.type == ev_int)
 		{

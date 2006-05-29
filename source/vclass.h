@@ -154,10 +154,11 @@ public:
 
 struct FInstruction
 {
-	vint32		Address;
-	vint32		Opcode;
-	vint32		Arg1;
-	vint32		Arg2;
+	vint32			Address;
+	vint32			Opcode;
+	vint32			Arg1;
+	vint32			Arg2;
+	VMemberBase*	Member;
 };
 
 class VMethod : public VMemberBase

@@ -70,7 +70,7 @@ static char		vastring[1024];
 
 const char* PF_FormatString()
 {
-	int		params[16];
+	VStack	params[16];
 	int		pi;
 
 	P_GET_INT(count);
@@ -97,38 +97,38 @@ const char* PF_FormatString()
 
 			case 'i':
 			case 'd':
-				strcat(vastring, va("%d", params[pi]));
+				strcat(vastring, va("%d", params[pi].i));
 				pi++;
 				break;
 
 			case 'x':
-				strcat(vastring, va("%x", params[pi]));
+				strcat(vastring, va("%x", params[pi].i));
 				pi++;
 				break;
 
 			case 'f':
-				strcat(vastring, va("%f", ((float*)params)[pi]));
+				strcat(vastring, va("%f", params[pi].f));
 				pi++;
 				break;
 
 			case 'n':
-				strcat(vastring, *((VName*)params)[pi]);
+				strcat(vastring, **(VName*)&params[pi].i);
 				pi++;
 				break;
 
 			case 's':
-				strcat(vastring, (char*)params[pi]);
+				strcat(vastring, (char*)params[pi].p);
 				pi++;
 				break;
 
 			case 'p':
-				strcat(vastring, va("%p", ((void**)params)[pi]));
+				strcat(vastring, va("%p", params[pi].p));
 				pi++;
 				break;
 
 			case 'v':
-				strcat(vastring, va("(%f,%f,%f)", ((float*)params)[pi],
-					((float*)params)[pi + 1], ((float*)params)[pi + 2]));
+				strcat(vastring, va("(%f,%f,%f)", params[pi].f,
+					params[pi + 1].f, params[pi + 2].f));
 				pi += 3;
 				break;
 
