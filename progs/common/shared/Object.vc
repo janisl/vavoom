@@ -672,7 +672,7 @@ struct subsector_t;
 //
 // LineDef
 //
-struct line_t:TPlane
+struct line_t : TPlane
 {
 	// Vertices, from v1 to v2.
 	TVec *v1;
@@ -712,7 +712,7 @@ struct line_t:TPlane
 	int arg4;
 	int arg5;
 
-	addfields 5;
+	int			LineTag;
 };
 
 //
@@ -743,7 +743,7 @@ struct side_t
 	sector_t *sector;
 };
 
-struct sec_plane_t:TPlane
+struct sec_plane_t : TPlane
 {
 	float minz;
 	float maxz;
@@ -837,7 +837,22 @@ struct sector_t
 	bool		bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
 	bool		bUnderWater;		//	Sector is underwater
 
-	addfields 14;
+	// 0 = untraversed, 1,2 = sndlines -1
+	int			soundtraversed;
+
+	// thing that made a sound (or null)
+	Entity		SoundTarget;
+
+	// Thinker for reversable actions
+	Thinker		FloorData;
+	Thinker		CeilingData;
+	Thinker		LightingData;
+	Thinker		AffectorData;
+
+	int			Damage;
+
+	float		Friction;
+	float		MoveFactor;
 };
 
 //
@@ -861,7 +876,7 @@ struct polyobj_t
 	float __base_y;
 	float __base_angle;
 	int __changed;
-	addfields 3;
+	Thinker SpecialData;	// pointer a thinker, if the poly is moving
 };
 
 //
@@ -1003,36 +1018,6 @@ struct intercept_t
 	line_t *line;
 };
 
-addfields sector_t
-{
-	// 0 = untraversed, 1,2 = sndlines -1
-	int			soundtraversed;
-
-	// thing that made a sound (or null)
-	Entity		SoundTarget;
-
-	// Thinker for reversable actions
-	Thinker		FloorData;
-	Thinker		CeilingData;
-	Thinker		LightingData;
-	Thinker		AffectorData;
-
-	int			Damage;
-
-	float		Friction;
-	float		MoveFactor;
-};
-
-addfields polyobj_t
-{
-	Thinker SpecialData;	// pointer a thinker, if the poly is moving
-};
-
-addfields line_t
-{
-	int			LineTag;
-};
-
 const int MAXSPECIALCROSS	= 32;
 
 struct tmtrace_t
@@ -1156,7 +1141,8 @@ struct particle_t
 	particle_t *next;
 	TVec vel;
 	float die;
-	addfields 7;
+	int type;
+	float ramp;
 };
 
 struct ClipRect
@@ -1168,12 +1154,6 @@ struct ClipRect
 	float ClipY;		// Topmost edge of rectangle relative to origin
 	float ClipWidth;	// Width of rectangle
 	float ClipHeight;	// Height of rectangle
-};
-
-addfields particle_t
-{
-	int type;
-	float ramp;
 };
 
 //**************************************************************************

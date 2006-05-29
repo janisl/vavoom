@@ -131,7 +131,6 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Sectors
 	//
-	VStruct* SSector = svpr.FindStruct("sector_t", VObject::StaticClass());
 	for (i = 0, sec = Sectors; i < NumSectors; i++, sec++)
 	{
 		Strm << sec->floor.dist
@@ -142,25 +141,23 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->special
 			<< sec->tag
 			<< sec->seqType;
+		Strm.SerialiseReference(*(VObject**)&sec->SoundTarget, VEntity::StaticClass());
+		Strm.SerialiseReference(*(VObject**)&sec->FloorData, VThinker::StaticClass());
+		Strm.SerialiseReference(*(VObject**)&sec->CeilingData, VThinker::StaticClass());
+		Strm.SerialiseReference(*(VObject**)&sec->LightingData, VThinker::StaticClass());
+		Strm.SerialiseReference(*(VObject**)&sec->AffectorData, VThinker::StaticClass());
+		Strm << sec->Damage
+			<< sec->Friction
+			<< sec->MoveFactor;
 		if (Strm.IsLoading())
 		{
 			CalcSecMinMaxs(sec);
-		}
-		//	Serialise added fields.
-		for (VField* F = SSector->Fields; F; F = F->Next)
-		{
-			byte* Data = (byte*)sec + F->Ofs;
-			if (Data >= (byte*)sec->user_fields)
-			{
-				VField::SerialiseFieldValue(Strm, Data, F->Type);
-			}
 		}
 	}
 
 	//
 	//	Lines
 	//
-	VStruct* SLine = svpr.FindStruct("line_t", VObject::StaticClass());
 	for (i = 0, li = Lines; i < NumLines; i++, li++)
 	{
 		//	Temporary hack to save seen on automap flags.
@@ -176,7 +173,8 @@ void VLevel::Serialise(VStream& Strm)
 			<< li->arg2
 			<< li->arg3
 			<< li->arg4
-			<< li->arg5;
+			<< li->arg5
+			<< li->LineTag;
 		for (j = 0; j < 2; j++)
 		{
 			if (li->sidenum[j] == -1)
@@ -190,21 +188,11 @@ void VLevel::Serialise(VStream& Strm)
 				<< si->bottomtexture 
 				<< si->midtexture;
 		}
-		//	Serialise added fields.
-		for (VField* F = SLine->Fields; F; F = F->Next)
-		{
-			byte* Data = (byte*)li + F->Ofs;
-			if (Data >= (byte*)li->user_fields)
-			{
-				VField::SerialiseFieldValue(Strm, Data, F->Type);
-			}
-		}
 	}
 
 	//
 	//	Polyobjs
 	//
-	VStruct* SPolyobj = svpr.FindStruct("polyobj_t", VObject::StaticClass());
 	for (i = 0; i < NumPolyObjs; i++)
 	{
 		if (Strm.IsLoading())
@@ -225,15 +213,7 @@ void VLevel::Serialise(VStream& Strm)
 				<< PolyObjs[i].startSpot.x
 				<< PolyObjs[i].startSpot.y;
 		}
-		//	Serialise added fields.
-		for (VField* F = SPolyobj->Fields; F; F = F->Next)
-		{
-			byte* Data = (byte*)&PolyObjs[i] + F->Ofs;
-			if (Data >= (byte*)PolyObjs[i].user_fields)
-			{
-				VField::SerialiseFieldValue(Strm, Data, F->Type);
-			}
-		}
+		Strm.SerialiseReference(*(VObject**)&PolyObjs[i].SpecialData, VThinker::StaticClass());
 	}
 	unguard;
 }

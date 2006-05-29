@@ -129,7 +129,7 @@ struct line_t : public TPlane
 	int			arg4;
 	int			arg5;
 
-	int			user_fields[5];
+	int			LineTag;
 };
 
 //
@@ -294,7 +294,22 @@ struct sector_t
 	};
 	vuint32		SectorFlags;
 
-	int			user_fields[14];
+	// 0 = untraversed, 1,2 = sndlines -1
+	vint32		soundtraversed;
+
+	// thing that made a sound (or null)
+	VEntity*	SoundTarget;
+
+	// Thinker for reversable actions
+	VThinker*	FloorData;
+	VThinker*	CeilingData;
+	VThinker*	LightingData;
+	VThinker*	AffectorData;
+
+	vint32		Damage;
+
+	float		Friction;
+	float		MoveFactor;
 };
 
 //
@@ -322,7 +337,7 @@ struct polyobj_t
 	float		base_y;
 	float		base_angle;
 	boolean		changed;
-	int			user_fields[3];
+	VThinker*	SpecialData;	// pointer a thinker, if the poly is moving
 };
 
 //

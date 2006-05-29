@@ -52,10 +52,11 @@ struct particle_t
 	TVec		org;	//	position
 	dword		color;	//	ARGB color
 	//	Handled by refresh
-	particle_t	*next;	//	next in the list
+	particle_t*	next;	//	next in the list
 	TVec		vel;	//	velocity
 	float		die;	//	cl.time when particle will be removed
-	int			user_fields[7];
+	int			type;
+	float		ramp;
 };
 
 struct refdef_t
@@ -168,65 +169,3 @@ FDrawerDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern VDrawer			*Drawer;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.20  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//
-//	Revision 1.19  2005/05/26 16:50:15  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.18  2005/05/03 14:57:06  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.17  2004/08/21 17:22:15  dj_jl
-//	Changed rendering driver declaration.
-//	
-//	Revision 1.16  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.15  2002/07/23 13:12:00  dj_jl
-//	Some compatibility fixes, beautification.
-//	
-//	Revision 1.14  2002/07/15 17:51:09  dj_jl
-//	Made VSubsystem global.
-//	
-//	Revision 1.13  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.12  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.11  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.10  2001/10/09 17:21:39  dj_jl
-//	Added sky begining and ending functions
-//	
-//	Revision 1.9  2001/09/12 17:31:27  dj_jl
-//	Rectangle drawing and direct update for plugins
-//	
-//	Revision 1.8  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.7  2001/08/15 17:15:55  dj_jl
-//	Drawer API changes, removed wipes
-//	
-//	Revision 1.6  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.5  2001/08/04 17:29:11  dj_jl
-//	Added depth hack for weapon models
-//	
-//	Revision 1.4  2001/08/01 17:42:22  dj_jl
-//	Fixed sprite lump drawing in player setup menu, beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
