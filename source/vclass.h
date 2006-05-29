@@ -170,7 +170,7 @@ public:
 	vint16			Flags;
 	vuint32			Profile1;
 	vuint32			Profile2;
-	TArray<vint32>	Statements;
+	TArray<vuint8>	Statements;
 	builtin_t		NativeFunc;
 	vint32			NumInstructions;
 	FInstruction*	Instructions;

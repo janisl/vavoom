@@ -998,8 +998,10 @@ void VMethod::PostLoad()
 //
 //==========================================================================
 
-#define WriteInt32(p)	Statements.Append(p)
-#define WritePtr(p)		Statements.Append((int)p)
+#define WriteInt32(p)	Statements.SetNum(Statements.Num() + 4); \
+	*(vint32*)&Statements[Statements.Num() - 4] = (p)
+#define WritePtr(p)		Statements.SetNum(Statements.Num() + sizeof(void*)); \
+	*(void**)&Statements[Statements.Num() - sizeof(void*)] = (p)
 
 void VMethod::CompileCode()
 {
@@ -1046,12 +1048,12 @@ void VMethod::CompileCode()
 		switch (OpcodeInfo[Instructions[i].Opcode].Args)
 		{
 		case OPCARGS_BranchTarget:
-			Statements[Instructions[i].Address + 1] =
-				(int)(Statements.Ptr() + Instructions[Instructions[i].Arg1].Address);
+			*(void**)&Statements[Instructions[i].Address + 1] =
+				(Statements.Ptr() + Instructions[Instructions[i].Arg1].Address);
 			break;
 		case OPCARGS_IntBranchTarget:
-			Statements[Instructions[i].Address + 2] =
-				(int)(Statements.Ptr() + Instructions[Instructions[i].Arg2].Address);
+			*(void**)&Statements[Instructions[i].Address + 5] =
+				(Statements.Ptr() + Instructions[Instructions[i].Arg2].Address);
 			break;
 		}
 	}

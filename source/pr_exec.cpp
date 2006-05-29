@@ -190,7 +190,7 @@ VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 #if USE_COMPUTED_GOTO
 #define PR_VM_SWITCH(op)	goto *vm_labels[op];
 #define PR_VM_CASE(x)		Lbl_ ## x:
-#define PR_VM_BREAK			Opc = *(int*)ip; ip += 3; goto *vm_labels[Opc];//*ip];
+#define PR_VM_BREAK			goto *vm_labels[*ip];
 #define PR_VM_DEFAULT
 #else
 #define PR_VM_SWITCH(op)	switch(op)
@@ -243,9 +243,7 @@ func_loop:
 		0 };
 #endif
 
-		int Opc = *(int*)ip;
-		ip += 3;
-		PR_VM_SWITCH(Opc)
+		PR_VM_SWITCH(*ip)
 		{
 		PR_VM_CASE(OPC_Done)
 			Sys_Error("Empty function or invalid opcode");
@@ -869,7 +867,7 @@ func_loop:
 
 	goto func_loop;
 	unguardfSlow(("(%s %d)", *func->GetFullName(),
-		(vint32*)ip - func->Statements.Ptr()));
+		ip - func->Statements.Ptr()));
 }
 
 //==========================================================================
