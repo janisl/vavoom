@@ -2290,6 +2290,7 @@ void R_FreeLevelData()
 		Z_Free(Block);
 		Block = Next;
 	}
+	AllocatedWSurfBlocks = NULL;
 
 	//	Free big blocks.
 	delete[] AllocatedSubRegions;
