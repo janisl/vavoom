@@ -612,7 +612,7 @@ void CalcSecMinMaxs(sector_t *sector)
 
 IMPLEMENT_FUNCTION(VLevel, PointInSector)
 {
-    TVec Point = PR_Popv();
-	VLevel *Self = (VLevel *)PR_Pop();
-    PR_Push((int)Self->PointInSubsector(Point)->sector);
+	P_GET_VEC(Point);
+	P_GET_SELF;
+	RET_PTR(Self->PointInSubsector(Point)->sector);
 }

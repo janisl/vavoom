@@ -164,77 +164,94 @@ class VBasePlayer : public VObject
 
 	void eventPutClientIntoServer()
 	{
-		svpr.Exec(GetVFunction("PutClientIntoServer"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("PutClientIntoServer");
 	}
 
 	void eventSpawnClient()
 	{
-		svpr.Exec(GetVFunction("SpawnClient"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("SpawnClient");
 	}
 
 	void eventNetGameReborn()
 	{
-		svpr.Exec(GetVFunction("NetGameReborn"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("NetGameReborn");
 	}
 
 	void eventDisconnectClient()
 	{
-		svpr.Exec(GetVFunction("DisconnectClient"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("DisconnectClient");
 	}
 
 	void eventUserinfoChanged()
 	{
-		svpr.Exec(GetVFunction("UserinfoChanged"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("UserinfoChanged");
 	}
 
 	void eventPlayerExitMap(bool clusterChange)
 	{
-		svpr.Exec(GetVFunction("PlayerExitMap"), (int)this, clusterChange);
+		P_PASS_SELF;
+		P_PASS_BOOL(clusterChange);
+		EV_RET_VOID("PlayerExitMap");
 	}
 
 	void eventPlayerTick(float deltaTime)
 	{
-		svpr.Exec(GetVFunction("PlayerTick"), (int)this, PassFloat(deltaTime));
+		P_PASS_SELF;
+		P_PASS_FLOAT(deltaTime);
+		EV_RET_VOID("PlayerTick");
 	}
 
 	void eventSetViewPos()
 	{
-		svpr.Exec(GetVFunction("SetViewPos"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("SetViewPos");
 	}
 
 	void eventCheat_God()
 	{
-		svpr.Exec(GetVFunction("Cheat_God"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Cheat_God");
 	}
 
 	void eventCheat_NoClip()
 	{
-		svpr.Exec(GetVFunction("Cheat_NoClip"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Cheat_NoClip");
 	}
 
 	void eventCheat_Gimme()
 	{
-		svpr.Exec(GetVFunction("Cheat_Gimme"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Cheat_Gimme");
 	}
 
 	void eventCheat_KillAll()
 	{
-		svpr.Exec(GetVFunction("Cheat_KillAll"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Cheat_KillAll");
 	}
 
 	void eventCheat_Morph()
 	{
-		svpr.Exec(GetVFunction("Cheat_Morph"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Cheat_Morph");
 	}
 
 	void eventCheat_NoWeapons()
 	{
-		svpr.Exec(GetVFunction("Cheat_NoWeapons"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Cheat_NoWeapons");
 	}
 
 	void eventCheat_Class()
 	{
-		svpr.Exec(GetVFunction("Cheat_Class"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Cheat_Class");
 	}
 };
 

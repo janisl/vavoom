@@ -439,22 +439,25 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
 	VObject* PrSelf, VMethod *prfunc)
 {
 	guard(SV_BlockThingsIterator);
-    if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
-    {
+	if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
+	{
 		return true;
-    }
-    
-    for (VEntity *Ent = GLevel->BlockLinks[y * GLevel->BlockMapWidth + x]; Ent;
+	}
+	
+	for (VEntity *Ent = GLevel->BlockLinks[y * GLevel->BlockMapWidth + x]; Ent;
 		Ent = Ent->BlockMapNext)
-    {
+	{
 		if (func && !func(Ent))
-		    return false;
-		if (prfunc && PrSelf && !svpr.Exec(prfunc, (int)PrSelf, (int)Ent))
-		    return false;
-		if (prfunc && !PrSelf && !svpr.Exec(prfunc, (int)Ent))
-		    return false;
-    }
-    return true;
+			return false;
+		if (prfunc && PrSelf)
+		{
+			P_PASS_REF(PrSelf);
+			P_PASS_REF(Ent);
+			if (!svpr.ExecuteFunction(prfunc).i)
+				return false;
+		}
+	}
+	return true;
 	unguard;
 }
 
@@ -760,11 +763,13 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 		if (trav && !trav(in))
 			return false;	// don't bother going farther
 
-		if (prtrav && PrSelf && !svpr.Exec(prtrav, (int)PrSelf, (int)in))
+		if (prtrav && PrSelf)
+		{
+			P_PASS_REF(PrSelf);
+			P_PASS_REF(in);
+			if (!svpr.ExecuteFunction(prtrav).i)
 			return false;	// don't bother going farther
-
-		if (prtrav && !PrSelf && !svpr.Exec(prtrav, (int)in))
-			return false;	// don't bother going farther
+		}
 
 		in->frac = 99999.0;
 	}

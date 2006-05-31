@@ -36,12 +36,11 @@ TArray<mobjinfo_t>		VClass::GScriptIds;
 TArray<VName>			VClass::GSpriteNames;
 TArray<VName>			VClass::GModelNames;
 
-#define DECLARE_OPC(name, args, argcount)	{ OPCARGS_##args, argcount }
+#define DECLARE_OPC(name, args)		{ OPCARGS_##args }
 #define OPCODE_INFO
 static struct
 {
 	int		Args;
-	int		ArgCount;
 } OpcodeInfo[NUM_OPCODES] =
 {
 #include "progdefs.h"
@@ -582,7 +581,6 @@ void VField::Serialise(VStream& Strm)
 	guard(VField::Serialise);
 	VMemberBase::Serialise(Strm);
 	Strm << Next
-		<< STRM_INDEX(Ofs)
 		<< Type
 		<< Func
 		<< STRM_INDEX(Flags);
@@ -832,6 +830,57 @@ void VField::CleanField(byte* Data, const VField::FType& Type)
 
 //==========================================================================
 //
+//	VField::FType::GetSize
+//
+//==========================================================================
+
+int VField::FType::GetSize() const
+{
+	guard(VField::FType::GetSize);
+	switch (Type)
+	{
+	case ev_int:		return sizeof(vint32);
+	case ev_float:		return sizeof(float);
+	case ev_name:		return sizeof(VName);
+	case ev_string:		return sizeof(char*);
+	case ev_pointer:	return sizeof(void*);
+	case ev_reference:	return sizeof(VObject*);
+	case ev_array:		return ArrayDim * GetArrayInnerType().GetSize();
+	case ev_struct:		return (Struct->Size + 3) & ~3;
+	case ev_vector:		return sizeof(TVec);
+	case ev_classid:	return sizeof(VClass*);
+	case ev_state:		return sizeof(VState*);
+	case ev_bool:		return sizeof(vuint32);
+	case ev_delegate:	return sizeof(VObject*) + sizeof(VMethod*);
+	}
+	return 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VField::FType::GetArrayInnerType
+//
+//==========================================================================
+
+VField::FType VField::FType::GetArrayInnerType() const
+{
+	guard(VField::FType::GetArrayInnerType);
+	if (Type != ev_array)
+	{
+		Sys_Error("Not an array type");
+		return *this;
+	}
+	VField::FType ret = *this;
+	ret.Type = ArrayInnerType;
+	ret.ArrayInnerType = ev_void;
+	ret.ArrayDim = 0;
+	return ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VMethod::VMethod
 //
 //==========================================================================
@@ -947,6 +996,7 @@ void VMethod::Serialise(VStream& Strm)
 		case OPCARGS_None:
 			break;
 		case OPCARGS_Member:
+		case OPCARGS_FieldOffset:
 			Strm << Instructions[i].Member;
 			break;
 		case OPCARGS_BranchTarget:
@@ -960,11 +1010,14 @@ void VMethod::Serialise(VStream& Strm)
 			Strm << Instructions[i].Arg1;
 			break;
 		case OPCARGS_Name:
-			Strm << *(VName*)&Instructions[i].Arg1;
+			Strm << Instructions[i].NameArg;
 			break;
 		case OPCARGS_String:
 			Strm << Instructions[i].Arg1;
 			Instructions[i].Arg1 += (int)GetPackage()->Strings;
+			break;
+		case OPCARGS_TypeSize:
+			Strm << Instructions[i].TypeArg;
 			break;
 		}
 	}
@@ -1034,10 +1087,18 @@ void VMethod::CompileCode()
 			WriteInt32(Instructions[i].Arg1);
 			break;
 		case OPCARGS_Name:
-			WriteInt32(Instructions[i].Arg1);
+			WriteInt32(Instructions[i].NameArg.GetIndex());
 			break;
 		case OPCARGS_String:
 			WriteInt32(Instructions[i].Arg1);
+			break;
+		case OPCARGS_FieldOffset:
+			//	Make sure struct / class field offsets have been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			WriteInt32(((VField*)Instructions[i].Member)->Ofs);
+			break;
+		case OPCARGS_TypeSize:
+			WriteInt32(Instructions[i].TypeArg.GetSize());
 			break;
 		}
 	}
@@ -1195,16 +1256,12 @@ VStruct::VStruct(VName AName)
 void VStruct::Serialise(VStream& Strm)
 {
 	guard(VStruct::Serialise);
+	vint32 StackSize;
 	VMemberBase::Serialise(Strm);
-	vuint8 IsVector;
-	vint32 AvailableSize;
-	vint32 AvailableOfs;
 	Strm << ParentStruct
 		<< IsVector
-		<< STRM_INDEX(Size)
-		<< Fields
-		<< STRM_INDEX(AvailableSize)
-		<< STRM_INDEX(AvailableOfs);
+		<< STRM_INDEX(StackSize)
+		<< Fields;
 	unguard;
 }
 
@@ -1228,10 +1285,53 @@ void VStruct::PostLoad()
 		ParentStruct->PostLoad();
 	}
 
+	//	Calculate field offsets and class size.
+	CalcFieldOffsets();
+
 	//	Set up list of reference fields.
 	InitReferences();
 
 	ObjectFlags |= CLASSOF_PostLoaded;
+}
+
+//==========================================================================
+//
+//	VStruct::CalcFieldOffsets
+//
+//==========================================================================
+
+void VStruct::CalcFieldOffsets()
+{
+	guard(VStruct::CalcFieldOffsets);
+	int size = ParentStruct ? ParentStruct->Size : 0;
+	VField* PrevField = NULL;
+	for (VField* fi = Fields; fi; fi = fi->Next)
+	{
+		if (fi->Type.Type == ev_bool && PrevField &&
+			PrevField->Type.Type == ev_bool &&
+			PrevField->Type.BitMask != 0x80000000)
+		{
+			vuint32 bit_mask = PrevField->Type.BitMask << 1;
+			if (fi->Type.BitMask != bit_mask)
+				Sys_Error("Wrong bit mask");
+			fi->Type.BitMask = bit_mask;
+			fi->Ofs = PrevField->Ofs;
+		}
+		else
+		{
+			fi->Ofs = size;
+			if (fi->Type.Type == ev_struct ||
+				(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
+			{
+				//	Make sure struct size has been calculated.
+				fi->Type.Struct->PostLoad();
+			}
+			size += fi->Type.GetSize();
+		}
+		PrevField = fi;
+	}
+	Size = size;
+	unguard;
 }
 
 //==========================================================================
@@ -1465,18 +1565,10 @@ void VClass::Serialise(VStream& Strm)
 {
 	guard(VClass::Serialise);
 	VMemberBase::Serialise(Strm);
-	int PrevSize = ClassSize;
 	VClass* PrevParent = ParentClass;
 	Strm << ParentClass
 		<< Fields
-		<< States
-		<< STRM_INDEX(ClassNumMethods)
-		<< STRM_INDEX(ClassSize);
-	if ((ObjectFlags & CLASSOF_Native) && ClassSize != PrevSize)
-	{
-		Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
-			GetName(), PrevSize, ClassSize);
-	}
+		<< States;
 	if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
 	{
 		Sys_Error("Bad parent class, class %s, C++ %s, VavoomC %s)",
@@ -1662,6 +1754,9 @@ void VClass::PostLoad()
 		GetSuperClass()->PostLoad();
 	}
 
+	//	Calculate field offsets and class size.
+	CalcFieldOffsets();
+
 	//	Initialise reference fields.
 	InitReferences();
 
@@ -1669,6 +1764,73 @@ void VClass::PostLoad()
 	CreateVTable();
 
 	ObjectFlags |= CLASSOF_PostLoaded;
+}
+
+//==========================================================================
+//
+//	VClass::CalcFieldOffsets
+//
+//==========================================================================
+
+void VClass::CalcFieldOffsets()
+{
+	guard(VClass::CalcFieldOffsets);
+	int PrevSize = ClassSize;
+	int size = ParentClass ? ParentClass->ClassSize : 0;
+	int numMethods = ParentClass ? ParentClass->ClassNumMethods : 1;
+	VField* PrevField = NULL;
+	for (VField* fi = Fields; fi; fi = fi->Next)
+	{
+		if (fi->Type.Type == ev_method)
+		{
+			if (fi->Name == NAME_None)
+			{
+				fi->Ofs = 0;
+				continue;
+			}
+			int MOfs = -1;
+			if (ParentClass)
+			{
+				MOfs = ParentClass->GetFunctionIndex(fi->Name);
+			}
+			if (MOfs == -1 && !(fi->Func->Flags & FUNC_Final))
+			{
+				MOfs = numMethods++;
+			}
+			fi->Ofs = MOfs;
+			continue;
+		}
+		if (fi->Type.Type == ev_bool && PrevField &&
+			PrevField->Type.Type == ev_bool &&
+			PrevField->Type.BitMask != 0x80000000)
+		{
+			vuint32 bit_mask = PrevField->Type.BitMask << 1;
+			if (fi->Type.BitMask != bit_mask)
+				Sys_Error("Wrong bit mask");
+			fi->Type.BitMask = bit_mask;
+			fi->Ofs = PrevField->Ofs;
+		}
+		else
+		{
+			fi->Ofs = size;
+			if (fi->Type.Type == ev_struct ||
+				(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
+			{
+				//	Make sure struct size has been calculated.
+				fi->Type.Struct->PostLoad();
+			}
+			size += fi->Type.GetSize();
+		}
+		PrevField = fi;
+	}
+	ClassSize = size;
+	ClassNumMethods = numMethods;
+	if ((ObjectFlags & CLASSOF_Native) && ClassSize != PrevSize)
+	{
+		Sys_Error("Bad class size, class %s, C++ %d, VavoomC %d)",
+			GetName(), PrevSize, ClassSize);
+	}
+	unguard;
 }
 
 //==========================================================================

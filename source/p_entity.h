@@ -207,7 +207,7 @@ class VEntity : public VThinker
 	static int FIndex_CheckInventory;
 	static int FIndex_GetSigilPieces;
 
-	static void InitFuncIndexes(void);
+	static void InitFuncIndexes();
 
 	//	VObject interface.
 	void Destroy();
@@ -215,55 +215,79 @@ class VEntity : public VThinker
 
 	void eventDestroyed()
 	{
-		svpr.Exec(GetVFunction(FIndex_Destroyed), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID(FIndex_Destroyed);
 	}
-	boolean eventTouch(VEntity *Other)
+	bool eventTouch(VEntity *Other)
 	{
-		return svpr.Exec(GetVFunction(FIndex_Touch), (int)this, (int)Other);
+		P_PASS_SELF;
+		P_PASS_REF(Other);
+		EV_RET_BOOL(FIndex_Touch);
 	}
 	void eventBlockedByLine(line_t * ld)
 	{
-		svpr.Exec(GetVFunction(FIndex_BlockedByLine), (int)this, (int)ld);
+		P_PASS_SELF;
+		P_PASS_PTR(ld);
+		EV_RET_VOID(FIndex_BlockedByLine);
 	}
 	void eventApplyFriction()
 	{
-		svpr.Exec(GetVFunction(FIndex_ApplyFriction), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID(FIndex_ApplyFriction);
 	}
 	void eventPushLine()
 	{
-		svpr.Exec(GetVFunction(FIndex_PushLine), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID(FIndex_PushLine);
 	}
 	void eventHandleFloorclip()
 	{
-		svpr.Exec(GetVFunction(FIndex_HandleFloorclip), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID(FIndex_HandleFloorclip);
 	}
 	void eventCrossSpecialLine(line_t *ld, int side)
 	{
-		svpr.Exec(GetVFunction(FIndex_CrossSpecialLine), (int)this, (int)ld, side);
+		P_PASS_SELF;
+		P_PASS_PTR(ld);
+		P_PASS_INT(side);
+		EV_RET_VOID(FIndex_CrossSpecialLine);
 	}
 	bool eventSectorChanged(int CrushChange)
 	{
-		return !!svpr.Exec(GetVFunction(FIndex_SectorChanged), (int)this, CrushChange);
+		P_PASS_SELF;
+		P_PASS_INT(CrushChange);
+		EV_RET_BOOL(FIndex_SectorChanged);
 	}
 	bool eventRoughCheckThing(VEntity *Other)
 	{
-		return !!svpr.Exec(GetVFunction(FIndex_RoughCheckThing), (int)this, (int)Other);
+		P_PASS_SELF;
+		P_PASS_REF(Other);
+		EV_RET_BOOL(FIndex_RoughCheckThing);
 	}
 	void eventGiveInventory(VName ItemName, int Amount)
 	{
-		svpr.Exec(GetVFunction(FIndex_GiveInventory), (int)this, ItemName.GetIndex(), Amount);
+		P_PASS_SELF;
+		P_PASS_NAME(ItemName);
+		P_PASS_INT(Amount);
+		EV_RET_VOID(FIndex_GiveInventory);
 	}
 	void eventTakeInventory(VName ItemName, int Amount)
 	{
-		svpr.Exec(GetVFunction(FIndex_TakeInventory), (int)this, ItemName.GetIndex(), Amount);
+		P_PASS_SELF;
+		P_PASS_NAME(ItemName);
+		P_PASS_INT(Amount);
+		EV_RET_VOID(FIndex_TakeInventory);
 	}
 	int eventCheckInventory(VName ItemName)
 	{
-		return svpr.Exec(GetVFunction(FIndex_CheckInventory), (int)this, ItemName.GetIndex());
+		P_PASS_SELF;
+		P_PASS_NAME(ItemName);
+		EV_RET_INT(FIndex_CheckInventory);
 	}
 	int eventGetSigilPieces()
 	{
-		return svpr.Exec(GetVFunction(FIndex_GetSigilPieces), (int)this);
+		P_PASS_SELF;
+		EV_RET_INT(FIndex_GetSigilPieces);
 	}
 
 	void Remove()
@@ -317,23 +341,3 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(CanSee)
 	DECLARE_FUNCTION(RoughMonsterSearch)
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/04/06 11:47:46  dj_jl
-//	Added maximal dropoff parameter.
-//
-//	Revision 1.4  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//	
-//	Revision 1.3  2006/03/12 20:06:02  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.2  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.1  2006/03/06 13:12:12  dj_jl
-//	Client now uses entity class.
-//	
-//**************************************************************************

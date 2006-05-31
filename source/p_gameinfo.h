@@ -62,27 +62,36 @@ class VGameInfo : public VObject
 
 	void eventInit()
 	{
-		svpr.Exec(GetVFunction("Init"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Init");
 	}
 	void eventInitNewGame(int skill)
 	{
-		svpr.Exec(GetVFunction("InitNewGame"), (int)this, skill);
+		P_PASS_SELF;
+		P_PASS_INT(skill);
+		EV_RET_VOID("InitNewGame");
 	}
 	VLevelInfo* eventCreateLevelInfo()
 	{
-		return (VLevelInfo*)svpr.Exec(GetVFunction("CreateLevelInfo"), (int)this);
+		P_PASS_SELF;
+		EV_RET_REF(VLevelInfo, "CreateLevelInfo");
 	}
 	void eventTranslateLevel(VLevel* InLevel)
 	{
-		svpr.Exec(GetVFunction("TranslateLevel"), (int)this, (int)InLevel);
+		P_PASS_SELF;
+		P_PASS_REF(InLevel);
+		EV_RET_VOID("TranslateLevel");
 	}
 	void eventSpawnWorld(VLevel* InLevel)
 	{
-		svpr.Exec(GetVFunction("SpawnWorld"), (int)this, (int)InLevel);
+		P_PASS_SELF;
+		P_PASS_REF(InLevel);
+		EV_RET_VOID("SpawnWorld");
 	}
 	VName eventGetConScriptName(VName LevelName)
 	{
-		vint32 Tmp = svpr.Exec(GetVFunction("GetConScriptName"), (int)this, LevelName.GetIndex());
-		return *(VName*)&Tmp;
+		P_PASS_SELF;
+		P_PASS_NAME(LevelName);
+		EV_RET_NAME("GetConScriptName");
 	}
 };

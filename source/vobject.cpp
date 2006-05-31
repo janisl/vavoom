@@ -204,7 +204,8 @@ VObject* VObject::StaticSpawnObject(VClass* AClass)
 	Obj->Register();
 	if (Obj->vtable)
 	{
-		TProgs::Exec(Obj->vtable[0], (int)Obj);
+		P_PASS_REF(Obj);
+		TProgs::ExecuteFunction(Obj->vtable[0]);
 	}
 	return Obj;
 	unguardf(("%s", AClass->GetName()));

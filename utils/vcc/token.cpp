@@ -521,13 +521,6 @@ static void ProcessLetterToken()
 			tk_Token = TK_KEYWORD;
 			tk_Keyword = KW_ABSTRACT;
 		}
-		else if (s[1] == 'd' && s[2] == 'd' && s[3] == 'f' && s[4] == 'i' &&
-			s[5] == 'e' && s[6] == 'l' && s[7] == 'd' && s[8] == 's' &&
-			s[9] == 0)
-		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_ADDFIELDS;
-		}
 		break;
 
 	case 'b':

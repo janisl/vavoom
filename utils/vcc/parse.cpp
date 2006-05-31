@@ -361,7 +361,6 @@ static void ParseStatement()
 
 				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 				TType etype = ParseExpression();
-				etype.CheckSizeIs4();
 				if (etype.type != ev_int)
 				{
 					ParseError("Int expression expected");
@@ -623,6 +622,13 @@ un++;
 	FuncRetType = t;
 
 	BeginCode(Func);
+	for (int i = 0; i < numlocaldefs; i++)
+	{
+		if (localdefs[i].type.type == ev_vector)
+		{
+			AddStatement(OPC_VFixParam, i);
+		}
+	}
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 
@@ -719,8 +725,8 @@ void CompileDefaultProperties(VField *method, VClass* InClass)
 	if (pcon)
 	{
 		AddStatement(OPC_LocalAddress, 0);
-		AddStatement(OPC_PushPointed);
-		AddStatement(OPC_Call, pcon->func->MemberIndex);
+		AddStatement(OPC_PushPointedPtr);
+		AddStatement(OPC_Call, pcon->func);
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
@@ -788,10 +794,6 @@ void PA_Compile()
 			else if (TK_Check(KW_CLASS))
 			{
 				CompileClass();
-			}
-			else if (TK_Check(KW_ADDFIELDS))
-			{
-				SkipAddFields(NULL);
 			}
 			else if (TK_Check(KW_VECTOR))
 			{

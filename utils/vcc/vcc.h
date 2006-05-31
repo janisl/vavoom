@@ -152,7 +152,6 @@ enum EKeyword
 	KW_MOBJINFO,
 	KW_SCRIPTID,
 	KW_ABSTRACT,
-	KW_ADDFIELDS,
 	KW_BOOL,
 	KW_BREAK,
 	KW_CASE,
@@ -244,6 +243,7 @@ enum EPunctuation
 	PU_RBRACE,
 };
 
+class VMemberBase;
 class VClass;
 class VStruct;
 class VMethod;
@@ -286,14 +286,6 @@ public:
 		return Loc & 0xffff;
 	}
 	const char* GetSource() const;
-};
-
-struct FInstruction
-{
-	vint32		Address;
-	vint32		Opcode;
-	vint32		Arg1;
-	vint32		Arg2;
 };
 
 //
@@ -368,7 +360,6 @@ public:
 		TModifiers::ReadOnly | TModifiers::Transient };
 
 	VField*		Next;
-	int			ofs;
 	TType		type;
 	VMethod*	func;	// Method's function
 	int			flags;
@@ -376,13 +367,23 @@ public:
 	VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Field, InName, InOuter, InLoc)
 	, Next(NULL)
-	, ofs(0)
 	, type(ev_void)
 	, func(0)
 	, flags(0)
 	{}
 
 	void Serialise(VStream&);
+};
+
+struct FInstruction
+{
+	vint32			Address;
+	vint32			Opcode;
+	vint32			Arg1;
+	vint32			Arg2;
+	VMemberBase*	Member;
+	VName			NameArg;
+	TType			TypeArg;
 };
 
 class VMethod : public VMemberBase
@@ -440,21 +441,17 @@ class VStruct : public VMemberBase
 public:
 	VStruct*		ParentStruct;
 	vuint8			IsVector;
-	int				Size;
+	//	Size in stack units when used as local variable.
+	vint32			StackSize;
 	//	Structure fields
 	VField*			Fields;
-	//	Addfield info
-	int				AvailableSize;
-	int				AvailableOfs;
 
 	VStruct(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Struct, InName, InOuter, InLoc)
 	, ParentStruct(0)
 	, IsVector(false)
-	, Size(0)
+	, StackSize(0)
 	, Fields(0)
-	, AvailableSize(0)
-	, AvailableOfs(0)
 	{}
 
 	void Serialise(VStream&);
@@ -503,16 +500,12 @@ public:
 	VClass*		ParentClass;
 	VField*		Fields;
 	VState*		States;
-	int			NumMethods;
-	int			Size;
 
 	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Class, InName, InOuter, InLoc)
 	, ParentClass(NULL)
 	, Fields(NULL)
 	, States(NULL)
-	, NumMethods(0)
-	, Size(0)
 	{}
 
 	void Serialise(VStream&);
@@ -561,20 +554,24 @@ void TK_Expect(EKeyword kwd, ECompileError error);
 void TK_Expect(EPunctuation punct, ECompileError error);
 
 void PC_Init();
-void AddPackagePath(const char* Path);
-int FindString(const char *str);
-int AddStatement(int statement);
-int AddStatement(int statement, int parm1);
-int AddStatement(int statement, int parm1, int parm2);
+void AddPackagePath(const char*);
+int FindString(const char*);
+int AddStatement(int);
+int AddStatement(int, int);
+int AddStatement(int, float);
+int AddStatement(int, VName);
+int AddStatement(int, VMemberBase*);
+int AddStatement(int, const TType&);
+int AddStatement(int, int, int);
 int UndoStatement();
 int GetNumInstructions();
-void FixupJump(int Pos, int JmpPos);
-void FixupJump(int Pos);
+void FixupJump(int, int);
+void FixupJump(int);
 void BeginCode(VMethod*);
 void EndCode(VMethod*);
-void PC_WriteObject(char *name);
-void PC_DumpAsm(char* name);
-VPackage* LoadPackage(VName InName);
+void PC_WriteObject(char*);
+void PC_DumpAsm(char*);
+VPackage* LoadPackage(VName);
 
 int EvalConstExpression(VClass*InClass, int type);
 float ConstFloatExpression();
@@ -606,13 +603,11 @@ VClass* CheckForClass(VName Name);
 VMethod* CheckForFunction(VClass*, VName);
 VConstant* CheckForConstant(VClass* InClass, VName);
 void SkipStruct(VClass*);
-void SkipAddFields(VClass*);
 void CompileClass();
 VField* ParseStructField(VStruct*);
 VField* ParseClassField(VClass*);
 VField* FindConstructor(VClass*);
 void ParseStruct(VClass*, bool);
-void AddFields(VClass*);
 void ParseClass();
 VField* CheckForField(VClass*, bool = true);
 VField* CheckForField(VName, VClass*, bool = true);

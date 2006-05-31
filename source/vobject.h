@@ -215,107 +215,6 @@ public:
 	}
 	VMethod *GetVFunction(VName FuncName) const;
 
-	int ProcessEvent(VName FuncName)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this);
-	}
-	int ProcessEvent(VName FuncName, int Parm1)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8, int Parm9)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8, Parm9);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8, int Parm9,
-		int Parm10)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8, Parm9, Parm10);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8, int Parm9,
-		int Parm10, int Parm11)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8, Parm9, Parm10, Parm11);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8, int Parm9,
-		int Parm10, int Parm11, int Parm12)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8, Parm9, Parm10, Parm11,
-			Parm12);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8, int Parm9,
-		int Parm10, int Parm11, int Parm12, int Parm13)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8, Parm9, Parm10, Parm11,
-			Parm12, Parm13);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8, int Parm9,
-		int Parm10, int Parm11, int Parm12, int Parm13, int Parm14)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8, Parm9, Parm10, Parm11,
-			Parm12, Parm13, Parm14);
-	}
-	int ProcessEvent(VName FuncName, int Parm1, int Parm2, int Parm3,
-		int Parm4, int Parm5, int Parm6, int Parm7, int Parm8, int Parm9,
-		int Parm10, int Parm11, int Parm12, int Parm13, int Parm14,
-		int Parm15)
-	{
-		return TProgs::Exec(GetVFunction(FuncName), (int)this, Parm1, Parm2,
-			Parm3, Parm4, Parm5, Parm6, Parm7, Parm8, Parm9, Parm10, Parm11,
-			Parm12, Parm13, Parm14, Parm15);
-	}
-
 	DECLARE_FUNCTION(Destroy)
 	DECLARE_FUNCTION(IsA)
 	DECLARE_FUNCTION(IsDestroyed)
@@ -638,14 +537,14 @@ public:
 //	Macros for calling VavoomC methods with different return types.
 //
 #define EV_RET_VOID(v)		TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_INT(v)		return TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_FLOAT(v)		int ret = TProgs::ExecuteFunction(GetVFunction(v)); return *(float*)&ret
-#define EV_RET_BOOL(v)		return !!TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_NAME(v)		int ret = TProgs::ExecuteFunction(GetVFunction(v)); return *(VName*)&ret
+#define EV_RET_INT(v)		return TProgs::ExecuteFunction(GetVFunction(v)).i
+#define EV_RET_FLOAT(v)		return TProgs::ExecuteFunction(GetVFunction(v)).f
+#define EV_RET_BOOL(v)		return !!TProgs::ExecuteFunction(GetVFunction(v)).i
+#define EV_RET_NAME(v)		vint32 ret = TProgs::ExecuteFunction(GetVFunction(v)).i; return *(VName*)&ret
 #define EV_RET_VEC(v)		Sys_Error("Not implemented")//TProgs::ExecuteFunction(GetVFunction(v))
 #define EV_RET_AVEC(v)		Sys_Error("Not implemented")//TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_REF(t, v)	return (t*)TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_PTR(t, v)	return (t*)TProgs::ExecuteFunction(GetVFunction(v))
+#define EV_RET_REF(t, v)	return (t*)TProgs::ExecuteFunction(GetVFunction(v)).p
+#define EV_RET_PTR(t, v)	return (t*)TProgs::ExecuteFunction(GetVFunction(v)).p
 
 //
 //	Parameter get macros. Parameters must be retrieved in backwards order.

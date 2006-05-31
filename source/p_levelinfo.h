@@ -50,64 +50,111 @@ class VLevelInfo : public VThinker
 
 	void eventSpawnSpecials()
 	{
-		svpr.Exec(GetVFunction("SpawnSpecials"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("SpawnSpecials");
 	}
 	void eventUpdateSpecials()
 	{
-		svpr.Exec(GetVFunction("UpdateSpecials"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("UpdateSpecials");
 	}
 	void eventAfterUnarchiveThinkers()
 	{
-		svpr.Exec(GetVFunction("AfterUnarchiveThinkers"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("AfterUnarchiveThinkers");
 	}
 	line_t* eventFindLine(int lineTag, int *searchPosition)
 	{
-		return (line_t*)svpr.Exec(GetVFunction("FindLine"), (int)this,
-			lineTag, (int)searchPosition);
+		P_PASS_SELF;
+		P_PASS_INT(lineTag);
+		P_PASS_PTR(searchPosition);
+		EV_RET_PTR(line_t, "FindLine");
 	}
 	void eventPolyThrustMobj(VEntity* A, TVec thrustDir, polyobj_t* po)
 	{
-		svpr.Exec(GetVFunction("PolyThrustMobj"), (int)this, (int)A,
-			PassFloat(thrustDir.x), PassFloat(thrustDir.y), PassFloat(thrustDir.z), (int)po);
+		P_PASS_SELF;
+		P_PASS_REF(A);
+		P_PASS_VEC(thrustDir);
+		P_PASS_PTR(po);
+		EV_RET_VOID("PolyThrustMobj");
 	}
 	bool eventTagBusy(int tag)
 	{
-		return !!svpr.Exec(GetVFunction("TagBusy"), (int)this, tag);
+		P_PASS_SELF;
+		P_PASS_INT(tag);
+		EV_RET_BOOL("TagBusy");
 	}
 	bool eventPolyBusy(int polyobj)
 	{
-		return !!svpr.Exec(GetVFunction("PolyBusy"), (int)this, polyobj);
+		P_PASS_SELF;
+		P_PASS_INT(polyobj);
+		EV_RET_BOOL("PolyBusy");
 	}
 	int eventThingCount(int type, int tid)
 	{
-		return svpr.Exec(GetVFunction("ThingCount"), (int)this, type, tid);
+		P_PASS_SELF;
+		P_PASS_INT(type);
+		P_PASS_INT(tid);
+		EV_RET_INT("ThingCount");
 	}
 	VEntity* eventFindMobjFromTID(int tid, int *searchPosition)
 	{
-		return (VEntity*)svpr.Exec(GetVFunction("FindMobjFromTID"), (int)this, tid, (int)searchPosition);
+		P_PASS_SELF;
+		P_PASS_INT(tid);
+		P_PASS_PTR(searchPosition);
+		EV_RET_REF(VEntity, "FindMobjFromTID");
 	}
 	bool eventExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		int Arg4, int Arg5, line_t* Line, int Side, VEntity* A)
 	{
-		return !!svpr.Exec(GetVFunction("ExecuteActionSpecial"), (int)this,
-			Special, Arg1, Arg2, Arg3, Arg4, Arg5, (int)Line, Side, (int)A);
+		P_PASS_SELF;
+		P_PASS_INT(Special);
+		P_PASS_INT(Arg1);
+		P_PASS_INT(Arg2);
+		P_PASS_INT(Arg3);
+		P_PASS_INT(Arg4);
+		P_PASS_INT(Arg5);
+		P_PASS_PTR(Line);
+		P_PASS_INT(Side);
+		P_PASS_REF(A);
+		EV_RET_BOOL("ExecuteActionSpecial");
 	}
 	int eventEV_ThingProjectile(int tid, int type, int angle, int speed,
 		int vspeed, int gravity, int newtid)
 	{
-		return svpr.Exec(GetVFunction("EV_ThingProjectile"), (int)this, tid,
-			type, angle, speed, vspeed, gravity, newtid);
+		P_PASS_SELF;
+		P_PASS_INT(tid);
+		P_PASS_INT(type);
+		P_PASS_INT(angle);
+		P_PASS_INT(speed);
+		P_PASS_INT(vspeed);
+		P_PASS_INT(gravity);
+		P_PASS_INT(newtid);
+		EV_RET_INT("EV_ThingProjectile");
 	}
 	void eventStartPlaneWatcher(VEntity* it, line_t* line, int lineSide,
 		bool ceiling, int tag, int height, int special, int arg1, int arg2,
 		int arg3, int arg4, int arg5)
 	{
-		svpr.Exec(GetVFunction("StartPlaneWatcher"), (int)this, (int)it,
-			(int)line, lineSide, ceiling, tag, height, special, arg1,
-			arg2, arg3, arg4, arg5);
+		P_PASS_SELF;
+		P_PASS_REF(it);
+		P_PASS_PTR(line);
+		P_PASS_INT(lineSide);
+		P_PASS_BOOL(ceiling);
+		P_PASS_INT(tag);
+		P_PASS_INT(height);
+		P_PASS_INT(special);
+		P_PASS_INT(arg1);
+		P_PASS_INT(arg2);
+		P_PASS_INT(arg3);
+		P_PASS_INT(arg4);
+		P_PASS_INT(arg5);
+		EV_RET_VOID("StartPlaneWatcher");
 	}
 	void eventSpawnMapThing(mthing_t* mthing)
 	{
-		svpr.Exec(GetVFunction("SpawnMapThing"), (int)this, (int)mthing);
+		P_PASS_SELF;
+		P_PASS_PTR(mthing);
+		EV_RET_VOID("SpawnMapThing");
 	}
 };

@@ -94,21 +94,35 @@ static bool			CheckForLocal;
 
 static TTree EmitPushPointed(const TType& type)
 {
-	if (type.type == ev_vector)
+	switch (type.type)
 	{
-		AddStatement(OPC_VPushPointed);
-	}
-	else if (type.type == ev_bool)
-	{
-		AddStatement(OPC_PushBool, type.bit_mask);
-	}
-	else if (type.type == ev_delegate)
-	{
-		AddStatement(OPC_PushPointedDelegate);
-	}
-	else
-	{
+	case ev_int:
+	case ev_float:
+	case ev_name:
+	case ev_struct://	Not exactly, but the rest of code will fail without these.
+	case ev_array:
 		AddStatement(OPC_PushPointed);
+		break;
+
+	case ev_string:
+	case ev_pointer:
+	case ev_reference:
+	case ev_classid:
+	case ev_state:
+		AddStatement(OPC_PushPointedPtr);
+		break;
+
+	case ev_vector:
+		AddStatement(OPC_VPushPointed);
+		break;
+
+	case ev_bool:
+		AddStatement(OPC_PushBool, type.bit_mask);
+		break;
+
+	case ev_delegate:
+		AddStatement(OPC_PushPointedDelegate);
+		break;
 	}
 
 	TTree op = TTree(type, type);
@@ -138,9 +152,10 @@ static TTree GetAddress(TTree op)
 	}
 	int Opc = UndoStatement();
 	if (Opc != OPC_VPushPointed && Opc != OPC_PushBool &&
-		Opc != OPC_PushPointed && Opc != OPC_PushPointedDelegate)
+		Opc != OPC_PushPointed && Opc != OPC_PushPointedPtr &&
+		Opc != OPC_PushPointedDelegate)
 	{
-		ParseError("Bad address operation");
+		ParseError("Bad address operation %d", Opc);
 		return op;
 	}
 	op.Type = MakePointerType(op.RealType);
@@ -183,16 +198,16 @@ static TTree ParseMethodCall(VField* field, bool HaveSelf, bool BaseCall)
 		if (!HaveSelf)
 		{
 			AddStatement(OPC_LocalAddress, 0);
-			AddStatement(OPC_PushPointed);
+			AddStatement(OPC_PushPointedPtr);
 		}
 		if (field->type.type == ev_delegate)
 		{
-			AddStatement(OPC_Offset, field->ofs);
+			AddStatement(OPC_Offset, field);
 			AddStatement(OPC_PushPointedDelegate);
 		}
 		else if (!DirectCall)
 		{
-			AddStatement(OPC_PushVFunc, field->ofs);
+			AddStatement(OPC_PushVFunc, field);
 		}
 	}
 
@@ -238,7 +253,7 @@ static TTree ParseMethodCall(VField* field, bool HaveSelf, bool BaseCall)
 	}
 	if (DirectCall)
 	{
-		AddStatement(OPC_Call, Func->MemberIndex);
+		AddStatement(OPC_Call, Func);
 	}
 	else
 	{
@@ -277,12 +292,12 @@ static TTree ParseExpressionPriority0()
 		return TTree(ev_int);
 
 	case TK_FLOAT:
-		AddStatement(OPC_PushNumber, PassFloat(tk_Float));
+		AddStatement(OPC_PushNumber, tk_Float);
 		TK_NextToken();
 		return TTree(ev_float);
 
 	case TK_NAME:
-		AddStatement(OPC_PushName, tk_Name.GetIndex());
+		AddStatement(OPC_PushName, tk_Name);
 		TK_NextToken();
 		return TTree(ev_name);
 
@@ -349,20 +364,20 @@ static TTree ParseExpressionPriority0()
 			else
 			{
 				AddStatement(OPC_LocalAddress, 0);
-				AddStatement(OPC_PushPointed);
+				AddStatement(OPC_PushPointedPtr);
 				op = TTree(SelfType);
 				return op;
 			}
 		}
 		if (TK_Check(KW_NONE))
 		{
-			AddStatement(OPC_PushNumber, 0);
+			AddStatement(OPC_PushNull);
 			op = TTree(TType((VClass*)NULL));
 			return op;
 		}
 		if (TK_Check(KW_NULL))
 		{
-			AddStatement(OPC_PushNumber, 0);
+			AddStatement(OPC_PushNull);
 			op = TTree(MakePointerType(TType(ev_void)));
 			return op;
 		}
@@ -403,7 +418,7 @@ static TTree ParseExpressionPriority0()
 					ParseError(ERR_BAD_EXPR, "Class reference required");
 				}
 				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
-				AddStatement(OPC_DynamicCast, Class->MemberIndex);
+				AddStatement(OPC_DynamicCast, Class);
 				op = TTree(TType(Class));
 				return op;
 			}
@@ -445,7 +460,7 @@ static TTree ParseExpressionPriority0()
 				if (State)
 				{
 					TK_NextToken();
-					AddStatement(OPC_PushState, State->MemberIndex);
+					AddStatement(OPC_PushState, State);
 					op = TTree(ev_state);
 					return op;
 				}
@@ -488,17 +503,17 @@ static TTree ParseExpressionPriority0()
 			if (field)
 			{
 				AddStatement(OPC_LocalAddress, 0);
-				AddStatement(OPC_PushPointed);
+				AddStatement(OPC_PushPointedPtr);
 				op = TTree(SelfType);
 				if (field->type.type == ev_method)
 				{
-					AddStatement(OPC_PushVFunc, field->ofs);
+					AddStatement(OPC_PushVFunc, field);
 					op = TTree(ev_delegate);
 					op.Type.Function = field->func;
 				}
 				else
 				{
-					AddStatement(OPC_Offset, field->ofs);
+					AddStatement(OPC_Offset, field);
 					op = EmitPushPointed(field->type);
 					op.Flags = field->flags;
 				}
@@ -508,7 +523,7 @@ static TTree ParseExpressionPriority0()
 			State = CheckForState(Name, SelfClass);
 			if (State)
 			{
-				AddStatement(OPC_PushState, State->MemberIndex);
+				AddStatement(OPC_PushState, State);
 				op = TTree(ev_state);
 				return op;
 			}
@@ -517,7 +532,7 @@ static TTree ParseExpressionPriority0()
 		Class = CheckForClass(Name);
 		if (Class)
 		{
-			AddStatement(OPC_PushClassId, Class->MemberIndex);
+			AddStatement(OPC_PushClassId, Class);
 			op = TTree(ev_classid);
 			return op;
 		}
@@ -552,7 +567,6 @@ static TTree ParseExpressionPriority1()
 	{
 		if (TK_Check(PU_MINUS_GT))
 		{
-			op.Type.CheckSizeIs4();
 			if (op.Type.type != ev_pointer)
 			{
 				ERR_Exit(ERR_BAD_EXPR, true, NULL);
@@ -567,7 +581,7 @@ static TTree ParseExpressionPriority1()
 				}
 				else
 				{
-					AddStatement(OPC_Offset, field->ofs);
+					AddStatement(OPC_Offset, field);
 					op = EmitPushPointed(field->type);
 					op.Flags = field->flags;
 				}
@@ -588,7 +602,7 @@ static TTree ParseExpressionPriority1()
 						}
 						else
 						{
-							AddStatement(OPC_PushVFunc, field->ofs);
+							AddStatement(OPC_PushVFunc, field);
 							op = TTree(ev_delegate);
 							op.Type.Function = field->func;
 						}
@@ -601,13 +615,13 @@ static TTree ParseExpressionPriority1()
 						}
 						else
 						{
-							AddStatement(OPC_Offset, field->ofs);
+							AddStatement(OPC_Offset, field);
 							op = EmitPushPointed(field->type);
 						}
 					}
 					else
 					{
-						AddStatement(OPC_Offset, field->ofs);
+						AddStatement(OPC_Offset, field);
 						op = EmitPushPointed(field->type);
 						op.Flags = field->flags;
 					}
@@ -622,7 +636,7 @@ static TTree ParseExpressionPriority1()
 				field = ParseStructField(type.Struct);
 				if (field)
 				{
-					AddStatement(OPC_Offset, field->ofs);
+					AddStatement(OPC_Offset, field);
 					op = EmitPushPointed(field->type);
 					op.Flags |= Flags & FIELD_ReadOnly;
 				}
@@ -656,7 +670,7 @@ static TTree ParseExpressionPriority1()
 				ParseError(ERR_EXPR_TYPE_MISTMATCH);
 			}
 			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
-			AddStatement(OPC_ArrayElement, type.GetSize());
+			AddStatement(OPC_ArrayElement, type);
 			op = EmitPushPointed(type);
 		}
 		else if (TK_Check(PU_LPAREN))
@@ -723,21 +737,8 @@ static TTree ParseExpressionPriority2()
 		if (TK_Check(PU_NOT))
 		{
 			op = ParseExpressionPriority2();
-			if (op.Type.type == ev_int ||
-				op.Type.type == ev_float ||
-				op.Type.type == ev_name ||
-				op.Type.type == ev_string ||
-				op.Type.type == ev_pointer ||
-				op.Type.type == ev_reference ||
-				op.Type.type == ev_classid ||
-				op.Type.type == ev_state)
-			{
-				AddStatement(OPC_NegateLogical);
-			}
-			else
-			{
-				ParseError("Expression type mistmatch");
-			}
+			op.Type.CheckSizeIs4();
+			AddStatement(OPC_NegateLogical);
 			op = TTree(ev_int);
 			return op;
 		}

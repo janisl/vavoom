@@ -75,11 +75,10 @@ static struct
 {
 	char*	name;
 	int		Args;
-	int		params;
 	int		usecount;
 } StatementInfo[NUM_OPCODES] =
 {
-#define DECLARE_OPC(name, args, argcount)		{ #name, OPCARGS_##args, argcount, 0}
+#define DECLARE_OPC(name, args)		{ #name, OPCARGS_##args, 0}
 #define OPCODE_INFO
 #include "../../source/progdefs.h"
 };
@@ -188,9 +187,9 @@ int AddStatement(int statement)
 		dprintf("AddStatement in pass 1\n");
 	}
 
-	if (StatementInfo[statement].params != 0)
+	if (StatementInfo[statement].Args != OPCARGS_None)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode doesn't have 0 params");
+		ERR_Exit(ERR_NONE, false, "Opcode doesn't take 0 params");
 	}
 
 	if (statement == OPC_Drop)
@@ -238,15 +237,118 @@ int AddStatement(int statement, int parm1)
 		dprintf("AddStatement in pass 1\n");
 	}
 
-	if (StatementInfo[statement].params != 1)
+	if (StatementInfo[statement].Args != OPCARGS_BranchTarget &&
+		StatementInfo[statement].Args != OPCARGS_Int &&
+		StatementInfo[statement].Args != OPCARGS_String)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode does.t have 1 params");
+		ERR_Exit(ERR_NONE, false, "Opcode does\'t take 1 params");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Arg1 = parm1;
 	I.Arg2 = 0;
+
+	return CurrentFunc->Instructions.Num() - 1;
+}
+
+//==========================================================================
+//
+//  AddStatement
+//
+//==========================================================================
+
+int AddStatement(int statement, float FloatArg)
+{
+	if (CurrentPass == 1)
+	{
+		dprintf("AddStatement in pass 1\n");
+	}
+
+	if (StatementInfo[statement].Args != OPCARGS_Int)
+	{
+		ERR_Exit(ERR_NONE, false, "Opcode does\'t take float argument");
+	}
+
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
+	I.Opcode = statement;
+	I.Arg1 = *(vint32*)&FloatArg;
+
+	return CurrentFunc->Instructions.Num() - 1;
+}
+
+//==========================================================================
+//
+//  AddStatement
+//
+//==========================================================================
+
+int AddStatement(int statement, VName NameArg)
+{
+	if (CurrentPass == 1)
+	{
+		dprintf("AddStatement in pass 1\n");
+	}
+
+	if (StatementInfo[statement].Args != OPCARGS_Name)
+	{
+		ERR_Exit(ERR_NONE, false, "Opcode does\'t take name argument");
+	}
+
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
+	I.Opcode = statement;
+	I.NameArg = NameArg;
+
+	return CurrentFunc->Instructions.Num() - 1;
+}
+
+//==========================================================================
+//
+//  AddStatement
+//
+//==========================================================================
+
+int AddStatement(int statement, VMemberBase* Member)
+{
+	if (CurrentPass == 1)
+	{
+		dprintf("AddStatement in pass 1\n");
+	}
+
+	if (StatementInfo[statement].Args != OPCARGS_Member &&
+		StatementInfo[statement].Args != OPCARGS_FieldOffset)
+	{
+		ParseError("Opcode does\'t take member as argument");
+	}
+
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
+	I.Opcode = statement;
+	I.Member = Member;
+
+	return CurrentFunc->Instructions.Num() - 1;
+}
+
+//==========================================================================
+//
+//  AddStatement
+//
+//==========================================================================
+
+int AddStatement(int statement, const TType& TypeArg)
+{
+	if (CurrentPass == 1)
+	{
+		dprintf("AddStatement in pass 1\n");
+	}
+
+	if (StatementInfo[statement].Args != OPCARGS_TypeSize)
+	{
+		ParseError("Opcode does\'t take type as argument");
+	}
+
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
+	I.Opcode = statement;
+	I.TypeArg = TypeArg;
 
 	return CurrentFunc->Instructions.Num() - 1;
 }
@@ -264,9 +366,9 @@ int AddStatement(int statement, int parm1, int parm2)
 		dprintf("AddStatement in pass 1\n");
 	}
 
-	if (StatementInfo[statement].params != 2)
+	if (StatementInfo[statement].Args != OPCARGS_IntBranchTarget)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode does.t have 2 params");
+		ERR_Exit(ERR_NONE, false, "Opcode does\'t take 2 params");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
@@ -961,36 +1063,43 @@ void DumpAsmFunction(VMethod* Func)
 	{
 		//	Opcode
 		int st = Func->Instructions[s].Opcode;
-		dprintf("%6d: %s ", s, StatementInfo[st].name);
-		if (StatementInfo[st].params >= 1)
+		dprintf("%6d: %s", s, StatementInfo[st].name);
+		switch (StatementInfo[st].Args)
 		{
-			//	1-st argument
-			dprintf("%6d ", Func->Instructions[s].Arg1);
-			if (st == OPC_Call)
+		case OPCARGS_None:
+			break;
+		case OPCARGS_Member:
+			//	Name of the object
+			dprintf(" %s.%s", *Func->Instructions[s].Member->Outer->Name,
+				*Func->Instructions[s].Member->Name);
+			break;
+		case OPCARGS_BranchTarget:
+			dprintf(" %6d", Func->Instructions[s].Arg1);
+			break;
+		case OPCARGS_IntBranchTarget:
+			dprintf(" %6d, %6d", Func->Instructions[s].Arg1, Func->Instructions[s].Arg2);
+			break;
+		case OPCARGS_Int:
+			dprintf(" %6d (%x)", Func->Instructions[s].Arg1, Func->Instructions[s].Arg1);
+			break;
+		case OPCARGS_Name:
+			//  Name
+			dprintf("\'%s\'", *Func->Instructions[s].NameArg);
+			break;
+		case OPCARGS_String:
+			//  String
+			dprintf("\"%s\"", &strings[Func->Instructions[s].Arg1]);
+			break;
+		case OPCARGS_FieldOffset:
+			dprintf(" %s", *Func->Instructions[s].Member->Name);
+			break;
+		case OPCARGS_TypeSize:
 			{
-				//	Name of the function called
-				dprintf("(%s.%s)", *VMemberBase::GMembers[Func->Instructions[s].Arg1]->Outer->Name,
-					*VMemberBase::GMembers[Func->Instructions[s].Arg1]->Name);
+				char Tmp[256];
+				Func->Instructions[s].TypeArg.GetName(Tmp);
+				dprintf(" %s", Tmp);
 			}
-			else if (st == OPC_PushString)
-			{
-				//  String
-				dprintf("(%s)", &strings[Func->Instructions[s].Arg1]);
-			}
-			else if (st == OPC_PushName)
-			{
-				//  Name
-				dprintf("(%s)", **(VName*)&Func->Instructions[s].Arg1);
-			}
-			else if (st == OPC_PushBool || st == OPC_AssignBool)
-			{
-				dprintf("(%x)", Func->Instructions[s].Arg1);
-			}
-		}
-		if (StatementInfo[st].params >= 2)
-		{
-			//	2-nd argument
-			dprintf("%6d ", Func->Instructions[s].Arg2);
+			break;
 		}
 		dprintf("\n");
 	}
@@ -1088,7 +1197,6 @@ void VField::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
 	Strm << Next
-		<< STRM_INDEX(ofs)
 		<< type
 		<< func
 		<< STRM_INDEX(flags);
@@ -1116,67 +1224,52 @@ void VMethod::Serialise(VStream& Strm)
 		int NumInstructions;
 		Strm << STRM_INDEX(NumInstructions);
 		Instructions.SetNum(NumInstructions);
-		for (int i = 0; i < NumInstructions; i++)
-		{
-			vuint8 Opc;
-			Strm << Opc;
-			Instructions[i].Opcode = Opc;
-			if (StatementInfo[Opc].params >= 1)
-			{
-				VMemberBase* TmpRef;
-				switch (Opc)
-				{
-				case OPC_PushName:
-					Strm << *(VName*)&Instructions[i].Arg1;
-					break;
-				case OPC_Call:
-				case OPC_PushClassId:
-				case OPC_DynamicCast:
-				case OPC_PushState:
-					Strm << TmpRef;
-					Instructions[i].Arg1 = TmpRef->MemberIndex;
-					break;
-				default:
-					Strm << Instructions[i].Arg1;
-					break;
-				}
-			}
-			if (StatementInfo[Opc].params >= 2)
-			{
-				Strm << Instructions[i].Arg2;
-			}
-		}
 	}
 	else
 	{
 		int NumInstructions = Instructions.Num();
 		Strm << STRM_INDEX(NumInstructions);
-		for (int i = 0; i < Instructions.Num(); i++)
+	}
+	for (int i = 0; i < Instructions.Num(); i++)
+	{
+		vuint8 Opc;
+		if (Strm.IsLoading())
 		{
-			vuint8 Opc = Instructions[i].Opcode;
 			Strm << Opc;
-			if (StatementInfo[Opc].params >= 1)
-			{
-				switch (Opc)
-				{
-				case OPC_PushName:
-					Strm << *(VName*)&Instructions[i].Arg1;
-					break;
-				case OPC_Call:
-				case OPC_PushClassId:
-				case OPC_DynamicCast:
-				case OPC_PushState:
-					Strm << VMemberBase::GMembers[Instructions[i].Arg1];
-					break;
-				default:
-					Strm << Instructions[i].Arg1;
-					break;
-				}
-			}
-			if (StatementInfo[Opc].params >= 2)
-			{
-				Strm << Instructions[i].Arg2;
-			}
+			Instructions[i].Opcode = Opc;
+		}
+		else
+		{
+			Opc = Instructions[i].Opcode;
+			Strm << Opc;
+		}
+		switch (StatementInfo[Opc].Args)
+		{
+		case OPCARGS_None:
+			break;
+		case OPCARGS_Member:
+		case OPCARGS_FieldOffset:
+			Strm << Instructions[i].Member;
+			break;
+		case OPCARGS_BranchTarget:
+			Strm << Instructions[i].Arg1;
+			break;
+		case OPCARGS_IntBranchTarget:
+			Strm << Instructions[i].Arg1;
+			Strm << Instructions[i].Arg2;
+			break;
+		case OPCARGS_Int:
+			Strm << Instructions[i].Arg1;
+			break;
+		case OPCARGS_Name:
+			Strm << Instructions[i].NameArg;
+			break;
+		case OPCARGS_String:
+			Strm << Instructions[i].Arg1;
+			break;
+		case OPCARGS_TypeSize:
+			Strm << Instructions[i].TypeArg;
+			break;
 		}
 	}
 }
@@ -1192,10 +1285,8 @@ void VStruct::Serialise(VStream& Strm)
 	VMemberBase::Serialise(Strm);
 	Strm << ParentStruct
 		<< IsVector
-		<< STRM_INDEX(Size)
-		<< Fields
-		<< STRM_INDEX(AvailableSize)
-		<< STRM_INDEX(AvailableOfs);
+		<< STRM_INDEX(StackSize)
+		<< Fields;
 }
 
 //==========================================================================
@@ -1209,9 +1300,7 @@ void VClass::Serialise(VStream& Strm)
 	VMemberBase::Serialise(Strm);
 	Strm << ParentClass
 		<< Fields
-		<< States
-		<< STRM_INDEX(NumMethods)
-		<< STRM_INDEX(Size);
+		<< States;
 }
 
 //==========================================================================

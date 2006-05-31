@@ -72,15 +72,15 @@ private:
 	VWindow *NextSibling;		// Next "highest" sibling (next one drawn)
 
 public:
-	VWindow(void);
+	VWindow();
 	virtual void Init(VWindow *InParent);
-	virtual void CleanUp(void);
-	void Destroy(void);
+	virtual void CleanUp();
+	void Destroy();
 
 	// Ancestral routines
-	VRootWindow *GetRootWindow(void);
-	VModalWindow *GetModalWindow(void);
-	VWindow *GetParent(void);
+	VRootWindow *GetRootWindow();
+	VModalWindow *GetModalWindow();
+	VWindow *GetParent();
 
 	// Child routines
 	VWindow *GetBottomChild(bool bVisibleOnly = true);
@@ -91,13 +91,13 @@ public:
 	VWindow *GetHigherSibling(bool bVisibleOnly = true);
 
 	// Routines which change order of siblings
-	void Raise(void);
-	void Lower(void);
+	void Raise();
+	void Lower();
 
 	// Visibility routines
 	void SetVisibility(bool NewVisibility);
-	void Show(void) { SetVisibility(true); }
-	void Hide(void) { SetVisibility(false); }
+	void Show() { SetVisibility(true); }
+	void Hide() { SetVisibility(false); }
 	bool IsVisible(bool bRecurse = true)
 	{
 		if (bRecurse)
@@ -117,8 +117,8 @@ public:
 
 	// Sensitivity routines
 	void SetSensitivity(bool NewSensitivity);
-	void Enable(void) { SetSensitivity(true); }
-	void Disable(void) { SetSensitivity(false); }
+	void Enable() { SetSensitivity(true); }
+	void Disable() { SetSensitivity(false); }
 	bool IsSensitive(bool bRecurse = true)
 	{
 		if (bRecurse)
@@ -138,9 +138,9 @@ public:
 
 	// Selectability routines
 	void SetSelectability(bool NewSelectability);
-	bool IsSelectable(void) { return !!(WindowFlags & WF_IsSelectable); }
+	bool IsSelectable() { return !!(WindowFlags & WF_IsSelectable); }
 	//bool IsTraversable(bool bCheckModal = true);
-	//bool IsFocusWindow(void);
+	//bool IsFocusWindow();
 
 	//	Reconfiguration routines.
 	void SetPos(int NewX, int NewY);
@@ -150,78 +150,100 @@ public:
 	void SetHeight(int NewHeight);
 
 	// Slayer of innocent children
-	void DestroyAllChildren(void) { KillAllChildren(); }
+	void DestroyAllChildren() { KillAllChildren(); }
 
-	void InitWindow(void)
+	void InitWindow()
 	{
-		clpr.Exec(GetVFunction("InitWindow"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("InitWindow");
 	}
-	void DestroyWindow(void)
+	void DestroyWindow()
 	{
-		clpr.Exec(GetVFunction("DestroyWindow"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("DestroyWindow");
 	}
-	void WindowReady(void)
+	void WindowReady()
 	{
-		clpr.Exec(GetVFunction("WindowReady"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("WindowReady");
 	}
 
 	virtual void ChildAdded(VWindow *Child)
 	{
-		clpr.Exec(GetVFunction("ChildAdded"), (int)this, (int)Child);
+		P_PASS_SELF;
+		P_PASS_REF(Child);
+		EV_RET_VOID("ChildAdded");
 	}
 	virtual void ChildRemoved(VWindow *Child)
 	{
-		clpr.Exec(GetVFunction("ChildRemoved"), (int)this, (int)Child);
+		P_PASS_SELF;
+		P_PASS_REF(Child);
+		EV_RET_VOID("ChildRemoved");
 	}
 	virtual void DescendantAdded(VWindow *Descendant)
 	{
-		clpr.Exec(GetVFunction("DescendantAdded"), (int)this, (int)Descendant);
+		P_PASS_SELF;
+		P_PASS_REF(Descendant);
+		EV_RET_VOID("DescendantAdded");
 	}
 	virtual void DescendantRemoved(VWindow *Descendant)
 	{
-		clpr.Exec(GetVFunction("DescendantRemoved"), (int)this, (int)Descendant);
+		P_PASS_SELF;
+		P_PASS_REF(Descendant);
+		EV_RET_VOID("DescendantRemoved");
 	}
 
-	virtual void ConfigurationChanged(void)
+	virtual void ConfigurationChanged()
 	{
-		clpr.Exec(GetVFunction("ConfigurationChanged"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("ConfigurationChanged");
 	}
 	virtual void VisibilityChanged(bool NewVisibility)
 	{
-		clpr.Exec(GetVFunction("VisibilityChanged"), (int)this, NewVisibility);
+		P_PASS_SELF;
+		P_PASS_BOOL(NewVisibility);
+		EV_RET_VOID("VisibilityChanged");
 	}
 	virtual void SensitivityChanged(bool bNewSensitivity)
 	{
-		clpr.Exec(GetVFunction("SensitivityChanged"), (int)this, bNewSensitivity);
+		P_PASS_SELF;
+		P_PASS_BOOL(bNewSensitivity);
+		EV_RET_VOID("SensitivityChanged");
 	}
 
 	virtual void DrawWindow(VGC *gc)
 	{
-		clpr.Exec(GetVFunction("DrawWindow"), (int)this, (int)gc);
+		P_PASS_SELF;
+		P_PASS_REF(gc);
+		EV_RET_VOID("DrawWindow");
 	}
 	virtual void PostDrawWindow(VGC *gc)
 	{
-		clpr.Exec(GetVFunction("PostDrawWindow"), (int)this, (int)gc);
+		P_PASS_SELF;
+		P_PASS_REF(gc);
+		EV_RET_VOID("PostDrawWindow");
 	}
 
 	virtual void Tick(float) { }
 	void eventTick(float DeltaTime)
 	{
-		clpr.Exec(GetVFunction("Tick"), (int)this, PassFloat(DeltaTime));
+		P_PASS_SELF;
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID("Tick");
 	}
 
 	static VWindow *CreateNewWindow(VClass *NewClass, VWindow *ParentWindow);
 
 protected:
-	void KillAllChildren(void);
+	void KillAllChildren();
 
 private:
 	void AddChild(VWindow *);
 	void RemoveChild(VWindow *);
 
-	void DrawTree(void);
+	void DrawTree();
 
-	void ClipTree(void);
+	void ClipTree();
 
 	void TickTree(float DeltaTime);
 

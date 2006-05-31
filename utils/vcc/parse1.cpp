@@ -578,16 +578,6 @@ void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
 			{
 				ParseError("Type of argument %d differs from base class", i + 1);
 			}
-		method->ofs = otherfield->ofs;
-	}
-	else if (FuncFlags & FUNC_Static)
-	{
-		method->ofs = -1;
-	}
-	else
-	{
-		method->ofs = InClass->NumMethods;
-		InClass->NumMethods++;
 	}
 
 	if (FuncFlags & FUNC_Native)
@@ -693,7 +683,6 @@ void ParseDefaultProperties(VField *method, VClass* InClass)
 	numlocaldefs = 1;
 
 	method->type = TType(ev_method);
-	method->ofs = 0;
 	method->Name = NAME_None;
 
 	VMethod* Func = new VMethod(NAME_None, InClass, method->Loc);
@@ -790,10 +779,6 @@ void PA_Parse()
 			{
 				ParseClass();
 			}
-			else if (TK_Check(KW_ADDFIELDS))
-			{
-				AddFields(NULL);
-			}
 			else if (TK_Check(KW_VECTOR))
 			{
 				ParseStruct(NULL, true);
@@ -815,73 +800,3 @@ void PA_Parse()
 		ERR_Exit(ERR_NONE, false, NULL);
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.21  2006/03/26 13:06:49  dj_jl
-//	Implemented support for modular progs.
-//
-//	Revision 1.20  2006/03/23 23:11:27  dj_jl
-//	Added support for final methods.
-//	
-//	Revision 1.19  2006/03/23 22:22:02  dj_jl
-//	Hashing of members for faster search.
-//	
-//	Revision 1.18  2006/03/23 18:30:54  dj_jl
-//	Use single list of all members, members tree.
-//	
-//	Revision 1.17  2006/03/12 13:03:22  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.16  2006/03/10 19:31:55  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.15  2006/02/28 19:17:20  dj_jl
-//	Added support for constants.
-//	
-//	Revision 1.14  2006/02/27 21:23:54  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.13  2006/02/25 17:07:57  dj_jl
-//	Linked list of fields, export all type info.
-//	
-//	Revision 1.12  2006/02/20 19:34:32  dj_jl
-//	Created modifiers class.
-//	
-//	Revision 1.11  2006/02/19 20:37:02  dj_jl
-//	Implemented support for delegates.
-//	
-//	Revision 1.10  2006/02/19 14:37:36  dj_jl
-//	Changed type handling.
-//	
-//	Revision 1.9  2006/02/17 19:25:00  dj_jl
-//	Removed support for progs global variables and functions.
-//	
-//	Revision 1.8  2006/02/10 22:15:21  dj_jl
-//	Temporary fix for big-endian systems.
-//	
-//	Revision 1.7  2005/12/14 20:53:23  dj_jl
-//	State names belong to a class.
-//	Structs and enums defined in a class.
-//	
-//	Revision 1.6  2005/12/12 20:58:47  dj_jl
-//	Removed compiler limitations.
-//	
-//	Revision 1.5  2005/11/29 19:31:43  dj_jl
-//	Class and struct classes, removed namespaces, beautification.
-//	
-//	Revision 1.4  2005/11/24 20:42:05  dj_jl
-//	Renamed opcodes, cleanup and improvements.
-//	
-//	Revision 1.3  2003/03/08 12:47:52  dj_jl
-//	Code cleanup.
-//	
-//	Revision 1.2  2002/09/07 16:36:38  dj_jl
-//	Support bool in function args and return type.
-//	Removed support for typedefs.
-//	
-//	Revision 1.1  2002/08/24 14:45:38  dj_jl
-//	2 pass compiling.
-//	
-//**************************************************************************

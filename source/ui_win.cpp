@@ -88,7 +88,7 @@ void VWindow::Init(VWindow *InParent)
 //
 //==========================================================================
 
-void VWindow::CleanUp(void)
+void VWindow::CleanUp()
 {
 }
 
@@ -118,7 +118,7 @@ void VWindow::Destroy()
 //
 //==========================================================================
 
-VRootWindow *VWindow::GetRootWindow(void)
+VRootWindow *VWindow::GetRootWindow()
 {
 	guard(VWindow::GetRootWindow);
 	VWindow *win = this;
@@ -136,7 +136,7 @@ VRootWindow *VWindow::GetRootWindow(void)
 //
 //==========================================================================
 
-VModalWindow *VWindow::GetModalWindow(void)
+VModalWindow *VWindow::GetModalWindow()
 {
 	guard(VWindow::GetModalWindow);
 	VWindow *win = this;
@@ -154,7 +154,7 @@ VModalWindow *VWindow::GetModalWindow(void)
 //
 //==========================================================================
 
-VWindow *VWindow::GetParent(void)
+VWindow *VWindow::GetParent()
 {
 	return Parent;
 }
@@ -249,7 +249,7 @@ VWindow *VWindow::GetHigherSibling(bool bVisibleOnly)
 //
 //==========================================================================
 
-void VWindow::Raise(void)
+void VWindow::Raise()
 {
 	guard(VWindow::Raise);
 	if (!Parent)
@@ -285,7 +285,7 @@ void VWindow::Raise(void)
 //
 //==========================================================================
 
-void VWindow::Lower(void)
+void VWindow::Lower()
 {
 	guard(VWindow::Lower);
 	if (!Parent)
@@ -467,7 +467,7 @@ void VWindow::SetHeight(int NewHeight)
 //
 //==========================================================================
 
-void VWindow::KillAllChildren(void)
+void VWindow::KillAllChildren()
 {
 	guard(VWindow::KillAllChildren);
 	while (FirstChild)
@@ -547,7 +547,7 @@ void VWindow::RemoveChild(VWindow *InChild)
 //
 //==========================================================================
 
-void VWindow::DrawTree(void)
+void VWindow::DrawTree()
 {
 	guard(VWindow::DrawTree);
 	if (!(WindowFlags & WF_IsVisible) || !ClipRect.HasArea())
@@ -571,7 +571,7 @@ void VWindow::DrawTree(void)
 //
 //==========================================================================
 
-void VWindow::ClipTree(void)
+void VWindow::ClipTree()
 {
 	guard(VWindow::ClipTree);
 	if (Parent)
@@ -635,198 +635,155 @@ VWindow *VWindow::CreateNewWindow(VClass *NewClass, VWindow *ParentWindow)
 //
 //==========================================================================
 
-inline VWindow *PR_PopWin(void)
-{
-	return (VWindow *)PR_Pop();
-}
-
 IMPLEMENT_FUNCTION(VWindow, Destroy)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	delete Self;
 }
 IMPLEMENT_FUNCTION(VWindow, NewChild)
 {
-	VClass *ChildClass = (VClass *)PR_Pop();
-	VWindow *Self = PR_PopWin();
-	PR_Push((int)CreateNewWindow(ChildClass, Self));
+	P_GET_PTR(VClass, ChildClass);
+	P_GET_SELF;
+	RET_REF(CreateNewWindow(ChildClass, Self));
 }
 IMPLEMENT_FUNCTION(VWindow, Raise)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	Self->Raise();
 }
 IMPLEMENT_FUNCTION(VWindow, Lower)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	Self->Lower();
 }
 IMPLEMENT_FUNCTION(VWindow, SetVisibility)
 {
-	bool bNewVisibility = !!PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_BOOL(bNewVisibility);
+	P_GET_SELF;
 	Self->SetVisibility(bNewVisibility);
 }
 IMPLEMENT_FUNCTION(VWindow, Show)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	Self->Show();
 }
 IMPLEMENT_FUNCTION(VWindow, Hide)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	Self->Hide();
 }
 IMPLEMENT_FUNCTION(VWindow, IsVisible)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	PR_Push(Self->IsVisible());
 }
 IMPLEMENT_FUNCTION(VWindow, SetSensitivity)
 {
-	bool bNewSensitivity = !!PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_BOOL(bNewSensitivity);
+	P_GET_SELF;
 	Self->SetSensitivity(bNewSensitivity);
 }
 IMPLEMENT_FUNCTION(VWindow, Enable)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	Self->Enable();
 }
 IMPLEMENT_FUNCTION(VWindow, Disable)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	Self->Disable();
 }
 IMPLEMENT_FUNCTION(VWindow, IsSensitive)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	PR_Push(Self->IsSensitive());
 }
 IMPLEMENT_FUNCTION(VWindow, SetSelectability)
 {
-	bool bNewSelectability = !!PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_BOOL(bNewSelectability);
+	P_GET_SELF;
 	Self->SetSelectability(bNewSelectability);
 }
 
 IMPLEMENT_FUNCTION(VWindow, GetRootWindow)
 {
-	VWindow *Self = PR_PopWin();
-	PR_Push((int)Self->GetRootWindow());
+	P_GET_SELF;
+	RET_REF(Self->GetRootWindow());
 }
 IMPLEMENT_FUNCTION(VWindow, GetModalWindow)
 {
-	VWindow *Self = PR_PopWin();
-	PR_Push((int)Self->GetModalWindow());
+	P_GET_SELF;
+	RET_REF(Self->GetModalWindow());
 }
 IMPLEMENT_FUNCTION(VWindow, GetParent)
 {
-	VWindow *Self = PR_PopWin();
-	PR_Push((int)Self->GetParent());
+	P_GET_SELF;
+	RET_REF(Self->GetParent());
 }
 
 IMPLEMENT_FUNCTION(VWindow, SetPos)
 {
-	int NewY = PR_Pop();
-	int NewX = PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_INT(NewY);
+	P_GET_INT(NewX);
+	P_GET_SELF;
 	Self->SetPos(NewX, NewY);
 }
 IMPLEMENT_FUNCTION(VWindow, SetSize)
 {
-	int NewHeight = PR_Pop();
-	int NewWidth = PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_INT(NewHeight);
+	P_GET_INT(NewWidth);
+	P_GET_SELF;
 	Self->SetSize(NewWidth, NewHeight);
 }
 IMPLEMENT_FUNCTION(VWindow, SetConfiguration)
 {
-	int NewHeight = PR_Pop();
-	int NewWidth = PR_Pop();
-	int NewY = PR_Pop();
-	int NewX = PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_INT(NewHeight);
+	P_GET_INT(NewWidth);
+	P_GET_INT(NewY);
+	P_GET_INT(NewX);
+	P_GET_SELF;
 	Self->SetConfiguration(NewX, NewY, NewWidth, NewHeight);
 }
 IMPLEMENT_FUNCTION(VWindow, SetWidth)
 {
-	int NewWidth = PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_INT(NewWidth);
+	P_GET_SELF;
 	Self->SetWidth(NewWidth);
 }
 IMPLEMENT_FUNCTION(VWindow, SetHeight)
 {
-	int NewHeight = PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_INT(NewHeight);
+	P_GET_SELF;
 	Self->SetHeight(NewHeight);
 }
 
 IMPLEMENT_FUNCTION(VWindow, GetBottomChild)
 {
-	bool bVisibleOnly = !!PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_BOOL(bVisibleOnly);
+	P_GET_SELF;
 	Self->GetBottomChild(bVisibleOnly);
 }
 IMPLEMENT_FUNCTION(VWindow, GetTopChild)
 {
-	bool bVisibleOnly = !!PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_BOOL(bVisibleOnly);
+	P_GET_SELF;
 	Self->GetTopChild(bVisibleOnly);
 }
 IMPLEMENT_FUNCTION(VWindow, GetLowerSibling)
 {
-	bool bVisibleOnly = !!PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_BOOL(bVisibleOnly);
+	P_GET_SELF;
 	Self->GetLowerSibling(bVisibleOnly);
 }
 IMPLEMENT_FUNCTION(VWindow, GetHigherSibling)
 {
-	bool bVisibleOnly = !!PR_Pop();
-	VWindow *Self = PR_PopWin();
+	P_GET_BOOL(bVisibleOnly);
+	P_GET_SELF;
 	Self->GetHigherSibling(bVisibleOnly);
 }
 
 IMPLEMENT_FUNCTION(VWindow, DestroyAllChildren)
 {
-	VWindow *Self = PR_PopWin();
+	P_GET_SELF;
 	Self->DestroyAllChildren();
 }
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//
-//	Revision 1.8  2006/03/06 13:02:32  dj_jl
-//	Cleaning up references to destroyed objects.
-//	
-//	Revision 1.7  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.6  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.5  2003/03/08 12:10:13  dj_jl
-//	API fixes.
-//	
-//	Revision 1.4  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.3  2002/07/27 18:12:14  dj_jl
-//	Added Selectability flag.
-//	
-//	Revision 1.2  2002/06/14 15:39:22  dj_jl
-//	Some fixes for Borland.
-//	
-//	Revision 1.1  2002/05/29 16:51:50  dj_jl
-//	Started a work on native Window classes.
-//	
-//**************************************************************************

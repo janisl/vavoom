@@ -94,99 +94,138 @@ class VClientGameBase : public VObject
 
 	void eventRootWindowCreated()
 	{
-		clpr.Exec(GetVFunction("RootWindowCreated"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("RootWindowCreated");
 	}
 	void eventConnected()
 	{
-		clpr.Exec(GetVFunction("Connected"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Connected");
 	}
 	void eventDisconnected()
 	{
-		clpr.Exec(GetVFunction("Disconnected"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("Disconnected");
 	}
 	void eventDemoPlaybackStarted()
 	{
-		clpr.Exec(GetVFunction("DemoPlaybackStarted"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("DemoPlaybackStarted");
 	}
 	void eventDemoPlaybackStopped()
 	{
-		clpr.Exec(GetVFunction("DemoPlaybackStopped"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("DemoPlaybackStopped");
 	}
 	void eventOnHostEndGame()
 	{
-		clpr.Exec(GetVFunction("OnHostEndGame"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("OnHostEndGame");
 	}
 	void eventOnHostError()
 	{
-		clpr.Exec(GetVFunction("OnHostError"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("OnHostError");
 	}
 	void eventStatusBarStartMap()
 	{
-		clpr.Exec(GetVFunction("StatusBarStartMap"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("StatusBarStartMap");
 	}
 	void eventStatusBarDrawer(int sb_type)
 	{
-		clpr.Exec(GetVFunction("StatusBarDrawer"), (int)this, sb_type);
+		P_PASS_SELF;
+		P_PASS_INT(sb_type);
+		EV_RET_VOID("StatusBarDrawer");
 	}
 	void eventStatusBarUpdateWidgets()
 	{
-		clpr.Exec(GetVFunction("StatusBarUpdateWidgets"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("StatusBarUpdateWidgets");
 	}
 	void eventIintermissionStart()
 	{
-		clpr.Exec(GetVFunction("IintermissionStart"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("IintermissionStart");
 	}
 	void eventStartFinale()
 	{
-		clpr.Exec(GetVFunction("StartFinale"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("StartFinale");
 	}
 	bool eventFinaleResponder(event_t* event)
 	{
-		return !!clpr.Exec(GetVFunction("FinaleResponder"), (int)this, (int)event);
+		P_PASS_SELF;
+		P_PASS_PTR(event);
+		EV_RET_BOOL("FinaleResponder");
 	}
 	void eventDeactivateMenu()
 	{
-		clpr.Exec(GetVFunction("DeactivateMenu"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("DeactivateMenu");
 	}
 	bool eventMenuResponder(event_t* event)
 	{
-		return !!clpr.Exec(GetVFunction("MenuResponder"), (int)this, (int)event);
+		P_PASS_SELF;
+		P_PASS_PTR(event);
+		EV_RET_BOOL("MenuResponder");
 	}
 	bool eventMenuActive()
 	{
-		return !!clpr.Exec(GetVFunction("MenuActive"), (int)this);
+		P_PASS_SELF;
+		EV_RET_BOOL("MenuActive");
 	}
 	void eventSetMenu(const char* Name)
 	{
-		clpr.Exec(GetVFunction("SetMenu"), (int)this, (int)Name);
+		P_PASS_SELF;
+		P_PASS_PTR(const_cast<char*>(Name));
+		EV_RET_VOID("SetMenu");
 	}
 	void eventMessageBoxDrawer()
 	{
-		clpr.Exec(GetVFunction("MessageBoxDrawer"), (int)this);
+		P_PASS_SELF;
+		EV_RET_VOID("MessageBoxDrawer");
 	}
 	bool eventMessageBoxResponder(event_t* event)
 	{
-		return !!clpr.Exec(GetVFunction("MessageBoxResponder"), (int)this, (int)event);
+		P_PASS_SELF;
+		P_PASS_PTR(event);
+		EV_RET_BOOL("MessageBoxResponder");
 	}
 	bool eventMessageBoxActive()
 	{
-		return !!clpr.Exec(GetVFunction("MessageBoxActive"), (int)this);
+		P_PASS_SELF;
+		EV_RET_BOOL("MessageBoxActive");
 	}
 	void eventDrawViewBorder(int x, int y, int w, int h)
 	{
-		clpr.Exec(GetVFunction("DrawViewBorder"), (int)this, x, y, w, h);
+		P_PASS_SELF;
+		P_PASS_INT(x);
+		P_PASS_INT(y);
+		P_PASS_INT(w);
+		P_PASS_INT(h);
+		EV_RET_VOID("DrawViewBorder");
 	}
 	bool eventParseServerCommand(int cmd_type)
 	{
-		return !!clpr.Exec(GetVFunction("ParseServerCommand"), (int)this, cmd_type);
+		P_PASS_SELF;
+		P_PASS_INT(cmd_type);
+		EV_RET_BOOL("ParseServerCommand");
 	}
 	void eventUpdateParticle(particle_t* p, float DeltaTime)
 	{
-		clpr.Exec(GetVFunction("UpdateParticle"), (int)this, (int)p, PassFloat(DeltaTime));
+		P_PASS_SELF;
+		P_PASS_PTR(p);
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID("UpdateParticle");
 	}
 	void eventUpdateMobj(VEntity* mobj, int key, float DeltaTime)
 	{
-		clpr.Exec(GetVFunction("UpdateMobj"), (int)this, (int)mobj, key, PassFloat(DeltaTime));
+		P_PASS_SELF;
+		P_PASS_REF(mobj);
+		P_PASS_INT(key);
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID("UpdateMobj");
 	}
 };
 
@@ -235,71 +274,3 @@ inline subsector_t* CL_PointInSubsector(float x, float y)
 extern dlight_t			cl_dlights[MAX_DLIGHTS];
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.22  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//
-//	Revision 1.21  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.20  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.19  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.18  2006/02/13 18:34:34  dj_jl
-//	Moved all server progs global functions to classes.
-//	
-//	Revision 1.17  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.16  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//	
-//	Revision 1.15  2005/05/03 14:56:58  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.14  2004/08/18 18:05:46  dj_jl
-//	Support for higher virtual screen resolutions.
-//	
-//	Revision 1.13  2002/09/07 16:31:50  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.12  2002/08/28 16:42:04  dj_jl
-//	Configurable entity limit.
-//	
-//	Revision 1.11  2002/04/11 16:44:44  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.10  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/12/04 18:16:28  dj_jl
-//	Player models and skins handled by server
-//	
-//	Revision 1.8  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.7  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.6  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.5  2001/08/15 17:24:02  dj_jl
-//	Improved object update on packet overflows
-//	
-//	Revision 1.4  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

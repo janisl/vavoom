@@ -119,13 +119,16 @@ public:
 		vint32		ArrayDim;
 		union
 		{
-			vint32		BitMask;
+			vuint32		BitMask;
 			VClass*		Class;			//  Class of the reference
 			VStruct*	Struct;			//  Struct data.
 			VMethod*	Function;		//  Function of the delegate type.
 		};
 
 		friend VStream& operator<<(VStream&, FType&);
+
+		int GetSize() const;
+		FType GetArrayInnerType() const;
 	};
 
 	VField*		Next;
@@ -159,6 +162,8 @@ struct FInstruction
 	vint32			Arg1;
 	vint32			Arg2;
 	VMemberBase*	Member;
+	VName			NameArg;
+	VField::FType	TypeArg;
 };
 
 class VMethod : public VMemberBase
@@ -247,6 +252,7 @@ class VStruct : public VMemberBase
 public:
 	vint32			ObjectFlags;
 	VStruct*		ParentStruct;
+	vuint8			IsVector;
 	vint32			Size;
 	VField*			Fields;
 	VField*			ReferenceFields;
@@ -256,6 +262,7 @@ public:
 	void Serialise(VStream&);
 	void PostLoad();
 
+	void CalcFieldOffsets();
 	void InitReferences();
 	void SerialiseObject(VStream&, byte*);
 	void CleanObject(byte*);
@@ -359,6 +366,7 @@ public:
 	int GetFunctionIndex(VName InName);
 	VState* FindState(VName InName);
 	VState* FindStateChecked(VName InName);
+	void CalcFieldOffsets();
 	void InitReferences();
 	void CreateVTable();
 	void SerialiseObject(VStream&, VObject*);

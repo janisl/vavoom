@@ -29,8 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define BASE_NUM_METHODS		1
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -410,12 +408,12 @@ int TType::GetSize() const
 	case ev_pointer:	return 4;
 	case ev_reference:	return 4;
 	case ev_array:		return array_dim * GetArrayInnerType().GetSize();
-	case ev_struct:		if (Struct->Size < 0) { ParseError("Incomplete type"); }
-						return (Struct->Size + 3) & ~3;
+	case ev_struct:		return Struct->StackSize * 4;
 	case ev_vector:		return 12;
 	case ev_classid:	return 4;
 	case ev_state:		return 4;
 	case ev_bool:		return 4;
+	case ev_delegate:	return 8;
 	}
 	return 0;
 }
@@ -483,12 +481,23 @@ void TType::CheckPassable() const
 
 void TType::CheckSizeIs4() const
 {
-	if (type == ev_void)
+	switch (type)
 	{
-		ParseError(ERR_VOID_VALUE);
-	}
-	if (GetSize() != 4)
-	{
+	case ev_int:
+	case ev_float:
+	case ev_name:
+	case ev_bool:
+		break;
+
+	case ev_string:
+	case ev_pointer:
+	case ev_reference:
+	case ev_classid:
+	case ev_state:
+		AddStatement(OPC_PtrToBool);
+		break;
+
+	default:
 		ParseError(ERR_EXPR_TYPE_MISTMATCH, "Size is not 4");
 	}
 }
@@ -652,42 +661,6 @@ void SkipStruct(VClass* InClass)
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		if (TK_Check(KW_ADDFIELDS))
-		{
-			TK_NextToken();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-		TModifiers::Parse();
-		TK_NextToken();
-		do
-		{
-			while (TK_Check(PU_ASTERISK));
-			TK_NextToken();
-			if (TK_Check(PU_LINDEX))
-			{
-				EvalConstExpression(InClass, ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-			}
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-}
-
-//==========================================================================
-//
-//	SkipAddFields
-//
-//==========================================================================
-
-void SkipAddFields(VClass* InClass)
-{
-	TK_NextToken();
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
 		TModifiers::Parse();
 		TK_NextToken();
 		do
@@ -807,12 +780,6 @@ void CompileClass()
 			continue;
 		}
 
-		if (TK_Check(KW_ADDFIELDS))
-		{
-			SkipAddFields(Class);
-			continue;
-		}
-
 		if (TK_Check(KW_DELEGATE))
 		{
 			SkipDelegate(Class);
@@ -874,8 +841,7 @@ void CompileClass()
 
 	for (fi = Class->Fields; fi; fi = fi->Next)
 	{
-		if (fi->type.type == ev_method &&
-			fi->Name == NAME_None && fi->ofs == 0)
+		if (fi->type.type == ev_method && fi->Name == NAME_None)
 		{
 			break;
 		}
@@ -898,7 +864,8 @@ VField* ParseStructField(VStruct* InStruct)
 		ParseError(ERR_NOT_A_STRUCT, "Base type required.");
 		return NULL;
 	}
-	if (InStruct->Size == -1)
+//FIXME	if (InStruct->Size == -1)
+	if (!InStruct->Fields)
 	{
 		ParseError("Incomplete type.");
 		return NULL;
@@ -935,11 +902,11 @@ VField* ParseStructField(VStruct* InStruct)
 
 VField* ParseClassField(VClass* InClass)
 {
-	if (InClass->Size == -1)
+/*FIXME	if (InClass->Size == -1)
 	{
 		ParseError("Incomplete type.");
 		return NULL;
-	}
+	}*/
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
@@ -980,10 +947,10 @@ VField* CheckForField(VClass* InClass, bool CheckPrivate)
 	{
 		return NULL;
 	}
-	if (InClass->Size == -1)
+/*FIXME	if (InClass->Size == -1)
 	{
 		return NULL;
-	}
+	}*/
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		return NULL;
@@ -1015,10 +982,10 @@ VField* CheckForField(VName Name, VClass* InClass, bool CheckPrivate)
 	{
 		return NULL;
 	}
-	if (InClass->Size == -1)
+/*FIXME	if (InClass->Size == -1)
 	{
 		return NULL;
-	}
+	}*/
 	if (Name == NAME_None)
 	{
 		return NULL;
@@ -1050,13 +1017,13 @@ VField* FindConstructor(VClass* InClass)
 	{
 		return NULL;
 	}
-	if (InClass->Size == -1)
+/*FIXME	if (InClass->Size == -1)
 	{
 		return NULL;
-	}
+	}*/
 	for (VField *fi = InClass->Fields; fi; fi = fi->Next)
 	{
-		if (fi->type.type == ev_method && fi->ofs == 0)
+		if (fi->type.type == ev_method && fi->Name == NAME_None)
 		{
 			return fi;
 		}
@@ -1155,8 +1122,7 @@ void VClass::AddState(VState* s)
 
 void ParseStruct(VClass* InClass, bool IsVector)
 {
-	VField*	fi;
-	int			size;
+	VField*		fi;
 	TType		t;
 	TType		type;
 	TType		struct_type;
@@ -1171,7 +1137,8 @@ void ParseStruct(VClass* InClass, bool IsVector)
 			return;
 		}
 		Struct = struct_type.Struct;
-		if (Struct->Size != -1)
+//FIXME		if (Struct->Size != -1)
+		if (Struct->Fields)
 		{
 			ParseError("Struct type already completed");
 			return;
@@ -1194,12 +1161,12 @@ void ParseStruct(VClass* InClass, bool IsVector)
 
 	if (TK_Check(PU_SEMICOLON))
 	{
-		Struct->Size = -1;
+//FIXME		Struct->Size = -1;
 		return;
 	}
 
+	int size = 0;
 	Struct->Fields = NULL;
-	size = 0;
 
 	if (!IsVector && TK_Check(PU_COLON))
 	{
@@ -1215,31 +1182,13 @@ void ParseStruct(VClass* InClass, bool IsVector)
 		else
 		{
 			Struct->ParentStruct = type.Struct;
-			size = type.GetSize();
+			size = Struct->ParentStruct->StackSize * 4;
 		}
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	while (!TK_Check(PU_RBRACE))
 	{
-		if (!IsVector && TK_Check(KW_ADDFIELDS))
-		{
-			if (Struct->AvailableSize)
-			{
-				ParseError("Addfields already defined");
-			}
-			if (tk_Token != TK_INTEGER)
-			{
-				ParseError("Field count expacted");
-			}
-			Struct->AvailableSize = tk_Number * 4;
-			Struct->AvailableOfs = size;
-			size += tk_Number * 4;
-			TK_NextToken();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
 		int Modifiers = TModifiers::Parse();
 		Modifiers = TModifiers::Check(Modifiers, VField::AllowedModifiers);
 
@@ -1295,18 +1244,16 @@ void ParseStruct(VClass* InClass, bool IsVector)
 				{
 					fi->type = t;
 					fi->type.bit_mask = prevbool->type.bit_mask << 1;
-					fi->ofs = prevbool->ofs;
 					Struct->AddField(fi);
 					continue;
 				}
 			}
-			fi->ofs = size;
 			if (!IsVector)
 			{
 				t = ParsePropArrayDims(InClass, t);
 			}
-			size += t.GetSize();
 			fi->type = t;
+			size += t.GetSize();
 			Struct->AddField(fi);
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
@@ -1322,117 +1269,7 @@ void ParseStruct(VClass* InClass, bool IsVector)
 			ParseError("Vector must have exactly 3 float fields");
 		}
 	}
-
-	Struct->Size = size;
-}
-
-//==========================================================================
-//
-//	AddFields
-//
-//==========================================================================
-
-void AddFields(VClass* InClass)
-{
-	TType			struct_type;
-	TType			type;
-	VField*		fi;
-	int				size;
-	int				ofs;
-	TType			t;
-
-	//  Read type, to which fields will be added to.
-	struct_type = CheckForType(InClass);
-	if (struct_type.type == ev_unknown)
-	{
-		ParseError("Parent type expected.");
-		return;
-	}
-
-	//  Check if it's a structure type
-	if (struct_type.type != ev_struct)
-	{
-		ParseError("Parent must be a struct.");
-		return;
-	}
-
-	VStruct* Struct = struct_type.Struct;
-
-	//  Check if type has reserved memory for additional fields
-	if (!Struct->AvailableSize)
-	{
-		ParseError("Parent type don't have available memory for additional fields.");
-		return;
-	}
-
-	//  Read info
-	size = Struct->AvailableSize;
-	ofs = Struct->AvailableOfs;
-
-	//	Add fields
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		int Modifiers = TModifiers::Parse();
-		Modifiers = TModifiers::Check(Modifiers, VField::AllowedModifiers);
-
-		type = CheckForType(InClass);
-		if (type.type == ev_unknown)
-		{
-			ParseError("Field type expected.");
-			continue;
-		}
-		do
-		{
-			t = type;
-			while (TK_Check(PU_ASTERISK))
-			{
-				t = MakePointerType(t);
-			}
-			if (t.type == ev_void)
-			{
-				ParseError("Field cannot have void type.");
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-			}
-			fi = new VField(tk_Name, Struct, tk_Location);
-			fi->flags = TModifiers::FieldAttr(Modifiers);
-			TK_NextToken();
-			if (t.type == ev_bool && Struct->Fields)
-			{
-				VField* prevbool = Struct->Fields;
-				while (prevbool->Next)
-					prevbool = prevbool->Next;
-				if (prevbool->type.type == ev_bool &&
-					(dword)prevbool->type.bit_mask != 0x80000000)
-				{
-					fi->type = t;
-					fi->type.bit_mask = prevbool->type.bit_mask << 1;
-					fi->ofs = prevbool->ofs;
-					Struct->AddField(fi);
-					continue;
-				}
-			}
-			fi->ofs = ofs;
-			t = ParsePropArrayDims(InClass, t);
-			size -= t.GetSize();
-			ofs += t.GetSize();
-			if (size < 0)
-			{
-				ParseError("Additional fields size overflow.");
-			}
-			fi->type = t;
-			Struct->AddField(fi);
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-
-	//	Renew TypeInfo
-	Struct->AvailableSize = size;
-	Struct->AvailableOfs = ofs;
+	Struct->StackSize = (size + 3) / 4;
 }
 
 //==========================================================================
@@ -1445,14 +1282,14 @@ void ParseClass()
 {
 	VField*			fi;
 	VField*			otherfield;
-	int					size;
 	TType				t;
 	TType				type;
 
 	VClass* Class = CheckForClass();
 	if (Class)
 	{
-		if (Class->Size != -1)
+//FIXME		if (Class->Size != -1)
+		if (Class->Fields)
 		{
 			ParseError("Class definition already completed");
 			return;
@@ -1472,13 +1309,11 @@ void ParseClass()
 
 	if (TK_Check(PU_SEMICOLON))
 	{
-		Class->Size = -1;
+//FIXME		Class->Size = -1;
 		return;
 	}
 
 	Class->Fields = NULL;
-	Class->NumMethods = BASE_NUM_METHODS;
-	size = 0;
 
 	if (TK_Check(PU_COLON))
 	{
@@ -1487,15 +1322,14 @@ void ParseClass()
 		{
 			ParseError("Parent class type expected");
 		}
-		else if (Parent->Size == -1)
+//FIXME		else if (Parent->Size == -1)
+		else if (!Parent->Fields)
 		{
 			ParseError("Incomplete parent class");
 		}
 		else
 		{
 			Class->ParentClass = Parent;
-			Class->NumMethods = Parent->NumMethods;
-			size = Parent->Size;
 		}
 	}
 	else if (Class->Name != NAME_Object)
@@ -1526,7 +1360,6 @@ void ParseClass()
 		}
 	} while (1);
 
-	Class->Size = size;
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	while (!TK_Check(KW_DEFAULTPROPERTIES))
 	{
@@ -1595,12 +1428,6 @@ void ParseClass()
 			continue;
 		}
 
-		if (TK_Check(KW_ADDFIELDS))
-		{
-			AddFields(Class);
-			continue;
-		}
-
 		if (TK_Check(KW_DELEGATE))
 		{
 			int Flags = 0;
@@ -1629,8 +1456,6 @@ void ParseClass()
 			{
 				TK_NextToken();
 			}
-			fi->ofs = size;
-			size += 8;
 			Class->AddField(fi);
 			ParseDelegate(t, fi, otherfield, Class, Flags);
 			continue;
@@ -1691,14 +1516,11 @@ void ParseClass()
 				{
 					fi->type = t;
 					fi->type.bit_mask = prevbool->type.bit_mask << 1;
-					fi->ofs = prevbool->ofs;
 					Class->AddField(fi);
 					continue;
 				}
 			}
-			fi->ofs = size;
 			t = ParsePropArrayDims(Class, t);
-			size += t.GetSize();
 			fi->type = t;
 			Class->AddField(fi);
 		} while (TK_Check(PU_COMMA));
@@ -1711,169 +1533,4 @@ void ParseClass()
 	fi = new VField(NAME_None, Class, tk_Location);
 	ParseDefaultProperties(fi, Class);
 	Class->AddField(fi);
-
-	Class->Size = size;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.52  2006/03/26 13:06:49  dj_jl
-//	Implemented support for modular progs.
-//
-//	Revision 1.51  2006/03/23 22:22:02  dj_jl
-//	Hashing of members for faster search.
-//	
-//	Revision 1.50  2006/03/23 18:30:54  dj_jl
-//	Use single list of all members, members tree.
-//	
-//	Revision 1.49  2006/03/13 21:24:21  dj_jl
-//	Added support for read-only, private and transient fields.
-//	
-//	Revision 1.48  2006/03/12 20:04:50  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.47  2006/03/10 19:31:55  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.46  2006/02/28 19:17:20  dj_jl
-//	Added support for constants.
-//	
-//	Revision 1.45  2006/02/27 21:23:55  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.44  2006/02/25 17:07:57  dj_jl
-//	Linked list of fields, export all type info.
-//	
-//	Revision 1.43  2006/02/20 19:34:32  dj_jl
-//	Created modifiers class.
-//	
-//	Revision 1.42  2006/02/19 20:37:02  dj_jl
-//	Implemented support for delegates.
-//	
-//	Revision 1.41  2006/02/19 14:37:36  dj_jl
-//	Changed type handling.
-//	
-//	Revision 1.40  2006/02/17 19:25:00  dj_jl
-//	Removed support for progs global variables and functions.
-//	
-//	Revision 1.39  2006/02/15 23:27:07  dj_jl
-//	Added script ID class attribute.
-//	
-//	Revision 1.38  2006/02/11 14:48:33  dj_jl
-//	Fixed arrays also for structs.
-//	
-//	Revision 1.37  2006/02/11 14:44:35  dj_jl
-//	Fixed multi-dimentional arrays.
-//	
-//	Revision 1.36  2005/12/14 20:53:23  dj_jl
-//	State names belong to a class.
-//	Structs and enums defined in a class.
-//	
-//	Revision 1.35  2005/12/12 20:58:47  dj_jl
-//	Removed compiler limitations.
-//	
-//	Revision 1.34  2005/12/07 22:52:55  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.33  2005/11/29 19:31:43  dj_jl
-//	Class and struct classes, removed namespaces, beautification.
-//	
-//	Revision 1.32  2005/11/24 20:42:05  dj_jl
-//	Renamed opcodes, cleanup and improvements.
-//	
-//	Revision 1.31  2005/04/28 07:14:03  dj_jl
-//	Fixed some warnings.
-//	
-//	Revision 1.30  2003/03/08 12:47:52  dj_jl
-//	Code cleanup.
-//	
-//	Revision 1.29  2002/11/02 17:11:13  dj_jl
-//	New style classes.
-//	
-//	Revision 1.28  2002/09/07 16:36:38  dj_jl
-//	Support bool in function args and return type.
-//	Removed support for typedefs.
-//	
-//	Revision 1.27  2002/08/24 14:45:38  dj_jl
-//	2 pass compiling.
-//	
-//	Revision 1.26  2002/06/14 15:33:45  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.25  2002/05/03 17:04:03  dj_jl
-//	Mangling of string pointers.
-//	
-//	Revision 1.24  2002/03/12 19:17:30  dj_jl
-//	Added keyword abstract
-//	
-//	Revision 1.23  2002/02/26 17:52:20  dj_jl
-//	Exporting special property info into progs.
-//	
-//	Revision 1.22  2002/02/16 16:28:36  dj_jl
-//	Added support for bool variables
-//	
-//	Revision 1.21  2002/02/02 19:23:02  dj_jl
-//	Natives declared inside class declarations.
-//	
-//	Revision 1.20  2002/01/21 18:23:09  dj_jl
-//	Constructors with no names
-//	
-//	Revision 1.19  2002/01/17 18:19:52  dj_jl
-//	New style of adding to mobjinfo, some fixes
-//	
-//	Revision 1.18  2002/01/15 18:29:36  dj_jl
-//	no message
-//	
-//	Revision 1.17  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//	Revision 1.16  2002/01/07 12:31:36  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.15  2001/12/27 17:44:02  dj_jl
-//	Removed support for C++ style constructors and destructors, some fixes
-//	
-//	Revision 1.14  2001/12/18 19:09:41  dj_jl
-//	Some extra info in progs and other small changes
-//	
-//	Revision 1.13  2001/12/12 19:22:22  dj_jl
-//	Support for method usage as state functions, dynamic cast
-//	Added dynamic arrays
-//	
-//	Revision 1.12  2001/12/03 19:25:44  dj_jl
-//	Fixed calling of parent function
-//	Added defaultproperties
-//	Fixed vectors as arguments to methods
-//	
-//	Revision 1.11  2001/12/01 18:17:09  dj_jl
-//	Fixed calling of parent method, speedup
-//	
-//	Revision 1.10  2001/11/09 14:42:29  dj_jl
-//	References, beautification
-//	
-//	Revision 1.9  2001/10/27 07:54:59  dj_jl
-//	Added support for constructors and destructors
-//	
-//	Revision 1.8  2001/10/09 17:31:55  dj_jl
-//	Addfields to class disabled by default
-//	
-//	Revision 1.7  2001/10/02 17:40:48  dj_jl
-//	Possibility to declare function's code inside class declaration
-//	
-//	Revision 1.6  2001/09/25 17:03:50  dj_jl
-//	Added calling of parent functions
-//	
-//	Revision 1.5  2001/09/24 17:31:38  dj_jl
-//	Some fixes
-//	
-//	Revision 1.4  2001/09/20 16:09:55  dj_jl
-//	Added basic object-oriented support
-//	
-//	Revision 1.3  2001/08/21 17:52:54  dj_jl
-//	Added support for real string pointers, beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

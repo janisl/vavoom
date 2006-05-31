@@ -124,7 +124,8 @@ bool VEntity::SetState(VState* InState)
 
 		// Modified handling.
 		// Call action functions when the state is set
-		svpr.Exec(st->function, (int)this);
+		P_PASS_SELF;
+		svpr.ExecuteFunction(st->function);
 
 		st = NextState;
 	}
@@ -1877,7 +1878,7 @@ VEntity* VEntity::RoughMonsterSearch(int distance)
 
 IMPLEMENT_FUNCTION(VEntity, Remove)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_SELF;
 	Self->Remove();
 }
 
@@ -1889,23 +1890,23 @@ IMPLEMENT_FUNCTION(VEntity, Remove)
 
 IMPLEMENT_FUNCTION(VEntity, SetState)
 {
-	VState* state = (VState*)PR_Pop();
-	VEntity *Self = (VEntity*)PR_Pop();
+	P_GET_PTR(VState, state);
+	P_GET_SELF;
 	PR_Push(Self->SetState(state));
 }
 
 IMPLEMENT_FUNCTION(VEntity, SetInitialState)
 {
-	VState* state = (VState*)PR_Pop();
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_PTR(VState, state);
+	P_GET_SELF;
 	Self->SetInitialState(state);
 }
 
 IMPLEMENT_FUNCTION(VEntity, FindState)
 {
-	VName StateName = PR_PopName();
-	VEntity *Self = (VEntity*)PR_Pop();
-	PR_Push((int)Self->FindState(StateName));
+	P_GET_NAME(StateName);
+	P_GET_SELF;
+	RET_PTR(Self->FindState(StateName));
 }
 
 //==========================================================================
@@ -1916,9 +1917,9 @@ IMPLEMENT_FUNCTION(VEntity, FindState)
 
 IMPLEMENT_FUNCTION(VEntity, PlaySound)
 {
-	int Channel = PR_Pop();
-	VName SoundName = PR_PopName();
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_INT(Channel);
+	P_GET_NAME(SoundName);
+	P_GET_SELF;
 	SV_StartSound(Self, S_ResolveEntitySound(Self->SoundClass,
 		Self->SoundGender, SoundName), Channel, 127);
 }
@@ -1931,9 +1932,9 @@ IMPLEMENT_FUNCTION(VEntity, PlaySound)
 
 IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 {
-	int Channel = PR_Pop();
-	VName SoundName = PR_PopName();
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_INT(Channel);
+	P_GET_NAME(SoundName);
+	P_GET_SELF;
 	SV_StartSound(NULL, S_ResolveEntitySound(Self->SoundClass,
 		Self->SoundGender, SoundName), Channel, 127);
 }
@@ -1946,8 +1947,8 @@ IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 
 IMPLEMENT_FUNCTION(VEntity, StopSound)
 {
-	int Channel = PR_Pop();
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_INT(Channel);
+	P_GET_SELF;
 	SV_StopSound(Self, Channel);
 }
 
@@ -1959,8 +1960,8 @@ IMPLEMENT_FUNCTION(VEntity, StopSound)
 
 IMPLEMENT_FUNCTION(VEntity, CheckWater)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(Self->CheckWater());
+	P_GET_SELF;
+	RET_INT(Self->CheckWater());
 }
 
 //==========================================================================
@@ -1971,8 +1972,8 @@ IMPLEMENT_FUNCTION(VEntity, CheckWater)
 
 IMPLEMENT_FUNCTION(VEntity, CheckDropOff)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Pushf(Self->CheckDropOff());
+	P_GET_SELF;
+	RET_FLOAT(Self->CheckDropOff());
 }
 
 //==========================================================================
@@ -1983,9 +1984,9 @@ IMPLEMENT_FUNCTION(VEntity, CheckDropOff)
 
 IMPLEMENT_FUNCTION(VEntity, CheckPosition)
 {
-	TVec Pos = PR_Popv();
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(Self->CheckPosition(Pos));
+	P_GET_VEC(Pos);
+	P_GET_SELF;
+	RET_BOOL(Self->CheckPosition(Pos));
 }
 
 //==========================================================================
@@ -1996,9 +1997,9 @@ IMPLEMENT_FUNCTION(VEntity, CheckPosition)
 
 IMPLEMENT_FUNCTION(VEntity, CheckRelPosition)
 {
-	TVec Pos = PR_Popv();
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(Self->CheckRelPosition(Pos));
+	P_GET_VEC(Pos);
+	P_GET_SELF;
+	RET_BOOL(Self->CheckRelPosition(Pos));
 }
 
 //==========================================================================
@@ -2009,9 +2010,9 @@ IMPLEMENT_FUNCTION(VEntity, CheckRelPosition)
 
 IMPLEMENT_FUNCTION(VEntity, CheckSides)
 {
-	TVec lsPos = PR_Popv();
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(Self->CheckSides(lsPos));
+	P_GET_VEC(lsPos);
+	P_GET_SELF;
+	RET_BOOL(Self->CheckSides(lsPos));
 }
 
 //==========================================================================
@@ -2022,9 +2023,9 @@ IMPLEMENT_FUNCTION(VEntity, CheckSides)
 
 IMPLEMENT_FUNCTION(VEntity, TryMove)
 {
-	TVec Pos = PR_Popv();
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(Self->TryMove(Pos));
+	P_GET_VEC(Pos);
+	P_GET_SELF;
+	RET_BOOL(Self->TryMove(Pos));
 }
 
 //==========================================================================
@@ -2035,8 +2036,8 @@ IMPLEMENT_FUNCTION(VEntity, TryMove)
 
 IMPLEMENT_FUNCTION(VEntity, TestMobjZ)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(Self->TestMobjZ());
+	P_GET_SELF;
+	RET_BOOL(Self->TestMobjZ());
 }
 
 //==========================================================================
@@ -2047,7 +2048,7 @@ IMPLEMENT_FUNCTION(VEntity, TestMobjZ)
 
 IMPLEMENT_FUNCTION(VEntity, SlideMove)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_SELF;
 	Self->SlideMove();
 }
 
@@ -2059,8 +2060,8 @@ IMPLEMENT_FUNCTION(VEntity, SlideMove)
 
 IMPLEMENT_FUNCTION(VEntity, BounceWall)
 {
-	float overbounce = PR_Popf();
-	VEntity	*Self = (VEntity *)PR_Pop();
+	P_GET_FLOAT(overbounce);
+	P_GET_SELF;
 	Self->BounceWall(overbounce);
 }
 
@@ -2072,7 +2073,7 @@ IMPLEMENT_FUNCTION(VEntity, BounceWall)
 
 IMPLEMENT_FUNCTION(VEntity, UpdateVelocity)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_SELF;
 	Self->UpdateVelocity();
 }
 
@@ -2084,8 +2085,8 @@ IMPLEMENT_FUNCTION(VEntity, UpdateVelocity)
 
 IMPLEMENT_FUNCTION(VEntity, CheckOnmobj)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push((int)Self->CheckOnmobj());
+	P_GET_SELF;
+	RET_REF(Self->CheckOnmobj());
 }
 
 //===========================================================================
@@ -2096,7 +2097,7 @@ IMPLEMENT_FUNCTION(VEntity, CheckOnmobj)
 
 IMPLEMENT_FUNCTION(VEntity, LinkToWorld)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_SELF;
 	Self->LinkToWorld();
 }
 
@@ -2108,7 +2109,7 @@ IMPLEMENT_FUNCTION(VEntity, LinkToWorld)
 
 IMPLEMENT_FUNCTION(VEntity, UnlinkFromWorld)
 {
-	VEntity *Self = (VEntity *)PR_Pop();
+	P_GET_SELF;
 	Self->UnlinkFromWorld();
 }
 
@@ -2120,9 +2121,9 @@ IMPLEMENT_FUNCTION(VEntity, UnlinkFromWorld)
 
 IMPLEMENT_FUNCTION(VEntity, CanSee)
 {
-	VEntity *Other = (VEntity *)PR_Pop();
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push(Self->CanSee(Other));
+	P_GET_REF(VEntity, Other);
+	P_GET_SELF;
+	RET_BOOL(Self->CanSee(Other));
 }
 
 //===========================================================================
@@ -2133,9 +2134,9 @@ IMPLEMENT_FUNCTION(VEntity, CanSee)
 
 IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
 {
-	int Distance = PR_Pop();
-	VEntity *Self = (VEntity *)PR_Pop();
-	PR_Push((int)Self->RoughMonsterSearch(Distance));
+	P_GET_INT(Distance);
+	P_GET_SELF;
+	RET_REF(Self->RoughMonsterSearch(Distance));
 }
 
 //===========================================================================
@@ -2165,7 +2166,8 @@ void VViewEntity::SetState(VState* InState)
 		ModelFrame = state->model_frame;
 		NextState = state->nextstate;
 		// Call action routine.
-		svpr.Exec(state->function, (int)this);
+		P_PASS_SELF;
+		svpr.ExecuteFunction(state->function);
 		state = NextState;
 	}
 	while (state && !StateTime);	// An initial state of 0 could cycle through.
@@ -2180,8 +2182,8 @@ void VViewEntity::SetState(VState* InState)
 
 IMPLEMENT_FUNCTION(VViewEntity, SetState)
 {
-	VState* state = (VState*)PR_Pop();
-	VViewEntity *Self = (VViewEntity *)PR_Pop();
+	P_GET_PTR(VState, state);
+	P_GET_SELF;
 	Self->SetState(state);
 }
 

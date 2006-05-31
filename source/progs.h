@@ -65,7 +65,7 @@ public:
 
 union VStack
 {
-	int		i;
+	vint32	i;
 	float	f;
 	void*	p;
 };
@@ -78,46 +78,7 @@ public:
 
 	static VStruct* FindStruct(VName InName, VClass* InClass);
 
-	static int Exec(VMethod *func);
-	static int Exec(VMethod *func, int parm1);
-	static int Exec(VMethod *func, int parm1, int parm2);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
-		int parm10);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
-		int parm10, int parm11);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
-		int parm10, int parm11, int parm12);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
-		int parm10, int parm11, int parm12, int parm13);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
-		int parm10, int parm11, int parm12, int parm13, int parm14);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
-		int parm10, int parm11, int parm12, int parm13, int parm14,
-		int parm15);
-	static int Exec(VMethod *func, int parm1, int parm2, int parm3,
-		int parm4, int parm5, int parm6, int parm7, int parm8, int parm9,
-		int parm10, int parm11, int parm12, int parm13, int parm14,
-		int parm15, int parm16);
-	static int ExecuteFunction(VMethod *func);
+	static VStack ExecuteFunction(VMethod *func);
 	static void DumpProfile();
 
 	int GetStringOffs(const char *Str);
