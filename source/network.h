@@ -90,13 +90,14 @@ struct hostcache_t
 void NET_Init();
 void NET_Shutdown();
 void NET_Slist();
-qsocket_t* NET_Connect(const char* host);
+qsocket_t* NET_Connect(const char*);
 qsocket_t* NET_CheckNewConnections();
-int NET_GetMessage(qsocket_t* sock);
-int NET_SendMessage(qsocket_t* sock, VMessage* data);
-int NET_SendUnreliableMessage(qsocket_t* sock, VMessage* data);
-bool NET_CanSendMessage(qsocket_t* sock);
-void NET_Close(qsocket_t* sock);
+bool NET_IsLocalConnection(qsocket_t*);
+int NET_GetMessage(qsocket_t*);
+int NET_SendMessage(qsocket_t*, VMessage*);
+int NET_SendUnreliableMessage(qsocket_t*, VMessage*);
+bool NET_CanSendMessage(qsocket_t*);
+void NET_Close(qsocket_t*);
 void NET_Poll();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

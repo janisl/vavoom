@@ -1921,7 +1921,7 @@ int NET_SendToAll(VMessage* data, int blocktime)
 		sv_player = GGameInfo->Players[i];
 		if (sv_player && sv_player->NetCon)
 		{
-			if (sv_player->NetCon->driver == 0)
+			if (NET_IsLocalConnection(sv_player->NetCon))
 			{
 				NET_SendMessage(sv_player->NetCon, data);
 				state1[i] = true;

@@ -706,6 +706,17 @@ qsocket_t* NET_CheckNewConnections()
 
 //==========================================================================
 //
+//	NET_IsLocalConnection
+//
+//==========================================================================
+
+bool NET_IsLocalConnection(qsocket_t* sock)
+{
+	return sock->driver == net_drivers[0] || sock->driver == net_drivers[1];
+}
+
+//==========================================================================
+//
 //	NET_Close
 //
 //==========================================================================
@@ -760,8 +771,7 @@ int	NET_GetMessage(qsocket_t* sock)
 	ret = sock->driver->GetMessage(sock);
 
 	// see if this connection has timed out
-	if (ret == 0 && sock->driver != net_drivers[0] &&
-		sock->driver != net_drivers[1])
+	if (ret == 0 && !NET_IsLocalConnection(sock))
 	{
 		if (net_time - sock->lastMessageTime > net_messagetimeout)
 		{
