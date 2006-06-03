@@ -896,6 +896,7 @@ VMethod::VMethod(VName AName)
 , NativeFunc(0)
 , NumInstructions(0)
 , Instructions(0)
+, VTableIndex(0)
 {
 }
 
@@ -997,6 +998,7 @@ void VMethod::Serialise(VStream& Strm)
 			break;
 		case OPCARGS_Member:
 		case OPCARGS_FieldOffset:
+		case OPCARGS_VTableIndex:
 			Strm << Instructions[i].Member;
 			break;
 		case OPCARGS_BranchTarget:
@@ -1096,6 +1098,11 @@ void VMethod::CompileCode()
 			//	Make sure struct / class field offsets have been calculated.
 			Instructions[i].Member->Outer->PostLoad();
 			WriteInt32(((VField*)Instructions[i].Member)->Ofs);
+			break;
+		case OPCARGS_VTableIndex:
+			//	Make sure class virtual table has been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			WriteInt32(((VMethod*)Instructions[i].Member)->VTableIndex);
 			break;
 		case OPCARGS_TypeSize:
 			WriteInt32(Instructions[i].TypeArg.GetSize());
@@ -1779,27 +1786,32 @@ void VClass::CalcFieldOffsets()
 	int size = ParentClass ? ParentClass->ClassSize : 0;
 	int numMethods = ParentClass ? ParentClass->ClassNumMethods : 1;
 	VField* PrevField = NULL;
-	for (VField* fi = Fields; fi; fi = fi->Next)
+	for (int i = 0; i < GMembers.Num(); i++)
 	{
-		if (fi->Type.Type == ev_method)
+		if (GMembers[i]->MemberType != MEMBER_Method ||
+			GMembers[i]->Outer != this)
 		{
-			if (fi->Name == NAME_None)
-			{
-				fi->Ofs = 0;
-				continue;
-			}
-			int MOfs = -1;
-			if (ParentClass)
-			{
-				MOfs = ParentClass->GetFunctionIndex(fi->Name);
-			}
-			if (MOfs == -1 && !(fi->Func->Flags & FUNC_Final))
-			{
-				MOfs = numMethods++;
-			}
-			fi->Ofs = MOfs;
 			continue;
 		}
+		VMethod* M = (VMethod*)GMembers[i];
+		if (M->Name == NAME_None)
+		{
+			M->VTableIndex = 0;
+			continue;
+		}
+		int MOfs = -1;
+		if (ParentClass)
+		{
+			MOfs = ParentClass->GetFunctionIndex(M->Name);
+		}
+		if (MOfs == -1 && !(M->Flags & FUNC_Final))
+		{
+			MOfs = numMethods++;
+		}
+		M->VTableIndex = MOfs;
+	}
+	for (VField* fi = Fields; fi; fi = fi->Next)
+	{
 		if (fi->Type.Type == ev_bool && PrevField &&
 			PrevField->Type.Type == ev_bool &&
 			PrevField->Type.BitMask != 0x80000000)
@@ -1904,13 +1916,19 @@ void VClass::CreateVTable()
 		memcpy(ClassVTable, ParentClass->ClassVTable,
 			ParentClass->ClassNumMethods * sizeof(VMethod*));
 	}
-	for (VField* f = Fields; f; f = f->Next)
+	for (int i = 0; i < GMembers.Num(); i++)
 	{
-		if (f->Type.Type != ev_method || f->Ofs == -1)
+		if (GMembers[i]->MemberType != MEMBER_Method ||
+			GMembers[i]->Outer != this)
 		{
 			continue;
 		}
-		ClassVTable[f->Ofs] = f->Func;
+		VMethod* M = (VMethod*)GMembers[i];
+		if (M->VTableIndex == -1)
+		{
+			continue;
+		}
+		ClassVTable[M->VTableIndex] = M;
 	}
 	unguard;
 }

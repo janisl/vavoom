@@ -686,8 +686,6 @@ void SkipStruct(VClass* InClass)
 
 void CompileClass()
 {
-	VField*	fi = NULL;
-	VField*	otherfield;
 	TType		t;
 	TType		type;
 
@@ -807,26 +805,30 @@ void CompileClass()
 				ParseError("Field name expected");
 				continue;
 			}
+			VName FieldName = tk_Name;
+			TK_NextToken();
+
+			if (TK_Check(PU_LPAREN))
+			{
+				VMethod* M = (VMethod*)VMemberBase::StaticFindMember(
+					FieldName, Class, MEMBER_Method);
+				if (!M)
+					ERR_Exit(ERR_NONE, true, "Method Field not found");
+				CompileMethodDef(t, M, Class);
+				need_semicolon = false;
+				break;
+			}
+
+			VField* fi = NULL;
 			for (fi = Class->Fields; fi; fi = fi->Next)
 			{
-				if (fi->Name == tk_Name)
+				if (fi->Name == FieldName)
 				{
 					break;
 				}
 			}
 			if (!fi)
 				ERR_Exit(ERR_NONE, true, "Method Field not found");
-			otherfield = CheckForField(Class, false);
-			if (!otherfield)
-			{
-				TK_NextToken();
-			}
-			if (TK_Check(PU_LPAREN))
-			{
-				CompileMethodDef(t, fi, otherfield, Class);
-				need_semicolon = false;
-				break;
-			}
 			if (TK_Check(PU_LINDEX))
 			{
 				EvalConstExpression(Class, ev_int);
@@ -839,16 +841,7 @@ void CompileClass()
 		}
 	}
 
-	for (fi = Class->Fields; fi; fi = fi->Next)
-	{
-		if (fi->type.type == ev_method && fi->Name == NAME_None)
-		{
-			break;
-		}
-	}
-	if (!fi)
-		ERR_Exit(ERR_NONE, true, "DP Field not found");
-	CompileDefaultProperties(fi, Class);
+	CompileDefaultProperties(FindConstructor(Class), Class);
 }
 
 //==========================================================================
@@ -864,8 +857,7 @@ VField* ParseStructField(VStruct* InStruct)
 		ParseError(ERR_NOT_A_STRUCT, "Base type required.");
 		return NULL;
 	}
-//FIXME	if (InStruct->Size == -1)
-	if (!InStruct->Fields)
+	if (!InStruct->Parsed)
 	{
 		ParseError("Incomplete type.");
 		return NULL;
@@ -896,82 +888,6 @@ VField* ParseStructField(VStruct* InStruct)
 
 //==========================================================================
 //
-//	ParseClassField
-//
-//==========================================================================
-
-VField* ParseClassField(VClass* InClass)
-{
-/*FIXME	if (InClass->Size == -1)
-	{
-		ParseError("Incomplete type.");
-		return NULL;
-	}*/
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
-		return NULL;
-	}
-	for (VField* fi = InClass->Fields; fi; fi = fi->Next)
-	{
-		if (TK_Check(fi->Name))
-		{
-			if (fi->flags & FIELD_Private && InClass != SelfClass)
-			{
-				ParseError("Field %s is private", *fi->Name);
-			}
-			return fi;
-		}
-	}
-	if (InClass->ParentClass)
-	{
-		return ParseClassField(InClass->ParentClass);
-	}
-	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
-	if (tk_Token == TK_IDENTIFIER)
-	{
-		TK_NextToken();
-	}
-	return NULL;
-}
-
-//==========================================================================
-//
-//	CheckForField
-//
-//==========================================================================
-
-VField* CheckForField(VClass* InClass, bool CheckPrivate)
-{
-	if (!InClass)
-	{
-		return NULL;
-	}
-/*FIXME	if (InClass->Size == -1)
-	{
-		return NULL;
-	}*/
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		return NULL;
-	}
-	for (VField *fi = InClass->Fields; fi; fi = fi->Next)
-	{
-		if (TK_Check(fi->Name))
-		{
-			if (CheckPrivate && fi->flags & FIELD_Private &&
-				InClass != SelfClass)
-			{
-				ParseError("Field %s is private", *fi->Name);
-			}
-			return fi;
-		}
-	}
-	return CheckForField(InClass->ParentClass, CheckPrivate);
-}
-
-//==========================================================================
-//
 //	CheckForField
 //
 //==========================================================================
@@ -982,10 +898,10 @@ VField* CheckForField(VName Name, VClass* InClass, bool CheckPrivate)
 	{
 		return NULL;
 	}
-/*FIXME	if (InClass->Size == -1)
+	if (!InClass->Parsed)
 	{
 		return NULL;
-	}*/
+	}
 	if (Name == NAME_None)
 	{
 		return NULL;
@@ -1007,28 +923,56 @@ VField* CheckForField(VName Name, VClass* InClass, bool CheckPrivate)
 
 //==========================================================================
 //
-//	FindConstructor
+//	CheckForMethod
 //
 //==========================================================================
 
-VField* FindConstructor(VClass* InClass)
+VMethod* CheckForMethod(VName Name, VClass* InClass)
 {
 	if (!InClass)
 	{
 		return NULL;
 	}
-/*FIXME	if (InClass->Size == -1)
+	if (!InClass->Parsed)
 	{
 		return NULL;
-	}*/
-	for (VField *fi = InClass->Fields; fi; fi = fi->Next)
-	{
-		if (fi->type.type == ev_method && fi->Name == NAME_None)
-		{
-			return fi;
-		}
 	}
-	return FindConstructor(InClass->ParentClass);
+	if (Name == NAME_None)
+	{
+		return NULL;
+	}
+	VMethod* M = (VMethod*)VMemberBase::StaticFindMember(Name, InClass,
+		MEMBER_Method);
+	if (M)
+	{
+		return M;
+	}
+	return CheckForMethod(Name, InClass->ParentClass);
+}
+
+//==========================================================================
+//
+//	FindConstructor
+//
+//==========================================================================
+
+VMethod* FindConstructor(VClass* InClass)
+{
+	if (!InClass)
+	{
+		return NULL;
+	}
+	if (!InClass->Parsed)
+	{
+		return NULL;
+	}
+	VMethod* M = (VMethod*)VMemberBase::StaticFindMember(NAME_None, InClass,
+		MEMBER_Method);
+	if (!M)
+	{
+		ParseError("Can't find default properties of %s", *InClass->Name);
+	}
+	return M;
 }
 
 //**************************************************************************
@@ -1137,8 +1081,7 @@ void ParseStruct(VClass* InClass, bool IsVector)
 			return;
 		}
 		Struct = struct_type.Struct;
-//FIXME		if (Struct->Size != -1)
-		if (Struct->Fields)
+		if (Struct->Parsed)
 		{
 			ParseError("Struct type already completed");
 			return;
@@ -1154,6 +1097,7 @@ void ParseStruct(VClass* InClass, bool IsVector)
 		//	New struct
 		Struct = new VStruct(tk_Name, InClass ? (VMemberBase*)InClass :
 			(VMemberBase*)CurrentPackage, tk_Location);
+		Struct->Parsed = false;
 		Struct->IsVector = IsVector;
 		//  Add to types
 		TK_NextToken();
@@ -1161,7 +1105,6 @@ void ParseStruct(VClass* InClass, bool IsVector)
 
 	if (TK_Check(PU_SEMICOLON))
 	{
-//FIXME		Struct->Size = -1;
 		return;
 	}
 
@@ -1270,6 +1213,7 @@ void ParseStruct(VClass* InClass, bool IsVector)
 		}
 	}
 	Struct->StackSize = (size + 3) / 4;
+	Struct->Parsed = true;
 }
 
 //==========================================================================
@@ -1280,16 +1224,13 @@ void ParseStruct(VClass* InClass, bool IsVector)
 
 void ParseClass()
 {
-	VField*			fi;
-	VField*			otherfield;
 	TType				t;
 	TType				type;
 
 	VClass* Class = CheckForClass();
 	if (Class)
 	{
-//FIXME		if (Class->Size != -1)
-		if (Class->Fields)
+		if (Class->Parsed)
 		{
 			ParseError("Class definition already completed");
 			return;
@@ -1304,12 +1245,12 @@ void ParseClass()
 		}
 		//	New class.
 		Class = new VClass(tk_Name, CurrentPackage, tk_Location);
+		Class->Parsed = false;
 		TK_NextToken();
 	}
 
 	if (TK_Check(PU_SEMICOLON))
 	{
-//FIXME		Class->Size = -1;
 		return;
 	}
 
@@ -1322,8 +1263,7 @@ void ParseClass()
 		{
 			ParseError("Parent class type expected");
 		}
-//FIXME		else if (Parent->Size == -1)
-		else if (!Parent->Fields)
+		else if (!Parent->Parsed)
 		{
 			ParseError("Incomplete parent class");
 		}
@@ -1446,18 +1386,15 @@ void ParseClass()
 				ParseError("Field name expected");
 				continue;
 			}
-			fi = new VField(tk_Name, Class, tk_Location);
-			otherfield = CheckForField(Class, false);
-			if (otherfield)
+			VField* fi = new VField(tk_Name, Class, tk_Location);
+			if (CheckForField(tk_Name, Class, false) ||
+				CheckForMethod(tk_Name, Class))
 			{
 				ParseError("Redeclared field");
 			}
-			else
-			{
-				TK_NextToken();
-			}
+			TK_NextToken();
 			Class->AddField(fi);
-			ParseDelegate(t, fi, otherfield, Class, Flags);
+			ParseDelegate(t, fi, Class, Flags);
 			continue;
 		}
 
@@ -1482,23 +1419,27 @@ void ParseClass()
 				ParseError("Field name expected");
 				continue;
 			}
-			fi = new VField(tk_Name, Class, tk_Location);
-			otherfield = CheckForField(Class, false);
-			if (!otherfield)
-			{
-				TK_NextToken();
-			}
-			if (TK_Check(PU_LPAREN))
-			{
-				ParseMethodDef(t, fi, otherfield, Class, Modifiers);
-				Class->AddField(fi);
-				need_semicolon = false;
-				break;
-			}
-			if (otherfield)
+			VName FieldName = tk_Name;
+			TLocation FieldLoc = tk_Location;
+			TK_NextToken();
+			VMethod* BaseMethod = CheckForMethod(FieldName, Class);
+			if (CheckForField(FieldName, Class, false))
 			{
 				ParseError("Redeclared field");
 				continue;
+			}
+
+			if (TK_Check(PU_LPAREN))
+			{
+				ParseMethodDef(t, FieldName, FieldLoc, BaseMethod, Class,
+					Modifiers);
+				need_semicolon = false;
+				break;
+			}
+			VField* fi = new VField(FieldName, Class, FieldLoc);
+			if (BaseMethod)
+			{
+				ParseError("Redeclared identifier");
 			}
 			if (t.type == ev_void)
 			{
@@ -1530,7 +1471,6 @@ void ParseClass()
 		}
 	}
 
-	fi = new VField(NAME_None, Class, tk_Location);
-	ParseDefaultProperties(fi, Class);
-	Class->AddField(fi);
+	ParseDefaultProperties(Class);
+	Class->Parsed = true;
 }

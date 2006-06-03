@@ -316,7 +316,8 @@ int AddStatement(int statement, VMemberBase* Member)
 	}
 
 	if (StatementInfo[statement].Args != OPCARGS_Member &&
-		StatementInfo[statement].Args != OPCARGS_FieldOffset)
+		StatementInfo[statement].Args != OPCARGS_FieldOffset &&
+		StatementInfo[statement].Args != OPCARGS_VTableIndex)
 	{
 		ParseError("Opcode does\'t take member as argument");
 	}
@@ -1093,6 +1094,9 @@ void DumpAsmFunction(VMethod* Func)
 		case OPCARGS_FieldOffset:
 			dprintf(" %s", *Func->Instructions[s].Member->Name);
 			break;
+		case OPCARGS_VTableIndex:
+			dprintf(" %s", *Func->Instructions[s].Member->Name);
+			break;
 		case OPCARGS_TypeSize:
 			{
 				char Tmp[256];
@@ -1249,6 +1253,7 @@ void VMethod::Serialise(VStream& Strm)
 			break;
 		case OPCARGS_Member:
 		case OPCARGS_FieldOffset:
+		case OPCARGS_VTableIndex:
 			Strm << Instructions[i].Member;
 			break;
 		case OPCARGS_BranchTarget:

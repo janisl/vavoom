@@ -169,9 +169,9 @@ static TTree GetAddress(TTree op)
 //
 //==========================================================================
 
-static TTree ParseMethodCall(VField* field, bool HaveSelf, bool BaseCall)
+static TTree ParseMethodCall(VMethod* Func, VField* DelegateField,
+	bool HaveSelf, bool BaseCall)
 {
-	VMethod* Func = field->func;
 	bool DirectCall = BaseCall || (Func->Flags & FUNC_Final);
 
 	//	Determine parameter count.
@@ -200,14 +200,14 @@ static TTree ParseMethodCall(VField* field, bool HaveSelf, bool BaseCall)
 			AddStatement(OPC_LocalAddress, 0);
 			AddStatement(OPC_PushPointedPtr);
 		}
-		if (field->type.type == ev_delegate)
+		if (DelegateField)
 		{
-			AddStatement(OPC_Offset, field);
+			AddStatement(OPC_Offset, DelegateField);
 			AddStatement(OPC_PushPointedDelegate);
 		}
 		else if (!DirectCall)
 		{
-			AddStatement(OPC_PushVFunc, field);
+			AddStatement(OPC_PushVFunc, Func);
 		}
 	}
 
@@ -321,19 +321,20 @@ static TTree ParseExpressionPriority0()
 				ParseError(":: not in method");
 				break;
 			}
-			field = CheckForField(SelfClass->ParentClass);
-			if (!field)
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError("Method name expected.");
+				break;
+			}
+			VMethod* M = CheckForMethod(tk_Name, SelfClass->ParentClass);
+			if (!M)
 			{
 				ParseError("No such method %s", *tk_Name);
 				break;
 			}
-			if (field->type.type != ev_method)
-			{
-				ParseError("Not a method");
-				break;
-			}
+			TK_NextToken();
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			return ParseMethodCall(field, false, true);
+			return ParseMethodCall(M, NULL, false, true);
 		}
 		break;
 
@@ -425,10 +426,15 @@ static TTree ParseExpressionPriority0()
 
 			if (SelfClass)
 			{
-				field = CheckForField(Name, SelfClass);
-				if (field && (field->type.type == ev_method || field->type.type == ev_delegate))
+				VMethod* M = CheckForMethod(Name, SelfClass);
+				if (M)
 				{
-					return ParseMethodCall(field, false, false);
+					return ParseMethodCall(M, NULL, false, false);
+				}
+				field = CheckForField(Name, SelfClass);
+				if (field && field->type.type == ev_delegate)
+				{
+					return ParseMethodCall(field->func, field, false, false);
 				}
 			}
 
@@ -499,24 +505,25 @@ static TTree ParseExpressionPriority0()
 
 		if (SelfClass)
 		{
+			VMethod* M = CheckForMethod(Name, SelfClass);
+			if (M)
+			{
+				AddStatement(OPC_LocalAddress, 0);
+				AddStatement(OPC_PushPointedPtr);
+				AddStatement(OPC_PushVFunc, M);
+				op = TTree(ev_delegate);
+				op.Type.Function = M;
+				return op;
+			}
+
 			field = CheckForField(Name, SelfClass);
 			if (field)
 			{
 				AddStatement(OPC_LocalAddress, 0);
 				AddStatement(OPC_PushPointedPtr);
-				op = TTree(SelfType);
-				if (field->type.type == ev_method)
-				{
-					AddStatement(OPC_PushVFunc, field);
-					op = TTree(ev_delegate);
-					op.Type.Function = field->func;
-				}
-				else
-				{
-					AddStatement(OPC_Offset, field);
-					op = EmitPushPointed(field->type);
-					op.Flags = field->flags;
-				}
+				AddStatement(OPC_Offset, field);
+				op = EmitPushPointed(field->type);
+				op.Flags = field->flags;
 				return op;
 			}
 
@@ -575,55 +582,65 @@ static TTree ParseExpressionPriority1()
 			field = ParseStructField(type.Struct);
 			if (field)
 			{
-				if (field->type.type == ev_method)
-				{
-					ParseError("Pointed method");
-				}
-				else
-				{
-					AddStatement(OPC_Offset, field);
-					op = EmitPushPointed(field->type);
-					op.Flags = field->flags;
-				}
+				AddStatement(OPC_Offset, field);
+				op = EmitPushPointed(field->type);
+				op.Flags = field->flags;
 			}
 		}
 		else if (TK_Check(PU_DOT))
 		{
 			if (op.Type.type == ev_reference)
 			{
-				field = ParseClassField(op.Type.Class);
-				if (field)
+				if (tk_Token != TK_IDENTIFIER)
 				{
-					if (field->type.type == ev_method)
+					ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
+				}
+				else
+				{
+					VMethod* M = CheckForMethod(tk_Name, op.Type.Class);
+					if (M)
 					{
+						TK_NextToken();
 						if (TK_Check(PU_LPAREN))
 						{
-							op = ParseMethodCall(field, true, false);
+							op = ParseMethodCall(M, NULL, true, false);
 						}
 						else
 						{
-							AddStatement(OPC_PushVFunc, field);
+							AddStatement(OPC_PushVFunc, M);
 							op = TTree(ev_delegate);
-							op.Type.Function = field->func;
-						}
-					}
-					else if (field->type.type == ev_delegate)
-					{
-						if (TK_Check(PU_LPAREN))
-						{
-							op = ParseMethodCall(field, true, false);
-						}
-						else
-						{
-							AddStatement(OPC_Offset, field);
-							op = EmitPushPointed(field->type);
+							op.Type.Function = M;
 						}
 					}
 					else
 					{
-						AddStatement(OPC_Offset, field);
-						op = EmitPushPointed(field->type);
-						op.Flags = field->flags;
+						field = CheckForField(tk_Name, op.Type.Class);
+						if (!field)
+						{
+							ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
+						}
+						TK_NextToken();
+						if (field)
+						{
+							if (field->type.type == ev_delegate)
+							{
+								if (TK_Check(PU_LPAREN))
+								{
+									op = ParseMethodCall(field->func, field, true, false);
+								}
+								else
+								{
+									AddStatement(OPC_Offset, field);
+									op = EmitPushPointed(field->type);
+								}
+							}
+							else
+							{
+								AddStatement(OPC_Offset, field);
+								op = EmitPushPointed(field->type);
+								op.Flags = field->flags;
+							}
+						}
 					}
 				}
 			}

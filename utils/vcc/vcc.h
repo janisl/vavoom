@@ -445,6 +445,7 @@ public:
 	vint32			StackSize;
 	//	Structure fields
 	VField*			Fields;
+	bool			Parsed;
 
 	VStruct(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Struct, InName, InOuter, InLoc)
@@ -452,6 +453,7 @@ public:
 	, IsVector(false)
 	, StackSize(0)
 	, Fields(0)
+	, Parsed(true)
 	{}
 
 	void Serialise(VStream&);
@@ -500,12 +502,14 @@ public:
 	VClass*		ParentClass;
 	VField*		Fields;
 	VState*		States;
+	bool		Parsed;
 
 	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Class, InName, InOuter, InLoc)
 	, ParentClass(NULL)
 	, Fields(NULL)
 	, States(NULL)
+	, Parsed(true)
 	{}
 
 	void Serialise(VStream&);
@@ -578,19 +582,19 @@ float ConstFloatExpression();
 
 TType ParseExpression(bool = false);
 
-void ParseMethodDef(const TType&, VField*, VField*, VClass*, int);
-void ParseDelegate(const TType&, VField*, VField*, VClass*, int);
+void ParseMethodDef(const TType&, VName, TLocation, VMethod*, VClass*, int);
+void ParseDelegate(const TType&, VField*, VClass*, int);
 VMethod* ParseStateCode(VClass*, VState*);
-void ParseDefaultProperties(VField*, VClass*);
+void ParseDefaultProperties(VClass*);
 void AddConstant(VClass* InClass, VName Name, int type, int value);
 void PA_Parse();
 
 int CheckForLocalVar(VName);
 void ParseLocalVar(const TType&);
-void CompileMethodDef(const TType&, VField*, VField*, VClass*);
+void CompileMethodDef(const TType&, VMethod*, VClass*);
 void SkipDelegate(VClass*);
 void CompileStateCode(VClass*, VMethod*);
-void CompileDefaultProperties(VField*, VClass*);
+void CompileDefaultProperties(VMethod*, VClass*);
 void PA_Compile();
 
 void InitTypes();
@@ -605,12 +609,11 @@ VConstant* CheckForConstant(VClass* InClass, VName);
 void SkipStruct(VClass*);
 void CompileClass();
 VField* ParseStructField(VStruct*);
-VField* ParseClassField(VClass*);
-VField* FindConstructor(VClass*);
+VMethod* FindConstructor(VClass*);
 void ParseStruct(VClass*, bool);
 void ParseClass();
-VField* CheckForField(VClass*, bool = true);
 VField* CheckForField(VName, VClass*, bool = true);
+VMethod* CheckForMethod(VName, VClass*);
 
 void InitInfoTables();
 void ParseStates(VClass*);

@@ -179,6 +179,7 @@ public:
 	builtin_t		NativeFunc;
 	vint32			NumInstructions;
 	FInstruction*	Instructions;
+	vint16			VTableIndex;
 
 	VMethod(VName);
 	~VMethod();

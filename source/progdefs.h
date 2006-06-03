@@ -42,7 +42,6 @@ enum EType
 	ev_array,
 	ev_struct,
 	ev_vector,
-	ev_method,
 	ev_classid,
 	ev_bool,
 	ev_delegate,
@@ -89,6 +88,7 @@ enum
 	OPCARGS_Name,
 	OPCARGS_String,
 	OPCARGS_FieldOffset,
+	OPCARGS_VTableIndex,
 	OPCARGS_TypeSize,
 };
 
@@ -101,7 +101,7 @@ enum
 
 	//	Call / return
 	DECLARE_OPC(Call, Member),
-	DECLARE_OPC(PushVFunc, FieldOffset),
+	DECLARE_OPC(PushVFunc, VTableIndex),
 	DECLARE_OPC(ICall, None),
 	DECLARE_OPC(Return, None),
 	DECLARE_OPC(ReturnL, None),

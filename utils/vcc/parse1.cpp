@@ -473,8 +473,8 @@ static void SkipCompoundStatement()
 //
 //==========================================================================
 
-void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
-	VClass* InClass, int Modifiers)
+void ParseMethodDef(const TType& t, VName MName, TLocation MethodLoc,
+	VMethod* BaseMethod, VClass* InClass, int Modifiers)
 {
 	if (t.type != ev_void)
 	{
@@ -499,14 +499,13 @@ void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
 			ParseError("Currently static methods must be final.");
 		}
 	}
-	if (CheckForFunction(InClass, method->Name))
+	if (CheckForFunction(InClass, MName))
 	{
 		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			"Function: %s.%s", *InClass->Name, *method->Name);
+			"Function: %s.%s", *InClass->Name, *MName);
 	}
 
-	VMethod* Func = new VMethod(method->Name, InClass, method->Loc);
-	method->func = Func;
+	VMethod* Func = new VMethod(MName, InClass, MethodLoc);
 	Func->Flags = FuncFlags;
 	Func->ReturnType = t;
 
@@ -557,24 +556,22 @@ void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	Func->ParamsSize = localsofs;
 
-	method->type = TType(ev_method);
-	if (otherfield)
+	if (BaseMethod)
 	{
-		VMethod* BaseFunc = otherfield->func;
-		if (BaseFunc->Flags & FUNC_Final)
+		if (BaseMethod->Flags & FUNC_Final)
 		{
 			ParseError("Method already has been declared as final and cannot be overriden.");
 		}
-		if (!BaseFunc->ReturnType.Equals(Func->ReturnType))
+		if (!BaseMethod->ReturnType.Equals(Func->ReturnType))
 		{
 			ParseError("Method redefined with different return type");
 		}
-		else if (BaseFunc->NumParams != Func->NumParams)
+		else if (BaseMethod->NumParams != Func->NumParams)
 		{
 			ParseError("Method redefined with different number of arguments");
 		}
 		else for (int i = 0; i < Func->NumParams; i++)
-			if (!BaseFunc->ParamTypes[i].Equals(Func->ParamTypes[i]))
+			if (!BaseMethod->ParamTypes[i].Equals(Func->ParamTypes[i]))
 			{
 				ParseError("Type of argument %d differs from base class", i + 1);
 			}
@@ -597,8 +594,8 @@ void ParseMethodDef(const TType& t, VField* method, VField* otherfield,
 //
 //==========================================================================
 
-void ParseDelegate(const TType& t, VField* method, VField* otherfield,
-	VClass* InClass, int FuncFlags)
+void ParseDelegate(const TType& t, VField* method, VClass* InClass,
+	int FuncFlags)
 {
 	if (t.type != ev_void)
 	{
@@ -678,15 +675,11 @@ VMethod* ParseStateCode(VClass* InClass, VState* InState)
 //
 //==========================================================================
 
-void ParseDefaultProperties(VField *method, VClass* InClass)
+void ParseDefaultProperties(VClass* InClass)
 {
 	numlocaldefs = 1;
 
-	method->type = TType(ev_method);
-	method->Name = NAME_None;
-
-	VMethod* Func = new VMethod(NAME_None, InClass, method->Loc);
-	method->func = Func;
+	VMethod* Func = new VMethod(NAME_None, InClass, tk_Location);
 	Func->ReturnType = TType(ev_void);
 	Func->ParamsSize = 1;
 

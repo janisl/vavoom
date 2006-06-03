@@ -556,8 +556,7 @@ static void ParseCompoundStatement()
 //
 //==========================================================================
 
-void CompileMethodDef(const TType& t, VField* method, VField* otherfield,
-	VClass* InClass)
+void CompileMethodDef(const TType& t, VMethod* Method, VClass* InClass)
 {
 	numlocaldefs = 1;
 	localsofs = 1;
@@ -605,11 +604,7 @@ un++;
 	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	maxlocalsofs = localsofs;
 
-	VMethod* Func = CheckForFunction(InClass, method->Name);
-	if (method->func != Func)
-		ERR_Exit(ERR_NONE, true, "Found wrong function");
-
-	if (Func->Flags & FUNC_Native)
+	if (Method->Flags & FUNC_Native)
 	{
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 		return;
@@ -621,7 +616,7 @@ un++;
 	ContinueLevel = 0;
 	FuncRetType = t;
 
-	BeginCode(Func);
+	BeginCode(Method);
 	for (int i = 0; i < numlocaldefs; i++)
 	{
 		if (localdefs[i].type.type == ev_vector)
@@ -636,8 +631,8 @@ un++;
 	{
 		AddStatement(OPC_Return);
 	}
-	Func->NumLocals = maxlocalsofs;
-	EndCode(Func);
+	Method->NumLocals = maxlocalsofs;
+	EndCode(Method);
 }
 
 //==========================================================================
@@ -706,7 +701,7 @@ void CompileStateCode(VClass* InClass, VMethod* Func)
 //
 //==========================================================================
 
-void CompileDefaultProperties(VField *method, VClass* InClass)
+void CompileDefaultProperties(VMethod* Method, VClass* InClass)
 {
 	numlocaldefs = 1;
 	localsofs = 1;
@@ -718,22 +713,22 @@ void CompileDefaultProperties(VField *method, VClass* InClass)
 	ContinueLevel = 0;
 	FuncRetType = TType(ev_void);
 
-	BeginCode(method->func);
+	BeginCode(Method);
 
 	//  Call parent constructor
-	VField *pcon = FindConstructor(InClass->ParentClass);
+	VMethod* pcon = FindConstructor(InClass->ParentClass);
 	if (pcon)
 	{
 		AddStatement(OPC_LocalAddress, 0);
 		AddStatement(OPC_PushPointedPtr);
-		AddStatement(OPC_Call, pcon->func);
+		AddStatement(OPC_Call, pcon);
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
 	AddStatement(OPC_Return);
-	method->func->NumLocals = maxlocalsofs;
-	EndCode(method->func);
+	Method->NumLocals = maxlocalsofs;
+	EndCode(Method);
 }
 
 //==========================================================================
