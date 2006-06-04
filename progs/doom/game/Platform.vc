@@ -59,6 +59,7 @@ float	Wait;
 int		Status;
 int		OldStatus;
 int		Crush;
+name	StartSound;
 
 //==========================================================================
 //
@@ -71,7 +72,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 {
 	float		DestHeight;
 	TVec		Spot;
-	name		StartSound;
 
 	Sector = InSector;
 	Sector->FloorData = self;
@@ -241,7 +241,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 	}
 	if (Type != PLATEV_Toggle)
-		SectorStartSequence(Sector, StartSound);
+		StartPlatSound();
 }
 
 //==========================================================================
@@ -301,7 +301,7 @@ void Tick(float deltaTime)
 			Time = Wait;
 			Status = PLAT_Down;
 			SectorStopSequence(Sector);
-			SectorStartSequence(Sector, 'PLatform');
+			StartPlatSound();
 		}
 		else if (res == RES_PASTDEST)
 		{
@@ -373,7 +373,7 @@ void Tick(float deltaTime)
 				Status = PLAT_Up;
 			else
 				Status = PLAT_Down;
-			SectorStartSequence(Sector, 'Platform');
+			StartPlatSound();
 		}
 		break;
 
@@ -382,32 +382,25 @@ void Tick(float deltaTime)
 	}
 }
 
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void StartPlatSound()
+{
+	if (Sector->seqType >= 0)
+	{
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
+			SEQ_Platform));
+	}
+	else
+	{
+		SectorStartSequence(Sector, StartSound);
+	}
+}
+
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.7  2006/02/19 14:19:33  dj_jl
-//  Some changes because of compiler changes.
-//
-//  Revision 1.6  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.5  2005/11/20 15:48:53  dj_jl
-//  Using sound sequences.
-//
-//  Revision 1.4  2005/11/17 23:05:22  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.3  2005/03/16 15:04:20  dj_jl
-//  More work on line specials.
-//
-//  Revision 1.2  2005/03/01 14:39:31  dj_jl
-//  Big update of line specials.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

@@ -1,5 +1,5 @@
 //**************************************************************************
-//**
+// //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
 //**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
@@ -31,6 +31,7 @@ int			Direction;		// 1 = up, 0 = waiting, -1 = down
 float		TopWait;		// time to wait at the top
 float		TopTime;		// (keep in case a door going down is reset)
 							// when it reaches 0, start going down
+name		OpenSound;
 name		CloseSound;
 line_t*		Line;
 
@@ -79,45 +80,44 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 void StartAnim()
 {
 	int		texTop;
-	name	opensound;
 
-	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;	
+	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;
 	if (texTop == TextureNumForName('doraln01'))
 	{
-		opensound = 'DoorOpenAirlock';
+		OpenSound = 'DoorOpenAirlock';
 		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName('dorchn01'))
 	{
-		opensound = 'DoorOpenChain';
+		OpenSound = 'DoorOpenChain';
 		CloseSound = 'DoorCloseChain';
 	}
 	else if (texTop == TextureNumForName('dorcrg01'))
 	{
-		opensound = 'DoorOpenSmallMetal';
+		OpenSound = 'DoorOpenSmallMetal';
 		CloseSound = 'DoorCloseSmallMetal';
 	}
 	else if (texTop == TextureNumForName('dorirs01'))
 	{
-		opensound = 'DoorOpenAirlock';
+		OpenSound = 'DoorOpenAirlock';
 		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName('dorqtr01'))
 	{
-		opensound = 'DoorOpenAirlock';
+		OpenSound = 'DoorOpenAirlock';
 		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName('dorstn01'))
 	{
-		opensound = 'DoorOpenStone';
+		OpenSound = 'DoorOpenStone';
 		CloseSound = 'DoorCloseStone';
 	}
 	else
 	{
-		opensound = 'DoorOpenLargeMetal';
+		OpenSound = 'DoorOpenLargeMetal';
 		CloseSound = 'DoorCloseLargeMetal';
 	}
-	SectorStartSequence(Sector, opensound);
+	StartDoorSound(true);
 	SetAnimTexture(texTop);
 }
 
@@ -167,7 +167,7 @@ void Tick(float deltaTime)
 		{
 			TopTime = 0.0;
 			Direction = -1;	// time to go back down
-			SectorStartSequence(Sector, CloseSound);
+			StartDoorSound(false);
 		}
 		break;
 
@@ -231,41 +231,28 @@ void SetAnimTexture(int NewTex)
 	}
 }
 
+//==========================================================================
+//
+//	SetAnimTexture
+//
+//==========================================================================
+
+void StartDoorSound(bool bOpen)
+{
+	if (Sector->seqType >= 0)
+	{
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+	}
+	else if (bOpen)
+	{
+		SectorStartSequence(Sector, OpenSound);
+	}
+	else
+	{
+		SectorStartSequence(Sector, CloseSound);
+	}
+}
+
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.10  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.9  2006/04/05 17:30:07  dj_jl
-//  Better way of setting current animation texture.
-//
-//  Revision 1.8  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.7  2005/11/20 12:55:21  dj_jl
-//  Using sound sequences.
-//
-//  Revision 1.6  2005/11/19 13:43:51  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.5  2005/03/28 07:45:29  dj_jl
-//  Some Boom line specials, fixed multiple bugs.
-//
-//  Revision 1.4  2005/03/01 14:39:33  dj_jl
-//  Big update of line specials.
-//
-//  Revision 1.3  2004/12/22 07:56:47  dj_jl
-//  Fully working Strife support.
-//
-//  Revision 1.2  2004/10/18 06:36:11  dj_jl
-//  Beautification.
-//
-//  Revision 1.1  2004/10/13 06:41:13  dj_jl
-//  Implemented animated doors.
-//
-//**************************************************************************

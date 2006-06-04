@@ -54,7 +54,7 @@ void Tick(float deltaTime)
 		{
 			time = 0.0;
 			poly = GetPolyobj(polyobj);
-			PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 		}
 		return;
 	}
@@ -107,7 +107,8 @@ void Tick(float deltaTime)
 				xSpeed = -xSpeed;
 				ySpeed = -ySpeed;
 				bClose = false;
-				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+				PolyobjStartSequence(poly, GetSeqTrans(poly->seqType,
+					SEQ_Door));
 			}
 		}
 		break;
@@ -157,7 +158,8 @@ void Tick(float deltaTime)
 				dist = totalDist - dist;
 				speed = -speed;
 				bClose = false;
-				PolyobjStartSequence(poly, POLY_SEQ_NAME(poly->seqType));
+				PolyobjStartSequence(poly, GetSeqTrans(poly->seqType,
+					SEQ_Door));
 			}
 		}
 		break;
@@ -170,14 +172,3 @@ void Tick(float deltaTime)
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2005/07/07 17:35:36  dj_jl
-//  Polyobj door distance fix.
-//
-//  Revision 1.1  2002/10/26 16:32:23  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

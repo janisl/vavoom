@@ -121,7 +121,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		CeilingDestDist = DotProduct(Sector->ceiling.normal, Spot);
 		break;
 	}
-//	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	StartFloorSound();
 }
 
 //==========================================================================
@@ -163,20 +163,25 @@ void Tick(float DeltaTime)
 	}
 }
 
+//==========================================================================
+//
+//	StartFloorSound
+//
+//==========================================================================
+
+void StartFloorSound()
+{
+	if (Sector->seqType >= 0)
+	{
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
+			SEQ_Platform));
+	}
+	else
+	{
+		SectorStartSequence(Sector, 'Floor');
+	}
+}
+
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2006/02/19 14:19:33  dj_jl
-//  Some changes because of compiler changes.
-//
-//  Revision 1.2  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.1  2005/03/16 15:04:20  dj_jl
-//  More work on line specials.
-//
-//**************************************************************************

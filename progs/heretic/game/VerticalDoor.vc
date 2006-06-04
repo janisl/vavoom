@@ -65,7 +65,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		SectorStartSequence(Sector, 'DoorCloseNormal');
+		StartDoorSound(false);
 		break;
 
 	case DOOREV_CloseWaitOpen:
@@ -73,7 +73,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		TopHeight = Sector->ceiling.dist;
 		TopWait *= 4.0;
 		Direction = -1;
-		SectorStartSequence(Sector, 'DoorCloseNormal');
+		StartDoorSound(false);
 		break;
 
 	case DOOREV_Raise:
@@ -106,7 +106,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = 1;
 		if (TopHeight != Sector->ceilingheight)
 		{
-			SectorStartSequence(Sector, 'DoorOpenNormal');
+			StartDoorSound(true);
 		}
 		break;
 
@@ -212,11 +212,11 @@ void Tick(float deltaTime)
 			{
 			case DOOREV_Raise:
 				Direction = -1;	// time to go back down
-				SectorStartSequence(Sector, 'DoorCloseNormal');
+				StartDoorSound(false);
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 1;
-				SectorStartSequence(Sector, 'DoorOpenNormal');
+				StartDoorSound(true);
 				break;
 			default:
 				break;
@@ -233,7 +233,7 @@ void Tick(float deltaTime)
 			case DOOREV_RaiseIn5Mins:
 				Direction = 1;
 				Type = DOOREV_Raise;
-				SectorStartSequence(Sector, 'DoorOpenNormal');
+				StartDoorSound(true);
 				break;
 			default:
 				break;
@@ -276,7 +276,7 @@ void Tick(float deltaTime)
 				break;
 			default:
 				Direction = 1;
-				SectorStartSequence(Sector, 'DoorOpenNormal');
+				StartDoorSound(true);
 				break;
 			}
 		}
@@ -370,36 +370,28 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 	}
 }
 
+//==========================================================================
+//
+//  StartDoorSound
+//
+//==========================================================================
+
+void StartDoorSound(bool bOpen)
+{
+	if (Sector->seqType >= 0)
+	{
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+	}
+	else if (bOpen)
+	{
+		SectorStartSequence(Sector, 'DoorOpenNormal');
+	}
+	else
+	{
+		SectorStartSequence(Sector, 'DoorCloseNormal');
+	}
+}
+
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.8  2006/02/15 23:33:11  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.7  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.6  2005/12/27 22:22:28  dj_jl
-//  Created level info class, moved action special handling to it.
-//
-//  Revision 1.5  2005/11/20 13:57:25  dj_jl
-//  Using sound sequences.
-//
-//  Revision 1.4  2005/11/18 23:36:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.3  2005/03/01 14:39:32  dj_jl
-//  Big update of line specials.
-//
-//  Revision 1.2  2005/01/25 17:45:13  dj_jl
-//  Constants for common line specials
-//  Updated special utilites.
-//
-//  Revision 1.1  2002/10/26 16:32:23  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

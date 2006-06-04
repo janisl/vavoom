@@ -162,7 +162,7 @@ void QueueInit(sector_t* InSector, int InType, float InHeight, int InStairsType,
 		Speed = StairSpeed * (QueueHeight - StairStartHeight) / StairStepDelta;
 		break;
 	}
-//	SectorStartSequence(Sector, seq_name[SEQ_PLATFORM + Sector->seqType]);
+	StartFloorSound();
 }
 
 //==========================================================================
@@ -235,6 +235,25 @@ void ProcessStairSector()
 		{
 			QueueStairSector(tsec, QueueHeight);
 		}
+	}
+}
+
+//==========================================================================
+//
+//	StartFloorSound
+//
+//==========================================================================
+
+void StartFloorSound()
+{
+	if (Sector->seqType >= 0)
+	{
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
+			SEQ_Platform));
+	}
+	else
+	{
+		SectorStartSequence(Sector, 'Floor');
 	}
 }
 

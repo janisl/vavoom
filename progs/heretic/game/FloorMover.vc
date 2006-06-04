@@ -332,7 +332,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		break;
 	}
-	SectorStartSequence(Sector, 'Floor');
+	StartFloorSound('Floor');
 }
 
 //==========================================================================
@@ -373,7 +373,7 @@ void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	//	Reset.
 	ResetTime = itof(Arg5) / 35.0;
 	OrgDist = Sector->floor.dist;
-	SectorStartSequence(Sector, 'FloorStairStep');
+	StartFloorSound('FloorStairStep');
 }
 
 //==========================================================================
@@ -399,7 +399,7 @@ void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
 	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	SectorStartSequence(Sector, 'Floor');
+	StartFloorSound('Floor');
 }
 
 //==========================================================================
@@ -423,7 +423,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	SectorStartSequence(Sector, 'Floor');
+	StartFloorSound('Floor');
 }
 
 //==========================================================================
@@ -477,7 +477,7 @@ void Tick(float deltaTime)
 				Delay = 0.0;
 				StepTime = 0.0;
 				PerStepTime = 0.0;
-				SectorStartSequence(Sector, 'FloorStairStep');
+				StartFloorSound('FloorStairStep');
 			}
 		}
 		if (PauseTime)
@@ -537,32 +537,25 @@ void Tick(float deltaTime)
 	}
 }
 
+//==========================================================================
+//
+//	StartFloorSound
+//
+//==========================================================================
+
+void StartFloorSound(name DefaultSeqName)
+{
+	if (Sector->seqType >= 0)
+	{
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
+			SEQ_Platform));
+	}
+	else
+	{
+		SectorStartSequence(Sector, DefaultSeqName);
+	}
+}
+
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.7  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.6  2005/11/20 13:57:25  dj_jl
-//  Using sound sequences.
-//
-//  Revision 1.5  2005/11/18 23:36:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.4  2005/03/28 07:43:29  dj_jl
-//  Some Boom line specials and other improvements.
-//
-//  Revision 1.3  2005/03/01 14:39:32  dj_jl
-//  Big update of line specials.
-//
-//  Revision 1.2  2004/11/22 07:36:25  dj_jl
-//  Implemented all sector specials in all games.
-//
-//  Revision 1.1  2002/10/26 16:32:22  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

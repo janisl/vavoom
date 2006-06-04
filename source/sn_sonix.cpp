@@ -411,6 +411,11 @@ void SN_SetSeqTrans(VName Name, int Num, int SeqType)
 VName SN_GetSeqTrans(int Num, int SeqType)
 {
 	guard(SN_GetSeqTrans);
+	if (Num < 0)
+	{
+		//	If not assigned, use 0 as default.
+		Num = 0;
+	}
 	if (SeqTrans[(Num & 63) + SeqType * 64] < 0)
 	{
 		return NAME_None;

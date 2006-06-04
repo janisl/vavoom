@@ -4209,6 +4209,13 @@ void SpawnMapThing(mthing_t * mthing)
 		return;
 	}
 
+	if (mthing->type >= 1400 && mthing->type < 1410)
+	{
+		XLevel.PointInSector(vector(mthing->x,
+			mthing->y, 0.0))->seqType = mthing->type - 1400;
+		return;
+	}
+
 	// Check current game type with spawn flags
 	if (Game.netgame == false)
 	{

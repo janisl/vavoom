@@ -427,7 +427,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->ceilingheight = ceilingheight;
 		ss->special = special;
 		ss->tag = tag;
-		ss->seqType = 0;//SEQTYPE_STONE; // default seqType
+		ss->seqType = -1;	// default seqType
 
 		ss->base_floorheight = ss->floor.dist;
 		ss->base_ceilingheight = ss->ceiling.dist;

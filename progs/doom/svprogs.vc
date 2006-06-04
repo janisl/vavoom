@@ -32,9 +32,6 @@
 import shared;
 import svcommon;
 
-//#define POLY_SEQ_NAME(num)		va("Sequence%d", num)
-#define POLY_SEQ_NAME(num)		'Sequence0'
-
 //
 // Map things flags
 //
