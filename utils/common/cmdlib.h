@@ -73,6 +73,14 @@ namespace VavoomUtils {
 
 // MACROS ------------------------------------------------------------------
 
+#define MIN_VINT8	((vint8)-128)
+#define MIN_VINT16	((vint16)-32768)
+#define MIN_VINT32	((vint32)-2147483648)
+
+#define MAX_VINT8	((vint8)0x7f)
+#define MAX_VINT16	((vint16)0x7fff)
+#define MAX_INT32	((vint32)0x7fffffff)
+
 // TYPES -------------------------------------------------------------------
 
 typedef int					boolean;	//	Must be 4 bytes long
@@ -131,35 +139,3 @@ inline void Delete(void *ptr)
 } // namespace VavoomUtils
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/02/27 21:22:52  dj_jl
-//	Added definitions for common integer types.
-//
-//	Revision 1.9  2006/02/10 22:17:21  dj_jl
-//	Some platform fixes.
-//	
-//	Revision 1.8  2002/08/24 14:41:32  dj_jl
-//	Removed usage of the iostream.
-//	
-//	Revision 1.7  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/12/27 17:42:07  dj_jl
-//	Added FixupPath
-//	
-//	Revision 1.5  2001/12/12 19:18:07  dj_jl
-//	Added Realloc
-//	
-//	Revision 1.4  2001/09/12 17:28:38  dj_jl
-//	Created glVIS plugin
-//	
-//	Revision 1.3  2001/08/21 17:51:21  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

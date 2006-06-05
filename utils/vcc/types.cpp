@@ -1345,6 +1345,10 @@ void ParseClass()
 				{
 					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 				}
+				if (t.type != ev_int && t.type != ev_float)
+				{
+					ParseError("Unsupported type of constant");
+				}
 				VName Name = tk_Name;
 				TK_NextToken();
 				if (!TK_Check(PU_ASSIGN))

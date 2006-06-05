@@ -117,7 +117,14 @@ static TTree EmitPushPointed(const TType& type)
 		break;
 
 	case ev_bool:
-		AddStatement(OPC_PushBool, type.bit_mask);
+		if (type.bit_mask & 0x000000ff)
+			AddStatement(OPC_PushBool0, type.bit_mask);
+		else if (type.bit_mask & 0x0000ff00)
+			AddStatement(OPC_PushBool1, type.bit_mask >> 8);
+		else if (type.bit_mask & 0x00ff0000)
+			AddStatement(OPC_PushBool2, type.bit_mask >> 16);
+		else
+			AddStatement(OPC_PushBool3, type.bit_mask >> 24);
 		break;
 
 	case ev_delegate:
@@ -151,9 +158,10 @@ static TTree GetAddress(TTree op)
 		ParseError("Tried to assign to a read-only field");
 	}
 	int Opc = UndoStatement();
-	if (Opc != OPC_VPushPointed && Opc != OPC_PushBool &&
-		Opc != OPC_PushPointed && Opc != OPC_PushPointedPtr &&
-		Opc != OPC_PushPointedDelegate)
+	if (Opc != OPC_VPushPointed && Opc != OPC_PushBool0 &&
+		Opc != OPC_PushBool1 && Opc != OPC_PushBool2 &&
+		Opc != OPC_PushBool3 && Opc != OPC_PushPointed &&
+		Opc != OPC_PushPointedPtr && Opc != OPC_PushPointedDelegate)
 	{
 		ParseError("Bad address operation %d", Opc);
 		return op;
@@ -161,6 +169,26 @@ static TTree GetAddress(TTree op)
 	op.Type = MakePointerType(op.RealType);
 	op.RealType = TType(ev_void);
 	return op;
+}
+
+//==========================================================================
+//
+//	ParseMethodCall
+//
+//==========================================================================
+
+static void EmitPushNumber(int Val)
+{
+	if (Val == 0)
+		AddStatement(OPC_PushNumber0);
+	else if (Val == 1)
+		AddStatement(OPC_PushNumber1);
+	else if (Val >= 0 && Val < 256)
+		AddStatement(OPC_PushNumberB, Val);
+	else if (Val >= MIN_VINT16 && Val <= MAX_VINT16)
+		AddStatement(OPC_PushNumberS, Val);
+	else
+		AddStatement(OPC_PushNumber, Val);
 }
 
 //==========================================================================
@@ -197,7 +225,7 @@ static TTree ParseMethodCall(VMethod* Func, VField* DelegateField,
 	{
 		if (!HaveSelf)
 		{
-			AddStatement(OPC_LocalAddress, 0);
+			AddStatement(OPC_LocalAddress0);
 			AddStatement(OPC_PushPointedPtr);
 		}
 		if (DelegateField)
@@ -245,7 +273,7 @@ static TTree ParseMethodCall(VMethod* Func, VField* DelegateField,
 	}
 	if (Func->Flags & FUNC_VarArgs)
 	{
-		AddStatement(OPC_PushNumber, argsize / 4 - num_needed_params);
+		EmitPushNumber(argsize / 4 - num_needed_params);
 		if (!DirectCall)
 		{
 			AddStatement(OPC_Swap);
@@ -287,7 +315,7 @@ static TTree ParseExpressionPriority0()
 	switch (tk_Token)
 	{
 	case TK_INTEGER:
-		AddStatement(OPC_PushNumber, tk_Number);
+		EmitPushNumber(tk_Number);
 		TK_NextToken();
 		return TTree(ev_int);
 
@@ -364,7 +392,7 @@ static TTree ParseExpressionPriority0()
 			}
 			else
 			{
-				AddStatement(OPC_LocalAddress, 0);
+				AddStatement(OPC_LocalAddress0);
 				AddStatement(OPC_PushPointedPtr);
 				op = TTree(SelfType);
 				return op;
@@ -384,13 +412,13 @@ static TTree ParseExpressionPriority0()
 		}
 		if (TK_Check(KW_TRUE))
 		{
-			AddStatement(OPC_PushNumber, 1);
+			AddStatement(OPC_PushNumber1);
 			op = TTree(ev_int);
 			return op;
 		}
 		if (TK_Check(KW_FALSE))
 		{
-			AddStatement(OPC_PushNumber, 0);
+			AddStatement(OPC_PushNumber0);
 			op = TTree(ev_int);
 			return op;
 		}
@@ -457,7 +485,7 @@ static TTree ParseExpressionPriority0()
 				if (Const)
 				{
 					TK_NextToken();
-					AddStatement(OPC_PushNumber, Const->value);
+					EmitPushNumber(Const->value);
 					op = TTree((EType)Const->Type);
 					return op;
 				}
@@ -490,7 +518,28 @@ static TTree ParseExpressionPriority0()
 		num = CheckForLocalVar(Name);
 		if (num)
 		{
-			AddStatement(OPC_LocalAddress, localdefs[num].ofs);
+			if (localdefs[num].ofs == 0)
+				AddStatement(OPC_LocalAddress0);
+			else if (localdefs[num].ofs == 1)
+				AddStatement(OPC_LocalAddress1);
+			else if (localdefs[num].ofs == 2)
+				AddStatement(OPC_LocalAddress2);
+			else if (localdefs[num].ofs == 3)
+				AddStatement(OPC_LocalAddress3);
+			else if (localdefs[num].ofs == 4)
+				AddStatement(OPC_LocalAddress4);
+			else if (localdefs[num].ofs == 5)
+				AddStatement(OPC_LocalAddress5);
+			else if (localdefs[num].ofs == 6)
+				AddStatement(OPC_LocalAddress6);
+			else if (localdefs[num].ofs == 7)
+				AddStatement(OPC_LocalAddress7);
+			else if (localdefs[num].ofs < 256)
+				AddStatement(OPC_LocalAddressB, localdefs[num].ofs);
+			else if (localdefs[num].ofs < MAX_VINT16)
+				AddStatement(OPC_LocalAddressS, localdefs[num].ofs);
+			else
+				AddStatement(OPC_LocalAddress, localdefs[num].ofs);
 			op = EmitPushPointed(localdefs[num].type);
 			return op;
 		}
@@ -498,7 +547,7 @@ static TTree ParseExpressionPriority0()
 		Const = CheckForConstant(SelfClass, Name);
 		if (Const)
 		{
-			AddStatement(OPC_PushNumber, Const->value);
+			EmitPushNumber(Const->value);
 			op = TTree((EType)Const->Type);
 			return op;
 		}
@@ -508,7 +557,7 @@ static TTree ParseExpressionPriority0()
 			VMethod* M = CheckForMethod(Name, SelfClass);
 			if (M)
 			{
-				AddStatement(OPC_LocalAddress, 0);
+				AddStatement(OPC_LocalAddress0);
 				AddStatement(OPC_PushPointedPtr);
 				AddStatement(OPC_PushVFunc, M);
 				op = TTree(ev_delegate);
@@ -519,7 +568,7 @@ static TTree ParseExpressionPriority0()
 			field = CheckForField(Name, SelfClass);
 			if (field)
 			{
-				AddStatement(OPC_LocalAddress, 0);
+				AddStatement(OPC_LocalAddress0);
 				AddStatement(OPC_PushPointedPtr);
 				AddStatement(OPC_Offset, field);
 				op = EmitPushPointed(field->type);
@@ -1481,7 +1530,14 @@ static TTree ParseExpressionPriority14()
 		}
 		else if (type.type == ev_bool && op2.Type.type == ev_int)
 		{
-			AddStatement(OPC_AssignBool, type.bit_mask);
+			if (type.bit_mask & 0x000000ff)
+				AddStatement(OPC_AssignBool0, type.bit_mask);
+			else if (type.bit_mask & 0x0000ff00)
+				AddStatement(OPC_AssignBool1, type.bit_mask >> 8);
+			else if (type.bit_mask & 0x00ff0000)
+				AddStatement(OPC_AssignBool2, type.bit_mask >> 16);
+			else
+				AddStatement(OPC_AssignBool3, type.bit_mask >> 24);
 		}
 		else if (type.type == ev_delegate && op2.Type.type == ev_delegate)
 		{
@@ -1489,7 +1545,7 @@ static TTree ParseExpressionPriority14()
 		}
 		else if (type.type == ev_delegate && op2.Type.type == ev_reference && op2.Type.Class == NULL)
 		{
-			AddStatement(OPC_PushNumber, 0);
+			AddStatement(OPC_PushNull);
 			AddStatement(OPC_AssignDelegate);
 		}
 		else

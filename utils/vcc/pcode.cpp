@@ -238,6 +238,8 @@ int AddStatement(int statement, int parm1)
 	}
 
 	if (StatementInfo[statement].Args != OPCARGS_BranchTarget &&
+		StatementInfo[statement].Args != OPCARGS_Byte &&
+		StatementInfo[statement].Args != OPCARGS_Short &&
 		StatementInfo[statement].Args != OPCARGS_Int &&
 		StatementInfo[statement].Args != OPCARGS_String)
 	{
@@ -367,7 +369,9 @@ int AddStatement(int statement, int parm1, int parm2)
 		dprintf("AddStatement in pass 1\n");
 	}
 
-	if (StatementInfo[statement].Args != OPCARGS_IntBranchTarget)
+	if (StatementInfo[statement].Args != OPCARGS_ByteBranchTarget &&
+		StatementInfo[statement].Args != OPCARGS_ShortBranchTarget &&
+		StatementInfo[statement].Args != OPCARGS_IntBranchTarget)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode does\'t take 2 params");
 	}
@@ -1038,6 +1042,7 @@ void PC_WriteObject(char *name)
 	{
 		dprintf("%-16s %d\n", StatementInfo[i].name, StatementInfo[i].usecount);
 	}
+	dprintf("%d opcodes\n", NUM_OPCODES);
 #endif
 }
 
@@ -1077,9 +1082,13 @@ void DumpAsmFunction(VMethod* Func)
 		case OPCARGS_BranchTarget:
 			dprintf(" %6d", Func->Instructions[s].Arg1);
 			break;
+		case OPCARGS_ByteBranchTarget:
+		case OPCARGS_ShortBranchTarget:
 		case OPCARGS_IntBranchTarget:
 			dprintf(" %6d, %6d", Func->Instructions[s].Arg1, Func->Instructions[s].Arg2);
 			break;
+		case OPCARGS_Byte:
+		case OPCARGS_Short:
 		case OPCARGS_Int:
 			dprintf(" %6d (%x)", Func->Instructions[s].Arg1, Func->Instructions[s].Arg1);
 			break;
@@ -1259,12 +1268,16 @@ void VMethod::Serialise(VStream& Strm)
 		case OPCARGS_BranchTarget:
 			Strm << Instructions[i].Arg1;
 			break;
+		case OPCARGS_ByteBranchTarget:
+		case OPCARGS_ShortBranchTarget:
 		case OPCARGS_IntBranchTarget:
-			Strm << Instructions[i].Arg1;
+			Strm << STRM_INDEX(Instructions[i].Arg1);
 			Strm << Instructions[i].Arg2;
 			break;
+		case OPCARGS_Byte:
+		case OPCARGS_Short:
 		case OPCARGS_Int:
-			Strm << Instructions[i].Arg1;
+			Strm << STRM_INDEX(Instructions[i].Arg1);
 			break;
 		case OPCARGS_Name:
 			Strm << Instructions[i].NameArg;

@@ -186,10 +186,13 @@ public:
 
 	void Serialise(VStream&);
 	void PostLoad();
-	void CompileCode();
 
 	friend inline VStream& operator<<(VStream& Strm, VMethod*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
+
+private:
+	void CompileCode();
+	void OptimiseInstructions();
 };
 
 //==========================================================================

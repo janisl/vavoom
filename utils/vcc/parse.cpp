@@ -405,8 +405,22 @@ static void ParseStatement()
 				FixupJump(switcherAddrPtr);
 				for (i = 0; i < numcases; i++)
 				{
-					AddStatement(OPC_CaseGoto, CaseInfo[i].value,
-						CaseInfo[i].address);
+					if (CaseInfo[i].value >= 0 && CaseInfo[i].value < 256)
+					{
+						AddStatement(OPC_CaseGotoB, CaseInfo[i].value,
+							CaseInfo[i].address);
+					}
+					else if (CaseInfo[i].value >= MIN_VINT16 &&
+						CaseInfo[i].value < MAX_VINT16)
+					{
+						AddStatement(OPC_CaseGotoS, CaseInfo[i].value,
+							CaseInfo[i].address);
+					}
+					else
+					{
+						AddStatement(OPC_CaseGoto, CaseInfo[i].value,
+							CaseInfo[i].address);
+					}
 				}
 				AddStatement(OPC_Drop);
 
@@ -495,7 +509,28 @@ void ParseLocalVar(const TType& type)
 		//  Initialisation
 		else if (TK_Check(PU_ASSIGN))
 		{
-			AddStatement(OPC_LocalAddress, localsofs);
+			if (localsofs == 0)
+				AddStatement(OPC_LocalAddress0);
+			else if (localsofs == 1)
+				AddStatement(OPC_LocalAddress1);
+			else if (localsofs == 2)
+				AddStatement(OPC_LocalAddress2);
+			else if (localsofs == 3)
+				AddStatement(OPC_LocalAddress3);
+			else if (localsofs == 4)
+				AddStatement(OPC_LocalAddress4);
+			else if (localsofs == 5)
+				AddStatement(OPC_LocalAddress5);
+			else if (localsofs == 6)
+				AddStatement(OPC_LocalAddress6);
+			else if (localsofs == 7)
+				AddStatement(OPC_LocalAddress7);
+			else if (localsofs < 256)
+				AddStatement(OPC_LocalAddressB, localsofs);
+			else if (localsofs <= MAX_VINT16)
+				AddStatement(OPC_LocalAddressS, localsofs);
+			else
+				AddStatement(OPC_LocalAddress, localsofs);
 			TType t1 = ParseExpression();
 			t1.CheckMatch(t);
 			if (t1.type == ev_vector)
@@ -719,7 +754,7 @@ void CompileDefaultProperties(VMethod* Method, VClass* InClass)
 	VMethod* pcon = FindConstructor(InClass->ParentClass);
 	if (pcon)
 	{
-		AddStatement(OPC_LocalAddress, 0);
+		AddStatement(OPC_LocalAddress0);
 		AddStatement(OPC_PushPointedPtr);
 		AddStatement(OPC_Call, pcon);
 	}

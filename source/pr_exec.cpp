@@ -194,7 +194,8 @@ VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
 #define PR_VM_DEFAULT		default:
 #endif
 
-#define ReadInt32(ip)		(*(int*)(ip))
+#define ReadInt16(ip)		(*(vint16*)(ip))
+#define ReadInt32(ip)		(*(vint32*)(ip))
 #define ReadPtr(ip)			(*(void**)(ip))
 
 static void RunFunction(VMethod *func)
@@ -221,7 +222,7 @@ static void RunFunction(VMethod *func)
 	memset(sp, 0, (func->NumLocals - func->NumParms) * sizeof(VStack));
 	sp += func->NumLocals - func->NumParms;
 
-	ip = (vuint8*)func->Statements.Ptr();
+	ip = func->Statements.Ptr();
 
 	//
 	//	The main function loop
@@ -253,8 +254,14 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_PushVFunc)
-			sp[0].p = ((VObject*)sp[-1].p)->GetVFunction(ReadInt32(ip + 1));
-			ip += 5;
+			sp[0].p = ((VObject*)sp[-1].p)->GetVFunction(ReadInt16(ip + 1));
+			ip += 3;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushVFuncB)
+			sp[0].p = ((VObject*)sp[-1].p)->GetVFunction(ip[1]);
+			ip += 2;
 			sp++;
 			PR_VM_BREAK;
 
@@ -283,18 +290,102 @@ func_loop:
 			pr_stackPtr = local_vars + 3;
 			return;
 
+		PR_VM_CASE(OPC_GotoB)
+			ip += ip[1];
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_GotoNB)
+			ip -= ip[1];
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_GotoS)
+			ip += ReadInt16(ip + 1);
+			PR_VM_BREAK;
+
 		PR_VM_CASE(OPC_Goto)
-			ip = (vuint8*)ReadPtr(ip + 1);
+			ip += ReadInt32(ip + 1);
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfGotoB)
+			if (sp[-1].i)
+			{
+				ip += ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfGotoNB)
+			if (sp[-1].i)
+			{
+				ip -= ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfGotoS)
+			if (sp[-1].i)
+			{
+				ip += ReadInt16(ip + 1);
+			}
+			else
+			{
+				ip += 3;
+			}
+			sp--;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_IfGoto)
 			if (sp[-1].i)
 			{
-				ip = (vuint8*)ReadPtr(ip + 1);
+				ip += ReadInt32(ip + 1);
 			}
 			else
 			{
-				ip += 1 + sizeof(void*);
+				ip += 5;
+			}
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfNotGotoB)
+			if (!sp[-1].i)
+			{
+				ip += ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfNotGotoNB)
+			if (!sp[-1].i)
+			{
+				ip -= ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfNotGotoS)
+			if (!sp[-1].i)
+			{
+				ip += ReadInt16(ip + 1);
+			}
+			else
+			{
+				ip += 3;
 			}
 			sp--;
 			PR_VM_BREAK;
@@ -302,47 +393,161 @@ func_loop:
 		PR_VM_CASE(OPC_IfNotGoto)
 			if (!sp[-1].i)
 			{
-				ip = (vuint8*)ReadPtr(ip + 1);
+				ip += ReadInt32(ip + 1);
 			}
 			else
 			{
-				ip += 1 + sizeof(void*);
+				ip += 5;
 			}
 			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfTopGotoB)
+			if (sp[-1].i)
+			{
+				ip += ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfTopGotoNB)
+			if (sp[-1].i)
+			{
+				ip -= ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfTopGotoS)
+			if (sp[-1].i)
+			{
+				ip += ReadInt16(ip + 1);
+			}
+			else
+			{
+				ip += 3;
+			}
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_IfTopGoto)
 			if (sp[-1].i)
 			{
-				ip = (vuint8*)ReadPtr(ip + 1);
+				ip += ReadInt32(ip + 1);
 			}
 			else
 			{
-				ip += 1 + sizeof(void*);
+				ip += 5;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfNotTopGotoB)
+			if (!sp[-1].i)
+			{
+				ip += ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfNotTopGotoNB)
+			if (!sp[-1].i)
+			{
+				ip -= ip[1];
+			}
+			else
+			{
+				ip += 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_IfNotTopGotoS)
+			if (!sp[-1].i)
+			{
+				ip += ReadInt16(ip + 1);
+			}
+			else
+			{
+				ip += 3;
 			}
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_IfNotTopGoto)
 			if (!sp[-1].i)
 			{
-				ip = (vuint8*)ReadPtr(ip + 1);
+				ip += ReadInt32(ip + 1);
 			}
 			else
 			{
-				ip += 1 + sizeof(void*);
+				ip += 5;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_CaseGotoB)
+			if (ip[1] == sp[-1].i)
+			{
+				ip += ReadInt16(ip + 2);
+				sp--;
+			}
+			else
+			{
+				ip += 4;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_CaseGotoS)
+			if (ReadInt16(ip + 1) == sp[-1].i)
+			{
+				ip += ReadInt16(ip + 3);
+				sp--;
+			}
+			else
+			{
+				ip += 5;
 			}
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_CaseGoto)
 			if (ReadInt32(ip + 1) == sp[-1].i)
 			{
-				ip = (vuint8*)ReadPtr(ip + 5);
+				ip += ReadInt16(ip + 5);
 				sp--;
 			}
 			else
 			{
-				ip += 5 + sizeof(void*);
+				ip += 7;
 			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushNumber0)
+			ip++;
+			sp->i = 0;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushNumber1)
+			ip++;
+			sp->i = 1;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushNumberB)
+			sp->i = ip[1];
+			ip += 2;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushNumberS)
+			sp->i = ReadInt16(ip + 1);
+			ip += 3;
+			sp++;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_PushNumber)
@@ -354,6 +559,18 @@ func_loop:
 		PR_VM_CASE(OPC_PushName)
 			sp->i = ReadInt32(ip + 1);
 			ip += 5;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushNameS)
+			sp->i = ReadInt16(ip + 1);
+			ip += 3;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushNameB)
+			sp->i = ip[1];
+			ip += 2;
 			sp++;
 			PR_VM_BREAK;
 
@@ -376,6 +593,66 @@ func_loop:
 			sp++;
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_LocalAddress0)
+			ip++;
+			sp->p = &local_vars[0];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress1)
+			ip++;
+			sp->p = &local_vars[1];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress2)
+			ip++;
+			sp->p = &local_vars[2];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress3)
+			ip++;
+			sp->p = &local_vars[3];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress4)
+			ip++;
+			sp->p = &local_vars[4];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress5)
+			ip++;
+			sp->p = &local_vars[5];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress6)
+			ip++;
+			sp->p = &local_vars[6];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddress7)
+			ip++;
+			sp->p = &local_vars[7];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddressB)
+			sp->p = &local_vars[ip[1]];
+			ip += 2;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalAddressS)
+			sp->p = &local_vars[ReadInt16(ip + 1)];
+			ip += 3;
+			sp++;
+			PR_VM_BREAK;
+
 		PR_VM_CASE(OPC_LocalAddress)
 			sp->p = &local_vars[ReadInt32(ip + 1)];
 			ip += 5;
@@ -387,9 +664,31 @@ func_loop:
 			ip += 5;
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_OffsetS)
+			sp[-1].p = (vuint8*)sp[-1].p + ReadInt16(ip + 1);
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_OffsetB)
+			sp[-1].p = (vuint8*)sp[-1].p + ip[1];
+			ip += 2;
+			PR_VM_BREAK;
+
 		PR_VM_CASE(OPC_ArrayElement)
 			sp[-2].p = (vuint8*)sp[-2].p + sp[-1].i * ReadInt32(ip + 1);
 			ip += 5;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ArrayElementS)
+			sp[-2].p = (vuint8*)sp[-2].p + sp[-1].i * ReadInt16(ip + 1);
+			ip += 3;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ArrayElementB)
+			sp[-2].p = (vuint8*)sp[-2].p + sp[-1].i * ip[1];
+			ip += 2;
 			sp--;
 			PR_VM_BREAK;
 
@@ -411,10 +710,34 @@ func_loop:
 			sp[-1].p = *(void**)sp[-1].p;
 			PR_VM_BREAK;
 
-		PR_VM_CASE(OPC_PushBool)
+		PR_VM_CASE(OPC_PushBool0)
 			{
-				vint32 mask = ReadInt32(ip + 1);
-				ip += 5;
+				vuint32 mask = ip[1];
+				ip += 2;
+				sp[-1].i = !!(*(vint32*)sp[-1].p & mask);
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushBool1)
+			{
+				vuint32 mask = ip[1] << 8;
+				ip += 2;
+				sp[-1].i = !!(*(vint32*)sp[-1].p & mask);
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushBool2)
+			{
+				vuint32 mask = ip[1] << 16;
+				ip += 2;
+				sp[-1].i = !!(*(vint32*)sp[-1].p & mask);
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushBool3)
+			{
+				vuint32 mask = ip[1] << 24;
+				ip += 2;
 				sp[-1].i = !!(*(vint32*)sp[-1].p & mask);
 			}
 			PR_VM_BREAK;
@@ -767,8 +1090,8 @@ func_loop:
 
 		PR_VM_CASE(OPC_VFixParam)
 			{
-				vint32 Idx = ReadInt32(ip + 1);
-				ip += 5;
+				vint32 Idx = ip[1];
+				ip += 2;
 				TVec* v = (TVec*)&local_vars[Idx];
 				v->y = local_vars[Idx + 1].f;
 				v->z = local_vars[Idx + 2].f;
@@ -856,14 +1179,50 @@ func_loop:
 			ASSIGNOP(void*, p, =);
 			PR_VM_BREAK;
 
-		PR_VM_CASE(OPC_AssignBool)
+		PR_VM_CASE(OPC_AssignBool0)
 			{
-				vint32 mask = ReadInt32(ip + 1);
+				vuint32 mask = ip[1];
 				if (sp[-1].i)
 					*(vint32*)sp[-2].p |= mask;
 				else
 					*(vint32*)sp[-2].p &= ~mask;
-				ip += 5;
+				ip += 2;
+				sp -= 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AssignBool1)
+			{
+				vuint32 mask = ip[1] << 8;
+				if (sp[-1].i)
+					*(vint32*)sp[-2].p |= mask;
+				else
+					*(vint32*)sp[-2].p &= ~mask;
+				ip += 2;
+				sp -= 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AssignBool2)
+			{
+				vuint32 mask = ip[1] << 16;
+				if (sp[-1].i)
+					*(vint32*)sp[-2].p |= mask;
+				else
+					*(vint32*)sp[-2].p &= ~mask;
+				ip += 2;
+				sp -= 2;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AssignBool3)
+			{
+				vuint32 mask = ip[1] << 24;
+				if (sp[-1].i)
+					*(vint32*)sp[-2].p |= mask;
+				else
+					*(vint32*)sp[-2].p &= ~mask;
+				ip += 2;
 				sp -= 2;
 			}
 			PR_VM_BREAK;
