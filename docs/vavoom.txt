@@ -99,8 +99,9 @@ Libraries:
     * zlib
     * libpng
     * Allegro 4.0 (http://alleg.sourceforge.net)
- or
-    * SDL 1.2.2 (http://www.libsdl.org)
+  or
+    * SDL 1.2 (http://www.libsdl.org) and SDL_mixer 1.2
+  (http://www.libsdl.org/projects/SDL_mixer/).
     * OpenGL: OpenGL implementation from your video card's manufacturer
   or MESA (http://www.mesa3d.org) and X-Windows development libraries.
     * AllegroGL (http://allegrogl.sourceforge.net) if you want to use OpenGL
