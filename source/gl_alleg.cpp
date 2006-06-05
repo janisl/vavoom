@@ -34,6 +34,20 @@ extern "C" {
 
 // TYPES -------------------------------------------------------------------
 
+class VAllegroOpenGLDrawer : public VOpenGLDrawer
+{
+public:
+	AMesaVisual		RenderVisual;
+	AMesaBuffer		RenderBuffer;
+	AMesaContext	RenderContext;
+
+	void Init();
+	bool SetResolution(int, int, int);
+	void* GetExtFuncPtr(const char*);
+	void Update();
+	void Shutdown();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -44,37 +58,40 @@ extern "C" {
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+IMPLEMENT_DRAWER(VAllegroOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
+	"Allegro OpenGL rasteriser device", "-opengl");
 
-static AMesaVisual		RenderVisual;
-static AMesaBuffer		RenderBuffer;
-static AMesaContext		RenderContext = NULL;
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Init
+//	VAllegroOpenGLDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init()
+void VAllegroOpenGLDrawer::Init()
 {
+	RenderVisual = NULL;
+	RenderBuffer = NULL;
+	RenderContext = NULL;
 }
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::SetResolution
+//	VAllegroOpenGLDrawer::SetResolution
 //
-// 	Set up the video mode
+//	Set up the video mode
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VAllegroOpenGLDrawer::SetResolution(int InWidth, int InHeight,
+	int InBPP)
 {
-	guard(VOpenGLDrawer::SetResolution);
+	guard(VAllegroOpenGLDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -123,26 +140,26 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::GetExtFuncPtr
+//	VAllegroOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *VOpenGLDrawer::GetExtFuncPtr(const char*)
+void* VAllegroOpenGLDrawer::GetExtFuncPtr(const char*)
 {
 	return NULL;
 }
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Update
+//	VAllegroOpenGLDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update(void)
+void VAllegroOpenGLDrawer::Update()
 {
-	guard(VOpenGLDrawer::Update);
+	guard(VAllegroOpenGLDrawer::Update);
 	glFlush();
 	AMesaSwapBuffers(RenderBuffer);
 	unguard;
@@ -150,15 +167,15 @@ void VOpenGLDrawer::Update(void)
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::Shutdown
+// 	VAllegroOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown(void)
+void VAllegroOpenGLDrawer::Shutdown()
 {
-	guard(VOpenGLDrawer::Shutdown);
+	guard(VAllegroOpenGLDrawer::Shutdown);
 	DeleteTextures();
 	if (RenderContext)
 	{
@@ -177,29 +194,3 @@ void VOpenGLDrawer::Shutdown(void)
 	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//
-//	Revision 1.7  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.6  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.5  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/08/04 17:32:04  dj_jl
-//	Added support for multitexture extensions
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

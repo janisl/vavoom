@@ -1,4 +1,4 @@
-//**************************************************************************
+
 //**
 //**	##   ##    ##    ##   ##   ####     ####   ###     ###
 //**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -62,8 +62,9 @@
 #define pt_next				16
 #define pt_vel				20
 #define pt_die				32
-#define pt_user_fields		36
-#define pt_size				64
+#define pt_type				36
+#define pt_ramp				40
+#define pt_size				44
 
 // espan_t structure
 // !!! if this is changed, it must be changed in r_shared.h too !!!
@@ -386,56 +387,3 @@
 .extern	C(D_DrawZSpan)
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.17  2006/04/16 17:00:22  dj_jl
-//	Fixed asm prefix concatenation.
-//
-//	Revision 1.16  2006/04/15 12:36:51  dj_jl
-//	Fixes for compiling on BeOS.
-//	
-//	Revision 1.15  2006/04/14 18:40:58  dj_jl
-//	Added configure check for asm prefix.
-//	
-//	Revision 1.14  2004/12/22 07:39:08  dj_jl
-//	Applied BSD patches.
-//	
-//	Revision 1.13  2002/11/16 17:11:14  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.12  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.11  2001/12/18 18:54:43  dj_jl
-//	Found a workaround for calling a C++ function, progs code patching
-//	
-//	Revision 1.10  2001/11/02 18:35:54  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.9  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.8  2001/08/21 17:22:28  dj_jl
-//	Optimized rendering with some asm
-//	
-//	Revision 1.7  2001/08/15 17:44:41  dj_jl
-//	Added missing externs
-//	
-//	Revision 1.6  2001/08/15 17:12:23  dj_jl
-//	Optimized model drawing
-//	
-//	Revision 1.5  2001/08/04 17:32:39  dj_jl
-//	Beautification
-//	
-//	Revision 1.4  2001/08/02 17:41:19  dj_jl
-//	Added new asm for 32-bits
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -185,7 +185,7 @@ bool VSoftwareDrawer::AliasCheckBBox(VModel* model, const TAVec &angles, int fra
 	float				zi, basepts[8][3], v0, v1, frac;
 	finalvert_t			*pv0, *pv1, viewpts[16];
 	auxvert_t			*pa0, *pa1, viewaux[16];
-	boolean				zclipped, zfullyclipped;
+	bool				zclipped, zfullyclipped;
 	unsigned			anyclip, allclip;
 	int					minz;
 	

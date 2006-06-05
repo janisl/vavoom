@@ -50,7 +50,7 @@ struct particle_t
 {
 	//	Drawing info
 	TVec		org;	//	position
-	dword		color;	//	ARGB color
+	vuint32		color;	//	ARGB color
 	//	Handled by refresh
 	particle_t*	next;	//	next in the list
 	TVec		vel;	//	velocity
@@ -67,7 +67,7 @@ struct refdef_t
  	int			height;
  	float		fovx;
  	float		fovy;
-	boolean		drawworld;
+	bool		drawworld;
 };
 
 struct VModel
@@ -126,7 +126,7 @@ public:
 	virtual void FillRect(float, float, float, float, dword) = 0;
 	virtual void ShadeRect(int, int, int, int, int) = 0;
 	virtual void DrawConsoleBackground(int) = 0;
-	virtual void DrawSpriteLump(float, float, float, float, int, int, boolean) = 0;
+	virtual void DrawSpriteLump(float, float, float, float, int, int, bool) = 0;
 
 	//	Automap
 	virtual void StartAutomap() = 0;

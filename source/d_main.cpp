@@ -75,17 +75,14 @@ extern int				d_zrowbytes;
 
 extern bool				d_roverwrapped;
 extern bool				r_cache_thrash;
-extern surfcache_t		*d_initial_rover;
-extern surfcache_t		*sc_rover;
-extern surfcache_t		*sc_base;
+extern surfcache_t*		d_initial_rover;
+extern surfcache_t*		sc_rover;
+extern surfcache_t*		sc_base;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_DRAWER(VSoftwareDrawer, DRAWER_Software, "Software",
-	"Software reaserizer", NULL);
-
-byte					*scrn;
-short					*zbuffer;
+byte*					scrn;
+short*					zbuffer;
 
 word					pal8_to16[256];
 dword					pal2rgb[256];
@@ -305,7 +302,7 @@ void VSoftwareDrawer::InitResolution()
 //
 //==========================================================================
 
-void VSoftwareDrawer::InitViewBorder(const refdef_t *rd)
+void VSoftwareDrawer::InitViewBorder(const refdef_t* rd)
 {
 	guard(VSoftwareDrawer::InitViewBorder);
     if (r_backscreen)
@@ -348,7 +345,7 @@ void VSoftwareDrawer::VideoErase(unsigned ofs, int count)
 //
 //==========================================================================
 
-void VSoftwareDrawer::EraseViewBorder(const refdef_t *rd)
+void VSoftwareDrawer::EraseViewBorder(const refdef_t* rd)
 {
 	guard(VSoftwareDrawer::EraseViewBorder);
 	int top;
@@ -418,7 +415,7 @@ void VSoftwareDrawer::EndDirectUpdate()
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetupView(const refdef_t *rd)
+void VSoftwareDrawer::SetupView(const refdef_t* rd)
 {
 	guard(VSoftwareDrawer::SetupView);
 	int i;
@@ -574,7 +571,7 @@ void VSoftwareDrawer::EndView()
 //
 //==========================================================================
 
-void* VSoftwareDrawer::ReadScreen(int *bpp, bool *bot2top)
+void* VSoftwareDrawer::ReadScreen(int* bpp, bool* bot2top)
 {
 	guard(VSoftwareDrawer::ReadScreen);
 	void *dst;

@@ -32,6 +32,20 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VSdlSoftwareDrawer : public VSoftwareDrawer
+{
+public:
+	SDL_Surface*	hw_screen;
+	SDL_Palette		hw_palette;
+	bool			new_palette;
+
+	void Init();
+	bool SetResolution(int, int, int);
+	void SetPalette8(vuint8*);
+	void Update();
+	void Shutdown();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -42,37 +56,40 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+IMPLEMENT_DRAWER(VSdlSoftwareDrawer, DRAWER_Software, "Software",
+	"SDL software rasteriser", NULL);
 
-static SDL_Surface	*hw_screen = NULL;
-static SDL_Palette	hw_palette = { 256, NULL };
-static bool			new_palette = false;
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VSoftwareDrawer::Init
+//	VSdlSoftwareDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void VSoftwareDrawer::Init()
+void VSdlSoftwareDrawer::Init()
 {
+	hw_screen = NULL;
+	hw_palette.ncolors = 256;
+	hw_palette.colors = NULL;
+	new_palette = false;
 }
 
 //==========================================================================
 //
-// 	VSoftwareDrawer::SetResolution
+// 	VSdlSoftwareDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VSdlSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
-	guard(VSoftwareDrawer::SetResolution);
+	guard(VSdlSoftwareDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -92,7 +109,7 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 		hw_screen = NULL;
 		if (hw_palette.colors != NULL)
 		{
-			free(hw_palette.colors);
+			delete[] hw_palette.colors;
 			hw_palette.colors = NULL;
 		}
 	}
@@ -124,11 +141,7 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 	if (BPP == 8)
 	{
-		hw_palette.colors = (SDL_Color *)malloc(sizeof(SDL_Color) * hw_palette.ncolors);
-		if (hw_palette.colors == NULL)
-		{
-			return false;
-		}
+		hw_palette.colors = new SDL_Color[hw_palette.ncolors];
 	}
 
 	if (!AllocMemory(Width, Height, BPP))
@@ -153,17 +166,17 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-//	VSoftwareDrawer::SetPalette8
+//	VSdlSoftwareDrawer::SetPalette8
 //
 //	Sets palette.
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetPalette8(byte *palette)
+void VSdlSoftwareDrawer::SetPalette8(vuint8* palette)
 {
-	guard(VSoftwareDrawer::SetPalette8);
-	byte* table = gammatable[usegamma];
-	byte* p = palette;
+	guard(VSdlSoftwareDrawer::SetPalette8);
+	vuint8* table = gammatable[usegamma];
+	vuint8* p = palette;
 	for (int i = 0; i < hw_palette.ncolors; i++)
 	{
 		hw_palette.colors[i].r = table[*p++];
@@ -177,20 +190,15 @@ void VSoftwareDrawer::SetPalette8(byte *palette)
 
 //==========================================================================
 //
-//	VSoftwareDrawer::Update
+//	VSdlSoftwareDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void VSoftwareDrawer::Update()
+void VSdlSoftwareDrawer::Update()
 {
-	guard(VSoftwareDrawer::Update);
-	int i;
-	int scrnpitch;
-	byte *psrc = NULL;
-	byte *pdst = NULL;
-
+	guard(VSdlSoftwareDrawer::Update);
 	if (SDL_MUSTLOCK(hw_screen))
 	{
 		while (SDL_LockSurface(hw_screen));
@@ -199,10 +207,10 @@ void VSoftwareDrawer::Update()
 	if (new_palette)
 		SDL_SetColors(hw_screen, hw_palette.colors, 0, hw_palette.ncolors);
 
-	scrnpitch = ScreenWidth * PixelBytes;
-	psrc = (byte *)scrn;
-	pdst = (byte *)hw_screen->pixels;
-	for (i = 0; i < ScreenHeight; i++)
+	int scrnpitch = ScreenWidth * PixelBytes;
+	vuint8* psrc = (vuint8*)scrn;
+	vuint8* pdst = (vuint8*)hw_screen->pixels;
+	for (int i = 0; i < ScreenHeight; i++)
 	{
 		memcpy(pdst, psrc, scrnpitch);
 		psrc += scrnpitch;
@@ -219,13 +227,13 @@ void VSoftwareDrawer::Update()
 
 //==========================================================================
 //
-// 	VSoftwareDrawer::Shutdown
+//	VSdlSoftwareDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void VSoftwareDrawer::Shutdown()
+void VSdlSoftwareDrawer::Shutdown()
 {
 	if (hw_screen != NULL)
 	{
@@ -233,7 +241,7 @@ void VSoftwareDrawer::Shutdown()
 		hw_screen = NULL;
 		if (hw_palette.colors != NULL)
 		{
-			free(hw_palette.colors);
+			delete[] hw_palette.colors;
 			hw_palette.colors = NULL;
 		}
 	}

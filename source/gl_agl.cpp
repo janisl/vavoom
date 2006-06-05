@@ -31,12 +31,21 @@
 
 #include <allegro.h>
 #include <alleggl.h>
-#include <dlfcn.h>
 #include "gl_local.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
+
+class VAllegroOpenGLDrawer : public VOpenGLDrawer
+{
+public:
+	void Init();
+	bool SetResolution(int, int, int);
+	void* GetExtFuncPtr(const char*);
+	void Update();
+	void Shutdown();
+};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -48,15 +57,18 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_DRAWER(VAllegroOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
+	"Allegro OpenGL rasteriser device", "-opengl");
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Init
+//	VAllegroOpenGLDrawer::Init
 //
-// 	Determine the hardware configuration
+//	Determine the hardware configuration
 //
 //==========================================================================
 
@@ -66,15 +78,15 @@ void VOpenGLDrawer::Init()
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::SetResolution
+//	VAllegroOpenGLDrawer::SetResolution
 //
-// 	Set up the video mode
+//	Set up the video mode
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VAllegroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
-	guard(VOpenGLDrawer::SetResolution);
+	guard(VAllegroOpenGLDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -130,68 +142,45 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::GetExtFuncPtr
+//	VAllegroOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *VOpenGLDrawer::GetExtFuncPtr(const char* name)
+void* VAllegroOpenGLDrawer::GetExtFuncPtr(const char* name)
 {
-	guard(VOpenGLDrawer::GetExtFuncPtr);
-	void *prjobj = dlopen(NULL, RTLD_LAZY);
-	if (!prjobj)
-	{
-		GCon->Log(NAME_Init, "Unable to open symbol list for main program.");
-		return NULL;
-	}
-	void *ptr = dlsym(prjobj, name);
-	dlclose(prjobj);
-	return ptr;
+	guard(VAllegroOpenGLDrawer::GetExtFuncPtr);
+	return allegro_gl_get_proc_address(name);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Update
+//	VAllegroOpenGLDrawer::Update
 //
-// 	Blit to the screen / Flip surfaces
+//	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update()
+void VAllegroOpenGLDrawer::Update()
 {
-	guard(VOpenGLDrawer::Update);
+	guard(VAllegroOpenGLDrawer::Update);
 	allegro_gl_flip();
 	unguard;
 }
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::Shutdown
+//	VAllegroOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown()
+void VAllegroOpenGLDrawer::Shutdown()
 {
-	guard(VOpenGLDrawer::Shutdown);
+	guard(VAllegroOpenGLDrawer::Shutdown);
 	DeleteTextures();
 	set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
 	remove_allegro_gl();
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.2  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.1  2005/03/28 07:26:54  dj_jl
-//	New OpenGL driver for Allegro.
-//	
-//**************************************************************************

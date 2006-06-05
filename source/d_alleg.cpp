@@ -33,6 +33,20 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VAllegroSoftwareDrawer : public VSoftwareDrawer
+{
+public:
+	BITMAP*		gamebitmap;
+
+	void Init();
+	bool SetResolution(int, int, int);
+	void SetPalette8(vuint8*);
+	void Update();
+	void Shutdown();
+
+	BITMAP* my_create_bitmap_ex(int, int, int);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -43,33 +57,36 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+IMPLEMENT_DRAWER(VAllegroSoftwareDrawer, DRAWER_Software, "Software",
+	"Allegro software rasteriser", NULL);
 
-static BITMAP		*gamebitmap = NULL;
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VSoftwareDrawer::Init
+//	VAllegroSoftwareDrawer::Init
 //
 //==========================================================================
 
-void VSoftwareDrawer::Init()
+void VAllegroSoftwareDrawer::Init()
 {
+	gamebitmap = NULL;
 }
 
 //==========================================================================
 //
-//	my_create_bitmap_ex
+//	VAllegroSoftwareDrawer::my_create_bitmap_ex
 //
 //	Creates a new memory bitmap in the specified color_depth
 //
 //==========================================================================
 
-static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
+BITMAP* VAllegroSoftwareDrawer::my_create_bitmap_ex(int color_depth,
+	int width, int height)
 {
-	guard(my_create_bitmap_ex);
+	guard(VAllegroSoftwareDrawer::my_create_bitmap_ex);
 	GFX_VTABLE*		vtable;
 	BITMAP*			bitmap;
 	int				i;
@@ -78,7 +95,7 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 	if (!vtable)
 		return NULL;
 
-	bitmap = (BITMAP*)Z_Malloc(sizeof(BITMAP) + (sizeof(char *) * height));
+	bitmap = (BITMAP*)Z_Malloc(sizeof(BITMAP) + (sizeof(char*) * height));
 
 	bitmap->dat = scrn;
 
@@ -94,7 +111,7 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 	bitmap->y_ofs = 0;
 	bitmap->seg = _default_ds();
 
-	bitmap->line[0] = (byte*)bitmap->dat;
+	bitmap->line[0] = (vuint8*)bitmap->dat;
 	for (i = 1; i < height; i++)
 		bitmap->line[i] = bitmap->line[i - 1] + width * BYTES_PER_PIXEL(color_depth);
 
@@ -107,15 +124,16 @@ static BITMAP *my_create_bitmap_ex(int color_depth, int width, int height)
 
 //==========================================================================
 //
-// 	VSoftwareDrawer::SetResolution
+// 	VAllegroSoftwareDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VAllegroSoftwareDrawer::SetResolution(int InWidth, int InHeight,
+	int InBPP)
 {
-	guard(VSoftwareDrawer::SetResolution);
+	guard(VAllegroSoftwareDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -185,32 +203,20 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-// 	VSoftwareDrawer::SetPalette8
+//	VAllegroSoftwareDrawer::SetPalette8
 //
-// 	Takes full 8 bit values.
+//	Takes full 8 bit values.
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetPalette8(byte *palette)
+void VAllegroSoftwareDrawer::SetPalette8(vuint8* palette)
 {
-	guard(VSoftwareDrawer::SetPalette8);
+	guard(VAllegroSoftwareDrawer::SetPalette8);
 	if (ScreenBPP != 8)
 		return;
 
-	byte* table = gammatable[usegamma];
-	byte* p = palette;
-
-#if defined DJGPP
-
-	//	Wait for vertical retrace
-	while ((inportb(0x3da) & 8) != 8);
-	while ((inportb(0x3da) & 8) == 8);
-
-	outportb(0x3c8, 0);
-	for (int i = 0; i < 768; i++)
-		outportb(0x3c9, table[*p++] >> 2);
-
-#else
+	vuint8* table = gammatable[usegamma];
+	vuint8* p = palette;
 
 	PALETTE		pal;
 	for (int i = 0; i < 256; i++)
@@ -220,85 +226,33 @@ void VSoftwareDrawer::SetPalette8(byte *palette)
 		pal[i].b = table[*p++] >> 2;
 	}
 	set_palette(pal);
-
-#endif
 	unguard;
 }
 
 //==========================================================================
 //
-//	VSoftwareDrawer::Update
+//	VAllegroSoftwareDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-#ifdef DJGPP
-static VCvarI d_blt_func("d_blt_func", "0", CVAR_Archive);
-
-static void Blit_LBL()
+void VAllegroSoftwareDrawer::Update()
 {
-	int				i;
-	unsigned int	temppointer;
-	int				pitch = ScreenWidth * PixelBytes;
-	int				mcnt = pitch >> 2;
-
-	temppointer = (unsigned int)scrn;
-	for (i = 0; i < ScreenHeight; i++, temppointer += pitch)
-	{
-		_movedatal(_my_ds(), temppointer, screen->seg,
-			(unsigned int)screen->line[i], mcnt);
-	}
-}
-
-static void Blit_Banked()
-{
-	int				i;
-	unsigned long	temppointer, destpointer;
-	int				pitch = ScreenWidth * PixelBytes;
-	int				mcnt = pitch >> 2;
-
-	temppointer = (unsigned long)scrn;
-	for (i = 0; i < ScreenHeight; i++)
-	{
-		destpointer = bmp_write_line(screen, i);
-		_movedatal(_my_ds(), temppointer, screen->seg, destpointer, mcnt);
-		temppointer += pitch;
-	}
-}
-#endif
-
-void VSoftwareDrawer::Update()
-{
-	guard(VSoftwareDrawer::Update);
-#ifdef DJGPP
-	if (is_linear_bitmap(screen))
-	{
-		if (d_blt_func == 1)
-		{
-			Blit_LBL();
-			return;
-		}
-		if (d_blt_func == 2)
-		{
-			Blit_Banked();
-			return;
-		}
-	}
-#endif
+	guard(VAllegroSoftwareDrawer::Update);
 	blit(gamebitmap, screen, 0, 0, 0, 0, SCREEN_W, SCREEN_H);
 	unguard;
 }
 
 //==========================================================================
 //
-// 	VSoftwareDrawer::Shutdown
+// 	VAllegroSoftwareDrawer::Shutdown
 //
 // 	Restore text mode
 //
 //==========================================================================
 
-void VSoftwareDrawer::Shutdown()
+void VAllegroSoftwareDrawer::Shutdown()
 {
 	set_gfx_mode(GFX_TEXT, 80, 25, 0, 0);
 	FreeAllMemory();

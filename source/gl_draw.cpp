@@ -234,7 +234,7 @@ void VOpenGLDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	int lump, int translation, boolean flip)
+	int lump, int translation, bool flip)
 {
 	guard(VOpenGLDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
@@ -276,7 +276,7 @@ void VOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VOpenGLDrawer::StartAutomap(void)
+void VOpenGLDrawer::StartAutomap()
 {
 	guard(VOpenGLDrawer::StartAutomap);
 	glDisable(GL_TEXTURE_2D);
@@ -309,7 +309,7 @@ void VOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
 //
 //==========================================================================
 
-void VOpenGLDrawer::EndAutomap(void)
+void VOpenGLDrawer::EndAutomap()
 {
 	guard(VOpenGLDrawer::EndAutomap);
 	glEnd();

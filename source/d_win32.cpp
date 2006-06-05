@@ -33,6 +33,24 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VWin32SoftwareDrawer : public VSoftwareDrawer
+{
+public:
+	LPDIRECTDRAW			DDraw;
+	LPDIRECTDRAWSURFACE		PrimarySurface;
+	LPDIRECTDRAWPALETTE		Palette;
+	PALETTEENTRY			PaletteEntries[256];
+
+	bool					Windowed;
+	bool					new_palette;
+
+	void Init();
+	bool SetResolution(int, int, int);
+	void SetPalette8(vuint8*);
+	void Update();
+	void Shutdown();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -43,30 +61,30 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_DRAWER(VWin32SoftwareDrawer, DRAWER_Software, "Software",
+	"DirectDraw software rasteriser", NULL);
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static LPDIRECTDRAW			DDraw = NULL;
-static LPDIRECTDRAWSURFACE	PrimarySurface = NULL;
-static LPDIRECTDRAWPALETTE	Palette = NULL;
-static PALETTEENTRY			PaletteEntries[256];
-
-static bool					Windowed;
-static bool					new_palette = false;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VSoftwareDrawer::Init
+//	VWin32SoftwareDrawer::Init
 //
-// 	Determine the hardware configuration
+//	Determine the hardware configuration
 //
 //==========================================================================
 
-void VSoftwareDrawer::Init()
+void VWin32SoftwareDrawer::Init()
 {
-	guard(VSoftwareDrawer::Init);
+	guard(VWin32SoftwareDrawer::Init);
 	HRESULT			result;
+
+	DDraw = NULL;
+	PrimarySurface = NULL;
+	Palette = NULL;
+	new_palette = false;
 
 	Windowed = !!GArgs.CheckParm("-window");
 
@@ -98,15 +116,15 @@ void VSoftwareDrawer::Init()
 
 //==========================================================================
 //
-// 	VSoftwareDrawer::SetResolution
+//	VWin32SoftwareDrawer::SetResolution
 //
-// 	Set up the video mode
+//	Set up the video mode
 //
 //==========================================================================
 
-bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VWin32SoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
-	guard(VSoftwareDrawer::SetResolution);
+	guard(VWin32SoftwareDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -244,17 +262,17 @@ bool VSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-//	VSoftwareDrawer::SetPalette8
+//	VWin32SoftwareDrawer::SetPalette8
 //
 //	Sets palette.
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetPalette8(byte* palette)
+void VWin32SoftwareDrawer::SetPalette8(vuint8* palette)
 {
-	guard(VSoftwareDrawer::SetPalette8);
-	byte* table = gammatable[usegamma];
-	byte* p = palette;
+	guard(VWin32SoftwareDrawer::SetPalette8);
+	vuint8* table = gammatable[usegamma];
+	vuint8* p = palette;
 	for (int i = 0; i < 256; i++)
 	{
 		PaletteEntries[i].peRed = table[*p++];
@@ -268,15 +286,15 @@ void VSoftwareDrawer::SetPalette8(byte* palette)
 
 //==========================================================================
 //
-//	VSoftwareDrawer::Update
+//	VWin32SoftwareDrawer::Update
 //
 // 	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void VSoftwareDrawer::Update()
+void VWin32SoftwareDrawer::Update()
 {
-	guard(VSoftwareDrawer::Update);
+	guard(VWin32SoftwareDrawer::Update);
 	DDSURFACEDESC	ddsd;
 
 	// Check for lost surface
@@ -327,13 +345,13 @@ void VSoftwareDrawer::Update()
 
 //==========================================================================
 //
-// 	VSoftwareDrawer::Shutdown
+//	VWin32SoftwareDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void VSoftwareDrawer::Shutdown()
+void VWin32SoftwareDrawer::Shutdown()
 {
 	if (DDraw)
 	{
@@ -344,7 +362,9 @@ void VSoftwareDrawer::Shutdown()
 		PrimarySurface = NULL;
 
 		if (Palette)
+		{
 			Palette->Release();
+		}
 		Palette = NULL;
 
 		DDraw->Release();

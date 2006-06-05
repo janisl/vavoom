@@ -211,7 +211,7 @@ public:
 	void FillRect(float, float, float, float, dword);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
-	void DrawSpriteLump(float, float, float, float, int, int, boolean);
+	void DrawSpriteLump(float, float, float, float, int, int, bool);
 
 	//	Automap
 	void StartAutomap();
@@ -396,96 +396,3 @@ private:
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.30  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.29  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//	
-//	Revision 1.28  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.27  2005/05/03 14:57:00  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.26  2004/08/21 17:22:15  dj_jl
-//	Changed rendering driver declaration.
-//	
-//	Revision 1.25  2004/02/09 17:29:58  dj_jl
-//	Increased block count
-//	
-//	Revision 1.24  2003/10/22 06:13:52  dj_jl
-//	Freeing old blocks on overflow
-//	
-//	Revision 1.23  2003/03/08 12:08:04  dj_jl
-//	Beautification.
-//	
-//	Revision 1.22  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.21  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.20  2002/03/28 17:56:52  dj_jl
-//	Increased lightmap texture count.
-//	
-//	Revision 1.19  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.18  2001/11/09 14:18:40  dj_jl
-//	Added specular highlights
-//	
-//	Revision 1.17  2001/10/27 07:45:01  dj_jl
-//	Added gamma controls
-//	
-//	Revision 1.16  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.15  2001/10/12 17:28:26  dj_jl
-//	Blending of sprite borders
-//	
-//	Revision 1.14  2001/10/09 17:21:39  dj_jl
-//	Added sky begining and ending functions
-//	
-//	Revision 1.13  2001/10/04 17:22:05  dj_jl
-//	My overloaded matrix, beautification
-//	
-//	Revision 1.12  2001/09/14 16:48:22  dj_jl
-//	Switched to DirectX 8
-//	
-//	Revision 1.11  2001/09/12 17:31:27  dj_jl
-//	Rectangle drawing and direct update for plugins
-//	
-//	Revision 1.10  2001/08/29 17:47:55  dj_jl
-//	Added texture filtering variables
-//	
-//	Revision 1.9  2001/08/24 17:03:57  dj_jl
-//	Added mipmapping, removed bumpmap test code
-//	
-//	Revision 1.8  2001/08/23 17:47:57  dj_jl
-//	Started work on mipmapping
-//	
-//	Revision 1.7  2001/08/15 17:15:55  dj_jl
-//	Drawer API changes, removed wipes
-//	
-//	Revision 1.6  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.5  2001/08/04 17:29:11  dj_jl
-//	Added depth hack for weapon models
-//	
-//	Revision 1.4  2001/08/01 17:33:58  dj_jl
-//	Fixed drawing of spite lump for player setup menu, beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

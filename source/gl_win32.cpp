@@ -31,6 +31,21 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VWin32OpenGLDrawer : public VOpenGLDrawer
+{
+public:
+	bool		Windowed;
+	HDC			DeviceContext;
+	HGLRC		RenderContext;
+	HWND		RenderWindow;
+
+	void Init();
+	bool SetResolution(int, int, int);
+	void* GetExtFuncPtr(const char*);
+	void Update();
+	void Shutdown();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -41,39 +56,40 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+IMPLEMENT_DRAWER(VWin32OpenGLDrawer, DRAWER_OpenGL, "OpenGL",
+	"Win32 OpenGL rasteriser device", "-opengl");
 
-static bool			Windowed;
-static HDC			DeviceContext;
-static HGLRC		RenderContext;
-static HWND			RenderWindow;
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Init
+//	VWin32OpenGLDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init()
+void VWin32OpenGLDrawer::Init()
 {
 	Windowed = !!GArgs.CheckParm("-window");
+	DeviceContext = NULL;
+	RenderContext = NULL;
+	RenderWindow = NULL;
 }
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::SetResolution
+// 	VWin32OpenGLDrawer::SetResolution
 //
 // 	Set up the video mode
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VWin32OpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
-	guard(VOpenGLDrawer::SetResolution);
+	guard(VWin32OpenGLDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -242,43 +258,43 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::GetExtFuncPtr
+//	VWin32OpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
+void* VWin32OpenGLDrawer::GetExtFuncPtr(const char *name)
 {
-	guard(VOpenGLDrawer::GetExtFuncPtr);
+	guard(VWin32OpenGLDrawer::GetExtFuncPtr);
 	return (void*)wglGetProcAddress(name);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Update
+//	VWin32OpenGLDrawer::Update
 //
-// 	Blit to the screen / Flip surfaces
+//	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update()
+void VWin32OpenGLDrawer::Update()
 {
-	guard(VOpenGLDrawer::Update);
+	guard(VWin32OpenGLDrawer::Update);
 	SwapBuffers(DeviceContext);
 	unguard;
 }
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::Shutdown
+//	VWin32OpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown()
+void VWin32OpenGLDrawer::Shutdown()
 {
-	guard(VOpenGLDrawer::Shutdown);
+	guard(VWin32OpenGLDrawer::Shutdown);
 	DeleteTextures();
 
 	if (RenderContext)
@@ -316,51 +332,3 @@ void VOpenGLDrawer::Shutdown()
 	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.14  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.13  2004/09/24 10:54:11  dj_jl
-//	MinGW support.
-//	
-//	Revision 1.12  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.11  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.10  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/10/04 17:23:29  dj_jl
-//	Got rid of some warnings
-//	
-//	Revision 1.8  2001/09/20 16:21:58  dj_jl
-//	Fixed error message box
-//	
-//	Revision 1.7  2001/09/12 17:35:40  dj_jl
-//	Added windowed mode
-//	
-//	Revision 1.6  2001/08/29 17:47:21  dj_jl
-//	Fixed resolution change to different color depth
-//	
-//	Revision 1.5  2001/08/04 17:32:04  dj_jl
-//	Added support for multitexture extensions
-//	
-//	Revision 1.4  2001/08/01 17:43:51  dj_jl
-//	Some modeset improvements
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

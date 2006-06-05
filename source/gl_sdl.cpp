@@ -32,6 +32,18 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VSdlOpenGLDrawer : public VOpenGLDrawer
+{
+public:
+	SDL_Surface*	hw_screen;
+
+	void Init();
+	bool SetResolution(int, int, int);
+	void* GetExtFuncPtr(const char*);
+	void Update();
+	void Shutdown();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -42,35 +54,37 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
+IMPLEMENT_DRAWER(VSdlOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
+	"SDL OpenGL rasteriser device", "-opengl");
 
-static SDL_Surface	*hw_screen = NULL;
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Init
+//	VSdlOpenGLDrawer::Init
 //
 // 	Determine the hardware configuration
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init()
+void VSdlOpenGLDrawer::Init()
 {
+	hw_screen = NULL;
 }
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::SetResolution
+//	VSdlOpenGLDrawer::SetResolution
 //
-// 	Set up the video mode
+//	Set up the video mode
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VSdlOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
-	guard(VOpenGLDrawer::SetResolution);
+	guard(VSdlOpenGLDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -115,68 +129,44 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::GetExtFuncPtr
+//	VSdlOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
+void* VSdlOpenGLDrawer::GetExtFuncPtr(const char* name)
 {
-	guard(VOpenGLDrawer::GetExtFuncPtr);
+	guard(VSdlOpenGLDrawer::GetExtFuncPtr);
 	return SDL_GL_GetProcAddress(name);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Update
+//	VSdlOpenGLDrawer::Update
 //
-// 	Blit to the screen / Flip surfaces
+//	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update()
+void VSdlOpenGLDrawer::Update()
 {
-	guard(VOpenGLDrawer::Update);
+	guard(VSdlOpenGLDrawer::Update);
 	SDL_GL_SwapBuffers();
 	unguard;
 }
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::Shutdown
+//	VSdlOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown()
+void VSdlOpenGLDrawer::Shutdown()
 {
-	guard(VOpenGLDrawer::Shutdown);
+	guard(VSdlOpenGLDrawer::Shutdown);
 	if (hw_screen != NULL)
 		SDL_FreeSurface(hw_screen);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.5  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.4  2004/10/08 12:39:01  dj_jl
-//	Added windowing mode.
-//	
-//	Revision 1.3  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2002/01/03 18:39:42  dj_jl
-//	Added SDL port
-//	
-//**************************************************************************

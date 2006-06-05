@@ -45,9 +45,6 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_DRAWER(VOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
-	"OpenGL rasterizer device", "-opengl");
-
 VCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_Archive);
 VCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::blend_sprites("gl_blend_sprites", "0", CVAR_Archive);

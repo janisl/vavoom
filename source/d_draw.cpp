@@ -987,7 +987,7 @@ void VSoftwareDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	int lump, int translation, boolean flip)
+	int lump, int translation, bool flip)
 {
 	guard(VSoftwareDrawer::DrawSpriteLump);
 	float w = GTextureManager.Textures[lump]->GetWidth();
@@ -1011,7 +1011,7 @@ void VSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VSoftwareDrawer::StartAutomap(void)
+void VSoftwareDrawer::StartAutomap()
 {
 	guard(VSoftwareDrawer::StartAutomap);
 	if (PixelBytes == 1)
@@ -1306,59 +1306,6 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dwor
 //
 //==========================================================================
 
-void VSoftwareDrawer::EndAutomap(void)
+void VSoftwareDrawer::EndAutomap()
 {
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.17  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//
-//	Revision 1.16  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.15  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.14  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.13  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.12  2002/03/20 19:09:53  dj_jl
-//	DeepSea tall patches support.
-//	
-//	Revision 1.11  2002/01/15 18:30:43  dj_jl
-//	Some fixes and improvements suggested by Malcolm Nixon
-//	
-//	Revision 1.10  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/11/09 14:20:48  dj_jl
-//	Drawing of images with different palettes
-//	
-//	Revision 1.8  2001/09/12 17:31:27  dj_jl
-//	Rectangle drawing and direct update for plugins
-//	
-//	Revision 1.7  2001/08/29 17:49:01  dj_jl
-//	Line colors in RGBA format
-//	
-//	Revision 1.6  2001/08/23 17:47:22  dj_jl
-//	Started work on pics with custom palettes
-//	
-//	Revision 1.5  2001/08/15 17:15:55  dj_jl
-//	Drawer API changes, removed wipes
-//	
-//	Revision 1.4  2001/08/01 17:33:58  dj_jl
-//	Fixed drawing of spite lump for player setup menu, beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

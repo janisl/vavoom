@@ -45,6 +45,30 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VAllgeroOpenGLDrawer : public VOpenGLDrawer
+{
+public:
+	Display*				RenderDisplay;
+	int						RenderScreen;
+	Window					RenderWindow;
+	GLXContext				RenderContext;
+
+#ifdef USE_FULLSCREEN
+	bool					vidmode_ext;
+	XF86VidModeModeInfo**	vidmodes;
+	int						num_vidmodes;
+	bool					vidmode_active;
+
+	bool					dgamouse;
+#endif
+
+	void Init();
+	bool SetResolution(int, int, int);
+	void* GetExtFuncPtr(const char*);
+	void Update();
+	void Shutdown();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -55,47 +79,47 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+IMPLEMENT_DRAWER(VAllegroOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
+	"Allegro OpenGL rasteriser device", "-opengl");
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static Display		*RenderDisplay = NULL;
-static int			RenderScreen;
-static Window		RenderWindow;
-static GLXContext	RenderContext = NULL;
-
-#ifdef USE_FULLSCREEN
-static bool			vidmode_ext = false;
-static XF86VidModeModeInfo	**vidmodes;
-static int			num_vidmodes;
-static bool			vidmode_active = false;
-
-static bool			dgamouse;
-#endif
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Init
+//	VAllgeroOpenGLDrawer::Init
 //
-// 	Determine the hardware configuration
+//	Determine the hardware configuration
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init()
+void VAllgeroOpenGLDrawer::Init()
 {
+	RenderDisplay = NULL;
+	RenderScreen = 0;
+	RenderWindow = NULL;
+	RenderContext = NULL;
+#ifdef USE_FULLSCREEN
+	vidmode_ext = false;
+	vidmodes = NULL;
+	num_vidmodes = 0;
+	vidmode_active = false;
+	dgamouse = false;
+#endif
 }
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::SetResolution
+//	VAllgeroOpenGLDrawer::SetResolution
 //
-// 	Set up the video mode
+//	Set up the video mode
 //
 //==========================================================================
 
-bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VAllgeroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 {
-	guard(VOpenGLDrawer::SetResolution);
+	guard(VAllgeroOpenGLDrawer::SetResolution);
 	int Width = InWidth;
 	int Height = InHeight;
 	int BPP = InBPP;
@@ -366,20 +390,20 @@ bool VOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::GetExtFuncPtr
+//	VAllgeroOpenGLDrawer::GetExtFuncPtr
 //
 //==========================================================================
 
-void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
+void* VAllgeroOpenGLDrawer::GetExtFuncPtr(const char *name)
 {
-	guard(VOpenGLDrawer::GetExtFuncPtr);
-	void *prjobj = dlopen(NULL, RTLD_LAZY);
+	guard(VAllgeroOpenGLDrawer::GetExtFuncPtr);
+	void* prjobj = dlopen(NULL, RTLD_LAZY);
 	if (!prjobj)
 	{
 		GCon->Log(NAME_Init, "Unable to open symbol list for main program.");
 		return NULL;
 	}
-	void *ptr = dlsym(prjobj, name);
+	void* ptr = dlsym(prjobj, name);
 	dlclose(prjobj);
 	return ptr;
 	unguard;
@@ -387,15 +411,15 @@ void *VOpenGLDrawer::GetExtFuncPtr(const char *name)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::Update
+//	VAllgeroOpenGLDrawer::Update
 //
-// 	Blit to the screen / Flip surfaces
+//	Blit to the screen / Flip surfaces
 //
 //==========================================================================
 
-void VOpenGLDrawer::Update()
+void VAllgeroOpenGLDrawer::Update()
 {
-	guard(VOpenGLDrawer::Update);
+	guard(VAllgeroOpenGLDrawer::Update);
 	glFlush();
 	glXSwapBuffers(RenderDisplay, RenderWindow);
 	unguard;
@@ -403,15 +427,15 @@ void VOpenGLDrawer::Update()
 
 //==========================================================================
 //
-// 	VOpenGLDrawer::Shutdown
+//	VAllgeroOpenGLDrawer::Shutdown
 //
 //	Close the graphics
 //
 //==========================================================================
 
-void VOpenGLDrawer::Shutdown()
+void VAllgeroOpenGLDrawer::Shutdown()
 {
-	guard(VOpenGLDrawer::Shutdown);
+	guard(VAllgeroOpenGLDrawer::Shutdown);
 	XLOCK();
 
 	DeleteTextures();
@@ -459,48 +483,3 @@ void VOpenGLDrawer::Shutdown()
 	XUNLOCK();
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.14  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.13  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.12  2005/03/28 07:26:54  dj_jl
-//	New OpenGL driver for Allegro.
-//	
-//	Revision 1.11  2004/11/22 07:34:06  dj_jl
-//	Updated to match latest Allegro.
-//	
-//	Revision 1.10  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.9  2002/01/11 08:12:01  dj_jl
-//	Added guard macros
-//	
-//	Revision 1.8  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/09/20 16:22:51  dj_jl
-//	Removed workarounds for Allegro bugs that are now fixed
-//	
-//	Revision 1.6  2001/08/23 17:46:18  dj_jl
-//	Better integrity with Allegro, fixed crashes on exit, mouse
-//	
-//	Revision 1.5  2001/08/17 17:43:40  dj_jl
-//	LINUX fixes
-//
-//	Revision 1.4  2001/08/04 17:32:04  dj_jl
-//	Added support for multitexture extensions
-//
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

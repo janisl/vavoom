@@ -42,7 +42,7 @@
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 IMPLEMENT_DRAWER(VDirect3DDrawer, DRAWER_Direct3D, "Direct3D",
-	"Direct3D rasterizer device", "-d3d");
+	"Direct3D rasteriser device", "-d3d");
 
 VCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_Archive);

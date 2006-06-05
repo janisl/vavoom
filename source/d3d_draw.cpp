@@ -259,7 +259,7 @@ void VDirect3DDrawer::DrawConsoleBackground(int h)
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
-	int lump, int translation, boolean flip)
+	int lump, int translation, bool flip)
 {
 	guard(VDirect3DDrawer::DrawSpriteLump);
 	SetSpriteLump(lump, translation);
@@ -299,7 +299,7 @@ void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 //
 //==========================================================================
 
-void VDirect3DDrawer::StartAutomap(void)
+void VDirect3DDrawer::StartAutomap()
 {
 	guard(VDirect3DDrawer::StartAutomap);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
@@ -334,7 +334,7 @@ void VDirect3DDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c
 //
 //==========================================================================
 
-void VDirect3DDrawer::EndAutomap(void)
+void VDirect3DDrawer::EndAutomap()
 {
 	guard(VDirect3DDrawer::EndAutomap);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
