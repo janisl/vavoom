@@ -138,6 +138,17 @@ LightingInc=0
 0x03d   7       20      gor3a0          Chain w/one legged player hung by ankle (no block)
 0x03e   7       20      gor5a0          Chain w/half player torso and one leg (no block)
 0x03f   7       20      gor1a0          Chain w/dying player hung by neck (no block)
+0x578   9       20      ifogd0          Sector sound sequence 0
+0x579   9       20      ifogd0          Sector sound sequence 1
+0x57a   9       20      ifogd0          Sector sound sequence 2
+0x57b   9       20      ifogd0          Sector sound sequence 3
+0x57c   9       20      ifogd0          Sector sound sequence 4
+0x57d   9       20      ifogd0          Sector sound sequence 5
+0x57e   9       20      ifogd0          Sector sound sequence 6
+0x57f   9       20      ifogd0          Sector sound sequence 7
+0x580   9       20      ifogd0          Sector sound sequence 8
+0x581   9       20      ifogd0          Sector sound sequence 9
+0x582   9       20      ifogd0          Sector sound sequence 10
 0x5dc   13      20      ifogd0          Floor slope
 0x5dd   13      20      ifogd0          Ceiling slope
 0x5de   13      20      ifogd0          Static light *( radius, -, -, -, - )

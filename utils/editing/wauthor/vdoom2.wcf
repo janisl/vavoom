@@ -159,6 +159,17 @@ LightingInc=0
 0x057   3       32      bfe2a0          Spawn spot
 0x058   3       32      bbrna0          Boss brain
 0x059   3       32      bosfc0          Boss shooter
+0x578   9       20      ifogd0          Sector sound sequence 0
+0x579   9       20      ifogd0          Sector sound sequence 1
+0x57a   9       20      ifogd0          Sector sound sequence 2
+0x57b   9       20      ifogd0          Sector sound sequence 3
+0x57c   9       20      ifogd0          Sector sound sequence 4
+0x57d   9       20      ifogd0          Sector sound sequence 5
+0x57e   9       20      ifogd0          Sector sound sequence 6
+0x57f   9       20      ifogd0          Sector sound sequence 7
+0x580   9       20      ifogd0          Sector sound sequence 8
+0x581   9       20      ifogd0          Sector sound sequence 9
+0x582   9       20      ifogd0          Sector sound sequence 10
 0x5dc   13      20      ifogd0          Floor slope
 0x5dd   13      20      ifogd0          Ceiling slope
 0x5de   13      20      ifogd0          Static light *( radius, -, -, -, - )
