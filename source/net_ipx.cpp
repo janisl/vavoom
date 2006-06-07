@@ -81,9 +81,9 @@ struct IPXAddr
 
 struct sockaddr_ipx
 {
-    vint16		sipx_family;
+	vint16		sipx_family;
 	IPXAddr		sipx_addr;
-    vint8		sipx_zero[2];
+	vint8		sipx_zero[2];
 };
 
 struct ECB
@@ -499,7 +499,7 @@ tryagain:
 	packetnum = -1;
 
 	for (int i = BasePacket[handle] + 1;
-			i < BasePacket[handle] + IPXSOCKBUFFERS; i++)
+		i < BasePacket[handle] + IPXSOCKBUFFERS; i++)
 	{
 		if (!PacketInUse(i))
 		{
@@ -568,7 +568,7 @@ tryagain:
 
 int VIpxDriver::Write(int handle, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(IPX_Write);
+	guard(VIpxDriver::Write);
 	packet_t	packet;
 
 	// has the previous send completed?
@@ -579,31 +579,31 @@ int VIpxDriver::Write(int handle, vuint8* buf, int len, sockaddr_t* addr)
 
 	switch (PacketCompletionCode(BasePacket[handle]))
 	{
-		case 0x00: // success
-			case 0xfc: // request cancelled
-				break;
+	case 0x00: // success
+	case 0xfc: // request cancelled
+		break;
 
-				case 0xfd: // malformed packet
-		default:
-			GCon->Logf(NAME_DevNet, "IPX driver send failure: %d", 
-					   (int)PacketCompletionCode(BasePacket[handle]));
-			break;
+	case 0xfd: // malformed packet
+	default:
+		GCon->Logf(NAME_DevNet, "IPX driver send failure: %d", 
+			(int)PacketCompletionCode(BasePacket[handle]));
+		break;
 
-			case 0xfe: // packet undeliverable
-				case 0xff: // unable to send packet
-					GCon->Log(NAME_DevNet, "IPX lost route, trying to re-establish");
+	case 0xfe: // packet undeliverable
+	case 0xff: // unable to send packet
+		GCon->Log(NAME_DevNet, "IPX lost route, trying to re-establish");
 
-			// look for a new route
-					GetPacket(BasePacket[handle], &packet);
-					if (IPX_GetLocalTarget(&packet.ipx.destination, packet.ecb.ImmediateAddress))
-						return -1;
-					PutPacket(BasePacket[handle], &packet);
+		// look for a new route
+		GetPacket(BasePacket[handle], &packet);
+		if (IPX_GetLocalTarget(&packet.ipx.destination, packet.ecb.ImmediateAddress))
+			return -1;
+		PutPacket(BasePacket[handle], &packet);
 
-			// re-send the one that failed
-					IPX_SendPacket(PacketOffset(BasePacket[handle]));
+		// re-send the one that failed
+		IPX_SendPacket(PacketOffset(BasePacket[handle]));
 
-			// report that we did not send the current one
-					return 0;
+		// report that we did not send the current one
+		return 0;
 	}
 
 	GetPacket(BasePacket[handle], &packet);
@@ -667,22 +667,22 @@ int VIpxDriver::Broadcast(int handle, vuint8* buf, int len)
 
 char* VIpxDriver::AddrToString(sockaddr_t* addr)
 {
-	guard(IPX_AddrToString);
+	guard(VIpxDriver::AddrToString);
 	static char buf[28];
 
 	sprintf(buf, "%02x%02x%02x%02x:%02x%02x%02x%02x%02x%02x:%u",
-			((sockaddr_ipx *)addr)->sipx_addr.network[0],
-			((sockaddr_ipx *)addr)->sipx_addr.network[1],
-			((sockaddr_ipx *)addr)->sipx_addr.network[2],
-			((sockaddr_ipx *)addr)->sipx_addr.network[3],
-			((sockaddr_ipx *)addr)->sipx_addr.node[0],
-			((sockaddr_ipx *)addr)->sipx_addr.node[1],
-			((sockaddr_ipx *)addr)->sipx_addr.node[2],
-			((sockaddr_ipx *)addr)->sipx_addr.node[3],
-			((sockaddr_ipx *)addr)->sipx_addr.node[4],
-			((sockaddr_ipx *)addr)->sipx_addr.node[5],
-			(vuint16)BigShort(((sockaddr_ipx *)addr)->sipx_addr.socket)
-		   );
+		((sockaddr_ipx*)addr)->sipx_addr.network[0],
+		((sockaddr_ipx*)addr)->sipx_addr.network[1],
+		((sockaddr_ipx*)addr)->sipx_addr.network[2],
+		((sockaddr_ipx*)addr)->sipx_addr.network[3],
+		((sockaddr_ipx*)addr)->sipx_addr.node[0],
+		((sockaddr_ipx*)addr)->sipx_addr.node[1],
+		((sockaddr_ipx*)addr)->sipx_addr.node[2],
+		((sockaddr_ipx*)addr)->sipx_addr.node[3],
+		((sockaddr_ipx*)addr)->sipx_addr.node[4],
+		((sockaddr_ipx*)addr)->sipx_addr.node[5],
+		(vuint16)BigShort(((sockaddr_ipx*)addr)->sipx_addr.socket)
+		);
 	return buf;
 	unguard;
 }
@@ -740,8 +740,8 @@ int VIpxDriver::GetSocketAddr(int handle, sockaddr_t* addr)
 	guard(VIpxDriver::GetSocketAddr);
 	memset(addr, 0, sizeof(sockaddr_t));
 	addr->sa_family = AF_NETWARE;
-	IPX_GetLocalAddress(&((sockaddr_ipx *)addr)->sipx_addr);
-	((sockaddr_ipx *)addr)->sipx_addr.socket = Socket[handle];
+	IPX_GetLocalAddress(&((sockaddr_ipx*)addr)->sipx_addr);
+	((sockaddr_ipx*)addr)->sipx_addr.socket = Socket[handle];
 	return 0;
 	unguard;
 }
@@ -777,15 +777,15 @@ int VIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 	if (n == 12)
 	{
 		sprintf(buf, "00000000:%s:%u", name, net_hostport);
-		return IPX_StringToAddr(buf, addr);
+		return StringToAddr(buf, addr);
 	}
 	if (n == 21)
 	{
 		sprintf(buf, "%s:%u", name, net_hostport);
-		return IPX_StringToAddr(buf, addr);
+		return StringToAddr(buf, addr);
 	}
 	if (n > 21 && n <= 27)
-		return IPX_StringToAddr(name, addr);
+		return StringToAddr(name, addr);
 
 	return -1;
 	unguard;
@@ -801,13 +801,21 @@ int VIpxDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
 	guard(VIpxDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
+	{
 		return -1;
+	}
 
-	if (memcmp(&((sockaddr_ipx *)addr1)->sipx_addr, &((sockaddr_ipx *)addr2)->sipx_addr, 10))
+	if (memcmp(&((sockaddr_ipx*)addr1)->sipx_addr,
+		&((sockaddr_ipx*)addr2)->sipx_addr, 10))
+	{
 		return -1;
+	}
 
-	if (((sockaddr_ipx *)addr1)->sipx_addr.socket != ((sockaddr_ipx *)addr2)->sipx_addr.socket)
+	if (((sockaddr_ipx*)addr1)->sipx_addr.socket !=
+		((sockaddr_ipx*)addr2)->sipx_addr.socket)
+	{
 		return 1;
+	}
 
 	return 0;
 	unguard;
@@ -897,7 +905,7 @@ int VIpxDriver::IPX_OpenSocket(vuint16 port)
 		GCon->Logf(NAME_DevNet, "IPX_OpenSocket: error %02x", regs.h.al);
 		return -1;
 	}
-    return regs.x.dx;
+	return regs.x.dx;
 }
 
 //==========================================================================
@@ -977,9 +985,9 @@ int VIpxDriver::IPX_ListenForPacket(unsigned int offset)
 	if (regs.h.al)
 	{
 		GCon->Logf(NAME_DevNet, "IPX_ListenForPacket: 0x%02x", regs.h.al);
-        return -1;
+		return -1;
 	}
-    return 0;
+	return 0;
 }
 
 //==========================================================================
