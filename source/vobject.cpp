@@ -849,28 +849,28 @@ IMPLEMENT_FUNCTION(VObject, MSG_WriteLong)
 
 IMPLEMENT_FUNCTION(VObject, MSG_ReadChar)
 {
-	RET_INT((vint8)net_msg.ReadByte());
+	RET_INT((vint8)GNet->NetMsg.ReadByte());
 }
 
 IMPLEMENT_FUNCTION(VObject, MSG_ReadByte)
 {
-	RET_INT((vuint8)net_msg.ReadByte());
+	RET_INT((vuint8)GNet->NetMsg.ReadByte());
 }
 
 IMPLEMENT_FUNCTION(VObject, MSG_ReadShort)
 {
-	RET_INT((vint16)net_msg.ReadShort());
+	RET_INT((vint16)GNet->NetMsg.ReadShort());
 }
 
 IMPLEMENT_FUNCTION(VObject, MSG_ReadWord)
 {
-	RET_INT((vuint16)net_msg.ReadShort());
+	RET_INT((vuint16)GNet->NetMsg.ReadShort());
 }
 
 IMPLEMENT_FUNCTION(VObject, MSG_ReadLong)
 {
-	int l;
-	net_msg >> l;
+	vint32 l;
+	GNet->NetMsg >> l;
 	RET_INT(l);
 }
 

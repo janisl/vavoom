@@ -109,7 +109,7 @@ struct client_static_t
 
 	// connection information
 	int				signon;			// 0 to SIGNONS
-	qsocket_t		*netcon;
+	VSocket		*netcon;
 	VMessage		message;		// writing buffer to send to server
 };
 

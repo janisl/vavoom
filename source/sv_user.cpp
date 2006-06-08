@@ -56,19 +56,19 @@ static VCvarI		sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 //
 //==========================================================================
 
-void SV_ReadMove()
+void SV_ReadMove(VMessage& msg)
 {
 	guard(SV_ReadMove);
     ticcmd_t	cmd;
 
-	sv_player->ViewAngles.yaw = ByteToAngle(net_msg.ReadByte());
-	sv_player->ViewAngles.pitch = ByteToAngle(net_msg.ReadByte());
-	sv_player->ViewAngles.roll = ByteToAngle(net_msg.ReadByte());
-	net_msg >> cmd.forwardmove
-			>> cmd.sidemove
-			>> cmd.flymove
-			>> cmd.buttons
-			>> cmd.impulse;
+	sv_player->ViewAngles.yaw = ByteToAngle(msg.ReadByte());
+	sv_player->ViewAngles.pitch = ByteToAngle(msg.ReadByte());
+	sv_player->ViewAngles.roll = ByteToAngle(msg.ReadByte());
+	msg >> cmd.forwardmove
+		>> cmd.sidemove
+		>> cmd.flymove
+		>> cmd.buttons
+		>> cmd.impulse;
 
 	// Don't move faster than maxmove
 	if (cmd.forwardmove > sv_maxmove)
@@ -167,7 +167,7 @@ bool SV_ReadClientMessages(int clientnum)
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_NeedsUpdate;
 	do
 	{
-		ret = NET_GetMessage(sv_player->NetCon);
+		ret = sv_player->NetCon->GetMessage();
 		if (ret == -1)
 		{
 			GCon->Log(NAME_DevNet, "Bad read");
@@ -179,42 +179,44 @@ bool SV_ReadClientMessages(int clientnum)
 
 		sv_player->PlayerFlags |= VBasePlayer::PF_NeedsUpdate;
 
-		net_msg.BeginReading();
+		VMessage& msg = GNet->NetMsg;
+
+		msg.BeginReading();
 
 		while (1)
 		{
-			if (net_msg.BadRead)
+			if (msg.BadRead)
 			{
 				GCon->Log(NAME_DevNet, "Packet corupted");
 				return false;
 			}
 
-			net_msg >> cmd_type;
+			msg >> cmd_type;
 
-			if (net_msg.BadRead)
+			if (msg.BadRead)
 				break; // Here this means end of packet
 
 			switch (cmd_type)
 			{
-			 case clc_nop:
+			case clc_nop:
 				break;
 
-			 case clc_move:
-				SV_ReadMove();
+			case clc_move:
+				SV_ReadMove(msg);
 				break;
 
-			 case clc_disconnect:
+			case clc_disconnect:
 				return false;
 	
-			 case clc_player_info:
-				SV_SetUserInfo(net_msg.ReadString());
+			case clc_player_info:
+				SV_SetUserInfo(msg.ReadString());
 				break;
 
-			 case clc_stringcmd:
-				SV_RunClientCommand(net_msg.ReadString());
+			case clc_stringcmd:
+				SV_RunClientCommand(msg.ReadString());
 				break;
 
-			 default:
+			default:
 				GCon->Log(NAME_DevNet, "Invalid command");
 				return false;
 			}

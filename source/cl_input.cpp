@@ -630,7 +630,7 @@ void CL_SendMove()
 			<< cmd.buttons
 			<< cmd.impulse;
 
-		NET_SendUnreliableMessage(cls.netcon, &msg);
+		cls.netcon->SendUnreliableMessage(&msg);
 	}
 
 	// send the reliable message
@@ -639,13 +639,13 @@ void CL_SendMove()
 		return;		// no message at all
 	}
 
-	if (!NET_CanSendMessage(cls.netcon))
+	if (!cls.netcon->CanSendMessage())
 	{
 		GCon->Log(NAME_Dev, "CL_WriteToServer: can't send");
 		return;
 	}
 
-	if (NET_SendMessage(cls.netcon, &cls.message) == -1)
+	if (cls.netcon->SendMessage(&cls.message) == -1)
 	{
 		Host_Error("CL_WriteToServer: lost server connection");
 	}
@@ -701,45 +701,3 @@ void CL_ClearInput()
 	impulse_cmd = 0;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.13  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.12  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.11  2004/10/11 07:57:30  dj_jl
-//	Joystick yaw speed fixed.
-//	
-//	Revision 1.10  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.9  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.8  2002/01/15 18:30:43  dj_jl
-//	Some fixes and improvements suggested by Malcolm Nixon
-//	
-//	Revision 1.7  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2002/01/04 18:21:16  dj_jl
-//	Fixed tilted death view
-//	
-//	Revision 1.5  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.4  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

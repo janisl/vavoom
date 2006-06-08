@@ -64,7 +64,7 @@ void CL_Disconnect();
 //
 //==========================================================================
 
-void CL_FinishTimeDemo(void)
+void CL_FinishTimeDemo()
 {
 	guard(CL_FinishTimeDemo);
 	int		frames;
@@ -89,7 +89,7 @@ void CL_FinishTimeDemo(void)
 //
 //==========================================================================
 
-void CL_StopPlayback(void)
+void CL_StopPlayback()
 {
 	guard(CL_StopPlayback);
 	if (!cls.demoplayback)
@@ -118,12 +118,12 @@ void CL_StopPlayback(void)
 //
 //==========================================================================
 
-void CL_WriteDemoMessage(void)
+void CL_WriteDemoMessage(VMessage& msg)
 {
 	guard(CL_WriteDemoMessage);
-	*cls.demofile << net_msg.CurSize;
+	*cls.demofile << msg.CurSize;
 	*cls.demofile << cl->viewangles;
-	cls.demofile->Serialise(net_msg.Data, net_msg.CurSize);
+	cls.demofile->Serialise(msg.Data, msg.CurSize);
 	cls.demofile->Flush();
 	unguard;
 }
@@ -136,7 +136,7 @@ void CL_WriteDemoMessage(void)
 //
 //==========================================================================
 
-int CL_GetMessage(void)
+int CL_GetMessage()
 {
 	guard(CL_GetMessage);
 	int r;
@@ -167,13 +167,13 @@ int CL_GetMessage(void)
 		}
 
 		// get the next message
-		*cls.demofile << net_msg.CurSize;
+		*cls.demofile << GNet->NetMsg.CurSize;
 //		VectorCopy (cl->mviewangles[0], cl->mviewangles[1]);
 		*cls.demofile << cl->viewangles;
 
-		if (net_msg.CurSize > MAX_MSGLEN)
+		if (GNet->NetMsg.CurSize > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");
-		cls.demofile->Serialise(net_msg.Data, net_msg.CurSize);
+		cls.demofile->Serialise(GNet->NetMsg.Data, GNet->NetMsg.CurSize);
 		if (cls.demofile->IsError())
 		{
 			CL_StopPlayback();
@@ -185,13 +185,14 @@ int CL_GetMessage(void)
 
 	do
 	{
-		r = NET_GetMessage(cls.netcon);
+		check(cls.netcon);
+		r = cls.netcon->GetMessage();
 
 		if (r != 1 && r != 2)
 			return r;
 	
 		// discard nop keepalive message
-		if (net_msg.CurSize == 1 && net_msg.Data[0] == svc_nop)
+		if (GNet->NetMsg.CurSize == 1 && GNet->NetMsg.Data[0] == svc_nop)
 			GCon->Log("<-- server to client keepalive");
 		else
 			break;
@@ -200,7 +201,7 @@ int CL_GetMessage(void)
 
 	if (cls.demorecording)
 	{
-		CL_WriteDemoMessage();
+		CL_WriteDemoMessage(GNet->NetMsg);
 	}
 	
 	return r;
@@ -213,13 +214,13 @@ int CL_GetMessage(void)
 //
 //==========================================================================
 
-void CL_StopRecording(void)
+void CL_StopRecording()
 {
 	guard(CL_StopRecording);
 	// write a disconnect message to the demo file
-	net_msg.Clear();
-	net_msg << (byte)svc_disconnect;
-	CL_WriteDemoMessage();
+	GNet->NetMsg.Clear();
+	GNet->NetMsg << (byte)svc_disconnect;
+	CL_WriteDemoMessage(GNet->NetMsg);
 
 	// finish up
 	delete cls.demofile;
@@ -408,58 +409,3 @@ COMMAND(TimeDemo)
 	cls.td_lastframe = -1;		// get a new message this frame
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.17  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.16  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.15  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.14  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.13  2005/12/25 19:20:02  dj_jl
-//	Moved title screen into a class.
-//	
-//	Revision 1.12  2004/12/03 16:15:46  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.11  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.10  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.9  2002/05/29 16:54:33  dj_jl
-//	Added const cast.
-//	
-//	Revision 1.8  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.7  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.5  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.4  2001/08/04 17:25:14  dj_jl
-//	Moved title / demo loop to progs
-//	Removed shareware / ExtendedWAD from engine
-//	
-//	Revision 1.3  2001/07/31 17:10:21  dj_jl
-//	Localizing demo loop
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -36,21 +36,21 @@ class VLoopbackDriver : public VNetDriver
 {
 public:
 	bool		localconnectpending;
-	qsocket_t*	loop_client;
-	qsocket_t*	loop_server;
+	VSocket*	loop_client;
+	VSocket*	loop_server;
 
 	VLoopbackDriver();
 	int Init();
 	void Listen(bool);
 	void SearchForHosts(bool);
-	qsocket_t* Connect(const char*);
-	qsocket_t* CheckNewConnections();
-	int GetMessage(qsocket_t*);
-	int SendMessage(qsocket_t*, VMessage*);
-	int SendUnreliableMessage(qsocket_t*, VMessage*);
-	bool CanSendMessage(qsocket_t*);
-	bool CanSendUnreliableMessage(qsocket_t*);
-	void Close(qsocket_t*);
+	VSocket* Connect(const char*);
+	VSocket* CheckNewConnections();
+	int GetMessage(VSocket*);
+	int SendMessage(VSocket*, VMessage*);
+	int SendUnreliableMessage(VSocket*, VMessage*);
+	bool CanSendMessage(VSocket*);
+	bool CanSendUnreliableMessage(VSocket*);
+	void Close(VSocket*);
 	void Shutdown();
 
 	static int IntAlign(int);
@@ -126,15 +126,15 @@ void VLoopbackDriver::SearchForHosts(bool)
 	if (!sv.active)
 		return;
 
-	hostCacheCount = 1;
-	if (strcmp(hostname, "UNNAMED") == 0)
-		strcpy(hostcache[0].name, "local");
+	GNet->HostCacheCount = 1;
+	if (strcmp(VNetwork::HostName, "UNNAMED") == 0)
+		strcpy(GNet->HostCache[0].name, "local");
 	else
-		strcpy(hostcache[0].name, hostname);
-	strncpy(hostcache[0].map, level.mapname, 15);
-	hostcache[0].users = svs.num_connected;
-	hostcache[0].maxusers = svs.max_clients;
-	strcpy(hostcache[0].cname, "local");
+		strcpy(GNet->HostCache[0].name, VNetwork::HostName);
+	strncpy(GNet->HostCache[0].map, level.mapname, 15);
+	GNet->HostCache[0].users = svs.num_connected;
+	GNet->HostCache[0].maxusers = svs.max_clients;
+	strcpy(GNet->HostCache[0].cname, "local");
 #endif
 	unguard;
 }
@@ -145,7 +145,7 @@ void VLoopbackDriver::SearchForHosts(bool)
 //
 //==========================================================================
 
-qsocket_t* VLoopbackDriver::Connect(const char* host)
+VSocket* VLoopbackDriver::Connect(const char* host)
 {
 	guard(VLoopbackDriver::Connect);
 	if (strcmp(host,"local") != 0)
@@ -155,34 +155,34 @@ qsocket_t* VLoopbackDriver::Connect(const char* host)
 
 	if (!loop_client)
 	{
-		loop_client = NET_NewQSocket(this);
+		loop_client = GNet->NewSocket(this);
 		if (loop_client == NULL)
 		{
 			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
 			return NULL;
 		}
-		strcpy(loop_client->address, "localhost");
+		loop_client->Address = "localhost";
 	}
-	loop_client->receiveMessageLength = 0;
-	loop_client->sendMessageLength = 0;
-	loop_client->canSend = true;
+	loop_client->ReceiveMessageLength = 0;
+	loop_client->SendMessageLength = 0;
+	loop_client->CanSend = true;
 
 	if (!loop_server)
 	{
-		loop_server = NET_NewQSocket(this);
+		loop_server = GNet->NewSocket(this);
 		if (loop_server == NULL)
 		{
 			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
 			return NULL;
 		}
-		strcpy(loop_server->address, "LOCAL");
+		loop_server->Address = "LOCAL";
 	}
-	loop_server->receiveMessageLength = 0;
-	loop_server->sendMessageLength = 0;
-	loop_server->canSend = true;
+	loop_server->ReceiveMessageLength = 0;
+	loop_server->SendMessageLength = 0;
+	loop_server->CanSend = true;
 
-	loop_client->driverdata = (void*)loop_server;
-	loop_server->driverdata = (void*)loop_client;
+	loop_client->DriverData = (void*)loop_server;
+	loop_server->DriverData = (void*)loop_client;
 	
 	return loop_client;	
 	unguard;
@@ -194,19 +194,19 @@ qsocket_t* VLoopbackDriver::Connect(const char* host)
 //
 //==========================================================================
 
-qsocket_t* VLoopbackDriver::CheckNewConnections()
+VSocket* VLoopbackDriver::CheckNewConnections()
 {
 	guard(VLoopbackDriver::CheckNewConnections);
 	if (!localconnectpending)
 		return NULL;
 
 	localconnectpending = false;
-	loop_server->sendMessageLength = 0;
-	loop_server->receiveMessageLength = 0;
-	loop_server->canSend = true;
-	loop_client->sendMessageLength = 0;
-	loop_client->receiveMessageLength = 0;
-	loop_client->canSend = true;
+	loop_server->SendMessageLength = 0;
+	loop_server->ReceiveMessageLength = 0;
+	loop_server->CanSend = true;
+	loop_client->SendMessageLength = 0;
+	loop_client->ReceiveMessageLength = 0;
+	loop_client->CanSend = true;
 	return loop_server;
 	unguard;
 }
@@ -228,29 +228,30 @@ int VLoopbackDriver::IntAlign(int value)
 //
 //==========================================================================
 
-int VLoopbackDriver::GetMessage(qsocket_t* sock)
+int VLoopbackDriver::GetMessage(VSocket* sock)
 {
 	guard(VLoopbackDriver::GetMessage);
 	int		ret;
 	int		length;
 
-	if (sock->receiveMessageLength == 0)
+	if (sock->ReceiveMessageLength == 0)
 		return 0;
 
-	ret = sock->receiveMessage[0];
-	length = sock->receiveMessage[1] + (sock->receiveMessage[2] << 8);
+	ret = sock->ReceiveMessageData[0];
+	length = sock->ReceiveMessageData[1] + (sock->ReceiveMessageData[2] << 8);
 	// alignment byte skipped here
-	net_msg.Clear();
-    net_msg.Write(sock->receiveMessage + 4,	length);
+	GNet->NetMsg.Clear();
+    GNet->NetMsg.Write(sock->ReceiveMessageData + 4,	length);
 
 	length = IntAlign(length + 4);
-	sock->receiveMessageLength -= length;
+	sock->ReceiveMessageLength -= length;
 
-	if (sock->receiveMessageLength)
-		memcpy(sock->receiveMessage, &sock->receiveMessage[length], sock->receiveMessageLength);
+	if (sock->ReceiveMessageLength)
+		memcpy(sock->ReceiveMessageData, &sock->ReceiveMessageData[length],
+			sock->ReceiveMessageLength);
 
-	if (sock->driverdata && ret == 1)
-		((qsocket_t*)sock->driverdata)->canSend = true;
+	if (sock->DriverData && ret == 1)
+		((VSocket*)sock->DriverData)->CanSend = true;
 
 	return ret;
 	unguard;
@@ -262,21 +263,21 @@ int VLoopbackDriver::GetMessage(qsocket_t* sock)
 //
 //==========================================================================
 
-int VLoopbackDriver::SendMessage(qsocket_t* sock, VMessage* data)
+int VLoopbackDriver::SendMessage(VSocket* sock, VMessage* data)
 {
 	guard(VLoopbackDriver::SendMessage);
 	vuint8*		buffer;
 	int*		bufferLength;
 
-	if (!sock->driverdata)
+	if (!sock->DriverData)
 		return -1;
 
-	bufferLength = &((qsocket_t*)sock->driverdata)->receiveMessageLength;
+	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
 
 	if ((*bufferLength + data->CurSize + 4) > NET_MAXMESSAGE)
 		Sys_Error("Loop_SendMessage: overflow\n");
 
-	buffer = ((qsocket_t*)sock->driverdata)->receiveMessage + *bufferLength;
+	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
 
 	// message type
 	*buffer++ = 1;
@@ -292,7 +293,7 @@ int VLoopbackDriver::SendMessage(qsocket_t* sock, VMessage* data)
     memcpy(buffer, data->Data, data->CurSize);
 	*bufferLength = IntAlign(*bufferLength + data->CurSize + 4);
 
-	sock->canSend = false;
+	sock->CanSend = false;
 	return 1;
 	unguard;
 }
@@ -303,21 +304,21 @@ int VLoopbackDriver::SendMessage(qsocket_t* sock, VMessage* data)
 //
 //==========================================================================
 
-int VLoopbackDriver::SendUnreliableMessage(qsocket_t* sock, VMessage* data)
+int VLoopbackDriver::SendUnreliableMessage(VSocket* sock, VMessage* data)
 {
 	guard(VLoopbackDriver::SendUnreliableMessage);
 	vuint8*		buffer;
 	int*		bufferLength;
 
-	if (!sock->driverdata)
+	if (!sock->DriverData)
 		return -1;
 
-	bufferLength = &((qsocket_t*)sock->driverdata)->receiveMessageLength;
+	bufferLength = &((VSocket*)sock->DriverData)->ReceiveMessageLength;
 
 	if ((*bufferLength + data->CurSize + sizeof(byte) + sizeof(short)) > NET_MAXMESSAGE)
 		return 0;
 
-	buffer = ((qsocket_t*)sock->driverdata)->receiveMessage + *bufferLength;
+	buffer = ((VSocket*)sock->DriverData)->ReceiveMessageData + *bufferLength;
 
 	// message type
 	*buffer++ = 2;
@@ -342,12 +343,12 @@ int VLoopbackDriver::SendUnreliableMessage(qsocket_t* sock, VMessage* data)
 //
 //==========================================================================
 
-bool VLoopbackDriver::CanSendMessage(qsocket_t* sock)
+bool VLoopbackDriver::CanSendMessage(VSocket* sock)
 {
 	guard(VLoopbackDriver::CanSendMessage);
-	if (!sock->driverdata)
+	if (!sock->DriverData)
 		return false;
-	return sock->canSend;
+	return sock->CanSend;
 	unguard;
 }
 
@@ -357,7 +358,7 @@ bool VLoopbackDriver::CanSendMessage(qsocket_t* sock)
 //
 //==========================================================================
 
-bool VLoopbackDriver::CanSendUnreliableMessage(qsocket_t*)
+bool VLoopbackDriver::CanSendUnreliableMessage(VSocket*)
 {
 	return true;
 }
@@ -368,14 +369,14 @@ bool VLoopbackDriver::CanSendUnreliableMessage(qsocket_t*)
 //
 //==========================================================================
 
-void VLoopbackDriver::Close(qsocket_t* sock)
+void VLoopbackDriver::Close(VSocket* sock)
 {
 	guard(VLoopbackDriver::Close);
-	if (sock->driverdata)
-		((qsocket_t*)sock->driverdata)->driverdata = NULL;
-	sock->receiveMessageLength = 0;
-	sock->sendMessageLength = 0;
-	sock->canSend = true;
+	if (sock->DriverData)
+		((VSocket*)sock->DriverData)->DriverData = NULL;
+	sock->ReceiveMessageLength = 0;
+	sock->SendMessageLength = 0;
+	sock->CanSend = true;
 	if (sock == loop_client)
 		loop_client = NULL;
 	else

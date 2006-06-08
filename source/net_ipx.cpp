@@ -129,23 +129,23 @@ struct packet_t
 class VIpxDriver : public VNetLanDriver
 {
 public:
-	vuint16			ipx_cs;
-	vuint16			ipx_ip;
+	vuint16				ipx_cs;
+	vuint16				ipx_ip;
 
-	__dpmi_regs		regs;
+	__dpmi_regs			regs;
 
-	_go32_dpmi_seginfo		packets_info;
-	int						packets_offset;
+	_go32_dpmi_seginfo	packets_info;
+	int					packets_offset;
 
-	vuint16			Socket[IPXSOCKETS];
-	int				BasePacket[IPXSOCKETS];
-	long			Sequence[IPXSOCKETS];	// for time stamp in packets
-	int          	handlesInUse;
+	vuint16				Socket[IPXSOCKETS];
+	int					BasePacket[IPXSOCKETS];
+	long				Sequence[IPXSOCKETS];	// for time stamp in packets
+	int					handlesInUse;
 
-	PollProcedure	pollProcedure;
+	VNetPollProcedure	pollProcedure;
 
-	int				net_acceptsocket;
-	int				net_controlsocket;
+	int					net_acceptsocket;
+	int					net_controlsocket;
 
 	VIpxDriver();
 	int Init();
@@ -161,7 +161,7 @@ public:
 	char* AddrToString(sockaddr_t*);
 	int StringToAddr(const char*, sockaddr_t*);
 	int GetSocketAddr(int, sockaddr_t*);
-	int GetNameFromAddr(sockaddr_t*, char*);
+	VStr GetNameFromAddr(sockaddr_t*);
 	int GetAddrFromName(const char*, sockaddr_t*);
 	int AddrCompare(sockaddr_t*, sockaddr_t*);
 	int GetSocketPort(sockaddr_t*);
@@ -223,6 +223,7 @@ VIpxDriver::VIpxDriver()
 , ipx_ip(0)
 , packets_offset(0)
 , handlesInUse(0)
+, pollProcedure(IPX_PollProcedure, this)
 , net_acceptsocket(-1)
 , net_controlsocket(0)
 {
@@ -232,8 +233,6 @@ VIpxDriver::VIpxDriver()
 	memset(&BasePacket, 0, sizeof(BasePacket));
 	memset(&Sequence, 0, sizeof(Sequence));
 	memset(&pollProcedure, 0, sizeof(pollProcedure));
-	pollProcedure.procedure = IPX_PollProcedure;
-	pollProcedure.arg = this;
 }
 
 //==========================================================================
@@ -276,15 +275,15 @@ int VIpxDriver::Init()
 		return -1;
 	}
 
-	SchedulePollProcedure(&pollProcedure, 0.01);
+	GNet->SchedulePollProcedure(&pollProcedure, 0.01);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_ipx_address, AddrToString(&addr));
-	colon = strrchr(my_ipx_address, ':');
+	strcpy(GNet->MyIpxAddress, AddrToString(&addr));
+	colon = strrchr(GNet->MyIpxAddress, ':');
 	if (colon)
 		*colon = 0;
 
-	ipxAvailable = true;
+	GNet->IpxAvailable = true;
 	GCon->Log(NAME_Init, "IPX initialized");
 	return net_controlsocket;
 	unguard;
@@ -316,7 +315,7 @@ void VIpxDriver::IPX_PollProcedure(void* arg)
 	guard(VIpxDriver::IPX_PollProcedure);
 	VIpxDriver* Self = (VIpxDriver*)arg;
 	Self->IPX_RelinquishControl();
-	SchedulePollProcedure(&Self->pollProcedure, 0.01);
+	GNet->SchedulePollProcedure(&Self->pollProcedure, 0.01);
 	unguard;
 }
 
@@ -334,7 +333,7 @@ void VIpxDriver::Listen(bool state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(GNet->HostPort);
 			if (net_acceptsocket == -1)
 			{
 				Sys_Error("IPX_Listen: Unable to open accept socket\n");
@@ -649,7 +648,7 @@ int VIpxDriver::Broadcast(int handle, vuint8* buf, int len)
 
 	memset(addr.sipx_addr.network, 0x00, 4);
 	memset(addr.sipx_addr.node, 0xff, 6);
-	addr.sipx_addr.socket = BigShort(net_hostport);
+	addr.sipx_addr.socket = BigShort(GNet->HostPort);
 
 	GetPacket(BasePacket[handle], &packet);
 	memset(packet.ecb.ImmediateAddress, 0xff, 6);
@@ -752,11 +751,10 @@ int VIpxDriver::GetSocketAddr(int handle, sockaddr_t* addr)
 //
 //==========================================================================
 
-int VIpxDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
+VStr VIpxDriver::GetNameFromAddr(sockaddr_t* addr)
 {
 	guard(VIpxDriver::GetNameFromAddr);
-	strcpy(name, AddrToString(addr));
-	return 0;
+	return AddrToString(addr);
 	unguard;
 }
 
@@ -776,12 +774,12 @@ int VIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 
 	if (n == 12)
 	{
-		sprintf(buf, "00000000:%s:%u", name, net_hostport);
+		sprintf(buf, "00000000:%s:%u", name, GNet->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n == 21)
 	{
-		sprintf(buf, "%s:%u", name, net_hostport);
+		sprintf(buf, "%s:%u", name, GNet->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n > 21 && n <= 27)

@@ -1163,7 +1163,7 @@ void SV_SendNop(VBasePlayer *client)
 
 	msg << (byte)svc_nop;
 
-	if (NET_SendUnreliableMessage(client->NetCon, &msg) == -1)
+	if (client->NetCon->SendUnreliableMessage(&msg) == -1)
 		SV_DropClient(true);	// if the message couldn't send, kick off
 	client->LastMessage = realtime;
 	unguard;
@@ -1225,7 +1225,7 @@ void SV_SendClientDatagram()
 
 		SV_UpdateLevel(msg);
 
-		if (NET_SendUnreliableMessage(sv_player->NetCon, &msg) == -1)
+		if (sv_player->NetCon->SendUnreliableMessage(&msg) == -1)
 		{
 			SV_DropClient(true);
 		}
@@ -1303,12 +1303,13 @@ void SV_SendReliable()
 			continue;
 		}
 
-		if (!NET_CanSendMessage(GGameInfo->Players[i]->NetCon))
+		if (!GGameInfo->Players[i]->NetCon->CanSendMessage())
 		{
 			continue;
 		}
 
-		if (NET_SendMessage(GGameInfo->Players[i]->NetCon, &GGameInfo->Players[i]->Message) == -1)
+		if (GGameInfo->Players[i]->NetCon->SendMessage(
+			&GGameInfo->Players[i]->Message) == -1)
 		{
 			SV_DropClient(true);
 			continue;
@@ -1921,9 +1922,9 @@ int NET_SendToAll(VMessage* data, int blocktime)
 		sv_player = GGameInfo->Players[i];
 		if (sv_player && sv_player->NetCon)
 		{
-			if (NET_IsLocalConnection(sv_player->NetCon))
+			if (sv_player->NetCon->IsLocalConnection())
 			{
-				NET_SendMessage(sv_player->NetCon, data);
+				sv_player->NetCon->SendMessage(data);
 				state1[i] = true;
 				state2[i] = true;
 				continue;
@@ -1948,14 +1949,14 @@ int NET_SendToAll(VMessage* data, int blocktime)
 			sv_player = GGameInfo->Players[i];
 			if (!state1[i])
 			{
-				if (NET_CanSendMessage(sv_player->NetCon))
+				if (sv_player->NetCon->CanSendMessage())
 				{
 					state1[i] = true;
-					NET_SendMessage(sv_player->NetCon, data);
+					sv_player->NetCon->SendMessage(data);
 				}
 				else
 				{
-					NET_GetMessage(sv_player->NetCon);
+					sv_player->NetCon->GetMessage();
 				}
 				count++;
 				continue;
@@ -1963,13 +1964,13 @@ int NET_SendToAll(VMessage* data, int blocktime)
 
 			if (!state2[i])
 			{
-				if (NET_CanSendMessage(sv_player->NetCon))
+				if (sv_player->NetCon->CanSendMessage())
 				{
 					state2[i] = true;
 				}
 				else
 				{
-					NET_GetMessage(sv_player->NetCon);
+					sv_player->NetCon->GetMessage();
 				}
 				count++;
 				continue;
@@ -2533,7 +2534,10 @@ void SV_DropClient(boolean)
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Active;
 	GGameInfo->Players[SV_GetPlayerNum(sv_player)] = NULL;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_Spawned;
-	NET_Close(sv_player->NetCon);
+	if (sv_player->NetCon)
+	{
+		sv_player->NetCon->Close();
+	}
 	sv_player->NetCon = NULL;
 	svs.num_connected--;
 	sv_player->UserInfo[0] = 0;
@@ -2726,7 +2730,7 @@ COMMAND(Stats)
 void SV_ConnectClient(VBasePlayer *player)
 {
 	guard(SV_ConnectClient);
-	GCon->Logf(NAME_Dev, "Client %s connected", player->NetCon->address);
+	GCon->Logf(NAME_Dev, "Client %s connected", *player->NetCon->Address);
 
 	GGameInfo->Players[SV_GetPlayerNum(player)] = player;
 	player->PlayerFlags |= VBasePlayer::PF_Active;
@@ -2760,7 +2764,7 @@ void SV_ConnectClient(VBasePlayer *player)
 void SV_CheckForNewClients()
 {
 	guard(SV_CheckForNewClients);
-	qsocket_t	*sock;
+	VSocket	*sock;
 	int			i;
 		
 	//
@@ -2768,7 +2772,7 @@ void SV_CheckForNewClients()
 	//
 	while (1)
 	{
-		sock = NET_CheckNewConnections();
+		sock = GNet->CheckNewConnections();
 		if (!sock)
 			break;
 
@@ -2799,11 +2803,11 @@ void SV_SetUserInfo(const char *info);
 void SV_ConnectBot(const char *name)
 {
 	guard(SV_ConnectBot);
-	qsocket_t	*sock;
+	VSocket	*sock;
 	int			i;
 		
-	net_connect_bot = true;
-	sock = NET_CheckNewConnections();
+	GNet->ConnectBot = true;
+	sock = GNet->CheckNewConnections();
 	if (!sock)
 		return;
 

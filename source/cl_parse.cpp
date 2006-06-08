@@ -81,8 +81,8 @@ void CL_Clear()
 	if (!sv.active)
 #endif
 	{
-	    // Make sure all sounds are stopped.
-	    S_StopAllSound();
+		// Make sure all sounds are stopped.
+		S_StopAllSound();
 	}
 	for (int i = 0; i < GMaxEntities; i++)
 		cl_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass());
@@ -92,63 +92,63 @@ void CL_Clear()
 	unguard;
 }
 
-static void CL_ReadMobjBase(clmobjbase_t &mobj)
+static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
 {
-	mobj.origin.x = net_msg.ReadShort();
-	mobj.origin.y = net_msg.ReadShort();
-	mobj.origin.z = net_msg.ReadShort();
-	mobj.angles.yaw = ByteToAngle(net_msg.ReadByte());
-	mobj.angles.pitch = ByteToAngle(net_msg.ReadByte());
-	mobj.angles.roll = ByteToAngle(net_msg.ReadByte());
-	mobj.sprite = (word)net_msg.ReadShort();
-	mobj.frame = (word)net_msg.ReadShort();
-	mobj.translucency = net_msg.ReadByte();
-	mobj.translation = net_msg.ReadByte();
-	mobj.effects = net_msg.ReadByte();
-	mobj.model_index = net_msg.ReadShort();
-	mobj.alias_frame = net_msg.ReadByte();
+	mobj.origin.x = msg.ReadShort();
+	mobj.origin.y = msg.ReadShort();
+	mobj.origin.z = msg.ReadShort();
+	mobj.angles.yaw = ByteToAngle(msg.ReadByte());
+	mobj.angles.pitch = ByteToAngle(msg.ReadByte());
+	mobj.angles.roll = ByteToAngle(msg.ReadByte());
+	mobj.sprite = (word)msg.ReadShort();
+	mobj.frame = (word)msg.ReadShort();
+	mobj.translucency = msg.ReadByte();
+	mobj.translation = msg.ReadByte();
+	mobj.effects = msg.ReadByte();
+	mobj.model_index = msg.ReadShort();
+	mobj.alias_frame = msg.ReadByte();
 	mobj.spritetype = mobj.sprite >> 10;
 	mobj.sprite &= 0x3ff;
 }
 
-static void CL_ParseBaseline()
+static void CL_ParseBaseline(VMessage& msg)
 {
 	int		i;
 
-	i = net_msg.ReadShort();
+	i = msg.ReadShort();
 
-	CL_ReadMobjBase(cl_mo_base[i]);
+	CL_ReadMobjBase(msg, cl_mo_base[i]);
 }
 
-static void CL_ReadMobj(int bits, VEntity* mobj, const clmobjbase_t &base)
+static void CL_ReadMobj(VMessage& msg, int bits, VEntity* mobj, const clmobjbase_t &base)
 {
 	if (bits & MOB_X)
-		mobj->Origin.x = net_msg.ReadShort();
+		mobj->Origin.x = msg.ReadShort();
 	else
 		mobj->Origin.x = base.origin.x;
 	if (bits & MOB_Y)
-		mobj->Origin.y = net_msg.ReadShort();
+		mobj->Origin.y = msg.ReadShort();
 	else
 		mobj->Origin.y = base.origin.y;
 	if (bits & MOB_Z)
-		mobj->Origin.z = net_msg.ReadShort();
+		mobj->Origin.z = msg.ReadShort();
 	else
 		mobj->Origin.z = base.origin.z;
 	if (bits & MOB_ANGLE)
-		mobj->Angles.yaw = ByteToAngle(net_msg.ReadByte());
+		mobj->Angles.yaw = ByteToAngle(msg.ReadByte());
 	else
 		mobj->Angles.yaw = base.angles.yaw;
 	if (bits & MOB_ANGLEP)
-		mobj->Angles.pitch = ByteToAngle(net_msg.ReadByte());
+		mobj->Angles.pitch = ByteToAngle(msg.ReadByte());
 	else
 		mobj->Angles.pitch = base.angles.pitch;
 	if (bits & MOB_ANGLER)
-		mobj->Angles.roll = ByteToAngle(net_msg.ReadByte());
+		mobj->Angles.roll = ByteToAngle(msg.ReadByte());
 	else
 		mobj->Angles.roll = base.angles.roll;
 	if (bits & MOB_SPRITE)
 	{
-		mobj->SpriteIndex = (word)net_msg.ReadShort();
+		mobj->SpriteIndex = (word)msg.ReadShort();
 		mobj->SpriteType = mobj->SpriteIndex >> 10;
 		mobj->SpriteIndex &= 0x3ff;
 	}
@@ -158,24 +158,24 @@ static void CL_ReadMobj(int bits, VEntity* mobj, const clmobjbase_t &base)
 		mobj->SpriteType = base.spritetype;
 	}
 	if (bits & MOB_FRAME)
-		mobj->SpriteFrame = (byte)net_msg.ReadByte();
+		mobj->SpriteFrame = (byte)msg.ReadByte();
 	else
 		mobj->SpriteFrame = base.frame;
 	if (bits & MOB_TRANSLUC)
-		mobj->Translucency = net_msg.ReadByte();
+		mobj->Translucency = msg.ReadByte();
 	else
 		mobj->Translucency = base.translucency;
 	if (bits & MOB_TRANSL)
-		mobj->Translation = net_msg.ReadByte();
+		mobj->Translation = msg.ReadByte();
 	else
 		mobj->Translation = base.translation;
 	if (bits & MOB_EFFECTS)
-		mobj->Effects = net_msg.ReadByte();
+		mobj->Effects = msg.ReadByte();
 	else
 		mobj->Effects = base.effects;
 	if (bits & MOB_MODEL)
 	{
-		mobj->ModelIndex = net_msg.ReadShort();
+		mobj->ModelIndex = msg.ReadShort();
 	}
 	else
 	{
@@ -183,10 +183,10 @@ static void CL_ReadMobj(int bits, VEntity* mobj, const clmobjbase_t &base)
 	}
 	if (bits & MOB_SKIN)
 	{
-		mobj->ModelSkinIndex = net_msg.ReadByte();
+		mobj->ModelSkinIndex = msg.ReadByte();
 		if (!mobj->ModelSkinIndex)
 		{
-			mobj->ModelSkinNum = net_msg.ReadByte();
+			mobj->ModelSkinNum = msg.ReadByte();
 		}
 		else
 		{
@@ -199,27 +199,27 @@ static void CL_ReadMobj(int bits, VEntity* mobj, const clmobjbase_t &base)
 		mobj->ModelSkinNum = 0;
 	}
 	if (mobj->ModelIndex && (bits & MOB_FRAME))
-		mobj->ModelFrame = net_msg.ReadByte();
+		mobj->ModelFrame = msg.ReadByte();
 	else
 		mobj->ModelFrame = base.alias_frame;
 }
 
-static void CL_ParseUpdateMobj()
+static void CL_ParseUpdateMobj(VMessage& msg)
 {
 	guard(CL_ParseUpdateMobj);
 	int		i;
 	int		bits;
 
-	bits = net_msg.ReadByte();
+	bits = msg.ReadByte();
 	if (bits & MOB_MORE_BITS)
-		bits |= net_msg.ReadByte() << 8;
+		bits |= msg.ReadByte() << 8;
 
 	if (bits & MOB_BIG_NUM)
-		i = net_msg.ReadShort();
+		i = msg.ReadShort();
 	else
-		i = net_msg.ReadByte();
+		i = msg.ReadByte();
 
-	CL_ReadMobj(bits, cl_mobjs[i], cl_mo_base[i]);
+	CL_ReadMobj(msg, bits, cl_mobjs[i], cl_mo_base[i]);
 
 	//	Marking mobj in use
 	cl_mobjs[i]->InUse = 2;
@@ -233,7 +233,7 @@ static void CL_ParseUpdateMobj()
 		wpent->InUse = true;
 		wpent->Origin = ent->Origin;
 		wpent->Angles = ent->Angles;
-		wpent->ModelIndex = net_msg.ReadShort();
+		wpent->ModelIndex = msg.ReadShort();
 		wpent->ModelFrame = 1;
 		wpent->Translucency = ent->Translucency;
 
@@ -242,89 +242,89 @@ static void CL_ParseUpdateMobj()
 	}
 	else if (bits & MOB_WEAPON)
 	{
-		net_msg.ReadShort();
+		msg.ReadShort();
 	}
 	unguard;
 }
 
-static void CL_ParseSecUpdate()
+static void CL_ParseSecUpdate(VMessage& msg)
 {
 	int			bits;
 	int			i;
 
-	bits = net_msg.ReadByte();
+	bits = msg.ReadByte();
 	if (bits & SUB_BIG_NUM)
-		i = net_msg.ReadShort();
+		i = msg.ReadShort();
 	else
-		i = net_msg.ReadByte();
+		i = msg.ReadByte();
 
 	if (bits & SUB_FLOOR)
-		GClLevel->Sectors[i].floor.dist = net_msg.ReadShort();
+		GClLevel->Sectors[i].floor.dist = msg.ReadShort();
 	if (bits & SUB_CEIL)
-		GClLevel->Sectors[i].ceiling.dist = net_msg.ReadShort();
+		GClLevel->Sectors[i].ceiling.dist = msg.ReadShort();
 	if (bits & SUB_LIGHT)
-		GClLevel->Sectors[i].params.lightlevel = net_msg.ReadByte() << 2;
+		GClLevel->Sectors[i].params.lightlevel = msg.ReadByte() << 2;
 	if (bits & SUB_FLOOR_X)
-		GClLevel->Sectors[i].floor.xoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].floor.xoffs = msg.ReadByte() & 63;
 	if (bits & SUB_FLOOR_Y)
-		GClLevel->Sectors[i].floor.yoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].floor.yoffs = msg.ReadByte() & 63;
 	if (bits & SUB_CEIL_X)
-		GClLevel->Sectors[i].ceiling.xoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].ceiling.xoffs = msg.ReadByte() & 63;
 	if (bits & SUB_CEIL_Y)
-		GClLevel->Sectors[i].ceiling.yoffs = net_msg.ReadByte() & 63;
+		GClLevel->Sectors[i].ceiling.yoffs = msg.ReadByte() & 63;
 	if (bits & (SUB_FLOOR | SUB_CEIL))
 		CalcSecMinMaxs(&GClLevel->Sectors[i]);
 }
 
-static void CL_ParseViewData()
+static void CL_ParseViewData(VMessage& msg)
 {
 	int		i;
 	int		bits;
 
-	net_msg >> cl->vieworg.x
-			>> cl->vieworg.y
-			>> cl->vieworg.z;
-	cl->extralight = net_msg.ReadByte();
-	cl->fixedcolormap = net_msg.ReadByte();
-	cl->palette = net_msg.ReadByte();
-	cl->translucency = net_msg.ReadByte();
-	cl->pspriteSY = net_msg.ReadShort();
+	msg >> cl->vieworg.x
+		>> cl->vieworg.y
+		>> cl->vieworg.z;
+	cl->extralight = msg.ReadByte();
+	cl->fixedcolormap = msg.ReadByte();
+	cl->palette = msg.ReadByte();
+	cl->translucency = msg.ReadByte();
+	cl->pspriteSY = msg.ReadShort();
 
-	cl->psprites[0].sprite = net_msg.ReadShort();
+	cl->psprites[0].sprite = msg.ReadShort();
 	if (cl->psprites[0].sprite != -1)
 	{
-		cl->psprites[0].frame = net_msg.ReadByte();
-		cl->psprites[0].alias_model = model_precache[net_msg.ReadShort()];
-		cl->psprites[0].alias_frame = net_msg.ReadByte();
-		cl->psprites[0].sx = net_msg.ReadShort();
-		cl->psprites[0].sy = net_msg.ReadShort();
+		cl->psprites[0].frame = msg.ReadByte();
+		cl->psprites[0].alias_model = model_precache[msg.ReadShort()];
+		cl->psprites[0].alias_frame = msg.ReadByte();
+		cl->psprites[0].sx = msg.ReadShort();
+		cl->psprites[0].sy = msg.ReadShort();
 	}
 
-	cl->psprites[1].sprite = net_msg.ReadShort();
+	cl->psprites[1].sprite = msg.ReadShort();
 	if (cl->psprites[1].sprite != -1)
 	{
-		cl->psprites[1].frame = net_msg.ReadByte();
-		cl->psprites[1].alias_model = model_precache[net_msg.ReadShort()];
-		cl->psprites[1].alias_frame = net_msg.ReadByte();
-		cl->psprites[1].sx = net_msg.ReadShort();
-		cl->psprites[1].sy = net_msg.ReadShort();
+		cl->psprites[1].frame = msg.ReadByte();
+		cl->psprites[1].alias_model = model_precache[msg.ReadShort()];
+		cl->psprites[1].alias_frame = msg.ReadByte();
+		cl->psprites[1].sx = msg.ReadShort();
+		cl->psprites[1].sy = msg.ReadShort();
 	}
 
-	cl->health = net_msg.ReadByte();
-	net_msg >> cl->items;
-	cl->Frags = net_msg.ReadShort();
+	cl->health = msg.ReadByte();
+	msg >> cl->items;
+	cl->Frags = msg.ReadShort();
 
-	bits = net_msg.ReadByte();
+	bits = msg.ReadByte();
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
 		if (bits & (1 << i))
-			net_msg >> cl->cshifts[i];
+			msg >> cl->cshifts[i];
 		else
 			cl->cshifts[i] = 0;
 	}
 }
 
-static void CL_ParseStartSound()
+static void CL_ParseStartSound(VMessage& msg)
 {
 	word		sound_id;
 	word		origin_id;
@@ -334,29 +334,29 @@ static void CL_ParseStartSound()
 	byte		volume;
 	int			channel;
 
-	net_msg	>> sound_id
-			>> origin_id;
+	msg >> sound_id
+		>> origin_id;
 
 	channel = origin_id >> 13;
 	origin_id &= 0x1fff;
 
 	if (origin_id)
 	{
-		x = net_msg.ReadShort();
-		y = net_msg.ReadShort();
-		z = net_msg.ReadShort();
+		x = msg.ReadShort();
+		y = msg.ReadShort();
+		z = msg.ReadShort();
 	}
-	net_msg	>> volume;
+	msg >> volume;
 
 	S_StartSound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id, channel, volume);
 }
 
-static void CL_ParseStopSound()
+static void CL_ParseStopSound(VMessage& msg)
 {
 	word	origin_id;
 	int		channel;
 
-	net_msg >> origin_id;
+	msg >> origin_id;
 
 	channel = origin_id >> 13;
 	origin_id &= 0x1fff;
@@ -364,7 +364,7 @@ static void CL_ParseStopSound()
 	S_StopSound(origin_id, channel);
 }
 
-static void CL_ParseStartSeq()
+static void CL_ParseStartSeq(VMessage& msg)
 {
 	int			origin_id;
 	float		x;
@@ -372,25 +372,25 @@ static void CL_ParseStartSeq()
 	float		z;
 	const char*	name;
 
-	origin_id = net_msg.ReadShort();
-	x = net_msg.ReadShort();
-	y = net_msg.ReadShort();
-	z = net_msg.ReadShort();
-	name = net_msg.ReadString();
+	origin_id = msg.ReadShort();
+	x = msg.ReadShort();
+	y = msg.ReadShort();
+	z = msg.ReadShort();
+	name = msg.ReadString();
 
 	SN_StartSequenceName(origin_id, TVec(x, y, z), name);
 }
 
-static void CL_ParseStopSeq()
+static void CL_ParseStopSeq(VMessage& msg)
 {
 	word	origin_id;
 
-	net_msg >> origin_id;
+	msg >> origin_id;
 
 	SN_StopSequence(origin_id);
 }
 
-static void CL_ParseTime()
+static void CL_ParseTime(VMessage& msg)
 {
 	guard(CL_ParseTime);
 	float	new_time;
@@ -446,7 +446,7 @@ static void CL_ParseTime()
 	}
 
 	R_AnimateSurfaces();
-	net_msg >> new_time;
+	msg >> new_time;
 	cl_level.tictime = int(new_time * 35);
 	cl_level.time = new_time;
 	cl->mtime[1] = cl->mtime[0];
@@ -474,46 +474,46 @@ static void CL_ReadFromServerInfo()
 
 void CL_SetupLevel();
 
-static void CL_ParseServerInfo()
+static void CL_ParseServerInfo(VMessage& msg)
 {
 	guard(CL_ParseServerInfo);
 	byte		ver;
 
-	net_msg >> ver;
+	msg >> ver;
 	if (ver != PROTOCOL_VERSION)
 		Host_Error("Server runs protocol %d, not %d", ver, PROTOCOL_VERSION);
 
 	CL_Clear();
 
-	strcpy(cl->serverinfo, net_msg.ReadString());
+	strcpy(cl->serverinfo, msg.ReadString());
 	CL_ReadFromServerInfo();
 
-	strcpy(cl_level.mapname, net_msg.ReadString());
-	strcpy(cl_level.level_name, net_msg.ReadString());
+	strcpy(cl_level.mapname, msg.ReadString());
+	strcpy(cl_level.level_name, msg.ReadString());
 
-	cl->clientnum = net_msg.ReadByte();
-	cl->maxclients = net_msg.ReadByte();
-	cl->deathmatch = net_msg.ReadByte();
+	cl->clientnum = msg.ReadByte();
+	cl->maxclients = msg.ReadByte();
+	cl->deathmatch = msg.ReadByte();
 
-	net_msg >> cl_level.totalkills
-			>> cl_level.totalitems
-			>> cl_level.totalsecret;
-	cl_level.sky1Texture = (word)net_msg.ReadShort();
-	cl_level.sky2Texture = (word)net_msg.ReadShort();
-	net_msg >> cl_level.sky1ScrollDelta
-			>> cl_level.sky2ScrollDelta;
-	cl_level.doubleSky = net_msg.ReadByte();
-	cl_level.lightning = net_msg.ReadByte();
-	strcpy(cl_level.skybox, net_msg.ReadString());
-	strcpy(cl_level.fadetable, net_msg.ReadString());
+	msg >> cl_level.totalkills
+		>> cl_level.totalitems
+		>> cl_level.totalsecret;
+	cl_level.sky1Texture = (word)msg.ReadShort();
+	cl_level.sky2Texture = (word)msg.ReadShort();
+	msg >> cl_level.sky1ScrollDelta
+		>> cl_level.sky2ScrollDelta;
+	cl_level.doubleSky = msg.ReadByte();
+	cl_level.lightning = msg.ReadByte();
+	strcpy(cl_level.skybox, msg.ReadString());
+	strcpy(cl_level.fadetable, msg.ReadString());
 
-	strcpy(cl_level.songLump, net_msg.ReadString());
-	cl_level.cdTrack = net_msg.ReadByte();
+	strcpy(cl_level.songLump, msg.ReadString());
+	cl_level.cdTrack = msg.ReadByte();
 
 	GCon->Log("---------------------------------------");
 	GCon->Log(cl_level.level_name);
 	GCon->Log("");
-    C_ClearNotify();
+	C_ClearNotify();
 
 	CL_LoadLevel(cl_level.mapname);
 
@@ -543,7 +543,7 @@ static void CL_ParseServerInfo()
 //
 //==========================================================================
 
-static void CL_ParseIntermission()
+static void CL_ParseIntermission(VMessage& msg)
 {
 	int			i;
 	int			j;
@@ -555,7 +555,7 @@ static void CL_ParseIntermission()
 	P_GetMapInfo(cl_level.mapname, ninfo);
 	im.leavecluster = ninfo.cluster;
 
-	nextmap = net_msg.ReadString();
+	nextmap = msg.ReadString();
 	P_GetMapInfo(nextmap, ninfo);
 	strcpy(im.entermap, nextmap);
 	strcpy(im.enter_name, ninfo.name);
@@ -567,17 +567,17 @@ static void CL_ParseIntermission()
 	im.time = cl_level.time;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (net_msg.ReadByte())
+		if (msg.ReadByte())
 			scores[i].Flags |= scores_t::SF_Active;
 		else
 			scores[i].Flags &= ~scores_t::SF_Active;
 		for (j = 0; j < MAXPLAYERS; j++)
-			scores[i].frags[j] = (char)net_msg.ReadByte();
-		scores[i].killcount = net_msg.ReadShort();
-		scores[i].itemcount = net_msg.ReadShort();
-		scores[i].secretcount = net_msg.ReadShort();
+			scores[i].frags[j] = (char)msg.ReadByte();
+		scores[i].killcount = msg.ReadShort();
+		scores[i].itemcount = msg.ReadShort();
+		scores[i].secretcount = msg.ReadShort();
 	}
-    IM_Start();
+	IM_Start();
 }
 
 //==========================================================================
@@ -586,12 +586,12 @@ static void CL_ParseIntermission()
 //
 //==========================================================================
 
-static void CL_ParseSpriteList()
+static void CL_ParseSpriteList(VMessage& msg)
 {
-	int count = net_msg.ReadShort();
+	int count = msg.ReadShort();
 	for (int i = 0; i < count; i++)
 	{
-		R_InstallSprite(net_msg.ReadString(), i);
+		R_InstallSprite(msg.ReadString(), i);
 	}
 }
 
@@ -601,10 +601,10 @@ static void CL_ParseSpriteList()
 //
 //==========================================================================
 
-static void CL_ParseModel()
+static void CL_ParseModel(VMessage& msg)
 {
-	int i = net_msg.ReadShort();
-	char *name = va("models/%s", net_msg.ReadString());
+	int i = msg.ReadShort();
+	char *name = va("models/%s", msg.ReadString());
 	weapon_model_precache[i] = NULL;
 	if (FL_FindFile(name))
 	{
@@ -634,10 +634,10 @@ static void CL_ParseModel()
 //
 //==========================================================================
 
-static void CL_ParseSkin()
+static void CL_ParseSkin(VMessage& msg)
 {
-	int i = net_msg.ReadByte();
-	skin_list[i] = VStr("models/") + (const char*)net_msg.ReadString();
+	int i = msg.ReadByte();
+	skin_list[i] = VStr("models/") + (const char*)msg.ReadString();
 }
 
 //==========================================================================
@@ -656,10 +656,10 @@ static void CL_ReadFromUserInfo(int)
 //
 //==========================================================================
 
-static void CL_ParseLineTransuc()
+static void CL_ParseLineTransuc(VMessage& msg)
 {
-	int i = net_msg.ReadShort();
-	int fuzz = net_msg.ReadByte();
+	int i = msg.ReadShort();
+	int fuzz = msg.ReadByte();
 	GClLevel->Lines[i].translucency = fuzz;
 }
 
@@ -669,10 +669,10 @@ static void CL_ParseLineTransuc()
 //
 //==========================================================================
 
-static void CL_ParseExtraFloor()
+static void CL_ParseExtraFloor(VMessage& msg)
 {
-	int i = net_msg.ReadShort();
-	int j = net_msg.ReadShort();
+	int i = msg.ReadShort();
+	int j = msg.ReadShort();
 	AddExtraFloor(&GClLevel->Lines[i], &GClLevel->Sectors[j]);
 }
 
@@ -682,11 +682,11 @@ static void CL_ParseExtraFloor()
 //
 //==========================================================================
 
-static void CL_ParseHeightSec()
+static void CL_ParseHeightSec(VMessage& msg)
 {
-	sector_t* ToSec = &GClLevel->Sectors[(word)net_msg.ReadShort()];
-	sector_t* HeightSec = &GClLevel->Sectors[(word)net_msg.ReadShort()];
-	int flags = net_msg.ReadByte();
+	sector_t* ToSec = &GClLevel->Sectors[(word)msg.ReadShort()];
+	sector_t* HeightSec = &GClLevel->Sectors[(word)msg.ReadShort()];
+	int flags = msg.ReadByte();
 
 	ToSec->heightsec = HeightSec;
 	if (flags & 2)
@@ -718,7 +718,7 @@ static void CL_ParseHeightSec()
 //
 //==========================================================================
 
-void CL_ParseServerMessage()
+void CL_ParseServerMessage(VMessage& msg)
 {
 	guard(CL_ParseServerMessage);
 	int			i;
@@ -735,153 +735,153 @@ void CL_ParseServerMessage()
 	int			trans;
 	sector_t*	sec;
 
-	net_msg.BeginReading();
+	msg.BeginReading();
 
 	// update command store from the packet
 	while (1)
 	{
-		if (net_msg.BadRead)
+		if (msg.BadRead)
 		{
-			GCon->Logf(NAME_Dev, "Length %d", net_msg.CurSize);
-			for (i = 0; i < net_msg.CurSize; i++)
-				GCon->Logf(NAME_Dev, "  %d", (int)net_msg.Data[i]);
+			GCon->Logf(NAME_Dev, "Length %d", msg.CurSize);
+			for (i = 0; i < msg.CurSize; i++)
+				GCon->Logf(NAME_Dev, "  %d", (int)msg.Data[i]);
 			Host_Error("Packet corupted");
 		}
 
-		net_msg >> cmd_type;
+		msg >> cmd_type;
 
-		if (net_msg.BadRead)
+		if (msg.BadRead)
 			break; // Here this means end of packet
 
 		switch (cmd_type)
 		{
-		 case svc_nop:
+		case svc_nop:
 			break;
 
-		 case svc_disconnect:
+		case svc_disconnect:
 			Host_EndGame("Server disconnected");
 
-		 case svc_server_info:
-			CL_ParseServerInfo();
+		case svc_server_info:
+			CL_ParseServerInfo(msg);
 			break;
 
-		 case svc_spawn_baseline:
-			CL_ParseBaseline();
+		case svc_spawn_baseline:
+			CL_ParseBaseline(msg);
 			break;
 
-		 case svc_update_mobj:
-		 	CL_ParseUpdateMobj();
+		case svc_update_mobj:
+			CL_ParseUpdateMobj(msg);
 			break;
 
-		 case svc_side_top:
-			i = net_msg.ReadShort();
-			GClLevel->Sides[i].toptexture = net_msg.ReadShort();
+		case svc_side_top:
+			i = msg.ReadShort();
+			GClLevel->Sides[i].toptexture = msg.ReadShort();
 			break;
 
-		 case svc_side_mid:
-			i = net_msg.ReadShort();
-			GClLevel->Sides[i].midtexture = net_msg.ReadShort();
+		case svc_side_mid:
+			i = msg.ReadShort();
+			GClLevel->Sides[i].midtexture = msg.ReadShort();
 			break;
 
-		 case svc_side_bot:
-			i = net_msg.ReadShort();
-			GClLevel->Sides[i].bottomtexture = net_msg.ReadShort();
+		case svc_side_bot:
+			i = msg.ReadShort();
+			GClLevel->Sides[i].bottomtexture = msg.ReadShort();
 			break;
 
-		 case svc_side_ofs:
-			i = net_msg.ReadShort();
-			GClLevel->Sides[i].textureoffset = net_msg.ReadShort();
-			GClLevel->Sides[i].rowoffset = net_msg.ReadShort();
+		case svc_side_ofs:
+			i = msg.ReadShort();
+			GClLevel->Sides[i].textureoffset = msg.ReadShort();
+			GClLevel->Sides[i].rowoffset = msg.ReadShort();
 			break;
 
-		 case svc_sec_floor:
-			i = net_msg.ReadShort();
-			GClLevel->Sectors[i].floor.pic = (word)net_msg.ReadShort();
+		case svc_sec_floor:
+			i = msg.ReadShort();
+			GClLevel->Sectors[i].floor.pic = (word)msg.ReadShort();
 			break;
 
-		 case svc_sec_ceil:
-			i = net_msg.ReadShort();
-			GClLevel->Sectors[i].ceiling.pic = (word)net_msg.ReadShort();
+		case svc_sec_ceil:
+			i = msg.ReadShort();
+			GClLevel->Sectors[i].ceiling.pic = (word)msg.ReadShort();
 			break;
 
-		 case svc_sec_update:
-		 	CL_ParseSecUpdate();
+		case svc_sec_update:
+			CL_ParseSecUpdate(msg);
 			break;
 
-		 case svc_set_angles:
-			cl->viewangles.pitch = AngleMod180(ByteToAngle(net_msg.ReadByte()));
-			cl->viewangles.yaw = ByteToAngle(net_msg.ReadByte());
-			cl->viewangles.roll = ByteToAngle(net_msg.ReadByte());
+		case svc_set_angles:
+			cl->viewangles.pitch = AngleMod180(ByteToAngle(msg.ReadByte()));
+			cl->viewangles.yaw = ByteToAngle(msg.ReadByte());
+			cl->viewangles.roll = ByteToAngle(msg.ReadByte());
 			break;
 
-		 case svc_center_look:
+		case svc_center_look:
 //FIXME
 			break;
 
-		 case svc_view_data:
-		 	CL_ParseViewData();
+		case svc_view_data:
+			CL_ParseViewData(msg);
 			break;
 
-		 case svc_start_sound:
-			CL_ParseStartSound();
+		case svc_start_sound:
+			CL_ParseStartSound(msg);
 			break;
 
-		 case svc_stop_sound:
-			CL_ParseStopSound();
+		case svc_stop_sound:
+			CL_ParseStopSound(msg);
 			break;
 
-		 case svc_start_seq:
-			CL_ParseStartSeq();
+		case svc_start_seq:
+			CL_ParseStartSeq(msg);
 			break;
 
-		 case svc_stop_seq:
-			CL_ParseStopSeq();
+		case svc_stop_seq:
+			CL_ParseStopSeq(msg);
 			break;
 
-		 case svc_print:
-			C_NotifyMessage(net_msg.ReadString());
+		case svc_print:
+			C_NotifyMessage(msg.ReadString());
 			break;
 
-		 case svc_center_print:
-			C_CenterMessage(net_msg.ReadString());
+		case svc_center_print:
+			C_CenterMessage(msg.ReadString());
 			break;
 
-		 case svc_time:
-			CL_ParseTime();
+		case svc_time:
+			CL_ParseTime(msg);
 			break;
 
-		 case svc_poly_spawn:
-			x = net_msg.ReadShort();
-			y =	net_msg.ReadShort();
-			tag = net_msg.ReadByte();
+		case svc_poly_spawn:
+			x = msg.ReadShort();
+			y = msg.ReadShort();
+			tag = msg.ReadByte();
 			CL_PO_SpawnPolyobj(x, y, tag);
 			break;
 
-		 case svc_poly_translate:
-			x = net_msg.ReadShort();
-			y =	net_msg.ReadShort();
-			tag = net_msg.ReadByte();
+		case svc_poly_translate:
+			x = msg.ReadShort();
+			y = msg.ReadShort();
+			tag = msg.ReadByte();
 			CL_PO_TranslateToStartSpot(x, y, tag);
 			break;
 
-		 case svc_poly_update:
-			i = net_msg.ReadByte();
-			x = net_msg.ReadShort();
-			y =	net_msg.ReadShort();
-			angle = ByteToAngle(net_msg.ReadByte());
+		case svc_poly_update:
+			i = msg.ReadByte();
+			x = msg.ReadShort();
+			y = msg.ReadShort();
+			angle = ByteToAngle(msg.ReadByte());
 			CL_PO_Update(i, x, y, angle);
 			break;
 
-		 case svc_force_lightning:
+		case svc_force_lightning:
 			R_ForceLightning();
 			break;
 
-		 case svc_intermission:
-			CL_ParseIntermission();
+		case svc_intermission:
+			CL_ParseIntermission(msg);
 			break;
 
-			case svc_pause:
-			if (net_msg.ReadByte())
+		case svc_pause:
+			if (msg.ReadByte())
 			{
 				cl->ClientFlags |= VClientState::CF_Paused;
 				S_PauseSound();
@@ -893,101 +893,101 @@ void CL_ParseServerMessage()
 			}
 			break;
 
-		 case svc_stats_long:
-			i = net_msg.ReadByte();
-			net_msg >> ((int*)((byte*)cl + sizeof(VClientState)))[i];
+		case svc_stats_long:
+			i = msg.ReadByte();
+			msg >> ((int*)((byte*)cl + sizeof(VClientState)))[i];
 			break;
 
-		 case svc_stats_short:
-			i = net_msg.ReadByte();
-			((int*)((byte*)cl + sizeof(VClientState)))[i] = net_msg.ReadShort();
+		case svc_stats_short:
+			i = msg.ReadByte();
+			((int*)((byte*)cl + sizeof(VClientState)))[i] = msg.ReadShort();
 			break;
 
-		 case svc_stats_byte:
-			i = net_msg.ReadByte();
-			((int*)((byte*)cl + sizeof(VClientState)))[i] = net_msg.ReadByte();
+		case svc_stats_byte:
+			i = msg.ReadByte();
+			((int*)((byte*)cl + sizeof(VClientState)))[i] = msg.ReadByte();
 			break;
 
-		 case svc_stringcmd:
-		 	GCmdBuf << net_msg.ReadString();
+		case svc_stringcmd:
+			GCmdBuf << msg.ReadString();
 			break;
 
-		 case svc_signonnum:
-			i = net_msg.ReadByte();
+		case svc_signonnum:
+			i = msg.ReadByte();
 			if (i <= cls.signon)
 				Host_Error("Received signon %i when at %i", i, cls.signon);
 			cls.signon = i;
 			CL_SignonReply();
 			break;
 
-		 case svc_skip_intermission:
+		case svc_skip_intermission:
 			IM_SkipIntermission();
 			break;
 
-		 case svc_finale:
+		case svc_finale:
 			F_StartFinale();
 			break;
 
-		 case svc_sec_floor_plane:
-			i = net_msg.ReadShort();
-			net_msg >> GClLevel->Sectors[i].floor.normal.x
-					>> GClLevel->Sectors[i].floor.normal.y
-					>> GClLevel->Sectors[i].floor.normal.z
-					>> GClLevel->Sectors[i].floor.dist;
+		case svc_sec_floor_plane:
+			i = msg.ReadShort();
+			msg >> GClLevel->Sectors[i].floor.normal.x
+				>> GClLevel->Sectors[i].floor.normal.y
+				>> GClLevel->Sectors[i].floor.normal.z
+				>> GClLevel->Sectors[i].floor.dist;
 			GClLevel->Sectors[i].base_floorheight = GClLevel->Sectors[i].floor.dist;
 			CalcSecMinMaxs(&GClLevel->Sectors[i]);
 			break;
 
-		 case svc_sec_ceil_plane:
-			i = net_msg.ReadShort();
-			net_msg >> GClLevel->Sectors[i].ceiling.normal.x
-					>> GClLevel->Sectors[i].ceiling.normal.y
-					>> GClLevel->Sectors[i].ceiling.normal.z
-					>> GClLevel->Sectors[i].ceiling.dist;
+		case svc_sec_ceil_plane:
+			i = msg.ReadShort();
+			msg >> GClLevel->Sectors[i].ceiling.normal.x
+				>> GClLevel->Sectors[i].ceiling.normal.y
+				>> GClLevel->Sectors[i].ceiling.normal.z
+				>> GClLevel->Sectors[i].ceiling.dist;
 			GClLevel->Sectors[i].base_ceilingheight  = GClLevel->Sectors[i].ceiling.dist;
 			CalcSecMinMaxs(&GClLevel->Sectors[i]);
 			break;
 
-		 case svc_serverinfo:
-			strcpy(name, net_msg.ReadString());
-			strcpy(string, net_msg.ReadString());
+		case svc_serverinfo:
+			strcpy(name, msg.ReadString());
+			strcpy(string, msg.ReadString());
 			Info_SetValueForKey(cl->serverinfo, name, string);
 			CL_ReadFromServerInfo();
 			break;
 
-		 case svc_userinfo:
-			i = net_msg.ReadByte();
-			strcpy(scores[i].userinfo, net_msg.ReadString());
+		case svc_userinfo:
+			i = msg.ReadByte();
+			strcpy(scores[i].userinfo, msg.ReadString());
 			CL_ReadFromUserInfo(i);
 			break;
 
-		 case svc_setinfo:
-			i = net_msg.ReadByte();
-			strcpy(name, net_msg.ReadString());
-			strcpy(string, net_msg.ReadString());
+		case svc_setinfo:
+			i = msg.ReadByte();
+			strcpy(name, msg.ReadString());
+			strcpy(string, msg.ReadString());
 			Info_SetValueForKey(scores[i].userinfo, name, string);
 			CL_ReadFromUserInfo(i);
 			break;
 
-		 case svc_sprites:
-			CL_ParseSpriteList();
+		case svc_sprites:
+			CL_ParseSpriteList(msg);
 			break;
 
-		 case svc_model:
-			CL_ParseModel();
+		case svc_model:
+			CL_ParseModel(msg);
 			break;
 
-		 case svc_skin:
-			CL_ParseSkin();
+		case svc_skin:
+			CL_ParseSkin(msg);
 			break;
 
-		 case svc_line_transluc:
-			CL_ParseLineTransuc();
+		case svc_line_transluc:
+			CL_ParseLineTransuc(msg);
 			break;
 
-		 case svc_sec_transluc:
-			i = net_msg.ReadShort();
-			trans = net_msg.ReadByte();
+		case svc_sec_transluc:
+			i = msg.ReadShort();
+			trans = msg.ReadByte();
 			sec = &GClLevel->Sectors[i];
 			sec->floor.translucency = trans;
 			sec->ceiling.translucency = trans;
@@ -997,62 +997,62 @@ void CL_ParseServerMessage()
 			}
 			break;
 
-		 case svc_extra_floor:
-			CL_ParseExtraFloor();
+		case svc_extra_floor:
+			CL_ParseExtraFloor(msg);
 			break;
 
-		 case svc_swap_planes:
-			i = net_msg.ReadShort();
+		case svc_swap_planes:
+			i = msg.ReadShort();
 			SwapPlanes(&GClLevel->Sectors[i]);
 			break;
 
-		 case svc_static_light:
-			origin.x = net_msg.ReadShort();
-			origin.y = net_msg.ReadShort();
-			origin.z = net_msg.ReadShort();
-			radius = (byte)net_msg.ReadByte() * 8;
+		case svc_static_light:
+			origin.x = msg.ReadShort();
+			origin.y = msg.ReadShort();
+			origin.z = msg.ReadShort();
+			radius = (byte)msg.ReadByte() * 8;
 			R_AddStaticLight(origin, radius, 0xffffffff);
 			break;
 
-		 case svc_static_light_rgb:
-			origin.x = net_msg.ReadShort();
-			origin.y = net_msg.ReadShort();
-			origin.z = net_msg.ReadShort();
-			radius = (byte)net_msg.ReadByte() * 8;
-			net_msg >> color;
+		case svc_static_light_rgb:
+			origin.x = msg.ReadShort();
+			origin.y = msg.ReadShort();
+			origin.z = msg.ReadShort();
+			radius = (byte)msg.ReadByte() * 8;
+			msg >> color;
 			R_AddStaticLight(origin, radius, color);
 			break;
 
-		 case svc_sec_light_color:
-			sec = &GClLevel->Sectors[net_msg.ReadShort()];
-			sec->params.LightColor = (net_msg.ReadByte() << 16) |
-				(net_msg.ReadByte() << 8) | net_msg.ReadByte();
+		case svc_sec_light_color:
+			sec = &GClLevel->Sectors[msg.ReadShort()];
+			sec->params.LightColor = (msg.ReadByte() << 16) |
+				(msg.ReadByte() << 8) | msg.ReadByte();
 			break;
 
 		case svc_change_sky:
-			cl_level.sky1Texture = (word)net_msg.ReadShort();
-			cl_level.sky2Texture = (word)net_msg.ReadShort();
+			cl_level.sky1Texture = (word)msg.ReadShort();
+			cl_level.sky2Texture = (word)msg.ReadShort();
 			R_SkyChanged();
 			break;
 
 		case svc_change_music:
-			strcpy(cl_level.songLump, net_msg.ReadString());
-			cl_level.cdTrack = net_msg.ReadByte();
+			strcpy(cl_level.songLump, msg.ReadString());
+			cl_level.cdTrack = msg.ReadByte();
 			S_MusicChanged();
 			break;
 
 		case svc_set_floor_light_sec:
-			i = (word)net_msg.ReadShort();
-			GClLevel->Sectors[i].floor.LightSourceSector = net_msg.ReadShort();
+			i = (word)msg.ReadShort();
+			GClLevel->Sectors[i].floor.LightSourceSector = msg.ReadShort();
 			break;
 
 		case svc_set_ceil_light_sec:
-			i = (word)net_msg.ReadShort();
-			GClLevel->Sectors[i].ceiling.LightSourceSector = net_msg.ReadShort();
+			i = (word)msg.ReadShort();
+			GClLevel->Sectors[i].ceiling.LightSourceSector = msg.ReadShort();
 			break;
 
 		case svc_set_heightsec:
-			CL_ParseHeightSec();
+			CL_ParseHeightSec(msg);
 			break;
 
 		default:
@@ -1060,153 +1060,15 @@ void CL_ParseServerMessage()
 			{
 				break;
 			}
-			GCon->Logf(NAME_Dev, "Length %d", net_msg.CurSize);
-			for (i = 0; i < net_msg.CurSize; i++)
+			GCon->Logf(NAME_Dev, "Length %d", msg.CurSize);
+			for (i = 0; i < msg.CurSize; i++)
 			{
-				GCon->Logf(NAME_Dev, "  %d", (int)net_msg.Data[i]);
+				GCon->Logf(NAME_Dev, "  %d", (int)msg.Data[i]);
 			}
-			GCon->Logf(NAME_Dev, "ReadCount %d", net_msg.ReadCount);
+			GCon->Logf(NAME_Dev, "ReadCount %d", msg.ReadCount);
 			Host_Error("Invalid packet %d", cmd_type);
 			break;
 		}
-   	}
+	}
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.45  2006/04/10 19:40:45  dj_jl
-//	Fixed clearng of client state object.
-//
-//	Revision 1.44  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//	Revision 1.43  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.42  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.41  2006/03/06 13:05:50  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.40  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.39  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.38  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.37  2006/02/05 14:11:00  dj_jl
-//	Fixed conflict with Solaris.
-//	
-//	Revision 1.36  2005/06/30 20:20:54  dj_jl
-//	Implemented rendering of Boom fake flats.
-//	
-//	Revision 1.35  2005/06/04 13:59:02  dj_jl
-//	Adding support for Boom fake sectors.
-//	
-//	Revision 1.34  2005/05/03 14:56:59  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.33  2005/03/28 07:28:19  dj_jl
-//	Transfer lighting and other BOOM stuff.
-//	
-//	Revision 1.32  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.31  2003/03/08 11:30:07  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.30  2002/09/07 16:31:50  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.29  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.28  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.27  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.26  2002/06/29 16:00:45  dj_jl
-//	Added total frags count.
-//	
-//	Revision 1.25  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.24  2002/03/28 17:59:04  dj_jl
-//	Fixed negative frags.
-//	
-//	Revision 1.23  2002/03/12 19:21:55  dj_jl
-//	No need for linefeed in client-printing
-//	
-//	Revision 1.22  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.21  2002/01/11 08:09:34  dj_jl
-//	Added sector plane swapping
-//	
-//	Revision 1.20  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.19  2001/12/27 17:36:47  dj_jl
-//	Some speedup
-//	
-//	Revision 1.18  2001/12/18 19:05:03  dj_jl
-//	Made VCvar a pure C++ class
-//	
-//	Revision 1.17  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.16  2001/12/04 18:16:28  dj_jl
-//	Player models and skins handled by server
-//	
-//	Revision 1.15  2001/12/01 17:51:46  dj_jl
-//	Little changes to compile with MSVC
-//	
-//	Revision 1.14  2001/11/09 14:28:23  dj_jl
-//	Fixed parsing of sound starting
-//	
-//	Revision 1.13  2001/10/27 07:51:27  dj_jl
-//	Beautification
-//	
-//	Revision 1.12  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.11  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.10  2001/10/09 17:24:05  dj_jl
-//	Changes after bug chatching
-//	
-//	Revision 1.9  2001/10/08 17:33:01  dj_jl
-//	Different client and server level structures
-//	
-//	Revision 1.8  2001/10/04 17:18:23  dj_jl
-//	Implemented the rest of cvar flags
-//	
-//	Revision 1.7  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.6  2001/08/29 17:55:42  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.5  2001/08/15 17:24:02  dj_jl
-//	Improved object update on packet overflows
-//	
-//	Revision 1.4  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

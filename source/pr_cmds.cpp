@@ -1509,14 +1509,9 @@ IMPLEMENT_FUNCTION(VObject, TranslateKey)
 //
 //==========================================================================
 
-struct slist_t;
-
 char* P_GetMapName(int map);
 char* P_GetMapLumpName(int map);
 char *P_TranslateMap(int map);
-
-void StartSearch();
-slist_t * GetSlist();
 
 IMPLEMENT_FUNCTION(VObject, P_GetMapName)
 {
@@ -1572,7 +1567,7 @@ IMPLEMENT_FUNCTION(VObject, SV_GetSaveString)
 
 IMPLEMENT_FUNCTION(VObject, GetSlist)
 {
-	RET_PTR(GetSlist());
+	RET_PTR(GNet->GetSlist());
 }
 
 void LoadTextLump(VName name, char *buf, int bufsize);
@@ -1598,7 +1593,7 @@ IMPLEMENT_FUNCTION(VObject, NewParticle)
 
 IMPLEMENT_FUNCTION(VObject, StartSearch)
 {
-	StartSearch();
+	GNet->StartSearch();
 }
 
 IMPLEMENT_FUNCTION(VObject, T_DrawCursor)

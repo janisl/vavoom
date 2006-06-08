@@ -201,7 +201,7 @@ public:
 	char* AddrToString(sockaddr_t*);
 	int StringToAddr(const char*, sockaddr_t*);
 	int GetSocketAddr(int, sockaddr_t*);
-	int GetNameFromAddr(sockaddr_t*, char*);
+	VStr GetNameFromAddr(sockaddr_t*);
 	int GetAddrFromName(const char*, sockaddr_t*);
 	int AddrCompare(sockaddr_t*, sockaddr_t*);
 	int GetSocketPort(sockaddr_t*);
@@ -276,13 +276,13 @@ int VBeameWhitesideDriver::Init()
 	}
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_tcpip_address, AddrToString(&addr));
-	colon = strrchr(my_tcpip_address, ':');
+	strcpy(GNet->MyIpAddress, AddrToString(&addr));
+	colon = strrchr(GNet->MyIpAddress, ':');
 	if (colon)
 		*colon = 0;
 
 	GCon->Log(NAME_Init, "BW_Init: UDP initialized");
-	tcpipAvailable = true;
+	GNet->IpAvailable = true;
 
 	return net_controlsocket;
 	unguard;
@@ -316,7 +316,7 @@ void VBeameWhitesideDriver::Listen(bool state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(GNet->HostPort);
 			if (net_acceptsocket == -1)
 				Sys_Error("BW_Listen: Unable to open accept socket\n");
 		}
@@ -594,7 +594,7 @@ int VBeameWhitesideDriver::Broadcast(int s, vuint8* msg, int len)
 	vuint8 buffer[LOWMEM_SIZE];
 	writeInfo = (BW_writeInfo_t *)buffer;
 	writeInfo->remoteAddr = bcastaddr;
-	writeInfo->remotePort = net_hostport;
+	writeInfo->remotePort = GNet->HostPort;
 	writeInfo->dataLen = len;
 	if (len > (int)NET_DATAGRAMSIZE)
 		Sys_Error("BW UDP write packet too large: %u\n", len);
@@ -693,11 +693,10 @@ int VBeameWhitesideDriver::GetSocketAddr(int socket, sockaddr_t* addr)
 //
 //==========================================================================
 
-int VBeameWhitesideDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
+VStr VBeameWhitesideDriver::GetNameFromAddr(sockaddr_t* addr)
 {
 	guard(VBeameWhitesideDriver::GetNameFromAddr);
-	strcpy(name, AddrToString(addr));
-	return 0;
+	return AddrToString(addr);
 	unguard;
 }
 
@@ -753,7 +752,7 @@ int VBeameWhitesideDriver::GetAddrFromName(const char* name, sockaddr_t* hostadd
 	if (*b++ == ':')
 		port = atoi(b);
 	else
-		port = net_hostport;
+		port = GNet->HostPort;
 
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in*)hostaddr)->sin_port = BigShort((short)port);

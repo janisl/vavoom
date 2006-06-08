@@ -39,14 +39,14 @@ public:
 	int Init();
 	void Listen(bool);
 	void SearchForHosts(bool);
-	qsocket_t* Connect(const char*);
-	qsocket_t* CheckNewConnections();
-	int GetMessage(qsocket_t*);
-	int SendMessage(qsocket_t*, VMessage*);
-	int SendUnreliableMessage(qsocket_t*, VMessage*);
-	bool CanSendMessage(qsocket_t*);
-	bool CanSendUnreliableMessage(qsocket_t*);
-	void Close(qsocket_t*);
+	VSocket* Connect(const char*);
+	VSocket* CheckNewConnections();
+	int GetMessage(VSocket*);
+	int SendMessage(VSocket*, VMessage*);
+	int SendUnreliableMessage(VSocket*, VMessage*);
+	bool CanSendMessage(VSocket*);
+	bool CanSendUnreliableMessage(VSocket*);
+	void Close(VSocket*);
 	void Shutdown();
 };
 
@@ -114,7 +114,7 @@ void VNullNetDriver::SearchForHosts(bool)
 //
 //==========================================================================
 
-qsocket_t* VNullNetDriver::Connect(const char*)
+VSocket* VNullNetDriver::Connect(const char*)
 {
 	return NULL;
 }
@@ -125,20 +125,20 @@ qsocket_t* VNullNetDriver::Connect(const char*)
 //
 //==========================================================================
 
-qsocket_t* VNullNetDriver::CheckNewConnections()
+VSocket* VNullNetDriver::CheckNewConnections()
 {
 	guard(VNullNetDriver::CheckNewConnections);
-	if (!net_connect_bot)
+	if (!GNet->ConnectBot)
 		return NULL;
 
-	net_connect_bot = false;
-	qsocket_t* sock = NET_NewQSocket(this);
+	GNet->ConnectBot = false;
+	VSocket* sock = GNet->NewSocket(this);
 	if (!sock)
 	{
 		GCon->Log("Server is full");
 		return NULL;
 	}
-	strcpy(sock->address, "NULL");
+	sock->Address = "NULL";
 	return sock;
 	unguard;
 }
@@ -149,7 +149,7 @@ qsocket_t* VNullNetDriver::CheckNewConnections()
 //
 //==========================================================================
 
-int VNullNetDriver::GetMessage(qsocket_t*)
+int VNullNetDriver::GetMessage(VSocket*)
 {
 	return 0;
 }
@@ -160,7 +160,7 @@ int VNullNetDriver::GetMessage(qsocket_t*)
 //
 //==========================================================================
 
-int VNullNetDriver::SendMessage(qsocket_t*, VMessage*)
+int VNullNetDriver::SendMessage(VSocket*, VMessage*)
 {
 	return 1;
 }
@@ -171,7 +171,7 @@ int VNullNetDriver::SendMessage(qsocket_t*, VMessage*)
 //
 //==========================================================================
 
-int VNullNetDriver::SendUnreliableMessage(qsocket_t*, VMessage*)
+int VNullNetDriver::SendUnreliableMessage(VSocket*, VMessage*)
 {
 	return 1;
 }
@@ -182,7 +182,7 @@ int VNullNetDriver::SendUnreliableMessage(qsocket_t*, VMessage*)
 //
 //==========================================================================
 
-bool VNullNetDriver::CanSendMessage(qsocket_t*)
+bool VNullNetDriver::CanSendMessage(VSocket*)
 {
 	return true;
 }
@@ -193,7 +193,7 @@ bool VNullNetDriver::CanSendMessage(qsocket_t*)
 //
 //==========================================================================
 
-bool VNullNetDriver::CanSendUnreliableMessage(qsocket_t*)
+bool VNullNetDriver::CanSendUnreliableMessage(VSocket*)
 {
 	return true;
 }
@@ -204,7 +204,7 @@ bool VNullNetDriver::CanSendUnreliableMessage(qsocket_t*)
 //
 //==========================================================================
 
-void VNullNetDriver::Close(qsocket_t*)
+void VNullNetDriver::Close(VSocket*)
 {
 }
 

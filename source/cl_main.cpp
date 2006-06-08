@@ -38,7 +38,7 @@
 void SV_ShutdownServer(boolean crash);
 void CL_Disconnect();
 
-void CL_ParseServerMessage();
+void CL_ParseServerMessage(VMessage&);
 int CL_GetMessage();
 void CL_StopPlayback();
 void CL_StopRecording();
@@ -294,7 +294,7 @@ void CL_ReadFromServer()
 		if (ret)
 		{
 //			cl->last_received_message = realtime;
-			CL_ParseServerMessage();
+			CL_ParseServerMessage(GNet->NetMsg);
 		}
 	} while (ret && cls.state == ca_connected);
 
@@ -361,30 +361,30 @@ void CL_KeepaliveMessage()
 		return;
 
 	// read messages from server, should just be nops
-	old = net_msg;
-	memcpy(olddata, net_msg.Data, net_msg.CurSize);
+	old = GNet->NetMsg;
+	memcpy(olddata, GNet->NetMsg.Data, GNet->NetMsg.CurSize);
 	
 	do
 	{
 		ret = CL_GetMessage();
 		switch (ret)
 		{
-		 default:
+		default:
 			Host_Error("CL_KeepaliveMessage: CL_GetMessage failed");
-		 case 0:
+		case 0:
 			break;	// nothing waiting
-		 case 1:
+		case 1:
 			Host_Error("CL_KeepaliveMessage: received a message");
 			break;
-		 case 2:
-			if (net_msg.ReadByte() != svc_nop)
+		case 2:
+			if (GNet->NetMsg.ReadByte() != svc_nop)
 				Host_Error("CL_KeepaliveMessage: datagram wasn't a nop");
 			break;
 		}
 	} while (ret);
 
-	net_msg = old;
-	memcpy(net_msg.Data, olddata, net_msg.CurSize);
+	GNet->NetMsg = old;
+	memcpy(GNet->NetMsg.Data, olddata, GNet->NetMsg.CurSize);
 
 	// check time
 	time = Sys_Time();
@@ -396,7 +396,7 @@ void CL_KeepaliveMessage()
 	GCon->Log("--> client to server keepalive");
 
 	cls.message << (byte)clc_nop;
-	NET_SendMessage(cls.netcon, &cls.message);
+	cls.netcon->SendMessage(&cls.message);
 	cls.message.Clear();
 	unguard;
 }
@@ -441,9 +441,9 @@ void CL_Disconnect()
 		}
 		cls.message.Clear();
 		cls.message << (byte)clc_disconnect;
-		NET_SendUnreliableMessage(cls.netcon, &cls.message);
+		cls.netcon->SendUnreliableMessage(&cls.message);
 		cls.message.Clear();
-		NET_Close(cls.netcon);
+		cls.netcon->Close();
 		cls.netcon = NULL;
 
 		cls.state = ca_disconnected;
@@ -482,7 +482,7 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
-	cls.netcon = NET_Connect(host);
+	cls.netcon = GNet->Connect(host);
 	if (!cls.netcon)
 	{
 		GCon->Log("Failed to connect to the server");

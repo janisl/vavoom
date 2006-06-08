@@ -177,7 +177,8 @@ void Host_Init()
 	SV_Init();
 #endif
 
-	NET_Init();
+	GNet = new VNetwork;
+	GNet->Init();
 
 	GCmdBuf.Exec();
 
@@ -321,7 +322,7 @@ void Host_Frame()
 		//	Process console commands
 		GCmdBuf.Exec();
 
-		NET_Poll();
+		GNet->Poll();
 
 #ifdef CLIENT
 		//	Make intentions
@@ -657,7 +658,7 @@ void Host_Shutdown()
 #ifdef SERVER
 	SAFE_SHUTDOWN(SV_Shutdown, ())
 #endif
-	SAFE_SHUTDOWN(NET_Shutdown, ())
+	SAFE_SHUTDOWN(delete GNet,)
 #ifdef CLIENT
 	SAFE_SHUTDOWN(delete GInput,)
 	SAFE_SHUTDOWN(V_Shutdown, ())

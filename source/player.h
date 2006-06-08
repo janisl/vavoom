@@ -87,7 +87,7 @@ class VBasePlayer : public VObject
 	};
 	vuint32			PlayerFlags;
 
-	qsocket_t		*NetCon;
+	VSocket		*NetCon;
 	VMessage		Message;
 	byte			MsgBuf[MAX_MSGLEN];
 	int				MobjUpdateStart;

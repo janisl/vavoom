@@ -63,7 +63,7 @@ public:
 	char* AddrToString(sockaddr_t*);
 	int StringToAddr(const char*, sockaddr_t*);
 	int GetSocketAddr(int, sockaddr_t*);
-	int GetNameFromAddr(sockaddr_t*, char*);
+	VStr GetNameFromAddr(sockaddr_t*);
 	int GetAddrFromName(const char*, sockaddr_t*);
 	int AddrCompare(sockaddr_t*, sockaddr_t*);
 	int GetSocketPort(sockaddr_t*);
@@ -142,7 +142,7 @@ int VWinIpxDriver::Init()
 	if (gethostname(buff, MAXHOSTNAMELEN) == 0)
 	{
 		// if the Vavoom hostname isn't set, set it to the machine name
-		if (strcmp(hostname, "UNNAMED") == 0)
+		if (strcmp(VNetwork::HostName, "UNNAMED") == 0)
 		{
 			// see if it's a text IP address (well, close enough)
 			for (p = buff; *p; p++)
@@ -157,7 +157,7 @@ int VWinIpxDriver::Init()
 						break;
 				buff[i] = 0;
 			}
-			hostname = buff;
+			VNetwork::HostName = buff;
 		}
 	}
 
@@ -170,19 +170,19 @@ int VWinIpxDriver::Init()
 		return -1;
 	}
 
-	((sockaddr_ipx *)&broadcastaddr)->sa_family = AF_IPX;
-	memset(((sockaddr_ipx *)&broadcastaddr)->sa_netnum, 0, 4);
-	memset(((sockaddr_ipx *)&broadcastaddr)->sa_nodenum, 0xff, 6);
-	((sockaddr_ipx *)&broadcastaddr)->sa_socket = htons((word)net_hostport);
+	((sockaddr_ipx*)&broadcastaddr)->sa_family = AF_IPX;
+	memset(((sockaddr_ipx*)&broadcastaddr)->sa_netnum, 0, 4);
+	memset(((sockaddr_ipx*)&broadcastaddr)->sa_nodenum, 0xff, 6);
+	((sockaddr_ipx*)&broadcastaddr)->sa_socket = htons((vuint16)GNet->HostPort);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_ipx_address, AddrToString(&addr));
-	p = strrchr(my_ipx_address, ':');
+	strcpy(GNet->MyIpxAddress, AddrToString(&addr));
+	p = strrchr(GNet->MyIpxAddress, ':');
 	if (p)
 		*p = 0;
 
 	GCon->Log(NAME_Init, "Winsock IPX Initialised");
-	ipxAvailable = true;
+	GNet->IpxAvailable = true;
 
 	return net_controlsocket;
 	unguard;
@@ -218,7 +218,7 @@ void VWinIpxDriver::Listen(bool state)
 	{
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(GNet->HostPort);
 			if (net_acceptsocket == -1)
 				Sys_Error("WIPX_Listen: Unable to open accept socket\n");
 		}
@@ -505,11 +505,10 @@ int VWinIpxDriver::GetSocketAddr(int handle, sockaddr_t* addr)
 //
 //==========================================================================
 
-int VWinIpxDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
+VStr VWinIpxDriver::GetNameFromAddr(sockaddr_t* addr)
 {
 	guard(VWinIpxDriver::GetNameFromAddr);
-	strcpy(name, AddrToString(addr));
-	return 0;
+	return AddrToString(addr);
 	unguard;
 }
 
@@ -529,12 +528,12 @@ int VWinIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 
 	if (n == 12)
 	{
-		sprintf(buf, "00000000:%s:%u", name, net_hostport);
+		sprintf(buf, "00000000:%s:%u", name, GNet->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n == 21)
 	{
-		sprintf(buf, "%s:%u", name, net_hostport);
+		sprintf(buf, "%s:%u", name, GNet->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n > 21 && n <= 27)

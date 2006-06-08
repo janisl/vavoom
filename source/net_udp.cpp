@@ -79,7 +79,7 @@ public:
 	char* AddrToString(sockaddr_t*);
 	int StringToAddr(const char*, sockaddr_t*);
 	int GetSocketAddr(int, sockaddr_t*);
-	int GetNameFromAddr(sockaddr_t*, char*);
+	VStr GetNameFromAddr(sockaddr_t*);
 	int GetAddrFromName(const char*, sockaddr_t*);
 	int AddrCompare(sockaddr_t*, sockaddr_t*);
 	int GetSocketPort(sockaddr_t*);
@@ -150,11 +150,11 @@ int VUdpDriver::Init()
 	}
 	myAddr = *(int*)local->h_addr_list[0];
 
-	// if the quake hostname isn't set, set it to the machine name
-	if (strcmp(hostname, "UNNAMED") == 0)
+	// if the Vavoom hostname isn't set, set it to the machine name
+	if (strcmp(VNetwork::HostName, "UNNAMED") == 0)
 	{
 		buff[15] = 0;
-		hostname = buff;
+		VNetwork::HostName = buff;
 	}
 
 	if ((net_controlsocket = OpenSocket(0)) == -1)
@@ -162,17 +162,17 @@ int VUdpDriver::Init()
 
 	((sockaddr_in *)&broadcastaddr)->sin_family = AF_INET;
 	((sockaddr_in *)&broadcastaddr)->sin_addr.s_addr = INADDR_BROADCAST;
-	((sockaddr_in *)&broadcastaddr)->sin_port = htons(net_hostport);
+	((sockaddr_in *)&broadcastaddr)->sin_port = htons(GNet->HostPort);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(my_tcpip_address, AddrToString(&addr));
-	colon = strrchr(my_tcpip_address, ':');
+	strcpy(GNet->MyIpAddress, AddrToString(&addr));
+	colon = strrchr(GNet->MyIpAddress, ':');
 	if (colon)
 		*colon = 0;
-	GCon->Logf(NAME_Init, "My TCP/IP address: %s", my_tcpip_address);
+	GCon->Logf(NAME_Init, "My IP address: %s", GNet->MyIpAddress);
 
 	GCon->Log(NAME_Init, "UDP Initialised");
-	tcpipAvailable = true;
+	GNet->IpAvailable = true;
 
 	return net_controlsocket;
 	unguard;
@@ -206,7 +206,7 @@ void VUdpDriver::Listen(bool state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(net_hostport);
+			net_acceptsocket = OpenSocket(GNet->HostPort);
 			if (net_acceptsocket == -1)
 				Sys_Error("UDP_Listen: Unable to open accept socket\n");
 		}
@@ -447,20 +447,17 @@ int VUdpDriver::GetSocketAddr(int socket, sockaddr_t* addr)
 //
 //==========================================================================
 
-int VUdpDriver::GetNameFromAddr(sockaddr_t* addr, char* name)
+VStr VUdpDriver::GetNameFromAddr(sockaddr_t* addr)
 {
 	guard(VUdpDriver::GetNameFromAddr);
-	hostent*		hostentry;
-
-	hostentry = gethostbyaddr((char *)&((sockaddr_in *)addr)->sin_addr, sizeof(in_addr), AF_INET);
+	hostent* hostentry = gethostbyaddr((char*)&((sockaddr_in*)addr)->sin_addr,
+		sizeof(in_addr), AF_INET);
 	if (hostentry)
 	{
-		strncpy(name, (char *)hostentry->h_name, NET_NAMELEN - 1);
-		return 0;
+		return (char*)hostentry->h_name;
 	}
 
-	strcpy(name, AddrToString(addr));
-	return 0;
+	return AddrToString(addr);
 	unguard;
 }
 
@@ -514,7 +511,7 @@ int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 	if (*b++ == ':')
 		port = atoi(b);
 	else
-		port = net_hostport;
+		port = GNet->HostPort;
 
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in *)hostaddr)->sin_port = htons((short)port);	
@@ -543,7 +540,7 @@ int VUdpDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 		return -1;
 
 	addr->sa_family = AF_INET;
-	((sockaddr_in*)addr)->sin_port = htons(net_hostport);	
+	((sockaddr_in*)addr)->sin_port = htons(GNet->HostPort);
 	((sockaddr_in*)addr)->sin_addr.s_addr = *(int*)hostentry->h_addr_list[0];
 
 	return 0;
