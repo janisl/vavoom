@@ -1150,3 +1150,112 @@
 ******************************************************************************
                             VERSION 1.20
 ******************************************************************************
+
+18.04.2006
+  Switched from CVS to Subversion.
+28.04.2006
+  Fixed installation on Unix.
+  Firebrand added lighting effects to teleport fogs, in Strife added default
+ names of actors in conversations, added fullscreen status bar, automatic use
+ of health and armor, other fixes.
+29.04.2006
+  Removed different version of Z_Malloc.
+  In glVIS fixed location of the temporary file.
+30.04.2006
+  Some more Strife and status bar fixes by Firebrand.
+  Removed minizone, added debug versions of memory allocation functions.
+01.05.2006
+  Changed loading of all texture types to use streams, some reorganisation.
+02.05.2006
+  Moved loading of file textures to corresponding classes.
+  Changed high-resolution version of a texture to be a texture object.
+  Moved loading of end-game text lump to host.cpp.
+  Fixed joystick button names and number of joystick buttons in SDL driver.
+03.05.2006
+  Moved loading of palettes to main render module, drivers now simply use it.
+  Removed support for purgable memory blocks.
+  Added operator new and delete overloads.
+04.05.2006
+  Added debug version of operator NEW.
+  Removed overloaded new and delete operators from some of the classes.
+  Doing proper freeing of allocated memory in some places.
+05.05.2006
+  More memory freed on exit.
+06.05.2006
+  Started work on freeing level memory without using Z_FreeTag.
+07.05.2006
+  Firebrand implemented code for monsters to avoid dropoffs.
+  Some more memory properly freed.
+08.05.2006
+  Started to rewrite loading of the level using streams.
+10.05.2006
+  For effects added checks if there's enough space in message.
+  Some more fixes from Firebrand.
+  Finished level loading using streams.
+11.05.2006
+  Rewrote dynamic array template from scratch.
+  Added support for TGA high-resolution textures.
+13.05.2006
+  Properly freeing level data, got rid of Z_FreeTag. Changed usage of the zone
+ memory tags to PU_STATIC, removed others.
+14.05.2006
+  Firebrand added check for pain elementals to not spawn lost sould through
+ impossible lines.
+  Got rid of zone memory tags.
+16.05.2006
+  Got rid of Z_Resize.
+  Implemented special allocation of small memory blocks.
+17.05.2006
+  Removed old zone memory manager, now uses libc memory allocation.
+  Fixed sound of exit switch.
+  Created input manager and input driver classes.
+18.05.2006
+  Removed unused DOS serial driver.
+  Started to create LAN network driver classes.
+19.05.2006
+  Fixed a bug with drawing Strife conversation dialog.
+  Mostly finished with LAN network drivers.
+20.05.2006
+  Moved network driver list to main network module.
+21.05.2006
+  Final touches on LAN network drivers.
+  Started work on main network driver classes.
+22.05.2006
+  Changed installation procedure on Unix systems.
+  Firebrand implemented monsters trying to walk away from forced dropoff.
+  Implemented support for specification of additional directories where to look
+ for IWAD files.
+  Finished work on network driver classes.
+23.05.2006
+  Moved player-related natives to player class, implemented Object's static
+ natives using standard interface with macros.
+25.05.2006
+  Moved building of progs class virtual function table to engine.
+  Moved prog function code to method classes, compiler now exports instructions
+ in intermediate format and final compilation is done in engine for current
+ platform.
+  Preparing to rewrite progs virtual machine to support 64-bit systems.
+27.05.2006
+  Rewrote most of the progs virtual machine.
+28.05.2006
+  Finished with rewriting virtual machine.
+29.05.2006
+  In progs removed addfields.
+  When compiled with gcc, progs virtual machine uses a computed goto.
+  Field offsets are now calculated by engine, since on 64-bit they will differ.
+31.05.2006
+  Rewrote all calls to progs and all natives to use new macros.
+  Did some test with progs stack to make sure it will work properly on 64-bit,
+ had to add some extra opcodes. Got rid of all TProgs::Exec methods.
+  Fixed delay when exiting the game.
+01.06.2006
+  Got rid of having a field object for every class method.
+04.06.2006
+  Fixed usage of sound sequences in all games.
+  Started to add progs opcode versions with short and byte argments.
+05.06.2006
+  Finished with specialised opcodes.
+  In software and OpenGL divers changed classes to be base classes and having
+ the actual driver class in system specific module.
+06.06.2006
+  Added sector sound sequence thing types to editor config files.
