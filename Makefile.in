@@ -38,7 +38,7 @@ LIB_FILES = @LIB_FILES@
 SV_LIBS = @SV_LIBS@
 SV_OBJ_FILES = @SV_OBJ_FILES@
 
-INSTALL_DIR = ${datadir}/vavoom
+INSTALL_DIR = $(DESTDIR)$(datadir)/vavoom
 
 C_ARGS   = -c -W -Wall $(CFLAGS)
 CPP_ARGS = -c -W -Wall $(CXXFLAGS) $(MAIN_CFLAGS)
@@ -474,14 +474,14 @@ INSTALL_DIRS = $(INSTALL_DIR) \
 install: $(INSTALL_TARGETS)
 
 installexe:
-	$(INSTALL) -d $(bindir)
-	$(INSTALL_PROGRAM) $(MAIN_EXE) $(bindir)
-	$(INSTALL_SCRIPT) utils/vavoom $(bindir)
+	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL_PROGRAM) $(MAIN_EXE) $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) utils/vavoom $(DESTDIR)$(bindir)
 
 installsvexe:
-	$(INSTALL) -d $(bindir)
-	$(INSTALL_PROGRAM) $(SERVER_EXE) $(bindir)
-	$(INSTALL_SCRIPT) utils/vavoom-dedicated $(bindir)
+	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL_PROGRAM) $(SERVER_EXE) $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) utils/vavoom-dedicated $(DESTDIR)$(bindir)
 
 installdata:
 	$(INSTALL) -d $(INSTALL_DIRS)
