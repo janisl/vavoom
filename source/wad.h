@@ -47,13 +47,31 @@ enum EWadNamespace
 	WADNS_Progs,
 };
 
+class VSearchPath
+{
+public:
+	virtual ~VSearchPath();
+	virtual VStr FindFile(const VStr&) = 0;
+	virtual VStream* OpenFileRead(const VStr&) = 0;
+	virtual void Close() = 0;
+	virtual int CheckNumForName(VName, EWadNamespace) = 0;
+	virtual void ReadLump(int, void*) = 0;
+	virtual void ReadFromLump(int, void*, int, int) = 0;
+	virtual void* CacheLumpNum(int) = 0;
+	virtual int LumpLength(int) = 0;
+	virtual VName LumpName(int) = 0;
+	virtual int IterateNS(int, EWadNamespace) = 0;
+	virtual void BuildGLNodes(VSearchPath*) = 0;
+	virtual void BuildPVS(VSearchPath*) = 0;
+	virtual VStream* CreateLumpReaderNum(int) = 0;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices);
 void W_Shutdown();
 
 void W_OpenAuxiliary(const VStr& FileName);
-void W_CloseAuxiliaryFile();
 void W_CloseAuxiliary();
 
 void W_BuildGLNodes(int lump);
@@ -78,46 +96,4 @@ void W_CleanupName(const char *src, char *dst);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.14  2006/03/02 23:24:36  dj_jl
-//	Wad lump names stored as names.
-//
-//	Revision 1.13  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.12  2006/01/29 20:41:30  dj_jl
-//	On Unix systems use ~/.vavoom for generated files.
-//	
-//	Revision 1.11  2005/11/24 20:07:36  dj_jl
-//	Aded namespace for progs.
-//	
-//	Revision 1.10  2005/11/06 15:28:40  dj_jl
-//	Some cleanup.
-//	
-//	Revision 1.9  2005/11/05 14:57:36  dj_jl
-//	Putting Strife shareware voices in correct namespace.
-//	
-//	Revision 1.8  2005/05/26 16:55:43  dj_jl
-//	New lump namespace iterator
-//	
-//	Revision 1.7  2004/11/23 12:43:11  dj_jl
-//	Wad file lump namespaces.
-//	
-//	Revision 1.6  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/09/14 16:52:14  dj_jl
-//	Added dynamic build of GWA file
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+extern TArray<VSearchPath*>	SearchPaths;

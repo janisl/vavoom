@@ -46,10 +46,6 @@ static struct
 #include "progdefs.h"
 };
 
-static int CodeSize;
-static int Num8;
-static int Num16;
-static int Num32;
 //==========================================================================
 //
 //	VProgsImport
@@ -426,10 +422,6 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 	Pkg->Checksum = crc;
 	Pkg->Reader = Reader;
 
-CodeSize = 0;
-Num8 = 0;
-Num16 = 0;
-Num32 = 0;
 	//	Create objects
 	Reader->Seek(Progs.ofs_exportinfo);
 	for (i = 0; i < Progs.num_exports; i++)
@@ -496,10 +488,6 @@ Num32 = 0;
 		Exports[i].Obj->PostLoad();
 	}
 
-dprintf("Code size of %s is %d\n", *InName, CodeSize);
-dprintf("Byte  %d\n", Num8);
-dprintf("Short %d\n", Num16);
-dprintf("Int   %d\n", Num32);
 	delete Reader;
 	Pkg->Reader = NULL;
 	return Pkg;
@@ -1226,7 +1214,6 @@ void VMethod::CompileCode()
 	//	We don't need instructions anymore.
 	delete[] Instructions;
 	Instructions = NULL;
-CodeSize += Statements.Num();
 	unguard;
 }
 
@@ -1346,19 +1333,15 @@ void VMethod::OptimiseInstructions()
 			if (Offs >= 0 && Offs < 256)
 			{
 				Instructions[i].Opcode -= 3;
-				Num8++;
 			}
 			else if (Offs < 0 && Offs > -256)
 			{
 				Instructions[i].Opcode -= 2;
-				Num8++;
 			}
 			else if (Offs >= MINSHORT && Offs <= MAXSHORT)
 			{
 				Instructions[i].Opcode -= 1;
-				Num16++;
 			}
-			else Num32++;
 			break;
 		}
 	}

@@ -243,10 +243,15 @@ static VModel* Mod_LoadModel(VModel* mod)
 	//
 	// load the file
 	//
-	if (FL_ReadFile(mod->name, &mod->data) < 0)
+	VStream* Strm = FL_OpenFileRead(mod->name);
+	if (!Strm)
 		Sys_Error("Couldn't load %s", mod->name);
-	
-	if (LittleLong(*(unsigned *)mod->data) != IDPOLY2HEADER)
+
+	mod->data = Z_Malloc(Strm->TotalSize());
+	Strm->Serialise(mod->data, Strm->TotalSize());
+	delete Strm;
+
+	if (LittleLong(*(vuint32*)mod->data) != IDPOLY2HEADER)
 		Sys_Error("model %s is not a md2 model", mod->name);
 
 	// swap model

@@ -31,10 +31,28 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct search_path_t
+class VFilesDir : public VSearchPath
 {
+private:
 	VStr			Path;
-	search_path_t*	Next;
+
+public:
+	VFilesDir(const VStr& aPath)
+	: Path(aPath)
+	{}
+	VStr FindFile(const VStr&);
+	VStream* OpenFileRead(const VStr&);
+	void Close();
+	int CheckNumForName(VName, EWadNamespace);
+	void ReadLump(int, void*);
+	void ReadFromLump(int, void*, int, int);
+	void* CacheLumpNum(int);
+	int LumpLength(int);
+	VName LumpName(int);
+	int IterateNS(int, EWadNamespace);
+	void BuildGLNodes(VSearchPath*);
+	void BuildPVS(VSearchPath*);
+	VStream* CreateLumpReaderNum(int);
 };
 
 struct version_t
@@ -66,7 +84,7 @@ VStr	fl_mainwad;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static search_path_t*	searchpaths;
+TArray<VSearchPath*>	SearchPaths;
 
 TArray<VStr>			wadfiles;
 TArray<VStr>			gwadirs;
@@ -98,21 +116,17 @@ void FL_AddFile(const VStr& file, const VStr& gwadir)
 static void AddGameDir(const VStr& dir)
 {
 	guard(AddGameDir);
-	search_path_t	*info;
+	VFilesDir	*info;
 
-	info = new search_path_t;
-	info->Path = fl_basedir + "/" + dir;
-	info->Next = searchpaths;
-	searchpaths = info;
+	info = new VFilesDir(fl_basedir + "/" + dir);
+	SearchPaths.Append(info);
 
 	VStr gwadir;
 	if (fl_savedir)
 	{
-		info = new search_path_t;
-		info->Path = fl_savedir + "/" + dir;
-		info->Next = searchpaths;
-		searchpaths = info;
-		gwadir = info->Path;
+		info = new VFilesDir(fl_savedir + "/" + dir);
+		SearchPaths.Append(info);
+		gwadir = fl_savedir + "/" + dir;
 	}
 
 	for (int i = 0; i < 1024; i++)
@@ -416,12 +430,11 @@ void FL_Init()
 void FL_Shutdown()
 {
 	guard(FL_Shutdown);
-	for (search_path_t* search = searchpaths; search;)
+	for (int i = 0; i < SearchPaths.Num(); i++)
 	{
-		search_path_t* Next = search->Next;
-		delete search;
-		search = Next;
+		delete SearchPaths[i];
 	}
+	SearchPaths.Clear();
 	fl_basedir.Clean();
 	fl_savedir.Clean();
 	fl_gamedir.Clean();
@@ -441,10 +454,10 @@ void FL_Shutdown()
 VStr FL_FindFile(const VStr& fname)
 {
 	guard(FL_FindFile);
-	for (search_path_t* search = searchpaths; search; search = search->Next)
+	for (int i = SearchPaths.Num() - 1; i >= 0 ; i--)
 	{
-		VStr tmp = search->Path + "/" + fname;
-		if (Sys_FileExists(tmp))
+		VStr tmp = SearchPaths[i]->FindFile(fname);
+		if (tmp)
 		{
 			return tmp;
 		}
@@ -474,48 +487,6 @@ void FL_CreatePath(const VStr& Path)
 			Temp[i] = Save;
 		}
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_ReadFile
-//
-//==========================================================================
-
-int FL_ReadFile(const VStr& name, void** buffer)
-{
-	guard(FL_ReadFile);
-	int			handle;
-	int			count;
-	int			length;
-	byte		*buf;
-	VStr		realname;
-
-	realname = FL_FindFile(name);
-	if (!realname)
-	{
-		return -1;
-	}
-
-	handle = Sys_FileOpenRead(realname);
-	if (handle == -1)
-	{
-		Sys_Error("Couldn't open file %s", *realname);
-	}
-	length = Sys_FileSize(handle);
-	buf = (byte*)Z_Malloc(length + 1);
-	*buffer = buf;
-	count = Sys_FileRead(handle, buf, length);
-	buf[length] = 0;
-	Sys_FileClose(handle);
-	
-	if (count < length)
-	{
-		Sys_Error("Couldn't read file %s", *realname);
-	}
-		
-	return length;
 	unguard;
 }
 
@@ -643,17 +614,15 @@ protected:
 VStream* FL_OpenFileRead(const VStr& Name)
 {
 	guard(FL_OpenFileRead);
-	VStr TmpName = FL_FindFile(Name);
-	if (!TmpName)
+	for (int i = SearchPaths.Num() - 1; i >= 0; i--)
 	{
-		return NULL;
+		VStream* Strm = SearchPaths[i]->OpenFileRead(Name);
+		if (Strm)
+		{
+			return Strm;
+		}
 	}
-	FILE *File = fopen(*TmpName, "rb");
-	if (!File)
-	{
-		return NULL;
-	}
-	return new VStreamFileReader(File, GCon);
+	return NULL;
 	unguard;
 }
 
@@ -764,4 +733,90 @@ VStream* FL_OpenFileWrite(const VStr& Name)
 	}
 	return new VStreamFileWriter(File, GCon);
 	unguard;
+}
+
+//==========================================================================
+//
+//	VFilesDir::FindFile
+//
+//==========================================================================
+
+VStr VFilesDir::FindFile(const VStr& fname)
+{
+	guard(VFilesDir::FindFile);
+	VStr tmp = Path + "/" + fname;
+	if (Sys_FileExists(tmp))
+	{
+		return tmp;
+	}
+	return VStr();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFilesDir::OpenFileRead
+//
+//==========================================================================
+
+VStream* VFilesDir::OpenFileRead(const VStr& Name)
+{
+	guard(FL_OpenFileRead);
+	VStr TmpName = Path + "/" + Name;
+	if (!Sys_FileExists(TmpName))
+	{
+		return NULL;
+	}
+	FILE *File = fopen(*TmpName, "rb");
+	if (!File)
+	{
+		return NULL;
+	}
+	return new VStreamFileReader(File, GCon);
+	unguard;
+}
+
+void VFilesDir::Close()
+{
+}
+int VFilesDir::CheckNumForName(VName, EWadNamespace)
+{
+	return -1;
+}
+void VFilesDir::ReadLump(int, void*)
+{
+	Sys_Error("ReadLump on directory");
+}
+void VFilesDir::ReadFromLump(int, void*, int, int)
+{
+	Sys_Error("ReadFromLump on directory");
+}
+void* VFilesDir::CacheLumpNum(int)
+{
+	Sys_Error("CacheLumpNum on directory");
+	return NULL;
+}
+int VFilesDir::LumpLength(int)
+{
+	return 0;
+}
+VName VFilesDir::LumpName(int)
+{
+	return NAME_None;
+}
+int VFilesDir::IterateNS(int, EWadNamespace)
+{
+	return -1;
+}
+void VFilesDir::BuildGLNodes(VSearchPath*)
+{
+	Sys_Error("BuildGLNodes on directory");
+}
+void VFilesDir::BuildPVS(VSearchPath*)
+{
+	Sys_Error("BuildPVS on directory");
+}
+VStream* VFilesDir::CreateLumpReaderNum(int)
+{
+	return NULL;
 }
