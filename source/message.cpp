@@ -194,12 +194,17 @@ VMessage& VMessage::operator << (vint32 c)
 VMessage& VMessage::operator << (float f)
 {
 	guard(VMessage::operator << float);
-	vint32 c = *(vint32*)&f;
+	union
+	{
+		vuint8	b[4];
+		float	f;
+	} c;
+	c.f = f;
 	vuint8* buf = (vuint8*)GetSpace(4);
-	buf[0] =  c        & 0xff;
-	buf[1] = (c >>  8) & 0xff;
-	buf[2] = (c >> 16) & 0xff;
-	buf[3] = (c >> 24) & 0xff;
+	buf[0] = c.b[0];
+	buf[1] = c.b[1];
+	buf[2] = c.b[2];
+	buf[3] = c.b[3];
 
 	return *this;
 	unguard;
@@ -352,12 +357,17 @@ VMessage& VMessage::operator >> (float& f)
 	}
 	else
 	{
-		vint32 c = Data[ReadCount]
-				+ (Data[ReadCount + 1] << 8)
-				+ (Data[ReadCount + 2] << 16)
-				+ (Data[ReadCount + 3] << 24);
+		union
+		{
+			vuint8	b[4];
+			float	f;
+		} d;
+		d.b[0] = Data[ReadCount];
+		d.b[1] = Data[ReadCount + 1];
+		d.b[2] = Data[ReadCount + 2];
+		d.b[3] = Data[ReadCount + 3];
 		ReadCount += 4;
-		f = *(float*)&c;
+		f = d.f;
 	}
 	return *this;
 	unguard;
