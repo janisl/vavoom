@@ -76,7 +76,7 @@ void SetSpeech(int SpeechNum)
 		TempBuffer[1] = Speech->BackPic[1];
 		TempBuffer[2] = 0;
 		strlwr(TempStr);
-		BackPic = R_RegisterPic(StrToName(TempStr), PIC_PATCH);
+		BackPic = R_RegisterPic(StrToName(TempStr));
 	}
 
 	if (Speech->Name[0])

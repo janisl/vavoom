@@ -750,14 +750,14 @@ void NewGame(int skill)
 
 void InitBorder()
 {
-	pic_brdr_t = R_RegisterPic('brdr_t', PIC_PATCH);
-	pic_brdr_b = R_RegisterPic('brdr_b', PIC_PATCH);
-	pic_brdr_l = R_RegisterPic('brdr_l', PIC_PATCH);
-	pic_brdr_r = R_RegisterPic('brdr_r', PIC_PATCH);
-	pic_brdr_tl = R_RegisterPic('brdr_tl', PIC_PATCH);
-	pic_brdr_tr = R_RegisterPic('brdr_tr', PIC_PATCH);
-	pic_brdr_bl = R_RegisterPic('brdr_bl', PIC_PATCH);
-	pic_brdr_br = R_RegisterPic('brdr_br', PIC_PATCH);
+	pic_brdr_t = R_RegisterPic('brdr_t');
+	pic_brdr_b = R_RegisterPic('brdr_b');
+	pic_brdr_l = R_RegisterPic('brdr_l');
+	pic_brdr_r = R_RegisterPic('brdr_r');
+	pic_brdr_tl = R_RegisterPic('brdr_tl');
+	pic_brdr_tr = R_RegisterPic('brdr_tr');
+	pic_brdr_bl = R_RegisterPic('brdr_bl');
+	pic_brdr_br = R_RegisterPic('brdr_br');
 }
 
 //==========================================================================

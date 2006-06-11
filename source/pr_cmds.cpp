@@ -1135,7 +1135,6 @@ IMPLEMENT_FUNCTION(VObject, SetVirtualScreen)
 
 IMPLEMENT_FUNCTION(VObject, R_RegisterPic)
 {
-	P_GET_INT(type);
 	P_GET_NAME(name);
 	RET_INT(GTextureManager.AddPatch(name, TEXTYPE_Pic));
 }
@@ -1149,7 +1148,6 @@ IMPLEMENT_FUNCTION(VObject, R_RegisterPic)
 IMPLEMENT_FUNCTION(VObject, R_RegisterPicPal)
 {
 	P_GET_NAME(palname);
-	P_GET_INT(type);
 	P_GET_NAME(name);
 	RET_INT(GTextureManager.AddRawWithPal(name, palname));
 }

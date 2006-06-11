@@ -26,7 +26,6 @@
 class MenuStaticBitmap : MenuObject;
 
 name PicName;
-int PicType;
 int Handle;
 
 void InitWindow()
@@ -35,7 +34,7 @@ void InitWindow()
 	Disable();
 	if (PicName)
 	{
-		Handle = R_RegisterPic(PicName, PicType);
+		Handle = R_RegisterPic(PicName);
 	}
 }
 
@@ -46,16 +45,4 @@ void DrawWindow(GC gc)
 
 defaultproperties
 {
-	PicType = PIC_PATCH;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.1  2002/10/26 16:32:22  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

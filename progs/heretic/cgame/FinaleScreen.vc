@@ -108,23 +108,23 @@ void Tick(float DeltaTime)
 		case 1:
 			if (!WadLumpPresent('e2m1'))
 			{
-				fpage1 = R_RegisterPic('order', PIC_RAW);
+				fpage1 = R_RegisterPic('order');
 			}
 			else
 			{
-				fpage1 = R_RegisterPic('credit', PIC_RAW);
+				fpage1 = R_RegisterPic('credit');
 			}
 			break;
 		case 2:
-			fpage1 = R_RegisterPicPal('e2end', PIC_RAW, 'e2pal');
+			fpage1 = R_RegisterPicPal('e2end', 'e2pal');
 			break;
 		case 3:
-			fpage1 = R_RegisterPic('final1', PIC_RAW);
-			fpage2 = R_RegisterPic('final2', PIC_RAW);
+			fpage1 = R_RegisterPic('final1');
+			fpage2 = R_RegisterPic('final2');
 			break;
 		case 4:	// Just show credits screen for extended episodes
 		case 5:
-			fpage1 = R_RegisterPic('credit', PIC_RAW);
+			fpage1 = R_RegisterPic('credit');
 			break;
 		}
 	}

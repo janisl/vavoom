@@ -247,16 +247,6 @@ const int MAX_TID_COUNT		= 200;
 //**************************************************************************
 
 //
-//  Types of graphics
-//
-
-enum
-{
-	PIC_PATCH,	// A standard Doom patch
-	PIC_RAW		// Raw screens in Heretic and Hexen
-};
-
-//
 // Fonts
 //
 enum
@@ -1651,9 +1641,9 @@ native static final bool StateIsInRange(state State, state Start, state End,
 
 native static final void SetVirtualScreen(int Width, int Height);
 //  Registers a graphic, returns handle
-native static final int R_RegisterPic(name Name, int type);
+native static final int R_RegisterPic(name Name);
 //  Registers a graphic with custom palette, returns handle
-native static final int R_RegisterPicPal(name Name, int type, name palname);
+native static final int R_RegisterPicPal(name Name, name palname);
 //  Retrieves pic info
 native static final void R_GetPicInfo(int handle, picinfo_t * info);
 //  Draws a pic

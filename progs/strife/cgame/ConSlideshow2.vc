@@ -52,7 +52,7 @@ void PlayPage()
 	switch (PageNum)
 	{
 	case 0:
-		BackPic.Handle = R_RegisterPic('ss3f1', PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss3f1');
 		CmdBuf_AddText("music loop d_dark");
 		LocalSound('svox/mac16');
 		PicTimer = 10.0;
@@ -60,21 +60,21 @@ void PlayPage()
 		break;
 
 	case 1:
-		BackPic.Handle = R_RegisterPic('ss3f2', PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss3f2');
 		LocalSound('svox/mac17');
 		PicTimer = 12.0;
 		PageNum = 2;
 		break;
 
 	case 2:
-		BackPic.Handle = R_RegisterPic('ss3f3', PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss3f3');
 		LocalSound('svox/mac18');
 		PicTimer = 12.0;
 		PageNum = 3;
 		break;
 
 	case 3:
-		BackPic.Handle = R_RegisterPic('ss3f4', PIC_PATCH);
+		BackPic.Handle = R_RegisterPic('ss3f4');
 		LocalSound('svox/mac19');
 		PicTimer = 11.0;
 		PageNum = -1;
@@ -104,23 +104,3 @@ defaultproperties
 {
 	bTickEnabled = true;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.5  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.4  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.3  2006/01/29 12:25:33  dj_jl
-//  Fixed slideshow music changes.
-//
-//  Revision 1.2  2005/11/05 15:51:27  dj_jl
-//  Voices played as normal sounds.
-//
-//  Revision 1.1  2004/12/22 07:56:46  dj_jl
-//  Fully working Strife support.
-//
-//**************************************************************************

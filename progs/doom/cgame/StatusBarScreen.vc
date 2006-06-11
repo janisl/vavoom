@@ -135,62 +135,62 @@ void StartMap()
 	string Name = ARR2STR(namebuf);
 	int i;
 
-	pic_bar = R_RegisterPic('stbar', PIC_PATCH);
-	pic_arms = R_RegisterPic('starms', PIC_PATCH);
+	pic_bar = R_RegisterPic('stbar');
+	pic_arms = R_RegisterPic('starms');
 
 	for (i = 0; i < 10; i++)
 	{
 		sprint(Name, "sttnum%d", i);
-		pic_tallnum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_tallnum[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stysnum%d", i);
-		pic_yellownum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_yellownum[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stgnum%d", i);
-		pic_graynum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_graynum[i] = R_RegisterPic(StrToName(Name));
 	}
-	pic_minus = R_RegisterPic('sttminus', PIC_PATCH);
-	pic_percent = R_RegisterPic('sttprcnt', PIC_PATCH);
+	pic_minus = R_RegisterPic('sttminus');
+	pic_percent = R_RegisterPic('sttprcnt');
 
 	sprint(Name, "stfb%d", cl.clientnum);
-	pic_faceback = R_RegisterPic(StrToName(Name), PIC_PATCH);
+	pic_faceback = R_RegisterPic(StrToName(Name));
 
 	for (i = 0; i < 6; i++)
 	{
 		sprint(Name, "stkeys%d", i);
-		pic_keys[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_keys[i] = R_RegisterPic(StrToName(Name));
 	}
 
 	for (i = 0; i < DoomDefs::ST_NUMPAINFACES; i++)
 	{
 		sprint(Name, "stfst%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stfst%d1", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stfst%d2", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stftr%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stftl%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stfouch%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stfevl%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "stfkill%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] = R_RegisterPic(StrToName(Name));
 	}
-	pic_faces[DoomDefs::ST_GODFACE] = R_RegisterPic('stfgod0', PIC_PATCH);
-	pic_faces[DoomDefs::ST_DEADFACE] = R_RegisterPic('stfdead0', PIC_PATCH);
+	pic_faces[DoomDefs::ST_GODFACE] = R_RegisterPic('stfgod0');
+	pic_faces[DoomDefs::ST_DEADFACE] = R_RegisterPic('stfdead0');
 
-	pic_pause = R_RegisterPic('m_pause', PIC_PATCH);
+	pic_pause = R_RegisterPic('m_pause');
 
 	// Fullscreen HUD stuff
-	pic_ammoicon[0] = R_RegisterPic('ammoa0', PIC_PATCH);
-	pic_ammoicon[1] = R_RegisterPic('sboxa0', PIC_PATCH);
-	pic_ammoicon[2] = R_RegisterPic('cella0', PIC_PATCH);
-	pic_ammoicon[3] = R_RegisterPic('rocka0', PIC_PATCH);
-	pic_health = R_RegisterPic('stima0', PIC_PATCH);
-	pic_armor = R_RegisterPic('arm1a0', PIC_PATCH);
-	pic_armor2 = R_RegisterPic('arm2a0', PIC_PATCH);
+	pic_ammoicon[0] = R_RegisterPic('ammoa0');
+	pic_ammoicon[1] = R_RegisterPic('sboxa0');
+	pic_ammoicon[2] = R_RegisterPic('cella0');
+	pic_ammoicon[3] = R_RegisterPic('rocka0');
+	pic_health = R_RegisterPic('stima0');
+	pic_armor = R_RegisterPic('arm1a0');
+	pic_armor2 = R_RegisterPic('arm2a0');
 }
 
 //==========================================================================
@@ -515,23 +515,3 @@ defaultproperties
 	Width = 320;
 	Height = 200;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.5  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.4  2006/02/28 22:43:55  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.3  2006/02/20 22:57:16  dj_jl
-//  Changed client state structure to class.
-//
-//  Revision 1.2  2006/02/17 19:06:51  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.1  2006/02/09 22:33:09  dj_jl
-//  Moved all client game code to classes.
-//
-//**************************************************************************

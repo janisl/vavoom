@@ -117,18 +117,18 @@ void Tick(float DeltaTime)
 		{
 		case 1:
 			if (WadLumpPresent('e4m1'))
-				fpage1 = R_RegisterPic('credit', PIC_PATCH);
+				fpage1 = R_RegisterPic('credit');
 			else
-				fpage1 = R_RegisterPic('help2', PIC_PATCH);
+				fpage1 = R_RegisterPic('help2');
 			break;
 		case 2:
-			fpage1 = R_RegisterPic('victory2', PIC_PATCH);
+			fpage1 = R_RegisterPic('victory2');
 			break;
 		case 3:
 			F_InitBunnyScroll();
 			break;
 		case 4:
-			fpage1 = R_RegisterPic('endpic', PIC_PATCH);
+			fpage1 = R_RegisterPic('endpic');
 			break;
 		}
 	}
@@ -214,11 +214,11 @@ void F_InitBunnyScroll()
 {
 	int i;
 
-	fpage1 = R_RegisterPic('pfub1', PIC_PATCH);
-	fpage2 = R_RegisterPic('pfub2', PIC_PATCH);
+	fpage1 = R_RegisterPic('pfub1');
+	fpage2 = R_RegisterPic('pfub2');
 	for (i = 0; i < 7; i++)
 	{
-		fend[i] = R_RegisterPic(StrToName(va("end%d", i)), PIC_PATCH);
+		fend[i] = R_RegisterPic(StrToName(va("end%d", i)));
 	}
 #ifdef FIXME
 	S_StartSong("d_bunny", P_GetCDEnd2Track(), true);
@@ -428,7 +428,7 @@ void F_StartCast()
 #else
 	CmdBuf_AddText("music loop d_evil\n");
 #endif
-	fpage1 = R_RegisterPic('bossback', PIC_PATCH);
+	fpage1 = R_RegisterPic('bossback');
 
 #if 0
 	castnum = 0;
@@ -680,17 +680,3 @@ defaultproperties
 	Width = 320;
 	Height = 200;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.2  2006/02/28 22:43:55  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.1  2006/02/09 22:33:09  dj_jl
-//  Moved all client game code to classes.
-//
-//**************************************************************************

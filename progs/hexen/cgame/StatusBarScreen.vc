@@ -101,150 +101,150 @@ void StartMap()
 	//
 	//  COMMON BAR
 	//
-	pic_bar = R_RegisterPic('h2bar', PIC_PATCH);
+	pic_bar = R_RegisterPic('h2bar');
 	switch (sb_pclass)
 	{
 	case HexenDefs::PCLASS_FIGHTER:
-		pic_chain = R_RegisterPic('chain', PIC_PATCH);
+		pic_chain = R_RegisterPic('chain');
 		if (cl.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
-			pic_lifegem = R_RegisterPic('lifegmf2', PIC_PATCH);
+			pic_lifegem = R_RegisterPic('lifegmf2');
 		}
 		else if (!sb_color)
 		{
-			pic_lifegem = R_RegisterPic('lifegem', PIC_PATCH);
+			pic_lifegem = R_RegisterPic('lifegem');
 		}
 		else
 		{
 			sprint(Name, "lifegmf%d", sb_color + 1);
-			pic_lifegem = R_RegisterPic(StrToName(Name), PIC_PATCH);
+			pic_lifegem = R_RegisterPic(StrToName(Name));
 		}
 		break;
 	case HexenDefs::PCLASS_CLERIC:
-		pic_chain = R_RegisterPic('chain2', PIC_PATCH);
+		pic_chain = R_RegisterPic('chain2');
 		if (cl.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
-			pic_lifegem = R_RegisterPic('lifegmc2', PIC_PATCH);
+			pic_lifegem = R_RegisterPic('lifegmc2');
 		}
 		else
 		{
 			sprint(Name, "lifegmc%d", sb_color + 1);
-			pic_lifegem = R_RegisterPic(StrToName(Name), PIC_PATCH);
+			pic_lifegem = R_RegisterPic(StrToName(Name));
 		}
 		break;
 	case HexenDefs::PCLASS_MAGE:
-		pic_chain = R_RegisterPic('chain3', PIC_PATCH);
+		pic_chain = R_RegisterPic('chain3');
 		if (cl.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
-			pic_lifegem = R_RegisterPic('lifegmm2', PIC_PATCH);
+			pic_lifegem = R_RegisterPic('lifegmm2');
 		}
 		else
 		{
 			sprint(Name, "lifegmm%d", sb_color + 1);
-			pic_lifegem = R_RegisterPic(StrToName(Name), PIC_PATCH);
+			pic_lifegem = R_RegisterPic(StrToName(Name));
 		}
 		break;
 	}
-	pic_lfedge = R_RegisterPic('lfedge', PIC_PATCH);
-	pic_rtedge = R_RegisterPic('rtedge', PIC_PATCH);
+	pic_lfedge = R_RegisterPic('lfedge');
+	pic_rtedge = R_RegisterPic('rtedge');
 
 	for (i = 0; i < 10; i++)
 	{
 		sprint(Name, "in%d", i);
-		pic_innum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_innum[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "inred%d", i);
-		pic_innum[10 + i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_innum[10 + i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "smallin%d", i);
-		pic_smallinnum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_smallinnum[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "fontb%d", 16 + i);
-		pic_bignum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_bignum[i] = R_RegisterPic(StrToName(Name));
 		R_GetPicInfo(pic_bignum[i], &info);
 		bignumwidth[i] = info.width;
 	}
-	pic_minus = R_RegisterPic('negnum', PIC_PATCH);
-	pic_arti[0] = R_RegisterPic('artibox', PIC_PATCH);	// none
-	pic_arti[1] = R_RegisterPic('artiinvu', PIC_PATCH);	// invulnerability
-	pic_arti[2] = R_RegisterPic('artiptn2', PIC_PATCH);	// health
-	pic_arti[3] = R_RegisterPic('artisphl', PIC_PATCH);	// superhealth
-	pic_arti[4] = R_RegisterPic('artihrad', PIC_PATCH);	// healing radius
-	pic_arti[5] = R_RegisterPic('artisumn', PIC_PATCH);	// summon maulator
-	pic_arti[6] = R_RegisterPic('artitrch', PIC_PATCH);	// torch
-	pic_arti[7] = R_RegisterPic('artipork', PIC_PATCH);	// pig
-	pic_arti[8] = R_RegisterPic('artisoar', PIC_PATCH);	// fly
-	pic_arti[9] = R_RegisterPic('artiblst', PIC_PATCH);	// blast radius
-	pic_arti[10] = R_RegisterPic('artipsbg', PIC_PATCH);	// poison bag
-	pic_arti[11] = R_RegisterPic('artitelo', PIC_PATCH);	// teleport other
-	pic_arti[12] = R_RegisterPic('artisped', PIC_PATCH);	// speed
-	pic_arti[13] = R_RegisterPic('artibman', PIC_PATCH);	// boost mana
-	pic_arti[14] = R_RegisterPic('artibrac', PIC_PATCH);	// boost armor
-	pic_arti[15] = R_RegisterPic('artiatlp', PIC_PATCH);	// teleport
-	pic_arti[16] = R_RegisterPic('artiskll', PIC_PATCH);	// arti_puzzskull
-	pic_arti[17] = R_RegisterPic('artibgem', PIC_PATCH);	// arti_puzzgembig
-	pic_arti[18] = R_RegisterPic('artigemr', PIC_PATCH);	// arti_puzzgemred
-	pic_arti[19] = R_RegisterPic('artigemg', PIC_PATCH);	// arti_puzzgemgreen1
-	pic_arti[20] = R_RegisterPic('artigmg2', PIC_PATCH);	// arti_puzzgemgreen2
-	pic_arti[21] = R_RegisterPic('artigemb', PIC_PATCH);	// arti_puzzgemblue1
-	pic_arti[22] = R_RegisterPic('artigmb2', PIC_PATCH);	// arti_puzzgemblue2
-	pic_arti[23] = R_RegisterPic('artibok1', PIC_PATCH);	// arti_puzzbook1
-	pic_arti[24] = R_RegisterPic('artibok2', PIC_PATCH);	// arti_puzzbook2
-	pic_arti[25] = R_RegisterPic('artiskl2', PIC_PATCH);	// arti_puzzskull2
-	pic_arti[26] = R_RegisterPic('artifwep', PIC_PATCH);	// arti_puzzfweapon
-	pic_arti[27] = R_RegisterPic('articwep', PIC_PATCH);	// arti_puzzcweapon
-	pic_arti[28] = R_RegisterPic('artimwep', PIC_PATCH);	// arti_puzzmweapon
-	pic_arti[29] = R_RegisterPic('artigear', PIC_PATCH);	// arti_puzzgear1
-	pic_arti[30] = R_RegisterPic('artiger2', PIC_PATCH);	// arti_puzzgear2
-	pic_arti[31] = R_RegisterPic('artiger3', PIC_PATCH);	// arti_puzzgear3
-	pic_arti[32] = R_RegisterPic('artiger4', PIC_PATCH);	// arti_puzzgear4
+	pic_minus = R_RegisterPic('negnum');
+	pic_arti[0] = R_RegisterPic('artibox');	// none
+	pic_arti[1] = R_RegisterPic('artiinvu');	// invulnerability
+	pic_arti[2] = R_RegisterPic('artiptn2');	// health
+	pic_arti[3] = R_RegisterPic('artisphl');	// superhealth
+	pic_arti[4] = R_RegisterPic('artihrad');	// healing radius
+	pic_arti[5] = R_RegisterPic('artisumn');	// summon maulator
+	pic_arti[6] = R_RegisterPic('artitrch');	// torch
+	pic_arti[7] = R_RegisterPic('artipork');	// pig
+	pic_arti[8] = R_RegisterPic('artisoar');	// fly
+	pic_arti[9] = R_RegisterPic('artiblst');	// blast radius
+	pic_arti[10] = R_RegisterPic('artipsbg');	// poison bag
+	pic_arti[11] = R_RegisterPic('artitelo');	// teleport other
+	pic_arti[12] = R_RegisterPic('artisped');	// speed
+	pic_arti[13] = R_RegisterPic('artibman');	// boost mana
+	pic_arti[14] = R_RegisterPic('artibrac');	// boost armor
+	pic_arti[15] = R_RegisterPic('artiatlp');	// teleport
+	pic_arti[16] = R_RegisterPic('artiskll');	// arti_puzzskull
+	pic_arti[17] = R_RegisterPic('artibgem');	// arti_puzzgembig
+	pic_arti[18] = R_RegisterPic('artigemr');	// arti_puzzgemred
+	pic_arti[19] = R_RegisterPic('artigemg');	// arti_puzzgemgreen1
+	pic_arti[20] = R_RegisterPic('artigmg2');	// arti_puzzgemgreen2
+	pic_arti[21] = R_RegisterPic('artigemb');	// arti_puzzgemblue1
+	pic_arti[22] = R_RegisterPic('artigmb2');	// arti_puzzgemblue2
+	pic_arti[23] = R_RegisterPic('artibok1');	// arti_puzzbook1
+	pic_arti[24] = R_RegisterPic('artibok2');	// arti_puzzbook2
+	pic_arti[25] = R_RegisterPic('artiskl2');	// arti_puzzskull2
+	pic_arti[26] = R_RegisterPic('artifwep');	// arti_puzzfweapon
+	pic_arti[27] = R_RegisterPic('articwep');	// arti_puzzcweapon
+	pic_arti[28] = R_RegisterPic('artimwep');	// arti_puzzmweapon
+	pic_arti[29] = R_RegisterPic('artigear');	// arti_puzzgear1
+	pic_arti[30] = R_RegisterPic('artiger2');	// arti_puzzgear2
+	pic_arti[31] = R_RegisterPic('artiger3');	// arti_puzzgear3
+	pic_arti[32] = R_RegisterPic('artiger4');	// arti_puzzgear4
 
 	//
 	//  MAIN BAR
 	//
-	pic_statbar = R_RegisterPic('statbar', PIC_PATCH);
-	pic_kills = R_RegisterPic('kills', PIC_PATCH);
-	pic_manadim1[0] = R_RegisterPic('manadim1', PIC_PATCH);
-	pic_manadim1[1] = R_RegisterPic('manabrt1', PIC_PATCH);
-	pic_manadim2[0] = R_RegisterPic('manadim2', PIC_PATCH);
-	pic_manadim2[1] = R_RegisterPic('manabrt2', PIC_PATCH);
-	pic_manavial1[0] = R_RegisterPic('manavl1d', PIC_PATCH);
-	pic_manavial1[1] = R_RegisterPic('manavl1', PIC_PATCH);
-	pic_manavial2[0] = R_RegisterPic('manavl2d', PIC_PATCH);
-	pic_manavial2[1] = R_RegisterPic('manavl2', PIC_PATCH);
-	pic_artiflash[0] = R_RegisterPic('useartia', PIC_PATCH);
-	pic_artiflash[1] = R_RegisterPic('useartib', PIC_PATCH);
-	pic_artiflash[2] = R_RegisterPic('useartic', PIC_PATCH);
-	pic_artiflash[3] = R_RegisterPic('useartid', PIC_PATCH);
-	pic_artiflash[4] = R_RegisterPic('useartie', PIC_PATCH);
+	pic_statbar = R_RegisterPic('statbar');
+	pic_kills = R_RegisterPic('kills');
+	pic_manadim1[0] = R_RegisterPic('manadim1');
+	pic_manadim1[1] = R_RegisterPic('manabrt1');
+	pic_manadim2[0] = R_RegisterPic('manadim2');
+	pic_manadim2[1] = R_RegisterPic('manabrt2');
+	pic_manavial1[0] = R_RegisterPic('manavl1d');
+	pic_manavial1[1] = R_RegisterPic('manavl1');
+	pic_manavial2[0] = R_RegisterPic('manavl2d');
+	pic_manavial2[1] = R_RegisterPic('manavl2');
+	pic_artiflash[0] = R_RegisterPic('useartia');
+	pic_artiflash[1] = R_RegisterPic('useartib');
+	pic_artiflash[2] = R_RegisterPic('useartic');
+	pic_artiflash[3] = R_RegisterPic('useartid');
+	pic_artiflash[4] = R_RegisterPic('useartie');
 	switch (sb_pclass)
 	{
 	case HexenDefs::PCLASS_FIGHTER:
-		pic_wpslot = R_RegisterPic('wpslot0', PIC_PATCH);
-		pic_wppiece[0] = R_RegisterPic('wpiecef1', PIC_PATCH);
-		pic_wppiece[1] = R_RegisterPic('wpiecef2', PIC_PATCH);
-		pic_wppiece[2] = R_RegisterPic('wpiecef3', PIC_PATCH);
-		pic_wpfull = R_RegisterPic('wpfull0', PIC_PATCH);
+		pic_wpslot = R_RegisterPic('wpslot0');
+		pic_wppiece[0] = R_RegisterPic('wpiecef1');
+		pic_wppiece[1] = R_RegisterPic('wpiecef2');
+		pic_wppiece[2] = R_RegisterPic('wpiecef3');
+		pic_wpfull = R_RegisterPic('wpfull0');
 		wppiecex[0] = 190;
 		wppiecex[1] = 225;
 		wppiecex[2] = 234;
 		break;
 	case HexenDefs::PCLASS_CLERIC:
-		pic_wpslot = R_RegisterPic('wpslot1', PIC_PATCH);
-		pic_wppiece[0] = R_RegisterPic('wpiecec1', PIC_PATCH);
-		pic_wppiece[1] = R_RegisterPic('wpiecec2', PIC_PATCH);
-		pic_wppiece[2] = R_RegisterPic('wpiecec3', PIC_PATCH);
-		pic_wpfull = R_RegisterPic('wpfull1', PIC_PATCH);
+		pic_wpslot = R_RegisterPic('wpslot1');
+		pic_wppiece[0] = R_RegisterPic('wpiecec1');
+		pic_wppiece[1] = R_RegisterPic('wpiecec2');
+		pic_wppiece[2] = R_RegisterPic('wpiecec3');
+		pic_wpfull = R_RegisterPic('wpfull1');
 		wppiecex[0] = 190;
 		wppiecex[1] = 212;
 		wppiecex[2] = 225;
 		break;
 	case HexenDefs::PCLASS_MAGE:
-		pic_wpslot = R_RegisterPic('wpslot2', PIC_PATCH);
-		pic_wppiece[0] = R_RegisterPic('wpiecem1', PIC_PATCH);
-		pic_wppiece[1] = R_RegisterPic('wpiecem2', PIC_PATCH);
-		pic_wppiece[2] = R_RegisterPic('wpiecem3', PIC_PATCH);
-		pic_wpfull = R_RegisterPic('wpfull2', PIC_PATCH);
+		pic_wpslot = R_RegisterPic('wpslot2');
+		pic_wppiece[0] = R_RegisterPic('wpiecem1');
+		pic_wppiece[1] = R_RegisterPic('wpiecem2');
+		pic_wppiece[2] = R_RegisterPic('wpiecem3');
+		pic_wpfull = R_RegisterPic('wpfull2');
 		wppiecex[0] = 190;
 		wppiecex[1] = 205;
 		wppiecex[2] = 224;
@@ -254,27 +254,27 @@ void StartMap()
 	//
 	//  KEY BAR
 	//
-	pic_keybar = R_RegisterPic('keybar', PIC_PATCH);
+	pic_keybar = R_RegisterPic('keybar');
 	for (i = 0; i < HexenDefs::NUMKEYS; i++)
 	{
 		sprint(Name, "keyslot%x", i + 1);
-		pic_key[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_key[i] = R_RegisterPic(StrToName(Name));
 	}
 	for (i = 0; i < HexenDefs::NUMARMOR; i++)
 	{
 		sprint(Name, "armslot%d", i + 1);
-		pic_armor[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_armor[i] = R_RegisterPic(StrToName(Name));
 	}
 
 	//
 	//  INVENTORY
 	//
-	pic_invbar = R_RegisterPic('invbar', PIC_PATCH);
-	pic_selectbox = R_RegisterPic('selectbo', PIC_PATCH);
-	pic_invgeml[0] = R_RegisterPic('invgeml1', PIC_PATCH);
-	pic_invgeml[1] = R_RegisterPic('invgeml2', PIC_PATCH);
-	pic_invgemr[0] = R_RegisterPic('invgemr1', PIC_PATCH);
-	pic_invgemr[1] = R_RegisterPic('invgemr2', PIC_PATCH);
+	pic_invbar = R_RegisterPic('invbar');
+	pic_selectbox = R_RegisterPic('selectbo');
+	pic_invgeml[0] = R_RegisterPic('invgeml1');
+	pic_invgeml[1] = R_RegisterPic('invgeml2');
+	pic_invgemr[0] = R_RegisterPic('invgemr1');
+	pic_invgemr[1] = R_RegisterPic('invgemr2');
 
 	//
 	//  ANIMATED ICONS
@@ -282,20 +282,20 @@ void StartMap()
 	for (i = 0; i < 16; i++)
 	{
 		sprint(Name, "spfly%d", i);
-		pic_fly[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_fly[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "spmino%d", i);
-		pic_mino[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_mino[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "spboot%d", i);
-		pic_boot[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_boot[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "spshld%d", i);
-		pic_shld[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_shld[i] = R_RegisterPic(StrToName(Name));
 	}
 
-	pic_paused = R_RegisterPic('paused', PIC_PATCH);
+	pic_paused = R_RegisterPic('paused');
 
 	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
-	pic_health = R_RegisterPic('ptn1a0', PIC_PATCH);
-	pic_armor2 = R_RegisterPic('arm1a0', PIC_PATCH);
+	pic_health = R_RegisterPic('ptn1a0');
+	pic_armor2 = R_RegisterPic('arm1a0');
 }
 
 //==========================================================================
@@ -896,23 +896,3 @@ defaultproperties
 	Width = 320;
 	Height = 200;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.5  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.4  2006/02/20 22:57:17  dj_jl
-//  Changed client state structure to class.
-//
-//  Revision 1.3  2006/02/19 14:24:10  dj_jl
-//  Some changes because of compiler changes.
-//
-//  Revision 1.2  2006/02/17 19:06:52  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.1  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
-//
-//**************************************************************************

@@ -665,14 +665,14 @@ void SharewareResponse(int key)
 
 void InitBorder()
 {
-	pic_bordt = R_RegisterPic('bordt', PIC_PATCH);
-	pic_bordb = R_RegisterPic('bordb', PIC_PATCH);
-	pic_bordl = R_RegisterPic('bordl', PIC_PATCH);
-	pic_bordr = R_RegisterPic('bordr', PIC_PATCH);
-	pic_bordtl = R_RegisterPic('bordtl', PIC_PATCH);
-	pic_bordtr = R_RegisterPic('bordtr', PIC_PATCH);
-	pic_bordbl = R_RegisterPic('bordbl', PIC_PATCH);
-	pic_bordbr = R_RegisterPic('bordbr', PIC_PATCH);
+	pic_bordt = R_RegisterPic('bordt');
+	pic_bordb = R_RegisterPic('bordb');
+	pic_bordl = R_RegisterPic('bordl');
+	pic_bordr = R_RegisterPic('bordr');
+	pic_bordtl = R_RegisterPic('bordtl');
+	pic_bordtr = R_RegisterPic('bordtr');
+	pic_bordbl = R_RegisterPic('bordbl');
+	pic_bordbr = R_RegisterPic('bordbr');
 }
 
 //==========================================================================

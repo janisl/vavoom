@@ -33,7 +33,7 @@ class MenuHelpPage : MenuStaticBitmap;
 
 void SetPage(name pageName)
 {
-	Handle = R_RegisterPic(pageName, PicType);
+	Handle = R_RegisterPic(pageName);
 }
 
 defaultproperties
@@ -44,14 +44,3 @@ defaultproperties
 	PicName = 'help1';
 #endif
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

@@ -57,10 +57,10 @@ void InitWindow()
 	if (Value > MaxValue)
 		Value = MaxValue;
 
-	pic_M_THERML = R_RegisterPic('m_therml', PIC_PATCH);
-	pic_M_THERMM = R_RegisterPic('m_thermm', PIC_PATCH);
-	pic_M_THERMR = R_RegisterPic('m_thermr', PIC_PATCH);
-	pic_M_THERMO = R_RegisterPic('m_thermo', PIC_PATCH);
+	pic_M_THERML = R_RegisterPic('m_therml');
+	pic_M_THERMM = R_RegisterPic('m_thermm');
+	pic_M_THERMR = R_RegisterPic('m_thermr');
+	pic_M_THERMO = R_RegisterPic('m_thermo');
 }
 
 void DrawWindow(GC gc)
@@ -128,20 +128,3 @@ defaultproperties
 	MinValue = 0.0;
 	MaxValue = 1.0;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.4  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.3  2005/11/19 13:43:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.2  2003/09/11 17:17:25  dj_jl
-//  Fixed return value
-//
-//  Revision 1.1  2002/11/02 08:20:52  dj_jl
-//  New style classes.
-//
-//**************************************************************************

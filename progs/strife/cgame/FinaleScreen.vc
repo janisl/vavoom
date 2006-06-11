@@ -81,28 +81,28 @@ void F_PlayPage()
 		//	Happy ending.
 	case 0:
 		CmdBuf_AddText("music loop d_happy\n");
-		FinalePic = R_RegisterPic('ss4f1', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss4f1');
 		LocalSound('svox/rie01');
 		FinaleTimer = 13.0;
 		FinalePage = 1;
 		break;
 
 	case 1:
-		FinalePic = R_RegisterPic('ss4f2', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss4f2');
 		LocalSound('svox/bbx01');
 		FinaleTimer = 11.0;
 		FinalePage = 2;
 		break;
 
 	case 2:
-		FinalePic = R_RegisterPic('ss4f3', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss4f3');
 		LocalSound('svox/bbx02');
 		FinaleTimer = 14.0;
 		FinalePage = 3;
 		break;
 
 	case 3:
-		FinalePic = R_RegisterPic('ss4f4', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss4f4');
 		FinaleTimer = 28.0;
 		FinalePage = -1;
 		break;
@@ -110,21 +110,21 @@ void F_PlayPage()
 		//	Sad ending.
 	case 10:
 		CmdBuf_AddText("music loop d_sad\n");
-		FinalePic = R_RegisterPic('ss5f1', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss5f1');
 		LocalSound('svox/ss501b');
 		FinaleTimer = 11.0;
 		FinalePage = 11;
 		break;
 
 	case 11:
-		FinalePic = R_RegisterPic('ss5f2', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss5f2');
 		LocalSound('svox/ss502b');
 		FinaleTimer = 10.0;
 		FinalePage = 12;
 		break;
 
 	case 12:
-		FinalePic = R_RegisterPic('ss5f3', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss5f3');
 		LocalSound('svox/ss503b');
 		FinaleTimer = 11.0;
 		FinalePage = -1;
@@ -133,21 +133,21 @@ void F_PlayPage()
 		//	Dark ending.
 	case 20:
 		CmdBuf_AddText("music loop d_end\n");
-		FinalePic = R_RegisterPic('ss6f1', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss6f1');
 		LocalSound('svox/ss601a');
 		FinaleTimer = 8.0;
 		FinalePage = 21;
 		break;
 
 	case 21:
-		FinalePic = R_RegisterPic('ss6f2', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss6f2');
 		LocalSound('svox/ss602a');
 		FinaleTimer = 8.0;
 		FinalePage = 22;
 		break;
 
 	case 22:
-		FinalePic = R_RegisterPic('ss6f3', PIC_PATCH);
+		FinalePic = R_RegisterPic('ss6f3');
 		LocalSound('svox/ss603a');
 		FinaleTimer = 9.0;
 		FinalePage = -1;
@@ -172,14 +172,3 @@ defaultproperties
 	Width = 320;
 	Height = 200;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.1  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
-//
-//**************************************************************************

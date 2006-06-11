@@ -647,29 +647,29 @@ void IM_LoadData()
 
 	// background
 #ifdef DOOM2
-	patchINTERPIC = R_RegisterPic('interpic', PIC_PATCH);
+	patchINTERPIC = R_RegisterPic('interpic');
 #else
 	int j;
 	anim_t *a;
 
 	if (im_episode > 3)
 	{
-		patchINTERPIC = R_RegisterPic('interpic', PIC_PATCH);
+		patchINTERPIC = R_RegisterPic('interpic');
 	}
 	else
 	{
 		patchINTERPIC =
-			R_RegisterPic(StrToName(va("wimap%d", im_episode - 1)), PIC_PATCH);
+			R_RegisterPic(StrToName(va("wimap%d", im_episode - 1)));
 	}
 
 	// you are here
-	yah[0] = R_RegisterPic('wiurh0', PIC_PATCH);
+	yah[0] = R_RegisterPic('wiurh0');
 
 	// you are here (alt.)
-	yah[1] = R_RegisterPic('wiurh1', PIC_PATCH);
+	yah[1] = R_RegisterPic('wiurh1');
 
 	// splat
-	splat = R_RegisterPic('wisplat', PIC_PATCH);
+	splat = R_RegisterPic('wisplat');
 
 	if (im_episode < 4)
 	{
@@ -683,7 +683,7 @@ void IM_LoadData()
 				{
 					// animations
 					a->p[i] = R_RegisterPic(StrToName(va("wia%d0%d0%d",
-						im_episode - 1, j, i)), PIC_PATCH);
+						im_episode - 1, j, i)));
 				}
 				else
 				{
@@ -698,25 +698,25 @@ void IM_LoadData()
 	if (ClGame.cl.maxclients > 1 || ClGame.cl.deathmatch)
 	{
 		// "killers" (vertical)
-		killers = R_RegisterPic('wikilrs', PIC_PATCH);
+		killers = R_RegisterPic('wikilrs');
 
 		// "victims" (horiz)
-		victims = R_RegisterPic('wivctms', PIC_PATCH);
+		victims = R_RegisterPic('wivctms');
 
 		// face backgrounds
 //      for (i = 0; i < MAXPLAYERS; i++)
 		for (i = 0; i < 4; i++)
 		{
-			p[i] = R_RegisterPic(StrToName(va("stpb%i", i)), PIC_PATCH);
+			p[i] = R_RegisterPic(StrToName(va("stpb%i", i)));
 		}
 
 		// your face
-		star = R_RegisterPic('stfst01', PIC_PATCH);
+		star = R_RegisterPic('stfst01');
 		R_GetPicInfo(star, &info);
 		star_width = info.width;
 
 		// dead face
-		bstar = R_RegisterPic('stfdead0', PIC_PATCH);
+		bstar = R_RegisterPic('stfdead0');
 	}
 }
 

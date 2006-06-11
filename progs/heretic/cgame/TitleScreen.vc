@@ -51,19 +51,19 @@ void AdvanceDemo()
 	{
 	case 0:
 		pagetime = 10.0;
-		page_pic = R_RegisterPic('title', PIC_RAW);
+		page_pic = R_RegisterPic('title');
 //      S_StartSong("MUS_TITL", P_GetCDTitleTrack(), false);
 		CmdBuf_AddText("music play MUS_TITL\n");
 		break;
 
 	case 1:
-		advisor_pic = R_RegisterPic('advisor', PIC_PATCH);
+		advisor_pic = R_RegisterPic('advisor');
 		CmdBuf_AddText("PlayDemo demo1\n");
 		break;
 
 	case 2:
 		pagetime = 200.0 / 35.0;
-		page_pic = R_RegisterPic('credit', PIC_RAW);
+		page_pic = R_RegisterPic('credit');
 		break;
 
 	case 3:
@@ -74,11 +74,11 @@ void AdvanceDemo()
 		pagetime = 200.0 / 35.0;
 		if (!WadLumpPresent('e2m1'))
 		{
-			page_pic = R_RegisterPic('order', PIC_RAW);
+			page_pic = R_RegisterPic('order');
 		}
 		else
 		{
-			page_pic = R_RegisterPic('credit', PIC_RAW);
+			page_pic = R_RegisterPic('credit');
 		}
 		break;
 
@@ -97,7 +97,7 @@ void AdvanceDemo()
 void ForceTitle()
 {
 	pagetime = 10.0;
-	page_pic = R_RegisterPic('title', PIC_RAW);
+	page_pic = R_RegisterPic('title');
 }
 
 //==========================================================================
@@ -184,17 +184,3 @@ defaultproperties
 	Height = 200;
 	demosequence = -1;	// -1 = don't play demos
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.2  2006/02/09 22:33:10  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.1  2005/12/25 19:19:15  dj_jl
-//  Moved title screen into a class.
-//
-//**************************************************************************

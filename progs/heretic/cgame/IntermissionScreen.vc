@@ -265,29 +265,29 @@ void IM_LoadPics()
 	switch (im_episode)
 	{
 	case 1:
-		patchINTERPIC = R_RegisterPic('mape1', PIC_PATCH);
+		patchINTERPIC = R_RegisterPic('mape1');
 		break;
 	case 2:
-		patchINTERPIC = R_RegisterPic('mape2', PIC_PATCH);
+		patchINTERPIC = R_RegisterPic('mape2');
 		break;
 	case 3:
-		patchINTERPIC = R_RegisterPic('mape3', PIC_PATCH);
+		patchINTERPIC = R_RegisterPic('mape3');
 		break;
 	default:
 		patchINTERPIC = 0;
 		break;
 	}
-	patchBEENTHERE = R_RegisterPic('in_x', PIC_PATCH);
-	patchGOINGTHERE = R_RegisterPic('in_yah', PIC_PATCH);
+	patchBEENTHERE = R_RegisterPic('in_x');
+	patchGOINGTHERE = R_RegisterPic('in_yah');
 
-	patchFaceOkay[0] = R_RegisterPic('facea0', PIC_PATCH);
-	patchFaceOkay[1] = R_RegisterPic('facea1', PIC_PATCH);
-	patchFaceOkay[2] = R_RegisterPic('facea2', PIC_PATCH);
-	patchFaceOkay[3] = R_RegisterPic('facea3', PIC_PATCH);
-	patchFaceDead[0] = R_RegisterPic('faceb0', PIC_PATCH);
-	patchFaceDead[1] = R_RegisterPic('faceb1', PIC_PATCH);
-	patchFaceDead[2] = R_RegisterPic('faceb2', PIC_PATCH);
-	patchFaceDead[3] = R_RegisterPic('faceb3', PIC_PATCH);
+	patchFaceOkay[0] = R_RegisterPic('facea0');
+	patchFaceOkay[1] = R_RegisterPic('facea1');
+	patchFaceOkay[2] = R_RegisterPic('facea2');
+	patchFaceOkay[3] = R_RegisterPic('facea3');
+	patchFaceDead[0] = R_RegisterPic('faceb0');
+	patchFaceDead[1] = R_RegisterPic('faceb1');
+	patchFaceDead[2] = R_RegisterPic('faceb2');
+	patchFaceDead[3] = R_RegisterPic('faceb3');
 }
 
 //========================================================================

@@ -83,91 +83,91 @@ void StartMap()
 	string Name = ARR2STR(namebuf);
 	picinfo_t info;
 
-	pic_barback = R_RegisterPic('barback', PIC_PATCH);
-	pic_god1 = R_RegisterPic('god1', PIC_PATCH);
-	pic_god2 = R_RegisterPic('god2', PIC_PATCH);
-	pic_barltop = R_RegisterPic('ltfctop', PIC_PATCH);
-	pic_barrtop = R_RegisterPic('rtfctop', PIC_PATCH);
-	pic_chain = R_RegisterPic('chain', PIC_PATCH);
+	pic_barback = R_RegisterPic('barback');
+	pic_god1 = R_RegisterPic('god1');
+	pic_god2 = R_RegisterPic('god2');
+	pic_barltop = R_RegisterPic('ltfctop');
+	pic_barrtop = R_RegisterPic('rtfctop');
+	pic_chain = R_RegisterPic('chain');
 	if (cl.maxclients == 1)
 	{
 		// single player game uses red life gem
-		pic_lifegem = R_RegisterPic('lifegem2', PIC_PATCH);
+		pic_lifegem = R_RegisterPic('lifegem2');
 	}
 	else
 	{
 		sprint(Name, "lifegem%d", cl.clientnum);
-		pic_lifegem = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_lifegem = R_RegisterPic(StrToName(Name));
 	}
-	pic_ltface = R_RegisterPic('ltface', PIC_PATCH);
-	pic_rtface = R_RegisterPic('rtface', PIC_PATCH);
+	pic_ltface = R_RegisterPic('ltface');
+	pic_rtface = R_RegisterPic('rtface');
 
 	if (cl.deathmatch)
 	{
-		pic_mainbar = R_RegisterPic('statbar', PIC_PATCH);
+		pic_mainbar = R_RegisterPic('statbar');
 	}
 	else
 	{
-		pic_mainbar = R_RegisterPic('lifebar', PIC_PATCH);
+		pic_mainbar = R_RegisterPic('lifebar');
 	}
 	for (i = 0; i < 10; i++)
 	{
 		sprint(Name, "in%d", i);
-		pic_innum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_innum[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "smallin%d", i);
-		pic_smallinnum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_smallinnum[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "fontb%d", 16 + i);
-		pic_bignum[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_bignum[i] = R_RegisterPic(StrToName(Name));
 		R_GetPicInfo(pic_bignum[i], &info);
 		bignumwidth[i] = info.width;
 	}
-	pic_minus = R_RegisterPic('negnum', PIC_PATCH);
-	pic_lame = R_RegisterPic('lame', PIC_PATCH);
-	pic_ammoicon[0] = R_RegisterPic('inamgld', PIC_PATCH);
-	pic_ammoicon[1] = R_RegisterPic('inambow', PIC_PATCH);
-	pic_ammoicon[2] = R_RegisterPic('inambst', PIC_PATCH);
-	pic_ammoicon[3] = R_RegisterPic('inamram', PIC_PATCH);
-	pic_ammoicon[4] = R_RegisterPic('inampnx', PIC_PATCH);
-	pic_ammoicon[5] = R_RegisterPic('inamlob', PIC_PATCH);
-	pic_ykey = R_RegisterPic('ykeyicon', PIC_PATCH);
-	pic_gkey = R_RegisterPic('gkeyicon', PIC_PATCH);
-	pic_bkey = R_RegisterPic('bkeyicon', PIC_PATCH);
+	pic_minus = R_RegisterPic('negnum');
+	pic_lame = R_RegisterPic('lame');
+	pic_ammoicon[0] = R_RegisterPic('inamgld');
+	pic_ammoicon[1] = R_RegisterPic('inambow');
+	pic_ammoicon[2] = R_RegisterPic('inambst');
+	pic_ammoicon[3] = R_RegisterPic('inamram');
+	pic_ammoicon[4] = R_RegisterPic('inampnx');
+	pic_ammoicon[5] = R_RegisterPic('inamlob');
+	pic_ykey = R_RegisterPic('ykeyicon');
+	pic_gkey = R_RegisterPic('gkeyicon');
+	pic_bkey = R_RegisterPic('bkeyicon');
 
-	pic_artiflash[0] = R_RegisterPic('useartia', PIC_PATCH);
-	pic_artiflash[1] = R_RegisterPic('useartib', PIC_PATCH);
-	pic_artiflash[2] = R_RegisterPic('useartic', PIC_PATCH);
-	pic_artiflash[3] = R_RegisterPic('useartid', PIC_PATCH);
-	pic_arti[0] = R_RegisterPic('artiinvu', PIC_PATCH);	// invulnerability
-	pic_arti[1] = R_RegisterPic('artiinvs', PIC_PATCH);	// invisibility
-	pic_arti[2] = R_RegisterPic('artiptn2', PIC_PATCH);	// health
-	pic_arti[3] = R_RegisterPic('artisphl', PIC_PATCH);	// superhealth
-	pic_arti[4] = R_RegisterPic('artipwbk', PIC_PATCH);	// tomeofpower
-	pic_arti[5] = R_RegisterPic('artitrch', PIC_PATCH);	// torch
-	pic_arti[6] = R_RegisterPic('artifbmb', PIC_PATCH);	// firebomb
-	pic_arti[7] = R_RegisterPic('artieggc', PIC_PATCH);	// egg
-	pic_arti[8] = R_RegisterPic('artisoar', PIC_PATCH);	// fly
-	pic_arti[9] = R_RegisterPic('artiatlp', PIC_PATCH);	// teleport
-	pic_artibox = R_RegisterPic('artibox', PIC_PATCH);
-	pic_invbar = R_RegisterPic('invbar', PIC_PATCH);
-	pic_selectbox = R_RegisterPic('selectbo', PIC_PATCH);
-	pic_invgeml[0] = R_RegisterPic('invgeml1', PIC_PATCH);
-	pic_invgeml[1] = R_RegisterPic('invgeml2', PIC_PATCH);
-	pic_invgemr[0] = R_RegisterPic('invgemr1', PIC_PATCH);
-	pic_invgemr[1] = R_RegisterPic('invgemr2', PIC_PATCH);
+	pic_artiflash[0] = R_RegisterPic('useartia');
+	pic_artiflash[1] = R_RegisterPic('useartib');
+	pic_artiflash[2] = R_RegisterPic('useartic');
+	pic_artiflash[3] = R_RegisterPic('useartid');
+	pic_arti[0] = R_RegisterPic('artiinvu');	// invulnerability
+	pic_arti[1] = R_RegisterPic('artiinvs');	// invisibility
+	pic_arti[2] = R_RegisterPic('artiptn2');	// health
+	pic_arti[3] = R_RegisterPic('artisphl');	// superhealth
+	pic_arti[4] = R_RegisterPic('artipwbk');	// tomeofpower
+	pic_arti[5] = R_RegisterPic('artitrch');	// torch
+	pic_arti[6] = R_RegisterPic('artifbmb');	// firebomb
+	pic_arti[7] = R_RegisterPic('artieggc');	// egg
+	pic_arti[8] = R_RegisterPic('artisoar');	// fly
+	pic_arti[9] = R_RegisterPic('artiatlp');	// teleport
+	pic_artibox = R_RegisterPic('artibox');
+	pic_invbar = R_RegisterPic('invbar');
+	pic_selectbox = R_RegisterPic('selectbo');
+	pic_invgeml[0] = R_RegisterPic('invgeml1');
+	pic_invgeml[1] = R_RegisterPic('invgeml2');
+	pic_invgemr[0] = R_RegisterPic('invgemr1');
+	pic_invgemr[1] = R_RegisterPic('invgemr2');
 
 	for (i = 0; i < 16; i++)
 	{
 		sprint(Name, "spfly%d", i);
-		pic_flight[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_flight[i] = R_RegisterPic(StrToName(Name));
 		sprint(Name, "spinbk%d", i);
-		pic_book[i] = R_RegisterPic(StrToName(Name), PIC_PATCH);
+		pic_book[i] = R_RegisterPic(StrToName(Name));
 	}
 
-	pic_paused = R_RegisterPic('paused', PIC_PATCH);
+	pic_paused = R_RegisterPic('paused');
 
 	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
-	pic_health = R_RegisterPic('ptn1a0', PIC_PATCH);
-	pic_armor2 = R_RegisterPic('shd2a0', PIC_PATCH);
+	pic_health = R_RegisterPic('ptn1a0');
+	pic_armor2 = R_RegisterPic('shd2a0');
 }
 
 //==========================================================================
@@ -616,20 +616,3 @@ defaultproperties
 	Width = 320;
 	Height = 200;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.4  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.3  2006/02/20 22:57:17  dj_jl
-//  Changed client state structure to class.
-//
-//  Revision 1.2  2006/02/17 19:06:52  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.1  2006/02/09 22:33:10  dj_jl
-//  Moved all client game code to classes.
-//
-//**************************************************************************

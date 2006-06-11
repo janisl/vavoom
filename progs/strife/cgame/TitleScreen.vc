@@ -50,50 +50,50 @@ void AdvanceDemo()
 	{
 	case 0:
 		pagetime = 12.0;
-		page_pic = R_RegisterPic('titlepic', PIC_PATCH);
+		page_pic = R_RegisterPic('titlepic');
 		CmdBuf_AddText("music play d_logo");
 		break;
 
 	case 1:
 		pagetime = 5.0;
-		page_pic = R_RegisterPic('rgelogo', PIC_PATCH);
+		page_pic = R_RegisterPic('rgelogo');
 		LocalSound('crusader/active');
 		break;
 
 	case 2:
 		pagetime = 7.0;
-		page_pic = R_RegisterPic('panel1', PIC_PATCH);
+		page_pic = R_RegisterPic('panel1');
 		CmdBuf_AddText("music play d_intro");
 		LocalSound('svox/pro1');
 		break;
 
 	case 3:
 		pagetime = 9.0;
-		page_pic = R_RegisterPic('panel2', PIC_PATCH);
+		page_pic = R_RegisterPic('panel2');
 		LocalSound('svox/pro2');
 		break;
 
 	case 4:
 		pagetime = 12.0;
-		page_pic = R_RegisterPic('panel3', PIC_PATCH);
+		page_pic = R_RegisterPic('panel3');
 		LocalSound('svox/pro3');
 		break;
 
 	case 5:
 		pagetime = 11.0;
-		page_pic = R_RegisterPic('panel4', PIC_PATCH);
+		page_pic = R_RegisterPic('panel4');
 		LocalSound('svox/pro4');
 		break;
 
 	case 6:
 		pagetime = 10.0;
-		page_pic = R_RegisterPic('panel5', PIC_PATCH);
+		page_pic = R_RegisterPic('panel5');
 		LocalSound('svox/pro5');
 		break;
 
 	case 7:
 		pagetime = 16.0;
-		page_pic = R_RegisterPic('panel6', PIC_PATCH);
+		page_pic = R_RegisterPic('panel6');
 		LocalSound('svox/pro6');
 		break;
 
@@ -103,7 +103,7 @@ void AdvanceDemo()
 
 	case 9:
 		pagetime = 6.0;
-		page_pic = R_RegisterPic('credit', PIC_PATCH);
+		page_pic = R_RegisterPic('credit');
 		break;
 	}
 }
@@ -117,7 +117,7 @@ void AdvanceDemo()
 void ForceTitle()
 {
 	pagetime = 11.0;
-	page_pic = R_RegisterPic('titlepic', PIC_PATCH);
+	page_pic = R_RegisterPic('titlepic');
 }
 
 //==========================================================================
@@ -200,20 +200,3 @@ defaultproperties
 	Height = 200;
 	demosequence = -1;	// -1 = don't play demos
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.4  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.3  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.2  2006/01/10 19:54:01  dj_jl
-//  Many bug fixes.
-//
-//  Revision 1.1  2005/12/25 19:19:16  dj_jl
-//  Moved title screen into a class.
-//
-//**************************************************************************

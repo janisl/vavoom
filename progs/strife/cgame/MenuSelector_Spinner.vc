@@ -33,14 +33,14 @@ void InitWindow()
 	::InitWindow();
 	bTickEnabled = true;
 	Disable();
-	selector_pics[0] = R_RegisterPic('m_curs1', PIC_PATCH);
-	selector_pics[1] = R_RegisterPic('m_curs2', PIC_PATCH);
-	selector_pics[2] = R_RegisterPic('m_curs3', PIC_PATCH);
-	selector_pics[3] = R_RegisterPic('m_curs4', PIC_PATCH);
-	selector_pics[4] = R_RegisterPic('m_curs5', PIC_PATCH);
-	selector_pics[5] = R_RegisterPic('m_curs6', PIC_PATCH);
-	selector_pics[6] = R_RegisterPic('m_curs7', PIC_PATCH);
-	selector_pics[7] = R_RegisterPic('m_curs8', PIC_PATCH);
+	selector_pics[0] = R_RegisterPic('m_curs1');
+	selector_pics[1] = R_RegisterPic('m_curs2');
+	selector_pics[2] = R_RegisterPic('m_curs3');
+	selector_pics[3] = R_RegisterPic('m_curs4');
+	selector_pics[4] = R_RegisterPic('m_curs5');
+	selector_pics[5] = R_RegisterPic('m_curs6');
+	selector_pics[6] = R_RegisterPic('m_curs7');
+	selector_pics[7] = R_RegisterPic('m_curs8');
 }
 
 void Tick(float DeltaTime)
@@ -56,14 +56,3 @@ void DrawWindow(GC gc)
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.1  2002/11/02 08:20:52  dj_jl
-//  New style classes.
-//
-//**************************************************************************
