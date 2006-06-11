@@ -48,7 +48,6 @@
 
 void Draw_TeleportIcon();
 void CL_Disconnect();
-void SV_MapTeleport(char *mapname);
 bool SV_ReadClientMessages(int i);
 void SV_RunClientCommand(const char *cmd);
 void EntInit();
@@ -106,13 +105,13 @@ VMessage		sv_signon(sv_signon_buf, MAX_MSGLEN);
 
 VBasePlayer*	sv_player;
 
-char			sv_next_map[12];
-char			sv_secret_map[12];
+VName			sv_next_map;
+VName			sv_secret_map;
 
 int 			TimerGame;
 
 boolean			in_secret;
-char			mapaftersecret[12];
+VName			mapaftersecret;
 
 VGameInfo*		GGameInfo;
 VLevelInfo*		GLevelInfo;
@@ -1646,9 +1645,9 @@ void SV_ChangeSky(const char* Sky1, const char* Sky2)
 void SV_ChangeMusic(const char* SongName)
 {
 	guard(SV_ChangeMusic);
-	strcpy(level.songLump, SongName);
+	level.SongLump = VName(SongName, VName::AddLower8);
 	sv_reliable << (byte)svc_change_music
-				<< level.songLump
+				<< *level.SongLump
 				<< (byte)level.cdTrack;
 	unguard;
 }
@@ -1694,7 +1693,7 @@ static void G_DoCompleted()
 	sv.intermission = 1;
 	sv.intertime = 0;
 
-	P_GetMapInfo(level.mapname, old_info);
+	P_GetMapInfo(level.MapName, old_info);
 	P_GetMapInfo(sv_next_map, new_info);
 
 	for (i = 0; i < MAXPLAYERS; i++)
@@ -1714,7 +1713,7 @@ static void G_DoCompleted()
 	}
 
 	sv_reliable << (byte)svc_intermission
-				<< sv_next_map;
+				<< *sv_next_map;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GGameInfo->Players[i])
@@ -1751,11 +1750,9 @@ void G_ExitLevel(int Position)
 	completed = true;
 	if (!deathmatch)
 	{
-		if (!strcmp(level.mapname, "E1M8") ||
-			!strcmp(level.mapname, "E2M8") ||
-			!strcmp(level.mapname, "E3M8") ||
-			!strcmp(level.mapname, "E4M8") ||
-			!strcmp(level.mapname, "E5M8"))
+		if (level.MapName == "e1m8" || level.MapName == "e2m8" ||
+			level.MapName == "e3m8" || level.MapName == "e4m8" ||
+			level.MapName == "e5m8")
 		{
 			sv_reliable << (byte)svc_finale;
 			sv.intermission = 2;
@@ -1765,7 +1762,7 @@ void G_ExitLevel(int Position)
 
 	if (in_secret)
 	{
-		strcpy(sv_next_map, mapaftersecret);
+		sv_next_map = mapaftersecret;
 	}
 	in_secret = false;
 	unguard;
@@ -1780,7 +1777,7 @@ void G_ExitLevel(int Position)
 void G_SecretExitLevel(int Position)
 {
 	guard(G_SecretExitLevel);
-	if (!sv_secret_map[0])
+	if (sv_secret_map == NAME_None)
 	{
 		// No secret map, use normal exit
 		G_ExitLevel(Position);
@@ -1789,12 +1786,12 @@ void G_SecretExitLevel(int Position)
 
 	if (!in_secret)
 	{
-		strcpy(mapaftersecret, sv_next_map);
+		mapaftersecret = sv_next_map;
 	}
 	LeavePosition = Position;
 	completed = true;
 
-	strcpy(sv_next_map, sv_secret_map); 	// go to secret level
+	sv_next_map = sv_secret_map; 	// go to secret level
 
 	in_secret = true;
 	for (int i = 0; i < MAXPLAYERS; i++)
@@ -1832,7 +1829,7 @@ void G_Completed(int InMap, int InPosition, int SaveAngle)
 		Map = 1;
 		Position = 0;
 	}
-	strcpy(sv_next_map, SV_GetMapName(Map));
+	sv_next_map = VName(SV_GetMapName(Map), VName::AddLower8);
 
 	LeavePosition = Position;
 	completed = true;
@@ -1863,7 +1860,7 @@ COMMAND(TeleportNewMap)
 
 	if (Args.Num() == 3)
 	{
-		strcpy(sv_next_map, *Args[1]);
+		sv_next_map = VName(*Args[1], VName::AddLower8);
 		LeavePosition = atoi(*Args[2]);
 	}
 	else if (sv.intermission != 1)
@@ -2116,7 +2113,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 	msg << (byte)svc_server_info
 		<< (byte)PROTOCOL_VERSION
 		<< svs.serverinfo
-		<< level.mapname
+		<< *level.MapName
 		<< level.level_name
 		<< (byte)SV_GetPlayerNum(player)
 		<< (byte)svs.max_clients
@@ -2130,9 +2127,9 @@ void SV_SendServerInfo(VBasePlayer *player)
 		<< level.sky2ScrollDelta
 		<< (byte)level.doubleSky
 		<< (byte)level.lightning
-		<< level.skybox
-		<< level.fadetable
-		<< level.songLump
+		<< *level.SkyBox
+		<< *level.FadeTable
+		<< *level.SongLump
 		<< (byte)level.cdTrack;
 
 	for (i = 0; i < MAXPLAYERS; i++)
@@ -2201,7 +2198,7 @@ void SV_SendServerInfoToClients()
 //
 //==========================================================================
 
-void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
+void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 {
 	guard(SV_SpawnServer);
 	int			i;
@@ -2243,11 +2240,11 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 
 	sv.active = true;
 
-	W_CleanupName(mapname, level.mapname);
+	level.MapName = VName(mapname, VName::AddLower8);
 
-	P_GetMapInfo(level.mapname, info);
-	strcpy(sv_next_map, info.nextMap);
-	strcpy(sv_secret_map, info.secretMap);
+	P_GetMapInfo(level.MapName, info);
+	sv_next_map = info.NextMap;
+	sv_secret_map = info.SecretMap;
 	memcpy(sv.mapalias, info.mapalias, sizeof(info.mapalias));
 
 	strcpy(level.level_name, info.name);
@@ -2261,11 +2258,11 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	level.sky2ScrollDelta = info.sky2ScrollDelta;
 	level.doubleSky = info.doubleSky;
 	level.lightning = info.lightning;
-	strcpy(level.skybox, info.skybox);
-	strcpy(level.fadetable, info.fadetable);
+	level.SkyBox = info.SkyBox;
+	level.FadeTable = info.FadeTable;
 
 	level.cdTrack = info.cdTrack;
-	strcpy(level.songLump, info.songLump);
+	level.SongLump = info.SongLump;
 
 	netgame = svs.max_clients > 1;
 	deathmatch = DeathMatch;
@@ -2275,7 +2272,7 @@ void SV_SpawnServer(char *mapname, boolean spawn_thinkers)
 	GGameInfo->deathmatch = deathmatch;
 
 	//	Load it
-	SV_LoadLevel(level.mapname);
+	SV_LoadLevel(level.MapName);
 
 	//	Spawn slopes, extra floors, etc.
 	GGameInfo->eventSpawnWorld(GLevel);
@@ -2356,16 +2353,16 @@ const char *SV_GetMapName(int num)
 	//  Check map aliases
 	for (int i = 0; i < MAX_MAP_ALIAS; i++)
 	{
-		if (sv.mapalias[i].num == num)
+		if (sv.mapalias[i].Num == num)
 		{
-			return sv.mapalias[i].name;
+			return *sv.mapalias[i].Name;
 		}
 	}
 
 	//  Use defalt map name in form MAP##
 	static char namebuf[12];
 
-	sprintf(namebuf, "MAP%02d", num);
+	sprintf(namebuf, "map%02d", num);
 	return namebuf;
 	unguard;
 }
@@ -2664,9 +2661,7 @@ COMMAND(Restart)
 	else
 	{
 		// reload the level from scratch
-		char		mapname[12];
-		strcpy(mapname, level.mapname);
-		SV_SpawnServer(mapname, true);
+		SV_SpawnServer(*level.MapName, true);
 	}
 	unguard;
 }
@@ -3075,276 +3070,3 @@ void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.90  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.89  2006/03/21 17:49:51  dj_jl
-//	Fixed missing pointer to level info in level info itself.
-//	
-//	Revision 1.88  2006/03/12 20:06:02  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.87  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.86  2006/03/06 13:05:51  dj_jl
-//	Thunbker list in level, client now uses entity class.
-//	
-//	Revision 1.85  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.84  2006/02/28 18:06:28  dj_jl
-//	Put thinkers back in linked list.
-//	
-//	Revision 1.83  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.82  2006/02/25 17:12:38  dj_jl
-//	Added missing implementation of the player class.
-//	
-//	Revision 1.81  2006/02/21 22:31:44  dj_jl
-//	Created dynamic string class.
-//	
-//	Revision 1.80  2006/02/21 17:54:13  dj_jl
-//	Save pointer to old stats.
-//	
-//	Revision 1.79  2006/02/20 22:52:15  dj_jl
-//	Removed player stats limit.
-//	
-//	Revision 1.78  2006/02/20 17:54:32  dj_jl
-//	Set level info for player when connecting.
-//	
-//	Revision 1.77  2006/02/15 23:28:18  dj_jl
-//	Moved all server progs global variables to classes.
-//	
-//	Revision 1.76  2006/02/13 18:34:34  dj_jl
-//	Moved all server progs global functions to classes.
-//	
-//	Revision 1.75  2006/02/05 18:52:44  dj_jl
-//	Moved common utils to level info class or built-in.
-//	
-//	Revision 1.74  2005/12/27 22:24:00  dj_jl
-//	Created level info class, moved action special handling to it.
-//	
-//	Revision 1.73  2005/12/07 22:53:26  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.72  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.71  2005/11/19 13:45:13  dj_jl
-//	Renamed sounds.
-//	
-//	Revision 1.70  2005/11/10 12:51:45  dj_jl
-//	Fixed spelling mistake.
-//	
-//	Revision 1.69  2005/07/09 12:18:52  dj_jl
-//	Changed rounding for win compatibility.
-//	
-//	Revision 1.68  2005/07/08 17:49:47  dj_jl
-//	Rounding of polyobj position.
-//	
-//	Revision 1.67  2005/05/26 16:55:00  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.66  2005/05/03 14:57:07  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.65  2005/04/28 07:16:16  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.64  2005/04/04 07:48:05  dj_jl
-//	Fix for loading level variables.
-//	
-//	Revision 1.63  2005/03/28 07:24:36  dj_jl
-//	Saving a net game.
-//	
-//	Revision 1.62  2005/03/16 15:04:44  dj_jl
-//	More work on line specials.
-//	
-//	Revision 1.61  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.60  2004/12/03 16:15:47  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.59  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.58  2004/04/15 07:08:05  dj_jl
-//	Fixed bot spawning at first time
-//	
-//	Revision 1.57  2004/02/09 17:28:45  dj_jl
-//	Bots fix
-//	
-//	Revision 1.56  2003/11/12 16:47:40  dj_jl
-//	Changed player structure into a class
-//	
-//	Revision 1.55  2003/10/22 06:16:54  dj_jl
-//	Secret level info saved in savegame
-//	
-//	Revision 1.54  2003/07/11 16:45:20  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.53  2003/07/03 18:11:13  dj_jl
-//	Moving extrafloors
-//	
-//	Revision 1.52  2003/03/08 16:02:53  dj_jl
-//	A little multiplayer fix.
-//	
-//	Revision 1.51  2003/03/08 11:33:39  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.50  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.49  2002/08/28 16:41:09  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.48  2002/08/08 18:05:20  dj_jl
-//	Release fixes.
-//	
-//	Revision 1.47  2002/08/05 17:21:00  dj_jl
-//	Made sound sequences reliable.
-//	
-//	Revision 1.46  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.45  2002/07/23 13:10:37  dj_jl
-//	Some fixes for switching to floating-point time.
-//	
-//	Revision 1.44  2002/07/13 07:43:31  dj_jl
-//	Fixed net buffer hack.
-//	
-//	Revision 1.43  2002/06/29 16:00:45  dj_jl
-//	Added total frags count.
-//	
-//	Revision 1.42  2002/06/14 15:37:47  dj_jl
-//	Added FOutputDevice code for dedicated server.
-//	
-//	Revision 1.41  2002/03/28 18:03:24  dj_jl
-//	Hack for single player, added SV_GetModelIndex
-//	
-//	Revision 1.40  2002/03/12 19:21:55  dj_jl
-//	No need for linefeed in client-printing
-//	
-//	Revision 1.39  2002/03/09 18:06:25  dj_jl
-//	Made Entity class and most of it's functions native
-//	
-//	Revision 1.38  2002/03/04 18:27:49  dj_jl
-//	Fixes for weapons
-//	
-//	Revision 1.37  2002/02/22 18:09:52  dj_jl
-//	Some improvements, beautification.
-//	
-//	Revision 1.36  2002/02/16 16:30:36  dj_jl
-//	Fixed sending server infor to remote clients
-//	
-//	Revision 1.35  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.34  2002/02/14 19:23:58  dj_jl
-//	Beautification
-//	
-//	Revision 1.33  2002/02/06 17:30:36  dj_jl
-//	Replaced Actor flags with boolean variables.
-//	
-//	Revision 1.32  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.31  2002/01/28 18:43:48  dj_jl
-//	Fixed "floating players"
-//	
-//	Revision 1.30  2002/01/24 18:15:23  dj_jl
-//	Fixed "slow motion" bug
-//	
-//	Revision 1.29  2002/01/11 18:22:41  dj_jl
-//	Started to use names in progs
-//	
-//	Revision 1.28  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.27  2002/01/03 18:38:25  dj_jl
-//	Added guard macros and core dumps
-//	
-//	Revision 1.26  2001/12/28 16:26:39  dj_jl
-//	Temporary fix for map teleport
-//	
-//	Revision 1.25  2001/12/27 17:33:29  dj_jl
-//	Removed thinker list
-//	
-//	Revision 1.24  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.23  2001/12/12 19:28:49  dj_jl
-//	Some little changes, beautification
-//	
-//	Revision 1.22  2001/12/04 18:16:28  dj_jl
-//	Player models and skins handled by server
-//	
-//	Revision 1.21  2001/12/03 19:23:08  dj_jl
-//	Fixes for view angles at respawn
-//	
-//	Revision 1.20  2001/12/01 17:40:41  dj_jl
-//	Added support for bots
-//	
-//	Revision 1.19  2001/10/27 07:51:27  dj_jl
-//	Beautification
-//	
-//	Revision 1.18  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.17  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.16  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.15  2001/10/09 17:30:45  dj_jl
-//	Improved stats updates
-//	
-//	Revision 1.14  2001/10/08 17:33:01  dj_jl
-//	Different client and server level structures
-//	
-//	Revision 1.13  2001/10/04 17:18:23  dj_jl
-//	Implemented the rest of cvar flags
-//	
-//	Revision 1.12  2001/09/27 17:03:20  dj_jl
-//	Support for multiple mobj classes
-//	
-//	Revision 1.11  2001/09/24 17:35:24  dj_jl
-//	Support for thinker classes
-//	
-//	Revision 1.10  2001/09/20 16:30:28  dj_jl
-//	Started to use object-oriented stuff in progs
-//	
-//	Revision 1.9  2001/08/30 17:46:21  dj_jl
-//	Removed game dependency
-//	
-//	Revision 1.8  2001/08/21 17:39:22  dj_jl
-//	Real string pointers in progs
-//	
-//	Revision 1.7  2001/08/15 17:08:59  dj_jl
-//	Fixed finale
-//	
-//	Revision 1.6  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.5  2001/08/04 17:32:39  dj_jl
-//	Beautification
-//	
-//	Revision 1.4  2001/08/02 17:46:38  dj_jl
-//	Added sending info about changed textures to new clients
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

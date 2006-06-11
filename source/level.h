@@ -600,7 +600,7 @@ struct level_t
 	int			currentitems;
 	int			currentsecret;
 
-	char		mapname[12];
+	VName		MapName;
 	int			levelnum;
 	int			cluster;
 	int			partime;
@@ -612,19 +612,19 @@ struct level_t
 	float		sky2ScrollDelta;
 	boolean		doubleSky;
 	boolean		lightning;
-	char		skybox[32];
-	char		fadetable[12];
+	VName		SkyBox;
+	VName		FadeTable;
 
 	int			cdTrack;
-	char		songLump[12];
+	VName		SongLump;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void CalcLine(line_t *line);
 void CalcSeg(seg_t *seg);
-void SV_LoadLevel(const char *MapName);
-void CL_LoadLevel(const char *MapName);
+void SV_LoadLevel(VName MapName);
+void CL_LoadLevel(VName MapName);
 sec_region_t *AddExtraFloor(line_t *line, sector_t *dst);
 void SwapPlanes(sector_t *);
 void CalcSecMinMaxs(sector_t *sector);

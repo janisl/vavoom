@@ -131,7 +131,7 @@ void VLoopbackDriver::SearchForHosts(bool)
 		strcpy(GNet->HostCache[0].name, "local");
 	else
 		strcpy(GNet->HostCache[0].name, VNetwork::HostName);
-	strncpy(GNet->HostCache[0].map, level.mapname, 15);
+	strncpy(GNet->HostCache[0].map, *level.MapName, 15);
 	GNet->HostCache[0].users = svs.num_connected;
 	GNet->HostCache[0].maxusers = svs.max_clients;
 	strcpy(GNet->HostCache[0].cname, "local");

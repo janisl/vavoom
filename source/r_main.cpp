@@ -170,7 +170,7 @@ void R_Start()
 	R_ClearParticles();
 	R_InitSky();
 
-	r_fog = !stricmp(cl_level.fadetable, "FOGMAP");
+	r_fog = cl_level.FadeTable == NAME_fogmap;
 
 	screenblocks = 0;
 

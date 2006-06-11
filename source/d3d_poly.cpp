@@ -781,7 +781,7 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	sidx[1] = 1;
 	sidx[2] = 2;
 	sidx[3] = 3;
-	if (!cl_level.skybox[0])
+	if (cl_level.SkyBox == NAME_None)
 	{
 		if (cv[1].z > 0)
 		{

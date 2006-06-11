@@ -37,7 +37,7 @@ void ServerFrame(int realtics);
 void CL_ReadFromServer();
 void SV_ShutdownServer(boolean crash);
 void CL_Disconnect();
-char *P_TranslateMap(int map);
+VName P_TranslateMap(int map);
 
 // MACROS ------------------------------------------------------------------
 
@@ -186,7 +186,7 @@ void Host_Init()
 	if (!sv.active)
 	{
 		GCmdBuf << "MaxPlayers 4\n";
-		GCmdBuf << "Map " << P_TranslateMap(1) << "\n";
+		GCmdBuf << "Map " << *P_TranslateMap(1) << "\n";
 	}
 #endif
 

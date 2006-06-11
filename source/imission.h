@@ -47,9 +47,9 @@ struct scores_t
 
 struct im_t
 {
-	char		leavemap[12];
+	VName		LeaveMap;
 	int			leavecluster;
-	char		entermap[12];
+	VName		EnterMap;
 	int			entercluster;
 	char		leave_name[32];
 	char		enter_name[32];

@@ -968,7 +968,7 @@ struct level_t
 	int			currentitems;
 	int			currentsecret;
 
-	int			mapname[3];
+	name		MapName;
 	int			levelnum;
 	int			cluster;
 	int			partime;
@@ -980,11 +980,11 @@ struct level_t
 	float		sky2ScrollDelta;
 	int			doubleSky;
 	int			lightning;
-	int			skybox[8];
-	int			fadetable[3];
+	name		SkyBox;
+	name		FadeTable;
 
 	int			cdTrack;
-	int			songLump[3];
+	name		SongLump;
 };
 
 //**************************************************************************
@@ -1103,9 +1103,9 @@ struct scores_t
 
 struct im_t
 {
-	int leavemap[12 / 4];
+	name LeaveMap;
 	int leavecluster;
-	int entermap[12 / 4];
+	name EnterMap;
 	int entercluster;
 	int leave_name[32 / 4];
 	int enter_name[32 / 4];
@@ -1719,8 +1719,8 @@ native static final void StopLocalSounds();
 //  Handle shift+key
 native static final int TranslateKey(int c);
 native static final string P_GetMapName(int map);
-native static final string P_GetMapLumpName(int map);
-native static final string P_TranslateMap(int map);
+native static final name P_GetMapLumpName(int map);
+native static final name P_TranslateMap(int map);
 native static final bool SV_GetSaveString(int i, string buf);
 native static final void StartSearch();
 native static final slist_t * GetSlist();

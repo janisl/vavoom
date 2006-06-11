@@ -1876,14 +1876,14 @@ void P_StartTypedACScripts(int Type)
 //
 //==========================================================================
 
-void P_CheckACSStore(void)
+void P_CheckACSStore()
 {
 	guard(P_CheckACSStore);
 	acsstore_t *store;
 
 	for (store = ACSStore; store->map[0] != 0; store++)
 	{
-		if (!strcmp(store->map, level.mapname))
+		if (!stricmp(store->map, *level.MapName))
 		{
 			FACScriptsObject* Object;
 			acsInfo_t* info = FACScriptsObject::StaticFindScript(store->script, Object);
@@ -1930,7 +1930,7 @@ bool P_StartACS(int number, int map_num, int arg1, int arg2, int arg3,
 		strcpy(map, SV_GetMapName(map_num));
 	}
 
-	if (map[0] && strcmp(map, level.mapname))
+	if (map[0] && stricmp(map, *level.MapName))
 	{
 		// Add to the script store
 		return AddToACSStore(map, number, arg1, arg2, arg3);

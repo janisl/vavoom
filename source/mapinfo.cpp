@@ -33,7 +33,7 @@
 
 #define UNKNOWN_MAP_NAME	"DEVELOPMENT MAP"
 #define DEFAULT_SKY_NAME	"SKY1"
-#define DEFAULT_FADE_TABLE	"COLORMAP"
+#define DEFAULT_FADE_TABLE	"colormap"
 
 enum
 {
@@ -62,15 +62,15 @@ enum
 
 struct FMapSongInfo
 {
-	char	MapName[16];
-	char	SongName[16];
+	VName	MapName;
+	VName	SongName;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-char *P_TranslateMap(int map);
+VName P_TranslateMap(int map);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
@@ -132,7 +132,7 @@ void InitMapInfo()
 	info = MapInfo;
 	info->cluster = 0;
 	info->warpTrans = 0;
-	strcpy(info->nextMap, "MAP01"); // Always go to map 1 if not specified
+	info->NextMap = "map01"; // Always go to map 1 if not specified
 	info->cdTrack = 1;
 	info->sky1Texture = GTextureManager.CheckNumForName(
 		VName(DEFAULT_SKY_NAME, VName::AddLower8),
@@ -146,7 +146,7 @@ void InitMapInfo()
 	info->sky2ScrollDelta = 0.0;
 	info->doubleSky = false;
 	info->lightning = false;
-	strcpy(info->fadetable, DEFAULT_FADE_TABLE);
+	info->FadeTable = DEFAULT_FADE_TABLE;
 	strcpy(info->name, UNKNOWN_MAP_NAME);
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
@@ -168,9 +168,10 @@ void InitMapInfo()
 
 	for (int i = 1; i < MapCount; i++)
 	{
-		if (MapInfo[i].nextMap[0] >= '0' && MapInfo[i].nextMap[0] <= '9')
+		if ((*MapInfo[i].NextMap)[0] >= '0' &&
+			(*MapInfo[i].NextMap)[0] <= '9')
 		{
-			strcpy(MapInfo[i].nextMap, P_TranslateMap(atoi(MapInfo[i].nextMap)));
+			MapInfo[i].NextMap = P_TranslateMap(atoi(*MapInfo[i].NextMap));
 		}
 	}
 	unguard;
@@ -188,11 +189,11 @@ static void ParseMapInfo()
 	mapInfo_t 	*info;
 	int 		mcmdValue;
 	int			NumMapAlias;
-	char		MapLumpName[12];
+	VName		MapLumpName;
 
 	while(SC_GetString())
 	{
-		if (SC_Compare("MAP") == false)
+		if (SC_Compare("map") == false)
 		{
 			SC_ScriptError(NULL);
 		}
@@ -207,7 +208,7 @@ static void ParseMapInfo()
 			{
 				SC_ScriptError(NULL);
 			}
-			sprintf(MapLumpName, "MAP%02d", sc_Number);
+			MapLumpName = va("map%02d", sc_Number);
 		}
 		else
 		{
@@ -216,14 +217,14 @@ static void ParseMapInfo()
 			{
 				SC_ScriptError(NULL);
 			}
-			W_CleanupName(sc_String, MapLumpName);
+			MapLumpName = VName(sc_String, VName::AddLower8);
 		}
 
 		//	Check for replaced map info.
 		info = NULL;
 		for (int i = 1; i < MAX_MAPS; i++)
 		{
-			if (!stricmp(MapLumpName, MapInfo[i].lumpname))
+			if (MapLumpName == MapInfo[i].LumpName)
 			{
 				info = &MapInfo[i];
 				memcpy(info, &MapInfo[0], sizeof(*info));
@@ -245,7 +246,7 @@ static void ParseMapInfo()
 
 			MapCount++;
 		}
-		strcpy(info->lumpname, MapLumpName);
+		info->LumpName = MapLumpName;
 
 		NumMapAlias = 0;
 
@@ -256,9 +257,9 @@ static void ParseMapInfo()
 		//	Set song lump name from SNDINFO script
 		for (int i = 0; i < MapSongList.Num(); i++)
 		{
-			if (!stricmp(MapSongList[i].MapName, info->lumpname))
+			if (MapSongList[i].MapName == info->LumpName)
 			{
-				strcpy(info->songLump, MapSongList[i].SongName);
+				info->SongLump = MapSongList[i].SongName;
 			}
 		}
 
@@ -273,86 +274,86 @@ static void ParseMapInfo()
 			mcmdValue = SC_MustMatchString(MapCmdNames);
 			switch(mcmdValue)
 			{
-				case MCMD_CLUSTER:
-					SC_MustGetNumber();
-					info->cluster = sc_Number;
-					break;
-				case MCMD_WARPTRANS:
-					SC_MustGetNumber();
-					info->warpTrans = sc_Number;
-					break;
-				case MCMD_NEXT:
-					SC_MustGetString();
-					strcpy(info->nextMap, sc_String);
-					break;
-				case MCMD_SECRET:
-					SC_MustGetString();
-					strcpy(info->secretMap, sc_String);
-					break;
-				case MCMD_MAPALIAS:
-					SC_MustGetStringName("{");
-					SC_MustGetString();
-					while (!SC_Compare("}"))
+			case MCMD_CLUSTER:
+				SC_MustGetNumber();
+				info->cluster = sc_Number;
+				break;
+			case MCMD_WARPTRANS:
+				SC_MustGetNumber();
+				info->warpTrans = sc_Number;
+				break;
+			case MCMD_NEXT:
+				SC_MustGetString();
+				info->NextMap = VName(sc_String, VName::AddLower8);
+				break;
+			case MCMD_SECRET:
+				SC_MustGetString();
+				info->SecretMap = VName(sc_String, VName::AddLower8);
+				break;
+			case MCMD_MAPALIAS:
+				SC_MustGetStringName("{");
+				SC_MustGetString();
+				while (!SC_Compare("}"))
+				{
+					if (NumMapAlias == MAX_MAP_ALIAS)
 					{
-						if (NumMapAlias == MAX_MAP_ALIAS)
-						{
-							SC_ScriptError("Too many map alias");
-						}
-						SC_UnGet();
-						SC_MustGetNumber();
-						info->mapalias[NumMapAlias].num = sc_Number;
-						SC_MustGetString();
-						strcpy(info->mapalias[NumMapAlias].name, sc_String);
-						SC_MustGetString();
+						SC_ScriptError("Too many map alias");
 					}
-					break;
-				case MCMD_CDTRACK:
+					SC_UnGet();
 					SC_MustGetNumber();
-					info->cdTrack = sc_Number;
-					break;
-				case MCMD_SKY1:
+					info->mapalias[NumMapAlias].Num = sc_Number;
 					SC_MustGetString();
-					info->sky1Texture = GTextureManager.CheckNumForName(
-						VName(sc_String, VName::AddLower8),
-						TEXTYPE_Wall, true, false);
-					SC_MustGetNumber();
-					info->sky1ScrollDelta = (float)sc_Number * 35.0 / 256.0;
-					break;
-				case MCMD_SKY2:
+					info->mapalias[NumMapAlias].Name = VName(sc_String, VName::AddLower8);
 					SC_MustGetString();
-					info->sky2Texture = GTextureManager.CheckNumForName(
-						VName(sc_String, VName::AddLower8),
-						TEXTYPE_Wall, true, false);
-					SC_MustGetNumber();
-					info->sky2ScrollDelta = (float)sc_Number * 35.0 / 256.0;
-					break;
-				case MCMD_SKYBOX:
-					SC_MustGetString();
-					strcpy(info->skybox, sc_String);
-					break;
-				case MCMD_DOUBLESKY:
-					info->doubleSky = true;
-					break;
-				case MCMD_LIGHTNING:
-					info->lightning = true;
-					break;
-				case MCMD_FADETABLE:
-					SC_MustGetString();
-					strcpy(info->fadetable, sc_String);
-					break;
-				case MCMD_MUSIC:
-					SC_MustGetString();
-					strcpy(info->songLump, sc_String);
-					break;
-				case MCMD_CD_STARTTRACK:
-				case MCMD_CD_END1TRACK:
-				case MCMD_CD_END2TRACK:
-				case MCMD_CD_END3TRACK:
-				case MCMD_CD_INTERTRACK:
-				case MCMD_CD_TITLETRACK:
-					SC_MustGetNumber();
-					cd_NonLevelTracks[mcmdValue-MCMD_CD_STARTTRACK] = sc_Number;
-					break;
+				}
+				break;
+			case MCMD_CDTRACK:
+				SC_MustGetNumber();
+				info->cdTrack = sc_Number;
+				break;
+			case MCMD_SKY1:
+				SC_MustGetString();
+				info->sky1Texture = GTextureManager.CheckNumForName(
+					VName(sc_String, VName::AddLower8),
+					TEXTYPE_Wall, true, false);
+				SC_MustGetNumber();
+				info->sky1ScrollDelta = (float)sc_Number * 35.0 / 256.0;
+				break;
+			case MCMD_SKY2:
+				SC_MustGetString();
+				info->sky2Texture = GTextureManager.CheckNumForName(
+					VName(sc_String, VName::AddLower8),
+					TEXTYPE_Wall, true, false);
+				SC_MustGetNumber();
+				info->sky2ScrollDelta = (float)sc_Number * 35.0 / 256.0;
+				break;
+			case MCMD_SKYBOX:
+				SC_MustGetString();
+				info->SkyBox = sc_String;
+				break;
+			case MCMD_DOUBLESKY:
+				info->doubleSky = true;
+				break;
+			case MCMD_LIGHTNING:
+				info->lightning = true;
+				break;
+			case MCMD_FADETABLE:
+				SC_MustGetString();
+				info->FadeTable = VName(sc_String, VName::AddLower8);
+				break;
+			case MCMD_MUSIC:
+				SC_MustGetString();
+				info->SongLump = VName(sc_String, VName::AddLower8);
+				break;
+			case MCMD_CD_STARTTRACK:
+			case MCMD_CD_END1TRACK:
+			case MCMD_CD_END2TRACK:
+			case MCMD_CD_END3TRACK:
+			case MCMD_CD_INTERTRACK:
+			case MCMD_CD_TITLETRACK:
+				SC_MustGetNumber();
+				cd_NonLevelTracks[mcmdValue-MCMD_CD_STARTTRACK] = sc_Number;
+				break;
 			}
 		}
 		if (info->doubleSky)
@@ -379,12 +380,12 @@ static int QualifyMap(int map)
 //
 //==========================================================================
 
-void P_GetMapInfo(const char *map, mapInfo_t &info)
+void P_GetMapInfo(VName map, mapInfo_t &info)
 {
 	guard(P_GetMapInfo);
 	for (int i = 1; i < MAX_MAPS; i++)
 	{
-		if (!stricmp(map, MapInfo[i].lumpname))
+		if (map == MapInfo[i].LumpName)
 		{
 			info = MapInfo[i];
 			return;
@@ -411,9 +412,9 @@ char* P_GetMapName(int map)
 //
 //==========================================================================
 
-char* P_GetMapLumpName(int map)
+VName P_GetMapLumpName(int map)
 {
-	return MapInfo[QualifyMap(map)].lumpname;
+	return MapInfo[QualifyMap(map)].LumpName;
 }
 
 //==========================================================================
@@ -450,20 +451,18 @@ int P_GetMapWarpTrans(int map)
 //
 //==========================================================================
 
-char *P_TranslateMap(int map)
+VName P_TranslateMap(int map)
 {
 	guard(P_TranslateMap);
-	int i;
-
-	for (i = 1; i < MAX_MAPS; i++)
+	for (int i = 1; i < MAX_MAPS; i++)
 	{
 		if (MapInfo[i].warpTrans == map)
 		{
-			return MapInfo[i].lumpname;
+			return MapInfo[i].LumpName;
 		}
 	}
 	// Not found
-	return MapInfo[1].lumpname;
+	return MapInfo[1].LumpName;
 	unguard;
 }
 
@@ -473,12 +472,12 @@ char *P_TranslateMap(int map)
 //
 //==========================================================================
 
-void P_PutMapSongLump(int map, const char *lumpName)
+void P_PutMapSongLump(int map, VName lumpName)
 {
 	guard(P_PutMapSongLump);
 	FMapSongInfo& ms = MapSongList.Alloc();
-	sprintf(ms.MapName, "MAP%02d", map);
-	strcpy(ms.SongName, lumpName);
+	ms.MapName = va("map%02d", map);
+	ms.SongName = lumpName;
 	unguard;
 }
 
@@ -559,9 +558,9 @@ COMMAND(MapList)
 	guard(COMMAND MapList);
 	for (int i = 0; i < MapCount; i++)
 	{
-		if (W_CheckNumForName(VName(MapInfo[i].lumpname, VName::AddLower8)) >= 0)
+		if (W_CheckNumForName(MapInfo[i].LumpName) >= 0)
 		{
-			GCon->Logf("%s - %s", MapInfo[i].lumpname, MapInfo[i].name);
+			GCon->Logf("%s - %s", *MapInfo[i].LumpName, MapInfo[i].name);
 		}
 	}
 	unguard;

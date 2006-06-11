@@ -1497,39 +1497,39 @@ void A_KeenDie()
 
 void A_BossDeath()
 {
-	string mapname;
+	name mapname;
 	int i;
 	Actor Other;
 	int args[5];
 
-	mapname = ARR2STR(Level.Game.level->mapname);
+	mapname = Level.Game.level->MapName;
 
-	if (!strcmp(mapname, "E1M8"))
+	if (mapname == 'e1m8')
 	{
 		if (Class != BaronOfHell)
 			return;
 	}
-	else if (!strcmp(mapname, "E2M8"))
+	else if (mapname == 'e2m8')
 	{
 		if (Class != Cyberdemon)
 			return;
 	}
-	else if (!strcmp(mapname, "E3M8"))
+	else if (mapname == 'e3m8')
 	{
 		if (Class != SpiderMastermind)
 			return;
 	}
-	else if (!strcmp(mapname, "E4M6"))
+	else if (mapname == 'e4m6')
 	{
 		if (Class != Cyberdemon)
 			return;
 	}
-	else if (!strcmp(mapname, "E4M8"))
+	else if (mapname == 'e4m8')
 	{
 		if (Class != SpiderMastermind)
 			return;
 	}
-	else if (!strcmp(mapname, "MAP07"))
+	else if (mapname == 'map07')
 	{
 		if ((Class != Mancubus) && (Class != Arachnotron))
 			return;
@@ -1559,22 +1559,22 @@ void A_BossDeath()
 	}
 
 	// victory!
-	if (!strcmp(mapname, "E1M8"))
+	if (mapname == 'e1m8')
 	{
 		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FloorMover::FLOOREV_LowerToLowest, NULL);
 		return;
 	}
-	if (!strcmp(mapname, "E4M6"))
+	if (mapname == 'e4m6')
 	{
 		DoomLevelInfo(Level).EV_DoDoor(666, 64, 150, 0, 0, VerticalDoor::DOOREV_Open, NULL, none);
 		return;
 	}
-	if (!strcmp(mapname, "E4M8"))
+	if (mapname == 'e4m8')
 	{
 		DoomLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FloorMover::FLOOREV_LowerToLowest, NULL);
 		return;
 	}
-	if (!strcmp(mapname, "MAP07"))
+	if (mapname == 'map07')
 	{
 		if (Class == Mancubus)
 		{

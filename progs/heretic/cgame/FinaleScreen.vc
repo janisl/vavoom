@@ -56,7 +56,7 @@ void StartFinale()
 	FinaleStage = 0;
 	FinaleTime = 0.0;
 
-	FindEpisodeAndMap(ARR2STR(ClGame.level->mapname), &f_episode, &f_map);
+	FindEpisodeAndMap(ClGame.level->MapName, &f_episode, &f_map);
 
 	switch (f_episode)
 	{
@@ -161,7 +161,7 @@ void DrawWindow(GC gc)
 //
 //==========================================================================
 
-void FindEpisodeAndMap(string Name, int *epi, int *map)
+void FindEpisodeAndMap(name Name, int *epi, int *map)
 {
 	int e;
 	int m;
@@ -170,7 +170,7 @@ void FindEpisodeAndMap(string Name, int *epi, int *map)
 	{
 		for (m = 1; m <= 9; m++)
 		{
-			if (!strcmp(Name, va("E%dM%d", e, m)))
+			if (Name == StrToName(va("e%dm%d", e, m)))
 			{
 				*epi = e;
 				*map = m;

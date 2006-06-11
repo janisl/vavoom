@@ -230,6 +230,8 @@ static short	mapxstart=0; //x-value for the bitmap.
 
 static boolean	stopped = true;
 
+static VName	lastmap;
+
 //
 //	The vector graphics for the automap.
 //
@@ -571,15 +573,13 @@ void AM_Stop()
 
 static void AM_Start()
 {
-    static char lastmap[12] = "";
-
     if (!stopped)
     	AM_Stop();
    	stopped = false;
-    if (strcmp(lastmap, cl_level.mapname))
+    if (lastmap != cl_level.MapName)
     {
 		AM_LevelInit();
-		strcpy(lastmap, cl_level.mapname);
+		lastmap = cl_level.MapName;
     }
     AM_initVariables();
     AM_loadPics();

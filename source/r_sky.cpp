@@ -297,14 +297,14 @@ static void R_InitSkyBox()
 
 	for (num = 0; num < skyboxinfo.Num(); num++)
 	{
-		if (!strcmp(cl_level.skybox, skyboxinfo[num].name))
+		if (!strcmp(*cl_level.SkyBox, skyboxinfo[num].name))
 		{
 			break;
 		}
 	}
 	if (num == skyboxinfo.Num())
 	{
-		Host_Error("No such skybox %s", cl_level.skybox);
+		Host_Error("No such skybox %s", *cl_level.SkyBox);
 	}
 	skyboxinfo_t &sinfo = skyboxinfo[num];
 
@@ -434,7 +434,7 @@ static void R_InitSkyBox()
 void R_InitSky()
 {
 	guard(R_InitSky);
-	if (cl_level.skybox[0])
+	if (cl_level.SkyBox != NAME_None)
 	{
 		R_InitSkyBox();
 	}
@@ -454,7 +454,7 @@ void R_InitSky()
 void R_SkyChanged()
 {
 	guard(R_SkyChanged);
-	if (cl_level.skybox[0])
+	if (cl_level.SkyBox != NAME_None)
 	{
 		return;
 	}
@@ -564,7 +564,7 @@ static void R_LightningFlash()
 				}
 			}
 			// Check if we aren't using a skybox
-			if (!cl_level.skybox[0])
+			if (cl_level.SkyBox == NAME_None)
 			{
 				for (i = 0; i < NumSkySurfs; i++)
 				{
@@ -619,7 +619,7 @@ static void R_LightningFlash()
 	if (foundSec)
 	{
 		// Check if we aren't using a skybox
-		if (!cl_level.skybox[0])
+		if (cl_level.SkyBox == NAME_None)
 		{
 			for (i = 0; i < NumSkySurfs; i++)
 			{

@@ -67,7 +67,7 @@ void A_BossDeath()
 	int i;
 	Actor Other;
 
-	if (strcmp(ARR2STR(Level.Game.level->mapname), "E1M8"))
+	if (Level.Game.level->MapName != 'e1m8')
 	{
 		//  Not a boss level
 		return;

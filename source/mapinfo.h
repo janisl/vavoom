@@ -33,37 +33,37 @@
 
 struct mapalias_t
 {
-	int num;
-	char name[12];
+	int		Num;
+	VName	Name;
 };
 
 struct mapInfo_t
 {
-	char lumpname[12];
-	int cluster;		// Defines what cluster level belongs to
-	int warpTrans;		// Actual map number in case maps are not sequential
-	char nextMap[12];	// Map to teleport to upon exit of timed deathmatch
-	char secretMap[12];	// Map to teleport upon secret exit
-	int cdTrack;		// CD track to play during level
-	char name[32];		// Name of map
-	int sky1Texture;	// Default sky texture
-	int sky2Texture;	// Alternate sky displayed in Sky2 sectors
-	float sky1ScrollDelta;// Default sky texture speed
-	float sky2ScrollDelta;// Alternate sky texture speed
-	boolean doubleSky;	// parallax sky: sky2 behind sky1
-	boolean lightning;	// Use of lightning on the level flashes from sky1 to sky2
-	char fadetable[12];	// Fade table {fogmap}
-	char songLump[12];	// Background music (MUS or MIDI)
-	char skybox[32];	// Sky box
-	mapalias_t mapalias[MAX_MAP_ALIAS];// Map aliases
+	VName		LumpName;
+	int			cluster;		// Defines what cluster level belongs to
+	int			warpTrans;		// Actual map number in case maps are not sequential
+	VName		NextMap;		// Map to teleport to upon exit of timed deathmatch
+	VName		SecretMap;		// Map to teleport upon secret exit
+	int			cdTrack;		// CD track to play during level
+	char		name[32];		// Name of map
+	int			sky1Texture;	// Default sky texture
+	int			sky2Texture;	// Alternate sky displayed in Sky2 sectors
+	float		sky1ScrollDelta;// Default sky texture speed
+	float		sky2ScrollDelta;// Alternate sky texture speed
+	boolean		doubleSky;		// parallax sky: sky2 behind sky1
+	boolean		lightning;		// Use of lightning on the level flashes from sky1 to sky2
+	VName		FadeTable;		// Fade table {fogmap}
+	VName		SongLump;		// Background music (MUS or MIDI)
+	VName		SkyBox;			// Sky box
+	mapalias_t	mapalias[MAX_MAP_ALIAS];// Map aliases
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void InitMapInfo();
 void ShutdownMapInfo();
-void P_GetMapInfo(const char *map, mapInfo_t &info);
-void P_PutMapSongLump(int map, const char *lumpName);
+void P_GetMapInfo(VName, mapInfo_t&);
+void P_PutMapSongLump(int, VName);
 int P_GetCDStartTrack();
 int P_GetCDEnd1Track();
 int P_GetCDEnd2Track();

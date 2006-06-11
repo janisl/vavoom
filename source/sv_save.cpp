@@ -70,7 +70,7 @@ enum gameArchiveSegment_t
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void SV_SpawnServer(char *mapname, boolean spawn_thinkers);
+void SV_SpawnServer(const char *mapname, bool spawn_thinkers);
 void SV_SendServerInfoToClients();
 void SV_ShutdownServer(boolean);
 void CL_Disconnect();
@@ -88,7 +88,7 @@ extern int			sv_load_num_players;
 extern VMessage		sv_signon;
 
 extern boolean		in_secret;
-extern char			mapaftersecret[12];
+extern VName		mapaftersecret;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -324,7 +324,7 @@ static VStr SV_GetSavesDir()
 //
 //==========================================================================
 
-boolean	SV_GetSaveString(int slot, char* buf)
+bool SV_GetSaveString(int slot, char* buf)
 {
 	guard(SV_GetSaveString);
 	FILE*		f;
@@ -694,7 +694,7 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 
 	// Open the output file
 	Saver = new VSaveWriterStream(FL_OpenFileWrite(*SAVE_MAP_NAME(slot,
-		(const char*)level.mapname)));
+		*level.MapName)));
 
 	int NamesOffset = 0;
 	*Saver << NamesOffset;
@@ -721,11 +721,10 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 		<< level.sky1ScrollDelta
 		<< level.sky2ScrollDelta
 		<< level.doubleSky
-		<< level.lightning;
-	Saver->Serialise(level.skybox, sizeof(level.skybox));
-
-	Saver->Serialise(level.songLump, sizeof(level.songLump));
-	*Saver << level.cdTrack;
+		<< level.lightning
+		<< level.SkyBox
+		<< level.SongLump
+		<< level.cdTrack;
 
 	//	Save baseline
 	Seg = ASEG_BASELINE;
@@ -787,14 +786,15 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 //
 //==========================================================================
 
-static void SV_LoadMap(const char *mapname, int slot)
+static void SV_LoadMap(VName MapName, int slot)
 {
 	guard(SV_LoadMap);
 	// Load a base level
-	SV_SpawnServer(const_cast<char*>(mapname), false);
+	SV_SpawnServer(*MapName, false);
 
 	// Load the file
-	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_MAP_NAME(slot, mapname)));
+	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_MAP_NAME(slot,
+		*MapName)));
 
 	// Load names
 	UnarchiveNames(*Loader);
@@ -817,11 +817,10 @@ static void SV_LoadMap(const char *mapname, int slot)
 		<< level.sky1ScrollDelta
 		<< level.sky2ScrollDelta
 		<< level.doubleSky
-		<< level.lightning;
-	Loader->Serialise(level.skybox, sizeof(level.skybox));
-
-	Loader->Serialise(level.songLump, sizeof(level.songLump));
-	*Loader << level.cdTrack;
+		<< level.lightning
+		<< level.SkyBox
+		<< level.SongLump
+		<< level.cdTrack;
 
 	AssertSegment(ASEG_BASELINE);
 	int len;
@@ -900,12 +899,12 @@ void SV_SaveGame(int slot, const char* description)
 	// Write current map and difficulty
 	byte Skill = (byte)gameskill;
 	*Saver << Skill;
-	Saver->Serialise(level.mapname, 8);
+	*Saver << level.MapName;
 
 	// Write secret level info
 	byte InSec = in_secret;
 	*Saver << InSec;
-	Saver->Serialise(mapaftersecret, 8);
+	*Saver << mapaftersecret;
 
 	// Write global script info
 	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
@@ -973,7 +972,7 @@ void SV_SaveGame(int slot, const char* description)
 void SV_LoadGame(int slot)
 {
 	guard(SV_LoadGame);
-	char		mapname[12];
+	VName		mapname;
 	int			i;
 
 	SV_ShutdownServer(false);
@@ -1013,16 +1012,14 @@ void SV_LoadGame(int slot)
 	AssertSegment(ASEG_GAME_HEADER);
 
 	gameskill = (skill_t)Streamer<byte>(*Loader);
-	Loader->Serialise(mapname, 8);
-	mapname[8] = 0;
+	*Loader << mapname;
 
 	//	Init skill hacks
 	GGameInfo->eventInitNewGame(gameskill);
 
 	// Read secret level info
 	in_secret = Streamer<byte>(*Loader);
-	Loader->Serialise(mapaftersecret, 8);
-	mapaftersecret[8] = 0;
+	*Loader << mapaftersecret;
 
 	// Read global script info
 	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
@@ -1100,7 +1097,7 @@ int SV_GetRebornSlot()
 //
 //==========================================================================
 
-boolean SV_RebornSlotAvailable()
+bool SV_RebornSlotAvailable()
 {
 	return Sys_FileExists(SAVE_NAME_ABS(REBORN_SLOT));
 }
@@ -1136,19 +1133,15 @@ void SV_ClearRebornSlot()
 //
 //==========================================================================
 
-void SV_MapTeleport(char *map)
+void SV_MapTeleport(VName mapname)
 {
 	guard(SV_MapTeleport);
-	char		mapname[12];
-
-	//	Make a copy because SV_SpawnServer can modify it
-	strcpy(mapname, map);
 	if (!deathmatch)
 	{
 		mapInfo_t	old_info;
 		mapInfo_t	new_info;
 
-		P_GetMapInfo(level.mapname, old_info);
+		P_GetMapInfo(level.MapName, old_info);
 		P_GetMapInfo(mapname, new_info);
 		//	All maps in cluster 0 are treated as in fifferent clusters
 		if (old_info.cluster && old_info.cluster == new_info.cluster)
@@ -1163,7 +1156,7 @@ void SV_MapTeleport(char *map)
 		}
 	}
 
-	if (!deathmatch && Sys_FileExists(SAVE_MAP_NAME_ABS(BASE_SLOT, (const char*)mapname)))
+	if (!deathmatch && Sys_FileExists(SAVE_MAP_NAME_ABS(BASE_SLOT, *mapname)))
 	{
 		// Unarchive map
 		SV_LoadMap(mapname, BASE_SLOT);
@@ -1171,7 +1164,7 @@ void SV_MapTeleport(char *map)
 	else
 	{
 		// New map
-		SV_SpawnServer(mapname, true);
+		SV_SpawnServer(*mapname, true);
 	}
 
 	// Launch waiting scripts

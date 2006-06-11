@@ -1510,8 +1510,8 @@ IMPLEMENT_FUNCTION(VObject, TranslateKey)
 //==========================================================================
 
 char* P_GetMapName(int map);
-char* P_GetMapLumpName(int map);
-char *P_TranslateMap(int map);
+VName P_GetMapLumpName(int map);
+VName P_TranslateMap(int map);
 
 IMPLEMENT_FUNCTION(VObject, P_GetMapName)
 {
@@ -1522,13 +1522,13 @@ IMPLEMENT_FUNCTION(VObject, P_GetMapName)
 IMPLEMENT_FUNCTION(VObject, P_GetMapLumpName)
 {
 	P_GET_INT(map);
-	RET_PTR(P_GetMapLumpName(map));
+	RET_NAME(P_GetMapLumpName(map));
 }
 
 IMPLEMENT_FUNCTION(VObject, P_TranslateMap)
 {
 	P_GET_INT(map);
-	RET_PTR(P_TranslateMap(map));
+	RET_NAME(P_TranslateMap(map));
 }
 
 IMPLEMENT_FUNCTION(VObject, KeyNameForNum)

@@ -409,7 +409,7 @@ void CalcSeg(seg_t *seg)
 //
 //==========================================================================
 
-void SV_LoadLevel(const char *MapName)
+void SV_LoadLevel(VName MapName)
 {
 	guard(SV_LoadLevel);
 	if (GLevel)
@@ -421,7 +421,7 @@ void SV_LoadLevel(const char *MapName)
 	GLevel = (VLevel*)VObject::StaticSpawnObject(VLevel::StaticClass());
 	GLevel->LevelFlags |= VLevel::LF_ForServer;
 
-	GLevel->LoadMap(VName(MapName, VName::AddLower8));
+	GLevel->LoadMap(MapName);
 	unguard;
 }
 
@@ -434,7 +434,7 @@ void SV_LoadLevel(const char *MapName)
 //
 //==========================================================================
 
-void CL_LoadLevel(const char *MapName)
+void CL_LoadLevel(VName MapName)
 {
 	guard(CL_LoadLevel);
 	if (GClLevel)
@@ -446,7 +446,7 @@ void CL_LoadLevel(const char *MapName)
 	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass());
 	GClGame->GLevel = GClLevel;
 
-	GClLevel->LoadMap(VName(MapName, VName::AddLower8));
+	GClLevel->LoadMap(MapName);
 	unguard;
 }
 

@@ -221,53 +221,8 @@ COMMAND(MyPos)
 	if (CheatAllowed())
     {
 		GCon->Logf("MAP %s  X:%f  Y:%f  Z:%f  Yaw:%f Pitch:%f",
-			level.mapname, GGameInfo->Players[0]->MO->Origin.x,
+			*level.MapName, GGameInfo->Players[0]->MO->Origin.x,
 			GGameInfo->Players[0]->MO->Origin.y, GGameInfo->Players[0]->MO->Origin.z,
 			GGameInfo->Players[0]->MO->Angles.yaw, GGameInfo->Players[0]->MO->Angles.pitch);
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.14  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.13  2006/02/15 23:28:18  dj_jl
-//	Moved all server progs global variables to classes.
-//	
-//	Revision 1.12  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.11  2004/12/22 07:50:06  dj_jl
-//	More extended ACS support, more linedef flags.
-//	
-//	Revision 1.10  2003/11/12 16:47:40  dj_jl
-//	Changed player structure into a class
-//	
-//	Revision 1.9  2003/07/11 16:45:20  dj_jl
-//	Made array of players with pointers
-//	
-//	Revision 1.8  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.7  2002/02/15 19:12:29  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.6  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.4  2001/10/04 17:18:23  dj_jl
-//	Implemented the rest of cvar flags
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

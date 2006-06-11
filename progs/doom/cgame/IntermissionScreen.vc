@@ -277,8 +277,8 @@ void Start()
 	btime = 0.0;
 
 #ifndef DOOM2
-	FindEpisodeAndMap(ARR2STR(ClGame.im->leavemap), &im_episode, &im_map);
-	FindEpisodeAndMap(ARR2STR(ClGame.im->entermap), &im_nextepisode, &im_nextmap);
+	FindEpisodeAndMap(ClGame.im->LeaveMap, &im_episode, &im_map);
+	FindEpisodeAndMap(ClGame.im->EnterMap, &im_nextepisode, &im_nextmap);
 
 	IM_InitAnimatedBack();
 #endif
@@ -367,7 +367,7 @@ void SetLN(int epi, int map, int x, int y)
 //
 //==========================================================================
 
-void FindEpisodeAndMap(string Name, int *epi, int *map)
+void FindEpisodeAndMap(name Name, int *epi, int *map)
 {
 	int e;
 	int m;
@@ -376,7 +376,7 @@ void FindEpisodeAndMap(string Name, int *epi, int *map)
 	{
 		for (m = 1; m <= 9; m++)
 		{
-			if (!strcmp(Name, va("E%dM%d", e, m)))
+			if (Name == StrToName(va("e%dm%d", e, m)))
 			{
 				*epi = e;
 				*map = m;
@@ -1585,7 +1585,7 @@ void IM_DrawNoState()
 {
 #ifdef DOOM2
 	// draws which level you are entering..
-	if (strcmp(ARR2STR(ClGame.im->leavemap), "MAP30"))
+	if (ClGame.im->LeaveMap != 'map30')
 	{
 		IM_DrawEL();
 	}
@@ -1651,34 +1651,32 @@ void IM_InitText()
 		return;
 	}
 
-	if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP06"))
+	if (ClGame.im->LeaveMap == 'map06')
 	{
 		TextFlat = 'slime16';
 		textLump = 'fin1text';
 	}
-	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP11"))
+	else if (ClGame.im->LeaveMap == 'map11')
 	{
 		TextFlat = 'rrock14';
 		textLump = 'fin2text';
 	}
-	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP20"))
+	else if (ClGame.im->LeaveMap == 'map20')
 	{
 		TextFlat = 'rrock07';
 		textLump = 'fin3text';
 	}
-	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP30"))
+	else if (ClGame.im->LeaveMap == 'map30')
 	{
 		TextFlat = 'rrock17';
 		textLump = 'fin4text';
 	}
-	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP15") &&
-		!strcmp(ARR2STR(ClGame.im->entermap), "MAP31"))
+	else if (ClGame.im->LeaveMap == 'map15' && ClGame.im->EnterMap == 'map31')
 	{
 		TextFlat = 'rrock13';
 		textLump = 'sec1text';
 	}
-	else if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP31") &&
-		!strcmp(ARR2STR(ClGame.im->entermap), "MAP32"))
+	else if (ClGame.im->LeaveMap == 'map31' && ClGame.im->EnterMap == 'map32')
 	{
 		TextFlat = 'rrock19';
 		textLump = 'sec2text';
@@ -1698,9 +1696,9 @@ void IM_InitText()
 	interstate = 2;
 	intertime = 0.0;
 #ifdef FIXME
-	S_StartSong("D_READ_M", P_GetCDEnd1Track(), true);
+	S_StartSong("d_read_m", P_GetCDEnd1Track(), true);
 #else
-	CmdBuf_AddText("music loop D_READ_M\n");
+	CmdBuf_AddText("music loop d_read_m\n");
 #endif
 }
 
@@ -1741,7 +1739,7 @@ void IM_UpdateText(float DeltaTime)
 	if (ClGame.skipintermission)
 	{
 		ClGame.skipintermission = false;
-		if (!strcmp(ARR2STR(ClGame.im->leavemap), "MAP30"))
+		if (ClGame.im->LeaveMap == 'map30')
 		{
 			ClGame.StartFinale();
 		}
@@ -1772,23 +1770,3 @@ defaultproperties
 	Width = 320;
 	Height = 200;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.5  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.4  2006/02/28 22:43:55  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.3  2006/02/20 22:57:16  dj_jl
-//  Changed client state structure to class.
-//
-//  Revision 1.2  2006/02/19 14:18:42  dj_jl
-//  Some changes because of compiler changes.
-//
-//  Revision 1.1  2006/02/09 22:33:09  dj_jl
-//  Moved all client game code to classes.
-//
-//**************************************************************************

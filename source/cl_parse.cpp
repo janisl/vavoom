@@ -488,7 +488,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 	strcpy(cl->serverinfo, msg.ReadString());
 	CL_ReadFromServerInfo();
 
-	strcpy(cl_level.mapname, msg.ReadString());
+	cl_level.MapName = msg.ReadString();
 	strcpy(cl_level.level_name, msg.ReadString());
 
 	cl->clientnum = msg.ReadByte();
@@ -504,10 +504,10 @@ static void CL_ParseServerInfo(VMessage& msg)
 		>> cl_level.sky2ScrollDelta;
 	cl_level.doubleSky = msg.ReadByte();
 	cl_level.lightning = msg.ReadByte();
-	strcpy(cl_level.skybox, msg.ReadString());
-	strcpy(cl_level.fadetable, msg.ReadString());
+	cl_level.SkyBox = msg.ReadString();
+	cl_level.FadeTable = msg.ReadString();
 
-	strcpy(cl_level.songLump, msg.ReadString());
+	cl_level.SongLump = msg.ReadString();
 	cl_level.cdTrack = msg.ReadByte();
 
 	GCon->Log("---------------------------------------");
@@ -515,7 +515,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 	GCon->Log("");
 	C_ClearNotify();
 
-	CL_LoadLevel(cl_level.mapname);
+	CL_LoadLevel(cl_level.MapName);
 
 	//	Temporary hack to restore seen on automap flags.
 #ifdef SERVER
@@ -548,16 +548,16 @@ static void CL_ParseIntermission(VMessage& msg)
 	int			i;
 	int			j;
 	mapInfo_t	ninfo;
-	const char*	nextmap;
+	VName		nextmap;
 
-	strcpy(im.leavemap, cl_level.mapname);
+	im.LeaveMap = cl_level.MapName;
 	strcpy(im.leave_name, cl_level.level_name);
-	P_GetMapInfo(cl_level.mapname, ninfo);
+	P_GetMapInfo(cl_level.MapName, ninfo);
 	im.leavecluster = ninfo.cluster;
 
 	nextmap = msg.ReadString();
 	P_GetMapInfo(nextmap, ninfo);
-	strcpy(im.entermap, nextmap);
+	im.EnterMap = nextmap;
 	strcpy(im.enter_name, ninfo.name);
 	im.entercluster = ninfo.cluster;
 
@@ -1036,7 +1036,7 @@ void CL_ParseServerMessage(VMessage& msg)
 			break;
 
 		case svc_change_music:
-			strcpy(cl_level.songLump, msg.ReadString());
+			cl_level.SongLump = msg.ReadString();
 			cl_level.cdTrack = msg.ReadByte();
 			S_MusicChanged();
 			break;

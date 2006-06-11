@@ -429,7 +429,7 @@ void Died(Actor source)
 	classid DropItemType;
 	Actor A;
 
-	if (bIsPlayer && !strcmp(ARR2STR(Level.Game.level->mapname), "MAP29"))
+	if (bIsPlayer && Level.Game.level->MapName == 'map29')
 	{
 		//	Start sad finale.
 		MSG_Select(MSG_SV_RELIABLE);

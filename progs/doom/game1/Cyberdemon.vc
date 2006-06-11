@@ -82,12 +82,12 @@ void A_CyberAttack()
 
 void A_BossDeath()
 {
-	string mapname;
+	name mapname;
 	int i;
 	Actor Other;
 
-	mapname = ARR2STR(Level.Game.level->mapname);
-	if (strcmp(mapname, "E2M8") && strcmp(mapname, "E4M6"))
+	mapname = Level.Game.level->MapName;
+	if (mapname != 'e2m8' && mapname != 'e4m6')
 	{
 		//  Not a boss level
 		return;
@@ -112,7 +112,7 @@ void A_BossDeath()
 	}
 
 	// victory!
-	if (!strcmp(mapname, "E4M6"))
+	if (mapname == 'e4m6')
 	{
 		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 64, 150, 0, 0, NULL,
 			0, none);

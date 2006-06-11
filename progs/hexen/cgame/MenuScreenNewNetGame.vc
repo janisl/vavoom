@@ -73,7 +73,7 @@ void StartNewGame(void)
 	CmdBuf_AddText("DeathMatch %d\n", DeathMatch.Value);
 	CmdBuf_AddText("TimeLimit %d\n", TimeLimit.Value * 5);
 	CmdBuf_AddText("Skill %d\n", Skill.Value);
-	CmdBuf_AddText("Map %s\n", P_GetMapLumpName(Level.Value + 1));
+	CmdBuf_AddText("Map %n\n", P_GetMapLumpName(Level.Value + 1));
 }
 
 defaultproperties
@@ -83,11 +83,3 @@ defaultproperties
 	SelectorType = MenuSelector_SmallRight;
 	Title = "NEW GAME";
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.1  2002/10/26 16:32:24  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

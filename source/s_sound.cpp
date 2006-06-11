@@ -801,7 +801,7 @@ void S_Start()
 	SN_StopAllSequences();
 	S_StopAllSound();
 
-	MapSong = VName(cl_level.songLump, VName::AddLower8);
+	MapSong = cl_level.SongLump;
 	MapCDTrack = cl_level.cdTrack;
 
 	StartMusic();
@@ -817,7 +817,7 @@ void S_Start()
 void S_MusicChanged()
 {
 	guard(S_MusicChanged);
-	MapSong = VName(cl_level.songLump, VName::AddLower8);
+	MapSong = cl_level.SongLump;
 	MapCDTrack = cl_level.cdTrack;
 
 	StartMusic();

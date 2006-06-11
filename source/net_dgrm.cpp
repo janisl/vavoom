@@ -647,7 +647,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 		msg << 0
 			<< (byte)CCREP_SERVER_INFO
 			<< (const char*)VNetwork::HostName
-			<< level.mapname
+			<< *level.MapName
 			<< (byte)svs.num_connected
 			<< (byte)svs.max_clients
 			<< (byte)NET_PROTOCOL_VERSION;

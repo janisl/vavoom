@@ -366,7 +366,8 @@ static void S_ParseSndinfo()
 				SC_MustGetString();
 				if (sc_Number)
 				{
-					P_PutMapSongLump(sc_Number, sc_String);
+					P_PutMapSongLump(sc_Number, VName(sc_String,
+						VName::AddLower8));
 				}
 			}
 			else if (!stricmp(sc_String, "$registered"))
@@ -380,7 +381,7 @@ static void S_ParseSndinfo()
 				SC_MustGetString();
 				int sfx = FindOrAddSound(sc_String);
 				SC_MustGetNumber();
-				S_sfx[sfx].NumChannels = sc_Number < 0 ? 0 : sc_Number > 255 ? 255 : sc_Number;
+				S_sfx[sfx].NumChannels = MID(0, sc_Number, 255);
 			}
 			else if (!stricmp(sc_String, "$pitchshift"))
 			{
@@ -388,13 +389,13 @@ static void S_ParseSndinfo()
 				SC_MustGetString();
 				int sfx = FindOrAddSound(sc_String);
 				SC_MustGetNumber();
-				S_sfx[sfx].ChangePitch = ((1 << (sc_Number < 0 ? 0 : sc_Number > 7 ? 7 : sc_Number)) - 1) / 255.0;
+				S_sfx[sfx].ChangePitch = ((1 << MID(0, sc_Number, 7)) - 1) / 255.0;
 			}
 			else if (!stricmp(sc_String, "$pitchshiftrange"))
 			{
 				// $pitchshiftrange <pitch shift amount>
 				SC_MustGetNumber();
-				CurrentChangePitch = ((1 << (sc_Number < 0 ? 0 : sc_Number > 7 ? 7 : sc_Number)) - 1) / 255.0;
+				CurrentChangePitch = ((1 << MID(0, sc_Number, 7)) - 1) / 255.0;
 			}
 			else if (!stricmp(sc_String, "$alias"))
 			{
