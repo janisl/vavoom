@@ -75,7 +75,6 @@ VCvarI			real_time("real_time", "1");
 
 server_t		sv;
 server_static_t	svs;
-TProgs			svpr;
 
 // increment every time a check is made
 int				validcount = 1;
@@ -181,7 +180,7 @@ void SV_Init()
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);
 	memset(sv_mo_free_time, 0, sizeof(double) * GMaxEntities);
 
-	svpr.Load("svprogs");
+	VMemberBase::StaticLoadPackage(NAME_svprogs);
 
 	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
 		VClass::FindClass("MainGameInfo"));

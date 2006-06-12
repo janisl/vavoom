@@ -189,4 +189,3 @@ boolean CL_Responder(event_t* ev);
 
 extern client_static_t	cls;
 extern VClientState*	cl;
-extern TProgs			clpr;

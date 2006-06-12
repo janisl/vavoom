@@ -129,6 +129,8 @@ REGISTER_NAME(saveicon)
 REGISTER_NAME(loadicon)
 REGISTER_NAME(ammnum0)
 REGISTER_NAME(stcfn033)
+REGISTER_NAME(clprogs)
+REGISTER_NAME(svprogs)
 
 // Closing -----------------------------------------------------------------
 

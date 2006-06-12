@@ -125,7 +125,7 @@ bool VEntity::SetState(VState* InState)
 		// Modified handling.
 		// Call action functions when the state is set
 		P_PASS_SELF;
-		svpr.ExecuteFunction(st->function);
+		ExecuteFunction(st->function);
 
 		st = NextState;
 	}
@@ -2167,7 +2167,7 @@ void VViewEntity::SetState(VState* InState)
 		NextState = state->nextstate;
 		// Call action routine.
 		P_PASS_SELF;
-		svpr.ExecuteFunction(state->function);
+		ExecuteFunction(state->function);
 		state = NextState;
 	}
 	while (state && !StateTime);	// An initial state of 0 could cycle through.

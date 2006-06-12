@@ -55,7 +55,6 @@ extern VStr			skin_list[256];
 
 client_static_t		cls;
 VClientState*		cl;
-TProgs				clpr;
 
 VClientGameBase*	GClGame;
 
@@ -85,7 +84,7 @@ static bool UserInfoSent;
 void CL_Init()
 {
 	guard(CL_Init);
-	clpr.Load("clprogs");
+	VMemberBase::StaticLoadPackage(NAME_clprogs);
 
 	cl_mobjs = new VEntity*[GMaxEntities];
 	cl_mo_base = new clmobjbase_t[GMaxEntities];

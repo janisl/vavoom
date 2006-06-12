@@ -133,47 +133,6 @@ void PR_Traceback()
 
 //==========================================================================
 //
-//	TProgs::Load
-//
-//==========================================================================
-
-void TProgs::Load(const char *AName)
-{
-	guard(TProgs::Load);
-	Pkg = VMemberBase::StaticLoadPackage(VName(AName, VName::AddLower8));
-	unguard;
-}
-
-//==========================================================================
-//
-//	TProgs::Unload
-//
-//==========================================================================
-
-void TProgs::Unload()
-{
-}
-
-//==========================================================================
-//
-//  TProgs::FindStruct
-//
-//==========================================================================
-
-VStruct* TProgs::FindStruct(VName InName, VClass* InClass)
-{
-	guard(TProgs::FindStruct);
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Struct &&
-			VMemberBase::GMembers[i]->Name == InName && 
-			((VStruct*)VMemberBase::GMembers[i])->Outer == InClass)
-			return (VStruct*)VMemberBase::GMembers[i];
-	return NULL;
-	unguard;
-}
-
-//==========================================================================
-//
 //  RunFunction
 //
 //==========================================================================
@@ -1300,13 +1259,13 @@ func_loop:
 
 //==========================================================================
 //
-//  TProgs::ExecuteFunction
+//  VObject::ExecuteFunction
 //
 //==========================================================================
 
-VStack TProgs::ExecuteFunction(VMethod *func)
+VStack VObject::ExecuteFunction(VMethod *func)
 {
-	guard(TProgs::ExecuteFunction);
+	guard(VObject::ExecuteFunction);
 	VMethod		*prev_func;
 	VStack		ret;
 
@@ -1356,11 +1315,11 @@ VStack TProgs::ExecuteFunction(VMethod *func)
 
 //==========================================================================
 //
-//	TProgs::DumpProfile
+//	VObject::DumpProfile
 //
 //==========================================================================
 
-void TProgs::DumpProfile()
+void VObject::DumpProfile()
 {
 	#define MAX_PROF	100
 	int i;
@@ -1404,14 +1363,4 @@ void TProgs::DumpProfile()
 			(double)Func->Profile2 * 100.0 / (double)totalcount,
 			(int)Func->Profile2, (int)Func->Profile1, *Func->GetFullName());
 	}
-}
-
-int TProgs::GetStringOffs(const char *Str)
-{
-	return Str - Pkg->Strings;
-}
-
-char *TProgs::StrAtOffs(int Offs)
-{
-	return Pkg->Strings + Offs;
 }

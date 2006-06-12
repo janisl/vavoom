@@ -133,7 +133,6 @@ class VObject : public VVirtualObjectBase
 
 	// Friends.
 	friend class FObjectIterator;
-	friend class TProgs;
 
 private:
 	// Internal per-object variables.
@@ -183,6 +182,9 @@ public:
 	static void CollectGarbage();
 	static VObject* GetIndexObject(int Index);
 	static int GetObjectsCount();
+
+	static VStack ExecuteFunction(VMethod *func);
+	static void DumpProfile();
 
 	// Functions.
 	bool ConditionalDestroy();
@@ -531,16 +533,16 @@ public:
 //
 //	Macros for calling VavoomC methods with different return types.
 //
-#define EV_RET_VOID(v)		TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_INT(v)		return TProgs::ExecuteFunction(GetVFunction(v)).i
-#define EV_RET_FLOAT(v)		return TProgs::ExecuteFunction(GetVFunction(v)).f
-#define EV_RET_BOOL(v)		return !!TProgs::ExecuteFunction(GetVFunction(v)).i
-#define EV_RET_NAME(v)		vint32 ret = TProgs::ExecuteFunction(GetVFunction(v)).i; return *(VName*)&ret
-#define EV_RET_STR(v)		VStack Ret = TProgs::ExecuteFunction(GetVFunction(v)); PR_PushPtr(Ret.p); return PR_PopStr()
-#define EV_RET_VEC(v)		Sys_Error("Not implemented")//TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_AVEC(v)		Sys_Error("Not implemented")//TProgs::ExecuteFunction(GetVFunction(v))
-#define EV_RET_REF(t, v)	return (t*)TProgs::ExecuteFunction(GetVFunction(v)).p
-#define EV_RET_PTR(t, v)	return (t*)TProgs::ExecuteFunction(GetVFunction(v)).p
+#define EV_RET_VOID(v)		ExecuteFunction(GetVFunction(v))
+#define EV_RET_INT(v)		return ExecuteFunction(GetVFunction(v)).i
+#define EV_RET_FLOAT(v)		return ExecuteFunction(GetVFunction(v)).f
+#define EV_RET_BOOL(v)		return !!ExecuteFunction(GetVFunction(v)).i
+#define EV_RET_NAME(v)		vint32 ret = ExecuteFunction(GetVFunction(v)).i; return *(VName*)&ret
+#define EV_RET_STR(v)		VStack Ret = ExecuteFunction(GetVFunction(v)); PR_PushPtr(Ret.p); return PR_PopStr()
+#define EV_RET_VEC(v)		Sys_Error("Not implemented")//ExecuteFunction(GetVFunction(v))
+#define EV_RET_AVEC(v)		Sys_Error("Not implemented")//ExecuteFunction(GetVFunction(v))
+#define EV_RET_REF(t, v)	return (t*)ExecuteFunction(GetVFunction(v)).p
+#define EV_RET_PTR(t, v)	return (t*)ExecuteFunction(GetVFunction(v)).p
 
 //
 //	Parameter get macros. Parameters must be retrieved in backwards order.

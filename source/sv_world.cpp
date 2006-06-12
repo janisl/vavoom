@@ -453,7 +453,7 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
 		{
 			P_PASS_REF(PrSelf);
 			P_PASS_REF(Ent);
-			if (!svpr.ExecuteFunction(prfunc).i)
+			if (!VObject::ExecuteFunction(prfunc).i)
 				return false;
 		}
 	}
@@ -767,7 +767,7 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 		{
 			P_PASS_REF(PrSelf);
 			P_PASS_REF(in);
-			if (!svpr.ExecuteFunction(prtrav).i)
+			if (!VObject::ExecuteFunction(prtrav).i)
 			return false;	// don't bother going farther
 		}
 

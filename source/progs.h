@@ -70,24 +70,6 @@ union VStack
 	void*	p;
 };
 
-class TProgs
-{
-public:
-	void Load(const char*);
-	void Unload();
-
-	static VStruct* FindStruct(VName InName, VClass* InClass);
-
-	static VStack ExecuteFunction(VMethod *func);
-	static void DumpProfile();
-
-	int GetStringOffs(const char *Str);
-	char *StrAtOffs(int Offs);
-
-private:
-	VPackage*		Pkg;
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void PR_Init();
@@ -95,8 +77,6 @@ void PR_OnAbort();
 void PR_Traceback();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern TProgs			svpr;
 
 extern VStack*			pr_stackPtr;
 
