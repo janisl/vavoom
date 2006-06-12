@@ -45,15 +45,10 @@ int					NumChoices;
 RandomConversation	RandomConversations[5];
 string				CancelTexts[3];
 
-int					WithGoldBuf[32 / 4 * 5];
-
 void SetSpeech(int SpeechNum)
 {
 	int i;
 	RogueConSpeech *Speech;
-	int TempBuffer[80];
-	string TempStr = ARR2STR(TempBuffer);
-	string VoiceName;
 
 	if (!SpeechNum)
 		return;
@@ -70,76 +65,61 @@ void SetSpeech(int SpeechNum)
 			return;
 		Speech = &ClGame.GLevel.LevelSpeeches[SpeechNum - 1];
 	}
-	if (Speech->BackPic[0])
+	if (Speech->BackPic)
 	{
-		TempBuffer[0] = Speech->BackPic[0];
-		TempBuffer[1] = Speech->BackPic[1];
-		TempBuffer[2] = 0;
-		strlwr(TempStr);
-		BackPic = R_RegisterPic(StrToName(TempStr));
+		BackPic = R_RegisterPic(Speech->BackPic);
 	}
 
-	if (Speech->Name[0])
+	if (Speech->Name)
 	{
-		SpeakerName = ARR2STR(Speech->Name);
+		SpeakerName = Speech->Name;
 	}
 	else
 	{
 		// FIXME: Make this some other way
-		switch(Speech->SpeakerID)
+		switch (Speech->SpeakerID)
 		{
-			case 38:
-			case 39:
-			case 40:
-			case 41:
-			case 42:
-			{
-				SpeakerName = "Beggar";
-				break;
-			}
-			case 43:
-			case 44:
-			case 45:
-			case 46:
-			case 47:
-			case 48:
-			{
-				SpeakerName = "Rebel";
-				break;
-			}
-			case 53:
-			case 54:
-			case 55:
-			case 56:
-			case 57:
-			case 58:
-			case 59:
-			case 60:
-			{
-				SpeakerName = "Acolyte";
-				break;
-			}
-			case 62:
-			{
-				SpeakerName = "Templar";
-				break;
-			}
+		case 38:
+		case 39:
+		case 40:
+		case 41:
+		case 42:
+			SpeakerName = "Beggar";
+			break;
+		case 43:
+		case 44:
+		case 45:
+		case 46:
+		case 47:
+		case 48:
+			SpeakerName = "Rebel";
+			break;
+		case 53:
+		case 54:
+		case 55:
+		case 56:
+		case 57:
+		case 58:
+		case 59:
+		case 60:
+			SpeakerName = "Acolyte";
+			break;
+		case 62:
+			SpeakerName = "Templar";
+			break;
 		}				
 
-		if(!SpeakerName)
+		if (!SpeakerName)
 			SpeakerName = "Person";
 	}
-	SpeechText = ARR2STR(Speech->Text);
+	SpeechText = Speech->Text;
 
 	//	Check for random conversation text.
-	strcpy(TempStr, SpeechText);
-	strsetchar(TempStr, 6, 0);
-	if (!strcmp(TempStr, "RANDOM"))
+	if (!strcmp(substr(SpeechText, 0, 6), "RANDOM"))
 	{
-		for (i = 0; i < 20; i++)
-		{
-			strsetchar(TempStr, i, strgetchar(TempStr, i + 7));
-		}
+		string TempStr;
+
+		TempStr = substr(SpeechText, 7, strlen(SpeechText) - 7);
 		for (i = 0; i < 5; i++)
 		{
 			if (!strcmp(TempStr, RandomConversations[i].Name))
@@ -152,7 +132,7 @@ void SetSpeech(int SpeechNum)
 
 	for (i = 0; i < 5; i++)
 	{
-		if (!Speech->Choices[i].Text[0])
+		if (!Speech->Choices[i].Text)
 		{
 			continue;
 		}
@@ -160,14 +140,12 @@ void SetSpeech(int SpeechNum)
 		if (Speech->Choices[i].NeedItem1 == 168 &&
 			Speech->Choices[i].NeedAmount1 > 0)
 		{
-			sprint(ptrtos(&WithGoldBuf[32 / 4 * i]), "%s for %d gold",
-				ARR2STR(Speech->Choices[i].Text),
-				Speech->Choices[i].NeedAmount1);
-			WinChoices[NumChoices].Text = ptrtos(&WithGoldBuf[32 / 4 * i]);
+			WinChoices[NumChoices].Text = va("%s for %d gold",
+				Speech->Choices[i].Text, Speech->Choices[i].NeedAmount1);
 		}
 		else
 		{
-			WinChoices[NumChoices].Text = ARR2STR(Speech->Choices[i].Text);
+			WinChoices[NumChoices].Text = Speech->Choices[i].Text;
 		}
 		WinChoices[NumChoices].ImpulseNum = 201 + i;
 		NumChoices++;
@@ -183,12 +161,9 @@ void SetSpeech(int SpeechNum)
 		WinChoices[i].SetPos(50, 180 - NumChoices * 16 + i * 16);
 	}
 
-	if (Speech->Voice[0])
+	if (Speech->Voice)
 	{
-		VoiceName = va("svox/%s", ARR2STR(Speech->Voice));
-		strsetchar(VoiceName, 13, 0);
-		strlwr(VoiceName);
-		LocalSound(StrToName(VoiceName));
+		LocalSound(Speech->Voice);
 	}
 
 	SetDefaultChoice();

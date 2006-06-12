@@ -317,7 +317,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 
 		// search the cache for this server
 		for (n = 0; n < GNet->HostCacheCount; n++)
-			if (strcmp(addr, GNet->HostCache[n].cname) == 0)
+			if (GNet->HostCache[n].CName == addr)
 				break;
 
 		// is it already there?
@@ -327,24 +327,21 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		// add it
 		GNet->HostCacheCount++;
 		msg >> str;
-		strcpy(GNet->HostCache[n].name, str);
+		GNet->HostCache[n].Name = str;
 		msg >> str;
-		strncpy(GNet->HostCache[n].map, str, 15);
-		GNet->HostCache[n].users = msg.ReadByte();
-		GNet->HostCache[n].maxusers = msg.ReadByte();
+		GNet->HostCache[n].Map = str;
+		GNet->HostCache[n].Users = msg.ReadByte();
+		GNet->HostCache[n].MaxUsers = msg.ReadByte();
 		if (msg.ReadByte() != NET_PROTOCOL_VERSION)
 		{
-			strcpy(GNet->HostCache[n].cname, GNet->HostCache[n].name);
-			GNet->HostCache[n].cname[14] = 0;
-			strcpy(GNet->HostCache[n].name, "*");
-			strcat(GNet->HostCache[n].name, GNet->HostCache[n].cname);
+			GNet->HostCache[n].Name = VStr("*") + GNet->HostCache[n].Name;
 		}
-		strcpy(GNet->HostCache[n].cname, addr);
+		GNet->HostCache[n].CName = addr;
 		i = 0;
 		do
 		{
 			msg >> str;
-			strncpy(GNet->HostCache[n].wadfiles[i++], str, 15);
+			GNet->HostCache[n].WadFiles[i++] = str;
 		}  while (*str);
 
 		// check for a name conflict
@@ -352,17 +349,16 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		{
 			if (i == n)
 				continue;
-			if (stricmp(GNet->HostCache[n].name, GNet->HostCache[i].name) == 0)
+			if (GNet->HostCache[n].Name.ICmp(GNet->HostCache[i].Name) == 0)
 			{
-				i = strlen(GNet->HostCache[n].name);
-				if (i < 15 && GNet->HostCache[n].name[i - 1] > '8')
+				i = GNet->HostCache[n].Name.Length();
+				if (i < 15 && GNet->HostCache[n].Name[i - 1] > '8')
 				{
-					GNet->HostCache[n].name[i] = '0';
-					GNet->HostCache[n].name[i + 1] = 0;
+					GNet->HostCache[n].Name += '0';
 				}
 				else
 				{
-					GNet->HostCache[n].name[i - 1]++;
+					GNet->HostCache[n].Name[i - 1]++;
 				}
 				i = -1;
 			}

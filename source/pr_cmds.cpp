@@ -60,6 +60,33 @@ VMessage			*pr_msg;
 
 // CODE --------------------------------------------------------------------
 
+//==========================================================================
+//
+//	PR_PushStr
+//
+//==========================================================================
+
+void PR_PushStr(const VStr& value)
+{
+	pr_stackPtr->p = NULL;
+	*(VStr*)&pr_stackPtr->p = value;
+	pr_stackPtr++;
+}
+
+//==========================================================================
+//
+//	PR_PopStr
+//
+//==========================================================================
+
+VStr PR_PopStr()
+{
+	--pr_stackPtr;
+	VStr Ret = *(VStr*)&pr_stackPtr->p;
+	((VStr*)&pr_stackPtr->p)->Clean();
+	return Ret;
+}
+
 //**************************************************************************
 //
 //	Vararg strings
@@ -78,9 +105,9 @@ const char* PF_FormatString()
 	{
 		params[pi] = *(--pr_stackPtr);
 	}
-	P_GET_PTR(char, str);
+	P_GET_STR(str);
 
-	char *src = str;
+	const char *src = *str;
 	char *dst = vastring;
 	memset(vastring, 0, sizeof(vastring));
 	pi = 0;
@@ -93,6 +120,11 @@ const char* PF_FormatString()
 			{
 			case '%':
 				*dst = *src;
+				break;
+
+			case 'c':
+				strcat(vastring, va("%c", params[pi].i));
+				pi++;
 				break;
 
 			case 'i':
@@ -117,7 +149,8 @@ const char* PF_FormatString()
 				break;
 
 			case 's':
-				strcat(vastring, (char*)params[pi].p);
+				strcat(vastring, **(VStr*)&params[pi].p);
+				((VStr*)&params[pi].p)->Clean();
 				pi++;
 				break;
 
@@ -1021,8 +1054,8 @@ IMPLEMENT_FUNCTION(VObject, SetHeightSector)
 
 IMPLEMENT_FUNCTION(VObject, FindModel)
 {
-	P_GET_PTR(char, name);
-	RET_INT(SV_FindModel(name));
+	P_GET_STR(name);
+	RET_INT(SV_FindModel(*name));
 }
 
 //==========================================================================
@@ -1045,8 +1078,8 @@ IMPLEMENT_FUNCTION(VObject, GetModelIndex)
 
 IMPLEMENT_FUNCTION(VObject, FindSkin)
 {
-	P_GET_PTR(char, name);
-	RET_INT(SV_FindSkin(name));
+	P_GET_STR(name);
+	RET_INT(SV_FindSkin(*name));
 }
 
 //==========================================================================
@@ -1081,8 +1114,8 @@ IMPLEMENT_FUNCTION(VObject, FindClassFromScriptId)
 
 IMPLEMENT_FUNCTION(VObject, ChangeMusic)
 {
-	P_GET_PTR(const char, SongName);
-	SV_ChangeMusic(SongName);
+	P_GET_STR(SongName);
+	SV_ChangeMusic(*SongName);
 }
 
 //==========================================================================
@@ -1217,8 +1250,8 @@ IMPLEMENT_FUNCTION(VObject, R_DrawShadowedPic)
 IMPLEMENT_FUNCTION(VObject, R_InstallSprite)
 {
 	P_GET_INT(index);
-	P_GET_PTR(char, name);
-	R_InstallSprite(name, index);
+	P_GET_STR(name);
+	R_InstallSprite(*name, index);
 }
 
 //==========================================================================
@@ -1246,10 +1279,10 @@ IMPLEMENT_FUNCTION(VObject, R_DrawSpritePatch)
 
 IMPLEMENT_FUNCTION(VObject, InstallModel)
 {
-	P_GET_PTR(char, name);
+	P_GET_STR(name);
 	if (FL_FindFile(name))
 	{
-		RET_PTR(Mod_FindName(name));
+		RET_PTR(Mod_FindName(*name));
 	}
 	else
 	{
@@ -1265,12 +1298,12 @@ IMPLEMENT_FUNCTION(VObject, InstallModel)
 
 IMPLEMENT_FUNCTION(VObject, R_DrawModelFrame)
 {
-	P_GET_PTR(char, skin);
+	P_GET_STR(skin);
 	P_GET_INT(frame);
 	P_GET_PTR(VModel, model);
 	P_GET_FLOAT(angle);
 	P_GET_VEC(origin);
-	R_DrawModelFrame(origin, angle, model, frame, skin);
+	R_DrawModelFrame(origin, angle, model, frame, *skin);
 }
 
 //==========================================================================
@@ -1388,8 +1421,8 @@ IMPLEMENT_FUNCTION(VObject, T_SetShadow)
 
 IMPLEMENT_FUNCTION(VObject, T_TextWidth)
 {
-	P_GET_PTR(char, text);
-	RET_INT(T_TextWidth(text));
+	P_GET_STR(text);
+	RET_INT(T_TextWidth(*text));
 }
 
 //==========================================================================
@@ -1400,8 +1433,8 @@ IMPLEMENT_FUNCTION(VObject, T_TextWidth)
 
 IMPLEMENT_FUNCTION(VObject, T_TextHeight)
 {
-	P_GET_PTR(char, text);
-	RET_INT(T_TextHeight(text));
+	P_GET_STR(text);
+	RET_INT(T_TextHeight(*text));
 }
 
 //==========================================================================
@@ -1412,25 +1445,10 @@ IMPLEMENT_FUNCTION(VObject, T_TextHeight)
 
 IMPLEMENT_FUNCTION(VObject, T_DrawText)
 {
-	P_GET_PTR(char, txt);
+	P_GET_STR(txt);
 	P_GET_INT(y);
 	P_GET_INT(x);
-	T_DrawText(x, y, txt);
-}
-
-//==========================================================================
-//
-//	PF_T_DrawNText
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, T_DrawNText)
-{
-	P_GET_INT(n);
-	P_GET_PTR(char, txt);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	T_DrawNText(x, y, txt, n);
+	T_DrawText(x, y, *txt);
 }
 
 //==========================================================================
@@ -1442,10 +1460,10 @@ IMPLEMENT_FUNCTION(VObject, T_DrawNText)
 IMPLEMENT_FUNCTION(VObject, T_DrawTextW)
 {
 	P_GET_INT(w);
-	P_GET_PTR(char, txt);
+	P_GET_STR(txt);
 	P_GET_INT(y);
 	P_GET_INT(x);
-	T_DrawTextW(x, y, txt, w);
+	T_DrawTextW(x, y, *txt, w);
 }
 
 //**************************************************************************
@@ -1498,7 +1516,7 @@ IMPLEMENT_FUNCTION(VObject, StopLocalSounds)
 IMPLEMENT_FUNCTION(VObject, TranslateKey)
 {
 	P_GET_INT(ch);
-	RET_INT(GInput->TranslateKey(ch));
+	RET_STR(VStr((char)GInput->TranslateKey(ch)));
 }
 
 //==========================================================================
@@ -1514,7 +1532,7 @@ VName P_TranslateMap(int map);
 IMPLEMENT_FUNCTION(VObject, P_GetMapName)
 {
 	P_GET_INT(map);
-	RET_PTR(P_GetMapName(map));
+	RET_STR(P_GetMapName(map));
 }
 
 IMPLEMENT_FUNCTION(VObject, P_GetMapLumpName)
@@ -1531,30 +1549,29 @@ IMPLEMENT_FUNCTION(VObject, P_TranslateMap)
 
 IMPLEMENT_FUNCTION(VObject, KeyNameForNum)
 {
-	P_GET_PTR(char, str);
 	P_GET_INT(keynum);
-	strcpy(str, *GInput->KeyNameForNum(keynum));
+	RET_STR(GInput->KeyNameForNum(keynum));
 }
 
 IMPLEMENT_FUNCTION(VObject, IN_GetBindingKeys)
 {
 	P_GET_PTR(int, key2);
 	P_GET_PTR(int, key1);
-	P_GET_PTR(char, name);
+	P_GET_STR(name);
 	GInput->GetBindingKeys(name, *key1, *key2);
 }
 
 IMPLEMENT_FUNCTION(VObject, IN_SetBinding)
 {
-	P_GET_PTR(char, onup);
-	P_GET_PTR(char, ondown);
+	P_GET_STR(onup);
+	P_GET_STR(ondown);
 	P_GET_INT(keynum);
 	GInput->SetBinding(keynum, ondown, onup);
 }
 
 IMPLEMENT_FUNCTION(VObject, SV_GetSaveString)
 {
-	P_GET_PTR(char, buf);
+	P_GET_PTR(VStr, buf);
 	P_GET_INT(i);
 #ifdef SERVER
 	RET_INT(SV_GetSaveString(i, buf));
@@ -1568,14 +1585,12 @@ IMPLEMENT_FUNCTION(VObject, GetSlist)
 	RET_PTR(GNet->GetSlist());
 }
 
-void LoadTextLump(VName name, char *buf, int bufsize);
+VStr LoadTextLump(VName name);
 
 IMPLEMENT_FUNCTION(VObject, LoadTextLump)
 {
-	P_GET_INT(bufsize);
-	P_GET_PTR(char, buf);
 	P_GET_NAME(name);
-	LoadTextLump(name, buf, bufsize);
+	RET_STR(LoadTextLump(name));
 }
 
 IMPLEMENT_FUNCTION(VObject, AllocDlight)

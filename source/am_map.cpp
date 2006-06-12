@@ -411,7 +411,7 @@ static void AM_ScrollParchment (float dmapx, float dmapy)
 	mapxstart -= (short)(dmapx * scale_mtof) >> 12;
 	mapystart -= (short)(dmapy * scale_mtof) >> 12;
 
-	if (mappic != NULL)
+	if (mappic > 0)
 	{
 		int pwidth = ScreenWidth; // ??
 		int pheight = (int)GTextureManager.TextureHeight(mappic);
@@ -441,7 +441,7 @@ static void AM_changeWindowLoc()
 		f_oldloc.x = 99999.0;
 	}
 
-	int oldmx = m_x, oldmy = m_y;
+	float oldmx = m_x, oldmy = m_y;
 
 	m_x += m_paninc.x;
 	m_y += m_paninc.y;
@@ -1541,7 +1541,7 @@ static void AM_DrawDeathmatchStats()
 		}
 		T_SetFont(font_small);
 		T_SetAlign(hleft, vtop);
-		T_DrawString(8, yPosition, GPlayersBase[order[i]]->PlayerName);
+		T_DrawString(8, yPosition, *GPlayersBase[order[i]]->PlayerName);
 		sprintf(textBuffer, "%d", GPlayersBase[order[i]]->Frags);
 		T_DrawString(80, yPosition, textBuffer);
 		yPosition += 10;

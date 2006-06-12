@@ -33,11 +33,9 @@ class Object
 
 //  Since version 1.5 compiler defines PROG_VERSION, so we can check that
 // progs are compiled with the right version of compiler
-#if !defined PROG_VERSION || PROG_VERSION != 19
-#error These are version 19 progs
+#if !defined PROG_VERSION || PROG_VERSION != 20
+#error These are version 20 progs
 #endif
-
-const int MAX_INFO_STRING		= 1024;
 
 enum
 {
@@ -914,35 +912,35 @@ struct subsector_t
 
 struct RogueConChoice
 {
-	int GiveItem;		//	Item given on success
-	int NeedItem1;		//	Required item 1
-	int NeedItem2;		//	Required item 2
-	int NeedItem3;		//	Required item 3
-	int NeedAmount1;	//	Amount of item 1
-	int NeedAmount2;	//	Amount of item 2
-	int NeedAmount3;	//	Amount of item 3
-	int Text[32/4];		//	Text of the answer
-	int TextOK[80/4];	//	Message displayed on success
-	int Next;			//	Dialog to go on success, negative values to go
+	int		GiveItem;	//	Item given on success
+	int		NeedItem1;	//	Required item 1
+	int		NeedItem2;	//	Required item 2
+	int		NeedItem3;	//	Required item 3
+	int		NeedAmount1;//	Amount of item 1
+	int		NeedAmount2;//	Amount of item 2
+	int		NeedAmount3;//	Amount of item 3
+	string	Text;		//	Text of the answer
+	string	TextOK;		//	Message displayed on success
+	int		Next;		//	Dialog to go on success, negative values to go
 						// here immediately
-	int Objectives;		//	Mission objectives, LOGxxxx lump
-	int TextNo[80/4];	//	Message displayed on failure (player doesn't
+	int		Objectives;	//	Mission objectives, LOGxxxx lump
+	string	TextNo;		//	Message displayed on failure (player doesn't
 						// have needed thing, it haves enough health/ammo,
 						// item is not ready, quest is not completed)
 };
 
 struct RogueConSpeech
 {
-	int SpeakerID;		//	Type of the object (MT_xxx)
-	int DropItem;		//	Item dropped when killed
-	int CheckItem1;		//	Item 1 to check for jump
-	int CheckItem2;		//	Item 2 to check for jump
-	int CheckItem3;		//	Item 3 to check for jump
-	int JumpToConv;		//	Jump to conversation if have certain item(s)
-	int Name[16/4];		//	Name of the character
-	int Voice[8/4];		//	Voice to play
-	int BackPic[8/4];	//	Picture of the speaker
-	int Text[320/4];	//	Message
+	int		SpeakerID;	//	Type of the object (MT_xxx)
+	int		DropItem;	//	Item dropped when killed
+	int		CheckItem1;	//	Item 1 to check for jump
+	int		CheckItem2;	//	Item 2 to check for jump
+	int		CheckItem3;	//	Item 3 to check for jump
+	int		JumpToConv;	//	Jump to conversation if have certain item(s)
+	string	Name;		//	Name of the character
+	name	Voice;		//	Voice to play
+	name	BackPic;	//	Picture of the speaker
+	string	Text;		//	Message
 	RogueConChoice Choices[5];	//	Choices
 };
 
@@ -1063,46 +1061,46 @@ enum { HOSTCACHESIZE		= 8 };
 
 struct hostcache_t
 {
-	int Name[16 / 4];
-	int map[16 / 4];
-	int cname[32 / 4];
-	int wadfiles[20 * 16 / 4];
-	int users;
-	int maxusers;
+	string			Name;
+	string			Map;
+	string			CName;
+	string			WadFiles[20];
+	int				Users;
+	int				MaxUsers;
 };
 
 struct slist_t
 {
-	bool bInProgress;
-	int count;
-	hostcache_t cache[HOSTCACHESIZE];
-	int return_reason[32 / 4];
+	bool			bInProgress;
+	int				Count;
+	hostcache_t*	Cache;
+	string			ReturnReason;
 };
 
 struct scores_t
 {
-	int Name[64 / 4];
-	bool bActive;
-	int frags[MAXPLAYERS];
-	int killcount;
-	int itemcount;
-	int secretcount;
-	float time;
-	int userinfo[MAX_INFO_STRING / 4];
+	string	Name;
+	bool	bActive;
+	int		frags[MAXPLAYERS];
+	int		killcount;
+	int		itemcount;
+	int		secretcount;
+	float	time;
+	string	userinfo;
 };
 
 struct im_t
 {
-	name LeaveMap;
-	int leavecluster;
-	name EnterMap;
-	int entercluster;
-	int leave_name[32 / 4];
-	int enter_name[32 / 4];
-	int totalkills;
-	int totalitems;
-	int totalsecret;
-	float time;
+	name	LeaveMap;
+	int		leavecluster;
+	name	EnterMap;
+	int		entercluster;
+	string	LeaveName;
+	string	EnterName;
+	int		totalkills;
+	int		totalitems;
+	int		totalsecret;
+	float	time;
 };
 
 struct picinfo_t
@@ -1531,31 +1529,20 @@ native static final int P_Random();
 //  String functions
 //
 
-//  Pointer to string hack
-native static final string ptrtos(void *ptr);
-#define ARR2STR(array)	ptrtos(&array[0])
-//  Get char s[i]
-native static final int strgetchar(string s, int i);
-//  Set char s[i]
-native static final void strsetchar(string s, int i, int c);
 //  String length
 native static final int strlen(string s);
 //  Compare strings
 native static final int strcmp(string s1, string s2);
 //  Compare strings ingnoring case
 native static final int stricmp(string s1, string s2);
-//  Copy string
-native static final void strcpy(string s1, string s2);
-//  Clear string
-native static final void strclr(string s);
 //  Append string to string
-native static final void strcat(string s1, string s2);
+native static final string strcat(string s1, string s2);
 //  Convert string to lowercase
-native static final void strlwr(string s);
+native static final string strlwr(string s);
 //  Convert string to uppercase
-native static final void strupr(string s);
-//  Print into a string
-native static final void sprint(string dest, string format, ...);
+native static final string strupr(string s);
+//  Gets a substring
+native static final string substr(string Str, int Start, int Len);
 //  Does varargs print into a temporary buffer
 native static final string va(string format, ...);
 //  Converts string to integer
@@ -1688,8 +1675,6 @@ native static final int T_TextWidth(string text);
 native static final int T_TextHeight(string text);
 //  Draws text
 native static final void T_DrawText(int x, int y, string text);
-//  Draws text, but no more than n characters
-native static final void T_DrawNText(int x, int y, string text, int n);
 //  Draws text wrapping at the width w
 native static final void T_DrawTextW(int x, int y, string text, int w);
 //  Draws a cursor at the end of last drawn string
@@ -1707,17 +1692,17 @@ native static final bool IsLocalSoundPlaying(name Name);
 native static final void StopLocalSounds();
 
 //  Handle shift+key
-native static final int TranslateKey(int c);
+native static final string TranslateKey(int c);
 native static final string P_GetMapName(int map);
 native static final name P_GetMapLumpName(int map);
 native static final name P_TranslateMap(int map);
-native static final bool SV_GetSaveString(int i, string buf);
+native static final bool SV_GetSaveString(int i, string* buf);
 native static final void StartSearch();
 native static final slist_t * GetSlist();
-native static final void KeyNameForNum(int KeyNr, string NameString);
+native static final string KeyNameForNum(int KeyNr);
 native static final void IN_GetBindingKeys(string cmd, int *key1, int *key2);
 native static final void IN_SetBinding(int key, string ondown, string onup);
-native static final void LoadTextLump(name Name, void *buf, int bufsize);
+native static final string LoadTextLump(name Name);
 native static final dlight_t *AllocDlight(int key);
 native static final particle_t *NewParticle();
 

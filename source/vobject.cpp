@@ -258,6 +258,7 @@ bool VObject::ConditionalDestroy()
 
 void VObject::Destroy()
 {
+	Class->DestructObject(this);
 }
 
 //==========================================================================
@@ -453,9 +454,13 @@ IMPLEMENT_FUNCTION(VObject, FatalError)
 IMPLEMENT_FUNCTION(VObject, CreateCvar)
 {
 	P_GET_INT(flags);
-	P_GET_PTR(char, def);
+	P_GET_STR(def);
 	P_GET_NAME(name);
-	new VCvar(*name, def, flags);
+	//	Create a copy, because def will be destructed.
+	//FIXME it needs to be freed.
+	char* Tmp = new char[def.Length() + 1];
+	strcpy(Tmp, *def);
+	new VCvar(*name, Tmp, flags);
 }
 
 IMPLEMENT_FUNCTION(VObject, GetCvar)
@@ -487,12 +492,12 @@ IMPLEMENT_FUNCTION(VObject, SetCvarF)
 IMPLEMENT_FUNCTION(VObject, GetCvarS)
 {
 	P_GET_NAME(name);
-	RET_PTR(const_cast<char*>(VCvar::GetCharp(*name)));
+	RET_STR(VCvar::GetString(*name));
 }
 
 IMPLEMENT_FUNCTION(VObject, SetCvarS)
 {
-	P_GET_PTR(char, value);
+	P_GET_STR(value);
 	P_GET_NAME(name);
 	VCvar::Set(*name, value);
 }
@@ -655,108 +660,76 @@ IMPLEMENT_FUNCTION(VObject, VectorRotateAroundZ)
 //
 //**************************************************************************
 
-IMPLEMENT_FUNCTION(VObject, ptrtos)
-{
-	//	Nothing to do
-}
-
-IMPLEMENT_FUNCTION(VObject, strgetchar)
-{
-	P_GET_INT(i);
-	P_GET_PTR(char, str);
-	RET_INT(vuint8(str[i]));
-}
-
-IMPLEMENT_FUNCTION(VObject, strsetchar)
-{
-	P_GET_INT(chr);
-	P_GET_INT(i);
-	P_GET_PTR(char, str);
-	str[i] = chr;
-}
-
 IMPLEMENT_FUNCTION(VObject, strlen)
 {
-	P_GET_PTR(char, s);
-	RET_INT(strlen(s));
+	P_GET_STR(s);
+	RET_INT(s.Length());
 }
 
 IMPLEMENT_FUNCTION(VObject, strcmp)
 {
-	P_GET_PTR(char, s2);
-	P_GET_PTR(char, s1);
-	RET_INT(strcmp(s1, s2));
+	P_GET_STR(s2);
+	P_GET_STR(s1);
+	RET_INT(s1.Cmp(s2));
 }
 
 IMPLEMENT_FUNCTION(VObject, stricmp)
 {
-	P_GET_PTR(char, s2);
-	P_GET_PTR(char, s1);
-	RET_INT(stricmp(s1, s2));
-}
-
-IMPLEMENT_FUNCTION(VObject, strcpy)
-{
-	P_GET_PTR(char, s2);
-	P_GET_PTR(char, s1);
-	strcpy(s1, s2);
-}
-
-IMPLEMENT_FUNCTION(VObject, strclr)
-{
-	P_GET_PTR(char, s);
-	s[0] = 0;
+	P_GET_STR(s2);
+	P_GET_STR(s1);
+	RET_INT(s1.ICmp(s2));
 }
 
 IMPLEMENT_FUNCTION(VObject, strcat)
 {
-	P_GET_PTR(char, s2);
-	P_GET_PTR(char, s1);
-	strcat(s1, s2);
+	P_GET_STR(s2);
+	P_GET_STR(s1);
+	RET_STR(s1 + s2);
 }
 
 IMPLEMENT_FUNCTION(VObject, strlwr)
 {
-	P_GET_PTR(char, s);
-	while (*s)
+	P_GET_STR(s);
+	for (char* c = const_cast<char*>(*s); *c; c++)
 	{
-		*s = tolower(*s);
-		s++;
+		*c = tolower(*c);
 	}
+	RET_STR(s);
 }
 
 IMPLEMENT_FUNCTION(VObject, strupr)
 {
-	P_GET_PTR(char, s);
-	while (*s)
+	P_GET_STR(s);
+	for (char* c = const_cast<char*>(*s); *c; c++)
 	{
-		*s = toupper(*s);
-		s++;
+		*c = toupper(*c);
 	}
+	RET_STR(s);
 }
 
-IMPLEMENT_FUNCTION(VObject, sprint)
+IMPLEMENT_FUNCTION(VObject, substr)
 {
-	const char* val = PF_FormatString();
-	P_GET_PTR(char, dst);
-	strcpy(dst, val);
+	P_GET_INT(Len);
+	P_GET_INT(Start);
+	P_GET_STR(Str);
+	RET_STR(VStr(Str, Start, Len));
 }
 
 IMPLEMENT_FUNCTION(VObject, va)
 {
-	RET_PTR(const_cast<char*>(PF_FormatString()));
+	RET_STR(PF_FormatString());
 }
 
 IMPLEMENT_FUNCTION(VObject, atoi)
 {
-	P_GET_PTR(char, str);
-	RET_INT(atoi(str));
+	P_GET_STR(str);
+	RET_INT(atoi(*str));
 }
 
 IMPLEMENT_FUNCTION(VObject, atof)
 {
-	P_GET_PTR(char, str);
-	RET_FLOAT(atof(str));
+	P_GET_STR(str);
+	RET_FLOAT(atof(*str));
 }
 
 //**************************************************************************
@@ -910,8 +883,8 @@ IMPLEMENT_FUNCTION(VObject, ftoi)
 
 IMPLEMENT_FUNCTION(VObject, StrToName)
 {
-	P_GET_PTR(char, str);
-	RET_NAME(VName(str));
+	P_GET_STR(str);
+	RET_NAME(VName(*str));
 }
 
 //==========================================================================
@@ -922,8 +895,8 @@ IMPLEMENT_FUNCTION(VObject, StrToName)
 
 IMPLEMENT_FUNCTION(VObject, Cmd_CheckParm)
 {
-	P_GET_PTR(char, str);
-	RET_INT(VCommand::CheckParm(str));
+	P_GET_STR(str);
+	RET_INT(VCommand::CheckParm(*str));
 }
 
 IMPLEMENT_FUNCTION(VObject, CmdBuf_AddText)
@@ -939,9 +912,9 @@ IMPLEMENT_FUNCTION(VObject, CmdBuf_AddText)
 
 IMPLEMENT_FUNCTION(VObject, Info_ValueForKey)
 {
-	P_GET_PTR(char, key);
-	P_GET_PTR(char, info);
-	RET_PTR(Info_ValueForKey(info, key));
+	P_GET_STR(key);
+	P_GET_STR(info);
+	RET_STR(Info_ValueForKey(info, key));
 }
 
 IMPLEMENT_FUNCTION(VObject, WadLumpPresent)

@@ -505,15 +505,6 @@ int EvalConstExpression(VClass*InClass, int type)
 		TK_NextToken();
 		return ret;
 
-	case ev_string:
-		if (tk_Token != TK_STRING)
-		{
-			ERR_Exit(ERR_BAD_CONST_EXPR, true, "String expected");
-		}
-		ret = tk_StringI;
-		TK_NextToken();
-		return ret;
-
 	case ev_classid:
 		c = CheckForClass();
 		if (c)

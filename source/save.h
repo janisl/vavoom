@@ -39,6 +39,6 @@ void SV_UpdateRebornSlot();
 void SV_ClearRebornSlot();
 bool SV_RebornSlotAvailable();
 int SV_GetRebornSlot();
-bool SV_GetSaveString(int slot, char* buf);
+bool SV_GetSaveString(int slot, VStr* buf);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

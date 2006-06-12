@@ -415,35 +415,35 @@ struct mthing_t
 
 struct FRogueConChoice
 {
-	int			Unknown1;
-	int			Unknown2;
-	int			Unknown3;
-	int			Unknown4;
-	int			Unknown5;
-	int			Unknown6;
-	int			Unknown7;
-	char		Text[32];	//	Text of the answer
-	char		TextOK[80];	//	Message displayed on success
-	int			Next;		//	Dialog to go on success, negative values to go
-							// here immediately
-	int			Objectives;	//	Mission objectives, LOGxxxx lump
-	char		TextNo[80];	//	Message displayed on failure (player doesn't
+	vint32		GiveItem;	//	Item given on success
+	vint32		NeedItem1;	//	Required item 1
+	vint32		NeedItem2;	//	Required item 2
+	vint32		NeedItem3;	//	Required item 3
+	vint32		NeedAmount1;//	Amount of item 1
+	vint32		NeedAmount2;//	Amount of item 2
+	vint32		NeedAmount3;//	Amount of item 3
+	VStr		Text;		//	Text of the answer
+	VStr		TextOK;		//	Message displayed on success
+	vint32		Next;		//	Dialog to go on success, negative values
+							// to go here immediately
+	vint32		Objectives;	//	Mission objectives, LOGxxxx lump
+	VStr		TextNo;		//	Message displayed on failure (player doesn't
 							// have needed thing, it haves enough health/ammo,
 							// item is not ready, quest is not completed)
 };
 
 struct FRogueConSpeech
 {
-	int			SpeakerID;	//	Type of the object (MT_xxx)
-	int			Unknown1;
-	int			Unknown2;
-	int			Unknown3;
-	int			Unknown4;
-	int			Unknown5;
-	char		Name[16];	//	Name of the character
-	char		Voice[8];	//	Voice to play
-	char		BackPic[8];	//	Picture of the speaker
-	char		Text[320];	//	Message
+	vint32		SpeakerID;	//	Type of the object (MT_xxx)
+	vint32		DropItem;	//	Item dropped when killed
+	vint32		CheckItem1;	//	Item 1 to check for jump
+	vint32		CheckItem2;	//	Item 2 to check for jump
+	vint32		CheckItem3;	//	Item 3 to check for jump
+	vint32		JumpToConv;	//	Jump to conversation if have certain item(s)
+	VStr		Name;		//	Name of the character
+	VName		Voice;		//	Voice to play
+	VName		BackPic;	//	Picture of the speaker
+	VStr		Text;		//	Message
 	FRogueConChoice	Choices[5];	//	Choices
 };
 

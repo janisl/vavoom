@@ -308,6 +308,27 @@ public:
 		return stricmp(**this, *S2);
 	}
 
+	//	Serialisation operator.
+	friend VStream& operator<<(VStream& Strm, VStr& S)
+	{
+		if (Strm.IsLoading())
+		{
+			vint32 Len;
+			Strm << STRM_INDEX(Len);
+			S.Resize(Len);
+			if (Len)
+				Strm.Serialise(S.Str, Len + 1);
+		}
+		else
+		{
+			vint32 Len = S.Length();
+			Strm << STRM_INDEX(Len);
+			if (Len)
+				Strm.Serialise(S.Str, Len + 1);
+		}
+		return Strm;
+	}
+
 	VStr ExtractFilePath() const;
 	VStr ExtractFileName() const;
 	VStr ExtractFileBase() const;
@@ -316,24 +337,3 @@ public:
 	VStr DefaultPath(const VStr& basepath) const;
 	VStr DefaultExtension(const VStr& extension) const;
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.4  2006/03/29 22:32:27  dj_jl
-//	Changed console variables and command buffer to use dynamic strings.
-//	
-//	Revision 1.3  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.2  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.1  2006/02/21 22:31:44  dj_jl
-//	Created dynamic string class.
-//	
-//**************************************************************************

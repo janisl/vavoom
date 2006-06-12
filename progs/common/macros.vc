@@ -32,13 +32,4 @@
 #define FOREACH(type, var) \
 	for (var = type(NextThinker(none, type)); var; \
 		var = type(NextThinker(var, type)))
-#define ARR2STR(array)	ptrtos(&array[0])
 #define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.1  2006/03/26 13:07:12  dj_jl
-//  Implemented support for modular progs.
-//
-//**************************************************************************

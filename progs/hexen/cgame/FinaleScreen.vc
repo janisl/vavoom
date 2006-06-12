@@ -28,8 +28,6 @@ class FinaleScreen : Window;
 const float TEXTSPEED	= 0.1;
 const float TEXTWAIT	= 7.0;
 
-const int MAX_FINALE_MESSAGE_SIZE	= 1024;
-
 MainClientState cl;
 
 int FinaleStage;
@@ -39,7 +37,7 @@ float FinaleEndTime;
 int fpage1;
 int fpage2;
 
-int FinaleText[MAX_FINALE_MESSAGE_SIZE / 4];
+string FinaleText;
 
 //==========================================================================
 //
@@ -184,8 +182,8 @@ void F_DrawPic(void)
 
 void F_GetFinaleText(name msgLumpName)
 {
-	LoadTextLump(msgLumpName, &FinaleText[0], MAX_FINALE_MESSAGE_SIZE);
-	FinaleEndTime = itof(strlen(ARR2STR(FinaleText))) * TEXTSPEED + TEXTWAIT;
+	FinaleText = LoadTextLump(msgLumpName);
+	FinaleEndTime = itof(strlen(FinaleText)) * TEXTSPEED + TEXTWAIT;
 }
 
 //===========================================================================
@@ -205,7 +203,7 @@ void F_TextWrite(void)
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawNText(20, (FinaleStage == 5) ? 135 : 5, ARR2STR(FinaleText), count);
+	T_DrawText(20, (FinaleStage == 5) ? 135 : 5, substr(FinaleText, 0, count));
 }
 
 //==========================================================================

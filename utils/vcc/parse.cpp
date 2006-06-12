@@ -109,7 +109,11 @@ int CheckForLocalVar(VName Name)
 
 static void AddDrop(const TType& type)
 {
-	if (type.GetSize() == 4)
+	if (type.type == ev_string)
+	{
+		AddStatement(OPC_DropStr);
+	}
+	else if (type.GetSize() == 4)
 	{
 		AddStatement(OPC_Drop);
 	}
@@ -194,6 +198,54 @@ static void WriteContinues(int address)
 	while (ContinueIndex && ContinueInfo[ContinueIndex-1].level > ContinueLevel)
 	{
 		FixupJump(ContinueInfo[--ContinueIndex].addressPtr, address);
+	}
+}
+
+//==========================================================================
+//
+//	EmitClearStrings
+//
+//==========================================================================
+
+static void EmitClearStrings(int Start = 0)
+{
+	for (int i = Start; i < numlocaldefs; i++)
+	{
+		if (localdefs[i].type.type == ev_string)
+		{
+			EmitLocalAddress(localdefs[i].ofs);
+			AddStatement(OPC_ClearPointedStr);
+		}
+		if (localdefs[i].type.type == ev_struct &&
+			localdefs[i].type.Struct->NeedsDestructor())
+		{
+			EmitLocalAddress(localdefs[i].ofs);
+			AddStatement(OPC_ClearPointedStruct, localdefs[i].type.Struct);
+		}
+		if (localdefs[i].type.type == ev_array)
+		{
+			if (localdefs[i].type.ArrayInnerType == ev_string)
+			{
+				for (int j = 0; j < localdefs[i].type.array_dim; j++)
+				{
+					EmitLocalAddress(localdefs[i].ofs);
+					EmitPushNumber(j);
+					AddStatement(OPC_ArrayElement, localdefs[i].type.GetArrayInnerType());
+					AddStatement(OPC_ClearPointedStr);
+				}
+			}
+			else if (localdefs[i].type.ArrayInnerType == ev_struct &&
+				localdefs[i].type.Struct->NeedsDestructor())
+			{
+				for (int j = 0; j < localdefs[i].type.array_dim; j++)
+				{
+					EmitLocalAddress(localdefs[i].ofs);
+					EmitPushNumber(j);
+					AddStatement(OPC_ArrayElement, localdefs[i].type.GetArrayInnerType());
+					AddStatement(OPC_ClearPointedStruct, localdefs[i].type.Struct);
+				}
+			}
+		}
 	}
 }
 
@@ -321,6 +373,7 @@ static void ParseStatement()
 					{
 						ERR_Exit(ERR_NO_RET_VALUE, true, NULL);
 					}
+					EmitClearStrings();
 					AddStatement(OPC_Return);
 				}
 				else
@@ -332,6 +385,7 @@ static void ParseStatement()
 					t = ParseExpression();
 					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 					t.CheckMatch(FuncRetType);
+					EmitClearStrings();
 					if (t.GetSize() == 4)
 					{
 						AddStatement(OPC_ReturnL);
@@ -509,35 +563,16 @@ void ParseLocalVar(const TType& type)
 		//  Initialisation
 		else if (TK_Check(PU_ASSIGN))
 		{
-			if (localsofs == 0)
-				AddStatement(OPC_LocalAddress0);
-			else if (localsofs == 1)
-				AddStatement(OPC_LocalAddress1);
-			else if (localsofs == 2)
-				AddStatement(OPC_LocalAddress2);
-			else if (localsofs == 3)
-				AddStatement(OPC_LocalAddress3);
-			else if (localsofs == 4)
-				AddStatement(OPC_LocalAddress4);
-			else if (localsofs == 5)
-				AddStatement(OPC_LocalAddress5);
-			else if (localsofs == 6)
-				AddStatement(OPC_LocalAddress6);
-			else if (localsofs == 7)
-				AddStatement(OPC_LocalAddress7);
-			else if (localsofs < 256)
-				AddStatement(OPC_LocalAddressB, localsofs);
-			else if (localsofs <= MAX_VINT16)
-				AddStatement(OPC_LocalAddressS, localsofs);
-			else
-				AddStatement(OPC_LocalAddress, localsofs);
+			EmitLocalAddress(localsofs);
 			TType t1 = ParseExpression();
 			t1.CheckMatch(t);
 			if (t1.type == ev_vector)
 				AddStatement(OPC_VAssignDrop);
 			else if (t1.type == ev_pointer || t1.type == ev_reference ||
-				t1.type == ev_classid || t1.type == ev_state || t1.type == ev_string)
+				t1.type == ev_classid || t1.type == ev_state)
 				AddStatement(OPC_AssignPtrDrop);
+			else if (t1.type == ev_string)
+				AddStatement(OPC_AssignStrDrop);
 			else
 				AddStatement(OPC_AssignDrop);
 		}
@@ -582,6 +617,7 @@ static void ParseCompoundStatement()
 
 	if (maxlocalsofs < localsofs)
 		maxlocalsofs = localsofs;
+	EmitClearStrings(num_local_defs_on_start);
 	numlocaldefs = num_local_defs_on_start;
 }
 
@@ -664,6 +700,7 @@ un++;
 
 	if (FuncRetType.type == ev_void)
 	{
+		EmitClearStrings();
 		AddStatement(OPC_Return);
 	}
 	Method->NumLocals = maxlocalsofs;
@@ -725,6 +762,7 @@ void CompileStateCode(VClass* InClass, VMethod* Func)
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
+	EmitClearStrings();
 	AddStatement(OPC_Return);
 	Func->NumLocals = maxlocalsofs;
 	EndCode(Func);
@@ -761,6 +799,7 @@ void CompileDefaultProperties(VMethod* Method, VClass* InClass)
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	ParseCompoundStatement();
+	EmitClearStrings();
 	AddStatement(OPC_Return);
 	Method->NumLocals = maxlocalsofs;
 	EndCode(Method);

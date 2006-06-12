@@ -70,7 +70,6 @@ const int NUMMAPS			= 9;
 
 const float TEXTSPEED	= 0.1;
 const float TEXTWAIT	= 4.0;
-const int MAX_INTRMSN_MESSAGE_SIZE	= 1024;
 
 #endif
 
@@ -744,7 +743,7 @@ void IM_DrawLF()
 
 	// draw <LevelName>
 	T_SetAlign(hcenter, vtop);
-	T_DrawText(160, y, ARR2STR(ClGame.im->leave_name));
+	T_DrawText(160, y, ClGame.im->LeaveName);
 
 	// draw "Finished!"
 	y += (5 * T_TextHeight("DUMMY")) / 4;
@@ -770,7 +769,7 @@ void IM_DrawEL()
 
 	// draw level
 	y += (5 * T_TextHeight("DUMMY")) / 4;
-	T_DrawText(160, y, ARR2STR(ClGame.im->enter_name));
+	T_DrawText(160, y, ClGame.im->EnterName);
 }
 
 //==========================================================================
@@ -1627,8 +1626,6 @@ void IM_UpdateNoState(float DeltaTime)
 // specifies current state
 float intertime;
 
-int ClusterMessage[MAX_INTRMSN_MESSAGE_SIZE / 4];
-
 float HubCount;
 string HubText;
 
@@ -1688,9 +1685,7 @@ void IM_InitText()
 		return;
 	}
 
-	LoadTextLump(textLump, &ClusterMessage[0], MAX_INTRMSN_MESSAGE_SIZE);
-
-	HubText = ARR2STR(ClusterMessage);
+	HubText = LoadTextLump(textLump);
 	HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
 
 	interstate = 2;
@@ -1724,7 +1719,7 @@ void IM_DrawText()
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawNText(10, 10, HubText, count);
+	T_DrawText(10, 10, substr(HubText, 0, count));
 }
 
 //==========================================================================

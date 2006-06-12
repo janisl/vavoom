@@ -175,10 +175,10 @@ class VClientGameBase : public VObject
 		P_PASS_SELF;
 		EV_RET_BOOL("MenuActive");
 	}
-	void eventSetMenu(const char* Name)
+	void eventSetMenu(const VStr& Name)
 	{
 		P_PASS_SELF;
-		P_PASS_PTR(const_cast<char*>(Name));
+		P_PASS_STR(Name);
 		EV_RET_VOID("SetMenu");
 	}
 	void eventMessageBoxDrawer()

@@ -27,8 +27,6 @@ class IntermissionScreen : Window;
 
 ClientGameBase ClGame;
 
-const int MAX_INTRMSN_MESSAGE_SIZE	= 1024;
-
 const float TALLY_EFFECT_TIME	= 0.625;
 const float TALLY_FINAL_X_DELTA	= 23.0;
 const float TALLY_FINAL_Y_DELTA	= 13.0;
@@ -51,8 +49,6 @@ float intertime;
 
 // background (map of levels).
 int patchINTERPIC;
-
-int ClusterMessage[MAX_INTRMSN_MESSAGE_SIZE / 4];
 
 float HubCount;
 string HubText;
@@ -201,9 +197,7 @@ void IM_InitStats()
 			if (ClGame.im->leavecluster >= 1 && ClGame.im->leavecluster <= 5)
 			{
 				msgLumpName = ClusMsgLumpNames[ClGame.im->leavecluster - 1];
-				LoadTextLump(msgLumpName, &ClusterMessage[0],
-					MAX_INTRMSN_MESSAGE_SIZE);
-				HubText = ARR2STR(ClusterMessage);
+				HubText = LoadTextLump(msgLumpName);
 				HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
 #ifdef FIXME
 				S_StartSong("hub", P_GetCDIntermissionTrack(), true);
@@ -276,7 +270,7 @@ void IM_DrawHubText()
 	}
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawNText(10, 5, HubText, count);
+	T_DrawText(10, 5, substr(HubText, 0, count));
 }
 
 //==========================================================================

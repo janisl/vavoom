@@ -131,8 +131,6 @@ int pic_armor2;
 
 void StartMap()
 {
-	int namebuf[3];
-	string Name = ARR2STR(namebuf);
 	int i;
 
 	pic_bar = R_RegisterPic('stbar');
@@ -140,43 +138,38 @@ void StartMap()
 
 	for (i = 0; i < 10; i++)
 	{
-		sprint(Name, "sttnum%d", i);
-		pic_tallnum[i] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stysnum%d", i);
-		pic_yellownum[i] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stgnum%d", i);
-		pic_graynum[i] = R_RegisterPic(StrToName(Name));
+		pic_tallnum[i] = R_RegisterPic(StrToName(va("sttnum%d", i)));
+		pic_yellownum[i] = R_RegisterPic(StrToName(va("stysnum%d", i)));
+		pic_graynum[i] = R_RegisterPic(StrToName(va("stgnum%d", i)));
 	}
 	pic_minus = R_RegisterPic('sttminus');
 	pic_percent = R_RegisterPic('sttprcnt');
 
-	sprint(Name, "stfb%d", cl.clientnum);
-	pic_faceback = R_RegisterPic(StrToName(Name));
+	pic_faceback = R_RegisterPic(StrToName(va("stfb%d", cl.clientnum)));
 
 	for (i = 0; i < 6; i++)
 	{
-		sprint(Name, "stkeys%d", i);
-		pic_keys[i] = R_RegisterPic(StrToName(Name));
+		pic_keys[i] = R_RegisterPic(StrToName(va("stkeys%d", i)));
 	}
 
 	for (i = 0; i < DoomDefs::ST_NUMPAINFACES; i++)
 	{
-		sprint(Name, "stfst%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stfst%d1", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stfst%d2", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stftr%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stftl%d0", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stfouch%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stfevl%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "stfkill%d", i);
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] = R_RegisterPic(StrToName(Name));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE] =
+			R_RegisterPic(StrToName(va("stfst%d0", i)));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] =
+			R_RegisterPic(StrToName(va("stfst%d1", i)));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] =
+			R_RegisterPic(StrToName(va("stfst%d2", i)));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] =
+			R_RegisterPic(StrToName(va("stftr%d0", i)));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] =
+			R_RegisterPic(StrToName(va("stftl%d0", i)));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] =
+			R_RegisterPic(StrToName(va("stfouch%d", i)));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] =
+			R_RegisterPic(StrToName(va("stfevl%d", i)));
+		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] =
+			R_RegisterPic(StrToName(va("stfkill%d", i)));
 	}
 	pic_faces[DoomDefs::ST_GODFACE] = R_RegisterPic('stfgod0');
 	pic_faces[DoomDefs::ST_DEADFACE] = R_RegisterPic('stfdead0');

@@ -25,11 +25,11 @@
 
 class MenuChoice_Skin : MenuChoiceEnum;
 
-int SkinBuf[64 / 4];
+string SkinName;
 
 void SetSkin(int skinNum)
 {
-	sprint(ARR2STR(SkinBuf), "models/players/%s/%s", GetCvarS('model'),
+	SkinName = va("models/players/%s/%s", GetCvarS('model'),
 		EnumNames[skinNum]);
 }
 
@@ -97,14 +97,3 @@ defaultproperties
 	EnumNames[28] = "yellow.pcx";
 	EnumNames[29] = "yellowf.pcx";
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

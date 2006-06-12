@@ -578,6 +578,11 @@ func_loop:
 			sp->p = ReadPtr(ip + 1);
 			ip += 1 + sizeof(void*);
 			sp++;
+			{
+				const char* S = (const char*)sp[-1].p;
+				sp[-1].p = NULL;
+				*(VStr*)&sp[-1].p = S;
+			}
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_PushClassId)
@@ -739,6 +744,15 @@ func_loop:
 				vuint32 mask = ip[1] << 24;
 				ip += 2;
 				sp[-1].i = !!(*(vint32*)sp[-1].p & mask);
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PushPointedStr)
+			{
+				ip++;
+				VStr* Ptr = (VStr*)sp[-1].p;
+				sp[-1].p = NULL;
+				*(VStr*)&sp[-1].p = *Ptr;
 			}
 			PR_VM_BREAK;
 
@@ -1132,6 +1146,22 @@ func_loop:
 			sp -= 2;
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_StrToBool)
+			{
+				ip++;
+				bool Val = *(VStr*)&sp[-1].p;
+				((VStr*)&sp[-1].p)->Clean();
+				sp[-1].i = Val;
+			}
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_AssignStrDrop)
+			ip++;
+			*(VStr*)sp[-2].p = *(VStr*)&sp[-1].p;
+			((VStr*)&sp[-1].p)->Clean();
+			sp -= 2;
+			PR_VM_BREAK;
+
 		PR_VM_CASE(OPC_PtrEquals)
 			BOOLOP(p, ==);
 			PR_VM_BREAK;
@@ -1145,6 +1175,18 @@ func_loop:
 			sp[-1].i = !!sp[-1].p;
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_ClearPointedStr)
+			((VStr*)sp[-1].p)->Clean();
+			ip += 1;
+			sp--;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_ClearPointedStruct)
+			((VStruct*)ReadPtr(ip + 1))->DestructObject((byte*)sp[-1].p);
+			ip += 1 + sizeof(void*);
+			sp--;
+			PR_VM_BREAK;
+
 		PR_VM_CASE(OPC_Drop)
 			ip++;
 			sp--;
@@ -1153,6 +1195,12 @@ func_loop:
 		PR_VM_CASE(OPC_VDrop)
 			ip++;
 			sp -= 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DropStr)
+			ip++;
+			((VStr*)&sp[-1].p)->Clean();
+			sp--;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_Swap)

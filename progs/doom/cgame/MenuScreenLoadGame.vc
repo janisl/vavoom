@@ -25,7 +25,7 @@
 
 class MenuScreenLoadGame:MenuScreen;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	MenuChoice_LoadSlot newChoice;
 	int i;
@@ -35,7 +35,7 @@ void CreateChoices(void)
 		newChoice = MenuChoice_LoadSlot(NewChild(MenuChoice_LoadSlot));
 		newChoice.SetPos(ChoicesStartX, ChoicesStartY + i * 18);
 		newChoice.SlotNum = i;
-		newChoice.Status = SV_GetSaveString(i, ARR2STR(newChoice.Text));
+		newChoice.Status = SV_GetSaveString(i, &newChoice.Text);
 	}
 }
 
@@ -46,14 +46,3 @@ defaultproperties
 	SelectorType = MenuSelector_Skull;
 	Title = "LOAD GAME";
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2003/03/08 12:13:50  dj_jl
-//  Menu code cleanup.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

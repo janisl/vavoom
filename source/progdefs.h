@@ -26,7 +26,7 @@
 #ifndef OPCODE_INFO
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	19
+#define PROG_VERSION	20
 
 #define	MAX_PARAMS		16
 
@@ -186,6 +186,7 @@ enum
 	DECLARE_OPC(PushBool1, Byte),
 	DECLARE_OPC(PushBool2, Byte),
 	DECLARE_OPC(PushBool3, Byte),
+	DECLARE_OPC(PushPointedStr, None),
 	DECLARE_OPC(PushPointedDelegate, None),
 
 	//	Integer opeartors
@@ -269,14 +270,25 @@ enum
 	DECLARE_OPC(VScaleVarDrop, None),
 	DECLARE_OPC(VIScaleVarDrop, None),
 
+	//	String operators
+	DECLARE_OPC(StrToBool, None),
+
+	//	String assignment operators
+	DECLARE_OPC(AssignStrDrop, None),
+
 	//	Pointer opeartors
 	DECLARE_OPC(PtrEquals, None),
 	DECLARE_OPC(PtrNotEquals, None),
 	DECLARE_OPC(PtrToBool, None),
 
+	//	Cleanup of local variables.
+	DECLARE_OPC(ClearPointedStr, None),
+	DECLARE_OPC(ClearPointedStruct, Member),
+
 	//	Drop result
 	DECLARE_OPC(Drop, None),
 	DECLARE_OPC(VDrop, None),
+	DECLARE_OPC(DropStr, None),
 
 	//	Swap stack elements.
 	DECLARE_OPC(Swap, None),

@@ -463,7 +463,7 @@ static void CL_ParseTime(VMessage& msg)
 
 static void CL_ReadFromServerInfo()
 {
-	VCvar::SetCheating(!!atoi(Info_ValueForKey(cl->serverinfo, "sv_cheats")));
+	VCvar::SetCheating(!!atoi(*Info_ValueForKey(cl->serverinfo, "sv_cheats")));
 }
 
 //==========================================================================
@@ -485,7 +485,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 
 	CL_Clear();
 
-	strcpy(cl->serverinfo, msg.ReadString());
+	cl->serverinfo = msg.ReadString();
 	CL_ReadFromServerInfo();
 
 	cl_level.MapName = msg.ReadString();
@@ -551,14 +551,14 @@ static void CL_ParseIntermission(VMessage& msg)
 	VName		nextmap;
 
 	im.LeaveMap = cl_level.MapName;
-	strcpy(im.leave_name, cl_level.level_name);
+	im.LeaveName = cl_level.level_name;
 	P_GetMapInfo(cl_level.MapName, ninfo);
 	im.leavecluster = ninfo.cluster;
 
 	nextmap = msg.ReadString();
 	P_GetMapInfo(nextmap, ninfo);
 	im.EnterMap = nextmap;
-	strcpy(im.enter_name, ninfo.name);
+	im.EnterName = ninfo.name;
 	im.entercluster = ninfo.cluster;
 
 	im.totalkills = cl_level.totalkills;
@@ -727,8 +727,8 @@ void CL_ParseServerMessage(VMessage& msg)
 	float		y;
 	int			tag;
 	float		angle;
-	char		name[MAX_INFO_KEY];
-	char		string[MAX_INFO_VALUE];
+	VStr		name;
+	VStr		string;
 	TVec		origin;
 	float		radius;
 	dword		color;
@@ -949,22 +949,22 @@ void CL_ParseServerMessage(VMessage& msg)
 			break;
 
 		case svc_serverinfo:
-			strcpy(name, msg.ReadString());
-			strcpy(string, msg.ReadString());
+			name = msg.ReadString();
+			string = msg.ReadString();
 			Info_SetValueForKey(cl->serverinfo, name, string);
 			CL_ReadFromServerInfo();
 			break;
 
 		case svc_userinfo:
 			i = msg.ReadByte();
-			strcpy(scores[i].userinfo, msg.ReadString());
+			scores[i].userinfo = msg.ReadString();
 			CL_ReadFromUserInfo(i);
 			break;
 
 		case svc_setinfo:
 			i = msg.ReadByte();
-			strcpy(name, msg.ReadString());
-			strcpy(string, msg.ReadString());
+			name = msg.ReadString();
+			string = msg.ReadString();
 			Info_SetValueForKey(scores[i].userinfo, name, string);
 			CL_ReadFromUserInfo(i);
 			break;

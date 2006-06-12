@@ -563,6 +563,7 @@ VField::VField(VName AName)
 : VMemberBase(MEMBER_Field, AName)
 , Next(0)
 , NextReference(0)
+, DestructorLink(0)
 , Ofs(0)
 , Func(0)
 , Flags(0)
@@ -657,28 +658,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		break;
 
 	case ev_string:
-		if (Strm.IsLoading())
-		{
-			int TmpIdx;
-			Strm << TmpIdx;
-			if (TmpIdx)
-			{
-				*(int*)Data = (int)svpr.StrAtOffs(TmpIdx);
-			}
-			else
-			{
-				*(int*)Data = 0;
-			}
-		}
-		else
-		{
-			int TmpIdx = 0;
-			if (*(int*)Data)
-			{
-				TmpIdx = svpr.GetStringOffs(*(char**)Data);
-			}
-			Strm << TmpIdx;
-		}
+		Strm << *(VStr*)Data;
 		break;
 
 	case ev_pointer:
@@ -818,10 +798,44 @@ void VField::CleanField(byte* Data, const VField::FType& Type)
 	case ev_array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
-		InnerSize = IntType.Type == ev_struct ? IntType.Struct->Size : 4;
+		InnerSize = IntType.GetSize();
 		for (int i = 0; i < Type.ArrayDim; i++)
 		{
 			CleanField(Data + i * InnerSize, IntType);
+		}
+		break;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VField::DestructField
+//
+//==========================================================================
+
+void VField::DestructField(byte* Data, const VField::FType& Type)
+{
+	guard(DestructField);
+	VField::FType IntType;
+	int InnerSize;
+	switch (Type.Type)
+	{
+	case ev_string:
+		((VStr*)Data)->Clean();
+		break;
+
+	case ev_struct:
+		Type.Struct->DestructObject(Data);
+		break;
+
+	case ev_array:
+		IntType = Type;
+		IntType.Type = Type.ArrayInnerType;
+		InnerSize = IntType.GetSize();
+		for (int i = 0; i < Type.ArrayDim; i++)
+		{
+			DestructField(Data + i * InnerSize, IntType);
 		}
 		break;
 	}
@@ -842,7 +856,7 @@ int VField::FType::GetSize() const
 	case ev_int:		return sizeof(vint32);
 	case ev_float:		return sizeof(float);
 	case ev_name:		return sizeof(VName);
-	case ev_string:		return sizeof(char*);
+	case ev_string:		return sizeof(VStr);
 	case ev_pointer:	return sizeof(void*);
 	case ev_reference:	return sizeof(VObject*);
 	case ev_array:		return ArrayDim * GetArrayInnerType().GetSize();
@@ -1472,6 +1486,7 @@ VStruct::VStruct(VName AName)
 , Size(0)
 , Fields(0)
 , ReferenceFields(0)
+, DestructorFields(0)
 {
 }
 
@@ -1518,6 +1533,9 @@ void VStruct::PostLoad()
 
 	//	Set up list of reference fields.
 	InitReferences();
+
+	//	Set up list of destructor fields.
+	InitDestructorFields();
 
 	ObjectFlags |= CLASSOF_PostLoaded;
 }
@@ -1619,6 +1637,60 @@ void VStruct::InitReferences()
 
 //==========================================================================
 //
+//	VStruct::InitDestructorFields
+//
+//==========================================================================
+
+void VStruct::InitDestructorFields()
+{
+	guard(VStruct::InitDestructorFields);
+	DestructorFields = NULL;
+	if (ParentStruct)
+	{
+		DestructorFields = ParentStruct->DestructorFields;
+	}
+
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		switch (F->Type.Type)
+		{
+		case ev_string:
+			F->DestructorLink = DestructorFields;
+			DestructorFields = F;
+			break;
+		
+		case ev_struct:
+			F->Type.Struct->PostLoad();
+			if (F->Type.Struct->DestructorFields)
+			{
+				F->DestructorLink = DestructorFields;
+				DestructorFields = F;
+			}
+			break;
+		
+		case ev_array:
+			if (F->Type.ArrayInnerType == ev_string)
+			{
+				F->DestructorLink = DestructorFields;
+				DestructorFields = F;
+			}
+			else if (F->Type.ArrayInnerType == ev_struct)
+			{
+				F->Type.Struct->PostLoad();
+				if (F->Type.Struct->DestructorFields)
+				{
+					F->DestructorLink = DestructorFields;
+					DestructorFields = F;
+				}
+			}
+			break;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStruct::SerialiseObject
 //
 //==========================================================================
@@ -1656,6 +1728,22 @@ void VStruct::CleanObject(byte* Data)
 	for (VField* F = ReferenceFields; F; F = F->NextReference)
 	{
 		VField::CleanField(Data + F->Ofs, F->Type);
+	}
+	unguardf(("(%s)", *Name));
+}
+
+//==========================================================================
+//
+//	VStruct::DestructObject
+//
+//==========================================================================
+
+void VStruct::DestructObject(byte* Data)
+{
+	guard(VStruct::DestructObject);
+	for (VField* F = DestructorFields; F; F = F->DestructorLink)
+	{
+		VField::DestructField(Data + F->Ofs, F->Type);
 	}
 	unguardf(("(%s)", *Name));
 }
@@ -1988,6 +2076,9 @@ void VClass::PostLoad()
 	//	Initialise reference fields.
 	InitReferences();
 
+	//	Initialise destructor fields.
+	InitDestructorFields();
+
 	//	Create virtual table.
 	CreateVTable();
 
@@ -2123,6 +2214,60 @@ void VClass::InitReferences()
 
 //==========================================================================
 //
+//	VClass::InitDestructorFields
+//
+//==========================================================================
+
+void VClass::InitDestructorFields()
+{
+	guard(VClass::InitDestructorFields);
+	DestructorFields = NULL;
+	if (GetSuperClass())
+	{
+		DestructorFields = GetSuperClass()->DestructorFields;
+	}
+
+	for (VField* F = Fields; F; F = F->Next)
+	{
+		switch (F->Type.Type)
+		{
+		case ev_string:
+			F->DestructorLink = DestructorFields;
+			DestructorFields = F;
+			break;
+		
+		case ev_struct:
+			F->Type.Struct->PostLoad();
+			if (F->Type.Struct->DestructorFields)
+			{
+				F->DestructorLink = DestructorFields;
+				DestructorFields = F;
+			}
+			break;
+		
+		case ev_array:
+			if (F->Type.ArrayInnerType == ev_string)
+			{
+				F->DestructorLink = DestructorFields;
+				DestructorFields = F;
+			}
+			else if (F->Type.ArrayInnerType == ev_struct)
+			{
+				F->Type.Struct->PostLoad();
+				if (F->Type.Struct->DestructorFields)
+				{
+					F->DestructorLink = DestructorFields;
+					DestructorFields = F;
+				}
+			}
+			break;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::CreateVTable
 //
 //==========================================================================
@@ -2189,10 +2334,26 @@ void VClass::SerialiseObject(VStream& Strm, VObject* Obj)
 
 void VClass::CleanObject(VObject* Obj)
 {
-	guard(CleanObject);
+	guard(VClass::CleanObject);
 	for (VField* F = ReferenceFields; F; F = F->NextReference)
 	{
 		VField::CleanField((byte*)Obj + F->Ofs, F->Type);
+	}
+	unguardf(("(%s)", GetName()));
+}
+
+//==========================================================================
+//
+//	VClass::DestructObject
+//
+//==========================================================================
+
+void VClass::DestructObject(VObject* Obj)
+{
+	guard(VClass::DestructObject);
+	for (VField* F = DestructorFields; F; F = F->DestructorLink)
+	{
+		VField::DestructField((byte*)Obj + F->Ofs, F->Type);
 	}
 	unguardf(("(%s)", GetName()));
 }

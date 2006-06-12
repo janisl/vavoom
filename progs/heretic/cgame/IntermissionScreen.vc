@@ -429,7 +429,7 @@ void IM_DrawSingleStats()
 	T_DrawText(50, 90, "ITEMS");
 	T_DrawText(50, 115, "SECRETS");
 	T_SetAlign(hcenter, vtop);
-	T_DrawText(160, 3, ARR2STR(ClGame.im->leave_name));
+	T_DrawText(160, 3, ClGame.im->LeaveName);
 	T_SetShadow(false);
 
 	T_SetFont(font_small);
@@ -518,7 +518,7 @@ void IM_DrawSingleStats()
 		T_DrawText(160, 160, "NOW ENTERING:");
 		T_SetShadow(true);
 		T_SetFont(font_big);
-		T_DrawText(160, 170, ARR2STR(ClGame.im->enter_name));
+		T_DrawText(160, 170, ClGame.im->EnterName);
 		T_SetShadow(false);
 		ClGame.skipintermission = false;
 	}
@@ -543,7 +543,7 @@ void IM_DrawCoopStats()
 	T_DrawText(232, 35, "SECRET");
 
 	T_SetAlign(hcenter, vtop);
-	T_DrawText(160, 3, ARR2STR(ClGame.im->leave_name));
+	T_DrawText(160, 3, ClGame.im->LeaveName);
 	T_SetShadow(false);
 	T_SetFont(font_small);
 	T_DrawText(160, 25, "FINISHED");
@@ -695,7 +695,7 @@ void IM_DrawOldLevel()
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
-	T_DrawText(160, 3, ARR2STR(ClGame.im->leave_name));
+	T_DrawText(160, 3, ClGame.im->LeaveName);
 	T_SetShadow(false);
 
 	T_SetFont(font_small);
@@ -751,7 +751,7 @@ void IM_DrawYAH()
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
-	T_DrawText(160, 20, ARR2STR(ClGame.im->enter_name));
+	T_DrawText(160, 20, ClGame.im->EnterName);
 	T_SetShadow(false);
 
 	if (im_map == 9)

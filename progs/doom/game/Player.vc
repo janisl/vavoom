@@ -286,7 +286,7 @@ void DisconnectClient()
 			ViewEnts[i] = none;
 		}
 	}
-	bprint("%s left the game\n", ARR2STR(PlayerName));
+	bprint("%s left the game\n", PlayerName);
 	MO.PlayFullVolumeSound('misc/chat', CHAN_AUTO);
 }
 
@@ -317,8 +317,8 @@ void SetClientModel()
 	string model;
 	string skin;
 
-	model = Info_ValueForKey(ARR2STR(UserInfo), "model");
-	if (!model || !strgetchar(model, 0))
+	model = Info_ValueForKey(UserInfo, "model");
+	if (!model)
 	{
 		MO.bFixedModel = false;
 		MO.ModelSkinNum = 0;
@@ -327,8 +327,8 @@ void SetClientModel()
 
 	MO.bFixedModel = true;
 	MO.ModelIndex = FindModel(va("players/%s/tris.md2", model));
-	skin = Info_ValueForKey(ARR2STR(UserInfo), "skin");
-	if (skin && strgetchar(skin, 0))
+	skin = Info_ValueForKey(UserInfo, "skin");
+	if (skin)
 	{
 		MO.ModelSkinNum = FindSkin(va("players/%s/%s", model, skin));
 	}

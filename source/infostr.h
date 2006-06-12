@@ -27,30 +27,12 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define	MAX_INFO_STRING		1024
-#define	MAX_INFO_KEY		1024
-#define	MAX_INFO_VALUE		1024
-
 // TYPES -------------------------------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-char *Info_ValueForKey(const char *s, const char *key);
-void Info_RemoveKey(char *s, const char *key);
-void Info_SetValueForKey(char *s, const char *key, const char *value);
+VStr Info_ValueForKey(const VStr& s, const VStr& key);
+void Info_RemoveKey(VStr& s, const VStr& key);
+void Info_SetValueForKey(VStr& s, const VStr& key, const VStr& value);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -44,7 +44,7 @@ struct server_static_t
 	int			max_clients;
 	int			num_connected;
 
-	char		serverinfo[MAX_INFO_STRING];
+	VStr		serverinfo;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

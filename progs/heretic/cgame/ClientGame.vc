@@ -58,7 +58,7 @@ int msgBoxX;
 int msgBoxY;
 int msgBoxW;
 int msgBoxH;
-int messageString[256 / 4];	// ...and here is the message string!
+string messageString;	// ...and here is the message string!
 bool messageNeedsInput;	// timed message = no input from user
 int messageType;
 
@@ -499,13 +499,13 @@ void ForceMenuOff(void)
 void MessageBoxStartMessage(string text, int type, bool input)
 {
 	messageToPrint = true;
-	strcpy(ARR2STR(messageString), text);
+	messageString = text;
 	messageType = type;
 	messageNeedsInput = input;
 
 	T_SetFont(font_small);
-	msgBoxW = (T_TextWidth(ARR2STR(messageString)) + 16) & ~15;
-	msgBoxH = (T_TextHeight(ARR2STR(messageString)) + 16) & ~15;
+	msgBoxW = (T_TextWidth(messageString) + 16) & ~15;
+	msgBoxH = (T_TextHeight(messageString) + 16) & ~15;
 	if (msgBoxW > 304)
 		msgBoxW = 304;
 	if (msgBoxH > 184)
@@ -531,7 +531,7 @@ void MessageBoxDrawer()
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcenter, vcenter);
-		T_DrawText(160, 100, ARR2STR(messageString));
+		T_DrawText(160, 100, messageString);
 	}
 }
 

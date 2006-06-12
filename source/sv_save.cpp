@@ -324,22 +324,25 @@ static VStr SV_GetSavesDir()
 //
 //==========================================================================
 
-bool SV_GetSaveString(int slot, char* buf)
+bool SV_GetSaveString(int slot, VStr* buf)
 {
 	guard(SV_GetSaveString);
 	FILE*		f;
+	char		Desc[SAVE_DESCRIPTION_LENGTH + 1];
 
 	f = fopen(*SAVE_NAME_ABS(slot), "rb");
 	if (f)
 	{
 		fseek(f, 4, SEEK_SET);
-		fread(buf, 1, SAVE_DESCRIPTION_LENGTH, f);
+		fread(Desc, 1, SAVE_DESCRIPTION_LENGTH, f);
+		Desc[SAVE_DESCRIPTION_LENGTH] = 0;
+		*buf = Desc;
 		fclose(f);
 		return true;
 	}
 	else
 	{
-		strcpy(buf, EMPTYSTRING);
+		*buf = EMPTYSTRING;
 		return false;
 	}
 	unguard;
@@ -1248,13 +1251,13 @@ COMMAND(Load)
 	}
 
 	int slot = atoi(*Args[1]);
-	char	desc[32];
-	if (!SV_GetSaveString(slot, desc))
+	VStr desc;
+	if (!SV_GetSaveString(slot, &desc))
 	{
 		GCon->Log("Empty slot");
 		return;
 	}
-	GCon->Logf("Loading \"%s\"", desc);
+	GCon->Logf("Loading \"%s\"", *desc);
 
 	Draw_LoadIcon();
 	SV_LoadGame(slot);

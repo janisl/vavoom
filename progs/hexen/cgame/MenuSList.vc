@@ -23,10 +23,10 @@
 //**
 //**************************************************************************
 
-class MenuSList:MenuChoice;
+class MenuSList : MenuChoice;
 
-int Cursor;
-slist_t* slist;
+int			Cursor;
+slist_t*	slist;
 
 void InitWindow(void)
 {
@@ -71,28 +71,28 @@ void DrawWindow(GC gc)
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	for (i = 0; i < slist->count; i++)
+	for (i = 0; i < slist->Count; i++)
 	{
-		gc.DrawText(16, 32 + 10 * i, ARR2STR(slist->cache[i].Name));
-		gc.DrawText(16 + 128, 32 + 10 * i, ARR2STR(slist->cache[i].map));
-		if (slist->cache[i].maxusers)
+		gc.DrawText(16, 32 + 10 * i, slist->Cache[i].Name);
+		gc.DrawText(16 + 128, 32 + 10 * i, slist->Cache[i].Map);
+		if (slist->Cache[i].MaxUsers)
 		{
 			gc.DrawText(16 + 256, 32 + 10 * i, va("%d/%d",
-				slist->cache[i].users, slist->cache[i].maxusers));
+				slist->Cache[i].Users, slist->Cache[i].MaxUsers));
 		}
 	}
 	gc.DrawText(8, 32 + Cursor * 10, ">");
 
-	if (slist->return_reason[0])
-		gc.DrawText(16, 116, ARR2STR(slist->return_reason));
+	if (slist->ReturnReason)
+		gc.DrawText(16, 116, slist->ReturnReason);
 
-	if (slist->count)
+	if (slist->Count)
 	{
 		x = 8;
 		y = 124;
-		for (i = 0; i < 20 && slist->cache[Cursor].wadfiles[i * 16 / 4]; i++)
+		for (i = 0; i < 20 && slist->Cache[Cursor].WadFiles[i]; i++)
 		{
-			w = T_TextWidth(ptrtos(&slist->cache[Cursor].wadfiles[i * 16 / 4]));
+			w = T_TextWidth(slist->Cache[Cursor].WadFiles[i]);
 			if (x + w > 312)
 			{
 				x = 8;
@@ -100,7 +100,7 @@ void DrawWindow(GC gc)
 				if (y > 190)
 					break;
 			}
-			gc.DrawText(x, y, ptrtos(&slist->cache[Cursor].wadfiles[i * 16 / 4]));
+			gc.DrawText(x, y, slist->Cache[Cursor].WadFiles[i]);
 			x += w + 8;
 		}
 	}
@@ -109,7 +109,7 @@ void DrawWindow(GC gc)
 	{
 		DrawTextBox(gc, "Searching...");
 	}
-	else if (!slist->count)
+	else if (!slist->Count)
 	{
 		DrawTextBox(gc, "No servers found");
 	}
@@ -127,32 +127,31 @@ bool Key(int key)
 	switch (key)
 	{
 	case K_DOWNARROW:
-		if (slist->count)
+		if (slist->Count)
 		{
 			Cursor++;
-			if (Cursor >= slist->count)
+			if (Cursor >= slist->Count)
 				Cursor = 0;
 			LocalSound('menu/cursor');
 		}
 		return true;
 
 	case K_UPARROW:
-		if (slist->count)
+		if (slist->Count)
 		{
 			Cursor--;
 			if (Cursor < 0)
-				Cursor = slist->count - 1;
+				Cursor = slist->Count - 1;
 			LocalSound('menu/cursor');
 		}
 		return true;
 
 	case K_ENTER:
 	case K_PADENTER:
-		if (slist->count)
+		if (slist->Count)
 		{
 			LocalSound('menu/choose');
-			CmdBuf_AddText("connect \"%s\"\n",
-				ARR2STR(slist->cache[Cursor].cname));
+			CmdBuf_AddText("connect \"%s\"\n", slist->Cache[Cursor].CName);
 		}
 		return true;
 
@@ -167,23 +166,3 @@ bool Key(int key)
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.5  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.4  2006/02/19 14:24:09  dj_jl
-//  Some changes because of compiler changes.
-//
-//  Revision 1.3  2006/02/09 22:33:10  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.2  2005/11/19 15:15:06  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.1  2002/10/26 16:32:25  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

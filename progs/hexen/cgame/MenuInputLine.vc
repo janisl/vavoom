@@ -23,20 +23,20 @@
 //**
 //**************************************************************************
 
-class MenuInputLine:MenuChoice;
+class MenuInputLine : MenuChoice;
 
-bool bEnteringText;
-string Text;
-int Value[32 / 4];
-int EnterText[32 / 4];
+bool	bEnteringText;
+string	Text;
+string	Value;
+string	EnterText;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	InitSlot();
 }
 
-void ValueChanged(void)
+void ValueChanged()
 {
 }
 
@@ -46,9 +46,9 @@ void DrawWindow(GC gc)
 	T_SetAlign(hleft, vtop);
 	gc.DrawText(0, 0, Text);
 	if (bEnteringText)
-		DrawSlot(gc, 12, ARR2STR(EnterText), true);
+		DrawSlot(gc, 12, EnterText, true);
 	else
-		DrawSlot(gc, 12, ARR2STR(Value), false);
+		DrawSlot(gc, 12, Value, false);
 }
 
 bool Key(int key)
@@ -68,27 +68,24 @@ bool Key(int key)
 		case K_PADENTER:
 		case K_MOUSE1:
 			bEnteringText = false;
-			strcpy(ARR2STR(Value), ARR2STR(EnterText));
+			Value = EnterText;
 			ValueChanged();
 			break;
 
     	case K_BACKSPACE:
-		    if (strlen(ARR2STR(EnterText)))
+		    if (strlen(EnterText))
 			{
-				strsetchar(ARR2STR(EnterText),
- 					strlen(ARR2STR(EnterText)) - 1, 0);
+				EnterText = substr(EnterText, 0, strlen(EnterText) - 1);
 			}
 			break;
 			
 		default:
 		    if (key >= 32 && key < 128)
 			{
-  				key = TranslateKey(key);
-				Len = strlen(ARR2STR(EnterText));
+  				Len = strlen(EnterText);
 	    		if (Len < 30)
 		    	{
-					strsetchar(ARR2STR(EnterText), Len++, key);
-					strsetchar(ARR2STR(EnterText), Len, 0);
+					EnterText = strcat(EnterText, TranslateKey(key));
     			}
 			}
 			break;
@@ -101,7 +98,7 @@ bool Key(int key)
 	{
 		// we are going to be intercepting all chars
 		bEnteringText = true;
-		strcpy(ARR2STR(EnterText), ARR2STR(Value));
+		EnterText = Value;
 		LocalSound('menu/choose');
 		return true;
 	}
@@ -112,17 +109,3 @@ defaultproperties
 {
 	Height = 30;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2005/11/19 15:15:06  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.2  2003/03/08 12:13:51  dj_jl
-//  Menu code cleanup.
-//
-//  Revision 1.1  2002/10/26 16:32:24  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

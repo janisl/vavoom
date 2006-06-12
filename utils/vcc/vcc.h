@@ -373,6 +373,7 @@ public:
 	{}
 
 	void Serialise(VStream&);
+	bool NeedsDestructor() const;
 };
 
 struct FInstruction
@@ -459,6 +460,7 @@ public:
 	void Serialise(VStream&);
 
 	void AddField(VField* f);
+	bool NeedsDestructor() const;
 };
 
 class VState : public VMemberBase
@@ -581,6 +583,8 @@ int EvalConstExpression(VClass*InClass, int type);
 float ConstFloatExpression();
 
 TType ParseExpression(bool = false);
+void EmitPushNumber(int);
+void EmitLocalAddress(int);
 
 void ParseMethodDef(const TType&, VName, TLocation, VMethod*, VClass*, int);
 void ParseDelegate(const TType&, VField*, VClass*, int);

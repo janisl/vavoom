@@ -4606,7 +4606,7 @@ void ConChoiceImpulse(int ChoiceNum)
 	Item3 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem3, Choice->NeedAmount3);
 	if (Item1 == -2 || Item2 == -2 || Item3 == -2)
 	{
-		CurrentSpeakingTo.Player.cprint(ARR2STR(Choice->TextNo));
+		CurrentSpeakingTo.Player.cprint(Choice->TextNo);
 		StopSpeech();
 		return;
 	}
@@ -4636,12 +4636,11 @@ void ConChoiceImpulse(int ChoiceNum)
 	}
 	if (!GaveItem)
 	{
-		CurrentSpeakingTo.Player.cprint(ARR2STR(Choice->TextNo));
+		CurrentSpeakingTo.Player.cprint(Choice->TextNo);
 	}
-	else if (strcmp(ARR2STR(Choice->TextOK), "") &&
-		strcmp(ARR2STR(Choice->TextOK), "_"))
+	else if (strcmp(Choice->TextOK, "") && strcmp(Choice->TextOK, "_"))
 	{
-		CurrentSpeakingTo.Player.cprint(ARR2STR(Choice->TextOK));
+		CurrentSpeakingTo.Player.cprint(Choice->TextOK);
 	}
 	if (Choice->Next < 0)
 	{

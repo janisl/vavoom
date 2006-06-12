@@ -79,8 +79,6 @@ int pic_armor2;
 void StartMap()
 {
 	int i;
-	int namebuf[3];
-	string Name = ARR2STR(namebuf);
 	picinfo_t info;
 
 	pic_barback = R_RegisterPic('barback');
@@ -96,8 +94,7 @@ void StartMap()
 	}
 	else
 	{
-		sprint(Name, "lifegem%d", cl.clientnum);
-		pic_lifegem = R_RegisterPic(StrToName(Name));
+		pic_lifegem = R_RegisterPic(StrToName(va("lifegem%d", cl.clientnum)));
 	}
 	pic_ltface = R_RegisterPic('ltface');
 	pic_rtface = R_RegisterPic('rtface');
@@ -112,12 +109,9 @@ void StartMap()
 	}
 	for (i = 0; i < 10; i++)
 	{
-		sprint(Name, "in%d", i);
-		pic_innum[i] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "smallin%d", i);
-		pic_smallinnum[i] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "fontb%d", 16 + i);
-		pic_bignum[i] = R_RegisterPic(StrToName(Name));
+		pic_innum[i] = R_RegisterPic(StrToName(va("in%d", i)));
+		pic_smallinnum[i] = R_RegisterPic(StrToName(va("smallin%d", i)));
+		pic_bignum[i] = R_RegisterPic(StrToName(va("fontb%d", 16 + i)));
 		R_GetPicInfo(pic_bignum[i], &info);
 		bignumwidth[i] = info.width;
 	}
@@ -157,10 +151,8 @@ void StartMap()
 
 	for (i = 0; i < 16; i++)
 	{
-		sprint(Name, "spfly%d", i);
-		pic_flight[i] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "spinbk%d", i);
-		pic_book[i] = R_RegisterPic(StrToName(Name));
+		pic_flight[i] = R_RegisterPic(StrToName(va("spfly%d", i)));
+		pic_book[i] = R_RegisterPic(StrToName(va("spinbk%d", i)));
 	}
 
 	pic_paused = R_RegisterPic('paused');

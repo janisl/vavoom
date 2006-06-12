@@ -31,7 +31,7 @@
 
 struct scores_t
 {
-	char		name[64];
+	VStr		name;
 	enum
 	{
 		SF_Active	= 0x01,
@@ -42,7 +42,7 @@ struct scores_t
 	int			itemcount;
 	int			secretcount;
 	float		time;
-	char		userinfo[MAX_INFO_STRING];
+	VStr		userinfo;
 };
 
 struct im_t
@@ -51,8 +51,8 @@ struct im_t
 	int			leavecluster;
 	VName		EnterMap;
 	int			entercluster;
-	char		leave_name[32];
-	char		enter_name[32];
+	VStr		LeaveName;
+	VStr		EnterName;
 	int			totalkills;
 	int			totalitems;
 	int			totalsecret;
@@ -61,33 +61,10 @@ struct im_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void IM_Start(void);
-void IM_SkipIntermission(void);
+void IM_Start();
+void IM_SkipIntermission();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern scores_t			scores[MAXPLAYERS];
 extern im_t				im;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.7  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//
-//	Revision 1.6  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.5  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

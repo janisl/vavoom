@@ -104,7 +104,6 @@ static TTree EmitPushPointed(const TType& type)
 		AddStatement(OPC_PushPointed);
 		break;
 
-	case ev_string:
 	case ev_pointer:
 	case ev_reference:
 	case ev_classid:
@@ -125,6 +124,10 @@ static TTree EmitPushPointed(const TType& type)
 			AddStatement(OPC_PushBool2, type.bit_mask >> 16);
 		else
 			AddStatement(OPC_PushBool3, type.bit_mask >> 24);
+		break;
+
+	case ev_string:
+		AddStatement(OPC_PushPointedStr);
 		break;
 
 	case ev_delegate:
@@ -161,7 +164,8 @@ static TTree GetAddress(TTree op)
 	if (Opc != OPC_VPushPointed && Opc != OPC_PushBool0 &&
 		Opc != OPC_PushBool1 && Opc != OPC_PushBool2 &&
 		Opc != OPC_PushBool3 && Opc != OPC_PushPointed &&
-		Opc != OPC_PushPointedPtr && Opc != OPC_PushPointedDelegate)
+		Opc != OPC_PushPointedPtr && Opc != OPC_PushPointedStr &&
+		Opc != OPC_PushPointedDelegate)
 	{
 		ParseError("Bad address operation %d", Opc);
 		return op;
@@ -177,7 +181,7 @@ static TTree GetAddress(TTree op)
 //
 //==========================================================================
 
-static void EmitPushNumber(int Val)
+void EmitPushNumber(int Val)
 {
 	if (Val == 0)
 		AddStatement(OPC_PushNumber0);
@@ -189,6 +193,38 @@ static void EmitPushNumber(int Val)
 		AddStatement(OPC_PushNumberS, Val);
 	else
 		AddStatement(OPC_PushNumber, Val);
+}
+
+//==========================================================================
+//
+//	ParseMethodCall
+//
+//==========================================================================
+
+void EmitLocalAddress(int Ofs)
+{
+	if (Ofs == 0)
+		AddStatement(OPC_LocalAddress0);
+	else if (Ofs == 1)
+		AddStatement(OPC_LocalAddress1);
+	else if (Ofs == 2)
+		AddStatement(OPC_LocalAddress2);
+	else if (Ofs == 3)
+		AddStatement(OPC_LocalAddress3);
+	else if (Ofs == 4)
+		AddStatement(OPC_LocalAddress4);
+	else if (Ofs == 5)
+		AddStatement(OPC_LocalAddress5);
+	else if (Ofs == 6)
+		AddStatement(OPC_LocalAddress6);
+	else if (Ofs == 7)
+		AddStatement(OPC_LocalAddress7);
+	else if (Ofs < 256)
+		AddStatement(OPC_LocalAddressB, Ofs);
+	else if (Ofs < MAX_VINT16)
+		AddStatement(OPC_LocalAddressS, Ofs);
+	else
+		AddStatement(OPC_LocalAddress, Ofs);
 }
 
 //==========================================================================
@@ -518,28 +554,7 @@ static TTree ParseExpressionPriority0()
 		num = CheckForLocalVar(Name);
 		if (num)
 		{
-			if (localdefs[num].ofs == 0)
-				AddStatement(OPC_LocalAddress0);
-			else if (localdefs[num].ofs == 1)
-				AddStatement(OPC_LocalAddress1);
-			else if (localdefs[num].ofs == 2)
-				AddStatement(OPC_LocalAddress2);
-			else if (localdefs[num].ofs == 3)
-				AddStatement(OPC_LocalAddress3);
-			else if (localdefs[num].ofs == 4)
-				AddStatement(OPC_LocalAddress4);
-			else if (localdefs[num].ofs == 5)
-				AddStatement(OPC_LocalAddress5);
-			else if (localdefs[num].ofs == 6)
-				AddStatement(OPC_LocalAddress6);
-			else if (localdefs[num].ofs == 7)
-				AddStatement(OPC_LocalAddress7);
-			else if (localdefs[num].ofs < 256)
-				AddStatement(OPC_LocalAddressB, localdefs[num].ofs);
-			else if (localdefs[num].ofs < MAX_VINT16)
-				AddStatement(OPC_LocalAddressS, localdefs[num].ofs);
-			else
-				AddStatement(OPC_LocalAddress, localdefs[num].ofs);
+			EmitLocalAddress(localdefs[num].ofs);
 			op = EmitPushPointed(localdefs[num].type);
 			return op;
 		}
@@ -1241,10 +1256,6 @@ static TTree ParseExpressionPriority7()
 			{
 				AddStatement(OPC_Equals);
 			}
-			else if (op1.Type.type == ev_string && op2.Type.type == ev_string)
-			{
-				AddStatement(OPC_PtrEquals);
-			}
 			else if (op1.Type.type == ev_pointer && op2.Type.type == ev_pointer)
 			{
 				AddStatement(OPC_PtrEquals);
@@ -1285,10 +1296,6 @@ static TTree ParseExpressionPriority7()
 			else if (op1.Type.type == ev_name && op2.Type.type == ev_name)
 			{
 				AddStatement(OPC_NotEquals);
-			}
-			else if (op1.Type.type == ev_string && op2.Type.type == ev_string)
-			{
-				AddStatement(OPC_PtrNotEquals);
 			}
 			else if (op1.Type.type == ev_pointer && op2.Type.type == ev_pointer)
 			{
@@ -1504,7 +1511,7 @@ static TTree ParseExpressionPriority14()
 		}
 		else if (type.type == ev_string && op2.Type.type == ev_string)
 		{
-			AddStatement(OPC_AssignPtrDrop);
+			AddStatement(OPC_AssignStrDrop);
 		}
 		else if (type.type == ev_pointer && op2.Type.type == ev_pointer)
 		{
@@ -1773,151 +1780,3 @@ TType ParseExpression(bool bLocals)
 	}
 	return op.Type;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.47  2006/03/23 23:11:27  dj_jl
-//	Added support for final methods.
-//
-//	Revision 1.46  2006/03/23 18:30:53  dj_jl
-//	Use single list of all members, members tree.
-//	
-//	Revision 1.45  2006/03/18 16:53:24  dj_jl
-//	Use offset opcode.
-//	
-//	Revision 1.44  2006/03/13 21:24:21  dj_jl
-//	Added support for read-only, private and transient fields.
-//	
-//	Revision 1.43  2006/03/12 20:04:50  dj_jl
-//	States as objects, added state variable type.
-//	
-//	Revision 1.42  2006/03/10 19:31:55  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.41  2006/02/28 19:17:20  dj_jl
-//	Added support for constants.
-//	
-//	Revision 1.40  2006/02/27 21:23:54  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.39  2006/02/19 20:37:01  dj_jl
-//	Implemented support for delegates.
-//	
-//	Revision 1.38  2006/02/19 14:37:36  dj_jl
-//	Changed type handling.
-//	
-//	Revision 1.37  2006/02/17 19:25:00  dj_jl
-//	Removed support for progs global variables and functions.
-//	
-//	Revision 1.36  2006/02/10 22:15:21  dj_jl
-//	Temporary fix for big-endian systems.
-//	
-//	Revision 1.35  2005/12/29 19:10:40  dj_jl
-//	Fixed compiler problem.
-//	
-//	Revision 1.34  2005/12/14 20:53:23  dj_jl
-//	State names belong to a class.
-//	Structs and enums defined in a class.
-//	
-//	Revision 1.33  2005/12/12 20:58:47  dj_jl
-//	Removed compiler limitations.
-//	
-//	Revision 1.32  2005/12/07 22:52:55  dj_jl
-//	Moved compiler generated data out of globals.
-//	
-//	Revision 1.31  2005/11/30 23:55:05  dj_jl
-//	Directly use with-drop statements.
-//	
-//	Revision 1.30  2005/11/30 13:14:53  dj_jl
-//	Implemented instruction buffer.
-//	
-//	Revision 1.29  2005/11/29 19:31:43  dj_jl
-//	Class and struct classes, removed namespaces, beautification.
-//	
-//	Revision 1.28  2005/11/24 20:40:42  dj_jl
-//	Removed building of the tree, opcode renaming.
-//	
-//	Revision 1.27  2003/03/08 12:47:52  dj_jl
-//	Code cleanup.
-//	
-//	Revision 1.26  2002/09/07 16:36:38  dj_jl
-//	Support bool in function args and return type.
-//	Removed support for typedefs.
-//	
-//	Revision 1.25  2002/08/24 14:45:38  dj_jl
-//	2 pass compiling.
-//	
-//	Revision 1.24  2002/06/14 15:33:45  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.23  2002/05/03 17:04:03  dj_jl
-//	Mangling of string pointers.
-//	
-//	Revision 1.22  2002/03/16 17:54:25  dj_jl
-//	Added opcode for pushing virtual function.
-//	
-//	Revision 1.21  2002/02/26 17:52:20  dj_jl
-//	Exporting special property info into progs.
-//	
-//	Revision 1.20  2002/02/16 16:28:36  dj_jl
-//	Added support for bool variables
-//	
-//	Revision 1.19  2002/01/23 17:56:28  dj_jl
-//	Removed support for C-style type casting.
-//	
-//	Revision 1.18  2002/01/21 18:23:09  dj_jl
-//	Constructors with no names
-//	
-//	Revision 1.17  2002/01/12 18:06:34  dj_jl
-//	New style of state functions, some other changes
-//	
-//	Revision 1.16  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//	Revision 1.15  2002/01/07 12:31:36  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.14  2001/12/18 19:09:41  dj_jl
-//	Some extra info in progs and other small changes
-//	
-//	Revision 1.13  2001/12/12 19:22:22  dj_jl
-//	Support for method usage as state functions, dynamic cast
-//	Added dynamic arrays
-//	
-//	Revision 1.12  2001/12/03 19:25:44  dj_jl
-//	Fixed calling of parent function
-//	Added defaultproperties
-//	Fixed vectors as arguments to methods
-//	
-//	Revision 1.11  2001/12/01 18:17:09  dj_jl
-//	Fixed calling of parent method, speedup
-//	
-//	Revision 1.10  2001/11/09 14:42:28  dj_jl
-//	References, beautification
-//	
-//	Revision 1.9  2001/10/27 07:54:59  dj_jl
-//	Added support for constructors and destructors
-//	
-//	Revision 1.8  2001/10/22 17:29:58  dj_jl
-//	Operators for clasid type
-//	
-//	Revision 1.7  2001/10/02 17:44:52  dj_jl
-//	Some optimizations
-//	
-//	Revision 1.6  2001/09/25 17:03:50  dj_jl
-//	Added calling of parent functions
-//	
-//	Revision 1.5  2001/09/20 16:09:55  dj_jl
-//	Added basic object-oriented support
-//	
-//	Revision 1.4  2001/09/05 12:19:20  dj_jl
-//	Release changes
-//	
-//	Revision 1.3  2001/08/21 17:52:54  dj_jl
-//	Added support for real string pointers, beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

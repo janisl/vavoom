@@ -34,6 +34,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_INFO_STRING		1024
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -59,54 +61,48 @@
 //
 //==========================================================================
 
-char *Info_ValueForKey(const char *s, const char *key)
+VStr Info_ValueForKey(const VStr& s, const VStr& key)
 {
-	char		pkey[MAX_INFO_KEY];
-	static char	value[2][MAX_INFO_VALUE];	// use two buffers so compares
-									// work without stomping on each other
-	static int	valueindex = 0;
-	char		*o;
-	
+	guard(Info_ValueForKey);
 	if (!s || !key)
 	{
-		return "";
+		return VStr();
 	}
 
-	if (strlen(s) >= MAX_INFO_STRING)
+	if (s.Length() >= MAX_INFO_STRING)
 	{
 		Host_Error("Info_ValueForKey: oversize infostring");
 	}
 
-	valueindex ^= 1;
-	if (*s == '\\')
-		s++;		
+	int i = 0;
+	if (s[i] == '\\')
+		i++;		
 	while (1)
 	{
-		o = pkey;
-		while (*s != '\\')
+		int Start = i;
+		while (s[i] != '\\')
 		{
-			if (!*s)
-				return "";
-			*o++ = *s++;
+			if (!s[i])
+				return VStr();
+			i++;
 		}
-		*o = 0;
-		s++;
+		VStr pkey(s, Start, i - Start);
+		i++;
 
-		o = value[valueindex];
-
-		while (*s != '\\' && *s)
+		Start = i;
+		while (s[i] != '\\' && s[i])
 		{
-			*o++ = *s++;
+			i++;
 		}
-		*o = 0;
 
-		if (!stricmp(key, pkey))
-			return value[valueindex];
+		if (!key.ICmp(pkey))
+			return VStr(s, Start, i - Start);
 
-		if (!*s)
-			return "";
-		s++;
+		if (!s[i])
+			return VStr();
+		i++;
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -115,56 +111,57 @@ char *Info_ValueForKey(const char *s, const char *key)
 //
 //==========================================================================
 
-void Info_RemoveKey(char *s, const char *key)
+void Info_RemoveKey(VStr& s, const VStr& key)
 {
-	char	*start;
-	char	pkey[MAX_INFO_KEY];
-	char	value[MAX_INFO_VALUE];
-	char	*o;
-
-	if (strlen(s) >= MAX_INFO_STRING)
+	guard(Info_RemoveKey);
+	if (!s)
+	{
+		return;
+	}
+	if (s.Length() >= MAX_INFO_STRING)
 	{
 		Host_Error("Info_RemoveKey: oversize infostring");
 	}
 
-	if (strchr(key, '\\'))
+	if (strchr(*key, '\\'))
 	{
 		GCon->Log("Can't use a key with a \\");
 		return;
 	}
 
+	int i = 0;
 	while (1)
 	{
-		start = s;
-		if (*s == '\\')
-			s++;
-		o = pkey;
-		while (*s != '\\')
+		int start = i;
+		if (s[i] == '\\')
+			i++;
+		int KeyStart = i;
+		while (s[i] != '\\')
 		{
-			if (!*s)
+			if (!s[i])
 				return;
-			*o++ = *s++;
+			i++;
 		}
-		*o = 0;
-		s++;
+		VStr pkey(s, KeyStart, i - KeyStart);
+		i++;
 
-		o = value;
-		while (*s != '\\' && *s)
+		int ValStart = i;
+		while (s[i] != '\\' && s[i])
 		{
-			*o++ = *s++;
+			i++;
 		}
-		*o = 0;
+		VStr value(s, ValStart, i - ValStart);
 
-		if (!strcmp(key, pkey))
+		if (!key.Cmp(pkey))
 		{
-			strcpy(start, s);	// remove this part
+			s = VStr(s, 0, start) + VStr(s, i, s.Length() - i);	// remove this part
 			return;
 		}
 
-		if (!*s)
+		if (!s[i])
 			return;
 	}
-
+	unguard;
 }
 
 //==========================================================================
@@ -175,35 +172,33 @@ void Info_RemoveKey(char *s, const char *key)
 //
 //==========================================================================
 
-void Info_SetValueForKey(char *s, const char *key, const char *value)
+void Info_SetValueForKey(VStr& s, const VStr& key, const VStr& value)
 {
-	char	newi[MAX_INFO_STRING];
-	char	*v;
-
-	if (strlen(s) >= MAX_INFO_STRING)
+	guard(Info_SetValueForKey);
+	if (s.Length() >= MAX_INFO_STRING)
 	{
 		Host_Error("Info_SetValueForKey: oversize infostring");
 	}
 
-	if (strchr(key, '\\') || strchr(value, '\\'))
+	if (strchr(*key, '\\') || strchr(*value, '\\'))
 	{
 		GCon->Log("Can't use keys or values with a \\");
 		return;
 	}
 
-	if (strchr(key, '\"') || strchr(value, '\"'))
+	if (strchr(*key, '\"') || strchr(*value, '\"'))
 	{
 		GCon->Log("Can't use keys or values with a \"");
 		return;
 	}
 
 	// this next line is kinda trippy
-	v = Info_ValueForKey(s, key);
-	if (*v)
+	VStr v = Info_ValueForKey(s, key);
+	if (v)
 	{
 		//	Key exists, make sure we have enough room for new value, if we
 		// don't, don't change it!
-		if (strlen(value) - strlen(v) + strlen(s) > MAX_INFO_STRING)
+		if (value.Length() - v.Length() + s.Length() > MAX_INFO_STRING)
 		{
 			GCon->Log("Info string length exceeded");
 			return;
@@ -211,33 +206,17 @@ void Info_SetValueForKey(char *s, const char *key, const char *value)
 	}
 
 	Info_RemoveKey(s, key);
-	if (!value || !strlen(value))
+	if (!value)
 		return;
 
-	sprintf(newi, "\\%s\\%s", key, value);
+	VStr newi = VStr("\\") + key + "\\" +  value;
 
-	if (strlen(newi) + strlen(s) > MAX_INFO_STRING)
+	if (newi.Length() + s.Length() > MAX_INFO_STRING)
 	{
 		GCon->Log("Info string length exceeded");
 		return;
 	}
 
-	strcat(s, newi);
+	s = s + newi;
+	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

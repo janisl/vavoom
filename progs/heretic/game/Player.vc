@@ -273,7 +273,7 @@ void DisconnectClient()
 			ViewEnts[i] = none;
 		}
 	}
-	bprint("%s left the game\n", ARR2STR(PlayerName));
+	bprint("%s left the game\n", PlayerName);
 	MO.PlayFullVolumeSound('misc/chat', CHAN_AUTO);
 }
 

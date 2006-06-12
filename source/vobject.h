@@ -255,18 +255,13 @@ public:
 	DECLARE_FUNCTION(VectorRotateAroundZ)
 
 	//	String functions
-	DECLARE_FUNCTION(ptrtos)
-	DECLARE_FUNCTION(strgetchar)
-	DECLARE_FUNCTION(strsetchar)
 	DECLARE_FUNCTION(strlen)
 	DECLARE_FUNCTION(strcmp)
 	DECLARE_FUNCTION(stricmp)
-	DECLARE_FUNCTION(strcpy)
-	DECLARE_FUNCTION(strclr)
 	DECLARE_FUNCTION(strcat)
 	DECLARE_FUNCTION(strlwr)
 	DECLARE_FUNCTION(strupr)
-	DECLARE_FUNCTION(sprint)
+	DECLARE_FUNCTION(substr)
 	DECLARE_FUNCTION(va)
 	DECLARE_FUNCTION(atoi)
 	DECLARE_FUNCTION(atof)
@@ -353,7 +348,6 @@ public:
 	DECLARE_FUNCTION(T_TextWidth)
 	DECLARE_FUNCTION(T_TextHeight)
 	DECLARE_FUNCTION(T_DrawText)
-	DECLARE_FUNCTION(T_DrawNText)
 	DECLARE_FUNCTION(T_DrawTextW)
 	DECLARE_FUNCTION(T_DrawCursor)
 
@@ -527,6 +521,7 @@ public:
 #define P_PASS_FLOAT(v)		PR_Pushf(v)
 #define P_PASS_BOOL(v)		PR_Push(v)
 #define P_PASS_NAME(v)		PR_PushName(v)
+#define P_PASS_STR(v)		PR_PushStr(v)
 #define P_PASS_VEC(v)		PR_Pushv(v)
 #define P_PASS_AVEC(v)		PR_Pushv(*(TVec*)&(v))
 #define P_PASS_REF(v)		PR_PushPtr(v)
@@ -541,6 +536,7 @@ public:
 #define EV_RET_FLOAT(v)		return TProgs::ExecuteFunction(GetVFunction(v)).f
 #define EV_RET_BOOL(v)		return !!TProgs::ExecuteFunction(GetVFunction(v)).i
 #define EV_RET_NAME(v)		vint32 ret = TProgs::ExecuteFunction(GetVFunction(v)).i; return *(VName*)&ret
+#define EV_RET_STR(v)		VStack Ret = TProgs::ExecuteFunction(GetVFunction(v)); PR_PushPtr(Ret.p); return PR_PopStr()
 #define EV_RET_VEC(v)		Sys_Error("Not implemented")//TProgs::ExecuteFunction(GetVFunction(v))
 #define EV_RET_AVEC(v)		Sys_Error("Not implemented")//TProgs::ExecuteFunction(GetVFunction(v))
 #define EV_RET_REF(t, v)	return (t*)TProgs::ExecuteFunction(GetVFunction(v)).p
@@ -553,6 +549,7 @@ public:
 #define P_GET_FLOAT(v)		float v = PR_Popf()
 #define P_GET_BOOL(v)		bool v = !!PR_Pop()
 #define P_GET_NAME(v)		VName v = PR_PopName()
+#define P_GET_STR(v)		VStr v = PR_PopStr()
 #define P_GET_VEC(v)		TVec v = PR_Popv()
 #define P_GET_AVEC(v)		TAVec v; v.roll = PR_Popf(); v.yaw = PR_Popf(); v.pitch = PR_Popf()
 #define P_GET_REF(c, v)		c* v = (c*)PR_PopPtr()
@@ -566,6 +563,7 @@ public:
 #define RET_FLOAT(v)		PR_Pushf(v)
 #define RET_BOOL(v)			PR_Push(v)
 #define RET_NAME(v)			PR_PushName(v)
+#define RET_STR(v)			PR_PushStr(v)
 #define RET_VEC(v)			PR_Pushv(v)
 #define RET_AVEC(v)			PR_Pushv(*(TVec*)&(v))
 #define RET_REF(v)			PR_PushPtr(v)

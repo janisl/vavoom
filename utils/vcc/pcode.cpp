@@ -464,6 +464,10 @@ void EndCode(VMethod* Func)
 #endif
 	FInstruction& Dummy = Func->Instructions.Alloc();
 	Dummy.Opcode = OPC_Done;
+	if ((*Func->Name)[0] == 'S' && (*Func->Name)[1] == 't' && (*Func->Name)[2] == 'r')
+	{
+		DumpAsmFunction(Func);
+	}
 }
 
 //==========================================================================
@@ -1065,7 +1069,7 @@ void DumpAsmFunction(VMethod* Func)
 		dprintf("Builtin function.\n");
 		return;
 	}
-	for (int s = 0; s < Func->Instructions.Num();)
+	for (int s = 0; s < Func->Instructions.Num(); s++)
 	{
 		//	Opcode
 		int st = Func->Instructions[s].Opcode;

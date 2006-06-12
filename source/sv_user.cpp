@@ -123,10 +123,10 @@ void SV_ReadFromUserInfo()
 	guard(SV_ReadFromUserInfo);
 	if (!sv_loading)
 	{
-		sv_player->BaseClass = atoi(Info_ValueForKey(sv_player->UserInfo, "class"));
+		sv_player->BaseClass = atoi(*Info_ValueForKey(sv_player->UserInfo, "class"));
 	}
-	strcpy(sv_player->PlayerName, Info_ValueForKey(sv_player->UserInfo, "name"));
-	sv_player->Color = atoi(Info_ValueForKey(sv_player->UserInfo, "color"));
+	sv_player->PlayerName = Info_ValueForKey(sv_player->UserInfo, "name");
+	sv_player->Color = atoi(*Info_ValueForKey(sv_player->UserInfo, "color"));
 	sv_player->eventUserinfoChanged();
 	unguard;
 }
@@ -137,12 +137,12 @@ void SV_ReadFromUserInfo()
 //
 //==========================================================================
 
-void SV_SetUserInfo(const char *info)
+void SV_SetUserInfo(const VStr& info)
 {
 	guard(SV_SetUserInfo);
 	if (!sv_loading)
 	{
-		strcpy(sv_player->UserInfo, info);
+		sv_player->UserInfo = info;
 		SV_ReadFromUserInfo();
 		sv_reliable << (byte)svc_userinfo
 					<< (byte)SV_GetPlayerNum(sv_player)

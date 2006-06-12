@@ -83,12 +83,12 @@ public:
 
 struct hostcache_t
 {
-	char		name[16];
-	char		map[16];
-	char		cname[32];
-	char		wadfiles[20][16];
-	int			users;
-	int			maxusers;
+	VStr		Name;
+	VStr		Map;
+	VStr		CName;
+	VStr		WadFiles[20];
+	vint32		Users;
+	vint32		MaxUsers;
 };
 
 //	Structure returned to progs.
@@ -98,10 +98,10 @@ struct slist_t
 	{
 		SF_InProgress	= 0x01,
 	};
-	vuint32		Flags;
-	int			count;
-	hostcache_t	cache[HOSTCACHESIZE];
-	char		return_reason[32];
+	vuint32			Flags;
+	int				Count;
+	hostcache_t*	Cache;
+	VStr			ReturnReason;
 };
 
 struct VNetPollProcedure

@@ -87,15 +87,15 @@ class VBasePlayer : public VObject
 	};
 	vuint32			PlayerFlags;
 
-	VSocket		*NetCon;
+	VSocket*		NetCon;
 	VMessage		Message;
 	byte			MsgBuf[MAX_MSGLEN];
 	int				MobjUpdateStart;
 	float			LastMessage;
 
-	char			UserInfo[MAX_INFO_STRING];
+	VStr			UserInfo;
 
-	char			PlayerName[MAXNAME];
+	VStr			PlayerName;
 	int				BaseClass;
 	int				PClass;			// player class type
 	int				Color;

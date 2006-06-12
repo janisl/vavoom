@@ -29,10 +29,10 @@ void ActivateSlot()
 {
 	// we are going to be intercepting all chars
 	bEnteringText = true;
-    strsetchar(ARR2STR(EnterText), 0, 0);
+    EnterText = "";
 	if (Status)
 	{
-		strcpy(ARR2STR(EnterText), ARR2STR(Text));
+		EnterText = Text;
 	}
 	LocalSound('menu/choose');
 }
@@ -40,17 +40,3 @@ void ActivateSlot()
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2005/11/18 23:36:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.2  2003/03/08 12:13:51  dj_jl
-//  Menu code cleanup.
-//
-//  Revision 1.1  2002/10/26 16:32:22  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

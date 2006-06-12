@@ -82,18 +82,10 @@ float mtime[2];
 float time;
 float oldtime;
 
-int serverinfo[MAX_INFO_STRING / 4];
+string serverinfo;
 
 int intermission;
 
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.1  2006/02/20 22:57:16  dj_jl
-//  Changed client state structure to class.
-//
-//**************************************************************************

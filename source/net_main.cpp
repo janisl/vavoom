@@ -496,11 +496,11 @@ void VNetwork::PrintSlist()
 
 	for (n = SlistLastShown; n < HostCacheCount; n++)
 	{
-		if (HostCache[n].maxusers)
-			GCon->Logf("%-15s %-15s %2d/%2d", HostCache[n].name, 
-				HostCache[n].map, HostCache[n].users, HostCache[n].maxusers);
+		if (HostCache[n].MaxUsers)
+			GCon->Logf("%-15s %-15s %2d/%2d", *HostCache[n].Name, 
+				*HostCache[n].Map, HostCache[n].Users, HostCache[n].MaxUsers);
 		else
-			GCon->Logf("%-15s %-15s", HostCache[n].name, HostCache[n].map);
+			GCon->Logf("%-15s %-15s", *HostCache[n].Name, *HostCache[n].Map);
 	}
 	SlistLastShown = n;
 }
@@ -548,10 +548,10 @@ slist_t* VNetwork::GetSlist()
 	{
 		if (HostCacheCount > 1)
 		{
-			hostcache_t temp;
+			vuint8 temp[sizeof(hostcache_t)];
 			for (int i = 0; i < HostCacheCount; i++)
 				for (int j = i + 1; j < HostCacheCount; j++)
-					if (strcmp(HostCache[j].name, HostCache[i].name) < 0)
+					if (HostCache[j].Name.Cmp(HostCache[i].Name) < 0)
 					{
 						memcpy(&temp, &HostCache[j], sizeof(hostcache_t));
 						memcpy(&HostCache[j], &HostCache[i], sizeof(hostcache_t));
@@ -566,9 +566,9 @@ slist_t* VNetwork::GetSlist()
 		slist.Flags |= slist_t::SF_InProgress;
 	else
 		slist.Flags &= ~slist_t::SF_InProgress;
-	slist.count = HostCacheCount;
-	memcpy(slist.cache, HostCache, sizeof(HostCache));
-	strcpy(slist.return_reason, ReturnReason);
+	slist.Count = HostCacheCount;
+	slist.Cache = HostCache;
+	slist.ReturnReason = ReturnReason;
 	return &slist;
 	unguard;
 }
@@ -582,19 +582,16 @@ slist_t* VNetwork::GetSlist()
 VSocket* VNetwork::Connect(const char* InHost)
 {
 	guard(VNetwork::Connect);
-	const char* host = InHost;
+	VStr		host = InHost;
 	VSocket*	ret;
 	int			numdrivers = NumDrivers;
 	int			n;
 
 	SetNetTime();
 
-	if (host && *host == 0)
-		host = NULL;
-
 	if (host)
 	{
-		if (stricmp(host, "local") == 0)
+		if (host == "local")
 		{
 			numdrivers = 1;
 			goto JustDoIt;
@@ -604,9 +601,9 @@ VSocket* VNetwork::Connect(const char* InHost)
 		{
 			for (n = 0; n < HostCacheCount; n++)
 			{
-				if (stricmp(host, HostCache[n].name) == 0)
+				if (HostCache[n].Name.ICmp(host) == 0)
 				{
-					host = HostCache[n].cname;
+					host = HostCache[n].CName;
 					break;
 				}
 			}
@@ -621,13 +618,13 @@ VSocket* VNetwork::Connect(const char* InHost)
 	while (SlistInProgress)
 		Poll();
 
-	if (host == NULL)
+	if (!host)
 	{
 		if (HostCacheCount != 1)
 			return NULL;
-		host = HostCache[0].cname;
+		host = HostCache[0].CName;
 		GCon->Log("Connecting to...");
-		GCon->Logf("%s @ %s", HostCache[0].name, host);
+		GCon->Logf("%s @ %s", *HostCache[0].Name, *host);
 		GCon->Log("");
 	}
 
@@ -635,9 +632,9 @@ VSocket* VNetwork::Connect(const char* InHost)
 	{
 		for (n = 0; n < HostCacheCount; n++)
 		{
-			if (stricmp(host, HostCache[n].name) == 0)
+			if (HostCache[n].Name.ICmp(host) == 0)
 			{
-				host = HostCache[n].cname;
+				host = HostCache[n].CName;
 				break;
 			}
 		}
@@ -648,7 +645,7 @@ JustDoIt:
 	{
 		if (Drivers[i]->initialised == false)
 			continue;
-		ret = Drivers[i]->Connect(host);
+		ret = Drivers[i]->Connect(*host);
 		if (ret)
 		{
 			return ret;

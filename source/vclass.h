@@ -133,6 +133,7 @@ public:
 
 	VField*		Next;
 	VField*		NextReference;	//	Linked list of reference fields.
+	VField*		DestructorLink;
 	vint32		Ofs;
 	FType		Type;
 	VMethod*	Func;
@@ -144,6 +145,7 @@ public:
 
 	static void SerialiseFieldValue(VStream&, byte*, const VField::FType&);
 	static void CleanField(byte*, const VField::FType&);
+	static void DestructField(byte*, const VField::FType&);
 
 	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -260,6 +262,7 @@ public:
 	vint32			Size;
 	VField*			Fields;
 	VField*			ReferenceFields;
+	VField*			DestructorFields;
 
 	VStruct(VName);
 
@@ -268,8 +271,10 @@ public:
 
 	void CalcFieldOffsets();
 	void InitReferences();
+	void InitDestructorFields();
 	void SerialiseObject(VStream&, byte*);
 	void CleanObject(byte*);
+	void DestructObject(byte*);
 
 	friend inline VStream& operator<<(VStream& Strm, VStruct*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
@@ -315,6 +320,7 @@ public:
 
 	VField*			Fields;
 	VField*			ReferenceFields;
+	VField*			DestructorFields;
 	VState*			States;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
@@ -372,9 +378,11 @@ public:
 	VState* FindStateChecked(VName InName);
 	void CalcFieldOffsets();
 	void InitReferences();
+	void InitDestructorFields();
 	void CreateVTable();
 	void SerialiseObject(VStream&, VObject*);
 	void CleanObject(VObject*);
+	void DestructObject(VObject*);
 
 	void Serialise(VStream&);
 	void PostLoad();

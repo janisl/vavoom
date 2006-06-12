@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreenPlayerSetup:MenuScreen;
+class MenuScreenPlayerSetup : MenuScreen;
 
 MenuChoice_PlayerName PlayerName;
 MenuChoice_Color Color;
@@ -31,7 +31,7 @@ MenuSpriteAnim Anim;
 MenuChoice_Skin Skin;
 MenuModel Mdl;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	model_t *model;
 
@@ -66,7 +66,7 @@ void CreateChoices(void)
 		Mdl.Origin = vector(-64.0, 32.0, -32.0);
 		Mdl.Angle = 345.0;
 		Mdl.Model = model;
-		Mdl.Skin = ARR2STR(Skin.SkinBuf);
+		Mdl.Skin = Skin.SkinName;
 		Skin.SetSkin(Skin.Value);
 	}
 }
@@ -78,14 +78,3 @@ defaultproperties
 	SelectorType = MenuSelector_SmallLeft;
 	Title = "PLAYER SETUP";
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

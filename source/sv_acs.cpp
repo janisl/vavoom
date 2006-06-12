@@ -3122,7 +3122,7 @@ int VACS::RunScript(float DeltaTime)
 				}
 				if (player && player->PlayerFlags & VBasePlayer::PF_Spawned)
 				{
-					strcat(PrintBuffer, player->PlayerName);
+					strcat(PrintBuffer, *player->PlayerName);
 				}
 				else if (player && !(player->PlayerFlags & VBasePlayer::PF_Spawned))
 				{

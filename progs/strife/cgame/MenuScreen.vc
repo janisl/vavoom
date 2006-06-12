@@ -58,11 +58,11 @@ void ChildAdded(Window Child)
 	::ChildAdded(Child);
 }
 
-void CreateTitle(void)
+void CreateTitle()
 {
 	MenuTitleText newTitle;
 
-	if (Title && Title != "")
+	if (Title)
 	{
 		newTitle = MenuTitleText(NewChild(MenuTitleText));
 		newTitle.SetPos(TitleX, TitleY);
@@ -70,7 +70,7 @@ void CreateTitle(void)
 	}
 }
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	MenuChoice newChoice;
 	int currentY;
@@ -88,7 +88,7 @@ void CreateChoices(void)
 	}
 }
 
-void CreateSelector(void)
+void CreateSelector()
 {
 	if (SelectorType)
 	{
@@ -96,7 +96,7 @@ void CreateSelector(void)
 	}
 }
 
-void CursorMoved(void)
+void CursorMoved()
 {
 	if (CursorPrev == CursorPos)
 		return;
@@ -119,7 +119,7 @@ void CursorMoved(void)
 	}
 }
 
-void SetDefaultChoice(void)
+void SetDefaultChoice()
 {
 	int i;
 
@@ -140,7 +140,7 @@ void SetDefaultChoice(void)
 	}
 }
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	CreateTitle();
@@ -149,7 +149,7 @@ void InitWindow(void)
 	SetDefaultChoice();
 }
 
-void CyclePrevChoice(void)
+void CyclePrevChoice()
 {
 	CursorPrev = CursorPos;
 	do
@@ -163,7 +163,7 @@ void CyclePrevChoice(void)
 	CursorMoved();
 }
 
-void CycleNextChoice(void)
+void CycleNextChoice()
 {
 	CursorPrev = CursorPos;
 	do
@@ -224,26 +224,3 @@ defaultproperties
 	TitleX = 160;
 	TitleY = 24;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.6  2006/04/06 21:50:23  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.5  2006/02/28 22:47:24  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.4  2006/02/09 22:33:11  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.3  2005/12/25 19:19:16  dj_jl
-//  Moved title screen into a class.
-//
-//  Revision 1.2  2005/11/19 13:43:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.1  2002/11/02 08:20:52  dj_jl
-//  New style classes.
-//
-//**************************************************************************

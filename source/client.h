@@ -95,7 +95,7 @@ struct client_static_t
 	cactive_t		state;
 
 	// personalization data sent to server
-	char			userinfo[MAX_INFO_STRING];
+	VStr			userinfo;
 
 	// demo recording info must be here, because record is started before
 	// entering a map (and clearing client_state_t)
@@ -176,7 +176,7 @@ class VClientState : public VObject
 	float			time;
 	float			oldtime;
 
-	char			serverinfo[MAX_INFO_STRING];
+	VStr			serverinfo;
 
 	int				intermission;
 };

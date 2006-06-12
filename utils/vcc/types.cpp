@@ -490,6 +490,9 @@ void TType::CheckSizeIs4() const
 		break;
 
 	case ev_string:
+		AddStatement(OPC_StrToBool);
+		break;
+
 	case ev_pointer:
 	case ev_reference:
 	case ev_classid:
@@ -1277,6 +1280,8 @@ void ParseClass()
 		ParseError("Parent class expected");
 	}
 
+	Class->Parsed = true;
+
 	int ClassModifiers = TModifiers::Parse();
 	ClassModifiers = TModifiers::Check(ClassModifiers, VClass::AllowedModifiers);
 	int ClassAttr = TModifiers::ClassAttr(ClassModifiers);
@@ -1476,5 +1481,42 @@ void ParseClass()
 	}
 
 	ParseDefaultProperties(Class);
-	Class->Parsed = true;
+}
+
+//==========================================================================
+//
+//	VField::NeedsDestructor
+//
+//==========================================================================
+
+bool VField::NeedsDestructor() const
+{
+	if (type.type == ev_string)
+		return true;
+	if (type.type == ev_array)
+	{
+		if (type.ArrayInnerType == ev_string)
+			return true;
+		if (type.ArrayInnerType == ev_struct)
+			return type.Struct->NeedsDestructor();
+	}
+	if (type.type == ev_struct)
+		return type.Struct->NeedsDestructor();
+	return false;
+}
+
+//==========================================================================
+//
+//	VStruct::NeedsDestructor
+//
+//==========================================================================
+
+bool VStruct::NeedsDestructor() const
+{
+	for (VField* F = Fields; F; F = F->Next)
+		if (F->NeedsDestructor())
+			return true;
+	if (ParentStruct)
+		return ParentStruct->NeedsDestructor();
+	return false;
 }

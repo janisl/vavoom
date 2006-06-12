@@ -61,7 +61,7 @@ int pic_armor1;
 int pic_armor2;
 
 int LoadedLog;
-int LogText[1024 / 4];
+string LogText;
 
 int AmmoPosY[StrifeDefs::NUMAMMO];
 string KeyNames[StrifeDefs::NUMKEYS];
@@ -74,8 +74,6 @@ string KeyNames[StrifeDefs::NUMKEYS];
 
 void StartMap()
 {
-	int namebuf[3];
-	string Name = ARR2STR(namebuf);
 	int i;
 
 	pic_invback = R_RegisterPic('invback');
@@ -87,12 +85,9 @@ void StartMap()
 
 	for (i = 0; i < 10; i++)
 	{
-		sprint(Name, "sttnum%d", i);
-		pic_tallnum[i] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "invfony%d", i);
-		pic_yellownum[i] = R_RegisterPic(StrToName(Name));
-		sprint(Name, "invfong%d", i);
-		pic_graynum[i] = R_RegisterPic(StrToName(Name));
+		pic_tallnum[i] = R_RegisterPic(StrToName(va("sttnum%d", i)));
+		pic_yellownum[i] = R_RegisterPic(StrToName(va("invfony%d", i)));
+		pic_graynum[i] = R_RegisterPic(StrToName(va("invfong%d", i)));
 	}
 	pic_yellownum[10] = R_RegisterPic('invfony%');
 	pic_graynum[10] = R_RegisterPic('invfong%');
@@ -180,7 +175,7 @@ void StartMap()
 	pic_pause = R_RegisterPic('m_pause');
 
 	LoadedLog = 0;
-	strcpy(ARR2STR(LogText), "Find help");
+	LogText = "Find help";
 }
 
 //==========================================================================
@@ -413,12 +408,12 @@ void SB_DrawMainBar()
 		R_DrawPic(0, 56, pic_invpop2);
 		if (LoadedLog != cl.Objectives)
 		{
-			LoadTextLump(StrToName(va("log%d", cl.Objectives)), &LogText[0], 1024);
+			LogText = LoadTextLump(StrToName(va("log%d", cl.Objectives)));
 			LoadedLog = cl.Objectives;
 		}
 		T_SetFont(font_yellow);
 		T_SetAlign(hleft, vtop);
-		T_DrawTextW(20, 60, ARR2STR(LogText), 280);
+		T_DrawTextW(20, 60, LogText, 280);
 	}
 }
 
@@ -553,12 +548,12 @@ void SB_DrawFullscreenStats(void)
 		R_DrawPic(0, 56, pic_invpop2);
 		if (LoadedLog != cl.Objectives)
 		{
-			LoadTextLump(StrToName(va("log%d", cl.Objectives)), &LogText[0], 1024);
+			LogText = LoadTextLump(StrToName(va("log%d", cl.Objectives)));
 			LoadedLog = cl.Objectives;
 		}
 		T_SetFont(font_yellow);
 		T_SetAlign(hleft, vtop);
-		T_DrawTextW(20, 60, ARR2STR(LogText), 280);
+		T_DrawTextW(20, 60, LogText, 280);
 	}
 }
 

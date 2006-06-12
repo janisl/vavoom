@@ -59,19 +59,16 @@ im_t			im;
 //
 //==========================================================================
 
-void LoadTextLump(VName name, char *buf, int bufsize)
+VStr LoadTextLump(VName name)
 {
-	int		msgSize;
-	int		msgLump;
-
-	msgLump = W_GetNumForName(name);
-	msgSize = W_LumpLength(msgLump);
-	if (msgSize >= bufsize)
-	{
-		Sys_Error("Message lump too long (%s)", *name);
-	}
+	int msgLump = W_GetNumForName(name);
+	int msgSize = W_LumpLength(msgLump);
+	char* buf = new char[msgSize + 1];
 	W_ReadLump(msgLump, buf);
 	buf[msgSize] = 0; // Append terminator
+	VStr Ret = buf;
+	delete[] buf;
+	return Ret;
 }
 
 //==========================================================================

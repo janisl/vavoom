@@ -32,7 +32,7 @@ int Value;
 int MaxValue;
 string EnumNames[32];
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
 	return 0;
 }
@@ -42,14 +42,14 @@ bool SetNewValue(int newValue)
 	return true;
 }
 
-void InitWindow(void)
+void InitWindow()
 {
 	int i;
 
 	MaxValue = 0;
 	for (i = 0; i < 32; i++)
 	{
-		if (EnumNames[i] && EnumNames[i] != "")
+		if (EnumNames[i])
 		{
 			MaxValue++;
 		}
@@ -128,14 +128,3 @@ defaultproperties
 {
 	Height = 10;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2005/11/18 23:36:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.1  2002/10/26 16:32:22  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

@@ -46,9 +46,9 @@ native readonly private int __MsgBuf[MAX_MSGLEN / 4];
 native readonly private int __MobjUpdateStart;
 native readonly private float __LastMessage;
 
-int UserInfo[MAX_INFO_STRING / 4];
+string UserInfo;
 
-int PlayerName[MAXNAME / 4];
+string PlayerName;
 int BaseClass;
 int PClass;	// player class type
 int Color;

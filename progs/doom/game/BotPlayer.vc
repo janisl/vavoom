@@ -1371,11 +1371,11 @@ void OnBeginPlay()
 	botinfo_t *binfo;
 	int i;
 
-	if (strcmp(ARR2STR(player.PlayerName), ""))
+	if (strcmp(player.PlayerName, ""))
 	{
 		for (i = 0; i < NUMTOTALBOTS; i++)
 		{
-			if (!stricmp(MainGameInfo(player.Level.Game).botinfo[i].Name, ARR2STR(player.PlayerName)))
+			if (!stricmp(MainGameInfo(player.Level.Game).botinfo[i].Name, player.PlayerName))
 			{
 				bottype = i;
 				break;
@@ -1406,7 +1406,7 @@ void OnBeginPlay()
 	info.evade = SkillLower(binfo->evade, 4 - botskill);
 	info.anticip = SkillLower(binfo->anticip, 4 - botskill);
 	info.reaction = SkillLower(binfo->reaction, 4 - botskill);
-	strcpy(ARR2STR(player.UserInfo), binfo->userinfo);
+	player.UserInfo = binfo->userinfo;
 
 	// Setup combat distance tables
 	if (player.Level.Game.deathmatch)

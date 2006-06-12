@@ -2793,7 +2793,7 @@ void SV_CheckForNewClients()
 //
 //==========================================================================
 
-void SV_SetUserInfo(const char *info);
+void SV_SetUserInfo(const VStr& info);
 
 void SV_ConnectBot(const char *name)
 {
@@ -2817,7 +2817,7 @@ void SV_ConnectBot(const char *name)
 
 	GPlayersBase[i]->NetCon = sock;
 	GPlayersBase[i]->PlayerFlags |= VBasePlayer::PF_IsBot;
-	strcpy(GPlayersBase[i]->PlayerName, name);
+	GPlayersBase[i]->PlayerName = name;
 	SV_ConnectClient(GPlayersBase[i]);
 	svs.num_connected++;
 

@@ -1192,22 +1192,40 @@ void VLevel::LoadRogueConScript(VName LumpName, FRogueConSpeech*& SpeechList,
 	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
 	for (int i = 0; i < NumSpeeches; i++)
 	{
+		char Tmp[324];
+
 		FRogueConSpeech& S = SpeechList[i];
-		*Strm << S.SpeakerID << S.Unknown1 << S.Unknown2 << S.Unknown3
-			<< S.Unknown4 << S.Unknown5;
-		Strm->Serialise(S.Name, 16);
-		Strm->Serialise(S.Voice, 8);
-		Strm->Serialise(S.BackPic, 8);
-		Strm->Serialise(S.Text, 320);
+		*Strm << S.SpeakerID << S.DropItem << S.CheckItem1 << S.CheckItem2
+			<< S.CheckItem3 << S.JumpToConv;
+		Strm->Serialise(Tmp, 16);
+		Tmp[16] = 0;
+		S.Name = Tmp;
+		Strm->Serialise(Tmp, 8);
+		Tmp[8] = 0;
+		S.Voice = VName(Tmp, VName::AddLower8);
+		if (S.Voice != NAME_None)
+			S.Voice = va("svox/%s", *S.Voice);
+		Strm->Serialise(Tmp, 8);
+		Tmp[8] = 0;
+		S.BackPic = VName(Tmp, VName::AddLower8);
+		Strm->Serialise(Tmp, 320);
+		Tmp[320] = 0;
+		S.Text = Tmp;
 		for (int j = 0; j < 5; j++)
 		{
 			FRogueConChoice& C = S.Choices[j];
-			*Strm << C.Unknown1 << C.Unknown2 << C.Unknown3 << C.Unknown4
-				<< C.Unknown5 << C.Unknown6 << C.Unknown7;
-			Strm->Serialise(C.Text, 32);
-			Strm->Serialise(C.TextOK, 80);
+			*Strm << C.GiveItem << C.NeedItem1 << C.NeedItem2 << C.NeedItem3
+				<< C.NeedAmount1 << C.NeedAmount2 << C.NeedAmount3;
+			Strm->Serialise(Tmp, 32);
+			Tmp[32] = 0;
+			C.Text = Tmp;
+			Strm->Serialise(Tmp, 80);
+			Tmp[80] = 0;
+			C.TextOK = Tmp;
 			*Strm << C.Next << C.Objectives;
-			Strm->Serialise(C.TextNo, 80);
+			Strm->Serialise(Tmp, 80);
+			Tmp[80] = 0;
+			C.TextNo = Tmp;
 		}
 	}
 	delete Strm;
