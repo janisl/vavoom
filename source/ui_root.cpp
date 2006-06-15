@@ -57,7 +57,7 @@ VRootWindow *GRoot;
 //
 //==========================================================================
 
-VRootWindow::VRootWindow(void)
+VRootWindow::VRootWindow()
 {
 	WindowType = WIN_Root;
 }
@@ -68,10 +68,10 @@ VRootWindow::VRootWindow(void)
 //
 //==========================================================================
 
-void VRootWindow::Init(void)
+void VRootWindow::Init()
 {
 	Super::Init(NULL);
-	SetSize(320, 200);
+	SetSize(640, 480);
 }
 
 //==========================================================================
@@ -80,7 +80,7 @@ void VRootWindow::Init(void)
 //
 //==========================================================================
 
-void VRootWindow::PaintWindows(void)
+void VRootWindow::PaintWindows()
 {
 	DrawTree();
 }
@@ -110,29 +110,3 @@ void VRootWindow::StaticInit()
 	GClGame->GRoot = GRoot;
 	unguard;
 }
-
-//==========================================================================
-//
-//
-//
-//==========================================================================
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//
-//	Revision 1.3  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//	
-//	Revision 1.2  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.1  2002/05/29 16:51:50  dj_jl
-//	Started a work on native Window classes.
-//	
-//	Revision 1.4  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//**************************************************************************

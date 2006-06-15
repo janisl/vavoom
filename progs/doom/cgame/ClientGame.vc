@@ -501,7 +501,7 @@ void PopMenu()
 //
 //==========================================================================
 
-void ForceMenuOff(void)
+void ForceMenuOff()
 {
 	int i;
 
@@ -533,8 +533,8 @@ void MessageBoxStartMessage(string text, int type, bool input)
 		msgBoxW = 304;
 	if (msgBoxH > 184)
 		msgBoxH = 184;
-	msgBoxX = (320 - msgBoxW) / 2;
-	msgBoxY = (200 - msgBoxH) / 2;
+	msgBoxX = (640 - msgBoxW) / 2;
+	msgBoxY = (480 - msgBoxH) / 2;
 
 	CmdBuf_AddText("HideConsole\n");
 }
@@ -554,7 +554,7 @@ void MessageBoxDrawer()
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcenter, vcenter);
-		T_DrawText(160, 100, messageString);
+		T_DrawText(320, 240, messageString);
 	}
 
 	if (WaitForQuit && !IsLocalSoundPlaying(QuitSound))
@@ -805,9 +805,9 @@ void DrawBorder(int x, int y, int w, int h)
 void DrawViewBorder(int x, int y, int w, int h)
 {
 #ifdef DOOM2
-	R_FillRectWithFlat(0, 0, 320, 200 - 32, 'grnrock');
+	R_FillRectWithFlat(0, 0, 640, 480/* - 32*/, 'grnrock');
 #else
-	R_FillRectWithFlat(0, 0, 320, 200 - 32, 'floor7_2');
+	R_FillRectWithFlat(0, 0, 640, 480/* - 32*/, 'floor7_2');
 #endif
 	DrawBorder(x, y, w, h);
 }

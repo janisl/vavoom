@@ -157,8 +157,9 @@ void DrawWindow(GC gc)
 //
 //===========================================================================
 
-void F_DrawPic(void)
+void F_DrawPic()
 {
+	SetVirtualScreen(320, 200);
 	R_DrawPic(0, 0, fpage1);
 	if (FinaleStage == 4 || FinaleStage == 5)
 	{
@@ -172,6 +173,7 @@ void F_DrawPic(void)
 			R_DrawPic(60, 0, fpage2);
 		}
 	}
+	SetVirtualScreen(640, 480);
 }
 
 //==========================================================================
@@ -192,7 +194,7 @@ void F_GetFinaleText(name msgLumpName)
 //
 //===========================================================================
 
-void F_TextWrite(void)
+void F_TextWrite()
 {
 	int count;
 
@@ -200,10 +202,12 @@ void F_TextWrite(void)
 	count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
 	if (count < 0)
 		count = 0;
+	if (count > strlen(FinaleText))
+		count = strlen(FinaleText);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(20, (FinaleStage == 5) ? 135 : 5, substr(FinaleText, 0, count));
+	T_DrawText(180, (FinaleStage == 5) ? 275 : 145, substr(FinaleText, 0, count));
 }
 
 //==========================================================================
@@ -212,7 +216,7 @@ void F_TextWrite(void)
 //
 //==========================================================================
 
-void F_FadeOut(void)
+void F_FadeOut()
 {
 	int fade = ftoi(FinaleTime * 32.0 / FinaleEndTime);
 
@@ -220,7 +224,7 @@ void F_FadeOut(void)
 		fade = 0;
 	if (fade > 31)
 		fade = 31;
-	R_ShadeRect(0, 0, 320, 200, fade);
+	R_ShadeRect(0, 0, 640, 480, fade);
 }
 
 //==========================================================================
@@ -229,7 +233,7 @@ void F_FadeOut(void)
 //
 //==========================================================================
 
-void F_FadeIn(void)
+void F_FadeIn()
 {
 	int fade = 31 - ftoi(FinaleTime * 32.0 / FinaleEndTime);
 
@@ -237,7 +241,7 @@ void F_FadeIn(void)
 		fade = 0;
 	if (fade > 31)
 		fade = 31;
-	R_ShadeRect(0, 0, 320, 200, fade);
+	R_ShadeRect(0, 0, 640, 480, fade);
 }
 
 //==========================================================================
@@ -254,6 +258,6 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 }

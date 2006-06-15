@@ -216,11 +216,13 @@ bool Key(int key)
 
 void DrawWindow(GC gc)
 {
-	R_ShadeRect(0, 0, 320, 200, GetCvar('menu_darkening'));
+	R_ShadeRect(0, 0, 640, 480, GetCvar('menu_darkening'));
 }
 
 defaultproperties
 {
+	X = 160;
+	Y = 140;
 	TitleX = 160;
 	TitleY = 24;
 }

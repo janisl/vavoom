@@ -148,7 +148,7 @@ void DrawWindow(GC gc)
 		F_DemonScroll();
 		break;
 	default:
-		R_DrawPic(0, 0, fpage1);
+		gc.DrawFullScreenPic(fpage1);
 		break;
 	}
 }
@@ -203,17 +203,19 @@ void F_TextWrite()
 	int count;
 
 	// erase the entire screen to a tiled background
-	R_FillRectWithFlat(0, 0, 320, 200, FinaleFlat);
+	R_FillRectWithFlat(0, 0, 640, 480, FinaleFlat);
 
 	// draw some of the text onto the screen
 	count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
 	if (count < 0)
 		count = 0;
+	if (count > strlen(FinaleText))
+		count = strlen(FinaleText);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	T_SetDist(-1, -1);
-	T_DrawText(20, 5, substr(FinaleText, 0, count));
+	T_DrawText(180, 145, substr(FinaleText, 0, count));
 	T_SetDist(-1, 1);
 }
 
@@ -225,6 +227,7 @@ void F_TextWrite()
 
 void F_DemonScroll()
 {
+	SetVirtualScreen(320, 200);
 	if (FinaleTime < 2.0)
 	{
 		R_DrawPic(0, 0, fpage1);
@@ -241,6 +244,7 @@ void F_DemonScroll()
 		//else, we'll just sit here and wait, for now
 		R_DrawPic(0, 0, fpage2);
 	}
+	SetVirtualScreen(640, 480);
 }
 
 //==========================================================================
@@ -257,20 +261,6 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.2  2006/02/28 22:45:25  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.1  2006/02/09 22:33:10  dj_jl
-//  Moved all client game code to classes.
-//
-//**************************************************************************

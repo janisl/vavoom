@@ -36,8 +36,8 @@
 
 void CalcFadetable16(byte *pal);
 
-void C_DrawNotify(void);
-void C_DrawCenterMessage(void);
+void C_DrawNotify();
+void C_DrawCenterMessage();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -55,8 +55,8 @@ int		ScreenBPP = 0;
 
 int		PixelBytes;
 
-int		VirtualWidth = 320;
-int		VirtualHeight = 200;
+int		VirtualWidth = 640;
+int		VirtualHeight = 480;
 
 float	fScaleX;
 float	fScaleY;
@@ -253,7 +253,7 @@ COMMAND(ScreenShot)
 //
 //==========================================================================
 
-static void DrawFPS(void)
+static void DrawFPS()
 {
 	guard(DrawFPS);
 	double		time;
@@ -272,7 +272,7 @@ static void DrawFPS(void)
 
 		T_SetFont(font_small);
 		T_SetAlign(hright, vtop);
-		T_DrawString(319, 0, va("%d fps", show_fps));
+		T_DrawString(VirtualWidth - 2, 0, va("%d fps", show_fps));
 	}
 	unguard;
 }
@@ -345,7 +345,7 @@ static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 //
 //==========================================================================
 
-static void CheckResolutionChange(void)
+static void CheckResolutionChange()
 {
 	guard(CheckResolutionChange);
 	bool		must_set_pal = false;
@@ -450,7 +450,7 @@ COMMAND(vid_restart)
 //
 //==========================================================================
 
-void SCR_Init(void)
+void SCR_Init()
 {
 }
 
@@ -460,7 +460,7 @@ void SCR_Init(void)
 //
 //==========================================================================
 
-void SCR_Update(void)
+void SCR_Update()
 {
 	guard(SCR_Update);
 	if (cls.state == ca_connected && cls.signon != SIGNONS)
@@ -525,7 +525,7 @@ void Draw_TeleportIcon()
 	if (W_CheckNumForName(NAME_teleicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("teleicon",
+		R_DrawPic(260, 68, GTextureManager.AddPatch(VName("teleicon",
 			VName::AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
@@ -544,7 +544,7 @@ void Draw_SaveIcon()
 	if (W_CheckNumForName(NAME_saveicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("saveicon",
+		R_DrawPic(260, 68, GTextureManager.AddPatch(VName("saveicon",
 			VName::AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
@@ -563,7 +563,7 @@ void Draw_LoadIcon()
 	if (W_CheckNumForName(NAME_loadicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(100, 68, GTextureManager.AddPatch(VName("loadicon",
+		R_DrawPic(260, 68, GTextureManager.AddPatch(VName("loadicon",
 			VName::AddLower8), TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
@@ -581,9 +581,9 @@ void SCR_SetVirtualScreen(int Width, int Height)
 	guard(SCR_SetVirtualScreen);
 	VirtualWidth = Width;
 	VirtualHeight = Height;
-    fScaleX = (float)ScreenWidth / (float)VirtualWidth;
-    fScaleY = (float)ScreenHeight / (float)VirtualHeight;
-    fScaleXI = (float)VirtualWidth / (float)ScreenWidth;
-    fScaleYI = (float)VirtualHeight / (float)ScreenHeight;
+	fScaleX = (float)ScreenWidth / (float)VirtualWidth;
+	fScaleY = (float)ScreenHeight / (float)VirtualHeight;
+	fScaleXI = (float)VirtualWidth / (float)ScreenWidth;
+	fScaleYI = (float)VirtualHeight / (float)ScreenHeight;
 	unguard;
 }

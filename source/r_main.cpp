@@ -307,9 +307,9 @@ static void R_ExecuteSetViewSize()
 void R_DrawViewBorder()
 {
 	guard(R_DrawViewBorder);
-	GClGame->eventDrawViewBorder(160 - screenblocks * 16,
-		(200 - sb_height - screenblocks * (200 - sb_height) / 10) / 2,
-		screenblocks * 32, screenblocks * (200 - sb_height) / 10);
+	GClGame->eventDrawViewBorder(320 - screenblocks * 32,
+		(480 - sb_height - screenblocks * (480 - sb_height) / 10) / 2,
+		screenblocks * 64, screenblocks * (480 - sb_height) / 10);
 	unguard;
 }
 

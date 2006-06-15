@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuSpriteAnim:MenuObject;
+class MenuSpriteAnim : MenuObject;
 
 int SprDef;
 int Speed;
@@ -31,7 +31,7 @@ int NumFrames;
 int Translation;
 float Time;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	bTickEnabled = true;
@@ -47,17 +47,10 @@ void DrawWindow(GC gc)
 {
 	int frame = ftoi(Time * itof(Speed)) % NumFrames;
 
-	R_DrawSpritePatch(X, Y, SprDef, frame, 0, Translation);
+	R_DrawSpritePatch(ftoi(gc.ClipRect.OriginX), ftoi(gc.ClipRect.OriginY),
+		SprDef, frame, 0, Translation);
 }
 
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

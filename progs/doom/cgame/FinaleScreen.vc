@@ -152,7 +152,7 @@ void DrawWindow(GC gc)
 	}
 	else
 	{
-		R_DrawPic(0, 0, fpage1);
+		gc.DrawFullScreenPic(fpage1);
 	}
 }
 
@@ -190,16 +190,18 @@ void F_TextWrite()
 	int count;
 
 	// erase the entire screen to a tiled background
-	R_FillRectWithFlat(0, 0, 320, 200, FinaleFlat);
+	R_FillRectWithFlat(0, 0, 640, 480, FinaleFlat);
 
 	// draw some of the text onto the screen
 	count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
 	if (count < 0)
 		count = 0;
+	if (count > strlen(FinaleText))
+		count = strlen(FinaleText);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(10, 10, substr(FinaleText, 0, count));
+	T_DrawText(170, 150, substr(FinaleText, 0, count));
 }
 
 //==========================================================================
@@ -237,6 +239,7 @@ void F_BunnyScroll()
 	int stage;
 
 	scrolled = ftoi((FinaleTime - 6.5) * 16.0);
+	SetVirtualScreen(320, 200);
 	if (scrolled <= 0)
 	{
 		R_DrawPic(0, 0, fpage1);
@@ -250,6 +253,7 @@ void F_BunnyScroll()
 		R_DrawPic(scrolled, 0, fpage1);
 		R_DrawPic(scrolled - 320, 0, fpage2);
 	}
+	SetVirtualScreen(640, 480);
 
 	if (FinaleTime < 32.0)
 	{
@@ -257,7 +261,7 @@ void F_BunnyScroll()
 	}
 	if (FinaleTime < 35.0)
 	{
-		R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[0]);
+		R_DrawPic((640 - 13 * 8) / 2, (480 - 8 * 8) / 2, fend[0]);
 		laststage = 0;
 		return;
 	}
@@ -272,7 +276,7 @@ void F_BunnyScroll()
 		LocalSound('weapons/pistol');
 		laststage = stage;
 	}
-	R_DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[stage]);
+	R_DrawPic((640 - 13 * 8) / 2, (480 - 8 * 8) / 2, fend[stage]);
 }
 
 //==========================================================================
@@ -642,10 +646,12 @@ bool F_CastResponder(event_t * ev)
 //
 //==========================================================================
 
-void F_CastDrawer(void)
+void F_CastDrawer()
 {
 	// erase the entire screen to a background
+	SetVirtualScreen(320, 200);
 	R_DrawPic(0, 0, fpage1);
+	SetVirtualScreen(640, 480);
 
 #if 0
 	T_SetFont(font_small);
@@ -675,6 +681,6 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 }

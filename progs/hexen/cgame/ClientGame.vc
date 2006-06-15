@@ -447,7 +447,7 @@ void PushMenuScreen(MenuScreen menu)
 //
 //==========================================================================
 
-void PopMenu(void)
+void PopMenu()
 {
 	menu_sp--;
 
@@ -475,7 +475,7 @@ void PopMenu(void)
 //
 //==========================================================================
 
-void ForceMenuOff(void)
+void ForceMenuOff()
 {
 	int i;
 
@@ -507,8 +507,8 @@ void MessageBoxStartMessage(string text, int type, bool input)
 		msgBoxW = 304;
 	if (msgBoxH > 184)
 		msgBoxH = 184;
-	msgBoxX = (320 - msgBoxW) / 2;
-	msgBoxY = (200 - msgBoxH) / 2;
+	msgBoxX = (640 - msgBoxW) / 2;
+	msgBoxY = (480 - msgBoxH) / 2;
 
 	CmdBuf_AddText("HideConsole\n");
 }
@@ -528,7 +528,7 @@ void MessageBoxDrawer()
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
 		T_SetAlign(hcenter, vcenter);
-		T_DrawText(160, 100, messageString);
+		T_DrawText(320, 240, messageString);
 	}
 }
 
@@ -702,7 +702,7 @@ void DrawBorder(int x, int y, int w, int h)
 
 void DrawViewBorder(int x, int y, int w, int h)
 {
-	R_FillRectWithFlat(0, 0, 320, 200 - 39, 'f_022');
+	R_FillRectWithFlat(0, 0, 640, 480/* - 39*/, 'f_022');
 	DrawBorder(x, y, w, h);
 }
 

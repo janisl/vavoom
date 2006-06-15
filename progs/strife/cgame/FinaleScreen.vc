@@ -65,7 +65,7 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	R_DrawPic(0, 0, FinalePic);
+	gc.DrawFullScreenPic(FinalePic);
 }
 
 //===========================================================================
@@ -169,6 +169,6 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 }

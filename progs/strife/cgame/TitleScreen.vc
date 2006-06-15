@@ -154,7 +154,7 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	R_DrawPic(0, 0, page_pic);
+	gc.DrawFullScreenPic(page_pic);
 }
 
 //==========================================================================

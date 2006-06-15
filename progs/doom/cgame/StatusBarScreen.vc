@@ -30,75 +30,75 @@ class StatusBarScreen : Window;
 //
 
 const int
-	ST_BGX				= 0,
-	ST_BGY				= 168,
+	ST_BGX				= 160,
+	ST_BGY				= 448,
 
 // AMMO number pos.
-	ST_AMMOX			= 44,
-	ST_AMMOY			= 171,
+	ST_AMMOX			= ST_BGX + 44,
+	ST_AMMOY			= ST_BGY + 3,
 
 // HEALTH number pos.
-	ST_HEALTHX			= 90,
-	ST_HEALTHY			= 171,
+	ST_HEALTHX			= ST_BGX + 90,
+	ST_HEALTHY			= ST_BGY + 3,
 
 // Frags pos.
-	ST_FRAGSX			= 138,
-	ST_FRAGSY			= 171,
+	ST_FRAGSX			= ST_BGX + 138,
+	ST_FRAGSY			= ST_BGY + 3,
 
 // Weapon pos.
-	ST_ARMSBGX			= 104,
-	ST_ARMSBGY			= 168,
-	ST_ARMSX			= 111,
-	ST_ARMSY			= 172,
+	ST_ARMSBGX			= ST_BGX + 104,
+	ST_ARMSBGY			= ST_BGY + 0,
+	ST_ARMSX			= ST_BGX + 111,
+	ST_ARMSY			= ST_BGY + 4,
 	ST_ARMSXSPACE		= 12,
 	ST_ARMSYSPACE		= 10,
 
 // Location of marine face
-	ST_FACESX			= 143,
-	ST_FACESY			= 168,
+	ST_FACESX			= ST_BGX + 143,
+	ST_FACESY			= ST_BGY + 0,
 
 // ARMOR number pos.
-	ST_ARMORX			= 221,
-	ST_ARMORY			= 171,
+	ST_ARMORX			= ST_BGX + 221,
+	ST_ARMORY			= ST_BGY + 3,
 
 // Key icon positions.
-	ST_KEY0X			= 239,
-	ST_KEY0Y			= 171,
-	ST_KEY1X			= 239,
-	ST_KEY1Y			= 181,
-	ST_KEY2X			= 239,
-	ST_KEY2Y			= 191,
+	ST_KEY0X			= ST_BGX + 239,
+	ST_KEY0Y			= ST_BGY + 3,
+	ST_KEY1X			= ST_BGX + 239,
+	ST_KEY1Y			= ST_BGY + 13,
+	ST_KEY2X			= ST_BGX + 239,
+	ST_KEY2Y			= ST_BGY + 23,
 
 // Ammunition counter.
-	ST_AMMO0X			= 288,
-	ST_AMMO0Y			= 173,
-	ST_AMMO1X			= 288,
-	ST_AMMO1Y			= 179,
-	ST_AMMO2X			= 288,
-	ST_AMMO2Y			= 191,
-	ST_AMMO3X			= 288,
-	ST_AMMO3Y			= 185,
+	ST_AMMO0X			= ST_BGX + 288,
+	ST_AMMO0Y			= ST_BGY + 5,
+	ST_AMMO1X			= ST_BGX + 288,
+	ST_AMMO1Y			= ST_BGY + 11,
+	ST_AMMO2X			= ST_BGX + 288,
+	ST_AMMO2Y			= ST_BGY + 23,
+	ST_AMMO3X			= ST_BGX + 288,
+	ST_AMMO3Y			= ST_BGY + 17,
 
 // Indicate maximum ammunition.
 // Only needed because backpack exists.
-	ST_MAXAMMO0X		= 314,
-	ST_MAXAMMO0Y		= 173,
-	ST_MAXAMMO1X		= 314,
-	ST_MAXAMMO1Y		= 179,
-	ST_MAXAMMO2X		= 314,
-	ST_MAXAMMO2Y		= 191,
-	ST_MAXAMMO3X		= 314,
-	ST_MAXAMMO3Y		= 185,
+	ST_MAXAMMO0X		= ST_BGX + 314,
+	ST_MAXAMMO0Y		= ST_BGY + 5,
+	ST_MAXAMMO1X		= ST_BGX + 314,
+	ST_MAXAMMO1Y		= ST_BGY + 11,
+	ST_MAXAMMO2X		= ST_BGX + 314,
+	ST_MAXAMMO2Y		= ST_BGY + 23,
+	ST_MAXAMMO3X		= ST_BGX + 314,
+	ST_MAXAMMO3Y		= ST_BGY + 17,
 
 //  Fullscreen widgets
-	ST_TDHEALTHX	= 64,
-	ST_TDHEALTHY	= 180,
+	ST_TDHEALTHX	= 120,
+	ST_TDHEALTHY	= 460,
 
-	ST_TDARMORX		= 140,
-	ST_TDARMORY		= 180,
+	ST_TDARMORX		= 280,
+	ST_TDARMORY		= 460,
 
-	ST_TDAMMOX		= 315,
-	ST_TDAMMOY		= 180;
+	ST_TDAMMOX		= 620,
+	ST_TDAMMOY		= 460;
 
 MainClientState cl;
 
@@ -373,11 +373,11 @@ void SB_DrawMainBar()
 //
 //==========================================================================
 
-void SB_DrawFullscreenStats(void)
+void SB_DrawFullscreenStats()
 {
 	// health
 	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl.health, 40, false);
-	R_DrawPic(10, 195, pic_health);
+	R_DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health);
 
 	// armor
 	if (cl.ArmorPoints)
@@ -386,11 +386,11 @@ void SB_DrawFullscreenStats(void)
 
 		if (cl.ArmorPoints > 100)
 		{
-			R_DrawPic(80, 195, pic_armor2);
+			R_DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor2);
 		}
 		else
 		{
-			R_DrawPic(80, 195, pic_armor);
+			R_DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor);
 		}
 	}
 
@@ -398,53 +398,53 @@ void SB_DrawFullscreenStats(void)
 	SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyAmmo, 40, false);
 	if ((cl.ReadyWeapon == DoomDefs::wp_pistol) || (cl.ReadyWeapon == DoomDefs::wp_chaingun))
 	{
-		R_DrawPic(255, 195, pic_ammoicon[0]);
+		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0]);
 	}
 	else if ((cl.ReadyWeapon == DoomDefs::wp_shotgun) || (cl.ReadyWeapon == DoomDefs::wp_supershotgun))
 	{
-		R_DrawPic(255, 195, pic_ammoicon[1]);
+		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1]);
 	}
 	else if ((cl.ReadyWeapon == DoomDefs::wp_plasma) || (cl.ReadyWeapon == DoomDefs::wp_bfg))
 	{
-		R_DrawPic(255, 195, pic_ammoicon[2]);
+		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2]);
 	}
 	else if ((cl.ReadyWeapon == DoomDefs::wp_missile)) //|| (cl.ReadyWeapon & wp_grenade))
 	{
-		R_DrawPic(255, 195, pic_ammoicon[3]);
+		R_DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3]);
 	}
 
 	// keys
 	if (cl.SBFlags & DoomDefs::SBF_BLUE_SKULL)
 	{
-		R_DrawPic(230, 190, pic_keys[3]);
+		R_DrawPic(460, 470, pic_keys[3]);
 	}
 	else if (cl.SBFlags & DoomDefs::SBF_BLUE_CARD)
 	{
-		R_DrawPic(230, 190, pic_keys[0]);
+		R_DrawPic(460, 470, pic_keys[0]);
 	}
 
 	if (cl.SBFlags & DoomDefs::SBF_YELLOW_SKULL)
 	{
-		R_DrawPic(220, 190, pic_keys[4]);
+		R_DrawPic(440, 470, pic_keys[4]);
 	}
 	else if (cl.SBFlags & DoomDefs::SBF_YELLOW_CARD)
 	{
-		R_DrawPic(220, 190, pic_keys[1]);
+		R_DrawPic(440, 470, pic_keys[1]);
 	}
 
 	if (cl.SBFlags & DoomDefs::SBF_RED_SKULL)
 	{
-		R_DrawPic(210, 190, pic_keys[5]);
+		R_DrawPic(420, 470, pic_keys[5]);
 	}
 	else if (cl.SBFlags & DoomDefs::SBF_RED_CARD)
 	{
-		R_DrawPic(210, 190, pic_keys[2]);
+		R_DrawPic(420, 470, pic_keys[2]);
 	}
 
 	if (cl.deathmatch)
 	{
 		// frags sum
-		SB_DrawTallNum(315, 5, cl.Frags, 40, false);
+		SB_DrawTallNum(630, 10, cl.Frags, 40, false);
 	}
 }
 
@@ -458,7 +458,7 @@ void SB_DrawPause()
 {
 	if (cl.bPaused && GetCvar('draw_pause'))
 	{
-		R_DrawPic(126, 4, pic_pause);
+		R_DrawPic(286, 4, pic_pause);
 	}
 }
 
@@ -505,6 +505,6 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 }

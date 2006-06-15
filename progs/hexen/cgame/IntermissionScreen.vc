@@ -30,15 +30,15 @@ ClientGameBase ClGame;
 const float TALLY_EFFECT_TIME	= 0.625;
 const float TALLY_FINAL_X_DELTA	= 23.0;
 const float TALLY_FINAL_Y_DELTA	= 13.0;
-const float TALLY_START_XPOS	= 178.0;
-const float TALLY_STOP_XPOS		= 90.0;
-const float TALLY_START_YPOS	= 132.0;
-const float TALLY_STOP_YPOS		= 83.0;
-const int TALLY_TOP_X			= 85;
-const int TALLY_TOP_Y			= 9;
-const int TALLY_LEFT_X			= 7;
-const int TALLY_LEFT_Y			= 71;
-const int TALLY_TOTALS_X		= 291;
+const float TALLY_START_XPOS	= 338.0;
+const float TALLY_STOP_XPOS		= 250.0;
+const float TALLY_START_YPOS	= 272.0;
+const float TALLY_STOP_YPOS		= 223.0;
+const int TALLY_TOP_X			= 245;
+const int TALLY_TOP_Y			= 149;
+const int TALLY_LEFT_X			= 167;
+const int TALLY_LEFT_Y			= 211;
+const int TALLY_TOTALS_X		= 451;
 
 float TextSpeed;
 float TextWait;
@@ -130,7 +130,7 @@ void DrawWindow(GC gc)
 		return;
 	}
 
-	R_DrawPic(0, 0, patchINTERPIC);
+	gc.DrawFullScreenPic(patchINTERPIC);
 
 	if (!ClGame.cl.deathmatch)
 	{
@@ -268,9 +268,13 @@ void IM_DrawHubText()
 	{
 		count = 0;
 	}
+	if (count > strlen(HubText))
+	{
+		count = strlen(HubText);
+	}
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(10, 5, substr(HubText, 0, count));
+	T_DrawText(170, 145, substr(HubText, 0, count));
 }
 
 //==========================================================================
@@ -412,8 +416,8 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 	TextSpeed = 0.1;
 	TextWait = 4.0;
 	ClusMsgLumpNames[0] = 'clus1msg';

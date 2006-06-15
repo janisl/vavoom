@@ -30,31 +30,31 @@ ClientGameBase ClGame;
 // GLOBAL LOCATIONS
 const int WI_SPACINGY	= 33;
 
-const int WI_TITLEY		= 2;
+const int WI_TITLEY		= 12;
 
 // SINGPLE-PLAYER STUFF
-const int SP_STATSX		= 50;
-const int SP_STATSY		= 50;
+const int SP_STATSX		= 210;
+const int SP_STATSY		= 190;
 
-const int SP_TIMEX		= 16;
-const int SP_TIMEY		= 168;
+const int SP_TIMEX		= 176;
+const int SP_TIMEY		= 308;
 
 // NET GAME STUFF
-const int NG_STATSY		= 50;
-const int NG_STATSX		= (32 + 32 / 2);
+const int NG_STATSY		= 210;
+const int NG_STATSX		= (172 + 32 / 2);
 
 const int NG_SPACINGX    	= 64;
 
 // DEATHMATCH STUFF
-const int DM_MATRIXX		= 42;
-const int DM_MATRIXY		= 68;
+const int DM_MATRIXX		= 202;
+const int DM_MATRIXY		= 208;
 
-const int DM_TOTALSX		= 269;
+const int DM_TOTALSX		= 429;
 
-const int DM_KILLERSX		= 10;
-const int DM_KILLERSY		= 100;
-const int DM_VICTIMSX    	= 5;
-const int DM_VICTIMSY		= 50;
+const int DM_KILLERSX		= 170;
+const int DM_KILLERSY		= 240;
+const int DM_VICTIMSX    	= 165;
+const int DM_VICTIMSY		= 190;
 
 const int DM_SPACINGX		= 40;
 
@@ -356,8 +356,8 @@ void SetAnim2(anim_t* a, int Type, float Period, int NAnims, int x, int y, int l
 
 void SetLN(int epi, int map, int x, int y)
 {
-	lnodes[epi * NUMMAPS + map].x = x;
-	lnodes[epi * NUMMAPS + map].y = y;
+	lnodes[epi * NUMMAPS + map].x = x * 2;
+	lnodes[epi * NUMMAPS + map].y = y * 480 / 200;
 }
 
 //==========================================================================
@@ -545,6 +545,7 @@ void IM_InitAnimatedBack()
 
 void IM_DrawBackground()
 {
+	SetVirtualScreen(320, 200);
 	R_DrawPic(0, 0, patchINTERPIC);
 	// draw animated background
 	if (im_episode <= 3)
@@ -561,6 +562,7 @@ void IM_DrawBackground()
 			}
 		}
 	}
+	SetVirtualScreen(640, 480);
 }
 
 //==========================================================================
@@ -629,7 +631,9 @@ void IM_UpdateBackground()
 
 void IM_DrawBackground()
 {
+	SetVirtualScreen(320, 200);
 	R_DrawPic(0, 0, patchINTERPIC);
+	SetVirtualScreen(640, 480);
 }
 #endif
 
@@ -743,12 +747,12 @@ void IM_DrawLF()
 
 	// draw <LevelName>
 	T_SetAlign(hcenter, vtop);
-	T_DrawText(160, y, ClGame.im->LeaveName);
+	T_DrawText(320, y, ClGame.im->LeaveName);
 
 	// draw "Finished!"
 	y += (5 * T_TextHeight("DUMMY")) / 4;
 
-	T_DrawText(160, y, "finished");
+	T_DrawText(320, y, "finished");
 }
 
 //==========================================================================
@@ -765,11 +769,11 @@ void IM_DrawEL()
 
 	// draw "Entering"
 	T_SetAlign(hcenter, vtop);
-	T_DrawText(160, y, "entering");
+	T_DrawText(320, y, "entering");
 
 	// draw level
 	y += (5 * T_TextHeight("DUMMY")) / 4;
-	T_DrawText(160, y, ClGame.im->EnterName);
+	T_DrawText(320, y, ClGame.im->EnterName);
 }
 
 //==========================================================================
@@ -855,9 +859,9 @@ void IM_DrawSingleStats()
 	T_DrawText(SP_STATSX, SP_STATSY + lh, "items");
 	T_DrawText(SP_STATSX, SP_STATSY + 2 * lh, "scrt");
 
-	IM_DrawPercent(320 - SP_STATSX, SP_STATSY, cnt_kills[0]);
-	IM_DrawPercent(320 - SP_STATSX, SP_STATSY + lh, cnt_items[0]);
-	IM_DrawPercent(320 - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret[0]);
+	IM_DrawPercent(640 - SP_STATSX, SP_STATSY, cnt_kills[0]);
+	IM_DrawPercent(640 - SP_STATSX, SP_STATSY + lh, cnt_items[0]);
+	IM_DrawPercent(640 - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret[0]);
 	IM_DrawTime(SP_TIMEX, SP_TIMEY, cnt_time);
 }
 
@@ -1016,7 +1020,7 @@ void IM_DrawCooperativeStats()
 
 	T_DrawText(NG_STATSX + 3 * NG_SPACINGX, NG_STATSY, "scrt");
 
-	T_DrawText(NG_STATSX + NG_SPACINGX, NG_STATSY, "frgs");
+	T_DrawText(NG_STATSX + 4 * NG_SPACINGX, NG_STATSY, "frgs");
 
 	// draw stats
 	y = NG_STATSY + T_TextHeight("kills");
@@ -1489,7 +1493,7 @@ void IM_DrawOnLnode(int n, int *c)
 		right = left + info.width;
 		bottom = top + info.height;
 
-		if (left >= 0 && right < 320 && top >= 0 && bottom < 200)
+		if (left >= 0 && right < 640 && top >= 0 && bottom < 480)
 		{
 			fits = true;
 		}
@@ -1708,18 +1712,18 @@ void IM_DrawText()
 	int count;
 
 	// erase the entire screen to a tiled background
-	R_FillRectWithFlat(0, 0, 320, 200, TextFlat);
+	R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
 
 	// draw some of the text onto the screen
 	count = ftoi((intertime - 0.3) / TEXTSPEED);
 	if (count < 0)
-	{
 		count = 0;
-	}
+	if (count > strlen(HubText))
+		count = strlen(HubText);
 
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	T_DrawText(10, 10, substr(HubText, 0, count));
+	T_DrawText(170, 150, substr(HubText, 0, count));
 }
 
 //==========================================================================
@@ -1762,6 +1766,6 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 }

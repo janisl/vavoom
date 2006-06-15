@@ -66,7 +66,7 @@ void CreateChoices()
 		Mdl.Origin = vector(-64.0, 32.0, -32.0);
 		Mdl.Angle = 345.0;
 		Mdl.Model = model;
-		Mdl.Skin = Skin.SkinName;
+		Skin.Mdl = Mdl;
 		Skin.SetSkin(Skin.Value);
 	}
 }

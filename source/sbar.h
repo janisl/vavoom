@@ -28,35 +28,18 @@
 // MACROS ------------------------------------------------------------------
 
 // status bar height at bottom of screen
-#define SB_REALHEIGHT	(sb_height * ScreenHeight / 200)
+#define SB_REALHEIGHT	((int)(sb_height * fScaleY))
 
 // TYPES -------------------------------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void SB_Init(void);
-void SB_Drawer(void);
-void SB_Ticker(void);
+void SB_Init();
+void SB_Drawer();
+void SB_Ticker();
 boolean	SB_Responder(event_t* ev);
-void SB_Start(void);// Called when the console player is spawned on each level.
+void SB_Start();// Called when the console player is spawned on each level.
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int		sb_height;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//
-//	Revision 1.4  2001/10/02 17:36:08  dj_jl
-//	Removed status bar widgets
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

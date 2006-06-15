@@ -30,15 +30,9 @@
 
 // MACROS ------------------------------------------------------------------
 
-//#define USE640
-
 #define MAXHISTORY			32
 #define MAX_LINES			1024
-#ifdef USE640
 #define MAX_LINE_LENGTH		80
-#else
-#define MAX_LINE_LENGTH		40
-#endif
 
 // TYPES -------------------------------------------------------------------
 
@@ -90,8 +84,8 @@ static int				c_history_current;
 
 static float			cons_h = 0;
 
-static VCvarF			con_height("con_height", "100", CVAR_Archive);
-static VCvarF			con_speed("con_speed", "200", CVAR_Archive);
+static VCvarF			con_height("con_height", "240", CVAR_Archive);
+static VCvarF			con_speed("con_speed", "480", CVAR_Archive);
 
 //	Autocomplete
 static int				c_autocompleteIndex = -1;
@@ -160,7 +154,7 @@ void C_Init()
 //
 //==========================================================================
 
-void C_Start(void)
+void C_Start()
 {
 	MN_DeactivateMenu();
 	if (consolestate == cons_closed)
@@ -179,15 +173,15 @@ void C_Start(void)
 //
 //==========================================================================
 
-void C_StartFull(void)
+void C_StartFull()
 {
 	MN_DeactivateMenu();
-   	c_iline.Init();
+	c_iline.Init();
 	last_line = num_lines;
 	consolestate = cons_open;
 	c_history_current = -1;
 	c_autocompleteIndex = -1;
-   	cons_h = 200.0;
+	cons_h = 480.0;
 }
 
 //==========================================================================
@@ -209,7 +203,7 @@ COMMAND(ToggleConsole)
 //
 //==========================================================================
 
-void C_Stop(void)
+void C_Stop()
 {
 	consolestate = cons_closing;
 }
@@ -233,7 +227,7 @@ COMMAND(HideConsole)
 //
 //==========================================================================
 
-bool C_Active(void)
+bool C_Active()
 {
 	return (consolestate == cons_opening) || (consolestate == cons_open);
 }
@@ -246,67 +240,47 @@ bool C_Active(void)
 //
 //==========================================================================
 
-void C_Drawer(void)
+void C_Drawer()
 {
-    int 		y;
+	int 		y;
 	int			i;
 
 	// Scroll console up when closing
 	if (consolestate == cons_closing)
 	{
-      	cons_h -= con_speed * host_frametime;
+		cons_h -= con_speed * host_frametime;
 		if (cons_h <= 0)
 		{
-           	// Closed
-          	cons_h = 0;
-    	  	consolestate = cons_closed;
+			// Closed
+			cons_h = 0;
+			consolestate = cons_closed;
 		}
 	}
 
 	// Scroll console down when opening
-    if (consolestate == cons_opening)
-    {
-      	cons_h += con_speed * host_frametime;
-        if (cons_h >= con_height)
-        {
-           	// Open
-          	cons_h = con_height;
-    	  	consolestate = cons_open;
-        }
+	if (consolestate == cons_opening)
+	{
+		cons_h += con_speed * host_frametime;
+		if (cons_h >= con_height)
+		{
+			// Open
+			cons_h = con_height;
+			consolestate = cons_open;
+		}
 	}
 
 	if (!consolestate)
-    {
-    	return;
-    }
+	{
+		return;
+	}
 
-    // Backbround
+	// Backbround
 	Drawer->DrawConsoleBackground((int)(fScaleY * cons_h));
 
 	T_SetFont(font_small);
-    T_SetAlign(hleft, vtop);
+	T_SetAlign(hleft, vtop);
 
-    // Input line
-#ifdef USE640
-	SCR_SetVirtualScreen(640, 480);
-	y = (int)(cons_h * 480 / 200) - 10;
-	T_DrawString8(4, y, ">");
-	i = strlen(c_iline.Data) - 37;
-	if (i < 0)
-		i = 0;
-	T_DrawString8(12, y, c_iline.Data + i);
-	T_DrawCursor();
-	y -= 10;
-
-	// Lines
-	i = last_line;
-	while ((y + 9 > 0) && i--)
-	{
-		T_DrawString8(4, y, clines[(i + first_line) % MAX_LINES]);
-		y -= 9;
-	}
-	SCR_SetVirtualScreen(320, 200);
-#else
+	// Input line
 	y = (int)cons_h - 10;
 	T_DrawString8(4, y, ">");
 	i = strlen(c_iline.Data) - 37;
@@ -323,7 +297,6 @@ void C_Drawer(void)
 		T_DrawString8(4, y, clines[(i + first_line) % MAX_LINES]);
 		y -= 9;
 	}
-#endif
 }
 
 //==========================================================================
@@ -632,7 +605,7 @@ static VCvarI			msg_echo("msg_echo", "1", CVAR_Archive);
 //
 //==========================================================================
 
-void C_ClearNotify(void)
+void C_ClearNotify()
 {
 	num_notify = 0;
 	first_notify = 0;
@@ -671,7 +644,7 @@ void C_NotifyMessage(const char *str)
 //
 //==========================================================================
 
-void C_DrawNotify(void)
+void C_DrawNotify()
 {
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
@@ -688,11 +661,7 @@ void C_DrawNotify(void)
 		}
 		else
 		{
-#ifdef USE640
 			int lp = T_DrawTextW(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES], 640);
-#else
-			int lp = T_DrawTextW(4, y, notify_lines[(i + first_notify) % NUM_NOTIFY_LINES], 320);
-#endif
 			y += 9 * lp;
 			i++;
 		}
@@ -724,13 +693,13 @@ void C_CenterMessage(const char *msg)
 //
 //==========================================================================
 
-void C_DrawCenterMessage(void)
+void C_DrawCenterMessage()
 {
 	if (center_time)
 	{
 		T_SetFont(font_small);
 	    T_SetAlign(hcenter, vcenter);
-		T_DrawTextW(160, 150, center_message, 300);
+		T_DrawTextW(320, 360, center_message, 600);
 		center_time -= host_frametime;
 		if (center_time < 0.0)
 		{
@@ -738,87 +707,3 @@ void C_DrawCenterMessage(void)
 		}
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.27  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.26  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.25  2006/02/21 22:31:44  dj_jl
-//	Created dynamic string class.
-//	
-//	Revision 1.24  2006/01/10 19:32:27  dj_jl
-//	Fix for long notify messages.
-//	
-//	Revision 1.23  2005/05/26 16:53:59  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.22  2004/12/03 16:15:46  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.21  2004/08/18 18:05:46  dj_jl
-//	Support for higher virtual screen resolutions.
-//	
-//	Revision 1.20  2003/03/08 12:08:03  dj_jl
-//	Beautification.
-//	
-//	Revision 1.19  2002/07/27 18:11:46  dj_jl
-//	Scrolling by 5 lines.
-//	
-//	Revision 1.18  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.17  2002/07/13 07:47:05  dj_jl
-//	Console device now echos messages to debugfile.
-//	
-//	Revision 1.16  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.15  2002/03/02 17:30:34  dj_jl
-//	Added suport for Pad-Enter.
-//	
-//	Revision 1.14  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.13  2001/12/28 16:27:30  dj_jl
-//	Beautification
-//	
-//	Revision 1.12  2001/12/18 19:05:03  dj_jl
-//	Made TCvar a pure C++ class
-//	
-//	Revision 1.11  2001/12/04 18:11:59  dj_jl
-//	Fixes for compiling with MSVC
-//	
-//	Revision 1.10  2001/11/09 14:36:33  dj_jl
-//	No moving on last line on adding new line if scrolled
-//	
-//	Revision 1.9  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.8  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.7  2001/10/04 17:19:32  dj_jl
-//	Seperated drawing of notify and center messages
-//	
-//	Revision 1.6  2001/09/12 17:33:39  dj_jl
-//	Fixed paranoid errors
-//	
-//	Revision 1.5  2001/08/15 17:26:35  dj_jl
-//	Made console not active when closing
-//	
-//	Revision 1.4  2001/08/07 16:49:26  dj_jl
-//	Added C_Active
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

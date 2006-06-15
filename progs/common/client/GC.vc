@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GC:Object
+class GC : Object
 	native;
 
 readonly ClipRect ClipRect;
@@ -38,17 +38,13 @@ void DrawText(int X, int Y, string Text)
 	T_DrawText(X + ftoi(ClipRect.OriginX), Y + ftoi(ClipRect.OriginY), Text);
 }
 
+void DrawFullScreenPic(int Handle)
+{
+	SetVirtualScreen(320, 200);
+	R_DrawPic(0, 0, Handle);
+	SetVirtualScreen(640, 480);
+}
+
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/03/13 21:28:11  dj_jl
-//  Added support for read-only, private and transient fields.
-//
-//  Revision 1.1  2002/10/26 16:32:17  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

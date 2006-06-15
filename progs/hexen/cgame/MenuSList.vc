@@ -28,7 +28,7 @@ class MenuSList : MenuChoice;
 int			Cursor;
 slist_t*	slist;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	StartSearch();
@@ -51,8 +51,8 @@ void DrawTextBox(GC gc, string text)
 		w = 304;
 	if (h > 184)
 		h = 184;
-	x = (320 - w) / 2;
-	y = (200 - h) / 2;
+	x = (640 - w) / 2;
+	y = (480 - h) / 2;
 
 	R_FillRectWithFlat(x, y, w, h, 'f_019');
 	GetClGame().DrawBorder(x, y, w, h);

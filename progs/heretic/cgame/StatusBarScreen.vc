@@ -25,6 +25,9 @@
 
 class StatusBarScreen : Window;
 
+const int BAR_X = 160;
+const int BAR_Y = 438;
+
 ClientGameBase ClGame;
 
 MainClientState cl;
@@ -216,7 +219,7 @@ void SB_DrawNumber9(int x, int y, int num)
 void SB_DrawNumber12(int x, int y, int num)
 {
 	x = x + 36;
-    
+
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
@@ -244,7 +247,7 @@ void SB_DrawINumber(int x, int y, int num)
 	if (num > 1)
 	{
 		x = x + 8;
-    
+
 		// draw the new number
 		while (num)
 		{
@@ -261,7 +264,7 @@ void SB_DrawINumber(int x, int y, int num)
 //
 //==========================================================================
 
-void SB_DrawMainBar(void)
+void SB_DrawMainBar()
 {
 	int chainY;
 	int healthPos;
@@ -269,18 +272,18 @@ void SB_DrawMainBar(void)
 	int health;
 
 	//  Background
-	R_DrawPic(0, 158, pic_barback);
+	R_DrawPic(BAR_X, BAR_Y, pic_barback);
 
 	if (cl.SBFlags & HereticDefs::SBF_GOD_MODE)
 	{
 		//  God mode
-		R_DrawPic(16, 167, pic_god1);
-		R_DrawPic(287, 167, pic_god2);
+		R_DrawPic(BAR_X + 16, BAR_Y + 9, pic_god1);
+		R_DrawPic(BAR_X + 287, BAR_Y + 9, pic_god2);
 	}
 
 	//  Top
-	R_DrawPic(0, 148, pic_barltop);
-	R_DrawPic(290, 148, pic_barrtop);
+	R_DrawPic(BAR_X + 0, BAR_Y - 10, pic_barltop);
+	R_DrawPic(BAR_X + 290, BAR_Y - 10, pic_barrtop);
 
 	//  Healtn and chain
 	health = HealthMarker;
@@ -293,94 +296,94 @@ void SB_DrawMainBar(void)
 		health = 100;
 	}
 	healthPos = (health * 256) / 100;
-	chainY = (HealthMarker == cl.health) ? 191 : 191 + ChainWiggle;
+	chainY = (HealthMarker == cl.health) ? 33 : 33 + ChainWiggle;
 
 	//  Chain
-	R_DrawPic(2 + (healthPos % 17), chainY, pic_chain);
-	R_DrawPic(17 + healthPos, chainY, pic_lifegem);
-	R_DrawPic(0, 190, pic_ltface);
-	R_DrawPic(276, 190, pic_rtface);
+	R_DrawPic(BAR_X + 2 + (healthPos % 17), BAR_Y + chainY, pic_chain);
+	R_DrawPic(BAR_X + 17 + healthPos, BAR_Y + chainY, pic_lifegem);
+	R_DrawPic(BAR_X + 0, BAR_Y + 32, pic_ltface);
+	R_DrawPic(BAR_X + 276, BAR_Y + 32, pic_rtface);
 	for (i = 0; i < 16; i++)
 	{
-		R_ShadeRect(277 + i, 190, 1, 10, 9 + i);
-		R_ShadeRect(19 + i, 190, 1, 10, 9 + 15 - i);
+		R_ShadeRect(BAR_X + 277 + i, BAR_Y + 32, 1, 10, 9 + i);
+		R_ShadeRect(BAR_X + 19 + i, BAR_Y + 32, 1, 10, 9 + 15 - i);
 	}
 
 	if (!(cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN))
 	{
 		//  Main interface
-		R_DrawPic(34, 160, pic_mainbar);
+		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_mainbar);
 
 		//  Frags / Health
 		if (cl.deathmatch)
 		{
-			SB_DrawNumber9(61, 170, cl.Frags);
+			SB_DrawNumber9(BAR_X + 61, BAR_Y + 12, cl.Frags);
 		}
 		else
 		{
-			SB_DrawNumber9(61, 170, health);
+			SB_DrawNumber9(BAR_X + 61, BAR_Y + 12, health);
 		}
 
 		if (cl.ReadyAmmo)
 		{
 			//  Ammo
-			SB_DrawNumber9(109, 162, cl.ReadyAmmo);
-			R_DrawPic(111, 172, pic_ammoicon[cl.readyweapon - 1]);
+			SB_DrawNumber9(BAR_X + 109, BAR_Y + 4, cl.ReadyAmmo);
+			R_DrawPic(BAR_X + 111, BAR_Y + 14, pic_ammoicon[cl.readyweapon - 1]);
 		}
 
 		//  Ready artifact
 		if (cl.ArtifactFlash)
 		{
-			R_DrawPic(182, 161, pic_artiflash[cl.ArtifactFlash - 1]);
+			R_DrawPic(BAR_X + 182, BAR_Y + 3, pic_artiflash[cl.ArtifactFlash - 1]);
 		}
 		else if (cl.readyArtifact > 0)
 		{
-			R_DrawPic(179, 160, pic_arti[cl.readyArtifact - 1]);
-			SB_DrawINumber(201, 182, cl.inventory[cl.inv_ptr].count);
+			R_DrawPic(BAR_X + 179, BAR_Y + 2, pic_arti[cl.readyArtifact - 1]);
+			SB_DrawINumber(BAR_X + 201, BAR_Y + 24, cl.inventory[cl.inv_ptr].count);
 		}
 
 		//  Keys
 		if (cl.SBFlags & HereticDefs::SBF_KEY_YELLOW)
 		{
-			R_DrawPic(153, 164, pic_ykey);
+			R_DrawPic(BAR_X + 153, BAR_Y + 6, pic_ykey);
 		}
 		if (cl.SBFlags & HereticDefs::SBF_KEY_GREEN)
 		{
-			R_DrawPic(153, 172, pic_gkey);
+			R_DrawPic(BAR_X + 153, BAR_Y + 14, pic_gkey);
 		}
 		if (cl.SBFlags & HereticDefs::SBF_KEY_BLUE)
 		{
-			R_DrawPic(153, 180, pic_bkey);
+			R_DrawPic(BAR_X + 153, BAR_Y + 22, pic_bkey);
 		}
 
 		//  Armor
-		SB_DrawNumber9(228, 170, cl.armorpoints);
+		SB_DrawNumber9(BAR_X + 228, BAR_Y + 12, cl.armorpoints);
 	}
 	else
 	{
 		int x;
 
 		//  Inventory
-		R_DrawPic(34, 160, pic_invbar);
+		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_invbar);
 		x = cl.inv_ptr - cl.curpos;
 		for (i = 0; i < 7; i++)
 		{
 			if (cl.inventorySlotNum > x + i
 				&& cl.inventory[x + i].type != HereticDefs::arti_none)
 			{
-				R_DrawPic(50 + i * 31, 160,
+				R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2,
 					pic_arti[cl.inventory[x + i].type - 1]);
-				SB_DrawINumber(69 + i * 31, 182, cl.inventory[x + i].count);
+				SB_DrawINumber(BAR_X + 69 + i * 31, BAR_Y + 24, cl.inventory[x + i].count);
 			}
 		}
-		R_DrawPic(50 + cl.curpos * 31, 189, pic_selectbox);
+		R_DrawPic(BAR_X + 50 + cl.curpos * 31, BAR_Y + 31, pic_selectbox);
 		if (x != 0)
 		{
-			R_DrawPic(38, 159, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 		if ((cl.inventorySlotNum - x > 7))
 		{
-			R_DrawPic(269, 159, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 	}
 }
@@ -391,44 +394,44 @@ void SB_DrawMainBar(void)
 //
 //==========================================================================
 
-void SB_DrawFullscreenStats(void)
+void SB_DrawFullscreenStats()
 {
 	int i;
 	int x;
 
 	//  Health
-	SB_DrawNumber12(5, 180, cl.health);
-	R_DrawPic(62, 224, pic_health);
+	SB_DrawNumber12(50, 450, cl.health);
+	R_DrawPic(30, 494, pic_health);
 
 	//  Armorpoints
-	SB_DrawNumber12(5, 160, cl.armorpoints);
-	R_DrawPic(62, 200, pic_armor2);
+	SB_DrawNumber12(140, 450, cl.armorpoints);
+	R_DrawPic(120, 490, pic_armor2);
 
 	//  Frags
 	if (cl.deathmatch)
 	{
-		SB_DrawNumber9(45, 185, cl.Frags);
+		SB_DrawNumber9(200, 450, cl.Frags);
 	}
 
 	//  Ammo
 	if (cl.ReadyAmmo)
 	{
-		SB_DrawNumber9(290, 186, cl.ReadyAmmo);
-		R_DrawPic(270, 184, pic_ammoicon[cl.readyweapon - 1]);
+		SB_DrawNumber9(610, 456, cl.ReadyAmmo);
+		R_DrawPic(590, 454, pic_ammoicon[cl.readyweapon - 1]);
 	}
 
 	//  Keys
 	if (cl.SBFlags & HereticDefs::SBF_KEY_YELLOW)
 	{
-		R_DrawPic(270, 164, pic_ykey);
+		R_DrawPic(580, 444, pic_ykey);
 	}
 	if (cl.SBFlags & HereticDefs::SBF_KEY_GREEN)
 	{
-		R_DrawPic(270, 172, pic_gkey);
+		R_DrawPic(580, 452, pic_gkey);
 	}
 	if (cl.SBFlags & HereticDefs::SBF_KEY_BLUE)
 	{
-		R_DrawPic(270, 180, pic_bkey);
+		R_DrawPic(580, 460, pic_bkey);
 	}
 
 	if (cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN)
@@ -437,31 +440,31 @@ void SB_DrawFullscreenStats(void)
 		x = cl.inv_ptr - cl.curpos;
 		for (i = 0; i < 7; i++)
 		{
-			R_DrawPic2(50 + i * 31, 168, pic_artibox, 40);
+			R_DrawPic2(210 + i * 31, 448, pic_artibox, 40);
 			if (cl.inventorySlotNum > x + i
 				&& cl.inventory[x + i].type != HereticDefs::arti_none)
 			{
-				R_DrawPic(50 + i * 31, 168,
+				R_DrawPic(210 + i * 31, 448,
 					pic_arti[cl.inventory[x + i].type - 1]);
-				SB_DrawINumber(69 + i * 31, 190, cl.inventory[x + i].count);
+				SB_DrawINumber(229 + i * 31, 470, cl.inventory[x + i].count);
 			}
 		}
-		R_DrawPic(50 + cl.curpos * 31, 197, pic_selectbox);
+		R_DrawPic(210 + cl.curpos * 31, 477, pic_selectbox);
 		if (x != 0)
 		{
-			R_DrawPic(38, 167, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(198, 447, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 		if (cl.inventorySlotNum - x > 7)
 		{
-			R_DrawPic(269, 167, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
+			R_DrawPic(429, 447, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 	}
 	else if (cl.readyArtifact > 0)
 	{
 		//  Ready artifact
-		R_DrawPic2(286, 150, pic_artibox, 40);
-		R_DrawPic(286, 150, pic_arti[cl.readyArtifact - 1]);
-		SB_DrawINumber(307, 172, cl.inventory[cl.inv_ptr].count);
+		R_DrawPic2(546, 440, pic_artibox, 40);
+		R_DrawPic(546, 440, pic_arti[cl.readyArtifact - 1]);
+		SB_DrawINumber(567, 462, cl.inventory[cl.inv_ptr].count);
 	}
 }
 
@@ -471,7 +474,7 @@ void SB_DrawFullscreenStats(void)
 //
 //==========================================================================
 
-void SB_DrawIcons(void)
+void SB_DrawIcons()
 {
 	int frame;
 
@@ -503,7 +506,7 @@ void SB_DrawIcons(void)
 
 	if (cl.SBFlags & HereticDefs::SBF_POWER_BOOK)
 	{
-		R_DrawPic(300, 17, pic_book[(ClGame.level->tictime / 3) & 15]);
+		R_DrawPic(620, 17, pic_book[(ClGame.level->tictime / 3) & 15]);
 	}
 }
 
@@ -517,7 +520,7 @@ void SB_DrawPause()
 {
 	if (cl.bPaused && GetCvar('draw_pause'))
 	{
-		R_DrawPic(160, cl.maxclients > 1 ? 70 : 20, pic_paused);
+		R_DrawPic(320, cl.maxclients > 1 ? 140 : 40, pic_paused);
 	}
 }
 
@@ -547,7 +550,7 @@ void SB_Drawer(int sb_view)
 //
 //==========================================================================
 
-void SB_UpdateWidgets(void)
+void SB_UpdateWidgets()
 {
 	int i;
 	int delta;
@@ -605,6 +608,6 @@ void VisibilityChanged(bool bNewVisibility)
 defaultproperties
 {
 	bTickEnabled = true;
-	Width = 320;
-	Height = 200;
+	Width = 640;
+	Height = 480;
 }

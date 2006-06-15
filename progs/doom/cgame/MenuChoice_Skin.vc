@@ -25,11 +25,11 @@
 
 class MenuChoice_Skin : MenuChoiceEnum;
 
-string SkinName;
+MenuModel Mdl;
 
 void SetSkin(int skinNum)
 {
-	SkinName = va("models/players/%s/%s", GetCvarS('model'),
+	Mdl.Skin = va("models/players/%s/%s", GetCvarS('model'),
 		EnumNames[skinNum]);
 }
 

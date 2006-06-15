@@ -31,7 +31,6 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
-#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -39,8 +38,8 @@
 #define PLAYERRADIUS	16.0
 #define MAPBLOCKUNITS	128
 
-#define AM_W			320
-#define AM_H			(200 - sb_height)
+#define AM_W			640
+#define AM_H			(480 - sb_height)
 
 // scale on entry
 #define INITSCALEMTOF		0.2
@@ -413,7 +412,7 @@ static void AM_ScrollParchment (float dmapx, float dmapy)
 
 	if (mappic > 0)
 	{
-		int pwidth = ScreenWidth; // ??
+		int pwidth = 320;
 		int pheight = (int)GTextureManager.TextureHeight(mappic);
 
 		while(mapxstart > 0)
@@ -949,7 +948,7 @@ static void AM_clearFB()
 	//blit the automap background to the screen.
 	for (int y = mapystart - mapheight; y < AM_H; y += mapheight)
 	{
-		for (int x = mapxstart - AM_W; x < AM_W; x += AM_W)
+		for (int x = mapxstart - AM_W; x < AM_W; x += 320)
 		{
 			R_DrawPic(x, y, mappic, 0);
 		}
@@ -1304,10 +1303,8 @@ static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
 static void AM_drawPlayers()
 {
 	mline_t			*player_arrow;
-	float			x, y, angle;
+	float			angle;
 	int				NUMPLYRLINES;
-	int				i;
-	VBasePlayer*	p;
 
 	if (am_player_arrow == 1)
 	{
@@ -1320,57 +1317,14 @@ static void AM_drawPlayers()
 		NUMPLYRLINES = NUMPLYRLINES1;
 	}
 
-	if (!netgame)
-	{
-		if (am_rotate)
-			angle = 90.0;
-		else
-			angle = cl->viewangles.yaw;
+	if (am_rotate)
+		angle = 90.0;
+	else
+		angle = cl->viewangles.yaw;
 
-		AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0,
-			angle, PlayerColor, FTOM(MTOF(cl->vieworg.x)), FTOM(MTOF(cl->vieworg.y)));
-		return;
-	}
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		p = GPlayersBase[i];
-
-		if (!p || p->MO == NULL)
-			continue;
-
-		if (cl->deathmatch && p != GPlayersBase[SV_GetPlayerNum(sv_player)])
-			continue;
-
-		if (p->MO != NULL)
-		{
-			x = FTOM(MTOF(p->MO->Origin.x));
-			y = FTOM(MTOF(p->MO->Origin.y));
-			angle = p->MO->Angles.yaw;
-
-			if (am_rotate)
-			{
-				AM_rotatePoint (&x, &y);
-				angle -= cl->viewangles.yaw - 90.0;
-			}
-
-			// FIXME
-/*			if (Game != Hexen && p->powers[pw_invisibility])
-			{
-				if (Game != Heretic)
-					color = 246; // *close* to black
-				else
-					color = 102; // *close* to the automap color
-			}
-			else
-			{
-				color = p->Color;
-			}*/
-
-			AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0, angle,
-				PlayerColor, x, y);
-		}
-	}
+	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0,
+		angle, PlayerColor, FTOM(MTOF(cl->vieworg.x)), FTOM(MTOF(cl->vieworg.y)));
+	return;
 }
 
 //==========================================================================
@@ -1471,7 +1425,7 @@ static void DrawWorldTimer(void)
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	sprintf(timeBuffer, "%.2d : %.2d : %.2d", hours, minutes, seconds);
-	T_DrawString(240, 8, timeBuffer);
+	T_DrawString(560, 8, timeBuffer);
 
 	if (days)
 	{
@@ -1483,10 +1437,10 @@ static void DrawWorldTimer(void)
 		{
 			sprintf(dayBuffer, "%.2d DAYS", days);
 		}
-		T_DrawString(240, 18, dayBuffer);
+		T_DrawString(560, 18, dayBuffer);
 		if (days >= 5)
 		{
-			T_DrawString(230, 28, "YOU FREAK!!!");
+			T_DrawString(550, 28, "YOU FREAK!!!");
 		}
 	}
 }
@@ -1499,7 +1453,7 @@ static void DrawWorldTimer(void)
 
 static void AM_DrawDeathmatchStats()
 {
-	int i, k, m;
+/*	int i, k, m;
 	int order[MAXPLAYERS];
 	char textBuffer[80];
 	int yPosition;
@@ -1545,7 +1499,7 @@ static void AM_DrawDeathmatchStats()
 		sprintf(textBuffer, "%d", GPlayersBase[order[i]]->Frags);
 		T_DrawString(80, yPosition, textBuffer);
 		yPosition += 10;
-	}
+	}*/
 }
 
 //===========================================================================
@@ -1556,7 +1510,7 @@ static void AM_DrawDeathmatchStats()
 
 static void AM_DrawLevelStats()
 {
-	int kills;
+/*	int kills;
 	int totalkills;
 	int items;
 	int totalitems;
@@ -1576,11 +1530,11 @@ static void AM_DrawLevelStats()
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
 	sprintf(kill, "Kills: %.2d / %.2d", kills, totalkills);
-	T_DrawString(8, 110, kill);
+	T_DrawString(8, 390, kill);
 	sprintf(item, "Items: %.2d / %.2d", items, totalitems);
-	T_DrawString(8, 120, item);
+	T_DrawString(8, 400, item);
 	sprintf(secret, "Secrets: %.2d / %.2d", secrets, totalsecrets);
-	T_DrawString(8, 130, secret);
+	T_DrawString(8, 410, secret);*/
 }
 
 //==========================================================================
@@ -1678,7 +1632,7 @@ void AM_Drawer()
 	DrawWorldTimer();
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vbottom);
-	T_DrawText(20, 200 - sb_height - 7, cl_level.level_name);
+	T_DrawText(20, 480 - sb_height - 7, cl_level.level_name);
 	if (ShowStats)
 	{
 		AM_DrawLevelStats();

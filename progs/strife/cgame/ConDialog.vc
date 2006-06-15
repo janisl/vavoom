@@ -158,7 +158,7 @@ void SetSpeech(int SpeechNum)
 
 	for (i = 0; i < NumChoices; i++)
 	{
-		WinChoices[i].SetPos(50, 180 - NumChoices * 16 + i * 16);
+		WinChoices[i].SetPos(100, 440 - NumChoices * 32 + i * 32);
 	}
 
 	if (Speech->Voice)
@@ -173,13 +173,13 @@ void DrawWindow(GC gc)
 {
 	if (BackPic != -1)
 	{
-		gc.DrawIcon(0, 0, BackPic);
+		gc.DrawFullScreenPic(BackPic);
 	}
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vtop);
-	gc.DrawText(16, 16, SpeakerName);
-	T_DrawTextW(16, 32, SpeechText, 320 - 32);
-	gc.DrawText(50, 160 - NumChoices * 16,
+	gc.DrawText(48, 48, SpeakerName);
+	T_DrawTextW(64, 96, SpeechText, 640 - 128);
+	gc.DrawText(100, 420 - NumChoices * 32,
 		"______________________________");
 }
 
@@ -199,6 +199,10 @@ bool Key(int key)
 
 defaultproperties
 {
+	X = 0;
+	Y = 0;
+	Width = 640;
+	Height = 480;
 	SelectorType = MenuSelector_Spinner;
 	BackPic = -1;
 	RandomConversations[0].Name = "PEASANT";
