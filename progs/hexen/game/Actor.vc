@@ -87,7 +87,6 @@ bool bSpawnCeiling;		// hang from ceiling instead of floor
 bool bPickUp;			// for players to pick up items
 bool bMissile;			// don't hit same species, explode on block
 bool bNoBlood;			// don't bleed when shot (use puff)
-bool bCorpse;			// don't stop moving halfway off a step
 bool bInFloat;			// floating to a height for a move, don't
 				// auto float to target's height
 bool bSkullFly;			// skull in flight
@@ -2287,7 +2286,7 @@ bool HitFloor()
 	Origin.z = FloorZ;
 	if (vdot < -0.1)
 	{
-		if (bIceDamage && vdot < -GRAVITY * 0.25)
+		if (bIceDamage && vdot < -DEFAULT_GRAVITY * 0.25)
 		{
 			StateTime = 0.1;
 			Velocity = vector(0.0, 0.0, 0.0);
@@ -2296,7 +2295,7 @@ bool HitFloor()
 		if (bIsPlayer)
 		{
 			Player(Player).JumpTime = 0.2;	// delay any jumping for a short time
-			if (vdot < -GRAVITY * 0.25 && !bFly)
+			if (vdot < -DEFAULT_GRAVITY * 0.25 && !bFly)
 			{
 				// squat down
 				Player(Player).DeltaViewHeight = vdot / 8.0;
@@ -2305,7 +2304,7 @@ bool HitFloor()
 					FallingDamage();
 					HexenLevelInfo(Level).NoiseAlert(self, self);
 				}
-				else if (vdot < -GRAVITY * 0.375 && !Player(Player).MorphTime)
+				else if (vdot < -DEFAULT_GRAVITY * 0.375 && !Player(Player).MorphTime)
 				{
 					PlaySound('*land', CHAN_BODY);
 					PlaySound('*grunt', CHAN_VOICE);
@@ -2421,6 +2420,7 @@ bool ZMovement(float DeltaTime)
 		Player(Player).ViewHeight -= FloorZ - Origin.z;
 		Player(Player).DeltaViewHeight = (Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
 	}
+
 	//
 	// adjust height
 	//
@@ -2489,7 +2489,7 @@ void PlayerLandedOnThing()
 		FallingDamage();
 		HexenLevelInfo(Level).NoiseAlert(self, self);
 	}
-	else if (Velocity.z < -GRAVITY * 0.375 && !Player(Player).MorphTime)
+	else if (Velocity.z < -DEFAULT_GRAVITY * 0.375 && !Player(Player).MorphTime)
 	{
 		PlaySound('*land', CHAN_BODY);
 		PlaySound('*grunt', CHAN_VOICE);
@@ -2707,7 +2707,7 @@ bool Physics(float DeltaTime)
 			{
 				if (bIsPlayer)
 				{
-					if (Velocity.z < -GRAVITY * 0.25 && !bFly)
+					if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
 					{
 						PlayerLandedOnThing();
 					}
