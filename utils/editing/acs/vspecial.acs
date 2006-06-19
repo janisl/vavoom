@@ -111,6 +111,8 @@ special
 	206:Plat_DownWaitUpStayLip(4, 5),
 	207:Plat_PerpetualRaiseLip(4),
 	214:Sector_SetDamage(3),
+	215:Teleport_Line(2),
+	216:Sector_SetGravity(3),
 	217:Stairs_BuildUpDoom(5),
 	218:Sector_SetWind(4),
 	219:Sector_SetFriction(4),
