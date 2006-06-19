@@ -44,6 +44,9 @@ TVec			trace_plane_normal;
 TVec			linestart;
 TVec			lineend;
 
+float			Gravity;				// Level Gravity
+
+
 //==========================================================================
 //
 //  SpawnSpecials
@@ -137,6 +140,16 @@ bool PolyBusy(int polyobj)
 int ThingCount(int type, int tid)
 {
 	return 0;
+}
+
+//==========================================================================
+//
+//  SetSectorGravity
+//
+//==========================================================================
+
+void SetSectorGravity(int tag, float integer, float fraction)
+{
 }
 
 //==========================================================================
