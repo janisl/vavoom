@@ -38,7 +38,7 @@ bool Physics(float DeltaTime)
 	{
 		if (WaterLevel < 2)
 		{
-			Velocity.z -= 45.0 / 50.0 * 627.5 * DeltaTime;
+			Velocity.z -= (100.0 - Mass) / 100.0 * GetGravity() * DeltaTime;
 		}
 	}
 	return ::Physics(DeltaTime);
