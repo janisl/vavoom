@@ -30,17 +30,17 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define TOCENTER 		-128
+#define TOCENTER 				-128
 
-#define TEXTURE_TOP		0
-#define TEXTURE_MIDDLE	1
-#define TEXTURE_BOTTOM	2
+#define TEXTURE_TOP				0
+#define TEXTURE_MIDDLE			1
+#define TEXTURE_BOTTOM			2
 
-#define REBORN_DESCRIPTION	"TEMP GAME"
+#define REBORN_DESCRIPTION		"TEMP GAME"
 
-#define MAX_MODELS		512
-#define MAX_SPRITES		512
-#define MAX_SKINS		256
+#define MAX_MODELS				512
+#define MAX_SPRITES				512
+#define MAX_SKINS				256
 
 // TYPES -------------------------------------------------------------------
 
@@ -145,6 +145,7 @@ static int		numskins;
 static VStr		skins[MAX_SKINS];
 
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
+static VCvarF	sv_gravity("sv_gravity", "800.0", CVAR_ServerInfo);
 
 // CODE --------------------------------------------------------------------
 
@@ -2282,6 +2283,10 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	{
 		GLevelInfo = GGameInfo->eventCreateLevelInfo();
 		GLevelInfo->Level = GLevelInfo;
+		if (info.Gravity)
+		    GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
+		else
+			GLevelInfo->Gravity = sv_gravity * DEFAULT_GRAVITY / 800.0;
 		for (i = 0; i < GLevel->NumThings; i++)
 		{
 			GLevelInfo->eventSpawnMapThing(&GLevel->Things[i]);

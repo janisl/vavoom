@@ -56,6 +56,7 @@ enum
 	MCMD_CD_END3TRACK,
 	MCMD_CD_INTERTRACK,
 	MCMD_CD_TITLETRACK,
+	MCMD_GRAVITY,
 };
 
 // TYPES -------------------------------------------------------------------
@@ -106,6 +107,7 @@ static const char *MapCmdNames[] =
 	"CD_END3_TRACK",
 	"CD_INTERMISSION_TRACK",
 	"CD_TITLE_TRACK",
+	"GRAVITY",
 	NULL
 };
 
@@ -147,6 +149,7 @@ void InitMapInfo()
 	info->doubleSky = false;
 	info->lightning = false;
 	info->FadeTable = DEFAULT_FADE_TABLE;
+	info->Gravity = 0.0;
 	strcpy(info->name, UNKNOWN_MAP_NAME);
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
@@ -353,6 +356,10 @@ static void ParseMapInfo()
 			case MCMD_CD_TITLETRACK:
 				SC_MustGetNumber();
 				cd_NonLevelTracks[mcmdValue-MCMD_CD_STARTTRACK] = sc_Number;
+				break;
+			case MCMD_GRAVITY:
+				SC_MustGetNumber();
+				info->Gravity = (float)sc_Number;
 				break;
 			}
 		}

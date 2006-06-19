@@ -432,6 +432,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->base_floorheight = ss->floor.dist;
 		ss->base_ceilingheight = ss->ceiling.dist;
 		ss->base_lightlevel = ss->params.lightlevel;
+		ss->Gravity = 1.0;	// default sector gravity of 1.0
 	}
 	delete Strm;
 	unguard;

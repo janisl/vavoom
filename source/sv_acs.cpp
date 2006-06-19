@@ -3162,15 +3162,19 @@ int VACS::RunScript(float DeltaTime)
 			break;
 
 		case PCD_SetGravity:
-			//FIXME
-			{float grav = float(stack[stackPtr - 1]) / float(0x10000);}
-			stackPtr--;
+			{
+				float grav = float(stack[stackPtr - 1]) * DEFAULT_GRAVITY / 800.0;
+				GLevelInfo->Gravity = grav;
+				stackPtr--;
+			}
 			break;
 
 		case PCD_SetGravityDirect:
-			//FIXME
-			{float grav = float(PC_GET_INT) / float(0x10000);}
-			stackPtr--;
+			{
+				float grav = float(PC_GET_INT) * DEFAULT_GRAVITY / 800.0;
+				GLevelInfo->Gravity = grav;
+				stackPtr--;
+			}
 			break;
 
 		case PCD_SetAirControl:

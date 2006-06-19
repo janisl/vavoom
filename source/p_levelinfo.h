@@ -46,6 +46,8 @@ class VLevelInfo : public VThinker
 	TVec			linestart;
 	TVec			lineend;
 
+	float			Gravity;								// Level Gravity
+
 	VLevelInfo();
 
 	void eventSpawnSpecials()
@@ -96,6 +98,14 @@ class VLevelInfo : public VThinker
 		P_PASS_INT(type);
 		P_PASS_INT(tid);
 		EV_RET_INT("ThingCount");
+	}
+	void eventSetSectorGravity(int tag, float integer, float fraction)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(tag);
+		P_PASS_FLOAT(integer);
+		P_PASS_FLOAT(fraction);
+		EV_RET_VOID("SetSectorGravity");
 	}
 	VEntity* eventFindMobjFromTID(int tid, int *searchPosition)
 	{

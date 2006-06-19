@@ -26,7 +26,8 @@
 #ifndef _SV_LOCAL_H
 #define _SV_LOCAL_H
 
-#define MAXHEALTH		100
+#define MAXHEALTH				100
+#define DEFAULT_GRAVITY			1225.0
 
 struct tmtrace_t;
 

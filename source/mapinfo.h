@@ -56,6 +56,7 @@ struct mapInfo_t
 	VName		SongLump;		// Background music (MUS or MIDI)
 	VName		SkyBox;			// Sky box
 	mapalias_t	mapalias[MAX_MAP_ALIAS];// Map aliases
+	float		Gravity;		// Map gravity
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

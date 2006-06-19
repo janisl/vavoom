@@ -310,6 +310,7 @@ struct sector_t
 
 	float		Friction;
 	float		MoveFactor;
+	float		Gravity;				// Sector gravity (1.0 is normal)
 };
 
 //

@@ -154,6 +154,7 @@ class VEntity : public VThinker
 		EF_IgnoreCeilingStep	= 0x00020000,	// continue walk without lowering itself
 		EF_AvoidingDropoff		= 0x00040000,	// used to move monsters away from dropoffs
 		EF_OnMobj				= 0x00080000,	// mobj is resting on top of another mobj
+		EF_Corpse				= 0x00100000,	// don't stop moving halfway off a step
 	};
 	vuint32			EntityFlags;
 
@@ -308,6 +309,7 @@ class VEntity : public VThinker
 	bool TestMobjZ(bool = false);
 	void SlideMove();
 	void BounceWall(float overbounce);
+	float GetGravity();
 	void UpdateVelocity();
 	void FakeZMovement();
 	VEntity *CheckOnmobj();
@@ -334,6 +336,7 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(TestMobjZ)
 	DECLARE_FUNCTION(SlideMove)
 	DECLARE_FUNCTION(BounceWall)
+	DECLARE_FUNCTION(GetGravity)
 	DECLARE_FUNCTION(UpdateVelocity)
 	DECLARE_FUNCTION(CheckOnmobj)
 	DECLARE_FUNCTION(LinkToWorld)

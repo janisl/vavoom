@@ -30,7 +30,9 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define GRAVITY			1225.0
+#define WATER_SINK_FACTOR		3.0
+#define WATER_SINK_SMALL_FACTOR	4.0
+#define WATER_SINK_SPEED		0.5
 
 // TYPES -------------------------------------------------------------------
 
@@ -1517,6 +1519,24 @@ void VEntity::BounceWall(float overbounce)
 
 //==========================================================================
 //
+//	VEntity::GetGravity
+//
+//	Set the gravity for this thing depending on gravity of sectors,
+//	level and self gravity.
+//
+//==========================================================================
+
+float VEntity::GetGravity()
+{
+	guard(VEntity::GetGravity);
+	float grav;
+	grav = GLevelInfo->Gravity * Sector->Gravity * host_frametime;
+	return grav;
+	unguard;
+}
+
+//==========================================================================
+//
 //  VEntity::UpdateVelocity
 //
 //==========================================================================
@@ -1524,6 +1544,8 @@ void VEntity::BounceWall(float overbounce)
 void VEntity::UpdateVelocity()
 {
 	guard(VEntity::UpdateVelocity);
+	float startvelz, sinkspeed;
+
 /*	if (Origin.z <= FloorZ && !Velocity.x && !Velocity.y &&
 		!Velocity.z && !bCountKill && !(EntityFlags & EF_IsPlayer))
 	{
@@ -1536,15 +1558,37 @@ void VEntity::UpdateVelocity()
 	// 45 degrees)
 	if (!(EntityFlags & EF_NoGravity) && (Origin.z > FloorZ || Floor->normal.z < 0.7))
 	{
+		//	Add gravity
 		if (WaterLevel < 2)
 		{
-			//  Add gravity
-			Velocity.z -= Mass / 100.0 * GRAVITY * host_frametime;
-		}
-		else if (!(EntityFlags & EF_IsPlayer))
-		{
-			//  Add gravity
-			Velocity.z = -Mass / 100.0 * 60.0;
+			Velocity.z -= Mass / 100.0 * GetGravity();
+			startvelz = Velocity.z;
+
+			// Water Gravity
+			if (WaterLevel > 1)
+			{
+				if (EntityFlags & EF_Corpse)
+					sinkspeed = -WATER_SINK_SPEED / 3.0;
+				else
+					sinkspeed = -WATER_SINK_SPEED;
+
+				if (Velocity.z < sinkspeed)
+				{
+					if (startvelz < sinkspeed)
+						Velocity.z = startvelz;
+					else
+						Velocity.z = sinkspeed;
+				}
+				else
+				{
+					Velocity.z = startvelz + ((Velocity.z - startvelz) * WATER_SINK_FACTOR);
+				}
+			}
+			else
+			{
+				if (WaterLevel == 1)
+					Velocity.z = startvelz + ((Velocity.z - startvelz) * WATER_SINK_SMALL_FACTOR);
+			}
 		}
 	}
 
@@ -2063,6 +2107,18 @@ IMPLEMENT_FUNCTION(VEntity, BounceWall)
 	P_GET_FLOAT(overbounce);
 	P_GET_SELF;
 	Self->BounceWall(overbounce);
+}
+
+//==========================================================================
+//
+//	Entity.GetGravity
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, GetGravity)
+{
+	P_GET_SELF;
+	RET_FLOAT(Self->GetGravity());
 }
 
 //==========================================================================

@@ -148,7 +148,8 @@ void VLevel::Serialise(VStream& Strm)
 		Strm.SerialiseReference(*(VObject**)&sec->AffectorData, VThinker::StaticClass());
 		Strm << sec->Damage
 			<< sec->Friction
-			<< sec->MoveFactor;
+			<< sec->MoveFactor
+			<< sec->Gravity;
 		if (Strm.IsLoading())
 		{
 			CalcSecMinMaxs(sec);
