@@ -158,7 +158,10 @@ __states__
 		SpriteFrame = Player(Player).Sigil;
 	}
 	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
-	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
+	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3)
+	{
+		WeaponSigil(Player.ViewEnts[ps_weapon]).A_SigilFlash();
+	}
 	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE)
 	{
 		A_Light1(); 
@@ -175,41 +178,3 @@ defaultproperties
 	AttackState = S_SIGIL1;
 	FlashState = S_SIGILFLASH1;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.11  2006/03/12 20:01:25  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.10  2006/03/02 18:36:30  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.9  2006/02/28 22:47:55  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.8  2006/02/17 19:06:53  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.7  2006/02/13 18:30:17  dj_jl
-//  Moved all server progs global functions to classes.
-//
-//  Revision 1.6  2005/12/11 21:31:40  dj_jl
-//  Made path traversal callbacks class members.
-//
-//  Revision 1.5  2005/11/19 13:43:51  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.4  2004/12/22 07:56:47  dj_jl
-//  Fully working Strife support.
-//
-//  Revision 1.3  2004/10/18 06:35:21  dj_jl
-//  Implemented many monsters, sigil and some more.
-//
-//  Revision 1.2  2004/01/30 17:40:09  dj_jl
-//  Implemented many action functions.
-//
-//  Revision 1.1  2002/11/02 08:20:57  dj_jl
-//  New style classes.
-//
-//**************************************************************************
