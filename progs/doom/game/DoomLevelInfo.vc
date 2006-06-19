@@ -376,6 +376,28 @@ int ThingCount(int type, int tid)
 
 //==========================================================================
 //
+//  SetSectorGravity
+//
+//==========================================================================
+
+void SetSectorGravity(int tag, float integer, float fraction)
+{
+	int SecNum;
+	float gravity;
+
+	if (fraction > 99.0)
+		fraction = 99.0;
+
+	gravity = integer + fraction * 0.01;
+
+	for (SecNum = FindSectorFromTag(tag, -1);
+		SecNum >= 0;
+		SecNum = FindSectorFromTag(tag, SecNum))
+		XLevel.Sectors[SecNum].Gravity = gravity;
+}
+
+//==========================================================================
+//
 //  ExecuteActionSpecial
 //
 //==========================================================================
@@ -861,6 +883,10 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_SectorSetCurrent:
 		buttonSuccess = AdjustPusher(Arg1, Arg2, Arg3, Arg4, Arg5, Line,
 			Pusher::PUSHER_Current);
+		break;
+	case LNSPEC_SectorSetGravity:
+		SetSectorGravity(Arg1, itof(Arg2), itof(Arg3));
+		buttonSuccess = true;
 		break;
 	case LNSPEC_ACSExecuteAlways:
 		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line, Side,
