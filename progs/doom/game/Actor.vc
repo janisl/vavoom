@@ -76,7 +76,6 @@ bool bTeleport;		// don't cross lines or look at heights
 bool bMissile;		// don't hit same species, explode on block
 bool bDropped;		// dropped by a demon, not level spawned
 bool bNoBlood;		// don't bleed when shot (use puff)
-bool bCorpse;		// don't stop moving halfway off a step
 bool bInFloat;		// floating to a height for a move, don't
 			// auto float to target's height
 bool bCountKill;	// count towards intermission kill total
@@ -104,7 +103,6 @@ bool bNoRespawn;
 bool bWindThrust;
 bool bNoTeleport;
 bool bStaticLight;	// Static light source.
-bool bAvoidDropoff;
 #ifdef DDF
 // Extra flags.
 bool bStealth;
@@ -1426,7 +1424,7 @@ void ZMovement(float DeltaTime)
 
 		if (vdot < -0.1)
 		{
-			if (bIsPlayer && (vdot < -GRAVITY * 0.25))
+			if (bIsPlayer && (vdot < -DEFAULT_GRAVITY * 0.25))
 			{
 				// Squat down.
 				// Decrease ViewHeight for a moment
@@ -1576,7 +1574,7 @@ float GetFriction()
 void PlayerLandedOnThing()
 {
 	Player(Player).DeltaViewHeight = Velocity.z / 8.0;
-	if (Velocity.z < -GRAVITY * 0.375)
+	if (Velocity.z < -DEFAULT_GRAVITY * 0.375)
 	{
 		PlaySound('*land', CHAN_VOICE);
 	}
@@ -1684,7 +1682,7 @@ bool Physics(float DeltaTime)
 			{
 				if (bIsPlayer)
 				{
-					if (Velocity.z < -GRAVITY * 0.25 && !bFly)
+					if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
 					{
 						PlayerLandedOnThing();
 					}
