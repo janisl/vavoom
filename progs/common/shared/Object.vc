@@ -309,7 +309,7 @@ enum
 	PT_EARLYOUT		= 4
 };
 
-const float GRAVITY			= 1225.0;
+const float DEFAULT_GRAVITY			= 1225.0;
 
 enum
 {
@@ -573,6 +573,8 @@ enum
 
 	LNSPEC_SectorSetDamage = 214,
 	LNSPEC_TeleportLine,
+
+	LNSPEC_SectorSetGravity = 216,
 
 	LNSPEC_StairsBuildUpDoom = 217,
 	LNSPEC_SectorSetWind,
@@ -841,6 +843,7 @@ struct sector_t
 
 	float		Friction;
 	float		MoveFactor;
+	float		Gravity;
 };
 
 //
