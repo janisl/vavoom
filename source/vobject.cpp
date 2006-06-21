@@ -294,6 +294,19 @@ VMethod *VObject::GetVFunction(VName FuncName) const
 
 //==========================================================================
 //
+//	VObject::ClearReferences
+//
+//==========================================================================
+
+void VObject::ClearReferences()
+{
+	guard(VObject::ClearReferences);
+	GetClass()->CleanObject(this);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VObject::CollectGarbage
 //
 //==========================================================================
@@ -328,7 +341,7 @@ void VObject::CollectGarbage()
 		{
 			continue;
 		}
-		GObjObjects[i]->GetClass()->CleanObject(GObjObjects[i]);
+		GObjObjects[i]->ClearReferences();
 	}
 
 	//	Now actually delete the objects.

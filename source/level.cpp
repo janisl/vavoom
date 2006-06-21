@@ -221,6 +221,38 @@ void VLevel::Serialise(VStream& Strm)
 
 //==========================================================================
 //
+//	VLevel::ClearReferences
+//
+//==========================================================================
+
+void VLevel::ClearReferences()
+{
+	guard(VLevel::ClearReferences);
+	Super::ClearReferences();
+	for (int i = 0; i < NumSectors; i++)
+	{
+		sector_t* sec = Sectors + i;
+		if (sec->SoundTarget && sec->SoundTarget->GetFlags() & _OF_CleanupRef)
+			sec->SoundTarget = NULL;
+		if (sec->FloorData && sec->FloorData->GetFlags() & _OF_CleanupRef)
+			sec->FloorData = NULL;
+		if (sec->CeilingData && sec->CeilingData->GetFlags() & _OF_CleanupRef)
+			sec->CeilingData = NULL;
+		if (sec->LightingData && sec->LightingData->GetFlags() & _OF_CleanupRef)
+			sec->LightingData = NULL;
+		if (sec->AffectorData && sec->AffectorData->GetFlags() & _OF_CleanupRef)
+			sec->AffectorData = NULL;
+	}
+	for (int i = 0; i < NumPolyObjs; i++)
+	{
+		if (PolyObjs[i].SpecialData && PolyObjs[i].SpecialData->GetFlags() & _OF_CleanupRef)
+			PolyObjs[i].SpecialData = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLevel::Destroy
 //
 //==========================================================================

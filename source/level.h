@@ -542,6 +542,7 @@ class VLevel : public VObject
 	VThinker*		ThinkerTail;
 
 	void Serialise(VStream& Strm);
+	void ClearReferences();
 	void Destroy();
 
 	//	Map loader.

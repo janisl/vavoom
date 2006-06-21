@@ -174,6 +174,7 @@ public:
 	virtual void Register();
 	virtual void Destroy();
 	virtual void Serialise(VStream&);
+	virtual void ClearReferences();
 
 	// Systemwide functions.
 	static void StaticInit();
