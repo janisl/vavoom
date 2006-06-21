@@ -1,0 +1,307 @@
+//**************************************************************************
+//**
+//**	##   ##    ##    ##   ##   ####     ####   ###     ###
+//**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**	 ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**	 ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**	   #    ##    ##    #      ####     ####   ##       ##
+//**
+//**	$Id: template.h),v 1.4 2002/05/18 16:56:35 dj_jl Exp $
+//**
+//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**
+//**	This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License), or (at your option) any later version.
+//**
+//**	This program is distributed in the hope that it will be useful),
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+#ifndef DECLARE_PCD
+#define DECLARE_PCD(name)	PCD_ ## name
+#define DECLARING_PCD_ENUM
+enum EPCD
+{
+#endif
+	DECLARE_PCD(Nop),
+	DECLARE_PCD(Terminate),
+	DECLARE_PCD(Suspend),
+	DECLARE_PCD(PushNumber),
+	DECLARE_PCD(LSpec1),
+	DECLARE_PCD(LSpec2),
+	DECLARE_PCD(LSpec3),
+	DECLARE_PCD(LSpec4),
+	DECLARE_PCD(LSpec5),
+	DECLARE_PCD(LSpec1Direct),
+	DECLARE_PCD(LSpec2Direct),//10
+	DECLARE_PCD(LSpec3Direct),
+	DECLARE_PCD(LSpec4Direct),
+	DECLARE_PCD(LSpec5Direct),
+	DECLARE_PCD(Add),
+	DECLARE_PCD(Subtract),
+	DECLARE_PCD(Multiply),
+	DECLARE_PCD(Divide),
+	DECLARE_PCD(Modulus),
+	DECLARE_PCD(EQ),
+	DECLARE_PCD(NE),//20
+	DECLARE_PCD(LT),
+	DECLARE_PCD(GT),
+	DECLARE_PCD(LE),
+	DECLARE_PCD(GE),
+	DECLARE_PCD(AssignScriptVar),
+	DECLARE_PCD(AssignMapVar),
+	DECLARE_PCD(AssignWorldVar),
+	DECLARE_PCD(PushScriptVar),
+	DECLARE_PCD(PushMapVar),
+	DECLARE_PCD(PushWorldVar),//30
+	DECLARE_PCD(AddScriptVar),
+	DECLARE_PCD(AddMapVar),
+	DECLARE_PCD(AddWorldVar),
+	DECLARE_PCD(SubScriptVar),
+	DECLARE_PCD(SubMapVar),
+	DECLARE_PCD(SubWorldVar),
+	DECLARE_PCD(MulScriptVar),
+	DECLARE_PCD(MulMapVar),
+	DECLARE_PCD(MulWorldVar),
+	DECLARE_PCD(DivScriptVar),//40
+	DECLARE_PCD(DivMapVar),
+	DECLARE_PCD(DivWorldVar),
+	DECLARE_PCD(ModScriptVar),
+	DECLARE_PCD(ModMapVar),
+	DECLARE_PCD(ModWorldVar),
+	DECLARE_PCD(IncScriptVar),
+	DECLARE_PCD(IncMapVar),
+	DECLARE_PCD(IncWorldVar),
+	DECLARE_PCD(DecScriptVar),
+	DECLARE_PCD(DecMapVar),//50
+	DECLARE_PCD(DecWorldVar),
+	DECLARE_PCD(Goto),
+	DECLARE_PCD(IfGoto),
+	DECLARE_PCD(Drop),
+	DECLARE_PCD(Delay),
+	DECLARE_PCD(DelayDirect),
+	DECLARE_PCD(Random),
+	DECLARE_PCD(RandomDirect),
+	DECLARE_PCD(ThingCount),
+	DECLARE_PCD(ThingCountDirect),//60
+	DECLARE_PCD(TagWait),
+	DECLARE_PCD(TagWaitDirect),
+	DECLARE_PCD(PolyWait),
+	DECLARE_PCD(PolyWaitDirect),
+	DECLARE_PCD(ChangeFloor),
+	DECLARE_PCD(ChangeFloorDirect),
+	DECLARE_PCD(ChangeCeiling),
+	DECLARE_PCD(ChangeCeilingDirect),
+	DECLARE_PCD(Restart),
+	DECLARE_PCD(AndLogical),//70
+	DECLARE_PCD(OrLogical),
+	DECLARE_PCD(AndBitwise),
+	DECLARE_PCD(OrBitwise),
+	DECLARE_PCD(EorBitwise),
+	DECLARE_PCD(NegateLogical),
+	DECLARE_PCD(LShift),
+	DECLARE_PCD(RShift),
+	DECLARE_PCD(UnaryMinus),
+	DECLARE_PCD(IfNotGoto),
+	DECLARE_PCD(LineSide),//80
+	DECLARE_PCD(ScriptWait),
+	DECLARE_PCD(ScriptWaitDirect),
+	DECLARE_PCD(ClearLineSpecial),
+	DECLARE_PCD(CaseGoto),
+	DECLARE_PCD(BeginPrint),
+	DECLARE_PCD(EndPrint),
+	DECLARE_PCD(PrintString),
+	DECLARE_PCD(PrintNumber),
+	DECLARE_PCD(PrintCharacter),
+	DECLARE_PCD(PlayerCount),//90
+	DECLARE_PCD(GameType),
+	DECLARE_PCD(GameSkill),
+	DECLARE_PCD(Timer),
+	DECLARE_PCD(SectorSound),
+	DECLARE_PCD(AmbientSound),
+	DECLARE_PCD(SoundSequence),
+	DECLARE_PCD(SetLineTexture),
+	DECLARE_PCD(SetLineBlocking),
+	DECLARE_PCD(SetLineSpecial),
+	DECLARE_PCD(ThingSound),//100
+	DECLARE_PCD(EndPrintBold),
+	DECLARE_PCD(ActivatorSound),// Start of the extended opcodes.
+	DECLARE_PCD(LocalAmbientSound),
+	DECLARE_PCD(SetLineMonsterBlocking),
+	DECLARE_PCD(PlayerBlueSkull),	// Start of new [Skull Tag] pcodes
+	DECLARE_PCD(PlayerRedSkull),
+	DECLARE_PCD(PlayerYellowSkull),
+	DECLARE_PCD(PlayerMasterSkull),
+	DECLARE_PCD(PlayerBlueCard),
+	DECLARE_PCD(PlayerRedCard),//110
+	DECLARE_PCD(PlayerYellowCard),
+	DECLARE_PCD(PlayerMasterCard),
+	DECLARE_PCD(PlayerBlackSkull),
+	DECLARE_PCD(PlayerSilverSkull),
+	DECLARE_PCD(PlayerGoldSkull),
+	DECLARE_PCD(PlayerBlackCard),
+	DECLARE_PCD(PlayerSilverCard),
+	DECLARE_PCD(PlayerOnTeam),
+	DECLARE_PCD(PlayerTeam),
+	DECLARE_PCD(PlayerHealth),//120
+	DECLARE_PCD(PlayerArmorPoints),
+	DECLARE_PCD(PlayerFrags),
+	DECLARE_PCD(PlayerExpert),
+	DECLARE_PCD(BlueTeamCount),
+	DECLARE_PCD(RedTeamCount),
+	DECLARE_PCD(BlueTeamScore),
+	DECLARE_PCD(RedTeamScore),
+	DECLARE_PCD(IsOneFlagCTF),
+	DECLARE_PCD(LSpec6),				// These are never used. They should probably
+	DECLARE_PCD(LSpec6Direct),//130	// be given names like DECLARE_PCD(Dummy.
+	DECLARE_PCD(PrintName),
+	DECLARE_PCD(MusicChange),
+	DECLARE_PCD(Team2FragPoints),
+	DECLARE_PCD(ConsoleCommand),
+	DECLARE_PCD(SinglePlayer),		// [RH] End of Skull Tag p-codes
+	DECLARE_PCD(FixedMul),
+	DECLARE_PCD(FixedDiv),
+	DECLARE_PCD(SetGravity),
+	DECLARE_PCD(SetGravityDirect),
+	DECLARE_PCD(SetAirControl),//140
+	DECLARE_PCD(SetAirControlDirect),
+	DECLARE_PCD(ClearInventory),
+	DECLARE_PCD(GiveInventory),
+	DECLARE_PCD(GiveInventoryDirect),
+	DECLARE_PCD(TakeInventory),
+	DECLARE_PCD(TakeInventoryDirect),
+	DECLARE_PCD(CheckInventory),
+	DECLARE_PCD(CheckInventoryDirect),
+	DECLARE_PCD(Spawn),
+	DECLARE_PCD(SpawnDirect),//150
+	DECLARE_PCD(SpawnSpot),
+	DECLARE_PCD(SpawnSpotDirect),
+	DECLARE_PCD(SetMusic),
+	DECLARE_PCD(SetMusicDirect),
+	DECLARE_PCD(LocalSetMusic),
+	DECLARE_PCD(LocalSetMusicDirect),
+	DECLARE_PCD(PrintFixed),
+	DECLARE_PCD(PrintLocalised),
+	DECLARE_PCD(MoreHudMessage),
+	DECLARE_PCD(OptHudMessage),//160
+	DECLARE_PCD(EndHudMessage),
+	DECLARE_PCD(EndHudMessageBold),
+	DECLARE_PCD(SetStyle),
+	DECLARE_PCD(SetStyleDirect),
+	DECLARE_PCD(SetFont),
+	DECLARE_PCD(SetFontDirect),
+	DECLARE_PCD(PushByte),
+	DECLARE_PCD(LSpec1DirectB),
+	DECLARE_PCD(LSpec2DirectB),
+	DECLARE_PCD(LSpec3DirectB),//170
+	DECLARE_PCD(LSpec4DirectB),
+	DECLARE_PCD(LSpec5DirectB),
+	DECLARE_PCD(DelayDirectB),
+	DECLARE_PCD(RandomDirectB),
+	DECLARE_PCD(PushBytes),
+	DECLARE_PCD(Push2Bytes),
+	DECLARE_PCD(Push3Bytes),
+	DECLARE_PCD(Push4Bytes),
+	DECLARE_PCD(Push5Bytes),
+	DECLARE_PCD(SetThingSpecial),//180
+	DECLARE_PCD(AssignGlobalVar),
+	DECLARE_PCD(PushGlobalVar),
+	DECLARE_PCD(AddGlobalVar),
+	DECLARE_PCD(SubGlobalVar),
+	DECLARE_PCD(MulGlobalVar),
+	DECLARE_PCD(DivGlobalVar),
+	DECLARE_PCD(ModGlobalVar),
+	DECLARE_PCD(IncGlobalVar),
+	DECLARE_PCD(DecGlobalVar),
+	DECLARE_PCD(FadeTo),//190
+	DECLARE_PCD(FadeRange),
+	DECLARE_PCD(CancelFade),
+	DECLARE_PCD(PlayMovie),
+	DECLARE_PCD(SetFloorTrigger),
+	DECLARE_PCD(SetCeilingTrigger),
+	DECLARE_PCD(GetActorX),
+	DECLARE_PCD(GetActorY),
+	DECLARE_PCD(GetActorZ),
+	DECLARE_PCD(StartTranslation),
+	DECLARE_PCD(TranslationRange1),//200
+	DECLARE_PCD(TranslationRange2),
+	DECLARE_PCD(EndTranslation),
+	DECLARE_PCD(Call),
+	DECLARE_PCD(CallDiscard),
+	DECLARE_PCD(ReturnVoid),
+	DECLARE_PCD(ReturnVal),
+	DECLARE_PCD(PushMapArray),
+	DECLARE_PCD(AssignMapArray),
+	DECLARE_PCD(AddMapArray),
+	DECLARE_PCD(SubMapArray),//210
+	DECLARE_PCD(MulMapArray),
+	DECLARE_PCD(DivMapArray),
+	DECLARE_PCD(ModMapArray),
+	DECLARE_PCD(IncMapArray),
+	DECLARE_PCD(DecMapArray),
+	DECLARE_PCD(Dup),
+	DECLARE_PCD(Swap),
+	DECLARE_PCD(WriteToIni),
+	DECLARE_PCD(GetFromIni),
+	DECLARE_PCD(Sin),//220
+	DECLARE_PCD(Cos),
+	DECLARE_PCD(VectorAngle),
+	DECLARE_PCD(CheckWeapon),
+	DECLARE_PCD(SetWeapon),
+	DECLARE_PCD(TagString),
+	DECLARE_PCD(PushWorldArray),
+	DECLARE_PCD(AssignWorldArray),
+	DECLARE_PCD(AddWorldArray),
+	DECLARE_PCD(SubWorldArray),
+	DECLARE_PCD(MulWorldArray),//230
+	DECLARE_PCD(DivWorldArray),
+	DECLARE_PCD(ModWorldArray),
+	DECLARE_PCD(IncWorldArray),
+	DECLARE_PCD(DecWorldArray),
+	DECLARE_PCD(PushGlobalArray),
+	DECLARE_PCD(AssignGlobalArray),
+	DECLARE_PCD(AddGlobalArray),
+	DECLARE_PCD(SubGlobalArray),
+	DECLARE_PCD(MulGlobalArray),
+	DECLARE_PCD(DivGlobalArray),//240
+	DECLARE_PCD(ModGlobalArray),
+	DECLARE_PCD(IncGlobalArray),
+	DECLARE_PCD(DecGlobalArray),
+	DECLARE_PCD(SetMarineWeapon),
+	DECLARE_PCD(SetActorProperty),
+	DECLARE_PCD(GetActorProperty),
+	DECLARE_PCD(PlayerNumber),
+	DECLARE_PCD(ActivatorTID),
+	DECLARE_PCD(SetMarineSprite),
+	DECLARE_PCD(GetScreenWidth),//250
+	DECLARE_PCD(GetScreenHeight),
+	DECLARE_PCD(ThingProjectile2),
+	DECLARE_PCD(StrLen),
+	DECLARE_PCD(SetHudSize),
+	DECLARE_PCD(GetCvar),
+	DECLARE_PCD(CaseGotoSorted),
+	DECLARE_PCD(SetResultValue),
+	DECLARE_PCD(GetLineRowOffset),
+	DECLARE_PCD(GetActorFloorZ),
+	DECLARE_PCD(GetActorAngle),//260
+	DECLARE_PCD(GetSectorFloorZ),
+	DECLARE_PCD(GetSectorCeilingZ),
+	DECLARE_PCD(LSpec5Result),
+	DECLARE_PCD(GetSigilPieces),
+	DECLARE_PCD(GetLevelInfo),
+	DECLARE_PCD(ChangeSky),
+	DECLARE_PCD(PlayerInGame),
+	DECLARE_PCD(PlayerIsBot),
+
+#ifdef DECLARING_PCD_ENUM
+	PCODE_COMMAND_COUNT
+};
+#undef DECLARE_PCD
+#undef DECLARING_PCD_ENUM
+#endif

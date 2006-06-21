@@ -110,6 +110,90 @@ void VStr::Resize(int NewLen)
 
 //==========================================================================
 //
+//	VStr::EvalEscapeSequences
+//
+//==========================================================================
+
+VStr VStr::EvalEscapeSequences() const
+{
+	guard(VStr::EvalEscapeSequences);
+	VStr Ret;
+	char Val;
+	for (const char* c = **this; *c; c++)
+	{
+		if (*c == '\\')
+		{
+			c++;
+			switch (*c)
+			{
+			case 't':
+				Ret += '\t';
+				break;
+			case 'n':
+				Ret += '\n';
+				break;
+			case 'r':
+				Ret += '\r';
+				break;
+			case 'x':
+				Val = 0;
+				c++;
+				for (int i = 0; i < 2; i++)
+				{
+					if (*c >= '0' && *c <= '9')
+						Val = (Val << 4) + *c - '0';
+					else if (*c >= 'a' && *c <= 'f')
+						Val = (Val << 4) + 10 + *c - 'a';
+					else if (*c >= 'A' && *c <= 'F')
+						Val = (Val << 4) + 10 + *c - 'A';
+					else
+						break;
+					c++;
+				}
+				c--;
+				Ret += Val;
+				break;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+				Val = 0;
+				for (int i = 0; i < 3; i++)
+				{
+					if (*c >= '0' && *c <= '7')
+						Val = (Val << 3) + *c - '0';
+					else
+						break;
+					c++;
+				}
+				c--;
+				Ret += Val;
+				break;
+			case '\n':
+				break;
+			case 0:
+				c--;
+				break;
+			default:
+				Ret += *c;
+				break;
+			}
+		}
+		else
+		{
+			Ret += *c;
+		}
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStr::ExtractFilePath
 //
 //==========================================================================

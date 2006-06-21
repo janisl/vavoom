@@ -329,6 +329,8 @@ public:
 		return Strm;
 	}
 
+	VStr EvalEscapeSequences() const;
+
 	VStr ExtractFilePath() const;
 	VStr ExtractFileName() const;
 	VStr ExtractFileBase() const;

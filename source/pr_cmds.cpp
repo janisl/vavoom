@@ -638,30 +638,6 @@ IMPLEMENT_FUNCTION(VObject, TerminateACS)
 	RET_BOOL(P_TerminateACS(number, map));
 }
 
-//==========================================================================
-//
-//  PF_TagFinished
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, TagFinished)
-{
-	P_GET_INT(tag);
-	P_TagFinished(tag);
-}
-
-//==========================================================================
-//
-//  PF_PolyobjFinished
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, PolyobjFinished)
-{
-	P_GET_INT(tag);
-	P_PolyobjFinished(tag);
-}
-
 //**************************************************************************
 //
 //  Sound functions

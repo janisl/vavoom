@@ -90,10 +90,8 @@ void P_StartTypedACScripts(int Type);
 bool P_StartACS(int number, int map, int arg1, int arg2, int arg3,
 	VEntity* activator, line_t* line, int side, bool Always,
 	bool WantResult);
-boolean P_TerminateACS(int number, int map);
-boolean P_SuspendACS(int number, int map);
-void P_TagFinished(int tag);
-void P_PolyobjFinished(int po);
+bool P_TerminateACS(int number, int map);
+bool P_SuspendACS(int number, int map);
 void P_ACSInitNewGame();
 void P_CheckACSStore();
 void P_SerialiseScripts(VStream& Strm);
@@ -241,6 +239,7 @@ void SV_SectorStopSequence(const sector_t *);
 void SV_PolyobjStartSequence(const polyobj_t *, const char *);
 void SV_PolyobjStopSequence(const polyobj_t *);
 void SV_BroadcastPrintf(const char *s, ...);
+void SV_BroadcastCentrePrintf(const char *s, ...);
 void SV_ClientPrintf(VBasePlayer *player, const char *s, ...);
 void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...);
 void SV_SetFloorPic(int i, int texture);

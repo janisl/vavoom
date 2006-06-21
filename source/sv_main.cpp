@@ -815,6 +815,28 @@ void SV_BroadcastPrintf(const char *s, ...)
 
 //==========================================================================
 //
+//	SV_BroadcastCentrePrintf
+//
+//==========================================================================
+
+void SV_BroadcastCentrePrintf(const char *s, ...)
+{
+	guard(SV_BroadcastCentrePrintf);
+	va_list	v;
+	char	buf[1024];
+
+	va_start(v, s);
+   	vsprintf(buf, s, v);
+	va_end(v);
+
+	for (int i = 0; i < svs.max_clients; i++)
+		if (GGameInfo->Players[i])
+			GGameInfo->Players[i]->Message << (byte)svc_center_print << buf;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_WriteViewData
 //
 //==========================================================================

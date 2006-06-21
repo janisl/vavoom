@@ -400,8 +400,6 @@ public:
 	DECLARE_FUNCTION(StartACS)
 	DECLARE_FUNCTION(SuspendACS)
 	DECLARE_FUNCTION(TerminateACS)
-	DECLARE_FUNCTION(TagFinished)
-	DECLARE_FUNCTION(PolyobjFinished)
 
 	//	Sound functions
 	DECLARE_FUNCTION(StartSoundAtVolume)

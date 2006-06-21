@@ -55,10 +55,10 @@
 
 #include "gamedefs.h"
 #include "sv_local.h"
+#include "p_acs.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define PRINT_BUFFER_SIZE	256
 #define ACS_STACK_DEPTH		4096
 
 // TYPES -------------------------------------------------------------------
@@ -98,281 +98,6 @@ enum
 	SCRIPTF_Net = 0x0001	//	Safe to "puke" in multiplayer.
 };
 
-enum EPCD
-{
-	PCD_Nop,
-	PCD_Terminate,
-	PCD_Suspend,
-	PCD_PushNumber,
-	PCD_LSpec1,
-	PCD_LSpec2,
-	PCD_LSpec3,
-	PCD_LSpec4,
-	PCD_LSpec5,
-	PCD_LSpec1Direct,
-	PCD_LSpec2Direct,//10
-	PCD_LSpec3Direct,
-	PCD_LSpec4Direct,
-	PCD_LSpec5Direct,
-	PCD_Add,
-	PCD_Subtract,
-	PCD_Multiply,
-	PCD_Divide,
-	PCD_Modulus,
-	PCD_EQ,
-	PCD_NE,//20
-	PCD_LT,
-	PCD_GT,
-	PCD_LE,
-	PCD_GE,
-	PCD_AssignScriptVar,
-	PCD_AssignMapVar,
-	PCD_AssignWorldVar,
-	PCD_PushScriptVar,
-	PCD_PushMapVar,
-	PCD_PushWorldVar,//30
-	PCD_AddScriptVar,
-	PCD_AddMapVar,
-	PCD_AddWorldVar,
-	PCD_SubScriptVar,
-	PCD_SubMapVar,
-	PCD_SubWorldVar,
-	PCD_MulScriptVar,
-	PCD_MulMapVar,
-	PCD_MulWorldVar,
-	PCD_DivScriptVar,//40
-	PCD_DivMapVar,
-	PCD_DivWorldVar,
-	PCD_ModScriptVar,
-	PCD_ModMapVar,
-	PCD_ModWorldVar,
-	PCD_IncScriptVar,
-	PCD_IncMapVar,
-	PCD_IncWorldVar,
-	PCD_DecScriptVar,
-	PCD_DecMapVar,//50
-	PCD_DecWorldVar,
-	PCD_Goto,
-	PCD_IfGoto,
-	PCD_Drop,
-	PCD_Delay,
-	PCD_DelayDirect,
-	PCD_Random,
-	PCD_RandomDirect,
-	PCD_ThingCount,
-	PCD_ThingCountDirect,//60
-	PCD_TagWait,
-	PCD_TagWaitDirect,
-	PCD_PolyWait,
-	PCD_PolyWaitDirect,
-	PCD_ChangeFloor,
-	PCD_ChangeFloorDirect,
-	PCD_ChangeCeiling,
-	PCD_ChangeCeilingDirect,
-	PCD_Restart,
-	PCD_AndLogical,//70
-	PCD_OrLogical,
-	PCD_AndBitwise,
-	PCD_OrBitwise,
-	PCD_EorBitwise,
-	PCD_NegateLogical,
-	PCD_LShift,
-	PCD_RShift,
-	PCD_UnaryMinus,
-	PCD_IfNotGoto,
-	PCD_LineSide,//80
-	PCD_ScriptWait,
-	PCD_ScriptWaitDirect,
-	PCD_ClearLineSpecial,
-	PCD_CaseGoto,
-	PCD_BeginPrint,
-	PCD_EndPrint,
-	PCD_PrintString,
-	PCD_PrintNumber,
-	PCD_PrintCharacter,
-	PCD_PlayerCount,//90
-	PCD_GameType,
-	PCD_GameSkill,
-	PCD_Timer,
-	PCD_SectorSound,
-	PCD_AmbientSound,
-	PCD_SoundSequence,
-	PCD_SetLineTexture,
-	PCD_SetLineBlocking,
-	PCD_SetLineSpecial,
-	PCD_ThingSound,//100
-	PCD_EndPrintBold,
-	PCD_ActivatorSound,// Start of the extended opcodes.
-	PCD_LocalAmbientSound,
-	PCD_SetLineMonsterBlocking,
-	PCD_PlayerBlueSkull,	// Start of new [Skull Tag] pcodes
-	PCD_PlayerRedSkull,
-	PCD_PlayerYellowSkull,
-	PCD_PlayerMasterSkull,
-	PCD_PlayerBlueCard,
-	PCD_PlayerRedCard,//110
-	PCD_PlayerYellowCard,
-	PCD_PlayerMasterCard,
-	PCD_PlayerBlackSkull,
-	PCD_PlayerSilverSkull,
-	PCD_PlayerGoldSkull,
-	PCD_PlayerBlavkCard,
-	PCD_PlayerSilverCard,
-	PCD_PlayerOnTeam,
-	PCD_PlayerTeam,
-	PCD_PlayerHealth,//120
-	PCD_PlayerArmorPoints,
-	PCD_PlayerFrags,
-	PCD_PlayerExpert,
-	PCD_BlueTeamCount,
-	PCD_RedTeamCount,
-	PCD_BlueTeamScore,
-	PCD_RedTeamScore,
-	PCD_IsOneFlagCTF,
-	PCD_LSpec6,				// These are never used. They should probably
-	PCD_LSpec6Direct,//130	// be given names like PCD_Dummy.
-	PCD_PrintName,
-	PCD_MusicChange,
-	PCD_Team2FragPoints,
-	PCD_ConsoleCommand,
-	PCD_SinglePlayer,		// [RH] End of Skull Tag p-codes
-	PCD_FixedMul,
-	PCD_FixedDiv,
-	PCD_SetGravity,
-	PCD_SetGravityDirect,
-	PCD_SetAirControl,//140
-	PCD_SetAirControlDirect,
-	PCD_ClearInventory,
-	PCD_GiveInventory,
-	PCD_GiveInventoryDirect,
-	PCD_TakeInventory,
-	PCD_TakeInventoryDirect,
-	PCD_CheckInventory,
-	PCD_CheckInventoryDirect,
-	PCD_Spawn,
-	PCD_SpawnDirect,//150
-	PCD_SpawnSpot,
-	PCD_SpawnSpotDirect,
-	PCD_SetMusic,
-	PCD_SetMusicDirect,
-	PCD_LocalSetMusic,
-	PCD_LocalSetMusicDirect,
-	PCD_PrintFixed,
-	PCD_PrintLocalized,
-	PCD_MoreHudMessage,
-	PCD_OptHudMessage,//160
-	PCD_EndHudMessage,
-	PCD_EndHudMessageBold,
-	PCD_SetStyle,
-	PCD_SetStyleDirect,
-	PCD_SetFont,
-	PCD_SetFontDirect,
-	PCD_PushByte,
-	PCD_LSpec1DirectB,
-	PCD_LSpec2DirectB,
-	PCD_LSpec3DirectB,//170
-	PCD_LSpec4DirectB,
-	PCD_LSpec5DirectB,
-	PCD_DelayDirectB,
-	PCD_RandomDirectB,
-	PCD_PushBytes,
-	PCD_Push2Bytes,
-	PCD_Push3Bytes,
-	PCD_Push4Bytes,
-	PCD_Push5Bytes,
-	PCD_SetThingSpecial,//180
-	PCD_AssignGlobalVar,
-	PCD_PushGlobalVar,
-	PCD_AddGlobalVar,
-	PCD_SubGlobalVar,
-	PCD_MulGlobalVar,
-	PCD_DivGlobalVar,
-	PCD_ModGlobalVar,
-	PCD_IncGlobalVar,
-	PCD_DecGlobalVar,
-	PCD_FadeTo,//190
-	PCD_FadeRange,
-	PCD_CancelFade,
-	PCD_PlayMovie,
-	PCD_SetFloorTrigger,
-	PCD_SetCeilingTrigger,
-	PCD_GetActorX,
-	PCD_GetActorY,
-	PCD_GetActorZ,
-	PCD_StartTranslation,
-	PCD_TranslationRange1,//200
-	PCD_TranslationRange2,
-	PCD_EndTranslation,
-	PCD_Call,
-	PCD_CallDiscard,
-	PCD_ReturnVoid,
-	PCD_ReturnVal,
-	PCD_PushMapArray,
-	PCD_AssignMapArray,
-	PCD_AddMapArray,
-	PCD_SubMapArray,//210
-	PCD_MulMapArray,
-	PCD_DivMapArray,
-	PCD_ModMapArray,
-	PCD_IncMapArray,
-	PCD_DecMapArray,
-	PCD_Dup,
-	PCD_Swap,
-	PCD_WriteToIni,
-	PCD_GetFromIni,
-	PCD_Sin,//220
-	PCD_Cos,
-	PCD_VectorAngle,
-	PCD_CheckWeapon,
-	PCD_SetWeapon,
-	PCD_TagString,
-	PCD_PushWorldArray,
-	PCD_AssignWorldArray,
-	PCD_AddWorldArray,
-	PCD_SubWorldArray,
-	PCD_MulWorldArray,//230
-	PCD_DivWorldArray,
-	PCD_ModWorldArray,
-	PCD_IncWorldArray,
-	PCD_DecWorldArray,
-	PCD_PushGlobalArray,
-	PCD_AssignGlobalArray,
-	PCD_AddGlobalArray,
-	PCD_SubGlobalArray,
-	PCD_MulGlobalArray,
-	PCD_DivGlobalArray,//240
-	PCD_ModGlobalArray,
-	PCD_IncGlobalArray,
-	PCD_DecGlobalArray,
-	PCD_SetMarineWeapon,
-	PCD_SetActorProperty,
-	PCD_GetActorProperty,
-	PCD_PlayerNumber,
-	PCD_ActivatorTID,
-	PCD_SetMarineSprite,
-	PCD_GetScreenWidth,//250
-	PCD_GetScreenHeight,
-	PCD_ThingProjectile2,
-	PCD_StrLen,
-	PCD_SetHudSize,
-	PCD_GetCvar,
-	PCD_CaseGotoSorted,
-	PCD_SetResultValue,
-	PCD_GetLineRowOffset,
-	PCD_GetActorFloorZ,
-	PCD_GetActorAngle,//260
-	PCD_GetSectorFloorZ,
-	PCD_GetSectorCeilingZ,
-	PCD_LSpec5Result,
-	PCD_GetSigilPieces,
-	PCD_GetLevelInfo,
-	PCD_ChangeSky,
-	PCD_PlayerInGame,
-	PCD_PlayerIsBot,
-
-	PCODE_COMMAND_COUNT
-};
-
 enum aste_t
 {
 	ASTE_INACTIVE,
@@ -406,23 +131,23 @@ struct acsHeader_t
 
 struct acsInfo_t
 {
-	word	number;
-	byte	type;
-	byte	argCount;
-	int 	*address;
-	word	Flags;
-	word	VarCount;
-	vuint8	state;
-	int 	waitValue;
+	vuint16		number;
+	vuint8		type;
+	vuint8		argCount;
+	vuint8*		Address;
+	vuint16		Flags;
+	vuint16		VarCount;
+	vuint8		state;
+	vint32		waitValue;
 };
 
 struct FACScriptFunction
 {
-	byte	ArgCount;
-	byte	LocalCount;
-	byte	HasReturnValue;
-	byte	ImportNum;
-	dword	Address;
+	vuint8		ArgCount;
+	vuint8		LocalCount;
+	vuint8		HasReturnValue;
+	vuint8		ImportNum;
+	vuint32		Address;
 };
 
 //
@@ -478,8 +203,6 @@ private:
 	byte* NextChunk(byte* prev) const;
 	void Serialise(VStream& Strm);
 	void StartTypedACScripts(int Type);
-	void TagFinished(int tag);
-	void PolyobjFinished(int po);
 	void ScriptFinished(int number);
 
 public:
@@ -488,8 +211,8 @@ public:
 	FACScriptsObject(int Lump);
 	~FACScriptsObject();
 
-	int* OffsetToPtr(int Offs);
-	int PtrToOffset(int* Ptr);
+	vuint8* OffsetToPtr(int);
+	int PtrToOffset(vuint8*);
 	EACSFormat GetFormat() const
 	{
 		return Format;
@@ -522,8 +245,6 @@ public:
 	static FACScriptsObject* StaticGetObject(int Index);
 	static void StaticStartTypedACScripts(int Type);
 	static void StaticSerialise(VStream& Strm);
-	static void StaticTagFinished(int tag);
-	static void StaticPolyobjFinished(int po);
 	static void StaticScriptFinished(int number);
 };
 
@@ -548,13 +269,36 @@ class VACS : public VThinker
 	acsInfo_t*			info;
 	float				DelayTime;
 	vint32*				LocalVars;
-	vint32*				ip;
-	FACScriptsObject*	activeObject;
+	vuint8*				InstructionPointer;
+	FACScriptsObject*	ActiveObject;
 
 	void Destroy();
 	void Serialise(VStream&);
-	int RunScript(float DeltaTime);
-	void Tick(float DeltaTime);
+	int RunScript(float);
+	void Tick(float);
+
+private:
+	const char* GetStr(int Index)
+	{
+		return FACScriptsObject::StaticGetString(Index);
+	}
+
+	VEntity* EntityFromTID(int TID, VEntity* Default)
+	{
+		if (!TID)
+		{
+			return Default;
+		}
+		else
+		{
+			int search = -1;
+			return Level->eventFindMobjFromTID(TID, &search);
+		}
+	}
+	int FindSectorFromTag(int, int);
+	void GiveInventory(VEntity*, const char*, int);
+	void TakeInventory(VEntity*, const char*, int);
+	int CheckInventory(VEntity*, const char*);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -563,15 +307,11 @@ class VACS : public VThinker
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static bool TagBusy(int tag);
 static bool AddToACSStore(const char* map, int number, int arg1, int arg2,
 	int arg3);
-
-static int FindSectorFromTag(int tag, int start);
-static void GiveInventory(VEntity* Activator, const char* Type, int Amount);
-static void TakeInventory(VEntity* Activator, const char* Type, int Amount);
-static int CheckInventory(VEntity* Activator, const char* Type);
-static void strbin(char *str);
+static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
+	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
+	bool Delayed);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -588,87 +328,8 @@ acsstore_t ACSStore[MAX_ACS_STORE+1]; // +1 for termination marker
 IMPLEMENT_CLASS(V, ACS)
 
 TArray<FACScriptsObject*>	FACScriptsObject::LoadedObjects;
-static int 					stack[ACS_STACK_DEPTH];
-static int					stackPtr;
 
 // CODE --------------------------------------------------------------------
-
-static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
-	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
-	bool Delayed)
-{
-	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass());
-	GLevel->AddThinker(script);
-	script->info = Info;
-	script->number = Info->number;
-	script->ip = Info->address;
-	script->activeObject = Object;
-	script->Activator = Activator;
-	script->line = Line;
-	script->side = Side;
-	script->LocalVars = new vint32[Info->VarCount];
-	script->LocalVars[0] = Arg1;
-	script->LocalVars[1] = Arg2;
-	script->LocalVars[2] = Arg3;
-	memset(script->LocalVars + Info->argCount, 0,
-		(Info->VarCount - Info->argCount) * 4);
-	if (Delayed)
-	{
-		//	World objects are allotted 1 second for initialization.
-		script->DelayTime = 1.0;
-	}
-	Info->state = ASTE_RUNNING;
-	return script;
-}
-
-static boolean P_ExecuteLineSpecial(int special, int *args, line_t *line, int side,
-	VEntity *mo)
-{
-   	return GLevelInfo->eventExecuteActionSpecial(special, args[0], args[1], args[2], args[3], args[4], line, side, mo);
-}
-
-static line_t* P_FindLine(int lineTag, int *searchPosition)
-{
-	return GLevelInfo->eventFindLine(lineTag, searchPosition);
-}
-
-static VEntity* P_FindMobjFromTID(int tid, int *searchPosition)
-{
-	return GLevelInfo->eventFindMobjFromTID(tid, searchPosition);
-}
-
-static int ThingCount(int type, int tid)
-{
-	return GLevelInfo->eventThingCount(type, tid);
-}
-
-static int Thing_Projectile2(int tid, int type, int angle, int speed,
-	int vspeed, int gravity, int newtid)
-{
-	return GLevelInfo->eventEV_ThingProjectile(tid, type, angle, speed, vspeed,
-		gravity, newtid);
-}
-
-static void StartPlaneWatcher(VEntity* it, line_t* line, int lineSide,
-	bool ceiling, int tag, int height, int special, int arg0, int arg1,
-	int arg2, int arg3, int arg4)
-{
-	GLevelInfo->eventStartPlaneWatcher(it, line, lineSide, ceiling,
-		tag, height, special, arg0, arg1, arg2, arg3, arg4);
-}
-
-static VEntity* EntityFromTID(int TID, VEntity* Default)
-{
-	if (!TID)
-	{
-		return Default;
-	}
-	else
-	{
-		int search = -1;
-		return P_FindMobjFromTID(TID, &search);
-	}
-}
 
 //==========================================================================
 //
@@ -818,7 +479,7 @@ void FACScriptsObject::LoadOldObject()
 		info->number = LittleLong(*buffer) % 1000;
 		info->type = LittleLong(*buffer) / 1000;
 		buffer++;
-		info->address = OffsetToPtr(LittleLong(*buffer++));
+		info->Address = OffsetToPtr(LittleLong(*buffer++));
 		info->argCount = LittleLong(*buffer++);
 		info->Flags = 0;
 		info->VarCount = MAX_ACS_SCRIPT_VARS;
@@ -872,7 +533,7 @@ void FACScriptsObject::LoadEnhancedObject()
 			info->number = LittleShort(*(short*)buffer);
 			info->type = LittleShort(((short*)buffer)[1]);
 			buffer++;
-			info->address = OffsetToPtr(LittleLong(*buffer++));
+			info->Address = OffsetToPtr(LittleLong(*buffer++));
 			info->argCount = LittleLong(*buffer++);
 			info->Flags = 0;
 			info->VarCount = MAX_ACS_SCRIPT_VARS;
@@ -892,7 +553,7 @@ void FACScriptsObject::LoadEnhancedObject()
 			info->type = ((byte*)buffer)[2];
 			info->argCount = ((byte*)buffer)[3];
 			buffer++;
-			info->address = OffsetToPtr(LittleLong(*buffer++));
+			info->Address = OffsetToPtr(LittleLong(*buffer++));
 			info->Flags = 0;
 			info->VarCount = MAX_ACS_SCRIPT_VARS;
 			info->state = ASTE_INACTIVE;
@@ -1376,11 +1037,11 @@ void FACScriptsObject::Serialise(VStream& Strm)
 //
 //==========================================================================
 
-int* FACScriptsObject::OffsetToPtr(int Offs)
+vuint8* FACScriptsObject::OffsetToPtr(int Offs)
 {
 	if (Offs < 0 || Offs >= DataSize)
 		Host_Error("Bad offset in ACS file");
-	return (int*)(Data + Offs);
+	return Data + Offs;
 }
 
 //==========================================================================
@@ -1389,9 +1050,9 @@ int* FACScriptsObject::OffsetToPtr(int Offs)
 //
 //==========================================================================
 
-int FACScriptsObject::PtrToOffset(int* Ptr)
+int FACScriptsObject::PtrToOffset(vuint8* Ptr)
 {
-	return (byte*)Ptr - Data;
+	return Ptr - Data;
 }
 
 //==========================================================================
@@ -1487,8 +1148,7 @@ void FACScriptsObject::StartTypedACScripts(int Type)
 		if (Scripts[i].type == Type)
 		{
 			// Auto-activate
-			VACS* script = SpawnScript(&Scripts[i], this, NULL, NULL, 0,
-				0, 0, 0, true);
+			SpawnScript(&Scripts[i], this, NULL, NULL, 0, 0, 0, 0, true);
 		}
 	}
 	unguard;
@@ -1620,86 +1280,6 @@ void FACScriptsObject::StaticSerialise(VStream& Strm)
 
 //==========================================================================
 //
-//	FACScriptsObject::TagFinished
-//
-//==========================================================================
-
-void FACScriptsObject::TagFinished(int tag)
-{
-	guard(FACScriptsObject::TagFinished);
-	for (int i = 0; i < NumScripts; i++)
-	{
-		if (Scripts[i].state == ASTE_WAITINGFORTAG &&
-			Scripts[i].waitValue == tag)
-		{
-			Scripts[i].state = ASTE_RUNNING;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	FACScriptsObject::StaticTagFinished
-//
-//==========================================================================
-
-void FACScriptsObject::StaticTagFinished(int tag)
-{
-	guard(FACScriptsObject::StaticTagFinished);
-	if (TagBusy(tag))
-	{
-		return;
-	}
-	for (int i = 0; i < LoadedObjects.Num(); i++)
-	{
-		LoadedObjects[i]->TagFinished(tag);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	FACScriptsObject::PolyobjFinished
-//
-//==========================================================================
-
-void FACScriptsObject::PolyobjFinished(int po)
-{
-	guard(FACScriptsObject::PolyobjFinished);
-	for (int i = 0; i < NumScripts; i++)
-	{
-		if (Scripts[i].state == ASTE_WAITINGFORPOLY &&
-			Scripts[i].waitValue == po)
-		{
-			Scripts[i].state = ASTE_RUNNING;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	FACScriptsObject::StaticPolyobjFinished
-//
-//==========================================================================
-
-void FACScriptsObject::StaticPolyobjFinished(int po)
-{
-	guard(FACScriptsObject::StaticPolyobjFinished);
-	if (PO_Busy(po))
-	{
-		return;
-	}
-	for (int i = 0; i < LoadedObjects.Num(); i++)
-	{
-		LoadedObjects[i]->PolyobjFinished(po);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	FACScriptsObject::ScriptFinished
 //
 //==========================================================================
@@ -1822,6 +1402,2270 @@ void FACSGrowingArray::Serialise(VStream& Strm)
 	{
 		Strm << STRM_INDEX(Data[i]);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VACS::Destroy
+//
+//==========================================================================
+
+void VACS::Destroy()
+{
+	guard(VACS::Destroy);
+	if (LocalVars)
+	{
+		delete[] LocalVars;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VACS::Serialise
+//
+//==========================================================================
+
+void VACS::Serialise(VStream& Strm)
+{
+	guard(VACS::Serialise);
+	int TmpInt;
+
+	Super::Serialise(Strm);
+	if (Strm.IsLoading())
+	{
+		Strm << TmpInt;
+		ActiveObject = FACScriptsObject::StaticGetObject(TmpInt);
+		Strm << TmpInt;
+		InstructionPointer = ActiveObject->OffsetToPtr(TmpInt);
+		info = ActiveObject->FindScript(number);
+		LocalVars = new vint32[info->VarCount];
+	}
+	else
+	{
+		TmpInt = ActiveObject->GetLibraryID() >> 16;
+		Strm << TmpInt;
+		TmpInt = ActiveObject->PtrToOffset(InstructionPointer);
+		Strm << TmpInt;
+	}
+	for (int i = 0; i < info->VarCount; i++)
+	{
+		Strm << LocalVars[i];
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcs::Tick
+//
+//==========================================================================
+
+void VACS::Tick(float DeltaTime)
+{
+	guard(VACS::Tick);
+	RunScript(DeltaTime);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VACS::RunScript
+//
+//==========================================================================
+
+#ifdef __GNUC__
+#define USE_COMPUTED_GOTO 1
+#endif
+
+#if USE_COMPUTED_GOTO
+#define ACSVM_SWITCH(op)	goto *vm_labels[op];
+#define ACSVM_CASE(x)		Lbl_ ## x:
+#define ACSVM_BREAK \
+	if (fmt == ACS_LittleEnhanced) \
+	{ \
+		cmd = *ip; \
+		if (cmd >= 240) \
+		{ \
+			cmd = 240 + ((cmd - 240) << 8) + ip[1]; \
+			ip += 2; \
+		} \
+		else \
+		{ \
+			ip++; \
+		} \
+	} \
+	else \
+	{ \
+		cmd = READ_INT32(ip); \
+		ip += 4; \
+	} \
+	if ((vuint32)cmd >= PCODE_COMMAND_COUNT) \
+	{ \
+		goto LblDefault; \
+	} \
+	goto *vm_labels[cmd];
+#define ACSVM_BREAK_STOP	goto LblFuncStop;
+#define ACSVM_DEFAULT		LblDefault:
+#else
+#define ACSVM_SWITCH(op)	switch (cmd)
+#define ACSVM_CASE(op)		case op:
+#define ACSVM_BREAK			break
+#define ACSVM_BREAK_STOP	break
+#define ACSVM_DEFAULT		default:
+#endif
+
+#define READ_INT32(p)		((p)[0] | ((p)[1] << 8) | ((p)[2] << 16) | ((p)[3] << 24))
+#define READ_BYTE_OR_INT32	(fmt == ACS_LittleEnhanced ? *ip : READ_INT32(ip))
+#define INC_BYTE_OR_INT32	if (fmt == ACS_LittleEnhanced) ip++; else ip += 4
+
+int VACS::RunScript(float DeltaTime)
+{
+	guard(VACS::RunScript);
+	if (info->state == ASTE_TERMINATING)
+	{
+		info->state = ASTE_INACTIVE;
+		FACScriptsObject::StaticScriptFinished(number);
+		SetFlags(_OF_DelayedDestroy);
+		return 1;
+	}
+	if (info->state == ASTE_WAITINGFORTAG &&
+		!Level->eventTagBusy(info->waitValue))
+	{
+		info->state = ASTE_RUNNING;
+	}
+	if (info->state == ASTE_WAITINGFORPOLY && !PO_Busy(info->waitValue))
+	{
+		info->state = ASTE_RUNNING;
+	}
+	if (info->state != ASTE_RUNNING)
+	{
+		return 1;
+	}
+	if (DelayTime)
+	{
+		DelayTime -= DeltaTime;
+		if (DelayTime < 0)
+			DelayTime = 0;
+		return 1;
+	}
+
+	VStr PrintStr;
+	vint32 resultValue = 1;
+	vint32 stack[ACS_STACK_DEPTH];
+	vint32* optstart = NULL;
+	vint32* locals = LocalVars;
+	FACScriptFunction* activeFunction = NULL;
+	EACSFormat fmt = ActiveObject->GetFormat();
+	int action = SCRIPT_CONTINUE;
+	vuint8* ip = InstructionPointer;
+	vint32* sp = stack;
+	do
+	{
+		vint32 cmd;
+
+#if USE_COMPUTED_GOTO
+		static void* vm_labels[] = {
+#define DECLARE_PCD(name)	&&Lbl_PCD_ ## name
+#include "p_acs.h"
+		0 };
+#endif
+
+		if (fmt == ACS_LittleEnhanced)
+		{
+			cmd = *ip;
+			if (cmd >= 240)
+			{
+				cmd = 240 + ((cmd - 240) << 8) + ip[1];
+				ip += 2;
+			}
+			else
+			{
+				ip++;
+			}
+		}
+		else
+		{
+			cmd = READ_INT32(ip);
+			ip += 4;
+		}
+
+		ACSVM_SWITCH(cmd)
+		{
+		//	Standard P-Code commands.
+		ACSVM_CASE(PCD_Nop)
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Terminate)
+			action = SCRIPT_TERMINATE;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_Suspend)
+			info->state = ASTE_SUSPENDED;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_PushNumber)
+			*sp = READ_INT32(ip);
+			ip += 4;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec1)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, sp[-1], 0, 0, 0, 0,
+					line, side, Activator);
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec2)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, sp[-2], sp[-1], 0,
+					0, 0, line, side, Activator);
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec3)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, sp[-3], sp[-2],
+					sp[-1], 0, 0, line, side, Activator);
+				sp -= 3;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec4)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, sp[-4], sp[-3],
+					sp[-2], sp[-1], 0, line, side, Activator);
+				sp -= 4;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec5)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, sp[-5], sp[-4],
+					sp[-3], sp[-2], sp[-1], line, side, Activator);
+				sp -= 5;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec1Direct)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, READ_INT32(ip), 0,
+					0, 0, 0, line, side, Activator);
+				ip += 4;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec2Direct)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, READ_INT32(ip),
+					READ_INT32(ip + 4), 0, 0, 0, line, side, Activator);
+				ip += 8;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec3Direct)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, READ_INT32(ip),
+					READ_INT32(ip + 4), READ_INT32(ip + 8), 0, 0, line, side,
+					Activator);
+				ip += 12;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec4Direct)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, READ_INT32(ip),
+					READ_INT32(ip + 4), READ_INT32(ip + 8),
+					READ_INT32(ip + 12), 0, line, side, Activator);
+				ip += 16;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec5Direct)
+			{
+				int special = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				Level->eventExecuteActionSpecial(special, READ_INT32(ip),
+					READ_INT32(ip + 4), READ_INT32(ip + 8),
+					READ_INT32(ip + 12), READ_INT32(ip + 16), line, side,
+					Activator);
+				ip += 20;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Add)
+			sp[-2] += sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Subtract)
+			sp[-2] -= sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Multiply)
+			sp[-2] *= sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Divide)
+			sp[-2] /= sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Modulus)
+			sp[-2] %= sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EQ)
+			sp[-2] = sp[-2] == sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_NE)
+			sp[-2] = sp[-2] != sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LT)
+			sp[-2] = sp[-2] < sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GT)
+			sp[-2] = sp[-2] > sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LE)
+			sp[-2] = sp[-2] <= sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GE)
+			sp[-2] = sp[-2] >= sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AssignScriptVar)
+			locals[READ_BYTE_OR_INT32] = sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AssignMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] = sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AssignWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] = sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushScriptVar)
+			*sp = locals[READ_BYTE_OR_INT32];
+			INC_BYTE_OR_INT32;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushMapVar)
+			*sp = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+			INC_BYTE_OR_INT32;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushWorldVar)
+			*sp = WorldVars[READ_BYTE_OR_INT32];
+			INC_BYTE_OR_INT32;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AddScriptVar)
+			locals[READ_BYTE_OR_INT32] += sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AddMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] += sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AddWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] += sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SubScriptVar)
+			locals[READ_BYTE_OR_INT32] -= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SubMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] -= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SubWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] -= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MulScriptVar)
+			locals[READ_BYTE_OR_INT32] *= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MulMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] *= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MulWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] *= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DivScriptVar)
+			locals[READ_BYTE_OR_INT32] /= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DivMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] /= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DivWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] /= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ModScriptVar)
+			locals[READ_BYTE_OR_INT32] %= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ModMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] %= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ModWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] %= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IncScriptVar)
+			locals[READ_BYTE_OR_INT32]++;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IncMapVar)
+			(*ActiveObject->MapVars[READ_BYTE_OR_INT32])++;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IncWorldVar)
+			WorldVars[READ_BYTE_OR_INT32]++;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DecScriptVar)
+			locals[READ_BYTE_OR_INT32]--;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DecMapVar)
+			(*ActiveObject->MapVars[READ_BYTE_OR_INT32])--;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DecWorldVar)
+			WorldVars[READ_BYTE_OR_INT32]--;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Goto)
+			ip = ActiveObject->OffsetToPtr(READ_INT32(ip));
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IfGoto)
+			if (sp[-1])
+			{
+				ip = ActiveObject->OffsetToPtr(READ_INT32(ip));
+			}
+			else
+			{
+				ip += 4;
+			}
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Drop)
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Delay)
+			DelayTime = float(sp[-1]) / 35.0;
+			sp--;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_DelayDirect)
+			DelayTime = float(READ_INT32(ip)) / 35.0;
+			ip += 4;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_Random)
+			sp[-2] = sp[-2] + (vint32)(Random() * (sp[-1] - sp[-2] + 1));
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RandomDirect)
+			*sp = READ_INT32(ip) + (vint32)(Random() * (READ_INT32(ip + 4) -
+				READ_INT32(ip) + 1));
+			ip += 8;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingCount)
+			sp[-2] = Level->eventThingCount(sp[-2], sp[-1]);
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingCountDirect)
+			*sp = Level->eventThingCount(READ_INT32(ip), READ_INT32(ip + 4));
+			ip += 8;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_TagWait)
+			info->waitValue = sp[-1];
+			info->state = ASTE_WAITINGFORTAG;
+			sp--;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_TagWaitDirect)
+			info->waitValue = READ_INT32(ip);
+			info->state = ASTE_WAITINGFORTAG;
+			ip += 4;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_PolyWait)
+			info->waitValue = sp[-1];
+			info->state = ASTE_WAITINGFORPOLY;
+			sp--;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_PolyWaitDirect)
+			info->waitValue = READ_INT32(ip);
+			info->state = ASTE_WAITINGFORPOLY;
+			ip += 4;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_ChangeFloor)
+			{
+				int Flat = GTextureManager.NumForName(VName(GetStr(sp[-1]),
+					VName::AddLower8), TEXTYPE_Flat, true, true);
+				for  (int Idx = FindSectorFromTag(sp[-2], -1); Idx >= 0;
+					Idx = FindSectorFromTag(sp[-2], Idx))
+				{
+					SV_SetFloorPic(Idx, Flat);
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ChangeFloorDirect)
+			{
+				int Tag = READ_INT32(ip);
+				int Flat = GTextureManager.NumForName(VName(GetStr(
+					READ_INT32(ip + 4)), VName::AddLower8), TEXTYPE_Flat,
+					true, true);
+				ip += 8;
+				for (int Idx = FindSectorFromTag(Tag, -1); Idx >= 0;
+					Idx = FindSectorFromTag(Tag, Idx))
+				{
+					SV_SetFloorPic(Idx, Flat);
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ChangeCeiling)
+			{
+				int Flat = GTextureManager.NumForName(VName(GetStr(sp[-1]),
+					VName::AddLower8), TEXTYPE_Flat, true, true);
+				for  (int Idx = FindSectorFromTag(sp[-2], -1); Idx >= 0;
+					Idx = FindSectorFromTag(sp[-2], Idx))
+				{
+					SV_SetCeilPic(Idx, Flat);
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ChangeCeilingDirect)
+			{
+				int Tag = READ_INT32(ip);
+				int Flat = GTextureManager.NumForName(VName(GetStr(
+					READ_INT32(ip + 4)), VName::AddLower8), TEXTYPE_Flat,
+					true, true);
+				ip += 8;
+				for (int Idx = FindSectorFromTag(Tag, -1); Idx >= 0;
+					Idx = FindSectorFromTag(Tag, Idx))
+				{
+					SV_SetCeilPic(Idx, Flat);
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Restart)
+			ip = info->Address;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndLogical)
+			sp[-2] = sp[-2] && sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrLogical)
+			sp[-2] = sp[-2] || sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndBitwise)
+			sp[-2] = sp[-2] & sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrBitwise)
+			sp[-2] = sp[-2] | sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EorBitwise)
+			sp[-2] = sp[-2] ^ sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_NegateLogical)
+			sp[-1] = !sp[-1];
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LShift)
+			sp[-2] = sp[-2] << sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RShift)
+			sp[-2] = sp[-2] >> sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_UnaryMinus)
+			sp[-1] = -sp[-1];
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IfNotGoto)
+			if (!sp[-1])
+			{
+				ip = ActiveObject->OffsetToPtr(READ_INT32(ip));
+			}
+			else
+			{
+				ip += 4;
+			}
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LineSide)
+			*sp = side;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ScriptWait)
+			info->waitValue = sp[-1];
+			info->state = ASTE_WAITINGFORSCRIPT;
+			sp--;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_ScriptWaitDirect)
+			info->waitValue = READ_INT32(ip);
+			info->state = ASTE_WAITINGFORSCRIPT;
+			ip += 4;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_ClearLineSpecial)
+			if (line)
+			{
+				line->special = 0;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CaseGoto)
+			if (sp[-1] == READ_INT32(ip))
+			{
+				ip = ActiveObject->OffsetToPtr(READ_INT32(ip + 4));
+				sp--;
+			}
+			else
+			{
+				ip += 8;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_BeginPrint)
+			PrintStr.Clean();
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EndPrint)
+			PrintStr = PrintStr.EvalEscapeSequences();
+			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
+			{
+				SV_ClientCenterPrintf(Activator->Player, *PrintStr);
+			}
+			else
+			{
+				SV_BroadcastCentrePrintf(*PrintStr);
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintString)
+			PrintStr += GetStr(sp[-1]);
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintNumber)
+			PrintStr +=  VStr(sp[-1]);
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintCharacter)
+			PrintStr += (char)sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerCount)
+			sp[0] = 0;
+			for (int i = 0; i < MAXPLAYERS; i++)
+			{
+				if (GGameInfo->Players[i])
+					sp[0]++;
+			}
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GameType)
+			if (netgame == false)
+			{
+				*sp = GAME_SINGLE_PLAYER;
+			}
+			else if (deathmatch)
+			{
+				*sp = GAME_NET_DEATHMATCH;
+			}
+			else
+			{
+				*sp = GAME_NET_COOPERATIVE;
+			}
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GameSkill)
+			*sp = gameskill;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Timer)
+			*sp = level.tictime;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SectorSound)
+			SV_SectorStartSound(line ? line->frontsector : NULL,
+				S_GetSoundID(GetStr(sp[-2])), 0, sp[-1]);
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AmbientSound)
+			SV_StartSound(NULL, S_GetSoundID(GetStr(sp[-2])), 0, sp[-1]);
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SoundSequence)
+			SV_SectorStartSequence(line ? line->frontsector : NULL,
+				GetStr(sp[-1]));
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetLineTexture)
+			{
+				int Tex = GTextureManager.NumForName(VName(GetStr(sp[-1]),
+					VName::AddLower8), TEXTYPE_Wall, true, true);
+				int searcher = -1;
+				for (line_t *line = Level->eventFindLine(sp[-4], &searcher);
+					line != NULL; line = Level->eventFindLine(sp[-4], &searcher))
+				{
+					SV_SetLineTexture(line->sidenum[sp[-3]], sp[-2], Tex);
+				}
+				sp -= 4;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetLineBlocking)
+			{
+				int searcher = -1;
+				for (line_t* line = Level->eventFindLine(sp[-2], &searcher);
+					line != NULL; line = Level->eventFindLine(sp[-2], &searcher))
+				{
+					if (sp[-1])
+						line->flags |= ML_BLOCKING;
+					else
+						line->flags &= ~ML_BLOCKING;
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetLineSpecial)
+			{
+				int searcher = -1;
+				for (line_t* line = Level->eventFindLine(sp[-7], &searcher);
+					line != NULL; line = Level->eventFindLine(sp[-7], &searcher))
+				{
+					line->special = sp[-6];
+					line->arg1 = sp[-5];
+					line->arg2 = sp[-4];
+					line->arg3 = sp[-3];
+					line->arg4 = sp[-2];
+					line->arg5 = sp[-1];
+				}
+				sp -= 7;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingSound)
+			{
+				int sound = S_GetSoundID(GetStr(sp[-2]));
+				int searcher = -1;
+				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
+					mobj != NULL; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				{
+					SV_StartSound(mobj, sound, 0, sp[-1]);
+				}
+				sp -= 3;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EndPrintBold)
+			//FIXME yellow message
+			PrintStr = PrintStr.EvalEscapeSequences();
+			SV_BroadcastCentrePrintf(*PrintStr);
+			ACSVM_BREAK;
+
+		//	Extended P-Code commands.
+		ACSVM_CASE(PCD_ActivatorSound)
+			SV_StartSound(Activator, S_GetSoundID(GetStr(sp[-2])), 0, sp[-1]);
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LocalAmbientSound)
+			SV_StartLocalSound(Activator, S_GetSoundID(GetStr(sp[-2])), 0,
+				sp[-1]);
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetLineMonsterBlocking)
+			{
+				int searcher = -1;
+				for (line_t* line = Level->eventFindLine(sp[-2], &searcher);
+					line != NULL; line = Level->eventFindLine(sp[-2], &searcher))
+				{
+					if (sp[-1])
+						line->flags |= ML_BLOCKMONSTERS;
+					else
+						line->flags &= ~ML_BLOCKMONSTERS;
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerHealth)
+			if (Activator)
+			{
+				*sp = Activator->Health;
+			}
+			else
+			{
+				*sp = 0;
+			}
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerArmorPoints)
+			//FIXME implement this
+			if (Activator && Activator->Player)
+			{
+				*sp = 0;
+			}
+			else
+			{
+				*sp = 0;
+			}
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerFrags)
+			if (Activator && Activator->Player)
+			{
+				*sp = Activator->Player->Frags;
+			}
+			else
+			{
+				*sp = 0;
+			}
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintName)
+			{
+				VBasePlayer* Plr;
+				if (sp[-1] <= 0 || sp[-1] > MAXPLAYERS)
+				{
+					Plr = Activator ? Activator->Player : NULL;
+				}
+				else
+				{
+					Plr = GGameInfo->Players[sp[-1] - 1];
+				}
+				if (Plr && (Plr->PlayerFlags & VBasePlayer::PF_Spawned))
+				{
+					PrintStr += Plr->PlayerName;
+				}
+				else if (Plr && !(Plr->PlayerFlags & VBasePlayer::PF_Spawned))
+				{
+					PrintStr += VStr("Player ") + VStr(sp[-1]);
+				}
+				else if (Activator)
+				{
+					PrintStr += Activator->GetClass()->GetName();
+				}
+				else
+				{
+					PrintStr += "Unknown";
+				}
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MusicChange)
+			SV_ChangeMusic(GetStr(sp[-2]));
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SinglePlayer)
+			sp[-1] = !netgame;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_FixedMul)
+			sp[-2] = vint32((double)sp[-2] / (double)0x10000 * (double)sp[-1]);
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_FixedDiv)
+			sp[-2] = vint32((double)sp[-2] / (double)sp[-1] * (double)0x10000);
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetGravity)
+			Level->Gravity = ((float)sp[-1] / (float)0x10000) *
+				DEFAULT_GRAVITY / 800.0;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetGravityDirect)
+			Level->Gravity = ((float)READ_INT32(ip) / (float)0x10000) *
+				DEFAULT_GRAVITY / 800.0;
+			ip += 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetAirControl)
+			//FIXME implement this
+			//sp[-1] - air control, fixed point
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetAirControlDirect)
+			//FIXME implement this
+			//READ_INT32(ip) - air control, fixed point
+			ip += 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ClearInventory)
+			//FIXME implement this
+			if (Activator)
+			{
+			}
+			else
+			{
+				for (int i = 0; i < MAXPLAYERS; i++)
+				{
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GiveInventory)
+			GiveInventory(Activator, GetStr(sp[-2]), sp[-1]);
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GiveInventoryDirect)
+			GiveInventory(Activator, GetStr(READ_INT32(ip)),
+				READ_INT32(ip + 4));
+			ip += 8;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_TakeInventory)
+			TakeInventory(Activator, GetStr(sp[-2]), sp[-1]);
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_TakeInventoryDirect)
+			TakeInventory(Activator, GetStr(READ_INT32(ip)),
+				READ_INT32(ip + 4));
+			ip += 8;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CheckInventory)
+			sp[-1] = CheckInventory(Activator, GetStr(sp[-1]));
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CheckInventoryDirect)
+			*sp = CheckInventory(Activator, GetStr(READ_INT32(ip)));
+			ip += 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Spawn)
+			//FIXME implement this
+			//sp[-6] - type name, string
+			//sp[-5] - x, fixed point
+			//sp[-4] - y, fixed point
+			//sp[-3] - z, fixed point
+			//sp[-2] - TID
+			//sp[-1] - angle, 256 as full circle
+			//Pushes result.
+			sp[-6] = 0;
+			sp -= 5;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SpawnDirect)
+			//FIXME implement this
+			//READ_INT32(ip) - type name, string
+			//READ_INT32(ip + 4) - x, fixed point
+			//READ_INT32(ip + 8) - y, fixed point
+			//READ_INT32(ip + 12) - z, fixed point
+			//READ_INT32(ip + 16) - TID
+			//READ_INT32(ip + 20) - angle, 256 as full circle
+			//Pushes result
+			*sp = 0;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SpawnSpot)
+			//FIXME implement this
+			//sp[-4] - type name, string
+			//sp[-3] - TID of the spot
+			//sp[-2] - TID
+			//sp[-1] - angle, 256 as full circle
+			//Pushes result
+			sp[-4] = 0;
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SpawnSpotDirect)
+			//FIXME implement this
+			//READ_INT32(ip) - type name, string.
+			//READ_INT32(ip + 4) - TID of the spot
+			//READ_INT32(ip + 8) - TID
+			//READ_INT32(ip + 12) - angle, 256 as full circle
+			//Pushes result
+			*sp = 0;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetMusic)
+			SV_ChangeMusic(GetStr(sp[-3]));
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetMusicDirect)
+			SV_ChangeMusic(GetStr(READ_INT32(ip)));
+			ip += 12;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LocalSetMusic)
+			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
+			{
+				SV_ChangeLocalMusic(Activator->Player, GetStr(sp[-3]));
+			}
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LocalSetMusicDirect)
+			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
+			{
+				SV_ChangeLocalMusic(Activator->Player, GetStr(READ_INT32(ip)));
+			}
+			ip += 12;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintFixed)
+			PrintStr += VStr(float(sp[-1]) / float(0x10000));
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintLocalised)
+			//FIXME print localised string.
+			PrintStr += GetStr(sp[-1]);
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MoreHudMessage)
+			PrintStr = PrintStr.EvalEscapeSequences();
+			optstart = NULL;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OptHudMessage)
+			optstart = sp;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EndHudMessage)
+		ACSVM_CASE(PCD_EndHudMessageBold)
+			//FIXME implement this
+			if (!optstart)
+			{
+				optstart = sp;
+			}
+			//optstart[-6] - type
+			//optstart[-5] - ID
+			//optstart[-4] - colour
+			//optstart[-3] - x, fixed point
+			//optstart[-2] - y, fixed point
+			//optstart[-1] - hold time, fixed point
+			if (cmd != PCD_EndHudMessageBold &&
+				Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
+			{
+				SV_ClientPrintf(Activator->Player, *PrintStr);
+			}
+			else
+			{
+				SV_BroadcastCentrePrintf(*PrintStr);
+			}
+			sp = optstart - 6;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetFont)
+			//FIXME implement this
+			//sp[-1] - font name, string
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetFontDirect)
+			//FIXME implement this
+			//READ_INT32(ip) - font name, string
+			ip += 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushByte)
+			*sp = *ip;
+			sp++;
+			ip++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec1DirectB)
+			Level->eventExecuteActionSpecial(ip[0], ip[1], 0, 0, 0, 0, line,
+				side, Activator);
+			ip += 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec2DirectB)
+			Level->eventExecuteActionSpecial(ip[0], ip[1], ip[2], 0, 0, 0,
+				line, side, Activator);
+			ip += 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec3DirectB)
+			Level->eventExecuteActionSpecial(ip[0], ip[1], ip[2], ip[3], 0,
+				0, line, side, Activator);
+			ip += 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec4DirectB)
+			Level->eventExecuteActionSpecial(ip[0], ip[1], ip[2], ip[3],
+				ip[4], 0, line, side, Activator);
+			ip += 5;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec5DirectB)
+			Level->eventExecuteActionSpecial(ip[0], ip[1], ip[2], ip[3],
+				ip[4], ip[5], line, side, Activator);
+			ip += 6;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DelayDirectB)
+			DelayTime = float(*ip) / 35.0;
+			ip++;
+			action = SCRIPT_STOP;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_CASE(PCD_RandomDirectB)
+			*sp = ip[0] + (vint32)(Random() * (ip[1] - ip[0] + 1));
+			ip += 2;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushBytes)
+			for (int i = 0; i < ip[0]; i++)
+				sp[i] = ip[i + 1];
+			sp += ip[0];
+			ip += ip[0] + 1;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Push2Bytes)
+			sp[0] = ip[0];
+			sp[1] = ip[1];
+			ip += 2;
+			sp += 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Push3Bytes)
+			sp[0] = ip[0];
+			sp[1] = ip[1];
+			sp[2] = ip[2];
+			ip += 3;
+			sp += 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Push4Bytes)
+			sp[0] = ip[0];
+			sp[1] = ip[1];
+			sp[2] = ip[2];
+			sp[3] = ip[3];
+			ip += 4;
+			sp += 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Push5Bytes)
+			sp[0] = ip[0];
+			sp[1] = ip[1];
+			sp[2] = ip[2];
+			sp[3] = ip[3];
+			sp[4] = ip[4];
+			ip += 5;
+			sp += 5;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetThingSpecial)
+			{
+				int searcher = -1;
+				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-7], &searcher);
+					Ent; Ent = Level->eventFindMobjFromTID(sp[-7], &searcher))
+				{
+					Ent->Special = sp[-6];
+					Ent->Args[0] = sp[-5];
+					Ent->Args[1] = sp[-4];
+					Ent->Args[2] = sp[-3];
+					Ent->Args[3] = sp[-2];
+					Ent->Args[4] = sp[-1];
+				}
+				sp -= 7;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AssignGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] = sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushGlobalVar)
+			*sp = GlobalVars[READ_BYTE_OR_INT32];
+			INC_BYTE_OR_INT32;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AddGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] += sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SubGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] -= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MulGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] *= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DivGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] /= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ModGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] %= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IncGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32]++;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DecGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32]--;
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_FadeTo)
+			//FIXME implement this
+			//sp[-5] - r
+			//sp[-4] - g
+			//sp[-3] - b
+			//sp[-2] - a
+			//sp[-1] - time, fixed point
+			sp -= 5;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_FadeRange)
+			//FIXME implement this
+			//sp[-9] - r1
+			//sp[-8] - g1
+			//sp[-7] - b1
+			//sp[-6] - a1
+			//sp[-5] - r2
+			//sp[-4] - g2
+			//sp[-3] - b2
+			//sp[-2] - a2
+			//sp[-1] - time, fixed point
+			sp -= 9;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CancelFade)
+			//FIXME implement this
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayMovie)
+			//FIXME implement this
+			//sp[-1] - movie name, string
+			//Pushes result
+			sp[-1] = 0;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetFloorTrigger)
+			Level->eventStartPlaneWatcher(Activator, line, side, false,
+				sp[-8], sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2],
+				sp[-1]);
+			sp -= 8;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetCeilingTrigger)
+			Level->eventStartPlaneWatcher(Activator, line, side, true,
+				sp[-8], sp[-7], sp[-6], sp[-5], sp[-4], sp[-3], sp[-2],
+				sp[-1]);
+			sp -= 8;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorX)
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				if (!Ent)
+				{
+					sp[-1] = 0;
+				}
+				else
+				{
+					sp[-1] = vint32(Ent->Origin.x * 0x10000);
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorY)
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				if (!Ent)
+				{
+					sp[-1] = 0;
+				}
+				else
+				{
+					sp[-1] = vint32(Ent->Origin.y * 0x10000);
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorZ)
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				if (!Ent)
+				{
+					sp[-1] = 0;
+				}
+				else
+				{
+					sp[-1] = vint32(Ent->Origin.z * 0x10000);
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_StartTranslation)
+			//FIXME implement this
+			//sp[-1] - index
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_TranslationRange1)
+			//FIXME implement this
+			//sp[-4] - start
+			//sp[-3] - end
+			//sp[-2] - pal1
+			//sp[-1] - pal2
+			sp -= 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_TranslationRange2)
+			//FIXME implement this
+			//sp[-8] - start
+			//sp[-7] - end
+			//sp[-6] - r1
+			//sp[-5] - g1
+			//sp[-4] - b1
+			//sp[-3] - r2
+			//sp[-2] - g2
+			//sp[-1] - b2
+			sp -= 8;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EndTranslation)
+			//FIXME implement this
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Call)
+		ACSVM_CASE(PCD_CallDiscard)
+			{
+				int funcnum;
+				int i;
+				FACScriptsObject* object = ActiveObject;
+
+				funcnum = READ_BYTE_OR_INT32;
+				INC_BYTE_OR_INT32;
+				FACScriptFunction* func = ActiveObject->GetFunction(funcnum,
+					object);
+				if (!func)
+				{
+					GCon->Logf("Function %d in script %d out of range",
+						funcnum, number);
+					action = SCRIPT_TERMINATE;
+					ACSVM_BREAK_STOP;
+				}
+				if ((sp - stack) + func->LocalCount + 64 > ACS_STACK_DEPTH)
+				{
+					// 64 is the margin for the function's working space
+					GCon->Logf("Out of stack space in script %d", number);
+					action = SCRIPT_TERMINATE;
+					ACSVM_BREAK_STOP;
+				}
+				//	The function's first argument is also its first local
+				// variable.
+				locals = sp - func->ArgCount;
+				//	Make space on the stack for any other variables the
+				// function uses.
+				for (i = 0; i < func->LocalCount; i++)
+				{
+					sp[i] = 0;
+				}
+				sp += i;
+				((CallReturn*)sp)->ReturnAddress =
+					ActiveObject->PtrToOffset(ip);
+				((CallReturn*)sp)->ReturnFunction = activeFunction;
+				((CallReturn*)sp)->ReturnObject = ActiveObject;
+				((CallReturn*)sp)->bDiscardResult = (cmd == PCD_CallDiscard);
+				sp += sizeof(CallReturn) / sizeof(vint32);
+				ip = ActiveObject->OffsetToPtr(func->Address);
+				ActiveObject = object;
+				activeFunction = func;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ReturnVoid)
+		ACSVM_CASE(PCD_ReturnVal)
+			{
+				int value;
+				CallReturn* retState;
+
+				if (cmd == PCD_ReturnVal)
+				{
+					value = sp[-1];
+					sp--;
+				}
+				else
+				{
+					value = 0;
+				}
+				sp -= sizeof(CallReturn) / sizeof(vint32);
+				retState = (CallReturn*)sp;
+				ip = ActiveObject->OffsetToPtr(retState->ReturnAddress);
+				sp -= activeFunction->ArgCount + activeFunction->LocalCount;
+				activeFunction = retState->ReturnFunction;
+				ActiveObject = retState->ReturnObject;
+				fmt = ActiveObject->GetFormat();
+				if (!activeFunction)
+				{
+					locals = LocalVars;
+				}
+				else
+				{
+					locals = sp - activeFunction->ArgCount -
+						activeFunction->LocalCount - sizeof(CallReturn) /
+						sizeof(vint32);
+				}
+				if (!retState->bDiscardResult)
+				{
+					*sp = value;
+					sp++;
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushMapArray)
+			sp[-1] = ActiveObject->GetArrayVal(*ActiveObject->MapVars[
+				READ_BYTE_OR_INT32], sp[-1]);
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AssignMapArray)
+			ActiveObject->SetArrayVal(*ActiveObject->MapVars[
+				READ_BYTE_OR_INT32], sp[-2], sp[-1]);
+			INC_BYTE_OR_INT32;
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AddMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) + sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SubMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) - sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MulMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) * sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DivMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) / sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ModMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) % sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IncMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-1],
+					ActiveObject->GetArrayVal(ANum, sp[-1]) + 1);
+				INC_BYTE_OR_INT32;
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DecMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-1],
+					ActiveObject->GetArrayVal(ANum, sp[-1]) - 1);
+				INC_BYTE_OR_INT32;
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Dup)
+			*sp = sp[-1];
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Swap)
+			{
+				int tmp = sp[-2];
+				sp[-2] = sp[-1];
+				sp[-1] = tmp;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Sin)
+			sp[-1] = vint32(msin(float(sp[-1]) * 360.0 / 0x10000) * 0x10000);
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_Cos)
+			sp[-1] = vint32(mcos(float(sp[-1]) * 360.0 / 0x10000) * 0x10000);
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_VectorAngle)
+			sp[-2] = vint32(matan(float(sp[-1]) / float(0x10000),
+				float(sp[-2]) / float(0x10000)) / 360.0 * 0x10000);
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CheckWeapon)
+			//FIXME implement this
+			//sp[-1] - weapon name, string
+			//Pushes result
+			sp[-1] = 0;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetWeapon)
+			//FIXME implement this
+			//sp[-1] - weapon name, string
+			//Pushes result
+			sp[-1] = 0;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_TagString)
+			sp[-1] |= ActiveObject->GetLibraryID();
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushWorldArray)
+			sp[-1] = WorldArrays[READ_BYTE_OR_INT32].GetElemVal(sp[-1]);
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AssignWorldArray)
+			WorldArrays[READ_BYTE_OR_INT32].SetElemVal(sp[-2], sp[-1]);
+			INC_BYTE_OR_INT32;
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AddWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) + sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SubWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) - sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MulWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) * sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DivWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) / sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ModWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) % sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IncWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-1],
+					WorldArrays[ANum].GetElemVal(sp[-1]) + 1);
+				INC_BYTE_OR_INT32;
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DecWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-1],
+					WorldArrays[ANum].GetElemVal(sp[-1]) - 1);
+				INC_BYTE_OR_INT32;
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PushGlobalArray)
+			sp[-1] = GlobalArrays[READ_BYTE_OR_INT32].GetElemVal(sp[-1]);
+			INC_BYTE_OR_INT32;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AssignGlobalArray)
+			GlobalArrays[READ_BYTE_OR_INT32].SetElemVal(sp[-2], sp[-1]);
+			INC_BYTE_OR_INT32;
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AddGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) + sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SubGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) - sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MulGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) * sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DivGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) / sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ModGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) % sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_IncGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-1],
+					GlobalArrays[ANum].GetElemVal(sp[-1]) + 1);
+				INC_BYTE_OR_INT32;
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_DecGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-1],
+					GlobalArrays[ANum].GetElemVal(sp[-1]) - 1);
+				INC_BYTE_OR_INT32;
+				sp--;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetMarineWeapon)
+			//FIXME implement this
+			//sp[-2] - TID
+			//sp[-1] - weapon name, string
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetActorProperty)
+			//FIXME implement this
+			//sp[-3] - TID
+			//sp[-2] - property
+			//sp[-1] - value
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorProperty)
+			//FIXME implement this
+			//sp[-2] - TID
+			//sp[-1] - property
+			//Pushes result
+			sp[-2] = 0;
+			sp -= 1;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerNumber)
+			*sp = Activator && (Activator->EntityFlags & VEntity::EF_IsPlayer) ?
+				SV_GetPlayerNum(Activator->Player) : -1;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ActivatorTID)
+			*sp = Activator ? Activator->TID : 0;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetMarineSprite)
+			//FIXME implement this
+			//sp[-2] - TID
+			//sp[-1] - class name, string
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetScreenWidth)
+			*sp = 640;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetScreenHeight)
+			*sp = 480;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingProjectile2)
+			Level->eventEV_ThingProjectile(sp[-7], sp[-6], sp[-5], sp[-4],
+				sp[-3], sp[-2], sp[-1]);
+			sp -= 7;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_StrLen)
+			sp[-1] = strlen(GetStr(sp[-1]));
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetHudSize)
+			//FIXME implement this
+			//sp[-3] - hud width, abs-ed
+			//sp[-2] - hud height, abs-ed
+			//sp[-1] - cover status bar
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetCvar)
+			sp[-1] = VCvar::GetInt(GetStr(sp[-1]));
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CaseGotoSorted)
+			//	The count and jump table are 4-byte aligned.
+			if ((int)ip & 3)
+			{
+				ip += 4 - ((int)ip & 3);
+			}
+			{
+				int numcases = READ_INT32(ip);
+				int min = 0, max = numcases - 1;
+				while (min <= max)
+				{
+					int mid = (min + max) / 2;
+					int caseval = READ_INT32(ip + 4 + mid * 8);
+					if (caseval == sp[-1])
+					{
+						ip = ActiveObject->OffsetToPtr(READ_INT32(ip + 8 + mid * 8));
+						sp--;
+						ACSVM_BREAK;
+					}
+					else if (caseval < sp[-1])
+					{
+						min = mid + 1;
+					}
+					else
+					{
+						max = mid - 1;
+					}
+				}
+				if (min > max)
+				{
+					// The case was not found, so go to the next instruction.
+					ip += 4 + numcases * 8;
+				}
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetResultValue)
+			resultValue = sp[-1];
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetLineRowOffset)
+			*sp = line ? (vint32)XLevel->Sides[line->sidenum[0]].rowoffset : 0;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorFloorZ)
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				sp[-1] = Ent ? vint32(Ent->FloorZ * 0x10000) : 0;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorAngle)
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				sp[-1] = Ent ? vint32(Ent->Angles.yaw * 0x10000 / 360) &
+					0xffff : 0;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetSectorFloorZ)
+			{
+				int SNum = FindSectorFromTag(sp[-3], -1);
+				sp[-3] = SNum >= 0 ? vint32(XLevel->Sectors[SNum].floor.
+					GetPointZ(sp[-2], sp[-1]) * 0x10000) : 0;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetSectorCeilingZ)
+			{
+				int SNum = FindSectorFromTag(sp[-3], -1);
+				sp[-3] = SNum >= 0 ? vint32(XLevel->Sectors[SNum].ceiling.
+					GetPointZ(sp[-2], sp[-1]) * 0x10000) : 0;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSpec5Result)
+			sp[-5] = Level->eventExecuteActionSpecial(READ_BYTE_OR_INT32,
+				sp[-5], sp[-4], sp[-3], sp[-2], sp[-1], line, side,
+				Activator);
+			INC_BYTE_OR_INT32;
+			sp -= 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetSigilPieces)
+			*sp = Activator ? Activator->eventGetSigilPieces() : 0;
+			sp++;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetLevelInfo)
+			switch (sp[-1])
+			{
+			case LEVELINFO_PAR_TIME:
+				sp[-1] = level.partime;
+				break;
+			case LEVELINFO_CLUSTERNUM:
+				sp[-1] = level.cluster;
+				break;
+			case LEVELINFO_LEVELNUM:
+				sp[-1] = level.levelnum;
+				break;
+			case LEVELINFO_TOTAL_SECRETS:
+				sp[-1] = level.totalsecret;
+				break;
+			case LEVELINFO_FOUND_SECRETS:
+				sp[-1] = level.currentsecret;
+				break;
+			case LEVELINFO_TOTAL_ITEMS:
+				sp[-1] = level.totalitems;
+				break;
+			case LEVELINFO_FOUND_ITEMS:
+				sp[-1] = level.currentitems;
+				break;
+			case LEVELINFO_TOTAL_MONSTERS:
+				sp[-1] = level.totalkills;
+				break;
+			case LEVELINFO_KILLED_MONSTERS:
+				sp[-1] = level.currentkills;
+				break;
+			default:
+				sp[-1] = 0;
+				break;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ChangeSky)
+			SV_ChangeSky(GetStr(sp[-2]), GetStr(sp[-1]));
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerInGame)
+			sp[-1] = (sp[-1] < 0 || sp[-1] >= MAXPLAYERS) ? false :
+				(GGameInfo->Players[sp[-1]] && (GGameInfo->Players[
+				sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned));
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerIsBot)
+			sp[-1] = (sp[-1] < 0 || sp[-1] >= MAXPLAYERS) ? false :
+				GGameInfo->Players[sp[-1]] && GGameInfo->Players[
+				sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned &&
+				GGameInfo->Players[sp[-1]]->PlayerFlags &
+				VBasePlayer::PF_IsBot;
+			ACSVM_BREAK;
+
+		//	These p-codes are not supported. They will terminate script.
+		ACSVM_CASE(PCD_PlayerBlueSkull)
+		ACSVM_CASE(PCD_PlayerRedSkull)
+		ACSVM_CASE(PCD_PlayerYellowSkull)
+		ACSVM_CASE(PCD_PlayerMasterSkull)
+		ACSVM_CASE(PCD_PlayerBlueCard)
+		ACSVM_CASE(PCD_PlayerRedCard)
+		ACSVM_CASE(PCD_PlayerYellowCard)
+		ACSVM_CASE(PCD_PlayerMasterCard)
+		ACSVM_CASE(PCD_PlayerBlackSkull)
+		ACSVM_CASE(PCD_PlayerSilverSkull)
+		ACSVM_CASE(PCD_PlayerGoldSkull)
+		ACSVM_CASE(PCD_PlayerBlackCard)
+		ACSVM_CASE(PCD_PlayerSilverCard)
+		ACSVM_CASE(PCD_PlayerOnTeam)
+		ACSVM_CASE(PCD_PlayerTeam)
+		ACSVM_CASE(PCD_PlayerExpert)
+		ACSVM_CASE(PCD_BlueTeamCount)
+		ACSVM_CASE(PCD_RedTeamCount)
+		ACSVM_CASE(PCD_BlueTeamScore)
+		ACSVM_CASE(PCD_RedTeamScore)
+		ACSVM_CASE(PCD_IsOneFlagCTF)
+		ACSVM_CASE(PCD_LSpec6)
+		ACSVM_CASE(PCD_LSpec6Direct)
+		ACSVM_CASE(PCD_Team2FragPoints)
+		ACSVM_CASE(PCD_ConsoleCommand)
+		ACSVM_CASE(PCD_SetStyle)
+		ACSVM_CASE(PCD_SetStyleDirect)
+		ACSVM_CASE(PCD_WriteToIni)
+		ACSVM_CASE(PCD_GetFromIni)
+			GCon->Logf(NAME_Dev, "Unsupported ACS p-code %d", cmd);
+			action = SCRIPT_TERMINATE;
+			ACSVM_BREAK_STOP;
+
+		ACSVM_DEFAULT
+			Host_Error("Illegal ACS opcode %d", cmd);
+		}
+	} while  (action == SCRIPT_CONTINUE);
+#if USE_COMPUTED_GOTO
+LblFuncStop:
+#endif
+	InstructionPointer = ip;
+	if (action == SCRIPT_TERMINATE)
+	{
+		info->state = ASTE_INACTIVE;
+		FACScriptsObject::StaticScriptFinished(number);
+		SetFlags(_OF_DelayedDestroy);
+	}
+	return resultValue;
+	unguard;
+}
+
+//==========================================================================
+//
+//  FindSectorFromTag
+//
+//	RETURN NEXT SECTOR # THAT LINE TAG REFERS TO
+//
+//==========================================================================
+
+int VACS::FindSectorFromTag(int tag, int start)
+{
+	guard(VACS::FindSectorFromTag);
+	for (int i = start + 1; i < XLevel->NumSectors; i++)
+		if (XLevel->Sectors[i].tag == tag)
+			return i;
+	return -1;
+	unguard;
+}
+
+//============================================================================
+//
+//	VACS::GiveInventory
+//
+//============================================================================
+
+void VACS::GiveInventory(VEntity* Activator, const char* AType, int Amount)
+{
+	guard(VACS::GiveInventory);
+	if (Amount <= 0)
+	{
+		return;
+	}
+	const char* Type = AType;
+	if (strcmp(Type, "Armor") == 0)
+	{
+		Type = "BasicArmor";
+	}
+	else if (Activator)
+	{
+		Activator->eventGiveInventory(Type, Amount);
+	}
+	else
+	{
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (GGameInfo->Players[i] &&
+				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+				GGameInfo->Players[i]->MO->eventGiveInventory(Type, Amount);
+		}
+	}
+	return;
+	unguard;
+}
+
+//============================================================================
+//
+//	VACS::TakeInventory
+//
+//============================================================================
+
+void VACS::TakeInventory(VEntity* Activator, const char* AType, int Amount)
+{
+	guard(VACS::TakeInventory);
+	if (Amount <= 0)
+	{
+		return;
+	}
+	const char* Type = AType;
+	if (strcmp(Type, "Armor") == 0)
+	{
+		Type = "BasicArmor";
+	}
+	if (Activator)
+	{
+		Activator->eventTakeInventory(Type, Amount);
+	}
+	else
+	{
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			if (GGameInfo->Players[i] &&
+				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+				GGameInfo->Players[i]->MO->eventTakeInventory(Type, Amount);
+		}
+	}
+	unguard;
+}
+
+//============================================================================
+//
+//	VACS::CheckInventory
+//
+//============================================================================
+
+int VACS::CheckInventory(VEntity* Activator, const char* AType)
+{
+	guard(VACS::CheckInventory);
+	if (!Activator)
+		return 0;
+
+	const char* Type = AType;
+	if (strcmp(Type, "Armor") == 0)
+	{
+		Type = "BasicArmor";
+	}
+	else if (!strcmp(Type, "Health"))
+	{
+		return Activator->Health;
+	}
+	return Activator->eventCheckInventory(Type);
 	unguard;
 }
 
@@ -2017,7 +3861,7 @@ static bool AddToACSStore(const char *map, int number, int arg1, int arg2,
 //
 //==========================================================================
 
-boolean P_TerminateACS(int number, int)
+bool P_TerminateACS(int number, int)
 {
 	guard(P_TerminateACS);
 	acsInfo_t* info;
@@ -2045,7 +3889,7 @@ boolean P_TerminateACS(int number, int)
 //
 //==========================================================================
 
-boolean P_SuspendACS(int number, int)
+bool P_SuspendACS(int number, int)
 {
 	guard(P_SuspendACS);
 	acsInfo_t* info;
@@ -2100,2607 +3944,34 @@ void P_SerialiseScripts(VStream& Strm)
 
 //==========================================================================
 //
-//	VACS::Destroy
+//	SpawnScript
 //
 //==========================================================================
 
-void VACS::Destroy()
+static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
+	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
+	bool Delayed)
 {
-	guard(VACS::Destroy);
-	if (LocalVars)
+	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass());
+	GLevel->AddThinker(script);
+	script->info = Info;
+	script->number = Info->number;
+	script->InstructionPointer = Info->Address;
+	script->ActiveObject = Object;
+	script->Activator = Activator;
+	script->line = Line;
+	script->side = Side;
+	script->LocalVars = new vint32[Info->VarCount];
+	script->LocalVars[0] = Arg1;
+	script->LocalVars[1] = Arg2;
+	script->LocalVars[2] = Arg3;
+	memset(script->LocalVars + Info->argCount, 0,
+		(Info->VarCount - Info->argCount) * 4);
+	if (Delayed)
 	{
-		delete[] LocalVars;
+		//	World objects are allotted 1 second for initialization.
+		script->DelayTime = 1.0;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VACS::Serialise
-//
-//==========================================================================
-
-void VACS::Serialise(VStream& Strm)
-{
-	guard(VACS::Serialise);
-	int TmpInt;
-
-	Super::Serialise(Strm);
-	if (Strm.IsLoading())
-	{
-		Strm << TmpInt;
-		activeObject = FACScriptsObject::StaticGetObject(TmpInt);
-		Strm << TmpInt;
-		ip = activeObject->OffsetToPtr(TmpInt);
-		info = activeObject->FindScript(number);
-		LocalVars = new vint32[info->VarCount];
-	}
-	else
-	{
-		TmpInt = activeObject->GetLibraryID() >> 16;
-		Strm << TmpInt;
-		TmpInt = activeObject->PtrToOffset(ip);
-		Strm << TmpInt;
-	}
-	for (int i = 0; i < info->VarCount; i++)
-	{
-		Strm << LocalVars[i];
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAcs::Tick
-//
-//==========================================================================
-
-void VACS::Tick(float DeltaTime)
-{
-	guard(VACS::Tick);
-	RunScript(DeltaTime);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VACS::RunScript
-//
-//==========================================================================
-
-inline int getbyte(int*& pc)
-{
-	int res = *(byte*)pc;
-	pc = (int*)((byte*)pc + 1);
-	return res;
-}
-
-int VACS::RunScript(float DeltaTime)
-{
-	guard(VACS::RunScript);
-	int cmd;
-	int action;
-	int SpecArgs[8];
-	char PrintBuffer[PRINT_BUFFER_SIZE];
-	int resultValue = 1;
-
-	if (info->state == ASTE_TERMINATING)
-	{
-		info->state = ASTE_INACTIVE;
-		FACScriptsObject::StaticScriptFinished(number);
-		SetFlags(_OF_DelayedDestroy);
-		return resultValue;
-	}
-	if (info->state != ASTE_RUNNING)
-	{
-		return resultValue;
-	}
-	if (DelayTime)
-	{
-		DelayTime -= DeltaTime;
-		if (DelayTime < 0)
-			DelayTime = 0;
-		return resultValue;
-	}
-	int optstart = -1;
-	int* locals = LocalVars;
-	FACScriptFunction* activeFunction = NULL;
-	EACSFormat fmt = activeObject->GetFormat();
-	int* PCodePtr = ip;
-	action = SCRIPT_CONTINUE;
-	do
-	{
-#define PC_GET_INT	LittleLong(*PCodePtr++)
-#define NEXTBYTE	(fmt == ACS_LittleEnhanced ? getbyte(PCodePtr) : PC_GET_INT)
-
-		if (fmt == ACS_LittleEnhanced)
-		{
-			cmd = getbyte(PCodePtr);
-			if (cmd >= 256 - 16)
-			{
-				cmd = (256 - 16) + ((cmd - (256 - 16)) << 8) + getbyte(PCodePtr);
-			}
-		}
-		else
-		{
-			cmd = PC_GET_INT;
-		}
-		switch (cmd)
-		{
-		//	Standard P-Code commands.
-		case PCD_Nop:
-			break;
-
-		case PCD_Terminate:
-			action = SCRIPT_TERMINATE;
-			break;
-
-		case PCD_Suspend:
-			info->state = ASTE_SUSPENDED;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_PushNumber:
-			stack[stackPtr++] = PC_GET_INT;
-			break;
-
-		case PCD_LSpec1:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[0] = stack[--stackPtr];
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec2:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[1] = stack[stackPtr - 1];
-				SpecArgs[0] = stack[stackPtr - 2];
-				stackPtr -= 2;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec3:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[2] = stack[stackPtr - 1];
-				SpecArgs[1] = stack[stackPtr - 2];
-				SpecArgs[0] = stack[stackPtr - 3];
-				stackPtr -= 3;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec4:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[3] = stack[stackPtr - 1];
-				SpecArgs[2] = stack[stackPtr - 2];
-				SpecArgs[1] = stack[stackPtr - 3];
-				SpecArgs[0] = stack[stackPtr - 4];
-				stackPtr -= 4;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec5:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[4] = stack[stackPtr - 1];
-				SpecArgs[3] = stack[stackPtr - 2];
-				SpecArgs[2] = stack[stackPtr - 3];
-				SpecArgs[1] = stack[stackPtr - 4];
-				SpecArgs[0] = stack[stackPtr - 5];
-				stackPtr -= 5;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec1Direct:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[0] = PC_GET_INT;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec2Direct:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[0] = PC_GET_INT;
-				SpecArgs[1] = PC_GET_INT;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec3Direct:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[0] = PC_GET_INT;
-				SpecArgs[1] = PC_GET_INT;
-				SpecArgs[2] = PC_GET_INT;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec4Direct:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[0] = PC_GET_INT;
-				SpecArgs[1] = PC_GET_INT;
-				SpecArgs[2] = PC_GET_INT;
-				SpecArgs[3] = PC_GET_INT;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_LSpec5Direct:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[0] = PC_GET_INT;
-				SpecArgs[1] = PC_GET_INT;
-				SpecArgs[2] = PC_GET_INT;
-				SpecArgs[3] = PC_GET_INT;
-				SpecArgs[4] = PC_GET_INT;
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-			}
-			break;
-
-		case PCD_Add:
-			stack[stackPtr - 2] = stack[stackPtr - 2] + stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_Subtract:
-			stack[stackPtr - 2] = stack[stackPtr - 2] - stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_Multiply:
-			stack[stackPtr - 2] = stack[stackPtr - 2] * stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_Divide:
-			stack[stackPtr - 2] = stack[stackPtr - 2] / stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_Modulus:
-			stack[stackPtr - 2] = stack[stackPtr - 2] % stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_EQ:
-			stack[stackPtr - 2] = stack[stackPtr - 2] == stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_NE:
-			stack[stackPtr - 2] = stack[stackPtr - 2] != stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_LT:
-			stack[stackPtr - 2] = stack[stackPtr - 2] < stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_GT:
-			stack[stackPtr - 2] = stack[stackPtr - 2] > stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_LE:
-			stack[stackPtr - 2] = stack[stackPtr - 2] <= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_GE:
-			stack[stackPtr - 2] = stack[stackPtr - 2] >= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_AssignScriptVar:
-			locals[NEXTBYTE] = stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_AssignMapVar:
-			*activeObject->MapVars[NEXTBYTE] = stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_AssignWorldVar:
-			WorldVars[NEXTBYTE] = stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_PushScriptVar:
-			stack[stackPtr++] = locals[NEXTBYTE];
-			break;
-
-		case PCD_PushMapVar:
-			stack[stackPtr++] = *activeObject->MapVars[NEXTBYTE];
-			break;
-
-		case PCD_PushWorldVar:
-			stack[stackPtr++] = WorldVars[NEXTBYTE];
-			break;
-
-		case PCD_AddScriptVar:
-			locals[NEXTBYTE] += stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_AddMapVar:
-			*activeObject->MapVars[NEXTBYTE] += stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_AddWorldVar:
-			WorldVars[NEXTBYTE] += stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_SubScriptVar:
-			locals[NEXTBYTE] -= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_SubMapVar:
-			*activeObject->MapVars[NEXTBYTE] -= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_SubWorldVar:
-			WorldVars[NEXTBYTE] -= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_MulScriptVar:
-			locals[NEXTBYTE] *= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_MulMapVar:
-			*activeObject->MapVars[NEXTBYTE] *= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_MulWorldVar:
-			WorldVars[NEXTBYTE] *= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_DivScriptVar:
-			locals[NEXTBYTE] /= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_DivMapVar:
-			*activeObject->MapVars[NEXTBYTE] /= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_DivWorldVar:
-			WorldVars[NEXTBYTE] /= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_ModScriptVar:
-			locals[NEXTBYTE] %= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_ModMapVar:
-			*activeObject->MapVars[NEXTBYTE] %= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_ModWorldVar:
-			WorldVars[NEXTBYTE] %= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_IncScriptVar:
-			locals[NEXTBYTE]++;
-			break;
-
-		case PCD_IncMapVar:
-			(*activeObject->MapVars[NEXTBYTE])++;
-			break;
-
-		case PCD_IncWorldVar:
-			WorldVars[NEXTBYTE]++;
-			break;
-
-		case PCD_DecScriptVar:
-			locals[NEXTBYTE]--;
-			break;
-
-		case PCD_DecMapVar:
-			(*activeObject->MapVars[NEXTBYTE])--;
-			break;
-
-		case PCD_DecWorldVar:
-			WorldVars[NEXTBYTE]--;
-			break;
-
-		case PCD_Goto:
-			PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
-			break;
-
-		case PCD_IfGoto:
-			if (stack[--stackPtr])
-			{
-				PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
-			}
-			else
-			{
-				PCodePtr++;
-			}
-			break;
-
-		case PCD_Drop:
-			stackPtr--;
-			break;
-
-		case PCD_Delay:
-			DelayTime = float(stack[stackPtr - 1]) / 35.0;
-			stackPtr--;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_DelayDirect:
-			DelayTime = float(PC_GET_INT) / 35.0;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_Random:
-			{
-				int low;
-				int high;
-			
-				high = stack[stackPtr - 1];
-				low = stack[stackPtr - 2];
-				stack[stackPtr - 2] = low + (int)(Random() * (high - low + 1));
-				stackPtr--;
-			}
-			break;
-
-		case PCD_RandomDirect:
-			{
-				int low;
-				int high;
-			
-				low = PC_GET_INT;
-				high = PC_GET_INT;
-				stack[stackPtr++] = low + (int)(Random() * (high - low + 1));
-			}
-			break;
-
-		case PCD_ThingCount:
-			stack[stackPtr - 2] = ThingCount(stack[stackPtr - 2], stack[stackPtr - 1]);
-			stackPtr--;
-			break;
-
-		case PCD_ThingCountDirect:
-			{
-				int type;
-			
-				type = PC_GET_INT;
-				stack[stackPtr++] = ThingCount(type, PC_GET_INT);
-			}
-			break;
-
-		case PCD_TagWait:
-			info->waitValue = stack[stackPtr - 1];
-			info->state = ASTE_WAITINGFORTAG;
-			stackPtr--;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_TagWaitDirect:
-			info->waitValue = PC_GET_INT;
-			info->state = ASTE_WAITINGFORTAG;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_PolyWait:
-			info->waitValue = stack[stackPtr - 1];
-			info->state = ASTE_WAITINGFORPOLY;
-			stackPtr--;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_PolyWaitDirect:
-			info->waitValue = PC_GET_INT;
-			info->state = ASTE_WAITINGFORPOLY;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_ChangeFloor:
-			{
-				int tag;
-				int flat;
-				int sectorIndex;
-
-				flat = GTextureManager.NumForName(VName(
-					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
-					VName::AddLower8), TEXTYPE_Flat, true, true);
-				tag = stack[stackPtr - 2];
-				stackPtr -= 2;
-				sectorIndex = -1;
-				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
-				{
-					SV_SetFloorPic(sectorIndex, flat);
-				}
-			}
-			break;
-
-		case PCD_ChangeFloorDirect:
-			{
-				int tag;
-				int flat;
-				int sectorIndex;
-			
-				tag = PC_GET_INT;
-				flat = GTextureManager.NumForName(VName(
-					FACScriptsObject::StaticGetString(PC_GET_INT),
-					VName::AddLower8), TEXTYPE_Flat, true, true);
-				sectorIndex = -1;
-				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
-				{
-					SV_SetFloorPic(sectorIndex, flat);
-				}
-			}
-			break;
-
-		case PCD_ChangeCeiling:
-			{
-				int tag;
-				int flat;
-				int sectorIndex;
-			
-				flat = GTextureManager.NumForName(VName(
-					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
-					VName::AddLower8), TEXTYPE_Flat, true, true);
-				tag = stack[stackPtr - 2];
-				stackPtr -= 2;
-				sectorIndex = -1;
-				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
-				{
-					SV_SetCeilPic(sectorIndex, flat);
-				}
-			}
-			break;
-
-		case PCD_ChangeCeilingDirect:
-			{
-				int tag;
-				int flat;
-				int sectorIndex;
-			
-				tag = PC_GET_INT;
-				flat = GTextureManager.NumForName(VName(
-					FACScriptsObject::StaticGetString(PC_GET_INT),
-					VName::AddLower8), TEXTYPE_Flat, true, true);
-				sectorIndex = -1;
-				while ((sectorIndex = FindSectorFromTag(tag, sectorIndex)) >= 0)
-				{
-					SV_SetCeilPic(sectorIndex, flat);
-				}
-			}
-			break;
-
-		case PCD_Restart:
-			PCodePtr = info->address;
-			break;
-
-		case PCD_AndLogical:
-			stack[stackPtr - 2] = stack[stackPtr - 2] && stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_OrLogical:
-			stack[stackPtr - 2] = stack[stackPtr - 2] || stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_AndBitwise:
-			stack[stackPtr - 2] = stack[stackPtr - 2] & stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_OrBitwise:
-			stack[stackPtr - 2] = stack[stackPtr - 2] | stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_EorBitwise:
-			stack[stackPtr - 2] = stack[stackPtr - 2] ^ stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_NegateLogical:
-			stack[stackPtr - 1] = !stack[stackPtr - 1];
-			break;
-
-		case PCD_LShift:
-			stack[stackPtr - 2] = stack[stackPtr - 2] << stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_RShift:
-			stack[stackPtr - 2] = stack[stackPtr - 2] >> stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_UnaryMinus:
-			stack[stackPtr - 1] = -stack[stackPtr - 1];
-			break;
-
-		case PCD_IfNotGoto:
-			if (stack[stackPtr - 1])
-			{
-				PCodePtr++;
-			}
-			else
-			{
-				PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
-			}
-			stackPtr--;
-			break;
-
-		case PCD_LineSide:
-			stack[stackPtr++] = side;
-			break;
-
-		case PCD_ScriptWait:
-			info->waitValue = stack[stackPtr - 1];
-			info->state = ASTE_WAITINGFORSCRIPT;
-			stackPtr--;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_ScriptWaitDirect:
-			info->waitValue = PC_GET_INT;
-			info->state = ASTE_WAITINGFORSCRIPT;
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_ClearLineSpecial:
-			if (line)
-			{
-				line->special = 0;
-			}
-			break;
-
-		case PCD_CaseGoto:
-			if (stack[stackPtr - 1] == PC_GET_INT)
-			{
-				PCodePtr = activeObject->OffsetToPtr(LittleLong(*PCodePtr));
-				stackPtr--;
-			}
-			else
-			{
-				PCodePtr++;
-			}
-			break;
-
-		case PCD_BeginPrint:
-			*PrintBuffer = 0;
-			break;
-
-		case PCD_EndPrint:
-			strbin(PrintBuffer);
-			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
-			{
-				SV_ClientCenterPrintf(Activator->Player, "%s\n", PrintBuffer);
-			}
-			else
-			{
-				for (int i = 0; i < MAXPLAYERS; i++)
-				{
-					if (GGameInfo->Players[i])
-					{
-						SV_ClientCenterPrintf(GGameInfo->Players[i], "%s\n", PrintBuffer);
-					}
-				}
-			}
-			break;
-
-		case PCD_PrintString:
-			strcat(PrintBuffer, FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
-			stackPtr--;
-			break;
-
-		case PCD_PrintNumber:
-			strcat(PrintBuffer, va("%d", stack[stackPtr - 1]));
-			stackPtr--;
-			break;
-
-		case PCD_PrintCharacter:
-			{
-				char *bufferEnd;
-			
-				bufferEnd = PrintBuffer + strlen(PrintBuffer);
-				*bufferEnd++ = stack[stackPtr - 1];
-				*bufferEnd = 0;
-				stackPtr--;
-			}
-			break;
-
-		case PCD_PlayerCount:
-			{
-				int i;
-				int count;
-			
-				count = 0;
-				for(i = 0; i < MAXPLAYERS; i++)
-				{
-					if (GGameInfo->Players[i])
-						count++;
-				}
-				stack[stackPtr++] = count;
-			}
-			break;
-
-		case PCD_GameType:
-			{
-				int gametype;
-			
-				if (netgame == false)
-				{
-					gametype = GAME_SINGLE_PLAYER;
-				}
-				else if (deathmatch)
-				{
-					gametype = GAME_NET_DEATHMATCH;
-				}
-				else
-				{
-					gametype = GAME_NET_COOPERATIVE;
-				}
-				stack[stackPtr++] = gametype;
-			}
-			break;
-
-		case PCD_GameSkill:
-			stack[stackPtr++] = gameskill;
-			break;
-
-		case PCD_Timer:
-			stack[stackPtr++] = level.tictime;
-			break;
-
-		case PCD_SectorSound:
-			{
-				int volume;
-				sector_t *sector;
-			
-				sector = NULL;
-				if (line)
-				{
-					sector = line->frontsector;
-				}
-				volume = stack[stackPtr - 1];
-				stackPtr--;
-				SV_SectorStartSound(sector,
-					S_GetSoundID(FACScriptsObject::StaticGetString(stack[--stackPtr])), 0, volume);
-			}
-			break;
-
-		case PCD_AmbientSound:
-			{
-				int volume;
-			
-				volume = stack[stackPtr - 1];
-				stackPtr--;
-				SV_StartSound(NULL, S_GetSoundID(
-					FACScriptsObject::StaticGetString(stack[--stackPtr])), 0, volume);
-			}
-			break;
-
-		case PCD_SoundSequence:
-			{
-				sector_t *sec;
-			
-				sec = NULL;
-				if (line)
-				{
-					sec = line->frontsector;
-				}
-				SV_SectorStartSequence(sec, FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
-				stackPtr--;
-			}
-			break;
-
-		case PCD_SetLineTexture:
-			{
-				line_t *line;
-				int lineTag;
-				int side;
-				int position;
-				int texture;
-				int searcher;
-			
-				texture = GTextureManager.NumForName(VName(
-					FACScriptsObject::StaticGetString(stack[stackPtr - 1]),
-					VName::AddLower8), TEXTYPE_Wall, true, true);
-				position = stack[stackPtr - 2];
-				side = stack[stackPtr - 3];
-				lineTag = stack[stackPtr - 4];
-				stackPtr -= 4;
-				searcher = -1;
-				while ((line = P_FindLine(lineTag, &searcher)) != NULL)
-				{
-					SV_SetLineTexture(line->sidenum[side], position, texture);
-				}
-			}
-			break;
-
-		case PCD_SetLineBlocking:
-			{
-				line_t *line;
-				int lineTag;
-				int blocking;
-				int searcher;
-			
-				blocking = stack[stackPtr - 1] ? ML_BLOCKING : 0;
-				lineTag = stack[stackPtr - 2];
-				stackPtr -= 2;
-				searcher = -1;
-				while ((line = P_FindLine(lineTag, &searcher)) != NULL)
-				{
-					line->flags = (line->flags & ~ML_BLOCKING) | blocking;
-				}
-			}
-			break;
-
-		case PCD_SetLineSpecial:
-			{
-				line_t *line;
-				int lineTag;
-				int special, arg1, arg2, arg3, arg4, arg5;
-				int searcher;
-			
-				arg5 = stack[stackPtr - 1];
-				arg4 = stack[stackPtr - 2];
-				arg3 = stack[stackPtr - 3];
-				arg2 = stack[stackPtr - 4];
-				arg1 = stack[stackPtr - 5];
-				special = stack[stackPtr - 6];
-				lineTag = stack[stackPtr - 7];
-				stackPtr -= 7;
-				searcher = -1;
-				while ((line = P_FindLine(lineTag, &searcher)) != NULL)
-				{
-					line->special = special;
-					line->arg1 = arg1;
-					line->arg2 = arg2;
-					line->arg3 = arg3;
-					line->arg4 = arg4;
-					line->arg5 = arg5;
-				}
-			}
-			break;
-
-		case PCD_ThingSound:
-			{
-				int tid;
-				int sound;
-				int volume;
-				VEntity *mobj;
-				int searcher;
-			
-				volume = stack[stackPtr - 1];
-				sound = S_GetSoundID(FACScriptsObject::StaticGetString(stack[stackPtr - 2]));
-				tid = stack[stackPtr - 3];
-				stackPtr -= 3;
-				searcher = -1;
-				while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
-				{
-					SV_StartSound(mobj, sound, 0, volume);
-				}
-			}
-			break;
-
-		case PCD_EndPrintBold:
-			strbin(PrintBuffer);
-			{
-				//FIXME yellow message
-				for (int i = 0; i < MAXPLAYERS; i++)
-				{
-					if (GGameInfo->Players[i])
-					{
-						SV_ClientCenterPrintf(GGameInfo->Players[i], "%s\n", PrintBuffer);
-					}
-				}
-			}
-			break;
-
-		//	Extended P-Code commands.
-		case PCD_ActivatorSound:
-			{
-				int sound;
-
-				sound = S_GetSoundID(FACScriptsObject::StaticGetString(stack[stackPtr - 2]));
-				SV_StartSound(Activator, sound, 0, stack[stackPtr - 1]);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_LocalAmbientSound:
-			{
-				int sound;
-
-				sound = S_GetSoundID(FACScriptsObject::StaticGetString(stack[stackPtr - 2]));
-				SV_StartLocalSound(Activator, sound, 0, stack[stackPtr - 1]);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_SetLineMonsterBlocking:
-			{
-				line_t *line;
-				int lineTag;
-				int blocking;
-				int searcher;
-			
-				blocking = stack[stackPtr - 1] ? ML_BLOCKMONSTERS : 0;
-				lineTag = stack[stackPtr - 2];
-				stackPtr -= 2;
-				searcher = -1;
-				while ((line = P_FindLine(lineTag, &searcher)) != NULL)
-				{
-					line->flags = (line->flags & ~ML_BLOCKING) | blocking;
-				}
-			}
-			break;
-
-		case PCD_PlayerHealth:
-			if (Activator)
-				stack[stackPtr++] = Activator->Health;
-			else
-				stack[stackPtr++] = 0;
-			break;
-
-		case PCD_PlayerArmorPoints:
-			if (Activator && Activator->Player)
-				//FIXME
-				stack[stackPtr++] = 0;
-			else
-				stack[stackPtr++] = 0;
-			break;
-
-		case PCD_PlayerFrags:
-			if (Activator && Activator->Player)
-				stack[stackPtr++] = Activator->Player->Frags;
-			else
-				stack[stackPtr++] = 0;
-			break;
-
-		case PCD_PrintName:
-			{
-				VBasePlayer* player = NULL;
-
-				if (stack[stackPtr - 1] == 0 ||
-					(unsigned)stack[stackPtr - 1] > MAXPLAYERS)
-				{
-					if (Activator)
-					{
-						player = Activator->Player;
-					}
-				}
-				else
-				{
-					player = GGameInfo->Players[stack[stackPtr - 1] - 1];
-				}
-				if (player && player->PlayerFlags & VBasePlayer::PF_Spawned)
-				{
-					strcat(PrintBuffer, *player->PlayerName);
-				}
-				else if (player && !(player->PlayerFlags & VBasePlayer::PF_Spawned))
-				{
-					strcat(PrintBuffer, va("Player %d", stack[stackPtr - 1]));
-				}
-				else if (Activator)
-				{
-					strcat(PrintBuffer, Activator->GetClass()->GetName());
-				}
-				else
-				{
-					strcat(PrintBuffer, " ");
-				}
-				stackPtr--;
-			}
-			break;
-
-		case PCD_MusicChange:
-			SV_ChangeMusic(FACScriptsObject::StaticGetString(stack[stackPtr - 2]));
-			stackPtr -= 2;
-			break;
-
-		case PCD_SinglePlayer:
-			stack[stackPtr++] = !netgame;
-			break;
-
-		case PCD_FixedMul:
-			stack[stackPtr - 2] = int((double(stack[stackPtr - 2]) /
-				double(0x10000)) * double(stack[stackPtr - 1]));
-			stackPtr--;
-			break;
-
-		case PCD_FixedDiv:
-			stack[stackPtr - 2] = int((double(stack[stackPtr - 2]) /
-				double(stack[stackPtr - 1])) * double(0x10000));
-			stackPtr--;
-			break;
-
-		case PCD_SetGravity:
-			{
-				float grav = float(stack[stackPtr - 1]) * DEFAULT_GRAVITY / 800.0;
-				GLevelInfo->Gravity = grav;
-				stackPtr--;
-			}
-			break;
-
-		case PCD_SetGravityDirect:
-			{
-				float grav = float(PC_GET_INT) * DEFAULT_GRAVITY / 800.0;
-				GLevelInfo->Gravity = grav;
-				stackPtr--;
-			}
-			break;
-
-		case PCD_SetAirControl:
-			//FIXME
-			{float airc = float(stack[stackPtr - 1]) / float(0x10000);}
-			stackPtr--;
-			break;
-
-		case PCD_SetAirControlDirect:
-			//FIXME
-			{float airc = float(PC_GET_INT) / float(0x10000);}
-			stackPtr--;
-			break;
-
-		case PCD_ClearInventory:
-			//FIXME
-			if (Activator)
-			{
-				//DoClearInv(Activator);
-			}
-			else
-			{
-				for (int i = 0; i < MAXPLAYERS; ++i)
-				{
-					//if (GGameInfo->Players[i] && GGameInfo->Players[i]->bSpawned)
-						//DoClearInv(GGameInfo->Players[i]->MO);
-				}
-			}
-			break;
-
-		case PCD_GiveInventory:
-			//FIXME
-			GiveInventory(Activator, FACScriptsObject::StaticGetString(stack[stackPtr - 2]),
-				stack[stackPtr - 1]);
-			stackPtr -= 2;
-			break;
-
-		case PCD_GiveInventoryDirect:
-			//FIXME
-			{
-				const char* ItemName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				GiveInventory(Activator, ItemName, PC_GET_INT);
-			}
-			break;
-
-		case PCD_TakeInventory:
-			//FIXME
-			TakeInventory(Activator, FACScriptsObject::StaticGetString(stack[stackPtr - 2]),
-				stack[stackPtr - 1]);
-			stackPtr -= 2;
-			break;
-
-		case PCD_TakeInventoryDirect:
-			{
-				const char* ItemName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				TakeInventory(Activator, ItemName, PC_GET_INT);
-			}
-			break;
-
-		case PCD_CheckInventory:
-			stack[stackPtr - 1] = CheckInventory(Activator,
-				FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
-			break;
-
-		case PCD_CheckInventoryDirect:
-			stack[stackPtr++] = CheckInventory(Activator,
-				FACScriptsObject::StaticGetString(stack[PC_GET_INT]));
-			break;
-
-		case PCD_Spawn:
-			//FIXME
-//			stack[stackPtr - 6] = DoSpawn(FACScriptsObject::StaticGetString(stack[stackPtr - 6]),
-//				float(stack[stackPtr - 5]) / float(0x10000),
-//				float(stack[stackPtr - 4]) / float(0x10000),
-//				float(stack[stackPtr - 3]) / float(0x10000),
-//				stack[stackPtr - 2],
-//				float(stack[stackPtr - 1]) * 360.0 / 256.0);
-			stackPtr -= 5;
-			break;
-
-		case PCD_SpawnDirect:
-			{
-				//FIXME
-				const char* TypeName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				float x = float(PC_GET_INT) / float(0x10000);
-				float y = float(PC_GET_INT) / float(0x10000);
-				float z = float(PC_GET_INT) / float(0x10000);
-				int tid = PC_GET_INT;
-				float ang = float(PC_GET_INT) * 360.0 / 256.0;
-//				stack[stackPtr] = DoSpawn(TypeName, x, y, z, tid, ang);
-				stackPtr++;
-			}
-			break;
-
-		case PCD_SpawnSpot:
-			//FIXME
-			{
-				const char* TypeName = FACScriptsObject::StaticGetString(stack[stackPtr - 4]);
-				int spot = stack[stackPtr - 3];
-				int tid = stack[stackPtr -2];
-				float ang = float(stack[stackPtr - 1]) * 360.0 / 256.0;
-				//stack[stackPtr - 4] = DoSpawnSpot(TypeName, spot, tid, ang);
-				stackPtr -= 3;
-			}
-			break;
-
-		case PCD_SpawnSpotDirect:
-			//FIXME
-			{
-				const char* TypeName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				int spot = PC_GET_INT;
-				int tid = PC_GET_INT;
-				float ang = float(PC_GET_INT) * 360.0 / 256.0;
-				//stack[stackPtr] = DoSpawnSpot(TypeName, spot, tid, ang);
-				stackPtr++;
-			}
-			break;
-
-		case PCD_SetMusic:
-			SV_ChangeMusic(FACScriptsObject::StaticGetString(stack[stackPtr - 3]));
-			stackPtr -= 3;
-			break;
-
-		case PCD_SetMusicDirect:
-			{
-				const char* SongName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				PC_GET_INT;
-				PC_GET_INT;
-				SV_ChangeMusic(SongName);
-			}
-			break;
-
-		case PCD_LocalSetMusic:
-			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
-			{
-				SV_ChangeLocalMusic(Activator->Player,
-					FACScriptsObject::StaticGetString(stack[stackPtr - 3]));
-			}
-			stackPtr -= 3;
-			break;
-
-		case PCD_LocalSetMusicDirect:
-			{
-				const char* SongName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				PC_GET_INT;
-				PC_GET_INT;
-				if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
-				{
-					SV_ChangeLocalMusic(Activator->Player, SongName);
-				}
-			}
-			break;
-
-		case PCD_PrintFixed:
-			strcat(PrintBuffer, va("%f", float(stack[stackPtr - 1]) / float(0x10000)));
-			stackPtr--;
-			break;
-
-		case PCD_PrintLocalized:
-			//FIXME print localized string.
-			strcat(PrintBuffer, FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
-			stackPtr--;
-			break;
-
-		case PCD_MoreHudMessage:
-			strbin(PrintBuffer);
-			optstart = -1;
-			break;
-
-		case PCD_OptHudMessage:
-			optstart = stackPtr;
-			break;
-
-		case PCD_EndHudMessage:
-		case PCD_EndHudMessageBold:
-			{
-				if (optstart == -1)
-				{
-					optstart = stackPtr;
-				}
-				int type = stack[optstart - 6];
-				int id = stack[optstart - 5];
-				int color = stack[optstart - 4];
-				float x = float(stack[optstart - 3]) / float(0x10000);
-				float y = float(stack[optstart - 2]) / float(0x10000);
-				float holdTime = float(stack[optstart - 1]) / float(0x10000);
-
-				//FIXME
-				if (cmd != PCD_EndHudMessageBold &&
-					Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
-				{
-					SV_ClientPrintf(Activator->Player, "%s\n", PrintBuffer);
-				}
-				else
-				{
-					for (int i = 0; i < MAXPLAYERS; i++)
-					{
-						if (GGameInfo->Players[i])
-						{
-							SV_ClientPrintf(GGameInfo->Players[i], "%s\n", PrintBuffer);
-						}
-					}
-				}
-			}
-			stackPtr = optstart - 6;
-			break;
-
-		case PCD_SetFont:
-			{
-				const char* FontName = FACScriptsObject::StaticGetString(stack[stackPtr - 1]);
-				//FIXME set the font.
-				stackPtr--;
-			}
-			break;
-
-		case PCD_SetFontDirect:
-			{
-				const char* FontName = FACScriptsObject::StaticGetString(PC_GET_INT);
-				//FIXME set the font.
-			}
-			break;
-
-		case PCD_PushByte:
-			stack[stackPtr++] = ((byte*)PCodePtr)[0];
-			PCodePtr = (int*)((byte*)PCodePtr + 1);
-			break;
-
-		case PCD_LSpec1DirectB:
-			SpecArgs[0] = ((byte*)PCodePtr)[1];
-			P_ExecuteLineSpecial(((byte*)PCodePtr)[0], SpecArgs, line, side, Activator);
-			PCodePtr = (int*)((byte*)PCodePtr + 2);
-			break;
-
-		case PCD_LSpec2DirectB:
-			{
-				int special;
-			
-				special = ((byte*)PCodePtr)[0];
-				SpecArgs[0] = ((byte*)PCodePtr)[1];
-				SpecArgs[1] = ((byte*)PCodePtr)[2];
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-				PCodePtr = (int*)((byte*)PCodePtr + 3);
-			}
-			break;
-
-		case PCD_LSpec3DirectB:
-			{
-				int special;
-			
-				special = ((byte*)PCodePtr)[0];
-				SpecArgs[0] = ((byte*)PCodePtr)[1];
-				SpecArgs[1] = ((byte*)PCodePtr)[2];
-				SpecArgs[2] = ((byte*)PCodePtr)[3];
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-				PCodePtr = (int*)((byte*)PCodePtr + 4);
-			}
-			break;
-
-		case PCD_LSpec4DirectB:
-			{
-				int special;
-			
-				special = ((byte*)PCodePtr)[0];
-				SpecArgs[0] = ((byte*)PCodePtr)[1];
-				SpecArgs[1] = ((byte*)PCodePtr)[2];
-				SpecArgs[2] = ((byte*)PCodePtr)[3];
-				SpecArgs[3] = ((byte*)PCodePtr)[4];
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-				PCodePtr = (int*)((byte*)PCodePtr + 5);
-			}
-			break;
-
-		case PCD_LSpec5DirectB:
-			{
-				int special;
-			
-				special = ((byte*)PCodePtr)[0];
-				SpecArgs[0] = ((byte*)PCodePtr)[1];
-				SpecArgs[1] = ((byte*)PCodePtr)[2];
-				SpecArgs[2] = ((byte*)PCodePtr)[3];
-				SpecArgs[3] = ((byte*)PCodePtr)[4];
-				SpecArgs[4] = ((byte*)PCodePtr)[5];
-				P_ExecuteLineSpecial(special, SpecArgs, line, side, Activator);
-				PCodePtr = (int*)((byte*)PCodePtr + 6);
-			}
-			break;
-
-		case PCD_DelayDirectB:
-			DelayTime = float(((byte*)PCodePtr)[0]) / 35.0;
-			PCodePtr = (int*)((byte*)PCodePtr + 1);
-			action = SCRIPT_STOP;
-			break;
-
-		case PCD_RandomDirectB:
-			{
-				int low;
-				int high;
-			
-				low = ((byte*)PCodePtr)[0];
-				high = ((byte*)PCodePtr)[1];
-				stack[stackPtr++] = low + (int)(Random() * (high - low + 1));
-				PCodePtr = (int*)((byte*)PCodePtr + 2);
-			}
-			break;
-
-		case PCD_PushBytes:
-			{
-				int count = ((byte*)PCodePtr)[0];
-				for (int i = 0; i < count; i++)
-					stack[stackPtr + i] = ((byte*)PCodePtr)[i + 1];
-				stackPtr += count;
-				PCodePtr = (int*)((byte*)PCodePtr + count + 1);
-			}
-			break;
-
-		case PCD_Push2Bytes:
-			stack[stackPtr] = ((byte*)PCodePtr)[0];
-			stack[stackPtr + 1] = ((byte*)PCodePtr)[1];
-			stackPtr += 2;
-			PCodePtr = (int*)((byte*)PCodePtr + 2);
-			break;
-
-		case PCD_Push3Bytes:
-			stack[stackPtr] = ((byte*)PCodePtr)[0];
-			stack[stackPtr + 1] = ((byte*)PCodePtr)[1];
-			stack[stackPtr + 2] = ((byte*)PCodePtr)[2];
-			stackPtr += 3;
-			PCodePtr = (int*)((byte*)PCodePtr + 3);
-			break;
-
-		case PCD_Push4Bytes:
-			stack[stackPtr] = ((byte*)PCodePtr)[0];
-			stack[stackPtr + 1] = ((byte*)PCodePtr)[1];
-			stack[stackPtr + 2] = ((byte*)PCodePtr)[2];
-			stack[stackPtr + 3] = ((byte*)PCodePtr)[3];
-			stackPtr += 4;
-			PCodePtr = (int*)((byte*)PCodePtr + 4);
-			break;
-
-		case PCD_Push5Bytes:
-			stack[stackPtr] = ((byte*)PCodePtr)[0];
-			stack[stackPtr + 1] = ((byte*)PCodePtr)[1];
-			stack[stackPtr + 2] = ((byte*)PCodePtr)[2];
-			stack[stackPtr + 3] = ((byte*)PCodePtr)[3];
-			stack[stackPtr + 4] = ((byte*)PCodePtr)[4];
-			stackPtr += 5;
-			PCodePtr = (int*)((byte*)PCodePtr + 5);
-			break;
-
-		case PCD_SetThingSpecial:
-			{
-				int searcher = -1;
-				VEntity* mobj;
-				int tid = stack[stackPtr - 7];
-				int special = stack[stackPtr - 6];
-				int arg1 = stack[stackPtr - 5];
-				int arg2 = stack[stackPtr - 4];
-				int arg3 = stack[stackPtr - 3];
-				int arg4 = stack[stackPtr - 2];
-				int arg5 = stack[stackPtr - 1];
-
-				while ((mobj = P_FindMobjFromTID(tid, &searcher)) != NULL)
-				{
-					mobj->Special = special;
-					mobj->Args[0] = arg1;
-					mobj->Args[1] = arg2;
-					mobj->Args[2] = arg3;
-					mobj->Args[3] = arg4;
-					mobj->Args[4] = arg5;
-				}
-				stackPtr -= 7;
-			}
-			break;
-
-		case PCD_AssignGlobalVar:
-			GlobalVars[NEXTBYTE] = stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_PushGlobalVar:
-			stack[stackPtr++] = GlobalVars[NEXTBYTE];
-			break;
-
-		case PCD_AddGlobalVar:
-			GlobalVars[NEXTBYTE] += stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_SubGlobalVar:
-			GlobalVars[NEXTBYTE] -= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_MulGlobalVar:
-			GlobalVars[NEXTBYTE] *= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_DivGlobalVar:
-			GlobalVars[NEXTBYTE] /= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_ModGlobalVar:
-			GlobalVars[NEXTBYTE] %= stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_IncGlobalVar:
-			GlobalVars[NEXTBYTE]++;
-			break;
-
-		case PCD_DecGlobalVar:
-			GlobalVars[NEXTBYTE]--;
-			break;
-
-		case PCD_FadeTo:
-			{
-				int r = stack[stackPtr - 5];
-				int g = stack[stackPtr - 4];
-				int b = stack[stackPtr - 3];
-				int a = stack[stackPtr - 2];
-				float time = float(stack[stackPtr - 1]) / float(0x10000);
-				//FIXME implement
-				stackPtr -= 5;
-			}
-			break;
-
-		case PCD_FadeRange:
-			{
-				int r1 = stack[stackPtr - 9];
-				int g1 = stack[stackPtr - 8];
-				int b1 = stack[stackPtr - 7];
-				int a1 = stack[stackPtr - 6];
-				int r2 = stack[stackPtr - 5];
-				int g2 = stack[stackPtr - 4];
-				int b2 = stack[stackPtr - 3];
-				int a2 = stack[stackPtr - 2];
-				float time = float(stack[stackPtr - 1]) / float(0x10000);
-				//FIXME implement
-				stackPtr -= 9;
-			}
-			break;
-
-		case PCD_CancelFade:
-			//FIXME implement.
-			break;
-
-		case PCD_PlayMovie:
-			{
-				const char* MovieName = FACScriptsObject::StaticGetString(stack[stackPtr - 1]);
-				//FIXME implement
-				stack[stackPtr - 1] = 0;
-			}
-			break;
-
-		case PCD_SetFloorTrigger:
-			StartPlaneWatcher(Activator, line, side, false,
-				stack[stackPtr - 8], stack[stackPtr - 7], stack[stackPtr - 6],
-				stack[stackPtr - 5], stack[stackPtr - 4], stack[stackPtr - 3],
-				stack[stackPtr - 2], stack[stackPtr - 1]);
-			stackPtr -= 8;
-			break;
-
-		case PCD_SetCeilingTrigger:
-			StartPlaneWatcher(Activator, line, side, true,
-				stack[stackPtr - 8], stack[stackPtr - 7], stack[stackPtr - 6],
-				stack[stackPtr - 5], stack[stackPtr - 4], stack[stackPtr - 3],
-				stack[stackPtr - 2], stack[stackPtr - 1]);
-			stackPtr -= 8;
-			break;
-
-		case PCD_GetActorX:
-			{
-				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
-				if (!Ent)
-				{
-					stack[stackPtr - 1] = 0;
-				}
-				else
-				{
-					stack[stackPtr - 1] = int(Ent->Origin.x * 0x10000);
-				}
-			}
-			break;
-
-		case PCD_GetActorY:
-			{
-				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
-				if (!Ent)
-				{
-					stack[stackPtr - 1] = 0;
-				}
-				else
-				{
-					stack[stackPtr - 1] = int(Ent->Origin.y * 0x10000);
-				}
-			}
-			break;
-
-		case PCD_GetActorZ:
-			{
-				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
-				if (!Ent)
-				{
-					stack[stackPtr - 1] = 0;
-				}
-				else
-				{
-					stack[stackPtr - 1] = int(Ent->Origin.z * 0x10000);
-				}
-			}
-			break;
-
-		case PCD_StartTranslation:
-			{
-				int Index = stack[stackPtr - 1];
-				stackPtr--;
-				//FIXME
-			}
-			break;
-
-		case PCD_TranslationRange1:
-			{
-				int start = stack[stackPtr - 4];
-				int end = stack[stackPtr - 3];
-				int pal1 = stack[stackPtr - 2];
-				int pal2 = stack[stackPtr - 1];
-				stackPtr -= 4;
-				//FIXME
-			}
-			break;
-
-		case PCD_TranslationRange2:
-			{
-				int start = stack[stackPtr - 8];
-				int end = stack[stackPtr - 7];
-				int r1 = stack[stackPtr - 6];
-				int g1 = stack[stackPtr - 5];
-				int b1 = stack[stackPtr - 4];
-				int r2 = stack[stackPtr - 3];
-				int g2 = stack[stackPtr - 2];
-				int b2 = stack[stackPtr - 1];
-				stackPtr -= 8;
-				//FIXME
-			}
-			break;
-
-		case PCD_EndTranslation:
-			//FIXME
-			break;
-
-		case PCD_Call:
-		case PCD_CallDiscard:
-			{
-				int funcnum;
-				int i;
-				FACScriptFunction *func;
-				FACScriptsObject* object = activeObject;
-
-				funcnum = NEXTBYTE;
-				func = activeObject->GetFunction(funcnum, object);
-				if (!func)
-				{
-					GCon->Logf("Function %d in script %d out of range", funcnum, number);
-					action = SCRIPT_TERMINATE;
-					break;
-				}
-				if (stackPtr + func->LocalCount + 64 > ACS_STACK_DEPTH)
-				{
-					// 64 is the margin for the function's working space
-					GCon->Logf("Out of stack space in script %d", number);
-					action = SCRIPT_TERMINATE;
-					break;
-				}
-				// The function's first argument is also its first local variable.
-				locals = &stack[stackPtr - func->ArgCount];
-				// Make space on the stack for any other variables the function uses.
-				for (i = 0; i < func->LocalCount; i++)
-				{
-					stack[stackPtr + i] = 0;
-				}
-				stackPtr += i;
-				((CallReturn*)&stack[stackPtr])->ReturnAddress = activeObject->PtrToOffset(PCodePtr);
-				((CallReturn*)&stack[stackPtr])->ReturnFunction = activeFunction;
-				((CallReturn*)&stack[stackPtr])->ReturnObject = activeObject;
-				((CallReturn*)&stack[stackPtr])->bDiscardResult = (cmd == PCD_CallDiscard);
-				stackPtr += sizeof(CallReturn) / sizeof(int);
-				PCodePtr = activeObject->OffsetToPtr(func->Address);
-				activeObject = object;
-				activeFunction = func;
-			}
-			break;
-
-		case PCD_ReturnVoid:
-		case PCD_ReturnVal:
-			{
-				int value;
-				CallReturn *retState;
-
-				if (cmd == PCD_ReturnVal)
-				{
-					value = stack[--stackPtr];
-				}
-				else
-				{
-					value = 0;
-				}
-				stackPtr -= sizeof(CallReturn) / sizeof(int);
-				retState = (CallReturn*)&stack[stackPtr];
-				PCodePtr = activeObject->OffsetToPtr(retState->ReturnAddress);
-				stackPtr -= activeFunction->ArgCount + activeFunction->LocalCount;
-				activeFunction = retState->ReturnFunction;
-				activeObject = retState->ReturnObject;
-				fmt = activeObject->GetFormat();
-				if (!activeFunction)
-				{
-					locals = LocalVars;
-				}
-				else
-				{
-					locals = &stack[stackPtr - activeFunction->ArgCount -
-						activeFunction->LocalCount - sizeof(CallReturn) / sizeof(int)];
-				}
-				if (!retState->bDiscardResult)
-				{
-					stack[stackPtr++] = value;
-				}
-			}
-			break;
-
-		case PCD_PushMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 1];
-				stack[stackPtr - 1] = activeObject->GetArrayVal(ANum, Idx);
-			}
-			break;
-
-		case PCD_AssignMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx, Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_AddMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx,
-					activeObject->GetArrayVal(ANum, Idx) + Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_SubMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx,
-					activeObject->GetArrayVal(ANum, Idx) - Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_MulMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx,
-					activeObject->GetArrayVal(ANum, Idx) * Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_DivMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx,
-					activeObject->GetArrayVal(ANum, Idx) / Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_ModMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx,
-					activeObject->GetArrayVal(ANum, Idx) % Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_IncMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx,
-					activeObject->GetArrayVal(ANum, Idx) + 1);
-				stackPtr--;
-			}
-			break;
-
-		case PCD_DecMapArray:
-			{
-				int ANum = *activeObject->MapVars[NEXTBYTE];
-				int Idx = stack[stackPtr - 1];
-				activeObject->SetArrayVal(ANum, Idx,
-					activeObject->GetArrayVal(ANum, Idx) - 1);
-				stackPtr--;
-			}
-			break;
-
-		case PCD_Dup:
-			stack[stackPtr] = stack[stackPtr - 1];
-			stackPtr++;
-			break;
-
-		case PCD_Swap:
-			{
-				int tmp = stack[stackPtr - 2];
-				stack[stackPtr - 2] = stack[stackPtr - 1];
-				stack[stackPtr - 1] = tmp;
-			}
-			break;
-
-		case PCD_Sin:
-			stack[stackPtr - 1] = int(msin(float(stack[stackPtr - 1]) *
-				360.0 / 0x10000) * 0x10000);
-			break;
-
-		case PCD_Cos:
-			stack[stackPtr - 1] = int(mcos(float(stack[stackPtr - 1]) *
-				360.0 / 0x10000) * 0x10000);
-			break;
-
-		case PCD_VectorAngle:
-			stack[stackPtr - 2] = int(matan(float(stack[stackPtr - 1]) / float(0x10000),
-				float(stack[stackPtr - 2]) / float(0x10000)) / 360.0 * 0x10000);
-			stackPtr--;
-			break;
-
-		case PCD_CheckWeapon:
-			{
-				const char* WpnName = FACScriptsObject::StaticGetString(stack[stackPtr - 1]);
-				//FIXME implement.
-				stack[stackPtr - 1] = 0;
-			}
-			break;
-
-		case PCD_SetWeapon:
-			{
-				const char* WpnName = FACScriptsObject::StaticGetString(stack[stackPtr - 1]);
-				//FIXME implement.
-				stack[stackPtr - 1] = 0;
-			}
-			break;
-
-		case PCD_TagString:
-			stack[stackPtr - 1] |= activeObject->GetLibraryID();
-			break;
-
-		case PCD_PushWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 1];
-				stack[stackPtr - 1] = WorldArrays[ANum].GetElemVal(Idx);
-			}
-			break;
-
-		case PCD_AssignWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx, Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_AddWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx,
-					WorldArrays[ANum].GetElemVal(Idx) + Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_SubWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx,
-					WorldArrays[ANum].GetElemVal(Idx) - Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_MulWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx,
-					WorldArrays[ANum].GetElemVal(Idx) * Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_DivWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx,
-					WorldArrays[ANum].GetElemVal(Idx) / Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_ModWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx,
-					WorldArrays[ANum].GetElemVal(Idx) % Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_IncWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx,
-					WorldArrays[ANum].GetElemVal(Idx) + 1);
-				stackPtr--;
-			}
-			break;
-
-		case PCD_DecWorldArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 1];
-				WorldArrays[ANum].SetElemVal(Idx,
-					WorldArrays[ANum].GetElemVal(Idx) - 1);
-				stackPtr--;
-			}
-			break;
-
-		case PCD_PushGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 1];
-				stack[stackPtr - 1] = GlobalArrays[ANum].GetElemVal(Idx);
-			}
-			break;
-
-		case PCD_AssignGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx, Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_AddGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx,
-					GlobalArrays[ANum].GetElemVal(Idx) + Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_SubGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx,
-					GlobalArrays[ANum].GetElemVal(Idx) - Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_MulGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx,
-					GlobalArrays[ANum].GetElemVal(Idx) * Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_DivGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx,
-					GlobalArrays[ANum].GetElemVal(Idx) / Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_ModGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 2];
-				int Val = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx,
-					GlobalArrays[ANum].GetElemVal(Idx) % Val);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_IncGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx,
-					GlobalArrays[ANum].GetElemVal(Idx) + 1);
-				stackPtr--;
-			}
-			break;
-
-		case PCD_DecGlobalArray:
-			{
-				int ANum = NEXTBYTE;
-				int Idx = stack[stackPtr - 1];
-				GlobalArrays[ANum].SetElemVal(Idx,
-					GlobalArrays[ANum].GetElemVal(Idx) - 1);
-				stackPtr--;
-			}
-			break;
-
-		case PCD_SetMarineWeapon:
-			{
-				int TID = stack[stackPtr - 2];
-				const char* WeapName = FACScriptsObject::StaticGetString(stack[stackPtr - 1]);
-				//FIXME implement.
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_SetActorProperty:
-			{
-				int TID = stack[stackPtr - 3];
-				int property = stack[stackPtr - 2];
-				int value = stack[stackPtr - 1];
-				//FIXME implement.
-				stackPtr -= 3;
-			}
-			break;
-
-		case PCD_GetActorProperty:
-			{
-				int TID = stack[stackPtr - 2];
-				int property = stack[stackPtr - 1];
-				//FIXME implement.
-				stack[stackPtr - 2] = 0;
-				stackPtr -= 1;
-			}
-			break;
-
-		case PCD_PlayerNumber:
-			if (!Activator || !(Activator->EntityFlags & VEntity::EF_IsPlayer))
-			{
-				stack[stackPtr++] = -1;
-			}
-			else
-			{
-				stack[stackPtr++] = SV_GetPlayerNum(Activator->Player);
-			}
-			break;
-
-		case PCD_ActivatorTID:
-			if (!Activator)
-			{
-				stack[stackPtr++] = 0;
-			}
-			else
-			{
-				stack[stackPtr++] = Activator->TID;
-			}
-			break;
-
-		case PCD_SetMarineSprite:
-			{
-				int TID = stack[stackPtr - 2];
-				const char* ClassName = FACScriptsObject::StaticGetString(stack[stackPtr - 1]);
-				//FIXME implement.
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_GetScreenWidth:
-			//FIXME server knows nothing about screens.
-			stack[stackPtr++] = 320;
-			break;
-
-		case PCD_GetScreenHeight:
-			//FIXME server knows nothing about screens.
-			stack[stackPtr++] = 200;
-			break;
-
-		case PCD_ThingProjectile2:
-			Thing_Projectile2(stack[stackPtr - 7], stack[stackPtr - 6],
-				stack[stackPtr - 5], stack[stackPtr - 4], stack[stackPtr - 3],
-				stack[stackPtr - 2], stack[stackPtr - 1]);
-			stackPtr -= 7;
-			break;
-
-		case PCD_StrLen:
-			stack[stackPtr - 1] = strlen(FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
-			break;
-
-		case PCD_SetHudSize:
-			{
-				int hudwidth = abs(stack[stackPtr - 3]);
-				int hudheight = abs(stack[stackPtr - 2]);
-				if (stack[stackPtr - 1])
-				{
-					//	Negative height means to cover the status bar.
-					hudheight = -hudheight;
-				}
-				//FIXME implement.
-				stackPtr -= 3;
-			}
-			break;
-
-		case PCD_GetCvar:
-			stack[stackPtr - 1] = VCvar::GetInt(FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
-			break;
-
-		case PCD_CaseGotoSorted:
-			//	The count and jump table are 4-byte aligned.
-			PCodePtr = (int*)(((int)PCodePtr + 3) & ~3);
-			{
-				int numcases = PC_GET_INT;
-				int min = 0, max = numcases - 1;
-				while (min <= max)
-				{
-					int mid = (min + max) / 2;
-					int caseval = LittleLong(PCodePtr[mid * 2]);
-					if (caseval == stack[stackPtr - 1])
-					{
-						PCodePtr = activeObject->OffsetToPtr(LittleLong(PCodePtr[mid * 2 + 1]));
-						stackPtr--;
-						break;
-					}
-					else if (caseval < stack[stackPtr - 1])
-					{
-						min = mid + 1;
-					}
-					else
-					{
-						max = mid - 1;
-					}
-				}
-				if (min > max)
-				{
-					// The case was not found, so go to the next instruction.
-					PCodePtr += numcases * 2;
-				}
-			}
-			break;
-
-		case PCD_SetResultValue:
-			resultValue = stack[stackPtr - 1];
-			stackPtr--;
-			break;
-
-		case PCD_GetLineRowOffset:
-			if (line)
-			{
-				stack[stackPtr++] = (int)GLevel->Sides[line->sidenum[0]].rowoffset;
-			}
-			else
-			{
-				stack[stackPtr++] = 0;
-			}
-			break;
-
-		case PCD_GetActorFloorZ:
-			{
-				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
-				if (!Ent)
-				{
-					stack[stackPtr - 1] = 0;
-				}
-				else
-				{
-					stack[stackPtr - 1] = int(Ent->FloorZ * 0x10000);
-				}
-			}
-			break;
-
-		case PCD_GetActorAngle:
-			{
-				VEntity* Ent = EntityFromTID(stack[stackPtr - 1], Activator);
-				if (!Ent)
-				{
-					stack[stackPtr - 1] = 0;
-				}
-				else
-				{
-					stack[stackPtr - 1] = int(Ent->Angles.yaw * 0x10000 / 360) & 0xffff;
-				}
-			}
-			break;
-
-		case PCD_GetSectorFloorZ:
-			// Arguments are (tag, x, y). If you don't use slopes, then (x, y) don't
-			// really matter and can be left as (0, 0) if you like.
-			{
-				int secnum = FindSectorFromTag(stack[stackPtr - 3], -1);
-				float z = 0;
-
-				if (secnum >= 0)
-				{
-					z = GLevel->Sectors[secnum].floor.GetPointZ(
-						stack[stackPtr - 2], stack[stackPtr - 1]);
-				}
-				stack[stackPtr - 3] = int(z * 0x10000);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_GetSectorCeilingZ:
-			// Arguments are (tag, x, y). If you don't use slopes, then (x, y) don't
-			// really matter and can be left as (0, 0) if you like.
-			{
-				int secnum = FindSectorFromTag(stack[stackPtr - 3], -1);
-				float z = 0;
-
-				if (secnum >= 0)
-				{
-					z = GLevel->Sectors[secnum].ceiling.GetPointZ(
-						stack[stackPtr - 2], stack[stackPtr - 1]);
-				}
-				stack[stackPtr - 3] = int(z * 0x10000);
-				stackPtr -= 2;
-			}
-			break;
-
-		case PCD_LSpec5Result:
-			{
-				int special;
-			
-				special = NEXTBYTE;
-				SpecArgs[4] = stack[stackPtr - 1];
-				SpecArgs[3] = stack[stackPtr - 2];
-				SpecArgs[2] = stack[stackPtr - 3];
-				SpecArgs[1] = stack[stackPtr - 4];
-				SpecArgs[0] = stack[stackPtr - 5];
-				stack[stackPtr - 5] = P_ExecuteLineSpecial(special,
-					SpecArgs, line, side, Activator);
-				stackPtr -= 4;
-			}
-			break;
-
-		case PCD_GetSigilPieces:
-			if (Activator)
-				stack[stackPtr++] = Activator->eventGetSigilPieces();
-			else
-				stack[stackPtr++] = 0;
-			break;
-
-		case PCD_GetLevelInfo:
-			switch (stack[stackPtr - 1])
-			{
-			case LEVELINFO_PAR_TIME:
-				stack[stackPtr - 1] = level.partime;
-				break;
-			case LEVELINFO_CLUSTERNUM:
-				stack[stackPtr - 1] = level.cluster;
-				break;
-			case LEVELINFO_LEVELNUM:
-				stack[stackPtr - 1] = level.levelnum;
-				break;
-			case LEVELINFO_TOTAL_SECRETS:
-				stack[stackPtr - 1] = level.totalsecret;
-				break;
-			case LEVELINFO_FOUND_SECRETS:
-				stack[stackPtr - 1] = level.currentsecret;
-				break;
-			case LEVELINFO_TOTAL_ITEMS:
-				stack[stackPtr - 1] = level.totalitems;
-				break;
-			case LEVELINFO_FOUND_ITEMS:
-				stack[stackPtr - 1] = level.currentitems;
-				break;
-			case LEVELINFO_TOTAL_MONSTERS:
-				stack[stackPtr - 1] = level.totalkills;
-				break;
-			case LEVELINFO_KILLED_MONSTERS:
-				stack[stackPtr - 1] = level.currentkills;
-				break;
-			default:
-				stack[stackPtr - 1] = 0;
-				break;
-			}
-
-		case PCD_ChangeSky:
-			SV_ChangeSky(
-				FACScriptsObject::StaticGetString(stack[stackPtr - 2]),
-				FACScriptsObject::StaticGetString(stack[stackPtr - 1]));
-			stackPtr -= 2;
-			break;
-
-		case PCD_PlayerInGame:
-			if (stack[stackPtr - 1] < 0 || stack[stackPtr - 1] >= MAXPLAYERS)
-			{
-				stack[stackPtr - 1] = false;
-			}
-			else
-			{
-				stack[stackPtr - 1] = GGameInfo->Players[stack[stackPtr - 1]] &&
-					GGameInfo->Players[stack[stackPtr - 1]]->PlayerFlags & VBasePlayer::PF_Spawned;
-			}
-			break;
-
-		case PCD_PlayerIsBot:
-			if (stack[stackPtr - 1] < 0 || stack[stackPtr - 1] >= MAXPLAYERS)
-			{
-				stack[stackPtr - 1] = false;
-			}
-			else
-			{
-				stack[stackPtr - 1] = GGameInfo->Players[stack[stackPtr - 1]] &&
-					GGameInfo->Players[stack[stackPtr - 1]]->PlayerFlags & VBasePlayer::PF_Spawned &&
-					GGameInfo->Players[stack[stackPtr - 1]]->PlayerFlags & VBasePlayer::PF_IsBot;
-			}
-			break;
-
-			//	These opcodes are not supported. They will terminate script.
-		case PCD_PlayerBlueSkull:
-		case PCD_PlayerRedSkull:
-		case PCD_PlayerYellowSkull:
-		case PCD_PlayerMasterSkull:
-		case PCD_PlayerBlueCard:
-		case PCD_PlayerRedCard:
-		case PCD_PlayerYellowCard:
-		case PCD_PlayerMasterCard:
-		case PCD_PlayerBlackSkull:
-		case PCD_PlayerSilverSkull:
-		case PCD_PlayerGoldSkull:
-		case PCD_PlayerBlavkCard:
-		case PCD_PlayerSilverCard:
-		case PCD_PlayerOnTeam:
-		case PCD_PlayerTeam:
-		case PCD_PlayerExpert:
-		case PCD_BlueTeamCount:
-		case PCD_RedTeamCount:
-		case PCD_BlueTeamScore:
-		case PCD_RedTeamScore:
-		case PCD_IsOneFlagCTF:
-		case PCD_LSpec6:
-		case PCD_LSpec6Direct:
-		case PCD_Team2FragPoints:
-		case PCD_ConsoleCommand:
-		case PCD_SetStyle:
-		case PCD_SetStyleDirect:
-		case PCD_WriteToIni:
-		case PCD_GetFromIni:
-			GCon->Logf(NAME_Dev, "Unsupported ACS opcode %d", cmd);
-			action = SCRIPT_TERMINATE;
-			break;
-
-		default:
-			Host_Error("Illegal ACS opcode %d", cmd);
-			break;
-		}
-	} while  (action == SCRIPT_CONTINUE);
-	ip = PCodePtr;
-	if (action == SCRIPT_TERMINATE)
-	{
-		info->state = ASTE_INACTIVE;
-		FACScriptsObject::StaticScriptFinished(number);
-		SetFlags(_OF_DelayedDestroy);
-	}
-	return resultValue;
-	unguard;
-}
-
-//==========================================================================
-//
-// P_TagFinished
-//
-//==========================================================================
-
-void P_TagFinished(int tag)
-{
-	FACScriptsObject::StaticTagFinished(tag);
-}
-
-//==========================================================================
-//
-// P_PolyobjFinished
-//
-//==========================================================================
-
-void P_PolyobjFinished(int po)
-{
-	FACScriptsObject::StaticPolyobjFinished(po);
-}
-
-//==========================================================================
-//
-//  FindSectorFromTag
-//
-//	RETURN NEXT SECTOR # THAT LINE TAG REFERS TO
-//
-//==========================================================================
-
-static int FindSectorFromTag(int tag, int start)
-{
-    int	i;
-	
-    for (i = start + 1; i < GLevel->NumSectors; i++)
-		if (GLevel->Sectors[i].tag == tag)
-		    return i;
-    
-    return -1;
-}
-
-//==========================================================================
-//
-//	TagBusy
-//
-//==========================================================================
-
-static bool TagBusy(int tag)
-{
-	return GLevelInfo->eventTagBusy(tag);
-}
-
-//============================================================================
-//
-//	GiveInventory
-//
-//============================================================================
-
-static void GiveInventory(VEntity* Activator, const char* Type, int Amount)
-{
-	if (Amount <= 0)
-	{
-		return;
-	}
-	if (strcmp(Type, "Armor") == 0)
-	{
-		Type = "BasicArmor";
-	}
-	else if (Activator)
-	{
-		Activator->eventGiveInventory(Type, Amount);
-	}
-	else
-	{
-		for (int i = 0; i < MAXPLAYERS; i++)
-		{
-			if (GGameInfo->Players[i] &&
-				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
-				GGameInfo->Players[i]->MO->eventGiveInventory(Type, Amount);
-		}
-	}
-}
-
-//============================================================================
-//
-//	GiveInventory
-//
-//============================================================================
-
-static void TakeInventory(VEntity* Activator, const char* Type, int Amount)
-{
-	if (Amount <= 0)
-	{
-		return;
-	}
-	if (strcmp(Type, "Armor") == 0)
-	{
-		Type = "BasicArmor";
-	}
-	if (Activator)
-	{
-		Activator->eventTakeInventory(Type, Amount);
-	}
-	else
-	{
-		for (int i = 0; i < MAXPLAYERS; i++)
-		{
-			if (GGameInfo->Players[i] &&
-				GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
-				GGameInfo->Players[i]->MO->eventTakeInventory(Type, Amount);
-		}
-	}
-}
-
-//============================================================================
-//
-//	CheckInventory
-//
-//============================================================================
-
-static int CheckInventory(VEntity* Activator, const char* Type)
-{
-	if (!Activator)
-		return 0;
-
-	if (strcmp(Type, "Armor") == 0)
-	{
-		Type = "BasicArmor";
-	}
-	else if (!strcmp(Type, "Health"))
-	{
-		return Activator->Health;
-	}
-	return Activator->eventCheckInventory(Type);
-}
-
-//============================================================================
-//
-//	strbin
-//
-//============================================================================
-
-static void strbin(char *str)
-{
-	char *p = str, c;
-	int i;
-
-	while ((c = *p++))
-	{
-		if (c != '\\')
-		{
-			*str++ = c;
-		}
-		else
-		{
-			switch (*p)
-			{
-//FIXME
-//			case 'c':
-//				*str++ = TEXTCOLOR_ESCAPE;
-//				break;
-			case 'n':
-				*str++ = '\n';
-				break;
-			case 't':
-				*str++ = '\t';
-				break;
-			case 'r':
-				*str++ = '\r';
-				break;
-			case '\n':
-				break;
-			case 'x':
-			case 'X':
-				c = 0;
-				p++;
-				for (i = 0; i < 2; i++)
-				{
-					c <<= 4;
-					if (*p >= '0' && *p <= '9')
-						c += *p-'0';
-					else if (*p >= 'a' && *p <= 'f')
-						c += 10 + *p-'a';
-					else if (*p >= 'A' && *p <= 'F')
-						c += 10 + *p-'A';
-					else
-						break;
-					p++;
-				}
-				*str++ = c;
-				break;
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-				c = 0;
-				for (i = 0; i < 3; i++)
-				{
-					c <<= 3;
-					if (*p >= '0' && *p <= '7')
-						c += *p-'0';
-					else
-						break;
-					p++;
-				}
-				*str++ = c;
-				break;
-			default:
-				*str++ = *p;
-				break;
-			}
-			p++;
-		}
-	}
-	*str = 0;
+	Info->state = ASTE_RUNNING;
+	return script;
 }
