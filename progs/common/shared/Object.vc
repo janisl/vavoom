@@ -573,10 +573,8 @@ enum
 
 	LNSPEC_SectorSetDamage = 214,
 	LNSPEC_TeleportLine,
-
-	LNSPEC_SectorSetGravity = 216,
-
-	LNSPEC_StairsBuildUpDoom = 217,
+	LNSPEC_SectorSetGravity,
+	LNSPEC_StairsBuildUpDoom,
 	LNSPEC_SectorSetWind,
 	LNSPEC_SectorSetFriction,
 	LNSPEC_SectorSetCurrent,// 220
@@ -1781,8 +1779,6 @@ native static final bool StartACS(int number, int map, int arg1, int arg2, int a
 	Entity activator, line_t* line, int side, bool Always, bool WantResult);
 native static final bool SuspendACS(int number, int map);
 native static final bool TerminateACS(int number, int map);
-native static final void TagFinished(int tag);
-native static final void PolyobjFinished(int po);
 
 //
 //  Sound functions

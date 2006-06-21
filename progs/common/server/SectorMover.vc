@@ -40,7 +40,6 @@ void Finished()
 	if (Sector->LightingData == self)
 		Sector->LightingData = none;
 	RemoveAffector();
-	TagFinished(Sector->tag);
 	RemoveSpecialThinker(self);
 }
 

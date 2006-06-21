@@ -86,7 +86,6 @@ void Tick(float deltaTime)
 					{
 						poly->SpecialData = none;
 					}
-					PolyobjFinished(poly->tag);
 					RemoveSpecialThinker(self);
 				}
 			}
@@ -138,7 +137,6 @@ void Tick(float deltaTime)
 					{
 						poly->SpecialData = none;
 					}
-					PolyobjFinished(poly->tag);
 					RemoveSpecialThinker(self);
 				}
 			}

@@ -63,7 +63,6 @@ void Tick(float deltaTime)
 				poly->SpecialData = none;
 			}
 			PolyobjStopSequence(poly);
-			PolyobjFinished(poly->tag);
 			RemoveSpecialThinker(self);
 			return;
 		}
@@ -73,11 +72,3 @@ void Tick(float deltaTime)
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.1  2002/10/26 16:32:23  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************
