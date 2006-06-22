@@ -219,22 +219,15 @@ void VSoftwareDrawer::GenerateTexture(int texnum)
 	Tex->DriverData = mip;
 	mip->width = mipw;
 	mip->height = miph;
-	if (Tex->GetWidth() < 16 || Tex->GetHeight() < 16)
+	byte* pSrc = block;
+	byte* pDst = (byte*)mip + sizeof(miptexture_t);
+	for (int y = 0; y < miph; y++)
 	{
-		byte* pSrc = block;
-		byte* pDst = (byte*)mip + sizeof(miptexture_t);
-		for (int y = 0; y < miph; y++)
+		for (int x = 0; x < mipw; x++)
 		{
-			for (int x = 0; x < mipw; x++)
-			{
-				pDst[x + y * mipw] = pSrc[x % Tex->GetWidth() +
-					(y % Tex->GetHeight()) * Tex->GetWidth()];
-			}
+			pDst[x + y * mipw] = pSrc[x % Tex->GetWidth() +
+				(y % Tex->GetHeight()) * Tex->GetWidth()];
 		}
-	}
-	else
-	{
-		memcpy((byte*)mip + sizeof(miptexture_t), block, mipw * miph);
 	}
 	Tex->Unload();
 	MakeMips(mip);
