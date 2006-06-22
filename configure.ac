@@ -55,12 +55,13 @@ dnl ---------------- Windows ----------------
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
 	CFLAGS="-mno-cygwin $CFLAGS"
 	CXXFLAGS="-mno-cygwin $CXXFLAGS"
+	LDFLAGS="-mno-cygwin $LDFLAGS"
 	LIB_STDCXX='-lstdc++'
 	LIB_MATH='-lm'
 
 	MAIN_EXE='Vavoom95$(EXEEXT)'
 	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_WIN32)"
-	MAIN_LIBS='-lgdi32 -lole32 -lwsock32 -lwinmm -lstdc++'
+	MAIN_LIBS='-lgdi32 -lole32 -lwsock32 -lwinmm -lpng -lz -lstdc++'
 
 	if test "x$with_opengl" != "xno"; then
 		OBJ_FILES="$OBJ_FILES \$(GL_OBJS) \$(GL_SYS_OBJ_WIN32)"
@@ -266,7 +267,7 @@ if test "x$with_flac" != "xno"; then
 	AC_LANG_CPLUSPLUS
 	AC_CHECK_HEADER([FLAC++/decoder.h], [
 		OBJ_FILES="$OBJ_FILES \$(FLAC_OBJS)"
-		MAIN_LIBS="-lFLAC++ $MAIN_LIBS"
+		MAIN_LIBS="-lFLAC++ -lFLAC $MAIN_LIBS"
 	])
 fi
 
