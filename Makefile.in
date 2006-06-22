@@ -242,6 +242,11 @@ CDAUDIO_OBJ_BSD = obj/cd_bsd.$(OBJEXT)
 SYS_OBJS_WIN32 = \
 	obj/cd_win32.$(OBJEXT) \
 	obj/d_win32.$(OBJEXT) \
+	obj/d3d_draw.$(OBJEXT) \
+	obj/d3d_info.$(OBJEXT) \
+	obj/d3d_main.$(OBJEXT) \
+	obj/d3d_poly.$(OBJEXT) \
+	obj/d3d_tex.$(OBJEXT) \
 	obj/in_win32.$(OBJEXT) \
 	obj/net_wins.$(OBJEXT) \
 	obj/net_wipx.$(OBJEXT) \
