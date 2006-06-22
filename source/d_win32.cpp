@@ -175,17 +175,6 @@ bool VWin32SoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	if (DDraw->CreateSurface(&ddsd, &PrimarySurface, NULL) != DD_OK)
 		Sys_Error("I_SetResolution: Failed to create primary surface");
 
-	if (BPP == 8)
-	{
-		if (PrimarySurface->SetPalette(Palette) != DD_OK)
-			Sys_Error("I_SetResolution: Failed to set palette");
-	}
-
-	if (!AllocMemory(Width, Height, BPP))
-	{
-		return false;
-	}
-
 	memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 	PrimarySurface->GetSurfaceDesc(&ddsd);
@@ -250,6 +239,17 @@ bool VWin32SoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 			GCon->Log(NAME_Init, "Pixel format not supported");
 			return false;
 		}
+	}
+
+	if (BPP == 8)
+	{
+		if (PrimarySurface->SetPalette(Palette) != DD_OK)
+			Sys_Error("I_SetResolution: Failed to set palette");
+	}
+
+	if (!AllocMemory(Width, Height, BPP))
+	{
+		return false;
 	}
 
 	ScreenWidth = Width;
