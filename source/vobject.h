@@ -511,6 +511,14 @@ public:
 };
 
 //
+//	Object creation template
+//
+template<class T> T* Spawn()
+{
+	return (T*)VObject::StaticSpawnObject(T::StaticClass());
+}
+
+//
 //	Helper macros for implementing native VavoomC functions and calls to the
 // VavoomC methods. This will make it simpler to port it to 64 bit platforms.
 //

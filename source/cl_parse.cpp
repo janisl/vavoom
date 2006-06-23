@@ -85,9 +85,9 @@ void CL_Clear()
 		S_StopAllSound();
 	}
 	for (int i = 0; i < GMaxEntities; i++)
-		cl_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass());
+		cl_mobjs[i] = Spawn<VEntity>();
 	for (int i = 0; i < MAXPLAYERS; i++)
-		cl_weapon_mobjs[i] = (VEntity*)VObject::StaticSpawnObject(VEntity::StaticClass());
+		cl_weapon_mobjs[i] = Spawn<VEntity>();
 	cls.signon = 0;
 	unguard;
 }

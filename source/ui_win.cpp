@@ -70,7 +70,7 @@ void VWindow::Init(VWindow *InParent)
 {
 	guard(VWindow::Init);
 	Parent = InParent;
-	WinGC = (VGC*)StaticSpawnObject(VGC::StaticClass());
+	WinGC = Spawn<VGC>();
 	if (Parent)
 	{
 		Parent->AddChild(this);

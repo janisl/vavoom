@@ -3952,7 +3952,7 @@ static VACS* SpawnScript(acsInfo_t* Info, FACScriptsObject* Object,
 	VEntity* Activator, line_t* Line, int Side, int Arg1, int Arg2, int Arg3,
 	bool Delayed)
 {
-	VACS* script = (VACS*)VObject::StaticSpawnObject(VACS::StaticClass());
+	VACS* script = Spawn<VACS>();
 	GLevel->AddThinker(script);
 	script->info = Info;
 	script->number = Info->number;

@@ -451,7 +451,7 @@ void SV_LoadLevel(VName MapName)
 		GLevel = NULL;
 	}
 
-	GLevel = (VLevel*)VObject::StaticSpawnObject(VLevel::StaticClass());
+	GLevel = Spawn<VLevel>();
 	GLevel->LevelFlags |= VLevel::LF_ForServer;
 
 	GLevel->LoadMap(MapName);
@@ -476,7 +476,7 @@ void CL_LoadLevel(VName MapName)
 		GClLevel = NULL;
 	}
 
-	GClLevel = (VLevel *)VObject::StaticSpawnObject(VLevel::StaticClass());
+	GClLevel = Spawn<VLevel>();
 	GClGame->GLevel = GClLevel;
 
 	GClLevel->LoadMap(MapName);
