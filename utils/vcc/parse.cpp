@@ -789,12 +789,11 @@ void CompileDefaultProperties(VMethod* Method, VClass* InClass)
 	BeginCode(Method);
 
 	//  Call parent constructor
-	VMethod* pcon = FindConstructor(InClass->ParentClass);
-	if (pcon)
+	if (InClass->ParentClass)
 	{
 		AddStatement(OPC_LocalAddress0);
 		AddStatement(OPC_PushPointedPtr);
-		AddStatement(OPC_Call, pcon);
+		AddStatement(OPC_Call, InClass->ParentClass->DefaultProperties);
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);

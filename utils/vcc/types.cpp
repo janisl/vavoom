@@ -844,7 +844,7 @@ void CompileClass()
 		}
 	}
 
-	CompileDefaultProperties(FindConstructor(Class), Class);
+	CompileDefaultProperties(Class->DefaultProperties, Class);
 }
 
 //==========================================================================
@@ -951,31 +951,6 @@ VMethod* CheckForMethod(VName Name, VClass* InClass)
 		return M;
 	}
 	return CheckForMethod(Name, InClass->ParentClass);
-}
-
-//==========================================================================
-//
-//	FindConstructor
-//
-//==========================================================================
-
-VMethod* FindConstructor(VClass* InClass)
-{
-	if (!InClass)
-	{
-		return NULL;
-	}
-	if (!InClass->Parsed)
-	{
-		return NULL;
-	}
-	VMethod* M = (VMethod*)VMemberBase::StaticFindMember(NAME_None, InClass,
-		MEMBER_Method);
-	if (!M)
-	{
-		ParseError("Can't find default properties of %s", *InClass->Name);
-	}
-	return M;
 }
 
 //**************************************************************************

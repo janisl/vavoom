@@ -186,27 +186,40 @@ void VObject::StaticExit()
 VObject* VObject::StaticSpawnObject(VClass* AClass)
 {
 	guard(VObject::StaticSpawnObject);
+	//	Allocate memory.
 	VObject* Obj = (VObject*)Z_Calloc(AClass->ClassSize);
+
+	//	Find native class.
 	VClass* NativeClass = AClass;
 	while (NativeClass && !(NativeClass->GetFlags() & CLASSOF_Native))
 	{
 		NativeClass = NativeClass->GetSuperClass();
 	}
-	if (!NativeClass)
-	{
-		Sys_Error("No native base class");
-	}
+	check(NativeClass);
+
+	//	Call constructor of the native class to set up C++ virtual table.
 	GNewObject = Obj;
 	NativeClass->ClassConstructor();
 	GNewObject = NULL;
+
+	//	Set up object fields.
 	Obj->Class = AClass;
 	Obj->vtable = AClass->ClassVTable;
 	Obj->Register();
-	if (Obj->vtable)
+
+	//	Find last class having default properties.
+	VClass* DPClass = AClass;
+	while (DPClass && !DPClass->DefaultProperties)
 	{
-		P_PASS_REF(Obj);
-		ExecuteFunction(Obj->vtable[0]);
+		DPClass = DPClass->GetSuperClass();
 	}
+
+	//	Call default properties method.
+	check(DPClass);
+	P_PASS_REF(Obj);
+	ExecuteFunction(DPClass->DefaultProperties);
+
+	//	We're done.
 	return Obj;
 	unguardf(("%s", AClass->GetName()));
 }

@@ -1322,7 +1322,8 @@ void VClass::Serialise(VStream& Strm)
 	VMemberBase::Serialise(Strm);
 	Strm << ParentClass
 		<< Fields
-		<< States;
+		<< States
+		<< DefaultProperties;
 }
 
 //==========================================================================

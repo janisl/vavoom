@@ -682,6 +682,7 @@ void ParseDefaultProperties(VClass* InClass)
 	VMethod* Func = new VMethod(NAME_None, InClass, tk_Location);
 	Func->ReturnType = TType(ev_void);
 	Func->ParamsSize = 1;
+	InClass->DefaultProperties = Func;
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
 	SkipCompoundStatement();

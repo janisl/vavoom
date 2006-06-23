@@ -504,6 +504,7 @@ public:
 	VClass*		ParentClass;
 	VField*		Fields;
 	VState*		States;
+	VMethod*	DefaultProperties;
 	bool		Parsed;
 
 	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
@@ -511,6 +512,7 @@ public:
 	, ParentClass(NULL)
 	, Fields(NULL)
 	, States(NULL)
+	, DefaultProperties(NULL)
 	, Parsed(true)
 	{}
 
@@ -613,7 +615,6 @@ VConstant* CheckForConstant(VClass* InClass, VName);
 void SkipStruct(VClass*);
 void CompileClass();
 VField* ParseStructField(VStruct*);
-VMethod* FindConstructor(VClass*);
 void ParseStruct(VClass*, bool);
 void ParseClass();
 VField* CheckForField(VName, VClass*, bool = true);

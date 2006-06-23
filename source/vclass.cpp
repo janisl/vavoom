@@ -1779,6 +1779,7 @@ VClass::VClass(VName AName)
 , Fields(0)
 , ReferenceFields(0)
 , States(0)
+, DefaultProperties(0)
 {
 	guard(VClass::VClass);
 	LinkNext = GClasses;
@@ -1806,6 +1807,7 @@ VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
 , Fields(0)
 , ReferenceFields(0)
 , States(0)
+, DefaultProperties(0)
 {
 	guard(native VClass::VClass);
 	LinkNext = GClasses;
@@ -1884,7 +1886,8 @@ void VClass::Serialise(VStream& Strm)
 	VClass* PrevParent = ParentClass;
 	Strm << ParentClass
 		<< Fields
-		<< States;
+		<< States
+		<< DefaultProperties;
 	if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
 	{
 		Sys_Error("Bad parent class, class %s, C++ %s, VavoomC %s)",
@@ -2096,7 +2099,7 @@ void VClass::CalcFieldOffsets()
 	guard(VClass::CalcFieldOffsets);
 	int PrevSize = ClassSize;
 	int size = ParentClass ? ParentClass->ClassSize : 0;
-	int numMethods = ParentClass ? ParentClass->ClassNumMethods : 1;
+	int numMethods = ParentClass ? ParentClass->ClassNumMethods : 0;
 	VField* PrevField = NULL;
 	for (int i = 0; i < GMembers.Num(); i++)
 	{
@@ -2106,9 +2109,9 @@ void VClass::CalcFieldOffsets()
 			continue;
 		}
 		VMethod* M = (VMethod*)GMembers[i];
-		if (M->Name == NAME_None)
+		if (M == DefaultProperties)
 		{
-			M->VTableIndex = 0;
+			M->VTableIndex = -1;
 			continue;
 		}
 		int MOfs = -1;

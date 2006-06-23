@@ -322,6 +322,7 @@ public:
 	VField*			ReferenceFields;
 	VField*			DestructorFields;
 	VState*			States;
+	VMethod*		DefaultProperties;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
