@@ -1430,14 +1430,28 @@ void VACS::Destroy()
 void VACS::Serialise(VStream& Strm)
 {
 	guard(VACS::Serialise);
-	int TmpInt;
+	vint32 TmpInt;
 
 	Super::Serialise(Strm);
+	Strm.SerialiseReference(*(VObject**)&Activator, VEntity::StaticClass());
 	if (Strm.IsLoading())
 	{
-		Strm << TmpInt;
+		Strm << STRM_INDEX(TmpInt);
+		line = TmpInt == -1 ? NULL : &XLevel->Lines[TmpInt];
+	}
+	else
+	{
+		TmpInt = line ? line - XLevel->Lines : -1;
+		Strm << STRM_INDEX(TmpInt);
+	}
+	Strm << side
+		<< number
+		<< DelayTime;
+	if (Strm.IsLoading())
+	{
+		Strm << STRM_INDEX(TmpInt);
 		ActiveObject = FACScriptsObject::StaticGetObject(TmpInt);
-		Strm << TmpInt;
+		Strm << STRM_INDEX(TmpInt);
 		InstructionPointer = ActiveObject->OffsetToPtr(TmpInt);
 		info = ActiveObject->FindScript(number);
 		LocalVars = new vint32[info->VarCount];
@@ -1445,9 +1459,9 @@ void VACS::Serialise(VStream& Strm)
 	else
 	{
 		TmpInt = ActiveObject->GetLibraryID() >> 16;
-		Strm << TmpInt;
+		Strm << STRM_INDEX(TmpInt);
 		TmpInt = ActiveObject->PtrToOffset(InstructionPointer);
-		Strm << TmpInt;
+		Strm << STRM_INDEX(TmpInt);
 	}
 	for (int i = 0; i < info->VarCount; i++)
 	{
