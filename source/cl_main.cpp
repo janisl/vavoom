@@ -195,7 +195,6 @@ dlight_t *CL_AllocDlight(int key)
 		}
 	}
 
-#if 1
 	int bestnum = 0;
 	float bestdist = 0.0;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
@@ -208,9 +207,6 @@ dlight_t *CL_AllocDlight(int key)
 		}
 	}
 	dl = &cl_dlights[bestnum];
-#else
-	dl = &cl_dlights[0];
-#endif
 	memset(dl, 0, sizeof(*dl));
 	dl->key = key;
 	return dl;
