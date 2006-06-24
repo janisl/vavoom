@@ -203,13 +203,15 @@ COMMAND(ScreenShot)
 	char	filename[128];
 
 	//	Find a file name to save it to
-	VStr BaseDir = (fl_savedir ? fl_savedir : fl_basedir) + fl_gamedir;
+	VStr BaseDir = (fl_savedir ? fl_savedir : fl_basedir) + "/" + fl_gamedir;
 	for (i = 0; i <= 9999; i++)
 	{
 		sprintf(filename, "shot%04d.%s", i, (const char*)screenshot_type);
+dprintf("Checking %s\n", *(BaseDir + "/" + (const char*)filename));
 		if (!Sys_FileExists(BaseDir + "/" + (const char*)filename))
 			break;	//	File doesn't exist
 	}
+dprintf("Using %d\n", i);
 	if (i == 10000)
 	{
 		GCon->Log("Couldn't create a PCX");
