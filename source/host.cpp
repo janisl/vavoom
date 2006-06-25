@@ -300,14 +300,11 @@ void Host_Frame()
 		//	Keep the random time dependent
 		rand();
 
-#ifdef PARANOID
-		Z_CheckHeap();
-#endif
-
 		//	Decide the simulation time
 		if (!FilterTime())
 		{
 			//	Don't run too fast, or packets will flood out
+			Sys_Sleep();
 			return;
 		}
 

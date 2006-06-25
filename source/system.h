@@ -45,6 +45,7 @@ void __attribute__((noreturn)) __declspec(noreturn) Sys_Quit(const char*);
 void Sys_Shutdown();
 
 double Sys_Time();
+void Sys_Sleep();
 
 char *Sys_ConsoleInput();
 
