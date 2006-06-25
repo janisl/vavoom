@@ -111,14 +111,14 @@ void CL_Init()
 void CL_Ticker()
 {
 	guard(CL_Ticker);
-    // do main actions
-    switch (cl->intermission)
-    { 
-      case 0:
+	// do main actions
+	switch (cl->intermission)
+	{
+	case 0:
 		SB_Ticker();
 		AM_Ticker();
 		break;
-    }
+	}
 	unguard;
 }
 
@@ -225,7 +225,7 @@ void CL_DecayLights()
 	int			i;
 	dlight_t	*dl;
 	float		time;
-	
+
 	time = cl->time - cl->oldtime;
 
 	dl = cl_dlights;
@@ -233,7 +233,7 @@ void CL_DecayLights()
 	{
 		if (dl->die < cl->time || !dl->radius)
 			continue;
-		
+
 		dl->radius -= time * dl->decay;
 		if (dl->radius < 0)
 			dl->radius = 0;
@@ -280,7 +280,7 @@ void CL_ReadFromServer()
 	cl->time += host_frametime;
 	
 	do
-    {
+	{
 		ret = CL_GetMessage();
 		if (ret == -1)
 		{
@@ -293,8 +293,11 @@ void CL_ReadFromServer()
 		}
 	} while (ret && cls.state == ca_connected);
 
-	CL_UpdateMobjs();
-   	CL_Ticker();
+	if (cls.signon == SIGNONS)
+	{
+		CL_UpdateMobjs();
+		CL_Ticker();
+	}
 	unguard;
 }
 
