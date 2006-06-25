@@ -35,11 +35,11 @@ void InitWindow(void)
 	::InitWindow();
 
 	Box = MenuObject(MenuScreen(Parent).NewChild(BoxType));
-	Box.SetPos(174, 8);
+	Box.SetPos(174, 28);
 	Box.Hide();
 
 	Walk = MenuObject(MenuScreen(Parent).NewChild(WalkType));
-	Walk.SetPos(174 + 24, 8 + 12);
+	Walk.SetPos(174 + 24, 28 + 12);
 	Walk.Hide();
 }
 
