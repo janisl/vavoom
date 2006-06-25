@@ -55,9 +55,7 @@ public:
 	virtual VStream* OpenFileRead(const VStr&) = 0;
 	virtual void Close() = 0;
 	virtual int CheckNumForName(VName, EWadNamespace) = 0;
-	virtual void ReadLump(int, void*) = 0;
 	virtual void ReadFromLump(int, void*, int, int) = 0;
-	virtual void* CacheLumpNum(int) = 0;
 	virtual int LumpLength(int) = 0;
 	virtual VName LumpName(int) = 0;
 	virtual int IterateNS(int, EWadNamespace) = 0;
@@ -83,16 +81,11 @@ int W_GetNumForName(VName Name, EWadNamespace NS = WADNS_Global);
 int W_LumpLength(int lump);
 VName W_LumpName(int lump);
 
-void W_ReadLump(int lump, void *dest);
 void W_ReadFromLump(int lump, void *dest, int pos, int size);
-void* W_CacheLumpNum(int lump);
-void* W_CacheLumpName(VName Name, EWadNamespace NS = WADNS_Global);
 VStream* W_CreateLumpReaderNum(int lump);
 VStream* W_CreateLumpReaderName(VName Name, EWadNamespace NS = WADNS_Global);
 
 int W_IterateNS(int Prev, EWadNamespace NS);
-
-void W_CleanupName(const char *src, char *dst);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

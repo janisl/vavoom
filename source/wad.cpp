@@ -70,9 +70,7 @@ public:
 	void OpenSingleLump(const VStr& FileName);
 	void Close();
 	int CheckNumForName(VName LumpName, EWadNamespace NS);
-	void ReadLump(int lump, void* dest);
 	void ReadFromLump(int lump, void* dest, int pos, int size);
-	void* CacheLumpNum(int lump);
 	void InitNamespaces();
 	void FixVoiceNamespaces();
 	void InitNamespace(EWadNamespace NS, VName Start, VName End,
@@ -108,27 +106,6 @@ static int					AuxiliaryIndex;
 
 VSearchPath::~VSearchPath()
 {
-}
-
-//==========================================================================
-//
-//  W_CleanupName
-//
-//==========================================================================
-
-void W_CleanupName(const char *src, char *dst)
-{
-	guard(W_CleanupName);
-	int i;
-	for (i = 0; i < 8 && src[i]; i++)
-	{
-		dst[i] = toupper(src[i]);
-	}
-	for (; i < 9; i++)
-	{
-		dst[i] = 0;
-	}
-	unguard;
 }
 
 //==========================================================================
@@ -353,25 +330,6 @@ VName W_LumpName(int lump)
 
 //==========================================================================
 //
-//  W_ReadLump
-//
-//==========================================================================
-
-void W_ReadLump(int lump, void* dest)
-{
-	guard(W_ReadLump);
-	if (FILE_INDEX(lump) >= SearchPaths.Num())
-	{
-		Sys_Error("W_ReadLump: %i >= num_wad_files", FILE_INDEX(lump));
-	}
-
-	VSearchPath* w = GET_LUMP_FILE(lump);
-	w->ReadLump(LUMP_INDEX(lump), dest);
-	unguard;
-}
-
-//==========================================================================
-//
 //  W_ReadFromLump
 //
 //==========================================================================
@@ -388,102 +346,6 @@ void W_ReadFromLump(int lump, void* dest, int pos, int size)
 	w->ReadFromLump(LUMP_INDEX(lump), dest, pos, size);
 	unguard;
 }
-
-//==========================================================================
-//
-//  W_CacheLumpNum
-//
-//==========================================================================
-
-void* W_CacheLumpNum(int lump)
-{
-	guard(W_CacheLumpNum);
-	if (FILE_INDEX(lump) >= SearchPaths.Num())
-	{
-		Sys_Error("W_CacheLumpNum: %i >= num_wad_files", FILE_INDEX(lump));
-	}
-
-	VSearchPath* w = GET_LUMP_FILE(lump);
-	int lumpindex = LUMP_INDEX(lump);
-	return w->CacheLumpNum(lumpindex);
-	unguard;
-}
-
-//==========================================================================
-//
-//  W_CacheLumpName
-//
-//==========================================================================
-
-void* W_CacheLumpName(VName Name, EWadNamespace NS)
-{
-	guard(W_CacheLumpName);
-	return W_CacheLumpNum(W_GetNumForName(Name, NS));
-	unguard;
-}
-
-//==========================================================================
-//
-//	VStreamLumpReader
-//
-//==========================================================================
-
-class VStreamLumpReader : public VStream
-{
-public:
-	VStreamLumpReader(byte* InData, int InSize)
-		: Data(InData), Pos(0), Size(InSize)
-	{
-		bLoading = true;
-	}
-	~VStreamLumpReader()
-	{
-		if (Data)
-			Close();
-	}
-	void Serialise(void* V, int Length)
-	{
-		if (Length > Size - Pos)
-		{
-			bError = true;
-			Length = Size - Pos;
-		}
-		memcpy(V, Data + Pos, Length);
-		Pos += Length;
-	}
-	int Tell()
-	{
-		return Pos;
-	}
-	int TotalSize()
-	{
-		return Size;
-	}
-	bool AtEnd()
-	{
-		return Pos >= Size;
-	}
-	void Seek(int InPos)
-	{
-		if (InPos < 0 || InPos > Size)
-		{
-			bError = true;
-			return;
-		}
-		Pos = InPos;
-	}
-	bool Close()
-	{
-		Z_Free(Data);
-		Data = NULL;
-		return !bError;
-	}
-
-protected:
-	byte *Data;
-	int Pos;
-	int Size;
-};
 
 //==========================================================================
 //
@@ -770,35 +632,6 @@ int VWadFile::CheckNumForName(VName LumpName, EWadNamespace NS)
 
 //==========================================================================
 //
-//  VWadFile::ReadLump
-//
-//  Loads the lump into the given buffer, which must be >= W_LumpLength().
-//
-//==========================================================================
-
-void VWadFile::ReadLump(int lump, void* dest)
-{
-	guard(VWadFile::ReadLump);
-	if ((dword)lump >= (dword)NumLumps)
-	{
-		Sys_Error("VWadFile::ReadLump: %i >= numlumps", lump);
-	}
-
-	lumpinfo_t &l = LumpInfo[lump];
-
-	Sys_FileSeek(Handle, l.Position);
-	int c = Sys_FileRead(Handle, dest, l.Size);
-
-	if (c < l.Size)
-	{
-		Sys_Error("W_ReadLump: only read %i of %i on lump %i",
-			c, l.Size, lump);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //  VWadFile::ReadFromLump
 //
 //  Loads part of the lump into the given buffer.
@@ -822,28 +655,6 @@ void VWadFile::ReadFromLump(int lump, void* dest, int pos, int size)
 
 	Sys_FileSeek(Handle, l.Position + pos);
 	Sys_FileRead(Handle, dest, size);
-	unguard;
-}
-
-//==========================================================================
-//
-//  VWadFile::CacheLumpNum
-//
-//==========================================================================
-
-void* VWadFile::CacheLumpNum(int lump)
-{
-	guard(VWadFile::CacheLumpNum);
-	if ((unsigned)lump >= (unsigned)NumLumps)
-	{
-		Sys_Error("W_CacheLumpNum: %i >= numlumps", lump);
-	}
-		
-	// read the lump in
-	byte *ptr = (byte*)Z_Malloc(LumpInfo[lump].Size + 1);
-	ReadLump(lump, ptr);
-	ptr[LumpInfo[lump].Size] = 0;
-	return ptr;
 	unguard;
 }
 
@@ -1063,8 +874,22 @@ void VWadFile::BuildPVS(VSearchPath* BaseWad)
 VStream* VWadFile::CreateLumpReaderNum(int lump)
 {
 	guard(VWadFile::CreateLumpReaderNum);
-	return new VStreamLumpReader((vuint8*)CacheLumpNum(lump),
-		LumpLength(lump));
+	check((vuint32)lump < (vuint32)NumLumps);
+	lumpinfo_t &l = LumpInfo[lump];
+
+	// read the lump in
+	void* ptr = Z_Malloc(l.Size);
+	Sys_FileSeek(Handle, l.Position);
+	int c = Sys_FileRead(Handle, ptr, l.Size);
+	if (c < l.Size)
+	{
+		Sys_Error("Only read %i of %i on lump %i", c, l.Size, lump);
+	}
+
+	//	Create stream.
+	VStream* Strm = new VMemoryStream(ptr, l.Size);
+	Z_Free(ptr);
+	return Strm;
 	unguard;
 }
 

@@ -61,10 +61,11 @@ im_t			im;
 
 VStr LoadTextLump(VName name)
 {
-	int msgLump = W_GetNumForName(name);
-	int msgSize = W_LumpLength(msgLump);
+	VStream* Strm = W_CreateLumpReaderName(name);
+	int msgSize = Strm->TotalSize();
 	char* buf = new char[msgSize + 1];
-	W_ReadLump(msgLump, buf);
+	Strm->Serialise(buf, msgSize);
+	delete Strm;
 	buf[msgSize] = 0; // Append terminator
 	VStr Ret = buf;
 	delete[] buf;

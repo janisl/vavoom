@@ -44,9 +44,7 @@ public:
 	VStream* OpenFileRead(const VStr&);
 	void Close();
 	int CheckNumForName(VName, EWadNamespace);
-	void ReadLump(int, void*);
 	void ReadFromLump(int, void*, int, int);
-	void* CacheLumpNum(int);
 	int LumpLength(int);
 	VName LumpName(int);
 	int IterateNS(int, EWadNamespace);
@@ -783,18 +781,9 @@ int VFilesDir::CheckNumForName(VName, EWadNamespace)
 {
 	return -1;
 }
-void VFilesDir::ReadLump(int, void*)
-{
-	Sys_Error("ReadLump on directory");
-}
 void VFilesDir::ReadFromLump(int, void*, int, int)
 {
 	Sys_Error("ReadFromLump on directory");
-}
-void* VFilesDir::CacheLumpNum(int)
-{
-	Sys_Error("CacheLumpNum on directory");
-	return NULL;
 }
 int VFilesDir::LumpLength(int)
 {

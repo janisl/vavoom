@@ -368,7 +368,10 @@ FACScriptsObject::FACScriptsObject(int Lump)
 		return;
     }
 
-	Data = (vuint8*)W_CacheLumpNum(Lump);
+	VStream* Strm = W_CreateLumpReaderNum(Lump);
+	Data = new vuint8[Strm->TotalSize()];
+	Strm->Serialise(Data, Strm->TotalSize());
+	delete Strm;
 	acsHeader_t* header = (acsHeader_t*)Data;
 
 	//	Check header.
