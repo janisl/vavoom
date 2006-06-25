@@ -117,13 +117,20 @@ void A_FiredChase()
 		Threshold--;
 
 	// Float up and down
-	Origin.z += Level.Game.FloatBobOffsets[WeaveIndex];
+	if(TestMobjZ())
+	{
+		Origin.z += Level.Game.FloatBobOffsets[WeaveIndex];
+	}
 	WeaveIndex = (WeaveIndex + 2) & 63;
+
 
 	// Insure it stays above certain height
 	if (Origin.z < FloorZ + 64.0)
 	{
-		Origin.z += 2.0;
+		if(TestMobjZ())
+		{
+			Origin.z += 2.0;
+		}
 	}
 
 	if (!Enemy || !Enemy.bShootable)
@@ -300,23 +307,3 @@ defaultproperties
 	DeathSound = 'FireDemonDeath';
 	Effects = HexenDefs::EF_DL_WHITE;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.5  2006/03/12 19:58:55  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.4  2006/02/17 19:06:52  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.3  2006/02/15 23:33:54  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.2  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.1  2002/10/26 16:32:26  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************
