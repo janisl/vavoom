@@ -173,8 +173,6 @@ special
 	208:TranslucentLine(2,3),
 	212:Sector_SetColor(4,5),
 	213:Sector_SetFade(4),
-	215:Teleport_Line(2),
-	216:Sector_SetGravity(3),
 	229:Thing_SetGoal(3),
 	237:ChangeCamera(3),
 	248:HealThing(1,2),
