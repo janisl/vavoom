@@ -32,7 +32,6 @@
 
 enum { MAX_CHANNELS = 256 };
 
-enum { MAX_SND_DIST = 2025 };
 enum { PRIORITY_MAX_ADJUST = 10 };
 
 // TYPES -------------------------------------------------------------------
@@ -111,6 +110,7 @@ TVec					listener_up;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static vuint8*				SoundCurve;
+static int 					MaxSoundDist = 2025;
 
 static VName				MapSong;
 static int					MapCDTrack;
@@ -289,7 +289,25 @@ void S_Init()
 		GStreamMusicPlayer->Init();
 	}
 
-	SoundCurve = (vuint8*)W_CacheLumpName(NAME_sndcurve);
+	int Lump = W_CheckNumForName(NAME_sndcurve);
+	if (Lump >= 0)
+	{
+		VStream* Strm = W_CreateLumpReaderNum(Lump);
+		MaxSoundDist = Strm->TotalSize();
+		SoundCurve = new vuint8[MaxSoundDist];
+		Strm->Serialise(SoundCurve, MaxSoundDist);
+		delete Strm;
+	}
+	else
+	{
+		MaxSoundDist = 1200;
+		SoundCurve = new vuint8[MaxSoundDist];
+		for (int i = 0; i < MaxSoundDist; i++)
+		{
+			SoundCurve[i] = MIN(127, (MaxSoundDist - i) * 127 /
+				(MaxSoundDist - 160));
+		}
+	}
 	snd_MaxVolume = -1;
 
 	//	Free all channels for use.
@@ -493,13 +511,13 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	int dist = 0;
 	if (origin_id && origin_id != cl->clientnum + 1)
 		dist = (int)Length(origin - cl->vieworg);
-	if (dist >= MAX_SND_DIST)
+	if (dist >= MaxSoundDist)
 	{
 		return; // sound is beyond the hearing range...
 	}
 
 	int priority = S_sfx[sound_id].Priority *
-		(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MAX_SND_DIST);
+		(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MaxSoundDist);
 
 	int chan = GetChannel(sound_id, origin_id, channel, priority);
 	if (chan == -1)
@@ -523,7 +541,7 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	else if (!GSoundDevice->Sound3D)
 	{
 		float vol = SoundCurve[dist] / 127.0 * volume;
-		float sep = DotProduct(origin - cl->vieworg, listener_right) / MAX_SND_DIST;
+		float sep = DotProduct(origin - cl->vieworg, listener_right) / MaxSoundDist;
 		if (swap_stereo)
 		{
 			sep = -sep;
@@ -671,7 +689,7 @@ void S_UpdateSfx()
 		Channel[i].origin += Channel[i].velocity * host_frametime;
 
 		int dist = (int)Length(Channel[i].origin - cl->vieworg);
-		if (dist >= MAX_SND_DIST)
+		if (dist >= MaxSoundDist)
 		{
 			//	Too far away
 			S_StopChannel(i);
@@ -683,7 +701,7 @@ void S_UpdateSfx()
 		{
 			float vol = SoundCurve[dist] / 127.0 * Channel[i].volume;
 			float sep = DotProduct(Channel[i].origin - cl->vieworg,
-				listener_right) / MAX_SND_DIST;
+				listener_right) / MaxSoundDist;
 			if (swap_stereo)
 			{
 				sep = -sep;
@@ -696,7 +714,7 @@ void S_UpdateSfx()
 				Channel[i].origin, Channel[i].velocity);
 		}
 		Channel[i].priority = S_sfx[Channel[i].sound_id].Priority *
-			(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MAX_SND_DIST);
+			(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MaxSoundDist);
 	}
 
 	if (GSoundDevice->Sound3D)
