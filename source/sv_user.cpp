@@ -221,7 +221,7 @@ bool SV_ReadClientMessages(int clientnum)
 				return false;
 			}
 		}
-	} while (ret > 2);
+	} while (ret > 0);
 
 	return true;
 	unguard;
