@@ -26,58 +26,16 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#ifdef CLIENT
 #include "s_local.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define SS_MAX_SCRIPTS			64
-#define SS_TEMPBUFFER_SIZE		1024
-#define SS_SEQUENCE_NAME_LENGTH	32
-
-#define SS_STRING_PLAY			"play"
-#define SS_STRING_PLAYUNTILDONE "playuntildone"
-#define SS_STRING_PLAYTIME		"playtime"
-#define SS_STRING_PLAYREPEAT	"playrepeat"
-#define SS_STRING_PLAYLOOP		"playloop"
-#define SS_STRING_DELAY			"delay"
-#define SS_STRING_DELAYRAND		"delayrand"
-#define SS_STRING_VOLUME		"volume"
-#define SS_STRING_END			"end"
-#define SS_STRING_STOPSOUND		"stopsound"
-#define SS_STRING_NO_CUTOFF		"nostopcutoff"
-#define SS_STRING_ATTENUATION	"attenuation"
-#define SS_STRING_DOOR			"door"
-#define SS_STRING_PLATFORM		"platform"
-#define SS_STRING_ENVIRONMENT	"environment"
-
 // TYPES -------------------------------------------------------------------
-
-enum sscmds_t
-{
-	SS_CMD_NONE,
-	SS_CMD_PLAY,
-	SS_CMD_WAITUNTILDONE, // used by PLAYUNTILDONE
-	SS_CMD_PLAYTIME,
-	SS_CMD_PLAYREPEAT,
-	SS_CMD_PLAYLOOP,
-	SS_CMD_DELAY,
-	SS_CMD_DELAYRAND,
-	SS_CMD_VOLUME,
-	SS_CMD_STOPSOUND,
-	SS_CMD_ATTENUATION,
-	SS_CMD_END
-};
-
-struct seq_info_t
-{
-	char	name[SS_SEQUENCE_NAME_LENGTH];
-	int		*data;
-	int		stopSound;
-};
 
 struct seqnode_t
 {
-	int			*sequencePtr;
+	vint32*		sequencePtr;
 	int			sequence;
 	int			origin_id;
 	TVec		origin;
@@ -95,336 +53,16 @@ struct seqnode_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void ParseSequenceScript();
-static void VerifySequencePtr(int *base, int *ptr);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static seq_info_t	SeqInfo[SS_MAX_SCRIPTS];
-static int			NumSequences;
-static int			SeqTrans[64 * 3];
-
-static int			ActiveSequences;
-static seqnode_t	*SequenceListHead;
-
-static const char *Attenuations[] =
-{
-	"none",
-	"normal",
-	"idle",
-	"static",
-	"surround",
-	NULL
-};
+static int					ActiveSequences;
+static seqnode_t*			SequenceListHead;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-// VerifySequencePtr
-//
-//   Verifies the integrity of the temporary ptr, and ensures that the ptr
-// 		isn't exceeding the size of the temporary buffer
-//==========================================================================
-
-static void VerifySequencePtr(int *base, int *ptr)
-{
-	guard(VerifySequencePtr);
-	if (ptr - base > SS_TEMPBUFFER_SIZE)
-	{
-		Sys_Error("VerifySequencePtr:  tempPtr >= %d\n", SS_TEMPBUFFER_SIZE);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-// GetSoundOffset
-//
-//==========================================================================
-
-static int GetSoundOffset(const char *name)
-{
-	guard(GetSoundOffset);
-	for (int i = 0; i < S_sfx.Num(); i++)
-	{
-		if (!stricmp(name, *S_sfx[i].TagName))
-		{
-			return i;
-		}
-	}
-	SC_ScriptError("GetSoundOffset:  Unknown sound name\n");
-	return 0;
-	unguard;
-}
-
-//==========================================================================
-//
-// SN_InitSequenceScript
-//
-//==========================================================================
-
-void SN_InitSequenceScript()
-{
-	guard(SN_InitSequenceScript);
-	ActiveSequences = 0;
-	NumSequences = 0;
-	memset(SeqTrans, -1, sizeof(SeqTrans));
-	memset(SeqInfo, 0, sizeof(SeqInfo));
-	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
-		Lump = W_IterateNS(Lump, WADNS_Global))
-	{
-		if (W_LumpName(Lump) == NAME_sndseq)
-		{
-			SC_OpenLumpNum(Lump);
-			ParseSequenceScript();
-		}
-	}
-	//	Optionally parse script file.
-	VStr filename = FL_FindFile("scripts/sndseq.txt");
-	if (fl_devmode && filename)
-	{
-		SC_OpenFile(*filename);
-		ParseSequenceScript();
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	AssignTranslations
-//
-//==========================================================================
-
-static void AssignTranslations(int SeqId, seqtype_t SeqType)
-{
-	guard(AssignTranslations);
-	sc_Crossed = false;
-
-	while (SC_GetString() && !sc_Crossed)
-	{
-		char* Stopper;
-		int Num = strtol(sc_String, &Stopper, 0);
-		if (*Stopper == 0)
-		{
-			SeqTrans[(Num & 63) + SeqType * 64] = SeqId;
-		}
-	}
-
-	SC_UnGet();
-	unguard;
-}
-
-//==========================================================================
-//
-//	ParseSequenceScript
-//
-//==========================================================================
-
-static void ParseSequenceScript()
-{
-	guard(ParseSequenceScript);
-	int 		*tempDataStart = NULL;
-	int 		*tempDataPtr = NULL;
-	bool		inSequence = false;
-	int			SeqId = 0;
-
-	while (SC_GetString())
-	{
-		if (*sc_String == ':')
-		{
-			if (inSequence)
-			{
-				SC_ScriptError("SN_InitSequenceScript:  Nested Script Error");
-			}
-			for (SeqId = 0; SeqId < NumSequences; SeqId++)
-			{
-				if (!strcmp(SeqInfo[SeqId].name, sc_String))
-				{
-					Z_Free(SeqInfo[SeqId].data);
-					break;
-				}
-			}
-			if (SeqId == NumSequences)
-			{
-				SeqId = NumSequences;
-				NumSequences++;
-				if (NumSequences == SS_MAX_SCRIPTS)
-				{
-					SC_ScriptError("Number of SS Scripts >= SS_MAX_SCRIPTS");
-				}
-			}
-			tempDataStart = (int *)Z_Malloc(SS_TEMPBUFFER_SIZE);
-			memset(tempDataStart, 0, SS_TEMPBUFFER_SIZE);
-			tempDataPtr = tempDataStart;
-            inSequence = true;
-            strcpy(SeqInfo[SeqId].name, sc_String + 1);
-			continue; // parse the next command
-		}
-		if (!inSequence)
-		{
-        	SC_ScriptError("String outside sequence");
-			continue;
-		}
-		if (SC_Compare(SS_STRING_PLAYUNTILDONE))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			SC_MustGetString();
-			*tempDataPtr++ = SS_CMD_PLAY;
-			*tempDataPtr++ = GetSoundOffset(sc_String);
-			*tempDataPtr++ = SS_CMD_WAITUNTILDONE;		
-		}
-		else if (SC_Compare(SS_STRING_PLAY))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			SC_MustGetString();
-			*tempDataPtr++ = SS_CMD_PLAY;
-			*tempDataPtr++ = GetSoundOffset(sc_String);
-		}
-		else if (SC_Compare(SS_STRING_PLAYTIME))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			SC_MustGetString();
-			*tempDataPtr++ = SS_CMD_PLAY;
-			*tempDataPtr++ = GetSoundOffset(sc_String);
-			SC_MustGetNumber();
-			*tempDataPtr++ = SS_CMD_DELAY;	
-			*tempDataPtr++ = sc_Number;
-		}
-		else if (SC_Compare(SS_STRING_PLAYREPEAT))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			SC_MustGetString();
-			*tempDataPtr++ = SS_CMD_PLAYREPEAT;
-			*tempDataPtr++ = GetSoundOffset(sc_String);
-		}
-		else if (SC_Compare(SS_STRING_PLAYLOOP))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			SC_MustGetString();
-			*tempDataPtr++ = SS_CMD_PLAYLOOP;
-			*tempDataPtr++ = GetSoundOffset(sc_String);
-			SC_MustGetNumber();
-			*tempDataPtr++ = sc_Number;
-		}
-		else if (SC_Compare(SS_STRING_DELAY))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			*tempDataPtr++ = SS_CMD_DELAY;
-			SC_MustGetNumber();
-			*tempDataPtr++ = sc_Number;
-		}
-		else if (SC_Compare(SS_STRING_DELAYRAND))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			*tempDataPtr++ = SS_CMD_DELAYRAND;
-			SC_MustGetNumber();
-			*tempDataPtr++ = sc_Number;
-			SC_MustGetNumber();
-			*tempDataPtr++ = sc_Number;
-		}
-		else if (SC_Compare(SS_STRING_VOLUME))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			*tempDataPtr++ = SS_CMD_VOLUME;
-			SC_MustGetNumber();
-			*tempDataPtr++ = sc_Number;
-		}
-		else if (SC_Compare(SS_STRING_ATTENUATION))
-		{
-			VerifySequencePtr(tempDataStart, tempDataPtr);
-			*tempDataPtr++ = SS_CMD_ATTENUATION;
-			SC_MustGetString();
-			*tempDataPtr++ = SC_MustMatchString(Attenuations);
-		}
-		else if (SC_Compare(SS_STRING_STOPSOUND))
-		{
-			SC_MustGetString();
-			SeqInfo[SeqId].stopSound = GetSoundOffset(sc_String);
-			*tempDataPtr++ = SS_CMD_STOPSOUND;
-		}
-		else if (SC_Compare(SS_STRING_NO_CUTOFF))
-		{
-			SeqInfo[SeqId].stopSound = -1;
-			*tempDataPtr++ = SS_CMD_STOPSOUND;
-		}
-		else if (SC_Compare(SS_STRING_DOOR))
-		{
-			AssignTranslations(SeqId, SEQ_Door);
-		}
-		else if (SC_Compare(SS_STRING_PLATFORM))
-		{
-			AssignTranslations(SeqId, SEQ_Platform);
-		}
-		else if (SC_Compare(SS_STRING_ENVIRONMENT))
-		{
-			AssignTranslations(SeqId, SEQ_Environment);
-		}
-		else if (SC_Compare(SS_STRING_END))
-		{
-			*tempDataPtr++ = SS_CMD_END;
-			int dataSize = (tempDataPtr-tempDataStart)*sizeof(int);
-			SeqInfo[SeqId].data = (int*)Z_Malloc(dataSize);
-			memcpy(SeqInfo[SeqId].data, tempDataStart, dataSize);
-			Z_Free(tempDataStart);
-			inSequence = false;
-		}
-		else
-		{
-			SC_ScriptError("SN_InitSequenceScript:  Unknown commmand.\n");
-		}
-	}
-	SC_Close();
-	unguard;
-}
-
-//==========================================================================
-//
-//  SN_SetSeqTrans
-//
-//==========================================================================
-
-void SN_SetSeqTrans(VName Name, int Num, int SeqType)
-{
-	guard(SN_SetSeqTrans);
-	for (int i = 0; i < NumSequences; i++)
-	{
-		if (!strcmp(*Name, SeqInfo[i].name))
-		{
-			SeqTrans[(Num & 63) + SeqType * 64] = i;
-			return;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//  SN_GetSeqTrans
-//
-//==========================================================================
-
-VName SN_GetSeqTrans(int Num, int SeqType)
-{
-	guard(SN_GetSeqTrans);
-	if (Num < 0)
-	{
-		//	If not assigned, use 0 as default.
-		Num = 0;
-	}
-	if (SeqTrans[(Num & 63) + SeqType * 64] < 0)
-	{
-		return NAME_None;
-	}
-	return SeqInfo[SeqTrans[(Num & 63) + SeqType * 64]].name;
-	unguard;
-}
-
-#ifdef CLIENT
 
 //==========================================================================
 //
@@ -439,16 +77,16 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 
 	SN_StopSequence(origin_id); // Stop any previous sequence
 	node = new seqnode_t;
-	node->sequencePtr = SeqInfo[sequence].data;
+	node->sequencePtr = GSoundManager->SeqInfo[sequence].Data;
 	node->sequence = sequence;
 	node->origin_id = origin_id;
 	node->origin = origin;
 	node->delayTics = 0;
-	node->stopSound = SeqInfo[sequence].stopSound;
+	node->stopSound = GSoundManager->SeqInfo[sequence].StopSound;
 	node->volume = 127; // Start at max volume
 	node->currentSoundID = 0;
 
-	if(!SequenceListHead)
+	if (!SequenceListHead)
 	{
 		SequenceListHead = node;
 		node->next = node->prev = NULL;
@@ -473,9 +111,9 @@ void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
 void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name)
 {
 	guard(SN_StartSequenceName);
-	for (int i = 0; i < NumSequences; i++)
+	for (int i = 0; i < GSoundManager->SeqInfo.Num(); i++)
 	{
-		if (!strcmp(name, SeqInfo[i].name))
+		if (GSoundManager->SeqInfo[i].Name == name)
 		{
 			SN_StartSequence(origin_id, origin, i);
 			return;
@@ -553,7 +191,7 @@ void SN_UpdateActiveSequences()
 		sndPlaying = S_GetSoundPlayingInfo((int)node->origin_id, node->currentSoundID);
 		switch (*node->sequencePtr)
 		{
-			case SS_CMD_PLAY:
+			case SSCMD_Play:
 				if(!sndPlaying)
 				{
 					node->currentSoundID = *(node->sequencePtr+1);
@@ -562,14 +200,14 @@ void SN_UpdateActiveSequences()
 				}
 				node->sequencePtr += 2;
 				break;
-			case SS_CMD_WAITUNTILDONE:
+			case SSCMD_WaitUntilDone:
 				if(!sndPlaying)
 				{
 					node->sequencePtr++;
 					node->currentSoundID = 0;
 				}
 				break;
-			case SS_CMD_PLAYREPEAT:
+			case SSCMD_PlayRepeat:
 				if(!sndPlaying)
 				{
 					node->currentSoundID = *(node->sequencePtr+1);
@@ -577,35 +215,35 @@ void SN_UpdateActiveSequences()
 						TVec(0, 0, 0), node->origin_id, 1, node->volume);
 				}
 				break;
-			case SS_CMD_PLAYLOOP:
+			case SSCMD_PlayLoop:
 				node->currentSoundID = *(node->sequencePtr + 1);
 				S_StartSound(node->currentSoundID, node->origin,
 					TVec(0, 0, 0), node->origin_id, 1, node->volume);
 				node->delayTics = *(node->sequencePtr + 2);
 				break;
-			case SS_CMD_DELAY:
+			case SSCMD_Delay:
 				node->delayTics = *(node->sequencePtr+1);
 				node->sequencePtr += 2;
 				node->currentSoundID = 0;
 				break;
-			case SS_CMD_DELAYRAND:
+			case SSCMD_DelayRand:
 				node->delayTics = *(node->sequencePtr + 1) +
 					rand() % (*(node->sequencePtr + 2) - *(node->sequencePtr + 1));
 				node->sequencePtr += 2;
 				node->currentSoundID = 0;
 				break;
-			case SS_CMD_VOLUME:
+			case SSCMD_Volume:
 				node->volume = (127*(*(node->sequencePtr+1)))/100;
 				node->sequencePtr += 2;
 				break;
-			case SS_CMD_ATTENUATION:
+			case SSCMD_Attenuation:
 				// Unused for now.
 				node->sequencePtr += 2;
 				break;
-			case SS_CMD_STOPSOUND:
+			case SSCMD_StopSound:
 				// Wait until something else stops the sequence
 				break;
-			case SS_CMD_END:
+			case SSCMD_End:
 				SN_StopSequence(node->origin_id);
 				break;
 			default:	
@@ -677,6 +315,7 @@ static void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics,
 
 void SN_SerialiseSounds(VStream& Strm)
 {
+#ifdef CLIENT
 	if (Strm.IsLoading())
 	{
 		// Reload and restart all sound sequences
@@ -692,10 +331,8 @@ void SN_SerialiseSounds(VStream& Strm)
 			float x = Streamer<float>(Strm);
 			float y = Streamer<float>(Strm);
 			float z = Streamer<float>(Strm);
-#ifdef CLIENT
 			SN_StartSequence(objectNum, TVec(x, y, z), sequence);
 			SN_ChangeNodeData(i, seqOffset, delayTics, volume, soundID);
-#endif
 		}
 	}
 	else
@@ -707,7 +344,8 @@ void SN_SerialiseSounds(VStream& Strm)
 			Strm << node->sequence;
 			Strm << node->delayTics;
 			Strm << node->volume;
-			int Offset = node->sequencePtr - SeqInfo[node->sequence].data;
+			vint32 Offset = node->sequencePtr -
+				GSoundManager->SeqInfo[node->sequence].Data;
 			Strm << Offset;
 			Strm << node->currentSoundID;
 			Strm << node->origin_id;
@@ -716,20 +354,8 @@ void SN_SerialiseSounds(VStream& Strm)
 			Strm << node->origin.z;
 		}
 	}
-}
-
-//==========================================================================
-//
-//	SN_FreeSequenceData
-//
-//==========================================================================
-
-void SN_FreeSequenceData()
-{
-	guard(SN_FreeSequenceData);
-	for (int i = 0; i < NumSequences; i++)
-	{
-		Z_Free(SeqInfo[i].data);
-	}
-	unguard;
+#else
+	vint32 Dummy = 0;
+	Strm << Dummy;
+#endif
 }

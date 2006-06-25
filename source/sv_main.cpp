@@ -3031,7 +3031,7 @@ COMMAND(Say)
 		Text += Args[i];
 	}
 	SV_BroadcastPrintf(*Text);
-	SV_StartSound(NULL, S_GetSoundID("misc/chat"), 0, 127);
+	SV_StartSound(NULL, GSoundManager->GetSoundID("misc/chat"), 0, 127);
 	unguard;
 }
 

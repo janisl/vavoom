@@ -442,12 +442,12 @@ int VDirectSoundDevice::CreateBuffer(int sound_id)
 	}
 
 	//	Check, that sound lump is loaded
-	if (!S_LoadSound(sound_id))
+	if (!GSoundManager->LoadSound(sound_id))
 	{
 		//	Missing sound.
 		return -1;
 	}
-	sfxinfo_t &sfx = S_sfx[sound_id];
+	sfxinfo_t &sfx = GSoundManager->S_sfx[sound_id];
 
 	// Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
@@ -517,7 +517,7 @@ int VDirectSoundDevice::CreateBuffer(int sound_id)
 		GCon->Log(NAME_Dev, DS_Error(result));
 
 		//	We don't need to keep lump static
-		S_DoneWithLump(sound_id);
+		GSoundManager->DoneWithLump(sound_id);
 
 		return -1;
 	}
@@ -528,7 +528,7 @@ int VDirectSoundDevice::CreateBuffer(int sound_id)
 	dsbuffer->Unlock(buffer, sfx.DataSize, buff2, size2);
 
 	//	We don't need to keep lump static
-	S_DoneWithLump(sound_id);
+	GSoundManager->DoneWithLump(sound_id);
 
 	Buffers[Handle].Buffer = dsbuffer;
 	Buffers[Handle].SoundID = sound_id;
@@ -555,7 +555,8 @@ int VDirectSoundDevice::PlaySound(int sound_id, float vol, float sep,
 	{
 		return -1;
 	}
-	Buffers[Handle].Buffer->SetFrequency((DWORD)(S_sfx[sound_id].SampleRate * pitch));
+	Buffers[Handle].Buffer->SetFrequency((DWORD)(
+		GSoundManager->S_sfx[sound_id].SampleRate * pitch));
 	Buffers[Handle].Buffer->SetCurrentPosition(0);
 
 	if (Sound3D)
@@ -615,7 +616,8 @@ int VDirectSoundDevice::PlaySound3D(int sound_id, const TVec &origin,
 	{
 		return -1;
 	}
-	Buffers[Handle].Buffer->SetFrequency((DWORD)(S_sfx[sound_id].SampleRate * pitch));
+	Buffers[Handle].Buffer->SetFrequency((DWORD)(
+		GSoundManager->S_sfx[sound_id].SampleRate * pitch));
 	Buffers[Handle].Buffer->SetCurrentPosition(0);
 
 	Buffers[Handle].Buffer->SetVolume((LONG)(4096.0 * (volume - 1.0)));

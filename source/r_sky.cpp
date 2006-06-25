@@ -626,7 +626,7 @@ static void R_LightningFlash()
 				sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
 			}
 		}
-		S_StartSoundName("world/thunder");
+		S_StartSound(GSoundManager->GetSoundID("world/thunder"));
 	}
 	// Calculate the next lighting flash
 	if (!NextLightningFlash)

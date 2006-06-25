@@ -146,8 +146,8 @@ void Host_Init()
 
 	PR_Init();
 
-	S_InitScript();
-	SN_InitSequenceScript();
+	GSoundManager = new VSoundManager;
+	GSoundManager->Init();
 	R_InitTexture();
 
 #ifdef CLIENT
@@ -666,7 +666,7 @@ void Host_Shutdown()
 #endif
 	SAFE_SHUTDOWN(Sys_Shutdown, ())
 
-	SAFE_SHUTDOWN(S_ShutdownData, ())
+	SAFE_SHUTDOWN(delete GSoundManager,)
 	SAFE_SHUTDOWN(R_ShutdownTexture, ())
 	SAFE_SHUTDOWN(VCommand::Shutdown, ())
 	SAFE_SHUTDOWN(VCvar::Shutdown, ())

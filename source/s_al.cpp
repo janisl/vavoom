@@ -174,8 +174,8 @@ bool VOpenALDevice::Init()
 	}
 
 	//	Allocate array for buffers.
-	Buffers = new ALuint[S_sfx.Num()];
-	memset(Buffers, 0, sizeof(ALuint) * S_sfx.Num());
+	Buffers = new ALuint[GSoundManager->S_sfx.Num()];
+	memset(Buffers, 0, sizeof(ALuint) * GSoundManager->S_sfx.Num());
 	Sound3D = true;
 	return true;
 	unguard;
@@ -209,7 +209,7 @@ void VOpenALDevice::Shutdown()
 	//	Delete buffers.
 	if (Buffers)
 	{
-		alDeleteBuffers(S_sfx.Num(), Buffers);
+		alDeleteBuffers(GSoundManager->S_sfx.Num(), Buffers);
 		delete[] Buffers;
 		Buffers = NULL;
 	}
@@ -258,7 +258,7 @@ bool VOpenALDevice::LoadSound(int sound_id)
 	}
 
 	//	Check, that sound lump is loaded
-	if (!S_LoadSound(sound_id))
+	if (!GSoundManager->LoadSound(sound_id))
 	{
 		//	Missing sound.
 		return false;
@@ -272,23 +272,25 @@ bool VOpenALDevice::LoadSound(int sound_id)
 	if (alGetError() != AL_NO_ERROR)
 	{
 		GCon->Log(NAME_Dev, "Failed to gen buffer");
-		S_DoneWithLump(sound_id);
+		GSoundManager->DoneWithLump(sound_id);
 		return false;
 	}
 
 	//	Load buffer data.
-	alBufferData(Buffers[sound_id], S_sfx[sound_id].SampleBits == 8 ?
-		AL_FORMAT_MONO8 : AL_FORMAT_MONO16, S_sfx[sound_id].Data,
-		S_sfx[sound_id].DataSize, S_sfx[sound_id].SampleRate);
+	alBufferData(Buffers[sound_id],
+		GSoundManager->S_sfx[sound_id].SampleBits == 8 ? AL_FORMAT_MONO8 :
+		AL_FORMAT_MONO16, GSoundManager->S_sfx[sound_id].Data,
+		GSoundManager->S_sfx[sound_id].DataSize,
+		GSoundManager->S_sfx[sound_id].SampleRate);
 	if (alGetError() != AL_NO_ERROR)
 	{
 		GCon->Log(NAME_Dev, "Failed to load buffer data");
-		S_DoneWithLump(sound_id);
+		GSoundManager->DoneWithLump(sound_id);
 		return false;
 	}
 
 	//	We don't need to keep lump static
-	S_DoneWithLump(sound_id);
+	GSoundManager->DoneWithLump(sound_id);
 	return true;
 	unguard;
 }

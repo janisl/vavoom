@@ -27,8 +27,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define S_StartSoundName(name)	S_StartSound(S_GetSoundID(name))
-
 // TYPES -------------------------------------------------------------------
 
 enum seqtype_t
@@ -38,24 +36,147 @@ enum seqtype_t
 	SEQ_Environment,
 };
 
+//
+// SoundFX struct.
+//
+struct sfxinfo_t
+{
+	VName	TagName;		// Name, by whitch sound is recognised in script
+	int		LumpNum;        // lump number of sfx
+
+	int		Priority;		// Higher priority takes precendence
+	int 	NumChannels;	// total number of channels a sound type may occupy
+	float	ChangePitch;
+	int		UseCount;
+	int		Link;
+	int*	Sounds;			// For random sounds, Link is count.
+
+	bool	bRandomHeader;
+	bool	bPlayerReserve;
+	bool	bSingular;
+
+	dword	SampleRate;
+	int		SampleBits;
+	dword	DataSize;
+	void*	Data;
+};
+
+enum ESSCmds
+{
+	SSCMD_None,
+	SSCMD_Play,
+	SSCMD_WaitUntilDone, // used by PLAYUNTILDONE
+	SSCMD_PlayTime,
+	SSCMD_PlayRepeat,
+	SSCMD_PlayLoop,
+	SSCMD_Delay,
+	SSCMD_DelayRand,
+	SSCMD_Volume,
+	SSCMD_StopSound,
+	SSCMD_Attenuation,
+	SSCMD_End
+};
+
+struct seq_info_t
+{
+	VName		Name;
+	vint32*		Data;
+	vint32		StopSound;
+};
+
+class VSoundManager
+{
+public:
+	//	The complete set of sound effects
+	TArray<sfxinfo_t>	S_sfx;
+	TArray<seq_info_t>	SeqInfo;
+
+	VSoundManager();
+	~VSoundManager();
+	void Init();
+	int GetSoundID(VName);
+	int GetSoundID(const char*);
+	int ResolveSound(int);
+	int ResolveEntitySound(VName, VName, VName);
+	bool LoadSound(int);
+	void DoneWithLump(int);
+
+	void SetSeqTrans(VName, int, int);
+	VName GetSeqTrans(int, int);
+
+private:
+	struct FPlayerSound
+	{
+		int		ClassId;
+		int		GenderId;
+		int		RefId;
+		int		SoundId;
+	};
+
+	enum ESoundType
+	{
+		SNDTYPE_World = 0,
+		SNDTYPE_Point = 1,
+		SNDTYPE_Surround =2,
+
+		SNDTYPE_Continuous = 4,
+		SNDTYPE_Random = 8,
+		SNDTYPE_Periodic = 12,
+	};
+
+	struct FAmbientSound
+	{
+		vuint32		Type;		// type of ambient sound
+		float		PeriodMin;	// # of tics between repeats
+		float		PeriodMax;	// max # of tics for random ambients
+		float		Volume;		// relative volume of sound
+		float		Attenuation;
+		VName		Sound;		// Logical name of sound to play
+	};
+
+	enum { NUM_AMBIENT_SOUNDS = 256 };
+
+	TArray<VName>			PlayerClasses;
+	TArray<VName>			PlayerGenders;
+	TArray<FPlayerSound>	PlayerSounds;
+	int						NumPlayerReserves;
+	float					CurrentChangePitch;
+	FAmbientSound*			AmbientSounds[NUM_AMBIENT_SOUNDS];
+	int						SeqTrans[64 * 3];
+
+	static const char*		Attenuations[];
+
+	void ParseSndinfo();
+	int AddSoundLump(VName, int);
+	int AddSound(VName, int);
+	int FindSound(VName);
+	int FindOrAddSound(VName);
+	void ParsePlayerSoundCommon(int&, int&, int&);
+	int AddPlayerClass(VName);
+	int FindPlayerClass(VName);
+	int AddPlayerGender(VName);
+	int FindPlayerGender(VName);
+	int FindPlayerSound(int, int, int);
+	int LookupPlayerSound(int, int, int);
+	int ResolveSound(int, int, int);
+
+	void ParseSequenceScript();
+	void AssignSeqTranslations(int, seqtype_t);
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
 //	Main
 //
 void S_Init();
-void S_InitScript();
 void S_Start();
 void S_MusicChanged();
 void S_StartSong(VName name, int track, boolean loop);
 void S_PauseSound();
 void S_ResumeSound();
 void S_UpdateSounds();
-int S_GetSoundID(VName Name);
-int S_GetSoundID(const char *name);
-int S_ResolveEntitySound(VName, VName, VName);
 void S_Shutdown();
-void S_ShutdownData();
 
 //
 //	Sound playback
@@ -72,9 +193,6 @@ boolean S_GetSoundPlayingInfo(int origin_id, int sound_id);
 //
 //	Sound sequences
 //
-void SN_InitSequenceScript();
-void SN_SetSeqTrans(VName Name, int Num, int SeqType);
-VName SN_GetSeqTrans(int Num, int SeqType);
 void SN_StartSequence(int origin_id, const TVec &origin, int sequence);
 void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name);
 void SN_StopSequence(int origin_id);
@@ -84,52 +202,4 @@ void SN_SerialiseSounds(VStream& Strm);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.16  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.15  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.14  2005/11/20 12:38:50  dj_jl
-//	Implemented support for sound sequence extensions.
-//	
-//	Revision 1.13  2005/11/17 18:53:21  dj_jl
-//	Implemented support for sndinfo extensions.
-//	
-//	Revision 1.12  2005/11/13 14:36:22  dj_jl
-//	Moved common sound functions to main sound module.
-//	
-//	Revision 1.11  2005/11/08 20:57:15  dj_jl
-//	Removed playing sound till done.
-//	
-//	Revision 1.10  2005/11/05 15:50:07  dj_jl
-//	Voices played as normal sounds.
-//	
-//	Revision 1.9  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.8  2004/11/30 07:17:17  dj_jl
-//	Made string pointers const.
-//	
-//	Revision 1.7  2002/07/27 18:10:11  dj_jl
-//	Implementing Strife conversations.
-//	
-//	Revision 1.6  2002/01/11 08:15:06  dj_jl
-//	Sound index retrieval by FName
-//	
-//	Revision 1.5  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/08/29 17:55:42  dj_jl
-//	Added sound channels
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
+extern VSoundManager*		GSoundManager;

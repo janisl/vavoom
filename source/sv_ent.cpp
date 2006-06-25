@@ -1958,7 +1958,7 @@ IMPLEMENT_FUNCTION(VEntity, PlaySound)
 	P_GET_INT(Channel);
 	P_GET_NAME(SoundName);
 	P_GET_SELF;
-	SV_StartSound(Self, S_ResolveEntitySound(Self->SoundClass,
+	SV_StartSound(Self, GSoundManager->ResolveEntitySound(Self->SoundClass,
 		Self->SoundGender, SoundName), Channel, 127);
 }
 
@@ -1973,7 +1973,7 @@ IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
 	P_GET_INT(Channel);
 	P_GET_NAME(SoundName);
 	P_GET_SELF;
-	SV_StartSound(NULL, S_ResolveEntitySound(Self->SoundClass,
+	SV_StartSound(NULL, GSoundManager->ResolveEntitySound(Self->SoundClass,
 		Self->SoundGender, SoundName), Channel, 127);
 }
 

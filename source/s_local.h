@@ -59,31 +59,6 @@ enum
 // TYPES -------------------------------------------------------------------
 
 //
-// SoundFX struct.
-//
-struct sfxinfo_t
-{
-	VName	TagName;		// Name, by whitch sound is recognised in script
-	int		LumpNum;        // lump number of sfx
-
-	int		Priority;		// Higher priority takes precendence
-	int 	NumChannels;	// total number of channels a sound type may occupy
-	float	ChangePitch;
-	int		UseCount;
-	int		Link;
-	int*	Sounds;			// For random sounds, Link is count.
-
-	bool	bRandomHeader;
-	bool	bPlayerReserve;
-	bool	bSingular;
-
-	dword	SampleRate;
-	int		SampleBits;
-	dword	DataSize;
-	void*	Data;
-};
-
-//
 //	VSoundDevice
 //
 //	Sound device interface. This class implements dummy driver.
@@ -322,26 +297,11 @@ FAudioCodecDesc		TClass##Desc(Description, TClass::Create);
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
-//	Data
-//
-int S_ResolveSound(int);
-bool S_LoadSound(int);
-void S_DoneWithLump(int);
-
-//
-//	Sequences
-//
-void SN_FreeSequenceData();
-
-//
 //	EAX utilites
 //
 float EAX_CalcEnvSize();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-// the complete set of sound effects
-extern TArray<sfxinfo_t>	S_sfx;
 
 //**************************************************************************
 //

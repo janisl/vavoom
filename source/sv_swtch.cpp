@@ -194,7 +194,7 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 		int Sound = sw->Sound;
 		if (!Sound)
 		{
-			Sound = S_GetSoundID(DefaultSound);
+			Sound = GSoundManager->GetSoundID(DefaultSound);
 		}
 		SV_SectorStartSound(GLevel->Sides[sidenum].sector, Sound, 0, 127);
 		SV_SetLineTexture(sidenum, where, toTex);

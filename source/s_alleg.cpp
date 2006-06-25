@@ -120,8 +120,8 @@ bool VAllegroSoundDevice::Init()
 		Sys_Error("ALLEGRO SOUND INIT ERROR!!!!\n%s\n", allegro_error);
 	}
 	allegro_sound_initialised = true;
-	Samples = new SAMPLE*[S_sfx.Num()];
-	memset(Samples, 0, sizeof(SAMPLE*) * S_sfx.Num());
+	Samples = new SAMPLE*[GSoundManager->S_sfx.Num()];
+	memset(Samples, 0, sizeof(SAMPLE*) * GSoundManager->S_sfx.Num());
 
 	GCon->Logf(NAME_Init, "configured audio device");
 	GCon->Logf(NAME_Init, "SFX   : %s", digi_driver->desc);
@@ -157,7 +157,7 @@ void VAllegroSoundDevice::Shutdown()
 	guard(VAllegroSoundDevice::Shutdown);
 	if (Samples)
 	{
-		for (int i = 0; i < S_sfx.Num(); i++)
+		for (int i = 0; i < GSoundManager->S_sfx.Num(); i++)
 		{
 			if (Samples[i])
 			{
@@ -194,34 +194,34 @@ bool VAllegroSoundDevice::LoadSample(int sound_id)
 		return Samples[sound_id];
 	}
 
-	if (!S_LoadSound(sound_id))
+	if (!GSoundManager->LoadSound(sound_id))
 	{
 		//	Missing sound.
 		return false;
 	}
 
-	int SfxSize = S_sfx[sound_id].DataSize;
-	if (S_sfx[sound_id].SampleBits == 16)
+	int SfxSize = GSoundManager->S_sfx[sound_id].DataSize;
+	if (GSoundManager->S_sfx[sound_id].SampleBits == 16)
 		SfxSize >>= 1;
 
 	//	Create SAMPLE* that Allegro uses.
-	SAMPLE* spl = create_sample(S_sfx[sound_id].SampleBits, 0,
-		S_sfx[sound_id].SampleRate, SfxSize);
+	SAMPLE* spl = create_sample(GSoundManager->S_sfx[sound_id].SampleBits, 0,
+		GSoundManager->S_sfx[sound_id].SampleRate, SfxSize);
 
-	if (S_sfx[sound_id].SampleBits == 16)
+	if (GSoundManager->S_sfx[sound_id].SampleBits == 16)
 	{
 		//	Convert 16 bit sound to unsigned format.
-		short* pSrc = (short*)S_sfx[sound_id].Data;
+		short* pSrc = (short*)GSoundManager->S_sfx[sound_id].Data;
 		short* pDst = (short*)spl->data;
 		for (int i = 0; i < SfxSize; i++, pSrc++, pDst++)
 			*pDst = *pSrc ^ 0x8000;
 	}
 	else
 	{
-		memcpy(spl->data, S_sfx[sound_id].Data, SfxSize);
+		memcpy(spl->data, GSoundManager->S_sfx[sound_id].Data, SfxSize);
 	}
 	Samples[sound_id] = spl;
-	S_DoneWithLump(sound_id);
+	GSoundManager->DoneWithLump(sound_id);
 	return true;
 	unguard;
 }

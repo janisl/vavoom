@@ -712,7 +712,7 @@ IMPLEMENT_FUNCTION(VObject, GetSoundPlayingInfo)
 IMPLEMENT_FUNCTION(VObject, GetSoundID)
 {
 	P_GET_NAME(Name);
-	RET_INT(S_GetSoundID(Name));
+	RET_INT(GSoundManager->GetSoundID(Name));
 }
 
 //==========================================================================
@@ -726,7 +726,7 @@ IMPLEMENT_FUNCTION(VObject, SetSeqTrans)
 	P_GET_INT(SeqType);
 	P_GET_INT(Num);
 	P_GET_NAME(Name);
-	SN_SetSeqTrans(Name, Num, SeqType);
+	GSoundManager->SetSeqTrans(Name, Num, SeqType);
 }
 
 //==========================================================================
@@ -739,7 +739,7 @@ IMPLEMENT_FUNCTION(VObject, GetSeqTrans)
 {
 	P_GET_INT(SeqType);
 	P_GET_INT(Num);
-	RET_NAME(SN_GetSeqTrans(Num, SeqType));
+	RET_NAME(GSoundManager->GetSeqTrans(Num, SeqType));
 }
 
 //==========================================================================
@@ -1457,7 +1457,7 @@ IMPLEMENT_FUNCTION(VObject, T_DrawTextW)
 IMPLEMENT_FUNCTION(VObject, LocalSound)
 {
 	P_GET_NAME(name);
-	S_StartSoundName(name);
+	S_StartSound(GSoundManager->GetSoundID(name));
 }
 
 //==========================================================================
@@ -1469,7 +1469,7 @@ IMPLEMENT_FUNCTION(VObject, LocalSound)
 IMPLEMENT_FUNCTION(VObject, IsLocalSoundPlaying)
 {
 	P_GET_NAME(name);
-	RET_BOOL(S_GetSoundPlayingInfo(0, S_GetSoundID(name)));
+	RET_BOOL(S_GetSoundPlayingInfo(0, GSoundManager->GetSoundID(name)));
 }
 
 //==========================================================================

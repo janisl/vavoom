@@ -172,8 +172,8 @@ bool VSDLSoundDevice::Init()
 	Mix_QuerySpec(&CurFrequency, &CurFormat, &CurChannels);
 
 	//	Allocate array for chunks.
-	Chunks = new Mix_Chunk*[S_sfx.Num()];
-	memset(Chunks, 0, sizeof(Mix_Chunk*) * S_sfx.Num());
+	Chunks = new Mix_Chunk*[GSoundManager->S_sfx.Num()];
+	memset(Chunks, 0, sizeof(Mix_Chunk*) * GSoundManager->S_sfx.Num());
 
 	GCon->Logf(NAME_Init, "Configured audio device");
 	GCon->Logf(NAME_Init, "Driver: %s", SDL_AudioDriverName(dname, 32));
@@ -231,7 +231,7 @@ void VSDLSoundDevice::Shutdown()
 	guard(VSDLSoundDevice::Shutdown);
 	if (Chunks)
 	{
-		for (int i = 0; i < S_sfx.Num(); i++)
+		for (int i = 0; i < GSoundManager->S_sfx.Num(); i++)
 		{
 			if (Chunks[i])
 			{
@@ -278,26 +278,26 @@ Mix_Chunk* VSDLSoundDevice::LoadSound(int sound_id)
 		return Chunks[sound_id];
 	}
 
-	if (!S_LoadSound(sound_id))
+	if (!GSoundManager->LoadSound(sound_id))
 	{
 		//	Missing sound.
 		return NULL;
 	}
 
 	//	Set up audio converter.
-	if (SDL_BuildAudioCVT(&cvt, S_sfx[sound_id].SampleBits == 8 ?
-		AUDIO_U8 : AUDIO_S16, 1, S_sfx[sound_id].SampleRate,
+	if (SDL_BuildAudioCVT(&cvt, GSoundManager->S_sfx[sound_id].SampleBits == 8 ?
+		AUDIO_U8 : AUDIO_S16, 1, GSoundManager->S_sfx[sound_id].SampleRate,
 		CurFormat, CurChannels, CurFrequency) < 0)
 	{
-		S_DoneWithLump(sound_id);
+		GSoundManager->DoneWithLump(sound_id);
 		return NULL;
 	}
 
 	//	Copy data.
-	cvt.len = S_sfx[sound_id].DataSize;
+	cvt.len = GSoundManager->S_sfx[sound_id].DataSize;
 	cvt.buf = (Uint8*)malloc(cvt.len * cvt.len_mult);
-	memcpy(cvt.buf, S_sfx[sound_id].Data, cvt.len);
-	S_DoneWithLump(sound_id);
+	memcpy(cvt.buf, GSoundManager->S_sfx[sound_id].Data, cvt.len);
+	GSoundManager->DoneWithLump(sound_id);
 
 	//	Run the audio converter.
 	if (SDL_ConvertAudio(&cvt) < 0)

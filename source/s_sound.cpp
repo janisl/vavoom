@@ -187,9 +187,8 @@ FCDAudioDeviceDesc::FCDAudioDeviceDesc(int Type, const char* AName,
 //
 //	S_Init
 //
-// 	Initializes sound stuff, including volume
-// 	Sets channels, SFX and music volume,
-// allocates channel buffer, sets S_sfx lookup.
+//	Initialises sound stuff, including volume
+//	Sets channels, SFX and music volume, allocates channel buffer.
 //
 //==========================================================================
 
@@ -397,7 +396,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 	int			lp; //least priority
 	int			found;
 	int			prior;
-	int numchannels = S_sfx[sound_id].NumChannels;
+	int numchannels = GSoundManager->S_sfx[sound_id].NumChannels;
 
 	if (numchannels > 0)
 	{
@@ -408,7 +407,7 @@ static int GetChannel(int sound_id, int origin_id, int channel, int priority)
 		{
 			if (Channel[i].sound_id == sound_id)
 			{
-				if (S_sfx[sound_id].bSingular)
+				if (GSoundManager->S_sfx[sound_id].bSingular)
 				{
 					// This sound is already playing, so don't start it again.
 					return -1;
@@ -501,7 +500,7 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	}
 
 	//	Find actual sound ID to use.
-	int sound_id = S_ResolveSound(InSoundId);
+	int sound_id = GSoundManager->ResolveSound(InSoundId);
 
 	//	Apply sound volume.
 	volume *= snd_MaxVolume;
@@ -516,7 +515,7 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 		return; // sound is beyond the hearing range...
 	}
 
-	int priority = S_sfx[sound_id].Priority *
+	int priority = GSoundManager->S_sfx[sound_id].Priority *
 		(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MaxSoundDist);
 
 	int chan = GetChannel(sound_id, origin_id, channel, priority);
@@ -526,9 +525,9 @@ void S_StartSound(int InSoundId, const TVec &origin, const TVec &velocity,
 	}
 
 	float pitch = 1.0;
-	if (S_sfx[sound_id].ChangePitch)
+	if (GSoundManager->S_sfx[sound_id].ChangePitch)
 	{
-		pitch = 1.0 + (Random() - Random()) * S_sfx[sound_id].ChangePitch;
+		pitch = 1.0 + (Random() - Random()) * GSoundManager->S_sfx[sound_id].ChangePitch;
 	}
 	int handle;
 	bool is3D;
@@ -612,7 +611,7 @@ void S_StopAllSound()
 boolean S_GetSoundPlayingInfo(int origin_id, int InSoundId)
 {
 	guard(S_GetSoundPlayingInfo);
-	int sound_id = S_ResolveSound(InSoundId);
+	int sound_id = GSoundManager->ResolveSound(InSoundId);
 	for (int i = 0; i < NumChannels; i++)
 	{
 		if (Channel[i].sound_id == sound_id &&
@@ -713,7 +712,7 @@ void S_UpdateSfx()
 			GSoundDevice->UpdateChannel3D(Channel[i].handle,
 				Channel[i].origin, Channel[i].velocity);
 		}
-		Channel[i].priority = S_sfx[Channel[i].sound_id].Priority *
+		Channel[i].priority = GSoundManager->S_sfx[Channel[i].sound_id].Priority *
 			(PRIORITY_MAX_ADJUST - PRIORITY_MAX_ADJUST * dist / MaxSoundDist);
 	}
 

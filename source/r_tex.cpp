@@ -3434,7 +3434,7 @@ static void ParseSwitchDef()
 	if (SndName == NAME_None)
 		sw.Sound = 0;
 	else
-		sw.Sound = S_GetSoundID(SndName);
+		sw.Sound = GSoundManager->GetSoundID(SndName);
 	sw.Tex1 = t1;
 	sw.Tex2 = t2;
 }
