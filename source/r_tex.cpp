@@ -852,9 +852,9 @@ vuint8* VTextureManager::GetRgbTable()
 	{
 		VStream* Strm = W_CreateLumpReaderName(NAME_rgbtable);
 		check(Strm);
-		check(Strm->TotalSize() == 0x10000);
-		RgbTable = new vuint8[0x10000];
-		Strm->Serialise(RgbTable, 0x10000);
+		check(Strm->TotalSize() == 0x8001);
+		RgbTable = new vuint8[0x8001];
+		Strm->Serialise(RgbTable, 0x8001);
 		delete Strm;
 	}
 	return RgbTable;
