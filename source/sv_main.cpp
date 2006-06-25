@@ -54,7 +54,7 @@ void EntInit();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void SV_DropClient(boolean crash);
+void SV_DropClient(bool crash);
 void SV_ShutdownServer(boolean);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -2547,7 +2547,7 @@ COMMAND(Begin)
 //
 //==========================================================================
 
-void SV_DropClient(boolean)
+void SV_DropClient(bool)
 {
 	guard(SV_DropClient);
 	if (sv_player->PlayerFlags & VBasePlayer::PF_Spawned)
@@ -2563,9 +2563,9 @@ void SV_DropClient(boolean)
 	}
 	sv_player->NetCon = NULL;
 	svs.num_connected--;
-	sv_player->UserInfo[0] = 0;
-	sv_reliable << (byte)svc_userinfo
-				<< (byte)SV_GetPlayerNum(sv_player)
+	sv_player->UserInfo = VStr();
+	sv_reliable << (vuint8)svc_userinfo
+				<< (vuint8)SV_GetPlayerNum(sv_player)
 				<< "";
 	unguard;
 }
