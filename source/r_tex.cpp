@@ -364,6 +364,7 @@ static TArray<frameDef_t>	FrameDefs;
 //==========================================================================
 
 VTextureManager::VTextureManager()
+: RgbTable(NULL)
 {
 }
 
@@ -412,6 +413,8 @@ void VTextureManager::Shutdown()
 	for (int i = 0; i < Textures.Num(); i++)
 		delete Textures[i];
 	Textures.Clear();
+	if (RgbTable)
+		delete[] RgbTable;
 	unguard;
 }
 
@@ -837,6 +840,26 @@ void VTextureManager::InitSpriteLumps()
 	unguard;
 }
 
+//==========================================================================
+//
+//	VTexture::VTexture
+//
+//==========================================================================
+
+vuint8* VTextureManager::GetRgbTable()
+{
+	if (!RgbTable)
+	{
+		VStream* Strm = W_CreateLumpReaderName(NAME_rgbtable);
+		check(Strm);
+		check(Strm->TotalSize() == 0x10000);
+		RgbTable = new vuint8[0x10000];
+		Strm->Serialise(RgbTable, 0x10000);
+		delete Strm;
+	}
+	return RgbTable;
+}
+
 //**************************************************************************
 //	VTexture
 //**************************************************************************
@@ -919,8 +942,6 @@ void VTexture::SetFrontSkyLayer()
 vuint8* VTexture::GetPixels8()
 {
 	guard(VTexture::GetPixels8);
-	static vuint8* RGBTable = 0;
-
 	//	If already have converted version, then just return it.
 	if (Pixels8Bit)
 	{
@@ -931,10 +952,7 @@ vuint8* VTexture::GetPixels8()
 	if (Format == TEXFMT_8Pal)
 	{
 		//	Remap to game palette
-		if (!RGBTable)
-		{
-			RGBTable = (vuint8*)W_CacheLumpName(NAME_rgbtable);
-		}
+		vuint8* RGBTable = GTextureManager.GetRgbTable();
 		int NumPixels = Width * Height;
 		rgba_t* Pal = GetPalette();
 		vuint8 Remap[256];
@@ -957,10 +975,7 @@ vuint8* VTexture::GetPixels8()
 	}
 	else if (Format == TEXFMT_RGBA)
 	{
-		if (!RGBTable)
-		{
-			RGBTable = (vuint8*)W_CacheLumpName(NAME_rgbtable);
-		}
+		vuint8* RGBTable = GTextureManager.GetRgbTable();
 		int NumPixels = Width * Height;
 		Pixels8Bit = new vuint8[NumPixels];
 		rgba_t* pSrc = (rgba_t*)Pixels;

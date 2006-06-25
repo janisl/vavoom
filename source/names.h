@@ -108,12 +108,6 @@ REGISTER_NAME(rgbtable)
 REGISTER_NAME(colormap)
 REGISTER_NAME(fogmap)
 REGISTER_NAME(translat)
-REGISTER_NAME(transp10)
-REGISTER_NAME(transp20)
-REGISTER_NAME(transp30)
-REGISTER_NAME(transp40)
-REGISTER_NAME(transp50)
-REGISTER_NAME(consmap)
 REGISTER_NAME(sndcurve)
 REGISTER_NAME(sndinfo)
 REGISTER_NAME(sndseq)
@@ -140,44 +134,3 @@ REGISTER_NAME(svprogs)
 	#undef REGISTER_NAME
 	#undef REGISTERING_ENUM
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.12  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//
-//	Revision 1.11  2006/02/25 17:12:38  dj_jl
-//	Added missing implementation of the player class.
-//	
-//	Revision 1.10  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.9  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.8  2005/12/27 22:24:00  dj_jl
-//	Created level info class, moved action special handling to it.
-//	
-//	Revision 1.7  2005/11/22 19:10:38  dj_jl
-//	Cleaned up a bit.
-//	
-//	Revision 1.6  2004/08/21 19:10:44  dj_jl
-//	Changed sound driver declaration.
-//	
-//	Revision 1.5  2004/08/21 17:22:15  dj_jl
-//	Changed rendering driver declaration.
-//	
-//	Revision 1.4  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//	
-//	Revision 1.3  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/12/18 18:57:11  dj_jl
-//	Added global name subsystem
-//	
-//**************************************************************************

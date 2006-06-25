@@ -232,10 +232,14 @@ void VSoftwareDrawer::ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 
 void VSoftwareDrawer::DrawConsoleBackground_8(int h)
 {
-	static byte *consbgmap = NULL;
 	if (!consbgmap)
 	{
-		consbgmap = (byte*)W_CacheLumpName(NAME_consmap);
+		consbgmap = new vuint8[256];
+		for (int i = 0; i < 256; i++)
+		{
+			consbgmap[i] = MakeCol8(0, 0, (int)(r_palette[i].r * 0.3 +
+				r_palette[i].g * 0.5 + r_palette[i].b * 0.2));
+		}
 	}
 
 	int w = ScreenWidth >> 2;

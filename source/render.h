@@ -87,8 +87,11 @@ public:
 	int CreatePatch(int Type, int LumpNum);
 	int AddRawWithPal(VName Name, VName PalName);
 	int AddFileTexture(VName Name, int Type);
+	vuint8* GetRgbTable();
 
 private:
+	vuint8*		RgbTable;
+
 	void InitTextures();
 	void InitFlats();
 	void InitOverloads();

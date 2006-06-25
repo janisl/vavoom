@@ -304,7 +304,9 @@ void Host_Frame()
 		if (!FilterTime())
 		{
 			//	Don't run too fast, or packets will flood out
+#ifndef CLIENT
 			Sys_Sleep();
+#endif
 			return;
 		}
 

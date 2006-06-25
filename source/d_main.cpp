@@ -645,13 +645,16 @@ void VSoftwareDrawer::FreeAllMemory()
 	Z_Free(fadetable32g);
 	Z_Free(fadetable32b);
 
-	Z_Free(tinttables[0]);
-	Z_Free(tinttables[1]);
-	Z_Free(tinttables[2]);
-	Z_Free(tinttables[3]);
-	Z_Free(tinttables[4]);
+	delete[] tinttables[0];
+	delete[] tinttables[1];
+	delete[] tinttables[2];
+	delete[] tinttables[3];
+	delete[] tinttables[4];
 
-	Z_Free(d_rgbtable);
-
+	if (consbgmap)
+	{
+		delete[] consbgmap;
+		consbgmap = NULL;
+	}
 	unguard;
 }

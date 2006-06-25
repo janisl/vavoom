@@ -782,9 +782,11 @@ void R_PrecacheLevel()
 static void InitTranslationTables()
 {
 	guard(InitTranslationTables);
-	int Lump = W_GetNumForName(NAME_translat);
-	translationtables = (vuint8*)W_CacheLumpNum(Lump);
-	int TabLen = W_LumpLength(Lump);
+	VStream* Strm = W_CreateLumpReaderName(NAME_translat);
+	int TabLen = Strm->TotalSize();
+	translationtables = new vuint8[TabLen];
+	Strm->Serialise(translationtables, TabLen);
+	delete Strm;
 	for (int i = 0; i < TabLen; i++)
 	{
 		if ((i & 0xff) == 0)

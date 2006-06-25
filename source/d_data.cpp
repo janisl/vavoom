@@ -60,10 +60,12 @@ byte			*fadetable32b;
 //
 //	Translucency tables
 //
-byte 			*tinttables[5];
+byte*			tinttables[5];
 word			scaletable[32][256];
 
-byte			*d_rgbtable;
+byte*			d_rgbtable;
+
+vuint8*			consbgmap = NULL;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -286,7 +288,10 @@ static void InitColourmaps()
 {
 	guard(InitColourmaps);
 	// Load in the light tables,
-	colormaps = (byte*)W_CacheLumpName(NAME_colormap);
+	VStream* Strm = W_CreateLumpReaderName(NAME_colormap);
+	colormaps = new vuint8[Strm->TotalSize()];
+	Strm->Serialise(colormaps, Strm->TotalSize());
+	delete Strm;
 	fadetable = colormaps;
 	fadetable16 = (word*)Z_Malloc(32 * 256 * 2);
 	fadetable16r = (word*)Z_Malloc(32 * 256 * 2);
@@ -301,6 +306,40 @@ static void InitColourmaps()
 
 //==========================================================================
 //
+//	CreateTranslucencyTable
+//
+//==========================================================================
+
+static vuint8* CreateTranslucencyTable(int transluc)
+{
+	guard(CreateTranslucencyTable);
+	vuint8 temp[768];
+	for (int i = 0; i < 256; i++)
+	{
+		temp[i * 3]     = r_palette[i].r * transluc / 100;
+		temp[i * 3 + 1] = r_palette[i].g * transluc / 100;
+		temp[i * 3 + 2] = r_palette[i].b * transluc / 100;
+	}
+	vuint8* table = new vuint8[0x10000];
+	vuint8* p = table;
+	for (int i = 0; i < 256; i++)
+	{
+		int r = r_palette[i].r * (100 - transluc) / 100;
+		int g = r_palette[i].g * (100 - transluc) / 100;
+		int b = r_palette[i].b * (100 - transluc) / 100;
+		vuint8* q = temp;
+		for (int j = 0; j < 256; j++)
+		{
+			*(p++) = MakeCol8(r + q[0], g + q[1], b + q[2]);
+			q += 3;
+		}
+	}
+	return table;
+	unguard;
+}
+
+//==========================================================================
+//
 //	InitTranslucencyTables
 //
 //==========================================================================
@@ -308,11 +347,11 @@ static void InitColourmaps()
 static void InitTranslucencyTables()
 {
 	guard(InitTranslucencyTables);
-	tinttables[0] = (byte*)W_CacheLumpName(NAME_transp10);
-	tinttables[1] = (byte*)W_CacheLumpName(NAME_transp20);
-	tinttables[2] = (byte*)W_CacheLumpName(NAME_transp30);
-	tinttables[3] = (byte*)W_CacheLumpName(NAME_transp40);
-	tinttables[4] = (byte*)W_CacheLumpName(NAME_transp50);
+	tinttables[0] = CreateTranslucencyTable(10);
+	tinttables[1] = CreateTranslucencyTable(20);
+	tinttables[2] = CreateTranslucencyTable(30);
+	tinttables[3] = CreateTranslucencyTable(40);
+	tinttables[4] = CreateTranslucencyTable(50);
 
 	for (int t = 0; t < 32; t++)
 	{
@@ -333,7 +372,7 @@ static void InitTranslucencyTables()
 void VSoftwareDrawer::InitData()
 {
 	guard(VSoftwareDrawer::InitData);
-	d_rgbtable = (byte*)W_CacheLumpName(NAME_rgbtable);
+	d_rgbtable = GTextureManager.GetRgbTable();
 	InitColourmaps();
 	InitTranslucencyTables();
 	unguard;
@@ -435,7 +474,10 @@ void VSoftwareDrawer::NewMap()
 
 	if (r_fog)
 	{
-		fadetable = (byte*)W_CacheLumpName(NAME_fogmap);
+		VStream* Strm = W_CreateLumpReaderName(NAME_fogmap);
+		fadetable = new vuint8[Strm->TotalSize()];
+		Strm->Serialise(fadetable, Strm->TotalSize());
+		delete Strm;
 	}
 	else
 	{

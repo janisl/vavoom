@@ -393,6 +393,8 @@ extern byte				*fadetable32r;
 extern byte				*fadetable32g;
 extern byte				*fadetable32b;
 
+extern vuint8*			consbgmap;
+
 extern byte				*scrn;
 extern short			*zbuffer;
 
