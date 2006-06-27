@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -77,41 +77,3 @@ enum
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.12  2006/03/26 13:08:05  dj_jl
-//  Implemented support for modular progs.
-//
-//  Revision 1.11  2006/02/20 22:57:17  dj_jl
-//  Changed client state structure to class.
-//
-//  Revision 1.10  2006/02/17 19:06:52  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.9  2002/03/20 19:07:46  dj_jl
-//  Got rid of a lots of legacy, beautification.
-//
-//  Revision 1.8  2002/01/07 12:23:17  dj_jl
-//  Changed copyright year
-//
-//  Revision 1.7  2001/10/09 17:35:46  dj_jl
-//  Split server defines into seperate file
-//
-//  Revision 1.6  2001/10/02 17:42:38  dj_jl
-//  Possibility to declare function's code inside class declaration
-//
-//  Revision 1.5  2001/09/24 17:15:00  dj_jl
-//  Created thinker classes
-//
-//  Revision 1.4  2001/09/20 16:19:59  dj_jl
-//  Start using object-oriented stuff, beautification
-//  
-//  Revision 1.3  2001/08/29 17:42:13  dj_jl
-//  Added sound channel
-//  
-//  Revision 1.2  2001/07/27 14:27:52  dj_jl
-//  Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -178,26 +178,3 @@ class TPlane
 		SetPointDir(v1, v2 - v1);
 	}
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.7  2004/12/27 12:23:18  dj_jl
-//	Multiple small changes for version 1.16
-//
-//	Revision 1.6  2002/08/24 14:41:35  dj_jl
-//	Removed usage of the iostream.
-//	
-//	Revision 1.5  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2002/01/03 18:35:14  dj_jl
-//	Switched to doubles, some fixes
-//	
-//	Revision 1.3  2001/08/24 17:08:34  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

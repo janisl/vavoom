@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -120,38 +120,3 @@ void SB_Start(void)
 {
 	GClGame->eventStatusBarStartMap();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//
-//	Revision 1.10  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.9  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.8  2001/12/27 17:36:47  dj_jl
-//	Some speedup
-//	
-//	Revision 1.7  2001/10/02 17:36:08  dj_jl
-//	Removed status bar widgets
-//	
-//	Revision 1.6  2001/08/30 17:44:07  dj_jl
-//	Removed memory leaks after startup
-//	
-//	Revision 1.5  2001/08/21 17:39:22  dj_jl
-//	Real string pointers in progs
-//	
-//	Revision 1.4  2001/08/15 17:08:15  dj_jl
-//	Fixed Strife status bar
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

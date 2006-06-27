@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -48,14 +48,3 @@ class	VRootWindow;
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.2  2002/06/14 15:39:22  dj_jl
-//	Some fixes for Borland.
-//
-//	Revision 1.1  2002/05/29 16:51:50  dj_jl
-//	Started a work on native Window classes.
-//	
-//**************************************************************************

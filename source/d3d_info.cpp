@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -946,20 +946,3 @@ void VDirect3DDrawer::LogPixelFormat(FOutputDevice &Ar, const LPDDPIXELFORMAT pf
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//
-//	Revision 1.3  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.2  2001/09/14 16:48:22  dj_jl
-//	Switched to DirectX 8
-//	
-//	Revision 1.1  2001/08/30 17:40:21  dj_jl
-//	Seperated from d3d_main
-//	
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -383,32 +383,3 @@ bool CL_TraceLine(const TVec &start, const TVec &end)
 	return false;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.9  2002/09/07 16:31:50  dj_jl
-//	Added Level class.
-//
-//	Revision 1.8  2002/08/05 17:20:00  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.7  2002/04/11 16:44:44  dj_jl
-//	Got rid of some warnings.
-//	
-//	Revision 1.6  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/10/27 07:51:27  dj_jl
-//	Beautification
-//	
-//	Revision 1.4  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

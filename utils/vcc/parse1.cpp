@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -77,7 +77,7 @@ static void SkipLocalVar()
 			SkipExpressionPriority13();
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
-		//  inicializ∆cija
+		//  Initialisation
 		else if (TK_Check(PU_ASSIGN))
 		{
 			SkipExpressionPriority13();
@@ -478,7 +478,7 @@ void ParseMethodDef(const TType& t, VName MName, TLocation MethodLoc,
 {
 	if (t.type != ev_void)
 	{
-		//	Function's rturn type must be void, vector or with size 4
+		//	Function's return type must be void, vector or with size 4
 		t.CheckPassable();
 	}
 
@@ -599,7 +599,7 @@ void ParseDelegate(const TType& t, VField* method, VClass* InClass,
 {
 	if (t.type != ev_void)
 	{
-		//	Function's rturn type must be void, vector or with size 4
+		//	Function's return type must be void, vector or with size 4
 		t.CheckPassable();
 	}
 

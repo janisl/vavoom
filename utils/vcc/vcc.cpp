@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -332,63 +332,3 @@ int dprintf(const char *text, ...)
 	fflush(fp);
 	return ret;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.19  2006/03/26 13:06:49  dj_jl
-//	Implemented support for modular progs.
-//
-//	Revision 1.18  2006/02/27 21:23:55  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.17  2005/11/29 19:31:43  dj_jl
-//	Class and struct classes, removed namespaces, beautification.
-//	
-//	Revision 1.16  2005/11/24 20:42:05  dj_jl
-//	Renamed opcodes, cleanup and improvements.
-//	
-//	Revision 1.15  2003/03/08 12:47:52  dj_jl
-//	Code cleanup.
-//	
-//	Revision 1.14  2002/11/02 17:11:13  dj_jl
-//	New style classes.
-//	
-//	Revision 1.13  2002/08/24 14:45:38  dj_jl
-//	2 pass compiling.
-//	
-//	Revision 1.12  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//	Revision 1.11  2002/01/07 12:31:36  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.10  2001/12/27 17:44:02  dj_jl
-//	Removed support for C++ style constructors and destructors, some fixes
-//	
-//	Revision 1.9  2001/12/12 19:22:22  dj_jl
-//	Support for method usage as state functions, dynamic cast
-//	Added dynamic arrays
-//	
-//	Revision 1.8  2001/12/01 18:17:09  dj_jl
-//	Fixed calling of parent method, speedup
-//	
-//	Revision 1.7  2001/10/09 17:31:55  dj_jl
-//	Addfields to class disabled by default
-//	
-//	Revision 1.6  2001/10/02 17:46:04  dj_jl
-//	Preprocessing into a memory buffer
-//	
-//	Revision 1.5  2001/09/24 17:31:38  dj_jl
-//	Some fixes
-//	
-//	Revision 1.4  2001/09/20 16:09:55  dj_jl
-//	Added basic object-oriented support
-//	
-//	Revision 1.3  2001/08/21 17:52:54  dj_jl
-//	Added support for real string pointers, beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

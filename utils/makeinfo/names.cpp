@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1251,11 +1251,3 @@ char* weapon_names[] =
     "WeaponChainsaw",
     "WeaponSuperShotgun",
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.1  2002/07/13 08:17:19  dj_jl
-//	Removed all non-Doom stuff, since it's now used only for DeHackEd.
-//
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -31,14 +31,3 @@
 #include "BasePlayer.vc"
 #include "ViewEntity.vc"
 #include "GameInfo.vc"
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/03/06 13:13:55  dj_jl
-//  Client now uses entity class.
-//
-//  Revision 1.1  2002/10/26 16:32:17  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

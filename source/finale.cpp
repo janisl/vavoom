@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -77,29 +77,3 @@ boolean F_Responder(event_t *event)
     	return false;
     return GClGame->eventFinaleResponder(event);
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//
-//	Revision 1.7  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.6  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/08/15 17:08:59  dj_jl
-//	Fixed finale
-//	
-//	Revision 1.4  2001/08/07 16:48:54  dj_jl
-//	Beautification
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -517,47 +517,3 @@ bool VEntity::CanSee(VEntity* Other)
 #endif
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.14  2005/11/24 20:09:23  dj_jl
-//	Removed unused fields from Object class.
-//
-//	Revision 1.13  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.12  2002/08/28 16:41:10  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.11  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.10  2002/03/09 18:02:53  dj_jl
-//	Added early out when one-sided line is crossed
-//	
-//	Revision 1.9  2002/03/02 17:31:55  dj_jl
-//	Improved sight checking with 3 rays.
-//	
-//	Revision 1.8  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.7  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2002/01/04 18:21:48  dj_jl
-//	A little protection against crashes
-//	
-//	Revision 1.5  2001/12/18 19:03:16  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.4  2001/08/31 17:28:00  dj_jl
-//	Removed RANGECHECK
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

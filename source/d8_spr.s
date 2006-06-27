@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -910,20 +910,3 @@ LNextSpan:
 	ret
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -30,17 +30,3 @@ defaultproperties
 	ConversationID = 320;
 	QuestID = QUEST_GotDerwinsEar;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2004/10/13 06:36:30  dj_jl
-//  Implemented items also giving quests.
-//
-//  Revision 1.2  2003/10/02 17:10:48  dj_jl
-//  Quest items.
-//
-//  Revision 1.1  2002/11/02 08:20:56  dj_jl
-//  New style classes.
-//
-//**************************************************************************

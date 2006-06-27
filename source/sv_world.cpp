@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1100,77 +1100,3 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 	}
 	return ret;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.24  2006/03/18 16:51:15  dj_jl
-//	Renamed type class names, better code serialisation.
-//
-//	Revision 1.23  2006/03/12 12:54:49  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.22  2005/12/11 21:37:00  dj_jl
-//	Made path traversal callbacks class members.
-//	
-//	Revision 1.21  2005/04/28 07:16:16  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.20  2004/12/27 12:23:17  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.19  2003/07/03 18:11:13  dj_jl
-//	Moving extrafloors
-//	
-//	Revision 1.18  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.17  2002/08/28 16:41:10  dj_jl
-//	Merged VMapObject with VEntity, some natives.
-//	
-//	Revision 1.16  2002/08/24 14:49:43  dj_jl
-//	Beautification.
-//	
-//	Revision 1.15  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.14  2002/07/13 07:50:58  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.13  2002/03/09 18:07:10  dj_jl
-//	SV_BlockLinesIterator not used by progs anymore
-//	
-//	Revision 1.12  2002/02/15 19:12:04  dj_jl
-//	Property namig style change
-//	
-//	Revision 1.11  2002/02/14 19:23:58  dj_jl
-//	Beautification
-//	
-//	Revision 1.10  2002/02/06 17:30:36  dj_jl
-//	Replaced Actor flags with boolean variables.
-//	
-//	Revision 1.9  2002/02/02 19:20:41  dj_jl
-//	VMethod pointers used instead of the function numbers
-//	
-//	Revision 1.8  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/12/18 19:03:17  dj_jl
-//	A lots of work on VObject
-//	
-//	Revision 1.6  2001/10/27 07:49:29  dj_jl
-//	Fixed map block stuff
-//	
-//	Revision 1.5  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.4  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

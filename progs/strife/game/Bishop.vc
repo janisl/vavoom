@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -116,29 +116,3 @@ defaultproperties
 	DeathSound = 'bishop/death';
 	ExplodeEffect = StrifeDefs::EF_DL_MISSILE;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.7  2006/04/09 15:35:16  dj_jl
-//  Added static lights and other lighting effects.
-//
-//  Revision 1.6  2006/03/12 20:01:24  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.5  2005/11/19 13:43:50  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.4  2005/03/28 07:45:29  dj_jl
-//  Some Boom line specials, fixed multiple bugs.
-//
-//  Revision 1.3  2004/10/18 06:35:20  dj_jl
-//  Implemented many monsters, sigil and some more.
-//
-//  Revision 1.2  2004/01/29 07:25:05  dj_jl
-//  Implemented many action functions
-//
-//  Revision 1.1  2002/11/02 08:20:56  dj_jl
-//  New style classes.
-//
-//**************************************************************************

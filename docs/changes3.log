@@ -1,181 +1,181 @@
 
 15.06.2002
-  AtklÆjÆs, ka Hexen-Æ monstri neredz spñlñtÆju. DØvaini, jo man ıóita, ke es
+  AtklÄjÄs, ka Hexen-Ä monstri neredz spÄ“lÄ“tÄju. DÄ«vaini, jo man Å¡Ä·ita, ke es
  to jau izlaboju.
 17.06.2002
-  Heretic objektu pÆrkÆrtoıana. Ieviestas pamatklases, viss saıóirots. Tika
- floatizñts PainChance.
+  Heretic objektu pÄrkÄrtoÅ¡ana. Ieviestas pamatklases, viss saÅ¡Ä·irots. Tika
+ floatizÄ“ts PainChance.
 18.06.2002
-  PÆrnesu SlideMove un BounceWall uz end÷ini.
+  PÄrnesu SlideMove un BounceWall uz endÅ¾ini.
 19.06.2002
-  Hexen objektu pÆrkÆrtoıana. Ieviestas bÆzes klases, ıóiroıana.
+  Hexen objektu pÄrkÄrtoÅ¡ana. Ieviestas bÄzes klases, Å¡Ä·iroÅ¡ana.
 20.06.2002
   Pievienoju funkciju FindClass.
-  Pabeidzu ıóirot Hexen klases. BaigÆ no·emıanÆs.
-  SÆku atıóirot Strife paceõmos priekımetus.
+  Pabeidzu Å¡Ä·irot Hexen klases. BaigÄ noÅ†emÅ¡anÄs.
+  SÄku atÅ¡Ä·irot Strife paceÄ¼mos priekÅ¡metus.
 21.06.2002
-  IzrÆdÆs ka sarunu skriptos priekımeti tiek doti izmantojot indeksu tabulÆ.
- Visi Strife pickup-i ir atseviıói.
+  IzrÄdÄs ka sarunu skriptos priekÅ¡meti tiek doti izmantojot indeksu tabulÄ.
+ Visi Strife pickup-i ir atseviÅ¡Ä·i.
 22.06.2002
-  Strife atslñgas, munØciju un ieroÒus jau var pa·emt. GandrØz visi ieroÒi ir
- strÆdñjoıi.
+  Strife atslÄ“gas, munÄ«ciju un ieroÄus jau var paÅ†emt. GandrÄ«z visi ieroÄi ir
+ strÄdÄ“joÅ¡i.
 25.06.2002
-  Visur pÆrgÆju uz peldoıÆ komata PainChance.
-  Darbojos ar Strife dekorÆcijÆm.
+  Visur pÄrgÄju uz peldoÅ¡Ä komata PainChance.
+  Darbojos ar Strife dekorÄcijÄm.
 26.06.2002
-  Salaboju Doom statiskÆs gaismas.
-  Pabeidzu ar Strife dekorÆcijÆm.
+  Salaboju Doom statiskÄs gaismas.
+  Pabeidzu ar Strife dekorÄcijÄm.
 27.06.2002
-  Ieviesu kopñjo fragu skaitØtÆju.
+  Ieviesu kopÄ“jo fragu skaitÄ«tÄju.
 01.07.2002
-  StrÆdÆju pie strife. Darbojos ar monstru ıÆvi·iem un citiem efektiem. Visas
- funkcijas ir apvienotas, daõa jau sadalØtas pa attiecØgajÆm klasñm.
+  StrÄdÄju pie strife. Darbojos ar monstru Å¡ÄviÅ†iem un citiem efektiem. Visas
+ funkcijas ir apvienotas, daÄ¼a jau sadalÄ«tas pa attiecÄ«gajÄm klasÄ“m.
 02.07.2002
-  PilnØbÆ pabeidzu Strife datu apvienoıanu, sakÆrtoıana.
-  Segmentu dati tiek interpretñti kÆ bez zØmes, kas atrisinÆs problñmu ar õoti
- lieliem lØme·iem.
+  PilnÄ«bÄ pabeidzu Strife datu apvienoÅ¡anu, sakÄrtoÅ¡ana.
+  Segmentu dati tiek interpretÄ“ti kÄ bez zÄ«mes, kas atrisinÄs problÄ“mu ar Ä¼oti
+ lieliem lÄ«meÅ†iem.
 03.07.2002
-  PÆris globÆlo funkciju pÆrnestas uz Entity klasi.
-  Neliels uzlabojums lØme·a ielÆdñ kas atõauj ielÆdñt problemÆtiskus lØme·us.
-  Salaboju tØkla paketes izmñra haku vienspñlñtÆja re÷ØmÆ.
-  makeinfo izmetu ÆrÆ Heretic, Hexen un Strife datus, pÆrgrupñju Doom datus.
- Iespñjams es to pÆrdñvñıu par deh2vc.
+  PÄris globÄlo funkciju pÄrnestas uz Entity klasi.
+  Neliels uzlabojums lÄ«meÅ†a ielÄdÄ“ kas atÄ¼auj ielÄdÄ“t problemÄtiskus lÄ«meÅ†us.
+  Salaboju tÄ«kla paketes izmÄ“ra haku vienspÄ“lÄ“tÄja reÅ¾Ä«mÄ.
+  makeinfo izmetu ÄrÄ Heretic, Hexen un Strife datus, pÄrgrupÄ“ju Doom datus.
+ IespÄ“jams es to pÄrdÄ“vÄ“Å¡u par deh2vc.
 06.07.2002
-  Heretic un Hexen pievienoti jauni modeõi.
+  Heretic un Hexen pievienoti jauni modeÄ¼i.
 08.07.2002
-  Turpinu modeõu pievienoıanu un uzlaboıanu.
+  Turpinu modeÄ¼u pievienoÅ¡anu un uzlaboÅ¡anu.
 12.07.2002
-  Rendñıanas draiveri tagad pieder VObject objektu kokam.
-  Visi draiveri zØmñ lØmeni vienÆ virzienÆ.
+  RendÄ“Å¡anas draiveri tagad pieder VObject objektu kokam.
+  Visi draiveri zÄ«mÄ“ lÄ«meni vienÄ virzienÄ.
 13.07.2002
-  Srife izmetu ÆrÆ visus shareware versijas datus.
-  Neliela kõİdi·a asemblera failÆ.
+  Srife izmetu ÄrÄ visus shareware versijas datus.
+  Neliela kÄ¼Å«diÅ†a asemblera failÄ.
 15.07.2002
   Srife izveidoju ievada sekvenci.
 16.07.2002
-  KompilÆtorÆ aizvietoju stÆvokLu tabulas ar dinamiskajiem masØviem.
-  SÆku darbu pie ska·as draiveru objektiem.
+  KompilÄtorÄ aizvietoju stÄvokLu tabulas ar dinamiskajiem masÄ«viem.
+  SÄku darbu pie skaÅ†as draiveru objektiem.
 17.07.2002
-  Daõa ska·as draivera funkciju ir klases funkcijas.
+  DaÄ¼a skaÅ†as draivera funkciju ir klases funkcijas.
 18.07.2002
-  Salaboju pieslñgıanos tØkla spñlei no menu, kÆ arØ vienu problñmu Heretic,
- kas uzkÆra tØkla spñli.
-  Pabeidzu ar ska·as draivera objektu, sÆku ieviest OpenAL draiveri. Ja nav
- ska·as datu, vairs netiks pÆrtraukta spñle.
+  Salaboju pieslÄ“gÅ¡anos tÄ«kla spÄ“lei no menu, kÄ arÄ« vienu problÄ“mu Heretic,
+ kas uzkÄra tÄ«kla spÄ“li.
+  Pabeidzu ar skaÅ†as draivera objektu, sÄku ieviest OpenAL draiveri. Ja nav
+ skaÅ†as datu, vairs netiks pÄrtraukta spÄ“le.
 19.07.2002
-  AtrisinÆju problñmu ar giard makrosiem.
+  AtrisinÄju problÄ“mu ar giard makrosiem.
 20.07.2002
-  Aizvietoju pÆris takıu skaitØtÆjus ar peldoıÆ komata laiku.
-  PilnØbÆ implementñju OpenAL draiveri.
+  Aizvietoju pÄris takÅ¡u skaitÄ«tÄjus ar peldoÅ¡Ä komata laiku.
+  PilnÄ«bÄ implementÄ“ju OpenAL draiveri.
 22.07.2002
-  OficiÆli pÆrgÆju uz peldoıÆ komata laiku.
+  OficiÄli pÄrgÄju uz peldoÅ¡Ä komata laiku.
   Izlaidu beta versiju.
 23.07.2002
-  PilnØbÆ atbrØvojos no iostream.
+  PilnÄ«bÄ atbrÄ«vojos no iostream.
 26.07.2002
-  SÆku ieviest Strife sarunas.
+  SÄku ieviest Strife sarunas.
 29.07.2002
-  Strife sarunas jau strÆdÆ.
-  Konsolñ skrollings pa 5 lØnijÆm, ar SHIFT pa vienai.
+  Strife sarunas jau strÄdÄ.
+  KonsolÄ“ skrollings pa 5 lÄ«nijÄm, ar SHIFT pa vienai.
 30.07.2002
-  PÆris dienas atpakaõ pateicu glBSP autoram par izmai·Æm. Vi·am paıam bija
- vñl pÆris izmai·as, kuras tika atjauninÆtas.
+  PÄris dienas atpakaÄ¼ pateicu glBSP autoram par izmaiÅ†Äm. ViÅ†am paÅ¡am bija
+ vÄ“l pÄris izmaiÅ†as, kuras tika atjauninÄtas.
 01.08.2002
-  Atjaunoju glBSP ar paıu jaunÆko versiju, kuru Endrjİ ir aploudojis CVS.
-  Atjaunoju vlaunch ar pÆris jaunÆm lietÆm.
+  Atjaunoju glBSP ar paÅ¡u jaunÄko versiju, kuru EndrjÅ« ir aploudojis CVS.
+  Atjaunoju vlaunch ar pÄris jaunÄm lietÄm.
 03.08.2002
   Pievienoju Heretic Gold Wand modeli.
 05.08.2002
-  PiestrÆdÆju pie modeõiem.
-  Sla·u sekvences tiek pÆrsİtØtas ar droıo protokolu.
+  PiestrÄdÄju pie modeÄ¼iem.
+  SlaÅ†u sekvences tiek pÄrsÅ«tÄ«tas ar droÅ¡o protokolu.
 06.08.2002
-  PÆris sØki labojumi. SakÆrtoju DDF un DeHackEd atbalstu.
-  Pielaboju OpenAL draiveri Linux vajadzØbÆm. Linux versijÆ ıis tas trİkst.
-  Poliobjektu grİzıanas kodÆ netika pareizi nodoti peldoıÆ komata skaitõi,
- kas iespñjams radØja FPU kõİdas.
-  Endrjİ radÆs ideja kÆ glBSP atrisinÆt problñmu, kad tiek sadalØts sektors
- ar poliobjektu pa virsotnñm. StrÆdÆ labi.
+  PÄris sÄ«ki labojumi. SakÄrtoju DDF un DeHackEd atbalstu.
+  Pielaboju OpenAL draiveri Linux vajadzÄ«bÄm. Linux versijÄ Å¡is tas trÅ«kst.
+  Poliobjektu grÅ«zÅ¡anas kodÄ netika pareizi nodoti peldoÅ¡Ä komata skaitÄ¼i,
+ kas iespÄ“jams radÄ«ja FPU kÄ¼Å«das.
+  EndrjÅ« radÄs ideja kÄ glBSP atrisinÄt problÄ“mu, kad tiek sadalÄ«ts sektors
+ ar poliobjektu pa virsotnÄ“m. StrÄdÄ labi.
 
 ******************************************************************************
                             VERSIJA 1.14
 ******************************************************************************
 
 12.08.2002
-  IzmñÖinÆju MP3 ar fmod, strÆdÆ normÆli.
+  IzmÄ“Ä£inÄju MP3 ar fmod, strÄdÄ normÄli.
 13.08.2002
-  DDF atbalstÆ nomainØju ObjInitState uz stÆvokõa vÆrdu.
-  ddf2vc portñju uz Windows, ar Borland strÆdA normÆli, problñmas ar MSVC.
- Vñl netiek eksportñti stÆvokõi objektiem bez tiem.
+  DDF atbalstÄ nomainÄ«ju ObjInitState uz stÄvokÄ¼a vÄrdu.
+  ddf2vc portÄ“ju uz Windows, ar Borland strÄdA normÄli, problÄ“mas ar MSVC.
+ VÄ“l netiek eksportÄ“ti stÄvokÄ¼i objektiem bez tiem.
 14.08.2002
-  SÆku strÆdÆt pie 2 piegÆjienu kompilatora.
+  SÄku strÄdÄt pie 2 piegÄjienu kompilatora.
 16.08.2002
-  Nopietns progress 2 piegÆjienu kompilñıanÆ.
+  Nopietns progress 2 piegÄjienu kompilÄ“Å¡anÄ.
 17.08.2002
-  2 piegÆjienu kompilñıana ir strÆdAjoıa.
+  2 piegÄjienu kompilÄ“Å¡ana ir strÄdAjoÅ¡a.
 19.08.2002
-  AtrisinÆju problñmu ar BLOCKMAP lielÆku par 64k.
-  Salaboju skrØnıotus.
+  AtrisinÄju problÄ“mu ar BLOCKMAP lielÄku par 64k.
+  Salaboju skrÄ«nÅ¡otus.
 20.08.2002
-  Implementñju slØpo virsmu definñıanu izmantojot virsot·u augstumus.
+  ImplementÄ“ju slÄ«po virsmu definÄ“Å¡anu izmantojot virsotÅ†u augstumus.
 23.08.2002
-  UtilØtos atbrØvojos no iostream.
+  UtilÄ«tos atbrÄ«vojos no iostream.
 26.08.2002
-  SlØpo virsmu definñıana izmantojot ZDoom lØniju speciÆlu.
-  PadarØju VEntity publisku.
+  SlÄ«po virsmu definÄ“Å¡ana izmantojot ZDoom lÄ«niju speciÄlu.
+  PadarÄ«ju VEntity publisku.
 27.08.2002
-  Ieviesu atbalstu krÆsainam sektoru apgaismojumam.
+  Ieviesu atbalstu krÄsainam sektoru apgaismojumam.
   Apvienoju Entity un MapObject klases.
 28.08.2002
-  Hexen atbrØvojos no tilta orbØtu tabulÆm.
-  Konfigurñjams entØıu limits.
-  Ieviesu atbalstu vecajÆm ekrÆna proporcijÆm.
+  Hexen atbrÄ«vojos no tilta orbÄ«tu tabulÄm.
+  KonfigurÄ“jams entÄ«Å¡u limits.
+  Ieviesu atbalstu vecajÄm ekrÄna proporcijÄm.
 29.08.2002
-  SÆku ieviest lØme·a klasi.
+  SÄku ieviest lÄ«meÅ†a klasi.
 30.08.2002
-  Visi lØme·a dati ir pÆrnesti uz lØme·a klasi.
-  Apgreidoju tekstİru utilØtu. Var konvertñt Strife tekstİras.
+  Visi lÄ«meÅ†a dati ir pÄrnesti uz lÄ«meÅ†a klasi.
+  Apgreidoju tekstÅ«ru utilÄ«tu. Var konvertÄ“t Strife tekstÅ«ras.
 31.08.2002
-  Turpinu darbu pie lØme·a klases, pÆrnestas veirÆkas funkcijas.
-  Var eksportñt Strife tekstİras atpakaõ wad failÆ.
-  SkriptÆ bool var izmantot funkciju argumentos un kÆ atgrie÷amo tipu.
+  Turpinu darbu pie lÄ«meÅ†a klases, pÄrnestas veirÄkas funkcijas.
+  Var eksportÄ“t Strife tekstÅ«ras atpakaÄ¼ wad failÄ.
+  SkriptÄ bool var izmantot funkciju argumentos un kÄ atgrieÅ¾amo tipu.
 02.09.2002
-  SkriptÆ atbrØvojos no PointInSubsector, visur ØstenØbÆ ir vajadzØgs sektors.
-  PieıóirıanÆ netika pÆrbaudØta tipu savietojamØba.
+  SkriptÄ atbrÄ«vojos no PointInSubsector, visur Ä«stenÄ«bÄ ir vajadzÄ«gs sektors.
+  PieÅ¡Ä·irÅ¡anÄ netika pÄrbaudÄ«ta tipu savietojamÄ«ba.
 05.09.2002
-  PÆrnesu P_ChangeSector uz dzini.
+  PÄrnesu P_ChangeSector uz dzini.
 07.09.2002
   Aizvietoju boolean ar bool.
-  PÆrnesu RoughMonsterSearch uz dzini.
+  PÄrnesu RoughMonsterSearch uz dzini.
 14.09.2002
-  SÆku pÆrveidot klases jaunÆ stilÆ.
+  SÄku pÄrveidot klases jaunÄ stilÄ.
 21.09.2002
-  Turpinu sadali. Ğodien kÆrta Hexen. Ak, vai!
+  Turpinu sadali. Å odien kÄrta Hexen. Ak, vai!
 28.09.2002
-  Turpinu. KÆrta vñl vienai kaudzei klaıu.
+  Turpinu. KÄrta vÄ“l vienai kaudzei klaÅ¡u.
 05.10.2002
-  Sodien kÆrta Strife klasñm.
+  Sodien kÄrta Strife klasÄ“m.
 12.10.2002
-  Dienas kÆrtØbÆ menu.
+  Dienas kÄrtÄ«bÄ menu.
 19.10.2002
-  KÆrta menu objektiem.
+  KÄrta menu objektiem.
 26.10.2002
-  Beidzot arØ servera pamatklases. Tas viss tika apdeitots iekı CVS, bet tÆ
- laikA uzkÆrÆs kompis un radÆk konflikti. Nebija laika Òakarñties. Bet pats
- galvenais ir tas, ka visas klases ir jaunajÆ stilÆ.
+  Beidzot arÄ« servera pamatklases. Tas viss tika apdeitots iekÅ¡ CVS, bet tÄ
+ laikA uzkÄrÄs kompis un radÄk konflikti. Nebija laika ÄakarÄ“ties. Bet pats
+ galvenais ir tas, ka visas klases ir jaunajÄ stilÄ.
 02.11.2002
-  Tiku galÆ ar CVS konfliktu. VisÆdi citÆd izjaukta diena.
+  Tiku galÄ ar CVS konfliktu. VisÄdi citÄd izjaukta diena.
 09.11.2002
-  Atradu kÆpñc ACS kÆrÆs - aizmirsu iekõaut skripta failu.
+  Atradu kÄpÄ“c ACS kÄrÄs - aizmirsu iekÄ¼aut skripta failu.
 16.11.2002
-  PÆris uzlabojumi softa draiverØ. PÆris citi sØki labojumi.
+  PÄris uzlabojumi softa draiverÄ«. PÄris citi sÄ«ki labojumi.
 02.01.2003
-  PÆris pÆrkÆrtojumi menu, konkrñti ievada lØnija.
-  KompilÆtorÆ ir tikai 2 piegÆjienu versija, atbrØvojos no this pointera.
+  PÄris pÄrkÄrtojumi menu, konkrÄ“ti ievada lÄ«nija.
+  KompilÄtorÄ ir tikai 2 piegÄjienu versija, atbrÄ«vojos no this pointera.
 15.02.2003
-  Ievada lØniju integrÆcija.
+  Ievada lÄ«niju integrÄcija.
   Korekts Destroy.
 08.03.2003
-  Uzlaboju tØkla spñli, cerams ka nebİs aizturu.
+  Uzlaboju tÄ«kla spÄ“li, cerams ka nebÅ«s aizturu.
 
 ******************************************************************************
                             VERSIJA 1.15
@@ -1259,3 +1259,59 @@
  the actual driver class in system specific module.
 06.06.2006
   Added sector sound sequence thing types to editor config files.
+07.06.2006
+  Changed socket structure into a class, some network methods moved to this
+ class. Created networking class.
+08.06.2006
+  Finished work on networking class.
+  Changed list of search paths and wad files to be dynamic arrays. Removed
+ limit of open wad files.
+11.06.2006
+  Added DESTDIR to Makefile.
+  Fixed miscompilation of message.cpp with latest versions of gcc.
+  Changed several fields in level structure to names, removed unused argument
+ from register picture methods.
+  Made file search path directory and wad file to have a common base class,
+ merged lists of search paths and wad files into one.
+  Started work on implementing support for dynamic strings in VavoomC.
+  Firebrand did some improvements to automap.
+12.06.2006
+  Finished implemnting dynamic strings in VavoomC.
+  Removed TProgs class, most of it is merged into VObject.
+14.06.2006
+  Changed default virtual screen resolution to 640x480 (so in next version
+ there's visually something new :-). Updated corresponding drawing methods.
+15.06.2006
+  Finished adjusting drawing methods to new resolution.
+17.06.2006
+  Started to rewrite ACS virtual machine in a way similar to progs virtual
+ machine.
+18.06.2006
+  Finished most of the work on ACS virtual machine rewrite.
+19.06.2006
+  Firebrand implemented support for customiseable gravity.
+  Some more work on ACS.
+21.06.2006
+  Changed the way poly-wait and tag-wait ACS commands work and basicly finshed
+ with ACS VM at the moment.
+  Properly clear references to thinkers in sectors and polyobjs.
+22.06.2006
+  Installed MinGW, compiles fine with it, just had to fix the Makefile.
+23.06.2006
+  Added template Spawn for simpler object creation.
+  Some fixes for software renderer.
+  Added to class info reference to the default properties method, did some more
+ fixes to be able to have class with no VavoomC code, made ACS class like this.
+24.06.2006
+  Moved calculation of translucency tables to engine, changed the way RGB table
+ is handled.
+  Fixed check for available screenshot file name.
+25.06.2006
+  Fixed crashes with network games, some improvements.
+  Changed remaining wad lump caching usages to use streams to load data. Got
+ rid of lump caching.
+  Implemented sound manager class, basicly everything in s_data. Also decided
+ to move parsing and list of sound sequences to this class.
+26.06.2006
+  Converted source files to UTF-8, updated copyright year and deleted old logs
+ (once I'm changing all of the files).

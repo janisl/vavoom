@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -62,38 +62,3 @@ void C_CenterMessage(const char *msg);
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern FOutputDevice	*GCon;
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/02/21 22:31:44  dj_jl
-//	Created dynamic string class.
-//
-//	Revision 1.10  2005/04/28 07:16:11  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.9  2004/12/03 16:15:46  dj_jl
-//	Implemented support for extended ACS format scripts, functions, libraries and more.
-//	
-//	Revision 1.8  2002/07/23 16:29:55  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.7  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.6  2002/01/07 12:16:41  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/08/15 17:26:35  dj_jl
-//	Made console not active when closing
-//	
-//	Revision 1.4  2001/08/07 16:49:26  dj_jl
-//	Added C_Active
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

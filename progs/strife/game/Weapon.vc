@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -291,50 +291,3 @@ defaultproperties
 	bRaiseNoiseAlert = true;
 	FireDeathWaveState = S_WAVE1;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.14  2006/04/09 15:34:39  dj_jl
-//  Added static lights and other lighting effects.
-//
-//  Revision 1.13  2006/03/12 20:01:25  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.12  2006/03/02 18:36:30  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.11  2006/02/28 22:47:55  dj_jl
-//  Replaced defines with constants.
-//
-//  Revision 1.10  2006/02/17 19:06:53  dj_jl
-//  Moved common defs to classes.
-//
-//  Revision 1.9  2006/02/15 23:34:27  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.8  2006/02/13 18:30:17  dj_jl
-//  Moved all server progs global functions to classes.
-//
-//  Revision 1.7  2005/11/19 13:43:51  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.6  2005/03/28 07:45:29  dj_jl
-//  Some Boom line specials, fixed multiple bugs.
-//
-//  Revision 1.5  2004/08/23 19:24:01  dj_jl
-//  Moved weapon utilites to player class.
-//
-//  Revision 1.4  2004/01/30 17:39:34  dj_jl
-//  Implemented many action functions.
-//
-//  Revision 1.3  2003/11/12 16:51:33  dj_jl
-//  Changed player structure into a class
-//
-//  Revision 1.2  2003/09/11 17:21:04  dj_jl
-//  Silent weapons
-//
-//  Revision 1.1  2002/11/02 08:20:57  dj_jl
-//  New style classes.
-//
-//**************************************************************************

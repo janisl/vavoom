@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -119,17 +119,3 @@ inline vuint32 GetTypeHash(const VName N)
 {
 	return N.GetIndex();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2006/02/27 21:23:54  dj_jl
-//	Rewrote names class.
-//
-//	Revision 1.2  2005/11/24 20:41:07  dj_jl
-//	Cleaned up a bit.
-//	
-//	Revision 1.1  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//**************************************************************************

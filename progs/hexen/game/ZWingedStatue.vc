@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -38,14 +38,3 @@ defaultproperties
 	bSolid = true;
 	IdleState = S_ZWINGEDSTATUE1;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/03/12 19:58:59  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.1  2002/10/26 16:32:27  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

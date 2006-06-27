@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -263,29 +263,3 @@ int main(int argc, char *argv[])
 	WriteModel();
 	return 0;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2005/05/03 15:02:52  dj_jl
-//	Added fixmd2 to the build system.
-//
-//	Revision 1.7  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/11/02 18:36:59  dj_jl
-//	no message
-//	
-//	Revision 1.5  2001/09/24 17:29:38  dj_jl
-//	Beautification
-//	
-//	Revision 1.4  2001/08/04 17:38:19  dj_jl
-//	Added moving of texture vertexes
-//
-//	Revision 1.3  2001/07/31 17:03:38  dj_jl
-//	Added checks for model file
-//
-//	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -536,67 +536,3 @@ float ConstFloatExpression()
 {
    	return FCExprLevI();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.20  2006/03/23 18:30:53  dj_jl
-//	Use single list of all members, members tree.
-//
-//	Revision 1.19  2006/02/28 19:17:20  dj_jl
-//	Added support for constants.
-//	
-//	Revision 1.18  2006/02/27 21:23:54  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.17  2006/02/19 20:37:01  dj_jl
-//	Implemented support for delegates.
-//	
-//	Revision 1.16  2006/02/17 19:25:00  dj_jl
-//	Removed support for progs global variables and functions.
-//	
-//	Revision 1.15  2005/12/14 20:53:23  dj_jl
-//	State names belong to a class.
-//	Structs and enums defined in a class.
-//	
-//	Revision 1.14  2005/11/29 19:31:43  dj_jl
-//	Class and struct classes, removed namespaces, beautification.
-//	
-//	Revision 1.13  2005/11/24 20:42:05  dj_jl
-//	Renamed opcodes, cleanup and improvements.
-//	
-//	Revision 1.12  2003/03/08 12:47:51  dj_jl
-//	Code cleanup.
-//	
-//	Revision 1.11  2002/09/07 16:36:38  dj_jl
-//	Support bool in function args and return type.
-//	Removed support for typedefs.
-//	
-//	Revision 1.10  2002/08/24 14:45:38  dj_jl
-//	2 pass compiling.
-//	
-//	Revision 1.9  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//	Revision 1.8  2002/01/07 12:31:36  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.7  2001/12/27 17:44:00  dj_jl
-//	Removed support for C++ style constructors and destructors, some fixes
-//	
-//	Revision 1.6  2001/12/01 18:17:09  dj_jl
-//	Fixed calling of parent method, speedup
-//	
-//	Revision 1.5  2001/10/02 17:44:52  dj_jl
-//	Some optimizations
-//	
-//	Revision 1.4  2001/09/20 16:09:55  dj_jl
-//	Added basic object-oriented support
-//	
-//	Revision 1.3  2001/08/21 17:52:54  dj_jl
-//	Added support for real string pointers, beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

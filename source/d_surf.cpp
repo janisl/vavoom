@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -2248,54 +2248,3 @@ void D_DrawDoubleSkySurf_32(void)
 		}
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.16  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.15  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//	
-//	Revision 1.14  2004/10/08 12:37:47  dj_jl
-//	Better rendering of old skies.
-//	
-//	Revision 1.13  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.12  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.11  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.10  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.9  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.8  2001/12/18 19:01:34  dj_jl
-//	Changes for MSVC asm
-//	
-//	Revision 1.7  2001/11/02 18:35:55  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.6  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.5  2001/08/21 17:46:08  dj_jl
-//	Added R_TextureAnimation, made SetTexture recognize flats
-//	
-//	Revision 1.4  2001/08/02 17:41:19  dj_jl
-//	Added new asm for 32-bits
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

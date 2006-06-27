@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -64,14 +64,3 @@ VModalWindow::VModalWindow(void)
 //
 //
 //==========================================================================
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.2  2004/08/21 15:03:07  dj_jl
-//	Remade VClass to be standalone class.
-//
-//	Revision 1.1  2002/06/14 15:45:57  dj_jl
-//	Added modal window class.
-//	
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -423,29 +423,3 @@ int VMemoryStream::TotalSize()
 {
 	return Array.Num();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2006/04/16 09:17:54  dj_jl
-//	Fixed byte swapping of integers.
-//
-//	Revision 1.2  2006/03/10 19:31:55  dj_jl
-//	Use serialisation for progs files.
-//	
-//	Revision 1.1  2006/02/27 21:24:33  dj_jl
-//	Added stream class.
-//	
-//	Revision 1.4  2006/02/27 20:45:26  dj_jl
-//	Rewrote names class.
-//	
-//	Revision 1.3  2006/02/27 18:44:25  dj_jl
-//	Serialisation of indexes in a compact way.
-//	
-//	Revision 1.2  2006/02/25 17:14:19  dj_jl
-//	Implemented proper serialisation of the objects.
-//	
-//	Revision 1.1  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//**************************************************************************

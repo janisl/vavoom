@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -1092,50 +1092,3 @@ void VSoftwareDrawer::WorldDrawing(void)
 		GCon->Logf(NAME_Dev, "Out of %d edges", outofedges);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2005/05/26 16:50:14  dj_jl
-//	Created texture manager class
-//
-//	Revision 1.14  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//	
-//	Revision 1.13  2002/07/13 07:38:00  dj_jl
-//	Added drawers to the object tree.
-//	
-//	Revision 1.12  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.11  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.10  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/12/18 19:01:34  dj_jl
-//	Changes for MSVC asm
-//	
-//	Revision 1.8  2001/11/02 18:35:54  dj_jl
-//	Sky optimizations
-//	
-//	Revision 1.7  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.6  2001/10/09 17:21:39  dj_jl
-//	Added sky begining and ending functions
-//	
-//	Revision 1.5  2001/08/21 17:22:28  dj_jl
-//	Optimized rendering with some asm
-//	
-//	Revision 1.4  2001/08/15 17:13:05  dj_jl
-//	Implemented D_EmitEdge in asm
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

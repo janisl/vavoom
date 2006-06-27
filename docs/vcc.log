@@ -1,24 +1,24 @@
 03-01-2000
-  SÆku veidot. ACC faili ir direktorijÆ SOURCE1, QCC faili ir direktorijÆ
- SOURCE2. LØdzØgi arØ objektu faili ir direktorijÆs OBJ1 un OBJ2 un testa
- programmas direktorijÆs TEMP1 un TEMP2. KopØgie izejas faili bİs direktorijÆ
+  SÄku veidot. ACC faili ir direktorijÄ SOURCE1, QCC faili ir direktorijÄ
+ SOURCE2. LÄ«dzÄ«gi arÄ« objektu faili ir direktorijÄs OBJ1 un OBJ2 un testa
+ programmas direktorijÄs TEMP1 un TEMP2. KopÄ«gie izejas faili bÅ«s direktorijÄ
  SOURCE.
 04-01-2000
-  Izveidots kopØgs starta modulis dcc.c, kõİdu modulis error.c un da÷Ædu
- funkciju modulis misc.c. Lai atıóirtu kompilÆtorus, ACC izmanto definñtu
- ACC. SÆku veidot kopØgu token.c, sis fails ir kopØgs, un tÆ beigÆs tiek
- iekõauts vecais fails token1.c, kurı katram kompilÆtoram ir atıóirØgs.
- QCC izmetu ÆrÆ vektorus.
+  Izveidots kopÄ«gs starta modulis dcc.c, kÄ¼Å«du modulis error.c un daÅ¾Ädu
+ funkciju modulis misc.c. Lai atÅ¡Ä·irtu kompilÄtorus, ACC izmanto definÄ“tu
+ ACC. SÄku veidot kopÄ«gu token.c, sis fails ir kopÄ«gs, un tÄ beigÄs tiek
+ iekÄ¼auts vecais fails token1.c, kurÅ¡ katram kompilÄtoram ir atÅ¡Ä·irÄ«gs.
+ QCC izmetu ÄrÄ vektorus.
 05-01-2000
-  LielÆkÆ daõa no token.c ir kopØga. No ACC token tipiem izmesti ÆrÆ visi
- atslñgvÆrdi, sÆku izmest ÆrÆ arØ speciÆlos simbolus.
+  LielÄkÄ daÄ¼a no token.c ir kopÄ«ga. No ACC token tipiem izmesti ÄrÄ visi
+ atslÄ“gvÄrdi, sÄku izmest ÄrÄ arÄ« speciÄlos simbolus.
 06-01-2000
-  Izmesti ÆrÆ no token tipiem visi speciÆlie simboli. PrincipÆ token.c
- galvenÆ daõa ir kopØga. Apvienots strlist.c, arØ pcode.c operÆciju koda
- rakstØıana ir pieejama abiem. SÆku apvienot izteiksmju sadalØıanu.
+  Izmesti ÄrÄ no token tipiem visi speciÄlie simboli. PrincipÄ token.c
+ galvenÄ daÄ¼a ir kopÄ«ga. Apvienots strlist.c, arÄ« pcode.c operÄciju koda
+ rakstÄ«Å¡ana ir pieejama abiem. SÄku apvienot izteiksmju sadalÄ«Å¡anu.
 07-01-2000
-   Ir kopØga izteiksmju bloks. Konstantu izteiksmju aprñóinÆıana atdaØta
-  atseviıói.
+   Ir kopÄ«ga izteiksmju bloks. Konstantu izteiksmju aprÄ“Ä·inÄÅ¡ana atdaÄ«ta
+  atseviÅ¡Ä·i.
 08-01-2000
   Ir gatava 1. versija.
   

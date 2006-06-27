@@ -9,7 +9,7 @@
 //**
 //**	$Id: template.h),v 1.4 2002/05/18 16:56:35 dj_jl Exp $
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License

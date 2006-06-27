@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -189,38 +189,3 @@ class TPlane
 		return DotProduct(point, normal) - dist < 0;
 	}
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//
-//	Revision 1.10  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.9  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.8  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.7  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/12/01 17:45:16  dj_jl
-//	Added additional fields to TPlane
-//	
-//	Revision 1.5  2001/10/22 17:25:55  dj_jl
-//	Floatification of angles
-//	
-//	Revision 1.4  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

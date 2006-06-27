@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -238,7 +238,7 @@ C(D_PolysetCalcGradients):
 	fsubp	%st(0),%st(2)	// t0 * p10_minus_p20 |
 							// t1 * p01_minus_p21 - t0 * p11_minus_p21 |
 							// t1 * p00_minus_p20 | denominv
-//STµLL
+//STALL
 	fsubrp	%st(0),%st(2)	// t1 * p01_minus_p21 - t0 * p11_minus_p21 |
 							// t1 * p00_minus_p20 - t0 * p10_minus_p20 |
 							// denominv
@@ -767,29 +767,3 @@ LSkip2:
 	ret
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.7  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//
-//	Revision 1.6  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/12/18 18:54:44  dj_jl
-//	Found a workaround for calling a C++ function, progs code patching
-//	
-//	Revision 1.4  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.3  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.2  2001/08/15 17:44:41  dj_jl
-//	Added missing externs
-//	
-//	Revision 1.1  2001/08/15 17:12:23  dj_jl
-//	Optimized model drawing
-//	
-//**************************************************************************

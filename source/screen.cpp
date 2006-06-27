@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -207,11 +207,9 @@ COMMAND(ScreenShot)
 	for (i = 0; i <= 9999; i++)
 	{
 		sprintf(filename, "shot%04d.%s", i, (const char*)screenshot_type);
-dprintf("Checking %s\n", *(BaseDir + "/" + (const char*)filename));
 		if (!Sys_FileExists(BaseDir + "/" + (const char*)filename))
 			break;	//	File doesn't exist
 	}
-dprintf("Using %d\n", i);
 	if (i == 10000)
 	{
 		GCon->Log("Couldn't create a PCX");

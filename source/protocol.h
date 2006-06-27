@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -148,41 +148,3 @@ enum
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.12  2005/06/04 13:59:02  dj_jl
-//	Adding support for Boom fake sectors.
-//
-//	Revision 1.11  2005/03/28 07:28:19  dj_jl
-//	Transfer lighting and other BOOM stuff.
-//	
-//	Revision 1.10  2004/12/27 12:23:16  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.9  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.8  2002/01/11 08:09:34  dj_jl
-//	Added sector plane swapping
-//	
-//	Revision 1.7  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.6  2001/12/04 18:16:28  dj_jl
-//	Player models and skins handled by server
-//	
-//	Revision 1.5  2001/08/31 17:26:07  dj_jl
-//	Protocol varsion change
-//	
-//	Revision 1.4  2001/08/07 16:46:23  dj_jl
-//	Added player models, skins and weapon
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

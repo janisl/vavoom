@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -98,23 +98,3 @@ struct trivertx_t
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2005/08/29 19:39:03  dj_jl
-//	Increased limits.
-//
-//	Revision 1.4  2005/05/03 14:57:06  dj_jl
-//	Added support for specifying skin index.
-//	
-//	Revision 1.3  2004/10/11 06:52:36  dj_jl
-//	Packing pragmas.
-//	
-//	Revision 1.2  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/09/06 17:46:37  dj_jl
-//	no message
-//	
-//**************************************************************************

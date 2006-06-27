@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -217,15 +217,3 @@ const char* VArgs::CheckValue(const char *check) const
 	return NULL;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.2  2006/04/08 12:14:25  dj_jl
-//	Fixed value check.
-//
-//	Revision 1.1  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//	
-//**************************************************************************

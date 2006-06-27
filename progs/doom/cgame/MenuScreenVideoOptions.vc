@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -66,17 +66,3 @@ defaultproperties
 	SelectorType = MenuSelector_SmallRight;
 	Title = "VIDEO OPTIONS";
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2006/04/06 21:50:22  dj_jl
-//  For some builtins changed string arguments to names.
-//
-//  Revision 1.2  2006/02/09 22:33:09  dj_jl
-//  Moved all client game code to classes.
-//
-//  Revision 1.1  2002/10/26 16:32:19  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

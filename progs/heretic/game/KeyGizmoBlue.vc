@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -60,26 +60,3 @@ defaultproperties
 	IdleState = S_KEYGIZMO1;
 	GizmoFloatState = KeyGizmoFloat::S_KGZ_BLUEFLOAT1;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.6  2006/04/14 14:57:30  firebrand_kh
-//  Added static light flag and properties
-//
-//  Revision 1.5  2006/03/12 19:56:46  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.4  2006/02/15 23:33:11  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.3  2005/12/14 20:52:32  dj_jl
-//  State names belong to a class.
-//
-//  Revision 1.2  2005/06/16 17:46:39  dj_jl
-//  Added model definitions.
-//
-//  Revision 1.1  2002/10/26 16:32:22  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

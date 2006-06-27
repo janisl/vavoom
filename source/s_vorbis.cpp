@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -366,17 +366,3 @@ VAudioCodec* VVorbisAudioCodec::Create(VStream* InStrm)
 	return Codec;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//
-//	Revision 1.2  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.1  2005/10/18 20:53:04  dj_jl
-//	Implemented basic support for streamed music.
-//	
-//**************************************************************************

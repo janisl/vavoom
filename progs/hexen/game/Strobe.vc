@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -89,20 +89,3 @@ void Tick(float DeltaTime)
 defaultproperties
 {
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.4  2006/02/05 18:50:55  dj_jl
-//  Moved common utils to level info class or built-in.
-//
-//  Revision 1.3  2005/03/16 15:04:39  dj_jl
-//  More work on line specials.
-//
-//  Revision 1.2  2005/03/01 14:39:33  dj_jl
-//  Big update of line specials.
-//
-//  Revision 1.1  2004/11/22 07:36:27  dj_jl
-//  Implemented all sector specials in all games.
-//
-//**************************************************************************

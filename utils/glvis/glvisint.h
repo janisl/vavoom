@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -209,32 +209,3 @@ private:
 } // namespace VavoomUtils
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2006/01/29 20:30:34  dj_jl
-//	Allow specification of the GWA file name.
-//
-//	Revision 1.5  2005/11/14 19:03:18  dj_jl
-//	Added support for version 5 GL nodes.
-//	
-//	Revision 1.4  2004/12/27 12:23:18  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.3  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.2  2001/10/18 17:41:47  dj_jl
-//	Added reject building
-//	
-//	Revision 1.1  2001/09/12 17:28:38  dj_jl
-//	Created glVIS plugin
-//	
-//	Revision 1.3  2001/08/24 17:08:34  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

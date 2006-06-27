@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -280,7 +280,7 @@ static void ProcessNumberToken()
 	tk_Number = c - '0';
 	if (c == '0' && (Chr == 'x' || Chr == 'X'))
 	{
-		//  Heksadecim∆la konstante
+		//  Hexadecimal constant.
 		NextChr();
 		while (ASCIIToHexDigit[(byte)Chr] != NON_HEX_DIGIT)
 		{

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -426,21 +426,3 @@ float EAX_CalcEnvSize(void)
 	len += CalcDirSize(TVec(0, 0, 3200));
 	return len / 3.0;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.3  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.2  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.1  2002/07/20 14:51:39  dj_jl
-//	Slit out EAX utilites for use on multiple platforms/drivers.
-//	
-//**************************************************************************

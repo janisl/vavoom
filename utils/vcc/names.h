@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -51,23 +51,3 @@ REGISTER_NAME(Object)
 	#undef REGISTER_NAME
 	#undef REGISTERING_ENUM
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.5  2005/12/12 20:58:47  dj_jl
-//	Removed compiler limitations.
-//
-//	Revision 1.4  2005/11/29 19:31:43  dj_jl
-//	Class and struct classes, removed namespaces, beautification.
-//	
-//	Revision 1.3  2005/11/24 20:41:07  dj_jl
-//	Cleaned up a bit.
-//	
-//	Revision 1.2  2002/01/25 18:05:58  dj_jl
-//	Better string hash function
-//	
-//	Revision 1.1  2002/01/11 08:17:31  dj_jl
-//	Added name subsystem, removed support for unsigned ints
-//	
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -107,29 +107,3 @@ defaultproperties
 	PainSound = 'PlayerFighterPain';
 	SoundClass = 'fighter';
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.7  2006/03/13 18:48:49  dj_jl
-//  Added function to check if a state is in the range.
-//
-//  Revision 1.6  2006/03/12 19:58:58  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.5  2006/03/02 18:35:14  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.4  2006/02/15 23:33:54  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.3  2005/11/17 18:55:04  dj_jl
-//  Implemented support for sndinfo extensions.
-//
-//  Revision 1.2  2003/11/12 16:50:47  dj_jl
-//  Changed player structure into a class
-//
-//  Revision 1.1  2002/10/26 16:32:26  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

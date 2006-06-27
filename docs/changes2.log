@@ -1,527 +1,527 @@
 
 29-06-2001
-  Pñc relØzes es spñlñju Desperados - Wanted dead or alive. Izieıana prasØja
- diezgan ilgu laiku. Pa vidu paspñju veikt prog÷u failu paplaıinÆjuma mai·u
+  PÄ“c relÄ«zes es spÄ“lÄ“ju Desperados - Wanted dead or alive. IzieÅ¡ana prasÄ«ja
+ diezgan ilgu laiku. Pa vidu paspÄ“ju veikt progÅ¾u failu paplaÅ¡inÄjuma maiÅ†u
  no .c uz .vc.
-  Izveidoju 3D grØdu caurredzamØbu.
+  Izveidoju 3D grÄ«du caurredzamÄ«bu.
 30-06-2001
-  vlumpy atbrØvojos no Allegro izmantoıanas.
-  Izveidoju speciÆlu clienta versiju lØme·a objekta struktİrai. AtbrØvojos
+  vlumpy atbrÄ«vojos no Allegro izmantoÅ¡anas.
+  Izveidoju speciÄlu clienta versiju lÄ«meÅ†a objekta struktÅ«rai. AtbrÄ«vojos
  no sektoru linkiem.
-  Izveidoju subsektoru linkus, sektora redzamØbas pÆrbaudei serveris tagad
- izmanto vis datus. No klienta/servera neizdarØtajÆm lietÆm palicis ir tikai
- mainØto tekstİru informÆcijas sİtØıana jauniem klientiem.
-  Salaboju spraitu zØmñıanu 2D gadØjumiem.
-  SÆku mñÖinÆt ieviest Quake modeõus.
+  Izveidoju subsektoru linkus, sektora redzamÄ«bas pÄrbaudei serveris tagad
+ izmanto vis datus. No klienta/servera neizdarÄ«tajÄm lietÄm palicis ir tikai
+ mainÄ«to tekstÅ«ru informÄcijas sÅ«tÄ«Å¡ana jauniem klientiem.
+  Salaboju spraitu zÄ«mÄ“Å¡anu 2D gadÄ«jumiem.
+  SÄku mÄ“Ä£inÄt ieviest Quake modeÄ¼us.
 02-07-2001
-  Turpinu darbu pie modeõiem. Portñju zØmñıanu, bet vñl neiet kÆ gribñtos.
-  Ğodien ir diezgan lielas pÆrmai·as, es nopirku GeForce2 un man tagd ir Østs
- akselerÆtors. LielÆko dienas daõu pavadØju izmñÖinot da÷Ædas ar OpenGL un
- Direct3D akselerñtÆs spñles. ×paıi priecñ akselerñtais OpenGL. AtklÆjÆs arØ
- viens OpenGL bags - caurspØdØgie spraiti vispÆr nav redzami. IzskatÆs ka
- karte veic alfas testu galØgajam pikselim, nevis izejas tekstİrai.
+  Turpinu darbu pie modeÄ¼iem. PortÄ“ju zÄ«mÄ“Å¡anu, bet vÄ“l neiet kÄ gribÄ“tos.
+  Å odien ir diezgan lielas pÄrmaiÅ†as, es nopirku GeForce2 un man tagd ir Ä«sts
+ akselerÄtors. LielÄko dienas daÄ¼u pavadÄ«ju izmÄ“Ä£inot daÅ¾Ädas ar OpenGL un
+ Direct3D akselerÄ“tÄs spÄ“les. ÄªpaÅ¡i priecÄ“ akselerÄ“tais OpenGL. AtklÄjÄs arÄ«
+ viens OpenGL bags - caurspÄ«dÄ«gie spraiti vispÄr nav redzami. IzskatÄs ka
+ karte veic alfas testu galÄ«gajam pikselim, nevis izejas tekstÅ«rai.
 03-07-2001
-  KautkÆ salaboju caurspØdØgos spraitus.
-  Ğo to pielaboju pie modeõiem, nestrÆdÆ kÆ vajag.
+  KautkÄ salaboju caurspÄ«dÄ«gos spraitus.
+  Å o to pielaboju pie modeÄ¼iem, nestrÄdÄ kÄ vajag.
 04-07-2001
-  PilnØbÆ salaboju caurspØdØgos spraitus.
-  Half-Life: Opposing Force ar akselerÆtoru beidzot iet spñlñjamÆ ÆtrumÆ, bİs
- jÆiziet.
+  PilnÄ«bÄ salaboju caurspÄ«dÄ«gos spraitus.
+  Half-Life: Opposing Force ar akselerÄtoru beidzot iet spÄ“lÄ“jamÄ ÄtrumÄ, bÅ«s
+ jÄiziet.
 10-07-2001
-  IzgÆju Half-Life:Opposing Force - baigi labais.
-  Izveidoju mipmaping iekı OpenGL, Ætruma pieaugums ir jİtams.
+  IzgÄju Half-Life:Opposing Force - baigi labais.
+  Izveidoju mipmaping iekÅ¡ OpenGL, Ätruma pieaugums ir jÅ«tams.
 11-07-2001
-  Uzlaboju alfa testu Direct3D. Testñju Dot3 bumpmapingu, izskatÆs soloıi,
- bet tas prasØs diezgan lielu darbu, tÆkÆ es ıaubos vai kautkas bİs.
+  Uzlaboju alfa testu Direct3D. TestÄ“ju Dot3 bumpmapingu, izskatÄs soloÅ¡i,
+ bet tas prasÄ«s diezgan lielu darbu, tÄkÄ es Å¡aubos vai kautkas bÅ«s.
 12-07-2001
-  Izveidoju "lens flares", tÆs ir no visiem gaismas objektiem, tÆpñc tÆs vñl
- nebİs pieejamas. ArØ redzamØbas pÆrbaudi vajag labÆku.
+  Izveidoju "lens flares", tÄs ir no visiem gaismas objektiem, tÄpÄ“c tÄs vÄ“l
+ nebÅ«s pieejamas. ArÄ« redzamÄ«bas pÄrbaudi vajag labÄku.
 13-07-2001
-  SÆku veidot jaunu lØmeni, ieviesu statisku gaismu izstarojoıiem objektiem
- iespñju definñt gaismas rÆdiusu.
+  SÄku veidot jaunu lÄ«meni, ieviesu statisku gaismu izstarojoÅ¡iem objektiem
+ iespÄ“ju definÄ“t gaismas rÄdiusu.
 14-07-2001
-  Dabİju DirectX 8 SDK. Ir diezgan lielas izmai·as. No jaunajÆm Direct3D
- ØpaıØbÆm man vislabÆk patØk Vertex shaders un Pixel shaders - ar dzelzi kas
- tos atbalsta iespñjas pieaug manÆmi. Diem÷ñl mana jaunÆ GeForce2 neatbalsta
+  DabÅ«ju DirectX 8 SDK. Ir diezgan lielas izmaiÅ†as. No jaunajÄm Direct3D
+ Ä«paÅ¡Ä«bÄm man vislabÄk patÄ«k Vertex shaders un Pixel shaders - ar dzelzi kas
+ tos atbalsta iespÄ“jas pieaug manÄmi. DiemÅ¾Ä“l mana jaunÄ GeForce2 neatbalsta
  tos.
 17-07-2001
-  Sa·ñmu vñstuli no puiıa kurı testñja OpenGL uz LINUX. KÆ jau varñja saprast
- viss strÆdÆ normÆli. Toties ir problñmas ar krÆsu dziõumu lielÆku par 16 bitu
- krÆsÆm, cerams ka izveidoju 32 bitu krÆsu atbalstu LINUX OpenGL versijai.
-  Salaboju automapu priekı OpenGL un Direct3D.
-  No lØme·a ielÆdñıanas izmetu ÆrÆ lieko, jo tagad vienmñr jÆbİt GL nodiem.
+  SaÅ†Ä“mu vÄ“stuli no puiÅ¡a kurÅ¡ testÄ“ja OpenGL uz LINUX. KÄ jau varÄ“ja saprast
+ viss strÄdÄ normÄli. Toties ir problÄ“mas ar krÄsu dziÄ¼umu lielÄku par 16 bitu
+ krÄsÄm, cerams ka izveidoju 32 bitu krÄsu atbalstu LINUX OpenGL versijai.
+  Salaboju automapu priekÅ¡ OpenGL un Direct3D.
+  No lÄ«meÅ†a ielÄdÄ“Å¡anas izmetu ÄrÄ lieko, jo tagad vienmÄ“r jÄbÅ«t GL nodiem.
 18-07-2001
-  AtkÆrtoti mñÖinu ieviest modeõu atbalstu. Ğoreiz veiksmØgi. PamazÆm sÆku
- pÆriet uz md2 formÆta atbalstu.
+  AtkÄrtoti mÄ“Ä£inu ieviest modeÄ¼u atbalstu. Å oreiz veiksmÄ«gi. PamazÄm sÄku
+ pÄriet uz md2 formÄta atbalstu.
 19-07-2001
-  AtbrØvojos no onseam un facesfront, iekıñji pÆrveidoju uz md2 formÆtu, t.i.
- tiek atbalstØts md2 formÆts. Pievienoju md2 formÆta modeõu ielÆdñıanu, viss
- strÆdÆ normÆli. Pñc nelielÆm pÆrdomÆm vecais mdl formÆts tika izmests ÆrÆ.
- Netaisos atbalstØt mdl formÆtu, jo to elementÆri var konvertñt md2 formÆtÆ.
- Un tÆ ir softa atbalsts md2 modeõiem. Paılaik tikai 8 bitu krÆsÆm, bet tÆ
- nav problñma. TÆpat ar OpenGL un Direct3D arØ nebİs problñmu.
+  AtbrÄ«vojos no onseam un facesfront, iekÅ¡Ä“ji pÄrveidoju uz md2 formÄtu, t.i.
+ tiek atbalstÄ«ts md2 formÄts. Pievienoju md2 formÄta modeÄ¼u ielÄdÄ“Å¡anu, viss
+ strÄdÄ normÄli. PÄ“c nelielÄm pÄrdomÄm vecais mdl formÄts tika izmests ÄrÄ.
+ Netaisos atbalstÄ«t mdl formÄtu, jo to elementÄri var konvertÄ“t md2 formÄtÄ.
+ Un tÄ ir softa atbalsts md2 modeÄ¼iem. PaÅ¡laik tikai 8 bitu krÄsÄm, bet tÄ
+ nav problÄ“ma. TÄpat ar OpenGL un Direct3D arÄ« nebÅ«s problÄ“mu.
 20-07-2001
-  Vispirms es izmetu ÆrÆ "subdivision" modeõu rendñıanu. Iespñjams ka vñlÆk
- es to pievienoıu atpakaõ. PagaidÆm jÆtiek galÆ ar parasto rendñıanu. Ieviesu
- atbalstu 16 un 32 bitu krÆsÆm. TÆkÆ viss ir kÆrtØbÆ, modeõu rendñıana tia
+  Vispirms es izmetu ÄrÄ "subdivision" modeÄ¼u rendÄ“Å¡anu. IespÄ“jams ka vÄ“lÄk
+ es to pievienoÅ¡u atpakaÄ¼. PagaidÄm jÄtiek galÄ ar parasto rendÄ“Å¡anu. Ieviesu
+ atbalstu 16 un 32 bitu krÄsÄm. TÄkÄ viss ir kÄrtÄ«bÄ, modeÄ¼u rendÄ“Å¡ana tia
  pievienota pie TDrawer un ieviestas OpenGL un Direct3D versijas.
-  Izmetu ÆrÆ "lens flares". NedomÆju ka ir vñrts to darØt, jo pat Quake3 to
- pñc noklusñıanas nedara. Un arØ reÆlajÆ dzØvñ normÆli tÆs nav redzamas.
-  AtklÆjÆs liela kõİda - softÆ modeõi tiek zØmñti spoguõatñlÆ. Bİs darbi·ı
- rØtdienai.
+  Izmetu ÄrÄ "lens flares". NedomÄju ka ir vÄ“rts to darÄ«t, jo pat Quake3 to
+ pÄ“c noklusÄ“Å¡anas nedara. Un arÄ« reÄlajÄ dzÄ«vÄ“ normÄli tÄs nav redzamas.
+  AtklÄjÄs liela kÄ¼Å«da - softÄ modeÄ¼i tiek zÄ«mÄ“ti spoguÄ¼atÄ“lÄ. BÅ«s darbiÅ†Å¡
+ rÄ«tdienai.
 21-07-2001
-  Salaboju modeõu zØmñıanu softÆ.
-  Apgreidoju Allegro uz jaunÆko versiju.
-  OpenGL un Direct3D izveidoju teksturñtas partikles, izskatÆs nedaudz labÆk.
-  Pievienoju visu nepiecieıamo modeõu atbalstam pievienojot jaunus laukus
- objektu struktİrÆs, attiecØgÆs izmai·as tØkla protokolÆ. Modeõus definñ
- prog÷os stÆvokõu tabulÆ aiz spraita kadra nummura, bet tas nav obligÆti -
- ja seko simbolu virkne, tad tas ir modelis, citÆdi stÆvoklin modeõa nav.
+  Salaboju modeÄ¼u zÄ«mÄ“Å¡anu softÄ.
+  Apgreidoju Allegro uz jaunÄko versiju.
+  OpenGL un Direct3D izveidoju teksturÄ“tas partikles, izskatÄs nedaudz labÄk.
+  Pievienoju visu nepiecieÅ¡amo modeÄ¼u atbalstam pievienojot jaunus laukus
+ objektu struktÅ«rÄs, attiecÄ«gÄs izmaiÅ†as tÄ«kla protokolÄ. ModeÄ¼us definÄ“
+ progÅ¾os stÄvokÄ¼u tabulÄ aiz spraita kadra nummura, bet tas nav obligÄti -
+ ja seko simbolu virkne, tad tas ir modelis, citÄdi stÄvoklin modeÄ¼a nav.
 23-07-2001
-  Izveidoju utilØtu modeõu salaboıanai Vavoom vajadzØbÆm.
-  Pabeidzu izmai·as protokolÆ.
-  Ja nav atni·as skrØnıotam, programma nebeigs darbu ar kõİdu, bet gan tikai
- izmetØs pazi·ojumu konsolñ. SkrØnıotu faili tagad sauksies shot$$$$.pcx.
-  Spñles datu direktorija tika pÆrdñvñta uz basev, wad failu inicializÆcija
- pÆrnesta uz failu moduli.
+  Izveidoju utilÄ«tu modeÄ¼u salaboÅ¡anai Vavoom vajadzÄ«bÄm.
+  Pabeidzu izmaiÅ†as protokolÄ.
+  Ja nav atniÅ†as skrÄ«nÅ¡otam, programma nebeigs darbu ar kÄ¼Å«du, bet gan tikai
+ izmetÄ«s paziÅ†ojumu konsolÄ“. SkrÄ«nÅ¡otu faili tagad sauksies shot$$$$.pcx.
+  SpÄ“les datu direktorija tika pÄrdÄ“vÄ“ta uz basev, wad failu inicializÄcija
+ pÄrnesta uz failu moduli.
 24-07-2001
   Nedaudz uzlaboju ievadu.
-  KÆdu laiku atpakaõ es Allegro sorceforge.net lapÆ pastÆstØju par problñmÆm
- ar xalleg.h, kuras tika izlabotas. Pieteicu Soundscape kõİdu.
-  SÆku interesñties par sourceforge.net. PiereÖistrñjos kÆ lietotÆjs, kÆ arØ
- pieteicu Vavoom projektu. SÆku interesñties par CVS.
+  KÄdu laiku atpakaÄ¼ es Allegro sorceforge.net lapÄ pastÄstÄ«ju par problÄ“mÄm
+ ar xalleg.h, kuras tika izlabotas. Pieteicu Soundscape kÄ¼Å«du.
+  SÄku interesÄ“ties par sourceforge.net. PiereÄ£istrÄ“jos kÄ lietotÄjs, kÄ arÄ«
+ pieteicu Vavoom projektu. SÄku interesÄ“ties par CVS.
 25-07-2001
-  Pievienoju carspØdØbu modeõiem OpenGL un Direct3D versijÆs. Kas gan tik
- nav vajadzØgs softa rendñıanai - krÆsainais apgaismojums, caurspØdØba un abi
- kopÆ. Darba pietiek. Tas nozØmñ, ka otrs plÆnotais mñróis ıai versijai -
- VavoomC valodas padarØıana par objekt-orientñtu valodu - netiks realizñts
- ıajÆ versijÆ, tÆpñc nemaz neko neuzsÆkıu.
-  Direct3D izmetu ÆrÆ visu, kas bija vajadzØgs priekı S3 Trio3D, kad man ir
- GeForce2, man tas vairs nav vajadzØgs, tÆpat kÆ jebkurai normÆlai 3D kartei.
-  SÆku pievienot modeõus.
-  sourceforge.net projekts ir pie·emts. Sagatavoju aploudot iekı CVS, ko
- vakarÆ arØ izdarØju. Tas prasØja õoti ilgu laiku, tas droıi vien ir tÆdñõ ka
- dati netiek kompresñti, õoti nepatØkami.
+  Pievienoju carspÄ«dÄ«bu modeÄ¼iem OpenGL un Direct3D versijÄs. Kas gan tik
+ nav vajadzÄ«gs softa rendÄ“Å¡anai - krÄsainais apgaismojums, caurspÄ«dÄ«ba un abi
+ kopÄ. Darba pietiek. Tas nozÄ«mÄ“, ka otrs plÄnotais mÄ“rÄ·is Å¡ai versijai -
+ VavoomC valodas padarÄ«Å¡ana par objekt-orientÄ“tu valodu - netiks realizÄ“ts
+ Å¡ajÄ versijÄ, tÄpÄ“c nemaz neko neuzsÄkÅ¡u.
+  Direct3D izmetu ÄrÄ visu, kas bija vajadzÄ«gs priekÅ¡ S3 Trio3D, kad man ir
+ GeForce2, man tas vairs nav vajadzÄ«gs, tÄpat kÄ jebkurai normÄlai 3D kartei.
+  SÄku pievienot modeÄ¼us.
+  sourceforge.net projekts ir pieÅ†emts. Sagatavoju aploudot iekÅ¡ CVS, ko
+ vakarÄ arÄ« izdarÄ«ju. Tas prasÄ«ja Ä¼oti ilgu laiku, tas droÅ¡i vien ir tÄdÄ“Ä¼ ka
+ dati netiek kompresÄ“ti, Ä¼oti nepatÄ«kami.
 26-07-2001
-    AtklÆju ka TASM exterdef nav obligÆti vajadzØgs norÆdØt tipu. TÆdñjÆdi visi
- eksterni tika pÆrnesti uz asm_i386.h, izveidoju kopØgu sistñmas asemblera
- moduli sys_i386.s, priekı Windows tas tiek konvertñts. Windows asemblerØ arØ
- izmetu ÆrÆ headeri un tagad .asm faili ir tØri Öenerñtie faili.
-  Pievienoti gandrØz visi pirmÆ Doom monstru modeõi, nolñmu modeõus kÆrtot pñc
- tipa direktorijÆs - lai ir kÆrtØba.
-  PÆrtaisØju fixmd2, tagad viss tiek definñts komandrindÆ. Atseviıóas komandas
- tiek prefiksñtas ar attiecØgu burtu, tagad to izmantot ir daudz parocØgÆk.
-  Pñc nelielÆm pİlñm izdevÆs Òekoutot no CVS - bija vispirms jÆieloginojas
- CVS serverØ lai tiktu izveidota mana jİzera direktorija. Ğoreiz, atıóirØbÆ
- no aplouda, tika ieslñgta datu kompresija. AtklÆju ko dara da÷as direktØvas.
+    AtklÄju ka TASM exterdef nav obligÄti vajadzÄ«gs norÄdÄ«t tipu. TÄdÄ“jÄdi visi
+ eksterni tika pÄrnesti uz asm_i386.h, izveidoju kopÄ«gu sistÄ“mas asemblera
+ moduli sys_i386.s, priekÅ¡ Windows tas tiek konvertÄ“ts. Windows asemblerÄ« arÄ«
+ izmetu ÄrÄ headeri un tagad .asm faili ir tÄ«ri Ä£enerÄ“tie faili.
+  Pievienoti gandrÄ«z visi pirmÄ Doom monstru modeÄ¼i, nolÄ“mu modeÄ¼us kÄrtot pÄ“c
+ tipa direktorijÄs - lai ir kÄrtÄ«ba.
+  PÄrtaisÄ«ju fixmd2, tagad viss tiek definÄ“ts komandrindÄ. AtseviÅ¡Ä·as komandas
+ tiek prefiksÄ“tas ar attiecÄ«gu burtu, tagad to izmantot ir daudz parocÄ«gÄk.
+  PÄ“c nelielÄm pÅ«lÄ“m izdevÄs Äekoutot no CVS - bija vispirms jÄieloginojas
+ CVS serverÄ« lai tiktu izveidota mana jÅ«zera direktorija. Å oreiz, atÅ¡Ä·irÄ«bÄ
+ no aplouda, tika ieslÄ“gta datu kompresija. AtklÄju ko dara daÅ¾as direktÄ«vas.
 27-07-2001
-  Nolñmu visiem failiem pievienot Id un Log direktØvas lai CVS automÆtiski
- dod logu kÆ tas ir da÷os citos projektos un kas man diezgan labi patØk. Pñc
- tam veicu pirmo lielo komitu. Bija diezgan liels Òakars ar failu apskates
- laikiem (kautkas saistØts ar RHIDE), bet beigÆs viss tika normÆli komitots.
- Un protams smuki tika apdeitotas direktØvas, kÆ man tas patØk.
-  Salaboju apdeitu, ja trİkst modeõa. TÆpat modeõu caurredzamØba nestrÆdÆja
- jo tÆ netika atõauta. TÆ arØ nestrÆdÆja korekti, jo modeõi netika pareizi
- ıóiroti, ko es arØ izlaboju.
-  AizsİtØju skrØnıotu uz DoomCenter un DoomWorld.
-  Turpinu pievienot monstru modeõus. GandrØz visi Doom monstru modeõi ir jau
- pievienoti, bet vñl nepÆrbaudØti.
+  NolÄ“mu visiem failiem pievienot Id un Log direktÄ«vas lai CVS automÄtiski
+ dod logu kÄ tas ir daÅ¾os citos projektos un kas man diezgan labi patÄ«k. PÄ“c
+ tam veicu pirmo lielo komitu. Bija diezgan liels Äakars ar failu apskates
+ laikiem (kautkas saistÄ«ts ar RHIDE), bet beigÄs viss tika normÄli komitots.
+ Un protams smuki tika apdeitotas direktÄ«vas, kÄ man tas patÄ«k.
+  Salaboju apdeitu, ja trÅ«kst modeÄ¼a. TÄpat modeÄ¼u caurredzamÄ«ba nestrÄdÄja
+ jo tÄ netika atÄ¼auta. TÄ arÄ« nestrÄdÄja korekti, jo modeÄ¼i netika pareizi
+ Å¡Ä·iroti, ko es arÄ« izlaboju.
+  AizsÅ«tÄ«ju skrÄ«nÅ¡otu uz DoomCenter un DoomWorld.
+  Turpinu pievienot monstru modeÄ¼us. GandrÄ«z visi Doom monstru modeÄ¼i ir jau
+ pievienoti, bet vÄ“l nepÄrbaudÄ«ti.
 28-07-2001
-  Salaboju modeõus objektiem, kuri netiek animñti.
-  Lai samazinÆtu modeõu informÆcijas paketi direktorija models modeõa ceõÆ
- netiek rakstØta.
-  Ar monstriem esmu ticis galÆ, sÆkas citi objekti.
+  Salaboju modeÄ¼us objektiem, kuri netiek animÄ“ti.
+  Lai samazinÄtu modeÄ¼u informÄcijas paketi direktorija models modeÄ¼a ceÄ¼Ä
+ netiek rakstÄ«ta.
+  Ar monstriem esmu ticis galÄ, sÄkas citi objekti.
 30-07-2001
-  Ar modeõiem iet uz beigÆm. TÆ izskatÆs, ka visi ir pievienoti. Bija jÆsalabo
- ieroÒu modeõu rendñıana.
-  Vñl priekıÆ neliels darbi·ı pie spñlñtÆja "ÆdÆm" un ieroÒa modeõa.
+  Ar modeÄ¼iem iet uz beigÄm. TÄ izskatÄs, ka visi ir pievienoti. Bija jÄsalabo
+ ieroÄu modeÄ¼u rendÄ“Å¡ana.
+  VÄ“l priekÅ¡Ä neliels darbiÅ†Å¡ pie spÄ“lÄ“tÄja "ÄdÄm" un ieroÄa modeÄ¼a.
 31-07-2001
-  Pabeidzu ar modeõiem, arØ no papildus paketes.
-  Ieviesu pilno apgaismojumu modeõiem.
-  SÆku darbu pie failu sistñmas. Tagad katrai atbalstØtajai spñlei ir sava
- spñles direktorija. Tagad katrai spñlei bİs savi konfigurÆcijas faili, demo
- faili un saglabÆtÆs spñles. KatrÆ spñles direktorijÆ tiek pievienoti visi wad
- faili wad0.wad, wad1.wad ... lØdz viens trİkst.
-  Programmas tagad paıas nosaka kura spñles versija - normÆlÆ, shareware vai
- paplaıinÆtÆ - tiek lietota pÆrbaudot vai ir vajadzØgÆ wad iedaõa (lump).
-  Nolñmu, ka titullapa un demo cikls ir jÆpÆrnes uz programmÆm. TÆdñjÆdi varñs
- atbrØvoties no vienas atkarØbas no spñles.
-  Salaboju kursoru tukıÆm simbolu virknñm.
+  Pabeidzu ar modeÄ¼iem, arÄ« no papildus paketes.
+  Ieviesu pilno apgaismojumu modeÄ¼iem.
+  SÄku darbu pie failu sistÄ“mas. Tagad katrai atbalstÄ«tajai spÄ“lei ir sava
+ spÄ“les direktorija. Tagad katrai spÄ“lei bÅ«s savi konfigurÄcijas faili, demo
+ faili un saglabÄtÄs spÄ“les. KatrÄ spÄ“les direktorijÄ tiek pievienoti visi wad
+ faili wad0.wad, wad1.wad ... lÄ«dz viens trÅ«kst.
+  Programmas tagad paÅ¡as nosaka kura spÄ“les versija - normÄlÄ, shareware vai
+ paplaÅ¡inÄtÄ - tiek lietota pÄrbaudot vai ir vajadzÄ«gÄ wad iedaÄ¼a (lump).
+  NolÄ“mu, ka titullapa un demo cikls ir jÄpÄrnes uz programmÄm. TÄdÄ“jÄdi varÄ“s
+ atbrÄ«voties no vienas atkarÄ«bas no spÄ“les.
+  Salaboju kursoru tukÅ¡Äm simbolu virknÄ“m.
 01-08-2001
-  Salaboju translñtos spraitus OpenGL draiverØ - bija pÆris õoti nopietnas
- kõİdas.
-  Salaboju spraita zØmñıanu spñlñtÆja konigurÆcijas menu.
-  Direct3D salaboju noteikıanu, kad vajag ıóirot spraitus.
-  OpenGL un Direct3D uzlaboju partikõu zØmñıanu.
-  MñÖinu salabot krÆsas dziõuma mai·u OpenGL Windows verijÆ - neveicÆs. BeigÆs
+  Salaboju translÄ“tos spraitus OpenGL draiverÄ« - bija pÄris Ä¼oti nopietnas
+ kÄ¼Å«das.
+  Salaboju spraita zÄ«mÄ“Å¡anu spÄ“lÄ“tÄja konigurÄcijas menu.
+  Direct3D salaboju noteikÅ¡anu, kad vajag Å¡Ä·irot spraitus.
+  OpenGL un Direct3D uzlaboju partikÄ¼u zÄ«mÄ“Å¡anu.
+  MÄ“Ä£inu salabot krÄsas dziÄ¼uma maiÅ†u OpenGL Windows verijÄ - neveicÄs. BeigÄs
  atradu iemeslu - SetPixelFormat logam var tikt lietots tikai vienu reizi.
-  SienÆm vispirms meklñ tekstİru tekstİru sarakstÆ un tikai pñc tam flatos.
- Tas salaboja RaiseToTexture speciÆlu. Starp citu tajÆ es atradu vienu Doom
- oriÖimÆlo kõudu - ·em vñrÆ tekstİru 0.
+  SienÄm vispirms meklÄ“ tekstÅ«ru tekstÅ«ru sarakstÄ un tikai pÄ“c tam flatos.
+ Tas salaboja RaiseToTexture speciÄlu. Starp citu tajÄ es atradu vienu Doom
+ oriÄ£imÄlo kÄ¼udu - Å†em vÄ“rÄ tekstÅ«ru 0.
 02-08-2001
-  Jaunie klienti tiek informñti par mainØtajÆm tekstİrÆm.
-  Pievienoju trİkstoıÆs 32 bitu funkciju asemblera versijas.
-  SoftÆ izveidoju modeõu zØmñıanu ar krÆsaino apgaismojumu un caurspØdØgos
- modeõus.
-  NovÆcu caurspØdØbu lÆpÆm - tomñr izskatÆs labÆk.
-  Direct3D izveidoju atbalstu ÆdÆm ar ne-2 pakÆpju izmñriem un lielÆkiem par
- maksimÆlu izmñru. Atbalsts itkÆ to prasa, kaut arØ tas ir õoti nevñlami.
- VisÆm ÆdÆm bİtu jÆbİt kvadrÆtiem ar 2 pakÆpes izmñriem. Pamatpaketes modeõu
- Ædas visas atbilst ıØm prasØbÆm, bet papilduspaketñ 8 Ædas neatbilst. 7 Ædas
- ar stulbÆm kõİdÆm tika izlabotas. Palika vñl plazmas ieroÒa Æda. Ar to bİs
- nedaudz jÆpadarbojas vñlÆk. GalvenÆ problñma ir tÆ, ka tas ir Quake modelis
- ar õoti platu Ædu. Puse Ædas tika pÆrnesta zem otras puses lai tÆ nebİtu tik
- plata un nedaudz augstÆka. Tagad to vajag samazinÆt lØdz 256x256. Nu ko, bİs
- jÆsÆk nodarboties ar modeõu veidoıanu.
+  Jaunie klienti tiek informÄ“ti par mainÄ«tajÄm tekstÅ«rÄm.
+  Pievienoju trÅ«kstoÅ¡Äs 32 bitu funkciju asemblera versijas.
+  SoftÄ izveidoju modeÄ¼u zÄ«mÄ“Å¡anu ar krÄsaino apgaismojumu un caurspÄ«dÄ«gos
+ modeÄ¼us.
+  NovÄcu caurspÄ«dÄ«bu lÄpÄm - tomÄ“r izskatÄs labÄk.
+  Direct3D izveidoju atbalstu ÄdÄm ar ne-2 pakÄpju izmÄ“riem un lielÄkiem par
+ maksimÄlu izmÄ“ru. Atbalsts itkÄ to prasa, kaut arÄ« tas ir Ä¼oti nevÄ“lami.
+ VisÄm ÄdÄm bÅ«tu jÄbÅ«t kvadrÄtiem ar 2 pakÄpes izmÄ“riem. Pamatpaketes modeÄ¼u
+ Ädas visas atbilst Å¡Ä«m prasÄ«bÄm, bet papilduspaketÄ“ 8 Ädas neatbilst. 7 Ädas
+ ar stulbÄm kÄ¼Å«dÄm tika izlabotas. Palika vÄ“l plazmas ieroÄa Äda. Ar to bÅ«s
+ nedaudz jÄpadarbojas vÄ“lÄk. GalvenÄ problÄ“ma ir tÄ, ka tas ir Quake modelis
+ ar Ä¼oti platu Ädu. Puse Ädas tika pÄrnesta zem otras puses lai tÄ nebÅ«tu tik
+ plata un nedaudz augstÄka. Tagad to vajag samazinÄt lÄ«dz 256x256. Nu ko, bÅ«s
+ jÄsÄk nodarboties ar modeÄ¼u veidoÅ¡anu.
 03-08-2001
-  PÆrnesu titullapu un demo ciklu uz prog÷iem. Pateicoties tam dzinim vairs
- neinteresñ vai ir paplaıinÆtÆ wad versija. Heretic-Æ shareware versijÆ fonam
- bija cits flats nekÆ reÖistrñtajÆ versijÆ. Atceõot to dzinim arØ neinteresñ
- vai ir shareware, vai nñ. AtkarØba no spñles ir kõuvusi vñl mazÆka.
-  Ieviesu z-hakoıanu ieroÒu modeõiem. Tagad tie var bİt nedaudz lielÆku.
+  PÄrnesu titullapu un demo ciklu uz progÅ¾iem. Pateicoties tam dzinim vairs
+ neinteresÄ“ vai ir paplaÅ¡inÄtÄ wad versija. Heretic-Ä shareware versijÄ fonam
+ bija cits flats nekÄ reÄ£istrÄ“tajÄ versijÄ. AtceÄ¼ot to dzinim arÄ« neinteresÄ“
+ vai ir shareware, vai nÄ“. AtkarÄ«ba no spÄ“les ir kÄ¼uvusi vÄ“l mazÄka.
+  Ieviesu z-hakoÅ¡anu ieroÄu modeÄ¼iem. Tagad tie var bÅ«t nedaudz lielÄku.
   Salaboju miglu Direct3D.
-  OpenGL sÆku mñÖinÆt izmantot paplaıinÆjumus. ArØ izmetu ÆrÆ z triku.
-  Beidzot man atsİtØja jautÆjumus intervijai.
+  OpenGL sÄku mÄ“Ä£inÄt izmantot paplaÅ¡inÄjumus. ArÄ« izmetu ÄrÄ z triku.
+  Beidzot man atsÅ«tÄ«ja jautÄjumus intervijai.
 04-08-2001
-  OpenGL ieviesu multitekstİru atbalstu. SÆkumÆ mñÖinÆju GL_SGIS_multitexture,
- bet nestrÆdÆja. Tad pamñÖinÆju GL_ARB_multitexture. Nedaudz labÆk, bet arØ
- kaut kas nestrÆdÆja. Pñc nelielÆm pİlñm noskaidroju, ka funkciju pointeri ir
- jÆdefinñ kÆ APIENTRY, lai Windows zin kÆ pareizi tÆs izsaukt. KÆ rezultÆtÆ
- aizgÆja. PamñÖinÆju atgriezsties pie GL_SGIS_multitexture, bet nez kÆpñc tas
- nestrÆdÆja. TÆdñl es palieku pie GL_ARB_multitexture.
-  Ieviesu sÆkuma versiju spñles bÆzes skriptam.
+  OpenGL ieviesu multitekstÅ«ru atbalstu. SÄkumÄ mÄ“Ä£inÄju GL_SGIS_multitexture,
+ bet nestrÄdÄja. Tad pamÄ“Ä£inÄju GL_ARB_multitexture. Nedaudz labÄk, bet arÄ«
+ kaut kas nestrÄdÄja. PÄ“c nelielÄm pÅ«lÄ“m noskaidroju, ka funkciju pointeri ir
+ jÄdefinÄ“ kÄ APIENTRY, lai Windows zin kÄ pareizi tÄs izsaukt. KÄ rezultÄtÄ
+ aizgÄja. PamÄ“Ä£inÄju atgriezsties pie GL_SGIS_multitexture, bet nez kÄpÄ“c tas
+ nestrÄdÄja. TÄdÄ“l es palieku pie GL_ARB_multitexture.
+  Ieviesu sÄkuma versiju spÄ“les bÄzes skriptam.
 06-08-2001
-  StrÆdÆju pie spñlñtÆju modeõiem un ÆdÆm. Pirmie objekti ir rezervñti priekı
- spñlñtÆju objektiem. Servera pusñ pagaidÆm tie ir tukıi un tikai apdeitojot
- klientam reÆlie spñlñtÆju objekti tiek apdeitoti kÆ pirmie. TÆdñjÆdi klients
- var atrast atbilstoıo modeli un Ædu. Katram spñlñtÆjam var bİt savs modelis
- un sava Æda. Bet pats labÆkais ir tas, ka ierocis spñlñtÆja rokÆs ir nevis
- kautkÆds mistisks ierocis, bet gan reÆlais ierocis. TÆdñjÆdi var pat redzñt
- kÆds ierocis ir oponenta rokÆs. Tas tika realizñts sekojoıi: katrÆ spñlñtÆja
- modeLa direktorijÆ jÆbİt diviem modeõiem - tris.md2 ar paıu modeli, kÆ arØ
- weapon.md2 ar trijstİri, kurı attñlo ieroÒa pozØciju un virzienu. Vñl tikai
- jÆsalabo modeõi.
-  Klienta pusñ atbrØvojos no floorclip.
+  StrÄdÄju pie spÄ“lÄ“tÄju modeÄ¼iem un ÄdÄm. Pirmie objekti ir rezervÄ“ti priekÅ¡
+ spÄ“lÄ“tÄju objektiem. Servera pusÄ“ pagaidÄm tie ir tukÅ¡i un tikai apdeitojot
+ klientam reÄlie spÄ“lÄ“tÄju objekti tiek apdeitoti kÄ pirmie. TÄdÄ“jÄdi klients
+ var atrast atbilstoÅ¡o modeli un Ädu. Katram spÄ“lÄ“tÄjam var bÅ«t savs modelis
+ un sava Äda. Bet pats labÄkais ir tas, ka ierocis spÄ“lÄ“tÄja rokÄs ir nevis
+ kautkÄds mistisks ierocis, bet gan reÄlais ierocis. TÄdÄ“jÄdi var pat redzÄ“t
+ kÄds ierocis ir oponenta rokÄs. Tas tika realizÄ“ts sekojoÅ¡i: katrÄ spÄ“lÄ“tÄja
+ modeLa direktorijÄ jÄbÅ«t diviem modeÄ¼iem - tris.md2 ar paÅ¡u modeli, kÄ arÄ«
+ weapon.md2 ar trijstÅ«ri, kurÅ¡ attÄ“lo ieroÄa pozÄ«ciju un virzienu. VÄ“l tikai
+ jÄsalabo modeÄ¼i.
+  Klienta pusÄ“ atbrÄ«vojos no floorclip.
 07-08-2001
-  NormÆli redz ieroci spñlñtÆja rokÆs. Vñl tikai jÆpielabo pozØcijas, arØ BFG
- ir nedaudz par lielu. VispÆr vislabÆk bİtu, ja ierocis normÆli bİtu vñrsts uz
- priekıu.
-  Atradu 2 Heretic modeõus, kurus arØ pievienoju.
-  Sagatavojos scñnas rendñıanai.
-  Seivgeimi ir apakıdirektorijÆ saves.
+  NormÄli redz ieroci spÄ“lÄ“tÄja rokÄs. VÄ“l tikai jÄpielabo pozÄ«cijas, arÄ« BFG
+ ir nedaudz par lielu. VispÄr vislabÄk bÅ«tu, ja ierocis normÄli bÅ«tu vÄ“rsts uz
+ priekÅ¡u.
+  Atradu 2 Heretic modeÄ¼us, kurus arÄ« pievienoju.
+  Sagatavojos scÄ“nas rendÄ“Å¡anai.
+  Seivgeimi ir apakÅ¡direktorijÄ saves.
 08-08-2001
-  Konsole veroties ciet vairs nav aktØva.
-  DOS-Æ pievienoju pÆrbaudes klaviatİras inicializÆcijai. Da÷reiz nostrÆdÆja
- aizsardzØba. Tas nozØmñ ka vairs nebİs gõuka, kad nospie÷ot tausti·u maıina
- uzkarÆs vai pÆrstartñjÆs.
-  Pievienoju modeli spñlñtÆja konfigurÆcijas menu.
-  SÆku optimizñt modeõu rendñıanu pievienojot asembleri.
+  Konsole veroties ciet vairs nav aktÄ«va.
+  DOS-Ä pievienoju pÄrbaudes klaviatÅ«ras inicializÄcijai. DaÅ¾reiz nostrÄdÄja
+ aizsardzÄ«ba. Tas nozÄ«mÄ“ ka vairs nebÅ«s gÄ¼uka, kad nospieÅ¾ot taustiÅ†u maÅ¡ina
+ uzkarÄs vai pÄrstartÄ“jÄs.
+  Pievienoju modeli spÄ“lÄ“tÄja konfigurÄcijas menu.
+  SÄku optimizÄ“t modeÄ¼u rendÄ“Å¡anu pievienojot asembleri.
 09-08-2001
-  StrÆdÆju pie modeõu zØmñıanas asemblera.
+  StrÄdÄju pie modeÄ¼u zÄ«mÄ“Å¡anas asemblera.
 10-08-2001
-  Ieviesu iepriekı aprñóinÆtas tabulas izmantoıanu 32 bitu caurspØdØbai.
-  Bija vñl viens kõİda gadØjumÆ, kad nav modeõu.
-  AtbrØvojos no pÆris atkarØbÆm no spñles tekstİru daõÆ. Dzinis pats atpazØst
- straifa tekstİru formÆtu un debesu tekstİru augstumi tiek pielaboti apskatot
- patÒu.
-  Salaboju finÆlus - tagad tie strÆdÆ, bet vñl ıis tas ir jÆpielabo.
-  PadarØju strÆdÆjoıu Straifa statusbÆru, protams ne glu÷i strÆdÆjoıu, toties
- dzinis vairs to neignorñs.
+  Ieviesu iepriekÅ¡ aprÄ“Ä·inÄtas tabulas izmantoÅ¡anu 32 bitu caurspÄ«dÄ«bai.
+  Bija vÄ“l viens kÄ¼Å«da gadÄ«jumÄ, kad nav modeÄ¼u.
+  AtbrÄ«vojos no pÄris atkarÄ«bÄm no spÄ“les tekstÅ«ru daÄ¼Ä. Dzinis pats atpazÄ«st
+ straifa tekstÅ«ru formÄtu un debesu tekstÅ«ru augstumi tiek pielaboti apskatot
+ patÄu.
+  Salaboju finÄlus - tagad tie strÄdÄ, bet vÄ“l Å¡is tas ir jÄpielabo.
+  PadarÄ«ju strÄdÄjoÅ¡u Straifa statusbÄru, protams ne gluÅ¾i strÄdÄjoÅ¡u, toties
+ dzinis vairs to neignorÄ“s.
 11-08-2001
-  Salaboju Doom 3 epizodes finÆlu, vñl paliek Heretic 2 epizodes finÆls.
+  Salaboju Doom 3 epizodes finÄlu, vÄ“l paliek Heretic 2 epizodes finÄls.
   Uzlaboju objektu apdeitu.
-  Turpinu darbu pie modeõu rendñıanas asemblera.
+  Turpinu darbu pie modeÄ¼u rendÄ“Å¡anas asemblera.
 13-08-2001
-  Turpinu strÆdÆt ar asembleri.
-  Izmetu ÆrÆ wipe efektus - tie jau bija atslñgti, kÆpñc turñt?
-  Metodei FillRectWithFlat tiek iedoas tekstİru koordinÆtes.
+  Turpinu strÄdÄt ar asembleri.
+  Izmetu ÄrÄ wipe efektus - tie jau bija atslÄ“gti, kÄpÄ“c turÄ“t?
+  Metodei FillRectWithFlat tiek iedoas tekstÅ«ru koordinÄtes.
 14-08-2001
-  Vñl divas r_alias.cpp funkcijas ir asembler.
+  VÄ“l divas r_alias.cpp funkcijas ir asembler.
 15-08-2001
-  Asembleris - vñl uzlaboju ıo to d_aliasa.s, sÆku veidot asemblera versijas
- d_edge.cpp funkcijÆm, sÆku ar D_EmitEdge.
+  Asembleris - vÄ“l uzlaboju Å¡o to d_aliasa.s, sÄku veidot asemblera versijas
+ d_edge.cpp funkcijÄm, sÄku ar D_EmitEdge.
 16-08-2001
   Asemblera versija D_ClipEdge, D_EmitEdge ir inlainots.
 17-08-2001
-  Linux distributØva mai·a. Man tagad ir Linux Mandrake 8.0 ar kuru beidzot
- mana videokarte strÆdÆ. Diem÷ñl nestrÆdÆ OpenGL, droıivien vajadzØgi draiveri
+  Linux distributÄ«va maiÅ†a. Man tagad ir Linux Mandrake 8.0 ar kuru beidzot
+ mana videokarte strÄdÄ. DiemÅ¾Ä“l nestrÄdÄ OpenGL, droÅ¡ivien vajadzÄ«gi draiveri
  no nVidia.
 20-08-2001
-  Nolñmu prog÷os simbolu virknes padarØt par reÆliem pointeriem.
+  NolÄ“mu progÅ¾os simbolu virknes padarÄ«t par reÄliem pointeriem.
   Izveidoju video opciju menu.
-  SetTexture atpazØst flatus. Tekstİru animÆcijai ir speciÆla funkcija.
-  Optimizñju asemblerØ D_GenerateSpans.
-  Ieviesu fl_devmode (parametrs -devgame). Izmetu ÆrÆ -devmaps.
-  Lokalizñju GL/glu.h.
-  Pñc noklusñıanas r_darken ir atlñgts.
+  SetTexture atpazÄ«st flatus. TekstÅ«ru animÄcijai ir speciÄla funkcija.
+  OptimizÄ“ju asemblerÄ« D_GenerateSpans.
+  Ieviesu fl_devmode (parametrs -devgame). Izmetu ÄrÄ -devmaps.
+  LokalizÄ“ju GL/glu.h.
+  PÄ“c noklusÄ“Å¡anas r_darken ir atlÄ“gts.
 22-08-2001
-  OpenGL mipmapu ÖenerÆciju veicu es pats, glu vairs netiek izmantots.
+  OpenGL mipmapu Ä£enerÄciju veicu es pats, glu vairs netiek izmantots.
 23-08-2001
-  Video re÷Øma mai·a ir atseviıóÆ apakımenu kÆ iepriekı.
-  SÆkuma atbalsts zØmñjumiem ar citÆm paletñm. OpenGL zØmñ Heretic 2 epizodes
- finÆlu kÆ vajag.
-  glVIS atpazØst visus GL lØme·us.
-  SÆku darbu pie mipmapinga Direct3D.
-  Praktiski atrisinÆju visas problñmas ar OpenGL uz LINUX.
-  IzrÆdÆs ka Allegro ir pievienoti jauni tausti·u kodi, tagad atkal uz LINUX
- klaviatİrai strÆdÆ visi tausti·i.
+  Video reÅ¾Ä«ma maiÅ†a ir atseviÅ¡Ä·Ä apakÅ¡menu kÄ iepriekÅ¡.
+  SÄkuma atbalsts zÄ«mÄ“jumiem ar citÄm paletÄ“m. OpenGL zÄ«mÄ“ Heretic 2 epizodes
+ finÄlu kÄ vajag.
+  glVIS atpazÄ«st visus GL lÄ«meÅ†us.
+  SÄku darbu pie mipmapinga Direct3D.
+  Praktiski atrisinÄju visas problÄ“mas ar OpenGL uz LINUX.
+  IzrÄdÄs ka Allegro ir pievienoti jauni taustiÅ†u kodi, tagad atkal uz LINUX
+ klaviatÅ«rai strÄdÄ visi taustiÅ†i.
 24-08-2001
   Direct3D ir mipmapings.
-  PrecØzÆks gaismmapu atrñóinÆıanas re÷Øms.
+  PrecÄ«zÄks gaismmapu atrÄ“Ä·inÄÅ¡anas reÅ¾Ä«ms.
 25-08-2001
-  Windows versijÆ OpenGL draiveris tagad izveido jaunu logu rendñıanai. Tagad
- strÆdÆ video re÷Øma mai·a uz citu krÆsu dziõumu.
-  AtdalØju atseviıói d3d_info.cpp.
+  Windows versijÄ OpenGL draiveris tagad izveido jaunu logu rendÄ“Å¡anai. Tagad
+ strÄdÄ video reÅ¾Ä«ma maiÅ†a uz citu krÄsu dziÄ¼umu.
+  AtdalÄ«ju atseviÅ¡Ä·i d3d_info.cpp.
   Ieviesu CVAR_LATCH.
 27-08-2001
   Nedaudz uzlaboju objektu apdeitu.
 28-08-2001
   Pievienoju Sys_FileTime, wad failu modulis to izmanto lai noteiktu, vai gwa
- fails nav vecÆks par paıu wad failu.
-  Pievienoju opciju -iwad, pÆrstrÆdÆju komandlØniju parametru izmantoıanu
- spñles noteikıanÆ pñc iwad faila.
+ fails nav vecÄks par paÅ¡u wad failu.
+  Pievienoju opciju -iwad, pÄrstrÄdÄju komandlÄ«niju parametru izmantoÅ¡anu
+ spÄ“les noteikÅ¡anÄ pÄ“c iwad faila.
 29-08-2001
-  PÆrnesu rÆmi un pazi·ojumu uz prog÷iem. Pauze ir statuslØnijas sastÆvdaõa.
-  Izveidoju konfigurÆjamas automama krÆsas.
-  PÆrdñvñju konsoles komandas Commands par CmdList un Cvars par CvarList.
-  Datagram tØkla savienoıanÆs pakete atkal sÆkas ar VAVOOM un nevis ar spñles
- vÆrdu.
-  BeigÆs pilnØbÆ atbrØvojos no mainØgÆ Game. TieıÆm nedomÆju ka tik Ætri
- tikÆu ar to galÆ.
-  Izveidoju objektiem ska·u kanÆlus.
+  PÄrnesu rÄmi un paziÅ†ojumu uz progÅ¾iem. Pauze ir statuslÄ«nijas sastÄvdaÄ¼a.
+  Izveidoju konfigurÄjamas automama krÄsas.
+  PÄrdÄ“vÄ“ju konsoles komandas Commands par CmdList un Cvars par CvarList.
+  Datagram tÄ«kla savienoÅ¡anÄs pakete atkal sÄkas ar VAVOOM un nevis ar spÄ“les
+ vÄrdu.
+  BeigÄs pilnÄ«bÄ atbrÄ«vojos no mainÄ«gÄ Game. TieÅ¡Äm nedomÄju ka tik Ätri
+ tikÄu ar to galÄ.
+  Izveidoju objektiem skaÅ†u kanÄlus.
 30-08-2001
-  Pabeidzu darbu pie objektu ska·u kanÆliem.
-  Atradu kõİdu ar rullñjoıÆm tekstİrÆm un gaismÆm.
-  LØme·a apdeitÆ izmantoju ÆtrÆku salØdzinÆSanu.
-  AtbrØvijos no atmi·as caurumiem pñc startupa.
-  FinÆla teksts LINUX versijai.
+  Pabeidzu darbu pie objektu skaÅ†u kanÄliem.
+  Atradu kÄ¼Å«du ar rullÄ“joÅ¡Äm tekstÅ«rÄm un gaismÄm.
+  LÄ«meÅ†a apdeitÄ izmantoju ÄtrÄku salÄ«dzinÄSanu.
+  AtbrÄ«vijos no atmiÅ†as caurumiem pÄ“c startupa.
+  FinÄla teksts LINUX versijai.
 31-08-2001
-  Prog÷os izmetu ÆrÆ vektoru makro.
-  Pievienoju anisotropo filtrÆciju.
-  Pilns bÆzes spñles skripts. ArØ spñõu identifikÆcijai ir Ærñjs skripts.
+  ProgÅ¾os izmetu ÄrÄ vektoru makro.
+  Pievienoju anisotropo filtrÄciju.
+  Pilns bÄzes spÄ“les skripts. ArÄ« spÄ“Ä¼u identifikÄcijai ir ÄrÄ“js skripts.
 01-09-2001
-  Salaboju "gibs" modeli spñlñtÆjam.
+  Salaboju "gibs" modeli spÄ“lÄ“tÄjam.
 03-09-2001
-  OpenGL partikõu efekts izmantojot GL_EXT_point_parameters.
-  PÆrdñvñju model.cpp par r_model.cpp, salaboju modeõu keıoıanu.
+  OpenGL partikÄ¼u efekts izmantojot GL_EXT_point_parameters.
+  PÄrdÄ“vÄ“ju model.cpp par r_model.cpp, salaboju modeÄ¼u keÅ¡oÅ¡anu.
 04-09-2001
-  Da÷i zØki labojumi.
-  Nolñmu laist klajÆ.
+  DaÅ¾i zÄ«ki labojumi.
+  NolÄ“mu laist klajÄ.
 
 ******************************************************************************
                             VERSIJA 1.9
 ******************************************************************************
 
 05-09-2001
-  AtradÆs pÆris problñmas kompilñjot Linux-am kÆ ÆrØ neliels gõuks Windows
- versijÆ.
+  AtradÄs pÄris problÄ“mas kompilÄ“jot Linux-am kÄ ÄrÄ« neliels gÄ¼uks Windows
+ versijÄ.
 06-09-2001
-  Nolñmu paskatØties kÆdas Østi izmai·as kodÆ rada exceptions un RTTI. Protams
- ka exceptions nemaina neko klasñs, bet gan pievieno kaudzi leiblu un kaut
- kÆdus tur vñl datus. RTTI izmai·as ir tikai klasñs ar virtuÆlajÆm funkcijÆm
- jur virtuÆlo funkciju tabulÆ tiek pievienota vñl viena funkcija, kura citÆdi
- ir nulles pointeris. JÆsÆk tas viss izmantot.
+  NolÄ“mu paskatÄ«ties kÄdas Ä«sti izmaiÅ†as kodÄ rada exceptions un RTTI. Protams
+ ka exceptions nemaina neko klasÄ“s, bet gan pievieno kaudzi leiblu un kaut
+ kÄdus tur vÄ“l datus. RTTI izmaiÅ†as ir tikai klasÄ“s ar virtuÄlajÄm funkcijÄm
+ jur virtuÄlo funkciju tabulÄ tiek pievienota vÄ“l viena funkcija, kura citÄdi
+ ir nulles pointeris. JÄsÄk tas viss izmantot.
 08-09-2001
-  IzmñÖinÆju glBSP plugin-u. viss strÆdÆ normÆli. PagaidÆm tas ir tikai kÆ
+  IzmÄ“Ä£inÄju glBSP plugin-u. viss strÄdÄ normÄli. PagaidÄm tas ir tikai kÄ
  konsoles komanda.
-  SÆku pÆrveidot glVIS lai izveidotu plugin-u. Tas tiks realizñts kÆ C++ klase
- ar virtuÆlajÆm funkcijÆm. Kõİdas gadØjumÆ tiks izmests exception.
+  SÄku pÄrveidot glVIS lai izveidotu plugin-u. Tas tiks realizÄ“ts kÄ C++ klase
+ ar virtuÄlajÄm funkcijÄm. KÄ¼Å«das gadÄ«jumÄ tiks izmests exception.
 10-09-2001
-  glVIS plugin-s ir gatavs, pievienoju pie Vavoom, viss strÆdÆ. ArØ konsoles
+  glVIS plugin-s ir gatavs, pievienoju pie Vavoom, viss strÄdÄ. ArÄ« konsoles
  komanda.
 11-09-2001
-  Windows OpenGL versijÆ pievienoju loga re÷Ømu.
+  Windows OpenGL versijÄ pievienoju loga reÅ¾Ä«mu.
 12-09-2001
-  glVIS plaugin-Æ nolñmu Malloc un Free izveidot kÆ funkcijas pointerus darba
- Ætruma dñõ.
+  glVIS plaugin-Ä nolÄ“mu Malloc un Free izveidot kÄ funkcijas pointerus darba
+ Ätruma dÄ“Ä¼.
 13-09-2001
-  PÆrstrÆdÆju wad failu moduli, katrs wad fails ir kÆ objekts un ir õoti
+  PÄrstrÄdÄju wad failu moduli, katrs wad fails ir kÄ objekts un ir Ä¼oti
  viegli pievienot gwa failu.
 14-09-2001
-  Pievienoju dinamisko gwa failu veidoıanu.
-  Direct3D versijÆ pÆrgÆju uz DirectX 8 izmantojot ifdefus lai varñtu pÆriet
- atpakaõ. PÆc pÆris stundÆm viss bija kÆrtØbÆ un strÆdÆja. Bet tagad aliktÆs
- zi·as - tas ir lñns. Rendñıanas Ætruma tests deva sekojoıus rezultÆtus:
+  Pievienoju dinamisko gwa failu veidoÅ¡anu.
+  Direct3D versijÄ pÄrgÄju uz DirectX 8 izmantojot ifdefus lai varÄ“tu pÄriet
+ atpakaÄ¼. PÄc pÄris stundÄm viss bija kÄrtÄ«bÄ un strÄdÄja. Bet tagad aliktÄs
+ ziÅ†as - tas ir lÄ“ns. RendÄ“Å¡anas Ätruma tests deva sekojoÅ¡us rezultÄtus:
    DirectX 8 -  9,4 FPS
    DirectX 7 - 17,9 FPS
    OpenGL    - 31,2 FPS
- Tas tikai apliecina to, par cik OpenGL ir pÆrÆks.
+ Tas tikai apliecina to, par cik OpenGL ir pÄrÄks.
 15-09-2001
-  SÆku pÆrstrÆdÆt kompilÆtoru. Pievienotas klases, var tikt definñtas metodes
- kuras var izmantot this pointeri. Metodes vÆl nav klases sastÆvdaõa.
+  SÄku pÄrstrÄdÄt kompilÄtoru. Pievienotas klases, var tikt definÄ“tas metodes
+ kuras var izmantot this pointeri. Metodes vÄl nav klases sastÄvdaÄ¼a.
 17-09-2001
-  Salaboju glBSP poliobjektu noteikıanu, vñl ir palikuıas pÆris nianses.
-  Pa·ñmu no vcc preprocesoru, izveidoju to kÆ bibliotñku un pievienoju pie
- vcc. Vairs nav vajadzØgs cits kompilÆtors lai kompilñtu prog÷us.
-  Pievienotas metodes pie klasñm, metodes var izmantot klases parametrus pa
- tieıo, metodes var izsaukt. ArØ jauns mainØgÆ tips classid. Klasu informÆcija
- ir pievienota virtuÆlÆs maıØnas failam.
-  Sa·ñmu piedÆvÆjumu pievienoties Korax-Heritage projektam.
+  Salaboju glBSP poliobjektu noteikÅ¡anu, vÄ“l ir palikuÅ¡as pÄris nianses.
+  PaÅ†Ä“mu no vcc preprocesoru, izveidoju to kÄ bibliotÄ“ku un pievienoju pie
+ vcc. Vairs nav vajadzÄ«gs cits kompilÄtors lai kompilÄ“tu progÅ¾us.
+  Pievienotas metodes pie klasÄ“m, metodes var izmantot klases parametrus pa
+ tieÅ¡o, metodes var izsaukt. ArÄ« jauns mainÄ«gÄ tips classid. Klasu informÄcija
+ ir pievienota virtuÄlÄs maÅ¡Ä«nas failam.
+  SaÅ†Ä“mu piedÄvÄjumu pievienoties Korax-Heritage projektam.
 18-09-2001
-  Pievienoju modeõus no Korax-Heritage projekta.
-  Izveidoju utilØtu ar kuru var apdeitot failus nesaÒakarñjot logus.
-  IznÆkusi jaunÆkÆ Allegro versija kurÆ ir izlabotas manis pieteiktÆs kõİdas.
-  ÖlBSP pluginÆ sÆkot jaunu karti tiek pÆrzØmñts viss ekrÆns.
-  Pievienoju atbalstu TGA modeõu ÆdÆm.
-  Prog÷u klasñs virtuÆlÆs tabulas sÆkumÆ pievienoju informÆciju par klasi -
- tÆs id un izmñru.
-  SÆku izmantot klases prog÷os un pÆrbaudØt kÆ tÆs strÆdÆ.
+  Pievienoju modeÄ¼us no Korax-Heritage projekta.
+  Izveidoju utilÄ«tu ar kuru var apdeitot failus nesaÄakarÄ“jot logus.
+  IznÄkusi jaunÄkÄ Allegro versija kurÄ ir izlabotas manis pieteiktÄs kÄ¼Å«das.
+  Ä£lBSP pluginÄ sÄkot jaunu karti tiek pÄrzÄ«mÄ“ts viss ekrÄns.
+  Pievienoju atbalstu TGA modeÄ¼u ÄdÄm.
+  ProgÅ¾u klasÄ“s virtuÄlÄs tabulas sÄkumÄ pievienoju informÄciju par klasi -
+ tÄs id un izmÄ“ru.
+  SÄku izmantot klases progÅ¾os un pÄrbaudÄ«t kÄ tÄs strÄdÄ.
 19-09-2001
-  AtbrØvojos no degenmobj_t. ACS domÆtÆja klase ir definñta prog÷os.
+  AtbrÄ«vojos no degenmobj_t. ACS domÄtÄja klase ir definÄ“ta progÅ¾os.
 20-09-2001
-  Salaboju pÆrdefinñtÆs metodes.
-  Salabiju zØmñjumu palielinÆıanu kad viena dimensija nemainÆs, tagad visi
- zØmñjumi tiek palielinÆti un nevis tiek pievienota tukıa vieta.
-  Windows OpenGL versijÆ beidzot ir kõİdas message box.
-  End÷inñ vairs netiek rezervñta vieta papildus laukiem, tagad tiek izmantots
- prog÷u klases izmñrs.
+  Salaboju pÄrdefinÄ“tÄs metodes.
+  Salabiju zÄ«mÄ“jumu palielinÄÅ¡anu kad viena dimensija nemainÄs, tagad visi
+ zÄ«mÄ“jumi tiek palielinÄti un nevis tiek pievienota tukÅ¡a vieta.
+  Windows OpenGL versijÄ beidzot ir kÄ¼Å«das message box.
+  EndÅ¾inÄ“ vairs netiek rezervÄ“ta vieta papildus laukiem, tagad tiek izmantots
+ progÅ¾u klases izmÄ“rs.
 21-09-2001
-  PÆrveidoju seivoıanu, dzinØ atbrØvojos no special_t.
-  SÆku sadalØt special atseviıóÆs klasñs. Ar Doom ir pabeigts. Pie reizes es
- arØ pÆrveidoju to visu uz peldoıÆ komata laika izmantoıanu.
+  PÄrveidoju seivoÅ¡anu, dzinÄ« atbrÄ«vojos no special_t.
+  SÄku sadalÄ«t special atseviÅ¡Ä·Äs klasÄ“s. Ar Doom ir pabeigts. Pie reizes es
+ arÄ« pÄrveidoju to visu uz peldoÅ¡Ä komata laika izmantoÅ¡anu.
 24-09-2001
   Pabeidzu ar Heretic un Hexen.
 25-09-2001
-  StraifÆ nolñmu pÆriet uz Hexen formÆtu vienkÆrıi pÆrkopñjot visu no Doom.
-  Aizvietoju menu konsoles funkcijas ar vienu funkciju, kurÆ tiek iedots menu
- vÆrds tÆdñjÆdi prog÷os var pievienot jaunus menu, kurus var izsaukt ar kÆda
- tausti·a palØdzØbu.
-  Pievienoju atbalstu bÆzes klases metodes izsaukıanai.
+  StraifÄ nolÄ“mu pÄriet uz Hexen formÄtu vienkÄrÅ¡i pÄrkopÄ“jot visu no Doom.
+  Aizvietoju menu konsoles funkcijas ar vienu funkciju, kurÄ tiek iedots menu
+ vÄrds tÄdÄ“jÄdi progÅ¾os var pievienot jaunus menu, kurus var izsaukt ar kÄda
+ taustiÅ†a palÄ«dzÄ«bu.
+  Pievienoju atbalstu bÄzes klases metodes izsaukÅ¡anai.
 26-09-2001
-  PÆrveidoju LavaInflictor par pointeri.
-  SÆku ieviest atbalstu lØme·a objektu tipiem.
-  makeinfo utilØtÆ pievienoju efektus, statiskÆs gaismas un objektu augstumu
- koriÖñıanu.
+  PÄrveidoju LavaInflictor par pointeri.
+  SÄku ieviest atbalstu lÄ«meÅ†a objektu tipiem.
+  makeinfo utilÄ«tÄ pievienoju efektus, statiskÄs gaismas un objektu augstumu
+ koriÄ£Ä“Å¡anu.
 27-09-2001
   Katram objekta tipam ir sava klase.
-  Pirmais baga reports SourceForge lapÆ. Neliela problñma ar ievada lØnijÆm -
- mÆÖinot ievadØt informÆciju uzkarÆs. Viss Ætri tika salabots.
-  Izlaista jauna glBSP versija. Poliobjektu kodu vi·ı tomñr pats salaboja.
+  Pirmais baga reports SourceForge lapÄ. Neliela problÄ“ma ar ievada lÄ«nijÄm -
+ mÄÄ£inot ievadÄ«t informÄciju uzkarÄs. Viss Ätri tika salabots.
+  Izlaista jauna glBSP versija. Poliobjektu kodu viÅ†Å¡ tomÄ“r pats salaboja.
 28-09-2001
-  PÆrslñdzos uz jauno glBSP. Tomñr da÷us poliobjekta sektorus neatrod.
+  PÄrslÄ“dzos uz jauno glBSP. TomÄ“r daÅ¾us poliobjekta sektorus neatrod.
 29-09-2001
-  Iespñja definñt metodes iekı klases deklarÆcijas.
-  Neliels uzlabojums lai paÆtrinÆtu kompileri. Diem÷ñl nav neko ÆtrÆks.
-  AktØvo domÆtÆju pointeri ir kÆ pievienotie lauki.
+  IespÄ“ja definÄ“t metodes iekÅ¡ klases deklarÄcijas.
+  Neliels uzlabojums lai paÄtrinÄtu kompileri. DiemÅ¾Ä“l nav neko ÄtrÄks.
+  AktÄ«vo domÄtÄju pointeri ir kÄ pievienotie lauki.
 01-10-2001
-  Objektu stÆvokõu mai·as funkcijas pÆrmesu uz katru spñli.
-  SÆku pÆrstrÆdÆt statusbÆru.
+  Objektu stÄvokÄ¼u maiÅ†as funkcijas pÄrmesu uz katru spÄ“li.
+  SÄku pÄrstrÄdÄt statusbÄru.
 02-10-2001
-  Preprocesors veido izejas failu atmi·Æ.
-  Statusa bÆrs pÆrstrÆdÆts.
+  Preprocesors veido izejas failu atmiÅ†Ä.
+  Statusa bÄrs pÄrstrÄdÄts.
 03-10-2001
-  AtbrØvojos no pÆris warning-iem.
-  Izlaboju gõuku Hexen-Æ, kad neatrodoties uz zemes kustñjÆs pilnÆ ÆtrumÆ.
+  AtbrÄ«vojos no pÄris warning-iem.
+  Izlaboju gÄ¼uku Hexen-Ä, kad neatrodoties uz zemes kustÄ“jÄs pilnÄ ÄtrumÄ.
 04-10-2001
-  AtdalØju atseviıói pazi·ojumu tekstu un centra teksta funkcijas.
-  Implementñju atliuıos konsoles mainØgo karodzi·us.
-  KonfigurÆcijas fails tiek saglabÆts izmantojot strØmus.
+  AtdalÄ«ju atseviÅ¡Ä·i paziÅ†ojumu tekstu un centra teksta funkcijas.
+  ImplementÄ“ju atliuÅ¡os konsoles mainÄ«go karodziÅ†us.
+  KonfigurÄcijas fails tiek saglabÄts izmantojot strÄ«mus.
 05-10-2001
-  SÆku zimantot exception-us.
-  Da÷Ædas klienta un servera lØme·u struktİras.
-  Konsole tiek zØmñta ar mazÆkiem burtiem.
-  Óetri va buferi.
-  PÆrnesu visu no v_draw.cpp uz r_ moduõiem.
-  Sa·emot servera informÆciju klients nomet signons uz 0, vairs nav vajadzØga
+  SÄku zimantot exception-us.
+  DaÅ¾Ädas klienta un servera lÄ«meÅ†u struktÅ«ras.
+  Konsole tiek zÄ«mÄ“ta ar mazÄkiem burtiem.
+  ÄŒetri va buferi.
+  PÄrnesu visu no v_draw.cpp uz r_ moduÄ¼iem.
+  SaÅ†emot servera informÄciju klients nomet signons uz 0, vairs nav vajadzÄ«ga
  komanda Reconnect.
-  AtrisinÆju problñmu ar objektu z-koordinÆti virs İdens.
-  NezØmeju tekstİru 0.
+  AtrisinÄju problÄ“mu ar objektu z-koordinÄti virs Å«dens.
+  NezÄ«meju tekstÅ«ru 0.
 06-10-2001
-  RadÆs vñlme sÆkt savu lØmeNa redaktoru, ko es arØ sÆku realizñt. Protams
- zØmñıanai es izmantoju OpenGL. IzskatÆs jauki.
-  Atbilde no Korax-Heritage puiıiem ar jautÆjumu kÆ izveidot slØpÆs virsmas
- un 3D-grØdas, bİs jÆraksta dokumentÆcija.
+  RadÄs vÄ“lme sÄkt savu lÄ«meNa redaktoru, ko es arÄ« sÄku realizÄ“t. Protams
+ zÄ«mÄ“Å¡anai es izmantoju OpenGL. IzskatÄs jauki.
+  Atbilde no Korax-Heritage puiÅ¡iem ar jautÄjumu kÄ izveidot slÄ«pÄs virsmas
+ un 3D-grÄ«das, bÅ«s jÄraksta dokumentÄcija.
 08-10-2001
-  PÆrdñvñju p_info.cpp par mapinfo.cpp ar attiecØgu header failu.
-  Dzinis tagad atgrie÷ pointeri uz serveru sarakstu, dzinØ tas tagad ir tØkla
- daõÆ.
+  PÄrdÄ“vÄ“ju p_info.cpp par mapinfo.cpp ar attiecÄ«gu header failu.
+  Dzinis tagad atgrieÅ¾ pointeri uz serveru sarakstu, dzinÄ« tas tagad ir tÄ«kla
+ daÄ¼Ä.
 09-10-2001
-  Pievienoju debesu zØmñıanas sÆkıanas un beigıanas metodes.
-  Salaboju lØme·u ielÆdi no atseviıóiem failiem.
-  Pñc noklusñıanas klasei nevar izmantot lauku pievienoıanu.
-  Uzlaboju statistiku sİtØıanu.
-  Salaboju slñd÷u ska·u.
-  Prog÷os katra spñle definñ savu mobj_t. StatiskÆs gaismas pÆrnesu uz katras
- spñles prog÷iem. Serverim ir savs definØciju fails.
+  Pievienoju debesu zÄ«mÄ“Å¡anas sÄkÅ¡anas un beigÅ¡anas metodes.
+  Salaboju lÄ«meÅ†u ielÄdi no atseviÅ¡Ä·iem failiem.
+  PÄ“c noklusÄ“Å¡anas klasei nevar izmantot lauku pievienoÅ¡anu.
+  Uzlaboju statistiku sÅ«tÄ«Å¡anu.
+  Salaboju slÄ“dÅ¾u skaÅ†u.
+  ProgÅ¾os katra spÄ“le definÄ“ savu mobj_t. StatiskÄs gaismas pÄrnesu uz katras
+ spÄ“les progÅ¾iem. Serverim ir savs definÄ«ciju fails.
 10-10-2001
-  KÆ apsolØju RambOrc, ieviesu spraitu zØmñıanu lØdzØgi kÆ DoomsDay dzinØ.
-  PapildinÆjumi pie MAPINFO skripta. Tiek definñts noslñpuma lØmenis, debesu
- kubs un, pats interesentÆkais, lØme·u nummuru norÆdes uz lØme·u vÆrdiem.
-  Hexen sÆk spñli lØmenØ ar warptrans 1 (kÆ oriÖinÆli).
-  Debesu dati salikti struktİrÆ.
-  Skripti devmodñ tiek lÆdñti no faila.
-  Iedevu Korax' Heritage komandai testñıanai ala versiju.
+  KÄ apsolÄ«ju RambOrc, ieviesu spraitu zÄ«mÄ“Å¡anu lÄ«dzÄ«gi kÄ DoomsDay dzinÄ«.
+  PapildinÄjumi pie MAPINFO skripta. Tiek definÄ“ts noslÄ“puma lÄ«menis, debesu
+ kubs un, pats interesentÄkais, lÄ«meÅ†u nummuru norÄdes uz lÄ«meÅ†u vÄrdiem.
+  Hexen sÄk spÄ“li lÄ«menÄ« ar warptrans 1 (kÄ oriÄ£inÄli).
+  Debesu dati salikti struktÅ«rÄ.
+  Skripti devmodÄ“ tiek lÄdÄ“ti no faila.
+  Iedevu Korax' Heritage komandai testÄ“Å¡anai ala versiju.
 11-10-2001
-  UzÆtru roku uzcepu utilØtu, kas pÆrveido tekstİru sarakstu par skriptÆ un
- otrÆdi.
+  UzÄtru roku uzcepu utilÄ«tu, kas pÄrveido tekstÅ«ru sarakstu par skriptÄ un
+ otrÄdi.
 12-10-2001
 13-10-2001
-  Atbalsts ÆdÆm ar jebkuru paleti.
-  Atseviıóa klase raóetñm.
-  Iespñja atslñgt dinamiskÆs gaismas.
-  Miglas parametru konsoles mainØgie.
+  Atbalsts ÄdÄm ar jebkuru paleti.
+  AtseviÅ¡Ä·a klase raÄ·etÄ“m.
+  IespÄ“ja atslÄ“gt dinamiskÄs gaismas.
+  Miglas parametru konsoles mainÄ«gie.
 15-10-2001
-  Hexen prog÷os da÷as fizikas funkcijas ir metodes. Raóeıu klasei ir savas
+  Hexen progÅ¾os daÅ¾as fizikas funkcijas ir metodes. RaÄ·eÅ¡u klasei ir savas
  fizikas metodes.
-  Pñc noklusñıanas ir izslñgta Quake modeõu gaismoıana.
-  Pilns TGA faila visu zinÆmo formÆtu atbalsts, TGA skrØnıoti.
+  PÄ“c noklusÄ“Å¡anas ir izslÄ“gta Quake modeÄ¼u gaismoÅ¡ana.
+  Pilns TGA faila visu zinÄmo formÄtu atbalsts, TGA skrÄ«nÅ¡oti.
 16-10-2001
-  Izveidoju debesu kuba skriptu, viss strÆdÆ perfekti.
-  Nedaudz uzlaboju slØdñıanu uz slØpÆm virsmÆm.
-  RadÆs vñlme pÆriet uz peldoıÆ komata le·óiem.
+  Izveidoju debesu kuba skriptu, viss strÄdÄ perfekti.
+  Nedaudz uzlaboju slÄ«dÄ“Å¡anu uz slÄ«pÄm virsmÄm.
+  RadÄs vÄ“lme pÄriet uz peldoÅ¡Ä komata leÅ†Ä·iem.
 17-10-2001
-  SpñlñtÆja skatØınÆs le·ói caur spñlñtÆja struktİru.
-  Klienta pusñ tiek izmantoti peldoıÆ komata le·ói.
-  Vairs neslØd uz ne pÆrÆk slØpÆm virsmÆm.
-  Hexen vñl pÆris domÆtÆji izmanto peldoıÆ komata laiku. Vñl ir palikıu tikai
- poliobjektu rotñıanas domÆtÆji, kuriem vispirms derñtu peldoıÆ komata le·ói.
-  Miglas konsoles mainØgie ir kopØgi.
-  Atradu kõİdu glBSP kuras dñõ tika sapists REJECT.
+  SpÄ“lÄ“tÄja skatÄ«Å¡nÄs leÅ†Ä·i caur spÄ“lÄ“tÄja struktÅ«ru.
+  Klienta pusÄ“ tiek izmantoti peldoÅ¡Ä komata leÅ†Ä·i.
+  Vairs neslÄ«d uz ne pÄrÄk slÄ«pÄm virsmÄm.
+  Hexen vÄ“l pÄris domÄtÄji izmanto peldoÅ¡Ä komata laiku. VÄ“l ir palikÅ¡u tikai
+ poliobjektu rotÄ“Å¡anas domÄtÄji, kuriem vispirms derÄ“tu peldoÅ¡Ä komata leÅ†Ä·i.
+  Miglas konsoles mainÄ«gie ir kopÄ«gi.
+  Atradu kÄ¼Å«du glBSP kuras dÄ“Ä¼ tika sapists REJECT.
 18-10-2001
-  glVIS tagad arØ veido REJECT datus, ja GL-nodi ir wad failÆ.
+  glVIS tagad arÄ« veido REJECT datus, ja GL-nodi ir wad failÄ.
 19-10-2001
-  ObjektÆ tipa nummurs aizvietots ar klases identifikÆtoru.
-  SÆku pilnu le·óu floatifikÆciju. PilnØbÆ pabeidzu dzini, rpog÷os visas
- iebİvñtÆs funkcijas izmanto peldoıÆ kamata le·óus. Doom prog÷i jau strÆdÆ.
+  ObjektÄ tipa nummurs aizvietots ar klases identifikÄtoru.
+  SÄku pilnu leÅ†Ä·u floatifikÄciju. PilnÄ«bÄ pabeidzu dzini, rpogÅ¾os visas
+ iebÅ«vÄ“tÄs funkcijas izmanto peldoÅ¡Ä kamata leÅ†Ä·us. Doom progÅ¾i jau strÄdÄ.
 20-10-2001
-  Pabeidzu ar le·óiem pÆrñjÆs spñlñs.
+  Pabeidzu ar leÅ†Ä·iem pÄrÄ“jÄs spÄ“lÄ“s.
 22-10-2001
-  PilnØbÆ atbrØvojos no veco le·óu paliekÆm.
+  PilnÄ«bÄ atbrÄ«vojos no veco leÅ†Ä·u paliekÄm.
 23-10-2001
-  Pievienoju vñl pÆris Heretic un Hexen modeõus.
-  Pñc lİguma ieviesu gammu OpenGL un Direct3D draiveros.
+  Pievienoju vÄ“l pÄris Heretic un Hexen modeÄ¼us.
+  PÄ“c lÅ«guma ieviesu gammu OpenGL un Direct3D draiveros.
 24-10-2001
-  Hexen nolñmu nedaudz savÆdÆk izmantot objekt-orientÆciju fizikÆ.
+  Hexen nolÄ“mu nedaudz savÄdÄk izmantot objekt-orientÄciju fizikÄ.
   Vavoom C atbalsts konstruktoriem un destruktoriem.
 25-10-2001
-  Iespñja definñt papildus konsoles mainØgos.
+  IespÄ“ja definÄ“t papildus konsoles mainÄ«gos.
   Praktiski visas Hexen fizikas funkcijas ir metodes.
-  Dabİju Cammand & Conquer: Yuri's revenge - tas bİs uz kÆdu nedñõu.
+  DabÅ«ju Cammand & Conquer: Yuri's revenge - tas bÅ«s uz kÄdu nedÄ“Ä¼u.
 27-10-2001
-  Nelielas problñmas ar tekoıo glVIS versiju, kuras tika Ætri izlabotas.
+  Nelielas problÄ“mas ar tekoÅ¡o glVIS versiju, kuras tika Ätri izlabotas.
 29-10-2001
   DamageMobj ir metode.
 31-10-2001
-  PÆrstrÆdÆju debesu zØmñıanu.
+  PÄrstrÄdÄju debesu zÄ«mÄ“Å¡anu.
 02-11-2001
   Pabeidzu debesis.
 06-11-2001
   Piebeidzu Yuri's revenge - labais!
-  Objektu lauki tiek inicializñti konstruktorÆ.
-  SÆku darbu pie referenÒu ievieıanas vcc.
+  Objektu lauki tiek inicializÄ“ti konstruktorÄ.
+  SÄku darbu pie referenÄu ievieÅ¡anas vcc.
 07-11-2001
-  Klasu references strÆdÆ normÆli.
+  Klasu references strÄdÄ normÄli.
 08-11-2001
-  PÆrnesu ievada lØnijas funkcijas uz prog÷iem.
-  Atradu kõudu kuras dñõ izmeta bojÆtu tØkla paketi.
-  Pievienoju "spekulÆrÆs" gaismas.
-  Pievienoju funkcijas failu saraksta iegİıanai. Seivgeimi tagad atrod visus
- lØme·us, arØ tos ar nestandarta nosaukumiem.
+  PÄrnesu ievada lÄ«nijas funkcijas uz progÅ¾iem.
+  Atradu kÄ¼udu kuras dÄ“Ä¼ izmeta bojÄtu tÄ«kla paketi.
+  Pievienoju "spekulÄrÄs" gaismas.
+  Pievienoju funkcijas failu saraksta iegÅ«Å¡anai. Seivgeimi tagad atrod visus
+ lÄ«meÅ†us, arÄ« tos ar nestandarta nosaukumiem.
 09-11-2001
-  Sagatavoju visu relØzei - testñju, pielaboju sØkas kõİdi·as, aploudoju to
- visu iekı CVS un rakstu dokumentÆciju.
+  Sagatavoju visu relÄ«zei - testÄ“ju, pielaboju sÄ«kas kÄ¼Å«diÅ†as, aploudoju to
+ visu iekÅ¡ CVS un rakstu dokumentÄciju.
 10-11-2001
-  RelØze. GalvenokÆrt dokumentÆcijas rakstØıana.
+  RelÄ«ze. GalvenokÄrt dokumentÄcijas rakstÄ«Å¡ana.
 
 ******************************************************************************
                             VERSIJA 1.10
@@ -529,118 +529,118 @@
 
 26-11-2001
   Tikko pabeidzu Deus Ex - baigi labais.
-  Nedaudz paÆtrinÆju kompilÆtoru.
-  Windows versijÆ konsoles mainØgie sistñmas tausti·u un augstÆs prioritÆtes
- atslñgıanai.
-  Iespñja ielÆdñt skripta testa pakotni.
-  Nolñmu skriptÆ ieviest atslñgvÆrdu self, kas bİs reference uz objektu.
+  Nedaudz paÄtrinÄju kompilÄtoru.
+  Windows versijÄ konsoles mainÄ«gie sistÄ“mas taustiÅ†u un augstÄs prioritÄtes
+ atslÄ“gÅ¡anai.
+  IespÄ“ja ielÄdÄ“t skripta testa pakotni.
+  NolÄ“mu skriptÄ ieviest atslÄ“gvÄrdu self, kas bÅ«s reference uz objektu.
 27-11-2001
-  MSG_Select vietÆ tagad ir divas funkcijas.
-  Nolñmu ieviest bÆzes klasi visiem skripta objektiem.
-  SÆku praktiski izmantot objektu references, atslñgvÆrds self arØ strÆdÆ.
-  SÆku visos skriptos pÆrveidot fizikas funkcijas par metodñm.
-  Ieviesu speciÆlu tØkla draiveri botiem. NormÆli tika radØts bots. Tikai
- paılaik vi·ı neko nedara.
-  NokaÒÆju DeusEx SDK, rØt bİs jÆpamñÖina.
+  MSG_Select vietÄ tagad ir divas funkcijas.
+  NolÄ“mu ieviest bÄzes klasi visiem skripta objektiem.
+  SÄku praktiski izmantot objektu references, atslÄ“gvÄrds self arÄ« strÄdÄ.
+  SÄku visos skriptos pÄrveidot fizikas funkcijas par metodÄ“m.
+  Ieviesu speciÄlu tÄ«kla draiveri botiem. NormÄli tika radÄ«ts bots. Tikai
+ paÅ¡laik viÅ†Å¡ neko nedara.
+  NokaÄÄju DeusEx SDK, rÄ«t bÅ«s jÄpamÄ“Ä£ina.
 28-11-2001
-  Atkal uzinstalñju MSVC. PamñÖinÆju kompilñt, atradÆs pÆris kõİdas.
-  Ieviesu none kÆ tukıo referenci.
-  Turpinu pÆrveidot Doom fizikas funkcijas par metodñm.
-  NormÆli noinstalñju DeusEx SDK, ekstraktñju skriptu kodus. Bİs kur smelties
- informÆciju AI veidoıanÆ.
+  Atkal uzinstalÄ“ju MSVC. PamÄ“Ä£inÄju kompilÄ“t, atradÄs pÄris kÄ¼Å«das.
+  Ieviesu none kÄ tukÅ¡o referenci.
+  Turpinu pÄrveidot Doom fizikas funkcijas par metodÄ“m.
+  NormÄli noinstalÄ“ju DeusEx SDK, ekstraktÄ“ju skriptu kodus. BÅ«s kur smelties
+ informÄciju AI veidoÅ¡anÄ.
 29-11-2001
-  PapildinÆju plakni ar papildus laikiem.
-  SÆku pÆrstrÆdÆt menu.
-  ArØ Heretic un Strife fizikas funkcijas ir metodes.
+  PapildinÄju plakni ar papildus laikiem.
+  SÄku pÄrstrÄdÄt menu.
+  ArÄ« Heretic un Strife fizikas funkcijas ir metodes.
 30-11-2001
-  AtklÆju nopietnu problñmu ar mantotÆs funkcijas izsaukıanu. VecÆka virtuÆlÆ
- funkcija neko nedod - glu÷i pretñji, izsaucot vecÆka funkciju kura savukÆrt
- izsauc tÆs vecÆka funkciju ØstenØbÆ izsauc sevi, kÆ rezultÆtÆ tur viss ·em un
- ieciklojas. Tas arØ bija iemesls kÆpñc mani pÆrveidojumi Hexen neizdevÆs.
- RadÆs ideja konstruktorÆ un destruktorÆ iedot virtuÆlo tabulu kÆ parametru,
- bet citÆm metodñm tas nederñs.
-  MñÖinÆju tÆlÆk pÆrveidot menu, bet augıminñtÆ iemesla dñõ tas neizdevÆs.
+  AtklÄju nopietnu problÄ“mu ar mantotÄs funkcijas izsaukÅ¡anu. VecÄka virtuÄlÄ
+ funkcija neko nedod - gluÅ¾i pretÄ“ji, izsaucot vecÄka funkciju kura savukÄrt
+ izsauc tÄs vecÄka funkciju Ä«stenÄ«bÄ izsauc sevi, kÄ rezultÄtÄ tur viss Å†em un
+ ieciklojas. Tas arÄ« bija iemesls kÄpÄ“c mani pÄrveidojumi Hexen neizdevÄs.
+ RadÄs ideja konstruktorÄ un destruktorÄ iedot virtuÄlo tabulu kÄ parametru,
+ bet citÄm metodÄ“m tas nederÄ“s.
+  MÄ“Ä£inÄju tÄlÄk pÄrveidot menu, bet augÅ¡minÄ“tÄ iemesla dÄ“Ä¼ tas neizdevÄs.
 01-12-2001
-  AtrisinÆju vakar atrasto problñmu õoti vienkÆrıÆ veidÆ - izsaucot pa tieıo.
-  Ieviesu VObject, veidoıu struktİru lØdzØgi Unreal dzinim.
-  TØkla spñlñ atdzimstot bija ıóØbs ekrÆns - atrisinÆts.
+  AtrisinÄju vakar atrasto problÄ“mu Ä¼oti vienkÄrÅ¡Ä veidÄ - izsaucot pa tieÅ¡o.
+  Ieviesu VObject, veidoÅ¡u struktÅ«ru lÄ«dzÄ«gi Unreal dzinim.
+  TÄ«kla spÄ“lÄ“ atdzimstot bija Å¡Ä·Ä«bs ekrÄns - atrisinÄts.
 03-12-2001
-  Bija vajadzØgs vñl viens operÆciju kods, kad netieıas izsaukıanas funkcijas
+  Bija vajadzÄ«gs vÄ“l viens operÄciju kods, kad netieÅ¡as izsaukÅ¡anas funkcijas
  parametrs ir vektors.
-  Skriptos konstruktors vietÆ tiek izmantots defaultproperties.
-  SÆku pievienot SkullTag botus.
+  Skriptos konstruktors vietÄ tiek izmantots defaultproperties.
+  SÄku pievienot SkullTag botus.
 04-12-2001
-  Salaboju spñlñtÆju modeõus, tagad lØóiem saglabÆjas modelis un Æda.
-  Boti strÆdÆ. Tas ir cool! Kaut gan Øpaıi sajİsmÆ par vi·u intelektu es
+  Salaboju spÄ“lÄ“tÄju modeÄ¼us, tagad lÄ«Ä·iem saglabÄjas modelis un Äda.
+  Boti strÄdÄ. Tas ir cool! Kaut gan Ä«paÅ¡i sajÅ«smÄ par viÅ†u intelektu es
  neesmu.
-  Salaboju MSVC savietojamØbu, ar MSVC normÆli kompilñjas un strÆdÆ.
+  Salaboju MSVC savietojamÄ«bu, ar MSVC normÄli kompilÄ“jas un strÄdÄ.
 05-12-2001
-  Skatos kautko priekı VObject.
-  Nedaudz piestrÆdÆju pie kompilatora.
+  Skatos kautko priekÅ¡ VObject.
+  Nedaudz piestrÄdÄju pie kompilatora.
 06-12-2001
-  Pievienoju dinamisko masØvu sagataves klasi. TÆ ir õoti laba lieta. Ar kuru
- õoti viegli var atbrØvoties no ierobe÷ojumiem.
+  Pievienoju dinamisko masÄ«vu sagataves klasi. TÄ ir Ä¼oti laba lieta. Ar kuru
+ Ä¼oti viegli var atbrÄ«voties no ierobeÅ¾ojumiem.
 07-12-2001
-  Pateicoties dinamiskajiem masØviem atbrØvojos no animÆciju un slñd÷u skaita
- ierobe÷ojumie.
-  SÆku pÆrveidot stÆvokõu funkcijas par metodñm. Izmantojot tieıo funkcijas
- numuru nav atıóirØibas.
+  Pateicoties dinamiskajiem masÄ«viem atbrÄ«vojos no animÄciju un slÄ“dÅ¾u skaita
+ ierobeÅ¾ojumie.
+  SÄku pÄrveidot stÄvokÄ¼u funkcijas par metodÄ“m. Izmantojot tieÅ¡o funkcijas
+ numuru nav atÅ¡Ä·irÄ«ibas.
 08-12-2001
-  Turpinu darbu pie stÆvokõu funkciju pÆrveidoıanas par metodñm. Ar Doom
- tÆkÆ bİtu pabeights.
+  Turpinu darbu pie stÄvokÄ¼u funkciju pÄrveidoÅ¡anas par metodÄ“m. Ar Doom
+ tÄkÄ bÅ«tu pabeights.
 10-12-2001
-  StÆvokõu funkciju pÆrveidoıana par metodñm turoinÆs pie citÆm spñlñm.
+  StÄvokÄ¼u funkciju pÄrveidoÅ¡ana par metodÄ“m turoinÄs pie citÄm spÄ“lÄ“m.
 11-12-2001
-  AtdalØju atsevoıói ieroÒu stÆvokõus, funkcijas ir ieroÒa objekta metodes.
+  AtdalÄ«ju atsevoÅ¡Ä·i ieroÄu stÄvokÄ¼us, funkcijas ir ieroÄa objekta metodes.
 13-12-2001
-  SkriptÆ nomainØju atslñgvÆrdu extern pret native.
-  Skriptos atbalsts dinamiskajai tipu mai·ai. Windows-Æ negrib strÆdÆt.
-  PÆrveidoju CVar_ funkcijas par statiskÆm TCvar metodñm.
-  Salaboju kÆrıanos pñc plak·u struktİras paplaıinÆıanas.
-  DomÆtÆju saraksts bez VThinker objekta izmantoıanas.
-  Skripta koda patÒoıana.
-  VObject kods tiek ieviests praksñ.
+  SkriptÄ nomainÄ«ju atslÄ“gvÄrdu extern pret native.
+  Skriptos atbalsts dinamiskajai tipu maiÅ†ai. Windows-Ä negrib strÄdÄt.
+  PÄrveidoju CVar_ funkcijas par statiskÄm TCvar metodÄ“m.
+  Salaboju kÄrÅ¡anos pÄ“c plakÅ†u struktÅ«ras paplaÅ¡inÄÅ¡anas.
+  DomÄtÄju saraksts bez VThinker objekta izmantoÅ¡anas.
+  Skripta koda patÄoÅ¡ana.
+  VObject kods tiek ieviests praksÄ“.
 14-12-2001
-  Viss ko skriptu kodÆ var nopatÒot ir nopatÒots.
-  MSVC pievienoju asemblera failu kompilñıanu.
-  SÆku lietot praksñ VClass objektus, tipu identifikÆcija izmantojot klases.
+  Viss ko skriptu kodÄ var nopatÄot ir nopatÄots.
+  MSVC pievienoju asemblera failu kompilÄ“Å¡anu.
+  SÄku lietot praksÄ“ VClass objektus, tipu identifikÄcija izmantojot klases.
 15-12-2001
-  Man nedeva mieru viena lieta - Windows normÆli izsauc iebİvñtÆs funkcijas,
- tÆdñjÆdi es pamñÖinÆju atrisinÆt C++ funkcijas tieıÆs izsaukıanas problñmu
- izmantojot netieıo izsaukıanu. RezultÆts - veiksmØgs.
-  Visas skripta izpildes metodes ir statiskas, objektu spaunoıana nav TProgs
- sastÆvdaLa. Korekti tiek reÖistrñtas un izmantotas iebİvñtÆs klases.
+  Man nedeva mieru viena lieta - Windows normÄli izsauc iebÅ«vÄ“tÄs funkcijas,
+ tÄdÄ“jÄdi es pamÄ“Ä£inÄju atrisinÄt C++ funkcijas tieÅ¡Äs izsaukÅ¡anas problÄ“mu
+ izmantojot netieÅ¡o izsaukÅ¡anu. RezultÄts - veiksmÄ«gs.
+  Visas skripta izpildes metodes ir statiskas, objektu spaunoÅ¡ana nav TProgs
+ sastÄvdaLa. Korekti tiek reÄ£istrÄ“tas un izmantotas iebÅ«vÄ“tÄs klases.
 17-12-2001
-  VisÆm spñlñm pievienoju poliobjektus.
-  Pievienoju FArchive, nedaudz pÆrveidoju seivoıanu.
-  Izmantoju savas vecÆs AngleMod metodes, jo tÆs ir precØzÆkas.
+  VisÄm spÄ“lÄ“m pievienoju poliobjektus.
+  Pievienoju FArchive, nedaudz pÄrveidoju seivoÅ¡anu.
+  Izmantoju savas vecÄs AngleMod metodes, jo tÄs ir precÄ«zÄkas.
 18-12-2001
-  LielÆkÆ daõa Hexen lØniju speciÆlo funkciju ir visÆs spñlñs.
-  Pievienoju globÆlu nosaukumu apakısistñmu.
+  LielÄkÄ daÄ¼a Hexen lÄ«niju speciÄlo funkciju ir visÄs spÄ“lÄ“s.
+  Pievienoju globÄlu nosaukumu apakÅ¡sistÄ“mu.
 20-12-2001
-  AtbrØvojos no thinker-u saraksta.
-  No Entity izmetu ÆrÆ type, jo tÆ vietÆ var izmantot lauku Class vai metodi
+  AtbrÄ«vojos no thinker-u saraksta.
+  No Entity izmetu ÄrÄ type, jo tÄ vietÄ var izmantot lauku Class vai metodi
  IsA.
-  Pievienoju miskastes savÆkıanas sÆkuma variantu. Metode Destroy neiznØcina
- uzreiz, bet gan maróñ objektu kÆ iznØcinÆtu un reÆlÆ iznØcinÆıana notiek
- miskastes savÆkıÆnas laikÆ.
-  Izmetu no skriptiem destruktorus un C++ stila konstruktorus, kÆ arØ visu
- lieko no virtuÆlo funkciju tabulas.
+  Pievienoju miskastes savÄkÅ¡anas sÄkuma variantu. Metode Destroy neiznÄ«cina
+ uzreiz, bet gan marÄ·Ä“ objektu kÄ iznÄ«cinÄtu un reÄlÄ iznÄ«cinÄÅ¡ana notiek
+ miskastes savÄkÅ¡Änas laikÄ.
+  Izmetu no skriptiem destruktorus un C++ stila konstruktorus, kÄ arÄ« visu
+ lieko no virtuÄlo funkciju tabulas.
 21-12-2001
-  Pabeidzu lauka type izmeıanu. AtdalØju VClass atseviıóÆ failÆ. Salaboju
- seivoıanu, classid lauki tiek korekti apstrÆdÆti.
+  Pabeidzu lauka type izmeÅ¡anu. AtdalÄ«ju VClass atseviÅ¡Ä·Ä failÄ. Salaboju
+ seivoÅ¡anu, classid lauki tiek korekti apstrÄdÄti.
 22-12-2001
-  Visi spñles laikÆ izmantotie funkciju numuri un globÆlo mainØgo indeksi
- tiek atrasti ielÆdes laikÆ.
+  Visi spÄ“les laikÄ izmantotie funkciju numuri un globÄlo mainÄ«go indeksi
+ tiek atrasti ielÄdes laikÄ.
 27-12-2001
-  SkriptÆ spawnhealth tagad tiek inicializñts funkcijÆ OnMapSpawn.
-  Atradu kÆpñc tik daudz tiek lietots strcmp - 2D zØmñjumu informÆcijas
- iegİıanÆ, pÆrveidoju tÆ, lai informÆcija tiktu lasØta tikai vienreiz. ArØ
+  SkriptÄ spawnhealth tagad tiek inicializÄ“ts funkcijÄ OnMapSpawn.
+  Atradu kÄpÄ“c tik daudz tiek lietots strcmp - 2D zÄ«mÄ“jumu informÄcijas
+ iegÅ«Å¡anÄ, pÄrveidoju tÄ, lai informÄcija tiktu lasÄ«ta tikai vienreiz. ArÄ«
  CheckHeap prasa daudz.
 28-12-2001
-  SpñlñtÆja informÆcija tiek sİtØta tikai savienojuma sÆkumÆ.
-  PÆris sØki labojumi pñdñjÆ brØdØ.
-  PÆrsteidzoıi ir tas, ka relØzes versijÆ lØme·u ielÆde ir daudz ÆtrÆka.
+  SpÄ“lÄ“tÄja informÄcija tiek sÅ«tÄ«ta tikai savienojuma sÄkumÄ.
+  PÄris sÄ«ki labojumi pÄ“dÄ“jÄ brÄ«dÄ«.
+  PÄrsteidzoÅ¡i ir tas, ka relÄ«zes versijÄ lÄ«meÅ†u ielÄde ir daudz ÄtrÄka.
 
 ******************************************************************************
                             VERSIJA 1.11
@@ -649,378 +649,378 @@
 02-01-2002
   Salaboju Straifa galveno menu.
   Pievienoju guard makors.
-  glVIS pÆrslñdzos no float uz double.
+  glVIS pÄrslÄ“dzos no float uz double.
 03-01-2002
-  Salaboju ieroÒus.
+  Salaboju ieroÄus.
   Pievienoju SDL portu.
 04-01-2002
-  Salaboju ıóØbo ekrÆnu pñc nÆves.
-  P_CheckSight pievienota aizsardzØba kas atrisina problñmas ar botiem.
+  Salaboju Å¡Ä·Ä«bo ekrÄnu pÄ“c nÄves.
+  P_CheckSight pievienota aizsardzÄ«ba kas atrisina problÄ“mas ar botiem.
 07-01-2002
-  IzmainØju autortiesØbu gadu.
-  glBSP izmai·as poliobjektu kodÆ.
+  IzmainÄ«ju autortiesÄ«bu gadu.
+  glBSP izmaiÅ†as poliobjektu kodÄ.
 08-01-2002
-  Pievienoju vcc nosaukumu apakısistñmu.
+  Pievienoju vcc nosaukumu apakÅ¡sistÄ“mu.
 09-01-2002
-  Pievienoju atbalstu EDGE 3D grØdÆm.
-  SÆku izmantot nosaukumus progs failÆ un kompilÆtorÆ.
+  Pievienoju atbalstu EDGE 3D grÄ«dÄm.
+  SÄku izmantot nosaukumus progs failÄ un kompilÄtorÄ.
 10-01-2002
-  PamñÖinÆju nokompilñt ar MinGW. Diem÷ñl nav ska·as, Direct3D nemñÖinÆju. Bet
- galvenÆ problñma ir tÆ, ka ir vajadzØgs -fvtable-thunks, kas nozØmñ ka ir
- jÆpÆrkompilñ libstdc++.a, tÆdñõ atbalsts MinGW pagaidÆm nebİs.
-  SkriptÆ pievienoju vÆrdu tipu "name", izmetu ÆrÆ atbalstu skaitõiem bez
- zØmes.
-  Ska·u saraksts kÆ dinamisks masØvs, izmanto vÆrdu sistñmu.
+  PamÄ“Ä£inÄju nokompilÄ“t ar MinGW. DiemÅ¾Ä“l nav skaÅ†as, Direct3D nemÄ“Ä£inÄju. Bet
+ galvenÄ problÄ“ma ir tÄ, ka ir vajadzÄ«gs -fvtable-thunks, kas nozÄ«mÄ“ ka ir
+ jÄpÄrkompilÄ“ libstdc++.a, tÄdÄ“Ä¼ atbalsts MinGW pagaidÄm nebÅ«s.
+  SkriptÄ pievienoju vÄrdu tipu "name", izmetu ÄrÄ atbalstu skaitÄ¼iem bez
+ zÄ«mes.
+  SkaÅ†u saraksts kÄ dinamisks masÄ«vs, izmanto vÄrdu sistÄ“mu.
 11-01-2002
-  Pievienoju dinamisko simbola virk·u klasi.
-  SÆku izmantot nosaukumus skriptÆ. Visi spraitu, modeõu, ska·u un sekvenÒu
- vÆrdi ir ar nosaukuma tipu.
+  Pievienoju dinamisko simbola virkÅ†u klasi.
+  SÄku izmantot nosaukumus skriptÄ. Visi spraitu, modeÄ¼u, skaÅ†u un sekvenÄu
+ vÄrdi ir ar nosaukuma tipu.
 12-01-2002
-  Objektu ska·as tiek inicializñtas ar nosaukumu palØdzØbu.
-  StÆvokõu tabulÆs aizvietoju funkcijas pointeri ar stÆvokõa kodu.
-  Aizvietoju pÆris C stila tipa pÆrveidoıanas ar diamisko tipu pÆrveidoıanu.
+  Objektu skaÅ†as tiek inicializÄ“tas ar nosaukumu palÄ«dzÄ«bu.
+  StÄvokÄ¼u tabulÄs aizvietoju funkcijas pointeri ar stÄvokÄ¼a kodu.
+  Aizvietoju pÄris C stila tipa pÄrveidoÅ¡anas ar diamisko tipu pÄrveidoÅ¡anu.
 14-01-2002
-  LØme·a speciÆlu kodÆ aizvietoti daudzi pointeri ar referencñm.
-  Ieviesu relatØvo un absolİto pozØcijas pÆrbaudi.
+  LÄ«meÅ†a speciÄlu kodÄ aizvietoti daudzi pointeri ar referencÄ“m.
+  Ieviesu relatÄ«vo un absolÅ«to pozÄ«cijas pÄrbaudi.
 15-01-2002
-  PÆrnesu visu no Entity uz Actor, sÆkıu veidot Entity kÆ kopñju klasi.
-  PÆrdñvñju objektu laukus uz vÆrdiem ar lielo sÆkuma burtu.
-  Viens puisis ieteica pÆris uzlabojumus. Nav slikti.
+  PÄrnesu visu no Entity uz Actor, sÄkÅ¡u veidot Entity kÄ kopÄ“ju klasi.
+  PÄrdÄ“vÄ“ju objektu laukus uz vÄrdiem ar lielo sÄkuma burtu.
+  Viens puisis ieteica pÄris uzlabojumus. Nav slikti.
 16-01-2002
-  PÆris uzlabojumu sakarÆ ar P_TouchSpecialThing. Augstums tiek pÆrbaudØts
- iepriekı un atbilst priekımeta augstumam.
-  Hexen pÆrdñvñju objektu klases. Baigais darbs.
+  PÄris uzlabojumu sakarÄ ar P_TouchSpecialThing. Augstums tiek pÄrbaudÄ«ts
+ iepriekÅ¡ un atbilst priekÅ¡meta augstumam.
+  Hexen pÄrdÄ“vÄ“ju objektu klases. Baigais darbs.
 17-01-2002
-  PÆrdñvñju objektu klases pÆrñjÆs spñlñs. AtıóirØba no Hexen ir õoti jİtama.
-  Objekta nummurs lØme·a redaktorÆ tagad tiek norÆdØts klases definØcijÆ.
-  Izlaboju kõİdas ar Hexen klasñm un Heretic un Hexen statusbÆriem.
+  PÄrdÄ“vÄ“ju objektu klases pÄrÄ“jÄs spÄ“lÄ“s. AtÅ¡Ä·irÄ«ba no Hexen ir Ä¼oti jÅ«tama.
+  Objekta nummurs lÄ«meÅ†a redaktorÄ tagad tiek norÄdÄ«ts klases definÄ«cijÄ.
+  Izlaboju kÄ¼Å«das ar Hexen klasÄ“m un Heretic un Hexen statusbÄriem.
 18-01-2002
-  SÆku darbu pie atbrØvoıanÆs no C stila tipu mai·Æm, citiem vÆrdiem sakot
+  SÄku darbu pie atbrÄ«voÅ¡anÄs no C stila tipu maiÅ†Äm, citiem vÄrdiem sakot
  pie menu.
 19-01-2002
-  Turpinu darbu pie menu. LielÆkÆ daõa menu ir mantotas no MenuScreen.
- Ieviesu izvñles bÆzes klasi un izvñõu sarakstu.
-  Windows versijÆ salaboju 32 bitu re÷Ømu.
+  Turpinu darbu pie menu. LielÄkÄ daÄ¼a menu ir mantotas no MenuScreen.
+ Ieviesu izvÄ“les bÄzes klasi un izvÄ“Ä¼u sarakstu.
+  Windows versijÄ salaboju 32 bitu reÅ¾Ä«mu.
 21-01-2002
-  PilnØbÆ visi menu ir mantoti no MenuScreen.
-  Menu kursors kÆ atseviıós objekts.
+  PilnÄ«bÄ visi menu ir mantoti no MenuScreen.
+  Menu kursors kÄ atseviÅ¡Ä·s objekts.
   Klasu konstruktori bez nosaukumiem.
-  MSVC nevajadzØgie warning-i tiek aizliegti.
+  MSVC nevajadzÄ«gie warning-i tiek aizliegti.
 22-01-2002
-  Menu nosaukuma objekts. LielÆkÆ daõa izvñõ·u tipu kÆ objekti.
+  Menu nosaukuma objekts. LielÄkÄ daÄ¼a izvÄ“Ä¼Å†u tipu kÄ objekti.
 23-01-2002
-  Pabeidzu darbu pie menu. PareizÆk sakot - pagaidÆ. Visi izvñõ·u lauki ir kÆ
- objekti. Bet pats galvenais kÆdñõ es to darØju bija atbrØvoıanÆs no C stila
- tipu pÆrveidoıanas. Nu tas ir izdarØts un kompilÆtors to vairs neatbalsta.
+  Pabeidzu darbu pie menu. PareizÄk sakot - pagaidÄ. Visi izvÄ“Ä¼Å†u lauki ir kÄ
+ objekti. Bet pats galvenais kÄdÄ“Ä¼ es to darÄ«ju bija atbrÄ«voÅ¡anÄs no C stila
+ tipu pÄrveidoÅ¡anas. Nu tas ir izdarÄ«ts un kompilÄtors to vairs neatbalsta.
 24-01-2002
-  AtdalØju Entity klasi atseviıóÆ kopñjÆ failÆ, pievienoju stÆvokõa mai·as
+  AtdalÄ«ju Entity klasi atseviÅ¡Ä·Ä kopÄ“jÄ failÄ, pievienoju stÄvokÄ¼a maiÅ†as
  funkcijas.
   Pievienoju Touch funkciju Actor klasei.
   MF2_PASSMOBJ aizvietoju ar inversu flagu MF2_NOPASSMOBJ.
-  JohaidØ! 35 kadru imitÆcija serverØ tieıÆm radØja "lñnÆs kustñıanÆs" efektu.
- Nomainot kadra laiku uz drusci· palielinÆtu laiku atrisinÆja ıo problñmu.
+  JohaidÄ«! 35 kadru imitÄcija serverÄ« tieÅ¡Äm radÄ«ja "lÄ“nÄs kustÄ“Å¡anÄs" efektu.
+ Nomainot kadra laiku uz drusciÅ† palielinÄtu laiku atrisinÄja Å¡o problÄ“mu.
 25-01-2002
-  Kaudze funkciju pÆrveidotas par Actor funkcijÆm.
-  Vismaz viens cilvñks bija õoti ieinteresñts dzirdot par "lñnÆs kustØbas"
- baga izlaboıanu. Un tas patieıÆm ir labs iemesls izlaist jaunu versiju kurÆ
- visi atrastie bagi ir izlaboti. DomÆju to izdarØt rØt.
+  Kaudze funkciju pÄrveidotas par Actor funkcijÄm.
+  Vismaz viens cilvÄ“ks bija Ä¼oti ieinteresÄ“ts dzirdot par "lÄ“nÄs kustÄ«bas"
+ baga izlaboÅ¡anu. Un tas patieÅ¡Äm ir labs iemesls izlaist jaunu versiju kurÄ
+ visi atrastie bagi ir izlaboti. DomÄju to izdarÄ«t rÄ«t.
 26-01-2002
-  Pievienoju konsoles mainØgos DirectSound3D parametriem.
-  Tika laista klajÆ versija 1.11.2.
-  Salaboju dinamisko tipu pÆrveidoıanu.
+  Pievienoju konsoles mainÄ«gos DirectSound3D parametriem.
+  Tika laista klajÄ versija 1.11.2.
+  Salaboju dinamisko tipu pÄrveidoÅ¡anu.
 29-01-2002
-  Salaboju superıotgana vertikÆlo rotÆciju.
+  Salaboju superÅ¡otgana vertikÄlo rotÄciju.
   Kaudze funkciju ir Actor funkcijas, aizvietoti kaudze pointeru ar klasu
- referencñm.
-  VisÆm spñlñm ir MCROSS un PCOSS flagi.
-  Heretic salaboju podu teleportÆciju.
-  Salabiju Hexen lØme·u mİziku.
+ referencÄ“m.
+  VisÄm spÄ“lÄ“m ir MCROSS un PCOSS flagi.
+  Heretic salaboju podu teleportÄciju.
+  Salabiju Hexen lÄ«meÅ†u mÅ«ziku.
   Uzlaboju response failus.
-  Pievienoju DirectSound3D minimÆlo distanci un problñma tika atrisinÆta.
-  Salaboju spñlñtÆju objektu apdeitu.
+  Pievienoju DirectSound3D minimÄlo distanci un problÄ“ma tika atrisinÄta.
+  Salaboju spÄ“lÄ“tÄju objektu apdeitu.
 30-01-2002
-  IebİvñtÆs funkcijas var tikt definñtÆs klases definØcijÆ.
-  UtilØtos aizvietoju pointerus ar referencñm.
-  Salaboju Hexen statusbÆra tØkla spñles gemus.
-  DzinØ FFunction pointeri visur tieıÆm ir FFunction pointeri un nevis int
- mainØgie.
+  IebÅ«vÄ“tÄs funkcijas var tikt definÄ“tÄs klases definÄ«cijÄ.
+  UtilÄ«tos aizvietoju pointerus ar referencÄ“m.
+  Salaboju Hexen statusbÄra tÄ«kla spÄ“les gemus.
+  DzinÄ« FFunction pointeri visur tieÅ¡Äm ir FFunction pointeri un nevis int
+ mainÄ«gie.
 01-02-2002
-  Salaboju pÆrÆk garos Heretic finÆla mesid÷us.
-  Salaboju lidoıanas pÆrtraukıanu.
-  TeleportNewMap bez argumentiem nestrÆdÆ, ja nav starp lØme·iem. Tam bİtu
- jÆatrisina problñma tØkla spñlñ kad pÆrlec lØme·iem.
-  Iespñjams ka iemesls kÆpñc atseviıóajam klientam ir jÆpieslñdzas no jauna
- ir tas ka sİtot servera informÆciju tØkla sokets ir aiz·emts.
-  SÆkuma versija ddf2vc konverterim var tikt nokompilñta.
+  Salaboju pÄrÄk garos Heretic finÄla mesidÅ¾us.
+  Salaboju lidoÅ¡anas pÄrtraukÅ¡anu.
+  TeleportNewMap bez argumentiem nestrÄdÄ, ja nav starp lÄ«meÅ†iem. Tam bÅ«tu
+ jÄatrisina problÄ“ma tÄ«kla spÄ“lÄ“ kad pÄrlec lÄ«meÅ†iem.
+  IespÄ“jams ka iemesls kÄpÄ“c atseviÅ¡Ä·ajam klientam ir jÄpieslÄ“dzas no jauna
+ ir tas ka sÅ«tot servera informÄciju tÄ«kla sokets ir aizÅ†emts.
+  SÄkuma versija ddf2vc konverterim var tikt nokompilÄ“ta.
 02-02-2002
-  IterÆtoru funkcijÆs klasu pointeri aizvietoti ar referencñm.
+  IterÄtoru funkcijÄs klasu pointeri aizvietoti ar referencÄ“m.
 04-02-2002
-  SÆku sadalØt flagus boolean mainØgajos. PagaidÆm tie ir 4 baitu mainØgie un
- ıØ darbØba õoti palielinÆs struktİru izmñrus, bet brØzumÆ tiks ieviesti bool
- mainØgie.
+  SÄku sadalÄ«t flagus boolean mainÄ«gajos. PagaidÄm tie ir 4 baitu mainÄ«gie un
+ Å¡Ä« darbÄ«ba Ä¼oti palielinÄs struktÅ«ru izmÄ“rus, bet brÄ«zumÄ tiks ieviesti bool
+ mainÄ«gie.
 05-02-2002
   Turpinu ar flagiem.
   Pievienoju Hexen botus.
 06-02-2002
   Pabeidzu ar flagiem.
-  Salaboju vadØbas tausti·u menu kursoru kÆ arØ noklusñto kursora pozØciju
- grİtØbas pakÆpes menu.
+  Salaboju vadÄ«bas taustiÅ†u menu kursoru kÄ arÄ« noklusÄ“to kursora pozÄ«ciju
+ grÅ«tÄ«bas pakÄpes menu.
 07-02-2002
-  PÆrnesu CheckPosition un Entity failu.
+  PÄrnesu CheckPosition un Entity failu.
 08-02-2002
-  AtbrØvojos no spraitu vÆrdu konstantñm. PiestrÆdÆju pie P_CheckRelPosition.
-  ForumÆ viens iedeva linku kur var nokaÒÆt pilnu Strife.
+  AtbrÄ«vojos no spraitu vÄrdu konstantÄ“m. PiestrÄdÄju pie P_CheckRelPosition.
+  ForumÄ viens iedeva linku kur var nokaÄÄt pilnu Strife.
 09-02-2002
-  NokaÒÆju Strife, bİs nekavñjoties jÆiziet.
+  NokaÄÄju Strife, bÅ«s nekavÄ“joties jÄiziet.
 13-02-2002
-  Pabeidzu Strife, vienkÆrıi super spñle, tas nekas ka grafika ir novecojusi
- un ievads nav Øpaıi ñrts neskatoties uz to ka vecie Doom laiki tika pavadØti
- ar ıÆdu ievadu.
-  PÆrdñvñju parametru origin uz Origin.
-  Strife versijÆ 1.2 ir izmainØts sarunu skriptu formÆts. TajÆ ir iekõauts
- bildes un ska·as vÆrds.
+  Pabeidzu Strife, vienkÄrÅ¡i super spÄ“le, tas nekas ka grafika ir novecojusi
+ un ievads nav Ä«paÅ¡i Ä“rts neskatoties uz to ka vecie Doom laiki tika pavadÄ«ti
+ ar Å¡Ädu ievadu.
+  PÄrdÄ“vÄ“ju parametru origin uz Origin.
+  Strife versijÄ 1.2 ir izmainÄ«ts sarunu skriptu formÄts. TajÄ ir iekÄ¼auts
+ bildes un skaÅ†as vÄrds.
 14-02-2002
-  VÆrdu pÆrdñvñıana visiem pÆrñjiem Entity laukiem. Pievienoju lauku Sector
- un flagu bIsPlayer. Pievienoju StepSpeed, jo tas nav glu÷i Ætrums bet gan
- soõa izmñrs.
+  VÄrdu pÄrdÄ“vÄ“Å¡ana visiem pÄrÄ“jiem Entity laukiem. Pievienoju lauku Sector
+ un flagu bIsPlayer. Pievienoju StepSpeed, jo tas nav gluÅ¾i Ätrums bet gan
+ soÄ¼a izmÄ“rs.
   Salaboju Hexen minotauru.
-  Salaboju botus pñc lØme·a mai·as.
+  Salaboju botus pÄ“c lÄ«meÅ†a maiÅ†as.
 15-02-2002
-  Izmetu ÆrÆ iepriekı atrastos ska·u indeksus.
-  PÆris uzlabojumi Strife.
-  PÆrdEvñju laukus dzinØ.
+  Izmetu ÄrÄ iepriekÅ¡ atrastos skaÅ†u indeksus.
+  PÄris uzlabojumi Strife.
+  PÄrdEvÄ“ju laukus dzinÄ«.
 16-02-2002
-  Ieviesu bool mainØgos.
-  Pievienoju lØniju teleportus un caurredzamas lØnijas.
-  Ceru ka salaboju problñmu kad ne-lokÆlie klienti nemainØja lØmeni.
+  Ieviesu bool mainÄ«gos.
+  Pievienoju lÄ«niju teleportus un caurredzamas lÄ«nijas.
+  Ceru ka salaboju problÄ“mu kad ne-lokÄlie klienti nemainÄ«ja lÄ«meni.
 18-02-2002
-  player_t un ViewEntity lauku pÆrdñvñıana, ska·as funkcijas pieder Entity.
- AizvÆcu no stÆvokõu tabulas misc1 un misc2 laukus, bet beigÆs vairs nekas
+  player_t un ViewEntity lauku pÄrdÄ“vÄ“Å¡ana, skaÅ†as funkcijas pieder Entity.
+ AizvÄcu no stÄvokÄ¼u tabulas misc1 un misc2 laukus, bet beigÄs vairs nekas
  neiet.
 19-02-2002
-  Atradu kõİdu kÆpñc kÆrÆs.
+  Atradu kÄ¼Å«du kÄpÄ“c kÄrÄs.
 20-02-2002
-  Strife tagad pievieno arØ voices.wad.
+  Strife tagad pievieno arÄ« voices.wad.
 21-02-2002
-  P_CheckRelPosition ir kopØgs.
+  P_CheckRelPosition ir kopÄ«gs.
 22-02-2002
-  PÆrñjo Actor un player_t lauku pÆrdñvñıana.
+  PÄrÄ“jo Actor un player_t lauku pÄrdÄ“vÄ“Å¡ana.
 23-02-2002
   Kaudze funkciju tagad ir Actor funkcijas.
 25-02-2002
-  KompilÆtorÆ pievienoju speciÆlo lauku tipu informÆcijas eksportu. AtklÆju
- ka Hexen virtuÆlÆs tabulas aiz·em pusmegabaitu. SadalØıana klasñs ıo skaitli
- noteikti samazinÆs.
+  KompilÄtorÄ pievienoju speciÄlo lauku tipu informÄcijas eksportu. AtklÄju
+ ka Hexen virtuÄlÄs tabulas aizÅ†em pusmegabaitu. SadalÄ«Å¡ana klasÄ“s Å¡o skaitli
+ noteikti samazinÄs.
 26-02-2002
-  Salaboju Hexen tØkla spñles menu un citas menu problñmas.
-  Spñõu seivoıana izmanto lauku tipu informÆciju, vÆrdi, references un klasu
- pointeri tiek apstrÆdÆti automÆtiski.
-  Aizvietoju target ar Enemy un Owner, meklñtÆjraóetes tagad var izmantot
- Target kÆ mñróa pointeri.
+  Salaboju Hexen tÄ«kla spÄ“les menu un citas menu problÄ“mas.
+  SpÄ“Ä¼u seivoÅ¡ana izmanto lauku tipu informÄciju, vÄrdi, references un klasu
+ pointeri tiek apstrÄdÄti automÄtiski.
+  Aizvietoju target ar Enemy un Owner, meklÄ“tÄjraÄ·etes tagad var izmantot
+ Target kÄ mÄ“rÄ·a pointeri.
 27-02-2002
-  Ieviesu ieroÒu klases. Hexen tÆs ir smuki sakÆrtotas.
-  Pievienojot spekulÆrÆs gaismas tiek atslñgta migla.
+  Ieviesu ieroÄu klases. Hexen tÄs ir smuki sakÄrtotas.
+  Pievienojot spekulÄrÄs gaismas tiek atslÄ“gta migla.
 28-02-2002
-  LietotÆja interfeisÆ pievienoju Pad-Enter atbalstu.
-  PÆrdñvñju Enemy atpakaõ uz Tatget.
-  SakÆrtoju ieroÒu klases Heretic un Strife.
+  LietotÄja interfeisÄ pievienoju Pad-Enter atbalstu.
+  PÄrdÄ“vÄ“ju Enemy atpakaÄ¼ uz Tatget.
+  SakÄrtoju ieroÄu klases Heretic un Strife.
   Pievienoju komandu MapList.
 01-03-2002
-  SÆku sakÆrot Hexen monstru klases savos failos.
-  Uzlaboju redzamØbas pÆrbaudi ar trØs stariem.
+  SÄku sakÄrot Hexen monstru klases savos failos.
+  Uzlaboju redzamÄ«bas pÄrbaudi ar trÄ«s stariem.
 02-03-2002
-  PrincipÆ esmu beidzis ar Hexem monstru klasñm.
+  PrincipÄ esmu beidzis ar Hexem monstru klasÄ“m.
 04-03-2002
   Ieviesu flagus bColideWithWorld un bColideWithThings.
-  Mainot lØmeni pazuda ierocis. Iemesls izrÆdÆs bija tas, ka mainot lØmeni
- tiek pa jaunu inicializñti ieroÒu spraiti un boti. Pievienoju jaunu funkciju
- PutClientIntoServer kurÆ tiek inicializñti ieroÒu spraiti un boti, un tas
+  Mainot lÄ«meni pazuda ierocis. Iemesls izrÄdÄs bija tas, ka mainot lÄ«meni
+ tiek pa jaunu inicializÄ“ti ieroÄu spraiti un boti. Pievienoju jaunu funkciju
+ PutClientIntoServer kurÄ tiek inicializÄ“ti ieroÄu spraiti un boti, un tas
  notiks tikai vienu reizi.
-  Hexen atdalØju atseviıói spñlñtÆju objektu definØcijas.
+  Hexen atdalÄ«ju atseviÅ¡Ä·i spÄ“lÄ“tÄju objektu definÄ«cijas.
 05-03-2002
-  Pievienoju visu nepiecieıamo atbalstu iebİvñto funkciju definñıanai Ærpus
+  Pievienoju visu nepiecieÅ¡amo atbalstu iebÅ«vÄ“to funkciju definÄ“Å¡anai Ärpus
  pr_cmds.cpp.
-  Entity tagad ir iebİvñta klase, tÆs funkcijas ir iebİvñtas.
+  Entity tagad ir iebÅ«vÄ“ta klase, tÄs funkcijas ir iebÅ«vÄ“tas.
 06-03-2002
-  GravitÆte ir atkarØga no masas. GravitÆtes funkcija ir iebİvñta.
+  GravitÄte ir atkarÄ«ga no masas. GravitÄtes funkcija ir iebÅ«vÄ“ta.
 07-03-2002
-  AtbrØvojos no funkciju pointeriem. SetState ir iebİvñtas, pÆrñjÆs izmanto
- funkcijas vÆrdu.
+  AtbrÄ«vojos no funkciju pointeriem. SetState ir iebÅ«vÄ“tas, pÄrÄ“jÄs izmanto
+ funkcijas vÄrdu.
   Salabiju "Tome of power"
 08-03-2002
-  CheckOnMobj ir iebİvñts.
+  CheckOnMobj ir iebÅ«vÄ“ts.
 09-03-2002
-  Hexen pÆris mainØgie pÆrnesti no Actor us Pawn. ThrustFloor klases pÆrnestas
+  Hexen pÄris mainÄ«gie pÄrnesti no Actor us Pawn. ThrustFloor klases pÄrnestas
  uz savu failu. Izveidoju klasi Pickup.
 11-03-2002
-  Klasñm var lietot atslñgvArdus abstract un native.
-  cprint nav vajadzØgs \n beigÆs.
-  Nodarbojos ar Hexen paceõano objektu sakÆrtoıanu. PagaidÆm viss ir pÆrnests
- uz inter.vc kurÆ arØ tiek veidotas kopñjÆs bÆzes klases.
+  KlasÄ“m var lietot atslÄ“gvArdus abstract un native.
+  cprint nav vajadzÄ«gs \n beigÄs.
+  Nodarbojos ar Hexen paceÄ¼ano objektu sakÄrtoÅ¡anu. PagaidÄm viss ir pÄrnests
+ uz inter.vc kurÄ arÄ« tiek veidotas kopÄ“jÄs bÄzes klases.
 12-03-2002
-  Pabeidzu ar Hexen paceõamÆjiem priekımetiem.
+  Pabeidzu ar Hexen paceÄ¼amÄjiem priekÅ¡metiem.
 14-03-2002
-  PamatØgs darbs pie Hexen. PilnØbÆ atbrØvojos no mobj_t.
+  PamatÄ«gs darbs pie Hexen. PilnÄ«bÄ atbrÄ«vojos no mobj_t.
 15-03-2002
   Heretic ieviesu Pawn klasi.
 16-03-2002
-  Pievienoju speciÆlu operÆcijas kodu virtuÆlÆs funkcijas ielikıanai stekÆ.
+  Pievienoju speciÄlu operÄcijas kodu virtuÄlÄs funkcijas ielikÅ¡anai stekÄ.
   Kaudze funkciju no user.vc un usersubs.vc is PlayerPawn funkcijas.
-  UzskaistinÆjumi Doom.
-  Izlaidu treıo beta versiju.
+  UzskaistinÄjumi Doom.
+  Izlaidu treÅ¡o beta versiju.
 18-03-2002
-  Izveidoju utilØtu tekstİru pÆrdñvñıanai priekı Korax' Heritage.
+  Izveidoju utilÄ«tu tekstÅ«ru pÄrdÄ“vÄ“Å¡anai priekÅ¡ Korax' Heritage.
 19-03-2002
-  Darbs ar Heretic pa·emamajiem priekımetiem.
-  Pievienoju atbalstu DeepSea augstajiem patÒiem.
-  MñÖinÆju ieviest atbalstu tekstİru izmñru koeficientiem. Kautkas sadalØıanÆ
- nestrÆdÆ.
+  Darbs ar Heretic paÅ†emamajiem priekÅ¡metiem.
+  Pievienoju atbalstu DeepSea augstajiem patÄiem.
+  MÄ“Ä£inÄju ieviest atbalstu tekstÅ«ru izmÄ“ru koeficientiem. Kautkas sadalÄ«Å¡anÄ
+ nestrÄdÄ.
 20-03-2002
-  VisÆs spñlñs atbrØvojos no mobj_t, cik iespñjams funkcijas pieder klasñm.
- ArØ klasu pointeri tiek aizvietoti ar referencñm. ArØ nolñmu tomñr pÆrdñvñt
+  VisÄs spÄ“lÄ“s atbrÄ«vojos no mobj_t, cik iespÄ“jams funkcijas pieder klasÄ“m.
+ ArÄ« klasu pointeri tiek aizvietoti ar referencÄ“m. ArÄ« nolÄ“mu tomÄ“r pÄrdÄ“vÄ“t
  Target par Enemy un Owner par Instigator.
-  Pa jaunu nohakoju Strife, ıoreiz no reÖstrñtÆs versijas exe faila un atradu
- ka ir pÆris izmai·as. Bİs ko darØt pñc relØzes.
+  Pa jaunu nohakoju Strife, Å¡oreiz no reÄ£strÄ“tÄs versijas exe faila un atradu
+ ka ir pÄris izmaiÅ†as. BÅ«s ko darÄ«t pÄ“c relÄ«zes.
 21-03-2002
   Salaboju Archvile bagu.
   Salaboju Heretic menu slaiderus.
-  Salaboju negatØvos fragus.
-  VienspñlñtÆja re÷ØmÆ izmantoju Òetrreiz lielÆku tØkla paketes buferi.
-  Daõñji atbrØvojos no texorg.
-  Atradu kõİdu poligonu sadalØıanÆ. Tekstİru izmñru koeficienti strÆdÆ.
+  Salaboju negatÄ«vos fragus.
+  VienspÄ“lÄ“tÄja reÅ¾Ä«mÄ izmantoju Äetrreiz lielÄku tÄ«kla paketes buferi.
+  DaÄ¼Ä“ji atbrÄ«vojos no texorg.
+  Atradu kÄ¼Å«du poligonu sadalÄ«Å¡anÄ. TekstÅ«ru izmÄ“ru koeficienti strÄdÄ.
 22-03-2002
-  Salaboju minotaurus tØkla spñlñs - vienkÆrıi vi·ı tika uzreiz iznØcinÆts jo
- bija atkarØgs no nomonsters.
-  Nolñmu tomñr kautko padarØt ar DDF konverteri. SÆku eksportñt objektu
+  Salaboju minotaurus tÄ«kla spÄ“lÄ“s - vienkÄrÅ¡i viÅ†Å¡ tika uzreiz iznÄ«cinÄts jo
+ bija atkarÄ«gs no nomonsters.
+  NolÄ“mu tomÄ“r kautko padarÄ«t ar DDF konverteri. SÄku eksportÄ“t objektu
  klases.
 23-03-2002
   Izlaidu ceturto beta versiju.
 25-03-2002
-  Doom un Strife pÆrveidoju itemu respaunu lØdzØgi tam kÆ to dara Heretic un
+  Doom un Strife pÄrveidoju itemu respaunu lÄ«dzÄ«gi tam kÄ to dara Heretic un
  Hexen.
-  SakÆrtoju tekstİru palielinÆıanu. PilnØbÆ atbrØvojos no texorg.
+  SakÄrtoju tekstÅ«ru palielinÄÅ¡anu. PilnÄ«bÄ atbrÄ«vojos no texorg.
 26-03-2002
-  AtbrØvojos no SetStateNF.
-  PÆrveidoju Heretic sektoru speciÆlus ZDoom stilÆ.
+  AtbrÄ«vojos no SetStateNF.
+  PÄrveidoju Heretic sektoru speciÄlus ZDoom stilÄ.
 27-03-2002
-  NovÆcu pÆrbaudi uz objekta raóetñm.
-  Salaboju D'Sparil-a burvju izsaukıanu.
-  Salaboju Hexen nepareizos ieroÒu vÆrdus.
-  Uzlaboju Hexen gaismas speciÆlo funkciju.
-  PalielinÆju gaismas karıu tekstİru skaitu.
-  PÆrbaudØju palielinÆtÆs tekstİras, strÆdÆ lieliski.
+  NovÄcu pÄrbaudi uz objekta raÄ·etÄ“m.
+  Salaboju D'Sparil-a burvju izsaukÅ¡anu.
+  Salaboju Hexen nepareizos ieroÄu vÄrdus.
+  Uzlaboju Hexen gaismas speciÄlo funkciju.
+  PalielinÄju gaismas karÅ¡u tekstÅ«ru skaitu.
+  PÄrbaudÄ«ju palielinÄtÄs tekstÅ«ras, strÄdÄ lieliski.
 28-03-2002
-  Pñdñjais kas bija palicis no pÆrdñvñjamajiem laukiem - mo player_t struktİrÆ
- tika pÆrdñvñts.
-  Tika izlabotas vñl pÆris kõİdas.
+  PÄ“dÄ“jais kas bija palicis no pÄrdÄ“vÄ“jamajiem laukiem - mo player_t struktÅ«rÄ
+ tika pÄrdÄ“vÄ“ts.
+  Tika izlabotas vÄ“l pÄris kÄ¼Å«das.
 
 ******************************************************************************
                             VERSIJA 1.12
 ******************************************************************************
 
 08-04-2002
-  vlumpy pievienoju tga atbalstu un 15 bitu vpic veidoıanu.
+  vlumpy pievienoju tga atbalstu un 15 bitu vpic veidoÅ¡anu.
 11-04-2002
   Tick funkcija.
-  TryMove iebİvñta.
+  TryMove iebÅ«vÄ“ta.
 19-04-2002
-  SÆku darbu pie Strife datu tabulu apvienoıanas. Dati tika ienesti makeinfo
- utilØtÆ.
+  SÄku darbu pie Strife datu tabulu apvienoÅ¡anas. Dati tika ienesti makeinfo
+ utilÄ«tÄ.
 20-04-2002
-  SÆku darbu pie skripta. Ir viss nepiecieıamais lai kompilñtu.
+  SÄku darbu pie skripta. Ir viss nepiecieÅ¡amais lai kompilÄ“tu.
 22-04-2002
-  Ieviesti lØdz ıim lietotie stÆvokõu, priekımetu un ska·u vÆrdi.
-  Apvienoti ieroÒi. NekÆdu atıóirØbu.
+  Ieviesti lÄ«dz Å¡im lietotie stÄvokÄ¼u, priekÅ¡metu un skaÅ†u vÄrdi.
+  Apvienoti ieroÄi. NekÄdu atÅ¡Ä·irÄ«bu.
 23-04-2002
-  Atradu iemeslu problñmai ar klipingu. VienÆdØbai var bİt õoti liela nozØme.
-  SÆku apvienoıanu un sadalØıanu pa failiem. Salaboju pÆrdevñju spraitu krÆsu
- mai·u. AtdalØti zemnieki.
+  Atradu iemeslu problÄ“mai ar klipingu. VienÄdÄ«bai var bÅ«t Ä¼oti liela nozÄ«me.
+  SÄku apvienoÅ¡anu un sadalÄ«Å¡anu pa failiem. Salaboju pÄrdevÄ“ju spraitu krÄsu
+ maiÅ†u. AtdalÄ«ti zemnieki.
 24-04-2002
-  Pabeidzu ar zemniekiem, atdalØju pÆrdevñjus, ubagus un rebelus.
+  Pabeidzu ar zemniekiem, atdalÄ«ju pÄrdevÄ“jus, ubagus un rebelus.
 25-04-2002
-  AtdalØti sargi, Macils.
+  AtdalÄ«ti sargi, Macils.
 26-04-2002
-  AtdalØti roboti.
+  AtdalÄ«ti roboti.
 27-04-2002
-  Visi Strife monstri tÆkÆ bİtu atdalØti.
+  Visi Strife monstri tÄkÄ bÅ«tu atdalÄ«ti.
 29-04-2002
-  Hexen bija sajaukti İdens tipi.
-  SakÆrtota Strife mİzika, ceru ka pareizi.
+  Hexen bija sajaukti Å«dens tipi.
+  SakÄrtota Strife mÅ«zika, ceru ka pareizi.
   Strife ieviesu Pickup klasi.
-  Simbola virk·u, pareizÆk sakot ofsetu, saglabÆıana.
+  Simbola virkÅ†u, pareizÄk sakot ofsetu, saglabÄÅ¡ana.
 02-05-2002
-  S_NULL tiek definñts klasñ Entity.
-  SÆku pÆrkÆrtot Doom objektus. Visi objekti jau ir sadalØti failos.
+  S_NULL tiek definÄ“ts klasÄ“ Entity.
+  SÄku pÄrkÄrtot Doom objektus. Visi objekti jau ir sadalÄ«ti failos.
 03-05-2002
-  Turpinu darbu ar Doom objektiem. VairÆkas kopñjas funkcijas tiek dublñtas.
- ArØ lØóu stÆvokõi tiek dublñti.
+  Turpinu darbu ar Doom objektiem. VairÄkas kopÄ“jas funkcijas tiek dublÄ“tas.
+ ArÄ« lÄ«Ä·u stÄvokÄ¼i tiek dublÄ“ti.
 14-05-2002
-  Doom nebiju nomainØjis PlayerPawn bÆzes klasi uz Pawn, kÆ dñõ spñlñtÆjs
- nebija noıaujams.
-  SÆku eksperimentñt ar EAX.
+  Doom nebiju nomainÄ«jis PlayerPawn bÄzes klasi uz Pawn, kÄ dÄ“Ä¼ spÄ“lÄ“tÄjs
+ nebija noÅ¡aujams.
+  SÄku eksperimentÄ“t ar EAX.
 15-05-2002
-  EAX tiek aprñóinÆts telpas izmñrs.
-  SÆku piestrÆdÆt pie DDF atbalsta.
-  PÆrkÆrtoju klases lai nebİtu nepiecieıamØba tÆs iepriekı pieteikt.
-  PÆrdñvñju SpawnState uz IdleState.
+  EAX tiek aprÄ“Ä·inÄts telpas izmÄ“rs.
+  SÄku piestrÄdÄt pie DDF atbalsta.
+  PÄrkÄrtoju klases lai nebÅ«tu nepiecieÅ¡amÄ«ba tÄs iepriekÅ¡ pieteikt.
+  PÄrdÄ“vÄ“ju SpawnState uz IdleState.
 16-05-2002
-  Ar papildus flagiem atbrØvojos no skripta pamatkoda atkarØbas no monstru un
- citÆm klasñm.
+  Ar papildus flagiem atbrÄ«vojos no skripta pamatkoda atkarÄ«bas no monstru un
+ citÄm klasÄ“m.
 17-05-2002
-  DDF tiek eksportñti ieroÒi.
-  PiestrÆdÆju pie FArchive klases. Tagad tÆ ir globÆla, var tikt izmantota
- failu lasØıanai.
+  DDF tiek eksportÄ“ti ieroÄi.
+  PiestrÄdÄju pie FArchive klases. Tagad tÄ ir globÄla, var tikt izmantota
+ failu lasÄ«Å¡anai.
 18-05-2002
-  DDF korekti sÆkuma ieroÒi.
-  FArchive tiek izmantots demo ierakstØıanai un lasØıanai.
-  SpeciÆla funkcija spñles pazi·ojumu drukÆıanai, tie vairs nav konsoles
- pazi·ojumi un var netikt drukÆti konsolñ. Pievienoju klasi FOutputDevice,
- kurai vajadzñtu aizvietot iostream izveidoıanu.
+  DDF korekti sÄkuma ieroÄi.
+  FArchive tiek izmantots demo ierakstÄ«Å¡anai un lasÄ«Å¡anai.
+  SpeciÄla funkcija spÄ“les paziÅ†ojumu drukÄÅ¡anai, tie vairs nav konsoles
+ paziÅ†ojumi un var netikt drukÄti konsolÄ“. Pievienoju klasi FOutputDevice,
+ kurai vajadzÄ“tu aizvietot iostream izveidoÅ¡anu.
 21-05-2002
-  DDF ieviestas noklusñtÆs vñrtØbas samazinot izmñrus. Ir gandrØz visi DDF
- priekımetu parametri.
+  DDF ieviestas noklusÄ“tÄs vÄ“rtÄ«bas samazinot izmÄ“rus. Ir gandrÄ«z visi DDF
+ priekÅ¡metu parametri.
 24-05-2002
-  Nolñmu sÆkt veidot logu sistñmu.
+  NolÄ“mu sÄkt veidot logu sistÄ“mu.
 25-05-2002
-  Izveodoju primitØvu GC klasi, pÆrnesu menu zØmñıanu caur ıo klasi. PamazÆm
- veidoju Window klasi, kautkas baigi karÆs un es nevaru saprast kÆpñc.
+  Izveodoju primitÄ«vu GC klasi, pÄrnesu menu zÄ«mÄ“Å¡anu caur Å¡o klasi. PamazÄm
+ veidoju Window klasi, kautkas baigi karÄs un es nevaru saprast kÄpÄ“c.
 27-05-2002
-  Atradu kÆpñc kÆrÆs. Ieviesu logu linkoto listu.
+  Atradu kÄpÄ“c kÄrÄs. Ieviesu logu linkoto listu.
 28-05-2002
-  Pievienoju logu tipu, clipinga taisnstİri, kurı pagaidÆm tiek izmantots
- tikai zØñınas pozØcijÆm. Pievienoju RootWindow. ZØmñıanu veic dzinis.
+  Pievienoju logu tipu, clipinga taisnstÅ«ri, kurÅ¡ pagaidÄm tiek izmantots
+ tikai zÄ«Ä“Å¡nas pozÄ«cijÄm. Pievienoju RootWindow. ZÄ«mÄ“Å¡anu veic dzinis.
 29-05-2002
-  Logiem pievienoju Tick funkciju, atbrØvojos no menu laika.
+  Logiem pievienoju Tick funkciju, atbrÄ«vojos no menu laika.
 30-05-2002
-  Pievienoju logu jİtØbu.
+  Pievienoju logu jÅ«tÄ«bu.
 31-05-2002
   Pievienoju ModalWindow klasi.
 06-05-2002
-  No DDF tiek eksportñti uzbrukumu tipi un gandrØz visi ieroÒu parametri.
+  No DDF tiek eksportÄ“ti uzbrukumu tipi un gandrÄ«z visi ieroÄu parametri.
 07-05-2002
-  PÆrnesti visi parametri no DDFActor uz Actor, jo tie ir vajadzØgi arØ
- priekı PlayerPawn. Eksportñju benefitus. StrÆdÆjoıi uzbrukumi. VispÆr viss
- konvertñtais pamazÆm sÆk strÆdÆt.
-  PÆrstrÆdÆju priekımetu pacelıanu.
+  PÄrnesti visi parametri no DDFActor uz Actor, jo tie ir vajadzÄ«gi arÄ«
+ priekÅ¡ PlayerPawn. EksportÄ“ju benefitus. StrÄdÄjoÅ¡i uzbrukumi. VispÄr viss
+ konvertÄ“tais pamazÄm sÄk strÄdÄt.
+  PÄrstrÄdÄju priekÅ¡metu pacelÅ¡anu.
 08-06-2002
-  PamatØgi pÆrstÆdÆti pa·emamie priekımeti. Tie tiek ieviesti DDF.
+  PamatÄ«gi pÄrstÄdÄti paÅ†emamie priekÅ¡meti. Tie tiek ieviesti DDF.
 10-06-2002
-  DDF priekımeti strÆdÆ. Atbalsts stÆvokõiem at citu uzbrukuma objektu.
+  DDF priekÅ¡meti strÄdÄ. Atbalsts stÄvokÄ¼iem at citu uzbrukuma objektu.
 11-06-2002
-  StÆvokõi iekõauj sevØ vÆrdu, tos var atrast pñc vÆrda.
-  Priekı DDF implementñtas kaudze funkciju.
+  StÄvokÄ¼i iekÄ¼auj sevÄ« vÄrdu, tos var atrast pÄ“c vÄrda.
+  PriekÅ¡ DDF implementÄ“tas kaudze funkciju.
   Salabots DeHackEd atbalsts.
-  Hexen atdalØti raóeıu objekti.
-  Windows versijÆ GUID-i tiek definñti iekı sys_win.cpp.
+  Hexen atdalÄ«ti raÄ·eÅ¡u objekti.
+  Windows versijÄ GUID-i tiek definÄ“ti iekÅ¡ sys_win.cpp.
 12-06-2002
-  Pievienotas vñl pÆris funkciju priekı DDF.
+  Pievienotas vÄ“l pÄris funkciju priekÅ¡ DDF.
 13-06-2002
-  Vñl pÆris lietas priekı DDF - ieroÒu pÆrslñgıana, pÆrlÆdñıana, un vñl pÆris
- sØkumu.
-  KompilÆtora eksportñtajÆ klasu informÆcijÆ tiek ·emti vñrÆ arØ masØvi un
- struktİras.
+  VÄ“l pÄris lietas priekÅ¡ DDF - ieroÄu pÄrslÄ“gÅ¡ana, pÄrlÄdÄ“Å¡ana, un vÄ“l pÄris
+ sÄ«kumu.
+  KompilÄtora eksportÄ“tajÄ klasu informÄcijÄ tiek Å†emti vÄ“rÄ arÄ« masÄ«vi un
+ struktÅ«ras.
 14-06-2002
-  Pirms relØzes ir vñl pÆris sØki labojumi.
+  Pirms relÄ«zes ir vÄ“l pÄris sÄ«ki labojumi.
 
 ******************************************************************************
                             VERSIJA 1.13

@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -145,26 +145,3 @@ defaultproperties
 	/*0, 0, 0, 0, 0,*/ PhaseTable[53] = 16; PhaseTable[54] = 16; PhaseTable[55] = 16;
 	PhaseTable[56] = 32; PhaseTable[57] = 32; PhaseTable[58] = 48; PhaseTable[59] = 64; PhaseTable[60] = 80; PhaseTable[61] = 96; PhaseTable[62] = 112; PhaseTable[63] = 128;
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.3  2006/04/11 18:27:39  dj_jl
-//  Removed Strife specific mapinfo extensions.
-//
-//  Revision 1.2  2006/03/13 21:24:53  dj_jl
-//  Added support for read-only, private and transient fields.
-//
-//  Revision 1.1  2006/03/06 13:13:55  dj_jl
-//  Client now uses entity class.
-//
-//  Revision 1.3  2006/03/02 18:27:26  dj_jl
-//  Don't use game specific classes in common.
-//
-//  Revision 1.2  2006/02/15 23:29:43  dj_jl
-//  Moved all server progs global variables to classes.
-//
-//  Revision 1.1  2006/02/13 18:30:15  dj_jl
-//  Moved all server progs global functions to classes.
-//
-//**************************************************************************

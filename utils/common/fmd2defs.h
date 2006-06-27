@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -95,20 +95,3 @@ struct trivertx_t
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2004/10/11 06:49:04  dj_jl
-//	Added support for version 3.0 GL nodes.
-//
-//	Revision 1.2  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.1  2001/09/24 17:29:18  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

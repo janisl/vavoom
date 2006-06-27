@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -42,14 +42,3 @@ defaultproperties
 	LightColour = RGB(255, 127, 80);
 	LightOffset = vector(0.0, 0.0, 32.0);
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.2  2006/04/14 14:57:25  firebrand_kh
-//  Added static light flag and properties
-//
-//  Revision 1.1  2002/10/26 16:32:20  dj_jl
-//  New style of defining classes.
-//
-//**************************************************************************

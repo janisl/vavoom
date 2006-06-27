@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -382,27 +382,3 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	return new VMikModAudioCodec(module);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.6  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.5  2006/03/29 20:32:54  dj_jl
-//	Avoid setting source stream to error.
-//	
-//	Revision 1.4  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//	
-//	Revision 1.3  2005/11/12 09:43:35  dj_jl
-//	Fixed conflict with SDL mixer.
-//	
-//	Revision 1.2  2005/11/03 22:46:35  dj_jl
-//	Support for any bitrate streams.
-//	
-//	Revision 1.1  2005/10/29 15:05:13  dj_jl
-//	Added MikMod driver.
-//	
-//**************************************************************************

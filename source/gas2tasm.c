@@ -2,7 +2,7 @@
 $Id$
 
 Copyright (C) 1996-1997 Id Software, Inc.
-Copyright (C) 2000-2001 J∆nis Legzdi∑˝
+Copyright (C) 2000-2001 JƒÅnis Legzdi≈Ü≈°
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -1123,19 +1123,3 @@ int main (int argc, char **argv)
 	}
     return 0;
 }
-
-/*
- * $Log$
- * Revision 1.5  2001/08/21 17:20:09  dj_jl
- * Removed ds:
- *
- * Revision 1.4  2001/08/15 17:16:36  dj_jl
- * Added missing opcodes
- *
- * Revision 1.3  2001/07/31 17:16:30  dj_jl
- * Just moved Log to the end of file
- *
- * Revision 1.2  2001/07/27 14:27:54  dj_jl
- * Update with Id-s and Log-s, some fixes
- *
- */

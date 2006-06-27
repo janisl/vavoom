@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -170,7 +170,7 @@ void WriteHeader(FILE *f)
 	fprintf(f, "//**\n");
 	fprintf(f, "//**\t$""Id:$\n");
 	fprintf(f, "//**\n");
-	fprintf(f, "//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý\n");
+	fprintf(f, "//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡\n");
 	fprintf(f, "//**\n");
 	fprintf(f, "//**	This program is free software; you can redistribute it and/or\n");
 	fprintf(f, "//**  modify it under the terms of the GNU General Public License\n");
@@ -736,92 +736,3 @@ int main(int argc, char** argv)
 
 	return 0;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.29  2005/04/04 07:53:23  dj_jl
-//	Fixed dehacked support.
-//
-//	Revision 1.28  2002/07/13 08:17:19  dj_jl
-//	Removed all non-Doom stuff, since it's now used only for DeHackEd.
-//	
-//	Revision 1.27  2002/06/29 16:01:54  dj_jl
-//	Floatized PainChance.
-//	
-//	Revision 1.26  2002/06/14 15:34:09  dj_jl
-//	Some fixes.
-//	
-//	Revision 1.25  2002/05/03 17:03:03  dj_jl
-//	Some updates.
-//	
-//	Revision 1.24  2002/03/20 19:12:22  dj_jl
-//	Updated to current state.
-//	
-//	Revision 1.23  2002/02/22 18:11:01  dj_jl
-//	Some renaming.
-//	
-//	Revision 1.22  2002/02/14 19:23:07  dj_jl
-//	Renamed Entity properties to new naming style
-//	
-//	Revision 1.21  2002/02/06 17:31:46  dj_jl
-//	Replaced Actor flags with boolean variables.
-//	
-//	Revision 1.20  2002/02/02 19:13:06  dj_jl
-//	Fixed things not spawned in deathmatch.
-//	
-//	Revision 1.19  2002/01/29 18:19:01  dj_jl
-//	Added MCROSS and PCROSS flags.
-//	
-//	Revision 1.18  2002/01/28 18:51:59  dj_jl
-//	Replaced some pointers with references.
-//	
-//	Revision 1.17  2002/01/24 18:21:20  dj_jl
-//	Inverted passmobj flag
-//	
-//	Revision 1.16  2002/01/17 18:18:12  dj_jl
-//	Renamed all map object classes
-//	
-//	Revision 1.15  2002/01/15 18:28:58  dj_jl
-//	Some property names with logical words starting with capital letter.
-//	
-//	Revision 1.14  2002/01/12 18:06:34  dj_jl
-//	New style of state functions, some other changes
-//	
-//	Revision 1.13  2002/01/11 18:21:49  dj_jl
-//	Started to use names in progs
-//	
-//	Revision 1.12  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.11  2001/12/27 17:45:17  dj_jl
-//	Removed spawnhealth
-//	
-//	Revision 1.10  2001/12/12 19:20:30  dj_jl
-//	States using methods
-//	
-//	Revision 1.9  2001/12/03 19:28:41  dj_jl
-//	Using defaultproperties, not constructors
-//	
-//	Revision 1.8  2001/11/09 14:40:32  dj_jl
-//	Initialization in constructors
-//	
-//	Revision 1.7  2001/10/22 17:28:02  dj_jl
-//	Removed mobjinfo index constants
-//	
-//	Revision 1.6  2001/10/18 17:42:19  dj_jl
-//	Seperate class for missiles
-//	
-//	Revision 1.5  2001/10/02 17:40:48  dj_jl
-//	Possibility to declare function's code inside class declaration
-//	
-//	Revision 1.4  2001/09/27 17:04:39  dj_jl
-//	Effects and static lights in mobjinfo, mobj classes
-//	
-//	Revision 1.3  2001/09/20 16:33:14  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

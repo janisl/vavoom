@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -2217,38 +2217,3 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 }
 
 #endif
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2002/11/16 17:11:15  dj_jl
-//	Improving software driver class.
-//
-//	Revision 1.10  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/12/18 19:01:34  dj_jl
-//	Changes for MSVC asm
-//	
-//	Revision 1.8  2001/10/18 17:36:31  dj_jl
-//	A lots of changes for Alpha 2
-//	
-//	Revision 1.7  2001/09/05 12:56:24  dj_jl
-//	Release changes
-//	
-//	Revision 1.6  2001/09/05 12:21:42  dj_jl
-//	Release changes
-//	
-//	Revision 1.5  2001/08/15 17:12:23  dj_jl
-//	Optimized model drawing
-//	
-//	Revision 1.4  2001/08/02 17:45:37  dj_jl
-//	Added support for colored lit and translucent models
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

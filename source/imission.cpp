@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -101,35 +101,3 @@ void IM_Start(void)
 
 	GClGame->eventIintermissionStart();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.10  2006/04/06 21:50:51  dj_jl
-//	For some builtins changed string arguments to names.
-//
-//	Revision 1.9  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.8  2006/03/02 23:24:35  dj_jl
-//	Wad lump names stored as names.
-//	
-//	Revision 1.7  2006/02/20 22:52:56  dj_jl
-//	Changed client state to a class.
-//	
-//	Revision 1.6  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.5  2002/05/18 16:56:34  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:30  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

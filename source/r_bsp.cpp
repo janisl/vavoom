@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -417,50 +417,3 @@ void R_RenderWorld(void)
 	Drawer->WorldDrawing();
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.15  2005/06/30 20:20:54  dj_jl
-//	Implemented rendering of Boom fake flats.
-//
-//	Revision 1.14  2005/04/28 07:16:15  dj_jl
-//	Fixed some warnings, other minor fixes.
-//	
-//	Revision 1.13  2005/03/28 07:28:19  dj_jl
-//	Transfer lighting and other BOOM stuff.
-//	
-//	Revision 1.12  2002/09/07 16:31:51  dj_jl
-//	Added Level class.
-//	
-//	Revision 1.11  2002/08/28 16:39:19  dj_jl
-//	Implemented sector light color.
-//	
-//	Revision 1.10  2002/07/13 07:39:08  dj_jl
-//	Removed back to front drawing.
-//	
-//	Revision 1.9  2002/03/28 17:58:02  dj_jl
-//	Added support for scaled textures.
-//	
-//	Revision 1.8  2002/03/20 19:11:21  dj_jl
-//	Added guarding.
-//	
-//	Revision 1.7  2002/01/25 18:08:19  dj_jl
-//	Beautification
-//	
-//	Revision 1.6  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/10/12 17:31:13  dj_jl
-//	no message
-//	
-//	Revision 1.4  2001/09/12 17:33:39  dj_jl
-//	Fixed paranoid errors
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

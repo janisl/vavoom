@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -100,11 +100,3 @@ void VThinker::Tick(float DeltaTime)
 	EV_RET_VOID(FIndex_Tick);
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.1  2006/03/06 13:12:12  dj_jl
-//	Client now uses entity class.
-//
-//**************************************************************************

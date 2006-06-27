@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -194,20 +194,3 @@ int TModifiers::FieldAttr(int Modifiers)
 		Attributes |= FIELD_ReadOnly;
 	return Attributes;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.4  2006/03/23 23:11:27  dj_jl
-//	Added support for final methods.
-//
-//	Revision 1.3  2006/03/13 21:24:21  dj_jl
-//	Added support for read-only, private and transient fields.
-//	
-//	Revision 1.2  2006/02/25 17:07:57  dj_jl
-//	Linked list of fields, export all type info.
-//	
-//	Revision 1.1  2006/02/20 19:34:32  dj_jl
-//	Created modifiers class.
-//	
-//**************************************************************************

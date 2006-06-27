@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -355,18 +355,3 @@ VStr VStr::DefaultExtension(const VStr& extension) const
 	return *this + extension;
 	unguard;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.3  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.2  2006/03/04 16:01:34  dj_jl
-//	File system API now uses strings.
-//	
-//	Revision 1.1  2006/02/21 22:31:44  dj_jl
-//	Created dynamic string class.
-//	
-//**************************************************************************

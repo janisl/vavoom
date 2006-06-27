@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -5510,41 +5510,3 @@ map_info_t		map_info[] =
 	{ "Fear", "D_e1m9" },
 #endif
 };
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.2  2005/11/20 12:50:56  dj_jl
-//	Renamed sounds.
-//
-//	Revision 1.1  2002/07/13 08:17:19  dj_jl
-//	Removed all non-Doom stuff, since it's now used only for DeHackEd.
-//	
-//	Revision 1.10  2002/03/28 18:08:17  dj_jl
-//	Changes for DeHackEd compatibility.
-//	
-//	Revision 1.9  2002/02/14 19:23:07  dj_jl
-//	Renamed Entity properties to new naming style
-//	
-//	Revision 1.8  2002/01/29 18:19:01  dj_jl
-//	Added MCROSS and PCROSS flags.
-//	
-//	Revision 1.7  2002/01/17 18:18:12  dj_jl
-//	Renamed all map object classes
-//	
-//	Revision 1.6  2002/01/07 12:30:05  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.5  2001/12/12 19:20:31  dj_jl
-//	States using methods
-//	
-//	Revision 1.4  2001/09/27 17:04:39  dj_jl
-//	Effects and static lights in mobjinfo, mobj classes
-//	
-//	Revision 1.3  2001/09/20 16:33:14  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/07/27 14:27:55  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

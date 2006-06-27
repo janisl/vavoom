@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**    Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -220,29 +220,3 @@ defaultproperties
 	PainSound = 'stalker/pain';
 	DeathSound = 'stalker/death';
 }
-
-//**************************************************************************
-//
-//  $Log$
-//  Revision 1.7  2006/04/06 11:48:52  dj_jl
-//  Fixed several bugs.
-//
-//  Revision 1.6  2006/03/28 15:05:13  firebrand_kh
-//  Fixes for dropping from ceiling
-//
-//  Revision 1.5  2006/03/12 20:01:24  dj_jl
-//  States as objects, added state variable type.
-//
-//  Revision 1.4  2005/11/19 13:43:51  dj_jl
-//  Renamed sounds.
-//
-//  Revision 1.3  2005/03/28 07:45:29  dj_jl
-//  Some Boom line specials, fixed multiple bugs.
-//
-//  Revision 1.2  2004/10/14 06:19:52  dj_jl
-//  Implemented stalker.
-//
-//  Revision 1.1  2002/11/02 08:20:57  dj_jl
-//  New style classes.
-//
-//**************************************************************************

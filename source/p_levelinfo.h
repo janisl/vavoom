@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -98,14 +98,6 @@ class VLevelInfo : public VThinker
 		P_PASS_INT(type);
 		P_PASS_INT(tid);
 		EV_RET_INT("ThingCount");
-	}
-	void eventSetSectorGravity(int tag, float integer, float fraction)
-	{
-		P_PASS_SELF;
-		P_PASS_INT(tag);
-		P_PASS_FLOAT(integer);
-		P_PASS_FLOAT(fraction);
-		EV_RET_VOID("SetSectorGravity");
 	}
 	VEntity* eventFindMobjFromTID(int tid, int *searchPosition)
 	{

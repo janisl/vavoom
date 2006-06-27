@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 JÆnis Legzdi·ý
+//**	Copyright (C) 1999-2006 JÄnis LegzdiÅ†Å¡
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -157,54 +157,3 @@ boolean MN_Active()
 {
 	return GClGame->eventMenuActive() || GClGame->eventMessageBoxActive();
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.16  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.15  2006/03/12 12:54:48  dj_jl
-//	Removed use of bitfields for portability reasons.
-//	
-//	Revision 1.14  2006/02/09 22:35:54  dj_jl
-//	Moved all client game code to classes.
-//	
-//	Revision 1.13  2005/12/25 19:20:02  dj_jl
-//	Moved title screen into a class.
-//	
-//	Revision 1.12  2002/05/29 16:51:50  dj_jl
-//	Started a work on native Window classes.
-//	
-//	Revision 1.11  2002/02/02 19:20:41  dj_jl
-//	FFunction pointers used instead of the function numbers
-//	
-//	Revision 1.10  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.9  2001/12/27 17:36:47  dj_jl
-//	Some speedup
-//	
-//	Revision 1.8  2001/10/09 17:25:02  dj_jl
-//	Finished slist moving stuff
-//	
-//	Revision 1.7  2001/10/08 17:34:57  dj_jl
-//	A lots of small changes and cleanups
-//	
-//	Revision 1.6  2001/09/25 17:04:45  dj_jl
-//	Replaced menu commands with command SetMenu
-//	
-//	Revision 1.5  2001/08/30 17:39:51  dj_jl
-//	Moved view border and message box to progs
-//	
-//	Revision 1.4  2001/08/07 16:49:26  dj_jl
-//	Added C_Active
-//	
-//	Revision 1.3  2001/07/31 17:09:34  dj_jl
-//	Removed seting shareware and ExtendedWAD in progs
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -376,33 +376,3 @@ COMMAND(glBSP)
 		delete[] TmpArgs;
 	}
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2006/04/05 17:23:37  dj_jl
-//	More dynamic string usage in console command class.
-//	Added class for handling command line arguments.
-//
-//	Revision 1.7  2006/01/29 20:41:30  dj_jl
-//	On Unix systems use ~/.vavoom for generated files.
-//	
-//	Revision 1.6  2003/10/23 06:36:15  dj_jl
-//	Parsing all args
-//	
-//	Revision 1.5  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.4  2002/01/07 12:16:42  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/09/20 16:23:40  dj_jl
-//	Beautification
-//	
-//	Revision 1.2  2001/09/14 16:52:14  dj_jl
-//	Added dynamic build of GWA file
-//	
-//	Revision 1.1  2001/09/12 17:37:47  dj_jl
-//	Added glBSP and glVIS plugins
-//	
-//**************************************************************************

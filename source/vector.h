@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -175,29 +175,3 @@ inline VStream& operator << (VStream &Strm, TVec &v)
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.8  2006/02/22 20:33:51  dj_jl
-//	Created stream class.
-//
-//	Revision 1.7  2004/12/27 12:23:17  dj_jl
-//	Multiple small changes for version 1.16
-//	
-//	Revision 1.6  2002/07/23 16:29:56  dj_jl
-//	Replaced console streams with output device class.
-//	
-//	Revision 1.5  2002/05/18 16:56:35  dj_jl
-//	Added FArchive and FOutputDevice classes.
-//	
-//	Revision 1.4  2002/01/07 12:16:43  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.3  2001/07/31 17:16:31  dj_jl
-//	Just moved Log to the end of file
-//	
-//	Revision 1.2  2001/07/27 14:27:54  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************

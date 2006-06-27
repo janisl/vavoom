@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -39,8 +39,6 @@ public:
 	void Load(sfxinfo_t&, VStream&);
 };
 #endif
-
-static void ParseSequenceScript();
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 

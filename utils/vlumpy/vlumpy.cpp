@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2002 J∆nis Legzdi∑˝
+//**	Copyright (C) 1999-2006 JƒÅnis Legzdi≈Ü≈°
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -771,38 +771,3 @@ int main(int argc, char *argv[])
 	}
 	return 0;
 }
-
-//**************************************************************************
-//
-//	$Log$
-//	Revision 1.11  2004/12/27 12:21:19  dj_jl
-//	Byte swapping for patches.
-//
-//	Revision 1.10  2003/11/03 07:20:30  dj_jl
-//	Grabbing of patches
-//	
-//	Revision 1.9  2002/08/24 14:41:35  dj_jl
-//	Removed usage of the iostream.
-//	
-//	Revision 1.8  2002/06/22 07:25:43  dj_jl
-//	Added transparent pixels to VPIC.
-//	
-//	Revision 1.7  2002/04/11 16:54:01  dj_jl
-//	Added support for 15-bit vpics.
-//	
-//	Revision 1.6  2002/03/20 19:12:56  dj_jl
-//	Added catching of wad errors.
-//	
-//	Revision 1.5  2002/01/07 12:31:36  dj_jl
-//	Changed copyright year
-//	
-//	Revision 1.4  2001/09/24 17:31:02  dj_jl
-//	Beautification
-//	
-//	Revision 1.3  2001/08/31 17:19:53  dj_jl
-//	Beautification
-//
-//	Revision 1.2  2001/07/27 14:27:56  dj_jl
-//	Update with Id-s and Log-s, some fixes
-//
-//**************************************************************************
