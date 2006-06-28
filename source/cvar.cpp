@@ -56,12 +56,11 @@ bool	VCvar::Cheating;
 //==========================================================================
 
 VCvar::VCvar(const char* AName, const char* ADefault, int AFlags)
+: Name(AName)
+, DefaultString(ADefault)
+, Flags(AFlags)
 {
 	guard(VCvar::VCvar);
-	Name = AName;
-	DefaultString = ADefault;
-	Flags = AFlags;
-
 	VCvar *prev = NULL;
 	for (VCvar *var = Variables; var; var = var->Next)
 	{
@@ -86,6 +85,46 @@ VCvar::VCvar(const char* AName, const char* ADefault, int AFlags)
 	{
 		Register();
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VCvar::VCvar
+//
+//==========================================================================
+
+VCvar::VCvar(const char* AName, const VStr& ADefault, int AFlags)
+: Name(AName)
+, Flags(AFlags | CVAR_Delete)
+{
+	guard(VCvar::VCvar);
+	char* Tmp = new char[ADefault.Length() + 1];
+	strcpy(Tmp, *ADefault);
+	DefaultString = Tmp;
+
+	VCvar *prev = NULL;
+	for (VCvar *var = Variables; var; var = var->Next)
+	{
+		if (stricmp(var->Name, Name) < 0)
+		{
+			prev = var;
+		}
+	}
+
+	if (prev)
+	{
+		Next = prev->Next;
+		prev->Next = this;
+	}
+	else
+	{
+		Next = Variables;
+		Variables = this;
+	}
+
+	check(Initialised);
+	Register();
 	unguard;
 }
 
@@ -239,10 +278,17 @@ void VCvar::Init()
 void VCvar::Shutdown()
 {
 	guard(VCvar::Shutdown);
-	for (VCvar *var = Variables; var; var = var->Next)
+	for (VCvar* var = Variables; var;)
 	{
+		VCvar* Next = var->Next;
 		var->StringValue.Clean();
 		var->LatchedString.Clean();
+		if (var->Flags & CVAR_Delete)
+		{
+			delete[] var->DefaultString;
+			delete var;
+		}
+		var = Next;
 	}
 	Initialised = false;
 	unguard;

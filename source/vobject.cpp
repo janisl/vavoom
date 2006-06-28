@@ -482,11 +482,7 @@ IMPLEMENT_FUNCTION(VObject, CreateCvar)
 	P_GET_INT(flags);
 	P_GET_STR(def);
 	P_GET_NAME(name);
-	//	Create a copy, because def will be destructed.
-	//FIXME it needs to be freed.
-	char* Tmp = new char[def.Length() + 1];
-	strcpy(Tmp, *def);
-	new VCvar(*name, Tmp, flags);
+	new VCvar(*name, def, flags);
 }
 
 IMPLEMENT_FUNCTION(VObject, GetCvar)

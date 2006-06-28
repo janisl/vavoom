@@ -25,15 +25,17 @@
 
 enum
 {
-	CVAR_Archive	= 1,	//	Set to cause it to be saved to config.cfg
-	CVAR_UserInfo	= 2,	//	Added to userinfo  when changed
-	CVAR_ServerInfo	= 4,	//	Added to serverinfo when changed
-	CVAR_Init		= 8,	//	Don't allow change from console at all,
-							// but can be set from the command line
-	CVAR_Latch		= 16,	//	Save changes until server restart
-	CVAR_Rom		= 32,	//	Display only, cannot be set by user at all
-	CVAR_Cheat		= 64,	//	Can not be changed if cheats are disabled
-	CVAR_Modified	= 128,	//	Set each time the cvar is changed
+	CVAR_Archive	= 0x0001,	//	Set to cause it to be saved to config.cfg
+	CVAR_UserInfo	= 0x0002,	//	Added to userinfo  when changed
+	CVAR_ServerInfo	= 0x0004,	//	Added to serverinfo when changed
+	CVAR_Init		= 0x0008,	//	Don't allow change from console at all,
+								// but can be set from the command line
+	CVAR_Latch		= 0x0010,	//	Save changes until server restart
+	CVAR_Rom		= 0x0020,	//	Display only, cannot be set by user at all
+	CVAR_Cheat		= 0x0040,	//	Can not be changed if cheats are disabled
+	CVAR_Modified	= 0x0080,	//	Set each time the cvar is changed
+
+	CVAR_Delete		= 0x8000,	//	Delete variable on exit.
 };
 
 //
@@ -49,10 +51,11 @@ protected:
 	int			IntValue;			//	atoi(string)
 	float		FloatValue;			//	atof(string)
 	VCvar*		Next;				//	For linked list if variables
-	VStr		LatchedString;		//	For CVAR_LATCH variables
+	VStr		LatchedString;		//	For CVAR_Latch variables
 
 public:
 	VCvar(const char* AName, const char* ADefault, int AFlags = 0);
+	VCvar(const char* AName, const VStr& ADefault, int AFlags = 0);
 	void Register();
 	void Set(int value);
 	void Set(float value);
