@@ -1173,6 +1173,7 @@ int VLevel::TexNumForName(const char *name, int Type, bool CMap) const
 void VLevel::LoadRogueConScript(VName LumpName, FRogueConSpeech*& SpeechList,
 	int& NumSpeeches) const
 {
+	guard(VLevel::LoadRogueConScript);
 	//	Clear variables.
 	SpeechList = NULL;
 	NumSpeeches = 0;
@@ -1187,7 +1188,7 @@ void VLevel::LoadRogueConScript(VName LumpName, FRogueConSpeech*& SpeechList,
 		return;	//	Not here.
 
 	//	Load them.
-	NumSpeeches = W_LumpLength(LumpNum) / sizeof(FRogueConSpeech);
+	NumSpeeches = W_LumpLength(LumpNum) / 1516;
 	SpeechList = new FRogueConSpeech[NumSpeeches];
 
 	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
@@ -1230,6 +1231,7 @@ void VLevel::LoadRogueConScript(VName LumpName, FRogueConSpeech*& SpeechList,
 		}
 	}
 	delete Strm;
+	unguard;
 }
 
 //==========================================================================
