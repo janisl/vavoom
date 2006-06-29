@@ -72,7 +72,7 @@ IMPLEMENT_DRAWER(VAllegroOpenGLDrawer, DRAWER_OpenGL, "OpenGL",
 //
 //==========================================================================
 
-void VOpenGLDrawer::Init()
+void VAllegroOpenGLDrawer::Init()
 {
 }
 
