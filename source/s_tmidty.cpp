@@ -119,10 +119,11 @@ PlayMode		VTimidityAudioCodec::MyPlayMode =
 	DEFAULT_RATE, PE_16BIT | PE_SIGNED, "Vavoom audio"
 };
 
-static VCvarI	s_timidity("s_timidity", "0", CVAR_Archive);
 #if defined(DJGPP) || defined(_WIN32)
+static VCvarI	s_timidity("s_timidity", "0", CVAR_Archive);
 static VCvarS	s_timidity_patches("s_timidity_patches", "\\TIMIDITY", CVAR_Archive);
 #else
+static VCvarI	s_timidity("s_timidity", "1", CVAR_Archive);
 static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_Archive);
 #endif
 
