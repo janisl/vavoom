@@ -190,7 +190,7 @@ public:
 		else
 		{
 			dprintf("Don't know how to handle pointer to %s\n", *Struct->Name);
-			Ptr = (void*)TmpIdx;
+			Ptr = NULL;
 		}
 	}
 };
@@ -295,7 +295,7 @@ public:
 		else
 		{
 			dprintf("Don't know how to handle pointer to %s\n", *Struct->Name);
-			TmpIdx = (int)Ptr;
+			TmpIdx = -1;
 		}
 		*this << STRM_INDEX(TmpIdx);
 	}
