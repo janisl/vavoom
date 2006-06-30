@@ -441,6 +441,7 @@ FACScriptsObject::~FACScriptsObject()
 {
 	guard(FACScriptsObject::~FACScriptsObject);
 	delete[] Scripts;
+	delete[] Strings;
 	for (int i = 0; i < NumArrays; i++)
 		delete[] ArrayStore[i].Data;
 	if (ArrayStore)
@@ -491,10 +492,10 @@ void FACScriptsObject::LoadOldObject()
 
 	//	Load strings.
 	NumStrings = LittleLong(*buffer++);
-	Strings = (char**)buffer;
+	Strings = new char*[NumStrings];
 	for (i = 0; i < NumStrings; i++)
 	{
-		Strings[i] = (char*)Data + LittleLong((int)Strings[i]);
+		Strings[i] = (char*)Data + LittleLong(buffer[i]);
 	}
 
 	//	Set up map vars.
@@ -618,10 +619,10 @@ void FACScriptsObject::LoadEnhancedObject()
 	{
 		buffer += 2;
 		NumStrings = LittleLong(buffer[1]);
-		Strings = (char**)(buffer + 3);
+		Strings = new char*[NumStrings];
 		for(i = 0; i < NumStrings; i++)
 		{
-			Strings[i] = (char*)buffer + LittleLong((int)Strings[i]);
+			Strings[i] = (char*)buffer + LittleLong(buffer[i + 3]);
 		}
 	}
 
