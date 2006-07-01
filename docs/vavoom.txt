@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    version 1.20
+                                                    Version 1.20
 
 Contents:
     0. Disclaimer
@@ -38,7 +38,7 @@ Contents:
 1. Introduction
 *****************************************************************************
 
-    Vavoom is a source port based on sources of Doom, Heretic, Hexen and
+    Vavoom is a source port based on the sources of Doom, Heretic, Hexen and
   "a little bit" from Quake. Supported platforms are DOS, Windows and LINUX.
   A dedicated server also can be compiled on OpenBSD and possibly on other
   UNIX systems, but this may require some changes.
@@ -51,14 +51,14 @@ Contents:
 Vavoom System Requirements:
      - Pentium processor or better
      - 32 MB RAM
-     - optional: Sound card
-     - optional: CD-ROM
+     - Optional: Sound card
+     - Optional: CD-ROM
      - Windows version: DirectX 7 (http://www.microsoft.com/directx)
 
-*** IMPORTANT!: Vavoom requires a floating point processor.
+*** IMPORTANT! Vavoom requires a floating point processor.
 Systems that do not have an FPU installed will not run Vavoom -- at all.
 
-  To play Vavoom you need main wad file from one of the following games:
+  To play Vavoom you need the main wad file from one of the following games:
      - Doom shareware
      - Registered Doom
      - Ultimate Doom
@@ -72,7 +72,7 @@ Systems that do not have an FPU installed will not run Vavoom -- at all.
      - Strife
   If you have multiple IWADs, you can use command line params -doom, -doom2,
 -tnt, -plutonia, -heretic, -hexen or -strife to look for IWADs only for that
-game. Hexen requires wad file from version 1.1.
+game. Hexen requires a wad file from version 1.1.
 
 *****************************************************************************
 3. Installation
@@ -84,8 +84,8 @@ game. Hexen requires wad file from version 1.1.
 
   First choose a directory, where you will place Vavoom - an existing Doom,
 Heretic and/or Hexen directory or new directory. If you decide to create a
-new directory, you must copy here main game wad file. Then unarchieve here
-binaries.
+new directory, you must copy here the main game wad file. Then unarchive here
+the binaries.
 
 ==============================================================================
 3.2 Linux/UNIX installation
@@ -115,7 +115,7 @@ Optional:
     * mikmod (http://mikmod.raphnet.net/)
     * FLAC (http://flac.sourceforge.net/)
 
-  And of course Vavoom sources.
+  And of course the Vavoom sources.
 
 Step by step:
 -------------
@@ -124,12 +124,12 @@ Step by step:
 
     tar xvjf vavoom-1.19.tar.bz2
 
-  If you got zip file instead of tarball then you must run fixunix.sh to
+  If you got the zip file instead of tarball then you must run fixunix.sh to
 convert text files to UNIX format:
 
     ./fixunix.sh
 
-  2. Run configure script:
+  2. Run the configure script:
 
     ./configure
 
@@ -145,7 +145,7 @@ convert text files to UNIX format:
 
     make
 
-  This will compile Vavoom executable, utilites, progs and will build
+  This will compile the Vavoom executable, utilities, progs and will build the
 additional wad files.
 
   4. Then you install it:
@@ -165,8 +165,8 @@ a symbolic link to it:
 
   Also make sure that the file/symbolic link name is in lower case.
 
-  6. If using allegro, run Allegro setup utility, setup your sound and music
-card, save changes and then copy allegro.cfg into Vavoom directory.
+  6. If using allegro, run the Allegro setup utility, setup your sound and music
+card, save the changes and then copy allegro.cfg into Vavoom directory.
 
 ==============================================================================
 3.3 Compiling LINUX / UNIX dedicated server
@@ -211,41 +211,43 @@ For Windows you need:
       * zlib
       * libpng
       * DirectX 7 SDK (http://www.microsoft.com/directx), already included
-    in Builder but some headers needed by DirectMusic are missing. In Allogro
+    in Builder but some headers needed by DirectMusic are missing. In Allegro
     website (http://alleg.sourceforge.net) you will find a minimal version of
     DirectX 7 SDK.
       * EAX 2.0 SDK (http://developer.creative.com/).
       * OpenAL SDK (http://developer.creative.com), you must create directory
-    AL in your compier's include directory and copy OpenAL include files here.
+    AL in your compiler’s include directory and copy OpenAL include files here.
       * libvorbis (http://www.vorbis.com)
       * libmad (http://www.underbit.com/products/mad/)
       * mikmod (http://mikmod.raphnet.net/)
       * FLAC (http://flac.sourceforge.net/)
 
-  The Makefile-s are for DOS and LINUX, for Windows the makefiles are files
+  The Makefile-s are for DOS and LINUX, for Windows the makefiles are the files
 with extension .mak. For DOS there's also RHIDE project files.
-  You can also compile with MSVC, you will find workspace and project files
-in subdirectory 'msvc'.
+  You can also compile with MSVC, you will find the workspace and project files
+in the 'msvc' subdirectory.
 
 *****************************************************************************
 4. Starting a net game
 *****************************************************************************
 
-  First about drivers. DOS version supports IPX, Beame & Whiteside TCP/IP and
-MPATH TCP/IP drivers. MPATH driver needs a launcher, the one from Quake works
-fine (because the drivers are taken from Quake sources). Serial driver is not
-fixed (if you need this, please let me know or otherwise I will not fix it).
-Windows version supports Winsock TCP/IP and Winsock IPX driers. Linux version
-haves only TCP/IP driver.
+  First about drivers. The DOS version supports IPX, Beame & Whiteside TCP/IP
+and MPATH TCP/IP drivers. MPATH driver needs a launcher, the one from Quake
+works fine (because the drivers are taken from Quake sources). Serial driver
+is not fixed (if you need this, please let me know or otherwise I will not
+fix it).
 
-  The default socket port is 26000. It can be changed in console with command
-"port <port>".
+The Windows version supports Winsock TCP/IP and Winsock IPX driers. The Linux
+version only has the TCP/IP driver.
 
-  Now network game can be launched from menu. It's Quake-like, so you should
-not have problems with it.
+  The default socket port is 26000. It can be changed in the console with
+the command "port <port>".
 
-  Here is a list of most important server console variables and commands for
-dedicated server operators.
+  Now network game can be launched from the main menu. It's Quake-like, so you
+should not have problems with it.
+
+  Here is a list of the most important server console variables and commands
+for dedicated server operators.
 
 Server console variables:
 -------------------------
@@ -258,8 +260,8 @@ Server console variables:
                           and they are attacking each other - total nightmare
     NoMonsters          - 0 - enable, 1 - disable monsters;
     TimeLimit           - Replaces command line param -time, sets time (in
-                     minutes), after which level will automaticly end, 0 for
-                     no limit, works only in deathmatch.
+                     minutes), after which the level will automatically end,
+                     0 for no limit, works only in deathmatch.
     HostName            - Name, listed in server list and that can be used to
                      connect to this server.
     Skill               - Game skill, 0 - very easy, 4 - nightmare
@@ -269,20 +271,20 @@ Server console commands:
 
     MaxPlayers [<players>]
 
-  Changes maximal mumber of players. Can be executed only when server is not
-running, for dedicated servers only on command line.
+  Changes maximum number of players. It can only be executed when the server is
+not running, for dedicated servers it's only executed on command line.
 
     Map <mapname>
 
-  Shuts down current server and spawns a new one in specified map. As you
-understand all clients are dropped.
+  Shuts down the current server and spawns a new one in the specified map. As
+you understand all the clients are dropped.
 
 *****************************************************************************
 5. Command line parameters
 *****************************************************************************
 
-  All console commands can be specified at command line by prefixing them
-with symbol +, they will be executed after executing basev/startup.vs.
+  All the console commands can be specified at the command line by prefixing
+them with the + symbol, they will be executed after executing basev/startup.vs.
   Some examples:
     +SetResolution 640 480 16
     +Exec myconfig.cfg
@@ -297,11 +299,11 @@ Graphics
 -D3D selects Direct3D driver
 -d3d
 
--PARTICLES specifies number of particles to use, default is 2048, but you
+-PARTICLES specifies the number of particles to use, default is 2048, but you
 can't have less than 512 (i.e. you can't disable them)
 -particles <count>
 
--SURFCACHESIZE specifies size of surface cache memory, in kilobytes
+-SURFCACHESIZE specifies the size of surface cache memory, in kilobytes
 -surfcachesize <size>
 
 Sound
@@ -401,22 +403,23 @@ Debugging
 ---------
 
 -DEBUG creates a debug file basev/debug.txt on DOS and Windows,
-~/.vavoom/debug.txt on Unix-like systems with all console messages.
+~/.vavoom/debug.txt on Unix-like systems with all the console messages.
 -debug
 
--STARTTIME sets start time, not in LINUX version and dedicated servers
+-STARTTIME sets start time, it doesn't works in the LINUX version or
+dedicated servers
 -starttime <time>
 
--RHIDE prints debugfile to stderr, in DOS version Sys_Error exits with call
-frame traceback
+-RHIDE prints debug file to stderr, in the DOS version Sys_Error exits with
+call frame traceback
 -rhide
 
 *****************************************************************************
-6. Differences from original game
+6. Differences from the original game
 *****************************************************************************
 
     - Support higher (and lower ;-) resolutions.
-    - 16 and 32 bit colors for all drivers, 24 bit for OpenGL and Direct3D.
+    - 16 and 32 bit colors for all the drivers, 24 bit for OpenGL and Direct3D.
     - Polygon-based software rendering.
     - OpenGL rendering.
     - Direct3D rendering.
@@ -434,16 +437,16 @@ frame traceback
     - Models.
     - Progs - now you can forget about DeHackEd.
     - Translucency.
-    - Consle. Call it witnh '`' key (also known as tilde). Special keys are:
-        - Tab to complete command, press it again for next matching command;
+    - Console. Call it with the '`' key (also known as tilde). Special keys are:
+        - Tab to complete a command, press it again for the next matching command;
         - Shift + Tab for reverse order;
-        - PageUp/PageDown to scroll lines up/down.
-        - Up/Down for last 16 command history
+        - PageUp/PageDown to scroll lines up/down;
+        - Up/Down for the last 16 commands history.
     - CD audio.
-    - 3 croshairs.
+    - 3 crosshairs.
     - Fullscreen stats also in Doom.
-    - Controls can be redefined in game.
-    - Pure cient/server architecture with in-game joining.
+    - Controls can be redefined in-game.
+    - Pure client/server architecture with in-game joining.
     - Sloped floors and ceilings.
     - 3D floors.
     - Possibility to use wall textures on floors/ceilings and flats on walls.
@@ -471,7 +474,7 @@ Version 1.1
  builtin table of sounds.
 * Fixed problem with long sound lumps.
 * Added function S_PlayTillDone for Doom quit sounds.
-* Windows version now suports 3D sound (if Your hardware suports it).
+* Windows version now supports 3D sound (if Your hardware supports it).
 * No more builtin sound sequence list - now registering all sequences from
  script.
 * CD now works on Windows and also on Linux (thanks to sources if Quake).
@@ -488,7 +491,7 @@ Version 1.2
  also added to makeinfo utility, which means that now you can create PROGS
  with changes of dehacked patch.
 * Removed some command line params (-playdemo, -record, -width, -height, ..).
- Moust of them are replaced with console commands that can be specified in
+ Most of them are replaced with console commands that can be specified in
  command line by adding + before them (like in Quake).
 * Some bug fixes.
 
@@ -499,20 +502,20 @@ Version 1.3
 * DOS network drivers ported to DJGPP and moved into main executable.
 * Fixed chat.
 * Fixed multiplayer intermission.
-* Totaly rewrote network protocol. Added multicast server. This means that
+* Totally rewrote network protocol. Added multicast server. This means that
  all client messages are sent only to server and server forwards them to
- other players. Why that's for? Whel, in the begining, when I tried to run
+ other players. Why that's for? Whel, in the beginning, when I tried to run
  4 players on IPX, it seemed that it runs one tic per second. By adding
  -extratics situation got a little bit better, but not by much. Now 4 players
- on IPX realy can play. No need to use -dup option so I decided to remove it.
+ on IPX really can play. No need to use -dup option so I decided to remove it.
  -extratics option was removed, when I added ACK mechanism.
 
 ==============================================================================
 Version 1.4 BETA
 ==============================================================================
 
-* Added almolst all Quake network drivers.
-* Client/server architecture. As You understand, this is a realy BIG cahnge.
+* Added almost all Quake network drivers.
+* Client/server architecture. As You understand, this is a really BIG change.
 * Removed support for old demos. New demos is not done yet :-(
 * Real random numbers.
 * Net game launching from console.
@@ -522,7 +525,7 @@ Version 1.4
 ==============================================================================
 
 * In-game joining (also in single player).
-* Fixed savegames, intermission, floor texture cahnges, other minor bugs.
+* Fixed savegames, intermission, floor texture changes, other minor bugs.
 
 ==============================================================================
 Version 1.5 BETA
@@ -533,7 +536,7 @@ Version 1.5 BETA
  float to int is very expensive.
 * Fixed bug with framerate bigger than 35 FPS (caused delays between input
  and actual action)
-* Improoved Windows keyboard input
+* Improved Windows keyboard input
 * I hope that I fixed problem with sound in Windows version
 * Added screen resolution menu
 * Server's mobj baseline is now saved in save game
@@ -586,7 +589,7 @@ Version 1.666 BETA 1
     extern int FlatNumForName(string name);
 
   If texture or flat is not found, Check... functions returns -1, but
- functions without Check will abort programm with error message.
+ functions without Check will abort program with error message.
 
 ==============================================================================
 Version 1.666 BETA 2
@@ -629,16 +632,16 @@ Version 1.7 BETA 1
     - indirect function calls;
     - C++ style structure inheritance;
     - special type for vectors, operators with vectors;
-    - supprot for Borland preprocessor;
+    - support for Borland preprocessor;
     - varargs for builtin printing functions.
-* Partialy moved menus to progs. In one of the next betas I will move the
+* Partially moved menus to progs. In one of the next betas I will move the
  rest of the menu code and also intermission and finale.
 * Level identification by name.
 * Sprite name list is sent from server. Disabled character cast in Doom 2
- finale. Client don't need server progs anymore.
+ finale. Client doesn’t need server progs anymore.
 * Testing support for Strife.
 * Possibility to use wall textures on floors/ceilings and flats on walls.
-* Reworked memory meneger to have less memory leaks.
+* Reworked memory manager to have less memory leaks.
 * Translucent walls.
 * Terrain type script.
 * Center messages.
@@ -685,7 +688,7 @@ Version 1.7 BETA 5
 
 * Finished moving menus to progs.
 * Moved intermissions and finales to progs.
-* Translucent croshair (cvar croshair_trans in range 0-100)
+* Translucent crosshair (cvar croshair_trans in range 0-100)
 
 ==============================================================================
 Version 1.7
@@ -696,7 +699,7 @@ Version 1.7
 * Lighting of sprites in data level, even more faster.
 * Other bug fixes and improvements.
 * In glBSP fixed polyobj finding.
-* A different algorythm for glVIS, more precise, but slower.
+* A different algorithm for glVIS, more precise, but slower.
 
 ==============================================================================
 Version 1.8
@@ -813,7 +816,7 @@ Version 1.13
 ==============================================================================
 
 * EAX Support.
-* Slighty improved Strife support.
+* Slightly improved Strife support.
 * A working version of the DDF to VavoomC converter.
 
 ==============================================================================
@@ -854,7 +857,7 @@ Version 1.15.1
 ==============================================================================
 
 * Moving 3D floors.
-* Greately improved Strife support: implemented many line specials, fully
+* Greatly improved Strife support: implemented many line specials, fully
  working conversations, inventory system and more.
 * In OpenGL and Direct3D drivers added a fix for overflow problem.
 * Secret level info saved in a savegame.
@@ -900,11 +903,11 @@ Version 1.16.1
 Version 1.17
 ==============================================================================
 
-* Reorganised line specials. Almost all existing line specials are now
+* Reorganized line specials. Almost all existing line specials are now
  available in all games. Also added a lots of new ones.
 * Partial support of Boom level editing features.
 * OpenGL driver using AllegroGL library for Linux.
-* Improved fulscreen stats.
+* Improved fullscreen stats.
 * Fixed multiple Strife bugs and made some other improvements.
 * Saving a network game.
 
@@ -916,7 +919,7 @@ Version 1.18
 * Updated models.
 * New texture manager.
 * Added support for overloaded textures.
-* Suuport for PNG files in WAD file.
+* Support for PNG files in WAD file.
 * More complete Boom support.
 * Basic network packet compression.
 * Other small fixes.
@@ -927,10 +930,10 @@ Version 1.19
 
 * Replaced DirectMusic driver with new driver that uses MMSystem.
 * Added support for WAV and FLACC format samples.
-* Added suport for Vorbis, MP3, FLACC and tracker module format music.
+* Added support for Vorbis, MP3, FLACC and tracker module format music.
 * Midi emulation with Timidity.
 * Parsing of all MAPINFO, SNDINFO and SNDSEQ scripts.
-* Sdded support for version 5 GL nodes.
+* Added support for version 5 GL nodes.
 * Added support for SNDINFO and SNDSEQ extensions.
 * Renamed sounds to ZDoom names.
 
@@ -976,7 +979,7 @@ Version 1.20
   Vavoom wiki:
     http://www.vavoom-engine.com/wiki/
 
-  The Vavoom SourceForfe project page:
+  The Vavoom SourceForge project page:
     http://sourceforge.net/projects/vavoom/
 
   The homepage for glBSP:
@@ -991,7 +994,7 @@ Version 1.20
   The home of Raven Software:
     http://www.ravensoft.com/
 
-  The home of Rogue Entertainement:
+  The home of Rogue Entertainment:
     http://www.rogue-ent.com/
 
   Doom related pages:
@@ -1009,7 +1012,7 @@ Version 1.20
   Korax' Heritage:
     http://www.korax-heritage.com/
 
-  All questions, bug reports, etc. should be posted on Vavoom forums:
+  All questions, bug reports, etc. should be posted on the Vavoom Engine forums:
     http://www.vavoom-engine.com/forums/
   or sent to:
     vavoom@vavoom-engine.com
