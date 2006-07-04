@@ -285,7 +285,7 @@ void VCvar::Shutdown()
 		var->LatchedString.Clean();
 		if (var->Flags & CVAR_Delete)
 		{
-			delete[] var->DefaultString;
+			delete[] const_cast<char*>(var->DefaultString);
 			delete var;
 		}
 		var = Next;
