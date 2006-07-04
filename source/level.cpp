@@ -304,16 +304,19 @@ void VLevel::Destroy()
 		Z_Free(PolyObjs);
 	}
 
-	for (int i = 0; i < NumSectors; i++)
+	if (Sectors)
 	{
-		sec_region_t* Next;
-		for (sec_region_t* r = Sectors[i].topregion; r; r = Next)
+		for (int i = 0; i < NumSectors; i++)
 		{
-			Next = r->next;
-			delete r;
+			sec_region_t* Next;
+			for (sec_region_t* r = Sectors[i].topregion; r; r = Next)
+			{
+				Next = r->next;
+				delete r;
+			}
 		}
+		delete[] Sectors[0].lines;
 	}
-	delete[] Sectors[0].lines;
 
 	delete[] Vertexes;
 	delete[] Sectors;
