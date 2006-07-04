@@ -218,11 +218,15 @@ void SV_Shutdown()
 {
 	guard(SV_Shutdown);
 	SV_ShutdownServer(false);
-	GGameInfo->ConditionalDestroy();
+	if (GGameInfo)
+		GGameInfo->ConditionalDestroy();
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
-		delete[] GPlayersBase[i]->OldStats;
-		GPlayersBase[i]->ConditionalDestroy();
+		if (GPlayersBase[i])
+		{
+			delete[] GPlayersBase[i]->OldStats;
+			GPlayersBase[i]->ConditionalDestroy();
+		}
 	}
 	delete[] sv_mobjs;
 	delete[] sv_mo_base;

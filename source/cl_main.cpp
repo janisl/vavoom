@@ -135,20 +135,26 @@ void CL_Shutdown()
 	CL_Disconnect();
 
 	//	Free up memory.
-	for (int i = 0; i < GMaxEntities; i++)
-		if (cl_mobjs[i])
-			cl_mobjs[i]->ConditionalDestroy();
+	if (cl_mobjs)
+	{
+		for (int i = 0; i < GMaxEntities; i++)
+			if (cl_mobjs[i])
+				cl_mobjs[i]->ConditionalDestroy();
+		delete[] cl_mobjs;
+	}
 	for (int i = 0; i < MAXPLAYERS; i++)
 		if (cl_weapon_mobjs[i])
 			cl_weapon_mobjs[i]->ConditionalDestroy();
-	Z_Free(cl_mobjs);
-	Z_Free(cl_mo_base);
+	delete[] cl_mo_base;
 	cls.message.Free();
 	if (GClLevel)
 		GClLevel->ConditionalDestroy();
-	GClGame->ConditionalDestroy();
-	cl->ConditionalDestroy();
-	GRoot->ConditionalDestroy();
+	if (GClGame)
+		GClGame->ConditionalDestroy();
+	if (cl)
+		cl->ConditionalDestroy();
+	if (GRoot)
+		GRoot->ConditionalDestroy();
 	for (int i = 0; i < 256; i++)
 	{
 		skin_list[i].Clean();
