@@ -128,6 +128,7 @@ public:
 		friend VStream& operator<<(VStream&, FType&);
 
 		int GetSize() const;
+		int GetAlignment() const;
 		FType GetArrayInnerType() const;
 	};
 
@@ -258,8 +259,9 @@ class VStruct : public VMemberBase
 public:
 	vint32			ObjectFlags;
 	VStruct*		ParentStruct;
-	vuint8			IsVector;
 	vint32			Size;
+	vuint8			Alignment;
+	vuint8			IsVector;
 	VField*			Fields;
 	VField*			ReferenceFields;
 	VField*			DestructorFields;

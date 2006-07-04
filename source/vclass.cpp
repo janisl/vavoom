@@ -872,6 +872,35 @@ int VField::FType::GetSize() const
 }
 
 //==========================================================================
+ //
+//	VField::FType::GetAlignment
+//
+//==========================================================================
+
+int VField::FType::GetAlignment() const
+{
+	guard(VField::FType::GetAlignment);
+	switch (Type)
+	{
+	case ev_int:		return sizeof(vint32);
+	case ev_float:		return sizeof(float);
+	case ev_name:		return sizeof(VName);
+	case ev_string:		return sizeof(char*);
+	case ev_pointer:	return sizeof(void*);
+	case ev_reference:	return sizeof(VObject*);
+	case ev_array:		return GetArrayInnerType().GetAlignment();
+	case ev_struct:		return Struct->Alignment;
+	case ev_vector:		return sizeof(float);
+	case ev_classid:	return sizeof(VClass*);
+	case ev_state:		return sizeof(VState*);
+	case ev_bool:		return sizeof(vuint32);
+	case ev_delegate:	return sizeof(VObject*);
+	}
+	return 0;
+	unguard;
+}
+
+//==========================================================================
 //
 //	VField::FType::GetArrayInnerType
 //
@@ -1484,6 +1513,8 @@ VStruct::VStruct(VName AName)
 , ObjectFlags(0)
 , ParentStruct(0)
 , Size(0)
+, Alignment(0)
+, IsVector(0)
 , Fields(0)
 , ReferenceFields(0)
 , DestructorFields(0)
@@ -1550,6 +1581,7 @@ void VStruct::CalcFieldOffsets()
 {
 	guard(VStruct::CalcFieldOffsets);
 	int size = ParentStruct ? ParentStruct->Size : 0;
+	Alignment = ParentStruct ? ParentStruct->Alignment : 0;
 	VField* PrevField = NULL;
 	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
@@ -1565,18 +1597,26 @@ void VStruct::CalcFieldOffsets()
 		}
 		else
 		{
-			fi->Ofs = size;
 			if (fi->Type.Type == ev_struct ||
 				(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
 			{
 				//	Make sure struct size has been calculated.
 				fi->Type.Struct->PostLoad();
 			}
+			//	Align field offset.
+			int FldAlign = fi->Type.GetAlignment();
+			size = (size + FldAlign - 1) & ~(FldAlign - 1);
+			//	Structure itself has the bigest alignment.
+			if (Alignment < FldAlign)
+			{
+				Alignment = FldAlign;
+			}
+			fi->Ofs = size;
 			size += fi->Type.GetSize();
 		}
 		PrevField = fi;
 	}
-	Size = size;
+	Size = (size + Alignment - 1) & ~(Alignment - 1);
 	unguard;
 }
 
@@ -2139,17 +2179,20 @@ void VClass::CalcFieldOffsets()
 		}
 		else
 		{
-			fi->Ofs = size;
 			if (fi->Type.Type == ev_struct ||
 				(fi->Type.Type == ev_array && fi->Type.ArrayInnerType == ev_struct))
 			{
 				//	Make sure struct size has been calculated.
 				fi->Type.Struct->PostLoad();
 			}
+			int FldAlign = fi->Type.GetAlignment();
+			size = (size + FldAlign - 1) & ~(FldAlign - 1);
+			fi->Ofs = size;
 			size += fi->Type.GetSize();
 		}
 		PrevField = fi;
 	}
+	size = (size + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 	ClassSize = size;
 	ClassNumMethods = numMethods;
 	if ((ObjectFlags & CLASSOF_Native) && ClassSize != PrevSize)
