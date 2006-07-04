@@ -1833,7 +1833,7 @@ VClass::VClass(VName AName)
 //
 //==========================================================================
 
-VClass::VClass(ENativeConstructor, size_t ASize, dword AClassFlags, 
+VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags, 
 	VClass *AParent, EName AName, void(*ACtor)())
 : VMemberBase(MEMBER_Class, AName)
 , ObjectFlags(CLASSOF_Native)

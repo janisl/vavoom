@@ -55,9 +55,9 @@ struct sfxinfo_t
 	bool	bPlayerReserve;
 	bool	bSingular;
 
-	dword	SampleRate;
+	vuint32	SampleRate;
 	int		SampleBits;
-	dword	DataSize;
+	vuint32	DataSize;
 	void*	Data;
 };
 

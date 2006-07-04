@@ -146,13 +146,13 @@ class VBasePlayer : public VObject
     int				Palette;
 
 	// Color shifts for damage, powerups and content types
-	dword			CShifts[NUM_CSHIFTS];
+	vuint32			CShifts[NUM_CSHIFTS];
 
     // Overlay view sprites (gun, etc).
     VViewEntity		*ViewEnts[NUMPSPRITES];
 	float			PSpriteSY;
 
-	dword 			WorldTimer;				// total time the player's been playing
+	vuint32			WorldTimer;				// total time the player's been playing
 
 	int*			OldStats;
 

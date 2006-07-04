@@ -36,17 +36,17 @@
 struct FRiffChunkHeader
 {
 	char		ID[4];
-	dword		Size;
+	vuint32		Size;
 };
 
 struct FWavFormatDesc
 {
-	word		Format;
-	word		Channels;
-	dword		Rate;
-	dword		BytesPerSec;
-	word		BlockAlign;
-	word		Bits;
+	vuint16		Format;
+	vuint16		Channels;
+	vuint32		Rate;
+	vuint32		BytesPerSec;
+	vuint16		BlockAlign;
+	vuint16		Bits;
 };
 #pragma pack()
 

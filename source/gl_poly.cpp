@@ -863,7 +863,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 //==========================================================================
 
 void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
-	int translucency, int translation, dword light)
+	int translucency, int translation, vuint32 light)
 {
 	guard(VOpenGLDrawer::DrawSpritePolygon);
 	TVec	texpt;
@@ -877,7 +877,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	}
 	glEnable(GL_ALPHA_TEST);
 
-	dword alpha = 255 * (100 - translucency) / 100;
+	vuint32 alpha = 255 * (100 - translucency) / 100;
 	SetColor((light & 0x00ffffff) | (alpha << 24));
 
 	glBegin(GL_QUADS);
@@ -921,7 +921,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	VModel* model, int InFrame, int skin_index, const char *skin,
-	dword light, int translucency, bool is_view_model)
+	vuint32 light, int translucency, bool is_view_model)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	int frame = InFrame;

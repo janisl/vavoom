@@ -1065,7 +1065,7 @@ extern "C" void D_PolysetDrawSpans_16(spanpackage_t *pspanpackage)
 extern "C" void D_PolysetDrawSpans_32(spanpackage_t *pspanpackage)
 {
 	int		lcount;
-	dword	*lpdest;
+	vuint32	*lpdest;
 	byte	*lptex;
 	int		lsfrac, ltfrac;
 	int		llight;
@@ -1089,7 +1089,7 @@ extern "C" void D_PolysetDrawSpans_32(spanpackage_t *pspanpackage)
 
 		if (lcount)
 		{
-			lpdest = (dword*)pspanpackage->pdest;
+			lpdest = (vuint32*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 			lsfrac = pspanpackage->sfrac;
@@ -1304,8 +1304,8 @@ extern "C" void D_PolysetDrawSpansFuzz_15(spanpackage_t *pspanpackage)
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 #ifdef USEASM
-			lsfrac = (dword)pspanpackage->sfrac >> 16;
-			ltfrac = (dword)pspanpackage->tfrac >> 16;
+			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
+			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
 			lsfrac = pspanpackage->sfrac;
 			ltfrac = pspanpackage->tfrac;
@@ -1336,14 +1336,14 @@ extern "C" void D_PolysetDrawSpansFuzz_15(spanpackage_t *pspanpackage)
 				llight += r_rstepx;
 				lptex += a_ststepxwhole;
 #ifdef USEASM
-				lsfrac += (dword)a_sstepxfrac >> 16;
+				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
 #ifdef USEASM
-				ltfrac += (dword)a_tstepxfrac >> 16;
+				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
 #endif
@@ -1396,8 +1396,8 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 #ifdef USEASM
-			lsfrac = (dword)pspanpackage->sfrac >> 16;
-			ltfrac = (dword)pspanpackage->tfrac >> 16;
+			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
+			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
 			lsfrac = pspanpackage->sfrac;
 			ltfrac = pspanpackage->tfrac;
@@ -1409,7 +1409,7 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					dword btemp = fadetable16[*lptex + (llight & 0xFF00)];
+					vuint32 btemp = fadetable16[*lptex + (llight & 0xFF00)];
 					byte r1 = GetCol16R(*lpdest);
 					byte g1 = GetCol16G(*lpdest);
 					byte b1 = GetCol16B(*lpdest);
@@ -1428,14 +1428,14 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 				llight += r_rstepx;
 				lptex += a_ststepxwhole;
 #ifdef USEASM
-				lsfrac += (dword)a_sstepxfrac >> 16;
+				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
 #ifdef USEASM
-				ltfrac += (dword)a_tstepxfrac >> 16;
+				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
 #endif
@@ -1462,7 +1462,7 @@ extern "C" void D_PolysetDrawSpansFuzz_16(spanpackage_t *pspanpackage)
 extern "C" void D_PolysetDrawSpansFuzz_32(spanpackage_t *pspanpackage)
 {
 	int		lcount;
-	dword	*lpdest;
+	vuint32	*lpdest;
 	byte	*lptex;
 	int		lsfrac, ltfrac;
 	int		llight;
@@ -1486,7 +1486,7 @@ extern "C" void D_PolysetDrawSpansFuzz_32(spanpackage_t *pspanpackage)
 
 		if (lcount)
 		{
-			lpdest = (dword*)pspanpackage->pdest;
+			lpdest = (vuint32*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 			lsfrac = pspanpackage->sfrac;
@@ -1498,7 +1498,7 @@ extern "C" void D_PolysetDrawSpansFuzz_32(spanpackage_t *pspanpackage)
 			{
 				if ((lzi >> 16) >= *lpz)
 				{
-					dword btemp = fadetable32[*lptex + (llight & 0xFF00)];
+					vuint32 btemp = fadetable32[*lptex + (llight & 0xFF00)];
 					byte r1 = GetCol32R(*lpdest);
 					byte g1 = GetCol32G(*lpdest);
 					byte b1 = GetCol32B(*lpdest);
@@ -1698,7 +1698,7 @@ extern "C" void D_PolysetDrawSpansRGB_16(spanpackage_t *pspanpackage)
 extern "C" void D_PolysetDrawSpansRGB_32(spanpackage_t *pspanpackage)
 {
 	int		lcount;
-	dword	*lpdest;
+	vuint32	*lpdest;
 	byte	*lptex;
 	int		lsfrac, ltfrac;
 	int		lr;
@@ -1724,7 +1724,7 @@ extern "C" void D_PolysetDrawSpansRGB_32(spanpackage_t *pspanpackage)
 
 		if (lcount)
 		{
-			lpdest = (dword*)pspanpackage->pdest;
+			lpdest = (vuint32*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 			lsfrac = pspanpackage->sfrac;
@@ -1966,8 +1966,8 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_15(spanpackage_t *pspanpackage)
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 #ifdef USEASM
-			lsfrac = (dword)pspanpackage->sfrac >> 16;
-			ltfrac = (dword)pspanpackage->tfrac >> 16;
+			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
+			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
 			lsfrac = pspanpackage->sfrac;
 			ltfrac = pspanpackage->tfrac;
@@ -2005,14 +2005,14 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_15(spanpackage_t *pspanpackage)
 				lb += r_bstepx;
 				lptex += a_ststepxwhole;
 #ifdef USEASM
-				lsfrac += (dword)a_sstepxfrac >> 16;
+				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
 #ifdef USEASM
-				ltfrac += (dword)a_tstepxfrac >> 16;
+				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
 #endif
@@ -2067,8 +2067,8 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 #ifdef USEASM
-			lsfrac = (dword)pspanpackage->sfrac >> 16;
-			ltfrac = (dword)pspanpackage->tfrac >> 16;
+			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
+			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
 #else
 			lsfrac = pspanpackage->sfrac;
 			ltfrac = pspanpackage->tfrac;
@@ -2083,7 +2083,7 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 				if ((lzi >> 16) >= *lpz)
 				{
 					int pix = *lptex;
-					dword btemp = fadetable16r[pix + (lr & 0xFF00)] |
+					vuint32 btemp = fadetable16r[pix + (lr & 0xFF00)] |
 						fadetable16g[pix + (lg & 0xFF00)] |
 						fadetable16b[pix + (lb & 0xFF00)];
 					byte r1 = GetCol16R(*lpdest);
@@ -2106,14 +2106,14 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 				lb += r_bstepx;
 				lptex += a_ststepxwhole;
 #ifdef USEASM
-				lsfrac += (dword)a_sstepxfrac >> 16;
+				lsfrac += (vuint32)a_sstepxfrac >> 16;
 #else
 				lsfrac += a_sstepxfrac;
 #endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
 #ifdef USEASM
-				ltfrac += (dword)a_tstepxfrac >> 16;
+				ltfrac += (vuint32)a_tstepxfrac >> 16;
 #else
 				ltfrac += a_tstepxfrac;
 #endif
@@ -2140,7 +2140,7 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_16(spanpackage_t *pspanpackage)
 extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 {
 	int		lcount;
-	dword	*lpdest;
+	vuint32	*lpdest;
 	byte	*lptex;
 	int		lsfrac, ltfrac;
 	int		lr;
@@ -2166,7 +2166,7 @@ extern "C" void D_PolysetDrawSpansRGBFuzz_32(spanpackage_t *pspanpackage)
 
 		if (lcount)
 		{
-			lpdest = (dword*)pspanpackage->pdest;
+			lpdest = (vuint32*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
 			lsfrac = pspanpackage->sfrac;

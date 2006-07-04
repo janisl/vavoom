@@ -400,8 +400,8 @@ FACScriptsObject::FACScriptsObject(int Lump)
 
 	if (Format == ACS_Old)
 	{
-		dword dirofs = LittleLong(header->infoOffset);
-		byte* pretag = Data + dirofs - 4;
+		vuint32 dirofs = LittleLong(header->infoOffset);
+		vuint8* pretag = Data + dirofs - 4;
 
 		Chunks = Data + DataSize;
 		//	Check for redesigned ACSE/ACSe
@@ -873,7 +873,7 @@ void FACScriptsObject::UnencryptStrings()
 {
 	guard(FACScriptsObject::UnencryptStrings);
 	byte *prevchunk = NULL;
-	dword *chunk = (dword*)FindChunk("STRE");
+	vuint32* chunk = (vuint32*)FindChunk("STRE");
 	while (chunk)
 	{
 		for (int strnum = 0; strnum < LittleLong(chunk[3]); strnum++)
@@ -890,7 +890,7 @@ void FACScriptsObject::UnencryptStrings()
 			} while (last != 0);
 		}
 		prevchunk = (byte*)chunk;
-		chunk = (dword*)NextChunk((byte*)chunk);
+		chunk = (vuint32*)NextChunk((vuint8*)chunk);
 		prevchunk[3] = 'L';
 	}
 	if (prevchunk)

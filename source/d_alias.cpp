@@ -123,7 +123,7 @@ static aedge_t aedges[12] =
 //==========================================================================
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	VModel* model, int frame, int skin_index, const char *skin, dword light,
+	VModel* model, int frame, int skin_index, const char *skin, vuint32 light,
 	int translucency, bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
@@ -429,7 +429,7 @@ void VSoftwareDrawer::AliasSetupSkin(int skin_index, const char *skin)
 //
 //==========================================================================
 
-void VSoftwareDrawer::AliasSetupLighting(dword light)
+void VSoftwareDrawer::AliasSetupLighting(vuint32 light)
 {
 	//	Guarantee that no vertex will ever be lit below LIGHT_MIN, so we
 	// don't have to clamp off the bottom

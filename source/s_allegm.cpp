@@ -172,7 +172,7 @@ void VAllegroMidiDevice::Tick(float)
 void VAllegroMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 {
 	guard(VAllegroMidiDevice::Play);
-	boolean		res;
+	bool		res;
 
 	Mus_SndPtr = Data;
 	res = LoadMIDI();
@@ -299,9 +299,7 @@ void VAllegroMidiDevice::Stop()
 	stop_midi();
 	if (midi_locked)
     {
-		int		i;
-
-		for (i = 0; i < MIDI_TRACKS; i++)
+		for (int i = 0; i < MIDI_TRACKS; i++)
 		{
 			if (mididata.track[i].data)
 			{

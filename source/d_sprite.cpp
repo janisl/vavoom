@@ -398,17 +398,17 @@ NextSpan:
 extern "C" void D_DrawSpriteSpans_32(sspan_t *pspan)
 {
 	int			count, spancount, izi, izistep;
-	dword		*pbase, *pdest;
+	vuint32		*pbase, *pdest;
 	fixed_t		s, t, snext, tnext, sstep, tstep;
 	float		sdivz, tdivz, zi, z, du, dv, spancountminus1;
 	float		sdivz8stepu, tdivz8stepu, zi8stepu;
-	dword		btemp;
+	vuint32		btemp;
 	short		*pz;
 
 	sstep = 0;	// keep compiler happy
 	tstep = 0;	// ditto
 
-	pbase = (dword*)cacheblock;
+	pbase = (vuint32*)cacheblock;
 
 	sdivz8stepu = d_sdivzstepu * 8;
 	tdivz8stepu = d_tdivzstepu * 8;
@@ -419,7 +419,7 @@ extern "C" void D_DrawSpriteSpans_32(sspan_t *pspan)
 
 	do
 	{
-		pdest = (dword*)scrn + ylookup[pspan->v] + pspan->u;
+		pdest = (vuint32*)scrn + ylookup[pspan->v] + pspan->u;
     	pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
@@ -1224,17 +1224,17 @@ NextSpan:
 extern "C" void D_DrawFuzzSpriteSpans_32(sspan_t *pspan)
 {
 	int			count, spancount, izi, izistep;
-	dword		*pbase, *pdest;
+	vuint32		*pbase, *pdest;
 	fixed_t		s, t, snext, tnext, sstep, tstep;
 	float		sdivz, tdivz, zi, z, du, dv, spancountminus1;
 	float		sdivz8stepu, tdivz8stepu, zi8stepu;
-	dword		btemp;
+	vuint32		btemp;
 	short		*pz;
 
 	sstep = 0;	// keep compiler happy
 	tstep = 0;	// ditto
 
-	pbase = (dword*)cacheblock;
+	pbase = (vuint32*)cacheblock;
 
 	sdivz8stepu = d_sdivzstepu * 8;
 	tdivz8stepu = d_tdivzstepu * 8;
@@ -1245,7 +1245,7 @@ extern "C" void D_DrawFuzzSpriteSpans_32(sspan_t *pspan)
 
 	do
 	{
-		pdest = (dword*)scrn + ylookup[pspan->v] + pspan->u;
+		pdest = (vuint32*)scrn + ylookup[pspan->v] + pspan->u;
     	pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
@@ -1724,7 +1724,7 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 //==========================================================================
 
 void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
-	int translation, int translucency, dword light)
+	int translation, int translucency, vuint32 light)
 {
 	int			i;
 	float		ymin, ymax;
@@ -1850,7 +1850,7 @@ void VSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
 //==========================================================================
 
 void VSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
-	int translucency, int translation, dword light)
+	int translucency, int translation, vuint32 light)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
 	SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light);

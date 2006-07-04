@@ -36,7 +36,7 @@
 struct sprite_cache_t
 {
 	void*		data;
-	dword		light;
+	vuint32		light;
 	int			lump;
 	int			tnum;
 };
@@ -111,7 +111,7 @@ void VSoftwareDrawer::FlushTextureCaches()
 void VSoftwareDrawer::SetTexture(int tex)
 {
 	guard(VSoftwareDrawer::SetTexture);
-	if ((dword)tex >= (dword)GTextureManager.Textures.Num())
+	if ((vuint32)tex >= (vuint32)GTextureManager.Textures.Num())
 		Sys_Error("Invalid texture num %d\n", tex);
 
 	if (GTextureManager.Textures[tex]->Type == TEXTYPE_SkyMap)
@@ -141,7 +141,7 @@ void VSoftwareDrawer::SetTexture(int tex)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetSpriteLump(int lump, dword light, int translation)
+void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
 {
 	guard(VSoftwareDrawer::SetSpriteLump);
 	light &= 0xf8f8f8f8;
@@ -388,7 +388,7 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 		}
 		else
 		{
-			dword remap[256];
+			vuint32 remap[256];
 
 			for (j = 0; j < 256; j++)
 			{
@@ -396,7 +396,7 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 			}
 
 			byte *psrc = (byte *)Pixels;
-			dword *pdst = (dword *)Tex->DriverData;
+			vuint32* pdst = (vuint32*)Tex->DriverData;
 			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
@@ -426,7 +426,7 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 		else
 		{
 			rgba_t *src = (rgba_t*)Pixels;
-			dword *dst = (dword*)Tex->DriverData;
+			vuint32* dst = (vuint32*)Tex->DriverData;
 			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol32(src->r, src->g, src->b);
@@ -443,7 +443,8 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 //
 //==========================================================================
 
-void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int translation)
+void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
+	int translation)
 {
 	guard(VSoftwareDrawer::GenerateSprite);
 	VTexture* Tex = GTextureManager.Textures[lump];
@@ -551,7 +552,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int transl
 	}
 	else if (colored)
 	{
-		dword* dest = (dword*)block;
+		vuint32* dest = (vuint32*)block;
 		while (count--)
 		{
 			if (*source)
@@ -568,11 +569,11 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, dword light, int transl
 	}
 	else
 	{
-		dword* dest = (dword*)block;
+		vuint32* dest = (vuint32*)block;
 		while (count--)
 		{
 			if (*source)
-				*dest = ((dword*)cmap)[trtab[*source]];
+				*dest = ((vuint32*)cmap)[trtab[*source]];
 			source++;
 			dest++;
 		}

@@ -565,11 +565,11 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 
 extern "C" void D_DrawParticle_32(particle_t *pparticle)
 {
-	TVec	local, transformed;
-	float	zi;
-	dword	*pdest;
-	short	*pz;
-	int		i, izi, pix, count, u, v, color;
+	TVec		local, transformed;
+	float		zi;
+	vuint32*	pdest;
+	short*		pz;
+	int			i, izi, pix, count, u, v, color;
 
 	// transform point
 	local = pparticle->org - vieworg;
@@ -601,7 +601,7 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 	color =	MakeCol32(r, g, b);
 
 	pz = zbuffer + ylookup[v] + u;
-	pdest = (dword*)scrn + ylookup[v] + u;
+	pdest = (vuint32*)scrn + ylookup[v] + u;
 	izi = (int)(zi * 0x8000);
 
 	pix = izi >> d_pix_shift;

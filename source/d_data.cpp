@@ -49,7 +49,7 @@ extern byte		gammatable[5][256];
 byte			*colormaps;	// Standard colormap
 byte			*fadetable;	// Current level's colormap
 word			*fadetable16;
-dword			*fadetable32;
+vuint32			*fadetable32;
 word			*fadetable16r;
 word			*fadetable16g;
 word			*fadetable16b;
@@ -297,7 +297,7 @@ static void InitColourmaps()
 	fadetable16r = (word*)Z_Malloc(32 * 256 * 2);
 	fadetable16g = (word*)Z_Malloc(32 * 256 * 2);
 	fadetable16b = (word*)Z_Malloc(32 * 256 * 2);
-	fadetable32 = (dword*)Z_Malloc(32 * 256 * 4);
+	fadetable32 = (vuint32*)Z_Malloc(32 * 256 * 4);
 	fadetable32r = (byte*)Z_Malloc(32 * 256);
 	fadetable32g = (byte*)Z_Malloc(32 * 256);
 	fadetable32b = (byte*)Z_Malloc(32 * 256);

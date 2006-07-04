@@ -67,7 +67,7 @@ struct surface_t
 	surface_t		*next;
 	texinfo_t		*texinfo;
 	TPlane			*plane;
-	dword			Light;		//	Light level and color.
+	vuint32			Light;		//	Light level and color.
 	byte			*lightmap;
 	rgb_t			*lightmap_rgb;
 	int				dlightframe;
@@ -102,7 +102,7 @@ public:
 	int			TextureTranslation;	// Animation
 	union
 	{
-		dword	DriverHandle;
+		vuint32	DriverHandle;
 		void*	DriverData;
 	};
 protected:
@@ -176,13 +176,13 @@ extern surface_t		*r_surface;
 
 extern int				r_dlightframecount;
 extern bool				r_light_add;
-extern dword			blocklights[18 * 18];
-extern dword			blocklightsr[18 * 18];
-extern dword			blocklightsg[18 * 18];
-extern dword			blocklightsb[18 * 18];
-extern dword			blockaddlightsr[18 * 18];
-extern dword			blockaddlightsg[18 * 18];
-extern dword			blockaddlightsb[18 * 18];
+extern vuint32			blocklights[18 * 18];
+extern vuint32			blocklightsr[18 * 18];
+extern vuint32			blocklightsg[18 * 18];
+extern vuint32			blocklightsb[18 * 18];
+extern vuint32			blockaddlightsr[18 * 18];
+extern vuint32			blockaddlightsg[18 * 18];
+extern vuint32			blockaddlightsb[18 * 18];
 
 extern rgba_t			r_palette[256];
 extern byte				r_black_colour;

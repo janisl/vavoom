@@ -79,13 +79,44 @@ public:
 	bool IsPlaying();
 };
 
+class VQMus2Mid
+{
+private:
+	struct VTrack
+	{
+		vint32				DeltaTime;
+		vuint8				LastEvent;
+		vint8				Vel;
+		TArray<vuint8>		Data;	//  Primary data
+	};
+
+	VTrack					Tracks[32];
+	vuint16					TrackCnt;
+	vint32 					Mus2MidChannel[16];
+
+	static const vuint8		Mus2MidControl[15];
+	static const vuint8		TrackEnd[];
+	static const vuint8		MidiKey[];
+	static const vuint8		MidiTempo[];
+
+	int FirstChannelAvailable();
+	void TWriteByte(int, vuint8);
+	void TWriteBuf(int, const vuint8*, int);
+	void TWriteVarLen(int, vuint32);
+	vuint32 ReadTime(VStream&);
+	bool Convert(VStream&);
+	void WriteMIDIFile(VStream&);
+	void FreeTracks();
+
+public:
+	int Run(VStream&, VStream&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-static int qmus2mid(VStream& InStrm, VStream& OutStrm);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -116,7 +147,7 @@ static VName				MapSong;
 static int					MapCDTrack;
 
 static VCvarI				cd_music("use_cd_music", "0", CVAR_Archive);
-static boolean				CDMusic = false;
+static bool					CDMusic = false;
 
 static FSoundDeviceDesc*	SoundDeviceList[SNDDRV_MAX];
 static FMidiDeviceDesc*		MidiDeviceList[MIDIDRV_MAX];
@@ -994,12 +1025,11 @@ static void PlaySong(const char* Song, bool Loop)
 		Strm->Seek(0);
 		VMemoryStream* MidStrm = new VMemoryStream();
 		MidStrm->BeginWrite();
-		int MidLength = qmus2mid(*Strm, *MidStrm);
-		Strm->Close();
+		VQMus2Mid Conv;
+		int MidLength = Conv.Run(*Strm, *MidStrm);
 		delete Strm;
 		if (!MidLength)
 		{
-			MidStrm->Close();
 			delete MidStrm;
 			return;
 		}
@@ -1313,77 +1343,58 @@ COMMAND(CD)
 //
 //**************************************************************************
 
-#define last(e) 			((byte)(e & 0x80))
-#define event_type(e)		((byte)((e & 0x7F) >> 4))
-#define channel(e)			((byte)(e & 0x0F))
-
-#define TRACKBUFFERSIZE		65536  /* 64 Ko */
-
-struct Track
+const vuint8		VQMus2Mid::Mus2MidControl[15] =
 {
-	dword		current;
-	char		vel;
-	long		DeltaTime;
-	byte		LastEvent;
-	char*		data; 	   /* Primary data */
+	0,				//	Program change - not a MIDI control change
+	0x00,			//	Bank select
+	0x01,			//	Modulation pot
+	0x07,			//	Volume
+	0x0A,			//	Pan pot
+	0x0B,			//	Expression pot
+	0x5B,			//	Reverb depth
+	0x5D,			//	Chorus depth
+	0x40,			//	Sustain pedal
+	0x43,			//	Soft pedal
+	0x78,			//	All sounds off
+	0x7B,			//	All notes off
+	0x7E,			//	Mono
+	0x7F,			//	Poly
+	0x79			//	Reset all controllers
 };
-
-static struct Track		tracks[32];
-static word				TrackCnt = 0;
-static int	 			MUS2MIDchannel[16];
-
-static const byte		MUS2MIDcontrol[15] =
-{
-	0,				/* Program change - not a MIDI control change */
-	0x00,			/* Bank select */
-	0x01,			/* Modulation pot */
-	0x07,			/* Volume */
-	0x0A,			/* Pan pot */
-	0x0B,			/* Expression pot */
-	0x5B,			/* Reverb depth */
-	0x5D,			/* Chorus depth */
-	0x40,			/* Sustain pedal */
-	0x43,			/* Soft pedal */
-	0x78,			/* All sounds off */
-	0x7B,			/* All notes off */
-	0x7E,			/* Mono */
-	0x7F,			/* Poly */
-	0x79			/* Reset all controllers */
-};
-static const byte		track_end[] =
+const vuint8		VQMus2Mid::TrackEnd[] =
 {
 	0x00, 0xff, 47, 0x00
 };
-static const byte		midikey[] =
+const vuint8		VQMus2Mid::MidiKey[] =
 {
 	0x00, 0xff, 0x59, 0x02, 0x00, 0x00   		// C major
 };
-static const byte		miditempo[] =
+const vuint8		VQMus2Mid::MidiTempo[] =
 {
 	0x00, 0xff, 0x51, 0x03, 0x09, 0xa3, 0x1a	// uS/qnote
 };
 
 //==========================================================================
 //
-//	FirstChannelAvailable
+//	VQMus2Mid::FirstChannelAvailable
 //
 //==========================================================================
 
-static int FirstChannelAvailable()
+int VQMus2Mid::FirstChannelAvailable()
 {
-	guard(FirstChannelAvailable);
-	int 	old15 = MUS2MIDchannel[15];
+	guard(VQMus2Mid::FirstChannelAvailable);
+	int 	old15 = Mus2MidChannel[15];
 	int		max = -1;
 
-	MUS2MIDchannel[15] = -1;
+	Mus2MidChannel[15] = -1;
 	for (int i = 0; i < 16; i++)
 	{
-		if (MUS2MIDchannel[i] > max)
+		if (Mus2MidChannel[i] > max)
 		{
-			max = MUS2MIDchannel[i];
+			max = Mus2MidChannel[i];
 		}
 	}
-	MUS2MIDchannel[15] = old15;
+	Mus2MidChannel[15] = old15;
 
 	return (max == 8 ? 10 : max + 1);
 	unguard;
@@ -1391,34 +1402,26 @@ static int FirstChannelAvailable()
 
 //==========================================================================
 //
-//	TWriteByte
+//	VQMus2Mid::TWriteByte
 //
 //==========================================================================
 
-static void TWriteByte(int MIDItrack, char data)
+void VQMus2Mid::TWriteByte(int MIDItrack, vuint8 data)
 {
-	guard(TWriteByte);
-	if (tracks[MIDItrack].current < TRACKBUFFERSIZE)
-	{
-		tracks[MIDItrack].data[tracks[MIDItrack].current] = data;
-	}
-	else
-	{
-		Sys_Error("qmus2mid: Track buffer full.");
-	}
-	tracks[MIDItrack].current++;
+	guard(VQMus2Mid::TWriteByte);
+	Tracks[MIDItrack].Data.Append(data);
 	unguard;
 }
 
 //==========================================================================
 //
-//	TWriteBuf
+//	VQMus2Mid::TWriteBuf
 //
 //==========================================================================
 
-static void TWriteBuf(int MIDItrack, const byte* buf, int size)
+void VQMus2Mid::TWriteBuf(int MIDItrack, const vuint8* buf, int size)
 {
-	guard(TWriteBuf);
+	guard(VQMus2Mid::TWriteBuf);
 	for (int i = 0; i < size; i++)
 	{
 		TWriteByte(MIDItrack, buf[i]);
@@ -1428,14 +1431,14 @@ static void TWriteBuf(int MIDItrack, const byte* buf, int size)
 
 //==========================================================================
 //
-//	TWriteVarLen
+//	VQMus2Mid::TWriteVarLen
 //
 //==========================================================================
 
-static void TWriteVarLen(int tracknum, dword value)
+void VQMus2Mid::TWriteVarLen(int tracknum, vuint32 value)
 {
-	guard(TWriteVarLen);
-	dword buffer = value & 0x7f;
+	guard(VQMus2Mid::TWriteVarLen);
+	vuint32 buffer = value & 0x7f;
 	while ((value >>= 7))
 	{
 		buffer <<= 8;
@@ -1455,15 +1458,15 @@ static void TWriteVarLen(int tracknum, dword value)
 
 //==========================================================================
 //
-//	ReadTime
+//	VQMus2Mid::ReadTime
 //
 //==========================================================================
 
-static dword ReadTime(VStream& Strm)
+vuint32 VQMus2Mid::ReadTime(VStream& Strm)
 {
-	guard(ReadTime);
-	dword 		time = 0;
-	byte		data;
+	guard(VQMus2Mid::ReadTime);
+	vuint32		time = 0;
+	vuint8		data;
 
 	if (Strm.AtEnd())
 		return 0;
@@ -1479,37 +1482,36 @@ static dword ReadTime(VStream& Strm)
 
 //==========================================================================
 //
-//  convert
+//  VQMus2Mid::Convert
 //
 //==========================================================================
 
-static bool convert(VStream& Strm)
+bool VQMus2Mid::Convert(VStream& Strm)
 {
-	guard(convert);
-	byte				et;
+	guard(VQMus2Mid::Convert);
+	vuint8				et;
 	int					MUSchannel;
 	int					MIDIchannel;
 	int					MIDItrack = 0;
 	int					NewEvent;
 	int 				i;
-	byte				event;
-	byte				data;
-	dword				DeltaTime;
-	byte				MIDIchan2track[16];
+	vuint8				event;
+	vuint8				data;
+	vuint32				DeltaTime;
+	vuint8				MIDIchan2track[16];
 	bool 				ouch = false;
 	FMusHeader			MUSh;
 
 	for (i = 0; i < 16; i++)
 	{
-		MUS2MIDchannel[i] = -1;
+		Mus2MidChannel[i] = -1;
 	}
 	for (i = 0; i < 32; i++)
 	{
-		tracks[i].current = 0;
-		tracks[i].vel = 64;
-		tracks[i].DeltaTime = 0;
-		tracks[i].LastEvent = 0;
-		tracks[i].data = NULL;
+		Tracks[i].DeltaTime = 0;
+		Tracks[i].LastEvent = 0;
+		Tracks[i].Vel = 64;
+		Tracks[i].Data.Clear();
 	}
 
 	Strm.Serialise(&MUSh, sizeof(FMusHeader));
@@ -1519,99 +1521,113 @@ static bool convert(VStream& Strm)
 		return false;
 	}
 
-	if ((word)LittleShort(MUSh.NumChannels) > 15)	 /* <=> MUSchannels+drums > 16 */
+	if ((vuint16)LittleShort(MUSh.NumChannels) > 15)	 /* <=> MUSchannels+drums > 16 */
 	{
 		GCon->Log(NAME_Dev,"Too many channels");
 		return false;
 	}
 
-	Strm.Seek((word)LittleShort(MUSh.ScoreStart));
+	Strm.Seek((vuint16)LittleShort(MUSh.ScoreStart));
 
-	tracks[0].data = (char*)Z_Malloc(TRACKBUFFERSIZE);
-	TWriteBuf(0, midikey, 6);
-	TWriteBuf(0, miditempo, 7);
+	TWriteBuf(0, MidiKey, 6);
+	TWriteBuf(0, MidiTempo, 7);
 
 	TrackCnt = 1;	//	Music starts here
 
 	Strm << event;
-	et = event_type(event);
-	MUSchannel = channel(event);
+	et = (event & 0x70) >> 4;
+	MUSchannel = event & 0x0f;
 	while ((et != 6) && !Strm.AtEnd())
 	{
-		if (MUS2MIDchannel[MUSchannel] == -1)
+		if (Mus2MidChannel[MUSchannel] == -1)
 		{
-			MIDIchannel = MUS2MIDchannel[MUSchannel] =
+			MIDIchannel = Mus2MidChannel[MUSchannel] =
 				(MUSchannel == 15 ? 9 : FirstChannelAvailable());
 			MIDItrack = MIDIchan2track[MIDIchannel] = TrackCnt++;
-			tracks[MIDItrack].data = (char*)Z_Malloc(TRACKBUFFERSIZE);
 		}
 		else
 		{
-			MIDIchannel = MUS2MIDchannel[MUSchannel];
+			MIDIchannel = Mus2MidChannel[MUSchannel];
 			MIDItrack = MIDIchan2track[MIDIchannel];
 		}
-		TWriteVarLen(MIDItrack, tracks[MIDItrack].DeltaTime);
-		tracks[MIDItrack].DeltaTime = 0;
+		TWriteVarLen(MIDItrack, Tracks[MIDItrack].DeltaTime);
+		Tracks[MIDItrack].DeltaTime = 0;
+
 		switch (et)
 		{
-		case 0:		/* release note */
-			NewEvent = 0x90 | MIDIchannel;
+		//	Release note
+		case 0:
+			//NewEvent = 0x90 | MIDIchannel;
+			NewEvent = 0x80 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
-			tracks[MIDItrack].LastEvent = NewEvent;
+			Tracks[MIDItrack].LastEvent = NewEvent;
 			Strm << data;
 			TWriteByte(MIDItrack, data);
-			TWriteByte(MIDItrack, 0);
+			//TWriteByte(MIDItrack, 0);
+			TWriteByte(MIDItrack, 64);
 			break;
+
+		//	Note on
 		case 1:
 			NewEvent = 0x90 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
-			tracks[MIDItrack].LastEvent = NewEvent;
+			Tracks[MIDItrack].LastEvent = NewEvent;
 			Strm << data;
 			TWriteByte(MIDItrack, data & 0x7F);
 			if (data & 0x80)
 			{
 				Strm << data;
-				tracks[MIDItrack].vel = data;
+				Tracks[MIDItrack].Vel = data;
 			}
-			TWriteByte(MIDItrack, tracks[MIDItrack].vel);
+			TWriteByte(MIDItrack, Tracks[MIDItrack].Vel);
 			break;
+
+		//	Pitch wheel
 		case 2:
 			NewEvent = 0xE0 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
-			tracks[MIDItrack].LastEvent = NewEvent;
+			Tracks[MIDItrack].LastEvent = NewEvent;
 			Strm << data;
 			TWriteByte(MIDItrack, (data & 1) << 6);
 			TWriteByte(MIDItrack, data >> 1);
 			break;
+
+		//	Control change
 		case 3:
 			NewEvent = 0xB0 | MIDIchannel;
 			TWriteByte(MIDItrack, NewEvent);
-			tracks[MIDItrack].LastEvent = NewEvent;
+			Tracks[MIDItrack].LastEvent = NewEvent;
 			Strm << data;
-			TWriteByte(MIDItrack, MUS2MIDcontrol[data]);
+			check(data < 15);
+			TWriteByte(MIDItrack, Mus2MidControl[data]);
 			if (data == 12)
-				TWriteByte(MIDItrack, LittleShort(MUSh.NumChannels) + 1);
+				//TWriteByte(MIDItrack, LittleShort(MUSh.NumChannels) + 1);
+				TWriteByte(MIDItrack, LittleShort(MUSh.NumChannels));
 			else
 				TWriteByte(MIDItrack, 0);
 			break;
+
+		//	Control or program change
 		case 4:
 			Strm << data;
 			if (data)
 			{
 				NewEvent = 0xB0 | MIDIchannel;
 				TWriteByte(MIDItrack, NewEvent);
-				tracks[MIDItrack].LastEvent = NewEvent;
-				TWriteByte(MIDItrack, MUS2MIDcontrol[data]);
+				Tracks[MIDItrack].LastEvent = NewEvent;
+				check(data < 15);
+				TWriteByte(MIDItrack, Mus2MidControl[data]);
 			}
 			else
 			{
 				NewEvent = 0xC0 | MIDIchannel;
 				TWriteByte(MIDItrack, NewEvent);
-				tracks[MIDItrack].LastEvent = NewEvent;
+				Tracks[MIDItrack].LastEvent = NewEvent;
 			}
 			Strm << data;
 			TWriteByte(MIDItrack, data);
 			break;
+
 		case 5:
 		case 7:
 			GCon->Log(NAME_Dev,"MUS file corupted");
@@ -1619,17 +1635,19 @@ static bool convert(VStream& Strm)
 		default:
 			break;
 		}
-		if (last(event))
+
+		if (event & 0x80)
 		{
 			DeltaTime = ReadTime(Strm);
 			for (i = 0; i < (int)TrackCnt; i++)
-				tracks[i].DeltaTime += DeltaTime;
+				Tracks[i].DeltaTime += DeltaTime;
 		}
+
 		if (!Strm.AtEnd())
 		{
 			Strm << event;
-			et = event_type(event);
-			MUSchannel = channel(event);
+			et = (event & 0x70) >> 4;
+			MUSchannel = event & 0x0f;
 		}
 		else
 		{
@@ -1639,7 +1657,7 @@ static bool convert(VStream& Strm)
 
 	for (i = 0; i < TrackCnt; i++)
 	{
-		TWriteBuf(i, track_end, 4);
+		TWriteBuf(i, TrackEnd, 4);
 	}
 
 	if (ouch)
@@ -1654,70 +1672,56 @@ static bool convert(VStream& Strm)
 
 //==========================================================================
 //
-//	WriteMIDIFile
+//	VQMus2Mid::WriteMIDIFile
 //
 //==========================================================================
 
-static void WriteMIDIFile(VStream& Strm)
+void VQMus2Mid::WriteMIDIFile(VStream& Strm)
 {
-	guard(WriteMIDIFile);
-	int				i;
-	dword			size;
-	MIDheader		hdr;
-
+	guard(VQMus2Mid::WriteMIDIFile);
 	//	Header
-	memcpy(hdr.ID, MIDIMAGIC, 4);
-	hdr.hdr_size   = BigLong(6);
-	hdr.type       = BigShort(1);
-	hdr.num_tracks = BigShort(TrackCnt);
-	hdr.divisions  = BigShort(89);
-	Strm.Serialise(&hdr, sizeof(hdr));
+	char HdrId[4] = { 'M', 'T', 'h', 'd' };
+	vuint32 HdrSize = 6;
+	vuint16 HdrType = 1;
+	vuint16 HdrNumTracks = TrackCnt;
+	vuint16 HdrDivisions = 89;
+
+	Strm.Serialise(HdrId, 4);
+	Strm.SerialiseBigEndian(&HdrSize, 4);
+	Strm.SerialiseBigEndian(&HdrType, 2);
+	Strm.SerialiseBigEndian(&HdrNumTracks, 2);
+	Strm.SerialiseBigEndian(&HdrDivisions, 2);
 
 	//	Tracks
-	for (i = 0; i < (int)TrackCnt; i++)
+	for (int i = 0; i < (int)TrackCnt; i++)
 	{
-		size = BigLong(tracks[i].current);
-		Strm.Serialise((void*)"MTrk", 4);
-		Strm.Serialise(&size, 4);
-		Strm.Serialise(tracks[i].data, tracks[i].current);
+		//	Identifier.
+		char TrackId[4] = { 'M', 'T', 'r', 'k' };
+		Strm.Serialise(TrackId, 4);
+
+		//	Data size.
+		vuint32 TrackSize = Tracks[i].Data.Num();
+		Strm.SerialiseBigEndian(&TrackSize, 4);
+
+		//	Data.
+		Strm.Serialise(Tracks[i].Data.Ptr(), Tracks[i].Data.Num());
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//  FreeTracks
+//  VQMus2Mid::Run
 //
 //==========================================================================
 
-static void FreeTracks()
+int VQMus2Mid::Run(VStream& InStrm, VStream& OutStrm)
 {
-	guard(FreeTracks);
-	for (int i = 0; i < 16; i++)
-	{
-		if (tracks[i].data)
-		{
-			Z_Free(tracks[i].data);
-			tracks[i].data = NULL;
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//  qmus2mid
-//
-//==========================================================================
-
-static int qmus2mid(VStream& InStrm, VStream& OutStrm)
-{
-	guard(qmus2mid);
-	if (convert(InStrm))
+	guard(VQMus2Mid::Run);
+	if (Convert(InStrm))
 	{
 		WriteMIDIFile(OutStrm);
 	}
-	FreeTracks();
 	return OutStrm.TotalSize();
 	unguard;
 }

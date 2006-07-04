@@ -795,15 +795,15 @@ VSocket* VDatagramDriver::CheckNewConnections()
 int VDatagramDriver::GetMessage(VSocket* sock)
 {
 	guard(VDatagramDriver::GetMessage);
-	dword		sequence;
-	dword		length;
-	dword		flags;
-	dword		comprLength;
-	dword		comprMethod;
+	vuint32		sequence;
+	vuint32		length;
+	vuint32		flags;
+	vuint32		comprLength;
+	vuint32		comprMethod;
 	sockaddr_t	readaddr;
 	int			ret = 0;
-	word		crc;
-	dword		count;
+	vuint16		crc;
+	vuint32		count;
 
 	//	Resend message if needed.
 	if (!sock->CanSend && (GNet->NetTime - sock->LastSendTime) > 1.0)

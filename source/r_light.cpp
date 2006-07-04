@@ -38,7 +38,7 @@ struct light_t
 {
 	TVec		origin;
 	float		radius;
-	dword		color;
+	vuint32		color;
 	int			leafnum;
 };
 
@@ -55,13 +55,13 @@ struct light_t
 int					r_dlightframecount;
 bool				r_light_add;
 
-dword				blocklights[18 * 18];
-dword				blocklightsr[18 * 18];
-dword				blocklightsg[18 * 18];
-dword				blocklightsb[18 * 18];
-dword				blockaddlightsr[18 * 18];
-dword				blockaddlightsg[18 * 18];
-dword				blockaddlightsb[18 * 18];
+vuint32				blocklights[18 * 18];
+vuint32				blocklightsr[18 * 18];
+vuint32				blocklightsg[18 * 18];
+vuint32				blocklightsb[18 * 18];
+vuint32				blockaddlightsr[18 * 18];
+vuint32				blockaddlightsg[18 * 18];
+vuint32				blockaddlightsb[18 * 18];
 
 byte				light_remap[256];
 VCvarI				r_darken("r_darken", "0", CVAR_Archive);
@@ -121,7 +121,7 @@ void R_ClearLights(void)
 //
 //==========================================================================
 
-void R_AddStaticLight(const TVec &origin, float radius, dword color)
+void R_AddStaticLight(const TVec &origin, float radius, vuint32 color)
 {
 	guard(R_AddStaticLight);
 	if (num_lights == MAX_STATIC_LIGHTS)
@@ -710,7 +710,7 @@ void R_PushDlights(void)
 //
 //==========================================================================
 
-dword R_LightPoint(const TVec &p)
+vuint32 R_LightPoint(const TVec &p)
 {
 	guard(R_LightPoint);
 	subsector_t		*sub;
@@ -889,10 +889,10 @@ void R_AddDynamicLights(surface_t *surf)
 				if (dist < minlight)
 				{
 					i = t * smax + s;
-					blocklights[i] += (dword)((rad - dist) * 256);
-					blocklightsr[i] += (dword)((rad - dist) * rmul);
-					blocklightsg[i] += (dword)((rad - dist) * gmul);
-					blocklightsb[i] += (dword)((rad - dist) * bmul);
+					blocklights[i] += (vuint32)((rad - dist) * 256);
+					blocklightsr[i] += (vuint32)((rad - dist) * rmul);
+					blocklightsg[i] += (vuint32)((rad - dist) * gmul);
+					blocklightsb[i] += (vuint32)((rad - dist) * bmul);
 					if (cl_dlights[lnum].color != 0xffffffff)
 						is_colored = true;
 				}

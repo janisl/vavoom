@@ -328,7 +328,7 @@ struct FMusHeader
 struct MIDheader
 {
 	char		ID[4];
-	dword		hdr_size;
+	vuint32		hdr_size;
 	word		type;
 	word		num_tracks;
 	word		divisions;

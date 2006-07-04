@@ -174,11 +174,12 @@ void SN_StopSequence(int origin_id)
 void SN_UpdateActiveSequences()
 {
 	guard(SN_UpdateActiveSequences);
-	seqnode_t *node;
-	boolean sndPlaying;
+	seqnode_t* node;
+	bool sndPlaying;
 
 	if (!ActiveSequences || cl->ClientFlags & VClientState::CF_Paused)
-	{ // No sequences currently playing/game is paused
+	{
+		// No sequences currently playing/game is paused
 		return;
 	}
 	for (node = SequenceListHead; node; node = node->next)
@@ -188,66 +189,66 @@ void SN_UpdateActiveSequences()
 			node->delayTics--;
 			continue;
 		}
-		sndPlaying = S_GetSoundPlayingInfo((int)node->origin_id, node->currentSoundID);
+		sndPlaying = S_GetSoundPlayingInfo(node->origin_id, node->currentSoundID);
 		switch (*node->sequencePtr)
 		{
-			case SSCMD_Play:
-				if(!sndPlaying)
-				{
-					node->currentSoundID = *(node->sequencePtr+1);
-					S_StartSound(node->currentSoundID, node->origin,
-						TVec(0, 0, 0), node->origin_id, 1, node->volume);
-				}
-				node->sequencePtr += 2;
-				break;
-			case SSCMD_WaitUntilDone:
-				if(!sndPlaying)
-				{
-					node->sequencePtr++;
-					node->currentSoundID = 0;
-				}
-				break;
-			case SSCMD_PlayRepeat:
-				if(!sndPlaying)
-				{
-					node->currentSoundID = *(node->sequencePtr+1);
-					S_StartSound(node->currentSoundID, node->origin,
-						TVec(0, 0, 0), node->origin_id, 1, node->volume);
-				}
-				break;
-			case SSCMD_PlayLoop:
-				node->currentSoundID = *(node->sequencePtr + 1);
+		case SSCMD_Play:
+			if(!sndPlaying)
+			{
+				node->currentSoundID = *(node->sequencePtr+1);
 				S_StartSound(node->currentSoundID, node->origin,
 					TVec(0, 0, 0), node->origin_id, 1, node->volume);
-				node->delayTics = *(node->sequencePtr + 2);
-				break;
-			case SSCMD_Delay:
-				node->delayTics = *(node->sequencePtr+1);
-				node->sequencePtr += 2;
+			}
+			node->sequencePtr += 2;
+			break;
+		case SSCMD_WaitUntilDone:
+			if(!sndPlaying)
+			{
+				node->sequencePtr++;
 				node->currentSoundID = 0;
-				break;
-			case SSCMD_DelayRand:
-				node->delayTics = *(node->sequencePtr + 1) +
-					rand() % (*(node->sequencePtr + 2) - *(node->sequencePtr + 1));
-				node->sequencePtr += 2;
-				node->currentSoundID = 0;
-				break;
-			case SSCMD_Volume:
-				node->volume = (127*(*(node->sequencePtr+1)))/100;
-				node->sequencePtr += 2;
-				break;
-			case SSCMD_Attenuation:
-				// Unused for now.
-				node->sequencePtr += 2;
-				break;
-			case SSCMD_StopSound:
-				// Wait until something else stops the sequence
-				break;
-			case SSCMD_End:
-				SN_StopSequence(node->origin_id);
-				break;
-			default:	
-				break;
+			}
+			break;
+		case SSCMD_PlayRepeat:
+			if(!sndPlaying)
+			{
+				node->currentSoundID = *(node->sequencePtr+1);
+				S_StartSound(node->currentSoundID, node->origin,
+					TVec(0, 0, 0), node->origin_id, 1, node->volume);
+			}
+			break;
+		case SSCMD_PlayLoop:
+			node->currentSoundID = *(node->sequencePtr + 1);
+			S_StartSound(node->currentSoundID, node->origin,
+				TVec(0, 0, 0), node->origin_id, 1, node->volume);
+			node->delayTics = *(node->sequencePtr + 2);
+			break;
+		case SSCMD_Delay:
+			node->delayTics = *(node->sequencePtr+1);
+			node->sequencePtr += 2;
+			node->currentSoundID = 0;
+			break;
+		case SSCMD_DelayRand:
+			node->delayTics = *(node->sequencePtr + 1) +
+				rand() % (*(node->sequencePtr + 2) - *(node->sequencePtr + 1));
+			node->sequencePtr += 2;
+			node->currentSoundID = 0;
+			break;
+		case SSCMD_Volume:
+			node->volume = (127*(*(node->sequencePtr+1)))/100;
+			node->sequencePtr += 2;
+			break;
+		case SSCMD_Attenuation:
+			// Unused for now.
+			node->sequencePtr += 2;
+			break;
+		case SSCMD_StopSound:
+			// Wait until something else stops the sequence
+			break;
+		case SSCMD_End:
+			SN_StopSequence(node->origin_id);
+			break;
+		default:	
+			break;
 		}
 	}
 	unguard;

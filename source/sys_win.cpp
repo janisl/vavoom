@@ -85,7 +85,7 @@ static bool				dir_already_got;
 static double		pfreq;
 static double		curtime = 0.0;
 static double		lastcurtime = 0.0;
-static dword		oldtime;
+static vuint32		oldtime;
 static int			lowshift;
 
 static HANDLE		tevent;
@@ -309,7 +309,7 @@ double Sys_Time()
 {
 	static int			sametimecount;
 	LARGE_INTEGER		PerformanceCount;
-	dword				temp, t2;
+	vuint32				temp, t2;
 	double				time;
 
 	Sys_PushFPCW_SetHigh();
@@ -377,15 +377,15 @@ static void Sys_InitTime()
 {
 	LARGE_INTEGER	PerformanceFreq;
 	LARGE_INTEGER	PerformanceCount;
-	dword			lowpart, highpart;
+	vuint32			lowpart, highpart;
 
 	if (!QueryPerformanceFrequency(&PerformanceFreq))
 		Sys_Error("No hardware timer available");
 
 	// get 32 out of the 64 time bits such that we have around
 	// 1 microsecond resolution
-	lowpart = (dword)PerformanceFreq.u.LowPart;
-	highpart = (dword)PerformanceFreq.u.HighPart;
+	lowpart = (vuint32)PerformanceFreq.u.LowPart;
+	highpart = (vuint32)PerformanceFreq.u.HighPart;
 	lowshift = 0;
 
 	while (highpart || (lowpart > 2000000.0))
@@ -401,8 +401,8 @@ static void Sys_InitTime()
 	//	Read current time and set old time.
 	QueryPerformanceCounter(&PerformanceCount);
 
-	oldtime = ((dword)PerformanceCount.u.LowPart >> lowshift) |
-			  ((dword)PerformanceCount.u.HighPart << (32 - lowshift));
+	oldtime = ((vuint32)PerformanceCount.u.LowPart >> lowshift) |
+			  ((vuint32)PerformanceCount.u.HighPart << (32 - lowshift));
 
 	//	Set start time
 	const char* p = GArgs.CheckValue("-starttime");

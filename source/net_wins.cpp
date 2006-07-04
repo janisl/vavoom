@@ -44,7 +44,7 @@ public:
 	int				net_broadcastsocket;
 	sockaddr_t		broadcastaddr;
 
-	dword			myAddr;
+	vuint32			myAddr;
 
 	static double	blocktime;
 
@@ -265,7 +265,7 @@ void VWinSockDriver::GetLocalAddress()
 	guard(VWinSockDriver::GetLocalAddress);
 	hostent		*local;
 	char		buff[MAXHOSTNAMELEN];
-	dword		addr;
+	vuint32		addr;
 
 	if (myAddr != INADDR_ANY)
 		return;
@@ -332,7 +332,7 @@ int VWinSockDriver::OpenSocket(int port)
 	guard(VWinSockDriver::OpenSocket);
 	int				newsocket;
 	sockaddr_in		address;
-	dword			trueval = 1;
+	vuint32			trueval = 1;
 
 	newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (newsocket == -1)
@@ -528,7 +528,7 @@ int VWinSockDriver::GetSocketAddr(int socket, sockaddr_t *addr)
 {
 	guard(VWinSockDriver::GetSocketAddr);
 	int		addrlen = sizeof(sockaddr_t);
-	dword	a;
+	vuint32	a;
 
 	memset(addr, 0, sizeof(sockaddr_t));
 	getsockname(socket, (sockaddr *)addr, &addrlen);

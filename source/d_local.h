@@ -74,7 +74,7 @@ struct miptexture_t
 {
 	int		width;
 	int		height;
-	dword	offsets[4];
+	vuint32	offsets[4];
 };
 
 struct espan_t
@@ -96,7 +96,7 @@ struct surfcache_t
 {
 	surfcache_t	*next;
 	surfcache_t	**owner;	// NULL is an empty chunk of memory
-	dword		Light;		// checked for strobe flash
+	vuint32		Light;		// checked for strobe flash
 	int			dlight;
 	int			size;		// including header
 	unsigned	width;
@@ -175,8 +175,8 @@ public:
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
-	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, dword, int, bool);
+	void DrawSpritePolygon(TVec*, int, int, int, vuint32);
+	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, vuint32, int, bool);
 
 	//	Particles
 	void StartParticles();
@@ -187,14 +187,14 @@ public:
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
-	void FillRect(float, float, float, float, dword);
+	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, bool);
 
 	//	Automap
 	void StartAutomap();
-	void DrawLine(int, int, dword, int, int, dword);
+	void DrawLine(int, int, vuint32, int, int, vuint32);
 	void EndAutomap();
 
 protected:
@@ -212,12 +212,12 @@ protected:
 
 	//	Textures.
 	void FlushTextureCaches();
-	void SetSpriteLump(int, dword, int);
+	void SetSpriteLump(int, vuint32, int);
 	byte* SetPic(int);
 	void GenerateTexture(int);
 	static void	MakeMips(miptexture_t*);
 	void LoadSkyMap(int);
-	void GenerateSprite(int, int, dword, int);
+	void GenerateSprite(int, int, vuint32, int);
 	void GeneratePic(int);
 
 	//	Edge drawing.
@@ -246,13 +246,13 @@ protected:
 	void SpriteCaclulateGradients(int lump);
 	void MaskedSurfCaclulateGradients(surface_t *surf);
 	void SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
-		int translation, int translucency, dword light);
+		int translation, int translucency, vuint32 light);
 
 	//	Drawing of the aliased models, i.e. md2
 	bool AliasCheckBBox(VModel* model, const TAVec &angles, int frame);
 	void AliasSetUpTransform(const TAVec &angles, int frame, int trivial_accept);
 	void AliasSetupSkin(int skin_index, const char *skin);
-	void AliasSetupLighting(dword light);
+	void AliasSetupLighting(vuint32 light);
 	void AliasSetupFrame(int frame);
 	void AliasPrepareUnclippedPoints();
 	void AliasPreparePoints();
@@ -271,10 +271,10 @@ protected:
 		fixed_t sstep, int count, byte *src, void* dst);
 	static void DrawFlatSpan_8(fixed_t s, fixed_t t, 
 		fixed_t sstep, int count, byte *src, void* dst);
-	static void FillRect_8(float x1, float y1, float x2, float y2, dword color);
+	static void FillRect_8(float x1, float y1, float x2, float y2, vuint32 color);
 	static void ShadeRect_8(int xx, int yy, int ww, int hh, int darkening);
 	static void DrawConsoleBackground_8(int h);
-	static void PutDot_8(int x, int y, dword c);
+	static void PutDot_8(int x, int y, vuint32 c);
 	static void DrawPicSpan_16(fixed_t s, fixed_t t,
 		fixed_t sstep, int count, byte *src, void* dst);
 	static void DrawSpritePicSpan_16(fixed_t s, fixed_t t,
@@ -285,10 +285,10 @@ protected:
 		fixed_t sstep, int count, byte *src, void* dst);
 	static void DrawFlatSpan_16(fixed_t s, fixed_t t,
 		fixed_t sstep, int count, byte *src, void* dst);
-	static void FillRect_16(float x1, float y1, float x2, float y2, dword color);
+	static void FillRect_16(float x1, float y1, float x2, float y2, vuint32 color);
 	static void ShadeRect_16(int xx, int yy, int ww, int hh, int darkening);
 	static void DrawConsoleBackground_16(int h);
-	static void PutDot_16(int x, int y, dword c);
+	static void PutDot_16(int x, int y, vuint32 c);
 	static void DrawPicSpan_32(fixed_t s, fixed_t t,
 		fixed_t sstep, int count, byte *src, void* dst);
 	static void DrawSpritePicSpan_32(fixed_t s, fixed_t t,
@@ -299,10 +299,10 @@ protected:
 		fixed_t sstep, int count, byte *src, void* dst);
 	static void DrawFlatSpan_32(fixed_t s, fixed_t t,
 		fixed_t sstep, int count, byte *src, void* dst);
-	static void FillRect_32(float x1, float y1, float x2, float y2, dword color);
+	static void FillRect_32(float x1, float y1, float x2, float y2, vuint32 color);
 	static void ShadeRect_32(int xx, int yy, int ww, int hh, int darkening);
 	static void DrawConsoleBackground_32(int h);
-	static void PutDot_32(int x, int y, dword c);
+	static void PutDot_32(int x, int y, vuint32 c);
 	static void DrawPic(float x1, float y1, float x2, float y2,
 		float s1, float t1, float s2, float t2);
 };
@@ -388,7 +388,7 @@ extern word				*fadetable16;
 extern word				*fadetable16r;
 extern word				*fadetable16g;
 extern word				*fadetable16b;
-extern dword			*fadetable32;
+extern vuint32			*fadetable32;
 extern byte				*fadetable32r;
 extern byte				*fadetable32g;
 extern byte				*fadetable32b;
@@ -434,7 +434,7 @@ extern byte				*tinttables[5];
 extern word				scaletable[32][256];
 
 extern word				pal8_to16[256];
-extern dword			pal2rgb[256];
+extern vuint32			pal2rgb[256];
 
 extern int				bppindex;
 
@@ -463,7 +463,7 @@ inline void TransformVector(const TVec &in, TVec &out)
 //
 //==========================================================================
 
-inline dword MakeCol8(byte r, byte g, byte b)
+inline vuint32 MakeCol8(byte r, byte g, byte b)
 {
 	return d_rgbtable[((r << 7) & 0x7c00) +
 		((g << 2) & 0x3e0) + ((b >> 3) & 0x1f)];
@@ -475,24 +475,24 @@ inline dword MakeCol8(byte r, byte g, byte b)
 //
 //==========================================================================
 
-inline dword MakeCol15(byte r, byte g, byte b)
+inline vuint32 MakeCol15(byte r, byte g, byte b)
 {
 	return	((r >> 3) << rshift) |
 			((g >> 3) << gshift) |
 			((b >> 3) << bshift);
 }
 
-inline byte GetCol15R(dword col)
+inline byte GetCol15R(vuint32 col)
 {
 	return byte((col >> rshift) << 3);
 }
 
-inline byte GetCol15G(dword col)
+inline byte GetCol15G(vuint32 col)
 {
 	return byte((col >> gshift) << 3);
 }
 
-inline byte GetCol15B(dword col)
+inline byte GetCol15B(vuint32 col)
 {
 	return byte((col >> bshift) << 3);
 }
@@ -503,24 +503,24 @@ inline byte GetCol15B(dword col)
 //
 //==========================================================================
 
-inline dword MakeCol16(byte r, byte g, byte b)
+inline vuint32 MakeCol16(byte r, byte g, byte b)
 {
 	return	((r >> 3) << rshift) |
 			((g >> 2) << gshift) |
 			((b >> 3) << bshift);
 }
 
-inline byte GetCol16R(dword col)
+inline byte GetCol16R(vuint32 col)
 {
 	return byte((col >> rshift) << 3);
 }
 
-inline byte GetCol16G(dword col)
+inline byte GetCol16G(vuint32 col)
 {
 	return byte((col >> gshift) << 2);
 }
 
-inline byte GetCol16B(dword col)
+inline byte GetCol16B(vuint32 col)
 {
 	return byte((col >> bshift) << 3);
 }
@@ -531,24 +531,24 @@ inline byte GetCol16B(dword col)
 //
 //==========================================================================
 
-inline dword MakeCol32(byte r, byte g, byte b)
+inline vuint32 MakeCol32(byte r, byte g, byte b)
 {
 	return	(r << rshift) |
 			(g << gshift) |
 			(b << bshift);
 }
 
-inline byte GetCol32R(dword col)
+inline byte GetCol32R(vuint32 col)
 {
 	return byte(col >> rshift);
 }
 
-inline byte GetCol32G(dword col)
+inline byte GetCol32G(vuint32 col)
 {
 	return byte(col >> gshift);
 }
 
-inline byte GetCol32B(dword col)
+inline byte GetCol32B(vuint32 col)
 {
 	return byte(col >> bshift);
 }
@@ -559,7 +559,7 @@ inline byte GetCol32B(dword col)
 //
 //==========================================================================
 
-inline dword MakeCol(byte r, byte g, byte b)
+inline vuint32 MakeCol(byte r, byte g, byte b)
 {
 	if (ScreenBPP == 8)
 	{
@@ -580,7 +580,7 @@ inline dword MakeCol(byte r, byte g, byte b)
 	return 0;
 }
 
-inline byte GetColR(dword col)
+inline byte GetColR(vuint32 col)
 {
 	if (ScreenBPP == 15)
 	{
@@ -597,7 +597,7 @@ inline byte GetColR(dword col)
 	return 0;
 }
 
-inline byte GetColG(dword col)
+inline byte GetColG(vuint32 col)
 {
 	if (ScreenBPP == 15)
 	{
@@ -614,7 +614,7 @@ inline byte GetColG(dword col)
 	return 0;
 }
 
-inline byte GetColB(dword col)
+inline byte GetColB(vuint32 col)
 {
 	if (ScreenBPP == 15)
 	{

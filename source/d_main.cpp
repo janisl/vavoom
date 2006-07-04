@@ -85,7 +85,7 @@ byte*					scrn;
 short*					zbuffer;
 
 word					pal8_to16[256];
-dword					pal2rgb[256];
+vuint32					pal2rgb[256];
 
 extern "C" {
 int						rshift = 11;
@@ -599,7 +599,7 @@ void* VSoftwareDrawer::ReadScreen(int* bpp, bool* bot2top)
 	else
 	{
 		dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t));
-		dword *psrc = (dword*)scrn;
+		vuint32* psrc = (vuint32*)scrn;
 		rgb_t *pdst = (rgb_t*)dst;
 		for (int i = 0; i < ScreenWidth * ScreenHeight; i++)
 		{

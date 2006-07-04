@@ -69,10 +69,10 @@ struct surfcache_t
 	surfcache_t	*addchain;	// list of specular surfaces
 	int			blocknum;	// light surface index
 	surfcache_t	**owner;
-	dword		Light;		// checked for strobe flash
+	vuint32		Light;		// checked for strobe flash
 	int			dlight;
 	surface_t	*surf;
-	dword		lastframe;
+	vuint32		lastframe;
 };
 
 struct MyD3DVertex
@@ -80,14 +80,14 @@ struct MyD3DVertex
 	float		x;			// Homogeneous coordinates
 	float		y;
 	float		z;
-	dword		color;		// Vertex color
+	vuint32		color;		// Vertex color
 	float		texs;		// Texture coordinates
 	float		text;
 	float		lights;		// Lightmap coordinates
     float		lightt;
 
 	MyD3DVertex() { }
-	MyD3DVertex(const TVec& v, dword _color, float _s, float _t)
+	MyD3DVertex(const TVec& v, vuint32 _color, float _s, float _t)
 	{
 		x = v.x;
 		y = v.y;
@@ -98,7 +98,7 @@ struct MyD3DVertex
 		lights = 0.0;
 		lightt = 0.0;
 	}
-	MyD3DVertex(const TVec& v, dword _color, float _s, float _t,
+	MyD3DVertex(const TVec& v, vuint32 _color, float _s, float _t,
 		float _ls, float _lt)
 	{
 		x = v.x;
@@ -110,7 +110,7 @@ struct MyD3DVertex
 		lights = _ls;
 		lightt = _lt;
 	}
-	MyD3DVertex(float _x, float _y, dword _color, float _s, float _t)
+	MyD3DVertex(float _x, float _y, vuint32 _color, float _s, float _t)
 	{
 		x = _x;
 		y = _y;
@@ -196,8 +196,8 @@ public:
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
-	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, dword, int, bool);
+	void DrawSpritePolygon(TVec*, int, int, int, vuint32);
+	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, vuint32, int, bool);
 
 	//	Particles
 	void StartParticles();
@@ -208,14 +208,14 @@ public:
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
-	void FillRect(float, float, float, float, dword);
+	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, bool);
 
 	//	Automap
 	void StartAutomap();
-	void DrawLine(int, int, dword, int, int, dword);
+	void DrawLine(int, int, vuint32, int, int, vuint32);
 	void EndAutomap();
 
 private:
@@ -274,7 +274,7 @@ private:
 			((g >> (8 - gbits)) << gshift) |
 			((b >> (8 - bbits)) << bshift));
 	}
-	dword MakeCol32(byte r, byte g, byte b, byte a)
+	vuint32 MakeCol32(byte r, byte g, byte b, byte a)
 	{
 		return (a << ashift32) | (r << rshift32) |
 			(g << gshift32) | (b << bshift32);
@@ -307,7 +307,7 @@ private:
 	MyD3DMatrix					IdentityMatrix;
 	MyD3DMatrix					matProj;
 	MyD3DMatrix					matView;
-	dword						SurfaceMemFlag;
+	vuint32						SurfaceMemFlag;
 	bool						square_textures;
 	int							maxTexSize;
 	int							maxMultiTex;
@@ -379,7 +379,7 @@ private:
 	surfcache_t					*freeblocks;
 	surfcache_t					*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t					blockbuf[NUM_CACHE_BLOCKS];
-	dword						cacheframecount;
+	vuint32						cacheframecount;
 
 	static VCvarI device;
 	static VCvarI clear;

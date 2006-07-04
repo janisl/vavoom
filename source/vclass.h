@@ -333,7 +333,7 @@ public:
 
 	// Constructors.
 	VClass(VName AName);
-	VClass(ENativeConstructor, size_t ASize, dword AClassFlags,
+	VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 		VClass *AParent, EName AName, void(*ACtor)());
 
 	// Destructors.
@@ -357,15 +357,15 @@ public:
 	static int FindModel(VName);
 
 	// Accessors.
-	dword GetFlags() const
+	vuint32 GetFlags() const
 	{
 		return ObjectFlags;
 	}
-	void SetFlags(dword NewFlags)
+	void SetFlags(vuint32 NewFlags)
 	{
 		ObjectFlags |= NewFlags;
 	}
-	void ClearFlags(dword NewFlags)
+	void ClearFlags(vuint32 NewFlags)
 	{
 		ObjectFlags &= ~NewFlags;
 	}

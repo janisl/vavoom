@@ -112,7 +112,7 @@ struct trans_sprite_t
 	};
 	int			type;
 	float		dist;
-	dword		light;
+	vuint32		light;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -172,7 +172,7 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 	int			r;
 
 	VTexture* Tex = GTextureManager.Textures[lumpnr];
-	if ((dword)frame >= 30 || (dword)rotation > 8)
+	if ((vuint32)frame >= 30 || (vuint32)rotation > 8)
 	{
 		Sys_Error("InstallSpriteLump: Bad frame characters in lump %s",
 			*Tex->Name);
@@ -233,7 +233,7 @@ void R_InstallSprite(const char *name, int index)
 	int			frame;
 	int			rotation;
 
-	if ((dword)index >= MAX_SPRITE_MODELS)
+	if ((vuint32)index >= MAX_SPRITE_MODELS)
 	{
 		Host_Error("Invalid sprite index %d for sprite %s", index, name);
 	}
@@ -340,7 +340,7 @@ void R_FreeSpriteData()
 //==========================================================================
 
 void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
-	int translucency, int translation, bool type, dword light)
+	int translucency, int translation, bool type, vuint32 light)
 {
 	guard(R_DrawTranslucentPoly);
 	int i;
@@ -620,7 +620,7 @@ static void RenderSprite(VEntity* thing)
 		float ang = matan(thing->Origin.y - vieworg.y,
 			thing->Origin.x - vieworg.x);
 		ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 2.0);
-		dword rot = (dword)(ang * 8 / 360.0) & 7;
+		vuint32 rot = (vuint32)(ang * 8 / 360.0) & 7;
 		lump = sprframe->lump[rot];
 		flip = (boolean)sprframe->flip[rot];
 	}
@@ -670,7 +670,7 @@ static void RenderSprite(VEntity* thing)
 	}
 	r_taxis = -sprup;
 
-	dword light;
+	vuint32 light;
 	if (thing->SpriteFrame & FF_FULLBRIGHT || fixedlight)
 	{
 		light = 0xffffffff;
@@ -699,7 +699,7 @@ static void RenderSprite(VEntity* thing)
 //
 //==========================================================================
 
-void RenderTranslucentAliasModel(VEntity* mobj, dword light)
+void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light)
 {
 	guard(RenderTranslucentAliasModel);
 	int i;
@@ -802,7 +802,7 @@ static void RenderAliasModel(VEntity* mobj)
 	}
 
 	//	Setup lighting
-	dword light;
+	vuint32 light;
 	if (mobj->SpriteFrame & FF_FULLBRIGHT || fixedlight)
 	{
 		light = 0xffffffff;
@@ -1022,7 +1022,7 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 	else
 		r_taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
-	dword light;
+	vuint32 light;
 	if (psp->frame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;
@@ -1048,7 +1048,7 @@ static void RenderViewModel(cl_pspdef_t *psp)
 	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 8.0 -
 		(psp->sy - 32.0) * viewup / 6.0;
 
-	dword light;
+	vuint32 light;
 	if (psp->frame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;

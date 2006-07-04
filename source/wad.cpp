@@ -641,7 +641,7 @@ int VWadFile::CheckNumForName(VName LumpName, EWadNamespace NS)
 void VWadFile::ReadFromLump(int lump, void* dest, int pos, int size)
 {
 	guard(VWadFile::ReadFromLump);
-	if ((dword)lump >= (dword)NumLumps)
+	if ((vuint32)lump >= (vuint32)NumLumps)
 	{
 		Sys_Error("VWadFile::ReadFromLump: %i >= numlumps", lump);
 	}

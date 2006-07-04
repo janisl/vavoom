@@ -287,7 +287,7 @@ HRESULT CALLBACK VDirect3DDrawer::EnumPixelFormats32Callback(LPDDPIXELFORMAT pf,
 //
 //==========================================================================
 
-int GetBits(dword mask)
+int GetBits(vuint32 mask)
 {
 	int answer = 0;
 	while (mask)
@@ -307,7 +307,7 @@ int GetBits(dword mask)
 //
 //==========================================================================
 
-int GetShift(dword mask)
+int GetShift(vuint32 mask)
 {
 	if (!mask)
 		return 0;
@@ -1102,9 +1102,9 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 		byte *psrc = (byte*)lrect.pBits + j * lrect.Pitch;
 		for (int i = 0; i < ScreenWidth; i++)
 		{
-			pdst->r = byte((*(dword*)psrc >> scr_rshift) << (8 - scr_rbits));
-			pdst->g = byte((*(dword*)psrc >> scr_gshift) << (8 - scr_gbits));
-			pdst->b = byte((*(dword*)psrc >> scr_bshift) << (8 - scr_bbits));
+			pdst->r = byte((*(vuint32*)psrc >> scr_rshift) << (8 - scr_rbits));
+			pdst->g = byte((*(vuint32*)psrc >> scr_gshift) << (8 - scr_gbits));
+			pdst->b = byte((*(vuint32*)psrc >> scr_bshift) << (8 - scr_bbits));
 			psrc += scr_pixbytes;
 			pdst++;
 		}
@@ -1136,9 +1136,9 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 		byte *psrc = (byte*)ddsd.lpSurface + j * ddsd.lPitch;
 		for (int i = 0; i < ScreenWidth; i++)
 		{
-			pdst->r = byte((*(dword*)psrc >> scr_rshift) << (8 - scr_rbits));
-			pdst->g = byte((*(dword*)psrc >> scr_gshift) << (8 - scr_gbits));
-			pdst->b = byte((*(dword*)psrc >> scr_bshift) << (8 - scr_bbits));
+			pdst->r = byte((*(vuint32*)psrc >> scr_rshift) << (8 - scr_rbits));
+			pdst->g = byte((*(vuint32*)psrc >> scr_gshift) << (8 - scr_gbits));
+			pdst->b = byte((*(vuint32*)psrc >> scr_bshift) << (8 - scr_bbits));
 			psrc += PixelBytes;
 			pdst++;
 		}

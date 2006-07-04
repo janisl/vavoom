@@ -45,7 +45,7 @@ struct dlight_t
 	float	decay;		// drop this each second
 	float	minlight;	// don't add when contributing less
 	int		key;		// used to identify owner to reuse the same light
-	dword	color;		// for colored lights
+	vuint32	color;		// for colored lights
 };
 
 // Client side Map Object definition.
@@ -239,7 +239,7 @@ void CL_KeepaliveMessage(void);
 bool CL_TraceLine(const TVec &start, const TVec &end);
 
 particle_t *R_NewParticle(void);
-void R_AddStaticLight(const TVec &origin, float radius, dword color);
+void R_AddStaticLight(const TVec &origin, float radius, vuint32 color);
 
 void R_InstallSprite(const char *name, int index);
 void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,

@@ -68,7 +68,6 @@ public:
 	VMessage& operator << (vuint16 c)  { return operator << ((vint16)c); }
 	VMessage& operator << (vint32 c);
 	VMessage& operator << (vuint32 c) { return operator << ((vint32)c); }
-	VMessage& operator << (dword c) { return operator << ((vint32)c); }
 	VMessage& operator << (float c);
 	VMessage& operator << (const char* c);
 	VMessage& operator << (const VStr& c);
@@ -84,7 +83,6 @@ public:
 	VMessage& operator >> (vuint16& c)  { return operator >> ((vint16&)c); }
 	VMessage& operator >> (vint32& c);
 	VMessage& operator >> (vuint32& c) { return operator >> ((vint32&)c); }
-	VMessage& operator >> (dword& c) { return operator >> ((vint32&)c); }
 	VMessage& operator >> (float& f);
 	VMessage& operator >> (const char*& s);
 	VMessage& operator >> (VStr& s);

@@ -88,14 +88,14 @@ int				lightleft,  lightright,  lightleftstep,  lightrightstep;
 int				lightrleft, lightrright, lightrleftstep, lightrrightstep;
 int				lightgleft, lightgright, lightgleftstep, lightgrightstep;
 int				lightbleft, lightbright, lightbleftstep, lightbrightstep;
-dword			blockdivmask;
+vuint32			blockdivmask;
 void			*prowdestbase;
 byte			*pbasesource;
 int				surfrowbytes;	// used by ASM files
-dword			*r_lightptr;
-dword			*r_lightptrr;
-dword			*r_lightptrg;
-dword			*r_lightptrb;
+vuint32			*r_lightptr;
+vuint32			*r_lightptrr;
+vuint32			*r_lightptrg;
+vuint32			*r_lightptrb;
 int				r_stepback;
 int				r_lightwidth;
 int				r_numhblocks, r_numvblocks;
@@ -844,10 +844,10 @@ void D_DrawSurfaceBlock32_mip0(void)
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -876,7 +876,7 @@ void D_DrawSurfaceBlock32_mip0(void)
 			psource += sourcetstep;
 			lightright += lightrightstep;
 			lightleft += lightleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -894,10 +894,10 @@ void D_DrawSurfaceBlock32_mip1(void)
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -926,7 +926,7 @@ void D_DrawSurfaceBlock32_mip1(void)
 			psource += sourcetstep;
 			lightright += lightrightstep;
 			lightleft += lightleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -944,10 +944,10 @@ void D_DrawSurfaceBlock32_mip2(void)
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -976,7 +976,7 @@ void D_DrawSurfaceBlock32_mip2(void)
 			psource += sourcetstep;
 			lightright += lightrightstep;
 			lightleft += lightleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -994,10 +994,10 @@ void D_DrawSurfaceBlock32_mip3(void)
 {
 	int			v, i, b, lightstep, lighttemp, light;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -1026,7 +1026,7 @@ void D_DrawSurfaceBlock32_mip3(void)
 			psource += sourcetstep;
 			lightright += lightrightstep;
 			lightleft += lightleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -1679,10 +1679,10 @@ void D_DrawSurfaceBlock32RGB_mip0(void)
 	int			lightgstep, lightgtemp, lightg;
 	int			lightbstep, lightbtemp, lightb;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -1738,7 +1738,7 @@ void D_DrawSurfaceBlock32RGB_mip0(void)
 			lightgleft += lightgleftstep;
 			lightbright += lightbrightstep;
 			lightbleft += lightbleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -1759,10 +1759,10 @@ void D_DrawSurfaceBlock32RGB_mip1(void)
 	int			lightgstep, lightgtemp, lightg;
 	int			lightbstep, lightbtemp, lightb;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -1818,7 +1818,7 @@ void D_DrawSurfaceBlock32RGB_mip1(void)
 			lightgleft += lightgleftstep;
 			lightbright += lightbrightstep;
 			lightbleft += lightbleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -1839,10 +1839,10 @@ void D_DrawSurfaceBlock32RGB_mip2(void)
 	int			lightgstep, lightgtemp, lightg;
 	int			lightbstep, lightbtemp, lightb;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -1898,7 +1898,7 @@ void D_DrawSurfaceBlock32RGB_mip2(void)
 			lightgleft += lightgleftstep;
 			lightbright += lightbrightstep;
 			lightbleft += lightbleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -1919,10 +1919,10 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 	int			lightgstep, lightgtemp, lightg;
 	int			lightbstep, lightbtemp, lightb;
 	byte		pix, *psource;
-	dword		*prowdest;
+	vuint32		*prowdest;
 
 	psource = pbasesource;
-	prowdest = (dword*)prowdestbase;
+	prowdest = (vuint32*)prowdestbase;
 
 	for (v = 0; v < r_numvblocks; v++)
 	{
@@ -1978,7 +1978,7 @@ void D_DrawSurfaceBlock32RGB_mip3(void)
 			lightgleft += lightgleftstep;
 			lightbright += lightbrightstep;
 			lightbleft += lightbleftstep;
-			prowdest = (dword*)((byte*)prowdest + surfrowbytes);
+			prowdest = (vuint32*)((byte*)prowdest + surfrowbytes);
 		}
 
 		if (psource >= r_sourcemax)
@@ -2067,7 +2067,7 @@ void D_DrawSkySurf_16(void)
 void D_DrawSkySurf_32(void)
 {
 	byte	*basesrc, *src;
-	dword	*dst;
+	vuint32	*dst;
 	int		texwidth, texheight;
 	int		smask;
 	int		s, t, texs;
@@ -2077,7 +2077,7 @@ void D_DrawSkySurf_32(void)
 	smask = texwidth - 1;
 
 	basesrc = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
-	dst = (dword *)dsky_cachedest;
+	dst = (vuint32 *)dsky_cachedest;
 
 	for (t = 0; t < dsky_cacheheight; t++)
 	{
@@ -2206,7 +2206,7 @@ void D_DrawDoubleSkySurf_16(void)
 void D_DrawDoubleSkySurf_32(void)
 {
 	byte	*basesrc1, *basesrc2, *src1, *src2;
-	dword	*dst;
+	vuint32	*dst;
 	int		texwidth1, texheight1, texwidth2, texheight2;
 	int		smask1, smask2;
 	int		s, t, texs1, texs2;
@@ -2220,7 +2220,7 @@ void D_DrawDoubleSkySurf_32(void)
 	basesrc1 = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
 	basesrc2 = (byte *)dsky_mt2 + dsky_mt2->offsets[0];
 
-	dst = (dword *)dsky_cachedest;
+	dst = (vuint32 *)dsky_cachedest;
 
 	smask1 = texwidth1 - 1;
 	smask2 = texwidth2 - 1;

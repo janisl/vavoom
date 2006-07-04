@@ -955,7 +955,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
-	int translucency, int translation, dword light)
+	int translucency, int translation, vuint32 light)
 {
 	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
@@ -1001,7 +1001,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
 //==========================================================================
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	VModel* model, int frame, int skin_index, const char *skin, dword light,
+	VModel* model, int frame, int skin_index, const char *skin, vuint32 light,
 	int translucency, bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
@@ -1025,7 +1025,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	TVec				alias_forward;
 	TVec				alias_right;
 	TVec				alias_up;
-	dword				alpha;
+	vuint32				alpha;
 
 	if (is_view_model)
 	{

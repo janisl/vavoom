@@ -75,10 +75,10 @@ static short ShortNoSwap(short x)
 }
 static int LongSwap(int x)
 {
-	return 	((dword)x >> 24) |
-			(((dword)x >> 8) & 0xff00) |
-			(((dword)x << 8) & 0xff0000) |
-			((dword)x << 24);
+	return 	((vuint32)x >> 24) |
+			(((vuint32)x >> 8) & 0xff00) |
+			(((vuint32)x << 8) & 0xff0000) |
+			((vuint32)x << 24);
 }
 static int LongNoSwap(int x)
 {

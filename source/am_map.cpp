@@ -132,16 +132,16 @@ boolean		automapactive = false;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // Automap colors
-static dword	WallColor;
-static dword	TSWallColor;
-static dword	FDWallColor;
-static dword	CDWallColor;
-static dword	EXWallColor;
-static dword	SecretWallColor;
-static dword	PowerWallColor;
-static dword	GridColor;
-static dword	ThingColor;
-static dword	PlayerColor;
+static vuint32	WallColor;
+static vuint32	TSWallColor;
+static vuint32	FDWallColor;
+static vuint32	CDWallColor;
+static vuint32	EXWallColor;
+static vuint32	SecretWallColor;
+static vuint32	PowerWallColor;
+static vuint32	GridColor;
+static vuint32	ThingColor;
+static vuint32	PlayerColor;
 
 static VCvarS	am_color_wall("am_color_wall", "d0 b0 85", CVAR_Archive);
 static VCvarS	am_color_tswall("am_color_tswall", "61 64 5f", CVAR_Archive);
@@ -1097,7 +1097,7 @@ static boolean AM_clipMline(mline_t* ml, fline_t* fl)
 //
 //==========================================================================
 
-static void AM_drawFline(fline_t* fl, dword color)
+static void AM_drawFline(fline_t* fl, vuint32 color)
 {
 	Drawer->DrawLine(fl->a.x, fl->a.y, color, fl->b.x, fl->b.y, color);
 }
@@ -1110,7 +1110,7 @@ static void AM_drawFline(fline_t* fl, dword color)
 //
 //==========================================================================
 
-static void AM_drawMline(mline_t *ml, dword color)
+static void AM_drawMline(mline_t *ml, vuint32 color)
 {
 	static fline_t fl;
 
@@ -1126,7 +1126,7 @@ static void AM_drawMline(mline_t *ml, dword color)
 //
 //==========================================================================
 
-static void AM_drawGrid(dword color)
+static void AM_drawGrid(vuint32 color)
 {
 	float	x, y;
 	float	start, end;
@@ -1255,7 +1255,7 @@ static void AM_drawWalls()
 //==========================================================================
 
 static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
-	float scale, float angle, dword color, float x, float y)
+	float scale, float angle, vuint32 color, float x, float y)
 {
 	float msinAngle = msin(angle);
 	float mcosAngle = mcos(angle);
@@ -1333,7 +1333,7 @@ static void AM_drawPlayers()
 //
 //==========================================================================
 
-static void AM_drawThings(dword color)
+static void AM_drawThings(vuint32 color)
 {
 	int			i;
 	float		x, y, angle;
@@ -1543,7 +1543,7 @@ static void AM_DrawLevelStats()
 //
 //==========================================================================
 
-static dword StringToColor(const char *str)
+static vuint32 StringToColor(const char *str)
 {
 	int r, g, b;
 	char *p;

@@ -731,7 +731,7 @@ void CL_ParseServerMessage(VMessage& msg)
 	VStr		string;
 	TVec		origin;
 	float		radius;
-	dword		color;
+	vuint32		color;
 	int			trans;
 	sector_t*	sec;
 

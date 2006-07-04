@@ -101,10 +101,10 @@ struct surfcache_t
 	surfcache_t	*addchain;	// list of specular surfaces
 	int			blocknum;	// light surface index
 	surfcache_t	**owner;
-	dword		Light;		// checked for strobe flash
+	vuint32		Light;		// checked for strobe flash
 	int			dlight;
 	surface_t	*surf;
-	dword		lastframe;
+	vuint32		lastframe;
 };
 
 class VOpenGLDrawer : public VDrawer
@@ -140,8 +140,8 @@ public:
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void EndSky();
 	void DrawMaskedPolygon(TVec*, int, int, int);
-	void DrawSpritePolygon(TVec*, int, int, int, dword);
-	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, dword, int, bool);
+	void DrawSpritePolygon(TVec*, int, int, int, vuint32);
+	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, vuint32, int, bool);
 
 	//	Particles
 	void StartParticles();
@@ -152,14 +152,14 @@ public:
 	void DrawPic(float, float, float, float, float, float, float, float, int, int);
 	void DrawPicShadow(float, float, float, float, float, float, float, float, int, int);
 	void FillRectWithFlat(float, float, float, float, float, float, float, float, const char*);
-	void FillRect(float, float, float, float, dword);
+	void FillRect(float, float, float, float, vuint32);
 	void ShadeRect(int, int, int, int, int);
 	void DrawConsoleBackground(int);
 	void DrawSpriteLump(float, float, float, float, int, int, bool);
 
 	//	Automap
 	void StartAutomap();
-	void DrawLine(int, int, dword, int, int, dword);
+	void DrawLine(int, int, vuint32, int, int, vuint32);
 	void EndAutomap();
 
 protected:
@@ -186,7 +186,7 @@ protected:
 	surfcache_t	*freeblocks;
 	surfcache_t	*cacheblocks[NUM_BLOCK_SURFS];
 	surfcache_t	blockbuf[NUM_CACHE_BLOCKS];
-	dword		cacheframecount;
+	vuint32		cacheframecount;
 
 	float		tex_iw;
 	float		tex_ih;
@@ -253,7 +253,7 @@ protected:
 	PointParameterf_t	p_PointParameterf;
 	PointParameterfv_t	p_PointParameterfv;
 
-	static void SetColor(dword c)
+	static void SetColor(vuint32 c)
 	{
 		glColor4ub(byte((c >> 16) & 0xff), byte((c >> 8) & 0xff),
 			byte(c & 0xff), byte(c >> 24));

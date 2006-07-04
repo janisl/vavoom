@@ -148,8 +148,8 @@ class VClientState : public VObject
 	int				palette;
 	int				prev_palette;
 
-	dword			cshifts[NUM_CSHIFTS];		//	color shifts for damage,
-	dword			prev_cshifts[NUM_CSHIFTS];	// powerups and content types
+	vuint32			cshifts[NUM_CSHIFTS];		//	color shifts for damage,
+	vuint32			prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
 	// Overlay view sprites (gun, etc).
 	cl_pspdef_t		psprites[NUMPSPRITES];
@@ -164,7 +164,7 @@ class VClientState : public VObject
 	};
 	vuint32			ClientFlags;
 
-	dword 			worldTimer;				// total time the player's been playing
+	vuint32			worldTimer;				// total time the player's been playing
 
 	// Overlay view sprites (gun, etc).
 	int				translucency;

@@ -479,7 +479,7 @@ void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 	}
 	else if (desc.Format == D3DFMT_A8R8G8B8)
 	{
-		dword *out = (dword*)lrect.pBits;
+		vuint32* out = (vuint32*)lrect.pBits;
 		for (int i = 0; i < width * height; i++, in++, out++)
 		{
 			*out = MakeCol32(in->r, in->g, in->b, in->a);
@@ -519,7 +519,7 @@ void VDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
 	{
 		for (int y = 0; y < height; y++)
 		{
-			dword *out = (dword*)((byte *)ddsd.lpSurface + y * ddsd.lPitch);
+			vuint32* out = (vuint32*)((vuint8*)ddsd.lpSurface + y * ddsd.lPitch);
 			for (int x = 0; x < width; x++, in++, out++)
 			{
 				*out = MakeCol32(in->r, in->g, in->b, in->a);

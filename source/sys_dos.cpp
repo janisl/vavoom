@@ -271,12 +271,12 @@ static double	oldtime = 0.0;
 
 static void Sys_InitTime()
 {
-    int			r;
-    dword		t;
-    dword		tick;
+	int			r;
+	vuint32		t;
+	vuint32		tick;
 
 	//
-    // set system timer to mode 2 for the Sys_Time() function
+	// set system timer to mode 2 for the Sys_Time() function
 	//
 	outportb(0x43, 0x34);
 	outportb(0x40, 0);
@@ -287,13 +287,13 @@ static void Sys_InitTime()
 	//
 	t = _farpeekw(_dos_ds, 0x46c) * 65536;
 
-    outportb(0x43, 0); // latch time
-    r = inportb(0x40);
-    r |= inportb(0x40) << 8;
-    r = (r - 1) & 0xffff;
+	outportb(0x43, 0); // latch time
+	r = inportb(0x40);
+	r |= inportb(0x40) << 8;
+	r = (r - 1) & 0xffff;
 
-    tick = _farpeekw(_dos_ds, 0x46c) * 65536;
-    if ((tick != t) && (r & 0x8000))
+	tick = _farpeekw(_dos_ds, 0x46c) * 65536;
+	if ((tick != t) && (r & 0x8000))
 		t = tick;
 
 	oldtime = (double) (t + (65536 - r)) / 1193200.0;

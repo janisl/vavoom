@@ -322,7 +322,7 @@ extern "C" void D_DrawSpans8_16(espan_t *pspan)
 extern "C" void D_DrawSpans8_32(espan_t *pspan)
 {
 	int				count, spancount;
-	dword			*pbase, *pdest;
+	vuint32			*pbase, *pdest;
 	fixed_t			s, t, snext, tnext, sstep, tstep;
 	float			sdivz, tdivz, zi, z, du, dv, spancountminus1;
 	float			sdivz8stepu, tdivz8stepu, zi8stepu;
@@ -330,7 +330,7 @@ extern "C" void D_DrawSpans8_32(espan_t *pspan)
 	sstep = 0;	// keep compiler happy
 	tstep = 0;	// ditto
 
-	pbase = (dword*)cacheblock;
+	pbase = (vuint32*)cacheblock;
 
 	sdivz8stepu = d_sdivzstepu * 8;
 	tdivz8stepu = d_tdivzstepu * 8;
@@ -338,7 +338,7 @@ extern "C" void D_DrawSpans8_32(espan_t *pspan)
 
 	do
 	{
-	    pdest = (dword*)scrn + ylookup[pspan->v] + pspan->u;
+	    pdest = (vuint32*)scrn + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -455,7 +455,7 @@ extern "C" void D_DrawSpans8_32(espan_t *pspan)
 extern "C" void D_DrawZSpans(espan_t *pspan)
 {
 	int				count, doublecount, izistep;
-	dword			izi;
+	vuint32			izi;
 	short			*pdest;
 	unsigned		ltemp;
 	double			zi;
@@ -481,7 +481,7 @@ extern "C" void D_DrawZSpans(espan_t *pspan)
 
 		if ((long)pdest & 0x02)
 		{
-			//	Align dest to dword
+			//	Align dest to double word
 			*pdest++ = (word)(izi >> 16);
 			izi += izistep;
 			count--;
@@ -496,7 +496,7 @@ extern "C" void D_DrawZSpans(espan_t *pspan)
 				izi += izistep;
 				ltemp |= izi & 0xFFFF0000;
 				izi += izistep;
-				*(dword *)pdest = ltemp;
+				*(vuint32*)pdest = ltemp;
 				pdest += 2;
 			} while (--doublecount > 0);
 		}

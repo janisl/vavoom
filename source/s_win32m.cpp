@@ -91,59 +91,59 @@ public:
 	struct FChunkHdr
 	{
 		char			Type[4];
-		dword			Length;
+		vuint32			Length;
 	};
 
 	struct FMidiFileHdr
 	{
-		word			Format;
-		word			Tracks;
-		word			Division;
+		vuint16			Format;
+		vuint16			Tracks;
+		vuint16			Division;
 	};
 #pragma pack()
 
 	struct FEvent
 	{
-		dword			Delta;
+		DWORD			Delta;
 		byte			Event[3];
-		dword			ParmCount;
+		DWORD			ParmCount;
 		const byte*		Parm;
 	};
 
 	struct FTrack
 	{
-		dword			FileOffset;
-		dword			TotalLength;
+		DWORD			FileOffset;
+		DWORD			TotalLength;
 
-		dword			Position;
-		dword			BytesLeft;
+		DWORD			Position;
+		DWORD			BytesLeft;
 		const byte*		ImagePtr;
 		byte			RunningStatus;
 
-		dword			TrackFlags;
+		DWORD			TrackFlags;
 	};
 
 	bool			MusicPaused;
 	float			MusVolume;
 
 	const byte*		MidiImage;
-	dword			MidiImageSize;
+	DWORD			MidiImageSize;
 
 	int				State;				//	Sequencer state (SEQ_S_xxx)
 	HMIDIOUT		hMidi;				//	Handle to open MIDI device
 	byte			BufAlloc[(sizeof(MIDIHDR) + CB_MIDI_BUFFERS) * C_MIDI_BUFFERS];	//	Streaming buffers -- initial allocation
 	LPMIDIHDR		FreeBuffers;		//	Streaming buffers -- free list
 	int				BuffersInMMSYSTEM;	//	Streaming buffers -- in use
-	dword			SeqFlags;			//	Various sequencer flags
+	DWORD			SeqFlags;			//	Various sequencer flags
 
-	dword			MidiPosition;
-	dword			Format;
-	dword			NumTracks;
-	dword			TimeDivision;
-	dword			SmfFlags;
+	DWORD			MidiPosition;
+	DWORD			Format;
+	DWORD			NumTracks;
+	DWORD			TimeDivision;
+	DWORD			SmfFlags;
 
-	dword			PendingUserEvent;
-	dword			PendingUserEventCount;
+	DWORD			PendingUserEvent;
+	DWORD			PendingUserEventCount;
 	const byte*		PendingUserEvents;
 
 	FTrack			Tracks[MAX_TRACKS];
@@ -166,11 +166,11 @@ public:
 	static void PASCAL StaticCallback(HMIDISTRM, UINT, DWORD, DWORD, DWORD);
 
 	EResult ReadEvents(LPMIDIHDR);
-	bool InsertParmData(dword, LPMIDIHDR);
+	bool InsertParmData(DWORD, LPMIDIHDR);
 	void SeekStart();
 	bool BuildFileIndex();
 	EResult GetNextEvent(FEvent&);
-	static dword GetVDword(const byte*, dword, dword&);
+	static DWORD GetVDword(const byte*, DWORD, DWORD&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -807,7 +807,7 @@ VMMSystemMidiDevice::EResult VMMSystemMidiDevice::ReadEvents(LPMIDIHDR lpmh)
 //
 //==========================================================================
 
-bool VMMSystemMidiDevice::InsertParmData(dword Delta, LPMIDIHDR lpmh)
+bool VMMSystemMidiDevice::InsertParmData(DWORD Delta, LPMIDIHDR lpmh)
 {
 	guard(VMMSystemMidiDevice::InsertParmData);
 	//	Can't fit 4 DWORD's? (Delta + stream-id + event + some data)
@@ -849,7 +849,7 @@ bool VMMSystemMidiDevice::InsertParmData(dword Delta, LPMIDIHDR lpmh)
 			Length, lpmh->dwBytesRecorded, lpmh->dwBufferLength);
 		GCon->Logf("PendingUserEventCount %08lX  PendingUserEvent %08lX Rounded %08lX",
 			PendingUserEventCount, PendingUserEvent, Rounded);
-		GCon->Logf("Offset into MIDI image %08lX", (dword)(PendingUserEvents - MidiImage));
+		GCon->Logf("Offset into MIDI image %08lX", (DWORD)(PendingUserEvents - MidiImage));
 		GCon->Logf("!memcpy is about to fault");
 	}
 
@@ -874,7 +874,7 @@ void VMMSystemMidiDevice::SeekStart()
 {
 	guard(VMMSystemMidiDevice::SeekStart);
 	FTrack*					ptrk;
-	dword                   idxTrack;
+	DWORD                   idxTrack;
 
 	MidiPosition = 0;
 	SmfFlags &= ~SMFF_Eof;
@@ -912,13 +912,13 @@ bool VMMSystemMidiDevice::BuildFileIndex()
 	EResult					smfrc;
 	const FChunkHdr*		pCh;
 	const FMidiFileHdr*		pFh;
-	dword					idx;
+	DWORD					idx;
 	FTrack*					pTrk;
-	dword					dwLeft;
+	DWORD					dwLeft;
 	const byte*				hpbImage;
-	dword					idxTrack;
+	DWORD					idxTrack;
 	FEvent					event;
-	dword					dwLength;
+	DWORD					dwLength;
 
 	//	Validate MIDI header
 	dwLeft   = MidiImageSize;
@@ -1079,14 +1079,14 @@ VMMSystemMidiDevice::EResult VMMSystemMidiDevice::GetNextEvent(FEvent& Event)
 	guard(VMMSystemMidiDevice::GetNextEvent);
 	FTrack*		pTrk;
 	FTrack*		pTrkFound;
-	dword		idxTrack;
-	dword		tkEventDelta;
-	dword		tkRelTime;
-	dword		tkMinRelTime;
+	DWORD		idxTrack;
+	DWORD		tkEventDelta;
+	DWORD		tkRelTime;
+	DWORD		tkMinRelTime;
 	byte		bEvent;
-	dword		dwGotTotal;
-	dword		dwGot;
-	dword		cbEvent;
+	DWORD		dwGotTotal;
+	DWORD		dwGot;
+	DWORD		cbEvent;
 
 	if (SmfFlags & SMFF_Eof)
 	{
@@ -1228,12 +1228,12 @@ VMMSystemMidiDevice::EResult VMMSystemMidiDevice::GetNextEvent(FEvent& Event)
 //
 //==========================================================================
 
-dword VMMSystemMidiDevice::GetVDword(const byte* ImagePtr, dword Left,
-	dword& Out)
+DWORD VMMSystemMidiDevice::GetVDword(const byte* ImagePtr, DWORD Left,
+	DWORD& Out)
 {
 	guard(VMMSystemMidiDevice::GetVDword);
 	byte		b;
-	dword		NumUsed = 0;
+	DWORD		NumUsed = 0;
 
 	Out = 0;
 	do

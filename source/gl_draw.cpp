@@ -153,7 +153,7 @@ void VOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
-	dword color)
+	vuint32 color)
 {
 	guard(VOpenGLDrawer::FillRect);
 	SetColor(color);
@@ -293,7 +293,8 @@ void VOpenGLDrawer::StartAutomap()
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawLine(int x1, int y1, dword c1, int x2, int y2, dword c2)
+void VOpenGLDrawer::DrawLine(int x1, int y1, vuint32 c1, int x2, int y2,	
+	vuint32 c2)
 {
 	guard(VOpenGLDrawer::DrawLine);
 	SetColor(c1);

@@ -105,7 +105,7 @@ void R_FreeSpriteData();
 void R_RenderMobjs();
 void R_DrawPlayerSprites();
 void R_DrawCroshair();
-void R_DrawTranslucentPoly(TVec*, int, int, int, int, bool, dword);
+void R_DrawTranslucentPoly(TVec*, int, int, int, int, bool, vuint32);
 void R_DrawTranslucentPolys();
 
 //
@@ -133,7 +133,7 @@ void R_UpdateWorld();
 void R_ClearLights();
 void R_LightFace(surface_t *surf, subsector_t *leaf);
 void R_PushDlights();
-dword R_LightPoint(const TVec &p);
+vuint32 R_LightPoint(const TVec &p);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

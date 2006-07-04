@@ -63,7 +63,7 @@ public:
 	int			net_broadcastsocket;
 	sockaddr_t	broadcastaddr;
 
-	dword		myAddr;
+	vuint32		myAddr;
 
 	VUdpDriver();
 	int Init();
@@ -429,7 +429,7 @@ int VUdpDriver::GetSocketAddr(int socket, sockaddr_t* addr)
 {
 	guard(VUdpDriver::GetSocketAddr);
 	socklen_t	addrlen = sizeof(sockaddr_t);
-	dword	a;
+	vuint32	a;
 
 	memset(addr, 0, sizeof(sockaddr_t));
 	getsockname(socket, (sockaddr *)addr, &addrlen);

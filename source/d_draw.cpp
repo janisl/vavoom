@@ -52,7 +52,7 @@ static byte				*picsource;
 
 static int				ds_shade;
 
-static void (*PutDot)(int, int, dword);
+static void (*PutDot)(int, int, vuint32);
 
 // CODE --------------------------------------------------------------------
 
@@ -176,7 +176,7 @@ void VSoftwareDrawer::DrawFlatSpan_8(fixed_t s, fixed_t t, fixed_t sstep,
 //==========================================================================
 
 void VSoftwareDrawer::FillRect_8(float x1, float y1, float x2, float y2,
-	dword color)
+	vuint32 color)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -245,10 +245,10 @@ void VSoftwareDrawer::DrawConsoleBackground_8(int h)
 	int w = ScreenWidth >> 2;
 	for (int y = 0; y < h; y++)
 	{
-		dword* buf = (dword*)(scrn + ScreenWidth * y);
+		vuint32* buf = (vuint32*)(scrn + ScreenWidth * y);
 		for (int x = 0; x < w; x++)
 		{
-			dword quad = buf[x];
+			vuint32 quad = buf[x];
 			byte p1 = consbgmap[quad & 255];
 			byte p2 = consbgmap[(quad >> 8) & 255];
 			byte p3 = consbgmap[(quad >> 16) & 255];
@@ -264,7 +264,7 @@ void VSoftwareDrawer::DrawConsoleBackground_8(int h)
 //
 //==========================================================================
 
-void VSoftwareDrawer::PutDot_8(int x, int y, dword c)
+void VSoftwareDrawer::PutDot_8(int x, int y, vuint32 c)
 {
 	((byte*)scrn)[y * ScreenWidth + x] = c;
 }
@@ -403,7 +403,7 @@ void VSoftwareDrawer::DrawFlatSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
 //==========================================================================
 
 void VSoftwareDrawer::FillRect_16(float x1, float y1, float x2, float y2,
-	dword color)
+	vuint32 color)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -496,7 +496,7 @@ void VSoftwareDrawer::DrawConsoleBackground_16(int h)
 //
 //==========================================================================
 
-void VSoftwareDrawer::PutDot_16(int x, int y, dword c)
+void VSoftwareDrawer::PutDot_16(int x, int y, vuint32 c)
 {
 	((word*)scrn)[y * ScreenWidth + x] = c;
 }
@@ -511,7 +511,7 @@ void VSoftwareDrawer::DrawPicSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
 	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    dword* dest = (dword*)dst;
+    vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
@@ -533,12 +533,12 @@ void VSoftwareDrawer::DrawPicSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
 void VSoftwareDrawer::DrawSpritePicSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
 	int count, byte *_src, void* dst)
 {
-	dword *src = (dword*)_src;
+	vuint32 *src = (vuint32*)_src;
 	src += (t >> FRACBITS) * cachewidth;
-    dword* dest = (dword*)dst;
+    vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
-		dword color = src[s >> FRACBITS];
+		vuint32 color = src[s >> FRACBITS];
 		if (color)
 		{
 			*dest = color;
@@ -558,13 +558,13 @@ void VSoftwareDrawer::DrawPicSpanFuzz_32(fixed_t s, fixed_t t, fixed_t sstep,
 	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    dword* dest = (dword*)dst;
+    vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
 		byte color = src[s >> FRACBITS];
 		if (color)
 		{
-			dword color32 = pal2rgb[color];
+			vuint32 color32 = pal2rgb[color];
 			byte r1 = GetCol32R(*dest);
 			byte g1 = GetCol32G(*dest);
 			byte b1 = GetCol32B(*dest);
@@ -591,7 +591,7 @@ void VSoftwareDrawer::DrawPicSpanShadow_32(fixed_t s, fixed_t t, fixed_t sstep,
 	int count, byte *src, void* dst)
 {
 	src += (t >> FRACBITS) * cachewidth;
-    dword* dest = (dword*)dst;
+    vuint32* dest = (vuint32*)dst;
 	int ishade = 255 - ds_shade;
 	while (count--)
     {
@@ -618,7 +618,7 @@ void VSoftwareDrawer::DrawFlatSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
 	int count, byte *src, void* dst)
 {
 	src += (t >> 10) & 0xfc0;
-    dword* dest = (dword*)dst;
+    vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
 		byte color = src[(s >> FRACBITS) & 0x3f];
@@ -635,7 +635,7 @@ void VSoftwareDrawer::DrawFlatSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
 //==========================================================================
 
 void VSoftwareDrawer::FillRect_32(float x1, float y1, float x2, float y2,
-	dword color)
+	vuint32 color)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -648,7 +648,7 @@ void VSoftwareDrawer::FillRect_32(float x1, float y1, float x2, float y2,
 
 	for (int y = iy1; y < iy2; y++)
 	{
-		dword *dest = (dword*)scrn + ix1 + ScreenWidth * y;
+		vuint32 *dest = (vuint32*)scrn + ix1 + ScreenWidth * y;
 		for (int i = wid; i; i--)
 		{
 			*dest++ = color;
@@ -677,7 +677,7 @@ void VSoftwareDrawer::ShadeRect_32(int xx, int yy, int ww, int hh, int darkening
 	darkening = 32 - darkening;
 	for (int y = y1; y < y2; y++)
 	{
-		dword *dest = (dword*)scrn + x1 + ScreenWidth * y;
+		vuint32 *dest = (vuint32*)scrn + x1 + ScreenWidth * y;
 		for (int x = x1; x < x2; x++)
 		{
 			byte r = GetCol32R(*dest);
@@ -699,7 +699,7 @@ void VSoftwareDrawer::DrawConsoleBackground_32(int h)
 {
 	for (int y = 0; y < h; y++)
 	{
-		dword *dest = (dword*)scrn + ScreenWidth * y;
+		vuint32* dest = (vuint32*)scrn + ScreenWidth * y;
 		for (int x = 0; x < ScreenWidth; x++)
 		{
 			byte r = GetCol32R(*dest);
@@ -718,9 +718,9 @@ void VSoftwareDrawer::DrawConsoleBackground_32(int h)
 //
 //==========================================================================
 
-void VSoftwareDrawer::PutDot_32(int x, int y, dword c)
+void VSoftwareDrawer::PutDot_32(int x, int y, vuint32 c)
 {
-	((dword*)scrn)[y * ScreenWidth + x] = c;
+	((vuint32*)scrn)[y * ScreenWidth + x] = c;
 }
 
 //==========================================================================
@@ -927,7 +927,7 @@ void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
-	dword color)
+	vuint32 color)
 {
 	guard(VSoftwareDrawer::FillRect);
 	if (ScreenBPP == 8)
@@ -1215,7 +1215,8 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawLine(int x1, int y1, dword color, int x2, int y2, dword)
+void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 color, int x2, int y2,
+	vuint32)
 {
 	guard(VSoftwareDrawer::DrawLine);
     register int x;

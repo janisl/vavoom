@@ -360,7 +360,7 @@ struct node_t : public TPlane
 	float		bbox[2][6];
 
 	// If NF_SUBSECTOR its a subsector.
-	dword		children[2];
+	vuint32		children[2];
 
 	node_t		*parent;
 	int			VisFrame;
@@ -385,7 +385,7 @@ struct subsector_t
 	int			VisFrame;
 	int			SkyVisFrame;
 
-	dword		dlightbits;
+	vuint32		dlightbits;
 	int			dlightframe;
 	subregion_t	*regions;
 };

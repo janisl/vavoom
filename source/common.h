@@ -82,7 +82,6 @@ enum ENoInit { E_NoInit };
 typedef int					boolean;	//	Must be 4 bytes long
 typedef unsigned char 		byte;
 typedef unsigned short	 	word;
-typedef unsigned long	 	dword;
 
 typedef char				vint8;
 typedef unsigned char		vuint8;
