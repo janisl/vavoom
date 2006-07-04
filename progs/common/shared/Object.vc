@@ -1429,7 +1429,10 @@ struct event_t
 	int data3;	// mouse/joystick y move
 };
 
-native readonly private int ObjectInternal[4];
+native readonly private void* CxxVTable;
+native readonly private void* VTable;
+native readonly private int ObjectIndex;
+native readonly private int ObjectFlags;
 native readonly classid Class;
 
 native void Destroy();

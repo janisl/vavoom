@@ -41,7 +41,11 @@ bool bDidSecret;	// True if secret level has been done.
 readonly private bool bNeedsUpdate;
 
 native readonly private void *__NetCon;
-native readonly private int __Message[5];
+native readonly private int __Message1;
+native readonly private void* __Message2;
+native readonly private int __Message3;
+native readonly private int __Message4;
+native readonly private void* __Message5;
 native readonly private int __MsgBuf[MAX_MSGLEN / 4];
 native readonly private int __MobjUpdateStart;
 native readonly private float __LastMessage;
