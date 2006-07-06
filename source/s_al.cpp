@@ -476,7 +476,7 @@ void VOpenALDevice::UpdateListener(const TVec& org, const TVec& vel,
 		pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
 			DSPROPERTY_EAXLISTENER_ENVIRONMENT, 0, &envId, sizeof(int));
 
-		float envSize = EAX_CalcEnvSize();
+		float envSize = GAudio->EAX_CalcEnvSize();
 		pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
 			DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE, 0, &envSize, sizeof(float));
 	}

@@ -697,7 +697,7 @@ IMPLEMENT_FUNCTION(VObject, GetSoundPlayingInfo)
 	P_GET_INT(id);
 	P_GET_REF(VEntity, mobj);
 #ifdef CLIENT
-	RET_BOOL(S_GetSoundPlayingInfo(mobj->NetID, id));
+	RET_BOOL(GAudio->IsSoundPlaying(mobj->NetID, id));
 #else
 	RET_BOOL(false);
 #endif
@@ -1457,7 +1457,8 @@ IMPLEMENT_FUNCTION(VObject, T_DrawTextW)
 IMPLEMENT_FUNCTION(VObject, LocalSound)
 {
 	P_GET_NAME(name);
-	S_StartSound(GSoundManager->GetSoundID(name));
+	GAudio->PlaySound(GSoundManager->GetSoundID(name), TVec(0, 0, 0),
+		TVec(0, 0, 0), 0, 0, 1);
 }
 
 //==========================================================================
@@ -1469,7 +1470,7 @@ IMPLEMENT_FUNCTION(VObject, LocalSound)
 IMPLEMENT_FUNCTION(VObject, IsLocalSoundPlaying)
 {
 	P_GET_NAME(name);
-	RET_BOOL(S_GetSoundPlayingInfo(0, GSoundManager->GetSoundID(name)));
+	RET_BOOL(GAudio->IsSoundPlaying(0, GSoundManager->GetSoundID(name)));
 }
 
 //==========================================================================
@@ -1480,7 +1481,7 @@ IMPLEMENT_FUNCTION(VObject, IsLocalSoundPlaying)
 
 IMPLEMENT_FUNCTION(VObject, StopLocalSounds)
 {
-	S_StopSound(0, 0);
+	GAudio->StopSound(0, 0);
 }
 
 //==========================================================================

@@ -1610,6 +1610,10 @@ SOURCE=..\..\source\s_mp3.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\source\s_qmus2mid.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\s_sdl.cpp
 # PROP Exclude_From_Build 1
 # End Source File

@@ -780,7 +780,7 @@ void VDirectSoundDevice::UpdateListener(const TVec& org, const TVec& vel,
 			DSPROPERTY_EAXLISTENER_ENVIRONMENT |
 			DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envId, sizeof(DWORD));
 
-		float envSize = EAX_CalcEnvSize();
+		float envSize = GAudio->EAX_CalcEnvSize();
 		PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
 			DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE |
 			DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envSize, sizeof(float));

@@ -33,6 +33,27 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VEaxTrace
+{
+public:
+	TVec			TraceStart;
+	TVec			TraceEnd;
+	TVec			TraceDelta;
+	TPlane			TracePlane;		// from t1 to t2
+
+	TVec			LineStart;
+	TVec			LineEnd;
+
+	int PlaneSide2(const TVec&, const TPlane*);
+	bool CheckPlane(const sec_plane_t*);
+	bool CheckPlanes(sector_t*);
+	bool CheckLine(seg_t*);
+	bool CrossSubsector(int);
+	bool CrossBSPNode(int);
+	float TraceLine(const TVec&, const TVec&);
+	float CalcDirSize(const TVec&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -49,37 +70,29 @@ extern int			cl_validcount;
 
 static VCvarF		eax_distance_unit("eax_distance_unit", "32.0", CVAR_Archive);
 
-static TVec			trace_start;
-static TVec			trace_end;
-static TVec			trace_delta;
-static TPlane		trace;			// from t1 to t2
-
-static TVec			linestart;
-static TVec			lineend;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	PlaneSide2
+//	VEaxTrace::PlaneSide2
 //
 //	Returns side 0 (front), 1 (back), or 2 (on).
 //
 //==========================================================================
 
-static int PlaneSide2(const TVec &point, const TPlane* plane)
+int VEaxTrace::PlaneSide2(const TVec &point, const TPlane* plane)
 {
 	float dot = DotProduct(point, plane->normal) - plane->dist;
-    return dot < -0.1 ? 1 : dot > 0.1 ? 0 : 2;
+	return dot < -0.1 ? 1 : dot > 0.1 ? 0 : 2;
 }
 
 //==========================================================================
 //
-//	CheckPlane
+//	VEaxTrace::CheckPlane
 //
 //==========================================================================
 
-static bool CheckPlane(const sec_plane_t *plane)
+bool VEaxTrace::CheckPlane(const sec_plane_t *plane)
 {
 	float		org_dist;
 	float		hit_dist;
@@ -89,13 +102,13 @@ static bool CheckPlane(const sec_plane_t *plane)
 		//	Plane doesn't block sight
 		return true;
 	}
-	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	org_dist = DotProduct(LineStart, plane->normal) - plane->dist;
 	if (org_dist < -0.1)
 	{
 		//	Ignore back side
 		return true;
 	}
-	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	hit_dist = DotProduct(LineEnd, plane->normal) - plane->dist;
 	if (hit_dist >= -0.1)
 	{
 		//	Didn't cross plane
@@ -111,9 +124,9 @@ static bool CheckPlane(const sec_plane_t *plane)
 	// Intercept vector.
 	// Don't need to check if den == 0, because then planes are paralel
 	// (they will never cross) or it's the same plane (also rejected)
-    float den = DotProduct(trace_delta, plane->normal);
+	float den = DotProduct(TraceDelta, plane->normal);
 	float frac = org_dist / den;
-	lineend = trace_start - frac * trace_delta;
+	LineEnd = TraceStart - frac * TraceDelta;
 
 	//	Crosses plane
 	return false;
@@ -121,11 +134,11 @@ static bool CheckPlane(const sec_plane_t *plane)
 
 //==========================================================================
 //
-//	CheckPlanes
+//	VEaxTrace::CheckPlanes
 //
 //==========================================================================
 
-static bool CheckPlanes(sector_t *sec)
+bool VEaxTrace::CheckPlanes(sector_t *sec)
 {
 	sec_region_t	*reg;
 
@@ -147,19 +160,19 @@ static bool CheckPlanes(sector_t *sec)
 
 //==========================================================================
 //
-//	CheckLine
+//	VEaxTrace::CheckLine
 //
 //==========================================================================
 
-static bool CheckLine(seg_t* seg)
+bool VEaxTrace::CheckLine(seg_t* seg)
 {
-    line_t*			line;
-    int				s1;
-    int				s2;
-    sector_t*		front;
-    float			opentop;
-    float			openbottom;
-    float			frac;
+	line_t*			line;
+	int				s1;
+	int				s2;
+	sector_t*		front;
+	float			opentop;
+	float			openbottom;
+	float			frac;
 	float			num;
 	float			den;
 	TVec			hit_point;
@@ -170,23 +183,23 @@ static bool CheckLine(seg_t* seg)
 
 	// allready checked other side?
 	if (line->validcount == cl_validcount)
-	    return true;
+		return true;
 	
 	line->validcount = cl_validcount;
 
-	s1 = PlaneSide2(*line->v1, &trace);
-	s2 = PlaneSide2(*line->v2, &trace);
+	s1 = PlaneSide2(*line->v1, &TracePlane);
+	s2 = PlaneSide2(*line->v2, &TracePlane);
 
 	// line isn't crossed?
 	if (s1 == s2)
-	    return true;
+		return true;
 
-	s1 = PlaneSide2(trace_start, line);
-	s2 = PlaneSide2(trace_end, line);
+	s1 = PlaneSide2(TraceStart, line);
+	s2 = PlaneSide2(TraceEnd, line);
 
 	// line isn't crossed?
 	if (s1 == s2 || (s1 == 2 && s2 == 0))
-    	return true;
+		return true;
 
 	// crosses a two sided line
 	if (s1 == 0)
@@ -201,22 +214,22 @@ static bool CheckLine(seg_t* seg)
 	// Intercept vector.
 	// Don't need to check if den == 0, because then planes are paralel
 	// (they will never cross) or it's the same plane (also rejected)
-    den = DotProduct(trace_delta, line->normal);
-	num = line->dist - DotProduct(trace_start, line->normal);
+	den = DotProduct(TraceDelta, line->normal);
+	num = line->dist - DotProduct(TraceStart, line->normal);
 	frac = num / den;
-	hit_point = trace_start + frac * trace_delta;
+	hit_point = TraceStart + frac * TraceDelta;
 
-	lineend = hit_point;
+	LineEnd = hit_point;
 
 	// stop because it is not two sided anyway
 	if (!(line->flags & ML_TWOSIDED))
-	    return false;
-	
+		return false;
+
 	if (!CheckPlanes(front))
 	{
 		return false;
 	}
-	linestart = lineend;
+	LineStart = LineEnd;
 
 	sec_region_t	*frontreg;
 	sec_region_t	*backreg;
@@ -269,27 +282,27 @@ static bool CheckLine(seg_t* seg)
 		}
 	}
 
-    return false;		// stop
+	return false;		// stop
 }
 
 //==========================================================================
 //
-//	CrossSubsector
+//	VEaxTrace::CrossSubsector
 //
 //	Returns true if trace crosses the given subsector successfully.
 //
 //==========================================================================
 
-static bool CrossSubsector(int num)
+bool VEaxTrace::CrossSubsector(int num)
 {
-    subsector_t*	sub;
-    int				count;
-    seg_t*			seg;
+	subsector_t*	sub;
+	int				count;
+	seg_t*			seg;
 	int 			polyCount;
 	seg_t**			polySeg;
 
-    sub = &GClLevel->Subsectors[num];
-    
+	sub = &GClLevel->Subsectors[num];
+
 	if (sub->poly)
 	{
 		// Check the polyobj in the subsector first
@@ -298,107 +311,107 @@ static bool CrossSubsector(int num)
 		while (polyCount--)
 		{
 			if (!CheckLine(*polySeg++))
-            {
-            	return false;
-            }
+			{
+				return false;
+			}
 		}
 	}
 
-    // check lines
-    count = sub->numlines;
-    seg = &GClLevel->Segs[sub->firstline];
+	// check lines
+	count = sub->numlines;
+	seg = &GClLevel->Segs[sub->firstline];
 
-    for ( ; count ; seg++, count--)
-    {
-    	if (!CheckLine(seg))
-        {
-        	return false;
-        }
-    }
-    // passed the subsector ok
-    return true;		
+	for ( ; count ; seg++, count--)
+	{
+		if (!CheckLine(seg))
+		{
+			return false;
+		}
+	}
+	// passed the subsector ok
+	return true;		
 }
 
 //==========================================================================
 //
-//	CrossBSPNode
+//	VEaxTrace::CrossBSPNode
 //
 //	Returns true if trace crosses the given node successfully.
 //
 //==========================================================================
 
-static bool CrossBSPNode(int bspnum)
+bool VEaxTrace::CrossBSPNode(int bspnum)
 {
-    node_t*	bsp;
-    int		side;
+	node_t*	bsp;
+	int		side;
 
-    if (bspnum & NF_SUBSECTOR)
-    {
+	if (bspnum & NF_SUBSECTOR)
+	{
 		if (bspnum == -1)
-		    return CrossSubsector(0);
+			return CrossSubsector(0);
 		else
-		    return CrossSubsector(bspnum & (~NF_SUBSECTOR));
-    }
-		
-    bsp = &GClLevel->Nodes[bspnum];
-    
-    // decide which side the start point is on
-    side = PlaneSide2(trace_start, bsp);
-    if (side == 2)
+			return CrossSubsector(bspnum & (~NF_SUBSECTOR));
+	}
+
+	bsp = &GClLevel->Nodes[bspnum];
+	
+	// decide which side the start point is on
+	side = PlaneSide2(TraceStart, bsp);
+	if (side == 2)
 		side = 0;	// an "on" should cross both sides
 
-    // cross the starting side
-    if (!CrossBSPNode(bsp->children[side]))
+	// cross the starting side
+	if (!CrossBSPNode(bsp->children[side]))
 		return false;
-	
-    // the partition plane is crossed here
-    if (side == PlaneSide2(trace_end, bsp))
-    {
+
+	// the partition plane is crossed here
+	if (side == PlaneSide2(TraceEnd, bsp))
+	{
 		// the line doesn't touch the other side
 		return true;
-    }
-    
-    // cross the ending side		
-    return CrossBSPNode(bsp->children[side^1]);
+	}
+
+	// cross the ending side		
+	return CrossBSPNode(bsp->children[side^1]);
 }
 
 //==========================================================================
 //
-//	EAXTraceLine
+//	VEaxTrace::TraceLine
 //
 //==========================================================================
 
-static float EAXTraceLine(const TVec &start, const TVec &end)
+float VEaxTrace::TraceLine(const TVec &start, const TVec &end)
 {
 	cl_validcount++;
 
-	trace_start = start;
-	trace_end = end;
+	TraceStart = start;
+	TraceEnd = end;
 
-	trace_delta = trace_end - trace_start;
-	trace.SetPointDir(start, trace_delta);
+	TraceDelta = TraceEnd - TraceStart;
+	TracePlane.SetPointDir(start, TraceDelta);
 
-	linestart = trace_start;
+	LineStart = TraceStart;
 
-    // the head node is the last node output
-    if (CrossBSPNode(GClLevel->NumNodes - 1))
+	// the head node is the last node output
+	if (CrossBSPNode(GClLevel->NumNodes - 1))
 	{
-		lineend = trace_end;
-	    CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
+		LineEnd = TraceEnd;
+		CheckPlanes(CL_PointInSubsector(end.x, end.y)->sector);
 	}
-	return Length(lineend - start);
+	return Length(LineEnd - start);
 }
 
 //==========================================================================
 //
-//	CalcDirSize
+//	VEaxTrace::CalcDirSize
 //
 //==========================================================================
 
-static float CalcDirSize(const TVec &dir)
+float VEaxTrace::CalcDirSize(const TVec &dir)
 {
-	float len = EAXTraceLine(cl->vieworg, cl->vieworg + dir) +
-		EAXTraceLine(cl->vieworg, cl->vieworg - dir);
+	float len = TraceLine(cl->vieworg, cl->vieworg + dir) +
+		TraceLine(cl->vieworg, cl->vieworg - dir);
 	len /= eax_distance_unit;
 	if (len > 100)
 		len = 100;
@@ -409,20 +422,23 @@ static float CalcDirSize(const TVec &dir)
 
 //==========================================================================
 //
-//	EAX_CalcEnvSize
+//	VAudio::EAX_CalcEnvSize
 //
 //==========================================================================
 
-float EAX_CalcEnvSize(void)
+float VAudio::EAX_CalcEnvSize()
 {
+	guard(VAudio::EAX_CalcEnvSize);
 	if (cls.state != ca_connected)
 	{
 		return 7.5;
 	}
 
 	float len = 0;
-	len += CalcDirSize(TVec(3200, 0, 0));
-	len += CalcDirSize(TVec(0, 3200, 0));
-	len += CalcDirSize(TVec(0, 0, 3200));
+	VEaxTrace Trace;
+	len += Trace.CalcDirSize(TVec(3200, 0, 0));
+	len += Trace.CalcDirSize(TVec(0, 3200, 0));
+	len += Trace.CalcDirSize(TVec(0, 0, 3200));
 	return len / 3.0;
+	unguard;
 }

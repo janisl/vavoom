@@ -82,7 +82,7 @@ void CL_Clear()
 #endif
 	{
 		// Make sure all sounds are stopped.
-		S_StopAllSound();
+		GAudio->StopAllSound();
 	}
 	for (int i = 0; i < GMaxEntities; i++)
 		cl_mobjs[i] = Spawn<VEntity>();
@@ -348,7 +348,8 @@ static void CL_ParseStartSound(VMessage& msg)
 	}
 	msg >> volume;
 
-	S_StartSound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id, channel, volume);
+	GAudio->PlaySound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id,
+		channel, volume / 127.0);
 }
 
 static void CL_ParseStopSound(VMessage& msg)
@@ -361,7 +362,7 @@ static void CL_ParseStopSound(VMessage& msg)
 	channel = origin_id >> 13;
 	origin_id &= 0x1fff;
 
-	S_StopSound(origin_id, channel);
+	GAudio->StopSound(origin_id, channel);
 }
 
 static void CL_ParseStartSeq(VMessage& msg)
@@ -378,7 +379,7 @@ static void CL_ParseStartSeq(VMessage& msg)
 	z = msg.ReadShort();
 	name = msg.ReadString();
 
-	SN_StartSequenceName(origin_id, TVec(x, y, z), name);
+	GAudio->StartSequenceName(origin_id, TVec(x, y, z), name);
 }
 
 static void CL_ParseStopSeq(VMessage& msg)
@@ -387,7 +388,7 @@ static void CL_ParseStopSeq(VMessage& msg)
 
 	msg >> origin_id;
 
-	SN_StopSequence(origin_id);
+	GAudio->StopSequence(origin_id);
 }
 
 static void CL_ParseTime(VMessage& msg)
@@ -529,7 +530,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 #endif
 
 	R_Start();
-	S_Start();
+	GAudio->Start();
 
 	SB_Start();
 
@@ -884,12 +885,12 @@ void CL_ParseServerMessage(VMessage& msg)
 			if (msg.ReadByte())
 			{
 				cl->ClientFlags |= VClientState::CF_Paused;
-				S_PauseSound();
+				GAudio->PauseSound();
 			}
 			else
 			{
 				cl->ClientFlags &= ~VClientState::CF_Paused;
-				S_ResumeSound();
+				GAudio->ResumeSound();
 			}
 			break;
 
@@ -1038,7 +1039,7 @@ void CL_ParseServerMessage(VMessage& msg)
 		case svc_change_music:
 			cl_level.SongLump = msg.ReadString();
 			cl_level.cdTrack = msg.ReadByte();
-			S_MusicChanged();
+			GAudio->MusicChanged();
 			break;
 
 		case svc_set_floor_light_sec:

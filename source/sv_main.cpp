@@ -261,7 +261,7 @@ void SV_Clear()
 	sv_datagram.Clear();
 #ifdef CLIENT
 	// Make sure all sounds are stopped.
-	S_StopAllSound();
+	GAudio->StopAllSound();
 #endif
 	unguard;
 }

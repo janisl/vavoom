@@ -666,7 +666,12 @@ static void ArchiveSounds()
 {
 	vint32 Seg = ASEG_SOUNDS;
 	*Saver << Seg;
-	SN_SerialiseSounds(*Saver);
+#ifdef CLIENT
+	GAudio->SerialiseSounds(*Saver);
+#else
+	vint32 Dummy = 0;
+	*Saver << Dummy;
+#endif
 }
 
 //==========================================================================
@@ -678,7 +683,13 @@ static void ArchiveSounds()
 static void UnarchiveSounds()
 {
 	AssertSegment(ASEG_SOUNDS);
-	SN_SerialiseSounds(*Loader);
+#ifdef CLIENT
+	GAudio->SerialiseSounds(*Loader);
+#else
+	vint32 Dummy = 0;
+	*Loader << Dummy;
+	Loader->Seek(Loader->Tell() + Dummy * 36);
+#endif
 }
 
 //==========================================================================

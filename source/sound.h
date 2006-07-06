@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
+class VStreamMusicPlayer;
+class VSoundDevice;
+class VMidiDevice;
+class VCDAudioDevice;
+class VSoundSeqNode;
 
 enum seqtype_t
 {
@@ -84,6 +84,11 @@ struct seq_info_t
 	vint32		StopSound;
 };
 
+//
+//	VSoundManager
+//
+//	Handles list of registered sound and sound sequences.
+//
 class VSoundManager
 {
 public:
@@ -164,42 +169,128 @@ private:
 	void AssignSeqTranslations(int, seqtype_t);
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
 //
-//	Main
+//	VAudio
 //
-void S_Init();
-void S_Start();
-void S_MusicChanged();
-void S_StartSong(VName name, int track, boolean loop);
-void S_PauseSound();
-void S_ResumeSound();
-void S_UpdateSounds();
-void S_Shutdown();
-
+//	Main audio management class.
 //
-//	Sound playback
-//
-void S_StartSound(int, const TVec&, const TVec&, int, int, int);
-inline void S_StartSound(int sound_id)
+class VAudio
 {
-	S_StartSound(sound_id, TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 127);
-}
-void S_StopSound(int, int);
-void S_StopAllSound(void);
-boolean S_GetSoundPlayingInfo(int origin_id, int sound_id);
+public:
+	//	Structors.
+	VAudio();
+	~VAudio();
 
-//
-//	Sound sequences
-//
-void SN_StartSequence(int origin_id, const TVec &origin, int sequence);
-void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name);
-void SN_StopSequence(int origin_id);
-void SN_UpdateActiveSequences();
-void SN_StopAllSequences();
-void SN_SerialiseSounds(VStream& Strm);
+	//	Top level methods.
+	void Init();
+	void Shutdown();
 
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
+	//	Playback of sound effects
+	void PlaySound(int, const TVec&, const TVec&, int, int, float);
+	void StopSound(int, int);
+	void StopAllSound();
+	bool IsSoundPlaying(int, int);
+
+	//	Music and general sound control
+	void StartSong(VName, int, bool);
+	void PauseSound();
+	void ResumeSound();
+	void Start();
+	void MusicChanged();
+	void UpdateSounds();
+
+	//	Sound sequences
+	void StartSequenceName(int, const TVec&, const char*);
+	void StopSequence(int);
+	void UpdateActiveSequences(float);
+	void StopAllSequences();
+	void SerialiseSounds(VStream&);
+
+	//	EAX utilites
+	float EAX_CalcEnvSize();
+
+private:
+	enum { MAX_CHANNELS = 256 };
+
+	enum { PRIORITY_MAX_ADJUST = 10 };
+
+	//	Info about sounds currently playing.
+	struct FChannel
+	{
+		int			origin_id;
+		int			channel;
+		TVec		origin;
+		TVec		velocity;
+		int			sound_id;
+		int			priority;
+		float		volume;
+		int			handle;
+		bool		is3D;
+	};
+
+	//	Sound curve
+	vuint8*				SoundCurve;
+	int 				MaxSoundDist;
+
+	//	Map's music lump and CD track
+	VName				MapSong;
+	int					MapCDTrack;
+
+	//	Wether we should use CD music
+	bool				CDMusic;
+
+	//	Stream music player
+	bool				MusicEnabled;
+	bool				StreamPlaying;
+	VStreamMusicPlayer*	StreamMusicPlayer;
+
+	//	List of currently playing sounds
+	FChannel			Channel[MAX_CHANNELS];
+	int					NumChannels;
+	int 				SndCount;
+
+	// maximum volume for sound
+	float				MaxVolume;
+
+	//	Listener orientation
+	TVec				ListenerForward;
+	TVec				ListenerRight;
+	TVec				ListenerUp;
+
+	//	Hardware devices
+	VSoundDevice*		SoundDevice;
+	VMidiDevice*		MidiDevice;
+	VCDAudioDevice*		CDAudioDevice;
+
+	//	Sound sequence list
+	int					ActiveSequences;
+	VSoundSeqNode*		SequenceListHead;
+
+	//	Console variables
+	static VCvarF		sfx_volume;
+	static VCvarF		music_volume;
+	static VCvarI		swap_stereo;
+	static VCvarI		s_channels;
+	static VCvarI		cd_music;
+
+	//	Friends
+	friend class TCmdMusic;
+	friend class TCmdCD;
+	friend class VSoundSeqNode;
+
+	//	Sound effect helpers
+	int GetChannel(int, int, int, int);
+	void StopChannel(int);
+	void UpdateSfx();
+
+	//	Music playback
+	void StartMusic();
+	void PlaySong(const char*, bool);
+
+	//	Execution of console commands
+	void CmdMusic(const TArray<VStr>&);
+	void CmdCD(const TArray<VStr>&);
+};
 
 extern VSoundManager*		GSoundManager;
+extern VAudio*				GAudio;

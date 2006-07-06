@@ -153,7 +153,8 @@ void Host_Init()
 #ifdef CLIENT
 	GInput = new VInput;
 	GInput->Init();
-	S_Init();
+	GAudio = new VAudio();
+	GAudio->Init();
 	SCR_Init();
 	T_Init();
 	CT_Init();
@@ -360,7 +361,7 @@ void Host_Frame()
 		}
 
 		//	Update audio
-		S_UpdateSounds();
+		GAudio->UpdateSounds();
 #endif
 
 		if (show_time)
@@ -661,7 +662,7 @@ void Host_Shutdown()
 #ifdef CLIENT
 	SAFE_SHUTDOWN(delete GInput,)
 	SAFE_SHUTDOWN(V_Shutdown, ())
-	SAFE_SHUTDOWN(S_Shutdown, ())
+	SAFE_SHUTDOWN(delete GAudio,)
 	SAFE_SHUTDOWN(T_Shutdown, ())
 #endif
 	SAFE_SHUTDOWN(Sys_Shutdown, ())

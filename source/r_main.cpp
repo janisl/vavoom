@@ -214,7 +214,8 @@ void R_SetViewSize(int blocks)
 COMMAND(SizeDown)
 {
 	R_SetViewSize(screenblocks - 1);
-	S_StartSound(GSoundManager->GetSoundID("menu/change"));
+	GAudio->PlaySound(GSoundManager->GetSoundID("menu/change"),
+		TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1);
 }
 
 //==========================================================================
@@ -226,7 +227,8 @@ COMMAND(SizeDown)
 COMMAND(SizeUp)
 {
 	R_SetViewSize(screenblocks + 1);
-	S_StartSound(GSoundManager->GetSoundID("menu/change"));
+	GAudio->PlaySound(GSoundManager->GetSoundID("menu/change"),
+		TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1);
 }
 
 //==========================================================================

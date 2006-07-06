@@ -294,12 +294,41 @@ struct FAudioCodecDesc
 #define IMPLEMENT_AUDIO_CODEC(TClass, Description) \
 FAudioCodecDesc		TClass##Desc(Description, TClass::Create);
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+//	Quick MUS to MIDI converter.
+class VQMus2Mid
+{
+private:
+	struct VTrack
+	{
+		vint32				DeltaTime;
+		vuint8				LastEvent;
+		vint8				Vel;
+		TArray<vuint8>		Data;	//  Primary data
+	};
 
-//
-//	EAX utilites
-//
-float EAX_CalcEnvSize();
+	VTrack					Tracks[32];
+	vuint16					TrackCnt;
+	vint32 					Mus2MidChannel[16];
+
+	static const vuint8		Mus2MidControl[15];
+	static const vuint8		TrackEnd[];
+	static const vuint8		MidiKey[];
+	static const vuint8		MidiTempo[];
+
+	int FirstChannelAvailable();
+	void TWriteByte(int, vuint8);
+	void TWriteBuf(int, const vuint8*, int);
+	void TWriteVarLen(int, vuint32);
+	vuint32 ReadTime(VStream&);
+	bool Convert(VStream&);
+	void WriteMIDIFile(VStream&);
+	void FreeTracks();
+
+public:
+	int Run(VStream&, VStream&);
+};
+
+// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

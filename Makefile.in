@@ -139,6 +139,7 @@ COMMON_OBJS = \
 	obj/r_things.$(OBJEXT) \
 	obj/s_data.$(OBJEXT) \
 	obj/s_eaxutl.$(OBJEXT) \
+	obj/s_qmus2mid.$(OBJEXT) \
 	obj/s_sound.$(OBJEXT) \
 	obj/s_tmidty.$(OBJEXT) \
 	obj/s_wav.$(OBJEXT) \
@@ -288,7 +289,6 @@ SV_COMMON_OBJ_FILES = \
 	obj/sv/r_tex.$(OBJEXT) \
 	obj/sv/s_data.$(OBJEXT) \
 	obj/sv/sc_man.$(OBJEXT) \
-	obj/sv/sn_sonix.$(OBJEXT) \
 	obj/sv/str.$(OBJEXT) \
 	obj/sv/stream.$(OBJEXT) \
 	obj/sv/sv_acs.$(OBJEXT) \

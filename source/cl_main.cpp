@@ -131,8 +131,11 @@ void CL_Ticker()
 void CL_Shutdown()
 {
 	guard(CL_Shutdown);
-	//	Disconnect.
-	CL_Disconnect();
+	if (cl)
+	{
+		//	Disconnect.
+		CL_Disconnect();
+	}
 
 	//	Free up memory.
 	if (cl_mobjs)
@@ -420,11 +423,11 @@ void CL_Disconnect()
     if (cl->ClientFlags & VClientState::CF_Paused)
     { 
 		cl->ClientFlags &= ~VClientState::CF_Paused;
-		S_ResumeSound();
+		GAudio->ResumeSound();
     } 
 	
 	// stop sounds (especially looping!)
-	S_StopAllSound();
+	GAudio->StopAllSound();
 	
 	// if running a local server, shut it down
 	if (cls.demoplayback)

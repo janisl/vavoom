@@ -26,25 +26,30 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#ifdef CLIENT
 #include "s_local.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
-struct seqnode_t
+class VSoundSeqNode
 {
-	vint32*		sequencePtr;
-	int			sequence;
-	int			origin_id;
-	TVec		origin;
-	int			currentSoundID;
-	int			delayTics;
-	int			volume;
-	int			stopSound;
-	seqnode_t	*prev;
-	seqnode_t	*next;
+public:
+	vint32			Sequence;
+	vint32*			SequencePtr;
+	vint32			OriginId;
+	TVec			Origin;
+	vint32			CurrentSoundID;
+	float			DelayTime;
+	float			Volume;
+	vint32			StopSound;
+	VSoundSeqNode*	Prev;
+	VSoundSeqNode*	Next;
+
+	VSoundSeqNode(int, const TVec&, int);
+	~VSoundSeqNode();
+	void Update(float);
+	void Serialise(VStream&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -59,63 +64,215 @@ struct seqnode_t
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int					ActiveSequences;
-static seqnode_t*			SequenceListHead;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  SN_StartSequence
+//  VSoundSeqNode::VSoundSeqNode
 //
 //==========================================================================
 
-void SN_StartSequence(int origin_id, const TVec &origin, int sequence)
+VSoundSeqNode::VSoundSeqNode(int InOriginId, const TVec& InOrigin,
+	int InSequence)
+: Sequence(InSequence)
+, OriginId(InOriginId)
+, Origin(InOrigin)
+, CurrentSoundID(0)
+, DelayTime(0.0)
+, Volume(1.0) // Start at max volume
+, Prev(NULL)
+, Next(NULL)
 {
-	guard(SN_StartSequence);
-	seqnode_t *node;
-
-	SN_StopSequence(origin_id); // Stop any previous sequence
-	node = new seqnode_t;
-	node->sequencePtr = GSoundManager->SeqInfo[sequence].Data;
-	node->sequence = sequence;
-	node->origin_id = origin_id;
-	node->origin = origin;
-	node->delayTics = 0;
-	node->stopSound = GSoundManager->SeqInfo[sequence].StopSound;
-	node->volume = 127; // Start at max volume
-	node->currentSoundID = 0;
-
-	if (!SequenceListHead)
+	if (Sequence >= 0)
 	{
-		SequenceListHead = node;
-		node->next = node->prev = NULL;
+		SequencePtr = GSoundManager->SeqInfo[Sequence].Data;
+		StopSound = GSoundManager->SeqInfo[Sequence].StopSound;
+	}
+
+	//	Add to the list of sound sequences.
+	if (!GAudio->SequenceListHead)
+	{
+		GAudio->SequenceListHead = this;
 	}
 	else
 	{
-		SequenceListHead->prev = node;
-		node->next = SequenceListHead;
-		node->prev = NULL;
-		SequenceListHead = node;
+		GAudio->SequenceListHead->Prev = this;
+		Next = GAudio->SequenceListHead;
+		GAudio->SequenceListHead = this;
 	}
-	ActiveSequences++;
+	GAudio->ActiveSequences++;
+}
+
+//==========================================================================
+//
+//  VSoundSeqNode::~VSoundSeqNode
+//
+//==========================================================================
+
+VSoundSeqNode::~VSoundSeqNode()
+{
+	//	Play stop sound.
+	if (StopSound >= 0)
+	{
+		GAudio->StopSound(OriginId, 0);
+	}
+	if (StopSound >= 1)
+	{
+		GAudio->PlaySound(StopSound, Origin, TVec(0, 0, 0), OriginId, 1,
+			Volume);
+	}
+
+	//	Remove from the list of active sound sequences.
+	if (GAudio->SequenceListHead == this)
+	{
+		GAudio->SequenceListHead = Next;
+	}
+	if (Prev)
+	{
+		Prev->Next = Next;
+	}
+	if (Next)
+	{
+		Next->Prev = Prev;
+	}
+	GAudio->ActiveSequences--;
+}
+
+//==========================================================================
+//
+//  VSoundSeqNode::Update
+//
+//==========================================================================
+
+void VSoundSeqNode::Update(float DeltaTime)
+{
+	guard(VSoundSeqNode::Update);
+	if (DelayTime)
+	{
+		DelayTime -= DeltaTime;
+		if (DelayTime <= 0.0)
+		{
+			DelayTime = 0.0;
+		}
+		return;
+	}
+
+	bool sndPlaying = GAudio->IsSoundPlaying(OriginId, CurrentSoundID);
+	switch (*SequencePtr)
+	{
+	case SSCMD_Play:
+		if (!sndPlaying)
+		{
+			CurrentSoundID = SequencePtr[1];
+			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
+				OriginId, 1, Volume);
+		}
+		SequencePtr += 2;
+		break;
+
+	case SSCMD_WaitUntilDone:
+		if (!sndPlaying)
+		{
+			SequencePtr++;
+			CurrentSoundID = 0;
+		}
+		break;
+
+	case SSCMD_PlayRepeat:
+		if (!sndPlaying)
+		{
+			CurrentSoundID = SequencePtr[1];
+			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
+				OriginId, 1, Volume);
+		}
+		break;
+
+	case SSCMD_PlayLoop:
+		CurrentSoundID = SequencePtr[1];
+		GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0), OriginId, 1,
+			Volume);
+		DelayTime = SequencePtr[2] / 35.0;
+		break;
+
+	case SSCMD_Delay:
+		DelayTime = SequencePtr[1] / 35.0;
+		SequencePtr += 2;
+		CurrentSoundID = 0;
+		break;
+
+	case SSCMD_DelayRand:
+		DelayTime = (SequencePtr[1] + rand() % (SequencePtr[2] -
+			SequencePtr[1])) / 35.0;
+		SequencePtr += 2;
+		CurrentSoundID = 0;
+		break;
+
+	case SSCMD_Volume:
+		Volume = SequencePtr[1] / 100.0;
+		SequencePtr += 2;
+		break;
+
+	case SSCMD_Attenuation:
+		// Unused for now.
+		SequencePtr += 2;
+		break;
+
+	case SSCMD_StopSound:
+		// Wait until something else stops the sequence
+		break;
+
+	case SSCMD_End:
+		GAudio->StopSequence(OriginId);
+		break;
+
+	default:	
+		break;
+	}
 	unguard;
 }
 
 //==========================================================================
 //
-//  SN_StartSequenceName
+//	VSoundSeqNode::Serialise
 //
 //==========================================================================
 
-void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name)
+void VSoundSeqNode::Serialise(VStream& Strm)
 {
-	guard(SN_StartSequenceName);
+	guard(VSoundSeqNode::Serialise);
+	Strm << Sequence << OriginId << Origin << CurrentSoundID << DelayTime
+		<< Volume;
+	if (Strm.IsLoading())
+	{
+		vint32 Offset;
+		Strm << Offset;
+		SequencePtr = GSoundManager->SeqInfo[Sequence].Data + Offset;
+		StopSound = GSoundManager->SeqInfo[Sequence].StopSound;
+	}
+	else
+	{
+		vint32 Offset = SequencePtr - GSoundManager->SeqInfo[Sequence].Data;
+		Strm << Offset;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAudio::StartSequenceName
+//
+//==========================================================================
+
+void VAudio::StartSequenceName(int origin_id, const TVec &origin,
+	const char *name)
+{
+	guard(VAudio::StartSequenceName);
 	for (int i = 0; i < GSoundManager->SeqInfo.Num(); i++)
 	{
 		if (GSoundManager->SeqInfo[i].Name == name)
 		{
-			SN_StartSequence(origin_id, origin, i);
+			StopSequence(origin_id); // Stop any previous sequence
+			new VSoundSeqNode(origin_id, origin, i);
 			return;
 		}
 	}
@@ -124,42 +281,18 @@ void SN_StartSequenceName(int origin_id, const TVec &origin, const char *name)
 
 //==========================================================================
 //
-//  SN_StopSequence
+//  VAudio::StopSequence
 //
 //==========================================================================
 
-void SN_StopSequence(int origin_id)
+void VAudio::StopSequence(int origin_id)
 {
-	guard(SN_StopSequence);
-	seqnode_t *node;
-
-	for (node = SequenceListHead; node; node = node->next)
+	guard(VAudio::StopSequence);
+	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
 	{
-		if (node->origin_id == origin_id)
+		if (node->OriginId == origin_id)
 		{
-			if (node->stopSound >= 0)
-			{
-				S_StopSound(origin_id, 0);
-			}
-			if (node->stopSound >= 1)
-			{
-				S_StartSound(node->stopSound, node->origin, TVec(0, 0, 0),
-					node->origin_id, 1, node->volume);
-			}
-			if (SequenceListHead == node)
-			{
-				SequenceListHead = node->next;
-			}
-			if (node->prev)
-			{
-				node->prev->next = node->next;
-			}
-			if (node->next)
-			{
-				node->next->prev = node->prev;
-			}
 			delete node;
-			ActiveSequences--;
 		}
 	}
 	unguard;
@@ -167,196 +300,69 @@ void SN_StopSequence(int origin_id)
 
 //==========================================================================
 //
-//  SN_UpdateActiveSequences
+//  VAudio::UpdateActiveSequences
 //
 //==========================================================================
 
-void SN_UpdateActiveSequences()
+void VAudio::UpdateActiveSequences(float DeltaTime)
 {
-	guard(SN_UpdateActiveSequences);
-	seqnode_t* node;
-	bool sndPlaying;
-
+	guard(VAudio::UpdateActiveSequences);
 	if (!ActiveSequences || cl->ClientFlags & VClientState::CF_Paused)
 	{
 		// No sequences currently playing/game is paused
 		return;
 	}
-	for (node = SequenceListHead; node; node = node->next)
+	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
 	{
-		if (node->delayTics)
-		{
-			node->delayTics--;
-			continue;
-		}
-		sndPlaying = S_GetSoundPlayingInfo(node->origin_id, node->currentSoundID);
-		switch (*node->sequencePtr)
-		{
-		case SSCMD_Play:
-			if(!sndPlaying)
-			{
-				node->currentSoundID = *(node->sequencePtr+1);
-				S_StartSound(node->currentSoundID, node->origin,
-					TVec(0, 0, 0), node->origin_id, 1, node->volume);
-			}
-			node->sequencePtr += 2;
-			break;
-		case SSCMD_WaitUntilDone:
-			if(!sndPlaying)
-			{
-				node->sequencePtr++;
-				node->currentSoundID = 0;
-			}
-			break;
-		case SSCMD_PlayRepeat:
-			if(!sndPlaying)
-			{
-				node->currentSoundID = *(node->sequencePtr+1);
-				S_StartSound(node->currentSoundID, node->origin,
-					TVec(0, 0, 0), node->origin_id, 1, node->volume);
-			}
-			break;
-		case SSCMD_PlayLoop:
-			node->currentSoundID = *(node->sequencePtr + 1);
-			S_StartSound(node->currentSoundID, node->origin,
-				TVec(0, 0, 0), node->origin_id, 1, node->volume);
-			node->delayTics = *(node->sequencePtr + 2);
-			break;
-		case SSCMD_Delay:
-			node->delayTics = *(node->sequencePtr+1);
-			node->sequencePtr += 2;
-			node->currentSoundID = 0;
-			break;
-		case SSCMD_DelayRand:
-			node->delayTics = *(node->sequencePtr + 1) +
-				rand() % (*(node->sequencePtr + 2) - *(node->sequencePtr + 1));
-			node->sequencePtr += 2;
-			node->currentSoundID = 0;
-			break;
-		case SSCMD_Volume:
-			node->volume = (127*(*(node->sequencePtr+1)))/100;
-			node->sequencePtr += 2;
-			break;
-		case SSCMD_Attenuation:
-			// Unused for now.
-			node->sequencePtr += 2;
-			break;
-		case SSCMD_StopSound:
-			// Wait until something else stops the sequence
-			break;
-		case SSCMD_End:
-			SN_StopSequence(node->origin_id);
-			break;
-		default:	
-			break;
-		}
+		node->Update(DeltaTime);
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//  SN_StopAllSequences
+//  VAudio::StopAllSequences
 //
 //==========================================================================
 
-void SN_StopAllSequences()
+void VAudio::StopAllSequences()
 {
-	guard(SN_StopAllSequences);
-	seqnode_t *node;
-
-	for(node = SequenceListHead; node; node = node->next)
+	guard(VAudio::StopAllSequences);
+	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
 	{
-		node->stopSound = 0; // don't play any stop sounds
-		SN_StopSequence(node->origin_id);
+		node->StopSound = 0; // don't play any stop sounds
+		delete node;
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//  SN_ChangeNodeData
-//
-// 	nodeNum zero is the first node
+//	VAudio::SerialiseSounds
 //
 //==========================================================================
 
-static void SN_ChangeNodeData(int nodeNum, int seqOffset, int delayTics,
-	int volume, int currentSoundID)
+void VAudio::SerialiseSounds(VStream& Strm)
 {
-	guard(SN_ChangeNodeData);
-	int i;
-	seqnode_t *node;
-
-	i = 0;
-	node = SequenceListHead;
-	while(node && i < nodeNum)
-	{
-		node = node->next;
-		i++;
-	}
-	if(!node)
-	{ // reach the end of the list before finding the nodeNum-th node
-		return;
-	}
-	node->delayTics = delayTics;
-	node->volume = volume;
-	node->sequencePtr += seqOffset;
-	node->currentSoundID = currentSoundID;
-	unguard;
-}
-
-#endif
-
-//==========================================================================
-//
-//	SN_SerialiseSounds
-//
-//==========================================================================
-
-void SN_SerialiseSounds(VStream& Strm)
-{
-#ifdef CLIENT
+	guard(VAudio::SerialiseSounds);
 	if (Strm.IsLoading())
 	{
 		// Reload and restart all sound sequences
-		int numSequences = Streamer<int>(Strm);
+		vint32 numSequences = Streamer<vint32>(Strm);
 		for (int i = 0; i < numSequences; i++)
 		{
-			int sequence = Streamer<int>(Strm);
-			int delayTics = Streamer<int>(Strm);
-			int volume = Streamer<int>(Strm);
-			int seqOffset = Streamer<int>(Strm);
-			int soundID = Streamer<int>(Strm);
-			int objectNum = Streamer<int>(Strm);
-			float x = Streamer<float>(Strm);
-			float y = Streamer<float>(Strm);
-			float z = Streamer<float>(Strm);
-			SN_StartSequence(objectNum, TVec(x, y, z), sequence);
-			SN_ChangeNodeData(i, seqOffset, delayTics, volume, soundID);
+			VSoundSeqNode* node = new VSoundSeqNode(0, TVec(0, 0, 0), -1);
+			node->Serialise(Strm);
 		}
 	}
 	else
 	{
 		// Save the sound sequences
 		Strm << ActiveSequences;
-		for (seqnode_t* node = SequenceListHead; node; node = node->next)
+		for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
 		{
-			Strm << node->sequence;
-			Strm << node->delayTics;
-			Strm << node->volume;
-			vint32 Offset = node->sequencePtr -
-				GSoundManager->SeqInfo[node->sequence].Data;
-			Strm << Offset;
-			Strm << node->currentSoundID;
-			Strm << node->origin_id;
-			Strm << node->origin.x;
-			Strm << node->origin.y;
-			Strm << node->origin.z;
+			node->Serialise(Strm);
 		}
 	}
-#else
-	vint32 Dummy = 0;
-	Strm << Dummy;
-#endif
+	unguard;
 }
