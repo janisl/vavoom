@@ -882,7 +882,7 @@ VTexture::VTexture()
 , SScale(1)
 , TScale(1)
 , TextureTranslation(0)
-, DriverHandle(0)
+, DriverData(0)
 , Pixels8Bit(0)
 , HiResTexture(0)
 {
