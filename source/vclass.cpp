@@ -753,7 +753,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 	case ev_array:
 		IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
-		InnerSize = IntType.Type == ev_vector ? 12 : IntType.Type == ev_struct ? IntType.Struct->Size : 4;
+		InnerSize = IntType.GetSize();
 		for (int i = 0; i < Type.ArrayDim; i++)
 		{
 			SerialiseFieldValue(Strm, Data + i * InnerSize, IntType);
