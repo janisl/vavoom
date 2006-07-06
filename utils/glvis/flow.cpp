@@ -88,19 +88,19 @@ void TVisBuilder::SimpleFlood(portal_t *srcportal, int leafnum)
 //
 //==========================================================================
 
-void TVisBuilder::BasePortalVis(void)
+void TVisBuilder::BasePortalVis()
 {
 	int			i, j, k;
 	portal_t	*tp, *p;
 	double		d;
 	winding_t	*w;
 
-	portalsee = New<byte>(numportals);
+	portalsee = new vuint8[numportals];
 	for (i = 0, p = portals; i < numportals; i++, p++)
 	{
 		Owner.DisplayBaseVisProgress(i, numportals);
 
-		p->mightsee = New<byte>(bitbytes);
+		p->mightsee = new vuint8[bitbytes];
 		
 		c_portalsee = 0;
 		memset(portalsee, 0, numportals);
@@ -139,7 +139,7 @@ void TVisBuilder::BasePortalVis(void)
 		p->nummightsee = c_leafsee;
 	}
 	Owner.DisplayBaseVisProgress(numportals, numportals);
-	Delete(portalsee);
+	delete[] portalsee;
 }
 
 //==========================================================================
@@ -166,7 +166,7 @@ void TVisBuilder::CheckStack(leaf_t *leaf, threaddata_t *thread)
 void TVisBuilder::FreeWinding(winding_t *w)
 {
 	if (!w->original)
-		Delete(w);
+		delete w;
 }
 
 //==========================================================================
@@ -179,7 +179,7 @@ winding_t *TVisBuilder::CopyWinding(winding_t *w)
 {
 	winding_t	*c;
 	
-	c = New<winding_t>();
+	c = new winding_t;
 	c->points[0] = w->points[0];
 	c->points[1] = w->points[1];
 	c->original = false;
@@ -216,7 +216,7 @@ winding_t *TVisBuilder::ClipWinding(winding_t *in, TPlane *split)
 		return in;
 	}
 	
-	neww = New<winding_t>();
+	neww = new winding_t;
 
 	// generate a split point
 	TVec &p1 = in->points[0];
@@ -390,7 +390,7 @@ void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 	stack.next = NULL;
 	stack.leaf = leaf;
 	stack.portal = NULL;
-	stack.mightsee = New<byte>(bitbytes);
+	stack.mightsee = new vuint8[bitbytes];
 	might = (long *)stack.mightsee;
 	vis = (long *)thread->leafvis;
 	
@@ -505,7 +505,7 @@ void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 		FreeWinding(target);
 	}
 	
-	Delete(stack.mightsee);
+	delete[] stack.mightsee;
 }
 
 //==========================================================================
@@ -522,7 +522,7 @@ void TVisBuilder::PortalFlow(portal_t *p)
 		throw GLVisError("PortalFlow: reflowed");
 	p->status = stat_working;
 	
-	p->visbits = New<byte>(bitbytes);
+	p->visbits = new vuint8[bitbytes];
 
 	memset(&data, 0, sizeof(data));
 	data.leafvis = p->visbits;
@@ -535,7 +535,7 @@ void TVisBuilder::PortalFlow(portal_t *p)
 		
 	RecursiveLeafFlow(p->leaf, &data, &data.pstack_head, 0);
 
-	Delete(p->mightsee);
+	delete[] p->mightsee;
 	p->status = stat_done;
 }
 
@@ -549,7 +549,7 @@ void TVisBuilder::PortalFlow(portal_t *p)
 //
 //==========================================================================
 
-portal_t *TVisBuilder::GetNextPortal(void)
+portal_t* TVisBuilder::GetNextPortal()
 {
 	int			j;
 	portal_t	*p, *tp;
@@ -579,7 +579,7 @@ portal_t *TVisBuilder::GetNextPortal(void)
 //
 //==========================================================================
 
-void TVisBuilder::CalcPortalVis(void)
+void TVisBuilder::CalcPortalVis()
 {
 	int		i;
 
@@ -630,10 +630,10 @@ void TVisBuilder::CalcPortalVis(void)
 
 void TVisBuilder::LeafFlow(int leafnum)
 {
-	leaf_t		*leaf;
-	byte		*outbuffer;
+	leaf_t*		leaf;
+	vuint8*		outbuffer;
 	int			i, j;
-	portal_t	*p;
+	portal_t*	p;
 	int			numvis;
 
 	//
@@ -648,7 +648,7 @@ void TVisBuilder::LeafFlow(int leafnum)
 			throw GLVisError("portal %d not done", (int)(p - portals));
 		for (j = 0; j < rowbytes; j++)
 			outbuffer[j] |= p->visbits[j];
-		Delete(p->visbits);
+		delete[] p->visbits;
 	}
 
 	if (outbuffer[leafnum >> 3] & (1 << (leafnum & 7)))
@@ -674,7 +674,7 @@ void TVisBuilder::LeafFlow(int leafnum)
 //
 //==========================================================================
 
-void TVisBuilder::BuildPVS(void)
+void TVisBuilder::BuildPVS()
 {
 	int i;
 
@@ -691,7 +691,7 @@ void TVisBuilder::BuildPVS(void)
 	//
 	totalvis = 0;
 	vissize = rowbytes * numsubsectors;
-	vis = New<byte>(vissize);
+	vis = new vuint8[vissize];
 	for (i = 0; i < numsubsectors; i++)
 	{
 		LeafFlow(i);
@@ -706,13 +706,13 @@ void TVisBuilder::BuildPVS(void)
 //
 //==========================================================================
 
-void TVisBuilder::BuildReject(void)
+void TVisBuilder::BuildReject()
 {
 	Owner.DisplayMessage("Building reject ... ");
 	rejectsize = (numsectors * numsectors + 7) / 8;
-	reject = New<byte>(rejectsize);
+	reject = new vuint8[rejectsize];
 	memset(reject, 0xff, rejectsize);
-	byte *svis = vis;
+	vuint8* svis = vis;
 	for (int i = 0; i < numsubsectors; i++)
 	{
 		int s1 = subsectors[i].secnum * numsectors;

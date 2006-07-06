@@ -36,7 +36,7 @@ void setup(char *srcf)
 {
 	int fd;
 	char *fp, *dp;
-	extern void setup_kwtab(void);
+	extern void setup_kwtab();
 
 	setup_kwtab();
 	dp = ".";

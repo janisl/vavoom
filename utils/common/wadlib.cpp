@@ -146,7 +146,7 @@ void* TIWadFile::GetLump(int lump)
 //
 //==========================================================================
 
-void TIWadFile::Close(void)
+void TIWadFile::Close()
 {
 	fclose(handle);
 	handle = NULL;
@@ -194,7 +194,7 @@ void TOWadFile::AddLump(const char *name, const void *data, int size)
 //
 //==========================================================================
 
-void TOWadFile::Close(void)
+void TOWadFile::Close()
 {
 	wadinfo_t	header;
 	strcpy(header.identification, wadid);

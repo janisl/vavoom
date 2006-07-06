@@ -1161,7 +1161,7 @@ void ParseStruct(VClass* InClass, bool IsVector)
 				while (prevbool->Next)
 					prevbool = prevbool->Next;
 				if (prevbool->type.type == ev_bool &&
-					(dword)prevbool->type.bit_mask != 0x80000000)
+					(vuint32)prevbool->type.bit_mask != 0x80000000)
 				{
 					fi->type = t;
 					fi->type.bit_mask = prevbool->type.bit_mask << 1;
@@ -1437,7 +1437,7 @@ void ParseClass()
 				while (prevbool->Next)
 					prevbool = prevbool->Next;
 				if (prevbool->type.type == ev_bool &&
-					(dword)prevbool->type.bit_mask != 0x80000000)
+					(vuint32)prevbool->type.bit_mask != 0x80000000)
 				{
 					fi->type = t;
 					fi->type.bit_mask = prevbool->type.bit_mask << 1;

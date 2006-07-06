@@ -39,8 +39,8 @@ using namespace VavoomUtils;
 // posts are runs of non masked source pixels
 struct post_t
 {
-	byte		topdelta;       // -1 is the last post in a column
-	byte		length;         // length data bytes follows
+	vuint8		topdelta;       // -1 is the last post in a column
+	vuint8		length;         // length data bytes follows
 };
 
 // column_t is a list of 0 or more post_t, (byte)-1 terminated
@@ -65,13 +65,13 @@ struct vpic_t
 	char		magic[4];
 	short		width;
 	short		height;
-	byte		bpp;
-	byte		reserved[7];
+	vuint8		bpp;
+	vuint8		reserved[7];
 };
 
 struct RGB_MAP
 {
-	byte		data[32][32][32];
+	vuint8		data[32][32][32];
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -116,7 +116,7 @@ int makecol8(int r, int g, int b)
 //
 //==========================================================================
 
-byte GetPixel(int x, int y)
+vuint8 GetPixel(int x, int y)
 {
 	return ImgData[x + y * ImgWidth];
 }
@@ -222,7 +222,7 @@ static void AddMap(const char *name)
 //
 //==========================================================================
 
-static void LoadImage(void)
+static void LoadImage()
 {
 	SC_MustGetString();
 	DestroyImage();
@@ -263,7 +263,7 @@ int my_bestfit_color(int r, int g, int b)
 //
 //==========================================================================
 
-void SetupRGBTable(void)
+void SetupRGBTable()
 {
 	if (rgb_table_created)
 	{
@@ -292,9 +292,9 @@ void SetupRGBTable(void)
 //
 //==========================================================================
 
-void GrabRGBTable(void)
+void GrabRGBTable()
 {
-	byte	tmp[32 * 32 * 32 + 4];
+	vuint8	tmp[32 * 32 * 32 + 4];
 
 	SetupRGBTable();
 	memcpy(tmp, &rgb_table, 32 * 32 * 32);
@@ -310,17 +310,17 @@ void GrabRGBTable(void)
 //
 //==========================================================================
 
-void GrabTranslucencyTable(void)
+void GrabTranslucencyTable()
 {
-	byte		table[256 * 256];
-	byte		temp[768];
+	vuint8		table[256 * 256];
+	vuint8		temp[768];
 	int			i;
 	int			j;
 	int			r;
 	int			g;
 	int			b;
-	byte*		p;
-	byte*		q;
+	vuint8*		p;
+	vuint8*		q;
 	int			transluc;
 
 	SC_MustGetNumber();
@@ -358,9 +358,9 @@ void GrabTranslucencyTable(void)
 //
 //==========================================================================
 
-void GrabScaleMap(void)
+void GrabScaleMap()
 {
-	byte		map[256];
+	vuint8		map[256];
 	int			i;
 	double		r;
 	double		g;
@@ -392,7 +392,7 @@ void GrabScaleMap(void)
 //
 //==========================================================================
 
-void GrabRaw(void)
+void GrabRaw()
 {
 	SC_MustGetNumber();
 	int x1 = sc_Number;
@@ -405,8 +405,8 @@ void GrabRaw(void)
 	int x2 = x1 + w;
 	int y2 = y1 + h;
 
-	byte *data = (byte*)Malloc(w * h);
-	byte *dst = data;
+	vuint8 *data = (vuint8*)Malloc(w * h);
+	vuint8 *dst = data;
 	for (int y = y1; y < y2; y++)
 	{
 		for (int x = x1; x < x2; x++)
@@ -428,7 +428,7 @@ void GrabRaw(void)
 //
 //==========================================================================
 
-void GrabPatch(void)
+void GrabPatch()
 {
 	SC_MustGetNumber();
 	int x1 = sc_Number;
@@ -453,7 +453,7 @@ void GrabPatch(void)
 
 	for (int x = 0; x < w; x++)
 	{
-		Patch->columnofs[x] = LittleLong((byte*)Col - (byte*)Patch);
+		Patch->columnofs[x] = LittleLong((vuint8*)Col - (vuint8*)Patch);
 		int y = 0;
 		int PrevTop = -1;
 		while (y < h)
@@ -476,7 +476,7 @@ void GrabPatch(void)
 				{
 					//	Insert empty post.
 					Col->topdelta = 254;
-					Col = (column_t*)((byte*)Col + 4);
+					Col = (column_t*)((vuint8*)Col + 4);
 					if (PrevTop < 254)
 					{
 						PrevTop = 254;
@@ -489,7 +489,7 @@ void GrabPatch(void)
 				Col->topdelta = y - PrevTop;
 			}
 			PrevTop = y;
-			byte* Pixels = (byte*)Col + 3;
+			vuint8* Pixels = (vuint8*)Col + 3;
 			while (y < h && Col->length < 255 &&
 				GetPixel(x1 + x, y1 + y) != TransColor)
 			{
@@ -497,15 +497,15 @@ void GrabPatch(void)
 				Col->length++;
 				y++;
 			}
-			Col = (column_t*)((byte*)Col + Col->length + 4);
+			Col = (column_t*)((vuint8*)Col + Col->length + 4);
 		}
 
 		//	Add terminating post.
 		Col->topdelta = 0xff;
-		Col = (column_t*)((byte*)Col + 4);
+		Col = (column_t*)((vuint8*)Col + 4);
 	}
 
-	outwad.AddLump(lumpname, Patch, (byte*)Col - (byte*)Patch);
+	outwad.AddLump(lumpname, Patch, (vuint8*)Col - (vuint8*)Patch);
 	Free(Patch);
 }
 
@@ -517,7 +517,7 @@ void GrabPatch(void)
 //
 //==========================================================================
 
-void GrabPic(void)
+void GrabPic()
 {
 	SC_MustGetNumber();
 	int x1 = sc_Number;
@@ -535,7 +535,7 @@ void GrabPic(void)
 	pic->width = LittleShort(w);
 	pic->height = LittleShort(h);
 	pic->bpp = 8;
-	byte *dst = (byte *)(pic + 1);
+	vuint8* dst = (vuint8*)(pic + 1);
 	for (int y = y1; y < y2; y++)
 	{
 		for (int x = x1; x < x2; x++)
@@ -557,7 +557,7 @@ void GrabPic(void)
 //
 //==========================================================================
 
-void GrabPic15(void)
+void GrabPic15()
 {
 	SC_MustGetNumber();
 	int x1 = sc_Number;
@@ -576,7 +576,7 @@ void GrabPic15(void)
 	pic->width = LittleShort(w);
 	pic->height = LittleShort(h);
 	pic->bpp = 15;
-	byte *dst = (byte *)(pic + 1);
+	vuint8* dst = (vuint8*)(pic + 1);
 	for (int y = y1; y < y2; y++)
 	{
 		for (int x = x1; x < x2; x++)
@@ -587,8 +587,8 @@ void GrabPic15(void)
 				c = 0x8000;
 			else
 				c = ((p.r << 7) & 0x7c00) | ((p.g << 2) & 0x03e0) | ((p.b >> 3) & 0x001f);
-			dst[0] = byte(c);
-			dst[1] = byte(c >> 8);
+			dst[0] = vuint8(c);
+			dst[1] = vuint8(c >> 8);
 			dst += 2;
 		}
 	}

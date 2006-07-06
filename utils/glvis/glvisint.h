@@ -60,8 +60,8 @@ struct portal_t : TPlane	// normal pointing into neighbor
 	int			leaf;		// neighbor
 	winding_t	winding;
 	vstatus_t	status;
-	byte		*visbits;
-	byte		*mightsee;
+	vuint8		*visbits;
+	vuint8		*mightsee;
 	int			nummightsee;
 	int			numcansee;
 };
@@ -76,18 +76,19 @@ struct leaf_t
 
 struct pstack_t
 {
-	pstack_t	*next;
-	leaf_t		*leaf;
-	portal_t	*portal;	// portal exiting
-	winding_t	*source, *pass;
+	pstack_t*	next;
+	leaf_t*		leaf;
+	portal_t*	portal;	// portal exiting
+	winding_t*	source;
+	winding_t*	pass;
 	TPlane		portalplane;
-	byte		*mightsee;		// bit string
+	vuint8*		mightsee;		// bit string
 };
 
 struct threaddata_t
 {
-	byte		*leafvis;		// bit string
-	portal_t	*base;
+	vuint8*		leafvis;		// bit string
+	portal_t*	base;
 	pstack_t	pstack_head;
 };
 
@@ -145,18 +146,18 @@ private:
 	subsector_t *subsectors;
 
 	int numportals;
-	portal_t *portals;
+	portal_t* portals;
 
 	int vissize;
-	byte *vis;
+	vuint8* vis;
 
 	int rejectsize;
-	byte *reject;
+	vuint8* reject;
 
 	int bitbytes;				// (portalleafs+63)>>3
 	int bitlongs;
 
-	byte *portalsee;
+	vuint8* portalsee;
 	int c_leafsee, c_portalsee;
 
 	int c_chains;
@@ -177,15 +178,15 @@ private:
 	void LoadLineDefs2(int lump);
 	void LoadSegs(int lump);
 	void LoadSubsectors(int lump);
-	void CreatePortals(void);
+	void CreatePortals();
 	void CopyLump(int i);
 	void LoadLevel(int lumpnum, int gl_lumpnum);
-	void FreeLevel(void);
-	void BuildGWA(void);
-	void BuildWAD(void);
+	void FreeLevel();
+	void BuildGWA();
+	void BuildWAD();
 
 	void SimpleFlood(portal_t *srcportal, int leafnum);
-	void BasePortalVis(void);
+	void BasePortalVis();
 	void CheckStack(leaf_t *leaf, threaddata_t *thread);
 	void FreeWinding(winding_t *w);
 	winding_t *CopyWinding(winding_t *w);
@@ -195,11 +196,11 @@ private:
 	void RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 		pstack_t *prevstack, int StackDepth);
 	void PortalFlow(portal_t *p);
-	portal_t *GetNextPortal(void);
-	void CalcPortalVis(void);
+	portal_t *GetNextPortal();
+	void CalcPortalVis();
 	void LeafFlow(int leafnum);
-	void BuildPVS(void);
-	void BuildReject(void);
+	void BuildPVS();
+	void BuildReject();
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

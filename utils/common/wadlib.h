@@ -55,11 +55,11 @@ class WadLibError
 class TIWadFile
 {
  public:
-	TIWadFile(void)
+	TIWadFile()
 	{
 		handle = NULL;
 	}
-	~TIWadFile(void)
+	~TIWadFile()
 	{
 		if (handle)
 		{
@@ -81,7 +81,7 @@ class TIWadFile
 	{
 		return GetLump(LumpNumForName(name));
 	}
-	void Close(void);
+	void Close();
 
 	FILE*			handle;
 	char			wadid[4];
@@ -92,11 +92,11 @@ class TIWadFile
 class TOWadFile
 {
  public:
-	TOWadFile(void)
+	TOWadFile()
 	{
 		handle = NULL;
 	}
-	~TOWadFile(void)
+	~TOWadFile()
 	{
 		if (handle)
 		{
@@ -105,7 +105,7 @@ class TOWadFile
 	}
 	void Open(const char *filename, const char *Awadid);
 	void AddLump(const char *name, const void *data, int size);
-	void Close(void);
+	void Close();
 
 	FILE*			handle;
 	char			wadid[4];

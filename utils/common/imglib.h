@@ -33,31 +33,31 @@ namespace VavoomUtils {
 
 struct rgb_t
 {
-	byte		r;
-	byte		g;
-	byte		b;
+	vuint8		r;
+	vuint8		g;
+	vuint8		b;
 };
 
 struct rgba_t
 {
-	byte		r;
-	byte		g;
-	byte		b;
-	byte		a;
+	vuint8		r;
+	vuint8		g;
+	vuint8		b;
+	vuint8		a;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void LoadImage(const char *name);
-void DestroyImage(void);
-void ConvertImageTo32Bit(void);
+void DestroyImage();
+void ConvertImageTo32Bit();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern int				ImgWidth;
 extern int				ImgHeight;
 extern int				ImgBPP;
-extern byte				*ImgData;
+extern vuint8*			ImgData;
 extern rgb_t			ImgPal[256];
 
 } // namespace VavoomUtils

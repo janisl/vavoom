@@ -1169,7 +1169,7 @@ void PC_DumpAsm(char* name)
 VStream& operator<<(VStream& Strm, TType& T)
 {
 	Strm << T.type;
-	byte RealType = T.type;
+	vuint8 RealType = T.type;
 	if (RealType == ev_array)
 	{
 		Strm << T.ArrayInnerType

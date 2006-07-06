@@ -86,8 +86,8 @@ struct mframe_t
 
 struct trivertx_t
 {
-	byte		v[3];
-	byte		lightnormalindex;
+	vuint8		v[3];
+	vuint8		lightnormalindex;
 };
 
 #pragma pack(pop)

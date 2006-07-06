@@ -87,18 +87,18 @@ extern	unsigned long namebit[077+1];
 
 enum errtype { WARNING, ERROR, FATAL };
 
-void	expandlex(void);
+void	expandlex();
 void setup(char *srcf);
 int	gettokens(Tokenrow *, int);
 int	comparetokens(Tokenrow *, Tokenrow *);
 Source	*setsource(char *, int, char *);
-void	unsetsource(void);
+void	unsetsource();
 void	puttokens(Tokenrow *);
 void	process(Tokenrow *);
 void	*domalloc(int);
 void	dofree(void *);
 void	error(enum errtype, char *, ...);
-void	flushout(void);
+void	flushout();
 int	fillbuf(Source *);
 int	trigraph(Source *);
 int	foldline(Source *);
@@ -125,7 +125,7 @@ void	doconcat(Tokenrow *);
 Tokenrow *stringify(Tokenrow *);
 int	lookuparg(Nlist *, Token *);
 long	eval(Tokenrow *, int);
-void	genline(void);
+void	genline();
 void	setempty(Tokenrow *);
 void	makespace(Tokenrow *);
 char	*outnum(char *, int);
@@ -135,7 +135,7 @@ int	checkhideset(int, Nlist *);
 void	prhideset(int);
 int	newhideset(int, Nlist *);
 int	unionhideset(int, int);
-void	iniths(void);
+void	iniths();
 #define	rowlen(tokrow)	((tokrow)->lp - (tokrow)->bp)
 
 extern	char *outp;

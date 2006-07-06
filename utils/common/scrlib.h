@@ -37,15 +37,15 @@ namespace VavoomUtils {
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void SC_Open(const char *name);
-void SC_Close(void);
-bool SC_GetString(void);
-void SC_MustGetString(void);
+void SC_Close();
+bool SC_GetString();
+void SC_MustGetString();
 void SC_MustGetStringName(const char *name);
-bool SC_GetNumber(void);
-void SC_MustGetNumber(void);
-bool SC_GetFloat(void);
-void SC_MustGetFloat(void);
-void SC_UnGet(void);
+bool SC_GetNumber();
+void SC_MustGetNumber();
+bool SC_GetFloat();
+void SC_MustGetFloat();
+void SC_UnGet();
 bool SC_Compare(const char *text);
 int SC_MatchString(const char **strings);
 int SC_MustMatchString(const char **strings);

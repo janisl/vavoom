@@ -79,14 +79,9 @@ namespace VavoomUtils {
 
 #define MAX_VINT8	((vint8)0x7f)
 #define MAX_VINT16	((vint16)0x7fff)
-#define MAX_INT32	((vint32)0x7fffffff)
+#define MAX_VINT32	((vint32)0x7fffffff)
 
 // TYPES -------------------------------------------------------------------
-
-typedef int					boolean;	//	Must be 4 bytes long
-typedef unsigned char 		byte;
-typedef unsigned short	 	word;
-typedef unsigned long	 	dword;
 
 typedef char				vint8;
 typedef unsigned char		vuint8;
@@ -120,21 +115,6 @@ int LoadFile(const char *name, void **bufferptr);
 extern void *(*Malloc)(size_t size);
 extern void *(*Realloc)(void *data, size_t size);
 extern void (*Free)(void *ptr);
-
-template<class T> T* New(void)
-{
-	return (T*)Malloc(sizeof(T));
-}
-
-template<class T> T* New(int numel)
-{
-	return (T*)Malloc(numel * sizeof(T));
-}
-
-inline void Delete(void *ptr)
-{
-	Free(ptr);
-}
 
 } // namespace VavoomUtils
 

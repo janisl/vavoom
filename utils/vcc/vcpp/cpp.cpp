@@ -20,7 +20,7 @@ void *output_buf;
 size_t output_buf_size;
 size_t output_size;
 
-void cpp_init(void)
+void cpp_init()
 {
 	expandlex();
 }

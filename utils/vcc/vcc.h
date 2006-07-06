@@ -328,10 +328,10 @@ public:
 	explicit TType(VClass* InClass);
 	explicit TType(VStruct* InStruct);
 
-	byte		type;
-	byte		InnerType;		//	For pointers
-	byte		ArrayInnerType;	//	For arrays
-	byte		PtrLevel;
+	vuint8		type;
+	vuint8		InnerType;		//	For pointers
+	vuint8		ArrayInnerType;	//	For arrays
+	vuint8		PtrLevel;
 	int			array_dim;
 	union
 	{
@@ -427,7 +427,7 @@ public:
 class VConstant : public VMemberBase
 {
 public:
-	byte		Type;
+	vuint8		Type;
 	int			value;
 
 	VConstant(VName InName, VMemberBase* InOuter, TLocation InLoc)

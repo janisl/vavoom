@@ -63,7 +63,7 @@ static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
 static int		num_dump_asm;
 static char*	dump_asm_names[1024];
-static boolean 	DebugMode;
+static bool		DebugMode;
 static FILE*	DebugFile;
 
 // CODE --------------------------------------------------------------------

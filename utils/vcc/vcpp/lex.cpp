@@ -237,7 +237,7 @@ struct fsm
 /* increase #states to power of 2 to encourage use of shift */
 short bigfsm[256][MAXSTATE];
 
-void expandlex(void)
+void expandlex()
 {
 	/*const */ struct fsm *fp;
 	int i, j, nstate;
@@ -591,7 +591,7 @@ Source *setsource(char *name, int fd, char *str)
 	return s;
 }
 
-void unsetsource(void)
+void unsetsource()
 {
 	Source *s = cursource;
 

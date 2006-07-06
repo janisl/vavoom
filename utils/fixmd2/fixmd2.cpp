@@ -56,7 +56,7 @@ static mmdl_t		*model;
 //
 //==========================================================================
 
-static void LoadModel(void)
+static void LoadModel()
 {
 	LoadFile(filename, (void**)&model);
 	if (model->ident != IDPOLY2HEADER)
@@ -71,7 +71,7 @@ static void LoadModel(void)
 //
 //==========================================================================
 
-static void WriteModel(void)
+static void WriteModel()
 {
 	FILE *f = fopen(filename, "wb");
 	fwrite(model, 1, model->ofsend, f);
@@ -86,7 +86,7 @@ static void WriteModel(void)
 
 static void ScaleModel(double scale)
 {
-	mframe_t *frame = (mframe_t*)((byte*)model + model->ofsframes);
+	mframe_t *frame = (mframe_t*)((vuint8*)model + model->ofsframes);
 	for (int i = 0; i < model->numframes; i++)
 	{
 		frame->scale[0] *= scale;
@@ -95,7 +95,7 @@ static void ScaleModel(double scale)
 		frame->scale_origin[0] *= scale;
 		frame->scale_origin[1] *= scale;
 		frame->scale_origin[2] *= scale;
-		frame = (mframe_t*)((byte*)frame + model->framesize);
+		frame = (mframe_t*)((vuint8*)frame + model->framesize);
 	}
 }
 
@@ -107,13 +107,13 @@ static void ScaleModel(double scale)
 
 static void ScaleModelNoOrigin(double scale)
 {
-	mframe_t *frame = (mframe_t*)((byte*)model + model->ofsframes);
+	mframe_t *frame = (mframe_t*)((vuint8*)model + model->ofsframes);
 	for (int i = 0; i < model->numframes; i++)
 	{
 		frame->scale[0] *= scale;
 		frame->scale[1] *= scale;
 		frame->scale[2] *= scale;
-		frame = (mframe_t*)((byte*)frame + model->framesize);
+		frame = (mframe_t*)((vuint8*)frame + model->framesize);
 	}
 }
 
@@ -125,13 +125,13 @@ static void ScaleModelNoOrigin(double scale)
 
 static void ShiftModel(double x, double y, double z)
 {
-	mframe_t *frame = (mframe_t*)((byte*)model + model->ofsframes);
+	mframe_t *frame = (mframe_t*)((vuint8*)model + model->ofsframes);
 	for (int i = 0; i < model->numframes; i++)
 	{
 		frame->scale_origin[0] += x;
 		frame->scale_origin[1] += y;
 		frame->scale_origin[2] += z;
-		frame = (mframe_t*)((byte*)frame + model->framesize);
+		frame = (mframe_t*)((vuint8*)frame + model->framesize);
 	}
 }
 
@@ -143,7 +143,7 @@ static void ShiftModel(double x, double y, double z)
 
 static void FixModelSkin(const char *name)
 {
-	mskin_t *skin = (mskin_t*)((byte*)model + model->ofsskins);
+	mskin_t *skin = (mskin_t*)((vuint8*)model + model->ofsskins);
 	strncpy(skin->name, name, sizeof(skin->name));
 }
 
@@ -186,7 +186,7 @@ static void MoveSTVerts(const char *str)
 	if (*sp)
 		Error("Bad syntax");
 
-	vert = (mstvert_t*)((byte*)model + model->ofsstverts);
+	vert = (mstvert_t*)((vuint8*)model + model->ofsstverts);
 	for (i = 0; i < model->numstverts; i++)
 	{
 		if (vert[i].s >= olds1 && vert[i].t >= oldt1 &&

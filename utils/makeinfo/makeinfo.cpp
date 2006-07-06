@@ -27,7 +27,7 @@
 #include "info.h"
 
 void ProcessDehackedFiles(int argc, char** argv);
-void MarkSpecialWeaponStates(void);
+void MarkSpecialWeaponStates();
 
 extern char*				sprnames[];
 extern char* 				statename[];
@@ -67,7 +67,7 @@ bool						Hacked;
 //
 //==========================================================================
 
-void FixupHeights(void)
+void FixupHeights()
 {
 	mobjinfo[MT1_MISC29].height = 72*FRACUNIT;
 	mobjinfo[MT1_MISC30].height = 56*FRACUNIT;
@@ -122,7 +122,7 @@ void MarkWeaponState(int num)
 //
 //==========================================================================
 
-void MarkWeaponStates(void)
+void MarkWeaponStates()
 {
 	int			i;
 
@@ -205,7 +205,7 @@ void WriteFooter(FILE *f)
 //
 //==========================================================================
 
-void WriteStates(void)
+void WriteStates()
 {
 	FILE*		f;
 	int			i;
@@ -285,7 +285,7 @@ void WriteStates(void)
 //
 //==========================================================================
 
-void WriteMobjInfo(void)
+void WriteMobjInfo()
 {
 	FILE*		f;
 	int			i;
@@ -496,7 +496,7 @@ void WriteMobjInfo(void)
 //
 //==========================================================================
 
-void WriteWeaponInfo(void)
+void WriteWeaponInfo()
 {
 	FILE*		f;
 	int			i;
@@ -591,7 +591,7 @@ void WriteWeaponInfo(void)
 //
 //==========================================================================
 
-static void WriteStrings(void)
+static void WriteStrings()
 {
 	int			i;
 	FILE		*f;
@@ -615,7 +615,7 @@ static void WriteStrings(void)
 //
 //==========================================================================
 
-static void WriteMisc(void)
+static void WriteMisc()
 {
 	FILE		*f;
 	int			i;
@@ -662,7 +662,7 @@ static void WriteMisc(void)
 //
 //==========================================================================
 
-static void WriteTxtLumps(void)
+static void WriteTxtLumps()
 {
 	int			i;
 	FILE		*f;

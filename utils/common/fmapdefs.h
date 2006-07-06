@@ -119,12 +119,12 @@ struct maplinedef2_t
 	short		v1;
 	short 		v2;
 	short 		flags;
-	byte 		special;
-	byte 		arg1;
-	byte 		arg2;
-	byte 		arg3;
-	byte 		arg4;
-	byte 		arg5;
+	vuint8 		special;
+	vuint8 		arg1;
+	vuint8 		arg2;
+	vuint8 		arg3;
+	vuint8 		arg4;
+	vuint8 		arg5;
 	short 		sidenum[2];	// sidenum[1] will be -1 if one sided
 };
 
@@ -244,12 +244,12 @@ struct mapthing2_t
 	short 		angle;
 	short 		type;
 	short 		options;
-	byte 		special;
-	byte 		arg1;
-	byte 		arg2;
-	byte 		arg3;
-	byte 		arg4;
-	byte 		arg5;
+	vuint8 		special;
+	vuint8 		arg1;
+	vuint8 		arg2;
+	vuint8 		arg3;
+	vuint8 		arg4;
+	vuint8 		arg5;
 };
 
 #pragma pack(pop)

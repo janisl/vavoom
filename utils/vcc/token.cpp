@@ -70,7 +70,7 @@ VName				tk_Name;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static char			ASCIIToChrCode[256];
-static byte			ASCIIToHexDigit[256];
+static vuint8		ASCIIToHexDigit[256];
 static char			TokenStringBuffer[MAX_QUOTED_LENGTH];
 static bool			IncLineNumber;
 static bool			NewLine;
@@ -253,7 +253,7 @@ static void NextChr()
 		IncLineNumber = false;
 	}
 	Chr = *FilePtr++;
-	if ((byte)Chr < ' ')
+	if ((vuint8)Chr < ' ')
 	{
 		if (Chr == '\n')
 		{
@@ -282,14 +282,14 @@ static void ProcessNumberToken()
 	{
 		//  Hexadecimal constant.
 		NextChr();
-		while (ASCIIToHexDigit[(byte)Chr] != NON_HEX_DIGIT)
+		while (ASCIIToHexDigit[(vuint8)Chr] != NON_HEX_DIGIT)
 		{
-			tk_Number = (tk_Number << 4) + ASCIIToHexDigit[(byte)Chr];
+			tk_Number = (tk_Number << 4) + ASCIIToHexDigit[(vuint8)Chr];
 			NextChr();
 		}
 		return;
 	}
-	while (ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
+	while (ASCIIToChrCode[(vuint8)Chr] == CHR_NUMBER)
 	{
 		tk_Number = 10 * tk_Number + (Chr - '0');
 		NextChr();
@@ -300,7 +300,7 @@ static void ProcessNumberToken()
 		NextChr(); // Point
 		tk_Float = tk_Number;
 		float	fmul = 0.1;
-		while (ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
+		while (ASCIIToChrCode[(vuint8)Chr] == CHR_NUMBER)
 		{
 			tk_Float += (Chr - '0') * fmul;
 			fmul /= 10.0;
@@ -467,8 +467,8 @@ static void ProcessLetterToken()
 
 	tk_Token = TK_IDENTIFIER;
 	len = 0;
-	while (ASCIIToChrCode[(byte)Chr] == CHR_LETTER
-		|| ASCIIToChrCode[(byte)Chr] == CHR_NUMBER)
+	while (ASCIIToChrCode[(vuint8)Chr] == CHR_LETTER
+		|| ASCIIToChrCode[(vuint8)Chr] == CHR_NUMBER)
 	{
 		if (len == MAX_IDENTIFIER_LENGTH - 1)
 		{
@@ -1176,7 +1176,7 @@ void TK_NextToken()
 
 				//	Read line number
 				while (Chr == ' ') NextChr();
-				if (ASCIIToChrCode[(byte)Chr] != CHR_NUMBER)
+				if (ASCIIToChrCode[(vuint8)Chr] != CHR_NUMBER)
 				{
 					ERR_Exit(ERR_NONE, false, "Bad directive.");
 				}
@@ -1185,7 +1185,7 @@ void TK_NextToken()
 
 				//	Read file name
 				while (Chr == ' ') NextChr();
-				if (ASCIIToChrCode[(byte)Chr] != CHR_QUOTE)
+				if (ASCIIToChrCode[(vuint8)Chr] != CHR_QUOTE)
 				{
 					ERR_Exit(ERR_NONE, false, "Bad directive.");
 				}
@@ -1202,7 +1202,7 @@ void TK_NextToken()
 				continue;
 			}
 		}
-		switch (ASCIIToChrCode[(byte)Chr])
+		switch (ASCIIToChrCode[(vuint8)Chr])
 		{
 			case CHR_EOF:
 				tk_Token = TK_EOF;

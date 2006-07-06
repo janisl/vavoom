@@ -29,7 +29,7 @@ class  TVec
 	double		x;
 	double		y;
 
-	TVec(void) { }
+	TVec() { }
 
 	TVec(double Ax, double Ay)
 	{
@@ -81,17 +81,17 @@ class  TVec
 		return *this;
 	}
 
-	TVec operator + (void) const
+	TVec operator + () const
 	{
 		return *this;
 	}
 
-	TVec operator - (void) const
+	TVec operator - () const
 	{
 		return TVec(-x,	-y);
 	}
 
-	double Length(void) const
+	double Length() const
 	{
 		return sqrt(x * x + y * y);
 	}

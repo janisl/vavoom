@@ -44,8 +44,8 @@ struct maptexture_t
 
 	char		name[8];
 	short		masked;				// Unused
-	byte		sscale;				// ZDoom's texture scaling
-	byte		tscale;
+	vuint8		sscale;				// ZDoom's texture scaling
+	vuint8		tscale;
 	short		width;
 	short		height;
 	int			columndirectory;	// OBSOLETE

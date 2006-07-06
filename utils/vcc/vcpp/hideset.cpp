@@ -93,7 +93,7 @@ int unionhideset(int hs1, int hs2)
 	return hs1;
 }
 
-void iniths(void)
+void iniths()
 {
 	hidesets = (Hideset *) domalloc(maxhidesets * sizeof(Hideset *));
 	hidesets[0] = (Hideset) domalloc(sizeof(Hideset));

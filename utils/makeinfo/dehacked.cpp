@@ -40,7 +40,7 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void FixupHeights(void);
+void FixupHeights();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -100,7 +100,7 @@ static int 		value;
 //
 //==========================================================================
 
-static bool GetLine(void)
+static bool GetLine()
 {
 	do
 	{
@@ -142,7 +142,7 @@ static bool GetLine(void)
 //
 //==========================================================================
 
-static bool ParseParam(void)
+static bool ParseParam()
 {
 	char	*val;
 

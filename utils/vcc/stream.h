@@ -151,7 +151,7 @@ public:
 class VMemoryStream : public VStream
 {
 protected:
-	TArray<byte>			Array;
+	TArray<vuint8>			Array;
 	int						Pos;
 
 public:
@@ -159,7 +159,7 @@ public:
 	VMemoryStream();
 	//	Initialise reading streams.
 	VMemoryStream(void*, int);
-	VMemoryStream(const TArray<byte>&);
+	VMemoryStream(const TArray<vuint8>&);
 
 	void Serialise(void*, int);
 	void Seek(int);
@@ -174,7 +174,7 @@ public:
 	{
 		bLoading = false;
 	}
-	TArray<byte>& GetArray()
+	TArray<vuint8>& GetArray()
 	{
 		return Array;
 	}

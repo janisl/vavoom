@@ -184,7 +184,7 @@ void VStream::SerialiseLittleEndian(void* Val, int Len)
 	{
 		//	Swap byte order.
 		for (int i = Len - 1; i >= 0; i--)
-			Serialise((byte*)Val + i, 1);
+			Serialise((vuint8*)Val + i, 1);
 	}
 	else
 	{
@@ -207,7 +207,7 @@ void VStream::SerialiseBigEndian(void* Val, int Len)
 	{
 		//	Swap byte order.
 		for (int i = Len - 1; i >= 0; i--)
-			Serialise((byte*)Val + i, 1);
+			Serialise((vuint8*)Val + i, 1);
 	}
 	else
 	{
@@ -340,7 +340,7 @@ VMemoryStream::VMemoryStream(void* InData, int InLen)
 //
 //==========================================================================
 
-VMemoryStream::VMemoryStream(const TArray<byte>& InArray)
+VMemoryStream::VMemoryStream(const TArray<vuint8>& InArray)
 : Pos(0)
 {
 	guard(VMemoryStream::VMemoryStream);

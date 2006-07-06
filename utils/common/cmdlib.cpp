@@ -154,7 +154,7 @@ char *va(const char *text, ...)
 
 short LittleShort(short val)
 {
-	byte *bv = (byte*)&val;
+	vuint8* bv = (vuint8*)&val;
 	return bv[0] + (bv[1] << 8);
 }
 
@@ -166,7 +166,7 @@ short LittleShort(short val)
 
 int LittleLong(int val)
 {
-	byte *bv = (byte*)&val;
+	vuint8* bv = (vuint8*)&val;
 	return bv[0] + (bv[1] << 8) + (bv[2] << 16) + (bv[3] << 24);
 }
 

@@ -48,7 +48,7 @@ kwtab[] =
 unsigned long namebit[077 + 1];
 Nlist *np;
 
-void setup_kwtab(void)
+void setup_kwtab()
 {
 	struct kwtab *kp;
 	Nlist *np;

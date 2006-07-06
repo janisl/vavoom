@@ -42,7 +42,7 @@ namespace VavoomUtils {
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void CheckOpen(void);
+static void CheckOpen();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -97,7 +97,7 @@ void SC_Open(const char *name)
 //
 //==========================================================================
 
-void SC_Close(void)
+void SC_Close()
 {
 	if (ScriptOpen)
 	{
@@ -112,10 +112,10 @@ void SC_Close(void)
 //
 //==========================================================================
 
-bool SC_GetString(void)
+bool SC_GetString()
 {
-	char 	*text;
-	boolean foundToken;
+	char*	text;
+	bool	foundToken;
 
 	CheckOpen();
 	if (AlreadyGot)
@@ -210,7 +210,7 @@ bool SC_GetString(void)
 //
 //==========================================================================
 
-void SC_MustGetString(void)
+void SC_MustGetString()
 {
 	if (SC_GetString() == false)
 	{
@@ -239,7 +239,7 @@ void SC_MustGetStringName(const char *name)
 //
 //==========================================================================
 
-bool SC_GetNumber(void)
+bool SC_GetNumber()
 {
 	char *stopper;
 
@@ -266,7 +266,7 @@ bool SC_GetNumber(void)
 //
 //==========================================================================
 
-void SC_MustGetNumber(void)
+void SC_MustGetNumber()
 {
 	if (SC_GetNumber() == false)
 	{
@@ -280,7 +280,7 @@ void SC_MustGetNumber(void)
 //
 //==========================================================================
 
-bool SC_GetFloat(void)
+bool SC_GetFloat()
 {
 	char *stopper;
 
@@ -307,7 +307,7 @@ bool SC_GetFloat(void)
 //
 //==========================================================================
 
-void SC_MustGetFloat(void)
+void SC_MustGetFloat()
 {
 	if (SC_GetFloat() == false)
 	{
@@ -323,7 +323,7 @@ void SC_MustGetFloat(void)
 //
 //==========================================================================
 
-void SC_UnGet(void)
+void SC_UnGet()
 {
 	AlreadyGot = true;
 }
@@ -401,7 +401,7 @@ void SC_ScriptError(const char *message)
 //
 //==========================================================================
 
-static void CheckOpen(void)
+static void CheckOpen()
 {
 	if (ScriptOpen == false)
 	{

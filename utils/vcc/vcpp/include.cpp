@@ -103,7 +103,7 @@ void doinclude(Tokenrow * trp)
 /*
  * Generate a line directive for cursource
  */
-void genline(void)
+void genline()
 {
 	static Token ta = { UNCLASS };
 	static Tokenrow tr = { &ta, &ta, &ta + 1, 1 };

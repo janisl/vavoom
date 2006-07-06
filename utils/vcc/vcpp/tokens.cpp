@@ -308,7 +308,7 @@ void puttokens(Tokenrow * trp)
 		flushout();
 }
 
-void flushout(void)
+void flushout()
 {
 	if (wbp > wbuf)
 	{

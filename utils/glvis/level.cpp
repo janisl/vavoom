@@ -137,7 +137,7 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	numvertexes = base_verts + gl_verts;
 
 	// Allocate zone memory for buffer.
-	li = vertexes = New<vertex_t>(numvertexes);
+	li = vertexes = new vertex_t[numvertexes];
 
 	// Load data into cache.
 	data = mainwad->GetLump(lump);
@@ -159,7 +159,7 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	{
 		gl_mapvertex_t*		glml;
 
-		glml = (gl_mapvertex_t *)((byte*)gldata + 4);
+		glml = (gl_mapvertex_t *)((vuint8*)gldata + 4);
 
 		// Copy and convert vertex, internal representation as vector.
 		for (i = 0; i < gl_verts; i++, li++, glml++)
@@ -206,7 +206,7 @@ void TVisBuilder::LoadSideDefs(int lump)
 	int i;
 
 	numsides = mainwad->LumpSize(lump) / sizeof(mapsidedef_t);
-	sidesecs = New<int>(numsides);
+	sidesecs = new vint32[numsides];
 	data = (mapsidedef_t *)mainwad->GetLump(lump);
 	for (i = 0; i < numsides; i++)
 	{
@@ -231,7 +231,7 @@ void TVisBuilder::LoadLineDefs1(int lump)
 	line_t *ld;
 
 	numlines = mainwad->LumpSize(lump) / sizeof(maplinedef1_t);
-	lines = New<line_t>(numlines);
+	lines = new line_t[numlines];
 	data = mainwad->GetLump(lump);
 
 	mld = (maplinedef1_t *)data;
@@ -271,7 +271,7 @@ void TVisBuilder::LoadLineDefs2(int lump)
 	line_t *ld;
 
 	numlines = mainwad->LumpSize(lump) / sizeof(maplinedef2_t);
-	lines = New<line_t>(numlines);
+	lines = new line_t[numlines];
 	data = mainwad->GetLump(lump);
 
 	mld = (maplinedef2_t *)data;
@@ -311,19 +311,19 @@ void TVisBuilder::LoadSegs(int lump)
 	if (GLNodesV5 || !strncmp((char*)data, GL_V3_MAGIC, 4))
 	{
 		int HdrSize = GLNodesV5 ? 0 : 4;
-		dword GLVertFlag = GLNodesV5 ? GL_VERTEX_V5 : GL_VERTEX_V3;
+		vuint32 GLVertFlag = GLNodesV5 ? GL_VERTEX_V5 : GL_VERTEX_V3;
 
 		numsegs = (glwad->LumpSize(lump) - HdrSize) / sizeof(mapglseg_v3_t);
-		segs = New<seg_t>(numsegs);
+		segs = new seg_t[numsegs];
 	
-		mapglseg_v3_t* ml = (mapglseg_v3_t*)((byte*)data + HdrSize);
+		mapglseg_v3_t* ml = (mapglseg_v3_t*)((vuint8*)data + HdrSize);
 		li = segs;
 		numportals = 0;
 	
 		for (i = 0; i < numsegs; i++, li++, ml++)
 		{
-			dword	v1num =	LittleLong(ml->v1);
-			dword	v2num =	LittleLong(ml->v2);
+			vuint32 v1num = LittleLong(ml->v1);
+			vuint32 v2num = LittleLong(ml->v2);
 	
 			if (v1num & GLVertFlag)
 			{
@@ -369,7 +369,7 @@ void TVisBuilder::LoadSegs(int lump)
 	else
 	{
 		numsegs = glwad->LumpSize(lump) / sizeof(mapglseg_t);
-		segs = New<seg_t>(numsegs);
+		segs = new seg_t[numsegs];
 	
 		mapglseg_t* ml = (mapglseg_t *)data;
 		li = segs;
@@ -377,8 +377,8 @@ void TVisBuilder::LoadSegs(int lump)
 	
 		for (i = 0; i < numsegs; i++, li++, ml++)
 		{
-			word	v1num =	LittleShort(ml->v1);
-			word	v2num =	LittleShort(ml->v2);
+			vuint16 v1num = LittleShort(ml->v1);
+			vuint16 v2num = LittleShort(ml->v2);
 	
 			if (v1num & GL_VERTEX)
 			{
@@ -423,7 +423,7 @@ void TVisBuilder::LoadSegs(int lump)
 
 	Free(data);
 
-	portals = New<portal_t>(numportals);
+	portals = new portal_t[numportals];
 }
 
 //==========================================================================
@@ -445,9 +445,9 @@ void TVisBuilder::LoadSubsectors(int lump)
 
 		numsubsectors = (glwad->LumpSize(lump) - HdrSize) /
 			sizeof(mapglsubsector_v3_t);
-		subsectors = New<subsector_t>(numsubsectors);
+		subsectors = new subsector_t[numsubsectors];
 	
-		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((byte*)data +
+		mapglsubsector_v3_t* ms = (mapglsubsector_v3_t*)((vuint8*)data +
 			HdrSize);
 		ss = subsectors;
 	
@@ -480,7 +480,7 @@ void TVisBuilder::LoadSubsectors(int lump)
 	else
 	{
 		numsubsectors = glwad->LumpSize(lump) / sizeof(mapsubsector_t);
-		subsectors = New<subsector_t>(numsubsectors);
+		subsectors = new subsector_t[numsubsectors];
 	
 		mapsubsector_t* ms = (mapsubsector_t *)data;
 		ss = subsectors;
@@ -488,8 +488,8 @@ void TVisBuilder::LoadSubsectors(int lump)
 		for (i = 0; i < numsubsectors; i++, ss++, ms++)
 		{
 			//	Set seg subsector links
-			int count = (word)LittleShort(ms->numsegs);
-			seg_t *line = &segs[(word)LittleShort(ms->firstseg)];
+			int count = (vuint16)LittleShort(ms->numsegs);
+			seg_t *line = &segs[(vuint16)LittleShort(ms->firstseg)];
 			ss->secnum = -1;
 			while (count--)
 			{
@@ -521,7 +521,7 @@ void TVisBuilder::LoadSubsectors(int lump)
 //
 //==========================================================================
 
-void TVisBuilder::CreatePortals(void)
+void TVisBuilder::CreatePortals()
 {
 	int i;
 
@@ -588,18 +588,18 @@ void TVisBuilder::LoadLevel(int lumpnum, int gl_lumpnum)
 //
 //==========================================================================
 
-void TVisBuilder::FreeLevel(void)
+void TVisBuilder::FreeLevel()
 {
-	Delete(vertexes);
-	Delete(sidesecs);
-	Delete(lines);
-	Delete(segs);
-	Delete(subsectors);
-	Delete(portals);
-	Delete(vis);
+	delete[] vertexes;
+	delete[] sidesecs;
+	delete[] lines;
+	delete[] segs;
+	delete[] subsectors;
+	delete[] portals;
+	delete[] vis;
 	if (reject)
 	{
-		Delete(reject);
+		delete[] reject;
 	}
 }
 
@@ -703,7 +703,7 @@ void TVisBuilder::CopyLump(int i)
 //
 //==========================================================================
 
-void TVisBuilder::BuildGWA(void)
+void TVisBuilder::BuildGWA()
 {
 	int i = 0;
 	while (i < glwad->numlumps)
@@ -766,7 +766,7 @@ void TVisBuilder::BuildGWA(void)
 //
 //==========================================================================
 
-void TVisBuilder::BuildWAD(void)
+void TVisBuilder::BuildWAD()
 {
 	int i = 0;
 	while (i < glwad->numlumps)

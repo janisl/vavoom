@@ -64,18 +64,18 @@ struct pcx_t
 
 struct tgaHeader_t
 {
-	byte id_length;
-	byte pal_type;
-	byte img_type;
-	word first_color;
-	word pal_colors;
-	byte pal_entry_size;
-	word left;
-	word top;
-	word width;
-	word height;
-	byte bpp;
-	byte descriptor_bits;
+	vuint8		id_length;
+	vuint8		pal_type;
+	vuint8		img_type;
+	vuint16		first_color;
+	vuint16		pal_colors;
+	vuint8		pal_entry_size;
+	vuint16		left;
+	vuint16		top;
+	vuint16		width;
+	vuint16		height;
+	vuint8		bpp;
+	vuint8		descriptor_bits;
 };
 
 #pragma pack(pop)
@@ -93,7 +93,7 @@ struct tgaHeader_t
 int				ImgWidth;
 int				ImgHeight;
 int				ImgBPP;
-byte			*ImgData;
+vuint8*			ImgData;
 rgb_t			ImgPal[256];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -107,7 +107,7 @@ static void LoadPCX(const char *filename)
 	int			x, y;
 	char		ch;
 	pcx_t		*pcx;
-	byte		*data;
+	vuint8		*data;
 
 	LoadFile(filename, (void**)&pcx);
 
@@ -127,7 +127,7 @@ static void LoadPCX(const char *filename)
 
 	bytes_per_line = LittleShort(pcx->bytes_per_line);
 
-	ImgData = new byte[ImgWidth * ImgHeight];
+	ImgData = new vuint8[ImgWidth * ImgHeight];
 
 	data = &pcx->data;
 
@@ -181,7 +181,7 @@ static void LoadPCX(const char *filename)
 static void LoadTGA(const char *filename)
 {
 	tgaHeader_t *hdr;
-	byte *data;
+	vuint8* data;
 	int col;
 	int count;
 	int c;
@@ -191,14 +191,14 @@ static void LoadTGA(const char *filename)
 	ImgWidth = LittleShort(hdr->width);
 	ImgHeight = LittleShort(hdr->height);
 
-	data = (byte*)(hdr + 1) + hdr->id_length;
+	data = (vuint8*)(hdr + 1) + hdr->id_length;
 
 	for (int i = 0; i < hdr->pal_colors; i++)
 	{
 		switch (hdr->pal_entry_size)
 		{
 		case 16:
-			col = *(word *)data;
+			col = *(vuint16*)data;
 			ImgPal[i].r = (col & 0x1F) << 3;
 			ImgPal[i].g = ((col >> 5) & 0x1F) << 3;
 			ImgPal[i].b = ((col >> 10) & 0x1F) << 3;
@@ -234,12 +234,12 @@ static void LoadTGA(const char *filename)
 		hdr->img_type == 9 || hdr->img_type == 11)
 	{
 		ImgBPP = 8;
-		ImgData = (byte*)Malloc(ImgWidth * ImgHeight);
+		ImgData = (vuint8*)Malloc(ImgWidth * ImgHeight);
 	}
 	else
 	{
 		ImgBPP = 32;
-		ImgData = (byte*)Malloc(ImgWidth * ImgHeight * 4);
+		ImgData = (vuint8*)Malloc(ImgWidth * ImgHeight * 4);
 	}
 
 	if (hdr->img_type == 1 && hdr->bpp == 8 && hdr->pal_type == 1)
@@ -248,7 +248,7 @@ static void LoadTGA(const char *filename)
 		for (int y = ImgHeight; y; y--)
 		{
 			int yc = hdr->descriptor_bits & 0x20 ? ImgHeight - y : y - 1;
-			byte *dst = ImgData + yc * ImgWidth;
+			vuint8* dst = ImgData + yc * ImgWidth;
 
 			memcpy(dst, data, ImgWidth);
 			data += ImgWidth;
@@ -264,7 +264,7 @@ static void LoadTGA(const char *filename)
 
 			for (int x = 0; x < ImgWidth; x++, dst++, data += 2)
 			{
-				col = *(word *)data;
+				col = *(vuint16*)data;
 				dst->r = ((col >> 10) & 0x1F) << 3;
 				dst->g = ((col >> 5) & 0x1F) << 3;
 				dst->b = (col & 0x1F) << 3;
@@ -319,7 +319,7 @@ static void LoadTGA(const char *filename)
 		for (int y = ImgHeight; y; y--)
 		{
 			int yc = hdr->descriptor_bits & 0x20 ? ImgHeight - y : y - 1;
-			byte *dst = ImgData + yc * ImgWidth;
+			vuint8* dst = ImgData + yc * ImgWidth;
 
 			memcpy(dst, data, ImgWidth);
 			data += ImgWidth;
@@ -331,7 +331,7 @@ static void LoadTGA(const char *filename)
 		for (int y = ImgHeight; y; y--)
 		{
 			int yc = hdr->descriptor_bits & 0x20 ? ImgHeight - y : y - 1;
-			byte *dst = ImgData + yc * ImgWidth;
+			vuint8* dst = ImgData + yc * ImgWidth;
 			c = 0;
 
 			do
@@ -373,7 +373,7 @@ static void LoadTGA(const char *filename)
 				{
 					count = (count & 0x7F) + 1;
 					c += count;
-					col = *(word *)data;
+					col = *(vuint16*)data;
 					while (count--)
 					{
 						dst->r = ((col >> 10) & 0x1F) << 3;
@@ -390,7 +390,7 @@ static void LoadTGA(const char *filename)
 					c += count;
 					while (count--)
 					{
-						col = *(word *)data;
+						col = *(vuint16*)data;
 						dst->r = ((col >> 10) & 0x1F) << 3;
 						dst->g = ((col >> 5) & 0x1F) << 3;
 						dst->b = (col & 0x1F) << 3;
@@ -504,7 +504,7 @@ static void LoadTGA(const char *filename)
 		for (int y = ImgHeight; y; y--)
 		{
 			int yc = hdr->descriptor_bits & 0x20 ? ImgHeight - y : y - 1;
-			byte *dst = ImgData + yc * ImgWidth;
+			vuint8* dst = ImgData + yc * ImgWidth;
 			c = 0;
 
 			do
@@ -564,7 +564,7 @@ void LoadImage(const char *name)
 //
 //==========================================================================
 
-void ConvertImageTo32Bit(void)
+void ConvertImageTo32Bit()
 {
 	if (ImgBPP == 8)
 	{
@@ -577,7 +577,7 @@ void ConvertImageTo32Bit(void)
 			NewData[i].a = 255;
 		}
 		Free(ImgData);
-		ImgData = (byte *)NewData;
+		ImgData = (vuint8*)NewData;
 		ImgBPP = 32;
 	}
 }
@@ -588,7 +588,7 @@ void ConvertImageTo32Bit(void)
 //
 //==========================================================================
 
-void DestroyImage(void)
+void DestroyImage()
 {
 	if (ImgData)
 	{
