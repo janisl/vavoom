@@ -394,12 +394,15 @@ void Z_Init()
 
 void Z_Shutdown()
 {
+	if (mainzone)
+	{
 #ifdef ZONE_DEBUG
-	Z_MemDebugDump();
+		Z_MemDebugDump();
 #endif
-	mainzone->Shutdown();
-	::free(mainzone);
-	mainzone = NULL;
+		mainzone->Shutdown();
+		::free(mainzone);
+		mainzone = NULL;
+	}
 }
 
 #ifdef ZONE_DEBUG
