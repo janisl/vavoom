@@ -332,7 +332,7 @@ int VWinSockDriver::OpenSocket(int port)
 	guard(VWinSockDriver::OpenSocket);
 	int				newsocket;
 	sockaddr_in		address;
-	vuint32			trueval = 1;
+	DWORD			trueval = 1;
 
 	newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (newsocket == -1)

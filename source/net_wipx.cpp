@@ -247,7 +247,7 @@ int VWinIpxDriver::OpenSocket(int port)
 	int				handle;
 	int				newsocket;
 	sockaddr_ipx	address;
-	vuint32			trueval = 1;
+	DWORD			trueval = 1;
 
 	for (handle = 0; handle < IPXSOCKETS; handle++)
 		if (ipxsocket[handle] == 0)
@@ -321,7 +321,7 @@ int VWinIpxDriver::Connect(int, sockaddr_t*)
 int VWinIpxDriver::CheckNewConnections()
 {
 	guard(VWinIpxDriver::CheckNewConnections);
-	vuint32		available;
+	DWORD		available;
 
 	if (net_acceptsocket == -1)
 		return -1;
