@@ -177,12 +177,18 @@ static void OpenScript(const char *name, int LumpNum, int type)
 		ScriptName = VStr(name).ExtractFileBase();
 	}
 	ScriptPtr = ScriptBuffer;
-	ScriptEndPtr = ScriptPtr+ScriptSize;
+	ScriptEndPtr = ScriptPtr + ScriptSize;
 	sc_Line = 1;
 	sc_End = false;
 	ScriptOpen = true;
 	sc_String = StringBuffer;
 	AlreadyGot = false;
+
+	//	Skip garbage some editors add in the begining of UTF-8 files.
+	if (ScriptPtr[0] == 0xef && ScriptPtr[1] == 0xbb && ScriptPtr[2] == 0xbf)
+	{
+		ScriptPtr += 3;
+	}
 	unguard;
 }
 

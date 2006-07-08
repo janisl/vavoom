@@ -585,6 +585,12 @@ Source *setsource(char *name, int fd, char *str)
 		s->inb = (uchar*)domalloc(INS + 4);
 		s->inp = s->inb;
 		len = 0;
+		//	Skip garbage some editors add in the begining of UTF-8 files.
+		read(s->fd, (char*)s->inp, 3);
+		if (s->inp[0] != 0xef || s->inp[1] != 0xbb || s->inp[2] != 0xbf)
+		{
+			len = 3;
+		}
 	}
 	s->inl = s->inp + len;
 	s->inl[0] = s->inl[1] = EOB;
