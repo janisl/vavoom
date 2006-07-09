@@ -437,7 +437,9 @@ progs: utils/bin/vcc$(EXEEXT)
 data: progs $(WAD_FILES)
 
 basev/%/wad0.wad: $(srcdir)/basev/%/wad0.ls utils/bin/vlumpy$(EXEEXT)
-	@mkdir -p `echo $@|sed 's/wad0.wad//'`
+	@mkdir -p basev/doom
+	@mkdir -p basev/plutonia
+	@mkdir -p basev/tnt
 	utils/bin/vlumpy$(EXEEXT) -D$@ $<
 
 basev/strife/strfhelp.o: $(srcdir)/utils/editing/acs/*.acs utils/bin/acc$(EXEEXT)

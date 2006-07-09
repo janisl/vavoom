@@ -186,13 +186,19 @@ dnl
 AC_MSG_CHECKING([for asm prefix before symbols])
 AC_CACHE_VAL(vavoom_cv_asm_prefix,
 [
-	AC_TRY_LINK([int test_for_underscore(void);
+	AC_TRY_LINK([#ifdef __cplusplus
+		extern "C"
+		#endif
+		int test_for_underscore();
 		asm (".globl _test_for_underscore\n"
 		"_test_for_underscore:");], [test_for_underscore ();],
 		vavoom_cv_asm_prefix=_,
 		vavoom_cv_asm_prefix=no)
 	if test "$vavoom_cv_asm_prefix" = no; then
-		AC_TRY_LINK([int test_for_underscore(void);
+		AC_TRY_LINK([#ifdef __cplusplus
+			extern "C"
+			#endif
+			int test_for_underscore();
 			asm (".globl test_for_undercore\n"
 			"test_for_underscore:");], [test_for_underscore ();],
 			vavoom_cv_asm_prefix=,
@@ -224,7 +230,7 @@ case $host in
 	;;
 
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
-	LIBS='-lwsock32 $LIBS'
+	LIBS="-lwsock32 $LIBS"
 	;;
 
 *)
