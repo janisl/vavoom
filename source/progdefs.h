@@ -26,7 +26,7 @@
 #ifndef OPCODE_INFO
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	20
+#define PROG_VERSION	21
 
 #define	MAX_PARAMS		16
 
