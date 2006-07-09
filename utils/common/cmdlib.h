@@ -91,6 +91,7 @@ typedef int16_t				vint16;
 typedef uint16_t			vuint16;
 typedef int32_t				vint32;
 typedef uint32_t			vuint32;
+/* Needs more changes to compile with MSVC
 #elif defined _WIN32
 typedef __int8				vint8;
 typedef unsigned __int8		vuint8;
@@ -98,6 +99,7 @@ typedef __int16				vint16;
 typedef unsigned __int16	vuint16;
 typedef __int32				vint32;
 typedef unsigned __int32	vuint32;
+*/
 #else
 typedef char				vint8;
 typedef unsigned char		vuint8;
