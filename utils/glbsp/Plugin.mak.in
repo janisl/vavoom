@@ -2,17 +2,22 @@
 # glBSP Makefile for Plugin
 #
 
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+AR=@AR@
 CC=@CC@
-CFLAGS=@CFLAGS@
+CFLAGS=@GLBSP_CFLAGS@
+CPPFLAGS=@GLBSP_CPPFLAGS@
+LDFLAGS=@GLBSP_LDFLAGS@
+LIBS=@GLBSP_LIBS@
 OBJEXT=@OBJEXT@
 RANLIB=@RANLIB@
-AR=@AR@
 
 MAIN=.
 
 OUTNAME=libglbsp.a
 
-CFLAGS+=-Wall -DGLBSP_PLUGIN -DUNIX -DINLINE_G=inline
+CFLAGS+=-DGLBSP_PLUGIN -DUNIX -DINLINE_G=inline
 
 OBJS=$(MAIN)/analyze.$(OBJEXT)  \
      $(MAIN)/blockmap.$(OBJEXT) \
@@ -36,6 +41,9 @@ clean:
 $(OUTNAME): $(OBJS)
 	$(AR) rc $(OUTNAME) $(OBJS)
 	$(RANLIB) $(OUTNAME)
+
+%.$(OBJEXT) : $(srcdir)/%.c $(srcdir)/*.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 .PHONY: all clean
 

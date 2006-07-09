@@ -1,31 +1,33 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
 AR=@AR@
 CXX=@CXX@
-CXXFLAGS=@CXXFLAGS@
+CXXFLAGS=@GLVIS_CXXFLAGS@
+CPPFLAGS=@GLVIS_CPPFLAGS@
 EXEEXT=@EXEEXT@
-LIB_MATH=@LIB_MATH@
-LIB_STDCXX=@LIB_STDCXX@
+LDFLAGS=@GLVIS_LDFLAGS@
+LIBS=@GLVIS_LIBS@
 OBJEXT=@OBJEXT@
 RANLIB=@RANLIB@
 
-CXXFLAGS += -Wall
 LIB_OBJS = cmdlib.$(OBJEXT) \
 	wadlib.$(OBJEXT) \
 	level.$(OBJEXT) \
 	flow.$(OBJEXT)
 OBJS = glvis.$(OBJEXT)
-LIBS = $(LIB_MATH) $(LIB_STDCXX)
 
 all: ../bin/glvis$(EXEEXT)
 
 ../bin/glvis$(EXEEXT): $(OBJS) libglvis.a
-	$(CXX) -s -o $@ $^ $(LIBS)
+	@mkdir -p ../bin
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 libglvis.a: $(LIB_OBJS)
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
-%.$(OBJEXT): %.cpp *.h ../common/*.h
-	$(CXX) $(CXXFLAGS) -I../common -c -o $@ $<
+%.$(OBJEXT): $(srcdir)/%.cpp $(srcdir)/*.h $(srcdir)/../common/*.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -I$(srcdir)/../common -c -o $@ $<
 
-%.$(OBJEXT): ../common/%.cpp ../common/*.h
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+%.$(OBJEXT): $(srcdir)/../common/%.cpp $(srcdir)/../common/*.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<

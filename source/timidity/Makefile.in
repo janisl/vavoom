@@ -1,6 +1,9 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
 AR=@AR@
-CC = @CC@
-CFLAGS = @CFLAGS@
+CXX=@CXX@
+CXXFLAGS=@TIMIDITY_CXXFLAGS@
+CPPFLAGS=@TIMIDITY_CPPFLAGS@
 OBJEXT=@OBJEXT@
 RANLIB=@RANLIB@
 
@@ -14,5 +17,5 @@ libtimidity.a: $(OBJS)
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
-%.$(OBJEXT): %.cpp *.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+%.$(OBJEXT): $(srcdir)/%.cpp $(srcdir)/*.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<

@@ -4,6 +4,8 @@
 #
 #---------------------------------------
 
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 bindir=@bindir@
@@ -14,7 +16,6 @@ ASMFLAGS=@ASMFLAGS@
 CC=@CC@
 CFLAGS=@CFLAGS@
 CXX=@CXX@
-CXXFLAGS=@CXXFLAGS@
 EXEEXT=@EXEEXT@
 INSTALL=@INSTALL@
 INSTALL_DATA=@INSTALL_DATA@
@@ -22,28 +23,27 @@ INSTALL_PROGRAM=@INSTALL_PROGRAM@
 INSTALL_SCRIPT=@INSTALL_SCRIPT@
 INSTALL_TARGETS=@INSTALL_TARGETS@
 IWADDIR_PARM=@IWADDIR_PARM@
-LDFLAGS=@LDFLAGS@
-LIB_STDCXX=@LIB_STDCXX@
-MAIN_CFLAGS=@MAIN_CFLAGS@
-MAIN_EXE=@MAIN_EXE@
 OBJEXT=@OBJEXT@
-SERVER_EXE=@SERVER_EXE@
 TARGETS=@TARGETS@
 
 @SET_MAKE@
 
+MAIN_EXE=@MAIN_EXE@
 OBJ_FILES = @OBJ_FILES@
-LIBS = @MAIN_LIBS@
 LIB_FILES = @LIB_FILES@
-SV_LIBS = @SV_LIBS@
+MAIN_CXXFLAGS=@MAIN_CXXFLAGS@
+MAIN_CPPFLAGS=@MAIN_CPPFLAGS@
+MAIN_LDFLAGS=@MAIN_LDFLAGS@
+MAIN_LIBS = @MAIN_LIBS@
+
+SERVER_EXE=@SERVER_EXE@
 SV_OBJ_FILES = @SV_OBJ_FILES@
+SV_CXXFLAGS=@SV_CXXFLAGS@
+SV_CPPFLAGS=@SV_CPPFLAGS@
+SV_LDFLAGS=@SV_LDFLAGS@
+SV_LIBS = @SV_LIBS@
 
 INSTALL_DIR = $(DESTDIR)$(datadir)/vavoom
-
-C_ARGS   = -c -W -Wall $(CFLAGS)
-CPP_ARGS = -c -W -Wall $(CXXFLAGS) $(MAIN_CFLAGS)
-ASM_ARGS = -c -W -Wall -x assembler-with-cpp $(ASMFLAGS)
-LINK_ARGS = -Wall $(LDFLAGS)
 
 #---------------------------------------
 #
@@ -352,23 +352,22 @@ all: $(TARGETS)
 exe: $(MAIN_EXE) utils/vavoom
 
 $(MAIN_EXE): $(OBJ_FILES) $(LIB_FILES)
-	$(CXX) $(LINK_ARGS) -o $@ $^ $(LIBS)
-
-suid:
-	chown root.root Vavoom
-	chmod 4755 Vavoom
+	$(CXX) $(MAIN_LDFLAGS) -o $@ $^ $(MAIN_LIBS)
 
 crash:
 	addr2line -e Vavoom -f < crash.txt >> basev/debug.txt
 
-obj/%.$(OBJEXT) : source/%.c
-	$(CC) $(C_ARGS) -o $@ $<
+obj/%.$(OBJEXT) : $(srcdir)/source/%.c
+	@mkdir -p obj
+	$(CC) -c $(CFLAGS) -o $@ $<
 
-obj/%.$(OBJEXT) : source/%.cpp source/*.h
-	$(CXX) $(CPP_ARGS) -o $@ $<
+obj/%.$(OBJEXT) : $(srcdir)/source/%.cpp $(srcdir)/source/*.h
+	@mkdir -p obj
+	$(CXX) -c $(MAIN_CPPFLAGS) $(MAIN_CXXFLAGS) -o $@ $<
 
-obj/%.$(OBJEXT) : source/%.s source/asm_i386.h
-	$(CC) $(ASM_ARGS) -o $@ $<
+obj/%.$(OBJEXT) : $(srcdir)/source/%.s $(srcdir)/source/asm_i386.h
+	@mkdir -p obj
+	$(CC) -c -x assembler-with-cpp $(ASMFLAGS) -o $@ $<
 
 utils/vavoom: Makefile
 	echo "#!/bin/sh" > $@
@@ -380,7 +379,7 @@ utils/vavoom: Makefile
 
 # ---------------------------------------
 
-source/timidity/libtimidity.a: source/timidity/*.cpp source/timidity/*.h
+source/timidity/libtimidity.a: $(srcdir)/source/timidity/*.cpp $(srcdir)/source/timidity/*.h
 	$(MAKE) -C source/timidity
 
 utils/glbsp/libglbsp.a:
@@ -396,16 +395,19 @@ sv: svexe data
 svexe: $(SERVER_EXE) utils/vavoom-dedicated
 
 $(SERVER_EXE): $(SV_OBJ_FILES)
-	$(CXX) $(LINK_ARGS) -o $@ $(SV_OBJ_FILES) $(SV_LIBS)
+	$(CXX) $(SV_LDFLAGS) -o $@ $(SV_OBJ_FILES) $(SV_LIBS)
 
-obj/sv/%.$(OBJEXT) : source/%.c
-	$(CC) $(C_ARGS) -DSERVER -o $@ $<
+obj/sv/%.$(OBJEXT) : $(srcdir)/source/%.c
+	@mkdir -p obj/sv
+	$(CC) $(SV_CPPFLAGS) -c $(CFLAGS) -DSERVER -o $@ $<
 
-obj/sv/%.$(OBJEXT) : source/%.cpp source/*.h
-	$(CXX) $(CPP_ARGS) -DSERVER -o $@ $<
+obj/sv/%.$(OBJEXT) : $(srcdir)/source/%.cpp $(srcdir)/source/*.h
+	@mkdir -p obj/sv
+	$(CXX) $(SV_CPPFLAGS) $(SV_CXXFLAGS) -DSERVER -c -o $@ $<
 
-obj/sv/%.$(OBJEXT) : source/%.s
-	$(CC) $(ASM_ARGS) -DSERVER -o $@ $<
+obj/sv/%.$(OBJEXT) : $(srcdir)/source/%.s
+	@mkdir -p obj/sv
+	$(CC) -c -x assembler-with-cpp $(ASMFLAGS) -DSERVER -o $@ $<
 
 utils/vavoom-dedicated: Makefile
 	echo "#!/bin/sh" > $@
@@ -434,11 +436,13 @@ progs: utils/bin/vcc$(EXEEXT)
 
 data: progs $(WAD_FILES)
 
-basev/%/wad0.wad: basev/%/wad0.ls utils/bin/vlumpy$(EXEEXT)
-	utils/bin/vlumpy$(EXEEXT) $<
+basev/%/wad0.wad: $(srcdir)/basev/%/wad0.ls utils/bin/vlumpy$(EXEEXT)
+	@mkdir -p `echo $@|sed 's/wad0.wad//'`
+	utils/bin/vlumpy$(EXEEXT) -D$@ $<
 
-basev/strife/strfhelp.o: utils/editing/acs/*.acs utils/bin/acc$(EXEEXT)
-	utils/bin/acc$(EXEEXT) utils/editing/acs/strfhelp.acs basev/strife/strfhelp.o
+basev/strife/strfhelp.o: $(srcdir)/utils/editing/acs/*.acs utils/bin/acc$(EXEEXT)
+	@mkdir -p basev/strife
+	utils/bin/acc$(EXEEXT) $(srcdir)/utils/editing/acs/strfhelp.acs basev/strife/strfhelp.o
 
 utils/bin/acc$(EXEEXT):
 	$(MAKE) -C utils/acc
@@ -490,17 +494,17 @@ installsvexe:
 
 installdata:
 	$(INSTALL) -d $(INSTALL_DIRS)
-	$(INSTALL_DATA) basev/games.txt $(INSTALL_DIR)/basev
-	$(INSTALL_DATA) basev/common/default.cfg basev/common/startup.vs basev/common/wad0.wad $(INSTALL_DIR)/basev/common
+	$(INSTALL_DATA) $(srcdir)/basev/games.txt $(INSTALL_DIR)/basev
+	$(INSTALL_DATA) $(srcdir)/basev/common/default.cfg $(srcdir)/basev/common/startup.vs basev/common/wad0.wad $(INSTALL_DIR)/basev/common
 	$(INSTALL_DATA) basev/doom/wad0.wad $(INSTALL_DIR)/basev/doom
-	$(INSTALL_DATA) basev/doom1/wad0.wad basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
-	$(INSTALL_DATA) basev/doom2/wad0.wad basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
-	$(INSTALL_DATA) basev/tnt/wad0.wad basev/tnt/base.txt $(INSTALL_DIR)/basev/tnt
-	$(INSTALL_DATA) basev/plutonia/wad0.wad basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
+	$(INSTALL_DATA) basev/doom1/wad0.wad $(srcdir)/basev/doom1/base.txt $(INSTALL_DIR)/basev/doom1
+	$(INSTALL_DATA) basev/doom2/wad0.wad $(srcdir)/basev/doom2/base.txt $(INSTALL_DIR)/basev/doom2
+	$(INSTALL_DATA) basev/tnt/wad0.wad $(srcdir)/basev/tnt/base.txt $(INSTALL_DIR)/basev/tnt
+	$(INSTALL_DATA) basev/plutonia/wad0.wad $(srcdir)/basev/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
 	$(INSTALL_DATA) basev/heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
 	$(INSTALL_DATA) basev/hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
 	$(INSTALL_DATA) basev/strife/wad0.wad $(INSTALL_DIR)/basev/strife
-	$(INSTALL_DATA) source/vavoom.png $(INSTALL_DIR)
+	$(INSTALL_DATA) $(srcdir)/source/vavoom.png $(INSTALL_DIR)
 
 # ---------------------------------------
 

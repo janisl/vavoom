@@ -88,6 +88,7 @@ TOWadFile		outwad;
 
 char			basepath[256];
 char			srcpath[256];
+char			destpath[256];
 
 RGB_MAP			rgb_table;
 bool			rgb_table_created;
@@ -145,6 +146,19 @@ char *fn(const char *name)
 	{
 		//	Absolute path
 		strcpy(filename, name);
+	}
+	else if (destpath[0])
+	{
+		sprintf(filename, "%s%s", destpath, name);
+		FILE* f = fopen(filename, "rb");
+		if (f)
+		{
+			fclose(f);
+		}
+		else
+		{
+			sprintf(filename, "%s%s", srcpath, name);
+		}
 	}
 	else
 	{
@@ -608,10 +622,18 @@ void ParseScript(const char *name)
 	ExtractFilePath(name, basepath);
 	strcpy(srcpath, basepath);
 
-	strcpy(destfile, name);
-	DefaultExtension(destfile, ".ls");
-	SC_Open(destfile);
-	StripExtension(destfile);
+	SC_Open(name);
+
+	if (!destfile[0])
+	{
+		strcpy(destfile, name);
+		StripExtension(destfile);
+		destpath[0] = 0;
+	}
+	else
+	{
+		ExtractFilePath(destfile, destpath);
+	}
 
 	bool OutputOpened = false;
 	bool GrabMode = false;
@@ -742,6 +764,8 @@ void ParseScript(const char *name)
 		outwad.Close();
 	}
 	SC_Close();
+
+	destfile[0] = 0;
 }
 
 //==========================================================================
@@ -762,7 +786,14 @@ int main(int argc, char *argv[])
 	{
 		for (int i = 1; i < argc; i++)
 		{
-			ParseScript(argv[i]);
+			if (argv[i][0] == '-' && argv[i][1] == 'D')
+			{
+				strcpy(destfile, argv[i] + 2);
+			}
+			else
+			{
+				ParseScript(argv[i]);
+			}
 		}
 	}
 	catch (WadLibError &E)

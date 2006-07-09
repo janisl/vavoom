@@ -1,0 +1,38 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+
+ifndef VCC
+VCC=vcc
+endif
+
+ifndef OUTDIR
+OUTDIR=.
+endif
+
+ifndef COMMON_DIR
+COMMON_DIR=$(srcdir)/../common
+endif
+
+ifndef COMMON_PROGS_DIR
+COMMON_PROGS_DIR=../../basev/common/progs
+endif
+
+all: $(OUTDIR)/shared.dat $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+clprogs: $(OUTDIR)/shared.dat
+clprogs: $(OUTDIR)/clprogs.dat
+svprogs: $(OUTDIR)/svprogs.dat
+
+del:
+	rm $(OUTDIR)/shared.dat $(OUTDIR)/clprogs.dat $(OUTDIR)/svprogs.dat
+
+$(OUTDIR)/shared.dat: $(VCC) $(srcdir)/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc
+	@mkdir -p $(OUTDIR)
+	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/hexndefs.vc $@
+
+$(OUTDIR)/clprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/cgame/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/client/*.vc
+	@mkdir -p $(OUTDIR)
+	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/clprogs.vc $@
+
+$(OUTDIR)/svprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/game/*.vc $(COMMON_DIR)/*.vc $(COMMON_DIR)/shared/*.vc $(COMMON_DIR)/server/*.vc
+	@mkdir -p $(OUTDIR)
+	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/svprogs.vc $@

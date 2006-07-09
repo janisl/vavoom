@@ -1315,3 +1315,25 @@
 26.06.2006
   Converted source files to UTF-8, updated copyright year and deleted old logs
  (once I'm changing all of the files).
+28.06.2006
+  Properly free default value string of console variables that were created by
+ progs.
+  Fixed loading of Strife conversation scripts.
+  Created class for MUS to MIDI converter, removed track size limit.
+29.06.2006
+  Fixed Allegro OpenGL driver.
+  Use Timidity on Unix systems by default.
+30.06.2006
+  Fixed class and struct size and offset calculations on 64-bit platforms with
+ proper alignments.
+  Fixed crashes in shutdown functions in a case there was an error during
+ startup.
+04.07.2006
+  Removed usage of old dword type.
+05.07.2006
+  Created an audio class, all sound effect and music playback moved to this
+ class. Also changed sound sequence node to be a class.
+06.07.2006
+  Got a chance to test it on a 64 bit system. After some bug fixes it runs.
+  Also moved sound sequence functions to audio class.
+  In utilities got rid of usage of the old types byte, word and dword.

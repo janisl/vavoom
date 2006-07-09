@@ -29,7 +29,7 @@
 //**
 //**************************************************************************
 
-#define ZONE_DEBUG		1
+//#define ZONE_DEBUG		1
 
 class ZoneError : public VavoomError
 {

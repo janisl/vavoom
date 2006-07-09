@@ -1,11 +1,12 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
 CXX=@CXX@
-CXXFLAGS=@CXXFLAGS@
+CXXFLAGS=@VCC_CXXFLAGS@
+CPPFLAGS=@VCC_CPPFLAGS@
 EXEEXT=@EXEEXT@
-LIB_STDCXX=@LIB_STDCXX@
+LDFLAGS=@VCC_LDFLAGS@
+LIBS=@VCC_LIBS@
 OBJEXT=@OBJEXT@
-
-LIBS=$(LIB_STDCXX)
-CXXFLAGS += -Wall
 
 OBJS = \
 	cmdlib.$(OBJEXT) \
@@ -35,13 +36,15 @@ OBJS = \
 all: ../bin/vcc$(EXEEXT)
 
 ../bin/vcc$(EXEEXT): $(OBJS)
-	$(CXX) -s -o $@ $^ $(LIBS)
+	@mkdir -p ../bin
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)
 
-%.$(OBJEXT) : %.cpp vcc.h ../../source/progdefs.h ../common/cmdlib.h ../common/array.h
-	$(CXX) $(CXXFLAGS) -I../common -c -o $@ $<
+%.$(OBJEXT) : $(srcdir)/%.cpp $(srcdir)/vcc.h $(top_srcdir)/source/progdefs.h $(srcdir)/../common/cmdlib.h $(srcdir)/../common/array.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -I$(srcdir)/../common -c -o $@ $<
 
-%.$(OBJEXT) : ../common/%.cpp ../common/cmdlib.h ../common/array.h
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+%.$(OBJEXT) : $(srcdir)/../common/%.cpp $(srcdir)/../common/cmdlib.h $(srcdir)/../common/array.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
-vcpp/%.$(OBJEXT) : vcpp/%.cpp vcpp/cpp.h
+vcpp/%.$(OBJEXT) : $(srcdir)/vcpp/%.cpp $(srcdir)/vcpp/cpp.h
+	@mkdir -p vcpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

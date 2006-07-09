@@ -1,0 +1,27 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+
+ifndef VCC
+VCC = vcc
+endif
+
+ifndef OUTDIR
+OUTDIR=.
+endif
+
+all: $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat
+
+del:
+	rm $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat
+
+$(OUTDIR)/common.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/shared/*.vc
+	@mkdir -p $(OUTDIR)
+	$(VCC) -P$(OUTDIR) $(srcdir)/common.vc $@
+
+$(OUTDIR)/clcommon.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/shared/*.vc $(srcdir)/client/*.vc
+	@mkdir -p $(OUTDIR)
+	$(VCC) -P$(OUTDIR) $(srcdir)/clcommon.vc $@
+
+$(OUTDIR)/svcommon.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/shared/*.vc $(srcdir)/server/*.vc
+	@mkdir -p $(OUTDIR)
+	$(VCC) -P$(OUTDIR) $(srcdir)/svcommon.vc $@

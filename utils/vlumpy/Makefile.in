@@ -1,13 +1,12 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
 CXX=@CXX@
-CXXFLAGS=@CXXFLAGS@
+CXXFLAGS=@VLUMPY_CXXFLAGS@
+CPPFLAGS=@VLUMPY_CPPFLAGS@
 EXEEXT=@EXEEXT@
-LIB_MATH=@LIB_MATH@
-LIB_STDCXX=@LIB_STDCXX@
+LDFLAGS=@VLUMPY_LDFLAGS@
+LIBS=@VLUMPY_LIBS@
 OBJEXT=@OBJEXT@
-
-LIBS=$(LIB_MATH) $(LIB_STDCXX)
-
-CXXFLAGS += -Wall
 
 OBJS = cmdlib.$(OBJEXT) \
 	imglib.$(OBJEXT) \
@@ -18,10 +17,11 @@ OBJS = cmdlib.$(OBJEXT) \
 all: ../bin/vlumpy$(EXEEXT)
 
 ../bin/vlumpy$(EXEEXT): $(OBJS)
-	$(CXX) -s -o $@ $(OBJS) $(LIBS)
+	@mkdir -p ../bin
+	$(CXX) -o $@ $(OBJS) $(LDFLAGS) $(LIBS)
 
-%.$(OBJEXT): %.cpp ../common/*.h
-	$(CXX) $(CXXFLAGS) -I../common -c -o $@ $<
+%.$(OBJEXT): $(srcdir)/%.cpp $(srcdir)/../common/*.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -I$(srcdir)/../common -c -o $@ $<
 
-%.$(OBJEXT): ../common/%.cpp ../common/*.h
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+%.$(OBJEXT): $(srcdir)/../common/%.cpp $(srcdir)/../common/*.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<

@@ -1,6 +1,11 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
 CC=@CC@
-CFLAGS=@CFLAGS@
+CFLAGS=@ACC_CFLAGS@
+CPPFLAGS=@ACC_CPPFLAGS@
 EXEEXT=@EXEEXT@
+LDFLAGS=@ACC_LDFLAGS@
+LIBS=@ACC_LIBS@
 OBJEXT=@OBJEXT@
 
 CFLAGS += -Wall
@@ -18,7 +23,8 @@ OBJS = \
 all: ../bin/acc$(EXEEXT)
 
 ../bin/acc$(EXEEXT): $(OBJS)
-	$(CC) -s -o $@ $^
+	@mkdir -p ../bin
+	$(CC) $(LDFLAGS) $(LIBS) -o $@ $^
 
-%.$(OBJEXT) : %.c *.h
-	$(CC) $(CFLAGS) -c -o $@ $<
+%.$(OBJEXT) : $(srcdir)/%.c $(srcdir)/*.h
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
