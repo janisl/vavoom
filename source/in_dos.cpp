@@ -584,5 +584,5 @@ void VDosInputDevice::ShutdownJoystick()
 
 VInputDevice* VInput::CreateDevice()
 {
-	return new VAllegroInputDevice();
+	return new VDosInputDevice();
 }

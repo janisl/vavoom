@@ -447,7 +447,7 @@ void Sys_Quit(const char* EndText)
 	// Throw the end text at the screen
 	if (EndText)
 	{
-		puttext(1, 1, 80, 25, EndText);
+		puttext(1, 1, 80, 25, const_cast<char*>(EndText));
 		gotoxy(1, 24);
 	}
 

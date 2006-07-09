@@ -391,7 +391,7 @@ int VBeameWhitesideDriver::OpenSocket(int port)
 		*(short *)&bind_msg[1] = port;
 		if (BW_ioctl(s, bind_msg, 3))
 		{
-			BW_CloseSocket(s);
+			CloseSocket(s);
 			return -1;
 		}
 		return s;
