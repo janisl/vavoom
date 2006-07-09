@@ -1337,3 +1337,12 @@
   Got a chance to test it on a 64 bit system. After some bug fixes it runs.
   Also moved sound sequence functions to audio class.
   In utilities got rid of usage of the old types byte, word and dword.
+08.07.2006
+  Started to improve configure script and build system, to properly check for
+ all libraries and to be able to build outside source directory.
+09.07.2006
+  Finished with build system, some small fixes before release.
+
+******************************************************************************
+                            VERSION 1.21
+******************************************************************************

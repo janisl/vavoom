@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.20
+                                                    Version 1.21
 
 Contents:
     0. Disclaimer
@@ -21,7 +21,7 @@ Contents:
     5. Command line parameters
     6. Differences from original game
     7. Version history
-    8. Licencing
+    8. Licensing
     9. Links
 
 *****************************************************************************
@@ -109,7 +109,7 @@ Libraries:
 Optional:
     * OpenAL (http://www.openal.org), the source must be checked out from the
   CVS repository. You will find info on this on OpenAL website or at Creative
-  developer center (http://developer.creative.com).
+  developer centre (http://developer.creative.com).
     * libvorbis (http://www.vorbis.com)
     * libmad (http://www.underbit.com/products/mad/)
     * mikmod (http://mikmod.raphnet.net/)
@@ -122,7 +122,7 @@ Step by step:
 
   1. Unpack the Vavoom source package:
 
-    tar xvjf vavoom-1.19.tar.bz2
+    tar xvjf vavoom-1.21.tar.bz2
 
   If you got the zip file instead of tarball then you must run fixunix.sh to
 convert text files to UNIX format:
@@ -169,29 +169,12 @@ a symbolic link to it:
 card, save the changes and then copy allegro.cfg into Vavoom directory.
 
 ==============================================================================
-3.3 Compiling LINUX / UNIX dedicated server
-==============================================================================
-
-Compiler and tools:
-    * GNU C++ Compiler, GNU make
-
-  Compilation of dedicated server is similar to normal installation, except
-you compile it with:
-
-    make sv
-
-  And then you install it with:
-
-    su -c "make installsv"
-
-==============================================================================
-3.4 Other source code compiling information for developers
+3.3 Other source code compiling information for developers
 ==============================================================================
 
 For DOS you need
   Compiler and tools:
-      * DJGPP (http://www.delorie.com/djgpp)
-      * GNU make or RHIDE
+      * DJGPP (http://www.delorie.com/djgpp) with gcc, make and bash
   Libraries:
       * zlib
       * libpng
@@ -201,9 +184,7 @@ For DOS you need
 
 For Windows you need:
   Compiler and tools:
-      * Borland C Compiler with Borland Turbo Assembler or Borland C++
-    Builder 5.0 (http://www.borland.com) Compiler itself is freeware, but I
-    don't know how about TASM.
+      * MinGW and MSYS (http://www.mingw.org).
   or:
       * Microsoft Visual C++ 6.0.
       * DJGPP (http://www.delorie.com/djgpp) - used to compile asm files.
@@ -216,7 +197,7 @@ For Windows you need:
     DirectX 7 SDK.
       * EAX 2.0 SDK (http://developer.creative.com/).
       * OpenAL SDK (http://developer.creative.com), you must create directory
-    AL in your compiler’s include directory and copy OpenAL include files here.
+    AL in your compilers include directory and copy OpenAL include files here.
       * libvorbis (http://www.vorbis.com)
       * libmad (http://www.underbit.com/products/mad/)
       * mikmod (http://mikmod.raphnet.net/)
@@ -419,7 +400,7 @@ call frame traceback
 *****************************************************************************
 
     - Support higher (and lower ;-) resolutions.
-    - 16 and 32 bit colors for all the drivers, 24 bit for OpenGL and Direct3D.
+    - 16 and 32 bit colours for all the drivers, 24 bit for OpenGL and Direct3D.
     - Polygon-based software rendering.
     - OpenGL rendering.
     - Direct3D rendering.
@@ -577,7 +558,7 @@ Version 1.666 BETA 1
 * Wider look range
 * Tilted death view.
 * Skyboxes
-* 16 bit colors
+* 16 bit colours
 * Early OpenGL rendering
 * Added builtins for retrieving texture/flat num from name. To use them open
  file builtins.c in directory common and in section of common builtins add
@@ -638,7 +619,7 @@ Version 1.7 BETA 1
  rest of the menu code and also intermission and finale.
 * Level identification by name.
 * Sprite name list is sent from server. Disabled character cast in Doom 2
- finale. Client doesn’t need server progs anymore.
+ finale. Client doesnt need server progs anymore.
 * Testing support for Strife.
 * Possibility to use wall textures on floors/ceilings and flats on walls.
 * Reworked memory manager to have less memory leaks.
@@ -646,7 +627,7 @@ Version 1.7 BETA 1
 * Terrain type script.
 * Center messages.
 * Translation tables loaded from wad file.
-* Correct player colors.
+* Correct player colours.
 
 ==============================================================================
 Version 1.7 BETA 2
@@ -655,8 +636,8 @@ Version 1.7 BETA 2
 * In Doom/Doom2 walking over/under other things.
 * 3D floors!
 * Translucent floors.
-* Palette color shifts. Currently used only for contents but soon all PLAYPAL
- entries will be replaced with color shifts.
+* Palette colour shifts. Currently used only for contents but soon all PLAYPAL
+ entries will be replaced with colour shifts.
 * Underwater effect.
 * Increased anims limit for retail Strife.
 * Config not saved on error.
@@ -714,7 +695,7 @@ Version 1.8
 * Mipmapping.
 * Sorted edge rasterization.
 * Static light sources.
-* 32 bpp colors.
+* 32 bpp colours.
 * Colored lighting.
 * Console alias saved in config.
 * Progs virtual machine now allocates local vars from progs stack.
@@ -730,7 +711,7 @@ Version 1.9
 * Mipmapping for OpenGL and Direct3D
 * Multitexture support in OpenGL.
 * Automap works in OpenGL and Direct3D
-* Configurable automap colors.
+* Configurable automap colours.
 * Reworked filesystem. Now Vavoom uses a filesystem similar to Quake.
 * Some client/server improvements.
 * Up to 8 sounds per entity.
@@ -841,7 +822,7 @@ Version 1.15 BETA 1
 * Fixed screenshots.
 * Slope creation with vertex heights.
 * ZDoom's sloping specials.
-* Support for colored sector light.
+* Support for coloured sector light.
 * Configurable entity limit.
 * Support for old aspect ratio (console variable old_aspect).
 
@@ -960,8 +941,25 @@ Version 1.20
 * Added lighting effects to Strife.
 * Implemented previous / next weapon commands.
 
+==============================================================================
+Version 1.21
+==============================================================================
+
+* A lots of work to make it work on 64-bit systems.
+* Removed old zone memory allocator, now uses standard libc methods.
+* Many changes to the internal architecture.
+* Added support for TGA high-resolution textures.
+* Improvements to monster behaviour, physics and automap.
+* Build system improvements, changed installation procedure on Unix systems.
+* Implemented support for specification of additional directories where to look
+ for IWAD files.
+* Fixed usage of sound sequences in all games.
+* Added support for dynamic strings in VavoomC.
+* Changed default virtual screen resolution to 640x480.
+* Use Timidity on Unix systems by default.
+
 *****************************************************************************
-8. Licencing
+8. Licensing
 *****************************************************************************
 
     Vavoom is distributed under terms of GNU General Public Licence.
