@@ -950,7 +950,10 @@ void VDirectSoundDevice::SetStreamData(short*, int)
 void VDirectSoundDevice::SetStreamVolume(float Volume)
 {
 	guard(VDirectSoundDevice::SetStreamVolume);
-	StrmBuffer->SetVolume(int(4000 * (Volume - 1.0)));
+	if (StrmBuffer)
+	{
+		StrmBuffer->SetVolume(int(4000 * (Volume - 1.0)));
+	}
 	unguard;
 }
 
@@ -963,7 +966,10 @@ void VDirectSoundDevice::SetStreamVolume(float Volume)
 void VDirectSoundDevice::PauseStream()
 {
 	guard(VDirectSoundDevice::PauseStream);
-	StrmBuffer->Stop();
+	if (StrmBuffer)
+	{
+		StrmBuffer->Stop();
+	}
 	unguard;
 }
 
@@ -976,6 +982,9 @@ void VDirectSoundDevice::PauseStream()
 void VDirectSoundDevice::ResumeStream()
 {
 	guard(VDirectSoundDevice::ResumeStream);
-	StrmBuffer->Play(0, 0, DSBPLAY_LOOPING);
+	if (StrmBuffer)
+	{
+		StrmBuffer->Play(0, 0, DSBPLAY_LOOPING);
+	}
 	unguard;
 }
