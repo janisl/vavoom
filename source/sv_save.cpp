@@ -498,6 +498,10 @@ static void ArchiveThinkers()
 	*Saver << Seg;
 
 	Saver->ObjectsMap.SetNum(VObject::GetObjectsCount());
+	for (int i = 0; i < VObject::GetObjectsCount(); i++)
+	{
+		Saver->ObjectsMap[i] = 0;
+	}
 
 	//	Add level
 	Saver->Exports.Append(GLevel);
