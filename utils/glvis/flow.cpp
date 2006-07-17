@@ -101,6 +101,7 @@ void TVisBuilder::BasePortalVis()
 		Owner.DisplayBaseVisProgress(i, numportals);
 
 		p->mightsee = new vuint8[bitbytes];
+		memset(p->mightsee, 0, bitbytes);
 		
 		c_portalsee = 0;
 		memset(portalsee, 0, numportals);
@@ -177,9 +178,7 @@ void TVisBuilder::FreeWinding(winding_t *w)
 
 winding_t *TVisBuilder::CopyWinding(winding_t *w)
 {
-	winding_t	*c;
-	
-	c = new winding_t;
+	winding_t* c = new winding_t;
 	c->points[0] = w->points[0];
 	c->points[1] = w->points[1];
 	c->original = false;
@@ -391,6 +390,7 @@ void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 	stack.leaf = leaf;
 	stack.portal = NULL;
 	stack.mightsee = new vuint8[bitbytes];
+	memset(stack.mightsee, 0, bitbytes);
 	might = (long *)stack.mightsee;
 	vis = (long *)thread->leafvis;
 	
@@ -523,6 +523,7 @@ void TVisBuilder::PortalFlow(portal_t *p)
 	p->status = stat_working;
 	
 	p->visbits = new vuint8[bitbytes];
+	memset(p->visbits, 0, bitbytes);
 
 	memset(&data, 0, sizeof(data));
 	data.leafvis = p->visbits;
@@ -692,6 +693,7 @@ void TVisBuilder::BuildPVS()
 	totalvis = 0;
 	vissize = rowbytes * numsubsectors;
 	vis = new vuint8[vissize];
+	memset(vis, 0, vissize);
 	for (i = 0; i < numsubsectors; i++)
 	{
 		LeafFlow(i);
