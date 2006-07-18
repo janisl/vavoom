@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.21
+                                                  Version 1.21.1
 
 Contents:
     0. Disclaimer
@@ -957,6 +957,13 @@ Version 1.21
 * Added support for dynamic strings in VavoomC.
 * Changed default virtual screen resolution to 640x480.
 * Use Timidity on Unix systems by default.
+
+==============================================================================
+Version 1.21.1
+==============================================================================
+
+* Fixed crash in glVIS.
+* Fixed crash when traveling to already visited map.
 
 *****************************************************************************
 8. Licensing
