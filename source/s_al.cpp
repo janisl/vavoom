@@ -39,6 +39,10 @@
 #include "gamedefs.h"
 #include "s_local.h"
 
+#ifndef AL_VERSION_1_1
+typedef ALchar ALubyte;
+#endif
+
 class VOpenALDevice : public VSoundDevice
 {
 private:
@@ -165,11 +169,11 @@ bool VOpenALDevice::Init()
 	}
 	Z_Free(sbuf);
 
-	if (alIsExtensionPresent((ALubyte *)"EAX"))
+	if (alIsExtensionPresent((ALchar*)"EAX"))
 	{
 		GCon->Log(NAME_Init, "EAX 2.0 supported");
-		pEAXSet = (EAXSet)alGetProcAddress((ALubyte *)"EAXSet");
-		pEAXGet = (EAXGet)alGetProcAddress((ALubyte *)"EAXGet");
+		pEAXSet = (EAXSet)alGetProcAddress((ALchar*)"EAXSet");
+		pEAXGet = (EAXGet)alGetProcAddress((ALchar*)"EAXGet");
 		supportEAX = true;
 	}
 
