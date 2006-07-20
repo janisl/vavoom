@@ -155,7 +155,7 @@ extern	size_t output_size;
 
 extern "C" {
 extern int creat(char *, int);
-extern int open(char *, int);
+extern int open(char *, int, ...);
 extern int close(int);
 extern int dup2(int, int);
 extern int write(int, const void *, size_t);
