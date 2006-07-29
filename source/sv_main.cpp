@@ -2789,8 +2789,8 @@ void SV_ConnectClient(VBasePlayer *player)
 void SV_CheckForNewClients()
 {
 	guard(SV_CheckForNewClients);
-	VSocket	*sock;
-	int			i;
+	VSocketPublic*	sock;
+	int				i;
 		
 	//
 	// check for new connections
@@ -2828,8 +2828,8 @@ void SV_SetUserInfo(const VStr& info);
 void SV_ConnectBot(const char *name)
 {
 	guard(SV_ConnectBot);
-	VSocket	*sock;
-	int			i;
+	VSocketPublic*	sock;
+	int				i;
 		
 	GNet->ConnectBot = true;
 	sock = GNet->CheckNewConnections();

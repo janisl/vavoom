@@ -142,7 +142,7 @@ int VWinIpxDriver::Init()
 	if (gethostname(buff, MAXHOSTNAMELEN) == 0)
 	{
 		// if the Vavoom hostname isn't set, set it to the machine name
-		if (strcmp(VNetwork::HostName, "UNNAMED") == 0)
+		if (strcmp(VNetworkPublic::HostName, "UNNAMED") == 0)
 		{
 			// see if it's a text IP address (well, close enough)
 			for (p = buff; *p; p++)
@@ -157,7 +157,7 @@ int VWinIpxDriver::Init()
 						break;
 				buff[i] = 0;
 			}
-			VNetwork::HostName = buff;
+			VNetworkPublic::HostName = buff;
 		}
 	}
 
@@ -173,16 +173,16 @@ int VWinIpxDriver::Init()
 	((sockaddr_ipx*)&broadcastaddr)->sa_family = AF_IPX;
 	memset(((sockaddr_ipx*)&broadcastaddr)->sa_netnum, 0, 4);
 	memset(((sockaddr_ipx*)&broadcastaddr)->sa_nodenum, 0xff, 6);
-	((sockaddr_ipx*)&broadcastaddr)->sa_socket = htons((vuint16)GNet->HostPort);
+	((sockaddr_ipx*)&broadcastaddr)->sa_socket = htons((vuint16)Net->HostPort);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(GNet->MyIpxAddress, AddrToString(&addr));
-	p = strrchr(GNet->MyIpxAddress, ':');
+	strcpy(Net->MyIpxAddress, AddrToString(&addr));
+	p = strrchr(Net->MyIpxAddress, ':');
 	if (p)
 		*p = 0;
 
 	GCon->Log(NAME_Init, "Winsock IPX Initialised");
-	GNet->IpxAvailable = true;
+	Net->IpxAvailable = true;
 
 	return net_controlsocket;
 	unguard;
@@ -218,7 +218,7 @@ void VWinIpxDriver::Listen(bool state)
 	{
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(GNet->HostPort);
+			net_acceptsocket = OpenSocket(Net->HostPort);
 			if (net_acceptsocket == -1)
 				Sys_Error("WIPX_Listen: Unable to open accept socket\n");
 		}
@@ -528,12 +528,12 @@ int VWinIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 
 	if (n == 12)
 	{
-		sprintf(buf, "00000000:%s:%u", name, GNet->HostPort);
+		sprintf(buf, "00000000:%s:%u", name, Net->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n == 21)
 	{
-		sprintf(buf, "%s:%u", name, GNet->HostPort);
+		sprintf(buf, "%s:%u", name, Net->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n > 21 && n <= 27)

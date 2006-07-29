@@ -220,13 +220,14 @@ int VDatagramDriver::Init()
 	if (GArgs.CheckParm("-nolan"))
 		return -1;
 
-	for (int i = 0; i < VNetwork::NumLanDrivers; i++)
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
 	{
-		int csock = VNetwork::LanDrivers[i]->Init();
+		VNetworkLocal::LanDrivers[i]->Net = Net;
+		int csock = VNetworkLocal::LanDrivers[i]->Init();
 		if (csock == -1)
 			continue;
-		VNetwork::LanDrivers[i]->initialised = true;
-		VNetwork::LanDrivers[i]->controlSock = csock;
+		VNetworkLocal::LanDrivers[i]->initialised = true;
+		VNetworkLocal::LanDrivers[i]->controlSock = csock;
 	}
 
 	return 0;
@@ -242,9 +243,9 @@ int VDatagramDriver::Init()
 void VDatagramDriver::Listen(bool state)
 {
 	guard(VDatagramDriver::Listen);
-	for (int i = 0; i < VNetwork::NumLanDrivers; i++)
-		if (VNetwork::LanDrivers[i]->initialised)
-			VNetwork::LanDrivers[i]->Listen(state);
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
+		if (VNetworkLocal::LanDrivers[i]->initialised)
+			VNetworkLocal::LanDrivers[i]->Listen(state);
 	unguard;
 }
 
@@ -265,7 +266,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 	int			n;
 	int			i;
 
-	VMessage& msg = GNet->NetMsg;
+	VMessage& msg = Net->NetMsg;
 
 	Drv->GetSocketAddr(Drv->controlSock, &myaddr);
 	if (xmit)
@@ -292,7 +293,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 			continue;
 
 		// is the cache full?
-		if (GNet->HostCacheCount == HOSTCACHESIZE)
+		if (Net->HostCacheCount == HOSTCACHESIZE)
 			continue;
 
 		msg.BeginReading();
@@ -316,49 +317,49 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		addr = Drv->AddrToString(&readaddr);
 
 		// search the cache for this server
-		for (n = 0; n < GNet->HostCacheCount; n++)
-			if (GNet->HostCache[n].CName == addr)
+		for (n = 0; n < Net->HostCacheCount; n++)
+			if (Net->HostCache[n].CName == addr)
 				break;
 
 		// is it already there?
-		if (n < GNet->HostCacheCount)
+		if (n < Net->HostCacheCount)
 			continue;
 
 		// add it
-		GNet->HostCacheCount++;
+		Net->HostCacheCount++;
 		msg >> str;
-		GNet->HostCache[n].Name = str;
+		Net->HostCache[n].Name = str;
 		msg >> str;
-		GNet->HostCache[n].Map = str;
-		GNet->HostCache[n].Users = msg.ReadByte();
-		GNet->HostCache[n].MaxUsers = msg.ReadByte();
+		Net->HostCache[n].Map = str;
+		Net->HostCache[n].Users = msg.ReadByte();
+		Net->HostCache[n].MaxUsers = msg.ReadByte();
 		if (msg.ReadByte() != NET_PROTOCOL_VERSION)
 		{
-			GNet->HostCache[n].Name = VStr("*") + GNet->HostCache[n].Name;
+			Net->HostCache[n].Name = VStr("*") + Net->HostCache[n].Name;
 		}
-		GNet->HostCache[n].CName = addr;
+		Net->HostCache[n].CName = addr;
 		i = 0;
 		do
 		{
 			msg >> str;
-			GNet->HostCache[n].WadFiles[i++] = str;
+			Net->HostCache[n].WadFiles[i++] = str;
 		}  while (*str);
 
 		// check for a name conflict
-		for (i = 0; i < GNet->HostCacheCount; i++)
+		for (i = 0; i < Net->HostCacheCount; i++)
 		{
 			if (i == n)
 				continue;
-			if (GNet->HostCache[n].Name.ICmp(GNet->HostCache[i].Name) == 0)
+			if (Net->HostCache[n].Name.ICmp(Net->HostCache[i].Name) == 0)
 			{
-				i = GNet->HostCache[n].Name.Length();
-				if (i < 15 && GNet->HostCache[n].Name[i - 1] > '8')
+				i = Net->HostCache[n].Name.Length();
+				if (i < 15 && Net->HostCache[n].Name[i - 1] > '8')
 				{
-					GNet->HostCache[n].Name += '0';
+					Net->HostCache[n].Name += '0';
 				}
 				else
 				{
-					GNet->HostCache[n].Name[i - 1]++;
+					Net->HostCache[n].Name[i - 1]++;
 				}
 				i = -1;
 			}
@@ -376,12 +377,12 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 void VDatagramDriver::SearchForHosts(bool xmit)
 {
 	guard(Datagram_SearchForHosts);
-	for (int i = 0; i < VNetwork::NumLanDrivers; i++)
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
 	{
-		if (GNet->HostCacheCount == HOSTCACHESIZE)
+		if (Net->HostCacheCount == HOSTCACHESIZE)
 			break;
-		if (VNetwork::LanDrivers[i]->initialised)
-			SearchForHosts(VNetwork::LanDrivers[i], xmit);
+		if (VNetworkLocal::LanDrivers[i]->initialised)
+			SearchForHosts(VNetworkLocal::LanDrivers[i], xmit);
 	}
 	unguard;
 }
@@ -408,7 +409,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	byte			msgtype;
 	int				newport;
 
-	VMessage& msg = GNet->NetMsg;
+	VMessage& msg = Net->NetMsg;
 
 	// see if we can resolve the host name
 	if (Drv->GetAddrFromName(host, &sendaddr) == -1)
@@ -418,7 +419,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	if (newsock == -1)
 		return NULL;
 
-	sock = GNet->NewSocket(this);
+	sock = Net->NewSocket(this);
 	if (sock == NULL)
 		goto ErrorReturn2;
 	sock->LanSocket = newsock;
@@ -430,7 +431,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 
 	// send the connection request
 	GCon->Log("trying..."); SCR_Update();
-	start_time = GNet->NetTime;
+	start_time = Net->NetTime;
 
 	for (reps = 0; reps < 3; reps++)
 	{
@@ -485,18 +486,18 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 				}
 			}
 		}
-		while (ret == 0 && (GNet->SetNetTime() - start_time) < 2.5);
+		while (ret == 0 && (Net->SetNetTime() - start_time) < 2.5);
 		if (ret)
 			break;
 		GCon->Log("still trying..."); SCR_Update();
-		start_time = GNet->SetNetTime();
+		start_time = Net->SetNetTime();
 	}
 
 	if (ret == 0)
 	{
 		reason = "No Response";
 		GCon->Log(reason);
-		strcpy(GNet->ReturnReason, reason);
+		strcpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -504,7 +505,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Network Error";
 		GCon->Log(reason);
-		strcpy(GNet->ReturnReason, reason);
+		strcpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -513,7 +514,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		msg >> reason;
 		GCon->Log(reason);
-		strncpy(GNet->ReturnReason, reason, 31);
+		strncpy(Net->ReturnReason, reason, 31);
 		goto ErrorReturn;
 	}
 
@@ -521,7 +522,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Bad Response";
 		GCon->Log(reason);
-		strcpy(GNet->ReturnReason, reason);
+		strcpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -533,14 +534,14 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	sock->Address = Drv->GetNameFromAddr(&sendaddr);
 
 	GCon->Log("Connection accepted");
-	sock->LastMessageTime = GNet->SetNetTime();
+	sock->LastMessageTime = Net->SetNetTime();
 
 	// switch the connection to the specified address
 	if (Drv->Connect(newsock, &sock->Addr) == -1)
 	{
 		reason = "Connect to Game failed";
 		GCon->Log(reason);
-		strcpy(GNet->ReturnReason, reason);
+		strcpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -548,7 +549,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	return sock;
 
 ErrorReturn:
-	GNet->FreeSocket(sock);
+	Net->FreeSocket(sock);
 ErrorReturn2:
 	Drv->CloseSocket(newsock);
 //	if (m_return_onerror)
@@ -571,11 +572,11 @@ ErrorReturn2:
 VSocket* VDatagramDriver::Connect(const char* host)
 {
 	guard(Datagram_Connect);
-	for (int i = 0; i < VNetwork::NumLanDrivers; i++)
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
 	{
-		if (VNetwork::LanDrivers[i]->initialised)
+		if (VNetworkLocal::LanDrivers[i]->initialised)
 		{
-			VSocket* ret = Connect(VNetwork::LanDrivers[i], host);
+			VSocket* ret = Connect(VNetworkLocal::LanDrivers[i], host);
 			if (ret)
 			{
 				return ret;
@@ -608,7 +609,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	int			ret;
 	const char*	gamename;
 
-	VMessage& msg = GNet->NetMsg;
+	VMessage& msg = Net->NetMsg;
 
 	acceptsock = Drv->CheckNewConnections();
 	if (acceptsock == -1)
@@ -642,7 +643,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 		// save space for the header, filled in later
 		msg << 0
 			<< (byte)CCREP_SERVER_INFO
-			<< (const char*)VNetwork::HostName
+			<< (const char*)VNetworkLocal::HostName
 			<< *level.MapName
 			<< (byte)svs.num_connected
 			<< (byte)svs.max_clients
@@ -678,7 +679,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	}
 */
 	// see if this guy is already connected
-	for (s = GNet->ActiveSockets; s; s = s->Next)
+	for (s = Net->ActiveSockets; s; s = s->Next)
 	{
 		if (s->Driver != this)
 			continue;
@@ -686,7 +687,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 		if (ret >= 0)
 		{
 			// is this a duplicate connection reqeust?
-			if (ret == 0 && GNet->NetTime - s->ConnectTime < 2.0)
+			if (ret == 0 && Net->NetTime - s->ConnectTime < 2.0)
 			{
 				// yes, so send a duplicate reply
 				msg.Clear();
@@ -708,7 +709,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	}
 
 	// allocate a QSocket
-	sock = GNet->NewSocket(this);
+	sock = Net->NewSocket(this);
 	if (sock == NULL)
 	{
 		// no room; try to let him know
@@ -727,7 +728,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	newsock = Drv->OpenSocket(0);
 	if (newsock == -1)
 	{
-		GNet->FreeSocket(sock);
+		Net->FreeSocket(sock);
 		return NULL;
 	}
 
@@ -735,7 +736,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	if (Drv->Connect(newsock, &clientaddr) == -1)
 	{
 		Drv->CloseSocket(newsock);
-		GNet->FreeSocket(sock);
+		Net->FreeSocket(sock);
 		return NULL;
 	}
 
@@ -773,11 +774,11 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 VSocket* VDatagramDriver::CheckNewConnections()
 {
 	guard(VDatagramDriver::CheckNewConnections);
-	for (int i = 0; i < VNetwork::NumLanDrivers; i++)
+	for (int i = 0; i < Net->NumLanDrivers; i++)
 	{
-		if (VNetwork::LanDrivers[i]->initialised)
+		if (Net->LanDrivers[i]->initialised)
 		{
-			VSocket* ret = CheckNewConnections(VNetwork::LanDrivers[i]);
+			VSocket* ret = CheckNewConnections(Net->LanDrivers[i]);
 			if (ret != NULL)
 				return ret;
 		}
@@ -806,7 +807,7 @@ int VDatagramDriver::GetMessage(VSocket* sock)
 	vuint32		count;
 
 	//	Resend message if needed.
-	if (!sock->CanSend && (GNet->NetTime - sock->LastSendTime) > 1.0)
+	if (!sock->CanSend && (Net->NetTime - sock->LastSendTime) > 1.0)
 		ReSendMessage(sock);
 
 	while(1)
@@ -905,8 +906,8 @@ int VDatagramDriver::GetMessage(VSocket* sock)
 
 			length -= NET_HEADERSIZE;
 
-			GNet->NetMsg.Clear();
-			GNet->NetMsg.Write(packetBuffer.data, length);
+			Net->NetMsg.Clear();
+			Net->NetMsg.Write(packetBuffer.data, length);
 
 			ret = 2;
 			break;
@@ -966,10 +967,10 @@ int VDatagramDriver::GetMessage(VSocket* sock)
 
 			if (flags & NETFLAG_EOM)
 			{
-				GNet->NetMsg.Clear();
-				GNet->NetMsg.Write(sock->ReceiveMessageData,
+				Net->NetMsg.Clear();
+				Net->NetMsg.Write(sock->ReceiveMessageData,
 					sock->ReceiveMessageLength);
-				GNet->NetMsg.Write(packetBuffer.data, length);
+				Net->NetMsg.Write(packetBuffer.data, length);
 				sock->ReceiveMessageLength = 0;
 
 				ret = 1;
@@ -1079,7 +1080,7 @@ int VDatagramDriver::SendMessage(VSocket* sock, VMessage* data)
 		return -1;
 	}
 
-	sock->LastSendTime = GNet->NetTime;
+	sock->LastSendTime = Net->NetTime;
 	packetsSent++;
 	return 1;
 	unguard;
@@ -1120,7 +1121,7 @@ int VDatagramDriver::SendMessageNext(VSocket* sock)
 		return -1;
 	}
 
-	sock->LastSendTime = GNet->NetTime;
+	sock->LastSendTime = Net->NetTime;
 	packetsSent++;
 	return 1;
 	unguard;
@@ -1160,7 +1161,7 @@ int VDatagramDriver::ReSendMessage(VSocket* sock)
 		return -1;
 	}
 
-	sock->LastSendTime = GNet->NetTime;
+	sock->LastSendTime = Net->NetTime;
 	packetsReSent++;
 	return 1;
 	unguard;
@@ -1251,12 +1252,12 @@ void VDatagramDriver::Shutdown()
 	//
 	// shutdown the lan drivers
 	//
-	for (int i = 0; i < VNetwork::NumLanDrivers; i++)
+	for (int i = 0; i < Net->NumLanDrivers; i++)
 	{
-		if (VNetwork::LanDrivers[i]->initialised)
+		if (Net->LanDrivers[i]->initialised)
 		{
-			VNetwork::LanDrivers[i]->Shutdown();
-			VNetwork::LanDrivers[i]->initialised = false;
+			Net->LanDrivers[i]->Shutdown();
+			Net->LanDrivers[i]->initialised = false;
 		}
 	}
 	unguard;
@@ -1287,12 +1288,13 @@ COMMAND(NetStats)
 	guard(COMMAND NetStats);
 	VSocket	*s;
 
+	VNetworkLocal* Net = (VNetworkLocal*)GNet;
 	if (Args.Num() == 1)
 	{
-		GCon->Logf("unreliable messages sent   = %d", GNet->UnreliableMessagesSent);
-		GCon->Logf("unreliable messages recv   = %d", GNet->UnreliableMessagesReceived);
-		GCon->Logf("reliable messages sent     = %d", GNet->MessagesSent);
-		GCon->Logf("reliable messages received = %d", GNet->MessagesReceived);
+		GCon->Logf("unreliable messages sent   = %d", Net->UnreliableMessagesSent);
+		GCon->Logf("unreliable messages recv   = %d", Net->UnreliableMessagesReceived);
+		GCon->Logf("reliable messages sent     = %d", Net->MessagesSent);
+		GCon->Logf("reliable messages received = %d", Net->MessagesReceived);
 		GCon->Logf("packetsSent                = %d", VDatagramDriver::packetsSent);
 		GCon->Logf("packetsReSent              = %d", VDatagramDriver::packetsReSent);
 		GCon->Logf("packetsReceived            = %d", VDatagramDriver::packetsReceived);
@@ -1302,18 +1304,18 @@ COMMAND(NetStats)
 	}
 	else if (Args[1] == "*")
 	{
-		for (s = GNet->ActiveSockets; s; s = s->Next)
+		for (s = Net->ActiveSockets; s; s = s->Next)
 			PrintStats(s);
-		for (s = GNet->FreeSockets; s; s = s->Next)
+		for (s = Net->FreeSockets; s; s = s->Next)
 			PrintStats(s);
 	}
 	else
 	{
-		for (s = GNet->ActiveSockets; s; s = s->Next)
+		for (s = Net->ActiveSockets; s; s = s->Next)
 			if (Args[1].ICmp(s->Address) == 0)
 				break;
 		if (s == NULL)
-			for (s = GNet->FreeSockets; s; s = s->Next)
+			for (s = Net->FreeSockets; s; s = s->Next)
 				if (Args[1].ICmp(s->Address) == 0)
 					break;
 		if (s == NULL)

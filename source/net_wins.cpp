@@ -153,7 +153,7 @@ int VWinSockDriver::Init()
 	}
 
 	// if the Vavoom hostname isn't set, set it to the machine name
-	if (strcmp(VNetwork::HostName, "UNNAMED") == 0)
+	if (strcmp(VNetworkPublic::HostName, "UNNAMED") == 0)
 	{
 		// see if it's a text IP address (well, close enough)
 		for (p = buff; *p; p++)
@@ -168,7 +168,7 @@ int VWinSockDriver::Init()
 					break;
 			buff[i] = 0;
 		}
-		VNetwork::HostName = buff;
+		VNetworkPublic::HostName = buff;
 	}
 
 	const char* pp = GArgs.CheckValue("-ip");
@@ -177,12 +177,12 @@ int VWinSockDriver::Init()
 		myAddr = inet_addr(pp);
 		if (myAddr == INADDR_NONE)
 			Sys_Error("%s is not a valid IP address", pp);
-		strcpy(GNet->MyIpAddress, pp);
+		strcpy(Net->MyIpAddress, pp);
 	}
 	else
 	{
 		myAddr = INADDR_ANY;
-		strcpy(GNet->MyIpAddress, "INADDR_ANY");
+		strcpy(Net->MyIpAddress, "INADDR_ANY");
 	}
 
     net_controlsocket = OpenSocket(0);
@@ -196,10 +196,10 @@ int VWinSockDriver::Init()
 
 	((sockaddr_in *)&broadcastaddr)->sin_family = AF_INET;
 	((sockaddr_in *)&broadcastaddr)->sin_addr.s_addr = INADDR_BROADCAST;
-	((sockaddr_in *)&broadcastaddr)->sin_port = htons((vuint16)GNet->HostPort);
+	((sockaddr_in *)&broadcastaddr)->sin_port = htons((vuint16)Net->HostPort);
 
 	GCon->Log(NAME_Init, "Winsock TCP/IP Initialised");
-	GNet->IpAvailable = true;
+	Net->IpAvailable = true;
 
 	return net_controlsocket;
 	unguard;
@@ -283,7 +283,7 @@ void VWinSockDriver::GetLocalAddress()
 	myAddr = *(int *)local->h_addr_list[0];
 
 	addr = ntohl(myAddr);
-	sprintf(GNet->MyIpAddress, "%d.%d.%d.%d", (addr >> 24) & 0xff,
+	sprintf(Net->MyIpAddress, "%d.%d.%d.%d", (addr >> 24) & 0xff,
 		(addr >> 16) & 0xff, (addr >> 8) & 0xff, addr & 0xff);
 	unguard;
 }
@@ -303,7 +303,7 @@ void VWinSockDriver::Listen(bool state)
 		if (net_acceptsocket == -1)
 		{
 			GetLocalAddress();
-			net_acceptsocket = OpenSocket(GNet->HostPort);
+			net_acceptsocket = OpenSocket(Net->HostPort);
 			if (net_acceptsocket == -1)
 				Sys_Error("WINS_Listen: Unable to open accept socket\n");
 		}
@@ -610,7 +610,7 @@ int VWinSockDriver::PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 	if (*b++ == ':')
 		port = atoi(b);
 	else
-		port = GNet->HostPort;
+		port = Net->HostPort;
 
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in *)hostaddr)->sin_port = htons((short)port);	
@@ -639,7 +639,7 @@ int VWinSockDriver::GetAddrFromName(const char *name, sockaddr_t *addr)
 		return -1;
 
 	addr->sa_family = AF_INET;
-	((sockaddr_in *)addr)->sin_port = htons((vuint16)GNet->HostPort);
+	((sockaddr_in *)addr)->sin_port = htons((vuint16)Net->HostPort);
 	((sockaddr_in *)addr)->sin_addr.s_addr = *(int *)hostentry->h_addr_list[0];
 
 	return 0;

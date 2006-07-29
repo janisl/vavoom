@@ -275,15 +275,15 @@ int VIpxDriver::Init()
 		return -1;
 	}
 
-	GNet->SchedulePollProcedure(&pollProcedure, 0.01);
+	Net->SchedulePollProcedure(&pollProcedure, 0.01);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(GNet->MyIpxAddress, AddrToString(&addr));
-	colon = strrchr(GNet->MyIpxAddress, ':');
+	strcpy(Net->MyIpxAddress, AddrToString(&addr));
+	colon = strrchr(Net->MyIpxAddress, ':');
 	if (colon)
 		*colon = 0;
 
-	GNet->IpxAvailable = true;
+	Net->IpxAvailable = true;
 	GCon->Log(NAME_Init, "IPX initialized");
 	return net_controlsocket;
 	unguard;
@@ -315,7 +315,7 @@ void VIpxDriver::IPX_PollProcedure(void* arg)
 	guard(VIpxDriver::IPX_PollProcedure);
 	VIpxDriver* Self = (VIpxDriver*)arg;
 	Self->IPX_RelinquishControl();
-	GNet->SchedulePollProcedure(&Self->pollProcedure, 0.01);
+	Net->SchedulePollProcedure(&Self->pollProcedure, 0.01);
 	unguard;
 }
 
@@ -333,7 +333,7 @@ void VIpxDriver::Listen(bool state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(GNet->HostPort);
+			net_acceptsocket = OpenSocket(Net->HostPort);
 			if (net_acceptsocket == -1)
 			{
 				Sys_Error("IPX_Listen: Unable to open accept socket\n");
@@ -648,7 +648,7 @@ int VIpxDriver::Broadcast(int handle, vuint8* buf, int len)
 
 	memset(addr.sipx_addr.network, 0x00, 4);
 	memset(addr.sipx_addr.node, 0xff, 6);
-	addr.sipx_addr.socket = BigShort(GNet->HostPort);
+	addr.sipx_addr.socket = BigShort(Net->HostPort);
 
 	GetPacket(BasePacket[handle], &packet);
 	memset(packet.ecb.ImmediateAddress, 0xff, 6);
@@ -774,12 +774,12 @@ int VIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 
 	if (n == 12)
 	{
-		sprintf(buf, "00000000:%s:%u", name, GNet->HostPort);
+		sprintf(buf, "00000000:%s:%u", name, Net->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n == 21)
 	{
-		sprintf(buf, "%s:%u", name, GNet->HostPort);
+		sprintf(buf, "%s:%u", name, Net->HostPort);
 		return StringToAddr(buf, addr);
 	}
 	if (n > 21 && n <= 27)

@@ -276,13 +276,13 @@ int VBeameWhitesideDriver::Init()
 	}
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(GNet->MyIpAddress, AddrToString(&addr));
-	colon = strrchr(GNet->MyIpAddress, ':');
+	strcpy(Net->MyIpAddress, AddrToString(&addr));
+	colon = strrchr(Net->MyIpAddress, ':');
 	if (colon)
 		*colon = 0;
 
 	GCon->Log(NAME_Init, "BW_Init: UDP initialized");
-	GNet->IpAvailable = true;
+	Net->IpAvailable = true;
 
 	return net_controlsocket;
 	unguard;
@@ -316,7 +316,7 @@ void VBeameWhitesideDriver::Listen(bool state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(GNet->HostPort);
+			net_acceptsocket = OpenSocket(Net->HostPort);
 			if (net_acceptsocket == -1)
 				Sys_Error("BW_Listen: Unable to open accept socket\n");
 		}
@@ -594,7 +594,7 @@ int VBeameWhitesideDriver::Broadcast(int s, vuint8* msg, int len)
 	vuint8 buffer[LOWMEM_SIZE];
 	writeInfo = (BW_writeInfo_t *)buffer;
 	writeInfo->remoteAddr = bcastaddr;
-	writeInfo->remotePort = GNet->HostPort;
+	writeInfo->remotePort = Net->HostPort;
 	writeInfo->dataLen = len;
 	if (len > (int)NET_DATAGRAMSIZE)
 		Sys_Error("BW UDP write packet too large: %u\n", len);
@@ -752,7 +752,7 @@ int VBeameWhitesideDriver::GetAddrFromName(const char* name, sockaddr_t* hostadd
 	if (*b++ == ':')
 		port = atoi(b);
 	else
-		port = GNet->HostPort;
+		port = Net->HostPort;
 
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in*)hostaddr)->sin_port = BigShort((short)port);

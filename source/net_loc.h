@@ -26,17 +26,138 @@
 #ifndef _NET_LOC_H
 #define _NET_LOC_H
 
+#define	NET_NAMELEN			64
+
+#define	MAX_NET_DRIVERS		8
+
+#define HOSTCACHESIZE		8
+
 #define NET_HEADERSIZE		(2 * sizeof(vuint32) + sizeof(vuint16))
 #define NET_DATAGRAMSIZE	(MAX_DATAGRAM + NET_HEADERSIZE)
 
-class VNetDriver
+class VNetDriver;
+class VNetLanDriver;
+
+struct sockaddr_t
+{
+	vint16		sa_family;
+	vint8		sa_data[14];
+};
+
+class VSocket : public VSocketPublic
 {
 public:
-	const char*	name;
-	bool		initialised;
+	VSocket*		Next;
+	double			ConnectTime;
+	double			LastMessageTime;
+	double			LastSendTime;
+
+	bool			Disconnected;
+	bool			CanSend;
+	bool			SendNext;
+	
+	VNetDriver*		Driver;
+	VNetLanDriver*	LanDriver;
+	int				LanSocket;
+	void*			DriverData;
+
+	vuint32			AckSequence;
+	vuint32			SendSequence;
+	vuint32			UnreliableSendSequence;
+	int				SendMessageLength;
+	vuint8			SendMessageData[NET_MAXMESSAGE];
+
+	vuint32			ReceiveSequence;
+	vuint32			UnreliableReceiveSequence;
+	int				ReceiveMessageLength;
+	vuint8			ReceiveMessageData[NET_MAXMESSAGE];
+
+	sockaddr_t		Addr;
+
+	bool IsLocalConnection();
+	int GetMessage();
+	int SendMessage(VMessage*);
+	int SendUnreliableMessage(VMessage*);
+	bool CanSendMessage();
+	void Close();
+};
+
+struct VNetPollProcedure
+{
+	VNetPollProcedure*	next;
+	double				nextTime;
+	void				(*procedure)(void*);
+	void*				arg;
+
+	VNetPollProcedure()
+	: next(NULL)
+	, nextTime(0.0)
+	, procedure(NULL)
+	, arg(NULL)
+	{}
+	VNetPollProcedure(void (*aProcedure)(void*), void* aArg)
+	: next(NULL)
+	, nextTime(0.0)
+	, procedure(aProcedure)
+	, arg(aArg)
+	{}
+};
+
+class VNetworkLocal : public VNetworkPublic
+{
+public:
+	double			NetTime;
+	
+	VSocket*		ActiveSockets;
+	VSocket*		FreeSockets;
+
+	int				HostCacheCount;
+	hostcache_t		HostCache[HOSTCACHESIZE];
+
+	int				HostPort;
+	int				DefaultHostPort;
+
+	char			MyIpxAddress[NET_NAMELEN];
+	char			MyIpAddress[NET_NAMELEN];
+
+	bool			IpxAvailable;
+	bool			IpAvailable;
+
+	int				MessagesSent;
+	int				MessagesReceived;
+	int				UnreliableMessagesSent;
+	int				UnreliableMessagesReceived;
+
+	char			ReturnReason[32];
+
+	bool			Listening;
+
+	static VNetDriver*		Drivers[MAX_NET_DRIVERS];
+	static int				NumDrivers;
+
+	static VNetLanDriver*	LanDrivers[MAX_NET_DRIVERS];
+	static int				NumLanDrivers;
+
+	static VCvarS			HostName;
+	static VCvarF			MessageTimeOut;
+
+	VNetworkLocal();
+	virtual VSocket* NewSocket(VNetDriver*) = 0;
+	virtual void FreeSocket(VSocket*) = 0;
+	virtual double SetNetTime() = 0;
+	virtual void SchedulePollProcedure(VNetPollProcedure*, double) = 0;
+
+	virtual void Slist() = 0;
+};
+
+class VNetDriver : public VVirtualObjectBase
+{
+public:
+	const char*		name;
+	bool			initialised;
+	VNetworkLocal*	Net;
 
 	VNetDriver(int, const char*);
-	virtual ~VNetDriver();
 	virtual int Init() = 0;
 	virtual void Listen(bool) = 0;
 	virtual void SearchForHosts(bool) = 0;
@@ -51,15 +172,15 @@ public:
 	virtual void Shutdown() = 0;
 };
 
-class VNetLanDriver
+class VNetLanDriver : public VVirtualObjectBase
 {
 public:
-	const char*	name;
-	bool		initialised;
-	int			controlSock;
+	const char*		name;
+	bool			initialised;
+	int				controlSock;
+	VNetworkLocal*	Net;
 
 	VNetLanDriver(int, const char*);
-	virtual ~VNetLanDriver();
 	virtual int Init() = 0;
 	virtual void Shutdown() = 0;
 	virtual void Listen(bool) = 0;

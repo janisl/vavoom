@@ -126,15 +126,15 @@ void VLoopbackDriver::SearchForHosts(bool)
 	if (!sv.active)
 		return;
 
-	GNet->HostCacheCount = 1;
-	if (strcmp(VNetwork::HostName, "UNNAMED") == 0)
-		GNet->HostCache[0].Name = "local";
+	Net->HostCacheCount = 1;
+	if (strcmp(Net->HostName, "UNNAMED") == 0)
+		Net->HostCache[0].Name = "local";
 	else
-		GNet->HostCache[0].Name = VNetwork::HostName;
-	GNet->HostCache[0].Map = VStr(level.MapName);
-	GNet->HostCache[0].Users = svs.num_connected;
-	GNet->HostCache[0].MaxUsers = svs.max_clients;
-	GNet->HostCache[0].CName = "local";
+		Net->HostCache[0].Name = Net->HostName;
+	Net->HostCache[0].Map = VStr(level.MapName);
+	Net->HostCache[0].Users = svs.num_connected;
+	Net->HostCache[0].MaxUsers = svs.max_clients;
+	Net->HostCache[0].CName = "local";
 #endif
 	unguard;
 }
@@ -155,7 +155,7 @@ VSocket* VLoopbackDriver::Connect(const char* host)
 
 	if (!loop_client)
 	{
-		loop_client = GNet->NewSocket(this);
+		loop_client = Net->NewSocket(this);
 		if (loop_client == NULL)
 		{
 			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
@@ -169,7 +169,7 @@ VSocket* VLoopbackDriver::Connect(const char* host)
 
 	if (!loop_server)
 	{
-		loop_server = GNet->NewSocket(this);
+		loop_server = Net->NewSocket(this);
 		if (loop_server == NULL)
 		{
 			GCon->Log(NAME_DevNet, "Loop_Connect: no qsocket available");
@@ -240,8 +240,8 @@ int VLoopbackDriver::GetMessage(VSocket* sock)
 	ret = sock->ReceiveMessageData[0];
 	length = sock->ReceiveMessageData[1] + (sock->ReceiveMessageData[2] << 8);
 	// alignment byte skipped here
-	GNet->NetMsg.Clear();
-    GNet->NetMsg.Write(sock->ReceiveMessageData + 4,	length);
+	Net->NetMsg.Clear();
+	Net->NetMsg.Write(sock->ReceiveMessageData + 4,	length);
 
 	length = IntAlign(length + 4);
 	sock->ReceiveMessageLength -= length;
@@ -283,14 +283,14 @@ int VLoopbackDriver::SendMessage(VSocket* sock, VMessage* data)
 	*buffer++ = 1;
 
 	// length
-    *buffer++ = data->CurSize & 0xff;
+	*buffer++ = data->CurSize & 0xff;
 	*buffer++ = data->CurSize >> 8;
 
 	// align
 	buffer++;
 
 	// message
-    memcpy(buffer, data->Data, data->CurSize);
+	memcpy(buffer, data->Data, data->CurSize);
 	*bufferLength = IntAlign(*bufferLength + data->CurSize + 4);
 
 	sock->CanSend = false;

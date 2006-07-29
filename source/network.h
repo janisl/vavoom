@@ -23,64 +23,37 @@
 //**
 //**************************************************************************
 
-#define	MAX_MSGLEN			8000		// max length of a reliable message
-#define	MAX_DATAGRAM		1024		// max length of unreliable message
-
-#define	NET_NAMELEN			64
-#define NET_MAXMESSAGE		8192
-
-#define HOSTCACHESIZE		8
-
-#define	MAX_NET_DRIVERS		8
-
-class VNetDriver;
-class VNetLanDriver;
-
-struct sockaddr_t
+enum
 {
-	vint16		sa_family;
-	vint8		sa_data[14];
+	MAX_MSGLEN			= 8000,		// max length of a reliable message
+	MAX_DATAGRAM		= 1024,		// max length of unreliable message
+
+	NET_MAXMESSAGE		= 8192
 };
 
-class VSocket
+//
+//	VSocketPublic
+//
+//	Public interface of a network socket.
+//
+class VSocketPublic : public VVirtualObjectBase
 {
 public:
-	VSocket*		Next;
-	double			ConnectTime;
-	double			LastMessageTime;
-	double			LastSendTime;
-
-	bool			Disconnected;
-	bool			CanSend;
-	bool			SendNext;
-	
-	VNetDriver*		Driver;
-	VNetLanDriver*	LanDriver;
-	int				LanSocket;
-	void*			DriverData;
-
-	vuint32			AckSequence;
-	vuint32			SendSequence;
-	vuint32			UnreliableSendSequence;
-	int				SendMessageLength;
-	vuint8			SendMessageData[NET_MAXMESSAGE];
-
-	vuint32			ReceiveSequence;
-	vuint32			UnreliableReceiveSequence;
-	int				ReceiveMessageLength;
-	vuint8			ReceiveMessageData[NET_MAXMESSAGE];
-
-	sockaddr_t		Addr;
 	VStr			Address;
 
-	bool IsLocalConnection();
-	int GetMessage();
-	int SendMessage(VMessage*);
-	int SendUnreliableMessage(VMessage*);
-	bool CanSendMessage();
-	void Close();
+	virtual bool IsLocalConnection() = 0;
+	virtual int GetMessage() = 0;
+	virtual int SendMessage(VMessage*) = 0;
+	virtual int SendUnreliableMessage(VMessage*) = 0;
+	virtual bool CanSendMessage() = 0;
+	virtual void Close() = 0;
 };
 
+//
+//	hostcache_t
+//
+//	An entry into a hosts cache table.
+//
 struct hostcache_t
 {
 	VStr		Name;
@@ -91,7 +64,11 @@ struct hostcache_t
 	vint32		MaxUsers;
 };
 
+//
+//	slist_t
+//
 //	Structure returned to progs.
+//
 struct slist_t
 {
 	enum
@@ -99,33 +76,17 @@ struct slist_t
 		SF_InProgress	= 0x01,
 	};
 	vuint32			Flags;
-	int				Count;
+	vint32			Count;
 	hostcache_t*	Cache;
 	VStr			ReturnReason;
 };
 
-struct VNetPollProcedure
-{
-	VNetPollProcedure*	next;
-	double				nextTime;
-	void				(*procedure)(void*);
-	void*				arg;
-
-	VNetPollProcedure()
-	: next(NULL)
-	, nextTime(0.0)
-	, procedure(NULL)
-	, arg(NULL)
-	{}
-	VNetPollProcedure(void (*aProcedure)(void*), void* aArg)
-	: next(NULL)
-	, nextTime(0.0)
-	, procedure(aProcedure)
-	, arg(aArg)
-	{}
-};
-
-class VNetwork
+//
+//	VNetworkPublic
+//
+//	Public networking driver interface.
+//
+class VNetworkPublic : public VVirtualObjectBase
 {
 public:
 	//	Public API
@@ -133,81 +94,19 @@ public:
 
 	bool			ConnectBot;
 
-	VNetwork();
-	~VNetwork();
-	void Init();
-	void Shutdown();
-	VSocket* Connect(const char*);
-	VSocket* CheckNewConnections();
-	void Poll();
-	void StartSearch();
-	slist_t* GetSlist();
+	VNetworkPublic()
+	: ConnectBot(false)
+	{}
 
-	//	API only for network drivers!
-	double			NetTime;
-	
-	VSocket*		ActiveSockets;
-	VSocket*		FreeSockets;
+	virtual void Init() = 0;
+	virtual void Shutdown() = 0;
+	virtual VSocketPublic* Connect(const char*) = 0;
+	virtual VSocketPublic* CheckNewConnections() = 0;
+	virtual void Poll() = 0;
+	virtual void StartSearch() = 0;
+	virtual slist_t* GetSlist() = 0;
 
-	int				HostCacheCount;
-	hostcache_t		HostCache[HOSTCACHESIZE];
-
-	int				HostPort;
-	int				DefaultHostPort;
-
-	char			MyIpxAddress[NET_NAMELEN];
-	char			MyIpAddress[NET_NAMELEN];
-
-	bool			IpxAvailable;
-	bool			IpAvailable;
-
-	int				MessagesSent;
-	int				MessagesReceived;
-	int				UnreliableMessagesSent;
-	int				UnreliableMessagesReceived;
-
-	char			ReturnReason[32];
-
-	bool			Listening;
-
-	static VNetDriver*		Drivers[MAX_NET_DRIVERS];
-	static int				NumDrivers;
-
-	static VNetLanDriver*	LanDrivers[MAX_NET_DRIVERS];
-	static int				NumLanDrivers;
-
-	static VCvarS			HostName;
-	static VCvarF			MessageTimeOut;
-
-	VSocket* NewSocket(VNetDriver*);
-	void FreeSocket(VSocket*);
-	double SetNetTime();
-	void SchedulePollProcedure(VNetPollProcedure*, double);
-
-	void Slist();
-
-private:
-	VNetPollProcedure	SlistSendProcedure;
-	VNetPollProcedure	SlistPollProcedure;
-
-	bool				SlistInProgress;
-	bool				SlistSilent;
-	bool				SlistLocal;
-	bool				SlistSorted;
-	double				SlistStartTime;
-	int					SlistLastShown;
-
-	slist_t				slist;
-
-	VNetPollProcedure*	PollProcedureList;
-
-	static void Slist_Send(void*);
-	static void Slist_Poll(void*);
-	void Slist_Send();
-	void Slist_Poll();
-	void PrintSlistHeader();
-	void PrintSlist();
-	void PrintSlistTrailer();
+	static VNetworkPublic* Create();
 };
 
-extern VNetwork*	GNet;
+extern VNetworkPublic*	GNet;

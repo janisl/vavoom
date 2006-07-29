@@ -178,7 +178,7 @@ void Host_Init()
 	SV_Init();
 #endif
 
-	GNet = new VNetwork;
+	GNet = VNetworkPublic::Create();
 	GNet->Init();
 
 	GCmdBuf.Exec();

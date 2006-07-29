@@ -151,10 +151,10 @@ int VUdpDriver::Init()
 	myAddr = *(int*)local->h_addr_list[0];
 
 	// if the Vavoom hostname isn't set, set it to the machine name
-	if (strcmp(VNetwork::HostName, "UNNAMED") == 0)
+	if (strcmp(Net->HostName, "UNNAMED") == 0)
 	{
 		buff[15] = 0;
-		VNetwork::HostName = buff;
+		Net->HostName = buff;
 	}
 
 	if ((net_controlsocket = OpenSocket(0)) == -1)
@@ -162,17 +162,17 @@ int VUdpDriver::Init()
 
 	((sockaddr_in *)&broadcastaddr)->sin_family = AF_INET;
 	((sockaddr_in *)&broadcastaddr)->sin_addr.s_addr = INADDR_BROADCAST;
-	((sockaddr_in *)&broadcastaddr)->sin_port = htons(GNet->HostPort);
+	((sockaddr_in *)&broadcastaddr)->sin_port = htons(Net->HostPort);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(GNet->MyIpAddress, AddrToString(&addr));
-	colon = strrchr(GNet->MyIpAddress, ':');
+	strcpy(Net->MyIpAddress, AddrToString(&addr));
+	colon = strrchr(Net->MyIpAddress, ':');
 	if (colon)
 		*colon = 0;
-	GCon->Logf(NAME_Init, "My IP address: %s", GNet->MyIpAddress);
+	GCon->Logf(NAME_Init, "My IP address: %s", Net->MyIpAddress);
 
 	GCon->Log(NAME_Init, "UDP Initialised");
-	GNet->IpAvailable = true;
+	Net->IpAvailable = true;
 
 	return net_controlsocket;
 	unguard;
@@ -206,7 +206,7 @@ void VUdpDriver::Listen(bool state)
 		// enable listening
 		if (net_acceptsocket == -1)
 		{
-			net_acceptsocket = OpenSocket(GNet->HostPort);
+			net_acceptsocket = OpenSocket(Net->HostPort);
 			if (net_acceptsocket == -1)
 				Sys_Error("UDP_Listen: Unable to open accept socket\n");
 		}
@@ -511,7 +511,7 @@ int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 	if (*b++ == ':')
 		port = atoi(b);
 	else
-		port = GNet->HostPort;
+		port = Net->HostPort;
 
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in *)hostaddr)->sin_port = htons((short)port);	
@@ -540,7 +540,7 @@ int VUdpDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 		return -1;
 
 	addr->sa_family = AF_INET;
-	((sockaddr_in*)addr)->sin_port = htons(GNet->HostPort);
+	((sockaddr_in*)addr)->sin_port = htons(Net->HostPort);
 	((sockaddr_in*)addr)->sin_addr.s_addr = *(int*)hostentry->h_addr_list[0];
 
 	return 0;

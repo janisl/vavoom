@@ -32,6 +32,52 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VNetwork : public VNetworkLocal
+{
+public:
+	//	Public API
+	VNetwork();
+	~VNetwork();
+	void Init();
+	void Shutdown();
+	VSocketPublic* Connect(const char*);
+	VSocketPublic* CheckNewConnections();
+	void Poll();
+	void StartSearch();
+	slist_t* GetSlist();
+
+	//	API only for network drivers!
+	VSocket* NewSocket(VNetDriver*);
+	void FreeSocket(VSocket*);
+	double SetNetTime();
+	void SchedulePollProcedure(VNetPollProcedure*, double);
+
+	void Slist();
+
+private:
+	VNetPollProcedure	SlistSendProcedure;
+	VNetPollProcedure	SlistPollProcedure;
+
+	bool				SlistInProgress;
+	bool				SlistSilent;
+	bool				SlistLocal;
+	bool				SlistSorted;
+	double				SlistStartTime;
+	int					SlistLastShown;
+
+	slist_t				slist;
+
+	VNetPollProcedure*	PollProcedureList;
+
+	static void Slist_Send(void*);
+	static void Slist_Poll(void*);
+	void Slist_Send();
+	void Slist_Poll();
+	void PrintSlistHeader();
+	void PrintSlist();
+	void PrintSlistTrailer();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -42,16 +88,16 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VNetwork*		GNet;
+VNetworkPublic*	GNet;
 
-VCvarS			VNetwork::HostName("hostname", "UNNAMED");
-VCvarF			VNetwork::MessageTimeOut("net_messagetimeout", "300");
+VCvarS			VNetworkLocal::HostName("hostname", "UNNAMED");
+VCvarF			VNetworkLocal::MessageTimeOut("net_messagetimeout", "300");
 
-VNetDriver*		VNetwork::Drivers[MAX_NET_DRIVERS];
-int				VNetwork::NumDrivers = 0;
+VNetDriver*		VNetworkLocal::Drivers[MAX_NET_DRIVERS];
+int				VNetworkLocal::NumDrivers = 0;
 
-VNetLanDriver*	VNetwork::LanDrivers[MAX_NET_DRIVERS];
-int				VNetwork::NumLanDrivers = 0;
+VNetLanDriver*	VNetworkLocal::LanDrivers[MAX_NET_DRIVERS];
+int				VNetworkLocal::NumLanDrivers = 0;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -59,13 +105,23 @@ int				VNetwork::NumLanDrivers = 0;
 
 //==========================================================================
 //
-//	VNetwork::VNetwork
+//	VNetworkPublic::Create
 //
 //==========================================================================
 
-VNetwork::VNetwork()
-: ConnectBot(false)
-, NetTime(0.0)
+VNetworkPublic* VNetworkPublic::Create()
+{
+	return new VNetwork();
+}
+
+//==========================================================================
+//
+//	VNetworkLocal::VNetworkLocal
+//
+//==========================================================================
+
+VNetworkLocal::VNetworkLocal()
+: NetTime(0.0)
 , ActiveSockets(NULL)
 , FreeSockets(NULL)
 , HostCacheCount(0)
@@ -78,7 +134,20 @@ VNetwork::VNetwork()
 , UnreliableMessagesSent(0)
 , UnreliableMessagesReceived(0)
 , Listening(false)
-, SlistSendProcedure(Slist_Send, this)
+{
+	MyIpxAddress[0] = 0;
+	MyIpAddress[0] = 0;
+	ReturnReason[0] = 0;
+}
+
+//==========================================================================
+//
+//	VNetwork::VNetwork
+//
+//==========================================================================
+
+VNetwork::VNetwork()
+: SlistSendProcedure(Slist_Send, this)
 , SlistPollProcedure(Slist_Poll, this)
 , SlistInProgress(false)
 , SlistSilent(false)
@@ -88,9 +157,6 @@ VNetwork::VNetwork()
 , SlistLastShown(0)
 , PollProcedureList(NULL)
 {
-	MyIpxAddress[0] = 0;
-	MyIpAddress[0] = 0;
-	ReturnReason[0] = 0;
 }
 
 //==========================================================================
@@ -150,6 +216,7 @@ void VNetwork::Init()
 	// Initialise all the drivers
 	for (i = 0; i < NumDrivers; i++)
 	{
+		Drivers[i]->Net = this;
 		if (Drivers[i]->Init() != -1)
 		{
 			Drivers[i]->initialised = true;
@@ -579,7 +646,7 @@ slist_t* VNetwork::GetSlist()
 //
 //==========================================================================
 
-VSocket* VNetwork::Connect(const char* InHost)
+VSocketPublic* VNetwork::Connect(const char* InHost)
 {
 	guard(VNetwork::Connect);
 	VStr		host = InHost;
@@ -669,7 +736,7 @@ JustDoIt:
 //
 //==========================================================================
 
-VSocket* VNetwork::CheckNewConnections()
+VSocketPublic* VNetwork::CheckNewConnections()
 {
 	guard(VNetwork::CheckNewConnections);
 	SetNetTime();
@@ -714,12 +781,12 @@ void VSocket::Close()
 	if (Disconnected)
 		return;
 
-	GNet->SetNetTime();
+	Driver->Net->SetNetTime();
 
 	// call the driver_Close function
 	Driver->Close(this);
 
-	GNet->FreeSocket(this);
+	Driver->Net->FreeSocket(this);
 	unguard;
 }
 
@@ -747,14 +814,14 @@ int	VSocket::GetMessage()
 		return -1;
 	}
 
-	GNet->SetNetTime();
+	Driver->Net->SetNetTime();
 
 	ret = Driver->GetMessage(this);
 
 	// see if this connection has timed out
 	if (ret == 0 && !IsLocalConnection())
 	{
-		if (GNet->NetTime - LastMessageTime > VNetwork::MessageTimeOut)
+		if (Driver->Net->NetTime - LastMessageTime > VNetwork::MessageTimeOut)
 		{
 			Close();
 			return -1;
@@ -765,11 +832,11 @@ int	VSocket::GetMessage()
 	{
 		if (!IsLocalConnection())
 		{
-			LastMessageTime = GNet->NetTime;
+			LastMessageTime = Driver->Net->NetTime;
 			if (ret == 1)
-				GNet->MessagesReceived++;
+				Driver->Net->MessagesReceived++;
 			else if (ret == 2)
-				GNet->UnreliableMessagesReceived++;
+				Driver->Net->UnreliableMessagesReceived++;
 		}
 	}
 
@@ -800,10 +867,10 @@ int VSocket::SendMessage(VMessage* data)
 		return -1;
 	}
 
-	GNet->SetNetTime();
+	Driver->Net->SetNetTime();
 	r = Driver->SendMessage(this, data);
 	if (r == 1 && !IsLocalConnection())
-		GNet->MessagesSent++;
+		Driver->Net->MessagesSent++;
 
 	return r;
 	unguard;
@@ -826,10 +893,10 @@ int VSocket::SendUnreliableMessage(VMessage* data)
 		return -1;
 	}
 
-	GNet->SetNetTime();
+	Driver->Net->SetNetTime();
 	r = Driver->SendUnreliableMessage(this, data);
 	if (r == 1 && !IsLocalConnection())
-		GNet->UnreliableMessagesSent++;
+		Driver->Net->UnreliableMessagesSent++;
 
 	return r;
 	unguard;
@@ -850,7 +917,7 @@ bool VSocket::CanSendMessage()
 	if (Disconnected)
 		return false;
 
-	GNet->SetNetTime();
+	Driver->Net->SetNetTime();
 
 	return Driver->CanSendMessage(this);
 	unguard;
@@ -873,16 +940,6 @@ VNetDriver::VNetDriver(int Level, const char* AName)
 
 //==========================================================================
 //
-//	VNetDriver::~VNetDriver
-//
-//==========================================================================
-
-VNetDriver::~VNetDriver()
-{
-}
-
-//==========================================================================
-//
 //	VNetLanDriver::VNetLanDriver
 //
 //==========================================================================
@@ -897,16 +954,6 @@ VNetLanDriver::VNetLanDriver(int Level, const char* AName)
 		VNetwork::NumLanDrivers = Level + 1;
 }
 
-//==========================================================================
-//
-//	VNetLanDriver::~VNetLanDriver
-//
-//==========================================================================
-
-VNetLanDriver::~VNetLanDriver()
-{
-}
-
 #if defined CLIENT && defined SERVER // I think like this
 
 //==========================================================================
@@ -918,19 +965,20 @@ VNetLanDriver::~VNetLanDriver()
 COMMAND(Listen)
 {
 	guard(COMMAND Listen);
+	VNetwork* Net = (VNetwork*)GNet;
 	if (Args.Num() != 2)
 	{
-		GCon->Logf("\"listen\" is \"%d\"", GNet->Listening ? 1 : 0);
+		GCon->Logf("\"listen\" is \"%d\"", Net->Listening ? 1 : 0);
 		return;
 	}
 
-	GNet->Listening = atoi(*Args[1]) ? true : false;
+	Net->Listening = atoi(*Args[1]) ? true : false;
 
 	for (int i = 0; i < VNetwork::NumDrivers; i++)
 	{
 		if (VNetwork::Drivers[i]->initialised == false)
 			continue;
-		VNetwork::Drivers[i]->Listen(GNet->Listening);
+		VNetwork::Drivers[i]->Listen(Net->Listening);
 	}
 	unguard;
 }
@@ -948,9 +996,10 @@ COMMAND(Port)
 	guard(COMMAND Port);
 	int 	n;
 
+	VNetwork* Net = (VNetwork*)GNet;
 	if (Args.Num() != 2)
 	{
-		GCon->Logf("\"port\" is \"%d\"", GNet->HostPort);
+		GCon->Logf("\"port\" is \"%d\"", Net->HostPort);
 		return;
 	}
 
@@ -961,10 +1010,10 @@ COMMAND(Port)
 		return;
 	}
 
-	GNet->DefaultHostPort = n;
-	GNet->HostPort = n;
+	Net->DefaultHostPort = n;
+	Net->HostPort = n;
 
-	if (GNet->Listening)
+	if (Net->Listening)
 	{
 		// force a change to the new port
 		GCmdBuf << "listen 0\n";
@@ -982,6 +1031,6 @@ COMMAND(Port)
 COMMAND(Slist)
 {
 	guard(COMMAND Slist);
-	GNet->Slist();
+	((VNetwork*)GNet)->Slist();
 	unguard;
 }

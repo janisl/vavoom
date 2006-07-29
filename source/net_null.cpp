@@ -128,11 +128,11 @@ VSocket* VNullNetDriver::Connect(const char*)
 VSocket* VNullNetDriver::CheckNewConnections()
 {
 	guard(VNullNetDriver::CheckNewConnections);
-	if (!GNet->ConnectBot)
+	if (!Net->ConnectBot)
 		return NULL;
 
-	GNet->ConnectBot = false;
-	VSocket* sock = GNet->NewSocket(this);
+	Net->ConnectBot = false;
+	VSocket* sock = Net->NewSocket(this);
 	if (!sock)
 	{
 		GCon->Log("Server is full");
