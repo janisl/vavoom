@@ -1909,6 +1909,7 @@ void VClass::Shutdown()
 	if (ClassVTable)
 	{
 		delete[] ClassVTable;
+		ClassVTable = NULL;
 	}
 	unguard;
 }
