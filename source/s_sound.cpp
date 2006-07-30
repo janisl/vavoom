@@ -32,36 +32,146 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VStreamMusicPlayer
+class VSoundSeqNode
 {
 public:
-	bool			StrmOpened;
-	VAudioCodec*	Codec;
-	//	Current playing song info.
-	bool			CurrLoop;
-	VName			CurrSong;
-	bool			Stopping;
-	double			FinishTime;
-	VSoundDevice*	SoundDevice;
+	vint32			Sequence;
+	vint32*			SequencePtr;
+	vint32			OriginId;
+	TVec			Origin;
+	vint32			CurrentSoundID;
+	float			DelayTime;
+	float			Volume;
+	vint32			StopSound;
+	VSoundSeqNode*	Prev;
+	VSoundSeqNode*	Next;
 
-	VStreamMusicPlayer(VSoundDevice* InSoundDevice)
-	: StrmOpened(false)
-	, Codec(NULL)
-	, CurrLoop(false)
-	, Stopping(false)
-	, SoundDevice(InSoundDevice)
-	{}
-	~VStreamMusicPlayer()
-	{}
+	VSoundSeqNode(int, const TVec&, int);
+	~VSoundSeqNode();
+	void Update(float);
+	void Serialise(VStream&);
+};
 
+//
+//	VAudio
+//
+//	Main audio management class.
+//
+class VAudio : public VAudioPublic
+{
+public:
+	//	Sound sequence list
+	int					ActiveSequences;
+	VSoundSeqNode*		SequenceListHead;
+
+	//	Structors.
+	VAudio();
+	~VAudio();
+
+	//	Top level methods.
 	void Init();
 	void Shutdown();
-	void Tick(float);
-	void Play(VAudioCodec* InCodec, const char* InName, bool InLoop);
-	void Pause();
-	void Resume();
-	void Stop();
-	bool IsPlaying();
+
+	//	Playback of sound effects
+	void PlaySound(int, const TVec&, const TVec&, int, int, float);
+	void StopSound(int, int);
+	void StopAllSound();
+	bool IsSoundPlaying(int, int);
+
+	//	Music and general sound control
+	void StartSong(VName, int, bool);
+	void PauseSound();
+	void ResumeSound();
+	void Start();
+	void MusicChanged();
+	void UpdateSounds();
+
+	//	Sound sequences
+	void StartSequenceName(int, const TVec&, const char*);
+	void StopSequence(int);
+	void UpdateActiveSequences(float);
+	void StopAllSequences();
+	void SerialiseSounds(VStream&);
+
+	//	EAX utilites
+	float EAX_CalcEnvSize();
+
+private:
+	enum { MAX_CHANNELS = 256 };
+
+	enum { PRIORITY_MAX_ADJUST = 10 };
+
+	//	Info about sounds currently playing.
+	struct FChannel
+	{
+		int			origin_id;
+		int			channel;
+		TVec		origin;
+		TVec		velocity;
+		int			sound_id;
+		int			priority;
+		float		volume;
+		int			handle;
+		bool		is3D;
+	};
+
+	//	Sound curve
+	vuint8*				SoundCurve;
+	int 				MaxSoundDist;
+
+	//	Map's music lump and CD track
+	VName				MapSong;
+	int					MapCDTrack;
+
+	//	Wether we should use CD music
+	bool				CDMusic;
+
+	//	Stream music player
+	bool				MusicEnabled;
+	bool				StreamPlaying;
+	VStreamMusicPlayer*	StreamMusicPlayer;
+
+	//	List of currently playing sounds
+	FChannel			Channel[MAX_CHANNELS];
+	int					NumChannels;
+	int 				SndCount;
+
+	// maximum volume for sound
+	float				MaxVolume;
+
+	//	Listener orientation
+	TVec				ListenerForward;
+	TVec				ListenerRight;
+	TVec				ListenerUp;
+
+	//	Hardware devices
+	VSoundDevice*		SoundDevice;
+	VMidiDevice*		MidiDevice;
+	VCDAudioDevice*		CDAudioDevice;
+
+	//	Console variables
+	static VCvarF		sfx_volume;
+	static VCvarF		music_volume;
+	static VCvarI		swap_stereo;
+	static VCvarI		s_channels;
+	static VCvarI		cd_music;
+
+	//	Friends
+	friend class TCmdMusic;
+	friend class TCmdCD;
+
+	//	Sound effect helpers
+	int GetChannel(int, int, int, int);
+	void StopChannel(int);
+	void UpdateSfx();
+
+	//	Music playback
+	void StartMusic();
+	void PlaySong(const char*, bool);
+
+	//	Execution of console commands
+	void CmdMusic(const TArray<VStr>&);
+	void CmdCD(const TArray<VStr>&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -74,7 +184,7 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VAudio*				GAudio;
+VAudioPublic*		GAudio;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -91,6 +201,17 @@ static FMidiDeviceDesc*		MidiDeviceList[MIDIDRV_MAX];
 static FCDAudioDeviceDesc*	CDAudioDeviceList[CDDRV_MAX];
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VAudioPublic::Create
+//
+//==========================================================================
+
+VAudioPublic* VAudioPublic::Create()
+{
+	return new VAudio();
+}
 
 //==========================================================================
 //
@@ -113,9 +234,9 @@ VAudio::VAudio()
 , SoundDevice(NULL)
 , MidiDevice(NULL)
 , CDAudioDevice(NULL)
-, ActiveSequences(0)
-, SequenceListHead(NULL)
 {
+	ActiveSequences = 0;
+	SequenceListHead = NULL;
 	memset(Channel, 0, sizeof(Channel));
 }
 
@@ -566,6 +687,116 @@ bool VAudio::IsSoundPlaying(int origin_id, int InSoundId)
 		}
 	}
 	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAudio::StartSequenceName
+//
+//==========================================================================
+
+void VAudio::StartSequenceName(int origin_id, const TVec &origin,
+	const char *name)
+{
+	guard(VAudio::StartSequenceName);
+	for (int i = 0; i < GSoundManager->SeqInfo.Num(); i++)
+	{
+		if (GSoundManager->SeqInfo[i].Name == name)
+		{
+			StopSequence(origin_id); // Stop any previous sequence
+			new VSoundSeqNode(origin_id, origin, i);
+			return;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAudio::StopSequence
+//
+//==========================================================================
+
+void VAudio::StopSequence(int origin_id)
+{
+	guard(VAudio::StopSequence);
+	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
+	{
+		if (node->OriginId == origin_id)
+		{
+			delete node;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAudio::UpdateActiveSequences
+//
+//==========================================================================
+
+void VAudio::UpdateActiveSequences(float DeltaTime)
+{
+	guard(VAudio::UpdateActiveSequences);
+	if (!ActiveSequences || cl->ClientFlags & VClientState::CF_Paused)
+	{
+		// No sequences currently playing/game is paused
+		return;
+	}
+	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
+	{
+		node->Update(DeltaTime);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAudio::StopAllSequences
+//
+//==========================================================================
+
+void VAudio::StopAllSequences()
+{
+	guard(VAudio::StopAllSequences);
+	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
+	{
+		node->StopSound = 0; // don't play any stop sounds
+		delete node;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAudio::SerialiseSounds
+//
+//==========================================================================
+
+void VAudio::SerialiseSounds(VStream& Strm)
+{
+	guard(VAudio::SerialiseSounds);
+	if (Strm.IsLoading())
+	{
+		// Reload and restart all sound sequences
+		vint32 numSequences = Streamer<vint32>(Strm);
+		for (int i = 0; i < numSequences; i++)
+		{
+			VSoundSeqNode* node = new VSoundSeqNode(0, TVec(0, 0, 0), -1);
+			node->Serialise(Strm);
+		}
+	}
+	else
+	{
+		// Save the sound sequences
+		Strm << ActiveSequences;
+		for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
+		{
+			node->Serialise(Strm);
+		}
+	}
 	unguard;
 }
 
@@ -1253,6 +1484,220 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 
 //==========================================================================
 //
+//	VAudio::EAX_CalcEnvSize
+//
+//==========================================================================
+
+float VAudio::EAX_CalcEnvSize()
+{
+	guard(VAudio::EAX_CalcEnvSize);
+	if (cls.state != ca_connected)
+	{
+		return 7.5;
+	}
+
+	float len = 0;
+	VEaxTrace Trace;
+	len += Trace.CalcDirSize(TVec(3200, 0, 0));
+	len += Trace.CalcDirSize(TVec(0, 3200, 0));
+	len += Trace.CalcDirSize(TVec(0, 0, 3200));
+	return len / 3.0;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VSoundSeqNode::VSoundSeqNode
+//
+//==========================================================================
+
+VSoundSeqNode::VSoundSeqNode(int InOriginId, const TVec& InOrigin,
+	int InSequence)
+: Sequence(InSequence)
+, OriginId(InOriginId)
+, Origin(InOrigin)
+, CurrentSoundID(0)
+, DelayTime(0.0)
+, Volume(1.0) // Start at max volume
+, Prev(NULL)
+, Next(NULL)
+{
+	if (Sequence >= 0)
+	{
+		SequencePtr = GSoundManager->SeqInfo[Sequence].Data;
+		StopSound = GSoundManager->SeqInfo[Sequence].StopSound;
+	}
+
+	//	Add to the list of sound sequences.
+	if (!((VAudio*)GAudio)->SequenceListHead)
+	{
+		((VAudio*)GAudio)->SequenceListHead = this;
+	}
+	else
+	{
+		((VAudio*)GAudio)->SequenceListHead->Prev = this;
+		Next = ((VAudio*)GAudio)->SequenceListHead;
+		((VAudio*)GAudio)->SequenceListHead = this;
+	}
+	((VAudio*)GAudio)->ActiveSequences++;
+}
+
+//==========================================================================
+//
+//  VSoundSeqNode::~VSoundSeqNode
+//
+//==========================================================================
+
+VSoundSeqNode::~VSoundSeqNode()
+{
+	//	Play stop sound.
+	if (StopSound >= 0)
+	{
+		((VAudio*)GAudio)->StopSound(OriginId, 0);
+	}
+	if (StopSound >= 1)
+	{
+		((VAudio*)GAudio)->PlaySound(StopSound, Origin, TVec(0, 0, 0),
+			OriginId, 1, Volume);
+	}
+
+	//	Remove from the list of active sound sequences.
+	if (((VAudio*)GAudio)->SequenceListHead == this)
+	{
+		((VAudio*)GAudio)->SequenceListHead = Next;
+	}
+	if (Prev)
+	{
+		Prev->Next = Next;
+	}
+	if (Next)
+	{
+		Next->Prev = Prev;
+	}
+	((VAudio*)GAudio)->ActiveSequences--;
+}
+
+//==========================================================================
+//
+//  VSoundSeqNode::Update
+//
+//==========================================================================
+
+void VSoundSeqNode::Update(float DeltaTime)
+{
+	guard(VSoundSeqNode::Update);
+	if (DelayTime)
+	{
+		DelayTime -= DeltaTime;
+		if (DelayTime <= 0.0)
+		{
+			DelayTime = 0.0;
+		}
+		return;
+	}
+
+	bool sndPlaying = GAudio->IsSoundPlaying(OriginId, CurrentSoundID);
+	switch (*SequencePtr)
+	{
+	case SSCMD_Play:
+		if (!sndPlaying)
+		{
+			CurrentSoundID = SequencePtr[1];
+			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
+				OriginId, 1, Volume);
+		}
+		SequencePtr += 2;
+		break;
+
+	case SSCMD_WaitUntilDone:
+		if (!sndPlaying)
+		{
+			SequencePtr++;
+			CurrentSoundID = 0;
+		}
+		break;
+
+	case SSCMD_PlayRepeat:
+		if (!sndPlaying)
+		{
+			CurrentSoundID = SequencePtr[1];
+			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
+				OriginId, 1, Volume);
+		}
+		break;
+
+	case SSCMD_PlayLoop:
+		CurrentSoundID = SequencePtr[1];
+		GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0), OriginId, 1,
+			Volume);
+		DelayTime = SequencePtr[2] / 35.0;
+		break;
+
+	case SSCMD_Delay:
+		DelayTime = SequencePtr[1] / 35.0;
+		SequencePtr += 2;
+		CurrentSoundID = 0;
+		break;
+
+	case SSCMD_DelayRand:
+		DelayTime = (SequencePtr[1] + rand() % (SequencePtr[2] -
+			SequencePtr[1])) / 35.0;
+		SequencePtr += 2;
+		CurrentSoundID = 0;
+		break;
+
+	case SSCMD_Volume:
+		Volume = SequencePtr[1] / 100.0;
+		SequencePtr += 2;
+		break;
+
+	case SSCMD_Attenuation:
+		// Unused for now.
+		SequencePtr += 2;
+		break;
+
+	case SSCMD_StopSound:
+		// Wait until something else stops the sequence
+		break;
+
+	case SSCMD_End:
+		GAudio->StopSequence(OriginId);
+		break;
+
+	default:	
+		break;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoundSeqNode::Serialise
+//
+//==========================================================================
+
+void VSoundSeqNode::Serialise(VStream& Strm)
+{
+	guard(VSoundSeqNode::Serialise);
+	Strm << Sequence << OriginId << Origin << CurrentSoundID << DelayTime
+		<< Volume;
+	if (Strm.IsLoading())
+	{
+		vint32 Offset;
+		Strm << Offset;
+		SequencePtr = GSoundManager->SeqInfo[Sequence].Data + Offset;
+		StopSound = GSoundManager->SeqInfo[Sequence].StopSound;
+	}
+	else
+	{
+		vint32 Offset = SequencePtr - GSoundManager->SeqInfo[Sequence].Data;
+		Strm << Offset;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	FSoundDeviceDesc::FSoundDeviceDesc
 //
 //==========================================================================
@@ -1304,171 +1749,6 @@ FCDAudioDeviceDesc::FCDAudioDeviceDesc(int Type, const char* AName,
 
 //==========================================================================
 //
-//	VStreamMusicPlayer::Init
-//
-//==========================================================================
-
-void VStreamMusicPlayer::Init()
-{
-}
-
-//==========================================================================
-//
-//	VStreamMusicPlayer::Shutdown
-//
-//==========================================================================
-
-void VStreamMusicPlayer::Shutdown()
-{
-	guard(VStreamMusicPlayer::Shutdown);
-	Stop();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VStreamMusicPlayer::Tick
-//
-//==========================================================================
-
-void VStreamMusicPlayer::Tick(float)
-{
-	guard(VStreamMusicPlayer::Tick);
-	if (!StrmOpened)
-		return;
-	if (Stopping && FinishTime + 1.0 < Sys_Time())
-	{
-		//	Finish playback.
-		Stop();
-		return;
-	}
-	for (int Len = SoundDevice->GetStreamAvailable(); Len;
-		Len = SoundDevice->GetStreamAvailable())
-	{
-		short* Data = SoundDevice->GetStreamBuffer();
-		int StartPos = 0;
-		while (!Stopping && StartPos < Len)
-		{
-			int SamplesDecoded = Codec->Decode(Data + StartPos * 2, Len - StartPos);
-			StartPos += SamplesDecoded;
-			if (Codec->Finished())
-			{
-				//	Stream ended.
-				if (CurrLoop)
-				{
-					//	Restart stream.
-					Codec->Restart();
-				}
-				else
-				{
-					//	We'll wait for 1 second to finish playing.
-					Stopping = true;
-					FinishTime = Sys_Time();
-				}
-			}
-			else if (StartPos < Len)
-			{
-				//	Should never happen.
-				GCon->Log("Stream decoded less but is not finished");
-				Stopping = true;
-				FinishTime = Sys_Time();
-			}
-		}
-		if (Stopping)
-		{
-			memset(Data + StartPos * 2, 0, (Len - StartPos) * 4);
-		}
-		SoundDevice->SetStreamData(Data, Len);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VStreamMusicPlayer::Play
-//
-//==========================================================================
-
-void VStreamMusicPlayer::Play(VAudioCodec* InCodec, const char* InName,
-	bool InLoop)
-{
-	guard(VStreamMusicPlayer::Play);
-	StrmOpened = SoundDevice->OpenStream(InCodec->SampleRate,
-		InCodec->SampleBits, InCodec->NumChannels);
-	if (!StrmOpened)
-		return;
-	Codec = InCodec;
-	CurrSong = InName;
-	CurrLoop = InLoop;
-	Stopping = false;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VStreamMusicPlayer::Pause
-//
-//==========================================================================
-
-void VStreamMusicPlayer::Pause()
-{
-	guard(VStreamMusicPlayer::Pause);
-	if (!StrmOpened)
-		return;
-	SoundDevice->PauseStream();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VStreamMusicPlayer::Resume
-//
-//==========================================================================
-
-void VStreamMusicPlayer::Resume()
-{
-	guard(VStreamMusicPlayer::Resume);
-	if (!StrmOpened)
-		return;
-	SoundDevice->ResumeStream();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VStreamMusicPlayer::Stop
-//
-//==========================================================================
-
-void VStreamMusicPlayer::Stop()
-{
-	guard(VStreamMusicPlayer::Stop);
-	if (!StrmOpened)
-		return;
-	delete Codec;
-	Codec = NULL;
-	SoundDevice->CloseStream();
-	StrmOpened = false;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VStreamMusicPlayer::IsPlaying
-//
-//==========================================================================
-
-bool VStreamMusicPlayer::IsPlaying()
-{
-	guard(VStreamMusicPlayer::IsPlaying);
-	if (!StrmOpened)
-		return false;
-	return false;
-	unguard;
-}
-
-//==========================================================================
-//
 //  COMMAND Music
 //
 //==========================================================================
@@ -1476,7 +1756,7 @@ bool VStreamMusicPlayer::IsPlaying()
 COMMAND(Music)
 {
 	guard(COMMAND Music);
-	GAudio->CmdMusic(Args);
+	((VAudio*)GAudio)->CmdMusic(Args);
 	unguard;
 }
 
@@ -1489,6 +1769,6 @@ COMMAND(Music)
 COMMAND(CD)
 {
 	guard(COMMAND CD);
-	GAudio->CmdCD(Args);
+	((VAudio*)GAudio)->CmdCD(Args);
 	unguard;
 }

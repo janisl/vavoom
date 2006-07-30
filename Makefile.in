@@ -141,12 +141,12 @@ COMMON_OBJS = \
 	obj/s_eaxutl.$(OBJEXT) \
 	obj/s_qmus2mid.$(OBJEXT) \
 	obj/s_sound.$(OBJEXT) \
+	obj/s_streamplayer.$(OBJEXT) \
 	obj/s_tmidty.$(OBJEXT) \
 	obj/s_wav.$(OBJEXT) \
 	obj/sbar.$(OBJEXT) \
 	obj/sc_man.$(OBJEXT) \
 	obj/screen.$(OBJEXT) \
-	obj/sn_sonix.$(OBJEXT) \
 	obj/str.$(OBJEXT) \
 	obj/stream.$(OBJEXT) \
 	obj/sv_acs.$(OBJEXT) \

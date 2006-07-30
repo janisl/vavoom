@@ -153,7 +153,7 @@ void Host_Init()
 #ifdef CLIENT
 	GInput = new VInput;
 	GInput->Init();
-	GAudio = new VAudio();
+	GAudio = VAudioPublic::Create();
 	GAudio->Init();
 	SCR_Init();
 	T_Init();

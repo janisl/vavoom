@@ -1629,6 +1629,11 @@ SOURCE=..\..\source\s_sound.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\source\s_streamplayer.cpp
+# ADD CPP /W4
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\s_tmidty.cpp
 # End Source File
 # Begin Source File
@@ -1647,11 +1652,6 @@ SOURCE=..\..\source\s_win32.cpp
 # Begin Source File
 
 SOURCE=..\..\source\s_win32m.cpp
-# ADD CPP /W4
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\sn_sonix.cpp
 # ADD CPP /W4
 # End Source File
 # Begin Source File

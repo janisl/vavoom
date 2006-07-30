@@ -23,12 +23,6 @@
 //**
 //**************************************************************************
 
-class VStreamMusicPlayer;
-class VSoundDevice;
-class VMidiDevice;
-class VCDAudioDevice;
-class VSoundSeqNode;
-
 enum seqtype_t
 {
 	SEQ_Door,
@@ -174,123 +168,39 @@ private:
 //
 //	Main audio management class.
 //
-class VAudio
+class VAudioPublic : public VVirtualObjectBase
 {
 public:
-	//	Structors.
-	VAudio();
-	~VAudio();
-
 	//	Top level methods.
-	void Init();
-	void Shutdown();
+	virtual void Init() = 0;
+	virtual void Shutdown() = 0;
 
 	//	Playback of sound effects
-	void PlaySound(int, const TVec&, const TVec&, int, int, float);
-	void StopSound(int, int);
-	void StopAllSound();
-	bool IsSoundPlaying(int, int);
+	virtual void PlaySound(int, const TVec&, const TVec&, int, int, float) = 0;
+	virtual void StopSound(int, int) = 0;
+	virtual void StopAllSound() = 0;
+	virtual bool IsSoundPlaying(int, int) = 0;
 
 	//	Music and general sound control
-	void StartSong(VName, int, bool);
-	void PauseSound();
-	void ResumeSound();
-	void Start();
-	void MusicChanged();
-	void UpdateSounds();
+	virtual void StartSong(VName, int, bool) = 0;
+	virtual void PauseSound() = 0;
+	virtual void ResumeSound() = 0;
+	virtual void Start() = 0;
+	virtual void MusicChanged() = 0;
+	virtual void UpdateSounds() = 0;
 
 	//	Sound sequences
-	void StartSequenceName(int, const TVec&, const char*);
-	void StopSequence(int);
-	void UpdateActiveSequences(float);
-	void StopAllSequences();
-	void SerialiseSounds(VStream&);
+	virtual void StartSequenceName(int, const TVec&, const char*) = 0;
+	virtual void StopSequence(int) = 0;
+	virtual void UpdateActiveSequences(float) = 0;
+	virtual void StopAllSequences() = 0;
+	virtual void SerialiseSounds(VStream&) = 0;
 
 	//	EAX utilites
-	float EAX_CalcEnvSize();
+	virtual float EAX_CalcEnvSize() = 0;
 
-private:
-	enum { MAX_CHANNELS = 256 };
-
-	enum { PRIORITY_MAX_ADJUST = 10 };
-
-	//	Info about sounds currently playing.
-	struct FChannel
-	{
-		int			origin_id;
-		int			channel;
-		TVec		origin;
-		TVec		velocity;
-		int			sound_id;
-		int			priority;
-		float		volume;
-		int			handle;
-		bool		is3D;
-	};
-
-	//	Sound curve
-	vuint8*				SoundCurve;
-	int 				MaxSoundDist;
-
-	//	Map's music lump and CD track
-	VName				MapSong;
-	int					MapCDTrack;
-
-	//	Wether we should use CD music
-	bool				CDMusic;
-
-	//	Stream music player
-	bool				MusicEnabled;
-	bool				StreamPlaying;
-	VStreamMusicPlayer*	StreamMusicPlayer;
-
-	//	List of currently playing sounds
-	FChannel			Channel[MAX_CHANNELS];
-	int					NumChannels;
-	int 				SndCount;
-
-	// maximum volume for sound
-	float				MaxVolume;
-
-	//	Listener orientation
-	TVec				ListenerForward;
-	TVec				ListenerRight;
-	TVec				ListenerUp;
-
-	//	Hardware devices
-	VSoundDevice*		SoundDevice;
-	VMidiDevice*		MidiDevice;
-	VCDAudioDevice*		CDAudioDevice;
-
-	//	Sound sequence list
-	int					ActiveSequences;
-	VSoundSeqNode*		SequenceListHead;
-
-	//	Console variables
-	static VCvarF		sfx_volume;
-	static VCvarF		music_volume;
-	static VCvarI		swap_stereo;
-	static VCvarI		s_channels;
-	static VCvarI		cd_music;
-
-	//	Friends
-	friend class TCmdMusic;
-	friend class TCmdCD;
-	friend class VSoundSeqNode;
-
-	//	Sound effect helpers
-	int GetChannel(int, int, int, int);
-	void StopChannel(int);
-	void UpdateSfx();
-
-	//	Music playback
-	void StartMusic();
-	void PlaySong(const char*, bool);
-
-	//	Execution of console commands
-	void CmdMusic(const TArray<VStr>&);
-	void CmdCD(const TArray<VStr>&);
+	static VAudioPublic* Create();
 };
 
 extern VSoundManager*		GSoundManager;
-extern VAudio*				GAudio;
+extern VAudioPublic*		GAudio;

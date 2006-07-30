@@ -58,20 +58,20 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
+class VSoundSeqNode;
+
 //
 //	VSoundDevice
 //
 //	Sound device interface. This class implements dummy driver.
 //
-class VSoundDevice
+class VSoundDevice : public VVirtualObjectBase
 {
 public:
 	bool		Sound3D;
 
 	VSoundDevice()
 	: Sound3D(false)
-	{}
-	virtual ~VSoundDevice()
 	{}
 
 	//	VSoundDevice interface.
@@ -123,7 +123,7 @@ FSoundDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClas
 //
 //	Midi player device interface. This class implements dummy driver.
 //
-class VMidiDevice
+class VMidiDevice : public VVirtualObjectBase
 {
 public:
 	bool		Initialised;
@@ -134,8 +134,6 @@ public:
 	VMidiDevice()
 	: Initialised(false)
 	, CurrLoop(false)
-	{}
-	virtual ~VMidiDevice()
 	{}
 
 	//	VMidiDevice interface.
@@ -175,7 +173,7 @@ FMidiDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass
 //
 //	CD player device interface. This class implements dummy driver.
 //
-class VCDAudioDevice
+class VCDAudioDevice : public VVirtualObjectBase
 {
 public:
 	bool		Initialised;
@@ -197,8 +195,6 @@ public:
 	, PlayLooping(false)
 	, PlayTrack(0)
 	, MaxTrack(0)
-	{}
-	virtual ~VCDAudioDevice()
 	{}
 
 	//	VCDAudioDevice interface.
@@ -235,7 +231,7 @@ VCDAudioDevice* Create##TClass() \
 FCDAudioDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
 //	Loader of sound samples.
-class VSampleLoader
+class VSampleLoader : public VVirtualObjectBase
 {
 public:
 	VSampleLoader*			Next;
@@ -247,13 +243,11 @@ public:
 		Next = List;
 		List = this;
 	}
-	virtual ~VSampleLoader()
-	{}
 	virtual void Load(sfxinfo_t&, VStream&) = 0;
 };
 
 //	Streamed audio decoder interface.
-class VAudioCodec
+class VAudioCodec : public VVirtualObjectBase
 {
 public:
 	int			SampleRate;
@@ -264,8 +258,6 @@ public:
 	: SampleRate(44100)
 	, SampleBits(16)
 	, NumChannels(2)
-	{}
-	virtual ~VAudioCodec()
 	{}
 	virtual int Decode(short*, int) = 0;
 	virtual bool Finished() = 0;
@@ -328,6 +320,59 @@ public:
 	int Run(VStream&, VStream&);
 };
 
+class VStreamMusicPlayer
+{
+public:
+	bool			StrmOpened;
+	VAudioCodec*	Codec;
+	//	Current playing song info.
+	bool			CurrLoop;
+	VName			CurrSong;
+	bool			Stopping;
+	double			FinishTime;
+	VSoundDevice*	SoundDevice;
+
+	VStreamMusicPlayer(VSoundDevice* InSoundDevice)
+	: StrmOpened(false)
+	, Codec(NULL)
+	, CurrLoop(false)
+	, Stopping(false)
+	, SoundDevice(InSoundDevice)
+	{}
+	~VStreamMusicPlayer()
+	{}
+
+	void Init();
+	void Shutdown();
+	void Tick(float);
+	void Play(VAudioCodec* InCodec, const char* InName, bool InLoop);
+	void Pause();
+	void Resume();
+	void Stop();
+	bool IsPlaying();
+};
+
+class VEaxTrace
+{
+public:
+	TVec			TraceStart;
+	TVec			TraceEnd;
+	TVec			TraceDelta;
+	TPlane			TracePlane;		// from t1 to t2
+
+	TVec			LineStart;
+	TVec			LineEnd;
+
+	int PlaneSide2(const TVec&, const TPlane*);
+	bool CheckPlane(const sec_plane_t*);
+	bool CheckPlanes(sector_t*);
+	bool CheckLine(seg_t*);
+	bool CrossSubsector(int);
+	bool CrossBSPNode(int);
+	float TraceLine(const TVec&, const TVec&);
+	float CalcDirSize(const TVec&);
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
@@ -346,21 +391,21 @@ public:
 struct FMusHeader
 {
 	char		ID[4];			// identifier "MUS" 0x1A
-	word		ScoreSize;
-	word		ScoreStart;
-	word		NumChannels; 	// count of primary channels
-	word		NumSecChannels;	// count of secondary channels (?)
-	word		InstrumentCount;
-	word		Dummy;
+	vuint16		ScoreSize;
+	vuint16		ScoreStart;
+	vuint16		NumChannels; 	// count of primary channels
+	vuint16		NumSecChannels;	// count of secondary channels (?)
+	vuint16		InstrumentCount;
+	vuint16		Dummy;
 };
 
 struct MIDheader
 {
 	char		ID[4];
 	vuint32		hdr_size;
-	word		type;
-	word		num_tracks;
-	word		divisions;
+	vuint16		type;
+	vuint16		num_tracks;
+	vuint16		divisions;
 };
 
 #pragma pack()

@@ -33,27 +33,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VEaxTrace
-{
-public:
-	TVec			TraceStart;
-	TVec			TraceEnd;
-	TVec			TraceDelta;
-	TPlane			TracePlane;		// from t1 to t2
-
-	TVec			LineStart;
-	TVec			LineEnd;
-
-	int PlaneSide2(const TVec&, const TPlane*);
-	bool CheckPlane(const sec_plane_t*);
-	bool CheckPlanes(sector_t*);
-	bool CheckLine(seg_t*);
-	bool CrossSubsector(int);
-	bool CrossBSPNode(int);
-	float TraceLine(const TVec&, const TVec&);
-	float CalcDirSize(const TVec&);
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -418,27 +397,4 @@ float VEaxTrace::CalcDirSize(const TVec &dir)
 	if (len < 1)
 		len = 1;
 	return len;
-}
-
-//==========================================================================
-//
-//	VAudio::EAX_CalcEnvSize
-//
-//==========================================================================
-
-float VAudio::EAX_CalcEnvSize()
-{
-	guard(VAudio::EAX_CalcEnvSize);
-	if (cls.state != ca_connected)
-	{
-		return 7.5;
-	}
-
-	float len = 0;
-	VEaxTrace Trace;
-	len += Trace.CalcDirSize(TVec(3200, 0, 0));
-	len += Trace.CalcDirSize(TVec(0, 3200, 0));
-	len += Trace.CalcDirSize(TVec(0, 0, 3200));
-	return len / 3.0;
-	unguard;
 }
