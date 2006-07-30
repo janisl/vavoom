@@ -40,7 +40,7 @@
 #include "s_local.h"
 
 #ifndef AL_VERSION_1_1
-typedef ALchar ALubyte;
+typedef ALubyte ALchar;
 #endif
 
 class VOpenALDevice : public VSoundDevice
