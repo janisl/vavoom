@@ -142,7 +142,7 @@ int VWinIpxDriver::Init()
 	if (gethostname(buff, MAXHOSTNAMELEN) == 0)
 	{
 		// if the Vavoom hostname isn't set, set it to the machine name
-		if (strcmp(VNetworkPublic::HostName, "UNNAMED") == 0)
+		if (strcmp(Net->HostName, "UNNAMED") == 0)
 		{
 			// see if it's a text IP address (well, close enough)
 			for (p = buff; *p; p++)
@@ -157,7 +157,7 @@ int VWinIpxDriver::Init()
 						break;
 				buff[i] = 0;
 			}
-			VNetworkPublic::HostName = buff;
+			Net->HostName = buff;
 		}
 	}
 
