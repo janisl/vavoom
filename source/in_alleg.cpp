@@ -495,11 +495,11 @@ void VAllegroInputDevice::ShutdownJoystick()
 
 //==========================================================================
 //
-//  VInput::CreateDevice
+//  VInputDevice::CreateDevice
 //
 //==========================================================================
 
-VInputDevice* VInput::CreateDevice()
+VInputDevice* VInputDevice::CreateDevice()
 {
 	return new VAllegroInputDevice();
 }

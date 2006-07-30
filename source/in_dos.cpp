@@ -578,11 +578,11 @@ void VDosInputDevice::ShutdownJoystick()
 
 //==========================================================================
 //
-//  VInput::CreateDevice
+//  VInputDevice::CreateDevice
 //
 //==========================================================================
 
-VInputDevice* VInput::CreateDevice()
+VInputDevice* VInputDevice::CreateDevice()
 {
 	return new VDosInputDevice();
 }

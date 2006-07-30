@@ -153,66 +153,55 @@ struct event_t
 //
 //	Input device class, handles actual reading of the input.
 //
-class VInputDevice
+class VInputDevice : public VVirtualObjectBase
 {
 public:
 	//	VInputDevice interface.
-	virtual ~VInputDevice();
 	virtual void ReadInput() = 0;
+
+	//	Implemented in corresponding system module.
+	static VInputDevice* CreateDevice();
 };
 
 //
 //	Input subsystem, handles all input events.
 //
-class VInput
+class VInputPublic : public VVirtualObjectBase
 {
 public:
 	int				ShiftDown;
 	int				CtrlDown;
 	int				AltDown;
 
-	VInput();
-	~VInput();
+	VInputPublic()
+	: ShiftDown(0)
+	, CtrlDown(0)
+	, AltDown(0)
+	{}
 
 	//	System device related functions.
-	void Init();
-	void Shutdown();
+	virtual void Init() = 0;
+	virtual void Shutdown() = 0;
 
 	//	Input event handling.
-	void PostEvent(event_t*);
-	void KeyEvent(int, int);
-	void ProcessEvents();
-	int ReadKey();
+	virtual void PostEvent(event_t*) = 0;
+	virtual void KeyEvent(int, int) = 0;
+	virtual void ProcessEvents() = 0;
+	virtual int ReadKey() = 0;
 
 	//	Handling of key bindings.
-	void GetBindingKeys(const VStr&, int&, int&);
-	void GetBinding(int, VStr&, VStr&);
-	void SetBinding(int, const VStr&, const VStr&);
-	void WriteBindings(FILE*);
+	virtual void GetBindingKeys(const VStr&, int&, int&) = 0;
+	virtual void GetBinding(int, VStr&, VStr&) = 0;
+	virtual void SetBinding(int, const VStr&, const VStr&) = 0;
+	virtual void WriteBindings(FILE*) = 0;
 
-	int TranslateKey(int);
+	virtual int TranslateKey(int) = 0;
 
-	int KeyNumForName(const VStr& Name);
-	VStr KeyNameForNum(int KeyNr);
+	virtual int KeyNumForName(const VStr& Name) = 0;
+	virtual VStr KeyNameForNum(int KeyNr) = 0;
 
-private:
-	enum { MAXEVENTS = 64 };
-
-	VInputDevice*	Device;
-
-	event_t			Events[MAXEVENTS];
-	int				EventHead;
-	int				EventTail;
-
-	VStr			KeyBindingsDown[256];
-	VStr			KeyBindingsUp[256];
-
-	static const char*	KeyNames[SCANCODECOUNT];
-	static const char	ShiftXForm[];
-
-	//	Implemented in corresponding system module.
-	VInputDevice* CreateDevice();
+	static VInputPublic* Create();
 };
 
 //	Global input handler.
-extern VInput*	GInput;
+extern VInputPublic*	GInput;

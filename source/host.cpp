@@ -151,7 +151,7 @@ void Host_Init()
 	R_InitTexture();
 
 #ifdef CLIENT
-	GInput = new VInput;
+	GInput = VInputPublic::Create();
 	GInput->Init();
 	GAudio = VAudioPublic::Create();
 	GAudio->Init();

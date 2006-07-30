@@ -38,6 +38,52 @@
 
 // TYPES -------------------------------------------------------------------
 
+//
+//	Input subsystem, handles all input events.
+//
+class VInput : public VInputPublic
+{
+public:
+	VInput();
+	~VInput();
+
+	//	System device related functions.
+	void Init();
+	void Shutdown();
+
+	//	Input event handling.
+	void PostEvent(event_t*);
+	void KeyEvent(int, int);
+	void ProcessEvents();
+	int ReadKey();
+
+	//	Handling of key bindings.
+	void GetBindingKeys(const VStr&, int&, int&);
+	void GetBinding(int, VStr&, VStr&);
+	void SetBinding(int, const VStr&, const VStr&);
+	void WriteBindings(FILE*);
+
+	int TranslateKey(int);
+
+	int KeyNumForName(const VStr& Name);
+	VStr KeyNameForNum(int KeyNr);
+
+private:
+	enum { MAXEVENTS = 64 };
+
+	VInputDevice*	Device;
+
+	event_t			Events[MAXEVENTS];
+	int				EventHead;
+	int				EventTail;
+
+	VStr			KeyBindingsDown[256];
+	VStr			KeyBindingsUp[256];
+
+	static const char*	KeyNames[SCANCODECOUNT];
+	static const char	ShiftXForm[];
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -48,7 +94,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VInput*			GInput;
+VInputPublic*		GInput;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -203,12 +249,13 @@ const char		VInput::ShiftXForm[] =
 
 //==========================================================================
 //
-//	VInputDevice::~VInputDevice
+//	VInputPublic::Create
 //
 //==========================================================================
 
-VInputDevice::~VInputDevice()
+VInputPublic* VInputPublic::Create()
 {
+	return new VInput();
 }
 
 //==========================================================================
@@ -218,10 +265,7 @@ VInputDevice::~VInputDevice()
 //==========================================================================
 
 VInput::VInput()
-: ShiftDown(0)
-, CtrlDown(0)
-, AltDown(0)
-, Device(0)
+: Device(0)
 , EventHead(0)
 , EventTail(0)
 {
@@ -247,7 +291,7 @@ VInput::~VInput()
 void VInput::Init()
 {
 	guard(VInput::Init);
-	Device = CreateDevice();
+	Device = VInputDevice::CreateDevice();
 	unguard;
 }
 

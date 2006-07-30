@@ -391,11 +391,11 @@ void VSdlInputDevice::PostJoystick()
 
 //==========================================================================
 //
-//  VInput::CreateDevice
+//  VInputDevice::CreateDevice
 //
 //==========================================================================
 
-VInputDevice* VInput::CreateDevice()
+VInputDevice* VInputDevice::CreateDevice()
 {
 	return new VSdlInputDevice();
 }
