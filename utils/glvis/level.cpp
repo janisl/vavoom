@@ -537,6 +537,14 @@ void TVisBuilder::CreatePortals()
 		subsector_t *sub = &subsectors[line->leaf];
 		if (line->partner)
 		{
+			//	Skip self-referencing subsector segs
+			if (line->leaf == line->partner->leaf)
+			{
+				Owner.DisplayMessage("Self-referencing subsector detected\n");
+				numportals--;
+				continue;
+			}
+
 			// create portal
 			if (sub->numportals == MAX_PORTALS_ON_LEAF)
 				throw GLVisError("Leaf with too many portals");
