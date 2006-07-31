@@ -1,0 +1,23 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+
+EXEEXT=@EXEEXT@
+
+@SET_MAKE@
+
+.PHONY: all clean install
+
+all: ../utils/bin/vcc$(EXEEXT)
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/common/progs -C common
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/doom1/progs -C doom
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/doom2/progs -C doom2
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/heretic/progs -C heretic
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/hexen/progs -C hexen
+	$(MAKE) VCC=../../utils/bin/vcc$(EXEEXT) OUTDIR=../../basev/strife/progs -C strife
+
+../utils/bin/vcc$(EXEEXT):
+	$(MAKE) -C ../utils/vcc
+
+install:
+
+clean:

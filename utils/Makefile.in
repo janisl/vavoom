@@ -1,0 +1,18 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+
+@SET_MAKE@
+
+.PHONY: all clean install
+
+all:
+	$(MAKE) -C acc
+	$(MAKE) -C vcc
+	$(MAKE) -C vlumpy
+	$(MAKE) -C glvis
+	$(MAKE) -C fixmd2
+
+install:
+
+clean:
+	-rm {acc,fixmd2,glbsp,glvis,vcc{,/vcpp},vlumpy}/*.{o,obj,a,lib,tds}

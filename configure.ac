@@ -419,7 +419,7 @@ dnl
 dnl  **** Check wether using external glBSP ****
 dnl
 
-LIB_FILES="source/timidity/libtimidity.a utils/glvis/libglvis.a"
+LIB_FILES="timidity/libtimidity.a ../utils/glvis/libglvis.a"
 
 if test "x$with_external_glbsp" != "x" -a "x$with_external_glbsp" != "xno"; then
 	if test "x$with_external_glbsp" != "xyes"; then
@@ -428,7 +428,7 @@ if test "x$with_external_glbsp" != "x" -a "x$with_external_glbsp" != "xno"; then
 	fi
 	LIBS="-lglbsp $LIBS"
 else
-	LIB_FILES="$LIB_FILES utils/glbsp/libglbsp.a"
+	LIB_FILES="$LIB_FILES ../utils/glbsp/libglbsp.a"
 fi
 
 dnl
@@ -518,7 +518,7 @@ dnl
 dnl  **** Build and instalation targets ****
 dnl
 
-TARGETS="utils"
+TARGETS=""
 INSTALL_TARGETS=""
 if test "x$enable_client" != "xno"; then
 	TARGETS="$TARGETS exe"
@@ -528,8 +528,6 @@ if test "x$enable_server" != "xno"; then
 	TARGETS="$TARGETS svexe"
 	INSTALL_TARGETS="$INSTALL_TARGETS installsvexe"
 fi
-TARGETS="$TARGETS data"
-INSTALL_TARGETS="$INSTALL_TARGETS installdata"
 
 AC_SUBST([TARGETS])
 AC_SUBST([INSTALL_TARGETS])
@@ -552,13 +550,17 @@ AC_SUBST([ASMFLAGS])
 
 AC_OUTPUT([
 	Makefile
+	basev/Makefile
+	progs/Makefile
 	progs/common/Makefile
 	progs/doom/Makefile
 	progs/doom2/Makefile
 	progs/heretic/Makefile
 	progs/hexen/Makefile
 	progs/strife/Makefile
+	source/Makefile
 	source/timidity/Makefile
+	utils/Makefile
 	utils/acc/Makefile
 	utils/fixmd2/Makefile
 	utils/glbsp/Plugin.mak

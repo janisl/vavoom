@@ -1,0 +1,104 @@
+top_srcdir=@top_srcdir@
+srcdir=@srcdir@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=@bindir@
+datadir=@datadir@
+libexecdir=@libexecdir@
+
+EXEEXT=@EXEEXT@
+INSTALL=@INSTALL@
+INSTALL_DATA=@INSTALL_DATA@
+OBJEXT=@OBJEXT@
+
+@SET_MAKE@
+
+INSTALL_DIR = $(DESTDIR)$(datadir)/vavoom
+
+#---------------------------------------
+#
+#	WAD files
+#
+#---------------------------------------
+
+WAD_FILES = \
+	common/wad0.wad \
+	doom/wad0.wad \
+	doom1/wad0.wad \
+	doom2/wad0.wad \
+	tnt/wad0.wad \
+	plutonia/wad0.wad \
+	heretic/wad0.wad \
+	hexen/wad0.wad \
+	strife/wad0.wad
+
+# ---------------------------------------
+
+.PHONY: all clean install
+
+all: $(WAD_FILES)
+
+# ---------------------------------------
+
+%/wad0.wad: $(srcdir)/%/wad0.ls ../utils/bin/vlumpy$(EXEEXT)
+	@mkdir -p doom
+	@mkdir -p plutonia
+	@mkdir -p tnt
+	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+
+strife/strfhelp.o: $(srcdir)/../utils/editing/acs/*.acs ../utils/bin/acc$(EXEEXT)
+	@mkdir -p strife
+	../utils/bin/acc$(EXEEXT) $(srcdir)/../utils/editing/acs/strfhelp.acs strife/strfhelp.o
+
+../utils/bin/acc$(EXEEXT):
+	$(MAKE) -C ../utils/acc
+
+../utils/bin/vlumpy$(EXEEXT):
+	$(MAKE) -C ../utils/vlumpy
+
+common/wad0.wad : common/progs/common.dat common/progs/clcommon.dat \
+	common/progs/svcommon.dat
+doom1/wad0.wad : doom1/progs/shared.dat doom1/progs/clprogs.dat \
+	doom1/progs/svprogs.dat
+doom2/wad0.wad : doom2/progs/shared.dat doom2/progs/clprogs.dat \
+	doom2/progs/svprogs.dat
+heretic/wad0.wad : heretic/progs/shared.dat heretic/progs/clprogs.dat \
+	heretic/progs/svprogs.dat
+hexen/wad0.wad : hexen/progs/shared.dat hexen/progs/clprogs.dat \
+	hexen/progs/svprogs.dat
+strife/wad0.wad : strife/progs/shared.dat strife/progs/clprogs.dat \
+	strife/progs/svprogs.dat strife/strfhelp.o
+
+# ---------------------------------------
+
+INSTALL_DIRS = $(INSTALL_DIR) \
+		$(INSTALL_DIR)/basev \
+		$(INSTALL_DIR)/basev/common \
+		$(INSTALL_DIR)/basev/doom \
+		$(INSTALL_DIR)/basev/doom1 \
+		$(INSTALL_DIR)/basev/doom2 \
+		$(INSTALL_DIR)/basev/tnt \
+		$(INSTALL_DIR)/basev/plutonia \
+		$(INSTALL_DIR)/basev/heretic \
+		$(INSTALL_DIR)/basev/hexen \
+		$(INSTALL_DIR)/basev/strife
+
+install: installdata
+
+installdata:
+	$(INSTALL) -d $(INSTALL_DIRS)
+	$(INSTALL_DATA) $(srcdir)/games.txt $(INSTALL_DIR)/basev
+	$(INSTALL_DATA) $(srcdir)/common/default.cfg $(srcdir)/common/startup.vs common/wad0.wad $(INSTALL_DIR)/basev/common
+	$(INSTALL_DATA) doom/wad0.wad $(INSTALL_DIR)/basev/doom
+	$(INSTALL_DATA) doom1/wad0.wad $(srcdir)/doom1/base.txt $(INSTALL_DIR)/basev/doom1
+	$(INSTALL_DATA) doom2/wad0.wad $(srcdir)/doom2/base.txt $(INSTALL_DIR)/basev/doom2
+	$(INSTALL_DATA) tnt/wad0.wad $(srcdir)/tnt/base.txt $(INSTALL_DIR)/basev/tnt
+	$(INSTALL_DATA) plutonia/wad0.wad $(srcdir)/plutonia/base.txt $(INSTALL_DIR)/basev/plutonia
+	$(INSTALL_DATA) heretic/wad0.wad $(INSTALL_DIR)/basev/heretic
+	$(INSTALL_DATA) hexen/wad0.wad $(INSTALL_DIR)/basev/hexen
+	$(INSTALL_DATA) strife/wad0.wad $(INSTALL_DIR)/basev/strife
+
+# ---------------------------------------
+
+clean:
+	-rm {doom{,1,2},heretic,hexen,plutonia,strife,tnt}/{progs/*.dat,wad0.wad}
