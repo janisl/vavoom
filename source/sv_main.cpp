@@ -2273,7 +2273,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	sv_secret_map = info.SecretMap;
 	memcpy(sv.mapalias, info.mapalias, sizeof(info.mapalias));
 
-	strcpy(level.level_name, info.name);
+	VStr::Cpy(level.level_name, info.name);
 	level.levelnum = info.warpTrans;//FIXME does this make sense?
 	level.cluster = info.cluster;
 	level.partime = 0;//FIXME not used in Vavoom.
@@ -2890,7 +2890,7 @@ COMMAND(Map)
 		GCon->Log("map <mapname> : change level");
 	 	return;
 	}
-	strcpy(mapname, *Args[1]);
+	VStr::Cpy(mapname, *Args[1]);
 
 	SV_ShutdownServer(false);
 #ifdef CLIENT

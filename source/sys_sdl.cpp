@@ -610,6 +610,7 @@ static void signal_handler(int s)
 	default:
 		__Context::ErrToThrow = "Terminated by signal";
 	}
+	dprintf("signal: %s\n", __Context::ErrToThrow);
 	longjmp(__Context::Env, 1);
 #else
 	switch (s)

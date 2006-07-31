@@ -264,16 +264,16 @@ COMMAND(SetInfo)
 
 IMPLEMENT_FUNCTION(VBasePlayer, cprint)
 {
-	const char* msg = PF_FormatString();
+	VStr msg = PF_FormatString();
 	P_GET_SELF;
-	SV_ClientPrintf(Self, msg);
+	SV_ClientPrintf(Self, *msg);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, centerprint)
 {
-	const char* msg = PF_FormatString();
+	VStr msg = PF_FormatString();
 	P_GET_SELF;
-	SV_ClientCenterPrintf(Self, msg);
+	SV_ClientCenterPrintf(Self, *msg);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, GetPlayerNum)

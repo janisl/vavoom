@@ -64,7 +64,7 @@ VCvar::VCvar(const char* AName, const char* ADefault, int AFlags)
 	VCvar *prev = NULL;
 	for (VCvar *var = Variables; var; var = var->Next)
 	{
-		if (stricmp(var->Name, Name) < 0)
+		if (VStr::ICmp(var->Name, Name) < 0)
 		{
 			prev = var;
 		}
@@ -100,13 +100,13 @@ VCvar::VCvar(const char* AName, const VStr& ADefault, int AFlags)
 {
 	guard(VCvar::VCvar);
 	char* Tmp = new char[ADefault.Length() + 1];
-	strcpy(Tmp, *ADefault);
+	VStr::Cpy(Tmp, *ADefault);
 	DefaultString = Tmp;
 
 	VCvar *prev = NULL;
 	for (VCvar *var = Variables; var; var = var->Next)
 	{
-		if (stricmp(var->Name, Name) < 0)
+		if (VStr::ICmp(var->Name, Name) < 0)
 		{
 			prev = var;
 		}
@@ -348,7 +348,7 @@ VCvar* VCvar::FindVariable(const char* name)
 	guard(VCvar::FindVariable);
 	for (VCvar* cvar = Variables; cvar; cvar = cvar->Next)
 	{
-		if (!stricmp(name, cvar->Name))
+		if (!VStr::ICmp(name, cvar->Name))
 		{
 			return cvar;
 		}

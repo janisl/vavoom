@@ -209,13 +209,13 @@ void VSoundManager::ParseSndinfo()
 	{
 		if (*sc_String == '$')
 		{
-			if (!stricmp(sc_String, "$archivepath"))
+			if (SC_Compare("$archivepath"))
 			{
 				// $archivepath <directory>
 				//	Ignored.
 				SC_MustGetString();
 			}
-			else if (!stricmp(sc_String, "$map"))
+			else if (SC_Compare("$map"))
 			{
 				// $map <map number> <song name>
 				SC_MustGetNumber();
@@ -226,12 +226,12 @@ void VSoundManager::ParseSndinfo()
 						VName::AddLower8));
 				}
 			}
-			else if (!stricmp(sc_String, "$registered"))
+			else if (SC_Compare("$registered"))
 			{
 				// $registered
 				//	Unused.
 			}
-			else if (!stricmp(sc_String, "$limit"))
+			else if (SC_Compare("$limit"))
 			{
 				// $limit <logical name> <max channels>
 				SC_MustGetString();
@@ -239,7 +239,7 @@ void VSoundManager::ParseSndinfo()
 				SC_MustGetNumber();
 				S_sfx[sfx].NumChannels = MID(0, sc_Number, 255);
 			}
-			else if (!stricmp(sc_String, "$pitchshift"))
+			else if (SC_Compare("$pitchshift"))
 			{
 				// $pitchshift <logical name> <pitch shift amount>
 				SC_MustGetString();
@@ -247,13 +247,13 @@ void VSoundManager::ParseSndinfo()
 				SC_MustGetNumber();
 				S_sfx[sfx].ChangePitch = ((1 << MID(0, sc_Number, 7)) - 1) / 255.0;
 			}
-			else if (!stricmp(sc_String, "$pitchshiftrange"))
+			else if (SC_Compare("$pitchshiftrange"))
 			{
 				// $pitchshiftrange <pitch shift amount>
 				SC_MustGetNumber();
 				CurrentChangePitch = ((1 << MID(0, sc_Number, 7)) - 1) / 255.0;
 			}
-			else if (!stricmp(sc_String, "$alias"))
+			else if (SC_Compare("$alias"))
 			{
 				// $alias <name of alias> <name of real sound>
 				SC_MustGetString();
@@ -265,7 +265,7 @@ void VSoundManager::ParseSndinfo()
 				//}
 				S_sfx[sfxfrom].Link = FindOrAddSound(sc_String);
 			}
-			else if (!stricmp(sc_String, "$random"))
+			else if (SC_Compare("$random"))
 			{
 				// $random <logical name> { <logical name> ... }
 				list.Clear();
@@ -291,7 +291,7 @@ void VSoundManager::ParseSndinfo()
 					S_sfx[id].bRandomHeader = true;
 				}
 			}
-			else if (!stricmp(sc_String, "$playerreserve"))
+			else if (SC_Compare("$playerreserve"))
 			{
 				// $playerreserve <logical name>
 				SC_MustGetString();
@@ -299,7 +299,7 @@ void VSoundManager::ParseSndinfo()
 				S_sfx[id].Link = NumPlayerReserves++;
 				S_sfx[id].bPlayerReserve = true;
 			}
-			else if (!stricmp(sc_String, "$playersound"))
+			else if (SC_Compare("$playersound"))
 			{
 				// $playersound <player class> <gender> <logical name> <lump name>
 				int PClass, Gender, RefId;
@@ -308,11 +308,11 @@ void VSoundManager::ParseSndinfo()
 				int id;
 
 				ParsePlayerSoundCommon(PClass, Gender, RefId);
-				len = strlen(*PlayerClasses[PClass]);
+				len = VStr::Length(*PlayerClasses[PClass]);
 				memcpy(FakeName, *PlayerClasses[PClass], len);
 				FakeName[len] = '|';
 				FakeName[len + 1] = Gender + '0';
-				strcpy(&FakeName[len + 2], *S_sfx[RefId].TagName);
+				VStr::Cpy(&FakeName[len + 2], *S_sfx[RefId].TagName);
 
 				id = AddSoundLump(FakeName, W_CheckNumForName(
 					VName(sc_String, VName::AddLower8)));
@@ -322,7 +322,7 @@ void VSoundManager::ParseSndinfo()
 				PlrSnd.RefId = RefId;
 				PlrSnd.SoundId = id;
 			}
-			else if (!stricmp(sc_String, "$playersounddup"))
+			else if (SC_Compare("$playersounddup"))
 			{
 				// $playersounddup <player class> <gender> <logical name> <target sound name>
 				int PClass, Gender, RefId, TargId;
@@ -340,7 +340,7 @@ void VSoundManager::ParseSndinfo()
 				PlrSnd.RefId = RefId;
 				PlrSnd.SoundId = AliasTo;
 			}
-			else if (!stricmp(sc_String, "$playeralias"))
+			else if (SC_Compare("$playeralias"))
 			{
 				// $playeralias <player class> <gender> <logical name> <logical name of existing sound>
 				int PClass, Gender, RefId;
@@ -353,14 +353,14 @@ void VSoundManager::ParseSndinfo()
 				PlrSnd.RefId = RefId;
 				PlrSnd.SoundId = AliasTo;
 			}
-			else if (!stricmp(sc_String, "$singular"))
+			else if (SC_Compare("$singular"))
 			{
 				// $singular <logical name>
 				SC_MustGetString();
 				int sfx = FindOrAddSound(sc_String);
 				S_sfx[sfx].bSingular = true;
 			}
-			else if (!stricmp(sc_String, "$ambient"))
+			else if (SC_Compare("$ambient"))
 			{
 				// $ambient <num> <logical name> [point [atten] | surround | [world]]
 				//			<continuous | random <minsecs> <maxsecs> | periodic <secs>>
@@ -733,7 +733,7 @@ int VSoundManager::GetSoundID(const char *name)
 	guard(VSoundManager::GetSoundID);
 	for (int i = 0; i < S_sfx.Num(); i++)
 	{
-		if (!strcmp(*S_sfx[i].TagName, name))
+		if (S_sfx[i].TagName == name)
 		{
 			return i;
 		}
@@ -901,7 +901,7 @@ void VSoundManager::ParseSequenceScript()
 			}
 			for (SeqId = 0; SeqId < SeqInfo.Num(); SeqId++)
 			{
-				if (!strcmp(*SeqInfo[SeqId].Name, sc_String + 1))
+				if (SeqInfo[SeqId].Name == sc_String + 1)
 				{
 					Z_Free(SeqInfo[SeqId].Data);
 					break;

@@ -222,7 +222,7 @@ bool VQMus2Mid::Convert(VStream& Strm)
 	}
 
 	Strm.Serialise(&MUSh, sizeof(FMusHeader));
-	if (strncmp(MUSh.ID, MUSMAGIC, 4))
+	if (VStr::NCmp(MUSh.ID, MUSMAGIC, 4))
 	{
 		GCon->Log("Not a MUS file");
 		return false;

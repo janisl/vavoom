@@ -202,7 +202,7 @@ void VCommand::AddToAutoComplete(const char* string)
 
 	// Alphabetic sort
 	for (int i = AutoCompleteTable.Num() - 1; i &&
-		(stricmp(AutoCompleteTable[i - 1], AutoCompleteTable[i]) > 0); i--)
+		(VStr::ICmp(AutoCompleteTable[i - 1], AutoCompleteTable[i]) > 0); i--)
 	{
 		const char* Swap = AutoCompleteTable[i];
 		AutoCompleteTable[i] = AutoCompleteTable[i - 1];
@@ -238,8 +238,8 @@ VStr VCommand::GetAutoComplete(const VStr& String, int& Index, bool Backward)
 
 	while (i < AutoCompleteTable.Num() && i >= 0)
 	{
-		if (String.Length() <= strlen(AutoCompleteTable[i]) &&
-			!strnicmp(*String, AutoCompleteTable[i], String.Length()))
+		if (String.Length() <= VStr::Length(AutoCompleteTable[i]) &&
+			!VStr::NICmp(*String, AutoCompleteTable[i], String.Length()))
 		{
 			Index = i;
 			return AutoCompleteTable[i];
@@ -539,11 +539,11 @@ COMMAND(CmdList)
 {
 	guard(COMMAND CmdList);
 	const char *prefix = Args.Num() > 1 ? *Args[1] : "";
-	int pref_len = strlen(prefix);
+	int pref_len = VStr::Length(prefix);
 	int count = 0;
 	for (VCommand *cmd = Cmds; cmd; cmd = cmd->Next)
 	{
-		if (pref_len && strnicmp(cmd->Name, prefix, pref_len))
+		if (pref_len && VStr::NICmp(cmd->Name, prefix, pref_len))
 			continue;
 		GCon->Logf(" %s", cmd->Name);
 		count++;

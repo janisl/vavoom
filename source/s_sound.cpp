@@ -1241,15 +1241,15 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 		return;
 	}
 
-	const char* command = *Args[1];
+	VStr command = Args[1];
 
-	if (!stricmp(command, "on"))
+	if (!command.ICmp("on"))
 	{
 		MusicEnabled = true;
 		return;
 	}
 
-	if (!stricmp(command, "off"))
+	if (!command.ICmp("off"))
 	{
 		if (MidiDevice)
 			MidiDevice->Stop();
@@ -1264,7 +1264,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "play"))
+	if (!command.ICmp("play"))
 	{
 		if (Args.Num() < 3)
 		{
@@ -1275,7 +1275,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "loop"))
+	if (!command.ICmp("loop"))
 	{
 		if (Args.Num() < 3)
 		{
@@ -1286,7 +1286,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "pause"))
+	if (!command.ICmp("pause"))
 	{
 		if (StreamPlaying)
 			StreamMusicPlayer->Pause();
@@ -1295,7 +1295,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "resume"))
+	if (!command.ICmp("resume"))
 	{
 		if (StreamPlaying)
 			StreamMusicPlayer->Resume();
@@ -1304,7 +1304,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "stop"))
+	if (!command.ICmp("stop"))
 	{
 		if (StreamPlaying)
 			StreamMusicPlayer->Stop();
@@ -1313,7 +1313,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "info"))
+	if (!command.ICmp("info"))
 	{
 		if (StreamPlaying && StreamMusicPlayer->IsPlaying())
 		{
@@ -1343,23 +1343,21 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 void VAudio::CmdCD(const TArray<VStr>& Args)
 {
 	guard(VAudio::CmdCD);
-	const char*		command;
-
 	if (!CDAudioDevice)
 		return;
 
 	if (Args.Num() < 2)
 		return;
 
-	command = *Args[1];
+	VStr command = Args[1];
 
-	if (!stricmp(command, "on"))
+	if (!command.ICmp("on"))
 	{
 		CDAudioDevice->Enabled = true;
 		return;
 	}
 
-	if (!stricmp(command, "off"))
+	if (!command.ICmp("off"))
 	{
 		if (CDAudioDevice->Playing)
 			CDAudioDevice->Stop();
@@ -1367,7 +1365,7 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "reset"))
+	if (!command.ICmp("reset"))
 	{
 		int		n;
 
@@ -1380,7 +1378,7 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "remap"))
+	if (!command.ICmp("remap"))
 	{
 		int		n;
 		int		ret;
@@ -1403,7 +1401,7 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "eject"))
+	if (!command.ICmp("eject"))
 	{
 		if (CDAudioDevice->Playing)
 			CDAudioDevice->Stop();
@@ -1412,7 +1410,7 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "close"))
+	if (!command.ICmp("close"))
 	{
 		CDAudioDevice->CloseDoor();
 		return;
@@ -1428,7 +1426,7 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		}
 	}
 
-	if (!stricmp(command, "play"))
+	if (!command.ICmp("play"))
 	{
 		if (Args.Num() < 2)
 		{
@@ -1439,7 +1437,7 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "loop"))
+	if (!command.ICmp("loop"))
 	{
 		if (Args.Num() < 2)
 		{
@@ -1450,25 +1448,25 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		return;
 	}
 
-	if (!stricmp(command, "pause"))
+	if (!command.ICmp("pause"))
 	{
 		CDAudioDevice->Pause();
 		return;
 	}
 
-	if (!stricmp(command, "resume"))
+	if (!command.ICmp("resume"))
 	{
 		CDAudioDevice->Resume();
 		return;
 	}
 
-	if (!stricmp(command, "stop"))
+	if (!command.ICmp("stop"))
 	{
 		CDAudioDevice->Stop();
 		return;
 	}
 
-	if (!stricmp(command, "info"))
+	if (!command.ICmp("info"))
 	{
 		GCon->Logf("%d tracks", CDAudioDevice->MaxTrack);
 		if (CDAudioDevice->Playing || CDAudioDevice->WasPlaying)

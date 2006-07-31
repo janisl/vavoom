@@ -593,7 +593,7 @@ void Host_CoreDump(const char *fmt, ...)
 	if (!host_error_string)
 	{
 		host_error_string = new char[32];
-		strcpy(host_error_string, "Stack trace: ");
+		VStr::Cpy(host_error_string, "Stack trace: ");
 		first = true;
 
 		PR_Traceback();
@@ -608,8 +608,9 @@ void Host_CoreDump(const char *fmt, ...)
 
 	dprintf("- %s\n", string);
 
-	char *new_string = new char[strlen(host_error_string) + strlen(string) + 6];
-	strcpy(new_string, host_error_string);
+	char *new_string = new char[VStr::Length(host_error_string) +
+		VStr::Length(string) + 6];
+	VStr::Cpy(new_string, host_error_string);
 	if (first)
 		first = false;
 	else
@@ -678,4 +679,10 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())
 	SAFE_SHUTDOWN(Z_Shutdown, ())
+}
+
+VavoomError::VavoomError(const char *text)
+{
+	VStr::NCpy(message, text, MAX_ERROR_TEXT_SIZE - 1);
+	message[MAX_ERROR_TEXT_SIZE - 1] = 0;
 }

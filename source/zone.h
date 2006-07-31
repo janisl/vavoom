@@ -86,19 +86,9 @@ inline void operator delete[](void* Ptr)
 	Z_Free(Ptr, "", 0);
 }
 
-inline char *Z_StrDup(const char *src, const char* FileName, int LineNumber)
-{
-	int len = strlen(src);
-	char *buf = (char*)Z_Malloc(len + 1, FileName, LineNumber);
-	strcpy(buf, src);
-	return buf;
-}
-
 #define Z_Malloc(size)				Z_Malloc(size, __FILE__, __LINE__)
 #define Z_Calloc(size)				Z_Calloc(size, __FILE__, __LINE__)
 #define Z_Free(ptr)					Z_Free(ptr, __FILE__, __LINE__)
-
-#define Z_StrDup(src)				Z_StrDup(src, __FILE__, __LINE__)
 
 #define ZONE_DEBUG_NEW				new(__FILE__, __LINE__)
 #undef new
@@ -128,14 +118,6 @@ inline void* operator new[](size_t Size)
 inline void operator delete[](void* Ptr)
 {
 	Z_Free(Ptr);
-}
-
-inline char *Z_StrDup(const char *src)
-{
-	int len = strlen(src);
-	char *buf = (char*)Z_Malloc(len + 1);
-	strcpy(buf, src);
-	return buf;
 }
 
 #endif

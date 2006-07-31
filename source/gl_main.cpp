@@ -95,12 +95,12 @@ void VOpenGLDrawer::InitResolution()
 	GCon->Logf(NAME_Init, "GL_VERSION: %s", glGetString (GL_VERSION));
 
 	GCon->Log(NAME_Init, "GL_EXTENSIONS:");
-	char *sbuf = Z_StrDup((char*)glGetString(GL_EXTENSIONS));
-	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
+	TArray<VStr> Exts;
+	VStr((char*)glGetString(GL_EXTENSIONS)).Split(' ', Exts);
+	for (int i = 0; i < Exts.Num(); i++)
 	{
-		GCon->Logf(NAME_Init, "- %s", s);
+		GCon->Log(NAME_Init, VStr("- ") + Exts[i]);
 	}
-	Z_Free(sbuf);
 
 	// Check the maximum texture size.
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
@@ -204,16 +204,15 @@ void VOpenGLDrawer::InitResolution()
 bool VOpenGLDrawer::CheckExtension(const char *ext)
 {
 	guard(VOpenGLDrawer::CheckExtension);
-	char *sbuf = Z_StrDup((char*)glGetString(GL_EXTENSIONS));
-	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
+	TArray<VStr> Exts;
+	VStr((char*)glGetString(GL_EXTENSIONS)).Split(' ', Exts);
+	for (int i = 0; i < Exts.Num(); i++)
 	{
-		if (!strcmp(ext, s))
+		if (Exts[i] == ext)
 		{
-			Z_Free(sbuf);
 			return true;
 		}
 	}
-	Z_Free(sbuf);
 	return false;
 	unguard;
 }

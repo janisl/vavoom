@@ -155,5 +155,5 @@ inline void* PR_PopPtr()
 void PR_PushStr(const VStr& value);
 VStr PR_PopStr();
 
-const char* PF_FormatString();
+VStr PF_FormatString();
 void PR_MSG_Select(int);

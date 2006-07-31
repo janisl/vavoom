@@ -508,10 +508,10 @@ void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 
 	// WAD file
 	Sys_FileRead(Handle, &header, sizeof(header));
-	if (strncmp(header.identification, "IWAD", 4))
+	if (VStr::NCmp(header.identification, "IWAD", 4))
 	{
 		// Homebrew levels?
-		if (strncmp(header.identification, "PWAD", 4))
+		if (VStr::NCmp(header.identification, "PWAD", 4))
 		{
 			Sys_Error ("Wad file %s doesn't have IWAD "
 		 		"or PWAD id\n", *FileName);

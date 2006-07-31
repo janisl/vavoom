@@ -54,13 +54,6 @@
 #define __declspec(whatever)
 #endif
 
-#if !defined _WIN32 && !defined DJGPP
-#undef stricmp	//	Allegro defines them
-#undef strnicmp
-#define stricmp		strcasecmp
-#define strnicmp	strncasecmp
-#endif
-
 //==========================================================================
 //
 //	Basic types
@@ -192,11 +185,7 @@ class VavoomError
 public:
 	char message[MAX_ERROR_TEXT_SIZE];
 
-	explicit VavoomError(const char *text)
-	{
-		strncpy(message, text, MAX_ERROR_TEXT_SIZE - 1);
-		message[MAX_ERROR_TEXT_SIZE - 1] = 0;
-	}
+	explicit VavoomError(const char *text);
 };
 
 class RecoverableError : public VavoomError

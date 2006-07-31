@@ -283,7 +283,7 @@ void C_Drawer()
 	// Input line
 	y = (int)cons_h - 10;
 	T_DrawString8(4, y, ">");
-	i = strlen(c_iline.Data) - 37;
+	i = VStr::Length(c_iline.Data) - 37;
 	if (i < 0)
 		i = 0;
 	T_DrawString8(12, y, c_iline.Data + i);
@@ -346,7 +346,7 @@ boolean C_Responder(event_t* ev)
 		c_history_last = (MAXHISTORY + c_history_last - 1) % MAXHISTORY;
 		if (c_history_size < MAXHISTORY)
 			c_history_size++;
-		strcpy(c_history[c_history_last], c_iline.Data);
+		VStr::Cpy(c_history[c_history_last], c_iline.Data);
 		c_history_current = -1;
 
 		//	Add to command buffer
@@ -480,7 +480,7 @@ static void AddLine(char* Data)
 		num_lines--;
 		first_line++;
 	}
-	strncpy(clines[(num_lines + first_line) % MAX_LINES], Data, MAX_LINE_LENGTH);
+	VStr::NCpy(clines[(num_lines + first_line) % MAX_LINES], Data, MAX_LINE_LENGTH);
 	clines[(num_lines + first_line) % MAX_LINES][MAX_LINE_LENGTH - 1] = 0;
 	num_lines++;
 	if (last_line == num_lines - 1)
@@ -502,75 +502,75 @@ static void DoPrint(const char *buf)
 {
 	const char	*ch;
 	const char	*p;
-    int			wlen;
+	int			wlen;
 
 #ifndef _WIN32
 	if (!graphics_started)
 		printf("%s", buf);
 #endif
 
-    ch = buf;
+	ch = buf;
 	while (*ch)
-    {
+	{
 		if (*ch == '\n')
-        {
-        	cpbuf[cpbuflen] = 0;
-            AddLine(cpbuf);
-            cpbuflen = 0;
-            ch++;
-        }
+		{
+			cpbuf[cpbuflen] = 0;
+			AddLine(cpbuf);
+			cpbuflen = 0;
+			ch++;
+		}
 		else if (*ch > ' ')
-        {
-        	//  Count word length
-        	p = ch;
-            wlen = 0;
-            while (*p > ' ')
-            {
-            	wlen++;
-                p++;
-            }
+		{
+			//  Count word length
+			p = ch;
+			wlen = 0;
+			while (*p > ' ')
+			{
+				wlen++;
+				p++;
+			}
 
 			if (cpbuflen + wlen >= MAX_LINE_LENGTH)
-            {
+			{
 				if (cpbuflen)
-    	        {
-	            	//	Word too long and it is not a first word
-                    //	Add current buffer and try again
-	        		cpbuf[cpbuflen] = 0;
-	    	        AddLine(cpbuf);
-		            cpbuflen = 0;
-	            }
-                else
-                {
-                	//	A very long word
-                    strncpy(cpbuf, ch, MAX_LINE_LENGTH - 1);
-                    cpbuf[MAX_LINE_LENGTH - 1] = 0;
-	    	        AddLine(cpbuf);
-                    ch += MAX_LINE_LENGTH - 1;
-                }
+				{
+					//	Word too long and it is not a first word
+					//	Add current buffer and try again
+					cpbuf[cpbuflen] = 0;
+					AddLine(cpbuf);
+					cpbuflen = 0;
+				}
+				else
+				{
+					//	A very long word
+					VStr::NCpy(cpbuf, ch, MAX_LINE_LENGTH - 1);
+					cpbuf[MAX_LINE_LENGTH - 1] = 0;
+					AddLine(cpbuf);
+					ch += MAX_LINE_LENGTH - 1;
+				}
 			}
-            else
-            {
+			else
+			{
 				//	Add word to buffer
-    	        while (*ch > ' ')
-	            {
+				while (*ch > ' ')
+				{
 					cpbuf[cpbuflen++] = *ch++;
-	            }
+				}
 			}
-        }
+		}
 		else
-        {
-        	//	Whitespace symbol
+		{
+			//	Whitespace symbol
 			cpbuf[cpbuflen++] = *ch;
 			if (cpbuflen >= MAX_LINE_LENGTH)
-	        {
-	        	cpbuf[MAX_LINE_LENGTH - 1] = 0;
-	            AddLine(cpbuf);
-	            cpbuflen = 0;
-	        }
-	        ch++;
+			{
+				cpbuf[MAX_LINE_LENGTH - 1] = 0;
+				AddLine(cpbuf);
+				cpbuflen = 0;
+			}
+			ch++;
 		}
-    }
+	}
 }
 
 //==========================================================================
@@ -627,9 +627,9 @@ void C_NotifyMessage(const char *str)
 	if (num_notify >= NUM_NOTIFY_LINES)
 	{
 		num_notify--;
-        first_notify++;
+		first_notify++;
 	}
-	strncpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
+	VStr::NCpy(notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES],
 		str, MAX_NOTIFY_LINE_LENGTH - 1);
 	notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES][
 		MAX_NOTIFY_LINE_LENGTH - 1] = 0;
@@ -683,7 +683,7 @@ static VCvarF			center_msg_time("center_message_time", "7", CVAR_Archive);
 
 void C_CenterMessage(const char *msg)
 {
-	strcpy(center_message, msg);
+	VStr::Cpy(center_message, msg);
 	center_time = center_msg_time;
 }
 

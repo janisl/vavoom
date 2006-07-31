@@ -220,11 +220,11 @@ COMMAND(ScreenShot)
 	data = Drawer->ReadScreen(&bpp, &bot2top);
 	if (data)
 	{
-		if (!strcmp(screenshot_type, "pcx"))
+		if (!VStr::Cmp(screenshot_type, "pcx"))
 		{
 			WritePCX(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
 		}
-		else if (!strcmp(screenshot_type, "tga"))
+		else if (!VStr::Cmp(screenshot_type, "tga"))
 		{
 			WriteTGA(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
 		}

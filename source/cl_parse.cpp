@@ -490,7 +490,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 	CL_ReadFromServerInfo();
 
 	cl_level.MapName = msg.ReadString();
-	strcpy(cl_level.level_name, msg.ReadString());
+	VStr::Cpy(cl_level.level_name, msg.ReadString());
 
 	cl->clientnum = msg.ReadByte();
 	cl->maxclients = msg.ReadByte();

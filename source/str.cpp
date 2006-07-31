@@ -30,8 +30,16 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include <cctype>
 
 // MACROS ------------------------------------------------------------------
+
+#if !defined _WIN32 && !defined DJGPP
+#undef stricmp	//	Allegro defines them
+#undef strnicmp
+#define stricmp		strcasecmp
+#define strnicmp	strncasecmp
+#endif
 
 // TYPES -------------------------------------------------------------------
 
@@ -65,7 +73,7 @@ VStr::VStr(const VStr& InStr, int Start, int Len)
 	if (Len)
 	{
 		Resize(Len);
-		strncpy(Str, InStr.Str + Start, Len);
+		NCpy(Str, InStr.Str + Start, Len);
 	}
 }
 
@@ -96,7 +104,7 @@ void VStr::Resize(int NewLen)
 		if (Str)
 		{
 			size_t Len = Min(Length(), (size_t)NewLen);
-			strncpy(NewStr, Str, Len);
+			NCpy(NewStr, Str, Len);
 			delete[] (Str - sizeof(int));
 		}
 		Str = NewStr;
@@ -105,6 +113,158 @@ void VStr::Resize(int NewLen)
 		//	Set terminator.
 		Str[NewLen] = 0;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::ToLower
+//
+//==========================================================================
+
+VStr VStr::ToLower() const
+{
+	guard(VStr::ToLower);
+	if (!Str)
+	{
+		return VStr();
+	}
+	VStr Ret;
+	int l = Length();
+	Ret.Resize(l);
+	for (int i = 0; i < l; i++)
+	{
+		Ret.Str[i] = ToLower(Str[i]);
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::ToUpper
+//
+//==========================================================================
+
+VStr VStr::ToUpper() const
+{
+	guard(VStr::ToUpper);
+	if (!Str)
+	{
+		return VStr();
+	}
+	VStr Ret;
+	int l = Length();
+	Ret.Resize(l);
+	for (int i = 0; i < l; i++)
+	{
+		Ret.Str[i] = ToUpper(Str[i]);
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::Utf8Substring
+//
+//==========================================================================
+
+VStr VStr::Utf8Substring(int Start, int Len) const
+{
+	check(Start >= 0);
+	check(Start <= (int)Utf8Length());
+	check(Len >= 0);
+	check(Start + Len <= (int)Utf8Length());
+	if (!Len)
+	{
+		return VStr();
+	}
+	int RealStart = ByteLengthForUtf8(Str, Start);
+	int RealLen = ByteLengthForUtf8(Str, Start + Len) - RealStart;
+	return VStr(*this, RealStart, RealLen);
+}
+
+//==========================================================================
+//
+//	VStr::Split
+//
+//==========================================================================
+
+void VStr::Split(char C, TArray<VStr>& A) const
+{
+	guard(VStr::Split);
+	A.Clear();
+	if (!Str)
+	{
+		return;
+	}
+	int Start = 0;
+	int Len = Length();
+	for (int i = 0; i <= Len; i++)
+	{
+		if (i == Len || Str[i] == C)
+		{
+			if (Start != i)
+			{
+				A.Append(VStr(*this, Start, i - Start));
+			}
+			Start = i + 1;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::IsValidUtf8
+//
+//==========================================================================
+
+bool VStr::IsValidUtf8() const
+{
+	guard(VStr::IsValidUtf8);
+	if (!Str)
+	{
+		return true;
+	}
+	for (const char* c = Str; *c;)
+	{
+		if ((*c & 0x80) == 0)
+		{
+			c++;
+		}
+		else if ((*c & 0xe0) == 0xc0)
+		{
+			if ((c[1] & 0xc0) != 0x80)
+			{
+				return false;
+			}
+			c += 2;
+		}
+		else if ((*c & 0xf0) == 0xe0)
+		{
+			if ((c[1] & 0xc0) != 0x80 || (c[2] & 0xc0) != 0x80)
+			{
+				return false;
+			}
+			c += 3;
+		}
+		else if ((*c & 0xf8) == 0xf0)
+		{
+			if ((c[1] & 0xc0) != 0x80 || (c[2] & 0xc0) != 0x80 ||
+				(c[3] & 0xc0) != 0x80)
+			{
+				return false;
+			}
+			c += 4;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
 	unguard;
 }
 
@@ -354,4 +514,147 @@ VStr VStr::DefaultExtension(const VStr& extension) const
 
 	return *this + extension;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::Length
+//
+//==========================================================================
+
+size_t VStr::Length(const char* S)
+{
+	return std::strlen(S);
+}
+
+//==========================================================================
+//
+//	VStr::Utf8Length
+//
+//==========================================================================
+
+size_t VStr::Utf8Length(const char* S)
+{
+	guard(VStr::Utf8Length);
+	size_t Count = 0;
+	for (const char* c = S; *c; c++)
+		if (*c & 0xc0 != 0x80)
+			Count++;
+	return Count;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::ByteLengthForUtf8
+//
+//==========================================================================
+
+size_t VStr::ByteLengthForUtf8(const char* S, size_t N)
+{
+	guard(VStr::ByteLengthForUtf8);
+	size_t Count = 0;
+	const char* c;
+	for (c = S; *c; c++)
+	{
+		if (*c & 0xc0 != 0x80)
+		{
+			if (Count == N)
+			{
+				return c - S;
+			}
+			Count++;
+		}
+	}
+	check(N == Count);
+	return c - S;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::Cmp
+//
+//==========================================================================
+
+int VStr::Cmp(const char* S1, const char* S2)
+{
+	return std::strcmp(S1, S2);
+}
+
+//==========================================================================
+//
+//	VStr::NCmp
+//
+//==========================================================================
+
+int VStr::NCmp(const char* S1, const char* S2, size_t N)
+{
+	return std::strncmp(S1, S2, N);
+}
+
+//==========================================================================
+//
+//	VStr::ICmp
+//
+//==========================================================================
+
+int VStr::ICmp(const char* S1, const char* S2)
+{
+	return stricmp(S1, S2);
+}
+
+//==========================================================================
+//
+//	VStr::NICmp
+//
+//==========================================================================
+
+int VStr::NICmp(const char* S1, const char* S2, size_t N)
+{
+	return strnicmp(S1, S2, N);
+}
+
+//==========================================================================
+//
+//	VStr::Cpy
+//
+//==========================================================================
+
+void VStr::Cpy(char* Dst, const char* Src)
+{
+	std::strcpy(Dst, Src);
+}
+
+//==========================================================================
+//
+//	VStr::NCpy
+//
+//==========================================================================
+
+void VStr::NCpy(char* Dst, const char* Src, size_t N)
+{
+	std::strncpy(Dst, Src, N);
+}
+
+//==========================================================================
+//
+//	VStr::ToUpper
+//
+//==========================================================================
+
+char VStr::ToUpper(char C)
+{
+	return std::toupper(C);
+}
+
+//==========================================================================
+//
+//	VStr::ToLower
+//
+//==========================================================================
+
+char VStr::ToLower(char C)
+{
+	return std::tolower(C);
 }

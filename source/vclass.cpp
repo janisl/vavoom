@@ -387,7 +387,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 		*Reader << ((int*)&Progs)[i];
 	}
 
-	if (strncmp(Progs.magic, PROG_MAGIC, 4))
+	if (VStr::NCmp(Progs.magic, PROG_MAGIC, 4))
 		Sys_Error("Progs has wrong file ID, possibly older version");
 	if (Progs.version != PROG_VERSION)
 		Sys_Error("Progs has wrong version number (%i should be %i)",
@@ -1000,7 +1000,7 @@ void VMethod::Serialise(VStream& Strm)
 		Sys_Error("Function has more than 16 params");
 	for (FBuiltinInfo* B = FBuiltinInfo::Builtins; B; B = B->Next)
 	{
-		if (Outer == B->OuterClass && !strcmp(*Name, B->Name))
+		if (Outer == B->OuterClass && !VStr::Cmp(*Name, B->Name))
 		{
 			if (Flags & FUNC_Native)
 			{

@@ -142,7 +142,7 @@ int VWinIpxDriver::Init()
 	if (gethostname(buff, MAXHOSTNAMELEN) == 0)
 	{
 		// if the Vavoom hostname isn't set, set it to the machine name
-		if (strcmp(Net->HostName, "UNNAMED") == 0)
+		if (VStr::Cmp(Net->HostName, "UNNAMED") == 0)
 		{
 			// see if it's a text IP address (well, close enough)
 			for (p = buff; *p; p++)
@@ -176,7 +176,7 @@ int VWinIpxDriver::Init()
 	((sockaddr_ipx*)&broadcastaddr)->sa_socket = htons((vuint16)Net->HostPort);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(Net->MyIpxAddress, AddrToString(&addr));
+	VStr::Cpy(Net->MyIpxAddress, AddrToString(&addr));
 	p = strrchr(Net->MyIpxAddress, ':');
 	if (p)
 		*p = 0;
@@ -524,7 +524,7 @@ int VWinIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 	int		n;
 	char	buf[32];
 
-	n = strlen(name);
+	n = VStr::Length(name);
 
 	if (n == 12)
 	{

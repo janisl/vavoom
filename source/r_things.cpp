@@ -254,13 +254,13 @@ void R_InstallSprite(const char *name, int index)
 			const char* lumpname = *GTextureManager.Textures[l]->Name;
 			if (*(int*)lumpname == intname)
 			{
-				frame = toupper(lumpname[4]) - 'A';
+				frame = VStr::ToUpper(lumpname[4]) - 'A';
 				rotation = lumpname[5] - '0';
 				InstallSpriteLump(l, frame, rotation, false);
 
 				if (lumpname[6])
 				{
-					frame = toupper(lumpname[6]) - 'A';
+					frame = VStr::ToUpper(lumpname[6]) - 'A';
 					rotation = lumpname[7] - '0';
 					InstallSpriteLump(l, frame, rotation, true);
 				}

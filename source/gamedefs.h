@@ -31,12 +31,11 @@
 #define _GAMEDEFS_H
 
 //	C headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cstdarg>
+#include <cmath>
 
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types

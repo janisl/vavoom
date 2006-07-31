@@ -902,12 +902,12 @@ void SV_SaveGame(int slot, const char* description)
 	// Write game save description
 	char desc[SAVE_DESCRIPTION_LENGTH];
 	memset(desc, 0, sizeof(desc));
-	strncpy(desc, description, SAVE_DESCRIPTION_LENGTH - 1);
+	VStr::NCpy(desc, description, SAVE_DESCRIPTION_LENGTH - 1);
 	Saver->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
 
 	// Write version info
 	memset(versionText, 0, SAVE_VERSION_TEXT_LENGTH);
-	strcpy(versionText, SAVE_VERSION_TEXT);
+	VStr::Cpy(versionText, SAVE_VERSION_TEXT);
 	Saver->Serialise(versionText, SAVE_VERSION_TEXT_LENGTH);
 
 	// Place a header marker
@@ -1018,7 +1018,7 @@ void SV_LoadGame(int slot)
 	// Check the version text
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
 	Loader->Serialise(versionText, SAVE_VERSION_TEXT_LENGTH);
-	if (strcmp(versionText, SAVE_VERSION_TEXT))
+	if (VStr::Cmp(versionText, SAVE_VERSION_TEXT))
 	{
 		// Bad version
 		Loader->Close();

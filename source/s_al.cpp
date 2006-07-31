@@ -162,12 +162,12 @@ bool VOpenALDevice::Init()
 	GCon->Logf(NAME_Init, "AL_RENDERER: %s", alGetString(AL_RENDERER));
 	GCon->Logf(NAME_Init, "AL_VERSION: %s", alGetString(AL_VERSION));
 	GCon->Log(NAME_Init, "AL_EXTENSIONS:");
-	char *sbuf = Z_StrDup((char*)alGetString(AL_EXTENSIONS));
-	for (char *s = strtok(sbuf, " "); s; s = strtok(NULL, " "))
+	TArray<VStr> Exts;
+	VStr((char*)alGetString(AL_EXTENSIONS)).Split(' ', Exts);
+	for (int i = 0; i < Exts.Num(); i++)
 	{
-		GCon->Logf(NAME_Init, "- %s", s);
+		GCon->Log(NAME_Init, VStr("- ") + Exts[i]);
 	}
-	Z_Free(sbuf);
 
 	if (alIsExtensionPresent((ALchar*)"EAX"))
 	{

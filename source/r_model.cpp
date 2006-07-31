@@ -102,7 +102,7 @@ VModel* Mod_FindName(const char *name)
 	//
 	for (i=0 , mod=mod_known ; i<mod_numknown ; i++, mod++)
 	{
-		if (!strcmp(mod->name, name))
+		if (!VStr::Cmp(mod->name, name))
 			break;
 	}
 			
@@ -114,7 +114,7 @@ VModel* Mod_FindName(const char *name)
 		}
 		else
 			mod_numknown++;
-		strcpy(mod->name, name);
+		VStr::Cpy(mod->name, name);
 	}
 
 	return mod;

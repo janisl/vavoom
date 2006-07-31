@@ -612,7 +612,7 @@ int VInput::KeyNumForName(const VStr& Name)
 
 	//	Single character.
 	if (!Name[1])
-		return tolower(Name[0]);
+		return VStr::ToLower(Name[0]);
 
 	//	Special cases that you can't enter in console.
 	if (!Name.ICmp("Space"))

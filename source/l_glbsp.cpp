@@ -216,7 +216,7 @@ static void GLBSP_DisplaySetTitle(const char *)
 static void GLBSP_DisplaySetBarText(int barnum, const char *str)
 {
 	gb_bar_t &b = bars[barnum - 1];
-	strcpy(b.text, str);
+	VStr::Cpy(b.text, str);
 	b.position = 0;
 	GLBSP_Draw();
 }

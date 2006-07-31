@@ -51,11 +51,11 @@ struct skyboxinfo_t
 {
 	struct skyboxsurf_t
 	{
-		int texture;
+		int			texture;
 	};
 
-	char name[128];
-	skyboxsurf_t surfs[6];
+	VName			Name;
+	skyboxsurf_t	surfs[6];
 };
 
 struct skysurface_t : surface_t
@@ -120,7 +120,7 @@ void R_InitSkyBoxes()
 		skyboxinfo_t& info = skyboxinfo.Alloc();
 		memset(&info, 0, sizeof(info));
 
-		strcpy(info.name, sc_String);
+		info.Name = sc_String;
 		SC_MustGetStringName("{");
 		for (int i = 0; i < 6; i++)
 		{
@@ -297,7 +297,7 @@ static void R_InitSkyBox()
 
 	for (num = 0; num < skyboxinfo.Num(); num++)
 	{
-		if (!strcmp(*cl_level.SkyBox, skyboxinfo[num].name))
+		if (cl_level.SkyBox == skyboxinfo[num].Name)
 		{
 			break;
 		}

@@ -463,12 +463,12 @@ IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 
 IMPLEMENT_FUNCTION(VObject, Error)
 {
-	Host_Error(PF_FormatString());
+	Host_Error(*PF_FormatString());
 }
 
 IMPLEMENT_FUNCTION(VObject, FatalError)
 {
-	Sys_Error(PF_FormatString());
+	Sys_Error(*PF_FormatString());
 }
 
 //**************************************************************************
@@ -685,7 +685,7 @@ IMPLEMENT_FUNCTION(VObject, VectorRotateAroundZ)
 IMPLEMENT_FUNCTION(VObject, strlen)
 {
 	P_GET_STR(s);
-	RET_INT(s.Length());
+	RET_INT(s.Utf8Length());
 }
 
 IMPLEMENT_FUNCTION(VObject, strcmp)
@@ -712,21 +712,13 @@ IMPLEMENT_FUNCTION(VObject, strcat)
 IMPLEMENT_FUNCTION(VObject, strlwr)
 {
 	P_GET_STR(s);
-	for (char* c = const_cast<char*>(*s); *c; c++)
-	{
-		*c = tolower(*c);
-	}
-	RET_STR(s);
+	RET_STR(s.ToLower());
 }
 
 IMPLEMENT_FUNCTION(VObject, strupr)
 {
 	P_GET_STR(s);
-	for (char* c = const_cast<char*>(*s); *c; c++)
-	{
-		*c = toupper(*c);
-	}
-	RET_STR(s);
+	RET_STR(s.ToUpper());
 }
 
 IMPLEMENT_FUNCTION(VObject, substr)
@@ -734,7 +726,7 @@ IMPLEMENT_FUNCTION(VObject, substr)
 	P_GET_INT(Len);
 	P_GET_INT(Start);
 	P_GET_STR(Str);
-	RET_STR(VStr(Str, Start, Len));
+	RET_STR(Str.Utf8Substring(Start, Len));
 }
 
 IMPLEMENT_FUNCTION(VObject, va)

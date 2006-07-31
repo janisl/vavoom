@@ -191,7 +191,7 @@ int VArgs::CheckParm(const char *check) const
 	guard(VArgs::CheckParm);
 	for (int i = 1; i < Argc; i++)
 	{
-		if (!stricmp(check, Argv[i]))
+		if (!VStr::ICmp(check, Argv[i]))
 		{
 			return i;
 		}

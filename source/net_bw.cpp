@@ -276,7 +276,7 @@ int VBeameWhitesideDriver::Init()
 	}
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(Net->MyIpAddress, AddrToString(&addr));
+	VStr::Cpy(Net->MyIpAddress, AddrToString(&addr));
 	colon = strrchr(Net->MyIpAddress, ':');
 	if (colon)
 		*colon = 0;
@@ -722,7 +722,7 @@ int VBeameWhitesideDriver::GetAddrFromName(const char* name, sockaddr_t* hostadd
 
 	buff[0] = '.';
 	b = buff;
-	strcpy(buff + 1, name);
+	VStr::Cpy(buff + 1, name);
 	if (buff[1] == '.')
 		b++;
 

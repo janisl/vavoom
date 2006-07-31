@@ -93,10 +93,10 @@ VStr PR_PopStr()
 //
 //**************************************************************************
 
-static char		vastring[1024];
-
-const char* PF_FormatString()
+VStr PF_FormatString()
 {
+	guard(PF_FormatString);
+	VStr	Ret;
 	VStack	params[16];
 	int		pi;
 
@@ -107,9 +107,7 @@ const char* PF_FormatString()
 	}
 	P_GET_STR(str);
 
-	const char *src = *str;
-	char *dst = vastring;
-	memset(vastring, 0, sizeof(vastring));
+	const char* src = *str;
 	pi = 0;
 	while (*src)
 	{
@@ -119,64 +117,57 @@ const char* PF_FormatString()
 			switch (*src)
 			{
 			case '%':
-				*dst = *src;
-				break;
-
-			case 'c':
-				strcat(vastring, va("%c", params[pi].i));
-				pi++;
+				Ret += *src;
 				break;
 
 			case 'i':
 			case 'd':
-				strcat(vastring, va("%d", params[pi].i));
+				Ret += va("%d", params[pi].i);
 				pi++;
 				break;
 
 			case 'x':
-				strcat(vastring, va("%x", params[pi].i));
+				Ret += va("%x", params[pi].i);
 				pi++;
 				break;
 
 			case 'f':
-				strcat(vastring, va("%f", params[pi].f));
+				Ret += va("%f", params[pi].f);
 				pi++;
 				break;
 
 			case 'n':
-				strcat(vastring, **(VName*)&params[pi].i);
+				Ret += *(VName*)&params[pi].i;
 				pi++;
 				break;
 
 			case 's':
-				strcat(vastring, **(VStr*)&params[pi].p);
+				Ret += *(VStr*)&params[pi].p;
 				((VStr*)&params[pi].p)->Clean();
 				pi++;
 				break;
 
 			case 'p':
-				strcat(vastring, va("%p", params[pi].p));
+				Ret += va("%p", params[pi].p);
 				pi++;
 				break;
 
 			case 'v':
-				strcat(vastring, va("(%f,%f,%f)", params[pi].f,
-					params[pi + 1].f, params[pi + 2].f));
+				Ret += va("(%f,%f,%f)", params[pi].f,
+					params[pi + 1].f, params[pi + 2].f);
 				pi += 3;
 				break;
 
 			default:
 				GCon->Logf(NAME_Dev, "PF_FormatString: Unknown format identifier %s", *src);
 				src--;
-				*dst = *src;
+				Ret += *src;
 				break;
 			}
-			dst = vastring + strlen(vastring);
 		}
 		else
 		{
-			*dst = *src;
-			dst++;
+			Ret += *src;
 		}
 		src++;
 	}
@@ -188,7 +179,8 @@ const char* PF_FormatString()
 	{
 		GCon->Log(NAME_Dev, "PF_FormatString: Param count overflow");
 	}
-	return vastring;
+	return Ret;
+	unguard;
 }
 
 #ifdef SERVER
@@ -207,7 +199,7 @@ const char* PF_FormatString()
 
 IMPLEMENT_FUNCTION(VObject, bprint)
 {
-	SV_BroadcastPrintf(PF_FormatString());
+	SV_BroadcastPrintf(*PF_FormatString());
 }
 
 //**************************************************************************

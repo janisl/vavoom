@@ -363,7 +363,7 @@ COMMAND(PlayDemo)
 
 	cls.demofile->Serialise(magic, 4);
 	magic[4] = 0;
-	if (strcmp(magic, "VDEM"))
+	if (VStr::Cmp(magic, "VDEM"))
 	{
 		delete cls.demofile;
 		cls.demofile = NULL;

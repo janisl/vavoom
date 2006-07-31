@@ -278,7 +278,7 @@ int VIpxDriver::Init()
 	Net->SchedulePollProcedure(&pollProcedure, 0.01);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(Net->MyIpxAddress, AddrToString(&addr));
+	VStr::Cpy(Net->MyIpxAddress, AddrToString(&addr));
 	colon = strrchr(Net->MyIpxAddress, ':');
 	if (colon)
 		*colon = 0;
@@ -770,7 +770,7 @@ int VIpxDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
 	int		n;
 	char	buf[32];
 
-	n = strlen(name);
+	n = VStr::Length(name);
 
 	if (n == 12)
 	{

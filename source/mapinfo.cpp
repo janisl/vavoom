@@ -150,7 +150,7 @@ void InitMapInfo()
 	info->lightning = false;
 	info->FadeTable = DEFAULT_FADE_TABLE;
 	info->Gravity = 0.0;
-	strcpy(info->name, UNKNOWN_MAP_NAME);
+	VStr::Cpy(info->name, UNKNOWN_MAP_NAME);
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
@@ -216,7 +216,7 @@ static void ParseMapInfo()
 		else
 		{
 			//	Map name
-			if (strlen(sc_String) > 8)
+			if (VStr::Length(sc_String) > 8)
 			{
 				SC_ScriptError(NULL);
 			}
@@ -255,7 +255,7 @@ static void ParseMapInfo()
 
 		// Map name must follow the number
 		SC_MustGetString();
-		strcpy(info->name, sc_String);
+		VStr::Cpy(info->name, sc_String);
 
 		//	Set song lump name from SNDINFO script
 		for (int i = 0; i < MapSongList.Num(); i++)

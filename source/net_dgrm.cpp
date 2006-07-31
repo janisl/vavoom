@@ -497,7 +497,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "No Response";
 		GCon->Log(reason);
-		strcpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -505,7 +505,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Network Error";
 		GCon->Log(reason);
-		strcpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -514,7 +514,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		msg >> reason;
 		GCon->Log(reason);
-		strncpy(Net->ReturnReason, reason, 31);
+		VStr::NCpy(Net->ReturnReason, reason, 31);
 		goto ErrorReturn;
 	}
 
@@ -522,7 +522,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Bad Response";
 		GCon->Log(reason);
-		strcpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -541,7 +541,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	{
 		reason = "Connect to Game failed";
 		GCon->Log(reason);
-		strcpy(Net->ReturnReason, reason);
+		VStr::Cpy(Net->ReturnReason, reason);
 		goto ErrorReturn;
 	}
 
@@ -607,7 +607,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	VSocket*	sock;
 	VSocket*	s;
 	int			ret;
-	const char*	gamename;
+	VStr		gamename;
 
 	VMessage& msg = Net->NetMsg;
 
@@ -636,7 +636,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 	if (command == CCREQ_SERVER_INFO)
 	{
 		msg >> gamename;
-		if (strcmp(gamename, "VAVOOM") != 0)
+		if (gamename != "VAVOOM")
 			return NULL;
 
 		msg.Clear();
@@ -662,7 +662,7 @@ VSocket* VDatagramDriver::CheckNewConnections(VNetLanDriver* Drv)
 		return NULL;
 
 	msg >> gamename;
-	if (strcmp(gamename, "VAVOOM") != 0)
+	if (gamename != "VAVOOM")
 		return NULL;
 
 /*	if (MSG_ReadByte() != NET_PROTOCOL_VERSION)

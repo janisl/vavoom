@@ -127,7 +127,7 @@ void VLoopbackDriver::SearchForHosts(bool)
 		return;
 
 	Net->HostCacheCount = 1;
-	if (strcmp(Net->HostName, "UNNAMED") == 0)
+	if (VStr::Cmp(Net->HostName, "UNNAMED") == 0)
 		Net->HostCache[0].Name = "local";
 	else
 		Net->HostCache[0].Name = Net->HostName;
@@ -148,7 +148,7 @@ void VLoopbackDriver::SearchForHosts(bool)
 VSocket* VLoopbackDriver::Connect(const char* host)
 {
 	guard(VLoopbackDriver::Connect);
-	if (strcmp(host,"local") != 0)
+	if (VStr::Cmp(host, "local") != 0)
 		return NULL;
 	
 	localconnectpending = true;

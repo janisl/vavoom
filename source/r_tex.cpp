@@ -1430,7 +1430,7 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 
 	//	Fix sky texture heights for Heretic, but it can also be used
 	// for Doom and Strife
-	if (!strnicmp(*Name, "sky", 3) && Height == 128)
+	if (!VStr::NICmp(*Name, "sky", 3) && Height == 128)
 	{
 		if (Patches[0].Tex->GetHeight() > Height)
 		{
@@ -3546,7 +3546,7 @@ void P_InitSwitchList()
 			TmpName2[8] = 0;
 
 			// Check for switches that aren't really switches
-			if (!stricmp(TmpName1, TmpName2))
+			if (!VStr::ICmp(TmpName1, TmpName2))
 			{
 				GCon->Logf(NAME_Init, "Switch %s in SWITCHES has the same 'on' state", TmpName1);
 				continue;

@@ -958,7 +958,7 @@ int FACScriptsObject::FindStringInChunk(byte* Chunk, const char* Name) const
 		int count = LittleLong(((int*)Chunk)[2]);
 		for (int i = 0; i < count; ++i)
 		{
-			if (!stricmp(Name, (char*)(Chunk + 8) +
+			if (!VStr::ICmp(Name, (char*)(Chunk + 8) +
 				LittleLong(((int*)Chunk)[3 + i])))
 			{
 				return i;
@@ -3363,7 +3363,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_StrLen)
-			sp[-1] = strlen(GetStr(sp[-1]));
+			sp[-1] = VStr::Utf8Length(GetStr(sp[-1]));
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetHudSize)
@@ -3609,7 +3609,7 @@ void VACS::GiveInventory(VEntity* Activator, const char* AType, int Amount)
 		return;
 	}
 	const char* Type = AType;
-	if (strcmp(Type, "Armor") == 0)
+	if (VStr::Cmp(Type, "Armor") == 0)
 	{
 		Type = "BasicArmor";
 	}
@@ -3644,7 +3644,7 @@ void VACS::TakeInventory(VEntity* Activator, const char* AType, int Amount)
 		return;
 	}
 	const char* Type = AType;
-	if (strcmp(Type, "Armor") == 0)
+	if (VStr::Cmp(Type, "Armor") == 0)
 	{
 		Type = "BasicArmor";
 	}
@@ -3677,11 +3677,11 @@ int VACS::CheckInventory(VEntity* Activator, const char* AType)
 		return 0;
 
 	const char* Type = AType;
-	if (strcmp(Type, "Armor") == 0)
+	if (VStr::Cmp(Type, "Armor") == 0)
 	{
 		Type = "BasicArmor";
 	}
-	else if (!strcmp(Type, "Health"))
+	else if (!VStr::Cmp(Type, "Health"))
 	{
 		return Activator->Health;
 	}
@@ -3747,7 +3747,7 @@ void P_CheckACSStore()
 
 	for (store = ACSStore; store->map[0] != 0; store++)
 	{
-		if (!stricmp(store->map, *level.MapName))
+		if (!VStr::ICmp(store->map, *level.MapName))
 		{
 			FACScriptsObject* Object;
 			acsInfo_t* info = FACScriptsObject::StaticFindScript(store->script, Object);
@@ -3770,7 +3770,7 @@ void P_CheckACSStore()
 				GCon->Logf(NAME_Dev, "P_CheckACSStore: Unknown script %d",
 					store->script);
 			}
-			strcpy(store->map, "-");
+			VStr::Cpy(store->map, "-");
 		}
 	}
 	unguard;
@@ -3791,10 +3791,10 @@ bool P_StartACS(int number, int map_num, int arg1, int arg2, int arg3,
 
 	if (map_num)
 	{
-		strcpy(map, SV_GetMapName(map_num));
+		VStr::Cpy(map, SV_GetMapName(map_num));
 	}
 
-	if (map[0] && stricmp(map, *level.MapName))
+	if (map[0] && VStr::ICmp(map, *level.MapName))
 	{
 		// Add to the script store
 		return AddToACSStore(map, number, arg1, arg2, arg3);
@@ -3845,7 +3845,7 @@ static bool AddToACSStore(const char *map, int number, int arg1, int arg2,
 	index = -1;
 	for (i = 0; ACSStore[i].map[0]; i++)
 	{
-		if (ACSStore[i].script == number && !strcmp(ACSStore[i].map, map))
+		if (ACSStore[i].script == number && !VStr::Cmp(ACSStore[i].map, map))
 		{
 			// Don't allow duplicates
 			return false;
@@ -3867,7 +3867,7 @@ static bool AddToACSStore(const char *map, int number, int arg1, int arg2,
 		index = i;
 		ACSStore[index + 1].map[0] = 0;
 	}
-	strcpy(ACSStore[index].map, map);
+	VStr::Cpy(ACSStore[index].map, map);
 	ACSStore[index].script = number;
 	ACSStore[index].args[0] = arg1;
 	ACSStore[index].args[1] = arg2;

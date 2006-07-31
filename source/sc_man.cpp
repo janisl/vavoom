@@ -600,7 +600,7 @@ int SC_MustMatchString(const char **strings)
 boolean SC_Compare(const char *text)
 {
 	guard(SC_Compare);
-	return !stricmp(text, sc_String);
+	return !VStr::ICmp(text, sc_String);
 	unguard;
 }
 

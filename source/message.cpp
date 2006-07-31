@@ -222,7 +222,7 @@ VMessage& VMessage::operator << (const char* s)
 	if (!s)
 		Write("", 1);
 	else
-		Write(s, strlen(s) + 1);
+		Write(s, VStr::Length(s) + 1);
 
 	return *this;
 	unguard;

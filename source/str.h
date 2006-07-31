@@ -45,8 +45,8 @@ public:
 	{
 		if (*InStr)
 		{
-			Resize(strlen(InStr));
-			strcpy(Str, InStr);
+			Resize(Length(InStr));
+			Cpy(Str, InStr);
 		}
 	}
 	VStr(const VStr& InStr)
@@ -55,7 +55,7 @@ public:
 		if (InStr.Str)
 		{
 			Resize(InStr.Length());
-			strcpy(Str, InStr.Str);
+			Cpy(Str, InStr.Str);
 		}
 	}
 	VStr(const VStr& InStr, int Start, int Len);
@@ -71,12 +71,12 @@ public:
 		if (InBool)
 		{
 			Resize(4);
-			strcpy(Str, "true");
+			Cpy(Str, "true");
 		}
 		else
 		{
 			Resize(5);
-			strcpy(Str, "false");
+			Cpy(Str, "false");
 		}
 	}
 	explicit VStr(int InInt)
@@ -85,8 +85,8 @@ public:
 		char Buf[64];
 
 		sprintf(Buf, "%d", InInt);
-		Resize(strlen(Buf));
-		strcpy(Str, Buf);
+		Resize(Length(Buf));
+		Cpy(Str, Buf);
 	}
 	explicit VStr(unsigned InInt)
 	: Str(NULL)
@@ -94,8 +94,8 @@ public:
 		char Buf[64];
 
 		sprintf(Buf, "%u", InInt);
-		Resize(strlen(Buf));
-		strcpy(Str, Buf);
+		Resize(Length(Buf));
+		Cpy(Str, Buf);
 	}
 	explicit VStr(float InFloat)
 	: Str(NULL)
@@ -103,14 +103,14 @@ public:
 		char Buf[64];
 
 		sprintf(Buf, "%f", InFloat);
-		Resize(strlen(Buf));
-		strcpy(Str, Buf);
+		Resize(Length(Buf));
+		Cpy(Str, Buf);
 	}
 	explicit VStr(const VName& InName)
 	: Str(NULL)
 	{
-		Resize(strlen(*InName));
-		strcpy(Str, *InName);
+		Resize(Length(*InName));
+		Cpy(Str, *InName);
 	}
 
 	//	Destructor.
@@ -128,6 +128,11 @@ public:
 	size_t Length() const
 	{
 		return Str ? ((int*)Str)[-1] : 0;
+	}
+	//	Return number of characters in a UTF-8 string.
+	size_t Utf8Length() const
+	{
+		return Str ? Utf8Length(Str) : 0;
 	}
 	//	Return C string.
 	const char* operator*() const
@@ -153,16 +158,16 @@ public:
 	//	Assignement operators.
 	VStr& operator=(const char* InStr)
 	{
-		Resize(strlen(InStr));
+		Resize(Length(InStr));
 		if (*InStr)
-			strcpy(Str, InStr);
+			Cpy(Str, InStr);
 		return *this;
 	}
 	VStr& operator=(const VStr& InStr)
 	{
 		Resize(InStr.Length());
 		if (InStr.Str)
-			strcpy(Str, InStr.Str);
+			Cpy(Str, InStr.Str);
 		return *this;
 	}
 
@@ -172,8 +177,8 @@ public:
 		if (*InStr)
 		{
 			int l = Length();
-			Resize(l + strlen(InStr));
-			strcpy(Str + l, InStr);
+			Resize(l + Length(InStr));
+			Cpy(Str + l, InStr);
 		}
 		return *this;
 	}
@@ -183,7 +188,7 @@ public:
 		{
 			int l = Length();
 			Resize(l + InStr.Length());
-			strcpy(Str + l, *InStr);
+			Cpy(Str + l, *InStr);
 		}
 		return *this;
 	}
@@ -275,38 +280,47 @@ public:
 	//	Comparison operators.
 	friend bool operator==(const VStr& S1, const char* S2)
 	{
-		return !strcmp(*S1, S2);
+		return !Cmp(*S1, S2);
 	}
 	friend bool operator==(const VStr& S1, const VStr& S2)
 	{
-		return !strcmp(*S1, *S2);
+		return !Cmp(*S1, *S2);
 	}
 	friend bool operator!=(const VStr& S1, const char* S2)
 	{
-		return !!strcmp(*S1, S2);
+		return !!Cmp(*S1, S2);
 	}
 	friend bool operator!=(const VStr& S1, const VStr& S2)
 	{
-		return !!strcmp(*S1, *S2);
+		return !!Cmp(*S1, *S2);
 	}
 
 	//	Comparison functions.
 	int Cmp(const char* S2) const
 	{
-		return strcmp(**this, S2);
+		return Cmp(**this, S2);
 	}
 	int Cmp(const VStr& S2) const
 	{
-		return strcmp(**this, *S2);
+		return Cmp(**this, *S2);
 	}
 	int ICmp(const char* S2) const
 	{
-		return stricmp(**this, S2);
+		return ICmp(**this, S2);
 	}
 	int ICmp(const VStr& S2) const
 	{
-		return stricmp(**this, *S2);
+		return ICmp(**this, *S2);
 	}
+
+	VStr ToLower() const;
+	VStr ToUpper() const;
+
+	VStr Utf8Substring(int, int) const;
+
+	void Split(char, TArray<VStr>&) const;
+
+	bool IsValidUtf8() const;
 
 	//	Serialisation operator.
 	friend VStream& operator<<(VStream& Strm, VStr& S)
@@ -338,4 +352,16 @@ public:
 	VStr StripExtension() const;
 	VStr DefaultPath(const VStr& basepath) const;
 	VStr DefaultExtension(const VStr& extension) const;
+
+	static size_t Length(const char*);
+	static size_t Utf8Length(const char*);
+	static size_t ByteLengthForUtf8(const char*, size_t);
+	static int Cmp(const char*, const char*);
+	static int NCmp(const char*, const char*, size_t);
+	static int ICmp(const char*, const char*);
+	static int NICmp(const char*, const char*, size_t);
+	static void Cpy(char*, const char*);
+	static void NCpy(char*, const char*, size_t);
+	static char ToUpper(char);
+	static char ToLower(char);
 };

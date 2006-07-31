@@ -151,7 +151,7 @@ int VUdpDriver::Init()
 	myAddr = *(int*)local->h_addr_list[0];
 
 	// if the Vavoom hostname isn't set, set it to the machine name
-	if (strcmp(Net->HostName, "UNNAMED") == 0)
+	if (VStr::Cmp(Net->HostName, "UNNAMED") == 0)
 	{
 		buff[15] = 0;
 		Net->HostName = buff;
@@ -165,7 +165,7 @@ int VUdpDriver::Init()
 	((sockaddr_in *)&broadcastaddr)->sin_port = htons(Net->HostPort);
 
 	GetSocketAddr(net_controlsocket, &addr);
-	strcpy(Net->MyIpAddress, AddrToString(&addr));
+	VStr::Cpy(Net->MyIpAddress, AddrToString(&addr));
 	colon = strrchr(Net->MyIpAddress, ':');
 	if (colon)
 		*colon = 0;
@@ -483,7 +483,7 @@ int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 
 	buff[0] = '.';
 	b = buff;
-	strcpy(buff + 1, in);
+	VStr::Cpy(buff + 1, in);
 	if (buff[1] == '.')
 		b++;
 
