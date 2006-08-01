@@ -130,7 +130,7 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 		Sys_Error("Required file %s doesn't exist", *FileName);
 	}
 
-	VStr ext = FileName.ExtractFileExtension();
+	VStr ext = FileName.ExtractFileExtension().ToLower();
 	VWadFile* Wad = new VWadFile;
 	if (ext != "wad" && ext != "gwa")
 	{
@@ -568,7 +568,7 @@ void VWadFile::OpenSingleLump(const VStr& FileName)
 	GCon->Logf(NAME_Init, "adding %s", *FileName);
 
 	Name = FileName;
-	GwaDir = NULL;
+	GwaDir = VStr();
 
 	// single lump file
 	NumLumps = 1;
