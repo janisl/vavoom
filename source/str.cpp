@@ -538,7 +538,7 @@ size_t VStr::Utf8Length(const char* S)
 	guard(VStr::Utf8Length);
 	size_t Count = 0;
 	for (const char* c = S; *c; c++)
-		if (*c & 0xc0 != 0x80)
+		if ((*c & 0xc0) != 0x80)
 			Count++;
 	return Count;
 	unguard;
@@ -557,7 +557,7 @@ size_t VStr::ByteLengthForUtf8(const char* S, size_t N)
 	const char* c;
 	for (c = S; *c; c++)
 	{
-		if (*c & 0xc0 != 0x80)
+		if ((*c & 0xc0) != 0x80)
 		{
 			if (Count == N)
 			{
