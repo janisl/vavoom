@@ -35,8 +35,14 @@ OBJS=$(MAIN)/analyze.$(OBJEXT)  \
 
 all:    $(OUTNAME)
 
+install:
+
+distdir:
+
+dist:
+
 clean:
-	rm -f $(OUTNAME) $(MAIN)/*.$(OBJEXT)
+	-rm -f $(OUTNAME) $(MAIN)/*.$(OBJEXT)
 
 $(OUTNAME): $(OBJS)
 	$(AR) rc $(OUTNAME) $(OBJS)

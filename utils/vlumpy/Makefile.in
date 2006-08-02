@@ -16,6 +16,15 @@ OBJS = cmdlib.$(OBJEXT) \
 
 all: ../bin/vlumpy$(EXEEXT)
 
+install:
+
+distdir:
+
+dist:
+
+clean:
+	-rm *.$(OBJEXT)
+
 ../bin/vlumpy$(EXEEXT): $(OBJS)
 	@mkdir -p ../bin
 	$(CXX) -o $@ $(OBJS) $(LDFLAGS) $(LIBS)

@@ -22,6 +22,15 @@ OBJS = \
 
 all: ../bin/acc$(EXEEXT)
 
+install:
+
+distdir:
+
+dist:
+
+clean:
+	-rm ../bin/acc$(EXEEXT) *.$(OBJEXT)
+
 ../bin/acc$(EXEEXT): $(OBJS)
 	@mkdir -p ../bin
 	$(CC) $(LDFLAGS) $(LIBS) -o $@ $^

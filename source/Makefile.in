@@ -367,7 +367,7 @@ timidity/libtimidity.a: $(srcdir)/timidity/*.cpp $(srcdir)/timidity/*.h
 	$(MAKE) -C timidity
 
 ../utils/glbsp/libglbsp.a:
-	$(MAKE) -C ../utils/glbsp -f Plugin.mak
+	$(MAKE) -C ../utils/glbsp
 
 ../utils/glvis/libglvis.a:
 	$(MAKE) -C ../utils/glvis libglvis.a
@@ -402,6 +402,7 @@ vavoom-dedicated: Makefile
 # ---------------------------------------
 
 install: $(INSTALL_TARGETS)
+	$(INSTALL) -d $(INSTALL_DIR)
 	$(INSTALL_DATA) $(srcdir)/vavoom.png $(INSTALL_DIR)
 
 installexe:
@@ -415,6 +416,10 @@ installsvexe:
 	$(INSTALL_SCRIPT) vavoom-dedicated $(DESTDIR)$(bindir)
 
 # ---------------------------------------
+
+distdir:
+
+dist:
 
 clean:
 	-rm $(OBJDIR)/*.o

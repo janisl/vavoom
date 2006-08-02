@@ -35,6 +35,15 @@ OBJS = \
 
 all: ../bin/vcc$(EXEEXT)
 
+install:
+
+distdir:
+
+dist:
+
+clean:
+	-rm ../bin/vcc$(EXEEXT) *.$(OBJEXT) vcpp/*.$(OBJEXT)
+
 ../bin/vcc$(EXEEXT): $(OBJS)
 	@mkdir -p ../bin
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)

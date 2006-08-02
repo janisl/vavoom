@@ -18,6 +18,15 @@ OBJS = glvis.$(OBJEXT)
 
 all: ../bin/glvis$(EXEEXT)
 
+install:
+
+distdir:
+
+dist:
+
+clean:
+	-rm ../bin/glvis$(EXEEXT) libglvis.a *.$(OBJEXT)
+
 ../bin/glvis$(EXEEXT): $(OBJS) libglvis.a
 	@mkdir -p ../bin
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LIBS)

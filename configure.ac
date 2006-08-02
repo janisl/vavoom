@@ -1,6 +1,8 @@
 AC_INIT([vavoom], [1.21])
 AC_CONFIG_SRCDIR([source/gamedefs.h])
 AC_CONFIG_AUX_DIR([utils])
+AM_INIT_AUTOMAKE([foreign no-define])
+dnl AM_MAINTAINER_MODE
 
 dnl
 dnl  **** Supported --with arguments ****
@@ -563,7 +565,7 @@ AC_OUTPUT([
 	utils/Makefile
 	utils/acc/Makefile
 	utils/fixmd2/Makefile
-	utils/glbsp/Plugin.mak
+	utils/glbsp/Makefile
 	utils/glvis/Makefile
 	utils/vcc/Makefile
 	utils/vlumpy/Makefile])

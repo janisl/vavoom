@@ -13,6 +13,15 @@ OBJS = cmdlib.$(OBJEXT) \
 
 all: ../bin/fixmd2$(EXEEXT)
 
+install:
+
+distdir:
+
+dist:
+
+clean:
+	-rm ../bin/fixmd2$(EXEEXT) *.$(OBJEXT)
+
 ../bin/fixmd2$(EXEEXT): $(OBJS)
 	@mkdir -p ../bin
 	$(CXX) -o $@ $(OBJS) $(LDFLAGS) $(LIBS)
