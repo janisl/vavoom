@@ -1,30 +1,16 @@
-top_srcdir=@top_srcdir@
-srcdir=@srcdir@
-
-EXEEXT=@EXEEXT@
-
 VCC=../../utils/vcc/vcc$(EXEEXT)
 OUTDIR=../../basev/common/progs
 
-all: $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat
-
-install:
-
-distdir:
-
-dist:
-
-clean:
-	rm $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat
+noinst_DATA = $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat
 
 $(OUTDIR)/common.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/shared/*.vc
 	@mkdir -p $(OUTDIR)
 	$(VCC) -P$(OUTDIR) $(srcdir)/common.vc $@
 
 $(OUTDIR)/clcommon.dat: $(VCC) $(OUTDIR)/common.dat $(srcdir)/*.vc $(srcdir)/shared/*.vc $(srcdir)/client/*.vc
-	@mkdir -p $(OUTDIR)
 	$(VCC) -P$(OUTDIR) $(srcdir)/clcommon.vc $@
 
 $(OUTDIR)/svcommon.dat: $(VCC) $(OUTDIR)/common.dat $(srcdir)/*.vc $(srcdir)/shared/*.vc $(srcdir)/server/*.vc
-	@mkdir -p $(OUTDIR)
 	$(VCC) -P$(OUTDIR) $(srcdir)/svcommon.vc $@
+
+EXTRA_DIST = *.vc shared/*.vc client/*.vc server/*.vc
