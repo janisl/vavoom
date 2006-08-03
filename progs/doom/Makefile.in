@@ -3,7 +3,7 @@ srcdir=@srcdir@
 
 EXEEXT=@EXEEXT@
 
-VCC=../../utils/bin/vcc$(EXEEXT)
+VCC=../../utils/vcc/vcc$(EXEEXT)
 OUTDIR=../../basev/doom1/progs
 COMMON_DIR=$(srcdir)/../common
 COMMON_PROGS_DIR=../../basev/common/progs

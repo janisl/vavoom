@@ -90,38 +90,41 @@ EXTRA_DIST = \
 	tnt/scripts/sec1text.txt \
 	tnt/scripts/sec2text.txt
 
-common/wad0.wad: $(srcdir)/common/wad0.ls ../utils/bin/vlumpy$(EXEEXT) \
+VLUMPY = ../utils/vlumpy/vlumpy$(EXEEXT)
+ACC = ../utils/acc/acc$(EXEEXT)
+
+common/wad0.wad: $(srcdir)/common/wad0.ls $(VLUMPY) \
 		common/progs/common.dat common/progs/clcommon.dat common/progs/svcommon.dat
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+	$(VLUMPY) -D$@ $<
 
-doom/wad0.wad: $(srcdir)/doom/wad0.ls ../utils/bin/vlumpy$(EXEEXT)
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+doom/wad0.wad: $(srcdir)/doom/wad0.ls $(VLUMPY)
+	$(VLUMPY) -D$@ $<
 
-doom1/wad0.wad: $(srcdir)/doom1/wad0.ls ../utils/bin/vlumpy$(EXEEXT) \
+doom1/wad0.wad: $(srcdir)/doom1/wad0.ls $(VLUMPY) \
 		doom1/progs/shared.dat doom1/progs/clprogs.dat doom1/progs/svprogs.dat
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+	$(VLUMPY) -D$@ $<
 
-doom2/wad0.wad: $(srcdir)/doom2/wad0.ls ../utils/bin/vlumpy$(EXEEXT) \
+doom2/wad0.wad: $(srcdir)/doom2/wad0.ls $(VLUMPY) \
 		doom2/progs/shared.dat doom2/progs/clprogs.dat doom2/progs/svprogs.dat
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+	$(VLUMPY) -D$@ $<
 
-heretic/wad0.wad: $(srcdir)/heretic/wad0.ls ../utils/bin/vlumpy$(EXEEXT) \
+heretic/wad0.wad: $(srcdir)/heretic/wad0.ls $(VLUMPY) \
 		heretic/progs/shared.dat heretic/progs/clprogs.dat heretic/progs/svprogs.dat
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+	$(VLUMPY) -D$@ $<
 
-hexen/wad0.wad: $(srcdir)/hexen/wad0.ls ../utils/bin/vlumpy$(EXEEXT) \
+hexen/wad0.wad: $(srcdir)/hexen/wad0.ls $(VLUMPY) \
 		hexen/progs/shared.dat hexen/progs/clprogs.dat hexen/progs/svprogs.dat
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+	$(VLUMPY) -D$@ $<
 
-plutonia/wad0.wad: $(srcdir)/plutonia/wad0.ls ../utils/bin/vlumpy$(EXEEXT)
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+plutonia/wad0.wad: $(srcdir)/plutonia/wad0.ls $(VLUMPY)
+	$(VLUMPY) -D$@ $<
 
-strife/wad0.wad: $(srcdir)/strife/wad0.ls ../utils/bin/vlumpy$(EXEEXT) \
+strife/wad0.wad: $(srcdir)/strife/wad0.ls $(VLUMPY) \
 		strife/progs/shared.dat strife/progs/clprogs.dat strife/progs/svprogs.dat strife/strfhelp.o
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+	$(VLUMPY) -D$@ $<
 
-strife/strfhelp.o: $(srcdir)/../utils/editing/acs/*.acs ../utils/bin/acc$(EXEEXT)
-	../utils/bin/acc$(EXEEXT) $(srcdir)/../utils/editing/acs/strfhelp.acs strife/strfhelp.o
+strife/strfhelp.o: $(srcdir)/../utils/editing/acs/*.acs $(ACC)
+	$(ACC) $(srcdir)/../utils/editing/acs/strfhelp.acs strife/strfhelp.o
 
-tnt/wad0.wad: $(srcdir)/tnt/wad0.ls ../utils/bin/vlumpy$(EXEEXT)
-	../utils/bin/vlumpy$(EXEEXT) -D$@ $<
+tnt/wad0.wad: $(srcdir)/tnt/wad0.ls $(VLUMPY)
+	$(VLUMPY) -D$@ $<

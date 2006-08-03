@@ -1,0 +1,43 @@
+CXXFLAGS=@VCC_CXXFLAGS@
+CPPFLAGS=@VCC_CPPFLAGS@
+DEFS=
+LDFLAGS=@VCC_LDFLAGS@
+LIBS=@VCC_LIBS@
+
+INCLUDES = -I$(srcdir)/../common
+
+noinst_PROGRAMS = vcc
+
+vcc_SOURCES = \
+	../common/array.h \
+	../common/cmdlib.cpp \
+	../common/cmdlib.h \
+	constexp.cpp \
+	error.cpp \
+	expressn.cpp \
+	info.cpp \
+	modifiers.cpp \
+	name.cpp \
+	name.h \
+	names.h \
+	parse.cpp \
+	parse1.cpp \
+	pcode.cpp \
+	stream.cpp \
+	stream.h \
+	token.cpp \
+	types.cpp \
+	vcc.cpp \
+	vcc.h \
+	vcpp/cpp.cpp \
+	vcpp/cpp.h \
+	vcpp/eval.cpp \
+	vcpp/hideset.cpp \
+	vcpp/include.cpp \
+	vcpp/lex.cpp \
+	vcpp/macro.cpp \
+	vcpp/nlist.cpp \
+	vcpp/tokens.cpp \
+	vcpp/unix.cpp
+
+EXTRA_DIST = vcc.txt

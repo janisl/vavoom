@@ -3,7 +3,7 @@ srcdir=@srcdir@
 
 EXEEXT=@EXEEXT@
 
-VCC=../../utils/bin/vcc$(EXEEXT)
+VCC=../../utils/vcc/vcc$(EXEEXT)
 OUTDIR=../../basev/common/progs
 
 all: $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat
