@@ -1,47 +1,4 @@
-#---------------------------------------
-#
-#	Configure script output
-#
-#---------------------------------------
-
-top_srcdir=@top_srcdir@
-srcdir=@srcdir@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-bindir=@bindir@
-datadir=@datadir@
-libexecdir=@libexecdir@
-
-ASMFLAGS=@ASMFLAGS@
-CC=@CC@
-CFLAGS=@CFLAGS@
-CXX=@CXX@
-EXEEXT=@EXEEXT@
-INSTALL=@INSTALL@
-INSTALL_DATA=@INSTALL_DATA@
-INSTALL_PROGRAM=@INSTALL_PROGRAM@
-INSTALL_SCRIPT=@INSTALL_SCRIPT@
-INSTALL_TARGETS=@INSTALL_TARGETS@
-IWADDIR_PARM=@IWADDIR_PARM@
-OBJEXT=@OBJEXT@
-TARGETS=@TARGETS@
-
-@SET_MAKE@
-
-MAIN_EXE=@MAIN_EXE@
-OBJ_FILES = @OBJ_FILES@
-LIB_FILES = @LIB_FILES@
-MAIN_CXXFLAGS=@MAIN_CXXFLAGS@
-MAIN_CPPFLAGS=@MAIN_CPPFLAGS@
-MAIN_LDFLAGS=@MAIN_LDFLAGS@
-MAIN_LIBS = @MAIN_LIBS@
-
-SERVER_EXE=@SERVER_EXE@
-SV_OBJ_FILES = @SV_OBJ_FILES@
-SV_CXXFLAGS=@SV_CXXFLAGS@
-SV_CPPFLAGS=@SV_CPPFLAGS@
-SV_LDFLAGS=@SV_LDFLAGS@
-SV_LIBS = @SV_LIBS@
+SUBDIRS = timidity
 
 INSTALL_DIR = $(DESTDIR)$(datadir)/vavoom
 
@@ -416,10 +373,6 @@ installsvexe:
 	$(INSTALL_SCRIPT) vavoom-dedicated $(DESTDIR)$(bindir)
 
 # ---------------------------------------
-
-distdir:
-
-dist:
 
 clean:
 	-rm $(OBJDIR)/*.o
