@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -282,6 +282,14 @@ void SB_DrawSmallNum(int x, int y, int num)
 void SB_DrawMainBar()
 {
 	int i;
+
+	// draw something in the blank spaces
+	// check which version of Doom we are playing
+#ifdef DOOM2
+	R_FillRectWithFlat(0, 448, 640, 32, 'grnrock');
+#else
+	R_FillRectWithFlat(0, 448, 640, 32, 'floor7_2');
+#endif
 
 	//  background
 	R_DrawPic(ST_BGX, ST_BGY, pic_bar);

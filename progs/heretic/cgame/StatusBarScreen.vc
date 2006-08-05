@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -270,6 +270,10 @@ void SB_DrawMainBar()
 	int healthPos;
 	int i;
 	int health;
+
+	// draw something in the blank spaces
+	R_FillRectWithFlat(0, 438, 640, 42,
+		!WadLumpPresent('e2m1') ? 'floor04' : 'flat513');
 
 	//  Background
 	R_DrawPic(BAR_X, BAR_Y, pic_barback);
