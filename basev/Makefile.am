@@ -98,6 +98,7 @@ common/wad0.wad: $(srcdir)/common/wad0.ls $(VLUMPY) \
 	$(VLUMPY) -D$@ $<
 
 doom/wad0.wad: $(srcdir)/doom/wad0.ls $(VLUMPY)
+	@mkdir -p doom
 	$(VLUMPY) -D$@ $<
 
 doom1/wad0.wad: $(srcdir)/doom1/wad0.ls $(VLUMPY) \
@@ -117,6 +118,7 @@ hexen/wad0.wad: $(srcdir)/hexen/wad0.ls $(VLUMPY) \
 	$(VLUMPY) -D$@ $<
 
 plutonia/wad0.wad: $(srcdir)/plutonia/wad0.ls $(VLUMPY)
+	@mkdir -p plutonia
 	$(VLUMPY) -D$@ $<
 
 strife/wad0.wad: $(srcdir)/strife/wad0.ls $(VLUMPY) \
@@ -127,4 +129,5 @@ strife/strfhelp.o: $(srcdir)/../utils/editing/acs/*.acs $(ACC)
 	$(ACC) $(srcdir)/../utils/editing/acs/strfhelp.acs strife/strfhelp.o
 
 tnt/wad0.wad: $(srcdir)/tnt/wad0.ls $(VLUMPY)
+	@mkdir -p tnt
 	$(VLUMPY) -D$@ $<

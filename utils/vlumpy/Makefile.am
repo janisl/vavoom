@@ -4,7 +4,7 @@ DEFS=
 LDFLAGS=@VLUMPY_LDFLAGS@
 LIBS=@VLUMPY_LIBS@
 
-INCLUDES = -I$(srcdir)../common
+INCLUDES = -I$(srcdir)/../common
 
 noinst_PROGRAMS = vlumpy
 
