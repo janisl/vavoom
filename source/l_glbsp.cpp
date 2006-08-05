@@ -34,15 +34,15 @@
 #define MESSAGE1	"VAVOOM IS NOW CREATING THE GWA FILE..."
 #define MESSAGE2	"THIS ONLY HAS TO BE DONE ONCE FOR THIS WAD"
 
-#define BARX		32
-#define BAR1Y		96
-#define BAR2Y		160
-#define BARW		(320 - 2 * BARX)
+#define BARX		64
+#define BAR1Y		144
+#define BAR2Y		240
+#define BARW		(640 - 2 * BARX)
 #define BARH		8
 
-#define BARTEXTX	32
-#define BARTEXT1Y	64
-#define BARTEXT2Y	140
+#define BARTEXTX	64
+#define BARTEXT1Y	80
+#define BARTEXT2Y	220
 
 // TYPES -------------------------------------------------------------------
 
@@ -97,8 +97,8 @@ static void GLBSP_Draw(void)
 
 	T_SetFont(font_small);
 	T_SetAlign(hcenter, vcenter);
-	T_DrawText(160, 16, MESSAGE1);
-	T_DrawText(160, 32, MESSAGE2);
+	T_DrawText(320, 32, MESSAGE1);
+	T_DrawText(320, 64, MESSAGE2);
 	T_SetAlign(hleft, vtop);
 
 	int i;

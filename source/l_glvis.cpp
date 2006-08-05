@@ -34,13 +34,13 @@
 #define MESSAGE1	"VAVOOM IS NOW BUILDING THE VIS DATA..."
 #define MESSAGE2	"THIS ONLY HAS TO BE DONE ONCE FOR THIS WAD"
 
-#define BARX		32
-#define BARY		96
-#define BARW		(320 - 2 * BARX)
+#define BARX		64
+#define BARY		144
+#define BARW		(640 - 2 * BARX)
 #define BARH		8
 
-#define BARTEXTX	32
-#define BARTEXTY	64
+#define BARTEXTX	64
+#define BARTEXTY	80
 
 // TYPES -------------------------------------------------------------------
 
@@ -114,8 +114,8 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 
 	T_SetFont(font_small);
 	T_SetAlign(hcenter, vcenter);
-	T_DrawText(160, 8, MESSAGE1);
-	T_DrawText(160, 24, MESSAGE2);
+	T_DrawText(320, 16, MESSAGE1);
+	T_DrawText(320, 48, MESSAGE2);
 	T_SetAlign(hleft, vtop);
 	T_DrawText(BARTEXTX, BARTEXTY, va("Creating vis data for %s", name));
 
@@ -126,7 +126,7 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 	if (glvis_fast)
 	{
 		T_SetAlign(hcenter, vcenter);
-		T_DrawText(160, 160, "Using fast mode\nIt's highly recomended that you rebuild\nfull vis data using standalone utility.");
+		T_DrawText(320, 320, "Using fast mode\nIt's highly recomended that you rebuild\nfull vis data using standalone utility.");
 	}
 
 	Drawer->Update();
