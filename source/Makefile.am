@@ -1,314 +1,361 @@
 SUBDIRS = timidity
 
-INSTALL_DIR = $(DESTDIR)$(datadir)/vavoom
+CPPFLAGS =
+CXXFLAGS =
+DEFS =
+LDFLAGS =
+LIBS =
+
+CCASFLAGS = -x assembler-with-cpp $(ASMFLAGS)
+
+bin_PROGRAMS =
+bin_SCRIPTS =
 
 #---------------------------------------
 #
-#	Main executable objects
+#	Main executable
 #
 #---------------------------------------
 
-OBJDIR=../obj
+if ENABLE_CLIENT
+bin_PROGRAMS += ../$(MAIN_EXE)
+if MAIN_PLATFORM_UNIX_ALLEGRO
+bin_SCRIPTS += vavoom
+endif
+if MAIN_PLATFORM_UNIX_SDL
+bin_SCRIPTS += vavoom
+endif
+endif
+
+_____MAIN_EXE__CPPFLAGS = @MAIN_CPPFLAGS@
+_____MAIN_EXE__CXXFLAGS = @MAIN_CXXFLAGS@
+_____MAIN_EXE__DEFS =
+_____MAIN_EXE__LDFLAGS = @MAIN_LDFLAGS@
+_____MAIN_EXE__LDADD = @MAIN_LIBS@ @LIB_FILES@
 
 #-- Common files --
-COMMON_OBJS = \
-	$(OBJDIR)/am_map.$(OBJEXT) \
-	$(OBJDIR)/args.$(OBJEXT) \
-	$(OBJDIR)/chat.$(OBJEXT) \
-	$(OBJDIR)/cheats.$(OBJEXT) \
-	$(OBJDIR)/cl_demo.$(OBJEXT) \
-	$(OBJDIR)/cl_input.$(OBJEXT) \
-	$(OBJDIR)/cl_main.$(OBJEXT) \
-	$(OBJDIR)/cl_parse.$(OBJEXT) \
-	$(OBJDIR)/cl_poly.$(OBJEXT) \
-	$(OBJDIR)/cl_trace.$(OBJEXT) \
-	$(OBJDIR)/cmd.$(OBJEXT) \
-	$(OBJDIR)/console.$(OBJEXT) \
-	$(OBJDIR)/crc.$(OBJEXT) \
-	$(OBJDIR)/cvar.$(OBJEXT) \
-	$(OBJDIR)/d_aclip.$(OBJEXT) \
-	$(OBJDIR)/d_alias.$(OBJEXT) \
-	$(OBJDIR)/d_data.$(OBJEXT) \
-	$(OBJDIR)/d_draw.$(OBJEXT) \
-	$(OBJDIR)/d_edge.$(OBJEXT) \
-	$(OBJDIR)/d_main.$(OBJEXT) \
-	$(OBJDIR)/d_part.$(OBJEXT) \
-	$(OBJDIR)/d_polyse.$(OBJEXT) \
-	$(OBJDIR)/d_scache.$(OBJEXT) \
-	$(OBJDIR)/d_span.$(OBJEXT) \
-	$(OBJDIR)/d_sprite.$(OBJEXT) \
-	$(OBJDIR)/d_surf.$(OBJEXT) \
-	$(OBJDIR)/d_tex.$(OBJEXT) \
-	$(OBJDIR)/d_aclipa.$(OBJEXT) \
-	$(OBJDIR)/d_aliasa.$(OBJEXT) \
-	$(OBJDIR)/d_edgea.$(OBJEXT) \
-	$(OBJDIR)/d_polysa.$(OBJEXT) \
-	$(OBJDIR)/d_varsa.$(OBJEXT) \
-	$(OBJDIR)/d_zspan.$(OBJEXT) \
-	$(OBJDIR)/d8_part.$(OBJEXT) \
-	$(OBJDIR)/d8_poly.$(OBJEXT) \
-	$(OBJDIR)/d8_s16.$(OBJEXT) \
-	$(OBJDIR)/d8_span.$(OBJEXT) \
-	$(OBJDIR)/d8_spr.$(OBJEXT) \
-	$(OBJDIR)/d8_surf.$(OBJEXT) \
-	$(OBJDIR)/d16_part.$(OBJEXT) \
-	$(OBJDIR)/d16_poly.$(OBJEXT) \
-	$(OBJDIR)/d16_s16.$(OBJEXT) \
-	$(OBJDIR)/d16_span.$(OBJEXT) \
-	$(OBJDIR)/d16_spr.$(OBJEXT) \
-	$(OBJDIR)/d16_surf.$(OBJEXT) \
-	$(OBJDIR)/d32_part.$(OBJEXT) \
-	$(OBJDIR)/d32_poly.$(OBJEXT) \
-	$(OBJDIR)/d32_s16.$(OBJEXT) \
-	$(OBJDIR)/d32_span.$(OBJEXT) \
-	$(OBJDIR)/d32_spr.$(OBJEXT) \
-	$(OBJDIR)/d32_surf.$(OBJEXT) \
-	$(OBJDIR)/debug.$(OBJEXT) \
-	$(OBJDIR)/finale.$(OBJEXT) \
-	$(OBJDIR)/files.$(OBJEXT) \
-	$(OBJDIR)/host.$(OBJEXT) \
-	$(OBJDIR)/iline.$(OBJEXT) \
-	$(OBJDIR)/imission.$(OBJEXT) \
-	$(OBJDIR)/in_input.$(OBJEXT) \
-	$(OBJDIR)/infostr.$(OBJEXT) \
-	$(OBJDIR)/l_glbsp.$(OBJEXT) \
-	$(OBJDIR)/l_glvis.$(OBJEXT) \
-	$(OBJDIR)/level.$(OBJEXT) \
-	$(OBJDIR)/mapinfo.$(OBJEXT) \
-	$(OBJDIR)/maths.$(OBJEXT) \
-	$(OBJDIR)/menu.$(OBJEXT) \
-	$(OBJDIR)/message.$(OBJEXT) \
-	$(OBJDIR)/misc.$(OBJEXT) \
-	$(OBJDIR)/name.$(OBJEXT) \
-	$(OBJDIR)/net_dgrm.$(OBJEXT) \
-	$(OBJDIR)/net_loop.$(OBJEXT) \
-	$(OBJDIR)/net_main.$(OBJEXT) \
-	$(OBJDIR)/net_null.$(OBJEXT) \
-	$(OBJDIR)/p_setup.$(OBJEXT) \
-	$(OBJDIR)/p_thinker.$(OBJEXT) \
-	$(OBJDIR)/pr_cmds.$(OBJEXT) \
-	$(OBJDIR)/pr_exec.$(OBJEXT) \
-	$(OBJDIR)/r_bsp.$(OBJEXT) \
-	$(OBJDIR)/r_light.$(OBJEXT) \
-	$(OBJDIR)/r_main.$(OBJEXT) \
-	$(OBJDIR)/r_model.$(OBJEXT) \
-	$(OBJDIR)/r_sky.$(OBJEXT) \
-	$(OBJDIR)/r_surf.$(OBJEXT) \
-	$(OBJDIR)/r_tex.$(OBJEXT) \
-	$(OBJDIR)/r_things.$(OBJEXT) \
-	$(OBJDIR)/s_data.$(OBJEXT) \
-	$(OBJDIR)/s_eaxutl.$(OBJEXT) \
-	$(OBJDIR)/s_qmus2mid.$(OBJEXT) \
-	$(OBJDIR)/s_sound.$(OBJEXT) \
-	$(OBJDIR)/s_streamplayer.$(OBJEXT) \
-	$(OBJDIR)/s_tmidty.$(OBJEXT) \
-	$(OBJDIR)/s_wav.$(OBJEXT) \
-	$(OBJDIR)/sbar.$(OBJEXT) \
-	$(OBJDIR)/sc_man.$(OBJEXT) \
-	$(OBJDIR)/screen.$(OBJEXT) \
-	$(OBJDIR)/str.$(OBJEXT) \
-	$(OBJDIR)/stream.$(OBJEXT) \
-	$(OBJDIR)/sv_acs.$(OBJEXT) \
-	$(OBJDIR)/sv_ent.$(OBJEXT) \
-	$(OBJDIR)/sv_main.$(OBJEXT) \
-	$(OBJDIR)/sv_poly.$(OBJEXT) \
-	$(OBJDIR)/sv_save.$(OBJEXT) \
-	$(OBJDIR)/sv_sight.$(OBJEXT) \
-	$(OBJDIR)/sv_swtch.$(OBJEXT) \
-	$(OBJDIR)/sv_tick.$(OBJEXT) \
-	$(OBJDIR)/sv_user.$(OBJEXT) \
-	$(OBJDIR)/sv_world.$(OBJEXT) \
-	$(OBJDIR)/text.$(OBJEXT) \
-	$(OBJDIR)/ui_gc.$(OBJEXT) \
-	$(OBJDIR)/ui_modal.$(OBJEXT) \
-	$(OBJDIR)/ui_root.$(OBJEXT) \
-	$(OBJDIR)/ui_win.$(OBJEXT) \
-	$(OBJDIR)/vclass.$(OBJEXT) \
-	$(OBJDIR)/vobject.$(OBJEXT) \
-	$(OBJDIR)/wad.$(OBJEXT) \
-	$(OBJDIR)/zone.$(OBJEXT)
+_____MAIN_EXE__SOURCES = \
+	adivtab.h \
+	am_map.cpp \
+	anorm_dots.h \
+	anorms.h \
+	args.cpp \
+	args.h \
+	array.h \
+	asm_i386.h \
+	automap.h \
+	build.h \
+	chat.cpp \
+	chat.h \
+	cheats.cpp \
+	client.h \
+	cl_demo.cpp \
+	cl_input.cpp \
+	cl_local.h \
+	cl_main.cpp \
+	cl_parse.cpp \
+	cl_poly.cpp \
+	cl_trace.cpp \
+	cmd.cpp \
+	cmd.h \
+	common.h \
+	console.cpp \
+	console.h \
+	crc.cpp \
+	crc.h \
+	cvar.cpp \
+	cvar.h \
+	d_aclip.cpp \
+	d_alias.cpp \
+	d_data.cpp \
+	d_draw.cpp \
+	d_edge.cpp \
+	d_local.h \
+	d_main.cpp \
+	d_part.cpp \
+	d_polyse.cpp \
+	d_scache.cpp \
+	d_span.cpp \
+	d_sprite.cpp \
+	d_surf.cpp \
+	d_tex.cpp \
+	d_aclipa.s \
+	d_aliasa.s \
+	d_edgea.s \
+	d_polysa.s \
+	d_varsa.s \
+	d_zspan.s \
+	d8_part.s \
+	d8_poly.s \
+	d8_s16.s \
+	d8_span.s \
+	d8_spr.s \
+	d8_surf.s \
+	d16_part.s \
+	d16_poly.s \
+	d16_s16.s \
+	d16_span.s \
+	d16_spr.s \
+	d16_surf.s \
+	d32_part.s \
+	d32_poly.s \
+	d32_s16.s \
+	d32_span.s \
+	d32_spr.s \
+	d32_surf.s \
+	debug.cpp \
+	debug.h \
+	drawer.h \
+	files.cpp \
+	files.h \
+	finale.cpp \
+	finale.h \
+	fmd2defs.h \
+	fwaddefs.h \
+	gamedefs.h \
+	host.cpp \
+	host.h \
+	iline.cpp \
+	iline.h \
+	imission.cpp \
+	imission.h \
+	in_input.cpp \
+	infostr.cpp \
+	infostr.h \
+	input.h \
+	l_glbsp.cpp \
+	l_glvis.cpp \
+	level.cpp \
+	level.h \
+	mapinfo.cpp \
+	mapinfo.h \
+	maths.cpp \
+	maths.h \
+	menu.cpp \
+	menu.h \
+	message.cpp \
+	message.h \
+	misc.cpp \
+	misc.h \
+	name.cpp \
+	name.h \
+	names.h \
+	net_dgrm.cpp \
+	net_loc.h \
+	net_loop.cpp \
+	net_main.cpp \
+	net_null.cpp \
+	network.h \
+	p_acs.h \
+	p_entity.h \
+	p_gameinfo.h \
+	p_levelinfo.h \
+	p_setup.cpp \
+	p_thinker.cpp \
+	p_thinker.h \
+	player.h \
+	pr_cmds.cpp \
+	pr_exec.cpp \
+	progdefs.h \
+	progs.h \
+	protocol.h \
+	r_bsp.cpp \
+	r_light.cpp \
+	r_local.h \
+	r_main.cpp \
+	r_model.cpp \
+	r_shared.h \
+	r_sky.cpp \
+	r_surf.cpp \
+	r_tex.cpp \
+	r_things.cpp \
+	render.h \
+	s_data.cpp \
+	s_eaxutl.cpp \
+	s_local.h \
+	s_qmus2mid.cpp \
+	s_sound.cpp \
+	s_streamplayer.cpp \
+	s_tmidty.cpp \
+	s_wav.cpp \
+	save.h \
+	sbar.cpp \
+	sbar.h \
+	sc_man.cpp \
+	screen.cpp \
+	screen.h \
+	scripts.h \
+	server.h \
+	sound.h \
+	str.cpp \
+	str.h \
+	stream.cpp \
+	stream.h \
+	sv_acs.cpp \
+	sv_ent.cpp \
+	sv_local.h \
+	sv_main.cpp \
+	sv_poly.cpp \
+	sv_save.cpp \
+	sv_sight.cpp \
+	sv_swtch.cpp \
+	sv_tick.cpp \
+	sv_user.cpp \
+	sv_world.cpp \
+	system.h \
+	text.cpp \
+	text.h \
+	ui.h \
+	ui_gc.cpp \
+	ui_gc.h \
+	ui_modal.cpp \
+	ui_modal.h \
+	ui_root.cpp \
+	ui_root.h \
+	ui_win.cpp \
+	ui_win.h \
+	vclass.cpp \
+	vclass.h \
+	vector.h \
+	video.h \
+	vobject.cpp \
+	vobject.h \
+	wad.cpp \
+	wad.h \
+	waddefs.h \
+	zone.cpp \
+	zone.h
 
 #-- Common OpenGL files --
-GL_OBJS = \
-	$(OBJDIR)/gl_draw.$(OBJEXT) \
-	$(OBJDIR)/gl_main.$(OBJEXT) \
-	$(OBJDIR)/gl_poly.$(OBJEXT) \
-	$(OBJDIR)/gl_tex.$(OBJEXT)
+if MAIN_OPENGL
+_____MAIN_EXE__SOURCES += \
+	gl_draw.cpp \
+	gl_local.h \
+	gl_main.cpp \
+	gl_poly.cpp \
+	gl_tex.cpp
+endif
 
 #-- OpenAL files --
-AL_OBJS = \
-	$(OBJDIR)/s_al.$(OBJEXT)
+if MAIN_OPENAL
+_____MAIN_EXE__SOURCES += \
+	s_al.cpp
+endif
 
 #-- Vorbis files --
-VORBIS_OBJS = \
-	$(OBJDIR)/s_vorbis.$(OBJEXT)
+if MAIN_VORBIS
+_____MAIN_EXE__SOURCES += \
+	s_vorbis.cpp
+endif
 
 #-- MP3 files --
-MP3_OBJS = \
-	$(OBJDIR)/s_mp3.$(OBJEXT)
+if MAIN_MP3
+_____MAIN_EXE__SOURCES += \
+	s_mp3.cpp
+endif
 
 #-- MikMod files --
-MIKMOD_OBJS = \
-	$(OBJDIR)/s_mikmod.$(OBJEXT)
+if MAIN_MIKMOD
+_____MAIN_EXE__SOURCES += \
+	s_mikmod.cpp
+endif
 
 #-- FLAC files --
-FLAC_OBJS = \
-	$(OBJDIR)/s_flac.$(OBJEXT)
+if MAIN_FLAC
+_____MAIN_EXE__SOURCES += \
+	s_flac.cpp
+endif
 
 #-- DOS --
-SYS_OBJS_DJGPP = \
-	$(OBJDIR)/cd_dos.$(OBJEXT) \
-	$(OBJDIR)/d_alleg.$(OBJEXT) \
-	$(OBJDIR)/in_dos.$(OBJEXT) \
-	$(OBJDIR)/mplib.$(OBJEXT) \
-	$(OBJDIR)/mplpc.$(OBJEXT) \
-	$(OBJDIR)/net_bw.$(OBJEXT) \
-	$(OBJDIR)/net_ipx.$(OBJEXT) \
-	$(OBJDIR)/net_mp.$(OBJEXT) \
-	$(OBJDIR)/npxsetup.$(OBJEXT) \
-	$(OBJDIR)/s_alleg.$(OBJEXT) \
-	$(OBJDIR)/s_allegm.$(OBJEXT) \
-	$(OBJDIR)/sys_i386.$(OBJEXT) \
-	$(OBJDIR)/sys_dos.$(OBJEXT)
-GL_SYS_OBJ_DJGPP = $(OBJDIR)/gl_alleg.$(OBJEXT)
+if MAIN_PLATFORM_DJGPP
+_____MAIN_EXE__SOURCES += \
+	cd_dos.cpp \
+	d_alleg.cpp \
+	in_dos.cpp \
+	mpdosock.h \
+	mplib.c \
+	mplpc.c \
+	net_bw.cpp \
+	net_ipx.cpp \
+	net_mp.cpp \
+	npxsetup.c \
+	s_alleg.cpp \
+	s_allegm.cpp \
+	sys_i386.s \
+	sys_dos.cpp
+endif
+if MAIN_OPENGL_DJGPP
+_____MAIN_EXE__SOURCES += \
+	gl_alleg.cpp
+endif
 
 #-- Linux with Allegro --
-SYS_OBJS_UNIX_ALLEGRO = \
-	$(OBJDIR)/d_alleg.$(OBJEXT) \
-	$(OBJDIR)/in_alleg.$(OBJEXT) \
-	$(OBJDIR)/net_udp.$(OBJEXT) \
-	$(OBJDIR)/s_alleg.$(OBJEXT) \
-	$(OBJDIR)/s_allegm.$(OBJEXT) \
-	$(OBJDIR)/sys_i386.$(OBJEXT) \
-	$(OBJDIR)/sys_lin.$(OBJEXT)
-GL_SYS_OBJ_UNIX_ALLEGRO = $(OBJDIR)/gl_agl.$(OBJEXT)
+if MAIN_PLATFORM_UNIX_ALLEGRO
+_____MAIN_EXE__SOURCES += \
+	d_alleg.cpp \
+	in_alleg.cpp \
+	net_udp.cpp \
+	s_alleg.cpp \
+	s_allegm.cpp \
+	sys_i386.s \
+	sys_lin.cpp
+endif
+if MAIN_OPENGL_UNIX_ALLEGRO
+_____MAIN_EXE__SOURCES += \
+	gl_agl.cpp
+endif
 
 #-- Linux with SDL --
-SYS_OBJS_UNIX_SDL = \
-	$(OBJDIR)/d_sdl.$(OBJEXT) \
-	$(OBJDIR)/in_sdl.$(OBJEXT) \
-	$(OBJDIR)/net_udp.$(OBJEXT) \
-	$(OBJDIR)/s_sdl.$(OBJEXT) \
-	$(OBJDIR)/s_sdlm.$(OBJEXT) \
-	$(OBJDIR)/sys_i386.$(OBJEXT) \
-	$(OBJDIR)/sys_sdl.$(OBJEXT)
-GL_SYS_OBJ_UNIX_SDL = $(OBJDIR)/gl_sdl.$(OBJEXT)
+if MAIN_PLATFORM_UNIX_SDL
+_____MAIN_EXE__SOURCES += \
+	d_sdl.cpp \
+	in_sdl.cpp \
+	net_udp.cpp \
+	s_sdl.cpp \
+	s_sdlm.cpp \
+	sys_i386.s \
+	sys_sdl.cpp
+endif
+if MAIN_OPENGL_UNIX_SDL
+_____MAIN_EXE__SOURCES += \
+	gl_sdl.cpp
+endif
 
 #-- CD audio drivers for various UNIX platforms --
-CDAUDIO_OBJ_LINUX = $(OBJDIR)/cd_linux.$(OBJEXT)
-CDAUDIO_OBJ_BSD = $(OBJDIR)/cd_bsd.$(OBJEXT)
+if MAIN_CDAUDIO_LINUX
+_____MAIN_EXE__SOURCES += \
+	cd_linux.cpp
+endif
+if MAIN_CDAUDIO_BSD
+_____MAIN_EXE__SOURCES += \
+	cd_bsd.cpp
+endif
 
 #-- Windows --
-SYS_OBJS_WIN32 = \
-	$(OBJDIR)/cd_win32.$(OBJEXT) \
-	$(OBJDIR)/d_win32.$(OBJEXT) \
-	$(OBJDIR)/d3d_draw.$(OBJEXT) \
-	$(OBJDIR)/d3d_info.$(OBJEXT) \
-	$(OBJDIR)/d3d_main.$(OBJEXT) \
-	$(OBJDIR)/d3d_poly.$(OBJEXT) \
-	$(OBJDIR)/d3d_tex.$(OBJEXT) \
-	$(OBJDIR)/in_win32.$(OBJEXT) \
-	$(OBJDIR)/net_wins.$(OBJEXT) \
-	$(OBJDIR)/net_wipx.$(OBJEXT) \
-	$(OBJDIR)/s_win32.$(OBJEXT) \
-	$(OBJDIR)/s_win32m.$(OBJEXT) \
-	$(OBJDIR)/sys_i386.$(OBJEXT) \
-	$(OBJDIR)/sys_win.$(OBJEXT)
-GL_SYS_OBJ_WIN32 = $(OBJDIR)/gl_win32.$(OBJEXT)
-
-#---------------------------------------
-#
-#	Dedicated server objcts
-#
-#---------------------------------------
-
-SV_OBJDIR=../obj/sv
-
-SV_COMMON_OBJ_FILES = \
-	$(SV_OBJDIR)/args.$(OBJEXT) \
-	$(SV_OBJDIR)/cmd.$(OBJEXT) \
-	$(SV_OBJDIR)/crc.$(OBJEXT) \
-	$(SV_OBJDIR)/cvar.$(OBJEXT) \
-	$(SV_OBJDIR)/debug.$(OBJEXT) \
-	$(SV_OBJDIR)/files.$(OBJEXT) \
-	$(SV_OBJDIR)/host.$(OBJEXT) \
-	$(SV_OBJDIR)/infostr.$(OBJEXT) \
-	$(SV_OBJDIR)/level.$(OBJEXT) \
-	$(SV_OBJDIR)/mapinfo.$(OBJEXT) \
-	$(SV_OBJDIR)/maths.$(OBJEXT) \
-	$(SV_OBJDIR)/message.$(OBJEXT) \
-	$(SV_OBJDIR)/misc.$(OBJEXT) \
-	$(SV_OBJDIR)/name.$(OBJEXT) \
-	$(SV_OBJDIR)/net_dgrm.$(OBJEXT) \
-	$(SV_OBJDIR)/net_loop.$(OBJEXT) \
-	$(SV_OBJDIR)/net_main.$(OBJEXT) \
-	$(SV_OBJDIR)/net_null.$(OBJEXT) \
-	$(SV_OBJDIR)/p_setup.$(OBJEXT) \
-	$(SV_OBJDIR)/p_thinker.$(OBJEXT) \
-	$(SV_OBJDIR)/pr_cmds.$(OBJEXT) \
-	$(SV_OBJDIR)/pr_exec.$(OBJEXT) \
-	$(SV_OBJDIR)/r_tex.$(OBJEXT) \
-	$(SV_OBJDIR)/s_data.$(OBJEXT) \
-	$(SV_OBJDIR)/sc_man.$(OBJEXT) \
-	$(SV_OBJDIR)/str.$(OBJEXT) \
-	$(SV_OBJDIR)/stream.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_acs.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_ent.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_main.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_poly.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_save.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_sight.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_swtch.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_tick.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_user.$(OBJEXT) \
-	$(SV_OBJDIR)/sv_world.$(OBJEXT) \
-	$(SV_OBJDIR)/vclass.$(OBJEXT) \
-	$(SV_OBJDIR)/vobject.$(OBJEXT) \
-	$(SV_OBJDIR)/wad.$(OBJEXT) \
-	$(SV_OBJDIR)/zone.$(OBJEXT)
-
-SV_SYS_OBJS_DJGPP = \
-	$(SV_OBJDIR)/mplib.$(OBJEXT) \
-	$(SV_OBJDIR)/mplpc.$(OBJEXT) \
-	$(SV_OBJDIR)/net_bw.$(OBJEXT) \
-	$(SV_OBJDIR)/net_ipx.$(OBJEXT) \
-	$(SV_OBJDIR)/net_mp.$(OBJEXT) \
-	$(SV_OBJDIR)/npxsetup.$(OBJEXT) \
-	$(SV_OBJDIR)/sys_bsd.$(OBJEXT)
-
-SV_SYS_OBJS_UNIX = \
-	$(SV_OBJDIR)/net_udp.$(OBJEXT) \
-	$(SV_OBJDIR)/sys_bsd.$(OBJEXT)
-
-SV_SYS_OBJS_WIN32 = \
-	$(SV_OBJDIR)/net_wins.$(OBJEXT) \
-	$(SV_OBJDIR)/net_wipx.$(OBJEXT) \
-	$(SV_OBJDIR)/sys_wind.$(OBJEXT)
-
-# ---------------------------------------
-
-.PHONY: all exe svexe clean install
-
-all: $(TARGETS)
-
-# ---------------------------------------
-
-exe: ../$(MAIN_EXE) vavoom
-
-../$(MAIN_EXE): $(OBJ_FILES) $(LIB_FILES)
-	$(CXX) $(MAIN_LDFLAGS) -o $@ $^ $(MAIN_LIBS)
-
-$(OBJDIR)/%.$(OBJEXT) : $(srcdir)/%.c
-	@mkdir -p $(OBJDIR)
-	$(CC) -c $(CFLAGS) -o $@ $<
-
-$(OBJDIR)/%.$(OBJEXT) : $(srcdir)/%.cpp $(srcdir)/*.h
-	@mkdir -p $(OBJDIR)
-	$(CXX) -c $(MAIN_CPPFLAGS) $(MAIN_CXXFLAGS) -o $@ $<
-
-$(OBJDIR)/%.$(OBJEXT) : $(srcdir)/%.s $(srcdir)/asm_i386.h
-	@mkdir -p $(OBJDIR)
-	$(CC) -c -x assembler-with-cpp $(ASMFLAGS) -o $@ $<
+if MAIN_PLATFORM_WIN32
+_____MAIN_EXE__SOURCES += \
+	cd_win32.cpp \
+	d_win32.cpp \
+	d3d_draw.cpp \
+	d3d_info.cpp \
+	d3d_local.h \
+	d3d_main.cpp \
+	d3d_poly.cpp \
+	d3d_tex.cpp \
+	eax.h \
+	in_win32.cpp \
+	net_wins.cpp \
+	net_wipx.cpp \
+	s_win32.cpp \
+	s_win32m.cpp \
+	sys_i386.s \
+	sys_win.cpp \
+	winlocal.h
+endif
+if MAIN_OPENGL_WIN32
+_____MAIN_EXE__SOURCES += \
+	gl_win32.cpp
+endif
 
 vavoom: Makefile
 	echo "#!/bin/sh" > $@
@@ -318,35 +365,91 @@ vavoom: Makefile
 	echo "\"$(bindir)/$(MAIN_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
 	echo "exit \$$?" >> $@
 
-# ---------------------------------------
+#---------------------------------------
+#
+#	Dedicated server
+#
+#---------------------------------------
 
-timidity/libtimidity.a: $(srcdir)/timidity/*.cpp $(srcdir)/timidity/*.h
-	$(MAKE) -C timidity
+if ENABLE_SERVER
+bin_PROGRAMS += ../$(SERVER_EXE)
+if SERVER_PLATFORM_UNIX
+bin_SCRIPTS += vavoom-dedicated
+endif
+endif
 
-../utils/glbsp/libglbsp.a:
-	$(MAKE) -C ../utils/glbsp
+_____SERVER_EXE__CPPFLAGS = @SV_CPPFLAGS@ -DSERVER
+_____SERVER_EXE__CXXFLAGS = @SV_CXXFLAGS@
+_____SERVER_EXE__DEFS =
+_____SERVER_EXE__LDFLAGS = @SV_LDFLAGS@
+_____SERVER_EXE__LDADD = @SV_LIBS@
 
-../utils/glvis/libglvis.a:
-	$(MAKE) -C ../utils/glvis libglvis.a
+_____SERVER_EXE__SOURCES = \
+	args.cpp \
+	cmd.cpp \
+	crc.cpp \
+	cvar.cpp \
+	debug.cpp \
+	files.cpp \
+	host.cpp \
+	infostr.cpp \
+	level.cpp \
+	mapinfo.cpp \
+	maths.cpp \
+	message.cpp \
+	misc.cpp \
+	name.cpp \
+	net_dgrm.cpp \
+	net_loop.cpp \
+	net_main.cpp \
+	net_null.cpp \
+	p_setup.cpp \
+	p_thinker.cpp \
+	pr_cmds.cpp \
+	pr_exec.cpp \
+	r_tex.cpp \
+	s_data.cpp \
+	sc_man.cpp \
+	str.cpp \
+	stream.cpp \
+	sv_acs.cpp \
+	sv_ent.cpp \
+	sv_main.cpp \
+	sv_poly.cpp \
+	sv_save.cpp \
+	sv_sight.cpp \
+	sv_swtch.cpp \
+	sv_tick.cpp \
+	sv_user.cpp \
+	sv_world.cpp \
+	vclass.cpp \
+	vobject.cpp \
+	wad.cpp \
+	zone.cpp
 
-# ---------------------------------------
+if SERVER_PLATFORM_DJGPP
+_____SERVER_EXE__SOURCES += \
+	mplib.c \
+	mplpc.c \
+	net_bw.cpp \
+	net_ipx.cpp \
+	net_mp.cpp \
+	npxsetup.c \
+	sys_bsd.cpp
+endif
 
-svexe: ../$(SERVER_EXE) vavoom-dedicated
+if SERVER_PLATFORM_UNIX
+_____SERVER_EXE__SOURCES += \
+	net_udp.cpp \
+	sys_bsd.cpp
+endif
 
-../$(SERVER_EXE): $(SV_OBJ_FILES)
-	$(CXX) $(SV_LDFLAGS) -o $@ $(SV_OBJ_FILES) $(SV_LIBS)
-
-$(SV_OBJDIR)/%.$(OBJEXT) : $(srcdir)/%.c
-	@mkdir -p $(SV_OBJDIR)
-	$(CC) $(SV_CPPFLAGS) -c $(CFLAGS) -DSERVER -o $@ $<
-
-$(SV_OBJDIR)/%.$(OBJEXT) : $(srcdir)/%.cpp $(srcdir)/*.h
-	@mkdir -p $(SV_OBJDIR)
-	$(CXX) $(SV_CPPFLAGS) $(SV_CXXFLAGS) -DSERVER -c -o $@ $<
-
-$(SV_OBJDIR)/%.$(OBJEXT) : $(srcdir)/%.s
-	@mkdir -p $(SV_OBJDIR)
-	$(CC) -c -x assembler-with-cpp $(ASMFLAGS) -DSERVER -o $@ $<
+if SERVER_PLATFORM_WIN32
+_____SERVER_EXE__SOURCES += \
+	net_wins.cpp \
+	net_wipx.cpp \
+	sys_wind.cpp
+endif
 
 vavoom-dedicated: Makefile
 	echo "#!/bin/sh" > $@
@@ -357,27 +460,13 @@ vavoom-dedicated: Makefile
 	echo "exit \$$?" >> $@
 
 # ---------------------------------------
-
-install: $(INSTALL_TARGETS)
-	$(INSTALL) -d $(INSTALL_DIR)
-	$(INSTALL_DATA) $(srcdir)/vavoom.png $(INSTALL_DIR)
-
-installexe:
-	$(INSTALL) -d $(DESTDIR)$(bindir)
-	$(INSTALL_PROGRAM) ../$(MAIN_EXE) $(DESTDIR)$(bindir)
-	$(INSTALL_SCRIPT) vavoom $(DESTDIR)$(bindir)
-
-installsvexe:
-	$(INSTALL) -d $(DESTDIR)$(bindir)
-	$(INSTALL_PROGRAM) ../$(SERVER_EXE) $(DESTDIR)$(bindir)
-	$(INSTALL_SCRIPT) vavoom-dedicated $(DESTDIR)$(bindir)
-
+#
+#	Icon
+#
 # ---------------------------------------
 
-clean:
-	-rm $(OBJDIR)/*.o
-	-rm $(OBJDIR)/cl/*.o
-	-rm $(OBJDIR)/sv/*.o
+basedir = $(datadir)/vavoom
+dist_base_DATA = vavoom.png
 
 # ---------------------------------------
 #
@@ -410,13 +499,26 @@ ASM_FILES = \
 	d32_span.asm \
 	d32_spr.asm \
 	d32_surf.asm \
-	pr_execa.asm \
 	sys_i386.asm
 
 asm: $(ASM_FILES)
 
 %.asm : %.s asm_i386.h gas2tasm$(EXEEXT)
-	$(CC) -x assembler-with-cpp -E -P -DGAS2TASM $< -o - | gas2tasm$(EXEEXT) > $@
+	$(CC) -x assembler-with-cpp -E -P -DGAS2TASM -DASM_PREFIX=_ $< -o - | ./gas2tasm$(EXEEXT) > $@
 
 gas2tasm$(EXEEXT) : gas2tasm.c
 	$(CC) -O3 -ffast-math -fomit-frame-pointer -s -o $@ $<
+
+# ---------------------------------------
+
+EXTRA_DIST = \
+	$(ASM_FILES) \
+	gas2tasm.c \
+	gl_x.cpp \
+	template.cpp \
+	template.h \
+	template.s \
+	vavoom.ico \
+	vavoom_2.ico \
+	vavoom_3.ico \
+	vavoom.rc

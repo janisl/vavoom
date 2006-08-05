@@ -1,7 +1,7 @@
 AC_INIT([vavoom], [1.21])
 AC_CONFIG_SRCDIR([source/gamedefs.h])
 AC_CONFIG_AUX_DIR([utils])
-AM_INIT_AUTOMAKE([foreign no-define])
+AM_INIT_AUTOMAKE([foreign no-define dist-zip dist-bzip2])
 dnl AM_MAINTAINER_MODE
 
 dnl
@@ -45,7 +45,7 @@ AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_RANLIB
 AC_PROG_INSTALL
-AC_PROG_MAKE_SET
+AM_PROG_AS
 
 if test "x$AR" = "x"; then
 	AR="ar"
@@ -248,19 +248,22 @@ dnl
 case $host in
 *-*-msdos* | *-*-go32*)
 	SERVER_EXE='VavoomSV$(EXEEXT)'
-	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_DJGPP)'
+	SERVER_PLATFORM=DJGPP
 	;;
 
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
 	SERVER_EXE='Vavm95SV$(EXEEXT)'
-	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_WIN32)'
+	SERVER_PLATFORM=WIN32
 	;;
 
 *)
 	SERVER_EXE="vavoom-dedicated.$host_cpu$EXEEXT"
-	SV_OBJ_FILES='$(SV_COMMON_OBJ_FILES) $(SV_SYS_OBJS_UNIX)'
+	SERVER_PLATFORM=UNIX
 	;;
 esac
+AM_CONDITIONAL(SERVER_PLATFORM_DJGPP, test x$SERVER_PLATFORM = xDJGPP)
+AM_CONDITIONAL(SERVER_PLATFORM_WIN32, test x$SERVER_PLATFORM = xWIN32)
+AM_CONDITIONAL(SERVER_PLATFORM_UNIX, test x$SERVER_PLATFORM = xUNIX)
 
 SV_CXXFLAGS=${CXXFLAGS}
 SV_CPPFLAGS=${CPPFLAGS}
@@ -268,7 +271,6 @@ SV_LDFLAGS=${LDFLAGS}
 SV_LIBS=${LIBS}
 
 AC_SUBST([SERVER_EXE])
-AC_SUBST([SV_OBJ_FILES])
 AC_SUBST([SV_CXXFLAGS])
 AC_SUBST([SV_CPPFLAGS])
 AC_SUBST([SV_LDFLAGS])
@@ -280,20 +282,19 @@ dnl
 
 if test "x$enable_client" != "xno"; then
 
-OBJ_FILES='$(COMMON_OBJS)'
-
 case $host in
 dnl ---------------- DJGPP ----------------
 *-*-msdos* | *-*-go32*)
 	MAIN_EXE='Vavoom$(EXEEXT)'
-	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_DJGPP)"
+	MAIN_PLATFORM='DJGPP'
 
 	AC_CHECK_HEADER([allegro.h], [], AC_MSG_ERROR(['Vavoom requires Allegro to compile']))
 	AC_CHECK_LIB([alleg], [allegro_exit], [], AC_MSG_ERROR(['Vavoom requires Allegro to compile']))
 
 	if test "x$with_opengl" != "xno"; then
 		AC_CHECK_HEADER([GL/gl.h], [
-			OBJ_FILES="$OBJ_FILES \$(GL_OBJS) \$(GL_SYS_OBJ_DJGPP)"
+			MAIN_OPENGL=TRUE
+			MAIN_OPENGL_DJGPP=TRUE
 			LIBS="-lGL $LIBS"
 		])
 	fi
@@ -302,17 +303,18 @@ dnl ---------------- DJGPP ----------------
 dnl ---------------- Windows ----------------
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
 	MAIN_EXE='Vavoom95$(EXEEXT)'
-	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_WIN32)"
+	MAIN_PLATFORM='WIN32'
 	LIBS="-lgdi32 -lole32 -lwinmm $LIBS"
 
 	if test "x$with_opengl" != "xno"; then
-		OBJ_FILES="$OBJ_FILES \$(GL_OBJS) \$(GL_SYS_OBJ_WIN32)"
+		MAIN_OPENGL=TRUE
+		MAIN_OPENGL_WIN32=TRUE
 		LIBS="-lopengl32 $LIBS"
 	fi
 
 	if test "x$with_openal" != "xno"; then
 		AC_CHECK_HEADER([AL/al.h], [
-			OBJ_FILES="$OBJ_FILES \$(AL_OBJS)"
+			MAIN_OPENAL=TRUE
 			LIBS="-lOpenAL32 $LIBS"
 		])
 	fi
@@ -377,21 +379,24 @@ dnl ---------------- Other *NIX platforms ----------------
 		AC_MSG_ERROR(['Vavoom requires Allegro or SDL to compile'])
 	fi
 	fi
-	OBJ_FILES="$OBJ_FILES \$(SYS_OBJS_${MAIN_PLATFORM})"
 
 	AC_CHECK_HEADER([linux/cdrom.h], [
-		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_LINUX)"
+		MAIN_CDAUDIO_LINUX=TRUE
 	], [AC_CHECK_HEADER([sys/cdio.h], [
-		OBJ_FILES="$OBJ_FILES \$(CDAUDIO_OBJ_BSD)"
+		MAIN_CDAUDIO_BSD=TRUE
 	])])
 
 	if test "x$with_opengl" != "xno"; then
-		OBJ_FILES="$OBJ_FILES \$(GL_OBJS) \$(GL_SYS_OBJ_${MAIN_PLATFORM})"
+		MAIN_OPENGL=TRUE
 		LIBS="-lGL $LIBS"
 		if test "x$MAIN_PLATFORM" = "xUNIX_ALLEGRO"; then
 			AC_CHECK_HEADER([alleggl.h], [], AC_MSG_ERROR(['Vavoom requires AllegroGL to use OpenGL']))
 			AC_CHECK_LIB([GLU], [gluProject], [], AC_MSG_ERROR(['Vavoom requires GLU to use OpenGL']))
 			AC_CHECK_LIB([agl], [install_allegro_gl], [], AC_MSG_ERROR(['Vavoom requires AllegroGL to use OpenGL']))
+			MAIN_OPENGL_UNIX_ALLEGRO=TRUE
+		fi
+		if test "x$MAIN_PLATFORM" = "xUNIX_SDL"; then
+			MAIN_OPENGL_UNIX_SDL=TRUE
 		fi
 	fi
 
@@ -402,7 +407,7 @@ dnl ---------------- Other *NIX platforms ----------------
 			openal_config=$with_openal_config
 		fi
 		if test "x$openal_config" != "x"; then
-			OBJ_FILES="$OBJ_FILES \$(AL_OBJS)"
+			MAIN_OPENAL=TRUE
 			CPPFLAGS="$CPPFLAGS `$openal_config --cflags`"
 			LIBS="`$openal_config --libs` $LIBS"
 		fi
@@ -450,7 +455,7 @@ if test "x$with_vorbis" != "xno"; then
 	AC_CHECK_LIB([vorbis], [vorbis_info_init], [], [with_vorbis=no])
 fi
 if test "x$with_vorbis" != "xno"; then
-	OBJ_FILES="$OBJ_FILES \$(VORBIS_OBJS)"
+	MAIN_VORBIS=TRUE
 fi
 
 dnl
@@ -464,7 +469,7 @@ if test "x$with_libmad" != "xno"; then
 	AC_CHECK_LIB([mad], [mad_stream_init], [], [with_libmad=no])
 fi
 if test "x$with_libmad" != "xno"; then
-	OBJ_FILES="$OBJ_FILES \$(MP3_OBJS)"
+	MAIN_MP3=TRUE
 fi
 
 dnl
@@ -478,7 +483,7 @@ if test "x$with_mikmod" != "xno"; then
 		mikmod_config=$with_mikmod_config
 	fi
 	if test "x$LIBMIKMOD_CONFIG" != "x"; then
-		OBJ_FILES="$OBJ_FILES \$(MIKMOD_OBJS)"
+		MAIN_MIKMOD=TRUE
 		CXXFLAGS="$CXXFLAGS `$LIBMIKMOD_CONFIG --cflags`"
 		LDFLAGS="$LDFLAGS `$LIBMIKMOD_CONFIG --ldadd`"
 		LIBS="`$LIBMIKMOD_CONFIG --libs` $LIBS"
@@ -493,7 +498,7 @@ if test "x$with_flac" != "xno"; then
 	AC_CHECK_HEADER([FLAC++/decoder.h], [], [with_flac=no])
 fi
 if test "x$with_flac" != "xno"; then
-	OBJ_FILES="$OBJ_FILES \$(FLAC_OBJS)"
+	MAIN_FLAC=TRUE
 	LIBS="-lFLAC++ -lFLAC $LIBS"
 fi
 
@@ -507,7 +512,6 @@ MAIN_LDFLAGS=${LDFLAGS}
 MAIN_LIBS=${LIBS}
 
 AC_SUBST([MAIN_EXE])
-AC_SUBST([OBJ_FILES])
 AC_SUBST([LIB_FILES])
 AC_SUBST([MAIN_CXXFLAGS])
 AC_SUBST([MAIN_CPPFLAGS])
@@ -516,23 +520,29 @@ AC_SUBST([MAIN_LIBS])
 
 fi  dnl if enabled client
 
+AM_CONDITIONAL(MAIN_PLATFORM_DJGPP, test x$MAIN_PLATFORM = xDJGPP)
+AM_CONDITIONAL(MAIN_PLATFORM_WIN32, test x$MAIN_PLATFORM = xWIN32)
+AM_CONDITIONAL(MAIN_PLATFORM_UNIX_ALLEGRO, test x$MAIN_PLATFORM = xUNIX_ALLEGRO)
+AM_CONDITIONAL(MAIN_PLATFORM_UNIX_SDL, test x$MAIN_PLATFORM = xUNIX_SDL)
+AM_CONDITIONAL(MAIN_OPENGL, test x$MAIN_OPENGL = xTRUE)
+AM_CONDITIONAL(MAIN_OPENGL_DJGPP, test x$MAIN_OPENGL_DJGPP = xTRUE)
+AM_CONDITIONAL(MAIN_OPENGL_WIN32, test x$MAIN_OPENGL_WIN32 = xTRUE)
+AM_CONDITIONAL(MAIN_OPENGL_UNIX_ALLEGRO, test x$MAIN_OPENGL_UNIX_ALLEGRO = xTRUE)
+AM_CONDITIONAL(MAIN_OPENGL_UNIX_SDL, test x$MAIN_OPENGL_UNIX_SDL = xTRUE)
+AM_CONDITIONAL(MAIN_CDAUDIO_LINUX, test x$MAIN_CDAUDIO_LINUX = xTRUE)
+AM_CONDITIONAL(MAIN_CDAUDIO_BSD, test x$MAIN_CDAUDIO_BSD = xTRUE)
+AM_CONDITIONAL(MAIN_OPENAL, test x$MAIN_OPENAL = xTRUE)
+AM_CONDITIONAL(MAIN_VORBIS, test x$MAIN_VORBIS = xTRUE)
+AM_CONDITIONAL(MAIN_MP3, test x$MAIN_MP3 = xTRUE)
+AM_CONDITIONAL(MAIN_MIKMOD, test x$MAIN_MIKMOD = xTRUE)
+AM_CONDITIONAL(MAIN_FLAC, test x$MAIN_FLAC = xTRUE)
+
 dnl
 dnl  **** Build and instalation targets ****
 dnl
 
-TARGETS=""
-INSTALL_TARGETS=""
-if test "x$enable_client" != "xno"; then
-	TARGETS="$TARGETS exe"
-	INSTALL_TARGETS="$INSTALL_TARGETS installexe"
-fi
-if test "x$enable_server" != "xno"; then
-	TARGETS="$TARGETS svexe"
-	INSTALL_TARGETS="$INSTALL_TARGETS installsvexe"
-fi
-
-AC_SUBST([TARGETS])
-AC_SUBST([INSTALL_TARGETS])
+AM_CONDITIONAL(ENABLE_CLIENT, test "x$enable_client" != "xno")
+AM_CONDITIONAL(ENABLE_SERVER, test "x$enable_server" != "xno")
 
 dnl
 dnl  **** IWAD directory option ****
