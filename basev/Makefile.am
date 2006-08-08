@@ -90,8 +90,8 @@ EXTRA_DIST = \
 	tnt/scripts/sec1text.txt \
 	tnt/scripts/sec2text.txt
 
-VLUMPY = ../utils/vlumpy/vlumpy$(EXEEXT)
-ACC = ../utils/acc/acc$(EXEEXT)
+VLUMPY = ../utils/bin/vlumpy$(EXEEXT)
+ACC = ../utils/bin/acc$(EXEEXT)
 
 common/wad0.wad: $(srcdir)/common/wad0.ls $(VLUMPY) \
 		common/progs/common.dat common/progs/clcommon.dat common/progs/svcommon.dat

@@ -6,9 +6,9 @@ LIBS=@VCC_LIBS@
 
 INCLUDES = -I$(srcdir)/../common
 
-noinst_PROGRAMS = vcc
+noinst_PROGRAMS = ../bin/vcc
 
-vcc_SOURCES = \
+___bin_vcc_SOURCES = \
 	../common/array.h \
 	../common/cmdlib.cpp \
 	../common/cmdlib.h \

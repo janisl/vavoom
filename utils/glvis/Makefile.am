@@ -20,8 +20,8 @@ libglvis_a_SOURCES = \
 	level.cpp \
 	vector.h
 
-noinst_PROGRAMS = glvis
-glvis_SOURCES = glvis.cpp
-glvis_LDADD = libglvis.a
+noinst_PROGRAMS = ../bin/glvis
+___bin_glvis_SOURCES = glvis.cpp
+___bin_glvis_LDADD = libglvis.a
 
 EXTRA_DIST = glvis.txt

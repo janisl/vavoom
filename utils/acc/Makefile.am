@@ -4,9 +4,9 @@ DEFS=
 LDFLAGS=@ACC_LDFLAGS@
 LIBS=@ACC_LIBS@
 
-noinst_PROGRAMS = acc
+noinst_PROGRAMS = ../bin/acc
 
-acc_SOURCES = \
+___bin_acc_SOURCES = \
 	acc.c \
 	common.h \
 	error.c \

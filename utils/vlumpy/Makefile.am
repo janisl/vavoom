@@ -6,9 +6,9 @@ LIBS=@VLUMPY_LIBS@
 
 INCLUDES = -I$(srcdir)/../common
 
-noinst_PROGRAMS = vlumpy
+noinst_PROGRAMS = ../bin/vlumpy
 
-vlumpy_SOURCES = \
+___bin_vlumpy_SOURCES = \
 	../common/cmdlib.cpp \
 	../common/cmdlib.h \
 	../common/ftexdefs.h \

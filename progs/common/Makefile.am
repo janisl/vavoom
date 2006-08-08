@@ -1,4 +1,4 @@
-VCC=../../utils/vcc/vcc$(EXEEXT)
+VCC=../../utils/bin/vcc$(EXEEXT)
 OUTDIR=../../basev/common/progs
 
 noinst_DATA = $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat

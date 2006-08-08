@@ -1,4 +1,4 @@
-VCC=../../utils/vcc/vcc$(EXEEXT)
+VCC=../../utils/bin/vcc$(EXEEXT)
 OUTDIR=../../basev/hexen/progs
 COMMON_DIR=$(srcdir)/../common
 COMMON_PROGS_DIR=../../basev/common/progs

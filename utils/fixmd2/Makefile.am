@@ -6,8 +6,8 @@ LIBS=@FIXMD2_LIBS@
 
 INCLUDES = -I$(srcdir)/../common
 
-noinst_PROGRAMS = fixmd2
-fixmd2_SOURCES = \
+noinst_PROGRAMS = ../bin/fixmd2
+___bin_fixmd2_SOURCES = \
 	../common/cmdlib.cpp \
 	../common/cmdlib.h \
 	../common/fmd2defs.h \
