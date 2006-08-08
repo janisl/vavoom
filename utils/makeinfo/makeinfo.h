@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-#include <stdio.h>
+#include "cmdlib.h"
 
 #define FRACUNIT	(1 << 16)
 
@@ -209,3 +209,5 @@ struct map_info_t
 };
 
 void MarkWeaponState(int num);
+
+extern bool						Doom2;

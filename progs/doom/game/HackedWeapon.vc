@@ -306,9 +306,62 @@ void A_BFGsound()
 
 void A_FireBFG()
 {
-	Player(Player).Ammo[Ammo] -= BFGCELLS;
+	Player(Player).Ammo[Ammo] -= MainGameInfo(Player.Level.Game).BFGCELLS;
 	Player(Player).SpawnPlayerMissile(BFGShot);
 }
+
+void A_Look(){}
+void A_Chase(){}
+void A_FaceTarget(){}
+void A_Pain(){}
+void A_Explode(){}
+void A_Scream(){}
+void A_XScream(){}
+void A_Fall(){}
+void A_PlayerScream(){}
+void A_BFGSpray(){}
+void A_PosAttack(){}
+void A_SPosAttack(){}
+void A_TroopAttack(){}
+void A_SargAttack(){}
+void A_HeadAttack(){}
+void A_BruisAttack(){}
+void A_SkullAttack(){}
+void A_Hoof(){}
+void A_Metal(){}
+void A_CyberAttack(){}
+void A_SpidRefire(){}
+void A_CPosAttack(){}
+void A_CPosRefire(){}
+void A_BabyMetal(){}
+void A_BspiAttack(){}
+void A_PainAttack(){}
+void A_PainDie(){}
+void A_SkelWhoosh(){}
+void A_SkelFist(){}
+void A_SkelMissile(){}
+void A_Tracer(){}
+void A_FatRaise(){}
+void A_FatAttack1(){}
+void A_FatAttack2(){}
+void A_FatAttack3(){}
+void A_VileChase(){}
+void A_VileStart(){}
+void A_VileTarget(){}
+void A_VileAttack(){}
+void A_Fire(){}
+void A_StartFire(){}
+void A_FireCrackle(){}
+void A_BrainPain(){}
+void A_BrainScream(){}
+void A_BrainExplode(){}
+void A_BrainDie(){}
+void A_BrainAwake(){}
+void A_BrainSpit(){}
+void A_SpawnFly(){}
+void A_SpawnSound(){}
+void A_KeenDie(){}
+void A_BossDeath(){}
 
 defaultproperties
 {

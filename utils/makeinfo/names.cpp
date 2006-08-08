@@ -42,7 +42,7 @@ char *sprnames[] = {
 
 char* statename[] =
 {
-    "S_NULL",
+    "none",
     "S_LIGHTDONE",
     "S_PUNCH",
     "S_PUNCHDOWN",

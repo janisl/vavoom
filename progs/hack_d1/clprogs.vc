@@ -27,34 +27,15 @@
 //**
 //**************************************************************************
 
-#include <client.vc>
+#include <macros.vc>
+
+import shared;
+import clcommon;
 
 #define NO_BOTS
 
-#include "../doomdefs.vc"
+class ClientGame;
+class MenuScreen;
+class MenuControlKey;
 
-#ifndef DOOM2
-bool ExtendedWAD;
-#endif
-
-#include "effects.vc"
-
-#include "imission.vc"
-
-#include "finale.vc"
-
-#include "border.vc"
-
-#include "msgbox.vc"
-
-#include "m_menu.vc"
-
-#include "../cgame/classes.vc"
-
-#include "m_api.vc"
-
-#include "statbar.vc"
-
-#include "title.vc"
-
-#include "clmain.vc"
+#include "cgame/classes.vc"

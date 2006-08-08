@@ -1224,7 +1224,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     0,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_MISSILE",
+	"DoomDefs::EF_DL_MISSILE",
     },
 
     {		//	Revenant
@@ -1282,7 +1282,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_RBALL"
+	"DoomDefs::EF_DL_RBALL"
     },
 
     {		//   RevenantTracerSmoke
@@ -1368,7 +1368,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_RBALL"
+	"DoomDefs::EF_DL_RBALL"
     },
 
     {		//	ChaingunGuy
@@ -1566,7 +1566,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_GBALL"
+	"DoomDefs::EF_DL_GBALL"
     },
 
     {		//	HellKnight
@@ -1624,7 +1624,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_MCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_MISSILE"
+	"DoomDefs::EF_DL_MISSILE"
     },
 
     {		//	SpiderMastermind
@@ -1934,7 +1934,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     0,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_MISSILE"
+	"DoomDefs::EF_DL_MISSILE"
     },
 
     {		//	Barrel
@@ -1992,7 +1992,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_RBALL"
+	"DoomDefs::EF_DL_RBALL"
     },
 
     {		//	CacodemonMissile
@@ -2022,7 +2022,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_RBALL"
+	"DoomDefs::EF_DL_RBALL"
     },
 
     {		//	Rocket
@@ -2052,7 +2052,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_MISSILE | EF_ROCKET"
+	"DoomDefs::EF_DL_MISSILE | DoomDefs::EF_ROCKET"
     },
 
     {		//	PlasmaShot
@@ -2082,7 +2082,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_PLASMA"
+	"DoomDefs::EF_DL_PLASMA"
     },
 
     {		//	BFGShot
@@ -2112,7 +2112,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_GBALL"
+	"DoomDefs::EF_DL_GBALL"
     },
 
     {		//	ArachnotronPlasma
@@ -2142,7 +2142,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     MF2_PCROSS,	// flags2
 	S1_NULL,		// raisestate
 	0,
-	"EF_DL_MISSILE"
+	"DoomDefs::EF_DL_MISSILE"
     },
 
     {		//	Puff
@@ -3349,7 +3349,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(Origin + vector(0.0, 0.0, 64.0),\n"
+	"Level.AddStaticLight(Origin + vector(0.0, 0.0, 64.0),\n"
 	"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
@@ -3381,7 +3381,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(Origin + vector(0.0, 0.0, 48.0),\n"
+	"Level.AddStaticLight(Origin + vector(0.0, 0.0, 48.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
@@ -3413,7 +3413,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
+	"Level.AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0);"
     },
 
@@ -3613,7 +3613,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
+	"Level.AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
     },
 
@@ -3701,7 +3701,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
+	"Level.AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));"
     },
 
@@ -3733,7 +3733,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
+	"Level.AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));"
     },
 
@@ -3765,7 +3765,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
+	"Level.AddStaticLightRGB(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));"
     },
 
@@ -3797,7 +3797,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
+	"Level.AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 0, 255));"
     },
 
@@ -3829,7 +3829,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
+	"Level.AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(0, 255, 0));"
     },
 
@@ -3861,7 +3861,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
+	"Level.AddStaticLightRGB(Origin + vector(0.0, 0.0, 16.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 200.0, RGB(255, 0, 0));"
     },
 
@@ -3949,7 +3949,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(Origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);"
+	"Level.AddStaticLight(Origin, mthing->arg1 ? itof(mthing->arg1) * 8.0 : 64.0);"
     },
 
     {		//   Candelabra
@@ -3980,7 +3980,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	S1_NULL,		// raisestate
 	0,
 	0,
-	"AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
+	"Level.AddStaticLight(Origin + vector(0.0, 0.0, 32.0),\n"
 		"\t\tmthing->arg1 ? itof(mthing->arg1) * 8.0 : 128.0);"
     },
 
@@ -5198,11 +5198,7 @@ sfxinfo_t sfx[] =
   { "cyber/hoof", "dshoof", 	70, 2, 1 },
   { "cyber/walk", "dsmetal", 	70, 2, 1 },
   { "weapons/chngun", "dspistol", 	64, 2, 1 },
-#ifdef DOOM2
-  { "misc/chat2", "dstink", 	60, 2, 0 },
-#else
   { "misc/chat", "dstink", 	60, 2, 0 },
-#endif
   { "doors/dr2_open", "dsbdopn", 	100, 2, 1 },
   { "doors/dr2_clos", "dsbdcls", 	100, 2, 1 },
   { "misc/spawn", "dsitmbk", 	100, 2, 1 },
@@ -5223,11 +5219,7 @@ sfxinfo_t sfx[] =
   { "skeleton/active", "dsskeact",	70, 2, 1 },
   { "skeleton/sight", "dsskesit",	70, 2, 1 },
   { "skeleton/attack", "dsskeatk",	70, 2, 1 },
-#ifdef DOOM2
-  { "misc/chat", "dsradio", 	60, 2, 1 },
-#else
   { "misc/chat2", "dsradio", 	60, 2, 1 },
-#endif
   { "menu/activate", "dsswtchn", 32, 2, 1 },
   { "menu/cursor", "dspstop", 		32, 2, 1 },
   { "menu/choose", "dspistol", 	32, 2, 1 },
@@ -5240,12 +5232,12 @@ int			num_sfx = sizeof(sfx) / sizeof(sfx[0]);
 
 string_def_t	strings[] =
 {
-	{ "PD_BLUEO", "You need a blue key to activate this object", NULL },
-	{ "PD_REDO", "You need a red key to activate this object", NULL },
-	{ "PD_YELLOWO", "You need a yellow key to activate this object", NULL },
-	{ "PD_BLUEK", "You need a blue key to open this door", NULL },
-	{ "PD_REDK", "You need a red key to open this door", NULL },
-	{ "PD_YELLOWK", "You need a yellow key to open this door", NULL },
+//	{ "PD_BLUEO", "You need a blue key to activate this object", NULL },
+//	{ "PD_REDO", "You need a red key to activate this object", NULL },
+//	{ "PD_YELLOWO", "You need a yellow key to activate this object", NULL },
+//	{ "PD_BLUEK", "You need a blue key to open this door", NULL },
+//	{ "PD_REDK", "You need a red key to open this door", NULL },
+//	{ "PD_YELLOWK", "You need a yellow key to open this door", NULL },
 
 	{ "GOTARMOR", "Picked up the armor.", NULL },
 	{ "GOTMEGA", "Picked up the MegaArmor!", NULL },
@@ -5292,9 +5284,8 @@ string_def_t	strings[] =
 	{NULL, NULL, NULL}
 };
 
-string_def_t	txtlumps[] =
+string_def_t	txtlumps2[] =
 {
-#ifdef DOOM2
 	{ "fin1text.txt",
 		"YOU HAVE ENTERED DEEPLY INTO THE INFESTED\n"
 		"STARPORT. BUT SOMETHING IS WRONG. THE\n"
@@ -5362,7 +5353,10 @@ string_def_t	txtlumps[] =
 		"CONGRATULATIONS, YOU'VE FOUND THE\n"
 		"SUPER SECRET LEVEL!  YOU'D BETTER\n"
 		"BLAZE THROUGH THIS ONE!\n", NULL },
-#else
+};
+
+string_def_t	txtlumps1[] =
+{
 	{ "fin1text.txt",
 "Once you beat the big badasses and\n"
 "clean out the moon base you're supposed\n"
@@ -5432,13 +5426,11 @@ string_def_t	txtlumps[] =
 "of demons run amok among our cities.\n"
 "\n"
 "next stop, hell on earth!", NULL },
-#endif
 	{NULL, NULL, NULL}
 };
 
-map_info_t		map_info[] =
+map_info_t		map_info2[] =
 {
-#ifdef DOOM2
 	{ "entryway", "D_runnin" },
 	{ "underhalls", "D_stalks" },
 	{ "the gantlet", "D_countd" },
@@ -5471,7 +5463,10 @@ map_info_t		map_info[] =
 	{ "icon of sin", "D_openin" },
 	{ "wolfenstein", "D_evil" },
 	{ "grosse", "D_ultima" },
-#else
+};
+
+map_info_t		map_info1[] =
+{
 	{ "Hangar", "D_e1m1" },
 	{ "Nuclear Plant", "D_e1m2" },
 	{ "Toxin Refinery", "D_e1m3" },
@@ -5508,5 +5503,4 @@ map_info_t		map_info[] =
 	{ "And Hell Followed", "D_e2m6" },
 	{ "Unto the Cruel", "D_e2m5" },
 	{ "Fear", "D_e1m9" },
-#endif
 };

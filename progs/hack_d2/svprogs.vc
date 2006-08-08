@@ -27,47 +27,103 @@
 //**
 //**************************************************************************
 
-#include <server.vc>
+#include <macros.vc>
+
+import shared;
+import svcommon;
 
 #define DOOM2
 #define NO_BOTS
 
-#include "../doomdefs.vc"
-#include "gendefs.vc"
-#include "svdefs.vc"
+//
+// Map things flags
+//
+enum
+{
+	MTF_EASY		= 0x0001,	// Skill flags.
+	MTF_NORMAL		= 0x0002,
+	MTF_HARD		= 0x0004,
+	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
+	MTF_DORMANT		= 0x0010,	// The thing is dormant
+	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
+	MTF_CLERIC		= 0x0040,
+	MTF_MAGE		= 0x0080,
+	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
+	MTF_GCOOP		= 0x0200,
+	MTF_GDEATHMATCH	= 0x0400
+};
 
-#include "xlat.vc"
-#include "ceilings.vc"
-#include "doors.vc"
-#include "floors.vc"
-#include "plats.vc"
-#include "polyobj.vc"
-#include "lights.vc"
-#include "scroll.vc"
-#include "spec.vc"
+enum
+{
+	FLOOR_SOLID,
+	FLOOR_WATER,
+	FLOOR_BLOOD,
+	FLOOR_NUKAGE,
+	FLOOR_SLIME,
+	FLOOR_LAVA
+};
 
-#include "world.vc"
+enum
+{
+	CONTENTS_EMPTY,
+	CONTENTS_WATER,
+	CONTENTS_BLOOD,
+	CONTENTS_NUKAGE,
+	CONTENTS_SLIME,
+	CONTENTS_LAVA,
 
-#include "wpninfo.vc"
+	CONTENTS_SOLID = -1
+};
 
-#include "../game/classes.vc"
+enum
+{
+	CSHIFT_CONTENTS
+};
 
-#include "mobj.vc"
+enum
+{
+	it_bluecard,
+	it_yellowcard,
+	it_redcard,
+	it_blueskull,
+	it_yellowskull,
+	it_redskull,
+
+	NUMCARDS
+};
+
+// Power up artifacts.
+enum
+{
+	pw_invulnerability,
+	pw_strength,
+	pw_invisibility,
+	pw_ironfeet,
+	pw_infrared,
+	NUMPOWERS
+};
+
+enum
+{
+	CHAN_AUTO,
+	CHAN_VOICE,
+	CHAN_WEAPON,
+	CHAN_ITEM,
+	CHAN_BODY
+};
+
+class PolyobjThinker;
+
 #define S_GIBS		FindState('S_GIBS')
-#include "map.vc"
+#include "game/classes.vc"
 #undef S_GIBS
-#include "teleport.vc"
+#include "game/HackedActor.vc"
+#include "game/HackedWeapon.vc"
 
-#include "strings.vc"
-#include "deh_wpn.vc"
-#include "deh_act.vc"
+#include "gendefs.vc"
 
 #include "states.vc"
 #include "mobjinfo.vc"
 #include "weapons.vc"
 
-#include "../game1/TeleportSpot2.vc"
-
-#include "things.vc"
-
-#include "svmain.vc"
+#include "game1/TeleportSpot2.vc"

@@ -1,4 +1,4 @@
-SUBDIRS = acc fixmd2 glbsp glvis vcc vlumpy
+SUBDIRS = acc fixmd2 glbsp glvis makeinfo vcc vlumpy
 EXTRA_DIST = \
 	editing/acs/strfhelp.acs \
 	editing/acs/stspec.acs \
@@ -16,12 +16,6 @@ EXTRA_DIST = \
 	editing/wauthor/vheretic.wcf \
 	editing/wauthor/vhexen.wcf \
 	editing/wauthor/vstrife.wcf \
-	makeinfo/dehacked.cpp \
-	makeinfo/info.cpp \
-	makeinfo/info.h \
-	makeinfo/makeinfo.cpp \
-	makeinfo/makeinfo.h \
-	makeinfo/names.cpp \
 	vlaunch/main.cpp \
 	vlaunch/main.dfm \
 	vlaunch/main.h \

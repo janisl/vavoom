@@ -23,7 +23,11 @@
 //**
 //**************************************************************************
 
+#ifndef NO_BOTS
 class MainGameInfo : GameInfo;
+#else
+class MainGameInfoBase : GameInfo;
+#endif
 
 const int NUM_SPECIALS = 273;
 
@@ -63,8 +67,10 @@ int WeaponOrder[DoomDefs::NUMWEAPONS];
 int terrain_contents[6];
 int contents_transluc[6];
 
+#ifndef NO_BOTS
 int botskill;
 botinfo_t botinfo[30];
+#endif
 
 tagged_line_t	TaggedLines[MAX_TAGGED_LINES];
 int				TaggedLineCount;
@@ -88,6 +94,11 @@ bool shareware;
 
 bool respawnmonsters;
 
+int INITIAL_HEALTH;
+int INITIAL_AMMO;
+int GOD_HEALTH;
+int BFGCELLS;
+
 //==========================================================================
 //
 //	Init
@@ -100,7 +111,9 @@ void Init()
 	shareware = !WadLumpPresent('e2m1');
 #endif
 	InitTranslationTables();
+#ifndef NO_BOTS
 	InitBotTypes();
+#endif
 }
 
 //==========================================================================
@@ -133,6 +146,7 @@ LevelInfo CreateLevelInfo()
 //
 //==========================================================================
 
+#ifndef NO_BOTS
 void InitBotTypes()
 {
 	SetBotType(0,
@@ -424,6 +438,7 @@ void SetBotType(int i, string Name, int accuracy, int intelect, int evade,
 	botinfo[i].reaction = reaction;
 	botinfo[i].userinfo = userinfo;
 }
+#endif
 
 //==========================================================================
 //
@@ -2170,5 +2185,11 @@ defaultproperties
 
 	air_control = 1.0 / 256.0;
 
+#ifndef NO_BOTS
 	botskill = 2;
+#endif
+	INITIAL_HEALTH = 100;
+	INITIAL_AMMO = 50;
+	GOD_HEALTH = 100;
+	BFGCELLS = 40;
 }

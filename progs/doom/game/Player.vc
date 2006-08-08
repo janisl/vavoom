@@ -41,10 +41,6 @@ const int CF_GODMODE		= 2;	// No damage, no health loss.
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
-const int INITIAL_HEALTH	= 100;
-const int INITIAL_AMMO		= 50;
-const int GOD_HEALTH		= 100;
-
 const float BONUSADD		= 0.2;
 
 const int INVERSECOLORMAP	= 32;
@@ -437,7 +433,7 @@ void SpawnPlayer(mthing_t * mthing)
 	float x;
 	float y;
 	float z;
-	PlayerPawn PP;
+	Actor PP;
 
 	if (PlayerState == PST_REBORN)
 		PlayerReborn();
@@ -445,7 +441,7 @@ void SpawnPlayer(mthing_t * mthing)
 	x = mthing->x;
 	y = mthing->y;
 	z = Actor::ONFLOORZ;
-	PP = PlayerPawn(DoomLevelInfo(Level).Spawn(DoomPlayer, vector(x, y, z)));
+	PP = DoomLevelInfo(Level).Spawn(DoomPlayer, vector(x, y, z));
 	PP.Origin.z += mthing->height;
 	PP.LinkToWorld();
 
@@ -524,11 +520,11 @@ void PlayerReborn()
 	bUseDown = true;	// don't do anything immediately
 	bAttackDown = true;
 	PlayerState = PST_LIVE;
-	Health = INITIAL_HEALTH;
+	Health = MainGameInfo(Level.Game).INITIAL_HEALTH;
 #ifdef DDF
 	SetInitialWeapons(self);
 #else
-	Ammo[DoomDefs::am_clip] = INITIAL_AMMO;
+	Ammo[DoomDefs::am_clip] = MainGameInfo(Level.Game).INITIAL_AMMO;
 	MaxAmmo[DoomDefs::am_clip] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_clip];
 	MaxAmmo[DoomDefs::am_shell] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_shell];
 	MaxAmmo[DoomDefs::am_misl] = MainGameInfo(Level.Game).maxammo[DoomDefs::am_misl];
@@ -2523,7 +2519,7 @@ int CheckAmmo()
 #else
 	// Minimal amount for one shot varies.
 	if (ReadyWeapon == DoomDefs::wp_bfg)
-		count = Weapon::BFGCELLS;
+		count = MainGameInfo(Level.Game).BFGCELLS;
 #ifdef DOOM2
 	else if (ReadyWeapon == DoomDefs::wp_supershotgun)
 		count = 2;	// Double barrel.
@@ -2576,9 +2572,9 @@ int CheckAmmo()
 			PendingWeapon = DoomDefs::wp_missile;
 		}
 #ifdef DOOM2
-		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > Weapon::BFGCELLS)
+		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > MainGameInfo(Level.Game).BFGCELLS)
 #else
-		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > Weapon::BFGCELLS &&
+		else if (WeaponOwned[DoomDefs::wp_bfg] && Ammo[DoomDefs::am_cell] > MainGameInfo(Level.Game).BFGCELLS &&
 			(!MainGameInfo(Level.Game).shareware))
 #endif
 		{
@@ -2803,8 +2799,8 @@ void Cheat_God()
 	if (Cheats & CF_GODMODE)
 	{
 		if (MO)
-			MO.Health = GOD_HEALTH;
-		Health = GOD_HEALTH;
+			MO.Health = MainGameInfo(Level.Game).GOD_HEALTH;
+		Health = MainGameInfo(Level.Game).GOD_HEALTH;
 		cprint("Degreelessness Mode On");
 	}
 	else

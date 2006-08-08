@@ -44,7 +44,7 @@ void A_BFGsound()
 
 void A_FireBFG()
 {
-	Player(Player).Ammo[Ammo] -= BFGCELLS;
+	Player(Player).Ammo[Ammo] -= MainGameInfo(Player.Level.Game).BFGCELLS;
 	Player(Player).SpawnPlayerMissile(BFGShot);
 }
 

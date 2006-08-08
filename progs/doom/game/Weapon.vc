@@ -31,8 +31,6 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
-const int BFGCELLS			= 40;
-
 int Ammo;
 state UpState;
 state DownState;

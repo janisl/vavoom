@@ -103,6 +103,20 @@ AC_SUBST([FIXMD2_LDFLAGS])
 AC_SUBST([FIXMD2_LIBS])
 
 dnl
+dnl  **** MakeInfo variables ****
+dnl
+
+MAKEINFO_CXXFLAGS=${CXXFLAGS}
+MAKEINFO_CPPFLAGS=${CPPFLAGS}
+MAKEINFO_LDFLAGS=${LDFLAGS}
+MAKEINFO_LIBS=${LIBS}
+
+AC_SUBST([MAKEINFO_CXXFLAGS])
+AC_SUBST([MAKEINFO_CPPFLAGS])
+AC_SUBST([MAKEINFO_LDFLAGS])
+AC_SUBST([MAKEINFO_LIBS])
+
+dnl
 dnl  **** VCC variables ****
 dnl
 
@@ -577,5 +591,6 @@ AC_OUTPUT([
 	utils/fixmd2/Makefile
 	utils/glbsp/Makefile
 	utils/glvis/Makefile
+	utils/makeinfo/Makefile
 	utils/vcc/Makefile
 	utils/vlumpy/Makefile])
