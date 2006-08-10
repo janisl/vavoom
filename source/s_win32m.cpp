@@ -287,7 +287,11 @@ void VMMSystemMidiDevice::SetVolume(float Volume)
 	if (Volume != MusVolume)
 	{
 		MusVolume = Volume;
-		//FIXME set volume.
+		if (hMidi)
+		{
+			midiOutSetVolume(hMidi, (DWORD)(0xffff * MusVolume) |
+				((DWORD)(0xffff * MusVolume) << 16));
+		}
 	}
 	unguard;
 }
@@ -495,13 +499,16 @@ MMRESULT VMMSystemMidiDevice::Preroll()
 	//
 	if (!hMidi)
 	{
-		uDeviceID = 0;
+		uDeviceID = MIDI_MAPPER;
 		if ((mmrc = midiStreamOpen((HMIDISTRM*)&hMidi, &uDeviceID, 1,
 			(DWORD)StaticCallback, (DWORD)this, CALLBACK_FUNCTION)) != MMSYSERR_NOERROR)
 		{
 			hMidi = NULL;
 			goto seq_Preroll_Cleanup;
 		}
+
+		midiOutSetVolume(hMidi, (DWORD)(0xffff * MusVolume) |
+			((DWORD)(0xffff * MusVolume) << 16));
 
 		mptd.cbStruct  = sizeof(mptd);
 		mptd.dwTimeDiv = TimeDivision;
