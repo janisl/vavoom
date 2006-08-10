@@ -1,8 +1,9 @@
 AC_INIT([vavoom], [1.21])
 AC_CONFIG_SRCDIR([source/gamedefs.h])
 AC_CONFIG_AUX_DIR([utils])
+
 AM_INIT_AUTOMAKE([foreign no-define dist-zip dist-bzip2])
-dnl AM_MAINTAINER_MODE
+AM_MAINTAINER_MODE
 
 dnl
 dnl  **** Supported --with arguments ****
