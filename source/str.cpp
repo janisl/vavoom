@@ -524,7 +524,7 @@ VStr VStr::DefaultExtension(const VStr& extension) const
 
 size_t VStr::Length(const char* S)
 {
-	return std::strlen(S);
+	return strlen(S);
 }
 
 //==========================================================================
@@ -579,7 +579,7 @@ size_t VStr::ByteLengthForUtf8(const char* S, size_t N)
 
 int VStr::Cmp(const char* S1, const char* S2)
 {
-	return std::strcmp(S1, S2);
+	return strcmp(S1, S2);
 }
 
 //==========================================================================
@@ -590,7 +590,7 @@ int VStr::Cmp(const char* S1, const char* S2)
 
 int VStr::NCmp(const char* S1, const char* S2, size_t N)
 {
-	return std::strncmp(S1, S2, N);
+	return strncmp(S1, S2, N);
 }
 
 //==========================================================================
@@ -623,7 +623,7 @@ int VStr::NICmp(const char* S1, const char* S2, size_t N)
 
 void VStr::Cpy(char* Dst, const char* Src)
 {
-	std::strcpy(Dst, Src);
+	strcpy(Dst, Src);
 }
 
 //==========================================================================
@@ -634,7 +634,7 @@ void VStr::Cpy(char* Dst, const char* Src)
 
 void VStr::NCpy(char* Dst, const char* Src, size_t N)
 {
-	std::strncpy(Dst, Src, N);
+	strncpy(Dst, Src, N);
 }
 
 //==========================================================================
@@ -645,7 +645,7 @@ void VStr::NCpy(char* Dst, const char* Src, size_t N)
 
 char VStr::ToUpper(char C)
 {
-	return std::toupper(C);
+	return toupper(C);
 }
 
 //==========================================================================
@@ -656,5 +656,5 @@ char VStr::ToUpper(char C)
 
 char VStr::ToLower(char C)
 {
-	return std::tolower(C);
+	return tolower(C);
 }
