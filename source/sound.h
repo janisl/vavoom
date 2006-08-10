@@ -143,14 +143,12 @@ private:
 	FAmbientSound*			AmbientSounds[NUM_AMBIENT_SOUNDS];
 	int						SeqTrans[64 * 3];
 
-	static const char*		Attenuations[];
-
-	void ParseSndinfo();
+	void ParseSndinfo(VScriptParser*);
 	int AddSoundLump(VName, int);
 	int AddSound(VName, int);
 	int FindSound(VName);
 	int FindOrAddSound(VName);
-	void ParsePlayerSoundCommon(int&, int&, int&);
+	void ParsePlayerSoundCommon(VScriptParser*, int&, int&, int&);
 	int AddPlayerClass(VName);
 	int FindPlayerClass(VName);
 	int AddPlayerGender(VName);
@@ -159,8 +157,8 @@ private:
 	int LookupPlayerSound(int, int, int);
 	int ResolveSound(int, int, int);
 
-	void ParseSequenceScript();
-	void AssignSeqTranslations(int, seqtype_t);
+	void ParseSequenceScript(VScriptParser*);
+	void AssignSeqTranslations(VScriptParser*, int, seqtype_t);
 };
 
 //

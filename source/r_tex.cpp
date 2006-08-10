@@ -3217,106 +3217,101 @@ void P_InitAnimated()
 //
 //==========================================================================
 
-static void ParseFTAnim(int IsFlat)
+static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 {
 	animDef_t 	ad;
 	frameDef_t	fd;
-	bool 		ignore;
-	bool		optional;
 
 	memset(&ad, 0, sizeof(ad));
 
 	//	Optional flag.
-	optional = false;
-	SC_MustGetString();
-	if (SC_Compare("optional"))
+	bool optional = false;
+	if (sc->Check("optional"))
 	{
 		optional = true;
-		SC_MustGetString();
 	}
 
 	//	Name
-	ignore = false;
-	ad.index = GTextureManager.CheckNumForName(VName(sc_String,
-		VName::AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
+	bool ignore = false;
+	sc->ExpectName8();
+	ad.index = GTextureManager.CheckNumForName(sc->Name8,
+		IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
 	if (ad.index == -1)
 	{
 		ignore = true;
 		if (!optional)
 		{
-			GCon->Logf("ANIMDEFS: Can't find %s", sc_String);
+			GCon->Logf("ANIMDEFS: Can't find %s", *sc->String);
 		}
 	}
 	bool missing = ignore && optional;
 
 	bool HadPic = false;
 	ad.startFrameDef = FrameDefs.Num();
-	while (SC_GetString())
+	while (1)
 	{
-		if (SC_Compare ("allowdecals"))
+		if (sc->Check("allowdecals"))
 		{
 			//	Since we don't have decals yet, ignore it.
 			continue;
 		}
 
-		if (SC_Compare("pic"))
+		if (sc->Check("pic"))
 		{
 			if (ad.IsRange)
 			{
-				SC_ScriptError ("You cannot use pic together with range.");
+				sc->Error("You cannot use pic together with range.");
 			}
 			HadPic = true;
 		}
-		else if (SC_Compare ("range"))
+		else if (sc->Check("range"))
 		{
 			if (ad.IsRange)
 			{
-				SC_ScriptError("You can only use range once in a single animation.");
+				sc->Error("You can only use range once in a single animation.");
 			}
 			if (HadPic)
 			{
-				SC_ScriptError("You cannot use range together with pic.");
+				sc->Error("You cannot use range together with pic.");
 			}
 			ad.IsRange = true;
 		}
 		else
 		{
-			SC_UnGet();
 			break;
 		}
 
 		memset(&fd, 0, sizeof(fd));
-		if (SC_CheckNumber())
+		if (sc->CheckNumber())
 		{
-			fd.index = ad.index + sc_Number - 1;
+			fd.index = ad.index + sc->Number - 1;
 		}
 		else
 		{
-			SC_MustGetString();
-			fd.index = GTextureManager.CheckNumForName(VName(sc_String,
-				VName::AddLower8), IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
+			sc->ExpectName8();
+			fd.index = GTextureManager.CheckNumForName(sc->Name8,
+				IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
 			if (fd.index == -1 && !missing)
 			{
-				SC_ScriptError(va("Unknown texture %s", sc_String));
+				sc->Error(va("Unknown texture %s", *sc->String));
 			}
 		}
-		SC_MustGetString();
-		if (SC_Compare("tics"))
+		if (sc->Check("tics"))
 		{
-			SC_MustGetNumber();
-			fd.baseTime = sc_Number;
+			sc->ExpectNumber();
+			fd.baseTime = sc->Number;
 			fd.randomRange = 0;
 		}
-		else if (SC_Compare("rand"))
+		else if (sc->Check("rand"))
 		{
-			SC_MustGetNumber();
-			fd.baseTime = sc_Number;
-			SC_MustGetNumber();
-			fd.randomRange = sc_Number - fd.baseTime + 1;
+			sc->ExpectNumber();
+			fd.baseTime = sc->Number;
+			sc->ExpectNumber();
+			fd.randomRange = sc->Number - fd.baseTime + 1;
 		}
 		else
 		{
-			SC_ScriptError(NULL);
+			sc->Error("bad command");
 		}
 		if (ad.IsRange)
 		{
@@ -3328,19 +3323,18 @@ static void ParseFTAnim(int IsFlat)
 				ad.Backwards = true;
 			}
 		}
-		if (ignore == false)
+		if (!ignore)
 		{
 			FrameDefs.Append(fd);
 		}
 	}
 
-	if ((ignore == false) && !ad.IsRange &&
-		(FrameDefs.Num() - ad.startFrameDef < 2))
+	if (!ignore && !ad.IsRange && FrameDefs.Num() - ad.startFrameDef < 2)
 	{
 		Sys_Error("P_InitFTAnims: AnimDef has framecount < 2.");
 	}
 
-	if (ignore == false)
+	if (!ignore)
 	{
 		ad.endFrameDef = FrameDefs.Num() - 1;
 		ad.CurrentRangeFrame = FrameDefs[ad.startFrameDef].index - ad.index;
@@ -3356,72 +3350,64 @@ static void ParseFTAnim(int IsFlat)
 //
 //==========================================================================
 
-static void ParseSwitchDef()
+static void ParseSwitchDef(VScriptParser* sc)
 {
-	SC_MustGetString();
-
 	//	Skip game specifier.
-	if (SC_Compare("doom"))
+	if (sc->Check("doom"))
 	{
-		SC_MustGetNumber();
-		SC_MustGetString();
+		sc->ExpectNumber();
 	}
-	else if (SC_Compare ("heretic"))
+	else if (sc->Check("heretic"))
 	{
-		SC_MustGetString();
 	}
-	else if (SC_Compare ("hexen"))
+	else if (sc->Check("hexen"))
 	{
-		SC_MustGetString();
 	}
-	else if (SC_Compare ("strife"))
+	else if (sc->Check("strife"))
 	{
-		SC_MustGetString();
 	}
-	else if (SC_Compare ("any"))
+	else if (sc->Check("any"))
 	{
-		SC_MustGetString();
 	}
 
 	//	Switch texture
-	int t1 = GTextureManager.CheckNumForName(VName(sc_String,
-		VName::AddLower8), TEXTYPE_Wall, true, false);
+	sc->ExpectName8();
+	int t1 = GTextureManager.CheckNumForName(sc->Name8, TEXTYPE_Wall, true,
+		false);
 	int t2 = -1;
 	VName SndName = NAME_None;
 
 	//	Currently only basic switch definition is supported.
-	while (SC_GetString())
+	while (1)
 	{
-		if (SC_Compare("quest"))
+		if (sc->Check("quest"))
 		{
 		}
-		else if (SC_Compare("on"))
+		else if (sc->Check("on"))
 		{
-			while (SC_GetString())
+			while (1)
 			{
-				if (SC_Compare("sound"))
+				if (sc->Check("sound"))
 				{
-					SC_MustGetString();
-					SndName = sc_String;
+					sc->ExpectString();
+					SndName = *sc->String;
 				}
-				else if (SC_Compare("pic"))
+				else if (sc->Check("pic"))
 				{
-					SC_MustGetString();
-					t2 = GTextureManager.CheckNumForName(VName(sc_String,
-						VName::AddLower8), TEXTYPE_Wall, true, false);
-					SC_MustGetStringName("tics");
-					SC_MustGetStringName("0");
+					sc->ExpectName8();
+					t2 = GTextureManager.CheckNumForName(sc->Name8,
+						TEXTYPE_Wall, true, false);
+					sc->Expect("tics");
+					sc->Expect("0");
 				}
 				else
 				{
-					SC_UnGet();
 					break;
 				}
 			}
 		}
 		else
 		{
-			SC_UnGet();
 			break;
 		}
 	}
@@ -3447,29 +3433,29 @@ static void ParseSwitchDef()
 //
 //==========================================================================
 
-static void ParseFTAnims()
+static void ParseFTAnims(VScriptParser* sc)
 {
 	guard(ParseFTAnims);
-	while (SC_GetString())
+	while (!sc->AtEnd())
 	{
-		if (SC_Compare("flat"))
+		if (sc->Check("flat"))
 		{
-			ParseFTAnim(true);
+			ParseFTAnim(sc, true);
 		}
-		else if (SC_Compare("texture"))
+		else if (sc->Check("texture"))
 		{
-			ParseFTAnim(false);
+			ParseFTAnim(sc, false);
 		}
-		else if (SC_Compare("switch"))
+		else if (sc->Check("switch"))
 		{
-			ParseSwitchDef();
+			ParseSwitchDef(sc);
 		}
 		else
 		{
-			SC_ScriptError(NULL);
+			sc->Error("bad command");
 		}
 	}
-	SC_Close();
+	delete sc;
 	unguard;
 }
 
@@ -3490,17 +3476,16 @@ static void InitFTAnims()
 	{
 		if (W_LumpName(Lump) == NAME_animdefs)
 		{
-			SC_OpenLumpNum(Lump);
-			ParseFTAnims();
+			ParseFTAnims(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)));
 		}
 	}
 
 	//	Optionally parse script file.
-	VStr filename = FL_FindFile("scripts/animdefs.txt");
-	if (fl_devmode && filename)
+	if (fl_devmode && FL_FindFile("scripts/animdefs.txt"))
 	{
-		SC_OpenFile(*filename);
-		ParseFTAnims();
+		ParseFTAnims(new VScriptParser("scripts/animdefs.txt",
+			FL_OpenFileRead("scripts/animdefs.txt")));
 	}
 
 	//	Read Boom's animated lump if present.

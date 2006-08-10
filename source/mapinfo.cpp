@@ -37,26 +37,12 @@
 
 enum
 {
-	MCMD_SKY1,
-	MCMD_SKY2,
-	MCMD_SKYBOX,
-	MCMD_DOUBLESKY,
-	MCMD_LIGHTNING,
-	MCMD_FADETABLE,
-	MCMD_CLUSTER,
-	MCMD_WARPTRANS,
-	MCMD_NEXT,
-	MCMD_SECRET,
-	MCMD_MAPALIAS,
-	MCMD_MUSIC,
-	MCMD_CDTRACK,
-	MCMD_CD_STARTTRACK,
-	MCMD_CD_END1TRACK,
-	MCMD_CD_END2TRACK,
-	MCMD_CD_END3TRACK,
-	MCMD_CD_INTERTRACK,
-	MCMD_CD_TITLETRACK,
-	MCMD_GRAVITY,
+	CD_STARTTRACK,
+	CD_END1TRACK,
+	CD_END2TRACK,
+	CD_END3TRACK,
+	CD_INTERTRACK,
+	CD_TITLETRACK,
 };
 
 // TYPES -------------------------------------------------------------------
@@ -75,7 +61,7 @@ VName P_TranslateMap(int map);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void ParseMapInfo();
+static void ParseMapInfo(VScriptParser* sc);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -85,31 +71,6 @@ static void ParseMapInfo();
 
 static mapInfo_t	MapInfo[MAX_MAPS];
 static int 			MapCount;
-
-static const char *MapCmdNames[] =
-{
-	"SKY1",
-	"SKY2",
-	"SKYBOX",
-	"DOUBLESKY",
-	"LIGHTNING",
-	"FADETABLE",
-	"CLUSTER",
-	"WARPTRANS",
-	"NEXT",
-	"SECRET",
-	"MAPALIAS",
-    "MUSIC",
-	"CDTRACK",
-	"CD_START_TRACK",
-	"CD_END1_TRACK",
-	"CD_END2_TRACK",
-	"CD_END3_TRACK",
-	"CD_INTERMISSION_TRACK",
-	"CD_TITLE_TRACK",
-	"GRAVITY",
-	NULL
-};
 
 static int cd_NonLevelTracks[6]; // Non-level specific song cd track numbers 
 
@@ -157,16 +118,15 @@ void InitMapInfo()
 	{
 		if (W_LumpName(Lump) == NAME_mapinfo)
 		{
-			SC_OpenLumpNum(Lump);
-			ParseMapInfo();
+			ParseMapInfo(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)));
 		}
 	}
 	//	Optionally parse script file.
-	VStr filename = FL_FindFile("scripts/mapinfo.txt");
-	if (fl_devmode && filename)
+	if (fl_devmode && FL_FindFile("scripts/mapinfo.txt"))
 	{
-		SC_OpenFile(*filename);
-		ParseMapInfo();
+		ParseMapInfo(new VScriptParser("scripts/mapinfo.txt",
+			FL_OpenFileRead("scripts/mapinfo.txt")));
 	}
 
 	for (int i = 1; i < MapCount; i++)
@@ -182,191 +142,223 @@ void InitMapInfo()
 
 //==========================================================================
 //
+//	ParseMap
+//
+//==========================================================================
+
+static void ParseMap(VScriptParser* sc)
+{
+	VName MapLumpName;
+	if (sc->CheckNumber())
+	{
+		//	Map number, for Hexen compatibility
+		if (sc->Number < 1 || sc->Number > 99)
+		{
+			sc->Error("Map number out or range");
+		}
+		MapLumpName = va("map%02d", sc->Number);
+	}
+	else
+	{
+		//	Map name
+		sc->ExpectName8();
+		MapLumpName = sc->Name8;
+	}
+
+	//	Check for replaced map info.
+	mapInfo_t* info = NULL;
+	for (int i = 1; i < MAX_MAPS; i++)
+	{
+		if (MapLumpName == MapInfo[i].LumpName)
+		{
+			info = &MapInfo[i];
+			memcpy(info, &MapInfo[0], sizeof(*info));
+
+			// The warp translation defaults to the map	index
+			info->warpTrans = i;
+			break;
+		}
+	}
+	if (!info)
+	{
+		info = &MapInfo[MapCount];
+
+		// Copy defaults to current map definition
+		memcpy(info, &MapInfo[0], sizeof(*info));
+
+		// The warp translation defaults to the map	index
+		info->warpTrans = MapCount;
+
+		MapCount++;
+	}
+	info->LumpName = MapLumpName;
+
+	int NumMapAlias = 0;
+
+	// Map name must follow the number
+	sc->ExpectString();
+	VStr::Cpy(info->name, *sc->String);
+
+	//	Set song lump name from SNDINFO script
+	for (int i = 0; i < MapSongList.Num(); i++)
+	{
+		if (MapSongList[i].MapName == info->LumpName)
+		{
+			info->SongLump = MapSongList[i].SongName;
+		}
+	}
+
+	// Process optional tokens
+	while (1)
+	{
+		if (sc->Check("cluster"))
+		{
+			sc->ExpectNumber();
+			info->cluster = sc->Number;
+		}
+		else if (sc->Check("warptrans"))
+		{
+			sc->ExpectNumber();
+			info->warpTrans = sc->Number;
+		}
+		else if (sc->Check("next"))
+		{
+			sc->ExpectName8();
+			info->NextMap = sc->Name8;
+		}
+		else if (sc->Check("secret"))
+		{
+			sc->ExpectName8();
+			info->SecretMap = sc->Name8;
+		}
+		else if (sc->Check("sky1"))
+		{
+			sc->ExpectName8();
+			info->sky1Texture = GTextureManager.CheckNumForName(
+				sc->Name8, TEXTYPE_Wall, true, false);
+			sc->ExpectNumber();
+			info->sky1ScrollDelta = (float)sc->Number * 35.0 / 256.0;
+		}
+		else if (sc->Check("sky2"))
+		{
+			sc->ExpectName8();
+			info->sky2Texture = GTextureManager.CheckNumForName(
+				sc->Name8, TEXTYPE_Wall, true, false);
+			sc->ExpectNumber();
+			info->sky2ScrollDelta = (float)sc->Number * 35.0 / 256.0;
+		}
+		else if (sc->Check("skybox"))
+		{
+			sc->ExpectString();
+			info->SkyBox = *sc->String;
+		}
+		else if (sc->Check("doublesky"))
+		{
+			info->doubleSky = true;
+		}
+		else if (sc->Check("lightning"))
+		{
+			info->lightning = true;
+		}
+		else if (sc->Check("fadetable"))
+		{
+			sc->ExpectName8();
+			info->FadeTable = sc->Name8;
+		}
+    	else if (sc->Check("music"))
+		{
+			sc->ExpectName8();
+			info->SongLump = sc->Name8;
+		}
+		else if (sc->Check("cdtrack"))
+		{
+			sc->ExpectNumber();
+			info->cdTrack = sc->Number;
+		}
+		else if (sc->Check("gravity"))
+		{
+			sc->ExpectNumber();
+			info->Gravity = (float)sc->Number;
+		}
+		else if (sc->Check("mapalias"))
+		{
+			sc->Expect("{");
+			while (!sc->Check("}"))
+			{
+				if (NumMapAlias == MAX_MAP_ALIAS)
+				{
+					sc->Error("Too many map aliases");
+				}
+				sc->ExpectNumber();
+				info->mapalias[NumMapAlias].Num = sc->Number;
+				sc->ExpectName8();
+				info->mapalias[NumMapAlias].Name = sc->Name8;
+				NumMapAlias++;
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (info->doubleSky)
+	{
+		GTextureManager.SetFrontSkyLayer(info->sky1Texture);
+	}
+}
+
+//==========================================================================
+//
 //	ParseMapInfo
 //
 //==========================================================================
 
-static void ParseMapInfo()
+static void ParseMapInfo(VScriptParser* sc)
 {
 	guard(ParseMapInfo);
-	mapInfo_t 	*info;
-	int 		mcmdValue;
-	int			NumMapAlias;
-	VName		MapLumpName;
-
-	while(SC_GetString())
+	while (!sc->AtEnd())
 	{
-		if (SC_Compare("map") == false)
+		if (sc->Check("map"))
 		{
-			SC_ScriptError(NULL);
+			ParseMap(sc);
 		}
-
-		SC_MustGetString();
-		if (sc_String[0] >= '0' && sc_String[0] <= '9')
+		else if (sc->Check("cd_start_track"))
 		{
-			//	Map number, for Hexen compatibility
-			SC_UnGet();
-			SC_MustGetNumber();
-			if (sc_Number < 1 || sc_Number > 99)
-			{
-				SC_ScriptError(NULL);
-			}
-			MapLumpName = va("map%02d", sc_Number);
+			sc->ExpectNumber();
+			cd_NonLevelTracks[CD_STARTTRACK] = sc->Number;
+		}
+		else if (sc->Check("cd_end1_track"))
+		{
+			sc->ExpectNumber();
+			cd_NonLevelTracks[CD_END1TRACK] = sc->Number;
+		}
+		else if (sc->Check("cd_end2_track"))
+		{
+			sc->ExpectNumber();
+			cd_NonLevelTracks[CD_END2TRACK] = sc->Number;
+		}
+		else if (sc->Check("cd_end3_track"))
+		{
+			sc->ExpectNumber();
+			cd_NonLevelTracks[CD_END3TRACK] = sc->Number;
+		}
+		else if (sc->Check("cd_intermission_track"))
+		{
+			sc->ExpectNumber();
+			cd_NonLevelTracks[CD_INTERTRACK] = sc->Number;
+		}
+		else if (sc->Check("cd_title_track"))
+		{
+			sc->ExpectNumber();
+			cd_NonLevelTracks[CD_TITLETRACK] = sc->Number;
 		}
 		else
 		{
-			//	Map name
-			if (VStr::Length(sc_String) > 8)
-			{
-				SC_ScriptError(NULL);
-			}
-			MapLumpName = VName(sc_String, VName::AddLower8);
+			sc->Error("Invalid command");
 		}
-
-		//	Check for replaced map info.
-		info = NULL;
-		for (int i = 1; i < MAX_MAPS; i++)
-		{
-			if (MapLumpName == MapInfo[i].LumpName)
-			{
-				info = &MapInfo[i];
-				memcpy(info, &MapInfo[0], sizeof(*info));
-
-				// The warp translation defaults to the map	index
-				info->warpTrans = i;
-				break;
-			}
-		}
-		if (!info)
-		{
-			info = &MapInfo[MapCount];
-
-			// Copy defaults to current map definition
-			memcpy(info, &MapInfo[0], sizeof(*info));
-
-			// The warp translation defaults to the map	index
-			info->warpTrans = MapCount;
-
-			MapCount++;
-		}
-		info->LumpName = MapLumpName;
-
-		NumMapAlias = 0;
-
-		// Map name must follow the number
-		SC_MustGetString();
-		VStr::Cpy(info->name, sc_String);
-
-		//	Set song lump name from SNDINFO script
-		for (int i = 0; i < MapSongList.Num(); i++)
-		{
-			if (MapSongList[i].MapName == info->LumpName)
-			{
-				info->SongLump = MapSongList[i].SongName;
-			}
-		}
-
-		// Process optional tokens
-		while (SC_GetString())
-		{
-			if (SC_Compare("MAP"))
-			{ // Start next map definition
-				SC_UnGet();
-				break;
-			}
-			mcmdValue = SC_MustMatchString(MapCmdNames);
-			switch(mcmdValue)
-			{
-			case MCMD_CLUSTER:
-				SC_MustGetNumber();
-				info->cluster = sc_Number;
-				break;
-			case MCMD_WARPTRANS:
-				SC_MustGetNumber();
-				info->warpTrans = sc_Number;
-				break;
-			case MCMD_NEXT:
-				SC_MustGetString();
-				info->NextMap = VName(sc_String, VName::AddLower8);
-				break;
-			case MCMD_SECRET:
-				SC_MustGetString();
-				info->SecretMap = VName(sc_String, VName::AddLower8);
-				break;
-			case MCMD_MAPALIAS:
-				SC_MustGetStringName("{");
-				SC_MustGetString();
-				while (!SC_Compare("}"))
-				{
-					if (NumMapAlias == MAX_MAP_ALIAS)
-					{
-						SC_ScriptError("Too many map alias");
-					}
-					SC_UnGet();
-					SC_MustGetNumber();
-					info->mapalias[NumMapAlias].Num = sc_Number;
-					SC_MustGetString();
-					info->mapalias[NumMapAlias].Name = VName(sc_String, VName::AddLower8);
-					SC_MustGetString();
-				}
-				break;
-			case MCMD_CDTRACK:
-				SC_MustGetNumber();
-				info->cdTrack = sc_Number;
-				break;
-			case MCMD_SKY1:
-				SC_MustGetString();
-				info->sky1Texture = GTextureManager.CheckNumForName(
-					VName(sc_String, VName::AddLower8),
-					TEXTYPE_Wall, true, false);
-				SC_MustGetNumber();
-				info->sky1ScrollDelta = (float)sc_Number * 35.0 / 256.0;
-				break;
-			case MCMD_SKY2:
-				SC_MustGetString();
-				info->sky2Texture = GTextureManager.CheckNumForName(
-					VName(sc_String, VName::AddLower8),
-					TEXTYPE_Wall, true, false);
-				SC_MustGetNumber();
-				info->sky2ScrollDelta = (float)sc_Number * 35.0 / 256.0;
-				break;
-			case MCMD_SKYBOX:
-				SC_MustGetString();
-				info->SkyBox = sc_String;
-				break;
-			case MCMD_DOUBLESKY:
-				info->doubleSky = true;
-				break;
-			case MCMD_LIGHTNING:
-				info->lightning = true;
-				break;
-			case MCMD_FADETABLE:
-				SC_MustGetString();
-				info->FadeTable = VName(sc_String, VName::AddLower8);
-				break;
-			case MCMD_MUSIC:
-				SC_MustGetString();
-				info->SongLump = VName(sc_String, VName::AddLower8);
-				break;
-			case MCMD_CD_STARTTRACK:
-			case MCMD_CD_END1TRACK:
-			case MCMD_CD_END2TRACK:
-			case MCMD_CD_END3TRACK:
-			case MCMD_CD_INTERTRACK:
-			case MCMD_CD_TITLETRACK:
-				SC_MustGetNumber();
-				cd_NonLevelTracks[mcmdValue-MCMD_CD_STARTTRACK] = sc_Number;
-				break;
-			case MCMD_GRAVITY:
-				SC_MustGetNumber();
-				info->Gravity = (float)sc_Number;
-				break;
-			}
-		}
-		if (info->doubleSky)
-			GTextureManager.SetFrontSkyLayer(info->sky1Texture);
 	}
-	SC_Close();
+	delete sc;
 	unguard;
 }
 
@@ -496,7 +488,7 @@ void P_PutMapSongLump(int map, VName lumpName)
 
 int P_GetCDStartTrack()
 {
-	return cd_NonLevelTracks[MCMD_CD_STARTTRACK-MCMD_CD_STARTTRACK];
+	return cd_NonLevelTracks[CD_STARTTRACK];
 }
 
 //==========================================================================
@@ -507,7 +499,7 @@ int P_GetCDStartTrack()
 
 int P_GetCDEnd1Track()
 {
-	return cd_NonLevelTracks[MCMD_CD_END1TRACK-MCMD_CD_STARTTRACK];
+	return cd_NonLevelTracks[CD_END1TRACK];
 }
 
 //==========================================================================
@@ -518,7 +510,7 @@ int P_GetCDEnd1Track()
 
 int P_GetCDEnd2Track()
 {
-	return cd_NonLevelTracks[MCMD_CD_END2TRACK-MCMD_CD_STARTTRACK];
+	return cd_NonLevelTracks[CD_END2TRACK];
 }
 
 //==========================================================================
@@ -529,7 +521,7 @@ int P_GetCDEnd2Track()
 
 int P_GetCDEnd3Track()
 {
-	return cd_NonLevelTracks[MCMD_CD_END3TRACK-MCMD_CD_STARTTRACK];
+	return cd_NonLevelTracks[CD_END3TRACK];
 }
 
 //==========================================================================
@@ -540,7 +532,7 @@ int P_GetCDEnd3Track()
 
 int P_GetCDIntermissionTrack()
 {
-	return cd_NonLevelTracks[MCMD_CD_INTERTRACK-MCMD_CD_STARTTRACK];
+	return cd_NonLevelTracks[CD_INTERTRACK];
 }
 
 //==========================================================================
@@ -551,7 +543,7 @@ int P_GetCDIntermissionTrack()
 
 int P_GetCDTitleTrack()
 {
-	return cd_NonLevelTracks[MCMD_CD_TITLETRACK-MCMD_CD_STARTTRACK];
+	return cd_NonLevelTracks[CD_TITLETRACK];
 }
 
 //==========================================================================

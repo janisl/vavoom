@@ -23,41 +23,38 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
+class VScriptParser
+{
+public:
+	VScriptParser(const VStr&, VStream*);
+	~VScriptParser();
 
-// MACROS ------------------------------------------------------------------
+	int 		Line;
+	bool		End;
+	bool		Crossed;
+	VStr		String;
+	VName		Name8;
+	int 		Number;
+	double 		Float;
 
-// TYPES -------------------------------------------------------------------
+	bool AtEnd();
+	bool GetString();
+	void ExpectString();
+	void ExpectName8();
+	bool Check(const char*);
+	void Expect(const char*);
+	bool CheckNumber();
+	void ExpectNumber();
+	bool CheckFloat();
+	void ExpectFloat();
+	void UnGet();
+	void Error(const char*);
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void SC_Open(const char *name);
-void SC_OpenLump(const char *name);
-void SC_OpenLumpNum(int LumpNum);
-void SC_OpenFile(const char *name);
-void SC_Close();
-boolean SC_GetString();
-void SC_MustGetString();
-void SC_MustGetStringName(const char *name);
-boolean SC_CheckNumber();
-boolean SC_GetNumber();
-void SC_MustGetNumber();
-boolean SC_CheckFloat();
-boolean SC_GetFloat();
-void SC_MustGetFloat();
-void SC_UnGet();
-boolean SC_Compare(const char *text);
-int SC_MatchString(const char **strings);
-int SC_MustMatchString(const char **strings);
-void SC_ScriptError(const char *message);
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern char 	*sc_String;
-extern int 		sc_Number;
-extern double 	sc_Float;
-extern int 		sc_Line;
-extern boolean 	sc_End;
-extern boolean 	sc_Crossed;
-extern boolean 	sc_FileScripts;
-extern char 	*sc_ScriptsDir;
+private:
+	VStr		ScriptName;
+	char*		ScriptBuffer;
+	char*		ScriptPtr;
+	char*		ScriptEndPtr;
+	int			ScriptSize;
+	bool		AlreadyGot;
+};

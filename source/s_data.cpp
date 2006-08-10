@@ -60,16 +60,6 @@ VSoundManager*		GSoundManager;
 static VRawSampleLoader		RawSampleLoader;
 #endif
 
-const char* VSoundManager::Attenuations[] =
-{
-	"none",
-	"normal",
-	"idle",
-	"static",
-	"surround",
-	NULL
-};
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -157,17 +147,16 @@ void VSoundManager::Init()
 	{
 		if (W_LumpName(Lump) == NAME_sndinfo)
 		{
-			SC_OpenLumpNum(Lump);
-			ParseSndinfo();
+			ParseSndinfo(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)));
 		}
 	}
 
 	//	Optionally parse script file.
-	VStr filename = FL_FindFile("scripts/sndinfo.txt");
-	if (fl_devmode && filename)
+	if (fl_devmode && FL_FindFile("scripts/sndinfo.txt"))
 	{
-		SC_OpenFile(*filename);
-		ParseSndinfo();
+		ParseSndinfo(new VScriptParser("scripts/sndinfo.txt",
+			FL_OpenFileRead("scripts/sndinfo.txt")));
 	}
 
 	S_sfx.Condense();
@@ -179,17 +168,16 @@ void VSoundManager::Init()
 	{
 		if (W_LumpName(Lump) == NAME_sndseq)
 		{
-			SC_OpenLumpNum(Lump);
-			ParseSequenceScript();
+			ParseSequenceScript(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)));
 		}
 	}
 
 	//	Optionally parse script file.
-	filename = FL_FindFile("scripts/sndseq.txt");
-	if (fl_devmode && filename)
+	if (fl_devmode && FL_FindFile("scripts/sndseq.txt"))
 	{
-		SC_OpenFile(*filename);
-		ParseSequenceScript();
+		ParseSequenceScript(new VScriptParser("scripts/sndseq.txt",
+			FL_OpenFileRead("scripts/sndseq.txt")));
 	}
 	unguard;
 }
@@ -200,266 +188,265 @@ void VSoundManager::Init()
 //
 //==========================================================================
 
-void VSoundManager::ParseSndinfo()
+void VSoundManager::ParseSndinfo(VScriptParser* sc)
 {
 	guard(VSoundManager::ParseSndinfo);
 	TArray<int>		list;
 
-	while (SC_GetString())
+	while (!sc->AtEnd())
 	{
-		if (*sc_String == '$')
+		if (sc->Check("$archivepath"))
 		{
-			if (SC_Compare("$archivepath"))
+			// $archivepath <directory>
+			//	Ignored.
+			sc->ExpectString();
+		}
+		else if (sc->Check("$map"))
+		{
+			// $map <map number> <song name>
+			sc->ExpectNumber();
+			sc->ExpectName8();
+			if (sc->Number)
 			{
-				// $archivepath <directory>
-				//	Ignored.
-				SC_MustGetString();
+				P_PutMapSongLump(sc->Number, sc->Name8);
 			}
-			else if (SC_Compare("$map"))
+		}
+		else if (sc->Check("$registered"))
+		{
+			// $registered
+			//	Unused.
+		}
+		else if (sc->Check("$limit"))
+		{
+			// $limit <logical name> <max channels>
+			sc->ExpectString();
+			int sfx = FindOrAddSound(*sc->String);
+			sc->ExpectNumber();
+			S_sfx[sfx].NumChannels = MID(0, sc->Number, 255);
+		}
+		else if (sc->Check("$pitchshift"))
+		{
+			// $pitchshift <logical name> <pitch shift amount>
+			sc->ExpectString();
+			int sfx = FindOrAddSound(*sc->String);
+			sc->ExpectNumber();
+			S_sfx[sfx].ChangePitch = ((1 << MID(0, sc->Number, 7)) - 1) / 255.0;
+		}
+		else if (sc->Check("$pitchshiftrange"))
+		{
+			// $pitchshiftrange <pitch shift amount>
+			sc->ExpectNumber();
+			CurrentChangePitch = ((1 << MID(0, sc->Number, 7)) - 1) / 255.0;
+		}
+		else if (sc->Check("$alias"))
+		{
+			// $alias <name of alias> <name of real sound>
+			sc->ExpectString();
+			int sfxfrom = AddSound(*sc->String, -1);
+			sc->ExpectString();
+			//if (S_sfx[sfxfrom].bPlayerCompat)
+			//{
+			//	sfxfrom = S_sfx[sfxfrom].link;
+			//}
+			S_sfx[sfxfrom].Link = FindOrAddSound(*sc->String);
+		}
+		else if (sc->Check("$random"))
+		{
+			// $random <logical name> { <logical name> ... }
+			list.Clear();
+			sc->ExpectString();
+			int id = AddSound(*sc->String, -1);
+			sc->Expect("{");
+			while (!sc->Check("}"))
 			{
-				// $map <map number> <song name>
-				SC_MustGetNumber();
-				SC_MustGetString();
-				if (sc_Number)
-				{
-					P_PutMapSongLump(sc_Number, VName(sc_String,
-						VName::AddLower8));
-				}
+				sc->ExpectString();
+				int sfxto = FindOrAddSound(*sc->String);
+				list.Append(sfxto);
 			}
-			else if (SC_Compare("$registered"))
+			if (list.Num() == 1)
 			{
-				// $registered
-				//	Unused.
+				// Only one sound: treat as $alias
+				S_sfx[id].Link = list[0];
 			}
-			else if (SC_Compare("$limit"))
+			else if (list.Num() > 1)
 			{
-				// $limit <logical name> <max channels>
-				SC_MustGetString();
-				int sfx = FindOrAddSound(sc_String);
-				SC_MustGetNumber();
-				S_sfx[sfx].NumChannels = MID(0, sc_Number, 255);
+				// Only add non-empty random lists
+				S_sfx[id].Link = list.Num();
+				S_sfx[id].Sounds = new int[list.Num()];
+				memcpy(S_sfx[id].Sounds, &list[0], sizeof(int) * list.Num());
+				S_sfx[id].bRandomHeader = true;
 			}
-			else if (SC_Compare("$pitchshift"))
-			{
-				// $pitchshift <logical name> <pitch shift amount>
-				SC_MustGetString();
-				int sfx = FindOrAddSound(sc_String);
-				SC_MustGetNumber();
-				S_sfx[sfx].ChangePitch = ((1 << MID(0, sc_Number, 7)) - 1) / 255.0;
-			}
-			else if (SC_Compare("$pitchshiftrange"))
-			{
-				// $pitchshiftrange <pitch shift amount>
-				SC_MustGetNumber();
-				CurrentChangePitch = ((1 << MID(0, sc_Number, 7)) - 1) / 255.0;
-			}
-			else if (SC_Compare("$alias"))
-			{
-				// $alias <name of alias> <name of real sound>
-				SC_MustGetString();
-				int sfxfrom = AddSound(sc_String, -1);
-				SC_MustGetString();
-				//if (S_sfx[sfxfrom].bPlayerCompat)
-				//{
-				//	sfxfrom = S_sfx[sfxfrom].link;
-				//}
-				S_sfx[sfxfrom].Link = FindOrAddSound(sc_String);
-			}
-			else if (SC_Compare("$random"))
-			{
-				// $random <logical name> { <logical name> ... }
-				list.Clear();
-				SC_MustGetString();
-				int id = AddSound(sc_String, -1);
-				SC_MustGetStringName("{");
-				while (SC_GetString() && !SC_Compare("}"))
-				{
-					int sfxto = FindOrAddSound(sc_String);
-					list.Append(sfxto);
-				}
-				if (list.Num() == 1)
-				{
-					// Only one sound: treat as $alias
-					S_sfx[id].Link = list[0];
-				}
-				else if (list.Num() > 1)
-				{
-					// Only add non-empty random lists
-					S_sfx[id].Link = list.Num();
-					S_sfx[id].Sounds = new int[list.Num()];
-					memcpy(S_sfx[id].Sounds, &list[0], sizeof(int) * list.Num());
-					S_sfx[id].bRandomHeader = true;
-				}
-			}
-			else if (SC_Compare("$playerreserve"))
-			{
-				// $playerreserve <logical name>
-				SC_MustGetString();
-				int id = AddSound(sc_String, -1);
-				S_sfx[id].Link = NumPlayerReserves++;
-				S_sfx[id].bPlayerReserve = true;
-			}
-			else if (SC_Compare("$playersound"))
-			{
-				// $playersound <player class> <gender> <logical name> <lump name>
-				int PClass, Gender, RefId;
-				char FakeName[NAME_SIZE];
-				size_t len;
-				int id;
+		}
+		else if (sc->Check("$playerreserve"))
+		{
+			// $playerreserve <logical name>
+			sc->ExpectString();
+			int id = AddSound(*sc->String, -1);
+			S_sfx[id].Link = NumPlayerReserves++;
+			S_sfx[id].bPlayerReserve = true;
+		}
+		else if (sc->Check("$playersound"))
+		{
+			// $playersound <player class> <gender> <logical name> <lump name>
+			int PClass, Gender, RefId;
+			char FakeName[NAME_SIZE];
+			size_t len;
+			int id;
 
-				ParsePlayerSoundCommon(PClass, Gender, RefId);
-				len = VStr::Length(*PlayerClasses[PClass]);
-				memcpy(FakeName, *PlayerClasses[PClass], len);
-				FakeName[len] = '|';
-				FakeName[len + 1] = Gender + '0';
-				VStr::Cpy(&FakeName[len + 2], *S_sfx[RefId].TagName);
+			ParsePlayerSoundCommon(sc, PClass, Gender, RefId);
+			len = VStr::Length(*PlayerClasses[PClass]);
+			memcpy(FakeName, *PlayerClasses[PClass], len);
+			FakeName[len] = '|';
+			FakeName[len + 1] = Gender + '0';
+			VStr::Cpy(&FakeName[len + 2], *S_sfx[RefId].TagName);
 
-				id = AddSoundLump(FakeName, W_CheckNumForName(
-					VName(sc_String, VName::AddLower8)));
-				FPlayerSound& PlrSnd = PlayerSounds.Alloc();
-				PlrSnd.ClassId = PClass;
-				PlrSnd.GenderId = Gender;
-				PlrSnd.RefId = RefId;
-				PlrSnd.SoundId = id;
-			}
-			else if (SC_Compare("$playersounddup"))
+			id = AddSoundLump(FakeName, W_CheckNumForName(
+				VName(*sc->String, VName::AddLower8)));
+			FPlayerSound& PlrSnd = PlayerSounds.Alloc();
+			PlrSnd.ClassId = PClass;
+			PlrSnd.GenderId = Gender;
+			PlrSnd.RefId = RefId;
+			PlrSnd.SoundId = id;
+		}
+		else if (sc->Check("$playersounddup"))
+		{
+			// $playersounddup <player class> <gender> <logical name> <target sound name>
+			int PClass, Gender, RefId, TargId;
+
+			ParsePlayerSoundCommon(sc, PClass, Gender, RefId);
+			TargId = FindSound(*sc->String);
+			if (!S_sfx[TargId].bPlayerReserve)
 			{
-				// $playersounddup <player class> <gender> <logical name> <target sound name>
-				int PClass, Gender, RefId, TargId;
-
-				ParsePlayerSoundCommon(PClass, Gender, RefId);
-				TargId = FindSound(sc_String);
-				if (!S_sfx[TargId].bPlayerReserve)
-				{
-					SC_ScriptError(va("%s is not a player sound", sc_String));
-				}
-				int AliasTo = FindPlayerSound(PClass, Gender, TargId);
-				FPlayerSound& PlrSnd = PlayerSounds.Alloc();
-				PlrSnd.ClassId = PClass;
-				PlrSnd.GenderId = Gender;
-				PlrSnd.RefId = RefId;
-				PlrSnd.SoundId = AliasTo;
+				sc->Error(va("%s is not a player sound", *sc->String));
 			}
-			else if (SC_Compare("$playeralias"))
-			{
-				// $playeralias <player class> <gender> <logical name> <logical name of existing sound>
-				int PClass, Gender, RefId;
+			int AliasTo = FindPlayerSound(PClass, Gender, TargId);
+			FPlayerSound& PlrSnd = PlayerSounds.Alloc();
+			PlrSnd.ClassId = PClass;
+			PlrSnd.GenderId = Gender;
+			PlrSnd.RefId = RefId;
+			PlrSnd.SoundId = AliasTo;
+		}
+		else if (sc->Check("$playeralias"))
+		{
+			// $playeralias <player class> <gender> <logical name> <logical name of existing sound>
+			int PClass, Gender, RefId;
 
-				ParsePlayerSoundCommon(PClass, Gender, RefId);
-				int AliasTo = FindOrAddSound(sc_String);
-				FPlayerSound& PlrSnd = PlayerSounds.Alloc();
-				PlrSnd.ClassId = PClass;
-				PlrSnd.GenderId = Gender;
-				PlrSnd.RefId = RefId;
-				PlrSnd.SoundId = AliasTo;
+			ParsePlayerSoundCommon(sc, PClass, Gender, RefId);
+			int AliasTo = FindOrAddSound(*sc->String);
+			FPlayerSound& PlrSnd = PlayerSounds.Alloc();
+			PlrSnd.ClassId = PClass;
+			PlrSnd.GenderId = Gender;
+			PlrSnd.RefId = RefId;
+			PlrSnd.SoundId = AliasTo;
+		}
+		else if (sc->Check("$singular"))
+		{
+			// $singular <logical name>
+			sc->ExpectString();
+			int sfx = FindOrAddSound(*sc->String);
+			S_sfx[sfx].bSingular = true;
+		}
+		else if (sc->Check("$ambient"))
+		{
+			// $ambient <num> <logical name> [point [atten] | surround | [world]]
+			//			<continuous | random <minsecs> <maxsecs> | periodic <secs>>
+			//			<volume>
+			FAmbientSound* ambient, dummy;
+
+			sc->ExpectNumber();
+			if (sc->Number < 0 || sc->Number >= NUM_AMBIENT_SOUNDS)
+			{
+				GCon->Logf("Bad ambient index (%d)", sc->Number);
+				ambient = &dummy;
 			}
-			else if (SC_Compare("$singular"))
+			else if (AmbientSounds[sc->Number])
 			{
-				// $singular <logical name>
-				SC_MustGetString();
-				int sfx = FindOrAddSound(sc_String);
-				S_sfx[sfx].bSingular = true;
+				ambient = AmbientSounds[sc->Number];
 			}
-			else if (SC_Compare("$ambient"))
+			else
 			{
-				// $ambient <num> <logical name> [point [atten] | surround | [world]]
-				//			<continuous | random <minsecs> <maxsecs> | periodic <secs>>
-				//			<volume>
-				FAmbientSound* ambient, dummy;
+				ambient = new FAmbientSound;
+				AmbientSounds[sc->Number] = ambient;
+			}
+			memset(ambient, 0, sizeof(FAmbientSound));
 
-				SC_MustGetNumber();
-				if (sc_Number < 0 || sc_Number >= NUM_AMBIENT_SOUNDS)
+			sc->ExpectString();
+			ambient->Sound = *sc->String;
+			ambient->Attenuation = 0;
+
+			if (sc->Check("point"))
+			{
+				ambient->Type = SNDTYPE_Point;
+				if (sc->CheckFloat())
 				{
-					GCon->Logf("Bad ambient index (%d)", sc_Number);
-					ambient = &dummy;
-				}
-				else
-				{
-					ambient = new FAmbientSound;
-					AmbientSounds[sc_Number] = ambient;
-				}
-				memset(ambient, 0, sizeof(FAmbientSound));
-
-				SC_MustGetString();
-				ambient->Sound = sc_String;
-				ambient->Attenuation = 0;
-
-				SC_MustGetString();
-				if (SC_Compare("point"))
-				{
-					float attenuation;
-
-					ambient->Type = SNDTYPE_Point;
-					if (SC_CheckFloat())
+					if (sc->Float > 0)
 					{
-						attenuation = sc_Float;
-						if (attenuation > 0)
-						{
-							ambient->Attenuation = attenuation;
-						}
-						else
-						{
-							ambient->Attenuation = 1;
-						}
+						ambient->Attenuation = sc->Float;
 					}
 					else
 					{
 						ambient->Attenuation = 1;
 					}
-					SC_MustGetString();
-				}
-				else if (SC_Compare("surround"))
-				{
-					ambient->Type = SNDTYPE_Surround;
-					SC_MustGetString();
-					ambient->Attenuation = -1;
-				}
-				else if (SC_Compare("world"))
-				{
-					// World is an optional keyword
-					SC_MustGetString();
-				}
-
-				if (SC_Compare("continuous"))
-				{
-					ambient->Type |= SNDTYPE_Continuous;
-				}
-				else if (SC_Compare("random"))
-				{
-					ambient->Type |= SNDTYPE_Random;
-					SC_MustGetFloat();
-					ambient->PeriodMin = sc_Float;
-					SC_MustGetFloat();
-					ambient->PeriodMax = sc_Float;
-				}
-				else if (SC_Compare("periodic"))
-				{
-					ambient->Type |= SNDTYPE_Periodic;
-					SC_MustGetFloat();
-					ambient->PeriodMin = sc_Float;
 				}
 				else
 				{
-					GCon->Logf("Unknown ambient type (%s)", sc_String);
+					ambient->Attenuation = 1;
 				}
-
-				SC_MustGetFloat();
-				ambient->Volume = sc_Float;
-				if (ambient->Volume > 1)
-					ambient->Volume = 1;
-				else if (ambient->Volume < 0)
-					ambient->Volume = 0;
 			}
-			continue;
+			else if (sc->Check("surround"))
+			{
+				ambient->Type = SNDTYPE_Surround;
+				ambient->Attenuation = -1;
+			}
+			else if (sc->Check("world"))
+			{
+				// World is an optional keyword
+			}
+
+			if (sc->Check("continuous"))
+			{
+				ambient->Type |= SNDTYPE_Continuous;
+			}
+			else if (sc->Check("random"))
+			{
+				ambient->Type |= SNDTYPE_Random;
+				sc->ExpectFloat();
+				ambient->PeriodMin = sc->Float;
+				sc->ExpectFloat();
+				ambient->PeriodMax = sc->Float;
+			}
+			else if (sc->Check("periodic"))
+			{
+				ambient->Type |= SNDTYPE_Periodic;
+				sc->ExpectFloat();
+				ambient->PeriodMin = sc->Float;
+			}
+			else
+			{
+				sc->ExpectString();
+				GCon->Logf("Unknown ambient type (%s)", *sc->String);
+			}
+
+			sc->ExpectFloat();
+			ambient->Volume = sc->Float;
+			if (ambient->Volume > 1)
+				ambient->Volume = 1;
+			else if (ambient->Volume < 0)
+				ambient->Volume = 0;
 		}
 		else
 		{
-			VName TagName = sc_String;
-			SC_MustGetString();
-			AddSound(TagName, W_CheckNumForName(VName(sc_String, VName::AddLower8)));
+			sc->ExpectString();
+			if (**sc->String == '$')
+			{
+				sc->Error("Unknown command");
+			}
+			VName TagName = *sc->String;
+			sc->ExpectName8();
+			AddSound(TagName, W_CheckNumForName(sc->Name8));
 		}
 	}
-	SC_Close();
+	delete sc;
 	unguard;
 }
 
@@ -572,22 +559,22 @@ int VSoundManager::FindOrAddSound(VName TagName)
 //
 //==========================================================================
 
-void VSoundManager::ParsePlayerSoundCommon(int& PClass, int& Gender,
-	int& RefId)
+void VSoundManager::ParsePlayerSoundCommon(VScriptParser* sc, int& PClass,
+	int& Gender, int& RefId)
 {
 	guard(VSoundManager::ParsePlayerSoundCommon);
-	SC_MustGetString();
-	PClass = AddPlayerClass(sc_String);
-	SC_MustGetString();
-	Gender = AddPlayerGender(sc_String);
-	SC_MustGetString();
-	RefId = FindSound(sc_String);
+	sc->ExpectString();
+	PClass = AddPlayerClass(*sc->String);
+	sc->ExpectString();
+	Gender = AddPlayerGender(*sc->String);
+	sc->ExpectString();
+	RefId = FindSound(*sc->String);
 	if (!S_sfx[RefId].bPlayerReserve)
 	{
-		SC_ScriptError(va("%s has not been reserved for a player sound",
-			sc_String));
+		sc->Error(va("%s has not been reserved for a player sound",
+			*sc->String));
 	}
-	SC_MustGetString();
+	sc->ExpectString();
 	unguard;
 }
 
@@ -884,24 +871,25 @@ void VSoundManager::DoneWithLump(int sound_id)
 //
 //==========================================================================
 
-void VSoundManager::ParseSequenceScript()
+void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 {
 	guard(VSoundManager::ParseSequenceScript);
 	TArray<vint32>	TempData;
 	bool			inSequence = false;
 	int				SeqId = 0;
 
-	while (SC_GetString())
+	while (!sc->AtEnd())
 	{
-		if (*sc_String == ':')
+		sc->ExpectString();
+		if (**sc->String == ':')
 		{
 			if (inSequence)
 			{
-				SC_ScriptError("SN_InitSequenceScript:  Nested Script Error");
+				sc->Error("SN_InitSequenceScript:  Nested Script Error");
 			}
 			for (SeqId = 0; SeqId < SeqInfo.Num(); SeqId++)
 			{
-				if (SeqInfo[SeqId].Name == sc_String + 1)
+				if (SeqInfo[SeqId].Name == *sc->String + 1)
 				{
 					Z_Free(SeqInfo[SeqId].Data);
 					break;
@@ -913,102 +901,116 @@ void VSoundManager::ParseSequenceScript()
 			}
 			TempData.Clear();
 			inSequence = true;
-			SeqInfo[SeqId].Name = sc_String + 1;
+			SeqInfo[SeqId].Name = *sc->String + 1;
 			SeqInfo[SeqId].Data = NULL;
 			SeqInfo[SeqId].StopSound = 0;
 			continue; // parse the next command
 		}
 		if (!inSequence)
 		{
-			SC_ScriptError("String outside sequence");
+			sc->Error("String outside sequence");
 			continue;
 		}
-		if (SC_Compare("playuntildone"))
+		sc->UnGet();
+		if (sc->Check("playuntildone"))
 		{
-			SC_MustGetString();
+			sc->ExpectString();
 			TempData.Append(SSCMD_Play);
-			TempData.Append(GetSoundID(sc_String));
+			TempData.Append(GetSoundID(*sc->String));
 			TempData.Append(SSCMD_WaitUntilDone);
 		}
-		else if (SC_Compare("play"))
+		else if (sc->Check("play"))
 		{
-			SC_MustGetString();
+			sc->ExpectString();
 			TempData.Append(SSCMD_Play);
-			TempData.Append(GetSoundID(sc_String));
+			TempData.Append(GetSoundID(*sc->String));
 		}
-		else if (SC_Compare("playtime"))
+		else if (sc->Check("playtime"))
 		{
-			SC_MustGetString();
+			sc->ExpectString();
 			TempData.Append(SSCMD_Play);
-			TempData.Append(GetSoundID(sc_String));
-			SC_MustGetNumber();
+			TempData.Append(GetSoundID(*sc->String));
+			sc->ExpectNumber();
 			TempData.Append(SSCMD_Delay);
-			TempData.Append(sc_Number);
+			TempData.Append(sc->Number);
 		}
-		else if (SC_Compare("playrepeat"))
+		else if (sc->Check("playrepeat"))
 		{
-			SC_MustGetString();
+			sc->ExpectString();
 			TempData.Append(SSCMD_PlayRepeat);
-			TempData.Append(GetSoundID(sc_String));
+			TempData.Append(GetSoundID(*sc->String));
 		}
-		else if (SC_Compare("playloop"))
+		else if (sc->Check("playloop"))
 		{
-			SC_MustGetString();
+			sc->ExpectString();
 			TempData.Append(SSCMD_PlayLoop);
-			TempData.Append(GetSoundID(sc_String));
-			SC_MustGetNumber();
-			TempData.Append(sc_Number);
+			TempData.Append(GetSoundID(*sc->String));
+			sc->ExpectNumber();
+			TempData.Append(sc->Number);
 		}
-		else if (SC_Compare("delay"))
+		else if (sc->Check("delay"))
 		{
 			TempData.Append(SSCMD_Delay);
-			SC_MustGetNumber();
-			TempData.Append(sc_Number);
+			sc->ExpectNumber();
+			TempData.Append(sc->Number);
 		}
-		else if (SC_Compare("delayrand"))
+		else if (sc->Check("delayrand"))
 		{
 			TempData.Append(SSCMD_DelayRand);
-			SC_MustGetNumber();
-			TempData.Append(sc_Number);
-			SC_MustGetNumber();
-			TempData.Append(sc_Number);
+			sc->ExpectNumber();
+			TempData.Append(sc->Number);
+			sc->ExpectNumber();
+			TempData.Append(sc->Number);
 		}
-		else if (SC_Compare("volume"))
+		else if (sc->Check("volume"))
 		{
 			TempData.Append(SSCMD_Volume);
-			SC_MustGetNumber();
-			TempData.Append(sc_Number);
+			sc->ExpectNumber();
+			TempData.Append(sc->Number);
 		}
-		else if (SC_Compare("attenuation"))
+		else if (sc->Check("attenuation"))
 		{
 			TempData.Append(SSCMD_Attenuation);
-			SC_MustGetString();
-			TempData.Append(SC_MustMatchString(Attenuations));
+			sc->ExpectString();
+			vint32 Atten = 0;
+			if (sc->Check("none"))
+				Atten = 0;
+			else if (sc->Check("normal"))
+				Atten = 1;
+			else if (sc->Check("idle"))
+				Atten = 2;
+			else if (sc->Check("static"))
+				Atten = 3;
+			else if (sc->Check("surround"))
+				Atten = 4;
+			else
+				sc->Error("Bad attenuation");
+			TempData.Append(Atten);
 		}
-		else if (SC_Compare("stopsound"))
+		else if (sc->Check("stopsound"))
 		{
-			SC_MustGetString();
-			SeqInfo[SeqId].StopSound = GetSoundID(sc_String);
+			sc->ExpectString();
+			SeqInfo[SeqId].StopSound = GetSoundID(*sc->String);
 			TempData.Append(SSCMD_StopSound);
 		}
-		else if (SC_Compare("nostopcutoff"))
+		else if (sc->Check("nostopcutoff"))
 		{
 			SeqInfo[SeqId].StopSound = -1;
 			TempData.Append(SSCMD_StopSound);
 		}
-		else if (SC_Compare("door"))
+		else if (sc->Check("door"))
 		{
-			AssignSeqTranslations(SeqId, SEQ_Door);
+			AssignSeqTranslations(sc, SeqId, SEQ_Door);
 		}
-		else if (SC_Compare("platform"))
+		else if (sc->Check("platform"))
 		{
-			AssignSeqTranslations(SeqId, SEQ_Platform);
+			AssignSeqTranslations(sc, SeqId, SEQ_Platform);
 		}
-		else if (SC_Compare("environment"))
+		else if (sc->Check("environment"))
 		{
-			AssignSeqTranslations(SeqId, SEQ_Environment);
+			AssignSeqTranslations(sc, SeqId, SEQ_Environment);
 		}
-		else if (SC_Compare("end"))
+		else if (sc->Check("end"))
 		{
 			TempData.Append(SSCMD_End);
 			SeqInfo[SeqId].Data = new vint32[TempData.Num()];
@@ -1018,10 +1020,10 @@ void VSoundManager::ParseSequenceScript()
 		}
 		else
 		{
-			SC_ScriptError("SN_InitSequenceScript:  Unknown commmand.\n");
+			sc->Error("Unknown commmand.");
 		}
 	}
-	SC_Close();
+	delete sc;
 	unguard;
 }
 
@@ -1031,22 +1033,23 @@ void VSoundManager::ParseSequenceScript()
 //
 //==========================================================================
 
-void VSoundManager::AssignSeqTranslations(int SeqId, seqtype_t SeqType)
+void VSoundManager::AssignSeqTranslations(VScriptParser* sc, int SeqId,
+	seqtype_t SeqType)
 {
 	guard(VSoundManager::AssignSeqTranslations);
-	sc_Crossed = false;
+	sc->Crossed = false;
 
-	while (SC_GetString() && !sc_Crossed)
+	while (sc->GetString() && !sc->Crossed)
 	{
 		char* Stopper;
-		int Num = strtol(sc_String, &Stopper, 0);
+		int Num = strtol(*sc->String, &Stopper, 0);
 		if (*Stopper == 0)
 		{
 			SeqTrans[(Num & 63) + SeqType * 64] = SeqId;
 		}
 	}
 
-	SC_UnGet();
+	sc->UnGet();
 	unguard;
 }
 

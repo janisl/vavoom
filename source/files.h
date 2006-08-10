@@ -41,6 +41,8 @@ void FL_CreatePath(const VStr& Path);
 VStream* FL_OpenFileRead(const VStr& Name);
 VStream* FL_OpenFileWrite(const VStr& Name);
 
+VStream* FL_OpenSysFileRead(const VStr& Name);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern bool		fl_devmode;

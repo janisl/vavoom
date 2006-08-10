@@ -29,13 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_STRING_SIZE 64
-#define ASCII_COMMENT (';')
-#define ASCII_QUOTE (34)
-#define LUMP_SCRIPT 1
-#define FILE_ZONE_SCRIPT 2
-#define LUMP_NUM_SCRIPT 3
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -44,148 +37,39 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void CheckOpen();
-static void OpenScript(const char *name, int LumpNum, int type);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-char 	*sc_String;
-int 	sc_Number;
-double 	sc_Float;
-int 	sc_Line;
-boolean sc_End;
-boolean sc_Crossed;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static VStr		ScriptName;
-static char		*ScriptBuffer;
-static char		*ScriptPtr;
-static char		*ScriptEndPtr;
-static char		StringBuffer[MAX_STRING_SIZE];
-static bool		ScriptOpen = false;
-static int		ScriptSize;
-static bool		AlreadyGot = false;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	SC_Open
+//	VScriptParser::VScriptParser
 //
 //==========================================================================
 
-void SC_Open(const char *name)
+VScriptParser::VScriptParser(const VStr& name, VStream* Strm)
+: Line(1)
+, End(false)
+, Crossed(false)
+, ScriptName(name)
+, AlreadyGot(false)
 {
-	guard(SC_Open);
-	VStr filename = FL_FindFile(va("scripts/%s.txt", name));
-	if (fl_devmode && filename)
-	{
-		SC_OpenFile(*filename);
-	}
-	else
-	{
-		SC_OpenLump(name);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-// SC_OpenLump
-//
-// Loads a script (from the WAD files) and prepares it for parsing.
-//
-//==========================================================================
-
-void SC_OpenLump(const char *name)
-{
-	guard(SC_OpenLump);
-	OpenScript(name, -1, LUMP_SCRIPT);
-	unguard;
-}
-
-//==========================================================================
-//
-// SC_OpenLumpNum
-//
-// Loads a script (from the WAD files) and prepares it for parsing.
-//
-//==========================================================================
-
-void SC_OpenLumpNum(int LumpNum)
-{
-	guard(SC_OpenLumpNum);
-	OpenScript(*W_LumpName(LumpNum), LumpNum, LUMP_NUM_SCRIPT);
-	unguard;
-}
-
-//==========================================================================
-//
-// SC_OpenFile
-//
-// Loads a script (from a file) and prepares it for parsing.  Uses the
-// zone memory allocator for memory allocation and de-allocation.
-//
-//==========================================================================
-
-void SC_OpenFile(const char *name)
-{
-	guard(SC_OpenFile);
-	OpenScript(name, -1, FILE_ZONE_SCRIPT);
-	unguard;
-}
-
-//==========================================================================
-//
-// OpenScript
-//
-//==========================================================================
-
-static void OpenScript(const char *name, int LumpNum, int type)
-{
-	guard(OpenScript);
-	SC_Close();
-	if (type == LUMP_SCRIPT)
-	{
-		// Lump script
-		VStream* Strm = W_CreateLumpReaderName(VName(name, VName::AddLower8));
-		ScriptSize = Strm->TotalSize();
-		ScriptBuffer = new char[ScriptSize + 1];
-		Strm->Serialise(ScriptBuffer, ScriptSize);
-		ScriptBuffer[ScriptSize] = 0;
-		delete Strm;
-		ScriptName = name;
-	}
-	else if (type == LUMP_NUM_SCRIPT)
-	{
-		// Lump num script
-		VStream* Strm = W_CreateLumpReaderNum(LumpNum);
-		ScriptSize = Strm->TotalSize();
-		ScriptBuffer = new char[ScriptSize + 1];
-		Strm->Serialise(ScriptBuffer, ScriptSize);
-		ScriptBuffer[ScriptSize] = 0;
-		delete Strm;
-		ScriptName = name;
-	}
-	else if (type == FILE_ZONE_SCRIPT)
-	{
-		// File script
-		ScriptSize = M_ReadFile(name, (byte **)&ScriptBuffer);
-		ScriptName = VStr(name).ExtractFileBase();
-	}
+	guard(VScriptParser::VScriptParser);
+	ScriptSize = Strm->TotalSize();
+	ScriptBuffer = new char[ScriptSize + 1];
+	Strm->Serialise(ScriptBuffer, ScriptSize);
+	ScriptBuffer[ScriptSize] = 0;
+	delete Strm;
 	ScriptPtr = ScriptBuffer;
 	ScriptEndPtr = ScriptPtr + ScriptSize;
-	sc_Line = 1;
-	sc_End = false;
-	ScriptOpen = true;
-	sc_String = StringBuffer;
-	AlreadyGot = false;
 
 	//	Skip garbage some editors add in the begining of UTF-8 files.
-	if (ScriptPtr[0] == 0xef && ScriptPtr[1] == 0xbb && ScriptPtr[2] == 0xbf)
+	if ((vuint8)ScriptPtr[0] == 0xef && (vuint8)ScriptPtr[1] == 0xbb &&
+		(vuint8)ScriptPtr[2] == 0xbf)
 	{
 		ScriptPtr += 3;
 	}
@@ -194,82 +78,99 @@ static void OpenScript(const char *name, int LumpNum, int type)
 
 //==========================================================================
 //
-// SC_Close
+//	VScriptParser::~VScriptParser
 //
 //==========================================================================
 
-void SC_Close()
+VScriptParser::~VScriptParser()
 {
-	guard(SC_Close);
-	if (ScriptOpen)
-	{
-		Z_Free(ScriptBuffer);
-		ScriptOpen = false;
-	}
-	ScriptName.Clean();
+	guard(VScriptParser::~VScriptParser);
+	delete[] ScriptBuffer;
 	unguard;
 }
 
 //==========================================================================
 //
-// SC_GetString
+//	VScriptParser::AtEnd
 //
 //==========================================================================
 
-boolean SC_GetString()
+bool VScriptParser::AtEnd()
 {
-	guard(SC_GetString);
-	char 	*text;
-	boolean foundToken;
+	guard(VScriptParser::AtEnd);
+	if (GetString())
+	{
+		UnGet();
+		return false;
+	}
+	return true;
+	unguard;
+}
 
-	CheckOpen();
+//==========================================================================
+//
+//	VScriptParser::GetString
+//
+//==========================================================================
+
+bool VScriptParser::GetString()
+{
+	guard(VScriptParser::GetString);
+	//	Check if we already have a token available.
 	if (AlreadyGot)
 	{
 		AlreadyGot = false;
 		return true;
 	}
-	foundToken = false;
-	sc_Crossed = false;
+
+	//	Check for end of script.
 	if (ScriptPtr >= ScriptEndPtr)
 	{
-		sc_End = true;
+		End = true;
 		return false;
 	}
+
+	Crossed = false;
+	bool foundToken = false;
 	while (foundToken == false)
 	{
-		while (*ScriptPtr <= 32)
+		//	Skip whitespace.
+		while ((vuint8)*ScriptPtr <= 32)
 		{
 			if (ScriptPtr >= ScriptEndPtr)
 			{
-				sc_End = true;
+				End = true;
 				return false;
 			}
+			//	Check for new-line character.
 			if (*ScriptPtr++ == '\n')
 			{
-				sc_Line++;
-				sc_Crossed = true;
+				Line++;
+				Crossed = true;
 			}
 		}
+
+		//	Check for end of script.
 		if (ScriptPtr >= ScriptEndPtr)
 		{
-			sc_End = true;
+			End = true;
 			return false;
 		}
-		if (*ScriptPtr == ASCII_COMMENT ||
-			(ScriptPtr[0] == '/' && ScriptPtr[1] == '/'))
+
+		//	Check for coments
+		if (*ScriptPtr == ';' || (ScriptPtr[0] == '/' && ScriptPtr[1] == '/'))
 		{
 			// Skip comment
 			while (*ScriptPtr++ != '\n')
 			{
 				if (ScriptPtr >= ScriptEndPtr)
 				{
-					sc_End = true;
+					End = true;
 					return false;
-	
 				}
 			}
-			sc_Line++;
-			sc_Crossed = true;
+			Line++;
+			Crossed = true;
 		}
 		else
 		{
@@ -277,15 +178,16 @@ boolean SC_GetString()
 			foundToken = true;
 		}
 	}
-	text = sc_String;
-	if (*ScriptPtr == ASCII_QUOTE)
-	{ // Quoted string
+
+	String.Clean();
+	if (*ScriptPtr == '\"')
+	{
+		//	Quoted string
 		ScriptPtr++;
-		while (*ScriptPtr != ASCII_QUOTE)
+		while (*ScriptPtr != '\"')
 		{
-			*text++ = *ScriptPtr++;
-			if(ScriptPtr == ScriptEndPtr
-				|| text == &sc_String[MAX_STRING_SIZE-1])
+			String += *ScriptPtr++;
+			if (ScriptPtr == ScriptEndPtr)
 			{
 				break;
 			}
@@ -294,343 +196,214 @@ boolean SC_GetString()
 	}
 	else
 	{
-		// Normal string
-		while ((*ScriptPtr > 32) && !(*ScriptPtr == ASCII_COMMENT ||
+		//	Normal string
+		while ((vuint8)*ScriptPtr > 32 && !(*ScriptPtr == ';' ||
 			(ScriptPtr[0] == '/' && ScriptPtr[1] == '/')))
 		{
-			*text++ = *ScriptPtr++;
-			if(ScriptPtr == ScriptEndPtr
-				|| text == &sc_String[MAX_STRING_SIZE-1])
+			String += *ScriptPtr++;
+			if (ScriptPtr == ScriptEndPtr)
 			{
 				break;
 			}
 		}
 	}
-	*text = 0;
 	return true;
 	unguard;
 }
 
 //==========================================================================
 //
-// SC_MustGetString
+//	VScriptParser::ExpectString
 //
 //==========================================================================
 
-void SC_MustGetString()
+void VScriptParser::ExpectString()
 {
-	guard(SC_MustGetString);
-	if (SC_GetString() == false)
+	guard(VScriptParser::ExpectString);
+	if (!GetString())
 	{
-		SC_ScriptError("Missing string.");
+		Error("Missing string.");
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-// SC_MustGetStringName
+//	VScriptParser::ExpectName8
 //
 //==========================================================================
 
-void SC_MustGetStringName(const char *name)
+void VScriptParser::ExpectName8()
 {
-	guard(SC_MustGetStringName);
-	SC_MustGetString();
-	if (SC_Compare(name) == false)
+	guard(VScriptParser::ExpectName8);
+	ExpectString();
+	if (String.Length() > 8)
 	{
-		SC_ScriptError(NULL);
+		Error("Name is too long");
+	}
+	Name8 = VName(*String, VName::AddLower8);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::Check
+//
+//==========================================================================
+
+bool VScriptParser::Check(const char* str)
+{
+	guard(VScriptParser::Check);
+	if (GetString())
+	{
+		if (!String.ICmp(str))
+		{
+			return true;
+		}
+		UnGet();
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::Expect
+//
+//==========================================================================
+
+void VScriptParser::Expect(const char* name)
+{
+	guard(VScriptParser::Expect);
+	ExpectString();
+	if (String.ICmp(name))
+	{
+		Error(va("Bad syntax, %s expected", name));
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	SC_CheckNumber
+//	VScriptParser::CheckNumber
 //
 //==========================================================================
 
-boolean SC_CheckNumber()
+bool VScriptParser::CheckNumber()
 {
-	guard(SC_CheckNumber);
-	char *stopper;
-
-	CheckOpen();
-	if (SC_GetString())
+	guard(VScriptParser::CheckNumber);
+	if (GetString())
 	{
-		sc_Number = strtol(sc_String, &stopper, 0);
+		char* stopper;
+		Number = strtol(*String, &stopper, 0);
+		if (*stopper == 0)
+		{
+			return true;
+		}
+		UnGet();
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::ExpectNumber
+//
+//==========================================================================
+
+void VScriptParser::ExpectNumber()
+{
+	guard(VScriptParser::ExpectNumber);
+	if (GetString())
+	{
+		char* stopper;
+		Number = strtol(*String, &stopper, 0);
 		if (*stopper != 0)
 		{
-			SC_UnGet();
-			return false;
+			Error(va("Bad numeric constant \"%s\".\n", *String));
 		}
-		return true;
 	}
 	else
 	{
-		return false;
+		Error("Missing integer.");
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-// SC_GetNumber
+//	VScriptParser::CheckFloat
 //
 //==========================================================================
 
-boolean SC_GetNumber()
+bool VScriptParser::CheckFloat()
 {
-	guard(SC_GetNumber);
-	char *stopper;
-
-	CheckOpen();
-	if (SC_GetString())
+	guard(VScriptParser::CheckFloat);
+	if (GetString())
 	{
-		sc_Number = strtol(sc_String, &stopper, 0);
+		char* stopper;
+		Float = strtod(*String, &stopper);
 		if (*stopper != 0)
 		{
-			Sys_Error("SC_GetNumber: Bad numeric constant \"%s\".\n"
-				"Script %s, Line %d", sc_String, *ScriptName, sc_Line);
+			return true;
 		}
-		return true;
+		UnGet();
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::ExpectFloat
+//
+//==========================================================================
+
+void VScriptParser::ExpectFloat()
+{
+	guard(VScriptParser::ExpectFloat);
+	if (GetString())
+	{
+		char* stopper;
+		Float = strtod(*String, &stopper);
+		if (*stopper != 0)
+		{
+			Error(va("Bad floating point constant \"%s\"", *String));
+		}
 	}
 	else
 	{
-		return false;
+		Error("Missing float.");
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-// SC_MustGetNumber
+//	VScriptParser::UnGet
+//
+//	Assumes there is a valid string in sc_String.
 //
 //==========================================================================
 
-void SC_MustGetNumber()
+void VScriptParser::UnGet()
 {
-	guard(SC_MustGetNumber);
-	if (SC_GetNumber() == false)
-	{
-		SC_ScriptError("Missing integer.");
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	SC_CheckFloat
-//
-//==========================================================================
-
-boolean SC_CheckFloat()
-{
-	guard(SC_CheckFloat);
-	char *stopper;
-
-	CheckOpen();
-	if (SC_GetString())
-	{
-		sc_Float = strtod(sc_String, &stopper);
-		if (*stopper != 0)
-		{
-			SC_UnGet();
-			return false;
-		}
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	SC_GetFloat
-//
-//==========================================================================
-
-boolean SC_GetFloat()
-{
-	guard(SC_GetFloat);
-	char *stopper;
-
-	CheckOpen();
-	if (SC_GetString())
-	{
-		sc_Float = strtod(sc_String, &stopper);
-		if (*stopper != 0)
-		{
-			Sys_Error("SC_GetFloat: Bad floating point constant \"%s\".\n"
-				"Script %s, Line %d", sc_String, *ScriptName, sc_Line);
-		}
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	SC_MustGetFloat
-//
-//==========================================================================
-
-void SC_MustGetFloat()
-{
-	guard(SC_MustGetFloat);
-	if (SC_GetFloat() == false)
-	{
-		SC_ScriptError("Missing float.");
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-// SC_UnGet
-//
-// Assumes there is a valid string in sc_String.
-//
-//==========================================================================
-
-void SC_UnGet()
-{
-	guard(SC_UnGet);
+	guard(VScriptParser::UnGet);
 	AlreadyGot = true;
 	unguard;
 }
 
 //==========================================================================
 //
-// SC_Check
-//
-// Returns true if another token is on the current line.
+//	VScriptParser::Error
 //
 //==========================================================================
 
-/*
-boolean SC_Check()
+void VScriptParser::Error(const char* message)
 {
-	char *text;
-
-	CheckOpen();
-	text = ScriptPtr;
-	if(text >= ScriptEndPtr)
-	{
-		return false;
-	}
-	while(*text <= 32)
-	{
-		if(*text == '\n')
-		{
-			return false;
-		}
-		text++;
-		if(text == ScriptEndPtr)
-		{
-			return false;
-		}
-	}
-	if(*text == ASCII_COMMENT)
-	{
-		return false;
-	}
-	return true;
-}
-*/
-
-//==========================================================================
-//
-// SC_MatchString
-//
-// Returns the index of the first match to sc_String from the passed
-// array of strings, or -1 if not found.
-//
-//==========================================================================
-
-int SC_MatchString(const char **strings)
-{
-	guard(SC_MatchString);
-	int i;
-
-	for (i = 0; *strings != NULL; i++)
-	{
-		if (SC_Compare(*strings++))
-		{
-			return i;
-		}
-	}
-	unguard;
-	return -1;
-}
-
-//==========================================================================
-//
-// SC_MustMatchString
-//
-//==========================================================================
-
-int SC_MustMatchString(const char **strings)
-{
-	guard(SC_MustMatchString);
-	int i;
-
-	i = SC_MatchString(strings);
-	if (i == -1)
-	{
-		SC_ScriptError(NULL);
-	}
-	return i;
-	unguard;
-}
-
-//==========================================================================
-//
-// SC_Compare
-//
-//==========================================================================
-
-boolean SC_Compare(const char *text)
-{
-	guard(SC_Compare);
-	return !VStr::ICmp(text, sc_String);
-	unguard;
-}
-
-//==========================================================================
-//
-// SC_ScriptError
-//
-//==========================================================================
-
-void SC_ScriptError(const char *message)
-{
-	guard(SC_ScriptError)
+	guard(VScriptParser::Error)
 	const char* Msg = message ? message : "Bad syntax.";
-	Sys_Error("Script error, \"%s\" line %d: %s", *ScriptName,
-		sc_Line, Msg);
-	unguard;
-}
-
-//==========================================================================
-//
-// CheckOpen
-//
-//==========================================================================
-
-static void CheckOpen()
-{
-	guard(CheckOpen);
-	if (ScriptOpen == false)
-	{
-		Sys_Error("SC_ call before SC_Open().");
-	}
+	Sys_Error("Script error, \"%s\" line %d: %s", *ScriptName, Line, Msg);
 	unguard;
 }

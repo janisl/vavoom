@@ -209,52 +209,41 @@ static void ParseBase(const VStr& name)
 	}
 
 	select_game = false;
-	SC_OpenFile(*UseName);
-	while (SC_GetString())
+	VScriptParser* sc = new VScriptParser(UseName, FL_OpenSysFileRead(UseName));
+	while (!sc->AtEnd())
 	{
 		version_t &dst = games.Alloc();
 		dst.ParmFound = 0;
 		dst.FixVoices = false;
-		if (!SC_Compare("game"))
+		sc->Expect("game");
+		sc->ExpectString();
+		dst.GameDir = sc->String;
+		if (sc->Check("iwad"))
 		{
-			SC_ScriptError(NULL);
+			sc->ExpectString();
+			dst.MainWad = sc->String;
 		}
-		SC_MustGetString();
-		dst.GameDir = sc_String;
-		SC_MustGetString();
-		if (SC_Compare("iwad"))
+		while (sc->Check("addfile"))
 		{
-			SC_MustGetString();
-			dst.MainWad = sc_String;
-			SC_MustGetString();
+			sc->ExpectString();
+			dst.AddFiles.Append(sc->String);
 		}
-		while (SC_Compare("addfile"))
+		if (sc->Check("param"))
 		{
-			SC_MustGetString();
-			dst.AddFiles.Append(sc_String);
-			SC_MustGetString();
-		}
-		if (SC_Compare("param"))
-		{
-			SC_MustGetString();
-			dst.ParmFound = GArgs.CheckParm(sc_String);
+			sc->ExpectString();
+			dst.ParmFound = GArgs.CheckParm(*sc->String);
 			if (dst.ParmFound)
 			{
 				select_game = true;
 			}
-			SC_MustGetString();
 		}
-		if (SC_Compare("fixvoices"))
+		if (sc->Check("fixvoices"))
 		{
 			dst.FixVoices = true;
-			SC_MustGetString();
 		}
-		if (!SC_Compare("end"))
-		{
-			SC_ScriptError(NULL);
-		}
+		sc->Expect("end");
 	}
-	SC_Close();
+	delete sc;
 
 	for (int gi = games.Num() - 1; gi >= 0; gi--)
 	{
@@ -621,6 +610,24 @@ VStream* FL_OpenFileRead(const VStr& Name)
 		}
 	}
 	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	FL_OpenSysFileRead
+//
+//==========================================================================
+
+VStream* FL_OpenSysFileRead(const VStr& Name)
+{
+	guard(FL_OpenSysFileRead);
+	FILE *File = fopen(*Name, "rb");
+	if (!File)
+	{
+		return NULL;
+	}
+	return new VStreamFileReader(File, GCon);
 	unguard;
 }
 

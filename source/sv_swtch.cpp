@@ -239,6 +239,33 @@ void P_UpdateButtons()
 
 //==========================================================================
 //
+// ParseTerrainTypes
+//
+//==========================================================================
+
+static void ParseTerrainTypes(VScriptParser* sc)
+{
+	guard(ParseTerrainTypes);
+	while (!sc->AtEnd())
+	{
+		sc->ExpectName8();
+		int pic = GTextureManager.CheckNumForName(sc->Name8, TEXTYPE_Flat,
+			true, true);
+		sc->ExpectNumber();
+		if (pic != -1)
+		{
+			TTerrainType& tt = TerrainTypes.Alloc();
+			tt.Pic = pic;
+			tt.Type = sc->Number;
+		}
+	}
+	delete sc;
+	TerrainTypes.Condense();
+	unguard;
+}
+
+//==========================================================================
+//
 // P_InitTerrainTypes
 //
 //==========================================================================
@@ -246,21 +273,21 @@ void P_UpdateButtons()
 void P_InitTerrainTypes()
 {
 	guard(P_InitTerrainTypes);
-	SC_Open("TERRAINS");
-	while (SC_GetString())
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		int pic = GTextureManager.CheckNumForName(VName(sc_String,
-			VName::AddLower8), TEXTYPE_Flat, true, true);
-		SC_MustGetNumber();
-		if (pic != -1)
+		if (W_LumpName(Lump) == "terrains")
 		{
-			TTerrainType& tt = TerrainTypes.Alloc();
-			tt.Pic = pic;
-			tt.Type = sc_Number;
+			ParseTerrainTypes(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)));
 		}
 	}
-	SC_Close();
-	TerrainTypes.Condense();
+	//	Optionally parse script file.
+	if (fl_devmode && FL_FindFile("scripts/terrains.txt"))
+	{
+		ParseTerrainTypes(new VScriptParser("scripts/terrains.txt",
+			FL_OpenFileRead("scripts/terrains.txt")));
+	}
 	unguard;
 }
 

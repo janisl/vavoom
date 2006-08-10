@@ -110,32 +110,55 @@ static int			NumSkySurfs;
 //
 //==========================================================================
 
-void R_InitSkyBoxes()
+static void ParseSkyBoxesScript(VScriptParser* sc)
 {
 	guard(R_InitSkyBoxes);
-	SC_Open("skyboxes");
-
-	while (SC_GetString())
+	while (!sc->AtEnd())
 	{
 		skyboxinfo_t& info = skyboxinfo.Alloc();
 		memset(&info, 0, sizeof(info));
 
-		info.Name = sc_String;
-		SC_MustGetStringName("{");
+		sc->ExpectString();
+		info.Name = *sc->String;
+		sc->Expect("{");
 		for (int i = 0; i < 6; i++)
 		{
-			SC_MustGetStringName("{");
-			SC_MustGetStringName("map");
-			SC_MustGetString();
+			sc->Expect("{");
+			sc->Expect("map");
+			sc->ExpectString();
 			info.surfs[i].texture = GTextureManager.AddFileTexture(
-				VName(sc_String), TEXTYPE_SkyMap);
-			SC_MustGetStringName("}");
+				VName(*sc->String), TEXTYPE_SkyMap);
+			sc->Expect("}");
 		}
-		SC_MustGetStringName("}");
+		sc->Expect("}");
 	}
-
-	SC_Close();
+	delete sc;
 	unguard;
+}
+
+//==========================================================================
+//
+//	R_InitSkyBoxes
+//
+//==========================================================================
+
+void R_InitSkyBoxes()
+{
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) == "skyboxes")
+		{
+			ParseSkyBoxesScript(new VScriptParser("skyboxes",
+				W_CreateLumpReaderNum(Lump)));
+		}
+	}
+	//	Optionally parse script file.
+	if (fl_devmode && FL_FindFile("scripts/skyboxes.txt"))
+	{
+		ParseSkyBoxesScript(new VScriptParser("scripts/skyboxes.txt",
+			FL_OpenFileRead("scripts/skyboxes.txt")));
+	}
 }
 
 //==========================================================================
