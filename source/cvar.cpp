@@ -507,7 +507,7 @@ bool VCvar::Command(const TArray<VStr>& Args)
 		{
 			GCon->Logf("%s is read-only", cvar->Name);
 		}
-		else if (cvar->Flags & CVAR_Init && host_initialized)
+		else if (cvar->Flags & CVAR_Init && host_initialised)
 		{
 			GCon->Logf("%s can be set only from command-line", cvar->Name);
 		}

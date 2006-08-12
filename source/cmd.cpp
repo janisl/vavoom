@@ -178,6 +178,7 @@ void VCommand::Shutdown()
 	}
 	AutoCompleteTable.Clear();
 	Args.Clear();
+	Original.Clean();
 	unguard;
 }
 
@@ -363,7 +364,7 @@ void VCommand::ExecuteString(const VStr& Acmd, ECmdSource src)
 	// Unknown command.
 	//
 #ifndef CLIENT
-	if (host_initialized)
+	if (host_initialised)
 #endif
 		GCon->Log(VStr("Unknown command ") + Args[0]);
 	unguard;
@@ -511,7 +512,12 @@ void VCmdBuf::Exec()
 		Buffer = VStr(Buffer, len, Buffer.Length() - len);
 
 		VCommand::ExecuteString(ParsedCmd, VCommand::SRC_Command);
-		
+
+		if (host_request_exit)
+		{
+			return;
+		}
+
 		if (Wait)
 		{
 			//	Skip out while text still remains in buffer, leaving it

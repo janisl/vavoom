@@ -233,6 +233,11 @@ void SV_Shutdown()
 	delete[] sv_mo_free_time;
 	
 	P_FreeTerrainTypes();
+	svs.serverinfo.Clean();
+	for (int i = 0; i < MAX_SKINS; i++)
+	{
+		skins[i].Clean();
+	}
 	unguard;
 }
 
@@ -2656,6 +2661,7 @@ void SV_ShutdownServer(boolean crash)
 	{
 		//	Save old stats pointer
 		int* OldStats = GPlayersBase[i]->OldStats;
+		GPlayersBase[i]->GetClass()->DestructObject(GPlayersBase[i]);
 		memset((byte*)GPlayersBase[i] + sizeof(VObject), 0,
 			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
 		//	Restore pointer

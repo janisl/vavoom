@@ -45,7 +45,8 @@ const char *Host_GetCoreDump(void);
 
 extern VCvarI		developer;
 
-extern boolean		host_initialized;
+extern bool			host_initialised;
+extern bool			host_request_exit;
 
 extern int			host_frametics;
 extern double		host_frametime;

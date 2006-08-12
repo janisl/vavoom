@@ -63,6 +63,7 @@ static VModel*			weapon_model_precache[1024];
 void CL_Clear()
 {
 	guard(CL_Clear);
+	cl->serverinfo.Clean();
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
 	memset(&cl_level, 0, sizeof(cl_level));
 	for (int i = 0; i < GMaxEntities; i++)
@@ -75,6 +76,11 @@ void CL_Clear()
 			cl_weapon_mobjs[i]->ConditionalDestroy();
 	memset(cl_weapon_mobjs, 0, sizeof(cl_weapon_mobjs));
 	memset(cl_dlights, 0, sizeof(cl_dlights));
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		scores[i].name.Clean();
+		scores[i].userinfo.Clean();
+	}
 	memset(scores, 0, sizeof(scores));
 	CL_ClearInput();
 #ifdef SERVER
@@ -638,7 +644,7 @@ static void CL_ParseModel(VMessage& msg)
 static void CL_ParseSkin(VMessage& msg)
 {
 	int i = msg.ReadByte();
-	skin_list[i] = VStr("models/") + (const char*)msg.ReadString();
+	skin_list[i] = VStr("models/") + msg.ReadString();
 }
 
 //==========================================================================

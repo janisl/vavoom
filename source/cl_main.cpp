@@ -162,6 +162,14 @@ void CL_Shutdown()
 	{
 		skin_list[i].Clean();
 	}
+	cls.userinfo.Clean();
+	im.LeaveName.Clean();
+	im.EnterName.Clean();
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		scores[i].name.Clean();
+		scores[i].userinfo.Clean();
+	}
 	unguard;
 }
 

@@ -38,6 +38,7 @@ void CL_ReadFromServer();
 void SV_ShutdownServer(boolean crash);
 void CL_Disconnect();
 VName P_TranslateMap(int map);
+void C_Shutdown();
 
 // MACROS ------------------------------------------------------------------
 
@@ -58,6 +59,8 @@ public:
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+void Host_Quit();
+
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -75,7 +78,8 @@ double			realtime;
 double			oldrealtime;
 int				host_framecount;
 
-boolean			host_initialized = false;
+bool			host_initialised = false;
+bool			host_request_exit = false;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -191,7 +195,7 @@ void Host_Init()
 	}
 #endif
 
-	host_initialized = true;
+	host_initialised = true;
 	unguard;
 }
 
@@ -321,6 +325,10 @@ void Host_Frame()
 
 		//	Process console commands
 		GCmdBuf.Exec();
+		if (host_request_exit)
+		{
+			Host_Quit();
+		}
 
 		GNet->Poll();
 
@@ -487,7 +495,7 @@ COMMAND(Version)
 #ifdef CLIENT
 void Host_SaveConfiguration()
 {
-	if (!host_initialized)
+	if (!host_initialised)
 		return;
 
 	FILE *f;
@@ -524,12 +532,13 @@ void Host_SaveConfiguration()
 
 //==========================================================================
 //
-//  Quit
+//  Host_Quit
 //
 //==========================================================================
 
-COMMAND(Quit)
+void Host_Quit()
 {
+	guard(Host_Quit);
 #ifdef CLIENT
 	CL_Disconnect();
 #endif
@@ -578,6 +587,18 @@ COMMAND(Quit)
 	}
 
 	Sys_Quit(GotEndText ? EndText : NULL);
+	unguard;
+}
+
+//==========================================================================
+//
+//  Quit
+//
+//==========================================================================
+
+COMMAND(Quit)
+{
+	host_request_exit = true;
 }
 
 //==========================================================================
@@ -654,6 +675,7 @@ void Host_Shutdown()
 	try { name args; } catch (...) { GCon->Log(#name" failed"); }
 
 #ifdef CLIENT
+	SAFE_SHUTDOWN(C_Shutdown, ())
 	SAFE_SHUTDOWN(CL_Shutdown, ())
 #endif
 #ifdef SERVER
