@@ -3380,9 +3380,9 @@ int VACS::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_CaseGotoSorted)
 			//	The count and jump table are 4-byte aligned.
-			if ((int)ip & 3)
+			if (ActiveObject->PtrToOffset(ip) & 3)
 			{
-				ip += 4 - ((int)ip & 3);
+				ip += 4 - (ActiveObject->PtrToOffset(ip) & 3);
 			}
 			{
 				int numcases = READ_INT32(ip);

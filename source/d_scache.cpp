@@ -199,7 +199,7 @@ surfcache_t *VSoftwareDrawer::SCAlloc(int width, int height)
 	if ((height < 0) || (height > 256))
 		Sys_Error("D_SCAlloc: bad cache height %d\n", height);
 
-	size = (int)&((surfcache_t *)0)->data[size];
+	size = &((surfcache_t *)0)->data[size] - (vuint8*)0;
 	size = (size + 3) & ~3;
 	if (size > sc_size)
 		Sys_Error("D_SCAlloc: %i > cache size", size);
