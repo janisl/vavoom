@@ -262,17 +262,17 @@ dnl
 
 case $host in
 *-*-msdos* | *-*-go32*)
-	SERVER_EXE='VavoomSV$(EXEEXT)'
+	SERVER_EXE='VavoomSV'
 	SERVER_PLATFORM=DJGPP
 	;;
 
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
-	SERVER_EXE='Vavm95SV$(EXEEXT)'
+	SERVER_EXE='Vavm95SV'
 	SERVER_PLATFORM=WIN32
 	;;
 
 *)
-	SERVER_EXE="vavoom-dedicated.$host_cpu$EXEEXT"
+	SERVER_EXE="vavoom-dedicated.$host_cpu"
 	SERVER_PLATFORM=UNIX
 	;;
 esac
@@ -300,7 +300,7 @@ if test "x$enable_client" != "xno"; then
 case $host in
 dnl ---------------- DJGPP ----------------
 *-*-msdos* | *-*-go32*)
-	MAIN_EXE='Vavoom$(EXEEXT)'
+	MAIN_EXE='Vavoom'
 	MAIN_PLATFORM='DJGPP'
 
 	AC_CHECK_HEADER([allegro.h], [], AC_MSG_ERROR(['Vavoom requires Allegro to compile']))
@@ -317,7 +317,7 @@ dnl ---------------- DJGPP ----------------
 
 dnl ---------------- Windows ----------------
 *-*-mingw32* | *-*-cygwin* | *-*-windows*)
-	MAIN_EXE='Vavoom95$(EXEEXT)'
+	MAIN_EXE='Vavoom95'
 	MAIN_PLATFORM='WIN32'
 	LIBS="-lgdi32 -lole32 -lwinmm $LIBS"
 
@@ -337,7 +337,7 @@ dnl ---------------- Windows ----------------
 
 dnl ---------------- Other *NIX platforms ----------------
 *)
-	MAIN_EXE="vavoom.$host_cpu$EXEEXT"
+	MAIN_EXE="vavoom.$host_cpu"
 
 	if test "x$with_allegro" = "xyes"; then
 		if test "x$with_allegro_config" = "x"; then
