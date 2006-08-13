@@ -1,4 +1,4 @@
-AC_INIT([glvis], [1.5])
+AC_INIT([glvis], [1.6])
 AC_CONFIG_SRCDIR([glvis.h])
 AM_INIT_AUTOMAKE([foreign no-define dist-zip dist-bzip2])
 

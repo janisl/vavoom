@@ -1,5 +1,5 @@
                             *********************
-                              glVIS version 1.5
+                              glVIS version 1.6
                             *********************
 
 ============================================================================
@@ -84,10 +84,10 @@ Quake's vis utility.
   All trademarks are the propriety of their owners.
 
 ============================================================================
-    License
+    Licence
 ============================================================================
 
-  glVIS is under the GNU General Public License (GPL). See the file `COPYING'
+  glVIS is under the GNU General Public Licence (GPL). See the file `gnu.txt'
 for the full text.
 
 ============================================================================
