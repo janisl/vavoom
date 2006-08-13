@@ -1355,3 +1355,55 @@
 ******************************************************************************
                             VERSION 1.21.1
 ******************************************************************************
+
+28.07.2006
+  Added fix for latest version of OpenAL.
+  Fixed crash when building on 64-bit systems.
+29.07.2006
+  Created abstract interfaces for network and audio systems.
+30.07.2006
+  Final changes to audio driver, split stream music player into separate file,
+ merged sound sequences in main file.
+  Created abstract interface for input driver.
+  Fixed problem with latest version of glBSP.
+  In string class added static methods that are wrappers of standard C string
+ functions. Changed code to use them.
+31.07.2006
+  Finished with string functions.
+  Created string methods for dealing with UTF-8 format strings.
+  Split main file into several makefiles.
+01.08.2006
+  Started to switch to automake. Switched makefiles in root, basev, progs and
+ utils. The main benefits are smaller initial makefiles, automatic dependency
+ tracking and automatic source distribution creation.
+02.08.2006
+  Fixed UTF-8 functions.
+  Switched to automake all makefiles in utilities.
+03.08.2006
+  Switched to automake the rest of the makefiles. Main makefile is not yet a
+ proper one.
+05.08.2006
+  Firebrand fixed empty spaces in status bar and adjusted drawing of glbsp and
+ glvis plugin interfaces.
+06.08.2006
+  Fixed problem with DoomBuilder config file for Heretic.
+08.08.2006
+  Changed utilities to be back in bin directory.
+  Fixed DeHackEd support.
+  Started to create script parser class.
+09.08.2006
+  Fully implemented script parser class, added some more helper methods to make
+ parsing simpler.
+10.08.2006
+  Fixed DOS and Windows executables having double .exe extension.
+  Firebrand did some improvements to Strife conversation dialog.
+  Fixed compilation on 64-bit systems with gcc4.
+  Fixed Windows MIDI driver to use MIDI device selected in control panel and
+ to properly set music volume.
+12.08.2006
+  Properly free all strings on exit and before doing memsets.
+  Simplified command checks in music and CD console commands.
+
+******************************************************************************
+                            VERSION 1.21.2
+******************************************************************************
