@@ -315,7 +315,7 @@ void VIpxDriver::IPX_PollProcedure(void* arg)
 	guard(VIpxDriver::IPX_PollProcedure);
 	VIpxDriver* Self = (VIpxDriver*)arg;
 	Self->IPX_RelinquishControl();
-	Net->SchedulePollProcedure(&Self->pollProcedure, 0.01);
+	Self->Net->SchedulePollProcedure(&Self->pollProcedure, 0.01);
 	unguard;
 }
 
