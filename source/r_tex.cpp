@@ -1046,7 +1046,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 	//	First try PNG.
 	char HighResName[80];
 	sprintf(HighResName, "textures/%s/%s.png", DirName, *Name);
-	if (FL_FindFile(HighResName))
+	if (FL_FileExists(HighResName))
 	{
 		//	Create new high-resolution texture.
 		HiResTexture = new VPngTexture(Type, HighResName);
@@ -1055,7 +1055,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 
 	//	Then try TGA.
 	sprintf(HighResName, "textures/%s/%s.tga", DirName, *Name);
-	if (FL_FindFile(HighResName))
+	if (FL_FileExists(HighResName))
 	{
 		//	Create new high-resolution texture.
 		HiResTexture = new VTgaTexture(Type, HighResName);
@@ -3482,7 +3482,7 @@ static void InitFTAnims()
 	}
 
 	//	Optionally parse script file.
-	if (fl_devmode && FL_FindFile("scripts/animdefs.txt"))
+	if (fl_devmode && FL_FileExists("scripts/animdefs.txt"))
 	{
 		ParseFTAnims(new VScriptParser("scripts/animdefs.txt",
 			FL_OpenFileRead("scripts/animdefs.txt")));

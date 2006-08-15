@@ -81,6 +81,7 @@ public:
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);
 	VStr FindFile(const VStr&);
+	bool FileExists(const VStr&);
 	VStream* OpenFileRead(const VStr&);
 	VStream* CreateLumpReaderNum(int);
 };
@@ -896,6 +897,11 @@ VStream* VWadFile::CreateLumpReaderNum(int lump)
 VStr VWadFile::FindFile(const VStr&)
 {
 	return VStr();
+}
+
+bool VWadFile::FileExists(const VStr&)
+{
+	return false;
 }
 
 VStream* VWadFile::OpenFileRead(const VStr& Name)

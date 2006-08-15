@@ -1248,7 +1248,7 @@ IMPLEMENT_FUNCTION(VObject, R_DrawSpritePatch)
 IMPLEMENT_FUNCTION(VObject, InstallModel)
 {
 	P_GET_STR(name);
-	if (FL_FindFile(name))
+	if (FL_FileExists(name))
 	{
 		RET_PTR(Mod_FindName(*name));
 	}

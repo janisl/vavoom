@@ -52,6 +52,7 @@ class VSearchPath
 public:
 	virtual ~VSearchPath();
 	virtual VStr FindFile(const VStr&) = 0;
+	virtual bool FileExists(const VStr&) = 0;
 	virtual VStream* OpenFileRead(const VStr&) = 0;
 	virtual void Close() = 0;
 	virtual int CheckNumForName(VName, EWadNamespace) = 0;

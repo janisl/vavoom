@@ -41,6 +41,7 @@ public:
 	: Path(aPath)
 	{}
 	VStr FindFile(const VStr&);
+	bool FileExists(const VStr&);
 	VStream* OpenFileRead(const VStr&);
 	void Close();
 	int CheckNumForName(VName, EWadNamespace);
@@ -111,41 +112,44 @@ void FL_AddFile(const VStr& file, const VStr& gwadir)
 //
 //==========================================================================
 
-static void AddGameDir(const VStr& dir)
+static void AddGameDir(const VStr& basedir, const VStr& dir)
 {
 	guard(AddGameDir);
-	VFilesDir	*info;
-
-	info = new VFilesDir(fl_basedir + "/" + dir);
-	SearchPaths.Append(info);
-
+	//	First add wad##.wad files.
 	VStr gwadir;
-	if (fl_savedir)
+	if (fl_savedir && basedir != fl_savedir)
 	{
-		info = new VFilesDir(fl_savedir + "/" + dir);
-		SearchPaths.Append(info);
 		gwadir = fl_savedir + "/" + dir;
 	}
 
 	for (int i = 0; i < 1024; i++)
 	{
-		VStr buf = fl_basedir + "/" + dir + "/wad" + i + ".wad";
+		VStr buf = basedir + "/" + dir + "/wad" + i + ".wad";
 		if (!Sys_FileExists(buf))
 			break;
 		FL_AddFile(buf, gwadir);
 	}
 
+	//	Finally add directory itself.
+	VFilesDir* info = new VFilesDir(basedir + "/" + dir);
+	SearchPaths.Append(info);
+	unguard;
+}
+
+//==========================================================================
+//
+//	AddGameDir
+//
+//==========================================================================
+
+static void AddGameDir(const VStr& dir)
+{
+	guard(AddGameDir);
+	AddGameDir(fl_basedir, dir);
 	if (fl_savedir)
 	{
-		for (int i = 0; i < 1024; i++)
-		{
-			VStr buf = fl_savedir + "/" + dir + "/wad" + i + ".wad";
-			if (!Sys_FileExists(buf))
-				break;
-			FL_AddFile(buf, VStr());
-		}
+		AddGameDir(fl_savedir, dir);
 	}
-
 	fl_gamedir = dir;
 	unguard;
 }
@@ -455,6 +459,26 @@ VStr FL_FindFile(const VStr& fname)
 
 //==========================================================================
 //
+//	FL_FileExists
+//
+//==========================================================================
+
+bool FL_FileExists(const VStr& fname)
+{
+	guard(FL_FileExists);
+	for (int i = SearchPaths.Num() - 1; i >= 0 ; i--)
+	{
+		if (SearchPaths[i]->FileExists(fname))
+		{
+			return true;
+		}
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	FL_CreatePath
 //
 //==========================================================================
@@ -755,6 +779,19 @@ VStr VFilesDir::FindFile(const VStr& fname)
 		return tmp;
 	}
 	return VStr();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFilesDir::FileExists
+//
+//==========================================================================
+
+bool VFilesDir::FileExists(const VStr& fname)
+{
+	guard(VFilesDir::FileExists);
+	return Sys_FileExists(Path + "/" + fname);
 	unguard;
 }
 

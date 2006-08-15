@@ -644,26 +644,30 @@ COMMAND(Echo)
 COMMAND(Exec)
 {
 	guard(COMMAND Exec);
-	char*		buf;
-
 	if (Args.Num() != 2)
 	{
 		GCon->Log("Exec <filename> : execute script file");
 		return;
 	}
 
-	VStr path = FL_FindFile(Args[1]);
-	if (!path)
+	if (!FL_FileExists(Args[1]))
 	{
 		GCon->Log(VStr("Can't find ") + Args[1]);
 		return;
 	}
 
-	GCon->Log(VStr("Executing ") + path);
+	GCon->Log(VStr("Executing ") + Args[1]);
 
-	M_ReadFile(*path, (byte**)&buf);
+	VStream* Strm = FL_OpenFileRead(Args[1]);
+	int Len = Strm->TotalSize();
+	char* buf = new char[Len + 1];
+	Strm->Serialise(buf, Len);
+	buf[Len] = 0;
+	delete Strm;
+
 	GCmdBuf.Insert(buf);
-	Z_Free(buf);
+
+	delete[] buf;
 	unguard;
 }
 

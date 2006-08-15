@@ -123,7 +123,7 @@ void InitMapInfo()
 		}
 	}
 	//	Optionally parse script file.
-	if (fl_devmode && FL_FindFile("scripts/mapinfo.txt"))
+	if (fl_devmode && FL_FileExists("scripts/mapinfo.txt"))
 	{
 		ParseMapInfo(new VScriptParser("scripts/mapinfo.txt",
 			FL_OpenFileRead("scripts/mapinfo.txt")));

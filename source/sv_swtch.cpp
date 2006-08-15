@@ -283,7 +283,7 @@ void P_InitTerrainTypes()
 		}
 	}
 	//	Optionally parse script file.
-	if (fl_devmode && FL_FindFile("scripts/terrains.txt"))
+	if (fl_devmode && FL_FileExists("scripts/terrains.txt"))
 	{
 		ParseTerrainTypes(new VScriptParser("scripts/terrains.txt",
 			FL_OpenFileRead("scripts/terrains.txt")));

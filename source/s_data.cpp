@@ -153,7 +153,7 @@ void VSoundManager::Init()
 	}
 
 	//	Optionally parse script file.
-	if (fl_devmode && FL_FindFile("scripts/sndinfo.txt"))
+	if (fl_devmode && FL_FileExists("scripts/sndinfo.txt"))
 	{
 		ParseSndinfo(new VScriptParser("scripts/sndinfo.txt",
 			FL_OpenFileRead("scripts/sndinfo.txt")));
@@ -174,7 +174,7 @@ void VSoundManager::Init()
 	}
 
 	//	Optionally parse script file.
-	if (fl_devmode && FL_FindFile("scripts/sndseq.txt"))
+	if (fl_devmode && FL_FileExists("scripts/sndseq.txt"))
 	{
 		ParseSequenceScript(new VScriptParser("scripts/sndseq.txt",
 			FL_OpenFileRead("scripts/sndseq.txt")));

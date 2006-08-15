@@ -613,13 +613,13 @@ static void CL_ParseModel(VMessage& msg)
 	int i = msg.ReadShort();
 	char *name = va("models/%s", msg.ReadString());
 	weapon_model_precache[i] = NULL;
-	if (FL_FindFile(name))
+	if (FL_FileExists(name))
 	{
 		model_precache[i] = Mod_FindName(name);
 		if (strstr(name, "tris.md2"))
 		{
-			VStr wpname = VStr(name).ExtractFilePath() + "/weapon.md2";
-			if (FL_FindFile(wpname))
+			VStr wpname = VStr(name).ExtractFilePath() + "weapon.md2";
+			if (FL_FileExists(wpname))
 			{
 				weapon_model_precache[i] = Mod_FindName(*wpname);
 			}

@@ -361,7 +361,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName InName)
 		if (GLoadedPackages[i]->Name == InName)
 			return GLoadedPackages[i];
 
-	if (fl_devmode && FL_FindFile(va("progs/%s.dat", *InName)))
+	if (fl_devmode && FL_FileExists(va("progs/%s.dat", *InName)))
 	{
 		//	Load PROGS from a specified file
 		Reader = new VProgsReader(FL_OpenFileRead(va("progs/%s.dat", *InName)));
