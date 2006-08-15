@@ -87,25 +87,11 @@ VStr	fl_mainwad;
 TArray<VSearchPath*>	SearchPaths;
 
 TArray<VStr>			wadfiles;
-TArray<VStr>			gwadirs;
 static bool				fl_fixvoices;
+static bool				bIwadAdded;
 static TArray<VStr>		IWadDirs;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	FL_AddFile
-//
-//==========================================================================
-
-void FL_AddFile(const VStr& file, const VStr& gwadir)
-{
-	guard(FL_AddFile);
-	wadfiles.Append(file);
-	gwadirs.Append(gwadir);
-	unguard;
-}
 
 //==========================================================================
 //
@@ -133,7 +119,7 @@ static void AddGameDir(const VStr& basedir, const VStr& dir)
 		VStr buf = basedir + "/" + dir + "/wad" + i + ".wad";
 		if (!Sys_FileExists(buf))
 			break;
-		FL_AddFile(buf, gwadir);
+		W_AddFile(buf, gwadir, fl_fixvoices);
 	}
 
 	//	Then add all .pk3 files in that directory.
@@ -284,12 +270,19 @@ static void ParseBase(const VStr& name)
 		{
 			if (!G.MainWad || G.MainWad == fl_mainwad)
 			{
+				fl_fixvoices = G.FixVoices;
+				if (!bIwadAdded)
+				{
+					VStr MainWadPath = FindMainWad(fl_mainwad);
+					W_AddFile(MainWadPath, fl_savedir, fl_fixvoices);
+					bIwadAdded = true;
+				}
 				for (int j = 0; j < G.AddFiles.Num(); j++)
 				{
-					FL_AddFile(fl_basedir + "/" + G.AddFiles[j], fl_savedir);
+					W_AddFile(fl_basedir + "/" + G.AddFiles[j], fl_savedir,
+						fl_fixvoices);
 				}
 				SetupGameDir(G.GameDir);
-				fl_fixvoices = G.FixVoices;
 				return;
 			}
 			continue;
@@ -304,7 +297,12 @@ static void ParseBase(const VStr& name)
 		if (MainWadPath)
 		{
 			fl_mainwad = G.MainWad;
-			FL_AddFile(MainWadPath, fl_savedir);
+			fl_fixvoices = G.FixVoices;
+			if (!bIwadAdded)
+			{
+				W_AddFile(MainWadPath, fl_savedir, fl_fixvoices);
+				bIwadAdded = true;
+			}
 			for (int j = 0; j < G.AddFiles.Num(); j++)
 			{
 				VStr FName = FindMainWad(G.AddFiles[j]);
@@ -312,10 +310,9 @@ static void ParseBase(const VStr& name)
 				{
 					Sys_Error("Required file %s not found", *G.AddFiles[j]);
 				}
-				FL_AddFile(FName, fl_savedir);
+				W_AddFile(FName, fl_savedir, fl_fixvoices);
 			}
 			SetupGameDir(G.GameDir);
-			fl_fixvoices = G.FixVoices;
 			return;
 		}
 	}
@@ -393,7 +390,6 @@ void FL_Init()
 	if (p)
 	{
 		fl_mainwad = p;
-		FL_AddFile(fl_mainwad, VStr());
 	}
 
 	p = GArgs.CheckValue("-devgame");
@@ -428,14 +424,8 @@ void FL_Init()
 			if (Ext == "pk3")
 				SearchPaths.Append(new VZipFile(GArgs[fp]));
 			else
-				FL_AddFile(GArgs[fp], VStr());
+				W_AddFile(GArgs[fp], VStr(), fl_fixvoices);
 		}
-	}
-
-	// open all the files, load headers, and count lumps
-	for (int i = 0; i < wadfiles.Num(); i++)
-	{
-		W_AddFile(wadfiles[i], gwadirs[i], fl_fixvoices);
 	}
 	unguard;
 }
@@ -459,7 +449,6 @@ void FL_Shutdown()
 	fl_gamedir.Clean();
 	fl_mainwad.Clean();
 	wadfiles.Clear();
-	gwadirs.Clear();
 	IWadDirs.Clear();
 	unguard;
 }

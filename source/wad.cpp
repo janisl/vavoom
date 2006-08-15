@@ -97,6 +97,8 @@ void GLVis_BuildPVS(const char *srcfile, const char* gwafile);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern TArray<VStr>			wadfiles;
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -130,6 +132,8 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 	{
 		Sys_Error("Required file %s doesn't exist", *FileName);
 	}
+
+	wadfiles.Append(FileName);
 
 	VStr ext = FileName.ExtractFileExtension().ToLower();
 	VWadFile* Wad = new VWadFile;
@@ -904,7 +908,7 @@ bool VWadFile::FileExists(const VStr&)
 	return false;
 }
 
-VStream* VWadFile::OpenFileRead(const VStr& Name)
+VStream* VWadFile::OpenFileRead(const VStr&)
 {
 	return NULL;
 }
