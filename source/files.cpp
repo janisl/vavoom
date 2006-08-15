@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "fs_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -112,6 +113,11 @@ void FL_AddFile(const VStr& file, const VStr& gwadir)
 //
 //==========================================================================
 
+static int cmpfunc(const void* v1, const void* v2)
+{
+	return ((VStr*)v1)->ICmp(*(VStr*)v2);
+}
+
 static void AddGameDir(const VStr& basedir, const VStr& dir)
 {
 	guard(AddGameDir);
@@ -128,6 +134,24 @@ static void AddGameDir(const VStr& basedir, const VStr& dir)
 		if (!Sys_FileExists(buf))
 			break;
 		FL_AddFile(buf, gwadir);
+	}
+
+	//	Then add all .pk3 files in that directory.
+	if (Sys_OpenDir(basedir + "/" + dir))
+	{
+		TArray<VStr> ZipFiles;
+		for (VStr test = Sys_ReadDir(); test; test = Sys_ReadDir())
+		{
+			VStr ext = test.ExtractFileExtension().ToLower();
+			if (ext == "pk3")
+				ZipFiles.Append(test);
+		}
+		Sys_CloseDir();
+		qsort(ZipFiles.Ptr(), ZipFiles.Num(), sizeof(VStr), cmpfunc);
+		for (int i = 0; i < ZipFiles.Num(); i++)
+		{
+			SearchPaths.Append(new VZipFile(basedir + "/" + dir + "/" + ZipFiles[i]));
+		}
 	}
 
 	//	Finally add directory itself.
@@ -400,7 +424,11 @@ void FL_Init()
 	{
 		while (++fp != GArgs.Count() && GArgs[fp][0] != '-' && GArgs[fp][0] != '+')
 		{
-			FL_AddFile(GArgs[fp], VStr());
+			VStr Ext = VStr(GArgs[fp]).ExtractFileExtension().ToLower();
+			if (Ext == "pk3")
+				SearchPaths.Append(new VZipFile(GArgs[fp]));
+			else
+				FL_AddFile(GArgs[fp], VStr());
 		}
 	}
 
