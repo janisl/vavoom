@@ -129,6 +129,11 @@ SOURCE=..\..\source\files.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\source\fs_zip.cpp
+# ADD CPP /W4
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\host.cpp
 # ADD CPP /W4
 # End Source File
@@ -268,6 +273,10 @@ SOURCE=..\..\source\files.h
 # Begin Source File
 
 SOURCE=..\..\source\fmapdefs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\fs_local.h
 # End Source File
 # Begin Source File
 
