@@ -74,17 +74,17 @@ enum ECompileError
 	ERR_CONTINUE_OVERFLOW,
 	ERR_CASE_OVERFLOW,
 	ERR_PARAMS_OVERFLOW,
-    ERR_LOCALS_OVERFLOW,
+	ERR_LOCALS_OVERFLOW,
 	ERR_STATEMENTS_OVERFLOW,
 	//  File errors
-    ERR_CANT_OPEN_FILE,
+	ERR_CANT_OPEN_FILE,
 	ERR_CANT_OPEN_DBGFILE,
 	//  Tokeniser erros
 	ERR_INCL_NESTING_TOO_DEEP,
 	ERR_BAD_RADIX_CONSTANT,
 	ERR_STRING_TOO_LONG,
 	ERR_EOF_IN_STRING,
-    ERR_NEW_LINE_INSIDE_QUOTE,
+	ERR_NEW_LINE_INSIDE_QUOTE,
 	ERR_UNKNOWN_ESC_CHAR,
 	ERR_IDENTIFIER_TOO_LONG,
 	ERR_BAD_CHARACTER,
@@ -99,8 +99,8 @@ enum ECompileError
 	ERR_MISSING_COLON,
 	ERR_MISSING_SEMICOLON,
 	ERR_BAD_ARG_COUNT,
-    ERR_VOID_VALUE,
-    ERR_PARAM_TYPE,
+	ERR_VOID_VALUE,
+	ERR_PARAM_TYPE,
 	ERR_ILLEGAL_EXPR_IDENT,
 	ERR_BAD_ASSIGNEMENT,
 	ERR_MISPLACED_BREAK,
@@ -114,7 +114,7 @@ enum ECompileError
 	ERR_INVALID_IDENTIFIER,
 	ERR_VOID_VAR,
 	ERR_REDEFINED_IDENTIFIER,
-    ERR_TYPE_MISTMATCH,
+	ERR_TYPE_MISTMATCH,
 	ERR_BAD_VAR_TYPE,
 	ERR_FUNCTION_REDECLARED,
 	ERR_INVALID_DECLARATOR,
@@ -123,14 +123,14 @@ enum ECompileError
 	ERR_UNDEFINED_FUNCTIONS,
 	ERR_BAD_INCDEC,
 	ERR_END_OF_NON_VOID_FUNCTION,
-    ERR_NOT_A_STRUCT,
-    ERR_NOT_A_FIELD,
+	ERR_NOT_A_STRUCT,
+	ERR_NOT_A_FIELD,
 	ERR_MISSING_RFIGURESCOPE,
 	ERR_BAD_ARRAY,
-    ERR_EXPR_TYPE_MISTMATCH,
-    ERR_POINTER_TO_POINTER,
+	ERR_EXPR_TYPE_MISTMATCH,
+	ERR_POINTER_TO_POINTER,
 
-    NUM_ERRORS
+	NUM_ERRORS
 };
 
 enum ETokenType
@@ -349,6 +349,8 @@ public:
 	int GetSize() const;
 	void CheckPassable() const;
 	void CheckSizeIs4() const;
+	void CheckSizeIs4(TLocation) const;
+	void EmitToBool() const;
 	void CheckMatch(const TType& Other) const;
 	void GetName(char* Dest) const;
 };
@@ -596,7 +598,6 @@ void AddConstant(VClass* InClass, VName Name, int type, int value);
 void PA_Parse();
 
 int CheckForLocalVar(VName);
-void ParseLocalVar(const TType&);
 void CompileMethodDef(const TType&, VMethod*, VClass*);
 void SkipDelegate(VClass*);
 void CompileStateCode(VClass*, VMethod*);
@@ -653,7 +654,9 @@ extern int				CurrentPass;
 extern TType			SelfType;
 extern VClass*			SelfClass;
 
-extern VLocalVarDef	localdefs[MAX_LOCAL_DEFS];
+extern VLocalVarDef		localdefs[MAX_LOCAL_DEFS];
+extern int				numlocaldefs;
+extern int				localsofs;
 
 // INLINE CODE -------------------------------------------------------------
 
@@ -666,13 +669,13 @@ extern VLocalVarDef	localdefs[MAX_LOCAL_DEFS];
 inline int PassFloat(float f)
 {
 	union
-    {
-    	float	f;
-        int		i;
+	{
+		float	f;
+		int		i;
 	} v;
 
-    v.f = f;
-    return v.i;
+	v.f = f;
+	return v.i;
 }
 
 inline bool TK_Check(int s_string)

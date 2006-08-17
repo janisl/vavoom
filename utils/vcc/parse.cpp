@@ -60,14 +60,14 @@ static void 	ParseCompoundStatement();
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 VLocalVarDef			localdefs[MAX_LOCAL_DEFS];
+int						numlocaldefs = 1;
+int						localsofs = 0;
 
 TType					SelfType;
 VClass*					SelfClass;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int				numlocaldefs = 1;
-static int				localsofs = 0;
 static int				maxlocalsofs = 0;
 static breakInfo_t		BreakInfo[MAX_BREAK];
 static int 				BreakIndex;
@@ -510,88 +510,6 @@ static void ParseStatement()
 
 //==========================================================================
 //
-//	ParseLocalVar
-//
-//==========================================================================
-
-void ParseLocalVar(const TType& type)
-{
-	TType	t;
-	int		size;
-
-	if (type.type == ev_unknown)
-	{
-		ParseError(ERR_INVALID_IDENTIFIER, "Bad type");
-		return;
-	}
-	do
-	{
-		t = type;
-		while (TK_Check(PU_ASTERISK))
-		{
-			t = MakePointerType(t);
-		}
-		if (t.type == ev_void)
-		{
-			ParseError(ERR_BAD_VAR_TYPE);
-		}
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError(ERR_INVALID_IDENTIFIER, "variable name expected");
-			continue;
-		}
-		if (numlocaldefs == MAX_LOCAL_DEFS)
-		{
-			ParseError(ERR_LOCALS_OVERFLOW);
-			continue;
-		}
-		localdefs[numlocaldefs].Name = tk_Name;
-
-		if (CheckForLocalVar(tk_Name))
-		{
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
-		}
-		TK_NextToken();
-
-		size = 1;
-		if (TK_Check(PU_LINDEX))
-		{
-			size = EvalConstExpression(SelfClass, ev_int);
-			t = MakeArrayType(t, size);
-			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-		}
-		//  Initialisation
-		else if (TK_Check(PU_ASSIGN))
-		{
-			EmitLocalAddress(localsofs);
-			TType t1 = ParseExpression();
-			t1.CheckMatch(t);
-			if (t1.type == ev_vector)
-				AddStatement(OPC_VAssignDrop);
-			else if (t1.type == ev_pointer || t1.type == ev_reference ||
-				t1.type == ev_classid || t1.type == ev_state)
-				AddStatement(OPC_AssignPtrDrop);
-			else if (t1.type == ev_string)
-				AddStatement(OPC_AssignStrDrop);
-			else
-				AddStatement(OPC_AssignDrop);
-		}
-		localdefs[numlocaldefs].type = t;
-		localdefs[numlocaldefs].ofs = localsofs;
-		//  Increase variable count after expression so you can't use
-		// the variable in expression.
-		numlocaldefs++;
-		localsofs += t.GetSize() / 4;
-		if (localsofs > 1024)
-		{
-			ParseWarning("Local vars > 1k");
-		}
-	} while (TK_Check(PU_COMMA));
-//	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-}
-
-//==========================================================================
-//
 //	ParseCompoundStatement
 //
 //==========================================================================
@@ -601,14 +519,6 @@ static void ParseCompoundStatement()
 	int		num_local_defs_on_start;
 
 	num_local_defs_on_start = numlocaldefs;
-	/*do
-	{
-		TType *type = CheckForType_();
-		if (type)
-		{
-			ParseLocalVar(type);
-		}
-	} while (type);*/
 
 	while (!TK_Check(PU_RBRACE))
 	{

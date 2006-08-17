@@ -507,6 +507,57 @@ void TType::CheckSizeIs4() const
 
 //==========================================================================
 //
+//	TType::CheckSizeIs4
+//
+//  Checks if type size is 4
+//
+//==========================================================================
+
+void TType::CheckSizeIs4(TLocation Loc) const
+{
+	switch (type)
+	{
+	case ev_int:
+	case ev_float:
+	case ev_name:
+	case ev_bool:
+	case ev_string:
+	case ev_pointer:
+	case ev_reference:
+	case ev_classid:
+	case ev_state:
+		break;
+
+	default:
+		ParseError(ERR_EXPR_TYPE_MISTMATCH, "Size is not 4");
+	}
+}
+
+//==========================================================================
+//
+//	TType::EmitToBool
+//
+//==========================================================================
+
+void TType::EmitToBool() const
+{
+	switch (type)
+	{
+	case ev_string:
+		AddStatement(OPC_StrToBool);
+		break;
+
+	case ev_pointer:
+	case ev_reference:
+	case ev_classid:
+	case ev_state:
+		AddStatement(OPC_PtrToBool);
+		break;
+	}
+}
+
+//==========================================================================
+//
 //	TType::CheckMatch
 //
 //	Check, if types are compatible

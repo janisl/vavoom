@@ -48,8 +48,6 @@ static void SkipExpressionPriority13();
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int			numlocaldefs = 1;
-
 static bool			CheckForLocal;
 
 // CODE --------------------------------------------------------------------
@@ -482,7 +480,6 @@ void ParseMethodDef(const TType& t, VName MName, TLocation MethodLoc,
 		t.CheckPassable();
 	}
 
-	numlocaldefs = 1;
 	int localsofs = 1;
 
 	Modifiers = TModifiers::Check(Modifiers, VMethod::AllowedModifiers);
@@ -546,7 +543,6 @@ void ParseMethodDef(const TType& t, VName MName, TLocation MethodLoc,
 		}
    		if (tk_Token == TK_IDENTIFIER)
 		{
-			numlocaldefs++;
 			TK_NextToken();
 		}
 		Func->ParamTypes[Func->NumParams] = type;
@@ -658,8 +654,6 @@ void ParseDelegate(const TType& t, VField* method, VClass* InClass,
 
 VMethod* ParseStateCode(VClass* InClass, VState* InState)
 {
-	numlocaldefs = 1;
-
 	VMethod* Func = new VMethod(NAME_None, InState, InState->Loc);
 	Func->ReturnType = TType(ev_void);
 	Func->ParamsSize = 1;
@@ -677,8 +671,6 @@ VMethod* ParseStateCode(VClass* InClass, VState* InState)
 
 void ParseDefaultProperties(VClass* InClass)
 {
-	numlocaldefs = 1;
-
 	VMethod* Func = new VMethod(NAME_None, InClass, tk_Location);
 	Func->ReturnType = TType(ev_void);
 	Func->ParamsSize = 1;
