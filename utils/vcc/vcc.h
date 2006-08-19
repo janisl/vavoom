@@ -719,4 +719,6 @@ inline bool TK_Check(EPunctuation punct)
 	return false;
 }
 
+#include "expression.h"
+
 #endif

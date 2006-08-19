@@ -99,7 +99,7 @@ SOURCE=..\..\utils\vcc\error.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\utils\vcc\expressn.cpp
+SOURCE=..\..\utils\vcc\expression.cpp
 # End Source File
 # Begin Source File
 
@@ -152,6 +152,10 @@ SOURCE=..\..\utils\vcc\array.h
 # Begin Source File
 
 SOURCE=..\..\utils\common\cmdlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\utils\vcc\expression.h
 # End Source File
 # Begin Source File
 

@@ -14,7 +14,8 @@ ___bin_vcc_SOURCES = \
 	../common/cmdlib.h \
 	constexp.cpp \
 	error.cpp \
-	expressn.cpp \
+	expression.cpp \
+	expression.h \
 	info.cpp \
 	modifiers.cpp \
 	name.cpp \

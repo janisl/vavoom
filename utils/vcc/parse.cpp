@@ -53,6 +53,8 @@ struct continueInfo_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
+static VExpression* ParseExpressionPriority13();
+
 static void 	ParseCompoundStatement();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -68,6 +70,8 @@ VClass*					SelfClass;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static bool				CheckForLocal;
+
 static int				maxlocalsofs = 0;
 static breakInfo_t		BreakInfo[MAX_BREAK];
 static int 				BreakIndex;
@@ -78,6 +82,931 @@ static int				ContinueLevel;
 static TType			FuncRetType;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	EmitPushNumber
+//
+//==========================================================================
+
+void EmitPushNumber(int Val)
+{
+	if (Val == 0)
+		AddStatement(OPC_PushNumber0);
+	else if (Val == 1)
+		AddStatement(OPC_PushNumber1);
+	else if (Val >= 0 && Val < 256)
+		AddStatement(OPC_PushNumberB, Val);
+	else if (Val >= MIN_VINT16 && Val <= MAX_VINT16)
+		AddStatement(OPC_PushNumberS, Val);
+	else
+		AddStatement(OPC_PushNumber, Val);
+}
+
+//==========================================================================
+//
+//	EmitLocalAddress
+//
+//==========================================================================
+
+void EmitLocalAddress(int Ofs)
+{
+	if (Ofs == 0)
+		AddStatement(OPC_LocalAddress0);
+	else if (Ofs == 1)
+		AddStatement(OPC_LocalAddress1);
+	else if (Ofs == 2)
+		AddStatement(OPC_LocalAddress2);
+	else if (Ofs == 3)
+		AddStatement(OPC_LocalAddress3);
+	else if (Ofs == 4)
+		AddStatement(OPC_LocalAddress4);
+	else if (Ofs == 5)
+		AddStatement(OPC_LocalAddress5);
+	else if (Ofs == 6)
+		AddStatement(OPC_LocalAddress6);
+	else if (Ofs == 7)
+		AddStatement(OPC_LocalAddress7);
+	else if (Ofs < 256)
+		AddStatement(OPC_LocalAddressB, Ofs);
+	else if (Ofs < MAX_VINT16)
+		AddStatement(OPC_LocalAddressS, Ofs);
+	else
+		AddStatement(OPC_LocalAddress, Ofs);
+}
+
+//==========================================================================
+//
+//	ParseDotMethodCall
+//
+//==========================================================================
+
+static VExpression* ParseDotMethodCall(VExpression* SelfExpr,
+	VName MethodName, TLocation Loc)
+{
+	VExpression* Args[MAX_ARG_COUNT + 1];
+	int NumArgs = 0;
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			Args[NumArgs] = ParseExpressionPriority13();
+			if (NumArgs == MAX_ARG_COUNT)
+				ParseError(tk_Location, "Too many arguments");
+			else
+				NumArgs++;
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	return new VDotInvocation(SelfExpr, MethodName, Loc, NumArgs, Args);
+}
+
+//==========================================================================
+//
+//	ParseBaseMethodCall
+//
+//==========================================================================
+
+static VExpression* ParseBaseMethodCall(VName Name, TLocation Loc)
+{
+	VExpression* Args[MAX_ARG_COUNT + 1];
+	int NumArgs = 0;
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			Args[NumArgs] = ParseExpressionPriority13();
+			if (NumArgs == MAX_ARG_COUNT)
+				ParseError(tk_Location, "Too many arguments");
+			else
+				NumArgs++;
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	return new VBaseInvocation(Name, NumArgs, Args, Loc);
+}
+
+//==========================================================================
+//
+//	ParseMethodCallOrCast
+//
+//==========================================================================
+
+static VExpression* ParseMethodCallOrCast(VName Name, TLocation Loc)
+{
+	VExpression* Args[MAX_ARG_COUNT + 1];
+	int NumArgs = 0;
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			Args[NumArgs] = ParseExpressionPriority13();
+			if (NumArgs == MAX_ARG_COUNT)
+				ParseError(tk_Location, "Too many arguments");
+			else
+				NumArgs++;
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	return new VCastOrInvocation(Name, Loc, NumArgs, Args);
+}
+
+//==========================================================================
+//
+//	ParseLocalVar
+//
+//==========================================================================
+
+static VLocalDecl* ParseLocalVar(const TType& InType, VName TypeName)
+{
+	VLocalDecl* Decl = new VLocalDecl(tk_Location);
+	do
+	{
+		VLocalEntry e;
+
+		while (TK_Check(PU_ASTERISK))
+		{
+			e.PointerLevel++;
+		}
+		if (tk_Token != TK_IDENTIFIER)
+		{
+			ParseError(tk_Location, "Invalid identifier, variable name expected");
+			continue;
+		}
+		e.Loc = tk_Location;
+		e.Name = tk_Name;
+		TK_NextToken();
+
+		if (TK_Check(PU_LINDEX))
+		{
+			e.ArraySize = EvalConstExpression(SelfClass, ev_int);
+			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+		}
+		//  Initialisation
+		else if (TK_Check(PU_ASSIGN))
+		{
+			e.Value = ParseExpressionPriority13();
+		}
+		Decl->Vars.Append(e);
+	} while (TK_Check(PU_COMMA));
+
+	Decl->BaseType = InType;
+	Decl->TypeName = TypeName;
+	return Decl;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority0
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority0()
+{
+	VName		Name;
+	bool		bLocals;
+	TLocation	Loc;
+
+	bLocals = CheckForLocal;
+	CheckForLocal = false;
+	TLocation l = tk_Location;
+	switch (tk_Token)
+	{
+	case TK_INTEGER:
+		TK_NextToken();
+		return new VIntLiteral(tk_Number, l);
+
+	case TK_FLOAT:
+		TK_NextToken();
+		return new VFloatLiteral(tk_Float, l);
+
+	case TK_NAME:
+		TK_NextToken();
+		return new VNameLiteral(tk_Name, l);
+
+	case TK_STRING:
+		TK_NextToken();
+		return new VStringLiteral(tk_StringI, l);
+
+	case TK_PUNCT:
+		if (TK_Check(PU_LPAREN))
+		{
+			VExpression* op = ParseExpressionPriority13();
+			if (!op)
+			{
+				ParseError(l, "Expression expected");
+			}
+			TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
+			return op;
+		}
+
+		if (TK_Check(PU_DCOLON))
+		{
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError(l, "Method name expected.");
+				break;
+			}
+			Loc = tk_Location;
+			Name = tk_Name;
+			TK_NextToken();
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			return ParseBaseMethodCall(Name, Loc);
+		}
+		break;
+
+	case TK_KEYWORD:
+		if (TK_Check(KW_VECTOR))
+		{
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			VExpression* op1 = ParseExpressionPriority13();
+			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
+			VExpression* op2 = ParseExpressionPriority13();
+			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
+			VExpression* op3 = ParseExpressionPriority13();
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+			return new VVector(op1, op2, op3, l);
+		}
+		if (TK_Check(KW_SELF))
+		{
+			return new VSelf(l);
+		}
+		if (TK_Check(KW_NONE))
+		{
+			return new VNoneLiteral(l);
+		}
+		if (TK_Check(KW_NULL))
+		{
+			return new VNullLiteral(l);
+		}
+		if (TK_Check(KW_TRUE))
+		{
+			return new VIntLiteral(1, l);
+		}
+		if (TK_Check(KW_FALSE))
+		{
+			return new VIntLiteral(0, l);
+		}
+		break;
+
+	case TK_IDENTIFIER:
+		Loc = tk_Location;
+		Name = tk_Name;
+		TK_NextToken();
+		if (TK_Check(PU_LPAREN))
+		{
+			return ParseMethodCallOrCast(Name, Loc);
+		}
+
+		if (TK_Check(PU_DCOLON))
+		{
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+				break;
+			}
+			VName Name2 = tk_Name;
+			TK_NextToken();
+			return new VDoubleName(Name, Name2, Loc);
+		}
+
+		if (bLocals && tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)
+		{
+			return ParseLocalVar(ev_unknown, Name);
+		}
+
+		return new VSingleName(Name, Loc);
+
+	default:
+		break;
+	}
+
+	return NULL;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority1
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority1()
+{
+	VExpression* op = ParseExpressionPriority0();
+	if (!op)
+		return NULL;
+	bool done = false;
+	do
+	{
+		TLocation l = tk_Location;
+
+		if (TK_Check(PU_MINUS_GT))
+		{
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError(tk_Location, "Invalid identifier, field name expacted");
+			}
+			else
+			{
+				op = new VPointerField(op, tk_Name, tk_Location);
+				TK_NextToken();
+			}
+		}
+		else if (TK_Check(PU_DOT))
+		{
+			if (tk_Token != TK_IDENTIFIER)
+			{
+				ParseError(tk_Location, "Invalid identifier, field name expacted");
+			}
+			else
+			{
+				VName FieldName = tk_Name;
+				TLocation Loc = tk_Location;
+				TK_NextToken();
+				if (TK_Check(PU_LPAREN))
+				{
+					op = ParseDotMethodCall(op, FieldName, Loc);
+				}
+				else
+				{
+					op = new VDotField(op, FieldName, Loc);
+				}
+			}
+		}
+		else if (TK_Check(PU_LINDEX))
+		{
+			VExpression* ind = ParseExpressionPriority13();
+			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
+			op = new VArrayElement(op, ind, l);
+		}
+		else
+		{
+			done = true;
+		}
+	} while (!done);
+
+	return op;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority2
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority2()
+{
+	VExpression*	op;
+
+	if (tk_Token == TK_PUNCT)
+	{
+		TLocation l = tk_Location;
+
+		if (TK_Check(PU_PLUS))
+		{
+			op = ParseExpressionPriority2();
+			return new VUnary(PU_PLUS, op, l);
+		}
+
+		if (TK_Check(PU_MINUS))
+		{
+			op = ParseExpressionPriority2();
+			return new VUnary(PU_MINUS, op, l);
+		}
+
+		if (TK_Check(PU_NOT))
+		{
+			op = ParseExpressionPriority2();
+			return new VUnary(PU_NOT, op, l);
+		}
+
+		if (TK_Check(PU_TILDE))
+		{
+			op = ParseExpressionPriority2();
+			return new VUnary(PU_TILDE, op, l);
+		}
+
+		if (TK_Check(PU_AND))
+		{
+			op = ParseExpressionPriority1();
+			return new VUnary(PU_AND, op, l);
+		}
+
+		if (TK_Check(PU_ASTERISK))
+		{
+			op = ParseExpressionPriority2();
+			return new VPushPointed(op);
+		}
+
+		if (TK_Check(PU_INC))
+		{
+			op = ParseExpressionPriority2();
+			return new VUnaryMutator(INCDEC_PreInc, op, l);
+		}
+
+		if (TK_Check(PU_DEC))
+		{
+			op = ParseExpressionPriority2();
+			return new VUnaryMutator(INCDEC_PreDec, op, l);
+		}
+	}
+
+	op = ParseExpressionPriority1();
+	if (!op)
+		return NULL;
+	TLocation l = tk_Location;
+
+	if (TK_Check(PU_INC))
+	{
+		return new VUnaryMutator(INCDEC_PostInc, op, l);
+	}
+
+	if (TK_Check(PU_DEC))
+	{
+		return new VUnaryMutator(INCDEC_PostDec, op, l);
+	}
+
+	return op;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority3
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority3()
+{
+	VExpression* op1 = ParseExpressionPriority2();
+	if (!op1)
+		return NULL;
+	bool done = false;
+	do
+	{
+		TLocation l = tk_Location;
+		if (TK_Check(PU_ASTERISK))
+		{
+			VExpression* op2 = ParseExpressionPriority2();
+			op1 = new VBinary(PU_ASTERISK, op1, op2, l);
+		}
+		else if (TK_Check(PU_SLASH))
+		{
+			VExpression* op2 = ParseExpressionPriority2();
+			op1 = new VBinary(PU_SLASH, op1, op2, l);
+		}
+		else if (TK_Check(PU_PERCENT))
+		{
+			VExpression* op2 = ParseExpressionPriority2();
+			op1 = new VBinary(PU_PERCENT, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority4
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority4()
+{
+	VExpression* op1 = ParseExpressionPriority3();
+	if (!op1)
+		return NULL;
+	bool done = false;
+	do
+	{
+		TLocation l = tk_Location;
+		if (TK_Check(PU_PLUS))
+		{
+			VExpression* op2 = ParseExpressionPriority3();
+			op1 = new VBinary(PU_PLUS, op1, op2, l);
+		}
+		else if (TK_Check(PU_MINUS))
+		{
+			VExpression* op2 = ParseExpressionPriority3();
+			op1 = new VBinary(PU_MINUS, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority5
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority5()
+{
+	VExpression* op1 = ParseExpressionPriority4();
+	if (!op1)
+		return NULL;
+	bool done = false;
+	do
+	{
+		TLocation l = tk_Location;
+		if (TK_Check(PU_LSHIFT))
+		{
+			VExpression* op2 = ParseExpressionPriority4();
+			op1 = new VBinary(PU_LSHIFT, op1, op2, l);
+		}
+		else if (TK_Check(PU_RSHIFT))
+		{
+			VExpression* op2 = ParseExpressionPriority4();
+			op1 = new VBinary(PU_RSHIFT, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority6
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority6()
+{
+	VExpression* op1 = ParseExpressionPriority5();
+	if (!op1)
+		return NULL;
+	bool done = false;
+	do
+	{
+		TLocation l = tk_Location;
+		if (TK_Check(PU_LT))
+		{
+			VExpression* op2 = ParseExpressionPriority5();
+			op1 = new VBinary(PU_LT, op1, op2, l);
+		}
+		else if (TK_Check(PU_LE))
+		{
+			VExpression* op2 = ParseExpressionPriority5();
+			op1 = new VBinary(PU_LE, op1, op2, l);
+		}
+		else if (TK_Check(PU_GT))
+		{
+			VExpression* op2 = ParseExpressionPriority5();
+			op1 = new VBinary(PU_GT, op1, op2, l);
+		}
+		else if (TK_Check(PU_GE))
+		{
+			VExpression* op2 = ParseExpressionPriority5();
+			op1 = new VBinary(PU_GE, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority7
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority7()
+{
+	VExpression* op1 = ParseExpressionPriority6();
+	if (!op1)
+		return NULL;
+	bool done = false;
+	do
+	{
+		TLocation l = tk_Location;
+		if (TK_Check(PU_EQ))
+		{
+			VExpression* op2 = ParseExpressionPriority6();
+			op1 = new VBinary(PU_EQ, op1, op2, l);
+		}
+		else if (TK_Check(PU_NE))
+		{
+			VExpression* op2 = ParseExpressionPriority6();
+			op1 = new VBinary(PU_NE, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	} while (!done);
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority8
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority8()
+{
+	VExpression* op1 = ParseExpressionPriority7();
+	if (!op1)
+		return NULL;
+	TLocation l = tk_Location;
+	while (TK_Check(PU_AND))
+	{
+		VExpression* op2 = ParseExpressionPriority7();
+		op1 = new VBinary(PU_AND, op1, op2, l);
+		l = tk_Location;
+	}
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority9
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority9()
+{
+	VExpression* op1 = ParseExpressionPriority8();
+	if (!op1)
+		return NULL;
+	TLocation l = tk_Location;
+	while (TK_Check(PU_XOR))
+	{
+		VExpression* op2 = ParseExpressionPriority8();
+		op1 = new VBinary(PU_XOR, op1, op2, l);
+		l = tk_Location;
+	}
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority10
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority10()
+{
+	VExpression* op1 = ParseExpressionPriority9();
+	if (!op1)
+		return NULL;
+	TLocation l = tk_Location;
+	while (TK_Check(PU_OR))
+	{
+		VExpression* op2 = ParseExpressionPriority9();
+		op1 = new VBinary(PU_OR, op1, op2, l);
+		l = tk_Location;
+	}
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority11
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority11()
+{
+	VExpression* op1 = ParseExpressionPriority10();
+	if (!op1)
+		return NULL;
+	TLocation l = tk_Location;
+	while (TK_Check(PU_AND_LOG))
+	{
+		VExpression* op2 = ParseExpressionPriority10();
+		op1 = new VBinary(PU_AND_LOG, op1, op2, l);
+		l = tk_Location;
+	}
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority12
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority12()
+{
+	VExpression* op1 = ParseExpressionPriority11();
+	if (!op1)
+		return NULL;
+	TLocation l = tk_Location;
+	while (TK_Check(PU_OR_LOG))
+	{
+		VExpression* op2 = ParseExpressionPriority11();
+		op1 = new VBinary(PU_OR_LOG, op1, op2, l);
+		l = tk_Location;
+	}
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority13
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority13()
+{
+	VExpression* op = ParseExpressionPriority12();
+	if (!op)
+		return NULL;
+	TLocation l = tk_Location;
+	if (TK_Check(PU_QUEST))
+	{
+		VExpression* op1 = ParseExpressionPriority13();
+		TK_Expect(PU_COLON, ERR_MISSING_COLON);
+		VExpression* op2 = ParseExpressionPriority13();
+		op = new VConditional(op, op1, op2, l);
+	}
+	return op;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority14
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority14()
+{
+	VExpression* op1 = ParseExpressionPriority13();
+	if (!op1)
+		return NULL;
+	TLocation l = tk_Location;
+	if (TK_Check(PU_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_ADD_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_ADD_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_MINUS_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_MINUS_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_MULTIPLY_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_MULTIPLY_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_DIVIDE_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_DIVIDE_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_MOD_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_MOD_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_AND_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_AND_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_OR_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_OR_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_XOR_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_XOR_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_LSHIFT_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_LSHIFT_ASSIGN, op1, op2, l);
+	}
+	else if (TK_Check(PU_RSHIFT_ASSIGN))
+	{
+		VExpression* op2 = ParseExpressionPriority13();
+		return new VAssignment(PU_RSHIFT_ASSIGN, op1, op2, l);
+	}
+	return op1;
+}
+
+//==========================================================================
+//
+//	ParseExpression
+//
+//==========================================================================
+
+TType ParseExpression(bool bLocals)
+{
+	if (bLocals && tk_Token == TK_KEYWORD)
+	{
+		TType type = CheckForTypeKeyword();
+		if (type.type != ev_unknown)
+		{
+			VLocalDecl* Decl = ParseLocalVar(type, NAME_None);
+			Decl->Declare();
+			Decl->EmitInitialisations();
+			delete Decl;
+			return ev_void;
+		}
+	}
+
+	CheckForLocal = bLocals;
+	VExpression* op = ParseExpressionPriority14();
+	if (!op)
+	{
+		return ev_void;
+	}
+
+	if (bLocals)
+	{
+		if (op->IsSingleName() && tk_Token == TK_IDENTIFIER)
+		{
+			VLocalDecl* Decl = ParseLocalVar(ev_unknown, ((VSingleName*)op)->Name);
+			delete op;
+			Decl->Declare();
+			Decl->EmitInitialisations();
+			delete Decl;
+			return ev_void;
+		}
+	}
+
+	if (!NumErrors)
+	{
+		op = op->ResolveTopLevel();
+	}
+	if (!op)
+	{
+		return ev_void;
+	}
+	if (!NumErrors)
+	{
+		op->Emit();
+	}
+	TType Ret = op->Type;
+	delete op;
+	return Ret;
+}
+
+//==========================================================================
+//
+//	SkipExpression
+//
+//==========================================================================
+
+void SkipExpression(bool bLocals = false)
+{
+	if (bLocals && tk_Token == TK_KEYWORD)
+	{
+		TType type = CheckForTypeKeyword();
+		if (type.type != ev_unknown)
+		{
+			VLocalDecl* Decl = ParseLocalVar(type, NAME_None);
+			delete Decl;
+			return;
+		}
+	}
+
+	CheckForLocal = bLocals;
+	VExpression* op = ParseExpressionPriority14();
+	if (!op)
+	{
+		return;
+	}
+
+	if (bLocals)
+	{
+		if (op->IsSingleName() && tk_Token == TK_IDENTIFIER)
+		{
+			VLocalDecl* Decl = ParseLocalVar(ev_unknown, ((VSingleName*)op)->Name);
+			delete op;
+			delete Decl;
+			return;
+		}
+	}
+
+	delete op;
+}
 
 //==========================================================================
 //
