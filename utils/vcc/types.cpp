@@ -242,7 +242,7 @@ TType TType::GetArrayInnerType() const
 //
 //==========================================================================
 
-static TType CheckForTypeKeyword()
+TType CheckForTypeKeyword()
 {
 	if (TK_Check(KW_VOID))
 	{
@@ -900,42 +900,27 @@ void CompileClass()
 
 //==========================================================================
 //
-//	ParseStructField
+//	CheckForStructField
 //
 //==========================================================================
 
-VField* ParseStructField(VStruct* InStruct)
+VField* CheckForStructField(VStruct* InStruct, VName FieldName, TLocation Loc)
 {
-	if (!InStruct)
-	{
-		ParseError(ERR_NOT_A_STRUCT, "Base type required.");
-		return NULL;
-	}
 	if (!InStruct->Parsed)
 	{
-		ParseError("Incomplete type.");
-		return NULL;
-	}
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
+		ParseError(Loc, "Incomplete type.");
 		return NULL;
 	}
 	for (VField* fi = InStruct->Fields; fi; fi = fi->Next)
 	{
-		if (TK_Check(fi->Name))
+		if (fi->Name == FieldName)
 		{
 			return fi;
 		}
 	}
 	if (InStruct->ParentStruct)
 	{
-		return ParseStructField(InStruct->ParentStruct);
-	}
-	ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
-	if (tk_Token == TK_IDENTIFIER)
-	{
-		TK_NextToken();
+		return CheckForStructField(InStruct->ParentStruct, FieldName, Loc);
 	}
 	return NULL;
 }

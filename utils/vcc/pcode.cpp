@@ -464,10 +464,7 @@ void EndCode(VMethod* Func)
 #endif
 	FInstruction& Dummy = Func->Instructions.Alloc();
 	Dummy.Opcode = OPC_Done;
-	if ((*Func->Name)[0] == 'S' && (*Func->Name)[1] == 't' && (*Func->Name)[2] == 'r')
-	{
-		DumpAsmFunction(Func);
-	}
+	DumpAsmFunction(Func);
 }
 
 //==========================================================================

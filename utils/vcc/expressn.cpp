@@ -40,19 +40,31 @@ public:
 	TType		RealType;
 	int			Flags;
 	TLocation	Loc;
+	bool		bDidResolve;	//FIXME
 
 	VExpression(const TLocation& ALoc)
 	: Type(ev_void)
 	, RealType(ev_void)
 	, Flags(0)
 	, Loc(ALoc)
+	, bDidResolve(false)
 	{
 	}
 	virtual ~VExpression()
 	{
 	}
-	virtual void EmitCode()
-	{}
+	virtual void EmitCode() = 0;
+	virtual VExpression* DoResolve() = 0;
+	VExpression* Resolve()
+	{
+		if (bDidResolve)
+			return this;
+		VExpression* e = DoResolve();
+		if (e)
+			e->bDidResolve = true;
+		return e;
+	}
+	VExpression* ResolveTopLevel();
 	virtual void RequestAddressOf()
 	{
 		ParseError(Loc, "Bad address operation");
@@ -100,18 +112,23 @@ public:
 			break;
 		}
 	}
+	virtual bool IsSingleName() { return false; }
 };
 
-class VIntConstant : public VExpression
+class VIntLiteral : public VExpression
 {
 public:
 	vint32		Value;
 
-	VIntConstant(vint32 AValue, const TLocation& ALoc)
+	VIntLiteral(vint32 AValue, const TLocation& ALoc)
 	: VExpression(ALoc)
 	, Value(AValue)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = ev_int;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -119,16 +136,20 @@ public:
 	}
 };
 
-class VFloatConstant : public VExpression
+class VFloatLiteral : public VExpression
 {
 public:
 	float		Value;
 
-	VFloatConstant(float AValue, const TLocation& ALoc)
+	VFloatLiteral(float AValue, const TLocation& ALoc)
 	: VExpression(ALoc)
 	, Value(AValue)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = ev_float;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -136,16 +157,20 @@ public:
 	}
 };
 
-class VNameConstant : public VExpression
+class VNameLiteral : public VExpression
 {
 public:
 	VName		Value;
 
-	VNameConstant(VName AValue, const TLocation& ALoc)
+	VNameLiteral(VName AValue, const TLocation& ALoc)
 	: VExpression(ALoc)
 	, Value(AValue)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = ev_name;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -153,16 +178,20 @@ public:
 	}
 };
 
-class VStringConstant : public VExpression
+class VStringLiteral : public VExpression
 {
 public:
 	vint32		Value;
 
-	VStringConstant(vint32 AValue, const TLocation& ALoc)
+	VStringLiteral(vint32 AValue, const TLocation& ALoc)
 	: VExpression(ALoc)
 	, Value(AValue)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = ev_string;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -179,7 +208,11 @@ public:
 	: VExpression(ALoc)
 	, State(AState)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = ev_state;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -196,7 +229,11 @@ public:
 	: VExpression(ALoc)
 	, Class(AClass)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = ev_classid;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -210,11 +247,15 @@ public:
 	VSelf(const TLocation& ALoc)
 	: VExpression(ALoc)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = SelfType;
 		if (!SelfClass)
 		{
 			ParseError(Loc, "self used outside member function\n");
 		}
+		return this;
 	}
 	void EmitCode()
 	{
@@ -223,13 +264,17 @@ public:
 	}
 };
 
-class VNone : public VExpression
+class VNoneLiteral : public VExpression
 {
 public:
-	VNone(const TLocation& ALoc)
+	VNoneLiteral(const TLocation& ALoc)
 	: VExpression(ALoc)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = TType((VClass*)NULL);
+		return this;
 	}
 	void EmitCode()
 	{
@@ -237,13 +282,17 @@ public:
 	}
 };
 
-class VNull : public VExpression
+class VNullLiteral : public VExpression
 {
 public:
-	VNull(const TLocation& ALoc)
+	VNullLiteral(const TLocation& ALoc)
 	: VExpression(ALoc)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = MakePointerType(TType(ev_void));
+		return this;
 	}
 	void EmitCode()
 	{
@@ -260,7 +309,11 @@ public:
 	: VExpression(ALoc)
 	, Const(AConst)
 	{
-		Type = (EType)AConst->Type;
+	}
+	VExpression* DoResolve()
+	{
+		Type = (EType)Const->Type;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -284,9 +337,27 @@ public:
 			ParseError(Loc, "Expression expected");
 			return;
 		}
+	}
+	~VPushPointed()
+	{
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
 		if (op->Type.type != ev_pointer)
 		{
 			ParseError(Loc, "Expression syntax error");
+			delete this;
+			return NULL;
 		}
 		Type = op->Type.GetPointerInnerType();
 		RealType = Type;
@@ -294,11 +365,7 @@ public:
 		{
 			Type = TType(ev_int);
 		}
-	}
-	~VPushPointed()
-	{
-		if (op)
-			delete op;
+		return this;
 	}
 	void RequestAddressOf()
 	{
@@ -334,19 +401,63 @@ public:
 	, op2(AOp2)
 	, op3(AOp3)
 	{
-		Type = ev_vector;
-		if (op1->Type.type != ev_float)
-			ParseError(Loc, "Expression type mistmatch, vector param 1 is not a float");
-		if (op2->Type.type != ev_float)
-			ParseError(Loc, "Expression type mistmatch, vector param 2 is not a float");
-		if (op3->Type.type != ev_float)
-			ParseError(Loc, "Expression type mistmatch, vector param 3 is not a float");
+		if (!op1)
+		{
+			ParseError(Loc, "Expression expected");
+		}
+		if (!op2)
+		{
+			ParseError(Loc, "Expression expected");
+		}
+		if (!op3)
+		{
+			ParseError(Loc, "Expression expected");
+		}
 	}
 	~VVector()
 	{
-		delete op1;
-		delete op2;
-		delete op3;
+		if (op1)
+			delete op1;
+		if (op2)
+			delete op2;
+		if (op3)
+			delete op3;
+	}
+	VExpression* DoResolve()
+	{
+		if (op1)
+			op1 = op1->Resolve();
+		if (op2)
+			op2 = op2->Resolve();
+		if (op3)
+			op3 = op3->Resolve();
+		if (!op1 || !op2 || !op3)
+		{
+			delete this;
+			return NULL;
+		}
+
+		if (op1->Type.type != ev_float)
+		{
+			ParseError(Loc, "Expression type mistmatch, vector param 1 is not a float");
+			delete this;
+			return NULL;
+		}
+		if (op2->Type.type != ev_float)
+		{
+			ParseError(Loc, "Expression type mistmatch, vector param 2 is not a float");
+			delete this;
+			return NULL;
+		}
+		if (op3->Type.type != ev_float)
+		{
+			ParseError(Loc, "Expression type mistmatch, vector param 3 is not a float");
+			delete this;
+			return NULL;
+		}
+
+		Type = ev_vector;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -367,15 +478,30 @@ public:
 	, Class(AClass)
 	, op(AOp)
 	{
-		Type = TType(Class);
-		if (op->Type.type != ev_reference)
-		{
-			ParseError(Loc, "Bad expression, class reference required");
-		}
 	}
 	~VDynamicCast()
 	{
-		delete op;
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
+		if (op->Type.type != ev_reference)
+		{
+			ParseError(Loc, "Bad expression, class reference required");
+			delete this;
+			return NULL;
+		}
+		Type = TType(Class);
+		return this;
 	}
 	void EmitCode()
 	{
@@ -395,12 +521,16 @@ public:
 	, num(ANum)
 	, AddressRequested(false)
 	{
+	}
+	VExpression* DoResolve()
+	{
 		Type = localdefs[num].type;
 		RealType = localdefs[num].type;
 		if (Type.type == ev_bool)
 		{
 			Type = TType(ev_int);
 		}
+		return this;
 	}
 	void RequestAddressOf()
 	{
@@ -431,17 +561,30 @@ public:
 	, field(AField)
 	, AddressRequested(false)
 	{
+		Flags = field->flags | ExtraFlags;
+	}
+	~VFieldAccess()
+	{
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
 		Type = field->type;
 		RealType = field->type;
 		if (Type.type == ev_bool)
 		{
 			Type = TType(ev_int);
 		}
-		Flags = field->flags | ExtraFlags;
-	}
-	~VFieldAccess()
-	{
-		delete op;
+		return this;
 	}
 	void RequestAddressOf()
 	{
@@ -482,9 +625,31 @@ public:
 			ParseError(Loc, "Expression expected");
 			return;
 		}
+	}
+	~VArrayElement()
+	{
+		if (op)
+			delete op;
+		if (ind)
+			delete ind;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (ind)
+			ind = ind->Resolve();
+		if (!op || !ind)
+		{
+			delete this;
+			return NULL;
+		}
+
 		if (ind->Type.type != ev_int)
 		{
 			ParseError(Loc, "Array index must be of integer type");
+			delete this;
+			return NULL;
 		}
 		if (op->Type.type == ev_array)
 		{
@@ -501,6 +666,8 @@ public:
 		else
 		{
 			ParseError(Loc, "Bad operation with array");
+			delete this;
+			return NULL;
 		}
 
 		RealType = Type;
@@ -508,13 +675,7 @@ public:
 		{
 			Type = TType(ev_int);
 		}
-	}
-	~VArrayElement()
-	{
-		if (op)
-			delete op;
-		if (ind)
-			delete ind;
+		return this;
 	}
 	void RequestAddressOf()
 	{
@@ -549,12 +710,25 @@ public:
 	, op(AOp)
 	, M(AM)
 	{
-		Type = ev_delegate;
-		Type.Function = M;
 	}
 	~VDelegateVal()
 	{
-		delete op;
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
+		Type = ev_delegate;
+		Type.Function = M;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -579,6 +753,22 @@ public:
 			ParseError(Loc, "Expression expected");
 			return;
 		}
+	}
+	~VUnary()
+	{
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
 		switch (Oper)
 		{
 		case PU_PLUS:
@@ -586,6 +776,8 @@ public:
 			if (op->Type.type != ev_int && op->Type.type != ev_float)
 			{
 				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
 			}
 			break;
 		case PU_MINUS:
@@ -604,6 +796,8 @@ public:
 			else
 			{
 				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
 			}
 			break;
 		case PU_NOT:
@@ -614,6 +808,8 @@ public:
 			if (op->Type.type != ev_int)
 			{
 				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
 			}
 			Type = ev_int;
 			break;
@@ -621,6 +817,8 @@ public:
 			if (op->Type.type == ev_reference)
 			{
 				ParseError(Loc, "Tried to take address of reference");
+				delete this;
+				return NULL;
 			}
 			else
 			{
@@ -631,11 +829,7 @@ public:
 		default:
 			break;
 		}
-	}
-	~VUnary()
-	{
-		if (op)
-			delete op;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -700,17 +894,31 @@ public:
 			ParseError(Loc, "Expression expected");
 			return;
 		}
-		Type = ev_int;
-		if (op->Type.type != ev_int)
-		{
-			ParseError(Loc, "Expression type mistmatch");
-		}
-		op->RequestAddressOf();
 	}
 	~VUnaryMutator()
 	{
 		if (op)
 			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
+		if (op->Type.type != ev_int)
+		{
+			ParseError(Loc, "Expression type mistmatch");
+			delete this;
+			return NULL;
+		}
+		Type = ev_int;
+		op->RequestAddressOf();
+		return this;
 	}
 	void EmitCode()
 	{
@@ -754,6 +962,26 @@ public:
 			ParseError(Loc, "Expression expected");
 			return;
 		}
+	}
+	~VBinary()
+	{
+		if (op1)
+			delete op1;
+		if (op2)
+			delete op2;
+	}
+	VExpression* DoResolve()
+	{
+		if (op1)
+			op1 = op1->Resolve();
+		if (op2)
+			op2 = op2->Resolve();
+		if (!op1 || !op2)
+		{
+			delete this;
+			return NULL;
+		}
+
 		switch (Oper)
 		{
 		case PU_ASTERISK:
@@ -776,6 +1004,8 @@ public:
 			else
 			{
 				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
 			}
 			break;
 		case PU_SLASH:
@@ -794,6 +1024,8 @@ public:
 			else
 			{
 				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
 			}
 			break;
 		case PU_PLUS:
@@ -813,6 +1045,8 @@ public:
 			else
 			{
 				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
 			}
 			break;
 		case PU_PERCENT:
@@ -828,14 +1062,38 @@ public:
 			else
 			{
 				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
 			}
 			break;
 		case PU_LT:
 		case PU_LE:
 		case PU_GT:
 		case PU_GE:
+			if (!(op1->Type.type == ev_int && op2->Type.type == ev_int) &&
+				!(op1->Type.type == ev_float && op2->Type.type == ev_float))
+			{
+				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
+			}
+			Type = ev_int;
+			break;
 		case PU_EQ:
 		case PU_NE:
+			if (!(op1->Type.type == ev_int && op2->Type.type == ev_int) &&
+				!(op1->Type.type == ev_float && op2->Type.type == ev_float) &&
+				!(op1->Type.type == ev_name && op2->Type.type == ev_name) &&
+				!(op1->Type.type == ev_pointer && op2->Type.type == ev_pointer) &&
+				!(op1->Type.type == ev_vector && op2->Type.type == ev_vector) &&
+				!(op1->Type.type == ev_classid && op2->Type.type == ev_classid) &&
+				!(op1->Type.type == ev_state && op2->Type.type == ev_state) &&
+				!(op1->Type.type == ev_reference && op2->Type.type == ev_reference))
+			{
+				ParseError(Loc, "Expression type mistmatch");
+				delete this;
+				return NULL;
+			}
 			Type = ev_int;
 			break;
 		case PU_AND_LOG:
@@ -847,13 +1105,7 @@ public:
 		default:
 			break;
 		}
-	}
-	~VBinary()
-	{
-		if (op1)
-			delete op1;
-		if (op2)
-			delete op2;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -973,10 +1225,6 @@ public:
 			{
 				AddStatement(OPC_FLess);
 			}
-			else
-			{
-				ParseError(Loc, "Expression type mistmatch");
-			}
 			break;
 
 		case PU_LE:
@@ -987,10 +1235,6 @@ public:
 			else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 			{
 				AddStatement(OPC_FLessEquals);
-			}
-			else
-			{
-				ParseError(Loc, "Expression type mistmatch");
 			}
 			break;
 
@@ -1003,10 +1247,6 @@ public:
 			{
 				AddStatement(OPC_FGreater);
 			}
-			else
-			{
-				ParseError(Loc, "Expression type mistmatch");
-			}
 			break;
 
 		case PU_GE:
@@ -1017,10 +1257,6 @@ public:
 			else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 			{
 				AddStatement(OPC_FGreaterEquals);
-			}
-			else
-			{
-				ParseError(Loc, "Expression type mistmatch");
 			}
 			break;
 
@@ -1057,10 +1293,6 @@ public:
 			{
 				AddStatement(OPC_PtrEquals);
 			}
-			else
-			{
-				ParseError(Loc, "Expression type mistmatch");
-			}
 			break;
 
 		case PU_NE:
@@ -1095,10 +1327,6 @@ public:
 			else if (op1->Type.type == ev_reference && op2->Type.type == ev_reference)
 			{
 				AddStatement(OPC_PtrNotEquals);
-			}
-			else
-			{
-				ParseError(Loc, "Expression type mistmatch");
 			}
 			break;
 
@@ -1164,12 +1392,6 @@ public:
 			ParseError(Loc, "Expression expected");
 			return;
 		}
-		op->Type.CheckSizeIs4(Loc);
-		op1->Type.CheckMatch(op2->Type);
-		if (op1->Type.type == ev_pointer && op1->Type.InnerType == ev_void)
-			Type = op2->Type;
-		else
-			Type = op1->Type;
 	}
 	~VConditional()
 	{
@@ -1179,6 +1401,28 @@ public:
 			delete op1;
 		if (op2)
 			delete op2;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (op1)
+			op1 = op1->Resolve();
+		if (op2)
+			op2 = op2->Resolve();
+		if (!op || !op1 || !op2)
+		{
+			delete this;
+			return NULL;
+		}
+
+		op->Type.CheckSizeIs4(Loc);
+		op1->Type.CheckMatch(op2->Type);
+		if (op1->Type.type == ev_pointer && op1->Type.InnerType == ev_void)
+			Type = op2->Type;
+		else
+			Type = op1->Type;
+		return this;
 	}
 	void EmitCode()
 	{
@@ -1211,8 +1455,6 @@ public:
 			ParseError(Loc, "Expression required on the right side of assignment operator");
 			return;
 		}
-		op2->Type.CheckMatch(op1->RealType);
-		op1->RequestAddressOf();
 	}
 	~VAssignment()
 	{
@@ -1220,6 +1462,22 @@ public:
 			delete op1;
 		if (op2)
 			delete op2;
+	}
+	VExpression* DoResolve()
+	{
+		if (op1)
+			op1 = op1->Resolve();
+		if (op2)
+			op2 = op2->Resolve();
+		if (!op1 || !op2)
+		{
+			delete this;
+			return NULL;
+		}
+
+		op2->Type.CheckMatch(op1->RealType);
+		op1->RequestAddressOf();
+		return this;
 	}
 	void EmitCode()
 	{
@@ -1458,18 +1716,18 @@ public:
 	VExpression*	Args[MAX_ARG_COUNT + 1];
 
 	VInvocation(VExpression* ASelfExpr, VMethod* AFunc, VField* ADelegateField,
-		bool AHaveSelf, bool ABaseCall, const TLocation& ALoc)
+		bool AHaveSelf, bool ABaseCall, const TLocation& ALoc, int ANumArgs,
+		VExpression** AArgs)
 	: VExpression(ALoc)
 	, SelfExpr(ASelfExpr)
 	, Func(AFunc)
 	, DelegateField(ADelegateField)
 	, HaveSelf(AHaveSelf)
 	, BaseCall(ABaseCall)
-	, NumArgs(0)
+	, NumArgs(ANumArgs)
 	{
-		Type  = Func->ReturnType;
-		if (Type.type == ev_bool)
-			Type = TType(ev_int);
+		for (int i = 0; i < NumArgs; i++)
+			Args[i] = AArgs[i];
 	}
 	~VInvocation()
 	{
@@ -1477,6 +1735,38 @@ public:
 			delete SelfExpr;
 		for (int i = 0; i < NumArgs; i++)
 			delete Args[i];
+	}
+	VExpression* DoResolve()
+	{
+		//	Resolve self expression if present.
+		if (SelfExpr)
+		{
+			SelfExpr = SelfExpr->Resolve();
+			if (!SelfExpr)
+			{
+				delete this;
+				return NULL;
+			}
+		}
+
+		//	Resolve arguments
+		for (int i = 0; i < NumArgs; i++)
+		{
+			if (Args[i])
+				Args[i] = Args[i]->Resolve();
+			if (!Args[i])
+			{
+				delete this;
+				return NULL;
+			}
+		}
+
+		CheckParams();
+
+		Type  = Func->ReturnType;
+		if (Type.type == ev_bool)
+			Type = TType(ev_int);
+		return this;
 	}
 	void EmitCode()
 	{
@@ -1569,7 +1859,7 @@ public:
 
 		if (Func->Flags & FUNC_VarArgs)
 		{
-			Args[NumArgs++] = new VIntConstant(argsize / 4 - num_needed_params, Loc);
+			Args[NumArgs++] = new VIntLiteral(argsize / 4 - num_needed_params, Loc);
 		}
 	}
 };
@@ -1588,13 +1878,594 @@ public:
 	}
 	~VDelegateToBool()
 	{
-		delete op;
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		return this;
 	}
 	void EmitCode()
 	{
 		op->EmitCode();
 		AddStatement(OPC_PushPointedPtr);
 		AddStatement(OPC_PtrToBool);
+	}
+};
+
+class VBaseInvocation : public VExpression
+{
+public:
+	VName			Name;
+	int				NumArgs;
+	VExpression*	Args[MAX_ARG_COUNT + 1];
+
+	VBaseInvocation(VName AName, int ANumArgs, VExpression** AArgs,
+		const TLocation& ALoc)
+	: VExpression(ALoc)
+	, Name(AName)
+	, NumArgs(ANumArgs)
+	{
+		for (int i = 0; i < NumArgs; i++)
+			Args[i] = AArgs[i];
+	}
+	~VBaseInvocation()
+	{
+		for (int i = 0; i < NumArgs; i++)
+			delete Args[i];
+	}
+	VExpression* DoResolve()
+	{
+		if (!SelfClass)
+		{
+			ParseError(Loc, ":: not in method");
+			delete this;
+			return NULL;
+		}
+		VMethod* Func = CheckForMethod(Name, SelfClass->ParentClass);
+		if (!Func)
+		{
+			ParseError(Loc, "No such method %s", *Name);
+			delete this;
+			return NULL;
+		}
+
+		VExpression* e = new VInvocation(NULL, Func, NULL, false,
+			true, Loc, NumArgs, Args);
+		NumArgs = 0;
+		delete this;
+		return e->Resolve();
+	}
+	void EmitCode()
+	{
+		ParseError(Loc, "Should not happen");
+	}
+};
+
+class VCastOrInvocation : public VExpression
+{
+public:
+	VName			Name;
+	int				NumArgs;
+	VExpression*	Args[MAX_ARG_COUNT + 1];
+
+	VCastOrInvocation(VName AName, const TLocation& ALoc, int ANumArgs,
+		VExpression** AArgs)
+	: VExpression(ALoc)
+	, Name(AName)
+	, NumArgs(ANumArgs)
+	{
+		for (int i = 0; i < NumArgs; i++)
+			Args[i] = AArgs[i];
+	}
+	~VCastOrInvocation()
+	{
+		for (int i = 0; i < NumArgs; i++)
+			delete Args[i];
+	}
+	VExpression* DoResolve()
+	{
+		VClass* Class = CheckForClass(Name);
+		if (Class)
+		{
+			if (NumArgs != 1 || !Args[0])
+			{
+				ParseError(Loc, "Dynamic cast requires 1 argument");
+				delete this;
+				return NULL;
+			}
+			VExpression* e = new VDynamicCast(Class, Args[0], Loc);
+			NumArgs = 0;
+			delete this;
+			return e->Resolve();
+		}
+
+		if (SelfClass)
+		{
+			VMethod* M = CheckForMethod(Name, SelfClass);
+			if (M)
+			{
+				VExpression* e = new VInvocation(NULL, M, NULL,
+					false, false, Loc, NumArgs, Args);
+				NumArgs = 0;
+				delete this;
+				return e->Resolve();
+			}
+			VField* field = CheckForField(Name, SelfClass);
+			if (field && field->type.type == ev_delegate)
+			{
+				VExpression* e = new VInvocation(NULL, field->func, field,
+					false, false, Loc, NumArgs, Args);
+				NumArgs = 0;
+				delete this;
+				return e->Resolve();
+			}
+		}
+
+		ParseError(Loc, "Unknown method %s", *Name);
+		delete this;
+		return NULL;
+	}
+	void EmitCode()
+	{
+		ParseError(Loc, "Should not happen");
+	}
+};
+
+class VDotInvocation : public VExpression
+{
+public:
+	VExpression*	SelfExpr;
+	VName			MethodName;
+	int				NumArgs;
+	VExpression*	Args[MAX_ARG_COUNT + 1];
+
+	VDotInvocation(VExpression* ASelfExpr, VName AMethodName,
+		const TLocation& ALoc, int ANumArgs, VExpression** AArgs)
+	: VExpression(ALoc)
+	, SelfExpr(ASelfExpr)
+	, MethodName(AMethodName)
+	, NumArgs(ANumArgs)
+	{
+		for (int i = 0; i < NumArgs; i++)
+			Args[i] = AArgs[i];
+	}
+	~VDotInvocation()
+	{
+		if (SelfExpr)
+			delete SelfExpr;
+		for (int i = 0; i < NumArgs; i++)
+			delete Args[i];
+	}
+	VExpression* DoResolve()
+	{
+		if (SelfExpr)
+			SelfExpr = SelfExpr->Resolve();
+		if (!SelfExpr)
+		{
+			delete this;
+			return NULL;
+		}
+
+		if (SelfExpr->Type.type != ev_reference)
+		{
+			ParseError(Loc, "Object reference expected left side of .");
+		}
+
+		VMethod* M = CheckForMethod(MethodName, SelfExpr->Type.Class);
+		if (M)
+		{
+			VExpression* e = new VInvocation(SelfExpr, M, NULL, true,
+				false, Loc, NumArgs, Args);
+			SelfExpr = NULL;
+			NumArgs = 0;
+			delete this;
+			return e->Resolve();
+		}
+
+		VField* field = CheckForField(MethodName, SelfExpr->Type.Class);
+		if (field && field->type.type == ev_delegate)
+		{
+			VExpression* e = new VInvocation(SelfExpr, field->func, field, true,
+				false, Loc, NumArgs, Args);
+			SelfExpr = NULL;
+			NumArgs = 0;
+			delete this;
+			return e->Resolve();
+		}
+
+		ParseError(Loc, "No such method %s", *MethodName);
+		delete this;
+		return NULL;
+	}
+	void EmitCode()
+	{
+		ParseError(Loc, "Should not happen");
+	}
+};
+
+class VSingleName : public VExpression
+{
+public:
+	VName			Name;
+
+	VSingleName(VName AName, const TLocation& ALoc)
+	: VExpression(ALoc)
+	, Name(AName)
+	{
+	}
+	VExpression* DoResolve()
+	{
+		int num = CheckForLocalVar(Name);
+		if (num)
+		{
+			VExpression* e = new VLocalVar(num, Loc);
+			delete this;
+			return e->Resolve();
+		}
+
+		VConstant* Const = CheckForConstant(SelfClass, Name);
+		if (Const)
+		{
+			VExpression* e = new VConstantValue(Const, Loc);
+			delete this;
+			return e->Resolve();
+		}
+
+		if (SelfClass)
+		{
+			VMethod* M = CheckForMethod(Name, SelfClass);
+			if (M)
+			{
+				VExpression* e = new VDelegateVal(new VSelf(Loc), M, Loc);
+				delete this;
+				return e->Resolve();
+			}
+
+			VField* field = CheckForField(Name, SelfClass);
+			if (field)
+			{
+				VExpression* e = new VFieldAccess(new VSelf(Loc), field, Loc, 0);
+				delete this;
+				return e->Resolve();
+			}
+
+			VState* State = CheckForState(Name, SelfClass);
+			if (State)
+			{
+				VExpression* e = new VStateConstant(State, Loc);
+				delete this;
+				return e->Resolve();
+			}
+		}
+
+		VClass* Class = CheckForClass(Name);
+		if (Class)
+		{
+			VExpression* e = new VClassConstant(Class, Loc);
+			delete this;
+			return e->Resolve();
+		}
+
+		ParseError(Loc, "Illegal expression identifier %s", *Name);
+		delete this;
+		return NULL;
+	}
+	void EmitCode()
+	{
+		ParseError(Loc, "Should not happen");
+	}
+	bool IsSingleName() { return true; }
+};
+
+class VDoubleName : public VExpression
+{
+public:
+	VName			Name1;
+	VName			Name2;
+
+	VDoubleName(VName AName1, VName AName2, const TLocation& ALoc)
+	: VExpression(ALoc)
+	, Name1(AName1)
+	, Name2(AName2)
+	{
+	}
+	VExpression* DoResolve()
+	{
+		VClass* Class = CheckForClass(Name1);
+		if (!Class)
+		{
+			ParseError("No such class %s", *Name1);
+			delete this;
+			return NULL;
+		}
+
+		VConstant* Const = CheckForConstant(Class, Name2);
+		if (Const)
+		{
+			VExpression* e = new VConstantValue(Const, Loc);
+			delete this;
+			return e->Resolve();
+		}
+
+		VState* State = CheckForState(Name2, Class);
+		if (State)
+		{
+			VExpression* e = new VStateConstant(State, Loc);
+			delete this;
+			return e->Resolve();
+		}
+
+		ParseError(Loc, "No such constant or state %s", *Name2);
+		delete this;
+		return NULL;
+	}
+	void EmitCode()
+	{
+		ParseError(Loc, "Should not happen");
+	}
+	bool IsSingleName() { return true; }
+};
+
+class VPointerField : public VExpression
+{
+public:
+	VExpression*		op;
+	VName				FieldName;
+
+	VPointerField(VExpression* AOp, VName AFieldName, const TLocation& ALoc)
+	: VExpression(ALoc)
+	, op(AOp)
+	, FieldName(AFieldName)
+	{
+	}
+	~VPointerField()
+	{
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
+		if (op->Type.type != ev_pointer)
+		{
+			ParseError(Loc, "Pointer type required on left side of ->");
+			delete this;
+			return NULL;
+		}
+		TType type = op->Type.GetPointerInnerType();
+		if (!type.Struct)
+		{
+			ParseError(Loc, "Not a structure type");
+			delete this;
+			return NULL;
+		}
+		VField* field = CheckForStructField(type.Struct, FieldName, Loc);
+		if (!field)
+		{
+			ParseError(Loc, "No such field %s", *FieldName);
+			delete this;
+			return NULL;
+		}
+		VExpression* e = new VFieldAccess(op, field, Loc, 0);
+		op = NULL;
+		delete this;
+		return e->Resolve();
+	}
+	void EmitCode()
+	{
+		ParseError(Loc, "Should not happen");
+	}
+};
+
+class VDotField : public VExpression
+{
+public:
+	VExpression*		op;
+	VName				FieldName;
+
+	VDotField(VExpression* AOp, VName AFieldName, const TLocation& ALoc)
+	: VExpression(ALoc)
+	, op(AOp)
+	, FieldName(AFieldName)
+	{
+	}
+	~VDotField()
+	{
+		if (op)
+			delete op;
+	}
+	VExpression* DoResolve()
+	{
+		if (op)
+			op = op->Resolve();
+		if (!op)
+		{
+			delete this;
+			return NULL;
+		}
+
+		if (op->Type.type == ev_reference)
+		{
+			VMethod* M = CheckForMethod(FieldName, op->Type.Class);
+			if (M)
+			{
+				VExpression* e = new VDelegateVal(op, M, Loc);
+				op = NULL;
+				delete this;
+				return e->Resolve();
+			}
+			else
+			{
+				VField* field = CheckForField(FieldName, op->Type.Class);
+				if (!field)
+				{
+					ParseError(Loc, "No such field %s", *FieldName);
+					delete this;
+					return NULL;
+				}
+				VExpression* e = new VFieldAccess(op, field, Loc, 0);
+				op = NULL;
+				delete this;
+				return e->Resolve();
+			}
+		}
+		else if (op->Type.type == ev_struct || op->Type.type == ev_vector)
+		{
+			TType type = op->Type;
+			int Flags = op->Flags;
+			op->Flags &= ~FIELD_ReadOnly;
+			op->RequestAddressOf();
+			VField* field = CheckForStructField(type.Struct, FieldName, Loc);
+			if (!field)
+			{
+				ParseError(Loc, "No such field %s", *FieldName);
+				delete this;
+				return NULL;
+			}
+			VExpression* e = new VFieldAccess(op, field, Loc, Flags & FIELD_ReadOnly);
+			op = NULL;
+			delete this;
+			return e->Resolve();
+		}
+		ParseError(Loc, "Reference, struc or vector expected on left side of .");
+		delete this;
+		return NULL;
+	}
+	void EmitCode()
+	{
+		ParseError(Loc, "Should not happen");
+	}
+};
+
+class VLocalEntry
+{
+public:
+	VName			Name;
+	TLocation		Loc;
+	VExpression*	Value;
+	int				PointerLevel;
+	int				ArraySize;
+
+	VLocalEntry()
+	: Name(NAME_None)
+	, Value(NULL)
+	, PointerLevel(0)
+	, ArraySize(-1)
+	{}
+};
+
+class VLocalDecl : public VExpression
+{
+public:
+	TType				BaseType;
+	VName				TypeName;
+	TArray<VLocalEntry>	Vars;
+
+	VLocalDecl(const TLocation& ALoc)
+	: VExpression(ALoc)
+	{
+	}
+	~VLocalDecl()
+	{
+		for (int i = 0; i < Vars.Num(); i++)
+		{
+			if (Vars[i].Value)
+			{
+				delete Vars[i].Value;
+			}
+		}
+	}
+
+	VExpression* DoResolve()
+	{
+		Declare();
+		return this;
+	}
+	void EmitCode()
+	{
+		EmitInitialisations();
+	}
+
+	void Declare()
+	{
+		if (BaseType.type == ev_unknown)
+		{
+			BaseType = CheckForType(SelfClass, TypeName);
+			if (BaseType.type == ev_unknown)
+			{
+				ParseError(tk_Location, "Invalid identifier, bad type");
+				return;
+			}
+		}
+
+		for (int i = 0; i < Vars.Num(); i++)
+		{
+			VLocalEntry& e = Vars[i];
+
+			if (CheckForLocalVar(e.Name))
+			{
+				ParseError(e.Loc, "Redefined identifier %s", *e.Name);
+			}
+
+			TType Type = BaseType;
+			for (int pl = 0; pl < e.PointerLevel; pl++)
+			{
+				Type = MakePointerType(Type);
+			}
+			if (Type.type == ev_void)
+			{
+				ParseError(e.Loc, "Bad variable type");
+			}
+			if (e.ArraySize != -1)
+			{
+				Type = MakeArrayType(Type, e.ArraySize);
+			}
+
+			if (numlocaldefs == MAX_LOCAL_DEFS)
+			{
+				ParseError(e.Loc, "Too many local variables");
+				continue;
+			}
+
+			localdefs[numlocaldefs].Name = e.Name;
+			localdefs[numlocaldefs].type = Type;
+			localdefs[numlocaldefs].ofs = localsofs;
+
+			//  Initialisation
+			if (e.Value)
+			{
+				VExpression* op1 = new VLocalVar(numlocaldefs, tk_Location);
+				e.Value = new VAssignment(PU_ASSIGN, op1, e.Value, tk_Location);
+				e.Value = e.Value->Resolve();
+			}
+
+			//  Increase variable count after expression so you can't use
+			// the variable in expression.
+			numlocaldefs++;
+			localsofs += Type.GetSize() / 4;
+			if (localsofs > 1024)
+			{
+				ParseWarning("Local vars > 1k");
+			}
+		}
+	}
+	void EmitInitialisations()
+	{
+		for (int i = 0; i < Vars.Num(); i++)
+		{
+			if (Vars[i].Value)
+			{
+				Vars[i].Value->EmitCode();
+			}
+		}
 	}
 };
 
@@ -1615,6 +2486,22 @@ static VExpression* ParseExpressionPriority13();
 static bool			CheckForLocal;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VExpression::ResolveTopLevel
+//
+//==========================================================================
+
+VExpression* VExpression::ResolveTopLevel()
+{
+	VExpression* e = Resolve();
+	if (e && e->Type.type == ev_delegate)
+	{
+		e = new VDelegateToBool(e);
+	}
+	return e;
+}
 
 //==========================================================================
 //
@@ -1670,28 +2557,78 @@ void EmitLocalAddress(int Ofs)
 
 //==========================================================================
 //
-//	ParseMethodCall
+//	ParseDotMethodCall
 //
 //==========================================================================
 
-static VExpression* ParseMethodCall(VExpression* SelfExpr, VMethod* Func,
-	VField* DelegateField, bool HaveSelf, bool BaseCall, TLocation Loc)
+static VExpression* ParseDotMethodCall(VExpression* SelfExpr,
+	VName MethodName, TLocation Loc)
 {
-	VInvocation* FExpr = new VInvocation(SelfExpr, Func,
-		DelegateField, HaveSelf, BaseCall, Loc);
-
-	FExpr->NumArgs = 0;
+	VExpression* Args[MAX_ARG_COUNT + 1];
+	int NumArgs = 0;
 	if (!TK_Check(PU_RPAREN))
 	{
 		do
 		{
-			FExpr->Args[FExpr->NumArgs] = ParseExpressionPriority13();
-			FExpr->NumArgs++;
+			Args[NumArgs] = ParseExpressionPriority13();
+			if (NumArgs == MAX_ARG_COUNT)
+				ParseError(tk_Location, "Too many arguments");
+			else
+				NumArgs++;
 		} while (TK_Check(PU_COMMA));
 		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 	}
-	FExpr->CheckParams();
-	return FExpr;
+	return new VDotInvocation(SelfExpr, MethodName, Loc, NumArgs, Args);
+}
+
+//==========================================================================
+//
+//	ParseBaseMethodCall
+//
+//==========================================================================
+
+static VExpression* ParseBaseMethodCall(VName Name, TLocation Loc)
+{
+	VExpression* Args[MAX_ARG_COUNT + 1];
+	int NumArgs = 0;
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			Args[NumArgs] = ParseExpressionPriority13();
+			if (NumArgs == MAX_ARG_COUNT)
+				ParseError(tk_Location, "Too many arguments");
+			else
+				NumArgs++;
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	return new VBaseInvocation(Name, NumArgs, Args, Loc);
+}
+
+//==========================================================================
+//
+//	ParseMethodCallOrCast
+//
+//==========================================================================
+
+static VExpression* ParseMethodCallOrCast(VName Name, TLocation Loc)
+{
+	VExpression* Args[MAX_ARG_COUNT + 1];
+	int NumArgs = 0;
+	if (!TK_Check(PU_RPAREN))
+	{
+		do
+		{
+			Args[NumArgs] = ParseExpressionPriority13();
+			if (NumArgs == MAX_ARG_COUNT)
+				ParseError(tk_Location, "Too many arguments");
+			else
+				NumArgs++;
+		} while (TK_Check(PU_COMMA));
+		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	}
+	return new VCastOrInvocation(Name, Loc, NumArgs, Args);
 }
 
 //==========================================================================
@@ -1700,74 +2637,42 @@ static VExpression* ParseMethodCall(VExpression* SelfExpr, VMethod* Func,
 //
 //==========================================================================
 
-static void ParseLocalVar(const TType& type)
+static VLocalDecl* ParseLocalVar(const TType& InType, VName TypeName)
 {
-	TType	t;
-	int		size;
-
-	if (type.type == ev_unknown)
-	{
-		ParseError(tk_Location, "Invalid identifier, bad type");
-		return;
-	}
+	VLocalDecl* Decl = new VLocalDecl(tk_Location);
 	do
 	{
-		t = type;
+		VLocalEntry e;
+
 		while (TK_Check(PU_ASTERISK))
 		{
-			t = MakePointerType(t);
-		}
-		if (t.type == ev_void)
-		{
-			ParseError(tk_Location, "Bad variable type");
+			e.PointerLevel++;
 		}
 		if (tk_Token != TK_IDENTIFIER)
 		{
 			ParseError(tk_Location, "Invalid identifier, variable name expected");
 			continue;
 		}
-		if (numlocaldefs == MAX_LOCAL_DEFS)
-		{
-			ParseError(ERR_LOCALS_OVERFLOW);
-			continue;
-		}
-		localdefs[numlocaldefs].Name = tk_Name;
-
-		if (CheckForLocalVar(tk_Name))
-		{
-			ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Identifier: %s", *tk_Name);
-		}
+		e.Loc = tk_Location;
+		e.Name = tk_Name;
 		TK_NextToken();
 
-		size = 1;
-		localdefs[numlocaldefs].type = t;
-		localdefs[numlocaldefs].ofs = localsofs;
 		if (TK_Check(PU_LINDEX))
 		{
-			size = EvalConstExpression(SelfClass, ev_int);
-			t = MakeArrayType(t, size);
+			e.ArraySize = EvalConstExpression(SelfClass, ev_int);
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-			localdefs[numlocaldefs].type = t;
 		}
 		//  Initialisation
 		else if (TK_Check(PU_ASSIGN))
 		{
-			VExpression* op1 = new VLocalVar(numlocaldefs, tk_Location);
-			VExpression* op2 = ParseExpressionPriority13();
-			VExpression* op = new VAssignment(PU_ASSIGN, op1, op2, tk_Location);
-			op->EmitCode();
-			delete op;
+			e.Value = ParseExpressionPriority13();
 		}
-		//  Increase variable count after expression so you can't use
-		// the variable in expression.
-		numlocaldefs++;
-		localsofs += t.GetSize() / 4;
-		if (localsofs > 1024)
-		{
-			ParseWarning("Local vars > 1k");
-		}
+		Decl->Vars.Append(e);
 	} while (TK_Check(PU_COMMA));
-//	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+
+	Decl->BaseType = InType;
+	Decl->TypeName = TypeName;
+	return Decl;
 }
 
 //==========================================================================
@@ -1778,13 +2683,8 @@ static void ParseLocalVar(const TType& type)
 
 static VExpression* ParseExpressionPriority0()
 {
-	int			num;
-	VField*		field;
 	VName		Name;
 	bool		bLocals;
-	VClass*		Class;
-	VConstant*	Const;
-	VState*		State;
 	TLocation	Loc;
 
 	bLocals = CheckForLocal;
@@ -1794,19 +2694,19 @@ static VExpression* ParseExpressionPriority0()
 	{
 	case TK_INTEGER:
 		TK_NextToken();
-		return new VIntConstant(tk_Number, l);
+		return new VIntLiteral(tk_Number, l);
 
 	case TK_FLOAT:
 		TK_NextToken();
-		return new VFloatConstant(tk_Float, l);
+		return new VFloatLiteral(tk_Float, l);
 
 	case TK_NAME:
 		TK_NextToken();
-		return new VNameConstant(tk_Name, l);
+		return new VNameLiteral(tk_Name, l);
 
 	case TK_STRING:
 		TK_NextToken();
-		return new VStringConstant(tk_StringI, l);
+		return new VStringLiteral(tk_StringI, l);
 
 	case TK_PUNCT:
 		if (TK_Check(PU_LPAREN))
@@ -1815,7 +2715,6 @@ static VExpression* ParseExpressionPriority0()
 			if (!op)
 			{
 				ParseError(l, "Expression expected");
-				return NULL;
 			}
 			TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
 			return op;
@@ -1823,25 +2722,16 @@ static VExpression* ParseExpressionPriority0()
 
 		if (TK_Check(PU_DCOLON))
 		{
-			if (!SelfClass)
-			{
-				ParseError(l, ":: not in method");
-				break;
-			}
 			if (tk_Token != TK_IDENTIFIER)
 			{
 				ParseError(l, "Method name expected.");
 				break;
 			}
-			VMethod* M = CheckForMethod(tk_Name, SelfClass->ParentClass);
-			if (!M)
-			{
-				ParseError(l, "No such method %s", *tk_Name);
-				break;
-			}
+			Loc = tk_Location;
+			Name = tk_Name;
 			TK_NextToken();
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			return ParseMethodCall(NULL, M, NULL, false, true, l);
+			return ParseBaseMethodCall(Name, Loc);
 		}
 		break;
 
@@ -1850,28 +2740,10 @@ static VExpression* ParseExpressionPriority0()
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
 			VExpression* op1 = ParseExpressionPriority13();
-			if (!op1)
-			{
-				ParseError(l, "Expression expected");
-				return NULL;
-			}
 			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
 			VExpression* op2 = ParseExpressionPriority13();
-			if (!op2)
-			{
-				ParseError(l, "Expression expected");
-				delete op1;
-				return NULL;
-			}
 			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
 			VExpression* op3 = ParseExpressionPriority13();
-			if (!op3)
-			{
-				ParseError(l, "Expression expected");
-				delete op1;
-				delete op2;
-				return NULL;
-			}
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 			return new VVector(op1, op2, op3, l);
 		}
@@ -1881,28 +2753,19 @@ static VExpression* ParseExpressionPriority0()
 		}
 		if (TK_Check(KW_NONE))
 		{
-			return new VNone(l);
+			return new VNoneLiteral(l);
 		}
 		if (TK_Check(KW_NULL))
 		{
-			return new VNull(l);
+			return new VNullLiteral(l);
 		}
 		if (TK_Check(KW_TRUE))
 		{
-			return new VIntConstant(1, l);
+			return new VIntLiteral(1, l);
 		}
 		if (TK_Check(KW_FALSE))
 		{
-			return new VIntConstant(0, l);
-		}
-		if (bLocals)
-		{
-			TType type = CheckForType(SelfClass);
-			if (type.type != ev_unknown)
-			{
-				ParseLocalVar(type);
-				return NULL;
-			}
+			return new VIntLiteral(0, l);
 		}
 		break;
 
@@ -1910,122 +2773,29 @@ static VExpression* ParseExpressionPriority0()
 		Loc = tk_Location;
 		Name = tk_Name;
 		TK_NextToken();
-		l = tk_Location;
 		if (TK_Check(PU_LPAREN))
 		{
-			VClass* Class = CheckForClass(Name);
-			if (Class)
-			{
-				VExpression* op = ParseExpressionPriority13();
-				if (!op)
-				{
-					ParseError(l, "Expression expected");
-					return NULL;
-				}
-				TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
-				return new VDynamicCast(Class, op, Loc);
-			}
-
-			if (SelfClass)
-			{
-				VMethod* M = CheckForMethod(Name, SelfClass);
-				if (M)
-				{
-					return ParseMethodCall(NULL, M, NULL, false, false, Loc);
-				}
-				field = CheckForField(Name, SelfClass);
-				if (field && field->type.type == ev_delegate)
-				{
-					return ParseMethodCall(NULL, field->func, field, false, false, Loc);
-				}
-			}
-
-			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", *Name);
-			break;
+			return ParseMethodCallOrCast(Name, Loc);
 		}
 
 		if (TK_Check(PU_DCOLON))
 		{
-			VClass* Class = CheckForClass(Name);
-			if (!Class)
+			if (tk_Token != TK_IDENTIFIER)
 			{
-				ParseError("Class name expected");
+				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
 				break;
 			}
-
-			if (tk_Token == TK_IDENTIFIER)
-			{
-				Const = CheckForConstant(Class, tk_Name);
-				if (Const)
-				{
-					TK_NextToken();
-					return new VConstantValue(Const, l);
-				}
-
-				State = CheckForState(tk_Name, Class);
-				if (State)
-				{
-					TK_NextToken();
-					return new VStateConstant(State, l);
-				}
-			}
-
-			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
-			break;
+			VName Name2 = tk_Name;
+			TK_NextToken();
+			return new VDoubleName(Name, Name2, Loc);
 		}
 
-		if (bLocals && (tk_Token == TK_IDENTIFIER ||
-			(tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)))
+		if (bLocals && tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)
 		{
-			TType type = CheckForType(SelfClass, Name);
-			if (type.type != ev_unknown)
-			{
-				ParseLocalVar(type);
-				return NULL;
-			}
+			return ParseLocalVar(ev_unknown, Name);
 		}
 
-		num = CheckForLocalVar(Name);
-		if (num)
-		{
-			return new VLocalVar(num, Loc);
-		}
-
-		Const = CheckForConstant(SelfClass, Name);
-		if (Const)
-		{
-			return new VConstantValue(Const, Loc);
-		}
-
-		if (SelfClass)
-		{
-			VMethod* M = CheckForMethod(Name, SelfClass);
-			if (M)
-			{
-				return new VDelegateVal(new VSelf(Loc), M, Loc);
-			}
-
-			field = CheckForField(Name, SelfClass);
-			if (field)
-			{
-				return new VFieldAccess(new VSelf(Loc), field, Loc, 0);
-			}
-
-			State = CheckForState(Name, SelfClass);
-			if (State)
-			{
-				return new VStateConstant(State, Loc);
-			}
-		}
-
-		Class = CheckForClass(Name);
-		if (Class)
-		{
-			return new VClassConstant(Class, Loc);
-		}
-
-		ERR_Exit(ERR_ILLEGAL_EXPR_IDENT, true, "Identifier: %s", *Name);
-		break;
+		return new VSingleName(Name, Loc);
 
 	default:
 		break;
@@ -2042,98 +2812,45 @@ static VExpression* ParseExpressionPriority0()
 
 static VExpression* ParseExpressionPriority1()
 {
-	bool		done;
-	TType		type;
-	VField*	field;
-
 	VExpression* op = ParseExpressionPriority0();
 	if (!op)
 		return NULL;
-	done = false;
+	bool done = false;
 	do
 	{
 		TLocation l = tk_Location;
 
 		if (TK_Check(PU_MINUS_GT))
 		{
-			if (op->Type.type != ev_pointer)
+			if (tk_Token != TK_IDENTIFIER)
 			{
-				ERR_Exit(ERR_BAD_EXPR, true, NULL);
+				ParseError(tk_Location, "Invalid identifier, field name expacted");
 			}
-			type = op->Type.GetPointerInnerType();
-			field = ParseStructField(type.Struct);
-			if (field)
+			else
 			{
-				op = new VFieldAccess(op, field, l, 0);
+				op = new VPointerField(op, tk_Name, tk_Location);
+				TK_NextToken();
 			}
 		}
 		else if (TK_Check(PU_DOT))
 		{
-			if (op->Type.type == ev_reference)
+			if (tk_Token != TK_IDENTIFIER)
 			{
-				if (tk_Token != TK_IDENTIFIER)
-				{
-					ParseError(ERR_INVALID_IDENTIFIER, ", field name expacted");
-				}
-				else
-				{
-					VMethod* M = CheckForMethod(tk_Name, op->Type.Class);
-					if (M)
-					{
-						TK_NextToken();
-						if (TK_Check(PU_LPAREN))
-						{
-							op = ParseMethodCall(op, M, NULL, true, false, l);
-						}
-						else
-						{
-							op = new VDelegateVal(op, M, l);
-						}
-					}
-					else
-					{
-						field = CheckForField(tk_Name, op->Type.Class);
-						if (!field)
-						{
-							ParseError(ERR_NOT_A_FIELD, "Identifier: %s", *tk_Name);
-						}
-						TK_NextToken();
-						if (field)
-						{
-							if (field->type.type == ev_delegate)
-							{
-								if (TK_Check(PU_LPAREN))
-								{
-									op = ParseMethodCall(op, field->func, field, true, false, l);
-								}
-								else
-								{
-									op = new VFieldAccess(op, field, l, 0);
-								}
-							}
-							else
-							{
-								op = new VFieldAccess(op, field, l, 0);
-							}
-						}
-					}
-				}
-			}
-			else if (op->Type.type == ev_struct || op->Type.type == ev_vector)
-			{
-				type = op->Type;
-				int Flags = op->Flags;
-				op->Flags &= ~FIELD_ReadOnly;
-				op->RequestAddressOf();
-				field = ParseStructField(type.Struct);
-				if (field)
-				{
-					op = new VFieldAccess(op, field, l, Flags & FIELD_ReadOnly);
-				}
+				ParseError(tk_Location, "Invalid identifier, field name expacted");
 			}
 			else
 			{
-				ParseError(ERR_BAD_EXPR);
+				VName FieldName = tk_Name;
+				TLocation Loc = tk_Location;
+				TK_NextToken();
+				if (TK_Check(PU_LPAREN))
+				{
+					op = ParseDotMethodCall(op, FieldName, Loc);
+				}
+				else
+				{
+					op = new VDotField(op, FieldName, Loc);
+				}
 			}
 		}
 		else if (TK_Check(PU_LINDEX))
@@ -2141,10 +2858,6 @@ static VExpression* ParseExpressionPriority1()
 			VExpression* ind = ParseExpressionPriority13();
 			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
 			op = new VArrayElement(op, ind, l);
-		}
-		else if (TK_Check(PU_LPAREN))
-		{
-			ParseError("Not a method");
 		}
 		else
 		{
@@ -2625,13 +3338,46 @@ static VExpression* ParseExpressionPriority14()
 
 TType ParseExpression(bool bLocals)
 {
+	if (bLocals && tk_Token == TK_KEYWORD)
+	{
+		TType type = CheckForTypeKeyword();
+		if (type.type != ev_unknown)
+		{
+			VLocalDecl* Decl = ParseLocalVar(type, NAME_None);
+			Decl->Declare();
+			Decl->EmitInitialisations();
+			delete Decl;
+			return ev_void;
+		}
+	}
+
 	CheckForLocal = bLocals;
 	VExpression* op = ParseExpressionPriority14();
 	if (!op)
-		return ev_void;
-	if (op->Type.type == ev_delegate)
 	{
-		op = new VDelegateToBool(op);
+		return ev_void;
+	}
+
+	if (bLocals)
+	{
+		if (op->IsSingleName() && tk_Token == TK_IDENTIFIER)
+		{
+			VLocalDecl* Decl = ParseLocalVar(ev_unknown, ((VSingleName*)op)->Name);
+			delete op;
+			Decl->Declare();
+			Decl->EmitInitialisations();
+			delete Decl;
+			return ev_void;
+		}
+	}
+
+	if (!NumErrors)
+	{
+		op = op->ResolveTopLevel();
+	}
+	if (!op)
+	{
+		return ev_void;
 	}
 	if (!NumErrors)
 	{
@@ -2640,4 +3386,49 @@ TType ParseExpression(bool bLocals)
 	TType Ret = op->Type;
 	delete op;
 	return Ret;
+}
+
+//==========================================================================
+//
+//	SkipExpression
+//
+//==========================================================================
+
+void SkipExpression(bool bLocals = false)
+{
+#if 0
+	CheckForLocal = bLocals;
+	SkipExpressionPriority14();
+#else
+	if (bLocals && tk_Token == TK_KEYWORD)
+	{
+		TType type = CheckForTypeKeyword();
+		if (type.type != ev_unknown)
+		{
+			VLocalDecl* Decl = ParseLocalVar(type, NAME_None);
+			delete Decl;
+			return;
+		}
+	}
+
+	CheckForLocal = bLocals;
+	VExpression* op = ParseExpressionPriority14();
+	if (!op)
+	{
+		return;
+	}
+
+	if (bLocals)
+	{
+		if (op->IsSingleName() && tk_Token == TK_IDENTIFIER)
+		{
+			VLocalDecl* Decl = ParseLocalVar(ev_unknown, ((VSingleName*)op)->Name);
+			delete op;
+			delete Decl;
+			return;
+		}
+	}
+
+	delete op;
+#endif
 }
