@@ -38,8 +38,9 @@
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static VExpression* ParseExpressionPriority13();
+static VExpression* ParseExpression();
 
-static VCompound*	ParseCompoundStatement();
+static VCompound* ParseCompoundStatement();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -171,7 +172,7 @@ static VLocalDecl* ParseLocalVar(const TType& InType, VName TypeName)
 
 		if (TK_Check(PU_LINDEX))
 		{
-			e.ArraySize = EvalConstExpression(SelfClass, ev_int);
+			e.ArraySize = ParseExpression();
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 		}
 		//  Initialisation

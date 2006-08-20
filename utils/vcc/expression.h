@@ -497,13 +497,13 @@ public:
 	TLocation		Loc;
 	VExpression*	Value;
 	int				PointerLevel;
-	int				ArraySize;
+	VExpression*	ArraySize;
 
 	VLocalEntry()
 	: Name(NAME_None)
 	, Value(NULL)
 	, PointerLevel(0)
-	, ArraySize(-1)
+	, ArraySize(NULL)
 	{}
 };
 

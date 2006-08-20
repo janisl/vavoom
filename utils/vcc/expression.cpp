@@ -3787,6 +3787,10 @@ VLocalDecl::~VLocalDecl()
 		{
 			delete Vars[i].Value;
 		}
+		if (Vars[i].ArraySize)
+		{
+			delete Vars[i].ArraySize;
+		}
 	}
 }
 
@@ -3849,9 +3853,17 @@ void VLocalDecl::Declare()
 		{
 			ParseError(e.Loc, "Bad variable type");
 		}
-		if (e.ArraySize != -1)
+		if (e.ArraySize)
 		{
-			Type = MakeArrayType(Type, e.ArraySize);
+			e.ArraySize = e.ArraySize->Resolve();
+			if (e.ArraySize)
+			{
+				vint32 ArrSize;
+				if (e.ArraySize->GetIntConst(ArrSize))
+				{
+					Type = MakeArrayType(Type, ArrSize);
+				}
+			}
 		}
 
 		if (numlocaldefs == MAX_LOCAL_DEFS)
