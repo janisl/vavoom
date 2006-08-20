@@ -3282,6 +3282,8 @@ void VLocalDecl::Declare()
 		localdefs[numlocaldefs].Name = e.Name;
 		localdefs[numlocaldefs].type = Type;
 		localdefs[numlocaldefs].ofs = localsofs;
+		localdefs[numlocaldefs].Visible = true;
+		localdefs[numlocaldefs].Cleared = false;
 
 		//  Initialisation
 		if (e.Value)

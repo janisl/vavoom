@@ -29,11 +29,12 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_BREAK		256
-#define MAX_CONTINUE	256
-#define MAX_CASE		256
-
 // TYPES -------------------------------------------------------------------
+
+static void WriteBreaks();
+static void WriteContinues(int address);
+static void EmitClearStrings(int Start, int End);
+static void AddDrop(const TType& type);
 
 struct breakInfo_t
 {
@@ -47,6 +48,540 @@ struct continueInfo_t
 	int		addressPtr;
 };
 
+static TArray<breakInfo_t>		BreakInfo;
+static int						BreakLevel;
+static int						BreakNumLocalsOnStart;
+static TArray<continueInfo_t> 	ContinueInfo;
+static int						ContinueLevel;
+static int						ContinueNumLocalsOnStart;
+
+class VStatement
+{
+public:
+	TLocation		Loc;
+
+	VStatement()
+	{}
+	VStatement(const TLocation& ALoc)
+	: Loc(ALoc)
+	{}
+	virtual ~VStatement()
+	{}
+	virtual void DoEmit() = 0;
+	void Emit()
+	{
+		DoEmit();
+	}
+};
+
+class VEmptyStatement : public VStatement
+{
+public:
+	VEmptyStatement(const TLocation& ALoc)
+	: VStatement(ALoc)
+	{}
+	void DoEmit()
+	{
+	}
+};
+
+class VIf : public VStatement
+{
+public:
+	VExpression*	Expr;
+	VStatement*		TrueStatement;
+	VStatement*		FalseStatement;
+
+	VIf(VExpression* AExpr, VStatement* ATrueStatement, const TLocation& ALoc)
+	: VStatement(ALoc)
+	, Expr(AExpr)
+	, TrueStatement(ATrueStatement)
+	, FalseStatement(NULL)
+	{
+	}
+	VIf(VExpression* AExpr, VStatement* ATrueStatement,
+		VStatement* AFalseStatement, const TLocation& ALoc)
+	: VStatement(ALoc)
+	, Expr(AExpr)
+	, TrueStatement(ATrueStatement)
+	, FalseStatement(AFalseStatement)
+	{}
+	~VIf()
+	{
+		if (Expr)
+			delete Expr;
+		if (TrueStatement)
+			delete TrueStatement;
+		if (FalseStatement)
+			delete FalseStatement;
+	}
+	void DoEmit()
+	{
+		//	Expression.
+		Expr->Emit();
+		Expr->Type.EmitToBool();
+
+		//	True statement
+		int jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
+		TrueStatement->Emit();
+		if (FalseStatement)
+		{
+			//	False statement
+			int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
+			FixupJump(jumpAddrPtr1);
+			FalseStatement->Emit();
+			FixupJump(jumpAddrPtr2);
+		}
+		else
+		{
+			FixupJump(jumpAddrPtr1);
+		}
+	}
+};
+
+class VWhile : public VStatement
+{
+public:
+	VExpression*		Expr;
+	VStatement*			Statement;
+	int					NumLocalsOnStart;
+
+	VWhile(VExpression* AExpr, VStatement* AStatement, int ANumLocalsOnStart, const TLocation& ALoc)
+	: VStatement(ALoc)
+	, Expr(AExpr)
+	, Statement(AStatement)
+	, NumLocalsOnStart(ANumLocalsOnStart)
+	{
+	}
+	~VWhile()
+	{
+		if (Expr)
+			delete Expr;
+		if (Statement)
+			delete Statement;
+	}
+	void DoEmit()
+	{
+		int PrevBreakLocalsStart = BreakNumLocalsOnStart;
+		int PrevContinueLocalsStart = BreakNumLocalsOnStart;
+		BreakNumLocalsOnStart = NumLocalsOnStart;
+		ContinueNumLocalsOnStart = NumLocalsOnStart;
+		BreakLevel++;
+		ContinueLevel++;
+		int topAddr = GetNumInstructions();
+		Expr->Emit();
+		Expr->Type.EmitToBool();
+		int outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
+		Statement->Emit();
+		AddStatement(OPC_Goto, topAddr);
+		FixupJump(outAddrPtr);
+		WriteContinues(topAddr);
+		WriteBreaks();
+		BreakNumLocalsOnStart = PrevBreakLocalsStart;
+		BreakNumLocalsOnStart = PrevContinueLocalsStart;
+	}
+};
+
+class VDo : public VStatement
+{
+public:
+	VExpression*		Expr;
+	VStatement*			Statement;
+	int					NumLocalsOnStart;
+
+	VDo(VExpression* AExpr, VStatement* AStatement, int ANumLocalsOnStart, const TLocation& ALoc)
+	: VStatement(ALoc)
+	, Expr(AExpr)
+	, Statement(AStatement)
+	, NumLocalsOnStart(ANumLocalsOnStart)
+	{
+	}
+	~VDo()
+	{
+		if (Expr)
+			delete Expr;
+		if (Statement)
+			delete Statement;
+	}
+	void DoEmit()
+	{
+		int PrevBreakLocalsStart = BreakNumLocalsOnStart;
+		int PrevContinueLocalsStart = BreakNumLocalsOnStart;
+		BreakNumLocalsOnStart = NumLocalsOnStart;
+		ContinueNumLocalsOnStart = NumLocalsOnStart;
+		BreakLevel++;
+		ContinueLevel++;
+		int topAddr = GetNumInstructions();
+		Statement->Emit();
+		int exprAddr = GetNumInstructions();
+		Expr->Emit();
+		Expr->Type.EmitToBool();
+		AddStatement(OPC_IfGoto, topAddr);
+		WriteContinues(exprAddr);
+		WriteBreaks();
+		BreakNumLocalsOnStart = PrevBreakLocalsStart;
+		BreakNumLocalsOnStart = PrevContinueLocalsStart;
+	}
+};
+
+class VFor : public VStatement
+{
+public:
+	TArray<VExpression*>	InitExpr;
+	VExpression*			CondExpr;
+	TArray<VExpression*>	LoopExpr;
+	VStatement*				Statement;
+	int						NumLocalsOnStart;
+
+	VFor(const TLocation& ALoc)
+	: VStatement(ALoc)
+	, CondExpr(NULL)
+	, Statement(NULL)
+	{
+	}
+	~VFor()
+	{
+		for (int i = 0; i < InitExpr.Num(); i++)
+			if (InitExpr[i])
+				delete InitExpr[i];
+		if (CondExpr)
+			delete CondExpr;
+		for (int i = 0; i < LoopExpr.Num(); i++)
+			if (LoopExpr[i])
+				delete LoopExpr[i];
+		if (Statement)
+			delete Statement;
+	}
+	void DoEmit()
+	{
+		int PrevBreakLocalsStart = BreakNumLocalsOnStart;
+		int PrevContinueLocalsStart = BreakNumLocalsOnStart;
+		BreakNumLocalsOnStart = NumLocalsOnStart;
+		ContinueNumLocalsOnStart = NumLocalsOnStart;
+		BreakLevel++;
+		ContinueLevel++;
+		for (int i = 0; i < InitExpr.Num(); i++)
+		{
+			InitExpr[i]->Emit();
+			AddDrop(InitExpr[i]->Type);
+		}
+		int topAddr = GetNumInstructions();
+		if (!CondExpr)
+		{
+			AddStatement(OPC_PushNumber, 1);
+		}
+		else
+		{
+			CondExpr->Emit();
+			CondExpr->Type.EmitToBool();
+		}
+		int jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
+		int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
+		int contAddr = GetNumInstructions();
+		for (int i = 0; i < LoopExpr.Num(); i++)
+		{
+			LoopExpr[i]->Emit();
+			AddDrop(LoopExpr[i]->Type);
+		}
+		AddStatement(OPC_Goto, topAddr);
+		FixupJump(jumpAddrPtr1);
+		Statement->Emit();
+		AddStatement(OPC_Goto, contAddr);
+		FixupJump(jumpAddrPtr2);
+		WriteContinues(contAddr);
+		WriteBreaks();
+		BreakNumLocalsOnStart = PrevBreakLocalsStart;
+		BreakNumLocalsOnStart = PrevContinueLocalsStart;
+	}
+};
+
+class VSwitch : public VStatement
+{
+public:
+	struct VCaseInfo
+	{
+		int		value;
+		int		address;
+	};
+
+	VExpression*		Expr;
+	TArray<VCaseInfo>	CaseInfo;
+	int					defaultAddress;
+	TArray<VStatement*>	Statements;
+	int					NumLocalsOnStart;
+
+	VSwitch(const TLocation& ALoc)
+	: VStatement(ALoc)
+	{
+	}
+	~VSwitch()
+	{
+		if (Expr)
+			delete Expr;
+		for (int i = 0; i < Statements.Num(); i++)
+			if (Statements[i])
+				delete Statements[i];
+	}
+	void DoEmit()
+	{
+		Expr->Emit();
+
+		int switcherAddrPtr = AddStatement(OPC_Goto, 0);
+		defaultAddress = -1;
+		int PrevBreakLocalsStart = BreakNumLocalsOnStart;
+		BreakNumLocalsOnStart = NumLocalsOnStart;
+		BreakLevel++;
+
+		for (int i = 0; i < Statements.Num(); i++)
+		{
+			Statements[i]->Emit();
+		}
+
+		int outAddrPtr = AddStatement(OPC_Goto, 0);
+
+		FixupJump(switcherAddrPtr);
+		for (int i = 0; i < CaseInfo.Num(); i++)
+		{
+			if (CaseInfo[i].value >= 0 && CaseInfo[i].value < 256)
+			{
+				AddStatement(OPC_CaseGotoB, CaseInfo[i].value,
+					CaseInfo[i].address);
+			}
+			else if (CaseInfo[i].value >= MIN_VINT16 &&
+				CaseInfo[i].value < MAX_VINT16)
+			{
+				AddStatement(OPC_CaseGotoS, CaseInfo[i].value,
+					CaseInfo[i].address);
+			}
+			else
+			{
+				AddStatement(OPC_CaseGoto, CaseInfo[i].value,
+					CaseInfo[i].address);
+			}
+		}
+		AddStatement(OPC_Drop);
+
+		if (defaultAddress != -1)
+		{
+			AddStatement(OPC_Goto, defaultAddress);
+		}
+
+		FixupJump(outAddrPtr);
+
+		WriteBreaks();
+		BreakNumLocalsOnStart = PrevBreakLocalsStart;
+	}
+};
+
+class VSwitchCase : public VStatement
+{
+public:
+	VSwitch*		Switch;
+	vint32			Value;
+
+	VSwitchCase(VSwitch* ASwitch, vint32 AValue, const TLocation& ALoc)
+	: VStatement(ALoc)
+	, Switch(ASwitch)
+	, Value(AValue)
+	{}
+	void DoEmit()
+	{
+		for (int i = 0; i < Switch->CaseInfo.Num(); i++)
+		{
+			if (Switch->CaseInfo[i].value == Value)
+			{
+				ParseError(Loc, "Duplicate case value");
+				break;
+			}
+		}
+		VSwitch::VCaseInfo& C = Switch->CaseInfo.Alloc();
+		C.value = Value;
+		C.address = GetNumInstructions();
+	}
+};
+
+class VSwitchDefault : public VStatement
+{
+public:
+	VSwitch*		Switch;
+
+	VSwitchDefault(VSwitch* ASwitch, const TLocation& ALoc)
+	: VStatement(ALoc)
+	, Switch(ASwitch)
+	{}
+	void DoEmit()
+	{
+		if (Switch->defaultAddress != -1)
+		{
+			ParseError(Loc, "Only 1 DEFAULT per switch allowed.");
+		}
+		Switch->defaultAddress = GetNumInstructions();
+	}
+};
+
+class VBreak : public VStatement
+{
+public:
+	int				NumLocalsEnd;
+
+	VBreak(const TLocation& ALoc)
+	: VStatement(ALoc)
+	{
+		NumLocalsEnd = numlocaldefs;
+	}
+	void DoEmit()
+	{
+		if (!BreakLevel)
+		{
+			ParseError(Loc, "Misplaced BREAK statement.");
+		}
+
+		EmitClearStrings(BreakNumLocalsOnStart, NumLocalsEnd);
+
+		breakInfo_t& B = BreakInfo.Alloc();
+		B.level = BreakLevel;
+		B.addressPtr = AddStatement(OPC_Goto, 0);
+	}
+};
+
+class VContinue : public VStatement
+{
+public:
+	int				NumLocalsEnd;
+
+	VContinue(const TLocation& ALoc)
+	: VStatement(ALoc)
+	{
+		NumLocalsEnd = numlocaldefs;
+	}
+	void DoEmit()
+	{
+		if (!ContinueLevel)
+		{
+			ParseError(Loc, "Misplaced CONTINUE statement.");
+		}
+
+		EmitClearStrings(ContinueNumLocalsOnStart, NumLocalsEnd);
+
+		continueInfo_t& C = ContinueInfo.Alloc();
+		C.level = ContinueLevel;
+		C.addressPtr = AddStatement(OPC_Goto, 0);
+	}
+};
+
+class VReturn : public VStatement
+{
+public:
+	VExpression*		Expr;
+	int					NumLocalsToClear;
+
+	VReturn(VExpression* AExpr, const TLocation& ALoc)
+	: VStatement(ALoc)
+	, Expr(AExpr)
+	{
+		NumLocalsToClear = numlocaldefs;
+	}
+	~VReturn()
+	{
+		if (Expr)
+			delete Expr;
+	}
+	void DoEmit()
+	{
+		if (Expr)
+		{
+			Expr->Emit();
+			EmitClearStrings(0, NumLocalsToClear);
+			if (Expr->Type.GetSize() == 4)
+			{
+				AddStatement(OPC_ReturnL);
+			}
+			else if (Expr->Type.type == ev_vector)
+			{
+				AddStatement(OPC_ReturnV);
+			}
+			else
+			{
+				ParseError(Loc, "Bad return type");
+			}
+		}
+		else
+		{
+			EmitClearStrings(0, NumLocalsToClear);
+			AddStatement(OPC_Return);
+		}
+	}
+};
+
+class VExpressionStatement : public VStatement
+{
+public:
+	VExpression*		Expr;
+
+	VExpressionStatement(VExpression* AExpr)
+	: VStatement(AExpr->Loc)
+	, Expr(AExpr)
+	{}
+	~VExpressionStatement()
+	{
+		if (Expr)
+			delete Expr;
+	}
+	void DoEmit()
+	{
+		Expr->Emit();
+		AddDrop(Expr->Type);
+	}
+};
+
+class VLocalVarStatement : public VStatement
+{
+public:
+	VLocalDecl*		Decl;
+
+	VLocalVarStatement(VLocalDecl* ADecl)
+	: VStatement(ADecl->Loc)
+	, Decl(ADecl)
+	{}
+	~VLocalVarStatement()
+	{
+		if (Decl)
+			delete Decl;
+	}
+	void DoEmit()
+	{
+		Decl->EmitInitialisations();
+	}
+};
+
+class VCompound : public VStatement
+{
+public:
+	TArray<VStatement*>		Statements;
+	int						NumLocalsOnStart;
+	int						NumLocalsOnEnd;
+
+	VCompound(const TLocation& ALoc)
+	: VStatement(ALoc)
+	{}
+	~VCompound()
+	{
+		for (int i = 0; i < Statements.Num(); i++)
+			if (Statements[i])
+				delete Statements[i];
+	}
+	void DoEmit()
+	{
+		for (int i = 0; i < Statements.Num(); i++)
+		{
+			Statements[i]->Emit();
+		}
+		EmitClearStrings(NumLocalsOnStart, NumLocalsOnEnd);
+		for (int i = NumLocalsOnStart; i < NumLocalsOnEnd; i++)
+			localdefs[i].Cleared = true;
+	}
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -55,7 +590,7 @@ struct continueInfo_t
 
 static VExpression* ParseExpressionPriority13();
 
-static void 	ParseCompoundStatement();
+static VCompound*	ParseCompoundStatement();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -73,12 +608,6 @@ VClass*					SelfClass;
 static bool				CheckForLocal;
 
 static int				maxlocalsofs = 0;
-static breakInfo_t		BreakInfo[MAX_BREAK];
-static int 				BreakIndex;
-static int				BreakLevel;
-static continueInfo_t 	ContinueInfo[MAX_CONTINUE];
-static int 				ContinueIndex;
-static int				ContinueLevel;
 static TType			FuncRetType;
 
 // CODE --------------------------------------------------------------------
@@ -916,56 +1445,10 @@ static VExpression* ParseExpressionPriority14()
 //
 //==========================================================================
 
-TType ParseExpression(bool bLocals)
+static VExpression* ParseExpression()
 {
-	if (bLocals && tk_Token == TK_KEYWORD)
-	{
-		TType type = CheckForTypeKeyword();
-		if (type.type != ev_unknown)
-		{
-			VLocalDecl* Decl = ParseLocalVar(type, NAME_None);
-			Decl->Declare();
-			Decl->EmitInitialisations();
-			delete Decl;
-			return ev_void;
-		}
-	}
-
-	CheckForLocal = bLocals;
-	VExpression* op = ParseExpressionPriority14();
-	if (!op)
-	{
-		return ev_void;
-	}
-
-	if (bLocals)
-	{
-		if (op->IsSingleName() && tk_Token == TK_IDENTIFIER)
-		{
-			VLocalDecl* Decl = ParseLocalVar(ev_unknown, ((VSingleName*)op)->Name);
-			delete op;
-			Decl->Declare();
-			Decl->EmitInitialisations();
-			delete Decl;
-			return ev_void;
-		}
-	}
-
-	if (!NumErrors)
-	{
-		op = op->ResolveTopLevel();
-	}
-	if (!op)
-	{
-		return ev_void;
-	}
-	if (!NumErrors)
-	{
-		op->Emit();
-	}
-	TType Ret = op->Type;
-	delete op;
-	return Ret;
+	CheckForLocal = false;
+	return ParseExpressionPriority14();
 }
 
 //==========================================================================
@@ -1022,6 +1505,10 @@ int CheckForLocalVar(VName Name)
 	}
 	for (int i = 1; i < numlocaldefs; i++)
 	{
+		if (!localdefs[i].Visible)
+		{
+			continue;
+		}
 		if (localdefs[i].Name == Name)
 		{
 			return i;
@@ -1058,28 +1545,6 @@ static void AddDrop(const TType& type)
 
 //==========================================================================
 //
-//	AddBreak
-//
-//==========================================================================
-
-static void AddBreak()
-{
-	if (!BreakLevel)
-	{
-		ERR_Exit(ERR_MISPLACED_BREAK, true, NULL);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	if (BreakIndex == MAX_BREAK)
-	{
-		ERR_Exit(ERR_BREAK_OVERFLOW, true, NULL);
-	}
-	BreakInfo[BreakIndex].level = BreakLevel;
-	BreakInfo[BreakIndex].addressPtr = AddStatement(OPC_Goto, 0);
-	BreakIndex++;
-}
-
-//==========================================================================
-//
 // WriteBreaks
 //
 //==========================================================================
@@ -1087,32 +1552,11 @@ static void AddBreak()
 static void WriteBreaks()
 {
 	BreakLevel--;
-	while (BreakIndex && BreakInfo[BreakIndex-1].level > BreakLevel)
+	while (BreakInfo.Num() && BreakInfo[BreakInfo.Num() - 1].level > BreakLevel)
 	{
-		FixupJump(BreakInfo[--BreakIndex].addressPtr);
+		FixupJump(BreakInfo[BreakInfo.Num() - 1].addressPtr);
+		BreakInfo.SetNum(BreakInfo.Num() - 1);
 	}
-}
-
-//==========================================================================
-//
-//	AddContinue
-//
-//==========================================================================
-
-static void AddContinue()
-{
-	if (!ContinueLevel)
-	{
-		ERR_Exit(ERR_MISPLACED_CONTINUE, true, NULL);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	if(ContinueIndex == MAX_CONTINUE)
-	{
-		ERR_Exit(ERR_CONTINUE_OVERFLOW, true, NULL);
-	}
-	ContinueInfo[ContinueIndex].level = ContinueLevel;
-	ContinueInfo[ContinueIndex].addressPtr = AddStatement(OPC_Goto, 0);
-	ContinueIndex++;
 }
 
 //==========================================================================
@@ -1124,9 +1568,10 @@ static void AddContinue()
 static void WriteContinues(int address)
 {
 	ContinueLevel--;
-	while (ContinueIndex && ContinueInfo[ContinueIndex-1].level > ContinueLevel)
+	while (ContinueInfo.Num() && ContinueInfo[ContinueInfo.Num() - 1].level > ContinueLevel)
 	{
-		FixupJump(ContinueInfo[--ContinueIndex].addressPtr, address);
+		FixupJump(ContinueInfo[ContinueInfo.Num() - 1].addressPtr, address);
+		ContinueInfo.SetNum(ContinueInfo.Num() - 1);
 	}
 }
 
@@ -1136,10 +1581,14 @@ static void WriteContinues(int address)
 //
 //==========================================================================
 
-static void EmitClearStrings(int Start = 0)
+static void EmitClearStrings(int Start, int End)
 {
-	for (int i = Start; i < numlocaldefs; i++)
+	for (int i = Start; i < End; i++)
 	{
+		if (localdefs[i].Cleared)
+		{
+			continue;
+		}
 		if (localdefs[i].type.type == ev_string)
 		{
 			EmitLocalAddress(localdefs[i].ofs);
@@ -1184,256 +1633,256 @@ static void EmitClearStrings(int Start = 0)
 //
 //==========================================================================
 
-static void ParseStatement()
+static VStatement* ParseStatement()
 {
-	TType		t;
-
+	TLocation l = tk_Location;
 	switch(tk_Token)
 	{
-		case TK_EOF:
-			ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
-			break;
-		case TK_KEYWORD:
-			if (TK_Check(KW_IF))
+	case TK_EOF:
+		ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
+		return NULL;
+
+	case TK_KEYWORD:
+		if (TK_Check(KW_IF))
+		{
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			VExpression* e = ParseExpression();
+			if (!e)
 			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				ParseExpression().CheckSizeIs4();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				int jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
-				ParseStatement();
-				if (TK_Check(KW_ELSE))
-				{
-					int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
-					FixupJump(jumpAddrPtr1);
-					ParseStatement();
-					FixupJump(jumpAddrPtr2);
-				}
-				else
-				{
-					FixupJump(jumpAddrPtr1);
-				}
+				ParseError(tk_Location, "If expression expected");
 			}
-			else if (TK_Check(KW_WHILE))
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+			VStatement* STrue = ParseStatement();
+			e = e->ResolveTopLevel();
+			e->Type.CheckSizeIs4(l);
+			if (TK_Check(KW_ELSE))
 			{
-				int			topAddr;
-
-				BreakLevel++;
-				ContinueLevel++;
-				topAddr = GetNumInstructions();
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				ParseExpression().CheckSizeIs4();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				int outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
-				ParseStatement();
-				AddStatement(OPC_Goto, topAddr);
-
-				FixupJump(outAddrPtr);
-				WriteContinues(topAddr);
-				WriteBreaks();
-			}
-			else if (TK_Check(KW_DO))
-			{
-				BreakLevel++;
-				ContinueLevel++;
-				int topAddr = GetNumInstructions();
-				ParseStatement();
-				TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				int exprAddr = GetNumInstructions();
-				ParseExpression().CheckSizeIs4();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				AddStatement(OPC_IfGoto, topAddr);
-				WriteContinues(exprAddr);
-				WriteBreaks();
-			}
-			else if (TK_Check(KW_FOR))
-			{
-				BreakLevel++;
-				ContinueLevel++;
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				do
-				{
-					t = ParseExpression();
-					AddDrop(t);
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				int topAddr = GetNumInstructions();
-				t = ParseExpression();
-				if (t.type == ev_void)
-				{
-					AddStatement(OPC_PushNumber, 1);
-				}
-				else
-				{
-					t.CheckSizeIs4();
-				}
-				int jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
-				int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				int contAddr = GetNumInstructions();
-				do
-				{
-					t = ParseExpression();
-					AddDrop(t);
-				} while (TK_Check(PU_COMMA));
-				AddStatement(OPC_Goto, topAddr);
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				FixupJump(jumpAddrPtr1);
-				ParseStatement();
-				AddStatement(OPC_Goto, contAddr);
-				FixupJump(jumpAddrPtr2);
-				WriteContinues(contAddr);
-				WriteBreaks();
-			}
-			else if (TK_Check(KW_BREAK))
-			{
-				AddBreak();
-			}
-			else if (TK_Check(KW_CONTINUE))
-			{
-				AddContinue();
-			}
-			else if (TK_Check(KW_RETURN))
-			{
-				if (TK_Check(PU_SEMICOLON))
-				{
-					if (FuncRetType.type != ev_void)
-					{
-						ERR_Exit(ERR_NO_RET_VALUE, true, NULL);
-					}
-					EmitClearStrings();
-					AddStatement(OPC_Return);
-				}
-				else
-				{
-					if (FuncRetType.type == ev_void)
-					{
-						ERR_Exit(ERR_VOID_RET, true, NULL);
-					}
-					t = ParseExpression();
-					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-					t.CheckMatch(FuncRetType);
-					EmitClearStrings();
-					if (t.GetSize() == 4)
-					{
-						AddStatement(OPC_ReturnL);
-					}
-					else if (t.type == ev_vector)
-					{
-						AddStatement(OPC_ReturnV);
-					}
-					else
-					{
-						ERR_Exit(ERR_NONE, true, "Bad return type");
-					}
-				}
-			}
-			else if (TK_Check(KW_SWITCH))
-			{
-				int			switcherAddrPtr;
-				int			outAddrPtr;
-				int			numcases;
-				int			defaultAddress;
-				int			i;
-				struct
-				{
-					int value;
-					int address;
-				} CaseInfo[MAX_CASE];
-
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				TType etype = ParseExpression();
-				if (etype.type != ev_int)
-				{
-					ParseError("Int expression expected");
-				}
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-
-				switcherAddrPtr = AddStatement(OPC_Goto, 0);
-				defaultAddress = -1;
-				numcases = 0;
-				BreakLevel++;
-
-				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-				do
-				{
-					if (TK_Check(KW_CASE))
-					{
-						if (numcases == MAX_CASE)
-						{
-							ERR_Exit(ERR_CASE_OVERFLOW, true, NULL);
-						}
-						CaseInfo[numcases].value = EvalConstExpression(SelfClass, etype.type);
-						CaseInfo[numcases].address = GetNumInstructions();
-						numcases++;
-						TK_Expect(PU_COLON, ERR_MISSING_COLON);
-						continue;
-					}
-					if (TK_Check(KW_DEFAULT))
-					{
-						if (defaultAddress != -1)
-						{
-							ERR_Exit(ERR_MULTIPLE_DEFAULT, true, NULL);
-						}
-						defaultAddress = GetNumInstructions();
-						TK_Expect(PU_COLON, ERR_MISSING_COLON);
-						continue;
-					}
-					ParseStatement();
-				} while (!TK_Check(PU_RBRACE));
-
-				outAddrPtr = AddStatement(OPC_Goto, 0);
-
-				FixupJump(switcherAddrPtr);
-				for (i = 0; i < numcases; i++)
-				{
-					if (CaseInfo[i].value >= 0 && CaseInfo[i].value < 256)
-					{
-						AddStatement(OPC_CaseGotoB, CaseInfo[i].value,
-							CaseInfo[i].address);
-					}
-					else if (CaseInfo[i].value >= MIN_VINT16 &&
-						CaseInfo[i].value < MAX_VINT16)
-					{
-						AddStatement(OPC_CaseGotoS, CaseInfo[i].value,
-							CaseInfo[i].address);
-					}
-					else
-					{
-						AddStatement(OPC_CaseGoto, CaseInfo[i].value,
-							CaseInfo[i].address);
-					}
-				}
-				AddStatement(OPC_Drop);
-
-				if (defaultAddress != -1)
-				{
-					AddStatement(OPC_Goto, defaultAddress);
-				}
-
-				FixupJump(outAddrPtr);
-
-				WriteBreaks();
+				VStatement* SFalse = ParseStatement();
+				return new VIf(e, STrue, SFalse, l);
 			}
 			else
 			{
-				t = ParseExpression(true);
-				AddDrop(t);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+				return new VIf(e, STrue, l);
 			}
-			break;
-		case TK_PUNCT:
-			if (TK_Check(PU_LBRACE))
+		}
+		else if (TK_Check(KW_WHILE))
+		{
+			int NumLocalsOnStart = numlocaldefs;
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			VExpression* Expr = ParseExpression();
+			if (!Expr)
 			{
-				ParseCompoundStatement();
-				break;
+				ParseError(tk_Location, "Wile loop expression expected");
 			}
-		default:
-			t = ParseExpression(true);
-			AddDrop(t);
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+			VStatement* Statement = ParseStatement();
+			if (!NumErrors)
+			{
+				Expr = Expr->ResolveTopLevel();
+			}
+			Expr->Type.CheckSizeIs4(l);
+			return new VWhile(Expr, Statement, NumLocalsOnStart, l);
+		}
+		else if (TK_Check(KW_DO))
+		{
+			int NumLocalsOnStart = numlocaldefs;
+			VStatement* Statement = ParseStatement();
+			TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			VExpression* Expr = ParseExpression();
+			if (!Expr)
+			{
+				ParseError(tk_Location, "Do loop expression expected");
+			}
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			break;
+			Expr = Expr->ResolveTopLevel();
+			Expr->Type.CheckSizeIs4(l);
+			return new VDo(Expr, Statement, NumLocalsOnStart, l);
+		}
+		else if (TK_Check(KW_FOR))
+		{
+			VFor* For = new VFor(l);
+			For->NumLocalsOnStart = numlocaldefs;
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			do
+			{
+				VExpression* Expr = ParseExpression();
+				if (Expr)
+				{
+					Expr = Expr->ResolveTopLevel();
+					For->InitExpr.Append(Expr);
+				}
+			} while (TK_Check(PU_COMMA));
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			VExpression* Expr = ParseExpression();
+			For->CondExpr = Expr;
+			if (For->CondExpr)
+			{
+				For->CondExpr = For->CondExpr->ResolveTopLevel();
+				For->CondExpr->Type.CheckSizeIs4(l);
+			}
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			do
+			{
+				VExpression* Expr = ParseExpression();
+				if (Expr)
+				{
+					Expr = Expr->ResolveTopLevel();
+					For->LoopExpr.Append(Expr);
+				}
+			} while (TK_Check(PU_COMMA));
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+			VStatement* Statement = ParseStatement();
+			For->Statement = Statement;
+			return For;
+		}
+		else if (TK_Check(KW_BREAK))
+		{
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			return new VBreak(l);
+		}
+		else if (TK_Check(KW_CONTINUE))
+		{
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			return new VContinue(l);
+		}
+		else if (TK_Check(KW_RETURN))
+		{
+			VExpression* Expr = NULL;
+			if (TK_Check(PU_SEMICOLON))
+			{
+				if (FuncRetType.type != ev_void)
+				{
+					ERR_Exit(ERR_NO_RET_VALUE, true, NULL);
+				}
+			}
+			else
+			{
+				if (FuncRetType.type == ev_void)
+				{
+					ERR_Exit(ERR_VOID_RET, true, NULL);
+				}
+				Expr = ParseExpression();
+				if (!Expr)
+				{
+					ParseError(l, "Bad expression");
+				}
+				else
+				{
+					Expr = Expr->ResolveTopLevel();
+				}
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+				Expr->Type.CheckMatch(FuncRetType);
+			}
+			return new VReturn(Expr, l);
+		}
+		else if (TK_Check(KW_SWITCH))
+		{
+			VSwitch* Switch = new VSwitch(l);
+			Switch->NumLocalsOnStart = numlocaldefs;
+			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			VExpression* Expr = ParseExpression();
+			if (!Expr)
+			{
+				ParseError("Switch expression expected");
+			}
+			else
+			{
+				Expr = Expr->ResolveTopLevel();
+				if (Expr->Type.type != ev_int)
+				{
+					ParseError(l, "Int expression expected");
+				}
+			}
+			Switch->Expr = Expr;
+			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+
+			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+			do
+			{
+				l = tk_Location;
+				if (TK_Check(KW_CASE))
+				{
+					vint32 Value = EvalConstExpression(SelfClass, ev_int);
+					TK_Expect(PU_COLON, ERR_MISSING_COLON);
+					Switch->Statements.Append(new VSwitchCase(Switch, Value, l));
+				}
+				else if (TK_Check(KW_DEFAULT))
+				{
+					TK_Expect(PU_COLON, ERR_MISSING_COLON);
+					Switch->Statements.Append(new VSwitchDefault(Switch, l));
+				}
+				else
+				{
+					VStatement* Statement = ParseStatement();
+					Switch->Statements.Append(Statement);
+				}
+			} while (!TK_Check(PU_RBRACE));
+			return Switch;
+		}
+		else
+		{
+			TType type = CheckForTypeKeyword();
+			if (type.type != ev_unknown)
+			{
+				VLocalDecl* Decl = ParseLocalVar(type, NAME_None);
+				Decl->Declare();
+				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+				return new VLocalVarStatement(Decl);
+			}
+			else
+			{
+				CheckForLocal = true;
+				VExpression* Expr = ParseExpressionPriority14();
+				if (Expr)
+				{
+					Expr = Expr->ResolveTopLevel();
+					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+					return new VExpressionStatement(Expr);
+				}
+				else
+				{
+					ParseError(l, "Misplaced keyword %s", tk_String);
+					TK_NextToken();
+					return new VEmptyStatement(l);
+				}
+			}
+		}
+
+	case TK_PUNCT:
+		if (TK_Check(PU_LBRACE))
+		{
+			return ParseCompoundStatement();
+		}
+		//Fall through
+
+	default:
+		CheckForLocal = true;
+		VExpression* Expr = ParseExpressionPriority14();
+		if (!Expr)
+		{
+			if (!TK_Check(PU_SEMICOLON))
+			{
+				ParseError(l, "Token %s makes no sense here", tk_String);
+				TK_NextToken();
+			}
+			return new VEmptyStatement(l);
+		}
+		else if (Expr->IsSingleName() && tk_Token == TK_IDENTIFIER)
+		{
+			VLocalDecl* Decl = ParseLocalVar(ev_unknown, ((VSingleName*)Expr)->Name);
+			delete Expr;
+			Decl->Declare();
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			return new VLocalVarStatement(Decl);
+		}
+		else
+		{
+			Expr = Expr->ResolveTopLevel();
+			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			return new VExpressionStatement(Expr);
+		}
 	}
 }
 
@@ -1443,21 +1892,24 @@ static void ParseStatement()
 //
 //==========================================================================
 
-static void ParseCompoundStatement()
+static VCompound* ParseCompoundStatement()
 {
-	int		num_local_defs_on_start;
+	VCompound* Comp = new VCompound(tk_Location);
 
-	num_local_defs_on_start = numlocaldefs;
-
+	Comp->NumLocalsOnStart = numlocaldefs;
 	while (!TK_Check(PU_RBRACE))
 	{
-		ParseStatement();
+		VStatement* s = ParseStatement();
+		Comp->Statements.Append(s);
 	}
+	Comp->NumLocalsOnEnd = numlocaldefs;
 
 	if (maxlocalsofs < localsofs)
 		maxlocalsofs = localsofs;
-	EmitClearStrings(num_local_defs_on_start);
-	numlocaldefs = num_local_defs_on_start;
+	for (int i = Comp->NumLocalsOnStart; i < numlocaldefs; i++)
+		localdefs[i].Visible = false;
+
+	return Comp;
 }
 
 //==========================================================================
@@ -1506,6 +1958,8 @@ un++;
 			localdefs[numlocaldefs].Name = tk_Name;
 			localdefs[numlocaldefs].type = type;
 			localdefs[numlocaldefs].ofs = localsofs;
+			localdefs[numlocaldefs].Visible = true;
+			localdefs[numlocaldefs].Cleared = false;
 			numlocaldefs++;
 			TK_NextToken();
 		}
@@ -1535,11 +1989,16 @@ un++;
 		}
 	}
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	ParseCompoundStatement();
+	VStatement* s = ParseCompoundStatement();
+	if (!NumErrors)
+	{
+		s->Emit();
+	}
+	delete s;
 
 	if (FuncRetType.type == ev_void)
 	{
-		EmitClearStrings();
+		EmitClearStrings(0, numlocaldefs);
 		AddStatement(OPC_Return);
 	}
 	Method->NumLocals = maxlocalsofs;
@@ -1600,8 +2059,13 @@ void CompileStateCode(VClass* InClass, VMethod* Func)
 	FuncRetType = TType(ev_void);
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	ParseCompoundStatement();
-	EmitClearStrings();
+	VStatement* s = ParseCompoundStatement();
+	if (!NumErrors)
+	{
+		s->Emit();
+	}
+	delete s;
+	EmitClearStrings(0, numlocaldefs);
 	AddStatement(OPC_Return);
 	Func->NumLocals = maxlocalsofs;
 	EndCode(Func);
@@ -1636,8 +2100,13 @@ void CompileDefaultProperties(VMethod* Method, VClass* InClass)
 	}
 
 	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	ParseCompoundStatement();
-	EmitClearStrings();
+	VStatement* s = ParseCompoundStatement();
+	if (!NumErrors)
+	{
+		s->Emit();
+	}
+	delete s;
+	EmitClearStrings(0, numlocaldefs);
 	AddStatement(OPC_Return);
 	Method->NumLocals = maxlocalsofs;
 	EndCode(Method);

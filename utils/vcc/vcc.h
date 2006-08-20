@@ -420,6 +420,8 @@ class VLocalVarDef : public VMemberBase
 public:
 	int			ofs;
 	TType		type;
+	bool		Visible;
+	bool		Cleared;
 
 	VLocalVarDef()
 	: VMemberBase(MEMBER_Field, NAME_None, NULL, TLocation())
@@ -586,7 +588,6 @@ VPackage* LoadPackage(VName);
 int EvalConstExpression(VClass*InClass, int type);
 float ConstFloatExpression();
 
-TType ParseExpression(bool = false);
 void EmitPushNumber(int);
 void EmitLocalAddress(int);
 
