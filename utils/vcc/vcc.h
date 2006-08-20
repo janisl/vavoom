@@ -348,8 +348,6 @@ public:
 	TType GetArrayInnerType() const;
 	int GetSize() const;
 	void CheckPassable() const;
-	bool CheckSizeIs4(TLocation) const;
-	void EmitToBool() const;
 	void CheckMatch(const TType& Other) const;
 	void GetName(char* Dest) const;
 };

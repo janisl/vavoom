@@ -775,7 +775,7 @@ static VExpression* ParseExpressionPriority11()
 	while (TK_Check(PU_AND_LOG))
 	{
 		VExpression* op2 = ParseExpressionPriority10();
-		op1 = new VBinary(PU_AND_LOG, op1, op2, l);
+		op1 = new VBinaryLogical(PU_AND_LOG, op1, op2, l);
 		l = tk_Location;
 	}
 	return op1;
@@ -796,7 +796,7 @@ static VExpression* ParseExpressionPriority12()
 	while (TK_Check(PU_OR_LOG))
 	{
 		VExpression* op2 = ParseExpressionPriority11();
-		op1 = new VBinary(PU_OR_LOG, op1, op2, l);
+		op1 = new VBinaryLogical(PU_OR_LOG, op1, op2, l);
 		l = tk_Location;
 	}
 	return op1;

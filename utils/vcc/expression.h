@@ -25,6 +25,12 @@
 
 enum { MAX_ARG_COUNT = 16 };
 
+//==========================================================================
+//
+//	VExpression
+//
+//==========================================================================
+
 class VExpression
 {
 public:
@@ -33,82 +39,130 @@ public:
 	int			Flags;
 	TLocation	Loc;
 
-	VExpression(const TLocation& ALoc);
+	VExpression(const TLocation&);
 	virtual ~VExpression();
 	virtual void Emit() = 0;
 	virtual VExpression* DoResolve() = 0;
 	VExpression* Resolve();
-	VExpression* ResolveTopLevel();
+	VExpression* ResolveBoolean();
 	virtual void RequestAddressOf();
-	void EmitPushPointedCode(TType type);
+	void EmitPushPointedCode(TType);
 	virtual bool IsSingleName();
 	virtual bool GetIntConst(vint32&);
 };
+
+//==========================================================================
+//
+//	VIntLiteral
+//
+//==========================================================================
 
 class VIntLiteral : public VExpression
 {
 public:
 	vint32		Value;
 
-	VIntLiteral(vint32 AValue, const TLocation& ALoc);
+	VIntLiteral(vint32, const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 	bool GetIntConst(vint32&);
 };
+
+//==========================================================================
+//
+//	VFloatLiteral
+//
+//==========================================================================
 
 class VFloatLiteral : public VExpression
 {
 public:
 	float		Value;
 
-	VFloatLiteral(float AValue, const TLocation& ALoc);
+	VFloatLiteral(float, const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VNameLiteral
+//
+//==========================================================================
 
 class VNameLiteral : public VExpression
 {
 public:
 	VName		Value;
 
-	VNameLiteral(VName AValue, const TLocation& ALoc);
+	VNameLiteral(VName, const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VStringLiteral
+//
+//==========================================================================
 
 class VStringLiteral : public VExpression
 {
 public:
 	vint32		Value;
 
-	VStringLiteral(vint32 AValue, const TLocation& ALoc);
+	VStringLiteral(vint32, const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VSelf
+//
+//==========================================================================
 
 class VSelf : public VExpression
 {
 public:
-	VSelf(const TLocation& ALoc);
+	VSelf(const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VNoneLiteral
+//
+//==========================================================================
 
 class VNoneLiteral : public VExpression
 {
 public:
-	VNoneLiteral(const TLocation& ALoc);
+	VNoneLiteral(const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VNullLiteral
+//
+//==========================================================================
+
 class VNullLiteral : public VExpression
 {
 public:
-	VNullLiteral(const TLocation& ALoc);
+	VNullLiteral(const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VVector
+//
+//==========================================================================
 
 class VVector : public VExpression
 {
@@ -117,22 +171,34 @@ public:
 	VExpression*	op2;
 	VExpression*	op3;
 
-	VVector(VExpression* AOp1, VExpression* AOp2, VExpression* AOp3, const TLocation& ALoc);
+	VVector(VExpression*, VExpression*, VExpression*, const TLocation&);
 	~VVector();
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VSingleName
+//
+//==========================================================================
 
 class VSingleName : public VExpression
 {
 public:
 	VName			Name;
 
-	VSingleName(VName AName, const TLocation& ALoc);
+	VSingleName(VName, const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 	bool IsSingleName();
 };
+
+//==========================================================================
+//
+//	VDoubleName
+//
+//==========================================================================
 
 class VDoubleName : public VExpression
 {
@@ -140,10 +206,16 @@ public:
 	VName			Name1;
 	VName			Name2;
 
-	VDoubleName(VName AName1, VName AName2, const TLocation& ALoc);
+	VDoubleName(VName, VName, const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VPointerField
+//
+//==========================================================================
 
 class VPointerField : public VExpression
 {
@@ -151,11 +223,17 @@ public:
 	VExpression*		op;
 	VName				FieldName;
 
-	VPointerField(VExpression* AOp, VName AFieldName, const TLocation& ALoc);
+	VPointerField(VExpression*, VName, const TLocation&);
 	~VPointerField();
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VDotField
+//
+//==========================================================================
 
 class VDotField : public VExpression
 {
@@ -163,11 +241,17 @@ public:
 	VExpression*		op;
 	VName				FieldName;
 
-	VDotField(VExpression* AOp, VName AFieldName, const TLocation& ALoc);
+	VDotField(VExpression*, VName, const TLocation&);
 	~VDotField();
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VArrayElement
+//
+//==========================================================================
 
 class VArrayElement : public VExpression
 {
@@ -176,12 +260,18 @@ public:
 	VExpression*		ind;
 	bool				AddressRequested;
 
-	VArrayElement(VExpression* AOp, VExpression* AInd, const TLocation& ALoc);
+	VArrayElement(VExpression*, VExpression*, const TLocation&);
 	~VArrayElement();
 	VExpression* DoResolve();
 	void RequestAddressOf();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VBaseInvocation
+//
+//==========================================================================
 
 class VBaseInvocation : public VExpression
 {
@@ -190,12 +280,17 @@ public:
 	int				NumArgs;
 	VExpression*	Args[MAX_ARG_COUNT + 1];
 
-	VBaseInvocation(VName AName, int ANumArgs, VExpression** AArgs,
-		const TLocation& ALoc);
+	VBaseInvocation(VName, int, VExpression**, const TLocation&);
 	~VBaseInvocation();
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VCastOrInvocation
+//
+//==========================================================================
 
 class VCastOrInvocation : public VExpression
 {
@@ -204,12 +299,17 @@ public:
 	int				NumArgs;
 	VExpression*	Args[MAX_ARG_COUNT + 1];
 
-	VCastOrInvocation(VName AName, const TLocation& ALoc, int ANumArgs,
-		VExpression** AArgs);
+	VCastOrInvocation(VName, const TLocation&, int, VExpression**);
 	~VCastOrInvocation();
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VDotInvocation
+//
+//==========================================================================
 
 class VDotInvocation : public VExpression
 {
@@ -219,25 +319,36 @@ public:
 	int				NumArgs;
 	VExpression*	Args[MAX_ARG_COUNT + 1];
 
-	VDotInvocation(VExpression* ASelfExpr, VName AMethodName,
-		const TLocation& ALoc, int ANumArgs, VExpression** AArgs);
+	VDotInvocation(VExpression*, VName, const TLocation&, int, VExpression**);
 	~VDotInvocation();
 	VExpression* DoResolve();
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VUnary
+//
+//==========================================================================
+
 class VUnary : public VExpression
 {
 public:
-	EPunctuation		Oper;	//	Operation
-	VExpression*		op;		//	Value
+	EPunctuation		Oper;
+	VExpression*		op;
 
-	VUnary(EPunctuation AOper, VExpression* AOp, const TLocation& ALoc);
+	VUnary(EPunctuation, VExpression*, const TLocation&);
 	~VUnary();
 	VExpression* DoResolve();
 	void Emit();
 	bool GetIntConst(vint32&);
 };
+
+//==========================================================================
+//
+//	VUnaryMutator
+//
+//==========================================================================
 
 enum EIncDec
 {
@@ -250,67 +361,117 @@ enum EIncDec
 class VUnaryMutator : public VExpression
 {
 public:
-	EIncDec			Oper;	//	Operation
-	VExpression*	op;		//	Value
+	EIncDec			Oper;
+	VExpression*	op;
 
-	VUnaryMutator(EIncDec AOper, VExpression* AOp, const TLocation& ALoc);
+	VUnaryMutator(EIncDec, VExpression*, const TLocation&);
 	~VUnaryMutator();
 	VExpression* DoResolve();
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VPushPointed
+//
+//==========================================================================
+
 class VPushPointed : public VExpression
 {
 public:
-	VExpression*	op;		//	Value
+	VExpression*	op;
 	bool			AddressRequested;
 
-	VPushPointed(VExpression* AOp);
+	VPushPointed(VExpression*);
 	~VPushPointed();
 	VExpression* DoResolve();
 	void RequestAddressOf();
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VBinary
+//
+//==========================================================================
+
 class VBinary : public VExpression
 {
 public:
-	EPunctuation		Oper;	//	Operation
-	VExpression*		op1;	//	Variable
-	VExpression*		op2;	//	Value
+	EPunctuation		Oper;
+	VExpression*		op1;
+	VExpression*		op2;
 
-	VBinary(EPunctuation AOper, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc);
+	VBinary(EPunctuation, VExpression*, VExpression*, const TLocation&);
 	~VBinary();
 	VExpression* DoResolve();
 	void Emit();
 	bool GetIntConst(vint32&);
 };
 
+//==========================================================================
+//
+//	VBinaryLogical
+//
+//==========================================================================
+
+class VBinaryLogical : public VExpression
+{
+public:
+	EPunctuation		Oper;
+	VExpression*		op1;
+	VExpression*		op2;
+
+	VBinaryLogical(EPunctuation, VExpression*, VExpression*, const TLocation&);
+	~VBinaryLogical();
+	VExpression* DoResolve();
+	void Emit();
+	bool GetIntConst(vint32&);
+};
+
+//==========================================================================
+//
+//	VConditional
+//
+//==========================================================================
+
 class VConditional : public VExpression
 {
 public:
-	VExpression*		op;		//	Condition
-	VExpression*		op1;	//	Value1
-	VExpression*		op2;	//	Value2
+	VExpression*		op;
+	VExpression*		op1;
+	VExpression*		op2;
 
-	VConditional(VExpression* AOp, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc);
+	VConditional(VExpression*, VExpression*, VExpression*, const TLocation&);
 	~VConditional();
 	VExpression* DoResolve();
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VAssignment
+//
+//==========================================================================
+
 class VAssignment : public VExpression
 {
 public:
-	EPunctuation		Oper;	//	Operation
-	VExpression*		op1;	//	Variable
-	VExpression*		op2;	//	Value
+	EPunctuation		Oper;
+	VExpression*		op1;
+	VExpression*		op2;
 
-	VAssignment(EPunctuation AOper, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc);
+	VAssignment(EPunctuation, VExpression*, VExpression*, const TLocation&);
 	~VAssignment();
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VLocalEntry
+//
+//==========================================================================
 
 class VLocalEntry
 {
@@ -329,6 +490,12 @@ public:
 	{}
 };
 
+//==========================================================================
+//
+//	VLocalDecl
+//
+//==========================================================================
+
 class VLocalDecl : public VExpression
 {
 public:
@@ -336,7 +503,7 @@ public:
 	VName				TypeName;
 	TArray<VLocalEntry>	Vars;
 
-	VLocalDecl(const TLocation& ALoc);
+	VLocalDecl(const TLocation&);
 	~VLocalDecl();
 
 	VExpression* DoResolve();

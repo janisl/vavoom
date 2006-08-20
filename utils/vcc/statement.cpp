@@ -172,9 +172,9 @@ bool VIf::Resolve()
 
 	if (Expr)
 	{
-		Expr = Expr->ResolveTopLevel();
+		Expr = Expr->ResolveBoolean();
 	}
-	if (!Expr || !Expr->Type.CheckSizeIs4(Loc))
+	if (!Expr)
 	{
 		Ret = false;
 	}
@@ -202,7 +202,6 @@ void VIf::DoEmit()
 {
 	//	Expression.
 	Expr->Emit();
-	Expr->Type.EmitToBool();
 
 	//	True statement
 	int jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
@@ -265,9 +264,9 @@ bool VWhile::Resolve()
 	NumLocalsOnStart = numlocaldefs;
 	if (Expr)
 	{
-		Expr = Expr->ResolveTopLevel();
+		Expr = Expr->ResolveBoolean();
 	}
-	if (!Expr || !Expr->Type.CheckSizeIs4(Loc))
+	if (!Expr)
 	{
 		Ret = false;
 	}
@@ -296,7 +295,6 @@ void VWhile::DoEmit()
 	ContinueLevel++;
 	int topAddr = GetNumInstructions();
 	Expr->Emit();
-	Expr->Type.EmitToBool();
 	int outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
 	Statement->Emit();
 	AddStatement(OPC_Goto, topAddr);
@@ -351,9 +349,9 @@ bool VDo::Resolve()
 	NumLocalsOnStart = numlocaldefs;
 	if (Expr)
 	{
-		Expr = Expr->ResolveTopLevel();
+		Expr = Expr->ResolveBoolean();
 	}
-	if (!Expr || !Expr->Type.CheckSizeIs4(Loc))
+	if (!Expr)
 	{
 		Ret = false;
 	}
@@ -384,7 +382,6 @@ void VDo::DoEmit()
 	Statement->Emit();
 	int exprAddr = GetNumInstructions();
 	Expr->Emit();
-	Expr->Type.EmitToBool();
 	AddStatement(OPC_IfGoto, topAddr);
 	WriteContinues(exprAddr);
 	WriteBreaks();
@@ -441,7 +438,7 @@ bool VFor::Resolve()
 
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
-		InitExpr[i] = InitExpr[i]->ResolveTopLevel();
+		InitExpr[i] = InitExpr[i]->Resolve();
 		if (!InitExpr[i])
 		{
 			Ret = false;
@@ -450,8 +447,8 @@ bool VFor::Resolve()
 
 	if (CondExpr)
 	{
-		CondExpr = CondExpr->ResolveTopLevel();
-		if (!CondExpr || !CondExpr->Type.CheckSizeIs4(Loc))
+		CondExpr = CondExpr->ResolveBoolean();
+		if (!CondExpr)
 		{
 			Ret = false;
 		}
@@ -459,7 +456,7 @@ bool VFor::Resolve()
 
 	for (int i = 0; i < LoopExpr.Num(); i++)
 	{
-		LoopExpr[i] = LoopExpr[i]->ResolveTopLevel();
+		LoopExpr[i] = LoopExpr[i]->Resolve();
 		if (!LoopExpr[i])
 		{
 			Ret = false;
@@ -501,7 +498,6 @@ void VFor::DoEmit()
 	else
 	{
 		CondExpr->Emit();
-		CondExpr->Type.EmitToBool();
 	}
 	int jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
 	int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
@@ -565,7 +561,7 @@ bool VSwitch::Resolve()
 	NumLocalsOnStart = numlocaldefs;
 	if (Expr)
 	{
-		Expr = Expr->ResolveTopLevel();
+		Expr = Expr->Resolve();
 	}
 	if (!Expr || Expr->Type.type != ev_int)
 	{
@@ -873,7 +869,7 @@ bool VReturn::Resolve()
 	bool Ret = true;
 	if (Expr)
 	{
-		Expr = Expr->ResolveTopLevel();
+		Expr = Expr->Resolve();
 		if (FuncRetType.type == ev_void)
 		{
 			ParseError(Loc, "viod function cannot return a value.");
@@ -965,7 +961,7 @@ bool VExpressionStatement::Resolve()
 {
 	bool Ret = true;
 	if (Expr)
-		Expr = Expr->ResolveTopLevel();
+		Expr = Expr->Resolve();
 	if (!Expr)
 		Ret = false;
 	return Ret;

@@ -31,6 +31,12 @@
 
 // TYPES -------------------------------------------------------------------
 
+//==========================================================================
+//
+//	VStateConstant
+//
+//==========================================================================
+
 class VStateConstant : public VExpression
 {
 public:
@@ -40,6 +46,12 @@ public:
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VClassConstant
+//
+//==========================================================================
 
 class VClassConstant : public VExpression
 {
@@ -51,6 +63,12 @@ public:
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VConstantValue
+//
+//==========================================================================
+
 class VConstantValue : public VExpression
 {
 public:
@@ -61,6 +79,12 @@ public:
 	void Emit();
 	bool GetIntConst(vint32&);
 };
+
+//==========================================================================
+//
+//	VDynamicCast
+//
+//==========================================================================
 
 class VDynamicCast : public VExpression
 {
@@ -74,6 +98,12 @@ public:
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VLocalVar
+//
+//==========================================================================
+
 class VLocalVar : public VExpression
 {
 public:
@@ -85,6 +115,12 @@ public:
 	void RequestAddressOf();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VFieldAccess
+//
+//==========================================================================
 
 class VFieldAccess : public VExpression
 {
@@ -100,6 +136,12 @@ public:
 	void Emit();
 };
 
+//==========================================================================
+//
+//	VDelegateVal
+//
+//==========================================================================
+
 class VDelegateVal : public VExpression
 {
 public:
@@ -111,6 +153,12 @@ public:
 	VExpression* DoResolve();
 	void Emit();
 };
+
+//==========================================================================
+//
+//	VInvocation
+//
+//==========================================================================
 
 class VInvocation : public VExpression
 {
@@ -132,6 +180,12 @@ public:
 	void CheckParams();
 };
 
+//==========================================================================
+//
+//	VDelegateToBool
+//
+//==========================================================================
+
 class VDelegateToBool : public VExpression
 {
 public:
@@ -139,6 +193,40 @@ public:
 
 	VDelegateToBool(VExpression* AOp);
 	~VDelegateToBool();
+	VExpression* DoResolve();
+	void Emit();
+};
+
+//==========================================================================
+//
+//	VStringToBool
+//
+//==========================================================================
+
+class VStringToBool : public VExpression
+{
+public:
+	VExpression*		op;
+
+	VStringToBool(VExpression* AOp);
+	~VStringToBool();
+	VExpression* DoResolve();
+	void Emit();
+};
+
+//==========================================================================
+//
+//	VPointerToBool
+//
+//==========================================================================
+
+class VPointerToBool : public VExpression
+{
+public:
+	VExpression*		op;
+
+	VPointerToBool(VExpression* AOp);
+	~VPointerToBool();
 	VExpression* DoResolve();
 	void Emit();
 };
@@ -269,16 +357,45 @@ bool VExpression::IsSingleName()
 
 //==========================================================================
 //
-//	VExpression::ResolveTopLevel
+//	VExpression::ResolveBoolean
 //
 //==========================================================================
 
-VExpression* VExpression::ResolveTopLevel()
+VExpression* VExpression::ResolveBoolean()
 {
 	VExpression* e = Resolve();
-	if (e && e->Type.type == ev_delegate)
+	if (!e)
 	{
+		return NULL;
+	}
+
+	switch (e->Type.type)
+	{
+	case ev_int:
+	case ev_float:
+	case ev_name:
+	case ev_bool:
+		break;
+
+	case ev_pointer:
+	case ev_reference:
+	case ev_classid:
+	case ev_state:
+		e = new VPointerToBool(e);
+		break;
+
+	case ev_string:
+		e = new VStringToBool(e);
+		break;
+
+	case ev_delegate:
 		e = new VDelegateToBool(e);
+		break;
+
+	default:
+		ParseError(Loc, "Expression type mistmatch, boolean expression expected");
+		delete e;
+		return NULL;
 	}
 	return e;
 }
@@ -1462,7 +1579,12 @@ VUnary::~VUnary()
 VExpression* VUnary::DoResolve()
 {
 	if (op)
-		op = op->Resolve();
+	{
+		if (Oper == PU_NOT)
+			op = op->ResolveBoolean();
+		else
+			op = op->Resolve();
+	}
 	if (!op)
 	{
 		delete this;
@@ -1501,7 +1623,6 @@ VExpression* VUnary::DoResolve()
 		}
 		break;
 	case PU_NOT:
-		op->Type.CheckSizeIs4(Loc);
 		Type = ev_int;
 		break;
 	case PU_TILDE:
@@ -1563,7 +1684,6 @@ void VUnary::Emit()
 		break;
 
 	case PU_NOT:
-		op->Type.EmitToBool();
 		AddStatement(OPC_NegateLogical);
 		break;
 
@@ -1968,12 +2088,6 @@ VExpression* VBinary::DoResolve()
 		}
 		Type = ev_int;
 		break;
-	case PU_AND_LOG:
-	case PU_OR_LOG:
-		op1->Type.CheckSizeIs4(Loc);
-		op2->Type.CheckSizeIs4(Loc);
-		Type = ev_int;
-		break;
 	default:
 		break;
 	}
@@ -1988,24 +2102,7 @@ VExpression* VBinary::DoResolve()
 
 void VBinary::Emit()
 {
-	int jmppos = 0;
-
 	op1->Emit();
-
-	switch (Oper)
-	{
-	case PU_AND_LOG:
-		op1->Type.EmitToBool();
-		jmppos = AddStatement(OPC_IfNotTopGoto, 0);
-		break;
-	case PU_OR_LOG:
-		op1->Type.EmitToBool();
-		jmppos = AddStatement(OPC_IfTopGoto, 0);
-		break;
-	default:
-		break;
-	}
-
 	op2->Emit();
 
 	switch (Oper)
@@ -2230,18 +2327,6 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_AND_LOG:
-		op2->Type.EmitToBool();
-		AddStatement(OPC_AndLogical);
-		FixupJump(jmppos);
-		break;
-
-	case PU_OR_LOG:
-		op2->Type.EmitToBool();
-		AddStatement(OPC_OrLogical);
-		FixupJump(jmppos);
-		break;
-
 	default:
 		break;
 	}
@@ -2337,6 +2422,130 @@ bool VBinary::GetIntConst(vint32& OutValue)
 			OutValue = Value1 | Value2;
 			return true;
 	
+		default:
+			break;
+		}
+	}
+	OutValue = 0;
+	return false;
+}
+
+//END
+
+//BEGIN VBinaryLogical
+
+//==========================================================================
+//
+//	VBinaryLogical::VBinaryLogical
+//
+//==========================================================================
+
+VBinaryLogical::VBinaryLogical(EPunctuation AOper, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc)
+: VExpression(ALoc)
+, Oper(AOper)
+, op1(AOp1)
+, op2(AOp2)
+{
+	if (!op2)
+	{
+		ParseError(Loc, "Expression expected");
+		return;
+	}
+}
+
+//==========================================================================
+//
+//	VBinaryLogical::~VBinaryLogical
+//
+//==========================================================================
+
+VBinaryLogical::~VBinaryLogical()
+{
+	if (op1)
+		delete op1;
+	if (op2)
+		delete op2;
+}
+
+//==========================================================================
+//
+//	VBinaryLogical::DoResolve
+//
+//==========================================================================
+
+VExpression* VBinaryLogical::DoResolve()
+{
+	if (op1)
+		op1 = op1->ResolveBoolean();
+	if (op2)
+		op2 = op2->ResolveBoolean();
+	if (!op1 || !op2)
+	{
+		delete this;
+		return NULL;
+	}
+
+	Type = ev_int;
+	return this;
+}
+
+//==========================================================================
+//
+//	VBinaryLogical::Emit
+//
+//==========================================================================
+
+void VBinaryLogical::Emit()
+{
+	int jmppos = 0;
+
+	op1->Emit();
+
+	switch (Oper)
+	{
+	case PU_AND_LOG:
+		jmppos = AddStatement(OPC_IfNotTopGoto, 0);
+		break;
+	case PU_OR_LOG:
+		jmppos = AddStatement(OPC_IfTopGoto, 0);
+		break;
+	default:
+		break;
+	}
+
+	op2->Emit();
+
+	switch (Oper)
+	{
+	case PU_AND_LOG:
+		AddStatement(OPC_AndLogical);
+		break;
+
+	case PU_OR_LOG:
+		AddStatement(OPC_OrLogical);
+		break;
+
+	default:
+		break;
+	}
+
+	FixupJump(jmppos);
+}
+
+//==========================================================================
+//
+//	VBinaryLogical::GetIntConst
+//
+//==========================================================================
+
+bool VBinaryLogical::GetIntConst(vint32& OutValue)
+{
+	vint32 Value1;
+	vint32 Value2;
+	if (op1->GetIntConst(Value1) && op2->GetIntConst(Value2))
+	{
+		switch (Oper)
+		{
 		case PU_AND_LOG:
 			OutValue = Value1 && Value2;
 			return true;
@@ -2406,7 +2615,7 @@ VConditional::~VConditional()
 VExpression* VConditional::DoResolve()
 {
 	if (op)
-		op = op->Resolve();
+		op = op->ResolveBoolean();
 	if (op1)
 		op1 = op1->Resolve();
 	if (op2)
@@ -2417,7 +2626,6 @@ VExpression* VConditional::DoResolve()
 		return NULL;
 	}
 
-	op->Type.CheckSizeIs4(Loc);
 	op1->Type.CheckMatch(op2->Type);
 	if (op1->Type.type == ev_pointer && op1->Type.InnerType == ev_void)
 		Type = op2->Type;
@@ -2435,7 +2643,6 @@ VExpression* VConditional::DoResolve()
 void VConditional::Emit()
 {
 	op->Emit();
-	op->Type.EmitToBool();
 	int jumppos1 = AddStatement(OPC_IfNotGoto, 0);
 	op1->Emit();
 	int jumppos2 = AddStatement(OPC_Goto, 0);
@@ -3359,6 +3566,110 @@ void VDelegateToBool::Emit()
 {
 	op->Emit();
 	AddStatement(OPC_PushPointedPtr);
+	AddStatement(OPC_PtrToBool);
+}
+
+//END
+
+//BEGIN VStringToBool
+
+//==========================================================================
+//
+//	VStringToBool::VStringToBool
+//
+//==========================================================================
+
+VStringToBool::VStringToBool(VExpression* AOp)
+: VExpression(AOp->Loc)
+, op(AOp)
+{
+	Type = ev_int;
+}
+
+//==========================================================================
+//
+//	VStringToBool::~VStringToBool
+//
+//==========================================================================
+
+VStringToBool::~VStringToBool()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VStringToBool::DoResolve
+//
+//==========================================================================
+
+VExpression* VStringToBool::DoResolve()
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VStringToBool::Emit
+//
+//==========================================================================
+
+void VStringToBool::Emit()
+{
+	op->Emit();
+	AddStatement(OPC_StrToBool);
+}
+
+//END
+
+//BEGIN VDelegateToBool
+
+//==========================================================================
+//
+//	VPointerToBool::VPointerToBool
+//
+//==========================================================================
+
+VPointerToBool::VPointerToBool(VExpression* AOp)
+: VExpression(AOp->Loc)
+, op(AOp)
+{
+	Type = ev_int;
+}
+
+//==========================================================================
+//
+//	VPointerToBool::~VPointerToBool
+//
+//==========================================================================
+
+VPointerToBool::~VPointerToBool()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VPointerToBool::DoResolve
+//
+//==========================================================================
+
+VExpression* VPointerToBool::DoResolve()
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VPointerToBool::Emit
+//
+//==========================================================================
+
+void VPointerToBool::Emit()
+{
+	op->Emit();
 	AddStatement(OPC_PtrToBool);
 }
 
