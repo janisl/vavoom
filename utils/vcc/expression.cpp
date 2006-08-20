@@ -3744,6 +3744,7 @@ VExpression* VDropResult::DoResolve()
 
 void VDropResult::Emit()
 {
+	op->Emit();
 	if (op->Type.type == ev_string)
 	{
 		AddStatement(OPC_DropStr);
