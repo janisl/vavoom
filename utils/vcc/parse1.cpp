@@ -37,8 +37,7 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void SkipCompoundStatement();
-void SkipExpression(bool bLocals = false);
+void SkipCompoundStatement();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -47,137 +46,6 @@ void SkipExpression(bool bLocals = false);
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	SkipStatement
-//
-//==========================================================================
-
-static void SkipStatement()
-{
-	switch (tk_Token)
-	{
-		case TK_EOF:
-			ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
-			break;
-		case TK_KEYWORD:
-			if (TK_Check(KW_IF))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				SkipExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				SkipStatement();
-				if (TK_Check(KW_ELSE))
-				{
-					SkipStatement();
-				}
-			}
-			else if (TK_Check(KW_WHILE))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				SkipExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				SkipStatement();
-			}
-			else if (TK_Check(KW_DO))
-			{
-				SkipStatement();
-				TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				SkipExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_FOR))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				do
-				{
-					SkipExpression();
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				SkipExpression();
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				do
-				{
-					SkipExpression();
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-				SkipStatement();
-			}
-			else if (TK_Check(KW_BREAK))
-			{
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_CONTINUE))
-			{
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_RETURN))
-			{
-//				if (!TK_Check(PU_SEMICOLON))
-				{
-					SkipExpression();
-					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-				}
-			}
-			else if (TK_Check(KW_SWITCH))
-			{
-				TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-				SkipExpression();
-				TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-
-				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-				do
-				{
-					if (TK_Check(KW_CASE))
-					{
-						//FIXME
-						SkipExpression(false);
-						TK_Expect(PU_COLON, ERR_MISSING_COLON);
-						continue;
-					}
-					if (TK_Check(KW_DEFAULT))
-					{
-						TK_Expect(PU_COLON, ERR_MISSING_COLON);
-						continue;
-					}
-					SkipStatement();
-				} while (!TK_Check(PU_RBRACE));
-			}
-			else
-			{
-				SkipExpression(true);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			break;
-		case TK_PUNCT:
-			if (TK_Check(PU_LBRACE))
-			{
-				SkipCompoundStatement();
-				break;
-			}
-		default:
-			SkipExpression(true);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			break;
-	}
-}
-
-//==========================================================================
-//
-//	SkipCompoundStatement
-//
-//==========================================================================
-
-static void SkipCompoundStatement()
-{
-	while (!TK_Check(PU_RBRACE))
-	{
-		SkipStatement();
-	}
-}
 
 //==========================================================================
 //

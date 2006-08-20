@@ -8,11 +8,10 @@ INCLUDES = -I$(srcdir)/../common
 
 noinst_PROGRAMS = ../bin/vcc
 
-___bin_vcc_SOURCES = \
+___bin_vcc_SOURCES = constexp.cpp \
 	../common/array.h \
 	../common/cmdlib.cpp \
 	../common/cmdlib.h \
-	constexp.cpp \
 	error.cpp \
 	expression.cpp \
 	expression.h \
@@ -24,6 +23,8 @@ ___bin_vcc_SOURCES = \
 	parse.cpp \
 	parse1.cpp \
 	pcode.cpp \
+	statement.cpp \
+	statement.h \
 	stream.cpp \
 	stream.h \
 	token.cpp \

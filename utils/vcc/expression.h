@@ -42,6 +42,7 @@ public:
 	virtual void RequestAddressOf();
 	void EmitPushPointedCode(TType type);
 	virtual bool IsSingleName();
+	virtual bool GetIntConst(vint32&);
 };
 
 class VIntLiteral : public VExpression
@@ -52,6 +53,7 @@ public:
 	VIntLiteral(vint32 AValue, const TLocation& ALoc);
 	VExpression* DoResolve();
 	void Emit();
+	bool GetIntConst(vint32&);
 };
 
 class VFloatLiteral : public VExpression
@@ -234,6 +236,7 @@ public:
 	~VUnary();
 	VExpression* DoResolve();
 	void Emit();
+	bool GetIntConst(vint32&);
 };
 
 enum EIncDec
@@ -280,6 +283,7 @@ public:
 	~VBinary();
 	VExpression* DoResolve();
 	void Emit();
+	bool GetIntConst(vint32&);
 };
 
 class VConditional : public VExpression

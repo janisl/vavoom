@@ -479,41 +479,7 @@ void TType::CheckPassable() const
 //
 //==========================================================================
 
-void TType::CheckSizeIs4() const
-{
-	switch (type)
-	{
-	case ev_int:
-	case ev_float:
-	case ev_name:
-	case ev_bool:
-		break;
-
-	case ev_string:
-		AddStatement(OPC_StrToBool);
-		break;
-
-	case ev_pointer:
-	case ev_reference:
-	case ev_classid:
-	case ev_state:
-		AddStatement(OPC_PtrToBool);
-		break;
-
-	default:
-		ParseError(ERR_EXPR_TYPE_MISTMATCH, "Size is not 4");
-	}
-}
-
-//==========================================================================
-//
-//	TType::CheckSizeIs4
-//
-//  Checks if type size is 4
-//
-//==========================================================================
-
-void TType::CheckSizeIs4(TLocation Loc) const
+bool TType::CheckSizeIs4(TLocation Loc) const
 {
 	switch (type)
 	{
@@ -526,10 +492,11 @@ void TType::CheckSizeIs4(TLocation Loc) const
 	case ev_reference:
 	case ev_classid:
 	case ev_state:
-		break;
+		return true;
 
 	default:
-		ParseError(ERR_EXPR_TYPE_MISTMATCH, "Size is not 4");
+		ParseError(Loc, "Expression type mistmatch, boolean expression expected");
+		return false;
 	}
 }
 

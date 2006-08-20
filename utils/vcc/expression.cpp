@@ -59,6 +59,7 @@ public:
 	VConstantValue(VConstant* AConst, const TLocation& ALoc);
 	VExpression* DoResolve();
 	void Emit();
+	bool GetIntConst(vint32&);
 };
 
 class VDynamicCast : public VExpression
@@ -282,6 +283,19 @@ VExpression* VExpression::ResolveTopLevel()
 	return e;
 }
 
+//==========================================================================
+//
+//	VExpression::GetIntConst
+//
+//==========================================================================
+
+bool VExpression::GetIntConst(vint32& Value)
+{
+	ParseError(Loc, "Integer constant expected");
+	Value = 0;
+	return false;
+}
+
 //END
 
 //BEGIN VIntLiteral
@@ -319,6 +333,18 @@ VExpression* VIntLiteral::DoResolve()
 void VIntLiteral::Emit()
 {
 	EmitPushNumber(Value);
+}
+
+//==========================================================================
+//
+//	VIntLiteral::GetIntConst
+//
+//==========================================================================
+
+bool VIntLiteral::GetIntConst(vint32& OutValue)
+{
+	OutValue = Value;
+	return true;
 }
 
 //END
@@ -1550,6 +1576,41 @@ void VUnary::Emit()
 	}
 }
 
+//==========================================================================
+//
+//	VUnary::GetIntConst
+//
+//==========================================================================
+
+bool VUnary::GetIntConst(vint32& OutValue)
+{
+	if (op->GetIntConst(OutValue))
+	{
+		switch (Oper)
+		{
+		case PU_PLUS:
+			return true;
+	
+		case PU_MINUS:
+			OutValue = -OutValue;
+			return true;
+	
+		case PU_NOT:
+			OutValue = !OutValue;
+			return true;
+	
+		case PU_TILDE:
+			OutValue = ~OutValue;
+			return true;
+	
+		default:
+			ParseError(Loc, "Integer constant expected");
+			break;
+		}
+	}
+	return false;
+}
+
 //END
 
 //BEGIN VUnaryMutator
@@ -2186,6 +2247,112 @@ void VBinary::Emit()
 	}
 }
 
+//==========================================================================
+//
+//	VBinary::GetIntConst
+//
+//==========================================================================
+
+bool VBinary::GetIntConst(vint32& OutValue)
+{
+	vint32 Value1;
+	vint32 Value2;
+	if (op1->GetIntConst(Value1) && op2->GetIntConst(Value2))
+	{
+		switch (Oper)
+		{
+		case PU_ASTERISK:
+			OutValue = Value1 * Value2;
+			return true;
+	
+		case PU_SLASH:
+			if (!Value2)
+			{
+				ParseError(Loc, "Division by 0");
+				OutValue = 0;
+				return false;
+			}
+			OutValue = Value1 / Value2;
+			return true;
+	
+		case PU_PERCENT:
+			if (!Value2)
+			{
+				ParseError(Loc, "Division by 0");
+				OutValue = 0;
+				return false;
+			}
+			OutValue = Value1 % Value2;
+			return true;
+	
+		case PU_PLUS:
+			OutValue = Value1 + Value2;
+			return true;
+	
+		case PU_MINUS:
+			OutValue = Value1 - Value2;
+			return true;
+	
+		case PU_LSHIFT:
+			OutValue = Value1 << Value2;
+			return true;
+	
+		case PU_RSHIFT:
+			OutValue = Value1 >> Value2;
+			return true;
+	
+		case PU_LT:
+			OutValue = Value1 < Value2;
+			return true;
+	
+		case PU_LE:
+			OutValue = Value1 <= Value2;
+			return true;
+	
+		case PU_GT:
+			OutValue = Value1 > Value2;
+			return true;
+	
+		case PU_GE:
+			OutValue = Value1 >= Value2;
+			return true;
+	
+		case PU_EQ:
+			OutValue = Value1 == Value2;
+			return true;
+	
+		case PU_NE:
+			OutValue = Value1 != Value2;
+			return true;
+	
+		case PU_AND:
+			OutValue = Value1 & Value2;
+			return true;
+	
+		case PU_XOR:
+			OutValue = Value1 ^ Value2;
+			return true;
+	
+		case PU_OR:
+			OutValue = Value1 | Value2;
+			return true;
+	
+		case PU_AND_LOG:
+			OutValue = Value1 && Value2;
+			return true;
+	
+		case PU_OR_LOG:
+			OutValue = Value1 || Value2;
+			return true;
+	
+		default:
+			break;
+		}
+	}
+	OutValue = 0;
+	return false;
+}
+
 //END
 
 //BEGIN VConditional
@@ -2682,6 +2849,24 @@ VExpression* VConstantValue::DoResolve()
 void VConstantValue::Emit()
 {
 	EmitPushNumber(Const->value);
+}
+
+//==========================================================================
+//
+//	VConstantValue::GetIntConst
+//
+//==========================================================================
+
+bool VConstantValue::GetIntConst(vint32& OutValue)
+{
+	if (Const->Type == ev_int)
+	{
+		OutValue = Const->value;
+		return true;
+	}
+	ParseError(Loc, "Integer constant expected");
+	OutValue = 0;
+	return false;
 }
 
 //END

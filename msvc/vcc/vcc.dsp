@@ -127,6 +127,10 @@ SOURCE=..\..\utils\vcc\pcode.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\utils\vcc\statement.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\utils\vcc\stream.cpp
 # End Source File
 # Begin Source File
@@ -164,6 +168,14 @@ SOURCE=..\..\utils\vcc\name.h
 # Begin Source File
 
 SOURCE=..\..\utils\vcc\names.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\utils\vcc\statement.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\utils\vcc\stream.h
 # End Source File
 # Begin Source File
 

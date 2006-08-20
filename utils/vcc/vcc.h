@@ -348,8 +348,7 @@ public:
 	TType GetArrayInnerType() const;
 	int GetSize() const;
 	void CheckPassable() const;
-	void CheckSizeIs4() const;
-	void CheckSizeIs4(TLocation) const;
+	bool CheckSizeIs4(TLocation) const;
 	void EmitToBool() const;
 	void CheckMatch(const TType& Other) const;
 	void GetName(char* Dest) const;
@@ -539,6 +538,18 @@ public:
 	{}
 };
 
+struct breakInfo_t
+{
+	int		level;
+	int		addressPtr;
+};
+
+struct continueInfo_t
+{
+	int		level;
+	int		addressPtr;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // -- Common --
@@ -598,6 +609,10 @@ void ParseDefaultProperties(VClass*);
 void AddConstant(VClass* InClass, VName Name, int type, int value);
 void PA_Parse();
 
+void WriteBreaks();
+void WriteContinues(int address);
+void EmitClearStrings(int Start, int End);
+void AddDrop(const TType& type);
 int CheckForLocalVar(VName);
 void CompileMethodDef(const TType&, VMethod*, VClass*);
 void SkipDelegate(VClass*);
@@ -660,6 +675,15 @@ extern VLocalVarDef		localdefs[MAX_LOCAL_DEFS];
 extern int				numlocaldefs;
 extern int				localsofs;
 
+extern int						maxlocalsofs;
+extern TArray<breakInfo_t>		BreakInfo;
+extern int						BreakLevel;
+extern int						BreakNumLocalsOnStart;
+extern TArray<continueInfo_t> 	ContinueInfo;
+extern int						ContinueLevel;
+extern int						ContinueNumLocalsOnStart;
+extern TType					FuncRetType;
+
 // INLINE CODE -------------------------------------------------------------
 
 //==========================================================================
@@ -721,5 +745,6 @@ inline bool TK_Check(EPunctuation punct)
 }
 
 #include "expression.h"
+#include "statement.h"
 
 #endif
