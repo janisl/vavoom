@@ -3675,6 +3675,91 @@ void VPointerToBool::Emit()
 
 //END
 
+//BEGIN VDelegateToBool
+
+//==========================================================================
+//
+//	VDropResult::VDropResult
+//
+//==========================================================================
+
+VDropResult::VDropResult(VExpression* AOp)
+: VExpression(AOp->Loc)
+, op(AOp)
+{
+}
+
+//==========================================================================
+//
+//	VDropResult::~VDropResult
+//
+//==========================================================================
+
+VDropResult::~VDropResult()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VDropResult::DoResolve
+//
+//==========================================================================
+
+VExpression* VDropResult::DoResolve()
+{
+	if (op)
+		op = op->Resolve();
+	if (!op)
+	{
+		delete this;
+		return NULL;
+	}
+
+	if (op->Type.type == ev_delegate)
+	{
+		ParseError("Delegate call parameters are missing");
+		delete this;
+		return NULL;
+	}
+
+	if (op->Type.type != ev_string && op->Type.GetSize() != 4 &&
+		op->Type.type != ev_vector && op->Type.type != ev_void)
+	{
+		ParseError("Expression's result type cannot be dropped");
+		delete this;
+		return NULL;
+	}
+
+	Type = ev_void;
+	return this;
+}
+
+//==========================================================================
+//
+//	VDropResult::Emit
+//
+//==========================================================================
+
+void VDropResult::Emit()
+{
+	if (op->Type.type == ev_string)
+	{
+		AddStatement(OPC_DropStr);
+	}
+	else if (op->Type.type == ev_vector)
+	{
+		AddStatement(OPC_VDrop);
+	}
+	else if (op->Type.GetSize() == 4)
+	{
+		AddStatement(OPC_Drop);
+	}
+}
+
+//END
+
 //BEGIN VLocalDecl
 
 //==========================================================================

@@ -386,6 +386,58 @@ int AddStatement(int statement, int parm1, int parm2)
 
 //==========================================================================
 //
+//	EmitPushNumber
+//
+//==========================================================================
+
+void EmitPushNumber(int Val)
+{
+	if (Val == 0)
+		AddStatement(OPC_PushNumber0);
+	else if (Val == 1)
+		AddStatement(OPC_PushNumber1);
+	else if (Val >= 0 && Val < 256)
+		AddStatement(OPC_PushNumberB, Val);
+	else if (Val >= MIN_VINT16 && Val <= MAX_VINT16)
+		AddStatement(OPC_PushNumberS, Val);
+	else
+		AddStatement(OPC_PushNumber, Val);
+}
+
+//==========================================================================
+//
+//	EmitLocalAddress
+//
+//==========================================================================
+
+void EmitLocalAddress(int Ofs)
+{
+	if (Ofs == 0)
+		AddStatement(OPC_LocalAddress0);
+	else if (Ofs == 1)
+		AddStatement(OPC_LocalAddress1);
+	else if (Ofs == 2)
+		AddStatement(OPC_LocalAddress2);
+	else if (Ofs == 3)
+		AddStatement(OPC_LocalAddress3);
+	else if (Ofs == 4)
+		AddStatement(OPC_LocalAddress4);
+	else if (Ofs == 5)
+		AddStatement(OPC_LocalAddress5);
+	else if (Ofs == 6)
+		AddStatement(OPC_LocalAddress6);
+	else if (Ofs == 7)
+		AddStatement(OPC_LocalAddress7);
+	else if (Ofs < 256)
+		AddStatement(OPC_LocalAddressB, Ofs);
+	else if (Ofs < MAX_VINT16)
+		AddStatement(OPC_LocalAddressS, Ofs);
+	else
+		AddStatement(OPC_LocalAddress, Ofs);
+}
+
+//==========================================================================
+//
 //  FixupJump
 //
 //==========================================================================

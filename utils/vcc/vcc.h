@@ -610,7 +610,6 @@ void PA_Parse();
 void WriteBreaks();
 void WriteContinues(int address);
 void EmitClearStrings(int Start, int End);
-void AddDrop(const TType& type);
 int CheckForLocalVar(VName);
 void CompileMethodDef(const TType&, VMethod*, VClass*);
 void SkipDelegate(VClass*);

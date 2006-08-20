@@ -69,58 +69,6 @@ static bool				CheckForLocal;
 
 //==========================================================================
 //
-//	EmitPushNumber
-//
-//==========================================================================
-
-void EmitPushNumber(int Val)
-{
-	if (Val == 0)
-		AddStatement(OPC_PushNumber0);
-	else if (Val == 1)
-		AddStatement(OPC_PushNumber1);
-	else if (Val >= 0 && Val < 256)
-		AddStatement(OPC_PushNumberB, Val);
-	else if (Val >= MIN_VINT16 && Val <= MAX_VINT16)
-		AddStatement(OPC_PushNumberS, Val);
-	else
-		AddStatement(OPC_PushNumber, Val);
-}
-
-//==========================================================================
-//
-//	EmitLocalAddress
-//
-//==========================================================================
-
-void EmitLocalAddress(int Ofs)
-{
-	if (Ofs == 0)
-		AddStatement(OPC_LocalAddress0);
-	else if (Ofs == 1)
-		AddStatement(OPC_LocalAddress1);
-	else if (Ofs == 2)
-		AddStatement(OPC_LocalAddress2);
-	else if (Ofs == 3)
-		AddStatement(OPC_LocalAddress3);
-	else if (Ofs == 4)
-		AddStatement(OPC_LocalAddress4);
-	else if (Ofs == 5)
-		AddStatement(OPC_LocalAddress5);
-	else if (Ofs == 6)
-		AddStatement(OPC_LocalAddress6);
-	else if (Ofs == 7)
-		AddStatement(OPC_LocalAddress7);
-	else if (Ofs < 256)
-		AddStatement(OPC_LocalAddressB, Ofs);
-	else if (Ofs < MAX_VINT16)
-		AddStatement(OPC_LocalAddressS, Ofs);
-	else
-		AddStatement(OPC_LocalAddress, Ofs);
-}
-
-//==========================================================================
-//
 //	ParseDotMethodCall
 //
 //==========================================================================
@@ -934,32 +882,6 @@ int CheckForLocalVar(VName Name)
 
 //==========================================================================
 //
-//	AddDrop
-//
-//==========================================================================
-
-void AddDrop(const TType& type)
-{
-	if (type.type == ev_string)
-	{
-		AddStatement(OPC_DropStr);
-	}
-	else if (type.GetSize() == 4)
-	{
-		AddStatement(OPC_Drop);
-	}
-	else if (type.type == ev_vector)
-	{
-		AddStatement(OPC_VDrop);
-	}
-	else if (type.type != ev_void)
-	{
-		ParseError("Expression's result type cannot be dropped");
-	}
-}
-
-//==========================================================================
-//
 // WriteBreaks
 //
 //==========================================================================
@@ -1116,7 +1038,7 @@ static VStatement* ParseStatement()
 				{
 					break;
 				}
-				For->InitExpr.Append(Expr);
+				For->InitExpr.Append(new VDropResult(Expr));
 			} while (TK_Check(PU_COMMA));
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			For->CondExpr = ParseExpression();
@@ -1128,7 +1050,7 @@ static VStatement* ParseStatement()
 				{
 					break;
 				}
-				For->LoopExpr.Append(Expr);
+				For->LoopExpr.Append(new VDropResult(Expr));
 			} while (TK_Check(PU_COMMA));
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 			VStatement* Statement = ParseStatement();
@@ -1205,7 +1127,7 @@ static VStatement* ParseStatement()
 				if (Expr)
 				{
 					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-					return new VExpressionStatement(Expr);
+					return new VExpressionStatement(new VDropResult(Expr));
 				}
 				else
 				{
@@ -1245,7 +1167,7 @@ static VStatement* ParseStatement()
 		else
 		{
 			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			return new VExpressionStatement(Expr);
+			return new VExpressionStatement(new VDropResult(Expr));
 		}
 	}
 }

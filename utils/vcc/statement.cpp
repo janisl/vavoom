@@ -488,7 +488,6 @@ void VFor::DoEmit()
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
 		InitExpr[i]->Emit();
-		AddDrop(InitExpr[i]->Type);
 	}
 	int topAddr = GetNumInstructions();
 	if (!CondExpr)
@@ -505,7 +504,6 @@ void VFor::DoEmit()
 	for (int i = 0; i < LoopExpr.Num(); i++)
 	{
 		LoopExpr[i]->Emit();
-		AddDrop(LoopExpr[i]->Type);
 	}
 	AddStatement(OPC_Goto, topAddr);
 	FixupJump(jumpAddrPtr1);
@@ -976,7 +974,6 @@ bool VExpressionStatement::Resolve()
 void VExpressionStatement::DoEmit()
 {
 	Expr->Emit();
-	AddDrop(Expr->Type);
 }
 
 //END
