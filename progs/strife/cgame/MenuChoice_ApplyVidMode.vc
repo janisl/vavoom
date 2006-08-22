@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuChoice_ApplyVidMode:MenuSmallTextButton;
+class MenuChoice_ApplyVidMode : MenuSmallTextButton;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 	MenuScreenScreenResolution(Parent).SetMode();
 }

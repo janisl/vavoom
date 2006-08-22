@@ -27,7 +27,7 @@ class ConDlgChoice : MenuSmallTextButton;
 
 int ImpulseNum;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 	CmdBuf_AddText("Impulse %d\n", ImpulseNum);
 	StopLocalSounds();

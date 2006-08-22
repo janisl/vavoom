@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Level:MenuChoiceEnum;
+class MenuChoice_Level : MenuChoiceEnum;
 
 void InitMapList(int epi)
 {
@@ -37,7 +37,7 @@ void InitMapList(int epi)
 	Value = 0;
 }
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	InitMapList(0);

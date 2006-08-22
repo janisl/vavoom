@@ -37,7 +37,7 @@ bool SetNewValue(int newValue)
 	return true;
 }
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	MenuScreenPlayerSetup(Parent).SetSpriteColor(Value);

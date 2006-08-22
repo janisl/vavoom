@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreenNewNetGame:MenuScreen;
+class MenuScreenNewNetGame : MenuScreen;
 
 MenuChoice_Players Players;
 MenuChoice_Monsters Monsters;
@@ -33,7 +33,7 @@ MenuChoice_TimeLimit TimeLimit;
 MenuChoice_MPEpisode Episode;
 MenuChoice_Level Level;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	MenuChoice newChoice;
 
@@ -71,7 +71,7 @@ void CreateChoices(void)
 	Episode.Levels = Level;
 }
 
-void StartNewGame(void)
+void StartNewGame()
 {
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers %d\n", Players.Value + 2);

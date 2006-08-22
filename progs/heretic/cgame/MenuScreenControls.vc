@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreenControls:MenuScreen;
+class MenuScreenControls : MenuScreen;
 
 MenuControlKey Controls[15];
 int NumControls;
@@ -41,7 +41,7 @@ void AddControl(string Text, string CommandOn, string CommandOff)
 	NumControls++;
 }
 
-void CreateControlKeyChoices(void)
+void CreateControlKeyChoices()
 {
 	AddControl("Move foward", "+Forward", "-Forward");
 	AddControl("Move backward", "+Backward", "-Backward");
@@ -60,12 +60,12 @@ void CreateControlKeyChoices(void)
 	AddControl("Mouse look", "+MouseLook", "-MouseLook");
 }
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	CreateControlKeyChoices();
 }
 
-void CursorMoved(void)
+void CursorMoved()
 {
 	::CursorMoved();
 	if (Selector && ClGame)

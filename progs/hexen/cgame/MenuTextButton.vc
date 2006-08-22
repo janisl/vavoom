@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuTextButton:MenuChoice;
+class MenuTextButton : MenuChoice;
 
 name ActivateSound;
 string Text;
@@ -32,7 +32,7 @@ int TextSelectedFont;
 int TextHAlign;
 int TextVAlign;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 }
 

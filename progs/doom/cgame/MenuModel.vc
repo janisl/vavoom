@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuModel:MenuObject;
+class MenuModel : MenuObject;
 
 TVec Origin;
 float Angle;
@@ -31,7 +31,7 @@ model_t *Model;
 int Frame;
 string Skin;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	Disable();

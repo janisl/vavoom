@@ -56,12 +56,12 @@ int GetInitialValue()
 	return mi;
 }
 
-int GetModeWidth(void)
+int GetModeWidth()
 {
 	return modes[Value].width;
 }
 
-int GetModeHeight(void)
+int GetModeHeight()
 {
 	return modes[Value].height;
 }

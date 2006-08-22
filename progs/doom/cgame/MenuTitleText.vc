@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-class MenuTitleText:MenuObject;
+class MenuTitleText : MenuObject;
 
 string Text;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	Disable();

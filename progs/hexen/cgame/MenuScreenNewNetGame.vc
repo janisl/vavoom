@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuScreenNewNetGame:MenuScreen;
+class MenuScreenNewNetGame : MenuScreen;
 
 MenuChoice_Players Players;
 MenuChoice_Monsters Monsters;
@@ -32,7 +32,7 @@ MenuChoice_MPSkill Skill;
 MenuChoice_TimeLimit TimeLimit;
 MenuChoice_Level Level;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	MenuChoice newChoice;
 
@@ -65,7 +65,7 @@ void CreateChoices(void)
 	ChoicesStartY += Level.Height;
 }
 
-void StartNewGame(void)
+void StartNewGame()
 {
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers %d\n", Players.Value + 2);

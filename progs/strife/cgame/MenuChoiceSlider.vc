@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoiceSlider:MenuChoice;
+class MenuChoiceSlider : MenuChoice;
 
 string Text;
 
@@ -37,7 +37,7 @@ int pic_M_THERMM;
 int pic_M_THERMR;
 int pic_M_THERMO;
 
-float GetInitialValue(void)
+float GetInitialValue()
 {
 	return 0.0;
 }

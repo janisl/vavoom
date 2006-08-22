@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuChoice_DeathMatch:MenuChoiceEnum;
+class MenuChoice_DeathMatch : MenuChoiceEnum;
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
 	return 1;
 }

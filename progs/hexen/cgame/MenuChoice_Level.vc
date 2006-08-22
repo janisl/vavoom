@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Level:MenuChoiceEnum;
+class MenuChoice_Level : MenuChoiceEnum;
 
-void InitMapList(void)
+void InitMapList()
 {
 	int i;
 #ifdef FIXME
@@ -52,7 +52,7 @@ void InitMapList(void)
 	Value = 0;
 }
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	InitMapList();

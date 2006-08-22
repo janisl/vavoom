@@ -23,14 +23,14 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Fighter:MenuBigTextButton;
+class MenuChoice_Fighter : MenuBigTextButton;
 
 MenuObject Box;
 MenuObject Walk;
 classid BoxType;
 classid WalkType;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 
@@ -43,14 +43,14 @@ void InitWindow(void)
 	Walk.Hide();
 }
 
-void FocusLost(void)
+void FocusLost()
 {
 	::FocusLost();
 	Box.Hide();
 	Walk.Hide();
 }
 
-void FocusReceived(void)
+void FocusReceived()
 {
 	::FocusReceived();
 	Box.Show();

@@ -29,7 +29,7 @@ MenuSpriteAnim Anim;
 int Color;
 int PClass;
 
-void SetColor(void)
+void SetColor()
 {
 	Anim.SprDef = 500 + PClass;
 	Anim.Translation = 0;

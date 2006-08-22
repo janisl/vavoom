@@ -38,7 +38,7 @@ int pic_M_SLDMD2;
 int pic_M_SLDRT;
 int pic_M_SLDKB;
 
-float GetInitialValue(void)
+float GetInitialValue()
 {
 	return 0.0;
 }

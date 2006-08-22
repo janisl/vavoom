@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuChoice_EndGame:MenuBigTextButton;
+class MenuChoice_EndGame : MenuBigTextButton;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 	CmdBuf_AddText("Disconnect\n");
 }

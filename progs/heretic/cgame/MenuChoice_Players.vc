@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Players:MenuChoiceEnum;
+class MenuChoice_Players : MenuChoiceEnum;
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
 	return 2;
 }

@@ -25,7 +25,7 @@
 
 class MenuChoice_MouseLook : MenuChoice_OnOff;
 
-int GetInitialValue(void)
+int GetInitialValue()
 {
 	return GetCvar('mouse_look');
 }

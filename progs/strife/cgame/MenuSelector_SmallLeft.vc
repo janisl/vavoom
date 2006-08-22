@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuSelector_SmallLeft:MenuObject;
+class MenuSelector_SmallLeft : MenuObject;
 
-void InitWindow(void)
+void InitWindow()
 {
 	::InitWindow();
 	Disable();

@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class MenuScreenScreenResolution:MenuScreen;
+class MenuScreenScreenResolution : MenuScreen;
 
 MenuChoice_VideoMode Mode;
 MenuChoice_BitDepth Depth;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	Mode = MenuChoice_VideoMode(NewChild(MenuChoice_VideoMode));
 	Mode.SetPos(ChoicesStartX, ChoicesStartY);
@@ -41,7 +41,7 @@ void CreateChoices(void)
 	::CreateChoices();
 }
 
-void SetMode(void)
+void SetMode()
 {
 	CmdBuf_AddText("SetResolution %d %d %d\n", Mode.GetModeWidth(),
 		Mode.GetModeHeight(), Depth.GetDepth());

@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class MenuScreenPlayerSetup:MenuScreen;
+class MenuScreenPlayerSetup : MenuScreen;
 
 MenuChoice_PlayerName PlayerName;
 MenuChoice_Color Color;
 MenuSpriteAnim Anim;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	PlayerName = MenuChoice_PlayerName(NewChild(MenuChoice_PlayerName));
 	PlayerName.SetPos(ChoicesStartX, ChoicesStartY);

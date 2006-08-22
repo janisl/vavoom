@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuScreenSkill:MenuScreen;
+class MenuScreenSkill : MenuScreen;
 
-void SetDefaultChoice(void)
+void SetDefaultChoice()
 {
 	::SetDefaultChoice();
 	CycleNextChoice();

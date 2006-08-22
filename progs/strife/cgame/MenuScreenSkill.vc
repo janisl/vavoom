@@ -23,11 +23,11 @@
 //**
 //**************************************************************************
 
-class MenuScreenSkill:MenuScreen;
+class MenuScreenSkill : MenuScreen;
 
 string SkillNames[5];
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	MenuChoice_Skill newChoice;
 	int i;
@@ -41,7 +41,7 @@ void CreateChoices(void)
 	}
 }
 
-void SetDefaultChoice(void)
+void SetDefaultChoice()
 {
 	::SetDefaultChoice();
 	CycleNextChoice();

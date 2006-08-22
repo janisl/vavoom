@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuScreenControls2:MenuScreenControls;
+class MenuScreenControls2 : MenuScreenControls;
 
-void CreateControlKeyChoices(void)
+void CreateControlKeyChoices()
 {
 	AddControl("Fly up", "+FlyUp", "-FlyUp");
 	AddControl("Fly down", "+FlyDown", "-FlyDown");

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Window:Object
+class Window : Object
 	native;
 
 // Quick class reference
@@ -55,23 +55,23 @@ readonly Window LastChild;		// "Highest" child (last one drawn)
 readonly Window PrevSibling;		// Next "lowest" sibling (previous one drawn)
 readonly Window NextSibling;		// Next "highest" sibling (next one drawn)
 
-native void Destroy(void);
+native void Destroy();
 native Window NewChild(classid ChildClass);
-native void Raise(void);
-native void Lower(void);
+native void Raise();
+native void Lower();
 native void SetVisibility(bool bNewVisibility);
-native void Show(void);
-native void Hide(void);
-native bool IsVisible(void);
+native void Show();
+native void Hide();
+native bool IsVisible();
 native void SetSensitivity(bool bNewSensitivity);
-native void Enable(void);
-native void Disable(void);
-native bool IsSensitive(void);
+native void Enable();
+native void Disable();
+native bool IsSensitive();
 native void SetSelectability(bool bNewSelectability);
 
-native RootWindow GetRootWindow(void);
-native ModalWindow GetModalWindow(void);
-native Window GetParent(void);
+native RootWindow GetRootWindow();
+native ModalWindow GetModalWindow();
+native Window GetParent();
 
 native void SetPos(int NewX, int NewY);
 native void SetSize(int NewWidth, int NewHeight);

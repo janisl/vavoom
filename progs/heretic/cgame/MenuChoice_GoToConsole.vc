@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuChoice_GoToConsole:MenuSmallTextButton;
+class MenuChoice_GoToConsole : MenuSmallTextButton;
 
-void ActivateEvent(void)
+void ActivateEvent()
 {
 	CmdBuf_AddText("ToggleConsole\n");
 }

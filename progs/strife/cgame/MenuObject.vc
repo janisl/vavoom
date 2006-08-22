@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuObject:Window;
+class MenuObject : Window;
 
 bool bSelected;
 
@@ -32,11 +32,11 @@ bool Key(int key)
 	return false;
 }
 
-void FocusLost(void)
+void FocusLost()
 {
 }
 
-void FocusReceived(void)
+void FocusReceived()
 {
 }
 

@@ -23,9 +23,9 @@
 //**
 //**************************************************************************
 
-class MenuScreenLoadGame:MenuScreen;
+class MenuScreenLoadGame : MenuScreen;
 
-void CreateChoices(void)
+void CreateChoices()
 {
 	MenuChoice_LoadSlot newChoice;
 	int i;
