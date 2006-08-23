@@ -54,8 +54,6 @@ static void DumpAsm();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int				CurrentPass;
-
 char			SourceFileName[MAX_FILE_NAME_LENGTH];
 static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
@@ -94,25 +92,22 @@ int main(int argc, char **argv)
 	dprintf("Preprocessing in %02d:%02d\n",
 		(preptime - starttime) / 60, (preptime - starttime) % 60);
 	TK_OpenSource(buf, size);
-	CurrentPass = 1;
 	PA_Parse();
-	TK_Restart();
-	int pass1time = time(0);
-	dprintf("Pass 1 in %02d:%02d\n",
-		(pass1time - preptime) / 60, (pass1time - preptime) % 60);
-	CurrentPass = 2;
-	PA_Compile();
-	int pass2time = time(0);
-	dprintf("Pass 2 in %02d:%02d\n",
-		(pass2time - pass1time) / 60, (pass2time - pass1time) % 60);
 	TK_CloseSource();
+	int parsetime = time(0);
+	dprintf("Compiled in %02d:%02d\n",
+		(parsetime - preptime) / 60, (parsetime - preptime) % 60);
+	EmitCode();
+	int compiletime = time(0);
+	dprintf("Compiled in %02d:%02d\n",
+		(compiletime - parsetime) / 60, (compiletime - parsetime) % 60);
 	PC_WriteObject(ObjectFileName);
 	ERR_RemoveErrorFile();
 	DumpAsm();
 	VName::StaticExit();
 	endtime = time(0);
 	dprintf("Wrote in %02d:%02d\n",
-		(endtime - pass2time) / 60, (endtime - pass2time) % 60);
+		(endtime - compiletime) / 60, (endtime - compiletime) % 60);
 	dprintf("Time elapsed: %02d:%02d\n",
 		(endtime - starttime) / 60, (endtime - starttime) % 60);
 	return 0;

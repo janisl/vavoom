@@ -21,7 +21,6 @@ ___bin_vcc_SOURCES = constexp.cpp \
 	name.h \
 	names.h \
 	parse.cpp \
-	parse1.cpp \
 	pcode.cpp \
 	statement.cpp \
 	statement.h \

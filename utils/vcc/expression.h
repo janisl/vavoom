@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-enum { MAX_ARG_COUNT = 16 };
+class VTypeExpr;
 
 //==========================================================================
 //
@@ -45,10 +45,12 @@ public:
 	virtual VExpression* DoResolve() = 0;
 	VExpression* Resolve();
 	VExpression* ResolveBoolean();
+	virtual VTypeExpr* ResolveAsType();
 	virtual void RequestAddressOf();
 	void EmitPushPointedCode(TType);
 	virtual bool IsSingleName();
 	virtual bool GetIntConst(vint32&);
+	virtual VExpression* CreateTypeExprCopy();
 };
 
 //==========================================================================
@@ -190,8 +192,10 @@ public:
 
 	VSingleName(VName, const TLocation&);
 	VExpression* DoResolve();
+	VTypeExpr* ResolveAsType();
 	void Emit();
 	bool IsSingleName();
+	VExpression* CreateTypeExprCopy();
 };
 
 //==========================================================================
@@ -278,7 +282,7 @@ class VBaseInvocation : public VExpression
 public:
 	VName			Name;
 	int				NumArgs;
-	VExpression*	Args[MAX_ARG_COUNT + 1];
+	VExpression*	Args[MAX_PARAMS + 1];
 
 	VBaseInvocation(VName, int, VExpression**, const TLocation&);
 	~VBaseInvocation();
@@ -297,7 +301,7 @@ class VCastOrInvocation : public VExpression
 public:
 	VName			Name;
 	int				NumArgs;
-	VExpression*	Args[MAX_ARG_COUNT + 1];
+	VExpression*	Args[MAX_PARAMS + 1];
 
 	VCastOrInvocation(VName, const TLocation&, int, VExpression**);
 	~VCastOrInvocation();
@@ -317,7 +321,7 @@ public:
 	VExpression*	SelfExpr;
 	VName			MethodName;
 	int				NumArgs;
-	VExpression*	Args[MAX_ARG_COUNT + 1];
+	VExpression*	Args[MAX_PARAMS + 1];
 
 	VDotInvocation(VExpression*, VName, const TLocation&, int, VExpression**);
 	~VDotInvocation();
@@ -486,6 +490,42 @@ public:
 
 //==========================================================================
 //
+//	VTypeExpr
+//
+//==========================================================================
+
+class VTypeExpr : public VExpression
+{
+public:
+	char		Name[128];
+
+	VTypeExpr(TType AType, const TLocation& ALoc);
+	VExpression* DoResolve();
+	VTypeExpr* ResolveAsType();
+	void Emit();
+	const char* GetName();
+	VExpression* CreateTypeExprCopy();
+};
+
+//==========================================================================
+//
+//	VPointerType
+//
+//==========================================================================
+
+class VPointerType : public VTypeExpr
+{
+public:
+	VExpression*	Expr;
+
+	VPointerType(VExpression* AExpr, const TLocation& ALoc);
+	~VPointerType();
+	VTypeExpr* ResolveAsType();
+	VExpression* CreateTypeExprCopy();
+};
+
+//==========================================================================
+//
 //	VLocalEntry
 //
 //==========================================================================
@@ -493,6 +533,7 @@ public:
 class VLocalEntry
 {
 public:
+	VExpression*	TypeExpr;
 	VName			Name;
 	TLocation		Loc;
 	VExpression*	Value;
@@ -516,8 +557,6 @@ public:
 class VLocalDecl : public VExpression
 {
 public:
-	TType				BaseType;
-	VName				TypeName;
 	TArray<VLocalEntry>	Vars;
 
 	VLocalDecl(const TLocation&);

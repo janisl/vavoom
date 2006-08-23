@@ -41,6 +41,22 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+VLocalVarDef			localdefs[MAX_LOCAL_DEFS];
+int						numlocaldefs = 1;
+int						localsofs = 0;
+
+TType					SelfType;
+VClass*					SelfClass;
+
+int						maxlocalsofs = 0;
+TArray<breakInfo_t>		BreakInfo;
+int						BreakLevel;
+int						BreakNumLocalsOnStart;
+TArray<continueInfo_t> 	ContinueInfo;
+int						ContinueLevel;
+int						ContinueNumLocalsOnStart;
+TType					FuncRetType;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -297,26 +313,9 @@ TType CheckForType(VClass* InClass)
 	{
 		return TType(ev_unknown);
 	}
-
-	VMemberBase* m = VMemberBase::StaticFindMember(tk_Name, ANY_PACKAGE,
-		MEMBER_Class);
-	if (m)
-	{
-		TK_NextToken();
-		return TType((VClass*)m);
-	}
-	m = VMemberBase::StaticFindMember(tk_Name, InClass ?
-		(VMemberBase*)InClass : (VMemberBase*)ANY_PACKAGE, MEMBER_Struct);
-	if (m)
-	{
-		TK_NextToken();
-		return TType((VStruct*)m);
-	}
-	if (InClass)
-	{
-		return CheckForType(InClass->ParentClass);
-	}
-	return TType(ev_unknown);
+	VName Name = tk_Name;
+	TK_NextToken();
+	return CheckForType(InClass, Name);
 }
 
 //==========================================================================
@@ -610,211 +609,6 @@ void TType::GetName(char* Dest) const
 
 //==========================================================================
 //
-//	SkipStruct
-//
-//==========================================================================
-
-void SkipStruct(VClass* InClass)
-{
-	TK_NextToken();
-	if (TK_Check(PU_SEMICOLON))
-	{
-		return;
-	}
-
-	if (TK_Check(PU_COLON))
-	{
-		TK_NextToken();
-	}
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		TModifiers::Parse();
-		TK_NextToken();
-		do
-		{
-			while (TK_Check(PU_ASTERISK));
-			TK_NextToken();
-			if (TK_Check(PU_LINDEX))
-			{
-				EvalConstExpression(InClass, ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-			}
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-}
-
-//==========================================================================
-//
-//	CompileClass
-//
-//==========================================================================
-
-void CompileClass()
-{
-	TType		t;
-	TType		type;
-
-	VClass* Class = CheckForClass();
-	if (!Class)
-	{
-		ParseError("Not a class type");
-		return;
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		return;
-	}
-
-	if (TK_Check(PU_COLON))
-	{
-		CheckForClass();
-	}
-
-	TModifiers::Parse();
-	do
-	{
-		if (TK_Check(KW_MOBJINFO))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			EvalConstExpression(NULL, ev_int);
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		}
-		else if (TK_Check(KW_SCRIPTID))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			EvalConstExpression(NULL, ev_int);
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		}
-		else
-		{
-			break;
-		}
-	} while (1);
-
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	while (!TK_Check(KW_DEFAULTPROPERTIES))
-	{
-		if (TK_Check(KW_STATES))
-		{
-			SkipStates(Class);
-			continue;
-		}
-
-		if (TK_Check(KW_ENUM))
-		{
-			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-			do
-			{
-				TK_NextToken();
-				if (TK_Check(PU_ASSIGN))
-				{
-					EvalConstExpression(Class, ev_int);
-				}
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
-		if (TK_Check(KW_CONST))
-		{
-			t = CheckForType(Class);
-			do
-			{
-				TK_NextToken();
-				if (!TK_Check(PU_ASSIGN))
-					ParseError("Assignement operator expected");
-				EvalConstExpression(Class, t.type);
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
-		if (TK_Check(KW_STRUCT))
-		{
-			SkipStruct(Class);
-			continue;
-		}
-
-		if (TK_Check(KW_VECTOR))
-		{
-			SkipStruct(Class);
-			continue;
-		}
-
-		if (TK_Check(KW_DELEGATE))
-		{
-			SkipDelegate(Class);
-			continue;
-		}
-
-		TModifiers::Parse();
-
-		type = CheckForType(Class);
-		if (type.type == ev_unknown)
-		{
-			ParseError("Field type expected.");
-		}
-
-		bool need_semicolon = true;
-		do
-		{
-			t = type;
-			while (TK_Check(PU_ASTERISK))
-			{
-				t = MakePointerType(t);
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-				continue;
-			}
-			VName FieldName = tk_Name;
-			TK_NextToken();
-
-			if (TK_Check(PU_LPAREN))
-			{
-				VMethod* M = (VMethod*)VMemberBase::StaticFindMember(
-					FieldName, Class, MEMBER_Method);
-				if (!M)
-					ERR_Exit(ERR_NONE, true, "Method Field not found");
-				CompileMethodDef(t, M, Class);
-				need_semicolon = false;
-				break;
-			}
-
-			VField* fi = NULL;
-			for (fi = Class->Fields; fi; fi = fi->Next)
-			{
-				if (fi->Name == FieldName)
-				{
-					break;
-				}
-			}
-			if (!fi)
-				ERR_Exit(ERR_NONE, true, "Method Field not found");
-			if (TK_Check(PU_LINDEX))
-			{
-				EvalConstExpression(Class, ev_int);
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-			}
-		} while (TK_Check(PU_COMMA));
-		if (need_semicolon)
-		{
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		}
-	}
-
-	CompileDefaultProperties(Class->DefaultProperties, Class);
-}
-
-//==========================================================================
-//
 //	CheckForStructField
 //
 //==========================================================================
@@ -912,23 +706,6 @@ VMethod* CheckForMethod(VName Name, VClass* InClass)
 
 //==========================================================================
 //
-//	ParsePropArrayDims
-//
-//==========================================================================
-
-static TType ParsePropArrayDims(VClass* Class, const TType& t)
-{
-	if (TK_Check(PU_LINDEX))
-	{
-		int i = EvalConstExpression(Class, ev_int);
-		TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
-		return MakeArrayType(t, i);
-	}
-	return t;
-}
-
-//==========================================================================
-//
 //	VStruct::AddField
 //
 //==========================================================================
@@ -989,428 +766,6 @@ void VClass::AddState(VState* s)
 
 //==========================================================================
 //
-//	ParseStruct
-//
-//==========================================================================
-
-void ParseStruct(VClass* InClass, bool IsVector)
-{
-	VField*		fi;
-	TType		t;
-	TType		type;
-	TType		struct_type;
-	VStruct*	Struct;
-
-	struct_type = CheckForType(InClass);
-	if (struct_type.type != ev_unknown)
-	{
-		if (struct_type.type != (IsVector ? ev_vector : ev_struct))
-		{
-			ParseError(IsVector ? "Not a vector type" : "Not a struct type");
-			return;
-		}
-		Struct = struct_type.Struct;
-		if (Struct->Parsed)
-		{
-			ParseError("Struct type already completed");
-			return;
-		}
-		Struct->Loc = tk_Location;
-	}
-	else
-	{
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Struct name expected");
-		}
-		//	New struct
-		Struct = new VStruct(tk_Name, InClass ? (VMemberBase*)InClass :
-			(VMemberBase*)CurrentPackage, tk_Location);
-		Struct->Parsed = false;
-		Struct->IsVector = IsVector;
-		//  Add to types
-		TK_NextToken();
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		return;
-	}
-
-	int size = 0;
-	Struct->Fields = NULL;
-
-	if (!IsVector && TK_Check(PU_COLON))
-	{
-		type = CheckForType(InClass);
-		if (type.type == ev_unknown)
-		{
-			ParseError("Parent type expected");
-		}
-		else if (type.type != ev_struct)
-		{
-			ParseError("Parent type must be a struct");
-		}
-		else
-		{
-			Struct->ParentStruct = type.Struct;
-			size = Struct->ParentStruct->StackSize * 4;
-		}
-	}
-
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
-	{
-		int Modifiers = TModifiers::Parse();
-		Modifiers = TModifiers::Check(Modifiers, VField::AllowedModifiers);
-
-		type = CheckForType(InClass);
-		if (type.type == ev_unknown)
-		{
-			ParseError("Field type expected.");
-		}
-		if (IsVector && type.type != ev_float)
-		{
-			ParseError("Vector can have only float fields");
-			continue;
-		}
-		do
-		{
-			t = type;
-			if (!IsVector)
-			{
-				while (TK_Check(PU_ASTERISK))
-				{
-					t = MakePointerType(t);
-				}
-			}
-			if (t.type == ev_void)
-			{
-				ParseError("Field cannot have void type.");
-			}
-			if (IsVector)
-			{
-				int fc = 0;
-				for (VField* f = Struct->Fields; f; f = f->Next)
-					fc++;
-				if (fc == 3)
-				{
-					ParseError("Vector must have exactly 3 float fields");
-					continue;
-				}
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-			}
-			fi = new VField(tk_Name, Struct, tk_Location);
-			fi->flags = TModifiers::FieldAttr(Modifiers);
-			TK_NextToken();
-			if (t.type == ev_bool && Struct->Fields)
-			{
-				VField* prevbool = Struct->Fields;
-				while (prevbool->Next)
-					prevbool = prevbool->Next;
-				if (prevbool->type.type == ev_bool &&
-					(vuint32)prevbool->type.bit_mask != 0x80000000)
-				{
-					fi->type = t;
-					fi->type.bit_mask = prevbool->type.bit_mask << 1;
-					Struct->AddField(fi);
-					continue;
-				}
-			}
-			if (!IsVector)
-			{
-				t = ParsePropArrayDims(InClass, t);
-			}
-			fi->type = t;
-			size += t.GetSize();
-			Struct->AddField(fi);
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	if (IsVector)
-	{
-		int fc = 0;
-		for (VField* f = Struct->Fields; f; f = f->Next)
-			fc++;
-		if (fc != 3)
-		{
-			ParseError("Vector must have exactly 3 float fields");
-		}
-	}
-	Struct->StackSize = (size + 3) / 4;
-	Struct->Parsed = true;
-}
-
-//==========================================================================
-//
-//	ParseClass
-//
-//==========================================================================
-
-void ParseClass()
-{
-	TType				t;
-	TType				type;
-
-	VClass* Class = CheckForClass();
-	if (Class)
-	{
-		if (Class->Parsed)
-		{
-			ParseError("Class definition already completed");
-			return;
-		}
-		Class->Loc = tk_Location;
-	}
-	else
-	{
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Class name expected");
-		}
-		//	New class.
-		Class = new VClass(tk_Name, CurrentPackage, tk_Location);
-		Class->Parsed = false;
-		TK_NextToken();
-	}
-
-	if (TK_Check(PU_SEMICOLON))
-	{
-		return;
-	}
-
-	Class->Fields = NULL;
-
-	if (TK_Check(PU_COLON))
-	{
-		VClass* Parent = CheckForClass();
-		if (!Parent)
-		{
-			ParseError("Parent class type expected");
-		}
-		else if (!Parent->Parsed)
-		{
-			ParseError("Incomplete parent class");
-		}
-		else
-		{
-			Class->ParentClass = Parent;
-		}
-	}
-	else if (Class->Name != NAME_Object)
-	{
-		ParseError("Parent class expected");
-	}
-
-	Class->Parsed = true;
-
-	int ClassModifiers = TModifiers::Parse();
-	ClassModifiers = TModifiers::Check(ClassModifiers, VClass::AllowedModifiers);
-	int ClassAttr = TModifiers::ClassAttr(ClassModifiers);
-	do
-	{
-		if (TK_Check(KW_MOBJINFO))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToMobjInfo(EvalConstExpression(NULL, ev_int), Class);
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		}
-		else if (TK_Check(KW_SCRIPTID))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToScriptIds(EvalConstExpression(NULL, ev_int), Class);
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-		}
-		else
-		{
-			break;
-		}
-	} while (1);
-
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	while (!TK_Check(KW_DEFAULTPROPERTIES))
-	{
-		if (TK_Check(KW_STATES))
-		{
-			ParseStates(Class);
-			continue;
-		}
-
-		if (TK_Check(KW_ENUM))
-		{
-			int val;
-			VName Name;
-
-			val = 0;
-			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-			do
-			{
-				if (tk_Token != TK_IDENTIFIER)
-				{
-					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-				}
-				Name = tk_Name;
-				TK_NextToken();
-				if (TK_Check(PU_ASSIGN))
-				{
-					val = EvalConstExpression(Class, ev_int);
-				}
-				AddConstant(Class, Name, ev_int, val);
-				val++;
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
-		if (TK_Check(KW_CONST))
-		{
-			t = CheckForType(Class);
-			do
-			{
-				if (tk_Token != TK_IDENTIFIER)
-				{
-					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-				}
-				if (t.type != ev_int && t.type != ev_float)
-				{
-					ParseError("Unsupported type of constant");
-				}
-				VName Name = tk_Name;
-				TK_NextToken();
-				if (!TK_Check(PU_ASSIGN))
-					ParseError("Assignement operator expected");
-				int val = EvalConstExpression(Class, t.type);
-				AddConstant(Class, Name, t.type, val);
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			continue;
-		}
-
-		if (TK_Check(KW_STRUCT))
-		{
-			ParseStruct(Class, false);
-			continue;
-		}
-
-		if (TK_Check(KW_VECTOR))
-		{
-			ParseStruct(Class, true);
-			continue;
-		}
-
-		if (TK_Check(KW_DELEGATE))
-		{
-			int Flags = 0;
-	
-			t = CheckForType(Class);
-			if (t.type == ev_unknown)
-			{
-				ParseError("Field type expected.");
-			}
-			while (TK_Check(PU_ASTERISK))
-			{
-				t = MakePointerType(t);
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-				continue;
-			}
-			VField* fi = new VField(tk_Name, Class, tk_Location);
-			if (CheckForField(tk_Name, Class, false) ||
-				CheckForMethod(tk_Name, Class))
-			{
-				ParseError("Redeclared field");
-			}
-			TK_NextToken();
-			Class->AddField(fi);
-			ParseDelegate(t, fi, Class, Flags);
-			continue;
-		}
-
-		int Modifiers = TModifiers::Parse();
-
-		type = CheckForType(Class);
-		if (type.type == ev_unknown)
-		{
-			ParseError("Field type expected.");
-		}
-
-		bool need_semicolon = true;
-		do
-		{
-			t = type;
-			while (TK_Check(PU_ASTERISK))
-			{
-				t = MakePointerType(t);
-			}
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError("Field name expected");
-				continue;
-			}
-			VName FieldName = tk_Name;
-			TLocation FieldLoc = tk_Location;
-			TK_NextToken();
-			VMethod* BaseMethod = CheckForMethod(FieldName, Class);
-			if (CheckForField(FieldName, Class, false))
-			{
-				ParseError("Redeclared field");
-				continue;
-			}
-
-			if (TK_Check(PU_LPAREN))
-			{
-				ParseMethodDef(t, FieldName, FieldLoc, BaseMethod, Class,
-					Modifiers);
-				need_semicolon = false;
-				break;
-			}
-			VField* fi = new VField(FieldName, Class, FieldLoc);
-			if (BaseMethod)
-			{
-				ParseError("Redeclared identifier");
-			}
-			if (t.type == ev_void)
-			{
-				ParseError("Field cannot have void type.");
-			}
-			Modifiers = TModifiers::Check(Modifiers, VField::AllowedModifiers);
-			fi->flags = TModifiers::FieldAttr(Modifiers);
-			if (t.type == ev_bool && Class->Fields)
-			{
-				VField* prevbool = Class->Fields;
-				while (prevbool->Next)
-					prevbool = prevbool->Next;
-				if (prevbool->type.type == ev_bool &&
-					(vuint32)prevbool->type.bit_mask != 0x80000000)
-				{
-					fi->type = t;
-					fi->type.bit_mask = prevbool->type.bit_mask << 1;
-					Class->AddField(fi);
-					continue;
-				}
-			}
-			t = ParsePropArrayDims(Class, t);
-			fi->type = t;
-			Class->AddField(fi);
-		} while (TK_Check(PU_COMMA));
-		if (need_semicolon)
-		{
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-		}
-	}
-
-	ParseDefaultProperties(Class);
-}
-
-//==========================================================================
-//
 //	VField::NeedsDestructor
 //
 //==========================================================================
@@ -1445,4 +800,185 @@ bool VStruct::NeedsDestructor() const
 	if (ParentStruct)
 		return ParentStruct->NeedsDestructor();
 	return false;
+}
+
+//==========================================================================
+//
+//	AddConstant
+//
+//==========================================================================
+
+void AddConstant(VClass* InClass, VName Name, int type, int value)
+{
+	if (CheckForConstant(InClass, Name))
+	{
+		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
+	}
+	VConstant* cDef = new VConstant(Name, InClass ?
+		(VMemberBase*)InClass : (VMemberBase*)CurrentPackage, tk_Location);
+	cDef->Type = (EType)type;
+	cDef->value = value;
+}
+
+//==========================================================================
+//
+//	CheckForLocalVar
+//
+//==========================================================================
+
+int CheckForLocalVar(VName Name)
+{
+	if (Name == NAME_None)
+	{
+		return 0;
+	}
+	for (int i = 1; i < numlocaldefs; i++)
+	{
+		if (!localdefs[i].Visible)
+		{
+			continue;
+		}
+		if (localdefs[i].Name == Name)
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	VMethod::Emit
+//
+//==========================================================================
+
+void VMethod::Emit()
+{
+	if (Flags & FUNC_Native)
+	{
+		if (Statement)
+		{
+			ParseError(Loc, "Native methods can't have a body");
+		}
+		return;
+	}
+
+	if (Outer->MemberType == MEMBER_Field)
+	{
+		//	Delegate
+		return;
+	}
+
+	if (!Statement)
+	{
+		ParseError(Loc, "Method body missing");
+		return;
+	}
+
+	VMemberBase* C = Outer;
+	while (C && C->MemberType != MEMBER_Class)
+	{
+		C = C->Outer;
+	}
+	SelfClass = (VClass*)C;
+	SelfType = TType(SelfClass);
+
+	numlocaldefs = 1;
+	localsofs = 1;
+
+	for (int i = 0; i < NumParams; i++)
+	{
+		VMethodParam& P = Params[i];
+		if (P.Name != NAME_None)
+		{
+			if (CheckForLocalVar(P.Name))
+			{
+				ParseError(P.Loc, "Redefined identifier %s", *P.Name);
+			}
+			localdefs[numlocaldefs].Name = P.Name;
+			localdefs[numlocaldefs].type = ParamTypes[i];
+			localdefs[numlocaldefs].ofs = localsofs;
+			localdefs[numlocaldefs].Visible = true;
+			localdefs[numlocaldefs].Cleared = false;
+			numlocaldefs++;
+		}
+		localsofs += ParamTypes[i].GetSize() / 4;
+	}
+	maxlocalsofs = localsofs;
+
+	BreakLevel = 0;
+	ContinueLevel = 0;
+	FuncRetType = ReturnType;
+
+	BeginCode(this);
+	for (int i = 0; i < numlocaldefs; i++)
+	{
+		if (localdefs[i].type.type == ev_vector)
+		{
+			AddStatement(OPC_VFixParam, i);
+		}
+	}
+
+	if (!NumErrors)
+	{
+		Statement->Resolve();
+	}
+
+	//  Call parent constructor
+	if (this == SelfClass->DefaultProperties && SelfClass->ParentClass)
+	{
+		AddStatement(OPC_LocalAddress0);
+		AddStatement(OPC_PushPointedPtr);
+		AddStatement(OPC_Call, SelfClass->ParentClass->DefaultProperties);
+	}
+
+	if (!NumErrors)
+	{
+		Statement->Emit();
+	}
+
+	if (FuncRetType.type == ev_void)
+	{
+		EmitClearStrings(0, numlocaldefs);
+		AddStatement(OPC_Return);
+	}
+	NumLocals = maxlocalsofs;
+	EndCode(this);
+}
+
+//==========================================================================
+//
+//	EmitCode
+//
+//==========================================================================
+
+void EmitCode()
+{
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	{
+		if (!VMemberBase::GMembers[i]->IsIn(CurrentPackage))
+		{
+			continue;
+		}
+
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_State)
+		{
+			VState* s = (VState*)VMemberBase::GMembers[i];
+			if (s->NextStateName != NAME_None)
+			{
+				s->nextstate = FindState(s->NextStateName, (VClass*)s->Outer);
+			}
+		}
+
+		//	Emit method code.
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method)
+		{
+			((VMethod*)VMemberBase::GMembers[i])->Emit();
+		}
+	}
+
+	if (NumErrors)
+	{
+		ERR_Exit(ERR_NONE, false, NULL);
+	}
 }

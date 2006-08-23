@@ -182,11 +182,6 @@ int FindString(const char *str)
 
 int AddStatement(int statement)
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("AddStatement in pass 1\n");
-	}
-
 	if (StatementInfo[statement].Args != OPCARGS_None)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode doesn't take 0 params");
@@ -232,11 +227,6 @@ int AddStatement(int statement)
 
 int AddStatement(int statement, int parm1)
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("AddStatement in pass 1\n");
-	}
-
 	if (StatementInfo[statement].Args != OPCARGS_BranchTarget &&
 		StatementInfo[statement].Args != OPCARGS_Byte &&
 		StatementInfo[statement].Args != OPCARGS_Short &&
@@ -262,11 +252,6 @@ int AddStatement(int statement, int parm1)
 
 int AddStatement(int statement, float FloatArg)
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("AddStatement in pass 1\n");
-	}
-
 	if (StatementInfo[statement].Args != OPCARGS_Int)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode does\'t take float argument");
@@ -287,11 +272,6 @@ int AddStatement(int statement, float FloatArg)
 
 int AddStatement(int statement, VName NameArg)
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("AddStatement in pass 1\n");
-	}
-
 	if (StatementInfo[statement].Args != OPCARGS_Name)
 	{
 		ERR_Exit(ERR_NONE, false, "Opcode does\'t take name argument");
@@ -312,11 +292,6 @@ int AddStatement(int statement, VName NameArg)
 
 int AddStatement(int statement, VMemberBase* Member)
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("AddStatement in pass 1\n");
-	}
-
 	if (StatementInfo[statement].Args != OPCARGS_Member &&
 		StatementInfo[statement].Args != OPCARGS_FieldOffset &&
 		StatementInfo[statement].Args != OPCARGS_VTableIndex)
@@ -339,11 +314,6 @@ int AddStatement(int statement, VMemberBase* Member)
 
 int AddStatement(int statement, const TType& TypeArg)
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("AddStatement in pass 1\n");
-	}
-
 	if (StatementInfo[statement].Args != OPCARGS_TypeSize)
 	{
 		ParseError("Opcode does\'t take type as argument");
@@ -364,11 +334,6 @@ int AddStatement(int statement, const TType& TypeArg)
 
 int AddStatement(int statement, int parm1, int parm2)
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("AddStatement in pass 1\n");
-	}
-
 	if (StatementInfo[statement].Args != OPCARGS_ByteBranchTarget &&
 		StatementInfo[statement].Args != OPCARGS_ShortBranchTarget &&
 		StatementInfo[statement].Args != OPCARGS_IntBranchTarget)
@@ -477,14 +442,93 @@ int GetNumInstructions()
 
 int UndoStatement()
 {
-	if (CurrentPass == 1)
-	{
-		dprintf("UndoStatement in pass 1\n");
-	}
-
 	int Ret = CurrentFunc->Instructions[CurrentFunc->Instructions.Num() - 1].Opcode;
 	CurrentFunc->Instructions.RemoveIndex(CurrentFunc->Instructions.Num() - 1);
 	return Ret;
+}
+
+//==========================================================================
+//
+// WriteBreaks
+//
+//==========================================================================
+
+void WriteBreaks()
+{
+	BreakLevel--;
+	while (BreakInfo.Num() && BreakInfo[BreakInfo.Num() - 1].level > BreakLevel)
+	{
+		FixupJump(BreakInfo[BreakInfo.Num() - 1].addressPtr);
+		BreakInfo.SetNum(BreakInfo.Num() - 1);
+	}
+}
+
+//==========================================================================
+//
+// WriteContinues
+//
+//==========================================================================
+
+void WriteContinues(int address)
+{
+	ContinueLevel--;
+	while (ContinueInfo.Num() && ContinueInfo[ContinueInfo.Num() - 1].level > ContinueLevel)
+	{
+		FixupJump(ContinueInfo[ContinueInfo.Num() - 1].addressPtr, address);
+		ContinueInfo.SetNum(ContinueInfo.Num() - 1);
+	}
+}
+
+//==========================================================================
+//
+//	EmitClearStrings
+//
+//==========================================================================
+
+void EmitClearStrings(int Start, int End)
+{
+	for (int i = Start; i < End; i++)
+	{
+		if (localdefs[i].Cleared)
+		{
+			continue;
+		}
+		if (localdefs[i].type.type == ev_string)
+		{
+			EmitLocalAddress(localdefs[i].ofs);
+			AddStatement(OPC_ClearPointedStr);
+		}
+		if (localdefs[i].type.type == ev_struct &&
+			localdefs[i].type.Struct->NeedsDestructor())
+		{
+			EmitLocalAddress(localdefs[i].ofs);
+			AddStatement(OPC_ClearPointedStruct, localdefs[i].type.Struct);
+		}
+		if (localdefs[i].type.type == ev_array)
+		{
+			if (localdefs[i].type.ArrayInnerType == ev_string)
+			{
+				for (int j = 0; j < localdefs[i].type.array_dim; j++)
+				{
+					EmitLocalAddress(localdefs[i].ofs);
+					EmitPushNumber(j);
+					AddStatement(OPC_ArrayElement, localdefs[i].type.GetArrayInnerType());
+					AddStatement(OPC_ClearPointedStr);
+				}
+			}
+			else if (localdefs[i].type.ArrayInnerType == ev_struct &&
+				localdefs[i].type.Struct->NeedsDestructor())
+			{
+				for (int j = 0; j < localdefs[i].type.array_dim; j++)
+				{
+					EmitLocalAddress(localdefs[i].ofs);
+					EmitPushNumber(j);
+					AddStatement(OPC_ArrayElement, localdefs[i].type.GetArrayInnerType());
+					AddStatement(OPC_ClearPointedStruct, localdefs[i].type.Struct);
+				}
+			}
+		}
+	}
 }
 
 //==========================================================================

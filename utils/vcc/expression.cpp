@@ -169,7 +169,7 @@ public:
 	bool			HaveSelf;
 	bool			BaseCall;
 	int				NumArgs;
-	VExpression*	Args[MAX_ARG_COUNT + 1];
+	VExpression*	Args[MAX_PARAMS + 1];
 
 	VInvocation(VExpression* ASelfExpr, VMethod* AFunc, VField* ADelegateField,
 		bool AHaveSelf, bool ABaseCall, const TLocation& ALoc, int ANumArgs,
@@ -285,6 +285,64 @@ VExpression* VExpression::Resolve()
 
 //==========================================================================
 //
+//	VExpression::ResolveBoolean
+//
+//==========================================================================
+
+VExpression* VExpression::ResolveBoolean()
+{
+	VExpression* e = Resolve();
+	if (!e)
+	{
+		return NULL;
+	}
+
+	switch (e->Type.type)
+	{
+	case ev_int:
+	case ev_float:
+	case ev_name:
+	case ev_bool:
+		break;
+
+	case ev_pointer:
+	case ev_reference:
+	case ev_classid:
+	case ev_state:
+		e = new VPointerToBool(e);
+		break;
+
+	case ev_string:
+		e = new VStringToBool(e);
+		break;
+
+	case ev_delegate:
+		e = new VDelegateToBool(e);
+		break;
+
+	default:
+		ParseError(Loc, "Expression type mistmatch, boolean expression expected");
+		delete e;
+		return NULL;
+	}
+	return e;
+}
+
+//==========================================================================
+//
+//	VExpression::ResolveAsType
+//
+//==========================================================================
+
+VTypeExpr* VExpression::ResolveAsType()
+{
+	ParseError(Loc, "Invalid type expression");
+	delete this;
+	return NULL;
+}
+
+//==========================================================================
+//
 //	VExpression::RequestAddressOf
 //
 //==========================================================================
@@ -357,51 +415,6 @@ bool VExpression::IsSingleName()
 
 //==========================================================================
 //
-//	VExpression::ResolveBoolean
-//
-//==========================================================================
-
-VExpression* VExpression::ResolveBoolean()
-{
-	VExpression* e = Resolve();
-	if (!e)
-	{
-		return NULL;
-	}
-
-	switch (e->Type.type)
-	{
-	case ev_int:
-	case ev_float:
-	case ev_name:
-	case ev_bool:
-		break;
-
-	case ev_pointer:
-	case ev_reference:
-	case ev_classid:
-	case ev_state:
-		e = new VPointerToBool(e);
-		break;
-
-	case ev_string:
-		e = new VStringToBool(e);
-		break;
-
-	case ev_delegate:
-		e = new VDelegateToBool(e);
-		break;
-
-	default:
-		ParseError(Loc, "Expression type mistmatch, boolean expression expected");
-		delete e;
-		return NULL;
-	}
-	return e;
-}
-
-//==========================================================================
-//
 //	VExpression::GetIntConst
 //
 //==========================================================================
@@ -411,6 +424,18 @@ bool VExpression::GetIntConst(vint32& Value)
 	ParseError(Loc, "Integer constant expected");
 	Value = 0;
 	return false;
+}
+
+//==========================================================================
+//
+//	VExpression::CreateTypeExprCopy
+//
+//==========================================================================
+
+VExpression* VExpression::CreateTypeExprCopy()
+{
+	ParseError(Loc, "Not a type");
+	return new VTypeExpr(ev_unknown, Loc);
 }
 
 //END
@@ -884,6 +909,27 @@ VExpression* VSingleName::DoResolve()
 
 //==========================================================================
 //
+//	VSingleName::ResolveAsType
+//
+//==========================================================================
+
+VTypeExpr* VSingleName::ResolveAsType()
+{
+	Type = CheckForType(SelfClass, Name);
+	if (Type.type == ev_unknown)
+	{
+		ParseError(Loc, "Invalid identifier, bad type name %s", *Name);
+		delete this;
+		return NULL;
+	}
+
+	VTypeExpr* e = new VTypeExpr(Type, Loc);
+	delete this;
+	return e;
+}
+
+//==========================================================================
+//
 //	VSingleName::Emit
 //
 //==========================================================================
@@ -902,6 +948,17 @@ void VSingleName::Emit()
 bool VSingleName::IsSingleName()
 {
 	return true;
+}
+
+//==========================================================================
+//
+//	VSingleName::CreateTypeExprCopy
+//
+//==========================================================================
+
+VExpression* VSingleName::CreateTypeExprCopy()
+{
+	return new VSingleName(Name, Loc);
 }
 
 //END
@@ -3481,7 +3538,7 @@ void VInvocation::CheckParams()
 	int num_needed_params = Func->NumParams;
 	if (Func->Flags & FUNC_VarArgs)
 	{
-		max_params = MAX_ARG_COUNT - 1;
+		max_params = MAX_PARAMS - 1;
 	}
 	else
 	{
@@ -3675,7 +3732,7 @@ void VPointerToBool::Emit()
 
 //END
 
-//BEGIN VDelegateToBool
+//BEGIN VDropResult
 
 //==========================================================================
 //
@@ -3761,6 +3818,149 @@ void VDropResult::Emit()
 
 //END
 
+//BEGIN VTypeExpr
+
+//==========================================================================
+//
+//	VTypeExpr::VTypeExpr
+//
+//==========================================================================
+
+VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc)
+: VExpression(ALoc)
+{
+	Type = AType;
+	Name[0] = 0;
+}
+
+//==========================================================================
+//
+//	VTypeExpr::DoResolve
+//
+//==========================================================================
+
+VExpression* VTypeExpr::DoResolve()
+{
+	return ResolveAsType();
+}
+
+//==========================================================================
+//
+//	VTypeExpr::ResolveAsType
+//
+//==========================================================================
+
+VTypeExpr* VTypeExpr::ResolveAsType()
+{
+	if (Type.type == ev_unknown)
+	{
+		ParseError(Loc, "Bad type");
+		delete this;
+		return NULL;
+	}
+	return this;
+}
+
+//==========================================================================
+//
+//	VTypeExpr::Emit
+//
+//==========================================================================
+
+void VTypeExpr::Emit()
+{
+	ParseError(Loc, "Should not happen");
+}
+
+//==========================================================================
+//
+//	VTypeExpr::GetName
+//
+//==========================================================================
+
+const char* VTypeExpr::GetName()
+{
+	if (!Name[0])
+		Type.GetName(Name);
+	return Name;
+}
+
+//==========================================================================
+//
+//	VTypeExpr::CreateTypeExprCopy
+//
+//==========================================================================
+
+VExpression* VTypeExpr::CreateTypeExprCopy()
+{
+	return new VTypeExpr(Type, Loc);
+}
+
+//END
+
+//BEGIN VTypeExpr
+
+//==========================================================================
+//
+//	VPointerType::VPointerType
+//
+//==========================================================================
+
+VPointerType::VPointerType(VExpression* AExpr, const TLocation& ALoc)
+: VTypeExpr(ev_unknown, ALoc)
+, Expr(AExpr)
+{
+}
+
+//==========================================================================
+//
+//	VPointerType::~VPointerType
+//
+//==========================================================================
+
+VPointerType::~VPointerType()
+{
+	if (Expr)
+	{
+		delete Expr;
+	}
+}
+
+//==========================================================================
+//
+//	VPointerType::ResolveAsType
+//
+//==========================================================================
+
+VTypeExpr* VPointerType::ResolveAsType()
+{
+	if (Expr)
+	{
+		Expr = Expr->ResolveAsType();
+	}
+	if (!Expr)
+	{
+		delete this;
+		return NULL;
+	}
+
+	Type = MakePointerType(Expr->Type);
+	return this;
+}
+
+//==========================================================================
+//
+//	VPointerType::CreateTypeExprCopy
+//
+//==========================================================================
+
+VExpression* VPointerType::CreateTypeExprCopy()
+{
+	return new VPointerType(Expr->CreateTypeExprCopy(), Loc);
+}
+
+//END
+
 //BEGIN VLocalDecl
 
 //==========================================================================
@@ -3784,6 +3984,10 @@ VLocalDecl::~VLocalDecl()
 {
 	for (int i = 0; i < Vars.Num(); i++)
 	{
+		if (Vars[i].TypeExpr)
+		{
+			delete Vars[i].TypeExpr;
+		}
 		if (Vars[i].Value)
 		{
 			delete Vars[i].Value;
@@ -3826,16 +4030,6 @@ void VLocalDecl::Emit()
 
 void VLocalDecl::Declare()
 {
-	if (BaseType.type == ev_unknown)
-	{
-		BaseType = CheckForType(SelfClass, TypeName);
-		if (BaseType.type == ev_unknown)
-		{
-			ParseError(tk_Location, "Invalid identifier, bad type");
-			return;
-		}
-	}
-
 	for (int i = 0; i < Vars.Num(); i++)
 	{
 		VLocalEntry& e = Vars[i];
@@ -3845,14 +4039,19 @@ void VLocalDecl::Declare()
 			ParseError(e.Loc, "Redefined identifier %s", *e.Name);
 		}
 
-		TType Type = BaseType;
+		e.TypeExpr = e.TypeExpr->ResolveAsType();
+		if (!e.TypeExpr)
+		{
+			continue;
+		}
+		TType Type = e.TypeExpr->Type;
 		for (int pl = 0; pl < e.PointerLevel; pl++)
 		{
 			Type = MakePointerType(Type);
 		}
 		if (Type.type == ev_void)
 		{
-			ParseError(e.Loc, "Bad variable type");
+			ParseError(e.TypeExpr->Loc, "Bad variable type");
 		}
 		if (e.ArraySize)
 		{

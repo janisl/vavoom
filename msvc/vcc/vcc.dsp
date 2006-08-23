@@ -119,10 +119,6 @@ SOURCE=..\..\utils\vcc\parse.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\utils\vcc\parse1.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\utils\vcc\pcode.cpp
 # End Source File
 # Begin Source File

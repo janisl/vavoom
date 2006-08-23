@@ -352,6 +352,9 @@ public:
 	void GetName(char* Dest) const;
 };
 
+#include "expression.h"
+#include "statement.h"
+
 class VField : public VMemberBase
 {
 public:
@@ -386,18 +389,38 @@ struct FInstruction
 	TType			TypeArg;
 };
 
+class VMethodParam
+{
+public:
+	VExpression*	TypeExpr;
+	VName			Name;
+	TLocation		Loc;
+
+	VMethodParam()
+	: TypeExpr(NULL)
+	, Name(NAME_None)
+	{}
+	~VMethodParam()
+	{
+		if (TypeExpr)
+			delete TypeExpr;
+	}
+};
+
 class VMethod : public VMemberBase
 {
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static |
 		TModifiers::Final };
 
-	int			NumLocals;
-	int			Flags;
-	TType		ReturnType;
-	int			NumParams;
-	int			ParamsSize;
-	TType		ParamTypes[MAX_PARAMS];
+	int						NumLocals;
+	int						Flags;
+	TType					ReturnType;
+	int						NumParams;
+	int						ParamsSize;
+	TType					ParamTypes[MAX_PARAMS];
+	VMethodParam			Params[MAX_PARAMS];
+	VStatement*				Statement;
 	TArray<FInstruction>	Instructions;
 
 	VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
@@ -407,9 +430,16 @@ public:
 	, ReturnType(ev_void)
 	, NumParams(0)
 	, ParamsSize(0)
+	, Statement(NULL)
 	{}
+	~VMethod()
+	{
+		if (Statement)
+			delete Statement;
+	}
 
 	void Serialise(VStream&);
+	void Emit();
 };
 
 class VLocalVarDef : public VMemberBase
@@ -474,6 +504,7 @@ public:
 	float		time;
 	VState*		nextstate;
 	VMethod*	function;
+	VName		NextStateName;
 	VState*		Next;
 
 	VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
@@ -485,6 +516,7 @@ public:
 	, time(0)
 	, nextstate(0)
 	, function(0)
+	, NextStateName(NAME_None)
 	, Next(0)
 	{}
 
@@ -566,7 +598,6 @@ int dprintf(const char *text, ...);
 
 void TK_Init();
 void TK_OpenSource(void *buf, size_t size);
-void TK_Restart();
 void TK_CloseSource();
 void TK_NextToken();
 bool TK_Check(const char *string);
@@ -588,6 +619,9 @@ int UndoStatement();
 int GetNumInstructions();
 void FixupJump(int, int);
 void FixupJump(int);
+void WriteBreaks();
+void WriteContinues(int address);
+void EmitClearStrings(int Start, int End);
 void BeginCode(VMethod*);
 void EndCode(VMethod*);
 void PC_WriteObject(char*);
@@ -600,22 +634,7 @@ float ConstFloatExpression();
 void EmitPushNumber(int);
 void EmitLocalAddress(int);
 
-void ParseMethodDef(const TType&, VName, TLocation, VMethod*, VClass*, int);
-void ParseDelegate(const TType&, VField*, VClass*, int);
-VMethod* ParseStateCode(VClass*, VState*);
-void ParseDefaultProperties(VClass*);
-void AddConstant(VClass* InClass, VName Name, int type, int value);
 void PA_Parse();
-
-void WriteBreaks();
-void WriteContinues(int address);
-void EmitClearStrings(int Start, int End);
-int CheckForLocalVar(VName);
-void CompileMethodDef(const TType&, VMethod*, VClass*);
-void SkipDelegate(VClass*);
-void CompileStateCode(VClass*, VMethod*);
-void CompileDefaultProperties(VMethod*, VClass*);
-void PA_Compile();
 
 void InitTypes();
 TType MakePointerType(const TType& type);
@@ -627,20 +646,18 @@ VClass* CheckForClass();
 VClass* CheckForClass(VName Name);
 VMethod* CheckForFunction(VClass*, VName);
 VConstant* CheckForConstant(VClass* InClass, VName);
-void SkipStruct(VClass*);
-void CompileClass();
 VField* CheckForStructField(VStruct*, VName, TLocation);
-void ParseStruct(VClass*, bool);
-void ParseClass();
 VField* CheckForField(VName, VClass*, bool = true);
 VMethod* CheckForMethod(VName, VClass*);
+void AddConstant(VClass* InClass, VName Name, int type, int value);
+int CheckForLocalVar(VName);
+void EmitCode();
 
 void InitInfoTables();
-void ParseStates(VClass*);
 void AddToMobjInfo(int Index, VClass* Class);
 void AddToScriptIds(int Index, VClass* Class);
-void SkipStates(VClass*);
 VState* CheckForState(VName StateName, VClass* InClass);
+VState* FindState(VName StateName, VClass* InClass);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -662,8 +679,6 @@ extern TArray<mobjinfo_t>	mobj_info;
 extern TArray<mobjinfo_t>	script_ids;
 
 extern int				NumErrors;
-
-extern int				CurrentPass;
 
 extern TType			SelfType;
 extern VClass*			SelfClass;
@@ -740,8 +755,5 @@ inline bool TK_Check(EPunctuation punct)
 	}
 	return false;
 }
-
-#include "expression.h"
-#include "statement.h"
 
 #endif
