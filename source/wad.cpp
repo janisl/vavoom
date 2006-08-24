@@ -53,13 +53,13 @@ class VWadFile : public VSearchPath
 {
 private:
 	VStr		Name;
-	int			Handle;
+	VStream*	Stream;
 	int			NumLumps;
 	lumpinfo_t*	LumpInfo;	// Location of each lump on disk.
 	VStr		GwaDir;
 
 public:
-	VWadFile() : Handle(-1), NumLumps(0), LumpInfo(NULL)
+	VWadFile() : Stream(NULL), NumLumps(0), LumpInfo(NULL)
 	{
 	}
 	~VWadFile()
@@ -504,15 +504,15 @@ void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	GwaDir = AGwaDir;
 
 	// open the file and add to directory
-	Handle = Sys_FileOpenRead(FileName);
-	if (Handle == -1)
+	Stream = FL_OpenSysFileRead(FileName);
+	if (!Stream)
 	{
 		Sys_Error("Couldn't open %s", *FileName);
 	}
 	GCon->Logf(NAME_Init, "adding %s", *FileName);
 
 	// WAD file
-	Sys_FileRead(Handle, &header, sizeof(header));
+	Stream->Serialise(&header, sizeof(header));
 	if (VStr::NCmp(header.identification, "IWAD", 4))
 	{
 		// Homebrew levels?
@@ -529,8 +529,8 @@ void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	LumpInfo = new lumpinfo_t[NumLumps];
 	length = header.numlumps * sizeof(filelump_t);
 	fi_p = fileinfo = (filelump_t*)Z_Malloc(length);
-	Sys_FileSeek(Handle, header.infotableofs);
-	Sys_FileRead(Handle, fileinfo, length);
+	Stream->Seek(header.infotableofs);
+	Stream->Serialise(fileinfo, length);
 
 	// Fill in lumpinfo
 	lump_p = LumpInfo;
@@ -565,8 +565,8 @@ void VWadFile::OpenSingleLump(const VStr& FileName)
 {
 	guard(VWadFile::OpenSingleLump);
 	// open the file and add to directory
-	Handle = Sys_FileOpenRead(FileName);
-	if (Handle == -1)
+	Stream = FL_OpenSysFileRead(FileName);
+	if (!Stream)
 	{
 		Sys_Error("Couldn't open %s", *FileName);
 	}
@@ -582,7 +582,7 @@ void VWadFile::OpenSingleLump(const VStr& FileName)
 	// Fill in lumpinfo
 	LumpInfo->Name = VName(*FileName.ExtractFileBase(), VName::AddLower8);
 	LumpInfo->Position = 0;
-	LumpInfo->Size = Sys_FileSize(Handle);
+	LumpInfo->Size = Stream->TotalSize();
 	unguard;
 }
 
@@ -603,10 +603,10 @@ void VWadFile::Close()
 	NumLumps = 0;
 	Name.Clean();
 	GwaDir.Clean();
-	if (Handle > 0)
+	if (Stream)
 	{
-		Sys_FileClose(Handle);
-		Handle = -1;
+		delete Stream;
+		Stream = NULL;
 	}
 	unguard;
 }
@@ -658,8 +658,8 @@ void VWadFile::ReadFromLump(int lump, void* dest, int pos, int size)
 		return;
 	}
 
-	Sys_FileSeek(Handle, l.Position + pos);
-	Sys_FileRead(Handle, dest, size);
+	Stream->Seek(l.Position + pos);
+	Stream->Serialise(dest, size);
 	unguard;
 }
 
@@ -884,17 +884,13 @@ VStream* VWadFile::CreateLumpReaderNum(int lump)
 
 	// read the lump in
 	void* ptr = Z_Malloc(l.Size);
-	Sys_FileSeek(Handle, l.Position);
-	int c = Sys_FileRead(Handle, ptr, l.Size);
-	if (c < l.Size)
-	{
-		Sys_Error("Only read %i of %i on lump %i", c, l.Size, lump);
-	}
+	Stream->Seek(l.Position);
+	Stream->Serialise(ptr, l.Size);
 
 	//	Create stream.
-	VStream* Strm = new VMemoryStream(ptr, l.Size);
+	VStream* S = new VMemoryStream(ptr, l.Size);
 	Z_Free(ptr);
-	return Strm;
+	return S;
 	unguard;
 }
 
