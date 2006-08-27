@@ -335,7 +335,7 @@ public:
 	int			array_dim;
 	union
 	{
-		int			bit_mask;
+		vuint32		bit_mask;
 		VClass*		Class;			//  Class of the reference
 		VStruct*	Struct;			//  Struct data.
 		VMethod*	Function;		//  Function of the delegate type.
@@ -361,21 +361,31 @@ public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Private |
 		TModifiers::ReadOnly | TModifiers::Transient };
 
-	VField*		Next;
-	TType		type;
-	VMethod*	func;	// Method's function
-	int			flags;
+	VField*			Next;
+	TType			type;
+	VExpression*	TypeExpr;
+	VMethod*		func;	// Method's function
+	vuint32 		Modifiers;
+	vuint32			flags;
 
 	VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Field, InName, InOuter, InLoc)
 	, Next(NULL)
 	, type(ev_void)
-	, func(0)
+	, TypeExpr(NULL)
+	, func(NULL)
+	, Modifiers(0)
 	, flags(0)
 	{}
+	~VField()
+	{
+		if (TypeExpr)
+			delete TypeExpr;
+	}
 
 	void Serialise(VStream&);
 	bool NeedsDestructor() const;
+	bool Define();
 };
 
 struct FInstruction
@@ -419,9 +429,12 @@ public:
 	int						NumParams;
 	int						ParamsSize;
 	TType					ParamTypes[MAX_PARAMS];
+	TArray<FInstruction>	Instructions;
+
+	vint32					Modifiers;
+	VExpression*			ReturnTypeExpr;
 	VMethodParam			Params[MAX_PARAMS];
 	VStatement*				Statement;
-	TArray<FInstruction>	Instructions;
 
 	VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Method, InName, InOuter, InLoc)
@@ -430,15 +443,20 @@ public:
 	, ReturnType(ev_void)
 	, NumParams(0)
 	, ParamsSize(0)
+	, Modifiers(0)
+	, ReturnTypeExpr(NULL)
 	, Statement(NULL)
 	{}
 	~VMethod()
 	{
+		if (ReturnTypeExpr)
+			delete ReturnTypeExpr;
 		if (Statement)
 			delete Statement;
 	}
 
 	void Serialise(VStream&);
+	bool Define();
 	void Emit();
 };
 
@@ -458,14 +476,31 @@ public:
 class VConstant : public VMemberBase
 {
 public:
-	vuint8		Type;
-	int			value;
+	vuint8			Type;
+	union
+	{
+		vint32		Value;
+		float		FloatValue;
+	};
+
+	VExpression*	ValueExpr;
+	VConstant*		PrevEnumValue;
 
 	VConstant(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Const, InName, InOuter, InLoc)
+	, Type(ev_unknown)
+	, Value(0)
+	, ValueExpr(NULL)
+	, PrevEnumValue(NULL)
 	{}
+	~VConstant()
+	{
+		if (ValueExpr)
+			delete ValueExpr;
+	}
 
 	void Serialise(VStream&);
+	bool Define();
 };
 
 class VStruct : public VMemberBase
@@ -492,35 +527,58 @@ public:
 
 	void AddField(VField* f);
 	bool NeedsDestructor() const;
+	bool DefineMembers();
 };
 
 class VState : public VMemberBase
 {
 public:
-	VName		SpriteName;
-	int			frame;
-	VName		ModelName;
-	int			model_frame;
-	float		time;
-	VState*		nextstate;
-	VMethod*	function;
-	VName		NextStateName;
-	VState*		Next;
+	//	State info
+	VName			SpriteName;
+	vint32			Frame;
+	VName			ModelName;
+	int				ModelFrame;
+	float			Time;
+	VState*			NextState;
+	VMethod*		Function;
+
+	//	Linked list of states
+	VState*			Next;
+
+	//	Compile time variables
+	VExpression*	FrameExpr;
+	VExpression*	ModelFrameExpr;
+	VExpression*	TimeExpr;
+	VName			NextStateName;
 
 	VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_State, InName, InOuter, InLoc)
 	, SpriteName(NAME_None)
-	, frame(0)
+	, Frame(0)
 	, ModelName(NAME_None)
-	, model_frame(0)
-	, time(0)
-	, nextstate(0)
-	, function(0)
-	, NextStateName(NAME_None)
+	, ModelFrame(0)
+	, Time(0)
+	, NextState(0)
+	, Function(0)
 	, Next(0)
+	, FrameExpr(NULL)
+	, ModelFrameExpr(NULL)
+	, TimeExpr(NULL)
+	, NextStateName(NAME_None)
 	{}
+	~VState()
+	{
+		if (FrameExpr)
+			delete FrameExpr;
+		if (ModelFrameExpr)
+			delete ModelFrameExpr;
+		if (TimeExpr)
+			delete TimeExpr;
+	}
 
 	void Serialise(VStream&);
+	bool Define();
+	void Emit();
 };
 
 struct mobjinfo_t
@@ -538,7 +596,11 @@ public:
 	VField*		Fields;
 	VState*		States;
 	VMethod*	DefaultProperties;
-	bool		Parsed;
+
+	TArray<VStruct*>	Structs;
+	TArray<VConstant*>	Constants;
+	TArray<VMethod*>	Methods;
+	bool				Parsed;
 
 	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Class, InName, InOuter, InLoc)
@@ -551,8 +613,13 @@ public:
 
 	void Serialise(VStream&);
 
-	void AddField(VField* f);
-	void AddState(VState* s);
+	void AddConstant(VConstant*);
+	void AddField(VField*);
+	void AddState(VState*);
+	void AddMethod(VMethod*);
+
+	bool DefineMembers();
+	void Emit();
 };
 
 class VPackage : public VMemberBase
@@ -628,8 +695,7 @@ void PC_WriteObject(char*);
 void PC_DumpAsm(char*);
 VPackage* LoadPackage(VName);
 
-int EvalConstExpression(VClass*InClass, int type);
-float ConstFloatExpression();
+int EvalConstExpression(VClass*InClass);
 
 void EmitPushNumber(int);
 void EmitLocalAddress(int);
@@ -695,6 +761,8 @@ extern TArray<continueInfo_t> 	ContinueInfo;
 extern int						ContinueLevel;
 extern int						ContinueNumLocalsOnStart;
 extern TType					FuncRetType;
+extern TArray<VStruct*>			ParsedStructs;
+extern TArray<VClass*>			ParsedClasses;
 
 // INLINE CODE -------------------------------------------------------------
 

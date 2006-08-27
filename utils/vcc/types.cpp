@@ -57,6 +57,9 @@ int						ContinueLevel;
 int						ContinueNumLocalsOnStart;
 TType					FuncRetType;
 
+TArray<VStruct*>		ParsedStructs;
+TArray<VClass*>			ParsedClasses;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -712,6 +715,15 @@ VMethod* CheckForMethod(VName Name, VClass* InClass)
 
 void VStruct::AddField(VField* f)
 {
+	for (VField* Check = Fields; Check; Check = Check->Next)
+	{
+		if (f->Name == Check->Name)
+		{
+			ParseError(f->Loc, "Redeclared field");
+			ParseError(Check->Loc, "Previous declaration here");
+		}
+	}
+
 	if (!Fields)
 		Fields = f;
 	else
@@ -722,6 +734,17 @@ void VStruct::AddField(VField* f)
 		Prev->Next = f;
 	}
 	f->Next = NULL;
+}
+
+//==========================================================================
+//
+//	VClass::AddConstant
+//
+//==========================================================================
+
+void VClass::AddConstant(VConstant* c)
+{
+	Constants.Append(c);
 }
 
 //==========================================================================
@@ -766,6 +789,17 @@ void VClass::AddState(VState* s)
 
 //==========================================================================
 //
+//	VClass::AddMethod
+//
+//==========================================================================
+
+void VClass::AddMethod(VMethod* m)
+{
+	Methods.Append(m);
+}
+
+//==========================================================================
+//
 //	VField::NeedsDestructor
 //
 //==========================================================================
@@ -804,24 +838,6 @@ bool VStruct::NeedsDestructor() const
 
 //==========================================================================
 //
-//	AddConstant
-//
-//==========================================================================
-
-void AddConstant(VClass* InClass, VName Name, int type, int value)
-{
-	if (CheckForConstant(InClass, Name))
-	{
-		ERR_Exit(ERR_REDEFINED_IDENTIFIER, true, "Symbol: %s", *Name);
-	}
-	VConstant* cDef = new VConstant(Name, InClass ?
-		(VMemberBase*)InClass : (VMemberBase*)CurrentPackage, tk_Location);
-	cDef->Type = (EType)type;
-	cDef->value = value;
-}
-
-//==========================================================================
-//
 //	CheckForLocalVar
 //
 //==========================================================================
@@ -844,6 +860,341 @@ int CheckForLocalVar(VName Name)
 		}
 	}
 	return 0;
+}
+
+//==========================================================================
+//
+//	VConstant::Define
+//
+//==========================================================================
+
+bool VConstant::Define()
+{
+	if (PrevEnumValue)
+	{
+		Value = PrevEnumValue->Value + 1;
+		return true;
+	}
+
+	if (ValueExpr)
+	{
+		ValueExpr = ValueExpr->Resolve();
+	}
+	if (!ValueExpr)
+	{
+		return false;
+	}
+
+	switch (Type)
+	{
+	case ev_int:
+		if (!ValueExpr->GetIntConst(Value))
+		{
+			return false;
+		}
+		break;
+
+	case ev_float:
+		if (!ValueExpr->GetFloatConst(FloatValue))
+		{
+			return false;
+		}
+		break;
+
+	default:
+		ParseError(Loc, "Unsupported type of constant");
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	VField::Define
+//
+//==========================================================================
+
+bool VField::Define()
+{
+	if (type.type == ev_delegate)
+	{
+		return func->Define();
+	}
+
+	if (TypeExpr)
+	{
+		TypeExpr = TypeExpr->ResolveAsType();
+	}
+	if (!TypeExpr)
+	{
+		return false;
+	}
+
+	if (TypeExpr->Type.type == ev_void)
+	{
+		ParseError(TypeExpr->Loc, "Field cannot have void type.");
+		return false;
+	}
+	type = TypeExpr->Type;
+
+	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers);
+	flags = TModifiers::FieldAttr(Modifiers);
+	return true;
+}
+
+//==========================================================================
+//
+//	VMethod::Define
+//
+//==========================================================================
+
+bool VMethod::Define()
+{
+	bool Ret = true;
+
+	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers);
+	Flags |= TModifiers::MethodAttr(Modifiers);
+
+	if (Flags & FUNC_Static)
+	{
+		if (!(Flags & FUNC_Native))
+		{
+			ParseError(Loc, "Currently only native methods can be static");
+			Ret = false;
+		}
+		if (!(Flags & FUNC_Final))
+		{
+			ParseError(Loc, "Currently static methods must be final.");
+			Ret = false;
+		}
+	}
+
+	if ((Flags & FUNC_VarArgs) && !(Flags & FUNC_Native))
+	{
+		ParseError(Loc, "Only native methods can have varargs");
+	}
+
+	if (ReturnTypeExpr)
+	{
+		ReturnTypeExpr = ReturnTypeExpr->ResolveAsType();
+	}
+	if (ReturnTypeExpr)
+	{
+		TType t = ReturnTypeExpr->Type;
+		if (t.type != ev_void)
+		{
+			//	Function's return type must be void, vector or with size 4
+			t.CheckPassable();
+		}
+		ReturnType = t;
+	}
+	else
+	{
+		Ret = false;
+	}
+
+	//	Resolve parameters types.
+	ParamsSize = 1;
+	for (int i = 0; i < NumParams; i++)
+	{
+		VMethodParam& P = Params[i];
+
+		if (P.TypeExpr)
+		{
+			P.TypeExpr = P.TypeExpr->ResolveAsType();
+		}
+		if (!P.TypeExpr)
+		{
+			Ret = false;
+			continue;
+		}
+		TType type = P.TypeExpr->Type;
+
+		if (type.type == ev_void)
+		{
+			ParseError(P.TypeExpr->Loc, "Bad variable type");
+			Ret = false;
+			continue;
+		}
+		type.CheckPassable();
+
+		ParamTypes[i] = type;
+		ParamsSize += type.GetSize() / 4;
+	}
+
+	//	If this is a overriden method, verify that return type and argument
+	// types match.
+	VMethod* BaseMethod = NULL;
+	if (Outer->MemberType == MEMBER_Class && Name != NAME_None &&
+		((VClass*)Outer)->ParentClass)
+	{
+		BaseMethod = CheckForMethod(Name, ((VClass*)Outer)->ParentClass);
+	}
+	if (BaseMethod)
+	{
+		if (BaseMethod->Flags & FUNC_Final)
+		{
+			ParseError(Loc, "Method already has been declared as final and cannot be overriden.");
+			Ret = false;
+		}
+		if (!BaseMethod->ReturnType.Equals(ReturnType))
+		{
+			ParseError(Loc, "Method redefined with different return type");
+			Ret = false;
+		}
+		else if (BaseMethod->NumParams != NumParams)
+		{
+			ParseError(Loc, "Method redefined with different number of arguments");
+			Ret = false;
+		}
+		else for (int i = 0; i < NumParams; i++)
+			if (!BaseMethod->ParamTypes[i].Equals(ParamTypes[i]))
+			{
+				ParseError(Loc, "Type of argument %d differs from base class", i + 1);
+				Ret = false;
+			}
+	}
+
+	return Ret;
+}
+
+//==========================================================================
+//
+//	VState::Define
+//
+//==========================================================================
+
+bool VState::Define()
+{
+	bool Ret = true;
+
+	if (!Function->Define())
+	{
+		Ret = false;
+	}
+
+	return Ret;
+}
+
+//==========================================================================
+//
+//	VStruct::DefineMembers
+//
+//==========================================================================
+
+bool VStruct::DefineMembers()
+{
+	bool Ret = true;
+
+	//	Define fields.
+	vint32 size = 0;
+	if (ParentStruct)
+	{
+		size = ParentStruct->StackSize * 4;
+	}
+	VField* PrevBool = NULL;
+	for (VField* fi = Fields; fi; fi = fi->Next)
+	{
+		if (!fi->Define())
+		{
+			Ret = false;
+		}
+		if (fi->type.type == ev_bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
+		{
+			fi->type.bit_mask = PrevBool->type.bit_mask << 1;
+		}
+		else
+		{
+			size += fi->type.GetSize();
+		}
+		PrevBool = fi->type.type == ev_bool ? fi : NULL;
+	}
+
+	//	Validate vector type.
+	if (IsVector)
+	{
+		int fc = 0;
+		for (VField* f = Fields; f; f = f->Next)
+		{
+			if (f->type.type != ev_float)
+			{
+				ParseError(f->Loc, "Vector can have only float fields");
+				Ret = false;
+			}
+			fc++;
+		}
+		if (fc != 3)
+		{
+			ParseError(Loc, "Vector must have exactly 3 float fields");
+			Ret = false;
+		}
+	}
+
+	StackSize = (size + 3) / 4;
+	return Ret;
+}
+
+//==========================================================================
+//
+//	VClass::DefineMembers
+//
+//==========================================================================
+
+bool VClass::DefineMembers()
+{
+	bool Ret = true;
+
+	SelfClass = this;
+
+	for (int i = 0; i < Constants.Num(); i++)
+	{
+		if (!Constants[i]->Define())
+		{
+			Ret = false;
+		}
+	}
+
+	for (int i = 0; i < Structs.Num(); i++)
+	{
+		Structs[i]->DefineMembers();
+	}
+
+	VField* PrevBool = NULL;
+	for (VField* fi = Fields; fi; fi = fi->Next)
+	{
+		if (!fi->Define())
+		{
+			Ret = false;
+		}
+		if (fi->type.type == ev_bool && PrevBool && PrevBool->type.bit_mask != 0x80000000)
+		{
+			fi->type.bit_mask = PrevBool->type.bit_mask << 1;
+		}
+		PrevBool = fi->type.type == ev_bool ? fi : NULL;
+	}
+
+	for (int i = 0; i < Methods.Num(); i++)
+	{
+		if (!Methods[i]->Define())
+		{
+			Ret = false;
+		}
+	}
+
+	if (!DefaultProperties->Define())
+	{
+		Ret = false;
+	}
+
+	for (VState* s = States; s; s = s->Next)
+	{
+		if (!s->Define())
+		{
+			Ret = false;
+		}
+	}
+
+	return Ret;
 }
 
 //==========================================================================
@@ -948,33 +1299,85 @@ void VMethod::Emit()
 
 //==========================================================================
 //
+//	VState::Emit
+//
+//==========================================================================
+
+void VState::Emit()
+{
+	if (FrameExpr)
+		FrameExpr = FrameExpr->Resolve();
+	if (ModelFrameExpr)
+		ModelFrameExpr = ModelFrameExpr->Resolve();
+	if (TimeExpr)
+		TimeExpr = TimeExpr->Resolve();
+
+	if (!FrameExpr || !TimeExpr)
+		return;
+	if (!FrameExpr->GetIntConst(Frame))
+		return;
+	if (ModelFrameExpr && !ModelFrameExpr->GetIntConst(ModelFrame))
+		return;
+	if (!TimeExpr->GetFloatConst(Time))
+		return;
+
+	if (NextStateName != NAME_None)
+	{
+		NextState = FindState(NextStateName, (VClass*)Outer);
+	}
+
+	Function->Emit();
+}
+
+//==========================================================================
+//
+//	VClass::Emit
+//
+//==========================================================================
+
+void VClass::Emit()
+{
+	//	Emit method code.
+	for (int i = 0; i < Methods.Num(); i++)
+	{
+		Methods[i]->Emit();
+	}
+
+	//	Emit code of the state methods.
+	for (VState* s = States; s; s = s->Next)
+	{
+		s->Emit();
+	}
+
+	DefaultProperties->Emit();
+}
+
+//==========================================================================
+//
 //	EmitCode
 //
 //==========================================================================
 
 void EmitCode()
 {
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	for (int i = 0; i < ParsedStructs.Num(); i++)
 	{
-		if (!VMemberBase::GMembers[i]->IsIn(CurrentPackage))
-		{
-			continue;
-		}
+		ParsedStructs[i]->DefineMembers();
+	}
 
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_State)
-		{
-			VState* s = (VState*)VMemberBase::GMembers[i];
-			if (s->NextStateName != NAME_None)
-			{
-				s->nextstate = FindState(s->NextStateName, (VClass*)s->Outer);
-			}
-		}
+	for (int i = 0; i < ParsedClasses.Num(); i++)
+	{
+		ParsedClasses[i]->DefineMembers();
+	}
 
-		//	Emit method code.
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method)
-		{
-			((VMethod*)VMemberBase::GMembers[i])->Emit();
-		}
+	if (NumErrors)
+	{
+		ERR_Exit(ERR_NONE, false, NULL);
+	}
+
+	for (int i = 0; i < ParsedClasses.Num(); i++)
+	{
+		ParsedClasses[i]->Emit();
 	}
 
 	if (NumErrors)

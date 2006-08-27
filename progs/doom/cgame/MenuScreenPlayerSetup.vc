@@ -33,7 +33,7 @@ MenuModel Mdl;
 
 void CreateChoices()
 {
-	model_t *model;
+	void* model;
 
 	PlayerName = MenuChoice_PlayerName(NewChild(MenuChoice_PlayerName));
 	PlayerName.SetPos(ChoicesStartX, ChoicesStartY);

@@ -231,8 +231,6 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class PolyobjThinker;
-
 /*
 
   Class definitions for botinfo, chatinfo, and
@@ -292,7 +290,5 @@ struct chatinfo_t
 	chatline_t		frustrated[5];
 	chatline_t		special[20];
 } chatinfo_t;*/
-
-class BotPlayer;
 
 #include "game/classes.vc"

@@ -653,10 +653,6 @@ struct TPlane
 //
 //==========================================================================
 
-struct sector_t;
-struct line_t;
-struct subsector_t;
-
 //
 // LineDef
 //
@@ -1041,13 +1037,11 @@ struct tmtrace_t
 //
 //**************************************************************************
 
-struct model_t;
-
 struct cl_pspdef_t
 {
 	int sprite;
 	int frame;
-	model_t *__alias_model;
+	void* __alias_model;
 	int alias_frame;
 	int alias_skinnum;
 	float sx;
@@ -1649,9 +1643,9 @@ native static final void R_InstallSprite(string Name, int index);
 native static final void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
 	int translation);
 //  Installs model
-native static final model_t* InstallModel(string Name);
+native static final void* InstallModel(string Name);
 //  Draws a model
-native static final void R_DrawModelFrame(TVec origin, float angle, model_t * model,
+native static final void R_DrawModelFrame(TVec origin, float angle, void* model,
 	int frame, string skin);
 //  Draws a rectangle filled with a flat
 native static final void R_FillRectWithFlat(int x, int y, int width, int height,

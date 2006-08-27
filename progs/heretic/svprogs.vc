@@ -273,8 +273,6 @@ enum
 
 // TYPES -------------------------------------------------------------------
 
-class PolyobjThinker;
-
 /*
 
   Class definitions for botinfo, chatinfo, and
@@ -356,7 +354,5 @@ enum
 	// Bot is heading to scoring place
 	BST_RETURN
 };
-
-class BotPlayer;
 
 #include "game/classes.vc"

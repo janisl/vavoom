@@ -28,8 +28,4 @@
 import shared;
 import clcommon;
 
-class ClientGame;
-class MenuScreen;
-class MenuControlKey;
-
 #include "cgame/classes.vc"

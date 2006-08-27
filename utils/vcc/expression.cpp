@@ -78,6 +78,7 @@ public:
 	VExpression* DoResolve();
 	void Emit();
 	bool GetIntConst(vint32&);
+	bool GetFloatConst(float&);
 };
 
 //==========================================================================
@@ -383,13 +384,13 @@ void VExpression::EmitPushPointedCode(TType type)
 
 	case ev_bool:
 		if (type.bit_mask & 0x000000ff)
-			AddStatement(OPC_PushBool0, type.bit_mask);
+			AddStatement(OPC_PushBool0, (int)(type.bit_mask));
 		else if (type.bit_mask & 0x0000ff00)
-			AddStatement(OPC_PushBool1, type.bit_mask >> 8);
+			AddStatement(OPC_PushBool1, (int)(type.bit_mask >> 8));
 		else if (type.bit_mask & 0x00ff0000)
-			AddStatement(OPC_PushBool2, type.bit_mask >> 16);
+			AddStatement(OPC_PushBool2, (int)(type.bit_mask >> 16));
 		else
-			AddStatement(OPC_PushBool3, type.bit_mask >> 24);
+			AddStatement(OPC_PushBool3, (int)(type.bit_mask >> 24));
 		break;
 
 	case ev_string:
@@ -423,6 +424,19 @@ bool VExpression::GetIntConst(vint32& Value)
 {
 	ParseError(Loc, "Integer constant expected");
 	Value = 0;
+	return false;
+}
+
+//==========================================================================
+//
+//	VExpression::GetFloatConst
+//
+//==========================================================================
+
+bool VExpression::GetFloatConst(float& Value)
+{
+	ParseError(Loc, "Float constant expected");
+	Value = 0.0;
 	return false;
 }
 
@@ -526,6 +540,18 @@ VExpression* VFloatLiteral::DoResolve()
 void VFloatLiteral::Emit()
 {
 	AddStatement(OPC_PushNumber, Value);
+}
+
+//==========================================================================
+//
+//	VFloatLiteral::GetFloatConst
+//
+//==========================================================================
+
+bool VFloatLiteral::GetFloatConst(float& OutValue)
+{
+	OutValue = Value;
+	return true;
 }
 
 //END
@@ -1788,6 +1814,32 @@ bool VUnary::GetIntConst(vint32& OutValue)
 	return false;
 }
 
+//==========================================================================
+//
+//	VUnary::GetFloatConst
+//
+//==========================================================================
+
+bool VUnary::GetFloatConst(float& OutValue)
+{
+	if (op->GetFloatConst(OutValue))
+	{
+		switch (Oper)
+		{
+		case PU_PLUS:
+			return true;
+	
+		case PU_MINUS:
+			OutValue = -OutValue;
+			return true;
+	
+		default:
+			break;
+		}
+	}
+	return VExpression::GetFloatConst(OutValue);
+}
+
 //END
 
 //BEGIN VUnaryMutator
@@ -2487,6 +2539,49 @@ bool VBinary::GetIntConst(vint32& OutValue)
 	return false;
 }
 
+//==========================================================================
+//
+//	VBinary::GetFloatConst
+//
+//==========================================================================
+
+bool VBinary::GetFloatConst(float& OutValue)
+{
+	float Value1;
+	float Value2;
+	if (op1->GetFloatConst(Value1) && op2->GetFloatConst(Value2))
+	{
+		switch (Oper)
+		{
+		case PU_ASTERISK:
+			OutValue = Value1 * Value2;
+			return true;
+	
+		case PU_SLASH:
+			if (!Value2)
+			{
+				ParseError(Loc, "Division by 0");
+				OutValue = 0;
+				return false;
+			}
+			OutValue = Value1 / Value2;
+			return true;
+	
+		case PU_PLUS:
+			OutValue = Value1 + Value2;
+			return true;
+	
+		case PU_MINUS:
+			OutValue = Value1 - Value2;
+			return true;
+	
+		default:
+			break;
+		}
+	}
+	return VExpression::GetFloatConst(OutValue);
+}
+
 //END
 
 //BEGIN VBinaryLogical
@@ -2823,13 +2918,13 @@ void VAssignment::Emit()
 		else if (op1->RealType.type == ev_bool && op2->Type.type == ev_int)
 		{
 			if (op1->RealType.bit_mask & 0x000000ff)
-				AddStatement(OPC_AssignBool0, op1->RealType.bit_mask);
+				AddStatement(OPC_AssignBool0, (int)op1->RealType.bit_mask);
 			else if (op1->RealType.bit_mask & 0x0000ff00)
-				AddStatement(OPC_AssignBool1, op1->RealType.bit_mask >> 8);
+				AddStatement(OPC_AssignBool1, (int)(op1->RealType.bit_mask >> 8));
 			else if (op1->RealType.bit_mask & 0x00ff0000)
-				AddStatement(OPC_AssignBool2, op1->RealType.bit_mask >> 16);
+				AddStatement(OPC_AssignBool2, (int)(op1->RealType.bit_mask >> 16));
 			else
-				AddStatement(OPC_AssignBool3, op1->RealType.bit_mask >> 24);
+				AddStatement(OPC_AssignBool3, (int)(op1->RealType.bit_mask >> 24));
 		}
 		else if (op1->RealType.type == ev_delegate && op2->Type.type == ev_delegate)
 		{
@@ -3112,7 +3207,7 @@ VExpression* VConstantValue::DoResolve()
 
 void VConstantValue::Emit()
 {
-	EmitPushNumber(Const->value);
+	EmitPushNumber(Const->Value);
 }
 
 //==========================================================================
@@ -3125,12 +3220,26 @@ bool VConstantValue::GetIntConst(vint32& OutValue)
 {
 	if (Const->Type == ev_int)
 	{
-		OutValue = Const->value;
+		OutValue = Const->Value;
 		return true;
 	}
-	ParseError(Loc, "Integer constant expected");
-	OutValue = 0;
-	return false;
+	return VExpression::GetIntConst(OutValue);
+}
+
+//==========================================================================
+//
+//	VConstantValue::GetFloatConst
+//
+//==========================================================================
+
+bool VConstantValue::GetFloatConst(float& OutValue)
+{
+	if (Const->Type == ev_float)
+	{
+		OutValue = Const->FloatValue;
+		return true;
+	}
+	return VExpression::GetFloatConst(OutValue);
 }
 
 //END
@@ -3898,7 +4007,7 @@ VExpression* VTypeExpr::CreateTypeExprCopy()
 
 //END
 
-//BEGIN VTypeExpr
+//BEGIN VPointerType
 
 //==========================================================================
 //
@@ -3957,6 +4066,79 @@ VTypeExpr* VPointerType::ResolveAsType()
 VExpression* VPointerType::CreateTypeExprCopy()
 {
 	return new VPointerType(Expr->CreateTypeExprCopy(), Loc);
+}
+
+//END
+
+//BEGIN VFixedArrayType
+
+//==========================================================================
+//
+//	VFixedArrayType::VFixedArrayType
+//
+//==========================================================================
+
+VFixedArrayType::VFixedArrayType(VExpression* AExpr, VExpression* ASizeExpr,
+	const TLocation& ALoc)
+: VTypeExpr(ev_unknown, ALoc)
+, Expr(AExpr)
+, SizeExpr(ASizeExpr)
+{
+	if (!SizeExpr)
+	{
+		ParseError(Loc, "Array size expected");
+	}
+}
+
+//==========================================================================
+//
+//	VFixedArrayType::~VFixedArrayType
+//
+//==========================================================================
+
+VFixedArrayType::~VFixedArrayType()
+{
+	if (Expr)
+	{
+		delete Expr;
+	}
+	if (SizeExpr)
+	{
+		delete SizeExpr;
+	}
+}
+
+//==========================================================================
+//
+//	VFixedArrayType::ResolveAsType
+//
+//==========================================================================
+
+VTypeExpr* VFixedArrayType::ResolveAsType()
+{
+	if (Expr)
+	{
+		Expr = Expr->ResolveAsType();
+	}
+	if (SizeExpr)
+	{
+		SizeExpr = SizeExpr->Resolve();
+	}
+	if (!Expr || !SizeExpr)
+	{
+		delete this;
+		return NULL;
+	}
+
+	vint32 Size;
+	if (!SizeExpr->GetIntConst(Size))
+	{
+		delete this;
+		return NULL;
+	}
+
+	Type = MakeArrayType(Expr->Type, Size);
+	return this;
 }
 
 //END

@@ -50,6 +50,7 @@ public:
 	void EmitPushPointedCode(TType);
 	virtual bool IsSingleName();
 	virtual bool GetIntConst(vint32&);
+	virtual bool GetFloatConst(float&);
 	virtual VExpression* CreateTypeExprCopy();
 };
 
@@ -84,6 +85,7 @@ public:
 	VFloatLiteral(float, const TLocation&);
 	VExpression* DoResolve();
 	void Emit();
+	bool GetFloatConst(float&);
 };
 
 //==========================================================================
@@ -346,6 +348,7 @@ public:
 	VExpression* DoResolve();
 	void Emit();
 	bool GetIntConst(vint32&);
+	bool GetFloatConst(float&);
 };
 
 //==========================================================================
@@ -411,6 +414,7 @@ public:
 	VExpression* DoResolve();
 	void Emit();
 	bool GetIntConst(vint32&);
+	bool GetFloatConst(float&);
 };
 
 //==========================================================================
@@ -482,7 +486,7 @@ class VDropResult : public VExpression
 public:
 	VExpression*		op;
 
-	VDropResult(VExpression* AOp);
+	VDropResult(VExpression*);
 	~VDropResult();
 	VExpression* DoResolve();
 	void Emit();
@@ -499,7 +503,7 @@ class VTypeExpr : public VExpression
 public:
 	char		Name[128];
 
-	VTypeExpr(TType AType, const TLocation& ALoc);
+	VTypeExpr(TType, const TLocation&);
 	VExpression* DoResolve();
 	VTypeExpr* ResolveAsType();
 	void Emit();
@@ -518,10 +522,27 @@ class VPointerType : public VTypeExpr
 public:
 	VExpression*	Expr;
 
-	VPointerType(VExpression* AExpr, const TLocation& ALoc);
+	VPointerType(VExpression*, const TLocation&);
 	~VPointerType();
 	VTypeExpr* ResolveAsType();
 	VExpression* CreateTypeExprCopy();
+};
+
+//==========================================================================
+//
+//	VFixedArrayType
+//
+//==========================================================================
+
+class VFixedArrayType : public VTypeExpr
+{
+public:
+	VExpression*	Expr;
+	VExpression*	SizeExpr;
+
+	VFixedArrayType(VExpression*, VExpression*, const TLocation&);
+	~VFixedArrayType();
+	VTypeExpr* ResolveAsType();
 };
 
 //==========================================================================

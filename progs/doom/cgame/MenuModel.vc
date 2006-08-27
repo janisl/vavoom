@@ -27,7 +27,7 @@ class MenuModel : MenuObject;
 
 TVec Origin;
 float Angle;
-model_t *Model;
+void* Model;
 int Frame;
 string Skin;
 

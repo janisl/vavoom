@@ -1429,12 +1429,12 @@ void VState::Serialise(VStream& Strm)
 {
 	VMemberBase::Serialise(Strm);
 	Strm << SpriteName
-		<< STRM_INDEX(frame)
+		<< STRM_INDEX(Frame)
 		<< ModelName
-		<< STRM_INDEX(model_frame)
-		<< time
-		<< nextstate
-		<< function
+		<< STRM_INDEX(ModelFrame)
+		<< Time
+		<< NextState
+		<< Function
 		<< Next;
 }
 
@@ -1451,15 +1451,15 @@ void VConstant::Serialise(VStream& Strm)
 	switch (Type)
 	{
 	case ev_float:
-		Strm << *(float*)&value;
+		Strm << FloatValue;
 		break;
 
 	case ev_name:
-		Strm << *(VName*)&value;
+		Strm << *(VName*)&Value;
 		break;
 
 	default:
-		Strm << STRM_INDEX(value);
+		Strm << STRM_INDEX(Value);
 		break;
 	}
 }

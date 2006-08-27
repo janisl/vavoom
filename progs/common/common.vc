@@ -23,11 +23,4 @@
 //**
 //**************************************************************************
 
-class Thinker;
-class Entity;
-class ViewEntity;
-class BasePlayer;
-class LevelInfo;
-class GameInfo;
-
 #include "shared/classes.vc"

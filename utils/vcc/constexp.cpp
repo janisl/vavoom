@@ -69,7 +69,7 @@ static int ConstExprFactor()
 	case TK_PUNCT:
 		if (TK_Check(PU_LPAREN))
 		{
-			ret = EvalConstExpression(ConstExprClass, ev_int);
+			ret = EvalConstExpression(ConstExprClass);
 			TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
 		}
 		else if (TK_Check(PU_NOT))
@@ -102,7 +102,7 @@ static int ConstExprFactor()
 					if (Const->Type != ev_int)
 						ParseError(ERR_EXPR_TYPE_MISTMATCH);
 					TK_NextToken();
-					ret = Const->value;
+					ret = Const->Value;
 					break;
 				}
 			}
@@ -116,7 +116,7 @@ static int ConstExprFactor()
 		{
 			if (Const->Type != ev_int)
 				ParseError(ERR_EXPR_TYPE_MISTMATCH);
-			ret = Const->value;
+			ret = Const->Value;
 		}
 		else
 		{
@@ -347,192 +347,10 @@ static int CExprLevA()
 	return ret;
 }
 
-//**************************************************************************
-//
-//	Floating point constant
-//
-//**************************************************************************
-
-static float FConstExprFactor()
-{
-	VConstant*	Const;
-	float		ret = 0.0;
-	VName		Name;
-
-	switch (tk_Token)
-	{
-	case TK_FLOAT:
-		ret = tk_Float;
-		TK_NextToken();
-		break;
-	case TK_PUNCT:
-		if (TK_Check(PU_LPAREN))
-		{
-			ret = ConstFloatExpression();
-			TK_Expect(PU_RPAREN, ERR_BAD_CONST_EXPR);
-		}
-		else
-		{
-			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid punct");
-		}
-		break;
-	case TK_IDENTIFIER:
-		Name = tk_Name;
-		TK_NextToken();
-		if (TK_Check(PU_DCOLON))
-		{
-			VClass* Class = CheckForClass(Name);
-			if (!Class)
-			{
-				ParseError("Class name expected");
-				break;
-			}
-
-			if (tk_Token == TK_IDENTIFIER)
-			{
-				Const = CheckForConstant(Class, tk_Name);
-				if (Const)
-				{
-					if (Const->Type != ev_float)
-						ParseError(ERR_EXPR_TYPE_MISTMATCH);
-					TK_NextToken();
-					ret = Const->value;
-					break;
-				}
-			}
-
-			ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
-			break;
-		}
-
-		Const = CheckForConstant(ConstExprClass, Name);
-		if (Const)
-		{
-			if (Const->Type != ev_float)
-				ParseError(ERR_EXPR_TYPE_MISTMATCH);
-			ret = Const->value;
-		}
-		else
-		{
-			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid identifier %s", *Name);
-		}
-		break;
-	default:
-		ERR_Exit(ERR_BAD_CONST_EXPR, true, "Invalid token %d %s", tk_Token, tk_String);
-		break;
-	}
-	return ret;
-}
-
-// Operatori: * / %
-static float FCExprLevJ()
-{
-	bool	unaryMinus;
-	float	ret;
-
-	unaryMinus = false;
-	if (TK_Check(PU_MINUS))
-	{
-		unaryMinus = true;
-	}
-	ret = FConstExprFactor();
-	if (unaryMinus)
-	{
-		ret = -ret;
-	}
-	do
-	{
-		if (TK_Check(PU_ASTERISK))
-		{
-			ret *= FConstExprFactor();
-		}
-		else if (TK_Check(PU_SLASH))
-		{
-			ret /= FConstExprFactor();
-		}
-		else
-		{
-			return ret;
-		}
-	} while (1);
-}
-
-// Operatori: + -
-static float FCExprLevI()
-{
-	float		ret;
-
-	ret = FCExprLevJ();
-	do
-	{
-		if (TK_Check(PU_PLUS))
-		{
-			ret += FCExprLevJ();
-		}
-		else if (TK_Check(PU_MINUS))
-		{
-			ret -= FCExprLevJ();
-		}
-		else
-		{
-			return ret;
-		}
-	} while (1);
-}
-
 //=====================
 
-int EvalConstExpression(VClass*InClass, int type)
+int EvalConstExpression(VClass*InClass)
 {
-	int		ret;
-	VClass*	c;
-
 	ConstExprClass = InClass;
-	switch (type)
-	{
-	 case ev_int:
-		return CExprLevA();
-
-	 case ev_float:
-		return PassFloat(FCExprLevI());
-
-	 case ev_name:
-	 	if (tk_Token != TK_NAME)
-		{
-			ERR_Exit(ERR_BAD_CONST_EXPR, true, "Name expected");
-		}
-		ret = tk_Name.GetIndex();
-		TK_NextToken();
-		return ret;
-
-	case ev_classid:
-		c = CheckForClass();
-		if (c)
-		{
-			return c->MemberIndex;
-		}
-		else
-		{
-			ERR_Exit(ERR_NONE, true, "Bad classid");
-		}
-
-	 case ev_bool:
-		return !!CExprLevA();
-
-	default:
-		ERR_Exit(ERR_NONE, true, "Constant value of this variable type cannot be defined.");
-	}
-
-	return 0;
-}
-
-//==========================================================================
-//
-//  ConstFloatExpression
-//
-//==========================================================================
-
-float ConstFloatExpression()
-{
-   	return FCExprLevI();
+	return CExprLevA();
 }
