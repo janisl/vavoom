@@ -730,7 +730,7 @@ public:
 		if (!I.Obj)
 		{
 			if (I.Type == MEMBER_Package)
-				I.Obj = LoadPackage(I.Name);
+				I.Obj = LoadPackage(I.Name, TLocation());
 			else
 				I.Obj = VMemberBase::StaticFindMember(I.Name,
 					GetImport(-I.OuterIndex - 1), I.Type);
@@ -882,7 +882,7 @@ public:
 //
 //==========================================================================
 
-VPackage* LoadPackage(VName InName)
+VPackage* LoadPackage(VName InName, TLocation l)
 {
 	int				i;
 	VName*			NameRemap;
@@ -907,7 +907,7 @@ VPackage* LoadPackage(VName InName)
 	}
 	if (!f)
 	{
-		ParseError("Can't find package");
+		ParseError(l, "Can't find package %s", *InName);
 		return NULL;
 	}
 	Reader = new VProgsReader(f);
@@ -922,13 +922,13 @@ VPackage* LoadPackage(VName InName)
 
 	if (strncmp(Progs.magic, PROG_MAGIC, 4))
 	{
-		ParseError("Progs has wrong file ID, possibly older version");
+		ParseError(l, "Package %s has wrong file ID", *InName);
 		BailOut();
 	}
 	if (Progs.version != PROG_VERSION)
 	{
-		ParseError("Progs has wrong version number (%i should be %i)",
-			Progs.version, PROG_VERSION);
+		ParseError(l, "Package %s has wrong version number (%i should be %i)",
+			*InName, Progs.version, PROG_VERSION);
 		BailOut();
 	}
 

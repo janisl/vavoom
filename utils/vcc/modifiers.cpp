@@ -126,14 +126,14 @@ const char* TModifiers::Name(int Modifier)
 //
 //==========================================================================
 
-int TModifiers::Check(int Modifers, int Allowed)
+int TModifiers::Check(int Modifers, int Allowed, TLocation l)
 {
 	int Bad = Modifers & ~Allowed;
 	if (Bad)
 	{
 		for (int i = 0; i < 32; i++)
 			if (Bad & (1 << i))
-				ParseError("%s modifier is not allowed", Name(1 << i));
+				ParseError(l, "%s modifier is not allowed", Name(1 << i));
 		return Modifers & Allowed;
 	}
 	return Modifers;
@@ -170,6 +170,10 @@ int TModifiers::MethodAttr(int Modifiers)
 int TModifiers::ClassAttr(int Modifiers)
 {
 	int Attributes = 0;
+	if (Modifiers & Native)
+		Attributes |= CLASS_Native;
+	if (Modifiers & Abstract)
+		Attributes |= CLASS_Abstract;
 	return Attributes;
 }
 

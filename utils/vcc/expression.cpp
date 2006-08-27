@@ -1110,7 +1110,7 @@ VExpression* VPointerField::DoResolve()
 		delete this;
 		return NULL;
 	}
-	VField* field = CheckForStructField(type.Struct, FieldName, Loc);
+	VField* field = CheckForStructField(type.Struct, FieldName);
 	if (!field)
 	{
 		ParseError(Loc, "No such field %s", *FieldName);
@@ -1210,7 +1210,7 @@ VExpression* VDotField::DoResolve()
 		int Flags = op->Flags;
 		op->Flags &= ~FIELD_ReadOnly;
 		op->RequestAddressOf();
-		VField* field = CheckForStructField(type.Struct, FieldName, Loc);
+		VField* field = CheckForStructField(type.Struct, FieldName);
 		if (!field)
 		{
 			ParseError(Loc, "No such field %s", *FieldName);
@@ -4174,10 +4174,6 @@ VLocalDecl::~VLocalDecl()
 		{
 			delete Vars[i].Value;
 		}
-		if (Vars[i].ArraySize)
-		{
-			delete Vars[i].ArraySize;
-		}
 	}
 }
 
@@ -4227,25 +4223,9 @@ void VLocalDecl::Declare()
 			continue;
 		}
 		TType Type = e.TypeExpr->Type;
-		for (int pl = 0; pl < e.PointerLevel; pl++)
-		{
-			Type = MakePointerType(Type);
-		}
 		if (Type.type == ev_void)
 		{
 			ParseError(e.TypeExpr->Loc, "Bad variable type");
-		}
-		if (e.ArraySize)
-		{
-			e.ArraySize = e.ArraySize->Resolve();
-			if (e.ArraySize)
-			{
-				vint32 ArrSize;
-				if (e.ArraySize->GetIntConst(ArrSize))
-				{
-					Type = MakeArrayType(Type, ArrSize);
-				}
-			}
 		}
 
 		if (numlocaldefs == MAX_LOCAL_DEFS)

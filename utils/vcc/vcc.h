@@ -65,6 +65,12 @@ class VMemberBase;
 
 // TYPES -------------------------------------------------------------------
 
+enum
+{
+	CLASS_Native		= 0x01,
+	CLASS_Abstract		= 0x02,
+};
+
 enum ECompileError
 {
 	ERR_NONE,
@@ -248,28 +254,6 @@ class VClass;
 class VStruct;
 class VMethod;
 
-class TModifiers
-{
-public:
-	enum
-	{
-		Native			= 0x0001,
-		Static			= 0x0002,
-		Abstract		= 0x0004,
-		Private			= 0x0008,
-		ReadOnly		= 0x0010,
-		Transient		= 0x0020,
-		Final			= 0x0040,
-	};
-
-	static int Parse();
-	static const char* Name(int);
-	static int Check(int, int);
-	static int MethodAttr(int);
-	static int ClassAttr(int);
-	static int FieldAttr(int);
-};
-
 class TLocation
 {
 private:
@@ -286,6 +270,28 @@ public:
 		return Loc & 0xffff;
 	}
 	const char* GetSource() const;
+};
+
+class TModifiers
+{
+public:
+	enum
+	{
+		Native			= 0x0001,
+		Static			= 0x0002,
+		Abstract		= 0x0004,
+		Private			= 0x0008,
+		ReadOnly		= 0x0010,
+		Transient		= 0x0020,
+		Final			= 0x0040,
+	};
+
+	static int Parse();
+	static const char* Name(int);
+	static int Check(int, int, TLocation);
+	static int MethodAttr(int);
+	static int ClassAttr(int);
+	static int FieldAttr(int);
 };
 
 //
@@ -512,7 +518,10 @@ public:
 	vint32			StackSize;
 	//	Structure fields
 	VField*			Fields;
-	bool			Parsed;
+
+	VName			ParentStructName;
+	TLocation		ParentStructLoc;
+	bool			Defined;
 
 	VStruct(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Struct, InName, InOuter, InLoc)
@@ -520,13 +529,15 @@ public:
 	, IsVector(false)
 	, StackSize(0)
 	, Fields(0)
-	, Parsed(true)
+	, ParentStructName(NAME_None)
+	, Defined(true)
 	{}
 
 	void Serialise(VStream&);
 
 	void AddField(VField* f);
 	bool NeedsDestructor() const;
+	bool Define();
 	bool DefineMembers();
 };
 
@@ -597,10 +608,16 @@ public:
 	VState*		States;
 	VMethod*	DefaultProperties;
 
-	TArray<VStruct*>	Structs;
-	TArray<VConstant*>	Constants;
-	TArray<VMethod*>	Methods;
-	bool				Parsed;
+	VName					ParentClassName;
+	TLocation				ParentClassLoc;
+	int						Modifiers;
+	TArray<VExpression*>	MobjInfoExpressions;
+	TArray<VExpression*>	ScriptIdExpressions;
+	TArray<VStruct*>		Structs;
+	TArray<VConstant*>		Constants;
+	TArray<VMethod*>		Methods;
+	bool					Parsed;
+	bool					Defined;
 
 	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
 	: VMemberBase(MEMBER_Class, InName, InOuter, InLoc)
@@ -608,8 +625,20 @@ public:
 	, Fields(NULL)
 	, States(NULL)
 	, DefaultProperties(NULL)
+	, ParentClassName(NAME_None)
+	, Modifiers(0)
 	, Parsed(true)
+	, Defined(true)
 	{}
+	~VClass()
+	{
+		for (int i = 0; i < MobjInfoExpressions.Num(); i++)
+			if (MobjInfoExpressions[i])
+				delete MobjInfoExpressions[i];
+		for (int i = 0; i < ScriptIdExpressions.Num(); i++)
+			if (ScriptIdExpressions[i])
+				delete ScriptIdExpressions[i];
+	}
 
 	void Serialise(VStream&);
 
@@ -618,6 +647,7 @@ public:
 	void AddState(VState*);
 	void AddMethod(VMethod*);
 
+	bool Define();
 	bool DefineMembers();
 	void Emit();
 };
@@ -645,6 +675,13 @@ struct continueInfo_t
 {
 	int		level;
 	int		addressPtr;
+};
+
+struct VImportedPackage
+{
+	VName		Name;
+	TLocation	Loc;
+	VPackage*	Pkg;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -693,9 +730,7 @@ void BeginCode(VMethod*);
 void EndCode(VMethod*);
 void PC_WriteObject(char*);
 void PC_DumpAsm(char*);
-VPackage* LoadPackage(VName);
-
-int EvalConstExpression(VClass*InClass);
+VPackage* LoadPackage(VName, TLocation);
 
 void EmitPushNumber(int);
 void EmitLocalAddress(int);
@@ -705,14 +740,11 @@ void PA_Parse();
 void InitTypes();
 TType MakePointerType(const TType& type);
 TType MakeArrayType(const TType& type, int elcount);
-TType CheckForTypeKeyword();
-TType CheckForType(VClass* InClass);
 TType CheckForType(VClass* InClass, VName Name);
-VClass* CheckForClass();
 VClass* CheckForClass(VName Name);
 VMethod* CheckForFunction(VClass*, VName);
 VConstant* CheckForConstant(VClass* InClass, VName);
-VField* CheckForStructField(VStruct*, VName, TLocation);
+VField* CheckForStructField(VStruct*, VName);
 VField* CheckForField(VName, VClass*, bool = true);
 VMethod* CheckForMethod(VName, VClass*);
 void AddConstant(VClass* InClass, VName Name, int type, int value);
@@ -761,6 +793,8 @@ extern TArray<continueInfo_t> 	ContinueInfo;
 extern int						ContinueLevel;
 extern int						ContinueNumLocalsOnStart;
 extern TType					FuncRetType;
+extern TArray<VImportedPackage>	PackagesToLoad;
+extern TArray<VConstant*>		ParsedConstants;
 extern TArray<VStruct*>			ParsedStructs;
 extern TArray<VClass*>			ParsedClasses;
 

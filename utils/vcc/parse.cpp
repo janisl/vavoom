@@ -53,6 +53,51 @@ static bool				CheckForLocal;
 
 //==========================================================================
 //
+//	CheckForTypeKeyword
+//
+//==========================================================================
+
+static TType CheckForTypeKeyword()
+{
+	if (TK_Check(KW_VOID))
+	{
+		return TType(ev_void);
+	}
+	if (TK_Check(KW_INT))
+	{
+		return TType(ev_int);
+	}
+	if (TK_Check(KW_FLOAT))
+	{
+		return TType(ev_float);
+	}
+	if (TK_Check(KW_NAME))
+	{
+		return TType(ev_name);
+	}
+	if (TK_Check(KW_STRING))
+	{
+		return TType(ev_string);
+	}
+	if (TK_Check(KW_CLASSID))
+	{
+		return TType(ev_classid);
+	}
+	if (TK_Check(KW_STATE))
+	{
+		return TType(ev_state);
+	}
+	if (TK_Check(KW_BOOL))
+	{
+		TType ret(ev_bool);
+		ret.bit_mask = 1;
+		return ret;
+	}
+	return TType(ev_unknown);
+}
+
+//==========================================================================
+//
 //	ParseDotMethodCall
 //
 //==========================================================================
@@ -141,9 +186,11 @@ static VLocalDecl* ParseLocalVar(VExpression* TypeExpr)
 		VLocalEntry e;
 
 		e.TypeExpr = TypeExpr->CreateTypeExprCopy();
+		TLocation l = tk_Location;
 		while (TK_Check(PU_ASTERISK))
 		{
-			e.PointerLevel++;
+			e.TypeExpr = new VPointerType(e.TypeExpr, l);
+			l = tk_Location;
 		}
 		if (tk_Token != TK_IDENTIFIER)
 		{
@@ -156,8 +203,10 @@ static VLocalDecl* ParseLocalVar(VExpression* TypeExpr)
 
 		if (TK_Check(PU_LINDEX))
 		{
-			e.ArraySize = ParseExpression();
+			TLocation SLoc = tk_Location;
+			VExpression* SE = ParseExpression();
 			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+			e.TypeExpr = new VFixedArrayType(e.TypeExpr, SE, SLoc);
 		}
 		//  Initialisation
 		else if (TK_Check(PU_ASSIGN))
@@ -1226,11 +1275,8 @@ static void ParseDefaultProperties(VClass* InClass)
 
 static void ParseStruct(VClass* InClass, bool IsVector)
 {
-	VField*		fi;
-	TType		struct_type;
-	VStruct*	Struct;
-
 	VName Name = tk_Name;
+	TLocation StrLoc = tk_Location;
 	if (tk_Token != TK_IDENTIFIER)
 	{
 		ParseError("Struct name expected");
@@ -1240,37 +1286,12 @@ static void ParseStruct(VClass* InClass, bool IsVector)
 	{
 		TK_NextToken();
 	}
-	struct_type = CheckForType(InClass, Name);
-	if (struct_type.type != ev_unknown)
-	{
-		if (struct_type.type != (IsVector ? ev_vector : ev_struct))
-		{
-			ParseError(IsVector ? "Not a vector type" : "Not a struct type");
-			return;
-		}
-		Struct = struct_type.Struct;
-		if (Struct->Parsed)
-		{
-			ParseError("Struct type already completed");
-			return;
-		}
-		Struct->Loc = tk_Location;
-	}
-	else
-	{
-		//	New struct
-		Struct = new VStruct(Name, InClass ? (VMemberBase*)InClass :
-			(VMemberBase*)CurrentPackage, tk_Location);
-		Struct->Parsed = false;
-		Struct->IsVector = IsVector;
-	}
 
-	if (TK_Check(PU_SEMICOLON))
-	{
-ParseWarning("Not needed");
-		return;
-	}
-
+	//	New struct
+	VStruct* Struct = new VStruct(Name, InClass ? (VMemberBase*)InClass :
+		(VMemberBase*)CurrentPackage, StrLoc);
+	Struct->Defined = false;
+	Struct->IsVector = IsVector;
 	Struct->Fields = NULL;
 
 	if (!IsVector && TK_Check(PU_COLON))
@@ -1281,17 +1302,9 @@ ParseWarning("Not needed");
 		}
 		else
 		{
-			VName ParentName = tk_Name;
+			Struct->ParentStructName = tk_Name;
+			Struct->ParentStructLoc = tk_Location;
 			TK_NextToken();
-			TType type = CheckForType(InClass, ParentName);
-			if (type.type != ev_struct)
-			{
-				ParseError("%s is not a struct type", *ParentName);
-			}
-			else
-			{
-				Struct->ParentStruct = type.Struct;
-			}
 		}
 	}
 
@@ -1336,7 +1349,7 @@ ParseWarning("Not needed");
 				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
 				FieldType = new VFixedArrayType(FieldType, e, SLoc);
 			}
-			fi = new VField(FieldName, Struct, FieldLoc);
+			VField* fi = new VField(FieldName, Struct, FieldLoc);
 			fi->TypeExpr = FieldType;
 			fi->Modifiers = Modifiers;
 			Struct->AddField(fi);
@@ -1345,8 +1358,6 @@ ParseWarning("Not needed");
 		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 	}
 	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-
-	Struct->Parsed = true;
 
 	if (InClass)
 	{
@@ -1441,44 +1452,27 @@ static void ParseStates(VClass* InClass)
 
 static void ParseClass()
 {
-	VClass* Class = CheckForClass();
-	if (Class)
+	if (tk_Token != TK_IDENTIFIER)
 	{
-		if (Class->Parsed)
-		{
-			ParseError("Class definition already completed");
-			return;
-		}
-		Class->Loc = tk_Location;
+		ParseError(tk_Location, "Class name expected");
 	}
-	else
-	{
-		if (tk_Token != TK_IDENTIFIER)
-		{
-			ParseError("Class name expected");
-		}
-		//	New class.
-		Class = new VClass(tk_Name, CurrentPackage, tk_Location);
-		Class->Parsed = false;
-		TK_NextToken();
-	}
-
-	Class->Fields = NULL;
+	//	New class.
+	VClass* Class = new VClass(tk_Name, CurrentPackage, tk_Location);
+	Class->Parsed = false;
+	Class->Defined = false;
+	TK_NextToken();
 
 	if (TK_Check(PU_COLON))
 	{
-		VClass* Parent = CheckForClass();
-		if (!Parent)
+		if (tk_Token != TK_IDENTIFIER)
 		{
-			ParseError("Parent class type expected");
-		}
-		else if (!Parent->Parsed)
-		{
-			ParseError("Incomplete parent class");
+			ParseError(tk_Location, "Parent class name expected");
 		}
 		else
 		{
-			Class->ParentClass = Parent;
+			Class->ParentClassName = tk_Name;
+			Class->ParentClassLoc = tk_Location;
+			TK_NextToken();
 		}
 	}
 	else if (Class->Name != NAME_Object)
@@ -1488,21 +1482,35 @@ static void ParseClass()
 
 	Class->Parsed = true;
 
-	int ClassModifiers = TModifiers::Parse();
-	ClassModifiers = TModifiers::Check(ClassModifiers, VClass::AllowedModifiers);
-	int ClassAttr = TModifiers::ClassAttr(ClassModifiers);
+	Class->Modifiers = TModifiers::Parse();
 	do
 	{
 		if (TK_Check(KW_MOBJINFO))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToMobjInfo(EvalConstExpression(NULL), Class);
+			VExpression* e = ParseExpression();
+			if (e)
+			{
+				Class->MobjInfoExpressions.Append(e);
+			}
+			else
+			{
+				ParseError(tk_Location, "Constant expression expected");
+			}
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
 		else if (TK_Check(KW_SCRIPTID))
 		{
 			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			AddToScriptIds(EvalConstExpression(NULL), Class);
+			VExpression* e = ParseExpression();
+			if (e)
+			{
+				Class->ScriptIdExpressions.Append(e);
+			}
+			else
+			{
+				ParseError(tk_Location, "Constant expression expected");
+			}
 			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
 		}
 		else
@@ -1727,7 +1735,9 @@ void PA_Parse()
 				{
 					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
 				}
-				LoadPackage(tk_Name);
+				VImportedPackage& I = PackagesToLoad.Alloc();
+				I.Name = tk_Name;
+				I.Loc = tk_Location;
 				TK_NextToken();
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
 			}
@@ -1761,7 +1771,7 @@ void PA_Parse()
 						cDef->ValueExpr = new VIntLiteral(0, tk_Location);
 					}
 					PrevValue = cDef;
-					cDef->Define();
+					ParsedConstants.Append(cDef);
 				} while (TK_Check(PU_COMMA));
 				TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
 				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);

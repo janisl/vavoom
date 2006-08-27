@@ -558,14 +558,11 @@ public:
 	VName			Name;
 	TLocation		Loc;
 	VExpression*	Value;
-	int				PointerLevel;
-	VExpression*	ArraySize;
 
 	VLocalEntry()
-	: Name(NAME_None)
+	: TypeExpr(NULL)
+	, Name(NAME_None)
 	, Value(NULL)
-	, PointerLevel(0)
-	, ArraySize(NULL)
 	{}
 };
 

@@ -8,7 +8,7 @@ INCLUDES = -I$(srcdir)/../common
 
 noinst_PROGRAMS = ../bin/vcc
 
-___bin_vcc_SOURCES = constexp.cpp \
+___bin_vcc_SOURCES = \
 	../common/array.h \
 	../common/cmdlib.cpp \
 	../common/cmdlib.h \

@@ -57,8 +57,10 @@ int						ContinueLevel;
 int						ContinueNumLocalsOnStart;
 TType					FuncRetType;
 
-TArray<VStruct*>		ParsedStructs;
-TArray<VClass*>			ParsedClasses;
+TArray<VImportedPackage>	PackagesToLoad;
+TArray<VConstant*>			ParsedConstants;
+TArray<VStruct*>			ParsedStructs;
+TArray<VClass*>				ParsedClasses;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -257,72 +259,6 @@ TType TType::GetArrayInnerType() const
 
 //==========================================================================
 //
-//	CheckForTypeKeyword
-//
-//==========================================================================
-
-TType CheckForTypeKeyword()
-{
-	if (TK_Check(KW_VOID))
-	{
-		return TType(ev_void);
-	}
-	if (TK_Check(KW_INT))
-	{
-		return TType(ev_int);
-	}
-	if (TK_Check(KW_FLOAT))
-	{
-		return TType(ev_float);
-	}
-	if (TK_Check(KW_NAME))
-	{
-		return TType(ev_name);
-	}
-	if (TK_Check(KW_STRING))
-	{
-		return TType(ev_string);
-	}
-	if (TK_Check(KW_CLASSID))
-	{
-		return TType(ev_classid);
-	}
-	if (TK_Check(KW_STATE))
-	{
-		return TType(ev_state);
-	}
-	if (TK_Check(KW_BOOL))
-	{
-		TType ret(ev_bool);
-		ret.bit_mask = 1;
-		return ret;
-	}
-	return TType(ev_unknown);
-}
-
-//==========================================================================
-//
-//  CheckForType
-//
-//==========================================================================
-
-TType CheckForType(VClass* InClass)
-{
-	if (tk_Token == TK_KEYWORD)
-	{
-		return CheckForTypeKeyword();
-	}
-	if (tk_Token != TK_IDENTIFIER)
-	{
-		return TType(ev_unknown);
-	}
-	VName Name = tk_Name;
-	TK_NextToken();
-	return CheckForType(InClass, Name);
-}
-
-//==========================================================================
-//
 //  CheckForType
 //
 //==========================================================================
@@ -351,29 +287,6 @@ TType CheckForType(VClass* InClass, VName Name)
 		return CheckForType(InClass->ParentClass, Name);
 	}
 	return TType(ev_unknown);
-}
-
-//==========================================================================
-//
-//  CheckForClass
-//
-//==========================================================================
-
-VClass* CheckForClass()
-{
-	if (tk_Token == TK_KEYWORD)
-	{
-		return NULL;
-	}
-
-	VMemberBase* m = VMemberBase::StaticFindMember(tk_Name, ANY_PACKAGE,
-		MEMBER_Class);
-	if (m)
-	{
-		TK_NextToken();
-		return (VClass*)m;
-	}
-	return NULL;
 }
 
 //==========================================================================
@@ -616,13 +529,8 @@ void TType::GetName(char* Dest) const
 //
 //==========================================================================
 
-VField* CheckForStructField(VStruct* InStruct, VName FieldName, TLocation Loc)
+VField* CheckForStructField(VStruct* InStruct, VName FieldName)
 {
-	if (!InStruct->Parsed)
-	{
-		ParseError(Loc, "Incomplete type.");
-		return NULL;
-	}
 	for (VField* fi = InStruct->Fields; fi; fi = fi->Next)
 	{
 		if (fi->Name == FieldName)
@@ -632,7 +540,7 @@ VField* CheckForStructField(VStruct* InStruct, VName FieldName, TLocation Loc)
 	}
 	if (InStruct->ParentStruct)
 	{
-		return CheckForStructField(InStruct->ParentStruct, FieldName, Loc);
+		return CheckForStructField(InStruct->ParentStruct, FieldName);
 	}
 	return NULL;
 }
@@ -937,7 +845,7 @@ bool VField::Define()
 	}
 	type = TypeExpr->Type;
 
-	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers);
+	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
 	flags = TModifiers::FieldAttr(Modifiers);
 	return true;
 }
@@ -952,7 +860,7 @@ bool VMethod::Define()
 {
 	bool Ret = true;
 
-	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers);
+	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
 	Flags |= TModifiers::MethodAttr(Modifiers);
 
 	if (Flags & FUNC_Static)
@@ -1074,6 +982,105 @@ bool VState::Define()
 	}
 
 	return Ret;
+}
+
+//==========================================================================
+//
+//	VStruct::Define
+//
+//==========================================================================
+
+bool VStruct::Define()
+{
+	if (ParentStructName != NAME_None)
+	{
+		TType type = CheckForType(Outer->MemberType == MEMBER_Class ?
+			(VClass*)Outer : NULL, ParentStructName);
+		if (type.type != ev_struct)
+		{
+			ParseError(ParentStructLoc, "%s is not a struct type",
+				*ParentStructName);
+		}
+		else
+		{
+			ParentStruct = type.Struct;
+		}
+	}
+
+	if (ParentStruct && !ParentStruct->Defined)
+	{
+		ParseError(ParentStructLoc, "Parent struct must be declared before");
+		return false;
+	}
+
+	Defined = true;
+	return true;
+}
+
+//==========================================================================
+//
+//	VClass::Define
+//
+//==========================================================================
+
+bool VClass::Define()
+{
+	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
+	int ClassAttr = TModifiers::ClassAttr(Modifiers);
+
+	if (ParentClassName != NAME_None)
+	{
+		ParentClass = CheckForClass(ParentClassName);
+		if (!ParentClass)
+		{
+			ParseError(ParentClassLoc, "No such class %s", *ParentClassName);
+		}
+		else if (!ParentClass->Defined)
+		{
+			ParseError(ParentClassLoc, "Parent class must be defined before");
+		}
+	}
+
+	for (int i = 0; i < Structs.Num(); i++)
+	{
+		if (!Structs[i]->Define())
+		{
+			return false;
+		}
+	}
+
+	for (int i = 0; i < MobjInfoExpressions.Num(); i++)
+	{
+		MobjInfoExpressions[i] = MobjInfoExpressions[i]->Resolve();
+		if (!MobjInfoExpressions[i])
+		{
+			return false;
+		}
+		vint32 Id;
+		if (!MobjInfoExpressions[i]->GetIntConst(Id))
+		{
+			return false;
+		}
+		AddToMobjInfo(Id, this);
+	}
+
+	for (int i = 0; i < ScriptIdExpressions.Num(); i++)
+	{
+		ScriptIdExpressions[i] = ScriptIdExpressions[i]->Resolve();
+		if (!ScriptIdExpressions[i])
+		{
+			return false;
+		}
+		vint32 Id;
+		if (!ScriptIdExpressions[i]->GetIntConst(Id))
+		{
+			return false;
+		}
+		AddToScriptIds(Id, this);
+	}
+
+	Defined = true;
+	return true;
 }
 
 //==========================================================================
@@ -1360,6 +1367,37 @@ void VClass::Emit()
 
 void EmitCode()
 {
+	for (int i = 0; i < PackagesToLoad.Num(); i++)
+	{
+		PackagesToLoad[i].Pkg = LoadPackage(PackagesToLoad[i].Name,
+			PackagesToLoad[i].Loc);
+	}
+
+	if (NumErrors)
+	{
+		ERR_Exit(ERR_NONE, false, NULL);
+	}
+
+	for (int i = 0; i < ParsedConstants.Num(); i++)
+	{
+		ParsedConstants[i]->Define();
+	}
+
+	for (int i = 0; i < ParsedStructs.Num(); i++)
+	{
+		ParsedStructs[i]->Define();
+	}
+
+	for (int i = 0; i < ParsedClasses.Num(); i++)
+	{
+		ParsedClasses[i]->Define();
+	}
+
+	if (NumErrors)
+	{
+		ERR_Exit(ERR_NONE, false, NULL);
+	}
+
 	for (int i = 0; i < ParsedStructs.Num(); i++)
 	{
 		ParsedStructs[i]->DefineMembers();
