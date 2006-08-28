@@ -91,10 +91,6 @@ SOURCE=..\..\utils\common\cmdlib.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\utils\vcc\constexp.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\utils\vcc\error.cpp
 # End Source File
 # Begin Source File
