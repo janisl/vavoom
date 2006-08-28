@@ -955,7 +955,7 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 		return;
 	}
 	sprdef = &sprites[psp->sprite];
-	if ((psp->frame & FF_FRAMEMASK)  >= sprdef->numframes)
+	if ((psp->frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d",
@@ -981,10 +981,8 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 
 	float sprx = 160.0 - psp->sx + TexSOffset;
 	float spry = 100.0 - psp->sy + TexTOffset;
-	if (refdef.height == ScreenHeight)
-	{
-		spry -= cl->pspriteSY;
-	}
+
+	spry -= cl->pspriteSY;
 
 	//	1 / 160 = 0.00625
 	TVec start = sprorigin - (sprx * PSP_DIST * 0.00625) * viewright;
