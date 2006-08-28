@@ -340,10 +340,18 @@ public:
 class VUnary : public VExpression
 {
 public:
-	EPunctuation		Oper;
-	VExpression*		op;
+	enum EUnaryOp
+	{
+		Plus,
+		Minus,
+		Not,
+		BitInvert,
+		TakeAddress,
+	};
+	EUnaryOp		Oper;
+	VExpression*	op;
 
-	VUnary(EPunctuation, VExpression*, const TLocation&);
+	VUnary(EUnaryOp, VExpression*, const TLocation&);
 	~VUnary();
 	VExpression* DoResolve();
 	void Emit();
@@ -357,17 +365,16 @@ public:
 //
 //==========================================================================
 
-enum EIncDec
-{
-	INCDEC_PreInc,
-	INCDEC_PreDec,
-	INCDEC_PostInc,
-	INCDEC_PostDec,
-};
-
 class VUnaryMutator : public VExpression
 {
 public:
+	enum EIncDec
+	{
+		PreInc,
+		PreDec,
+		PostInc,
+		PostDec,
+	};
 	EIncDec			Oper;
 	VExpression*	op;
 
@@ -405,11 +412,30 @@ public:
 class VBinary : public VExpression
 {
 public:
-	EPunctuation		Oper;
-	VExpression*		op1;
-	VExpression*		op2;
+	enum EBinOp
+	{
+		Add,
+		Subtract,
+		Multiply,
+		Divide,
+		Modulus,
+		LShift,
+		RShift,
+		And,
+		XOr,
+		Or,
+		Equals,
+		NotEquals,
+		Less,
+		LessEquals,
+		Greater,
+		GreaterEquals,
+	};
+	EBinOp			Oper;
+	VExpression*	op1;
+	VExpression*	op2;
 
-	VBinary(EPunctuation, VExpression*, VExpression*, const TLocation&);
+	VBinary(EBinOp, VExpression*, VExpression*, const TLocation&);
 	~VBinary();
 	VExpression* DoResolve();
 	void Emit();
@@ -426,11 +452,16 @@ public:
 class VBinaryLogical : public VExpression
 {
 public:
-	EPunctuation		Oper;
-	VExpression*		op1;
-	VExpression*		op2;
+	enum ELogOp
+	{
+		And,
+		Or,
+	};
+	ELogOp			Oper;
+	VExpression*	op1;
+	VExpression*	op2;
 
-	VBinaryLogical(EPunctuation, VExpression*, VExpression*, const TLocation&);
+	VBinaryLogical(ELogOp, VExpression*, VExpression*, const TLocation&);
 	~VBinaryLogical();
 	VExpression* DoResolve();
 	void Emit();
@@ -465,11 +496,25 @@ public:
 class VAssignment : public VExpression
 {
 public:
-	EPunctuation		Oper;
-	VExpression*		op1;
-	VExpression*		op2;
+	enum EAssignOper
+	{
+		Assign,
+		AddAssign,
+		MinusAssign,
+		MultiplyAssign,
+		DivideAssign,
+		ModAssign,
+		AndAssign,
+		OrAssign,
+		XOrAssign,
+		LShiftAssign,
+		RShiftAssign,
+	};
+	EAssignOper		Oper;
+	VExpression*	op1;
+	VExpression*	op2;
 
-	VAssignment(EPunctuation, VExpression*, VExpression*, const TLocation&);
+	VAssignment(EAssignOper, VExpression*, VExpression*, const TLocation&);
 	~VAssignment();
 	VExpression* DoResolve();
 	void Emit();

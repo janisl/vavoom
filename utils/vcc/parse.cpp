@@ -43,6 +43,8 @@ static VCompound* ParseCompoundStatement();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern VLexer			Lex;
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -59,35 +61,35 @@ static bool				CheckForLocal;
 
 static TType CheckForTypeKeyword()
 {
-	if (TK_Check(KW_VOID))
+	if (Lex.Check(TK_Void))
 	{
 		return TType(ev_void);
 	}
-	if (TK_Check(KW_INT))
+	if (Lex.Check(TK_Int))
 	{
 		return TType(ev_int);
 	}
-	if (TK_Check(KW_FLOAT))
+	if (Lex.Check(TK_Float))
 	{
 		return TType(ev_float);
 	}
-	if (TK_Check(KW_NAME))
+	if (Lex.Check(TK_Name))
 	{
 		return TType(ev_name);
 	}
-	if (TK_Check(KW_STRING))
+	if (Lex.Check(TK_String))
 	{
 		return TType(ev_string);
 	}
-	if (TK_Check(KW_CLASSID))
+	if (Lex.Check(TK_ClassId))
 	{
 		return TType(ev_classid);
 	}
-	if (TK_Check(KW_STATE))
+	if (Lex.Check(TK_State))
 	{
 		return TType(ev_state);
 	}
-	if (TK_Check(KW_BOOL))
+	if (Lex.Check(TK_Bool))
 	{
 		TType ret(ev_bool);
 		ret.bit_mask = 1;
@@ -107,17 +109,17 @@ static VExpression* ParseDotMethodCall(VExpression* SelfExpr,
 {
 	VExpression* Args[MAX_PARAMS + 1];
 	int NumArgs = 0;
-	if (!TK_Check(PU_RPAREN))
+	if (!Lex.Check(TK_RParen))
 	{
 		do
 		{
 			Args[NumArgs] = ParseExpressionPriority13();
 			if (NumArgs == MAX_PARAMS)
-				ParseError(tk_Location, "Too many arguments");
+				ParseError(Lex.Location, "Too many arguments");
 			else
 				NumArgs++;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		} while (Lex.Check(TK_Comma));
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 	}
 	return new VDotInvocation(SelfExpr, MethodName, Loc, NumArgs, Args);
 }
@@ -132,17 +134,17 @@ static VExpression* ParseBaseMethodCall(VName Name, TLocation Loc)
 {
 	VExpression* Args[MAX_PARAMS + 1];
 	int NumArgs = 0;
-	if (!TK_Check(PU_RPAREN))
+	if (!Lex.Check(TK_RParen))
 	{
 		do
 		{
 			Args[NumArgs] = ParseExpressionPriority13();
 			if (NumArgs == MAX_PARAMS)
-				ParseError(tk_Location, "Too many arguments");
+				ParseError(Lex.Location, "Too many arguments");
 			else
 				NumArgs++;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		} while (Lex.Check(TK_Comma));
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 	}
 	return new VBaseInvocation(Name, NumArgs, Args, Loc);
 }
@@ -157,17 +159,17 @@ static VExpression* ParseMethodCallOrCast(VName Name, TLocation Loc)
 {
 	VExpression* Args[MAX_PARAMS + 1];
 	int NumArgs = 0;
-	if (!TK_Check(PU_RPAREN))
+	if (!Lex.Check(TK_RParen))
 	{
 		do
 		{
 			Args[NumArgs] = ParseExpressionPriority13();
 			if (NumArgs == MAX_PARAMS)
-				ParseError(tk_Location, "Too many arguments");
+				ParseError(Lex.Location, "Too many arguments");
 			else
 				NumArgs++;
-		} while (TK_Check(PU_COMMA));
-		TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		} while (Lex.Check(TK_Comma));
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 	}
 	return new VCastOrInvocation(Name, Loc, NumArgs, Args);
 }
@@ -180,41 +182,41 @@ static VExpression* ParseMethodCallOrCast(VName Name, TLocation Loc)
 
 static VLocalDecl* ParseLocalVar(VExpression* TypeExpr)
 {
-	VLocalDecl* Decl = new VLocalDecl(tk_Location);
+	VLocalDecl* Decl = new VLocalDecl(Lex.Location);
 	do
 	{
 		VLocalEntry e;
 
 		e.TypeExpr = TypeExpr->CreateTypeExprCopy();
-		TLocation l = tk_Location;
-		while (TK_Check(PU_ASTERISK))
+		TLocation l = Lex.Location;
+		while (Lex.Check(TK_Asterisk))
 		{
 			e.TypeExpr = new VPointerType(e.TypeExpr, l);
-			l = tk_Location;
+			l = Lex.Location;
 		}
-		if (tk_Token != TK_IDENTIFIER)
+		if (Lex.Token != TK_Identifier)
 		{
-			ParseError(tk_Location, "Invalid identifier, variable name expected");
+			ParseError(Lex.Location, "Invalid identifier, variable name expected");
 			continue;
 		}
-		e.Loc = tk_Location;
-		e.Name = tk_Name;
-		TK_NextToken();
+		e.Loc = Lex.Location;
+		e.Name = Lex.Name;
+		Lex.NextToken();
 
-		if (TK_Check(PU_LINDEX))
+		if (Lex.Check(TK_LBracket))
 		{
-			TLocation SLoc = tk_Location;
+			TLocation SLoc = Lex.Location;
 			VExpression* SE = ParseExpression();
-			TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+			Lex.Expect(TK_RBracket, ERR_MISSING_RFIGURESCOPE);
 			e.TypeExpr = new VFixedArrayType(e.TypeExpr, SE, SLoc);
 		}
 		//  Initialisation
-		else if (TK_Check(PU_ASSIGN))
+		else if (Lex.Check(TK_Assign))
 		{
 			e.Value = ParseExpressionPriority13();
 		}
 		Decl->Vars.Append(e);
-	} while (TK_Check(PU_COMMA));
+	} while (Lex.Check(TK_Comma));
 	delete TypeExpr;
 	return Decl;
 }
@@ -233,108 +235,105 @@ static VExpression* ParseExpressionPriority0()
 
 	bLocals = CheckForLocal;
 	CheckForLocal = false;
-	TLocation l = tk_Location;
-	switch (tk_Token)
+	TLocation l = Lex.Location;
+	switch (Lex.Token)
 	{
-	case TK_INTEGER:
-		TK_NextToken();
-		return new VIntLiteral(tk_Number, l);
+	case TK_IntLiteral:
+		Lex.NextToken();
+		return new VIntLiteral(Lex.Number, l);
 
-	case TK_FLOAT:
-		TK_NextToken();
-		return new VFloatLiteral(tk_Float, l);
+	case TK_FloatLiteral:
+		Lex.NextToken();
+		return new VFloatLiteral(Lex.Float, l);
 
-	case TK_NAME:
-		TK_NextToken();
-		return new VNameLiteral(tk_Name, l);
+	case TK_NameLiteral:
+		Lex.NextToken();
+		return new VNameLiteral(Lex.Name, l);
 
-	case TK_STRING:
-		TK_NextToken();
-		return new VStringLiteral(tk_StringI, l);
+	case TK_StringLiteral:
+		Lex.NextToken();
+		return new VStringLiteral(Lex.StringI, l);
 
-	case TK_PUNCT:
-		if (TK_Check(PU_LPAREN))
-		{
-			VExpression* op = ParseExpressionPriority13();
-			if (!op)
-			{
-				ParseError(l, "Expression expected");
-			}
-			TK_Expect(PU_RPAREN, ERR_BAD_EXPR);
-			return op;
-		}
+	case TK_Self:
+		Lex.NextToken();
+		return new VSelf(l);
 
-		if (TK_Check(PU_DCOLON))
-		{
-			if (tk_Token != TK_IDENTIFIER)
-			{
-				ParseError(l, "Method name expected.");
-				break;
-			}
-			Loc = tk_Location;
-			Name = tk_Name;
-			TK_NextToken();
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			return ParseBaseMethodCall(Name, Loc);
-		}
-		break;
+	case TK_None:
+		Lex.NextToken();
+		return new VNoneLiteral(l);
+	
+	case TK_Null:
+		Lex.NextToken();
+		return new VNullLiteral(l);
 
-	case TK_KEYWORD:
-		if (TK_Check(KW_VECTOR))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			VExpression* op1 = ParseExpressionPriority13();
-			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
-			VExpression* op2 = ParseExpressionPriority13();
-			TK_Expect(PU_COMMA, ERR_BAD_EXPR);
-			VExpression* op3 = ParseExpressionPriority13();
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			return new VVector(op1, op2, op3, l);
-		}
-		if (TK_Check(KW_SELF))
-		{
-			return new VSelf(l);
-		}
-		if (TK_Check(KW_NONE))
-		{
-			return new VNoneLiteral(l);
-		}
-		if (TK_Check(KW_NULL))
-		{
-			return new VNullLiteral(l);
-		}
-		if (TK_Check(KW_TRUE))
-		{
-			return new VIntLiteral(1, l);
-		}
-		if (TK_Check(KW_FALSE))
-		{
-			return new VIntLiteral(0, l);
-		}
-		break;
+	case TK_False:
+		Lex.NextToken();
+		return new VIntLiteral(0, l);
 
-	case TK_IDENTIFIER:
-		Loc = tk_Location;
-		Name = tk_Name;
-		TK_NextToken();
-		if (TK_Check(PU_LPAREN))
+	case TK_True:
+		Lex.NextToken();
+		return new VIntLiteral(1, l);
+
+	case TK_Vector:
+	{
+		Lex.NextToken();
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		VExpression* op1 = ParseExpressionPriority13();
+		Lex.Expect(TK_Comma);
+		VExpression* op2 = ParseExpressionPriority13();
+		Lex.Expect(TK_Comma);
+		VExpression* op3 = ParseExpressionPriority13();
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		return new VVector(op1, op2, op3, l);
+	}
+
+	case TK_LParen:
+	{
+		Lex.NextToken();
+		VExpression* op = ParseExpressionPriority13();
+		if (!op)
+		{
+			ParseError(l, "Expression expected");
+		}
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		return op;
+	}
+
+	case TK_DColon:
+		Lex.NextToken();
+		if (Lex.Token != TK_Identifier)
+		{
+			ParseError(l, "Method name expected.");
+			break;
+		}
+		Loc = Lex.Location;
+		Name = Lex.Name;
+		Lex.NextToken();
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		return ParseBaseMethodCall(Name, Loc);
+
+	case TK_Identifier:
+		Loc = Lex.Location;
+		Name = Lex.Name;
+		Lex.NextToken();
+		if (Lex.Check(TK_LParen))
 		{
 			return ParseMethodCallOrCast(Name, Loc);
 		}
 
-		if (TK_Check(PU_DCOLON))
+		if (Lex.Check(TK_DColon))
 		{
-			if (tk_Token != TK_IDENTIFIER)
+			if (Lex.Token != TK_Identifier)
 			{
-				ParseError(ERR_ILLEGAL_EXPR_IDENT, "Identifier: %s", tk_String);
+				ParseError(Lex.Location, "Identifier expected");
 				break;
 			}
-			VName Name2 = tk_Name;
-			TK_NextToken();
+			VName Name2 = Lex.Name;
+			Lex.NextToken();
 			return new VDoubleName(Name, Name2, Loc);
 		}
 
-		if (bLocals && tk_Token == TK_PUNCT && tk_Punct == PU_ASTERISK)
+		if (bLocals && Lex.Token == TK_Asterisk)
 		{
 			return ParseLocalVar(new VSingleName(Name, Loc));
 		}
@@ -362,32 +361,32 @@ static VExpression* ParseExpressionPriority1()
 	bool done = false;
 	do
 	{
-		TLocation l = tk_Location;
+		TLocation l = Lex.Location;
 
-		if (TK_Check(PU_MINUS_GT))
+		if (Lex.Check(TK_Arrow))
 		{
-			if (tk_Token != TK_IDENTIFIER)
+			if (Lex.Token != TK_Identifier)
 			{
-				ParseError(tk_Location, "Invalid identifier, field name expacted");
+				ParseError(Lex.Location, "Invalid identifier, field name expacted");
 			}
 			else
 			{
-				op = new VPointerField(op, tk_Name, tk_Location);
-				TK_NextToken();
+				op = new VPointerField(op, Lex.Name, Lex.Location);
+				Lex.NextToken();
 			}
 		}
-		else if (TK_Check(PU_DOT))
+		else if (Lex.Check(TK_Dot))
 		{
-			if (tk_Token != TK_IDENTIFIER)
+			if (Lex.Token != TK_Identifier)
 			{
-				ParseError(tk_Location, "Invalid identifier, field name expacted");
+				ParseError(Lex.Location, "Invalid identifier, field name expacted");
 			}
 			else
 			{
-				VName FieldName = tk_Name;
-				TLocation Loc = tk_Location;
-				TK_NextToken();
-				if (TK_Check(PU_LPAREN))
+				VName FieldName = Lex.Name;
+				TLocation Loc = Lex.Location;
+				Lex.NextToken();
+				if (Lex.Check(TK_LParen))
 				{
 					op = ParseDotMethodCall(op, FieldName, Loc);
 				}
@@ -397,10 +396,10 @@ static VExpression* ParseExpressionPriority1()
 				}
 			}
 		}
-		else if (TK_Check(PU_LINDEX))
+		else if (Lex.Check(TK_LBracket))
 		{
 			VExpression* ind = ParseExpressionPriority13();
-			TK_Expect(PU_RINDEX, ERR_BAD_ARRAY);
+			Lex.Expect(TK_RBracket, ERR_BAD_ARRAY);
 			op = new VArrayElement(op, ind, l);
 		}
 		else
@@ -422,72 +421,69 @@ static VExpression* ParseExpressionPriority2()
 {
 	VExpression*	op;
 
-	if (tk_Token == TK_PUNCT)
+	TLocation l = Lex.Location;
+
+	if (Lex.Check(TK_Plus))
 	{
-		TLocation l = tk_Location;
+		op = ParseExpressionPriority2();
+		return new VUnary(VUnary::Plus, op, l);
+	}
 
-		if (TK_Check(PU_PLUS))
-		{
-			op = ParseExpressionPriority2();
-			return new VUnary(PU_PLUS, op, l);
-		}
+	if (Lex.Check(TK_Minus))
+	{
+		op = ParseExpressionPriority2();
+		return new VUnary(VUnary::Minus, op, l);
+	}
 
-		if (TK_Check(PU_MINUS))
-		{
-			op = ParseExpressionPriority2();
-			return new VUnary(PU_MINUS, op, l);
-		}
+	if (Lex.Check(TK_Not))
+	{
+		op = ParseExpressionPriority2();
+		return new VUnary(VUnary::Not, op, l);
+	}
 
-		if (TK_Check(PU_NOT))
-		{
-			op = ParseExpressionPriority2();
-			return new VUnary(PU_NOT, op, l);
-		}
+	if (Lex.Check(TK_Tilde))
+	{
+		op = ParseExpressionPriority2();
+		return new VUnary(VUnary::BitInvert, op, l);
+	}
 
-		if (TK_Check(PU_TILDE))
-		{
-			op = ParseExpressionPriority2();
-			return new VUnary(PU_TILDE, op, l);
-		}
+	if (Lex.Check(TK_And))
+	{
+		op = ParseExpressionPriority1();
+		return new VUnary(VUnary::TakeAddress, op, l);
+	}
 
-		if (TK_Check(PU_AND))
-		{
-			op = ParseExpressionPriority1();
-			return new VUnary(PU_AND, op, l);
-		}
+	if (Lex.Check(TK_Asterisk))
+	{
+		op = ParseExpressionPriority2();
+		return new VPushPointed(op);
+	}
 
-		if (TK_Check(PU_ASTERISK))
-		{
-			op = ParseExpressionPriority2();
-			return new VPushPointed(op);
-		}
+	if (Lex.Check(TK_Inc))
+	{
+		op = ParseExpressionPriority2();
+		return new VUnaryMutator(VUnaryMutator::PreInc, op, l);
+	}
 
-		if (TK_Check(PU_INC))
-		{
-			op = ParseExpressionPriority2();
-			return new VUnaryMutator(INCDEC_PreInc, op, l);
-		}
-
-		if (TK_Check(PU_DEC))
-		{
-			op = ParseExpressionPriority2();
-			return new VUnaryMutator(INCDEC_PreDec, op, l);
-		}
+	if (Lex.Check(TK_Dec))
+	{
+		op = ParseExpressionPriority2();
+		return new VUnaryMutator(VUnaryMutator::PreDec, op, l);
 	}
 
 	op = ParseExpressionPriority1();
 	if (!op)
 		return NULL;
-	TLocation l = tk_Location;
+	l = Lex.Location;
 
-	if (TK_Check(PU_INC))
+	if (Lex.Check(TK_Inc))
 	{
-		return new VUnaryMutator(INCDEC_PostInc, op, l);
+		return new VUnaryMutator(VUnaryMutator::PostInc, op, l);
 	}
 
-	if (TK_Check(PU_DEC))
+	if (Lex.Check(TK_Dec))
 	{
-		return new VUnaryMutator(INCDEC_PostDec, op, l);
+		return new VUnaryMutator(VUnaryMutator::PostDec, op, l);
 	}
 
 	return op;
@@ -507,21 +503,21 @@ static VExpression* ParseExpressionPriority3()
 	bool done = false;
 	do
 	{
-		TLocation l = tk_Location;
-		if (TK_Check(PU_ASTERISK))
+		TLocation l = Lex.Location;
+		if (Lex.Check(TK_Asterisk))
 		{
 			VExpression* op2 = ParseExpressionPriority2();
-			op1 = new VBinary(PU_ASTERISK, op1, op2, l);
+			op1 = new VBinary(VBinary::Multiply, op1, op2, l);
 		}
-		else if (TK_Check(PU_SLASH))
+		else if (Lex.Check(TK_Slash))
 		{
 			VExpression* op2 = ParseExpressionPriority2();
-			op1 = new VBinary(PU_SLASH, op1, op2, l);
+			op1 = new VBinary(VBinary::Divide, op1, op2, l);
 		}
-		else if (TK_Check(PU_PERCENT))
+		else if (Lex.Check(TK_Percent))
 		{
 			VExpression* op2 = ParseExpressionPriority2();
-			op1 = new VBinary(PU_PERCENT, op1, op2, l);
+			op1 = new VBinary(VBinary::Modulus, op1, op2, l);
 		}
 		else
 		{
@@ -546,16 +542,16 @@ static VExpression* ParseExpressionPriority4()
 	bool done = false;
 	do
 	{
-		TLocation l = tk_Location;
-		if (TK_Check(PU_PLUS))
+		TLocation l = Lex.Location;
+		if (Lex.Check(TK_Plus))
 		{
 			VExpression* op2 = ParseExpressionPriority3();
-			op1 = new VBinary(PU_PLUS, op1, op2, l);
+			op1 = new VBinary(VBinary::Add, op1, op2, l);
 		}
-		else if (TK_Check(PU_MINUS))
+		else if (Lex.Check(TK_Minus))
 		{
 			VExpression* op2 = ParseExpressionPriority3();
-			op1 = new VBinary(PU_MINUS, op1, op2, l);
+			op1 = new VBinary(VBinary::Subtract, op1, op2, l);
 		}
 		else
 		{
@@ -580,16 +576,16 @@ static VExpression* ParseExpressionPriority5()
 	bool done = false;
 	do
 	{
-		TLocation l = tk_Location;
-		if (TK_Check(PU_LSHIFT))
+		TLocation l = Lex.Location;
+		if (Lex.Check(TK_LShift))
 		{
 			VExpression* op2 = ParseExpressionPriority4();
-			op1 = new VBinary(PU_LSHIFT, op1, op2, l);
+			op1 = new VBinary(VBinary::LShift, op1, op2, l);
 		}
-		else if (TK_Check(PU_RSHIFT))
+		else if (Lex.Check(TK_RShift))
 		{
 			VExpression* op2 = ParseExpressionPriority4();
-			op1 = new VBinary(PU_RSHIFT, op1, op2, l);
+			op1 = new VBinary(VBinary::RShift, op1, op2, l);
 		}
 		else
 		{
@@ -614,26 +610,26 @@ static VExpression* ParseExpressionPriority6()
 	bool done = false;
 	do
 	{
-		TLocation l = tk_Location;
-		if (TK_Check(PU_LT))
+		TLocation l = Lex.Location;
+		if (Lex.Check(TK_Less))
 		{
 			VExpression* op2 = ParseExpressionPriority5();
-			op1 = new VBinary(PU_LT, op1, op2, l);
+			op1 = new VBinary(VBinary::Less, op1, op2, l);
 		}
-		else if (TK_Check(PU_LE))
+		else if (Lex.Check(TK_LessEquals))
 		{
 			VExpression* op2 = ParseExpressionPriority5();
-			op1 = new VBinary(PU_LE, op1, op2, l);
+			op1 = new VBinary(VBinary::LessEquals, op1, op2, l);
 		}
-		else if (TK_Check(PU_GT))
+		else if (Lex.Check(TK_Greater))
 		{
 			VExpression* op2 = ParseExpressionPriority5();
-			op1 = new VBinary(PU_GT, op1, op2, l);
+			op1 = new VBinary(VBinary::Greater, op1, op2, l);
 		}
-		else if (TK_Check(PU_GE))
+		else if (Lex.Check(TK_GreaterEquals))
 		{
 			VExpression* op2 = ParseExpressionPriority5();
-			op1 = new VBinary(PU_GE, op1, op2, l);
+			op1 = new VBinary(VBinary::GreaterEquals, op1, op2, l);
 		}
 		else
 		{
@@ -658,16 +654,16 @@ static VExpression* ParseExpressionPriority7()
 	bool done = false;
 	do
 	{
-		TLocation l = tk_Location;
-		if (TK_Check(PU_EQ))
+		TLocation l = Lex.Location;
+		if (Lex.Check(TK_Equals))
 		{
 			VExpression* op2 = ParseExpressionPriority6();
-			op1 = new VBinary(PU_EQ, op1, op2, l);
+			op1 = new VBinary(VBinary::Equals, op1, op2, l);
 		}
-		else if (TK_Check(PU_NE))
+		else if (Lex.Check(TK_NotEquals))
 		{
 			VExpression* op2 = ParseExpressionPriority6();
-			op1 = new VBinary(PU_NE, op1, op2, l);
+			op1 = new VBinary(VBinary::NotEquals, op1, op2, l);
 		}
 		else
 		{
@@ -688,12 +684,12 @@ static VExpression* ParseExpressionPriority8()
 	VExpression* op1 = ParseExpressionPriority7();
 	if (!op1)
 		return NULL;
-	TLocation l = tk_Location;
-	while (TK_Check(PU_AND))
+	TLocation l = Lex.Location;
+	while (Lex.Check(TK_And))
 	{
 		VExpression* op2 = ParseExpressionPriority7();
-		op1 = new VBinary(PU_AND, op1, op2, l);
-		l = tk_Location;
+		op1 = new VBinary(VBinary::And, op1, op2, l);
+		l = Lex.Location;
 	}
 	return op1;
 }
@@ -709,12 +705,12 @@ static VExpression* ParseExpressionPriority9()
 	VExpression* op1 = ParseExpressionPriority8();
 	if (!op1)
 		return NULL;
-	TLocation l = tk_Location;
-	while (TK_Check(PU_XOR))
+	TLocation l = Lex.Location;
+	while (Lex.Check(TK_XOr))
 	{
 		VExpression* op2 = ParseExpressionPriority8();
-		op1 = new VBinary(PU_XOR, op1, op2, l);
-		l = tk_Location;
+		op1 = new VBinary(VBinary::XOr, op1, op2, l);
+		l = Lex.Location;
 	}
 	return op1;
 }
@@ -730,12 +726,12 @@ static VExpression* ParseExpressionPriority10()
 	VExpression* op1 = ParseExpressionPriority9();
 	if (!op1)
 		return NULL;
-	TLocation l = tk_Location;
-	while (TK_Check(PU_OR))
+	TLocation l = Lex.Location;
+	while (Lex.Check(TK_Or))
 	{
 		VExpression* op2 = ParseExpressionPriority9();
-		op1 = new VBinary(PU_OR, op1, op2, l);
-		l = tk_Location;
+		op1 = new VBinary(VBinary::Or, op1, op2, l);
+		l = Lex.Location;
 	}
 	return op1;
 }
@@ -751,12 +747,12 @@ static VExpression* ParseExpressionPriority11()
 	VExpression* op1 = ParseExpressionPriority10();
 	if (!op1)
 		return NULL;
-	TLocation l = tk_Location;
-	while (TK_Check(PU_AND_LOG))
+	TLocation l = Lex.Location;
+	while (Lex.Check(TK_AndLog))
 	{
 		VExpression* op2 = ParseExpressionPriority10();
-		op1 = new VBinaryLogical(PU_AND_LOG, op1, op2, l);
-		l = tk_Location;
+		op1 = new VBinaryLogical(VBinaryLogical::And, op1, op2, l);
+		l = Lex.Location;
 	}
 	return op1;
 }
@@ -772,12 +768,12 @@ static VExpression* ParseExpressionPriority12()
 	VExpression* op1 = ParseExpressionPriority11();
 	if (!op1)
 		return NULL;
-	TLocation l = tk_Location;
-	while (TK_Check(PU_OR_LOG))
+	TLocation l = Lex.Location;
+	while (Lex.Check(TK_OrLog))
 	{
 		VExpression* op2 = ParseExpressionPriority11();
-		op1 = new VBinaryLogical(PU_OR_LOG, op1, op2, l);
-		l = tk_Location;
+		op1 = new VBinaryLogical(VBinaryLogical::Or, op1, op2, l);
+		l = Lex.Location;
 	}
 	return op1;
 }
@@ -793,11 +789,11 @@ static VExpression* ParseExpressionPriority13()
 	VExpression* op = ParseExpressionPriority12();
 	if (!op)
 		return NULL;
-	TLocation l = tk_Location;
-	if (TK_Check(PU_QUEST))
+	TLocation l = Lex.Location;
+	if (Lex.Check(TK_Quest))
 	{
 		VExpression* op1 = ParseExpressionPriority13();
-		TK_Expect(PU_COLON, ERR_MISSING_COLON);
+		Lex.Expect(TK_Colon, ERR_MISSING_COLON);
 		VExpression* op2 = ParseExpressionPriority13();
 		op = new VConditional(op, op1, op2, l);
 	}
@@ -815,61 +811,61 @@ static VExpression* ParseExpressionPriority14()
 	VExpression* op1 = ParseExpressionPriority13();
 	if (!op1)
 		return NULL;
-	TLocation l = tk_Location;
-	if (TK_Check(PU_ASSIGN))
+	TLocation l = Lex.Location;
+	if (Lex.Check(TK_Assign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::Assign, op1, op2, l);
 	}
-	else if (TK_Check(PU_ADD_ASSIGN))
+	else if (Lex.Check(TK_AddAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_ADD_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::AddAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_MINUS_ASSIGN))
+	else if (Lex.Check(TK_MinusAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_MINUS_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::MinusAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_MULTIPLY_ASSIGN))
+	else if (Lex.Check(TK_MultiplyAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_MULTIPLY_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::MultiplyAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_DIVIDE_ASSIGN))
+	else if (Lex.Check(TK_DivideAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_DIVIDE_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::DivideAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_MOD_ASSIGN))
+	else if (Lex.Check(TK_ModAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_MOD_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::ModAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_AND_ASSIGN))
+	else if (Lex.Check(TK_AndAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_AND_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::AndAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_OR_ASSIGN))
+	else if (Lex.Check(TK_OrAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_OR_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::OrAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_XOR_ASSIGN))
+	else if (Lex.Check(TK_XOrAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_XOR_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::XOrAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_LSHIFT_ASSIGN))
+	else if (Lex.Check(TK_LShiftAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_LSHIFT_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::LShiftAssign, op1, op2, l);
 	}
-	else if (TK_Check(PU_RSHIFT_ASSIGN))
+	else if (Lex.Check(TK_RShiftAssign))
 	{
 		VExpression* op2 = ParseExpressionPriority13();
-		return new VAssignment(PU_RSHIFT_ASSIGN, op1, op2, l);
+		return new VAssignment(VAssignment::RShiftAssign, op1, op2, l);
 	}
 	return op1;
 }
@@ -894,152 +890,174 @@ static VExpression* ParseExpression()
 
 static VStatement* ParseStatement()
 {
-	TLocation l = tk_Location;
-	switch(tk_Token)
+	TLocation l = Lex.Location;
+	switch(Lex.Token)
 	{
 	case TK_EOF:
-		ERR_Exit(ERR_UNEXPECTED_EOF, true, NULL);
+		ParseError(Lex.Location, ERR_UNEXPECTED_EOF);
 		return NULL;
 
-	case TK_KEYWORD:
-		if (TK_Check(KW_IF))
+	case TK_If:
+	{
+		Lex.NextToken();
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		VExpression* e = ParseExpression();
+		if (!e)
 		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			VExpression* e = ParseExpression();
-			if (!e)
+			ParseError(Lex.Location, "If expression expected");
+		}
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		VStatement* STrue = ParseStatement();
+		if (Lex.Check(TK_Else))
+		{
+			VStatement* SFalse = ParseStatement();
+			return new VIf(e, STrue, SFalse, l);
+		}
+		else
+		{
+			return new VIf(e, STrue, l);
+		}
+	}
+
+	case TK_While:
+	{
+		Lex.NextToken();
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		VExpression* Expr = ParseExpression();
+		if (!Expr)
+		{
+			ParseError(Lex.Location, "Wile loop expression expected");
+		}
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		VStatement* Statement = ParseStatement();
+		return new VWhile(Expr, Statement, l);
+	}
+
+	case TK_Do:
+	{
+		Lex.NextToken();
+		VStatement* Statement = ParseStatement();
+		Lex.Expect(TK_While, ERR_BAD_DO_STATEMENT);
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		VExpression* Expr = ParseExpression();
+		if (!Expr)
+		{
+			ParseError(Lex.Location, "Do loop expression expected");
+		}
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+		return new VDo(Expr, Statement, l);
+	}
+
+	case TK_For:
+	{
+		Lex.NextToken();
+		VFor* For = new VFor(l);
+		For->NumLocalsOnStart = numlocaldefs;
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		do
+		{
+			VExpression* Expr = ParseExpression();
+			if (!Expr)
 			{
-				ParseError(tk_Location, "If expression expected");
+				break;
 			}
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			VStatement* STrue = ParseStatement();
-			if (TK_Check(KW_ELSE))
+			For->InitExpr.Append(new VDropResult(Expr));
+		} while (Lex.Check(TK_Comma));
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+		For->CondExpr = ParseExpression();
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+		do
+		{
+			VExpression* Expr = ParseExpression();
+			if (!Expr)
 			{
-				VStatement* SFalse = ParseStatement();
-				return new VIf(e, STrue, SFalse, l);
+				break;
+			}
+			For->LoopExpr.Append(new VDropResult(Expr));
+		} while (Lex.Check(TK_Comma));
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+		VStatement* Statement = ParseStatement();
+		For->Statement = Statement;
+		return For;
+	}
+
+	case TK_Break:
+		Lex.NextToken();
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+		return new VBreak(l);
+
+	case TK_Continue:
+		Lex.NextToken();
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+		return new VContinue(l);
+
+	case TK_Return:
+	{
+		Lex.NextToken();
+		VExpression* Expr = ParseExpression();
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+		return new VReturn(Expr, l);
+	}
+
+	case TK_Switch:
+	{
+		Lex.NextToken();
+		VSwitch* Switch = new VSwitch(l);
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
+		Switch->Expr = ParseExpression();
+		if (!Switch->Expr)
+		{
+			ParseError(Lex.Location, "Switch expression expected");
+		}
+		Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+
+		Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+		do
+		{
+			l = Lex.Location;
+			if (Lex.Check(TK_Case))
+			{
+				VExpression* Expr = ParseExpression();
+				if (!Expr)
+				{
+					ParseError(Lex.Location, "Case value expected");
+				}
+				Lex.Expect(TK_Colon, ERR_MISSING_COLON);
+				Switch->Statements.Append(new VSwitchCase(Switch, Expr, l));
+			}
+			else if (Lex.Check(TK_Default))
+			{
+				Lex.Expect(TK_Colon, ERR_MISSING_COLON);
+				Switch->Statements.Append(new VSwitchDefault(Switch, l));
 			}
 			else
 			{
-				return new VIf(e, STrue, l);
+				VStatement* Statement = ParseStatement();
+				Switch->Statements.Append(Statement);
 			}
-		}
-		else if (TK_Check(KW_WHILE))
-		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			VExpression* Expr = ParseExpression();
-			if (!Expr)
-			{
-				ParseError(tk_Location, "Wile loop expression expected");
-			}
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			VStatement* Statement = ParseStatement();
-			return new VWhile(Expr, Statement, l);
-		}
-		else if (TK_Check(KW_DO))
-		{
-			VStatement* Statement = ParseStatement();
-			TK_Expect(KW_WHILE, ERR_BAD_DO_STATEMENT);
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			VExpression* Expr = ParseExpression();
-			if (!Expr)
-			{
-				ParseError(tk_Location, "Do loop expression expected");
-			}
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			return new VDo(Expr, Statement, l);
-		}
-		else if (TK_Check(KW_FOR))
-		{
-			VFor* For = new VFor(l);
-			For->NumLocalsOnStart = numlocaldefs;
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			do
-			{
-				VExpression* Expr = ParseExpression();
-				if (!Expr)
-				{
-					break;
-				}
-				For->InitExpr.Append(new VDropResult(Expr));
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			For->CondExpr = ParseExpression();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			do
-			{
-				VExpression* Expr = ParseExpression();
-				if (!Expr)
-				{
-					break;
-				}
-				For->LoopExpr.Append(new VDropResult(Expr));
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-			VStatement* Statement = ParseStatement();
-			For->Statement = Statement;
-			return For;
-		}
-		else if (TK_Check(KW_BREAK))
-		{
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			return new VBreak(l);
-		}
-		else if (TK_Check(KW_CONTINUE))
-		{
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			return new VContinue(l);
-		}
-		else if (TK_Check(KW_RETURN))
-		{
-			VExpression* Expr = ParseExpression();
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			return new VReturn(Expr, l);
-		}
-		else if (TK_Check(KW_SWITCH))
-		{
-			VSwitch* Switch = new VSwitch(l);
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
-			Switch->Expr = ParseExpression();
-			if (!Switch->Expr)
-			{
-				ParseError(tk_Location, "Switch expression expected");
-			}
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+		} while (!Lex.Check(TK_RBrace));
+		return Switch;
+	}
 
-			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-			do
-			{
-				l = tk_Location;
-				if (TK_Check(KW_CASE))
-				{
-					VExpression* Expr = ParseExpression();
-					if (!Expr)
-					{
-						ParseError(tk_Location, "Case value expected");
-					}
-					TK_Expect(PU_COLON, ERR_MISSING_COLON);
-					Switch->Statements.Append(new VSwitchCase(Switch, Expr, l));
-				}
-				else if (TK_Check(KW_DEFAULT))
-				{
-					TK_Expect(PU_COLON, ERR_MISSING_COLON);
-					Switch->Statements.Append(new VSwitchDefault(Switch, l));
-				}
-				else
-				{
-					VStatement* Statement = ParseStatement();
-					Switch->Statements.Append(Statement);
-				}
-			} while (!TK_Check(PU_RBRACE));
-			return Switch;
-		}
-		else
+	case TK_LBrace:
+		Lex.NextToken();
+		return ParseCompoundStatement();
+
+	case TK_Bool:
+	case TK_ClassId:
+	case TK_Float:
+	case TK_Int:
+	case TK_Name:
+	case TK_State:
+	case TK_String:
+	case TK_Void:
 		{
 			TType type = CheckForTypeKeyword();
 			if (type.type != ev_unknown)
 			{
 				VLocalDecl* Decl = ParseLocalVar(new VTypeExpr(type, l));
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+				Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 				return new VLocalVarStatement(Decl);
 			}
 			else
@@ -1048,46 +1066,39 @@ static VStatement* ParseStatement()
 				VExpression* Expr = ParseExpressionPriority14();
 				if (Expr)
 				{
-					TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+					Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 					return new VExpressionStatement(new VDropResult(Expr));
 				}
 				else
 				{
-					ParseError(l, "Misplaced keyword %s", tk_String);
-					TK_NextToken();
+					ParseError(l, "Misplaced keyword %s", VLexer::TokenNames[Lex.Token]);
+					Lex.NextToken();
 					return new VEmptyStatement(l);
 				}
 			}
 		}
-
-	case TK_PUNCT:
-		if (TK_Check(PU_LBRACE))
-		{
-			return ParseCompoundStatement();
-		}
-		//Fall through
 
 	default:
 		CheckForLocal = true;
 		VExpression* Expr = ParseExpressionPriority14();
 		if (!Expr)
 		{
-			if (!TK_Check(PU_SEMICOLON))
+			if (!Lex.Check(TK_Semicolon))
 			{
-				ParseError(l, "Token %s makes no sense here", tk_String);
-				TK_NextToken();
+				ParseError(l, "Token %s makes no sense here", VLexer::TokenNames[Lex.Token]);
+				Lex.NextToken();
 			}
 			return new VEmptyStatement(l);
 		}
-		else if (Expr->IsSingleName() && tk_Token == TK_IDENTIFIER)
+		else if (Expr->IsSingleName() && Lex.Token == TK_Identifier)
 		{
 			VLocalDecl* Decl = ParseLocalVar(Expr);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 			return new VLocalVarStatement(Decl);
 		}
 		else
 		{
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 			return new VExpressionStatement(new VDropResult(Expr));
 		}
 	}
@@ -1101,8 +1112,8 @@ static VStatement* ParseStatement()
 
 static VCompound* ParseCompoundStatement()
 {
-	VCompound* Comp = new VCompound(tk_Location);
-	while (!TK_Check(PU_RBRACE))
+	VCompound* Comp = new VCompound(Lex.Location);
+	while (!Lex.Check(TK_RBrace))
 	{
 		Comp->Statements.Append(ParseStatement());
 	}
@@ -1117,20 +1128,35 @@ static VCompound* ParseCompoundStatement()
 
 static VExpression* ParseType()
 {
-	TLocation l = tk_Location;
-	if (tk_Token == TK_KEYWORD)
+	TLocation l = Lex.Location;
+	switch (Lex.Token)
+	{
+	case TK_Bool:
+	case TK_ClassId:
+	case TK_Float:
+	case TK_Int:
+	case TK_Name:
+	case TK_State:
+	case TK_String:
+	case TK_Void:
 	{
 		TType t = CheckForTypeKeyword();
 		if (t.type != ev_unknown)
 		{
 			return new VTypeExpr(t, l);
 		}
+		break;
 	}
-	else if (tk_Token == TK_IDENTIFIER)
+
+	case TK_Identifier:
 	{
-		VExpression* e = new VSingleName(tk_Name, l);
-		TK_NextToken();
+		VExpression* e = new VSingleName(Lex.Name, l);
+		Lex.NextToken();
 		return e;
+	}
+
+	default:
+		break;
 	}
 	return NULL;
 }
@@ -1146,8 +1172,7 @@ static void ParseMethodDef(VExpression* RetType, VName MName, TLocation MethodLo
 {
 	if (CheckForFunction(InClass, MName))
 	{
-		ERR_Exit(ERR_FUNCTION_REDECLARED, true,
-			"Function: %s.%s", *InClass->Name, *MName);
+		ParseError(MethodLoc, "Redeclared method %s.%s", *InClass->Name, *MName);
 	}
 
 	VMethod* Func = new VMethod(MName, InClass, MethodLoc);
@@ -1157,7 +1182,7 @@ static void ParseMethodDef(VExpression* RetType, VName MName, TLocation MethodLo
 
 	do
 	{
-		if (TK_Check(PU_VARARGS))
+		if (Lex.Check(TK_VarArgs))
 		{
 			Func->Flags |= FUNC_VarArgs;
 			break;
@@ -1170,34 +1195,34 @@ static void ParseMethodDef(VExpression* RetType, VName MName, TLocation MethodLo
 		{
 			break;
 		}
-		TLocation l = tk_Location;
-		while (TK_Check(PU_ASTERISK))
+		TLocation l = Lex.Location;
+		while (Lex.Check(TK_Asterisk))
 		{
 			P.TypeExpr = new VPointerType(P.TypeExpr, l);;
-			l = tk_Location;
+			l = Lex.Location;
 		}
-		if (tk_Token == TK_IDENTIFIER)
+		if (Lex.Token == TK_Identifier)
 		{
-			P.Name = tk_Name;
-			P.Loc = tk_Location;
-			TK_NextToken();
+			P.Name = Lex.Name;
+			P.Loc = Lex.Location;
+			Lex.NextToken();
 		}
 		if (Func->NumParams == MAX_PARAMS)
 		{
-			ParseError(tk_Location, "Method parameters overflow");
+			ParseError(Lex.Location, "Method parameters overflow");
 			continue;
 		}
 		Func->NumParams++;
-	} while (TK_Check(PU_COMMA));
-	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+	} while (Lex.Check(TK_Comma));
+	Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 
-	if (TK_Check(PU_SEMICOLON))
+	if (Lex.Check(TK_Semicolon))
 	{
 		numbuiltins++;
 	}
 	else
 	{
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+		Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
 		Func->Statement = ParseCompoundStatement();
 	}
 }
@@ -1213,7 +1238,7 @@ static void ParseDelegate(VExpression* RetType, VField* Delegate)
 	VMethod* Func = new VMethod(NAME_None, Delegate, Delegate->Loc);
 	Func->ReturnTypeExpr = RetType;
 
-	TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+	Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 	do
 	{
 		VMethodParam& P = Func->Params[Func->NumParams];
@@ -1223,27 +1248,27 @@ static void ParseDelegate(VExpression* RetType, VField* Delegate)
 		{
 			break;
 		}
-		TLocation l = tk_Location;
-		while (TK_Check(PU_ASTERISK))
+		TLocation l = Lex.Location;
+		while (Lex.Check(TK_Asterisk))
 		{
 			P.TypeExpr = new VPointerType(P.TypeExpr, l);;
-			l = tk_Location;
+			l = Lex.Location;
 		}
-		if (tk_Token == TK_IDENTIFIER)
+		if (Lex.Token == TK_Identifier)
 		{
-			P.Name = tk_Name;
-			P.Loc = tk_Location;
-			TK_NextToken();
+			P.Name = Lex.Name;
+			P.Loc = Lex.Location;
+			Lex.NextToken();
 		}
 		if (Func->NumParams == MAX_PARAMS)
 		{
-			ParseError(tk_Location, "Method parameters overflow");
+			ParseError(Lex.Location, "Method parameters overflow");
 			continue;
 		}
 		Func->NumParams++;
-	} while (TK_Check(PU_COMMA));
-	TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+	} while (Lex.Check(TK_Comma));
+	Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
+	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 
 	Delegate->func = Func;
 	Delegate->type = TType(ev_delegate);
@@ -1258,12 +1283,12 @@ static void ParseDelegate(VExpression* RetType, VField* Delegate)
 
 static void ParseDefaultProperties(VClass* InClass)
 {
-	VMethod* Func = new VMethod(NAME_None, InClass, tk_Location);
-	Func->ReturnTypeExpr = new VTypeExpr(ev_void, tk_Location);
+	VMethod* Func = new VMethod(NAME_None, InClass, Lex.Location);
+	Func->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
 	Func->ReturnType = TType(ev_void);
 	InClass->DefaultProperties = Func;
 
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
 	Func->Statement = ParseCompoundStatement();
 }
 
@@ -1275,16 +1300,16 @@ static void ParseDefaultProperties(VClass* InClass)
 
 static void ParseStruct(VClass* InClass, bool IsVector)
 {
-	VName Name = tk_Name;
-	TLocation StrLoc = tk_Location;
-	if (tk_Token != TK_IDENTIFIER)
+	VName Name = Lex.Name;
+	TLocation StrLoc = Lex.Location;
+	if (Lex.Token != TK_Identifier)
 	{
-		ParseError("Struct name expected");
+		ParseError(Lex.Location, "Struct name expected");
 		Name = NAME_None;
 	}
 	else
 	{
-		TK_NextToken();
+		Lex.NextToken();
 	}
 
 	//	New struct
@@ -1294,70 +1319,70 @@ static void ParseStruct(VClass* InClass, bool IsVector)
 	Struct->IsVector = IsVector;
 	Struct->Fields = NULL;
 
-	if (!IsVector && TK_Check(PU_COLON))
+	if (!IsVector && Lex.Check(TK_Colon))
 	{
-		if (tk_Token != TK_IDENTIFIER)
+		if (Lex.Token != TK_Identifier)
 		{
-			ParseError(tk_Location, "Parent class name expected");
+			ParseError(Lex.Location, "Parent class name expected");
 		}
 		else
 		{
-			Struct->ParentStructName = tk_Name;
-			Struct->ParentStructLoc = tk_Location;
-			TK_NextToken();
+			Struct->ParentStructName = Lex.Name;
+			Struct->ParentStructLoc = Lex.Location;
+			Lex.NextToken();
 		}
 	}
 
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
+	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+	while (!Lex.Check(TK_RBrace))
 	{
-		vint32 Modifiers = TModifiers::Parse();
+		vint32 Modifiers = TModifiers::Parse(Lex);
 
 		VExpression* Type = ParseType();
 		if (!Type)
 		{
-			ParseError(tk_Location, "Field type expected.");
-			TK_NextToken();
+			ParseError(Lex.Location, "Field type expected.");
+			Lex.NextToken();
 			continue;
 		}
 
 		do
 		{
 			VExpression* FieldType = Type->CreateTypeExprCopy();
-			TLocation l = tk_Location;
-			while (TK_Check(PU_ASTERISK))
+			TLocation l = Lex.Location;
+			while (Lex.Check(TK_Asterisk))
 			{
 				FieldType = new VPointerType(FieldType, l);
-				l = tk_Location;
+				l = Lex.Location;
 			}
 
 			VName FieldName(NAME_None);
-			TLocation FieldLoc = tk_Location;
-			if (tk_Token != TK_IDENTIFIER)
+			TLocation FieldLoc = Lex.Location;
+			if (Lex.Token != TK_Identifier)
 			{
-				ParseError(tk_Location, "Field name expected");
+				ParseError(Lex.Location, "Field name expected");
 			}
 			else
 			{
-				FieldName = tk_Name;
+				FieldName = Lex.Name;
 			}
-			TK_NextToken();
-			if (TK_Check(PU_LINDEX))
+			Lex.NextToken();
+			if (Lex.Check(TK_LBracket))
 			{
-				TLocation SLoc = tk_Location;
+				TLocation SLoc = Lex.Location;
 				VExpression* e = ParseExpression();
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+				Lex.Expect(TK_RBracket, ERR_MISSING_RFIGURESCOPE);
 				FieldType = new VFixedArrayType(FieldType, e, SLoc);
 			}
 			VField* fi = new VField(FieldName, Struct, FieldLoc);
 			fi->TypeExpr = FieldType;
 			fi->Modifiers = Modifiers;
 			Struct->AddField(fi);
-		} while (TK_Check(PU_COMMA));
+		} while (Lex.Check(TK_Comma));
 		delete Type;
-		TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 	}
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 
 	if (InClass)
 	{
@@ -1377,69 +1402,68 @@ static void ParseStruct(VClass* InClass, bool IsVector)
 
 static void ParseStates(VClass* InClass)
 {
-	TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-	while (!TK_Check(PU_RBRACE))
+	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+	while (!Lex.Check(TK_RBrace))
 	{
 		//	State identifier
-		if (tk_Token != TK_IDENTIFIER)
+		if (Lex.Token != TK_Identifier)
 		{
-			ParseError(tk_Location, "State name expected");
-			TK_NextToken();
+			ParseError(Lex.Location, "State name expected");
+			Lex.NextToken();
 			continue;
 		}
-		VState* s = new VState(tk_Name, InClass, tk_Location);
+		VState* s = new VState(Lex.Name, InClass, Lex.Location);
 		InClass->AddState(s);
-		TK_NextToken();
-		TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+		Lex.NextToken();
+		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 		//	Sprite name
-		if (tk_Token != TK_NAME)
+		if (Lex.Token != TK_NameLiteral)
 		{
-			ParseError(ERR_NONE, "Sprite name expected");
+			ParseError(Lex.Location, "Sprite name expected");
 		}
-		if (tk_Name != NAME_None && strlen(*tk_Name) != 4)
+		if (Lex.Name != NAME_None && strlen(*Lex.Name) != 4)
 		{
-			ParseError(ERR_NONE, "Invalid sprite name");
+			ParseError(Lex.Location, "Invalid sprite name");
 		}
-		s->SpriteName = tk_Name;
-		TK_NextToken();
-		TK_Expect(PU_COMMA, ERR_NONE);
+		s->SpriteName = Lex.Name;
+		Lex.NextToken();
+		Lex.Expect(TK_Comma);
 		//  Frame
 		s->FrameExpr = ParseExpression();
-		TK_Expect(PU_COMMA, ERR_NONE);
-		if (tk_Token == TK_NAME)
+		Lex.Expect(TK_Comma);
+		if (Lex.Token == TK_NameLiteral)
 		{
 			//	Model
-			s->ModelName = tk_Name;
-			TK_NextToken();
-			TK_Expect(PU_COMMA, ERR_NONE);
+			s->ModelName = Lex.Name;
+			Lex.NextToken();
+			Lex.Expect(TK_Comma);
 			//  Frame
 			s->ModelFrameExpr = ParseExpression();
 			if (!s->ModelFrameExpr)
 			{
-				ParseError(tk_Location, "Model frame number expected");
+				ParseError(Lex.Location, "Model frame number expected");
 			}
-			TK_Expect(PU_COMMA, ERR_NONE);
+			Lex.Expect(TK_Comma);
 		}
 		//  Tics
 		s->TimeExpr = ParseExpression();
-		TK_Expect(PU_COMMA, ERR_NONE);
+		Lex.Expect(TK_Comma);
 		//  Next state
-		if (tk_Token != TK_IDENTIFIER &&
-			(tk_Token != TK_KEYWORD || tk_Keyword != KW_NONE))
+		if (Lex.Token != TK_Identifier && Lex.Token != TK_None)
 		{
-			ERR_Exit(ERR_NONE, true, NULL);
+			ParseError(Lex.Location, "Next state name expectred");
 		}
-		if (tk_Token == TK_IDENTIFIER)
+		if (Lex.Token == TK_Identifier)
 		{
-			s->NextStateName = tk_Name;
+			s->NextStateName = Lex.Name;
 		}
-		TK_NextToken();
-		TK_Expect(PU_RPAREN, ERR_NONE);
+		Lex.NextToken();
+		Lex.Expect(TK_RParen, ERR_NONE);
 		//	Code
 		s->Function = new VMethod(NAME_None, s, s->Loc);
-		s->Function->ReturnTypeExpr = new VTypeExpr(ev_void, tk_Location);
+		s->Function->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
 		s->Function->ReturnType = TType(ev_void);
-		TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+		Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
 		s->Function->Statement = ParseCompoundStatement();
 	}
 }
@@ -1452,42 +1476,42 @@ static void ParseStates(VClass* InClass)
 
 static void ParseClass()
 {
-	if (tk_Token != TK_IDENTIFIER)
+	if (Lex.Token != TK_Identifier)
 	{
-		ParseError(tk_Location, "Class name expected");
+		ParseError(Lex.Location, "Class name expected");
 	}
 	//	New class.
-	VClass* Class = new VClass(tk_Name, CurrentPackage, tk_Location);
+	VClass* Class = new VClass(Lex.Name, CurrentPackage, Lex.Location);
 	Class->Parsed = false;
 	Class->Defined = false;
-	TK_NextToken();
+	Lex.NextToken();
 
-	if (TK_Check(PU_COLON))
+	if (Lex.Check(TK_Colon))
 	{
-		if (tk_Token != TK_IDENTIFIER)
+		if (Lex.Token != TK_Identifier)
 		{
-			ParseError(tk_Location, "Parent class name expected");
+			ParseError(Lex.Location, "Parent class name expected");
 		}
 		else
 		{
-			Class->ParentClassName = tk_Name;
-			Class->ParentClassLoc = tk_Location;
-			TK_NextToken();
+			Class->ParentClassName = Lex.Name;
+			Class->ParentClassLoc = Lex.Location;
+			Lex.NextToken();
 		}
 	}
 	else if (Class->Name != NAME_Object)
 	{
-		ParseError("Parent class expected");
+		ParseError(Lex.Location, "Parent class expected");
 	}
 
 	Class->Parsed = true;
 
-	Class->Modifiers = TModifiers::Parse();
+	Class->Modifiers = TModifiers::Parse(Lex);
 	do
 	{
-		if (TK_Check(KW_MOBJINFO))
+		if (Lex.Check(TK_MobjInfo))
 		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 			VExpression* e = ParseExpression();
 			if (e)
 			{
@@ -1495,13 +1519,13 @@ static void ParseClass()
 			}
 			else
 			{
-				ParseError(tk_Location, "Constant expression expected");
+				ParseError(Lex.Location, "Constant expression expected");
 			}
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+			Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 		}
-		else if (TK_Check(KW_SCRIPTID))
+		else if (Lex.Check(TK_ScriptId))
 		{
-			TK_Expect(PU_LPAREN, ERR_MISSING_LPAREN);
+			Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 			VExpression* e = ParseExpression();
 			if (e)
 			{
@@ -1509,9 +1533,9 @@ static void ParseClass()
 			}
 			else
 			{
-				ParseError(tk_Location, "Constant expression expected");
+				ParseError(Lex.Location, "Constant expression expected");
 			}
-			TK_Expect(PU_RPAREN, ERR_MISSING_RPAREN);
+			Lex.Expect(TK_RParen, ERR_MISSING_RPAREN);
 		}
 		else
 		{
@@ -1519,35 +1543,35 @@ static void ParseClass()
 		}
 	} while (1);
 
-	TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-	while (!TK_Check(KW_DEFAULTPROPERTIES))
+	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+	while (!Lex.Check(TK_DefaultProperties))
 	{
-		if (TK_Check(KW_STATES))
+		if (Lex.Check(TK_States))
 		{
 			ParseStates(Class);
 			continue;
 		}
 
-		if (TK_Check(KW_ENUM))
+		if (Lex.Check(TK_Enum))
 		{
 			VConstant* PrevValue = NULL;
-			TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
+			Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
 			do
 			{
-				if (tk_Token != TK_IDENTIFIER)
+				if (Lex.Token != TK_Identifier)
 				{
-					ParseError(tk_Location, "Identifier expected");
-					TK_NextToken();
+					ParseError(Lex.Location, "Identifier expected");
+					Lex.NextToken();
 					continue;
 				}
-				if (CheckForConstant(Class, tk_Name))
+				if (CheckForConstant(Class, Lex.Name))
 				{
-					ParseError(tk_Location, "Redefined identifier %s", *tk_Name);
+					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
-				VConstant* cDef = new VConstant(tk_Name, Class, tk_Location);
+				VConstant* cDef = new VConstant(Lex.Name, Class, Lex.Location);
 				cDef->Type = ev_int;
-				TK_NextToken();
-				if (TK_Check(PU_ASSIGN))
+				Lex.NextToken();
+				if (Lex.Check(TK_Assign))
 				{
 					cDef->ValueExpr = ParseExpression();
 				}
@@ -1557,96 +1581,96 @@ static void ParseClass()
 				}
 				else
 				{
-					cDef->ValueExpr = new VIntLiteral(0, tk_Location);
+					cDef->ValueExpr = new VIntLiteral(0, Lex.Location);
 				}
 				PrevValue = cDef;
 				Class->AddConstant(cDef);
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			} while (Lex.Check(TK_Comma));
+			Lex.Expect(TK_RBrace, ERR_MISSING_RBRACE);
+			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 			continue;
 		}
 
-		if (TK_Check(KW_CONST))
+		if (Lex.Check(TK_Const))
 		{
 			TType t = CheckForTypeKeyword();
 			do
 			{
-				if (tk_Token != TK_IDENTIFIER)
+				if (Lex.Token != TK_Identifier)
 				{
-					ParseError(tk_Location, "Const name expected");
-					TK_NextToken();
+					ParseError(Lex.Location, "Const name expected");
+					Lex.NextToken();
 					continue;
 				}
-				if (CheckForConstant(Class, tk_Name))
+				if (CheckForConstant(Class, Lex.Name))
 				{
-					ParseError(tk_Location, "Redefined identifier %s", *tk_Name);
+					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
-				VConstant* cDef = new VConstant(tk_Name, Class, tk_Location);
+				VConstant* cDef = new VConstant(Lex.Name, Class, Lex.Location);
 				cDef->Type = t.type;
-				TK_NextToken();
-				if (!TK_Check(PU_ASSIGN))
+				Lex.NextToken();
+				if (!Lex.Check(TK_Assign))
 				{
-					ParseError(tk_Location, "Assignement operator expected");
+					ParseError(Lex.Location, "Assignement operator expected");
 				}
 				cDef->ValueExpr = ParseExpression();
 				Class->AddConstant(cDef);
-			} while (TK_Check(PU_COMMA));
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			} while (Lex.Check(TK_Comma));
+			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 			continue;
 		}
 
-		if (TK_Check(KW_STRUCT))
+		if (Lex.Check(TK_Struct))
 		{
 			ParseStruct(Class, false);
 			continue;
 		}
 
-		if (TK_Check(KW_VECTOR))
+		if (Lex.Check(TK_Vector))
 		{
 			ParseStruct(Class, true);
 			continue;
 		}
 
-		if (TK_Check(KW_DELEGATE))
+		if (Lex.Check(TK_Delegate))
 		{
 			VExpression* Type = ParseType();
 			if (!Type)
 			{
-				ParseError(tk_Location, "Field type expected.");
+				ParseError(Lex.Location, "Field type expected.");
 				continue;
 			}
-			TLocation l = tk_Location;
-			while (TK_Check(PU_ASTERISK))
+			TLocation l = Lex.Location;
+			while (Lex.Check(TK_Asterisk))
 			{
 				Type = new VPointerType(Type, l);
-				l = tk_Location;
+				l = Lex.Location;
 			}
 
-			if (tk_Token != TK_IDENTIFIER)
+			if (Lex.Token != TK_Identifier)
 			{
-				ParseError("Field name expected");
+				ParseError(Lex.Location, "Field name expected");
 				continue;
 			}
-			VField* fi = new VField(tk_Name, Class, tk_Location);
-			if (CheckForField(tk_Name, Class, false) ||
-				CheckForMethod(tk_Name, Class))
+			VField* fi = new VField(Lex.Name, Class, Lex.Location);
+			if (CheckForField(Lex.Location, Lex.Name, Class, false) ||
+				CheckForMethod(Lex.Name, Class))
 			{
-				ParseError("Redeclared field");
+				ParseError(Lex.Location, "Redeclared field");
 			}
-			TK_NextToken();
+			Lex.NextToken();
 			Class->AddField(fi);
 			ParseDelegate(Type, fi);
 			continue;
 		}
 
-		int Modifiers = TModifiers::Parse();
+		int Modifiers = TModifiers::Parse(Lex);
 
 		VExpression* Type = ParseType();
 		if (!Type)
 		{
-			ParseError(tk_Location, "Field type expected.");
-			TK_NextToken();
+			ParseError(Lex.Location, "Field type expected.");
+			Lex.NextToken();
 			continue;
 		}
 
@@ -1654,39 +1678,39 @@ static void ParseClass()
 		do
 		{
 			VExpression* FieldType = Type->CreateTypeExprCopy();
-			TLocation l = tk_Location;
-			while (TK_Check(PU_ASTERISK))
+			TLocation l = Lex.Location;
+			while (Lex.Check(TK_Asterisk))
 			{
 				FieldType = new VPointerType(FieldType, l);
-				l = tk_Location;
+				l = Lex.Location;
 			}
-			if (tk_Token != TK_IDENTIFIER)
+			if (Lex.Token != TK_Identifier)
 			{
-				ParseError("Field name expected");
+				ParseError(Lex.Location, "Field name expected");
 				continue;
 			}
-			VName FieldName = tk_Name;
-			TLocation FieldLoc = tk_Location;
-			TK_NextToken();
+			VName FieldName = Lex.Name;
+			TLocation FieldLoc = Lex.Location;
+			Lex.NextToken();
 
-			if (CheckForField(FieldName, Class, false))
+			if (CheckForField(FieldLoc, FieldName, Class, false))
 			{
-				ParseError("Redeclared field");
+				ParseError(Lex.Location, "Redeclared field");
 				continue;
 			}
 
-			if (TK_Check(PU_LPAREN))
+			if (Lex.Check(TK_LParen))
 			{
 				ParseMethodDef(FieldType, FieldName, FieldLoc, Class, Modifiers);
 				need_semicolon = false;
 				break;
 			}
 
-			if (TK_Check(PU_LINDEX))
+			if (Lex.Check(TK_LBracket))
 			{
-				TLocation SLoc = tk_Location;
+				TLocation SLoc = Lex.Location;
 				VExpression* e = ParseExpression();
-				TK_Expect(PU_RINDEX, ERR_MISSING_RFIGURESCOPE);
+				Lex.Expect(TK_RBracket, ERR_MISSING_RFIGURESCOPE);
 				FieldType = new VFixedArrayType(FieldType, e, SLoc);
 			}
 
@@ -1694,11 +1718,11 @@ static void ParseClass()
 			fi->TypeExpr = FieldType;
 			fi->Modifiers = Modifiers;
 			Class->AddField(fi);
-		} while (TK_Check(PU_COMMA));
+		} while (Lex.Check(TK_Comma));
 		delete Type;
 		if (need_semicolon)
 		{
-			TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
+			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 		}
 	}
 
@@ -1719,89 +1743,94 @@ void PA_Parse()
 
 	dprintf("Compiling pass 1\n");
 
-	TK_NextToken();
+	Lex.NextToken();
 	done = false;
 	while (!done)
 	{
-		switch(tk_Token)
+		switch(Lex.Token)
 		{
 		case TK_EOF:
 			done = true;
 			break;
-		case TK_KEYWORD:
-			if (TK_Check(KW_IMPORT))
+
+		case TK_Import:
+		{
+			Lex.NextToken();
+			if (Lex.Token != TK_Identifier)
 			{
-				if (tk_Token != TK_IDENTIFIER)
+				ParseError(Lex.Location, "Package name expected");
+			}
+			VImportedPackage& I = PackagesToLoad.Alloc();
+			I.Name = Lex.Name;
+			I.Loc = Lex.Location;
+			Lex.NextToken();
+			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+			break;
+		}
+
+		case TK_Enum:
+		{
+			Lex.NextToken();
+			VConstant* PrevValue = NULL;
+			Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
+			do
+			{
+				if (Lex.Token != TK_Identifier)
 				{
-					ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
+					ParseError(Lex.Location, "Expected IDENTIFIER");
 				}
-				VImportedPackage& I = PackagesToLoad.Alloc();
-				I.Name = tk_Name;
-				I.Loc = tk_Location;
-				TK_NextToken();
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_ENUM))
-			{
-				VConstant* PrevValue = NULL;
-				TK_Expect(PU_LBRACE, ERR_MISSING_LBRACE);
-				do
+				if (CheckForConstant(NULL, Lex.Name))
 				{
-					if (tk_Token != TK_IDENTIFIER)
-					{
-						ERR_Exit(ERR_INVALID_IDENTIFIER, true, NULL);
-					}
-					if (CheckForConstant(NULL, tk_Name))
-					{
-						ParseError(tk_Location, "Redefined identifier %s", *tk_Name);
-					}
-					VConstant* cDef = new VConstant(tk_Name, CurrentPackage, tk_Location);
-					cDef->Type = ev_int;
-					TK_NextToken();
-					if (TK_Check(PU_ASSIGN))
-					{
-						cDef->ValueExpr = ParseExpression();
-					}
-					else if (PrevValue)
-					{
-						cDef->PrevEnumValue = PrevValue;
-					}
-					else
-					{
-						cDef->ValueExpr = new VIntLiteral(0, tk_Location);
-					}
-					PrevValue = cDef;
-					ParsedConstants.Append(cDef);
-				} while (TK_Check(PU_COMMA));
-				TK_Expect(PU_RBRACE, ERR_MISSING_RBRACE);
-				TK_Expect(PU_SEMICOLON, ERR_MISSING_SEMICOLON);
-			}
-			else if (TK_Check(KW_STRUCT))
-			{
-				ParseStruct(NULL, false);
-			}
-			else if (TK_Check(KW_CLASS))
-			{
-				ParseClass();
-			}
-			else if (TK_Check(KW_VECTOR))
-			{
-				ParseStruct(NULL, true);
-			}
-			else
-			{
-				ERR_Exit(ERR_INVALID_DECLARATOR, true, "Symbol \"%s\"", tk_String);
-			}
+					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
+				}
+				VConstant* cDef = new VConstant(Lex.Name, CurrentPackage, Lex.Location);
+				cDef->Type = ev_int;
+				Lex.NextToken();
+				if (Lex.Check(TK_Assign))
+				{
+					cDef->ValueExpr = ParseExpression();
+				}
+				else if (PrevValue)
+				{
+					cDef->PrevEnumValue = PrevValue;
+				}
+				else
+				{
+					cDef->ValueExpr = new VIntLiteral(0, Lex.Location);
+				}
+				PrevValue = cDef;
+				ParsedConstants.Append(cDef);
+			} while (Lex.Check(TK_Comma));
+			Lex.Expect(TK_RBrace, ERR_MISSING_RBRACE);
+			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+			break;
+		}
+
+		case TK_Struct:
+			Lex.NextToken();
+			ParseStruct(NULL, false);
+			break;
+
+		case TK_Vector:
+			Lex.NextToken();
+			ParseStruct(NULL, true);
+			break;
+
+		case TK_Class:
+			Lex.NextToken();
+			ParseClass();
 			break;
 
 		default:
-			ERR_Exit(ERR_INVALID_DECLARATOR, true, "Token type %d, symbol \"%s\"", tk_Token, tk_String);
+			ParseError(Lex.Location, "Invalid token \"%s\"",
+				VLexer::TokenNames[Lex.Token]);
+			Lex.NextToken();
 			break;
 		}
 	}
 
 	if (NumErrors)
 	{
-		ERR_Exit(ERR_NONE, false, NULL);
+		BailOut();
 	}
 }

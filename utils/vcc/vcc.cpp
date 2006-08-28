@@ -57,6 +57,8 @@ static void DumpAsm();
 char			SourceFileName[MAX_FILE_NAME_LENGTH];
 static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
+VLexer			Lex;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int		num_dump_asm;
@@ -91,9 +93,8 @@ int main(int argc, char **argv)
 	int preptime = time(0);
 	dprintf("Preprocessing in %02d:%02d\n",
 		(preptime - starttime) / 60, (preptime - starttime) % 60);
-	TK_OpenSource(buf, size);
+	Lex.OpenSource(buf, size);
 	PA_Parse();
-	TK_CloseSource();
 	int parsetime = time(0);
 	dprintf("Compiled in %02d:%02d\n",
 		(parsetime - preptime) / 60, (parsetime - preptime) % 60);
@@ -102,7 +103,6 @@ int main(int argc, char **argv)
 	dprintf("Compiled in %02d:%02d\n",
 		(compiletime - parsetime) / 60, (compiletime - parsetime) % 60);
 	PC_WriteObject(ObjectFileName);
-	ERR_RemoveErrorFile();
 	DumpAsm();
 	VName::StaticExit();
 	endtime = time(0);
@@ -126,7 +126,8 @@ static void SignalHandler(int s)
 	switch (s)
 	{
 	case SIGSEGV:
-		ERR_Exit(ERR_NONE, true, "Segmentation Violation");
+		FatalError("%s:%d Segmentation Violation", Lex.Location.GetSource(),
+			Lex.Location.GetLine());
 	}
 }
 
@@ -149,10 +150,8 @@ static void Init()
 	DebugFile = NULL;
 	num_dump_asm = 0;
 	VName::StaticInit();
-	TK_Init();
 	PC_Init();
 	InitTypes();
-	InitInfoTables();
 }
 
 //==========================================================================
@@ -284,7 +283,7 @@ static void OpenDebugFile(char *name)
 {
 	if (!(DebugFile = fopen(name, "w")))
 	{
-		ERR_Exit(ERR_CANT_OPEN_DBGFILE, false, "File: \"%s\".", name);
+		FatalError("Can\'t open debug file \"%s\".", name);
 	}
 }
 

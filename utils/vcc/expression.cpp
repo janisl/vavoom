@@ -903,7 +903,7 @@ VExpression* VSingleName::DoResolve()
 			return e->Resolve();
 		}
 
-		VField* field = CheckForField(Name, SelfClass);
+		VField* field = CheckForField(Loc, Name, SelfClass);
 		if (field)
 		{
 			VExpression* e = new VFieldAccess((new VSelf(Loc))->Resolve(), field, Loc, 0);
@@ -1015,7 +1015,7 @@ VExpression* VDoubleName::DoResolve()
 	VClass* Class = CheckForClass(Name1);
 	if (!Class)
 	{
-		ParseError("No such class %s", *Name1);
+		ParseError(Loc, "No such class %s", *Name1);
 		delete this;
 		return NULL;
 	}
@@ -1191,7 +1191,7 @@ VExpression* VDotField::DoResolve()
 		}
 		else
 		{
-			VField* field = CheckForField(FieldName, op->Type.Class);
+			VField* field = CheckForField(Loc, FieldName, op->Type.Class);
 			if (!field)
 			{
 				ParseError(Loc, "No such field %s", *FieldName);
@@ -1498,7 +1498,7 @@ VExpression* VCastOrInvocation::DoResolve()
 			delete this;
 			return e->Resolve();
 		}
-		VField* field = CheckForField(Name, SelfClass);
+		VField* field = CheckForField(Loc, Name, SelfClass);
 		if (field && field->type.type == ev_delegate)
 		{
 			VExpression* e = new VInvocation(NULL, field->func, field,
@@ -1592,7 +1592,7 @@ VExpression* VDotInvocation::DoResolve()
 		return e->Resolve();
 	}
 
-	VField* field = CheckForField(MethodName, SelfExpr->Type.Class);
+	VField* field = CheckForField(Loc, MethodName, SelfExpr->Type.Class);
 	if (field && field->type.type == ev_delegate)
 	{
 		VExpression* e = new VInvocation(SelfExpr, field->func, field, true,
@@ -1629,7 +1629,7 @@ void VDotInvocation::Emit()
 //
 //==========================================================================
 
-VUnary::VUnary(EPunctuation AOper, VExpression* AOp, const TLocation& ALoc)
+VUnary::VUnary(VUnary::EUnaryOp AOper, VExpression* AOp, const TLocation& ALoc)
 : VExpression(ALoc)
 , Oper(AOper)
 , op(AOp)
@@ -1663,7 +1663,7 @@ VExpression* VUnary::DoResolve()
 {
 	if (op)
 	{
-		if (Oper == PU_NOT)
+		if (Oper == Not)
 			op = op->ResolveBoolean();
 		else
 			op = op->Resolve();
@@ -1676,7 +1676,7 @@ VExpression* VUnary::DoResolve()
 
 	switch (Oper)
 	{
-	case PU_PLUS:
+	case Plus:
 		Type = op->Type;
 		if (op->Type.type != ev_int && op->Type.type != ev_float)
 		{
@@ -1685,7 +1685,7 @@ VExpression* VUnary::DoResolve()
 			return NULL;
 		}
 		break;
-	case PU_MINUS:
+	case Minus:
 		if (op->Type.type == ev_int)
 		{
 			Type = ev_int;
@@ -1705,10 +1705,10 @@ VExpression* VUnary::DoResolve()
 			return NULL;
 		}
 		break;
-	case PU_NOT:
+	case Not:
 		Type = ev_int;
 		break;
-	case PU_TILDE:
+	case BitInvert:
 		if (op->Type.type != ev_int)
 		{
 			ParseError(Loc, "Expression type mistmatch");
@@ -1717,7 +1717,7 @@ VExpression* VUnary::DoResolve()
 		}
 		Type = ev_int;
 		break;
-	case PU_AND:
+	case TakeAddress:
 		if (op->Type.type == ev_reference)
 		{
 			ParseError(Loc, "Tried to take address of reference");
@@ -1729,8 +1729,6 @@ VExpression* VUnary::DoResolve()
 			op->RequestAddressOf();
 			Type = MakePointerType(op->RealType);
 		}
-		break;
-	default:
 		break;
 	}
 	return this;
@@ -1748,10 +1746,10 @@ void VUnary::Emit()
 
 	switch (Oper)
 	{
-	case PU_PLUS:
+	case Plus:
 		break;
 
-	case PU_MINUS:
+	case Minus:
 		if (op->Type.type == ev_int)
 		{
 			AddStatement(OPC_UnaryMinus);
@@ -1766,15 +1764,15 @@ void VUnary::Emit()
 		}
 		break;
 
-	case PU_NOT:
+	case Not:
 		AddStatement(OPC_NegateLogical);
 		break;
 
-	case PU_TILDE:
+	case BitInvert:
 		AddStatement(OPC_BitInverse);
 		break;
 
-	default:
+	case TakeAddress:
 		break;
 	}
 }
@@ -1791,27 +1789,26 @@ bool VUnary::GetIntConst(vint32& OutValue)
 	{
 		switch (Oper)
 		{
-		case PU_PLUS:
+		case Plus:
 			return true;
 	
-		case PU_MINUS:
+		case Minus:
 			OutValue = -OutValue;
 			return true;
 	
-		case PU_NOT:
+		case Not:
 			OutValue = !OutValue;
 			return true;
 	
-		case PU_TILDE:
+		case BitInvert:
 			OutValue = ~OutValue;
 			return true;
 	
-		default:
-			ParseError(Loc, "Integer constant expected");
+		case TakeAddress:
 			break;
 		}
 	}
-	return false;
+	return VExpression::GetIntConst(OutValue);
 }
 
 //==========================================================================
@@ -1826,10 +1823,10 @@ bool VUnary::GetFloatConst(float& OutValue)
 	{
 		switch (Oper)
 		{
-		case PU_PLUS:
+		case Plus:
 			return true;
 	
-		case PU_MINUS:
+		case Minus:
 			OutValue = -OutValue;
 			return true;
 	
@@ -1912,19 +1909,19 @@ void VUnaryMutator::Emit()
 	op->Emit();
 	switch (Oper)
 	{
-	case INCDEC_PreInc:
+	case PreInc:
 		AddStatement(OPC_PreInc);
 		break;
 
-	case INCDEC_PreDec:
+	case PreDec:
 		AddStatement(OPC_PreDec);
 		break;
 
-	case INCDEC_PostInc:
+	case PostInc:
 		AddStatement(OPC_PostInc);
 		break;
 
-	case INCDEC_PostDec:
+	case PostDec:
 		AddStatement(OPC_PostDec);
 		break;
 	}
@@ -2038,7 +2035,7 @@ void VPushPointed::Emit()
 //
 //==========================================================================
 
-VBinary::VBinary(EPunctuation AOper, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc)
+VBinary::VBinary(EBinOp AOper, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc)
 : VExpression(ALoc)
 , Oper(AOper)
 , op1(AOp1)
@@ -2085,7 +2082,28 @@ VExpression* VBinary::DoResolve()
 
 	switch (Oper)
 	{
-	case PU_ASTERISK:
+	case Add:
+	case Subtract:
+		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		{
+			Type = ev_int;
+		}
+		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		{
+			Type = ev_float;
+		}
+		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		{
+			Type = ev_vector;
+		}
+		else
+		{
+			ParseError(Loc, "Expression type mistmatch");
+			delete this;
+			return NULL;
+		}
+		break;
+	case Multiply:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			Type = ev_int;
@@ -2109,7 +2127,7 @@ VExpression* VBinary::DoResolve()
 			return NULL;
 		}
 		break;
-	case PU_SLASH:
+	case Divide:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			Type = ev_int;
@@ -2129,33 +2147,12 @@ VExpression* VBinary::DoResolve()
 			return NULL;
 		}
 		break;
-	case PU_PLUS:
-	case PU_MINUS:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
-		{
-			Type = ev_int;
-		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
-		{
-			Type = ev_float;
-		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
-		{
-			Type = ev_vector;
-		}
-		else
-		{
-			ParseError(Loc, "Expression type mistmatch");
-			delete this;
-			return NULL;
-		}
-		break;
-	case PU_PERCENT:
-	case PU_LSHIFT:
-	case PU_RSHIFT:
-	case PU_AND:
-	case PU_XOR:
-	case PU_OR:
+	case Modulus:
+	case LShift:
+	case RShift:
+	case And:
+	case XOr:
+	case Or:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			Type = ev_int;
@@ -2167,10 +2164,10 @@ VExpression* VBinary::DoResolve()
 			return NULL;
 		}
 		break;
-	case PU_LT:
-	case PU_LE:
-	case PU_GT:
-	case PU_GE:
+	case Less:
+	case LessEquals:
+	case Greater:
+	case GreaterEquals:
 		if (!(op1->Type.type == ev_int && op2->Type.type == ev_int) &&
 			!(op1->Type.type == ev_float && op2->Type.type == ev_float))
 		{
@@ -2180,8 +2177,8 @@ VExpression* VBinary::DoResolve()
 		}
 		Type = ev_int;
 		break;
-	case PU_EQ:
-	case PU_NE:
+	case Equals:
+	case NotEquals:
 		if (!(op1->Type.type == ev_int && op2->Type.type == ev_int) &&
 			!(op1->Type.type == ev_float && op2->Type.type == ev_float) &&
 			!(op1->Type.type == ev_name && op2->Type.type == ev_name) &&
@@ -2196,8 +2193,6 @@ VExpression* VBinary::DoResolve()
 			return NULL;
 		}
 		Type = ev_int;
-		break;
-	default:
 		break;
 	}
 	return this;
@@ -2216,7 +2211,37 @@ void VBinary::Emit()
 
 	switch (Oper)
 	{
-	case PU_ASTERISK:
+	case Add:
+		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		{
+			AddStatement(OPC_Add);
+		}
+		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		{
+			AddStatement(OPC_FAdd);
+		}
+		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		{
+			AddStatement(OPC_VAdd);
+		}
+		break;
+
+	case Subtract:
+		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
+		{
+			AddStatement(OPC_Subtract);
+		}
+		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
+		{
+			AddStatement(OPC_FSubtract);
+		}
+		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
+		{
+			AddStatement(OPC_VSubtract);
+		}
+		break;
+
+	case Multiply:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_Multiply);
@@ -2235,7 +2260,7 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_SLASH:
+	case Divide:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_Divide);
@@ -2250,58 +2275,28 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_PERCENT:
+	case Modulus:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_Modulus);
 		}
 		break;
 
-	case PU_PLUS:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
-		{
-			AddStatement(OPC_Add);
-		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
-		{
-			AddStatement(OPC_FAdd);
-		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
-		{
-			AddStatement(OPC_VAdd);
-		}
-		break;
-
-	case PU_MINUS:
-		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
-		{
-			AddStatement(OPC_Subtract);
-		}
-		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
-		{
-			AddStatement(OPC_FSubtract);
-		}
-		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
-		{
-			AddStatement(OPC_VSubtract);
-		}
-		break;
-
-	case PU_LSHIFT:
+	case LShift:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_LShift);
 		}
 		break;
 
-	case PU_RSHIFT:
+	case RShift:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_RShift);
 		}
 		break;
 
-	case PU_LT:
+	case Less:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_Less);
@@ -2312,7 +2307,7 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_LE:
+	case LessEquals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_LessEquals);
@@ -2323,7 +2318,7 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_GT:
+	case Greater:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_Greater);
@@ -2334,7 +2329,7 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_GE:
+	case GreaterEquals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_GreaterEquals);
@@ -2345,7 +2340,7 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_EQ:
+	case Equals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_Equals);
@@ -2380,7 +2375,7 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_NE:
+	case NotEquals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_NotEquals);
@@ -2415,28 +2410,25 @@ void VBinary::Emit()
 		}
 		break;
 
-	case PU_AND:
+	case And:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_AndBitwise);
 		}
 		break;
 
-	case PU_XOR:
+	case XOr:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_XOrBitwise);
 		}
 		break;
 
-	case PU_OR:
+	case Or:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_OrBitwise);
 		}
-		break;
-
-	default:
 		break;
 	}
 }
@@ -2455,11 +2447,11 @@ bool VBinary::GetIntConst(vint32& OutValue)
 	{
 		switch (Oper)
 		{
-		case PU_ASTERISK:
+		case Multiply:
 			OutValue = Value1 * Value2;
 			return true;
 	
-		case PU_SLASH:
+		case Divide:
 			if (!Value2)
 			{
 				ParseError(Loc, "Division by 0");
@@ -2469,7 +2461,7 @@ bool VBinary::GetIntConst(vint32& OutValue)
 			OutValue = Value1 / Value2;
 			return true;
 	
-		case PU_PERCENT:
+		case Modulus:
 			if (!Value2)
 			{
 				ParseError(Loc, "Division by 0");
@@ -2479,60 +2471,57 @@ bool VBinary::GetIntConst(vint32& OutValue)
 			OutValue = Value1 % Value2;
 			return true;
 	
-		case PU_PLUS:
+		case Add:
 			OutValue = Value1 + Value2;
 			return true;
 	
-		case PU_MINUS:
+		case Subtract:
 			OutValue = Value1 - Value2;
 			return true;
 	
-		case PU_LSHIFT:
+		case LShift:
 			OutValue = Value1 << Value2;
 			return true;
 	
-		case PU_RSHIFT:
+		case RShift:
 			OutValue = Value1 >> Value2;
 			return true;
 	
-		case PU_LT:
+		case Less:
 			OutValue = Value1 < Value2;
 			return true;
 	
-		case PU_LE:
+		case LessEquals:
 			OutValue = Value1 <= Value2;
 			return true;
 	
-		case PU_GT:
+		case Greater:
 			OutValue = Value1 > Value2;
 			return true;
 	
-		case PU_GE:
+		case GreaterEquals:
 			OutValue = Value1 >= Value2;
 			return true;
 	
-		case PU_EQ:
+		case Equals:
 			OutValue = Value1 == Value2;
 			return true;
 	
-		case PU_NE:
+		case NotEquals:
 			OutValue = Value1 != Value2;
 			return true;
 	
-		case PU_AND:
+		case And:
 			OutValue = Value1 & Value2;
 			return true;
 	
-		case PU_XOR:
+		case XOr:
 			OutValue = Value1 ^ Value2;
 			return true;
 	
-		case PU_OR:
+		case Or:
 			OutValue = Value1 | Value2;
 			return true;
-	
-		default:
-			break;
 		}
 	}
 	OutValue = 0;
@@ -2553,11 +2542,19 @@ bool VBinary::GetFloatConst(float& OutValue)
 	{
 		switch (Oper)
 		{
-		case PU_ASTERISK:
+		case Add:
+			OutValue = Value1 + Value2;
+			return true;
+	
+		case Subtract:
+			OutValue = Value1 - Value2;
+			return true;
+	
+		case Multiply:
 			OutValue = Value1 * Value2;
 			return true;
 	
-		case PU_SLASH:
+		case Divide:
 			if (!Value2)
 			{
 				ParseError(Loc, "Division by 0");
@@ -2565,14 +2562,6 @@ bool VBinary::GetFloatConst(float& OutValue)
 				return false;
 			}
 			OutValue = Value1 / Value2;
-			return true;
-	
-		case PU_PLUS:
-			OutValue = Value1 + Value2;
-			return true;
-	
-		case PU_MINUS:
-			OutValue = Value1 - Value2;
 			return true;
 	
 		default:
@@ -2592,7 +2581,8 @@ bool VBinary::GetFloatConst(float& OutValue)
 //
 //==========================================================================
 
-VBinaryLogical::VBinaryLogical(EPunctuation AOper, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc)
+VBinaryLogical::VBinaryLogical(ELogOp AOper, VExpression* AOp1,
+	VExpression* AOp2, const TLocation& ALoc)
 : VExpression(ALoc)
 , Oper(AOper)
 , op1(AOp1)
@@ -2655,13 +2645,11 @@ void VBinaryLogical::Emit()
 
 	switch (Oper)
 	{
-	case PU_AND_LOG:
+	case And:
 		jmppos = AddStatement(OPC_IfNotTopGoto, 0);
 		break;
-	case PU_OR_LOG:
+	case Or:
 		jmppos = AddStatement(OPC_IfTopGoto, 0);
-		break;
-	default:
 		break;
 	}
 
@@ -2669,15 +2657,12 @@ void VBinaryLogical::Emit()
 
 	switch (Oper)
 	{
-	case PU_AND_LOG:
+	case And:
 		AddStatement(OPC_AndLogical);
 		break;
 
-	case PU_OR_LOG:
+	case Or:
 		AddStatement(OPC_OrLogical);
-		break;
-
-	default:
 		break;
 	}
 
@@ -2698,16 +2683,13 @@ bool VBinaryLogical::GetIntConst(vint32& OutValue)
 	{
 		switch (Oper)
 		{
-		case PU_AND_LOG:
+		case And:
 			OutValue = Value1 && Value2;
 			return true;
 	
-		case PU_OR_LOG:
+		case Or:
 			OutValue = Value1 || Value2;
 			return true;
-	
-		default:
-			break;
 		}
 	}
 	OutValue = 0;
@@ -2778,7 +2760,7 @@ VExpression* VConditional::DoResolve()
 		return NULL;
 	}
 
-	op1->Type.CheckMatch(op2->Type);
+	op1->Type.CheckMatch(Loc, op2->Type);
 	if (op1->Type.type == ev_pointer && op1->Type.InnerType == ev_void)
 		Type = op2->Type;
 	else
@@ -2813,7 +2795,8 @@ void VConditional::Emit()
 //
 //==========================================================================
 
-VAssignment::VAssignment(EPunctuation AOper, VExpression* AOp1, VExpression* AOp2, const TLocation& ALoc)
+VAssignment::VAssignment(VAssignment::EAssignOper AOper, VExpression* AOp1,
+	VExpression* AOp2, const TLocation& ALoc)
 : VExpression(ALoc)
 , Oper(AOper)
 , op1(AOp1)
@@ -2858,7 +2841,7 @@ VExpression* VAssignment::DoResolve()
 		return NULL;
 	}
 
-	op2->Type.CheckMatch(op1->RealType);
+	op2->Type.CheckMatch(Loc, op1->RealType);
 	op1->RequestAddressOf();
 	return this;
 }
@@ -2876,7 +2859,7 @@ void VAssignment::Emit()
 
 	switch (Oper)
 	{
-	case PU_ASSIGN:
+	case Assign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_AssignDrop);
@@ -2941,7 +2924,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_ADD_ASSIGN:
+	case AddAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_AddVarDrop);
@@ -2960,7 +2943,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_MINUS_ASSIGN:
+	case MinusAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_SubVarDrop);
@@ -2979,7 +2962,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_MULTIPLY_ASSIGN:
+	case MultiplyAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_MulVarDrop);
@@ -2998,7 +2981,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_DIVIDE_ASSIGN:
+	case DivideAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_DivVarDrop);
@@ -3017,7 +3000,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_MOD_ASSIGN:
+	case ModAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_ModVarDrop);
@@ -3028,7 +3011,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_AND_ASSIGN:
+	case AndAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_AndVarDrop);
@@ -3039,7 +3022,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_OR_ASSIGN:
+	case OrAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_OrVarDrop);
@@ -3055,7 +3038,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_XOR_ASSIGN:
+	case XOrAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_XOrVarDrop);
@@ -3066,7 +3049,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_LSHIFT_ASSIGN:
+	case LShiftAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_LShiftVarDrop);
@@ -3077,7 +3060,7 @@ void VAssignment::Emit()
 		}
 		break;
 
-	case PU_RSHIFT_ASSIGN:
+	case RShiftAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
 			AddStatement(OPC_RShiftVarDrop);
@@ -3087,9 +3070,6 @@ void VAssignment::Emit()
 			ParseError(Loc, "Expression type mistmatch");
 		}
 		break;
-
-	default:
-		ParseError(Loc, "Impossible");
 	}
 }
 
@@ -3664,7 +3644,7 @@ void VInvocation::CheckParams()
 		{
 			if (i < num_needed_params)
 			{
-				Args[i]->Type.CheckMatch(Func->ParamTypes[i]);
+				Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
 			}
 		}
 		argsize += Args[i]->Type.GetSize();
@@ -3885,7 +3865,7 @@ VExpression* VDropResult::DoResolve()
 
 	if (op->Type.type == ev_delegate)
 	{
-		ParseError("Delegate call parameters are missing");
+		ParseError(Loc, "Delegate call parameters are missing");
 		delete this;
 		return NULL;
 	}
@@ -3893,7 +3873,7 @@ VExpression* VDropResult::DoResolve()
 	if (op->Type.type != ev_string && op->Type.GetSize() != 4 &&
 		op->Type.type != ev_vector && op->Type.type != ev_void)
 	{
-		ParseError("Expression's result type cannot be dropped");
+		ParseError(Loc, "Expression's result type cannot be dropped");
 		delete this;
 		return NULL;
 	}
@@ -4137,7 +4117,7 @@ VTypeExpr* VFixedArrayType::ResolveAsType()
 		return NULL;
 	}
 
-	Type = MakeArrayType(Expr->Type, Size);
+	Type = MakeArrayType(Expr->Type, Size, Loc);
 	return this;
 }
 
@@ -4243,8 +4223,8 @@ void VLocalDecl::Declare()
 		//  Initialisation
 		if (e.Value)
 		{
-			VExpression* op1 = new VLocalVar(numlocaldefs, tk_Location);
-			e.Value = new VAssignment(PU_ASSIGN, op1, e.Value, tk_Location);
+			VExpression* op1 = new VLocalVar(numlocaldefs, e.Loc);
+			e.Value = new VAssignment(VAssignment::Assign, op1, e.Value, e.Loc);
 			e.Value = e.Value->Resolve();
 		}
 
@@ -4254,7 +4234,7 @@ void VLocalDecl::Declare()
 		localsofs += Type.GetSize() / 4;
 		if (localsofs > 1024)
 		{
-			ParseWarning("Local vars > 1k");
+			ParseWarning(e.Loc, "Local vars > 1k");
 		}
 	}
 }

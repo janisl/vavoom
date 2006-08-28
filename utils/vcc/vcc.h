@@ -74,19 +74,10 @@ enum
 enum ECompileError
 {
 	ERR_NONE,
-	//  Memory errors
-	ERR_TOO_MANY_STRINGS,
-	ERR_BREAK_OVERFLOW,
-	ERR_CONTINUE_OVERFLOW,
-	ERR_CASE_OVERFLOW,
-	ERR_PARAMS_OVERFLOW,
-	ERR_LOCALS_OVERFLOW,
-	ERR_STATEMENTS_OVERFLOW,
 	//  File errors
 	ERR_CANT_OPEN_FILE,
 	ERR_CANT_OPEN_DBGFILE,
 	//  Tokeniser erros
-	ERR_INCL_NESTING_TOO_DEEP,
 	ERR_BAD_RADIX_CONSTANT,
 	ERR_STRING_TOO_LONG,
 	ERR_EOF_IN_STRING,
@@ -94,183 +85,25 @@ enum ECompileError
 	ERR_UNKNOWN_ESC_CHAR,
 	ERR_IDENTIFIER_TOO_LONG,
 	ERR_BAD_CHARACTER,
-	ERR_UNTERM_COMMENT,
 	//  Syntax errors
-	ERR_BAD_CONST_EXPR,
-	ERR_BAD_EXPR,
 	ERR_MISSING_LPAREN,
 	ERR_MISSING_RPAREN,
 	ERR_MISSING_LBRACE,
 	ERR_MISSING_RBRACE,
 	ERR_MISSING_COLON,
 	ERR_MISSING_SEMICOLON,
-	ERR_BAD_ARG_COUNT,
-	ERR_VOID_VALUE,
-	ERR_PARAM_TYPE,
-	ERR_ILLEGAL_EXPR_IDENT,
-	ERR_BAD_ASSIGNEMENT,
-	ERR_MISPLACED_BREAK,
-	ERR_MISPLACED_CONTINUE,
 	ERR_UNEXPECTED_EOF,
 	ERR_BAD_DO_STATEMENT,
-	ERR_NO_RET_VALUE,
-	ERR_VOID_RET,
-	ERR_MULTIPLE_DEFAULT,
-	ERR_INVALID_STATEMENT,
 	ERR_INVALID_IDENTIFIER,
-	ERR_VOID_VAR,
-	ERR_REDEFINED_IDENTIFIER,
-	ERR_TYPE_MISTMATCH,
-	ERR_BAD_VAR_TYPE,
 	ERR_FUNCTION_REDECLARED,
-	ERR_INVALID_DECLARATOR,
-	ERR_INVALID_DIRECTIVE,
-	ERR_STRING_LIT_NOT_FOUND,
-	ERR_UNDEFINED_FUNCTIONS,
-	ERR_BAD_INCDEC,
-	ERR_END_OF_NON_VOID_FUNCTION,
-	ERR_NOT_A_STRUCT,
-	ERR_NOT_A_FIELD,
 	ERR_MISSING_RFIGURESCOPE,
 	ERR_BAD_ARRAY,
 	ERR_EXPR_TYPE_MISTMATCH,
-	ERR_POINTER_TO_POINTER,
 
 	NUM_ERRORS
 };
 
-enum ETokenType
-{
-	TK_NONE,
-	TK_EOF,				//	Reached end of file
-	TK_IDENTIFIER, 		//	Identifier, value: tk_String
-	TK_PUNCT, 			//	Special symbol, value: tk_String
-	TK_NAME,			//	Name constant, value: tk_Name
-	TK_KEYWORD,			//	Keyword, value: tk_String
-	TK_STRING,			//	String, value: tk_String
-	TK_INTEGER,			//	Integer number, value: tk_Number
-	TK_FLOAT,			//	Floating number, value: tk_Float
-};
-
-enum EKeyword
-{
-	KW_STATES = 1,
-	KW_MOBJINFO,
-	KW_SCRIPTID,
-	KW_ABSTRACT,
-	KW_BOOL,
-	KW_BREAK,
-	KW_CASE,
-	KW_CLASS,
-	KW_CLASSID,
-	KW_CONST,
-	KW_CONTINUE,
-	KW_DEFAULT,
-	KW_DEFAULTPROPERTIES,
-	KW_DELEGATE,
-	KW_DO,
-	KW_ELSE,
-	KW_ENUM,
-	KW_FALSE,
-	KW_FINAL,
-	KW_FLOAT,
-	KW_FOR,
-	KW_IF,
-	KW_IMPORT,
-	KW_INT,
-	KW_NAME,
-	KW_NATIVE,
-	KW_NONE,
-	KW_NULL,
-	KW_PRIVATE,
-	KW_READONLY,
-	KW_RETURN,
-	KW_SELF,
-	KW_STATE,
-	KW_STATIC,
-	KW_STRING,
-	KW_STRUCT,
-	KW_SWITCH,
-	KW_TRANSIENT,
-	KW_TRUE,
-	KW_VECTOR,
-	KW_VOID,
-	KW_WHILE,
-};
-
-enum EPunctuation
-{
-	PU_VARARGS = 1,
-	PU_LSHIFT_ASSIGN,
-	PU_RSHIFT_ASSIGN,
-	PU_ADD_ASSIGN,
-	PU_MINUS_ASSIGN,
-	PU_MULTIPLY_ASSIGN,
-	PU_DIVIDE_ASSIGN,
-	PU_MOD_ASSIGN,
-	PU_AND_ASSIGN,
-	PU_OR_ASSIGN,
-	PU_XOR_ASSIGN,
-	PU_EQ,
-	PU_NE,
-	PU_LE,
-	PU_GE,
-	PU_AND_LOG,
-	PU_OR_LOG,
-	PU_LSHIFT,
-	PU_RSHIFT,
-	PU_INC,
-	PU_DEC,
-	PU_MINUS_GT,
-	PU_DCOLON,
-	PU_LT,
-	PU_GT,
-	PU_QUEST,
-	PU_AND,
-	PU_OR,
-	PU_XOR,
-	PU_TILDE,
-	PU_NOT,
-	PU_PLUS,
-	PU_MINUS,
-	PU_ASTERISK,
-	PU_SLASH,
-	PU_PERCENT,
-	PU_LPAREN,
-	PU_RPAREN,
-	PU_DOT,
-	PU_COMMA,
-	PU_SEMICOLON,
-	PU_COLON,
-	PU_ASSIGN,
-	PU_LINDEX,
-	PU_RINDEX,
-	PU_LBRACE,
-	PU_RBRACE,
-};
-
-class VMemberBase;
-class VClass;
-class VStruct;
-class VMethod;
-
-class TLocation
-{
-private:
-	int		Loc;
-public:
-	TLocation()
-	: Loc(0)
-	{}
-	TLocation(int SrcIdx, int Line)
-	: Loc((SrcIdx << 16) | Line)
-	{}
-	int GetLine() const
-	{
-		return Loc & 0xffff;
-	}
-	const char* GetSource() const;
-};
+#include "lexer.h"
 
 class TModifiers
 {
@@ -286,13 +119,17 @@ public:
 		Final			= 0x0040,
 	};
 
-	static int Parse();
+	static int Parse(VLexer&);
 	static const char* Name(int);
 	static int Check(int, int, TLocation);
 	static int MethodAttr(int);
 	static int ClassAttr(int);
 	static int FieldAttr(int);
 };
+
+class VClass;
+class VStruct;
+class VMethod;
 
 //
 // The base class of all objects.
@@ -349,13 +186,13 @@ public:
 
 	friend VStream& operator<<(VStream&, TType&);
 
-	bool Equals(const TType& Other) const;
+	bool Equals(const TType&) const;
 	TType GetPointerInnerType() const;
 	TType GetArrayInnerType() const;
 	int GetSize() const;
-	void CheckPassable() const;
-	void CheckMatch(const TType& Other) const;
-	void GetName(char* Dest) const;
+	void CheckPassable(TLocation) const;
+	void CheckMatch(TLocation, const TType&) const;
+	void GetName(char*) const;
 };
 
 #include "expression.h"
@@ -688,26 +525,14 @@ struct VImportedPackage
 
 // -- Common --
 
-void ERR_Exit(ECompileError error, bool info, char *text, ...) __attribute__((noreturn));
-void ParseError(ECompileError error);
-void ParseError(ECompileError error, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void ParseError(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
+void FatalError(char *text, ...) __attribute__((noreturn, format(printf, 1, 2)));
+void ParseError(TLocation, ECompileError error);
+void ParseError(TLocation, ECompileError error, const char *text, ...) __attribute__ ((format(printf, 3, 4)));
 void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void ParseWarning(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
 void BailOut() __attribute__((noreturn));
-void ERR_RemoveErrorFile();
 
 int dprintf(const char *text, ...);
-
-void TK_Init();
-void TK_OpenSource(void *buf, size_t size);
-void TK_CloseSource();
-void TK_NextToken();
-bool TK_Check(const char *string);
-void TK_Expect(const char *string, ECompileError error);
-void TK_Expect(EKeyword kwd, ECompileError error);
-void TK_Expect(EPunctuation punct, ECompileError error);
 
 void PC_Init();
 void AddPackagePath(const char*);
@@ -739,36 +564,20 @@ void PA_Parse();
 
 void InitTypes();
 TType MakePointerType(const TType& type);
-TType MakeArrayType(const TType& type, int elcount);
+TType MakeArrayType(const TType&, int, TLocation);
 TType CheckForType(VClass* InClass, VName Name);
 VClass* CheckForClass(VName Name);
 VMethod* CheckForFunction(VClass*, VName);
 VConstant* CheckForConstant(VClass* InClass, VName);
 VField* CheckForStructField(VStruct*, VName);
-VField* CheckForField(VName, VClass*, bool = true);
+VField* CheckForField(TLocation, VName, VClass*, bool = true);
 VMethod* CheckForMethod(VName, VClass*);
 void AddConstant(VClass* InClass, VName Name, int type, int value);
 int CheckForLocalVar(VName);
 void EmitCode();
-
-void InitInfoTables();
-void AddToMobjInfo(int Index, VClass* Class);
-void AddToScriptIds(int Index, VClass* Class);
-VState* CheckForState(VName StateName, VClass* InClass);
-VState* FindState(VName StateName, VClass* InClass);
+VState* CheckForState(VName, VClass*);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern TLocation		tk_Location;
-extern int				tk_IncludedLines;
-extern ETokenType		tk_Token;
-extern int				tk_Number;
-extern float			tk_Float;
-extern char*			tk_String;
-extern int				tk_StringI;
-extern EKeyword			tk_Keyword;
-extern EPunctuation		tk_Punct;
-extern VName			tk_Name;
 
 extern VPackage*			CurrentPackage;
 extern int					numbuiltins;
@@ -816,46 +625,6 @@ inline int PassFloat(float f)
 
 	v.f = f;
 	return v.i;
-}
-
-inline bool TK_Check(int s_string)
-{
-	if (tk_Token == TK_IDENTIFIER && tk_StringI == s_string)
-	{
-		TK_NextToken();
-		return true;
-	}
-	return false;
-}
-
-inline bool TK_Check(VName Name)
-{
-	if (tk_Token == TK_IDENTIFIER && tk_Name == Name)
-	{
-		TK_NextToken();
-		return true;
-	}
-	return false;
-}
-
-inline bool TK_Check(EKeyword kwd)
-{
-	if (tk_Token == TK_KEYWORD && tk_Keyword == kwd)
-	{
-		TK_NextToken();
-		return true;
-	}
-	return false;
-}
-
-inline bool TK_Check(EPunctuation punct)
-{
-	if (tk_Token == TK_PUNCT && tk_Punct == punct)
-	{
-		TK_NextToken();
-		return true;
-	}
-	return false;
 }
 
 #endif

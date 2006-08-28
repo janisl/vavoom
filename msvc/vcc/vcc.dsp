@@ -99,7 +99,7 @@ SOURCE=..\..\utils\vcc\expression.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\utils\vcc\info.cpp
+SOURCE=..\..\utils\vcc\lexer.cpp
 # End Source File
 # Begin Source File
 
@@ -127,10 +127,6 @@ SOURCE=..\..\utils\vcc\stream.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\utils\vcc\token.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\utils\vcc\types.cpp
 # End Source File
 # Begin Source File
@@ -152,6 +148,10 @@ SOURCE=..\..\utils\common\cmdlib.h
 # Begin Source File
 
 SOURCE=..\..\utils\vcc\expression.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\utils\vcc\lexer.h
 # End Source File
 # Begin Source File
 

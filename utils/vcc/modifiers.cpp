@@ -53,37 +53,37 @@
 //
 //==========================================================================
 
-int TModifiers::Parse()
+int TModifiers::Parse(VLexer& Lex)
 {
 	int Modifiers = 0;
 	bool done = false;
 	do
 	{
-		if (TK_Check(KW_NATIVE))
+		if (Lex.Check(TK_Native))
 		{
 			Modifiers |= Native;
 		}
-		else if (TK_Check(KW_STATIC))
+		else if (Lex.Check(TK_Static))
 		{
 			Modifiers |= Static;
 		}
-		else if (TK_Check(KW_ABSTRACT))
+		else if (Lex.Check(TK_Abstract))
 		{
 			Modifiers |= Abstract;
 		}
-		else if (TK_Check(KW_PRIVATE))
+		else if (Lex.Check(TK_Private))
 		{
 			Modifiers |= Private;
 		}
-		else if (TK_Check(KW_READONLY))
+		else if (Lex.Check(TK_ReadOnly))
 		{
 			Modifiers |= ReadOnly;
 		}
-		else if (TK_Check(KW_TRANSIENT))
+		else if (Lex.Check(TK_Transient))
 		{
 			Modifiers |= Transient;
 		}
-		else if (TK_Check(KW_FINAL))
+		else if (Lex.Check(TK_Final))
 		{
 			Modifiers |= Final;
 		}

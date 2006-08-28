@@ -205,7 +205,7 @@ TType TType::GetPointerInnerType() const
 {
 	if (type != ev_pointer)
 	{
-		ParseError("Not a pointer type");
+		FatalError("Not a pointer type");
 		return *this;
 	}
 	TType ret = *this;
@@ -224,11 +224,11 @@ TType TType::GetPointerInnerType() const
 //
 //==========================================================================
 
-TType MakeArrayType(const TType& type, int elcount)
+TType MakeArrayType(const TType& type, int elcount, TLocation l)
 {
 	if (type.type == ev_array)
 	{
-		ParseError("Can't have multi-dimensional arrays");
+		ParseError(l, "Can't have multi-dimensional arrays");
 	}
 	TType array = type;
 	array.ArrayInnerType = type.type;
@@ -247,7 +247,7 @@ TType TType::GetArrayInnerType() const
 {
 	if (type != ev_array)
 	{
-		ParseError("Not a pointer type");
+		FatalError("Not an array type");
 		return *this;
 	}
 	TType ret = *this;
@@ -378,11 +378,13 @@ VConstant* CheckForConstant(VClass* InClass, VName Name)
 //
 //==========================================================================
 
-void TType::CheckPassable() const
+void TType::CheckPassable(TLocation l) const
 {
 	if (GetSize() != 4 && type != ev_vector && type != ev_delegate)
 	{
-		ParseError(ERR_EXPR_TYPE_MISTMATCH);
+		char Name[256];
+		GetName(Name);
+		ParseError(l, "Type %s is not passable", Name);
 	}
 }
 
@@ -397,10 +399,10 @@ void TType::CheckPassable() const
 //
 //==========================================================================
 
-void TType::CheckMatch(const TType& Other) const
+void TType::CheckMatch(TLocation l, const TType& Other) const
 {
-	CheckPassable();
-	Other.CheckPassable();
+	CheckPassable(l);
+	Other.CheckPassable(l);
 	if (Equals(Other))
 	{
 		return;
@@ -471,20 +473,20 @@ void TType::CheckMatch(const TType& Other) const
 		VMethod& F2 = *Other.Function;
 		if (F1.Flags & FUNC_Static || F2.Flags & FUNC_Static)
 		{
-			ParseError("Can't assign a static function to delegate");
+			ParseError(l, "Can't assign a static function to delegate");
 		}
 		if (!F1.ReturnType.Equals(F2.ReturnType))
 		{
-			ParseError("Delegate has different return type");
+			ParseError(l, "Delegate has different return type");
 		}
 		else if (F1.NumParams != F2.NumParams)
 		{
-			ParseError("Delegate has different number of arguments");
+			ParseError(l, "Delegate has different number of arguments");
 		}
 		else for (int i = 0; i < F1.NumParams; i++)
 			if (!F1.ParamTypes[i].Equals(F2.ParamTypes[i]))
 			{
-				ParseError("Delegate argument %d differs", i + 1);
+				ParseError(l, "Delegate argument %d differs", i + 1);
 			}
 		return;
 	}
@@ -492,7 +494,7 @@ void TType::CheckMatch(const TType& Other) const
 	char Name2[256];
 	GetName(Name1);
 	Other.GetName(Name2);
-	ParseError(ERR_EXPR_TYPE_MISTMATCH, " Types %s and %s are not compatible %d %d",
+	ParseError(l, "Type mistmatch, types %s and %s are not compatible %d %d",
 		Name1, Name2, type, Other.type);
 }
 
@@ -551,7 +553,7 @@ VField* CheckForStructField(VStruct* InStruct, VName FieldName)
 //
 //==========================================================================
 
-VField* CheckForField(VName Name, VClass* InClass, bool CheckPrivate)
+VField* CheckForField(TLocation l, VName Name, VClass* InClass, bool CheckPrivate)
 {
 	if (!InClass)
 	{
@@ -572,12 +574,12 @@ VField* CheckForField(VName Name, VClass* InClass, bool CheckPrivate)
 			if (CheckPrivate && fi->flags & FIELD_Private &&
 				InClass != SelfClass)
 			{
-				ParseError("Field %s is private", *fi->Name);
+				ParseError(l, "Field %s is private", *fi->Name);
 			}
 			return fi;
 		}
 	}
-	return CheckForField(Name, InClass->ParentClass, CheckPrivate);
+	return CheckForField(l, Name, InClass->ParentClass, CheckPrivate);
 }
 
 //==========================================================================
@@ -607,6 +609,27 @@ VMethod* CheckForMethod(VName Name, VClass* InClass)
 		return M;
 	}
 	return CheckForMethod(Name, InClass->ParentClass);
+}
+
+//==========================================================================
+//
+//	CheckForState
+//
+//==========================================================================
+
+VState* CheckForState(VName StateName, VClass* InClass)
+{
+	VMemberBase* m = VMemberBase::StaticFindMember(StateName, InClass,
+		MEMBER_State);
+	if (m)
+	{
+		return (VState*)m;
+	}
+	if (InClass->ParentClass)
+	{
+		return CheckForState(StateName, InClass->ParentClass);
+	}
+	return NULL;
 }
 
 //**************************************************************************
@@ -892,7 +915,7 @@ bool VMethod::Define()
 		if (t.type != ev_void)
 		{
 			//	Function's return type must be void, vector or with size 4
-			t.CheckPassable();
+			t.CheckPassable(ReturnTypeExpr->Loc);
 		}
 		ReturnType = t;
 	}
@@ -924,7 +947,7 @@ bool VMethod::Define()
 			Ret = false;
 			continue;
 		}
-		type.CheckPassable();
+		type.CheckPassable(P.TypeExpr->Loc);
 
 		ParamTypes[i] = type;
 		ParamsSize += type.GetSize() / 4;
@@ -1061,7 +1084,9 @@ bool VClass::Define()
 		{
 			return false;
 		}
-		AddToMobjInfo(Id, this);
+		mobjinfo_t& mi = mobj_info.Alloc();
+		mi.doomednum = Id;
+		mi.class_id = this;
 	}
 
 	for (int i = 0; i < ScriptIdExpressions.Num(); i++)
@@ -1076,7 +1101,9 @@ bool VClass::Define()
 		{
 			return false;
 		}
-		AddToScriptIds(Id, this);
+		mobjinfo_t& mi = script_ids.Alloc();
+		mi.doomednum = Id;
+		mi.class_id = this;
 	}
 
 	Defined = true;
@@ -1330,7 +1357,11 @@ void VState::Emit()
 
 	if (NextStateName != NAME_None)
 	{
-		NextState = FindState(NextStateName, (VClass*)Outer);
+		NextState = CheckForState(NextStateName, (VClass*)Outer);
+		if (!NextState)
+		{
+			ParseError(Loc, "No such state %s", *NextStateName);
+		}
 	}
 
 	Function->Emit();
@@ -1375,7 +1406,7 @@ void EmitCode()
 
 	if (NumErrors)
 	{
-		ERR_Exit(ERR_NONE, false, NULL);
+		BailOut();
 	}
 
 	for (int i = 0; i < ParsedConstants.Num(); i++)
@@ -1395,7 +1426,7 @@ void EmitCode()
 
 	if (NumErrors)
 	{
-		ERR_Exit(ERR_NONE, false, NULL);
+		BailOut();
 	}
 
 	for (int i = 0; i < ParsedStructs.Num(); i++)
@@ -1410,7 +1441,7 @@ void EmitCode()
 
 	if (NumErrors)
 	{
-		ERR_Exit(ERR_NONE, false, NULL);
+		BailOut();
 	}
 
 	for (int i = 0; i < ParsedClasses.Num(); i++)
@@ -1420,6 +1451,6 @@ void EmitCode()
 
 	if (NumErrors)
 	{
-		ERR_Exit(ERR_NONE, false, NULL);
+		BailOut();
 	}
 }

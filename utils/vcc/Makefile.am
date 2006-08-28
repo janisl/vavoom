@@ -15,7 +15,8 @@ ___bin_vcc_SOURCES = \
 	error.cpp \
 	expression.cpp \
 	expression.h \
-	info.cpp \
+	lexer.cpp \
+	lexer.h \
 	modifiers.cpp \
 	name.cpp \
 	name.h \
@@ -26,7 +27,6 @@ ___bin_vcc_SOURCES = \
 	statement.h \
 	stream.cpp \
 	stream.h \
-	token.cpp \
 	types.cpp \
 	vcc.cpp \
 	vcc.h \

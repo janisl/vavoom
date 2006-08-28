@@ -875,7 +875,7 @@ bool VReturn::Resolve()
 		}
 		else
 		{
-			Expr->Type.CheckMatch(FuncRetType);
+			Expr->Type.CheckMatch(Expr->Loc, FuncRetType);
 		}
 	}
 	else

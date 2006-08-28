@@ -184,7 +184,7 @@ int AddStatement(int statement)
 {
 	if (StatementInfo[statement].Args != OPCARGS_None)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode doesn't take 0 params");
+		FatalError("Opcode doesn't take 0 params");
 	}
 
 	if (statement == OPC_Drop)
@@ -233,7 +233,7 @@ int AddStatement(int statement, int parm1)
 		StatementInfo[statement].Args != OPCARGS_Int &&
 		StatementInfo[statement].Args != OPCARGS_String)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode does\'t take 1 params");
+		FatalError("Opcode does\'t take 1 params");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
@@ -254,7 +254,7 @@ int AddStatement(int statement, float FloatArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Int)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode does\'t take float argument");
+		FatalError("Opcode does\'t take float argument");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
@@ -274,7 +274,7 @@ int AddStatement(int statement, VName NameArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Name)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode does\'t take name argument");
+		FatalError("Opcode does\'t take name argument");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
@@ -296,7 +296,7 @@ int AddStatement(int statement, VMemberBase* Member)
 		StatementInfo[statement].Args != OPCARGS_FieldOffset &&
 		StatementInfo[statement].Args != OPCARGS_VTableIndex)
 	{
-		ParseError("Opcode does\'t take member as argument");
+		FatalError("Opcode does\'t take member as argument");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
@@ -316,7 +316,7 @@ int AddStatement(int statement, const TType& TypeArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_TypeSize)
 	{
-		ParseError("Opcode does\'t take type as argument");
+		FatalError("Opcode does\'t take type as argument");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
@@ -338,7 +338,7 @@ int AddStatement(int statement, int parm1, int parm2)
 		StatementInfo[statement].Args != OPCARGS_ShortBranchTarget &&
 		StatementInfo[statement].Args != OPCARGS_IntBranchTarget)
 	{
-		ERR_Exit(ERR_NONE, false, "Opcode does\'t take 2 params");
+		FatalError("Opcode does\'t take 2 params");
 	}
 
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
@@ -560,7 +560,7 @@ void EndCode(VMethod* Func)
 #endif
 	FInstruction& Dummy = Func->Instructions.Alloc();
 	Dummy.Opcode = OPC_Done;
-	DumpAsmFunction(Func);
+//	DumpAsmFunction(Func);
 }
 
 //==========================================================================
@@ -1022,7 +1022,7 @@ void PC_WriteObject(char *name)
 	f = fopen(name, "wb");
 	if (!f)
 	{
-		ERR_Exit(ERR_CANT_OPEN_FILE, false, "File: \"%s\".", name);
+		FatalError("Can't open file \"%s\".", name);
 	}
 
 	VProgsWriter Writer(f);

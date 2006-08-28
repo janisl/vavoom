@@ -29,20 +29,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define EOF_CHARACTER		127
-#define NON_HEX_DIGIT		255
-
 // TYPES -------------------------------------------------------------------
-
-enum chr_t
-{
-	CHR_EOF,
-	CHR_LETTER,
-	CHR_NUMBER,
-	CHR_QUOTE,
-	CHR_SINGLE_QUOTE,
-	CHR_SPECIAL
-};
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -50,48 +37,23 @@ enum chr_t
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void NextChr();
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TLocation			tk_Location;
+TArray<char*>		TLocation::SourceFiles;
 
-ETokenType	 		tk_Token;
-char*				tk_String;
-int					tk_StringI;
-int 				tk_Number;
-float				tk_Float;
-EKeyword			tk_Keyword;
-EPunctuation		tk_Punct;
-VName				tk_Name;
-
-// PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static char			ASCIIToChrCode[256];
-static vuint8		ASCIIToHexDigit[256];
-static char			TokenStringBuffer[MAX_QUOTED_LENGTH];
-static bool			IncLineNumber;
-static bool			NewLine;
-static bool			SourceOpen;
-static char*		FileStart;
-static char*		FilePtr;
-static char*		FileEnd;
-static char			Chr;
-
-static TArray<char*>	SourceFiles;
-static int 				tk_SourceIdx;
-static int 				tk_Line;
-
-static char* Keywords[] =
+const char*			VLexer::TokenNames[] =
 {
 	"",
-	"__states__",
-	"__mobjinfo__",
-	"__scriptid__",
+	"END OF FILE",
+	"IDENTIFIER",
+	"NAME LITERAL",
+	"STRING LITERAL",
+	"INTEGER LITERAL",
+	"FLOAT LITERAL",
+	//	Keywords
 	"abstract",
-	"addfields",
 	"bool",
 	"break",
 	"case",
@@ -110,6 +72,7 @@ static char* Keywords[] =
 	"float",
 	"for",
 	"if",
+	"import",
 	"int",
 	"name",
 	"native",
@@ -129,28 +92,96 @@ static char* Keywords[] =
 	"vector",
 	"void",
 	"while",
+	"__states__",
+	"__mobjinfo__",
+	"__scriptid__",
+	//	Punctuation
+	"...",
+	"<<=",
+	">>=",
+	"+=",
+	"-=",
+	"*=",
+	"/=",
+	"%=",
+	"&=",
+	"|=",
+	"^=",
+	"==",
+	"!=",
+	"<=",
+	">=",
+	"&&",
+	"||",
+	"<<",
+	">>",
+	"++",
+	"--",
+	"->",
+	"::",
+	"<",
+	">",
+	"?",
+	"&",
+	"|",
+	"^",
+	"~",
+	"!",
+	"+",
+	"-",
+	"*",
+	"/",
+	"%",
+	"(",
+	")",
+	".",
+	",",
+	";",
+	":",
+	"=",
+	"[",
+	"]",
+	"{",
+	"}",
 };
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-// TK_Init
+//	VLexer::VLexer
 //
 //==========================================================================
 
-void TK_Init()
+VLexer::VLexer()
+: IncLineNumber(false)
+, NewLine(false)
+, SourceOpen(false)
+, FileStart(NULL)
+, FilePtr(NULL)
+, FileEnd(NULL)
+, SourceIdx(0)
+, Line(1)
+, Token(TK_NoToken)
+, Number(0)
+, Float(0)
+, StringI(0)
+, Name(NAME_None)
 {
 	int i;
 
+	memset(TokenStringBuffer, 0, sizeof(TokenStringBuffer));
+
 	for (i = 0; i < 256; i++)
 	{
-		ASCIIToChrCode[i] = CHR_SPECIAL;
+		ASCIIToChrCode[i] = CHR_Special;
 		ASCIIToHexDigit[i] = NON_HEX_DIGIT;
 	}
 	for (i = '0'; i <= '9'; i++)
 	{
-		ASCIIToChrCode[i] = CHR_NUMBER;
+		ASCIIToChrCode[i] = CHR_Number;
 		ASCIIToHexDigit[i] = i-'0';
 	}
 	for (i = 'A'; i <= 'F'; i++)
@@ -163,52 +194,48 @@ void TK_Init()
 	}
 	for (i = 'A'; i <= 'Z'; i++)
 	{
-		ASCIIToChrCode[i] = CHR_LETTER;
+		ASCIIToChrCode[i] = CHR_Letter;
 	}
 	for (i = 'a'; i <= 'z'; i++)
 	{
-		ASCIIToChrCode[i] = CHR_LETTER;
+		ASCIIToChrCode[i] = CHR_Letter;
 	}
-	ASCIIToChrCode[(int)'\"'] = CHR_QUOTE;
-	ASCIIToChrCode[(int)'\''] = CHR_SINGLE_QUOTE;
-	ASCIIToChrCode[(int)'_'] = CHR_LETTER;
+	ASCIIToChrCode[(int)'\"'] = CHR_Quote;
+	ASCIIToChrCode[(int)'\''] = CHR_SingleQuote;
+	ASCIIToChrCode[(int)'_'] = CHR_Letter;
 	ASCIIToChrCode[0] = CHR_EOF;
 	ASCIIToChrCode[EOF_CHARACTER] = CHR_EOF;
-	tk_String = TokenStringBuffer;
-	IncLineNumber = false;
-	SourceOpen = false;
+	String = TokenStringBuffer;
 }
 
 //==========================================================================
 //
-// TK_OpenSource
+//	VLexer::OpenSource
 //
 //==========================================================================
 
-void TK_OpenSource(void *buf, size_t size)
+void VLexer::OpenSource(void* buf, size_t size)
 {
-	//	Actually we don't need to close it.
-	TK_CloseSource();
-
 	//	Read file and prepare for compilation.
 	SourceOpen = true;
-	FileStart = (char *)buf;
+	FileStart = (char*)buf;
 	FileEnd = FileStart + size;
 	FilePtr = FileStart;
-	tk_Line = 1;
-	tk_Location = TLocation(tk_SourceIdx, tk_Line);
-	tk_Token = TK_NONE;
+	SourceIdx = 0;
+	Line = 1;
+	Location = TLocation(SourceIdx, Line);
+	Token = TK_NoToken;
 	NewLine = true;
 	NextChr();
 }
 
 //==========================================================================
 //
-// TK_CloseSource
+//	VLexer::~VLexer
 //
 //==========================================================================
 
-void TK_CloseSource()
+VLexer::~VLexer()
 {
 	if (SourceOpen)
 	{
@@ -219,11 +246,11 @@ void TK_CloseSource()
 
 //==========================================================================
 //
-// NextChr
+//	VLexer::NextChr
 //
 //==========================================================================
 
-static void NextChr()
+void VLexer::NextChr()
 {
 	if (FilePtr >= FileEnd)
 	{
@@ -232,8 +259,8 @@ static void NextChr()
 	}
 	if (IncLineNumber)
 	{
-		tk_Line++;
-		tk_Location = TLocation(tk_SourceIdx, tk_Line);
+		Line++;
+		Location = TLocation(SourceIdx, Line);
 		IncLineNumber = false;
 	}
 	Chr = *FilePtr++;
@@ -250,43 +277,43 @@ static void NextChr()
 
 //==========================================================================
 //
-// ProcessNumberToken
+//	VLexer::ProcessNumberToken
 //
 //==========================================================================
 
-static void ProcessNumberToken()
+void VLexer::ProcessNumberToken()
 {
 	char c;
 
-	tk_Token = TK_INTEGER;
+	Token = TK_IntLiteral;
 	c = Chr;
 	NextChr();
-	tk_Number = c - '0';
+	Number = c - '0';
 	if (c == '0' && (Chr == 'x' || Chr == 'X'))
 	{
 		//  Hexadecimal constant.
 		NextChr();
 		while (ASCIIToHexDigit[(vuint8)Chr] != NON_HEX_DIGIT)
 		{
-			tk_Number = (tk_Number << 4) + ASCIIToHexDigit[(vuint8)Chr];
+			Number = (Number << 4) + ASCIIToHexDigit[(vuint8)Chr];
 			NextChr();
 		}
 		return;
 	}
-	while (ASCIIToChrCode[(vuint8)Chr] == CHR_NUMBER)
+	while (ASCIIToChrCode[(vuint8)Chr] == CHR_Number)
 	{
-		tk_Number = 10 * tk_Number + (Chr - '0');
+		Number = 10 * Number + (Chr - '0');
 		NextChr();
 	}
 	if (Chr == '.')
 	{
-		tk_Token = TK_FLOAT;
+		Token = TK_FloatLiteral;
 		NextChr(); // Point
-		tk_Float = tk_Number;
+		Float = Number;
 		float	fmul = 0.1;
-		while (ASCIIToChrCode[(vuint8)Chr] == CHR_NUMBER)
+		while (ASCIIToChrCode[(vuint8)Chr] == CHR_Number)
 		{
-			tk_Float += (Chr - '0') * fmul;
+			Float += (Chr - '0') * fmul;
 			fmul /= 10.0;
 			NextChr();
 		}
@@ -298,12 +325,13 @@ static void ProcessNumberToken()
 		int digit;
 
 		NextChr(); // Underscore
-		radix = tk_Number;
+		radix = Number;
 		if (radix < 2 || radix > 36)
 		{
-			ERR_Exit(ERR_BAD_RADIX_CONSTANT, true, NULL);
+			ParseError(Location, ERR_BAD_RADIX_CONSTANT);
+			radix = 2;
 		}
-		tk_Number = 0;
+		Number = 0;
 		do
 		{
 			digit = toupper(Chr);
@@ -325,7 +353,7 @@ static void ProcessNumberToken()
 			}
 			if (digit != -1)
 			{
-				tk_Number = radix * tk_Number + digit;
+				Number = radix * Number + digit;
 				NextChr();
 			}
 		} while (digit != -1);
@@ -334,20 +362,20 @@ static void ProcessNumberToken()
 
 //==========================================================================
 //
-//	ProcessChar
+//	VLexer::ProcessChar
 //
 //==========================================================================
 
-static void ProcessChar()
+void VLexer::ProcessChar()
 {
 	if (Chr == EOF_CHARACTER)
 	{
-		ParseError(ERR_EOF_IN_STRING);
+		ParseError(Location, ERR_EOF_IN_STRING);
 		BailOut();
 	}
 	if (IncLineNumber)
 	{
-		ParseError(ERR_NEW_LINE_INSIDE_QUOTE);
+		ParseError(Location, ERR_NEW_LINE_INSIDE_QUOTE);
 	}
 	if (Chr == '\\')
 	{
@@ -355,12 +383,12 @@ static void ProcessChar()
 		NextChr();
 		if (Chr == EOF_CHARACTER)
 		{
-			ParseError(ERR_EOF_IN_STRING);
+			ParseError(Location, ERR_EOF_IN_STRING);
 			BailOut();
 		}
 		if (IncLineNumber)
-	   	{
-			ParseError(ERR_NEW_LINE_INSIDE_QUOTE);
+		{
+			ParseError(Location, ERR_NEW_LINE_INSIDE_QUOTE);
 		}
 		if (Chr == 'n')
 			Chr = '\n';
@@ -373,28 +401,28 @@ static void ProcessChar()
 		else if (Chr == '\\')
 			Chr = '\\';
 		else
-			ParseError(ERR_UNKNOWN_ESC_CHAR);
+			ParseError(Location, ERR_UNKNOWN_ESC_CHAR);
 	}
 }
 
 //==========================================================================
 //
-// ProcessQuoteToken
+//	VLexer::ProcessQuoteToken
 //
 //==========================================================================
 
-static void ProcessQuoteToken()
+void VLexer::ProcessQuoteToken()
 {
 	int len;
 
-	tk_Token = TK_STRING;
+	Token = TK_StringLiteral;
 	len = 0;
 	NextChr();
 	while (Chr != '\"')
 	{
 		if (len >= MAX_QUOTED_LENGTH - 1)
 		{
-			ParseError(ERR_STRING_TOO_LONG);
+			ParseError(Location, ERR_STRING_TOO_LONG);
 			NextChr();
 			continue;
 		}
@@ -405,27 +433,27 @@ static void ProcessQuoteToken()
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
-	tk_StringI = FindString(tk_String);
+	StringI = FindString(String);
 }
 
 //==========================================================================
 //
-// ProcessSingleQuoteToken
+//	VLexer::ProcessSingleQuoteToken
 //
 //==========================================================================
 
-static void ProcessSingleQuoteToken()
+void VLexer::ProcessSingleQuoteToken()
 {
 	int len;
 
-	tk_Token = TK_NAME;
+	Token = TK_NameLiteral;
 	len = 0;
 	NextChr();
 	while (Chr != '\'')
 	{
 		if (len >= MAX_IDENTIFIER_LENGTH - 1)
 		{
-			ParseError(ERR_STRING_TOO_LONG);
+			ParseError(Location, ERR_STRING_TOO_LONG);
 			NextChr();
 			continue;
 		}
@@ -436,27 +464,27 @@ static void ProcessSingleQuoteToken()
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
-	tk_Name = TokenStringBuffer;
+	Name = TokenStringBuffer;
 }
 
 //==========================================================================
 //
-// ProcessLetterToken
+//	VLexer::ProcessLetterToken
 //
 //==========================================================================
 
-static void ProcessLetterToken()
+void VLexer::ProcessLetterToken()
 {
 	int		len;
 
-	tk_Token = TK_IDENTIFIER;
+	Token = TK_Identifier;
 	len = 0;
-	while (ASCIIToChrCode[(vuint8)Chr] == CHR_LETTER
-		|| ASCIIToChrCode[(vuint8)Chr] == CHR_NUMBER)
+	while (ASCIIToChrCode[(vuint8)Chr] == CHR_Letter
+		|| ASCIIToChrCode[(vuint8)Chr] == CHR_Number)
 	{
 		if (len == MAX_IDENTIFIER_LENGTH - 1)
 		{
-			ParseError(ERR_IDENTIFIER_TOO_LONG);
+			ParseError(Location, ERR_IDENTIFIER_TOO_LONG);
 			NextChr();
 			continue;
 		}
@@ -466,7 +494,7 @@ static void ProcessLetterToken()
 	}
 	TokenStringBuffer[len] = 0;
 
-	register const char* s = tk_String;
+	register const char* s = TokenStringBuffer;
 	switch (s[0])
 	{
 	case '_':
@@ -476,23 +504,20 @@ static void ProcessLetterToken()
 				s[6] == 'i' && s[7] == 'n' && s[8] == 'f' && s[9] == 'o' &&
 				s[10] == '_' && s[11] == '_' && s[12] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_MOBJINFO;
+				Token = TK_MobjInfo;
 			}
 			else if (s[2] == 's')
 			{
 				if (s[3] == 't' && s[4] == 'a' && s[5] == 't' && s[6] == 'e' &&
 					s[7] == 's' && s[8] == '_' && s[9] == '_' && s[10] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_STATES;
+					Token = TK_States;
 				}
 				else if (s[3] == 'c' && s[4] == 'r' && s[5] == 'i' &&
 					s[6] == 'p' && s[7] == 't' && s[8] == 'i' && s[9] == 'd' &&
 					s[10] == '_' && s[11] == '_' && s[12] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_SCRIPTID;
+					Token = TK_ScriptId;
 				}
 			}
 		}
@@ -502,56 +527,48 @@ static void ProcessLetterToken()
 		if (s[1] == 'b' && s[2] == 's' && s[3] == 't' && s[4] == 'r' &&
 			s[5] == 'a' && s[6] == 'c' && s[7] == 't' && s[8] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_ABSTRACT;
+			Token = TK_Abstract;
 		}
 		break;
 
 	case 'b':
 		if (s[1] == 'o' && s[2] == 'o' && s[3] == 'l' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_BOOL;
+			Token = TK_Bool;
 		}
 		else if (s[1] == 'r' && s[2] == 'e' && s[3] == 'a' && s[4] == 'k' &&
 			s[5] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_BREAK;
+			Token = TK_Break;
 		}
 		break;
 
 	case 'c':
 		if (s[1] == 'a' && s[2] == 's' && s[3] == 'e' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_CASE;
+			Token = TK_Case;
 		}
 		else if (s[1] == 'l' && s[2] == 'a' && s[3] == 's' && s[4] == 's')
 		{
 			if (s[5] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_CLASS;
+				Token = TK_Class;
 			}
 			else if (s[5] == 'i' && s[6] == 'd' && s[7] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_CLASSID;
+				Token = TK_ClassId;
 			}
 		}
 		else if (s[1] == 'o' && s[2] == 'n')
 		{
 			if (s[3] == 's' && s[4] == 't' && s[5] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_CONST;
+				Token = TK_Const;
 			}
 			else if (s[3] == 't' && s[4] == 'i' && s[5] == 'n' &&
 				s[6] == 'u' && s[7] == 'e' && s[8] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_CONTINUE;
+				Token = TK_Continue;
 			}
 		}
 		break;
@@ -564,42 +581,36 @@ static void ProcessLetterToken()
 			{
 				if (s[7] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_DEFAULT;
+					Token = TK_Default;
 				}
 				else if (s[7] == 'p' && s[8] == 'r' && s[9] == 'o' &&
 					s[10] == 'p' && s[11] == 'e' && s[12] == 'r' &&
 					s[13] == 't' && s[14] == 'i' && s[15] == 'e' &&
 					s[16] == 's' && s[17] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_DEFAULTPROPERTIES;
+					Token = TK_DefaultProperties;
 				}
 			}
 			else if (s[2] == 'l' && s[3] == 'e' && s[4] == 'g' &&
 				s[5] == 'a' && s[6] == 't' && s[7] == 'e' && s[8] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_DELEGATE;
+				Token = TK_Delegate;
 			}
 		}
 		else if (s[1] == 'o' && s[2] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_DO;
+			Token = TK_Do;
 		}
 		break;
 
 	case 'e':
 		if (s[1] == 'l' && s[2] == 's' && s[3] == 'e' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_ELSE;
+			Token = TK_Else;
 		}
 		else if (s[1] == 'n' && s[2] == 'u' && s[3] == 'm' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_ENUM;
+			Token = TK_Enum;
 		}
 		break;
 
@@ -607,63 +618,53 @@ static void ProcessLetterToken()
 		if (s[1] == 'a' && s[2] == 'l' && s[3] == 's' && s[4] == 'e' &&
 			s[5] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_FALSE;
+			Token = TK_False;
 		}
 		else if (s[1] == 'i' && s[2] == 'n' && s[3] == 'a' && s[4] == 'l' &&
 			s[5] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_FINAL;
+			Token = TK_Final;
 		}
 		else if (s[1] == 'l' && s[2] == 'o' && s[3] == 'a' && s[4] == 't' &&
 			s[5] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_FLOAT;
+			Token = TK_Float;
 		}
 		else if (s[1] == 'o' && s[2] == 'r' && s[3] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_FOR;
+			Token = TK_For;
 		}
 		break;
 
 	case 'i':
 		if (s[1] == 'f' && s[2] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_IF;
+			Token = TK_If;
 		}
 		else if (s[1] == 'm' && s[2] == 'p' && s[3] == 'o' && s[4] == 'r' &&
 			s[5] == 't' && s[6] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_IMPORT;
+			Token = TK_Import;
 		}
 		else if (s[1] == 'n' && s[2] == 't' && s[3] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_INT;
+			Token = TK_Int;
 		}
 		break;
 
 	case 'n':
 		if (s[1] == 'a' && s[2] == 'm' && s[3] == 'e' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_NAME;
+			Token = TK_Name;
 		}
 		else if (s[1] == 'o' && s[2] == 'n' && s[3] == 'e' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_NONE;
+			Token = TK_None;
 		}
 		else if (s[1] == 'a' && s[2] == 't' && s[3] == 'i' && s[4] == 'v' &&
 			s[5] == 'e' && s[6] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_NATIVE;
+			Token = TK_Native;
 		}
 		break;
 
@@ -671,7 +672,7 @@ static void ProcessLetterToken()
 		if (s[1] == 'U' && s[2] == 'L' &&
 			s[3] == 'L' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
+			Token = TK_KEYWORD;
 			tk_Keyword = KW_NULL;
 		}
 		break;*/
@@ -680,8 +681,7 @@ static void ProcessLetterToken()
 		if (s[1] == 'r' && s[2] == 'i' && s[3] == 'v' && s[4] == 'a' &&
 			s[5] == 't' && s[6] == 'e' && s[7] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_PRIVATE;
+			Token = TK_Private;
 		}
 		break;
 
@@ -691,14 +691,12 @@ static void ProcessLetterToken()
 			if (s[2] == 'a' && s[3] == 'd' && s[4] == 'o' && s[5] == 'n' &&
 				s[6] == 'l' && s[7] == 'y' && s[8] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_READONLY;
+				Token = TK_ReadOnly;
 			}
 			else if (s[2] == 't' && s[3] == 'u' && s[4] == 'r' &&
 				s[5] == 'n' && s[6] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_RETURN;
+				Token = TK_Return;
 			}
 		}
 		break;
@@ -706,8 +704,7 @@ static void ProcessLetterToken()
 	case 's':
 		if (s[1] == 'e' && s[2] == 'l' && s[3] == 'f' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_SELF;
+			Token = TK_Self;
 		}
 		else if (s[1] == 't')
 		{
@@ -715,35 +712,30 @@ static void ProcessLetterToken()
 			{
 				if (s[4] == 'e' && s[5] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_STATE;
+					Token = TK_State;
 				}
 				else if (s[4] == 'i' && s[5] == 'c' && s[6] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_STATIC;
+					Token = TK_Static;
 				}
 			}
 			else if (s[2] == 'r')
 			{
 				if (s[3] == 'i' && s[4] == 'n' && s[5] == 'g' && s[6] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_STRING;
+					Token = TK_String;
 				}
 				else if (s[3] == 'u' && s[4] == 'c' && s[5] == 't' &&
 					s[6] == 0)
 				{
-					tk_Token = TK_KEYWORD;
-					tk_Keyword = KW_STRUCT;
+					Token = TK_Struct;
 				}
 			}
 		}
 		else if (s[1] == 'w' && s[2] == 'i' && s[3] == 't' && s[4] == 'c' &&
 			s[5] == 'h' && s[6] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_SWITCH;
+			Token = TK_Switch;
 		}
 		break;
 
@@ -753,13 +745,11 @@ static void ProcessLetterToken()
 			if (s[2] == 'a' && s[3] == 'n' && s[4] == 's' && s[5] == 'i' &&
 				s[6] == 'e' && s[7] == 'n' && s[8] == 't' && s[9] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_TRANSIENT;
+				Token = TK_Transient;
 			}
 			else if (s[2] == 'u' && s[3] == 'e' && s[4] == 0)
 			{
-				tk_Token = TK_KEYWORD;
-				tk_Keyword = KW_TRUE;
+				Token = TK_True;
 			}
 		}
 		break;
@@ -768,13 +758,11 @@ static void ProcessLetterToken()
 		if (s[1] == 'e' && s[2] == 'c' && s[3] == 't' && s[4] == 'o' &&
 			s[5] == 'r' && s[6] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_VECTOR;
+			Token = TK_Vector;
 		}
 		else if (s[1] == 'o' && s[2] == 'i' && s[3] == 'd' && s[4] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_VOID;
+			Token = TK_Void;
 		}
 		break;
 
@@ -782,120 +770,117 @@ static void ProcessLetterToken()
 		if (s[1] == 'h' && s[2] == 'i' && s[3] == 'l' && s[4] == 'e' &&
 			s[5] == 0)
 		{
-			tk_Token = TK_KEYWORD;
-			tk_Keyword = KW_WHILE;
+			Token = TK_While;
 		}
 		break;
 	}
 	if (s[0] == 'N' && s[1] == 'U' && s[2] == 'L' && s[3] == 'L' && s[4] == 0)
 	{
-		tk_Token = TK_KEYWORD;
-		tk_Keyword = KW_NULL;
+		Token = TK_Null;
 	}
 
-	if (tk_Token == TK_IDENTIFIER)
+	if (Token == TK_Identifier)
 	{
-		tk_Name = tk_String;
+		Name = TokenStringBuffer;
 	}
 }
 
 //==========================================================================
 //
-//	ProcessSpecialToken
+//	VLexer::ProcessSpecialToken
 //
 //==========================================================================
 
-static void ProcessSpecialToken()
+void VLexer::ProcessSpecialToken()
 {
 	char c = Chr;
-   	NextChr();
-	tk_Token = TK_PUNCT;
+	NextChr();
 	switch (c)
 	{
 	case '+':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_ADD_ASSIGN;
+			Token = TK_AddAssign;
 			NextChr();
 		}
 		else if (Chr == '+')
 		{
-			tk_Punct = PU_INC;
+			Token = TK_Inc;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_PLUS;
+			Token = TK_Plus;
 		}
 		break;
 
 	case '-':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_MINUS_ASSIGN;
+			Token = TK_MinusAssign;
 			NextChr();
 		}
 		else if (Chr == '-')
 		{
-			tk_Punct = PU_DEC;
+			Token = TK_Dec;
 			NextChr();
 		}
 		else if (Chr == '>')
 		{
-			tk_Punct = PU_MINUS_GT;
+			Token = TK_Arrow;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_MINUS;
+			Token = TK_Minus;
 		}
 		break;
 
 	case '*':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_MULTIPLY_ASSIGN;
+			Token = TK_MultiplyAssign;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_ASTERISK;
+			Token = TK_Asterisk;
 		}
 		break;
 
 	case '/':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_DIVIDE_ASSIGN;
+			Token = TK_DivideAssign;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_SLASH;
+			Token = TK_Slash;
 		}
 		break;
 
 	case '%':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_MOD_ASSIGN;
+			Token = TK_ModAssign;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_PERCENT;
+			Token = TK_Percent;
 		}
 		break;
 
 	case '=':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_EQ;
+			Token = TK_Equals;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_ASSIGN;
+			Token = TK_Assign;
 		}
 		break;
 
@@ -905,22 +890,22 @@ static void ProcessSpecialToken()
 			NextChr();
 			if (Chr == '=')
 			{
-				tk_Punct = PU_LSHIFT_ASSIGN;
+				Token = TK_LShiftAssign;
 				NextChr();
 			}
 			else
 			{
-				tk_Punct = PU_LSHIFT;
+				Token = TK_LShift;
 			}
 		}
 		else if (Chr == '=')
 		{
-			tk_Punct = PU_LE;
+			Token = TK_LessEquals;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_LT;
+			Token = TK_Less;
 		}
 		break;
 
@@ -930,161 +915,161 @@ static void ProcessSpecialToken()
 			NextChr();
 			if (Chr == '=')
 			{
-				tk_Punct = PU_RSHIFT_ASSIGN;
+				Token = TK_RShiftAssign;
 				NextChr();
 			}
 			else
 			{
-				tk_Punct = PU_RSHIFT;
+				Token = TK_RShift;
 			}
 		}
 		else if (Chr == '=')
 		{
-			tk_Punct = PU_GE;
+			Token = TK_GreaterEquals;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_GT;
+			Token = TK_Greater;
 		}
 		break;
 
 	case '!':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_NE;
+			Token = TK_NotEquals;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_NOT;
+			Token = TK_Not;
 		}
 		break;
 
 	case '&':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_AND_ASSIGN;
+			Token = TK_AndAssign;
 			NextChr();
 		}
 		else if (Chr == '&')
 		{
-			tk_Punct = PU_AND_LOG;
+			Token = TK_AndLog;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_AND;
+			Token = TK_And;
 		}
 		break;
 
 	case '|':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_OR_ASSIGN;
+			Token = TK_OrAssign;
 			NextChr();
 		}
 		else if (Chr == '|')
 		{
-			tk_Punct = PU_OR_LOG;
+			Token = TK_OrLog;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_OR;
+			Token = TK_Or;
 		}
 		break;
 
 	case '^':
 		if (Chr == '=')
 		{
-			tk_Punct = PU_XOR_ASSIGN;
+			Token = TK_XOrAssign;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_XOR;
+			Token = TK_XOr;
 		}
 		break;
 
 	case '.':
 		if (Chr == '.' && FilePtr[0] == '.')
 		{
-			tk_Punct = PU_VARARGS;
+			Token = TK_VarArgs;
 			NextChr();
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_DOT;
+			Token = TK_Dot;
 		}
 		break;
 
 	case ':':
 		if (Chr == ':')
 		{
-			tk_Punct = PU_DCOLON;
+			Token = TK_DColon;
 			NextChr();
 		}
 		else
 		{
-			tk_Punct = PU_COLON;
+			Token = TK_Colon;
 		}
 		break;
 
 	case '(':
-		tk_Punct = PU_LPAREN;
+		Token = TK_LParen;
 		break;
 
 	case ')':
-		tk_Punct = PU_RPAREN;
+		Token = TK_RParen;
 		break;
 
 	case '?':
-		tk_Punct = PU_QUEST;
+		Token = TK_Quest;
 		break;
 
 	case '~':
-		tk_Punct = PU_TILDE;
+		Token = TK_Tilde;
 		break;
 
 	case ',':
-		tk_Punct = PU_COMMA;
+		Token = TK_Comma;
 		break;
 
 	case ';':
-		tk_Punct = PU_SEMICOLON;
+		Token = TK_Semicolon;
 		break;
 
 	case '[':
-		tk_Punct = PU_LINDEX;
+		Token = TK_LBracket;
 		break;
 
 	case ']':
-		tk_Punct = PU_RINDEX;
+		Token = TK_RBracket;
 		break;
 
 	case '{':
-		tk_Punct = PU_LBRACE;
+		Token = TK_LBrace;
 		break;
 
 	case '}':
-		tk_Punct = PU_RBRACE;
+		Token = TK_RBrace;
 		break;
 
 	default:
-		ParseError(ERR_BAD_CHARACTER, "Unknown punctuation \'%c\'", Chr);
-		tk_Token = TK_NONE;
+		ParseError(Location, ERR_BAD_CHARACTER, "Unknown punctuation \'%c\'", Chr);
+		Token = TK_NoToken;
 	}
 }
 
 //==========================================================================
 //
-// ProcessFileName
+//	VLexer::ProcessFileName
 //
 //==========================================================================
 
-static void ProcessFileName()
+void VLexer::ProcessFileName()
 {
 	int len = 0;
 	NextChr();
@@ -1092,18 +1077,18 @@ static void ProcessFileName()
 	{
 		if (len >= MAX_QUOTED_LENGTH - 1)
 		{
-			ParseError(ERR_STRING_TOO_LONG);
+			ParseError(Location, ERR_STRING_TOO_LONG);
 			NextChr();
 			continue;
 		}
 		if (Chr == EOF_CHARACTER)
 		{
-			ParseError(ERR_EOF_IN_STRING);
+			ParseError(Location, ERR_EOF_IN_STRING);
 			break;
 		}
 		if (IncLineNumber)
 		{
-			ParseError(ERR_NEW_LINE_INSIDE_QUOTE);
+			ParseError(Location, ERR_NEW_LINE_INSIDE_QUOTE);
 		}
 		TokenStringBuffer[len] = Chr;
 		NextChr();
@@ -1115,30 +1100,30 @@ static void ProcessFileName()
 
 //==========================================================================
 //
-//	AddSourceFile
+//	VLexer::AddSourceFile
 //
 //==========================================================================
 
-static int AddSourceFile(const char* SName)
+int VLexer::AddSourceFile(const char* SName)
 {
 	//	Find it.
-	for (int i = 0; i < SourceFiles.Num(); i++)
-		if (!strcmp(SName, SourceFiles[i]))
+	for (int i = 0; i < TLocation::SourceFiles.Num(); i++)
+		if (!strcmp(SName, TLocation::SourceFiles[i]))
 			return i;
 
 	//	Not found, add it.
 	char* NewName = new char[strlen(SName) + 1];
 	strcpy(NewName, SName);
-	return SourceFiles.Append(NewName);
+	return TLocation::SourceFiles.Append(NewName);
 }
 
 //==========================================================================
 //
-// TK_NextToken
+//	VLexer::NextToken
 //
 //==========================================================================
 
-void TK_NextToken()
+void VLexer::NextToken()
 {
 	do
 	{
@@ -1160,142 +1145,108 @@ void TK_NextToken()
 
 				//	Read line number
 				while (Chr == ' ') NextChr();
-				if (ASCIIToChrCode[(vuint8)Chr] != CHR_NUMBER)
+				if (ASCIIToChrCode[(vuint8)Chr] != CHR_Number)
 				{
-					ERR_Exit(ERR_NONE, false, "Bad directive.");
+					ParseError(Location, "Bad directive.");
 				}
 				ProcessNumberToken();
-				tk_Line = tk_Number - 1;
+				Line = Number - 1;
 
 				//	Read file name
 				while (Chr == ' ') NextChr();
-				if (ASCIIToChrCode[(vuint8)Chr] != CHR_QUOTE)
+				if (ASCIIToChrCode[(vuint8)Chr] != CHR_Quote)
 				{
-					ERR_Exit(ERR_NONE, false, "Bad directive.");
+					ParseError(Location, "Bad directive.");
 				}
 				ProcessFileName();
-				tk_SourceIdx = AddSourceFile(tk_String);
-				tk_Location = TLocation(tk_SourceIdx, tk_Line);
+				SourceIdx = AddSourceFile(String);
+				Location = TLocation(SourceIdx, Line);
 
 				//	Ignore flags
 				while (!NewLine)
 				{
 					NextChr();
 				}
-				tk_Token = TK_NONE;
+				Token = TK_NoToken;
 				continue;
 			}
 		}
 		switch (ASCIIToChrCode[(vuint8)Chr])
 		{
 			case CHR_EOF:
-				tk_Token = TK_EOF;
+				Token = TK_EOF;
 				break;
-			case CHR_LETTER:
+			case CHR_Letter:
 				ProcessLetterToken();
 				break;
-			case CHR_NUMBER:
+			case CHR_Number:
 				ProcessNumberToken();
 				break;
-			case CHR_QUOTE:
+			case CHR_Quote:
 				ProcessQuoteToken();
 				break;
-			case CHR_SINGLE_QUOTE:
+			case CHR_SingleQuote:
 				ProcessSingleQuoteToken();
 				break;
 			default:
 				ProcessSpecialToken();
 				break;
 		}
-	} while (tk_Token == TK_NONE);
+	} while (Token == TK_NoToken);
 }
 
 //==========================================================================
 //
-//  TK_Check
-//
-//	Return true and take next token if current matches string.
-//  Return false and do nothing otherwise.
+//	VLexer::Check
 //
 //==========================================================================
 
-bool TK_Check(const char *string)
+bool VLexer::Check(EToken tk)
 {
-	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
-		tk_Token != TK_PUNCT)
+	if (Token == tk)
 	{
-		return false;
+		NextToken();
+		return true;
 	}
-	if (strcmp(string, TokenStringBuffer))
-	{
-		return false;
-	}
-
-	TK_NextToken();
-	return true;
+	return false;
 }
 
 //==========================================================================
 //
-//	TK_Expect
+//	VLexer::Expect
 //
-//  Report error, if current token is not equals to string.
-//  Take next token.
+//	Report error, if current token is not equals to tk.
+//	Take next token.
 //
 //==========================================================================
 
-void TK_Expect(const char *string, ECompileError error)
+void VLexer::Expect(EToken tk)
 {
-	if (tk_Token != TK_IDENTIFIER && tk_Token != TK_KEYWORD &&
-		tk_Token != TK_PUNCT)
+	if (Token != tk)
 	{
-		ParseError(error, "invalid token type");
+		ParseError(Location, "expected %s, found %s", TokenNames[tk],
+			TokenNames[Token]);
 	}
-	if (strcmp(string, TokenStringBuffer))
-	{
-		ParseError(error, "expected %s, found %s", string, TokenStringBuffer);
-	}
-	TK_NextToken();
+	NextToken();
 }
 
 //==========================================================================
 //
-//	TK_Expect
+//	VLexer::Expect
 //
-//  Report error, if current token is not equals to kwd.
-//  Take next token.
+//	Report error, if current token is not equals to tk.
+//	Take next token.
 //
 //==========================================================================
 
-void TK_Expect(EKeyword kwd, ECompileError error)
+void VLexer::Expect(EToken tk, ECompileError error)
 {
-	if (tk_Token != TK_KEYWORD)
+	if (Token != tk)
 	{
-		ParseError(error, "invalid token type");
+		ParseError(Location, error, "expected %s, found %s", TokenNames[tk],
+			TokenNames[Token]);
 	}
-	if (tk_Keyword != kwd)
-	{
-		ParseError(error, "expected %s, found %s", Keywords[kwd], TokenStringBuffer);
-	}
-	TK_NextToken();
-}
-
-//==========================================================================
-//
-//	TK_Expect
-//
-//  Report error, if current token is not equals to punct.
-//  Take next token.
-//
-//==========================================================================
-
-void TK_Expect(EPunctuation punct, ECompileError error)
-{
-	if (tk_Token != TK_PUNCT || tk_Punct != punct)
-	{
-		ParseError(error);
-	}
-	TK_NextToken();
+	NextToken();
 }
 
 //==========================================================================
