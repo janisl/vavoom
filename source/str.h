@@ -313,8 +313,20 @@ public:
 		return ICmp(**this, *S2);
 	}
 
+	bool StartsWith(const char*) const;
+	bool StartsWith(const VStr&) const;
+	bool EndsWith(const char*) const;
+	bool EndsWith(const VStr&) const;
+
 	VStr ToLower() const;
 	VStr ToUpper() const;
+
+	int IndexOf(char) const;
+	int IndexOf(const char*) const;
+	int IndexOf(const VStr&) const;
+	int LastIndexOf(char) const;
+	int LastIndexOf(const char*) const;
+	int LastIndexOf(const VStr&) const;
 
 	VStr Utf8Substring(int, int) const;
 
@@ -352,6 +364,7 @@ public:
 	VStr StripExtension() const;
 	VStr DefaultPath(const VStr& basepath) const;
 	VStr DefaultExtension(const VStr& extension) const;
+	VStr FixFileSlashes() const;
 
 	static size_t Length(const char*);
 	static size_t Utf8Length(const char*);

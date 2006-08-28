@@ -118,6 +118,78 @@ void VStr::Resize(int NewLen)
 
 //==========================================================================
 //
+//	VStr::StartsWith
+//
+//==========================================================================
+
+bool VStr::StartsWith(const char* S) const
+{
+	guard(VStr::StartsWith);
+	size_t l = Length(S);
+	if (l > Length())
+	{
+		return false;
+	}
+	return NCmp(**this, S, l) == 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::StartsWith
+//
+//==========================================================================
+
+bool VStr::StartsWith(const VStr& S) const
+{
+	guard(VStr::StartsWith);
+	size_t l = S.Length();
+	if (l > Length())
+	{
+		return false;
+	}
+	return NCmp(**this, *S, l) == 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::EndsWith
+//
+//==========================================================================
+
+bool VStr::EndsWith(const char* S) const
+{
+	guard(VStr::EndsWith);
+	size_t l = Length(S);
+	if (l > Length())
+	{
+		return false;
+	}
+	return NCmp(**this + Length() - l, S, l) == 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::EndsWith
+//
+//==========================================================================
+
+bool VStr::EndsWith(const VStr& S) const
+{
+	guard(VStr::EndsWith);
+	size_t l = S.Length();
+	if (l > Length())
+	{
+		return false;
+	}
+	return NCmp(**this + Length() - l, *S, l) == 0;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStr::ToLower
 //
 //==========================================================================
@@ -161,6 +233,151 @@ VStr VStr::ToUpper() const
 		Ret.Str[i] = ToUpper(Str[i]);
 	}
 	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::IndexOf
+//
+//==========================================================================
+
+int VStr::IndexOf(char C) const
+{
+	guard(VStr::IndexOf);
+	int l = Length();
+	for (int i = 0; i < l; i++)
+	{
+		if (Str[i] == C)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::IndexOf
+//
+//==========================================================================
+
+int VStr::IndexOf(const char* S) const
+{
+	guard(VStr::IndexOf);
+	int sl = Length(S);
+	if (!sl)
+	{
+		return -1;
+	}
+	int l = Length();
+	for (int i = 0; i <= l - sl; i++)
+	{
+		if (NCmp(Str + i, S, sl) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::IndexOf
+//
+//==========================================================================
+
+int VStr::IndexOf(const VStr& S) const
+{
+	guard(VStr::IndexOf);
+	int sl = S.Length();
+	if (!sl)
+	{
+		return -1;
+	}
+	int l = Length();
+	for (int i = 0; i <= l - sl; i++)
+	{
+		if (NCmp(Str + i, *S, sl) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::LastIndexOf
+//
+//==========================================================================
+
+int VStr::LastIndexOf(char C) const
+{
+	guard(VStr::LastIndexOf);
+	for (int i = Length() - 1; i >= 0; i--)
+	{
+		if (Str[i] == C)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::LastIndexOf
+//
+//==========================================================================
+
+int VStr::LastIndexOf(const char* S) const
+{
+	guard(VStr::LastIndexOf);
+	int sl = Length(S);
+	if (!sl)
+	{
+		return -1;
+	}
+	int l = Length();
+	for (int i = l - sl; i >= 0; i--)
+	{
+		if (NCmp(Str + i, S, sl) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::LastIndexOf
+//
+//==========================================================================
+
+int VStr::LastIndexOf(const VStr& S) const
+{
+	guard(VStr::LastIndexOf);
+	int sl = S.Length();
+	if (!sl)
+	{
+		return -1;
+	}
+	int l = Length();
+	for (int i = l - sl; i >= 0; i--)
+	{
+		if (NCmp(Str + i, *S, sl) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
 	unguard;
 }
 
@@ -513,6 +730,26 @@ VStr VStr::DefaultExtension(const VStr& extension) const
 	}
 
 	return *this + extension;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::FixFileSlashes
+//
+//==========================================================================
+
+VStr VStr::FixFileSlashes() const
+{
+	guard(VStr::FixFileSlashes);
+	VStr Ret(*this);
+	int l = Length();
+	for (int i = 0; i < l; i++)
+	{
+		if (Ret[i] == '\\')
+			Ret[i] = '/';
+	}
+	return Ret;
 	unguard;
 }
 
