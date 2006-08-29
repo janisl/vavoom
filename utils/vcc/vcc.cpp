@@ -57,14 +57,15 @@ static void DumpAsm();
 char			SourceFileName[MAX_FILE_NAME_LENGTH];
 static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
 
-VLexer			Lex;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int		num_dump_asm;
 static char*	dump_asm_names[1024];
 static bool		DebugMode;
 static FILE*	DebugFile;
+
+static VLexer	Lex;
+static VParser	Parser(Lex);
 
 // CODE --------------------------------------------------------------------
 
@@ -94,7 +95,7 @@ int main(int argc, char **argv)
 	dprintf("Preprocessing in %02d:%02d\n",
 		(preptime - starttime) / 60, (preptime - starttime) % 60);
 	Lex.OpenSource(buf, size);
-	PA_Parse();
+	Parser.Parse();
 	int parsetime = time(0);
 	dprintf("Compiled in %02d:%02d\n",
 		(parsetime - preptime) / 60, (parsetime - preptime) % 60);

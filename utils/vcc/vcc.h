@@ -502,6 +502,49 @@ public:
 	{}
 };
 
+class VParser
+{
+private:
+	VLexer&			Lex;
+	bool			CheckForLocal;
+
+	VExpression* ParseDotMethodCall(VExpression*, VName, TLocation);
+	VExpression* ParseBaseMethodCall(VName, TLocation);
+	VExpression* ParseMethodCallOrCast(VName, TLocation);
+	VLocalDecl* ParseLocalVar(VExpression* TypeExpr);
+	VExpression* ParseExpressionPriority0();
+	VExpression* ParseExpressionPriority1();
+	VExpression* ParseExpressionPriority2();
+	VExpression* ParseExpressionPriority3();
+	VExpression* ParseExpressionPriority4();
+	VExpression* ParseExpressionPriority5();
+	VExpression* ParseExpressionPriority6();
+	VExpression* ParseExpressionPriority7();
+	VExpression* ParseExpressionPriority8();
+	VExpression* ParseExpressionPriority9();
+	VExpression* ParseExpressionPriority10();
+	VExpression* ParseExpressionPriority11();
+	VExpression* ParseExpressionPriority12();
+	VExpression* ParseExpressionPriority13();
+	VExpression* ParseExpressionPriority14();
+	VExpression* ParseExpression();
+	VStatement* ParseStatement();
+	VCompound* ParseCompoundStatement();
+	VExpression* ParseType();
+	void ParseMethodDef(VExpression*, VName, TLocation, VClass*, vint32);
+	void ParseDelegate(VExpression*, VField*);
+	void ParseDefaultProperties(VClass*);
+	void ParseStruct(VClass*, bool);
+	void ParseStates(VClass*);
+	void ParseClass();
+
+public:
+	VParser(VLexer& InLex)
+	: Lex(InLex)
+	{}
+	void Parse();
+};
+
 struct breakInfo_t
 {
 	int		level;

@@ -37,74 +37,21 @@
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static VExpression* ParseExpressionPriority13();
-static VExpression* ParseExpression();
-static VCompound* ParseCompoundStatement();
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
-
-extern VLexer			Lex;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static bool				CheckForLocal;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	CheckForTypeKeyword
+//	VParser::ParseDotMethodCall
 //
 //==========================================================================
 
-static TType CheckForTypeKeyword()
-{
-	if (Lex.Check(TK_Void))
-	{
-		return TType(ev_void);
-	}
-	if (Lex.Check(TK_Int))
-	{
-		return TType(ev_int);
-	}
-	if (Lex.Check(TK_Float))
-	{
-		return TType(ev_float);
-	}
-	if (Lex.Check(TK_Name))
-	{
-		return TType(ev_name);
-	}
-	if (Lex.Check(TK_String))
-	{
-		return TType(ev_string);
-	}
-	if (Lex.Check(TK_ClassId))
-	{
-		return TType(ev_classid);
-	}
-	if (Lex.Check(TK_State))
-	{
-		return TType(ev_state);
-	}
-	if (Lex.Check(TK_Bool))
-	{
-		TType ret(ev_bool);
-		ret.bit_mask = 1;
-		return ret;
-	}
-	return TType(ev_unknown);
-}
-
-//==========================================================================
-//
-//	ParseDotMethodCall
-//
-//==========================================================================
-
-static VExpression* ParseDotMethodCall(VExpression* SelfExpr,
+VExpression* VParser::ParseDotMethodCall(VExpression* SelfExpr,
 	VName MethodName, TLocation Loc)
 {
 	VExpression* Args[MAX_PARAMS + 1];
@@ -126,11 +73,11 @@ static VExpression* ParseDotMethodCall(VExpression* SelfExpr,
 
 //==========================================================================
 //
-//	ParseBaseMethodCall
+//	VParser::ParseBaseMethodCall
 //
 //==========================================================================
 
-static VExpression* ParseBaseMethodCall(VName Name, TLocation Loc)
+VExpression* VParser::ParseBaseMethodCall(VName Name, TLocation Loc)
 {
 	VExpression* Args[MAX_PARAMS + 1];
 	int NumArgs = 0;
@@ -151,11 +98,11 @@ static VExpression* ParseBaseMethodCall(VName Name, TLocation Loc)
 
 //==========================================================================
 //
-//	ParseMethodCallOrCast
+//	VParser::ParseMethodCallOrCast
 //
 //==========================================================================
 
-static VExpression* ParseMethodCallOrCast(VName Name, TLocation Loc)
+VExpression* VParser::ParseMethodCallOrCast(VName Name, TLocation Loc)
 {
 	VExpression* Args[MAX_PARAMS + 1];
 	int NumArgs = 0;
@@ -176,11 +123,11 @@ static VExpression* ParseMethodCallOrCast(VName Name, TLocation Loc)
 
 //==========================================================================
 //
-//	ParseLocalVar
+//	VParser::ParseLocalVar
 //
 //==========================================================================
 
-static VLocalDecl* ParseLocalVar(VExpression* TypeExpr)
+VLocalDecl* VParser::ParseLocalVar(VExpression* TypeExpr)
 {
 	VLocalDecl* Decl = new VLocalDecl(Lex.Location);
 	do
@@ -223,11 +170,11 @@ static VLocalDecl* ParseLocalVar(VExpression* TypeExpr)
 
 //==========================================================================
 //
-//	ParseExpressionPriority0
+//	VParser::ParseExpressionPriority0
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority0()
+VExpression* VParser::ParseExpressionPriority0()
 {
 	VName		Name;
 	bool		bLocals;
@@ -349,11 +296,11 @@ static VExpression* ParseExpressionPriority0()
 
 //==========================================================================
 //
-//	ParseExpressionPriority1
+//	VParser::ParseExpressionPriority1
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority1()
+VExpression* VParser::ParseExpressionPriority1()
 {
 	VExpression* op = ParseExpressionPriority0();
 	if (!op)
@@ -413,11 +360,11 @@ static VExpression* ParseExpressionPriority1()
 
 //==========================================================================
 //
-//	ParseExpressionPriority2
+//	VParser::ParseExpressionPriority2
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority2()
+VExpression* VParser::ParseExpressionPriority2()
 {
 	VExpression*	op;
 
@@ -491,11 +438,11 @@ static VExpression* ParseExpressionPriority2()
 
 //==========================================================================
 //
-//	ParseExpressionPriority3
+//	VParser::ParseExpressionPriority3
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority3()
+VExpression* VParser::ParseExpressionPriority3()
 {
 	VExpression* op1 = ParseExpressionPriority2();
 	if (!op1)
@@ -530,11 +477,11 @@ static VExpression* ParseExpressionPriority3()
 
 //==========================================================================
 //
-//	ParseExpressionPriority4
+//	VParser::ParseExpressionPriority4
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority4()
+VExpression* VParser::ParseExpressionPriority4()
 {
 	VExpression* op1 = ParseExpressionPriority3();
 	if (!op1)
@@ -564,11 +511,11 @@ static VExpression* ParseExpressionPriority4()
 
 //==========================================================================
 //
-//	ParseExpressionPriority5
+//	VParser::ParseExpressionPriority5
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority5()
+VExpression* VParser::ParseExpressionPriority5()
 {
 	VExpression* op1 = ParseExpressionPriority4();
 	if (!op1)
@@ -598,11 +545,11 @@ static VExpression* ParseExpressionPriority5()
 
 //==========================================================================
 //
-//	ParseExpressionPriority6
+//	VParser::ParseExpressionPriority6
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority6()
+VExpression* VParser::ParseExpressionPriority6()
 {
 	VExpression* op1 = ParseExpressionPriority5();
 	if (!op1)
@@ -642,11 +589,11 @@ static VExpression* ParseExpressionPriority6()
 
 //==========================================================================
 //
-//	ParseExpressionPriority7
+//	VParser::ParseExpressionPriority7
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority7()
+VExpression* VParser::ParseExpressionPriority7()
 {
 	VExpression* op1 = ParseExpressionPriority6();
 	if (!op1)
@@ -675,11 +622,11 @@ static VExpression* ParseExpressionPriority7()
 
 //==========================================================================
 //
-//	ParseExpressionPriority8
+//	VParser::ParseExpressionPriority8
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority8()
+VExpression* VParser::ParseExpressionPriority8()
 {
 	VExpression* op1 = ParseExpressionPriority7();
 	if (!op1)
@@ -696,11 +643,11 @@ static VExpression* ParseExpressionPriority8()
 
 //==========================================================================
 //
-//	ParseExpressionPriority9
+//	VParser::ParseExpressionPriority9
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority9()
+VExpression* VParser::ParseExpressionPriority9()
 {
 	VExpression* op1 = ParseExpressionPriority8();
 	if (!op1)
@@ -717,11 +664,11 @@ static VExpression* ParseExpressionPriority9()
 
 //==========================================================================
 //
-//	ParseExpressionPriority10
+//	VParser::ParseExpressionPriority10
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority10()
+VExpression* VParser::ParseExpressionPriority10()
 {
 	VExpression* op1 = ParseExpressionPriority9();
 	if (!op1)
@@ -738,11 +685,11 @@ static VExpression* ParseExpressionPriority10()
 
 //==========================================================================
 //
-//	ParseExpressionPriority11
+//	VParser::ParseExpressionPriority11
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority11()
+VExpression* VParser::ParseExpressionPriority11()
 {
 	VExpression* op1 = ParseExpressionPriority10();
 	if (!op1)
@@ -759,11 +706,11 @@ static VExpression* ParseExpressionPriority11()
 
 //==========================================================================
 //
-//	ParseExpressionPriority12
+//	VParser::ParseExpressionPriority12
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority12()
+VExpression* VParser::ParseExpressionPriority12()
 {
 	VExpression* op1 = ParseExpressionPriority11();
 	if (!op1)
@@ -780,11 +727,11 @@ static VExpression* ParseExpressionPriority12()
 
 //==========================================================================
 //
-//	ParseExpressionPriority13
+//	VParser::ParseExpressionPriority13
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority13()
+VExpression* VParser::ParseExpressionPriority13()
 {
 	VExpression* op = ParseExpressionPriority12();
 	if (!op)
@@ -802,11 +749,11 @@ static VExpression* ParseExpressionPriority13()
 
 //==========================================================================
 //
-//	ParseExpressionPriority14
+//	VParser::ParseExpressionPriority14
 //
 //==========================================================================
 
-static VExpression* ParseExpressionPriority14()
+VExpression* VParser::ParseExpressionPriority14()
 {
 	VExpression* op1 = ParseExpressionPriority13();
 	if (!op1)
@@ -872,11 +819,11 @@ static VExpression* ParseExpressionPriority14()
 
 //==========================================================================
 //
-//	ParseExpression
+//	VParser::ParseExpression
 //
 //==========================================================================
 
-static VExpression* ParseExpression()
+VExpression* VParser::ParseExpression()
 {
 	CheckForLocal = false;
 	return ParseExpressionPriority14();
@@ -884,11 +831,11 @@ static VExpression* ParseExpression()
 
 //==========================================================================
 //
-//	ParseStatement
+//	VParser::ParseStatement
 //
 //==========================================================================
 
-static VStatement* ParseStatement()
+VStatement* VParser::ParseStatement()
 {
 	TLocation l = Lex.Location;
 	switch(Lex.Token)
@@ -1052,31 +999,12 @@ static VStatement* ParseStatement()
 	case TK_State:
 	case TK_String:
 	case TK_Void:
-		{
-			TType type = CheckForTypeKeyword();
-			if (type.type != ev_unknown)
-			{
-				VLocalDecl* Decl = ParseLocalVar(new VTypeExpr(type, l));
-				Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
-				return new VLocalVarStatement(Decl);
-			}
-			else
-			{
-				CheckForLocal = true;
-				VExpression* Expr = ParseExpressionPriority14();
-				if (Expr)
-				{
-					Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
-					return new VExpressionStatement(new VDropResult(Expr));
-				}
-				else
-				{
-					ParseError(l, "Misplaced keyword %s", VLexer::TokenNames[Lex.Token]);
-					Lex.NextToken();
-					return new VEmptyStatement(l);
-				}
-			}
-		}
+	{
+		VExpression* TypeExpr = ParseType();
+		VLocalDecl* Decl = ParseLocalVar(TypeExpr);
+		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
+		return new VLocalVarStatement(Decl);
+	}
 
 	default:
 		CheckForLocal = true;
@@ -1106,11 +1034,11 @@ static VStatement* ParseStatement()
 
 //==========================================================================
 //
-//	ParseCompoundStatement
+//	VParser::ParseCompoundStatement
 //
 //==========================================================================
 
-static VCompound* ParseCompoundStatement()
+VCompound* VParser::ParseCompoundStatement()
 {
 	VCompound* Comp = new VCompound(Lex.Location);
 	while (!Lex.Check(TK_RBrace))
@@ -1122,30 +1050,49 @@ static VCompound* ParseCompoundStatement()
 
 //==========================================================================
 //
-//	ParseType
+//	VParser::ParseType
 //
 //==========================================================================
 
-static VExpression* ParseType()
+VExpression* VParser::ParseType()
 {
 	TLocation l = Lex.Location;
 	switch (Lex.Token)
 	{
-	case TK_Bool:
-	case TK_ClassId:
-	case TK_Float:
-	case TK_Int:
-	case TK_Name:
-	case TK_State:
-	case TK_String:
 	case TK_Void:
+		Lex.NextToken();
+		return new VTypeExpr(ev_void, l);
+
+	case TK_Int:
+		Lex.NextToken();
+		return new VTypeExpr(ev_int, l);
+
+	case TK_Float:
+		Lex.NextToken();
+		return new VTypeExpr(ev_float, l);
+
+	case TK_Name:
+		Lex.NextToken();
+		return new VTypeExpr(ev_name, l);
+
+	case TK_String:
+		Lex.NextToken();
+		return new VTypeExpr(ev_string, l);
+
+	case TK_ClassId:
+		Lex.NextToken();
+		return new VTypeExpr(ev_classid, l);
+
+	case TK_State:
+		Lex.NextToken();
+		return new VTypeExpr(ev_state, l);
+
+	case TK_Bool:
 	{
-		TType t = CheckForTypeKeyword();
-		if (t.type != ev_unknown)
-		{
-			return new VTypeExpr(t, l);
-		}
-		break;
+		Lex.NextToken();
+		TType ret(ev_bool);
+		ret.bit_mask = 1;
+		return new VTypeExpr(ret, l);
 	}
 
 	case TK_Identifier:
@@ -1156,19 +1103,18 @@ static VExpression* ParseType()
 	}
 
 	default:
-		break;
+		return NULL;
 	}
-	return NULL;
 }
 
 //==========================================================================
 //
-//	ParseMethodDef
+//	VParser::ParseMethodDef
 //
 //==========================================================================
 
-static void ParseMethodDef(VExpression* RetType, VName MName, TLocation MethodLoc,
-	VClass* InClass, int Modifiers)
+void VParser::ParseMethodDef(VExpression* RetType, VName MName,
+	TLocation MethodLoc, VClass* InClass, vint32 Modifiers)
 {
 	if (CheckForFunction(InClass, MName))
 	{
@@ -1229,11 +1175,11 @@ static void ParseMethodDef(VExpression* RetType, VName MName, TLocation MethodLo
 
 //==========================================================================
 //
-//	ParseDelegate
+//	VParser::ParseDelegate
 //
 //==========================================================================
 
-static void ParseDelegate(VExpression* RetType, VField* Delegate)
+void VParser::ParseDelegate(VExpression* RetType, VField* Delegate)
 {
 	VMethod* Func = new VMethod(NAME_None, Delegate, Delegate->Loc);
 	Func->ReturnTypeExpr = RetType;
@@ -1277,11 +1223,11 @@ static void ParseDelegate(VExpression* RetType, VField* Delegate)
 
 //==========================================================================
 //
-//	ParseDefaultProperties
+//	VParser::ParseDefaultProperties
 //
 //==========================================================================
 
-static void ParseDefaultProperties(VClass* InClass)
+void VParser::ParseDefaultProperties(VClass* InClass)
 {
 	VMethod* Func = new VMethod(NAME_None, InClass, Lex.Location);
 	Func->ReturnTypeExpr = new VTypeExpr(ev_void, Lex.Location);
@@ -1294,11 +1240,11 @@ static void ParseDefaultProperties(VClass* InClass)
 
 //==========================================================================
 //
-//	ParseStruct
+//	VParser::ParseStruct
 //
 //==========================================================================
 
-static void ParseStruct(VClass* InClass, bool IsVector)
+void VParser::ParseStruct(VClass* InClass, bool IsVector)
 {
 	VName Name = Lex.Name;
 	TLocation StrLoc = Lex.Location;
@@ -1396,11 +1342,11 @@ static void ParseStruct(VClass* InClass, bool IsVector)
 
 //==========================================================================
 //
-//	ParseStates
+//	VParser::ParseStates
 //
 //==========================================================================
 
-static void ParseStates(VClass* InClass)
+void VParser::ParseStates(VClass* InClass)
 {
 	Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
 	while (!Lex.Check(TK_RBrace))
@@ -1470,11 +1416,11 @@ static void ParseStates(VClass* InClass)
 
 //==========================================================================
 //
-//	ParseClass
+//	VParser::ParseClass
 //
 //==========================================================================
 
-static void ParseClass()
+void VParser::ParseClass()
 {
 	if (Lex.Token != TK_Identifier)
 	{
@@ -1593,7 +1539,28 @@ static void ParseClass()
 
 		if (Lex.Check(TK_Const))
 		{
-			TType t = CheckForTypeKeyword();
+			int Type = ev_unknown;
+			if (Lex.Check(TK_Int))
+			{
+				Type = ev_int;
+			}
+			else if (Lex.Check(TK_Float))
+			{
+				Type = ev_float;
+			}
+			else if (Lex.Check(TK_Name))
+			{
+				Type = ev_name;
+			}
+			else if (Lex.Check(TK_String))
+			{
+				Type = ev_string;
+			}
+			else
+			{
+				ParseError(Lex.Location, "Bad constant type");
+				Lex.NextToken();
+			}
 			do
 			{
 				if (Lex.Token != TK_Identifier)
@@ -1607,7 +1574,7 @@ static void ParseClass()
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
 				VConstant* cDef = new VConstant(Lex.Name, Class, Lex.Location);
-				cDef->Type = t.type;
+				cDef->Type = Type;
 				Lex.NextToken();
 				if (!Lex.Check(TK_Assign))
 				{
@@ -1733,11 +1700,11 @@ static void ParseClass()
 
 //==========================================================================
 //
-//	PA_Parse
+//	VParser::Parse
 //
 //==========================================================================
 
-void PA_Parse()
+void VParser::Parse()
 {
 	bool		done;
 
