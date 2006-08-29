@@ -878,7 +878,7 @@ VSingleName::VSingleName(VName AName, const TLocation& ALoc)
 VExpression* VSingleName::DoResolve()
 {
 	int num = CheckForLocalVar(Name);
-	if (num)
+	if (num != -1)
 	{
 		VExpression* e = new VLocalVar(num, Loc);
 		delete this;
@@ -3314,8 +3314,8 @@ VLocalVar::VLocalVar(int ANum, const TLocation& ALoc)
 
 VExpression* VLocalVar::DoResolve()
 {
-	Type = localdefs[num].type;
-	RealType = localdefs[num].type;
+	Type = LocalDefs[num].type;
+	RealType = LocalDefs[num].type;
 	if (Type.type == ev_bool)
 	{
 		Type = TType(ev_int);
@@ -3344,10 +3344,10 @@ void VLocalVar::RequestAddressOf()
 
 void VLocalVar::Emit()
 {
-	EmitLocalAddress(localdefs[num].ofs);
+	EmitLocalAddress(LocalDefs[num].ofs);
 	if (!AddressRequested)
 	{
-		EmitPushPointedCode(localdefs[num].type);
+		EmitPushPointedCode(LocalDefs[num].type);
 	}
 }
 
@@ -4192,7 +4192,7 @@ void VLocalDecl::Declare()
 	{
 		VLocalEntry& e = Vars[i];
 
-		if (CheckForLocalVar(e.Name))
+		if (CheckForLocalVar(e.Name) != -1)
 		{
 			ParseError(e.Loc, "Redefined identifier %s", *e.Name);
 		}
@@ -4208,29 +4208,23 @@ void VLocalDecl::Declare()
 			ParseError(e.TypeExpr->Loc, "Bad variable type");
 		}
 
-		if (numlocaldefs == MAX_LOCAL_DEFS)
-		{
-			ParseError(e.Loc, "Too many local variables");
-			continue;
-		}
-
-		localdefs[numlocaldefs].Name = e.Name;
-		localdefs[numlocaldefs].type = Type;
-		localdefs[numlocaldefs].ofs = localsofs;
-		localdefs[numlocaldefs].Visible = true;
-		localdefs[numlocaldefs].Cleared = false;
+		VLocalVarDef& L = LocalDefs.Alloc();
+		L.Name = e.Name;
+		L.type = Type;
+		L.ofs = localsofs;
+		L.Visible = false;
+		L.Cleared = false;
 
 		//  Initialisation
 		if (e.Value)
 		{
-			VExpression* op1 = new VLocalVar(numlocaldefs, e.Loc);
+			VExpression* op1 = new VLocalVar(LocalDefs.Num() - 1, e.Loc);
 			e.Value = new VAssignment(VAssignment::Assign, op1, e.Value, e.Loc);
 			e.Value = e.Value->Resolve();
 		}
 
-		//  Increase variable count after expression so you can't use
-		// the variable in expression.
-		numlocaldefs++;
+		L.Visible = true;
+
 		localsofs += Type.GetSize() / 4;
 		if (localsofs > 1024)
 		{

@@ -261,7 +261,7 @@ bool VWhile::Resolve()
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = numlocaldefs;
+	NumLocalsOnStart = LocalDefs.Num();
 	if (Expr)
 	{
 		Expr = Expr->ResolveBoolean();
@@ -346,7 +346,7 @@ bool VDo::Resolve()
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = numlocaldefs;
+	NumLocalsOnStart = LocalDefs.Num();
 	if (Expr)
 	{
 		Expr = Expr->ResolveBoolean();
@@ -435,6 +435,8 @@ VFor::~VFor()
 bool VFor::Resolve()
 {
 	bool Ret = true;
+
+	NumLocalsOnStart = LocalDefs.Num();
 
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
@@ -556,7 +558,7 @@ bool VSwitch::Resolve()
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = numlocaldefs;
+	NumLocalsOnStart = LocalDefs.Num();
 	if (Expr)
 	{
 		Expr = Expr->Resolve();
@@ -746,7 +748,7 @@ void VSwitchDefault::DoEmit()
 VBreak::VBreak(const TLocation& ALoc)
 : VStatement(ALoc)
 {
-	NumLocalsEnd = numlocaldefs;
+	NumLocalsEnd = LocalDefs.Num();
 }
 
 //==========================================================================
@@ -793,7 +795,7 @@ void VBreak::DoEmit()
 VContinue::VContinue(const TLocation& ALoc)
 : VStatement(ALoc)
 {
-	NumLocalsEnd = numlocaldefs;
+	NumLocalsEnd = LocalDefs.Num();
 }
 
 //==========================================================================
@@ -841,7 +843,7 @@ VReturn::VReturn(VExpression* AExpr, const TLocation& ALoc)
 : VStatement(ALoc)
 , Expr(AExpr)
 {
-	NumLocalsToClear = numlocaldefs;
+	NumLocalsToClear = LocalDefs.Num();
 }
 
 //==========================================================================
@@ -1065,7 +1067,7 @@ VCompound::~VCompound()
 bool VCompound::Resolve()
 {
 	bool Ret = true;
-	NumLocalsOnStart = numlocaldefs;
+	NumLocalsOnStart = LocalDefs.Num();
 	for (int i = 0; i < Statements.Num(); i++)
 	{
 		if (!Statements[i]->Resolve())
@@ -1073,12 +1075,10 @@ bool VCompound::Resolve()
 			Ret = false;
 		}
 	}
-	NumLocalsOnEnd = numlocaldefs;
+	NumLocalsOnEnd = LocalDefs.Num();
 
-	if (maxlocalsofs < localsofs)
-		maxlocalsofs = localsofs;
-	for (int i = NumLocalsOnStart; i < numlocaldefs; i++)
-		localdefs[i].Visible = false;
+	for (int i = NumLocalsOnStart; i < LocalDefs.Num(); i++)
+		LocalDefs[i].Visible = false;
 
 	return Ret;
 }
@@ -1097,7 +1097,7 @@ void VCompound::DoEmit()
 	}
 	EmitClearStrings(NumLocalsOnStart, NumLocalsOnEnd);
 	for (int i = NumLocalsOnStart; i < NumLocalsOnEnd; i++)
-		localdefs[i].Cleared = true;
+		LocalDefs[i].Cleared = true;
 }
 
 //END

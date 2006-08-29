@@ -489,42 +489,42 @@ void EmitClearStrings(int Start, int End)
 {
 	for (int i = Start; i < End; i++)
 	{
-		if (localdefs[i].Cleared)
+		if (LocalDefs[i].Cleared)
 		{
 			continue;
 		}
-		if (localdefs[i].type.type == ev_string)
+		if (LocalDefs[i].type.type == ev_string)
 		{
-			EmitLocalAddress(localdefs[i].ofs);
+			EmitLocalAddress(LocalDefs[i].ofs);
 			AddStatement(OPC_ClearPointedStr);
 		}
-		if (localdefs[i].type.type == ev_struct &&
-			localdefs[i].type.Struct->NeedsDestructor())
+		if (LocalDefs[i].type.type == ev_struct &&
+			LocalDefs[i].type.Struct->NeedsDestructor())
 		{
-			EmitLocalAddress(localdefs[i].ofs);
-			AddStatement(OPC_ClearPointedStruct, localdefs[i].type.Struct);
+			EmitLocalAddress(LocalDefs[i].ofs);
+			AddStatement(OPC_ClearPointedStruct, LocalDefs[i].type.Struct);
 		}
-		if (localdefs[i].type.type == ev_array)
+		if (LocalDefs[i].type.type == ev_array)
 		{
-			if (localdefs[i].type.ArrayInnerType == ev_string)
+			if (LocalDefs[i].type.ArrayInnerType == ev_string)
 			{
-				for (int j = 0; j < localdefs[i].type.array_dim; j++)
+				for (int j = 0; j < LocalDefs[i].type.array_dim; j++)
 				{
-					EmitLocalAddress(localdefs[i].ofs);
+					EmitLocalAddress(LocalDefs[i].ofs);
 					EmitPushNumber(j);
-					AddStatement(OPC_ArrayElement, localdefs[i].type.GetArrayInnerType());
+					AddStatement(OPC_ArrayElement, LocalDefs[i].type.GetArrayInnerType());
 					AddStatement(OPC_ClearPointedStr);
 				}
 			}
-			else if (localdefs[i].type.ArrayInnerType == ev_struct &&
-				localdefs[i].type.Struct->NeedsDestructor())
+			else if (LocalDefs[i].type.ArrayInnerType == ev_struct &&
+				LocalDefs[i].type.Struct->NeedsDestructor())
 			{
-				for (int j = 0; j < localdefs[i].type.array_dim; j++)
+				for (int j = 0; j < LocalDefs[i].type.array_dim; j++)
 				{
-					EmitLocalAddress(localdefs[i].ofs);
+					EmitLocalAddress(LocalDefs[i].ofs);
 					EmitPushNumber(j);
-					AddStatement(OPC_ArrayElement, localdefs[i].type.GetArrayInnerType());
-					AddStatement(OPC_ClearPointedStruct, localdefs[i].type.Struct);
+					AddStatement(OPC_ArrayElement, LocalDefs[i].type.GetArrayInnerType());
+					AddStatement(OPC_ClearPointedStruct, LocalDefs[i].type.Struct);
 				}
 			}
 		}
@@ -560,7 +560,7 @@ void EndCode(VMethod* Func)
 #endif
 	FInstruction& Dummy = Func->Instructions.Alloc();
 	Dummy.Opcode = OPC_Done;
-//	DumpAsmFunction(Func);
+	DumpAsmFunction(Func);
 }
 
 //==========================================================================

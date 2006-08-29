@@ -41,14 +41,12 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VLocalVarDef			localdefs[MAX_LOCAL_DEFS];
-int						numlocaldefs = 1;
+TArray<VLocalVarDef>	LocalDefs;
 int						localsofs = 0;
 
 TType					SelfType;
 VClass*					SelfClass;
 
-int						maxlocalsofs = 0;
 TArray<breakInfo_t>		BreakInfo;
 int						BreakLevel;
 int						BreakNumLocalsOnStart;
@@ -777,20 +775,20 @@ int CheckForLocalVar(VName Name)
 {
 	if (Name == NAME_None)
 	{
-		return 0;
+		return -1;
 	}
-	for (int i = 1; i < numlocaldefs; i++)
+	for (int i = 0; i < LocalDefs.Num(); i++)
 	{
-		if (!localdefs[i].Visible)
+		if (!LocalDefs[i].Visible)
 		{
 			continue;
 		}
-		if (localdefs[i].Name == Name)
+		if (LocalDefs[i].Name == Name)
 		{
 			return i;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 //==========================================================================
@@ -1268,7 +1266,7 @@ void VMethod::Emit()
 	SelfClass = (VClass*)C;
 	SelfType = TType(SelfClass);
 
-	numlocaldefs = 1;
+	LocalDefs.Clear();
 	localsofs = 1;
 
 	for (int i = 0; i < NumParams; i++)
@@ -1276,31 +1274,30 @@ void VMethod::Emit()
 		VMethodParam& P = Params[i];
 		if (P.Name != NAME_None)
 		{
-			if (CheckForLocalVar(P.Name))
+			if (CheckForLocalVar(P.Name) != -1)
 			{
 				ParseError(P.Loc, "Redefined identifier %s", *P.Name);
 			}
-			localdefs[numlocaldefs].Name = P.Name;
-			localdefs[numlocaldefs].type = ParamTypes[i];
-			localdefs[numlocaldefs].ofs = localsofs;
-			localdefs[numlocaldefs].Visible = true;
-			localdefs[numlocaldefs].Cleared = false;
-			numlocaldefs++;
+			VLocalVarDef& L = LocalDefs.Alloc();
+			L.Name = P.Name;
+			L.type = ParamTypes[i];
+			L.ofs = localsofs;
+			L.Visible = true;
+			L.Cleared = false;
 		}
 		localsofs += ParamTypes[i].GetSize() / 4;
 	}
-	maxlocalsofs = localsofs;
 
 	BreakLevel = 0;
 	ContinueLevel = 0;
 	FuncRetType = ReturnType;
 
 	BeginCode(this);
-	for (int i = 0; i < numlocaldefs; i++)
+	for (int i = 0; i < LocalDefs.Num(); i++)
 	{
-		if (localdefs[i].type.type == ev_vector)
+		if (LocalDefs[i].type.type == ev_vector)
 		{
-			AddStatement(OPC_VFixParam, i);
+			AddStatement(OPC_VFixParam, LocalDefs[i].ofs);
 		}
 	}
 
@@ -1324,10 +1321,10 @@ void VMethod::Emit()
 
 	if (FuncRetType.type == ev_void)
 	{
-		EmitClearStrings(0, numlocaldefs);
+		EmitClearStrings(0, LocalDefs.Num());
 		AddStatement(OPC_Return);
 	}
-	NumLocals = maxlocalsofs;
+	NumLocals = localsofs;
 	EndCode(this);
 }
 

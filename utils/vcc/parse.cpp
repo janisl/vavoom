@@ -900,7 +900,6 @@ VStatement* VParser::ParseStatement()
 	{
 		Lex.NextToken();
 		VFor* For = new VFor(l);
-		For->NumLocalsOnStart = numlocaldefs;
 		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
 		do
 		{

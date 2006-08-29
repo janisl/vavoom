@@ -58,7 +58,6 @@ class VMemberBase;
 #define MAX_FILE_NAME_LENGTH	512
 #define MAX_QUOTED_LENGTH		256
 #define MAX_IDENTIFIER_LENGTH	64
-#define MAX_LOCAL_DEFS			64
 
 #define ANY_PACKAGE				((VPackage*)-1)
 #define ANY_MEMBER				255
@@ -260,6 +259,20 @@ public:
 	}
 };
 
+class VLocalVarDef
+{
+public:
+	VName			Name;
+	TLocation		Loc;
+	int				ofs;
+	TType			type;
+	bool			Visible;
+	bool			Cleared;
+
+	VLocalVarDef()
+	{}
+};
+
 class VMethod : public VMemberBase
 {
 public:
@@ -301,19 +314,6 @@ public:
 	void Serialise(VStream&);
 	bool Define();
 	void Emit();
-};
-
-class VLocalVarDef : public VMemberBase
-{
-public:
-	int			ofs;
-	TType		type;
-	bool		Visible;
-	bool		Cleared;
-
-	VLocalVarDef()
-	: VMemberBase(MEMBER_Field, NAME_None, NULL, TLocation())
-	{}
 };
 
 class VConstant : public VMemberBase
@@ -622,22 +622,20 @@ VState* CheckForState(VName, VClass*);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern VPackage*			CurrentPackage;
-extern int					numbuiltins;
+extern VPackage*				CurrentPackage;
+extern int						numbuiltins;
 
-extern TArray<mobjinfo_t>	mobj_info;
-extern TArray<mobjinfo_t>	script_ids;
+extern TArray<mobjinfo_t>		mobj_info;
+extern TArray<mobjinfo_t>		script_ids;
 
-extern int				NumErrors;
+extern int						NumErrors;
 
-extern TType			SelfType;
-extern VClass*			SelfClass;
+extern TType					SelfType;
+extern VClass*					SelfClass;
 
-extern VLocalVarDef		localdefs[MAX_LOCAL_DEFS];
-extern int				numlocaldefs;
-extern int				localsofs;
+extern TArray<VLocalVarDef>		LocalDefs;
+extern int						localsofs;
 
-extern int						maxlocalsofs;
 extern TArray<breakInfo_t>		BreakInfo;
 extern int						BreakLevel;
 extern int						BreakNumLocalsOnStart;
