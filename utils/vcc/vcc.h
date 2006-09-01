@@ -197,6 +197,27 @@ public:
 	void GetName(char*) const;
 };
 
+class VLabel
+{
+private:
+	friend class VEmitContext;
+
+	int			Index;
+
+	VLabel(int AIndex)
+	: Index(AIndex)
+	{}
+
+public:
+	VLabel()
+	: Index(-1)
+	{}
+	bool IsDefined() const
+	{
+		return Index != -1;
+	}
+};
+
 #include "expression.h"
 #include "statement.h"
 
@@ -582,22 +603,10 @@ private:
 	void ParseClass();
 
 public:
-	VParser(VLexer& InLex)
-	: Lex(InLex)
+	VParser(VLexer& ALex)
+	: Lex(ALex)
 	{}
 	void Parse();
-};
-
-struct breakInfo_t
-{
-	int		level;
-	int		addressPtr;
-};
-
-struct continueInfo_t
-{
-	int		level;
-	int		addressPtr;
 };
 
 class VEmitContext
@@ -605,7 +614,15 @@ class VEmitContext
 private:
 	VMethod*				CurrentFunc;
 
-	void FixupJump(int, int);
+	struct VLabelFixup
+	{
+		int					Pos;
+		int					LabelIdx;
+		int					Arg;
+	};
+
+	TArray<int>				Labels;
+	TArray<VLabelFixup>		Fixups;
 
 public:
 	VClass*					SelfClass;
@@ -616,11 +633,9 @@ public:
 	TArray<VLocalVarDef>	LocalDefs;
 	int						localsofs;
 
-	TArray<breakInfo_t>		BreakInfo;
-	int						BreakLevel;
+	VLabel					LoopStart;
+	VLabel					LoopEnd;
 	int						BreakNumLocalsOnStart;
-	TArray<continueInfo_t> 	ContinueInfo;
-	int						ContinueLevel;
 	int						ContinueNumLocalsOnStart;
 
 	VEmitContext(VMemberBase*);
@@ -628,19 +643,19 @@ public:
 
 	int CheckForLocalVar(VName);
 
-	int AddStatement(int);
-	int AddStatement(int, int);
-	int AddStatement(int, float);
-	int AddStatement(int, VName);
-	int AddStatement(int, VMemberBase*);
-	int AddStatement(int, const TType&);
-	int AddStatement(int, int, int);
-	void FixupJump(int);
-	int GetNumInstructions();
+	VLabel DefineLabel();
+	void MarkLabel(VLabel);
+
+	void AddStatement(int);
+	void AddStatement(int, int);
+	void AddStatement(int, float);
+	void AddStatement(int, VName);
+	void AddStatement(int, VMemberBase*);
+	void AddStatement(int, const TType&);
+	void AddStatement(int, VLabel);
+	void AddStatement(int, int, VLabel);
 	void EmitPushNumber(int);
 	void EmitLocalAddress(int);
-	void WriteBreaks();
-	void WriteContinues(int);
 	void EmitClearStrings(int, int);
 };
 

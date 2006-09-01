@@ -2652,17 +2652,17 @@ VExpression* VBinaryLogical::DoResolve(VEmitContext& ec)
 
 void VBinaryLogical::Emit(VEmitContext& ec)
 {
-	int jmppos = 0;
+	VLabel End = ec.DefineLabel();
 
 	op1->Emit(ec);
 
 	switch (Oper)
 	{
 	case And:
-		jmppos = ec.AddStatement(OPC_IfNotTopGoto, 0);
+		ec.AddStatement(OPC_IfNotTopGoto, End);
 		break;
 	case Or:
-		jmppos = ec.AddStatement(OPC_IfTopGoto, 0);
+		ec.AddStatement(OPC_IfTopGoto, End);
 		break;
 	}
 
@@ -2679,7 +2679,7 @@ void VBinaryLogical::Emit(VEmitContext& ec)
 		break;
 	}
 
-	ec.FixupJump(jmppos);
+	ec.MarkLabel(End);
 }
 
 //==========================================================================
@@ -2789,13 +2789,16 @@ VExpression* VConditional::DoResolve(VEmitContext& ec)
 
 void VConditional::Emit(VEmitContext& ec)
 {
+	VLabel FalseTarget = ec.DefineLabel();
+	VLabel End = ec.DefineLabel();
+
 	op->Emit(ec);
-	int jumppos1 = ec.AddStatement(OPC_IfNotGoto, 0);
+	ec.AddStatement(OPC_IfNotGoto, FalseTarget);
 	op1->Emit(ec);
-	int jumppos2 = ec.AddStatement(OPC_Goto, 0);
-	ec.FixupJump(jumppos1);
+	ec.AddStatement(OPC_Goto, End);
+	ec.MarkLabel(FalseTarget);
 	op2->Emit(ec);
-	ec.FixupJump(jumppos2);
+	ec.MarkLabel(End);
 }
 
 //END

@@ -103,13 +103,13 @@ class VSwitch : public VStatement
 public:
 	struct VCaseInfo
 	{
-		int		value;
-		int		address;
+		vint32			Value;
+		VLabel			Address;
 	};
 
 	VExpression*		Expr;
 	TArray<VCaseInfo>	CaseInfo;
-	int					defaultAddress;
+	VLabel				DefaultAddress;
 	TArray<VStatement*>	Statements;
 	int					NumLocalsOnStart;
 

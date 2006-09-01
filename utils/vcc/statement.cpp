@@ -202,21 +202,23 @@ void VIf::DoEmit(VEmitContext& ec)
 {
 	//	Expression.
 	Expr->Emit(ec);
+	VLabel FalseTarget = ec.DefineLabel();
+	ec.AddStatement(OPC_IfNotGoto, FalseTarget);
 
 	//	True statement
-	int jumpAddrPtr1 = ec.AddStatement(OPC_IfNotGoto, 0);
 	TrueStatement->Emit(ec);
 	if (FalseStatement)
 	{
 		//	False statement
-		int jumpAddrPtr2 = ec.AddStatement(OPC_Goto, 0);
-		ec.FixupJump(jumpAddrPtr1);
+		VLabel End = ec.DefineLabel();
+		ec.AddStatement(OPC_Goto, End);
+		ec.MarkLabel(FalseTarget);
 		FalseStatement->Emit(ec);
-		ec.FixupJump(jumpAddrPtr2);
+		ec.MarkLabel(End);
 	}
 	else
 	{
-		ec.FixupJump(jumpAddrPtr1);
+		ec.MarkLabel(FalseTarget);
 	}
 }
 
@@ -289,20 +291,26 @@ void VWhile::DoEmit(VEmitContext& ec)
 {
 	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
 	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
+	VLabel OldStart = ec.LoopStart;
+	VLabel OldEnd = ec.LoopEnd;
 	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
 	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
-	ec.BreakLevel++;
-	ec.ContinueLevel++;
-	int topAddr = ec.GetNumInstructions();
+
+	ec.LoopStart = ec.DefineLabel();
+	ec.LoopEnd = ec.DefineLabel();
+
+	ec.MarkLabel(ec.LoopStart);
 	Expr->Emit(ec);
-	int outAddrPtr = ec.AddStatement(OPC_IfNotGoto, 0);
+	ec.AddStatement(OPC_IfNotGoto, ec.LoopEnd);
+
 	Statement->Emit(ec);
-	ec.AddStatement(OPC_Goto, topAddr);
-	ec.FixupJump(outAddrPtr);
-	ec.WriteContinues(topAddr);
-	ec.WriteBreaks();
+	ec.AddStatement(OPC_Goto, ec.LoopStart);
+	ec.MarkLabel(ec.LoopEnd);
+
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
 	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
+	ec.LoopStart = OldStart;
+	ec.LoopEnd = OldEnd;
 }
 
 //END
@@ -374,19 +382,26 @@ void VDo::DoEmit(VEmitContext& ec)
 {
 	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
 	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
+	VLabel OldStart = ec.LoopStart;
+	VLabel OldEnd = ec.LoopEnd;
 	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
 	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
-	ec.BreakLevel++;
-	ec.ContinueLevel++;
-	int topAddr = ec.GetNumInstructions();
+
+	VLabel Loop = ec.DefineLabel();
+	ec.LoopStart = ec.DefineLabel();
+	ec.LoopEnd = ec.DefineLabel();
+
+	ec.MarkLabel(Loop);
 	Statement->Emit(ec);
-	int exprAddr = ec.GetNumInstructions();
+	ec.MarkLabel(ec.LoopStart);
 	Expr->Emit(ec);
-	ec.AddStatement(OPC_IfGoto, topAddr);
-	ec.WriteContinues(exprAddr);
-	ec.WriteBreaks();
+	ec.AddStatement(OPC_IfGoto, Loop);
+	ec.MarkLabel(ec.LoopEnd);
+
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
 	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
+	ec.LoopStart = OldStart;
+	ec.LoopEnd = OldEnd;
 }
 
 //END
@@ -483,15 +498,21 @@ void VFor::DoEmit(VEmitContext& ec)
 {
 	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
 	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
+	VLabel OldStart = ec.LoopStart;
+	VLabel OldEnd = ec.LoopEnd;
 	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
 	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
-	ec.BreakLevel++;
-	ec.ContinueLevel++;
+
+	ec.LoopStart = ec.DefineLabel();
+	ec.LoopEnd = ec.DefineLabel();
+	VLabel LoopCond = ec.DefineLabel();
+	VLabel LoopCode = ec.DefineLabel();
+
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
 		InitExpr[i]->Emit(ec);
 	}
-	int topAddr = ec.GetNumInstructions();
+	ec.MarkLabel(LoopCond);
 	if (!CondExpr)
 	{
 		ec.AddStatement(OPC_PushNumber, 1);
@@ -500,22 +521,23 @@ void VFor::DoEmit(VEmitContext& ec)
 	{
 		CondExpr->Emit(ec);
 	}
-	int jumpAddrPtr1 = ec.AddStatement(OPC_IfGoto, 0);
-	int jumpAddrPtr2 = ec.AddStatement(OPC_Goto, 0);
-	int contAddr = ec.GetNumInstructions();
+	ec.AddStatement(OPC_IfGoto, LoopCode);
+	ec.AddStatement(OPC_Goto, ec.LoopEnd);
+	ec.MarkLabel(ec.LoopStart);
 	for (int i = 0; i < LoopExpr.Num(); i++)
 	{
 		LoopExpr[i]->Emit(ec);
 	}
-	ec.AddStatement(OPC_Goto, topAddr);
-	ec.FixupJump(jumpAddrPtr1);
+	ec.AddStatement(OPC_Goto, LoopCond);
+	ec.MarkLabel(LoopCode);
 	Statement->Emit(ec);
-	ec.AddStatement(OPC_Goto, contAddr);
-	ec.FixupJump(jumpAddrPtr2);
-	ec.WriteContinues(contAddr);
-	ec.WriteBreaks();
+	ec.AddStatement(OPC_Goto, ec.LoopStart);
+	ec.MarkLabel(ec.LoopEnd);
+
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
 	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
+	ec.LoopStart = OldStart;
+	ec.LoopEnd = OldEnd;
 }
 
 //END
@@ -588,52 +610,55 @@ bool VSwitch::Resolve(VEmitContext& ec)
 
 void VSwitch::DoEmit(VEmitContext& ec)
 {
+	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
+	VLabel OldEnd = ec.LoopEnd;
+	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
+
 	Expr->Emit(ec);
 
-	int switcherAddrPtr = ec.AddStatement(OPC_Goto, 0);
-	defaultAddress = -1;
-	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
-	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
-	ec.BreakLevel++;
+	VLabel SwitchTable = ec.DefineLabel();
+	ec.LoopEnd = ec.DefineLabel();
+
+	ec.AddStatement(OPC_Goto, SwitchTable);
 
 	for (int i = 0; i < Statements.Num(); i++)
 	{
 		Statements[i]->Emit(ec);
 	}
 
-	int outAddrPtr = ec.AddStatement(OPC_Goto, 0);
+	ec.AddStatement(OPC_Goto, ec.LoopEnd);
 
-	ec.FixupJump(switcherAddrPtr);
+	ec.MarkLabel(SwitchTable);
 	for (int i = 0; i < CaseInfo.Num(); i++)
 	{
-		if (CaseInfo[i].value >= 0 && CaseInfo[i].value < 256)
+		if (CaseInfo[i].Value >= 0 && CaseInfo[i].Value < 256)
 		{
-			ec.AddStatement(OPC_CaseGotoB, CaseInfo[i].value,
-				CaseInfo[i].address);
+			ec.AddStatement(OPC_CaseGotoB, CaseInfo[i].Value,
+				CaseInfo[i].Address);
 		}
-		else if (CaseInfo[i].value >= MIN_VINT16 &&
-			CaseInfo[i].value < MAX_VINT16)
+		else if (CaseInfo[i].Value >= MIN_VINT16 &&
+			CaseInfo[i].Value < MAX_VINT16)
 		{
-			ec.AddStatement(OPC_CaseGotoS, CaseInfo[i].value,
-				CaseInfo[i].address);
+			ec.AddStatement(OPC_CaseGotoS, CaseInfo[i].Value,
+				CaseInfo[i].Address);
 		}
 		else
 		{
-			ec.AddStatement(OPC_CaseGoto, CaseInfo[i].value,
-				CaseInfo[i].address);
+			ec.AddStatement(OPC_CaseGoto, CaseInfo[i].Value,
+				CaseInfo[i].Address);
 		}
 	}
 	ec.AddStatement(OPC_Drop);
 
-	if (defaultAddress != -1)
+	if (DefaultAddress.IsDefined())
 	{
-		ec.AddStatement(OPC_Goto, defaultAddress);
+		ec.AddStatement(OPC_Goto, DefaultAddress);
 	}
 
-	ec.FixupJump(outAddrPtr);
+	ec.MarkLabel(ec.LoopEnd);
 
-	ec.WriteBreaks();
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
+	ec.LoopEnd = OldEnd;
 }
 
 //END
@@ -683,15 +708,16 @@ void VSwitchCase::DoEmit(VEmitContext& ec)
 {
 	for (int i = 0; i < Switch->CaseInfo.Num(); i++)
 	{
-		if (Switch->CaseInfo[i].value == Value)
+		if (Switch->CaseInfo[i].Value == Value)
 		{
 			ParseError(Loc, "Duplicate case value");
 			break;
 		}
 	}
 	VSwitch::VCaseInfo& C = Switch->CaseInfo.Alloc();
-	C.value = Value;
-	C.address = ec.GetNumInstructions();
+	C.Value = Value;
+	C.Address = ec.DefineLabel();
+	ec.MarkLabel(C.Address);
 }
 
 //END
@@ -728,11 +754,13 @@ bool VSwitchDefault::Resolve(VEmitContext&)
 
 void VSwitchDefault::DoEmit(VEmitContext& ec)
 {
-	if (Switch->defaultAddress != -1)
+	if (Switch->DefaultAddress.IsDefined())
 	{
 		ParseError(Loc, "Only 1 DEFAULT per switch allowed.");
+		return;
 	}
-	Switch->defaultAddress = ec.GetNumInstructions();
+	Switch->DefaultAddress = ec.DefineLabel();
+	ec.MarkLabel(Switch->DefaultAddress);
 }
 
 //END
@@ -770,16 +798,14 @@ bool VBreak::Resolve(VEmitContext& ec)
 
 void VBreak::DoEmit(VEmitContext& ec)
 {
-	if (!ec.BreakLevel)
+	if (!ec.LoopEnd.IsDefined())
 	{
 		ParseError(Loc, "Misplaced BREAK statement.");
+		return;
 	}
 
 	ec.EmitClearStrings(ec.BreakNumLocalsOnStart, NumLocalsEnd);
-
-	breakInfo_t& B = ec.BreakInfo.Alloc();
-	B.level = ec.BreakLevel;
-	B.addressPtr = ec.AddStatement(OPC_Goto, 0);
+	ec.AddStatement(OPC_Goto, ec.LoopEnd);
 }
 
 //END
@@ -817,16 +843,14 @@ bool VContinue::Resolve(VEmitContext& ec)
 
 void VContinue::DoEmit(VEmitContext& ec)
 {
-	if (!ec.ContinueLevel)
+	if (!ec.LoopStart.IsDefined())
 	{
 		ParseError(Loc, "Misplaced CONTINUE statement.");
+		return;
 	}
 
 	ec.EmitClearStrings(ec.ContinueNumLocalsOnStart, NumLocalsEnd);
-
-	continueInfo_t& C = ec.ContinueInfo.Alloc();
-	C.level = ec.ContinueLevel;
-	C.addressPtr = ec.AddStatement(OPC_Goto, 0);
+	ec.AddStatement(OPC_Goto, ec.LoopStart);
 }
 
 //END

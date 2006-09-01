@@ -195,9 +195,7 @@ VEmitContext::VEmitContext(VMemberBase* Member)
 : CurrentFunc(NULL)
 , FuncRetType(ev_unknown)
 , localsofs(0)
-, BreakLevel(0)
 , BreakNumLocalsOnStart(0)
-, ContinueLevel(0)
 , ContinueNumLocalsOnStart(0)
 {
 	//	Find the class.
@@ -232,6 +230,25 @@ VEmitContext::VEmitContext(VMemberBase* Member)
 
 void VEmitContext::EndCode()
 {
+	//	Fix-up labels.
+	for (int i = 0; i < Fixups.Num(); i++)
+	{
+		if (Labels[Fixups[i].LabelIdx] < 0)
+		{
+			FatalError("Label was not marked");
+		}
+		if (Fixups[i].Arg == 1)
+		{
+			CurrentFunc->Instructions[Fixups[i].Pos].Arg1 =
+				Labels[Fixups[i].LabelIdx];
+		}
+		else
+		{
+			CurrentFunc->Instructions[Fixups[i].Pos].Arg2 =
+				Labels[Fixups[i].LabelIdx];
+		}
+	}
+
 #ifdef OPCODE_STATS
 	for (int i = 0; i < CurrentFunc->Instructions.Num(); i++)
 	{
@@ -271,11 +288,42 @@ int VEmitContext::CheckForLocalVar(VName Name)
 
 //==========================================================================
 //
+//  VEmitContext::DefineLabel
+//
+//==========================================================================
+
+VLabel VEmitContext::DefineLabel()
+{
+	Labels.Append(-1);
+	return VLabel(Labels.Num() - 1);
+}
+
+//==========================================================================
+//
+//  VEmitContext::MarkLabel
+//
+//==========================================================================
+
+void VEmitContext::MarkLabel(VLabel l)
+{
+	if (l.Index < 0 || l.Index >= Labels.Num())
+	{
+		FatalError("Bad label index %d", l.Index);
+	}
+	if (Labels[l.Index] >= 0)
+	{
+		FatalError("Label has already been marked");
+	}
+	Labels[l.Index] = CurrentFunc->Instructions.Num();
+}
+
+//==========================================================================
+//
 //  VEmitContext::AddStatement
 //
 //==========================================================================
 
-int VEmitContext::AddStatement(int statement)
+void VEmitContext::AddStatement(int statement)
 {
 	if (StatementInfo[statement].Args != OPCARGS_None)
 	{
@@ -310,8 +358,6 @@ int VEmitContext::AddStatement(int statement)
 	I.Opcode = statement;
 	I.Arg1 = 0;
 	I.Arg2 = 0;
-
-	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -320,10 +366,9 @@ int VEmitContext::AddStatement(int statement)
 //
 //==========================================================================
 
-int VEmitContext::AddStatement(int statement, int parm1)
+void VEmitContext::AddStatement(int statement, int parm1)
 {
-	if (StatementInfo[statement].Args != OPCARGS_BranchTarget &&
-		StatementInfo[statement].Args != OPCARGS_Byte &&
+	if (StatementInfo[statement].Args != OPCARGS_Byte &&
 		StatementInfo[statement].Args != OPCARGS_Short &&
 		StatementInfo[statement].Args != OPCARGS_Int &&
 		StatementInfo[statement].Args != OPCARGS_String)
@@ -335,8 +380,6 @@ int VEmitContext::AddStatement(int statement, int parm1)
 	I.Opcode = statement;
 	I.Arg1 = parm1;
 	I.Arg2 = 0;
-
-	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -345,7 +388,7 @@ int VEmitContext::AddStatement(int statement, int parm1)
 //
 //==========================================================================
 
-int VEmitContext::AddStatement(int statement, float FloatArg)
+void VEmitContext::AddStatement(int statement, float FloatArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Int)
 	{
@@ -355,8 +398,6 @@ int VEmitContext::AddStatement(int statement, float FloatArg)
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Arg1 = *(vint32*)&FloatArg;
-
-	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -365,7 +406,7 @@ int VEmitContext::AddStatement(int statement, float FloatArg)
 //
 //==========================================================================
 
-int VEmitContext::AddStatement(int statement, VName NameArg)
+void VEmitContext::AddStatement(int statement, VName NameArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Name)
 	{
@@ -375,8 +416,6 @@ int VEmitContext::AddStatement(int statement, VName NameArg)
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.NameArg = NameArg;
-
-	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -385,7 +424,7 @@ int VEmitContext::AddStatement(int statement, VName NameArg)
 //
 //==========================================================================
 
-int VEmitContext::AddStatement(int statement, VMemberBase* Member)
+void VEmitContext::AddStatement(int statement, VMemberBase* Member)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Member &&
 		StatementInfo[statement].Args != OPCARGS_FieldOffset &&
@@ -397,8 +436,6 @@ int VEmitContext::AddStatement(int statement, VMemberBase* Member)
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Member = Member;
-
-	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -407,7 +444,7 @@ int VEmitContext::AddStatement(int statement, VMemberBase* Member)
 //
 //==========================================================================
 
-int VEmitContext::AddStatement(int statement, const TType& TypeArg)
+void VEmitContext::AddStatement(int statement, const TType& TypeArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_TypeSize)
 	{
@@ -417,8 +454,6 @@ int VEmitContext::AddStatement(int statement, const TType& TypeArg)
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.TypeArg = TypeArg;
-
-	return CurrentFunc->Instructions.Num() - 1;
 }
 
 //==========================================================================
@@ -427,7 +462,31 @@ int VEmitContext::AddStatement(int statement, const TType& TypeArg)
 //
 //==========================================================================
 
-int VEmitContext::AddStatement(int statement, int parm1, int parm2)
+void VEmitContext::AddStatement(int statement, VLabel Lbl)
+{
+	if (StatementInfo[statement].Args != OPCARGS_BranchTarget)
+	{
+		FatalError("Opcode does\'t take label as argument");
+	}
+
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
+	I.Opcode = statement;
+	I.Arg1 = 0;
+	I.Arg2 = 0;
+
+	VLabelFixup& Fix = Fixups.Alloc();
+	Fix.Pos = CurrentFunc->Instructions.Num() - 1;
+	Fix.Arg = 1;
+	Fix.LabelIdx = Lbl.Index;
+}
+
+//==========================================================================
+//
+//  VEmitContext::AddStatement
+//
+//==========================================================================
+
+void VEmitContext::AddStatement(int statement, int parm1, VLabel Lbl)
 {
 	if (StatementInfo[statement].Args != OPCARGS_ByteBranchTarget &&
 		StatementInfo[statement].Args != OPCARGS_ShortBranchTarget &&
@@ -439,42 +498,12 @@ int VEmitContext::AddStatement(int statement, int parm1, int parm2)
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Arg1 = parm1;
-	I.Arg2 = parm2;
+	I.Arg2 = 0;
 
-	return CurrentFunc->Instructions.Num() - 1;
-}
-
-//==========================================================================
-//
-//	VEmitContext::FixupJump
-//
-//==========================================================================
-
-void VEmitContext::FixupJump(int Pos, int JmpPos)
-{
-	CurrentFunc->Instructions[Pos].Arg1 = JmpPos;
-}
-
-//==========================================================================
-//
-//	VEmitContext::FixupJump
-//
-//==========================================================================
-
-void VEmitContext::FixupJump(int Pos)
-{
-	CurrentFunc->Instructions[Pos].Arg1 = CurrentFunc->Instructions.Num();
-}
-
-//==========================================================================
-//
-//  VEmitContext::GetNumInstructions
-//
-//==========================================================================
-
-int VEmitContext::GetNumInstructions()
-{
-	return CurrentFunc->Instructions.Num();
+	VLabelFixup& Fix = Fixups.Alloc();
+	Fix.Pos = CurrentFunc->Instructions.Num() - 1;
+	Fix.Arg = 2;
+	Fix.LabelIdx = Lbl.Index;
 }
 
 //==========================================================================
@@ -527,38 +556,6 @@ void VEmitContext::EmitLocalAddress(int Ofs)
 		AddStatement(OPC_LocalAddressS, Ofs);
 	else
 		AddStatement(OPC_LocalAddress, Ofs);
-}
-
-//==========================================================================
-//
-//	VEmitContext::WriteBreaks
-//
-//==========================================================================
-
-void VEmitContext::WriteBreaks()
-{
-	BreakLevel--;
-	while (BreakInfo.Num() && BreakInfo[BreakInfo.Num() - 1].level > BreakLevel)
-	{
-		FixupJump(BreakInfo[BreakInfo.Num() - 1].addressPtr);
-		BreakInfo.SetNum(BreakInfo.Num() - 1);
-	}
-}
-
-//==========================================================================
-//
-//	VEmitContext::WriteContinues
-//
-//==========================================================================
-
-void VEmitContext::WriteContinues(int address)
-{
-	ContinueLevel--;
-	while (ContinueInfo.Num() && ContinueInfo[ContinueInfo.Num() - 1].level > ContinueLevel)
-	{
-		FixupJump(ContinueInfo[ContinueInfo.Num() - 1].addressPtr, address);
-		ContinueInfo.SetNum(ContinueInfo.Num() - 1);
-	}
 }
 
 //==========================================================================
