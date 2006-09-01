@@ -72,9 +72,9 @@ VStatement::~VStatement()
 //
 //==========================================================================
 
-void VStatement::Emit()
+void VStatement::Emit(VEmitContext& ec)
 {
-	DoEmit();
+	DoEmit(ec);
 }
 
 //END
@@ -97,7 +97,7 @@ VEmptyStatement::VEmptyStatement(const TLocation& ALoc)
 //
 //==========================================================================
 
-bool VEmptyStatement::Resolve()
+bool VEmptyStatement::Resolve(VEmitContext&)
 {
 	return true;
 }
@@ -108,7 +108,7 @@ bool VEmptyStatement::Resolve()
 //
 //==========================================================================
 
-void VEmptyStatement::DoEmit()
+void VEmptyStatement::DoEmit(VEmitContext&)
 {
 }
 
@@ -166,25 +166,25 @@ VIf::~VIf()
 //
 //==========================================================================
 
-bool VIf::Resolve()
+bool VIf::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
 	if (Expr)
 	{
-		Expr = Expr->ResolveBoolean();
+		Expr = Expr->ResolveBoolean(ec);
 	}
 	if (!Expr)
 	{
 		Ret = false;
 	}
 
-	if (!TrueStatement->Resolve())
+	if (!TrueStatement->Resolve(ec))
 	{
 		Ret = false;
 	}
 
-	if (FalseStatement && !FalseStatement->Resolve())
+	if (FalseStatement && !FalseStatement->Resolve(ec))
 	{
 		Ret = false;
 	}
@@ -198,25 +198,25 @@ bool VIf::Resolve()
 //
 //==========================================================================
 
-void VIf::DoEmit()
+void VIf::DoEmit(VEmitContext& ec)
 {
 	//	Expression.
-	Expr->Emit();
+	Expr->Emit(ec);
 
 	//	True statement
-	int jumpAddrPtr1 = AddStatement(OPC_IfNotGoto, 0);
-	TrueStatement->Emit();
+	int jumpAddrPtr1 = ec.AddStatement(OPC_IfNotGoto, 0);
+	TrueStatement->Emit(ec);
 	if (FalseStatement)
 	{
 		//	False statement
-		int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
-		FixupJump(jumpAddrPtr1);
-		FalseStatement->Emit();
-		FixupJump(jumpAddrPtr2);
+		int jumpAddrPtr2 = ec.AddStatement(OPC_Goto, 0);
+		ec.FixupJump(jumpAddrPtr1);
+		FalseStatement->Emit(ec);
+		ec.FixupJump(jumpAddrPtr2);
 	}
 	else
 	{
-		FixupJump(jumpAddrPtr1);
+		ec.FixupJump(jumpAddrPtr1);
 	}
 }
 
@@ -257,21 +257,21 @@ VWhile::~VWhile()
 //
 //==========================================================================
 
-bool VWhile::Resolve()
+bool VWhile::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = LocalDefs.Num();
+	NumLocalsOnStart = ec.LocalDefs.Num();
 	if (Expr)
 	{
-		Expr = Expr->ResolveBoolean();
+		Expr = Expr->ResolveBoolean(ec);
 	}
 	if (!Expr)
 	{
 		Ret = false;
 	}
 
-	if (!Statement->Resolve())
+	if (!Statement->Resolve(ec))
 	{
 		Ret = false;
 	}
@@ -285,24 +285,24 @@ bool VWhile::Resolve()
 //
 //==========================================================================
 
-void VWhile::DoEmit()
+void VWhile::DoEmit(VEmitContext& ec)
 {
-	int PrevBreakLocalsStart = BreakNumLocalsOnStart;
-	int PrevContinueLocalsStart = BreakNumLocalsOnStart;
-	BreakNumLocalsOnStart = NumLocalsOnStart;
-	ContinueNumLocalsOnStart = NumLocalsOnStart;
-	BreakLevel++;
-	ContinueLevel++;
-	int topAddr = GetNumInstructions();
-	Expr->Emit();
-	int outAddrPtr = AddStatement(OPC_IfNotGoto, 0);
-	Statement->Emit();
-	AddStatement(OPC_Goto, topAddr);
-	FixupJump(outAddrPtr);
-	WriteContinues(topAddr);
-	WriteBreaks();
-	BreakNumLocalsOnStart = PrevBreakLocalsStart;
-	BreakNumLocalsOnStart = PrevContinueLocalsStart;
+	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
+	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
+	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
+	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
+	ec.BreakLevel++;
+	ec.ContinueLevel++;
+	int topAddr = ec.GetNumInstructions();
+	Expr->Emit(ec);
+	int outAddrPtr = ec.AddStatement(OPC_IfNotGoto, 0);
+	Statement->Emit(ec);
+	ec.AddStatement(OPC_Goto, topAddr);
+	ec.FixupJump(outAddrPtr);
+	ec.WriteContinues(topAddr);
+	ec.WriteBreaks();
+	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
+	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
 }
 
 //END
@@ -342,21 +342,21 @@ VDo::~VDo()
 //
 //==========================================================================
 
-bool VDo::Resolve()
+bool VDo::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = LocalDefs.Num();
+	NumLocalsOnStart = ec.LocalDefs.Num();
 	if (Expr)
 	{
-		Expr = Expr->ResolveBoolean();
+		Expr = Expr->ResolveBoolean(ec);
 	}
 	if (!Expr)
 	{
 		Ret = false;
 	}
 
-	if (!Statement->Resolve())
+	if (!Statement->Resolve(ec))
 	{
 		Ret = false;
 	}
@@ -370,23 +370,23 @@ bool VDo::Resolve()
 //
 //==========================================================================
 
-void VDo::DoEmit()
+void VDo::DoEmit(VEmitContext& ec)
 {
-	int PrevBreakLocalsStart = BreakNumLocalsOnStart;
-	int PrevContinueLocalsStart = BreakNumLocalsOnStart;
-	BreakNumLocalsOnStart = NumLocalsOnStart;
-	ContinueNumLocalsOnStart = NumLocalsOnStart;
-	BreakLevel++;
-	ContinueLevel++;
-	int topAddr = GetNumInstructions();
-	Statement->Emit();
-	int exprAddr = GetNumInstructions();
-	Expr->Emit();
-	AddStatement(OPC_IfGoto, topAddr);
-	WriteContinues(exprAddr);
-	WriteBreaks();
-	BreakNumLocalsOnStart = PrevBreakLocalsStart;
-	BreakNumLocalsOnStart = PrevContinueLocalsStart;
+	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
+	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
+	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
+	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
+	ec.BreakLevel++;
+	ec.ContinueLevel++;
+	int topAddr = ec.GetNumInstructions();
+	Statement->Emit(ec);
+	int exprAddr = ec.GetNumInstructions();
+	Expr->Emit(ec);
+	ec.AddStatement(OPC_IfGoto, topAddr);
+	ec.WriteContinues(exprAddr);
+	ec.WriteBreaks();
+	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
+	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
 }
 
 //END
@@ -432,15 +432,15 @@ VFor::~VFor()
 //
 //==========================================================================
 
-bool VFor::Resolve()
+bool VFor::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = LocalDefs.Num();
+	NumLocalsOnStart = ec.LocalDefs.Num();
 
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
-		InitExpr[i] = InitExpr[i]->Resolve();
+		InitExpr[i] = InitExpr[i]->Resolve(ec);
 		if (!InitExpr[i])
 		{
 			Ret = false;
@@ -449,7 +449,7 @@ bool VFor::Resolve()
 
 	if (CondExpr)
 	{
-		CondExpr = CondExpr->ResolveBoolean();
+		CondExpr = CondExpr->ResolveBoolean(ec);
 		if (!CondExpr)
 		{
 			Ret = false;
@@ -458,14 +458,14 @@ bool VFor::Resolve()
 
 	for (int i = 0; i < LoopExpr.Num(); i++)
 	{
-		LoopExpr[i] = LoopExpr[i]->Resolve();
+		LoopExpr[i] = LoopExpr[i]->Resolve(ec);
 		if (!LoopExpr[i])
 		{
 			Ret = false;
 		}
 	}
 
-	if (!Statement->Resolve())
+	if (!Statement->Resolve(ec))
 	{
 		Ret = false;
 	}
@@ -479,43 +479,43 @@ bool VFor::Resolve()
 //
 //==========================================================================
 
-void VFor::DoEmit()
+void VFor::DoEmit(VEmitContext& ec)
 {
-	int PrevBreakLocalsStart = BreakNumLocalsOnStart;
-	int PrevContinueLocalsStart = BreakNumLocalsOnStart;
-	BreakNumLocalsOnStart = NumLocalsOnStart;
-	ContinueNumLocalsOnStart = NumLocalsOnStart;
-	BreakLevel++;
-	ContinueLevel++;
+	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
+	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
+	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
+	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
+	ec.BreakLevel++;
+	ec.ContinueLevel++;
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
-		InitExpr[i]->Emit();
+		InitExpr[i]->Emit(ec);
 	}
-	int topAddr = GetNumInstructions();
+	int topAddr = ec.GetNumInstructions();
 	if (!CondExpr)
 	{
-		AddStatement(OPC_PushNumber, 1);
+		ec.AddStatement(OPC_PushNumber, 1);
 	}
 	else
 	{
-		CondExpr->Emit();
+		CondExpr->Emit(ec);
 	}
-	int jumpAddrPtr1 = AddStatement(OPC_IfGoto, 0);
-	int jumpAddrPtr2 = AddStatement(OPC_Goto, 0);
-	int contAddr = GetNumInstructions();
+	int jumpAddrPtr1 = ec.AddStatement(OPC_IfGoto, 0);
+	int jumpAddrPtr2 = ec.AddStatement(OPC_Goto, 0);
+	int contAddr = ec.GetNumInstructions();
 	for (int i = 0; i < LoopExpr.Num(); i++)
 	{
-		LoopExpr[i]->Emit();
+		LoopExpr[i]->Emit(ec);
 	}
-	AddStatement(OPC_Goto, topAddr);
-	FixupJump(jumpAddrPtr1);
-	Statement->Emit();
-	AddStatement(OPC_Goto, contAddr);
-	FixupJump(jumpAddrPtr2);
-	WriteContinues(contAddr);
-	WriteBreaks();
-	BreakNumLocalsOnStart = PrevBreakLocalsStart;
-	BreakNumLocalsOnStart = PrevContinueLocalsStart;
+	ec.AddStatement(OPC_Goto, topAddr);
+	ec.FixupJump(jumpAddrPtr1);
+	Statement->Emit(ec);
+	ec.AddStatement(OPC_Goto, contAddr);
+	ec.FixupJump(jumpAddrPtr2);
+	ec.WriteContinues(contAddr);
+	ec.WriteBreaks();
+	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
+	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
 }
 
 //END
@@ -554,14 +554,14 @@ VSwitch::~VSwitch()
 //
 //==========================================================================
 
-bool VSwitch::Resolve()
+bool VSwitch::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = LocalDefs.Num();
+	NumLocalsOnStart = ec.LocalDefs.Num();
 	if (Expr)
 	{
-		Expr = Expr->Resolve();
+		Expr = Expr->Resolve(ec);
 	}
 	if (!Expr || Expr->Type.type != ev_int)
 	{
@@ -571,7 +571,7 @@ bool VSwitch::Resolve()
 
 	for (int i = 0; i < Statements.Num(); i++)
 	{
-		if (!Statements[i]->Resolve())
+		if (!Statements[i]->Resolve(ec))
 		{
 			Ret = false;
 		}
@@ -586,54 +586,54 @@ bool VSwitch::Resolve()
 //
 //==========================================================================
 
-void VSwitch::DoEmit()
+void VSwitch::DoEmit(VEmitContext& ec)
 {
-	Expr->Emit();
+	Expr->Emit(ec);
 
-	int switcherAddrPtr = AddStatement(OPC_Goto, 0);
+	int switcherAddrPtr = ec.AddStatement(OPC_Goto, 0);
 	defaultAddress = -1;
-	int PrevBreakLocalsStart = BreakNumLocalsOnStart;
-	BreakNumLocalsOnStart = NumLocalsOnStart;
-	BreakLevel++;
+	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
+	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
+	ec.BreakLevel++;
 
 	for (int i = 0; i < Statements.Num(); i++)
 	{
-		Statements[i]->Emit();
+		Statements[i]->Emit(ec);
 	}
 
-	int outAddrPtr = AddStatement(OPC_Goto, 0);
+	int outAddrPtr = ec.AddStatement(OPC_Goto, 0);
 
-	FixupJump(switcherAddrPtr);
+	ec.FixupJump(switcherAddrPtr);
 	for (int i = 0; i < CaseInfo.Num(); i++)
 	{
 		if (CaseInfo[i].value >= 0 && CaseInfo[i].value < 256)
 		{
-			AddStatement(OPC_CaseGotoB, CaseInfo[i].value,
+			ec.AddStatement(OPC_CaseGotoB, CaseInfo[i].value,
 				CaseInfo[i].address);
 		}
 		else if (CaseInfo[i].value >= MIN_VINT16 &&
 			CaseInfo[i].value < MAX_VINT16)
 		{
-			AddStatement(OPC_CaseGotoS, CaseInfo[i].value,
+			ec.AddStatement(OPC_CaseGotoS, CaseInfo[i].value,
 				CaseInfo[i].address);
 		}
 		else
 		{
-			AddStatement(OPC_CaseGoto, CaseInfo[i].value,
+			ec.AddStatement(OPC_CaseGoto, CaseInfo[i].value,
 				CaseInfo[i].address);
 		}
 	}
-	AddStatement(OPC_Drop);
+	ec.AddStatement(OPC_Drop);
 
 	if (defaultAddress != -1)
 	{
-		AddStatement(OPC_Goto, defaultAddress);
+		ec.AddStatement(OPC_Goto, defaultAddress);
 	}
 
-	FixupJump(outAddrPtr);
+	ec.FixupJump(outAddrPtr);
 
-	WriteBreaks();
-	BreakNumLocalsOnStart = PrevBreakLocalsStart;
+	ec.WriteBreaks();
+	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
 }
 
 //END
@@ -659,12 +659,12 @@ VSwitchCase::VSwitchCase(VSwitch* ASwitch, VExpression* AExpr, const TLocation& 
 //
 //==========================================================================
 
-bool VSwitchCase::Resolve()
+bool VSwitchCase::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 	if (Expr)
 	{
-		Expr = Expr->Resolve();
+		Expr = Expr->Resolve(ec);
 	}
 	if (!Expr || !Expr->GetIntConst(Value))
 	{
@@ -679,7 +679,7 @@ bool VSwitchCase::Resolve()
 //
 //==========================================================================
 
-void VSwitchCase::DoEmit()
+void VSwitchCase::DoEmit(VEmitContext& ec)
 {
 	for (int i = 0; i < Switch->CaseInfo.Num(); i++)
 	{
@@ -691,7 +691,7 @@ void VSwitchCase::DoEmit()
 	}
 	VSwitch::VCaseInfo& C = Switch->CaseInfo.Alloc();
 	C.value = Value;
-	C.address = GetNumInstructions();
+	C.address = ec.GetNumInstructions();
 }
 
 //END
@@ -715,7 +715,7 @@ VSwitchDefault::VSwitchDefault(VSwitch* ASwitch, const TLocation& ALoc)
 //
 //==========================================================================
 
-bool VSwitchDefault::Resolve()
+bool VSwitchDefault::Resolve(VEmitContext&)
 {
 	return true;
 }
@@ -726,13 +726,13 @@ bool VSwitchDefault::Resolve()
 //
 //==========================================================================
 
-void VSwitchDefault::DoEmit()
+void VSwitchDefault::DoEmit(VEmitContext& ec)
 {
 	if (Switch->defaultAddress != -1)
 	{
 		ParseError(Loc, "Only 1 DEFAULT per switch allowed.");
 	}
-	Switch->defaultAddress = GetNumInstructions();
+	Switch->defaultAddress = ec.GetNumInstructions();
 }
 
 //END
@@ -748,7 +748,6 @@ void VSwitchDefault::DoEmit()
 VBreak::VBreak(const TLocation& ALoc)
 : VStatement(ALoc)
 {
-	NumLocalsEnd = LocalDefs.Num();
 }
 
 //==========================================================================
@@ -757,8 +756,9 @@ VBreak::VBreak(const TLocation& ALoc)
 //
 //==========================================================================
 
-bool VBreak::Resolve()
+bool VBreak::Resolve(VEmitContext& ec)
 {
+	NumLocalsEnd = ec.LocalDefs.Num();
 	return true;
 }
 
@@ -768,18 +768,18 @@ bool VBreak::Resolve()
 //
 //==========================================================================
 
-void VBreak::DoEmit()
+void VBreak::DoEmit(VEmitContext& ec)
 {
-	if (!BreakLevel)
+	if (!ec.BreakLevel)
 	{
 		ParseError(Loc, "Misplaced BREAK statement.");
 	}
 
-	EmitClearStrings(BreakNumLocalsOnStart, NumLocalsEnd);
+	ec.EmitClearStrings(ec.BreakNumLocalsOnStart, NumLocalsEnd);
 
-	breakInfo_t& B = BreakInfo.Alloc();
-	B.level = BreakLevel;
-	B.addressPtr = AddStatement(OPC_Goto, 0);
+	breakInfo_t& B = ec.BreakInfo.Alloc();
+	B.level = ec.BreakLevel;
+	B.addressPtr = ec.AddStatement(OPC_Goto, 0);
 }
 
 //END
@@ -795,7 +795,6 @@ void VBreak::DoEmit()
 VContinue::VContinue(const TLocation& ALoc)
 : VStatement(ALoc)
 {
-	NumLocalsEnd = LocalDefs.Num();
 }
 
 //==========================================================================
@@ -804,8 +803,9 @@ VContinue::VContinue(const TLocation& ALoc)
 //
 //==========================================================================
 
-bool VContinue::Resolve()
+bool VContinue::Resolve(VEmitContext& ec)
 {
+	NumLocalsEnd = ec.LocalDefs.Num();
 	return true;
 }
 
@@ -815,18 +815,18 @@ bool VContinue::Resolve()
 //
 //==========================================================================
 
-void VContinue::DoEmit()
+void VContinue::DoEmit(VEmitContext& ec)
 {
-	if (!ContinueLevel)
+	if (!ec.ContinueLevel)
 	{
 		ParseError(Loc, "Misplaced CONTINUE statement.");
 	}
 
-	EmitClearStrings(ContinueNumLocalsOnStart, NumLocalsEnd);
+	ec.EmitClearStrings(ec.ContinueNumLocalsOnStart, NumLocalsEnd);
 
-	continueInfo_t& C = ContinueInfo.Alloc();
-	C.level = ContinueLevel;
-	C.addressPtr = AddStatement(OPC_Goto, 0);
+	continueInfo_t& C = ec.ContinueInfo.Alloc();
+	C.level = ec.ContinueLevel;
+	C.addressPtr = ec.AddStatement(OPC_Goto, 0);
 }
 
 //END
@@ -843,7 +843,6 @@ VReturn::VReturn(VExpression* AExpr, const TLocation& ALoc)
 : VStatement(ALoc)
 , Expr(AExpr)
 {
-	NumLocalsToClear = LocalDefs.Num();
 }
 
 //==========================================================================
@@ -864,25 +863,26 @@ VReturn::~VReturn()
 //
 //==========================================================================
 
-bool VReturn::Resolve()
+bool VReturn::Resolve(VEmitContext& ec)
 {
+	NumLocalsToClear = ec.LocalDefs.Num();
 	bool Ret = true;
 	if (Expr)
 	{
-		Expr = Expr->Resolve();
-		if (FuncRetType.type == ev_void)
+		Expr = Expr->Resolve(ec);
+		if (ec.FuncRetType.type == ev_void)
 		{
 			ParseError(Loc, "viod function cannot return a value.");
 			Ret = false;
 		}
 		else
 		{
-			Expr->Type.CheckMatch(Expr->Loc, FuncRetType);
+			Expr->Type.CheckMatch(Expr->Loc, ec.FuncRetType);
 		}
 	}
 	else
 	{
-		if (FuncRetType.type != ev_void)
+		if (ec.FuncRetType.type != ev_void)
 		{
 			ParseError(Loc, "Return value expected.");
 			Ret = false;
@@ -897,19 +897,19 @@ bool VReturn::Resolve()
 //
 //==========================================================================
 
-void VReturn::DoEmit()
+void VReturn::DoEmit(VEmitContext& ec)
 {
 	if (Expr)
 	{
-		Expr->Emit();
-		EmitClearStrings(0, NumLocalsToClear);
+		Expr->Emit(ec);
+		ec.EmitClearStrings(0, NumLocalsToClear);
 		if (Expr->Type.GetSize() == 4)
 		{
-			AddStatement(OPC_ReturnL);
+			ec.AddStatement(OPC_ReturnL);
 		}
 		else if (Expr->Type.type == ev_vector)
 		{
-			AddStatement(OPC_ReturnV);
+			ec.AddStatement(OPC_ReturnV);
 		}
 		else
 		{
@@ -918,8 +918,8 @@ void VReturn::DoEmit()
 	}
 	else
 	{
-		EmitClearStrings(0, NumLocalsToClear);
-		AddStatement(OPC_Return);
+		ec.EmitClearStrings(0, NumLocalsToClear);
+		ec.AddStatement(OPC_Return);
 	}
 }
 
@@ -957,11 +957,11 @@ VExpressionStatement::~VExpressionStatement()
 //
 //==========================================================================
 
-bool VExpressionStatement::Resolve()
+bool VExpressionStatement::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 	if (Expr)
-		Expr = Expr->Resolve();
+		Expr = Expr->Resolve(ec);
 	if (!Expr)
 		Ret = false;
 	return Ret;
@@ -973,9 +973,9 @@ bool VExpressionStatement::Resolve()
 //
 //==========================================================================
 
-void VExpressionStatement::DoEmit()
+void VExpressionStatement::DoEmit(VEmitContext& ec)
 {
-	Expr->Emit();
+	Expr->Emit(ec);
 }
 
 //END
@@ -1012,10 +1012,10 @@ VLocalVarStatement::~VLocalVarStatement()
 //
 //==========================================================================
 
-bool VLocalVarStatement::Resolve()
+bool VLocalVarStatement::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
-	Decl->Declare();
+	Decl->Declare(ec);
 	return Ret;
 }
 
@@ -1025,9 +1025,9 @@ bool VLocalVarStatement::Resolve()
 //
 //==========================================================================
 
-void VLocalVarStatement::DoEmit()
+void VLocalVarStatement::DoEmit(VEmitContext& ec)
 {
-	Decl->EmitInitialisations();
+	Decl->EmitInitialisations(ec);
 }
 
 //END
@@ -1064,21 +1064,21 @@ VCompound::~VCompound()
 //
 //==========================================================================
 
-bool VCompound::Resolve()
+bool VCompound::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
-	NumLocalsOnStart = LocalDefs.Num();
+	NumLocalsOnStart = ec.LocalDefs.Num();
 	for (int i = 0; i < Statements.Num(); i++)
 	{
-		if (!Statements[i]->Resolve())
+		if (!Statements[i]->Resolve(ec))
 		{
 			Ret = false;
 		}
 	}
-	NumLocalsOnEnd = LocalDefs.Num();
+	NumLocalsOnEnd = ec.LocalDefs.Num();
 
-	for (int i = NumLocalsOnStart; i < LocalDefs.Num(); i++)
-		LocalDefs[i].Visible = false;
+	for (int i = NumLocalsOnStart; i < ec.LocalDefs.Num(); i++)
+		ec.LocalDefs[i].Visible = false;
 
 	return Ret;
 }
@@ -1089,15 +1089,15 @@ bool VCompound::Resolve()
 //
 //==========================================================================
 
-void VCompound::DoEmit()
+void VCompound::DoEmit(VEmitContext& ec)
 {
 	for (int i = 0; i < Statements.Num(); i++)
 	{
-		Statements[i]->Emit();
+		Statements[i]->Emit(ec);
 	}
-	EmitClearStrings(NumLocalsOnStart, NumLocalsOnEnd);
+	ec.EmitClearStrings(NumLocalsOnStart, NumLocalsOnEnd);
 	for (int i = NumLocalsOnStart; i < NumLocalsOnEnd; i++)
-		LocalDefs[i].Cleared = true;
+		ec.LocalDefs[i].Cleared = true;
 }
 
 //END

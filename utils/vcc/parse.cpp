@@ -1115,7 +1115,7 @@ VExpression* VParser::ParseType()
 void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 	TLocation MethodLoc, VClass* InClass, vint32 Modifiers)
 {
-	if (CheckForFunction(InClass, MName))
+	if (InClass->CheckForFunction(MName))
 	{
 		ParseError(MethodLoc, "Redeclared method %s.%s", *InClass->Name, *MName);
 	}
@@ -1163,7 +1163,7 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 
 	if (Lex.Check(TK_Semicolon))
 	{
-		numbuiltins++;
+		CurrentPackage->numbuiltins++;
 	}
 	else
 	{
@@ -1335,7 +1335,7 @@ void VParser::ParseStruct(VClass* InClass, bool IsVector)
 	}
 	else
 	{
-		ParsedStructs.Append(Struct);
+		CurrentPackage->ParsedStructs.Append(Struct);
 	}
 }
 
@@ -1427,7 +1427,6 @@ void VParser::ParseClass()
 	}
 	//	New class.
 	VClass* Class = new VClass(Lex.Name, CurrentPackage, Lex.Location);
-	Class->Parsed = false;
 	Class->Defined = false;
 	Lex.NextToken();
 
@@ -1448,8 +1447,6 @@ void VParser::ParseClass()
 	{
 		ParseError(Lex.Location, "Parent class expected");
 	}
-
-	Class->Parsed = true;
 
 	Class->Modifiers = TModifiers::Parse(Lex);
 	do
@@ -1509,7 +1506,7 @@ void VParser::ParseClass()
 					Lex.NextToken();
 					continue;
 				}
-				if (CheckForConstant(Class, Lex.Name))
+				if (Class->CheckForConstant(Lex.Name))
 				{
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
@@ -1568,7 +1565,7 @@ void VParser::ParseClass()
 					Lex.NextToken();
 					continue;
 				}
-				if (CheckForConstant(Class, Lex.Name))
+				if (Class->CheckForConstant(Lex.Name))
 				{
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
@@ -1619,8 +1616,8 @@ void VParser::ParseClass()
 				continue;
 			}
 			VField* fi = new VField(Lex.Name, Class, Lex.Location);
-			if (CheckForField(Lex.Location, Lex.Name, Class, false) ||
-				CheckForMethod(Lex.Name, Class))
+			if (Class->CheckForField(Lex.Location, Lex.Name, false) ||
+				Class->CheckForMethod(Lex.Name))
 			{
 				ParseError(Lex.Location, "Redeclared field");
 			}
@@ -1659,7 +1656,7 @@ void VParser::ParseClass()
 			TLocation FieldLoc = Lex.Location;
 			Lex.NextToken();
 
-			if (CheckForField(FieldLoc, FieldName, Class, false))
+			if (Class->CheckForField(FieldLoc, FieldName, false))
 			{
 				ParseError(Lex.Location, "Redeclared field");
 				continue;
@@ -1694,7 +1691,7 @@ void VParser::ParseClass()
 
 	ParseDefaultProperties(Class);
 
-	ParsedClasses.Append(Class);
+	CurrentPackage->ParsedClasses.Append(Class);
 }
 
 //==========================================================================
@@ -1726,7 +1723,7 @@ void VParser::Parse()
 			{
 				ParseError(Lex.Location, "Package name expected");
 			}
-			VImportedPackage& I = PackagesToLoad.Alloc();
+			VImportedPackage& I = CurrentPackage->PackagesToLoad.Alloc();
 			I.Name = Lex.Name;
 			I.Loc = Lex.Location;
 			Lex.NextToken();
@@ -1745,7 +1742,7 @@ void VParser::Parse()
 				{
 					ParseError(Lex.Location, "Expected IDENTIFIER");
 				}
-				if (CheckForConstant(NULL, Lex.Name))
+				if (CurrentPackage->CheckForConstant(Lex.Name))
 				{
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
@@ -1765,7 +1762,7 @@ void VParser::Parse()
 					cDef->ValueExpr = new VIntLiteral(0, Lex.Location);
 				}
 				PrevValue = cDef;
-				ParsedConstants.Append(cDef);
+				CurrentPackage->ParsedConstants.Append(cDef);
 			} while (Lex.Check(TK_Comma));
 			Lex.Expect(TK_RBrace, ERR_MISSING_RBRACE);
 			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);

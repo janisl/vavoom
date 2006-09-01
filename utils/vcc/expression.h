@@ -41,13 +41,13 @@ public:
 
 	VExpression(const TLocation&);
 	virtual ~VExpression();
-	virtual void Emit() = 0;
-	virtual VExpression* DoResolve() = 0;
-	VExpression* Resolve();
-	VExpression* ResolveBoolean();
-	virtual VTypeExpr* ResolveAsType();
+	virtual VExpression* DoResolve(VEmitContext&) = 0;
+	VExpression* Resolve(VEmitContext&);
+	VExpression* ResolveBoolean(VEmitContext&);
+	virtual VTypeExpr* ResolveAsType(VEmitContext&);
 	virtual void RequestAddressOf();
-	void EmitPushPointedCode(TType);
+	virtual void Emit(VEmitContext&) = 0;
+	void EmitPushPointedCode(TType, VEmitContext&);
 	virtual bool IsSingleName();
 	virtual bool GetIntConst(vint32&);
 	virtual bool GetFloatConst(float&);
@@ -66,8 +66,8 @@ public:
 	vint32		Value;
 
 	VIntLiteral(vint32, const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 	bool GetIntConst(vint32&);
 };
 
@@ -83,8 +83,8 @@ public:
 	float		Value;
 
 	VFloatLiteral(float, const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 	bool GetFloatConst(float&);
 };
 
@@ -100,8 +100,8 @@ public:
 	VName		Value;
 
 	VNameLiteral(VName, const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -116,8 +116,8 @@ public:
 	vint32		Value;
 
 	VStringLiteral(vint32, const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -130,8 +130,8 @@ class VSelf : public VExpression
 {
 public:
 	VSelf(const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -144,8 +144,8 @@ class VNoneLiteral : public VExpression
 {
 public:
 	VNoneLiteral(const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -158,8 +158,8 @@ class VNullLiteral : public VExpression
 {
 public:
 	VNullLiteral(const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -177,8 +177,8 @@ public:
 
 	VVector(VExpression*, VExpression*, VExpression*, const TLocation&);
 	~VVector();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -193,9 +193,9 @@ public:
 	VName			Name;
 
 	VSingleName(VName, const TLocation&);
-	VExpression* DoResolve();
-	VTypeExpr* ResolveAsType();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	VTypeExpr* ResolveAsType(VEmitContext&);
+	void Emit(VEmitContext&);
 	bool IsSingleName();
 	VExpression* CreateTypeExprCopy();
 };
@@ -213,8 +213,8 @@ public:
 	VName			Name2;
 
 	VDoubleName(VName, VName, const TLocation&);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -231,8 +231,8 @@ public:
 
 	VPointerField(VExpression*, VName, const TLocation&);
 	~VPointerField();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -249,8 +249,8 @@ public:
 
 	VDotField(VExpression*, VName, const TLocation&);
 	~VDotField();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -268,9 +268,9 @@ public:
 
 	VArrayElement(VExpression*, VExpression*, const TLocation&);
 	~VArrayElement();
-	VExpression* DoResolve();
+	VExpression* DoResolve(VEmitContext&);
 	void RequestAddressOf();
-	void Emit();
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -288,8 +288,8 @@ public:
 
 	VBaseInvocation(VName, int, VExpression**, const TLocation&);
 	~VBaseInvocation();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -307,8 +307,8 @@ public:
 
 	VCastOrInvocation(VName, const TLocation&, int, VExpression**);
 	~VCastOrInvocation();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -327,8 +327,8 @@ public:
 
 	VDotInvocation(VExpression*, VName, const TLocation&, int, VExpression**);
 	~VDotInvocation();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -353,8 +353,8 @@ public:
 
 	VUnary(EUnaryOp, VExpression*, const TLocation&);
 	~VUnary();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 	bool GetIntConst(vint32&);
 	bool GetFloatConst(float&);
 };
@@ -380,8 +380,8 @@ public:
 
 	VUnaryMutator(EIncDec, VExpression*, const TLocation&);
 	~VUnaryMutator();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -398,9 +398,9 @@ public:
 
 	VPushPointed(VExpression*);
 	~VPushPointed();
-	VExpression* DoResolve();
+	VExpression* DoResolve(VEmitContext&);
 	void RequestAddressOf();
-	void Emit();
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -437,8 +437,8 @@ public:
 
 	VBinary(EBinOp, VExpression*, VExpression*, const TLocation&);
 	~VBinary();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 	bool GetIntConst(vint32&);
 	bool GetFloatConst(float&);
 };
@@ -463,8 +463,8 @@ public:
 
 	VBinaryLogical(ELogOp, VExpression*, VExpression*, const TLocation&);
 	~VBinaryLogical();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 	bool GetIntConst(vint32&);
 };
 
@@ -483,8 +483,8 @@ public:
 
 	VConditional(VExpression*, VExpression*, VExpression*, const TLocation&);
 	~VConditional();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -516,8 +516,8 @@ public:
 
 	VAssignment(EAssignOper, VExpression*, VExpression*, const TLocation&);
 	~VAssignment();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -533,8 +533,8 @@ public:
 
 	VDropResult(VExpression*);
 	~VDropResult();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -549,9 +549,9 @@ public:
 	char		Name[128];
 
 	VTypeExpr(TType, const TLocation&);
-	VExpression* DoResolve();
-	VTypeExpr* ResolveAsType();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	VTypeExpr* ResolveAsType(VEmitContext&);
+	void Emit(VEmitContext&);
 	const char* GetName();
 	VExpression* CreateTypeExprCopy();
 };
@@ -569,7 +569,7 @@ public:
 
 	VPointerType(VExpression*, const TLocation&);
 	~VPointerType();
-	VTypeExpr* ResolveAsType();
+	VTypeExpr* ResolveAsType(VEmitContext&);
 	VExpression* CreateTypeExprCopy();
 };
 
@@ -587,7 +587,7 @@ public:
 
 	VFixedArrayType(VExpression*, VExpression*, const TLocation&);
 	~VFixedArrayType();
-	VTypeExpr* ResolveAsType();
+	VTypeExpr* ResolveAsType(VEmitContext&);
 };
 
 //==========================================================================
@@ -625,9 +625,9 @@ public:
 	VLocalDecl(const TLocation&);
 	~VLocalDecl();
 
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 
-	void Declare();
-	void EmitInitialisations();
+	void Declare(VEmitContext&);
+	void EmitInitialisations(VEmitContext&);
 };

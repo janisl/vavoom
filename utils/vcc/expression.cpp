@@ -43,8 +43,8 @@ public:
 	VState*		State;
 
 	VStateConstant(VState* AState, const TLocation& ALoc);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -59,8 +59,8 @@ public:
 	VClass*		Class;
 
 	VClassConstant(VClass* AClass, const TLocation& ALoc);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -75,8 +75,8 @@ public:
 	VConstant*		Const;
 
 	VConstantValue(VConstant* AConst, const TLocation& ALoc);
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 	bool GetIntConst(vint32&);
 	bool GetFloatConst(float&);
 };
@@ -95,8 +95,8 @@ public:
 
 	VDynamicCast(VClass* AClass, VExpression* AOp, const TLocation& ALoc);
 	~VDynamicCast();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -112,9 +112,9 @@ public:
 	bool			AddressRequested;
 
 	VLocalVar(int ANum, const TLocation& ALoc);
-	VExpression* DoResolve();
+	VExpression* DoResolve(VEmitContext&);
 	void RequestAddressOf();
-	void Emit();
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -132,9 +132,9 @@ public:
 
 	VFieldAccess(VExpression* AOp, VField* AField, const TLocation& ALoc, int ExtraFlags);
 	~VFieldAccess();
-	VExpression* DoResolve();
+	VExpression* DoResolve(VEmitContext&);
 	void RequestAddressOf();
-	void Emit();
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -151,8 +151,8 @@ public:
 
 	VDelegateVal(VExpression* AOp, VMethod* AM, const TLocation& ALoc);
 	~VDelegateVal();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -176,8 +176,8 @@ public:
 		bool AHaveSelf, bool ABaseCall, const TLocation& ALoc, int ANumArgs,
 		VExpression** AArgs);
 	~VInvocation();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 	void CheckParams();
 };
 
@@ -194,8 +194,8 @@ public:
 
 	VDelegateToBool(VExpression* AOp);
 	~VDelegateToBool();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -211,8 +211,8 @@ public:
 
 	VStringToBool(VExpression* AOp);
 	~VStringToBool();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 //==========================================================================
@@ -228,8 +228,8 @@ public:
 
 	VPointerToBool(VExpression* AOp);
 	~VPointerToBool();
-	VExpression* DoResolve();
-	void Emit();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -278,9 +278,9 @@ VExpression::~VExpression()
 //
 //==========================================================================
 
-VExpression* VExpression::Resolve()
+VExpression* VExpression::Resolve(VEmitContext& ec)
 {
-	VExpression* e = DoResolve();
+	VExpression* e = DoResolve(ec);
 	return e;
 }
 
@@ -290,9 +290,9 @@ VExpression* VExpression::Resolve()
 //
 //==========================================================================
 
-VExpression* VExpression::ResolveBoolean()
+VExpression* VExpression::ResolveBoolean(VEmitContext& ec)
 {
-	VExpression* e = Resolve();
+	VExpression* e = Resolve(ec);
 	if (!e)
 	{
 		return NULL;
@@ -335,7 +335,7 @@ VExpression* VExpression::ResolveBoolean()
 //
 //==========================================================================
 
-VTypeExpr* VExpression::ResolveAsType()
+VTypeExpr* VExpression::ResolveAsType(VEmitContext&)
 {
 	ParseError(Loc, "Invalid type expression");
 	delete this;
@@ -359,7 +359,7 @@ void VExpression::RequestAddressOf()
 //
 //==========================================================================
 
-void VExpression::EmitPushPointedCode(TType type)
+void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 {
 	switch (type.type)
 	{
@@ -368,37 +368,37 @@ void VExpression::EmitPushPointedCode(TType type)
 	case ev_name:
 	case ev_struct://	Not exactly, but the rest of code will fail without these.
 	case ev_array:
-		AddStatement(OPC_PushPointed);
+		ec.AddStatement(OPC_PushPointed);
 		break;
 
 	case ev_pointer:
 	case ev_reference:
 	case ev_classid:
 	case ev_state:
-		AddStatement(OPC_PushPointedPtr);
+		ec.AddStatement(OPC_PushPointedPtr);
 		break;
 
 	case ev_vector:
-		AddStatement(OPC_VPushPointed);
+		ec.AddStatement(OPC_VPushPointed);
 		break;
 
 	case ev_bool:
 		if (type.bit_mask & 0x000000ff)
-			AddStatement(OPC_PushBool0, (int)(type.bit_mask));
+			ec.AddStatement(OPC_PushBool0, (int)(type.bit_mask));
 		else if (type.bit_mask & 0x0000ff00)
-			AddStatement(OPC_PushBool1, (int)(type.bit_mask >> 8));
+			ec.AddStatement(OPC_PushBool1, (int)(type.bit_mask >> 8));
 		else if (type.bit_mask & 0x00ff0000)
-			AddStatement(OPC_PushBool2, (int)(type.bit_mask >> 16));
+			ec.AddStatement(OPC_PushBool2, (int)(type.bit_mask >> 16));
 		else
-			AddStatement(OPC_PushBool3, (int)(type.bit_mask >> 24));
+			ec.AddStatement(OPC_PushBool3, (int)(type.bit_mask >> 24));
 		break;
 
 	case ev_string:
-		AddStatement(OPC_PushPointedStr);
+		ec.AddStatement(OPC_PushPointedStr);
 		break;
 
 	case ev_delegate:
-		AddStatement(OPC_PushPointedDelegate);
+		ec.AddStatement(OPC_PushPointedDelegate);
 		break;
 	}
 }
@@ -466,6 +466,7 @@ VIntLiteral::VIntLiteral(vint32 AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
+	Type = ev_int;
 }
 
 //==========================================================================
@@ -474,9 +475,8 @@ VIntLiteral::VIntLiteral(vint32 AValue, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VIntLiteral::DoResolve()
+VExpression* VIntLiteral::DoResolve(VEmitContext&)
 {
-	Type = ev_int;
 	return this;
 }
 
@@ -486,9 +486,9 @@ VExpression* VIntLiteral::DoResolve()
 //
 //==========================================================================
 
-void VIntLiteral::Emit()
+void VIntLiteral::Emit(VEmitContext& ec)
 {
-	EmitPushNumber(Value);
+	ec.EmitPushNumber(Value);
 }
 
 //==========================================================================
@@ -517,6 +517,7 @@ VFloatLiteral::VFloatLiteral(float AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
+	Type = ev_float;
 }
 
 //==========================================================================
@@ -525,9 +526,8 @@ VFloatLiteral::VFloatLiteral(float AValue, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VFloatLiteral::DoResolve()
+VExpression* VFloatLiteral::DoResolve(VEmitContext&)
 {
-	Type = ev_float;
 	return this;
 }
 
@@ -537,9 +537,9 @@ VExpression* VFloatLiteral::DoResolve()
 //
 //==========================================================================
 
-void VFloatLiteral::Emit()
+void VFloatLiteral::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_PushNumber, Value);
+	ec.AddStatement(OPC_PushNumber, Value);
 }
 
 //==========================================================================
@@ -568,6 +568,7 @@ VNameLiteral::VNameLiteral(VName AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
+	Type = ev_name;
 }
 
 //==========================================================================
@@ -576,9 +577,8 @@ VNameLiteral::VNameLiteral(VName AValue, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VNameLiteral::DoResolve()
+VExpression* VNameLiteral::DoResolve(VEmitContext&)
 {
-	Type = ev_name;
 	return this;
 }
 
@@ -588,9 +588,9 @@ VExpression* VNameLiteral::DoResolve()
 //
 //==========================================================================
 
-void VNameLiteral::Emit()
+void VNameLiteral::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_PushName, Value);
+	ec.AddStatement(OPC_PushName, Value);
 }
 
 //END
@@ -607,6 +607,7 @@ VStringLiteral::VStringLiteral(vint32 AValue, const TLocation& ALoc)
 : VExpression(ALoc)
 , Value(AValue)
 {
+	Type = ev_string;
 }
 
 //==========================================================================
@@ -615,9 +616,8 @@ VStringLiteral::VStringLiteral(vint32 AValue, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VStringLiteral::DoResolve()
+VExpression* VStringLiteral::DoResolve(VEmitContext&)
 {
-	Type = ev_string;
 	return this;
 }
 
@@ -627,9 +627,9 @@ VExpression* VStringLiteral::DoResolve()
 //
 //==========================================================================
 
-void VStringLiteral::Emit()
+void VStringLiteral::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_PushString, Value);
+	ec.AddStatement(OPC_PushString, Value);
 }
 
 //END
@@ -653,13 +653,15 @@ VSelf::VSelf(const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VSelf::DoResolve()
+VExpression* VSelf::DoResolve(VEmitContext& ec)
 {
-	Type = SelfType;
-	if (!SelfClass)
+	if (!ec.SelfClass)
 	{
 		ParseError(Loc, "self used outside member function\n");
+		delete this;
+		return NULL;
 	}
+	Type = TType(ec.SelfClass);
 	return this;
 }
 
@@ -669,10 +671,10 @@ VExpression* VSelf::DoResolve()
 //
 //==========================================================================
 
-void VSelf::Emit()
+void VSelf::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_LocalAddress0);
-	AddStatement(OPC_PushPointedPtr);
+	ec.AddStatement(OPC_LocalAddress0);
+	ec.AddStatement(OPC_PushPointedPtr);
 }
 
 //END
@@ -688,6 +690,7 @@ void VSelf::Emit()
 VNoneLiteral::VNoneLiteral(const TLocation& ALoc)
 : VExpression(ALoc)
 {
+	Type = TType((VClass*)NULL);
 }
 
 //==========================================================================
@@ -696,9 +699,8 @@ VNoneLiteral::VNoneLiteral(const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VNoneLiteral::DoResolve()
+VExpression* VNoneLiteral::DoResolve(VEmitContext&)
 {
-	Type = TType((VClass*)NULL);
 	return this;
 }
 
@@ -708,9 +710,9 @@ VExpression* VNoneLiteral::DoResolve()
 //
 //==========================================================================
 
-void VNoneLiteral::Emit()
+void VNoneLiteral::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_PushNull);
+	ec.AddStatement(OPC_PushNull);
 }
 
 //END
@@ -726,6 +728,7 @@ void VNoneLiteral::Emit()
 VNullLiteral::VNullLiteral(const TLocation& ALoc)
 : VExpression(ALoc)
 {
+	Type = TType(ev_void).MakePointerType();
 }
 
 //==========================================================================
@@ -734,9 +737,8 @@ VNullLiteral::VNullLiteral(const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VNullLiteral::DoResolve()
+VExpression* VNullLiteral::DoResolve(VEmitContext&)
 {
-	Type = MakePointerType(TType(ev_void));
 	return this;
 }
 
@@ -746,9 +748,9 @@ VExpression* VNullLiteral::DoResolve()
 //
 //==========================================================================
 
-void VNullLiteral::Emit()
+void VNullLiteral::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_PushNull);
+	ec.AddStatement(OPC_PushNull);
 }
 
 //END
@@ -803,14 +805,14 @@ VVector::~VVector()
 //
 //==========================================================================
 
-VExpression* VVector::DoResolve()
+VExpression* VVector::DoResolve(VEmitContext& ec)
 {
 	if (op1)
-		op1 = op1->Resolve();
+		op1 = op1->Resolve(ec);
 	if (op2)
-		op2 = op2->Resolve();
+		op2 = op2->Resolve(ec);
 	if (op3)
-		op3 = op3->Resolve();
+		op3 = op3->Resolve(ec);
 	if (!op1 || !op2 || !op3)
 	{
 		delete this;
@@ -846,11 +848,11 @@ VExpression* VVector::DoResolve()
 //
 //==========================================================================
 
-void VVector::Emit()
+void VVector::Emit(VEmitContext& ec)
 {
-	op1->Emit();
-	op2->Emit();
-	op3->Emit();
+	op1->Emit(ec);
+	op2->Emit(ec);
+	op3->Emit(ec);
 }
 
 //END
@@ -875,49 +877,57 @@ VSingleName::VSingleName(VName AName, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VSingleName::DoResolve()
+VExpression* VSingleName::DoResolve(VEmitContext& ec)
 {
-	int num = CheckForLocalVar(Name);
+	int num = ec.CheckForLocalVar(Name);
 	if (num != -1)
 	{
 		VExpression* e = new VLocalVar(num, Loc);
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 
-	VConstant* Const = CheckForConstant(SelfClass, Name);
-	if (Const)
+	if (ec.SelfClass)
 	{
-		VExpression* e = new VConstantValue(Const, Loc);
-		delete this;
-		return e->Resolve();
-	}
+		VConstant* Const = ec.SelfClass->CheckForConstant(Name);
+		if (Const)
+		{
+			VExpression* e = new VConstantValue(Const, Loc);
+			delete this;
+			return e->Resolve(ec);
+		}
 
-	if (SelfClass)
-	{
-		VMethod* M = CheckForMethod(Name, SelfClass);
+		VMethod* M = ec.SelfClass->CheckForMethod(Name);
 		if (M)
 		{
-			VExpression* e = new VDelegateVal((new VSelf(Loc))->Resolve(), M, Loc);
+			VExpression* e = new VDelegateVal((new VSelf(Loc))->Resolve(ec), M, Loc);
 			delete this;
-			return e->Resolve();
+			return e->Resolve(ec);
 		}
 
-		VField* field = CheckForField(Loc, Name, SelfClass);
+		VField* field = ec.SelfClass->CheckForField(Loc, Name, ec.SelfClass);
 		if (field)
 		{
-			VExpression* e = new VFieldAccess((new VSelf(Loc))->Resolve(), field, Loc, 0);
+			VExpression* e = new VFieldAccess((new VSelf(Loc))->Resolve(ec), field, Loc, 0);
 			delete this;
-			return e->Resolve();
+			return e->Resolve(ec);
 		}
 
-		VState* State = CheckForState(Name, SelfClass);
+		VState* State = ec.SelfClass->CheckForState(Name);
 		if (State)
 		{
 			VExpression* e = new VStateConstant(State, Loc);
 			delete this;
-			return e->Resolve();
+			return e->Resolve(ec);
 		}
+	}
+
+	VConstant* Const = ec.Package->CheckForConstant(Name);
+	if (Const)
+	{
+		VExpression* e = new VConstantValue(Const, Loc);
+		delete this;
+		return e->Resolve(ec);
 	}
 
 	VClass* Class = CheckForClass(Name);
@@ -925,7 +935,7 @@ VExpression* VSingleName::DoResolve()
 	{
 		VExpression* e = new VClassConstant(Class, Loc);
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 
 	ParseError(Loc, "Illegal expression identifier %s", *Name);
@@ -939,9 +949,9 @@ VExpression* VSingleName::DoResolve()
 //
 //==========================================================================
 
-VTypeExpr* VSingleName::ResolveAsType()
+VTypeExpr* VSingleName::ResolveAsType(VEmitContext& ec)
 {
-	Type = CheckForType(SelfClass, Name);
+	Type = CheckForType(ec.SelfClass, Name);
 	if (Type.type == ev_unknown)
 	{
 		ParseError(Loc, "Invalid identifier, bad type name %s", *Name);
@@ -960,7 +970,7 @@ VTypeExpr* VSingleName::ResolveAsType()
 //
 //==========================================================================
 
-void VSingleName::Emit()
+void VSingleName::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -1010,7 +1020,7 @@ VDoubleName::VDoubleName(VName AName1, VName AName2, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VDoubleName::DoResolve()
+VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 {
 	VClass* Class = CheckForClass(Name1);
 	if (!Class)
@@ -1020,20 +1030,20 @@ VExpression* VDoubleName::DoResolve()
 		return NULL;
 	}
 
-	VConstant* Const = CheckForConstant(Class, Name2);
+	VConstant* Const = Class->CheckForConstant(Name2);
 	if (Const)
 	{
 		VExpression* e = new VConstantValue(Const, Loc);
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 
-	VState* State = CheckForState(Name2, Class);
+	VState* State = Class->CheckForState(Name2);
 	if (State)
 	{
 		VExpression* e = new VStateConstant(State, Loc);
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 
 	ParseError(Loc, "No such constant or state %s", *Name2);
@@ -1047,7 +1057,7 @@ VExpression* VDoubleName::DoResolve()
 //
 //==========================================================================
 
-void VDoubleName::Emit()
+void VDoubleName::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -1087,10 +1097,10 @@ VPointerField::~VPointerField()
 //
 //==========================================================================
 
-VExpression* VPointerField::DoResolve()
+VExpression* VPointerField::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->Resolve();
+		op = op->Resolve(ec);
 	if (!op)
 	{
 		delete this;
@@ -1110,7 +1120,7 @@ VExpression* VPointerField::DoResolve()
 		delete this;
 		return NULL;
 	}
-	VField* field = CheckForStructField(type.Struct, FieldName);
+	VField* field = type.Struct->CheckForField(FieldName);
 	if (!field)
 	{
 		ParseError(Loc, "No such field %s", *FieldName);
@@ -1120,7 +1130,7 @@ VExpression* VPointerField::DoResolve()
 	VExpression* e = new VFieldAccess(op, field, Loc, 0);
 	op = NULL;
 	delete this;
-	return e->Resolve();
+	return e->Resolve(ec);
 }
 
 //==========================================================================
@@ -1129,7 +1139,7 @@ VExpression* VPointerField::DoResolve()
 //
 //==========================================================================
 
-void VPointerField::Emit()
+void VPointerField::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -1169,10 +1179,10 @@ VDotField::~VDotField()
 //
 //==========================================================================
 
-VExpression* VDotField::DoResolve()
+VExpression* VDotField::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->Resolve();
+		op = op->Resolve(ec);
 	if (!op)
 	{
 		delete this;
@@ -1181,17 +1191,17 @@ VExpression* VDotField::DoResolve()
 
 	if (op->Type.type == ev_reference)
 	{
-		VMethod* M = CheckForMethod(FieldName, op->Type.Class);
+		VMethod* M = op->Type.Class->CheckForMethod(FieldName);
 		if (M)
 		{
 			VExpression* e = new VDelegateVal(op, M, Loc);
 			op = NULL;
 			delete this;
-			return e->Resolve();
+			return e->Resolve(ec);
 		}
 		else
 		{
-			VField* field = CheckForField(Loc, FieldName, op->Type.Class);
+			VField* field = op->Type.Class->CheckForField(Loc, FieldName, ec.SelfClass);
 			if (!field)
 			{
 				ParseError(Loc, "No such field %s", *FieldName);
@@ -1201,7 +1211,7 @@ VExpression* VDotField::DoResolve()
 			VExpression* e = new VFieldAccess(op, field, Loc, 0);
 			op = NULL;
 			delete this;
-			return e->Resolve();
+			return e->Resolve(ec);
 		}
 	}
 	else if (op->Type.type == ev_struct || op->Type.type == ev_vector)
@@ -1210,7 +1220,7 @@ VExpression* VDotField::DoResolve()
 		int Flags = op->Flags;
 		op->Flags &= ~FIELD_ReadOnly;
 		op->RequestAddressOf();
-		VField* field = CheckForStructField(type.Struct, FieldName);
+		VField* field = type.Struct->CheckForField(FieldName);
 		if (!field)
 		{
 			ParseError(Loc, "No such field %s", *FieldName);
@@ -1220,7 +1230,7 @@ VExpression* VDotField::DoResolve()
 		VExpression* e = new VFieldAccess(op, field, Loc, Flags & FIELD_ReadOnly);
 		op = NULL;
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 	ParseError(Loc, "Reference, struc or vector expected on left side of .");
 	delete this;
@@ -1233,7 +1243,7 @@ VExpression* VDotField::DoResolve()
 //
 //==========================================================================
 
-void VDotField::Emit()
+void VDotField::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -1281,12 +1291,12 @@ VArrayElement::~VArrayElement()
 //
 //==========================================================================
 
-VExpression* VArrayElement::DoResolve()
+VExpression* VArrayElement::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->Resolve();
+		op = op->Resolve(ec);
 	if (ind)
-		ind = ind->Resolve();
+		ind = ind->Resolve(ec);
 	if (!op || !ind)
 	{
 		delete this;
@@ -1349,14 +1359,14 @@ void VArrayElement::RequestAddressOf()
 //
 //==========================================================================
 
-void VArrayElement::Emit()
+void VArrayElement::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	ind->Emit();
-	AddStatement(OPC_ArrayElement, RealType);
+	op->Emit(ec);
+	ind->Emit(ec);
+	ec.AddStatement(OPC_ArrayElement, RealType);
 	if (!AddressRequested)
 	{
-		EmitPushPointedCode(RealType);
+		EmitPushPointedCode(RealType, ec);
 	}
 }
 
@@ -1398,15 +1408,15 @@ VBaseInvocation::~VBaseInvocation()
 //
 //==========================================================================
 
-VExpression* VBaseInvocation::DoResolve()
+VExpression* VBaseInvocation::DoResolve(VEmitContext& ec)
 {
-	if (!SelfClass)
+	if (!ec.SelfClass)
 	{
 		ParseError(Loc, ":: not in method");
 		delete this;
 		return NULL;
 	}
-	VMethod* Func = CheckForMethod(Name, SelfClass->ParentClass);
+	VMethod* Func = ec.SelfClass->ParentClass->CheckForMethod(Name);
 	if (!Func)
 	{
 		ParseError(Loc, "No such method %s", *Name);
@@ -1418,7 +1428,7 @@ VExpression* VBaseInvocation::DoResolve()
 		true, Loc, NumArgs, Args);
 	NumArgs = 0;
 	delete this;
-	return e->Resolve();
+	return e->Resolve(ec);
 }
 
 //==========================================================================
@@ -1427,7 +1437,7 @@ VExpression* VBaseInvocation::DoResolve()
 //
 //==========================================================================
 
-void VBaseInvocation::Emit()
+void VBaseInvocation::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -1470,7 +1480,7 @@ VCastOrInvocation::~VCastOrInvocation()
 //
 //==========================================================================
 
-VExpression* VCastOrInvocation::DoResolve()
+VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 {
 	VClass* Class = CheckForClass(Name);
 	if (Class)
@@ -1484,28 +1494,28 @@ VExpression* VCastOrInvocation::DoResolve()
 		VExpression* e = new VDynamicCast(Class, Args[0], Loc);
 		NumArgs = 0;
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 
-	if (SelfClass)
+	if (ec.SelfClass)
 	{
-		VMethod* M = CheckForMethod(Name, SelfClass);
+		VMethod* M = ec.SelfClass->CheckForMethod(Name);
 		if (M)
 		{
 			VExpression* e = new VInvocation(NULL, M, NULL,
 				false, false, Loc, NumArgs, Args);
 			NumArgs = 0;
 			delete this;
-			return e->Resolve();
+			return e->Resolve(ec);
 		}
-		VField* field = CheckForField(Loc, Name, SelfClass);
+		VField* field = ec.SelfClass->CheckForField(Loc, Name, ec.SelfClass);
 		if (field && field->type.type == ev_delegate)
 		{
 			VExpression* e = new VInvocation(NULL, field->func, field,
 				false, false, Loc, NumArgs, Args);
 			NumArgs = 0;
 			delete this;
-			return e->Resolve();
+			return e->Resolve(ec);
 		}
 	}
 
@@ -1520,7 +1530,7 @@ VExpression* VCastOrInvocation::DoResolve()
 //
 //==========================================================================
 
-void VCastOrInvocation::Emit()
+void VCastOrInvocation::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -1566,10 +1576,10 @@ VDotInvocation::~VDotInvocation()
 //
 //==========================================================================
 
-VExpression* VDotInvocation::DoResolve()
+VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 {
 	if (SelfExpr)
-		SelfExpr = SelfExpr->Resolve();
+		SelfExpr = SelfExpr->Resolve(ec);
 	if (!SelfExpr)
 	{
 		delete this;
@@ -1579,9 +1589,11 @@ VExpression* VDotInvocation::DoResolve()
 	if (SelfExpr->Type.type != ev_reference)
 	{
 		ParseError(Loc, "Object reference expected left side of .");
+		delete this;
+		return NULL;
 	}
 
-	VMethod* M = CheckForMethod(MethodName, SelfExpr->Type.Class);
+	VMethod* M = SelfExpr->Type.Class->CheckForMethod(MethodName);
 	if (M)
 	{
 		VExpression* e = new VInvocation(SelfExpr, M, NULL, true,
@@ -1589,10 +1601,11 @@ VExpression* VDotInvocation::DoResolve()
 		SelfExpr = NULL;
 		NumArgs = 0;
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 
-	VField* field = CheckForField(Loc, MethodName, SelfExpr->Type.Class);
+	VField* field = SelfExpr->Type.Class->CheckForField(Loc, MethodName,
+		ec.SelfClass);
 	if (field && field->type.type == ev_delegate)
 	{
 		VExpression* e = new VInvocation(SelfExpr, field->func, field, true,
@@ -1600,7 +1613,7 @@ VExpression* VDotInvocation::DoResolve()
 		SelfExpr = NULL;
 		NumArgs = 0;
 		delete this;
-		return e->Resolve();
+		return e->Resolve(ec);
 	}
 
 	ParseError(Loc, "No such method %s", *MethodName);
@@ -1614,7 +1627,7 @@ VExpression* VDotInvocation::DoResolve()
 //
 //==========================================================================
 
-void VDotInvocation::Emit()
+void VDotInvocation::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -1659,14 +1672,14 @@ VUnary::~VUnary()
 //
 //==========================================================================
 
-VExpression* VUnary::DoResolve()
+VExpression* VUnary::DoResolve(VEmitContext& ec)
 {
 	if (op)
 	{
 		if (Oper == Not)
-			op = op->ResolveBoolean();
+			op = op->ResolveBoolean(ec);
 		else
-			op = op->Resolve();
+			op = op->Resolve(ec);
 	}
 	if (!op)
 	{
@@ -1727,7 +1740,7 @@ VExpression* VUnary::DoResolve()
 		else
 		{
 			op->RequestAddressOf();
-			Type = MakePointerType(op->RealType);
+			Type = op->RealType.MakePointerType();
 		}
 		break;
 	}
@@ -1740,9 +1753,9 @@ VExpression* VUnary::DoResolve()
 //
 //==========================================================================
 
-void VUnary::Emit()
+void VUnary::Emit(VEmitContext& ec)
 {
-	op->Emit();
+	op->Emit(ec);
 
 	switch (Oper)
 	{
@@ -1752,24 +1765,24 @@ void VUnary::Emit()
 	case Minus:
 		if (op->Type.type == ev_int)
 		{
-			AddStatement(OPC_UnaryMinus);
+			ec.AddStatement(OPC_UnaryMinus);
 		}
 		else if (op->Type.type == ev_float)
 		{
-			AddStatement(OPC_FUnaryMinus);
+			ec.AddStatement(OPC_FUnaryMinus);
 		}
 		else if (op->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VUnaryMinus);
+			ec.AddStatement(OPC_VUnaryMinus);
 		}
 		break;
 
 	case Not:
-		AddStatement(OPC_NegateLogical);
+		ec.AddStatement(OPC_NegateLogical);
 		break;
 
 	case BitInvert:
-		AddStatement(OPC_BitInverse);
+		ec.AddStatement(OPC_BitInverse);
 		break;
 
 	case TakeAddress:
@@ -1877,10 +1890,10 @@ VUnaryMutator::~VUnaryMutator()
 //
 //==========================================================================
 
-VExpression* VUnaryMutator::DoResolve()
+VExpression* VUnaryMutator::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->Resolve();
+		op = op->Resolve(ec);
 	if (!op)
 	{
 		delete this;
@@ -1904,25 +1917,25 @@ VExpression* VUnaryMutator::DoResolve()
 //
 //==========================================================================
 
-void VUnaryMutator::Emit()
+void VUnaryMutator::Emit(VEmitContext& ec)
 {
-	op->Emit();
+	op->Emit(ec);
 	switch (Oper)
 	{
 	case PreInc:
-		AddStatement(OPC_PreInc);
+		ec.AddStatement(OPC_PreInc);
 		break;
 
 	case PreDec:
-		AddStatement(OPC_PreDec);
+		ec.AddStatement(OPC_PreDec);
 		break;
 
 	case PostInc:
-		AddStatement(OPC_PostInc);
+		ec.AddStatement(OPC_PostInc);
 		break;
 
 	case PostDec:
-		AddStatement(OPC_PostDec);
+		ec.AddStatement(OPC_PostDec);
 		break;
 	}
 }
@@ -1967,10 +1980,10 @@ VPushPointed::~VPushPointed()
 //
 //==========================================================================
 
-VExpression* VPushPointed::DoResolve()
+VExpression* VPushPointed::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->Resolve();
+		op = op->Resolve(ec);
 	if (!op)
 	{
 		delete this;
@@ -2016,12 +2029,12 @@ void VPushPointed::RequestAddressOf()
 //
 //==========================================================================
 
-void VPushPointed::Emit()
+void VPushPointed::Emit(VEmitContext& ec)
 {
-	op->Emit();
+	op->Emit(ec);
 	if (!AddressRequested)
 	{
-		EmitPushPointedCode(RealType);
+		EmitPushPointedCode(RealType, ec);
 	}
 }
 
@@ -2068,12 +2081,12 @@ VBinary::~VBinary()
 //
 //==========================================================================
 
-VExpression* VBinary::DoResolve()
+VExpression* VBinary::DoResolve(VEmitContext& ec)
 {
 	if (op1)
-		op1 = op1->Resolve();
+		op1 = op1->Resolve(ec);
 	if (op2)
-		op2 = op2->Resolve();
+		op2 = op2->Resolve(ec);
 	if (!op1 || !op2)
 	{
 		delete this;
@@ -2204,230 +2217,230 @@ VExpression* VBinary::DoResolve()
 //
 //==========================================================================
 
-void VBinary::Emit()
+void VBinary::Emit(VEmitContext& ec)
 {
-	op1->Emit();
-	op2->Emit();
+	op1->Emit(ec);
+	op2->Emit(ec);
 
 	switch (Oper)
 	{
 	case Add:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Add);
+			ec.AddStatement(OPC_Add);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FAdd);
+			ec.AddStatement(OPC_FAdd);
 		}
 		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VAdd);
+			ec.AddStatement(OPC_VAdd);
 		}
 		break;
 
 	case Subtract:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Subtract);
+			ec.AddStatement(OPC_Subtract);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FSubtract);
+			ec.AddStatement(OPC_FSubtract);
 		}
 		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VSubtract);
+			ec.AddStatement(OPC_VSubtract);
 		}
 		break;
 
 	case Multiply:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Multiply);
+			ec.AddStatement(OPC_Multiply);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FMultiply);
+			ec.AddStatement(OPC_FMultiply);
 		}
 		else if (op1->Type.type == ev_vector && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_VPostScale);
+			ec.AddStatement(OPC_VPostScale);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VPreScale);
+			ec.AddStatement(OPC_VPreScale);
 		}
 		break;
 
 	case Divide:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Divide);
+			ec.AddStatement(OPC_Divide);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FDivide);
+			ec.AddStatement(OPC_FDivide);
 		}
 		else if (op1->Type.type == ev_vector && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_VIScale);
+			ec.AddStatement(OPC_VIScale);
 		}
 		break;
 
 	case Modulus:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Modulus);
+			ec.AddStatement(OPC_Modulus);
 		}
 		break;
 
 	case LShift:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_LShift);
+			ec.AddStatement(OPC_LShift);
 		}
 		break;
 
 	case RShift:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_RShift);
+			ec.AddStatement(OPC_RShift);
 		}
 		break;
 
 	case Less:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Less);
+			ec.AddStatement(OPC_Less);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FLess);
+			ec.AddStatement(OPC_FLess);
 		}
 		break;
 
 	case LessEquals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_LessEquals);
+			ec.AddStatement(OPC_LessEquals);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FLessEquals);
+			ec.AddStatement(OPC_FLessEquals);
 		}
 		break;
 
 	case Greater:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Greater);
+			ec.AddStatement(OPC_Greater);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FGreater);
+			ec.AddStatement(OPC_FGreater);
 		}
 		break;
 
 	case GreaterEquals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_GreaterEquals);
+			ec.AddStatement(OPC_GreaterEquals);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FGreaterEquals);
+			ec.AddStatement(OPC_FGreaterEquals);
 		}
 		break;
 
 	case Equals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_Equals);
+			ec.AddStatement(OPC_Equals);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FEquals);
+			ec.AddStatement(OPC_FEquals);
 		}
 		else if (op1->Type.type == ev_name && op2->Type.type == ev_name)
 		{
-			AddStatement(OPC_Equals);
+			ec.AddStatement(OPC_Equals);
 		}
 		else if (op1->Type.type == ev_pointer && op2->Type.type == ev_pointer)
 		{
-			AddStatement(OPC_PtrEquals);
+			ec.AddStatement(OPC_PtrEquals);
 		}
 		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VEquals);
+			ec.AddStatement(OPC_VEquals);
 		}
 		else if (op1->Type.type == ev_classid && op2->Type.type == ev_classid)
 		{
-			AddStatement(OPC_PtrEquals);
+			ec.AddStatement(OPC_PtrEquals);
 		}
 		else if (op1->Type.type == ev_state && op2->Type.type == ev_state)
 		{
-			AddStatement(OPC_PtrEquals);
+			ec.AddStatement(OPC_PtrEquals);
 		}
 		else if (op1->Type.type == ev_reference && op2->Type.type == ev_reference)
 		{
-			AddStatement(OPC_PtrEquals);
+			ec.AddStatement(OPC_PtrEquals);
 		}
 		break;
 
 	case NotEquals:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_NotEquals);
+			ec.AddStatement(OPC_NotEquals);
 		}
 		else if (op1->Type.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FNotEquals);
+			ec.AddStatement(OPC_FNotEquals);
 		}
 		else if (op1->Type.type == ev_name && op2->Type.type == ev_name)
 		{
-			AddStatement(OPC_NotEquals);
+			ec.AddStatement(OPC_NotEquals);
 		}
 		else if (op1->Type.type == ev_pointer && op2->Type.type == ev_pointer)
 		{
-			AddStatement(OPC_PtrNotEquals);
+			ec.AddStatement(OPC_PtrNotEquals);
 		}
 		else if (op1->Type.type == ev_vector && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VNotEquals);
+			ec.AddStatement(OPC_VNotEquals);
 		}
 		else if (op1->Type.type == ev_classid && op2->Type.type == ev_classid)
 		{
-			AddStatement(OPC_PtrNotEquals);
+			ec.AddStatement(OPC_PtrNotEquals);
 		}
 		else if (op1->Type.type == ev_state && op2->Type.type == ev_state)
 		{
-			AddStatement(OPC_PtrNotEquals);
+			ec.AddStatement(OPC_PtrNotEquals);
 		}
 		else if (op1->Type.type == ev_reference && op2->Type.type == ev_reference)
 		{
-			AddStatement(OPC_PtrNotEquals);
+			ec.AddStatement(OPC_PtrNotEquals);
 		}
 		break;
 
 	case And:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_AndBitwise);
+			ec.AddStatement(OPC_AndBitwise);
 		}
 		break;
 
 	case XOr:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_XOrBitwise);
+			ec.AddStatement(OPC_XOrBitwise);
 		}
 		break;
 
 	case Or:
 		if (op1->Type.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_OrBitwise);
+			ec.AddStatement(OPC_OrBitwise);
 		}
 		break;
 	}
@@ -2615,12 +2628,12 @@ VBinaryLogical::~VBinaryLogical()
 //
 //==========================================================================
 
-VExpression* VBinaryLogical::DoResolve()
+VExpression* VBinaryLogical::DoResolve(VEmitContext& ec)
 {
 	if (op1)
-		op1 = op1->ResolveBoolean();
+		op1 = op1->ResolveBoolean(ec);
 	if (op2)
-		op2 = op2->ResolveBoolean();
+		op2 = op2->ResolveBoolean(ec);
 	if (!op1 || !op2)
 	{
 		delete this;
@@ -2637,36 +2650,36 @@ VExpression* VBinaryLogical::DoResolve()
 //
 //==========================================================================
 
-void VBinaryLogical::Emit()
+void VBinaryLogical::Emit(VEmitContext& ec)
 {
 	int jmppos = 0;
 
-	op1->Emit();
+	op1->Emit(ec);
 
 	switch (Oper)
 	{
 	case And:
-		jmppos = AddStatement(OPC_IfNotTopGoto, 0);
+		jmppos = ec.AddStatement(OPC_IfNotTopGoto, 0);
 		break;
 	case Or:
-		jmppos = AddStatement(OPC_IfTopGoto, 0);
+		jmppos = ec.AddStatement(OPC_IfTopGoto, 0);
 		break;
 	}
 
-	op2->Emit();
+	op2->Emit(ec);
 
 	switch (Oper)
 	{
 	case And:
-		AddStatement(OPC_AndLogical);
+		ec.AddStatement(OPC_AndLogical);
 		break;
 
 	case Or:
-		AddStatement(OPC_OrLogical);
+		ec.AddStatement(OPC_OrLogical);
 		break;
 	}
 
-	FixupJump(jmppos);
+	ec.FixupJump(jmppos);
 }
 
 //==========================================================================
@@ -2746,14 +2759,14 @@ VConditional::~VConditional()
 //
 //==========================================================================
 
-VExpression* VConditional::DoResolve()
+VExpression* VConditional::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->ResolveBoolean();
+		op = op->ResolveBoolean(ec);
 	if (op1)
-		op1 = op1->Resolve();
+		op1 = op1->Resolve(ec);
 	if (op2)
-		op2 = op2->Resolve();
+		op2 = op2->Resolve(ec);
 	if (!op || !op1 || !op2)
 	{
 		delete this;
@@ -2774,15 +2787,15 @@ VExpression* VConditional::DoResolve()
 //
 //==========================================================================
 
-void VConditional::Emit()
+void VConditional::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	int jumppos1 = AddStatement(OPC_IfNotGoto, 0);
-	op1->Emit();
-	int jumppos2 = AddStatement(OPC_Goto, 0);
-	FixupJump(jumppos1);
-	op2->Emit();
-	FixupJump(jumppos2);
+	op->Emit(ec);
+	int jumppos1 = ec.AddStatement(OPC_IfNotGoto, 0);
+	op1->Emit(ec);
+	int jumppos2 = ec.AddStatement(OPC_Goto, 0);
+	ec.FixupJump(jumppos1);
+	op2->Emit(ec);
+	ec.FixupJump(jumppos2);
 }
 
 //END
@@ -2829,12 +2842,12 @@ VAssignment::~VAssignment()
 //
 //==========================================================================
 
-VExpression* VAssignment::DoResolve()
+VExpression* VAssignment::DoResolve(VEmitContext& ec)
 {
 	if (op1)
-		op1 = op1->Resolve();
+		op1 = op1->Resolve(ec);
 	if (op2)
-		op2 = op2->Resolve();
+		op2 = op2->Resolve(ec);
 	if (!op1 || !op2)
 	{
 		delete this;
@@ -2852,71 +2865,71 @@ VExpression* VAssignment::DoResolve()
 //
 //==========================================================================
 
-void VAssignment::Emit()
+void VAssignment::Emit(VEmitContext& ec)
 {
-	op1->Emit();
-	op2->Emit();
+	op1->Emit(ec);
+	op2->Emit(ec);
 
 	switch (Oper)
 	{
 	case Assign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_AssignDrop);
+			ec.AddStatement(OPC_AssignDrop);
 		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_AssignDrop);
+			ec.AddStatement(OPC_AssignDrop);
 		}
 		else if (op1->RealType.type == ev_name && op2->Type.type == ev_name)
 		{
-			AddStatement(OPC_AssignDrop);
+			ec.AddStatement(OPC_AssignDrop);
 		}
 		else if (op1->RealType.type == ev_string && op2->Type.type == ev_string)
 		{
-			AddStatement(OPC_AssignStrDrop);
+			ec.AddStatement(OPC_AssignStrDrop);
 		}
 		else if (op1->RealType.type == ev_pointer && op2->Type.type == ev_pointer)
 		{
-			AddStatement(OPC_AssignPtrDrop);
+			ec.AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VAssignDrop);
+			ec.AddStatement(OPC_VAssignDrop);
 		}
 		else if (op1->RealType.type == ev_classid && (op2->Type.type == ev_classid ||
 			(op2->Type.type == ev_reference && op2->Type.Class == NULL)))
 		{
-			AddStatement(OPC_AssignPtrDrop);
+			ec.AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (op1->RealType.type == ev_state && (op2->Type.type == ev_state ||
 			(op2->Type.type == ev_reference && op2->Type.Class == NULL)))
 		{
-			AddStatement(OPC_AssignPtrDrop);
+			ec.AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (op1->RealType.type == ev_reference && op2->Type.type == ev_reference)
 		{
-			AddStatement(OPC_AssignPtrDrop);
+			ec.AddStatement(OPC_AssignPtrDrop);
 		}
 		else if (op1->RealType.type == ev_bool && op2->Type.type == ev_int)
 		{
 			if (op1->RealType.bit_mask & 0x000000ff)
-				AddStatement(OPC_AssignBool0, (int)op1->RealType.bit_mask);
+				ec.AddStatement(OPC_AssignBool0, (int)op1->RealType.bit_mask);
 			else if (op1->RealType.bit_mask & 0x0000ff00)
-				AddStatement(OPC_AssignBool1, (int)(op1->RealType.bit_mask >> 8));
+				ec.AddStatement(OPC_AssignBool1, (int)(op1->RealType.bit_mask >> 8));
 			else if (op1->RealType.bit_mask & 0x00ff0000)
-				AddStatement(OPC_AssignBool2, (int)(op1->RealType.bit_mask >> 16));
+				ec.AddStatement(OPC_AssignBool2, (int)(op1->RealType.bit_mask >> 16));
 			else
-				AddStatement(OPC_AssignBool3, (int)(op1->RealType.bit_mask >> 24));
+				ec.AddStatement(OPC_AssignBool3, (int)(op1->RealType.bit_mask >> 24));
 		}
 		else if (op1->RealType.type == ev_delegate && op2->Type.type == ev_delegate)
 		{
-			AddStatement(OPC_AssignDelegate);
+			ec.AddStatement(OPC_AssignDelegate);
 		}
 		else if (op1->RealType.type == ev_delegate && op2->Type.type == ev_reference && op2->Type.Class == NULL)
 		{
-			AddStatement(OPC_PushNull);
-			AddStatement(OPC_AssignDelegate);
+			ec.AddStatement(OPC_PushNull);
+			ec.AddStatement(OPC_AssignDelegate);
 		}
 		else
 		{
@@ -2927,15 +2940,15 @@ void VAssignment::Emit()
 	case AddAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_AddVarDrop);
+			ec.AddStatement(OPC_AddVarDrop);
 		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FAddVarDrop);
+			ec.AddStatement(OPC_FAddVarDrop);
 		}
 		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VAddVarDrop);
+			ec.AddStatement(OPC_VAddVarDrop);
 		}
 		else
 		{
@@ -2946,15 +2959,15 @@ void VAssignment::Emit()
 	case MinusAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_SubVarDrop);
+			ec.AddStatement(OPC_SubVarDrop);
 		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FSubVarDrop);
+			ec.AddStatement(OPC_FSubVarDrop);
 		}
 		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_vector)
 		{
-			AddStatement(OPC_VSubVarDrop);
+			ec.AddStatement(OPC_VSubVarDrop);
 		}
 		else
 		{
@@ -2965,15 +2978,15 @@ void VAssignment::Emit()
 	case MultiplyAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_MulVarDrop);
+			ec.AddStatement(OPC_MulVarDrop);
 		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FMulVarDrop);
+			ec.AddStatement(OPC_FMulVarDrop);
 		}
 		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_VScaleVarDrop);
+			ec.AddStatement(OPC_VScaleVarDrop);
 		}
 		else
 		{
@@ -2984,15 +2997,15 @@ void VAssignment::Emit()
 	case DivideAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_DivVarDrop);
+			ec.AddStatement(OPC_DivVarDrop);
 		}
 		else if (op1->RealType.type == ev_float && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_FDivVarDrop);
+			ec.AddStatement(OPC_FDivVarDrop);
 		}
 		else if (op1->RealType.type == ev_vector && op2->Type.type == ev_float)
 		{
-			AddStatement(OPC_VIScaleVarDrop);
+			ec.AddStatement(OPC_VIScaleVarDrop);
 		}
 		else
 		{
@@ -3003,7 +3016,7 @@ void VAssignment::Emit()
 	case ModAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_ModVarDrop);
+			ec.AddStatement(OPC_ModVarDrop);
 		}
 		else
 		{
@@ -3014,7 +3027,7 @@ void VAssignment::Emit()
 	case AndAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_AndVarDrop);
+			ec.AddStatement(OPC_AndVarDrop);
 		}
 		else
 		{
@@ -3025,12 +3038,12 @@ void VAssignment::Emit()
 	case OrAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_OrVarDrop);
+			ec.AddStatement(OPC_OrVarDrop);
 		}
 //FIXME This is wrong!
 		else if (op1->RealType.type == ev_bool && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_OrVarDrop);
+			ec.AddStatement(OPC_OrVarDrop);
 		}
 		else
 		{
@@ -3041,7 +3054,7 @@ void VAssignment::Emit()
 	case XOrAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_XOrVarDrop);
+			ec.AddStatement(OPC_XOrVarDrop);
 		}
 		else
 		{
@@ -3052,7 +3065,7 @@ void VAssignment::Emit()
 	case LShiftAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_LShiftVarDrop);
+			ec.AddStatement(OPC_LShiftVarDrop);
 		}
 		else
 		{
@@ -3063,7 +3076,7 @@ void VAssignment::Emit()
 	case RShiftAssign:
 		if (op1->RealType.type == ev_int && op2->Type.type == ev_int)
 		{
-			AddStatement(OPC_RShiftVarDrop);
+			ec.AddStatement(OPC_RShiftVarDrop);
 		}
 		else
 		{
@@ -3087,6 +3100,7 @@ VStateConstant::VStateConstant(VState* AState, const TLocation& ALoc)
 : VExpression(ALoc)
 , State(AState)
 {
+	Type = ev_state;
 }
 
 //==========================================================================
@@ -3095,9 +3109,8 @@ VStateConstant::VStateConstant(VState* AState, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VStateConstant::DoResolve()
+VExpression* VStateConstant::DoResolve(VEmitContext&)
 {
-	Type = ev_state;
 	return this;
 }
 
@@ -3107,9 +3120,9 @@ VExpression* VStateConstant::DoResolve()
 //
 //==========================================================================
 
-void VStateConstant::Emit()
+void VStateConstant::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_PushState, State);
+	ec.AddStatement(OPC_PushState, State);
 }
 
 //END
@@ -3126,6 +3139,7 @@ VClassConstant::VClassConstant(VClass* AClass, const TLocation& ALoc)
 : VExpression(ALoc)
 , Class(AClass)
 {
+	Type = ev_classid;
 }
 
 //==========================================================================
@@ -3134,9 +3148,8 @@ VClassConstant::VClassConstant(VClass* AClass, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VClassConstant::DoResolve()
+VExpression* VClassConstant::DoResolve(VEmitContext&)
 {
-	Type = ev_classid;
 	return this;
 }
 
@@ -3146,9 +3159,9 @@ VExpression* VClassConstant::DoResolve()
 //
 //==========================================================================
 
-void VClassConstant::Emit()
+void VClassConstant::Emit(VEmitContext& ec)
 {
-	AddStatement(OPC_PushClassId, Class);
+	ec.AddStatement(OPC_PushClassId, Class);
 }
 
 //END
@@ -3173,7 +3186,7 @@ VConstantValue::VConstantValue(VConstant* AConst, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VConstantValue::DoResolve()
+VExpression* VConstantValue::DoResolve(VEmitContext&)
 {
 	Type = (EType)Const->Type;
 	return this;
@@ -3185,9 +3198,9 @@ VExpression* VConstantValue::DoResolve()
 //
 //==========================================================================
 
-void VConstantValue::Emit()
+void VConstantValue::Emit(VEmitContext& ec)
 {
-	EmitPushNumber(Const->Value);
+	ec.EmitPushNumber(Const->Value);
 }
 
 //==========================================================================
@@ -3257,10 +3270,10 @@ VDynamicCast::~VDynamicCast()
 //
 //==========================================================================
 
-VExpression* VDynamicCast::DoResolve()
+VExpression* VDynamicCast::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->Resolve();
+		op = op->Resolve(ec);
 	if (!op)
 	{
 		delete this;
@@ -3283,10 +3296,10 @@ VExpression* VDynamicCast::DoResolve()
 //
 //==========================================================================
 
-void VDynamicCast::Emit()
+void VDynamicCast::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	AddStatement(OPC_DynamicCast, Class);
+	op->Emit(ec);
+	ec.AddStatement(OPC_DynamicCast, Class);
 }
 
 //END
@@ -3312,10 +3325,10 @@ VLocalVar::VLocalVar(int ANum, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VLocalVar::DoResolve()
+VExpression* VLocalVar::DoResolve(VEmitContext& ec)
 {
-	Type = LocalDefs[num].type;
-	RealType = LocalDefs[num].type;
+	Type = ec.LocalDefs[num].type;
+	RealType = ec.LocalDefs[num].type;
 	if (Type.type == ev_bool)
 	{
 		Type = TType(ev_int);
@@ -3342,12 +3355,12 @@ void VLocalVar::RequestAddressOf()
 //
 //==========================================================================
 
-void VLocalVar::Emit()
+void VLocalVar::Emit(VEmitContext& ec)
 {
-	EmitLocalAddress(LocalDefs[num].ofs);
+	ec.EmitLocalAddress(ec.LocalDefs[num].ofs);
 	if (!AddressRequested)
 	{
-		EmitPushPointedCode(LocalDefs[num].type);
+		EmitPushPointedCode(ec.LocalDefs[num].type, ec);
 	}
 }
 
@@ -3388,7 +3401,7 @@ VFieldAccess::~VFieldAccess()
 //
 //==========================================================================
 
-VExpression* VFieldAccess::DoResolve()
+VExpression* VFieldAccess::DoResolve(VEmitContext&)
 {
 	Type = field->type;
 	RealType = field->type;
@@ -3422,13 +3435,13 @@ void VFieldAccess::RequestAddressOf()
 //
 //==========================================================================
 
-void VFieldAccess::Emit()
+void VFieldAccess::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	AddStatement(OPC_Offset, field);
+	op->Emit(ec);
+	ec.AddStatement(OPC_Offset, field);
 	if (!AddressRequested)
 	{
-		EmitPushPointedCode(field->type);
+		EmitPushPointedCode(field->type, ec);
 	}
 }
 
@@ -3467,7 +3480,7 @@ VDelegateVal::~VDelegateVal()
 //
 //==========================================================================
 
-VExpression* VDelegateVal::DoResolve()
+VExpression* VDelegateVal::DoResolve(VEmitContext&)
 {
 	Type = ev_delegate;
 	Type.Function = M;
@@ -3480,10 +3493,10 @@ VExpression* VDelegateVal::DoResolve()
 //
 //==========================================================================
 
-void VDelegateVal::Emit()
+void VDelegateVal::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	AddStatement(OPC_PushVFunc, M);
+	op->Emit(ec);
+	ec.AddStatement(OPC_PushVFunc, M);
 }
 
 //END
@@ -3531,13 +3544,13 @@ VInvocation::~VInvocation()
 //
 //==========================================================================
 
-VExpression* VInvocation::DoResolve()
+VExpression* VInvocation::DoResolve(VEmitContext& ec)
 {
 	//	Resolve arguments
 	for (int i = 0; i < NumArgs; i++)
 	{
 		if (Args[i])
-			Args[i] = Args[i]->Resolve();
+			Args[i] = Args[i]->Resolve(ec);
 		if (!Args[i])
 		{
 			delete this;
@@ -3559,10 +3572,10 @@ VExpression* VInvocation::DoResolve()
 //
 //==========================================================================
 
-void VInvocation::Emit()
+void VInvocation::Emit(VEmitContext& ec)
 {
 	if (SelfExpr)
-		SelfExpr->Emit();
+		SelfExpr->Emit(ec);
 
 	bool DirectCall = BaseCall || (Func->Flags & FUNC_Final);
 
@@ -3577,39 +3590,39 @@ void VInvocation::Emit()
 	{
 		if (!HaveSelf)
 		{
-			AddStatement(OPC_LocalAddress0);
-			AddStatement(OPC_PushPointedPtr);
+			ec.AddStatement(OPC_LocalAddress0);
+			ec.AddStatement(OPC_PushPointedPtr);
 		}
 		if (DelegateField)
 		{
-			AddStatement(OPC_Offset, DelegateField);
-			AddStatement(OPC_PushPointedDelegate);
+			ec.AddStatement(OPC_Offset, DelegateField);
+			ec.AddStatement(OPC_PushPointedDelegate);
 		}
 		else if (!DirectCall)
 		{
-			AddStatement(OPC_PushVFunc, Func);
+			ec.AddStatement(OPC_PushVFunc, Func);
 		}
 	}
 
 	for (int i = 0; i < NumArgs; i++)
 	{
-		Args[i]->Emit();
+		Args[i]->Emit(ec);
 		if (!DirectCall)
 		{
 			if (Args[i]->Type.type == ev_vector)
-				AddStatement(OPC_Swap3);
+				ec.AddStatement(OPC_Swap3);
 			else
-				AddStatement(OPC_Swap);
+				ec.AddStatement(OPC_Swap);
 		}
 	}
 
 	if (DirectCall)
 	{
-		AddStatement(OPC_Call, Func);
+		ec.AddStatement(OPC_Call, Func);
 	}
 	else
 	{
-		AddStatement(OPC_ICall);
+		ec.AddStatement(OPC_ICall);
 	}
 }
 
@@ -3697,7 +3710,7 @@ VDelegateToBool::~VDelegateToBool()
 //
 //==========================================================================
 
-VExpression* VDelegateToBool::DoResolve()
+VExpression* VDelegateToBool::DoResolve(VEmitContext&)
 {
 	return this;
 }
@@ -3708,11 +3721,11 @@ VExpression* VDelegateToBool::DoResolve()
 //
 //==========================================================================
 
-void VDelegateToBool::Emit()
+void VDelegateToBool::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	AddStatement(OPC_PushPointedPtr);
-	AddStatement(OPC_PtrToBool);
+	op->Emit(ec);
+	ec.AddStatement(OPC_PushPointedPtr);
+	ec.AddStatement(OPC_PtrToBool);
 }
 
 //END
@@ -3750,7 +3763,7 @@ VStringToBool::~VStringToBool()
 //
 //==========================================================================
 
-VExpression* VStringToBool::DoResolve()
+VExpression* VStringToBool::DoResolve(VEmitContext&)
 {
 	return this;
 }
@@ -3761,10 +3774,10 @@ VExpression* VStringToBool::DoResolve()
 //
 //==========================================================================
 
-void VStringToBool::Emit()
+void VStringToBool::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	AddStatement(OPC_StrToBool);
+	op->Emit(ec);
+	ec.AddStatement(OPC_StrToBool);
 }
 
 //END
@@ -3802,7 +3815,7 @@ VPointerToBool::~VPointerToBool()
 //
 //==========================================================================
 
-VExpression* VPointerToBool::DoResolve()
+VExpression* VPointerToBool::DoResolve(VEmitContext&)
 {
 	return this;
 }
@@ -3813,10 +3826,10 @@ VExpression* VPointerToBool::DoResolve()
 //
 //==========================================================================
 
-void VPointerToBool::Emit()
+void VPointerToBool::Emit(VEmitContext& ec)
 {
-	op->Emit();
-	AddStatement(OPC_PtrToBool);
+	op->Emit(ec);
+	ec.AddStatement(OPC_PtrToBool);
 }
 
 //END
@@ -3853,10 +3866,10 @@ VDropResult::~VDropResult()
 //
 //==========================================================================
 
-VExpression* VDropResult::DoResolve()
+VExpression* VDropResult::DoResolve(VEmitContext& ec)
 {
 	if (op)
-		op = op->Resolve();
+		op = op->Resolve(ec);
 	if (!op)
 	{
 		delete this;
@@ -3888,20 +3901,20 @@ VExpression* VDropResult::DoResolve()
 //
 //==========================================================================
 
-void VDropResult::Emit()
+void VDropResult::Emit(VEmitContext& ec)
 {
-	op->Emit();
+	op->Emit(ec);
 	if (op->Type.type == ev_string)
 	{
-		AddStatement(OPC_DropStr);
+		ec.AddStatement(OPC_DropStr);
 	}
 	else if (op->Type.type == ev_vector)
 	{
-		AddStatement(OPC_VDrop);
+		ec.AddStatement(OPC_VDrop);
 	}
 	else if (op->Type.GetSize() == 4)
 	{
-		AddStatement(OPC_Drop);
+		ec.AddStatement(OPC_Drop);
 	}
 }
 
@@ -3928,9 +3941,9 @@ VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc)
 //
 //==========================================================================
 
-VExpression* VTypeExpr::DoResolve()
+VExpression* VTypeExpr::DoResolve(VEmitContext& ec)
 {
-	return ResolveAsType();
+	return ResolveAsType(ec);
 }
 
 //==========================================================================
@@ -3939,7 +3952,7 @@ VExpression* VTypeExpr::DoResolve()
 //
 //==========================================================================
 
-VTypeExpr* VTypeExpr::ResolveAsType()
+VTypeExpr* VTypeExpr::ResolveAsType(VEmitContext&)
 {
 	if (Type.type == ev_unknown)
 	{
@@ -3956,7 +3969,7 @@ VTypeExpr* VTypeExpr::ResolveAsType()
 //
 //==========================================================================
 
-void VTypeExpr::Emit()
+void VTypeExpr::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -4021,11 +4034,11 @@ VPointerType::~VPointerType()
 //
 //==========================================================================
 
-VTypeExpr* VPointerType::ResolveAsType()
+VTypeExpr* VPointerType::ResolveAsType(VEmitContext& ec)
 {
 	if (Expr)
 	{
-		Expr = Expr->ResolveAsType();
+		Expr = Expr->ResolveAsType(ec);
 	}
 	if (!Expr)
 	{
@@ -4033,7 +4046,7 @@ VTypeExpr* VPointerType::ResolveAsType()
 		return NULL;
 	}
 
-	Type = MakePointerType(Expr->Type);
+	Type = Expr->Type.MakePointerType();
 	return this;
 }
 
@@ -4094,15 +4107,15 @@ VFixedArrayType::~VFixedArrayType()
 //
 //==========================================================================
 
-VTypeExpr* VFixedArrayType::ResolveAsType()
+VTypeExpr* VFixedArrayType::ResolveAsType(VEmitContext& ec)
 {
 	if (Expr)
 	{
-		Expr = Expr->ResolveAsType();
+		Expr = Expr->ResolveAsType(ec);
 	}
 	if (SizeExpr)
 	{
-		SizeExpr = SizeExpr->Resolve();
+		SizeExpr = SizeExpr->Resolve(ec);
 	}
 	if (!Expr || !SizeExpr)
 	{
@@ -4117,7 +4130,7 @@ VTypeExpr* VFixedArrayType::ResolveAsType()
 		return NULL;
 	}
 
-	Type = MakeArrayType(Expr->Type, Size, Loc);
+	Type = Expr->Type.MakeArrayType(Size, Loc);
 	return this;
 }
 
@@ -4163,9 +4176,9 @@ VLocalDecl::~VLocalDecl()
 //
 //==========================================================================
 
-VExpression* VLocalDecl::DoResolve()
+VExpression* VLocalDecl::DoResolve(VEmitContext& ec)
 {
-	Declare();
+	Declare(ec);
 	return this;
 }
 
@@ -4175,9 +4188,9 @@ VExpression* VLocalDecl::DoResolve()
 //
 //==========================================================================
 
-void VLocalDecl::Emit()
+void VLocalDecl::Emit(VEmitContext& ec)
 {
-	EmitInitialisations();
+	EmitInitialisations(ec);
 }
 
 //==========================================================================
@@ -4186,18 +4199,18 @@ void VLocalDecl::Emit()
 //
 //==========================================================================
 
-void VLocalDecl::Declare()
+void VLocalDecl::Declare(VEmitContext& ec)
 {
 	for (int i = 0; i < Vars.Num(); i++)
 	{
 		VLocalEntry& e = Vars[i];
 
-		if (CheckForLocalVar(e.Name) != -1)
+		if (ec.CheckForLocalVar(e.Name) != -1)
 		{
 			ParseError(e.Loc, "Redefined identifier %s", *e.Name);
 		}
 
-		e.TypeExpr = e.TypeExpr->ResolveAsType();
+		e.TypeExpr = e.TypeExpr->ResolveAsType(ec);
 		if (!e.TypeExpr)
 		{
 			continue;
@@ -4208,25 +4221,25 @@ void VLocalDecl::Declare()
 			ParseError(e.TypeExpr->Loc, "Bad variable type");
 		}
 
-		VLocalVarDef& L = LocalDefs.Alloc();
+		VLocalVarDef& L = ec.LocalDefs.Alloc();
 		L.Name = e.Name;
 		L.type = Type;
-		L.ofs = localsofs;
+		L.ofs = ec.localsofs;
 		L.Visible = false;
 		L.Cleared = false;
 
 		//  Initialisation
 		if (e.Value)
 		{
-			VExpression* op1 = new VLocalVar(LocalDefs.Num() - 1, e.Loc);
+			VExpression* op1 = new VLocalVar(ec.LocalDefs.Num() - 1, e.Loc);
 			e.Value = new VAssignment(VAssignment::Assign, op1, e.Value, e.Loc);
-			e.Value = e.Value->Resolve();
+			e.Value = e.Value->Resolve(ec);
 		}
 
 		L.Visible = true;
 
-		localsofs += Type.GetSize() / 4;
-		if (localsofs > 1024)
+		ec.localsofs += Type.GetSize() / 4;
+		if (ec.localsofs > 1024)
 		{
 			ParseWarning(e.Loc, "Local vars > 1k");
 		}
@@ -4239,13 +4252,13 @@ void VLocalDecl::Declare()
 //
 //==========================================================================
 
-void VLocalDecl::EmitInitialisations()
+void VLocalDecl::EmitInitialisations(VEmitContext& ec)
 {
 	for (int i = 0; i < Vars.Num(); i++)
 	{
 		if (Vars[i].Value)
 		{
-			Vars[i].Value->Emit();
+			Vars[i].Value->Emit(ec);
 		}
 	}
 }

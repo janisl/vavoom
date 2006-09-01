@@ -41,38 +41,9 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TArray<VLocalVarDef>	LocalDefs;
-int						localsofs = 0;
-
-TType					SelfType;
-VClass*					SelfClass;
-
-TArray<breakInfo_t>		BreakInfo;
-int						BreakLevel;
-int						BreakNumLocalsOnStart;
-TArray<continueInfo_t> 	ContinueInfo;
-int						ContinueLevel;
-int						ContinueNumLocalsOnStart;
-TType					FuncRetType;
-
-TArray<VImportedPackage>	PackagesToLoad;
-TArray<VConstant*>			ParsedConstants;
-TArray<VStruct*>			ParsedStructs;
-TArray<VClass*>				ParsedClasses;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	InitTypes
-//
-//==========================================================================
-
-void InitTypes()
-{
-}
 
 //==========================================================================
 //
@@ -173,13 +144,13 @@ bool TType::Equals(const TType& Other) const
 
 //==========================================================================
 //
-//	MakePointerType
+//	TType::MakePointerType
 //
 //==========================================================================
 
-TType MakePointerType(const TType& type)
+TType TType::MakePointerType() const
 {
-	TType pointer = type;
+	TType pointer = *this;
 	if (pointer.type == ev_pointer)
 	{
 		pointer.PtrLevel++;
@@ -218,18 +189,18 @@ TType TType::GetPointerInnerType() const
 
 //==========================================================================
 //
-//	MakeArrayType
+//	TType::MakeArrayType
 //
 //==========================================================================
 
-TType MakeArrayType(const TType& type, int elcount, TLocation l)
+TType TType::MakeArrayType(int elcount, TLocation l) const
 {
-	if (type.type == ev_array)
+	if (type == ev_array)
 	{
 		ParseError(l, "Can't have multi-dimensional arrays");
 	}
-	TType array = type;
-	array.ArrayInnerType = type.type;
+	TType array = *this;
+	array.ArrayInnerType = type;
 	array.type = ev_array;
 	array.array_dim = elcount;
 	return array;
@@ -337,33 +308,71 @@ int TType::GetSize() const
 //
 //==========================================================================
 
-VMethod* CheckForFunction(VClass* InClass, VName Name)
+VMethod* VClass::CheckForFunction(VName Name)
 {
 	if (Name == NAME_None)
 	{
 		return NULL;
 	}
-	return (VMethod*)VMemberBase::StaticFindMember(Name, InClass,
-		MEMBER_Method);
+	return (VMethod*)StaticFindMember(Name, this, MEMBER_Method);
 }
 
 //==========================================================================
 //
-//	CheckForConstant
+//	VClass::CheckForMethod
 //
 //==========================================================================
 
-VConstant* CheckForConstant(VClass* InClass, VName Name)
+VMethod* VClass::CheckForMethod(VName Name)
 {
-	VMemberBase* m = VMemberBase::StaticFindMember(Name, InClass ?
-		(VMemberBase*)InClass : (VMemberBase*)ANY_PACKAGE, MEMBER_Const);
+	if (Name == NAME_None)
+	{
+		return NULL;
+	}
+	VMethod* M = (VMethod*)StaticFindMember(Name, this, MEMBER_Method);
+	if (M)
+	{
+		return M;
+	}
+	if (ParentClass)
+	{
+		return ParentClass->CheckForMethod(Name);
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	VClass::CheckForConstant
+//
+//==========================================================================
+
+VConstant* VClass::CheckForConstant(VName Name)
+{
+	VMemberBase* m = StaticFindMember(Name, this, MEMBER_Const);
 	if (m)
 	{
 		return (VConstant*)m;
 	}
-	if (InClass)
+	if (ParentClass)
 	{
-		return CheckForConstant(InClass->ParentClass, Name);
+		return ParentClass->CheckForConstant(Name);
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	VPackage::CheckForConstant
+//
+//==========================================================================
+
+VConstant* VPackage::CheckForConstant(VName Name)
+{
+	VMemberBase* m = StaticFindMember(Name, this, MEMBER_Const);
+	if (m)
+	{
+		return (VConstant*)m;
 	}
 	return NULL;
 }
@@ -525,107 +534,73 @@ void TType::GetName(char* Dest) const
 
 //==========================================================================
 //
-//	CheckForStructField
+//	VStruct::CheckForField
 //
 //==========================================================================
 
-VField* CheckForStructField(VStruct* InStruct, VName FieldName)
+VField* VStruct::CheckForField(VName FieldName)
 {
-	for (VField* fi = InStruct->Fields; fi; fi = fi->Next)
+	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
 		if (fi->Name == FieldName)
 		{
 			return fi;
 		}
 	}
-	if (InStruct->ParentStruct)
+	if (ParentStruct)
 	{
-		return CheckForStructField(InStruct->ParentStruct, FieldName);
+		return ParentStruct->CheckForField(FieldName);
 	}
 	return NULL;
 }
 
 //==========================================================================
 //
-//	CheckForField
+//	VClass::CheckForField
 //
 //==========================================================================
 
-VField* CheckForField(TLocation l, VName Name, VClass* InClass, bool CheckPrivate)
+VField* VClass::CheckForField(TLocation l, VName Name, VClass* SelfClass, bool CheckPrivate)
 {
-	if (!InClass)
-	{
-		return NULL;
-	}
-	if (!InClass->Parsed)
-	{
-		return NULL;
-	}
 	if (Name == NAME_None)
 	{
 		return NULL;
 	}
-	for (VField *fi = InClass->Fields; fi; fi = fi->Next)
+	for (VField *fi = Fields; fi; fi = fi->Next)
 	{
 		if (Name == fi->Name)
 		{
 			if (CheckPrivate && fi->flags & FIELD_Private &&
-				InClass != SelfClass)
+				this != SelfClass)
 			{
 				ParseError(l, "Field %s is private", *fi->Name);
 			}
 			return fi;
 		}
 	}
-	return CheckForField(l, Name, InClass->ParentClass, CheckPrivate);
+	if (ParentClass)
+	{
+		return ParentClass->CheckForField(l, Name, SelfClass, CheckPrivate);
+	}
+	return NULL;
 }
 
 //==========================================================================
 //
-//	CheckForMethod
+//	VClass::CheckForState
 //
 //==========================================================================
 
-VMethod* CheckForMethod(VName Name, VClass* InClass)
+VState* VClass::CheckForState(VName StateName)
 {
-	if (!InClass)
-	{
-		return NULL;
-	}
-	if (!InClass->Parsed)
-	{
-		return NULL;
-	}
-	if (Name == NAME_None)
-	{
-		return NULL;
-	}
-	VMethod* M = (VMethod*)VMemberBase::StaticFindMember(Name, InClass,
-		MEMBER_Method);
-	if (M)
-	{
-		return M;
-	}
-	return CheckForMethod(Name, InClass->ParentClass);
-}
-
-//==========================================================================
-//
-//	CheckForState
-//
-//==========================================================================
-
-VState* CheckForState(VName StateName, VClass* InClass)
-{
-	VMemberBase* m = VMemberBase::StaticFindMember(StateName, InClass,
-		MEMBER_State);
+	VMemberBase* m = StaticFindMember(StateName, this, MEMBER_State);
 	if (m)
 	{
 		return (VState*)m;
 	}
-	if (InClass->ParentClass)
+	if (ParentClass)
 	{
-		return CheckForState(StateName, InClass->ParentClass);
+		return ParentClass->CheckForState(StateName);
 	}
 	return NULL;
 }
@@ -767,32 +742,6 @@ bool VStruct::NeedsDestructor() const
 
 //==========================================================================
 //
-//	CheckForLocalVar
-//
-//==========================================================================
-
-int CheckForLocalVar(VName Name)
-{
-	if (Name == NAME_None)
-	{
-		return -1;
-	}
-	for (int i = 0; i < LocalDefs.Num(); i++)
-	{
-		if (!LocalDefs[i].Visible)
-		{
-			continue;
-		}
-		if (LocalDefs[i].Name == Name)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
-//==========================================================================
-//
 //	VConstant::Define
 //
 //==========================================================================
@@ -807,7 +756,8 @@ bool VConstant::Define()
 
 	if (ValueExpr)
 	{
-		ValueExpr = ValueExpr->Resolve();
+		VEmitContext ec(this);
+		ValueExpr = ValueExpr->Resolve(ec);
 	}
 	if (!ValueExpr)
 	{
@@ -852,7 +802,8 @@ bool VField::Define()
 
 	if (TypeExpr)
 	{
-		TypeExpr = TypeExpr->ResolveAsType();
+		VEmitContext ec(this);
+		TypeExpr = TypeExpr->ResolveAsType(ec);
 	}
 	if (!TypeExpr)
 	{
@@ -903,9 +854,11 @@ bool VMethod::Define()
 		ParseError(Loc, "Only native methods can have varargs");
 	}
 
+	VEmitContext ec(this);
+
 	if (ReturnTypeExpr)
 	{
-		ReturnTypeExpr = ReturnTypeExpr->ResolveAsType();
+		ReturnTypeExpr = ReturnTypeExpr->ResolveAsType(ec);
 	}
 	if (ReturnTypeExpr)
 	{
@@ -930,7 +883,7 @@ bool VMethod::Define()
 
 		if (P.TypeExpr)
 		{
-			P.TypeExpr = P.TypeExpr->ResolveAsType();
+			P.TypeExpr = P.TypeExpr->ResolveAsType(ec);
 		}
 		if (!P.TypeExpr)
 		{
@@ -957,7 +910,7 @@ bool VMethod::Define()
 	if (Outer->MemberType == MEMBER_Class && Name != NAME_None &&
 		((VClass*)Outer)->ParentClass)
 	{
-		BaseMethod = CheckForMethod(Name, ((VClass*)Outer)->ParentClass);
+		BaseMethod = ((VClass*)Outer)->ParentClass->CheckForMethod(Name);
 	}
 	if (BaseMethod)
 	{
@@ -1072,7 +1025,8 @@ bool VClass::Define()
 
 	for (int i = 0; i < MobjInfoExpressions.Num(); i++)
 	{
-		MobjInfoExpressions[i] = MobjInfoExpressions[i]->Resolve();
+		VEmitContext ec(this);
+		MobjInfoExpressions[i] = MobjInfoExpressions[i]->Resolve(ec);
 		if (!MobjInfoExpressions[i])
 		{
 			return false;
@@ -1082,14 +1036,15 @@ bool VClass::Define()
 		{
 			return false;
 		}
-		mobjinfo_t& mi = mobj_info.Alloc();
+		mobjinfo_t& mi = ec.Package->mobj_info.Alloc();
 		mi.doomednum = Id;
 		mi.class_id = this;
 	}
 
 	for (int i = 0; i < ScriptIdExpressions.Num(); i++)
 	{
-		ScriptIdExpressions[i] = ScriptIdExpressions[i]->Resolve();
+		VEmitContext ec(this);
+		ScriptIdExpressions[i] = ScriptIdExpressions[i]->Resolve(ec);
 		if (!ScriptIdExpressions[i])
 		{
 			return false;
@@ -1099,7 +1054,7 @@ bool VClass::Define()
 		{
 			return false;
 		}
-		mobjinfo_t& mi = script_ids.Alloc();
+		mobjinfo_t& mi = ec.Package->script_ids.Alloc();
 		mi.doomednum = Id;
 		mi.class_id = this;
 	}
@@ -1175,8 +1130,6 @@ bool VStruct::DefineMembers()
 bool VClass::DefineMembers()
 {
 	bool Ret = true;
-
-	SelfClass = this;
 
 	for (int i = 0; i < Constants.Num(); i++)
 	{
@@ -1258,74 +1211,63 @@ void VMethod::Emit()
 		return;
 	}
 
-	VMemberBase* C = Outer;
-	while (C && C->MemberType != MEMBER_Class)
-	{
-		C = C->Outer;
-	}
-	SelfClass = (VClass*)C;
-	SelfType = TType(SelfClass);
+	VEmitContext ec(this);
 
-	LocalDefs.Clear();
-	localsofs = 1;
+	ec.LocalDefs.Clear();
+	ec.localsofs = 1;
 
 	for (int i = 0; i < NumParams; i++)
 	{
 		VMethodParam& P = Params[i];
 		if (P.Name != NAME_None)
 		{
-			if (CheckForLocalVar(P.Name) != -1)
+			if (ec.CheckForLocalVar(P.Name) != -1)
 			{
 				ParseError(P.Loc, "Redefined identifier %s", *P.Name);
 			}
-			VLocalVarDef& L = LocalDefs.Alloc();
+			VLocalVarDef& L = ec.LocalDefs.Alloc();
 			L.Name = P.Name;
 			L.type = ParamTypes[i];
-			L.ofs = localsofs;
+			L.ofs = ec.localsofs;
 			L.Visible = true;
 			L.Cleared = false;
 		}
-		localsofs += ParamTypes[i].GetSize() / 4;
+		ec.localsofs += ParamTypes[i].GetSize() / 4;
 	}
 
-	BreakLevel = 0;
-	ContinueLevel = 0;
-	FuncRetType = ReturnType;
-
-	BeginCode(this);
-	for (int i = 0; i < LocalDefs.Num(); i++)
+	for (int i = 0; i < ec.LocalDefs.Num(); i++)
 	{
-		if (LocalDefs[i].type.type == ev_vector)
+		if (ec.LocalDefs[i].type.type == ev_vector)
 		{
-			AddStatement(OPC_VFixParam, LocalDefs[i].ofs);
+			ec.AddStatement(OPC_VFixParam, ec.LocalDefs[i].ofs);
 		}
 	}
 
 	if (!NumErrors)
 	{
-		Statement->Resolve();
+		Statement->Resolve(ec);
 	}
 
 	//  Call parent constructor
-	if (this == SelfClass->DefaultProperties && SelfClass->ParentClass)
+	if (this == ec.SelfClass->DefaultProperties && ec.SelfClass->ParentClass)
 	{
-		AddStatement(OPC_LocalAddress0);
-		AddStatement(OPC_PushPointedPtr);
-		AddStatement(OPC_Call, SelfClass->ParentClass->DefaultProperties);
+		ec.AddStatement(OPC_LocalAddress0);
+		ec.AddStatement(OPC_PushPointedPtr);
+		ec.AddStatement(OPC_Call, ec.SelfClass->ParentClass->DefaultProperties);
 	}
 
 	if (!NumErrors)
 	{
-		Statement->Emit();
+		Statement->Emit(ec);
 	}
 
-	if (FuncRetType.type == ev_void)
+	if (ReturnType.type == ev_void)
 	{
-		EmitClearStrings(0, LocalDefs.Num());
-		AddStatement(OPC_Return);
+		ec.EmitClearStrings(0, ec.LocalDefs.Num());
+		ec.AddStatement(OPC_Return);
 	}
-	NumLocals = localsofs;
-	EndCode(this);
+	NumLocals = ec.localsofs;
+	ec.EndCode();
 }
 
 //==========================================================================
@@ -1336,12 +1278,13 @@ void VMethod::Emit()
 
 void VState::Emit()
 {
+	VEmitContext ec(this);
 	if (FrameExpr)
-		FrameExpr = FrameExpr->Resolve();
+		FrameExpr = FrameExpr->Resolve(ec);
 	if (ModelFrameExpr)
-		ModelFrameExpr = ModelFrameExpr->Resolve();
+		ModelFrameExpr = ModelFrameExpr->Resolve(ec);
 	if (TimeExpr)
-		TimeExpr = TimeExpr->Resolve();
+		TimeExpr = TimeExpr->Resolve(ec);
 
 	if (!FrameExpr || !TimeExpr)
 		return;
@@ -1354,7 +1297,7 @@ void VState::Emit()
 
 	if (NextStateName != NAME_None)
 	{
-		NextState = CheckForState(NextStateName, (VClass*)Outer);
+		NextState = ((VClass*)Outer)->CheckForState(NextStateName);
 		if (!NextState)
 		{
 			ParseError(Loc, "No such state %s", *NextStateName);
@@ -1395,10 +1338,11 @@ void VClass::Emit()
 
 void EmitCode()
 {
-	for (int i = 0; i < PackagesToLoad.Num(); i++)
+	for (int i = 0; i < CurrentPackage->PackagesToLoad.Num(); i++)
 	{
-		PackagesToLoad[i].Pkg = LoadPackage(PackagesToLoad[i].Name,
-			PackagesToLoad[i].Loc);
+		CurrentPackage->PackagesToLoad[i].Pkg = LoadPackage(
+			CurrentPackage->PackagesToLoad[i].Name,
+			CurrentPackage->PackagesToLoad[i].Loc);
 	}
 
 	if (NumErrors)
@@ -1406,34 +1350,19 @@ void EmitCode()
 		BailOut();
 	}
 
-	for (int i = 0; i < ParsedConstants.Num(); i++)
+	for (int i = 0; i < CurrentPackage->ParsedConstants.Num(); i++)
 	{
-		ParsedConstants[i]->Define();
+		CurrentPackage->ParsedConstants[i]->Define();
 	}
 
-	for (int i = 0; i < ParsedStructs.Num(); i++)
+	for (int i = 0; i < CurrentPackage->ParsedStructs.Num(); i++)
 	{
-		ParsedStructs[i]->Define();
+		CurrentPackage->ParsedStructs[i]->Define();
 	}
 
-	for (int i = 0; i < ParsedClasses.Num(); i++)
+	for (int i = 0; i < CurrentPackage->ParsedClasses.Num(); i++)
 	{
-		ParsedClasses[i]->Define();
-	}
-
-	if (NumErrors)
-	{
-		BailOut();
-	}
-
-	for (int i = 0; i < ParsedStructs.Num(); i++)
-	{
-		ParsedStructs[i]->DefineMembers();
-	}
-
-	for (int i = 0; i < ParsedClasses.Num(); i++)
-	{
-		ParsedClasses[i]->DefineMembers();
+		CurrentPackage->ParsedClasses[i]->Define();
 	}
 
 	if (NumErrors)
@@ -1441,9 +1370,24 @@ void EmitCode()
 		BailOut();
 	}
 
-	for (int i = 0; i < ParsedClasses.Num(); i++)
+	for (int i = 0; i < CurrentPackage->ParsedStructs.Num(); i++)
 	{
-		ParsedClasses[i]->Emit();
+		CurrentPackage->ParsedStructs[i]->DefineMembers();
+	}
+
+	for (int i = 0; i < CurrentPackage->ParsedClasses.Num(); i++)
+	{
+		CurrentPackage->ParsedClasses[i]->DefineMembers();
+	}
+
+	if (NumErrors)
+	{
+		BailOut();
+	}
+
+	for (int i = 0; i < CurrentPackage->ParsedClasses.Num(); i++)
+	{
+		CurrentPackage->ParsedClasses[i]->Emit();
 	}
 
 	if (NumErrors)

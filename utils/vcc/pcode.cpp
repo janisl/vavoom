@@ -33,19 +33,11 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct TStringInfo
-{
-	int offs;
-	int next;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-
-void DumpAsmFunction(VMethod*);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -55,21 +47,11 @@ TArray<VMemberBase*>	VMemberBase::GMembers;
 VMemberBase*			VMemberBase::GMembersHash[4096];
 
 VPackage*			CurrentPackage;
-int					numbuiltins;
-
-TArray<mobjinfo_t>	mobj_info;
-TArray<mobjinfo_t>	script_ids;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<const char*>	PackagePath;
 static TArray<VPackage*>	LoadedPackages;
-
-static TArray<char>			strings;
-static TArray<TStringInfo>	StringInfo;
-static int					StringLookup[256];
-
-static VMethod*				CurrentFunc;
 
 static struct
 {
@@ -105,15 +87,6 @@ VStream& operator<<(VStream& Strm, VClass*& Obj)
 void PC_Init()
 {
 	CurrentPackage = new VPackage();
-
-	//	Strings
-	memset(StringLookup, 0, 256 * 4);
-	//	1-st string is empty
-	StringInfo.Alloc();
-	StringInfo[0].offs = 0;
-	StringInfo[0].next = 0;
-	strings.SetNum(4);
-	memset(strings.Ptr(), 0, 4);
 }
 
 //==========================================================================
@@ -129,24 +102,62 @@ void AddPackagePath(const char* Path)
 
 //==========================================================================
 //
-//	StringHashFunc
+//	VPackage::VPackage
 //
 //==========================================================================
 
-static int StringHashFunc(const char *str)
+VPackage::VPackage()
+: VMemberBase(MEMBER_Package, NAME_None, NULL, TLocation())
+{
+	//	Strings
+	memset(StringLookup, 0, 256 * 4);
+	//	1-st string is empty
+	StringInfo.Alloc();
+	StringInfo[0].offs = 0;
+	StringInfo[0].next = 0;
+	Strings.SetNum(4);
+	memset(Strings.Ptr(), 0, 4);
+}
+
+//==========================================================================
+//
+//	VPackage::VPackage
+//
+//==========================================================================
+
+VPackage::VPackage(VName InName)
+: VMemberBase(MEMBER_Package, InName, NULL, TLocation())
+{
+	//	Strings
+	memset(StringLookup, 0, 256 * 4);
+	//	1-st string is empty
+	StringInfo.Alloc();
+	StringInfo[0].offs = 0;
+	StringInfo[0].next = 0;
+	Strings.SetNum(4);
+	memset(Strings.Ptr(), 0, 4);
+}
+
+//==========================================================================
+//
+//	VPackage::StringHashFunc
+//
+//==========================================================================
+
+int VPackage::StringHashFunc(const char *str)
 {
 	return (*str ^ (str[1] << 4)) & 0xff;
 }
 
 //==========================================================================
 //
-//  FindString
+//  VPackage::FindString
 //
 //  Return offset in strings array.
 //
 //==========================================================================
 
-int FindString(const char *str)
+int VPackage::FindString(const char *str)
 {
 	if (!*str)
 	{
@@ -155,7 +166,7 @@ int FindString(const char *str)
 	int hash = StringHashFunc(str);
 	for (int i = StringLookup[hash]; i; i = StringInfo[i].next)
 	{
-		if (!strcmp(&strings[StringInfo[i].offs], str))
+		if (!strcmp(&Strings[StringInfo[i].offs], str))
 		{
 			return StringInfo[i].offs;
 		}
@@ -164,23 +175,107 @@ int FindString(const char *str)
 	//  Add new string
 	TStringInfo& SI = StringInfo.Alloc();
 	int AddLen = (strlen(str) + 4) & ~3;
-	int Ofs = strings.Num();
-	strings.SetNum(strings.Num() + AddLen);
-	memset(&strings[Ofs], 0, AddLen);
+	int Ofs = Strings.Num();
+	Strings.SetNum(Strings.Num() + AddLen);
+	memset(&Strings[Ofs], 0, AddLen);
 	SI.offs = Ofs;
 	SI.next = StringLookup[hash];
 	StringLookup[hash] = StringInfo.Num() - 1;
-	strcpy(&strings[Ofs], str);
+	strcpy(&Strings[Ofs], str);
 	return SI.offs;
 }
 
 //==========================================================================
 //
-//  AddStatement
+//	VEmitContext::VEmitContext
 //
 //==========================================================================
 
-int AddStatement(int statement)
+VEmitContext::VEmitContext(VMemberBase* Member)
+: CurrentFunc(NULL)
+, FuncRetType(ev_unknown)
+, localsofs(0)
+, BreakLevel(0)
+, BreakNumLocalsOnStart(0)
+, ContinueLevel(0)
+, ContinueNumLocalsOnStart(0)
+{
+	//	Find the class.
+	VMemberBase* CM = Member;
+	while (CM && CM->MemberType != MEMBER_Class)
+	{
+		CM = CM->Outer;
+	}
+	SelfClass = (VClass*)CM;
+
+	VMemberBase* PM = Member;
+	while (PM && PM->MemberType != MEMBER_Package)
+	{
+		PM = PM->Outer;
+	}
+	Package = (VPackage*)PM;
+
+	if (Member->MemberType == MEMBER_Method)
+	{
+		CurrentFunc = (VMethod*)Member;
+		CurrentFunc->Instructions.Clear();
+		CurrentFunc->Instructions.Resize(1024);
+		FuncRetType = CurrentFunc->ReturnType;
+	}
+}
+
+//==========================================================================
+//
+//	VEmitContext::EndCode
+//
+//==========================================================================
+
+void VEmitContext::EndCode()
+{
+#ifdef OPCODE_STATS
+	for (int i = 0; i < CurrentFunc->Instructions.Num(); i++)
+	{
+		StatementInfo[CurrentFunc->Instructions[i].Opcode].usecount++;
+	}
+#endif
+	FInstruction& Dummy = CurrentFunc->Instructions.Alloc();
+	Dummy.Opcode = OPC_Done;
+	CurrentFunc->DumpAsm();
+}
+
+//==========================================================================
+//
+//	VEmitContext::CheckForLocalVar
+//
+//==========================================================================
+
+int VEmitContext::CheckForLocalVar(VName Name)
+{
+	if (Name == NAME_None)
+	{
+		return -1;
+	}
+	for (int i = 0; i < LocalDefs.Num(); i++)
+	{
+		if (!LocalDefs[i].Visible)
+		{
+			continue;
+		}
+		if (LocalDefs[i].Name == Name)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+//==========================================================================
+//
+//  VEmitContext::AddStatement
+//
+//==========================================================================
+
+int VEmitContext::AddStatement(int statement)
 {
 	if (StatementInfo[statement].Args != OPCARGS_None)
 	{
@@ -207,7 +302,7 @@ int AddStatement(int statement)
 
 		if (statement != OPC_Drop)
 		{
-			UndoStatement();
+			CurrentFunc->Instructions.RemoveIndex(CurrentFunc->Instructions.Num() - 1);
 		}
 	}
 
@@ -221,11 +316,11 @@ int AddStatement(int statement)
 
 //==========================================================================
 //
-//  AddStatement
+//  VEmitContext::AddStatement
 //
 //==========================================================================
 
-int AddStatement(int statement, int parm1)
+int VEmitContext::AddStatement(int statement, int parm1)
 {
 	if (StatementInfo[statement].Args != OPCARGS_BranchTarget &&
 		StatementInfo[statement].Args != OPCARGS_Byte &&
@@ -246,11 +341,11 @@ int AddStatement(int statement, int parm1)
 
 //==========================================================================
 //
-//  AddStatement
+//  VEmitContext::AddStatement
 //
 //==========================================================================
 
-int AddStatement(int statement, float FloatArg)
+int VEmitContext::AddStatement(int statement, float FloatArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Int)
 	{
@@ -266,11 +361,11 @@ int AddStatement(int statement, float FloatArg)
 
 //==========================================================================
 //
-//  AddStatement
+//  VEmitContext::AddStatement
 //
 //==========================================================================
 
-int AddStatement(int statement, VName NameArg)
+int VEmitContext::AddStatement(int statement, VName NameArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Name)
 	{
@@ -286,11 +381,11 @@ int AddStatement(int statement, VName NameArg)
 
 //==========================================================================
 //
-//  AddStatement
+//  VEmitContext::AddStatement
 //
 //==========================================================================
 
-int AddStatement(int statement, VMemberBase* Member)
+int VEmitContext::AddStatement(int statement, VMemberBase* Member)
 {
 	if (StatementInfo[statement].Args != OPCARGS_Member &&
 		StatementInfo[statement].Args != OPCARGS_FieldOffset &&
@@ -308,11 +403,11 @@ int AddStatement(int statement, VMemberBase* Member)
 
 //==========================================================================
 //
-//  AddStatement
+//  VEmitContext::AddStatement
 //
 //==========================================================================
 
-int AddStatement(int statement, const TType& TypeArg)
+int VEmitContext::AddStatement(int statement, const TType& TypeArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_TypeSize)
 	{
@@ -328,11 +423,11 @@ int AddStatement(int statement, const TType& TypeArg)
 
 //==========================================================================
 //
-//  AddStatement
+//  VEmitContext::AddStatement
 //
 //==========================================================================
 
-int AddStatement(int statement, int parm1, int parm2)
+int VEmitContext::AddStatement(int statement, int parm1, int parm2)
 {
 	if (StatementInfo[statement].Args != OPCARGS_ByteBranchTarget &&
 		StatementInfo[statement].Args != OPCARGS_ShortBranchTarget &&
@@ -351,11 +446,44 @@ int AddStatement(int statement, int parm1, int parm2)
 
 //==========================================================================
 //
-//	EmitPushNumber
+//	VEmitContext::FixupJump
 //
 //==========================================================================
 
-void EmitPushNumber(int Val)
+void VEmitContext::FixupJump(int Pos, int JmpPos)
+{
+	CurrentFunc->Instructions[Pos].Arg1 = JmpPos;
+}
+
+//==========================================================================
+//
+//	VEmitContext::FixupJump
+//
+//==========================================================================
+
+void VEmitContext::FixupJump(int Pos)
+{
+	CurrentFunc->Instructions[Pos].Arg1 = CurrentFunc->Instructions.Num();
+}
+
+//==========================================================================
+//
+//  VEmitContext::GetNumInstructions
+//
+//==========================================================================
+
+int VEmitContext::GetNumInstructions()
+{
+	return CurrentFunc->Instructions.Num();
+}
+
+//==========================================================================
+//
+//	VEmitContext::EmitPushNumber
+//
+//==========================================================================
+
+void VEmitContext::EmitPushNumber(int Val)
 {
 	if (Val == 0)
 		AddStatement(OPC_PushNumber0);
@@ -371,11 +499,11 @@ void EmitPushNumber(int Val)
 
 //==========================================================================
 //
-//	EmitLocalAddress
+//	VEmitContext::EmitLocalAddress
 //
 //==========================================================================
 
-void EmitLocalAddress(int Ofs)
+void VEmitContext::EmitLocalAddress(int Ofs)
 {
 	if (Ofs == 0)
 		AddStatement(OPC_LocalAddress0);
@@ -403,57 +531,11 @@ void EmitLocalAddress(int Ofs)
 
 //==========================================================================
 //
-//  FixupJump
+//	VEmitContext::WriteBreaks
 //
 //==========================================================================
 
-void FixupJump(int Pos, int JmpPos)
-{
-	CurrentFunc->Instructions[Pos].Arg1 = JmpPos;
-}
-
-//==========================================================================
-//
-//  FixupJump
-//
-//==========================================================================
-
-void FixupJump(int Pos)
-{
-	CurrentFunc->Instructions[Pos].Arg1 = CurrentFunc->Instructions.Num();
-}
-
-//==========================================================================
-//
-//  GetNumInstructions
-//
-//==========================================================================
-
-int GetNumInstructions()
-{
-	return CurrentFunc->Instructions.Num();
-}
-
-//==========================================================================
-//
-//  UndoStatement
-//
-//==========================================================================
-
-int UndoStatement()
-{
-	int Ret = CurrentFunc->Instructions[CurrentFunc->Instructions.Num() - 1].Opcode;
-	CurrentFunc->Instructions.RemoveIndex(CurrentFunc->Instructions.Num() - 1);
-	return Ret;
-}
-
-//==========================================================================
-//
-// WriteBreaks
-//
-//==========================================================================
-
-void WriteBreaks()
+void VEmitContext::WriteBreaks()
 {
 	BreakLevel--;
 	while (BreakInfo.Num() && BreakInfo[BreakInfo.Num() - 1].level > BreakLevel)
@@ -465,11 +547,11 @@ void WriteBreaks()
 
 //==========================================================================
 //
-// WriteContinues
+//	VEmitContext::WriteContinues
 //
 //==========================================================================
 
-void WriteContinues(int address)
+void VEmitContext::WriteContinues(int address)
 {
 	ContinueLevel--;
 	while (ContinueInfo.Num() && ContinueInfo[ContinueInfo.Num() - 1].level > ContinueLevel)
@@ -481,11 +563,11 @@ void WriteContinues(int address)
 
 //==========================================================================
 //
-//	EmitClearStrings
+//	VEmitContext::EmitClearStrings
 //
 //==========================================================================
 
-void EmitClearStrings(int Start, int End)
+void VEmitContext::EmitClearStrings(int Start, int End)
 {
 	for (int i = Start; i < End; i++)
 	{
@@ -529,38 +611,6 @@ void EmitClearStrings(int Start, int End)
 			}
 		}
 	}
-}
-
-//==========================================================================
-//
-//	BeginCode
-//
-//==========================================================================
-
-void BeginCode(VMethod* Func)
-{
-	CurrentFunc = Func;
-	CurrentFunc->Instructions.Clear();
-	CurrentFunc->Instructions.Resize(1024);
-}
-
-//==========================================================================
-//
-//	EndCode
-//
-//==========================================================================
-
-void EndCode(VMethod* Func)
-{
-#ifdef OPCODE_STATS
-	for (int i = 0; i < Func->Instructions.Num(); i++)
-	{
-		StatementInfo[Func->Instructions[i].Opcode].usecount++;
-	}
-#endif
-	FInstruction& Dummy = Func->Instructions.Alloc();
-	Dummy.Opcode = OPC_Done;
-	DumpAsmFunction(Func);
 }
 
 //==========================================================================
@@ -1007,11 +1057,11 @@ VPackage* LoadPackage(VName InName, TLocation l)
 
 //==========================================================================
 //
-//	PC_WriteObject
+//	VPackage::WriteObject
 //
 //==========================================================================
 
-void PC_WriteObject(char *name)
+void VPackage::WriteObject(const char *name)
 {
 	FILE*			f;
 	int				i;
@@ -1029,7 +1079,7 @@ void PC_WriteObject(char *name)
 
 	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		if (VMemberBase::GMembers[i]->IsIn(CurrentPackage))
+		if (VMemberBase::GMembers[i]->IsIn(this))
 			Writer.AddExport(VMemberBase::GMembers[i]);
 	}
 
@@ -1065,23 +1115,23 @@ void PC_WriteObject(char *name)
 	}
 
 	progs.ofs_strings = Writer.Tell();
-	progs.num_strings = strings.Num();
-	Writer.Serialise(&strings[0], strings.Num());
+	progs.num_strings = Strings.Num();
+	Writer.Serialise(&Strings[0], Strings.Num());
 
 	progs.ofs_mobjinfo = Writer.Tell();
 	progs.num_mobjinfo = mobj_info.Num();
-	for (i = 0; i < mobj_info.Num(); i++)
+	for (i = 0; i < CurrentPackage->mobj_info.Num(); i++)
 	{
-		Writer << STRM_INDEX(mobj_info[i].doomednum)
-			<< mobj_info[i].class_id;
+		Writer << STRM_INDEX(CurrentPackage->mobj_info[i].doomednum)
+			<< CurrentPackage->mobj_info[i].class_id;
 	}
 
 	progs.ofs_scriptids = Writer.Tell();
 	progs.num_scriptids = script_ids.Num();
-	for (i = 0; i < script_ids.Num(); i++)
+	for (i = 0; i < CurrentPackage->script_ids.Num(); i++)
 	{
-		Writer << STRM_INDEX(script_ids[i].doomednum)
-			<< script_ids[i].class_id;
+		Writer << STRM_INDEX(CurrentPackage->script_ids[i].doomednum)
+			<< CurrentPackage->script_ids[i].class_id;
 	}
 
 	//	Serialise imports.
@@ -1112,7 +1162,7 @@ void PC_WriteObject(char *name)
 	dprintf("            count   size\n");
 	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
 	dprintf("Names      %6d %6d\n", Writer.Names.Num(), progs.ofs_strings - progs.ofs_names);
-	dprintf("Strings    %6d %6d\n", StringInfo.Num(), strings.Num());
+	dprintf("Strings    %6d %6d\n", StringInfo.Num(), Strings.Num());
 	dprintf("Builtins   %6d\n", numbuiltins);
 	dprintf("Mobj info  %6d %6d\n", mobj_info.Num(), progs.ofs_scriptids - progs.ofs_mobjinfo);
 	dprintf("Script Ids %6d %6d\n", script_ids.Num(), progs.ofs_imports - progs.ofs_scriptids);
@@ -1145,27 +1195,26 @@ void PC_WriteObject(char *name)
 
 //==========================================================================
 //
-//	DumpAsmFunction
+//	VMethod::DumpAsm
 //
-//	Disassembles a function.
+//	Disassembles a method.
 //
 //==========================================================================
 
-void DumpAsmFunction(VMethod* Func)
+void VMethod::DumpAsm()
 {
 	dprintf("--------------------------------------------\n");
-	dprintf("Dump ASM function %s.%s\n\n", *Func->Outer->Name,
-		*Func->Name);
-	if (Func->Flags & FUNC_Native)
+	dprintf("Dump ASM function %s.%s\n\n", *Outer->Name, *Name);
+	if (Flags & FUNC_Native)
 	{
 		//	Builtin function
 		dprintf("Builtin function.\n");
 		return;
 	}
-	for (int s = 0; s < Func->Instructions.Num(); s++)
+	for (int s = 0; s < Instructions.Num(); s++)
 	{
 		//	Opcode
-		int st = Func->Instructions[s].Opcode;
+		int st = Instructions[s].Opcode;
 		dprintf("%6d: %s", s, StatementInfo[st].name);
 		switch (StatementInfo[st].Args)
 		{
@@ -1173,40 +1222,40 @@ void DumpAsmFunction(VMethod* Func)
 			break;
 		case OPCARGS_Member:
 			//	Name of the object
-			dprintf(" %s.%s", *Func->Instructions[s].Member->Outer->Name,
-				*Func->Instructions[s].Member->Name);
+			dprintf(" %s.%s", *Instructions[s].Member->Outer->Name,
+				*Instructions[s].Member->Name);
 			break;
 		case OPCARGS_BranchTarget:
-			dprintf(" %6d", Func->Instructions[s].Arg1);
+			dprintf(" %6d", Instructions[s].Arg1);
 			break;
 		case OPCARGS_ByteBranchTarget:
 		case OPCARGS_ShortBranchTarget:
 		case OPCARGS_IntBranchTarget:
-			dprintf(" %6d, %6d", Func->Instructions[s].Arg1, Func->Instructions[s].Arg2);
+			dprintf(" %6d, %6d", Instructions[s].Arg1, Instructions[s].Arg2);
 			break;
 		case OPCARGS_Byte:
 		case OPCARGS_Short:
 		case OPCARGS_Int:
-			dprintf(" %6d (%x)", Func->Instructions[s].Arg1, Func->Instructions[s].Arg1);
+			dprintf(" %6d (%x)", Instructions[s].Arg1, Instructions[s].Arg1);
 			break;
 		case OPCARGS_Name:
 			//  Name
-			dprintf("\'%s\'", *Func->Instructions[s].NameArg);
+			dprintf("\'%s\'", *Instructions[s].NameArg);
 			break;
 		case OPCARGS_String:
 			//  String
-			dprintf("\"%s\"", &strings[Func->Instructions[s].Arg1]);
+			dprintf("\"%s\"", &CurrentPackage->Strings[Instructions[s].Arg1]);
 			break;
 		case OPCARGS_FieldOffset:
-			dprintf(" %s", *Func->Instructions[s].Member->Name);
+			dprintf(" %s", *Instructions[s].Member->Name);
 			break;
 		case OPCARGS_VTableIndex:
-			dprintf(" %s", *Func->Instructions[s].Member->Name);
+			dprintf(" %s", *Instructions[s].Member->Name);
 			break;
 		case OPCARGS_TypeSize:
 			{
 				char Tmp[256];
-				Func->Instructions[s].TypeArg.GetName(Tmp);
+				Instructions[s].TypeArg.GetName(Tmp);
 				dprintf(" %s", Tmp);
 			}
 			break;
@@ -1246,7 +1295,7 @@ void PC_DumpAsm(char* name)
 			!strcmp(cname, *VMemberBase::GMembers[i]->Outer->Name) &&
 			!strcmp(fname, *VMemberBase::GMembers[i]->Name))
 		{
-			DumpAsmFunction((VMethod*)VMemberBase::GMembers[i]);
+			((VMethod*)VMemberBase::GMembers[i])->DumpAsm();
 			return;
 		}
 	}

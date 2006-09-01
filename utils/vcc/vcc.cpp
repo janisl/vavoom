@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 	int compiletime = time(0);
 	dprintf("Compiled in %02d:%02d\n",
 		(compiletime - parsetime) / 60, (compiletime - parsetime) % 60);
-	PC_WriteObject(ObjectFileName);
+	CurrentPackage->WriteObject(ObjectFileName);
 	DumpAsm();
 	VName::StaticExit();
 	endtime = time(0);
@@ -152,7 +152,6 @@ static void Init()
 	num_dump_asm = 0;
 	VName::StaticInit();
 	PC_Init();
-	InitTypes();
 }
 
 //==========================================================================

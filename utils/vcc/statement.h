@@ -30,17 +30,17 @@ public:
 
 	VStatement(const TLocation&);
 	virtual ~VStatement();
-	virtual bool Resolve() = 0;
-	virtual void DoEmit() = 0;
-	void Emit();
+	virtual bool Resolve(VEmitContext&) = 0;
+	virtual void DoEmit(VEmitContext&) = 0;
+	void Emit(VEmitContext&);
 };
 
 class VEmptyStatement : public VStatement
 {
 public:
 	VEmptyStatement(const TLocation&);
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VIf : public VStatement
@@ -53,8 +53,8 @@ public:
 	VIf(VExpression*, VStatement*, const TLocation&);
 	VIf(VExpression*, VStatement*, VStatement*, const TLocation&);
 	~VIf();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VWhile : public VStatement
@@ -66,8 +66,8 @@ public:
 
 	VWhile(VExpression*, VStatement*, const TLocation&);
 	~VWhile();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VDo : public VStatement
@@ -79,8 +79,8 @@ public:
 
 	VDo(VExpression*, VStatement*, const TLocation&);
 	~VDo();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VFor : public VStatement
@@ -94,8 +94,8 @@ public:
 
 	VFor(const TLocation&);
 	~VFor();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VSwitch : public VStatement
@@ -115,8 +115,8 @@ public:
 
 	VSwitch(const TLocation&);
 	~VSwitch();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VSwitchCase : public VStatement
@@ -127,8 +127,8 @@ public:
 	vint32			Value;
 
 	VSwitchCase(VSwitch*, VExpression*, const TLocation&);
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VSwitchDefault : public VStatement
@@ -137,8 +137,8 @@ public:
 	VSwitch*		Switch;
 
 	VSwitchDefault(VSwitch*, const TLocation&);
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VBreak : public VStatement
@@ -147,8 +147,8 @@ public:
 	int				NumLocalsEnd;
 
 	VBreak(const TLocation&);
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VContinue : public VStatement
@@ -157,8 +157,8 @@ public:
 	int				NumLocalsEnd;
 
 	VContinue(const TLocation&);
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VReturn : public VStatement
@@ -169,8 +169,8 @@ public:
 
 	VReturn(VExpression*, const TLocation&);
 	~VReturn();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VExpressionStatement : public VStatement
@@ -180,8 +180,8 @@ public:
 
 	VExpressionStatement(VExpression*);
 	~VExpressionStatement();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VLocalVarStatement : public VStatement
@@ -191,8 +191,8 @@ public:
 
 	VLocalVarStatement(VLocalDecl*);
 	~VLocalVarStatement();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 
 class VCompound : public VStatement
@@ -204,7 +204,7 @@ public:
 
 	VCompound(const TLocation&);
 	~VCompound();
-	bool Resolve();
-	void DoEmit();
+	bool Resolve(VEmitContext&);
+	void DoEmit(VEmitContext&);
 };
 

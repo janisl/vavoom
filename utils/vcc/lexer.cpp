@@ -433,7 +433,7 @@ void VLexer::ProcessQuoteToken()
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
-	StringI = FindString(String);
+	StringI = CurrentPackage->FindString(String);
 }
 
 //==========================================================================

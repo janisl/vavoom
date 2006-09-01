@@ -129,6 +129,7 @@ public:
 class VClass;
 class VStruct;
 class VMethod;
+class VEmitContext;
 
 //
 // The base class of all objects.
@@ -186,7 +187,9 @@ public:
 	friend VStream& operator<<(VStream&, TType&);
 
 	bool Equals(const TType&) const;
+	TType MakePointerType() const;
 	TType GetPointerInnerType() const;
+	TType MakeArrayType(int, TLocation) const;
 	TType GetArrayInnerType() const;
 	int GetSize() const;
 	void CheckPassable(TLocation) const;
@@ -314,6 +317,7 @@ public:
 	void Serialise(VStream&);
 	bool Define();
 	void Emit();
+	void DumpAsm();
 };
 
 class VConstant : public VMemberBase
@@ -373,6 +377,7 @@ public:
 	void Serialise(VStream&);
 
 	void AddField(VField* f);
+	VField* CheckForField(VName);
 	bool NeedsDestructor() const;
 	bool Define();
 	bool DefineMembers();
@@ -453,7 +458,6 @@ public:
 	TArray<VStruct*>		Structs;
 	TArray<VConstant*>		Constants;
 	TArray<VMethod*>		Methods;
-	bool					Parsed;
 	bool					Defined;
 
 	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
@@ -464,7 +468,6 @@ public:
 	, DefaultProperties(NULL)
 	, ParentClassName(NAME_None)
 	, Modifiers(0)
-	, Parsed(true)
 	, Defined(true)
 	{}
 	~VClass()
@@ -484,22 +487,62 @@ public:
 	void AddState(VState*);
 	void AddMethod(VMethod*);
 
+	VMethod* CheckForFunction(VName);
+	VMethod* CheckForMethod(VName);
+	VConstant* CheckForConstant(VName);
+	VField* CheckForField(TLocation, VName, VClass*, bool = true);
+	VState* CheckForState(VName);
+
 	bool Define();
 	bool DefineMembers();
 	void Emit();
 };
 
+class VPackage;
+
+struct VImportedPackage
+{
+	VName		Name;
+	TLocation	Loc;
+	VPackage*	Pkg;
+};
+
 class VPackage : public VMemberBase
 {
-public:
-	TArray<VPackage*>	ImportedPackages;
+private:
+	struct TStringInfo
+	{
+		int offs;
+		int next;
+	};
 
-	VPackage()
-	: VMemberBase(MEMBER_Package, NAME_None, NULL, TLocation())
-	{}
-	VPackage(VName InName)
-	: VMemberBase(MEMBER_Package, InName, NULL, TLocation())
-	{}
+	TArray<TStringInfo>			StringInfo;
+	int							StringLookup[256];
+
+	static int StringHashFunc(const char*);
+
+public:
+	TArray<VImportedPackage>	PackagesToLoad;
+
+	TArray<char>				Strings;
+
+	TArray<mobjinfo_t>			mobj_info;
+	TArray<mobjinfo_t>			script_ids;
+
+	TArray<VConstant*>			ParsedConstants;
+	TArray<VStruct*>			ParsedStructs;
+	TArray<VClass*>				ParsedClasses;
+
+	int							numbuiltins;
+
+	VPackage();
+	VPackage(VName InName);
+
+	int FindString(const char*);
+
+	VConstant* CheckForConstant(VName);
+
+	void WriteObject(const char*);
 };
 
 class VParser
@@ -557,11 +600,48 @@ struct continueInfo_t
 	int		addressPtr;
 };
 
-struct VImportedPackage
+class VEmitContext
 {
-	VName		Name;
-	TLocation	Loc;
-	VPackage*	Pkg;
+private:
+	VMethod*				CurrentFunc;
+
+	void FixupJump(int, int);
+
+public:
+	VClass*					SelfClass;
+	VPackage*				Package;
+
+	TType					FuncRetType;
+
+	TArray<VLocalVarDef>	LocalDefs;
+	int						localsofs;
+
+	TArray<breakInfo_t>		BreakInfo;
+	int						BreakLevel;
+	int						BreakNumLocalsOnStart;
+	TArray<continueInfo_t> 	ContinueInfo;
+	int						ContinueLevel;
+	int						ContinueNumLocalsOnStart;
+
+	VEmitContext(VMemberBase*);
+	void EndCode();
+
+	int CheckForLocalVar(VName);
+
+	int AddStatement(int);
+	int AddStatement(int, int);
+	int AddStatement(int, float);
+	int AddStatement(int, VName);
+	int AddStatement(int, VMemberBase*);
+	int AddStatement(int, const TType&);
+	int AddStatement(int, int, int);
+	void FixupJump(int);
+	int GetNumInstructions();
+	void EmitPushNumber(int);
+	void EmitLocalAddress(int);
+	void WriteBreaks();
+	void WriteContinues(int);
+	void EmitClearStrings(int, int);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -579,74 +659,18 @@ int dprintf(const char *text, ...);
 
 void PC_Init();
 void AddPackagePath(const char*);
-int FindString(const char*);
-int AddStatement(int);
-int AddStatement(int, int);
-int AddStatement(int, float);
-int AddStatement(int, VName);
-int AddStatement(int, VMemberBase*);
-int AddStatement(int, const TType&);
-int AddStatement(int, int, int);
-int UndoStatement();
-int GetNumInstructions();
-void FixupJump(int, int);
-void FixupJump(int);
-void WriteBreaks();
-void WriteContinues(int address);
-void EmitClearStrings(int Start, int End);
-void BeginCode(VMethod*);
-void EndCode(VMethod*);
-void PC_WriteObject(char*);
 void PC_DumpAsm(char*);
 VPackage* LoadPackage(VName, TLocation);
 
-void EmitPushNumber(int);
-void EmitLocalAddress(int);
-
-void PA_Parse();
-
-void InitTypes();
-TType MakePointerType(const TType& type);
-TType MakeArrayType(const TType&, int, TLocation);
 TType CheckForType(VClass* InClass, VName Name);
 VClass* CheckForClass(VName Name);
-VMethod* CheckForFunction(VClass*, VName);
-VConstant* CheckForConstant(VClass* InClass, VName);
-VField* CheckForStructField(VStruct*, VName);
-VField* CheckForField(TLocation, VName, VClass*, bool = true);
-VMethod* CheckForMethod(VName, VClass*);
-void AddConstant(VClass* InClass, VName Name, int type, int value);
-int CheckForLocalVar(VName);
 void EmitCode();
-VState* CheckForState(VName, VClass*);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern VPackage*				CurrentPackage;
-extern int						numbuiltins;
-
-extern TArray<mobjinfo_t>		mobj_info;
-extern TArray<mobjinfo_t>		script_ids;
 
 extern int						NumErrors;
-
-extern TType					SelfType;
-extern VClass*					SelfClass;
-
-extern TArray<VLocalVarDef>		LocalDefs;
-extern int						localsofs;
-
-extern TArray<breakInfo_t>		BreakInfo;
-extern int						BreakLevel;
-extern int						BreakNumLocalsOnStart;
-extern TArray<continueInfo_t> 	ContinueInfo;
-extern int						ContinueLevel;
-extern int						ContinueNumLocalsOnStart;
-extern TType					FuncRetType;
-extern TArray<VImportedPackage>	PackagesToLoad;
-extern TArray<VConstant*>		ParsedConstants;
-extern TArray<VStruct*>			ParsedStructs;
-extern TArray<VClass*>			ParsedClasses;
 
 // INLINE CODE -------------------------------------------------------------
 
