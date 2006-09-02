@@ -452,6 +452,17 @@ VExpression* VExpression::CreateTypeExprCopy()
 	return new VTypeExpr(ev_unknown, Loc);
 }
 
+//==========================================================================
+//
+//	VExpression::AddDropResult
+//
+//==========================================================================
+
+bool VExpression::AddDropResult()
+{
+	return false;
+}
+
 //END
 
 //BEGIN VIntLiteral
@@ -1937,7 +1948,43 @@ void VUnaryMutator::Emit(VEmitContext& ec)
 	case PostDec:
 		ec.AddStatement(OPC_PostDec);
 		break;
+
+	case Inc:
+		ec.AddStatement(OPC_IncDrop);
+		break;
+
+	case Dec:
+		ec.AddStatement(OPC_DecDrop);
+		break;
 	}
+}
+
+//==========================================================================
+//
+//	VUnaryMutator::AddDropResult
+//
+//==========================================================================
+
+bool VUnaryMutator::AddDropResult()
+{
+	switch (Oper)
+	{
+	case PreInc:
+	case PostInc:
+		Oper = Inc;
+		break;
+
+	case PreDec:
+	case PostDec:
+		Oper = Dec;
+		break;
+
+	case Inc:
+	case Dec:
+		FatalError("Should not happen");
+	}
+	Type = ev_void;
+	return true;
 }
 
 //END
@@ -3892,6 +3939,14 @@ VExpression* VDropResult::DoResolve(VEmitContext& ec)
 		ParseError(Loc, "Expression's result type cannot be dropped");
 		delete this;
 		return NULL;
+	}
+
+	if (op->AddDropResult())
+	{
+		VExpression* e = op;
+		op = NULL;
+		delete this;
+		return e;
 	}
 
 	Type = ev_void;

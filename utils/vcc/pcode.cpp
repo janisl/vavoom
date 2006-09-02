@@ -197,30 +197,6 @@ void VEmitContext::AddStatement(int statement)
 		FatalError("Opcode doesn't take 0 params");
 	}
 
-	if (statement == OPC_Drop)
-	{
-		switch (CurrentFunc->Instructions[CurrentFunc->Instructions.Num() - 1].Opcode)
-		{
-		case OPC_PreInc:
-		case OPC_PostInc:
-			statement = OPC_IncDrop;
-			break;
-
-		case OPC_PreDec:
-		case OPC_PostDec:
-			statement = OPC_DecDrop;
-			break;
-
-		default:
-			break;
-		}
-
-		if (statement != OPC_Drop)
-		{
-			CurrentFunc->Instructions.RemoveIndex(CurrentFunc->Instructions.Num() - 1);
-		}
-	}
-
 	FInstruction& I = CurrentFunc->Instructions.Alloc();
 	I.Opcode = statement;
 	I.Arg1 = 0;

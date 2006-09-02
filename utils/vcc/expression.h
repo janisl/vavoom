@@ -52,6 +52,7 @@ public:
 	virtual bool GetIntConst(vint32&);
 	virtual bool GetFloatConst(float&);
 	virtual VExpression* CreateTypeExprCopy();
+	virtual bool AddDropResult();
 };
 
 //==========================================================================
@@ -374,6 +375,8 @@ public:
 		PreDec,
 		PostInc,
 		PostDec,
+		Inc,
+		Dec,
 	};
 	EIncDec			Oper;
 	VExpression*	op;
@@ -382,6 +385,7 @@ public:
 	~VUnaryMutator();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
+	bool AddDropResult();
 };
 
 //==========================================================================
