@@ -49,6 +49,8 @@ static void Init();
 static void ProcessArgs(int ArgCount, char **ArgVector);
 static void OpenDebugFile(char *name);
 static void DumpAsm();
+static void PC_Init();
+static void PC_DumpAsm(char*);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -56,6 +58,8 @@ static void DumpAsm();
 
 char			SourceFileName[MAX_FILE_NAME_LENGTH];
 static char		ObjectFileName[MAX_FILE_NAME_LENGTH];
+
+VPackage*		CurrentPackage;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -65,7 +69,6 @@ static bool		DebugMode;
 static FILE*	DebugFile;
 
 static VLexer	Lex;
-static VParser	Parser(Lex);
 
 // CODE --------------------------------------------------------------------
 
@@ -95,11 +98,12 @@ int main(int argc, char **argv)
 	dprintf("Preprocessing in %02d:%02d\n",
 		(preptime - starttime) / 60, (preptime - starttime) % 60);
 	Lex.OpenSource(buf, size);
+	VParser Parser(Lex, CurrentPackage);
 	Parser.Parse();
 	int parsetime = time(0);
 	dprintf("Compiled in %02d:%02d\n",
 		(parsetime - preptime) / 60, (parsetime - preptime) % 60);
-	EmitCode();
+	CurrentPackage->Emit();
 	int compiletime = time(0);
 	dprintf("Compiled in %02d:%02d\n",
 		(compiletime - parsetime) / 60, (compiletime - parsetime) % 60);
@@ -224,7 +228,7 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 				cpp_add_define(option, text);
 				break;
 			case 'P':
-				AddPackagePath(text);
+				VMemberBase::AddPackagePath(text);
 				break;
 			default:
 				DisplayUsage();
@@ -281,7 +285,8 @@ static void ProcessArgs(int ArgCount, char **ArgVector)
 
 static void OpenDebugFile(char *name)
 {
-	if (!(DebugFile = fopen(name, "w")))
+	DebugFile = fopen(name, "w");
+	if (!DebugFile)
 	{
 		FatalError("Can\'t open debug file \"%s\".", name);
 	}
@@ -295,9 +300,7 @@ static void OpenDebugFile(char *name)
 
 static void DumpAsm()
 {
-	int		i;
-
-	for (i=0; i<num_dump_asm; i++)
+	for (int i = 0; i < num_dump_asm; i++)
 	{
 		PC_DumpAsm(dump_asm_names[i]);
 	}
@@ -311,18 +314,65 @@ static void DumpAsm()
 
 int dprintf(const char *text, ...)
 {
-	FILE*		fp;
 	va_list		argPtr;
-	int			ret;
 
 	if (!DebugMode)
 	{
 		return 0;
 	}
-	fp = DebugFile? DebugFile : stdout;
+	FILE* fp = DebugFile? DebugFile : stdout;
 	va_start(argPtr, text);
-	ret = vfprintf(fp, text, argPtr);
+	int ret = vfprintf(fp, text, argPtr);
 	va_end(argPtr);
 	fflush(fp);
 	return ret;
+}
+
+//==========================================================================
+//
+//	PC_Init
+//
+//==========================================================================
+
+static void PC_Init()
+{
+	CurrentPackage = new VPackage();
+}
+
+//==========================================================================
+//
+//  PC_DumpAsm
+//
+//==========================================================================
+
+static void PC_DumpAsm(char* name)
+{
+	int		i;
+	char	buf[1024];
+	char	*cname;
+	char	*fname;
+
+	strcpy(buf, name);
+	if (strstr(buf, "."))
+	{
+		cname = buf;
+		fname = strstr(buf, ".") + 1;
+		fname[-1] = 0;
+	}
+	else
+	{
+		dprintf("Dump ASM: Bad name %s\n", name);
+		return;
+	}
+	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
+	{
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Method &&
+			!strcmp(cname, *VMemberBase::GMembers[i]->Outer->Name) &&
+			!strcmp(fname, *VMemberBase::GMembers[i]->Name))
+		{
+			((VMethod*)VMemberBase::GMembers[i])->DumpAsm();
+			return;
+		}
+	}
+	dprintf("Dump ASM: %s not found!\n", name);
 }

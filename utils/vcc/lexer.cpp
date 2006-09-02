@@ -167,7 +167,6 @@ VLexer::VLexer()
 , Token(TK_NoToken)
 , Number(0)
 , Float(0)
-, StringI(0)
 , Name(NAME_None)
 {
 	int i;
@@ -433,7 +432,6 @@ void VLexer::ProcessQuoteToken()
 	}
 	TokenStringBuffer[len] = 0;
 	NextChr();
-	StringI = CurrentPackage->FindString(String);
 }
 
 //==========================================================================

@@ -219,7 +219,6 @@ public:
 	vint32				Number;
 	float				Float;
 	char*				String;
-	int					StringI;
 	VName				Name;
 
 	static const char*	TokenNames[];

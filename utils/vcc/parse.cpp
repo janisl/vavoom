@@ -186,20 +186,32 @@ VExpression* VParser::ParseExpressionPriority0()
 	switch (Lex.Token)
 	{
 	case TK_IntLiteral:
+	{
+		vint32 Val = Lex.Number;
 		Lex.NextToken();
-		return new VIntLiteral(Lex.Number, l);
+		return new VIntLiteral(Val, l);
+	}
 
 	case TK_FloatLiteral:
+	{
+		float Val = Lex.Float;
 		Lex.NextToken();
-		return new VFloatLiteral(Lex.Float, l);
+		return new VFloatLiteral(Val, l);
+	}
 
 	case TK_NameLiteral:
+	{
+		VName Val = Lex.Name;
 		Lex.NextToken();
-		return new VNameLiteral(Lex.Name, l);
+		return new VNameLiteral(Val, l);
+	}
 
 	case TK_StringLiteral:
+	{
+		int Val = Package->FindString(Lex.String);
 		Lex.NextToken();
-		return new VStringLiteral(Lex.StringI, l);
+		return new VStringLiteral(Val, l);
+	}
 
 	case TK_Self:
 		Lex.NextToken();
@@ -1163,7 +1175,7 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 
 	if (Lex.Check(TK_Semicolon))
 	{
-		CurrentPackage->numbuiltins++;
+		Package->numbuiltins++;
 	}
 	else
 	{
@@ -1259,7 +1271,7 @@ void VParser::ParseStruct(VClass* InClass, bool IsVector)
 
 	//	New struct
 	VStruct* Struct = new VStruct(Name, InClass ? (VMemberBase*)InClass :
-		(VMemberBase*)CurrentPackage, StrLoc);
+		(VMemberBase*)Package, StrLoc);
 	Struct->Defined = false;
 	Struct->IsVector = IsVector;
 	Struct->Fields = NULL;
@@ -1335,7 +1347,7 @@ void VParser::ParseStruct(VClass* InClass, bool IsVector)
 	}
 	else
 	{
-		CurrentPackage->ParsedStructs.Append(Struct);
+		Package->ParsedStructs.Append(Struct);
 	}
 }
 
@@ -1426,7 +1438,7 @@ void VParser::ParseClass()
 		ParseError(Lex.Location, "Class name expected");
 	}
 	//	New class.
-	VClass* Class = new VClass(Lex.Name, CurrentPackage, Lex.Location);
+	VClass* Class = new VClass(Lex.Name, Package, Lex.Location);
 	Class->Defined = false;
 	Lex.NextToken();
 
@@ -1691,7 +1703,7 @@ void VParser::ParseClass()
 
 	ParseDefaultProperties(Class);
 
-	CurrentPackage->ParsedClasses.Append(Class);
+	Package->ParsedClasses.Append(Class);
 }
 
 //==========================================================================
@@ -1723,7 +1735,7 @@ void VParser::Parse()
 			{
 				ParseError(Lex.Location, "Package name expected");
 			}
-			VImportedPackage& I = CurrentPackage->PackagesToLoad.Alloc();
+			VImportedPackage& I = Package->PackagesToLoad.Alloc();
 			I.Name = Lex.Name;
 			I.Loc = Lex.Location;
 			Lex.NextToken();
@@ -1742,11 +1754,11 @@ void VParser::Parse()
 				{
 					ParseError(Lex.Location, "Expected IDENTIFIER");
 				}
-				if (CurrentPackage->CheckForConstant(Lex.Name))
+				if (Package->CheckForConstant(Lex.Name))
 				{
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
-				VConstant* cDef = new VConstant(Lex.Name, CurrentPackage, Lex.Location);
+				VConstant* cDef = new VConstant(Lex.Name, Package, Lex.Location);
 				cDef->Type = ev_int;
 				Lex.NextToken();
 				if (Lex.Check(TK_Assign))
@@ -1762,7 +1774,7 @@ void VParser::Parse()
 					cDef->ValueExpr = new VIntLiteral(0, Lex.Location);
 				}
 				PrevValue = cDef;
-				CurrentPackage->ParsedConstants.Append(cDef);
+				Package->ParsedConstants.Append(cDef);
 			} while (Lex.Check(TK_Comma));
 			Lex.Expect(TK_RBrace, ERR_MISSING_RBRACE);
 			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);

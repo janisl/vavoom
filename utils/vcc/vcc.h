@@ -49,6 +49,8 @@ class VMemberBase;
 
 // MACROS ------------------------------------------------------------------
 
+#define OPCODE_STATS
+
 //	Number of elements in an array.
 #define ARRAY_COUNT(array)				((int)(sizeof(array) / sizeof((array)[0])))
 
@@ -130,32 +132,7 @@ class VClass;
 class VStruct;
 class VMethod;
 class VEmitContext;
-
-//
-// The base class of all objects.
-//
-class VMemberBase
-{
-public:
-	vuint8			MemberType;
-	vint32			MemberIndex;
-	VName			Name;
-	VMemberBase*	Outer;
-	TLocation		Loc;
-	VMemberBase*	HashNext;
-
-	static TArray<VMemberBase*>		GMembers;
-	static VMemberBase*				GMembersHash[4096];
-
-	VMemberBase(vuint8, VName, VMemberBase*, TLocation);
-	virtual ~VMemberBase()
-	{}
-
-	virtual void Serialise(VStream&);
-	bool IsIn(VMemberBase*) const;
-
-	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
-};
+class VPackage;
 
 class TType
 {
@@ -221,6 +198,41 @@ public:
 #include "expression.h"
 #include "statement.h"
 
+//
+// The base class of all objects.
+//
+class VMemberBase
+{
+public:
+	vuint8			MemberType;
+	vint32			MemberIndex;
+	VName			Name;
+	VMemberBase*	Outer;
+	TLocation		Loc;
+	VMemberBase*	HashNext;
+
+	static TArray<VMemberBase*>		GMembers;
+	static VMemberBase*				GMembersHash[4096];
+
+	static TArray<const char*>		PackagePath;
+	static TArray<VPackage*>		LoadedPackages;
+
+	VMemberBase(vuint8, VName, VMemberBase*, TLocation);
+	virtual ~VMemberBase();
+
+	bool IsIn(VMemberBase*) const;
+
+	virtual void Serialise(VStream&);
+
+	static void AddPackagePath(const char*);
+	static VPackage* LoadPackage(VName, TLocation);
+	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
+
+	//FIXME This looks ugly.
+	static TType CheckForType(VClass*, VName);
+	static VClass* CheckForClass(VName);
+};
+
 class VField : public VMemberBase
 {
 public:
@@ -234,24 +246,15 @@ public:
 	vuint32 		Modifiers;
 	vuint32			flags;
 
-	VField(VName InName, VMemberBase* InOuter, TLocation InLoc)
-	: VMemberBase(MEMBER_Field, InName, InOuter, InLoc)
-	, Next(NULL)
-	, type(ev_void)
-	, TypeExpr(NULL)
-	, func(NULL)
-	, Modifiers(0)
-	, flags(0)
-	{}
-	~VField()
-	{
-		if (TypeExpr)
-			delete TypeExpr;
-	}
+	VField(VName, VMemberBase*, TLocation);
+	~VField();
 
 	void Serialise(VStream&);
 	bool NeedsDestructor() const;
 	bool Define();
+
+	friend VStream& operator<<(VStream& Strm, VField*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 struct FInstruction
@@ -316,29 +319,16 @@ public:
 	VMethodParam			Params[MAX_PARAMS];
 	VStatement*				Statement;
 
-	VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
-	: VMemberBase(MEMBER_Method, InName, InOuter, InLoc)
-	, NumLocals(0)
-	, Flags(0)
-	, ReturnType(ev_void)
-	, NumParams(0)
-	, ParamsSize(0)
-	, Modifiers(0)
-	, ReturnTypeExpr(NULL)
-	, Statement(NULL)
-	{}
-	~VMethod()
-	{
-		if (ReturnTypeExpr)
-			delete ReturnTypeExpr;
-		if (Statement)
-			delete Statement;
-	}
+	VMethod(VName, VMemberBase*, TLocation);
+	~VMethod();
 
 	void Serialise(VStream&);
 	bool Define();
 	void Emit();
 	void DumpAsm();
+
+	friend VStream& operator<<(VStream& Strm, VMethod*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 class VConstant : public VMemberBase
@@ -354,18 +344,8 @@ public:
 	VExpression*	ValueExpr;
 	VConstant*		PrevEnumValue;
 
-	VConstant(VName InName, VMemberBase* InOuter, TLocation InLoc)
-	: VMemberBase(MEMBER_Const, InName, InOuter, InLoc)
-	, Type(ev_unknown)
-	, Value(0)
-	, ValueExpr(NULL)
-	, PrevEnumValue(NULL)
-	{}
-	~VConstant()
-	{
-		if (ValueExpr)
-			delete ValueExpr;
-	}
+	VConstant(VName, VMemberBase*, TLocation);
+	~VConstant();
 
 	void Serialise(VStream&);
 	bool Define();
@@ -385,15 +365,7 @@ public:
 	TLocation		ParentStructLoc;
 	bool			Defined;
 
-	VStruct(VName InName, VMemberBase* InOuter, TLocation InLoc)
-	: VMemberBase(MEMBER_Struct, InName, InOuter, InLoc)
-	, ParentStruct(0)
-	, IsVector(false)
-	, StackSize(0)
-	, Fields(0)
-	, ParentStructName(NAME_None)
-	, Defined(true)
-	{}
+	VStruct(VName, VMemberBase*, TLocation);
 
 	void Serialise(VStream&);
 
@@ -402,6 +374,9 @@ public:
 	bool NeedsDestructor() const;
 	bool Define();
 	bool DefineMembers();
+
+	friend VStream& operator<<(VStream& Strm, VStruct*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 class VState : public VMemberBase
@@ -425,34 +400,15 @@ public:
 	VExpression*	TimeExpr;
 	VName			NextStateName;
 
-	VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
-	: VMemberBase(MEMBER_State, InName, InOuter, InLoc)
-	, SpriteName(NAME_None)
-	, Frame(0)
-	, ModelName(NAME_None)
-	, ModelFrame(0)
-	, Time(0)
-	, NextState(0)
-	, Function(0)
-	, Next(0)
-	, FrameExpr(NULL)
-	, ModelFrameExpr(NULL)
-	, TimeExpr(NULL)
-	, NextStateName(NAME_None)
-	{}
-	~VState()
-	{
-		if (FrameExpr)
-			delete FrameExpr;
-		if (ModelFrameExpr)
-			delete ModelFrameExpr;
-		if (TimeExpr)
-			delete TimeExpr;
-	}
+	VState(VName, VMemberBase*, TLocation);
+	~VState();
 
 	void Serialise(VStream&);
 	bool Define();
 	void Emit();
+
+	friend VStream& operator<<(VStream& Strm, VState*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 struct mobjinfo_t
@@ -481,25 +437,8 @@ public:
 	TArray<VMethod*>		Methods;
 	bool					Defined;
 
-	VClass(VName InName, VMemberBase* InOuter, TLocation InLoc)
-	: VMemberBase(MEMBER_Class, InName, InOuter, InLoc)
-	, ParentClass(NULL)
-	, Fields(NULL)
-	, States(NULL)
-	, DefaultProperties(NULL)
-	, ParentClassName(NAME_None)
-	, Modifiers(0)
-	, Defined(true)
-	{}
-	~VClass()
-	{
-		for (int i = 0; i < MobjInfoExpressions.Num(); i++)
-			if (MobjInfoExpressions[i])
-				delete MobjInfoExpressions[i];
-		for (int i = 0; i < ScriptIdExpressions.Num(); i++)
-			if (ScriptIdExpressions[i])
-				delete ScriptIdExpressions[i];
-	}
+	VClass(VName, VMemberBase*, TLocation);
+	~VClass();
 
 	void Serialise(VStream&);
 
@@ -517,9 +456,10 @@ public:
 	bool Define();
 	bool DefineMembers();
 	void Emit();
-};
 
-class VPackage;
+	friend VStream& operator<<(VStream& Strm, VClass*& Obj)
+	{ return Strm << *(VMemberBase**)&Obj; }
+};
 
 struct VImportedPackage
 {
@@ -563,6 +503,7 @@ public:
 
 	VConstant* CheckForConstant(VName);
 
+	void Emit();
 	void WriteObject(const char*);
 };
 
@@ -570,6 +511,7 @@ class VParser
 {
 private:
 	VLexer&			Lex;
+	VPackage*		Package;
 	bool			CheckForLocal;
 
 	VExpression* ParseDotMethodCall(VExpression*, VName, TLocation);
@@ -603,8 +545,9 @@ private:
 	void ParseClass();
 
 public:
-	VParser(VLexer& ALex)
+	VParser(VLexer& ALex, VPackage* APackage)
 	: Lex(ALex)
+	, Package(APackage)
 	{}
 	void Parse();
 };
@@ -659,9 +602,14 @@ public:
 	void EmitClearStrings(int, int);
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+struct VStatementInfo
+{
+	const char*		name;
+	int				Args;
+	int				usecount;
+};
 
-// -- Common --
+// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void FatalError(char *text, ...) __attribute__((noreturn, format(printf, 1, 2)));
 void ParseError(TLocation, ECompileError error);
@@ -672,39 +620,10 @@ void BailOut() __attribute__((noreturn));
 
 int dprintf(const char *text, ...);
 
-void PC_Init();
-void AddPackagePath(const char*);
-void PC_DumpAsm(char*);
-VPackage* LoadPackage(VName, TLocation);
-
-TType CheckForType(VClass* InClass, VName Name);
-VClass* CheckForClass(VName Name);
-void EmitCode();
-
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern VPackage*				CurrentPackage;
 
 extern int						NumErrors;
 
-// INLINE CODE -------------------------------------------------------------
-
-//==========================================================================
-//
-//	PassFloat
-//
-//==========================================================================
-
-inline int PassFloat(float f)
-{
-	union
-	{
-		float	f;
-		int		i;
-	} v;
-
-	v.f = f;
-	return v.i;
-}
+extern VStatementInfo			StatementInfo[NUM_OPCODES];
 
 #endif

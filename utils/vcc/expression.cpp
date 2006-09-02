@@ -930,7 +930,7 @@ VExpression* VSingleName::DoResolve(VEmitContext& ec)
 		return e->Resolve(ec);
 	}
 
-	VClass* Class = CheckForClass(Name);
+	VClass* Class = VMemberBase::CheckForClass(Name);
 	if (Class)
 	{
 		VExpression* e = new VClassConstant(Class, Loc);
@@ -951,7 +951,7 @@ VExpression* VSingleName::DoResolve(VEmitContext& ec)
 
 VTypeExpr* VSingleName::ResolveAsType(VEmitContext& ec)
 {
-	Type = CheckForType(ec.SelfClass, Name);
+	Type = VMemberBase::CheckForType(ec.SelfClass, Name);
 	if (Type.type == ev_unknown)
 	{
 		ParseError(Loc, "Invalid identifier, bad type name %s", *Name);
@@ -1022,7 +1022,7 @@ VDoubleName::VDoubleName(VName AName1, VName AName2, const TLocation& ALoc)
 
 VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 {
-	VClass* Class = CheckForClass(Name1);
+	VClass* Class = VMemberBase::CheckForClass(Name1);
 	if (!Class)
 	{
 		ParseError(Loc, "No such class %s", *Name1);
@@ -1482,7 +1482,7 @@ VCastOrInvocation::~VCastOrInvocation()
 
 VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 {
-	VClass* Class = CheckForClass(Name);
+	VClass* Class = VMemberBase::CheckForClass(Name);
 	if (Class)
 	{
 		if (NumArgs != 1 || !Args[0])
