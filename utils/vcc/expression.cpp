@@ -77,8 +77,10 @@ public:
 	VConstantValue(VConstant* AConst, const TLocation& ALoc);
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
-	bool GetIntConst(vint32&);
-	bool GetFloatConst(float&);
+	bool IsIntConst() const;
+	bool IsFloatConst() const;
+	vint32 GetIntConst() const;
+	float GetFloatConst() const;
 };
 
 //==========================================================================
@@ -416,15 +418,36 @@ bool VExpression::IsSingleName()
 
 //==========================================================================
 //
+//	VExpression::IsIntConst
+//
+//==========================================================================
+
+bool VExpression::IsIntConst() const
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VExpression::IsFloatConst
+//
+//==========================================================================
+
+bool VExpression::IsFloatConst() const
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	VExpression::GetIntConst
 //
 //==========================================================================
 
-bool VExpression::GetIntConst(vint32& Value)
+vint32 VExpression::GetIntConst() const
 {
 	ParseError(Loc, "Integer constant expected");
-	Value = 0;
-	return false;
+	return 0;
 }
 
 //==========================================================================
@@ -433,11 +456,10 @@ bool VExpression::GetIntConst(vint32& Value)
 //
 //==========================================================================
 
-bool VExpression::GetFloatConst(float& Value)
+float VExpression::GetFloatConst() const
 {
 	ParseError(Loc, "Float constant expected");
-	Value = 0.0;
-	return false;
+	return 0.0;
 }
 
 //==========================================================================
@@ -508,9 +530,19 @@ void VIntLiteral::Emit(VEmitContext& ec)
 //
 //==========================================================================
 
-bool VIntLiteral::GetIntConst(vint32& OutValue)
+vint32 VIntLiteral::GetIntConst() const
 {
-	OutValue = Value;
+	return Value;
+}
+
+//==========================================================================
+//
+//	VIntLiteral::IsIntConst
+//
+//==========================================================================
+
+bool VIntLiteral::IsIntConst() const
+{
 	return true;
 }
 
@@ -555,14 +587,24 @@ void VFloatLiteral::Emit(VEmitContext& ec)
 
 //==========================================================================
 //
+//	VFloatLiteral::IsFloatConst
+//
+//==========================================================================
+
+bool VFloatLiteral::IsFloatConst() const
+{
+	return true;
+}
+
+//==========================================================================
+//
 //	VFloatLiteral::GetFloatConst
 //
 //==========================================================================
 
-bool VFloatLiteral::GetFloatConst(float& OutValue)
+float VFloatLiteral::GetFloatConst() const
 {
-	OutValue = Value;
-	return true;
+	return Value;
 }
 
 //END
@@ -1708,7 +1750,14 @@ VExpression* VUnary::DoResolve(VEmitContext& ec)
 			delete this;
 			return NULL;
 		}
-		break;
+		else
+		{
+			VExpression* e = op;
+			op = NULL;
+			delete this;
+			return e;
+		}
+
 	case Minus:
 		if (op->Type.type == ev_int)
 		{
@@ -1729,9 +1778,11 @@ VExpression* VUnary::DoResolve(VEmitContext& ec)
 			return NULL;
 		}
 		break;
+
 	case Not:
 		Type = ev_int;
 		break;
+
 	case BitInvert:
 		if (op->Type.type != ev_int)
 		{
@@ -1741,6 +1792,7 @@ VExpression* VUnary::DoResolve(VEmitContext& ec)
 		}
 		Type = ev_int;
 		break;
+
 	case TakeAddress:
 		if (op->Type.type == ev_reference)
 		{
@@ -1755,6 +1807,45 @@ VExpression* VUnary::DoResolve(VEmitContext& ec)
 		}
 		break;
 	}
+
+	//	Optimise integer constants.
+	if (op->IsIntConst())
+	{
+		vint32 Value = op->GetIntConst();
+		VExpression* e = NULL;
+		switch (Oper)
+		{
+		case Minus:
+			e = new VIntLiteral(-Value, Loc);
+			break;
+
+		case Not:
+			e = new VIntLiteral(!Value, Loc);
+			break;
+
+		case BitInvert:
+			e = new VIntLiteral(~Value, Loc);
+			break;
+
+		default:
+			break;
+		}
+		if (e)
+		{
+			delete this;
+			return e;
+		}
+	}
+
+	//	Optimise float constants.
+	if (op->IsFloatConst() && Oper == Minus)
+	{
+		float Value = op->GetFloatConst();
+		VExpression* e = new VFloatLiteral(-Value, Loc);
+		delete this;
+		return e;
+	}
+
 	return this;
 }
 
@@ -1799,66 +1890,6 @@ void VUnary::Emit(VEmitContext& ec)
 	case TakeAddress:
 		break;
 	}
-}
-
-//==========================================================================
-//
-//	VUnary::GetIntConst
-//
-//==========================================================================
-
-bool VUnary::GetIntConst(vint32& OutValue)
-{
-	if (op->GetIntConst(OutValue))
-	{
-		switch (Oper)
-		{
-		case Plus:
-			return true;
-	
-		case Minus:
-			OutValue = -OutValue;
-			return true;
-	
-		case Not:
-			OutValue = !OutValue;
-			return true;
-	
-		case BitInvert:
-			OutValue = ~OutValue;
-			return true;
-	
-		case TakeAddress:
-			break;
-		}
-	}
-	return VExpression::GetIntConst(OutValue);
-}
-
-//==========================================================================
-//
-//	VUnary::GetFloatConst
-//
-//==========================================================================
-
-bool VUnary::GetFloatConst(float& OutValue)
-{
-	if (op->GetFloatConst(OutValue))
-	{
-		switch (Oper)
-		{
-		case Plus:
-			return true;
-	
-		case Minus:
-			OutValue = -OutValue;
-			return true;
-	
-		default:
-			break;
-		}
-	}
-	return VExpression::GetFloatConst(OutValue);
 }
 
 //END
@@ -2255,6 +2286,141 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 		Type = ev_int;
 		break;
 	}
+
+	//	Optimise integer constants
+	if (op1->IsIntConst() && op2->IsIntConst())
+	{
+		vint32 Value1 = op1->GetIntConst();
+		vint32 Value2 = op2->GetIntConst();
+		VExpression* e = NULL;
+		switch (Oper)
+		{
+		case Add:
+			e = new VIntLiteral(Value1 + Value2, Loc);
+			break;
+
+		case Subtract:
+			e = new VIntLiteral(Value1 - Value2, Loc);
+			break;
+
+		case Multiply:
+			e = new VIntLiteral(Value1 * Value2, Loc);
+			break;
+
+		case Divide:
+			if (!Value2)
+			{
+				ParseError(Loc, "Division by 0");
+				delete this;
+				return NULL;
+			}
+			e = new VIntLiteral(Value1 / Value2, Loc);
+			break;
+
+		case Modulus:
+			if (!Value2)
+			{
+				ParseError(Loc, "Division by 0");
+				delete this;
+				return NULL;
+			}
+			e = new VIntLiteral(Value1 % Value2, Loc);
+			break;
+
+		case LShift:
+			e = new VIntLiteral(Value1 << Value2, Loc);
+			break;
+
+		case RShift:
+			e = new VIntLiteral(Value1 >> Value2, Loc);
+			break;
+
+		case Less:
+			e = new VIntLiteral(Value1 < Value2, Loc);
+			break;
+
+		case LessEquals:
+			e = new VIntLiteral(Value1 <= Value2, Loc);
+			break;
+
+		case Greater:
+			e = new VIntLiteral(Value1 > Value2, Loc);
+			break;
+
+		case GreaterEquals:
+			e = new VIntLiteral(Value1 >= Value2, Loc);
+			break;
+
+		case Equals:
+			e = new VIntLiteral(Value1 == Value2, Loc);
+			break;
+
+		case NotEquals:
+			e = new VIntLiteral(Value1 != Value2, Loc);
+			break;
+
+		case And:
+			e = new VIntLiteral(Value1 & Value2, Loc);
+			break;
+
+		case XOr:
+			e = new VIntLiteral(Value1 ^ Value2, Loc);
+			break;
+
+		case Or:
+			e = new VIntLiteral(Value1 | Value2, Loc);
+			break;
+
+		default:
+			break;
+		}
+		if (e)
+		{
+			delete this;
+			return e;
+		}
+	}
+
+	//	Optimise float constants.
+	if (op1->IsFloatConst() && op2->IsFloatConst())
+	{
+		float Value1 = op1->GetFloatConst();
+		float Value2 = op2->GetFloatConst();
+		VExpression* e = NULL;
+		switch (Oper)
+		{
+		case Add:
+			e = new VFloatLiteral(Value1 + Value2, Loc);
+			break;
+	
+		case Subtract:
+			e = new VFloatLiteral(Value1 - Value2, Loc);
+			break;
+	
+		case Multiply:
+			e = new VFloatLiteral(Value1 * Value2, Loc);
+			break;
+	
+		case Divide:
+			if (!Value2)
+			{
+				ParseError(Loc, "Division by 0");
+				delete this;
+				return NULL;
+			}
+			e = new VFloatLiteral(Value1 / Value2, Loc);
+			break;
+	
+		default:
+			break;
+		}
+		if (e)
+		{
+			delete this;
+			return e;
+		}
+	}
+
 	return this;
 }
 
@@ -2493,144 +2659,6 @@ void VBinary::Emit(VEmitContext& ec)
 	}
 }
 
-//==========================================================================
-//
-//	VBinary::GetIntConst
-//
-//==========================================================================
-
-bool VBinary::GetIntConst(vint32& OutValue)
-{
-	vint32 Value1;
-	vint32 Value2;
-	if (op1->GetIntConst(Value1) && op2->GetIntConst(Value2))
-	{
-		switch (Oper)
-		{
-		case Multiply:
-			OutValue = Value1 * Value2;
-			return true;
-	
-		case Divide:
-			if (!Value2)
-			{
-				ParseError(Loc, "Division by 0");
-				OutValue = 0;
-				return false;
-			}
-			OutValue = Value1 / Value2;
-			return true;
-	
-		case Modulus:
-			if (!Value2)
-			{
-				ParseError(Loc, "Division by 0");
-				OutValue = 0;
-				return false;
-			}
-			OutValue = Value1 % Value2;
-			return true;
-	
-		case Add:
-			OutValue = Value1 + Value2;
-			return true;
-	
-		case Subtract:
-			OutValue = Value1 - Value2;
-			return true;
-	
-		case LShift:
-			OutValue = Value1 << Value2;
-			return true;
-	
-		case RShift:
-			OutValue = Value1 >> Value2;
-			return true;
-	
-		case Less:
-			OutValue = Value1 < Value2;
-			return true;
-	
-		case LessEquals:
-			OutValue = Value1 <= Value2;
-			return true;
-	
-		case Greater:
-			OutValue = Value1 > Value2;
-			return true;
-	
-		case GreaterEquals:
-			OutValue = Value1 >= Value2;
-			return true;
-	
-		case Equals:
-			OutValue = Value1 == Value2;
-			return true;
-	
-		case NotEquals:
-			OutValue = Value1 != Value2;
-			return true;
-	
-		case And:
-			OutValue = Value1 & Value2;
-			return true;
-	
-		case XOr:
-			OutValue = Value1 ^ Value2;
-			return true;
-	
-		case Or:
-			OutValue = Value1 | Value2;
-			return true;
-		}
-	}
-	OutValue = 0;
-	return false;
-}
-
-//==========================================================================
-//
-//	VBinary::GetFloatConst
-//
-//==========================================================================
-
-bool VBinary::GetFloatConst(float& OutValue)
-{
-	float Value1;
-	float Value2;
-	if (op1->GetFloatConst(Value1) && op2->GetFloatConst(Value2))
-	{
-		switch (Oper)
-		{
-		case Add:
-			OutValue = Value1 + Value2;
-			return true;
-	
-		case Subtract:
-			OutValue = Value1 - Value2;
-			return true;
-	
-		case Multiply:
-			OutValue = Value1 * Value2;
-			return true;
-	
-		case Divide:
-			if (!Value2)
-			{
-				ParseError(Loc, "Division by 0");
-				OutValue = 0;
-				return false;
-			}
-			OutValue = Value1 / Value2;
-			return true;
-	
-		default:
-			break;
-		}
-	}
-	return VExpression::GetFloatConst(OutValue);
-}
-
 //END
 
 //BEGIN VBinaryLogical
@@ -2688,6 +2716,30 @@ VExpression* VBinaryLogical::DoResolve(VEmitContext& ec)
 	}
 
 	Type = ev_int;
+
+	//	Optimise constant cases.
+	if (op1->IsIntConst() && op2->IsIntConst())
+	{
+		vint32 Value1 = op1->GetIntConst();
+		vint32 Value2 = op2->GetIntConst();
+		VExpression* e = NULL;
+		switch (Oper)
+		{
+		case And:
+			e = new VIntLiteral(Value1 && Value2, Loc);
+			break;
+
+		case Or:
+			e = new VIntLiteral(Value1 || Value2, Loc);
+			break;
+		}
+		if (e)
+		{
+			delete this;
+			return e;
+		}
+	}
+
 	return this;
 }
 
@@ -2727,33 +2779,6 @@ void VBinaryLogical::Emit(VEmitContext& ec)
 	}
 
 	ec.MarkLabel(End);
-}
-
-//==========================================================================
-//
-//	VBinaryLogical::GetIntConst
-//
-//==========================================================================
-
-bool VBinaryLogical::GetIntConst(vint32& OutValue)
-{
-	vint32 Value1;
-	vint32 Value2;
-	if (op1->GetIntConst(Value1) && op2->GetIntConst(Value2))
-	{
-		switch (Oper)
-		{
-		case And:
-			OutValue = Value1 && Value2;
-			return true;
-	
-		case Or:
-			OutValue = Value1 || Value2;
-			return true;
-		}
-	}
-	OutValue = 0;
-	return false;
 }
 
 //END
@@ -3259,14 +3284,13 @@ void VConstantValue::Emit(VEmitContext& ec)
 //
 //==========================================================================
 
-bool VConstantValue::GetIntConst(vint32& OutValue)
+vint32 VConstantValue::GetIntConst() const
 {
 	if (Const->Type == ev_int)
 	{
-		OutValue = Const->Value;
-		return true;
+		return Const->Value;
 	}
-	return VExpression::GetIntConst(OutValue);
+	return VExpression::GetIntConst();
 }
 
 //==========================================================================
@@ -3275,14 +3299,35 @@ bool VConstantValue::GetIntConst(vint32& OutValue)
 //
 //==========================================================================
 
-bool VConstantValue::GetFloatConst(float& OutValue)
+float VConstantValue::GetFloatConst() const
 {
 	if (Const->Type == ev_float)
 	{
-		OutValue = Const->FloatValue;
-		return true;
+		return Const->FloatValue;
 	}
-	return VExpression::GetFloatConst(OutValue);
+	return VExpression::GetFloatConst();
+}
+
+//==========================================================================
+//
+//	VConstantValue::IsIntConst
+//
+//==========================================================================
+
+bool VConstantValue::IsIntConst() const
+{
+	return Const->Type == ev_int;
+}
+
+//==========================================================================
+//
+//	VConstantValue::IsFloatConst
+//
+//==========================================================================
+
+bool VConstantValue::IsFloatConst() const
+{
+	return Const->Type == ev_float;
 }
 
 //END
@@ -4181,13 +4226,14 @@ VTypeExpr* VFixedArrayType::ResolveAsType(VEmitContext& ec)
 		return NULL;
 	}
 
-	vint32 Size;
-	if (!SizeExpr->GetIntConst(Size))
+	if (!SizeExpr->IsIntConst())
 	{
+		ParseError(SizeExpr->Loc, "Integer constant expected");
 		delete this;
 		return NULL;
 	}
 
+	vint32 Size = SizeExpr->GetIntConst();
 	Type = Expr->Type.MakeArrayType(Size, Loc);
 	return this;
 }

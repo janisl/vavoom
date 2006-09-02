@@ -1567,17 +1567,21 @@ bool VConstant::Define()
 	switch (Type)
 	{
 	case ev_int:
-		if (!ValueExpr->GetIntConst(Value))
+		if (!ValueExpr->IsIntConst())
 		{
+			ParseError(ValueExpr->Loc, "Integer constant expected");
 			return false;
 		}
+		Value = ValueExpr->GetIntConst();
 		break;
 
 	case ev_float:
-		if (!ValueExpr->GetFloatConst(FloatValue))
+		if (!ValueExpr->IsFloatConst())
 		{
+			ParseError(ValueExpr->Loc, "Float constant expected");
 			return false;
 		}
+		FloatValue = ValueExpr->GetFloatConst();
 		break;
 
 	default:
@@ -1879,12 +1883,27 @@ void VState::Emit()
 
 	if (!FrameExpr || !TimeExpr)
 		return;
-	if (!FrameExpr->GetIntConst(Frame))
+
+	if (!FrameExpr->IsIntConst())
+	{
+		ParseError(FrameExpr->Loc, "Integer constant expected");
 		return;
-	if (ModelFrameExpr && !ModelFrameExpr->GetIntConst(ModelFrame))
+	}
+	if (ModelFrameExpr && !ModelFrameExpr->IsIntConst())
+	{
+		ParseError(ModelFrameExpr->Loc, "Integer constant expected");
 		return;
-	if (!TimeExpr->GetFloatConst(Time))
+	}
+	if (!TimeExpr->IsFloatConst())
+	{
+		ParseError(TimeExpr->Loc, "Float constant expected");
 		return;
+	}
+
+	Frame = FrameExpr->GetIntConst();
+	if (ModelFrameExpr)
+		ModelFrame = ModelFrameExpr->GetIntConst();
+	Time = TimeExpr->GetFloatConst();
 
 	if (NextStateName != NAME_None)
 	{
@@ -2163,13 +2182,13 @@ bool VClass::Define()
 		{
 			return false;
 		}
-		vint32 Id;
-		if (!MobjInfoExpressions[i]->GetIntConst(Id))
+		if (!MobjInfoExpressions[i]->IsIntConst())
 		{
+			ParseError(MobjInfoExpressions[i]->Loc, "Integer constant expected");
 			return false;
 		}
 		mobjinfo_t& mi = ec.Package->mobj_info.Alloc();
-		mi.doomednum = Id;
+		mi.doomednum = MobjInfoExpressions[i]->GetIntConst();
 		mi.class_id = this;
 	}
 
@@ -2181,13 +2200,13 @@ bool VClass::Define()
 		{
 			return false;
 		}
-		vint32 Id;
-		if (!ScriptIdExpressions[i]->GetIntConst(Id))
+		if (!ScriptIdExpressions[i]->IsIntConst())
 		{
+			ParseError(ScriptIdExpressions[i]->Loc, "Integer constant expected");
 			return false;
 		}
 		mobjinfo_t& mi = ec.Package->script_ids.Alloc();
-		mi.doomednum = Id;
+		mi.doomednum = ScriptIdExpressions[i]->GetIntConst();
 		mi.class_id = this;
 	}
 

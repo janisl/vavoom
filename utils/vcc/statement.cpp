@@ -691,9 +691,18 @@ bool VSwitchCase::Resolve(VEmitContext& ec)
 	{
 		Expr = Expr->Resolve(ec);
 	}
-	if (!Expr || !Expr->GetIntConst(Value))
+	if (!Expr)
 	{
 		Ret = false;
+	}
+	else if (!Expr->IsIntConst())
+	{
+		ParseError(Expr->Loc, "Integer constant expected");
+		Ret = false;
+	}
+	else
+	{
+		Value = Expr->GetIntConst();
 	}
 	return Ret;
 }

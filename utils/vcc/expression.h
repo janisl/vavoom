@@ -49,8 +49,10 @@ public:
 	virtual void Emit(VEmitContext&) = 0;
 	void EmitPushPointedCode(TType, VEmitContext&);
 	virtual bool IsSingleName();
-	virtual bool GetIntConst(vint32&);
-	virtual bool GetFloatConst(float&);
+	virtual bool IsIntConst() const;
+	virtual bool IsFloatConst() const;
+	virtual vint32 GetIntConst() const;
+	virtual float GetFloatConst() const;
 	virtual VExpression* CreateTypeExprCopy();
 	virtual bool AddDropResult();
 };
@@ -69,7 +71,8 @@ public:
 	VIntLiteral(vint32, const TLocation&);
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
-	bool GetIntConst(vint32&);
+	bool IsIntConst() const;
+	vint32 GetIntConst() const;
 };
 
 //==========================================================================
@@ -86,7 +89,8 @@ public:
 	VFloatLiteral(float, const TLocation&);
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
-	bool GetFloatConst(float&);
+	bool IsFloatConst() const;
+	float GetFloatConst() const;
 };
 
 //==========================================================================
@@ -356,8 +360,6 @@ public:
 	~VUnary();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
-	bool GetIntConst(vint32&);
-	bool GetFloatConst(float&);
 };
 
 //==========================================================================
@@ -443,8 +445,6 @@ public:
 	~VBinary();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
-	bool GetIntConst(vint32&);
-	bool GetFloatConst(float&);
 };
 
 //==========================================================================
@@ -469,7 +469,6 @@ public:
 	~VBinaryLogical();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
-	bool GetIntConst(vint32&);
 };
 
 //==========================================================================
