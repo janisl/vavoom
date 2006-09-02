@@ -296,15 +296,16 @@ void VWhile::DoEmit(VEmitContext& ec)
 	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
 	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
 
+	VLabel Loop = ec.DefineLabel();
 	ec.LoopStart = ec.DefineLabel();
 	ec.LoopEnd = ec.DefineLabel();
 
+	ec.AddStatement(OPC_Goto, ec.LoopStart);
+	ec.MarkLabel(Loop);
+	Statement->Emit(ec);
 	ec.MarkLabel(ec.LoopStart);
 	Expr->Emit(ec);
-	ec.AddStatement(OPC_IfNotGoto, ec.LoopEnd);
-
-	Statement->Emit(ec);
-	ec.AddStatement(OPC_Goto, ec.LoopStart);
+	ec.AddStatement(OPC_IfGoto, Loop);
 	ec.MarkLabel(ec.LoopEnd);
 
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
@@ -496,6 +497,7 @@ bool VFor::Resolve(VEmitContext& ec)
 
 void VFor::DoEmit(VEmitContext& ec)
 {
+	//	Set-up continues and breaks.
 	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
 	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
 	VLabel OldStart = ec.LoopStart;
@@ -503,37 +505,51 @@ void VFor::DoEmit(VEmitContext& ec)
 	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
 	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
 
+	//	Define labels.
 	ec.LoopStart = ec.DefineLabel();
 	ec.LoopEnd = ec.DefineLabel();
-	VLabel LoopCond = ec.DefineLabel();
-	VLabel LoopCode = ec.DefineLabel();
+	VLabel Test = ec.DefineLabel();
+	VLabel Loop = ec.DefineLabel();
 
+	//	Emit initialisation expressions.
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
 		InitExpr[i]->Emit(ec);
 	}
-	ec.MarkLabel(LoopCond);
-	if (!CondExpr)
+
+	//	Jump to test if it's present.
+	if (CondExpr)
 	{
-		ec.AddStatement(OPC_PushNumber, 1);
+		ec.AddStatement(OPC_Goto, Test);
 	}
-	else
-	{
-		CondExpr->Emit(ec);
-	}
-	ec.AddStatement(OPC_IfGoto, LoopCode);
-	ec.AddStatement(OPC_Goto, ec.LoopEnd);
+
+	//	Emit embeded statement.
+	ec.MarkLabel(Loop);
+	Statement->Emit(ec);
+
+	//	Emit per-loop expression statements.
 	ec.MarkLabel(ec.LoopStart);
 	for (int i = 0; i < LoopExpr.Num(); i++)
 	{
 		LoopExpr[i]->Emit(ec);
 	}
-	ec.AddStatement(OPC_Goto, LoopCond);
-	ec.MarkLabel(LoopCode);
-	Statement->Emit(ec);
-	ec.AddStatement(OPC_Goto, ec.LoopStart);
+
+	//	Loop test.
+	ec.MarkLabel(Test);
+	if (!CondExpr)
+	{
+		ec.AddStatement(OPC_Goto, Loop);
+	}
+	else
+	{
+		CondExpr->Emit(ec);
+		ec.AddStatement(OPC_IfGoto, Loop);
+	}
+
+	//	End of loop.
 	ec.MarkLabel(ec.LoopEnd);
 
+	//	Restore continue and break state.
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
 	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
 	ec.LoopStart = OldStart;
@@ -616,21 +632,12 @@ void VSwitch::DoEmit(VEmitContext& ec)
 
 	Expr->Emit(ec);
 
-	VLabel SwitchTable = ec.DefineLabel();
 	ec.LoopEnd = ec.DefineLabel();
 
-	ec.AddStatement(OPC_Goto, SwitchTable);
-
-	for (int i = 0; i < Statements.Num(); i++)
-	{
-		Statements[i]->Emit(ec);
-	}
-
-	ec.AddStatement(OPC_Goto, ec.LoopEnd);
-
-	ec.MarkLabel(SwitchTable);
+	//	Case table.
 	for (int i = 0; i < CaseInfo.Num(); i++)
 	{
+		CaseInfo[i].Address = ec.DefineLabel();
 		if (CaseInfo[i].Value >= 0 && CaseInfo[i].Value < 256)
 		{
 			ec.AddStatement(OPC_CaseGotoB, CaseInfo[i].Value,
@@ -650,9 +657,20 @@ void VSwitch::DoEmit(VEmitContext& ec)
 	}
 	ec.AddStatement(OPC_Drop);
 
+	//	Go to default case if we have one, otherwise to the end of switch.
 	if (DefaultAddress.IsDefined())
 	{
 		ec.AddStatement(OPC_Goto, DefaultAddress);
+	}
+	else
+	{
+		ec.AddStatement(OPC_Goto, ec.LoopEnd);
+	}
+
+	//	Switch statements.
+	for (int i = 0; i < Statements.Num(); i++)
+	{
+		Statements[i]->Emit(ec);
 	}
 
 	ec.MarkLabel(ec.LoopEnd);
@@ -686,25 +704,34 @@ VSwitchCase::VSwitchCase(VSwitch* ASwitch, VExpression* AExpr, const TLocation& 
 
 bool VSwitchCase::Resolve(VEmitContext& ec)
 {
-	bool Ret = true;
 	if (Expr)
 	{
 		Expr = Expr->Resolve(ec);
 	}
 	if (!Expr)
 	{
-		Ret = false;
+		return false;
 	}
-	else if (!Expr->IsIntConst())
+	if (!Expr->IsIntConst())
 	{
 		ParseError(Expr->Loc, "Integer constant expected");
-		Ret = false;
+		return false;
 	}
-	else
+
+	Value = Expr->GetIntConst();
+	for (int i = 0; i < Switch->CaseInfo.Num(); i++)
 	{
-		Value = Expr->GetIntConst();
+		if (Switch->CaseInfo[i].Value == Value)
+		{
+			ParseError(Loc, "Duplicate case value");
+			break;
+		}
 	}
-	return Ret;
+
+	Index = Switch->CaseInfo.Num();
+	VSwitch::VCaseInfo& C = Switch->CaseInfo.Alloc();
+	C.Value = Value;
+	return true;
 }
 
 //==========================================================================
@@ -715,18 +742,7 @@ bool VSwitchCase::Resolve(VEmitContext& ec)
 
 void VSwitchCase::DoEmit(VEmitContext& ec)
 {
-	for (int i = 0; i < Switch->CaseInfo.Num(); i++)
-	{
-		if (Switch->CaseInfo[i].Value == Value)
-		{
-			ParseError(Loc, "Duplicate case value");
-			break;
-		}
-	}
-	VSwitch::VCaseInfo& C = Switch->CaseInfo.Alloc();
-	C.Value = Value;
-	C.Address = ec.DefineLabel();
-	ec.MarkLabel(C.Address);
+	ec.MarkLabel(Switch->CaseInfo[Index].Address);
 }
 
 //END

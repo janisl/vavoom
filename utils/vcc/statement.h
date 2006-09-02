@@ -125,6 +125,7 @@ public:
 	VSwitch*		Switch;
 	VExpression*	Expr;
 	vint32			Value;
+	vint32			Index;
 
 	VSwitchCase(VSwitch*, VExpression*, const TLocation&);
 	bool Resolve(VEmitContext&);
