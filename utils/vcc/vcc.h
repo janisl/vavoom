@@ -594,6 +594,7 @@ public:
 	void AddStatement(int, float);
 	void AddStatement(int, VName);
 	void AddStatement(int, VMemberBase*);
+	void AddStatement(int, VMemberBase*, int);
 	void AddStatement(int, const TType&);
 	void AddStatement(int, VLabel);
 	void AddStatement(int, int, VLabel);

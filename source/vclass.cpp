@@ -1044,6 +1044,11 @@ void VMethod::Serialise(VStream& Strm)
 		case OPCARGS_VTableIndex:
 			Strm << Instructions[i].Member;
 			break;
+		case OPCARGS_VTableIndex_Byte:
+		case OPCARGS_FieldOffset_Byte:
+			Strm << Instructions[i].Member;
+			Strm << STRM_INDEX(Instructions[i].Arg2);
+			break;
 		case OPCARGS_BranchTarget:
 			Strm << Instructions[i].Arg1;
 			break;
@@ -1199,6 +1204,36 @@ void VMethod::CompileCode()
 			Instructions[i].Member->Outer->PostLoad();
 			WriteUInt8(((VMethod*)Instructions[i].Member)->VTableIndex);
 			break;
+		case OPCARGS_VTableIndex_Byte:
+			//	Make sure class virtual table has been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			WriteInt16(((VMethod*)Instructions[i].Member)->VTableIndex);
+			WriteUInt8(Instructions[i].Arg2);
+			break;
+		case OPCARGS_VTableIndexB_Byte:
+			//	Make sure class virtual table has been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			WriteUInt8(((VMethod*)Instructions[i].Member)->VTableIndex);
+			WriteUInt8(Instructions[i].Arg2);
+			break;
+		case OPCARGS_FieldOffset_Byte:
+			//	Make sure struct / class field offsets have been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			WriteInt32(((VField*)Instructions[i].Member)->Ofs);
+			WriteUInt8(Instructions[i].Arg2);
+			break;
+		case OPCARGS_FieldOffsetS_Byte:
+			//	Make sure struct / class field offsets have been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			WriteInt16(((VField*)Instructions[i].Member)->Ofs);
+			WriteUInt8(Instructions[i].Arg2);
+			break;
+		case OPCARGS_FieldOffsetB_Byte:
+			//	Make sure struct / class field offsets have been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			WriteUInt8(((VField*)Instructions[i].Member)->Ofs);
+			WriteUInt8(Instructions[i].Arg2);
+			break;
 		case OPCARGS_TypeSize:
 			WriteInt32(Instructions[i].TypeArg.GetSize());
 			break;
@@ -1283,6 +1318,28 @@ void VMethod::OptimiseInstructions()
 			}
 			break;
 
+		case OPC_VCall:
+			//	Make sure class virtual table has been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			if (((VMethod*)Instructions[i].Member)->VTableIndex < 256)
+			{
+				Instructions[i].Opcode = OPC_VCallB;
+			}
+			break;
+
+		case OPC_DelegateCall:
+			//	Make sure struct / class field offsets have been calculated.
+			Instructions[i].Member->Outer->PostLoad();
+			if (((VField*)Instructions[i].Member)->Ofs < 256)
+			{
+				Instructions[i].Opcode = OPC_DelegateCallB;
+			}
+			else if (((VField*)Instructions[i].Member)->Ofs <= MAXSHORT)
+			{
+				Instructions[i].Opcode = OPC_DelegateCallS;
+			}
+			break;
+
 		case OPC_Offset:
 			//	Make sure struct / class field offsets have been calculated.
 			Instructions[i].Member->Outer->PostLoad();
@@ -1344,10 +1401,14 @@ void VMethod::OptimiseInstructions()
 		case OPCARGS_NameS:
 		case OPCARGS_FieldOffsetS:
 		case OPCARGS_VTableIndex:
+		case OPCARGS_VTableIndexB_Byte:
+		case OPCARGS_FieldOffsetB_Byte:
 		case OPCARGS_TypeSizeS:
 			Addr += 3;
 			break;
 		case OPCARGS_ByteBranchTarget:
+		case OPCARGS_VTableIndex_Byte:
+		case OPCARGS_FieldOffsetS_Byte:
 			Addr += 4;
 			break;
 		case OPCARGS_BranchTarget:
@@ -1357,6 +1418,9 @@ void VMethod::OptimiseInstructions()
 		case OPCARGS_FieldOffset:
 		case OPCARGS_TypeSize:
 			Addr += 5;
+			break;
+		case OPCARGS_FieldOffset_Byte:
+			Addr += 6;
 			break;
 		case OPCARGS_IntBranchTarget:
 			Addr += 7;

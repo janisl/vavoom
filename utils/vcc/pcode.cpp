@@ -287,6 +287,26 @@ void VEmitContext::AddStatement(int statement, VMemberBase* Member)
 //
 //==========================================================================
 
+void VEmitContext::AddStatement(int statement, VMemberBase* Member, int Arg)
+{
+	if (StatementInfo[statement].Args != OPCARGS_VTableIndex_Byte &&
+		StatementInfo[statement].Args != OPCARGS_FieldOffset_Byte)
+	{
+		FatalError("Opcode does\'t take member and byte as argument");
+	}
+
+	FInstruction& I = CurrentFunc->Instructions.Alloc();
+	I.Opcode = statement;
+	I.Member = Member;
+	I.Arg2 = Arg;
+}
+
+//==========================================================================
+//
+//  VEmitContext::AddStatement
+//
+//==========================================================================
+
 void VEmitContext::AddStatement(int statement, const TType& TypeArg)
 {
 	if (StatementInfo[statement].Args != OPCARGS_TypeSize)

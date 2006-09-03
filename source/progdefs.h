@@ -104,6 +104,11 @@ enum
 	OPCARGS_TypeSize,
 	OPCARGS_TypeSizeS,
 	OPCARGS_TypeSizeB,
+	OPCARGS_VTableIndex_Byte,
+	OPCARGS_VTableIndexB_Byte,
+	OPCARGS_FieldOffset_Byte,
+	OPCARGS_FieldOffsetS_Byte,
+	OPCARGS_FieldOffsetB_Byte,
 };
 
 enum
@@ -117,7 +122,11 @@ enum
 	DECLARE_OPC(Call, Member),
 	DECLARE_OPC(PushVFunc, VTableIndex),
 	DECLARE_OPC(PushVFuncB, VTableIndexB),
-	DECLARE_OPC(ICall, None),
+	DECLARE_OPC(VCall, VTableIndex_Byte),
+	DECLARE_OPC(VCallB, VTableIndexB_Byte),
+	DECLARE_OPC(DelegateCall, FieldOffset_Byte),
+	DECLARE_OPC(DelegateCallS, FieldOffsetS_Byte),
+	DECLARE_OPC(DelegateCallB, FieldOffsetB_Byte),
 	DECLARE_OPC(Return, None),
 	DECLARE_OPC(ReturnL, None),
 	DECLARE_OPC(ReturnV, None),
@@ -279,10 +288,6 @@ enum
 	DECLARE_OPC(Drop, None),
 	DECLARE_OPC(VDrop, None),
 	DECLARE_OPC(DropStr, None),
-
-	//	Swap stack elements.
-	DECLARE_OPC(Swap, None),
-	DECLARE_OPC(Swap3, None),
 
 	//	Special assignment operators
 	DECLARE_OPC(AssignPtrDrop, None),

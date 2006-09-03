@@ -224,12 +224,81 @@ func_loop:
 			sp++;
 			PR_VM_BREAK;
 
-		PR_VM_CASE(OPC_ICall)
-			sp--;
+		PR_VM_CASE(OPC_VCall)
 			pr_stackPtr = sp;
-			RunFunction((VMethod*)sp->p);
+			if (!sp[-ip[3]].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			RunFunction(((VObject*)sp[-ip[3]].p)->GetVFunction(ReadInt16(ip + 1)));
+			ip += 4;
 			current_func = func;
-			ip++;
+			sp = pr_stackPtr;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VCallB)
+			pr_stackPtr = sp;
+			if (!sp[-ip[2]].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			RunFunction(((VObject*)sp[-ip[2]].p)->GetVFunction(ip[1]));
+			ip += 3;
+			current_func = func;
+			sp = pr_stackPtr;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DelegateCall)
+			{
+				//	Get pointer to the delegate
+				void** pDelegate = (void**)((vuint8*)sp[-ip[5]].p + ReadInt32(ip + 1));
+				//	Push proper self object.
+				if (!pDelegate[0])
+				{
+					Sys_Error("Delegate is not initialised");
+				}
+				sp[-ip[5]].p = pDelegate[0];
+				pr_stackPtr = sp;
+				RunFunction((VMethod*)pDelegate[1]);
+			}
+			ip += 6;
+			current_func = func;
+			sp = pr_stackPtr;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DelegateCallS)
+			{
+				//	Get pointer to the delegate
+				void** pDelegate = (void**)((vuint8*)sp[-ip[3]].p + ReadInt16(ip + 1));
+				//	Push proper self object.
+				if (!pDelegate[0])
+				{
+					Sys_Error("Delegate is not initialised");
+				}
+				sp[-ip[3]].p = pDelegate[0];
+				pr_stackPtr = sp;
+				RunFunction((VMethod*)pDelegate[1]);
+			}
+			ip += 4;
+			current_func = func;
+			sp = pr_stackPtr;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_DelegateCallB)
+			{
+				//	Get pointer to the delegate
+				void** pDelegate = (void**)((vuint8*)sp[-ip[2]].p + ip[1]);
+				//	Push proper self object.
+				if (!pDelegate[0])
+				{
+					Sys_Error("Delegate is not initialised");
+				}
+				sp[-ip[2]].p = pDelegate[0];
+				pr_stackPtr = sp;
+				RunFunction((VMethod*)pDelegate[1]);
+			}
+			ip += 3;
+			current_func = func;
 			sp = pr_stackPtr;
 			PR_VM_BREAK;
 
@@ -536,16 +605,28 @@ func_loop:
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_Offset)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
 			sp[-1].p = (vuint8*)sp[-1].p + ReadInt32(ip + 1);
 			ip += 5;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_OffsetS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
 			sp[-1].p = (vuint8*)sp[-1].p + ReadInt16(ip + 1);
 			ip += 3;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_OffsetB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
 			sp[-1].p = (vuint8*)sp[-1].p + ip[1];
 			ip += 2;
 			PR_VM_BREAK;
@@ -1064,26 +1145,6 @@ func_loop:
 			ip++;
 			((VStr*)&sp[-1].p)->Clean();
 			sp--;
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_Swap)
-			{
-				ip++;
-				VStack tmp = sp[-2];
-				sp[-2] = sp[-1];
-				sp[-1] = tmp;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_Swap3)
-			{
-				ip++;
-				VStack tmp = sp[-4];
-				sp[-4] = sp[-3];
-				sp[-3] = sp[-2];
-				sp[-2] = sp[-1];
-				sp[-1] = tmp;
-			}
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_AssignPtrDrop)

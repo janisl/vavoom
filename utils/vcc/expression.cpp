@@ -3750,36 +3750,29 @@ void VInvocation::Emit(VEmitContext& ec)
 			ec.AddStatement(OPC_LocalAddress0);
 			ec.AddStatement(OPC_PushPointedPtr);
 		}
-		if (DelegateField)
-		{
-			ec.AddStatement(OPC_Offset, DelegateField);
-			ec.AddStatement(OPC_PushPointedDelegate);
-		}
-		else if (!DirectCall)
-		{
-			ec.AddStatement(OPC_PushVFunc, Func);
-		}
 	}
 
+	vint32 SelfOffset = 1;
 	for (int i = 0; i < NumArgs; i++)
 	{
 		Args[i]->Emit(ec);
-		if (!DirectCall)
-		{
-			if (Args[i]->Type.type == ev_vector)
-				ec.AddStatement(OPC_Swap3);
-			else
-				ec.AddStatement(OPC_Swap);
-		}
+		if (Args[i]->Type.type == ev_vector)
+			SelfOffset += 3;
+		else
+			SelfOffset++;
 	}
 
 	if (DirectCall)
 	{
 		ec.AddStatement(OPC_Call, Func);
 	}
+	else if (DelegateField)
+	{
+		ec.AddStatement(OPC_DelegateCall, DelegateField, SelfOffset);
+	}
 	else
 	{
-		ec.AddStatement(OPC_ICall);
+		ec.AddStatement(OPC_VCall, Func, SelfOffset);
 	}
 }
 

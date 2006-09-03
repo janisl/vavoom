@@ -1172,6 +1172,11 @@ void VMethod::Serialise(VStream& Strm)
 		case OPCARGS_VTableIndex:
 			Strm << Instructions[i].Member;
 			break;
+		case OPCARGS_VTableIndex_Byte:
+		case OPCARGS_FieldOffset_Byte:
+			Strm << Instructions[i].Member;
+			Strm << STRM_INDEX(Instructions[i].Arg2);
+			break;
 		case OPCARGS_BranchTarget:
 			Strm << Instructions[i].Arg1;
 			break;
@@ -1470,6 +1475,10 @@ void VMethod::DumpAsm()
 			break;
 		case OPCARGS_VTableIndex:
 			dprintf(" %s", *Instructions[s].Member->Name);
+			break;
+		case OPCARGS_VTableIndex_Byte:
+		case OPCARGS_FieldOffset_Byte:
+			dprintf(" %s %d", *Instructions[s].Member->Name, Instructions[s].Arg2);
 			break;
 		case OPCARGS_TypeSize:
 			{
