@@ -357,6 +357,25 @@ void VExpression::RequestAddressOf()
 
 //==========================================================================
 //
+//	VExpression::EmitBranchable
+//
+//==========================================================================
+
+void VExpression::EmitBranchable(VEmitContext& ec, VLabel Lbl, bool OnTrue)
+{
+	Emit(ec);
+	if (OnTrue)
+	{
+		ec.AddStatement(OPC_IfGoto, Lbl);
+	}
+	else
+	{
+		ec.AddStatement(OPC_IfNotGoto, Lbl);
+	}
+}
+
+//==========================================================================
+//
 //	VExpression::EmitPushPointedCode
 //
 //==========================================================================
@@ -1892,6 +1911,24 @@ void VUnary::Emit(VEmitContext& ec)
 	}
 }
 
+//==========================================================================
+//
+//	VUnary::EmitBranchable
+//
+//==========================================================================
+
+void VUnary::EmitBranchable(VEmitContext& ec, VLabel Lbl, bool OnTrue)
+{
+	if (Oper == Not)
+	{
+		op->EmitBranchable(ec, Lbl, !OnTrue);
+	}
+	else
+	{
+		VExpression::EmitBranchable(ec, Lbl, OnTrue);
+	}
+}
+
 //END
 
 //BEGIN VUnaryMutator
@@ -2751,34 +2788,60 @@ VExpression* VBinaryLogical::DoResolve(VEmitContext& ec)
 
 void VBinaryLogical::Emit(VEmitContext& ec)
 {
+	VLabel Push01 = ec.DefineLabel();
 	VLabel End = ec.DefineLabel();
 
-	op1->Emit(ec);
-
-	switch (Oper)
-	{
-	case And:
-		ec.AddStatement(OPC_IfNotTopGoto, End);
-		break;
-	case Or:
-		ec.AddStatement(OPC_IfTopGoto, End);
-		break;
-	}
+	op1->EmitBranchable(ec, Push01, Oper == Or);
 
 	op2->Emit(ec);
+	ec.AddStatement(OPC_Goto, End);
 
+	ec.MarkLabel(Push01);
+	ec.AddStatement(Oper == And ? OPC_PushNumber0 : OPC_PushNumber1);
+
+	ec.MarkLabel(End);
+}
+
+//==========================================================================
+//
+//	VBinaryLogical::EmitBranchable
+//
+//==========================================================================
+
+void VBinaryLogical::EmitBranchable(VEmitContext& ec, VLabel Lbl, bool OnTrue)
+{
 	switch (Oper)
 	{
 	case And:
-		ec.AddStatement(OPC_AndLogical);
+		if (OnTrue)
+		{
+			VLabel End = ec.DefineLabel();
+			op1->EmitBranchable(ec, End, false);
+			op2->EmitBranchable(ec, Lbl, true);
+			ec.MarkLabel(End);
+		}
+		else
+		{
+			op1->EmitBranchable(ec, Lbl, false);
+			op2->EmitBranchable(ec, Lbl, false);
+		}
 		break;
 
 	case Or:
-		ec.AddStatement(OPC_OrLogical);
+		if (OnTrue)
+		{
+			op1->EmitBranchable(ec, Lbl, true);
+			op2->EmitBranchable(ec, Lbl, true);
+		}
+		else
+		{
+			VLabel End = ec.DefineLabel();
+			op1->EmitBranchable(ec, End, true);
+			op2->EmitBranchable(ec, Lbl, false);
+			ec.MarkLabel(End);
+		}
 		break;
 	}
-
-	ec.MarkLabel(End);
 }
 
 //END
@@ -2864,8 +2927,7 @@ void VConditional::Emit(VEmitContext& ec)
 	VLabel FalseTarget = ec.DefineLabel();
 	VLabel End = ec.DefineLabel();
 
-	op->Emit(ec);
-	ec.AddStatement(OPC_IfNotGoto, FalseTarget);
+	op->EmitBranchable(ec, FalseTarget, false);
 	op1->Emit(ec);
 	ec.AddStatement(OPC_Goto, End);
 	ec.MarkLabel(FalseTarget);

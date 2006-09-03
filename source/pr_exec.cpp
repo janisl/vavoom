@@ -361,94 +361,6 @@ func_loop:
 			sp--;
 			PR_VM_BREAK;
 
-		PR_VM_CASE(OPC_IfTopGotoB)
-			if (sp[-1].i)
-			{
-				ip += ip[1];
-			}
-			else
-			{
-				ip += 2;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_IfTopGotoNB)
-			if (sp[-1].i)
-			{
-				ip -= ip[1];
-			}
-			else
-			{
-				ip += 2;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_IfTopGotoS)
-			if (sp[-1].i)
-			{
-				ip += ReadInt16(ip + 1);
-			}
-			else
-			{
-				ip += 3;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_IfTopGoto)
-			if (sp[-1].i)
-			{
-				ip += ReadInt32(ip + 1);
-			}
-			else
-			{
-				ip += 5;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_IfNotTopGotoB)
-			if (!sp[-1].i)
-			{
-				ip += ip[1];
-			}
-			else
-			{
-				ip += 2;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_IfNotTopGotoNB)
-			if (!sp[-1].i)
-			{
-				ip -= ip[1];
-			}
-			else
-			{
-				ip += 2;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_IfNotTopGotoS)
-			if (!sp[-1].i)
-			{
-				ip += ReadInt16(ip + 1);
-			}
-			else
-			{
-				ip += 3;
-			}
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_IfNotTopGoto)
-			if (!sp[-1].i)
-			{
-				ip += ReadInt32(ip + 1);
-			}
-			else
-			{
-				ip += 5;
-			}
-			PR_VM_BREAK;
-
 		PR_VM_CASE(OPC_CaseGotoB)
 			if (ip[1] == sp[-1].i)
 			{
@@ -778,14 +690,6 @@ func_loop:
 
 		PR_VM_CASE(OPC_GreaterEquals)
 			BOOLOP(i, >=);
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_AndLogical)
-			BOOLOP(i, &&);
-			PR_VM_BREAK;
-
-		PR_VM_CASE(OPC_OrLogical)
-			BOOLOP(i, ||);
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_NegateLogical)

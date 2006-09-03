@@ -200,10 +200,10 @@ bool VIf::Resolve(VEmitContext& ec)
 
 void VIf::DoEmit(VEmitContext& ec)
 {
-	//	Expression.
-	Expr->Emit(ec);
 	VLabel FalseTarget = ec.DefineLabel();
-	ec.AddStatement(OPC_IfNotGoto, FalseTarget);
+
+	//	Expression.
+	Expr->EmitBranchable(ec, FalseTarget, false);
 
 	//	True statement
 	TrueStatement->Emit(ec);
@@ -304,8 +304,7 @@ void VWhile::DoEmit(VEmitContext& ec)
 	ec.MarkLabel(Loop);
 	Statement->Emit(ec);
 	ec.MarkLabel(ec.LoopStart);
-	Expr->Emit(ec);
-	ec.AddStatement(OPC_IfGoto, Loop);
+	Expr->EmitBranchable(ec, Loop, true);
 	ec.MarkLabel(ec.LoopEnd);
 
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
@@ -395,8 +394,7 @@ void VDo::DoEmit(VEmitContext& ec)
 	ec.MarkLabel(Loop);
 	Statement->Emit(ec);
 	ec.MarkLabel(ec.LoopStart);
-	Expr->Emit(ec);
-	ec.AddStatement(OPC_IfGoto, Loop);
+	Expr->EmitBranchable(ec, Loop, true);
 	ec.MarkLabel(ec.LoopEnd);
 
 	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
@@ -542,8 +540,7 @@ void VFor::DoEmit(VEmitContext& ec)
 	}
 	else
 	{
-		CondExpr->Emit(ec);
-		ec.AddStatement(OPC_IfGoto, Loop);
+		CondExpr->EmitBranchable(ec, Loop, true);
 	}
 
 	//	End of loop.

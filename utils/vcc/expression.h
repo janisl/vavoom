@@ -47,6 +47,7 @@ public:
 	virtual VTypeExpr* ResolveAsType(VEmitContext&);
 	virtual void RequestAddressOf();
 	virtual void Emit(VEmitContext&) = 0;
+	virtual void EmitBranchable(VEmitContext&, VLabel, bool);
 	void EmitPushPointedCode(TType, VEmitContext&);
 	virtual bool IsSingleName();
 	virtual bool IsIntConst() const;
@@ -360,6 +361,7 @@ public:
 	~VUnary();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
+	void EmitBranchable(VEmitContext&, VLabel, bool);
 };
 
 //==========================================================================
@@ -469,6 +471,7 @@ public:
 	~VBinaryLogical();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
+	void EmitBranchable(VEmitContext&, VLabel, bool);
 };
 
 //==========================================================================
