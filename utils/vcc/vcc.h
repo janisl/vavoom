@@ -294,7 +294,6 @@ public:
 	int				ofs;
 	TType			type;
 	bool			Visible;
-	bool			Cleared;
 
 	VLocalVarDef()
 	{}
@@ -578,8 +577,6 @@ public:
 
 	VLabel					LoopStart;
 	VLabel					LoopEnd;
-	int						BreakNumLocalsOnStart;
-	int						ContinueNumLocalsOnStart;
 
 	VEmitContext(VMemberBase*);
 	void EndCode();

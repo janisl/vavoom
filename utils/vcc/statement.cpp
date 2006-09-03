@@ -263,7 +263,6 @@ bool VWhile::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = ec.LocalDefs.Num();
 	if (Expr)
 	{
 		Expr = Expr->ResolveBoolean(ec);
@@ -289,12 +288,8 @@ bool VWhile::Resolve(VEmitContext& ec)
 
 void VWhile::DoEmit(VEmitContext& ec)
 {
-	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
-	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
 	VLabel OldStart = ec.LoopStart;
 	VLabel OldEnd = ec.LoopEnd;
-	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
-	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
 
 	VLabel Loop = ec.DefineLabel();
 	ec.LoopStart = ec.DefineLabel();
@@ -307,8 +302,6 @@ void VWhile::DoEmit(VEmitContext& ec)
 	Expr->EmitBranchable(ec, Loop, true);
 	ec.MarkLabel(ec.LoopEnd);
 
-	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
-	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
 	ec.LoopStart = OldStart;
 	ec.LoopEnd = OldEnd;
 }
@@ -354,7 +347,6 @@ bool VDo::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = ec.LocalDefs.Num();
 	if (Expr)
 	{
 		Expr = Expr->ResolveBoolean(ec);
@@ -380,12 +372,8 @@ bool VDo::Resolve(VEmitContext& ec)
 
 void VDo::DoEmit(VEmitContext& ec)
 {
-	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
-	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
 	VLabel OldStart = ec.LoopStart;
 	VLabel OldEnd = ec.LoopEnd;
-	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
-	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
 
 	VLabel Loop = ec.DefineLabel();
 	ec.LoopStart = ec.DefineLabel();
@@ -397,8 +385,6 @@ void VDo::DoEmit(VEmitContext& ec)
 	Expr->EmitBranchable(ec, Loop, true);
 	ec.MarkLabel(ec.LoopEnd);
 
-	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
-	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
 	ec.LoopStart = OldStart;
 	ec.LoopEnd = OldEnd;
 }
@@ -450,8 +436,6 @@ bool VFor::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = ec.LocalDefs.Num();
-
 	for (int i = 0; i < InitExpr.Num(); i++)
 	{
 		InitExpr[i] = InitExpr[i]->Resolve(ec);
@@ -496,12 +480,8 @@ bool VFor::Resolve(VEmitContext& ec)
 void VFor::DoEmit(VEmitContext& ec)
 {
 	//	Set-up continues and breaks.
-	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
-	int PrevContinueLocalsStart = ec.ContinueNumLocalsOnStart;
 	VLabel OldStart = ec.LoopStart;
 	VLabel OldEnd = ec.LoopEnd;
-	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
-	ec.ContinueNumLocalsOnStart = NumLocalsOnStart;
 
 	//	Define labels.
 	ec.LoopStart = ec.DefineLabel();
@@ -547,8 +527,6 @@ void VFor::DoEmit(VEmitContext& ec)
 	ec.MarkLabel(ec.LoopEnd);
 
 	//	Restore continue and break state.
-	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
-	ec.ContinueNumLocalsOnStart = PrevContinueLocalsStart;
 	ec.LoopStart = OldStart;
 	ec.LoopEnd = OldEnd;
 }
@@ -593,7 +571,6 @@ bool VSwitch::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
 
-	NumLocalsOnStart = ec.LocalDefs.Num();
 	if (Expr)
 	{
 		Expr = Expr->Resolve(ec);
@@ -623,9 +600,7 @@ bool VSwitch::Resolve(VEmitContext& ec)
 
 void VSwitch::DoEmit(VEmitContext& ec)
 {
-	int PrevBreakLocalsStart = ec.BreakNumLocalsOnStart;
 	VLabel OldEnd = ec.LoopEnd;
-	ec.BreakNumLocalsOnStart = NumLocalsOnStart;
 
 	Expr->Emit(ec);
 
@@ -672,7 +647,6 @@ void VSwitch::DoEmit(VEmitContext& ec)
 
 	ec.MarkLabel(ec.LoopEnd);
 
-	ec.BreakNumLocalsOnStart = PrevBreakLocalsStart;
 	ec.LoopEnd = OldEnd;
 }
 
@@ -806,9 +780,8 @@ VBreak::VBreak(const TLocation& ALoc)
 //
 //==========================================================================
 
-bool VBreak::Resolve(VEmitContext& ec)
+bool VBreak::Resolve(VEmitContext&)
 {
-	NumLocalsEnd = ec.LocalDefs.Num();
 	return true;
 }
 
@@ -826,7 +799,6 @@ void VBreak::DoEmit(VEmitContext& ec)
 		return;
 	}
 
-	ec.EmitClearStrings(ec.BreakNumLocalsOnStart, NumLocalsEnd);
 	ec.AddStatement(OPC_Goto, ec.LoopEnd);
 }
 
@@ -851,9 +823,8 @@ VContinue::VContinue(const TLocation& ALoc)
 //
 //==========================================================================
 
-bool VContinue::Resolve(VEmitContext& ec)
+bool VContinue::Resolve(VEmitContext&)
 {
-	NumLocalsEnd = ec.LocalDefs.Num();
 	return true;
 }
 
@@ -871,7 +842,6 @@ void VContinue::DoEmit(VEmitContext& ec)
 		return;
 	}
 
-	ec.EmitClearStrings(ec.ContinueNumLocalsOnStart, NumLocalsEnd);
 	ec.AddStatement(OPC_Goto, ec.LoopStart);
 }
 
@@ -1113,7 +1083,7 @@ VCompound::~VCompound()
 bool VCompound::Resolve(VEmitContext& ec)
 {
 	bool Ret = true;
-	NumLocalsOnStart = ec.LocalDefs.Num();
+	int NumLocalsOnStart = ec.LocalDefs.Num();
 	for (int i = 0; i < Statements.Num(); i++)
 	{
 		if (!Statements[i]->Resolve(ec))
@@ -1121,7 +1091,6 @@ bool VCompound::Resolve(VEmitContext& ec)
 			Ret = false;
 		}
 	}
-	NumLocalsOnEnd = ec.LocalDefs.Num();
 
 	for (int i = NumLocalsOnStart; i < ec.LocalDefs.Num(); i++)
 		ec.LocalDefs[i].Visible = false;
@@ -1141,9 +1110,6 @@ void VCompound::DoEmit(VEmitContext& ec)
 	{
 		Statements[i]->Emit(ec);
 	}
-	ec.EmitClearStrings(NumLocalsOnStart, NumLocalsOnEnd);
-	for (int i = NumLocalsOnStart; i < NumLocalsOnEnd; i++)
-		ec.LocalDefs[i].Cleared = true;
 }
 
 //END

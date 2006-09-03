@@ -62,8 +62,6 @@ VEmitContext::VEmitContext(VMemberBase* Member)
 : CurrentFunc(NULL)
 , FuncRetType(ev_unknown)
 , localsofs(0)
-, BreakNumLocalsOnStart(0)
-, ContinueNumLocalsOnStart(0)
 {
 	//	Find the class.
 	VMemberBase* CM = Member;
@@ -431,10 +429,6 @@ void VEmitContext::EmitClearStrings(int Start, int End)
 {
 	for (int i = Start; i < End; i++)
 	{
-		if (LocalDefs[i].Cleared)
-		{
-			continue;
-		}
 		if (LocalDefs[i].type.type == ev_string)
 		{
 			EmitLocalAddress(LocalDefs[i].ofs);

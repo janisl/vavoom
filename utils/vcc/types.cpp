@@ -1370,7 +1370,6 @@ void VMethod::Emit()
 			L.type = ParamTypes[i];
 			L.ofs = ec.localsofs;
 			L.Visible = true;
-			L.Cleared = false;
 		}
 		ec.localsofs += ParamTypes[i].GetSize() / 4;
 	}

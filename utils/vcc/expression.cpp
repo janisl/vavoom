@@ -4385,7 +4385,6 @@ void VLocalDecl::Declare(VEmitContext& ec)
 		L.type = Type;
 		L.ofs = ec.localsofs;
 		L.Visible = false;
-		L.Cleared = false;
 
 		//  Initialisation
 		if (e.Value)

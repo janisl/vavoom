@@ -62,7 +62,6 @@ class VWhile : public VStatement
 public:
 	VExpression*		Expr;
 	VStatement*			Statement;
-	int					NumLocalsOnStart;
 
 	VWhile(VExpression*, VStatement*, const TLocation&);
 	~VWhile();
@@ -75,7 +74,6 @@ class VDo : public VStatement
 public:
 	VExpression*		Expr;
 	VStatement*			Statement;
-	int					NumLocalsOnStart;
 
 	VDo(VExpression*, VStatement*, const TLocation&);
 	~VDo();
@@ -90,7 +88,6 @@ public:
 	VExpression*			CondExpr;
 	TArray<VExpression*>	LoopExpr;
 	VStatement*				Statement;
-	int						NumLocalsOnStart;
 
 	VFor(const TLocation&);
 	~VFor();
@@ -111,7 +108,6 @@ public:
 	TArray<VCaseInfo>	CaseInfo;
 	VLabel				DefaultAddress;
 	TArray<VStatement*>	Statements;
-	int					NumLocalsOnStart;
 
 	VSwitch(const TLocation&);
 	~VSwitch();
@@ -145,8 +141,6 @@ public:
 class VBreak : public VStatement
 {
 public:
-	int				NumLocalsEnd;
-
 	VBreak(const TLocation&);
 	bool Resolve(VEmitContext&);
 	void DoEmit(VEmitContext&);
@@ -155,8 +149,6 @@ public:
 class VContinue : public VStatement
 {
 public:
-	int				NumLocalsEnd;
-
 	VContinue(const TLocation&);
 	bool Resolve(VEmitContext&);
 	void DoEmit(VEmitContext&);
@@ -200,8 +192,6 @@ class VCompound : public VStatement
 {
 public:
 	TArray<VStatement*>		Statements;
-	int						NumLocalsOnStart;
-	int						NumLocalsOnEnd;
 
 	VCompound(const TLocation&);
 	~VCompound();
