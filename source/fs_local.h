@@ -38,11 +38,11 @@ class VZipFile : public VSearchPath
 	vuint32			BytesBeforeZipFile;	//	Byte before the zipfile, (>0 for sfx)
 
 	vuint32 SearchCentralDir();
+	static int FileCmpFunc(const void*, const void*);
 
 public:
 	VZipFile(const VStr&);
 	~VZipFile();
-	VStr FindFile(const VStr&);
 	bool FileExists(const VStr&);
 	VStream* OpenFileRead(const VStr&);
 	void Close();
@@ -51,9 +51,15 @@ public:
 	int LumpLength(int);
 	VName LumpName(int);
 	int IterateNS(int, EWadNamespace);
+	VStream* CreateLumpReaderNum(int);
+
+	VStr FindFile(const VStr&);
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);
-	VStream* CreateLumpReaderNum(int);
+
+	void ListWadFiles(TArray<VStr>&);
 };
+
+void W_AddFileFromZip(const VStr&, VStream*, const VStr&, VStream*);
 
 #endif

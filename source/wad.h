@@ -45,6 +45,14 @@ enum EWadNamespace
 	WADNS_Voices,
 	WADNS_HiResTextures,
 	WADNS_Progs,
+
+	//	Special namespaces for zip files, in wad file they will be searched
+	// in global namespace.
+	WADNS_ZipSpecial,
+	WADNS_Patches,
+	WADNS_Graphics,
+	WADNS_Sounds,
+	WADNS_Music,
 };
 
 class VSearchPath

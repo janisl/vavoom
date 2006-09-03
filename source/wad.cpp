@@ -66,7 +66,7 @@ public:
 	{
 		Close();
 	}
-	void Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices);
+	void Open(const VStr&, const VStr&, bool, VStream*);
 	void OpenSingleLump(const VStr& FileName);
 	void Close();
 	int CheckNumForName(VName LumpName, EWadNamespace NS);
@@ -143,7 +143,7 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 	}
 	else
 	{
-		Wad->Open(FileName, GwaDir, FixVoices);
+		Wad->Open(FileName, GwaDir, FixVoices, NULL);
 	}
 	SearchPaths.Append(Wad);
 
@@ -176,6 +176,38 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 				SearchPaths.Append(new VWadFile);
 			}
 		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  W_AddFileFromZip
+//
+//==========================================================================
+
+void W_AddFileFromZip(const VStr& WadName, VStream* WadStrm,
+	const VStr& GwaName, VStream* GwaStrm)
+{
+	guard(W_AddFileFromZip);
+	//	Add WAD file.
+	wadfiles.Append(WadName);
+	VWadFile* Wad = new VWadFile;
+	Wad->Open(WadName, VStr(), false, WadStrm);
+	SearchPaths.Append(Wad);
+
+	if (GwaStrm)
+	{
+		//	Add GWA file
+		wadfiles.Append(GwaName);
+		VWadFile* Gwa = new VWadFile;
+		Gwa->Open(GwaName, VStr(), false, GwaStrm);
+		SearchPaths.Append(Gwa);
+	}
+	else
+	{
+		//	Leave empty slot for GWA file
+		SearchPaths.Append(new VWadFile);
 	}
 	unguard;
 }
@@ -490,7 +522,8 @@ void W_Shutdown()
 //
 //==========================================================================
 
-void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
+void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices,
+	VStream* InStream)
 {
 	guard(VWadFile::Open);
 	wadinfo_t		header;
@@ -503,11 +536,18 @@ void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices)
 	Name = FileName;
 	GwaDir = AGwaDir;
 
-	// open the file and add to directory
-	Stream = FL_OpenSysFileRead(FileName);
-	if (!Stream)
+	if (InStream)
 	{
-		Sys_Error("Couldn't open %s", *FileName);
+		Stream = InStream;
+	}
+	else
+	{
+		// open the file and add to directory
+		Stream = FL_OpenSysFileRead(FileName);
+		if (!Stream)
+		{
+			Sys_Error("Couldn't open %s", *FileName);
+		}
 	}
 	GCon->Logf(NAME_Init, "adding %s", *FileName);
 
@@ -619,9 +659,16 @@ void VWadFile::Close()
 //
 //==========================================================================
 
-int VWadFile::CheckNumForName(VName LumpName, EWadNamespace NS)
+int VWadFile::CheckNumForName(VName LumpName, EWadNamespace InNS)
 {
 	guard(VWadFile::CheckNumForName);
+	//	Special ZIP-file namespaces in WAD file are in global namespace.
+	EWadNamespace NS = InNS;
+	if (NS > WADNS_ZipSpecial)
+	{
+		NS = WADNS_Global;
+	}
+
 	for (int i = NumLumps - 1; i >= 0; i--)
 	{
 		if (LumpInfo[i].Namespace == NS && LumpInfo[i].Name == LumpName)
@@ -839,7 +886,7 @@ void VWadFile::BuildGLNodes(VSearchPath* GlWad)
 	GLVis_BuildPVS(*Name, *gwaname);
 
 	// Add GWA file
-	((VWadFile*)GlWad)->Open(gwaname, VStr(), false);
+	((VWadFile*)GlWad)->Open(gwaname, VStr(), false, NULL);
 #endif
 	unguard;
 }
@@ -865,7 +912,7 @@ void VWadFile::BuildPVS(VSearchPath* BaseWad)
 	GLVis_BuildPVS(*name, BaseWad != this ? *glname : NULL);
 
 	// Add GWA file
-	Open(glname, VStr(), false);
+	Open(glname, VStr(), false, NULL);
 #endif
 	unguard;
 }

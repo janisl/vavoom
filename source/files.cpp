@@ -87,11 +87,55 @@ VStr	fl_mainwad;
 TArray<VSearchPath*>	SearchPaths;
 
 TArray<VStr>			wadfiles;
-static bool				fl_fixvoices;
 static bool				bIwadAdded;
 static TArray<VStr>		IWadDirs;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	AddGameDir
+//
+//==========================================================================
+
+static void AddZipFile(VStr ZipName)
+{
+	//	Add ZIP file.
+	VZipFile* Zip = new VZipFile(ZipName);
+	SearchPaths.Append(Zip);
+
+	//	Add all WAD files in the root of the ZIP file.
+	TArray<VStr> Wads;
+	Zip->ListWadFiles(Wads);
+	for (int i = 0; i < Wads.Num(); i++)
+	{
+		VStr GwaName = Wads[i].StripExtension() + ".gwa";
+		VStream* WadStrm = Zip->OpenFileRead(Wads[i]);
+		VStream* GwaStrm = Zip->OpenFileRead(GwaName);
+
+		//	Decompress WAD and GWA files into a memory stream since
+		// reading from ZIP will be very slow.
+		size_t Len = WadStrm->TotalSize();
+		vuint8* Buf = new vuint8[Len];
+		WadStrm->Serialise(Buf, Len);
+		delete WadStrm;
+		WadStrm = new VMemoryStream(Buf, Len);
+		delete[] Buf;
+
+		if (GwaStrm)
+		{
+			Len = GwaStrm->TotalSize();
+			Buf = new vuint8[Len];
+			GwaStrm->Serialise(Buf, Len);
+			delete GwaStrm;
+			GwaStrm = new VMemoryStream(Buf, Len);
+			delete[] Buf;
+		}
+
+		W_AddFileFromZip(ZipName + ":" + Wads[i], WadStrm,
+			ZipName + ":" + GwaName, GwaStrm);
+	}
+}
 
 //==========================================================================
 //
@@ -119,7 +163,7 @@ static void AddGameDir(const VStr& basedir, const VStr& dir)
 		VStr buf = basedir + "/" + dir + "/wad" + i + ".wad";
 		if (!Sys_FileExists(buf))
 			break;
-		W_AddFile(buf, gwadir, fl_fixvoices);
+		W_AddFile(buf, gwadir, false);
 	}
 
 	//	Then add all .pk3 files in that directory.
@@ -136,7 +180,7 @@ static void AddGameDir(const VStr& basedir, const VStr& dir)
 		qsort(ZipFiles.Ptr(), ZipFiles.Num(), sizeof(VStr), cmpfunc);
 		for (int i = 0; i < ZipFiles.Num(); i++)
 		{
-			SearchPaths.Append(new VZipFile(basedir + "/" + dir + "/" + ZipFiles[i]));
+			AddZipFile(basedir + "/" + dir + "/" + ZipFiles[i]);
 		}
 	}
 
@@ -270,17 +314,16 @@ static void ParseBase(const VStr& name)
 		{
 			if (!G.MainWad || G.MainWad == fl_mainwad)
 			{
-				fl_fixvoices = G.FixVoices;
 				if (!bIwadAdded)
 				{
 					VStr MainWadPath = FindMainWad(fl_mainwad);
-					W_AddFile(MainWadPath, fl_savedir, fl_fixvoices);
+					W_AddFile(MainWadPath, fl_savedir, G.FixVoices);
 					bIwadAdded = true;
 				}
 				for (int j = 0; j < G.AddFiles.Num(); j++)
 				{
 					W_AddFile(fl_basedir + "/" + G.AddFiles[j], fl_savedir,
-						fl_fixvoices);
+						false);
 				}
 				SetupGameDir(G.GameDir);
 				return;
@@ -297,10 +340,9 @@ static void ParseBase(const VStr& name)
 		if (MainWadPath)
 		{
 			fl_mainwad = G.MainWad;
-			fl_fixvoices = G.FixVoices;
 			if (!bIwadAdded)
 			{
-				W_AddFile(MainWadPath, fl_savedir, fl_fixvoices);
+				W_AddFile(MainWadPath, fl_savedir, G.FixVoices);
 				bIwadAdded = true;
 			}
 			for (int j = 0; j < G.AddFiles.Num(); j++)
@@ -310,7 +352,7 @@ static void ParseBase(const VStr& name)
 				{
 					Sys_Error("Required file %s not found", *G.AddFiles[j]);
 				}
-				W_AddFile(FName, fl_savedir, fl_fixvoices);
+				W_AddFile(FName, fl_savedir, false);
 			}
 			SetupGameDir(G.GameDir);
 			return;
@@ -422,9 +464,9 @@ void FL_Init()
 		{
 			VStr Ext = VStr(GArgs[fp]).ExtractFileExtension().ToLower();
 			if (Ext == "pk3")
-				SearchPaths.Append(new VZipFile(GArgs[fp]));
+				AddZipFile(GArgs[fp]);
 			else
-				W_AddFile(GArgs[fp], VStr(), fl_fixvoices);
+				W_AddFile(GArgs[fp], VStr(), false);
 		}
 	}
 	unguard;

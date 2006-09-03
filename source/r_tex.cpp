@@ -397,9 +397,9 @@ void VTextureManager::Init()
 	//	Find sky flat number.
 	skyflatnum = CheckNumForName(NAME_f_sky, TEXTYPE_Flat, true, false);
 	if (skyflatnum < 0)
-	    skyflatnum = CheckNumForName(NAME_f_sky001, TEXTYPE_Flat, true, false);
+		skyflatnum = CheckNumForName(NAME_f_sky001, TEXTYPE_Flat, true, false);
 	if (skyflatnum < 0)
-	    skyflatnum = NumForName(NAME_f_sky1, TEXTYPE_Flat, true, false);
+		skyflatnum = NumForName(NAME_f_sky1, TEXTYPE_Flat, true, false);
 	unguard;
 }
 
@@ -566,7 +566,7 @@ int VTextureManager::AddPatch(VName Name, int Type)
 {
 	guard(VTextureManager::AddPatch);
 	//	Find the lump number.
-	int LumpNum = W_CheckNumForName(Name);
+	int LumpNum = W_CheckNumForName(Name, WADNS_Graphics);
 	if (LumpNum < 0)
 		LumpNum = W_CheckNumForName(Name, WADNS_Sprites);
 	if (LumpNum < 0)
@@ -641,7 +641,7 @@ int VTextureManager::CreatePatch(int Type, int LumpNum)
 int VTextureManager::AddRawWithPal(VName Name, VName PalName)
 {
 	guard(VTextureManager::AddRawWithPal);
-	int LumpNum = W_CheckNumForName(Name);
+	int LumpNum = W_CheckNumForName(Name, WADNS_Graphics);
 	if (LumpNum < 0)
 	{
 		GCon->Logf("VTextureManager::AddRawWithPal: %s not found", *Name);
@@ -727,7 +727,7 @@ void VTextureManager::InitTextures()
 		VName PatchName(TmpName, VName::AddLower8);
 
 		//	Get wad lump number.
-		int LNum = W_CheckNumForName(PatchName);
+		int LNum = W_CheckNumForName(PatchName, WADNS_Patches);
 		//	Sprites also can be used as patches.
 		if (LNum < 0)
 		{
@@ -3022,7 +3022,7 @@ void WritePCX(char* filename, void* data, int width, int height, int bpp,
 	memset(pcx.filler, 0, sizeof(pcx.filler));
 	*Strm << pcx;
 
-    // pack the image
+	// pack the image
 	if (bpp == 8)
 	{
 		for (j = 0; j < height; j++)

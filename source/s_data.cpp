@@ -301,7 +301,7 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 			VStr::Cpy(&FakeName[len + 2], *S_sfx[RefId].TagName);
 
 			id = AddSoundLump(FakeName, W_CheckNumForName(
-				VName(*sc->String, VName::AddLower8)));
+				VName(*sc->String, VName::AddLower8), WADNS_Sounds));
 			FPlayerSound& PlrSnd = PlayerSounds.Alloc();
 			PlrSnd.ClassId = PClass;
 			PlrSnd.GenderId = Gender;
@@ -443,7 +443,7 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 			}
 			VName TagName = *sc->String;
 			sc->ExpectName8();
-			AddSound(TagName, W_CheckNumForName(sc->Name8));
+			AddSound(TagName, W_CheckNumForName(sc->Name8, WADNS_Sounds));
 		}
 	}
 	delete sc;

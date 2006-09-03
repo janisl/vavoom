@@ -73,6 +73,10 @@ struct VZipFileInfo
 	vuint32		uncompressed_size;		//	Uncompressed size
 	vuint16		size_filename;			//	Filename length
 	vuint32		offset_curfile;			//	Relative offset of local header
+
+	//	For WAD-like access.
+	VName		LumpName;
+	vint32		LumpNamespace;
 };
 
 class VZipFileReader : public VStream
@@ -227,13 +231,55 @@ VZipFile::VZipFile(const VStr& zipfile)
 		char* filename_inzip = new char[file_info.size_filename + 1];
 		filename_inzip[file_info.size_filename] = '\0';
 		FileStream->Serialise(filename_inzip, file_info.size_filename);
-		Files[i].Name = VStr(filename_inzip).ToLower();
+		Files[i].Name = VStr(filename_inzip).ToLower().FixFileSlashes();
 		delete[] filename_inzip;
+
+		//	Set up lump name for WAD-like access.
+		VStr LumpName = Files[i].Name.ExtractFileName().StripExtension();
+
+		//	Map some directories to WAD namespaces.
+		Files[i].LumpNamespace =
+			Files[i].Name.StartsWith("sprites/") ? WADNS_Sprites :
+			Files[i].Name.StartsWith("flats/") ? WADNS_Flats :
+			Files[i].Name.StartsWith("colormaps/") ? WADNS_ColorMaps :
+			Files[i].Name.StartsWith("acs/") ? WADNS_ACSLibrary :
+			Files[i].Name.StartsWith("textures/") ? WADNS_NewTextures :
+			Files[i].Name.StartsWith("vioces/") ? WADNS_Voices :
+			Files[i].Name.StartsWith("hires/") ? WADNS_HiResTextures :
+			Files[i].Name.StartsWith("progs/") ? WADNS_Progs :
+			Files[i].Name.StartsWith("patches/") ? WADNS_Patches :
+			Files[i].Name.StartsWith("graphics/") ? WADNS_Graphics :
+			Files[i].Name.StartsWith("sounds/") ? WADNS_Sounds :
+			Files[i].Name.StartsWith("music/") ? WADNS_Music :
+			Files[i].Name.IndexOf('/') == -1 ? WADNS_Global : -1;
+
+		//	Anything from other directories won't be accessed as lump.
+		if (Files[i].LumpNamespace == -1)
+			LumpName = VStr();
+
+		//	For sprites \ is a valid frame character but is not allowed to
+		// be in a file name, so we do a little mapping here.
+		if (Files[i].LumpNamespace == WADNS_Sprites)
+		{
+			for (int ni = 0; ni < LumpName.Length(); ni++)
+			{
+				if (LumpName[ni] == '^')
+				{
+					LumpName[ni] = '\\';
+				}
+			}
+		}
+
+		//	Final lump name;
+		Files[i].LumpName = VName(*LumpName, VName::AddLower8);
 
 		//	Set the current file of the zipfile to the next file.
 		pos_in_central_dir += SIZECENTRALDIRITEM + file_info.size_filename +
 			size_file_extra + size_file_comment;
 	}
+
+	//	Sort files alphabetically.
+	qsort(Files, NumFiles, sizeof(VZipFileInfo), FileCmpFunc);
 	unguard;
 }
 
@@ -306,6 +352,17 @@ vuint32 VZipFile::SearchCentralDir()
 //
 //==========================================================================
 
+int VZipFile::FileCmpFunc(const void* v1, const void* v2)
+{
+	return ((VZipFileInfo*)v1)->Name.ICmp(((VZipFileInfo*)v2)->Name);
+}
+
+//==========================================================================
+//
+//	VZipFile::FileExists
+//
+//==========================================================================
+
 bool VZipFile::FileExists(const VStr& FName)
 {
 	guard(VZipFile::FileExists);
@@ -363,28 +420,115 @@ void VZipFile::Close()
 	unguard;
 }
 
+//==========================================================================
+//
+//	VZipFile::CheckNumForName
+//
+//==========================================================================
+
+int VZipFile::CheckNumForName(VName LumpName, EWadNamespace NS)
+{
+	guard(VZipFile::CheckNumForName);
+	for (int i = NumFiles - 1; i >= 0; i--)
+	{
+		if (Files[i].LumpNamespace == NS && Files[i].LumpName == LumpName)
+		{
+			return i;
+		}
+	}
+
+	// Not found.
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VZipFile::ReadFromLump
+//
+//==========================================================================
+
+void VZipFile::ReadFromLump(int Lump, void* Dest, int Pos, int Size)
+{
+	guard(VZipFile::ReadFromLump);
+	check(Lump >= 0);
+	check(Lump < NumFiles);
+	VStream* Strm = CreateLumpReaderNum(Lump);
+	Strm->Seek(Pos);
+	Strm->Serialise(Dest, Size);
+	delete Strm;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VZipFile::LumpLength
+//
+//==========================================================================
+
+int VZipFile::LumpLength(int Lump)
+{
+	if (Lump >= NumFiles)
+	{
+		return 0;
+	}
+	return Files[Lump].uncompressed_size;
+}
+
+//==========================================================================
+//
+//	VZipFile::LumpName
+//
+//==========================================================================
+
+VName VZipFile::LumpName(int Lump)
+{
+	if (Lump >= NumFiles)
+	{
+		return NAME_None;
+	}
+	return Files[Lump].LumpName;
+}
+
+//==========================================================================
+//
+//	VZipFile::IterateNS
+//
+//==========================================================================
+
+int VZipFile::IterateNS(int Start, EWadNamespace NS)
+{
+	guard(VZipFile::IterateNS);
+	for (int li = Start; li < NumFiles; li++)
+	{
+		if (Files[li].LumpNamespace == NS)
+		{
+			return li;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VZipFile::CreateLumpReaderNum
+//
+//==========================================================================
+
+VStream* VZipFile::CreateLumpReaderNum(int Lump)
+{
+	guard(VZipFile::CreateLumpReaderNum);
+	check(Lump >= 0);
+	check(Lump < NumFiles);
+	return new VZipFileReader(FileStream, BytesBeforeZipFile, Files[Lump],
+		GCon);
+	unguard;
+}
+
 VStr VZipFile::FindFile(const VStr&)
 {
 	return VStr();
-}
-int VZipFile::CheckNumForName(VName, EWadNamespace)
-{
-	return -1;
-}
-void VZipFile::ReadFromLump(int, void*, int, int)
-{
-}
-int VZipFile::LumpLength(int)
-{
-	return 0;
-}
-VName VZipFile::LumpName(int)
-{
-	return NAME_None;
-}
-int VZipFile::IterateNS(int, EWadNamespace)
-{
-	return -1;
 }
 void VZipFile::BuildGLNodes(VSearchPath*)
 {
@@ -392,9 +536,27 @@ void VZipFile::BuildGLNodes(VSearchPath*)
 void VZipFile::BuildPVS(VSearchPath*)
 {
 }
-VStream* VZipFile::CreateLumpReaderNum(int)
+
+//==========================================================================
+//
+//	VZipFile::ListWadFiles
+//
+//==========================================================================
+
+void VZipFile::ListWadFiles(TArray<VStr>& List)
 {
-	return NULL;
+	guard(VZipFile::ListWadFiles);
+	for (int i = 0; i < NumFiles; i++)
+	{
+		//	Only .wad files.
+		if (!Files[i].Name.EndsWith(".wad"))
+			continue;
+		//	Don't add WAD files in subdirectories
+		if (Files[i].Name.IndexOf('/') != -1)
+			continue;
+		List.Append(Files[i].Name);
+	}
+	unguard;
 }
 
 //==========================================================================

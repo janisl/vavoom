@@ -1152,7 +1152,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 		Strm = FL_OpenFileRead(va("music/%s.flac", Song));
 	if (!Strm)
 	{
-		int Lump = W_CheckNumForName(VName(Song, VName::AddLower8));
+		int Lump = W_CheckNumForName(VName(Song, VName::AddLower8), WADNS_Music);
 		if (Lump < 0)
 		{
 			GCon->Logf("Can't find song %s", Song);
