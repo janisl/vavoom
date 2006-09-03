@@ -357,6 +357,8 @@ static TArray<frameDef_t>	FrameDefs;
 
 // CODE --------------------------------------------------------------------
 
+//BEGIN VTextureManager
+
 //==========================================================================
 //
 //	VTextureManager::VTextureManager
@@ -860,6 +862,10 @@ vuint8* VTextureManager::GetRgbTable()
 	return RgbTable;
 }
 
+//END
+
+//BEGIN VTexture
+
 //**************************************************************************
 //	VTexture
 //**************************************************************************
@@ -1036,8 +1042,14 @@ VTexture* VTexture::GetHighResolutionTexture()
 	case TEXTYPE_Flat:
 		DirName = "flats";
 		break;
+	case TEXTYPE_Overload:
+		DirName = "textures";
+		break;
+	case TEXTYPE_Sprite:
+		DirName = "sprites";
+		break;
 	case TEXTYPE_Pic:
-		DirName = "pics";
+		DirName = "graphics";
 		break;
 	default:
 		return NULL;
@@ -1045,7 +1057,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 
 	//	First try PNG.
 	char HighResName[80];
-	sprintf(HighResName, "textures/%s/%s.png", DirName, *Name);
+	sprintf(HighResName, "hirestex/%s/%s.png", DirName, *Name);
 	if (FL_FileExists(HighResName))
 	{
 		//	Create new high-resolution texture.
@@ -1054,7 +1066,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 	}
 
 	//	Then try TGA.
-	sprintf(HighResName, "textures/%s/%s.tga", DirName, *Name);
+	sprintf(HighResName, "hirestex/%s/%s.tga", DirName, *Name);
 	if (FL_FileExists(HighResName))
 	{
 		//	Create new high-resolution texture.
@@ -1104,6 +1116,10 @@ void VTexture::FixupPalette(vuint8* Pixels, rgba_t* Palette)
 	unguard;
 }
 
+//END
+
+//BEGIN VDummyTexture
+
 //**************************************************************************
 //	VDummyTexture
 //**************************************************************************
@@ -1140,6 +1156,10 @@ vuint8* VDummyTexture::GetPixels()
 void VDummyTexture::Unload()
 {
 }
+
+//END
+
+//BEGIN TPatchTexture
 
 //**************************************************************************
 //	TPatchTexture
@@ -1344,6 +1364,10 @@ void TPatchTexture::Unload()
 	}
 	unguard;
 }
+
+//END
+
+//BEGIN VMultiPatchTexture
 
 //**************************************************************************
 //	VMultiPatchTexture
@@ -1624,6 +1648,10 @@ void VMultiPatchTexture::Unload()
 	unguard;
 }
 
+//END
+
+//BEGIN VFlatTexture
+
 //**************************************************************************
 //	VFlatTexture
 //**************************************************************************
@@ -1726,6 +1754,10 @@ void VFlatTexture::Unload()
 	}
 	unguard;
 }
+
+//END
+
+//BEGIN VRawPicTexture
 
 //**************************************************************************
 //	VRawPicTexture
@@ -1876,6 +1908,10 @@ void VRawPicTexture::Unload()
 	}
 	unguard;
 }
+
+//END
+
+//BEGIN VImgzTexture
 
 //**************************************************************************
 //	VImgzTexture
@@ -2029,6 +2065,10 @@ void VImgzTexture::Unload()
 	}
 	unguard;
 }
+
+//END
+
+//BEGIN VPcxTexture
 
 //**************************************************************************
 //	VPcxTexture
@@ -2214,6 +2254,10 @@ void VPcxTexture::Unload()
 	}
 	unguard;
 }
+
+//END
+
+//BEGIN VTgaTexture
 
 //**************************************************************************
 //	VTgaTexture
@@ -2685,6 +2729,10 @@ void VTgaTexture::Unload()
 	unguard;
 }
 
+//END
+
+//BEGIN VPngTexture
+
 //**************************************************************************
 //	VPngTexture
 //**************************************************************************
@@ -2932,6 +2980,8 @@ void VPngTexture::Unload()
 	}
 	unguard;
 }
+
+//END
 
 #ifdef CLIENT
 //==========================================================================
