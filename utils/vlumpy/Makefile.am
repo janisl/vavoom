@@ -19,4 +19,8 @@ ___bin_vlumpy_SOURCES = \
 	../common/scrlib.h \
 	../common/wadlib.cpp \
 	../common/wadlib.h \
-	vlumpy.cpp
+	ioapi.cpp \
+	ioapi.h \
+	vlumpy.cpp \
+	zip.cpp \
+	zip.h

@@ -25,6 +25,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+#include "zip.h"
+#include <time.h>
 #include "cmdlib.h"
 #include "wadlib.h"
 #include "scrlib.h"
@@ -85,6 +87,7 @@ struct RGB_MAP
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 TOWadFile		outwad;
+zipFile			Zip;
 
 char			basepath[256];
 char			srcpath[256];
@@ -93,12 +96,57 @@ char			destpath[256];
 RGB_MAP			rgb_table;
 bool			rgb_table_created;
 
-char			lumpname[12];
+char			lumpname[256];
 char			destfile[1024];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	AddToZip
+//
+//==========================================================================
+
+void AddToZip(const char* Name, void* Data, size_t Size)
+{
+	zip_fileinfo zi;
+	memset(&zi, 0, sizeof(zi));
+
+	//	Set file time to current time.
+	time_t CurTime = 0;
+	time(&CurTime);
+	struct tm* LTime = localtime(&CurTime);
+	if (LTime)
+	{
+		zi.tmz_date.tm_sec  = LTime->tm_sec;
+		zi.tmz_date.tm_min  = LTime->tm_min;
+		zi.tmz_date.tm_hour = LTime->tm_hour;
+		zi.tmz_date.tm_mday = LTime->tm_mday;
+		zi.tmz_date.tm_mon  = LTime->tm_mon ;
+		zi.tmz_date.tm_year = LTime->tm_year;
+	}
+
+	//	Open file.
+	if (zipOpenNewFileInZip(Zip, Name, &zi, NULL, 0, NULL, 0, NULL,
+		Z_DEFLATED, Z_BEST_COMPRESSION) != ZIP_OK)
+	{
+		Error("Failed to open file in ZIP");
+	}
+
+	//	Write to it
+	if (zipWriteInFileInZip(Zip, Data, Size) != ZIP_OK)
+	{
+		Error("Failed to write file in ZIP");
+	}
+
+	//	Close it.
+	if (zipCloseFileInZip(Zip) != ZIP_OK)
+	{
+		Error("Failed to close file in ZIP");
+	}
+}
 
 //==========================================================================
 //
@@ -197,6 +245,11 @@ static void AddWadFile(const char *name)
 
 static void AddWad(const char *name)
 {
+	if (Zip)
+	{
+		Error("$wad cannot be used for ZIP file");
+	}
+
 	char *filename = fn(name);
 	DefaultExtension(filename, ".wad");
 	AddWadFile(filename);
@@ -212,9 +265,12 @@ static void AddWad(const char *name)
 
 static void AddMap(const char *name)
 {
-	char	*filename;
+	if (Zip)
+	{
+		Error("$map cannot be used for ZIP file");
+	}
 
-	filename = fn(name);
+	char* filename = fn(name);
 	DefaultExtension(filename, ".wad");
 	AddWadFile(filename);
 
@@ -313,7 +369,14 @@ void GrabRGBTable()
 	SetupRGBTable();
 	memcpy(tmp, &rgb_table, 32 * 32 * 32);
 	tmp[32 * 32 * 32] = 0;
-	outwad.AddLump(lumpname, tmp, 32 * 32 * 32 + 1);
+	if (Zip)
+	{
+		AddToZip(lumpname, tmp, 32 * 32 * 32 + 1);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, tmp, 32 * 32 * 32 + 1);
+	}
 }
 
 //==========================================================================
@@ -361,7 +424,14 @@ void GrabTranslucencyTable()
 			q += 3;
 		}
 	}
-	outwad.AddLump(lumpname, table, 256 * 256);
+	if (Zip)
+	{
+		AddToZip(lumpname, table, 256 * 256);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, table, 256 * 256);
+	}
 }
 
 //==========================================================================
@@ -395,7 +465,14 @@ void GrabScaleMap()
 		map[i] = makecol8((int)(r * col), (int)(g * col), (int)(b * col));
 	}
 
-	outwad.AddLump(lumpname, map, 256);
+	if (Zip)
+	{
+		AddToZip(lumpname, map, 256);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, map, 256);
+	}
 }
 
 //==========================================================================
@@ -430,7 +507,14 @@ void GrabRaw()
 		}
 	}
 
-	outwad.AddLump(lumpname, data, w * h);
+	if (Zip)
+	{
+		AddToZip(lumpname, data, w * h);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, data, w * h);
+	}
 	Free(data);
 }
 
@@ -519,7 +603,14 @@ void GrabPatch()
 		Col = (column_t*)((vuint8*)Col + 4);
 	}
 
-	outwad.AddLump(lumpname, Patch, (vuint8*)Col - (vuint8*)Patch);
+	if (Zip)
+	{
+		AddToZip(lumpname, Patch, (vuint8*)Col - (vuint8*)Patch);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, Patch, (vuint8*)Col - (vuint8*)Patch);
+	}
 	Free(Patch);
 }
 
@@ -559,7 +650,14 @@ void GrabPic()
 		}
 	}
 
-	outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h);
+	if (Zip)
+	{
+		AddToZip(lumpname, pic, sizeof(vpic_t) + w * h);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h);
+	}
 	Free(pic);
 }
 
@@ -607,7 +705,14 @@ void GrabPic15()
 		}
 	}
 
-	outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h * 2);
+	if (Zip)
+	{
+		AddToZip(lumpname, pic, sizeof(vpic_t) + w * h * 2);
+	}
+	else
+	{
+		outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h * 2);
+	}
 	Free(pic);
 }
 
@@ -676,7 +781,20 @@ void ParseScript(const char *name)
 		if (!OutputOpened)
 		{
 			DefaultExtension(destfile, ".wad");
-			outwad.Open(destfile, "PWAD");
+			char Ext[8];
+			ExtractFileExtension(destfile, Ext);
+			if (!stricmp(Ext, "zip") || !stricmp(Ext, "pk3"))
+			{
+				Zip = zipOpen(destfile, APPEND_STATUS_CREATE);
+				if (!Zip)
+				{
+					Error("Failed to open ZIP file");
+				}
+			}
+			else
+			{
+				outwad.Open(destfile, "PWAD");
+			}
 			OutputOpened = true;
 		}
 
@@ -696,6 +814,10 @@ void ParseScript(const char *name)
 
 		if (SC_Compare("$label"))
 		{
+			if (Zip)
+			{
+				Error("$label cannot be used for ZIP file");
+			}
 			SC_MustGetString();
 			outwad.AddLump(sc_String, NULL, 0);
 			continue;
@@ -703,7 +825,7 @@ void ParseScript(const char *name)
 
 		if (GrabMode)
 		{
-			if (strlen(sc_String) > 8)
+			if (!Zip && strlen(sc_String) > 8)
 			{
 				SC_ScriptError("Lump name is too long.");
 			}
@@ -744,12 +866,21 @@ void ParseScript(const char *name)
 				SC_ScriptError(va("Unknown command %s", sc_String));
 			}
 		}
+		else if (Zip)
+		{
+			strcpy(lumpname, sc_String);
+			SC_MustGetString();
+			void *data;
+			int size = LoadFile(fn(sc_String), &data);
+			AddToZip(lumpname, data, size);
+			Free(data);
+		}
 		else
 		{
 			ExtractFileBase(sc_String, lumpname);
 			if (strlen(lumpname) > 8)
 			{
-				SC_ScriptError("File name too long");
+				SC_ScriptError("Lump name too long");
 			}
 			void *data;
 			int size = LoadFile(fn(sc_String), &data);
@@ -762,6 +893,13 @@ void ParseScript(const char *name)
 	if (outwad.handle)
 	{
 		outwad.Close();
+	}
+	if (Zip)
+	{
+		if (zipClose(Zip, NULL) != ZIP_OK)
+		{
+			Error("Failed to close ZIP file");
+		}
 	}
 	SC_Close();
 
