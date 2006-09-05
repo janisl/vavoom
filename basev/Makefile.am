@@ -1,41 +1,41 @@
 basevdir = $(datadir)/vavoom/basev
 nobase_basev_DATA = \
-	common/wad0.wad \
-	doom/wad0.wad \
-	doom1/wad0.wad \
-	doom2/wad0.wad \
-	heretic/wad0.wad \
-	hexen/wad0.wad \
-	plutonia/wad0.wad \
-	strife/wad0.wad \
-	tnt/wad0.wad
+	common/basepak.pk3 \
+	doom/basepak.pk3 \
+	doom1/basepak.pk3 \
+	doom2/basepak.pk3 \
+	heretic/basepak.pk3 \
+	hexen/basepak.pk3 \
+	plutonia/basepak.pk3 \
+	strife/basepak.pk3 \
+	tnt/basepak.pk3
 nobase_dist_basev_DATA = \
 	games.txt \
-	common/default.cfg \
-	common/startup.vs \
 	doom1/base.txt \
 	doom2/base.txt \
 	plutonia/base.txt \
 	tnt/base.txt
 
 EXTRA_DIST = \
-	common/wad0.ls \
+	common/basepak.ls.in \
+	common/default.cfg \
+	common/startup.vs \
 	doom/jldoom.wad \
 	doom/palette.pcx \
-	doom/wad0.ls \
+	doom/basepak.ls.in \
 	doom/scripts/animdefs.txt \
 	doom/scripts/skyboxes.txt \
 	doom/scripts/sndinfo.txt \
 	doom/scripts/sndseq.txt \
 	doom/scripts/terrains.txt \
-	doom1/wad0.ls \
+	doom1/basepak.ls.in \
 	doom1/scripts/fin1text.txt \
 	doom1/scripts/fin2text.txt \
 	doom1/scripts/fin3text.txt \
 	doom1/scripts/fin4text.txt \
 	doom1/scripts/mapinfo.txt \
 	doom1/scripts/sndinfo.txt \
-	doom2/wad0.ls \
+	doom2/basepak.ls.in \
 	doom2/scripts/fin1text.txt \
 	doom2/scripts/fin2text.txt \
 	doom2/scripts/fin3text.txt \
@@ -45,7 +45,7 @@ EXTRA_DIST = \
 	doom2/scripts/sec2text.txt \
 	heretic/hticdat.wad \
 	heretic/palette.pcx \
-	heretic/wad0.ls \
+	heretic/basepak.ls.in \
 	heretic/scripts/animdefs.txt \
 	heretic/scripts/fin1text.txt \
 	heretic/scripts/fin2text.txt \
@@ -59,12 +59,12 @@ EXTRA_DIST = \
 	heretic/scripts/terrains.txt \
 	hexen/hexendat.wad \
 	hexen/palette.pcx \
-	hexen/wad0.ls \
+	hexen/basepak.ls.in \
 	hexen/scripts/animdefs.txt \
 	hexen/scripts/skyboxes.txt \
 	hexen/scripts/sndinfo.txt \
 	hexen/scripts/terrains.txt \
-	plutonia/wad0.ls \
+	plutonia/basepak.ls.in \
 	plutonia/scripts/fin1text.txt \
 	plutonia/scripts/fin2text.txt \
 	plutonia/scripts/fin3text.txt \
@@ -74,14 +74,14 @@ EXTRA_DIST = \
 	plutonia/scripts/sec2text.txt \
 	strife/palette.pcx \
 	strife/strifdat.wad \
-	strife/wad0.ls \
+	strife/basepak.ls.in \
 	strife/scripts/animdefs.txt \
 	strife/scripts/mapinfo.txt \
 	strife/scripts/skyboxes.txt \
 	strife/scripts/sndinfo.txt \
 	strife/scripts/sndseq.txt \
 	strife/scripts/terrains.txt \
-	tnt/wad0.ls \
+	tnt/basepak.ls.in \
 	tnt/scripts/fin1text.txt \
 	tnt/scripts/fin2text.txt \
 	tnt/scripts/fin3text.txt \
@@ -93,41 +93,41 @@ EXTRA_DIST = \
 VLUMPY = ../utils/bin/vlumpy$(EXEEXT)
 ACC = ../utils/bin/acc$(EXEEXT)
 
-common/wad0.wad: $(srcdir)/common/wad0.ls $(VLUMPY) \
+common/basepak.pk3: common/basepak.ls $(VLUMPY) \
 		common/progs/common.dat common/progs/clcommon.dat common/progs/svcommon.dat
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
-doom/wad0.wad: $(srcdir)/doom/wad0.ls $(VLUMPY)
+doom/basepak.pk3: doom/basepak.ls $(VLUMPY)
 	@mkdir -p doom
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
-doom1/wad0.wad: $(srcdir)/doom1/wad0.ls $(VLUMPY) \
+doom1/basepak.pk3: doom1/basepak.ls $(VLUMPY) \
 		doom1/progs/shared.dat doom1/progs/clprogs.dat doom1/progs/svprogs.dat
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
-doom2/wad0.wad: $(srcdir)/doom2/wad0.ls $(VLUMPY) \
+doom2/basepak.pk3: doom2/basepak.ls $(VLUMPY) \
 		doom2/progs/shared.dat doom2/progs/clprogs.dat doom2/progs/svprogs.dat
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
-heretic/wad0.wad: $(srcdir)/heretic/wad0.ls $(VLUMPY) \
+heretic/basepak.pk3: heretic/basepak.ls $(VLUMPY) \
 		heretic/progs/shared.dat heretic/progs/clprogs.dat heretic/progs/svprogs.dat
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
-hexen/wad0.wad: $(srcdir)/hexen/wad0.ls $(VLUMPY) \
+hexen/basepak.pk3: hexen/basepak.ls $(VLUMPY) \
 		hexen/progs/shared.dat hexen/progs/clprogs.dat hexen/progs/svprogs.dat
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
-plutonia/wad0.wad: $(srcdir)/plutonia/wad0.ls $(VLUMPY)
+plutonia/basepak.pk3: plutonia/basepak.ls $(VLUMPY)
 	@mkdir -p plutonia
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
-strife/wad0.wad: $(srcdir)/strife/wad0.ls $(VLUMPY) \
+strife/basepak.pk3: strife/basepak.ls $(VLUMPY) \
 		strife/progs/shared.dat strife/progs/clprogs.dat strife/progs/svprogs.dat strife/strfhelp.o
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<
 
 strife/strfhelp.o: $(srcdir)/../utils/editing/acs/*.acs $(ACC)
 	$(ACC) $(srcdir)/../utils/editing/acs/strfhelp.acs strife/strfhelp.o
 
-tnt/wad0.wad: $(srcdir)/tnt/wad0.ls $(VLUMPY)
+tnt/basepak.pk3: tnt/basepak.ls $(VLUMPY)
 	@mkdir -p tnt
-	$(VLUMPY) -D$@ $<
+	$(VLUMPY) $<

@@ -1,0 +1,10 @@
+$dest basepak.pk3
+
+//	Default config files
+default.cfg				@srcdir@/default.cfg
+startup.vs				@srcdir@/startup.vs
+
+//	Common progs
+progs/common.dat		progs/common.dat
+progs/clcommon.dat		progs/clcommon.dat
+progs/svcommon.dat		progs/svcommon.dat

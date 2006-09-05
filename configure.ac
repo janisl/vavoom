@@ -148,20 +148,6 @@ dnl
 AC_SEARCH_LIBS([sin], [m], [], [AC_ERROR([Library containing sin not found])])
 
 dnl
-dnl  **** VLumpy variables ****
-dnl
-
-VLUMPY_CXXFLAGS=${CXXFLAGS}
-VLUMPY_CPPFLAGS=${CPPFLAGS}
-VLUMPY_LDFLAGS=${LDFLAGS}
-VLUMPY_LIBS=${LIBS}
-
-AC_SUBST([VLUMPY_CXXFLAGS])
-AC_SUBST([VLUMPY_CPPFLAGS])
-AC_SUBST([VLUMPY_LDFLAGS])
-AC_SUBST([VLUMPY_LIBS])
-
-dnl
 dnl  **** glVIS variables ****
 dnl
 
@@ -195,6 +181,20 @@ AC_SUBST([GLBSP_CFLAGS])
 AC_SUBST([GLBSP_CPPFLAGS])
 AC_SUBST([GLBSP_LDFLAGS])
 AC_SUBST([GLBSP_LIBS])
+
+dnl
+dnl  **** VLumpy variables ****
+dnl
+
+VLUMPY_CXXFLAGS=${CXXFLAGS}
+VLUMPY_CPPFLAGS=${CPPFLAGS}
+VLUMPY_LDFLAGS=${LDFLAGS}
+VLUMPY_LIBS=${LIBS}
+
+AC_SUBST([VLUMPY_CXXFLAGS])
+AC_SUBST([VLUMPY_CPPFLAGS])
+AC_SUBST([VLUMPY_LDFLAGS])
+AC_SUBST([VLUMPY_LIBS])
 
 dnl
 dnl  **** Test for prefix prepended by compiler to global symbols ****
@@ -578,6 +578,15 @@ AC_SUBST([ASMFLAGS])
 AC_OUTPUT([
 	Makefile
 	basev/Makefile
+	basev/common/basepak.ls
+	basev/doom/basepak.ls
+	basev/doom1/basepak.ls
+	basev/doom2/basepak.ls
+	basev/heretic/basepak.ls
+	basev/hexen/basepak.ls
+	basev/plutonia/basepak.ls
+	basev/strife/basepak.ls
+	basev/tnt/basepak.ls
 	progs/Makefile
 	progs/common/Makefile
 	progs/doom/Makefile

@@ -157,7 +157,7 @@ static void T_LoadFont(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	for (i = 0; i < 96; i++)
 	{
 		sprintf(buffer, "%s%02d", Name, i);
-		if (W_CheckNumForName(VName(buffer, VName::AddLower8)) >= 0)
+		if (W_CheckNumForName(VName(buffer, VName::AddLower8), WADNS_Graphics) >= 0)
 		{
 			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
 				VName::AddLower8), TEXTYPE_Pic);
@@ -201,7 +201,7 @@ static void T_LoadFont2(font_e FontNr, const char* Name, int SpaceW, int SpaceH)
 	for (i = 0; i < 64; i++)
 	{
 		sprintf(buffer, "%s%03d", Name, i + 32);
-		if (W_CheckNumForName(VName(buffer, VName::AddLower8)) >= 0)
+		if (W_CheckNumForName(VName(buffer, VName::AddLower8), WADNS_Graphics) >= 0)
 		{
 			Fonts[FontNr]->Pics[i] = GTextureManager.AddPatch(VName(buffer,
 				VName::AddLower8), TEXTYPE_Pic);

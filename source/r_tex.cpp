@@ -598,7 +598,8 @@ int VTextureManager::CreatePatch(int Type, int LumpNum)
 	guard(VTextureManager::CreatePatch);
 	//	Read lump header and see what type of lump it is.
 	vuint8 LumpHeader[16];
-	W_ReadFromLump(LumpNum, LumpHeader, 0, 16);
+	memset(LumpHeader, 0, sizeof(LumpHeader));
+	W_ReadFromLump(LumpNum, LumpHeader, 0, MIN(W_LumpLength(LumpNum), 16));
 
 	//	Check for ZDoom's IMGZ image.
 	if (LumpHeader[0] == 'I' && LumpHeader[1] == 'M' &&
