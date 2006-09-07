@@ -20,7 +20,7 @@ EXTRA_DIST = \
 	common/basepak.ls.in \
 	common/default.cfg \
 	common/startup.vs \
-	doom/jldoom.wad \
+	doom/graphics/*.lmp \
 	doom/palette.pcx \
 	doom/basepak.ls.in \
 	doom/scripts/animdefs.txt \
@@ -43,7 +43,7 @@ EXTRA_DIST = \
 	doom2/scripts/mapinfo.txt \
 	doom2/scripts/sec1text.txt \
 	doom2/scripts/sec2text.txt \
-	heretic/hticdat.wad \
+	heretic/graphics/*.lmp \
 	heretic/palette.pcx \
 	heretic/basepak.ls.in \
 	heretic/scripts/animdefs.txt \
@@ -57,7 +57,7 @@ EXTRA_DIST = \
 	heretic/scripts/sndinfo.txt \
 	heretic/scripts/sndseq.txt \
 	heretic/scripts/terrains.txt \
-	hexen/hexendat.wad \
+	hexen/graphics/*.lmp \
 	hexen/palette.pcx \
 	hexen/basepak.ls.in \
 	hexen/scripts/animdefs.txt \
@@ -73,7 +73,7 @@ EXTRA_DIST = \
 	plutonia/scripts/sec1text.txt \
 	plutonia/scripts/sec2text.txt \
 	strife/palette.pcx \
-	strife/strifdat.wad \
+	strife/graphics/*.lmp \
 	strife/basepak.ls.in \
 	strife/scripts/animdefs.txt \
 	strife/scripts/mapinfo.txt \
