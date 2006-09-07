@@ -1553,7 +1553,8 @@ int VACS::RunScript(float DeltaTime)
 	{
 		info->state = ASTE_RUNNING;
 	}
-	if (info->state == ASTE_WAITINGFORPOLY && !PO_Busy(info->waitValue))
+	if (info->state == ASTE_WAITINGFORPOLY &&
+		!Level->eventPolyBusy(info->waitValue))
 	{
 		info->state = ASTE_RUNNING;
 	}

@@ -51,12 +51,12 @@ void Tick(float deltaTime)
 	}
 	xMove = move * cos(angle);
 	yMove = move * sin(angle);
-	if (PO_MovePolyobj(polyobj, xMove, yMove))
+	if (XLevel.MovePolyobj(polyobj, xMove, yMove))
 	{
 		dist -= absMove;
 		if (dist <= 0.0)
 		{
-			poly = GetPolyobj(polyobj);
+			poly = XLevel.GetPolyobj(polyobj);
 			if (poly->SpecialData == self)
 			{
 				poly->SpecialData = none;

@@ -173,11 +173,6 @@ SOURCE=..\..\source\name.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\source\p_setup.cpp
-# ADD CPP /W4
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\source\pr_cmds.cpp
 # ADD CPP /W4
 # End Source File
@@ -1862,8 +1857,37 @@ SOURCE=..\..\source\input.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\source\p_acs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\p_entity.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\p_gameinfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\p_levelinfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\p_polyobj.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\p_setup.cpp
+# ADD CPP /W4
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\p_thinker.cpp
 # ADD CPP /W4
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\p_thinker.h
 # End Source File
 # End Group
 # Begin Group "Client"
@@ -1891,11 +1915,6 @@ SOURCE=..\..\source\cl_main.cpp
 # Begin Source File
 
 SOURCE=..\..\source\cl_parse.cpp
-# ADD CPP /W4
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\cl_poly.cpp
 # ADD CPP /W4
 # End Source File
 # Begin Source File
@@ -1935,11 +1954,6 @@ SOURCE=..\..\source\sv_local.h
 # Begin Source File
 
 SOURCE=..\..\source\sv_main.cpp
-# ADD CPP /W4
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\source\sv_poly.cpp
 # ADD CPP /W4
 # End Source File
 # Begin Source File

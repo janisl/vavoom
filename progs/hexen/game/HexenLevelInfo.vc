@@ -323,7 +323,7 @@ bool PolyBusy(int polyobj)
 {
 	polyobj_t *poly;
 
-	poly = GetPolyobj(polyobj);
+	poly = XLevel.GetPolyobj(polyobj);
 	if (!poly->SpecialData)
 	{
 		return false;
@@ -2208,7 +2208,7 @@ bool EV_RotatePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	polyobj_t *poly;
 
 	polyNum = Arg1;
-	poly = GetPolyobj(polyNum);
+	poly = XLevel.GetPolyobj(polyNum);
 	if (poly)
 	{
 		if (poly->SpecialData && !overRide)
@@ -2245,10 +2245,10 @@ bool EV_RotatePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	poly->SpecialData = pe;
 	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 
-	for (mirror = GetPolyobjMirror(polyNum); mirror;
-		mirror = GetPolyobjMirror(polyNum))
+	for (mirror = XLevel.GetPolyobjMirror(polyNum); mirror;
+		mirror = XLevel.GetPolyobjMirror(polyNum))
 	{
-		poly = GetPolyobj(mirror);
+		poly = XLevel.GetPolyobj(mirror);
 		if (poly && poly->SpecialData && !overRide)
 		{	// mirroring poly is already in motion
 			break;
@@ -2271,7 +2271,7 @@ bool EV_RotatePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 		{
 			pe.dist = 360.0;
 		}
-		poly = GetPolyobj(polyNum);
+		poly = XLevel.GetPolyobj(polyNum);
 		if (poly)
 		{
 			poly->SpecialData = pe;
@@ -2308,7 +2308,7 @@ bool EV_MovePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	float an;
 
 	polyNum = Arg1;
-	poly = GetPolyobj(polyNum);
+	poly = XLevel.GetPolyobj(polyNum);
 	if (poly)
 	{
 		if (poly->SpecialData && !overRide)
@@ -2342,10 +2342,10 @@ bool EV_MovePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	pe.angle = an;
 	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 
-	for (mirror = GetPolyobjMirror(polyNum); mirror;
-		mirror = GetPolyobjMirror(polyNum))
+	for (mirror = XLevel.GetPolyobjMirror(polyNum); mirror;
+		mirror = XLevel.GetPolyobjMirror(polyNum))
 	{
-		poly = GetPolyobj(mirror);
+		poly = XLevel.GetPolyobj(mirror);
 		if (poly && poly->SpecialData && !overRide)
 		{	// mirroring poly is already in motion
 			break;
@@ -2390,7 +2390,7 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	float an = 0.0;
 
 	polyNum = Arg1;
-	poly = GetPolyobj(polyNum);
+	poly = XLevel.GetPolyobj(polyNum);
 	if (poly)
 	{
 		if (poly->SpecialData)
@@ -2435,10 +2435,10 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 
 	poly->SpecialData = pd;
 
-	for (mirror = GetPolyobjMirror(polyNum); mirror;
-		mirror = GetPolyobjMirror(polyNum))
+	for (mirror = XLevel.GetPolyobjMirror(polyNum); mirror;
+		mirror = XLevel.GetPolyobjMirror(polyNum))
 	{
-		poly = GetPolyobj(mirror);
+		poly = XLevel.GetPolyobj(mirror);
 		if (poly && poly->SpecialData)
 		{	// mirroring poly is already in motion
 			break;

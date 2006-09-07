@@ -86,6 +86,9 @@ native readonly RogueConSpeech*	LevelSpeeches;
 native readonly private int		__NumPolyObjs;
 native readonly private void*	__PolyObjs;
 
+native readonly private int		__NumPolyAnchorPoints;
+native readonly private void*	__PolyAnchorPoints;
+
 native readonly private Thinker	__ThinkerHead;
 native readonly private Thinker	__ThinkerTail;
 
@@ -94,6 +97,17 @@ native readonly private Thinker	__ThinkerTail;
 //
 
 native final sector_t *PointInSector(TVec Point);
+
+//
+//  Polyobj functions
+//
+
+native final void SpawnPolyobj(float x, float y, int tag, bool crush);
+native final void AddPolyAnchorPoint(float x, float y, int tag);
+native final polyobj_t* GetPolyobj(int polyNum);
+native final int GetPolyobjMirror(int poly);
+native final bool RotatePolyobj(int num, float angle);
+native final bool MovePolyobj(int num, float x, float y);
 
 defaultproperties
 {

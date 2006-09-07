@@ -41,6 +41,13 @@
 #define FF_FULLBRIGHT	0x80	// flag in thing->frame
 #define FF_FRAMEMASK	0x7f
 
+// MAXRADIUS is for precalculated sector block boxes
+// the spider demon is larger, but we do not have any moving sectors nearby
+#define MAXRADIUS		32.0
+
+// mapblocks are used to check movement against lines and things
+#define MapBlock(x)		((int)floor(x) >> 7)
+
 // TYPES -------------------------------------------------------------------
 
 //==========================================================================
@@ -351,6 +358,13 @@ struct polyblock_t
 	polyblock_t	*next;
 };
 
+struct PolyAnchorPoint_t
+{
+	float		x;
+	float		y;
+	int			tag;
+};
+
 //
 // BSP node.
 //
@@ -534,12 +548,16 @@ class VLevel : public VObject
 	vint32				NumLevelSpeeches;
 	FRogueConSpeech*	LevelSpeeches;
 
-	//	List of all poly-objects on the level.
-	vint32			NumPolyObjs;
-	polyobj_t*		PolyObjs;
+	//	List of all poly-objects on the level
+	vint32				NumPolyObjs;
+	polyobj_t*			PolyObjs;
 
-	VThinker*		ThinkerHead;
-	VThinker*		ThinkerTail;
+	//	Anchor points of poly-objects
+	vint32				NumPolyAnchorPoints;
+	PolyAnchorPoint_t*	PolyAnchorPoints;
+
+	VThinker*			ThinkerHead;
+	VThinker*			ThinkerTail;
 
 	void Serialise(VStream& Strm);
 	void ClearReferences();
@@ -555,39 +573,73 @@ class VLevel : public VObject
 	void RemoveThinker(VThinker*);
 	void DestroyAllThinkers();
 
+	//	Poly-objects.
+	void SpawnPolyobj(float, float, int, int);
+	void AddPolyAnchorPoint(float, float, int);
+	void InitPolyobjs();
+	polyobj_t* GetPolyobj(int);
+	int GetPolyobjMirror(int);
+	bool MovePolyobj(int, float, float);
+	bool RotatePolyobj(int, float);
+
+	bool IsForServer() const
+	{
+		return !!(LevelFlags & LF_ForServer);
+	}
+	bool IsForClient() const
+	{
+		return !(LevelFlags & LF_ForServer);
+	}
+
 private:
 	//	Map loaders.
-	void LoadVertexes(int Lump, int GLLump, int& NumBaseVerts);
-	void LoadSectors(int Lump);
-	void LoadSideDefsPass1(int Lump);
-	void LoadSideDefsPass2(int Lump);
-	void LoadLineDefs1(int Lump, int NumBaseVerts);
-	void LoadLineDefs2(int Lump, int NumBaseVerts);
-	void LoadGLSegs(int Lump, int NumBaseVerts);
-	void LoadSubsectors(int Lump);
-	void LoadNodes(int Lump);
-	void LoadPVS(int Lump);
-	void LoadBlockMap(int Lump);
-	void LoadReject(int Lump);
-	void LoadThings1(int Lump);
-	void LoadThings2(int Lump);
+	void LoadVertexes(int, int, int&);
+	void LoadSectors(int);
+	void LoadSideDefsPass1(int);
+	void LoadSideDefsPass2(int);
+	void LoadLineDefs1(int, int);
+	void LoadLineDefs2(int, int);
+	void LoadGLSegs(int, int);
+	void LoadSubsectors(int);
+	void LoadNodes(int);
+	void LoadPVS(int);
+	void LoadBlockMap(int);
+	void LoadReject(int);
+	void LoadThings1(int);
+	void LoadThings2(int);
 
 	//	Map loading helpers.
-	int FindGLNodes(VName name) const;
-	int TexNumForName(const char* name, int Type, bool CMap = false) const;
-	void SetupLineSides(line_t* ld) const;
+	int FindGLNodes(VName) const;
+	int TexNumForName(const char*, int, bool = false) const;
+	void SetupLineSides(line_t*) const;
 
 	//	Post-loading routines.
 	void GroupLines() const;
-	void LinkNode(int BSPNum, node_t* pParent) const;
-	void ClearBox(float* box) const;
-	void AddToBox(float* box, float x, float y) const;
+	void LinkNode(int, node_t*) const;
+	void ClearBox(float*) const;
+	void AddToBox(float*, float, float) const;
 
 	//	Loader of the Strife conversations.
-	void LoadRogueConScript(VName LumpName, FRogueConSpeech*& SpeechList,
-		int& NumSpeeches) const;
+	void LoadRogueConScript(VName, FRogueConSpeech*&, int&) const;
+
+	//	Internal poly-object methods
+	void IterFindPolySegs(const TVec&, seg_t**, int&, const TVec&);
+	void TranslatePolyobjToStartSpot(float, float, int);
+	void UpdatePolySegs(polyobj_t*);
+	void InitPolyBlockMap();
+	void LinkPolyobj(polyobj_t*);
+	void UnLinkPolyobj(polyobj_t*);
+	bool PolyCheckMobjBlocking(seg_t*, polyobj_t*);
 
 	DECLARE_FUNCTION(PointInSector)
+
+	//	Polyobj functions
+	DECLARE_FUNCTION(SpawnPolyobj)
+	DECLARE_FUNCTION(AddPolyAnchorPoint)
+	DECLARE_FUNCTION(GetPolyobj)
+	DECLARE_FUNCTION(GetPolyobjMirror)
+	DECLARE_FUNCTION(MovePolyobj)
+	DECLARE_FUNCTION(RotatePolyobj)
 };
 
 struct level_t

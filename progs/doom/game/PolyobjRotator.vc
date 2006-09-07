@@ -46,7 +46,7 @@ void Tick(float deltaTime)
 	{
 		move = dist * (speed < 0.0 ? -1.0 : 1.0);
 	}
-	if (PO_RotatePolyobj(polyobj, move))
+	if (XLevel.RotatePolyobj(polyobj, move))
 	{
 		if (dist < 0.0)
 		{
@@ -56,7 +56,7 @@ void Tick(float deltaTime)
 		dist -= absMove;
 		if (dist <= 0.0)
 		{
-			poly = GetPolyobj(polyobj);
+			poly = XLevel.GetPolyobj(polyobj);
 			if (poly->SpecialData == self)
 			{
 				poly->SpecialData = none;

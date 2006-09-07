@@ -110,13 +110,6 @@ extern acsstore_t		ACSStore[MAX_ACS_STORE + 1]; // +1 for termination marker
 //
 //==========================================================================
 
-// MAXRADIUS is for precalculated sector block boxes
-// the spider demon is larger, but we do not have any moving sectors nearby
-#define MAXRADIUS		32.0
-
-// mapblocks are used to check movement against lines and things
-#define MapBlock(x)		((int)floor(x) >> 7)
-
 #define PT_ADDLINES		1
 #define PT_ADDTHINGS	2
 #define PT_EARLYOUT		4
@@ -189,24 +182,6 @@ void P_InitThinkers();
 void P_Ticker();
 
 extern int 			TimerGame; // tic countdown for deathmatch
-
-//==========================================================================
-//
-//	sv_poly
-//
-//	Polyobjs
-//
-//==========================================================================
-
-void PO_SpawnPolyobj(float x, float y, int tag, int crush);
-void PO_AddAnchorPoint(float x, float y, int tag);
-boolean PO_MovePolyobj(int num, float x, float y);
-boolean PO_RotatePolyobj(int num, float angle);
-void PO_Init();
-boolean PO_Busy(int polyobj);
-polyobj_t *PO_GetPolyobj(int polyNum);
-int PO_GetPolyobjMirror(int poly);
-void PO_FreePolyobjData();
 
 //==========================================================================
 //

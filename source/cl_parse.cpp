@@ -35,8 +35,6 @@
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void CL_ClearInput();
-void CL_PO_SpawnPolyobj(float x, float y, int tag);
-void CL_PO_TranslateToStartSpot(float originX, float originY, int tag);
 void CL_PO_Update(int i, float x, float y, float angle);
 void CL_SignonReply();
 
@@ -721,6 +719,34 @@ static void CL_ParseHeightSec(VMessage& msg)
 
 //==========================================================================
 //
+//	CL_PO_Update
+//
+//==========================================================================
+
+void CL_PO_Update(int i, float x, float y, float angle)
+{
+	guard(CL_PO_Update);
+	if (!GClLevel->NumPolyObjs)
+		return;
+
+	if (GClLevel->PolyObjs[i].angle != angle)
+	{
+		GClLevel->RotatePolyobj(GClLevel->PolyObjs[i].tag,
+			angle - GClLevel->PolyObjs[i].angle);
+	}
+
+	if (x != GClLevel->PolyObjs[i].startSpot.x ||
+		y != GClLevel->PolyObjs[i].startSpot.y)
+	{
+		GClLevel->MovePolyobj(GClLevel->PolyObjs[i].tag,
+			x - GClLevel->PolyObjs[i].startSpot.x,
+			y - GClLevel->PolyObjs[i].startSpot.y);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	CL_ParseServerMessage
 //
 //==========================================================================
@@ -861,14 +887,14 @@ void CL_ParseServerMessage(VMessage& msg)
 			x = msg.ReadShort();
 			y = msg.ReadShort();
 			tag = msg.ReadByte();
-			CL_PO_SpawnPolyobj(x, y, tag);
+			GClLevel->SpawnPolyobj(x, y, tag, 0);
 			break;
 
 		case svc_poly_translate:
 			x = msg.ReadShort();
 			y = msg.ReadShort();
 			tag = msg.ReadByte();
-			CL_PO_TranslateToStartSpot(x, y, tag);
+			GClLevel->AddPolyAnchorPoint(x, y, tag);
 			break;
 
 		case svc_poly_update:

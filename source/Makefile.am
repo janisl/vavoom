@@ -54,7 +54,6 @@ _____MAIN_EXE__SOURCES = \
 	cl_local.h \
 	cl_main.cpp \
 	cl_parse.cpp \
-	cl_poly.cpp \
 	cl_trace.cpp \
 	cmd.cpp \
 	cmd.h \
@@ -152,6 +151,7 @@ _____MAIN_EXE__SOURCES = \
 	p_entity.h \
 	p_gameinfo.h \
 	p_levelinfo.h \
+	p_polyobj.cpp \
 	p_setup.cpp \
 	p_thinker.cpp \
 	p_thinker.h \
@@ -197,7 +197,6 @@ _____MAIN_EXE__SOURCES = \
 	sv_ent.cpp \
 	sv_local.h \
 	sv_main.cpp \
-	sv_poly.cpp \
 	sv_save.cpp \
 	sv_sight.cpp \
 	sv_swtch.cpp \
@@ -406,6 +405,7 @@ _____SERVER_EXE__SOURCES = \
 	net_loop.cpp \
 	net_main.cpp \
 	net_null.cpp \
+	p_polyobj.cpp \
 	p_setup.cpp \
 	p_thinker.cpp \
 	pr_cmds.cpp \
@@ -418,7 +418,6 @@ _____SERVER_EXE__SOURCES = \
 	sv_acs.cpp \
 	sv_ent.cpp \
 	sv_main.cpp \
-	sv_poly.cpp \
 	sv_save.cpp \
 	sv_sight.cpp \
 	sv_swtch.cpp \

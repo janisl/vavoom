@@ -1249,7 +1249,7 @@ void SpawnWorld(Level InLevel)
 		if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
 		{
 			// Polyobj StartSpot Pt.
-			SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
+			InLevel.SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
 				(mthing->type == PO_SPAWNCRUSH_TYPE));
 			mthing->type = 0;
 			continue;
@@ -1257,7 +1257,7 @@ void SpawnWorld(Level InLevel)
 		if (mthing->type == PO_ANCHOR_TYPE)
 		{
 			// Polyobj Anchor Pt.
-			AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
+			InLevel.AddPolyAnchorPoint(mthing->x, mthing->y, mthing->angle);
 			mthing->type = 0;
 			continue;
 		}

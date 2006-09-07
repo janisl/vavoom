@@ -388,14 +388,6 @@ public:
 	DECLARE_FUNCTION(P_ChangeSwitchTexture)
 	DECLARE_FUNCTION(NextThinker)
 
-	//	Polyobj functions
-	DECLARE_FUNCTION(SpawnPolyobj)
-	DECLARE_FUNCTION(AddAnchorPoint)
-	DECLARE_FUNCTION(GetPolyobj)
-	DECLARE_FUNCTION(GetPolyobjMirror)
-	DECLARE_FUNCTION(PO_MovePolyobj)
-	DECLARE_FUNCTION(PO_RotatePolyobj)
-
 	//	ACS functions
 	DECLARE_FUNCTION(StartACS)
 	DECLARE_FUNCTION(SuspendACS)

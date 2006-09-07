@@ -53,7 +53,7 @@ void Tick(float deltaTime)
 		if (time <= 0.0)
 		{
 			time = 0.0;
-			poly = GetPolyobj(polyobj);
+			poly = XLevel.GetPolyobj(polyobj);
 			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
 		}
 		return;
@@ -66,12 +66,12 @@ void Tick(float deltaTime)
 		{
 			move = (move < 0.0 ? -1.0 : 1.0) * dist;
 		}
-		if (PO_MovePolyobj(polyobj, move * xSpeed, move * ySpeed))
+		if (XLevel.MovePolyobj(polyobj, move * xSpeed, move * ySpeed))
 		{
 			dist -= fabs(move);
 			if (dist <= 0.0)
 			{
-				poly = GetPolyobj(polyobj);
+				poly = XLevel.GetPolyobj(polyobj);
 				PolyobjStopSequence(poly);
 				if (!bClose)
 				{
@@ -93,7 +93,7 @@ void Tick(float deltaTime)
 		}
 		else
 		{
-			poly = GetPolyobj(polyobj);
+			poly = XLevel.GetPolyobj(polyobj);
 			if (poly->bCrush || !bClose)
 			{
 				// continue moving if the poly is a crusher, or is opening
@@ -118,12 +118,12 @@ void Tick(float deltaTime)
 		{
 			move = (move < 0.0 ? -1.0 : 1.0) * dist;
 		}
-		if (PO_RotatePolyobj(polyobj, move))
+		if (XLevel.RotatePolyobj(polyobj, move))
 		{
 			dist -= fabs(move);
 			if (dist <= 0.0)
 			{
-				poly = GetPolyobj(polyobj);
+				poly = XLevel.GetPolyobj(polyobj);
 				PolyobjStopSequence(poly);
 				if (!bClose)
 				{
@@ -144,7 +144,7 @@ void Tick(float deltaTime)
 		}
 		else
 		{
-			poly = GetPolyobj(polyobj);
+			poly = XLevel.GetPolyobj(polyobj);
 			if (poly->bCrush || !bClose)
 			{
 				// continue moving if the poly is a crusher, or is opening

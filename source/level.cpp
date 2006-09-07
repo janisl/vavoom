@@ -200,12 +200,12 @@ void VLevel::Serialise(VStream& Strm)
 		{
 			float angle, polyX, polyY;
 
-			Strm << angle 
+			Strm << angle
 				<< polyX 
 				<< polyY;
-			PO_RotatePolyobj(PolyObjs[i].tag, angle);
-			PO_MovePolyobj(PolyObjs[i].tag, 
-				polyX - PolyObjs[i].startSpot.x, 
+			RotatePolyobj(PolyObjs[i].tag, angle);
+			MovePolyobj(PolyObjs[i].tag,
+				polyX - PolyObjs[i].startSpot.x,
 				polyY - PolyObjs[i].startSpot.y);
 		}
 		else
@@ -293,15 +293,13 @@ void VLevel::Destroy()
 		}
 		delete[] PolyBlockMap;
 	}
-#ifdef SERVER
-	if (this == GLevel)
-	{
-		PO_FreePolyobjData();
-	}
-#endif
 	if (PolyObjs)
 	{
-		Z_Free(PolyObjs);
+		delete[] PolyObjs;
+	}
+	if (PolyAnchorPoints)
+	{
+		delete[] PolyAnchorPoints;
 	}
 
 	if (Sectors)

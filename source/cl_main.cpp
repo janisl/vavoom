@@ -329,11 +329,12 @@ void CL_SignonReply()
 	guard(CL_SignonReply);
 	switch (cls.signon)
 	{
-	 case 1:
+	case 1:
 		cls.message << (byte)clc_stringcmd << "PreSpawn\n";
 		break;
 
-	 case 2:
+	case 2:
+		GClLevel->InitPolyobjs();
 		R_PreRender();
 		if (!UserInfoSent)
 		{
@@ -343,7 +344,7 @@ void CL_SignonReply()
 		cls.message << (byte)clc_stringcmd << "Spawn\n";
 		break;
 
-	 case 3:
+	case 3:
 		cls.message << (byte)clc_stringcmd << "Begin\n";
 		break;
 	}
