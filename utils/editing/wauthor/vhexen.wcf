@@ -307,6 +307,9 @@ LightingInc=0
 0x233b  14      20      artiger2        Clock gear (bronze)
 0x233c  14      20      artiger3        Clock gear (bronze hub)
 0x233d  14      20      artiger4        Clock gear (bronze ring)
+0x2454  13      20      icprd0          Polyobject anchor
+0x2455  13      20      sbfxh0          Start spot
+0x2456  13      20      sbfxc0          Start spot w/crush
 0x2710  13      20      spirk0          Spawn fog *( speed, angle, freq., duration, - )
 0x2711  8       20      fogsa0          Fog (small) *( speed, -, -, duration, move )
 0x2712  8       20      fogma0          Fog (medium) *( speed, -, -, duration, move )

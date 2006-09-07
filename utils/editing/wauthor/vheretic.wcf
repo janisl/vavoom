@@ -195,6 +195,9 @@ LightingInc=0
 0xbb8   13      20      telea0      Polyobject anchor
 0xbb9   13      20      telea0      Start spot
 0xbba   13      20      telea0      Start spot w/crush
+0x2454  13      20      telea0      Polyobject anchor
+0x2455  13      20      telea0      Start spot
+0x2456  13      20      telea0      Start spot w/crush
 
 ;       ID                              used to classify linedefs
 ;       Name                    textual description of class

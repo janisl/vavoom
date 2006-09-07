@@ -28,13 +28,6 @@
 import shared;
 import svcommon;
 
-enum
-{
-	PO_ANCHOR_TYPE = 3000,
-	PO_SPAWN_TYPE,
-	PO_SPAWNCRUSH_TYPE
-};
-
 //
 // -------------- Enemy ---------------
 //

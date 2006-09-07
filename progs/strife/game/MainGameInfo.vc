@@ -47,6 +47,13 @@ struct tagged_line_t
 	int lineTag;
 };
 
+enum
+{
+	PO_ANCHOR_TYPE = 9300,
+	PO_SPAWN_TYPE,
+	PO_SPAWNCRUSH_TYPE
+};
+
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
 classid WeaponClasses[StrifeDefs::NUMWEAPONS];

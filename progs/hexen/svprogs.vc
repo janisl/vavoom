@@ -69,13 +69,6 @@ enum
 
 enum
 {
-	PO_ANCHOR_TYPE = 3000,
-	PO_SPAWN_TYPE,
-	PO_SPAWNCRUSH_TYPE
-};
-
-enum
-{
 	CHAN_AUTO,
 	CHAN_VOICE,
 	CHAN_WEAPON,

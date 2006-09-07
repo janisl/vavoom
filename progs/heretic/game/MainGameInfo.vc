@@ -50,6 +50,17 @@ struct tagged_line_t
 	int lineTag;
 };
 
+enum
+{
+	PO_ANCHOR_TYPE_HEXEN = 3000,
+	PO_SPAWN_TYPE_HEXEN,
+	PO_SPAWNCRUSH_TYPE_HEXEN,
+
+	PO_ANCHOR_TYPE = 9300,
+	PO_SPAWN_TYPE,
+	PO_SPAWNCRUSH_TYPE
+};
+
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
 classid WeaponClasses[NUMWEAPONS];
@@ -1192,15 +1203,20 @@ void SpawnWorld(Level InLevel)
 			continue;
 		}
 
-		if (mthing->type == PO_SPAWN_TYPE || mthing->type == PO_SPAWNCRUSH_TYPE)
+		if (mthing->type == PO_SPAWN_TYPE_HEXEN ||
+			mthing->type == PO_SPAWNCRUSH_TYPE_HEXEN ||
+			mthing->type == PO_SPAWN_TYPE ||
+			mthing->type == PO_SPAWNCRUSH_TYPE)
 		{
 			// Polyobj StartSpot Pt.
 			SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
-				(mthing->type == PO_SPAWNCRUSH_TYPE));
+				mthing->type == PO_SPAWNCRUSH_TYPE_HEXEN ||
+				mthing->type == PO_SPAWNCRUSH_TYPE);
 			mthing->type = 0;
 			continue;
 		}
-		if (mthing->type == PO_ANCHOR_TYPE)
+		if (mthing->type == PO_ANCHOR_TYPE_HEXEN ||
+			mthing->type == PO_ANCHOR_TYPE)
 		{
 			// Polyobj Anchor Pt.
 			AddAnchorPoint(mthing->x, mthing->y, mthing->angle);
