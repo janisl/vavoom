@@ -1382,9 +1382,9 @@ void VMethod::Emit()
 		}
 	}
 
-	if (!NumErrors)
+	if (!Statement->Resolve(ec))
 	{
-		Statement->Resolve(ec);
+		return;
 	}
 
 	//  Call parent constructor
@@ -1395,10 +1395,7 @@ void VMethod::Emit()
 		ec.AddStatement(OPC_Call, ec.SelfClass->ParentClass->DefaultProperties);
 	}
 
-	if (!NumErrors)
-	{
-		Statement->Emit(ec);
-	}
+	Statement->Emit(ec);
 
 	if (ReturnType.type == ev_void)
 	{
