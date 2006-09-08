@@ -35,8 +35,6 @@ struct server_t
 
 	int			intermission;
 	int			intertime;
-
-	mapalias_t	mapalias[MAX_MAP_ALIAS];// Map aliases
 };
 
 struct server_static_t

@@ -193,8 +193,6 @@ static void ParseMap(VScriptParser* sc)
 	}
 	info->LumpName = MapLumpName;
 
-	int NumMapAlias = 0;
-
 	// Map name must follow the number
 	sc->ExpectString();
 	VStr::Cpy(info->name, *sc->String);
@@ -208,10 +206,29 @@ static void ParseMap(VScriptParser* sc)
 		}
 	}
 
+	//	Set default levelnum for this map.
+	const char* mn = *MapLumpName;
+	if (mn[0] == 'm' && mn[1] == 'a' && mn[2] == 'p' && mn[5] == 0)
+	{
+		int num = atoi(mn + 3);
+		if  (num >= 1 && num <= 99)
+			info->LevelNum = num;
+	}
+	else if (mn[0] == 'e' && mn[1] >= '0' && mn[1] <= '9' &&
+		mn[2] == 'm' && mn[3] >= '0' && mn[3] <= '9')
+	{
+		info->LevelNum = (mn[1] - '1') * 10 + (mn[3] - '0');
+	}
+
 	// Process optional tokens
 	while (1)
 	{
-		if (sc->Check("cluster"))
+		if (sc->Check("levelnum"))
+		{
+			sc->ExpectNumber();
+			info->LevelNum = sc->Number;
+		}
+		else if (sc->Check("cluster"))
 		{
 			sc->ExpectNumber();
 			info->cluster = sc->Number;
@@ -265,7 +282,7 @@ static void ParseMap(VScriptParser* sc)
 			sc->ExpectName8();
 			info->FadeTable = sc->Name8;
 		}
-    	else if (sc->Check("music"))
+		else if (sc->Check("music"))
 		{
 			sc->ExpectName8();
 			info->SongLump = sc->Name8;
@@ -280,25 +297,19 @@ static void ParseMap(VScriptParser* sc)
 			sc->ExpectNumber();
 			info->Gravity = (float)sc->Number;
 		}
-		else if (sc->Check("mapalias"))
-		{
-			sc->Expect("{");
-			while (!sc->Check("}"))
-			{
-				if (NumMapAlias == MAX_MAP_ALIAS)
-				{
-					sc->Error("Too many map aliases");
-				}
-				sc->ExpectNumber();
-				info->mapalias[NumMapAlias].Num = sc->Number;
-				sc->ExpectName8();
-				info->mapalias[NumMapAlias].Name = sc->Name8;
-				NumMapAlias++;
-			}
-		}
 		else
 		{
 			break;
+		}
+	}
+
+	//	Avoid duplicate levelnums, later one takes precedance.
+	for (int i = 1; i < MAX_MAPS; i++)
+	{
+		if (MapInfo[i].LevelNum == info->LevelNum &&
+			&MapInfo[i] != info)
+		{
+			MapInfo[i].LevelNum = 0;
 		}
 	}
 
@@ -418,32 +429,6 @@ VName P_GetMapLumpName(int map)
 
 //==========================================================================
 //
-// P_GetMapCluster
-//
-//==========================================================================
-
-/*
-int P_GetMapCluster(int map)
-{
-	return MapInfo[QualifyMap(map)].cluster;
-}
-*/
-
-//==========================================================================
-//
-// P_GetMapWarpTrans
-//
-//==========================================================================
-
-/*
-int P_GetMapWarpTrans(int map)
-{
-	return MapInfo[QualifyMap(map)].warpTrans;
-}
-*/
-
-//==========================================================================
-//
 // P_TranslateMap
 //
 // Returns the actual map number given a warp map number.
@@ -453,7 +438,7 @@ int P_GetMapWarpTrans(int map)
 VName P_TranslateMap(int map)
 {
 	guard(P_TranslateMap);
-	for (int i = 1; i < MAX_MAPS; i++)
+	for (int i = MAX_MAPS - 1; i > 0; i--)
 	{
 		if (MapInfo[i].warpTrans == map)
 		{
@@ -462,6 +447,29 @@ VName P_TranslateMap(int map)
 	}
 	// Not found
 	return MapInfo[1].LumpName;
+	unguard;
+}
+
+//==========================================================================
+//
+//	P_GetMapNameByLevelNum
+//
+//	Returns the actual map name given a level number.
+//
+//==========================================================================
+
+VName P_GetMapNameByLevelNum(int map)
+{
+	guard(P_GetMapNameByLevelNum);
+	for (int i = 1; i < MAX_MAPS; i++)
+	{
+		if (MapInfo[i].LevelNum == map)
+		{
+			return MapInfo[i].LumpName;
+		}
+	}
+	// Not found, use map##
+	return va("map%02d", map);
 	unguard;
 }
 

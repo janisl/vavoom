@@ -1408,10 +1408,6 @@ IMPLEMENT_FUNCTION(VObject, TranslateKey)
 //
 //==========================================================================
 
-char* P_GetMapName(int map);
-VName P_GetMapLumpName(int map);
-VName P_TranslateMap(int map);
-
 IMPLEMENT_FUNCTION(VObject, P_GetMapName)
 {
 	P_GET_INT(map);

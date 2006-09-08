@@ -221,7 +221,6 @@ void SV_SetFloorPic(int i, int texture);
 void SV_SetCeilPic(int i, int texture);
 void SV_SetLineTexture(int side, int position, int texture);
 void SV_SetLineTransluc(line_t *line, int trans);
-const char *SV_GetMapName(int num);
 int SV_FindModel(const char *name);
 int SV_GetModelIndex(const VName &Name);
 int SV_FindSkin(const char *name);

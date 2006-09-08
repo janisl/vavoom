@@ -3792,7 +3792,7 @@ bool P_StartACS(int number, int map_num, int arg1, int arg2, int arg3,
 
 	if (map_num)
 	{
-		VStr::Cpy(map, SV_GetMapName(map_num));
+		VStr::Cpy(map, *P_GetMapNameByLevelNum(map_num));
 	}
 
 	if (map[0] && VStr::ICmp(map, *level.MapName))

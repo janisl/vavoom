@@ -27,19 +27,12 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_MAP_ALIAS	16
-
 // TYPES -------------------------------------------------------------------
-
-struct mapalias_t
-{
-	int		Num;
-	VName	Name;
-};
 
 struct mapInfo_t
 {
 	VName		LumpName;
+	vint32		LevelNum;		// Level number for action specials
 	int			cluster;		// Defines what cluster level belongs to
 	int			warpTrans;		// Actual map number in case maps are not sequential
 	VName		NextMap;		// Map to teleport to upon exit of timed deathmatch
@@ -55,7 +48,6 @@ struct mapInfo_t
 	VName		FadeTable;		// Fade table {fogmap}
 	VName		SongLump;		// Background music (MUS or MIDI)
 	VName		SkyBox;			// Sky box
-	mapalias_t	mapalias[MAX_MAP_ALIAS];// Map aliases
 	float		Gravity;		// Map gravity
 };
 
@@ -64,6 +56,10 @@ struct mapInfo_t
 void InitMapInfo();
 void ShutdownMapInfo();
 void P_GetMapInfo(VName, mapInfo_t&);
+char* P_GetMapName(int);
+VName P_GetMapLumpName(int);
+VName P_TranslateMap(int);
+VName P_GetMapNameByLevelNum(int);
 void P_PutMapSongLump(int, VName);
 int P_GetCDStartTrack();
 int P_GetCDEnd1Track();

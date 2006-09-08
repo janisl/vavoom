@@ -85,7 +85,7 @@ int				sv_load_num_players;
 VBasePlayer*	GPlayersBase[MAXPLAYERS];
 
 skill_t         gameskill; 
- 
+
 boolean         paused;
 
 boolean         deathmatch = false;   	// only if started as net death
@@ -773,7 +773,7 @@ void SV_ClientPrintf(VBasePlayer *player, const char *s, ...)
 	char	buf[1024];
 
 	va_start(v, s);
-   	vsprintf(buf, s, v);
+	vsprintf(buf, s, v);
 	va_end(v);
 
 	player->Message << (byte)svc_print << buf;
@@ -793,7 +793,7 @@ void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...)
 	char	buf[1024];
 
 	va_start(v, s);
-   	vsprintf(buf, s, v);
+	vsprintf(buf, s, v);
 	va_end(v);
 
 	player->Message << (byte)svc_center_print << buf;
@@ -813,7 +813,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 	char	buf[1024];
 
 	va_start(v, s);
-   	vsprintf(buf, s, v);
+	vsprintf(buf, s, v);
 	va_end(v);
 
 	for (int i = 0; i < svs.max_clients; i++)
@@ -835,7 +835,7 @@ void SV_BroadcastCentrePrintf(const char *s, ...)
 	char	buf[1024];
 
 	va_start(v, s);
-   	vsprintf(buf, s, v);
+	vsprintf(buf, s, v);
 	va_end(v);
 
 	for (int i = 0; i < svs.max_clients; i++)
@@ -1834,7 +1834,7 @@ void G_SecretExitLevel(int Position)
 	}
 	unguard;
 } 
- 
+
 //==========================================================================
 //
 //	G_Completed
@@ -1855,12 +1855,12 @@ void G_Completed(int InMap, int InPosition, int SaveAngle)
 		{
 			sv_reliable << (byte)svc_finale;
 			sv.intermission = 2;
-		   	return;
+			return;
 		}
 		Map = 1;
 		Position = 0;
 	}
-	sv_next_map = VName(SV_GetMapName(Map), VName::AddLower8);
+	sv_next_map = P_GetMapNameByLevelNum(Map);
 
 	LeavePosition = Position;
 	completed = true;
@@ -2276,7 +2276,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	P_GetMapInfo(level.MapName, info);
 	sv_next_map = info.NextMap;
 	sv_secret_map = info.SecretMap;
-	memcpy(sv.mapalias, info.mapalias, sizeof(info.mapalias));
 
 	VStr::Cpy(level.level_name, info.name);
 	level.levelnum = info.warpTrans;//FIXME does this make sense?
@@ -2315,7 +2314,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 		GLevelInfo = GGameInfo->eventCreateLevelInfo();
 		GLevelInfo->Level = GLevelInfo;
 		if (info.Gravity)
-		    GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
+			GLevelInfo->Gravity = info.Gravity * DEFAULT_GRAVITY / 800.0;
 		else
 			GLevelInfo->Gravity = sv_gravity * DEFAULT_GRAVITY / 800.0;
 		for (i = 0; i < GLevel->NumThings; i++)
@@ -2373,32 +2372,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	SV_CreateBaseline();
 
 	GCon->Log(NAME_Dev, "Server spawned");
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_GetMapName
-//
-//==========================================================================
-
-const char *SV_GetMapName(int num)
-{
-	guard(SV_GetMapName);
-	//  Check map aliases
-	for (int i = 0; i < MAX_MAP_ALIAS; i++)
-	{
-		if (sv.mapalias[i].Num == num)
-		{
-			return *sv.mapalias[i].Name;
-		}
-	}
-
-	//  Use defalt map name in form MAP##
-	static char namebuf[12];
-
-	sprintf(namebuf, "map%02d", num);
-	return namebuf;
 	unguard;
 }
 
@@ -2894,7 +2867,7 @@ COMMAND(Map)
 	if (Args.Num() != 2)
 	{
 		GCon->Log("map <mapname> : change level");
-	 	return;
+		return;
 	}
 	VStr::Cpy(mapname, *Args[1]);
 
