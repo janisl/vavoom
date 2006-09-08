@@ -69,6 +69,7 @@ VCvarI				r_ambient("r_ambient", "0");
 int					light_mem;
 VCvarI				r_extrasamples("r_extrasamples", "0", CVAR_Archive);
 VCvarI				r_dynamic("r_dynamic", "1", CVAR_Archive);
+VCvarI				r_dynamic_clip("r_dynamic_clip", "0", CVAR_Archive);
 VCvarI				r_static_lights("r_static_lights", "1", CVAR_Archive);
 VCvarI				r_static_add("r_static_add", "0", CVAR_Archive);
 VCvarF				r_specular("r_specular", "0.1", CVAR_Archive);
@@ -516,7 +517,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	w = (surf->extents[0] >> 4) + 1;
 	h = (surf->extents[1] >> 4) + 1;
 
-	//	If surface alreadu haves a lightmap, we will reuse it, otherwiese
+	//	If the surface already has a lightmap, we will reuse it, otherwiese
 	// we must allocate a new block
 	if (is_colored)
 	{
@@ -642,6 +643,9 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 void R_MarkLights(dlight_t *light, int bit, int bspnum)
 {
 	guard(R_MarkLights);
+	static byte	*dyn_facevis;
+	int leafnum;
+
     if (bspnum & NF_SUBSECTOR)
     {
 		int num;
@@ -650,7 +654,19 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 		    num = 0;
 		else
 		    num = bspnum & (~NF_SUBSECTOR);
-	    subsector_t *ss = &GClLevel->Subsectors[num];
+		subsector_t *ss = &GClLevel->Subsectors[num];
+
+		if (r_dynamic_clip)
+		{
+			dyn_facevis = GClLevel->LeafPVS(ss);
+			leafnum = CL_PointInSubsector(light->origin.x, light->origin.y)
+							- GClLevel->Subsectors;
+
+			// Check potential visibility
+			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
+				return;
+		}
+
 		if (ss->dlightframe != r_dlightframecount)
 		{
 			ss->dlightbits = 0;
@@ -662,12 +678,12 @@ void R_MarkLights(dlight_t *light, int bit, int bspnum)
 	{
 		node_t* node = &GClLevel->Nodes[bspnum];
 		float dist = DotProduct(light->origin, node->normal) - node->dist;
-	
-		if (dist > -light->radius)
+
+		if (dist > -light->radius + light->minlight)
 		{
 			R_MarkLights(light, bit, node->children[0]);
 		}
-		if (dist < light->radius)
+		if (dist < light->radius - light->minlight)
 		{
 			R_MarkLights(light, bit, node->children[1]);
 		}
@@ -720,6 +736,9 @@ vuint32 R_LightPoint(const TVec &p)
 	surface_t		*surf;
 	int				ltmp;
 	rgb_t			*rgbtmp;
+	static byte		*dyn_facevis;
+	int				leafnum;
+
 
 	if (fixedlight)
 	{
@@ -731,10 +750,12 @@ vuint32 R_LightPoint(const TVec &p)
 	while (reg->next)
 	{
 		d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
+
 		if (d >= 0.0)
 		{
 			break;
 		}
+
 		reg = reg->next;
 	}
 
@@ -758,8 +779,7 @@ vuint32 R_LightPoint(const TVec &p)
 		{
 			continue;
 		}
-		if (s < surf->texturemins[0] ||
-			t < surf->texturemins[1])
+		if (s < surf->texturemins[0] ||	t < surf->texturemins[1])
 		{
 			continue;
 		}
@@ -767,8 +787,7 @@ vuint32 R_LightPoint(const TVec &p)
 		ds = s - surf->texturemins[0];
 		dt = t - surf->texturemins[1];
 
-		if (ds > surf->extents[0] ||
-			dt > surf->extents[1])
+		if (ds > surf->extents[0] || dt > surf->extents[1])
 		{
 			continue;
 		}
@@ -797,10 +816,20 @@ vuint32 R_LightPoint(const TVec &p)
 	{
 		for (i = 0; i < MAX_DLIGHTS; i++)
 		{
+			if (r_dynamic_clip)
+			{
+				dyn_facevis = GClLevel->LeafPVS(sub);
+				leafnum = CL_PointInSubsector(cl_dlights[i].origin.x, cl_dlights[i].origin.y)
+								- GClLevel->Subsectors;
+
+				// Check potential visibility
+				if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
+						continue;
+			}
 			if (!(sub->dlightbits & (1 << i)))
 				continue;
 
-			add = cl_dlights[i].radius - Length(p - cl_dlights[i].origin);
+			add = (cl_dlights[i].radius - cl_dlights[i].minlight) - Length(p - cl_dlights[i].origin);
 	
 			if (add > 0)
 			{
@@ -841,6 +870,10 @@ void R_AddDynamicLights(surface_t *surf)
 	int			s, t, i;
 	int			smax, tmax;
 	texinfo_t	*tex;
+	subsector_t *sub;
+	static byte	*dyn_facevis;
+	int			leafnum;
+
 
 	smax = (surf->extents[0] >> 4) + 1;
 	tmax = (surf->extents[1] >> 4) + 1;
@@ -854,6 +887,12 @@ void R_AddDynamicLights(surface_t *surf)
 		rad = cl_dlights[lnum].radius;
 		dist = DotProduct(cl_dlights[lnum].origin, surf->plane->normal) -
 				surf->plane->dist;
+		if (r_dynamic_clip)
+		{
+			if (dist <= -0.1)
+				continue;
+		}
+		
 		rad -= fabs(dist);
 		minlight = cl_dlights[lnum].minlight;
 		if (rad < minlight)
@@ -861,6 +900,18 @@ void R_AddDynamicLights(surface_t *surf)
 		minlight = rad - minlight;
 
 		impact = cl_dlights[lnum].origin - surf->plane->normal * dist;
+
+		if (r_dynamic_clip)
+		{
+			sub = CL_PointInSubsector(surf->verts->x, surf->verts->y);
+			dyn_facevis = GClLevel->LeafPVS(sub);
+			leafnum = CL_PointInSubsector(cl_dlights[lnum].origin.x, cl_dlights[lnum].origin.y)
+							- GClLevel->Subsectors;
+
+			// Check potential visibility
+			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
+				continue;
+		}
 
 		rmul = (cl_dlights[lnum].color >> 16) & 0xff;
 		gmul = (cl_dlights[lnum].color >> 8) & 0xff;
@@ -886,6 +937,7 @@ void R_AddDynamicLights(surface_t *surf)
 					dist = sd + (td >> 1);
 				else
 					dist = td + (sd >> 1);
+
 				if (dist < minlight)
 				{
 					i = t * smax + s;
