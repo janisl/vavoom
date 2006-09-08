@@ -50,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 /nologo /subsystem:console /machine:I386
+# ADD LINK32 zlib.lib /nologo /subsystem:console /machine:I386
 
 !ELSEIF  "$(CFG)" == "vlumpy - Win32 Debug"
 
@@ -95,6 +95,10 @@ SOURCE=..\..\utils\common\imglib.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\utils\vlumpy\ioapi.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\utils\common\scrlib.cpp
 # End Source File
 # Begin Source File
@@ -106,6 +110,10 @@ SOURCE=..\..\utils\vlumpy\vlumpy.cpp
 
 SOURCE=..\..\utils\common\wadlib.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\utils\vlumpy\zip.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -116,7 +124,15 @@ SOURCE=..\..\utils\common\cmdlib.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\utils\common\fwaddefs.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\utils\common\imglib.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\utils\vlumpy\ioapi.h
 # End Source File
 # Begin Source File
 
@@ -125,6 +141,10 @@ SOURCE=..\..\utils\common\scrlib.h
 # Begin Source File
 
 SOURCE=..\..\utils\common\wadlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\utils\vlumpy\zip.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
