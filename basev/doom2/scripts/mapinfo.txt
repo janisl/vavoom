@@ -40,6 +40,7 @@ next MAP08
 secret MAP31
 SKY1 SKY1 0
 Music D_shawn
+map07special
 
 map MAP08 "tricks and traps"
 next MAP09

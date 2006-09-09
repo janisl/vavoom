@@ -62,6 +62,57 @@ bool Deactivate()
 	return false;
 }
 
+//==========================================================================
+//
+//	BossDeathSpecialAction
+//
+//==========================================================================
+
+void BossDeathSpecialAction()
+{
+	// make sure there is a player alive for victory
+	int i;
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// scan the remaining thinkers to see if all bosses are dead
+	Actor Other;
+	FOREACH(Actor, Other)
+	{
+		if (Other != self && Other.Class == Class && Other.Health > 0)
+		{
+			// other boss not dead
+			return;
+		}
+	}
+
+	// victory!
+	if (XLevel.bSpecialActionKillMonsters)
+	{
+		// Kill any remaining monsters
+		DoomLevelInfo(Level).P_Massacre();
+	}
+
+	if (XLevel.bSpecialActionOpenDoor)
+	{
+		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 64, 150, 0, 0,
+			NULL, 0, none);
+	}
+	else if (XLevel.bSpecialActionLowerFloor)
+	{
+		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0,
+			0, NULL, 0, none);
+	}
+	else
+	{
+		G_ExitLevel(0);
+	}
+}
+
 defaultproperties
 {
 	ReactionCount = 8;

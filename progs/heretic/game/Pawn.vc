@@ -353,85 +353,6 @@ void A_NoBlocking()
 
 //==========================================================================
 //
-//  A_BossDeath
-//
-//  Trigger special effects if all bosses are dead.
-//
-//==========================================================================
-
-void A_BossDeath()
-{
-	name mapname;
-	Actor mo;
-
-	mapname = Level.Game.level->MapName;
-
-	if (mapname == 'e1m8')
-	{
-		if (Class != Head)
-		{
-			// Not considered a boss in this episode
-			return;
-		}
-	}
-	else if (mapname == 'e2m8')
-	{
-		if (Class != Minotaur)
-		{
-			// Not considered a boss in this episode
-			return;
-		}
-	}
-	else if (mapname == 'e3m8')
-	{
-		if (Class != Sorcerer2)
-		{
-			// Not considered a boss in this episode
-			return;
-		}
-	}
-	else if (mapname == 'e4m8')
-	{
-		if (Class != Head)
-		{
-			// Not considered a boss in this episode
-			return;
-		}
-	}
-	else if (mapname == 'e5m8')
-	{
-		if (Class != Minotaur)
-		{
-			// Not considered a boss in this episode
-			return;
-		}
-	}
-	else
-	{
-		//  Not a boss level
-		return;
-	}
-
-	// Make sure all bosses are dead
-	FOREACH(Actor, mo)
-	{
-		if ((mo != self) && (mo.Class == Class) && (mo.Health > 0))
-		{
-			// Found a living boss
-			return;
-		}
-	}
-	if (mapname != 'e1m8')
-	{
-		// Kill any remaining monsters
-		HereticLevelInfo(Level).P_Massacre();
-	}
-	HereticLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
-		FLOOREV_LowerToNearest, NULL);
-}
-
-//==========================================================================
-//
 //  A_Feathers
 //
 //==========================================================================
@@ -470,6 +391,57 @@ void A_Feathers()
 		case 6: mo.SetState(Feather::S_FEATHER7); break;
 		case 7: mo.SetState(Feather::S_FEATHER8); break;
 		}
+	}
+}
+
+//==========================================================================
+//
+//	BossDeathSpecialAction
+//
+//==========================================================================
+
+void BossDeathSpecialAction()
+{
+	// make sure there is a player alive for victory
+	int i;
+	for (i = 0; i < MAXPLAYERS; i++)
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
+			break;
+
+	if (i == MAXPLAYERS)
+		return;	// no one left alive, so do not end game
+
+	// Make sure all bosses are dead
+	Actor mo;
+	FOREACH(Actor, mo)
+	{
+		if ((mo != self) && (mo.Class == Class) && (mo.Health > 0))
+		{
+			// Found a living boss
+			return;
+		}
+	}
+
+	if (XLevel.bSpecialActionKillMonsters)
+	{
+		// Kill any remaining monsters
+		HereticLevelInfo(Level).P_Massacre();
+	}
+
+	if (XLevel.bSpecialActionOpenDoor)
+	{
+		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 64, 150, 0, 0,
+			NULL, 0, none);
+	}
+	else if (XLevel.bSpecialActionLowerFloor)
+	{
+		//NOTE Doom does loer to lowest.
+		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToNearest, 666, 8, 0, 0,
+			0, NULL, 0, none);
+	}
+	else
+	{
+		G_ExitLevel(0);
 	}
 }
 

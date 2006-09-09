@@ -114,6 +114,23 @@ void A_HeadAttack()
 	}
 }
 
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Trigger special effects if all bosses are dead.
+//
+//==========================================================================
+
+void A_BossDeath()
+{
+	if (!XLevel.bIronLichSpecial)
+	{
+		return;
+	}
+	BossDeathSpecialAction();
+}
+
 __states__
 {
 	S_HEAD_LOOK('HEAD', 0, 'monsters/head/base.md2', 0, 10.0 / 35.0, S_HEAD_LOOK) { A_Look(); }

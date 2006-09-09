@@ -39,6 +39,7 @@ next MAP08
 secret MAP31
 sky1 SKY1 0
 music D_shawn
+map07special
 
 map MAP08 "realm"
 next MAP09

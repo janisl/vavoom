@@ -47,6 +47,8 @@ MAP E1M8 "HELL'S MAW"
 next E1M1
 SKY1 SKY1 0
 Music "MUS_E1M8"
+ironlichspecial
+specialaction_lowerfloor
 
 MAP E1M9 "THE GRAVEYARD"
 next E1M1
@@ -101,6 +103,9 @@ MAP E2M8 "THE PORTALS OF CHAOS"
 next E2M1
 SKY1 SKY2 0
 Music "MUS_E2M8"
+minotaurspecial
+specialaction_lowerfloor
+specialaction_killmonsters
 
 MAP E2M9 "THE GLACIER"
 next E2M1
@@ -155,6 +160,9 @@ MAP E3M8 "D'SPARIL'S KEEP"
 next E3M1
 SKY1 SKY3 0
 Music "MUS_E1M9"
+dsparilspecial
+specialaction_lowerfloor
+specialaction_killmonsters
 
 MAP E3M9 "THE AQUIFER"
 next E3M1
@@ -209,6 +217,9 @@ MAP E4M8 "SHATTERED BRIDGE"
 next E4M1
 SKY1 SKY1 0
 Music "MUS_E1M8"
+ironlichspecial
+specialaction_lowerfloor
+specialaction_killmonsters
 
 MAP E4M9 "MAUSOLEUM"
 next E4M1
@@ -262,6 +273,9 @@ MAP E5M8 "FIELD OF JUDGEMENT"
 next E5M1
 SKY1 SKY3 0
 Music "MUS_E2M8"
+minotaurspecial
+specialaction_lowerfloor
+specialaction_killmonsters
 
 MAP E5M9 "SKEIN OF D'SPARIL"
 next E5M1

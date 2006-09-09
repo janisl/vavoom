@@ -2301,6 +2301,28 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	//	Load it
 	SV_LoadLevel(level.MapName);
 
+	//	Copy special action flags from mapinfo.
+	if (info.Flags & MAPINFOF_Map07Special)
+		GLevel->LevelFlags |= VLevel::LF_Map07Special;
+	if (info.Flags & MAPINFOF_BaronSpecial)
+		GLevel->LevelFlags |= VLevel::LF_BaronSpecial;
+	if (info.Flags & MAPINFOF_CyberDemonSpecial)
+		GLevel->LevelFlags |= VLevel::LF_CyberDemonSpecial;
+	if (info.Flags & MAPINFOF_SpiderMastermindSpecial)
+		GLevel->LevelFlags |= VLevel::LF_SpiderMastermindSpecial;
+	if (info.Flags & MAPINFOF_MinotaurSpecial)
+		GLevel->LevelFlags |= VLevel::LF_MinotaurSpecial;
+	if (info.Flags & MAPINFOF_DSparilSpecial)
+		GLevel->LevelFlags |= VLevel::LF_DSparilSpecial;
+	if (info.Flags & MAPINFOF_IronLichSpecial)
+		GLevel->LevelFlags |= VLevel::LF_IronLichSpecial;
+	if (info.Flags & MAPINFOF_SpecialActionOpenDoor)
+		GLevel->LevelFlags |= VLevel::LF_SpecialActionOpenDoor;
+	if (info.Flags & MAPINFOF_SpecialActionLowerFloor)
+		GLevel->LevelFlags |= VLevel::LF_SpecialActionLowerFloor;
+	if (info.Flags & MAPINFOF_SpecialActionKillMonsters)
+		GLevel->LevelFlags |= VLevel::LF_SpecialActionKillMonsters;
+
 	//	Spawn slopes, extra floors, etc.
 	GGameInfo->eventSpawnWorld(GLevel);
 

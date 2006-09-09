@@ -4194,6 +4194,31 @@ Actor Spawn(classid type, TVec AOrigin)
 	return A;
 }
 
+//==========================================================================
+//
+//  P_Massacre
+//
+//  Kills all monsters.
+//
+//==========================================================================
+
+int P_Massacre()
+{
+	int count;
+	Actor mo;
+
+	count = 0;
+	FOREACH(Actor, mo)
+	{
+		if (mo.bCountKill && (mo.Health > 0))
+		{
+			mo.Damage(none, none, 10000);
+			count++;
+		}
+	}
+	return count;
+}
+
 defaultproperties
 {
 }

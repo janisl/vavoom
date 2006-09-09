@@ -105,43 +105,12 @@ void A_SpidRefire()
 
 void A_BossDeath()
 {
-	name mapname;
-	int i;
-	Actor Other;
-
-	mapname = Level.Game.level->MapName;
-	if (mapname != 'e3m8' && mapname != 'e4m8')
+	if (!XLevel.bSpiderMastermindSpecial)
 	{
 		//  Not a boss level
 		return;
 	}
-
-	// make sure there is a player alive for victory
-	for (i = 0; i < MAXPLAYERS; i++)
-		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned && Level.Game.Players[i].Health > 0)
-			break;
-
-	if (i == MAXPLAYERS)
-		return;	// no one left alive, so do not end game
-
-	// scan the remaining thinkers to see if all bosses are dead
-	FOREACH(Actor, Other)
-	{
-		if (Other != self && Other.Class == Class && Other.Health > 0)
-		{
-			// other boss not dead
-			return;
-		}
-	}
-
-	// victory!
-	if (mapname == 'e4m8')
-	{
-		Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8, 0, 0, 0, NULL, 0, none);
-		return;
-	}
-
-	G_ExitLevel(0);
+	BossDeathSpecialAction();
 }
 
 __states__

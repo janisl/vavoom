@@ -31,8 +31,18 @@
 
 enum
 {
-	MAPINFOF_DoubleSky		= 0x00000001,	// parallax sky: sky2 behind sky1
-	MAPINFOF_Lightning		= 0x00000002,	// Use of lightning on the level flashes from sky1 to sky2
+	MAPINFOF_DoubleSky					= 0x00000001,	// parallax sky: sky2 behind sky1
+	MAPINFOF_Lightning					= 0x00000002,	// Use of lightning on the level flashes from sky1 to sky2
+	MAPINFOF_Map07Special				= 0x00000004,
+	MAPINFOF_BaronSpecial				= 0x00000008,
+	MAPINFOF_CyberDemonSpecial			= 0x00000010,
+	MAPINFOF_SpiderMastermindSpecial	= 0x00000020,
+	MAPINFOF_MinotaurSpecial			= 0x00000040,
+	MAPINFOF_DSparilSpecial				= 0x00000080,
+	MAPINFOF_IronLichSpecial			= 0x00000100,
+	MAPINFOF_SpecialActionOpenDoor		= 0x00000200,
+	MAPINFOF_SpecialActionLowerFloor	= 0x00000400,
+	MAPINFOF_SpecialActionKillMonsters	= 0x00000800,
 };
 
 struct mapInfo_t

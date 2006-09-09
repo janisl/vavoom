@@ -95,7 +95,7 @@ void A_BossDeath()
 	int i;
 	Actor Other;
 
-	if (Level.Game.level->MapName != 'map07')
+	if (!XLevel.bMap07Special)
 	{
 		//  Not a boss level
 		return;

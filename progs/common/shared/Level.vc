@@ -30,6 +30,17 @@ class Level : Object
 native readonly private bool	bForServer;	//	True if this level belongs to the server.
 native readonly private bool	bExtended;	//	True if level was in Hexen format.
 native readonly private bool	bGLNodesV5;	//	True if using version 5 GL nodes.
+//	Special actions, as set in MAPINFO.
+native readonly bool			bMap07Special;
+native readonly bool			bBaronSpecial;
+native readonly bool			bCyberDemonSpecial;
+native readonly bool			bSpiderMastermindSpecial;
+native readonly bool			bMinotaurSpecial;
+native readonly bool			bDSparilSpecial;
+native readonly bool			bIronLichSpecial;
+native readonly bool			bSpecialActionOpenDoor;
+native readonly bool			bSpecialActionLowerFloor;
+native readonly bool			bSpecialActionKillMonsters;
 
 //
 //	MAP related Lookup tables.

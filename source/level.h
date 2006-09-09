@@ -482,6 +482,17 @@ class VLevel : public VObject
 		LF_ForServer	= 0x01,	//	True if this level belongs to the server.
 		LF_Extended		= 0x02,	//	True if level was in Hexen format.
 		LF_GLNodesV5	= 0x04,	//	True if using version 5 GL nodes.
+		//	From mapinfo.
+		LF_Map07Special					= 0x00000008,
+		LF_BaronSpecial					= 0x00000010,
+		LF_CyberDemonSpecial			= 0x00000020,
+		LF_SpiderMastermindSpecial		= 0x00000040,
+		LF_MinotaurSpecial				= 0x00000080,
+		LF_DSparilSpecial				= 0x00000100,
+		LF_IronLichSpecial				= 0x00000200,
+		LF_SpecialActionOpenDoor		= 0x00000400,
+		LF_SpecialActionLowerFloor		= 0x00000800,
+		LF_SpecialActionKillMonsters	= 0x00001000,
 	};
 	vuint32			LevelFlags;
 

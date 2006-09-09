@@ -3067,38 +3067,13 @@ void Cheat_Gimme()
 
 //==========================================================================
 //
-//  P_Massacre
-//
-//  Kills all monsters.
-//
-//==========================================================================
-
-int P_Massacre()
-{
-	int count;
-	Actor mo;
-
-	count = 0;
-	FOREACH(Actor, mo)
-	{
-		if (mo.bCountKill && (mo.Health > 0))
-		{
-			mo.Damage(none, none, 10000);
-			count++;
-		}
-	}
-	return count;
-}
-
-//==========================================================================
-//
 //  Cheat_KillAll
 //
 //==========================================================================
 
 void Cheat_KillAll()
 {
-	cprint("%d MONSTERS KILLED", P_Massacre());
+	cprint("%d MONSTERS KILLED", DoomLevelInfo(Level).P_Massacre());
 }
 
 defaultproperties

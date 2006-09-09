@@ -170,7 +170,7 @@ void A_BossDeath()
 	int i;
 	Mancubus Other;
 
-	if (Level.Game.level->MapName != 'map07')
+	if (!XLevel.bMap07Special)
 	{
 		//  Not a boss level
 		return;

@@ -321,6 +321,53 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 			sc->ExpectNumber();
 			info->Gravity = (float)sc->Number;
 		}
+		else if (sc->Check("map07special"))
+		{
+			info->Flags |= MAPINFOF_Map07Special;
+		}
+		else if (sc->Check("baronspecial"))
+		{
+			info->Flags |= MAPINFOF_BaronSpecial;
+		}
+		else if (sc->Check("cyberdemonspecial"))
+		{
+			info->Flags |= MAPINFOF_CyberDemonSpecial;
+		}
+		else if (sc->Check("spidermastermindspecial"))
+		{
+			info->Flags |= MAPINFOF_SpiderMastermindSpecial;
+		}
+		else if (sc->Check("minotaurspecial"))
+		{
+			info->Flags |= MAPINFOF_MinotaurSpecial;
+		}
+		else if (sc->Check("dsparilspecial"))
+		{
+			info->Flags |= MAPINFOF_DSparilSpecial;
+		}
+		else if (sc->Check("ironlichspecial"))
+		{
+			info->Flags |= MAPINFOF_IronLichSpecial;
+		}
+		else if (sc->Check("specialaction_exitlevel"))
+		{
+			info->Flags &= ~(MAPINFOF_SpecialActionOpenDoor |
+				MAPINFOF_SpecialActionLowerFloor);
+		}
+		else if (sc->Check("specialaction_opendoor"))
+		{
+			info->Flags &= ~MAPINFOF_SpecialActionLowerFloor;
+			info->Flags |= MAPINFOF_SpecialActionOpenDoor;
+		}
+		else if (sc->Check("specialaction_lowerfloor"))
+		{
+			info->Flags |= MAPINFOF_SpecialActionLowerFloor;
+			info->Flags &= ~MAPINFOF_SpecialActionOpenDoor;
+		}
+		else if (sc->Check("specialaction_killmonsters"))
+		{
+			info->Flags |= MAPINFOF_SpecialActionKillMonsters;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();

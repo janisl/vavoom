@@ -241,6 +241,24 @@ void A_SorDBon()
 	PlayFullVolumeSound('dsparil/bones', CHAN_BODY);
 }
 
+//==========================================================================
+//
+//  A_BossDeath
+//
+//  Trigger special effects if all bosses are dead.
+//
+//==========================================================================
+
+void A_BossDeath()
+{
+	if (!XLevel.bDSparilSpecial)
+	{
+		//  Not a boss level
+		return;
+	}
+	BossDeathSpecialAction();
+}
+
 __states__
 {
 	S_SOR2_RISE1('SOR2', 0, 'monsters/dsparil/base2.md2', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
