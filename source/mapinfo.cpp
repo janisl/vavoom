@@ -29,12 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_MAPS			99
-
-#define UNKNOWN_MAP_NAME	"DEVELOPMENT MAP"
-#define DEFAULT_SKY_NAME	"SKY1"
-#define DEFAULT_FADE_TABLE	"colormap"
-
 enum
 {
 	CD_STARTTRACK,
@@ -69,12 +63,11 @@ static void ParseMapInfo(VScriptParser* sc);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static mapInfo_t	MapInfo[MAX_MAPS];
-static int 			MapCount;
-
-static int cd_NonLevelTracks[6]; // Non-level specific song cd track numbers 
-
-static TArray<FMapSongInfo>		MapSongList;
+static mapInfo_t			DefaultMap;
+static TArray<mapInfo_t>	MapInfo;
+static TArray<FMapSongInfo>	MapSongList;
+// Non-level specific song cd track numbers
+static int					cd_NonLevelTracks[6];
 
 // CODE --------------------------------------------------------------------
 
@@ -89,29 +82,21 @@ void InitMapInfo()
 	guard(InitMapInfo);
 	mapInfo_t 	*info;
 
-	MapCount = 1;
-
 	// Put defaults into MapInfo[0]
-	info = MapInfo;
-	info->cluster = 0;
-	info->warpTrans = 0;
-	info->NextMap = "map01"; // Always go to map 1 if not specified
-	info->cdTrack = 1;
-	info->sky1Texture = GTextureManager.CheckNumForName(
-		VName(DEFAULT_SKY_NAME, VName::AddLower8),
+	info = &DefaultMap;
+	info->Name = "Unnamed";
+	info->Cluster = 0;
+	info->WarpTrans = 0;
+	info->NextMap = NAME_None;
+	info->CDTrack = 0;
+	info->Sky1Texture = GTextureManager.CheckNumForName("sky1",
 		TEXTYPE_Wall, true, false);
-	if (info->sky1Texture < 0)
-		info->sky1Texture = GTextureManager.CheckNumForName(
-			VName("SKYMNT02", VName::AddLower8),
-			TEXTYPE_Wall, true, false);
-	info->sky2Texture = info->sky1Texture;
-	info->sky1ScrollDelta = 0.0;
-	info->sky2ScrollDelta = 0.0;
-	info->doubleSky = false;
-	info->lightning = false;
-	info->FadeTable = DEFAULT_FADE_TABLE;
+	info->Sky2Texture = info->Sky1Texture;
+	info->Sky1ScrollDelta = 0.0;
+	info->Sky2ScrollDelta = 0.0;
+	info->FadeTable = NAME_colormap;
 	info->Gravity = 0.0;
-	VStr::Cpy(info->name, UNKNOWN_MAP_NAME);
+	info->Flags = 0;
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
@@ -129,7 +114,7 @@ void InitMapInfo()
 			FL_OpenFileRead("scripts/mapinfo.txt")));
 	}
 
-	for (int i = 1; i < MapCount; i++)
+	for (int i = 0; i < MapInfo.Num(); i++)
 	{
 		if ((*MapInfo[i].NextMap)[0] >= '0' &&
 			(*MapInfo[i].NextMap)[0] <= '9')
@@ -146,78 +131,109 @@ void InitMapInfo()
 //
 //==========================================================================
 
-static void ParseMap(VScriptParser* sc)
+static void ParseMap(VScriptParser* sc, bool IsDefault)
 {
-	VName MapLumpName;
-	if (sc->CheckNumber())
+	mapInfo_t* info = NULL;
+	bool HexenMode = false;
+	if (IsDefault)
 	{
-		//	Map number, for Hexen compatibility
-		if (sc->Number < 1 || sc->Number > 99)
-		{
-			sc->Error("Map number out or range");
-		}
-		MapLumpName = va("map%02d", sc->Number);
+		info = &DefaultMap;
+		info->LumpName = NAME_None;
+		info->Name = VStr();
+		info->LevelNum = 0;
+		info->Cluster = 0;
+		info->WarpTrans = 0;
+		info->NextMap = NAME_None;
+		info->SecretMap = NAME_None;
+		info->SongLump = NAME_None;
+		info->CDTrack = 0;
+		info->Sky1Texture = GTextureManager.DefaultTexture;
+		info->Sky2Texture = GTextureManager.DefaultTexture;
+		info->Sky1ScrollDelta = 0;
+		info->Sky2ScrollDelta = 0;
+		info->SkyBox = NAME_None;
+		info->FadeTable = NAME_colormap;
+		info->Gravity = 0;
+		info->Flags = 0;
 	}
 	else
 	{
-		//	Map name
-		sc->ExpectName8();
-		MapLumpName = sc->Name8;
-	}
-
-	//	Check for replaced map info.
-	mapInfo_t* info = NULL;
-	for (int i = 1; i < MAX_MAPS; i++)
-	{
-		if (MapLumpName == MapInfo[i].LumpName)
+		VName MapLumpName;
+		if (sc->CheckNumber())
 		{
-			info = &MapInfo[i];
-			memcpy(info, &MapInfo[0], sizeof(*info));
-
-			// The warp translation defaults to the map	index
-			info->warpTrans = i;
-			break;
+			//	Map number, for Hexen compatibility
+			HexenMode = true;
+			if (sc->Number < 1 || sc->Number > 99)
+			{
+				sc->Error("Map number out or range");
+			}
+			MapLumpName = va("map%02d", sc->Number);
 		}
-	}
-	if (!info)
-	{
-		info = &MapInfo[MapCount];
+		else
+		{
+			//	Map name
+			sc->ExpectName8();
+			MapLumpName = sc->Name8;
+		}
+
+		//	Check for replaced map info.
+		for (int i = 0; i < MapInfo.Num(); i++)
+		{
+			if (MapLumpName == MapInfo[i].LumpName)
+			{
+				info = &MapInfo[i];
+				break;
+			}
+		}
+		if (!info)
+		{
+			info = &MapInfo.Alloc();
+		}
 
 		// Copy defaults to current map definition
-		memcpy(info, &MapInfo[0], sizeof(*info));
+		info->LumpName = MapLumpName;
+		info->LevelNum = DefaultMap.LevelNum;
+		info->Cluster = DefaultMap.Cluster;
+		info->WarpTrans = DefaultMap.WarpTrans;
+		info->NextMap = DefaultMap.NextMap;
+		info->SecretMap = DefaultMap.SecretMap;
+		info->SongLump = DefaultMap.SongLump;
+		info->CDTrack = DefaultMap.CDTrack;
+		info->Sky1Texture = DefaultMap.Sky1Texture;
+		info->Sky2Texture = DefaultMap.Sky2Texture;
+		info->Sky1ScrollDelta = DefaultMap.Sky1ScrollDelta;
+		info->Sky2ScrollDelta = DefaultMap.Sky2ScrollDelta;
+		info->SkyBox = DefaultMap.SkyBox;
+		info->FadeTable = DefaultMap.FadeTable;
+		info->Gravity = DefaultMap.Gravity;
+		info->Flags = DefaultMap.Flags;
 
-		// The warp translation defaults to the map	index
-		info->warpTrans = MapCount;
+		// Map name must follow the number
+		sc->ExpectString();
+		info->Name = sc->String;
 
-		MapCount++;
-	}
-	info->LumpName = MapLumpName;
-
-	// Map name must follow the number
-	sc->ExpectString();
-	VStr::Cpy(info->name, *sc->String);
-
-	//	Set song lump name from SNDINFO script
-	for (int i = 0; i < MapSongList.Num(); i++)
-	{
-		if (MapSongList[i].MapName == info->LumpName)
+		//	Set song lump name from SNDINFO script
+		for (int i = 0; i < MapSongList.Num(); i++)
 		{
-			info->SongLump = MapSongList[i].SongName;
+			if (MapSongList[i].MapName == info->LumpName)
+			{
+				info->SongLump = MapSongList[i].SongName;
+			}
 		}
-	}
 
-	//	Set default levelnum for this map.
-	const char* mn = *MapLumpName;
-	if (mn[0] == 'm' && mn[1] == 'a' && mn[2] == 'p' && mn[5] == 0)
-	{
-		int num = atoi(mn + 3);
-		if  (num >= 1 && num <= 99)
-			info->LevelNum = num;
-	}
-	else if (mn[0] == 'e' && mn[1] >= '0' && mn[1] <= '9' &&
-		mn[2] == 'm' && mn[3] >= '0' && mn[3] <= '9')
-	{
-		info->LevelNum = (mn[1] - '1') * 10 + (mn[3] - '0');
+		//	Set default levelnum for this map.
+		const char* mn = *MapLumpName;
+		if (mn[0] == 'm' && mn[1] == 'a' && mn[2] == 'p' && mn[5] == 0)
+		{
+			int num = atoi(mn + 3);
+			if  (num >= 1 && num <= 99)
+				info->LevelNum = num;
+		}
+		else if (mn[0] == 'e' && mn[1] >= '0' && mn[1] <= '9' &&
+			mn[2] == 'm' && mn[3] >= '0' && mn[3] <= '9')
+		{
+			info->LevelNum = (mn[1] - '1') * 10 + (mn[3] - '0');
+		}
 	}
 
 	// Process optional tokens
@@ -231,12 +247,12 @@ static void ParseMap(VScriptParser* sc)
 		else if (sc->Check("cluster"))
 		{
 			sc->ExpectNumber();
-			info->cluster = sc->Number;
+			info->Cluster = sc->Number;
 		}
 		else if (sc->Check("warptrans"))
 		{
 			sc->ExpectNumber();
-			info->warpTrans = sc->Number;
+			info->WarpTrans = sc->Number;
 		}
 		else if (sc->Check("next"))
 		{
@@ -251,18 +267,26 @@ static void ParseMap(VScriptParser* sc)
 		else if (sc->Check("sky1"))
 		{
 			sc->ExpectName8();
-			info->sky1Texture = GTextureManager.CheckNumForName(
+			info->Sky1Texture = GTextureManager.CheckNumForName(
 				sc->Name8, TEXTYPE_Wall, true, false);
-			sc->ExpectNumber();
-			info->sky1ScrollDelta = (float)sc->Number * 35.0 / 256.0;
+			sc->ExpectFloat();
+			if (HexenMode)
+			{
+				sc->Float /= 256.0;
+			}
+			info->Sky1ScrollDelta = sc->Float * 35.0;
 		}
 		else if (sc->Check("sky2"))
 		{
 			sc->ExpectName8();
-			info->sky2Texture = GTextureManager.CheckNumForName(
+			info->Sky2Texture = GTextureManager.CheckNumForName(
 				sc->Name8, TEXTYPE_Wall, true, false);
-			sc->ExpectNumber();
-			info->sky2ScrollDelta = (float)sc->Number * 35.0 / 256.0;
+			sc->ExpectFloat();
+			if (HexenMode)
+			{
+				sc->Float /= 256.0;
+			}
+			info->Sky2ScrollDelta = sc->Float * 35.0;
 		}
 		else if (sc->Check("skybox"))
 		{
@@ -271,11 +295,11 @@ static void ParseMap(VScriptParser* sc)
 		}
 		else if (sc->Check("doublesky"))
 		{
-			info->doubleSky = true;
+			info->Flags |= MAPINFOF_DoubleSky;
 		}
 		else if (sc->Check("lightning"))
 		{
-			info->lightning = true;
+			info->Flags |= MAPINFOF_Lightning;
 		}
 		else if (sc->Check("fadetable"))
 		{
@@ -290,49 +314,12 @@ static void ParseMap(VScriptParser* sc)
 		else if (sc->Check("cdtrack"))
 		{
 			sc->ExpectNumber();
-			info->cdTrack = sc->Number;
+			info->CDTrack = sc->Number;
 		}
 		else if (sc->Check("gravity"))
 		{
 			sc->ExpectNumber();
 			info->Gravity = (float)sc->Number;
-		}
-		else
-		{
-			break;
-		}
-	}
-
-	//	Avoid duplicate levelnums, later one takes precedance.
-	for (int i = 1; i < MAX_MAPS; i++)
-	{
-		if (MapInfo[i].LevelNum == info->LevelNum &&
-			&MapInfo[i] != info)
-		{
-			MapInfo[i].LevelNum = 0;
-		}
-	}
-
-	if (info->doubleSky)
-	{
-		GTextureManager.SetFrontSkyLayer(info->sky1Texture);
-	}
-}
-
-//==========================================================================
-//
-//	ParseMapInfo
-//
-//==========================================================================
-
-static void ParseMapInfo(VScriptParser* sc)
-{
-	guard(ParseMapInfo);
-	while (!sc->AtEnd())
-	{
-		if (sc->Check("map"))
-		{
-			ParseMap(sc);
 		}
 		else if (sc->Check("cd_start_track"))
 		{
@@ -366,6 +353,50 @@ static void ParseMapInfo(VScriptParser* sc)
 		}
 		else
 		{
+			break;
+		}
+	}
+
+	if (info->Flags & MAPINFOF_DoubleSky)
+	{
+		GTextureManager.SetFrontSkyLayer(info->Sky1Texture);
+	}
+
+	if (!IsDefault)
+	{
+		//	Avoid duplicate levelnums, later one takes precedance.
+		for (int i = 0; i < MapInfo.Num(); i++)
+		{
+			if (MapInfo[i].LevelNum == info->LevelNum &&
+				&MapInfo[i] != info)
+			{
+				MapInfo[i].LevelNum = 0;
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//	ParseMapInfo
+//
+//==========================================================================
+
+static void ParseMapInfo(VScriptParser* sc)
+{
+	guard(ParseMapInfo);
+	while (!sc->AtEnd())
+	{
+		if (sc->Check("map"))
+		{
+			ParseMap(sc, false);
+		}
+		else if (sc->Check("defaultmap"))
+		{
+			ParseMap(sc, true);
+		}
+		else
+		{
 			sc->Error("Invalid command");
 		}
 	}
@@ -381,7 +412,7 @@ static void ParseMapInfo(VScriptParser* sc)
 
 static int QualifyMap(int map)
 {
-	return (map < 1 || map > MapCount) ? 0 : map;
+	return (map < 0 || map >= MapInfo.Num()) ? 0 : map;
 }
 
 //==========================================================================
@@ -390,18 +421,17 @@ static int QualifyMap(int map)
 //
 //==========================================================================
 
-void P_GetMapInfo(VName map, mapInfo_t &info)
+const mapInfo_t& P_GetMapInfo(VName map)
 {
 	guard(P_GetMapInfo);
-	for (int i = 1; i < MAX_MAPS; i++)
+	for (int i = 0; i < MapInfo.Num(); i++)
 	{
 		if (map == MapInfo[i].LumpName)
 		{
-			info = MapInfo[i];
-			return;
+			return MapInfo[i];
 		}
 	}
-	info = MapInfo[0];
+	return DefaultMap;
 	unguard;
 }
 
@@ -411,9 +441,9 @@ void P_GetMapInfo(VName map, mapInfo_t &info)
 //
 //==========================================================================
 
-char* P_GetMapName(int map)
+const char* P_GetMapName(int map)
 {
-	return MapInfo[QualifyMap(map)].name;
+	return *MapInfo[QualifyMap(map)].Name;
 }
 
 //==========================================================================
@@ -438,15 +468,15 @@ VName P_GetMapLumpName(int map)
 VName P_TranslateMap(int map)
 {
 	guard(P_TranslateMap);
-	for (int i = MAX_MAPS - 1; i > 0; i--)
+	for (int i = MapInfo.Num() - 1; i >= 0; i--)
 	{
-		if (MapInfo[i].warpTrans == map)
+		if (MapInfo[i].WarpTrans == map)
 		{
 			return MapInfo[i].LumpName;
 		}
 	}
 	// Not found
-	return MapInfo[1].LumpName;
+	return MapInfo[0].LumpName;
 	unguard;
 }
 
@@ -461,7 +491,7 @@ VName P_TranslateMap(int map)
 VName P_GetMapNameByLevelNum(int map)
 {
 	guard(P_GetMapNameByLevelNum);
-	for (int i = 1; i < MAX_MAPS; i++)
+	for (int i = 0; i < MapInfo.Num(); i++)
 	{
 		if (MapInfo[i].LevelNum == map)
 		{
@@ -563,11 +593,11 @@ int P_GetCDTitleTrack()
 COMMAND(MapList)
 {
 	guard(COMMAND MapList);
-	for (int i = 0; i < MapCount; i++)
+	for (int i = 0; i < MapInfo.Num(); i++)
 	{
 		if (W_CheckNumForName(MapInfo[i].LumpName) >= 0)
 		{
-			GCon->Logf("%s - %s", *MapInfo[i].LumpName, MapInfo[i].name);
+			GCon->Log(VStr(MapInfo[i].LumpName) + " - " + MapInfo[i].Name);
 		}
 	}
 	unguard;
@@ -582,6 +612,7 @@ COMMAND(MapList)
 void ShutdownMapInfo()
 {
 	guard(ShutdownMapInfo);
+	MapInfo.Clear();
 	MapSongList.Clear();
 	unguard;
 }

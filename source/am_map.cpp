@@ -1632,7 +1632,7 @@ void AM_Drawer()
 	DrawWorldTimer();
 	T_SetFont(font_small);
 	T_SetAlign(hleft, vbottom);
-	T_DrawText(20, 480 - sb_height - 7, cl_level.level_name);
+	T_DrawText(20, 480 - sb_height - 7, *cl_level.LevelName);
 	if (ShowStats)
 	{
 		AM_DrawLevelStats();

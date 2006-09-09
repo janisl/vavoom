@@ -29,34 +29,39 @@
 
 // TYPES -------------------------------------------------------------------
 
+enum
+{
+	MAPINFOF_DoubleSky		= 0x00000001,	// parallax sky: sky2 behind sky1
+	MAPINFOF_Lightning		= 0x00000002,	// Use of lightning on the level flashes from sky1 to sky2
+};
+
 struct mapInfo_t
 {
 	VName		LumpName;
+	VStr		Name;			// Name of map
 	vint32		LevelNum;		// Level number for action specials
-	int			cluster;		// Defines what cluster level belongs to
-	int			warpTrans;		// Actual map number in case maps are not sequential
+	vint32		Cluster;		// Defines what cluster level belongs to
+	vint32		WarpTrans;		// Actual map number in case maps are not sequential
 	VName		NextMap;		// Map to teleport to upon exit of timed deathmatch
 	VName		SecretMap;		// Map to teleport upon secret exit
-	int			cdTrack;		// CD track to play during level
-	char		name[32];		// Name of map
-	int			sky1Texture;	// Default sky texture
-	int			sky2Texture;	// Alternate sky displayed in Sky2 sectors
-	float		sky1ScrollDelta;// Default sky texture speed
-	float		sky2ScrollDelta;// Alternate sky texture speed
-	boolean		doubleSky;		// parallax sky: sky2 behind sky1
-	boolean		lightning;		// Use of lightning on the level flashes from sky1 to sky2
-	VName		FadeTable;		// Fade table {fogmap}
 	VName		SongLump;		// Background music (MUS or MIDI)
+	vint32		CDTrack;		// CD track to play during level
+	vint32		Sky1Texture;	// Default sky texture
+	vint32		Sky2Texture;	// Alternate sky displayed in Sky2 sectors
+	float		Sky1ScrollDelta;// Default sky texture speed
+	float		Sky2ScrollDelta;// Alternate sky texture speed
 	VName		SkyBox;			// Sky box
+	VName		FadeTable;		// Fade table {fogmap}
 	float		Gravity;		// Map gravity
+	vuint32		Flags;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void InitMapInfo();
 void ShutdownMapInfo();
-void P_GetMapInfo(VName, mapInfo_t&);
-char* P_GetMapName(int);
+const mapInfo_t& P_GetMapInfo(VName);
+const char* P_GetMapName(int);
 VName P_GetMapLumpName(int);
 VName P_TranslateMap(int);
 VName P_GetMapNameByLevelNum(int);

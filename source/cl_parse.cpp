@@ -494,7 +494,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 	CL_ReadFromServerInfo();
 
 	cl_level.MapName = msg.ReadString();
-	VStr::Cpy(cl_level.level_name, msg.ReadString());
+	cl_level.LevelName = msg.ReadString();
 
 	cl->clientnum = msg.ReadByte();
 	cl->maxclients = msg.ReadByte();
@@ -516,7 +516,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 	cl_level.cdTrack = msg.ReadByte();
 
 	GCon->Log("---------------------------------------");
-	GCon->Log(cl_level.level_name);
+	GCon->Log(cl_level.LevelName);
 	GCon->Log("");
 	C_ClearNotify();
 
@@ -550,33 +550,29 @@ static void CL_ParseServerInfo(VMessage& msg)
 
 static void CL_ParseIntermission(VMessage& msg)
 {
-	int			i;
-	int			j;
-	mapInfo_t	ninfo;
-	VName		nextmap;
+	VName nextmap = msg.ReadString();
 
+	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
 	im.LeaveMap = cl_level.MapName;
-	im.LeaveName = cl_level.level_name;
-	P_GetMapInfo(cl_level.MapName, ninfo);
-	im.leavecluster = ninfo.cluster;
+	im.LeaveName = cl_level.LevelName;
+	im.leavecluster = linfo.Cluster;
 
-	nextmap = msg.ReadString();
-	P_GetMapInfo(nextmap, ninfo);
+	const mapInfo_t& einfo = P_GetMapInfo(nextmap);
 	im.EnterMap = nextmap;
-	im.EnterName = ninfo.name;
-	im.entercluster = ninfo.cluster;
+	im.EnterName = einfo.Name;
+	im.entercluster = einfo.Cluster;
 
 	im.totalkills = cl_level.totalkills;
 	im.totalitems = cl_level.totalitems;
 	im.totalsecret = cl_level.totalsecret;
 	im.time = cl_level.time;
-	for (i = 0; i < MAXPLAYERS; i++)
+	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		if (msg.ReadByte())
 			scores[i].Flags |= scores_t::SF_Active;
 		else
 			scores[i].Flags &= ~scores_t::SF_Active;
-		for (j = 0; j < MAXPLAYERS; j++)
+		for (int j = 0; j < MAXPLAYERS; j++)
 			scores[i].frags[j] = (char)msg.ReadByte();
 		scores[i].killcount = msg.ReadShort();
 		scores[i].itemcount = msg.ReadShort();

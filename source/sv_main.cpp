@@ -1708,8 +1708,6 @@ static void G_DoCompleted()
 {
 	int			i;
 	int			j;
-	mapInfo_t	old_info;
-	mapInfo_t	new_info;
 
 	completed = false;
 	if (sv.intermission)
@@ -1724,20 +1722,20 @@ static void G_DoCompleted()
 	sv.intermission = 1;
 	sv.intertime = 0;
 
-	P_GetMapInfo(level.MapName, old_info);
-	P_GetMapInfo(sv_next_map, new_info);
+	const mapInfo_t& old_info = P_GetMapInfo(level.MapName);
+	const mapInfo_t& new_info = P_GetMapInfo(sv_next_map);
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GGameInfo->Players[i])
 		{
-			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.cluster ||
-				old_info.cluster != new_info.cluster);
+			GGameInfo->Players[i]->eventPlayerExitMap(!old_info.Cluster ||
+				old_info.Cluster != new_info.Cluster);
 		}
 	}
 
-	if (!deathmatch && old_info.cluster &&
-		old_info.cluster == new_info.cluster)
+	if (!deathmatch && old_info.Cluster &&
+		old_info.Cluster == new_info.Cluster)
 	{
 		GCmdBuf << "TeleportNewMap\n";
 		return;
@@ -2145,7 +2143,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 		<< (byte)PROTOCOL_VERSION
 		<< svs.serverinfo
 		<< *level.MapName
-		<< level.level_name
+		<< level.LevelName
 		<< (byte)SV_GetPlayerNum(player)
 		<< (byte)svs.max_clients
 		<< (byte)deathmatch
@@ -2233,7 +2231,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 {
 	guard(SV_SpawnServer);
 	int			i;
-	mapInfo_t	info;
 
 	GCon->Logf(NAME_Dev, "Spawning server %s", mapname);
 	paused = false;
@@ -2273,25 +2270,25 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 
 	level.MapName = VName(mapname, VName::AddLower8);
 
-	P_GetMapInfo(level.MapName, info);
+	const mapInfo_t& info = P_GetMapInfo(level.MapName);
 	sv_next_map = info.NextMap;
 	sv_secret_map = info.SecretMap;
 
-	VStr::Cpy(level.level_name, info.name);
-	level.levelnum = info.warpTrans;//FIXME does this make sense?
-	level.cluster = info.cluster;
+	level.LevelName = info.Name;
+	level.levelnum = info.LevelNum;
+	level.cluster = info.Cluster;
 	level.partime = 0;//FIXME not used in Vavoom.
 
-	level.sky1Texture = info.sky1Texture;
-	level.sky2Texture = info.sky2Texture;
-	level.sky1ScrollDelta = info.sky1ScrollDelta;
-	level.sky2ScrollDelta = info.sky2ScrollDelta;
-	level.doubleSky = info.doubleSky;
-	level.lightning = info.lightning;
+	level.sky1Texture = info.Sky1Texture;
+	level.sky2Texture = info.Sky2Texture;
+	level.sky1ScrollDelta = info.Sky1ScrollDelta;
+	level.sky2ScrollDelta = info.Sky2ScrollDelta;
+	level.doubleSky = !!(info.Flags & MAPINFOF_DoubleSky);
+	level.lightning = !!(info.Flags & MAPINFOF_Lightning);
 	level.SkyBox = info.SkyBox;
 	level.FadeTable = info.FadeTable;
 
-	level.cdTrack = info.cdTrack;
+	level.cdTrack = info.CDTrack;
 	level.SongLump = info.SongLump;
 
 	netgame = svs.max_clients > 1;
