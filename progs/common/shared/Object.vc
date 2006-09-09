@@ -957,7 +957,7 @@ struct level_t
 	int			levelnum;
 	int			cluster;
 	int			partime;
-	int			__level_name[8];
+	string		LevelName;
 
 	int			sky1Texture;
 	int			sky2Texture;
