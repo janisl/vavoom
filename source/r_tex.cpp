@@ -367,6 +367,7 @@ static TArray<frameDef_t>	FrameDefs;
 
 VTextureManager::VTextureManager()
 : RgbTable(NULL)
+, DefaultTexture(-1)
 {
 }
 
@@ -394,10 +395,19 @@ void VTextureManager::Init()
 	//	Initialise sprites.
 	InitSpriteLumps();
 
+	//	Find default texture.
+	DefaultTexture = CheckNumForName("-noflat-", TEXTYPE_Overload, false,
+		false);
+	if (DefaultTexture == -1)
+	{
+		Sys_Error("Default texture -noflat- not found");
+	}
+
 	//	Find sky flat number.
 	skyflatnum = CheckNumForName(NAME_f_sky, TEXTYPE_Flat, true, false);
 	if (skyflatnum < 0)
-		skyflatnum = CheckNumForName(NAME_f_sky001, TEXTYPE_Flat, true, false);
+		skyflatnum = CheckNumForName(NAME_f_sky001, TEXTYPE_Flat, true,
+			false);
 	if (skyflatnum < 0)
 		skyflatnum = NumForName(NAME_f_sky1, TEXTYPE_Flat, true, false);
 	unguard;
@@ -487,7 +497,8 @@ int	VTextureManager::NumForName(VName Name, int Type, bool bOverload,
 	int i = CheckNumForName(Name, Type, bOverload, bCheckAny);
 	if (i == -1)
 	{
-		Host_Error("VTextureManager::NumForName: %s not found", *Name);
+		GCon->Logf("VTextureManager::NumForName: %s not found", *Name);
+		i = DefaultTexture;
 	}
 	return i;
 	unguard;

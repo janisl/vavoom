@@ -70,6 +70,7 @@ class VTextureManager
 {
 public:
 	TArray<VTexture*>	Textures;
+	vint32				DefaultTexture;
 
 	VTextureManager();
 	void Init();

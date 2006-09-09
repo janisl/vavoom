@@ -104,7 +104,6 @@ enum
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VCvarI strict_level_errors("strict_level_errors", "1");
-static VCvarI ignore_missing_textures("ignore_missing_textures", "0");
 
 // CODE --------------------------------------------------------------------
 
@@ -1153,12 +1152,8 @@ int VLevel::TexNumForName(const char *name, int Type, bool CMap) const
 		{
 			return 0;
 		}
-		if (ignore_missing_textures)
-		{
-			GCon->Logf("FTNumForName: %s not found", *Name);
-			return 0;
-		}
-		Host_Error("FTNumForName: %s not found", *Name);
+		GCon->Logf("FTNumForName: %s not found", *Name);
+		return GTextureManager.DefaultTexture;
 	}
 	return i;
 	unguard;
