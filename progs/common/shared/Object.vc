@@ -1087,15 +1087,19 @@ struct scores_t
 struct im_t
 {
 	name	LeaveMap;
-	int		leavecluster;
-	name	EnterMap;
-	int		entercluster;
+	int		LeaveCluster;
 	string	LeaveName;
+
+	name	EnterMap;
+	int		EnterCluster;
 	string	EnterName;
-	int		totalkills;
-	int		totalitems;
-	int		totalsecret;
-	float	time;
+
+	int		TotalKills;
+	int		TotalItems;
+	int		TotalSecret;
+	float	Time;
+
+	bool	bNoIntermission;
 };
 
 struct picinfo_t

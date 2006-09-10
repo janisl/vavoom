@@ -44,6 +44,7 @@ map E1M8 "phobos anomaly"
 next E1M1
 sky1 SKY1 0
 music D_e1m8
+nointermission
 baronspecial
 specialaction_lowerfloor
 
@@ -99,6 +100,7 @@ map E2M8 "tower of babel"
 next E2M1
 sky1 SKY2 0
 music D_e2m8
+nointermission
 cyberdemonspecial
 specialaction_exitlevel
 
@@ -154,6 +156,7 @@ map E3M8 "dis"
 next E3M1
 sky1 SKY3 0
 music D_e3m8
+nointermission
 spidermastermindspecial
 specialaction_exitlevel
 
@@ -211,6 +214,7 @@ map E4M8 "unto the cruel"
 next E4M1
 sky1 SKY4 0
 music D_e2m5
+nointermission
 spidermastermindspecial
 specialaction_lowerfloor
 

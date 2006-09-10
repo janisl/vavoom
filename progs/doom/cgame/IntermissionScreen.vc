@@ -25,6 +25,17 @@
 
 class IntermissionScreen : Window;
 
+//	Intermission states
+enum
+{
+	IMS_Stats,
+	IMS_NextLoc,
+	IMS_Text,
+
+	IMS_NoState,
+	IMS_Done
+};
+
 ClientGameBase ClGame;
 
 // GLOBAL LOCATIONS
@@ -282,14 +293,14 @@ void Start()
 	IM_InitAnimatedBack();
 #endif
 
-	if (!ClGame.im->totalkills)
-		ClGame.im->totalkills = 1;
+	if (!ClGame.im->TotalKills)
+		ClGame.im->TotalKills = 1;
 
-	if (!ClGame.im->totalitems)
-		ClGame.im->totalitems = 1;
+	if (!ClGame.im->TotalItems)
+		ClGame.im->TotalItems = 1;
 
-	if (!ClGame.im->totalsecret)
-		ClGame.im->totalsecret = 1;
+	if (!ClGame.im->TotalSecret)
+		ClGame.im->TotalSecret = 1;
 
 	if (ClGame.cl.deathmatch)
 		IM_InitDeathmatchStats();
@@ -298,22 +309,32 @@ void Start()
 	else
 		IM_InitSingleStats();
 
-	IM_LoadData();
+	if (interstate == IMS_Stats)
+	{
+		IM_LoadData();
 
 	// intermission music
 #ifdef FIXME
 #ifdef DOOM2
-	S_StartSong("D_DM2INT", P_GetCDIntermissionTrack(), true);
+		S_StartSong("D_DM2INT", P_GetCDIntermissionTrack(), true);
 #else
-	S_StartSong("D_INTER", P_GetCDIntermissionTrack(), true);
+		S_StartSong("D_INTER", P_GetCDIntermissionTrack(), true);
 #endif
 #else
 #ifdef DOOM2
-	CmdBuf_AddText("music loop D_DM2INT\n");
+		CmdBuf_AddText("music loop D_DM2INT\n");
 #else
-	CmdBuf_AddText("music loop D_INTER\n");
+		CmdBuf_AddText("music loop D_INTER\n");
 #endif
 #endif
+	}
+	else
+	{
+		CmdBuf_AddText("TeleportNewMap\n");
+		interstate = IMS_Done;
+		ClGame.skipintermission = 0;
+		cnt = 0.01;
+	}
 }
 
 #ifndef DOOM2
@@ -406,7 +427,7 @@ void Tick(float DeltaTime)
 #endif
 	switch (interstate)
 	{
-	case 0:
+	case IMS_Stats:
 		if (ClGame.cl.deathmatch)
 			IM_UpdateDeathmatchStats(DeltaTime);
 		else if (ClGame.cl.maxclients > 1)
@@ -416,20 +437,20 @@ void Tick(float DeltaTime)
 		break;
 
 #ifndef DOOM2
-	case 1:
+	case IMS_NextLoc:
 		IM_UpdateNextLoc(DeltaTime);
 		break;
 #else
-	case 2:
+	case IMS_Text:
 		IM_UpdateText(DeltaTime);
 		break;
 #endif
 
-	case -1:
+	case IMS_NoState:
 		IM_UpdateNoState(DeltaTime);
 		break;
 
-	case -2:
+	case IMS_Done:
 		break;
 	}
 }
@@ -444,11 +465,11 @@ void DrawWindow(GC gc)
 {
 	T_SetFont(font_big);
 
-	IM_DrawBackground();
-
 	switch (interstate)
 	{
-	case 0:
+	case IMS_Stats:
+		IM_DrawBackground();
+
 		if (ClGame.cl.deathmatch)
 		{
 			IM_DrawDeathmatchStats();
@@ -464,18 +485,26 @@ void DrawWindow(GC gc)
 		break;
 
 #ifndef DOOM2
-	case 1:
+	case IMS_NextLoc:
+		IM_DrawBackground();
+
 		IM_DrawNextLoc();
 		break;
 #else
-	case 2:
+	case IMS_Text:
+		IM_DrawBackground();
+
 		IM_DrawText();
 		break;
 #endif
 
-	case -1:
-	case -2:
+	case IMS_NoState:
+		IM_DrawBackground();
+
 		IM_DrawNoState();
+		break;
+
+	case IMS_Done:
 		break;
 	}
 }
@@ -828,7 +857,7 @@ void IM_DrawTime(int x, int y, int t)
 
 void IM_InitSingleStats()
 {
-	interstate = 0;
+	interstate = IMS_Stats;
 	ClGame.skipintermission = 0;
 	sp_state = 1;
 	cnt_kills[0] = -1;
@@ -836,6 +865,10 @@ void IM_InitSingleStats()
 	cnt_secret[0] = -1;
 	cnt_time = -1;
 	cnt_pause = 1.0;
+	if (ClGame.im->bNoIntermission)
+	{
+		interstate = IMS_NoState;
+	}
 }
 
 //==========================================================================
@@ -876,10 +909,10 @@ void IM_UpdateSingleStats(float DeltaTime)
 	if (ClGame.skipintermission && sp_state != 10)
 	{
 		ClGame.skipintermission = 0;
-		cnt_kills[0] = (ClGame.scores[0].killcount * 100) / ClGame.im->totalkills;
-		cnt_items[0] = (ClGame.scores[0].itemcount * 100) / ClGame.im->totalitems;
-		cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / ClGame.im->totalsecret;
-		cnt_time = ftoi(ClGame.im->time);
+		cnt_kills[0] = (ClGame.scores[0].killcount * 100) / ClGame.im->TotalKills;
+		cnt_items[0] = (ClGame.scores[0].itemcount * 100) / ClGame.im->TotalItems;
+		cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / ClGame.im->TotalSecret;
+		cnt_time = ftoi(ClGame.im->Time);
 		LocalSound('weapons/rocklx');
 		sp_state = 10;
 	}
@@ -891,9 +924,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_kills[0] >= (ClGame.scores[0].killcount * 100) / ClGame.im->totalkills)
+		if (cnt_kills[0] >= (ClGame.scores[0].killcount * 100) / ClGame.im->TotalKills)
 		{
-			cnt_kills[0] = (ClGame.scores[0].killcount * 100) / ClGame.im->totalkills;
+			cnt_kills[0] = (ClGame.scores[0].killcount * 100) / ClGame.im->TotalKills;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -905,9 +938,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_items[0] >= (ClGame.scores[0].itemcount * 100) / ClGame.im->totalitems)
+		if (cnt_items[0] >= (ClGame.scores[0].itemcount * 100) / ClGame.im->TotalItems)
 		{
-			cnt_items[0] = (ClGame.scores[0].itemcount * 100) / ClGame.im->totalitems;
+			cnt_items[0] = (ClGame.scores[0].itemcount * 100) / ClGame.im->TotalItems;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -919,9 +952,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 		if (!(ftoi(btime * 35.0) & 3))
 			LocalSound('weapons/pistol');
 
-		if (cnt_secret[0] >= (ClGame.scores[0].secretcount * 100) / ClGame.im->totalsecret)
+		if (cnt_secret[0] >= (ClGame.scores[0].secretcount * 100) / ClGame.im->TotalSecret)
 		{
-			cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / ClGame.im->totalsecret;
+			cnt_secret[0] = (ClGame.scores[0].secretcount * 100) / ClGame.im->TotalSecret;
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -934,9 +967,9 @@ void IM_UpdateSingleStats(float DeltaTime)
 
 		cnt_time += 3;
 
-		if (cnt_time >= ftoi(ClGame.im->time))
+		if (cnt_time >= ftoi(ClGame.im->Time))
 		{
-			cnt_time = ftoi(ClGame.im->time);
+			cnt_time = ftoi(ClGame.im->Time);
 			LocalSound('weapons/rocklx');
 			sp_state++;
 		}
@@ -976,7 +1009,7 @@ void IM_InitCooperativeStats()
 {
 	int i;
 
-	interstate = 0;
+	interstate = IMS_Stats;
 	ClGame.skipintermission = 0;
 	ng_state = 1;
 
@@ -991,6 +1024,11 @@ void IM_InitCooperativeStats()
 		cnt_items[i] = 0;
 		cnt_secret[i] = 0;
 		cnt_frags[i] = 0;
+	}
+
+	if (ClGame.im->bNoIntermission)
+	{
+		interstate = IMS_NoState;
 	}
 }
 
@@ -1101,9 +1139,9 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 			if (!ClGame.scores[i].bActive)
 				continue;
 
-			cnt_kills[i] = (ClGame.scores[i].killcount * 100) / ClGame.im->totalkills;
-			cnt_items[i] = (ClGame.scores[i].itemcount * 100) / ClGame.im->totalitems;
-			cnt_secret[i] = (ClGame.scores[i].secretcount * 100) / ClGame.im->totalsecret;
+			cnt_kills[i] = (ClGame.scores[i].killcount * 100) / ClGame.im->TotalKills;
+			cnt_items[i] = (ClGame.scores[i].itemcount * 100) / ClGame.im->TotalItems;
+			cnt_secret[i] = (ClGame.scores[i].secretcount * 100) / ClGame.im->TotalSecret;
 			cnt_frags[i] = FragSum(i);
 		}
 		LocalSound('weapons/rocklx');
@@ -1124,8 +1162,8 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 
 			cnt_kills[i] += 2;
 
-			if (cnt_kills[i] >= (ClGame.scores[i].killcount * 100) / ClGame.im->totalkills)
-				cnt_kills[i] = (ClGame.scores[i].killcount * 100) / ClGame.im->totalkills;
+			if (cnt_kills[i] >= (ClGame.scores[i].killcount * 100) / ClGame.im->TotalKills)
+				cnt_kills[i] = (ClGame.scores[i].killcount * 100) / ClGame.im->TotalKills;
 			else
 				stillticking = true;
 		}
@@ -1149,8 +1187,8 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 				continue;
 
 			cnt_items[i] += 2;
-			if (cnt_items[i] >= (ClGame.scores[i].itemcount * 100) / ClGame.im->totalitems)
-				cnt_items[i] = (ClGame.scores[i].itemcount * 100) / ClGame.im->totalitems;
+			if (cnt_items[i] >= (ClGame.scores[i].itemcount * 100) / ClGame.im->TotalItems)
+				cnt_items[i] = (ClGame.scores[i].itemcount * 100) / ClGame.im->TotalItems;
 			else
 				stillticking = true;
 		}
@@ -1175,9 +1213,9 @@ void IM_UpdateCooperativeStats(float DeltaTime)
 			cnt_secret[i] += 2;
 
 			if (cnt_secret[i] >=
-				(ClGame.scores[i].secretcount * 100) / ClGame.im->totalsecret)
+				(ClGame.scores[i].secretcount * 100) / ClGame.im->TotalSecret)
 				cnt_secret[i] =
-					(ClGame.scores[i].secretcount * 100) / ClGame.im->totalsecret;
+					(ClGame.scores[i].secretcount * 100) / ClGame.im->TotalSecret;
 			else
 				stillticking = true;
 		}
@@ -1249,7 +1287,7 @@ void IM_InitDeathmatchStats()
 	int i;
 	int j;
 
-	interstate = 0;
+	interstate = IMS_Stats;
 	ClGame.skipintermission = 0;
 	dm_state = 1;
 
@@ -1460,7 +1498,7 @@ void IM_UpdateDeathmatchStats(float DeltaTime)
 
 void IM_InitNextLoc()
 {
-	interstate = 1;
+	interstate = IMS_NextLoc;
 	ClGame.skipintermission = 0;
 	cnt = SHOWNEXTLOCDELAY;
 
@@ -1573,7 +1611,7 @@ void IM_UpdateNextLoc(float DeltaTime)
 
 void IM_InitNoState()
 {
-	interstate = -1;
+	interstate = IMS_NoState;
 	ClGame.skipintermission = 0;
 	cnt = 0.3;
 }
@@ -1614,7 +1652,7 @@ void IM_UpdateNoState(float DeltaTime)
 		IM_InitText();
 #else
 		CmdBuf_AddText("TeleportNewMap\n");
-		interstate = -2;
+		interstate = IMS_Done;
 #endif
 	}
 }
@@ -1648,7 +1686,7 @@ void IM_InitText()
 	if (ClGame.cl.deathmatch)
 	{
 		CmdBuf_AddText("TeleportNewMap\n");
-		interstate = -2;
+		interstate = IMS_Done;
 		return;
 	}
 
@@ -1685,14 +1723,14 @@ void IM_InitText()
 	else
 	{
 		CmdBuf_AddText("TeleportNewMap\n");
-		interstate = -2;
+		interstate = IMS_Done;
 		return;
 	}
 
 	HubText = LoadTextLump(textLump);
 	HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
 
-	interstate = 2;
+	interstate = IMS_Text;
 	intertime = 0.0;
 #ifdef FIXME
 	S_StartSong("d_read_m", P_GetCDEnd1Track(), true);
@@ -1745,7 +1783,7 @@ void IM_UpdateText(float DeltaTime)
 		else
 		{
 			CmdBuf_AddText("TeleportNewMap\n");
-			interstate = -2;
+			interstate = IMS_Done;
 		}
 	}
 }

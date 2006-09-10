@@ -43,6 +43,7 @@ enum
 	MAPINFOF_SpecialActionOpenDoor		= 0x00000200,
 	MAPINFOF_SpecialActionLowerFloor	= 0x00000400,
 	MAPINFOF_SpecialActionKillMonsters	= 0x00000800,
+	MAPINFOF_NoIntermission				= 0x00001000,
 };
 
 struct mapInfo_t

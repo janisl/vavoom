@@ -48,15 +48,23 @@ struct scores_t
 struct im_t
 {
 	VName		LeaveMap;
-	int			leavecluster;
-	VName		EnterMap;
-	int			entercluster;
+	vint32		LeaveCluster;
 	VStr		LeaveName;
+
+	VName		EnterMap;
+	vint32		EnterCluster;
 	VStr		EnterName;
-	int			totalkills;
-	int			totalitems;
-	int			totalsecret;
-	float		time;
+
+	vint32		TotalKills;
+	vint32		TotalItems;
+	vint32		TotalSecret;
+	float		Time;
+
+	enum
+	{
+		IMF_NoIntermission	= 0x01,
+	};
+	vint32		IMFlags;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

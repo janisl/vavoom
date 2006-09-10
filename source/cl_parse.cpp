@@ -554,18 +554,21 @@ static void CL_ParseIntermission(VMessage& msg)
 
 	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
 	im.LeaveMap = cl_level.MapName;
-	im.LeaveName = cl_level.LevelName;
-	im.leavecluster = linfo.Cluster;
+	im.LeaveCluster = linfo.Cluster;
+	im.LeaveName = linfo.Name;
+	im.IMFlags = 0;
+	if (linfo.Flags & MAPINFOF_NoIntermission)
+		im.IMFlags |= im_t::IMF_NoIntermission;
 
 	const mapInfo_t& einfo = P_GetMapInfo(nextmap);
 	im.EnterMap = nextmap;
+	im.EnterCluster = einfo.Cluster;
 	im.EnterName = einfo.Name;
-	im.entercluster = einfo.Cluster;
 
-	im.totalkills = cl_level.totalkills;
-	im.totalitems = cl_level.totalitems;
-	im.totalsecret = cl_level.totalsecret;
-	im.time = cl_level.time;
+	im.TotalKills = cl_level.totalkills;
+	im.TotalItems = cl_level.totalitems;
+	im.TotalSecret = cl_level.totalsecret;
+	im.Time = cl_level.time;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		if (msg.ReadByte())

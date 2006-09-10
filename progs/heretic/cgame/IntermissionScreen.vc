@@ -25,6 +25,15 @@
 
 class IntermissionScreen : Window;
 
+//	Intermission states
+enum
+{
+	IMS_Stats,
+	IMS_PrevLoc,
+	IMS_NextLoc,
+	IMS_Done
+};
+
 ClientGameBase ClGame;
 
 struct yahpt_t
@@ -87,23 +96,6 @@ void Start()
 	FindEpisodeAndMap(ClGame.im->EnterMap, &im_nextepisode, &im_nextmap);
 	IM_LoadPics();
 	IM_InitStats();
-	interstate = 0;
-	ClGame.skipintermission = false;
-	intertime = 0.0;
-	if (im_episode > 3)
-	{
-		oldintertime = 35.0;
-	}
-	else
-	{
-		oldintertime = 10.0;
-	}
-	im_sounds = 0;
-#ifdef FIXME
-	S_StartSong("MUS_INTR", P_GetCDIntermissionTrack(), true);
-#else
-	CmdBuf_AddText("music loop MUS_INTR\n");
-#endif
 }
 
 //==========================================================================
@@ -141,7 +133,7 @@ void FindEpisodeAndMap(name Name, int *epi, int *map)
 
 void Tick(float DeltaTime)
 {
-	if (interstate == 3)
+	if (interstate == IMS_Done)
 	{
 		if (cnt > 0.0)
 		{
@@ -158,27 +150,20 @@ void Tick(float DeltaTime)
 	if (oldintertime < intertime)
 	{
 		interstate++;
-		if (im_episode > 3 && interstate >= 1)
+		if (im_episode > 3 && interstate >= IMS_PrevLoc)
 		{
 			// Extended Wad levels:  skip directly to the next level
-			interstate = 3;
+			interstate = IMS_Done;
 		}
 		switch (interstate)
 		{
-		case 0:
-			oldintertime = intertime + 10.0;
-			if (im_episode > 3)
-			{
-				oldintertime = intertime + 35.0;
-			}
-			break;
-		case 1:
+		case IMS_PrevLoc:
 			oldintertime = intertime + 6.0;
 			break;
-		case 2:
+		case IMS_NextLoc:
 			oldintertime = 99999.0;
 			break;
-		case 3:
+		case IMS_Done:
 			cnt = 0.3;
 			break;
 		default:
@@ -187,20 +172,20 @@ void Tick(float DeltaTime)
 	}
 	if (ClGame.skipintermission)
 	{
-		if (interstate == 0 && intertime < 5.0)
+		if (interstate == IMS_Stats && intertime < 5.0)
 		{
 			intertime = 5.0;
 			ClGame.skipintermission = false;
 			return;
 		}
-		else if (interstate < 2 && im_episode < 4)
+		else if (interstate == IMS_PrevLoc && im_episode < 4)
 		{
-			interstate = 2;
+			interstate = IMS_NextLoc;
 			ClGame.skipintermission = false;
 			LocalSound('doors/dr1_clos');
 			return;
 		}
-		interstate = 3;
+		interstate = IMS_Done;
 		cnt = 0.3;
 		ClGame.skipintermission = false;
 		LocalSound('doors/dr1_clos');
@@ -215,11 +200,11 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	if (interstate == 3)
+	if (interstate == IMS_Done)
 	{
 		return;
 	}
-	if (oldinterstate != 2 && interstate == 2)
+	if (oldinterstate != IMS_NextLoc && interstate == IMS_NextLoc)
 	{
 		LocalSound('plats/pt1_stop');
 	}
@@ -229,7 +214,7 @@ void DrawWindow(GC gc)
 
 	switch (interstate)
 	{
-	case 0:	// draw stats
+	case IMS_Stats:	// draw stats
 		if (ClGame.cl.maxclients == 1)
 			IM_DrawSingleStats();
 		else if (!ClGame.cl.deathmatch)
@@ -237,19 +222,19 @@ void DrawWindow(GC gc)
 		else
 			IM_DrawDMStats();
 		break;
-	case 1:	// leaving old level
+	case IMS_PrevLoc:	// leaving old level
 		if (im_episode < 4)
 		{
 			IM_DrawOldLevel();
 		}
 		break;
-	case 2:	// going to the next level
+	case IMS_NextLoc:	// going to the next level
 		if (im_episode < 4)
 		{
 			IM_DrawYAH();
 		}
 		break;
-	case 3:	// waiting before going to the next level
+	case IMS_Done:	// waiting before going to the next level
 		break;
 	}
 }
@@ -308,7 +293,7 @@ void IM_UnloadPics()
 
 void IM_DrawBackground()
 {
-	if (interstate == 0)
+	if (interstate == IMS_Stats)
 	{
 		R_FillRectWithFlat(0, 0, 640, 480, 'floor16');
 	}
@@ -338,7 +323,14 @@ void IM_InitStats()
 
 	if (ClGame.cl.maxclients == 1)
 	{
-		time = ftoi(ClGame.im->time);
+		if (ClGame.im->bNoIntermission)
+		{
+			interstate = IMS_Done;
+			cnt = 0.01;
+			return;
+		}
+
+		time = ftoi(ClGame.im->Time);
 		hours = time / 3600;
 		time -= hours * 3600;
 		minutes = time / 60;
@@ -347,6 +339,13 @@ void IM_InitStats()
 	}
 	else if (!ClGame.cl.deathmatch)
 	{
+		if (ClGame.im->bNoIntermission)
+		{
+			interstate = IMS_Done;
+			cnt = 0.01;
+			return;
+		}
+
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
 			killPercent[i] = 0;
@@ -354,20 +353,20 @@ void IM_InitStats()
 			secretPercent[i] = 0;
 			if (ClGame.scores[i].bActive)
 			{
-				if (ClGame.im->totalkills)
+				if (ClGame.im->TotalKills)
 				{
 					killPercent[i] =
-						ClGame.scores[i].killcount * 100 / ClGame.im->totalkills;
+						ClGame.scores[i].killcount * 100 / ClGame.im->TotalKills;
 				}
-				if (ClGame.im->totalitems)
+				if (ClGame.im->TotalItems)
 				{
 					bonusPercent[i] =
-						ClGame.scores[i].itemcount * 100 / ClGame.im->totalitems;
+						ClGame.scores[i].itemcount * 100 / ClGame.im->TotalItems;
 				}
-				if (ClGame.im->totalsecret)
+				if (ClGame.im->TotalSecret)
 				{
 					secretPercent[i] =
-						ClGame.scores[i].secretcount * 100 / ClGame.im->totalsecret;
+						ClGame.scores[i].secretcount * 100 / ClGame.im->TotalSecret;
 				}
 			}
 		}
@@ -414,6 +413,24 @@ void IM_InitStats()
 			slaughterboy = 0;
 		}
 	}
+
+	interstate = IMS_Stats;
+	ClGame.skipintermission = false;
+	intertime = 0.0;
+	if (im_episode > 3)
+	{
+		oldintertime = 35.0;
+	}
+	else
+	{
+		oldintertime = 10.0;
+	}
+	im_sounds = 0;
+#ifdef FIXME
+	S_StartSong("MUS_INTR", P_GetCDIntermissionTrack(), true);
+#else
+	CmdBuf_AddText("music loop MUS_INTR\n");
+#endif
 }
 
 //========================================================================
@@ -452,7 +469,7 @@ void IM_DrawSingleStats()
 	T_SetDist(1, 1);
 	T_DrawText(362, 205, va("%d", ClGame.scores[0].killcount));
 	T_DrawText(397, 205, "/");
-	T_DrawText(410, 205, va("%d", ClGame.im->totalkills));
+	T_DrawText(410, 205, va("%d", ClGame.im->TotalKills));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 2.0)
@@ -470,7 +487,7 @@ void IM_DrawSingleStats()
 	T_SetDist(1, 1);
 	T_DrawText(362, 230, va("%d", ClGame.scores[0].itemcount));
 	T_DrawText(397, 230, "/");
-	T_DrawText(410, 230, va("%d", ClGame.im->totalitems));
+	T_DrawText(410, 230, va("%d", ClGame.im->TotalItems));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 3.0)
@@ -488,7 +505,7 @@ void IM_DrawSingleStats()
 	T_SetDist(1, 1);
 	T_DrawText(362, 255, va("%d", ClGame.scores[0].secretcount));
 	T_DrawText(397, 255, "/");
-	T_DrawText(410, 255, va("%d", ClGame.im->totalsecret));
+	T_DrawText(410, 255, va("%d", ClGame.im->TotalSecret));
 	T_SetDist(-1, 1);
 	T_SetShadow(false);
 	if (intertime < 5.0)
@@ -777,7 +794,7 @@ void IM_DrawYAH()
 			YAHspot[(im_episode - 1) * 9 + 8].y * 480 / 200,
 			patchBEENTHERE);
 	}
-	if (!(ftoi(32.0 * intertime) & 16) || interstate == 3)
+	if (!(ftoi(32.0 * intertime) & 16) || interstate == IMS_Done)
 	{
 		// draw the destination 'X'
 		R_DrawPic(YAHspot[(im_nextepisode - 1) * 9 + im_nextmap - 1].x * 2,

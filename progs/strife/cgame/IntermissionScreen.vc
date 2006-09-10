@@ -35,6 +35,11 @@ ClientGameBase ClGame;
 
 void Start()
 {
+	if (!ClGame.cl.deathmatch && !ClGame.im->bNoIntermission)
+	{
+		print("Intermission stats are not yet implemented");
+	}
+	CmdBuf_AddText("TeleportNewMap\n");
 }
 
 //==========================================================================

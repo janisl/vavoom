@@ -25,6 +25,13 @@
 
 class IntermissionScreen : Window;
 
+enum
+{
+	IMS_Stats,
+	IMS_Text,
+	IMS_Done
+};
+
 ClientGameBase ClGame;
 
 const float TALLY_EFFECT_TIME	= 0.625;
@@ -76,13 +83,10 @@ void Start()
 {
 	IM_InitStats();
 	IM_LoadPics();
-	interstate = 0;
-	ClGame.skipintermission = false;
-	intertime = 0.0;
 
 	if (!ClGame.cl.deathmatch && !HubCount)
 	{
-		interstate = 1;
+		interstate = IMS_Done;
 		cnt = 0.3;
 	}
 }
@@ -95,7 +99,7 @@ void Start()
 
 void Tick(float DeltaTime)
 {
-	if (interstate)
+	if (interstate == IMS_Done)
 	{
 		if (cnt > 0.0)
 		{
@@ -111,7 +115,7 @@ void Tick(float DeltaTime)
 	intertime += DeltaTime;
 	if (ClGame.skipintermission || (!ClGame.cl.deathmatch && !HubCount))
 	{
-		interstate = 1;
+		interstate = IMS_Done;
 		cnt = 0.3;
 		ClGame.skipintermission = false;
 	}
@@ -125,23 +129,19 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	if (interstate)
+	if (interstate == IMS_Done)
 	{
 		return;
 	}
 
-	gc.DrawFullScreenPic(patchINTERPIC);
+	switch (interstate)
+	{
+	case IMS_Stats:
+		IM_DrawDeathTally(gc);
+		break;
 
-	if (!ClGame.cl.deathmatch)
-	{
-		if (HubCount)
-		{
-			IM_DrawHubText();
-		}
-	}
-	else
-	{
-		IM_DrawDeathTally();
+	case IMS_Text:
+		IM_DrawHubText(gc);
 	}
 }
 
@@ -187,28 +187,20 @@ void IM_InitStats()
 	int posnum;
 	int slaughtercount;
 	int playercount;
-	name msgLumpName;
 
+	ClGame.skipintermission = false;
+	intertime = 0.0;
 	if (!ClGame.cl.deathmatch)
 	{
-		HubCount = 0.0;
-		if (ClGame.im->leavecluster != ClGame.im->entercluster)
+		if (!ClGame.im->bNoIntermission)
 		{
-			if (ClGame.im->leavecluster >= 1 && ClGame.im->leavecluster <= 5)
-			{
-				msgLumpName = ClusMsgLumpNames[ClGame.im->leavecluster - 1];
-				HubText = LoadTextLump(msgLumpName);
-				HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
-#ifdef FIXME
-				S_StartSong("hub", P_GetCDIntermissionTrack(), true);
-#else
-				CmdBuf_AddText("music loop hub\n");
-#endif
-			}
+			print("Single player stats are not implemented");
 		}
+		IM_InitHubText();
 	}
 	else
 	{
+		interstate = IMS_Stats;
 		slaughterboy = 0;
 		slaughterfrags = -9999;
 		posnum = 0;
@@ -253,17 +245,46 @@ void IM_InitStats()
 	}
 }
 
+//========================================================================
+//
+//  IM_InitStats
+//
+//  Initializes the stats for single player mode
+//
+//========================================================================
+
+void IM_InitHubText()
+{
+	name msgLumpName;
+
+	interstate = IMS_Text;
+	HubCount = 0.0;
+	if (ClGame.im->LeaveCluster != ClGame.im->EnterCluster)
+	{
+		if (ClGame.im->LeaveCluster >= 1 && ClGame.im->LeaveCluster <= 5)
+		{
+			msgLumpName = ClusMsgLumpNames[ClGame.im->LeaveCluster - 1];
+			HubText = LoadTextLump(msgLumpName);
+			HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
+#ifdef FIXME
+			S_StartSong("hub", P_GetCDIntermissionTrack(), true);
+#else
+			CmdBuf_AddText("music loop hub\n");
+#endif
+		}
+	}
+}
+
 //===========================================================================
 //
 //  IM_DrawHubText
 //
 //===========================================================================
 
-void IM_DrawHubText()
+void IM_DrawHubText(GC gc)
 {
-	int count;
-
-	count = ftoi((intertime - 0.3) / TextSpeed);
+	gc.DrawFullScreenPic(patchINTERPIC);
+	int count = ftoi((intertime - 0.3) / TextSpeed);
 	if (count < 0)
 	{
 		count = 0;
@@ -325,7 +346,7 @@ void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 //
 //========================================================================
 
-void IM_DrawDeathTally()
+void IM_DrawDeathTally(GC gc)
 {
 	int i, j;
 	float xPos, yPos;
@@ -334,6 +355,7 @@ void IM_DrawDeathTally()
 	int x, y;
 	bool bold;
 
+	gc.DrawFullScreenPic(patchINTERPIC);
 	R_DrawPic(TALLY_TOP_X, TALLY_TOP_Y, tallytop);
 	R_DrawPic(TALLY_LEFT_X, TALLY_LEFT_Y, tallylft);
 	if (intertime < TALLY_EFFECT_TIME)

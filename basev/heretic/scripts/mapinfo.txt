@@ -47,6 +47,7 @@ MAP E1M8 "HELL'S MAW"
 next E1M1
 SKY1 SKY1 0
 Music "MUS_E1M8"
+nointermission
 ironlichspecial
 specialaction_lowerfloor
 
@@ -103,6 +104,7 @@ MAP E2M8 "THE PORTALS OF CHAOS"
 next E2M1
 SKY1 SKY2 0
 Music "MUS_E2M8"
+nointermission
 minotaurspecial
 specialaction_lowerfloor
 specialaction_killmonsters
@@ -160,6 +162,7 @@ MAP E3M8 "D'SPARIL'S KEEP"
 next E3M1
 SKY1 SKY3 0
 Music "MUS_E1M9"
+nointermission
 dsparilspecial
 specialaction_lowerfloor
 specialaction_killmonsters
@@ -217,6 +220,7 @@ MAP E4M8 "SHATTERED BRIDGE"
 next E4M1
 SKY1 SKY1 0
 Music "MUS_E1M8"
+nointermission
 ironlichspecial
 specialaction_lowerfloor
 specialaction_killmonsters
@@ -273,6 +277,7 @@ MAP E5M8 "FIELD OF JUDGEMENT"
 next E5M1
 SKY1 SKY3 0
 Music "MUS_E2M8"
+nointermission
 minotaurspecial
 specialaction_lowerfloor
 specialaction_killmonsters

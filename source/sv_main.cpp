@@ -1734,13 +1734,6 @@ static void G_DoCompleted()
 		}
 	}
 
-	if (!deathmatch && old_info.Cluster &&
-		old_info.Cluster == new_info.Cluster)
-	{
-		GCmdBuf << "TeleportNewMap\n";
-		return;
-	}
-
 	sv_reliable << (byte)svc_intermission
 				<< *sv_next_map;
 	for (i = 0; i < MAXPLAYERS; i++)

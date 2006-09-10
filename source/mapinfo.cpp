@@ -208,6 +208,11 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 		info->Gravity = DefaultMap.Gravity;
 		info->Flags = DefaultMap.Flags;
 
+		if (HexenMode)
+		{
+			info->Flags |= MAPINFOF_NoIntermission;
+		}
+
 		// Map name must follow the number
 		sc->ExpectString();
 		info->Name = sc->String;
@@ -367,6 +372,14 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 		else if (sc->Check("specialaction_killmonsters"))
 		{
 			info->Flags |= MAPINFOF_SpecialActionKillMonsters;
+		}
+		else if (sc->Check("intermission"))
+		{
+			info->Flags &= ~MAPINFOF_NoIntermission;
+		}
+		else if (sc->Check("nointermission"))
+		{
+			info->Flags |= MAPINFOF_NoIntermission;
 		}
 		else if (sc->Check("cd_start_track"))
 		{
