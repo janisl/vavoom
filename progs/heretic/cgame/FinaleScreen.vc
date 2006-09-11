@@ -25,20 +25,12 @@
 
 class FinaleScreen : Window;
 
-const float TEXTSPEED	= 0.1;
-const float TEXTWAIT	= 7.0;
-
 ClientGameBase ClGame;
 
 int f_episode;
 int f_map;
 
-int FinaleStage;
 float FinaleTime;
-float FinaleEndTime;
-name FinaleFlat;
-
-string FinaleText;
 
 int fpage1;
 int fpage2;
@@ -51,32 +43,31 @@ int fpage2;
 
 void StartFinale()
 {
-	FinaleStage = 0;
-	FinaleTime = 0.0;
-
 	FindEpisodeAndMap(ClGame.level->MapName, &f_episode, &f_map);
 
+	FinaleTime = 0.0;
 	switch (f_episode)
 	{
 	case 1:
-		FinaleFlat = 'floor25';
-		F_GetFinaleText('fin1text');
+		if (!WadLumpPresent('e2m1'))
+		{
+			fpage1 = R_RegisterPic('order');
+		}
+		else
+		{
+			fpage1 = R_RegisterPic('credit');
+		}
 		break;
 	case 2:
-		FinaleFlat = 'flathuh1';
-		F_GetFinaleText('fin2text');
+		fpage1 = R_RegisterPicPal('e2end', 'e2pal');
 		break;
 	case 3:
-		FinaleFlat = 'fltwawa2';
-		F_GetFinaleText('fin3text');
+		fpage1 = R_RegisterPic('final1');
+		fpage2 = R_RegisterPic('final2');
 		break;
-	case 4:
-		FinaleFlat = 'floor28';
-		F_GetFinaleText('fin4text');
-		break;
+	case 4:	// Just show credits screen for extended episodes
 	case 5:
-		FinaleFlat = 'floor08';
-		F_GetFinaleText('fin5text');
+		fpage1 = R_RegisterPic('credit');
 		break;
 	}
 
@@ -96,36 +87,6 @@ void StartFinale()
 void Tick(float DeltaTime)
 {
 	FinaleTime += DeltaTime;
-
-	if (!FinaleStage && FinaleTime > FinaleEndTime)
-	{
-		FinaleTime = 0.0;
-		FinaleStage = 1;
-		switch (f_episode)
-		{
-		case 1:
-			if (!WadLumpPresent('e2m1'))
-			{
-				fpage1 = R_RegisterPic('order');
-			}
-			else
-			{
-				fpage1 = R_RegisterPic('credit');
-			}
-			break;
-		case 2:
-			fpage1 = R_RegisterPicPal('e2end', 'e2pal');
-			break;
-		case 3:
-			fpage1 = R_RegisterPic('final1');
-			fpage2 = R_RegisterPic('final2');
-			break;
-		case 4:	// Just show credits screen for extended episodes
-		case 5:
-			fpage1 = R_RegisterPic('credit');
-			break;
-		}
-	}
 }
 
 //==========================================================================
@@ -136,12 +97,6 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	if (!FinaleStage)
-	{
-		F_TextWrite();
-		return;
-	}
-
 	switch (f_episode)
 	{
 	case 3:
@@ -178,45 +133,6 @@ void FindEpisodeAndMap(name Name, int *epi, int *map)
 	}
 	*epi = 4;
 	*map = 1;
-}
-
-//==========================================================================
-//
-//  F_GetFinaleText
-//
-//==========================================================================
-
-void F_GetFinaleText(name msgLumpName)
-{
-	FinaleText = LoadTextLump(msgLumpName);
-	FinaleEndTime = itof(strlen(FinaleText)) * TEXTSPEED + TEXTWAIT;
-}
-
-//===========================================================================
-//
-//  F_TextWrite
-//
-//===========================================================================
-
-void F_TextWrite()
-{
-	int count;
-
-	// erase the entire screen to a tiled background
-	R_FillRectWithFlat(0, 0, 640, 480, FinaleFlat);
-
-	// draw some of the text onto the screen
-	count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
-	if (count < 0)
-		count = 0;
-	if (count > strlen(FinaleText))
-		count = strlen(FinaleText);
-
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
-	T_SetDist(-1, -1);
-	T_DrawText(180, 145, substr(FinaleText, 0, count));
-	T_SetDist(-1, 1);
 }
 
 //==========================================================================

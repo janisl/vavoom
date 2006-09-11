@@ -186,7 +186,31 @@ bool VScriptParser::GetString()
 		ScriptPtr++;
 		while (*ScriptPtr != '\"')
 		{
-			String += *ScriptPtr++;
+			if (*ScriptPtr == '\n')
+			{
+				Line++;
+			}
+			if (*ScriptPtr == '\\')
+			{
+				ScriptPtr++;
+				if (ScriptPtr == ScriptEndPtr)
+				{
+					break;
+				}
+				switch (*ScriptPtr)
+				{
+				case '\"':
+					String += '\"';
+					break;
+				default:
+					String += *ScriptPtr;
+				}
+				ScriptPtr++;
+			}
+			else
+			{
+				String += *ScriptPtr++;
+			}
 			if (ScriptPtr == ScriptEndPtr)
 			{
 				break;

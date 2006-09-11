@@ -1,0 +1,26 @@
+//	MAPINFO for Hexen.
+//	This one just defines clusters, the rest is in hexen.wad
+
+clusterdef 1
+hub
+exittext clus1msg
+exittextislump
+pic interpic
+
+clusterdef 2
+hub
+exittext clus2msg
+exittextislump
+pic interpic
+
+clusterdef 3
+hub
+exittext clus3msg
+exittextislump
+pic interpic
+
+clusterdef 4
+hub
+exittext clus4msg
+exittextislump
+pic interpic

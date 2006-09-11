@@ -61,6 +61,7 @@ EXTRA_DIST = \
 	hexen/palette.pcx \
 	hexen/basepak.ls.in \
 	hexen/scripts/animdefs.txt \
+	hexen/scripts/mapinfo.txt \
 	hexen/scripts/skyboxes.txt \
 	hexen/scripts/sndinfo.txt \
 	hexen/scripts/terrains.txt \

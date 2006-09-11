@@ -1094,12 +1094,20 @@ struct im_t
 	int		EnterCluster;
 	string	EnterName;
 
+	string	Text;
+	name	TextFlat;
+	name	TextPic;
+	name	TextMusic;
+	int		TextCDTrack;
+	int		TextCDId;
+
 	int		TotalKills;
 	int		TotalItems;
 	int		TotalSecret;
 	float	Time;
 
 	bool	bNoIntermission;
+	bool	bTextIsLump;
 };
 
 struct picinfo_t

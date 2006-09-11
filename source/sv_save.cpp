@@ -1158,8 +1158,9 @@ void SV_MapTeleport(VName mapname)
 	{
 		const mapInfo_t& old_info = P_GetMapInfo(level.MapName);
 		const mapInfo_t& new_info = P_GetMapInfo(mapname);
-		//	All maps in cluster 0 are treated as in fifferent clusters
-		if (old_info.Cluster && old_info.Cluster == new_info.Cluster)
+		//	All maps in cluster 0 are treated as in different clusters.
+		if (old_info.Cluster && old_info.Cluster == new_info.Cluster &&
+			(P_GetClusterDef(old_info.Cluster)->Flags & CLUSTERF_Hub))
 		{
 			// Same cluster - save map without saving player mobjs
 			SV_SaveMap(BASE_SLOT, false);

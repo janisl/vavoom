@@ -1,6 +1,7 @@
 ; EPISODE 1 - THE CITY OF THE DAMNED
 
 MAP E1M1 "THE DOCKS"
+cluster 1
 next E1M2
 secret E1M9
 SKY1 SKY1 0
@@ -8,43 +9,50 @@ Music "MUS_E1M1"
 cdtrack 8
 
 MAP E1M2 "THE DUNGEONS"
+cluster 1
 next E1M3
 secret E1M9
 SKY1 SKY1 0
 Music "MUS_E1M2"
 
 MAP E1M3 "THE GATEHOUSE"
+cluster 1
 next E1M4
 secret E1M9
 SKY1 SKY1 0
 Music "MUS_E1M3"
 
 MAP E1M4 "THE GUARD TOWER"
+cluster 1
 next E1M5
 secret E1M9
 SKY1 SKY1 0
 Music "MUS_E1M4"
 
 MAP E1M5 "THE CITADEL"
+cluster 1
 next E1M6
 secret E1M9
 SKY1 SKY1 0
 Music "MUS_E1M5"
 
 MAP E1M6 "THE CATHEDRAL"
+cluster 1
 next E1M7
 secret E1M9
 SKY1 SKY1 0
 Music "MUS_E1M6"
 
 MAP E1M7 "THE CRYPTS"
+cluster 1
 next E1M8
 secret E1M9
 SKY1 SKY1 0
 Music "MUS_E1M7"
 
 MAP E1M8 "HELL'S MAW"
-next E1M1
+cluster 1
+next EndGame1
 SKY1 SKY1 0
 Music "MUS_E1M8"
 nointermission
@@ -52,6 +60,7 @@ ironlichspecial
 specialaction_lowerfloor
 
 MAP E1M9 "THE GRAVEYARD"
+cluster 1
 next E1M1
 SKY1 SKY1 0
 Music "MUS_E1M9"
@@ -59,49 +68,57 @@ Music "MUS_E1M9"
 ; EPISODE 2 - HELL'S MAW
 
 MAP E2M1 "THE CRATER"
+cluster 2
 next E2M2
 secret E2M9
 SKY1 SKY2 0
 Music "MUS_E2M1"
 
 MAP E2M2 "THE LAVA PITS"
+cluster 2
 next E2M3
 secret E2M9
 SKY1 SKY2 0
 Music "MUS_E2M2"
 
 MAP E2M3 "THE RIVER OF FIRE"
+cluster 2
 next E2M4
 secret E2M9
 SKY1 SKY2 0
 Music "MUS_E2M3"
 
 MAP E2M4 "THE ICE GROTTO"
+cluster 2
 next E2M5
 secret E2M9
 SKY1 SKY2 0
 Music "MUS_E2M4"
 
 MAP E2M5 "THE CATACOMBS"
+cluster 2
 next E2M6
 secret E2M9
 SKY1 SKY2 0
 Music "MUS_E1M4"
 
 MAP E2M6 "THE LABYRINTH"
+cluster 2
 next E2M7
 secret E2M9
 SKY1 SKY2 0
 Music "MUS_E2M6"
 
 MAP E2M7 "THE GREAT HALL"
+cluster 2
 next E2M8
 secret E2M9
 SKY1 SKY2 0
 Music "MUS_E2M7"
 
 MAP E2M8 "THE PORTALS OF CHAOS"
-next E2M1
+cluster 2
+next EndGame2
 SKY1 SKY2 0
 Music "MUS_E2M8"
 nointermission
@@ -110,6 +127,7 @@ specialaction_lowerfloor
 specialaction_killmonsters
 
 MAP E2M9 "THE GLACIER"
+cluster 2
 next E2M1
 SKY1 SKY2 0
 Music "MUS_E2M9"
@@ -117,49 +135,57 @@ Music "MUS_E2M9"
 ; EPISODE 3 - THE DOME OF D'SPARIL
 
 MAP E3M1 "THE STOREHOUSE"
+cluster 3
 next E3M2
 secret E3M9
 SKY1 SKY3 0
 Music "MUS_E1M1"
 
 MAP E3M2 "THE CESSPOOL"
+cluster 3
 next E3M3
 secret E3M9
 SKY1 SKY3 0
 Music "MUS_E3M2"
 
 MAP E3M3 "THE CONFLUENCE"
+cluster 3
 next E3M4
 secret E3M9
 SKY1 SKY3 0
 Music "MUS_E3M3"
 
 MAP E3M4 "THE AZURE FORTRESS"
+cluster 3
 next E3M5
 secret E3M9
 SKY1 SKY3 0
 Music "MUS_E1M6"
 
 MAP E3M5 "THE OPHIDIAN LAIR"
+cluster 3
 next E3M6
 secret E3M9
 SKY1 SKY3 0
 Music "MUS_E1M3"
 
 MAP E3M6 "THE HALLS OF FEAR"
+cluster 3
 next E3M7
 secret E3M9
 SKY1 SKY3 0
 Music "MUS_E1M2"
 
 MAP E3M7 "THE CHASM"
+cluster 3
 next E3M8
 secret E3M9
 SKY1 SKY3 0
 Music "MUS_E1M5"
 
 MAP E3M8 "D'SPARIL'S KEEP"
-next E3M1
+cluster 3
+next EndGame3
 SKY1 SKY3 0
 Music "MUS_E1M9"
 nointermission
@@ -168,6 +194,7 @@ specialaction_lowerfloor
 specialaction_killmonsters
 
 MAP E3M9 "THE AQUIFER"
+cluster 3
 next E3M1
 SKY1 SKY3 0
 Music "MUS_E2M6"
@@ -175,49 +202,57 @@ Music "MUS_E2M6"
 ; EPISODE 4: THE OSSUARY
 
 MAP E4M1 "CATAFALQUE"
+cluster 4
 next E4M2
 secret E4M9
 SKY1 SKY1 0
 Music "MUS_E1M6"
 
 MAP E4M2 "BLOCKHOUSE"
+cluster 4
 next E4M3
 secret E4M9
 SKY1 SKY1 0
 Music "MUS_E1M2"
 
 MAP E4M3 "AMBULATORY"
+cluster 4
 next E4M4
 secret E4M9
 SKY1 SKY1 0
 Music "MUS_E1M3"
 
 MAP E4M4 "SEPULCHER"
+cluster 4
 next E4M5
 secret E4M9
 SKY1 SKY1 0
 Music "MUS_E1M4"
 
 MAP E4M5 "GREAT STAIR"
+cluster 4
 next E4M6
 secret E4M9
 SKY1 SKY1 0
 Music "MUS_E1M5"
 
 MAP E4M6 "HALLS OF THE APOSTATE"
+cluster 4
 next E4M7
 secret E4M9
 SKY1 SKY1 0
 Music "MUS_E1M1"
 
 MAP E4M7 "RAMPARTS OF PERDITION"
+cluster 4
 next E4M8
 secret E4M9
 SKY1 SKY1 0
 Music "MUS_E1M7"
 
 MAP E4M8 "SHATTERED BRIDGE"
-next E4M1
+cluster 4
+next EndGame4
 SKY1 SKY1 0
 Music "MUS_E1M8"
 nointermission
@@ -226,6 +261,7 @@ specialaction_lowerfloor
 specialaction_killmonsters
 
 MAP E4M9 "MAUSOLEUM"
+cluster 4
 next E4M1
 SKY1 SKY1 0
 Music "MUS_E1M9"
@@ -233,48 +269,56 @@ Music "MUS_E1M9"
 ; EPISODE 5: THE STAGNANT DEMESNE
 
 MAP E5M1 "OCHRE CLIFFS"
+cluster 5
 next E5M2
 secret E5M9
 SKY1 SKY3 0
 Music "MUS_E2M1"
 
 MAP E5M2 "RAPIDS"
+cluster 5
 next E5M3
 secret E5M9
 SKY1 SKY3 0
 Music "MUS_E2M2"
 
 MAP E5M3 "QUAY"
+cluster 5
 next E5M4
 secret E5M9
 SKY1 SKY3 0
 Music "MUS_E2M3"
 
 MAP E5M4 "COURTYARD"
+cluster 5
 next E5M5
 secret E5M9
 SKY1 SKY3 0
 Music "MUS_E2M4"
 
 MAP E5M5 "HYDRATYR"
+cluster 5
 next E5M6
 secret E5M9
 SKY1 SKY3 0
 Music "MUS_E1M4"
 
 MAP E5M6 "COLONNADE"
+cluster 5
 next E5M7
 secret E5M9
 SKY1 SKY3 0
 Music "MUS_E2M6"
 
 MAP E5M7 "FOETID MANSE"
+cluster 5
 next E5M8
 SKY1 SKY3 0
 Music "MUS_E2M7"
 
 MAP E5M8 "FIELD OF JUDGEMENT"
-next E5M1
+cluster 5
+next EndGame5
 SKY1 SKY3 0
 Music "MUS_E2M8"
 nointermission
@@ -283,6 +327,7 @@ specialaction_lowerfloor
 specialaction_killmonsters
 
 MAP E5M9 "SKEIN OF D'SPARIL"
+cluster 5
 next E5M1
 secret E5M9
 SKY1 SKY3 0
@@ -308,4 +353,117 @@ Music "MUS_E1M6"
 ;Music "MUS_TITL"
 ;Music "MUS_INTR"
 ;Music "MUS_CPTD"
-CD_TITLE_TRACK 4
+
+clusterdef 1
+exittext "with the destruction of the iron
+liches and their minions, the last
+of the undead are cleared from this
+plane of existence.
+
+those creatures had to come from
+somewhere, though, and you have the
+sneaky suspicion that the fiery
+portal of hell's maw opens onto
+their home dimension.
+
+to make sure that more undead
+(or even worse things) don't come
+through, you'll have to seal hell's
+maw from the other side. of course
+this means you may get stuck in a
+very unfriendly world, but no one
+ever said being a Heretic was easy!"
+flat floor25
+
+clusterdef 2
+exittext "the mighty maulotaurs have proved
+to be no match for you, and as
+their steaming corpses slide to the
+ground you feel a sense of grim
+satisfaction that they have been
+destroyed.
+
+the gateways which they guarded
+have opened, revealing what you
+hope is the way home. but as you
+step through, mocking laughter
+rings in your ears.
+
+was some other force controlling
+the maulotaurs? could there be even
+more horrific beings through this
+gate? the sweep of a crystal dome
+overhead where the sky should be is
+certainly not a good sign...."
+flat flathuh1
+
+clusterdef 3
+exittext "the death of d'sparil has loosed
+the magical bonds holding his
+creatures on this plane, their
+dying screams overwhelming his own
+cries of agony.
+
+your oath of vengeance fulfilled,
+you enter the portal to your own
+world, mere moments before the dome
+shatters into a million pieces.
+
+but if d'sparil's power is broken
+forever, why don't you feel safe?
+was it that last shout just before
+his death, the one that sounded
+like a curse? or a summoning? you
+can't really be sure, but it might
+just have been a scream.
+
+then again, what about the other
+serpent riders?"
+flat fltwawa2
+
+clusterdef 4
+exittext "you thought you would return to your
+own world after d'sparil died, but
+his final act banished you to his
+own plane. here you entered the
+shattered remnants of lands
+conquered by d'sparil. you defeated
+the last guardians of these lands,
+but now you stand before the gates
+to d'sparil's stronghold. until this
+moment you had no doubts about your
+ability to face anything you might
+encounter, but beyond this portal
+lies the very heart of the evil
+which invaded your world. d'sparil
+might be dead, but the pit where he
+was spawned remains. now you must
+enter that pit in the hopes of
+finding a way out. and somewhere,
+in the darkest corner of d'sparil's
+demesne, his personal bodyguards
+await your arrival ..."
+flat floor28
+
+clusterdef 5
+exittext "as the final maulotaur bellows his
+death-agony, you realize that you
+have never come so close to your own
+destruction. not even the fight with
+d'sparil and his disciples had been
+this desperate. grimly you stare at
+the gates which open before you,
+wondering if they lead home, or if
+they open onto some undreamed-of
+horror. you find yourself wondering
+if you have the strength to go on,
+if nothing but death and pain await
+you. but what else can you do, if
+the will to fight is gone? can you
+force yourself to continue in the
+face of such despair? do you have
+the courage? you find, in the end,
+that it is not within you to
+surrender without a fight. eyes
+wide, you go to meet your fate."
+flat floor08

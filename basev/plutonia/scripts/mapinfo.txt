@@ -1,40 +1,48 @@
 map MAP01 "congo"
+cluster 5
 next MAP02
 secret MAP31
 sky1 SKY1 0
 music D_runnin
 
 map MAP02 "well of souls"
+cluster 5
 next MAP03
 secret MAP31
 sky1 SKY1 0
 music D_stalks
 
 map MAP03 "aztec"
+cluster 5
 next MAP04
 secret MAP31
 sky1 SKY1 0
 music D_countd
 
 map MAP04 "caged"
+cluster 5
 next MAP05
 secret MAP31
 sky1 SKY1 0
 music D_betwee
 
 map MAP05 "ghost town"
+cluster 5
 next MAP06
 secret MAP31
 sky1 SKY1 0
 music D_doom
 
 map MAP06 "baron's lair"
+cluster 5
 next MAP07
 secret MAP31
 sky1 SKY1 0
 music D_the_da
 
+;------------------------------------------------------
 map MAP07 "caughtyard"
+cluster 6
 next MAP08
 secret MAP31
 sky1 SKY1 0
@@ -42,24 +50,28 @@ music D_shawn
 map07special
 
 map MAP08 "realm"
+cluster 6
 next MAP09
 secret MAP31
 sky1 SKY1 0
 music D_ddtblu
 
 map MAP09 "abattoire"
+cluster 6
 next MAP10
 secret MAP31
 sky1 SKY1 0
 music D_in_cit
 
 map MAP10 "onslaught"
+cluster 6
 next MAP11
 secret MAP31
 sky1 SKY1 0
 music D_dead
 
 map MAP11 "hunted"
+cluster 6
 next MAP12
 secret MAP31
 sky1 SKY1 0
@@ -67,54 +79,63 @@ music D_stlks2
 
 ;------------------------------------------------------
 map MAP12 "speed"
+cluster 7
 next MAP13
 secret MAP31
 sky1 SKY2 0
 music D_theda2
 
 map MAP13 "the crypt"
+cluster 7
 next MAP14
 secret MAP31
 sky1 SKY2 0
 music D_doom2
 
 map MAP14 "genesis"
+cluster 7
 next MAP15
 secret MAP31
 sky1 SKY2 0
 music D_ddtbl2
 
 map MAP15 "the twilight"
+cluster 7
 next MAP16
 secret MAP31
 sky1 SKY2 0
 music D_runni2
 
 map MAP16 "the omen"
+cluster 7
 next MAP17
 secret MAP31
 sky1 SKY2 0
 music D_dead2
 
 map MAP17 "compound"
+cluster 7
 next MAP18
 secret MAP31
 sky1 SKY2 0
 music D_stlks3
 
 map MAP18 "neurosphere"
+cluster 7
 next MAP19
 secret MAP31
 sky1 SKY2 0
 music D_romero
 
 map MAP19 "nme"
+cluster 7
 next MAP20
 secret MAP31
 sky1 SKY2 0
 music D_shawn2
 
 map MAP20 "the death domain"
+cluster 7
 next MAP21
 secret MAP31
 sky1 SKY2 0
@@ -122,72 +143,156 @@ music D_messag
 
 ;-------------------------------------------------------
 map MAP21 "slayer"
+cluster 8
 next MAP22
 secret MAP31
 sky1 SKY3 0
 music D_count2
 
 map MAP22 "impossible mission"
+cluster 8
 next MAP23
 secret MAP31
 sky1 SKY3 0
 music D_ddtbl3
 
 map MAP23 "tombstone"
+cluster 8
 next MAP24
 secret MAP31
 sky1 SKY3 0
 music D_ampie
 
 map MAP24 "the final frontier"
+cluster 8
 next MAP25
 secret MAP31
 sky1 SKY3 0
 music D_theda3
 
 map MAP25 "the temple of darkness"
+cluster 8
 next MAP26
 secret MAP31
 sky1 SKY3 0
 music D_adrian
 
 map MAP26 "bunker"
+cluster 8
 next MAP27
 secret MAP31
 sky1 SKY3 0
 music D_messg2
 
 map MAP27 "anti-christ"
+cluster 8
 next MAP28
 secret MAP31
 sky1 SKY3 0
 music D_romer2
 
 map MAP28 "the sewers"
+cluster 8
 next MAP29
 secret MAP31
 sky1 SKY3 0
 music D_tense
 
 map MAP29 "odyssey of noises"
+cluster 8
 next MAP30
 secret MAP31
 sky1 SKY3 0
 music D_shawn3
 
 map MAP30 "the gateway of hell"
+cluster 8
 next MAP01
 sky1 SKY3 0
 music D_openin
 
 ;------------------------------------------------------
 map MAP31 "cyberden"
+cluster 9
 next MAP32
 secret MAP32
 sky1 SKY3 0
 music D_evil
 
 map MAP32 "go 2 it"
+cluster 10
 next MAP01
 sky1 SKY3 0
 music D_ultima
+
+;------------------------------------------------------
+clusterdef 5
+exittext "You gloat over the steaming carcass of the
+Guardian.  With its death, you've wrested
+the Accelerator from the stinking claws
+of Hell.  You relax and glance around the
+room.  Damn!  There was supposed to be at
+least one working prototype, but you can't
+see it. The demons must have taken it.
+
+You must find the prototype, or all your
+struggles will have been wasted. Keep
+moving, keep fighting, keep killing.
+Oh yes, keep living, too."
+flat slime16
+music d_read_m
+
+clusterdef 6
+exittext "Even the deadly Arch-Vile labyrinth could
+not stop you, and you've gotten to the
+prototype Accelerator which is soon
+efficiently and permanently deactivated.
+
+You're good at that kind of thing."
+flat rrock14
+music d_read_m
+
+clusterdef 7
+exittext "You've bashed and battered your way into
+the heart of the devil-hive.  Time for a
+Search-and-Destroy mission, aimed at the
+Gatekeeper, whose foul offspring is
+cascading to Earth.  Yeah, he's bad. But
+you know who's worse!
+
+Grinning evilly, you check your gear, and
+get ready to give the bastard a little Hell
+of your own making!"
+flat rrock07
+music d_read_m
+
+clusterdef 8
+exittext "The Gatekeeper's evil face is splattered
+all over the place.  As its tattered corpse
+collapses, an inverted Gate forms and
+sucks down the shards of the last
+prototype Accelerator, not to mention the
+few remaining demons.  You're done. Hell
+has gone back to pounding bad dead folks
+instead of good live ones.  Remember to
+tell your grandkids to put a rocket
+launcher in your coffin. If you go to Hell
+when you die, you'll need it for some
+final cleaning-up ..."
+flat rrock17
+music d_read_m
+
+clusterdef 9
+entertext "You've found the second-hardest level we
+got. Hope you have a saved game a level or
+two previous.  If not, be prepared to die
+aplenty. For master marines only."
+flat rrock13
+music d_read_m
+
+clusterdef 10
+entertext "Betcha wondered just what WAS the hardest
+level we had ready for ya?  Now you know.
+No one gets out alive."
+flat rrock19
+music d_read_m

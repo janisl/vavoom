@@ -200,20 +200,23 @@ map MAP32 "Sanctuary"
 next MAP33
 sky1 skymnt02 0
 music D_MAP1
-cluster 1
+cluster 2
 
 map MAP33 "Town"
 next MAP34
 sky1 skymnt02 0
 music D_MAP2
-cluster 1
+cluster 2
 
 map MAP34 "Movement Base"
 next MAP32
 sky1 skymnt02 0
 music D_MAP3
-cluster 1
+cluster 2
 
 ;------------------------------------------------------
-; Non level CD tracks
-CD_TITLE_TRACK 4
+clusterdef 1
+hub
+
+clusterdef 2
+hub

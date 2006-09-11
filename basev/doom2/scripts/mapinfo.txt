@@ -1,4 +1,5 @@
 map MAP01 "entryway"
+cluster 5
 next MAP02
 secret MAP31
 SKY1 SKY1 0
@@ -6,36 +7,43 @@ Music D_runnin
 cdtrack 5
 
 map MAP02 "underhalls"
+cluster 5
 next MAP03
 secret MAP31
 SKY1 SKY1 0
 Music D_stalks
 
 map MAP03 "the gantlet"
+cluster 5
 next MAP04
 secret MAP31
 SKY1 SKY1 0
 Music D_countd
 
 map MAP04 "the focus"
+cluster 5
 next MAP05
 secret MAP31
 SKY1 SKY1 0
 Music D_betwee
 
 map MAP05 "the waste tunnels"
+cluster 5
 next MAP06
 secret MAP31
 SKY1 SKY1 0
 Music D_doom
 
 map MAP06 "the crusher"
+cluster 5
 next MAP07
 secret MAP31
 SKY1 SKY1 0
 Music D_the_da
 
+;------------------------------------------------------
 map MAP07 "dead simple"
+cluster 6
 next MAP08
 secret MAP31
 SKY1 SKY1 0
@@ -43,24 +51,28 @@ Music D_shawn
 map07special
 
 map MAP08 "tricks and traps"
+cluster 6
 next MAP09
 secret MAP31
 SKY1 SKY1 0
 Music D_ddtblu
 
 map MAP09 "the pit"
+cluster 6
 next MAP10
 secret MAP31
 SKY1 SKY1 0
 Music D_in_cit
 
 map MAP10 "refueling base"
+cluster 6
 next MAP11
 secret MAP31
 SKY1 SKY1 0
 Music D_dead
 
 map MAP11 "'o' of destruction!"
+cluster 6
 next MAP12
 secret MAP31
 SKY1 SKY1 0
@@ -68,54 +80,63 @@ Music D_stlks2
 
 ;------------------------------------------------------
 map MAP12 "the factory"
+cluster 7
 next MAP13
 secret MAP31
 SKY1 SKY2 0
 Music D_theda2
 
 map MAP13 "downtown"
+cluster 7
 next MAP14
 secret MAP31
 SKY1 SKY2 0
 Music D_doom2
 
 map MAP14 "the inmost dens"
+cluster 7
 next MAP15
 secret MAP31
 SKY1 SKY2 0
 Music D_ddtbl2
 
 map MAP15 "industrial zone"
+cluster 7
 next MAP16
 secret MAP31
 SKY1 SKY2 0
 Music D_runni2
 
 map MAP16 "suburbs"
+cluster 7
 next MAP17
 secret MAP31
 SKY1 SKY2 0
 Music D_dead2
 
 map MAP17 "tenements"
+cluster 7
 next MAP18
 secret MAP31
 SKY1 SKY2 0
 Music D_stlks3
 
 map MAP18 "the courtyard"
+cluster 7
 next MAP19
 secret MAP31
 SKY1 SKY2 0
 Music D_romero
 
 map MAP19 "the citadel"
+cluster 7
 next MAP20
 secret MAP31
 SKY1 SKY2 0
 Music D_shawn2
 
 map MAP20 "gotcha!"
+cluster 7
 next MAP21
 secret MAP31
 SKY1 SKY2 0
@@ -123,76 +144,170 @@ Music D_messag
 
 ;-------------------------------------------------------
 map MAP21 "nirvana"
+cluster 8
 next MAP22
 secret MAP31
 SKY1 SKY3 0
 Music D_count2
 
 map MAP22 "the catacombs"
+cluster 8
 next MAP23
 secret MAP31
 SKY1 SKY3 0
 Music D_ddtbl3
 
 map MAP23 "barrels o' fun"
+cluster 8
 next MAP24
 secret MAP31
 SKY1 SKY3 0
 Music D_ampie
 
 map MAP24 "the chasm"
+cluster 8
 next MAP25
 secret MAP31
 SKY1 SKY3 0
 Music D_theda3
 
 map MAP25 "bloodfalls"
+cluster 8
 next MAP26
 secret MAP31
 SKY1 SKY3 0
 Music D_adrian
 
 map MAP26 "the abandoned mines"
+cluster 8
 next MAP27
 secret MAP31
 SKY1 SKY3 0
 Music D_messg2
 
 map MAP27 "monster condo"
+cluster 8
 next MAP28
 secret MAP31
 SKY1 SKY3 0
 Music D_romer2
 
 map MAP28 "the spirit world"
+cluster 8
 next MAP29
 secret MAP31
 SKY1 SKY3 0
 Music D_tense
 
 map MAP29 "the living end"
+cluster 8
 next MAP30
 secret MAP31
 SKY1 SKY3 0
 Music D_shawn3
 
 map MAP30 "icon of sin"
+cluster 8
 next MAP01
 SKY1 SKY3 0
 Music D_openin
 
 ;------------------------------------------------------
 map MAP31 "wolfenstein"
+cluster 9
 next MAP32
 secret MAP32
 SKY1 SKY3 0
 Music D_evil
 
 map MAP32 "grosse"
+cluster 10
 next MAP01
 SKY1 SKY3 0
 Music D_ultima
 
 ;------------------------------------------------------
-; Non level CD tracks
-CD_TITLE_TRACK 4
+clusterdef 5
+exittext "YOU HAVE ENTERED DEEPLY INTO THE INFESTED
+STARPORT. BUT SOMETHING IS WRONG. THE
+MONSTERS HAVE BROUGHT THEIR OWN REALITY
+WITH THEM, AND THE STARPORT'S TECHNOLOGY
+IS BEING SUBVERTED BY THEIR PRESENCE.
+
+AHEAD, YOU SEE AN OUTPOST OF HELL, A
+FORTIFIED ZONE. IF YOU CAN GET PAST IT,
+YOU CAN PENETRATE INTO THE HAUNTED HEART
+OF THE STARBASE AND FIND THE CONTROLLING
+SWITCH WHICH HOLDS EARTH'S POPULATION
+HOSTAGE."
+flat slime16
+music d_read_m
+
+clusterdef 6
+exittext "YOU HAVE WON! YOUR VICTORY HAS ENABLED
+HUMANKIND TO EVACUATE EARTH AND ESCAPE
+THE NIGHTMARE.  NOW YOU ARE THE ONLY
+HUMAN LEFT ON THE FACE OF THE PLANET.
+CANNIBAL MUTATIONS, CARNIVOROUS ALIENS,
+AND EVIL SPIRITS ARE YOUR ONLY NEIGHBORS.
+YOU SIT BACK AND WAIT FOR DEATH, CONTENT
+THAT YOU HAVE SAVED YOUR SPECIES.
+
+BUT THEN, EARTH CONTROL BEAMS DOWN A
+MESSAGE FROM SPACE: \"SENSORS HAVE LOCATED
+THE SOURCE OF THE ALIEN INVASION. IF YOU
+GO THERE, YOU MAY BE ABLE TO BLOCK THEIR
+ENTRY.  THE ALIEN BASE IS IN THE HEART OF
+YOUR OWN HOME CITY, NOT FAR FROM THE
+STARPORT.\" SLOWLY AND PAINFULLY YOU GET
+UP AND RETURN TO THE FRAY."
+flat rrock14
+music d_read_m
+
+clusterdef 7
+exittext "YOU ARE AT THE CORRUPT HEART OF THE CITY,
+SURROUNDED BY THE CORPSES OF YOUR ENEMIES.
+YOU SEE NO WAY TO DESTROY THE CREATURES'
+ENTRYWAY ON THIS SIDE, SO YOU CLENCH YOUR
+TEETH AND PLUNGE THROUGH IT.
+
+THERE MUST BE A WAY TO CLOSE IT ON THE
+OTHER SIDE. WHAT DO YOU CARE IF YOU'VE
+GOT TO GO THROUGH HELL TO GET TO IT?"
+flat rrock07
+music d_read_m
+
+clusterdef 8
+exittext "THE HORRENDOUS VISAGE OF THE BIGGEST
+DEMON YOU'VE EVER SEEN CRUMBLES BEFORE
+YOU, AFTER YOU PUMP YOUR ROCKETS INTO
+HIS EXPOSED BRAIN. THE MONSTER SHRIVELS
+UP AND DIES, ITS THRASHING LIMBS
+DEVASTATING UNTOLD MILES OF HELL'S
+SURFACE.
+
+YOU'VE DONE IT. THE INVASION IS OVER.
+EARTH IS SAVED. HELL IS A WRECK. YOU
+WONDER WHERE BAD FOLKS WILL GO WHEN THEY
+DIE, NOW. WIPING THE SWEAT FROM YOUR
+FOREHEAD YOU BEGIN THE LONG TREK BACK
+HOME. REBUILDING EARTH OUGHT TO BE A
+LOT MORE FUN THAN RUINING IT WAS."
+flat rrock17
+music d_read_m
+
+clusterdef 9
+entertext "CONGRATULATIONS, YOU'VE FOUND THE SECRET
+LEVEL! LOOKS LIKE IT'S BEEN BUILT BY
+HUMANS, RATHER THAN DEMONS. YOU WONDER
+WHO THE INMATES OF THIS CORNER OF HELL
+WILL BE."
+flat rrock13
+music d_read_m
+
+clusterdef 10
+entertext "CONGRATULATIONS, YOU'VE FOUND THE
+SUPER SECRET LEVEL!  YOU'D BETTER
+BLAZE THROUGH THIS ONE!"
+flat rrock19
+music d_read_m

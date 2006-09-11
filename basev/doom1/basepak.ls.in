@@ -8,7 +8,3 @@ progs/svprogs.dat		progs/svprogs.dat
 //	Scripts
 mapinfo.txt				@srcdir@/scripts/mapinfo.txt
 sndinfo.txt				@srcdir@/scripts/sndinfo.txt
-fin1text.txt			@srcdir@/scripts/fin1text.txt
-fin2text.txt			@srcdir@/scripts/fin2text.txt
-fin3text.txt			@srcdir@/scripts/fin3text.txt
-fin4text.txt			@srcdir@/scripts/fin4text.txt

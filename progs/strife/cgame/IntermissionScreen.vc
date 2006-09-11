@@ -25,7 +25,26 @@
 
 class IntermissionScreen : Window;
 
+enum
+{
+	IMS_Stats,
+	IMS_Text,
+	IMS_Done
+};
+
 ClientGameBase ClGame;
+
+float TextSpeed;
+float TextWait;
+
+// specifies current state
+int interstate;
+float intertime;
+
+float HubCount;
+string HubText;
+name TextFlat;
+int TextPic;
 
 //==========================================================================
 //
@@ -39,7 +58,14 @@ void Start()
 	{
 		print("Intermission stats are not yet implemented");
 	}
-	CmdBuf_AddText("TeleportNewMap\n");
+	if (!ClGame.cl.deathmatch)
+	{
+		IM_InitHubText();
+	}
+	else
+	{
+		CmdBuf_AddText("TeleportNewMap\n");
+	}
 }
 
 //==========================================================================
@@ -50,6 +76,13 @@ void Start()
 
 void Tick(float DeltaTime)
 {
+	intertime += DeltaTime;
+	if (ClGame.skipintermission || intertime > HubCount)
+	{
+		CmdBuf_AddText("TeleportNewMap\n");
+		interstate = IMS_Done;
+		ClGame.skipintermission = false;
+	}
 }
 
 //==========================================================================
@@ -60,6 +93,99 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
+	if (interstate == IMS_Done)
+	{
+		return;
+	}
+
+	switch (interstate)
+	{
+	case IMS_Text:
+		IM_DrawHubText(gc);
+	}
+}
+
+//========================================================================
+//
+//  IM_InitHubText
+//
+//  Initializes the stats for single player mode
+//
+//========================================================================
+
+void IM_InitHubText()
+{
+	if (!ClGame.im->Text)
+	{
+		CmdBuf_AddText("TeleportNewMap\n");
+		interstate = IMS_Done;
+		return;
+	}
+
+	if (ClGame.im->bTextIsLump)
+	{
+		HubText = LoadTextLump(StrToName(ClGame.im->Text));
+	}
+	else
+	{
+		HubText = ClGame.im->Text;
+	}
+	HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
+
+	TextFlat = '';
+	TextPic = 0;
+	if (ClGame.im->TextPic)
+	{
+		TextPic = R_RegisterPic(ClGame.im->TextPic);
+	}
+	else if (ClGame.im->TextFlat)
+	{
+		TextFlat = ClGame.im->TextFlat;
+	}
+
+	if (ClGame.im->TextMusic)
+	{
+		CmdBuf_AddText(va("music loop %n\n", ClGame.im->TextMusic));
+	}
+	else
+	{
+		CmdBuf_AddText("music loop d_intro\n");
+	}
+	interstate = IMS_Text;
+}
+
+//===========================================================================
+//
+//  IM_DrawHubText
+//
+//===========================================================================
+
+void IM_DrawHubText(GC gc)
+{
+	if (TextPic)
+	{
+		gc.DrawFullScreenPic(TextPic);
+	}
+	else if (TextFlat)
+	{
+		R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
+	}
+	else
+	{
+		R_FillRect(0, 0, 640, 480, 0);
+	}
+	int count = ftoi((intertime - 0.3) / TextSpeed);
+	if (count < 0)
+	{
+		count = 0;
+	}
+	if (count > strlen(HubText))
+	{
+		count = strlen(HubText);
+	}
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	T_DrawText(170, 145, substr(HubText, 0, count));
 }
 
 //==========================================================================

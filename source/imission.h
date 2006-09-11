@@ -55,6 +55,13 @@ struct im_t
 	vint32		EnterCluster;
 	VStr		EnterName;
 
+	VStr		Text;
+	VName		TextFlat;
+	VName		TextPic;
+	VName		TextMusic;
+	vint32		TextCDTrack;
+	vint32		TextCDId;
+
 	vint32		TotalKills;
 	vint32		TotalItems;
 	vint32		TotalSecret;
@@ -63,6 +70,7 @@ struct im_t
 	enum
 	{
 		IMF_NoIntermission	= 0x01,
+		IMF_TextIsLump		= 0x02,
 	};
 	vint32		IMFlags;
 };

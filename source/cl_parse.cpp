@@ -552,11 +552,13 @@ static void CL_ParseIntermission(VMessage& msg)
 {
 	VName nextmap = msg.ReadString();
 
+	im.Text.Clean();
+	im.IMFlags = 0;
+
 	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
 	im.LeaveMap = cl_level.MapName;
 	im.LeaveCluster = linfo.Cluster;
 	im.LeaveName = linfo.Name;
-	im.IMFlags = 0;
 	if (linfo.Flags & MAPINFOF_NoIntermission)
 		im.IMFlags |= im_t::IMF_NoIntermission;
 
@@ -564,6 +566,44 @@ static void CL_ParseIntermission(VMessage& msg)
 	im.EnterMap = nextmap;
 	im.EnterCluster = einfo.Cluster;
 	im.EnterName = einfo.Name;
+
+	if (linfo.Cluster != einfo.Cluster)
+	{
+		if (einfo.Cluster)
+		{
+			const VClusterDef* CDef = P_GetClusterDef(einfo.Cluster);
+			if (CDef->EnterText.Length())
+			{
+				im.Text = CDef->EnterText;
+				if (CDef->Flags & CLUSTERF_EnterTextIsLump)
+				{
+					im.IMFlags |= im_t::IMF_TextIsLump;
+				}
+				im.TextFlat = CDef->Flat;
+				im.TextPic = CDef->Pic;
+				im.TextMusic = CDef->Music;
+				im.TextCDTrack = CDef->CDTrack;
+				im.TextCDId = CDef->CDId;
+			}
+		}
+		if (im.Text.Length() == 0 && linfo.Cluster)
+		{
+			const VClusterDef* CDef = P_GetClusterDef(linfo.Cluster);
+			if (CDef->ExitText.Length())
+			{
+				im.Text = CDef->ExitText;
+				if (CDef->Flags & CLUSTERF_ExitTextIsLump)
+				{
+					im.IMFlags |= im_t::IMF_TextIsLump;
+				}
+				im.TextFlat = CDef->Flat;
+				im.TextPic = CDef->Pic;
+				im.TextMusic = CDef->Music;
+				im.TextCDTrack = CDef->CDTrack;
+				im.TextCDId = CDef->CDId;
+			}
+		}
+	}
 
 	im.TotalKills = cl_level.totalkills;
 	im.TotalItems = cl_level.totalitems;

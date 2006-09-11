@@ -16,6 +16,7 @@ progs/svprogs.dat		progs/svprogs.dat
 
 //	Scripts
 animdefs.txt			@srcdir@/scripts/animdefs.txt
+mapinfo.txt				@srcdir@/scripts/mapinfo.txt
 sndinfo.txt				@srcdir@/scripts/sndinfo.txt
 skyboxes.txt			@srcdir@/scripts/skyboxes.txt
 terrains.txt			@srcdir@/scripts/terrains.txt

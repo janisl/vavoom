@@ -30,9 +30,8 @@ enum
 {
 	IMS_Stats,
 	IMS_NextLoc,
-	IMS_Text,
-
 	IMS_NoState,
+	IMS_Text,
 	IMS_Done
 };
 
@@ -77,12 +76,8 @@ const float SHOWNEXTLOCDELAY	= 4.0;
 const int NUMEPISODES		= 3;
 const int NUMMAPS			= 9;
 
-#ifdef DOOM2
-
 const float TEXTSPEED	= 0.1;
-const float TEXTWAIT	= 4.0;
-
-#endif
+const float TEXTWAIT	= 7.0;
 
 #ifndef DOOM2
 
@@ -330,10 +325,7 @@ void Start()
 	}
 	else
 	{
-		CmdBuf_AddText("TeleportNewMap\n");
-		interstate = IMS_Done;
-		ClGame.skipintermission = 0;
-		cnt = 0.01;
+		IM_InitText();
 	}
 }
 
@@ -440,14 +432,14 @@ void Tick(float DeltaTime)
 	case IMS_NextLoc:
 		IM_UpdateNextLoc(DeltaTime);
 		break;
-#else
-	case IMS_Text:
-		IM_UpdateText(DeltaTime);
-		break;
 #endif
 
 	case IMS_NoState:
 		IM_UpdateNoState(DeltaTime);
+		break;
+
+	case IMS_Text:
+		IM_UpdateText(DeltaTime);
 		break;
 
 	case IMS_Done:
@@ -490,18 +482,16 @@ void DrawWindow(GC gc)
 
 		IM_DrawNextLoc();
 		break;
-#else
-	case IMS_Text:
-		IM_DrawBackground();
-
-		IM_DrawText();
-		break;
 #endif
 
 	case IMS_NoState:
 		IM_DrawBackground();
 
 		IM_DrawNoState();
+		break;
+
+	case IMS_Text:
+		IM_DrawText(gc);
 		break;
 
 	case IMS_Done:
@@ -1648,16 +1638,9 @@ void IM_UpdateNoState(float DeltaTime)
 	if (cnt <= 0.0)
 	{
 		IM_UnloadData();
-#ifdef DOOM2
 		IM_InitText();
-#else
-		CmdBuf_AddText("TeleportNewMap\n");
-		interstate = IMS_Done;
-#endif
 	}
 }
-
-#ifdef DOOM2
 
 //==========================================================================
 //
@@ -1672,6 +1655,7 @@ float HubCount;
 string HubText;
 
 name TextFlat;
+int TextPic;
 
 //==========================================================================
 //
@@ -1681,62 +1665,57 @@ name TextFlat;
 
 void IM_InitText()
 {
-	name textLump;
-
-	if (ClGame.cl.deathmatch)
+	if (ClGame.cl.deathmatch || !ClGame.im->Text)
 	{
 		CmdBuf_AddText("TeleportNewMap\n");
 		interstate = IMS_Done;
 		return;
 	}
 
-	if (ClGame.im->LeaveMap == 'map06')
+	if (ClGame.im->bTextIsLump)
 	{
-		TextFlat = 'slime16';
-		textLump = 'fin1text';
-	}
-	else if (ClGame.im->LeaveMap == 'map11')
-	{
-		TextFlat = 'rrock14';
-		textLump = 'fin2text';
-	}
-	else if (ClGame.im->LeaveMap == 'map20')
-	{
-		TextFlat = 'rrock07';
-		textLump = 'fin3text';
-	}
-	else if (ClGame.im->LeaveMap == 'map30')
-	{
-		TextFlat = 'rrock17';
-		textLump = 'fin4text';
-	}
-	else if (ClGame.im->LeaveMap == 'map15' && ClGame.im->EnterMap == 'map31')
-	{
-		TextFlat = 'rrock13';
-		textLump = 'sec1text';
-	}
-	else if (ClGame.im->LeaveMap == 'map31' && ClGame.im->EnterMap == 'map32')
-	{
-		TextFlat = 'rrock19';
-		textLump = 'sec2text';
+		HubText = LoadTextLump(StrToName(ClGame.im->Text));
 	}
 	else
 	{
-		CmdBuf_AddText("TeleportNewMap\n");
-		interstate = IMS_Done;
-		return;
+		HubText = ClGame.im->Text;
 	}
-
-	HubText = LoadTextLump(textLump);
 	HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
+
+	TextFlat = '';
+	TextPic = 0;
+	if (ClGame.im->TextPic)
+	{
+		TextPic = R_RegisterPic(ClGame.im->TextPic);
+	}
+	else if (ClGame.im->TextFlat)
+	{
+		TextFlat = ClGame.im->TextFlat;
+	}
 
 	interstate = IMS_Text;
 	intertime = 0.0;
+
+	if (ClGame.im->TextMusic)
+	{
+		CmdBuf_AddText(va("music loop %n\n", ClGame.im->TextMusic));
+	}
+	else
+	{
+#ifdef DOOM2
 #ifdef FIXME
-	S_StartSong("d_read_m", P_GetCDEnd1Track(), true);
+		S_StartSong("d_read_m", P_GetCDEnd1Track(), true);
 #else
-	CmdBuf_AddText("music loop d_read_m\n");
+		CmdBuf_AddText("music loop d_read_m\n");
 #endif
+#else
+#ifdef FIXME
+		S_StartSong("D_VICTOR", P_GetCDEnd1Track(), true);
+#else
+		CmdBuf_AddText("music loop D_VICTOR\n");
+#endif
+#endif
+	}
 }
 
 //==========================================================================
@@ -1745,12 +1724,23 @@ void IM_InitText()
 //
 //==========================================================================
 
-void IM_DrawText()
+void IM_DrawText(GC gc)
 {
 	int count;
 
 	// erase the entire screen to a tiled background
-	R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
+	if (TextPic)
+	{
+		gc.DrawFullScreenPic(TextPic);
+	}
+	else if (TextFlat)
+	{
+		R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
+	}
+	else
+	{
+		R_FillRect(0, 0, 640, 480, 0);
+	}
 
 	// draw some of the text onto the screen
 	count = ftoi((intertime - 0.3) / TEXTSPEED);
@@ -1773,7 +1763,7 @@ void IM_DrawText()
 void IM_UpdateText(float DeltaTime)
 {
 	intertime += DeltaTime;
-	if (ClGame.skipintermission)
+	if (ClGame.skipintermission || intertime > HubCount)
 	{
 		ClGame.skipintermission = false;
 		if (ClGame.im->LeaveMap == 'map30')
@@ -1787,8 +1777,6 @@ void IM_UpdateText(float DeltaTime)
 		}
 	}
 }
-
-#endif
 
 //==========================================================================
 //

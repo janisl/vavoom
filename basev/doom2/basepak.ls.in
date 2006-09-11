@@ -7,9 +7,3 @@ progs/svprogs.dat		progs/svprogs.dat
 
 //	Scrpts
 mapinfo.txt				@srcdir@/scripts/mapinfo.txt
-fin1text.txt			@srcdir@/scripts/fin1text.txt
-fin2text.txt			@srcdir@/scripts/fin2text.txt
-fin3text.txt			@srcdir@/scripts/fin3text.txt
-fin4text.txt			@srcdir@/scripts/fin4text.txt
-sec1text.txt			@srcdir@/scripts/sec1text.txt
-sec2text.txt			@srcdir@/scripts/sec2text.txt

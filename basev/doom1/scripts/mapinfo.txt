@@ -1,47 +1,55 @@
 map E1M1 "hangar"
+cluster 1
 next E1M2
 secret E1M9
 sky1 SKY1 0
 music D_e1m1
 
 map E1M2 "nuclear plant"
+cluster 1
 next E1M3
 secret E1M9
 sky1 SKY1 0
 music D_e1m2
 
 map E1M3 "toxin refinery"
+cluster 1
 next E1M4
 secret E1M9
 sky1 SKY1 0
 music D_e1m3
 
 map E1M4 "command control"
+cluster 1
 next E1M5
 secret E1M9
 sky1 SKY1 0
 music D_e1m4
 
 map E1M5 "phobos lab"
+cluster 1
 next E1M6
 secret E1M9
 sky1 SKY1 0
 music D_e1m5
 
 map E1M6 "central processing"
+cluster 1
 next E1M7
 secret E1M9
 sky1 SKY1 0
 music D_e1m6
 
 map E1M7 "computer station"
+cluster 1
 next E1M8
 secret E1M9
 sky1 SKY1 0
 music D_e1m7
 
 map E1M8 "phobos anomaly"
-next E1M1
+cluster 1
+next EndGame1
 sky1 SKY1 0
 music D_e1m8
 nointermission
@@ -49,55 +57,64 @@ baronspecial
 specialaction_lowerfloor
 
 map E1M9 "military base"
+cluster 1
 next E1M1
 sky1 SKY1 0
 music D_e1m9
 
 ;------------------------------------------------------
 map E2M1 "deimos anomaly"
+cluster 2
 next E2M2
 secret E2M9
 sky1 SKY2 0
 music D_e2m1
 
 map E2M2 "containment area"
+cluster 2
 next E2M3
 secret E2M9
 sky1 SKY2 0
 music D_e2m2
 
 map E2M3 "refinery"
+cluster 2
 next E2M4
 secret E2M9
 sky1 SKY2 0
 music D_e2m3
 
 map E2M4 "deimos lab"
+cluster 2
 next E2M5
 secret E2M9
 sky1 SKY2 0
 music D_e2m4
 
 map E2M5 "command center"
+cluster 2
 next E2M6
 secret E2M9
 sky1 SKY2 0
 music D_e2m5
 
 map E2M6 "halls of the damned"
+cluster 2
 next E2M7
 secret E2M9
 sky1 SKY2 0
 music D_e2m6
 
 map E2M7 "spawning vats"
+cluster 2
 next E2M8
 secret E2M9
 sky1 SKY2 0
 music D_e2m7
 
 map E2M8 "tower of babel"
-next E2M1
+cluster 2
+next EndGame2
 sky1 SKY2 0
 music D_e2m8
 nointermission
@@ -105,55 +122,64 @@ cyberdemonspecial
 specialaction_exitlevel
 
 map E2M9 "fortress of mystery"
+cluster 2
 next E2M1
 sky1 SKY2 0
 music D_e2m9
 
 ;-------------------------------------------------------
 map E3M1 "hell keep"
+cluster 3
 next E3M2
 secret E3M9
 sky1 SKY3 0
 music D_e3m1
 
 map E3M2 "slough of despair"
+cluster 3
 next E3M3
 secret E3M9
 sky1 SKY3 0
 music D_e3m2
 
 map E3M3 "pandemonium"
+cluster 3
 next E3M4
 secret E3M9
 sky1 SKY3 0
 music D_e3m3
 
 map E3M4 "house of pain"
+cluster 3
 next E3M5
 secret E3M9
 sky1 SKY3 0
 music D_e3m4
 
 map E3M5 "unholy cathedral"
+cluster 3
 next E3M6
 secret E3M9
 sky1 SKY3 0
 music D_e3m5
 
 map E3M6 "mt. erebus"
+cluster 3
 next E3M7
 secret E3M9
 sky1 SKY3 0
 music D_e3m6
 
 map E3M7 "limbo"
+cluster 3
 next E3M8
 secret E3M9
 sky1 SKY3 0
 music D_e3m7
 
 map E3M8 "dis"
-next E3M1
+cluster 3
+next EndGame3
 sky1 SKY3 0
 music D_e3m8
 nointermission
@@ -161,42 +187,49 @@ spidermastermindspecial
 specialaction_exitlevel
 
 map E3M9 "warrens"
+cluster 3
 next E3M1
 sky1 SKY3 0
 music D_e3m9
 
 ;------------------------------------------------------
 map E4M1 "hell beneath"
+cluster 4
 next E4M2
 secret E4M9
 sky1 SKY4 0
 music D_e3m4
 
 map E4M2 "perfect hatred"
+cluster 4
 next E4M3
 secret E4M9
 sky1 SKY4 0
 music D_e3m2
 
 map E4M3 "sever the wicked"
+cluster 4
 next E4M4
 secret E4M9
 sky1 SKY4 0
 music D_e3m3
 
 map E4M4 "unruly evil"
+cluster 4
 next E4M5
 secret E4M9
 sky1 SKY4 0
 music D_e1m5
 
 map E4M5 "they will repent"
+cluster 4
 next E4M6
 secret E4M9
 sky1 SKY4 0
 music D_e2m7
 
 map E4M6 "against thee wickedly"
+cluster 4
 next E4M7
 secret E4M9
 sky1 SKY4 0
@@ -205,13 +238,15 @@ cyberdemonspecial
 specialaction_opendoor
 
 map E4M7 "and hell followed"
+cluster 4
 next E4M8
 secret E4M9
 sky1 SKY4 0
 music D_e2m6
 
 map E4M8 "unto the cruel"
-next E4M1
+cluster 4
+next EndGame4
 sky1 SKY4 0
 music D_e2m5
 nointermission
@@ -219,6 +254,89 @@ spidermastermindspecial
 specialaction_lowerfloor
 
 map E4M9 "fear"
+cluster 4
 next E4M1
 sky1 SKY4 0
 music D_e1m9
+
+;------------------------------------------------------
+clusterdef 1
+exittext "Once you beat the big badasses and
+clean out the moon base you're supposed
+to win, aren't you? Aren't you? Where's
+your fat reward and ticket home? What
+the hell is this? It's not supposed to
+end this way!
+
+It stinks like rotten meat, but looks
+like the lost Deimos base.  Looks like
+you're stuck on The Shores of Hell.
+The only way out is through.
+
+To continue the DOOM experience, play
+The Shores of Hell and its amazing
+sequel, Inferno!"
+flat floor4_8
+music d_victor
+
+clusterdef 2
+exittext "You've done it! The hideous cyber-
+demon lord that ruled the lost Deimos
+moon base has been slain and you
+are triumphant! But ... where are
+you? You clamber to the edge of the
+moon and look down to see the awful
+truth.
+
+Deimos floats above Hell itself!
+You've never heard of anyone escaping
+from Hell, but you'll make the bastards
+sorry they ever heard of you! Quickly,
+you rappel down to  the surface of
+Hell.
+
+Now, it's on to the final chapter of
+DOOM! -- Inferno."
+flat sflr6_1
+music d_victor
+
+clusterdef 3
+exittext "The loathsome spiderdemon that
+masterminded the invasion of the moon
+bases and caused so much death has had
+its ass kicked for all time.
+
+A hidden doorway opens and you enter.
+You've proven too tough for Hell to
+contain, and now Hell at last plays
+fair -- for you emerge from the door
+to see the green fields of Earth!
+Home at last.
+
+You wonder what's been happening on
+Earth while you were battling evil
+unleashed. It's good that no Hell-
+spawn could have come through that
+door with you ..."
+flat mflr8_4
+music d_victor
+
+clusterdef 4
+exittext "the spider mastermind must have sent forth
+its legions of hellspawn before your
+final confrontation with that terrible
+beast from hell.  but you stepped forward
+and brought forth eternal damnation and
+suffering upon the horde as a true hero
+would in the face of something so evil.
+
+besides, someone was gonna pay for what
+happened to daisy, your pet rabbit.
+
+but now, you see spread before you more
+potential pain and gibbitude as a nation
+of demons run amok among our cities.
+
+next stop, hell on earth!"
+flat mflr8_3
+music d_victor

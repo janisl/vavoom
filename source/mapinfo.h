@@ -67,6 +67,26 @@ struct mapInfo_t
 	vuint32		Flags;
 };
 
+enum
+{
+	CLUSTERF_Hub				= 0x01,
+	CLUSTERF_EnterTextIsLump	= 0x02,
+	CLUSTERF_ExitTextIsLump		= 0x04,
+};
+
+struct VClusterDef
+{
+	vint32		Cluster;
+	vint32		Flags;
+	VStr		EnterText;
+	VStr		ExitText;
+	VName		Flat;
+	VName		Pic;
+	VName		Music;
+	vint32		CDTrack;
+	vint32		CDId;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void InitMapInfo();
@@ -77,6 +97,7 @@ VName P_GetMapLumpName(int);
 VName P_TranslateMap(int);
 VName P_GetMapNameByLevelNum(int);
 void P_PutMapSongLump(int, VName);
+const VClusterDef* P_GetClusterDef(int);
 int P_GetCDStartTrack();
 int P_GetCDEnd1Track();
 int P_GetCDEnd2Track();

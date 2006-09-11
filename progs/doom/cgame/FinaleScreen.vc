@@ -35,18 +35,10 @@ ClientGameBase ClGame;
 
 #ifndef DOOM2
 
-const float TEXTSPEED	= 0.1;
-const float TEXTWAIT	= 7.0;
-
 int f_episode;
 int f_map;
 
-int FinaleStage;
 float FinaleTime;
-float FinaleEndTime;
-name FinaleFlat;
-
-string FinaleText;
 
 int fpage1;
 int fpage2;
@@ -62,31 +54,25 @@ int laststage;
 
 void StartFinale()
 {
-	FinaleStage = 0;
-	FinaleTime = 0.0;
-
 	FindEpisodeAndMap(ClGame.level->MapName, &f_episode, &f_map);
 
+	FinaleTime = 0.0;
 	switch (f_episode)
 	{
 	case 1:
-		FinaleFlat = 'floor4_8';
-		F_GetFinaleText('fin1text');
+		if (WadLumpPresent('e4m1'))
+			fpage1 = R_RegisterPic('credit');
+		else
+			fpage1 = R_RegisterPic('help2');
 		break;
 	case 2:
-		FinaleFlat = 'sflr6_1';
-		F_GetFinaleText('fin2text');
+		fpage1 = R_RegisterPic('victory2');
 		break;
 	case 3:
-		FinaleFlat = 'mflr8_4';
-		F_GetFinaleText('fin3text');
+		F_InitBunnyScroll();
 		break;
 	case 4:
-		FinaleFlat = 'mflr8_3';
-		F_GetFinaleText('fin4text');
-		break;
-	default:
-		// Ouch.
+		fpage1 = R_RegisterPic('endpic');
 		break;
 	}
 
@@ -106,30 +92,6 @@ void StartFinale()
 void Tick(float DeltaTime)
 {
 	FinaleTime += DeltaTime;
-
-	if (!FinaleStage && FinaleTime > FinaleEndTime)
-	{
-		FinaleTime = 0.0;
-		FinaleStage = 1;
-		switch (f_episode)
-		{
-		case 1:
-			if (WadLumpPresent('e4m1'))
-				fpage1 = R_RegisterPic('credit');
-			else
-				fpage1 = R_RegisterPic('help2');
-			break;
-		case 2:
-			fpage1 = R_RegisterPic('victory2');
-			break;
-		case 3:
-			F_InitBunnyScroll();
-			break;
-		case 4:
-			fpage1 = R_RegisterPic('endpic');
-			break;
-		}
-	}
 }
 
 //==========================================================================
@@ -140,12 +102,6 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	if (!FinaleStage)
-	{
-		F_TextWrite();
-		return;
-	}
-
 	if (f_episode == 3)
 	{
 		F_BunnyScroll();
@@ -165,43 +121,6 @@ void DrawWindow(GC gc)
 bool Responder(event_t * event)
 {
 	return false;
-}
-
-//==========================================================================
-//
-//  F_GetFinaleText
-//
-//==========================================================================
-
-void F_GetFinaleText(name msgLumpName)
-{
-	FinaleText = LoadTextLump(msgLumpName);
-	FinaleEndTime = itof(strlen(FinaleText)) * TEXTSPEED + TEXTWAIT;
-}
-
-//===========================================================================
-//
-//  F_TextWrite
-//
-//===========================================================================
-
-void F_TextWrite()
-{
-	int count;
-
-	// erase the entire screen to a tiled background
-	R_FillRectWithFlat(0, 0, 640, 480, FinaleFlat);
-
-	// draw some of the text onto the screen
-	count = ftoi((FinaleTime - 0.3) / TEXTSPEED);
-	if (count < 0)
-		count = 0;
-	if (count > strlen(FinaleText))
-		count = strlen(FinaleText);
-
-	T_SetFont(font_small);
-	T_SetAlign(hleft, vtop);
-	T_DrawText(170, 150, substr(FinaleText, 0, count));
 }
 
 //==========================================================================

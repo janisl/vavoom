@@ -1,40 +1,48 @@
 map MAP01 "system control"
+cluster 5
 next MAP02
 secret MAP31
 SKY1 SKY1 0
 Music D_runnin
 
 map MAP02 "human bbq"
+cluster 5
 next MAP03
 secret MAP31
 SKY1 SKY1 0
 Music D_stalks
 
 map MAP03 "power control"
+cluster 5
 next MAP04
 secret MAP31
 SKY1 SKY1 0
 Music D_countd
 
 map MAP04 "wormhole"
+cluster 5
 next MAP05
 secret MAP31
 SKY1 SKY1 0
 Music D_betwee
 
 map MAP05 "hanger"
+cluster 5
 next MAP06
 secret MAP31
 SKY1 SKY1 0
 Music D_doom
 
 map MAP06 "open season"
+cluster 5
 next MAP07
 secret MAP31
 SKY1 SKY1 0
 Music D_the_da
 
+;------------------------------------------------------
 map MAP07 "prison"
+cluster 6
 next MAP08
 secret MAP31
 SKY1 SKY1 0
@@ -42,24 +50,28 @@ Music D_shawn
 map07special
 
 map MAP08 "metal"
+cluster 6
 next MAP09
 secret MAP31
 SKY1 SKY1 0
 Music D_ddtblu
 
 map MAP09 "stronghold"
+cluster 6
 next MAP10
 secret MAP31
 SKY1 SKY1 0
 Music D_in_cit
 
 map MAP10 "redemption"
+cluster 6
 next MAP11
 secret MAP31
 SKY1 SKY1 0
 Music D_dead
 
 map MAP11 "storage facility"
+cluster 6
 next MAP12
 secret MAP31
 SKY1 SKY1 0
@@ -67,54 +79,63 @@ Music D_stlks2
 
 ;------------------------------------------------------
 map MAP12 "crater"
+cluster 7
 next MAP13
 secret MAP31
 SKY1 SKY2 0
 Music D_theda2
 
 map MAP13 "nukage processing"
+cluster 7
 next MAP14
 secret MAP31
 SKY1 SKY2 0
 Music D_doom2
 
 map MAP14 "steel works"
+cluster 7
 next MAP15
 secret MAP31
 SKY1 SKY2 0
 Music D_ddtbl2
 
 map MAP15 "dead zone"
+cluster 7
 next MAP16
 secret MAP31
 SKY1 SKY2 0
 Music D_runni2
 
 map MAP16 "deepest reaches"
+cluster 7
 next MAP17
 secret MAP31
 SKY1 SKY2 0
 Music D_dead2
 
 map MAP17 "processing area"
+cluster 7
 next MAP18
 secret MAP31
 SKY1 SKY2 0
 Music D_stlks3
 
 map MAP18 "mill"
+cluster 7
 next MAP19
 secret MAP31
 SKY1 SKY2 0
 Music D_romero
 
 map MAP19 "shipping/respawning"
+cluster 7
 next MAP20
 secret MAP31
 SKY1 SKY2 0
 Music D_shawn2
 
 map MAP20 "central processing"
+cluster 7
 next MAP21
 secret MAP31
 SKY1 SKY2 0
@@ -122,72 +143,164 @@ Music D_messag
 
 ;-------------------------------------------------------
 map MAP21 "administration center"
+cluster 8
 next MAP22
 secret MAP31
 SKY1 SKY3 0
 Music D_count2
 
 map MAP22 "habitat"
+cluster 8
 next MAP23
 secret MAP31
 SKY1 SKY3 0
 Music D_ddtbl3
 
 map MAP23 "lunar mining project"
+cluster 8
 next MAP24
 secret MAP31
 SKY1 SKY3 0
 Music D_ampie
 
 map MAP24 "quarry"
+cluster 8
 next MAP25
 secret MAP31
 SKY1 SKY3 0
 Music D_theda3
 
 map MAP25 "baron's den"
+cluster 8
 next MAP26
 secret MAP31
 SKY1 SKY3 0
 Music D_adrian
 
 map MAP26 "ballistyx"
+cluster 8
 next MAP27
 secret MAP31
 SKY1 SKY3 0
 Music D_messg2
 
 map MAP27 "mount pain"
+cluster 8
 next MAP28
 secret MAP31
 SKY1 SKY3 0
 Music D_romer2
 
 map MAP28 "heck"
+cluster 8
 next MAP29
 secret MAP31
 SKY1 SKY3 0
 Music D_tense
 
 map MAP29 "river styx"
+cluster 8
 next MAP30
 secret MAP31
 SKY1 SKY3 0
 Music D_shawn3
 
 map MAP30 "last call"
+cluster 8
 next MAP01
 SKY1 SKY3 0
 Music D_openin
 
 ;------------------------------------------------------
 map MAP31 "pharaoh"
+cluster 9
 next MAP32
 secret MAP32
 SKY1 SKY3 0
 Music D_evil
 
 map MAP32 "caribbean"
+cluster 10
 next MAP01
 SKY1 SKY3 0
 Music D_ultima
+
+;------------------------------------------------------
+clusterdef 5
+exittext "You've fought your way out of the infested
+experimental labs.   It seems that UAC has
+once again gulped it down.  With their
+high turnover, it must be hard for poor
+old UAC to buy corporate health insurance
+nowadays..
+
+Ahead lies the military complex, now
+swarming with diseased horrors hot to get
+their teeth into you. With luck, the
+complex still has some warlike ordnance
+laying around."
+flat slime16
+music d_read_m
+
+clusterdef 6
+exittext "You hear the grinding of heavy machinery
+ahead.  You sure hope they're not stamping
+out new hellspawn, but you're ready to
+ream out a whole herd if you have to.
+They might be planning a blood feast, but
+you feel about as mean as two thousand
+maniacs packed into one mad killer.
+
+You don't plan to go down easy."
+flat rrock14
+music d_read_m
+
+clusterdef 7
+exittext "The vista opening ahead looks real damn
+familiar. Smells familiar, too -- like
+fried excrement. You didn't like this
+place before, and you sure as hell ain't
+planning to like it now. The more you
+brood on it, the madder you get.
+Hefting your gun, an evil grin trickles
+onto your face. Time to take some names."
+flat rrock07
+music d_read_m
+
+clusterdef 8
+exittext "Suddenly, all is silent, from one horizon
+to the other. The agonizing echo of Hell
+fades away, the nightmare sky turns to
+blue, the heaps of monster corpses start
+to evaporate along with the evil stench
+that filled the air. Jeeze, maybe you've
+done it. Have you really won?
+
+Something rumbles in the distance.
+A blue light begins to glow inside the
+ruined skull of the demon-spitter."
+flat rrock17
+music d_read_m
+
+clusterdef 9
+entertext "What now? Looks totally different. Kind
+of like King Tut's condo. Well,
+whatever's here can't be any worse
+than usual. Can it?  Or maybe it's best
+to let sleeping gods lie.."
+flat rrock13
+music d_read_m
+
+clusterdef 10
+entertext "Time for a vacation. You've burst the
+bowels of hell and by golly you're ready
+for a break. You mutter to yourself,
+Maybe someone else can kick Hell's ass
+next time around. Ahead lies a quiet town,
+with peaceful flowing water, quaint
+buildings, and presumably no Hellspawn.
+
+As you step off the transport, you hear
+the stomp of a cyberdemon's iron shoe."
+flat rrock19
+music d_read_m

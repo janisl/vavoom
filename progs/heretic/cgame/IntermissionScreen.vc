@@ -31,8 +31,12 @@ enum
 	IMS_Stats,
 	IMS_PrevLoc,
 	IMS_NextLoc,
+	IMS_Text,
 	IMS_Done
 };
+
+const float TEXTSPEED	= 0.1;
+const float TEXTWAIT	= 7.0;
 
 ClientGameBase ClGame;
 
@@ -83,6 +87,11 @@ int im_sounds;
 float cnt;
 
 yahpt_t YAHspot[3 * 9];
+
+float HubCount;
+string HubText;
+name TextFlat;
+int TextPic;
 
 //==========================================================================
 //
@@ -153,7 +162,7 @@ void Tick(float DeltaTime)
 		if (im_episode > 3 && interstate >= IMS_PrevLoc)
 		{
 			// Extended Wad levels:  skip directly to the next level
-			interstate = IMS_Done;
+			interstate = IMS_Text;
 		}
 		switch (interstate)
 		{
@@ -162,6 +171,9 @@ void Tick(float DeltaTime)
 			break;
 		case IMS_NextLoc:
 			oldintertime = 99999.0;
+			break;
+		case IMS_Text:
+			IM_InitText();
 			break;
 		case IMS_Done:
 			cnt = 0.3;
@@ -185,10 +197,18 @@ void Tick(float DeltaTime)
 			LocalSound('doors/dr1_clos');
 			return;
 		}
-		interstate = IMS_Done;
-		cnt = 0.3;
-		ClGame.skipintermission = false;
-		LocalSound('doors/dr1_clos');
+		else if (interstate < IMS_Text)
+		{
+			IM_InitText();
+			ClGame.skipintermission = false;
+			LocalSound('doors/dr1_clos');
+		}
+		else
+		{
+			ClGame.skipintermission = false;
+			interstate = IMS_Done;
+			cnt = 0.3;
+		}
 	}
 }
 
@@ -210,11 +230,11 @@ void DrawWindow(GC gc)
 	}
 	oldinterstate = interstate;
 
-	IM_DrawBackground();
-
 	switch (interstate)
 	{
 	case IMS_Stats:	// draw stats
+		IM_DrawBackground();
+
 		if (ClGame.cl.maxclients == 1)
 			IM_DrawSingleStats();
 		else if (!ClGame.cl.deathmatch)
@@ -223,16 +243,23 @@ void DrawWindow(GC gc)
 			IM_DrawDMStats();
 		break;
 	case IMS_PrevLoc:	// leaving old level
+		IM_DrawBackground();
+
 		if (im_episode < 4)
 		{
 			IM_DrawOldLevel();
 		}
 		break;
 	case IMS_NextLoc:	// going to the next level
+		IM_DrawBackground();
+
 		if (im_episode < 4)
 		{
 			IM_DrawYAH();
 		}
+		break;
+	case IMS_Text:	// displaying text
+		IM_DrawText(gc);
 		break;
 	case IMS_Done:	// waiting before going to the next level
 		break;
@@ -325,8 +352,7 @@ void IM_InitStats()
 	{
 		if (ClGame.im->bNoIntermission)
 		{
-			interstate = IMS_Done;
-			cnt = 0.01;
+			IM_InitText();
 			return;
 		}
 
@@ -341,8 +367,7 @@ void IM_InitStats()
 	{
 		if (ClGame.im->bNoIntermission)
 		{
-			interstate = IMS_Done;
-			cnt = 0.01;
+			IM_InitText();
 			return;
 		}
 
@@ -801,6 +826,115 @@ void IM_DrawYAH()
 			YAHspot[(im_nextepisode - 1) * 9 + im_nextmap - 1].y * 480 / 200,
 			patchGOINGTHERE);
 	}
+}
+
+//==========================================================================
+//
+//  IM_InitText
+//
+//==========================================================================
+
+void IM_InitText()
+{
+	if (ClGame.cl.deathmatch)
+	{
+		interstate = IMS_Done;
+		cnt = 0.3;
+		return;
+	}
+
+	if (!ClGame.im->Text)
+	{
+		if (ClGame.im->bNoIntermission)
+		{
+			CmdBuf_AddText("TeleportNewMap\n");
+			interstate = IMS_Done;
+			cnt = 0.0;
+			return;
+		}
+		else
+		{
+			interstate = IMS_Done;
+			cnt = 0.3;
+			return;
+		}
+	}
+
+	if (ClGame.im->bTextIsLump)
+	{
+		HubText = LoadTextLump(StrToName(ClGame.im->Text));
+	}
+	else
+	{
+		HubText = ClGame.im->Text;
+	}
+	HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
+
+	TextFlat = '';
+	TextPic = 0;
+	if (ClGame.im->TextPic)
+	{
+		TextPic = R_RegisterPic(ClGame.im->TextPic);
+	}
+	else if (ClGame.im->TextFlat)
+	{
+		TextFlat = ClGame.im->TextFlat;
+	}
+
+	ClGame.skipintermission = false;
+	interstate = IMS_Text;
+	intertime = 0.0;
+	oldintertime = HubCount;
+	if (ClGame.im->TextMusic)
+	{
+		CmdBuf_AddText(va("music loop %n\n", ClGame.im->TextMusic));
+	}
+	else
+	{
+#ifdef FIXME
+		S_StartSong("mus_cptd", P_GetCDEnd1Track(), true);
+#else
+		CmdBuf_AddText("music loop mus_cptd\n");
+#endif
+	}
+}
+
+//==========================================================================
+//
+//  IM_DrawText
+//
+//==========================================================================
+
+void IM_DrawText(GC gc)
+{
+	int count;
+
+	// erase the entire screen to a tiled background
+	if (TextPic)
+	{
+		gc.DrawFullScreenPic(TextPic);
+	}
+	else if (TextFlat)
+	{
+		R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
+	}
+	else
+	{
+		R_FillRect(0, 0, 640, 480, 0);
+	}
+
+	// draw some of the text onto the screen
+	count = ftoi((intertime - 0.3) / TEXTSPEED);
+	if (count < 0)
+		count = 0;
+	if (count > strlen(HubText))
+		count = strlen(HubText);
+
+	T_SetFont(font_small);
+	T_SetAlign(hleft, vtop);
+	T_SetDist(-1, -1);
+	T_DrawText(180, 145, substr(HubText, 0, count));
+	T_SetDist(-1, 1);
 }
 
 //==========================================================================

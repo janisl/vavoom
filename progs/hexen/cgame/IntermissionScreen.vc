@@ -49,6 +49,8 @@ const int TALLY_TOTALS_X		= 451;
 
 float TextSpeed;
 float TextWait;
+name TextFlat;
+int TextPic;
 
 // specifies current state
 int interstate;
@@ -70,8 +72,6 @@ int tallytop;
 int tallylft;
 
 bool showTotals;
-
-name ClusMsgLumpNames[5];
 
 //==========================================================================
 //
@@ -153,12 +153,6 @@ void DrawWindow(GC gc)
 
 void IM_LoadPics()
 {
-	if (HubCount || ClGame.cl.deathmatch)
-	{
-		patchINTERPIC = R_RegisterPic('interpic');
-		tallytop = R_RegisterPic('tallytop');
-		tallylft = R_RegisterPic('tallylft');
-	}
 }
 
 //========================================================================
@@ -200,6 +194,10 @@ void IM_InitStats()
 	}
 	else
 	{
+		patchINTERPIC = R_RegisterPic('interpic');
+		tallytop = R_RegisterPic('tallytop');
+		tallylft = R_RegisterPic('tallylft');
+
 		interstate = IMS_Stats;
 		slaughterboy = 0;
 		slaughterfrags = -9999;
@@ -247,7 +245,7 @@ void IM_InitStats()
 
 //========================================================================
 //
-//  IM_InitStats
+//  IM_InitHubText
 //
 //  Initializes the stats for single player mode
 //
@@ -255,17 +253,37 @@ void IM_InitStats()
 
 void IM_InitHubText()
 {
-	name msgLumpName;
-
 	interstate = IMS_Text;
 	HubCount = 0.0;
-	if (ClGame.im->LeaveCluster != ClGame.im->EnterCluster)
+	if (ClGame.im->Text)
 	{
-		if (ClGame.im->LeaveCluster >= 1 && ClGame.im->LeaveCluster <= 5)
+		if (ClGame.im->bTextIsLump)
 		{
-			msgLumpName = ClusMsgLumpNames[ClGame.im->LeaveCluster - 1];
-			HubText = LoadTextLump(msgLumpName);
-			HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
+			HubText = LoadTextLump(StrToName(ClGame.im->Text));
+		}
+		else
+		{
+			HubText = ClGame.im->Text;
+		}
+		HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
+
+		TextFlat = '';
+		TextPic = 0;
+		if (ClGame.im->TextPic)
+		{
+			TextPic = R_RegisterPic(ClGame.im->TextPic);
+		}
+		else if (ClGame.im->TextFlat)
+		{
+			TextFlat = ClGame.im->TextFlat;
+		}
+
+		if (ClGame.im->TextMusic)
+		{
+			CmdBuf_AddText(va("music loop %n\n", ClGame.im->TextMusic));
+		}
+		else
+		{
 #ifdef FIXME
 			S_StartSong("hub", P_GetCDIntermissionTrack(), true);
 #else
@@ -283,7 +301,18 @@ void IM_InitHubText()
 
 void IM_DrawHubText(GC gc)
 {
-	gc.DrawFullScreenPic(patchINTERPIC);
+	if (TextPic)
+	{
+		gc.DrawFullScreenPic(TextPic);
+	}
+	else if (TextFlat)
+	{
+		R_FillRectWithFlat(0, 0, 640, 480, TextFlat);
+	}
+	else
+	{
+		R_FillRect(0, 0, 640, 480, 0);
+	}
 	int count = ftoi((intertime - 0.3) / TextSpeed);
 	if (count < 0)
 	{
@@ -442,9 +471,4 @@ defaultproperties
 	Height = 480;
 	TextSpeed = 0.1;
 	TextWait = 4.0;
-	ClusMsgLumpNames[0] = 'clus1msg';
-	ClusMsgLumpNames[1] = 'clus2msg';
-	ClusMsgLumpNames[2] = 'clus3msg';
-	ClusMsgLumpNames[3] = 'clus4msg';
-	ClusMsgLumpNames[4] = 'clus5msg';
 }

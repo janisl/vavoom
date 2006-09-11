@@ -66,6 +66,8 @@ static void ParseMapInfo(VScriptParser* sc);
 static mapInfo_t			DefaultMap;
 static TArray<mapInfo_t>	MapInfo;
 static TArray<FMapSongInfo>	MapSongList;
+static VClusterDef			DefaultClusterDef;
+static TArray<VClusterDef>	ClusterDefs;
 // Non-level specific song cd track numbers
 static int					cd_NonLevelTracks[6];
 
@@ -253,6 +255,20 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 		{
 			sc->ExpectNumber();
 			info->Cluster = sc->Number;
+			if (!P_GetClusterDef(info->Cluster))
+			{
+				//	Add empty cluster def if it doesn't exist yet.
+				VClusterDef& C = ClusterDefs.Alloc();
+				C.Cluster = info->Cluster;
+				C.Flags = 0;
+				C.EnterText = VStr();
+				C.ExitText = VStr();
+				C.Flat = NAME_None;
+				C.Pic = NAME_None;
+				C.Music = NAME_None;
+				C.CDTrack = 0;
+				C.CDId = 0;
+			}
 		}
 		else if (sc->Check("warptrans"))
 		{
@@ -438,6 +454,108 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 
 //==========================================================================
 //
+//	ParseClusterDef
+//
+//==========================================================================
+
+static void ParseClusterDef(VScriptParser* sc)
+{
+	VClusterDef* CDef = NULL;
+	sc->ExpectNumber();
+
+	//	Check for replaced cluster def.
+	for (int i = 0; i < ClusterDefs.Num(); i++)
+	{
+		if (sc->Number == ClusterDefs[i].Cluster)
+		{
+			CDef = &ClusterDefs[i];
+			break;
+		}
+	}
+	if (!CDef)
+	{
+		CDef = &ClusterDefs.Alloc();
+	}
+
+	//	Set defaults.
+	CDef->Cluster = sc->Number;
+	CDef->Flags = 0;
+	CDef->EnterText = VStr();
+	CDef->ExitText = VStr();
+	CDef->Flat = NAME_None;
+	CDef->Pic = NAME_None;
+	CDef->Music = NAME_None;
+	CDef->CDTrack = 0;
+	CDef->CDId = 0;
+
+	while (1)
+	{
+		if (sc->Check("hub"))
+		{
+			CDef->Flags |= CLUSTERF_Hub;
+		}
+		else if (sc->Check("entertext"))
+		{
+			sc->ExpectString();
+			CDef->EnterText = sc->String;
+		}
+		else if (sc->Check("entertextislump"))
+		{
+			CDef->Flags |= CLUSTERF_EnterTextIsLump;
+		}
+		else if (sc->Check("exittext"))
+		{
+			sc->ExpectString();
+			CDef->ExitText = sc->String;
+		}
+		else if (sc->Check("exittextislump"))
+		{
+			CDef->Flags |= CLUSTERF_ExitTextIsLump;
+		}
+		else if (sc->Check("flat"))
+		{
+			sc->ExpectName8();
+			CDef->Flat = sc->Name8;
+		}
+		else if (sc->Check("pic"))
+		{
+			sc->ExpectName8();
+			CDef->Pic = sc->Name8;
+		}
+		else if (sc->Check("music"))
+		{
+			sc->ExpectName8();
+			CDef->Music = sc->Name8;
+		}
+		else if (sc->Check("cdtrack"))
+		{
+			sc->ExpectNumber();
+			CDef->CDTrack = sc->Number;
+		}
+		else if (sc->Check("cdid"))
+		{
+			sc->ExpectNumber();
+			CDef->CDId = sc->Number;
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	//	Make sure text lump names are in lower case.
+	if (CDef->Flags & CLUSTERF_EnterTextIsLump)
+	{
+		CDef->EnterText = CDef->EnterText.ToLower();
+	}
+	if (CDef->Flags & CLUSTERF_ExitTextIsLump)
+	{
+		CDef->ExitText = CDef->ExitText.ToLower();
+	}
+}
+
+//==========================================================================
+//
 //	ParseMapInfo
 //
 //==========================================================================
@@ -455,9 +573,13 @@ static void ParseMapInfo(VScriptParser* sc)
 		{
 			ParseMap(sc, true);
 		}
+		else if (sc->Check("clusterdef"))
+		{
+			ParseClusterDef(sc);
+		}
 		else
 		{
-			sc->Error("Invalid command");
+			sc->Error(va("Invalid command %s", *sc->String));
 		}
 	}
 	delete sc;
@@ -580,6 +702,26 @@ void P_PutMapSongLump(int map, VName lumpName)
 
 //==========================================================================
 //
+//	P_GetClusterDef
+//
+//==========================================================================
+
+const VClusterDef* P_GetClusterDef(int Cluster)
+{
+	guard(P_GetClusterDef);
+	for (int i = 0; i < ClusterDefs.Num(); i++)
+	{
+		if (Cluster == ClusterDefs[i].Cluster)
+		{
+			return &ClusterDefs[i];
+		}
+	}
+	return &DefaultClusterDef;
+	unguard;
+}
+
+//==========================================================================
+//
 // P_GetCDStartTrack
 //
 //==========================================================================
@@ -674,5 +816,6 @@ void ShutdownMapInfo()
 	guard(ShutdownMapInfo);
 	MapInfo.Clear();
 	MapSongList.Clear();
+	ClusterDefs.Clear();
 	unguard;
 }

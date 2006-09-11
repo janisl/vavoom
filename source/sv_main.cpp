@@ -1770,17 +1770,6 @@ void G_ExitLevel(int Position)
 	guard(G_ExitLevel);
 	LeavePosition = Position;
 	completed = true;
-	if (!deathmatch)
-	{
-		if (level.MapName == "e1m8" || level.MapName == "e2m8" ||
-			level.MapName == "e3m8" || level.MapName == "e4m8" ||
-			level.MapName == "e5m8")
-		{
-			sv_reliable << (byte)svc_finale;
-			sv.intermission = 2;
-			return;
-		}
-	}
 
 	if (in_secret)
 	{
@@ -1888,6 +1877,18 @@ COMMAND(TeleportNewMap)
 	else if (sv.intermission != 1)
 	{
 		return;
+	}
+
+	if (!deathmatch)
+	{
+		if (level.MapName == "e1m8" || level.MapName == "e2m8" ||
+			level.MapName == "e3m8" || level.MapName == "e4m8" ||
+			level.MapName == "e5m8")
+		{
+			sv_reliable << (byte)svc_finale;
+			sv.intermission = 2;
+			return;
+		}
 	}
 
 #ifdef CLIENT
