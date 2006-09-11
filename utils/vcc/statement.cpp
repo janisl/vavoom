@@ -543,6 +543,7 @@ void VFor::DoEmit(VEmitContext& ec)
 
 VSwitch::VSwitch(const TLocation& ALoc)
 : VStatement(ALoc)
+, HaveDefault(false)
 {
 }
 
@@ -630,8 +631,9 @@ void VSwitch::DoEmit(VEmitContext& ec)
 	ec.AddStatement(OPC_Drop);
 
 	//	Go to default case if we have one, otherwise to the end of switch.
-	if (DefaultAddress.IsDefined())
+	if (HaveDefault)
 	{
+		DefaultAddress = ec.DefineLabel();
 		ec.AddStatement(OPC_Goto, DefaultAddress);
 	}
 	else
@@ -739,6 +741,12 @@ VSwitchDefault::VSwitchDefault(VSwitch* ASwitch, const TLocation& ALoc)
 
 bool VSwitchDefault::Resolve(VEmitContext&)
 {
+	if (Switch->HaveDefault)
+	{
+		ParseError(Loc, "Only 1 DEFAULT per switch allowed.");
+		return false;
+	}
+	Switch->HaveDefault = true;
 	return true;
 }
 
@@ -750,12 +758,6 @@ bool VSwitchDefault::Resolve(VEmitContext&)
 
 void VSwitchDefault::DoEmit(VEmitContext& ec)
 {
-	if (Switch->DefaultAddress.IsDefined())
-	{
-		ParseError(Loc, "Only 1 DEFAULT per switch allowed.");
-		return;
-	}
-	Switch->DefaultAddress = ec.DefineLabel();
 	ec.MarkLabel(Switch->DefaultAddress);
 }
 

@@ -108,6 +108,7 @@ public:
 	TArray<VCaseInfo>	CaseInfo;
 	VLabel				DefaultAddress;
 	TArray<VStatement*>	Statements;
+	bool				HaveDefault;
 
 	VSwitch(const TLocation&);
 	~VSwitch();
