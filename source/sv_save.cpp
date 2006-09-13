@@ -154,9 +154,9 @@ public:
 		Name = NameRemap[NameIndex];
 		return *this;
 	}
-	void SerialiseReference(VObject*& Ref, VClass*)
+	VStream& operator<<(VObject*& Ref)
 	{
-		guard(Loader::SerialiseReference);
+		guard(Loader::operator<<VObject*&);
 		int TmpIdx;
 		*this << STRM_INDEX(TmpIdx);
 		if (TmpIdx == 0)
@@ -173,6 +173,7 @@ public:
 		{
 			Ref = GPlayersBase[-TmpIdx - 1];
 		}
+		return *this;
 		unguard;
 	}
 	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)
@@ -260,9 +261,9 @@ public:
 		*this << STRM_INDEX(NamesMap[Name.GetIndex()]);
 		return *this;
 	}
-	void SerialiseReference(VObject*& Ref, VClass*)
+	VStream& operator<<(VObject*& Ref)
 	{
-		guard(Saver::SerialiseReference);
+		guard(Saver::operator<<VObject*&);
 		int TmpIdx;
 		if (!Ref)
 		{
@@ -272,7 +273,7 @@ public:
 		{
 			TmpIdx = ObjectsMap[Ref->GetIndex()];
 		}
-		*this << STRM_INDEX(TmpIdx);
+		return *this << STRM_INDEX(TmpIdx);
 		unguard;
 	}
 	void SerialiseStructPointer(void*& Ptr, VStruct* Struct)

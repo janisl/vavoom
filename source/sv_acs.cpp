@@ -1437,7 +1437,7 @@ void VACS::Serialise(VStream& Strm)
 	vint32 TmpInt;
 
 	Super::Serialise(Strm);
-	Strm.SerialiseReference(*(VObject**)&Activator, VEntity::StaticClass());
+	Strm << Activator;
 	if (Strm.IsLoading())
 	{
 		Strm << STRM_INDEX(TmpInt);

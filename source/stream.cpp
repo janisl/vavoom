@@ -147,12 +147,13 @@ VStream& VStream::operator<<(VName&)
 
 //==========================================================================
 //
-//	VStream::SerialiseReference
+//	VStream::operator<<
 //
 //==========================================================================
 
-void VStream::SerialiseReference(VObject*&, VClass*)
+VStream& VStream::operator<<(VObject*&)
 {
+	return *this;
 }
 
 //==========================================================================

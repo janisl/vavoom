@@ -140,13 +140,13 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->params.lightlevel
 			<< sec->special
 			<< sec->tag
-			<< sec->seqType;
-		Strm.SerialiseReference(*(VObject**)&sec->SoundTarget, VEntity::StaticClass());
-		Strm.SerialiseReference(*(VObject**)&sec->FloorData, VThinker::StaticClass());
-		Strm.SerialiseReference(*(VObject**)&sec->CeilingData, VThinker::StaticClass());
-		Strm.SerialiseReference(*(VObject**)&sec->LightingData, VThinker::StaticClass());
-		Strm.SerialiseReference(*(VObject**)&sec->AffectorData, VThinker::StaticClass());
-		Strm << sec->Damage
+			<< sec->seqType
+			<< sec->SoundTarget
+			<< sec->FloorData
+			<< sec->CeilingData
+			<< sec->LightingData
+			<< sec->AffectorData
+			<< sec->Damage
 			<< sec->Friction
 			<< sec->MoveFactor
 			<< sec->Gravity;
@@ -214,7 +214,7 @@ void VLevel::Serialise(VStream& Strm)
 				<< PolyObjs[i].startSpot.x
 				<< PolyObjs[i].startSpot.y;
 		}
-		Strm.SerialiseReference(*(VObject**)&PolyObjs[i].SpecialData, VThinker::StaticClass());
+		Strm << PolyObjs[i].SpecialData;
 	}
 	unguard;
 }

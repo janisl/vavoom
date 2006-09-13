@@ -51,6 +51,8 @@ public: \
 	DECLARE_BASE_CLASS(TClass, TSuperClass, TStaticFlags) \
 	virtual ~TClass() \
 		{ ConditionalDestroy(); } \
+	friend inline VStream& operator<<(VStream& Strm, TClass*& Obj) \
+		{ return Strm << *(VObject**)&Obj; } \
 	static void InternalConstructor() \
 		{ new TClass(); }
 
@@ -58,7 +60,9 @@ public: \
 #define DECLARE_ABSTRACT_CLASS(TClass, TSuperClass, TStaticFlags) \
 	DECLARE_BASE_CLASS(TClass, TSuperClass, TStaticFlags | CLASS_Abstract) \
 	virtual ~TClass() \
-		{ ConditionalDestroy(); }
+		{ ConditionalDestroy(); } \
+	friend inline VStream& operator<<(VStream& Strm, TClass*& Obj) \
+		{ return Strm << *(VObject**)&Obj; }
 
 // Register a class at startup time.
 #define IMPLEMENT_CLASS(Pre, TClass) \

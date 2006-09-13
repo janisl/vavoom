@@ -672,7 +672,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		break;
 
 	case ev_reference:
-		Strm.SerialiseReference(*(VObject**)Data, Type.Class);
+		Strm << *(VObject**)Data;
 		break;
 
 	case ev_classid:
@@ -729,7 +729,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		break;
 
 	case ev_delegate:
-		Strm.SerialiseReference(*(VObject**)Data, Type.Class);
+		Strm << *(VObject**)Data;
 		if (Strm.IsLoading())
 		{
 			VName FuncName;

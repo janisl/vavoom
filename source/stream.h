@@ -71,7 +71,7 @@ public:
 
 	//	Interface functions for objects and classes streams.
 	virtual VStream& operator<<(VName&);
-	virtual void SerialiseReference(VObject*&, VClass*);
+	virtual VStream& operator<<(VObject*&);
 	virtual void SerialiseStructPointer(void*&, VStruct*);
 	virtual VStream& operator<<(VMemberBase*&);
 
