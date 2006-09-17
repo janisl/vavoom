@@ -804,6 +804,12 @@ bool VSoundManager::LoadSound(int sound_id)
 	guard(VSoundManager::LoadSound);
 	if (!S_sfx[sound_id].Data)
 	{
+		if (S_sfx[sound_id].LumpNum < 0)
+		{
+			GCon->Logf(NAME_Dev, "Sound %s lump not found",
+				*S_sfx[sound_id].TagName);
+			return false;
+		}
 		VStream* Strm = FL_OpenFileRead(va("sound/%s.flac", *W_LumpName(S_sfx[sound_id].LumpNum)));
 		if (!Strm)
 			Strm = FL_OpenFileRead(va("sound/%s.wav", *W_LumpName(S_sfx[sound_id].LumpNum)));
@@ -812,12 +818,6 @@ bool VSoundManager::LoadSound(int sound_id)
 		if (!Strm)
 		{
 			// get LumpNum if necessary
-			if (S_sfx[sound_id].LumpNum < 0)
-			{
-				GCon->Logf(NAME_Dev, "Sound %s lump not found",
-					*S_sfx[sound_id].TagName);
-				return false;
-			}
 			Strm = W_CreateLumpReaderNum(S_sfx[sound_id].LumpNum);
 		}
 
