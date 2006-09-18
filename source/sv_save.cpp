@@ -752,29 +752,25 @@ static void SV_SaveMap(int slot, boolean savePlayers)
 	Saver->Serialise(sv_signon.Data, sv_signon.CurSize);
 	for (int i = 0; i < GMaxEntities; i++)
 	{
-		if (sv_mo_base[i].Origin.x ||
+		if (sv_mo_base[i].Class ||
+			sv_mo_base[i].State ||
+			sv_mo_base[i].Origin.x ||
 			sv_mo_base[i].Origin.y ||
 			sv_mo_base[i].Origin.z ||
 			sv_mo_base[i].Angles.pitch ||
 			sv_mo_base[i].Angles.yaw ||
 			sv_mo_base[i].Angles.roll ||
 			sv_mo_base[i].SpriteType ||
-			sv_mo_base[i].SpriteIndex ||
-			sv_mo_base[i].SpriteFrame ||
-			sv_mo_base[i].ModelIndex ||
-			sv_mo_base[i].ModelFrame ||
 			sv_mo_base[i].Translucency ||
 			sv_mo_base[i].Translation ||
 			sv_mo_base[i].Effects)
 		{
 			*Saver << STRM_INDEX(i)
+				<< sv_mo_base[i].Class
+				<< sv_mo_base[i].State
 				<< sv_mo_base[i].Origin
 				<< sv_mo_base[i].Angles
 				<< STRM_INDEX(sv_mo_base[i].SpriteType)
-				<< STRM_INDEX(sv_mo_base[i].SpriteIndex)
-				<< STRM_INDEX(sv_mo_base[i].SpriteFrame)
-				<< STRM_INDEX(sv_mo_base[i].ModelIndex)
-				<< STRM_INDEX(sv_mo_base[i].ModelFrame)
 				<< STRM_INDEX(sv_mo_base[i].Translucency)
 				<< STRM_INDEX(sv_mo_base[i].Translation)
 				<< STRM_INDEX(sv_mo_base[i].Effects);
@@ -854,13 +850,11 @@ static void SV_LoadMap(VName MapName, int slot)
 	*Loader << STRM_INDEX(Idx);
 	while (Idx != -1)
 	{
-		*Loader << sv_mo_base[Idx].Origin
+		*Loader << sv_mo_base[Idx].Class
+			<< sv_mo_base[Idx].State
+			<< sv_mo_base[Idx].Origin
 			<< sv_mo_base[Idx].Angles
 			<< STRM_INDEX(sv_mo_base[Idx].SpriteType)
-			<< STRM_INDEX(sv_mo_base[Idx].SpriteIndex)
-			<< STRM_INDEX(sv_mo_base[Idx].SpriteFrame)
-			<< STRM_INDEX(sv_mo_base[Idx].ModelIndex)
-			<< STRM_INDEX(sv_mo_base[Idx].ModelFrame)
 			<< STRM_INDEX(sv_mo_base[Idx].Translucency)
 			<< STRM_INDEX(sv_mo_base[Idx].Translation)
 			<< STRM_INDEX(sv_mo_base[Idx].Effects)

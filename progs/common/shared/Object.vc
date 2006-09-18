@@ -1234,6 +1234,8 @@ enum
 
 	svc_set_heightsec,
 
+	svc_class_name,
+
 	USER_PROTOCOL_START = 128
 };
 
@@ -1245,35 +1247,6 @@ enum
 	clc_move,
 	clc_stringcmd,
 	clc_player_info
-};
-
-enum
-{
-	MOB_X			= 0x0001,
-	MOB_Y			= 0x0002,
-	MOB_Z			= 0x0004,
-	MOB_ANGLE		= 0x0008,
-	MOB_FRAME		= 0x0010,
-	MOB_EFFECTS		= 0x0020,
-	MOB_BIG_NUM		= 0x0040,
-	MOB_MORE_BITS	= 0x0080,
-	MOB_SPRITE		= 0x0100,
-	MOB_TRANSLUC	= 0x0200,
-	MOB_TRANSL		= 0x0400,
-	MOB_ANGLEP		= 0x0800,
-	MOB_ANGLER		= 0x1000,
-	MOB_SKIN		= 0x2000,
-	MOB_MODEL		= 0x4000,
-	MOB_WEAPON		= 0x8000,
-
-	SUB_FLOOR		= 0x0001,
-	SUB_CEIL		= 0x0002,
-	SUB_LIGHT		= 0x0004,
-	SUB_FLOOR_X		= 0x0008,
-	SUB_FLOOR_Y		= 0x0010,
-	SUB_CEIL_X		= 0x0020,
-	SUB_CEIL_Y		= 0x0040,
-	SUB_BIG_NUM		= 0x0080
 };
 
 //**************************************************************************
@@ -1625,6 +1598,7 @@ native static final Object SpawnObject(classid cid);
 native static final classid FindClass(name Name);
 native static final bool StateIsInRange(state State, state Start, state End,
 	int MaxDepth);
+native static final name GetStateSpriteName(state State);
 
 //==========================================================================
 //

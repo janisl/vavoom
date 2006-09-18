@@ -186,6 +186,7 @@ void VObject::StaticExit()
 VObject* VObject::StaticSpawnObject(VClass* AClass)
 {
 	guard(VObject::StaticSpawnObject);
+	check(AClass);
 	//	Allocate memory.
 	VObject* Obj = (VObject*)Z_Calloc(AClass->ClassSize);
 
@@ -221,7 +222,7 @@ VObject* VObject::StaticSpawnObject(VClass* AClass)
 
 	//	We're done.
 	return Obj;
-	unguardf(("%s", AClass->GetName()));
+	unguardf(("%s", AClass ? AClass->GetName() : "NULL"));
 }
 
 //==========================================================================
@@ -956,5 +957,11 @@ IMPLEMENT_FUNCTION(VObject, StateIsInRange)
 	P_GET_PTR(VState, Start);
 	P_GET_PTR(VState, State);
 	RET_BOOL(State->IsInRange(Start, End, MaxDepth));
+}
+
+IMPLEMENT_FUNCTION(VObject, GetStateSpriteName)
+{
+	P_GET_PTR(VState, State);
+	RET_NAME(State ? State->SpriteName : NAME_None);
 }
 

@@ -115,13 +115,8 @@ bool VEntity::SetState(VState* InState)
 
 		State = st;
 		StateTime = st->time;
-		SpriteIndex = st->SpriteIndex;
-		SpriteName = st->SpriteName;
-		SpriteFrame = st->frame;
-		if (!(EntityFlags & EF_FixedModel))
-			ModelIndex = st->ModelIndex;
-		ModelFrame = st->model_frame;
 		NextState = st->nextstate;
+		EntityFlags &= ~EF_FullBright;
 
 		// Modified handling.
 		// Call action functions when the state is set
@@ -150,21 +145,11 @@ void VEntity::SetInitialState(VState* InState)
 	if (InState)
 	{
 		StateTime = InState->time;
-		SpriteIndex = InState->SpriteIndex;
-		SpriteName = InState->SpriteName;
-		SpriteFrame = InState->frame;
-		ModelIndex = InState->ModelIndex;
-		ModelFrame = InState->model_frame;
 		NextState = InState->nextstate;
 	}
 	else
 	{
 		StateTime = -1.0;
-		SpriteIndex = 0;
-		SpriteName = NAME_None;
-		SpriteFrame = 0;
-		ModelIndex = 0;
-		ModelFrame = 0;
 		NextState = NULL;
 	}
 	unguard;

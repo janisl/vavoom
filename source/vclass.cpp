@@ -1474,6 +1474,7 @@ VState::VState(VName AName)
 , nextstate(0)
 , function(0)
 , Next(0)
+, NetId(-1)
 {
 }
 
@@ -1884,6 +1885,7 @@ VClass::VClass(VName AName)
 , ReferenceFields(0)
 , States(0)
 , DefaultProperties(0)
+, NetId(-1)
 {
 	guard(VClass::VClass);
 	LinkNext = GClasses;
@@ -1912,6 +1914,7 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 , ReferenceFields(0)
 , States(0)
 , DefaultProperties(0)
+, NetId(-1)
 {
 	guard(native VClass::VClass);
 	LinkNext = GClasses;
@@ -2189,6 +2192,20 @@ void VClass::PostLoad()
 
 	//	Create virtual table.
 	CreateVTable();
+
+	//	Create states lookup table.
+	if (GetSuperClass())
+	{
+		for (int i = 0; i < GetSuperClass()->StatesLookup.Num(); i++)
+		{
+			StatesLookup.Append(GetSuperClass()->StatesLookup[i]);
+		}
+	}
+	for (VState* S = States; S; S = S->Next)
+	{
+		S->NetId = StatesLookup.Num();
+		StatesLookup.Append(S);
+	}
 
 	ObjectFlags |= CLASSOF_PostLoaded;
 }

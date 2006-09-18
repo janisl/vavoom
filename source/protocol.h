@@ -104,6 +104,8 @@ enum
 
 	svc_set_heightsec,
 
+	svc_class_name,
+
 	USER_PROTOCOL_START = 128
 };
 
@@ -121,18 +123,24 @@ enum
 #define MOB_Y			0x0002
 #define MOB_Z			0x0004
 #define MOB_ANGLE		0x0008
-#define MOB_FRAME		0x0010
+#define MOB_STATE		0x0010
 #define MOB_EFFECTS		0x0020
 #define MOB_BIG_NUM		0x0040
 #define MOB_MORE_BITS	0x0080
-#define MOB_SPRITE		0x0100
-#define MOB_TRANSLUC	0x0200
+#define MOB_CLASS		0x0100
+#define MOB_BIG_CLASS	0x0200
 #define MOB_TRANSL		0x0400
-#define MOB_ANGLEP		0x0800
-#define MOB_ANGLER		0x1000
-#define MOB_SKIN		0x2000
-#define MOB_MODEL		0x4000
-#define MOB_WEAPON		0x8000
+#define MOB_TRANSLUC	0x0800
+#define MOB_ANGLEP		0x1000
+#define MOB_ANGLER		0x2000
+#define MOB_BIG_STATE	0x4000
+#define MOB_MORE_BITS2	0x8000
+#define MOB_WEAPON		0x010000
+#define MOB_SPRITE		0x020000
+#define MOB_FULL_BRIGHT	0x040000
+#define MOB_MODEL		0x080000
+#define MOB_SKIN_NUM	0x100000
+#define MOB_SKIN_IDX	0x200000
 
 #define SUB_FLOOR		0x0001
 #define SUB_CEIL		0x0002

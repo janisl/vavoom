@@ -118,12 +118,11 @@ void DropStuff()
 bool HandlePickup(Actor Toucher)
 {
 	int i;
-	name sound;
-
-	sound = 'misc/i_pkup';
+	name sound = 'misc/i_pkup';
 
 	// Identify by sprite.
 	// armor
+	name SpriteName = GetStateSpriteName(State);
 	if (SpriteName == 'ARM1')
 	{
 		if (!Player(Toucher.Player).GiveArmor(1))

@@ -30,6 +30,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_CLASS_LOOKUP		1024
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -55,6 +57,7 @@ VStr			skin_list[256];
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VModel*			weapon_model_precache[1024];
+static VClass*			ClassLookup[MAX_CLASS_LOOKUP];
 
 // CODE --------------------------------------------------------------------
 
@@ -98,21 +101,19 @@ void CL_Clear()
 
 static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
 {
+	mobj.Class = ClassLookup[(vuint16)msg.ReadShort()];
+	check(mobj.Class);
+	mobj.State = mobj.Class->StatesLookup[(vuint16)msg.ReadShort()];
 	mobj.origin.x = msg.ReadShort();
 	mobj.origin.y = msg.ReadShort();
 	mobj.origin.z = msg.ReadShort();
 	mobj.angles.yaw = ByteToAngle(msg.ReadByte());
 	mobj.angles.pitch = ByteToAngle(msg.ReadByte());
 	mobj.angles.roll = ByteToAngle(msg.ReadByte());
-	mobj.sprite = (word)msg.ReadShort();
-	mobj.frame = (word)msg.ReadShort();
+	mobj.spritetype = msg.ReadByte();
 	mobj.translucency = msg.ReadByte();
 	mobj.translation = msg.ReadByte();
 	mobj.effects = msg.ReadByte();
-	mobj.model_index = msg.ReadShort();
-	mobj.alias_frame = msg.ReadByte();
-	mobj.spritetype = mobj.sprite >> 10;
-	mobj.sprite &= 0x3ff;
 }
 
 static void CL_ParseBaseline(VMessage& msg)
@@ -124,8 +125,40 @@ static void CL_ParseBaseline(VMessage& msg)
 	CL_ReadMobjBase(msg, cl_mo_base[i]);
 }
 
-static void CL_ReadMobj(VMessage& msg, int bits, VEntity* mobj, const clmobjbase_t &base)
+static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbase_t &base)
 {
+	VClass* C;
+	if (bits & MOB_CLASS)
+	{
+		if (bits & MOB_BIG_CLASS)
+			C = ClassLookup[(vuint16)msg.ReadShort()];
+		else
+			C = ClassLookup[msg.ReadByte()];
+	}
+	else
+	{
+		check(base.Class);
+		C = base.Class;
+	}
+	if (mobj->GetClass() != C)
+	{
+		if (mobj->GetClass() != VEntity::StaticClass())
+			GClLevel->RemoveThinker(mobj);
+		mobj->ConditionalDestroy();
+		mobj = (VEntity*)VObject::StaticSpawnObject(C);
+		GClLevel->AddThinker(mobj);
+	}
+	if (bits & MOB_STATE)
+	{
+		if (bits & MOB_BIG_STATE)
+			mobj->State = mobj->GetClass()->StatesLookup[(vuint16)msg.ReadShort()];
+		else
+			mobj->State = mobj->GetClass()->StatesLookup[msg.ReadByte()];
+	}
+	else
+	{
+		mobj->State = base.State;
+	}
 	if (bits & MOB_X)
 		mobj->Origin.x = msg.ReadShort();
 	else
@@ -151,20 +184,13 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity* mobj, const clmobjbase
 	else
 		mobj->Angles.roll = base.angles.roll;
 	if (bits & MOB_SPRITE)
-	{
-		mobj->SpriteIndex = (word)msg.ReadShort();
-		mobj->SpriteType = mobj->SpriteIndex >> 10;
-		mobj->SpriteIndex &= 0x3ff;
-	}
+		mobj->SpriteType = msg.ReadByte();
 	else
-	{
-		mobj->SpriteIndex = base.sprite;
 		mobj->SpriteType = base.spritetype;
-	}
-	if (bits & MOB_FRAME)
-		mobj->SpriteFrame = (byte)msg.ReadByte();
+	if (bits & MOB_FULL_BRIGHT)
+		mobj->EntityFlags |= VEntity::EF_FullBright;
 	else
-		mobj->SpriteFrame = base.frame;
+		mobj->EntityFlags &= ~VEntity::EF_FullBright;
 	if (bits & MOB_TRANSLUC)
 		mobj->Translucency = msg.ReadByte();
 	else
@@ -177,35 +203,18 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity* mobj, const clmobjbase
 		mobj->Effects = msg.ReadByte();
 	else
 		mobj->Effects = base.effects;
+	mobj->EntityFlags &= ~VEntity::EF_FixedModel;
 	if (bits & MOB_MODEL)
 	{
-		mobj->ModelIndex = msg.ReadShort();
+		mobj->EntityFlags |= VEntity::EF_FixedModel;
+		mobj->FixedModelIndex = msg.ReadShort();
 	}
-	else
-	{
-		mobj->ModelIndex = base.model_index;
-	}
-	if (bits & MOB_SKIN)
-	{
+	mobj->ModelSkinIndex = 0;
+	mobj->ModelSkinNum = 0;
+	if (bits & MOB_SKIN_NUM)
+		mobj->ModelSkinNum = msg.ReadByte();
+	else if (bits & MOB_SKIN_IDX)
 		mobj->ModelSkinIndex = msg.ReadByte();
-		if (!mobj->ModelSkinIndex)
-		{
-			mobj->ModelSkinNum = msg.ReadByte();
-		}
-		else
-		{
-			mobj->ModelSkinNum = 0;
-		}
-	}
-	else
-	{
-		mobj->ModelSkinIndex = 0;
-		mobj->ModelSkinNum = 0;
-	}
-	if (mobj->ModelIndex && (bits & MOB_FRAME))
-		mobj->ModelFrame = msg.ReadByte();
-	else
-		mobj->ModelFrame = base.alias_frame;
 }
 
 static void CL_ParseUpdateMobj(VMessage& msg)
@@ -217,6 +226,8 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 	bits = msg.ReadByte();
 	if (bits & MOB_MORE_BITS)
 		bits |= msg.ReadByte() << 8;
+	if (bits & MOB_MORE_BITS2)
+		bits |= msg.ReadByte() << 16;
 
 	if (bits & MOB_BIG_NUM)
 		i = msg.ReadShort();
@@ -228,8 +239,12 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 	//	Marking mobj in use
 	cl_mobjs[i]->InUse = 2;
 
-	if (bits & MOB_WEAPON && model_precache[cl_mobjs[i]->ModelIndex] &&
-		weapon_model_precache[cl_mobjs[i]->ModelIndex])
+	if (bits & MOB_WEAPON && model_precache[cl_mobjs[i]->EntityFlags &
+		VEntity::EF_FixedModel ? cl_mobjs[i]->FixedModelIndex :
+		cl_mobjs[i]->State->ModelIndex] &&
+		weapon_model_precache[cl_mobjs[i]->EntityFlags &
+		VEntity::EF_FixedModel ? cl_mobjs[i]->FixedModelIndex :
+		cl_mobjs[i]->State->ModelIndex])
 	{
 		VEntity* ent = cl_mobjs[i];
 		VEntity* wpent = cl_weapon_mobjs[i];
@@ -237,12 +252,13 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 		wpent->InUse = true;
 		wpent->Origin = ent->Origin;
 		wpent->Angles = ent->Angles;
-		wpent->ModelIndex = msg.ReadShort();
-		wpent->ModelFrame = 1;
+		wpent->EntityFlags |= VEntity::EF_FixedModel;
+		wpent->FixedModelIndex = msg.ReadShort();
 		wpent->Translucency = ent->Translucency;
 
-		R_PositionWeaponModel(wpent, weapon_model_precache[ent->ModelIndex],
-			ent->ModelFrame);
+		R_PositionWeaponModel(wpent, weapon_model_precache[ent->EntityFlags &
+			VEntity::EF_FixedModel ? ent->FixedModelIndex :
+			ent->State->ModelIndex], 1);
 	}
 	else if (bits & MOB_WEAPON)
 	{
@@ -473,6 +489,37 @@ static void CL_ReadFromServerInfo()
 
 //==========================================================================
 //
+//	CL_AddModel
+//
+//==========================================================================
+
+static void CL_AddModel(int i, const char *name)
+{
+	weapon_model_precache[i] = NULL;
+	if (FL_FileExists(name))
+	{
+		model_precache[i] = Mod_FindName(name);
+		if (strstr(name, "tris.md2"))
+		{
+			VStr wpname = VStr(name).ExtractFilePath() + "weapon.md2";
+			if (FL_FileExists(wpname))
+			{
+				weapon_model_precache[i] = Mod_FindName(*wpname);
+			}
+			else
+			{
+				GCon->Logf("Can't find wepon info model %s", *wpname);
+			}
+		}
+	}
+	else if (VCvar::GetInt("r_models"))
+	{
+		GCon->Logf("Can't find %s", name);
+	}
+}
+
+//==========================================================================
+//
 //	CL_DoLoadLevel
 //
 //==========================================================================
@@ -537,6 +584,16 @@ static void CL_ParseServerInfo(VMessage& msg)
 	GAudio->Start();
 
 	SB_Start();
+
+	for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
+	{
+		R_InstallSprite(*VClass::GSpriteNames[i], i);
+	}
+
+	for (int i = 1; i < VClass::GModelNames.Num(); i++)
+	{
+		CL_AddModel(i, va("models/%s", *VClass::GModelNames[i]));
+	}
 
 	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
@@ -626,6 +683,19 @@ static void CL_ParseIntermission(VMessage& msg)
 
 //==========================================================================
 //
+//	CL_ParseClassName
+//
+//==========================================================================
+
+static void CL_ParseClassName(VMessage& msg)
+{
+	vint32 i = msg.ReadShort();
+	const char* Name = msg.ReadString();
+	ClassLookup[i] = VClass::FindClass(Name);
+}
+
+//==========================================================================
+//
 //	CL_ParseSpriteList
 //
 //==========================================================================
@@ -649,27 +719,7 @@ static void CL_ParseModel(VMessage& msg)
 {
 	int i = msg.ReadShort();
 	char *name = va("models/%s", msg.ReadString());
-	weapon_model_precache[i] = NULL;
-	if (FL_FileExists(name))
-	{
-		model_precache[i] = Mod_FindName(name);
-		if (strstr(name, "tris.md2"))
-		{
-			VStr wpname = VStr(name).ExtractFilePath() + "weapon.md2";
-			if (FL_FileExists(wpname))
-			{
-				weapon_model_precache[i] = Mod_FindName(*wpname);
-			}
-			else
-			{
-				GCon->Logf("Can't find wepon info model %s", *wpname);
-			}
-		}
-	}
-	else if (VCvar::GetInt("r_models"))
-	{
-		GCon->Logf("Can't find %s", name);
-	}
+	CL_AddModel(i, name);
 }
 
 //==========================================================================
@@ -1125,6 +1175,10 @@ void CL_ParseServerMessage(VMessage& msg)
 
 		case svc_set_heightsec:
 			CL_ParseHeightSec(msg);
+			break;
+
+		case svc_class_name:
+			CL_ParseClassName(msg);
 			break;
 
 		default:

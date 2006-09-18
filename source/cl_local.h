@@ -51,19 +51,13 @@ struct dlight_t
 // Client side Map Object definition.
 struct clmobjbase_t
 {
+	VClass*		Class;
+	VState*		State;
 	TVec		origin;	// position
 	TAVec		angles;	// orientation
-
 	int			spritetype;
-    int			sprite;	// used to find patch_t and flip value
-    int			frame;	// might be ORed with FF_FULLBRIGHT
-
-	int			model_index;
-	int			alias_frame;
-
-    int			translucency;
-    int			translation;
-
+	int			translucency;
+	int			translation;
 	int			effects;
 };
 

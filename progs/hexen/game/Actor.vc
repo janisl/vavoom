@@ -1189,8 +1189,8 @@ void Damage(Actor inflictor, Actor source, int damage)
 	}
 	if ((Random() < PainChance) && !bSkullFly)
 	{
-		if (inflictor && (inflictor.Class == LightningFloor
-				|| inflictor.Class == LightningZap))
+		if (inflictor && (inflictor.Class == LightningFloor ||
+			inflictor.Class == LightningZap))
 		{
 			if (P_Random() < 96)
 			{
@@ -1200,7 +1200,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			else
 			{
 				// "electrocute" the target
-				SpriteFrame |= FF_FULLBRIGHT;
+				bFullBright = true;
 				if (bCountKill && P_Random() < 128
 					&& !GetSoundPlayingInfo(self, GetSoundID('PuppyBeat')))
 				{

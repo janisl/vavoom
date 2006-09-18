@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "progdefs.h"
 #include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -95,11 +96,11 @@ VEntity**		sv_mobjs;
 mobj_base_t*	sv_mo_base;
 double*			sv_mo_free_time;
 
-byte			sv_reliable_buf[MAX_MSGLEN];
+vuint8			sv_reliable_buf[MAX_MSGLEN];
 VMessage		sv_reliable(sv_reliable_buf, MAX_MSGLEN);
-byte			sv_datagram_buf[MAX_DATAGRAM];
+vuint8			sv_datagram_buf[MAX_DATAGRAM];
 VMessage		sv_datagram(sv_datagram_buf, MAX_DATAGRAM);
-byte			sv_signon_buf[MAX_MSGLEN];
+vuint8			sv_signon_buf[MAX_MSGLEN];
 VMessage		sv_signon(sv_signon_buf, MAX_MSGLEN);
 
 VBasePlayer*	sv_player;
@@ -132,13 +133,11 @@ static VCvarI	Skill("Skill", "2");
 
 static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 
-static byte		*fatpvs;
+static vuint8	*fatpvs;
 static VCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_Archive);
 
 static bool		mapteleport_issued;
 
-static int		numsprites;
-static VName	sprites[MAX_SPRITES];
 static int		nummodels;
 static VName	models[MAX_MODELS];
 static int		numskins;
@@ -319,48 +318,66 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	unguard;
 }
 
+int c_bigClass;
+int c_bigState;
 //==========================================================================
 //
 //	SV_GetMobjBits
 //
 //==========================================================================
 
-int	SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
+int SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 {
 	guard(SV_GetMobjBits);
 	int		bits = 0;
 
 	if (fabs(base.Origin.x - mobj.Origin.x) >= 1.0)
-		bits |=	MOB_X;
+		bits |= MOB_X;
 	if (fabs(base.Origin.y - mobj.Origin.y) >= 1.0)
-		bits |=	MOB_Y;
+		bits |= MOB_Y;
 	if (fabs(base.Origin.z - (mobj.Origin.z - mobj.FloorClip)) >= 1.0)
-		bits |=	MOB_Z;
-//	if (fabs(base.Angles.yaw - mobj.Angles.yaw) >= 1.0)
+		bits |= MOB_Z;
 	if (AngleToByte(base.Angles.yaw) != AngleToByte(mobj.Angles.yaw))
-		bits |=	MOB_ANGLE;
-//	if (fabs(base.Angles.pitch - mobj.Angles.pitch) >= 1.0)
+		bits |= MOB_ANGLE;
 	if (AngleToByte(base.Angles.pitch) != AngleToByte(mobj.Angles.pitch))
-		bits |=	MOB_ANGLEP;
-//	if (fabs(base.Angles.roll - mobj.Angles.roll) >= 1.0)
+		bits |= MOB_ANGLEP;
 	if (AngleToByte(base.Angles.roll) != AngleToByte(mobj.Angles.roll))
-		bits |=	MOB_ANGLER;
-	if (base.SpriteIndex != mobj.SpriteIndex || base.SpriteType != mobj.SpriteType)
-		bits |=	MOB_SPRITE;
-	if (base.SpriteFrame != mobj.SpriteFrame)
-		bits |=	MOB_FRAME;
+		bits |= MOB_ANGLER;
+	if (base.SpriteType != mobj.SpriteType)
+		bits |= MOB_SPRITE;
+	if (mobj.EntityFlags & VEntity::EF_FullBright)
+		bits |= MOB_FULL_BRIGHT;
 	if (base.Translucency != mobj.Translucency)
-		bits |=	MOB_TRANSLUC;
+		bits |= MOB_TRANSLUC;
 	if (base.Translation != mobj.Translation)
-		bits |=	MOB_TRANSL;
+		bits |= MOB_TRANSL;
 	if (base.Effects != mobj.Effects)
 		bits |= MOB_EFFECTS;
-	if (base.ModelIndex != mobj.ModelIndex)
+	if ((mobj.EntityFlags & VEntity::EF_FixedModel) &&
+		mobj.FixedModelIndex != mobj.State->ModelIndex)
 		bits |= MOB_MODEL;
-	if (mobj.ModelIndex && (mobj.ModelSkinIndex || mobj.ModelSkinNum))
-		bits |= MOB_SKIN;
-	if (mobj.ModelIndex && base.ModelFrame != mobj.ModelFrame)
-		bits |= MOB_FRAME;
+	if (mobj.State->ModelIndex && mobj.ModelSkinNum)
+		bits |= MOB_SKIN_NUM;
+	else if (mobj.State->ModelIndex && mobj.ModelSkinIndex)
+		bits |= MOB_SKIN_IDX;
+	if (base.Class != mobj.GetClass())
+	{
+		bits |= MOB_CLASS;
+		if (mobj.GetClass()->NetId > 0xff)
+		{
+			bits |= MOB_BIG_CLASS;
+			c_bigClass++;
+		}
+	}
+	if (base.State != mobj.State)
+	{
+		bits |= MOB_STATE;
+		if (mobj.State->NetId > 0xff)
+		{
+			bits |= MOB_BIG_STATE;
+			c_bigState++;
+		}
+	}
 
 	return bits;
 	unguard;
@@ -375,38 +392,98 @@ int	SV_GetMobjBits(VEntity &mobj, mobj_base_t &base)
 void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 {
 	guard(SV_WriteMobj);
+	if (bits & MOB_BIG_CLASS)
+		msg << (vuint16)mobj.GetClass()->NetId;
+	else if (bits & MOB_CLASS)
+		msg << (vuint8)mobj.GetClass()->NetId;
+	if (bits & MOB_BIG_STATE)
+		msg << (vuint16)mobj.State->NetId;
+	else if (bits & MOB_STATE)
+		msg << (vuint8)mobj.State->NetId;
 	if (bits & MOB_X)
-		msg << (word)mobj.Origin.x;
+		msg << (vuint16)mobj.Origin.x;
 	if (bits & MOB_Y)
-		msg << (word)mobj.Origin.y;
+		msg << (vuint16)mobj.Origin.y;
 	if (bits & MOB_Z)
-		msg << (word)(mobj.Origin.z - mobj.FloorClip);
+		msg << (vuint16)(mobj.Origin.z - mobj.FloorClip);
 	if (bits & MOB_ANGLE)
-		msg << (byte)(AngleToByte(mobj.Angles.yaw));
+		msg << (vuint8)(AngleToByte(mobj.Angles.yaw));
 	if (bits & MOB_ANGLEP)
-		msg << (byte)(AngleToByte(mobj.Angles.pitch));
+		msg << (vuint8)(AngleToByte(mobj.Angles.pitch));
 	if (bits & MOB_ANGLER)
-		msg << (byte)(AngleToByte(mobj.Angles.roll));
+		msg << (vuint8)(AngleToByte(mobj.Angles.roll));
 	if (bits & MOB_SPRITE)
-		msg << (word)(mobj.SpriteIndex | (mobj.SpriteType << 10));
-	if (bits & MOB_FRAME)
-		msg << (byte)mobj.SpriteFrame;
+		msg << (vuint8)mobj.SpriteType;
 	if (bits & MOB_TRANSLUC)
-		msg << (byte)mobj.Translucency;
+		msg << (vuint8)mobj.Translucency;
 	if (bits & MOB_TRANSL)
-		msg << (byte)mobj.Translation;
+		msg << (vuint8)mobj.Translation;
 	if (bits & MOB_EFFECTS)
-		msg << (byte)mobj.Effects;
+		msg << (vuint8)mobj.Effects;
 	if (bits & MOB_MODEL)
-		msg << (word)mobj.ModelIndex;
-	if ((bits & MOB_SKIN) && mobj.ModelSkinNum)
-		msg << (byte)0 << (byte)mobj.ModelSkinNum;
-	else if (bits & MOB_SKIN)
-		msg << (byte)mobj.ModelSkinIndex;
-	if (mobj.ModelIndex && (bits & MOB_FRAME))
-		msg << (byte)mobj.ModelFrame;
+		msg << (vuint16)mobj.FixedModelIndex;
+	if (bits & MOB_SKIN_NUM)
+		msg << (vuint8)mobj.ModelSkinNum;
+	else if (bits & MOB_SKIN_IDX)
+		msg << (vuint8)mobj.ModelSkinIndex;
 	if (bits & MOB_WEAPON)
-		msg << (word)mobj.Player->WeaponModel;
+		msg << (vuint16)mobj.Player->WeaponModel;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_UpdateMobj
+//
+//==========================================================================
+
+void SV_UpdateMobj(int i, VMessage &msg)
+{
+	guard(SV_UpdateMobj);
+	int bits;
+	int sendnum;
+
+	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
+	{
+		sendnum = SV_GetPlayerNum(sv_mobjs[i]->Player) + 1;
+	}
+	else
+	{
+		sendnum = i;
+	}
+
+	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[sendnum]);
+
+	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
+	{
+		//	Clear look angles, because they must not affect model orientation
+		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
+		if (sv_mobjs[i]->Player->WeaponModel)
+		{
+			bits |= MOB_WEAPON;
+		}
+	}
+	if (sendnum > 0xff)
+		bits |= MOB_BIG_NUM;
+	if (bits > 0xff)
+		bits |= MOB_MORE_BITS;
+	if (bits > 0xffff)
+		bits |= MOB_MORE_BITS2;
+
+	msg << (vuint8)svc_update_mobj;
+	if (bits & MOB_MORE_BITS)
+		msg << (vuint16)bits;
+	else
+		msg << (vuint8)bits;
+	if (bits & MOB_MORE_BITS2)
+		msg << (vuint8)(bits >> 16);
+	if (bits & MOB_BIG_NUM)
+		msg << (vuint16)sendnum;
+	else
+		msg << (vuint8)sendnum;
+
+	SV_WriteMobj(bits, *sv_mobjs[i], msg);
+	return;
 	unguard;
 }
 
@@ -451,14 +528,27 @@ void SV_CreateBaseline()
 	guard(SV_CreateBaseline);
 	int		i;
 
+	int CurId = 0;
+	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
+	{
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
+		{
+			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
+			if (C->IsChildOf(VThinker::StaticClass()))
+			{
+				C->NetId = CurId++;
+			}
+		}
+	}
+
 	for (i = 0; i < GLevel->NumSectors; i++)
 	{
 		sector_t &sec = GLevel->Sectors[i];
 		if (sec.floor.translucency)
 		{
-			sv_signon << (byte)svc_sec_transluc
-					<< (word)i
-					<< (byte)sec.floor.translucency;
+			sv_signon << (vuint8)svc_sec_transluc
+					<< (vuint16)i
+					<< (vuint8)sec.floor.translucency;
 		}
 	}
 
@@ -469,7 +559,8 @@ void SV_CreateBaseline()
 		if (sv_mobjs[i]->EntityFlags & VEntity::EF_Hidden)
 			continue;
 
-		if (!sv_signon.CheckSpace(32))
+		//NOTE Do we really need 10 bytes extra?
+		if (!sv_signon.CheckSpace(30))
 		{
 			GCon->Log(NAME_Dev, "SV_CreateBaseline: Overflow");
 			return;
@@ -478,6 +569,8 @@ void SV_CreateBaseline()
 		VEntity &mobj = *sv_mobjs[i];
 		mobj_base_t &base = sv_mo_base[i];
 
+		base.Class = mobj.GetClass();
+		base.State = mobj.State;
 		base.Origin.x = mobj.Origin.x;
 		base.Origin.y = mobj.Origin.y;
 		base.Origin.z = mobj.Origin.z - mobj.FloorClip;
@@ -485,29 +578,24 @@ void SV_CreateBaseline()
 		base.Angles.pitch = mobj.Angles.pitch;
 		base.Angles.roll = mobj.Angles.roll;
 		base.SpriteType = mobj.SpriteType;
-		base.SpriteIndex = mobj.SpriteIndex;
-		base.SpriteFrame = mobj.SpriteFrame;
 		base.Translucency = mobj.Translucency;
 		base.Translation = mobj.Translation;
 		base.Effects = mobj.Effects;
-		base.ModelIndex = mobj.ModelIndex;
-		base.ModelFrame = mobj.ModelFrame;
 
-		sv_signon << (byte)svc_spawn_baseline
-					<< (word)i
-					<< (word)mobj.Origin.x
-					<< (word)mobj.Origin.y
-					<< (word)(mobj.Origin.z - mobj.FloorClip)
-					<< (byte)(AngleToByte(mobj.Angles.yaw))
-					<< (byte)(AngleToByte(mobj.Angles.pitch))
-					<< (byte)(AngleToByte(mobj.Angles.roll))
-					<< (word)(mobj.SpriteIndex | (mobj.SpriteType << 10))
-					<< (word)mobj.SpriteFrame
-					<< (byte)mobj.Translucency
-					<< (byte)mobj.Translation
-					<< (byte)mobj.Effects
-					<< (word)mobj.ModelIndex
-					<< (byte)mobj.ModelFrame;
+		sv_signon << (vuint8)svc_spawn_baseline
+					<< (vuint16)i
+					<< (vuint16)mobj.GetClass()->NetId
+					<< (vuint16)mobj.State->NetId
+					<< (vuint16)mobj.Origin.x
+					<< (vuint16)mobj.Origin.y
+					<< (vuint16)(mobj.Origin.z - mobj.FloorClip)
+					<< (vuint8)(AngleToByte(mobj.Angles.yaw))
+					<< (vuint8)(AngleToByte(mobj.Angles.pitch))
+					<< (vuint8)(AngleToByte(mobj.Angles.roll))
+					<< (vuint8)mobj.SpriteType
+					<< (vuint8)mobj.Translucency
+					<< (vuint8)mobj.Translation
+					<< (vuint8)mobj.Effects;
 	}
 	unguard;
 }
@@ -546,16 +634,16 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 	if (!sv_datagram.CheckSpace(12))
 		return;
 
-	sv_datagram << (byte)svc_start_sound
-				<< (word)sound_id
-				<< (word)(origin_id | (channel << 13));
+	sv_datagram << (vuint8)svc_start_sound
+				<< (vuint16)sound_id
+				<< (vuint16)(origin_id | (channel << 13));
 	if (origin_id)
 	{
-		sv_datagram << (word)origin.x
-					<< (word)origin.y
-					<< (word)origin.z;
+		sv_datagram << (vuint16)origin.x
+					<< (vuint16)origin.y
+					<< (vuint16)origin.z;
 	}
-	sv_datagram << (byte)volume;
+	sv_datagram << (vuint8)volume;
 	unguard;
 }
 
@@ -571,8 +659,8 @@ void SV_StopSound(int origin_id, int channel)
 	if (!sv_datagram.CheckSpace(3))
 		return;
 
-	sv_datagram << (byte)svc_stop_sound
-				<< (word)(origin_id | (channel << 13));
+	sv_datagram << (vuint8)svc_stop_sound
+				<< (vuint16)(origin_id | (channel << 13));
 	unguard;
 }
 
@@ -610,10 +698,10 @@ void SV_StartLocalSound(const VEntity * origin, int sound_id, int channel,
 	guard(SV_StartSound);
 	if (origin && origin->Player)
 	{
-		origin->Player->Message << (byte)svc_start_sound
-								<< (word)sound_id
-								<< (word)(channel << 13)
-								<< (byte)volume;
+		origin->Player->Message << (vuint8)svc_start_sound
+								<< (vuint16)sound_id
+								<< (vuint16)(channel << 13)
+								<< (vuint8)volume;
 	}
 	unguard;
 }
@@ -676,11 +764,11 @@ void SV_SectorStopSound(const sector_t *sector, int channel)
 void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 {
 	guard(SV_StartSequence);
-	sv_reliable << (byte)svc_start_seq
-				<< (word)origin_id
-				<< (word)origin.x
-				<< (word)origin.y
-				<< (word)origin.z
+	sv_reliable << (vuint8)svc_start_seq
+				<< (vuint16)origin_id
+				<< (vuint16)origin.x
+				<< (vuint16)origin.y
+				<< (vuint16)origin.z
 				<< name;
 	unguard;
 }
@@ -694,8 +782,8 @@ void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
 void SV_StopSequence(int origin_id)
 {
 	guard(SV_StopSequence);
-	sv_reliable << (byte)svc_stop_seq
-				<< (word)origin_id;
+	sv_reliable << (vuint8)svc_stop_seq
+				<< (vuint16)origin_id;
 	unguard;
 }
 
@@ -776,7 +864,7 @@ void SV_ClientPrintf(VBasePlayer *player, const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->Message << (byte)svc_print << buf;
+	player->Message << (vuint8)svc_print << buf;
 	unguard;
 }
 
@@ -796,7 +884,7 @@ void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->Message << (byte)svc_center_print << buf;
+	player->Message << (vuint8)svc_center_print << buf;
 	unguard;
 }
 
@@ -818,7 +906,7 @@ void SV_BroadcastPrintf(const char *s, ...)
 
 	for (int i = 0; i < svs.max_clients; i++)
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->Message << (byte)svc_print << buf;
+			GGameInfo->Players[i]->Message << (vuint8)svc_print << buf;
 	unguard;
 }
 
@@ -840,7 +928,7 @@ void SV_BroadcastCentrePrintf(const char *s, ...)
 
 	for (int i = 0; i < svs.max_clients; i++)
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->Message << (byte)svc_center_print << buf;
+			GGameInfo->Players[i]->Message << (vuint8)svc_center_print << buf;
 	unguard;
 }
 
@@ -855,51 +943,51 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 	guard(SV_WriteViewData);
 	int		i;
 
-	msg << (byte)svc_view_data
+	msg << (vuint8)svc_view_data
 		<< player.ViewOrg.x
 		<< player.ViewOrg.y
 		<< player.ViewOrg.z
-		<< (byte)player.ExtraLight
-		<< (byte)player.FixedColormap
-		<< (byte)player.Palette
-		<< (byte)player.MO->Translucency
-		<< (word)player.PSpriteSY;
+		<< (vuint8)player.ExtraLight
+		<< (vuint8)player.FixedColormap
+		<< (vuint8)player.Palette
+		<< (vuint8)player.MO->Translucency
+		<< (vuint16)player.PSpriteSY;
 	if (player.ViewEnts[0] && player.ViewEnts[0]->State)
 	{
-		msg << (word)player.ViewEnts[0]->SpriteIndex
-			<< (byte)player.ViewEnts[0]->SpriteFrame
-			<< (word)player.ViewEnts[0]->ModelIndex
-			<< (byte)player.ViewEnts[0]->ModelFrame
-			<< (word)player.ViewEnts[0]->SX
-			<< (word)player.ViewEnts[0]->SY;
+		msg << (vuint16)player.ViewEnts[0]->SpriteIndex
+			<< (vuint8)player.ViewEnts[0]->SpriteFrame
+			<< (vuint16)player.ViewEnts[0]->ModelIndex
+			<< (vuint8)player.ViewEnts[0]->ModelFrame
+			<< (vuint16)player.ViewEnts[0]->SX
+			<< (vuint16)player.ViewEnts[0]->SY;
 	}
 	else
 	{
-		msg << (short)-1;
+		msg << (vint16)-1;
 	}
 	if (player.ViewEnts[1] && player.ViewEnts[1]->State)
 	{
-		msg << (word)player.ViewEnts[1]->SpriteIndex
-			<< (byte)player.ViewEnts[1]->SpriteFrame
-			<< (word)player.ViewEnts[1]->ModelIndex
-			<< (byte)player.ViewEnts[1]->ModelFrame
-			<< (word)player.ViewEnts[1]->SX
-			<< (word)player.ViewEnts[1]->SY;
+		msg << (vuint16)player.ViewEnts[1]->SpriteIndex
+			<< (vuint8)player.ViewEnts[1]->SpriteFrame
+			<< (vuint16)player.ViewEnts[1]->ModelIndex
+			<< (vuint8)player.ViewEnts[1]->ModelFrame
+			<< (vuint16)player.ViewEnts[1]->SX
+			<< (vuint16)player.ViewEnts[1]->SY;
 	}
 	else
 	{
-		msg << (short)-1;
+		msg << (vint16)-1;
 	}
 
-	msg << (byte)player.Health
+	msg << (vuint8)player.Health
 		<< player.Items
-		<< (short)player.Frags;
+		<< (vint16)player.Frags;
 
 	int bits = 0;
 	for (i = 0; i < NUM_CSHIFTS; i++)
 		if (player.CShifts[i] & 0xff000000)
 			bits |= (1 << i);
-	msg << (byte)bits;
+	msg << (vuint8)bits;
 	for (i = 0; i < NUM_CSHIFTS; i++)
 		if (player.CShifts[i] & 0xff000000)
 			msg << player.CShifts[i];
@@ -908,63 +996,11 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 	if (player.PlayerFlags & VBasePlayer::PF_FixAngle)
 	{
 		player.PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-		msg << (byte)svc_set_angles
-			<< (byte)(AngleToByte(player.ViewAngles.pitch))
-			<< (byte)(AngleToByte(player.ViewAngles.yaw))
-			<< (byte)(AngleToByte(player.ViewAngles.roll));
+		msg << (vuint8)svc_set_angles
+			<< (vuint8)(AngleToByte(player.ViewAngles.pitch))
+			<< (vuint8)(AngleToByte(player.ViewAngles.yaw))
+			<< (vuint8)(AngleToByte(player.ViewAngles.roll));
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_UpdateMobj
-//
-//==========================================================================
-
-void SV_UpdateMobj(int i, VMessage &msg)
-{
-	guard(SV_UpdateMobj);
-	int bits;
-	int sendnum;
-
-	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
-	{
-		sendnum = SV_GetPlayerNum(sv_mobjs[i]->Player) + 1;
-	}
-	else
-	{
-		sendnum = i;
-	}
-
-	bits = SV_GetMobjBits(*sv_mobjs[i], sv_mo_base[sendnum]);
-
-	if (sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
-	{
-		//	Clear look angles, because they must not affect model orientation
-		bits &= ~(MOB_ANGLEP | MOB_ANGLER);
-		if (sv_mobjs[i]->Player->WeaponModel)
-		{
-			bits |= MOB_WEAPON;
-		}
-	}
-	if (sendnum > 255)
-		bits |=	MOB_BIG_NUM;
-	if (bits > 255)
-		bits |=	MOB_MORE_BITS;
-
-	msg << (byte)svc_update_mobj;
-	if (bits & MOB_MORE_BITS)
-		msg << (word)bits;
-	else
-		msg << (byte)bits;
-	if (bits & MOB_BIG_NUM)
-		msg << (word)sendnum;
-	else
-		msg << (byte)sendnum;
-
-	SV_WriteMobj(bits, *sv_mobjs[i], msg);
-	return;
 	unguard;
 }
 
@@ -1048,26 +1084,26 @@ void SV_UpdateLevel(VMessage &msg)
 		
 		if (i > 255)
 			bits |= SUB_BIG_NUM;
-		msg << (byte)svc_sec_update
-			<< (byte)bits;
+		msg << (vuint8)svc_sec_update
+			<< (vuint8)bits;
 		if (bits & SUB_BIG_NUM)
-			msg << (word)i;
+			msg << (vuint16)i;
 		else
-			msg << (byte)i;
+			msg << (vuint8)i;
 		if (bits & SUB_FLOOR)
-			msg << (word)(sec->floor.dist);
+			msg << (vuint16)(sec->floor.dist);
 		if (bits & SUB_CEIL)
-			msg << (word)(sec->ceiling.dist);
+			msg << (vuint16)(sec->ceiling.dist);
 		if (bits & SUB_LIGHT)
-			msg << (byte)(sec->params.lightlevel >> 2);
+			msg << (vuint8)(sec->params.lightlevel >> 2);
 		if (bits & SUB_FLOOR_X)
-			msg << (byte)(sec->floor.xoffs);
+			msg << (vuint8)(sec->floor.xoffs);
 		if (bits & SUB_FLOOR_Y)
-			msg << (byte)(sec->floor.yoffs);
+			msg << (vuint8)(sec->floor.yoffs);
 		if (bits & SUB_CEIL_X)
-			msg << (byte)(sec->ceiling.xoffs);
+			msg << (vuint8)(sec->ceiling.xoffs);
 		if (bits & SUB_CEIL_Y)
-			msg << (byte)(sec->ceiling.yoffs);
+			msg << (vuint8)(sec->ceiling.yoffs);
 	}
 	for (i = 0; i < GLevel->NumSides; i++)
 	{
@@ -1087,10 +1123,10 @@ void SV_UpdateLevel(VMessage &msg)
 			return;
 		}
 
-		msg << (byte)svc_side_ofs
-			<< (word)i
-			<< (word)side->textureoffset
-			<< (word)side->rowoffset;
+		msg << (vuint8)svc_side_ofs
+			<< (vuint16)i
+			<< (vuint16)side->textureoffset
+			<< (vuint16)side->rowoffset;
 	}
 
 	for (i = 0; i < GLevel->NumPolyObjs; i++)
@@ -1115,28 +1151,33 @@ void SV_UpdateLevel(VMessage &msg)
 			return;
 		}
 
-		msg << (byte)svc_poly_update
-			<< (byte)i
-			<< (word)floor(po->startSpot.x + 0.5)
-			<< (word)floor(po->startSpot.y + 0.5)
-			<< (byte)(AngleToByte(po->angle));
+		msg << (vuint8)svc_poly_update
+			<< (vuint8)i
+			<< (vuint16)floor(po->startSpot.x + 0.5)
+			<< (vuint16)floor(po->startSpot.y + 0.5)
+			<< (vuint8)(AngleToByte(po->angle));
 	}
 
+int StartSize = msg.CurSize;
+int NumObjs = 0;
 	//	First update players
 	for (i = 0; i < GMaxEntities; i++)
 	{
 		if (!sv_mobjs[i])
 			continue;
+		if (sv_mobjs[i]->GetFlags() & _OF_DelayedDestroy)
+			continue;
 		if (sv_mobjs[i]->EntityFlags & VEntity::EF_Hidden)
 			continue;
 		if (!sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
 			continue;
-		if (!msg.CheckSpace(25))
+		if (!msg.CheckSpace(29))
 		{
 			GCon->Log(NAME_Dev, "UpdateLevel: player overflow");
 			return;
 		}
 		SV_UpdateMobj(i, msg);
+		NumObjs++;
 	}
 
 	//	Then update non-player mobjs in sight
@@ -1146,13 +1187,15 @@ void SV_UpdateLevel(VMessage &msg)
 		int index = (i + starti) % GMaxEntities;
 		if (!sv_mobjs[index])
 			continue;
+		if (sv_mobjs[i]->GetFlags() & _OF_DelayedDestroy)
+			continue;
 		if (sv_mobjs[index]->EntityFlags & VEntity::EF_Hidden)
 			continue;
 		if (sv_mobjs[index]->EntityFlags & VEntity::EF_IsPlayer)
 			continue;
 		if (!SV_CheckFatPVS(sv_mobjs[index]->SubSector))
 			continue;
-		if (!msg.CheckSpace(25))
+		if (!msg.CheckSpace(29))
 		{
 			if (sv_player->MobjUpdateStart && show_mobj_overflow)
 			{
@@ -1167,8 +1210,11 @@ void SV_UpdateLevel(VMessage &msg)
 			return;
 		}
 		SV_UpdateMobj(index, msg);
+		NumObjs++;
 	}
 	sv_player->MobjUpdateStart = 0;
+dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
+		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
 	unguard;
 }
 
@@ -1185,13 +1231,13 @@ void SV_SendNop(VBasePlayer *client)
 {
 	guard(SV_SendNop);
 	VMessage	msg;
-	byte		buf[4];
+	vuint8		buf[4];
 
 	msg.Data = buf;
 	msg.MaxSize = sizeof(buf);
 	msg.CurSize = 0;
 
-	msg << (byte)svc_nop;
+	msg << (vuint8)svc_nop;
 
 	if (client->NetCon->SendUnreliableMessage(&msg) == -1)
 		SV_DropClient(true);	// if the message couldn't send, kick off
@@ -1208,7 +1254,7 @@ void SV_SendNop(VBasePlayer *client)
 void SV_SendClientDatagram()
 {
 	guard(SV_SendClientDatagram);
-	byte		buf[4096];
+	vuint8		buf[4096];
 	VMessage	msg(buf, MAX_DATAGRAM);
 
 	if (!netgame)
@@ -1245,7 +1291,7 @@ void SV_SendClientDatagram()
 
 		msg.Clear();
 
-		msg << (byte)svc_time
+		msg << (vuint8)svc_time
 			<< level.time;
 
 		SV_WriteViewData(*sv_player, msg);
@@ -1285,7 +1331,7 @@ void SV_SendReliable()
 		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
 			continue;
 
-		Stats = (int*)((byte*)GGameInfo->Players[i] + sizeof(VBasePlayer));
+		Stats = (int*)((vuint8*)GGameInfo->Players[i] + sizeof(VBasePlayer));
 		for (j = 0; j < num_stats; j++)
 		{
 			if (Stats[j] == GGameInfo->Players[i]->OldStats[j])
@@ -1295,18 +1341,18 @@ void SV_SendReliable()
 			int sval = Stats[j];
 			if (sval >= 0 && sval < 256)
 			{
-				GGameInfo->Players[i]->Message << (byte)svc_stats_byte
-					<< (byte)j << (byte)sval;
+				GGameInfo->Players[i]->Message << (vuint8)svc_stats_byte
+					<< (vuint8)j << (vuint8)sval;
 			}
 			else if (sval >= MINSHORT && sval <= MAXSHORT)
 			{
-				GGameInfo->Players[i]->Message << (byte)svc_stats_short
-					<< (byte)j << (short)sval;
+				GGameInfo->Players[i]->Message << (vuint8)svc_stats_short
+					<< (vuint8)j << (vint16)sval;
 			}
 			else
 			{
-				GGameInfo->Players[i]->Message << (byte)svc_stats_long
-					<< (byte)j << sval;
+				GGameInfo->Players[i]->Message << (vuint8)svc_stats_long
+					<< (vuint8)j << sval;
 			}
 			GGameInfo->Players[i]->OldStats[j] = sval;
 		}
@@ -1429,7 +1475,7 @@ static void CheckForSkip()
 	}
 	if (skip)
 	{
-		sv_reliable << (byte)svc_skip_intermission;
+		sv_reliable << (vuint8)svc_skip_intermission;
 	}
 }
 
@@ -1564,7 +1610,7 @@ void SV_Ticker()
 
 void SV_ForceLightning()
 {
-	sv_datagram << (byte)svc_force_lightning;
+	sv_datagram << (vuint8)svc_force_lightning;
 }
 
 //==========================================================================
@@ -1579,23 +1625,23 @@ void SV_SetLineTexture(int side, int position, int texture)
 	if (position == TEXTURE_MIDDLE)
 	{
 		GLevel->Sides[side].midtexture = texture;
-		sv_reliable << (byte)svc_side_mid
-					<< (word)side
-					<< (word)GLevel->Sides[side].midtexture;
+		sv_reliable << (vuint8)svc_side_mid
+					<< (vuint16)side
+					<< (vuint16)GLevel->Sides[side].midtexture;
 	}
 	else if (position == TEXTURE_BOTTOM)
 	{
 		GLevel->Sides[side].bottomtexture = texture;
-		sv_reliable << (byte)svc_side_bot
-					<< (word)side
-					<< (word)GLevel->Sides[side].bottomtexture;
+		sv_reliable << (vuint8)svc_side_bot
+					<< (vuint16)side
+					<< (vuint16)GLevel->Sides[side].bottomtexture;
 	}
 	else
 	{ // TEXTURE_TOP
 		GLevel->Sides[side].toptexture = texture;
-		sv_reliable << (byte)svc_side_top
-					<< (word)side
-					<< (word)GLevel->Sides[side].toptexture;
+		sv_reliable << (vuint8)svc_side_top
+					<< (vuint16)side
+					<< (vuint16)GLevel->Sides[side].toptexture;
 	}
 	unguard;
 }
@@ -1610,9 +1656,9 @@ void SV_SetLineTransluc(line_t *line, int trans)
 {
 	guard(SV_SetLineTransluc);
 	line->translucency = trans;
-	sv_signon	<< (byte)svc_line_transluc
-				<< (short)(line - GLevel->Lines)
-				<< (byte)trans;
+	sv_signon	<< (vuint8)svc_line_transluc
+				<< (vint16)(line - GLevel->Lines)
+				<< (vuint8)trans;
 	unguard;
 }
 
@@ -1626,9 +1672,9 @@ void SV_SetFloorPic(int i, int texture)
 {
 	guard(SV_SetFloorPic);
 	GLevel->Sectors[i].floor.pic = texture;
-	sv_reliable << (byte)svc_sec_floor
-				<< (word)i
-				<< (word)GLevel->Sectors[i].floor.pic;
+	sv_reliable << (vuint8)svc_sec_floor
+				<< (vuint16)i
+				<< (vuint16)GLevel->Sectors[i].floor.pic;
 	unguard;
 }
 
@@ -1642,9 +1688,9 @@ void SV_SetCeilPic(int i, int texture)
 {
 	guard(SV_SetCeilPic);
 	GLevel->Sectors[i].ceiling.pic = texture;
-	sv_reliable << (byte)svc_sec_ceil
-				<< (word)i
-				<< (word)GLevel->Sectors[i].ceiling.pic;
+	sv_reliable << (vuint8)svc_sec_ceil
+				<< (vuint16)i
+				<< (vuint16)GLevel->Sectors[i].ceiling.pic;
 	unguard;
 }
 
@@ -1661,9 +1707,9 @@ void SV_ChangeSky(const char* Sky1, const char* Sky2)
 		VName::AddLower8), TEXTYPE_Wall, true, false);
 	level.sky2Texture = GTextureManager.NumForName(VName(Sky2,
 		VName::AddLower8), TEXTYPE_Wall, true, false);
-	sv_reliable << (byte)svc_change_sky
-				<< (word)level.sky1Texture
-				<< (word)level.sky2Texture;
+	sv_reliable << (vuint8)svc_change_sky
+				<< (vuint16)level.sky1Texture
+				<< (vuint16)level.sky2Texture;
 	unguard;
 }
 
@@ -1677,9 +1723,9 @@ void SV_ChangeMusic(const char* SongName)
 {
 	guard(SV_ChangeMusic);
 	level.SongLump = VName(SongName, VName::AddLower8);
-	sv_reliable << (byte)svc_change_music
+	sv_reliable << (vuint8)svc_change_music
 				<< *level.SongLump
-				<< (byte)level.cdTrack;
+				<< (vuint8)level.cdTrack;
 	unguard;
 }
 
@@ -1692,9 +1738,9 @@ void SV_ChangeMusic(const char* SongName)
 void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
 {
 	guard(SV_ChangeLocalMusic);
-	player->Message << (byte)svc_change_music
+	player->Message << (vuint8)svc_change_music
 					<< SongName
-					<< (byte)0;
+					<< (vuint8)0;
 	unguard;
 }
 
@@ -1734,27 +1780,27 @@ static void G_DoCompleted()
 		}
 	}
 
-	sv_reliable << (byte)svc_intermission
+	sv_reliable << (vuint8)svc_intermission
 				<< *sv_next_map;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GGameInfo->Players[i])
 		{
-			sv_reliable << (byte)true;
+			sv_reliable << (vuint8)true;
 			for (j = 0; j < MAXPLAYERS; j++)
-				sv_reliable << (byte)GGameInfo->Players[i]->FragsStats[j];
-			sv_reliable << (short)GGameInfo->Players[i]->KillCount
-						<< (short)GGameInfo->Players[i]->ItemCount
-						<< (short)GGameInfo->Players[i]->SecretCount;
+				sv_reliable << (vuint8)GGameInfo->Players[i]->FragsStats[j];
+			sv_reliable << (vint16)GGameInfo->Players[i]->KillCount
+						<< (vint16)GGameInfo->Players[i]->ItemCount
+						<< (vint16)GGameInfo->Players[i]->SecretCount;
 		}
 		else
 		{
-			sv_reliable << (byte)false;
+			sv_reliable << (vuint8)false;
 			for (j = 0; j < MAXPLAYERS; j++)
-				sv_reliable << (byte)0;
-			sv_reliable << (short)0
-						<< (short)0
-						<< (short)0;
+				sv_reliable << (vuint8)0;
+			sv_reliable << (vint16)0
+						<< (vint16)0
+						<< (vint16)0;
 		}
 	}
 }
@@ -1833,7 +1879,7 @@ void G_Completed(int InMap, int InPosition, int SaveAngle)
 	{
 		if (!deathmatch)
 		{
-			sv_reliable << (byte)svc_finale;
+			sv_reliable << (vuint8)svc_finale;
 			sv.intermission = 2;
 			return;
 		}
@@ -1885,7 +1931,7 @@ COMMAND(TeleportNewMap)
 			level.MapName == "e3m8" || level.MapName == "e4m8" ||
 			level.MapName == "e5m8")
 		{
-			sv_reliable << (byte)svc_finale;
+			sv_reliable << (vuint8)svc_finale;
 			sv.intermission = 2;
 			return;
 		}
@@ -2011,16 +2057,8 @@ int NET_SendToAll(VMessage* data, int blocktime)
 
 static void SV_InitModelLists()
 {
-	int i;
-
-	numsprites = VClass::GSpriteNames.Num();
-	for (i = 0; i < numsprites; i++)
-	{
-		sprites[i] = VClass::GSpriteNames[i];
-	}
-
 	nummodels = VClass::GModelNames.Num();
-	for (i = 1; i < nummodels; i++)
+	for (int i = 1; i < nummodels; i++)
 	{
 		models[i] = VClass::GModelNames[i];
 	}
@@ -2052,8 +2090,8 @@ int SV_FindModel(const char *name)
 	}
 	models[i] = name;
 	nummodels++;
-	sv_reliable << (byte)svc_model
-				<< (short)i
+	sv_reliable << (vuint8)svc_model
+				<< (vint16)i
 				<< name;
 	return i;
 	unguard;
@@ -2083,8 +2121,8 @@ int SV_GetModelIndex(const VName &Name)
 	}
 	models[i] = Name;
 	nummodels++;
-	sv_reliable << (byte)svc_model
-				<< (short)i
+	sv_reliable << (vuint8)svc_model
+				<< (vint16)i
 				<< *Name;
 	return i;
 	unguard;
@@ -2114,8 +2152,8 @@ int SV_FindSkin(const char *name)
 	}
 	skins[i] = name;
 	numskins++;
-	sv_reliable << (byte)svc_skin
-				<< (byte)i
+	sv_reliable << (vuint8)svc_skin
+				<< (vuint8)i
 				<< name;
 	return i;
 	unguard;
@@ -2133,58 +2171,65 @@ void SV_SendServerInfo(VBasePlayer *player)
 	int			i;
 	VMessage	&msg = player->Message;
 
-	msg << (byte)svc_server_info
-		<< (byte)PROTOCOL_VERSION
+	msg << (vuint8)svc_server_info
+		<< (vuint8)PROTOCOL_VERSION
 		<< svs.serverinfo
 		<< *level.MapName
 		<< level.LevelName
-		<< (byte)SV_GetPlayerNum(player)
-		<< (byte)svs.max_clients
-		<< (byte)deathmatch
+		<< (vuint8)SV_GetPlayerNum(player)
+		<< (vuint8)svs.max_clients
+		<< (vuint8)deathmatch
 		<< level.totalkills
 		<< level.totalitems
 		<< level.totalsecret
-		<< (word)level.sky1Texture
-		<< (word)level.sky2Texture
+		<< (vuint16)level.sky1Texture
+		<< (vuint16)level.sky2Texture
 		<< level.sky1ScrollDelta
 		<< level.sky2ScrollDelta
-		<< (byte)level.doubleSky
-		<< (byte)level.lightning
+		<< (vuint8)level.doubleSky
+		<< (vuint8)level.lightning
 		<< *level.SkyBox
 		<< *level.FadeTable
 		<< *level.SongLump
-		<< (byte)level.cdTrack;
+		<< (vuint8)level.cdTrack;
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		msg << (byte)svc_userinfo
-			<< (byte)i
+		msg << (vuint8)svc_userinfo
+			<< (vuint8)i
 			<< (GGameInfo->Players[i] ? GGameInfo->Players[i]->UserInfo : "");
 	}
 
-	msg << (byte)svc_sprites
-		<< (short)numsprites;
-	for (i = 0; i < numsprites; i++)
+	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
-		msg << *sprites[i];
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
+		{
+			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
+			if (C->IsChildOf(VThinker::StaticClass()))
+			{
+				msg << (vuint8)svc_class_name
+					<< (vuint16)C->NetId
+					<< C->GetName();
+			}
+		}
 	}
 
-	for (i = 1; i < nummodels; i++)
+	for (i = VClass::GModelNames.Num(); i < nummodels; i++)
 	{
-		msg << (byte)svc_model
-			<< (short)i
+		msg << (vuint8)svc_model
+			<< (vint16)i
 			<< *models[i];
 	}
 
 	for (i = 1; i < numskins; i++)
 	{
-		msg << (byte)svc_skin
-			<< (byte)i
+		msg << (vuint8)svc_skin
+			<< (vuint8)i
 			<< *skins[i];
 	}
 
-	msg << (byte)svc_signonnum
-		<< (byte)1;
+	msg << (vuint8)svc_signonnum
+		<< (vuint8)1;
 	unguard;
 }
 
@@ -2405,21 +2450,21 @@ static void SV_WriteChangedTextures(VMessage &msg)
 		side_t &s = GLevel->Sides[i];
 		if (s.midtexture != s.base_midtexture)
 		{
-			msg << (byte)svc_side_mid
-				<< (word)i
-				<< (word)s.midtexture;
+			msg << (vuint8)svc_side_mid
+				<< (vuint16)i
+				<< (vuint16)s.midtexture;
 		}
 		if (s.bottomtexture != s.base_bottomtexture)
 		{
-			msg << (byte)svc_side_bot
-				<< (word)i
-				<< (word)s.bottomtexture;
+			msg << (vuint8)svc_side_bot
+				<< (vuint16)i
+				<< (vuint16)s.bottomtexture;
 		}
 		if (s.toptexture != s.base_toptexture)
 		{
-			msg << (byte)svc_side_top
-				<< (word)i
-				<< (word)s.toptexture;
+			msg << (vuint8)svc_side_top
+				<< (vuint16)i
+				<< (vuint16)s.toptexture;
 		}
 	}
 
@@ -2428,15 +2473,15 @@ static void SV_WriteChangedTextures(VMessage &msg)
 		sector_t &s = GLevel->Sectors[i];
 		if (s.floor.pic != s.floor.base_pic)
 		{
-			msg << (byte)svc_sec_floor
-				<< (word)i
-				<< (word)s.floor.pic;
+			msg << (vuint8)svc_sec_floor
+				<< (vuint16)i
+				<< (vuint16)s.floor.pic;
 		}
 		if (s.ceiling.pic != s.ceiling.base_pic)
 		{
-			msg << (byte)svc_sec_ceil
-				<< (word)i
-				<< (word)s.ceiling.pic;
+			msg << (vuint8)svc_sec_ceil
+				<< (vuint16)i
+				<< (vuint16)s.ceiling.pic;
 		}
 	}
 }
@@ -2457,7 +2502,7 @@ COMMAND(PreSpawn)
 	}
 
 	sv_player->Message << sv_signon;
-	sv_player->Message << (byte)svc_signonnum << (byte)2;
+	sv_player->Message << (vuint8)svc_signonnum << (vuint8)2;
 	unguard;
 }
 
@@ -2496,11 +2541,11 @@ COMMAND(Spawn)
 		}
 	}
 	SV_WriteChangedTextures(sv_player->Message);
-	sv_player->Message << (byte)svc_set_angles
-						<< (byte)(AngleToByte(sv_player->ViewAngles.pitch))
-						<< (byte)(AngleToByte(sv_player->ViewAngles.yaw))
-						<< (byte)0;
-	sv_player->Message << (byte)svc_signonnum << (byte)3;
+	sv_player->Message << (vuint8)svc_set_angles
+						<< (vuint8)(AngleToByte(sv_player->ViewAngles.pitch))
+						<< (vuint8)(AngleToByte(sv_player->ViewAngles.yaw))
+						<< (vuint8)0;
+	sv_player->Message << (vuint8)svc_signonnum << (vuint8)3;
 	sv_player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
 	memset(sv_player->OldStats, 0, num_stats * 4);
 	unguard;
@@ -2576,7 +2621,7 @@ void SV_DropClient(bool)
 void SV_ShutdownServer(boolean crash)
 {
 	guard(SV_ShutdownServer);
-	byte		buf[128];
+	vuint8		buf[128];
 	VMessage	msg(buf, 128);
 	int			i;
 	int			count;
@@ -2623,7 +2668,7 @@ void SV_ShutdownServer(boolean crash)
 #endif
 
 	// make sure all the clients know we're disconnecting
-	msg << (byte)svc_disconnect;
+	msg << (vuint8)svc_disconnect;
 	count = NET_SendToAll(&msg, 5);
 	if (count)
 		GCon->Logf("Shutdown server failed for %d clients", count);
@@ -2648,7 +2693,7 @@ void SV_ShutdownServer(boolean crash)
 		//	Save old stats pointer
 		int* OldStats = GPlayersBase[i]->OldStats;
 		GPlayersBase[i]->GetClass()->DestructObject(GPlayersBase[i]);
-		memset((byte*)GPlayersBase[i] + sizeof(VObject), 0,
+		memset((vuint8*)GPlayersBase[i] + sizeof(VObject), 0,
 			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
 		//	Restore pointer
 		GPlayersBase[i]->OldStats = OldStats;
@@ -2708,7 +2753,7 @@ COMMAND(Pause)
 	}
 
 	paused ^= 1;
-	sv_reliable << (byte)svc_pause << (byte)paused;
+	sv_reliable << (vuint8)svc_pause << (vuint8)paused;
 	unguard;
 }
 

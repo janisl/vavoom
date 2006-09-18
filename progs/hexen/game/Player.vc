@@ -2232,7 +2232,21 @@ void PlayerTick(float deltaTime)
 				{
 					speedA._Special1 = 0;
 				}
-				speedA.SpriteIndex = MO.SpriteIndex;
+				switch (PClass)
+				{
+				case HexenDefs::PCLASS_FIGHTER:
+					speedA.SetState(PlayerSpeed::S_PLAYER_F_SPEED1);
+					break;
+				case HexenDefs::PCLASS_CLERIC:
+					speedA.SetState(PlayerSpeed::S_PLAYER_C_SPEED1);
+					break;
+				case HexenDefs::PCLASS_MAGE:
+					speedA.SetState(PlayerSpeed::S_PLAYER_M_SPEED1);
+					break;
+				case HexenDefs::PCLASS_PIG:
+					speedA.SetState(PlayerSpeed::S_PLAYER_P_SPEED1);
+					break;
+				}
 				speedA.FloorClip = MO.FloorClip;
 #ifdef FIXME
 				if (self == GPlayers[consoleplayer])

@@ -23,7 +23,9 @@
 //**
 //**************************************************************************
 
-class ZArmorChunk:Decoration;
+class ZArmorChunk : Decoration;
+
+state ChunkStates[10];
 
 __states__
 {
@@ -44,4 +46,14 @@ defaultproperties
 	Radius = 4.0;
 	Height = 8.0;
 	IdleState = S_ZARMORCHUNK1;
+	ChunkStates[0] = S_ZARMORCHUNK1;
+	ChunkStates[1] = S_ZARMORCHUNK2;
+	ChunkStates[2] = S_ZARMORCHUNK3;
+	ChunkStates[3] = S_ZARMORCHUNK4;
+	ChunkStates[4] = S_ZARMORCHUNK5;
+	ChunkStates[5] = S_ZARMORCHUNK6;
+	ChunkStates[6] = S_ZARMORCHUNK7;
+	ChunkStates[7] = S_ZARMORCHUNK8;
+	ChunkStates[8] = S_ZARMORCHUNK9;
+	ChunkStates[9] = S_ZARMORCHUNK10;
 }

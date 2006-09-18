@@ -34,17 +34,26 @@ class PlayerSpeed : Effect;
 void A_SpeedFade()
 {
 	Translucency = 66;
-	SpriteIndex = Instigator.SpriteIndex;
 }
 
 __states__
 {
-	S_PLAYER_SPEED1('PLAY', 0, 5.0 / 35.0, S_PLAYER_SPEED2) { }
-	S_PLAYER_SPEED2('PLAY', 0, 3.0 / 35.0, none) { A_SpeedFade(); }
+	//	Fighter
+	S_PLAYER_F_SPEED1('PLAY', 0, 5.0 / 35.0, S_PLAYER_F_SPEED2) { }
+	S_PLAYER_F_SPEED2('PLAY', 0, 3.0 / 35.0, none) { A_SpeedFade(); }
+	//	Cleric
+	S_PLAYER_C_SPEED1('CLER', 0, 5.0 / 35.0, S_PLAYER_C_SPEED2) { }
+	S_PLAYER_C_SPEED2('CLER', 0, 3.0 / 35.0, none) { A_SpeedFade(); }
+	//	Mage
+	S_PLAYER_M_SPEED1('MAGE', 0, 5.0 / 35.0, S_PLAYER_M_SPEED2) { }
+	S_PLAYER_M_SPEED2('MAGE', 0, 3.0 / 35.0, none) { A_SpeedFade(); }
+	//	Pig
+	S_PLAYER_P_SPEED1('PIGY', 0, 5.0 / 35.0, S_PLAYER_P_SPEED2) { }
+	S_PLAYER_P_SPEED2('PIGY', 0, 3.0 / 35.0, none) { A_SpeedFade(); }
 }
 
 defaultproperties
 {
 	Translucency = 33;
-	IdleState = S_PLAYER_SPEED1;
+	IdleState = S_PLAYER_F_SPEED1;
 }

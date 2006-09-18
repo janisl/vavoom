@@ -218,6 +218,8 @@ public:
 	VMethod*	function;
 	VState*		Next;
 
+	vint32		NetId;
+
 	VState(VName);
 
 	void Serialise(VStream&);
@@ -325,6 +327,9 @@ public:
 	VField*			DestructorFields;
 	VState*			States;
 	VMethod*		DefaultProperties;
+
+	vint32			NetId;
+	TArray<VState*>	StatesLookup;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;

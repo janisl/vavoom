@@ -85,15 +85,15 @@ TVec Origin;
 // Momentums, used to update position.
 TVec Velocity;
 
-TAVec Angles;		// orientation
+TAVec Angles;				// orientation
 
-//More drawing info: to determine current sprite.
-int SpriteType;		//  How to draw sprite
-int SpriteIndex;	// used to find patch_t and flip value
-int SpriteFrame;	// might be ORed with FF_FULLBRIGHT
+readonly state State;
+readonly state NextState;
+float StateTime;			// state tic counter
 
-int ModelIndex;
-int ModelFrame;
+//More drawing info.
+int SpriteType;				//  How to draw sprite
+int FixedModelIndex;
 int ModelSkinIndex;
 int ModelSkinNum;
 
@@ -104,8 +104,8 @@ float FloorClip;	// value to use for floor clipping
 
 int Effects;
 
-native readonly subsector_t *SubSector;
-native readonly sector_t *Sector;
+native readonly subsector_t* SubSector;
+native readonly sector_t* Sector;
 
 // Interaction info, by BLOCKMAP.
 // Links in blocks (if needed).
@@ -118,8 +118,8 @@ native float CeilingZ;
 native float DropOffZ;
 
 //  Closest floor and ceiling, source of floorz and ceilingz
-native sec_plane_t *Floor;
-native sec_plane_t *Ceiling;
+native sec_plane_t* Floor;
+native sec_plane_t* Ceiling;
 
 // If == validcount, already checked.
 int ValidCount;
@@ -133,22 +133,23 @@ bool bFixedModel;
 
 bool bNoGravity;		// don't apply gravity every tic
 bool bNoPassMobj;		// Disable z block checking.  If on,
-				// this flag will prevent the mobj
-				// from passing over/under other mobjs.
+						// this flag will prevent the mobj
+						// from passing over/under other mobjs.
 bool bColideWithThings;
 bool bColideWithWorld;
 bool bCheckLineBlocking;
 bool bCheckLineBlockMonsters;
 bool bDropOff;			// allow jumps from high places
 bool bFloat;			// allow moves to any height, no gravity
-bool bFly;			// fly mode is active
+bool bFly;				// fly mode is active
 bool bBlasted;			// missile will pass through ghosts
-bool bCantLeaveFloorpic;	// stay within a certain floor type
+bool bCantLeaveFloorpic;// stay within a certain floor type
 bool bFloorClip;		// if feet are allowed to be clipped
-bool bIgnoreCeilingStep;	// continue walk without lowering itself
-bool bAvoidingDropoff;		// used to move monsters away from dropoffs
+bool bIgnoreCeilingStep;// continue walk without lowering itself
+bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step
+bool bFullBright;		// make current state full bright
 
 int Health;
 
@@ -160,18 +161,13 @@ float Height;
 // Only valid if type == MT_PLAYER
 BasePlayer Player;
 
-int TID;	// thing identifier
+int TID;		// thing identifier
 int Special;	// special
 int Args[5];	// special arguments
 
 readonly private int NetID;
 
 native readonly private int InUse;	//	Counter for client side
-
-name SpriteName;
-float StateTime;	// state tic counter
-readonly state State;
-readonly state NextState;
 
 //  Params
 float Mass;
@@ -286,7 +282,7 @@ void HandleFloorclip()
 //
 //==========================================================================
 
-void CrossSpecialLine(line_t *ld, int side)
+void CrossSpecialLine(line_t* ld, int side)
 {
 }
 

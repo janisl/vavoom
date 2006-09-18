@@ -315,6 +315,7 @@ public:
 	DECLARE_FUNCTION(SpawnObject)
 	DECLARE_FUNCTION(FindClass)
 	DECLARE_FUNCTION(StateIsInRange)
+	DECLARE_FUNCTION(GetStateSpriteName)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

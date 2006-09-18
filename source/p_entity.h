@@ -88,15 +88,15 @@ class VEntity : public VThinker
 	// Momentums, used to update position.
 	TVec			Velocity;
 
-	TAVec			Angles;	// orientation
+	TAVec			Angles;			// orientation
 
-	//More drawing info: to determine current sprite.
-	int				SpriteType;
-	int				SpriteIndex;	// used to find patch_t and flip value
-	int				SpriteFrame;	// might be ORed with FF_FULLBRIGHT
+	VState*			State;
+	VState*			NextState;
+	float			StateTime;		// state tic counter
 
-	int				ModelIndex;
-	int				ModelFrame;
+	//More drawing info.
+	int				SpriteType;		//  How to draw sprite
+	int				FixedModelIndex;
 	int				ModelSkinIndex;
 	int				ModelSkinNum;
 
@@ -155,6 +155,7 @@ class VEntity : public VThinker
 		EF_AvoidingDropoff		= 0x00040000,	// used to move monsters away from dropoffs
 		EF_OnMobj				= 0x00080000,	// mobj is resting on top of another mobj
 		EF_Corpse				= 0x00100000,	// don't stop moving halfway off a step
+		EF_FullBright			= 0x00200000,	// make current state full bright
 	};
 	vuint32			EntityFlags;
 
@@ -175,11 +176,6 @@ class VEntity : public VThinker
 	int				NetID;
 
 	int				InUse;			//	Counter for client side
-
-	VName			SpriteName;
-	float			StateTime;	// state tic counter
-	VState*			State;
-	VState*			NextState;
 
 	//  Params
 	float			Mass;

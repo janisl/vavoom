@@ -192,41 +192,39 @@ extern int 			TimerGame; // tic countdown for deathmatch
 //	Mobj baseline type
 struct mobj_base_t
 {
+	VClass*		Class;			// class
+	VState*		State;			// state
 	TVec		Origin;			// position
 	TAVec		Angles;			// orientation
 	int			SpriteType;		// sprite orientation type
-	int			SpriteIndex;	// used to find patch_t and flip value
-	int			SpriteFrame;	// might be ORed with FF_FULLBRIGHT
-	int			ModelIndex;
-	int			ModelFrame;
 	int			Translucency;	// translucency, in percents
 	int			Translation;	// player color translation
 	int			Effects;		// dynamic lights, trails
 };
 
-void SV_StartSound(const VEntity *, int, int, int);
-void SV_StartLocalSound(const VEntity *, int, int, int);
-void SV_StopSound(const VEntity *, int);
-void SV_SectorStartSound(const sector_t *, int, int, int);
-void SV_SectorStopSound(const sector_t *, int);
-void SV_SectorStartSequence(const sector_t *, const char *);
-void SV_SectorStopSequence(const sector_t *);
-void SV_PolyobjStartSequence(const polyobj_t *, const char *);
-void SV_PolyobjStopSequence(const polyobj_t *);
-void SV_BroadcastPrintf(const char *s, ...);
-void SV_BroadcastCentrePrintf(const char *s, ...);
-void SV_ClientPrintf(VBasePlayer *player, const char *s, ...);
-void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...);
-void SV_SetFloorPic(int i, int texture);
-void SV_SetCeilPic(int i, int texture);
-void SV_SetLineTexture(int side, int position, int texture);
-void SV_SetLineTransluc(line_t *line, int trans);
-int SV_FindModel(const char *name);
-int SV_GetModelIndex(const VName &Name);
-int SV_FindSkin(const char *name);
-void SV_ChangeSky(const char* Sky1, const char* Sky2);
-void SV_ChangeMusic(const char* SongName);
-void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName);
+void SV_StartSound(const VEntity*, int, int, int);
+void SV_StartLocalSound(const VEntity*, int, int, int);
+void SV_StopSound(const VEntity*, int);
+void SV_SectorStartSound(const sector_t*, int, int, int);
+void SV_SectorStopSound(const sector_t*, int);
+void SV_SectorStartSequence(const sector_t*, const char*);
+void SV_SectorStopSequence(const sector_t*);
+void SV_PolyobjStartSequence(const polyobj_t*, const char*);
+void SV_PolyobjStopSequence(const polyobj_t*);
+void SV_BroadcastPrintf(const char*, ...);
+void SV_BroadcastCentrePrintf(const char*, ...);
+void SV_ClientPrintf(VBasePlayer*, const char*, ...);
+void SV_ClientCenterPrintf(VBasePlayer*, const char*, ...);
+void SV_SetFloorPic(int, int);
+void SV_SetCeilPic(int, int);
+void SV_SetLineTexture(int, int, int);
+void SV_SetLineTransluc(line_t*, int);
+int SV_FindModel(const char*);
+int SV_GetModelIndex(const VName&);
+int SV_FindSkin(const char*);
+void SV_ChangeSky(const char*, const char*);
+void SV_ChangeMusic(const char*);
+void SV_ChangeLocalMusic(VBasePlayer*, const char*);
 
 void SV_ReadMove();
 
