@@ -198,7 +198,7 @@ void A_ThrustImpale()
 	// stomp on any things contacted
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			P_BlockThingsIterator(bx, by, self, 'PIT_ThrustStompThing');
+			XLevel.BlockThingsIterator(bx, by, self, 'PIT_ThrustStompThing');
 }
 
 __states__

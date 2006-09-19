@@ -358,7 +358,7 @@ bool TraceLine(TVec start, TVec end)
 	trace_end = end;
 
 	linestart = trace_start;
-	if (P_PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES,
+	if (XLevel.PathTraverse(start.x, start.y, end.x, end.y, PT_ADDLINES,
 		self, 'TraceTraverse'))
 	{
 		lineend = end;

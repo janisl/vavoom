@@ -251,7 +251,7 @@ void Tick(float DeltaTime)
 
 		for (bx = xl; bx <= xh; bx++)
 			for (by = yl; by <= yh; by++)
-				P_BlockThingsIterator(bx, by, self, 'PIT_PushThing');
+				XLevel.BlockThingsIterator(bx, by, self, 'PIT_PushThing');
 		return;
 	}
 

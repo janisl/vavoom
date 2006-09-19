@@ -108,6 +108,11 @@ native readonly private Thinker	__ThinkerTail;
 //
 
 native final sector_t *PointInSector(TVec Point);
+native final bool BlockThingsIterator(int x, int y, Object SelfObj,
+	name FuncName);
+native final bool PathTraverse(float x1, float y1, float x2, float y2,
+	int flags, Object SelfObj, name FuncName);
+native final bool ChangeSector(sector_t* sector, int crunch);
 
 //
 //  Polyobj functions

@@ -3662,7 +3662,7 @@ void P_UseLines()
 	y1 = MO.Origin.y;
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
-	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
+	MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
 }
 
 //**************************************************************************
@@ -3758,7 +3758,7 @@ bool UsePuzzleItem(int itemType)
 	y1 = MO.Origin.y;
 	x2 = x1 + USERANGE * PuzzleUseDir.x;
 	y2 = y1 + USERANGE * PuzzleUseDir.y;
-	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
+	MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
 		self, 'PTR_PuzzleItemTraverse');
 	return PuzzleActivated;
 }

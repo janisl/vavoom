@@ -140,7 +140,7 @@ void Tick(float deltaTime)
 	case 1:
 		//	Open door.
 		Sector->ceiling.dist = TopDist;
-		P_ChangeSector(Sector, false);
+		XLevel.ChangeSector(Sector, false);
 		CurrentFrame += AnimSpeed * deltaTime;
 		if (CurrentFrame >= itof(NumFrames))
 		{
@@ -184,7 +184,7 @@ void Tick(float deltaTime)
 		//	Try to close door. If it crushes it means that there's something
 		// inside the door so go back.
 		Sector->ceiling.dist = BotDist;
-		if (P_ChangeSector(Sector, false))
+		if (XLevel.ChangeSector(Sector, false))
 		{
 			Direction = 1;
 		}
@@ -205,7 +205,7 @@ void Tick(float deltaTime)
 		else
 		{
 			Sector->ceiling.dist = TopDist;
-			P_ChangeSector(Sector, false);
+			XLevel.ChangeSector(Sector, false);
 		}
 		break;
 	}

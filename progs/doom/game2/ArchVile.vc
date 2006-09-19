@@ -66,7 +66,7 @@ void A_VileChase()
 			{
 				// Call PIT_VileCheck to check whether object is a corpse
 				// that canbe raised.
-				if (!P_BlockThingsIterator(bx, by, self, 'PIT_VileCheck'))
+				if (!XLevel.BlockThingsIterator(bx, by, self, 'PIT_VileCheck'))
 				{
 					// got one!
 					temp = Enemy;

@@ -2308,7 +2308,7 @@ void RadiusAttack(int damage, int distance, bool damageSource)
 
 	for (y = yl; y <= yh; y++)
 		for (x = xl; x <= xh; x++)
-			P_BlockThingsIterator(x, y, self, 'PIT_RadiusAttack');
+			XLevel.BlockThingsIterator(x, y, self, 'PIT_RadiusAttack');
 }
 
 //==========================================================================
@@ -2646,7 +2646,7 @@ bool TeleportMove(TVec newOrg)
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!P_BlockThingsIterator(bx, by, self, 'PIT_StompThing'))
+			if (!XLevel.BlockThingsIterator(bx, by, self, 'PIT_StompThing'))
 				return false;
 
 	// the move is ok,
@@ -3437,7 +3437,7 @@ TVec AimLineAttack(TAVec angles, float distance)
 	aim_range = distance;
 	linetarget = none;
 
-	P_PathTraverse(Origin.x, Origin.y, x2, y2,
+	XLevel.PathTraverse(Origin.x, Origin.y, x2, y2,
 		PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_AimTraverse');
 
 	if (linetarget)
@@ -3763,7 +3763,7 @@ int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 
 	dst = shoot_origin + shoot_range * shoot_dir;
 	shoot_linestart = shoot_origin;
-	if (!P_PathTraverse(Origin.x, Origin.y, dst.x, dst.y,
+	if (!XLevel.PathTraverse(Origin.x, Origin.y, dst.x, dst.y,
 			PT_ADDLINES | PT_ADDTHINGS, self, 'PTR_ShootTraverse'))
 	{
 		return false;

@@ -462,6 +462,25 @@ struct FRogueConSpeech
 	FRogueConChoice	Choices[5];	//	Choices
 };
 
+enum
+{
+	PT_ADDLINES		= 1,
+	PT_ADDTHINGS	= 2,
+	PT_EARLYOUT		= 4,
+};
+
+struct intercept_t
+{
+	float		frac;		// along trace line
+	enum
+	{
+		IF_IsALine = 0x01,
+	};
+	vuint32		Flags;
+	VEntity*	thing;
+	line_t*		line;
+};
+
 //==========================================================================
 //
 //									LEVEL
@@ -593,6 +612,13 @@ class VLevel : public VObject
 	bool MovePolyobj(int, float, float);
 	bool RotatePolyobj(int, float);
 
+	bool BlockLinesIterator(int, int, bool(*func)(void*, line_t*), void*);
+	bool BlockThingsIterator(int, int, bool(*func)(void*, VEntity*),
+		void*, VObject*, VMethod*);
+	bool PathTraverse(float, float, float, float, int,
+		bool(*trav)(void*, intercept_t *), void*, VObject*, VMethod*);
+	bool ChangeSector(sector_t*, int);
+
 	bool IsForServer() const
 	{
 		return !!(LevelFlags & LF_ForServer);
@@ -643,6 +669,9 @@ private:
 	bool PolyCheckMobjBlocking(seg_t*, polyobj_t*);
 
 	DECLARE_FUNCTION(PointInSector)
+	DECLARE_FUNCTION(BlockThingsIterator)
+	DECLARE_FUNCTION(PathTraverse)
+	DECLARE_FUNCTION(ChangeSector)
 
 	//	Polyobj functions
 	DECLARE_FUNCTION(SpawnPolyobj)

@@ -236,41 +236,6 @@ IMPLEMENT_FUNCTION(VObject, P_BoxOnLineSide)
 
 //==========================================================================
 //
-//  PF_P_BlockThingsIterator
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, P_BlockThingsIterator)
-{
-	P_GET_NAME(FuncName);
-	P_GET_REF(VObject, SelfObj);
-	P_GET_INT(y);
-	P_GET_INT(x);
-	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	RET_BOOL(SV_BlockThingsIterator(x, y, NULL, NULL, SelfObj, func));
-}
-
-//==========================================================================
-//
-//	PF_P_PathTraverse
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, P_PathTraverse)
-{
-	P_GET_NAME(FuncName);
-	P_GET_REF(VObject, SelfObj);
-	P_GET_INT(flags);
-	P_GET_FLOAT(y2);
-	P_GET_FLOAT(x2);
-	P_GET_FLOAT(y1);
-	P_GET_FLOAT(x1);
-	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	RET_BOOL(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, NULL, SelfObj, func));
-}
-
-//==========================================================================
-//
 //	PF_FindThingGap
 //
 //==========================================================================
@@ -350,19 +315,6 @@ IMPLEMENT_FUNCTION(VObject, MapBlock)
 {
 	P_GET_FLOAT(x);
 	RET_INT(MapBlock(x));
-}
-
-//==========================================================================
-//
-//	PF_P_ChangeSector
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, P_ChangeSector)
-{
-	P_GET_INT(crunch);
-	P_GET_PTR(sector_t, sec);
-	RET_BOOL(P_ChangeSector(sec, crunch));
 }
 
 //**************************************************************************

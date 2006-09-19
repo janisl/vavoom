@@ -2784,7 +2784,7 @@ void P_UseLines()
 	y1 = MO.Origin.y;
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
-	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
+	MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
 }
 
 //==========================================================================

@@ -85,7 +85,7 @@ void Tick(float DeltaTime)
 		{
 			// Remove
 			Sector->floor.dist = OriginalDist;
-			P_ChangeSector(Sector, true);
+			XLevel.ChangeSector(Sector, true);
 			Finished();
 			return;
 		}
@@ -106,7 +106,7 @@ void Tick(float DeltaTime)
 	Accumulator += AccSpeed * DeltaTime;
 	Sector->floor.dist = OriginalDist + Level.Game.FloatBobOffsets[
 		ftoi(Accumulator) & 63] * Scale / Sector->floor.normal.z;
-	P_ChangeSector(Sector, true);
+	XLevel.ChangeSector(Sector, true);
 }
 
 defaultproperties

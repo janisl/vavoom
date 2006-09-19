@@ -618,7 +618,7 @@ bool CheckPath(float ang, float dist)
 
 	player.P_UseLines();
 
-	if (!P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_BotPathTraverse'))
+	if (!player.MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_BotPathTraverse'))
 		return false;
 	else
 		return true;

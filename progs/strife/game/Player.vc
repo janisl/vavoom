@@ -2530,12 +2530,12 @@ void P_UseLines()
 
 	x2 = x1 + USETHINGRANGE * useDir.x;
 	y2 = y1 + USETHINGRANGE * useDir.y;
-	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
+	MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS,
 		self, 'PTR_UseThingTraverse');
 
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
-	P_PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
+	MO.XLevel.PathTraverse(x1, y1, x2, y2, PT_ADDLINES, self, 'PTR_UseTraverse');
 }
 
 //==========================================================================

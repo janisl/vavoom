@@ -373,15 +373,12 @@ public:
 	//	Map utilites
 	DECLARE_FUNCTION(LineOpenings)
 	DECLARE_FUNCTION(P_BoxOnLineSide)
-	DECLARE_FUNCTION(P_BlockThingsIterator)
-	DECLARE_FUNCTION(P_PathTraverse)
 	DECLARE_FUNCTION(FindThingGap)
 	DECLARE_FUNCTION(FindOpening)
 	DECLARE_FUNCTION(PointInRegion)
 	DECLARE_FUNCTION(AddExtraFloor)
 	DECLARE_FUNCTION(SwapPlanes)
 	DECLARE_FUNCTION(MapBlock)
-	DECLARE_FUNCTION(P_ChangeSector)
 
 	//	Mobj utilites
 	DECLARE_FUNCTION(NewMobjThinker)
