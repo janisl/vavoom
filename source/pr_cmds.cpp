@@ -247,7 +247,7 @@ IMPLEMENT_FUNCTION(VObject, P_BlockThingsIterator)
 	P_GET_INT(y);
 	P_GET_INT(x);
 	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	RET_BOOL(SV_BlockThingsIterator(x, y, NULL, SelfObj, func));
+	RET_BOOL(SV_BlockThingsIterator(x, y, NULL, NULL, SelfObj, func));
 }
 
 //==========================================================================
@@ -266,7 +266,7 @@ IMPLEMENT_FUNCTION(VObject, P_PathTraverse)
 	P_GET_FLOAT(y1);
 	P_GET_FLOAT(x1);
 	VMethod* func = SelfObj->GetClass()->FindFunctionChecked(FuncName);
-	RET_BOOL(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, SelfObj, func));
+	RET_BOOL(SV_PathTraverse(x1, y1, x2, y2, flags, NULL, NULL, SelfObj, func));
 }
 
 //==========================================================================

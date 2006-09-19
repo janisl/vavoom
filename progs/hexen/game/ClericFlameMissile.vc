@@ -26,6 +26,20 @@
 class ClericFlameMissile : Projectile;
 
 float FlameSpeed;
+Actor bmo;
+
+//==========================================================================
+//
+//	HitMobj
+//
+//==========================================================================
+
+void HitMobj(Entity Other)
+{
+	bmo = Actor(Other);
+	::HitMobj(Other);
+	bmo = none;
+}
 
 //============================================================================
 //
@@ -52,11 +66,9 @@ void A_CFlameMissile()
 	float an;
 	float dist;
 	Actor A;
-	Actor bmo;
 
 	A_UnHideThing();
 	PlaySound('ClericFlameExplode', CHAN_VOICE);
-	bmo = Actor(Level.Game.tmtrace->BlockingMobj);
 	if (bmo && bmo.bShootable)
 	{
 		// Hit something, so spawn the flame circle around the thing

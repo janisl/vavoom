@@ -77,6 +77,9 @@
 //
 //==========================================================================
 
+struct tztrace_t;
+struct tmtrace_t;
+
 class VEntity : public VThinker
 {
 	DECLARE_CLASS(VEntity, VThinker, 0)
@@ -232,9 +235,10 @@ class VEntity : public VThinker
 		P_PASS_SELF;
 		EV_RET_VOID(FIndex_ApplyFriction);
 	}
-	void eventPushLine()
+	void eventPushLine(tmtrace_t* tmtrace)
 	{
 		P_PASS_SELF;
+		P_PASS_PTR(tmtrace);
 		EV_RET_VOID(FIndex_PushLine);
 	}
 	void eventHandleFloorclip()
@@ -292,29 +296,29 @@ class VEntity : public VThinker
 		SetFlags(_OF_DelayedDestroy);
 	}
 
-	bool SetState(VState* state);
-	void SetInitialState(VState* state);
-	VState* FindState(VName StateName);
+	bool SetState(VState*);
+	void SetInitialState(VState*);
+	VState* FindState(VName);
 
 	bool CheckWater();
-	bool CheckSides(TVec lsPos);
+	bool CheckSides(TVec);
 	float CheckDropOff();
-	bool CheckPosition(TVec Pos);
-	bool CheckRelPosition(TVec Pos);
-	bool TryMove(TVec newPos);
-	bool TestMobjZ(bool = false);
+	bool CheckPosition(TVec);
+	bool CheckRelPosition(tmtrace_t&, TVec);
+	bool TryMove(tmtrace_t&, TVec);
+	bool TestMobjZ(tztrace_t&, bool = false);
 	void SlideMove();
-	void BounceWall(float overbounce);
+	void BounceWall(float);
 	float GetGravity();
 	void UpdateVelocity();
-	void FakeZMovement();
+	void FakeZMovement(tztrace_t&);
 	VEntity *CheckOnmobj();
-	VEntity *RoughBlockCheck(int index);
-	VEntity *RoughMonsterSearch(int distance);
+	VEntity *RoughBlockCheck(int);
+	VEntity *RoughMonsterSearch(int);
 
 	void LinkToWorld();
 	void UnlinkFromWorld();
-	bool CanSee(VEntity* Other);
+	bool CanSee(VEntity*);
 
 	DECLARE_FUNCTION(Remove)
 	DECLARE_FUNCTION(SetState)
@@ -329,6 +333,7 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(CheckPosition)
 	DECLARE_FUNCTION(CheckRelPosition)
 	DECLARE_FUNCTION(TryMove)
+	DECLARE_FUNCTION(TryMoveEx)
 	DECLARE_FUNCTION(TestMobjZ)
 	DECLARE_FUNCTION(SlideMove)
 	DECLARE_FUNCTION(BounceWall)

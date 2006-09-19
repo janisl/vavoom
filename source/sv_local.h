@@ -141,11 +141,11 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point);
 
 int P_BoxOnLineSide(float* tmbox, line_t* ld);
 
-boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*));
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
-	VObject* PrSelf, VMethod *prfunc);
-boolean SV_PathTraverse(float x1, float y1, float x2, float y2,
-	int flags, boolean(*trav)(intercept_t *), VObject* PrSelf, VMethod *prtrav);
+bool SV_BlockLinesIterator(int, int, bool(*func)(void*, line_t*), void*);
+bool SV_BlockThingsIterator(int, int, bool(*func)(void*, VEntity*),
+	void*, VObject*, VMethod*);
+bool SV_PathTraverse(float, float, float, float, int,
+	bool(*trav)(void*, intercept_t *), void*, VObject*, VMethod*);
 
 sec_region_t *SV_FindThingGap(sec_region_t *gaps, const TVec &point, float z1, float z2);
 opening_t *SV_FindOpening(opening_t *gaps, float z1, float z2);

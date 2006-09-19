@@ -35,6 +35,83 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct cptrace_t
+{
+	VEntity *Thing;
+	TVec Pos;
+	float bbox[4];
+	float FloorZ;
+	float CeilingZ;
+	float DropOffZ;
+	sec_plane_t *Floor;
+	sec_plane_t *Ceiling;
+};
+
+struct sidestrace_t
+{
+	float tmbbox[4];
+	TVec pe_pos;	// Pain Elemental position for Lost Soul checks	// phares
+	TVec ls_pos;	// Lost Soul position for Lost Soul checks		// phares
+};
+
+struct tmtrace_t
+{
+	VEntity *Thing;
+	TVec End;
+	float BBox[4];
+	float FloorZ;
+	float CeilingZ;
+	float DropOffZ;
+	sec_plane_t *Floor;
+	sec_plane_t *Ceiling;
+
+	enum
+	{
+		TF_FloatOk = 0x01,	// if true, move would be ok if
+							// within tmtrace.FloorZ - tmtrace.CeilingZ
+	};
+	vuint32 TraceFlags;
+
+	// keep track of the line that lowers the ceiling,
+	// so missiles don't explode against sky hack walls
+	line_t *CeilingLine;
+
+	// keep track of special lines as they are hit,
+	// but don't process them until the move is proven valid
+	enum { MAXSPECIALCROSS = 32 };
+	line_t *SpecHit[MAXSPECIALCROSS];
+	int NumSpecHit;
+
+	VEntity *BlockingMobj;
+};
+
+struct avoiddropoff_t
+{
+	VEntity *thing;
+	float angle;
+	float floorx;
+	float floory;
+	float floorz;
+	float t_bbox[4];
+};
+
+struct slidetrace_t
+{
+	float bestslidefrac;
+	line_t *bestslideline;
+
+	VEntity *slidemo;
+	TVec slideorg;
+	TVec slidedir;
+};
+
+struct tztrace_t
+{
+	VEntity *tzmthing;
+	TVec tzorg;
+	VEntity *onmobj;	//generic global onmobj...used for landing on pods/players
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -219,22 +296,6 @@ bool VEntity::CheckWater()
 //
 //**************************************************************************
 
-struct cptrace_t
-{
-	VEntity *Thing;
-	TVec Pos;
-	float bbox[4];
-	float FloorZ;
-	float CeilingZ;
-	float DropOffZ;
-	sec_plane_t *Floor;
-	sec_plane_t *Ceiling;
-};
-
-static float tmbbox[4];
-static TVec pe_pos;	// Pain Elemental position for Lost Soul checks	// phares
-static TVec ls_pos;	// Lost Soul position for Lost Soul checks		// phares
-
 //==========================================================================
 //																	// phares
 // PIT_CrossLine													//   |
@@ -255,18 +316,19 @@ static TVec ls_pos;	// Lost Soul position for Lost Soul checks		// phares
 //
 //==========================================================================
 
- // killough 3/26/98: make static
-static boolean PIT_CrossLine(line_t* ld)
+// killough 3/26/98: make static
+static bool PIT_CrossLine(void* arg, line_t* ld)
 {
 	guardSlow(PIT_CrossLine);
 
+	sidestrace_t* trace = (sidestrace_t*)arg;
 	if ((ld->flags & ML_BLOCKING) || (ld->flags & ML_BLOCKMONSTERS) ||
 		(ld->flags & ML_BLOCKEVERYTHING))
-		if (!(tmbbox[BOXLEFT] > ld->bbox[BOXRIGHT] ||
-			  tmbbox[BOXRIGHT] < ld->bbox[BOXLEFT] ||
-			  tmbbox[BOXTOP] < ld->bbox[BOXBOTTOM] ||
-			  tmbbox[BOXBOTTOM] > ld->bbox[BOXTOP]))
-			if (ld->PointOnSide(pe_pos) != ld->PointOnSide(ls_pos))
+		if (!(trace->tmbbox[BOXLEFT] > ld->bbox[BOXRIGHT] ||
+			trace->tmbbox[BOXRIGHT] < ld->bbox[BOXLEFT] ||
+			trace->tmbbox[BOXTOP] < ld->bbox[BOXBOTTOM] ||
+			trace->tmbbox[BOXBOTTOM] > ld->bbox[BOXTOP]))
+			if (ld->PointOnSide(trace->pe_pos) != ld->PointOnSide(trace->ls_pos))
 					return false;  // line blocks trajectory
 
 	return true; // line doesn't block trajectory
@@ -296,34 +358,33 @@ bool VEntity::CheckSides(TVec lsPos)
 {
 	guard(VEntity::CheckSides);
 	int bx,by,xl,xh,yl,yh;
+	sidestrace_t trace;
 
-	pe_pos = Origin;
-	ls_pos = lsPos;
+	trace.pe_pos = Origin;
+	trace.ls_pos = lsPos;
 
 	// Here is the bounding box of the trajectory
-	tmbbox[BOXLEFT] = pe_pos.x < ls_pos.x ? pe_pos.x : ls_pos.x;
-	tmbbox[BOXRIGHT] = pe_pos.x > ls_pos.x ? pe_pos.x : ls_pos.x;
-	tmbbox[BOXTOP] = pe_pos.y > ls_pos.y ? pe_pos.y : ls_pos.y;
-	tmbbox[BOXBOTTOM] = pe_pos.y < ls_pos.y ? pe_pos.y : ls_pos.y;
+	trace.tmbbox[BOXLEFT] = MIN(trace.pe_pos.x, trace.ls_pos.x);
+	trace.tmbbox[BOXRIGHT] = MAX(trace.pe_pos.x, trace.ls_pos.x);
+	trace.tmbbox[BOXTOP] = MAX(trace.pe_pos.y, trace.ls_pos.y);
+	trace.tmbbox[BOXBOTTOM] = MIN(trace.pe_pos.y, trace.ls_pos.y);
 
 	// Determine which blocks to look in for blocking lines
-	xl = MapBlock(tmbbox[BOXLEFT] - XLevel->BlockMapOrgX);
-	xh = MapBlock(tmbbox[BOXRIGHT] - XLevel->BlockMapOrgX);
-	yl = MapBlock(tmbbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
-	yh = MapBlock(tmbbox[BOXTOP] - XLevel->BlockMapOrgY);
+	xl = MapBlock(trace.tmbbox[BOXLEFT] - XLevel->BlockMapOrgX);
+	xh = MapBlock(trace.tmbbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+	yl = MapBlock(trace.tmbbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+	yh = MapBlock(trace.tmbbox[BOXTOP] - XLevel->BlockMapOrgY);
 
 	// xl->xh, yl->yh determine the mapblock set to search
 	validcount++; // prevents checking same line twice
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!SV_BlockLinesIterator(bx, by, PIT_CrossLine))
+			if (!SV_BlockLinesIterator(bx, by, PIT_CrossLine, &trace))
 				return true;
 
 	return false;
 	unguard;
 }
-
-static cptrace_t cptrace;
 
 //==========================================================================
 //
@@ -331,10 +392,11 @@ static cptrace_t cptrace;
 //
 //==========================================================================
 
-static boolean PIT_CheckThing(VEntity *Other)
+static bool PIT_CheckThing(void* arg, VEntity *Other)
 {
 	guardSlow(PIT_CheckThing);
 	float blockdist;
+	cptrace_t cptrace = *(cptrace_t*)arg;
 
 	if (!(Other->EntityFlags & VEntity::EF_Solid))
 		return true;
@@ -389,11 +451,12 @@ static boolean PIT_CheckThing(VEntity *Other)
 //
 //==========================================================================
 
-static boolean PIT_CheckLine(line_t * ld)
+static bool PIT_CheckLine(void* arg, line_t * ld)
 {
 	guardSlow(PIT_CheckLine);
 	TVec hit_point;
 	opening_t *open;
+	cptrace_t& cptrace = *(cptrace_t*)arg;
 
 	if (cptrace.bbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
 		cptrace.bbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
@@ -506,6 +569,7 @@ bool VEntity::CheckPosition(TVec Pos)
 	subsector_t *newsubsec;
 	sec_region_t *gap;
 	sec_region_t *reg;
+	cptrace_t cptrace;
 
 	cptrace.Thing = this;
 
@@ -548,7 +612,7 @@ bool VEntity::CheckPosition(TVec Pos)
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!SV_BlockThingsIterator(bx, by, PIT_CheckThing, NULL, NULL))
+			if (!SV_BlockThingsIterator(bx, by, PIT_CheckThing, &cptrace, NULL, NULL))
 				return false;
 
 	// check lines
@@ -559,7 +623,7 @@ bool VEntity::CheckPosition(TVec Pos)
 
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!SV_BlockLinesIterator(bx, by, PIT_CheckLine))
+			if (!SV_BlockLinesIterator(bx, by, PIT_CheckLine, &cptrace))
 				return false;
 
 	return true;
@@ -571,51 +635,6 @@ bool VEntity::CheckPosition(TVec Pos)
 //  MOVEMENT CLIPPING
 //
 //**************************************************************************
-
-struct tmtrace_t
-{
-	VEntity *Thing;
-	TVec End;
-	float BBox[4];
-	float FloorZ;
-	float CeilingZ;
-	float DropOffZ;
-	sec_plane_t *Floor;
-	sec_plane_t *Ceiling;
-
-	enum
-	{
-		TF_FloatOk = 0x01,	// if true, move would be ok if
-							// within tmtrace.FloorZ - tmtrace.CeilingZ
-	};
-	vuint32 TraceFlags;
-
-	// keep track of the line that lowers the ceiling,
-	// so missiles don't explode against sky hack walls
-	line_t *CeilingLine;
-
-	// keep track of special lines as they are hit,
-	// but don't process them until the move is proven valid
-	#define MAXSPECIALCROSS	32
-	line_t *SpecHit[MAXSPECIALCROSS];
-	int NumSpecHit;
-
-	VEntity *BlockingMobj;
-};
-
-static tmtrace_t tmtrace;
-
-struct avoiddropoff_t
-{
-	VEntity *thing;
-	float angle;
-	float floorx;
-	float floory;
-	float floorz;
-	float t_bbox[4];
-};
-
-static avoiddropoff_t a;
 
 //=============================================================================
 //
@@ -630,13 +649,14 @@ static avoiddropoff_t a;
 // hang over dropoffs.
 //=============================================================================
 
-static boolean PIT_AvoidDropoff(line_t *line)
+static bool PIT_AvoidDropoff(void* arg, line_t *line)
 {
 	guardSlow(PIT_AvoidDropoff);
 	float front;
 	float back;
 	sec_region_t* FrontReg;
 	sec_region_t* BackReg;
+	avoiddropoff_t& a = *(avoiddropoff_t*)arg;
 
 	if (line->backsector && // Ignore one-sided linedefs
 		a.t_bbox[BOXRIGHT] > line->bbox[BOXLEFT] &&
@@ -644,7 +664,7 @@ static boolean PIT_AvoidDropoff(line_t *line)
 		a.t_bbox[BOXTOP] > line->bbox[BOXBOTTOM] && // Linedef must be contacted
 		a.t_bbox[BOXBOTTOM] < line->bbox[BOXTOP] &&
 		P_BoxOnLineSide(&a.t_bbox[0], line) == -1)
-    {
+	{
 		// New logic for 3D Floors
 		FrontReg = SV_FindThingGap(line->frontsector->botregion,
 			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
@@ -692,7 +712,9 @@ float VEntity::CheckDropOff()
 	int yh;
 	int bx;
 	int by;
-	
+
+	avoiddropoff_t a;
+
 	// Try to move away from a dropoff
 	a.thing = this;
 	a.floorx = Origin.x;
@@ -713,7 +735,7 @@ float VEntity::CheckDropOff()
 	validcount++;
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if(!SV_BlockLinesIterator(bx, by, PIT_AvoidDropoff)) // all contacted lines
+			if(!SV_BlockLinesIterator(bx, by, PIT_AvoidDropoff, &a)) // all contacted lines
 				return a.angle;
 
 	return 0.0;
@@ -726,10 +748,11 @@ float VEntity::CheckDropOff()
 //
 //==========================================================================
 
-static boolean PIT_CheckRelThing(VEntity *Other)
+static bool PIT_CheckRelThing(void* arg, VEntity *Other)
 {
 	guardSlow(PIT_CheckRelThing);
 	float blockdist;
+	tmtrace_t& tmtrace = *(tmtrace_t*)arg;
 
 	blockdist = Other->Radius + tmtrace.Thing->Radius;
 
@@ -782,11 +805,12 @@ static boolean PIT_CheckRelThing(VEntity *Other)
 //
 //==========================================================================
 
-static boolean PIT_CheckRelLine(line_t * ld)
+static bool PIT_CheckRelLine(void* arg, line_t * ld)
 {
 	guardSlow(PIT_CheckRelLine);
 	TVec hit_point;
 	opening_t *open;
+	tmtrace_t& tmtrace = *(tmtrace_t*)arg;
 
 	if (tmtrace.BBox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
 		tmtrace.BBox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
@@ -887,7 +911,7 @@ static boolean PIT_CheckRelLine(line_t * ld)
 	// if contacted a special line, add it to the list
 	if (ld->special)
 	{
-		if (tmtrace.NumSpecHit >= MAXSPECIALCROSS)
+		if (tmtrace.NumSpecHit >= tmtrace_t::MAXSPECIALCROSS)
 		{
 			//GCon->Log(NAME_Dev, "Spechit overflow");
 		}
@@ -930,7 +954,7 @@ static boolean PIT_CheckRelLine(line_t * ld)
 //
 //==========================================================================
 
-bool VEntity::CheckRelPosition(TVec Pos)
+bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 {
 	guard(VEntity::CheckRelPosition);
 	int xl;
@@ -992,7 +1016,7 @@ bool VEntity::CheckRelPosition(TVec Pos)
 
 		for (bx = xl; bx <= xh; bx++)
 			for (by = yl; by <= yh; by++)
-				if (!SV_BlockThingsIterator(bx, by, PIT_CheckRelThing, NULL, NULL))
+				if (!SV_BlockThingsIterator(bx, by, PIT_CheckRelThing, &tmtrace, NULL, NULL))
 					return false;
 
 		tmtrace.BlockingMobj = NULL;
@@ -1008,7 +1032,7 @@ bool VEntity::CheckRelPosition(TVec Pos)
 
 		for (bx = xl; bx <= xh; bx++)
 			for (by = yl; by <= yh; by++)
-				if (!SV_BlockLinesIterator(bx, by, PIT_CheckRelLine))
+				if (!SV_BlockLinesIterator(bx, by, PIT_CheckRelLine, &tmtrace))
 					return false;
 	}
 
@@ -1024,17 +1048,17 @@ bool VEntity::CheckRelPosition(TVec Pos)
 //
 //==========================================================================
 
-bool VEntity::TryMove(TVec newPos)
+bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 {
 	guard(VEntity::TryMove);
-	boolean check;
+	bool check;
 	TVec oldorg;
 	int side;
 	int oldside;
 	line_t *ld;
-	boolean good;
+	bool good;
 
-	check = CheckRelPosition(newPos);
+	check = CheckRelPosition(tmtrace, newPos);
 	tmtrace.TraceFlags &= ~tmtrace_t::TF_FloatOk;
 	if (!check)
 	{
@@ -1042,9 +1066,9 @@ bool VEntity::TryMove(TVec newPos)
 		if (!O || O->EntityFlags & EF_IsPlayer || !(EntityFlags & EF_IsPlayer) ||
 			O->Origin.z + O->Height - Origin.z > MaxStepHeight ||
 			O->CeilingZ - (O->Origin.z + O->Height) < Height ||
-		   	tmtrace.CeilingZ - (O->Origin.z + O->Height) < Height)
+			tmtrace.CeilingZ - (O->Origin.z + O->Height) < Height)
 		{
-			eventPushLine();
+			eventPushLine(&tmtrace);
 			return false;
 		}
 	}
@@ -1054,7 +1078,7 @@ bool VEntity::TryMove(TVec newPos)
 		if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
 		{
 			// Doesn't fit
-			eventPushLine();
+			eventPushLine(&tmtrace);
 			return false;
 		}
 
@@ -1064,7 +1088,7 @@ bool VEntity::TryMove(TVec newPos)
 			!(EntityFlags & EF_IgnoreCeilingStep))
 		{
 			// mobj must lower itself to fit
-			eventPushLine();
+			eventPushLine(&tmtrace);
 			return false;
 		}
 		if (EntityFlags & EF_Fly)
@@ -1074,30 +1098,31 @@ bool VEntity::TryMove(TVec newPos)
 			if (Origin.z + Height > tmtrace.CeilingZ)
 			{
 				Velocity.z = -8.0 * 35.0;
-				eventPushLine();
+				eventPushLine(&tmtrace);
 				return false;
 			}
 			else if (Origin.z < tmtrace.FloorZ
 				&& tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
 			{
 				Velocity.z = 8.0 * 35.0;
-				eventPushLine();
+				eventPushLine(&tmtrace);
 				return false;
 			}
 		}
 		if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
 		{
 			// Too big a step up
-			eventPushLine();
+			eventPushLine(&tmtrace);
 			return false;
 		}
 		else if (Origin.z < tmtrace.FloorZ)
 		{
 			// Check to make sure there's nothing in the way for the step up
-			good = TestMobjZ();
+			tztrace_t tztrace;
+			good = TestMobjZ(tztrace);
 			if(!good)
 			{
-				eventPushLine();
+				eventPushLine(&tmtrace);
 				return false;
 			}
 		}
@@ -1199,13 +1224,6 @@ bool VEntity::TryMove(TVec newPos)
 //
 //**************************************************************************
 
-static float bestslidefrac;
-static line_t *bestslideline;
-
-static VEntity *slidemo;
-static TVec slideorg;
-static TVec slidedir;
-
 //==========================================================================
 //
 //  ClipVelocity
@@ -1225,13 +1243,14 @@ static TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 //
 //==========================================================================
 
-static boolean PTR_SlideTraverse(intercept_t * in)
+static bool PTR_SlideTraverse(void* arg, intercept_t* in)
 {
 	guard(PTR_SlideTraverse);
 	line_t *li;
 	TVec hit_point;
 	opening_t *open;
-	boolean good;
+	bool good;
+	slidetrace_t& trace = *(slidetrace_t*)arg;
 
 	if (!(in->Flags & intercept_t::IF_IsALine))
 		Host_Error("PTR_SlideTraverse: not a line?");
@@ -1239,30 +1258,31 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 	li = in->line;
 
 	// set openrange, opentop, openbottom
-	hit_point = slideorg + in->frac * slidedir;
+	hit_point = trace.slideorg + in->frac * trace.slidedir;
 	open = SV_LineOpenings(li, hit_point);
-	open = SV_FindOpening(open, slidemo->Origin.z,
-		slidemo->Origin.z + slidemo->Height);
+	open = SV_FindOpening(open, trace.slidemo->Origin.z,
+		trace.slidemo->Origin.z + trace.slidemo->Height);
 
 	if (li->flags & ML_TWOSIDED)
 	{
 		// set openrange, opentop, openbottom
-		hit_point = slideorg + in->frac * slidedir;
+		hit_point = trace.slideorg + in->frac * trace.slidedir;
 		open = SV_LineOpenings(li, hit_point);
-		open = SV_FindOpening(open, slidemo->Origin.z,
-			slidemo->Origin.z + slidemo->Height);
+		open = SV_FindOpening(open, trace.slidemo->Origin.z,
+			trace.slidemo->Origin.z + trace.slidemo->Height);
 
-		if (open && (open->range >= slidemo->Height) &&	//  fits
-			(open->top - slidemo->Origin.z >= slidemo->Height) &&	// mobj is not too high
-			(open->bottom - slidemo->Origin.z <= slidemo->MaxStepHeight))	// not too big a step up
+		if (open && (open->range >= trace.slidemo->Height) &&	//  fits
+			(open->top - trace.slidemo->Origin.z >= trace.slidemo->Height) &&	// mobj is not too high
+			(open->bottom - trace.slidemo->Origin.z <= trace.slidemo->MaxStepHeight))	// not too big a step up
 		{
 			// this line doesn't block movement
 			return true;
 		}
-		if (open && (slidemo->Origin.z < open->bottom))
+		if (open && (trace.slidemo->Origin.z < open->bottom))
 		{
 			// Check to make sure there's nothing in the way for the step up
-			good = slidemo->TestMobjZ();
+			tztrace_t tztrace;
+			good = trace.slidemo->TestMobjZ(tztrace);
 			if (good)
 			{
 				return true;
@@ -1271,7 +1291,7 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 	}
 	else
 	{
-		if (li->PointOnSide(slidemo->Origin))
+		if (li->PointOnSide(trace.slidemo->Origin))
 		{
 			// don't hit the back side
 			return true;
@@ -1280,10 +1300,10 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 
 	// the line blocks movement,
 	// see if it is closer than best so far
-	if (in->frac < bestslidefrac)
+	if (in->frac < trace.bestslidefrac)
 	{
-		bestslidefrac = in->frac;
-		bestslideline = li;
+		trace.bestslidefrac = in->frac;
+		trace.bestslideline = li;
 	}
 
 	return false;	// stop
@@ -1296,12 +1316,12 @@ static boolean PTR_SlideTraverse(intercept_t * in)
 //
 //==========================================================================
 
-static void SlidePathTraverse(float x, float y)
+static void SlidePathTraverse(slidetrace_t& trace, float x, float y)
 {
-	slideorg = TVec(x, y, slidemo->Origin.z);
-	slidedir = slidemo->Velocity * host_frametime;
-	SV_PathTraverse(x, y, x + slidedir.x, y + slidedir.y,
-		PT_ADDLINES, PTR_SlideTraverse, NULL, NULL);
+	trace.slideorg = TVec(x, y, trace.slidemo->Origin.z);
+	trace.slidedir = trace.slidemo->Velocity * host_frametime;
+	SV_PathTraverse(x, y, x + trace.slidedir.x, y + trace.slidedir.y,
+		PT_ADDLINES, PTR_SlideTraverse, &trace, NULL, NULL);
 }
 
 //==========================================================================
@@ -1324,8 +1344,10 @@ void VEntity::SlideMove()
 	float newx;
 	float newy;
 	int hitcount;
+	slidetrace_t trace;
+	tmtrace_t tmtrace;
 
-	slidemo = this;
+	trace.slidemo = this;
 	hitcount = 0;
 
 	do
@@ -1333,8 +1355,8 @@ void VEntity::SlideMove()
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!TryMove(TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
-				TryMove(TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
+				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
 			return;
 		}
 
@@ -1361,52 +1383,52 @@ void VEntity::SlideMove()
 			traily = Origin.y + Radius;
 		}
 
-		bestslidefrac = 1.00001f;
+		trace.bestslidefrac = 1.00001f;
 
-		SlidePathTraverse(leadx, leady);
-		SlidePathTraverse(trailx, leady);
-		SlidePathTraverse(leadx, traily);
+		SlidePathTraverse(trace, leadx, leady);
+		SlidePathTraverse(trace, trailx, leady);
+		SlidePathTraverse(trace, leadx, traily);
 
 		// move up to the wall
-		if (bestslidefrac == 1.00001f)
+		if (trace.bestslidefrac == 1.00001f)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!TryMove(TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
-				TryMove(TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
+				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
 			return;
 		}
 
 		// fudge a bit to make sure it doesn't hit
-		bestslidefrac -= 0.03125;
-		if (bestslidefrac > 0.0)
+		trace.bestslidefrac -= 0.03125;
+		if (trace.bestslidefrac > 0.0)
 		{
-			newx = Velocity.x * host_frametime * bestslidefrac;
-			newy = Velocity.y * host_frametime * bestslidefrac;
+			newx = Velocity.x * host_frametime * trace.bestslidefrac;
+			newy = Velocity.y * host_frametime * trace.bestslidefrac;
 
-			if (!TryMove(TVec(Origin.x + newx, Origin.y + newy, Origin.z)))
+			if (!TryMove(tmtrace, TVec(Origin.x + newx, Origin.y + newy, Origin.z)))
 			{
-				if (!TryMove(TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
-					TryMove(TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+				if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
+					TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
 				return;
 			}
 		}
 
 		// Now continue along the wall.
 		// First calculate remainder.
-		bestslidefrac = 1.0 - (bestslidefrac + 0.03125);
+		trace.bestslidefrac = 1.0 - (trace.bestslidefrac + 0.03125);
 
-		if (bestslidefrac > 1.0)
-			bestslidefrac = 1.0;
+		if (trace.bestslidefrac > 1.0)
+			trace.bestslidefrac = 1.0;
 
-		if (bestslidefrac <= 0.0)
+		if (trace.bestslidefrac <= 0.0)
 			return;
 
 		// clip the moves
-		Velocity = ClipVelocity(Velocity * bestslidefrac,
-			bestslideline->normal, 1.0);
+		Velocity = ClipVelocity(Velocity * trace.bestslidefrac,
+			trace.bestslideline->normal, 1.0);
 
 	}
-	while (!TryMove(TVec(Origin.x + Velocity.x * host_frametime,
+	while (!TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime,
 			Origin.y + Velocity.y * host_frametime, Origin.z)));
 	unguard;
 }
@@ -1425,12 +1447,13 @@ void VEntity::SlideMove()
 //
 //============================================================================
 
-static boolean PTR_BounceTraverse(intercept_t * in)
+static bool PTR_BounceTraverse(void* arg, intercept_t* in)
 {
 	guard(PTR_BounceTraverse);
 	line_t *li;
 	TVec hit_point;
 	opening_t *open;
+	slidetrace_t& trace = *(slidetrace_t*)arg;
 
 	if (!(in->Flags & intercept_t::IF_IsALine))
 		Host_Error("PTR_BounceTraverse: not a line?");
@@ -1438,26 +1461,26 @@ static boolean PTR_BounceTraverse(intercept_t * in)
 	li = in->line;
 	if (li->flags & ML_TWOSIDED)
 	{
-		hit_point = slideorg + in->frac * slidedir;
+		hit_point = trace.slideorg + in->frac * trace.slidedir;
 		open = SV_LineOpenings(li, hit_point);	// set openrange, opentop, openbottom
-		open = SV_FindOpening(open, slidemo->Origin.z,
-			slidemo->Origin.z + slidemo->Height);
-		if (open && open->range >= slidemo->Height &&	// fits
-			slidemo->Origin.z + slidemo->Height <= open->top &&
-			slidemo->Origin.z >= open->bottom)	// mobj is not too high
+		open = SV_FindOpening(open, trace.slidemo->Origin.z,
+			trace.slidemo->Origin.z + trace.slidemo->Height);
+		if (open && open->range >= trace.slidemo->Height &&	// fits
+			trace.slidemo->Origin.z + trace.slidemo->Height <= open->top &&
+			trace.slidemo->Origin.z >= open->bottom)	// mobj is not too high
 		{
 			return true;	// this line doesn't block movement
 		}
 	}
 	else
 	{
-		if (li->PointOnSide(slidemo->Origin))
+		if (li->PointOnSide(trace.slidemo->Origin))
 		{
 			return true;	// don't hit the back side
 		}
 	}
 
-	bestslideline = li;
+	trace.bestslideline = li;
 	return false;	// stop
 	unguard;
 }
@@ -1471,32 +1494,33 @@ static boolean PTR_BounceTraverse(intercept_t * in)
 void VEntity::BounceWall(float overbounce)
 {
 	guard(VEntity::BounceWall);
-	slidemo = this;
+	slidetrace_t trace;
+	trace.slidemo = this;
 	if (Velocity.x > 0.0)
 	{
-		slideorg.x = Origin.x + Radius;
+		trace.slideorg.x = Origin.x + Radius;
 	}
 	else
 	{
-		slideorg.x = Origin.x - Radius;
+		trace.slideorg.x = Origin.x - Radius;
 	}
 	if (Velocity.y > 0.0)
 	{
-		slideorg.y = Origin.y + Radius;
+		trace.slideorg.y = Origin.y + Radius;
 	}
 	else
 	{
-		slideorg.y = Origin.y - Radius;
+		trace.slideorg.y = Origin.y - Radius;
 	}
-	slideorg.z = Origin.z;
-	slidedir = Velocity * host_frametime;
-	bestslideline = NULL;
-	SV_PathTraverse(slideorg.x, slideorg.y,
-		slideorg.x + slidedir.x, slideorg.y + slidedir.y,
-		PT_ADDLINES, PTR_BounceTraverse, NULL, NULL);
-	if (bestslideline)
+	trace.slideorg.z = Origin.z;
+	trace.slidedir = Velocity * host_frametime;
+	trace.bestslideline = NULL;
+	SV_PathTraverse(trace.slideorg.x, trace.slideorg.y, trace.slideorg.x + trace.slidedir.x,
+		trace.slideorg.y + trace.slidedir.y, PT_ADDLINES, PTR_BounceTraverse, &trace,
+		NULL, NULL);
+	if (trace.bestslideline)
 	{
-		Velocity = ClipVelocity(Velocity, bestslideline->normal, overbounce);
+		Velocity = ClipVelocity(Velocity, trace.bestslideline->normal, overbounce);
 	}
 	unguard;
 }
@@ -1585,48 +1609,45 @@ void VEntity::UpdateVelocity()
 //
 //**************************************************************************
 
-static VEntity *tzmthing;
-static TVec tzorg;
-static VEntity *onmobj;	//generic global onmobj...used for landing on pods/players
-
 //==========================================================================
 //
 //  PIT_CheckOnmobjZ
 //
 //==========================================================================
 
-static boolean PIT_CheckOnmobjZ(VEntity *Other)
+static bool PIT_CheckOnmobjZ(void* arg, VEntity *Other)
 {
 	guardSlow(PIT_CheckOnmobjZ);
 	float blockdist;
+	tztrace_t& tztrace = *(tztrace_t*)arg;
 
 	if (!(Other->EntityFlags & VEntity::EF_Solid))
 	{
 		// Can't hit thing
 		return true;
 	}
-	blockdist = Other->Radius + tzmthing->Radius;
-	if (fabs(Other->Origin.x - tzorg.x) >= blockdist ||
-		fabs(Other->Origin.y - tzorg.y) >= blockdist)
+	blockdist = Other->Radius + tztrace.tzmthing->Radius;
+	if (fabs(Other->Origin.x - tztrace.tzorg.x) >= blockdist ||
+		fabs(Other->Origin.y - tztrace.tzorg.y) >= blockdist)
 	{
 		// Didn't hit thing
 		return true;
 	}
-	if (Other == tzmthing)
+	if (Other == tztrace.tzmthing)
 	{
 		// Don't clip against self
 		return true;
 	}
-	if (tzorg.z > Other->Origin.z + Other->Height)
+	if (tztrace.tzorg.z > Other->Origin.z + Other->Height)
 	{
 		return true;
 	}
-	if (tzorg.z + tzmthing->Height < Other->Origin.z)
+	if (tztrace.tzorg.z + tztrace.tzmthing->Height < Other->Origin.z)
 	{
 		// under thing
 		return true;
 	}
-	onmobj = Other;
+	tztrace.onmobj = Other;
 	return false;
 	unguardSlow;
 }
@@ -1639,7 +1660,7 @@ static boolean PIT_CheckOnmobjZ(VEntity *Other)
 //
 //=============================================================================
 
-bool VEntity::TestMobjZ(bool AlreadySetUp)
+bool VEntity::TestMobjZ(tztrace_t& tztrace, bool AlreadySetUp)
 {
 	guard(VEntity::TestMobjZ);
 	int xl, xh, yl, yh, bx, by;
@@ -1650,8 +1671,8 @@ bool VEntity::TestMobjZ(bool AlreadySetUp)
 
 	if (!AlreadySetUp)
 	{
-		tzmthing = this;
-		tzorg = Origin;
+		tztrace.tzmthing = this;
+		tztrace.tzorg = Origin;
 	}
 	//
 	// the bounding box is extended by MAXRADIUS because mobj_ts are grouped
@@ -1666,7 +1687,7 @@ bool VEntity::TestMobjZ(bool AlreadySetUp)
 	// xl->xh, yl->yh determine the mapblock set to search
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, NULL, NULL))
+			if (!SV_BlockThingsIterator(bx, by, PIT_CheckOnmobjZ, &tztrace, NULL, NULL))
 				return false;
 
 	return true;
@@ -1681,13 +1702,13 @@ bool VEntity::TestMobjZ(bool AlreadySetUp)
 //
 //=============================================================================
 
-void VEntity::FakeZMovement()
+void VEntity::FakeZMovement(tztrace_t& tztrace)
 {
 	guard(VEntity::FakeZMovement);
 	//
 	//  adjust height
 	//
-	tzorg.z += Velocity.z * host_frametime;
+	tztrace.tzorg.z += Velocity.z * host_frametime;
 #if 0
 	if (EntityFlags & EF_Float && Target)
 	{
@@ -1711,15 +1732,15 @@ void VEntity::FakeZMovement()
 	//
 	//  clip movement
 	//
-	if (tzorg.z <= FloorZ)
+	if (tztrace.tzorg.z <= FloorZ)
 	{
 		// Hit the floor
-		tzorg.z = FloorZ;
+		tztrace.tzorg.z = FloorZ;
 	}
-	if (tzorg.z + Height > CeilingZ)
+	if (tztrace.tzorg.z + Height > CeilingZ)
 	{
 		// hit the ceiling
-		tzorg.z = CeilingZ - Height;
+		tztrace.tzorg.z = CeilingZ - Height;
 	}
 	unguard;
 }
@@ -1735,15 +1756,14 @@ void VEntity::FakeZMovement()
 VEntity* VEntity::CheckOnmobj()
 {
 	guard(VEntity::CheckOnmobj);
-	boolean good;
+	tztrace_t tztrace;
+	tztrace.tzmthing = this;
+	tztrace.tzorg = Origin;
+	FakeZMovement(tztrace);
+	bool good = TestMobjZ(tztrace, true);
 
-	tzmthing = this;
-	tzorg = Origin;
-	FakeZMovement();
-	good = TestMobjZ(true);
-
-	return good ? NULL : onmobj;
- 	unguard;
+	return good ? NULL : tztrace.onmobj;
+	unguard;
 }
 
 //===========================================================================
@@ -2021,8 +2041,9 @@ IMPLEMENT_FUNCTION(VEntity, CheckPosition)
 IMPLEMENT_FUNCTION(VEntity, CheckRelPosition)
 {
 	P_GET_VEC(Pos);
+	P_GET_PTR(tmtrace_t, tmtrace);
 	P_GET_SELF;
-	RET_BOOL(Self->CheckRelPosition(Pos));
+	RET_BOOL(Self->CheckRelPosition(*tmtrace, Pos));
 }
 
 //==========================================================================
@@ -2048,7 +2069,22 @@ IMPLEMENT_FUNCTION(VEntity, TryMove)
 {
 	P_GET_VEC(Pos);
 	P_GET_SELF;
-	RET_BOOL(Self->TryMove(Pos));
+	tmtrace_t tmtrace;
+	RET_BOOL(Self->TryMove(tmtrace, Pos));
+}
+
+//==========================================================================
+//
+//	Entity.TryMoveEx
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, TryMoveEx)
+{
+	P_GET_VEC(Pos);
+	P_GET_PTR(tmtrace_t, tmtrace);
+	P_GET_SELF;
+	RET_BOOL(Self->TryMove(*tmtrace, Pos));
 }
 
 //==========================================================================
@@ -2060,7 +2096,8 @@ IMPLEMENT_FUNCTION(VEntity, TryMove)
 IMPLEMENT_FUNCTION(VEntity, TestMobjZ)
 {
 	P_GET_SELF;
-	RET_BOOL(Self->TestMobjZ());
+	tztrace_t tztrace;
+	RET_BOOL(Self->TestMobjZ(tztrace));
 }
 
 //==========================================================================
@@ -2255,7 +2292,6 @@ void VEntity::InitFuncIndexes()
 
 void EntInit()
 {
-	GGameInfo->tmtrace = &tmtrace;
 	VEntity::InitFuncIndexes();
 }
 

@@ -23,8 +23,6 @@
 //**
 //**************************************************************************
 
-struct tmtrace_t;
-
 class VGameInfo : public VObject
 {
 	DECLARE_CLASS(VGameInfo, VObject, 0)
@@ -45,8 +43,6 @@ class VGameInfo : public VObject
 	VBasePlayer*	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 
 	level_t*		level;
-
-	tmtrace_t*		tmtrace;
 
 	int				RebornPosition;
 

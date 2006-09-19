@@ -44,8 +44,6 @@ readonly BasePlayer	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 
 readonly level_t*	level;
 
-readonly tmtrace_t*	tmtrace;
-
 int					RebornPosition;
 
 readonly float		frametime;

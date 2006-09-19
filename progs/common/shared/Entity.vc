@@ -199,8 +199,9 @@ native final void StopSound(int Channel);
 native final bool CheckSides(TVec lsPos);
 native final float CheckDropOff();
 native final bool CheckPosition(TVec Pos);
-native final bool CheckRelPosition(TVec Pos);
+native final bool CheckRelPosition(tmtrace_t* tmtrace, TVec Pos);
 native final bool TryMove(TVec newPos);
+native final bool TryMoveEx(tmtrace_t* tmtrace, TVec newPos);
 native final bool TestMobjZ();
 
 native final void SlideMove();
@@ -262,7 +263,7 @@ void BlockedByLine(line_t * ld)
 //
 //==========================================================================
 
-void PushLine()
+void PushLine(tmtrace_t* tmtrace)
 {
 }
 

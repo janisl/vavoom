@@ -1105,7 +1105,7 @@ void BlockedByLine(line_t * ld)
 //
 //==========================================================================
 
-void PushLine()
+void PushLine(tmtrace_t* tmtrace)
 {
 	if (bColideWithWorld)
 	{
@@ -1117,12 +1117,12 @@ void PushLine()
 		{
 			Damage(none, none, ftoi(Mass) >> 5);
 		}
-		numSpecHitTemp = Level.Game.tmtrace->NumSpecHit;
+		numSpecHitTemp = tmtrace->NumSpecHit;
 		while (numSpecHitTemp > 0)
 		{
 			numSpecHitTemp--;
 			// see if the line was crossed
-			ld = Level.Game.tmtrace->SpecHit[numSpecHitTemp];
+			ld = tmtrace->SpecHit[numSpecHitTemp];
 			side = PointOnPlaneSide(Origin, ld);
 			CheckForPushSpecial(ld, side);
 		}
@@ -1293,7 +1293,8 @@ void XYMovement(float DeltaTime)
 			ymove = 0.0;
 		}
 
-		if (!TryMove(vector(ptryx, ptryy, Origin.z)))
+		tmtrace_t tmtrace;
+		if (!TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z)))
 		{
 			// blocked move
 			if (bIsPlayer)
@@ -1306,17 +1307,17 @@ void XYMovement(float DeltaTime)
 				if (bBounce)
 				{
 					//  Bounce against walls and non-killable ofjects
-					if (Level.Game.tmtrace->BlockingMobj)
+					if (tmtrace.BlockingMobj)
 					{
-						if (!Level.Game.tmtrace->BlockingMobj.bIsPlayer &&
-							!Actor(Level.Game.tmtrace->BlockingMobj).bCountKill)
+						if (!tmtrace.BlockingMobj.bIsPlayer &&
+							!Actor(tmtrace.BlockingMobj).bCountKill)
 						{
 							float speed;
 							float angle;
 
-							angle = AngleMod360(
-								atan2(Origin.y - Level.Game.tmtrace->BlockingMobj.Origin.y,
-								Origin.x - Level.Game.tmtrace->BlockingMobj.Origin.x) +
+							angle = AngleMod360(atan2(
+								Origin.y - tmtrace.BlockingMobj.Origin.y,
+								Origin.x - tmtrace.BlockingMobj.Origin.x) +
 								(Random() * 16.0 - 8.0));
 							speed = Length(Velocity);
 							speed = speed * 0.75;
@@ -1347,9 +1348,9 @@ void XYMovement(float DeltaTime)
 				}
 
 				// explode a missile
-				if (Level.Game.tmtrace->CeilingLine &&
-					Level.Game.tmtrace->CeilingLine->backsector &&
-					Level.Game.tmtrace->CeilingLine->backsector->ceiling.pic == Level.Game.skyflatnum)
+				if (tmtrace.CeilingLine &&
+					tmtrace.CeilingLine->backsector &&
+					tmtrace.CeilingLine->backsector->ceiling.pic == Level.Game.skyflatnum)
 				{
 					// Hack to prevent missiles exploding
 					// against the sky.
@@ -1648,7 +1649,6 @@ bool Physics(float DeltaTime)
 	UpdateVelocity();
 
 	// momentum movement
-	Level.Game.tmtrace->BlockingMobj = none;
 	if (Velocity.x || Velocity.y)
 	{
 		XYMovement(DeltaTime);
@@ -1667,45 +1667,50 @@ bool Physics(float DeltaTime)
 			return false;
 		}
 	}
-	if ((Origin.z != FloorZ) || Velocity.z || Level.Game.tmtrace->BlockingMobj)
+	if (!bNoPassMobj && !bMissile)
 	{
 		// Handle Z momentum and gravity
-		if (!bNoPassMobj && !bMissile)
+		onmo = Actor(CheckOnmobj());
+		if (onmo)
 		{
-			onmo = Actor(CheckOnmobj());
-			if (!onmo)
+			if (bIsPlayer)
+			{
+				if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
+				{
+					PlayerLandedOnThing();
+				}
+			}
+			if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
+			{
+				if (bIsPlayer)
+				{
+					Player(Player).ViewHeight -=
+						onmo.Origin.z + onmo.Height - Origin.z;
+					Player(Player).DeltaViewHeight =
+						(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
+				}
+				Origin.z = onmo.Origin.z + onmo.Height;
+			}
+			bOnMobj = true;
+			Velocity.z = 0.0;
+		}
+		else
+		{
+			if ((Origin.z != FloorZ) || Velocity.z || onmo)
 			{
 				ZMovement(DeltaTime);
 				bOnMobj = false;
 			}
-			else
-			{
-				if (bIsPlayer)
-				{
-					if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
-					{
-						PlayerLandedOnThing();
-					}
-				}
-				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
-				{
-					if (bIsPlayer)
-					{
-						Player(Player).ViewHeight -=
-							onmo.Origin.z + onmo.Height - Origin.z;
-						Player(Player).DeltaViewHeight =
-							(Player::VIEWHEIGHT - Player(Player).ViewHeight) * 4.0;
-					}
-					Origin.z = onmo.Origin.z + onmo.Height;
-				}
-				bOnMobj = true;
-				Velocity.z = 0.0;
-			}
 		}
-		else
+		if (IsDestroyed())
 		{
-			ZMovement(DeltaTime);
+			return false;	// entity was removed
 		}
+	}
+	else if ((Origin.z != FloorZ) || Velocity.z)
+	{
+		// Handle Z momentum and gravity
+		ZMovement(DeltaTime);
 		if (IsDestroyed())
 		{
 			return false;	// entity was removed
@@ -1809,13 +1814,14 @@ bool HeightClip()
 
 	onfloor = (Origin.z == FloorZ);
 
-	CheckRelPosition(Origin);
+	tmtrace_t tmtrace;
+	CheckRelPosition(&tmtrace, Origin);
 	// what about stranding a monster partially off an edge?
 
-	Floor = Level.Game.tmtrace->Floor;
-	Ceiling = Level.Game.tmtrace->Ceiling;
-	FloorZ = Level.Game.tmtrace->FloorZ;
-	CeilingZ = Level.Game.tmtrace->CeilingZ;
+	Floor = tmtrace.Floor;
+	Ceiling = tmtrace.Ceiling;
+	FloorZ = tmtrace.FloorZ;
+	CeilingZ = tmtrace.CeilingZ;
 
 	if (onfloor)
 	{
@@ -2478,9 +2484,10 @@ bool StepMove()
 	}
 
 	try_ok = true;
-	for(i=1; i < steps; i++)
+	tmtrace_t tmtrace;
+	for (i = 1; i < steps; i++)
 	{
-		try_ok = TryMove(vector(origx + (deltax / itof(steps * i)), origy +
+		try_ok = TryMoveEx(&tmtrace, vector(origx + (deltax / itof(steps * i)), origy +
 					(deltay / itof(steps * i)), Origin.z));
 		if (!try_ok)
 			break;
@@ -2488,15 +2495,15 @@ bool StepMove()
 
 	// killough 3/15/98: don't jump over dropoffs:
 	if (try_ok)
-		try_ok = TryMove (vector(tryx, tryy, Origin.z));
+		try_ok = TryMoveEx(&tmtrace, vector(tryx, tryy, Origin.z));
 
 	if (!try_ok)
 	{
 		// open any specials
-		if (bFloat && Level.Game.tmtrace->bFloatOk)
+		if (bFloat && tmtrace.bFloatOk)
 		{
 			// must adjust height
-			if (Origin.z < Level.Game.tmtrace->FloorZ)
+			if (Origin.z < tmtrace.FloorZ)
 				Origin.z += FLOATSPEED * Level.Game.frametime;
 			else
 				Origin.z -= FLOATSPEED * Level.Game.frametime;
@@ -2509,14 +2516,14 @@ bool StepMove()
 			}
 		}
 
-		if (!Level.Game.tmtrace->NumSpecHit)
+		if (!tmtrace.NumSpecHit)
 			return false;
 
 		MoveDir = DI_NODIR;
 		good = false;
-		while (Level.Game.tmtrace->NumSpecHit--)
+		while (tmtrace.NumSpecHit--)
 		{
-			ld = Level.Game.tmtrace->SpecHit[Level.Game.tmtrace->NumSpecHit];
+			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -2699,11 +2706,14 @@ void NewChaseDir()
 	deltaxx = 0.0;
 	deltayy = 0.0;
 
-	if(!Enemy)
+	if (!Enemy)
 		Error("NewChaseDir: called with no Enemy");
-	
+
+	tmtrace_t tmtrace;
+	CheckRelPosition(&tmtrace, Origin);
+
 	// Try to move away from a dropoff
-	if (FloorZ - Level.Game.tmtrace->DropOffZ > MaxDropoffHeight && 
+	if (FloorZ - tmtrace.DropOffZ > MaxDropoffHeight &&
 		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
 	{
 		// We call the CheckDropoff here to determine if the

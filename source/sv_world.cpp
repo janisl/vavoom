@@ -52,6 +52,28 @@ typedef int fixed_t;
 
 // TYPES -------------------------------------------------------------------
 
+struct pathtrace_t
+{
+	enum { MAXINTERCEPTS = 128 };
+
+	intercept_t		intercepts[MAXINTERCEPTS];
+	intercept_t*	intercept_p;
+	bool			earlyout;
+
+	TPlane			plane;
+	TVec			org;
+	TVec			dest;
+	TVec			delta;
+	TVec			dir;
+	float			len;
+};
+
+struct secchangetrace_t
+{
+	vint32			crushchange;
+	bool			nofit;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -92,11 +114,11 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point)
 	float			frontceilz;
 	float			backceilz;
 
-    if (linedef->sidenum[1] == -1)
-    {
+	if (linedef->sidenum[1] == -1)
+	{
 		// single sided line
 		return NULL;
-    }
+	}
 
 	op = NULL;
 	opsused = 0;
@@ -182,45 +204,45 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point)
 int P_BoxOnLineSide(float* tmbox, line_t* ld)
 {
 	guard(P_BoxOnLineSide);
-    int		p1 = 0;
-    int		p2 = 0;
+	int		p1 = 0;
+	int		p2 = 0;
 	
-    switch (ld->slopetype)
-    {
-      case ST_HORIZONTAL:
+	switch (ld->slopetype)
+	{
+	case ST_HORIZONTAL:
 		p1 = tmbox[BOXTOP] > ld->v1->y;
 		p2 = tmbox[BOXBOTTOM] > ld->v1->y;
 		if (ld->dir.x < 0)
 		{
-	    	p1 ^= 1;
-	    	p2 ^= 1;
+			p1 ^= 1;
+			p2 ^= 1;
 		}
 		break;
 	
-      case ST_VERTICAL:
+	case ST_VERTICAL:
 		p1 = tmbox[BOXRIGHT] < ld->v1->x;
 		p2 = tmbox[BOXLEFT] < ld->v1->x;
 		if (ld->dir.y < 0)
 		{
-	    	p1 ^= 1;
-	    	p2 ^= 1;
+			p1 ^= 1;
+			p2 ^= 1;
 		}
 		break;
 	
-      case ST_POSITIVE:
+	case ST_POSITIVE:
 		p1 = ld->PointOnSide(TVec(tmbox[BOXLEFT], tmbox[BOXTOP], 0));
 		p2 = ld->PointOnSide(TVec(tmbox[BOXRIGHT], tmbox[BOXBOTTOM], 0));
 		break;
 	
-      case ST_NEGATIVE:
+	case ST_NEGATIVE:
 		p1 = ld->PointOnSide(TVec(tmbox[BOXRIGHT], tmbox[BOXTOP], 0));
 		p2 = ld->PointOnSide(TVec(tmbox[BOXLEFT], tmbox[BOXBOTTOM], 0));
 		break;
-    }
+	}
 
-    if (p1 == p2)
+	if (p1 == p2)
 		return p1;
-    return -1;
+	return -1;
 	unguard;
 }
 
@@ -240,7 +262,7 @@ int P_BoxOnLineSide(float* tmbox, line_t* ld)
 //
 //==========================================================================
 
-void VEntity::UnlinkFromWorld(void)
+void VEntity::UnlinkFromWorld()
 {
 	guard(SV_UnlinkFromWorld);
 	if (!SubSector)
@@ -248,28 +270,28 @@ void VEntity::UnlinkFromWorld(void)
 		return;
 	}
 
-    if (!(EntityFlags & EF_NoBlockmap))
-    {
+	if (!(EntityFlags & EF_NoBlockmap))
+	{
 		//	Inert things don't need to be in blockmap
 		//	Unlink from block map
 		if (BlockMapNext)
-		    BlockMapNext->BlockMapPrev = BlockMapPrev;
+			BlockMapNext->BlockMapPrev = BlockMapPrev;
 	
 		if (BlockMapPrev)
-		    BlockMapPrev->BlockMapNext = BlockMapNext;
+			BlockMapPrev->BlockMapNext = BlockMapNext;
 		else
 		{
-		    int blockx = MapBlock(Origin.x - XLevel->BlockMapOrgX);
-		    int blocky = MapBlock(Origin.y - XLevel->BlockMapOrgY);
+			int blockx = MapBlock(Origin.x - XLevel->BlockMapOrgX);
+			int blocky = MapBlock(Origin.y - XLevel->BlockMapOrgY);
 
-		    if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
-		    	blocky >= 0 && blocky < XLevel->BlockMapHeight)
-		    {
+			if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
+				blocky >= 0 && blocky < XLevel->BlockMapHeight)
+			{
 				XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] =
 					BlockMapNext;
-		    }
+			}
 		}
-    }
+	}
 	SubSector = NULL;
 	Sector = NULL;
 	unguard;
@@ -284,10 +306,10 @@ void VEntity::UnlinkFromWorld(void)
 //
 //==========================================================================
 
-void VEntity::LinkToWorld(void)
+void VEntity::LinkToWorld()
 {
 	guard(SV_LinkToWorld);
-    subsector_t*	ss;
+	subsector_t*	ss;
 	sec_region_t*	reg;
 	sec_region_t*	r;
 
@@ -296,7 +318,7 @@ void VEntity::LinkToWorld(void)
 		UnlinkFromWorld();
 	}
 
-    // link into subsector
+	// link into subsector
 	ss = SV_PointInSubsector(Origin.x, Origin.y);
 	reg = SV_FindThingGap(ss->sector->botregion, Origin,
 		Origin.z, Origin.z + Height);
@@ -315,9 +337,9 @@ void VEntity::LinkToWorld(void)
 	Ceiling = r->ceiling;
 	CeilingZ = r->ceiling->GetPointZ(Origin);
 
-    // link into blockmap
-    if (!(EntityFlags & EF_NoBlockmap))
-    {
+	// link into blockmap
+	if (!(EntityFlags & EF_NoBlockmap))
+	{
 		// inert things don't need to be in blockmap
 		int blockx = MapBlock(Origin.x - XLevel->BlockMapOrgX);
 		int blocky = MapBlock(Origin.y - XLevel->BlockMapOrgY);
@@ -325,21 +347,21 @@ void VEntity::LinkToWorld(void)
 		if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
 			blocky >= 0 && blocky < XLevel->BlockMapHeight)
 		{
-		    VEntity** link = &XLevel->BlockLinks[
+			VEntity** link = &XLevel->BlockLinks[
 				blocky * XLevel->BlockMapWidth + blockx];
-	    	BlockMapPrev = NULL;
-		    BlockMapNext = *link;
-		    if (*link)
+			BlockMapPrev = NULL;
+			BlockMapNext = *link;
+			if (*link)
 				(*link)->BlockMapPrev = this;
 
-		    *link = this;
+			*link = this;
 		}
 		else
 		{
-		    // thing is off the map
-		    BlockMapNext = BlockMapPrev = NULL;
+			// thing is off the map
+			BlockMapNext = BlockMapPrev = NULL;
 		}
-    }
+	}
 	unguard;
 }
 
@@ -363,7 +385,8 @@ void VEntity::LinkToWorld(void)
 //
 //==========================================================================
 
-boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
+bool SV_BlockLinesIterator(int x, int y, bool(*func)(void*, line_t*),
+	void* FuncArg)
 {
 	guard(SV_BlockLinesIterator);
 	int			offset;
@@ -373,14 +396,14 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 	polyblock_t	*polyLink;
 	seg_t		**tempSeg;
 
-    if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
-    {
+	if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
+	{
 		return true;
-    }
-    
-    offset = y * GLevel->BlockMapWidth + x;
+	}
 
-    //	Check polyobj blockmap
+	offset = y * GLevel->BlockMapWidth + x;
+
+	//	Check polyobj blockmap
 	polyLink = GLevel->PolyBlockMap[offset];
 	while (polyLink)
 	{
@@ -397,7 +420,7 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 						continue;
 					}
 					(*tempSeg)->linedef->validcount = validcount;
-					if (!func((*tempSeg)->linedef))
+					if (!func(FuncArg, (*tempSeg)->linedef))
 					{
 						return false;
 					}
@@ -407,10 +430,10 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 		polyLink = polyLink->next;
 	}
 
-    offset = *(GLevel->BlockMap + offset);
+	offset = *(GLevel->BlockMap + offset);
 
-    for (list = GLevel->BlockMapLump + offset; *list != -1; list++)
-    {
+	for (list = GLevel->BlockMapLump + offset; *list != -1; list++)
+	{
 #ifdef PARANOID
 		if (*list < 0 || *list >= GLevel->NumLines)
 			Host_Error("Broken blockmap - line %d", *list);
@@ -418,14 +441,14 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 		ld = &GLevel->Lines[*list];
 
 		if (ld->validcount == validcount)
-	    	continue; 	// line has already been checked
+			continue; 	// line has already been checked
 
 		ld->validcount = validcount;
 		
-		if (!func(ld))
-	    	return false;
-    }
-    return true;	// everything was checked
+		if (!func(FuncArg, ld))
+			return false;
+	}
+	return true;	// everything was checked
 	unguard;
 }
 
@@ -435,8 +458,8 @@ boolean SV_BlockLinesIterator(int x, int y, boolean(*func)(line_t*))
 //
 //==========================================================================
 
-boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
-	VObject* PrSelf, VMethod *prfunc)
+bool SV_BlockThingsIterator(int x, int y, bool(*func)(void*, VEntity*),
+	void* FuncArg, VObject* PrSelf, VMethod *prfunc)
 {
 	guard(SV_BlockThingsIterator);
 	if (x < 0 || y < 0 || x >= GLevel->BlockMapWidth || y >= GLevel->BlockMapHeight)
@@ -447,7 +470,7 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
 	for (VEntity *Ent = GLevel->BlockLinks[y * GLevel->BlockMapWidth + x]; Ent;
 		Ent = Ent->BlockMapNext)
 	{
-		if (func && !func(Ent))
+		if (func && !func(FuncArg, Ent))
 			return false;
 		if (prfunc && PrSelf)
 		{
@@ -467,19 +490,6 @@ boolean SV_BlockThingsIterator(int x, int y, boolean(*func)(VEntity*),
 //
 //**************************************************************************
 
-#define MAXINTERCEPTS	128
-
-static intercept_t	intercepts[MAXINTERCEPTS];
-static intercept_t	*intercept_p;
-static boolean 		earlyout;
-
-static TPlane	 	trace_plane;
-static TVec			trace_org;
-static TVec			trace_dest;
-static TVec			trace_delta;
-static TVec			trace_dir;
-static float		trace_len;
-
 //==========================================================================
 //
 //	PIT_AddLineIntercepts
@@ -491,17 +501,18 @@ static float		trace_len;
 //
 //==========================================================================
 
-static boolean PIT_AddLineIntercepts(line_t* ld)
+static bool PIT_AddLineIntercepts(void* arg, line_t* ld)
 {
 	guard(PIT_AddLineIntercepts);
-	float dot1 = DotProduct(*ld->v1, trace_plane.normal) - trace_plane.dist;
-	float dot2 = DotProduct(*ld->v2, trace_plane.normal) - trace_plane.dist;
-    
+	pathtrace_t& trace = *(pathtrace_t*)arg;
+	float dot1 = DotProduct(*ld->v1, trace.plane.normal) - trace.plane.dist;
+	float dot2 = DotProduct(*ld->v2, trace.plane.normal) - trace.plane.dist;
+	
 	if (dot1 * dot2 >= 0)
 	{
 		return true;	// line isn't crossed
 	}
-    
+	
 	// hit the line
 	//
 	//	Find the fractional intercept point along the trace line.
@@ -510,12 +521,12 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 	float		den;
 	float		frac;
 	
-	den = DotProduct(ld->normal, trace_delta);
+	den = DotProduct(ld->normal, trace.delta);
 	if (den == 0)
 	{
 		return true;
 	}
-	num = ld->dist - DotProduct(trace_org, ld->normal);
+	num = ld->dist - DotProduct(trace.org, ld->normal);
 	frac = num / den;
 
 	if (frac < 0)
@@ -524,21 +535,21 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 	}
 	
 	// try to early out the check
-	if (earlyout && frac < 1.0 && !ld->backsector)
+	if (trace.earlyout && frac < 1.0 && !ld->backsector)
 	{
 		return false;	// stop checking
 	}
 
-	if (intercept_p - intercepts >= MAXINTERCEPTS)
+	if (trace.intercept_p - trace.intercepts >= trace.MAXINTERCEPTS)
 	{
 		GCon->Log(NAME_Dev, "Intercepts overflow");
 	}
 	else
 	{
-		intercept_p->frac = frac;
-		intercept_p->Flags |= intercept_t::IF_IsALine;
-		intercept_p->line = ld;
-		intercept_p++;
+		trace.intercept_p->frac = frac;
+		trace.intercept_p->Flags |= intercept_t::IF_IsALine;
+		trace.intercept_p->line = ld;
+		trace.intercept_p++;
 	}
 
 	return true;	// continue
@@ -551,36 +562,37 @@ static boolean PIT_AddLineIntercepts(line_t* ld)
 //
 //==========================================================================
 
-static boolean PIT_AddThingIntercepts(VEntity* thing)
+static bool PIT_AddThingIntercepts(void* arg, VEntity* thing)
 {
 	guard(PIT_AddThingIntercepts);
-	float dot = DotProduct(thing->Origin, trace_plane.normal) - trace_plane.dist;
+	pathtrace_t& trace = *(pathtrace_t*)arg;
+	float dot = DotProduct(thing->Origin, trace.plane.normal) - trace.plane.dist;
 	if (dot >= thing->Radius || dot <= -thing->Radius)
 	{
 		return true;		// line isn't crossed
 	}
 
-	float dist = DotProduct((thing->Origin - trace_org), trace_dir);
+	float dist = DotProduct((thing->Origin - trace.org), trace.dir);
 //	dist -= sqrt(thing->radius * thing->radius - dot * dot);
-    if (dist < 0)
+	if (dist < 0)
 	{
 		return true;		// behind source
 	}
-	float frac = dist / trace_len;
+	float frac = dist / trace.len;
 
-	if (intercept_p - intercepts >= MAXINTERCEPTS)
+	if (trace.intercept_p - trace.intercepts >= trace.MAXINTERCEPTS)
 	{
 		GCon->Log(NAME_Dev, "Intercepts overflow");
 	}
 	else
 	{
-		intercept_p->frac = frac;
-		intercept_p->Flags &= ~intercept_t::IF_IsALine;
-		intercept_p->thing = thing;
-		intercept_p++;
+		trace.intercept_p->frac = frac;
+		trace.intercept_p->Flags &= ~intercept_t::IF_IsALine;
+		trace.intercept_p->thing = thing;
+		trace.intercept_p++;
 	}
 
-    return true;		// keep going
+	return true;		// keep going
 	unguard;
 }
 
@@ -593,8 +605,9 @@ static boolean PIT_AddThingIntercepts(VEntity* thing)
 //
 //==========================================================================
 
-boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
-	int flags, boolean(*trav)(intercept_t *), VObject* PrSelf, VMethod *prtrav)
+bool SV_PathTraverse(float InX1, float InY1, float x2, float y2, int flags,
+	bool(*trav)(void*, intercept_t *), void* FuncArg, VObject* PrSelf,
+	VMethod *prtrav)
 {
 	guard(SV_PathTraverse);
 	float x1 = InX1;
@@ -619,12 +632,13 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 	int			mapystep;
 
 	int			count;
+	pathtrace_t	trace;
 
-	earlyout = flags & PT_EARLYOUT;
+	trace.earlyout = !!(flags & PT_EARLYOUT);
 
 	validcount++;
-	intercept_p = intercepts;
-	memset(intercepts, 0, sizeof(intercepts));
+	trace.intercept_p = trace.intercepts;
+	memset(trace.intercepts, 0, sizeof(trace.intercepts));
 
 	if (((FX(x1 - GLevel->BlockMapOrgX)) & (MAPBLOCKSIZE - 1)) == 0)
 //	if (fmod(x1 - GLevel->BlockMapOrgX, MAPBLOCKSIZE) == 0.0)
@@ -634,13 +648,13 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 //	if (fmod(y1 - GLevel->BlockMapOrgY, MAPBLOCKSIZE) == 0.0)
 		y1 += 1.0;	// don't side exactly on a line
 
-	trace_org = TVec(x1, y1, 0);
-	trace_dest = TVec(x2, y2, 0);
-	trace_delta = trace_dest - trace_org;
-	trace_dir = Normalise(trace_delta);
-	trace_len = Length(trace_delta);
+	trace.org = TVec(x1, y1, 0);
+	trace.dest = TVec(x2, y2, 0);
+	trace.delta = trace.dest - trace.org;
+	trace.dir = Normalise(trace.delta);
+	trace.len = Length(trace.delta);
 
-	trace_plane.SetPointDir(trace_org, trace_delta);
+	trace.plane.SetPointDir(trace.org, trace.delta);
 
 	x1 -= GLevel->BlockMapOrgX;
 	y1 -= GLevel->BlockMapOrgY;
@@ -708,13 +722,13 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 	{
 		if (flags & PT_ADDLINES)
 		{
-			if (!SV_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts))
+			if (!SV_BlockLinesIterator(mapx, mapy, PIT_AddLineIntercepts, &trace))
 				return false;	// early out
 		}
 	
 		if (flags & PT_ADDTHINGS)
 		{
-			if (!SV_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts, NULL, NULL))
+			if (!SV_BlockThingsIterator(mapx, mapy, PIT_AddThingIntercepts, &trace, NULL, NULL))
 				return false;	// early out
 		}
 		
@@ -741,14 +755,14 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 	intercept_t*	scan;
 	intercept_t*	in;
 	
-	count = intercept_p - intercepts;
+	count = trace.intercept_p - trace.intercepts;
 	
 	in = 0;			// shut up compiler warning
 	
 	while (count--)
 	{
 		dist = 99999.0;
-		for (scan = intercepts; scan < intercept_p; scan++)
+		for (scan = trace.intercepts; scan < trace.intercept_p; scan++)
 		{
 			if (scan->frac < dist)
 			{
@@ -760,7 +774,7 @@ boolean SV_PathTraverse(float InX1, float InY1, float x2, float y2,
 		if (dist > 1.0)
 			return true;	// checked everything in range
 
-		if (trav && !trav(in))
+		if (trav && !trav(FuncArg, in))
 			return false;	// don't bother going farther
 
 		if (prtrav && PrSelf)
@@ -1034,21 +1048,19 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //
 //**************************************************************************
 
-static int crushchange;
-static bool nofit;
-
 //==========================================================================
 //
 //  PIT_ChangeSector
 //
 //==========================================================================
 
-boolean PIT_ChangeSector(VEntity *Other)
+bool PIT_ChangeSector(void* arg, VEntity *Other)
 {
-	if (!Other->eventSectorChanged(crushchange))
+	secchangetrace_t& trace = *(secchangetrace_t*)arg;
+	if (!Other->eventSectorChanged(trace.crushchange))
 	{
 		// keep checking (crush other things)
-		nofit = true;	//don't fit
+		trace.nofit = true;	//don't fit
 	}
 	return true;
 }
@@ -1067,18 +1079,19 @@ bool P_ChangeSector(sector_t * sector, int crunch)
 	bool ret;
 	sector_t* sec2;
 	sec_region_t* reg;
+	secchangetrace_t trace;
 
 	CalcSecMinMaxs(sector);
 
-	nofit = false;
-	crushchange = crunch;
+	trace.nofit = false;
+	trace.crushchange = crunch;
 
 	// re-check heights for all things near the moving sector
 	for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
 		for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
-			SV_BlockThingsIterator(x, y, PIT_ChangeSector, NULL, NULL);
+			SV_BlockThingsIterator(x, y, PIT_ChangeSector, &trace, NULL, NULL);
 
-	ret = nofit;
+	ret = trace.nofit;
 	if (sector->SectorFlags & sector_t::SF_ExtrafloorSource)
 	{
 		for (i = 0; i < GLevel->NumSectors; i++)

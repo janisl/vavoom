@@ -554,9 +554,10 @@ bool StepMove()
 	}
 
 	try_ok = true;
+	tmtrace_t tmtrace;
 	for(i=1; i < steps; i++)
 	{
-		try_ok = TryMove(vector(origx + (deltax / itof(steps * i)), origy +
+		try_ok = TryMoveEx(&tmtrace, vector(origx + (deltax / itof(steps * i)), origy +
 					(deltay / itof(steps * i)), Origin.z));
 		if (!try_ok)
 			break;
@@ -564,35 +565,35 @@ bool StepMove()
 
 	// killough 3/15/98: don't jump over dropoffs:
 	if (try_ok)
-		try_ok = TryMove (vector(tryx, tryy, Origin.z));
+		try_ok = TryMoveEx(&tmtrace, vector(tryx, tryy, Origin.z));
 
 	if (!try_ok)
 	{
 		// open any specials
-		if (bFloat && Level.Game.tmtrace->bFloatOk)
+		if (bFloat && tmtrace.bFloatOk)
 		{
 			// must adjust height
-			if (Origin.z < Level.Game.tmtrace->FloorZ)
+			if (Origin.z < tmtrace.FloorZ)
 				Origin.z += FLOATSPEED * Level.Game.frametime;
 			else
 				Origin.z -= FLOATSPEED * Level.Game.frametime;
 
 			// Check to make sure there's nothing in the way of the float
-			if(TestMobjZ())
+			if (TestMobjZ())
 			{
 				bInFloat = true;
 				return true;
 			}
 		}
 
-		if (!Level.Game.tmtrace->NumSpecHit)
+		if (!tmtrace.NumSpecHit)
 			return false;
 
 		MoveDir = DI_NODIR;
 		good = false;
-		while (Level.Game.tmtrace->NumSpecHit--)
+		while (tmtrace.NumSpecHit--)
 		{
-			ld = Level.Game.tmtrace->SpecHit[Level.Game.tmtrace->NumSpecHit];
+			ld = tmtrace.SpecHit[tmtrace.NumSpecHit];
 			// if the special is not a door
 			// that can be opened,
 			// return false
@@ -767,9 +768,12 @@ void NewChaseDir()
 
 	if(!Enemy)
 		Error("NewChaseDir: called with no Enemy");
-	
+
+	tmtrace_t tmtrace;
+	CheckRelPosition(&tmtrace, Origin);
+
 	// Try to move away from a dropoff
-	if (FloorZ - Level.Game.tmtrace->DropOffZ > MaxDropoffHeight && 
+	if (FloorZ - tmtrace.DropOffZ > MaxDropoffHeight && 
 		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
 	{
 		angle = CheckDropOff();
