@@ -792,7 +792,7 @@ bool VLevel::RotatePolyobj(int num, float angle)
 	po->angle = AngleMod(po->angle + angle);
 	if (IsForServer())
 	{
-		GLevel->LinkPolyobj(po);
+		LinkPolyobj(po);
 	}
 	return true;
 	unguard;
