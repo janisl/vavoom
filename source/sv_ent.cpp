@@ -1539,7 +1539,7 @@ void VEntity::BounceWall(float overbounce)
 float VEntity::GetGravity()
 {
 	guard(VEntity::GetGravity);
-	return GLevelInfo->Gravity * Sector->Gravity;
+	return Level->Gravity * Sector->Gravity;
 	unguard;
 }
 

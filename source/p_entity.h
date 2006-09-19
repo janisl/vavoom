@@ -293,6 +293,7 @@ class VEntity : public VThinker
 
 	void Remove()
 	{
+		UnlinkFromWorld();
 		SetFlags(_OF_DelayedDestroy);
 	}
 
