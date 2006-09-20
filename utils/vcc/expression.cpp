@@ -1543,7 +1543,8 @@ VCastOrInvocation::VCastOrInvocation(VName AName, const TLocation& ALoc, int ANu
 VCastOrInvocation::~VCastOrInvocation()
 {
 	for (int i = 0; i < NumArgs; i++)
-		delete Args[i];
+		if (Args[i])
+			delete Args[i];
 }
 
 //==========================================================================

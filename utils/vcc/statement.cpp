@@ -893,9 +893,13 @@ bool VReturn::Resolve(VEmitContext& ec)
 			ParseError(Loc, "viod function cannot return a value.");
 			Ret = false;
 		}
-		else
+		else if (Expr)
 		{
 			Expr->Type.CheckMatch(Expr->Loc, ec.FuncRetType);
+		}
+		else
+		{
+			Ret = false;
 		}
 	}
 	else
