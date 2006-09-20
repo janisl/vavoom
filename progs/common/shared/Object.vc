@@ -299,7 +299,6 @@ enum
 	for (var = type(NextThinker(none, type)); var; \
 		var = type(NextThinker(var, type)))
 
-const int MAXNAME		= 32;
 const int MAX_MSGLEN	= 8000;
 
 enum
@@ -1718,10 +1717,6 @@ native static final sec_region_t *FindThingGap(sec_region_t * gaps, TVec point, 
 native static final opening_t *FindOpening(opening_t * gaps, float z1, float z2);
 //  Find best region in sector for a given point
 native static final sec_region_t *PointInRegion(sector_t * sector, TVec p);
-native static final sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
-//	Swap sector's floor and ceiling, it's used by level converter to support
-// EDGE and Legacy 3D floors.
-native static final void SwapPlanes(sector_t *s);
 native static final int MapBlock(float val);
 
 //
@@ -1774,25 +1769,12 @@ native static final void G_Completed(int Map, int Position, int SaveAngle);
 native static final int TerrainType(int pic);
 native static final void P_ForceLightning();
 native static final void SB_Start();
-native static final void SetFloorPic(sector_t * sec, int texture);
-native static final void SetCeilPic(sector_t * sec, int texture);
-native static final void SetLineTexture(int side, int position, int texture);
-native static final void SetLineTransluc(line_t * line, int trans);
-native static final void SendFloorSlope(sector_t * sector);
-native static final void SendCeilingSlope(sector_t * sector);
-native static final void SetSecLightColor(sector_t * sector, int Color);
-native static final void SetFloorLightSector(sector_t* Sector, sector_t* SrcSector);
-native static final void SetCeilingLightSector(sector_t* Sector, sector_t* SrcSector);
-native static final void SetHeightSector(sector_t* Sector, sector_t* SrcSector, int Flags);
 native static final int FindModel(string Name);
 native static final int GetModelIndex(name Name);
 native static final int FindSkin(string Name);
 native static final classid FindClassFromEditorId(int Id);
 native static final classid FindClassFromScriptId(int Id);
 native static final void ChangeMusic(string SongName);
-
-//  Return next sector # that line tag refers to
-native static final int FindSectorFromTag(int tag, int start);
 
 defaultproperties
 {

@@ -108,8 +108,8 @@ bool TagBusy(int tag)
 {
 	int sectorIndex;
 
-	for (sectorIndex = FindSectorFromTag(tag, -1); sectorIndex >= 0;
-		sectorIndex = FindSectorFromTag(tag, sectorIndex))
+	for (sectorIndex = XLevel.FindSectorFromTag(tag, -1); sectorIndex >= 0;
+		sectorIndex = XLevel.FindSectorFromTag(tag, sectorIndex))
 	{
 		if (XLevel.Sectors[sectorIndex].FloorData ||
 			XLevel.Sectors[sectorIndex].CeilingData)

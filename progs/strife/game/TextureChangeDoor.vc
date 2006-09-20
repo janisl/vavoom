@@ -225,8 +225,8 @@ void SetAnimTexture(int NewTex)
 	{
 		if (Sector->lines[i]->flags & ML_TWOSIDED)
 		{
-			SetLineTexture(Sector->lines[i]->sidenum[0], 1, NewTex);
-			SetLineTexture(Sector->lines[i]->sidenum[1], 1, NewTex);
+			XLevel.SetLineTexture(Sector->lines[i]->sidenum[0], 1, NewTex);
+			XLevel.SetLineTexture(Sector->lines[i]->sidenum[1], 1, NewTex);
 		}
 	}
 }

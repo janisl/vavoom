@@ -41,8 +41,6 @@
 
 VEntity *SV_SpawnMobj(VClass *Class);
 void SV_ForceLightning();
-void SV_SetFloorPic(int i, int texture);
-void SV_SetCeilPic(int i, int texture);
 VClass* SV_FindClassFromEditorId(int Id);
 VClass* SV_FindClassFromScriptId(int Id);
 
@@ -278,35 +276,6 @@ IMPLEMENT_FUNCTION(VObject, PointInRegion)
 
 //==========================================================================
 //
-//	PF_AddExtraFloor
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, AddExtraFloor)
-{
-	P_GET_PTR(sector_t, dst);
-	P_GET_PTR(line_t, line);
-	RET_PTR(AddExtraFloor(line, dst));
-	sv_signon << (byte)svc_extra_floor
-				<< (short)(line - GLevel->Lines)
-				<< (short)(dst - GLevel->Sectors);
-}
-
-//==========================================================================
-//
-//	PF_SwapPlanes
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SwapPlanes)
-{
-	P_GET_PTR(sector_t, s);
-	SwapPlanes(s);
-	sv_signon << (byte)svc_swap_planes << (short)(s - GLevel->Sectors);
-}
-
-//==========================================================================
-//
 //	PF_MapBlock
 //
 //==========================================================================
@@ -333,35 +302,6 @@ IMPLEMENT_FUNCTION(VObject, NewMobjThinker)
 {
 	P_GET_PTR(VClass, Class);
 	RET_REF(SV_SpawnMobj(Class));
-}
-
-//==========================================================================
-//
-//	PF_NextMobj
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, NextMobj)
-{
-	P_GET_REF(VThinker, th);
-	if (!th)
-	{
-		th = GLevel->ThinkerHead;
-	}
-	else
-	{
-		th = th->Next;
-	}
-	while (th)
-	{
-		if (th->IsA(VEntity::StaticClass()))
-		{
-			RET_REF(th);
-			return;
-		}
-		th = th->Next;
-	}
-	RET_REF(0);
 }
 
 //**************************************************************************
@@ -432,7 +372,7 @@ IMPLEMENT_FUNCTION(VObject, NextThinker)
 	}
 	while (th)
 	{
-		if (th->IsA(Class))
+		if (th->IsA(Class) && !(th->GetFlags() & _OF_DelayedDestroy))
 		{
 			RET_REF(th);
 			return;
@@ -726,162 +666,6 @@ IMPLEMENT_FUNCTION(VObject, P_ForceLightning)
 
 //==========================================================================
 //
-//	PF_SetFloorPic
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetFloorPic)
-{
-	P_GET_INT(texture);
-	P_GET_PTR(sector_t, sec);
-	SV_SetFloorPic(sec - GLevel->Sectors, texture);
-}
-
-//==========================================================================
-//
-//	PF_SetCeilPic
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetCeilPic)
-{
-	P_GET_INT(texture);
-	P_GET_PTR(sector_t, sec);
-	SV_SetCeilPic(sec - GLevel->Sectors, texture);
-}
-
-//==========================================================================
-//
-//	PF_SetLineTexture
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetLineTexture)
-{
-	P_GET_INT(texture);
-	P_GET_INT(position);
-	P_GET_INT(side);
-	SV_SetLineTexture(side, position, texture);
-}
-
-//==========================================================================
-//
-//	PF_SetLineTransluc
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetLineTransluc)
-{
-	P_GET_INT(trans);
-	P_GET_PTR(line_t, line);
-	SV_SetLineTransluc(line, trans);
-}
-
-//==========================================================================
-//
-//	PF_SendFloorSlope
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SendFloorSlope)
-{
-	P_GET_PTR(sector_t, sector);
-	sector->floor.CalcBits();
-	sv_signon << (byte)svc_sec_floor_plane
-			<< (word)(sector - GLevel->Sectors)
-			<< sector->floor.normal.x
-			<< sector->floor.normal.y
-			<< sector->floor.normal.z
-			<< sector->floor.dist;
-}
-
-//==========================================================================
-//
-//	PF_SendCeilingSlope
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SendCeilingSlope)
-{
-	P_GET_PTR(sector_t, sector);
-	sector->ceiling.CalcBits();
-	sv_signon << (byte)svc_sec_ceil_plane
-			<< (word)(sector - GLevel->Sectors)
-			<< sector->ceiling.normal.x
-			<< sector->ceiling.normal.y
-			<< sector->ceiling.normal.z
-			<< sector->ceiling.dist;
-}
-
-//==========================================================================
-//
-//	PF_SetSecLightColor
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetSecLightColor)
-{
-	P_GET_INT(Col);
-	P_GET_PTR(sector_t, sector);
-	sector->params.LightColor = Col;
-	sv_signon << (byte)svc_sec_light_color
-			<< (word)(sector - GLevel->Sectors)
-			<< (byte)(Col >> 16)
-			<< (byte)(Col >> 8)
-			<< (byte)Col;
-}
-
-//==========================================================================
-//
-//	PF_SetFloorLightSector
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetFloorLightSector)
-{
-	P_GET_PTR(sector_t, SrcSector);
-	P_GET_PTR(sector_t, Sector);
-	Sector->floor.LightSourceSector = SrcSector - GLevel->Sectors;
-	sv_signon << (byte)svc_set_floor_light_sec
-			<< (word)(Sector - GLevel->Sectors)
-			<< (word)(SrcSector - GLevel->Sectors);
-}
-
-//==========================================================================
-//
-//	PF_SetCeilingLightSector
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetCeilingLightSector)
-{
-	P_GET_PTR(sector_t, SrcSector);
-	P_GET_PTR(sector_t, Sector);
-	Sector->ceiling.LightSourceSector = SrcSector - GLevel->Sectors;
-	sv_signon << (byte)svc_set_ceil_light_sec
-			<< (word)(Sector - GLevel->Sectors)
-			<< (word)(SrcSector - GLevel->Sectors);
-}
-
-//==========================================================================
-//
-//	PF_SetHeightSector
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SetHeightSector)
-{
-	P_GET_INT(Flags);
-	P_GET_PTR(sector_t, SrcSector);
-	P_GET_PTR(sector_t, Sector);
-	sv_signon << (byte)svc_set_heightsec
-			<< (word)(Sector - GLevel->Sectors)
-			<< (word)(SrcSector - GLevel->Sectors)
-			<< (byte)Flags;
-}
-
-//==========================================================================
-//
 //	PF_FindModel
 //
 //==========================================================================
@@ -950,26 +734,6 @@ IMPLEMENT_FUNCTION(VObject, ChangeMusic)
 {
 	P_GET_STR(SongName);
 	SV_ChangeMusic(*SongName);
-}
-
-//==========================================================================
-//
-//  PF_FindSectorFromTag
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, FindSectorFromTag)
-{
-	P_GET_INT(start);
-	P_GET_INT(tag);
-	int Ret = -1;
-	for (int i = start + 1; i < GLevel->NumSectors; i++)
-		if (GLevel->Sectors[i].tag == tag)
-		{
-			Ret = i;
-			break;
-		}
-	RET_INT(Ret);
 }
 
 #endif

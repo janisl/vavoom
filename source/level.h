@@ -672,6 +672,21 @@ private:
 	DECLARE_FUNCTION(BlockThingsIterator)
 	DECLARE_FUNCTION(PathTraverse)
 	DECLARE_FUNCTION(ChangeSector)
+	DECLARE_FUNCTION(AddExtraFloor)
+	DECLARE_FUNCTION(SwapPlanes)
+
+	DECLARE_FUNCTION(SetFloorPic)
+	DECLARE_FUNCTION(SetCeilPic)
+	DECLARE_FUNCTION(SetLineTexture)
+	DECLARE_FUNCTION(SetLineTransluc)
+	DECLARE_FUNCTION(SendFloorSlope)
+	DECLARE_FUNCTION(SendCeilingSlope)
+	DECLARE_FUNCTION(SetSecLightColor)
+	DECLARE_FUNCTION(SetFloorLightSector)
+	DECLARE_FUNCTION(SetCeilingLightSector)
+	DECLARE_FUNCTION(SetHeightSector)
+
+	DECLARE_FUNCTION(FindSectorFromTag)
 
 	//	Polyobj functions
 	DECLARE_FUNCTION(SpawnPolyobj)

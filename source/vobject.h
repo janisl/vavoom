@@ -376,13 +376,10 @@ public:
 	DECLARE_FUNCTION(FindThingGap)
 	DECLARE_FUNCTION(FindOpening)
 	DECLARE_FUNCTION(PointInRegion)
-	DECLARE_FUNCTION(AddExtraFloor)
-	DECLARE_FUNCTION(SwapPlanes)
 	DECLARE_FUNCTION(MapBlock)
 
 	//	Mobj utilites
 	DECLARE_FUNCTION(NewMobjThinker)
-	DECLARE_FUNCTION(NextMobj)
 
 	//	Special thinker utilites
 	DECLARE_FUNCTION(NewSpecialThinker)
@@ -414,23 +411,12 @@ public:
 	DECLARE_FUNCTION(SB_Start)
 	DECLARE_FUNCTION(TerrainType)
 	DECLARE_FUNCTION(P_ForceLightning)
-	DECLARE_FUNCTION(SetFloorPic)
-	DECLARE_FUNCTION(SetCeilPic)
-	DECLARE_FUNCTION(SetLineTexture)
-	DECLARE_FUNCTION(SetLineTransluc)
-	DECLARE_FUNCTION(SendFloorSlope)
-	DECLARE_FUNCTION(SendCeilingSlope)
-	DECLARE_FUNCTION(SetSecLightColor)
-	DECLARE_FUNCTION(SetFloorLightSector)
-	DECLARE_FUNCTION(SetCeilingLightSector)
-	DECLARE_FUNCTION(SetHeightSector)
 	DECLARE_FUNCTION(FindModel)
 	DECLARE_FUNCTION(GetModelIndex)
 	DECLARE_FUNCTION(FindSkin)
 	DECLARE_FUNCTION(FindClassFromEditorId)
 	DECLARE_FUNCTION(FindClassFromScriptId)
 	DECLARE_FUNCTION(ChangeMusic)
-	DECLARE_FUNCTION(FindSectorFromTag)
 #endif
 };
 

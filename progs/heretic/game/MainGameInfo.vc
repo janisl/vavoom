@@ -612,7 +612,7 @@ void MakeFloorSlope(Level InLevel, mthing_t * mthing)
 			}
 			sec->floor.dist = DotProduct(sec->floor.normal, p3);
 			sec->base_floorheight = sec->floor.dist;
-			SendFloorSlope(sec);
+			InLevel.SendFloorSlope(sec);
 			return;
 		}
 	}
@@ -662,7 +662,7 @@ void MakeCeilingSlope(Level InLevel, mthing_t * mthing)
 			}
 			sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
 			sec->base_ceilingheight = sec->ceiling.dist;
-			SendCeilingSlope(sec);
+			InLevel.SendCeilingSlope(sec);
 			return;
 		}
 	}
@@ -791,7 +791,7 @@ void MakeVertexFloorHeights(Level InLevel)
 		}
 		sec->floor.dist = DotProduct(sec->floor.normal, p3);
 		sec->base_floorheight = sec->floor.dist;
-		SendFloorSlope(sec);
+		InLevel.SendFloorSlope(sec);
 	}
 }
 
@@ -864,7 +864,7 @@ void MakeVertexCeilingHeights(Level InLevel)
 		}
 		sec->ceiling.dist = DotProduct(sec->ceiling.normal, p3);
 		sec->base_ceilingheight = sec->ceiling.dist;
-		SendCeilingSlope(sec);
+		InLevel.SendCeilingSlope(sec);
 	}
 }
 
@@ -883,7 +883,7 @@ void MakeVertexCeilingHeights(Level InLevel)
 //
 //==========================================================================
 
-void AlignPlane(sector_t *sec, line_t *line, int which)
+void AlignPlane(Level InLevel, sector_t *sec, line_t *line, int which)
 {
 	sector_t *refsec;
 	float bestdist;
@@ -947,9 +947,9 @@ void AlignPlane(sector_t *sec, line_t *line, int which)
 	srcplane->normal = cross;
 	srcplane->dist = DotProduct(cross, p);
 	if (which == 0)
-		SendFloorSlope(sec);
+		InLevel.SendFloorSlope(sec);
 	else
-		SendCeilingSlope(sec);
+		InLevel.SendCeilingSlope(sec);
 }
 
 //==========================================================================
@@ -983,10 +983,10 @@ void SetSlopes(Level InLevel)
 						bits = (InLevel.Lines[i].arg1 >> 2) & 3;
 
 					if (bits == 1)			// align front side to back
-						AlignPlane(InLevel.Lines[i].frontsector,
+						AlignPlane(InLevel, InLevel.Lines[i].frontsector,
 							&InLevel.Lines[i], s);
 					else if (bits == 2)		// align back side to front
-						AlignPlane(InLevel.Lines[i].backsector,
+						AlignPlane(InLevel, InLevel.Lines[i].backsector,
 							&InLevel.Lines[i], s);
 				}
 			}
@@ -1008,7 +1008,7 @@ void SpawnExtraFloors(Level InLevel, line_t * line)
 	{
 		if (line->arg1 == InLevel.Sectors[j].tag)
 		{
-			AddExtraFloor(line, &InLevel.Sectors[j]);
+			InLevel.AddExtraFloor(line, &InLevel.Sectors[j]);
 		}
 	}
 }
@@ -1087,11 +1087,11 @@ void MakeHeightSec(Level InLevel, line_t* Line)
 	{
 		Sec->bNoFakeLight = true;
 	}
-	for (s = FindSectorFromTag(Line->arg1, -1); s  >= 0;
-		s = FindSectorFromTag(Line->arg1, s))
+	for (s = InLevel.FindSectorFromTag(Line->arg1, -1); s  >= 0;
+		s = InLevel.FindSectorFromTag(Line->arg1, s))
 	{
 		InLevel.Sectors[s].heightsec = Sec;
-		SetHeightSector(&InLevel.Sectors[s], Sec, Line->arg2);
+		InLevel.SetHeightSector(&InLevel.Sectors[s], Sec, Line->arg2);
 	}
 }
 
@@ -1138,8 +1138,8 @@ void SetSectorFriction(Level InLevel, int tag, int amount, bool alterFlag)
 	Friction = (1.0 - itof(OldFriction) / itof(0x10000)) * 35.0;
 	MoveFactor = itof(OldMoveFactor) / itof(0x10000);
 
-	for (s = FindSectorFromTag(tag, -1); s >= 0;
-		s = FindSectorFromTag(tag, s))
+	for (s = InLevel.FindSectorFromTag(tag, -1); s >= 0;
+		s = InLevel.FindSectorFromTag(tag, s))
 	{
 		// killough 8/28/98:
 		//
@@ -1250,22 +1250,22 @@ void SpawnWorld(Level InLevel)
 			break;
 
 		case LNSPEC_TransferFloorLight:
-			for (SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, -1);
+			for (SecNum = InLevel.FindSectorFromTag(InLevel.Lines[i].arg1, -1);
 				SecNum >= 0;
-				SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
+				SecNum = InLevel.FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
 			{
-				SetFloorLightSector(&InLevel.Sectors[SecNum],
+				InLevel.SetFloorLightSector(&InLevel.Sectors[SecNum],
 					InLevel.Lines[i].frontsector);
 			}
 			InLevel.Lines[i].special = 0;
 			break;
 
 		case LNSPEC_TransferCeilingLight:
-			for (SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, -1);
+			for (SecNum = InLevel.FindSectorFromTag(InLevel.Lines[i].arg1, -1);
 				SecNum >= 0;
-				SecNum = FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
+				SecNum = InLevel.FindSectorFromTag(InLevel.Lines[i].arg1, SecNum))
 			{
-				SetCeilingLightSector(&InLevel.Sectors[SecNum],
+				InLevel.SetCeilingLightSector(&InLevel.Sectors[SecNum],
 					InLevel.Lines[i].frontsector);
 			}
 			InLevel.Lines[i].special = 0;
@@ -1334,13 +1334,13 @@ void SpawnWorld(Level InLevel)
 			{
 				if (TaggedLines[j].lineTag == InLevel.Lines[i].arg1)
 				{
-					SetLineTransluc(TaggedLines[j].line, trans);
+					InLevel.SetLineTransluc(TaggedLines[j].line, trans);
 				}
 			}
 		}
 		else
 		{
-			SetLineTransluc(&InLevel.Lines[i], trans);
+			InLevel.SetLineTransluc(&InLevel.Lines[i], trans);
 		}
 		InLevel.Lines[i].special = 0;
 	}

@@ -335,8 +335,8 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 
 	//	Search all sectors for ones with same tag as activating line
 	i = -1;
-	for (i = FindSectorFromTag(Tag, i); i >= 0;
-		i = FindSectorFromTag(Tag, i))
+	for (i = XLevel.FindSectorFromTag(Tag, i); i >= 0;
+		i = XLevel.FindSectorFromTag(Tag, i))
 	{
 		sector = &XLevel.Sectors[i];
 		bright = 0;

@@ -3595,8 +3595,8 @@ void A_RemoveForceField()
 		{
 			line->flags &= ~(ML_BLOCKING|ML_BLOCKEVERYTHING);
 			line->special = 0;
-			SetLineTexture(line->sidenum[0], 1, 0);
-			SetLineTexture(line->sidenum[1], 1, 0);
+			XLevel.SetLineTexture(line->sidenum[0], 1, 0);
+			XLevel.SetLineTexture(line->sidenum[1], 1, 0);
 		}
 	}
 }

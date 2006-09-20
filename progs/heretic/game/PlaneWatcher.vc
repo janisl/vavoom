@@ -58,7 +58,7 @@ void Start(Actor it, line_t* line, int lineSide, bool ceiling, int tag,
 	LineSide = lineSide;
 	bCeiling = ceiling;
 
-	secnum = FindSectorFromTag(tag, -1);
+	secnum = XLevel.FindSectorFromTag(tag, -1);
 	if (secnum >= 0)
 	{
 		Sector = &XLevel.Sectors[secnum];
