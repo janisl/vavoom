@@ -1017,16 +1017,19 @@ void CL_ParseServerMessage(VMessage& msg)
 
 		case svc_stats_long:
 			i = msg.ReadByte();
+			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
 			msg >> ((int*)((byte*)cl + sizeof(VClientState)))[i];
 			break;
 
 		case svc_stats_short:
 			i = msg.ReadByte();
+			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
 			((int*)((byte*)cl + sizeof(VClientState)))[i] = msg.ReadShort();
 			break;
 
 		case svc_stats_byte:
 			i = msg.ReadByte();
+			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
 			((int*)((byte*)cl + sizeof(VClientState)))[i] = msg.ReadByte();
 			break;
 
