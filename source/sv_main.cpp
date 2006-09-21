@@ -2200,7 +2200,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 			<< (GGameInfo->Players[i] ? GGameInfo->Players[i]->UserInfo : "");
 	}
 
-	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
+/*	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
 		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
 		{
@@ -2212,7 +2212,7 @@ void SV_SendServerInfo(VBasePlayer *player)
 					<< C->GetName();
 			}
 		}
-	}
+	}*/
 
 	for (i = VClass::GModelNames.Num(); i < nummodels; i++)
 	{

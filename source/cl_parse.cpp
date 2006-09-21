@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
+#include "progdefs.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -593,6 +594,18 @@ static void CL_ParseServerInfo(VMessage& msg)
 	for (int i = 1; i < VClass::GModelNames.Num(); i++)
 	{
 		CL_AddModel(i, va("models/%s", *VClass::GModelNames[i]));
+	}
+
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	{
+		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
+		{
+			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
+			if (C->IsChildOf(VThinker::StaticClass()))
+			{
+				ClassLookup[C->NetId] = C;
+			}
+		}
 	}
 
 	GCon->Log(NAME_Dev, "Client level loaded");
