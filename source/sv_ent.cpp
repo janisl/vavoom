@@ -126,6 +126,7 @@ extern VEntity**	sv_mobjs;
 
 IMPLEMENT_CLASS(V, Entity);
 
+int VEntity::FIndex_BeginPlay;
 int VEntity::FIndex_Destroyed;
 int VEntity::FIndex_Touch;
 int VEntity::FIndex_BlockedByLine;
@@ -2270,6 +2271,7 @@ IMPLEMENT_FUNCTION(VViewEntity, SetState)
 void VEntity::InitFuncIndexes()
 {
 	guard(VEntity::InitFuncIndexes);
+	FIndex_BeginPlay = StaticClass()->GetFunctionIndex("BeginPlay");
 	FIndex_Destroyed = StaticClass()->GetFunctionIndex("Destroyed");
 	FIndex_Touch = StaticClass()->GetFunctionIndex("Touch");
 	FIndex_BlockedByLine = StaticClass()->GetFunctionIndex("BlockedByLine");

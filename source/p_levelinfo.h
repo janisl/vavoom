@@ -31,6 +31,12 @@ class VLevelInfo : public VThinker
 
 	VGameInfo*		Game;
 
+	enum
+	{
+		LIF_BegunPlay					= 0x00000001,
+	};
+	vuint32			LevelInfoFlags;
+
 	// Maintain single and multi player starting spots.
 	mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
 	int				NumDeathmatchStarts;

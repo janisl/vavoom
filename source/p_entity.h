@@ -193,6 +193,7 @@ class VEntity : public VThinker
 	VName			SoundClass;
 	VName			SoundGender;
 
+	static int FIndex_BeginPlay;
 	static int FIndex_Destroyed;
 	static int FIndex_Touch;
 	static int FIndex_BlockedByLine;
@@ -213,6 +214,11 @@ class VEntity : public VThinker
 	void Destroy();
 	void Serialise(VStream&);
 
+	void eventBeginPlay()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(FIndex_BeginPlay);
+	}
 	void eventDestroyed()
 	{
 		P_PASS_SELF;

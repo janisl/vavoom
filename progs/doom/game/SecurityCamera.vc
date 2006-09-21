@@ -23,28 +23,6 @@
 //**
 //**************************************************************************
 
-class TempActor : Actor;
-
-bool bDidBeginPlay;
-
-void BeginPlay()
-{
-}
-
-void Tick(float DeltaTime)
-{
-	if (!bDidBeginPlay)
-	{
-		bDidBeginPlay = true;
-		BeginPlay();
-	}
-	::Tick(DeltaTime);
-}
-
-defaultproperties
-{
-}
-
 //**************************************************************************
 //**
 //**	SecurityCamera
@@ -56,7 +34,7 @@ defaultproperties
 //**
 //**************************************************************************
 
-class SecurityCamera : TempActor
+class SecurityCamera : Actor
 	__mobjinfo__(9025);
 
 float Center;
@@ -230,7 +208,7 @@ defaultproperties
 //**
 //**************************************************************************
 
-class InterpolationPoint : TempActor
+class InterpolationPoint : Actor
 	__mobjinfo__(9070);
 
 InterpolationPoint NextPoint;
@@ -328,7 +306,7 @@ defaultproperties
 //**
 //**************************************************************************
 
-class PathFollower : TempActor
+class PathFollower : Actor
 	__mobjinfo__(9071);
 
 bool bActive;

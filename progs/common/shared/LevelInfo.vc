@@ -29,6 +29,8 @@ class LevelInfo : Thinker
 
 native readonly GameInfo	Game;
 
+readonly bool	bBegunPlay;
+
 // Maintain single and multi player starting spots.
 mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
 int				NumDeathmatchStarts;

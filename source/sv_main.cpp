@@ -314,6 +314,12 @@ VEntity *SV_SpawnMobj(VClass *Class)
 	}
 	sv_mobjs[i] = Ent;
 	Ent->NetID = i;
+
+	if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_BegunPlay)
+	{
+		Ent->eventBeginPlay();
+	}
+
 	return Ent;
 	unguard;
 }
@@ -1207,6 +1213,8 @@ int NumObjs = 0;
 			}
 			//	Next update starts here
 			sv_player->MobjUpdateStart = index;
+dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
+		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
 			return;
 		}
 		SV_UpdateMobj(index, msg);
@@ -2421,6 +2429,17 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	}
 
 	SV_SendServerInfoToClients();
+
+	//	Call BeginPlay events.
+	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
+	{
+		if (Th->IsA(VEntity::StaticClass()) &&
+			!(Th->GetFlags() & _OF_DelayedDestroy))
+		{
+			((VEntity*)Th)->eventBeginPlay();
+		}
+	}
+	GLevelInfo->LevelInfoFlags |= VLevelInfo::LIF_BegunPlay;
 
 	//	Start open scripts.
 	P_StartTypedACScripts(SCRIPT_Open);
