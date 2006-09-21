@@ -1187,7 +1187,7 @@ int NumObjs = 0;
 		int index = (i + starti) % GMaxEntities;
 		if (!sv_mobjs[index])
 			continue;
-		if (sv_mobjs[i]->GetFlags() & _OF_DelayedDestroy)
+		if (sv_mobjs[index]->GetFlags() & _OF_DelayedDestroy)
 			continue;
 		if (sv_mobjs[index]->EntityFlags & VEntity::EF_Hidden)
 			continue;
