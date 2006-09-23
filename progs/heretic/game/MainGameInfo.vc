@@ -70,7 +70,7 @@ int WeaponOrder[NUMWEAPONS];
 int terrain_contents[4];
 int contents_transluc[4];
 
-botinfo_t botinfo[NUMTOTALBOTS];
+BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
 tagged_line_t TaggedLines[MAX_TAGGED_LINES];
@@ -152,74 +152,74 @@ void InitBotTypes()
 {
 	SetBotType(0,
 		"bot1",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot1\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
 	);
 	SetBotType(1,
 		"bot2",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot2\\color\\1\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
 	);
 	SetBotType(2,
 		"bot3",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot3\\color\\2\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
 	);
 	SetBotType(3,
 		"bot4",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot4\\color\\3\\class\\0\\model\\doomguy\\skin\\camo.pcx"
 	);
 	SetBotType(4,
 		"bot5",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot5\\color\\4\\class\\0\\model\\doomguy\\skin\\green.pcx"
 	);
 	SetBotType(5,
 		"bot6",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot6\\color\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
 	);
 	SetBotType(6,
 		"bot7",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot7\\color\\6\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
 	);
 	SetBotType(7,
 		"bot8",
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
-		bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
+		BotPlayer::bsk_medium,
 		"\\Name\\bot8\\color\\7\\class\\0\\model\\doomguy\\skin\\camo.pcx"
 	);
 }

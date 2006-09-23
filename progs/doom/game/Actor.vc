@@ -172,6 +172,83 @@ classid ImuneMissileType;
 string PickupMessage;
 
 #ifdef DDF
+enum
+{
+	DLITE_None,
+	DLITE_Constant,	// lighting is constant (regardless of distance)
+	DLITE_Linear,	// lighting is proportional to 1 / distance
+	DLITE_Quadratic	// lighting is proportional to 1 / (distance^2)
+};
+
+enum
+{
+	ATK_None,
+	ATK_Projectile,
+	ATK_Spawner,
+	ATK_TripleSpawner,
+	ATK_Spreader,
+	ATK_RandomSpread,
+	ATK_Shot,
+	ATK_Tracker,
+	ATK_CloseCombat,
+	ATK_ShootToSpot,
+	ATK_SkullFly,
+	ATK_SmartProjectile,
+	ATK_Spray,
+	NUMATKCLASS
+};
+
+struct AttackType
+{
+	int AttackStyle;
+	bool bTraceSmoke;
+	bool bKillFailedSpawn;
+	bool bPrestepSpawn;
+	bool bSpawnTelefrags;
+	bool bNeedSight;
+	bool bFaceTarget;
+	bool bPlayer;
+	bool bForceAim;
+	bool bAngledSpawn;
+	bool bNoTriggerLines;
+	name InitSound;
+	name Sound;
+	float AccuracySlope;
+	float AccuracyAngle;
+	float XOffset;
+	float YOffset;
+	float AngleOffset;
+	float SlopeOffset;
+	float AssaultSpeed;
+	float Height;
+	float Range;
+	int Count;
+	int TooClose;
+	int Damage;
+	int DamageMax;
+	int DamageError;
+	float DamageDelay;
+	int DamageNoArmour;
+
+	// class of the attack.
+	int AttackClass;
+
+	// object init state.
+	name ObjInitState;
+
+	float NoTraceChance;
+	float KeepFireChance;
+
+	// the MOBJ that is integrated with this attack, or NULL
+	classid AtkMobj;
+
+	// spawned object (for spawners). Can be NULL.
+	classid SpawnedObj;
+
+	// puff object.  Can be NULL.
+	classid Puff;
+};
+
 // New states.
 int SpawnState;
 int ResState;
