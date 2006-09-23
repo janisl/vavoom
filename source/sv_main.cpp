@@ -125,6 +125,7 @@ static int		RebornPosition;	// Position indicator for cooperative net-play rebor
 static bool		completed;
 
 static int		num_stats;
+static int		num_string_stats;
 
 static VCvarI	TimeLimit("TimeLimit", "0");
 static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
@@ -187,14 +188,18 @@ void SV_Init()
 	GGameInfo->eventInit();
 
 	num_stats = GGameInfo->num_stats;
+	num_string_stats = GGameInfo->num_string_stats;
 
 	VClass* PlayerClass = VClass::FindClass("Player");
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		GPlayersBase[i] = (VBasePlayer*)VObject::StaticSpawnObject(
 			PlayerClass);
-		GPlayersBase[i]->OldStats = new vint32[num_stats];
-		memset(GPlayersBase[i]->OldStats, 0, sizeof(vint32) * num_stats);
+		if (num_string_stats && sizeof(VStr) > 4)
+			num_stats = (num_stats + 1) & ~1;
+		int TotalStats = num_stats + num_string_stats * (sizeof(VStr) / 4);
+		GPlayersBase[i]->OldStats = new vint32[TotalStats];
+		memset(GPlayersBase[i]->OldStats, 0, sizeof(vint32) * TotalStats);
 	}
 
 	GGameInfo->validcount = &validcount;
@@ -223,6 +228,10 @@ void SV_Shutdown()
 	{
 		if (GPlayersBase[i])
 		{
+			for (int j = 0; j < num_string_stats; j++)
+			{
+				((VStr*)(GPlayersBase[i]->OldStats + num_stats))[j].Clean();
+			}
 			delete[] GPlayersBase[i]->OldStats;
 			GPlayersBase[i]->ConditionalDestroy();
 		}
@@ -1339,7 +1348,7 @@ void SV_SendReliable()
 		if (!(GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
 			continue;
 
-		Stats = (int*)((vuint8*)GGameInfo->Players[i] + sizeof(VBasePlayer));
+		Stats = (vint32*)((vuint8*)GGameInfo->Players[i] + sizeof(VBasePlayer));
 		for (j = 0; j < num_stats; j++)
 		{
 			if (Stats[j] == GGameInfo->Players[i]->OldStats[j])
@@ -1363,6 +1372,18 @@ void SV_SendReliable()
 					<< (vuint8)j << sval;
 			}
 			GGameInfo->Players[i]->OldStats[j] = sval;
+		}
+		VStr* StrStats = (VStr*)(Stats + num_stats);
+		VStr* OldStrStats = (VStr*)(GGameInfo->Players[i]->OldStats + num_stats);
+		for (j = 0; j < num_string_stats; j++)
+		{
+			if (StrStats[j] == OldStrStats[j])
+			{
+				continue;
+			}
+			GGameInfo->Players[i]->Message << (vuint8)svc_stats_string
+				<< (vuint8)(num_stats + j) << StrStats[j];
+			OldStrStats[j] = StrStats[j];
 		}
 	}
 

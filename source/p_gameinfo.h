@@ -30,28 +30,29 @@ class VGameInfo : public VObject
 	VName			AcsHelper;
 	VName			GenericConScript;
 
-	int				netgame;
-	int				deathmatch;
-	int				gameskill;
-	int				respawn;
-	int				nomonsters;
-	int				fastparm;
+	vint32			netgame;
+	vint32			deathmatch;
+	vint32			gameskill;
+	vint32			respawn;
+	vint32			nomonsters;
+	vint32			fastparm;
 
-	int*			validcount;
-	int				skyflatnum;
+	vint32*			validcount;
+	vint32			skyflatnum;
 
 	VBasePlayer*	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 
 	level_t*		level;
 
-	int				RebornPosition;
+	vint32			RebornPosition;
 
 	float			frametime;
 
-	int				num_stats;
+	vint32			num_stats;
+	vint32			num_string_stats;
 
 	float			FloatBobOffsets[64];
-	int				PhaseTable[64];
+	vint32			PhaseTable[64];
 
 	VGameInfo()
 	{}

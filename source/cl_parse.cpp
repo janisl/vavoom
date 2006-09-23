@@ -1046,6 +1046,12 @@ void CL_ParseServerMessage(VMessage& msg)
 			((int*)((byte*)cl + sizeof(VClientState)))[i] = msg.ReadByte();
 			break;
 
+		case svc_stats_string:
+			i = msg.ReadByte();
+			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
+			*(VStr*)((byte*)cl + sizeof(VClientState) + i * 4) = msg.ReadString();
+			break;
+
 		case svc_stringcmd:
 			GCmdBuf << msg.ReadString();
 			break;

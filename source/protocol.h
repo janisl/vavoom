@@ -105,6 +105,7 @@ enum
 	svc_set_heightsec,
 
 	svc_class_name,
+	svc_stats_string,
 
 	USER_PROTOCOL_START = 128
 };

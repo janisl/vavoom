@@ -49,6 +49,7 @@ int					RebornPosition;
 readonly float		frametime;
 
 int					num_stats;
+int					num_string_stats;
 
 float				FloatBobOffsets[64];
 int					PhaseTable[64];
