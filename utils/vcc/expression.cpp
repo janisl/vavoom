@@ -426,11 +426,11 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 
 //==========================================================================
 //
-//	VExpression::IsSingleName
+//	VExpression::IsValidTypeExpression
 //
 //==========================================================================
 
-bool VExpression::IsSingleName()
+bool VExpression::IsValidTypeExpression()
 {
 	return false;
 }
@@ -1049,11 +1049,11 @@ void VSingleName::Emit(VEmitContext&)
 
 //==========================================================================
 //
-//	VSingleName::IsSingleName
+//	VSingleName::IsValidTypeExpression
 //
 //==========================================================================
 
-bool VSingleName::IsSingleName()
+bool VSingleName::IsValidTypeExpression()
 {
 	return true;
 }
@@ -1125,6 +1125,35 @@ VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 
 //==========================================================================
 //
+//	VDoubleName::ResolveAsType
+//
+//==========================================================================
+
+VTypeExpr* VDoubleName::ResolveAsType(VEmitContext& ec)
+{
+	VClass* Class = VMemberBase::CheckForClass(Name1);
+	if (!Class)
+	{
+		ParseError(Loc, "No such class %s", *Name1);
+		delete this;
+		return NULL;
+	}
+
+	Type = VMemberBase::CheckForType(Class, Name2);
+	if (Type.type == ev_unknown)
+	{
+		ParseError(Loc, "Invalid identifier, bad type name %s::%s", *Name1, *Name2);
+		delete this;
+		return NULL;
+	}
+
+	VTypeExpr* e = new VTypeExpr(Type, Loc);
+	delete this;
+	return e;
+}
+
+//==========================================================================
+//
 //	VDoubleName::Emit
 //
 //==========================================================================
@@ -1132,6 +1161,28 @@ VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 void VDoubleName::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
+}
+
+//==========================================================================
+//
+//	VDoubleName::IsValidTypeExpression
+//
+//==========================================================================
+
+bool VDoubleName::IsValidTypeExpression()
+{
+	return true;
+}
+
+//==========================================================================
+//
+//	VDoubleName::CreateTypeExprCopy
+//
+//==========================================================================
+
+VExpression* VDoubleName::CreateTypeExprCopy()
+{
+	return new VDoubleName(Name1, Name2, Loc);
 }
 
 //END

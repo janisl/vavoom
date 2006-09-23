@@ -289,6 +289,10 @@ VExpression* VParser::ParseExpressionPriority0()
 			}
 			VName Name2 = Lex.Name;
 			Lex.NextToken();
+			if (bLocals && Lex.Token == TK_Asterisk)
+			{
+				return ParseLocalVar(new VDoubleName(Name, Name2, Loc));
+			}
 			return new VDoubleName(Name, Name2, Loc);
 		}
 
@@ -1029,7 +1033,7 @@ VStatement* VParser::ParseStatement()
 			}
 			return new VEmptyStatement(l);
 		}
-		else if (Expr->IsSingleName() && Lex.Token == TK_Identifier)
+		else if (Expr->IsValidTypeExpression() && Lex.Token == TK_Identifier)
 		{
 			VLocalDecl* Decl = ParseLocalVar(Expr);
 			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
@@ -1108,9 +1112,20 @@ VExpression* VParser::ParseType()
 
 	case TK_Identifier:
 	{
-		VExpression* e = new VSingleName(Lex.Name, l);
+		VName Name = Lex.Name;
 		Lex.NextToken();
-		return e;
+		if (Lex.Check(TK_DColon))
+		{
+			if (Lex.Token != TK_Identifier)
+			{
+				ParseError(Lex.Location, "Identifier expected");
+				return new VSingleName(Name, l);
+			}
+			VName Name2 = Lex.Name;
+			Lex.NextToken();
+			return new VDoubleName(Name, Name2, l);
+		}
+		return new VSingleName(Name, l);
 	}
 
 	default:

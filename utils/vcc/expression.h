@@ -49,7 +49,7 @@ public:
 	virtual void Emit(VEmitContext&) = 0;
 	virtual void EmitBranchable(VEmitContext&, VLabel, bool);
 	void EmitPushPointedCode(TType, VEmitContext&);
-	virtual bool IsSingleName();
+	virtual bool IsValidTypeExpression();
 	virtual bool IsIntConst() const;
 	virtual bool IsFloatConst() const;
 	virtual vint32 GetIntConst() const;
@@ -202,7 +202,7 @@ public:
 	VExpression* DoResolve(VEmitContext&);
 	VTypeExpr* ResolveAsType(VEmitContext&);
 	void Emit(VEmitContext&);
-	bool IsSingleName();
+	bool IsValidTypeExpression();
 	VExpression* CreateTypeExprCopy();
 };
 
@@ -220,7 +220,10 @@ public:
 
 	VDoubleName(VName, VName, const TLocation&);
 	VExpression* DoResolve(VEmitContext&);
+	VTypeExpr* ResolveAsType(VEmitContext&);
 	void Emit(VEmitContext&);
+	bool IsValidTypeExpression();
+	VExpression* CreateTypeExprCopy();
 };
 
 //==========================================================================
