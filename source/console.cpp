@@ -593,6 +593,10 @@ static void DoPrint(const char *buf)
 void FConsoleDevice::Serialise(const char* V, EName Event)
 {
 	dprintf("%s: %s\n", VName::SafeString(Event), V);
+	if (Event == NAME_Dev && !developer)
+	{
+		return;
+	}
 	DoPrint(V);
 	DoPrint("\n");
 }
