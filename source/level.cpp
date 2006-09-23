@@ -307,7 +307,7 @@ void VLevel::Destroy()
 		for (int i = 0; i < NumSectors; i++)
 		{
 			sec_region_t* Next;
-			for (sec_region_t* r = Sectors[i].topregion; r; r = Next)
+			for (sec_region_t* r = Sectors[i].botregion; r; r = Next)
 			{
 				Next = r->next;
 				delete r;
