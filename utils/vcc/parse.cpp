@@ -1796,16 +1796,6 @@ void VParser::Parse()
 			break;
 		}
 
-		case TK_Struct:
-			Lex.NextToken();
-			ParseStruct(NULL, false);
-			break;
-
-		case TK_Vector:
-			Lex.NextToken();
-			ParseStruct(NULL, true);
-			break;
-
 		case TK_Class:
 			Lex.NextToken();
 			ParseClass();
