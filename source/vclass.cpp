@@ -1341,15 +1341,23 @@ void VMethod::OptimiseInstructions()
 			break;
 
 		case OPC_Offset:
+		case OPC_FieldValue:
+		case OPC_VFieldValue:
+		case OPC_PtrFieldValue:
+		case OPC_StrFieldValue:
+		case OPC_Bool0FieldValue:
+		case OPC_Bool1FieldValue:
+		case OPC_Bool2FieldValue:
+		case OPC_Bool3FieldValue:
 			//	Make sure struct / class field offsets have been calculated.
 			Instructions[i].Member->Outer->PostLoad();
 			if (((VField*)Instructions[i].Member)->Ofs < 256)
 			{
-				Instructions[i].Opcode = OPC_OffsetB;
+				Instructions[i].Opcode += 2;
 			}
 			else if (((VField*)Instructions[i].Member)->Ofs <= MAXSHORT)
 			{
-				Instructions[i].Opcode = OPC_OffsetS;
+				Instructions[i].Opcode++;
 			}
 			break;
 

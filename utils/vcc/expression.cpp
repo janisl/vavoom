@@ -745,8 +745,7 @@ VExpression* VSelf::DoResolve(VEmitContext& ec)
 
 void VSelf::Emit(VEmitContext& ec)
 {
-	ec.AddStatement(OPC_LocalAddress0);
-	ec.AddStatement(OPC_PushPointedPtr);
+	ec.AddStatement(OPC_LocalValue0);
 }
 
 //END
@@ -1129,7 +1128,7 @@ VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 //
 //==========================================================================
 
-VTypeExpr* VDoubleName::ResolveAsType(VEmitContext& ec)
+VTypeExpr* VDoubleName::ResolveAsType(VEmitContext&)
 {
 	VClass* Class = VMemberBase::CheckForClass(Name1);
 	if (!Class)
@@ -3566,9 +3565,63 @@ void VLocalVar::RequestAddressOf()
 
 void VLocalVar::Emit(VEmitContext& ec)
 {
-	ec.EmitLocalAddress(ec.LocalDefs[num].ofs);
-	if (!AddressRequested)
+	if (AddressRequested)
 	{
+		ec.EmitLocalAddress(ec.LocalDefs[num].ofs);
+	}
+	else if (ec.LocalDefs[num].ofs < 256)
+	{
+		int Ofs = ec.LocalDefs[num].ofs;
+		if (ec.LocalDefs[num].type.type == ev_bool &&
+			ec.LocalDefs[num].type.bit_mask != 1)
+		{
+			ParseError(Loc, "Strange local bool mask");
+		}
+		switch (ec.LocalDefs[num].type.type)
+		{
+		case ev_int:
+		case ev_float:
+		case ev_name:
+		case ev_pointer:
+		case ev_reference:
+		case ev_classid:
+		case ev_state:
+		case ev_bool:
+			if (Ofs == 0)
+				ec.AddStatement(OPC_LocalValue0);
+			else if (Ofs == 1)
+				ec.AddStatement(OPC_LocalValue1);
+			else if (Ofs == 2)
+				ec.AddStatement(OPC_LocalValue2);
+			else if (Ofs == 3)
+				ec.AddStatement(OPC_LocalValue3);
+			else if (Ofs == 4)
+				ec.AddStatement(OPC_LocalValue4);
+			else if (Ofs == 5)
+				ec.AddStatement(OPC_LocalValue5);
+			else if (Ofs == 6)
+				ec.AddStatement(OPC_LocalValue6);
+			else if (Ofs == 7)
+				ec.AddStatement(OPC_LocalValue7);
+			else
+				ec.AddStatement(OPC_LocalValueB, Ofs);
+			break;
+
+		case ev_vector:
+			ec.AddStatement(OPC_VLocalValueB, Ofs);
+			break;
+
+		case ev_string:
+			ec.AddStatement(OPC_StrLocalValueB, Ofs);
+			break;
+
+		default:
+			ParseError(Loc, "Invalid operation of this variable type");
+		}
+	}
+	else
+	{
+		ec.EmitLocalAddress(ec.LocalDefs[num].ofs);
 		EmitPushPointedCode(ec.LocalDefs[num].type, ec);
 	}
 }
@@ -3647,10 +3700,54 @@ void VFieldAccess::RequestAddressOf()
 void VFieldAccess::Emit(VEmitContext& ec)
 {
 	op->Emit(ec);
-	ec.AddStatement(OPC_Offset, field);
-	if (!AddressRequested)
+	if (AddressRequested)
 	{
-		EmitPushPointedCode(field->type, ec);
+		ec.AddStatement(OPC_Offset, field);
+	}
+	else
+	{
+		switch (field->type.type)
+		{
+		case ev_int:
+		case ev_float:
+		case ev_name:
+			ec.AddStatement(OPC_FieldValue, field);
+			break;
+
+		case ev_pointer:
+		case ev_reference:
+		case ev_classid:
+		case ev_state:
+			ec.AddStatement(OPC_PtrFieldValue, field);
+			break;
+
+		case ev_vector:
+			ec.AddStatement(OPC_VFieldValue, field);
+			break;
+
+		case ev_bool:
+			if (field->type.bit_mask & 0x000000ff)
+				ec.AddStatement(OPC_Bool0FieldValue, field, (int)(field->type.bit_mask));
+			else if (field->type.bit_mask & 0x0000ff00)
+				ec.AddStatement(OPC_Bool1FieldValue, field, (int)(field->type.bit_mask >> 8));
+			else if (field->type.bit_mask & 0x00ff0000)
+				ec.AddStatement(OPC_Bool2FieldValue, field, (int)(field->type.bit_mask >> 16));
+			else
+				ec.AddStatement(OPC_Bool3FieldValue, field, (int)(field->type.bit_mask >> 24));
+			break;
+
+		case ev_string:
+			ec.AddStatement(OPC_StrFieldValue, field);
+			break;
+
+		case ev_delegate:
+			ec.AddStatement(OPC_Offset, field);
+			ec.AddStatement(OPC_PushPointedDelegate);
+			break;
+
+		default:
+			ParseError(Loc, "Invalid operation on field of this type");
+		}
 	}
 }
 
@@ -3799,8 +3896,7 @@ void VInvocation::Emit(VEmitContext& ec)
 	{
 		if (!HaveSelf)
 		{
-			ec.AddStatement(OPC_LocalAddress0);
-			ec.AddStatement(OPC_PushPointedPtr);
+			ec.AddStatement(OPC_LocalValue0);
 		}
 	}
 

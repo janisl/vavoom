@@ -604,6 +604,75 @@ func_loop:
 			sp++;
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_LocalValue0)
+			ip++;
+			*sp = local_vars[0];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValue1)
+			ip++;
+			*sp = local_vars[1];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValue2)
+			ip++;
+			*sp = local_vars[2];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValue3)
+			ip++;
+			*sp = local_vars[3];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValue4)
+			ip++;
+			*sp = local_vars[4];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValue5)
+			ip++;
+			*sp = local_vars[5];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValue6)
+			ip++;
+			*sp = local_vars[6];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValue7)
+			ip++;
+			*sp = local_vars[7];
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_LocalValueB)
+			*sp = local_vars[ip[1]];
+			ip += 2;
+			sp++;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VLocalValueB)
+			sp[0].f = ((TVec*)&local_vars[ip[1]])->x;
+			sp[1].f = ((TVec*)&local_vars[ip[1]])->y;
+			sp[2].f = ((TVec*)&local_vars[ip[1]])->z;
+			ip += 2;
+			sp += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_StrLocalValueB)
+			sp->p = NULL;
+			*(VStr*)&sp->p = *(VStr*)&local_vars[ip[1]];
+			ip += 2;
+			sp++;
+			PR_VM_BREAK;
+
 		PR_VM_CASE(OPC_Offset)
 			if (!sp[-1].p)
 			{
@@ -629,6 +698,252 @@ func_loop:
 			}
 			sp[-1].p = (vuint8*)sp[-1].p + ip[1];
 			ip += 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = *(vint32*)((vuint8*)sp[-1].p + ReadInt32(ip + 1));
+			ip += 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = *(vint32*)((vuint8*)sp[-1].p + ReadInt16(ip + 1));
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_FieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = *(vint32*)((vuint8*)sp[-1].p + ip[1]);
+			ip += 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VFieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			{
+				TVec* vp = (TVec*)((vuint8*)sp[-1].p + ReadInt32(ip + 1));
+				sp[1].f = vp->z;
+				sp[0].f = vp->y;
+				sp[-1].f = vp->x;
+			}
+			sp += 2;
+			ip += 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VFieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			{
+				TVec* vp = (TVec*)((vuint8*)sp[-1].p + ReadInt16(ip + 1));
+				sp[1].f = vp->z;
+				sp[0].f = vp->y;
+				sp[-1].f = vp->x;
+			}
+			sp += 2;
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_VFieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			{
+				TVec* vp = (TVec*)((vuint8*)sp[-1].p + ip[1]);
+				sp[1].f = vp->z;
+				sp[0].f = vp->y;
+				sp[-1].f = vp->x;
+			}
+			sp += 2;
+			ip += 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PtrFieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].p = *(void**)((vuint8*)sp[-1].p + ReadInt32(ip + 1));
+			ip += 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PtrFieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].p = *(void**)((vuint8*)sp[-1].p + ReadInt16(ip + 1));
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_PtrFieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].p = *(void**)((vuint8*)sp[-1].p + ip[1]);
+			ip += 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_StrFieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			{
+				VStr* Ptr = (VStr*)((vuint8*)sp[-1].p + ReadInt32(ip + 1));
+				sp[-1].p = NULL;
+				*(VStr*)&sp[-1].p = *Ptr;
+			}
+			ip += 5;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_StrFieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			{
+				VStr* Ptr = (VStr*)((vuint8*)sp[-1].p + ReadInt16(ip + 1));
+				sp[-1].p = NULL;
+				*(VStr*)&sp[-1].p = *Ptr;
+			}
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_StrFieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			{
+				VStr* Ptr = (VStr*)((vuint8*)sp[-1].p + ip[1]);
+				sp[-1].p = NULL;
+				*(VStr*)&sp[-1].p = *Ptr;
+			}
+			ip += 2;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool0FieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt32(ip + 1)) & ip[5]);
+			ip += 6;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool0FieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt16(ip + 1)) & ip[3]);
+			ip += 4;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool0FieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ip[1]) & ip[2]);
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool1FieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt32(ip + 1)) & (ip[5] << 8));
+			ip += 6;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool1FieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt16(ip + 1)) & (ip[3] << 8));
+			ip += 4;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool1FieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ip[1]) & (ip[2] << 8));
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool2FieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt32(ip + 1)) & (ip[5] << 16));
+			ip += 6;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool2FieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt16(ip + 1)) & (ip[3] << 16));
+			ip += 4;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool2FieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ip[1]) & (ip[2] << 16));
+			ip += 3;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool3FieldValue)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt32(ip + 1)) & (ip[5] << 24));
+			ip += 6;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool3FieldValueS)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ReadInt16(ip + 1)) & (ip[3] << 24));
+			ip += 4;
+			PR_VM_BREAK;
+
+		PR_VM_CASE(OPC_Bool3FieldValueB)
+			if (!sp[-1].p)
+			{
+				Sys_Error("Reference not set to an instance of an object");
+			}
+			sp[-1].i = !!(*(vint32*)((vuint8*)sp[-1].p + ip[1]) & (ip[2] << 24));
+			ip += 3;
 			PR_VM_BREAK;
 
 		PR_VM_CASE(OPC_ArrayElement)

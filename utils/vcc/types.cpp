@@ -1390,8 +1390,7 @@ void VMethod::Emit()
 	//  Call parent constructor
 	if (this == ec.SelfClass->DefaultProperties && ec.SelfClass->ParentClass)
 	{
-		ec.AddStatement(OPC_LocalAddress0);
-		ec.AddStatement(OPC_PushPointedPtr);
+		ec.AddStatement(OPC_LocalValue0);
 		ec.AddStatement(OPC_Call, ec.SelfClass->ParentClass->DefaultProperties);
 	}
 
