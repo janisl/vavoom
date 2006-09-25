@@ -463,7 +463,7 @@ void FL_Init()
 		while (++fp != GArgs.Count() && GArgs[fp][0] != '-' && GArgs[fp][0] != '+')
 		{
 			VStr Ext = VStr(GArgs[fp]).ExtractFileExtension().ToLower();
-			if (Ext == "pk3")
+			if (Ext == "pk3" || Ext == "zip")
 				AddZipFile(GArgs[fp]);
 			else
 				W_AddFile(GArgs[fp], VStr(), false);
