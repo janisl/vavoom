@@ -1407,3 +1407,118 @@
 ******************************************************************************
                             VERSION 1.21.2
 ******************************************************************************
+
+13.08.2006
+  Some version number fixes.
+14.08.2006
+  Started to implement support for ZIP (or PK3) files.
+15.08.2006
+  Split ZIP file handling into a separate file, merged with the unzip library.
+  Changed the way wad files are added to the list. Strife shareware voices are
+ fixed only for the IWAD file.
+  Started to convert expression parsing to build an expression tree and emit
+ actual code after parsing.
+16.08.2006
+  Finished first step in converting expression handling, got rid of old TTree
+ class.
+17.08.2006
+  Started to change doing resolving of the expressions to be done after it has
+ been parsed.
+19.08.2006
+  Finished moving resolving of expressions after parsing. Renamed expression
+ handling file. Moved expression parsing code to parse.cpp, changed pass 1 to
+ use it and just ignore result. Started to do similar work on changing the
+ statements to classes and emit code after parsing.
+20.08.2006
+  Finished most of the initial work on statement classes, split them into a
+ separate file. Made pass 1 to use it.
+  Changed calculation of some constants to use expression tree.
+  Some more improvements to expressions.
+22.08.2006
+  Changed variable and parameter types to be resolved using expressions.
+24.08.2006
+  Changed parsing of the methods and states to use expression classes and do
+ resolving and emiting after parsing. This allowed me to get rid of the 2 pass
+ compiling.
+26.08.2006
+  Added fixed array type expression. Do declaring of the struct and class
+ fields after parsing.
+27.08.2006
+  Changed the rest of the member classes to use type expressions. Got rid of
+ the evaluation of the constant expressions. After that there's no more need
+ to predefine struct and class types.
+  Started to merge keyword and punctuation enums into a token enum.
+  Changed WAD file manager to use stream to read the file.
+28.08.2006
+  Firebrand fixed drawing of the weapon sprites with status bar on.
+  Added some more utility methods to the string class.
+  Finished merging of the keyword and punctuation enums into token type enum.
+ Changed expression classes to use their own enums. Created a lexer class.
+29.08.2006
+  Created a parser class.
+  Removed limit on the number of local variables.
+30.08.2006
+  Created an emit context class that is passes to all resolving and emiting
+ methods. Most of the code generation moved to this class.
+31.08.2006
+  Even more of the global vcc variables and methods moved to classes.
+01.09.2006
+  Created a label class to simplify emiting of the jump statements.
+02.09.2006
+  Do evaluation of operations with constants as part of the resolving of the
+ expression. Did some loop and branching optimisations.
+03.09.2006
+  Added specialised opcodes for virtual method and delegate calls. This
+ allowed to get rid of the argument swapping.
+  Optimised branching of logical operators.
+  Implemented support for ZDoom style of handling of the PK3 files as an
+ alternative to the WAD files. Also add all of the WAD files in the root of a
+ ZIP file.
+  Changed directory for high-resolution textures to hirestex.
+05.09.2006
+  Properly use ZIP specific WAD namespaces.
+  Added support for generating ZIP files with vlumpy.
+06.09.2006
+  Started to merge client and server versions of the polyobject code.
+08.09.2006
+  Finished merging polyobject code. In Heretic and Hexen added support for new
+ polyobject thing types.
+  Implemented support for levelnum mapinfo command, this one replaces mapalias
+ command which has been removed.
+  Firebrand added optional dynamic light clipping.
+09.09.2006
+  Added support for specifying special boss death actions in mapinfo. Also
+ added support for defaultmap. Removed map count limit.
+10.09.2006
+  Implemented support for nointermission flag and started to implement support
+ for cluster definitions.
+11.09.2006
+  Added support for cluster enter and exit text definition.
+12.09.2006
+  Simplified serialisation of object references in C++ code.
+13.09.2006
+  Started to do some changes in network protocol. Server now sends a list of
+ all classes to client. Client now spawn an object of the actual class.
+17.09.2006
+  Made sure that progs don't need to modify state variables in entity class.
+  Fixed crash with missing sound lump.
+18.09.2006
+  Server now sends the state index instead of sprite/frame/model indexes.
+  Removed state data copy variables from entity class.
+19.09.2006
+  Added extra parameter to map traversal callbacks. Got rid of the global
+ variables that were used by callbacks.
+  Moved some of the map handling methods to level class.
+20.09.2006
+  Moved more of the map handling methods to level class.
+21.09.2006
+  Implemented BeginPlay entity event.
+  Currently assume that client and server have identical progs.
+  Fixed some bugs in Korax Arena.
+22.09.2006
+  Added support for accessing a struct of another class. Don't allow global
+ structs anymore.
+23.09.2006
+  Implemented proper handling of string stats in player class.
+  Fixed printing of development messages to the console.
+  Fixed freeing of the sector regions.
