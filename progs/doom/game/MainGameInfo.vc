@@ -156,7 +156,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot1\\color\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
+		"\\Name\\bot1\\colour\\0\\class\\0\\model\\doomguy\\skin\\green.pcx"
 	);
 	SetBotType(1,
 		"bot2",
@@ -165,7 +165,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot2\\color\\0\\class\\0\\model\\doomguy\\skin\\greenf.pcx"
+		"\\Name\\bot2\\colour\\0\\class\\0\\model\\doomguy\\skin\\greenf.pcx"
 	);
 	SetBotType(2,
 		"bot3",
@@ -174,7 +174,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot3\\color\\0\\class\\0\\model\\doomguy\\skin\\camo.pcx"
+		"\\Name\\bot3\\colour\\0\\class\\0\\model\\doomguy\\skin\\camo.pcx"
 	);
 	SetBotType(3,
 		"bot4",
@@ -183,7 +183,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot4\\color\\0\\class\\0\\model\\doomguy\\skin\\camof.pcx"
+		"\\Name\\bot4\\colour\\0\\class\\0\\model\\doomguy\\skin\\camof.pcx"
 	);
 	SetBotType(4,
 		"bot5",
@@ -192,7 +192,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot5\\color\\1\\class\\0\\model\\doomguy\\skin\\black.pcx"
+		"\\Name\\bot5\\colour\\1\\class\\0\\model\\doomguy\\skin\\black.pcx"
 	);
 	SetBotType(5,
 		"bot6",
@@ -201,7 +201,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot6\\color\\1\\class\\0\\model\\doomguy\\skin\\blackf.pcx"
+		"\\Name\\bot6\\colour\\1\\class\\0\\model\\doomguy\\skin\\blackf.pcx"
 	);
 	SetBotType(6,
 		"bot7",
@@ -210,7 +210,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot7\\color\\1\\class\\0\\model\\doomguy\\skin\\white.pcx"
+		"\\Name\\bot7\\colour\\1\\class\\0\\model\\doomguy\\skin\\white.pcx"
 	);
 	SetBotType(7,
 		"bot8",
@@ -219,7 +219,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot8\\color\\1\\class\\0\\model\\doomguy\\skin\\whitef.pcx"
+		"\\Name\\bot8\\colour\\1\\class\\0\\model\\doomguy\\skin\\whitef.pcx"
 	);
 	SetBotType(8,
 		"bot9",
@@ -228,7 +228,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot9\\color\\2\\class\\0\\model\\doomguy\\skin\\brown.pcx"
+		"\\Name\\bot9\\colour\\2\\class\\0\\model\\doomguy\\skin\\brown.pcx"
 	);
 	SetBotType(9,
 		"bot10",
@@ -237,7 +237,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot10\\color\\2\\class\\0\\model\\doomguy\\skin\\brownf.pcx"
+		"\\Name\\bot10\\colour\\2\\class\\0\\model\\doomguy\\skin\\brownf.pcx"
 	);
 	SetBotType(10,
 		"bot11",
@@ -246,7 +246,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot11\\color\\3\\class\\0\\model\\doomguy\\skin\\red.pcx"
+		"\\Name\\bot11\\colour\\3\\class\\0\\model\\doomguy\\skin\\red.pcx"
 	);
 	SetBotType(11,
 		"bot12",
@@ -255,7 +255,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot12\\color\\3\\class\\0\\model\\doomguy\\skin\\redf.pcx"
+		"\\Name\\bot12\\colour\\3\\class\\0\\model\\doomguy\\skin\\redf.pcx"
 	);
 	SetBotType(12,
 		"bot13",
@@ -264,7 +264,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot13\\color\\4\\class\\0\\model\\doomguy\\skin\\pink.pcx"
+		"\\Name\\bot13\\colour\\4\\class\\0\\model\\doomguy\\skin\\pink.pcx"
 	);
 	SetBotType(13,
 		"bot14",
@@ -273,7 +273,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot14\\color\\4\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
+		"\\Name\\bot14\\colour\\4\\class\\0\\model\\doomguy\\skin\\pinkf.pcx"
 	);
 	SetBotType(14,
 		"bot15",
@@ -282,7 +282,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot15\\color\\5\\class\\0\\model\\doomguy\\skin\\blue.pcx"
+		"\\Name\\bot15\\colour\\5\\class\\0\\model\\doomguy\\skin\\blue.pcx"
 	);
 	SetBotType(15,
 		"bot16",
@@ -291,7 +291,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot16\\color\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
+		"\\Name\\bot16\\colour\\5\\class\\0\\model\\doomguy\\skin\\bluef.pcx"
 	);
 	SetBotType(16,
 		"bot17",
@@ -300,7 +300,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot17\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtblue.pcx"
+		"\\Name\\bot17\\colour\\5\\class\\0\\model\\doomguy\\skin\\lgtblue.pcx"
 	);
 	SetBotType(17,
 		"bot18",
@@ -309,7 +309,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot18\\color\\5\\class\\0\\model\\doomguy\\skin\\lgtbluef.pcx"
+		"\\Name\\bot18\\colour\\5\\class\\0\\model\\doomguy\\skin\\lgtbluef.pcx"
 	);
 	SetBotType(18,
 		"bot19",
@@ -318,7 +318,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot19\\color\\5\\class\\0\\model\\doomguy\\skin\\navy.pcx"
+		"\\Name\\bot19\\colour\\5\\class\\0\\model\\doomguy\\skin\\navy.pcx"
 	);
 	SetBotType(19,
 		"bot20",
@@ -327,7 +327,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot20\\color\\5\\class\\0\\model\\doomguy\\skin\\navyf.pcx"
+		"\\Name\\bot20\\colour\\5\\class\\0\\model\\doomguy\\skin\\navyf.pcx"
 	);
 	SetBotType(20,
 		"bot21",
@@ -336,7 +336,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot21\\color\\5\\class\\0\\model\\doomguy\\skin\\indigo.pcx"
+		"\\Name\\bot21\\colour\\5\\class\\0\\model\\doomguy\\skin\\indigo.pcx"
 	);
 	SetBotType(21,
 		"bot22",
@@ -345,7 +345,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot22\\color\\5\\class\\0\\model\\doomguy\\skin\\indigof.pcx"
+		"\\Name\\bot22\\colour\\5\\class\\0\\model\\doomguy\\skin\\indigof.pcx"
 	);
 	SetBotType(22,
 		"bot23",
@@ -354,7 +354,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot23\\color\\6\\class\\0\\model\\doomguy\\skin\\violet.pcx"
+		"\\Name\\bot23\\colour\\6\\class\\0\\model\\doomguy\\skin\\violet.pcx"
 	);
 	SetBotType(23,
 		"bot24",
@@ -363,7 +363,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot24\\color\\6\\class\\0\\model\\doomguy\\skin\\violetf.pcx"
+		"\\Name\\bot24\\colour\\6\\class\\0\\model\\doomguy\\skin\\violetf.pcx"
 	);
 	SetBotType(24,
 		"bot25",
@@ -372,7 +372,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot25\\color\\6\\class\\0\\model\\doomguy\\skin\\purple.pcx"
+		"\\Name\\bot25\\colour\\6\\class\\0\\model\\doomguy\\skin\\purple.pcx"
 	);
 	SetBotType(25,
 		"bot26",
@@ -381,7 +381,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot26\\color\\6\\class\\0\\model\\doomguy\\skin\\purplef.pcx"
+		"\\Name\\bot26\\colour\\6\\class\\0\\model\\doomguy\\skin\\purplef.pcx"
 	);
 	SetBotType(26,
 		"bot27",
@@ -390,7 +390,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot27\\color\\7\\class\\0\\model\\doomguy\\skin\\orange.pcx"
+		"\\Name\\bot27\\colour\\7\\class\\0\\model\\doomguy\\skin\\orange.pcx"
 	);
 	SetBotType(27,
 		"bot28",
@@ -399,7 +399,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot28\\color\\7\\class\\0\\model\\doomguy\\skin\\orangef.pcx"
+		"\\Name\\bot28\\colour\\7\\class\\0\\model\\doomguy\\skin\\orangef.pcx"
 	);
 	SetBotType(28,
 		"bot29",
@@ -408,7 +408,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot29\\color\\7\\class\\0\\model\\doomguy\\skin\\yellow.pcx"
+		"\\Name\\bot29\\colour\\7\\class\\0\\model\\doomguy\\skin\\yellow.pcx"
 	);
 	SetBotType(29,
 		"bot30",
@@ -417,7 +417,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\Name\\bot30\\color\\7\\class\\0\\model\\doomguy\\skin\\yellowf.pcx"
+		"\\Name\\bot30\\colour\\7\\class\\0\\model\\doomguy\\skin\\yellowf.pcx"
 	);
 }
 
@@ -799,7 +799,7 @@ void TranslateLine(Level InLevel, line_t* line)
 		return;
 	}
 
-	//	Handle Boom's generalized types.
+	//	Handle Boom's generalised types.
 	if (OldSpec > 0x2F80)
 	{
 		//	Activation flags.
@@ -838,7 +838,7 @@ void TranslateLine(Level InLevel, line_t* line)
 
 		if (OldSpec <= 0x3000)
 		{
-			//	Generalized crusher (tag, dnspeed, upspeed, silent, damage)
+			//	Generalised crusher (tag, dnspeed, upspeed, silent, damage)
 			line->special = LNSPEC_CeilingGenericCrush;
 			if (OldSpec & 0x0020)
 			{
@@ -857,7 +857,7 @@ void TranslateLine(Level InLevel, line_t* line)
 		}
 		else if (OldSpec <= 0x3400)
 		{
-			//	Generalized stairs (tag, speed, step, dir/igntxt, reset)
+			//	Generalised stairs (tag, speed, step, dir/igntxt, reset)
 			line->special = LNSPEC_StairsGeneric;
 			if (OldSpec & 0x0020)
 			{
@@ -882,7 +882,7 @@ void TranslateLine(Level InLevel, line_t* line)
 		}
 		else if (OldSpec <= 0x3800)
 		{
-			//	Generalized lift (tag, speed, delay, target, height)
+			//	Generalised lift (tag, speed, delay, target, height)
 			line->special = LNSPEC_PlatGeneric;
 			if (OldSpec & 0x0020)
 			{
@@ -907,7 +907,7 @@ void TranslateLine(Level InLevel, line_t* line)
 		}
 		else if (OldSpec <= 0x3c00)
 		{
-			//	Generalized locked door (tag, speed, kind, delay, lock)
+			//	Generalised locked door (tag, speed, kind, delay, lock)
 			line->special = LNSPEC_DoorGeneric;
 			if (OldSpec & 0x0080)
 			{
@@ -935,7 +935,7 @@ void TranslateLine(Level InLevel, line_t* line)
 		}
 		else if (OldSpec <= 0x4000)
 		{
-			//	Generalized door (tag, speed, kind, delay, lock)
+			//	Generalised door (tag, speed, kind, delay, lock)
 			line->special = LNSPEC_DoorGeneric;
 			switch (OldSpec & 0x0018)
 			{
@@ -961,8 +961,8 @@ void TranslateLine(Level InLevel, line_t* line)
 		}
 		else
 		{
-			//	Generalized ceiling (tag, speed, height, target, change/model/direct/crush)
-			//	Generalized floor (tag, speed, height, target, change/model/direct/crush)
+			//	Generalised ceiling (tag, speed, height, target, change/model/direct/crush)
+			//	Generalised floor (tag, speed, height, target, change/model/direct/crush)
 			if (OldSpec <= 0x6000)
 				line->special = LNSPEC_CeilingGeneric;
 			else

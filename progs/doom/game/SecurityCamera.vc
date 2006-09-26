@@ -37,7 +37,7 @@
 class SecurityCamera : Actor
 	__mobjinfo__(9025);
 
-float Center;
+float Centre;
 float Acc;
 float Delta;
 float Range;
@@ -51,7 +51,7 @@ float Range;
 void BeginPlay()
 {
 	::BeginPlay();
-	Center = Angles.yaw;
+	Centre = Angles.yaw;
 	if (Args[2])
 		Delta = 360.0 / (itof(Args[2]) / 8.0);
 	else
@@ -89,7 +89,7 @@ void TickCamera(float DeltaTime)
 {
 	Acc += Delta * DeltaTime;
 	if (Range)
-		Angles.yaw = Center + Range * sin(Acc);
+		Angles.yaw = Centre + Range * sin(Acc);
 	else if (Delta)
 		Angles.yaw = Acc;
 }
@@ -173,7 +173,7 @@ void TickCamera(float DeltaTime)
 		if (MaxPitchChange)
 		{
 			// Aim camera's pitch
-			TVec dv = MobjCenter(Enemy) - Origin;
+			TVec dv = MobjCentre(Enemy) - Origin;
 			TAVec d;
 			VectorAngles(&dv, &d);
 			if (fabs(d.pitch - Angles.pitch) < MaxPitchChange * DeltaTime)
@@ -855,7 +855,7 @@ bool Interpolate()
 
 	if (::Interpolate())
 	{
-		delta = MobjCenter(Enemy) - Origin;
+		delta = MobjCentre(Enemy) - Origin;
 		VectorAngles(&delta, &ang);
 		Angles.yaw = ang.yaw;
 		if (Args[2] & 4)

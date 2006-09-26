@@ -169,7 +169,7 @@ void IM_UnloadPics()
 //
 //  IM_InitStats
 //
-//  Initializes the stats for single player mode
+//  Initialises the stats for single player mode
 //
 //========================================================================
 
@@ -247,7 +247,7 @@ void IM_InitStats()
 //
 //  IM_InitHubText
 //
-//  Initializes the stats for single player mode
+//  Initialises the stats for single player mode
 //
 //========================================================================
 
@@ -336,7 +336,7 @@ void IM_DrawHubText(GC gc)
 void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 {
 	T_SetFont(font_small);
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
 		T_DrawText(x, y, va("%d",
@@ -357,7 +357,7 @@ void IM_DrawNumber(int val, int x, int y, int wrapThresh)
 void IM_DrawNumberBold(int val, int x, int y, int wrapThresh)
 {
 	T_SetFont(font_yellow);
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 	if (!(val < -9 && wrapThresh < 1000))
 	{
 		T_DrawText(x, y, va("%d",
@@ -439,7 +439,7 @@ void IM_DrawDeathTally(GC gc)
 				{
 					T_SetFont(font_small);
 				}
-				T_SetAlign(hcenter, vtop);
+				T_SetAlign(hcentre, vtop);
 				T_DrawText(x, y, "--");
 			}
 		}

@@ -175,7 +175,7 @@ struct mobj_base_t
 	TAVec		Angles;			// orientation
 	int			SpriteType;		// sprite orientation type
 	int			Translucency;	// translucency, in percents
-	int			Translation;	// player color translation
+	int			Translation;	// player colour translation
 	int			Effects;		// dynamic lights, trails
 };
 
@@ -191,7 +191,7 @@ void SV_PolyobjStopSequence(const polyobj_t*);
 void SV_BroadcastPrintf(const char*, ...);
 void SV_BroadcastCentrePrintf(const char*, ...);
 void SV_ClientPrintf(VBasePlayer*, const char*, ...);
-void SV_ClientCenterPrintf(VBasePlayer*, const char*, ...);
+void SV_ClientCentrePrintf(VBasePlayer*, const char*, ...);
 void SV_SetFloorPic(int, int);
 void SV_SetCeilPic(int, int);
 void SV_SetLineTexture(int, int, int);

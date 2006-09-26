@@ -41,7 +41,7 @@ void A_SigilFloorAttack()
 	x = Origin.x + itof(P_Random() & 191) - 64.0;
 	y = Origin.y + itof(P_Random() & 191) - 64.0;
 
-	//	Spawn bolt in the center.
+	//	Spawn bolt in the centre.
 	lightning1 = Spawn(SigilFX4, vector(Origin.x, Origin.y, ONCEILINGZ));
 	if(Sector->bHasExtrafloors && Origin.z <= CeilingZ)
 		lightning1.Origin.z = CeilingZ - lightning1.Height;

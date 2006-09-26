@@ -36,7 +36,7 @@ void InitWindow()
 void DrawWindow(GC gc)
 {
 	T_SetFont(font_big);
-	T_SetAlign(hcenter, vbottom);
+	T_SetAlign(hcentre, vbottom);
 	gc.DrawText(0, 0, Text);
 }
 

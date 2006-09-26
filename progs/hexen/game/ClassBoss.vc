@@ -26,7 +26,7 @@
 class ClassBoss : Pawn
 	abstract;
 
-bool bHealthInitialized;
+bool bHealthInitialised;
 int StrafeCount;
 
 float StrafeRange;
@@ -41,10 +41,10 @@ void A_ClassBossHealth()
 {
 	if (Level.Game.netgame && !Level.Game.deathmatch)	// co-op only
 	{
-		if (!bHealthInitialized)
+		if (!bHealthInitialised)
 		{
 			Health *= 5;
-			bHealthInitialized = true;	// has been initialized
+			bHealthInitialised = true;	// has been initialised
 		}
 	}
 }

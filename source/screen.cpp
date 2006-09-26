@@ -37,7 +37,7 @@
 void CalcFadetable16(byte *pal);
 
 void C_DrawNotify();
-void C_DrawCenterMessage();
+void C_DrawCentreMessage();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -496,7 +496,7 @@ void SCR_Update()
 			CT_Drawer();
 			SB_Drawer();
 			C_DrawNotify();
-			C_DrawCenterMessage();
+			C_DrawCentreMessage();
 			break;
 		}
 	}

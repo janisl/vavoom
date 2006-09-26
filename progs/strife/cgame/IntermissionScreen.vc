@@ -109,7 +109,7 @@ void DrawWindow(GC gc)
 //
 //  IM_InitHubText
 //
-//  Initializes the stats for single player mode
+//  Initialises the stats for single player mode
 //
 //========================================================================
 

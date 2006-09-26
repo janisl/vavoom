@@ -77,7 +77,7 @@ static VCvarS *chat_macros[10] =
 //
 //	CT_Init
 //
-// 	Initialize chat mode data
+// 	Initialise chat mode data
 //
 //===========================================================================
 

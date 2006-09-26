@@ -48,7 +48,7 @@ public:
 	VMemberBase*	Outer;
 	VName			Name;
 
-	static bool						GObjInitialized;
+	static bool						GObjInitialised;
 	static VClass*					GClasses;	// Linked list of all classes.
 	static TArray<VMemberBase*>		GMembers;
 	static TArray<VPackage*>		GLoadedPackages;

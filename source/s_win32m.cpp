@@ -238,7 +238,7 @@ void VMMSystemMidiDevice::Init()
 	BuffersInMMSYSTEM = 0;
 	SeqFlags = 0;
 
-	//	Initialize all MIDIHDR's and throw them into a free list
+	//	Initialise all MIDIHDR's and throw them into a free list
 	LPBYTE Work = BufAlloc;
 	for (int i = 0; i < C_MIDI_BUFFERS; i++)
 	{

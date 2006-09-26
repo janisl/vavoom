@@ -34,7 +34,7 @@ readonly bool bIsVisible;		// True if the window is visible
 readonly bool bIsSensitive;		// True if the window can take input
 readonly bool bIsSelectable;		// True if the window can have keyboard focus
 bool bTickEnabled;		// True if Tick() event should be called
-readonly bool bIsInitialized;	// True if the window has been initialized
+readonly bool bIsInitialised;	// True if the window has been initialised
 
 // Destructor information
 readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye

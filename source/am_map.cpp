@@ -131,28 +131,28 @@ boolean		automapactive = false;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-// Automap colors
-static vuint32	WallColor;
-static vuint32	TSWallColor;
-static vuint32	FDWallColor;
-static vuint32	CDWallColor;
-static vuint32	EXWallColor;
-static vuint32	SecretWallColor;
-static vuint32	PowerWallColor;
-static vuint32	GridColor;
-static vuint32	ThingColor;
-static vuint32	PlayerColor;
+// Automap colours
+static vuint32	WallColour;
+static vuint32	TSWallColour;
+static vuint32	FDWallColour;
+static vuint32	CDWallColour;
+static vuint32	EXWallColour;
+static vuint32	SecretWallColour;
+static vuint32	PowerWallColour;
+static vuint32	GridColour;
+static vuint32	ThingColour;
+static vuint32	PlayerColour;
 
-static VCvarS	am_color_wall("am_color_wall", "d0 b0 85", CVAR_Archive);
-static VCvarS	am_color_tswall("am_color_tswall", "61 64 5f", CVAR_Archive);
-static VCvarS	am_color_fdwall("am_color_fdwall", "a0 6c 40", CVAR_Archive);
-static VCvarS	am_color_cdwall("am_color_cdwall", "94 94 ac", CVAR_Archive);
-static VCvarS	am_color_exwall("am_color_exwall", "7b 4b 27", CVAR_Archive);
-static VCvarS	am_color_secretwall("am_color_secretwall", "00 00 00", CVAR_Archive);
-static VCvarS	am_color_power("am_color_power", "7d 83 79", CVAR_Archive);
-static VCvarS	am_color_grid("am_color_grid", "4d 9d 42", CVAR_Archive);
-static VCvarS	am_color_thing("am_color_thing", "2d 2d 2d", CVAR_Archive);
-static VCvarS	am_color_player("am_color_player", "e6 e6 e6", CVAR_Archive);
+static VCvarS	am_colour_wall("am_colour_wall", "d0 b0 85", CVAR_Archive);
+static VCvarS	am_colour_tswall("am_colour_tswall", "61 64 5f", CVAR_Archive);
+static VCvarS	am_colour_fdwall("am_colour_fdwall", "a0 6c 40", CVAR_Archive);
+static VCvarS	am_colour_cdwall("am_colour_cdwall", "94 94 ac", CVAR_Archive);
+static VCvarS	am_colour_exwall("am_colour_exwall", "7b 4b 27", CVAR_Archive);
+static VCvarS	am_colour_secretwall("am_colour_secretwall", "00 00 00", CVAR_Archive);
+static VCvarS	am_colour_power("am_colour_power", "7d 83 79", CVAR_Archive);
+static VCvarS	am_colour_grid("am_colour_grid", "4d 9d 42", CVAR_Archive);
+static VCvarS	am_colour_thing("am_colour_thing", "2d 2d 2d", CVAR_Archive);
+static VCvarS	am_colour_player("am_colour_player", "e6 e6 e6", CVAR_Archive);
 
 static VCvarI	am_player_arrow("am_player_arrow", "1", CVAR_Archive);
 static VCvarI	followplayer("followplayer", "1", CVAR_Archive); // specifies whether to follow the player around
@@ -257,7 +257,7 @@ static mline_t player_arrow1[] =
 
 static mline_t player_arrow2[] =
 {
-	{ { -R + R / 4.0, 0.0 }, { 0.0, 0.0} }, // center line.
+	{ { -R + R / 4.0, 0.0 }, { 0.0, 0.0} }, // centre line.
 	{ { -R + R / 4.0, R / 8.0 }, { R, 0.0} }, // blade
 	{ { -R + R / 4.0, -R / 8.0 }, { R, 0.0 } },
 	{ { -R + R / 4.0, -R / 4.0 }, { -R + R / 4.0, R / 4.0 } }, // crosspiece
@@ -1097,9 +1097,9 @@ static boolean AM_clipMline(mline_t* ml, fline_t* fl)
 //
 //==========================================================================
 
-static void AM_drawFline(fline_t* fl, vuint32 color)
+static void AM_drawFline(fline_t* fl, vuint32 colour)
 {
-	Drawer->DrawLine(fl->a.x, fl->a.y, color, fl->b.x, fl->b.y, color);
+	Drawer->DrawLine(fl->a.x, fl->a.y, colour, fl->b.x, fl->b.y, colour);
 }
 
 //==========================================================================
@@ -1110,12 +1110,12 @@ static void AM_drawFline(fline_t* fl, vuint32 color)
 //
 //==========================================================================
 
-static void AM_drawMline(mline_t *ml, vuint32 color)
+static void AM_drawMline(mline_t *ml, vuint32 colour)
 {
 	static fline_t fl;
 
 	if (AM_clipMline(ml, &fl))
-		AM_drawFline(&fl, color); // draws it on frame buffer using fb coords
+		AM_drawFline(&fl, colour); // draws it on frame buffer using fb coords
 }
 
 //==========================================================================
@@ -1126,7 +1126,7 @@ static void AM_drawMline(mline_t *ml, vuint32 color)
 //
 //==========================================================================
 
-static void AM_drawGrid(vuint32 color)
+static void AM_drawGrid(vuint32 colour)
 {
 	float	x, y;
 	float	start, end;
@@ -1148,10 +1148,10 @@ static void AM_drawGrid(vuint32 color)
 		ml.b.x = x;
 		if (am_rotate)
 		{
-			AM_rotatePoint (&ml.a.x, &ml.a.y);
-			AM_rotatePoint (&ml.b.x, &ml.b.y);
+			AM_rotatePoint(&ml.a.x, &ml.a.y);
+			AM_rotatePoint(&ml.b.x, &ml.b.y);
 		}
-		AM_drawMline(&ml, color);
+		AM_drawMline(&ml, colour);
 	}
 
 	// Figure out start of horizontal gridlines
@@ -1170,10 +1170,10 @@ static void AM_drawGrid(vuint32 color)
 		ml.b.y = y;
 		if (am_rotate)
 		{
-			AM_rotatePoint (&ml.a.x, &ml.a.y);
-			AM_rotatePoint (&ml.b.x, &ml.b.y);
+			AM_rotatePoint(&ml.a.x, &ml.a.y);
+			AM_rotatePoint(&ml.b.x, &ml.b.y);
 		}
-		AM_drawMline(&ml, color);
+		AM_drawMline(&ml, colour);
 	}
 }
 
@@ -1211,39 +1211,39 @@ static void AM_drawWalls()
 				continue;
 			if (!line.backsector)
 			{
-				AM_drawMline(&l, WallColor);
+				AM_drawMline(&l, WallColour);
 			}
 			else if (line.flags & ML_SECRET) // secret door
 			{
 				if (am_cheating)
-					AM_drawMline(&l, SecretWallColor);
+					AM_drawMline(&l, SecretWallColour);
 				else
-					AM_drawMline(&l, WallColor);
+					AM_drawMline(&l, WallColour);
 			}
 			else if (line.backsector->floor.minz
 				!= line.frontsector->floor.minz)
 			{
-				AM_drawMline(&l, FDWallColor); // floor level change
+				AM_drawMline(&l, FDWallColour); // floor level change
 			}
 			else if (line.backsector->ceiling.maxz
 				!= line.frontsector->ceiling.maxz)
 			{
-				AM_drawMline(&l, CDWallColor); // ceiling level change
+				AM_drawMline(&l, CDWallColour); // ceiling level change
 			}
 			else if (line.backsector->SectorFlags & sector_t::SF_HasExtrafloors
 				|| line.frontsector->SectorFlags & sector_t::SF_HasExtrafloors)
 			{
-				AM_drawMline(&l, EXWallColor); // show extra floors
+				AM_drawMline(&l, EXWallColour); // show extra floors
 			}
 			else if (am_cheating)
 			{
-				AM_drawMline(&l, TSWallColor);
+				AM_drawMline(&l, TSWallColour);
 			}
 		}
 		else if (cl->items & IT_ALL_MAP)
 		{
 			if (!(line.flags & LINE_NEVERSEE))
-				AM_drawMline(&l, PowerWallColor);
+				AM_drawMline(&l, PowerWallColour);
 		}
 	}
 }
@@ -1255,7 +1255,7 @@ static void AM_drawWalls()
 //==========================================================================
 
 static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
-	float scale, float angle, vuint32 color, float x, float y)
+	float scale, float angle, vuint32 colour, float x, float y)
 {
 	float msinAngle = msin(angle);
 	float mcosAngle = mcos(angle);
@@ -1290,7 +1290,7 @@ static void AM_drawLineCharacter(mline_t* lineguy, int lineguylines,
 		l.b.x += x;
 		l.b.y += y;
 
-		AM_drawMline(&l, color);
+		AM_drawMline(&l, colour);
 	}
 }
 
@@ -1323,7 +1323,7 @@ static void AM_drawPlayers()
 		angle = cl->viewangles.yaw;
 
 	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0,
-		angle, PlayerColor, FTOM(MTOF(cl->vieworg.x)), FTOM(MTOF(cl->vieworg.y)));
+		angle, PlayerColour, FTOM(MTOF(cl->vieworg.x)), FTOM(MTOF(cl->vieworg.y)));
 	return;
 }
 
@@ -1333,7 +1333,7 @@ static void AM_drawPlayers()
 //
 //==========================================================================
 
-static void AM_drawThings(vuint32 color)
+static void AM_drawThings(vuint32 colour)
 {
 	int			i;
 	float		x, y, angle;
@@ -1352,7 +1352,8 @@ static void AM_drawThings(vuint32 color)
 				angle += 90.0 - cl->viewangles.yaw;
 			}
 
-			AM_drawLineCharacter(thintriangle_guy, NUMTHINTRIANGLEGUYLINES, 16.0, angle, color, x, y);
+			AM_drawLineCharacter(thintriangle_guy, NUMTHINTRIANGLEGUYLINES,
+				16.0, angle, colour, x, y);
 		}
 	}
 }
@@ -1539,11 +1540,11 @@ static void AM_DrawLevelStats()
 
 //==========================================================================
 //
-//	StringToColor
+//	StringToColour
 //
 //==========================================================================
 
-static vuint32 StringToColor(const char *str)
+static vuint32 StringToColour(const char *str)
 {
 	int r, g, b;
 	char *p;
@@ -1592,16 +1593,16 @@ static void AM_CheckVariables()
 		mtof_zoommul = old_mtof_zoommul;
 	}
 
-	WallColor = StringToColor(am_color_wall);
-	TSWallColor = StringToColor(am_color_tswall);
-	FDWallColor = StringToColor(am_color_fdwall);
-	CDWallColor = StringToColor(am_color_cdwall);
-	EXWallColor = StringToColor(am_color_exwall);
-	SecretWallColor = StringToColor(am_color_secretwall);
-	PowerWallColor = StringToColor(am_color_power);
-	GridColor = StringToColor(am_color_grid);
-	ThingColor = StringToColor(am_color_thing);
-	PlayerColor = StringToColor(am_color_player);
+	WallColour = StringToColour(am_colour_wall);
+	TSWallColour = StringToColour(am_colour_tswall);
+	FDWallColour = StringToColour(am_colour_fdwall);
+	CDWallColour = StringToColour(am_colour_cdwall);
+	EXWallColour = StringToColour(am_colour_exwall);
+	SecretWallColour = StringToColour(am_colour_secretwall);
+	PowerWallColour = StringToColour(am_colour_power);
+	GridColour = StringToColour(am_colour_grid);
+	ThingColour = StringToColour(am_colour_thing);
+	PlayerColour = StringToColour(am_colour_player);
 }
 
 //==========================================================================
@@ -1620,13 +1621,13 @@ void AM_Drawer()
 	Drawer->StartAutomap();
 	if (grid)
 	{
-		AM_drawGrid(GridColor);
+		AM_drawGrid(GridColour);
 	}
 	AM_drawWalls();
 	AM_drawPlayers();
 	if (am_cheating == 2)
 	{
-		AM_drawThings(ThingColor);
+		AM_drawThings(ThingColour);
 	}
 	Drawer->EndAutomap();
 	DrawWorldTimer();

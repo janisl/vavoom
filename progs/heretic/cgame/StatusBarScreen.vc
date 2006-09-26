@@ -36,7 +36,7 @@ MainClientState cl;
 int HealthMarker;
 int ChainWiggle;
 
-bool hitCenterFrame;
+bool hitCentreFrame;
 
 // Graphics
 int pic_barback;
@@ -488,21 +488,21 @@ void SB_DrawIcons()
 		frame = (ClGame.level->tictime / 3) & 15;
 		if (cl.SBFlags & HereticDefs::SBF_IN_FLIGHT)
 		{
-			if (hitCenterFrame && frame != 15 && frame != 0)
+			if (hitCentreFrame && frame != 15 && frame != 0)
 			{
 				frame = 15;
 			}
 			else
 			{
-				hitCenterFrame = false;
+				hitCentreFrame = false;
 			}
 		}
 		else
 		{
-			if (hitCenterFrame || frame == 15 || frame == 0)
+			if (hitCentreFrame || frame == 15 || frame == 0)
 			{
 				frame = 15;
-				hitCenterFrame = true;
+				hitCentreFrame = true;
 			}
 		}
 		R_DrawPic(20, 17, pic_flight[frame]);

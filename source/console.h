@@ -57,7 +57,7 @@ void C_StartFull(void);
 void C_Stop(void);
 void C_ClearNotify(void);
 void C_NotifyMessage(const char *msg);
-void C_CenterMessage(const char *msg);
+void C_CentreMessage(const char *msg);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

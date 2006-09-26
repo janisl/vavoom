@@ -104,7 +104,7 @@ bool VAllegroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 	if (BPP < 16)
 	{
-		//	True-color only
+		//	True-colour only
 		GCon->Log(NAME_Init, "Attempt to set a paletized video mode for OpenGL");
 		return false;
 	}

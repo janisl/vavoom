@@ -168,7 +168,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf1\\color\\0\\class\\0\\model\\\\skin\\"
+		"\\name\\botf1\\colour\\0\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(1,
 		"botf2",
@@ -177,7 +177,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf2\\color\\1\\class\\0\\model\\\\skin\\"
+		"\\name\\botf2\\colour\\1\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(2,
 		"botf3",
@@ -186,7 +186,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf3\\color\\2\\class\\0\\model\\\\skin\\"
+		"\\name\\botf3\\colour\\2\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(3,
 		"botf4",
@@ -195,7 +195,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf4\\color\\3\\class\\0\\model\\\\skin\\"
+		"\\name\\botf4\\colour\\3\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(4,
 		"botf5",
@@ -204,7 +204,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf5\\color\\4\\class\\0\\model\\\\skin\\"
+		"\\name\\botf5\\colour\\4\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(5,
 		"botf6",
@@ -213,7 +213,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf6\\color\\5\\class\\0\\model\\\\skin\\"
+		"\\name\\botf6\\colour\\5\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(6,
 		"botf7",
@@ -222,7 +222,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf7\\color\\6\\class\\0\\model\\\\skin\\"
+		"\\name\\botf7\\colour\\6\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(7,
 		"botf8",
@@ -231,7 +231,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botf8\\color\\7\\class\\0\\model\\\\skin\\"
+		"\\name\\botf8\\colour\\7\\class\\0\\model\\\\skin\\"
 	);
 	SetBotType(8,
 		"botc1",
@@ -240,7 +240,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc1\\color\\0\\class\\1\\model\\\\skin\\"
+		"\\name\\botc1\\colour\\0\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(9,
 		"botc2",
@@ -249,7 +249,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc2\\color\\1\\class\\1\\model\\\\skin\\"
+		"\\name\\botc2\\colour\\1\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(10,
 		"botc3",
@@ -258,7 +258,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc3\\color\\2\\class\\1\\model\\\\skin\\"
+		"\\name\\botc3\\colour\\2\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(11,
 		"botc4",
@@ -267,7 +267,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc4\\color\\3\\class\\1\\model\\\\skin\\"
+		"\\name\\botc4\\colour\\3\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(12,
 		"botc5",
@@ -276,7 +276,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc5\\color\\4\\class\\1\\model\\\\skin\\"
+		"\\name\\botc5\\colour\\4\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(13,
 		"botc6",
@@ -285,7 +285,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc6\\color\\5\\class\\1\\model\\\\skin\\"
+		"\\name\\botc6\\colour\\5\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(14,
 		"botc7",
@@ -294,7 +294,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc7\\color\\6\\class\\1\\model\\\\skin\\"
+		"\\name\\botc7\\colour\\6\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(15,
 		"botc8",
@@ -303,7 +303,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botc8\\color\\7\\class\\1\\model\\\\skin\\"
+		"\\name\\botc8\\colour\\7\\class\\1\\model\\\\skin\\"
 	);
 	SetBotType(16,
 		"botm1",
@@ -312,7 +312,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm1\\color\\0\\class\\2\\model\\\\skin\\"
+		"\\name\\botm1\\colour\\0\\class\\2\\model\\\\skin\\"
 	);
 	SetBotType(17,
 		"botm2",
@@ -321,7 +321,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm2\\color\\1\\class\\2\\model\\\\skin\\"
+		"\\name\\botm2\\colour\\1\\class\\2\\model\\\\skin\\"
 	);
 	SetBotType(18,
 		"botm3",
@@ -330,7 +330,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm3\\color\\2\\class\\2\\model\\\\skin\\"
+		"\\name\\botm3\\colour\\2\\class\\2\\model\\\\skin\\"
 	);
 	SetBotType(19,
 		"botm4",
@@ -339,7 +339,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm4\\color\\3\\class\\2\\model\\\\skin\\"
+		"\\name\\botm4\\colour\\3\\class\\2\\model\\\\skin\\"
 	);
 	SetBotType(20,
 		"botm5",
@@ -348,7 +348,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm5\\color\\4\\class\\2\\model\\\\skin\\"
+		"\\name\\botm5\\colour\\4\\class\\2\\model\\\\skin\\"
 	);
 	SetBotType(21,
 		"botm6",
@@ -357,7 +357,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm6\\color\\5\\class\\2\\model\\\\skin\\"
+		"\\name\\botm6\\colour\\5\\class\\2\\model\\\\skin\\"
 	);
 	SetBotType(22,
 		"botm7",
@@ -366,7 +366,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm7\\color\\6\\class\\2\\model\\\\skin\\"
+		"\\name\\botm7\\colour\\6\\class\\2\\model\\\\skin\\"
 	);
 	SetBotType(23,
 		"botm8",
@@ -375,7 +375,7 @@ void InitBotTypes()
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
 		BotPlayer::bsk_medium,
-		"\\name\\botm8\\color\\7\\class\\2\\model\\\\skin\\"
+		"\\name\\botm8\\colour\\7\\class\\2\\model\\\\skin\\"
 	);
 }
 

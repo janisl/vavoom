@@ -59,7 +59,7 @@ VClientState*		cl;
 VClientGameBase*	GClGame;
 
 VCvarS			cl_name("name", "PLAYER", CVAR_Archive | CVAR_UserInfo);
-VCvarI			cl_color("color", "0", CVAR_Archive | CVAR_UserInfo);
+VCvarI			cl_colour("colour", "0", CVAR_Archive | CVAR_UserInfo);
 VCvarI			cl_class("class", "0", CVAR_Archive | CVAR_UserInfo);
 VCvarS			cl_model("model", "", CVAR_Archive | CVAR_UserInfo);
 VCvarS			cl_skin("skin", "", CVAR_Archive | CVAR_UserInfo);

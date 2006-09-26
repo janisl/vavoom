@@ -122,7 +122,7 @@ struct anim_t
 	// actual graphics for frames of animations
 	int p[3];
 
-	// following must be initialized to zero before use!
+	// following must be initialised to zero before use!
 
 	// next value of btime (used in conjunction with period)
 	float nexttime;
@@ -765,7 +765,7 @@ void IM_DrawLF()
 	int y = WI_TITLEY;
 
 	// draw <LevelName>
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 	T_DrawText(320, y, ClGame.im->LeaveName);
 
 	// draw "Finished!"
@@ -787,7 +787,7 @@ void IM_DrawEL()
 	int y = WI_TITLEY;
 
 	// draw "Entering"
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 	T_DrawText(320, y, "entering");
 
 	// draw level
@@ -1316,7 +1316,7 @@ void IM_DrawDeathmatchStats()
 
 	IM_DrawLF();
 
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 	// draw stat titles (top line)
 	T_DrawText(DM_TOTALSX, DM_MATRIXY - WI_SPACINGY + 10, "total");
 

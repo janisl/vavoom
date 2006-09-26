@@ -39,7 +39,7 @@ enum EWadNamespace
 	WADNS_Global,
 	WADNS_Sprites,
 	WADNS_Flats,
-	WADNS_ColorMaps,
+	WADNS_ColourMaps,
 	WADNS_ACSLibrary,
 	WADNS_NewTextures,
 	WADNS_Voices,

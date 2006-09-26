@@ -48,7 +48,7 @@ typedef struct {
     tremolo_depth, vibrato_depth,
     modes;
   uint8
-    attenuation, freq_center;
+    attenuation, freq_centre;
   int8
     panning, note_to_use, exclusiveClass;
   int16

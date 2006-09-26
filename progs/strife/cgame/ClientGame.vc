@@ -68,7 +68,7 @@ int pic_brdr_tr;
 int pic_brdr_bl;
 int pic_brdr_br;
 
-int ecolors[8];
+int ecolours[8];
 
 //==========================================================================
 //
@@ -523,13 +523,13 @@ void MessageBoxStartMessage(string text, int type, bool input)
 
 void MessageBoxDrawer()
 {
-	// Horiz. & Vertically center string and print it.
+	// Horiz. & Vertically centre string and print it.
 	if (messageToPrint)
 	{
 		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'f_pave01');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
-		T_SetAlign(hcenter, vcenter);
+		T_SetAlign(hcentre, vcentre);
 		T_DrawText(320, 240, messageString);
 	}
 }
@@ -732,7 +732,7 @@ void ParseGunShot()
 
 		p->org = org;
 		c = P_Random() >> 1;
-		p->color = RGB(c, c, c);
+		p->colour = RGB(c, c, c);
 		p->die = cl.time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
@@ -767,7 +767,7 @@ void ParseBlood()
 
 		p->org = org;
 		c = P_Random() >> 1;
-		p->color = RGB(32 + c, c >> 4, c >> 4);
+		p->colour = RGB(32 + c, c >> 4, c >> 4);
 		p->die = cl.time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
@@ -795,7 +795,7 @@ void ParseExplosion()
 	dl = AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->color = ecolors[etype];
+	dl->colour = ecolours[etype];
 	dl->die = cl.time + 0.5;
 	dl->decay = 300.0;
 }
@@ -878,7 +878,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(255, 255, 255);
+		dl->colour = RGB(255, 255, 255);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -886,7 +886,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(255, 0, 0);
+		dl->colour = RGB(255, 0, 0);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -894,7 +894,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(0, 255, 0);
+		dl->colour = RGB(0, 255, 0);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -902,7 +902,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(0, 0, 255);
+		dl->colour = RGB(0, 0, 255);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -914,7 +914,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 
 		dl->origin = dl->origin + 18.0 * fv;
 		dl->radius = 200.0 + Random() * 31.0;
-		dl->color = 0xffffffff;
+		dl->colour = 0xffffffff;
 		dl->minlight = 32.0;
 		dl->die = cl.time + 0.1;
 	}
@@ -938,10 +938,10 @@ void StartSpeech(int SpeechNum)
 defaultproperties
 {
 	sb_height = 32;
-	ecolors[0] = 0;	// EF_DL_NONE
-	ecolors[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
-	ecolors[2] = RGB(255, 32, 32);	// EF_DL_RED
-	ecolors[3] = RGB(32, 255, 32);	// EF_DL_GREEN
-	ecolors[4] = RGB(32, 32, 255);	// EF_DL_BLUE
-	ecolors[5] = 0;	// EF_DL_MUZZLEFLASH
+	ecolours[0] = 0;	// EF_DL_NONE
+	ecolours[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
+	ecolours[2] = RGB(255, 32, 32);	// EF_DL_RED
+	ecolours[3] = RGB(32, 255, 32);	// EF_DL_GREEN
+	ecolours[4] = RGB(32, 32, 255);	// EF_DL_BLUE
+	ecolours[5] = 0;	// EF_DL_MUZZLEFLASH
 }

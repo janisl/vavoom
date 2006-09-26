@@ -23,20 +23,20 @@
 //**
 //**************************************************************************
 
-class MenuChoice_ColoredLights : MenuChoice_OnOff;
+class MenuChoice_ColouredLights : MenuChoice_OnOff;
 
 int GetInitialValue()
 {
-	return GetCvar('d_colored_lights');
+	return GetCvar('d_coloured_lights');
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvar('d_colored_lights', newValue);
+	SetCvar('d_coloured_lights', newValue);
 	return true;
 }
 
 defaultproperties
 {
-	Text = "Colored lights";
+	Text = "Coloured lights";
 }

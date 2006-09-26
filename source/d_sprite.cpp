@@ -1477,8 +1477,8 @@ void VSoftwareDrawer::SpriteClipEdge(const TVec &v0, const TVec &v1,
 	{
 		r_nearzi = z1;
 	}
-	tr.x = tr.x * z1 * xprojection + centerxfrac;
-	tr.y = tr.y * z1 * yprojection + centeryfrac;
+	tr.x = tr.x * z1 * xprojection + centrexfrac;
+	tr.y = tr.y * z1 * yprojection + centreyfrac;
 
 	if (tr.x < -0.5)
 		tr.x = -0.5;
@@ -1643,12 +1643,12 @@ void VSoftwareDrawer::SpriteCaclulateGradients(int lump)
 	d_zistepu = p_normal.x * distinv / xprojection;
 	d_zistepv = p_normal.y * distinv / yprojection;
 
-	d_sdivzorigin = p_saxis.z - centerxfrac * d_sdivzstepu -
-			centeryfrac * d_sdivzstepv;
-	d_tdivzorigin = p_taxis.z - centerxfrac * d_tdivzstepu -
-			centeryfrac * d_tdivzstepv;
-	d_ziorigin = p_normal.z * distinv - centerxfrac * d_zistepu -
-			centeryfrac * d_zistepv;
+	d_sdivzorigin = p_saxis.z - centrexfrac * d_sdivzstepu -
+			centreyfrac * d_sdivzstepv;
+	d_tdivzorigin = p_taxis.z - centrexfrac * d_tdivzstepu -
+			centreyfrac * d_tdivzstepv;
+	d_ziorigin = p_normal.z * distinv - centrexfrac * d_zistepu -
+			centreyfrac * d_zistepv;
 
 	sadjust = (fixed_t)(DotProduct(vieworg - r_texorg, r_saxis) * 0x10000 + 0.5) - spr_texturemins[0];
 	tadjust = (fixed_t)(DotProduct(vieworg - r_texorg, r_taxis) * 0x10000 + 0.5) - spr_texturemins[1];
@@ -1684,8 +1684,8 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 
 	d_zistepu = p_normal.x * distinv / xprojection;
 	d_zistepv = p_normal.y * distinv / yprojection;
-	d_ziorigin = p_normal.z * distinv - centerxfrac * d_zistepu -
-			centeryfrac * d_zistepv;
+	d_ziorigin = p_normal.z * distinv - centrexfrac * d_zistepu -
+			centreyfrac * d_zistepv;
 
 	t = mipscale / xprojection;
 	d_sdivzstepu = p_saxis.x * t;
@@ -1696,9 +1696,9 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 	d_tdivzstepv = p_taxis.y * t;
 
 	d_sdivzorigin = p_saxis.z * mipscale -
-		centerxfrac * d_sdivzstepu - centeryfrac * d_sdivzstepv;
+		centrexfrac * d_sdivzstepu - centreyfrac * d_sdivzstepv;
 	d_tdivzorigin = p_taxis.z * mipscale -
-		centerxfrac * d_tdivzstepu - centeryfrac * d_tdivzstepv;
+		centrexfrac * d_tdivzstepu - centreyfrac * d_tdivzstepv;
 
 	t = 0x10000 * mipscale;
 	sadjust = (fixed_t)(DotProduct(vieworg, tex->saxis) * t + 0.5) -

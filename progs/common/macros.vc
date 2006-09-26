@@ -27,7 +27,7 @@
 #define GET_SPAC(_flags_)	(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
 #define RGB(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
 #define RGBA(r, g, b, a)	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
-#define MobjCenter(mobj)\
+#define MobjCentre(mobj)\
 	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
 #define FOREACH(type, var) \
 	for (var = type(NextThinker(none, type)); var; \

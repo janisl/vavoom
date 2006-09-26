@@ -219,9 +219,9 @@ LNoSetNearZi0:
 	fxch	%st(1)				// ym4*zi | xm4*zi*xprojection
 	fmuls	C(yprojection)		// ym4*zi*yprojection | xm4*zi*xprojection
 	fxch	%st(1)				// xm4*zi*xprojection | ym4*zi*yprojection
-	fadds	C(centerxfrac)		// u0 | ym4*zi*yprojection
+	fadds	C(centrexfrac)		// u0 | ym4*zi*yprojection
 	fxch	%st(1)				// ym4*zi*yprojection | u0
-	fadds	C(centeryfrac)		// v0 | u0
+	fadds	C(centreyfrac)		// v0 | u0
 	fxch	%st(1)				// u0 | v0
 
 	fcoms	C(vrectx_adj)
@@ -334,9 +334,9 @@ LNoSetNearZi1:
 	fxch	%st(1)				// ym4*zi | xm4*zi*xprojection
 	fmuls	C(yprojection)		// ym4*zi*yprojection | xm4*zi*xprojection
 	fxch	%st(1)				// xm4*zi*xprojection | ym4*zi*yprojection
-	fadds	C(centerxfrac)		// u1 | ym4*zi*yprojection
+	fadds	C(centrexfrac)		// u1 | ym4*zi*yprojection
 	fxch	%st(1)				// ym4*zi*yprojection | u1
-	fadds	C(centeryfrac)		// v1 | u1
+	fadds	C(centreyfrac)		// v1 | u1
 	fxch	%st(1)				// u1 | v1
 
 	fcoms	C(vrectx_adj)

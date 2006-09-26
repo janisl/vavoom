@@ -65,7 +65,7 @@ struct ticcmd_t
 {
 	short		forwardmove;	// *2048 for move
 	short		sidemove;		// *2048 for move
-	short		flymove;		// fly up/down/centering
+	short		flymove;		// fly up/down/centreing
 	byte		buttons;
 	byte		impulse;
 };
@@ -126,7 +126,7 @@ class VClientState : public VObject
 	// Focal origin above r.z
 	TVec			vieworg;
 	TAVec			viewangles;
-	int				centering;
+	int				centreing;
 
 	// This is only used between levels,
 	// mo->health is used during levels.
@@ -141,14 +141,14 @@ class VClientState : public VObject
 	int				extralight;
 
 	// For lite-amp and invulnarability powers
-	int				fixedcolormap;
+	int				fixedcolourmap;
 
 	// Current PLAYPAL index
-	//  can be set to REDCOLORMAP for pain, etc.
+	//  can be set to REDCOLOURMAP for pain, etc.
 	int				palette;
 	int				prev_palette;
 
-	vuint32			cshifts[NUM_CSHIFTS];		//	color shifts for damage,
+	vuint32			cshifts[NUM_CSHIFTS];		//	colour shifts for damage,
 	vuint32			prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
 	// Overlay view sprites (gun, etc).

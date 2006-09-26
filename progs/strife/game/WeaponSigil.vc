@@ -125,7 +125,7 @@ void A_SigilFlash()
 {
 	//Player.MiscTime = 10;
 	Actor(Player.MO).Damage(none, none, 5);
-	Player.FixedColormap = Player::INVERSECOLORMAP;
+	Player.FixedColourmap = Player::INVERSECOLOURMAP;
 }
 
 __states__
@@ -165,7 +165,7 @@ __states__
 	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE)
 	{
 		A_Light1(); 
-		Player.FixedColormap = 0;
+		Player.FixedColourmap = 0;
 	}
 }
 

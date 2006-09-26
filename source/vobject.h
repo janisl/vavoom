@@ -146,7 +146,7 @@ private:
 	VClass*					Class;	  			// Class the object belongs to.
 
 	// Private systemwide variables.
-	static bool				GObjInitialized;
+	static bool				GObjInitialised;
 	static TArray<VObject*>	GObjObjects;		// List of all objects.
 	static TArray<int>		GObjAvailable;		// Available object indices.
 	static VObject*			GObjHash[4096];		// Object hash.

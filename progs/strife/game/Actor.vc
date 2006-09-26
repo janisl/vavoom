@@ -718,7 +718,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	if (inflictor && bColideWithThings)
 	{
 		Velocity += (500.0 * itof(damage > 100 ? 100 : damage) / Mass) *
-			Normalise(MobjCenter(self) - MobjCenter(inflictor));
+			Normalise(MobjCentre(self) - MobjCentre(inflictor));
 	}
 
 	if (inflictor && inflictor.bPoisonDamage && bNoBlood)
@@ -2177,7 +2177,7 @@ bool PIT_RadiusAttack(Entity Other)
 	if (!Actor(Other).bShootable)
 		return true;
 
-	dist = Length(MobjCenter(Other) - MobjCenter(self)) - Other.Radius;
+	dist = Length(MobjCentre(Other) - MobjCentre(self)) - Other.Radius;
 
 	if (dist < 0.0)
 		dist = 0.0;
@@ -2582,7 +2582,7 @@ Actor TossUpObject(classid type)
 
 	randomspeed = Random() * 8.0 - 6.0;
 
-	A = Spawn(type, MobjCenter(self));
+	A = Spawn(type, MobjCentre(self));
 	if (A)
 	{
 		an = AngleMod360(Angles.yaw + Random() * 360.0);

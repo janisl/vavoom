@@ -238,7 +238,7 @@ void VSoftwareDrawer::PolysetSetupDrawer(int translucency)
 	int fuzzfunc = 0;
 
 //translucency = 30;
-//d_affinetridesc.coloredlight = 1;
+//d_affinetridesc.colouredlight = 1;
 	if (translucency)
 	{
 		int trindex = (translucency - 5) / 10;
@@ -263,7 +263,7 @@ void VSoftwareDrawer::PolysetSetupDrawer(int translucency)
 	}
 
 	D_PolysetDrawSpans = alias_span_drawers[bppindex]
-		[d_affinetridesc.coloredlight][fuzzfunc];
+		[d_affinetridesc.colouredlight][fuzzfunc];
 	unguardSlow;
 }
 

@@ -123,7 +123,7 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 	}
 	do
 	{
-		surfs->Light = (lLev << 24) | LightParams->LightColor;
+		surfs->Light = (lLev << 24) | LightParams->LightColour;
 		surfs->dlightframe = r_sub->dlightframe;
 		surfs->dlightbits = r_sub->dlightbits;
 

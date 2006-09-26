@@ -763,13 +763,13 @@ IMPLEMENT_FUNCTION(VLevel, SendCeilingSlope)
 			<< sector->ceiling.dist;
 }
 
-IMPLEMENT_FUNCTION(VLevel, SetSecLightColor)
+IMPLEMENT_FUNCTION(VLevel, SetSecLightColour)
 {
 	P_GET_INT(Col);
 	P_GET_PTR(sector_t, sector);
 	P_GET_SELF;
-	sector->params.LightColor = Col;
-	sv_signon << (byte)svc_sec_light_color
+	sector->params.LightColour = Col;
+	sv_signon << (byte)svc_sec_light_colour
 			<< (word)(sector - Self->Sectors)
 			<< (byte)(Col >> 16)
 			<< (byte)(Col >> 8)

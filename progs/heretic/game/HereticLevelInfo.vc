@@ -1241,7 +1241,7 @@ bool CheckLock(Actor user, int lock)
 	}
 	if (!(Player(user.Player).Keys & (1 << (lock - 1))))
 	{
-		user.Player.centerprint(MainGameInfo(Game).keymsg[lock - 1]);
+		user.Player.centreprint(MainGameInfo(Game).keymsg[lock - 1]);
 		user.PlaySound('*usefail', CHAN_VOICE);
 		return false;
 	}
@@ -3452,8 +3452,8 @@ bool DoGroupForOne(Actor victim, Actor source, Actor dest, bool floorz,
 //
 //	EV_TeleportGroup
 //
-//	[RH] Teleport a group of actors centered around source_tid so
-// that they become centered around dest_tid instead.
+//	[RH] Teleport a group of actors centred around source_tid so
+// that they become centred around dest_tid instead.
 //
 //==========================================================================
 

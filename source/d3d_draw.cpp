@@ -161,15 +161,15 @@ void VDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
-	vuint32 color)
+	vuint32 colour)
 {
 	guard(VDirect3DDrawer::FillRect);
 	MyD3DVertex	dv[4];
 
-	dv[0] = MyD3DVertex(x1, y1, color, 0, 0);
-	dv[1] = MyD3DVertex(x2, y1, color, 0, 0);
-	dv[2] = MyD3DVertex(x2, y2, color, 0, 0);
-	dv[3] = MyD3DVertex(x1, y2, color, 0, 0);
+	dv[0] = MyD3DVertex(x1, y1, colour, 0, 0);
+	dv[1] = MyD3DVertex(x2, y1, colour, 0, 0);
+	dv[2] = MyD3DVertex(x2, y2, colour, 0, 0);
+	dv[3] = MyD3DVertex(x1, y2, colour, 0, 0);
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);

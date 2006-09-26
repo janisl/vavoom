@@ -26,37 +26,37 @@
 class MenuScreenPlayerSetup : MenuScreen;
 
 MenuSpriteAnim Anim;
-int Color;
+int Colour;
 int PClass;
 
-void SetColor()
+void SetColour()
 {
 	Anim.SprDef = 500 + PClass;
 	Anim.Translation = 0;
 	if (PClass == HexenDefs::PCLASS_FIGHTER)
 	{
-		if (Color == 0)
+		if (Colour == 0)
 			Anim.Translation = 2;
-	else if (Color != 2)
-			Anim.Translation = Color;
+	else if (Colour != 2)
+			Anim.Translation = Colour;
 	}
 	else
 	{
-		if (Color)
-			Anim.Translation = PClass * (MAXPLAYERS - 1) + Color;
+		if (Colour)
+			Anim.Translation = PClass * (MAXPLAYERS - 1) + Colour;
 	}
 }
 
-void SetSpriteColor(int newColor)
+void SetSpriteColour(int newColour)
 {
-	Color = newColor;
-	SetColor();
+	Colour = newColour;
+	SetColour();
 }
 
 void SetPClass(int newPClass)
 {
 	PClass = newPClass;
-	SetColor();
+	SetColour();
 }
 
 void CreateChoices()
@@ -77,7 +77,7 @@ void CreateChoices()
 defaultproperties
 {
 	Choices[0] = MenuChoice_PlayerName;
-	Choices[1] = MenuChoice_Color;
+	Choices[1] = MenuChoice_Colour;
 	Choices[2] = MenuChoice_PClass;
 	ChoicesStartX = 16;
 	ChoicesStartY = 40;

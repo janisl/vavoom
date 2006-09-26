@@ -26,7 +26,7 @@
 class MenuScreenPlayerSetup : MenuScreen;
 
 MenuChoice_PlayerName PlayerName;
-MenuChoice_Color Color;
+MenuChoice_Colour Colour;
 MenuSpriteAnim Anim;
 MenuChoice_Skin Skin;
 MenuModel Mdl;
@@ -39,9 +39,9 @@ void CreateChoices()
 	PlayerName.SetPos(ChoicesStartX, ChoicesStartY);
 	ChoicesStartY += PlayerName.Height;
 
-	Color = MenuChoice_Color(NewChild(MenuChoice_Color));
-	Color.SetPos(ChoicesStartX, ChoicesStartY);
-	ChoicesStartY += Color.Height;
+	Colour = MenuChoice_Colour(NewChild(MenuChoice_Colour));
+	Colour.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Colour.Height;
 
 	R_InstallSprite("PLAY", 500);
 
@@ -50,8 +50,8 @@ void CreateChoices()
 	Anim.SprDef = 500;
 	Anim.Speed = 8;
 	Anim.NumFrames = 4;
-	Anim.Translation = Color.Value;
-	Color.Anim = Anim;
+	Anim.Translation = Colour.Value;
+	Colour.Anim = Anim;
 
 	model = InstallModel("models/players/doomguy/tris.md2");
 	if (model)

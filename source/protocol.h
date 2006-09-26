@@ -37,12 +37,12 @@ enum
 	svc_server_info,
 
 	svc_print,
-	svc_center_print,
+	svc_centre_print,
 	svc_stringcmd,
 	svc_signonnum,
 
 	svc_set_angles,
-	svc_center_look,
+	svc_centre_look,
 	svc_view_data,
 	svc_stats_long,
 	svc_stats_short,
@@ -95,7 +95,7 @@ enum
 
 	svc_static_light,
 	svc_static_light_rgb,
-	svc_sec_light_color,
+	svc_sec_light_colour,
 
 	svc_change_sky,
 	svc_change_music,

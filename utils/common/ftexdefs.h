@@ -39,7 +39,7 @@ struct maptexture_t
 		short		originy;
 		short		patch;
 		short		stepdir;
-		short		colormap;
+		short		colourmap;
 	};
 
 	char		name[8];

@@ -306,7 +306,7 @@ static void CL_ParseViewData(VMessage& msg)
 		>> cl->vieworg.y
 		>> cl->vieworg.z;
 	cl->extralight = msg.ReadByte();
-	cl->fixedcolormap = msg.ReadByte();
+	cl->fixedcolourmap = msg.ReadByte();
 	cl->palette = msg.ReadByte();
 	cl->translucency = msg.ReadByte();
 	cl->pspriteSY = msg.ReadShort();
@@ -866,7 +866,7 @@ void CL_ParseServerMessage(VMessage& msg)
 	VStr		string;
 	TVec		origin;
 	float		radius;
-	vuint32		color;
+	vuint32		colour;
 	int			trans;
 	sector_t*	sec;
 
@@ -949,7 +949,7 @@ void CL_ParseServerMessage(VMessage& msg)
 			cl->viewangles.roll = ByteToAngle(msg.ReadByte());
 			break;
 
-		case svc_center_look:
+		case svc_centre_look:
 //FIXME
 			break;
 
@@ -977,8 +977,8 @@ void CL_ParseServerMessage(VMessage& msg)
 			C_NotifyMessage(msg.ReadString());
 			break;
 
-		case svc_center_print:
-			C_CenterMessage(msg.ReadString());
+		case svc_centre_print:
+			C_CentreMessage(msg.ReadString());
 			break;
 
 		case svc_time:
@@ -1163,13 +1163,13 @@ void CL_ParseServerMessage(VMessage& msg)
 			origin.y = msg.ReadShort();
 			origin.z = msg.ReadShort();
 			radius = (byte)msg.ReadByte() * 8;
-			msg >> color;
-			R_AddStaticLight(origin, radius, color);
+			msg >> colour;
+			R_AddStaticLight(origin, radius, colour);
 			break;
 
-		case svc_sec_light_color:
+		case svc_sec_light_colour:
 			sec = &GClLevel->Sectors[msg.ReadShort()];
-			sec->params.LightColor = (msg.ReadByte() << 16) |
+			sec->params.LightColour = (msg.ReadByte() << 16) |
 				(msg.ReadByte() << 8) | msg.ReadByte();
 			break;
 

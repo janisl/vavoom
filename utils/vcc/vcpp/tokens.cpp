@@ -339,7 +339,7 @@ char *outnum(char *p, int n)
 }
 
 /*
- * allocate and initialize a new string from s, of length l, at offset o
+ * allocate and initialise a new string from s, of length l, at offset o
  * Null terminated.
  */
 uchar *newstring(uchar * s, int l, int o)

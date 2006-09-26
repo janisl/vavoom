@@ -603,7 +603,7 @@ int main(int argc,char** argv)
 		Sys_SetFPCW();
 		Sys_InitTime();
 
-		//	Initialize
+		//	Initialise
 		Host_Init();
 
 		//	Play game

@@ -46,7 +46,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define TOCENTER 		-128
+#define TOCENTRE		-128
 
 #define BUTTON(name) \
 static TKButton		Key ## name; \
@@ -144,12 +144,12 @@ BUTTON(Left)
 BUTTON(Right)
 BUTTON(LookUp)
 BUTTON(LookDown)
-BUTTON(LookCenter)
+BUTTON(LookCentre)
 BUTTON(MoveLeft)
 BUTTON(MoveRight)
 BUTTON(FlyUp)
 BUTTON(FlyDown)
-BUTTON(FlyCenter)
+BUTTON(FlyCentre)
 BUTTON(Attack)
 BUTTON(Use)
 BUTTON(Jump)
@@ -324,17 +324,17 @@ COMMAND(ToggleAlwaysRun)
 
 //==========================================================================
 //
-//	COMMAND CenterTilt
+//	COMMAND CentreTilt
 //
 //==========================================================================
 
 void V_StartPitchDrift()
 {
-	cl->centering = true;
+	cl->centreing = true;
 }
 void V_StopPitchDrift()
 {
-	cl->centering = false;
+	cl->centreing = false;
 }
 
 //==========================================================================
@@ -391,18 +391,18 @@ static void AdjustAngles()
 		cl->viewangles.pitch -= mousey * m_pitch;
 	}
 
-	//	Center look
-	if ((KeyLookCenter.state & 1) || (KeyFlyCenter.state & 1))
+	//	Centre look
+	if ((KeyLookCentre.state & 1) || (KeyFlyCentre.state & 1))
 	{
 		V_StartPitchDrift();
 	}
-	if (cl->centering)
+	if (cl->centreing)
 	{
 		float adelta = cl_pitchdriftspeed * host_frametime;
 		if (fabs(cl->viewangles.pitch) < adelta)
 		{
 			cl->viewangles.pitch = 0;
-			cl->centering = false;
+			cl->centreing = false;
 		}
 		else
 		{
@@ -523,9 +523,9 @@ static void BuildTiccmd(ticcmd_t* cmd)
 		flyheight = 127;
 	if (flyheight < -127)
 		flyheight = -127;
-	if (KeyFlyCenter.KeyState())
+	if (KeyFlyCentre.KeyState())
 	{
-		flyheight = TOCENTER;
+		flyheight = TOCENTRE;
 	}
 
  	//

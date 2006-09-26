@@ -24,7 +24,7 @@
 //**************************************************************************
 //**	
 //**	LineOfSight/Visibility checks, uses REJECT Lookup Table. This uses
-//**  specialized forms of the maputils routines for optimized performance
+//**  specialised forms of the maputils routines for optimized performance
 //**
 //**************************************************************************
 

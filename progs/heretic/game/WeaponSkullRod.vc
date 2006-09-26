@@ -69,12 +69,12 @@ void A_FireSkullRodPL2()
 	if (Player.Level.Game.netgame)
 	{
 		// Multi-player game
-		HornRodMissile2(MainGameInfo(Player.Level.Game).MissileMobj).RainColor = Player.GetPlayerNum();
+		HornRodMissile2(MainGameInfo(Player.Level.Game).MissileMobj).RainColour = Player.GetPlayerNum();
 	}
 	else
 	{
 		// Always use red missiles in single player games
-		HornRodMissile2(MainGameInfo(Player.Level.Game).MissileMobj).RainColor = 2;
+		HornRodMissile2(MainGameInfo(Player.Level.Game).MissileMobj).RainColour = 2;
 	}
 	if (Actor(Player.MO).linetarget)
 	{

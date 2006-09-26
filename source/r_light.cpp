@@ -38,7 +38,7 @@ struct light_t
 {
 	TVec		origin;
 	float		radius;
-	vuint32		color;
+	vuint32		colour;
 	int			leafnum;
 };
 
@@ -92,7 +92,7 @@ static float		lightmapg[18 * 18 * 4];
 static float		lightmapb[18 * 18 * 4];
 static bool			light_hit;
 static byte			*facevis;
-static bool			is_colored;
+static bool			is_coloured;
 
 static int			c_bad;
 
@@ -122,7 +122,7 @@ void R_ClearLights(void)
 //
 //==========================================================================
 
-void R_AddStaticLight(const TVec &origin, float radius, vuint32 color)
+void R_AddStaticLight(const TVec &origin, float radius, vuint32 colour)
 {
 	guard(R_AddStaticLight);
 	if (num_lights == MAX_STATIC_LIGHTS)
@@ -132,7 +132,7 @@ void R_AddStaticLight(const TVec &origin, float radius, vuint32 color)
 	}
 	lights[num_lights].origin = origin;
 	lights[num_lights].radius = radius;
-	lights[num_lights].color = color;
+	lights[num_lights].colour = colour;
 	lights[num_lights].leafnum = CL_PointInSubsector(origin.x, origin.y) -
 		GClLevel->Subsectors;
 	num_lights++;
@@ -290,7 +290,7 @@ static void CalcPoints(surface_t *surf)
 
 	//
 	// fill in surforg
-	// the points are biased towards the center of the surface
+	// the points are biased towards the centre of the surface
 	// to help avoid edge cases just inside walls
 	//
 	spt = surfpt;
@@ -365,7 +365,7 @@ static void CalcPoints(surface_t *surf)
 					}
 				}
 				
-				// move surf 8 pixels towards the center
+				// move surf 8 pixels towards the centre
 				*spt += 8 * Normalise(facemid - *spt);
 			}
 			if (i == 2)
@@ -438,9 +438,9 @@ static void SingleLightFace(light_t *light, surface_t *surf)
 	//
 	spt = surfpt;
 	squaredist = light->radius * light->radius;
-	rmul = ((light->color >> 16) & 0xff) / 255.0;
-	gmul = ((light->color >> 8) & 0xff) / 255.0;
-	bmul = (light->color & 0xff) / 255.0;
+	rmul = ((light->colour >> 16) & 0xff) / 255.0;
+	gmul = ((light->colour >> 8) & 0xff) / 255.0;
+	bmul = (light->colour & 0xff) / 255.0;
 	for (c = 0; c < numsurfpt; c++, spt++)
 	{
 		dist = CastRay(light->origin, *spt, squaredist);
@@ -462,8 +462,8 @@ static void SingleLightFace(light_t *light, surface_t *surf)
 		if (lightmap[c] > 1)		// ignore real tiny lights
 		{
 			light_hit = true;
-			if (light->color != 0xffffffff)
-				is_colored = true;
+			if (light->colour != 0xffffffff)
+				is_coloured = true;
 		}
 	}
 	unguard;
@@ -484,7 +484,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 	facevis = GClLevel->LeafPVS(leaf);
 	points_calculated = false;
 	light_hit = false;
-	is_colored = false;
+	is_coloured = false;
 
 	//
 	// cast all lights
@@ -519,7 +519,7 @@ void R_LightFace(surface_t *surf, subsector_t *leaf)
 
 	//	If the surface already has a lightmap, we will reuse it, otherwiese
 	// we must allocate a new block
-	if (is_colored)
+	if (is_coloured)
 	{
 		if (surf->lightmap_rgb)
 		{
@@ -765,10 +765,10 @@ vuint32 R_LightPoint(const TVec &p)
 	{
 		l = light_remap[MIN(255, (int)l)];
 	}
-	int SecLightColor = reg->secregion->params->LightColor;
-	lr = ((SecLightColor >> 16) & 255) * l / 255.0;
-	lg = ((SecLightColor >> 8) & 255) * l / 255.0;
-	lb = (SecLightColor & 255) * l / 255.0;
+	int SecLightColour = reg->secregion->params->LightColour;
+	lr = ((SecLightColour >> 16) & 255) * l / 255.0;
+	lg = ((SecLightColour >> 8) & 255) * l / 255.0;
+	lb = (SecLightColour & 255) * l / 255.0;
 
 	//	Light from floor's lightmap
 	s = (int)(DotProduct(p, reg->floor->texinfo.saxis) + reg->floor->texinfo.soffs);
@@ -834,9 +834,9 @@ vuint32 R_LightPoint(const TVec &p)
 			if (add > 0)
 			{
 				l += add;
-				lr += add * ((cl_dlights[i].color >> 16) & 0xff) / 255.0;
-				lg += add * ((cl_dlights[i].color >> 8) & 0xff) / 255.0;
-				lb += add * (cl_dlights[i].color & 0xff) / 255.0;
+				lr += add * ((cl_dlights[i].colour >> 16) & 0xff) / 255.0;
+				lg += add * ((cl_dlights[i].colour >> 8) & 0xff) / 255.0;
+				lb += add * (cl_dlights[i].colour & 0xff) / 255.0;
 			}
 		}
 	}
@@ -913,9 +913,9 @@ void R_AddDynamicLights(surface_t *surf)
 				continue;
 		}
 
-		rmul = (cl_dlights[lnum].color >> 16) & 0xff;
-		gmul = (cl_dlights[lnum].color >> 8) & 0xff;
-		bmul = cl_dlights[lnum].color & 0xff;
+		rmul = (cl_dlights[lnum].colour >> 16) & 0xff;
+		gmul = (cl_dlights[lnum].colour >> 8) & 0xff;
+		bmul = cl_dlights[lnum].colour & 0xff;
 
 		local.x = DotProduct(impact, tex->saxis) + tex->soffs;
 		local.y = DotProduct(impact, tex->taxis) + tex->toffs;
@@ -945,8 +945,8 @@ void R_AddDynamicLights(surface_t *surf)
 					blocklightsr[i] += (vuint32)((rad - dist) * rmul);
 					blocklightsg[i] += (vuint32)((rad - dist) * gmul);
 					blocklightsb[i] += (vuint32)((rad - dist) * bmul);
-					if (cl_dlights[lnum].color != 0xffffffff)
-						is_colored = true;
+					if (cl_dlights[lnum].colour != 0xffffffff)
+						is_coloured = true;
 				}
 			}
 		}
@@ -971,7 +971,7 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	byte		*lightmap;
 	rgb_t		*lightmap_rgb;
 
-	is_colored = false;
+	is_coloured = false;
 	r_light_add = false;
 	smax = (surf->extents[0] >> 4) + 1;
 	tmax = (surf->extents[1] >> 4) + 1;
@@ -987,7 +987,7 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	int tG = ((surf->Light >> 8) & 255) * t / 255;
 	int tB = (surf->Light & 255) * t / 255;
 	if (tR != tG || tR != tB)
-		is_colored = true;
+		is_coloured = true;
 	for (i = 0; i < size; i++)
 	{
 		blocklights[i] = t;
@@ -1004,9 +1004,9 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 	{
 		if (!lightmap)
 		{
-			Sys_Error("RGB lightmap without uncolored lightmap");
+			Sys_Error("RGB lightmap without uncoloured lightmap");
 		}
-		is_colored = true;
+		is_coloured = true;
 		for (i = 0; i < size; i++)
 		{
 			blocklights[i] += lightmap[i] << 8;
@@ -1112,6 +1112,6 @@ bool R_BuildLightMap(surface_t *surf, int shift)
 		blocklightsb[i] = t;
 	}
 
-	return is_colored;
+	return is_coloured;
 	unguard;
 }

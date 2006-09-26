@@ -137,7 +137,7 @@ bool VAllgeroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 	if (BPP < 16)
 	{
-		//	True-color only
+		//	True-colour only
 		GCon->Log(NAME_Init, "Attempt to set a paletized video mode for OpenGL");
 		return false;
 	}
@@ -176,7 +176,7 @@ bool VAllgeroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	RenderDisplay = _xwin.display;
 	if (!RenderDisplay)
 	{
-		GCon->Log(NAME_Init, "No display - Allegro X-Windows driver not initialized");
+		GCon->Log(NAME_Init, "No display - Allegro X-Windows driver not initialised");
 		XUNLOCK();
 		return false;
 	}

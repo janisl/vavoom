@@ -69,10 +69,10 @@ void VSoftwareDrawer::DrawPicSpan_8(fixed_t s, fixed_t t, fixed_t sstep,
     byte* dest = (byte*)dst;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			*dest = color;
+			*dest = colour;
 		}
 		s += sstep;
 		dest++;
@@ -92,10 +92,10 @@ void VSoftwareDrawer::DrawPicSpanFuzz_8(fixed_t s, fixed_t t, fixed_t sstep,
     byte* dest = (byte*)dst;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			*dest = d_transluc[*dest + (color << 8)];
+			*dest = d_transluc[*dest + (colour << 8)];
 		}
 		s += sstep;
 		dest++;
@@ -115,10 +115,10 @@ void VSoftwareDrawer::DrawPicSpanAltFuzz_8(fixed_t s, fixed_t t, fixed_t sstep,
     byte* dest = (byte*)dst;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			*dest = d_transluc[(*dest << 8) + color];
+			*dest = d_transluc[(*dest << 8) + colour];
 		}
 		s += sstep;
 		dest++;
@@ -136,11 +136,11 @@ void VSoftwareDrawer::DrawPicSpanShadow_8(fixed_t s, fixed_t t, fixed_t sstep,
 {
 	src += (t >> FRACBITS) * cachewidth;
     byte* dest = (byte*)dst;
-	byte *cmap = colormaps + ((ds_shade >> 3) << 8);
+	byte* cmap = colourmaps + ((ds_shade >> 3) << 8);
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
 			*dest = cmap[*dest];
 		}
@@ -162,8 +162,8 @@ void VSoftwareDrawer::DrawFlatSpan_8(fixed_t s, fixed_t t, fixed_t sstep,
     byte* dest = (byte*)dst;
 	while (count--)
     {
-		byte color = src[(s >> FRACBITS) & 0x3f];
-		*dest = color;
+		byte colour = src[(s >> FRACBITS) & 0x3f];
+		*dest = colour;
 		s += sstep;
 		dest++;
 	}
@@ -176,7 +176,7 @@ void VSoftwareDrawer::DrawFlatSpan_8(fixed_t s, fixed_t t, fixed_t sstep,
 //==========================================================================
 
 void VSoftwareDrawer::FillRect_8(float x1, float y1, float x2, float y2,
-	vuint32 color)
+	vuint32 colour)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -185,13 +185,13 @@ void VSoftwareDrawer::FillRect_8(float x1, float y1, float x2, float y2,
 
 	int iWid = ix2 - ix1;
 
-	byte bColor = color = d_rgbtable[((color >> 9) & 0x7c00) | 
-		((color >> 6) & 0x03e0) | ((color >> 3) & 0x1f)];
+	byte bColour = colour = d_rgbtable[((colour >> 9) & 0x7c00) | 
+		((colour >> 6) & 0x03e0) | ((colour >> 3) & 0x1f)];
 
 	byte *dest = (byte*)scrn + ix1 + ScreenWidth * iy1;
 	for (int y = iy1; y < iy2; y++, dest += ScreenWidth)
 	{
-		memset(dest, bColor, iWid);
+		memset(dest, bColour, iWid);
 	}
 }
 
@@ -213,7 +213,7 @@ void VSoftwareDrawer::ShadeRect_8(int xx, int yy, int ww, int hh, int darkening)
 	if (x2 > ScreenWidth) x2 = ScreenWidth;
 	if (y2 > ScreenHeight) y2 = ScreenHeight;
 
-    byte *shades = colormaps + darkening * 256;
+    byte* shades = colourmaps + darkening * 256;
 	for (int y = y1; y < y2; y++)
 	{
 		byte *dest = scrn + x1 + ScreenWidth * y;
@@ -282,10 +282,10 @@ void VSoftwareDrawer::DrawPicSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
     word* dest = (word*)dst;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			*dest = pal8_to16[color];
+			*dest = pal8_to16[colour];
 		}
 		s += sstep;
 		dest++;
@@ -306,10 +306,10 @@ void VSoftwareDrawer::DrawSpritePicSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
     word* dest = (word*)dst;
 	while (count--)
     {
-		word color = src[s >> FRACBITS];
-		if (color)
+		word colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			*dest = color;
+			*dest = colour;
 		}
 		s += sstep;
 		dest++;
@@ -329,16 +329,16 @@ void VSoftwareDrawer::DrawPicSpanFuzz_16(fixed_t s, fixed_t t, fixed_t sstep,
     word* dest = (word*)dst;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			word color16 = pal8_to16[color];
+			word colour16 = pal8_to16[colour];
 			byte r1 = GetColR(*dest);
 			byte g1 = GetColG(*dest);
 			byte b1 = GetColB(*dest);
-			byte r2 = GetColR(color16);
-			byte g2 = GetColG(color16);
-			byte b2 = GetColB(color16);
+			byte r2 = GetColR(colour16);
+			byte g2 = GetColG(colour16);
+			byte b2 = GetColB(colour16);
 			byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
 			byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
 			byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;
@@ -363,8 +363,8 @@ void VSoftwareDrawer::DrawPicSpanShadow_16(fixed_t s, fixed_t t, fixed_t sstep,
 	int ishade = 255 - ds_shade;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
 			byte r = GetColR(*dest);
 			byte g = GetColG(*dest);
@@ -389,8 +389,8 @@ void VSoftwareDrawer::DrawFlatSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
     word* dest = (word*)dst;
 	while (count--)
     {
-		byte color = src[(s >> FRACBITS) & 0x3f];
-		*dest = pal8_to16[color];
+		byte colour = src[(s >> FRACBITS) & 0x3f];
+		*dest = pal8_to16[colour];
 		s += sstep;
 		dest++;
 	}
@@ -403,7 +403,7 @@ void VSoftwareDrawer::DrawFlatSpan_16(fixed_t s, fixed_t t, fixed_t sstep,
 //==========================================================================
 
 void VSoftwareDrawer::FillRect_16(float x1, float y1, float x2, float y2,
-	vuint32 color)
+	vuint32 colour)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -412,16 +412,16 @@ void VSoftwareDrawer::FillRect_16(float x1, float y1, float x2, float y2,
 
 	int wid = ix2 - ix1;
 
-	word wColor;
+	word wColour;
 	if (ScreenBPP == 15)
 	{
-		wColor = (word)MakeCol15((byte)(color >> 16), (byte)(color >> 8),
-			(byte)color);
+		wColour = (word)MakeCol15((byte)(colour >> 16), (byte)(colour >> 8),
+			(byte)colour);
 	}
 	else
 	{
-		wColor = (word)MakeCol16((byte)(color >> 16), (byte)(color >> 8),
-			(byte)color);
+		wColour = (word)MakeCol16((byte)(colour >> 16), (byte)(colour >> 8),
+			(byte)colour);
 	}
 
 	for (int y = iy1; y < iy2; y++)
@@ -429,7 +429,7 @@ void VSoftwareDrawer::FillRect_16(float x1, float y1, float x2, float y2,
 		word *dest = (word*)scrn + ix1 + ScreenWidth * y;
 		for (int i = wid; i; i--)
 		{
-			*dest++ = wColor;
+			*dest++ = wColour;
 		}
 	}
 }
@@ -514,10 +514,10 @@ void VSoftwareDrawer::DrawPicSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
     vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			*dest = pal2rgb[color];
+			*dest = pal2rgb[colour];
 		}
 		s += sstep;
 		dest++;
@@ -538,10 +538,10 @@ void VSoftwareDrawer::DrawSpritePicSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
     vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
-		vuint32 color = src[s >> FRACBITS];
-		if (color)
+		vuint32 colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			*dest = color;
+			*dest = colour;
 		}
 		s += sstep;
 		dest++;
@@ -561,16 +561,16 @@ void VSoftwareDrawer::DrawPicSpanFuzz_32(fixed_t s, fixed_t t, fixed_t sstep,
     vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
-			vuint32 color32 = pal2rgb[color];
+			vuint32 colour32 = pal2rgb[colour];
 			byte r1 = GetCol32R(*dest);
 			byte g1 = GetCol32G(*dest);
 			byte b1 = GetCol32B(*dest);
-			byte r2 = GetCol32R(color32);
-			byte g2 = GetCol32G(color32);
-			byte b2 = GetCol32B(color32);
+			byte r2 = GetCol32R(colour32);
+			byte g2 = GetCol32G(colour32);
+			byte b2 = GetCol32B(colour32);
 			byte r = (d_dsttranstab[r1] + d_srctranstab[r2]) >> 8;
 			byte g = (d_dsttranstab[g1] + d_srctranstab[g2]) >> 8;
 			byte b = (d_dsttranstab[b1] + d_srctranstab[b2]) >> 8;
@@ -595,8 +595,8 @@ void VSoftwareDrawer::DrawPicSpanShadow_32(fixed_t s, fixed_t t, fixed_t sstep,
 	int ishade = 255 - ds_shade;
 	while (count--)
     {
-		byte color = src[s >> FRACBITS];
-		if (color)
+		byte colour = src[s >> FRACBITS];
+		if (colour)
 		{
 			byte r = GetCol32R(*dest);
 			byte g = GetCol32G(*dest);
@@ -621,8 +621,8 @@ void VSoftwareDrawer::DrawFlatSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
     vuint32* dest = (vuint32*)dst;
 	while (count--)
     {
-		byte color = src[(s >> FRACBITS) & 0x3f];
-		*dest = pal2rgb[color];
+		byte colour = src[(s >> FRACBITS) & 0x3f];
+		*dest = pal2rgb[colour];
 		s += sstep;
 		dest++;
 	}
@@ -635,7 +635,7 @@ void VSoftwareDrawer::DrawFlatSpan_32(fixed_t s, fixed_t t, fixed_t sstep,
 //==========================================================================
 
 void VSoftwareDrawer::FillRect_32(float x1, float y1, float x2, float y2,
-	vuint32 color)
+	vuint32 colour)
 {
 	int ix1 = int(x1);
 	int iy1 = int(y1);
@@ -644,14 +644,14 @@ void VSoftwareDrawer::FillRect_32(float x1, float y1, float x2, float y2,
 
 	int wid = ix2 - ix1;
 
-	color = MakeCol32((byte)(color >> 16), (byte)(color >> 8), (byte)color);
+	colour = MakeCol32((byte)(colour >> 16), (byte)(colour >> 8), (byte)colour);
 
 	for (int y = iy1; y < iy2; y++)
 	{
 		vuint32 *dest = (vuint32*)scrn + ix1 + ScreenWidth * y;
 		for (int i = wid; i; i--)
 		{
-			*dest++ = color;
+			*dest++ = colour;
 		}
 	}
 }
@@ -922,25 +922,25 @@ void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 //
 //  VSoftwareDrawer::FillRect
 //
-// 	Fills rectangle with color.
+// 	Fills rectangle with colour.
 //
 //==========================================================================
 
 void VSoftwareDrawer::FillRect(float x1, float y1, float x2, float y2,
-	vuint32 color)
+	vuint32 colour)
 {
 	guard(VSoftwareDrawer::FillRect);
 	if (ScreenBPP == 8)
 	{
-		FillRect_8(x1, y1, x2, y2, color);
+		FillRect_8(x1, y1, x2, y2, colour);
 	}
 	else if (PixelBytes == 2)
 	{
-		FillRect_16(x1, y1, x2, y2, color);
+		FillRect_16(x1, y1, x2, y2, colour);
 	}
 	else
 	{
-		FillRect_32(x1, y1, x2, y2, color);
+		FillRect_32(x1, y1, x2, y2, colour);
 	}
 	unguard;
 }
@@ -1058,7 +1058,7 @@ static void AM_PutDot(short x, short y, byte *cc, byte *cm)
 	{
 		cc = cm;
 	}
-	else if (cc > oldcc + 6) // don't let the color escape from the fade table...
+	else if (cc > oldcc + 6) // don't let the colour escape from the fade table...
 	{
 		cc = oldcc + 6;
 	}
@@ -1072,16 +1072,16 @@ static void AM_PutDot(short x, short y, byte *cc, byte *cm)
 //
 //	Wu antialiased line drawer.
 //	(X0,Y0),(X1,Y1) = line to draw
-//	BaseColor = color # of first color in block used for antialiasing, the
-//          100% intensity version of the drawing color
-//	NumLevels = size of color block, with BaseColor+NumLevels-1 being the
-//          0% intensity version of the drawing color
+//	BaseColour = colour # of first colour in block used for antialiasing, the
+//          100% intensity version of the drawing colour
+//	NumLevels = size of colour block, with BaseColour+NumLevels-1 being the
+//          0% intensity version of the drawing colour
 //	IntensityBits = log base 2 of NumLevels; the # of bits used to describe
-//          the intensity of the drawing color. 2**IntensityBits==NumLevels
+//          the intensity of the drawing colour. 2**IntensityBits==NumLevels
 //
 //==========================================================================
 
-static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
+static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColour,
 	int NumLevels, unsigned short IntensityBits)
 {
 	unsigned short IntensityShift, ErrorAdj, ErrorAcc;
@@ -1096,7 +1096,7 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 	}
    	/* Draw the initial pixel, which is always exactly intersected by
       the line and so needs no weighting */
-	AM_PutDot(X0, Y0, &BaseColor[0], NULL);
+	AM_PutDot(X0, Y0, &BaseColour[0], NULL);
 
 	if ((DeltaX = X1 - X0) >= 0)
 	{
@@ -1108,7 +1108,7 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 		DeltaX = -DeltaX; /* make DeltaX positive */
 	}
 	/* Special-case horizontal, vertical, and diagonal lines, which
-      require no weighting because they go right through the center of
+      require no weighting because they go right through the centre of
       every pixel */
 	if ((DeltaY = Y1 - Y0) == 0)
 	{
@@ -1116,7 +1116,7 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 		while (DeltaX-- != 0)
 		{
         	X0 += XDir;
-			AM_PutDot(X0, Y0, &BaseColor[0], NULL);
+			AM_PutDot(X0, Y0, &BaseColour[0], NULL);
 		}
 		return;
 	}
@@ -1126,7 +1126,7 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 		do
 		{
 			Y0++;
-			AM_PutDot(X0, Y0, &BaseColor[0], NULL);
+			AM_PutDot(X0, Y0, &BaseColour[0], NULL);
 		} while (--DeltaY != 0);
 		return;
 	}
@@ -1137,12 +1137,12 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 		{
 			X0 += XDir;
 			Y0++;
-			AM_PutDot(X0, Y0, &BaseColor[0], NULL);
+			AM_PutDot(X0, Y0, &BaseColour[0], NULL);
 		} while (--DeltaY != 0);
 		return;
 	}
    /* Line is not horizontal, diagonal, or vertical */
-   ErrorAcc = 0;  /* initialize the line error accumulator to 0 */
+   ErrorAcc = 0;  /* initialise the line error accumulator to 0 */
    /* # of bits by which to shift ErrorAcc to get intensity level */
    IntensityShift = 16 - IntensityBits;
    /* Mask used to flip all bits in an intensity weighting, producing the
@@ -1170,13 +1170,13 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
             intensity weighting for this pixel, and the complement of the
             weighting for the paired pixel */
          Weighting = ErrorAcc >> IntensityShift;
-			AM_PutDot(X0, Y0, &BaseColor[Weighting], &BaseColor[7]);
+			AM_PutDot(X0, Y0, &BaseColour[Weighting], &BaseColour[7]);
          AM_PutDot(X0 + XDir, Y0,
-               &BaseColor[(Weighting ^ WeightingComplementMask)], &BaseColor[7]);
+               &BaseColour[(Weighting ^ WeightingComplementMask)], &BaseColour[7]);
       }
       /* Draw the final pixel, which is always exactly intersected by the line
          and so needs no weighting */
-      AM_PutDot(X1, Y1, &BaseColor[0], NULL);
+      AM_PutDot(X1, Y1, &BaseColour[0], NULL);
       return;
    }
    /* It's an X-major line; calculate 16-bit fixed-point fractional part of a
@@ -1198,14 +1198,14 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
          intensity weighting for this pixel, and the complement of the
          weighting for the paired pixel */
       Weighting = ErrorAcc >> IntensityShift;
-      AM_PutDot(X0, Y0, &BaseColor[Weighting], &BaseColor[7]);
+      AM_PutDot(X0, Y0, &BaseColour[Weighting], &BaseColour[7]);
       AM_PutDot(X0, Y0 + 1,
-      		&BaseColor[(Weighting ^ WeightingComplementMask)], &BaseColor[7]);
+      		&BaseColour[(Weighting ^ WeightingComplementMask)], &BaseColour[7]);
 
    }
    /* Draw the final pixel, which is always exactly intersected by the line
       and so needs no weighting */
-   AM_PutDot(X1, Y1, &BaseColor[0], NULL);
+   AM_PutDot(X1, Y1, &BaseColour[0], NULL);
 }
 #endif
 
@@ -1215,7 +1215,7 @@ static void DrawWuLine(int X0, int Y0, int X1, int Y1, byte *BaseColor,
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 color, int x2, int y2,
+void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 colour, int x2, int y2,
 	vuint32)
 {
 	guard(VSoftwareDrawer::DrawLine);
@@ -1231,17 +1231,17 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 color, int x2, int y2,
     register int e;
 
 #if 0
-	if (color == WALLCOLORS)
+	if (colour == WALLCOLOURS)
 	{
 		DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, &antialias[0][0], 8, 3);
 		return;
 	}
-	if (color == FDWALLCOLORS)
+	if (colour == FDWALLCOLOURS)
 	{
 		DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, &antialias[1][0], 8, 3);
 		return;
 	}
-	if (color == CDWALLCOLORS)
+	if (colour == CDWALLCOLOURS)
 	{
 		DrawWuLine(fl->a.x, fl->a.y, fl->b.x, fl->b.y, &antialias[2][0], 8, 3);
 		return;
@@ -1249,13 +1249,13 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 color, int x2, int y2,
 #endif
 
 	if (ScreenBPP == 8)
-		color = d_rgbtable[((color >> 9) & 0x7c00) | ((color >> 6) & 0x03e0) | ((color >> 3) & 0x1f)];
+		colour = d_rgbtable[((colour >> 9) & 0x7c00) | ((colour >> 6) & 0x03e0) | ((colour >> 3) & 0x1f)];
 	else if (ScreenBPP == 15)
-		color = MakeCol15((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+		colour = MakeCol15((colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff);
 	else if (ScreenBPP == 16)
-		color = MakeCol16((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+		colour = MakeCol16((colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff);
 	else
-		color = MakeCol32((color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff);
+		colour = MakeCol32((colour >> 16) & 0xff, (colour >> 8) & 0xff, colour & 0xff);
 
     dx = x2 - x1;
     ax = 2 * (dx < 0 ? -dx : dx);
@@ -1274,7 +1274,7 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 color, int x2, int y2,
        	e = x2;
 		while (1)
 		{
-			PutDot(x, y, color);
+			PutDot(x, y, colour);
     		if (x == e) return;
 	    	if (d >= 0)
 		    {
@@ -1291,7 +1291,7 @@ void VSoftwareDrawer::DrawLine(int x1, int y1, vuint32 color, int x2, int y2,
         e = y2;
 		while (1)
 		{
-			PutDot(x, y, color);
+			PutDot(x, y, colour);
 	    	if (y == e) return;
 		    if (d >= 0)
 		    {

@@ -878,7 +878,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 	glEnable(GL_ALPHA_TEST);
 
 	vuint32 alpha = 255 * (100 - translucency) / 100;
-	SetColor((light & 0x00ffffff) | (alpha << 24));
+	SetColour((light & 0x00ffffff) | (alpha << 24));
 
 	glBegin(GL_QUADS);
 
@@ -955,7 +955,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	alpha = (100.0 - translucency) / 100.0;
 	if (!model_lighting)
 	{
-		SetColor((light & 0x00ffffff) | ((255 * (100 - translucency) / 100) << 24));
+		SetColour((light & 0x00ffffff) | ((255 * (100 - translucency) / 100) << 24));
 	}
 	
 	//
@@ -1087,7 +1087,7 @@ void VOpenGLDrawer::StartParticles()
 void VOpenGLDrawer::DrawParticle(particle_t *p)
 {
 	guard(VOpenGLDrawer::DrawParticle);
-	SetColor(p->color);
+	SetColour(p->colour);
 	if (pointparmsable)
 	{
 		glVertex(p->org);

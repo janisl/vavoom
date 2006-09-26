@@ -208,7 +208,7 @@ void VAllegroInputDevice::StartupKeyboard()
 
 	if (install_keyboard())
 	{
-		Sys_Error("Failed to initialize keyboard");
+		Sys_Error("Failed to initialise keyboard");
 	}
 	keyboard_lowlevel_callback = KeyboardHandler;
 	keyboard_started = true;
@@ -404,17 +404,17 @@ void VAllegroInputDevice::StartupJoystick()
 		return;
 	}
 
-	//	When initialising joystick, it must be centered, so we have to remove
-	// it, give a message to center joystick, wait for keypress and then
-	// reinitialize it.
+	//	When initialising joystick, it must be centred, so we have to remove
+	// it, give a message to centre joystick, wait for keypress and then
+	// reinitialise it.
 	if (joy[0].flags & JOYFLAG_CALIBRATE)
 	{
 		remove_joystick();
 
-		printf("CENTER the joystick and press a key:\n");
+		printf("CENTRE the joystick and press a key:\n");
 		GInput->ReadKey();
 
-		// Initialize the joystick driver
+		// Initialise the joystick driver
 		if (install_joystick(JOY_TYPE_AUTODETECT))
 		{
 			Sys_Error("Error initialising joystick\n%s\n", allegro_error);

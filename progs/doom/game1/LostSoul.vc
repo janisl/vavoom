@@ -46,7 +46,7 @@ void A_SkullAttack()
 
 	PlaySound(AttackSound, CHAN_VOICE);
 	A_FaceTarget();
-	Velocity = Normalise(MobjCenter(Enemy) - Origin) * SkullSpeed;
+	Velocity = Normalise(MobjCentre(Enemy) - Origin) * SkullSpeed;
 }
 
 __states__

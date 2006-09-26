@@ -101,7 +101,7 @@ bool VSdlOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 	if (BPP < 16)
 	{
-		// True-color only
+		// True-colour only
 		return false;
 	}
 

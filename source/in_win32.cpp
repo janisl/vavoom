@@ -509,7 +509,7 @@ VDirectInputDevice::VDirectInputDevice()
 
 	result = DInput->Initialize(hInst, DIRECTINPUT_VERSION);
 	if (result != DI_OK)
-		Sys_Error("Failed to initialize DirectInput object");
+		Sys_Error("Failed to initialise DirectInput object");
 
 	StartupKeyboard();
 	StartupMouse();
@@ -611,7 +611,7 @@ void VDirectInputDevice::StartupKeyboard()
 	//	Create keyboard device
 	Result = DInput->CreateDevice(GUID_SysKeyboard, &lpKeyboard, NULL);
 	if (Result != DI_OK)
-		Sys_Error("Failed to initialize keyboard");
+		Sys_Error("Failed to initialise keyboard");
 
 	//	Set data format
 	Result = lpKeyboard->SetDataFormat(&df_Keyboard);
@@ -715,7 +715,7 @@ void VDirectInputDevice::ShutdownKeyboard()
 //
 // 	VDirectInputDevice::StartupMouse
 //
-//	Initializes mouse
+//	Initialises mouse
 //
 //==========================================================================
 
@@ -883,7 +883,7 @@ void VDirectInputDevice::ShutdownMouse()
 //
 //	VDirectInputDevice::StartupJoystick
 //
-// 	Initializes joystick
+//	Initialises joystick
 //
 //==========================================================================
 

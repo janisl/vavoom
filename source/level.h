@@ -222,7 +222,7 @@ struct sec_plane_t : public TPlane
 struct sec_params_t
 {
 	int			lightlevel;
-	int			LightColor;
+	int			LightColour;
 	int			contents;
 };
 
@@ -681,7 +681,7 @@ private:
 	DECLARE_FUNCTION(SetLineTransluc)
 	DECLARE_FUNCTION(SendFloorSlope)
 	DECLARE_FUNCTION(SendCeilingSlope)
-	DECLARE_FUNCTION(SetSecLightColor)
+	DECLARE_FUNCTION(SetSecLightColour)
 	DECLARE_FUNCTION(SetFloorLightSector)
 	DECLARE_FUNCTION(SetCeilingLightSector)
 	DECLARE_FUNCTION(SetHeightSector)

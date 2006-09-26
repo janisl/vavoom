@@ -229,8 +229,8 @@ static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 		{
 			r_nearzi = z1;
 		}
-		u0 = tr.x * z1 * xprojection + centerxfrac;
-		v0 = tr.y * z1 * yprojection + centeryfrac;
+		u0 = tr.x * z1 * xprojection + centrexfrac;
+		v0 = tr.y * z1 * yprojection + centreyfrac;
 
 		if (u0 < vrectx_adj)
 			u0 = vrectx_adj;
@@ -253,8 +253,8 @@ static void D_EmitEdge(const TVec &pv0, const TVec &pv1)
 	{
 		r_nearzi = z1;
 	}
-	u1 = tr.x * z1 * xprojection + centerxfrac;
-	v1 = tr.y * z1 * yprojection + centeryfrac;
+	u1 = tr.x * z1 * xprojection + centrexfrac;
+	v1 = tr.y * z1 * yprojection + centreyfrac;
 
 	if (u1 < vrectx_adj)
 		u1 = vrectx_adj;
@@ -894,8 +894,8 @@ static void D_CalcGradients(surface_t *pface, int miplevel, const TVec &modelorg
 	d_zistepu = p_normal.x * distinv / xprojection;
 	d_zistepv = p_normal.y * distinv / yprojection;
 	d_ziorigin = p_normal.z * distinv -
-			centerxfrac * d_zistepu -
-			centeryfrac * d_zistepv;
+			centrexfrac * d_zistepu -
+			centreyfrac * d_zistepv;
 
 	TVec tr_saxis;
 	TVec tr_taxis;
@@ -912,9 +912,9 @@ static void D_CalcGradients(surface_t *pface, int miplevel, const TVec &modelorg
 	d_tdivzstepv = tr_taxis.y * t;
 
 	d_sdivzorigin = tr_saxis.z * mipscale -
-		centerxfrac * d_sdivzstepu - centeryfrac * d_sdivzstepv;
+		centrexfrac * d_sdivzstepu - centreyfrac * d_sdivzstepv;
 	d_tdivzorigin = tr_taxis.z * mipscale -
-		centerxfrac * d_tdivzstepu - centeryfrac * d_tdivzstepv;
+		centrexfrac * d_tdivzstepu - centreyfrac * d_tdivzstepv;
 
 	t = 0x10000 * mipscale;
 	sadjust = ((fixed_t)(DotProduct(modelorg, tex->saxis) * t + 0.5)) -

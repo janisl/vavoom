@@ -3,7 +3,7 @@
     TiMidity -- Experimental MIDI to WAVE converter
     Copyright (C) 1995 Tuukka Toivonen <toivonen@clinet.fi>
 
-    Suddenly, you realize that this program is free software; you get
+    Suddenly, you realise that this program is free software; you get
     an overwhelming urge to redistribute it and/or modify it under the
     terms of the GNU General Public License as published by the Free
     Software Foundation; either version 2 of the License, or (at your
@@ -227,7 +227,7 @@ static void mix_mystery_signal(resample_t *sp, int32 *lp, int v, int count)
   final_volume_t 
     left_rear=vp->lr_mix, 
     left=vp->left_mix, 
-    center=vp->ce_mix, 
+    centre=vp->ce_mix, 
     right=vp->right_mix, 
     right_rear=vp->rr_mix, 
     lfe=vp->lfe_mix;
@@ -242,7 +242,7 @@ static void mix_mystery_signal(resample_t *sp, int32 *lp, int v, int count)
 
 	left_rear = vp->lr_mix;
 	left = vp->left_mix;
-	center = vp->ce_mix;
+	centre = vp->ce_mix;
 	right = vp->right_mix;
 	right_rear = vp->rr_mix;
 	lfe = vp->lfe_mix;
@@ -262,7 +262,7 @@ static void mix_mystery_signal(resample_t *sp, int32 *lp, int v, int count)
 			MIXATION(right_rear);
 		}
 		if (num_ochannels == 6) {
-			MIXATION(center);
+			MIXATION(centre);
 			MIXATION(lfe);
 		}
 	  }
@@ -271,7 +271,7 @@ static void mix_mystery_signal(resample_t *sp, int32 *lp, int v, int count)
 	  return;	/* Envelope ran out */
 	left_rear = vp->lr_mix;
 	left = vp->left_mix;
-	center = vp->ce_mix;
+	centre = vp->ce_mix;
 	right = vp->right_mix;
 	right_rear = vp->rr_mix;
 	lfe = vp->lfe_mix;
@@ -289,7 +289,7 @@ static void mix_mystery_signal(resample_t *sp, int32 *lp, int v, int count)
 			MIXATION(right_rear);
 		}
 		if (num_ochannels == 6) {
-			MIXATION(center);
+			MIXATION(centre);
 			MIXATION(lfe);
 		}
 	  }
@@ -297,7 +297,7 @@ static void mix_mystery_signal(resample_t *sp, int32 *lp, int v, int count)
       }
 }
 
-static void mix_center_signal(resample_t *sp, int32 *lp, int v, int count)
+static void mix_centre_signal(resample_t *sp, int32 *lp, int v, int count)
 {
   Voice *vp = voice + v;
   final_volume_t 
@@ -554,7 +554,7 @@ static void mix_mystery(resample_t *sp, int32 *lp, int v, int count)
   final_volume_t 
     left_rear=voice[v].lr_mix, 
     left=voice[v].left_mix, 
-    center=voice[v].ce_mix, 
+    centre=voice[v].ce_mix, 
     right=voice[v].right_mix, 
     right_rear=voice[v].rr_mix, 
     lfe=voice[v].lfe_mix;
@@ -570,13 +570,13 @@ static void mix_mystery(resample_t *sp, int32 *lp, int v, int count)
 			MIXATION(right_rear);
 		}
 		if (num_ochannels == 6) {
-			MIXATION(center);
+			MIXATION(centre);
 			MIXATION(lfe);
 		}
     }
 }
 
-static void mix_center(resample_t *sp, int32 *lp, int v, int count)
+static void mix_centre(resample_t *sp, int32 *lp, int v, int count)
 {
   final_volume_t 
     left=voice[v].left_mix;
@@ -675,9 +675,9 @@ static void ramp_out(resample_t *sp, int32 *lp, int v, int32 c)
 {
 
   /* should be final_volume_t, but uint8 gives trouble. */
-  int32 left_rear, left, center, right, right_rear, lfe, li, ri;
+  int32 left_rear, left, centre, right, right_rear, lfe, li, ri;
 
-  resample_t s = 0; /* silly warning about uninitialized s */
+  resample_t s = 0; /* silly warning about uninitialised s */
 
   /* Fix by James Caldwell */
   if ( c == 0 ) c = 1;
@@ -693,7 +693,7 @@ static void ramp_out(resample_t *sp, int32 *lp, int v, int32 c)
       if (voice[v].panned==PANNED_MYSTERY)
 	{
 	  left_rear = voice[v].lr_mix;
-	  center=voice[v].ce_mix;
+	  centre=voice[v].ce_mix;
 	  right=voice[v].right_mix;
 	  right_rear = voice[v].rr_mix;
 	  lfe = voice[v].lfe_mix;
@@ -703,7 +703,7 @@ static void ramp_out(resample_t *sp, int32 *lp, int v, int32 c)
 	    {
 	      left_rear += li; if (left_rear<0) left_rear=0;
 	      left += li; if (left<0) left=0;
-	      center += li; if (center<0) center=0;
+	      centre += li; if (centre<0) centre=0;
 	      right += ri; if (right<0) right=0;
 	      right_rear += ri; if (right_rear<0) right_rear=0;
 	      lfe += li; if (lfe<0) lfe=0;
@@ -715,12 +715,12 @@ static void ramp_out(resample_t *sp, int32 *lp, int v, int32 c)
 			MIXATION(right_rear);
 		}
 		if (num_ochannels == 6) {
-			MIXATION(center);
+			MIXATION(centre);
 			MIXATION(lfe);
 		}
 	    }
 	}
-      else if (voice[v].panned==PANNED_CENTER)
+      else if (voice[v].panned==PANNED_CENTRE)
 	{
 	  while (c--)
 	    {
@@ -839,12 +839,12 @@ void mix_voice(int32 *buf, int v, int32 c)
 	      else
 		mix_mystery(sp, buf, v, count);
 	    }
-	  else if (vp->panned == PANNED_CENTER)
+	  else if (vp->panned == PANNED_CENTRE)
 	    {
 	      if (vp->envelope_increment || vp->tremolo_phase_increment)
-		mix_center_signal(sp, buf, v, count);
+		mix_centre_signal(sp, buf, v, count);
 	      else
-		mix_center(sp, buf, v, count);
+		mix_centre(sp, buf, v, count);
 	    }
 	  else
 	    { 

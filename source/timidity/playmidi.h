@@ -139,7 +139,7 @@ typedef struct {
 #define PANNED_MYSTERY 0
 #define PANNED_LEFT 1
 #define PANNED_RIGHT 2
-#define PANNED_CENTER 3
+#define PANNED_CENTRE 3
 /* Anything but PANNED_MYSTERY only uses the left volume */
 
 /* Envelope stages: */

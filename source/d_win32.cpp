@@ -94,10 +94,10 @@ void VWin32SoftwareDrawer::Init()
 	if (result != DD_OK)
 		Sys_Error("I_InitGraphics: Failed to create DirecDraw7");
 
-	// Initialize
+	// Initialise
 	result = DDraw->Initialize(NULL);
 	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to initialize DirectDraw");
+		Sys_Error("I_InitGraphics: Failed to initialise DirectDraw");
 
 	// Set cooperative level
 	result = DDraw->SetCooperativeLevel(hwnd,

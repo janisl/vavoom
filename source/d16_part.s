@@ -54,7 +54,7 @@ C(D_DrawParticle_15):
 	movl	P(%esp),%edi
 
 	//	Convert color from RBG format into 16-bpp color
-	movl	pt_color(%edi),%ebx
+	movl	pt_colour(%edi),%ebx
 	movb	C(rshift),%cl
 	movl	%ebx,%ebp
 	shrl	$19,%ebp
@@ -71,7 +71,7 @@ C(D_DrawParticle_15):
 	orl		%eax,%ebp
 	sall	%cl,%ebx
 	orl		%ebx,%ebp
-	movl	%ebp,DP_Color
+	movl	%ebp,DP_Colour
 
 	jmp		L15bppEntry
 
@@ -93,7 +93,7 @@ C(D_DrawParticle_16):
 	movl	P(%esp),%edi
 
 	//	Convert color from RBG format into 16-bpp color
-	movl	pt_color(%edi),%ebx
+	movl	pt_colour(%edi),%ebx
 	movb	C(rshift),%cl
 	movl	%ebx,%ebp
 	shrl	$19,%ebp
@@ -110,7 +110,7 @@ C(D_DrawParticle_16):
 	orl		%eax,%ebp
 	sall	%cl,%ebx
 	orl		%ebx,%ebp
-	movl	%ebp,DP_Color
+	movl	%ebp,DP_Colour
 
 L15bppEntry:
 
@@ -187,10 +187,10 @@ L15bppEntry:
 	fxch	%st(1)			// x | y/z | 1/z
 	fmul	%st(2),%st(0)	// x/z | y/z | 1/z
 	fxch	%st(1)			// y/z | x/z | 1/z
-	fadds	C(centeryfrac)		// v | x/z | 1/z
+	fadds	C(centreyfrac)		// v | x/z | 1/z
 	fxch	%st(1)			// x/z | v | 1/z
-	fadds	C(centerxfrac)		// u | v | 1/z
-// FIXME: preadjust xcenter and ycenter
+	fadds	C(centrexfrac)		// u | v | 1/z
+// FIXME: preadjust xcentre and ycentre
 	fxch	%st(1)			// v | u | 1/z
 	fadds	float_point5	// v | u | 1/z
 	fxch	%st(1)			// u | v | 1/z
@@ -272,7 +272,7 @@ LTestDone:
 	cmpl	$4,%eax
 	ja		LDefault
 
-	movw	DP_Color,%cx
+	movw	DP_Colour,%cx
 
 	jmp		*DP_EntryTable-4(,%eax,4)
 
@@ -490,7 +490,7 @@ LDefault:
 	movb	C(d_y_aspect_shift),%cl
 	shll	%cl,%ebx
 
-	movw	DP_Color,%cx
+	movw	DP_Colour,%cx
 
 // for ( ; count ; count--, pz += d_zwidth, pdest += screenwidth)
 // {

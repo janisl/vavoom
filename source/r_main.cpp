@@ -387,13 +387,13 @@ static void R_SetupFrame()
 	R_TransformFrustum();
 
     extralight = cl->extralight;
-	if (cl->fixedcolormap >= 32)
+	if (cl->fixedcolourmap >= 32)
 	{
 		fixedlight = 255;
 	}
-	else if (cl->fixedcolormap)
+	else if (cl->fixedcolourmap)
 	{
-		fixedlight = 255 - (cl->fixedcolormap << 3);
+		fixedlight = 255 - (cl->fixedcolourmap << 3);
 	}
 	else
 	{
@@ -818,14 +818,14 @@ void R_InitData()
 	//	We use colour 0 as transparent colour, so we must find an alternate
 	// index for black colour. In Doom, Heretic and Strife there is another
 	// black colour, in Hexen it's almost black.
-	//	I think that originaly Doom uses colour 255 as transparent color,
+	//	I think that originaly Doom uses colour 255 as transparent colour,
 	// but utilites created by others uses the alternate black colour and
-	// these graphics can contain pixels of color 255.
-	//	Heretic and Hexen also uses color 255 as transparent, even more - in
+	// these graphics can contain pixels of colour 255.
+	//	Heretic and Hexen also uses colour 255 as transparent, even more - in
 	// colourmaps it's maped to colour 0. Posibly this can cause problems
 	// with modified graphics.
-	//	Strife uses color 0 as transparent. I already had problems with fact
-	// that colour 255 is normal color, now there shouldn't be any problems.
+	//	Strife uses colour 0 as transparent. I already had problems with fact
+	// that colour 255 is normal colour, now there shouldn't be any problems.
 	VStream* Strm = W_CreateLumpReaderName(NAME_playpal);
 	rgba_t* pal = r_palette;
 	int best_dist = 0x10000;

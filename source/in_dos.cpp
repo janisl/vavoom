@@ -324,7 +324,7 @@ void VDosInputDevice::ShutdownKeyboard()
 //
 //  VDosInputDevice::StartupMouse
 //
-//	Initializes mouse
+//	Initialises mouse
 //
 //==========================================================================
 
@@ -460,7 +460,7 @@ void VDosInputDevice::ShutdownMouse()
 //
 //  VDosInputDevice::StartupJoystick
 //
-// 	Initializes joystick
+// 	Initialises joystick
 //
 //==========================================================================
 
@@ -472,7 +472,7 @@ void VDosInputDevice::StartupJoystick()
 		return;
 	}
 
-	// Initialize the joystick driver
+	// Initialise the joystick driver
 	if (install_joystick(JOY_TYPE_AUTODETECT))
 	{
 		Sys_Error("Error initialising joystick\n%s\n", allegro_error);
@@ -488,10 +488,10 @@ void VDosInputDevice::StartupJoystick()
 	{
 		remove_joystick();
 
-		printf("CENTER the joystick and press a key:\n");
+		printf("CENTRE the joystick and press a key:\n");
 		GInput->ReadKey();
 
-		// Initialize the joystick driver
+		// Initialise the joystick driver
 		if (install_joystick(JOY_TYPE_AUTODETECT))
 		{
 			Sys_Error("Error initialising joystick\n%s\n", allegro_error);

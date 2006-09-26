@@ -175,12 +175,12 @@ float_point5:			.single	0.5
 .globl	DP_u
 .globl	DP_v
 .globl	DP_32768
-.globl	DP_Color
+.globl	DP_Colour
 .globl	DP_Pix
 DP_u:			.long	0
 DP_v:			.long	0
 DP_32768:		.single	32768.0
-DP_Color:		.long	0
+DP_Colour:		.long	0
 DP_Pix:			.long	0
 
 .globl	lzistepx

@@ -105,7 +105,7 @@ typedef double FLOAT_T;
 
 /* For some reason the sample volume is always set to maximum in all
    patch files. Define this for a crude adjustment that may help
-   equalize instrument volumes. */
+   equalise instrument volumes. */
 #define ADJUST_SAMPLE_VOLUMES
 
 /* The number of samples to use for ramping out a dying note. Affects

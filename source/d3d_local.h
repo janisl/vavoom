@@ -80,42 +80,42 @@ struct MyD3DVertex
 	float		x;			// Homogeneous coordinates
 	float		y;
 	float		z;
-	vuint32		color;		// Vertex color
+	vuint32		colour;		// Vertex colour
 	float		texs;		// Texture coordinates
 	float		text;
 	float		lights;		// Lightmap coordinates
     float		lightt;
 
 	MyD3DVertex() { }
-	MyD3DVertex(const TVec& v, vuint32 _color, float _s, float _t)
+	MyD3DVertex(const TVec& v, vuint32 _colour, float _s, float _t)
 	{
 		x = v.x;
 		y = v.y;
 		z = v.z;
-		color = _color;
+		colour = _colour;
 		texs = _s;
 		text = _t;
 		lights = 0.0;
 		lightt = 0.0;
 	}
-	MyD3DVertex(const TVec& v, vuint32 _color, float _s, float _t,
+	MyD3DVertex(const TVec& v, vuint32 _colour, float _s, float _t,
 		float _ls, float _lt)
 	{
 		x = v.x;
 		y = v.y;
 		z = v.z;
-		color = _color;
+		colour = _colour;
 		texs = _s;
 		text = _t;
 		lights = _ls;
 		lightt = _lt;
 	}
-	MyD3DVertex(float _x, float _y, vuint32 _color, float _s, float _t)
+	MyD3DVertex(float _x, float _y, vuint32 _colour, float _s, float _t)
 	{
 		x = _x;
 		y = _y;
 		z = 0.0;
-		color = _color;
+		colour = _colour;
 		texs = _s;
 		text = _t;
 		lights = 0.0;

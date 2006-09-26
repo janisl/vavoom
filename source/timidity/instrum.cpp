@@ -568,7 +568,7 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
 	}
 
       READ_CHAR(sp->modes);
-      READ_SHORT(sp->freq_center);
+      READ_SHORT(sp->freq_centre);
       READ_SHORT(sp->freq_scale);
 
       if (sf2flag)

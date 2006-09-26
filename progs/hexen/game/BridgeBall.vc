@@ -31,7 +31,7 @@
 //      _Special1    true == removing from world
 //
 //  Child
-//      Instigator  pointer to center mobj
+//      Instigator  pointer to centre mobj
 //
 //**************************************************************************
 

@@ -37,7 +37,7 @@ void InitWindow()
 	switch (GetCvar('_driver'))
 	{
 	case DRV_SOFTWARE:
-		Choices[7] = MenuChoice_ColoredLights;
+		Choices[7] = MenuChoice_ColouredLights;
 		Choices[8] = MenuChoice_SpanDrawing;
 		break;
 

@@ -220,11 +220,11 @@ void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_SRCCOLOR)
 	{
-		Ar.Log(" SrcColor");
+		Ar.Log(" SrcColour");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_INVSRCCOLOR)
 	{
-		Ar.Log(" InvSrcColor");
+		Ar.Log(" InvSrcColour");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_SRCALPHA)
 	{
@@ -244,11 +244,11 @@ void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_DESTCOLOR)
 	{
-		Ar.Log(" DestColor");
+		Ar.Log(" DestColour");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_INVDESTCOLOR)
 	{
-		Ar.Log(" InvDestColor");
+		Ar.Log(" InvDestColour");
 	}
 	if (pc.dwSrcBlendCaps & D3DPBLENDCAPS_SRCALPHASAT)
 	{
@@ -274,11 +274,11 @@ void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_SRCCOLOR)
 	{
-		Ar.Log(" SrcColor");
+		Ar.Log(" SrcColour");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_INVSRCCOLOR)
 	{
-		Ar.Log(" InvSrcColor");
+		Ar.Log(" InvSrcColour");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_SRCALPHA)
 	{
@@ -298,11 +298,11 @@ void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_DESTCOLOR)
 	{
-		Ar.Log(" DestColor");
+		Ar.Log(" DestColour");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_INVDESTCOLOR)
 	{
-		Ar.Log(" InvDestColor");
+		Ar.Log(" InvDestColour");
 	}
 	if (pc.dwDestBlendCaps & D3DPBLENDCAPS_SRCALPHASAT)
 	{
@@ -354,27 +354,27 @@ void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 	Ar.Log("Shade caps:");
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORFLATMONO)
 	{
-		Ar.Log(" ColorFlatMono");
+		Ar.Log(" ColourFlatMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORFLATRGB)
 	{
-		Ar.Log(" ColorFlatRGB");
+		Ar.Log(" ColourFlatRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORGOURAUDMONO)
 	{
-		Ar.Log(" ColorGouraudMono");
+		Ar.Log(" ColourGouraudMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORGOURAUDRGB)
 	{
-		Ar.Log(" ColorGouraudRGB");
+		Ar.Log(" ColourGouraudRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORPHONGMONO)
 	{
-		Ar.Log(" ColorPhongMono");
+		Ar.Log(" ColourPhongMono");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_COLORPHONGRGB)
 	{
-		Ar.Log(" ColorPhongRGB");
+		Ar.Log(" ColourPhongRGB");
 	}
 	if (pc.dwShadeCaps & D3DPSHADECAPS_SPECULARFLATMONO)
 	{
@@ -452,7 +452,7 @@ void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_TRANSPARENCY)
 	{
-		Ar.Log("- Color-keyed textures are supported");
+		Ar.Log("- Colour-keyed textures are supported");
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_BORDER)
 	{
@@ -484,7 +484,7 @@ void VDirect3DDrawer::LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc)
 	}
 	if (pc.dwTextureCaps & D3DPTEXTURECAPS_COLORKEYBLEND)
 	{
-		Ar.Log("- colorkeyblend");
+		Ar.Log("- colourkeyblend");
 	}
 
 	Ar.Log("Texture filter caps:");
@@ -907,13 +907,13 @@ void VDirect3DDrawer::LogPixelFormat(FOutputDevice &Ar, const LPDDPIXELFORMAT pf
 	if (pf->dwFlags & DDPF_FOURCC)
 		Ar.Log("- contains a FOURCC code describing a non-RGB pixel format.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED1)
-		Ar.Log("- 1-bit color indexed.");
+		Ar.Log("- 1-bit colour indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED2)
-		Ar.Log("- 2-bit color indexed.");
+		Ar.Log("- 2-bit colour indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED4)
-		Ar.Log("- 4-bit color indexed.");
+		Ar.Log("- 4-bit colour indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXED8)
-		Ar.Log("- 8-bit color indexed.");
+		Ar.Log("- 8-bit colour indexed.");
 	if (pf->dwFlags & DDPF_PALETTEINDEXEDTO8)
 		Ar.Log("- indexed to an 8-bit palette.");
 	if (pf->dwFlags & DDPF_RGB)

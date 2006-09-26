@@ -187,7 +187,7 @@ void InitTextureModel(line_t* Line, line_t* SrcLine)
 //
 //	InitGen
 //
-//	Add a generalized scroller to the thinker list.
+//	Add a generalised scroller to the thinker list.
 //
 // type: the enumerated type of scrolling: floor, ceiling, floor carrier,
 //   wall, floor carrier & scroller

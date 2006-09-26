@@ -401,7 +401,7 @@ void T_DrawNString(int x, int y, const char* String, int lenght)
 	cx = x;
 	cy = y;
 
-	if (HAlign == hcenter)
+	if (HAlign == hcentre)
 		cx -= T_StringWidth(String) / 2;
 	if (HAlign == hright)
 		cx -= T_StringWidth(String);
@@ -478,7 +478,7 @@ void T_DrawNText(int x, int y, const char* String, int lenght)
 	cx = x;
 	cy = y;
 
-	if (VAlign == vcenter)
+	if (VAlign == vcentre)
 		cy -= T_TextHeight(String) / 2;
 	if (VAlign == vbottom)
 		cy -= T_TextHeight(String);
@@ -540,7 +540,7 @@ int T_DrawTextW(int x, int y, const char* String, int w)
 	cy = y;
 
 	//	These won't work correctly so don't use them for now.
-	if (VAlign == vcenter)
+	if (VAlign == vcentre)
 		cy -= T_TextHeight(String) / 2;
 	if (VAlign == vbottom)
 		cy -= T_TextHeight(String);
@@ -642,7 +642,7 @@ void T_DrawString8(int x, int y, const char* String)
 	cx = x;
 	cy = y;
 
-	if (HAlign == hcenter)
+	if (HAlign == hcentre)
 		cx -= T_StringWidth(String) / 2;
 	if (HAlign == hright)
 		cx -= T_StringWidth(String);

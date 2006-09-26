@@ -1072,7 +1072,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 		float thrust;
 
 		thrust = itof(damage) / Mass * 656.25;
-		dir = Normalise(MobjCenter(self) - MobjCenter(inflictor));
+		dir = Normalise(MobjCentre(self) - MobjCentre(inflictor));
 		Velocity += dir * thrust;
 	}
 
@@ -2314,7 +2314,7 @@ bool HitFloor()
 				{
 					PlaySound('*land', CHAN_BODY);
 				}
-//FIXME				Player.centering = true;
+//FIXME				Player.centreing = true;
 			}
 		}
 		else if (Class == Pottery1 || Class == Pottery2 || Class == Pottery3)
@@ -2499,7 +2499,7 @@ void PlayerLandedOnThing()
 	{
 		PlaySound('*land', CHAN_BODY);
 	}
-//FIXME Player.centering = true;
+//FIXME Player.centreing = true;
 }
 
 //==========================================================================
@@ -3408,7 +3408,7 @@ bool PIT_RadiusAttack(Entity Other)
 		return true;
 	}
 #endif
-	dist = Length(MobjCenter(Other) - MobjCenter(self)) - Other.Radius;
+	dist = Length(MobjCentre(Other) - MobjCentre(self)) - Other.Radius;
 	if (dist < 0.0)
 	{
 		dist = 0.0;

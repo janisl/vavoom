@@ -80,7 +80,7 @@ void A_FiredSpawnRock()
 		mo._Special1 = 2;	// Number bounces
 	}
 
-	// Initialize fire demon
+	// Initialise fire demon
 	StrafeCount = 0;
 	bJustAttacked = false;
 }

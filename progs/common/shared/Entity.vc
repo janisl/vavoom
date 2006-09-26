@@ -482,7 +482,7 @@ void RemoveThing()
 
 float DistTo(Entity Other)
 {
-	return Length(MobjCenter(Other) - MobjCenter(self));
+	return Length(MobjCentre(Other) - MobjCentre(self));
 }
 
 //==========================================================================

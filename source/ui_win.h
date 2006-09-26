@@ -46,7 +46,7 @@ class VWindow : public VObject
 		WF_IsSensitive		= 0x0002,	// True if the window can take input
 		WF_IsSelectable		= 0x0004,	// True if the window can have keyboard focus
 		WF_TickEnabled		= 0x0008,	// True if () event should be called
-		WF_IsInitialised	= 0x0010,	// True if the window has been initialized
+		WF_IsInitialised	= 0x0010,	// True if the window has been initialised
 
 		// Destructor information
 		WF_BeingDestroyed	= 0x0020,	// True if this window is going bye-bye

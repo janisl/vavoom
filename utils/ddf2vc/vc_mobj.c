@@ -741,7 +741,7 @@ void VC_WriteMobjs(void)
 		if (m->halo.translucency != 0.5)
 			fprintf(f, "\tHaloTranslucency = %1.2f;\n", m->halo.translucency);
 		if (m->halo.colour != 0x00ffffff)
-			fprintf(f, "\tHaloColor = 0x%08x;\n", m->halo.colour);
+			fprintf(f, "\tHaloColour = 0x%08x;\n", m->halo.colour);
 		if (m->halo.graphic[0])
 			fprintf(f, "\tHaloGraphic = \"%s\";\n", m->halo.graphic);
 
@@ -750,7 +750,7 @@ void VC_WriteMobjs(void)
 		if (m->dlight.intensity != 32)
 			fprintf(f, "\tDLightIntensity = %d;\n", m->dlight.intensity);
 		if (m->dlight.colour != 0x00ffffff)
-			fprintf(f, "\tDLightColor = 0x%08x;\n", m->dlight.colour);
+			fprintf(f, "\tDLightColour = 0x%08x;\n", m->dlight.colour);
 		if (m->dlight.height != 0.5)
 			fprintf(f, "\tDLightHeight = %1.2f;\n", m->dlight.height);
 

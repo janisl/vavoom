@@ -57,7 +57,7 @@
 // !!! if this is changed, it must be changed in drawer.h too !!!
 // driver-usable fields
 #define pt_org				0
-#define pt_color			12
+#define pt_colour			12
 // drivers never touch the following fields
 #define pt_next				16
 #define pt_vel				20
@@ -122,7 +122,7 @@
 #define atd_pfinalverts		16
 #define atd_pstverts		20
 #define atd_numtriangles	24
-#define atd_coloredlight	28
+#define atd_colouredlight	28
 #define atd_size			32
 
 // mtriangle_t structure
@@ -203,7 +203,7 @@
 .extern	DP_u
 .extern	DP_v
 .extern	DP_32768
-.extern	DP_Color
+.extern	DP_Colour
 .extern	DP_Pix
 
 .extern	lzistepx
@@ -229,8 +229,8 @@
 .extern	C(r_ppn)
 .extern	C(r_pup)
 .extern	C(r_pright)
-.extern	C(centerxfrac)
-.extern	C(centeryfrac)
+.extern	C(centrexfrac)
+.extern	C(centreyfrac)
 .extern	C(d_particle_right)
 .extern	C(d_particle_top)
 .extern	C(d_pix_min)
@@ -316,8 +316,8 @@
 .extern	C(aliastransform)
 .extern	C(xprojection)
 .extern	C(yprojection)
-.extern	C(aliasxcenter)
-.extern	C(aliasycenter)
+.extern	C(aliasxcentre)
+.extern	C(aliasycentre)
 .extern	C(ziscale)
 .extern	C(d_plightvec)
 .extern	C(d_avertexnormals)

@@ -67,7 +67,7 @@ struct surface_t
 	surface_t		*next;
 	texinfo_t		*texinfo;
 	TPlane			*plane;
-	vuint32			Light;		//	Light level and color.
+	vuint32			Light;		//	Light level and colour.
 	byte			*lightmap;
 	rgb_t			*lightmap_rgb;
 	int				dlightframe;
@@ -83,7 +83,7 @@ enum
 {
 	TEXFMT_8,		//	Paletised texture in main palette.
 	TEXFMT_8Pal,	//	Paletised texture with custom palette.
-	TEXFMT_RGBA,	//	Truecolor texture.
+	TEXFMT_RGBA,	//	Truecolour texture.
 };
 
 class VTexture

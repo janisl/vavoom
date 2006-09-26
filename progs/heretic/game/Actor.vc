@@ -972,7 +972,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			thrust = itof(damage) / Mass * 656.25;
 		}
 
-		dir = MobjCenter(self) - MobjCenter(inflictor);
+		dir = MobjCentre(self) - MobjCentre(inflictor);
 		if (bNoGravity)
 		{
 			dir.z = 0.0;
@@ -1778,7 +1778,7 @@ void ZMovement(float DeltaTime)
 			{
 				Player(Player).DeltaViewHeight = vdot / 8.0;
 				PlaySound('*land', CHAN_BODY);
-//FIXME				Player.centering = true;
+//FIXME				Player.centreing = true;
 			}
 			Velocity -= vdot * Floor->normal;
 		}
@@ -2262,7 +2262,7 @@ bool PIT_RadiusAttack(Entity Other)
 		return true;
 	}
 
-	dist = Length(MobjCenter(Other) - MobjCenter(self)) - Other.Radius;
+	dist = Length(MobjCentre(Other) - MobjCentre(self)) - Other.Radius;
 
 	if (dist < 0.0)
 		dist = 0.0;

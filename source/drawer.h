@@ -50,7 +50,7 @@ struct particle_t
 {
 	//	Drawing info
 	TVec		org;	//	position
-	vuint32		color;	//	ARGB color
+	vuint32		colour;	//	ARGB colour
 	//	Handled by refresh
 	particle_t*	next;	//	next in the list
 	TVec		vel;	//	velocity

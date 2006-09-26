@@ -393,20 +393,20 @@ C(D_AliasProjectFinalVert):
 							// ziscale * zi
 	fxch	%st(1)			// x * xprojection * zi | y * yprojection * zi |
 							// ziscale * zi
-	fadds	C(aliasxcenter)	// x * xprojection * zi + aliasxcenter |
+	fadds	C(aliasxcentre)	// x * xprojection * zi + aliasxcentre |
 							// y * yprojection * zi | ziscale * zi
 	fxch	%st(1)			// y * yprojection * zi |
-							// x * xprojection * zi + aliasxcenter |
+							// x * xprojection * zi + aliasxcentre |
 							// ziscale * zi
-	fadds	C(aliasycenter)	// y * yprojection * zi + aliasycenter |
-							// x * xprojection * zi + aliasxcenter |
+	fadds	C(aliasycentre)	// y * yprojection * zi + aliasycentre |
+							// x * xprojection * zi + aliasxcentre |
 							// ziscale * zi
 	fxch	%st(2)			// ziscale * zi |
-							// x * xprojection * zi + aliasxcenter |
-							// y * yprojection * zi + aliasycenter
-	fistpl	8(%ecx)			// x * xprojection * zi + aliasxcenter |
-							// y * yprojection * zi + aliasycenter
-	fistpl	(%ecx)			// y * yprojection * zi + aliasycenter
+							// x * xprojection * zi + aliasxcentre |
+							// y * yprojection * zi + aliasycentre
+	fistpl	8(%ecx)			// x * xprojection * zi + aliasxcentre |
+							// y * yprojection * zi + aliasycentre
+	fistpl	(%ecx)			// y * yprojection * zi + aliasycentre
 	fistpl	4(%ecx)			//
 	ret
 
@@ -572,15 +572,15 @@ Lp3:
 	movl	%ecx,12(%esi)
 	movl	%edx,16(%esi)
 	fxch	%st(1)					// x * zi | zi | yaccum124 | yaccum3
-	fadds	C(aliasxcenter)			// x * zi + aliasxcenter | zi |
+	fadds	C(aliasxcentre)			// x * zi + aliasxcentre | zi |
 									// yaccum124 | yaccum3
 	fxch	%st(2)					// yaccum124 | zi |
-									// x * zi + aliasxcenter | yaccum3
-	faddp	%st(0),%st(3)			// zi | x * zi + aliasxcenter | y
-	fistl	8(%esi)					// zi | x * zi + aliasxcenter | y
-	fmulp	%st(0),%st(2)			// x * zi + aliasxcenter | y * zi
+									// x * zi + aliasxcentre | yaccum3
+	faddp	%st(0),%st(3)			// zi | x * zi + aliasxcentre | y
+	fistl	8(%esi)					// zi | x * zi + aliasxcentre | y
+	fmulp	%st(0),%st(2)			// x * zi + aliasxcentre | y * zi
 	fistpl	(%esi)					// y * zi
-	fadds	C(aliasycenter)			// y * zi + aliasycenter
+	fadds	C(aliasycentre)			// y * zi + aliasycentre
 	movl	%ebx,20(%esi)
 	movl	$0,24(%esi)
 	fistpl	4(%esi)					//

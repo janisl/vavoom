@@ -61,7 +61,7 @@ void A_Tracer()
 	if (!Enemy || Enemy.Health <= 0)
 		return;
 
-	wishdir = Normalise(MobjCenter(Enemy) - Origin);
+	wishdir = Normalise(MobjCentre(Enemy) - Origin);
 	currdir = Normalise(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);

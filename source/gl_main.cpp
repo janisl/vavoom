@@ -389,10 +389,10 @@ void VOpenGLDrawer::SetupView(const refdef_t *rd)
 	if (r_fog)
 	{
 		static GLenum fogMode[4] = { GL_LINEAR, GL_LINEAR, GL_EXP, GL_EXP2 };
-		float fogColor[4] = { r_fog_r, r_fog_g, r_fog_b, 1.0 };
+		float fogColour[4] = { r_fog_r, r_fog_g, r_fog_b, 1.0 };
 
 		glFogi(GL_FOG_MODE, fogMode[r_fog & 3]);
-		glFogfv(GL_FOG_COLOR, fogColor);
+		glFogfv(GL_FOG_COLOR, fogColour);
 		glFogf(GL_FOG_DENSITY, r_fog_density);
 		glHint(GL_FOG_HINT, r_fog < 4 ? GL_DONT_CARE : GL_NICEST);
 		glFogf(GL_FOG_START, r_fog_start);

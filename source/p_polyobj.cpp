@@ -356,7 +356,7 @@ void VLevel::TranslatePolyobjToStartSpot(float originX, float originY, int tag)
 
 	seg_t** tempSeg = po->segs;
 	vertex_t* tempPt = po->originalPts;
-	vertex_t avg(0, 0, 0); // used to find a polyobj's center, and hence subsector
+	vertex_t avg(0, 0, 0); // used to find a polyobj's centre, and hence subsector
 
 	for (int i = 0; i < po->numsegs; i++, tempSeg++, tempPt++)
 	{

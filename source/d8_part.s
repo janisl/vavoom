@@ -133,10 +133,10 @@ C(D_DrawParticle_8):
 	fxch	%st(1)			// x | y/z | 1/z
 	fmul	%st(2),%st(0)	// x/z | y/z | 1/z
 	fxch	%st(1)			// y/z | x/z | 1/z
-	fadds	C(centeryfrac)		// v | x/z | 1/z
+	fadds	C(centreyfrac)		// v | x/z | 1/z
 	fxch	%st(1)			// x/z | v | 1/z
-	fadds	C(centerxfrac)		// u | v | 1/z
-// FIXME: preadjust xcenter and ycenter
+	fadds	C(centrexfrac)		// u | v | 1/z
+// FIXME: preadjust xcentre and ycentre
 	fxch	%st(1)			// v | u | 1/z
 	fadds	float_point5	// v | u | 1/z
 	fxch	%st(1)			// u | v | 1/z
@@ -174,7 +174,7 @@ C(D_DrawParticle_8):
 
 	//	Convert color from RBG format into palette index by looking up
 	// in RGB table
-	movl	pt_color(%edi),%ebx
+	movl	pt_colour(%edi),%ebx
 	movl	%ebx,%ecx
 	shrl	$9,%ecx
 	movl	%ebx,%ebp
@@ -187,7 +187,7 @@ C(D_DrawParticle_8):
 	movl	C(d_rgbtable),%ebp
 	addl	%ecx,%ebx
 	movb	(%ebp,%ebx),%cl
-	movb	%cl,DP_Color
+	movb	%cl,DP_Colour
 
 	movl	C(scrn),%ebx
 
@@ -229,7 +229,7 @@ LTestPixMax:
 	movl	%ecx,%eax
 LTestDone:
 
-	movb	DP_Color,%ch
+	movb	DP_Colour,%ch
 
 	movl	C(d_y_aspect_shift),%ebx
 	testl	%ebx,%ebx

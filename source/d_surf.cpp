@@ -156,7 +156,7 @@ static void	(*surfmiptable32RGB[4])(void) =
 
 int					c_surf;
 
-static VCvarI d_colored_lights("d_colored_lights", "1", CVAR_Archive);
+static VCvarI d_coloured_lights("d_coloured_lights", "1", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -229,13 +229,13 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	byte			*pcolumndest;
 	void			(*pblockdrawer)(void);
 	miptexture_t	*mt;
-	bool			colored;
+	bool			coloured;
 
 	// calculate the lightings
-	colored = R_BuildLightMap(surface, 3);
-	if (!d_colored_lights)
+	coloured = R_BuildLightMap(surface, 3);
+	if (!d_coloured_lights)
 	{
-		colored = false;
+		coloured = false;
 	}
 	
 	surfrowbytes = surfwidth * PixelBytes;
@@ -263,7 +263,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 
 	if (PixelBytes == 1)
 	{
-		if (colored)
+		if (coloured)
 			pblockdrawer = surfmiptable8RGB[miplevel];
 		else
 			pblockdrawer = surfmiptable8[miplevel];
@@ -272,7 +272,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	}
 	else if (PixelBytes == 2)
 	{
-		if (colored)
+		if (coloured)
 			pblockdrawer = surfmiptable16RGB[miplevel];
 		else
 			pblockdrawer = surfmiptable16[miplevel];
@@ -281,7 +281,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	}
 	else
 	{
-		if (colored)
+		if (coloured)
 			pblockdrawer = surfmiptable32RGB[miplevel];
 		else
 			pblockdrawer = surfmiptable32[miplevel];

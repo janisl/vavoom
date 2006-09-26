@@ -694,10 +694,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		ShowWindow(hwnd, iCmdShow);
 		UpdateWindow(hwnd);
 
-		//	Initialize COM
+		//	Initialise COM
 		if (FAILED(CoInitialize(NULL)))
 		{
-			MessageBox(hwnd, "Failed to initialize COM", "Error", MB_OK);
+			MessageBox(hwnd, "Failed to initialise COM", "Error", MB_OK);
 			return 1;
 		}
 

@@ -39,31 +39,31 @@
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern byte		gammatable[5][256];
+extern vuint8	gammatable[5][256];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 //
-//	Colormaps
+//	Colourmaps
 //
-byte			*colormaps;	// Standard colormap
-byte			*fadetable;	// Current level's colormap
-word			*fadetable16;
-vuint32			*fadetable32;
-word			*fadetable16r;
-word			*fadetable16g;
-word			*fadetable16b;
-byte			*fadetable32r;
-byte			*fadetable32g;
-byte			*fadetable32b;
+vuint8*			colourmaps;	// Standard colourmap
+vuint8*			fadetable;	// Current level's colourmap
+vuint16*		fadetable16;
+vuint32*		fadetable32;
+vuint16*		fadetable16r;
+vuint16*		fadetable16g;
+vuint16*		fadetable16b;
+vuint8*			fadetable32r;
+vuint8*			fadetable32g;
+vuint8*			fadetable32b;
 
 //
 //	Translucency tables
 //
-byte*			tinttables[5];
-word			scaletable[32][256];
+vuint8*			tinttables[5];
+vuint16			scaletable[32][256];
 
-byte*			d_rgbtable;
+vuint8*			d_rgbtable;
 
 vuint8*			consbgmap = NULL;
 
@@ -157,7 +157,7 @@ static void CalcFadetable16(rgb_t *pal)
 			fadetable16r[i] = MakeCol(r, 0, 0);
 			fadetable16g[i] = MakeCol(0, g, 0);
 			fadetable16b[i] = MakeCol(0, 0, b);
-			//	For 16 bit we use color 0 as transparent
+			//	For 16 bit we use colour 0 as transparent
 			if (!fadetable16[i])
 			{
 				fadetable16[i] = 1;
@@ -221,7 +221,7 @@ static void CalcFadetable32(rgb_t *pal)
 			fadetable32r[i] = r;
 			fadetable32g[i] = g;
 			fadetable32b[i] = b;
-			//	For 32 bit we use color 0 as transparent
+			//	For 32 bit we use colour 0 as transparent
 			if (!fadetable32[i])
 			{
 				fadetable32[i] = 1;
@@ -289,10 +289,10 @@ static void InitColourmaps()
 	guard(InitColourmaps);
 	// Load in the light tables,
 	VStream* Strm = W_CreateLumpReaderName(NAME_colormap);
-	colormaps = new vuint8[Strm->TotalSize()];
-	Strm->Serialise(colormaps, Strm->TotalSize());
+	colourmaps = new vuint8[Strm->TotalSize()];
+	Strm->Serialise(colourmaps, Strm->TotalSize());
 	delete Strm;
-	fadetable = colormaps;
+	fadetable = colourmaps;
 	fadetable16 = (word*)Z_Malloc(32 * 256 * 2);
 	fadetable16r = (word*)Z_Malloc(32 * 256 * 2);
 	fadetable16g = (word*)Z_Malloc(32 * 256 * 2);
@@ -467,7 +467,7 @@ void VSoftwareDrawer::UpdatePalette()
 void VSoftwareDrawer::NewMap()
 {
 	guard(VSoftwareDrawer::NewMap);
-	if (fadetable != colormaps)
+	if (fadetable != colourmaps)
 	{
 		Z_Free(fadetable);
 	}
@@ -481,7 +481,7 @@ void VSoftwareDrawer::NewMap()
 	}
 	else
 	{
-		fadetable = colormaps;
+		fadetable = colourmaps;
 	}
 
 	//	Remap colour 0 to alternate balck colour
@@ -491,7 +491,7 @@ void VSoftwareDrawer::NewMap()
 		{
 			fadetable[i] = 0;
 		}
-		else if (!colormaps[i])
+		else if (!colourmaps[i])
 		{
 			fadetable[i] = r_black_colour;
 		}

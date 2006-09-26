@@ -1209,20 +1209,20 @@ bool CheckLock(Actor user, int lock)
 		//	Regular keys.
 		if (!(Player(user.Player).Keys & (1 << (lock - 1))))
 		{
-			user.Player.centerprint("You need a key");
+			user.Player.centreprint("You need a key");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
 	}
 	else if (lock == 102)
 	{
-		user.Player.centerprint("That doesn\'t seem to work");
+		user.Player.centreprint("That doesn\'t seem to work");
 		user.PlaySound('*grunt', CHAN_VOICE);
 		return false;
 	}
 	else if (lock == 103)
 	{
-		user.Player.centerprint(
+		user.Player.centreprint(
 			"THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
 		user.PlaySound('*grunt', CHAN_VOICE);
 		return false;
@@ -3622,8 +3622,8 @@ bool DoGroupForOne(Actor victim, Actor source, Actor dest, bool floorz,
 //
 //	EV_TeleportGroup
 //
-//	[RH] Teleport a group of actors centered around source_tid so
-// that they become centered around dest_tid instead.
+//	[RH] Teleport a group of actors centred around source_tid so
+// that they become centred around dest_tid instead.
 //
 //==========================================================================
 

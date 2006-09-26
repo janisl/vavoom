@@ -126,7 +126,7 @@ void SV_ReadFromUserInfo()
 		sv_player->BaseClass = atoi(*Info_ValueForKey(sv_player->UserInfo, "class"));
 	}
 	sv_player->PlayerName = Info_ValueForKey(sv_player->UserInfo, "name");
-	sv_player->Color = atoi(*Info_ValueForKey(sv_player->UserInfo, "color"));
+	sv_player->Colour = atoi(*Info_ValueForKey(sv_player->UserInfo, "colour"));
 	sv_player->eventUserinfoChanged();
 	unguard;
 }
@@ -269,11 +269,11 @@ IMPLEMENT_FUNCTION(VBasePlayer, cprint)
 	SV_ClientPrintf(Self, *msg);
 }
 
-IMPLEMENT_FUNCTION(VBasePlayer, centerprint)
+IMPLEMENT_FUNCTION(VBasePlayer, centreprint)
 {
 	VStr msg = PF_FormatString();
 	P_GET_SELF;
-	SV_ClientCenterPrintf(Self, *msg);
+	SV_ClientCentrePrintf(Self, *msg);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, GetPlayerNum)
@@ -301,7 +301,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
 	Self->PlayerFlags &= ~VBasePlayer::PF_AttackDown;
 	Self->PlayerFlags &= ~VBasePlayer::PF_UseDown;
 	Self->ExtraLight = 0;
-	Self->FixedColormap = 0;
+	Self->FixedColourmap = 0;
 	Self->Palette = 0;
 	memset(Self->CShifts, 0, sizeof(Self->CShifts));
 	Self->PSpriteSY = 0;

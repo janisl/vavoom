@@ -284,7 +284,7 @@ int VIpxDriver::Init()
 		*colon = 0;
 
 	Net->IpxAvailable = true;
-	GCon->Log(NAME_Init, "IPX initialized");
+	GCon->Log(NAME_Init, "IPX initialised");
 	return net_controlsocket;
 	unguard;
 }

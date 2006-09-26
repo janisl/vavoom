@@ -176,7 +176,7 @@ VSdlInputDevice::VSdlInputDevice()
 		SDL_WarpMouse(mouse_oldx, mouse_oldy);
 	}
 
-	// initialize joystick
+	//	Initialise joystick
 	StartupJoystick();
 	unguard;
 }
@@ -314,7 +314,7 @@ void VSdlInputDevice::ReadInput()
 //
 //	VSdlInputDevice::StartupJoystick
 //
-// 	Initializes joystick
+//	Initialises joystick
 //
 //==========================================================================
 

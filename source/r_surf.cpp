@@ -1956,7 +1956,7 @@ void UpdateFakeFlats(sector_t* sec)
 		{
 			if (underwater)
 			{
-//				tempsec->ColorMap = s->ColorMap;
+//				tempsec->ColourMap = s->ColourMap;
 				if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
 				{
 					ff->params.lightlevel = s->params.lightlevel;
@@ -2033,7 +2033,7 @@ void UpdateFakeFlats(sector_t* sec)
 		ff->floorplane.dist = sec->floor.dist;
 		ff->ceilplane.normal = -s->floor.normal;
 		ff->ceilplane.dist = -s->floor.dist/* + 1*/;
-//		ff->ColorMap = s->ColorMap;
+//		ff->ColourMap = s->ColourMap;
 	}
 
 	// killough 11/98: prevent sudden light changes from non-water sectors:
@@ -2100,7 +2100,7 @@ void UpdateFakeFlats(sector_t* sec)
 		ff->ceilplane.dist		= s->ceiling.dist;
 		ff->floorplane.normal	= -s->ceiling.normal;
 		ff->floorplane.dist		= -s->ceiling.dist/* + 1*/;
-//		ff->ColorMap			= s->ColorMap;
+//		ff->ColourMap			= s->ColourMap;
 
 		ff->ceilplane.pic = diffTex ? sec->ceiling.pic : s->ceiling.pic;
 		ff->floorplane.pic									= s->ceiling.pic;

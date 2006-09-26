@@ -468,7 +468,7 @@ int main(int argc, char** argv)
 		signal(SIGNOFP, signal_handler);
 #endif
 
-		//	Initialize
+		//	Initialise
 		Host_Init();
 
 		//	Play game

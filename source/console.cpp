@@ -686,39 +686,39 @@ void C_DrawNotify()
 //**************************************************************************
 //**************************************************************************
 
-static char				center_message[256];
-static float			center_time;
-static VCvarF			center_msg_time("center_message_time", "7", CVAR_Archive);
+static char				centre_message[256];
+static float			centre_time;
+static VCvarF			centre_msg_time("centre_message_time", "7", CVAR_Archive);
 
 //==========================================================================
 //
-//	C_CenterMessage
+//	C_CentreMessage
 //
 //==========================================================================
 
-void C_CenterMessage(const char *msg)
+void C_CentreMessage(const char *msg)
 {
-	VStr::Cpy(center_message, msg);
-	center_time = center_msg_time;
+	VStr::Cpy(centre_message, msg);
+	centre_time = centre_msg_time;
 }
 
 //==========================================================================
 //
-//	C_DrawCenterMessage
+//	C_DrawCentreMessage
 //
 //==========================================================================
 
-void C_DrawCenterMessage()
+void C_DrawCentreMessage()
 {
-	if (center_time)
+	if (centre_time)
 	{
 		T_SetFont(font_small);
-	    T_SetAlign(hcenter, vcenter);
-		T_DrawTextW(320, 360, center_message, 600);
-		center_time -= host_frametime;
-		if (center_time < 0.0)
+	    T_SetAlign(hcentre, vcentre);
+		T_DrawTextW(320, 360, centre_message, 600);
+		centre_time -= host_frametime;
+		if (centre_time < 0.0)
 		{
-			center_time = 0.0;
+			centre_time = 0.0;
 		}
 	}
 }

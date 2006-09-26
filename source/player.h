@@ -98,12 +98,12 @@ class VBasePlayer : public VObject
 	VStr			PlayerName;
 	int				BaseClass;
 	int				PClass;			// player class type
-	int				Color;
+	int				Colour;
 
 	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
 	float			ForwardMove;	// *2048 for move
 	float			SideMove;		// *2048 for move
-	float			FlyMove;		// fly up/down/centering
+	float			FlyMove;		// fly up/down/centreing
 	int				Buttons;		// fire, use
 	int				Impulse;		// weapon changes, inventory, etc
 
@@ -139,13 +139,13 @@ class VBasePlayer : public VObject
     int				ExtraLight;
 
 	// For lite-amp and invulnarability powers
-    int				FixedColormap;
+    int				FixedColourmap;
 
     // Current PLAYPAL index
-    //  can be set to REDCOLORMAP for pain, etc.
+    //  can be set to REDCOLOURMAP for pain, etc.
     int				Palette;
 
-	// Color shifts for damage, powerups and content types
+	// Colour shifts for damage, powerups and content types
 	vuint32			CShifts[NUM_CSHIFTS];
 
     // Overlay view sprites (gun, etc).
@@ -157,7 +157,7 @@ class VBasePlayer : public VObject
 	int*			OldStats;
 
 	DECLARE_FUNCTION(cprint)
-	DECLARE_FUNCTION(centerprint)
+	DECLARE_FUNCTION(centreprint)
 	DECLARE_FUNCTION(GetPlayerNum)
 	DECLARE_FUNCTION(ClearPlayer)
 	DECLARE_FUNCTION(SelectClientMsg)

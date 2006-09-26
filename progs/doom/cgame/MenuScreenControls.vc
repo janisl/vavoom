@@ -51,7 +51,7 @@ void CreateControlKeyChoices()
 	AddControl("Move right", "+MoveRight", "-MoveRight");
 	AddControl("Look up", "+LookUp", "-LookUp");
 	AddControl("Look down", "+LookDown", "-LookDown");
-	AddControl("Center look", "+LookCenter", "-LookCenter");
+	AddControl("Centre look", "+LookCentre", "-LookCentre");
 	AddControl("Jump", "+Jump", "-Jump");
 	AddControl("Fire", "+Attack", "-Attack");
 	AddControl("Use", "+Use", "-Use");

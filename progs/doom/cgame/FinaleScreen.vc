@@ -574,7 +574,7 @@ void F_CastDrawer()
 
 #if 0
 	T_SetFont(font_small);
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 //  T_DrawText(160, 180, castorder[castnum].Name);
 	T_DrawText(160, 180,
 		svpr.GetString(mobjinfo[castorder[castnum]].message));

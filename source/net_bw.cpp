@@ -281,7 +281,7 @@ int VBeameWhitesideDriver::Init()
 	if (colon)
 		*colon = 0;
 
-	GCon->Log(NAME_Init, "BW_Init: UDP initialized");
+	GCon->Log(NAME_Init, "BW_Init: UDP initialised");
 	Net->IpAvailable = true;
 
 	return net_controlsocket;

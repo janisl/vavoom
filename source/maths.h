@@ -157,7 +157,7 @@ class TPlane
 		CalcBits();
 	}
 
-	//	Initializes vertical plane from point and direction
+	//	Initialises vertical plane from point and direction
 	void SetPointDir(const TVec &point, const TVec &dir)
 	{
 		normal = Normalise(TVec(dir.y, -dir.x, 0));
@@ -165,7 +165,7 @@ class TPlane
 		CalcBits();
 	}
 
-	//	Initializes vertical plane from 2 points
+	//	Initialises vertical plane from 2 points
 	void Set2Points(const TVec &v1, const TVec &v2)
 	{
 		SetPointDir(v1, v2 - v1);

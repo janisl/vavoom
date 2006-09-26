@@ -47,7 +47,7 @@ enum font_e
 enum halign_e
 {
 	hleft,		//Left
-	hcenter,	//Centred
+	hcentre,	//Centred
 	hright		//Right
 };
 
@@ -57,7 +57,7 @@ enum halign_e
 enum valign_e
 {
 	vtop,		//Top
-	vcenter,	//Center
+	vcentre,	//Centre
 	vbottom		//Bottom
 };
 

@@ -29,7 +29,7 @@ void CreateControlKeyChoices()
 {
 	AddControl("Fly up", "+FlyUp", "-FlyUp");
 	AddControl("Fly down", "+FlyDown", "-FlyDown");
-	AddControl("Center flight", "+FlyCenter", "-FlyCenter");
+	AddControl("Centre flight", "+FlyCentre", "-FlyCentre");
 	AddControl("Inventory left", "Impulse 13", "");
 	AddControl("Inventory right", "Impulse 14", "");
 	AddControl("Inventory use", "Impulse 15", "");

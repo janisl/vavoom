@@ -133,7 +133,7 @@ struct affinetridesc_t
 	finalvert_t*		pfinalverts;
 	finalstvert_t*		pstverts;
 	int					numtriangles;
-	int					coloredlight;
+	int					colouredlight;
 };
 
 struct auxvert_t
@@ -206,7 +206,7 @@ protected:
 	void VideoErase(unsigned ofs, int count);
 	void EraseViewBorder(const refdef_t *rd);
 
-	//	Palette and color lookup table management.
+	//	Palette and colour lookup table management.
 	virtual void SetPalette8(vuint8*) = 0;
 	void UpdatePalette();
 
@@ -261,50 +261,34 @@ protected:
 	void PolysetDraw();
 
 	//	Drawing of onscreen graphics.
-	static void DrawPicSpan_8(fixed_t s, fixed_t t, 
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawPicSpanFuzz_8(fixed_t s, fixed_t t, 
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawPicSpanAltFuzz_8(fixed_t s, fixed_t t, 
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawPicSpanShadow_8(fixed_t s, fixed_t t, 
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawFlatSpan_8(fixed_t s, fixed_t t, 
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void FillRect_8(float x1, float y1, float x2, float y2, vuint32 color);
-	static void ShadeRect_8(int xx, int yy, int ww, int hh, int darkening);
-	static void DrawConsoleBackground_8(int h);
-	static void PutDot_8(int x, int y, vuint32 c);
-	static void DrawPicSpan_16(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawSpritePicSpan_16(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *_src, void* dst);
-	static void DrawPicSpanFuzz_16(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawPicSpanShadow_16(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawFlatSpan_16(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void FillRect_16(float x1, float y1, float x2, float y2, vuint32 color);
-	static void ShadeRect_16(int xx, int yy, int ww, int hh, int darkening);
-	static void DrawConsoleBackground_16(int h);
-	static void PutDot_16(int x, int y, vuint32 c);
-	static void DrawPicSpan_32(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawSpritePicSpan_32(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *_src, void* dst);
-	static void DrawPicSpanFuzz_32(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawPicSpanShadow_32(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void DrawFlatSpan_32(fixed_t s, fixed_t t,
-		fixed_t sstep, int count, byte *src, void* dst);
-	static void FillRect_32(float x1, float y1, float x2, float y2, vuint32 color);
-	static void ShadeRect_32(int xx, int yy, int ww, int hh, int darkening);
-	static void DrawConsoleBackground_32(int h);
-	static void PutDot_32(int x, int y, vuint32 c);
-	static void DrawPic(float x1, float y1, float x2, float y2,
-		float s1, float t1, float s2, float t2);
+	static void DrawPicSpan_8(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawPicSpanFuzz_8(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawPicSpanAltFuzz_8(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawPicSpanShadow_8(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawFlatSpan_8(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void FillRect_8(float, float, float, float, vuint32);
+	static void ShadeRect_8(int, int, int, int, int);
+	static void DrawConsoleBackground_8(int);
+	static void PutDot_8(int, int, vuint32);
+	static void DrawPicSpan_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawSpritePicSpan_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawPicSpanFuzz_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawPicSpanShadow_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawFlatSpan_16(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void FillRect_16(float, float, float, float, vuint32);
+	static void ShadeRect_16(int, int, int, int, int);
+	static void DrawConsoleBackground_16(int);
+	static void PutDot_16(int, int, vuint32);
+	static void DrawPicSpan_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawSpritePicSpan_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawPicSpanFuzz_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawPicSpanShadow_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void DrawFlatSpan_32(fixed_t, fixed_t, fixed_t, int, byte*, void*);
+	static void FillRect_32(float, float, float, float, vuint32);
+	static void ShadeRect_32(int, int, int, int, int);
+	static void DrawConsoleBackground_32(int);
+	static void PutDot_32(int, int, vuint32);
+	static void DrawPic(float, float, float, float, float, float, float, float);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -314,11 +298,11 @@ extern "C" {
 
 //	Span drawers.
 void D_DrawSpans8_8(espan_t*);
-void D_DrawSpans16_8(espan_t *pspan);
+void D_DrawSpans16_8(espan_t*);
 void D_DrawSpans8_16(espan_t*);
-void D_DrawSpans16_16(espan_t *pspan);
+void D_DrawSpans16_16(espan_t*);
 void D_DrawSpans8_32(espan_t*);
-void D_DrawSpans16_32(espan_t *pspan);
+void D_DrawSpans16_32(espan_t*);
 void D_DrawZSpans(espan_t*);
 
 //	Sprite drawers.
@@ -332,13 +316,13 @@ void D_DrawSpriteSpans_32(sspan_t*);
 void D_DrawFuzzSpriteSpans_32(sspan_t*);
 
 //	Particle drawers.
-void D_DrawParticle_8(particle_t *pparticle);
-void D_DrawParticle_15(particle_t *pparticle);
-void D_DrawParticle_16(particle_t *pparticle);
-void D_DrawParticle_32(particle_t *pparticle);
+void D_DrawParticle_8(particle_t*);
+void D_DrawParticle_15(particle_t*);
+void D_DrawParticle_16(particle_t*);
+void D_DrawParticle_32(particle_t*);
 
 //	For models.
-void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av);
+void D_AliasProjectFinalVert(finalvert_t*, auxvert_t*);
 
 } // extern "C"
 
@@ -368,12 +352,12 @@ extern word*			d_dsttranstab;
 
 extern int				ylookup[MAXSCREENHEIGHT];
 
-extern float			centerxfrac;
-extern float			centeryfrac;
+extern float			centrexfrac;
+extern float			centreyfrac;
 extern float			xprojection;
 extern float			yprojection;
-extern float			aliasxcenter;
-extern float			aliasycenter;
+extern float			aliasxcentre;
+extern float			aliasycentre;
 
 extern int				d_pix_shift;
 extern int				d_pix_min;
@@ -428,9 +412,9 @@ extern particle_func_t	D_DrawParticle;
 extern float			xscaleshrink;
 extern float			yscaleshrink;
 
-extern byte				*colormaps;
+extern vuint8*			colourmaps;
 
-extern byte				*tinttables[5];
+extern vuint8*			tinttables[5];
 extern word				scaletable[32][256];
 
 extern word				pal8_to16[256];
@@ -438,11 +422,11 @@ extern vuint32			pal2rgb[256];
 
 extern int				bppindex;
 
-extern miptexture_t		*miptexture;
+extern miptexture_t*	miptexture;
 
-extern finalvert_t		*pfinalverts;
-extern finalstvert_t	*pfinalstverts;
-extern auxvert_t		*pauxverts;
+extern finalvert_t*		pfinalverts;
+extern finalstvert_t*	pfinalstverts;
+extern auxvert_t*		pauxverts;
 
 //==========================================================================
 //
@@ -555,7 +539,7 @@ inline byte GetCol32B(vuint32 col)
 
 //==========================================================================
 //
-//	Inlines for color making
+//	Inlines for colour making
 //
 //==========================================================================
 

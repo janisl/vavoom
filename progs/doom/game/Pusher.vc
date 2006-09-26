@@ -36,14 +36,14 @@
 //    Pushes you away from a point source defined by the location of an
 //    MT_PUSH Thing. The force decreases linearly with distance from the
 //    source. This force crosses sector boundaries and is felt w/in a circle
-//    whose center is at the MT_PUSH. The force is felt only if the point
+//    whose centre is at the MT_PUSH. The force is felt only if the point
 //    MT_PUSH can see the target object.
 //
 // 2) Pulling toward
 //
 //    Same as Pushing Away except you're pulled toward an MT_PULL point
 //    source. This force crosses sector boundaries and is felt w/in a circle
-//    whose center is at the MT_PULL. The force is felt only if the point
+//    whose centre is at the MT_PULL. The force is felt only if the point
 //    MT_PULL can see the target object.
 //
 // 3) Wind

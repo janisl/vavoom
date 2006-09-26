@@ -41,9 +41,9 @@ void DrawTextBox(GC gc, string text)
 	int w;
 	int h;
 
-	// Horiz. & Vertically center string and print it.
+	// Horiz. & Vertically centre string and print it.
 	T_SetFont(font_small);
-	T_SetAlign(hcenter, vcenter);
+	T_SetAlign(hcentre, vcentre);
 
 	w = (T_TextWidth(text) + 16) & ~15;
 	h = (T_TextHeight(text) + 16) & ~15;

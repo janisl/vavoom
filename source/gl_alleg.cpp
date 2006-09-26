@@ -107,7 +107,7 @@ bool VAllegroOpenGLDrawer::SetResolution(int InWidth, int InHeight,
 
 	if (BPP < 16)
 	{
-		//	True-color only
+		//	True-colour only
 		return false;
 	}
 

@@ -108,8 +108,8 @@ float					vrecty_adj;
 float					vrectw_adj;
 float					vrecth_adj;
 
-float					centerxfrac;
-float					centeryfrac;
+float					centrexfrac;
+float					centreyfrac;
 float					xprojection;
 float					yprojection;
 
@@ -305,13 +305,13 @@ void VSoftwareDrawer::InitResolution()
 void VSoftwareDrawer::InitViewBorder(const refdef_t* rd)
 {
 	guard(VSoftwareDrawer::InitViewBorder);
-    if (r_backscreen)
-    {
-      	Z_Free(r_backscreen);
+	if (r_backscreen)
+	{
+		Z_Free(r_backscreen);
 		r_backscreen = NULL;
-    }
+	}
 
-    if (rd->width == ScreenWidth)
+	if (rd->width == ScreenWidth)
 		return;
 
 	r_backscreen = (byte*)Z_Malloc(ScreenWidth * (ScreenHeight - SB_REALHEIGHT) * PixelBytes);
@@ -334,7 +334,7 @@ void VSoftwareDrawer::VideoErase(unsigned ofs, int count)
 {
 	ofs *= PixelBytes;
 	count *= PixelBytes;
-    memcpy(scrn + ofs, r_backscreen + ofs, count);
+	memcpy(scrn + ofs, r_backscreen + ofs, count);
 } 
 
 //==========================================================================
@@ -429,14 +429,14 @@ void VSoftwareDrawer::SetupView(const refdef_t* rd)
 	xprojection = (float)(viewwidth / 2) / rd->fovx;
 	yprojection = (float)(viewheight / 2) / rd->fovy;
 
-    centerxfrac = (float)(viewwidth / 2) - 0.5;
-    centeryfrac = (float)(viewheight / 2) - 0.5;
+	centrexfrac = (float)(viewwidth / 2) - 0.5;
+	centreyfrac = (float)(viewheight / 2) - 0.5;
 
-    aliasxcenter = (float)(viewwidth / 2);
-    aliasycenter = (float)(viewheight / 2);
+	aliasxcentre = (float)(viewwidth / 2);
+	aliasycentre = (float)(viewheight / 2);
 
-    // Preclaculate all row offsets.
-    for (i = 0; i < viewheight; i++)
+	// Preclaculate all row offsets.
+	for (i = 0; i < viewheight; i++)
 	{
 		ylookup[i] = viewx + (viewheight - 1 - i + viewy) * ScreenWidth;
 	}
@@ -635,7 +635,7 @@ void VSoftwareDrawer::FreeAllMemory()
 		}
 	}
 
-	Z_Free(colormaps);
+	Z_Free(colourmaps);
 	Z_Free(fadetable16);
 	Z_Free(fadetable16r);
 	Z_Free(fadetable16g);

@@ -77,8 +77,8 @@ trivertx_t		*d_apverts;
 int				d_anumverts;
 
 float			aliastransform[3][4];
-float			aliasxcenter;
-float			aliasycenter;
+float			aliasxcentre;
+float			aliasycentre;
 float			ziscale;
 
 TVec			d_plightvec;
@@ -284,8 +284,8 @@ bool VSoftwareDrawer::AliasCheckBBox(VModel* model, const TAVec &angles, int fra
 		zi = 1.0 / viewaux[i].fv[2];
 
 	// FIXME: do with chop mode in ASM, or convert to float
-		v0 = (viewaux[i].fv[0] * xprojection * zi) + aliasxcenter;
-		v1 = (viewaux[i].fv[1] * yprojection * zi) + aliasycenter;
+		v0 = (viewaux[i].fv[0] * xprojection * zi) + aliasxcentre;
+		v1 = (viewaux[i].fv[1] * yprojection * zi) + aliasycentre;
 
 		flags = 0;
 
@@ -487,7 +487,7 @@ void VSoftwareDrawer::AliasSetupLighting(vuint32 light)
 	d_shadelightb *= VID_GRADES;
 
 
-	d_affinetridesc.coloredlight = (d_ambientlightr != d_ambientlightg) ||
+	d_affinetridesc.colouredlight = (d_ambientlightr != d_ambientlightg) ||
 		(d_ambientlightr != d_ambientlightb);
 
 // FIXME: remove and do real lighting
@@ -690,9 +690,9 @@ extern "C" void D_AliasTransformAndProjectFinalVerts(finalvert_t *fv)
 		fv->zi = (int)zi;
 
 		fv->u = (int)(((DotProduct(v, aliastransform[0]) +
-				aliastransform[0][3]) * zi) + aliasxcenter);
+				aliastransform[0][3]) * zi) + aliasxcentre);
 		fv->v = (int)(((DotProduct(v, aliastransform[1]) +
-				aliastransform[1][3]) * zi) + aliasycenter);
+				aliastransform[1][3]) * zi) + aliasycentre);
 
 		fv->flags = 0;
 
@@ -788,8 +788,8 @@ extern "C" void D_AliasProjectFinalVert(finalvert_t *fv, auxvert_t *av)
 
 	fv->zi = (int)(zi * ziscale);
 
-	fv->u = (int)((av->fv[0] * xprojection * zi) + aliasxcenter);
-	fv->v = (int)((av->fv[1] * yprojection * zi) + aliasycenter);
+	fv->u = (int)((av->fv[0] * xprojection * zi) + aliasxcentre);
+	fv->v = (int)((av->fv[1] * yprojection * zi) + aliasycentre);
 }
 
 #endif

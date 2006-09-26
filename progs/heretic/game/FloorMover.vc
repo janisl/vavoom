@@ -190,7 +190,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		Texture = Sector->floor.pic;
-		// jff 1/24/98 make sure NewSpecial gets initialized
+		// jff 1/24/98 make sure NewSpecial gets initialised
 		// in case no surrounding sector is at DestHeight
 		// --> should not affect compatibility <--
 		NewSpecial = Sector->special & ~SECSPEC_SECRET_MASK; 
@@ -357,7 +357,7 @@ void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = 1;
 	}
 	Speed = itof(Arg2) * 35.0 / 8.0;
-	//jff 2/27/98 fix uninitialized crush field
+	//jff 2/27/98 fix uninitialised crush field
 	Crush = (Arg2 == 32) ? 10 : -1;
 	FloorDestDist = DotProduct(Sector->floor.normal,
 		vector(0.0, 0.0, InHeight));

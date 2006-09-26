@@ -1163,7 +1163,7 @@ bool CheckLock(Actor A, int lock)
 	}
 	if (!(Player(A.Player).Keys & (1 << (lock - 1))))
 	{
-		A.Player.centerprint("YOU NEED THE %s", MainGameInfo(Game).TextKeyMessages[lock - 1]);
+		A.Player.centreprint("YOU NEED THE %s", MainGameInfo(Game).TextKeyMessages[lock - 1]);
 		A.PlaySound('DoorLocked', CHAN_ITEM);
 		return false;
 	}
@@ -3355,8 +3355,8 @@ bool DoGroupForOne(Actor victim, Actor source, Actor dest, bool floorz,
 //
 //	EV_TeleportGroup
 //
-//	[RH] Teleport a group of actors centered around source_tid so
-// that they become centered around dest_tid instead.
+//	[RH] Teleport a group of actors centred around source_tid so
+// that they become centred around dest_tid instead.
 //
 //==========================================================================
 

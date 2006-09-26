@@ -114,7 +114,7 @@ struct pcx_t
 	vuint8		palette[48];
 
 	vint8		reserved;
-	vint8		color_planes;
+	vint8		colour_planes;
 	vuint16		bytes_per_line;
 	vuint16		palette_type;
 
@@ -125,7 +125,7 @@ struct pcx_t
 		Strm << h.manufacturer << h.version << h.encoding << h.bits_per_pixel
 			<< h.xmin << h.ymin << h.xmax << h.ymax << h.hres << h.vres;
 		Strm.Serialise(h.palette, 48);
-		Strm << h.reserved << h.color_planes << h.bytes_per_line
+		Strm << h.reserved << h.colour_planes << h.bytes_per_line
 			<< h.palette_type;
 		Strm.Serialise(h.filler, 58);
 		return Strm;
@@ -719,7 +719,7 @@ int VTextureManager::AddFileTexture(VName Name, int Type)
 //
 //	VTextureManager::InitTextures
 //
-// 	Initializes the texture list with the textures from the world map.
+// 	Initialises the texture list with the textures from the world map.
 //
 //==========================================================================
 
@@ -2166,10 +2166,10 @@ vuint8* VPcxTexture::GetPixels()
 	//	We only support 8-bit pcx files.
 	if (pcx.bits_per_pixel != 8)
 	{
-		// we like 8 bit color planes
+		// we like 8 bit colour planes
 		Sys_Error("No 8-bit planes\n");
 	}
-	if (pcx.color_planes != 1)
+	if (pcx.colour_planes != 1)
 	{
 		Sys_Error("Not 8 bpp\n");
 	}
@@ -2388,11 +2388,11 @@ vuint8* VTgaTexture::GetPixels()
 
 	/* Image type:
 	*    0 = no image data
-	*    1 = uncompressed color mapped
-	*    2 = uncompressed true color
+	*    1 = uncompressed colour mapped
+	*    2 = uncompressed true colour
 	*    3 = grayscale
-	*    9 = RLE color mapped
-	*   10 = RLE true color
+	*    9 = RLE colour mapped
+	*   10 = RLE true colour
 	*   11 = RLE grayscale
 	*/
 
@@ -3018,9 +3018,9 @@ void WritePCX(char* filename, void* data, int width, int height, int bpp,
 	
 	pcx_t pcx;
 	pcx.manufacturer = 0x0a;	// PCX id
-	pcx.version = 5;			// 256 color
+	pcx.version = 5;			// 256 colour
 	pcx.encoding = 1;			// uncompressed
-	pcx.bits_per_pixel = 8;		// 256 color
+	pcx.bits_per_pixel = 8;		// 256 colour
 	pcx.xmin = 0;
 	pcx.ymin = 0;
 	pcx.xmax = width - 1;
@@ -3028,7 +3028,7 @@ void WritePCX(char* filename, void* data, int width, int height, int bpp,
 	pcx.hres = width;
 	pcx.vres = height;
 	memset(pcx.palette, 0, sizeof(pcx.palette));
-	pcx.color_planes = bpp == 8 ? 1 : 3;
+	pcx.colour_planes = bpp == 8 ? 1 : 3;
 	pcx.bytes_per_line = width;
 	pcx.palette_type = 1;	// not a grey scale
 	memset(pcx.filler, 0, sizeof(pcx.filler));
@@ -3491,7 +3491,7 @@ static void ParseSwitchDef(VScriptParser* sc)
 //
 //	ParseFTAnims
 //
-//	Initialize flat and texture animation lists.
+//	Initialise flat and texture animation lists.
 //
 //==========================================================================
 

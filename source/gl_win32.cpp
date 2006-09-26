@@ -108,7 +108,7 @@ bool VWin32OpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 	if (BPP < 16)
 	{
-		//	True-color only
+		//	True-colour only
 		return false;
 	}
 
@@ -208,8 +208,8 @@ bool VWin32OpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 		PFD_SUPPORT_OPENGL |			// Format Must Support OpenGL
 		PFD_DOUBLEBUFFER,				// Must Support Double Buffering
 		PFD_TYPE_RGBA,					// Request An RGBA Format
-		byte(BPP),						// Select Our Color Depth
-		0, 0, 0, 0, 0, 0,				// Color Bits Ignored
+		byte(BPP),						// Select Our Colour Depth
+		0, 0, 0, 0, 0, 0,				// Colour Bits Ignored
 		0,								// No Alpha Buffer
 		0,								// Shift Bit Ignored
 		0,								// No Accumulation Buffer

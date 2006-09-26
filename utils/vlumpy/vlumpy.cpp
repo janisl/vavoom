@@ -302,13 +302,13 @@ static void LoadImage()
 
 //==========================================================================
 //
-//	my_bestfit_color
+//	my_bestfit_colour
 //
 //==========================================================================
 
-int my_bestfit_color(int r, int g, int b)
+int my_bestfit_colour(int r, int g, int b)
 {
-	int		best_color = 0;
+	int		best_colour = 0;
 	int		best_dist = 0x1000000;
 
 	for (int i = 1; i < 256; i++)
@@ -318,13 +318,13 @@ int my_bestfit_color(int r, int g, int b)
 			(ImgPal[i].b - b) * (ImgPal[i].b - b);
 		if (dist < best_dist)
 		{
-			best_color = i;
+			best_colour = i;
 			best_dist = dist;
 			if (!dist)
 				break;
 		}
 	}
-	return best_color;
+	return best_colour;
 }
 
 //==========================================================================
@@ -346,7 +346,7 @@ void SetupRGBTable()
 		{
 			for (int b = 0; b < 32; b++)
 			{
-				rgb_table.data[r][g][b] = my_bestfit_color(
+				rgb_table.data[r][g][b] = my_bestfit_colour(
 					(int)(r * 255.0 / 31.0 + 0.5),
 					(int)(g * 255.0 / 31.0 + 0.5),
 					(int)(b * 255.0 / 31.0 + 0.5));
@@ -541,7 +541,7 @@ void GrabPatch()
 	SC_MustGetNumber();
 	int topoffset = sc_Number;
 
-	int TransColor = 0;
+	int TransColour = 0;
 	patch_t* Patch = (patch_t*)Malloc(8 + 4 * w + w * h * 4);
 	Patch->width = LittleShort(w);
 	Patch->height = LittleShort(h);
@@ -557,7 +557,7 @@ void GrabPatch()
 		while (y < h)
 		{
 			//	Skip transparent pixels.
-			if (GetPixel(x1 + x, y1 + y) == TransColor)
+			if (GetPixel(x1 + x, y1 + y) == TransColour)
 			{
 				y++;
 				continue;
@@ -589,7 +589,7 @@ void GrabPatch()
 			PrevTop = y;
 			vuint8* Pixels = (vuint8*)Col + 3;
 			while (y < h && Col->length < 255 &&
-				GetPixel(x1 + x, y1 + y) != TransColor)
+				GetPixel(x1 + x, y1 + y) != TransColour)
 			{
 				Pixels[Col->length] = GetPixel(x1 + x, y1 + y);
 				Col->length++;

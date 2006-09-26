@@ -96,7 +96,7 @@ static void GLBSP_Draw(void)
 	Drawer->FillRect(0, 0, ScreenWidth, ScreenHeight, 0xff000000);
 
 	T_SetFont(font_small);
-	T_SetAlign(hcenter, vcenter);
+	T_SetAlign(hcentre, vcentre);
 	T_DrawText(320, 32, MESSAGE1);
 	T_DrawText(320, 64, MESSAGE2);
 	T_SetAlign(hleft, vtop);

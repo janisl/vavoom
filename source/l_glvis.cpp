@@ -113,7 +113,7 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 	Drawer->FillRect(0, 0, ScreenWidth, ScreenHeight, 0xff000000);
 
 	T_SetFont(font_small);
-	T_SetAlign(hcenter, vcenter);
+	T_SetAlign(hcentre, vcentre);
 	T_DrawText(320, 16, MESSAGE1);
 	T_DrawText(320, 48, MESSAGE2);
 	T_SetAlign(hleft, vtop);
@@ -125,7 +125,7 @@ void TGLVisGUI::DisplayStartMap(const char *name)
 
 	if (glvis_fast)
 	{
-		T_SetAlign(hcenter, vcenter);
+		T_SetAlign(hcentre, vcentre);
 		T_DrawText(320, 320, "Using fast mode\nIt's highly recomended that you rebuild\nfull vis data using standalone utility.");
 	}
 

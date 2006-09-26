@@ -193,7 +193,7 @@ bool VVorbisAudioCodec::Init()
 		}
 	}
 
-	//	Parsed all three headers. Initialize the Vorbis decoder.
+	//	Parsed all three headers. Initialise the Vorbis decoder.
 	vorbis_synthesis_init(&vd, &vi);
 	vorbis_block_init(&vd, &vb);
 	SampleRate = vi.rate;

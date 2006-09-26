@@ -94,7 +94,7 @@ int pic_brdr_br;
 
 int ramp1[16];
 int ramp2[16];
-int ecolors[8];
+int ecolours[8];
 
 //==========================================================================
 //
@@ -547,13 +547,13 @@ void MessageBoxStartMessage(string text, int type, bool input)
 
 void MessageBoxDrawer()
 {
-	// Horiz. & Vertically center string and print it.
+	// Horiz. & Vertically centre string and print it.
 	if (messageToPrint)
 	{
 		R_FillRectWithFlat(msgBoxX, msgBoxY, msgBoxW, msgBoxH, 'flat20');
 		DrawBorder(msgBoxX, msgBoxY, msgBoxW, msgBoxH);
 		T_SetFont(font_small);
-		T_SetAlign(hcenter, vcenter);
+		T_SetAlign(hcentre, vcentre);
 		T_DrawText(320, 240, messageString);
 	}
 
@@ -837,7 +837,7 @@ void ParseGunShot()
 
 		p->org = org;
 		c = P_Random() >> 1;
-		p->color = RGB(c, c, c);
+		p->colour = RGB(c, c, c);
 		p->die = cl.time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
@@ -873,7 +873,7 @@ void ParseBlood()
 
 		p->org = org;
 		c = P_Random() >> 1;
-		p->color = RGB(32 + c, c >> 4, c >> 4);
+		p->colour = RGB(32 + c, c >> 4, c >> 4);
 		p->die = cl.time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
@@ -905,7 +905,7 @@ void ParseExplosion()
 		if (!p)
 			return;
 		p->die = cl.time + 5.0;
-		p->color = ramp1[0];
+		p->colour = ramp1[0];
 		p->ramp = Random() * 4.0;
 		if (i & 1)
 		{
@@ -926,7 +926,7 @@ void ParseExplosion()
 	dl = AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->color = 0xffffffff;
+	dl->colour = 0xffffffff;
 	dl->die = cl.time + 0.5;
 	dl->decay = 300.0;
 }
@@ -951,7 +951,7 @@ void ParseExplosion2()
 	dl = AllocDlight(0);
 	dl->origin = org;
 	dl->radius = 350.0;
-	dl->color = ecolors[etype];
+	dl->colour = ecolours[etype];
 	dl->die = cl.time + 0.5;
 	dl->decay = 300.0;
 }
@@ -1021,7 +1021,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		if (p->ramp >= 16.0)
 			p->die = -1.0;
 		else
-			p->color = ramp1[ftoi(p->ramp)];
+			p->colour = ramp1[ftoi(p->ramp)];
 		p->vel.x += p->vel.x * dvel;
 		p->vel.y += p->vel.y * dvel;
 		p->vel.z += p->vel.z * dvel;
@@ -1033,7 +1033,7 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		if (p->ramp >= 16.0)
 			p->die = -1.0;
 		else
-			p->color = ramp2[ftoi(p->ramp)];
+			p->colour = ramp2[ftoi(p->ramp)];
 		p->vel.x -= p->vel.x * DeltaTime;
 		p->vel.y -= p->vel.y * DeltaTime;
 		p->vel.z -= p->vel.z * DeltaTime;
@@ -1062,7 +1062,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(255, 255, 255);
+		dl->colour = RGB(255, 255, 255);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -1070,7 +1070,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(255, 0, 0);
+		dl->colour = RGB(255, 0, 0);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -1078,7 +1078,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(0, 255, 0);
+		dl->colour = RGB(0, 255, 0);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -1086,7 +1086,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl = AllocDlight(key);
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
-		dl->color = RGB(0, 0, 255);
+		dl->colour = RGB(0, 0, 255);
 		dl->die = cl.time + 0.1;
 		break;
 
@@ -1098,7 +1098,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 
 		dl->origin = dl->origin + 18.0 * fv;
 		dl->radius = 200.0 + Random() * 31.0;
-		dl->color = 0xffffffff;
+		dl->colour = 0xffffffff;
 		dl->minlight = 32.0;
 		dl->die = cl.time + 0.1;
 	}
@@ -1119,7 +1119,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 
 			p->org = mobj.Origin;
 			c = P_Random() >> 1;
-			p->color = RGB(c, c, c);
+			p->colour = RGB(c, c, c);
 			p->die = cl.time + 0.5 * Random();
 			p->type = pt_static;
 			p->vel.x = 16.0 * (Random() - 0.5);
@@ -1174,10 +1174,10 @@ defaultproperties
 	ramp2[4] = 0xbfbf772f; ramp2[5] = 0xafaf632f; ramp2[6] = 0x9f8f4333; ramp2[7] = 0x8f733723;
 	ramp2[8] = 0x7fbf772f; ramp2[9] = 0x6faf632f; ramp2[10] = 0x5f8f4333; ramp2[11] = 0x4f733723;
 	ramp2[12] = 0x3fbf772f; ramp2[13] = 0x2faf632f; ramp2[14] = 0x1f8f4333; ramp2[15] = 0x0f733723;
-	ecolors[0] = 0;	// EF_DL_NONE
-	ecolors[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
-	ecolors[2] = RGB(255, 32, 32);	// EF_DL_RBALL
-	ecolors[3] = RGB(32, 255, 32);	// EF_DL_GBALL
-	ecolors[4] = RGB(32, 32, 255);	// EF_DL_PLASMA
-	ecolors[5] = 0;	// EF_DL_MUZZLEFLASH
+	ecolours[0] = 0;	// EF_DL_NONE
+	ecolours[1] = RGB(255, 255, 255);	// EF_DL_MISSILE
+	ecolours[2] = RGB(255, 32, 32);	// EF_DL_RBALL
+	ecolours[3] = RGB(32, 255, 32);	// EF_DL_GBALL
+	ecolours[4] = RGB(32, 32, 255);	// EF_DL_PLASMA
+	ecolours[5] = 0;	// EF_DL_MUZZLEFLASH
 }

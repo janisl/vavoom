@@ -153,10 +153,10 @@ void VOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 //==========================================================================
 
 void VOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
-	vuint32 color)
+	vuint32 colour)
 {
 	guard(VOpenGLDrawer::FillRect);
-	SetColor(color);
+	SetColour(colour);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_ALPHA_TEST);
 	glBegin(GL_QUADS);
@@ -297,9 +297,9 @@ void VOpenGLDrawer::DrawLine(int x1, int y1, vuint32 c1, int x2, int y2,
 	vuint32 c2)
 {
 	guard(VOpenGLDrawer::DrawLine);
-	SetColor(c1);
+	SetColour(c1);
 	glVertex2f(x1, y1);
-	SetColor(c2);
+	SetColour(c2);
 	glVertex2f(x2, y2);
 	unguard;
 }

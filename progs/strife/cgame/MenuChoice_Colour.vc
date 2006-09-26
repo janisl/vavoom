@@ -23,32 +23,32 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Color:MenuChoiceEnum;
+class MenuChoice_Colour : MenuChoiceEnum;
 
 MenuSpriteAnim Anim;
 
 int GetInitialValue()
 {
-	return GetCvar('color');
+	return GetCvar('colour');
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvar('color', newValue);
+	SetCvar('colour', newValue);
 	Anim.Translation = newValue;
 	return true;
 }
 
 defaultproperties
 {
-	Text = "Color";
+	Text = "Colour";
 	bLeftAlign = true;
-	EnumNames[0] = "green";
-	EnumNames[1] = "gray";
-	EnumNames[2] = "brown";
-	EnumNames[3] = "red";
-	EnumNames[4] = "light red";
-	EnumNames[5] = "blue";
-	EnumNames[6] = "rose";
-	EnumNames[7] = "light brown";
+	EnumNames[0] = "brown";
+	EnumNames[1] = "red";
+	EnumNames[2] = "dark brown";
+	EnumNames[3] = "gray";
+	EnumNames[4] = "green";
+	EnumNames[5] = "yellow";
+	EnumNames[6] = "light green";
+	EnumNames[7] = "cyan";
 }

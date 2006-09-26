@@ -31,7 +31,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define TOCENTER 				-128
+#define TOCENTRE				-128
 
 #define TEXTURE_TOP				0
 #define TEXTURE_MIDDLE			1
@@ -885,13 +885,13 @@ void SV_ClientPrintf(VBasePlayer *player, const char *s, ...)
 
 //==========================================================================
 //
-//	SV_ClientCenterPrintf
+//	SV_ClientCentrePrintf
 //
 //==========================================================================
 
-void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...)
+void SV_ClientCentrePrintf(VBasePlayer *player, const char *s, ...)
 {
-	guard(SV_ClientCenterPrintf);
+	guard(SV_ClientCentrePrintf);
 	va_list	v;
 	char	buf[1024];
 
@@ -899,7 +899,7 @@ void SV_ClientCenterPrintf(VBasePlayer *player, const char *s, ...)
 	vsprintf(buf, s, v);
 	va_end(v);
 
-	player->Message << (vuint8)svc_center_print << buf;
+	player->Message << (vuint8)svc_centre_print << buf;
 	unguard;
 }
 
@@ -943,7 +943,7 @@ void SV_BroadcastCentrePrintf(const char *s, ...)
 
 	for (int i = 0; i < svs.max_clients; i++)
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->Message << (vuint8)svc_center_print << buf;
+			GGameInfo->Players[i]->Message << (vuint8)svc_centre_print << buf;
 	unguard;
 }
 
@@ -963,7 +963,7 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 		<< player.ViewOrg.y
 		<< player.ViewOrg.z
 		<< (vuint8)player.ExtraLight
-		<< (vuint8)player.FixedColormap
+		<< (vuint8)player.FixedColourmap
 		<< (vuint8)player.Palette
 		<< (vuint8)player.MO->Translucency
 		<< (vuint16)player.PSpriteSY;
@@ -2824,7 +2824,7 @@ COMMAND(Stats)
 //
 //	SV_ConnectClient
 //
-//	Initializes a client_t for a new net connection.  This will only be
+//	Initialises a client_t for a new net connection.  This will only be
 // called once for a player each game, not once for each level change.
 //
 //==========================================================================

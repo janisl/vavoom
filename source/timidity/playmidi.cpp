@@ -368,7 +368,7 @@ static void recompute_amp(int v)
     {
       if (panning > 60 && panning < 68)
 	{
-	  voice[v].panned=PANNED_CENTER;
+	  voice[v].panned=PANNED_CENTRE;
 
 	  if (num_ochannels == 6) voice[v].left_amp =
 		FSCALENEG((double) (tempamp) * voice[v].sample->volume *
@@ -432,7 +432,7 @@ static void recompute_amp(int v)
     }
   else
     {
-      voice[v].panned=PANNED_CENTER;
+      voice[v].panned=PANNED_CENTRE;
 
       voice[v].left_amp=
 	FSCALENEG((double)(tempamp) * voice[v].sample->volume * master_volume,
@@ -628,8 +628,8 @@ static void clone_voice(Instrument *ip, int v, MidiEvent *e, int clone_type, int
 	else if (variationbank == 36) played_note -= 7;
   }
 #if 0
-  played_note = ( (played_note - voice[w].sample->freq_center) * voice[w].sample->freq_scale ) / 1024 +
-		voice[w].sample->freq_center;
+  played_note = ( (played_note - voice[w].sample->freq_centre) * voice[w].sample->freq_scale ) / 1024 +
+		voice[w].sample->freq_centre;
 #endif
   voice[w].note = played_note;
   voice[w].orig_frequency = freq_table[played_note];
@@ -833,8 +833,8 @@ static void start_note(MidiEvent *e, int i)
 
   if (!played_note || !drumsflag) played_note = this_note & 0x7f;
 #if 0
-  played_note = ( (played_note - voice[i].sample->freq_center) * voice[i].sample->freq_scale ) / 1024 +
-		voice[i].sample->freq_center;
+  played_note = ( (played_note - voice[i].sample->freq_centre) * voice[i].sample->freq_scale ) / 1024 +
+		voice[i].sample->freq_centre;
 #endif
   voice[i].status=VOICE_ON;
   voice[i].channel=ch;

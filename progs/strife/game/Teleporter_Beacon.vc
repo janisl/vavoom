@@ -83,7 +83,7 @@ void A_SummonRebel()
 	}
 	if (owner != NULL)
 	{
-		// Rebels are the same color as their owner
+		// Rebels are the same colour as their owner
 		rebel->Translation = owner->Translation;
 		// Set the rebel's target to whatever last hurt the player, so long as it's not
 		// one of the player's other rebels.

@@ -37,7 +37,7 @@ VClass VObject::PrivateStaticClass
 );
 VClass* autoclassVObject = VObject::StaticClass();
 
-bool				VObject::GObjInitialized;
+bool				VObject::GObjInitialised;
 TArray<VObject*>	VObject::GObjObjects;
 TArray<int>			VObject::GObjAvailable;
 VObject*			VObject::GObjHash[4096];
@@ -66,7 +66,7 @@ VObject::~VObject()
 	guard(VObject::~VObject);
 	ConditionalDestroy();
 	GNumDeleted--;
-	if (!GObjInitialized)
+	if (!GObjInitialised)
 	{
 		return;
 	}
@@ -159,7 +159,7 @@ void VObject::operator delete(void* Object, const char*, int)
 void VObject::StaticInit()
 {
 	VMemberBase::StaticInit();
-	GObjInitialized = true;
+	GObjInitialised = true;
 }
 
 //==========================================================================
@@ -173,7 +173,7 @@ void VObject::StaticExit()
 	CollectGarbage();
 	GObjObjects.Clear();
 	GObjAvailable.Clear();
-	GObjInitialized = false;
+	GObjInitialised = false;
 	VMemberBase::StaticExit();
 }
 

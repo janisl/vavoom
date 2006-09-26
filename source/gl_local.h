@@ -253,7 +253,7 @@ protected:
 	PointParameterf_t	p_PointParameterf;
 	PointParameterfv_t	p_PointParameterfv;
 
-	static void SetColor(vuint32 c)
+	static void SetColour(vuint32 c)
 	{
 		glColor4ub(byte((c >> 16) & 0xff), byte((c >> 8) & 0xff),
 			byte(c & 0xff), byte(c >> 24));

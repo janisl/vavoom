@@ -45,7 +45,7 @@ struct dlight_t
 	float	decay;		// drop this each second
 	float	minlight;	// don't add when contributing less
 	int		key;		// used to identify owner to reuse the same light
-	vuint32	color;		// for colored lights
+	vuint32	colour;		// for coloured lights
 };
 
 // Client side Map Object definition.
@@ -225,24 +225,23 @@ class VClientGameBase : public VObject
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-dlight_t *CL_AllocDlight(int key);
-void CL_DecayLights(void);
+dlight_t *CL_AllocDlight(int);
+void CL_DecayLights();
 
-void CL_KeepaliveMessage(void);
+void CL_KeepaliveMessage();
 
-bool CL_TraceLine(const TVec &start, const TVec &end);
+bool CL_TraceLine(const TVec&, const TVec&);
 
-particle_t *R_NewParticle(void);
-void R_AddStaticLight(const TVec &origin, float radius, vuint32 color);
+particle_t *R_NewParticle();
+void R_AddStaticLight(const TVec&, float, vuint32);
 
-void R_InstallSprite(const char *name, int index);
-void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
-	int frame, const char *skin);
+void R_InstallSprite(const char*, int);
+void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*);
 
-VModel* Mod_FindName(const char* name);
-void R_PositionWeaponModel(VEntity* wpent, VModel* wpmodel, int frame);
+VModel* Mod_FindName(const char*);
+void R_PositionWeaponModel(VEntity*, VModel*, int);
 
-void SCR_SetVirtualScreen(int Width, int Height);
+void SCR_SetVirtualScreen(int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

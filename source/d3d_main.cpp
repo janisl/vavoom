@@ -160,10 +160,10 @@ void VDirect3DDrawer::Init()
 	if (result != DD_OK)
 		Sys_Error("I_InitGraphics: Failed to create DirecDraw7");
 
-	// Initialize
+	// Initialise
 	result = DDraw->Initialize(NULL);
 	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to initialize DirectDraw");
+		Sys_Error("I_InitGraphics: Failed to initialise DirectDraw");
 
 	// Set cooperative level
 	result = DDraw->SetCooperativeLevel(hwnd,
@@ -345,7 +345,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 
 	if (BPP < 16)
 	{
-		//	True-color only
+		//	True-colour only
 		return false;
 	}
 
@@ -502,7 +502,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 		EnumZBufferCallback, (VOID*)&ddpfZBuffer);
 
 	//	If the enumerated format is good (it should be), the dwSize member
-	// will be properly initialized. Check this just in case.
+	// will be properly initialised. Check this just in case.
 	if (sizeof(DDPIXELFORMAT) != ddpfZBuffer.dwSize)
 		return false;
  

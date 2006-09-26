@@ -36,7 +36,7 @@ int pclass;	// player class type
 // Focal origin above r.z
 TVec vieworg;
 TAVec viewangles;
-int centering;
+int centreing;
 
 // This is only used between levels,
 // mo->health is used during levels.
@@ -51,14 +51,14 @@ int Frags;
 int extralight;
 
 // For lite-amp and invulnarability powers
-int fixedcolormap;
+int fixedcolourmap;
 
 // Current PLAYPAL index
-//  can be set to REDCOLORMAP for pain, etc.
+//  can be set to REDCOLOURMAP for pain, etc.
 int palette;
 int prev_palette;
 
-int cshifts[NUM_CSHIFTS];	//  color shifts for damage,
+int cshifts[NUM_CSHIFTS];	//  colour shifts for damage,
 int prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
 // Overlay view sprites (gun, etc).

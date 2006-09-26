@@ -314,7 +314,7 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 					b += r_palette[psrc[srcrow + 1]].b;
 				}
 
-				//	Get color.
+				//	Get colour.
 				if (a > 2)
 				{
 					*pdst = 0;
@@ -463,7 +463,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 	int lightr = (light >> 19) & 0x1f;
 	int lightg = (light >> 11) & 0x1f;
 	int lightb = (light >> 3) & 0x1f;
-	bool colored = (lightr != lightg) || (lightr != lightb);
+	bool coloured = (lightr != lightg) || (lightr != lightb);
 
 	void *cmap;
 	void *cmapr;
@@ -496,7 +496,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 
 	int count =  w * h;
 	byte* source = SrcBlock;
-	if (ScreenBPP == 8 && colored)
+	if (ScreenBPP == 8 && coloured)
 	{
 		byte* dest = (byte*)block;
 		while (count--)
@@ -522,7 +522,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 			dest++;
 		}
 	}
-	else if (PixelBytes == 2 && colored)
+	else if (PixelBytes == 2 && coloured)
 	{
 		word* dest = (word*)block;
 		while (count--)
@@ -550,7 +550,7 @@ void VSoftwareDrawer::GenerateSprite(int lump, int slot, vuint32 light,
 			dest++;
 		}
 	}
-	else if (colored)
+	else if (coloured)
 	{
 		vuint32* dest = (vuint32*)block;
 		while (count--)

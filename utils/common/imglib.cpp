@@ -54,7 +54,7 @@ struct pcx_t
 	unsigned char	palette[48];
 
 	char			reserved;
-	char			color_planes;
+	char			colour_planes;
 	unsigned short	bytes_per_line;
 	unsigned short	palette_type;
 
@@ -67,8 +67,8 @@ struct tgaHeader_t
 	vuint8		id_length;
 	vuint8		pal_type;
 	vuint8		img_type;
-	vuint16		first_color;
-	vuint16		pal_colors;
+	vuint16		first_colour;
+	vuint16		pal_colours;
 	vuint8		pal_entry_size;
 	vuint16		left;
 	vuint16		top;
@@ -113,10 +113,10 @@ static void LoadPCX(const char *filename)
 
 	if (pcx->bits_per_pixel != 8)
 	{
-		// we like 8 bit color planes
+		// we like 8 bit colour planes
 		Error("No 8-bit planes\n");
 	}
-	if (pcx->color_planes != 1)
+	if (pcx->colour_planes != 1)
 	{
 		Error("Not 8 bpp\n");
 	}
@@ -193,7 +193,7 @@ static void LoadTGA(const char *filename)
 
 	data = (vuint8*)(hdr + 1) + hdr->id_length;
 
-	for (int i = 0; i < hdr->pal_colors; i++)
+	for (int i = 0; i < hdr->pal_colours; i++)
 	{
 		switch (hdr->pal_entry_size)
 		{
@@ -222,11 +222,11 @@ static void LoadTGA(const char *filename)
 
 	/* Image type:
 	 *    0 = no image data
-	 *    1 = uncompressed color mapped
-	 *    2 = uncompressed true color
+	 *    1 = uncompressed colour mapped
+	 *    2 = uncompressed true colour
 	 *    3 = grayscale
-	 *    9 = RLE color mapped
-	 *   10 = RLE true color
+	 *    9 = RLE colour mapped
+	 *   10 = RLE true colour
 	 *   11 = RLE grayscale
 	 */
 

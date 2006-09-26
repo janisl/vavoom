@@ -26,7 +26,7 @@
 #include "gamedefs.h"
 #include "progdefs.h"
 
-bool					VMemberBase::GObjInitialized;
+bool					VMemberBase::GObjInitialised;
 VClass*					VMemberBase::GClasses;
 TArray<VMemberBase*>	VMemberBase::GMembers;
 TArray<VPackage*>		VMemberBase::GLoadedPackages;
@@ -219,7 +219,7 @@ VMemberBase::VMemberBase(vuint8 InMemberType, VName AName)
 , Outer(0)
 , Name(AName)
 {
-	if (GObjInitialized)
+	if (GObjInitialised)
 	{
 		GMembers.Append(this);
 	}
@@ -308,7 +308,7 @@ void VMemberBase::StaticInit()
 	VClass::GModelNames.Append(NAME_None);
 	for (VClass* C = GClasses; C; C = C->LinkNext)
 		GMembers.Append(C);
-	GObjInitialized = true;
+	GObjInitialised = true;
 	unguard;
 }
 
@@ -338,7 +338,7 @@ void VMemberBase::StaticExit()
 	VClass::GScriptIds.Clear();
 	VClass::GSpriteNames.Clear();
 	VClass::GModelNames.Clear();
-	GObjInitialized = false;
+	GObjInitialised = false;
 }
 
 //==========================================================================
@@ -1944,7 +1944,7 @@ VClass::~VClass()
 		delete[] ClassVTable;
 	}
 
-	if (!GObjInitialized)
+	if (!GObjInitialised)
 	{
 		return;
 	}

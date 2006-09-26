@@ -1138,14 +1138,14 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			if (model_lighting)
 			{
 				l = shadedots[verts[index].lightnormalindex];
-				out[i].color = alpha |
+				out[i].colour = alpha |
 					(((int)(l * shadelightr * 0xff) << 16) & 0x00ff0000) |
 					(((int)(l * shadelightg * 0xff) <<  8) & 0x0000ff00) |
 					(((int)(l * shadelightb * 0xff)      ) & 0x000000ff);
 			}
 			else
 			{
-				out[i].color = alpha | light;
+				out[i].colour = alpha | light;
 			}
 
 			out[i].x = verts[index].v[0];
@@ -1223,10 +1223,10 @@ void VDirect3DDrawer::DrawParticle(particle_t *p)
 {
 	guard(VDirect3DDrawer::DrawParticle);
 	MyD3DVertex out[4];
-	out[0] = MyD3DVertex(p->org - viewright + viewup, p->color, 0, 0);
-	out[1] = MyD3DVertex(p->org + viewright + viewup, p->color, 1, 0);
-	out[2] = MyD3DVertex(p->org + viewright - viewup, p->color, 1, 1);
-	out[3] = MyD3DVertex(p->org - viewright - viewup, p->color, 0, 1);
+	out[0] = MyD3DVertex(p->org - viewright + viewup, p->colour, 0, 0);
+	out[1] = MyD3DVertex(p->org + viewright + viewup, p->colour, 1, 0);
+	out[2] = MyD3DVertex(p->org + viewright - viewup, p->colour, 1, 1);
+	out[3] = MyD3DVertex(p->org - viewright - viewup, p->colour, 0, 1);
 #if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
 #else

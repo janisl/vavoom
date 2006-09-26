@@ -79,23 +79,19 @@ void VAllegroSoftwareDrawer::Init()
 //
 //	VAllegroSoftwareDrawer::my_create_bitmap_ex
 //
-//	Creates a new memory bitmap in the specified color_depth
+//	Creates a new memory bitmap in the specified colour_depth
 //
 //==========================================================================
 
-BITMAP* VAllegroSoftwareDrawer::my_create_bitmap_ex(int color_depth,
+BITMAP* VAllegroSoftwareDrawer::my_create_bitmap_ex(int colour_depth,
 	int width, int height)
 {
 	guard(VAllegroSoftwareDrawer::my_create_bitmap_ex);
-	GFX_VTABLE*		vtable;
-	BITMAP*			bitmap;
-	int				i;
-
-	vtable = _get_vtable(color_depth);
+	GFX_VTABLE* vtable = _get_vtable(colour_depth);
 	if (!vtable)
 		return NULL;
 
-	bitmap = (BITMAP*)Z_Malloc(sizeof(BITMAP) + (sizeof(char*) * height));
+	BITMAP* bitmap = (BITMAP*)Z_Malloc(sizeof(BITMAP) + (sizeof(char*) * height));
 
 	bitmap->dat = scrn;
 
@@ -112,8 +108,11 @@ BITMAP* VAllegroSoftwareDrawer::my_create_bitmap_ex(int color_depth,
 	bitmap->seg = _default_ds();
 
 	bitmap->line[0] = (vuint8*)bitmap->dat;
-	for (i = 1; i < height; i++)
-		bitmap->line[i] = bitmap->line[i - 1] + width * BYTES_PER_PIXEL(color_depth);
+	for (int i = 1; i < height; i++)
+	{
+		bitmap->line[i] = bitmap->line[i - 1] + width *
+			BYTES_PER_PIXEL(colour_depth);
+	}
 
 	if (system_driver->created_bitmap)
 		system_driver->created_bitmap(bitmap);

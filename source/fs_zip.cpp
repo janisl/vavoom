@@ -241,7 +241,7 @@ VZipFile::VZipFile(const VStr& zipfile)
 		Files[i].LumpNamespace =
 			Files[i].Name.StartsWith("sprites/") ? WADNS_Sprites :
 			Files[i].Name.StartsWith("flats/") ? WADNS_Flats :
-			Files[i].Name.StartsWith("colormaps/") ? WADNS_ColorMaps :
+			Files[i].Name.StartsWith("colormaps/") ? WADNS_ColourMaps :
 			Files[i].Name.StartsWith("acs/") ? WADNS_ACSLibrary :
 			Files[i].Name.StartsWith("textures/") ? WADNS_NewTextures :
 			Files[i].Name.StartsWith("voices/") ? WADNS_Voices :

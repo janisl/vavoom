@@ -472,7 +472,7 @@ void IM_DrawSingleStats()
 	T_DrawText(210, 205, "KILLS");
 	T_DrawText(210, 230, "ITEMS");
 	T_DrawText(210, 255, "SECRETS");
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 	T_DrawText(320, 143, ClGame.im->LeaveName);
 	T_SetShadow(false);
 
@@ -558,7 +558,7 @@ void IM_DrawSingleStats()
 	else
 	{
 		T_SetFont(font_small);
-		T_SetAlign(hcenter, vtop);
+		T_SetAlign(hcentre, vtop);
 		T_DrawText(320, 300, "NOW ENTERING:");
 		T_SetShadow(true);
 		T_SetFont(font_big);
@@ -586,7 +586,7 @@ void IM_DrawCoopStats()
 	T_DrawText(315, 175, "BONUS");
 	T_DrawText(392, 175, "SECRET");
 
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 	T_DrawText(320, 143, ClGame.im->LeaveName);
 	T_SetShadow(false);
 	T_SetFont(font_small);
@@ -735,7 +735,7 @@ void IM_DrawOldLevel()
 {
 	int i;
 
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 
 	T_SetShadow(true);
 	T_SetFont(font_big);
@@ -793,7 +793,7 @@ void IM_DrawYAH()
 {
 	int i;
 
-	T_SetAlign(hcenter, vtop);
+	T_SetAlign(hcentre, vtop);
 
 	T_SetFont(font_small);
 	T_DrawText(320, 10, "NOW ENTERING:");

@@ -1182,7 +1182,7 @@ bool CheckLock(Actor user, int lock)
 	case 2:	// Blue Lock
 		if (!(Keys & (1 << it_bluecard)))
 		{
-			user.Player.centerprint("You need a blue keycard");
+			user.Player.centreprint("You need a blue keycard");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1191,7 +1191,7 @@ bool CheckLock(Actor user, int lock)
 	case 1:	// Red Lock
 		if (!(Keys & (1 << it_redcard)))
 		{
-			user.Player.centerprint("You need a red keycard");
+			user.Player.centreprint("You need a red keycard");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1200,7 +1200,7 @@ bool CheckLock(Actor user, int lock)
 	case 3:	// Yellow Lock
 		if (!(Keys & (1 << it_yellowcard)))
 		{
-			user.Player.centerprint("You need a yellow keycard");
+			user.Player.centreprint("You need a yellow keycard");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1209,7 +1209,7 @@ bool CheckLock(Actor user, int lock)
 	case 5:	// Blue Lock
 		if (!(Keys & (1 << it_blueskull)))
 		{
-			user.Player.centerprint("You need a blue skullkey");
+			user.Player.centreprint("You need a blue skullkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1218,7 +1218,7 @@ bool CheckLock(Actor user, int lock)
 	case 4:	// Red Lock
 		if (!(Keys & (1 << it_redskull)))
 		{
-			user.Player.centerprint("You need a red skullkey");
+			user.Player.centreprint("You need a red skullkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1227,7 +1227,7 @@ bool CheckLock(Actor user, int lock)
 	case 6:	// Yellow Lock
 		if (!(Keys & (1 << it_yellowskull)))
 		{
-			user.Player.centerprint("You need a yellow skullkey");
+			user.Player.centreprint("You need a yellow skullkey");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1237,7 +1237,7 @@ bool CheckLock(Actor user, int lock)
 	case 128 + 100:	// Any key
 		if (!Keys)
 		{
-			user.Player.centerprint("You need any key");
+			user.Player.centreprint("You need any key");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1246,7 +1246,7 @@ bool CheckLock(Actor user, int lock)
 	case 101:	// All keys
 		if (Keys != 0x3f)
 		{
-			user.Player.centerprint("You need all keycards and skullkeys");
+			user.Player.centreprint("You need all keycards and skullkeys");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1255,7 +1255,7 @@ bool CheckLock(Actor user, int lock)
 	case 128 + 2:	// Blue Lock
 		if (!(Keys & ((1 << it_bluecard) | (1 << it_blueskull))))
 		{
-			user.Player.centerprint("You need a blue key");
+			user.Player.centreprint("You need a blue key");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1264,7 +1264,7 @@ bool CheckLock(Actor user, int lock)
 	case 128 + 1:	// Red Lock
 		if (!(Keys & ((1 << it_redcard) | (1 << it_redskull))))
 		{
-			user.Player.centerprint("You need a red key");
+			user.Player.centreprint("You need a red key");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1273,7 +1273,7 @@ bool CheckLock(Actor user, int lock)
 	case 128 + 3:	// Yellow Lock
 		if (!(Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
-			user.Player.centerprint("You need a yellow key");
+			user.Player.centreprint("You need a yellow key");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -1284,7 +1284,7 @@ bool CheckLock(Actor user, int lock)
 			!(Keys & ((1 << it_redcard) | (1 << it_redskull))) ||
 			!(Keys & ((1 << it_yellowcard) | (1 << it_yellowskull))))
 		{
-			user.Player.centerprint("You need all keys");
+			user.Player.centreprint("You need all keys");
 			user.PlaySound('*grunt', CHAN_VOICE);
 			return false;
 		}
@@ -3506,8 +3506,8 @@ bool DoGroupForOne(Actor victim, Actor source, Actor dest, bool floorz,
 //
 //	EV_TeleportGroup
 //
-//	[RH] Teleport a group of actors centered around source_tid so
-// that they become centered around dest_tid instead.
+//	[RH] Teleport a group of actors centred around source_tid so
+// that they become centred around dest_tid instead.
 //
 //==========================================================================
 

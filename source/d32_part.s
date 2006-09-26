@@ -128,10 +128,10 @@ L15bppEntry:
 	fxch	%st(1)			// x | y/z | 1/z
 	fmul	%st(2),%st(0)	// x/z | y/z | 1/z
 	fxch	%st(1)			// y/z | x/z | 1/z
-	fadds	C(centeryfrac)		// v | x/z | 1/z
+	fadds	C(centreyfrac)		// v | x/z | 1/z
 	fxch	%st(1)			// x/z | v | 1/z
-	fadds	C(centerxfrac)		// u | v | 1/z
-// FIXME: preadjust xcenter and ycenter
+	fadds	C(centrexfrac)		// u | v | 1/z
+// FIXME: preadjust xcentre and ycentre
 	fxch	%st(1)			// v | u | 1/z
 	fadds	float_point5	// v | u | 1/z
 	fxch	%st(1)			// u | v | 1/z
@@ -168,15 +168,15 @@ L15bppEntry:
 	jg		LPop1AndDone
 
 	//	Convert color if needed
-	movl	pt_color(%edi),%ebp
+	movl	pt_colour(%edi),%ebp
 	movl	C(rshift),%ecx
 	cmpl	$16,%ecx		//	Check for ARGB format
-	je		LColorDone
+	je		LColourDone
 	//	ABGR format
 	bswap	%ebp			// !!! 486 and abowe !!!
 	rorl	$8,%ebp
-LColorDone:
-	movl	%ebp,DP_Color
+LColourDone:
+	movl	%ebp,DP_Colour
 
 	movl	C(scrn),%ebx
 
@@ -223,7 +223,7 @@ LTestDone:
 	cmpl	$4,%eax
 	ja		LDefault
 
-	movl	DP_Color,%ecx
+	movl	DP_Colour,%ecx
 
 	jmp		*DP_EntryTable-4(,%eax,4)
 
@@ -441,7 +441,7 @@ LDefault:
 	movb	C(d_y_aspect_shift),%cl
 	shll	%cl,%ebx
 
-	movl	DP_Color,%ecx
+	movl	DP_Colour,%ecx
 
 // for ( ; count ; count--, pz += d_zwidth, pdest += screenwidth)
 // {

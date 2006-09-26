@@ -626,14 +626,14 @@ void FACScriptsObject::LoadEnhancedObject()
 		}
 	}
 
-	//	Initialize this object's map variable pointers to defaults. They can
+	//	Initialise this object's map variable pointers to defaults. They can
 	// be changed later once the imported modules are loaded.
 	for (i = 0; i < MAX_ACS_MAP_VARS; i++)
 	{
 		MapVars[i] = &MapVarStore[i];
 	}
 
-	//	Initialize this object's map variables.
+	//	Initialise this object's map variables.
 	memset(MapVarStore, 0, sizeof(MapVarStore));
 	buffer = (int*)FindChunk("MINI");
 	while (buffer)
@@ -663,7 +663,7 @@ void FACScriptsObject::LoadEnhancedObject()
 		}
 	}
 
-	//	Initialize arrays.
+	//	Initialise arrays.
 	buffer = (int*)FindChunk("AINI");
 	while (buffer)
 	{
@@ -706,7 +706,7 @@ void FACScriptsObject::LoadEnhancedObject()
 	// is okay.
 	LibraryID = LoadedObjects.Append(this) << 16;
 
-	//	Tag the library ID to any map variables that are initialized with
+	//	Tag the library ID to any map variables that are initialised with
 	// strings.
 	if (LibraryID)
 	{
@@ -2190,7 +2190,7 @@ int VACS::RunScript(float DeltaTime)
 			PrintStr = PrintStr.EvalEscapeSequences();
 			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				SV_ClientCenterPrintf(Activator->Player, *PrintStr);
+				SV_ClientCentrePrintf(Activator->Player, *PrintStr);
 			}
 			else
 			{

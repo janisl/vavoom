@@ -318,12 +318,12 @@ float HaloSize;
 float HaloMinSize;
 float HaloMaxSize;
 float HaloTranslucency;
-int HaloColor;
+int HaloColour;
 string HaloGraphic;
 
 int DLightType;
 int DLightIntensity;
-int DLightColor;
+int DLightColour;
 float DLightHeight;
 
 classid DropItem;
@@ -901,7 +901,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			Player(source.Player).ReadyWeapon != DoomDefs::wp_chainsaw))
 	{
 		Velocity += (500.0 * itof(damage) / Mass) *
-			Normalise(MobjCenter(self) - MobjCenter(inflictor));
+			Normalise(MobjCentre(self) - MobjCentre(inflictor));
 	}
 
 	// player specific
@@ -1998,7 +1998,7 @@ bool PIT_RadiusAttack(Entity Other)
 	if (Actor(Other).bBoss)
 		return true;
 
-	dist = Length(MobjCenter(Other) - MobjCenter(self)) - Other.Radius;
+	dist = Length(MobjCentre(Other) - MobjCentre(self)) - Other.Radius;
 
 	if (dist < 0.0)
 		dist = 0.0;
@@ -3810,7 +3810,7 @@ void ObjectSpawning(AttackType *attack, float angle)
 	{
 		newobject.bSkullFly = true;
 		newobject.A_FaceTarget();
-		newobject.Velocity = Normalise(MobjCenter(newobject.Enemy) -
+		newobject.Velocity = Normalise(MobjCentre(newobject.Enemy) -
 			newobject.Origin) * attack->AssaultSpeed;
 	}
 
@@ -3900,7 +3900,7 @@ void DoAttack(AttackType *attack)
 		bSkullFly = true;
 		if (attack->InitSound)
 			PlaySound(attack->InitSound, CHAN_VOICE);
-		Velocity = Normalise(MobjCenter(Enemy) - Origin) * attack->AssaultSpeed;
+		Velocity = Normalise(MobjCentre(Enemy) - Origin) * attack->AssaultSpeed;
 		break;
 
 	case ATK_Spawner:
@@ -4660,7 +4660,7 @@ void P_ActFixedHomingProjectile()
 	if (!Enemy || Enemy.Health <= 0)
 		return;
 
-	wishdir = Normalise(MobjCenter(Enemy) - Origin);
+	wishdir = Normalise(MobjCentre(Enemy) - Origin);
 	currdir = Normalise(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
@@ -4704,7 +4704,7 @@ void P_ActRandomHomingProjectile()
 	if (!Enemy || Enemy.Health <= 0)
 		return;
 
-	wishdir = Normalise(MobjCenter(Enemy) - Origin);
+	wishdir = Normalise(MobjCentre(Enemy) - Origin);
 	currdir = Normalise(Velocity);
 	delta = wishdir - currdir;
 	adjustlen = Length(delta);
@@ -4962,9 +4962,9 @@ defaultproperties
 	HaloMinSize = -1.0;
 	HaloMaxSize = -1.0;
 	HaloTranslucency = 0.5;
-	HaloColor = 0x00ffffff;
+	HaloColour = 0x00ffffff;
 	DLightIntensity = 32;
-	DLightColor = 0x00ffffff;
+	DLightColour = 0x00ffffff;
 	DLightHeight = 0.5;
 #endif
 }

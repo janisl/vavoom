@@ -84,7 +84,7 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 	float	zi;
 	byte	*pdest;
 	short	*pz;
-	int		i, izi, pix, count, u, v, color;
+	int		i, izi, pix, count, u, v, colour;
 
 	// transform point
 	local = pparticle->org - vieworg;
@@ -97,10 +97,10 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 		return;
 
 	// project the point
-	// FIXME: preadjust xcenter and ycenter
+	// FIXME: preadjust xcentre and ycentre
 	zi = 1.0 / transformed.z;
-	u = (int)(centerxfrac + zi * transformed.x + 0.5);
-	v = (int)(centeryfrac + zi * transformed.y + 0.5);
+	u = (int)(centrexfrac + zi * transformed.x + 0.5);
+	v = (int)(centreyfrac + zi * transformed.y + 0.5);
 
 	if ((v > d_particle_top) || 
 		(u > d_particle_right) ||
@@ -110,9 +110,9 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 		return;
 	}
 
-	color =	d_rgbtable[((pparticle->color >> 9) & 0x7c00) +
-		((pparticle->color >> 6) & 0x3e0) +
-		((pparticle->color >> 3) & 0x1f)];
+	colour =	d_rgbtable[((pparticle->colour >> 9) & 0x7c00) +
+		((pparticle->colour >> 6) & 0x3e0) +
+		((pparticle->colour >> 3) & 0x1f)];
 
 	pz = zbuffer + ylookup[v] + u;
 	pdest = (byte*)scrn + ylookup[v] + u;
@@ -135,7 +135,7 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 		}
 		break;
@@ -148,13 +148,13 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 		}
 		break;
@@ -167,19 +167,19 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 		}
 		break;
@@ -192,25 +192,25 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 
 			if (pz[3] <= izi)
 			{
 				pz[3] = izi;
-				pdest[3] = color;
+				pdest[3] = colour;
 			}
 		}
 		break;
@@ -225,7 +225,7 @@ extern "C" void D_DrawParticle_8(particle_t *pparticle)
 				if (pz[i] <= izi)
 				{
 					pz[i] = izi;
-					pdest[i] = color;
+					pdest[i] = colour;
 				}
 			}
 		}
@@ -245,7 +245,7 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 	float	zi;
 	word	*pdest;
 	short	*pz;
-	int		i, izi, pix, count, u, v, color;
+	int		i, izi, pix, count, u, v, colour;
 
 	// transform point
 	local = pparticle->org - vieworg;
@@ -258,10 +258,10 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 		return;
 
 	// project the point
-	// FIXME: preadjust xcenter and ycenter
+	// FIXME: preadjust xcentre and ycentre
 	zi = 1.0 / transformed.z;
-	u = (int)(centerxfrac + zi * transformed.x + 0.5);
-	v = (int)(centeryfrac + zi * transformed.y + 0.5);
+	u = (int)(centrexfrac + zi * transformed.x + 0.5);
+	v = (int)(centreyfrac + zi * transformed.y + 0.5);
 
 	if ((v > d_particle_top) || 
 		(u > d_particle_right) ||
@@ -271,10 +271,10 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 		return;
 	}
 
-	byte r = (pparticle->color >> 16) & 0xff;
-	byte g = (pparticle->color >> 8) & 0xff;
-	byte b = pparticle->color & 0xff;
-	color =	MakeCol15(r, g, b);
+	byte r = (pparticle->colour >> 16) & 0xff;
+	byte g = (pparticle->colour >> 8) & 0xff;
+	byte b = pparticle->colour & 0xff;
+	colour =	MakeCol15(r, g, b);
 
 	pz = zbuffer + ylookup[v] + u;
 	pdest = (word*)scrn + ylookup[v] + u;
@@ -297,7 +297,7 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 		}
 		break;
@@ -310,13 +310,13 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 		}
 		break;
@@ -329,19 +329,19 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 		}
 		break;
@@ -354,25 +354,25 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 
 			if (pz[3] <= izi)
 			{
 				pz[3] = izi;
-				pdest[3] = color;
+				pdest[3] = colour;
 			}
 		}
 		break;
@@ -387,7 +387,7 @@ extern "C" void D_DrawParticle_15(particle_t *pparticle)
 				if (pz[i] <= izi)
 				{
 					pz[i] = izi;
-					pdest[i] = color;
+					pdest[i] = colour;
 				}
 			}
 		}
@@ -407,7 +407,7 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 	float	zi;
 	word	*pdest;
 	short	*pz;
-	int		i, izi, pix, count, u, v, color;
+	int		i, izi, pix, count, u, v, colour;
 
 	// transform point
 	local = pparticle->org - vieworg;
@@ -420,10 +420,10 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 		return;
 
 	// project the point
-	// FIXME: preadjust xcenter and ycenter
+	// FIXME: preadjust xcentre and ycentre
 	zi = 1.0 / transformed.z;
-	u = (int)(centerxfrac + zi * transformed.x + 0.5);
-	v = (int)(centeryfrac + zi * transformed.y + 0.5);
+	u = (int)(centrexfrac + zi * transformed.x + 0.5);
+	v = (int)(centreyfrac + zi * transformed.y + 0.5);
 
 	if ((v > d_particle_top) || 
 		(u > d_particle_right) ||
@@ -433,10 +433,10 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 		return;
 	}
 
-	byte r = (pparticle->color >> 16) & 0xff;
-	byte g = (pparticle->color >> 8) & 0xff;
-	byte b = pparticle->color & 0xff;
-	color =	MakeCol16(r, g, b);
+	byte r = (pparticle->colour >> 16) & 0xff;
+	byte g = (pparticle->colour >> 8) & 0xff;
+	byte b = pparticle->colour & 0xff;
+	colour =	MakeCol16(r, g, b);
 
 	pz = zbuffer + ylookup[v] + u;
 	pdest = (word*)scrn + ylookup[v] + u;
@@ -459,7 +459,7 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 		}
 		break;
@@ -472,13 +472,13 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 		}
 		break;
@@ -491,19 +491,19 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 		}
 		break;
@@ -516,25 +516,25 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 
 			if (pz[3] <= izi)
 			{
 				pz[3] = izi;
-				pdest[3] = color;
+				pdest[3] = colour;
 			}
 		}
 		break;
@@ -549,7 +549,7 @@ extern "C" void D_DrawParticle_16(particle_t *pparticle)
 				if (pz[i] <= izi)
 				{
 					pz[i] = izi;
-					pdest[i] = color;
+					pdest[i] = colour;
 				}
 			}
 		}
@@ -569,7 +569,7 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 	float		zi;
 	vuint32*	pdest;
 	short*		pz;
-	int			i, izi, pix, count, u, v, color;
+	int			i, izi, pix, count, u, v, colour;
 
 	// transform point
 	local = pparticle->org - vieworg;
@@ -582,10 +582,10 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 		return;
 
 	// project the point
-	// FIXME: preadjust xcenter and ycenter
+	// FIXME: preadjust xcentre and ycentre
 	zi = 1.0 / transformed.z;
-	u = (int)(centerxfrac + zi * transformed.x + 0.5);
-	v = (int)(centeryfrac + zi * transformed.y + 0.5);
+	u = (int)(centrexfrac + zi * transformed.x + 0.5);
+	v = (int)(centreyfrac + zi * transformed.y + 0.5);
 
 	if ((v > d_particle_top) || 
 		(u > d_particle_right) ||
@@ -595,10 +595,10 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 		return;
 	}
 
-	byte r = (pparticle->color >> 16) & 0xff;
-	byte g = (pparticle->color >> 8) & 0xff;
-	byte b = pparticle->color & 0xff;
-	color =	MakeCol32(r, g, b);
+	byte r = (pparticle->colour >> 16) & 0xff;
+	byte g = (pparticle->colour >> 8) & 0xff;
+	byte b = pparticle->colour & 0xff;
+	colour =	MakeCol32(r, g, b);
 
 	pz = zbuffer + ylookup[v] + u;
 	pdest = (vuint32*)scrn + ylookup[v] + u;
@@ -621,7 +621,7 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 		}
 		break;
@@ -634,13 +634,13 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 		}
 		break;
@@ -653,19 +653,19 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 		}
 		break;
@@ -678,25 +678,25 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 			if (pz[0] <= izi)
 			{
 				pz[0] = izi;
-				pdest[0] = color;
+				pdest[0] = colour;
 			}
 
 			if (pz[1] <= izi)
 			{
 				pz[1] = izi;
-				pdest[1] = color;
+				pdest[1] = colour;
 			}
 
 			if (pz[2] <= izi)
 			{
 				pz[2] = izi;
-				pdest[2] = color;
+				pdest[2] = colour;
 			}
 
 			if (pz[3] <= izi)
 			{
 				pz[3] = izi;
-				pdest[3] = color;
+				pdest[3] = colour;
 			}
 		}
 		break;
@@ -711,7 +711,7 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 				if (pz[i] <= izi)
 				{
 					pz[i] = izi;
-					pdest[i] = color;
+					pdest[i] = colour;
 				}
 			}
 		}
@@ -727,7 +727,7 @@ extern "C" void D_DrawParticle_32(particle_t *pparticle)
 //
 //==========================================================================
 
-void VSoftwareDrawer::StartParticles(void)
+void VSoftwareDrawer::StartParticles()
 {
 	guard(VSoftwareDrawer::StartParticles);
 	r_pright = viewright * xscaleshrink;
@@ -745,7 +745,7 @@ void VSoftwareDrawer::StartParticles(void)
 void VSoftwareDrawer::DrawParticle(particle_t *pparticle)
 {
 	guard(VSoftwareDrawer::DrawParticle);
-	if (pparticle->color > 0x7fffffff)
+	if (pparticle->colour > 0x7fffffff)
 	{
 		D_DrawParticle(pparticle);
 	}
@@ -758,6 +758,6 @@ void VSoftwareDrawer::DrawParticle(particle_t *pparticle)
 //
 //==========================================================================
 
-void VSoftwareDrawer::EndParticles(void)
+void VSoftwareDrawer::EndParticles()
 {
 }

@@ -65,7 +65,7 @@
 #define	MF_NOTDMATCH	0x02000000	// don't spawn in death match (key cards)
 
 #define	MF_TRANSLATION	0x0c000000	// if 0x4 0x8 or 0xc, use a translation
-#define	MF_TRANSSHIFT	26			// table for player colormaps
+#define	MF_TRANSSHIFT	26			// table for player colourmaps
 
 #define MF_TRANSLUCENT	0x80000000  // Translucency
 

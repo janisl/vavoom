@@ -46,7 +46,7 @@ const int
 
 const float BONUSADD		= 0.2;
 
-const int INVERSECOLORMAP	= 32;
+const int INVERSECOLOURMAP	= 32;
 
 //
 //  PALETTE MACROS
@@ -259,7 +259,7 @@ void UserinfoChanged()
 	{
 		return;
 	}
-	MO.Translation = Color;
+	MO.Translation = Colour;
 }
 
 //==========================================================================
@@ -373,8 +373,8 @@ void SpawnPlayer(mthing_t * mthing)
 	A.Origin.z += mthing->height;
 	A.LinkToWorld();
 
-	// set color translations for player sprites
-	A.Translation = Color;
+	// set colour translations for player sprites
+	A.Translation = Colour;
 
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 	A.Player = self;
@@ -387,7 +387,7 @@ void SpawnPlayer(mthing_t * mthing)
 	DamageFlash = 0.0;
 	BonusFlash = 0.0;
 	ExtraLight = 0;
-	FixedColormap = 0;
+	FixedColourmap = 0;
 	LastSectorDamageTime = 0.0;
 	LastHazardTime = 0.0;
 	ViewHeight = VIEWHEIGHT;
@@ -411,7 +411,7 @@ void SpawnPlayer(mthing_t * mthing)
 //
 //  PlayerReborn
 //
-//  Called after a player dies almost everything is cleared and initialized
+//  Called after a player dies almost everything is cleared and initialised
 //
 //==========================================================================
 
@@ -465,7 +465,7 @@ void PlayerExitMap(bool clusterChange)
 	MO.Angles.pitch = 0.0;
 //	MO.Translucency = 0;		// cancel invisibility
 	ExtraLight = 0;			// cancel gun flashes
-	FixedColormap = 0;		// cancel ir gogles
+	FixedColourmap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes
 	BonusFlash = 0.0;
 }
@@ -1347,7 +1347,7 @@ void PlayerInSpecialSector(float deltaTime)
 		SecretCount++;
 		Level.Game.level->currentsecret++;
 		MO.Sector->special &= ~SECSPEC_SECRET_MASK;
-		centerprint("You found a secret area");
+		centreprint("You found a secret area");
 		MO.PlaySound('misc/secret', CHAN_VOICE);
 	}
 
@@ -1965,14 +1965,14 @@ void PlayerTick(float deltaTime)
 		}
 	}
 
-	// Handling colormaps.
+	// Handling colourmaps.
 	if (Powers[pw_invulnerability])
 	{
 		if (Powers[pw_invulnerability] > 4.0 ||
 			(ftoi(4.0 * Powers[pw_invulnerability]) & 1))
-			FixedColormap = INVERSECOLORMAP;
+			FixedColourmap = INVERSECOLOURMAP;
 		else
-			FixedColormap = 0;
+			FixedColourmap = 0;
 	}
 	else if (Powers[pw_infrared])
 	{
@@ -1980,13 +1980,13 @@ void PlayerTick(float deltaTime)
 			(ftoi(4.0 * Powers[pw_infrared]) & 1))
 		{
 			// almost full bright
-			FixedColormap = 1;
+			FixedColourmap = 1;
 		}
 		else
-			FixedColormap = 0;
+			FixedColourmap = 0;
 	}
 	else
-		FixedColormap = 0;
+		FixedColourmap = 0;
 }
 
 //==========================================================================

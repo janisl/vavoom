@@ -23,20 +23,36 @@
 //**
 //**************************************************************************
 
-class MenuChoice_ColoredLights : MenuChoice_OnOff;
+class MenuChoice_Colour : MenuChoiceEnum;
 
 int GetInitialValue()
 {
-	return GetCvar('d_colored_lights');
+	return GetCvar('colour');
 }
 
 bool SetNewValue(int newValue)
 {
-	SetCvar('d_colored_lights', newValue);
+	SetCvar('colour', newValue);
+	MenuScreenPlayerSetup(Parent).SetSpriteColour(newValue);
 	return true;
+}
+
+void InitWindow()
+{
+	::InitWindow();
+	MenuScreenPlayerSetup(Parent).SetSpriteColour(Value);
 }
 
 defaultproperties
 {
-	Text = "Colored lights";
+	Text = "Colour";
+	bLeftAlign = true;
+	EnumNames[0] = "blue";
+	EnumNames[1] = "red";
+	EnumNames[2] = "gold";
+	EnumNames[3] = "light green";
+	EnumNames[4] = "green";
+	EnumNames[5] = "gray";
+	EnumNames[6] = "brown";
+	EnumNames[7] = "magenta";
 }
