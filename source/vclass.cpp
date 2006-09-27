@@ -983,6 +983,7 @@ void VMethod::Serialise(VStream& Strm)
 	vint32 TmpNumLocals;
 	vint32 TmpFlags;
 	vint32 ParamsSize;
+	vuint8 TmpParmFlag;
 	Strm << STRM_INDEX(TmpNumLocals)
 		<< STRM_INDEX(TmpFlags)
 		<< TmpType
@@ -993,7 +994,7 @@ void VMethod::Serialise(VStream& Strm)
 	NumLocals = TmpNumLocals;
 	Flags = TmpFlags;
 	for (int i = 0; i < TmpNumParams; i++)
-		Strm << TmpType;
+		Strm << TmpType << TmpParmFlag;
 
 	//	Set up builtins
 	if (NumParms > 16)

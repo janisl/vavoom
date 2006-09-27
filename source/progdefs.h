@@ -69,6 +69,12 @@ enum
 
 enum
 {
+	FPARM_Optional	= 0x01,
+	FPARM_Out		= 0x02,
+};
+
+enum
+{
 	MEMBER_Package,
 	MEMBER_Field,
 	MEMBER_Method,

@@ -545,6 +545,16 @@ template<class T> T* Spawn()
 #define P_GET_PTR(t, v)		t* v = (t*)PR_PopPtr()
 #define P_GET_SELF			ThisClass* Self = (ThisClass*)PR_PopPtr()
 
+#define P_GET_INT_OPT(v)	bool specified_##v = !!PR_Pop(); vint32 v = PR_Pop()
+#define P_GET_FLOAT_OPT(v)	bool specified_##v = !!PR_Pop(); float v = PR_Popf()
+#define P_GET_BOOL_OPT(v)	bool specified_##v = !!PR_Pop(); bool v = !!PR_Pop()
+#define P_GET_NAME_OPT(v)	bool specified_##v = !!PR_Pop(); VName v = PR_PopName()
+#define P_GET_STR_OPT(v)	bool specified_##v = !!PR_Pop(); VStr v = PR_PopStr()
+#define P_GET_VEC_OPT(v)	bool specified_##v = !!PR_Pop(); TVec v = PR_Popv()
+#define P_GET_AVEC_OPT(v)	bool specified_##v = !!PR_Pop(); TAVec v; v.roll = PR_Popf(); v.yaw = PR_Popf(); v.pitch = PR_Popf()
+#define P_GET_REF_OPT(c, v)	bool specified_##v = !!PR_Pop(); c* v = (c*)PR_PopPtr()
+#define P_GET_PTR_OPT(t, v)	bool specified_##v = !!PR_Pop(); t* v = (t*)PR_PopPtr()
+
 //
 //	Method return macros.
 //

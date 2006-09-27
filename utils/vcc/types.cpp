@@ -1106,6 +1106,7 @@ VMethod::VMethod(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , ReturnTypeExpr(NULL)
 , Statement(NULL)
 {
+	memset(ParamFlags, 0, sizeof(ParamFlags));
 }
 
 //==========================================================================
@@ -1137,7 +1138,8 @@ void VMethod::Serialise(VStream& Strm)
 		<< STRM_INDEX(NumParams)
 		<< STRM_INDEX(ParamsSize);
 	for (int i = 0; i < NumParams; i++)
-		Strm << ParamTypes[i];
+		Strm << ParamTypes[i]
+			<< ParamFlags[i];
 
 	if (Strm.IsLoading())
 	{
@@ -1282,8 +1284,19 @@ bool VMethod::Define()
 		}
 		type.CheckPassable(P.TypeExpr->Loc);
 
+		TModifiers::Check(P.Modifiers, AllowedParmModifiers, P.Loc);
+
 		ParamTypes[i] = type;
+		ParamFlags[i] = TModifiers::ParmAttr(P.Modifiers);
+		if (ParamFlags[i] & FPARM_Optional && ParamFlags[i] & FPARM_Out)
+		{
+			ParseError(P.Loc, "Modifiers optional and out are mutually exclusive");
+		}
 		ParamsSize += type.GetSize() / 4;
+		if (ParamFlags[i] & FPARM_Optional)
+		{
+			ParamsSize++;
+		}
 	}
 
 	//	If this is a overriden method, verify that return type and argument
@@ -1370,8 +1383,22 @@ void VMethod::Emit()
 			L.type = ParamTypes[i];
 			L.ofs = ec.localsofs;
 			L.Visible = true;
+			L.ParamFlags = ParamFlags[i];
 		}
 		ec.localsofs += ParamTypes[i].GetSize() / 4;
+		if (ParamFlags[i] & FPARM_Optional)
+		{
+			if (P.Name != NAME_None)
+			{
+				VLocalVarDef& L = ec.LocalDefs.Alloc();
+				L.Name = va("specified_%s", *P.Name);
+				L.type = ev_int;
+				L.ofs = ec.localsofs;
+				L.Visible = true;
+				L.ParamFlags = 0;
+			}
+			ec.localsofs++;
+		}
 	}
 
 	for (int i = 0; i < ec.LocalDefs.Num(); i++)

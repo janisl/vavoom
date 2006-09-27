@@ -118,6 +118,8 @@ public:
 		ReadOnly		= 0x0010,
 		Transient		= 0x0020,
 		Final			= 0x0040,
+		Optional		= 0x0080,
+		Out				= 0x0100,
 	};
 
 	static int Parse(VLexer&);
@@ -126,6 +128,7 @@ public:
 	static int MethodAttr(int);
 	static int ClassAttr(int);
 	static int FieldAttr(int);
+	static int ParmAttr(int);
 };
 
 class VClass;
@@ -274,10 +277,12 @@ public:
 	VExpression*	TypeExpr;
 	VName			Name;
 	TLocation		Loc;
+	int				Modifiers;
 
 	VMethodParam()
 	: TypeExpr(NULL)
 	, Name(NAME_None)
+	, Modifiers(0)
 	{}
 	~VMethodParam()
 	{
@@ -294,6 +299,7 @@ public:
 	int				ofs;
 	TType			type;
 	bool			Visible;
+	vuint8			ParamFlags;
 
 	VLocalVarDef()
 	{}
@@ -304,6 +310,7 @@ class VMethod : public VMemberBase
 public:
 	enum { AllowedModifiers = TModifiers::Native | TModifiers::Static |
 		TModifiers::Final };
+	enum { AllowedParmModifiers = TModifiers::Optional  | TModifiers::Out };
 
 	int						NumLocals;
 	int						Flags;
@@ -311,6 +318,7 @@ public:
 	int						NumParams;
 	int						ParamsSize;
 	TType					ParamTypes[MAX_PARAMS];
+	vuint8					ParamFlags[MAX_PARAMS];
 	TArray<FInstruction>	Instructions;
 
 	vint32					Modifiers;

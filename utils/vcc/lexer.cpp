@@ -78,6 +78,8 @@ const char*			VLexer::TokenNames[] =
 	"native",
 	"none",
 	"NULL",
+	"optional",
+	"out",
 	"private",
 	"readonly",
 	"return",
@@ -674,6 +676,18 @@ void VLexer::ProcessLetterToken()
 			tk_Keyword = KW_NULL;
 		}
 		break;*/
+
+	case 'o':
+		if (s[1] == 'p' && s[2] == 't' && s[3] == 'i' && s[4] == 'o' &&
+			s[5] == 'n' && s[6] == 'a' && s[7] == 'l' && s[8] == 0)
+		{
+			Token = TK_Optional;
+		}
+		else if (s[1] == 'u' && s[2] == 't' && s[3] == 0)
+		{
+			Token = TK_Out;
+		}
+		break;
 
 	case 'p':
 		if (s[1] == 'r' && s[2] == 'i' && s[3] == 'v' && s[4] == 'a' &&

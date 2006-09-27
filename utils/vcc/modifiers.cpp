@@ -87,6 +87,14 @@ int TModifiers::Parse(VLexer& Lex)
 		{
 			Modifiers |= Final;
 		}
+		else if (Lex.Check(TK_Optional))
+		{
+			Modifiers |= Optional;
+		}
+		else if (Lex.Check(TK_Out))
+		{
+			Modifiers |= Out;
+		}
 		else
 		{
 			done = true;
@@ -114,6 +122,8 @@ const char* TModifiers::Name(int Modifier)
 	case ReadOnly:	return "readonly";
 	case Transient:	return "transient";
 	case Final:		return "final";
+	case Optional:	return "optional";
+	case Out:		return "out";
 	}
 	return "";
 }
@@ -196,5 +206,23 @@ int TModifiers::FieldAttr(int Modifiers)
 		Attributes |= FIELD_Private;
 	if (Modifiers & ReadOnly)
 		Attributes |= FIELD_ReadOnly;
+	return Attributes;
+}
+
+//==========================================================================
+//
+//	TModifiers::ParmAttr
+//
+//	Convert modifiers to method parameter attributes.
+//
+//==========================================================================
+
+int TModifiers::ParmAttr(int Modifiers)
+{
+	int Attributes = 0;
+	if (Modifiers & Optional)
+		Attributes |= FPARM_Optional;
+	if (Modifiers & Out)
+		Attributes |= FPARM_Out;
 	return Attributes;
 }

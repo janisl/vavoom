@@ -67,6 +67,8 @@ enum EToken
 	TK_Native,
 	TK_None,
 	TK_Null,
+	TK_Optional,
+	TK_Out,
 	TK_Private,
 	TK_ReadOnly,
 	TK_Return,

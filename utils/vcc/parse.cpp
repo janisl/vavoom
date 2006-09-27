@@ -1162,6 +1162,8 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 
 		VMethodParam& P = Func->Params[Func->NumParams];
 
+		P.Modifiers = TModifiers::Parse(Lex);
+
 		P.TypeExpr = ParseType();
 		if (!P.TypeExpr && Func->NumParams == 0)
 		{

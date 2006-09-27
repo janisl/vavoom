@@ -112,6 +112,7 @@ class VLocalVar : public VExpression
 public:
 	int				num;
 	bool			AddressRequested;
+	bool			PushOutParam;
 
 	VLocalVar(int ANum, const TLocation& ALoc);
 	VExpression* DoResolve(VEmitContext&);
@@ -3524,6 +3525,7 @@ VLocalVar::VLocalVar(int ANum, const TLocation& ALoc)
 : VExpression(ALoc)
 , num(ANum)
 , AddressRequested(false)
+, PushOutParam(false)
 {
 }
 
@@ -3541,6 +3543,7 @@ VExpression* VLocalVar::DoResolve(VEmitContext& ec)
 	{
 		Type = TType(ev_int);
 	}
+	PushOutParam = !!(ec.LocalDefs[num].ParamFlags & FPARM_Out);
 	return this;
 }
 
@@ -3552,6 +3555,11 @@ VExpression* VLocalVar::DoResolve(VEmitContext& ec)
 
 void VLocalVar::RequestAddressOf()
 {
+	if (PushOutParam)
+	{
+		PushOutParam = false;
+		return;
+	}
 	if (AddressRequested)
 		ParseError(Loc, "Multiple address of");
 	AddressRequested = true;
@@ -3568,6 +3576,40 @@ void VLocalVar::Emit(VEmitContext& ec)
 	if (AddressRequested)
 	{
 		ec.EmitLocalAddress(ec.LocalDefs[num].ofs);
+	}
+	else if (ec.LocalDefs[num].ParamFlags & FPARM_Out)
+	{
+		if (ec.LocalDefs[num].ofs < 256)
+		{
+			int Ofs = ec.LocalDefs[num].ofs;
+			if (Ofs == 0)
+				ec.AddStatement(OPC_LocalValue0);
+			else if (Ofs == 1)
+				ec.AddStatement(OPC_LocalValue1);
+			else if (Ofs == 2)
+				ec.AddStatement(OPC_LocalValue2);
+			else if (Ofs == 3)
+				ec.AddStatement(OPC_LocalValue3);
+			else if (Ofs == 4)
+				ec.AddStatement(OPC_LocalValue4);
+			else if (Ofs == 5)
+				ec.AddStatement(OPC_LocalValue5);
+			else if (Ofs == 6)
+				ec.AddStatement(OPC_LocalValue6);
+			else if (Ofs == 7)
+				ec.AddStatement(OPC_LocalValue7);
+			else
+				ec.AddStatement(OPC_LocalValueB, Ofs);
+		}
+		else
+		{
+			ec.EmitLocalAddress(ec.LocalDefs[num].ofs);
+			ec.AddStatement(OPC_PushPointedPtr);
+		}
+		if (PushOutParam)
+		{
+			EmitPushPointedCode(ec.LocalDefs[num].type, ec);
+		}
 	}
 	else if (ec.LocalDefs[num].ofs < 256)
 	{
@@ -3853,15 +3895,22 @@ VInvocation::~VInvocation()
 VExpression* VInvocation::DoResolve(VEmitContext& ec)
 {
 	//	Resolve arguments
+	bool ArgsOk = true;
 	for (int i = 0; i < NumArgs; i++)
 	{
 		if (Args[i])
-			Args[i] = Args[i]->Resolve(ec);
-		if (!Args[i])
 		{
-			delete this;
-			return NULL;
+			Args[i] = Args[i]->Resolve(ec);
+			if (!Args[i])
+			{
+				ArgsOk = false;
+			}
 		}
+	}
+	if (!ArgsOk)
+	{
+		delete this;
+		return NULL;
 	}
 
 	CheckParams();
@@ -3903,11 +3952,54 @@ void VInvocation::Emit(VEmitContext& ec)
 	vint32 SelfOffset = 1;
 	for (int i = 0; i < NumArgs; i++)
 	{
-		Args[i]->Emit(ec);
-		if (Args[i]->Type.type == ev_vector)
-			SelfOffset += 3;
-		else
+		if (!Args[i])
+		{
+			switch (Func->ParamTypes[i].type)
+			{
+			case ev_int:
+			case ev_float:
+			case ev_name:
+			case ev_bool:
+				ec.EmitPushNumber(0);
+				SelfOffset++;
+				break;
+
+			case ev_string:
+			case ev_pointer:
+			case ev_reference:
+			case ev_classid:
+			case ev_state:
+				ec.AddStatement(OPC_PushNull);
+				SelfOffset++;
+				break;
+
+			case ev_vector:
+				ec.EmitPushNumber(0);
+				ec.EmitPushNumber(0);
+				ec.EmitPushNumber(0);
+				SelfOffset += 3;
+				break;
+
+			default:
+				ParseError(Loc, "Bad optional parameter type");
+				break;
+			}
+			ec.EmitPushNumber(0);
 			SelfOffset++;
+		}
+		else
+		{
+			Args[i]->Emit(ec);
+			if (Args[i]->Type.type == ev_vector)
+				SelfOffset += 3;
+			else
+				SelfOffset++;
+			if (Func->ParamFlags[i] & FPARM_Optional)
+			{
+				ec.EmitPushNumber(1);
+				SelfOffset++;
+			}
+		}
 	}
 
 	if (DirectCall)
@@ -3947,23 +4039,52 @@ void VInvocation::CheckParams()
 
 	for (int i = 0; i < NumArgs; i++)
 	{
-		if (i >= max_params)
+		if (i < num_needed_params)
 		{
-			ParseError(Loc, "Incorrect number of arguments, need %d, got %d.", max_params, i + 1);
+			if (!Args[i])
+			{
+				if (!(Func->ParamFlags[i] & FPARM_Optional))
+				{
+					ParseError(Loc, "Bad expresion");
+				}
+				argsize += Func->ParamTypes[i].GetSize();
+			}
+			else
+			{
+				Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
+				if (Func->ParamFlags[i] & FPARM_Out)
+				{
+					Args[i]->RequestAddressOf();
+				}
+				argsize += Args[i]->Type.GetSize();
+			}
+		}
+		else if (!Args[i])
+		{
+			ParseError(Loc, "Bad expresion");
 		}
 		else
 		{
-			if (i < num_needed_params)
-			{
-				Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
-			}
+			argsize += Args[i]->Type.GetSize();
 		}
-		argsize += Args[i]->Type.GetSize();
 	}
-	if (NumArgs < num_needed_params)
+	if (NumArgs > max_params)
 	{
-		ParseError(Loc, "Incorrect argument count %d, should be %d",
-			NumArgs, num_needed_params);
+		ParseError(Loc, "Incorrect number of arguments, need %d, got %d.", max_params, NumArgs);
+	}
+	while (NumArgs < num_needed_params)
+	{
+		if (Func->ParamFlags[NumArgs] & FPARM_Optional)
+		{
+			Args[NumArgs] = NULL;
+			NumArgs++;
+		}
+		else
+		{
+			ParseError(Loc, "Incorrect argument count %d, should be %d",
+				NumArgs, num_needed_params);
+			break;
+		}
 	}
 
 	if (Func->Flags & FUNC_VarArgs)
@@ -4533,6 +4654,7 @@ void VLocalDecl::Declare(VEmitContext& ec)
 		L.type = Type;
 		L.ofs = ec.localsofs;
 		L.Visible = false;
+		L.ParamFlags = 0;
 
 		//  Initialisation
 		if (e.Value)
