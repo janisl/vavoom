@@ -86,7 +86,7 @@ void RootWindowCreated()
 	GImission = IntermissionScreen(GRoot.NewChild(IntermissionScreen));
 	GFinale = FinaleScreen(GRoot.NewChild(FinaleScreen));
 	GTitle.ClGame = self;
-	GSBar.cl = MainClientState(cl);
+	GSBar.cl = Player(cl);
 	GSBar.ClGame = self;
 	GSBar.Hide();
 	GImission.ClGame = self;
@@ -750,7 +750,7 @@ void ParseGunShot()
 		p->org = org;
 		c = P_Random() >> 1;
 		p->colour = RGB(c, c, c);
-		p->die = cl.time + 0.5 * Random();
+		p->die = time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
@@ -785,7 +785,7 @@ void ParseBlood()
 		p->org = org;
 		c = P_Random() >> 1;
 		p->colour = RGB(32 + c, c >> 4, c >> 4);
-		p->die = cl.time + 0.5 * Random();
+		p->die = time + 0.5 * Random();
 		p->vel.x = 32.0 * (Random() - 0.5);
 		p->vel.y = 32.0 * (Random() - 0.5);
 		p->vel.z = 32.0 * (Random() - 0.5);
@@ -813,7 +813,7 @@ void ParseExplosion()
 	dl->origin = org;
 	dl->radius = 350.0;
 	dl->colour = ecolours[etype];
-	dl->die = cl.time + 0.5;
+	dl->die = time + 0.5;
 	dl->decay = 300.0;
 }
 
@@ -875,7 +875,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(255, 255, 255);
-		dl->die = cl.time + 0.1;
+		dl->die = time + 0.1;
 		break;
 
 	case HereticDefs::EF_DL_RED:
@@ -883,7 +883,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(255, 0, 0);
-		dl->die = cl.time + 0.1;
+		dl->die = time + 0.1;
 		break;
 
 	case HereticDefs::EF_DL_GREEN:
@@ -891,7 +891,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(0, 255, 0);
-		dl->die = cl.time + 0.1;
+		dl->die = time + 0.1;
 		break;
 
 	case HereticDefs::EF_DL_BLUE:
@@ -899,7 +899,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(0, 0, 255);
-		dl->die = cl.time + 0.1;
+		dl->die = time + 0.1;
 		break;
 
 	case HereticDefs::EF_DL_MAGENTA:
@@ -907,7 +907,7 @@ void UpdateMobj(Entity mobj, int key, float DeltaTime)
 		dl->origin = mobj.Origin;
 		dl->radius = 200.0;
 		dl->colour = RGB(255, 0, 255);
-		dl->die = cl.time + 0.1;
+		dl->die = time + 0.1;
 		break;
 	}
 }

@@ -3,5 +3,5 @@ vcc -I../common -P../common ../common/clcommon.vc ../common/clcommon.dat
 vcc -I../common -P../common ../common/svcommon.vc ../common/svcommon.dat
 
 vcc -I../common -P../common herdefs.vc shared.dat
-vcc -I../common -P../common clprogs.vc clprogs.dat
 vcc -I../common -P../common svprogs.vc svprogs.dat
+vcc -I../common -P../common clprogs.vc clprogs.dat

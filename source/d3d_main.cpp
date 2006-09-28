@@ -890,10 +890,10 @@ void VDirect3DDrawer::EndView()
 	guard(VDirect3DDrawer::EndView);
 	Setup2D();
 
-	cl->cshifts[7] = cl->prev_cshifts[7];
+	cl->CShifts[7] = GClGame->prev_cshifts[7];
 	for (int i = 0; i < NUM_CSHIFTS; i++)
 	{
-		if (!cl->cshifts[i])
+		if (!cl->CShifts[i])
 		{
 			continue;
 		}
@@ -904,10 +904,10 @@ void VDirect3DDrawer::EndView()
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 
-		dv[0] = MyD3DVertex(0, 0, cl->cshifts[i], 0, 0);
-		dv[1] = MyD3DVertex(ScreenWidth, 0, cl->cshifts[i], 0, 0);
-		dv[2] = MyD3DVertex(ScreenWidth, ScreenHeight, cl->cshifts[i], 0, 0);
-		dv[3] = MyD3DVertex(0, ScreenHeight, cl->cshifts[i], 0, 0);
+		dv[0] = MyD3DVertex(0, 0, cl->CShifts[i], 0, 0);
+		dv[1] = MyD3DVertex(ScreenWidth, 0, cl->CShifts[i], 0, 0);
+		dv[2] = MyD3DVertex(ScreenWidth, ScreenHeight, cl->CShifts[i], 0, 0);
+		dv[3] = MyD3DVertex(0, ScreenHeight, cl->CShifts[i], 0, 0);
 
 #if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
@@ -1168,13 +1168,13 @@ void VDirect3DDrawer::SetPalette(int pnum)
 	int cmax = MAX(MAX(pal[0].r, pal[0].g), pal[0].b);
 	if (!cmax)
 	{
-		cl->cshifts[7] = 0;
+		cl->CShifts[7] = 0;
 	}
 	else
 	{
-		cl->cshifts[7] = (cmax << 24) | ((255 * pal[0].r / cmax) << 16) |
+		cl->CShifts[7] = (cmax << 24) | ((255 * pal[0].r / cmax) << 16) |
 			((255 * pal[0].g / cmax) << 8) | (255 * pal[0].b / cmax);
 	}
-	cl->prev_cshifts[7] = cl->cshifts[7];
+	GClGame->prev_cshifts[7] = cl->CShifts[7];
 	unguard;
 }

@@ -713,7 +713,7 @@ void R_PushDlights(void)
 	l = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
-		if (l->die < cl->time || !l->radius)
+		if (l->die < GClGame->time || !l->radius)
 			continue;
 		R_MarkLights(l, 1 << i, GClLevel->NumNodes - 1);
 	}

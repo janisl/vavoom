@@ -235,9 +235,9 @@ void DrawWindow(GC gc)
 	case IMS_Stats:	// draw stats
 		IM_DrawBackground();
 
-		if (ClGame.cl.maxclients == 1)
+		if (ClGame.maxclients == 1)
 			IM_DrawSingleStats();
-		else if (!ClGame.cl.deathmatch)
+		else if (!ClGame.deathmatch)
 			IM_DrawCoopStats();
 		else
 			IM_DrawDMStats();
@@ -348,7 +348,7 @@ void IM_InitStats()
 	int playercount;
 	int time;
 
-	if (ClGame.cl.maxclients == 1)
+	if (ClGame.maxclients == 1)
 	{
 		if (ClGame.im->bNoIntermission)
 		{
@@ -363,7 +363,7 @@ void IM_InitStats()
 		time -= minutes * 60;
 		seconds = time;
 	}
-	else if (!ClGame.cl.deathmatch)
+	else if (!ClGame.deathmatch)
 	{
 		if (ClGame.im->bNoIntermission)
 		{
@@ -686,7 +686,7 @@ void IM_DrawDMStats()
 	{
 		if (ClGame.scores[i].bActive)
 		{
-			if (intertime < 3.0 || i == ClGame.cl.clientnum)
+			if (intertime < 3.0 || i == ClGame.cl.ClientNum)
 			{
 				R_DrawShadowedPic(200, ypos, patchFaceOkay[i]);
 				R_DrawShadowedPic(xpos, 158, patchFaceDead[i]);
@@ -836,7 +836,7 @@ void IM_DrawYAH()
 
 void IM_InitText()
 {
-	if (ClGame.cl.deathmatch)
+	if (ClGame.deathmatch)
 	{
 		interstate = IMS_Done;
 		cnt = 0.3;

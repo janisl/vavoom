@@ -84,7 +84,7 @@ void Start()
 	IM_InitStats();
 	IM_LoadPics();
 
-	if (!ClGame.cl.deathmatch && !HubCount)
+	if (!ClGame.deathmatch && !HubCount)
 	{
 		interstate = IMS_Done;
 		cnt = 0.3;
@@ -113,7 +113,7 @@ void Tick(float DeltaTime)
 		return;
 	}
 	intertime += DeltaTime;
-	if (ClGame.skipintermission || (!ClGame.cl.deathmatch && !HubCount))
+	if (ClGame.skipintermission || (!ClGame.deathmatch && !HubCount))
 	{
 		interstate = IMS_Done;
 		cnt = 0.3;
@@ -184,7 +184,7 @@ void IM_InitStats()
 
 	ClGame.skipintermission = false;
 	intertime = 0.0;
-	if (!ClGame.cl.deathmatch)
+	if (!ClGame.deathmatch)
 	{
 		if (!ClGame.im->bNoIntermission)
 		{
@@ -417,7 +417,7 @@ void IM_DrawDeathTally(GC gc)
 		for (j = 0; j < MAXPLAYERS; j++, xPos += xDelta)
 		{
 			x = ftoi(xPos);
-			bold = (i == ClGame.cl.clientnum || j == ClGame.cl.clientnum);
+			bold = (i == ClGame.cl.ClientNum || j == ClGame.cl.ClientNum);
 			if (ClGame.scores[i].bActive && ClGame.scores[j].bActive)
 			{
 				if (bold)

@@ -389,8 +389,8 @@ float VEaxTrace::TraceLine(const TVec &start, const TVec &end)
 
 float VEaxTrace::CalcDirSize(const TVec &dir)
 {
-	float len = TraceLine(cl->vieworg, cl->vieworg + dir) +
-		TraceLine(cl->vieworg, cl->vieworg - dir);
+	float len = TraceLine(cl->ViewOrg, cl->ViewOrg + dir) +
+		TraceLine(cl->ViewOrg, cl->ViewOrg - dir);
 	len /= eax_distance_unit;
 	if (len > 100)
 		len = 100;

@@ -33,8 +33,6 @@
 
 #define IT_ALL_MAP		1
 
-#define NUM_CSHIFTS		8
-
 #define SIGNONS		4
 
 //
@@ -45,18 +43,6 @@
 #define BT_JUMP			4
 
 // TYPES -------------------------------------------------------------------
-
-//
-// Overlay psprites are scaled shapes
-// drawn directly on the view screen,
-// coordinates are given for a 320*200 view screen.
-//
-enum psprnum_t
-{
-    ps_weapon,
-    ps_flash,	//	Only DOOM uses it
-    NUMPSPRITES
-};
 
 // The data sampled per tick (single player)
 // and transmitted to other peers (multiplayer).
@@ -71,17 +57,6 @@ struct ticcmd_t
 };
 
 struct VModel;
-
-struct cl_pspdef_t
-{
-	int			sprite;
-	int			frame;
-	VModel*		alias_model;
-	int			alias_frame;
-	int			alias_skinnum;
-	float		sx;
-	float		sy;
-};
 
 enum cactive_t
 {
@@ -113,74 +88,6 @@ struct client_static_t
 	VMessage		message;		// writing buffer to send to server
 };
 
-class VClientState : public VObject
-{
-	DECLARE_CLASS(VClientState, VObject, 0)
-
-	int				clientnum;		// cl_mobjs[cl.clientnum] = player
-
-	int				pclass;			// player class type
-
-	// Determine POV,
-	//  including viewpoint bobbing during movement.
-	// Focal origin above r.z
-	TVec			vieworg;
-	TAVec			viewangles;
-	int				centreing;
-
-	// This is only used between levels,
-	// mo->health is used during levels.
-	int				health;
-
-	int				items;
-
-	// Frags, kills of other players.
-	int				Frags;
-
-	// So gun flashes light up areas.
-	int				extralight;
-
-	// For lite-amp and invulnarability powers
-	int				fixedcolourmap;
-
-	// Current PLAYPAL index
-	//  can be set to REDCOLOURMAP for pain, etc.
-	int				palette;
-	int				prev_palette;
-
-	vuint32			cshifts[NUM_CSHIFTS];		//	colour shifts for damage,
-	vuint32			prev_cshifts[NUM_CSHIFTS];	// powerups and content types
-
-	// Overlay view sprites (gun, etc).
-	cl_pspdef_t		psprites[NUMPSPRITES];
-	float			pspriteSY;
-
-	enum
-	{
-		// True if secret level has been done.
-		CF_DidSecret	= 0x01,
-
-		CF_Paused		= 0x02,
-	};
-	vuint32			ClientFlags;
-
-	vuint32			worldTimer;				// total time the player's been playing
-
-	// Overlay view sprites (gun, etc).
-	int				translucency;
-
-	int				maxclients;
-	int				deathmatch;
-
-	float			mtime[2];
-	float			time;
-	float			oldtime;
-
-	VStr			serverinfo;
-
-	int				intermission;
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 boolean CL_Responder(event_t* ev);
@@ -188,4 +95,4 @@ boolean CL_Responder(event_t* ev);
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern client_static_t	cls;
-extern VClientState*	cl;
+extern VBasePlayer*		cl;

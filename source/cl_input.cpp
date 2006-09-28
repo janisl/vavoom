@@ -330,11 +330,11 @@ COMMAND(ToggleAlwaysRun)
 
 void V_StartPitchDrift()
 {
-	cl->centreing = true;
+	cl->PlayerFlags |= VBasePlayer::PF_Centreing;
 }
 void V_StopPitchDrift()
 {
-	cl->centreing = false;
+	cl->PlayerFlags &= ~VBasePlayer::PF_Centreing;
 }
 
 //==========================================================================
@@ -363,32 +363,32 @@ static void AdjustAngles()
 	//	YAW
 	if (!(KeyStrafe.state & 1))
 	{ 
-		cl->viewangles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
-		cl->viewangles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
+		cl->ViewAngles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
+		cl->ViewAngles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
 		if (joyxmove > 0)
-			cl->viewangles.yaw -= joy_yaw * speed;
+			cl->ViewAngles.yaw -= joy_yaw * speed;
 		if (joyxmove < 0)
-			cl->viewangles.yaw += joy_yaw * speed;
+			cl->ViewAngles.yaw += joy_yaw * speed;
 	}
 	if (!(KeyStrafe.state & 1) &&
 		(!lookstrafe || (!mouse_look && !(KeyMouseLook.state & 1))))
 	{
-		cl->viewangles.yaw -= mousex * m_yaw;
+		cl->ViewAngles.yaw -= mousex * m_yaw;
 	}
-	cl->viewangles.yaw = AngleMod(cl->viewangles.yaw);
+	cl->ViewAngles.yaw = AngleMod(cl->ViewAngles.yaw);
 
 	//	PITCH
 	float up = KeyLookUp.KeyState();
 	float down = KeyLookDown.KeyState();
-	cl->viewangles.pitch -= cl_pitchspeed * up * speed;
-	cl->viewangles.pitch += cl_pitchspeed * down * speed;
+	cl->ViewAngles.pitch -= cl_pitchspeed * up * speed;
+	cl->ViewAngles.pitch += cl_pitchspeed * down * speed;
 	if (up || down || (KeyMouseLook.state & 1))
 	{
 		V_StopPitchDrift();
 	}
 	if ((mouse_look || (KeyMouseLook.state & 1)) && !(KeyStrafe.state & 1))
 	{
-		cl->viewangles.pitch -= mousey * m_pitch;
+		cl->ViewAngles.pitch -= mousey * m_pitch;
 	}
 
 	//	Centre look
@@ -396,61 +396,61 @@ static void AdjustAngles()
 	{
 		V_StartPitchDrift();
 	}
-	if (cl->centreing)
+	if (cl->PlayerFlags & VBasePlayer::PF_Centreing)
 	{
 		float adelta = cl_pitchdriftspeed * host_frametime;
-		if (fabs(cl->viewangles.pitch) < adelta)
+		if (fabs(cl->ViewAngles.pitch) < adelta)
 		{
-			cl->viewangles.pitch = 0;
-			cl->centreing = false;
+			cl->ViewAngles.pitch = 0;
+			cl->PlayerFlags &= ~VBasePlayer::PF_Centreing;
 		}
 		else
 		{
-			if (cl->viewangles.pitch > 0.0)
+			if (cl->ViewAngles.pitch > 0.0)
 			{
-				cl->viewangles.pitch -= adelta;
+				cl->ViewAngles.pitch -= adelta;
 			}
-			else if (cl->viewangles.pitch < 0.0)
+			else if (cl->ViewAngles.pitch < 0.0)
 			{
-				cl->viewangles.pitch += adelta;
+				cl->ViewAngles.pitch += adelta;
 			}
 		}
 	}
 
 	//	ROLL
-	if (cl->health <= 0)
+	if (cl->Health <= 0)
  	{
- 		if (cl->viewangles.roll >= 0 && cl->viewangles.roll < cl_deathroll)
+ 		if (cl->ViewAngles.roll >= 0 && cl->ViewAngles.roll < cl_deathroll)
 		{
-			cl->viewangles.roll += cl_deathrollspeed * host_frametime;
+			cl->ViewAngles.roll += cl_deathrollspeed * host_frametime;
 		}
- 		if (cl->viewangles.roll < 0 && cl->viewangles.roll > -cl_deathroll)
+ 		if (cl->ViewAngles.roll < 0 && cl->ViewAngles.roll > -cl_deathroll)
 		{
-			cl->viewangles.roll -= cl_deathrollspeed * host_frametime;
+			cl->ViewAngles.roll -= cl_deathrollspeed * host_frametime;
 		}
 	}
 	else
 	{
-		cl->viewangles.roll = 0.0;
+		cl->ViewAngles.roll = 0.0;
 	}
 
 	//	Check angles
-	if (cl->viewangles.pitch > 80.0)
+	if (cl->ViewAngles.pitch > 80.0)
 	{
-		cl->viewangles.pitch = 80.0;
+		cl->ViewAngles.pitch = 80.0;
 	}
-	if (cl->viewangles.pitch < -70.0)
+	if (cl->ViewAngles.pitch < -70.0)
 	{
-		cl->viewangles.pitch = -70.0;
+		cl->ViewAngles.pitch = -70.0;
 	}
 
-	if (cl->viewangles.roll > 80.0)
+	if (cl->ViewAngles.roll > 80.0)
 	{
-		cl->viewangles.roll = 80.0;
+		cl->ViewAngles.roll = 80.0;
 	}
-	if (cl->viewangles.roll < -80.0)
+	if (cl->ViewAngles.roll < -80.0)
 	{
-		cl->viewangles.roll = -80.0;
+		cl->ViewAngles.roll = -80.0;
 	}
 	unguard;
 }
@@ -621,9 +621,9 @@ void CL_SendMove()
 		mousex = mousey = 0;
 		msg.Clear();
 		msg << (byte)clc_move
-			<< (byte)(AngleToByte(cl->viewangles.yaw))
-			<< (byte)(AngleToByte(cl->viewangles.pitch))
-			<< (byte)(AngleToByte(cl->viewangles.roll))
+			<< (byte)(AngleToByte(cl->ViewAngles.yaw))
+			<< (byte)(AngleToByte(cl->ViewAngles.pitch))
+			<< (byte)(AngleToByte(cl->ViewAngles.roll))
 			<< cmd.forwardmove
 			<< cmd.sidemove
 			<< cmd.flymove

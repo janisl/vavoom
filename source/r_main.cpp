@@ -198,10 +198,10 @@ void R_SetViewSize(int blocks)
 {
 	guard(R_SetViewSize);
 	if (blocks > 2)
-    {
+	{
 		screen_size = blocks;
 	}
-    set_resolutioon_needed = true;
+	set_resolutioon_needed = true;
 	unguard;
 }
 
@@ -240,14 +240,14 @@ COMMAND(SizeUp)
 static void R_ExecuteSetViewSize()
 {
 	guard(R_ExecuteSetViewSize);
-    set_resolutioon_needed = false;
+	set_resolutioon_needed = false;
 	if (screen_size < 3)
-    {
-    	screen_size = 3;
+	{
+		screen_size = 3;
 	}
 	if (screen_size > 11)
-    {
-    	screen_size = 11;
+	{
+		screen_size = 11;
 	}
 	screenblocks = screen_size;
 
@@ -261,19 +261,19 @@ static void R_ExecuteSetViewSize()
 	}
 	old_fov = fov;
 
-    if (screenblocks > 10)
-    {
-        refdef.width = ScreenWidth;
-        refdef.height = ScreenHeight;
+	if (screenblocks > 10)
+	{
+		refdef.width = ScreenWidth;
+		refdef.height = ScreenHeight;
 		refdef.y = 0;
-    }
-    else
-    {
-        refdef.width = screenblocks * ScreenWidth / 10;
-        refdef.height = (screenblocks * (ScreenHeight - SB_REALHEIGHT) / 10);
+	}
+	else
+	{
+		refdef.width = screenblocks * ScreenWidth / 10;
+		refdef.height = (screenblocks * (ScreenHeight - SB_REALHEIGHT) / 10);
 		refdef.y = (ScreenHeight - SB_REALHEIGHT - refdef.height) >> 1;
-    }
-    refdef.x = (ScreenWidth - refdef.width) >> 1;
+	}
+	refdef.x = (ScreenWidth - refdef.width) >> 1;
 
 	if (old_aspect)
 		PixelAspect = ((float)ScreenHeight * 320.0) / ((float)ScreenWidth * 200.0);
@@ -356,15 +356,15 @@ VCvarI			r_chase_front("r_chase_front", "0", CVAR_Archive);
 static void R_SetupFrame()
 {
 	guard(R_SetupFrame);
-    // change the view size if needed
+	// change the view size if needed
 	if (screen_size != screenblocks || !screenblocks ||
 		set_resolutioon_needed || old_fov != fov ||
 		old_aspect != prev_old_aspect)
-    {
+	{
 		R_ExecuteSetViewSize();
-    }
+	}
 
-	viewangles = cl->viewangles;
+	viewangles = cl->ViewAngles;
 	if (r_chasecam && r_chase_front)
 	{
 		//	This is used to see how weapon looks in player's hands
@@ -375,32 +375,32 @@ static void R_SetupFrame()
 
 	if (r_chasecam)
 	{
-		vieworg = cl_mobjs[cl->clientnum + 1]->Origin + TVec(0.0, 0.0, 32.0)
+		vieworg = cl_mobjs[cl->ClientNum + 1]->Origin + TVec(0.0, 0.0, 32.0)
 			- r_chase_dist * viewforward + r_chase_up * viewup
 			+ r_chase_right * viewright;
 	}
 	else
 	{
-		vieworg = cl->vieworg;
+		vieworg = cl->ViewOrg;
 	}
 
 	R_TransformFrustum();
 
-    extralight = cl->extralight;
-	if (cl->fixedcolourmap >= 32)
+	extralight = cl->ExtraLight;
+	if (cl->FixedColourmap >= 32)
 	{
 		fixedlight = 255;
 	}
-	else if (cl->fixedcolourmap)
+	else if (cl->FixedColourmap)
 	{
-		fixedlight = 255 - (cl->fixedcolourmap << 3);
+		fixedlight = 255 - (cl->FixedColourmap << 3);
 	}
 	else
 	{
 		fixedlight = 0;
 	}
 
-	r_viewleaf = CL_PointInSubsector(cl->vieworg.x, cl->vieworg.y);
+	r_viewleaf = CL_PointInSubsector(cl->ViewOrg.x, cl->ViewOrg.y);
 
 	Drawer->SetupView(&refdef);
 	unguard;
@@ -550,7 +550,7 @@ void R_UpdateParticles()
 	frametime = host_frametime;
 	
 	kill = active_particles;
-	while (kill && kill->die < cl->time)
+	while (kill && kill->die < GClGame->time)
 	{
 		active_particles = kill->next;
 		kill->next = free_particles;
@@ -561,7 +561,7 @@ void R_UpdateParticles()
 	for (p = active_particles; p; p = p->next)
 	{
 		kill = p->next;
-		while (kill && kill->die < cl->time)
+		while (kill && kill->die < GClGame->time)
 		{
 			p->next = kill->next;
 			kill->next = free_particles;
@@ -877,14 +877,14 @@ COMMAND(TimeRefresh)
 	double		start, stop, time, RenderTime, UpdateTime;
 	float		startangle;
 
-	startangle = cl->viewangles.yaw;
+	startangle = cl->ViewAngles.yaw;
 
 	RenderTime = 0;
 	UpdateTime = 0;
 	start = Sys_Time();
 	for (i = 0; i < 128; i++)
 	{
-		cl->viewangles.yaw = (float)(i) * 360.0 / 128.0;
+		cl->ViewAngles.yaw = (float)(i) * 360.0 / 128.0;
 
 		Drawer->StartUpdate();
 
@@ -901,7 +901,7 @@ COMMAND(TimeRefresh)
 	GCon->Logf("%f seconds (%f fps)", time, 128 / time);
 	GCon->Logf("Render time %f, update time %f", RenderTime, UpdateTime);
 
-	cl->viewangles.yaw = startangle;
+	cl->ViewAngles.yaw = startangle;
 	unguard;
 }
 

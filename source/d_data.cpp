@@ -274,7 +274,7 @@ void VSoftwareDrawer::SetPalette(int InNum)
 	//	Save palette
 	memcpy(host_basepal, pal, 768);
 	//	Must recalculate any cshifts
-	memset(cl->prev_cshifts, 0, sizeof(cl->prev_cshifts));
+	memset(GClGame->prev_cshifts, 0, sizeof(GClGame->prev_cshifts));
 	unguard;
 }
 
@@ -398,10 +398,10 @@ void VSoftwareDrawer::UpdatePalette()
 	
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
-		if (cl->cshifts[i] != cl->prev_cshifts[i])
+		if (cl->CShifts[i] != GClGame->prev_cshifts[i])
 		{
 			newshifts = true;
-			cl->prev_cshifts[i] = cl->cshifts[i];
+			GClGame->prev_cshifts[i] = cl->CShifts[i];
 		}
 	}
 	
@@ -422,10 +422,10 @@ void VSoftwareDrawer::UpdatePalette()
 	
 		for (j = 0; j < NUM_CSHIFTS; j++)
 		{
-			perc = (cl->cshifts[j] >> 24) & 0xff;
-			dstr = (cl->cshifts[j] >> 16) & 0xff;
-			dstg = (cl->cshifts[j] >> 8) & 0xff;
-			dstb = cl->cshifts[j] & 0xff;
+			perc = (cl->CShifts[j] >> 24) & 0xff;
+			dstr = (cl->CShifts[j] >> 16) & 0xff;
+			dstg = (cl->CShifts[j] >> 8) & 0xff;
+			dstb = cl->CShifts[j] & 0xff;
 			r += (perc * (dstr - r)) >> 8;
 			g += (perc * (dstg - g)) >> 8;
 			b += (perc * (dstb - b)) >> 8;

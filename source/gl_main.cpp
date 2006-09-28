@@ -423,10 +423,10 @@ void VOpenGLDrawer::EndView()
 	guard(VOpenGLDrawer::EndView);
 	Setup2D();
 
-	cl->cshifts[7] = cl->prev_cshifts[7];
+	cl->CShifts[7] = GClGame->prev_cshifts[7];
 	for (int i = 0; i < NUM_CSHIFTS; i++)
 	{
-		if (!cl->cshifts[i])
+		if (!cl->CShifts[i])
 		{
 			continue;
 		}
@@ -434,10 +434,10 @@ void VOpenGLDrawer::EndView()
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
 
-		glColor4f((float)((cl->cshifts[i] >> 16) & 0xff) / 255.0,
-				(float)((cl->cshifts[i] >> 8) & 0xff) / 255.0,
-				(float)(cl->cshifts[i] & 0xff) / 255.0,
-				(float)((cl->cshifts[i] >> 24) & 0xff) / 255.0);
+		glColor4f((float)((cl->CShifts[i] >> 16) & 0xff) / 255.0,
+				(float)((cl->CShifts[i] >> 8) & 0xff) / 255.0,
+				(float)(cl->CShifts[i] & 0xff) / 255.0,
+				(float)((cl->CShifts[i] >> 24) & 0xff) / 255.0);
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
 		glVertex2f(ScreenWidth, 0);
@@ -484,13 +484,13 @@ void VOpenGLDrawer::SetPalette(int pnum)
 	int cmax = MAX(MAX(pal[0], pal[1]), pal[2]);
 	if (!cmax)
 	{
-		cl->cshifts[7] = 0;
+		cl->CShifts[7] = 0;
 	}
 	else
 	{
-		cl->cshifts[7] = (cmax << 24) | ((255 * pal[0] / cmax) << 16) |
+		cl->CShifts[7] = (cmax << 24) | ((255 * pal[0] / cmax) << 16) |
 			((255 * pal[1] / cmax) << 8) | (255 * pal[2] / cmax);
 	}
-	cl->prev_cshifts[7] = cl->cshifts[7];
+	GClGame->prev_cshifts[7] = cl->CShifts[7];
 	unguard;
 }

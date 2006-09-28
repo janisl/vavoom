@@ -76,7 +76,7 @@ struct spriteframe_t
 	//  we might as well insert the same name eight times.
 	boolean     rotate;
 
-    // Lump to use for view angles 0-7.
+	// Lump to use for view angles 0-7.
 	short		lump[8];
 
 	// Flip bit (1 = flip) to use for view angles 0-7.
@@ -190,7 +190,7 @@ static void InstallSpriteLump(int lumpnr, int frame, int rotation, bool flipped)
 			sprtemp[frame].lump[r] = lumpnr;
 			sprtemp[frame].flip[r] = flipped;
 		}
-     	return;
+		return;
 	}
 
 	// the lump is only used for one rotation
@@ -241,9 +241,9 @@ void R_InstallSprite(const char *name, int index)
 	memset(sprtemp, -1, sizeof(sprtemp));
 	maxframe = -1;
 
-    // scan all the lump names for each of the names,
-    //  noting the highest frame letter.
-    // Just compare 4 characters as ints
+	// scan all the lump names for each of the names,
+	//  noting the highest frame letter.
+	// Just compare 4 characters as ints
 	intname = *(int*)*VName(spritename, VName::AddLower8);
 
 	// scan the lumps, filling in the frames for whatever is found
@@ -281,17 +281,17 @@ void R_InstallSprite(const char *name, int index)
 	{
 		switch ((int)sprtemp[frame].rotate)
 		{
-		 case -1:
+		case -1:
 			// no rotations were found for that frame at all
 			Sys_Error("R_InstallSprite: No patches found "
 					"for %s frame %c", spritename, frame + 'A');
 			break;
 
-		 case 0:
+		case 0:
 			// only the first rotation is needed
 			break;
 
-		 case 1:
+		case 1:
 			// must have all 8 frames
 			for (rotation = 0; rotation < 8; rotation++)
 			{
@@ -464,7 +464,7 @@ extern VCvarI		r_chasecam;
 static void RenderSprite(VEntity* thing)
 {
 	guard(RenderSprite);
-	if (thing == cl_mobjs[cl->clientnum + 1] && !r_chasecam)
+	if (thing == cl_mobjs[cl->ClientNum + 1] && !r_chasecam)
 	{
 		//	Don't draw client's mobj
 		return;
@@ -490,7 +490,7 @@ static void RenderSprite(VEntity* thing)
 
 	switch (spr_type)
 	{
-	 case SPR_VP_PARALLEL_UPRIGHT:
+	case SPR_VP_PARALLEL_UPRIGHT:
 		//	Generate the sprite's axes, with sprup straight up in worldspace,
 		// and sprright parallel to the viewplane. This will not work if the
 		// view direction is very close to straight up or down, because the
@@ -509,7 +509,7 @@ static void RenderSprite(VEntity* thing)
 		sprforward = TVec(-sprright.y, sprright.x, 0);
 		break;
 
-	 case SPR_FACING_UPRIGHT:
+	case SPR_FACING_UPRIGHT:
 		//	Generate the sprite's axes, with sprup straight up in worldspace,
 		// and sprright perpendicular to sprorigin. This will not work if the
 		// view direction is very close to straight up or down, because the
@@ -528,7 +528,7 @@ static void RenderSprite(VEntity* thing)
 		sprforward = TVec(-sprright.y, sprright.x, 0);
 		break;
 
-	 case SPR_VP_PARALLEL:
+	case SPR_VP_PARALLEL:
 		//	Generate the sprite's axes, completely parallel to the viewplane.
 		// There are no problem situations, because the sprite is always in
 		// the same position relative to the viewer
@@ -537,13 +537,13 @@ static void RenderSprite(VEntity* thing)
 		sprforward = viewforward;
 		break;
 
-	 case SPR_ORIENTED:
+	case SPR_ORIENTED:
 		//	Generate the sprite's axes, according to the sprite's world
 		// orientation
 		AngleVectors(thing->Angles, sprforward, sprright, sprup);
 		break;
 
-	 case SPR_VP_PARALLEL_ORIENTED:
+	case SPR_VP_PARALLEL_ORIENTED:
 		//	Generate the sprite's axes, parallel to the viewplane, but
 		// rotated in that plane around the centre according to the sprite
 		// entity's roll angle. So sprforward stays the same, but sprright
@@ -558,7 +558,7 @@ static void RenderSprite(VEntity* thing)
 			viewup.y * cr, viewright.z * -sr + viewup.z * cr);
 		break;
 
-	 case SPR_VP_PARALLEL_UPRIGHT_ORIENTED:
+	case SPR_VP_PARALLEL_UPRIGHT_ORIENTED:
 		//	Generate the sprite's axes, with sprup straight up in worldspace,
 		// and sprright parallel to the viewplane and then rotated in that
 		// plane around the centre according to the sprite entity's roll
@@ -584,7 +584,7 @@ static void RenderSprite(VEntity* thing)
 		sprup = TVec(tvec.x * -sr, tvec.y * -sr, tvec.z * -sr + cr);
 		break;
 
-	 default:
+	default:
 		Sys_Error("RenderSprite: Bad sprite type %d", spr_type);
 	}
 
@@ -794,8 +794,8 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 static void RenderAliasModel(VEntity* mobj, bool IsWeapon)
 {
 	guard(RenderAliasModel);
-	if (!r_chasecam && (mobj == cl_mobjs[cl->clientnum + 1] ||
-		mobj == cl_weapon_mobjs[cl->clientnum + 1]))
+	if (!r_chasecam && (mobj == cl_mobjs[cl->ClientNum + 1] ||
+		mobj == cl_weapon_mobjs[cl->ClientNum + 1]))
 	{
 		//	Don't draw client's mobj
 		return;
@@ -871,7 +871,7 @@ void R_RenderMobjs()
 			}
 			else
 			{
-	    	    RenderSprite(cl_mobjs[i]);
+				RenderSprite(cl_mobjs[i]);
 			}
 		}
 	}
@@ -956,7 +956,7 @@ void R_DrawTranslucentPolys()
 //
 //==========================================================================
 
-static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
+static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 {
 	guard(RenderPSprite);
 	spritedef_t*		sprdef;
@@ -965,23 +965,23 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 	boolean				flip;
 
 	// decide which patch to use
-	if ((unsigned)psp->sprite >= MAX_SPRITE_MODELS)
+	if ((vuint32)VEnt->SpriteIndex >= MAX_SPRITE_MODELS)
 	{
 #ifdef PARANOID
-		GCon->Logf("R_ProjectSprite: invalid sprite number %d", psp->sprite);
+		GCon->Logf("R_ProjectSprite: invalid sprite number %d", VEnt->SpriteIndex);
 #endif
 		return;
 	}
-	sprdef = &sprites[psp->sprite];
-	if ((psp->frame & FF_FRAMEMASK) >= sprdef->numframes)
+	sprdef = &sprites[VEnt->SpriteIndex];
+	if ((VEnt->SpriteFrame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d",
-			psp->sprite, psp->frame);
+			VEnt->SpriteIndex, VEnt->SpriteFrame);
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[psp->frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[VEnt->SpriteFrame & FF_FRAMEMASK];
 
 	lump = sprframe->lump[0];
 	flip = (boolean)sprframe->flip[0];
@@ -997,10 +997,10 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 	float PSP_DISTI = 1.0 / PSP_DIST;
 	TVec sprorigin = vieworg + PSP_DIST * viewforward;
 
-	float sprx = 160.0 - psp->sx + TexSOffset;
-	float spry = 100.0 - psp->sy + TexTOffset;
+	float sprx = 160.0 - VEnt->SX + TexSOffset;
+	float spry = 100.0 - VEnt->SY + TexTOffset;
 
-	spry -= cl->pspriteSY;
+	spry -= cl->PSpriteSY;
 
 	//	1 / 160 = 0.00625
 	TVec start = sprorigin - (sprx * PSP_DIST * 0.00625) * viewright;
@@ -1039,7 +1039,7 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 		r_taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
 	vuint32 light;
-	if (psp->frame & FF_FULLBRIGHT)
+	if (VEnt->SpriteFrame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;
 	}
@@ -1048,7 +1048,7 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 		light = R_LightPoint(sprorigin);
 	}
 
-	Drawer->DrawSpritePolygon(dv, lump, cl->translucency, 0, light);
+	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntTranslucency, 0, light);
 	unguard;
 }
 
@@ -1058,14 +1058,14 @@ static void RenderPSprite(cl_pspdef_t* psp, float PSP_DIST)
 //
 //==========================================================================
 
-static void RenderViewModel(cl_pspdef_t *psp)
+static void RenderViewModel(VViewEntity* VEnt)
 {
 	guard(RenderViewModel);
-	TVec origin = vieworg + (psp->sx - 1.0) * viewright / 8.0 -
-		(psp->sy - 32.0) * viewup / 6.0;
+	TVec origin = vieworg + (VEnt->SX - 1.0) * viewright / 8.0 -
+		(VEnt->SY - 32.0) * viewup / 6.0;
 
 	vuint32 light;
-	if (psp->frame & FF_FULLBRIGHT)
+	if (VEnt->SpriteFrame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;
 	}
@@ -1074,8 +1074,9 @@ static void RenderViewModel(cl_pspdef_t *psp)
 		light = R_LightPoint(origin);
 	}
 
-	Drawer->DrawAliasModel(origin, cl->viewangles, psp->alias_model,
-		psp->alias_frame, 0, NULL, light, cl->translucency, true);
+	Drawer->DrawAliasModel(origin, cl->ViewAngles,
+		model_precache[VEnt->ModelIndex], VEnt->ModelFrame, 0, NULL, light,
+		cl->ViewEntTranslucency, true);
 	unguard;
 }
 
@@ -1088,26 +1089,23 @@ static void RenderViewModel(cl_pspdef_t *psp)
 void R_DrawPlayerSprites()
 {
 	guard(R_DrawPlayerSprites);
-    int         i;
-    cl_pspdef_t	*psp;
-
 	if (!r_draw_psprites || r_chasecam)
 	{
 		return;
 	}
 
-	if (cl->psprites[0].alias_model && r_view_models)
+	if (model_precache[cl->ViewEnts[0]->ModelIndex] && r_view_models)
 	{
-		RenderViewModel(cl->psprites);
+		RenderViewModel(cl->ViewEnts[0]);
 	}
 	else
 	{
-	    // add all active psprites
-		for (i = 0, psp = cl->psprites; i < NUMPSPRITES; i++, psp++)
+		// add all active psprites
+		for (int i = 0; i < NUMPSPRITES; i++)
 		{
-			if (psp->sprite != -1)
+			if (cl->ViewEnts[i]->SpriteIndex != -1)
 			{
-				RenderPSprite(psp, 3 - i);
+				RenderPSprite(cl->ViewEnts[i], 3 - i);
 			}
 		}
 	}
@@ -1192,7 +1190,7 @@ void R_DrawModelFrame(const TVec &origin, float angle, VModel* model,
 
 	refdef_t	rd;
 
-    rd.x = 0;
+	rd.x = 0;
 	rd.y = 0;
 	rd.width = ScreenWidth;
 	rd.height = ScreenHeight;

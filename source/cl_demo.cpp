@@ -122,7 +122,7 @@ void CL_WriteDemoMessage(VMessage& msg)
 {
 	guard(CL_WriteDemoMessage);
 	*cls.demofile << msg.CurSize;
-	*cls.demofile << cl->viewangles;
+	*cls.demofile << cl->ViewAngles;
 	cls.demofile->Serialise(msg.Data, msg.CurSize);
 	cls.demofile->Flush();
 	unguard;
@@ -160,7 +160,7 @@ int CL_GetMessage()
 					cls.td_starttime = realtime;
 				}
 			}
-			else if ( /* cl->time > 0 && */ cl->time <= cl_level.time)
+			else if ( /* cl->time > 0 && */ GClGame->time <= cl_level.time)
 			{
 				return 0;		// don't need another message yet
 			}
@@ -169,7 +169,7 @@ int CL_GetMessage()
 		// get the next message
 		*cls.demofile << GNet->NetMsg.CurSize;
 //		VectorCopy (cl->mviewangles[0], cl->mviewangles[1]);
-		*cls.demofile << cl->viewangles;
+		*cls.demofile << cl->ViewAngles;
 
 		if (GNet->NetMsg.CurSize > MAX_MSGLEN)
 			Sys_Error("Demo message > MAX_MSGLEN");

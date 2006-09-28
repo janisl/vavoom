@@ -80,7 +80,6 @@
 #include "chat.h"
 #include "finale.h"
 #include "save.h"
-#include "client.h"
 #include "server.h"
 #include "protocol.h"
 #include "imission.h"
@@ -89,5 +88,6 @@
 #include "p_entity.h"
 #include "player.h"
 #include "p_gameinfo.h"
+#include "client.h"
 
 #endif

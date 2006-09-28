@@ -30,7 +30,7 @@ const int BAR_Y = 438;
 
 ClientGameBase ClGame;
 
-MainClientState cl;
+Player cl;
 
 // Chain
 int HealthMarker;
@@ -90,19 +90,19 @@ void StartMap()
 	pic_barltop = R_RegisterPic('ltfctop');
 	pic_barrtop = R_RegisterPic('rtfctop');
 	pic_chain = R_RegisterPic('chain');
-	if (cl.maxclients == 1)
+	if (ClGame.maxclients == 1)
 	{
 		// single player game uses red life gem
 		pic_lifegem = R_RegisterPic('lifegem2');
 	}
 	else
 	{
-		pic_lifegem = R_RegisterPic(StrToName(va("lifegem%d", cl.clientnum)));
+		pic_lifegem = R_RegisterPic(StrToName(va("lifegem%d", cl.ClientNum)));
 	}
 	pic_ltface = R_RegisterPic('ltface');
 	pic_rtface = R_RegisterPic('rtface');
 
-	if (cl.deathmatch)
+	if (ClGame.deathmatch)
 	{
 		pic_mainbar = R_RegisterPic('statbar');
 	}
@@ -300,7 +300,7 @@ void SB_DrawMainBar()
 		health = 100;
 	}
 	healthPos = (health * 256) / 100;
-	chainY = (HealthMarker == cl.health) ? 33 : 33 + ChainWiggle;
+	chainY = (HealthMarker == cl.Health) ? 33 : 33 + ChainWiggle;
 
 	//  Chain
 	R_DrawPic(BAR_X + 2 + (healthPos % 17), BAR_Y + chainY, pic_chain);
@@ -319,7 +319,7 @@ void SB_DrawMainBar()
 		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_mainbar);
 
 		//  Frags / Health
-		if (cl.deathmatch)
+		if (ClGame.deathmatch)
 		{
 			SB_DrawNumber9(BAR_X + 61, BAR_Y + 12, cl.Frags);
 		}
@@ -332,7 +332,7 @@ void SB_DrawMainBar()
 		{
 			//  Ammo
 			SB_DrawNumber9(BAR_X + 109, BAR_Y + 4, cl.ReadyAmmo);
-			R_DrawPic(BAR_X + 111, BAR_Y + 14, pic_ammoicon[cl.readyweapon - 1]);
+			R_DrawPic(BAR_X + 111, BAR_Y + 14, pic_ammoicon[cl.ReadyWeapon - 1]);
 		}
 
 		//  Ready artifact
@@ -340,10 +340,10 @@ void SB_DrawMainBar()
 		{
 			R_DrawPic(BAR_X + 182, BAR_Y + 3, pic_artiflash[cl.ArtifactFlash - 1]);
 		}
-		else if (cl.readyArtifact > 0)
+		else if (cl.ReadyArtifact > 0)
 		{
-			R_DrawPic(BAR_X + 179, BAR_Y + 2, pic_arti[cl.readyArtifact - 1]);
-			SB_DrawINumber(BAR_X + 201, BAR_Y + 24, cl.inventory[cl.inv_ptr].count);
+			R_DrawPic(BAR_X + 179, BAR_Y + 2, pic_arti[cl.ReadyArtifact - 1]);
+			SB_DrawINumber(BAR_X + 201, BAR_Y + 24, cl.Inventory[cl.InvPtr].count);
 		}
 
 		//  Keys
@@ -361,7 +361,7 @@ void SB_DrawMainBar()
 		}
 
 		//  Armor
-		SB_DrawNumber9(BAR_X + 228, BAR_Y + 12, cl.armorpoints);
+		SB_DrawNumber9(BAR_X + 228, BAR_Y + 12, cl.ArmorPoints);
 	}
 	else
 	{
@@ -369,23 +369,23 @@ void SB_DrawMainBar()
 
 		//  Inventory
 		R_DrawPic(BAR_X + 34, BAR_Y + 2, pic_invbar);
-		x = cl.inv_ptr - cl.curpos;
+		x = cl.InvPtr - cl.InvCurPos;
 		for (i = 0; i < 7; i++)
 		{
-			if (cl.inventorySlotNum > x + i
-				&& cl.inventory[x + i].type != HereticDefs::arti_none)
+			if (cl.InventorySlotNum > x + i &&
+				cl.Inventory[x + i].type != HereticDefs::arti_none)
 			{
 				R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2,
-					pic_arti[cl.inventory[x + i].type - 1]);
-				SB_DrawINumber(BAR_X + 69 + i * 31, BAR_Y + 24, cl.inventory[x + i].count);
+					pic_arti[cl.Inventory[x + i].type - 1]);
+				SB_DrawINumber(BAR_X + 69 + i * 31, BAR_Y + 24, cl.Inventory[x + i].count);
 			}
 		}
-		R_DrawPic(BAR_X + 50 + cl.curpos * 31, BAR_Y + 31, pic_selectbox);
+		R_DrawPic(BAR_X + 50 + cl.InvCurPos * 31, BAR_Y + 31, pic_selectbox);
 		if (x != 0)
 		{
 			R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
-		if ((cl.inventorySlotNum - x > 7))
+		if ((cl.InventorySlotNum - x > 7))
 		{
 			R_DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
@@ -404,15 +404,15 @@ void SB_DrawFullscreenStats()
 	int x;
 
 	//  Health
-	SB_DrawNumber12(50, 450, cl.health);
+	SB_DrawNumber12(50, 450, cl.Health);
 	R_DrawPic(30, 494, pic_health);
 
 	//  Armorpoints
-	SB_DrawNumber12(140, 450, cl.armorpoints);
+	SB_DrawNumber12(140, 450, cl.ArmorPoints);
 	R_DrawPic(120, 490, pic_armor2);
 
 	//  Frags
-	if (cl.deathmatch)
+	if (ClGame.deathmatch)
 	{
 		SB_DrawNumber9(200, 450, cl.Frags);
 	}
@@ -421,7 +421,7 @@ void SB_DrawFullscreenStats()
 	if (cl.ReadyAmmo)
 	{
 		SB_DrawNumber9(610, 456, cl.ReadyAmmo);
-		R_DrawPic(590, 454, pic_ammoicon[cl.readyweapon - 1]);
+		R_DrawPic(590, 454, pic_ammoicon[cl.ReadyWeapon - 1]);
 	}
 
 	//  Keys
@@ -441,34 +441,34 @@ void SB_DrawFullscreenStats()
 	if (cl.SBFlags & HereticDefs::SBF_INVENTORY_OPEN)
 	{
 		//  Inventory
-		x = cl.inv_ptr - cl.curpos;
+		x = cl.InvPtr - cl.InvCurPos;
 		for (i = 0; i < 7; i++)
 		{
 			R_DrawPic2(210 + i * 31, 448, pic_artibox, 40);
-			if (cl.inventorySlotNum > x + i
-				&& cl.inventory[x + i].type != HereticDefs::arti_none)
+			if (cl.InventorySlotNum > x + i &&
+				cl.Inventory[x + i].type != HereticDefs::arti_none)
 			{
 				R_DrawPic(210 + i * 31, 448,
-					pic_arti[cl.inventory[x + i].type - 1]);
-				SB_DrawINumber(229 + i * 31, 470, cl.inventory[x + i].count);
+					pic_arti[cl.Inventory[x + i].type - 1]);
+				SB_DrawINumber(229 + i * 31, 470, cl.Inventory[x + i].count);
 			}
 		}
-		R_DrawPic(210 + cl.curpos * 31, 477, pic_selectbox);
+		R_DrawPic(210 + cl.InvCurPos * 31, 477, pic_selectbox);
 		if (x != 0)
 		{
 			R_DrawPic(198, 447, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
-		if (cl.inventorySlotNum - x > 7)
+		if (cl.InventorySlotNum - x > 7)
 		{
 			R_DrawPic(429, 447, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 	}
-	else if (cl.readyArtifact > 0)
+	else if (cl.ReadyArtifact > 0)
 	{
 		//  Ready artifact
 		R_DrawPic2(546, 440, pic_artibox, 40);
-		R_DrawPic(546, 440, pic_arti[cl.readyArtifact - 1]);
-		SB_DrawINumber(567, 462, cl.inventory[cl.inv_ptr].count);
+		R_DrawPic(546, 440, pic_arti[cl.ReadyArtifact - 1]);
+		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].count);
 	}
 }
 
@@ -522,9 +522,9 @@ void SB_DrawIcons()
 
 void SB_DrawPause()
 {
-	if (cl.bPaused && GetCvar('draw_pause'))
+	if (ClGame.bPaused && GetCvar('draw_pause'))
 	{
-		R_DrawPic(320, cl.maxclients > 1 ? 140 : 40, pic_paused);
+		R_DrawPic(320, ClGame.maxclients > 1 ? 140 : 40, pic_paused);
 	}
 }
 
@@ -565,7 +565,7 @@ void SB_UpdateWidgets()
 		ChainWiggle = P_Random() & 1;
 	}
 
-	curHealth = cl.health;
+	curHealth = cl.Health;
 	if (curHealth < 0)
 	{
 		curHealth = 0;

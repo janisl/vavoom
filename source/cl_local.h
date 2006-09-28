@@ -72,10 +72,11 @@ class VClientGameBase : public VObject
 		CF_LocalServer		= 0x01,
 		// used to accelerate or skip a stage
 		CF_SkipIntermission	= 0x02,
+		CF_Paused			= 0x04,
 	};
 	vuint32				ClientFlags;
 
-	VClientState*		cl;
+	VBasePlayer*		cl;
 	level_t*			level;
 	VLevel*				GLevel;
 
@@ -85,6 +86,20 @@ class VClientGameBase : public VObject
 	VRootWindow*		GRoot;
 
 	int					sb_height;
+
+	int					maxclients;
+	int					deathmatch;
+
+	VStr				serverinfo;
+
+	int					intermission;
+
+	int					prev_palette;
+
+	vuint32				prev_cshifts[NUM_CSHIFTS];	// powerups and content types
+
+	float				time;
+	float				oldtime;
 
 	void eventRootWindowCreated()
 	{

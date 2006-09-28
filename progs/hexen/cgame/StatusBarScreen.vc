@@ -30,7 +30,7 @@ const int BAR_Y = 441;
 
 ClientGameBase ClGame;
 
-MainClientState cl;
+Player cl;
 
 int sb_pclass;
 int sb_colour;
@@ -107,7 +107,7 @@ void StartMap()
 	{
 	case HexenDefs::PCLASS_FIGHTER:
 		pic_chain = R_RegisterPic('chain');
-		if (cl.maxclients == 1)
+		if (ClGame.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic('lifegmf2');
@@ -124,7 +124,7 @@ void StartMap()
 		break;
 	case HexenDefs::PCLASS_CLERIC:
 		pic_chain = R_RegisterPic('chain2');
-		if (cl.maxclients == 1)
+		if (ClGame.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic('lifegmc2');
@@ -137,7 +137,7 @@ void StartMap()
 		break;
 	case HexenDefs::PCLASS_MAGE:
 		pic_chain = R_RegisterPic('chain3');
-		if (cl.maxclients == 1)
+		if (ClGame.maxclients == 1)
 		{
 			// single player game uses red life gem (the second gem)
 			pic_lifegem = R_RegisterPic('lifegmm2');
@@ -444,7 +444,7 @@ void SB_DrawMainBar()
 	R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_statbar);
 
 	// Frags / health
-	if (cl.deathmatch)
+	if (ClGame.deathmatch)
 	{
 		R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_kills);
 		SB_DrawNumber9(BAR_X + 40, BAR_Y + 15, cl.Frags, 0);
@@ -462,7 +462,7 @@ void SB_DrawMainBar()
 	}
 
 	//  Mana
-	if (cl.mana[0] == 0)
+	if (cl.Mana[0] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana1 = 0;
@@ -471,7 +471,7 @@ void SB_DrawMainBar()
 	{
 		sb_mana1 = 1;
 	}
-	if (cl.mana[1] == 0)
+	if (cl.Mana[1] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana2 = 0;
@@ -507,24 +507,24 @@ void SB_DrawMainBar()
 		sb_manaVial1 = 1;
 		sb_manaVial2 = 1;
 	}
-	SB_DrawMNumber(BAR_X + 79, BAR_Y + 20, cl.mana[0]);
-	SB_DrawMNumber(BAR_X + 111, BAR_Y + 20, cl.mana[1]);
+	SB_DrawMNumber(BAR_X + 79, BAR_Y + 20, cl.Mana[0]);
+	SB_DrawMNumber(BAR_X + 111, BAR_Y + 20, cl.Mana[1]);
 	R_DrawPic(BAR_X + 77, BAR_Y + 3, pic_manadim1[sb_mana1]);
 	R_DrawPic(BAR_X + 110, BAR_Y + 3, pic_manadim2[sb_mana2]);
 	R_DrawPic(BAR_X + 94, BAR_Y + 3, pic_manavial1[sb_manaVial1]);
 	R_DrawPic(BAR_X + 102, BAR_Y + 3, pic_manavial2[sb_manaVial2]);
-	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 - (22 * cl.mana[0]) / HexenDefs::MAX_MANA, 31);
-	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 - (22 * cl.mana[1]) / HexenDefs::MAX_MANA, 31);
+	R_ShadeRect(BAR_X + 95, BAR_Y + 4, 3, 22 - (22 * cl.Mana[0]) / HexenDefs::MAX_MANA, 31);
+	R_ShadeRect(BAR_X + 103, BAR_Y + 4, 3, 22 - (22 * cl.Mana[1]) / HexenDefs::MAX_MANA, 31);
 
 	// Ready artifact
 	if (cl.ArtifactFlash)
 	{
 		R_DrawPic(BAR_X + 148, BAR_Y + 3, pic_artiflash[cl.ArtifactFlash]);
 	}
-	else if (cl.readyArtifact > 0)
+	else if (cl.ReadyArtifact > 0)
 	{
-		R_DrawPic(BAR_X + 143, BAR_Y + 2, pic_arti[cl.readyArtifact]);
-		SB_DrawINumber(BAR_X + 166, BAR_Y + 23, cl.inventory[cl.inv_ptr].count);
+		R_DrawPic(BAR_X + 143, BAR_Y + 2, pic_arti[cl.ReadyArtifact]);
+		SB_DrawINumber(BAR_X + 166, BAR_Y + 23, cl.Inventory[cl.InvPtr].count);
 	}
 
 	// Weapon Pieces
@@ -599,23 +599,23 @@ void SB_DrawInventoryBar()
 	R_DrawPic(BAR_X + 38, BAR_Y + 1, pic_invbar);
 
 	//  Inventory
-	x = cl.inv_ptr - cl.curpos;
+	x = cl.InvPtr - cl.InvCurPos;
 	for (i = 0; i < 7; i++)
 	{
-		if (cl.inventorySlotNum > x + i
-			&& cl.inventory[x + i].type != HexenDefs::arti_none)
+		if (cl.InventorySlotNum > x + i &&
+			cl.Inventory[x + i].type != HexenDefs::arti_none)
 		{
-			R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2, pic_arti[cl.inventory[x + i].type]);
-			SB_DrawINumber(BAR_X + 71 + i * 31, BAR_Y + 24, cl.inventory[x + i].count);
+			R_DrawPic(BAR_X + 50 + i * 31, BAR_Y + 2, pic_arti[cl.Inventory[x + i].type]);
+			SB_DrawINumber(BAR_X + 71 + i * 31, BAR_Y + 24, cl.Inventory[x + i].count);
 		}
 	}
 
-	R_DrawPic(BAR_X + 50 + cl.curpos * 31, BAR_Y + 2, pic_selectbox);
+	R_DrawPic(BAR_X + 50 + cl.InvCurPos * 31, BAR_Y + 2, pic_selectbox);
 	if (x != 0)
 	{
 		R_DrawPic(BAR_X + 42, BAR_Y + 2, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 	}
-	if (cl.inventorySlotNum - x > 7)
+	if (cl.InventorySlotNum - x > 7)
 	{
 		R_DrawPic(BAR_X + 269, BAR_Y + 2, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 	}
@@ -636,7 +636,7 @@ void SB_DrawFullscreenStats()
 	int readyweapon;
 
 	//  Health
-	SB_DrawNumber12(50, 450, cl.health);
+	SB_DrawNumber12(50, 450, cl.Health);
 	R_DrawPic(30, 494, pic_health);
 
 	// Armor
@@ -644,7 +644,7 @@ void SB_DrawFullscreenStats()
 	R_DrawPic(120, 490, pic_armor2);
 
 	//  Frags
-	if (cl.deathmatch)
+	if (ClGame.deathmatch)
 	{
 		SB_DrawNumber9(200, 450, cl.Frags, 0);
 	}
@@ -652,38 +652,38 @@ void SB_DrawFullscreenStats()
 	if (cl.InventoryTime)
 	{
 		//  Inventory
-		x = cl.inv_ptr - cl.curpos;
+		x = cl.InvPtr - cl.InvCurPos;
 		for (i = 0; i < 7; i++)
 		{
 			R_DrawPic2(210 + i * 31, 448, pic_arti[0], 40);
-			if (cl.inventorySlotNum > x + i
-				&& cl.inventory[x + i].type != HexenDefs::arti_none)
+			if (cl.InventorySlotNum > x + i &&
+				cl.Inventory[x + i].type != HexenDefs::arti_none)
 			{
 				R_DrawPic(209 + i * 31, 447,
-					pic_arti[cl.inventory[x + i].type]);
-				SB_DrawINumber(229 + i * 31, 468, cl.inventory[x + i].count);
+					pic_arti[cl.Inventory[x + i].type]);
+				SB_DrawINumber(229 + i * 31, 468, cl.Inventory[x + i].count);
 			}
 		}
-		R_DrawPic(210 + cl.curpos * 31, 447, pic_selectbox);
+		R_DrawPic(210 + cl.InvCurPos * 31, 447, pic_selectbox);
 		if (x != 0)
 		{
 			R_DrawPic(200, 447, pic_invgeml[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
-		if (cl.inventorySlotNum - x > 7)
+		if (cl.InventorySlotNum - x > 7)
 		{
 			R_DrawPic(428, 447, pic_invgemr[!(ClGame.level->tictime & 4) ? 0 : 1]);
 		}
 	}
-	else if (cl.readyArtifact > 0)
+	else if (cl.ReadyArtifact > 0)
 	{
 		//  Ready artifact
 		R_DrawPic2(546, 440, pic_arti[0], 40);
-		R_DrawPic(544, 440, pic_arti[cl.readyArtifact]);
-		SB_DrawINumber(567, 462, cl.inventory[cl.inv_ptr].count);
+		R_DrawPic(544, 440, pic_arti[cl.ReadyArtifact]);
+		SB_DrawINumber(567, 462, cl.Inventory[cl.InvPtr].count);
 	}
 
 	//  Mana
-	if (cl.mana[0] == 0)
+	if (cl.Mana[0] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana1 = 0;
@@ -692,7 +692,7 @@ void SB_DrawFullscreenStats()
 	{
 		sb_mana1 = 1;
 	}
-	if (cl.mana[1] == 0)
+	if (cl.Mana[1] == 0)
 	{
 		// Draw Dim Mana icon
 		sb_mana2 = 0;
@@ -721,8 +721,8 @@ void SB_DrawFullscreenStats()
 	{
 	}
 
-	SB_DrawMNumber(600, 446, cl.mana[0]);
-	SB_DrawMNumber(600, 462, cl.mana[1]);
+	SB_DrawMNumber(600, 446, cl.Mana[0]);
+	SB_DrawMNumber(600, 462, cl.Mana[1]);
 	R_DrawPic(584, 440, pic_manadim1[sb_mana1]);
 	R_DrawPic(584, 456, pic_manadim2[sb_mana2]);
 }
@@ -790,9 +790,9 @@ void SB_DrawIcons()
 
 void SB_DrawPause()
 {
-	if (cl.bPaused && GetCvar('draw_pause'))
+	if (ClGame.bPaused && GetCvar('draw_pause'))
 	{
-		R_DrawPic(320, cl.maxclients > 1 ? 140 : 40, pic_paused);
+		R_DrawPic(320, ClGame.maxclients > 1 ? 140 : 40, pic_paused);
 	}
 }
 
@@ -840,7 +840,7 @@ void SB_UpdateWidgets()
 	int delta;
 	int curHealth;
 
-	curHealth = cl.health;
+	curHealth = cl.Health;
 	if (curHealth < 0)
 	{
 		curHealth = 0;

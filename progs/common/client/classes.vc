@@ -27,5 +27,4 @@
 #include "Window.vc"
 #include "ModalWindow.vc"
 #include "RootWindow.vc"
-#include "ClientState.vc"
 #include "ClientGameBase.vc"

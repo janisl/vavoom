@@ -1036,17 +1036,6 @@ struct tmtrace_t
 //
 //**************************************************************************
 
-struct cl_pspdef_t
-{
-	int sprite;
-	int frame;
-	void* __alias_model;
-	int alias_frame;
-	int alias_skinnum;
-	float sx;
-	float sy;
-};
-
 //
 //  Server list
 //

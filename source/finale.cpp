@@ -58,9 +58,9 @@
 
 void F_StartFinale()
 {
-	cl->intermission = 2;
+	GClGame->intermission = 2;
 	automapactive = false;
-	cl->palette = 0;
+	cl->Palette = 0;
 
 	GClGame->eventStartFinale();
 }
@@ -73,7 +73,7 @@ void F_StartFinale()
 
 boolean F_Responder(event_t *event)
 {
-    if (cls.state != ca_connected || cl->intermission != 2)
+    if (cls.state != ca_connected || GClGame->intermission != 2)
     	return false;
     return GClGame->eventFinaleResponder(event);
 }

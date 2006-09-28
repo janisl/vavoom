@@ -65,8 +65,15 @@ static VClass*			ClassLookup[MAX_CLASS_LOOKUP];
 void CL_Clear()
 {
 	guard(CL_Clear);
-	cl->serverinfo.Clean();
+	GClGame->serverinfo.Clean();
+	GClGame->intermission = 0;
+	GClGame->time = 0;
+	VViewEntity* PrevVEnts[NUMPSPRITES];
+	PrevVEnts[0] = cl->ViewEnts[0];
+	PrevVEnts[1] = cl->ViewEnts[1];
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
+	cl->ViewEnts[0] = PrevVEnts[0];
+	cl->ViewEnts[1] = PrevVEnts[1];
 	memset(&cl_level, 0, sizeof(cl_level));
 	for (int i = 0; i < GMaxEntities; i++)
 		if (cl_mobjs[i])
@@ -302,46 +309,46 @@ static void CL_ParseViewData(VMessage& msg)
 	int		i;
 	int		bits;
 
-	msg >> cl->vieworg.x
-		>> cl->vieworg.y
-		>> cl->vieworg.z;
-	cl->extralight = msg.ReadByte();
-	cl->fixedcolourmap = msg.ReadByte();
-	cl->palette = msg.ReadByte();
-	cl->translucency = msg.ReadByte();
-	cl->pspriteSY = msg.ReadShort();
+	msg >> cl->ViewOrg.x
+		>> cl->ViewOrg.y
+		>> cl->ViewOrg.z;
+	cl->ExtraLight = msg.ReadByte();
+	cl->FixedColourmap = msg.ReadByte();
+	cl->Palette = msg.ReadByte();
+	cl->ViewEntTranslucency = msg.ReadByte();
+	cl->PSpriteSY = msg.ReadShort();
 
-	cl->psprites[0].sprite = msg.ReadShort();
-	if (cl->psprites[0].sprite != -1)
+	cl->ViewEnts[0]->SpriteIndex = msg.ReadShort();
+	if (cl->ViewEnts[0]->SpriteIndex != -1)
 	{
-		cl->psprites[0].frame = msg.ReadByte();
-		cl->psprites[0].alias_model = model_precache[msg.ReadShort()];
-		cl->psprites[0].alias_frame = msg.ReadByte();
-		cl->psprites[0].sx = msg.ReadShort();
-		cl->psprites[0].sy = msg.ReadShort();
+		cl->ViewEnts[0]->SpriteFrame = msg.ReadByte();
+		cl->ViewEnts[0]->ModelIndex = msg.ReadShort();
+		cl->ViewEnts[0]->ModelFrame = msg.ReadByte();
+		cl->ViewEnts[0]->SX = msg.ReadShort();
+		cl->ViewEnts[0]->SY = msg.ReadShort();
 	}
 
-	cl->psprites[1].sprite = msg.ReadShort();
-	if (cl->psprites[1].sprite != -1)
+	cl->ViewEnts[1]->SpriteIndex = msg.ReadShort();
+	if (cl->ViewEnts[1]->SpriteIndex != -1)
 	{
-		cl->psprites[1].frame = msg.ReadByte();
-		cl->psprites[1].alias_model = model_precache[msg.ReadShort()];
-		cl->psprites[1].alias_frame = msg.ReadByte();
-		cl->psprites[1].sx = msg.ReadShort();
-		cl->psprites[1].sy = msg.ReadShort();
+		cl->ViewEnts[1]->SpriteFrame = msg.ReadByte();
+		cl->ViewEnts[1]->ModelIndex = msg.ReadShort();
+		cl->ViewEnts[1]->ModelFrame = msg.ReadByte();
+		cl->ViewEnts[1]->SX = msg.ReadShort();
+		cl->ViewEnts[1]->SY = msg.ReadShort();
 	}
 
-	cl->health = msg.ReadByte();
-	msg >> cl->items;
+	cl->Health = msg.ReadByte();
+	msg >> cl->Items;
 	cl->Frags = msg.ReadShort();
 
 	bits = msg.ReadByte();
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
 		if (bits & (1 << i))
-			msg >> cl->cshifts[i];
+			msg >> cl->CShifts[i];
 		else
-			cl->cshifts[i] = 0;
+			cl->CShifts[i] = 0;
 	}
 }
 
@@ -471,9 +478,7 @@ static void CL_ParseTime(VMessage& msg)
 	msg >> new_time;
 	cl_level.tictime = int(new_time * 35);
 	cl_level.time = new_time;
-	cl->mtime[1] = cl->mtime[0];
-	cl->mtime[0] = new_time;
-	cl->worldTimer = cl_level.tictime;
+	cl->WorldTimer = cl_level.tictime;
 	unguard;
 }
 
@@ -485,7 +490,7 @@ static void CL_ParseTime(VMessage& msg)
 
 static void CL_ReadFromServerInfo()
 {
-	VCvar::SetCheating(!!atoi(*Info_ValueForKey(cl->serverinfo, "sv_cheats")));
+	VCvar::SetCheating(!!atoi(*Info_ValueForKey(GClGame->serverinfo, "sv_cheats")));
 }
 
 //==========================================================================
@@ -538,15 +543,15 @@ static void CL_ParseServerInfo(VMessage& msg)
 
 	CL_Clear();
 
-	cl->serverinfo = msg.ReadString();
+	GClGame->serverinfo = msg.ReadString();
 	CL_ReadFromServerInfo();
 
 	cl_level.MapName = msg.ReadString();
 	cl_level.LevelName = msg.ReadString();
 
-	cl->clientnum = msg.ReadByte();
-	cl->maxclients = msg.ReadByte();
-	cl->deathmatch = msg.ReadByte();
+	cl->ClientNum = msg.ReadByte();
+	GClGame->maxclients = msg.ReadByte();
+	GClGame->deathmatch = msg.ReadByte();
 
 	msg >> cl_level.totalkills
 		>> cl_level.totalitems
@@ -944,9 +949,9 @@ void CL_ParseServerMessage(VMessage& msg)
 			break;
 
 		case svc_set_angles:
-			cl->viewangles.pitch = AngleMod180(ByteToAngle(msg.ReadByte()));
-			cl->viewangles.yaw = ByteToAngle(msg.ReadByte());
-			cl->viewangles.roll = ByteToAngle(msg.ReadByte());
+			cl->ViewAngles.pitch = AngleMod180(ByteToAngle(msg.ReadByte()));
+			cl->ViewAngles.yaw = ByteToAngle(msg.ReadByte());
+			cl->ViewAngles.roll = ByteToAngle(msg.ReadByte());
 			break;
 
 		case svc_centre_look:
@@ -1018,38 +1023,38 @@ void CL_ParseServerMessage(VMessage& msg)
 		case svc_pause:
 			if (msg.ReadByte())
 			{
-				cl->ClientFlags |= VClientState::CF_Paused;
+				GClGame->ClientFlags |= VClientGameBase::CF_Paused;
 				GAudio->PauseSound();
 			}
 			else
 			{
-				cl->ClientFlags &= ~VClientState::CF_Paused;
+				GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
 				GAudio->ResumeSound();
 			}
 			break;
 
 		case svc_stats_long:
 			i = msg.ReadByte();
-			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
-			msg >> ((int*)((byte*)cl + sizeof(VClientState)))[i];
+			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
+			msg >> ((int*)((byte*)cl + sizeof(VBasePlayer)))[i];
 			break;
 
 		case svc_stats_short:
 			i = msg.ReadByte();
-			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
-			((int*)((byte*)cl + sizeof(VClientState)))[i] = msg.ReadShort();
+			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
+			((int*)((byte*)cl + sizeof(VBasePlayer)))[i] = msg.ReadShort();
 			break;
 
 		case svc_stats_byte:
 			i = msg.ReadByte();
-			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
-			((int*)((byte*)cl + sizeof(VClientState)))[i] = msg.ReadByte();
+			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
+			((int*)((byte*)cl + sizeof(VBasePlayer)))[i] = msg.ReadByte();
 			break;
 
 		case svc_stats_string:
 			i = msg.ReadByte();
-			check(i < (cl->GetClass()->ClassSize - sizeof(VClientState)) / 4);
-			*(VStr*)((byte*)cl + sizeof(VClientState) + i * 4) = msg.ReadString();
+			check(i < (int)(cl->GetClass()->ClassSize - sizeof(VBasePlayer)) / 4);
+			*(VStr*)((byte*)cl + sizeof(VBasePlayer) + i * 4) = msg.ReadString();
 			break;
 
 		case svc_stringcmd:
@@ -1095,7 +1100,7 @@ void CL_ParseServerMessage(VMessage& msg)
 		case svc_serverinfo:
 			name = msg.ReadString();
 			string = msg.ReadString();
-			Info_SetValueForKey(cl->serverinfo, name, string);
+			Info_SetValueForKey(GClGame->serverinfo, name, string);
 			CL_ReadFromServerInfo();
 			break;
 

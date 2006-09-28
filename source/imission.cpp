@@ -94,8 +94,8 @@ void IM_Start(void)
 	GClGame->scores = scores;
 	GClGame->im = &im;
 
-	cl->intermission = 1;
-	cl->palette = 0;
+	GClGame->intermission = 1;
+	cl->Palette = 0;
 	AM_Stop();
 	GAudio->StopAllSequences();
 

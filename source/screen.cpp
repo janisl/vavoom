@@ -383,7 +383,7 @@ static void CheckResolutionChange()
 
 	if (must_set_pal)
 	{
-		Drawer->SetPalette(cl->prev_palette);
+		Drawer->SetPalette(GClGame->prev_palette);
 	}
 
 	if (res_changed)
@@ -473,18 +473,18 @@ void SCR_Update()
 
 	Drawer->StartUpdate();
 
-	if (cl->prev_palette != cl->palette)
+	if (GClGame->prev_palette != cl->Palette)
 	{
-		Drawer->SetPalette(cl->palette);
-		cl->prev_palette = cl->palette;
+		Drawer->SetPalette(cl->Palette);
+		GClGame->prev_palette = cl->Palette;
 	}
 
 	// do buffered drawing
 	if (cls.state != ca_disconnected)
 	{
-		switch (cl->intermission)
+		switch (GClGame->intermission)
 		{
-		  case 0:
+		case 0:
 			if (automapactive)
 			{
 				AM_Drawer();

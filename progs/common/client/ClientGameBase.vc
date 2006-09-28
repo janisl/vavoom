@@ -32,7 +32,9 @@ bool local_server;
 // used to accelerate or skip a stage
 bool skipintermission;
 
-readonly ClientState cl;
+bool bPaused;
+
+readonly BasePlayer cl;
 readonly level_t* level;
 readonly Level GLevel;
 
@@ -42,6 +44,20 @@ readonly im_t *im;
 readonly RootWindow GRoot;
 
 int sb_height;
+
+int maxclients;
+int deathmatch;
+
+string serverinfo;
+
+int intermission;
+
+int prev_palette;
+
+int prev_cshifts[NUM_CSHIFTS];	// powerups and content types
+
+float time;
+float oldtime;
 
 //==========================================================================
 //

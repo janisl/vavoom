@@ -54,7 +54,7 @@ extern VStr			skin_list[256];
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 client_static_t		cls;
-VClientState*		cl;
+VBasePlayer*		cl;
 
 VClientGameBase*	GClGame;
 
@@ -69,7 +69,6 @@ dlight_t		cl_dlights[MAX_DLIGHTS];
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 IMPLEMENT_CLASS(V, ClientGameBase);
-IMPLEMENT_CLASS(V, ClientState);
 
 static bool UserInfoSent;
 
@@ -95,8 +94,11 @@ void CL_Init()
 
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
-	cl = (VClientState*)VObject::StaticSpawnObject(
-		VClass::FindClass("MainClientState"));
+	cl = (VBasePlayer*)VObject::StaticSpawnObject(
+		VClass::FindClass("Player"));
+	for (int i = 0; i < NUMPSPRITES; i++)
+		cl->ViewEnts[i] = (VViewEntity*)VObject::StaticSpawnObject(
+			VViewEntity::StaticClass());
 	GClGame->cl = cl;
 	GClGame->level = &cl_level;
 	unguard;
@@ -112,7 +114,7 @@ void CL_Ticker()
 {
 	guard(CL_Ticker);
 	// do main actions
-	switch (cl->intermission)
+	switch (GClGame->intermission)
 	{
 	case 0:
 		SB_Ticker();
@@ -155,7 +157,11 @@ void CL_Shutdown()
 	if (GClGame)
 		GClGame->ConditionalDestroy();
 	if (cl)
+	{
+		for (int i = 0; i < NUMPSPRITES; i++)
+			cl->ViewEnts[i]->ConditionalDestroy();
 		cl->ConditionalDestroy();
+	}
 	if (GRoot)
 		GRoot->ConditionalDestroy();
 	for (int i = 0; i < 256; i++)
@@ -205,7 +211,7 @@ dlight_t *CL_AllocDlight(int key)
 	dl = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		if (dl->die < cl->time)
+		if (dl->die < GClGame->time)
 		{
 			memset(dl, 0, sizeof(*dl));
 			dl->key = key;
@@ -217,7 +223,7 @@ dlight_t *CL_AllocDlight(int key)
 	float bestdist = 0.0;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		float dist = Length(dl->origin - cl->vieworg);
+		float dist = Length(dl->origin - cl->ViewOrg);
 		if (dist > bestdist)
 		{
 			bestnum = i;
@@ -244,12 +250,12 @@ void CL_DecayLights()
 	dlight_t	*dl;
 	float		time;
 
-	time = cl->time - cl->oldtime;
+	time = GClGame->time - GClGame->oldtime;
 
 	dl = cl_dlights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		if (dl->die < cl->time || !dl->radius)
+		if (dl->die < GClGame->time || !dl->radius)
 			continue;
 
 		dl->radius -= time * dl->decay;
@@ -294,8 +300,8 @@ void CL_ReadFromServer()
 	if (cls.state != ca_connected)
 		return;
 
-	cl->oldtime = cl->time;
-	cl->time += host_frametime;
+	GClGame->oldtime = GClGame->time;
+	GClGame->time += host_frametime;
 	
 	do
 	{
@@ -430,11 +436,11 @@ void CL_KeepaliveMessage()
 void CL_Disconnect()
 {
 	guard(CL_Disconnect);
-    if (cl->ClientFlags & VClientState::CF_Paused)
-    { 
-		cl->ClientFlags &= ~VClientState::CF_Paused;
+	if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
+	{
+		GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
 		GAudio->ResumeSound();
-    } 
+	} 
 	
 	// stop sounds (especially looping!)
 	GAudio->StopAllSound();

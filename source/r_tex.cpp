@@ -366,8 +366,8 @@ static TArray<frameDef_t>	FrameDefs;
 //==========================================================================
 
 VTextureManager::VTextureManager()
-: RgbTable(NULL)
-, DefaultTexture(-1)
+: DefaultTexture(-1)
+, RgbTable(NULL)
 {
 }
 

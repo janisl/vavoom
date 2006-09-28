@@ -100,7 +100,8 @@ const int
 	ST_TDAMMOX		= 620,
 	ST_TDAMMOY		= 460;
 
-MainClientState cl;
+ClientGame ClGame;
+Player cl;
 
 //
 //  PICS
@@ -145,7 +146,7 @@ void StartMap()
 	pic_minus = R_RegisterPic('sttminus');
 	pic_percent = R_RegisterPic('sttprcnt');
 
-	pic_faceback = R_RegisterPic(StrToName(va("stfb%d", cl.clientnum)));
+	pic_faceback = R_RegisterPic(StrToName(va("stfb%d", cl.ClientNum)));
 
 	for (i = 0; i < 6; i++)
 	{
@@ -298,9 +299,9 @@ void SB_DrawMainBar()
 	SB_DrawTallNum(ST_AMMOX, ST_AMMOY, cl.ReadyAmmo, 0, false);
 
 	// health percentage
-	SB_DrawTallNum(ST_HEALTHX, ST_HEALTHY, cl.health, 0, true);
+	SB_DrawTallNum(ST_HEALTHX, ST_HEALTHY, cl.Health, 0, true);
 
-	if (cl.deathmatch)
+	if (ClGame.deathmatch)
 	{
 		// frags sum
 		SB_DrawTallNum(ST_FRAGSX, ST_FRAGSY, cl.Frags, 0, false);
@@ -325,7 +326,7 @@ void SB_DrawMainBar()
 	}
 
 	// faces
-	if (cl.maxclients > 1)
+	if (ClGame.maxclients > 1)
 	{
 		R_DrawPic(ST_FACESX, ST_FACESY, pic_faceback);
 	}
@@ -384,7 +385,7 @@ void SB_DrawMainBar()
 void SB_DrawFullscreenStats()
 {
 	// health
-	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl.health, 40, false);
+	SB_DrawTallNum(ST_TDHEALTHX, ST_TDHEALTHY, cl.Health, 40, false);
 	R_DrawPic(ST_TDHEALTHX - 60, ST_TDHEALTHY + 15, pic_health);
 
 	// armor
@@ -449,7 +450,7 @@ void SB_DrawFullscreenStats()
 		R_DrawPic(420, 470, pic_keys[2]);
 	}
 
-	if (cl.deathmatch)
+	if (ClGame.deathmatch)
 	{
 		// frags sum
 		SB_DrawTallNum(630, 10, cl.Frags, 40, false);
@@ -464,7 +465,7 @@ void SB_DrawFullscreenStats()
 
 void SB_DrawPause()
 {
-	if (cl.bPaused && GetCvar('draw_pause'))
+	if (ClGame.bPaused && GetCvar('draw_pause'))
 	{
 		R_DrawPic(286, 4, pic_pause);
 	}

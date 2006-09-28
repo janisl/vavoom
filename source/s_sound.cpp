@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
 #include "s_local.h"
 
 // MACROS ------------------------------------------------------------------
@@ -457,8 +458,8 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.
 	int dist = 0;
-	if (origin_id && origin_id != cl->clientnum + 1)
-		dist = (int)Length(origin - cl->vieworg);
+	if (origin_id && origin_id != cl->ClientNum + 1)
+		dist = (int)Length(origin - cl->ViewOrg);
 	if (dist >= MaxSoundDist)
 	{
 		return; // sound is beyond the hearing range...
@@ -480,7 +481,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	}
 	int handle;
 	bool is3D;
-	if (!origin_id || origin_id == cl->clientnum + 1)
+	if (!origin_id || origin_id == cl->ClientNum + 1)
 	{
 		//	Local sound
 		handle = SoundDevice->PlaySound(sound_id, volume, 0, pitch, false);
@@ -489,7 +490,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	else if (!SoundDevice->Sound3D)
 	{
 		float vol = SoundCurve[dist] / 127.0 * volume;
-		float sep = DotProduct(origin - cl->vieworg, ListenerRight) / MaxSoundDist;
+		float sep = DotProduct(origin - cl->ViewOrg, ListenerRight) / MaxSoundDist;
 		if (swap_stereo)
 		{
 			sep = -sep;
@@ -740,7 +741,7 @@ void VAudio::StopSequence(int origin_id)
 void VAudio::UpdateActiveSequences(float DeltaTime)
 {
 	guard(VAudio::UpdateActiveSequences);
-	if (!ActiveSequences || cl->ClientFlags & VClientState::CF_Paused)
+	if (!ActiveSequences || GClGame->ClientFlags & VClientGameBase::CF_Paused)
 	{
 		// No sequences currently playing/game is paused
 		return;
@@ -832,7 +833,7 @@ void VAudio::UpdateSfx()
 		return;
 	}
 
-	AngleVectors(cl->viewangles, ListenerForward, ListenerRight, ListenerUp);
+	AngleVectors(cl->ViewAngles, ListenerForward, ListenerRight, ListenerUp);
 
 	for (int i = 0; i < NumChannels; i++)
 	{
@@ -853,7 +854,7 @@ void VAudio::UpdateSfx()
 			continue;
 		}
 
-		if (Channel[i].origin_id == cl->clientnum + 1)
+		if (Channel[i].origin_id == cl->ClientNum + 1)
 		{
 			//	Client sound
 			continue;
@@ -862,7 +863,7 @@ void VAudio::UpdateSfx()
 		//	Move sound
 		Channel[i].origin += Channel[i].velocity * host_frametime;
 
-		int dist = (int)Length(Channel[i].origin - cl->vieworg);
+		int dist = (int)Length(Channel[i].origin - cl->ViewOrg);
 		if (dist >= MaxSoundDist)
 		{
 			//	Too far away
@@ -874,7 +875,7 @@ void VAudio::UpdateSfx()
 		if (!Channel[i].is3D)
 		{
 			float vol = SoundCurve[dist] / 127.0 * Channel[i].volume;
-			float sep = DotProduct(Channel[i].origin - cl->vieworg,
+			float sep = DotProduct(Channel[i].origin - cl->ViewOrg,
 				ListenerRight) / MaxSoundDist;
 			if (swap_stereo)
 			{
@@ -893,7 +894,7 @@ void VAudio::UpdateSfx()
 
 	if (SoundDevice->Sound3D)
 	{
-		SoundDevice->UpdateListener(cl->vieworg, TVec(0, 0, 0),
+		SoundDevice->UpdateListener(cl->ViewOrg, TVec(0, 0, 0),
 			ListenerForward, ListenerRight, ListenerUp);
 	}
 

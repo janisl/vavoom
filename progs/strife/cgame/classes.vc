@@ -23,7 +23,6 @@
 //**
 //**************************************************************************
 
-#include "MainClientState.vc"
 #include "MenuObject.vc"
 #include "MenuChoice.vc"
 #include "MenuTitleText.vc"

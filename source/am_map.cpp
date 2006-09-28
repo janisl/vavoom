@@ -343,8 +343,8 @@ static void AM_restoreScaleAndLoc()
 	}
 	else
 	{
-		m_x = cl->vieworg.x - m_w / 2.0;
-		m_y = cl->vieworg.y - m_h / 2.0;
+		m_x = cl->ViewOrg.x - m_w / 2.0;
+		m_y = cl->ViewOrg.y - m_h / 2.0;
 	}
 	m_x2 = m_x + m_w;
 	m_y2 = m_y + m_h;
@@ -523,10 +523,10 @@ static void AM_initVariables()
 	m_w = FTOM(f_w);
 	m_h = FTOM(f_h);
 
-	oldplr.x = cl->vieworg.x;
-	oldplr.y = cl->vieworg.y;
-	m_x = cl->vieworg.x - m_w / 2.0;
-	m_y = cl->vieworg.y - m_h / 2.0;
+	oldplr.x = cl->ViewOrg.x;
+	oldplr.y = cl->ViewOrg.y;
+	m_x = cl->ViewOrg.x - m_w / 2.0;
+	m_y = cl->ViewOrg.y - m_h / 2.0;
 	AM_changeWindowLoc();
 
 	// for saving & restoring
@@ -837,11 +837,11 @@ static void AM_rotate(float* x, float* y, float a)
 
 void AM_rotatePoint (float *x, float *y)
 {
-	*x -= FTOM(MTOF(cl->vieworg.x));
-	*y -= FTOM(MTOF(cl->vieworg.y));
-	AM_rotate (x, y, 90.0 - cl->viewangles.yaw);
-	*x += FTOM(MTOF(cl->vieworg.x));
-	*y += FTOM(MTOF(cl->vieworg.y));
+	*x -= FTOM(MTOF(cl->ViewOrg.x));
+	*y -= FTOM(MTOF(cl->ViewOrg.y));
+	AM_rotate (x, y, 90.0 - cl->ViewAngles.yaw);
+	*x += FTOM(MTOF(cl->ViewOrg.x));
+	*y += FTOM(MTOF(cl->ViewOrg.y));
 }
 
 //==========================================================================
@@ -854,23 +854,23 @@ static void AM_doFollowPlayer()
 {
 	float sx, sy;
 
-	if (f_oldloc.x != cl->vieworg.x || f_oldloc.y != cl->vieworg.y)
+	if (f_oldloc.x != cl->ViewOrg.x || f_oldloc.y != cl->ViewOrg.y)
 	{
-		m_x = FTOM(MTOF(cl->vieworg.x)) - m_w / 2.0;
-		m_y = FTOM(MTOF(cl->vieworg.y)) - m_h / 2.0;
+		m_x = FTOM(MTOF(cl->ViewOrg.x)) - m_w / 2.0;
+		m_y = FTOM(MTOF(cl->ViewOrg.y)) - m_h / 2.0;
 		m_x2 = m_x + m_w;
 		m_y2 = m_y + m_h;
 		// do the parallax parchment scrolling.
-		sx = FTOM(MTOF(cl->vieworg.x - f_oldloc.x));
-		sy = FTOM(MTOF(f_oldloc.y - cl->vieworg.y));
+		sx = FTOM(MTOF(cl->ViewOrg.x - f_oldloc.x));
+		sy = FTOM(MTOF(f_oldloc.y - cl->ViewOrg.y));
 		if (am_rotate)
 		{
-			AM_rotate(&sx, &sy, cl->viewangles.yaw - 90.0);
+			AM_rotate(&sx, &sy, cl->ViewAngles.yaw - 90.0);
 		}
 		AM_ScrollParchment (sx, sy);
 
-		f_oldloc.x = cl->vieworg.x;
-		f_oldloc.y = cl->vieworg.y;
+		f_oldloc.x = cl->ViewOrg.x;
+		f_oldloc.y = cl->ViewOrg.y;
 	}
 }
 
@@ -914,11 +914,11 @@ static void AM_clearFB()
 
 	if (followplayer)
 	{
-		dmapx = MTOF(cl->vieworg.x) - MTOF(oldplr.x);
-		dmapy = MTOF(oldplr.y) - MTOF(cl->vieworg.y);
+		dmapx = MTOF(cl->ViewOrg.x) - MTOF(oldplr.x);
+		dmapy = MTOF(oldplr.y) - MTOF(cl->ViewOrg.y);
 
-		oldplr.x = cl->vieworg.x;
-		oldplr.y = cl->vieworg.y;
+		oldplr.x = cl->ViewOrg.x;
+		oldplr.y = cl->ViewOrg.y;
 		mapxstart -= dmapx>>1;
 		mapystart -= dmapy>>1;
 
@@ -1240,7 +1240,7 @@ static void AM_drawWalls()
 				AM_drawMline(&l, TSWallColour);
 			}
 		}
-		else if (cl->items & IT_ALL_MAP)
+		else if (cl->Items & IT_ALL_MAP)
 		{
 			if (!(line.flags & LINE_NEVERSEE))
 				AM_drawMline(&l, PowerWallColour);
@@ -1320,10 +1320,10 @@ static void AM_drawPlayers()
 	if (am_rotate)
 		angle = 90.0;
 	else
-		angle = cl->viewangles.yaw;
+		angle = cl->ViewAngles.yaw;
 
-	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0,
-		angle, PlayerColour, FTOM(MTOF(cl->vieworg.x)), FTOM(MTOF(cl->vieworg.y)));
+	AM_drawLineCharacter(player_arrow, NUMPLYRLINES, 0.0, angle,
+		PlayerColour, FTOM(MTOF(cl->ViewOrg.x)), FTOM(MTOF(cl->ViewOrg.y)));
 	return;
 }
 
@@ -1349,7 +1349,7 @@ static void AM_drawThings(vuint32 colour)
 			if (am_rotate)
 			{
 				AM_rotatePoint (&x, &y);
-				angle += 90.0 - cl->viewangles.yaw;
+				angle += 90.0 - cl->ViewAngles.yaw;
 			}
 
 			AM_drawLineCharacter(thintriangle_guy, NUMTHINTRIANGLEGUYLINES,
@@ -1409,7 +1409,7 @@ static void DrawWorldTimer(void)
 	char timeBuffer[15];
 	char dayBuffer[20];
 
-	worldTimer = cl->worldTimer;
+	worldTimer = cl->WorldTimer;
 
 	if (!worldTimer)
 		return;
@@ -1638,7 +1638,7 @@ void AM_Drawer()
 	{
 		AM_DrawLevelStats();
 	}
-	if (ShowStats == 2 && cl->maxclients > 1 && cl->deathmatch)
+	if (ShowStats == 2 && GClGame->maxclients > 1 && GClGame->deathmatch)
 	{
 		AM_DrawDeathmatchStats();
 	}

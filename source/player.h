@@ -27,19 +27,33 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define NUM_CSHIFTS		8
+
 // TYPES -------------------------------------------------------------------
+
+//
+// Overlay psprites are scaled shapes
+// drawn directly on the view screen,
+// coordinates are given for a 320*200 view screen.
+//
+enum psprnum_t
+{
+	ps_weapon,
+	ps_flash,	//	Only DOOM uses it
+	NUMPSPRITES
+};
 
 //
 // Player states.
 //
 enum playerstate_t
 {
-    // Playing or camping.
-    PST_LIVE,
-    // Dead on the ground, view follows killer.
-    PST_DEAD,
-    // Ready to restart/respawn???
-    PST_REBORN		
+	// Playing or camping.
+	PST_LIVE,
+	// Dead on the ground, view follows killer.
+	PST_DEAD,
+	// Ready to restart/respawn???
+	PST_REBORN		
 };
 
 class VViewEntity : public VObject
@@ -56,7 +70,7 @@ class VViewEntity : public VObject
 	float		SY;
 	VState*		State;
 	VState*		NextState;
-    float		StateTime;
+	float		StateTime;
 	VBasePlayer	*Player;
 
 	void SetState(VState* stnum);
@@ -84,6 +98,7 @@ class VBasePlayer : public VObject
 		PF_UseDown		= 0x0020,
 		PF_DidSecret	= 0x0040,	// True if secret level has been done.
 		PF_NeedsUpdate	= 0x0080,
+		PF_Centreing	= 0x0100,
 	};
 	vuint32			PlayerFlags;
 
@@ -107,54 +122,58 @@ class VBasePlayer : public VObject
 	int				Buttons;		// fire, use
 	int				Impulse;		// weapon changes, inventory, etc
 
-    VEntity*		MO;
-    int				PlayerState;
+	VEntity*		MO;
+	int				PlayerState;
 
 	//	Model of current weapon
 	int				WeaponModel;
 
-    // Determine POV,
-    //  including viewpoint bobbing during movement.
-    // Focal origin above r.z
+	// Determine POV,
+	//  including viewpoint bobbing during movement.
+	// Focal origin above r.z
 	TVec			ViewOrg;
 
 	TAVec			ViewAngles;
 
-    // This is only used between levels,
-    // mo->health is used during levels.
-    int				Health;
+	// This is only used between levels,
+	// mo->health is used during levels.
+	int				Health;
 
 	int				Items;
 
-    // Frags, kills of other players.
+	// Frags, kills of other players.
 	int				Frags;
-    int				FragsStats[MAXPLAYERS];
+	int				FragsStats[MAXPLAYERS];
 
-    // For intermission stats.
-    int				KillCount;
-    int				ItemCount;
-    int				SecretCount;
+	// For intermission stats.
+	int				KillCount;
+	int				ItemCount;
+	int				SecretCount;
 
-    // So gun flashes light up areas.
-    int				ExtraLight;
+	// So gun flashes light up areas.
+	int				ExtraLight;
 
 	// For lite-amp and invulnarability powers
-    int				FixedColourmap;
+	int				FixedColourmap;
 
-    // Current PLAYPAL index
-    //  can be set to REDCOLOURMAP for pain, etc.
-    int				Palette;
+	// Current PLAYPAL index
+	//  can be set to REDCOLOURMAP for pain, etc.
+	int				Palette;
 
 	// Colour shifts for damage, powerups and content types
 	vuint32			CShifts[NUM_CSHIFTS];
 
-    // Overlay view sprites (gun, etc).
-    VViewEntity		*ViewEnts[NUMPSPRITES];
+	// Overlay view sprites (gun, etc).
+	VViewEntity*	ViewEnts[NUMPSPRITES];
 	float			PSpriteSY;
 
 	vuint32			WorldTimer;				// total time the player's been playing
 
 	int*			OldStats;
+
+	int				ClientNum;		// cl_mobjs[cl.clientnum] = player
+
+	int				ViewEntTranslucency;
 
 	DECLARE_FUNCTION(cprint)
 	DECLARE_FUNCTION(centreprint)

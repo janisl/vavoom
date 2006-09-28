@@ -28,7 +28,7 @@ class FinaleScreen : Window;
 const float TEXTSPEED	= 0.1;
 const float TEXTWAIT	= 7.0;
 
-MainClientState cl;
+ClientGame ClGame;
 
 int FinaleStage;
 float FinaleTime;
@@ -52,7 +52,7 @@ void StartFinale()
 
 	FinaleEndTime = 2.0;
 	fpage1 = R_RegisterPic('finale1');
-	if (cl.maxclients > 1)
+	if (ClGame.maxclients > 1)
 	{
 		fpage2 = R_RegisterPic('chessall');
 	}
@@ -164,7 +164,7 @@ void F_DrawPic()
 	if (FinaleStage == 4 || FinaleStage == 5)
 	{
 		// Chess pic, draw the correct character graphic
-		if (cl.maxclients > 1)
+		if (ClGame.maxclients > 1)
 		{
 			R_DrawPic(20, 0, fpage2);
 		}

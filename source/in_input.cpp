@@ -33,6 +33,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -419,7 +420,7 @@ void VInput::ProcessEvents()
 		if (MN_Responder(ev))
 			continue;
 
-		if (cls.state == ca_connected && !cl->intermission)
+		if (cls.state == ca_connected && !GClGame->intermission)
 		{
 			if (SB_Responder(ev))
 				continue;	// status window ate it
