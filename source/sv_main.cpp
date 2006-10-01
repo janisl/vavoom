@@ -116,6 +116,8 @@ VName			mapaftersecret;
 VGameInfo*		GGameInfo;
 VLevelInfo*		GLevelInfo;
 
+TArray<VSndSeqInfo>	sv_ActiveSequences;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int 		LeavePosition;
@@ -778,9 +780,24 @@ void SV_SectorStopSound(const sector_t *sector, int channel)
 //==========================================================================
 
 void SV_StartSequence(const TVec& Origin, vint32 OriginId, VName Name,
-	int ModeNum)
+	vint32 ModeNum)
 {
 	guard(SV_StartSequence);
+	//	Remove any existing sequences of this origin
+	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	{
+		if (sv_ActiveSequences[i].OriginId == OriginId)
+		{
+			sv_ActiveSequences.RemoveIndex(i);
+			i--;
+		}
+	}
+	VSndSeqInfo& Seq = sv_ActiveSequences.Alloc();
+	Seq.Name = Name;
+	Seq.OriginId = OriginId;
+	Seq.Origin = Origin;
+	Seq.ModeNum = ModeNum;
+
 	sv_reliable << (vuint8)svc_start_seq
 				<< (vuint16)OriginId
 				<< (vuint16)Origin.x
@@ -793,6 +810,30 @@ void SV_StartSequence(const TVec& Origin, vint32 OriginId, VName Name,
 
 //==========================================================================
 //
+//	SV_AddSequenceChoice
+//
+//==========================================================================
+
+void SV_AddSequenceChoice(int origin_id, VName Choice)
+{
+	guard(SV_AddSequenceChoice);
+	//	Remove it from server's sequences list.
+	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	{
+		if (sv_ActiveSequences[i].OriginId == origin_id)
+		{
+			sv_ActiveSequences[i].Choices.Append(Choice);
+		}
+	}
+
+	sv_reliable << (vuint8)svc_add_seq_choice
+				<< (vuint16)origin_id
+				<< *Choice;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_StopSequence
 //
 //==========================================================================
@@ -800,6 +841,16 @@ void SV_StartSequence(const TVec& Origin, vint32 OriginId, VName Name,
 void SV_StopSequence(int origin_id)
 {
 	guard(SV_StopSequence);
+	//	Remove it from server's sequences list.
+	for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+	{
+		if (sv_ActiveSequences[i].OriginId == origin_id)
+		{
+			sv_ActiveSequences.RemoveIndex(i);
+			i--;
+		}
+	}
+
 	sv_reliable << (vuint8)svc_stop_seq
 				<< (vuint16)origin_id;
 	unguard;
@@ -865,6 +916,45 @@ void SV_PolyobjStopSequence(const polyobj_t *poly)
 {
 	guard(SV_PolyobjStopSequence);
 	SV_StopSequence((poly - GLevel->PolyObjs) + GMaxEntities + GLevel->NumSectors);
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_EntityStartSequence
+//
+//==========================================================================
+
+void SV_EntityStartSequence(const VEntity* Ent, VName Name, int ModeNum)
+{
+	guard(SV_EntityStartSequence);
+	SV_StartSequence(Ent->Origin, GetOriginNum(Ent), Name, ModeNum);
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_EntityAddSequenceChoice
+//
+//==========================================================================
+
+void SV_EntityAddSequenceChoice(const VEntity* Ent, VName Choice)
+{
+	guard(SV_EntityAddSequenceChoice);
+	SV_AddSequenceChoice(GetOriginNum(Ent), Choice);
+	unguard;
+}
+
+//==========================================================================
+//
+//	SV_EntityStopSequence
+//
+//==========================================================================
+
+void SV_EntityStopSequence(const VEntity* Ent)
+{
+	guard(SV_EntityStopSequence);
+	SV_StopSequence(GetOriginNum(Ent));
 	unguard;
 }
 
@@ -2579,6 +2669,22 @@ COMMAND(Spawn)
 			GCon->Log(NAME_Dev, "Mobj already spawned");
 		}
 		sv_player->eventSpawnClient();
+		for (int i = 0; i < sv_ActiveSequences.Num(); i++)
+		{
+			sv_player->Message << (vuint8)svc_start_seq
+				<< (vuint16)sv_ActiveSequences[i].OriginId
+				<< (vuint16)sv_ActiveSequences[i].Origin.x
+				<< (vuint16)sv_ActiveSequences[i].Origin.y
+				<< (vuint16)sv_ActiveSequences[i].Origin.z
+				<< *sv_ActiveSequences[i].Name
+				<< (vuint8)sv_ActiveSequences[i].ModeNum;
+			for (int j = 0; j < sv_ActiveSequences[i].Choices.Num(); j++)
+			{
+				sv_player->Message << (vuint8)svc_add_seq_choice
+					<< (vuint16)sv_ActiveSequences[i].OriginId
+					<< *sv_ActiveSequences[i].Choices[j];
+			}
+		}
 	}
 	else
 	{

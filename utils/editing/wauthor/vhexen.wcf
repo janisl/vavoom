@@ -332,6 +332,7 @@ LightingInc=0
 0x2905  8       20      ffsmc0          Flame (small, continuous)
 0x2906  8       20      fflga0          Flame (large, timed) *( duration, -, -, -, - )
 0x2907  8       20      fflgf0          Flame (large, continuous)
+0x36f2  9       20      telea0          Sound sequence *( number, mode, -, -, - )
 
 ;       ID                      used to classify specials
 ;       Name                    textual description of class

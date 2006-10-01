@@ -51,3 +51,131 @@ end
 
 :Silence
 end
+
+//
+//	------- Ambient sounds --------
+//
+
+:HereticAmbience
+	delayrand		210 465
+	volumerand		0 63
+	randonsequence
+	restart
+
+:AFX_Scream
+	environment		0
+	slot			HereticAmbience
+	playuntildone	world/amb1
+end
+
+:AFX_Squish
+	environment		1
+	slot			HereticAmbience
+	playuntildone	world/amb2
+end
+
+:AFX_Drops
+	environment		2
+	slot			HereticAmbience
+	play			world/amb3
+	delayrand		16 47
+	play			world/amb7
+	delayrand		16 47
+	play			world/amb3
+	delayrand		16 47
+	play			world/amb7
+	delayrand		16 47
+	play			world/amb3
+	delayrand		16 47
+	play			world/amb7
+	delayrand		16 47
+end
+
+:AFX_SlowFootsteps
+	environment		3
+	slot			HereticAmbience
+	playtime		world/amb4 15
+	volumerel		-2.36
+	playtime		world/amb11 15
+	volumerel		-2.36
+	playtime		world/amb4 15
+	volumerel		-2.36
+	playtime		world/amb11 15
+	volumerel		-2.36
+	playtime		world/amb4 15
+	volumerel		-2.36
+	playtime		world/amb11 15
+	volumerel		-2.36
+	playtime		world/amb4 15
+	volumerel		-2.36
+	playuntildone	world/amb11
+end
+
+:AFX_Heartbeat
+	environment		4
+	slot			HereticAmbience
+	playtime		world/amb5 35
+	playtime		world/amb5 35
+	playtime		world/amb5 35
+	playuntildone	world/amb5
+end
+
+:AFX_Bells
+	environment		5
+	slot			HereticAmbience
+	playtime		world/amb6 17
+	volumerel		-6.3
+	playtime		world/amb6 17
+	volumerel		-6.3
+	playtime		world/amb6 17
+	volumerel		-6.3
+	playuntildone	world/amb6
+end
+
+:AFX_Growl
+	environment		6
+	slot			HereticAmbience
+	playuntildone	world/amb12
+end
+
+:AFX_Magic
+	environment		7
+	slot			HereticAmbience
+	playuntildone	world/amb8
+end
+
+:AFX_Laughter
+	environment		8
+	slot			HereticAmbience
+	playtime		world/amb9 16
+	volumerel		-3.15
+	playtime		world/amb9 16
+	volumerel		-3.15
+	playtime		world/amb9 16
+	volumerel		-3.15
+	playtime		world/amb10 16
+	volumerel		-3.15
+	playtime		world/amb10 16
+	volumerel		-3.15
+	playuntildone	world/amb10
+end
+
+:AFX_FastFootsteps
+	environment		9
+	slot			HereticAmbience
+	playtime		world/amb4 8
+	volumerel		-2.36
+	playtime		world/amb11 8
+	volumerel		-2.36
+	playtime		world/amb4 8
+	volumerel		-2.36
+	playtime		world/amb11 8
+	volumerel		-2.36
+	playtime		world/amb4 8
+	volumerel		-2.36
+	playtime		world/amb11 8
+	volumerel		-2.36
+	playtime		world/amb4 8
+	volumerel		-2.36
+	playuntildone	world/amb11
+end

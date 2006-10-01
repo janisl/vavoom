@@ -405,6 +405,16 @@ static void CL_ParseStartSeq(VMessage& msg)
 	GAudio->StartSequence(OriginId, TVec(x, y, z), Name, ModeNum);
 }
 
+static void CL_ParseAddSeqChoice(VMessage& msg)
+{
+	vuint16	origin_id;
+
+	msg >> origin_id;
+	VName Choice = msg.ReadString();
+
+	GAudio->AddSeqChoice(origin_id, Choice);
+}
+
 static void CL_ParseStopSeq(VMessage& msg)
 {
 	word	origin_id;
@@ -967,6 +977,10 @@ void CL_ParseServerMessage(VMessage& msg)
 
 		case svc_start_seq:
 			CL_ParseStartSeq(msg);
+			break;
+
+		case svc_add_seq_choice:
+			CL_ParseAddSeqChoice(msg);
 			break;
 
 		case svc_stop_seq:

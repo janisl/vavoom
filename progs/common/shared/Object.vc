@@ -1224,6 +1224,7 @@ enum
 
 	svc_class_name,
 	svc_stats_string,
+	svc_add_seq_choice,
 
 	USER_PROTOCOL_START = 128
 };
@@ -1745,6 +1746,7 @@ native static final bool GetSoundPlayingInfo(Entity mobj, int sound_id);
 native static final int GetSoundID(name Name);
 native static final void SetSeqTrans(name Name, int Num, int SeqType);
 native static final name GetSeqTrans(int Num, int SeqType);
+native static final name GetSeqSlot(name Sequence);
 native static final void SectorStartSequence(sector_t * sector, name sequence,
 	int ModeNum);
 native static final void SectorStopSequence(sector_t * sector);

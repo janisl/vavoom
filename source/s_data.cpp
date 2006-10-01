@@ -1149,13 +1149,10 @@ void VSoundManager::AssignSeqTranslations(VScriptParser* sc, int SeqId,
 void VSoundManager::SetSeqTrans(VName Name, int Num, int SeqType)
 {
 	guard(VSoundManager::SetSeqTrans);
-	for (int i = 0; i < SeqInfo.Num(); i++)
+	int Idx = FindSequence(Name);
+	if (Idx != -1)
 	{
-		if (SeqInfo[i].Name == Name)
-		{
-			SeqTrans[(Num & 63) + SeqType * 64] = i;
-			return;
-		}
+		SeqTrans[(Num & 63) + SeqType * 64] = Idx;
 	}
 	unguard;
 }
@@ -1179,6 +1176,24 @@ VName VSoundManager::GetSeqTrans(int Num, int SeqType)
 		return NAME_None;
 	}
 	return SeqInfo[SeqTrans[(Num & 63) + SeqType * 64]].Name;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VSoundManager::GetSeqSlot
+//
+//==========================================================================
+
+VName VSoundManager::GetSeqSlot(VName Name)
+{
+	guard(VSoundManager::GetSeqSlot);
+	int Idx = FindSequence(Name);
+	if (Idx != -1)
+	{
+		return SeqInfo[Idx].Slot;
+	}
+	return NAME_None;
 	unguard;
 }
 

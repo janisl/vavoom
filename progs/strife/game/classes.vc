@@ -82,6 +82,9 @@
 #include "TeleportSpot2.vc"
 #include "TeleportSpot3.vc"
 
+#include "SoundSequence.vc"
+#include "SoundSequenceSlot.vc"
+
 #include "WeaponPunch.vc"
 #include "ElectricArrow.vc"
 #include "PoisonArrow.vc"

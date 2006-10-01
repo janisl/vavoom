@@ -106,6 +106,7 @@ enum
 
 	svc_class_name,
 	svc_stats_string,
+	svc_add_seq_choice,
 
 	USER_PROTOCOL_START = 128
 };

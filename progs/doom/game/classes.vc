@@ -72,3 +72,6 @@
 #include "PointPusher.vc"
 #include "PointPuller.vc"
 #include "Pusher.vc"
+
+#include "SoundSequence.vc"
+#include "SoundSequenceSlot.vc"

@@ -75,6 +75,20 @@
 
 #include "LavaInflictor.vc"
 
+#include "SoundSequence.vc"
+#include "SoundSequenceSlot.vc"
+#include "AmbientSoundSequence.vc"
+#include "AmbientSoundSequence1.vc"
+#include "AmbientSoundSequence2.vc"
+#include "AmbientSoundSequence3.vc"
+#include "AmbientSoundSequence4.vc"
+#include "AmbientSoundSequence5.vc"
+#include "AmbientSoundSequence6.vc"
+#include "AmbientSoundSequence7.vc"
+#include "AmbientSoundSequence8.vc"
+#include "AmbientSoundSequence9.vc"
+#include "AmbientSoundSequence10.vc"
+
 #include "StaffPuff.vc"
 #include "StaffPuff2.vc"
 #include "WeaponStaff.vc"

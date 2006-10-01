@@ -400,6 +400,7 @@ public:
 	DECLARE_FUNCTION(GetSoundID)
 	DECLARE_FUNCTION(SetSeqTrans)
 	DECLARE_FUNCTION(GetSeqTrans)
+	DECLARE_FUNCTION(GetSeqSlot)
 	DECLARE_FUNCTION(SectorStartSequence)
 	DECLARE_FUNCTION(SectorStopSequence)
 	DECLARE_FUNCTION(PolyobjStartSequence)

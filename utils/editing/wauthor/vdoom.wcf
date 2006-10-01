@@ -192,6 +192,7 @@ LightingInc=0
 0x2454  13      20      ifoga0          Polyobject anchor
 0x2455  13      20      ifoga0          Start spot
 0x2456  13      20      ifoga0          Start spot w/crush
+0x36f2  9       20      ifogd0          Sound sequence *( number, mode, -, -, - )
 
 ;	ID				used to classify linedefs
 ;	Name			textual description of class

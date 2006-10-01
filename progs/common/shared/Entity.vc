@@ -196,6 +196,10 @@ native final void PlaySound(name SoundName, int Channel);
 native final void PlayFullVolumeSound(name SoundName, int Channel);
 native final void StopSound(int Channel);
 
+native final void StartSoundSequence(name sequence, int ModeNum);
+native final void AddSoundSequenceChoice(name Choice);
+native final void StopSoundSequence();
+
 native final bool CheckSides(TVec lsPos);
 native final float CheckDropOff();
 native final bool CheckPosition(TVec Pos);

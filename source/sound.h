@@ -57,6 +57,7 @@ public:
 
 	void SetSeqTrans(VName, int, int);
 	VName GetSeqTrans(int, int);
+	VName GetSeqSlot(VName);
 	int FindSequence(VName);
 
 private:

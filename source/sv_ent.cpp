@@ -2000,6 +2000,45 @@ IMPLEMENT_FUNCTION(VEntity, StopSound)
 
 //==========================================================================
 //
+//	Entity.StartSoundSequence
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, StartSoundSequence)
+{
+	P_GET_INT(ModeNum);
+	P_GET_NAME(Name);
+	P_GET_SELF;
+	SV_EntityStartSequence(Self, Name, ModeNum);
+}
+
+//==========================================================================
+//
+//	Entity.AddSoundSequenceChoice
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, AddSoundSequenceChoice)
+{
+	P_GET_NAME(Choice);
+	P_GET_SELF;
+	SV_EntityAddSequenceChoice(Self, Choice);
+}
+
+//==========================================================================
+//
+//	Entity.StopSoundSequence
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, StopSoundSequence)
+{
+	P_GET_SELF;
+	SV_EntityStopSequence(Self);
+}
+
+//==========================================================================
+//
 //	Entity.CheckWater
 //
 //==========================================================================

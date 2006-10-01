@@ -67,6 +67,9 @@
 
 #include "LavaInflictor.vc"
 
+#include "SoundSequence.vc"
+#include "SoundSequenceSlot.vc"
+
 #include "Pickup.vc"
 #include "ItemHealingBottle.vc"
 #include "Artifact.vc"
