@@ -59,8 +59,9 @@ end
 :HereticAmbience
 	delayrand		210 465
 	volumerand		0 63
-	randonsequence
+	randomsequence
 	restart
+end
 
 :AFX_Scream
 	environment		0
