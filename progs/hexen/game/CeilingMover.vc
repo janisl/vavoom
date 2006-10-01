@@ -283,8 +283,8 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		break;
 	}
-	SectorStartSequence(Sector,
-		GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
+		SEQ_Platform), 0);
 }
 
 //==================================================================

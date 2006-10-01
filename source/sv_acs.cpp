@@ -2263,7 +2263,7 @@ int VACS::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SoundSequence)
 			SV_SectorStartSequence(line ? line->frontsector : NULL,
-				GetStr(sp[-1]));
+				GetStr(sp[-1]), 0);
 			sp--;
 			ACSVM_BREAK;
 

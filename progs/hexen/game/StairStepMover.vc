@@ -154,7 +154,7 @@ void QueueInit(sector_t* InSector, int InType, float InHeight, int InStairsType,
 		Speed = StairSpeed * (QueueHeight - StairStartHeight) / StairStepDelta;
 		break;
 	}
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================

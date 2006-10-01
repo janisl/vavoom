@@ -2498,7 +2498,7 @@ bool EV_RotatePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	pe.thrust_force = pe.speed / 32.0 * itof(0x800) / 90.0;
 
 	poly->SpecialData = pe;
-	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 
 	for (mirror = XLevel.GetPolyobjMirror(polyNum); mirror;
 		mirror = XLevel.GetPolyobjMirror(polyNum))
@@ -2542,7 +2542,7 @@ bool EV_RotatePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 		pe.thrust_force = pe.speed / 32.0 * itof(0x800) / 90.0;
 
 		polyNum = mirror;
-		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 	}
 	return true;
 }
@@ -2595,7 +2595,7 @@ bool EV_MovePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 	an = itof(Arg3) * (90.0 / 64.0);
 
 	pe.angle = an;
-	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+	PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 
 	for (mirror = XLevel.GetPolyobjMirror(polyNum); mirror;
 		mirror = XLevel.GetPolyobjMirror(polyNum))
@@ -2624,7 +2624,7 @@ bool EV_MovePoly(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 		an = AngleMod360(an + 180.0);	// reverse the angle
 		pe.angle = an;
 		polyNum = mirror;
-		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 	}
 	return true;
 }
@@ -2673,7 +2673,7 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 		//THRUST
 		pd.thrust_force = pd.speed / 8.0;
 
-		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 	}
 	else if (type == PODOOR_SWING)
 	{
@@ -2685,7 +2685,7 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 		//THRUST
 		pd.thrust_force = pd.speed * itof(0x1000) / 180.0;
 
-		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+		PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 	}
 
 	poly->SpecialData = pd;
@@ -2715,7 +2715,7 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 			//THRUST
 			pd.thrust_force = pd.speed / 8.0;
 
-			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 		}
 		else if (type == PODOOR_SWING)
 		{
@@ -2727,7 +2727,7 @@ bool EV_OpenPolyDoor(line_t * line, int Arg1, int Arg2, int Arg3, int Arg4,
 			//THRUST
 			pd.thrust_force = pd.speed * itof(0x1000) / 180.0;
 
-			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 		}
 		polyNum = mirror;
 	}

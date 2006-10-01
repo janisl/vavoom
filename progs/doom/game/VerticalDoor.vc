@@ -401,30 +401,28 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 
 void StartDoorSound(bool bOpen)
 {
-	if (Sector->seqType >= 0)
-	{
-		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
-	}
-	else if (bOpen)
+	name SeqName = Sector->seqType >= 0 ? GetSeqTrans(Sector->seqType,
+		SEQ_Door) : 'DoorNormal';
+	if (bOpen)
 	{
 		if (Speed >= 256.0)
 		{
-			SectorStartSequence(Sector, 'DoorOpenBlazing');
+			SectorStartSequence(Sector, SeqName, 2);
 		}
 		else
 		{
-			SectorStartSequence(Sector, 'DoorOpenNormal');
+			SectorStartSequence(Sector, SeqName, 0);
 		}
 	}
 	else
 	{
 		if (Speed >= 256.0)
 		{
-			SectorStartSequence(Sector, 'DoorCloseBlazing');
+			SectorStartSequence(Sector, SeqName, 3);
 		}
 		else
 		{
-			SectorStartSequence(Sector, 'DoorCloseNormal');
+			SectorStartSequence(Sector, SeqName, 1);
 		}
 	}
 }

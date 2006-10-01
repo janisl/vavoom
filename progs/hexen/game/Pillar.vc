@@ -95,7 +95,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	CeilingDest = DotProduct(Sector->ceiling.normal, Spot);
 	Direction = 1;
 	Crush = InCrush * Arg4;
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================
@@ -163,7 +163,7 @@ void InitOpen(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 			(CeilHeight - CeilDestHeight);
 	}
 	Direction = -1;	// open the pillar
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================

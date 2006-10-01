@@ -30,53 +30,8 @@ enum seqtype_t
 	SEQ_Environment,
 };
 
-//
-// SoundFX struct.
-//
-struct sfxinfo_t
-{
-	VName	TagName;		// Name, by whitch sound is recognised in script
-	int		LumpNum;        // lump number of sfx
-
-	int		Priority;		// Higher priority takes precendence
-	int 	NumChannels;	// total number of channels a sound type may occupy
-	float	ChangePitch;
-	int		UseCount;
-	int		Link;
-	int*	Sounds;			// For random sounds, Link is count.
-
-	bool	bRandomHeader;
-	bool	bPlayerReserve;
-	bool	bSingular;
-
-	vuint32	SampleRate;
-	int		SampleBits;
-	vuint32	DataSize;
-	void*	Data;
-};
-
-enum ESSCmds
-{
-	SSCMD_None,
-	SSCMD_Play,
-	SSCMD_WaitUntilDone, // used by PLAYUNTILDONE
-	SSCMD_PlayTime,
-	SSCMD_PlayRepeat,
-	SSCMD_PlayLoop,
-	SSCMD_Delay,
-	SSCMD_DelayRand,
-	SSCMD_Volume,
-	SSCMD_StopSound,
-	SSCMD_Attenuation,
-	SSCMD_End
-};
-
-struct seq_info_t
-{
-	VName		Name;
-	vint32*		Data;
-	vint32		StopSound;
-};
+struct sfxinfo_t;
+struct seq_info_t;
 
 //
 //	VSoundManager
@@ -102,6 +57,7 @@ public:
 
 	void SetSeqTrans(VName, int, int);
 	VName GetSeqTrans(int, int);
+	int FindSequence(VName);
 
 private:
 	struct FPlayerSound
@@ -188,7 +144,8 @@ public:
 	virtual void UpdateSounds() = 0;
 
 	//	Sound sequences
-	virtual void StartSequenceName(int, const TVec&, const char*) = 0;
+	virtual void StartSequence(int, const TVec&, VName, int) = 0;
+	virtual void AddSeqChoice(int, VName) = 0;
 	virtual void StopSequence(int) = 0;
 	virtual void UpdateActiveSequences(float) = 0;
 	virtual void StopAllSequences() = 0;

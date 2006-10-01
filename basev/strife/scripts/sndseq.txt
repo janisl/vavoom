@@ -84,6 +84,55 @@ end
 	nostopcutoff
 end
 
+[DoorStone
+	0			DoorOpenStone
+	1			DoorCloseStone
+	2			DoorOpenBlazing
+	3			DoorCloseBlazing
+]
+
+[DoorLargeWood
+	0			DoorOpenLargeWood
+	1			DoorCloseLargeWood
+	2			DoorOpenBlazing
+	3			DoorCloseBlazing
+]
+
+[DoorSmallWood
+	0			DoorOpenSmallWood
+	1			DoorCloseSmallWood
+	2			DoorOpenBlazing
+	3			DoorCloseBlazing
+]
+
+[DoorLargeMetal
+	0			DoorOpenLargeMetal
+	1			DoorCloseLargeMetal
+	2			DoorOpenBlazing
+	3			DoorCloseBlazing
+]
+
+[DoorSmallMetal
+	0			DoorOpenSmallMetal
+	1			DoorCloseSmallMetal
+	2			DoorOpenBlazing
+	3			DoorCloseBlazing
+]
+
+[DoorChain
+	0			DoorOpenChain
+	1			DoorCloseChain
+	2			DoorOpenBlazing
+	3			DoorCloseBlazing
+]
+
+[DoorAirlock
+	0			DoorOpenAirlock
+	1			DoorCloseAirlock
+	2			DoorOpenBlazing
+	3			DoorCloseBlazing
+]
+
 :CeilingNormal
 	playrepeat	plats/pt1_mid
 end

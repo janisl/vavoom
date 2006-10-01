@@ -24,6 +24,13 @@ end
 	nostopcutoff
 end
 
+[DoorNormal
+	0				DoorOpenNormal
+	1				DoorCloseNormal
+	2				DoorOpenBlazing
+	3				DoorCloseBlazing
+]
+
 :CeilingNormal
 	playrepeat		plats/pt1_mid
 end

@@ -548,11 +548,11 @@ void StartFloorSound(name DefaultSeqName)
 	if (Sector->seqType >= 0)
 	{
 		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
-			SEQ_Platform));
+			SEQ_Platform), 0);
 	}
 	else
 	{
-		SectorStartSequence(Sector, DefaultSeqName);
+		SectorStartSequence(Sector, DefaultSeqName, 0);
 	}
 }
 

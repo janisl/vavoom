@@ -302,11 +302,11 @@ void StartFloorSound()
 	if (Sector->seqType >= 0)
 	{
 		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
-			SEQ_Platform));
+			SEQ_Platform), 0);
 	}
 	else
 	{
-		SectorStartSequence(Sector, 'FloorStairStep');
+		SectorStartSequence(Sector, 'FloorStairStep', 0);
 	}
 }
 

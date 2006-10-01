@@ -330,7 +330,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		break;
 	}
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================
@@ -372,7 +372,7 @@ void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	ResetTime = itof(Arg5) / 35.0;
 	OrgDist = Sector->floor.dist;
 
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================
@@ -398,7 +398,7 @@ void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
 	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================
@@ -422,7 +422,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================

@@ -31,8 +31,7 @@ int			Direction;		// 1 = up, 0 = waiting, -1 = down
 float		TopWait;		// time to wait at the top
 float		TopTime;		// (keep in case a door going down is reset)
 							// when it reaches 0, start going down
-name		OpenSound;
-name		CloseSound;
+name		DefaultSound;
 line_t*		Line;
 
 int			NumFrames;		//	Total number of animation frames.
@@ -84,38 +83,31 @@ void StartAnim()
 	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;
 	if (texTop == TextureNumForName('doraln01'))
 	{
-		OpenSound = 'DoorOpenAirlock';
-		CloseSound = 'DoorCloseAirlock';
+		DefaultSound = 'DoorAirlock';
 	}
 	else if (texTop == TextureNumForName('dorchn01'))
 	{
-		OpenSound = 'DoorOpenChain';
-		CloseSound = 'DoorCloseChain';
+		DefaultSound = 'DoorChain';
 	}
 	else if (texTop == TextureNumForName('dorcrg01'))
 	{
-		OpenSound = 'DoorOpenSmallMetal';
-		CloseSound = 'DoorCloseSmallMetal';
+		DefaultSound = 'DoorSmallMetal';
 	}
 	else if (texTop == TextureNumForName('dorirs01'))
 	{
-		OpenSound = 'DoorOpenAirlock';
-		CloseSound = 'DoorCloseAirlock';
+		DefaultSound = 'DoorAirlock';
 	}
 	else if (texTop == TextureNumForName('dorqtr01'))
 	{
-		OpenSound = 'DoorOpenAirlock';
-		CloseSound = 'DoorCloseAirlock';
+		DefaultSound = 'DoorAirlock';
 	}
 	else if (texTop == TextureNumForName('dorstn01'))
 	{
-		OpenSound = 'DoorOpenStone';
-		CloseSound = 'DoorCloseStone';
+		DefaultSound = 'DoorStone';
 	}
 	else
 	{
-		OpenSound = 'DoorOpenLargeMetal';
-		CloseSound = 'DoorCloseLargeMetal';
+		DefaultSound = 'DoorLargeMetal';
 	}
 	StartDoorSound(true);
 	SetAnimTexture(texTop);
@@ -239,17 +231,15 @@ void SetAnimTexture(int NewTex)
 
 void StartDoorSound(bool bOpen)
 {
-	if (Sector->seqType >= 0)
+	name SeqName = Sector->seqType >= 0 ? GetSeqTrans(Sector->seqType,
+		SEQ_Door) : DefaultSound;
+	if (bOpen)
 	{
-		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
-	}
-	else if (bOpen)
-	{
-		SectorStartSequence(Sector, OpenSound);
+		SectorStartSequence(Sector, SeqName, 0);
 	}
 	else
 	{
-		SectorStartSequence(Sector, CloseSound);
+		SectorStartSequence(Sector, SeqName, 1);
 	}
 }
 

@@ -543,11 +543,11 @@ void StartFloorSound()
 	if (Sector->seqType >= 0)
 	{
 		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
-			SEQ_Platform));
+			SEQ_Platform), 0);
 	}
 	else
 	{
-		SectorStartSequence(Sector, 'Floor');
+		SectorStartSequence(Sector, 'Floor', 0);
 	}
 }
 

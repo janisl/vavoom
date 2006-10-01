@@ -26,10 +26,6 @@
 #ifndef _S_LOCAL_H
 #define _S_LOCAL_H
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
 //	Sound device types.
 //??? Should Default be replaced with all default drivers?
 enum
@@ -56,9 +52,62 @@ enum
 	CDDRV_MAX
 };
 
-// TYPES -------------------------------------------------------------------
+enum ESSCmds
+{
+	SSCMD_None,
+	SSCMD_Play,
+	SSCMD_WaitUntilDone, // used by PLAYUNTILDONE
+	SSCMD_PlayTime,
+	SSCMD_PlayRepeat,
+	SSCMD_PlayLoop,
+	SSCMD_Delay,
+	SSCMD_DelayOnce,
+	SSCMD_DelayRand,
+	SSCMD_Volume,
+	SSCMD_VolumeRel,
+	SSCMD_VolumeRand,
+	SSCMD_StopSound,
+	SSCMD_Attenuation,
+	SSCMD_RandomSequence,
+	SSCMD_Branch,
+	SSCMD_Select,
+	SSCMD_End
+};
 
 class VSoundSeqNode;
+
+//
+// SoundFX struct.
+//
+struct sfxinfo_t
+{
+	VName	TagName;		// Name, by whitch sound is recognised in script
+	int		LumpNum;        // lump number of sfx
+
+	int		Priority;		// Higher priority takes precendence
+	int 	NumChannels;	// total number of channels a sound type may occupy
+	float	ChangePitch;
+	int		UseCount;
+	int		Link;
+	int*	Sounds;			// For random sounds, Link is count.
+
+	bool	bRandomHeader;
+	bool	bPlayerReserve;
+	bool	bSingular;
+
+	vuint32	SampleRate;
+	int		SampleBits;
+	vuint32	DataSize;
+	void*	Data;
+};
+
+struct seq_info_t
+{
+	VName		Name;
+	VName		Slot;
+	vint32*		Data;
+	vint32		StopSound;
+};
 
 //
 //	VSoundDevice
@@ -372,10 +421,6 @@ public:
 	float TraceLine(const TVec&, const TVec&);
 	float CalcDirSize(const TVec&);
 };
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //**************************************************************************
 //

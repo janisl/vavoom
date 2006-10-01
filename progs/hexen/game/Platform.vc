@@ -212,7 +212,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Status = PLAT_Down;
 		break;
 	}
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform));
+	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 }
 
 //==========================================================================
@@ -271,7 +271,7 @@ void Tick(float deltaTime)
 			Time = Wait;
 			Status = PLAT_Down;
 			SectorStartSequence(Sector,
-				GetSeqTrans(Sector->seqType, SEQ_Platform));
+				GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 		}
 		else if (res == RES_PASTDEST)
 		{
@@ -340,7 +340,7 @@ void Tick(float deltaTime)
 			else
 				Status = PLAT_Down;
 			SectorStartSequence(Sector,
-				GetSeqTrans(Sector->seqType, SEQ_Platform));
+				GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
 		}
 
 	case PLAT_InStasis:

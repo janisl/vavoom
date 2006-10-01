@@ -877,11 +877,13 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 	TArray<vint32>	TempData;
 	bool			inSequence = false;
 	int				SeqId = 0;
+	int				DelayOnceIndex = 0;
+	char			SeqType = ':';
 
 	while (!sc->AtEnd())
 	{
 		sc->ExpectString();
-		if (**sc->String == ':')
+		if (**sc->String == ':' || **sc->String == '[')
 		{
 			if (inSequence)
 			{
@@ -901,9 +903,17 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			}
 			TempData.Clear();
 			inSequence = true;
+			DelayOnceIndex = 0;
+			SeqType = sc->String[0];
 			SeqInfo[SeqId].Name = *sc->String + 1;
+			SeqInfo[SeqId].Slot = NAME_None;
 			SeqInfo[SeqId].Data = NULL;
 			SeqInfo[SeqId].StopSound = 0;
+			if (SeqType == '[')
+			{
+				TempData.Append(SSCMD_Select);
+				TempData.Append(0);
+			}
 			continue; // parse the next command
 		}
 		if (!inSequence)
@@ -911,22 +921,47 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			sc->Error("String outside sequence");
 			continue;
 		}
-		sc->UnGet();
-		if (sc->Check("playuntildone"))
+		if (SeqType == '[')
 		{
+			//	Selection sequence
+			if (sc->String[0] == ']')
+			{
+				TempData[1] = (TempData.Num() - 2) / 2;
+				TempData.Append(SSCMD_End);
+				SeqInfo[SeqId].Data = new vint32[TempData.Num()];
+				memcpy(SeqInfo[SeqId].Data, TempData.Ptr(), TempData.Num() *
+					sizeof(vint32));
+				inSequence = false;
+			}
+			else
+			{
+				sc->UnGet();
+				sc->ExpectNumber();
+				TempData.Append(sc->Number);
+				sc->ExpectString();
+				TempData.Append(VName(*sc->String).GetIndex());
+			}
+			continue;
+		}
+		sc->UnGet();
+		if (sc->Check("play"))
+		{
+			//	play <sound>
+			sc->ExpectString();
+			TempData.Append(SSCMD_Play);
+			TempData.Append(GetSoundID(*sc->String));
+		}
+		else if (sc->Check("playuntildone"))
+		{
+			//	playuntildone <sound>
 			sc->ExpectString();
 			TempData.Append(SSCMD_Play);
 			TempData.Append(GetSoundID(*sc->String));
 			TempData.Append(SSCMD_WaitUntilDone);
 		}
-		else if (sc->Check("play"))
-		{
-			sc->ExpectString();
-			TempData.Append(SSCMD_Play);
-			TempData.Append(GetSoundID(*sc->String));
-		}
 		else if (sc->Check("playtime"))
 		{
+			//	playtime <string> <tics>
 			sc->ExpectString();
 			TempData.Append(SSCMD_Play);
 			TempData.Append(GetSoundID(*sc->String));
@@ -936,12 +971,14 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 		}
 		else if (sc->Check("playrepeat"))
 		{
+			//	playrepeat <sound>
 			sc->ExpectString();
 			TempData.Append(SSCMD_PlayRepeat);
 			TempData.Append(GetSoundID(*sc->String));
 		}
 		else if (sc->Check("playloop"))
 		{
+			//	playloop <sound> <count>
 			sc->ExpectString();
 			TempData.Append(SSCMD_PlayLoop);
 			TempData.Append(GetSoundID(*sc->String));
@@ -950,12 +987,22 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 		}
 		else if (sc->Check("delay"))
 		{
+			//	delay <tics>
 			TempData.Append(SSCMD_Delay);
 			sc->ExpectNumber();
 			TempData.Append(sc->Number);
 		}
+		else if (sc->Check("delayonce"))
+		{
+			//	delayonce <tics>
+			TempData.Append(SSCMD_DelayOnce);
+			sc->ExpectNumber();
+			TempData.Append(sc->Number);
+			TempData.Append(DelayOnceIndex++);
+		}
 		else if (sc->Check("delayrand"))
 		{
+			//	delayrand <tics_from> <tics_to>
 			TempData.Append(SSCMD_DelayRand);
 			sc->ExpectNumber();
 			TempData.Append(sc->Number);
@@ -964,14 +1011,31 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 		}
 		else if (sc->Check("volume"))
 		{
+			//	volume <volume>
 			TempData.Append(SSCMD_Volume);
-			sc->ExpectNumber();
-			TempData.Append(sc->Number);
+			sc->ExpectFloat();
+			TempData.Append((vint32)(sc->Float * 100.0));
+		}
+		else if (sc->Check("volumerel"))
+		{
+			//	volumerel <volume_delta>
+			TempData.Append(SSCMD_VolumeRel);
+			sc->ExpectFloat();
+			TempData.Append((vint32)(sc->Float * 100.0));
+		}
+		else if (sc->Check("volumerand"))
+		{
+			//	volumerand <volume_from> <volume_to>
+			TempData.Append(SSCMD_VolumeRand);
+			sc->ExpectFloat();
+			TempData.Append((vint32)(sc->Float * 100.0));
+			sc->ExpectFloat();
+			TempData.Append((vint32)(sc->Float * 100.0));
 		}
 		else if (sc->Check("attenuation"))
 		{
+			//	attenuation none|normal|idle|static|surround
 			TempData.Append(SSCMD_Attenuation);
-			sc->ExpectString();
 			vint32 Atten = 0;
 			if (sc->Check("none"))
 				Atten = 0;
@@ -987,31 +1051,54 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 				sc->Error("Bad attenuation");
 			TempData.Append(Atten);
 		}
+		else if (sc->Check("randomsequence"))
+		{
+			//	randomsequence
+			TempData.Append(SSCMD_RandomSequence);
+		}
+		else if (sc->Check("restart"))
+		{
+			//	restart
+			TempData.Append(SSCMD_Branch);
+			TempData.Append(TempData.Num() - 1);
+		}
 		else if (sc->Check("stopsound"))
 		{
+			//	stopsound <sound>
 			sc->ExpectString();
 			SeqInfo[SeqId].StopSound = GetSoundID(*sc->String);
 			TempData.Append(SSCMD_StopSound);
 		}
 		else if (sc->Check("nostopcutoff"))
 		{
+			//	nostopcutoff
 			SeqInfo[SeqId].StopSound = -1;
 			TempData.Append(SSCMD_StopSound);
 		}
 		else if (sc->Check("door"))
 		{
+			//	door <number>...
 			AssignSeqTranslations(sc, SeqId, SEQ_Door);
 		}
 		else if (sc->Check("platform"))
 		{
+			//	platform <number>...
 			AssignSeqTranslations(sc, SeqId, SEQ_Platform);
 		}
 		else if (sc->Check("environment"))
 		{
+			//	environment <number>...
 			AssignSeqTranslations(sc, SeqId, SEQ_Environment);
+		}
+		else if (sc->Check("slot"))
+		{
+			//	slot <name>...
+			sc->ExpectString();
+			SeqInfo[SeqId].Slot = *sc->String;
 		}
 		else if (sc->Check("end"))
 		{
+			//	end
 			TempData.Append(SSCMD_End);
 			SeqInfo[SeqId].Data = new vint32[TempData.Num()];
 			memcpy(SeqInfo[SeqId].Data, TempData.Ptr(), TempData.Num() *
@@ -1092,6 +1179,26 @@ VName VSoundManager::GetSeqTrans(int Num, int SeqType)
 		return NAME_None;
 	}
 	return SeqInfo[SeqTrans[(Num & 63) + SeqType * 64]].Name;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VSoundManager::FindSequence
+//
+//==========================================================================
+
+int VSoundManager::FindSequence(VName Name)
+{
+	guard(VSoundManager::FindSequence);
+	for (int i = 0; i < SeqInfo.Num(); i++)
+	{
+		if (SeqInfo[i].Name == Name)
+		{
+			return i;
+		}
+	}
+	return -1;
 	unguard;
 }
 

@@ -4,7 +4,7 @@
 //
 //**************************************************************************
 
-:DoorOpenNormal
+:HereticDoorOpen
 	play			doors/dr1_open
 	nostopcutoff
 end
@@ -14,15 +14,12 @@ end
 	stopsound		doors/dr1_clos
 end
 
-:DoorOpenBlazing
-	play			doors/dr2_open
-	nostopcutoff
-end
-
-:DoorCloseBlazing
-	play			doors/dr2_open
-	stopsound		doors/dr2_clos
-end
+[HereticDoor
+	0				HereticDoorOpen
+	1				HereticDoorClose
+	2				HereticDoorOpen
+	3				HereticDoorClose
+]
 
 :CeilingNormal
 	playrepeat		doors/dr1_move

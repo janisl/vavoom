@@ -395,19 +395,14 @@ static void CL_ParseStopSound(VMessage& msg)
 
 static void CL_ParseStartSeq(VMessage& msg)
 {
-	int			origin_id;
-	float		x;
-	float		y;
-	float		z;
-	const char*	name;
+	int OriginId = msg.ReadShort();
+	float x = msg.ReadShort();
+	float y = msg.ReadShort();
+	float z = msg.ReadShort();
+	const char* Name = msg.ReadString();
+	int ModeNum = msg.ReadByte();
 
-	origin_id = msg.ReadShort();
-	x = msg.ReadShort();
-	y = msg.ReadShort();
-	z = msg.ReadShort();
-	name = msg.ReadString();
-
-	GAudio->StartSequenceName(origin_id, TVec(x, y, z), name);
+	GAudio->StartSequence(OriginId, TVec(x, y, z), Name, ModeNum);
 }
 
 static void CL_ParseStopSeq(VMessage& msg)

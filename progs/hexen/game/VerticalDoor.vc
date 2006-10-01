@@ -64,7 +64,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+		StartDoorSound(false);
 		break;
 
 	case DOOREV_CloseWaitOpen:
@@ -72,7 +72,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		TopHeight = Sector->ceiling.dist;
 		TopWait *= 4.0;
 		Direction = -1;
-		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+		StartDoorSound(false);
 		break;
 
 	case DOOREV_Raise:
@@ -103,7 +103,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = 1;
-		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+		StartDoorSound(true);
 		break;
 
 	case DOOREV_RaiseIn5Mins:
@@ -204,11 +204,11 @@ void Tick(float deltaTime)
 			{
 			case DOOREV_Raise:
 				Direction = -1;	// time to go back down
-				SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+				StartDoorSound(false);
 				break;
 			case DOOREV_CloseWaitOpen:
 				Direction = 1;
-				SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+				StartDoorSound(true);
 				break;
 			default:
 				break;
@@ -226,7 +226,7 @@ void Tick(float deltaTime)
 			case DOOREV_RaiseIn5Mins:
 				Direction = 1;
 				Type = DOOREV_Raise;
-				SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Door));
+				StartDoorSound(true);
 				break;
 			}
 		}
@@ -359,6 +359,39 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 		}
 		sector->params.lightlevel = ftoi(Frac * itof(bright) +
 			(1.0 - Frac) * itof(min));
+	}
+}
+
+//==========================================================================
+//
+//  StartDoorSound
+//
+//==========================================================================
+
+void StartDoorSound(bool bOpen)
+{
+	name SeqName = GetSeqTrans(Sector->seqType, SEQ_Door);
+	if (bOpen)
+	{
+		if (Speed >= 256.0)
+		{
+			SectorStartSequence(Sector, SeqName, 2);
+		}
+		else
+		{
+			SectorStartSequence(Sector, SeqName, 0);
+		}
+	}
+	else
+	{
+		if (Speed >= 256.0)
+		{
+			SectorStartSequence(Sector, SeqName, 3);
+		}
+		else
+		{
+			SectorStartSequence(Sector, SeqName, 1);
+		}
 	}
 }
 

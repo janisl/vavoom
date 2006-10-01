@@ -60,7 +60,7 @@ void Tick(float deltaTime)
 		{
 			time = 0.0;
 			poly = XLevel.GetPolyobj(polyobj);
-			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+			PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 		}
 		return;
 	}
@@ -112,7 +112,7 @@ void Tick(float deltaTime)
 				xSpeed = -xSpeed;
 				ySpeed = -ySpeed;
 				bClose = false;
-				PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+				PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 			}
 		}
 		break;
@@ -161,7 +161,7 @@ void Tick(float deltaTime)
 				dist = totalDist - dist;
 				speed = -speed;
 				bClose = false;
-				PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door));
+				PolyobjStartSequence(poly, GetSeqTrans(poly->seqType, SEQ_Door), 0);
 			}
 		}
 		break;

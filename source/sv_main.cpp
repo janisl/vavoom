@@ -136,6 +136,7 @@ static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 
 static vuint8	*fatpvs;
 static VCvarI	show_mobj_overflow("show_mobj_overflow", "0", CVAR_Archive);
+static VCvarI	show_update_stats("show_update_stats", "0", 0);
 
 static bool		mapteleport_issued;
 
@@ -776,15 +777,17 @@ void SV_SectorStopSound(const sector_t *sector, int channel)
 //
 //==========================================================================
 
-void SV_StartSequence(const TVec &origin, int origin_id, const char *name)
+void SV_StartSequence(const TVec& Origin, vint32 OriginId, VName Name,
+	int ModeNum)
 {
 	guard(SV_StartSequence);
 	sv_reliable << (vuint8)svc_start_seq
-				<< (vuint16)origin_id
-				<< (vuint16)origin.x
-				<< (vuint16)origin.y
-				<< (vuint16)origin.z
-				<< name;
+				<< (vuint16)OriginId
+				<< (vuint16)Origin.x
+				<< (vuint16)Origin.y
+				<< (vuint16)Origin.z
+				<< *Name
+				<< (vuint8)ModeNum;
 	unguard;
 }
 
@@ -808,17 +811,18 @@ void SV_StopSequence(int origin_id)
 //
 //==========================================================================
 
-void SV_SectorStartSequence(const sector_t *sector, const char *name)
+void SV_SectorStartSequence(const sector_t* Sector, VName Name,
+	int ModeNum)
 {
 	guard(SV_SectorStartSequence);
-	if (sector)
+	if (Sector)
 	{
-		SV_StartSequence(sector->soundorg,
-			(sector - GLevel->Sectors) + GMaxEntities, name);
+		SV_StartSequence(Sector->soundorg, (Sector - GLevel->Sectors) +
+			GMaxEntities, Name, ModeNum);
 	}
 	else
 	{
-		SV_StartSequence(TVec(0, 0, 0), 0, name);
+		SV_StartSequence(TVec(0, 0, 0), 0, Name, ModeNum);
 	}
 	unguard;
 }
@@ -842,11 +846,12 @@ void SV_SectorStopSequence(const sector_t *sector)
 //
 //==========================================================================
 
-void SV_PolyobjStartSequence(const polyobj_t *poly, const char *name)
+void SV_PolyobjStartSequence(const polyobj_t* Poly, VName Name,
+	int ModeNum)
 {
 	guard(SV_PolyobjStartSequence);
-	SV_StartSequence(poly->startSpot,
-		(poly - GLevel->PolyObjs) + GMaxEntities + GLevel->NumSectors, name);
+	SV_StartSequence(Poly->startSpot, (Poly - GLevel->PolyObjs) +
+		GMaxEntities + GLevel->NumSectors, Name, ModeNum);
 	unguard;
 }
 
@@ -1222,6 +1227,7 @@ int NumObjs = 0;
 			}
 			//	Next update starts here
 			sv_player->MobjUpdateStart = index;
+if (show_update_stats)
 dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
 		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
 			return;
@@ -1230,6 +1236,7 @@ dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurS
 		NumObjs++;
 	}
 	sv_player->MobjUpdateStart = 0;
+if (show_update_stats)
 dprintf("Update size %d (%d) for %d, aver %f big %d %d\n", msg.CurSize, msg.CurSize -
 		StartSize, NumObjs, float(msg.CurSize - StartSize) / NumObjs, c_bigClass, c_bigState);
 	unguard;

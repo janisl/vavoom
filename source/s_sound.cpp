@@ -44,10 +44,15 @@ public:
 	float			DelayTime;
 	float			Volume;
 	vint32			StopSound;
+	vuint32			DidDelayOnce;
+	TArray<vint32>	SeqChoices;
+	vint32			ModeNum;
 	VSoundSeqNode*	Prev;
 	VSoundSeqNode*	Next;
+	VSoundSeqNode*	ParentSeq;
+	VSoundSeqNode*	ChildSeq;
 
-	VSoundSeqNode(int, const TVec&, int);
+	VSoundSeqNode(int, const TVec&, int, int);
 	~VSoundSeqNode();
 	void Update(float);
 	void Serialise(VStream&);
@@ -88,7 +93,8 @@ public:
 	void UpdateSounds();
 
 	//	Sound sequences
-	void StartSequenceName(int, const TVec&, const char*);
+	void StartSequence(int, const TVec&, VName, int);
+	void AddSeqChoice(int, VName);
 	void StopSequence(int);
 	void UpdateActiveSequences(float);
 	void StopAllSequences();
@@ -693,20 +699,42 @@ bool VAudio::IsSoundPlaying(int origin_id, int InSoundId)
 
 //==========================================================================
 //
-//  VAudio::StartSequenceName
+//  VAudio::StartSequence
 //
 //==========================================================================
 
-void VAudio::StartSequenceName(int origin_id, const TVec &origin,
-	const char *name)
+void VAudio::StartSequence(int OriginId, const TVec &Origin, VName Name,
+	int ModeNum)
 {
-	guard(VAudio::StartSequenceName);
-	for (int i = 0; i < GSoundManager->SeqInfo.Num(); i++)
+	guard(VAudio::StartSequence);
+	int Idx = GSoundManager->FindSequence(Name);
+	if (Idx != -1)
 	{
-		if (GSoundManager->SeqInfo[i].Name == name)
+		StopSequence(OriginId); // Stop any previous sequence
+		new VSoundSeqNode(OriginId, Origin, Idx, ModeNum);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAudio::AddSeqChoice
+//
+//==========================================================================
+
+void VAudio::AddSeqChoice(int OriginId, VName Name)
+{
+	guard(VAudio::AddSeqChoice);
+	int Idx = GSoundManager->FindSequence(Name);
+	if (Idx == -1)
+	{
+		return;
+	}
+	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
+	{
+		if (node->OriginId == OriginId)
 		{
-			StopSequence(origin_id); // Stop any previous sequence
-			new VSoundSeqNode(origin_id, origin, i);
+			node->SeqChoices.Append(Idx);
 			return;
 		}
 	}
@@ -785,7 +813,11 @@ void VAudio::SerialiseSounds(VStream& Strm)
 		vint32 numSequences = Streamer<vint32>(Strm);
 		for (int i = 0; i < numSequences; i++)
 		{
-			VSoundSeqNode* node = new VSoundSeqNode(0, TVec(0, 0, 0), -1);
+			new VSoundSeqNode(0, TVec(0, 0, 0), -1, 0);
+		}
+		VSoundSeqNode* node = SequenceListHead;
+		for (int i = 0; i < numSequences; i++, node = node->Next)
+		{
 			node->Serialise(Strm);
 		}
 	}
@@ -1510,14 +1542,16 @@ float VAudio::EAX_CalcEnvSize()
 //
 //==========================================================================
 
-VSoundSeqNode::VSoundSeqNode(int InOriginId, const TVec& InOrigin,
-	int InSequence)
-: Sequence(InSequence)
-, OriginId(InOriginId)
-, Origin(InOrigin)
+VSoundSeqNode::VSoundSeqNode(int AOriginId, const TVec& AOrigin,
+	int ASequence, int AModeNum)
+: Sequence(ASequence)
+, OriginId(AOriginId)
+, Origin(AOrigin)
 , CurrentSoundID(0)
 , DelayTime(0.0)
 , Volume(1.0) // Start at max volume
+, DidDelayOnce(0)
+, ModeNum(AModeNum)
 , Prev(NULL)
 , Next(NULL)
 {
@@ -1598,6 +1632,10 @@ void VSoundSeqNode::Update(float DeltaTime)
 	bool sndPlaying = GAudio->IsSoundPlaying(OriginId, CurrentSoundID);
 	switch (*SequencePtr)
 	{
+	case SSCMD_None:
+		SequencePtr++;
+		break;
+
 	case SSCMD_Play:
 		if (!sndPlaying)
 		{
@@ -1638,21 +1676,95 @@ void VSoundSeqNode::Update(float DeltaTime)
 		CurrentSoundID = 0;
 		break;
 
+	case SSCMD_DelayOnce:
+		if (!DidDelayOnce & (1 << SequencePtr[2]))
+		{
+			DidDelayOnce |= 1 << SequencePtr[2];
+			DelayTime = SequencePtr[1] / 35.0;
+			CurrentSoundID = 0;
+		}
+		SequencePtr += 3;
+		break;
+
 	case SSCMD_DelayRand:
 		DelayTime = (SequencePtr[1] + rand() % (SequencePtr[2] -
 			SequencePtr[1])) / 35.0;
-		SequencePtr += 2;
+		SequencePtr += 3;
 		CurrentSoundID = 0;
 		break;
 
 	case SSCMD_Volume:
-		Volume = SequencePtr[1] / 100.0;
+		Volume = SequencePtr[1] / 10000.0;
 		SequencePtr += 2;
+		break;
+
+	case SSCMD_VolumeRel:
+		Volume += SequencePtr[1] / 10000.0;
+		SequencePtr += 2;
+		break;
+
+	case SSCMD_VolumeRand:
+		Volume = (SequencePtr[1] + rand() % (SequencePtr[2] -
+			SequencePtr[1])) / 10000.0;
+		SequencePtr += 3;
 		break;
 
 	case SSCMD_Attenuation:
 		// Unused for now.
 		SequencePtr += 2;
+		break;
+
+	case SSCMD_RandomSequence:
+		if (SeqChoices.Num() == 0)
+		{
+			SequencePtr++;
+		}
+		else if (!ChildSeq)
+		{
+			int Choice = rand() % SeqChoices.Num();
+			ChildSeq = new VSoundSeqNode(OriginId, Origin, SeqChoices[Choice],
+				ModeNum);
+			ChildSeq->ParentSeq = this;
+			ChildSeq->Volume = Volume;
+			return;
+		}
+		else
+		{
+			//	Waiting for child sequence to finish.
+			return;
+		}
+		break;
+
+	case SSCMD_Branch:
+		SequencePtr -= SequencePtr[1];
+		break;
+
+	case SSCMD_Select:
+		{
+			//	Transfer sequence to the one matching the ModeNum.
+			int NumChoices = SequencePtr[1];
+			int i;
+			for (i = 0; i < NumChoices; i++)
+			{
+				if (SequencePtr[2 + i * 2] == ModeNum)
+				{
+					int Idx = GSoundManager->FindSequence(
+						*(VName*)&SequencePtr[3 + i * 2]);
+					if (Idx != -1)
+					{
+						Sequence = Idx;
+						SequencePtr = GSoundManager->SeqInfo[Sequence].Data;
+						StopSound = GSoundManager->SeqInfo[Sequence].StopSound;
+						break;
+					}
+				}
+			}
+			if (i == NumChoices)
+			{
+				//	Not found.
+				SequencePtr += 2 + NumChoices;
+			}
+		}
 		break;
 
 	case SSCMD_StopSound:
@@ -1678,19 +1790,40 @@ void VSoundSeqNode::Update(float DeltaTime)
 void VSoundSeqNode::Serialise(VStream& Strm)
 {
 	guard(VSoundSeqNode::Serialise);
-	Strm << Sequence << OriginId << Origin << CurrentSoundID << DelayTime
-		<< Volume;
+	Strm << STRM_INDEX(Sequence)
+		<< STRM_INDEX(OriginId)
+		<< Origin
+		<< STRM_INDEX(CurrentSoundID)
+		<< DelayTime
+		<< STRM_INDEX(DidDelayOnce)
+		<< Volume
+		<< STRM_INDEX(ModeNum);
+
 	if (Strm.IsLoading())
 	{
 		vint32 Offset;
-		Strm << Offset;
+		Strm << STRM_INDEX(Offset);
 		SequencePtr = GSoundManager->SeqInfo[Sequence].Data + Offset;
 		StopSound = GSoundManager->SeqInfo[Sequence].StopSound;
+
+		vint32 Count;
+		Strm << STRM_INDEX(Count);
+		for (int i = 0; i < Count; i++)
+		{
+			VName SeqName;
+			Strm << SeqName;
+			SeqChoices.Append(GSoundManager->FindSequence(SeqName));
+		}
 	}
 	else
 	{
 		vint32 Offset = SequencePtr - GSoundManager->SeqInfo[Sequence].Data;
-		Strm << Offset;
+		Strm << STRM_INDEX(Offset);
+
+		vint32 Count = SeqChoices.Num();
+		Strm << STRM_INDEX(Count);
+		for (int i = 0; i < SeqChoices.Num(); i++)
+			Strm << GSoundManager->SeqInfo[SeqChoices[i]].Name;
 	}
 	unguard;
 }

@@ -548,9 +548,10 @@ IMPLEMENT_FUNCTION(VObject, GetSeqTrans)
 
 IMPLEMENT_FUNCTION(VObject, SectorStartSequence)
 {
+	P_GET_INT(ModeNum);
 	P_GET_NAME(name);
 	P_GET_PTR(sector_t, sec);
-	SV_SectorStartSequence(sec, *name);
+	SV_SectorStartSequence(sec, *name, ModeNum);
 }
 
 //==========================================================================
@@ -573,9 +574,10 @@ IMPLEMENT_FUNCTION(VObject, SectorStopSequence)
 
 IMPLEMENT_FUNCTION(VObject, PolyobjStartSequence)
 {
+	P_GET_INT(ModeNum);
 	P_GET_NAME(name);
 	P_GET_PTR(polyobj_t, poly);
-	SV_PolyobjStartSequence(poly, *name);
+	SV_PolyobjStartSequence(poly, *name, ModeNum);
 }
 
 //==========================================================================
