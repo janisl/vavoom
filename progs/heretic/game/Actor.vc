@@ -3805,7 +3805,7 @@ void A_Scream()
 	if (Class == ChickenPlayer || Class == Sorcerer1 || Class == Minotaur)
 	{
 		// Make boss death sounds full volume
-		PlayFullVolumeSound(DeathSound, CHAN_VOICE);
+		PlaySound(DeathSound, CHAN_VOICE, 1.0, ATTN_NONE);
 	}
 	else
 	{

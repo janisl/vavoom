@@ -192,8 +192,8 @@ native final bool SetState(state State);
 native final void SetInitialState(state State);
 native final state FindState(name StateName);
 
-native final void PlaySound(name SoundName, int Channel);
-native final void PlayFullVolumeSound(name SoundName, int Channel);
+native final void PlaySound(name SoundName, int Channel, optional float Volume,
+	optional float Atenuation);
 native final void StopSound(int Channel);
 
 native final void StartSoundSequence(name sequence, int ModeNum);

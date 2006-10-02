@@ -215,7 +215,7 @@ void A_SorcBallOrbit()
 			if (Instigator.Health > 0)
 				Instigator.SetState(Sorcerer::S_SORC_ATTACK1);
 
-			PlayFullVolumeSound('SorcererSpellCast', CHAN_VOICE);
+			PlaySound('SorcererSpellCast', CHAN_VOICE, 1.0, ATTN_NONE);
 
 			A_CastSorcererSpell();
 		}
@@ -247,7 +247,7 @@ void A_SorcBallOrbit()
 	{
 		Instigator.Args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
-		PlayFullVolumeSound('SorcererBallWoosh', CHAN_VOICE);
+		PlaySound('SorcererBallWoosh', CHAN_VOICE, 1.0, ATTN_NONE);
 	}
 	Special1f = angle;	// Set previous angle
 	Origin.x = Instigator.Origin.x + dist * cos(angle);
@@ -265,7 +265,7 @@ void A_SorcBallOrbit()
 
 void A_SorcBallPop()
 {
-	PlayFullVolumeSound('SorcererBallPop', CHAN_VOICE);
+	PlaySound('SorcererBallPop', CHAN_VOICE, 1.0, ATTN_NONE);
 	bNoGravity = false;
 	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
@@ -287,7 +287,7 @@ void A_BounceCheck()
 		if (Args[3]-- <= 0)
 		{
 			SetState(DeathState);
-			PlayFullVolumeSound('SorcererBigBallExplode', CHAN_VOICE);
+			PlaySound('SorcererBigBallExplode', CHAN_VOICE, 1.0, ATTN_NONE);
 		}
 		else
 		{

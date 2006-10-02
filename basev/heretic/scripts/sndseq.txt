@@ -59,6 +59,7 @@ end
 :HereticAmbience
 	delayrand		210 465
 	volumerand		0 63
+	attenuation		none
 	randomsequence
 	restart
 end

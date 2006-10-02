@@ -238,6 +238,12 @@ enum
 
 const int MAX_TID_COUNT		= 200;
 
+const float ATTN_NONE		= 0.0;
+const float ATTN_NORMAL		= 1.0;
+const float ATTN_IDLE		= 2.0;
+const float ATTN_STATIC		= 3.0;
+const float ATTN_SURROUND	= -1.0;
+
 //**************************************************************************
 //**
 //**    CLIENT DEFINES
@@ -1738,10 +1744,6 @@ native static final bool TerminateACS(int number, int map);
 //  Sound functions
 //
 
-native static final void StartSoundAtVolume(Entity mobj, int sound, int channel,
-	int volume);
-native static final void SectorStartSound(sector_t * sec, int sound, int channel);
-native static final void SectorStopSound(sector_t * sec, int channel);
 native static final bool GetSoundPlayingInfo(Entity mobj, int sound_id);
 native static final int GetSoundID(name Name);
 native static final void SetSeqTrans(name Name, int Num, int SeqType);
@@ -1753,8 +1755,6 @@ native static final void SectorStopSequence(sector_t * sector);
 native static final void PolyobjStartSequence(polyobj_t * mobj, name sequence,
 	int ModeNum);
 native static final void PolyobjStopSequence(polyobj_t * mobj);
-
-#define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)
 
 native static final void G_ExitLevel(int Position);
 native static final void G_SecretExitLevel(int Position);

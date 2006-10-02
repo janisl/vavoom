@@ -188,10 +188,10 @@ struct VSndSeqInfo
 	TArray<VName>	Choices;
 };
 
-void SV_StartSound(const VEntity*, int, int, int);
-void SV_StartLocalSound(const VEntity*, int, int, int);
+void SV_StartSound(const VEntity*, int, int, float, float);
+void SV_StartLocalSound(const VEntity*, int, int, float, float);
 void SV_StopSound(const VEntity*, int);
-void SV_SectorStartSound(const sector_t*, int, int, int);
+void SV_SectorStartSound(const sector_t*, int, int, float, float);
 void SV_SectorStopSound(const sector_t*, int);
 void SV_SectorStartSequence(const sector_t*, VName, int);
 void SV_SectorStopSequence(const sector_t*);

@@ -3252,11 +3252,11 @@ bool ExplodeMissile()
 
 	if (SorcererBall(self))
 	{
-		PlayFullVolumeSound('SorcererBigBallExplode', CHAN_AUTO);
+		PlaySound('SorcererBigBallExplode', CHAN_AUTO, 1.0, ATTN_NONE);
 	}
 	else if (SorcererFX1(self))
 	{
-		PlayFullVolumeSound('SorcererHeadScream', CHAN_AUTO);
+		PlaySound('SorcererHeadScream', CHAN_AUTO, 1.0, ATTN_NONE);
 	}
 	else if (DeathSound)
 	{

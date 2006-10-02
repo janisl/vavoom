@@ -650,7 +650,7 @@ static void R_LightningFlash()
 			}
 		}
 		GAudio->PlaySound(GSoundManager->GetSoundID("world/thunder"),
-			TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1);
+			TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1, 0);
 	}
 	// Calculate the next lighting flash
 	if (!NextLightningFlash)

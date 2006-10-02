@@ -38,7 +38,7 @@ state DeathLoopState;
 
 void A_SorRise()
 {
-	PlayFullVolumeSound('dsparil/rise', CHAN_VOICE);
+	PlaySound('dsparil/rise', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -49,7 +49,7 @@ void A_SorRise()
 
 void A_SorSightSnd()
 {
-	PlayFullVolumeSound('dsparil/sight', CHAN_VOICE);
+	PlaySound('dsparil/sight', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -159,7 +159,7 @@ void A_Srcr2Attack()
 	{
 		return;
 	}
-	PlayFullVolumeSound(AttackSound, CHAN_AUTO);
+	PlaySound(AttackSound, CHAN_AUTO, 1.0, ATTN_NONE);
 	if (CheckMeleeRange())
 	{
 		Enemy.Damage(self, self, HITDICE(20));
@@ -201,7 +201,7 @@ void A_Sor2DthInit()
 
 void A_SorDSph()
 {
-	PlayFullVolumeSound('dsparil/scream', CHAN_VOICE);
+	PlaySound('dsparil/scream', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -227,7 +227,7 @@ void A_Sor2DthLoop()
 
 void A_SorDExp()
 {
-	PlayFullVolumeSound('dsparil/explode', CHAN_BODY);
+	PlaySound('dsparil/explode', CHAN_BODY, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -238,7 +238,7 @@ void A_SorDExp()
 
 void A_SorDBon()
 {
-	PlayFullVolumeSound('dsparil/bones', CHAN_BODY);
+	PlaySound('dsparil/bones', CHAN_BODY, 1.0, ATTN_NONE);
 }
 
 //==========================================================================

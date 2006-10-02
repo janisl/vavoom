@@ -57,7 +57,7 @@ void A_SorcFX1Seek()
 		if (Args[3]-- <= 0)
 		{
 			SetState(DeathState);
-			PlayFullVolumeSound('SorcererHeadScream', CHAN_VOICE);
+			PlaySound('SorcererHeadScream', CHAN_VOICE, 1.0, ATTN_NONE);
 		}
 		else
 		{

@@ -274,7 +274,7 @@ void DisconnectClient()
 		}
 	}
 	bprint("%s left the game\n", PlayerName);
-	MO.PlayFullVolumeSound('misc/chat', CHAN_AUTO);
+	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
 }
 
 //==========================================================================

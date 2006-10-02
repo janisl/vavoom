@@ -55,7 +55,7 @@ void A_BrainAwake()
 	}
 	BrainTargetOn = 0;
 
-	PlayFullVolumeSound('brain/sight', CHAN_VOICE);
+	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -85,7 +85,7 @@ void A_BrainSpit()
 	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
 		A.Velocity.y / A.StateTime);
 
-	PlayFullVolumeSound('brain/spit', CHAN_WEAPON);
+	PlaySound('brain/spit', CHAN_WEAPON, 1.0, ATTN_NONE);
 }
 
 __states__

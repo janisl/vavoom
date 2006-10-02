@@ -32,4 +32,3 @@
 #define FOREACH(type, var) \
 	for (var = type(NextThinker(none, type)); var; \
 		var = type(NextThinker(var, type)))
-#define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)

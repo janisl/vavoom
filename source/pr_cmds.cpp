@@ -444,48 +444,6 @@ IMPLEMENT_FUNCTION(VObject, TerminateACS)
 
 //==========================================================================
 //
-//	PF_StartSoundAtVolume
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, StartSoundAtVolume)
-{
-	P_GET_INT(vol);
-	P_GET_INT(channel);
-	P_GET_INT(sound);
-	P_GET_REF(VEntity, mobj);
-	SV_StartSound(mobj, sound, channel, vol);
-}
-
-//==========================================================================
-//
-//	PF_SectorStartSound
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SectorStartSound)
-{
-	P_GET_INT(channel);
-	P_GET_INT(sound);
-	P_GET_PTR(sector_t, sec);
-	SV_SectorStartSound(sec, sound, channel, 127);
-}
-
-//==========================================================================
-//
-//	PF_SectorStopSound
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, SectorStopSound)
-{
-	P_GET_INT(channel);
-	P_GET_PTR(sector_t, sec);
-	SV_SectorStopSound(sec, channel);
-}
-
-//==========================================================================
-//
 //	PF_GetSoundPlayingInfo
 //
 //==========================================================================
@@ -1094,7 +1052,7 @@ IMPLEMENT_FUNCTION(VObject, LocalSound)
 {
 	P_GET_NAME(name);
 	GAudio->PlaySound(GSoundManager->GetSoundID(name), TVec(0, 0, 0),
-		TVec(0, 0, 0), 0, 0, 1);
+		TVec(0, 0, 0), 0, 0, 1, 0);
 }
 
 //==========================================================================

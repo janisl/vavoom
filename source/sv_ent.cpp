@@ -1963,26 +1963,13 @@ IMPLEMENT_FUNCTION(VEntity, FindState)
 
 IMPLEMENT_FUNCTION(VEntity, PlaySound)
 {
+	P_GET_FLOAT_OPT(Attenuation, 1.0);
+	P_GET_FLOAT_OPT(Volume, 1.0);
 	P_GET_INT(Channel);
 	P_GET_NAME(SoundName);
 	P_GET_SELF;
 	SV_StartSound(Self, GSoundManager->ResolveEntitySound(Self->SoundClass,
-		Self->SoundGender, SoundName), Channel, 127);
-}
-
-//==========================================================================
-//
-//	Entity.PlayFullVolumeSound
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VEntity, PlayFullVolumeSound)
-{
-	P_GET_INT(Channel);
-	P_GET_NAME(SoundName);
-	P_GET_SELF;
-	SV_StartSound(NULL, GSoundManager->ResolveEntitySound(Self->SoundClass,
-		Self->SoundGender, SoundName), Channel, 127);
+		Self->SoundGender, SoundName), Channel, Volume, Attenuation);
 }
 
 //==========================================================================

@@ -140,12 +140,12 @@ void TouchSpecial(Actor Toucher)
 	{
 		Toucher.Player.cprint(MainGameInfo(Level.Game).fourthWeaponText[PieceClass]);
 		// Play the build-sound full volume for all players
-		Toucher.PlayFullVolumeSound('WeaponBuild', CHAN_ITEM);
+		Toucher.PlaySound('WeaponBuild', CHAN_ITEM, 1.0, ATTN_NONE);
 	}
 	else
 	{
 		Toucher.Player.cprint(MainGameInfo(Level.Game).weaponPieceText[PieceClass]);
-		Toucher.PlayFullVolumeSound('PickupWeapon', CHAN_ITEM);	//FIXME must be PickupPiece
+		Toucher.PlaySound('PickupWeapon', CHAN_ITEM, 1.0, ATTN_NONE);	//FIXME must be PickupPiece
 	}
 }
 

@@ -921,10 +921,31 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			sc->Error("String outside sequence");
 			continue;
 		}
+		sc->UnGet();
+
+		if (sc->Check("door"))
+		{
+			//	door <number>...
+			AssignSeqTranslations(sc, SeqId, SEQ_Door);
+			continue;
+		}
+		if (sc->Check("platform"))
+		{
+			//	platform <number>...
+			AssignSeqTranslations(sc, SeqId, SEQ_Platform);
+			continue;
+		}
+		if (sc->Check("environment"))
+		{
+			//	environment <number>...
+			AssignSeqTranslations(sc, SeqId, SEQ_Environment);
+			continue;
+		}
+
 		if (SeqType == '[')
 		{
 			//	Selection sequence
-			if (sc->String[0] == ']')
+			if (sc->Check("]"))
 			{
 				TempData[1] = (TempData.Num() - 2) / 2;
 				TempData.Append(SSCMD_End);
@@ -935,7 +956,6 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			}
 			else
 			{
-				sc->UnGet();
 				sc->ExpectNumber();
 				TempData.Append(sc->Number);
 				sc->ExpectString();
@@ -943,7 +963,7 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			}
 			continue;
 		}
-		sc->UnGet();
+
 		if (sc->Check("play"))
 		{
 			//	play <sound>
@@ -1046,7 +1066,7 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			else if (sc->Check("static"))
 				Atten = 3;
 			else if (sc->Check("surround"))
-				Atten = 4;
+				Atten = -1;
 			else
 				sc->Error("Bad attenuation");
 			TempData.Append(Atten);
@@ -1074,21 +1094,6 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			//	nostopcutoff
 			SeqInfo[SeqId].StopSound = -1;
 			TempData.Append(SSCMD_StopSound);
-		}
-		else if (sc->Check("door"))
-		{
-			//	door <number>...
-			AssignSeqTranslations(sc, SeqId, SEQ_Door);
-		}
-		else if (sc->Check("platform"))
-		{
-			//	platform <number>...
-			AssignSeqTranslations(sc, SeqId, SEQ_Platform);
-		}
-		else if (sc->Check("environment"))
-		{
-			//	environment <number>...
-			AssignSeqTranslations(sc, SeqId, SEQ_Environment);
 		}
 		else if (sc->Check("slot"))
 		{

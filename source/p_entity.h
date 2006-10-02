@@ -332,7 +332,6 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(SetInitialState)
 	DECLARE_FUNCTION(FindState)
 	DECLARE_FUNCTION(PlaySound)
-	DECLARE_FUNCTION(PlayFullVolumeSound)
 	DECLARE_FUNCTION(StopSound)
 	DECLARE_FUNCTION(StartSoundSequence)
 	DECLARE_FUNCTION(AddSoundSequenceChoice)

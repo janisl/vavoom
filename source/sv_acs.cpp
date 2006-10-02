@@ -2251,13 +2251,13 @@ int VACS::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SectorSound)
 			SV_SectorStartSound(line ? line->frontsector : NULL,
-				GSoundManager->GetSoundID(GetStr(sp[-2])), 0, sp[-1]);
+				GSoundManager->GetSoundID(GetStr(sp[-2])), 0, sp[-1] / 127.0, 1.0);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_AmbientSound)
 			SV_StartSound(NULL, GSoundManager->GetSoundID(GetStr(sp[-2])),
-				0, sp[-1]);
+				0, sp[-1] / 127.0, 0.0);
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -2320,7 +2320,7 @@ int VACS::RunScript(float DeltaTime)
 				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
 					mobj != NULL; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
 				{
-					SV_StartSound(mobj, sound, 0, sp[-1]);
+					SV_StartSound(mobj, sound, 0, sp[-1] / 127.0, 1.0);
 				}
 				sp -= 3;
 			}
@@ -2335,13 +2335,13 @@ int VACS::RunScript(float DeltaTime)
 		//	Extended P-Code commands.
 		ACSVM_CASE(PCD_ActivatorSound)
 			SV_StartSound(Activator, GSoundManager->GetSoundID(GetStr(
-				sp[-2])), 0, sp[-1]);
+				sp[-2])), 0, sp[-1] / 127.0, 1.0);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_LocalAmbientSound)
 			SV_StartLocalSound(Activator, GSoundManager->GetSoundID(GetStr(
-				sp[-2])), 0, sp[-1]);
+				sp[-2])), 0, sp[-1] / 127.0, 1.0);
 			sp -= 2;
 			ACSVM_BREAK;
 

@@ -96,7 +96,7 @@ void A_KoraxStep()
 
 void A_KoraxStep2()
 {
-	PlayFullVolumeSound('KoraxStep', CHAN_BODY);
+	PlaySound('KoraxStep', CHAN_BODY, 1.0, ATTN_NONE);
 	A_Chase();
 }
 
@@ -134,7 +134,7 @@ void A_KoraxChase()
 	}
 	else if (Random() < 0.1171875)
 	{
-		PlayFullVolumeSound('KoraxActive', CHAN_VOICE);
+		PlaySound('KoraxActive', CHAN_VOICE, 1.0, ATTN_NONE);
 	}
 
 	// Teleport away
@@ -337,7 +337,7 @@ void A_KoraxMissile()
 	}
 
 	// Fire all 6 missiles at once
-	PlayFullVolumeSound(sound, CHAN_VOICE);
+	PlaySound(sound, CHAN_VOICE, 1.0, ATTN_NONE);
 	KoraxFire1(mtype);
 	KoraxFire2(mtype);
 	KoraxFire3(mtype);

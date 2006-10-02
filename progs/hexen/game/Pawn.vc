@@ -845,7 +845,7 @@ void A_Look()
 		if (bBoss)
 		{
 			// Full volume
-			PlayFullVolumeSound(SightSound, CHAN_VOICE);
+			PlaySound(SightSound, CHAN_VOICE, 1.0, ATTN_NONE);
 		}
 		else
 		{
@@ -989,7 +989,7 @@ void A_Chase()
 		}
 		else if (bBoss)
 		{
-			PlayFullVolumeSound(ActiveSound, CHAN_VOICE);
+			PlaySound(ActiveSound, CHAN_VOICE, 1.0, ATTN_NONE);
 		}
 		else
 		{

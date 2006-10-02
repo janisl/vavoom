@@ -1261,7 +1261,7 @@ void A_FireCrackle()
 
 void A_BrainPain()
 {
-	PlayFullVolumeSound('brain/pain', CHAN_VOICE);
+	PlaySound('brain/pain', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -1291,7 +1291,7 @@ void A_BrainScream()
 			A.StateTime = 0.1;
 	}
 
-	PlayFullVolumeSound('brain/death', CHAN_VOICE);
+	PlaySound('brain/death', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -1357,7 +1357,7 @@ void A_BrainAwake()
 	}
 	braintargeton = 0;
 
-	PlayFullVolumeSound('brain/sight', CHAN_VOICE);
+	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -1387,7 +1387,7 @@ void A_BrainSpit()
 	A.ReactionCount = ftoi((targ.Origin.y - Origin.y) /
 		A.Velocity.y / A.StateTime);
 
-	PlayFullVolumeSound('brain/spit', CHAN_WEAPON);
+	PlaySound('brain/spit', CHAN_WEAPON, 1.0, ATTN_NONE);
 }
 
 //==========================================================================

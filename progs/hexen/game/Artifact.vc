@@ -205,7 +205,7 @@ void TouchSpecial(Actor Toucher)
 		else
 		{
 			// Puzzle item
-			PlayFullVolumeSound('PickupItem', CHAN_ITEM);
+			PlaySound('PickupItem', CHAN_ITEM, 1.0, ATTN_NONE);
 			Toucher.Player.cprint(MainGameInfo(Level.Game).artifactMessages[ArtifactType]);
 			if (!Level.Game.netgame || Level.Game.deathmatch)
 			{

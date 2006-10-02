@@ -646,7 +646,7 @@ int GetOriginNum(const VEntity *mobj)
 //==========================================================================
 
 void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
-	int channel, int volume)
+	int channel, float volume, float Attenuation)
 {
 	guard(SV_StartSound);
 	if (!sv_datagram.CheckSpace(12))
@@ -661,7 +661,8 @@ void SV_StartSound(const TVec &origin, int origin_id, int sound_id,
 					<< (vuint16)origin.y
 					<< (vuint16)origin.z;
 	}
-	sv_datagram << (vuint8)volume;
+	sv_datagram << (vuint8)(volume * 127)
+		<< (vuint8)(Attenuation * 64);
 	unguard;
 }
 
@@ -688,18 +689,19 @@ void SV_StopSound(int origin_id, int channel)
 //
 //==========================================================================
 
-void SV_StartSound(const VEntity * origin, int sound_id, int channel,
-	int volume)
+void SV_StartSound(const VEntity* Ent, int SoundId, int Channel,
+	float Volume, float Attenuation)
 {
 	guard(SV_StartSound);
-	if (origin)
+	if (Ent)
 	{
-		SV_StartSound(origin->Origin, GetOriginNum(origin), sound_id,
-			channel, volume);
+		SV_StartSound(Ent->Origin, GetOriginNum(Ent), SoundId,
+			Channel, Volume, Attenuation);
 	}
 	else
 	{
-		SV_StartSound(TVec(0, 0, 0), 0, sound_id, channel, volume);
+		SV_StartSound(TVec(0, 0, 0), 0, SoundId, Channel, Volume,
+			Attenuation);
 	}
 	unguard;
 }
@@ -710,16 +712,17 @@ void SV_StartSound(const VEntity * origin, int sound_id, int channel,
 //
 //==========================================================================
 
-void SV_StartLocalSound(const VEntity * origin, int sound_id, int channel,
-	int volume)
+void SV_StartLocalSound(const VEntity* Ent, int SoundId, int Channel,
+	float Volume, float Attenuation)
 {
 	guard(SV_StartSound);
-	if (origin && origin->Player)
+	if (Ent && Ent->Player)
 	{
-		origin->Player->Message << (vuint8)svc_start_sound
-								<< (vuint16)sound_id
-								<< (vuint16)(channel << 13)
-								<< (vuint8)volume;
+		Ent->Player->Message << (vuint8)svc_start_sound
+							<< (vuint16)SoundId
+							<< (vuint16)(Channel << 13)
+							<< (vuint8)(Volume * 127)
+							<< (vuint8)(Attenuation * 64);
 	}
 	unguard;
 }
@@ -743,19 +746,20 @@ void SV_StopSound(const VEntity *origin, int channel)
 //
 //==========================================================================
 
-void SV_SectorStartSound(const sector_t *sector, int sound_id, int channel,
-	int volume)
+void SV_SectorStartSound(const sector_t* Sector, int SoundId, int Channel,
+	float Volume, float Attenuation)
 {
 	guard(SV_SectorStartSound);
-	if (sector)
+	if (Sector)
 	{
-		SV_StartSound(sector->soundorg,
-			(sector - GLevel->Sectors) + GMaxEntities,
-			sound_id, channel, volume);
+		SV_StartSound(Sector->soundorg,
+			(Sector - GLevel->Sectors) + GMaxEntities,
+			SoundId, Channel, Volume, Attenuation);
 	}
 	else
 	{
-		SV_StartSound(TVec(0, 0, 0), 0, sound_id, channel, volume);
+		SV_StartSound(TVec(0, 0, 0), 0, SoundId, Channel, Volume,
+			Attenuation);
 	}
 	unguard;
 }
@@ -3225,7 +3229,7 @@ COMMAND(Say)
 		Text += Args[i];
 	}
 	SV_BroadcastPrintf(*Text);
-	SV_StartSound(NULL, GSoundManager->GetSoundID("misc/chat"), 0, 127);
+	SV_StartSound(NULL, GSoundManager->GetSoundID("misc/chat"), 0, 1.0, 0);
 	unguard;
 }
 

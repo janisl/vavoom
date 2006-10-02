@@ -354,12 +354,13 @@ static void CL_ParseViewData(VMessage& msg)
 
 static void CL_ParseStartSound(VMessage& msg)
 {
-	word		sound_id;
-	word		origin_id;
+	vuint16		sound_id;
+	vuint16		origin_id;
 	float		x = 0.0;
 	float		y = 0.0;
 	float		z = 0.0;
-	byte		volume;
+	vuint8		volume;
+	vuint8		attenuation;
 	int			channel;
 
 	msg >> sound_id
@@ -374,10 +375,11 @@ static void CL_ParseStartSound(VMessage& msg)
 		y = msg.ReadShort();
 		z = msg.ReadShort();
 	}
-	msg >> volume;
+	msg >> volume
+		>> attenuation;
 
 	GAudio->PlaySound(sound_id, TVec(x, y, z), TVec(0, 0, 0), origin_id,
-		channel, volume / 127.0);
+		channel, volume / 127.0, attenuation / 64.0);
 }
 
 static void CL_ParseStopSound(VMessage& msg)

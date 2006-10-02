@@ -208,7 +208,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		XLevel.SetFloorPic(Sector, Line->frontsector->floor.pic);
 		// NO MORE DAMAGE, IF APPLICABLE
 		Sector->special &= SECSPEC_SECRET_MASK;
-		SectorStartSoundName(Sector, 'StoneMoving', CHAN_VOICE);
 		break;
 
 	case FLOOREV_RaiseByValueChange:
@@ -227,7 +226,6 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		XLevel.SetFloorPic(Sector, Line->frontsector->floor.pic);
-		SectorStartSoundName(Sector, 'StoneMoving', CHAN_VOICE);
 		break;
 
 	case FLOOREV_RaiseAndCrush:

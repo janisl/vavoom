@@ -43,6 +43,7 @@ public:
 	vint32			CurrentSoundID;
 	float			DelayTime;
 	float			Volume;
+	float			Attenuation;
 	vint32			StopSound;
 	vuint32			DidDelayOnce;
 	TArray<vint32>	SeqChoices;
@@ -79,7 +80,7 @@ public:
 	void Shutdown();
 
 	//	Playback of sound effects
-	void PlaySound(int, const TVec&, const TVec&, int, int, float);
+	void PlaySound(int, const TVec&, const TVec&, int, int, float, float);
 	void StopSound(int, int);
 	void StopAllSound();
 	bool IsSoundPlaying(int, int);
@@ -118,6 +119,7 @@ private:
 		int			sound_id;
 		int			priority;
 		float		volume;
+		float		Attenuation;
 		int			handle;
 		bool		is3D;
 	};
@@ -447,7 +449,8 @@ void VAudio::Shutdown()
 //==========================================================================
 
 void VAudio::PlaySound(int InSoundId, const TVec& origin,
-	const TVec& velocity, int origin_id, int channel, float volume)
+	const TVec& velocity, int origin_id, int channel, float volume,
+	float Attenuation)
 {
 	guard(VAudio::PlaySound);
 	if (!SoundDevice || !InSoundId || !MaxVolume || !volume)
@@ -464,8 +467,8 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.
 	int dist = 0;
-	if (origin_id && origin_id != cl->ClientNum + 1)
-		dist = (int)Length(origin - cl->ViewOrg);
+	if (origin_id && origin_id != cl->ClientNum + 1 && Attenuation > 0)
+		dist = (int)(Length(origin - cl->ViewOrg) * Attenuation);
 	if (dist >= MaxSoundDist)
 	{
 		return; // sound is beyond the hearing range...
@@ -483,11 +486,12 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	float pitch = 1.0;
 	if (GSoundManager->S_sfx[sound_id].ChangePitch)
 	{
-		pitch = 1.0 + (Random() - Random()) * GSoundManager->S_sfx[sound_id].ChangePitch;
+		pitch = 1.0 + (Random() - Random()) *
+			GSoundManager->S_sfx[sound_id].ChangePitch;
 	}
 	int handle;
 	bool is3D;
-	if (!origin_id || origin_id == cl->ClientNum + 1)
+	if (!origin_id || origin_id == cl->ClientNum + 1 || Attenuation <= 0)
 	{
 		//	Local sound
 		handle = SoundDevice->PlaySound(sound_id, volume, 0, pitch, false);
@@ -496,7 +500,8 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	else if (!SoundDevice->Sound3D)
 	{
 		float vol = SoundCurve[dist] / 127.0 * volume;
-		float sep = DotProduct(origin - cl->ViewOrg, ListenerRight) / MaxSoundDist;
+		float sep = DotProduct(origin - cl->ViewOrg, ListenerRight) /
+			MaxSoundDist;
 		if (swap_stereo)
 		{
 			sep = -sep;
@@ -506,7 +511,8 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	}
 	else
 	{
-		handle = SoundDevice->PlaySound3D(sound_id, origin, velocity, volume, pitch, false);
+		handle = SoundDevice->PlaySound3D(sound_id, origin, velocity,
+			volume, pitch, false);
 		is3D = true;
 	}
 	Channel[chan].origin_id = origin_id;
@@ -516,6 +522,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	Channel[chan].sound_id = sound_id;
 	Channel[chan].priority = priority;
 	Channel[chan].volume = volume;
+	Channel[chan].Attenuation = Attenuation;
 	Channel[chan].handle = handle;
 	Channel[chan].is3D = is3D;
 	unguard;
@@ -880,7 +887,7 @@ void VAudio::UpdateSfx()
 			StopChannel(i);
 			continue;
 		}
-		if (!Channel[i].origin_id)
+		if (!Channel[i].origin_id || Channel[i].Attenuation <= 0)
 		{
 			//	Full volume sound
 			continue;
@@ -895,7 +902,8 @@ void VAudio::UpdateSfx()
 		//	Move sound
 		Channel[i].origin += Channel[i].velocity * host_frametime;
 
-		int dist = (int)Length(Channel[i].origin - cl->ViewOrg);
+		int dist = (int)(Length(Channel[i].origin - cl->ViewOrg) *
+			Channel[i].Attenuation);
 		if (dist >= MaxSoundDist)
 		{
 			//	Too far away
@@ -1550,10 +1558,13 @@ VSoundSeqNode::VSoundSeqNode(int AOriginId, const TVec& AOrigin,
 , CurrentSoundID(0)
 , DelayTime(0.0)
 , Volume(1.0) // Start at max volume
+, Attenuation(1.0)
 , DidDelayOnce(0)
 , ModeNum(AModeNum)
 , Prev(NULL)
 , Next(NULL)
+, ParentSeq(NULL)
+, ChildSeq(NULL)
 {
 	if (Sequence >= 0)
 	{
@@ -1583,6 +1594,19 @@ VSoundSeqNode::VSoundSeqNode(int AOriginId, const TVec& AOrigin,
 
 VSoundSeqNode::~VSoundSeqNode()
 {
+	if (ParentSeq && ParentSeq->ChildSeq == this)
+	{
+		//	Re-activate parent sequence.
+		ParentSeq->SequencePtr++;
+		ParentSeq->ChildSeq = NULL;
+		ParentSeq = NULL;
+	}
+
+	if (ChildSeq)
+	{
+		delete ChildSeq;
+	}
+
 	//	Play stop sound.
 	if (StopSound >= 0)
 	{
@@ -1591,7 +1615,7 @@ VSoundSeqNode::~VSoundSeqNode()
 	if (StopSound >= 1)
 	{
 		((VAudio*)GAudio)->PlaySound(StopSound, Origin, TVec(0, 0, 0),
-			OriginId, 1, Volume);
+			OriginId, 1, Volume, Attenuation);
 	}
 
 	//	Remove from the list of active sound sequences.
@@ -1641,7 +1665,7 @@ void VSoundSeqNode::Update(float DeltaTime)
 		{
 			CurrentSoundID = SequencePtr[1];
 			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
-				OriginId, 1, Volume);
+				OriginId, 1, Volume, Attenuation);
 		}
 		SequencePtr += 2;
 		break;
@@ -1659,14 +1683,14 @@ void VSoundSeqNode::Update(float DeltaTime)
 		{
 			CurrentSoundID = SequencePtr[1];
 			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
-				OriginId, 1, Volume);
+				OriginId, 1, Volume, Attenuation);
 		}
 		break;
 
 	case SSCMD_PlayLoop:
 		CurrentSoundID = SequencePtr[1];
 		GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0), OriginId, 1,
-			Volume);
+			Volume, Attenuation);
 		DelayTime = SequencePtr[2] / 35.0;
 		break;
 
@@ -1710,7 +1734,7 @@ void VSoundSeqNode::Update(float DeltaTime)
 		break;
 
 	case SSCMD_Attenuation:
-		// Unused for now.
+		Attenuation = SequencePtr[1];
 		SequencePtr += 2;
 		break;
 
@@ -1726,6 +1750,7 @@ void VSoundSeqNode::Update(float DeltaTime)
 				ModeNum);
 			ChildSeq->ParentSeq = this;
 			ChildSeq->Volume = Volume;
+			ChildSeq->Attenuation = Attenuation;
 			return;
 		}
 		else
@@ -1772,7 +1797,7 @@ void VSoundSeqNode::Update(float DeltaTime)
 		break;
 
 	case SSCMD_End:
-		GAudio->StopSequence(OriginId);
+		delete this;
 		break;
 
 	default:	
@@ -1797,6 +1822,7 @@ void VSoundSeqNode::Serialise(VStream& Strm)
 		<< DelayTime
 		<< STRM_INDEX(DidDelayOnce)
 		<< Volume
+		<< Attenuation
 		<< STRM_INDEX(ModeNum);
 
 	if (Strm.IsLoading())
@@ -1814,6 +1840,27 @@ void VSoundSeqNode::Serialise(VStream& Strm)
 			Strm << SeqName;
 			SeqChoices.Append(GSoundManager->FindSequence(SeqName));
 		}
+
+		vint32 ParentSeqIdx;
+		vint32 ChildSeqIdx;
+		Strm << STRM_INDEX(ParentSeqIdx)
+			<< STRM_INDEX(ChildSeqIdx);
+		if (ParentSeqIdx != -1 || ChildSeqIdx != -1)
+		{
+			int i = 0;
+			for (VSoundSeqNode* n = ((VAudio*)GAudio)->SequenceListHead;
+				n; n = n->Next, i++)
+			{
+				if (ParentSeqIdx == i)
+				{
+					ParentSeq = n;
+				}
+				if (ChildSeqIdx == i)
+				{
+					ChildSeq = n;
+				}
+			}
+		}
 	}
 	else
 	{
@@ -1824,6 +1871,27 @@ void VSoundSeqNode::Serialise(VStream& Strm)
 		Strm << STRM_INDEX(Count);
 		for (int i = 0; i < SeqChoices.Num(); i++)
 			Strm << GSoundManager->SeqInfo[SeqChoices[i]].Name;
+
+		vint32 ParentSeqIdx = -1;
+		vint32 ChildSeqIdx = -1;
+		if (ParentSeq || ChildSeq)
+		{
+			int i = 0;
+			for (VSoundSeqNode* n = ((VAudio*)GAudio)->SequenceListHead;
+				n; n = n->Next, i++)
+			{
+				if (ParentSeq == n)
+				{
+					ParentSeqIdx = i;
+				}
+				if (ChildSeq == n)
+				{
+					ChildSeqIdx = i;
+				}
+			}
+		}
+		Strm << STRM_INDEX(ParentSeqIdx)
+			<< STRM_INDEX(ChildSeqIdx);
 	}
 	unguard;
 }

@@ -125,7 +125,7 @@ void A_Sor1Pain()
 
 void A_SorZap()
 {
-	PlayFullVolumeSound('dsparil/zap', CHAN_BODY);
+	PlaySound('dsparil/zap', CHAN_BODY, 1.0, ATTN_NONE);
 }
 
 //==========================================================================

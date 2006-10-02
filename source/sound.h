@@ -131,7 +131,8 @@ public:
 	virtual void Shutdown() = 0;
 
 	//	Playback of sound effects
-	virtual void PlaySound(int, const TVec&, const TVec&, int, int, float) = 0;
+	virtual void PlaySound(int, const TVec&, const TVec&, int, int, float,
+		float) = 0;
 	virtual void StopSound(int, int) = 0;
 	virtual void StopAllSound() = 0;
 	virtual bool IsSoundPlaying(int, int) = 0;

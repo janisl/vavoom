@@ -36,7 +36,7 @@ class BossBrain : Actor
 
 void A_BrainPain()
 {
-	PlayFullVolumeSound('brain/pain', CHAN_VOICE);
+	PlaySound('brain/pain', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -66,7 +66,7 @@ void A_BrainScream()
 			A.StateTime = 0.1;
 	}
 
-	PlayFullVolumeSound('brain/death', CHAN_VOICE);
+	PlaySound('brain/death', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
 //==========================================================================

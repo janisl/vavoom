@@ -3298,15 +3298,7 @@ void A_Look()
 	// go into chase state
 	if (SightSound)
 	{
-		if (bBoss)
-		{
-			// Full volume
-			PlayFullVolumeSound(SightSound, CHAN_VOICE);
-		}
-		else
-		{
-			PlaySound(SightSound, CHAN_VOICE);
-		}
+		PlaySound(SightSound, CHAN_VOICE, 1.0, bBoss ? ATTN_NONE : ATTN_NORMAL);
 	}
 
 #ifdef DDF
@@ -3536,15 +3528,7 @@ void A_Scream()
 	if (DeathSound)
 	{
 		// Check for bosses.
-		if (bBoss)
-		{
-			// full volume
-			PlayFullVolumeSound(DeathSound, CHAN_VOICE);
-		}
-		else
-		{
-			PlaySound(DeathSound, CHAN_VOICE);
-		}
+		PlaySound(DeathSound, CHAN_VOICE, 1.0, bBoss ? ATTN_NONE : ATTN_NORMAL);
 	}
 }
 
