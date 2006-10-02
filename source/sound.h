@@ -54,6 +54,7 @@ public:
 	int ResolveEntitySound(VName, VName, VName);
 	bool LoadSound(int);
 	void DoneWithLump(int);
+	float GetMusicVolume(VName);
 
 	void SetSeqTrans(VName, int, int);
 	VName GetSeqTrans(int, int);
@@ -92,12 +93,19 @@ private:
 
 	enum { NUM_AMBIENT_SOUNDS = 256 };
 
+	struct VMusicVolume
+	{
+		VName		SongName;
+		float		Volume;
+	};
+
 	TArray<VName>			PlayerClasses;
 	TArray<VName>			PlayerGenders;
 	TArray<FPlayerSound>	PlayerSounds;
 	int						NumPlayerReserves;
 	float					CurrentChangePitch;
 	FAmbientSound*			AmbientSounds[NUM_AMBIENT_SOUNDS];
+	TArray<VMusicVolume>	MusicVolumes;
 	int						SeqTrans[64 * 3];
 
 	void ParseSndinfo(VScriptParser*);

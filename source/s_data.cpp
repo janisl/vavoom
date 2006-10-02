@@ -434,6 +434,27 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 			else if (ambient->Volume < 0)
 				ambient->Volume = 0;
 		}
+		else if (sc->Check("$musicvolume"))
+		{
+			sc->ExpectName8();
+			VName SongName = sc->Name8;
+			sc->ExpectFloat();
+			int i;
+			for (i = 0; i < MusicVolumes.Num(); i++)
+			{
+				if (MusicVolumes[i].SongName == SongName)
+				{
+					MusicVolumes[i].Volume = sc->Float;
+					break;
+				}
+			}
+			if (i == MusicVolumes.Num())
+			{
+				VMusicVolume& V = MusicVolumes.Alloc();
+				V.SongName = SongName;
+				V.Volume = sc->Float;
+			}
+		}
 		else
 		{
 			sc->ExpectString();
@@ -862,6 +883,26 @@ void VSoundManager::DoneWithLump(int sound_id)
 	}
 	Z_Free(sfx.Data);
 	sfx.Data = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoundManager::GetMusicVolume
+//
+//==========================================================================
+
+float VSoundManager::GetMusicVolume(VName SongName)
+{
+	guard(VSoundManager::GetMusicVolume);
+	for (int i = 0; i < MusicVolumes.Num(); i++)
+	{
+		if (MusicVolumes[i].SongName == SongName)
+		{
+			return MusicVolumes[i].Volume;
+		}
+	}
+	return 1.0;
 	unguard;
 }
 

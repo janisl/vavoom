@@ -131,6 +131,7 @@ private:
 	//	Map's music lump and CD track
 	VName				MapSong;
 	int					MapCDTrack;
+	float				MusicVolumeFactor;
 
 	//	Wether we should use CD music
 	bool				CDMusic;
@@ -1108,12 +1109,12 @@ void VAudio::UpdateSounds()
 	UpdateSfx();
 	if (StreamMusicPlayer)
 	{
-		SoundDevice->SetStreamVolume(music_volume);
+		SoundDevice->SetStreamVolume(music_volume * MusicVolumeFactor);
 		StreamMusicPlayer->Tick(host_frametime);
 	}
 	if (MidiDevice)
 	{
-		MidiDevice->SetVolume(music_volume);
+		MidiDevice->SetVolume(music_volume * MusicVolumeFactor);
 		MidiDevice->Tick(host_frametime);
 	}
 	if (CDAudioDevice)
@@ -1142,6 +1143,9 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	else if (MidiDevice)
 		MidiDevice->Stop();
 	StreamPlaying = false;
+
+	//	Get music volume for this song.
+	MusicVolumeFactor = GSoundManager->GetMusicVolume(Song);
 
 	//	Find the song.
 	VStream* Strm = FL_OpenFileRead(va("music/%s.ogg", Song));
