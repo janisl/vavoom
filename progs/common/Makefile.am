@@ -1,16 +1,13 @@
 VCC=../../utils/bin/vcc$(EXEEXT)
 OUTDIR=../../basev/common/progs
 
-noinst_DATA = $(OUTDIR)/common.dat $(OUTDIR)/clcommon.dat $(OUTDIR)/svcommon.dat
+noinst_DATA = $(OUTDIR)/engine.dat $(OUTDIR)/svcommon.dat
 
-$(OUTDIR)/common.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/shared/*.vc
+$(OUTDIR)/engine.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/engine/*.vc
 	@mkdir -p $(OUTDIR)
-	$(VCC) -P$(OUTDIR) $(srcdir)/common.vc $@
+	$(VCC) -P$(OUTDIR) $(srcdir)/engine/classes.vc $@
 
-$(OUTDIR)/clcommon.dat: $(VCC) $(OUTDIR)/common.dat $(srcdir)/*.vc $(srcdir)/shared/*.vc $(srcdir)/client/*.vc
-	$(VCC) -P$(OUTDIR) $(srcdir)/clcommon.vc $@
-
-$(OUTDIR)/svcommon.dat: $(VCC) $(OUTDIR)/common.dat $(srcdir)/*.vc $(srcdir)/shared/*.vc $(srcdir)/server/*.vc
+$(OUTDIR)/svcommon.dat: $(VCC) $(OUTDIR)/engine.dat $(srcdir)/*.vc $(srcdir)/server/*.vc
 	$(VCC) -P$(OUTDIR) $(srcdir)/svcommon.vc $@
 
-EXTRA_DIST = *.vc shared/*.vc client/*.vc server/*.vc
+EXTRA_DIST = *.vc engine/*.vc server/*.vc
