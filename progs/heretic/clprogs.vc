@@ -26,7 +26,6 @@
 #include <macros.vc>
 
 import shared;
-import clcommon;
 import svprogs;
 
 #include "cgame/classes.vc"

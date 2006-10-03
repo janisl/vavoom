@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-import common;
+import engine;
 
 class HexenDefs : Object;
 
