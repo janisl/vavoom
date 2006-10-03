@@ -57,6 +57,8 @@ VScriptParser::VScriptParser(const VStr& name, VStream* Strm)
 , Crossed(false)
 , ScriptName(name)
 , AlreadyGot(false)
+, CMode(false)
+, Escape(true)
 {
 	guard(VScriptParser::VScriptParser);
 	ScriptSize = Strm->TotalSize();
@@ -87,6 +89,28 @@ VScriptParser::~VScriptParser()
 	guard(VScriptParser::~VScriptParser);
 	delete[] ScriptBuffer;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::SetCMode
+//
+//==========================================================================
+
+void VScriptParser::SetCMode(bool val)
+{
+	CMode = val;
+}
+
+//==========================================================================
+//
+//	VScriptParser::SetEscape
+//
+//==========================================================================
+
+void VScriptParser::SetEscape(bool val)
+{
+	Escape = val;
 }
 
 //==========================================================================
@@ -158,7 +182,8 @@ bool VScriptParser::GetString()
 		}
 
 		//	Check for coments
-		if (*ScriptPtr == ';' || (ScriptPtr[0] == '/' && ScriptPtr[1] == '/'))
+		if ((!CMode && *ScriptPtr == ';') ||
+			(ScriptPtr[0] == '/' && ScriptPtr[1] == '/'))
 		{
 			// Skip comment
 			while (*ScriptPtr++ != '\n')
@@ -172,6 +197,26 @@ bool VScriptParser::GetString()
 			Line++;
 			Crossed = true;
 		}
+		else if (ScriptPtr[0] == '/' && ScriptPtr[1] == '*')
+		{
+			// Skip comment
+			ScriptPtr += 2;
+			while (ScriptPtr[0] != '*' || ScriptPtr[1] != '/')
+			{
+				if (ScriptPtr >= ScriptEndPtr)
+				{
+					End = true;
+					return false;
+				}
+				//	Check for new-line character.
+				if (*ScriptPtr == '\n')
+				{
+					Line++;
+					Crossed = true;
+				}
+				ScriptPtr++;
+			}
+		}
 		else
 		{
 			// Found a token
@@ -184,50 +229,118 @@ bool VScriptParser::GetString()
 	{
 		//	Quoted string
 		ScriptPtr++;
-		while (*ScriptPtr != '\"')
+		while (ScriptPtr < ScriptEndPtr && *ScriptPtr != '\"')
 		{
-			if (*ScriptPtr == '\n')
-			{
-				Line++;
-			}
-			if (*ScriptPtr == '\\')
+			if (Escape && ScriptPtr[0] == '\\' && ScriptPtr[1] == '\"')
 			{
 				ScriptPtr++;
+			}
+			else if (ScriptPtr[0] == '\r' && ScriptPtr[1] == '\n')
+			{
+				//	Convert from DOS format to UNIX format.
+				ScriptPtr++;
+			}
+			if (*ScriptPtr == '\n')
+			{
+				if (CMode)
+				{
+					if (!Escape || String.Length() == 0 ||
+						String[String.Length() - 1] != '\\')
+					{
+						Error("Unterminated string constant");
+					}
+					else
+					{
+						//	Remove the \ character.
+						String = VStr(String, 0, String.Length() - 1);
+					}
+				}
+				Line++;
+				Crossed = true;
+			}
+			String += *ScriptPtr++;
+		}
+		ScriptPtr++;
+	}
+	else if (CMode)
+	{
+		if ((ScriptPtr[0] == '&' && ScriptPtr[1] == '&') ||
+			(ScriptPtr[0] == '=' && ScriptPtr[1] == '=') ||
+			(ScriptPtr[0] == '|' && ScriptPtr[1] == '|') ||
+			(ScriptPtr[0] == '<' && ScriptPtr[1] == '<') ||
+			(ScriptPtr[0] == '>' && ScriptPtr[1] == '>'))
+		{
+			//	Special double-character token
+			String += *ScriptPtr++;
+			String += *ScriptPtr++;
+		}
+		else if (*ScriptPtr == '-' && ((ScriptPtr[1] >= '0' &&
+			ScriptPtr[1] <= '9') || (ScriptPtr[1] == '.' &&
+			ScriptPtr[2] >= '0' && ScriptPtr[2] <= '9')))
+		{
+			//	Negative number
+			String += *ScriptPtr++;
+			while ((vuint8)*ScriptPtr > 32 &&
+				!strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,\"", *ScriptPtr))
+			{
+				String += *ScriptPtr++;
 				if (ScriptPtr == ScriptEndPtr)
 				{
 					break;
 				}
-				switch (*ScriptPtr)
-				{
-				case '\"':
-					String += '\"';
-					break;
-				default:
-					String += *ScriptPtr;
-				}
-				ScriptPtr++;
-			}
-			else
-			{
-				String += *ScriptPtr++;
-			}
-			if (ScriptPtr == ScriptEndPtr)
-			{
-				break;
 			}
 		}
-		ScriptPtr++;
+		else if (strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,.", *ScriptPtr))
+		{
+			//	Special single-character token
+			String += *ScriptPtr++;
+		}
+		else if (ScriptPtr[0] >= '0' && ScriptPtr[0] <= '9')
+		{
+			//	Number
+			while ((vuint8)*ScriptPtr > 32 &&
+				!strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,\"", *ScriptPtr))
+			{
+				String += *ScriptPtr++;
+				if (ScriptPtr == ScriptEndPtr)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			//	Normal string
+			while ((vuint8)*ScriptPtr > 32 &&
+				!strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,\".", *ScriptPtr))
+			{
+				String += *ScriptPtr++;
+				if (ScriptPtr == ScriptEndPtr)
+				{
+					break;
+				}
+			}
+		}
 	}
 	else
 	{
-		//	Normal string
-		while ((vuint8)*ScriptPtr > 32 && !(*ScriptPtr == ';' ||
-			(ScriptPtr[0] == '/' && ScriptPtr[1] == '/')))
+		//	Special single-character tokens
+		if (strchr("{}|=", *ScriptPtr))
 		{
 			String += *ScriptPtr++;
-			if (ScriptPtr == ScriptEndPtr)
+		}
+		else
+		{
+			//	Normal string
+			while ((vuint8)*ScriptPtr > 32 && !strchr("{}|=;\"", *ScriptPtr) &&
+				(ScriptPtr[0] != '/' || ScriptPtr[1] != '/') &&
+				(ScriptPtr[0] != '/' || ScriptPtr[1] != '*'))
 			{
-				break;
+				String += *ScriptPtr++;
+				if (ScriptPtr == ScriptEndPtr)
+				{
+					break;
+				}
 			}
 		}
 	}

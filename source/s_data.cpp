@@ -954,6 +954,7 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 			{
 				TempData.Append(SSCMD_Select);
 				TempData.Append(0);
+				sc->SetCMode(true);
 			}
 			continue; // parse the next command
 		}
@@ -994,6 +995,7 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 				memcpy(SeqInfo[SeqId].Data, TempData.Ptr(), TempData.Num() *
 					sizeof(vint32));
 				inSequence = false;
+				sc->SetCMode(false);
 			}
 			else
 			{

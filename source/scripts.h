@@ -37,6 +37,8 @@ public:
 	int 		Number;
 	double 		Float;
 
+	void SetCMode(bool);
+	void SetEscape(bool);
 	bool AtEnd();
 	bool GetString();
 	void ExpectString();
@@ -57,4 +59,6 @@ private:
 	char*		ScriptEndPtr;
 	int			ScriptSize;
 	bool		AlreadyGot;
+	bool		CMode;
+	bool		Escape;
 };
