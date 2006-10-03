@@ -1,0 +1,146 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class GameInfo : Object
+	native
+	abstract;
+
+name				AcsHelper;
+name				GenericConScript;
+
+readonly int		netgame;
+readonly int		deathmatch;
+readonly int		gameskill;
+int					respawn;
+int					nomonsters;
+int					fastparm;
+
+readonly int*		validcount;
+readonly int		skyflatnum;
+
+readonly BasePlayer	Players[MAXPLAYERS]; // Bookkeeping on players - state.
+
+readonly level_t*	level;
+
+int					RebornPosition;
+
+readonly float		frametime;
+
+int					num_stats;
+int					num_string_stats;
+
+float				FloatBobOffsets[64];
+int					PhaseTable[64];
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init()
+{
+}
+
+//==========================================================================
+//
+//  InitNewGame
+//
+//==========================================================================
+
+void InitNewGame(int skill)
+{
+}
+
+//==========================================================================
+//
+//  CreateLevelInfo
+//
+//==========================================================================
+
+LevelInfo CreateLevelInfo()
+{
+	return none;
+}
+
+//==========================================================================
+//
+//  TranslateLevel
+//
+//==========================================================================
+
+void TranslateLevel(Level InLevel)
+{
+}
+
+//==========================================================================
+//
+//  SpawnWorld
+//
+//==========================================================================
+
+void SpawnWorld(Level InLevel)
+{
+}
+
+//==========================================================================
+//
+//  GetConScriptName
+//
+//==========================================================================
+
+name GetConScriptName(name LevelName)
+{
+	return '';
+}
+
+defaultproperties
+{
+	FloatBobOffsets[0] = 0.0; FloatBobOffsets[1] = 0.7841339111; FloatBobOffsets[2] = 1.560714722; FloatBobOffsets[3] = 2.322265625;
+	FloatBobOffsets[4] = 3.061462402; FloatBobOffsets[5] = 3.77116394; FloatBobOffsets[6] = 4.444549561; FloatBobOffsets[7] = 5.075134277;
+	FloatBobOffsets[8] = 5.656845093; FloatBobOffsets[9] = 6.184082031; FloatBobOffsets[10] = 6.651748657; FloatBobOffsets[11] = 7.055358887;
+	FloatBobOffsets[12] = 7.391021729; FloatBobOffsets[13] = 7.655517578; FloatBobOffsets[14] = 7.8462677; FloatBobOffsets[15] = 7.961471558;
+	FloatBobOffsets[16] = 7.999984741; FloatBobOffsets[17] = 7.961471558; FloatBobOffsets[18] = 7.8462677; FloatBobOffsets[19] = 7.655517578;
+	FloatBobOffsets[20] = 7.391021729; FloatBobOffsets[21] = 7.055358887; FloatBobOffsets[22] = 6.651748657; FloatBobOffsets[23] = 6.184082031;
+	FloatBobOffsets[24] = 5.656845093; FloatBobOffsets[25] = 5.075134277; FloatBobOffsets[26] = 4.444549561; FloatBobOffsets[27] = 3.77116394;
+	FloatBobOffsets[28] = 3.061462402; FloatBobOffsets[29] = 2.322265625; FloatBobOffsets[30] = 1.560714722; FloatBobOffsets[31] = 0.7841339111;
+	FloatBobOffsets[32] = -0.0000152587; FloatBobOffsets[33] = -0.7841491699; FloatBobOffsets[34] = -1.56072998; FloatBobOffsets[35] = -2.322280884;
+	FloatBobOffsets[36] = -3.061477661; FloatBobOffsets[37] = -3.771179199; FloatBobOffsets[38] = -4.444564819; FloatBobOffsets[39] = -5.075149536;
+	FloatBobOffsets[40] = -5.656860352; FloatBobOffsets[41] = -6.18409729; FloatBobOffsets[42] = -6.651763916; FloatBobOffsets[43] = -7.055374146;
+	FloatBobOffsets[44] = -7.391052246; FloatBobOffsets[45] = -7.655532837; FloatBobOffsets[46] = -7.846298218; FloatBobOffsets[47] = -7.961486816;
+	FloatBobOffsets[48] = -8.0; FloatBobOffsets[49] = -7.961486816; FloatBobOffsets[50] = -7.846298218; FloatBobOffsets[51] = -7.655532837;
+	FloatBobOffsets[52] = -7.391052246; FloatBobOffsets[53] = -7.055374146; FloatBobOffsets[54] = -6.651763916; FloatBobOffsets[55] = -6.18409729;
+	FloatBobOffsets[56] = -5.656860352; FloatBobOffsets[57] = -5.075149536; FloatBobOffsets[58] = -4.444564819; FloatBobOffsets[59] = -3.771179199;
+	FloatBobOffsets[60] = -3.061477661; FloatBobOffsets[61] = -2.322280884; FloatBobOffsets[62] = -1.56072998; FloatBobOffsets[63] = -0.7841339111;
+
+	PhaseTable[0] = 128; PhaseTable[1] = 112; PhaseTable[2] = 96; PhaseTable[3] = 80; PhaseTable[4] = 64; PhaseTable[5] = 48; PhaseTable[6] = 32; PhaseTable[7] = 32;
+	PhaseTable[8] = 16; PhaseTable[9] = 16; PhaseTable[10] = 16; //0, 0, 0, 0, 0,
+	//0, 0, 0, 0, 0, 0, 0, 0,
+	//0, 0, 0, 0, 0, 0, 0, 0,
+	//0, 0, 0, 0, 0, 0, 0, 0,
+	//0, 0, 0, 0, 0, 0, 0, 0,
+	/*0, 0, 0, 0, 0,*/ PhaseTable[53] = 16; PhaseTable[54] = 16; PhaseTable[55] = 16;
+	PhaseTable[56] = 32; PhaseTable[57] = 32; PhaseTable[58] = 48; PhaseTable[59] = 64; PhaseTable[60] = 80; PhaseTable[61] = 96; PhaseTable[62] = 112; PhaseTable[63] = 128;
+}

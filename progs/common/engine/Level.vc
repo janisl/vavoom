@@ -1,0 +1,148 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Level : Object
+	native;
+
+//	Flags.
+native readonly private bool	bForServer;	//	True if this level belongs to the server.
+native readonly private bool	bExtended;	//	True if level was in Hexen format.
+native readonly private bool	bGLNodesV5;	//	True if using version 5 GL nodes.
+//	Special actions, as set in MAPINFO.
+native readonly bool			bMap07Special;
+native readonly bool			bBaronSpecial;
+native readonly bool			bCyberDemonSpecial;
+native readonly bool			bSpiderMastermindSpecial;
+native readonly bool			bMinotaurSpecial;
+native readonly bool			bDSparilSpecial;
+native readonly bool			bIronLichSpecial;
+native readonly bool			bSpecialActionOpenDoor;
+native readonly bool			bSpecialActionLowerFloor;
+native readonly bool			bSpecialActionKillMonsters;
+
+//
+//	MAP related Lookup tables.
+//	Store VERTEXES, LINEDEFS, SIDEDEFS, etc.
+//
+
+native readonly int				NumVertexes;
+native readonly TVec*			Vertexes;
+
+native readonly int				NumSectors;
+native readonly sector_t*		Sectors;
+
+native readonly int				NumSides;
+native readonly side_t*			Sides;
+
+native readonly int				NumLines;
+native readonly line_t*			Lines;
+
+native readonly private int		__NumSegs;
+native readonly private void*	__Segs;
+
+native readonly private int		__NumSubsectors;
+native readonly private void*	__Subsectors;
+
+native readonly private int		__NumNodes;
+native readonly private void*	__Nodes;
+
+native readonly private void*	__VisData;
+native readonly private void*	__NoVis;
+
+// !!! Used only during level loading
+native readonly int				NumThings;
+native readonly mthing_t*		Things;
+
+native readonly private void*	__BlockMapLump;
+native readonly private void*	__BlockMap;
+native readonly private int		__BlockMapWidth;
+native readonly private int		__BlockMapHeight;
+native readonly float			BlockMapOrgX;
+native readonly float			BlockMapOrgY;
+native readonly private void*	__BlockLinks;
+native readonly private void*	__PolyBlockMap;
+
+native readonly private void*	__RejectMatrix;
+
+//	Strife conversations.
+native readonly int				NumGenericSpeeches;
+native readonly RogueConSpeech*	GenericSpeeches;
+
+native readonly int				NumLevelSpeeches;
+native readonly RogueConSpeech*	LevelSpeeches;
+
+//	List of all poly-objects on the level.
+native readonly private int		__NumPolyObjs;
+native readonly private void*	__PolyObjs;
+
+native readonly private int		__NumPolyAnchorPoints;
+native readonly private void*	__PolyAnchorPoints;
+
+native readonly private Thinker	__ThinkerHead;
+native readonly private Thinker	__ThinkerTail;
+
+//
+//	Natives
+//
+
+native final sector_t *PointInSector(TVec Point);
+native final bool BlockThingsIterator(int x, int y, Object SelfObj,
+	name FuncName);
+native final bool PathTraverse(float x1, float y1, float x2, float y2,
+	int flags, Object SelfObj, name FuncName);
+native final bool ChangeSector(sector_t* sector, int crunch);
+native final sec_region_t *AddExtraFloor(line_t * line, sector_t * dst);
+//	Swap sector's floor and ceiling, it's used by level converter to support
+// EDGE and Legacy 3D floors.
+native final void SwapPlanes(sector_t *s);
+
+native final void SetFloorPic(sector_t * sec, int texture);
+native final void SetCeilPic(sector_t * sec, int texture);
+native final void SetLineTexture(int side, int position, int texture);
+native final void SetLineTransluc(line_t * line, int trans);
+native final void SendFloorSlope(sector_t * sector);
+native final void SendCeilingSlope(sector_t * sector);
+native final void SetSecLightColor(sector_t * sector, int Color);
+native final void SetFloorLightSector(sector_t* Sector, sector_t* SrcSector);
+native final void SetCeilingLightSector(sector_t* Sector, sector_t* SrcSector);
+native final void SetHeightSector(sector_t* Sector, sector_t* SrcSector, int Flags);
+
+//  Return next sector # that line tag refers to
+native final int FindSectorFromTag(int tag, int start);
+
+//
+//  Polyobj functions
+//
+
+native final void SpawnPolyobj(float x, float y, int tag, bool crush);
+native final void AddPolyAnchorPoint(float x, float y, int tag);
+native final polyobj_t* GetPolyobj(int polyNum);
+native final int GetPolyobjMirror(int poly);
+native final bool RotatePolyobj(int num, float angle);
+native final bool MovePolyobj(int num, float x, float y);
+
+defaultproperties
+{
+}

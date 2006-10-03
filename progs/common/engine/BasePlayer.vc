@@ -1,0 +1,186 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//
+//	Extended player object info: player_t
+//
+//**************************************************************************
+
+class BasePlayer : Object;
+
+readonly LevelInfo		Level;
+
+readonly bool bActive;
+readonly bool bSpawned;
+readonly bool bIsBot;
+bool bFixAngle;
+bool bAttackDown;	// True if button down last tic.
+bool bUseDown;
+bool bDidSecret;	// True if secret level has been done.
+readonly private bool bNeedsUpdate;
+
+native readonly private void *__NetCon;
+native readonly private int __Message1;
+native readonly private void* __Message2;
+native readonly private int __Message3;
+native readonly private int __Message4;
+native readonly private void* __Message5;
+native readonly private int __MsgBuf[MAX_MSGLEN / 4];
+native readonly private int __MobjUpdateStart;
+native readonly private float __LastMessage;
+
+string UserInfo;
+
+string PlayerName;
+int BaseClass;
+int PClass;	// player class type
+int Color;
+
+// Copied from cmd, needed for PROGS, which supports only 4 byte ints
+float ForwardMove;	// *2048 for move
+float SideMove;	// *2048 for move
+float FlyMove;	// fly up/down/centering
+int Buttons;	// fire, use
+int Impulse;	// weapon changes, inventory, etc
+
+Entity MO;
+int PlayerState;
+
+//  Model of current weapon
+int WeaponModel;
+
+// Determine POV,
+//  including viewpoint bobbing during movement.
+// Focal origin above r.z
+TVec ViewOrg;
+
+TAVec ViewAngles;
+
+// This is only used between levels,
+// mo->health is used during levels.
+int Health;
+
+int Items;
+
+// Frags, kills of other players.
+int Frags;
+int FragsStats[MAXPLAYERS];
+
+// For intermission stats.
+int KillCount;
+int ItemCount;
+int SecretCount;
+
+// So gun flashes light up areas.
+int ExtraLight;
+
+// For lite-amp and invulnarability powers
+int FixedColormap;
+
+// Current PLAYPAL index
+//  can be set to REDCOLORMAP for pain, etc.
+int Palette;
+
+//  color shifts for damage, powerups and content types
+int CShifts[NUM_CSHIFTS];
+
+// Overlay view sprites (gun, etc).
+ViewEntity ViewEnts[NUMPSPRITES];
+float PSpriteSY;
+
+int WorldTimer;	// total time the player's been playing
+
+native readonly private int* OldStats;
+
+//  Print to client
+native final void cprint(string format, ...);
+//  Client's center message
+native final void centerprint(string format, ...);
+native final int GetPlayerNum();
+native final void ClearPlayer();
+native final void SelectClientMsg(int msgtype);
+
+void PutClientIntoServer()
+{
+}
+
+void SpawnClient()
+{
+}
+
+void NetGameReborn()
+{
+}
+
+void DisconnectClient()
+{
+}
+
+void UserinfoChanged()
+{
+}
+
+void PlayerExitMap(bool clusterChange)
+{
+}
+
+void PlayerTick(float deltaTime)
+{
+}
+
+void SetViewPos()
+{
+}
+
+void Cheat_God()
+{
+}
+
+void Cheat_NoClip()
+{
+}
+
+void Cheat_Gimme()
+{
+}
+
+void Cheat_KillAll()
+{
+}
+
+void Cheat_Morph()
+{
+}
+
+void Cheat_NoWeapons()
+{
+}
+
+void Cheat_Class()
+{
+}
+
+defaultproperties
+{
+}

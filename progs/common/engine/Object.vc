@@ -1,0 +1,1782 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//
+//	Base class of all classes
+//
+//==========================================================================
+
+class Object
+	native
+	abstract;
+
+//  Since version 1.5 compiler defines PROG_VERSION, so we can check that
+// progs are compiled with the right version of compiler
+#if !defined PROG_VERSION || PROG_VERSION != 21
+#error These are version 21 progs
+#endif
+
+enum
+{
+	CVAR_ARCHIVE		= 1,	//	Set to cause it to be saved to vavoom.cfg
+	CVAR_USERINFO		= 2,	//	Added to userinfo  when changed
+	CVAR_SERVERINFO		= 4,	//	Added to serverinfo when changed
+	CVAR_INIT			= 8,	//	Don't allow change from console at all,
+								// but can be set from the command line
+	CVAR_LATCH			= 16,	//	Save changes until server restart
+	CVAR_ROM			= 32,	//	Display only, cannot be set by user at all
+	CVAR_CHEAT			= 64,	//	Can not be changed if cheats are disabled
+	CVAR_MODIFIED		= 128	//	Set each time the cvar is changed
+};
+
+const int MININT				= 0x80000000;
+const int MAXINT				= 0x7fffffff;
+
+const int TICRATE				= 35;
+
+const int MAXPLAYERS			= 8;
+
+const int NUM_CSHIFTS			= 8;
+#define CSHIFT(r, g, b, a)	(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
+
+// Difficulty/skill settings/filters.
+enum
+{
+	sk_baby,
+	sk_easy,
+	sk_medium,
+	sk_hard,
+	sk_nightmare
+};
+
+enum
+{
+	//  Generate the sprite's axes, with sprup straight up in worldspace,
+	// and sprright parallel to the viewplane.
+	SPR_VP_PARALLEL_UPRIGHT,
+	//  Generate the sprite's axes, with sprup straight up in worldspace,
+	// and sprright perpendicular to sprorigin.
+	SPR_FACING_UPRIGHT,
+	//  Generate the sprite's axes, completely parallel to the viewplane.
+	SPR_VP_PARALLEL,
+	//  Generate the sprite's axes, according to the sprite's world
+	// orientation
+	SPR_ORIENTED,
+	//  Generate the sprite's axes, parallel to the viewplane, but
+	// rotated in that plane around the center according to the sprite
+	// entity's roll angle. So sprforward stays the same, but sprright
+	// and sprup rotate
+	SPR_VP_PARALLEL_ORIENTED,
+	//  Generate the sprite's axes, with sprup straight up in worldspace,
+	// and sprright parallel to the viewplane and then rotated in that
+	// plane around the center according to the sprite entity's roll
+	// angle. So sprforward stays the same, but sprright and sprup rotate
+	SPR_VP_PARALLEL_UPRIGHT_ORIENTED
+};
+
+//
+//  Frame flags:
+//  handles maximum brightness (torches, muzzle flare, light sources)
+//
+enum
+{
+	FF_FULLBRIGHT	= 0x80,	// flag in thing->frame
+	FF_FRAMEMASK	= 0x7f
+};
+
+enum
+{
+	ps_weapon,
+	ps_flash,
+	NUMPSPRITES
+};
+
+//
+// Button/action code definitions.
+//
+enum
+{
+	BT_ATTACK		= 1,	// Press "Fire".
+	BT_USE			= 2,	// Use button, to open doors, activate switches.
+	BT_JUMP			= 4
+};
+
+//
+// Player states.
+//
+enum
+{
+	// Playing or camping.
+	PST_LIVE,
+	// Dead on the ground, view follows killer.
+	PST_DEAD,
+	// Ready to restart/respawn???
+	PST_REBORN
+};
+
+const float TOCENTER		= -128.0;
+
+enum
+{
+	DI_EAST,
+	DI_NORTHEAST,
+	DI_NORTH,
+	DI_NORTHWEST,
+	DI_WEST,
+	DI_SOUTHWEST,
+	DI_SOUTH,
+	DI_SOUTHEAST,
+	DI_NODIR,
+	NUMDIRS
+};
+
+enum
+{
+	RES_OK,
+	RES_CRUSHED,
+	RES_PASTDEST
+};
+
+const int MAXDEATHMATCHSTARTS	= 16;
+const int MAX_PLAYER_STARTS		= 16;
+
+const float MAXRADIUS			= 32.0;
+
+//
+// LineDef attributes.
+//
+const int
+	ML_BLOCKING			= 0x0001,	// Solid, is an obstacle.
+	ML_BLOCKMONSTERS	= 0x0002,	// Blocks monsters only.
+	ML_TWOSIDED			= 0x0004,	// Backside will not be present at all
+	ML_DONTPEGTOP		= 0x0008,	// upper texture unpegged
+	ML_DONTPEGBOTTOM	= 0x0010,	// lower texture unpegged
+	ML_SECRET			= 0x0020,	// don't map as two sided: IT'S A SECRET!
+	ML_SOUNDBLOCK		= 0x0040,	// don't let sound cross two of these
+	ML_DONTDRAW			= 0x0080,	// don't draw on the automap
+	ML_MAPPED			= 0x0100,	// set if already drawn in automap
+	ML_REPEAT_SPECIAL	= 0x0200,	// special is repeatable
+	ML_SPAC_SHIFT		= 10,
+	ML_SPAC_MASK		= 0x1c00,
+#define GET_SPAC(_flags_)	(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
+	ML_MONSTERSCANACTIVATE	= 0x2000,	//	Monsters (as well as players) can activate the line
+	ML_BLOCKEVERYTHING	= 0x8000,	//	Line blocks everything.
+	ML_RAILING			= 0x20000,
+	ML_BLOCK_FLOATERS	= 0x40000,
+	ML_CLIP_MIDTEX		= 0x80000;	// Automatic for every Strife line
+
+//	These will be converted.
+const int 
+	ML_PASSUSE_BOOM				= 0x0200,	//	Boom's ML_PASSUSE flag (conflicts with ML_REPEAT_SPECIAL)
+	ML_RAILING_STRIFE			= 0x0200,
+	ML_BLOCK_FLOATERS_STRIFE	= 0x0400,
+	ML_UNKNOWN2_STRIFE			= 0x0800,
+	ML_TRANSLUCENT_STRIFE		= 0x1000;
+
+//
+// Special activation types
+//
+enum
+{
+	SPAC_CROSS		= 0,	// when player crosses line
+	SPAC_USE		= 1,	// when player uses line
+	SPAC_MCROSS		= 2,	// when monster crosses line
+	SPAC_IMPACT		= 3,	// when projectile hits line
+	SPAC_PUSH		= 4,	// when player/monster pushes line
+	SPAC_PCROSS		= 5,	// when projectile crosses line
+	SPAC_USETHROUGH	= 6,	// SPAC_USE, but passes it through
+	SPAC_PTOUCH		= 7	// when a projectiles crosses or hits line
+};
+
+//
+//  SECTOR PLANE FLAGS
+//
+enum
+{
+	SPF_NOBLOCKING		= 1,
+	SPF_NOBLOCKSIGHT	= 2,
+	SPF_NOBLOCKSHOOT	= 4
+};
+
+//
+//  Player items
+//
+enum { IT_ALL_MAP			= 1 };
+
+enum
+{
+	MSG_SV_DATAGRAM,
+	MSG_SV_RELIABLE,
+	MSG_SV_SIGNON,
+	MSG_SV_CLIENT,
+	MSG_CL_MESSAGE
+};
+
+#define RGB(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
+#define RGBA(r, g, b, a)	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+
+const int MAX_TID_COUNT		= 200;
+
+//**************************************************************************
+//**
+//**    CLIENT DEFINES
+//**
+//**************************************************************************
+
+//
+// Fonts
+//
+enum
+{
+	font_small,
+	font_yellow,
+	font_big,
+
+	NUMFONTTYPES
+};
+
+//
+// Horisontal text alignement
+//
+enum
+{
+	hleft,		//Left
+	hcenter,	//Centred
+	hright		//Right
+};
+
+//
+// Vertical text alignement
+//
+enum
+{
+	vtop,		//Top
+	vcenter,	//Center
+	vbottom		//Bottom
+};
+
+//
+//  STATUS BAR VIEW TYPE
+//
+enum
+{
+	SB_VIEW_NORMAL,
+	SB_VIEW_AUTOMAP,
+	SB_VIEW_FULLSCREEN
+};
+
+//**************************************************************************
+//**
+//**    SERVER DEFINES
+//**
+//**************************************************************************
+
+#define MobjCenter(mobj)\
+	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
+
+#define FOREACH(type, var) \
+	for (var = type(NextThinker(none, type)); var; \
+		var = type(NextThinker(var, type)))
+
+const int MAX_MSGLEN	= 8000;
+
+enum
+{
+	PT_ADDLINES		= 1,
+	PT_ADDTHINGS	= 2,
+	PT_EARLYOUT		= 4
+};
+
+const float DEFAULT_GRAVITY			= 1225.0;
+
+enum
+{
+	SEQ_Door,
+	SEQ_Platform,
+	SEQ_Environment
+};
+
+enum
+{
+	SECSPEC_None,
+	SECSPEC_LightPhased,
+	SECSPEC_LightSequenceStart,
+	SECSPEC_LightSequence,
+	SECSPEC_LightSequenceAlt,
+
+	SECSPEC_StairsSpecial1 = 26,
+	SECSPEC_StairsSpecial2,
+
+	SECSPEC_WindEastSlow = 40,//40
+	SECSPEC_WindEastMedium,
+	SECSPEC_WindEastFast,
+	SECSPEC_WindNorthSlow,
+	SECSPEC_WindNorthMedium,
+	SECSPEC_WindNorthFast,
+	SECSPEC_WindSouthSlow,
+	SECSPEC_WindSouthMedium,
+	SECSPEC_WindSouthFast,
+	SECSPEC_WindWestSlow,
+	SECSPEC_WindWestMedium,//50
+	SECSPEC_WindWestFast,
+
+	SECSPEC_LightFlicker = 65,
+	SECSPEC_LightStrobeFast,
+	SECSPEC_LightStrobeSlow,
+	SECSPEC_LightStrobeFastDamage,
+	SECSPEC_DamageHellslime,
+	SECSPEC_DamageSludge,//70
+	SECSPEC_DamageNukage,
+	SECSPEC_LightGlow,
+
+	SECSPEC_DoorCloseIn30 = 74,
+	SECSPEC_DamageSuperHellslimeExit,
+	SECSPEC_LightSyncStrobeSlow,
+	SECSPEC_LightSyncStrobeFast,
+	SECSPEC_DoorRaiseIn5Minutes,
+	SECSPEC_FrictionLow,
+	SECSPEC_DamageSuperHellslime,// 80
+	SECSPEC_LightFireFlicker,
+	SECSPEC_DamageLavaWimpy,
+	SECSPEC_DamageLavaHefty,
+	SECSPEC_ScrollEastLavaDamage,
+
+	SECSPEC_DamageHazard = 105,
+
+	SECSPEC_DamageInstantDeath = 115,
+	SECSPEC_DamageSuperHazard,
+
+	SECSPEC_ScrollCurrent = 118,
+
+	//	These are handled by the engine.
+	SECSPEC_LightningOutdoor = 197,
+	SECSPEC_LightningIndoor1,
+	SECSPEC_Lightningindoor2,
+	SECSPEC_Sky2,//200
+	SECSPEC_ScrollNorthSlow,
+	SECSPEC_ScrollNorthMedium,
+	SECSPEC_ScrollNorthFast,
+	SECSPEC_ScrollEastSlow,
+	SECSPEC_ScrollEastMedium,
+	SECSPEC_ScrollEastFast,
+	SECSPEC_ScrollSouthSlow,
+	SECSPEC_ScrollSouthMedium,
+	SECSPEC_ScrollSouthFast,
+	SECSPEC_ScrollWestSlow,//210
+	SECSPEC_ScrollWestMedium,
+	SECSPEC_ScrollWestFast,
+	SECSPEC_ScrollNorthWestSlow,
+	SECSPEC_ScrollNorthWestMedium,
+	SECSPEC_ScrollNorthWestFast,
+	SECSPEC_ScrollNorthEastSlow,
+	SECSPEC_ScrollNorthEastMedium,
+	SECSPEC_ScrollNorthEastFast,
+	SECSPEC_ScrollSouthEastSlow,
+	SECSPEC_ScrollSouthEastMedium,//220
+	SECSPEC_ScrollSouthEastFast,
+	SECSPEC_ScrollSouthWestSlow,
+	SECSPEC_ScrollSouthWestMedium,
+	SECSPEC_ScrollSouthWestFast,
+	SECSPEC_ScrollEast5,
+	SECSPEC_ScrollEast10,
+	SECSPEC_ScrollEast25,
+	SECSPEC_ScrollEast30,
+	SECSPEC_ScrollEast35,
+	SECSPEC_ScrollNorth5,//230
+	SECSPEC_ScrollNorth10,
+	SECSPEC_ScrollNorth25,
+	SECSPEC_ScrollNorth30,
+	SECSPEC_ScrollNorth35,
+	SECSPEC_ScrollSouth5,
+	SECSPEC_ScrollSouth10,
+	SECSPEC_ScrollSouth25,
+	SECSPEC_ScrollSouth30,
+	SECSPEC_ScrollSouth35,
+	SECSPEC_ScrollWest5,//240
+	SECSPEC_ScrollWest10,
+	SECSPEC_ScrollWest25,
+	SECSPEC_ScrollWest30,
+	SECSPEC_ScrollWest35,
+
+	SECSPEC_Max
+};
+
+enum
+{
+	SECSPEC_BASE_MASK		= 0x00ff,
+	SECSPEC_DAMAGE_MASK		= 0x0300,
+	SECSPEC_SECRET_MASK		= 0x0400,
+	SECSPEC_FRICTION_MASK	= 0x0800,
+	SECSPEC_PUSH_MASK		= 0x1000
+};
+
+enum
+{
+	LNSPEC_None,
+	LNSPEC_PolyStartLine,
+	LNSPEC_PolyRotateLeft,
+	LNSPEC_PolyRotateRight,
+	LNSPEC_PolyMove,
+	LNSPEC_PolyExplicitLine,
+	LNSPEC_PolyMoveTimes8,
+	LNSPEC_PolyDoorSwing,
+	LNSPEC_PolyDoorSlide,
+
+	LNSPEC_DoorClose = 10,// 10
+	LNSPEC_DoorOpen,
+	LNSPEC_DoorRaise,
+	LNSPEC_DoorLockedRaise,
+
+	LNSPEC_FloorLowerByValue = 20,// 20
+	LNSPEC_FloorLowerToLowest,
+	LNSPEC_FloorLowerToNearest,
+	LNSPEC_FloorRaiseByValue,
+	LNSPEC_FloorRaiseToHighest,
+	LNSPEC_FloorRaiseToNearest,
+	LNSPEC_StairsBuildDownNormal,
+	LNSPEC_StairsBuildUpNormal,
+	LNSPEC_FloorRaiseAndCrush,
+	LNSPEC_PillarBuild,
+	LNSPEC_PillarOpen,// 30
+	LNSPEC_StairsBuildDownSync,
+	LNSPEC_StairsBuildUpSync,
+	LNSPEC_ForceField,
+	LNSPEC_ClearForceField,
+	LNSPEC_FloorRaiseByValueTimes8,
+	LNSPEC_FloorLowerByValueTimes8,
+
+	LNSPEC_CeilingWaggle = 38,
+	LNSPEC_TeleportZombieChanger,
+	LNSPEC_CeilingLowerByValue,// 40
+	LNSPEC_CeilingRaiseByValue,
+	LNSPEC_CeilingCrushAndRaise,
+	LNSPEC_CeilingLowerAndCrush,
+	LNSPEC_CeilingCrushStop,
+	LNSPEC_CeilingCrushRaiseAndStay,
+	LNSPEC_FloorCrushStop,
+
+	LNSPEC_PlatPerpetualRaise = 60,
+	LNSPEC_PlatStop,
+	LNSPEC_PlatDownWaitUpStay,
+	LNSPEC_PlatDownByValueWaitUpStay,
+	LNSPEC_PlatUpWaitDownStay,
+	LNSPEC_PlatUpByValueWaitDownStay,
+	LNSPEC_FloorLowerTimes8Instant,
+	LNSPEC_FloorRaiseTimes8Instant,
+	LNSPEC_FloorMoveToValueTimes8,
+	LNSPEC_CeilingMoveToValueTimes8,
+	LNSPEC_Teleport,// 70
+	LNSPEC_TeleportNoFog,
+	LNSPEC_ThingThrust,
+	LNSPEC_ThingDamage,
+	LNSPEC_TeleportNewMap,
+	LNSPEC_TeleportEndGame,
+	LNSPEC_TeleportOther,
+	LNSPEC_TeleportGroup,
+	LNSPEC_TeleportSector,
+
+	LNSPEC_ACSExecute = 80,// 80
+	LNSPEC_ACSSuspend,
+	LNSPEC_ACSTerminate,
+	LNSPEC_ACSLockedExecute,
+	LNSPEC_ACSExecuteWithResult,
+
+	LNSPEC_PolyRotateLeftOverride = 90,// 90
+	LNSPEC_PolyRotateRightOverride,
+	LNSPEC_PolyMoveOverride,
+	LNSPEC_PolyMoveTimes8Override,
+	LNSPEC_PillarBuildCrush,
+	LNSPEC_FloorAndCeilingLowerByValue,
+	LNSPEC_FloorAndCeilingRaiseByValue,
+
+	LNSPEC_ScrollTextureLeft = 100,// 100
+	LNSPEC_ScrollTextureRight,
+	LNSPEC_ScrollTextureUp,
+	LNSPEC_ScrollTextureDown,
+
+	LNSPEC_LightForceLightning = 109,
+	LNSPEC_LightRaiseByValue,// 110
+	LNSPEC_LightLowerByValue,
+	LNSPEC_LightChangeToValue,
+	LNSPEC_LightFade,
+	LNSPEC_LightGlow,
+	LNSPEC_LightFlicker,
+	LNSPEC_LightStrobe,
+	LNSPEC_LightStop,
+
+	LNSPEC_QuakeTremor = 120,// 120
+	LNSPEC_LineSetIdentification,
+
+	LNSPEC_UsePuzzleItem = 129,
+	LNSPEC_ThingActivate,// 130
+	LNSPEC_ThingDeactivate,
+	LNSPEC_ThingRemove,
+	LNSPEC_ThingDestroy,
+	LNSPEC_ThingProjectile,
+	LNSPEC_ThingSpawn,
+	LNSPEC_ThingProjectileGravity,
+	LNSPEC_ThingSpawnNoFog,
+	LNSPEC_FloorWaggle,
+
+	LNSPEC_SectorSoundChange = 140,// 140
+
+	LNSPEC_3DFloor = 160,// 160
+	LNSPEC_Contents,
+
+	LNSPEC_PlaneUpNearestWaitDownStay = 172,
+	LNSPEC_NoiseAlert,
+
+	LNSPEC_PlaneAlign = 181,
+
+	LNSPEC_CeilingLowerToHighestFloor = 192,
+	LNSPEC_CeilingLowerInstant,
+	LNSPEC_CeilingRaiseInstant,
+	LNSPEC_CeilingCrushRaiseAndStayA,
+	LNSPEC_CeilingCrushAndRaiseA,
+	LNSPEC_CeilingCrushAndRaiseSilentA,
+	LNSPEC_CeilingRaiseByValueTimes8,
+	LNSPEC_CeilingLowerByValueTimes8,
+	LNSPEC_FloorGeneric,// 200
+	LNSPEC_CeilingGeneric,
+	LNSPEC_DoorGeneric,
+	LNSPEC_PlatGeneric,
+	LNSPEC_StairsGeneric,
+	LNSPEC_CeilingGenericCrush,
+	LNSPEC_PlatDownWaitUpStayLip,
+	LNSPEC_PlatPerpetualRaiseLip,
+	LNSPEC_LineTranslucent,
+	LNSPEC_TransferHeights,
+	LNSPEC_TransferFloorLight,// 210
+	LNSPEC_TransferCeilingLight,
+
+	LNSPEC_SectorSetDamage = 214,
+	LNSPEC_TeleportLine,
+	LNSPEC_SectorSetGravity,
+	LNSPEC_StairsBuildUpDoom,
+	LNSPEC_SectorSetWind,
+	LNSPEC_SectorSetFriction,
+	LNSPEC_SectorSetCurrent,// 220
+	LNSPEC_ScrollTextureBoth,
+	LNSPEC_ScrollTextureModel,
+	LNSPEC_ScrollFloor,
+	LNSPEC_ScrollCeiling,
+	LNSPEC_ScrollTextureOffsets,
+	LNSPEC_ACSExecuteAlways,
+	LNSPEC_PointPushSetForce,
+	LNSPEC_FloorRaiseToNearestChange,
+
+	LNSPEC_FloorRaiseByValueChangeTex = 230,// 230
+	LNSPEC_PlatToggle,
+	LNSPEC_LightStrobeDoom,
+	LNSPEC_LightMinNeighbor,
+	LNSPEC_LightMaxNeighbor,
+	LNSPEC_FloorTransferTrigger,
+	LNSPEC_FloorTransferNumeric,
+
+	LNSPEC_FloorRaiseToLowestCeiling = 238,
+	LNSPEC_FloorRaiseByValueChange,
+	LNSPEC_FloorRaiseByTexture,// 240
+	LNSPEC_FloorLowerToLowestChange,
+	LNSPEC_FloorLowerToHighest,
+	LNSPEC_ExitNormal,
+	LNSPEC_ExitSecret,
+	LNSPEC_ElevatorRaiseToNearest,
+	LNSPEC_ElevatorMoveToFloor,
+	LNSPEC_ElevatorLowerToNearest,
+
+	LNSPEC_DoorCloseWaitOpen = 249,
+	LNSPEC_FloorDonut,// 250
+	LNSPEC_FloorAndCeilingLowerRaise,
+	LNSPEC_CeilingRaiseToNearest,
+	LNSPEC_CeilingLowerToLowest,
+	LNSPEC_CeilingLowerToFloor,
+	LNSPEC_CeilingCrushRaiseAndStaySilentA,
+
+	LNSPEC_Max
+};
+
+//==========================================================================
+//
+//  3D math - vectors and panes
+//
+//==========================================================================
+
+vector TVec
+{
+	float x;
+	float y;
+	float z;
+};
+
+vector TAVec
+{
+	float pitch;
+	float yaw;
+	float roll;
+};
+
+struct TPlane
+{
+	TVec normal;
+	float dist;
+	int __type;
+	int __signbits;
+	int __reserved1;
+	int __reserved2;
+};
+
+//==========================================================================
+//
+//  Level
+//
+//==========================================================================
+
+//
+// LineDef
+//
+struct line_t : TPlane
+{
+	// Vertices, from v1 to v2.
+	TVec *v1;
+	TVec *v2;
+
+	// Precalculated v2 - v1 for side checking.
+	TVec __dir;
+
+	// Animation related.
+	int flags;
+
+	// Visual appearance: SideDefs.
+	//  sidenum[1] will be -1 if one sided
+	int sidenum[2];
+
+	// Neat. Another bounding box, for the extent
+	//  of the LineDef.
+	float bbox[4];
+
+	// To aid move clipping.
+	int __slopetype;
+
+	// Front and back sector.
+	// Note: redundant? Can be retrieved from SideDefs.
+	sector_t *frontsector;
+	sector_t *backsector;
+
+	// if == validcount, already checked
+	int validcount;
+
+	int translucency;
+
+	int special;
+	int arg1;
+	int arg2;
+	int arg3;
+	int arg4;
+	int arg5;
+
+	int			LineTag;
+};
+
+//
+// The SideDef.
+//
+struct side_t
+{
+	// add this to the calculated texture column
+	float textureoffset;
+
+	// add this to the calculated texture top
+	float rowoffset;
+
+	float __base_textureoffset;
+	float __base_rowoffset;
+
+	// Texture indices.
+	// We do not maintain names here.
+	int toptexture;
+	int bottomtexture;
+	int midtexture;
+
+	int __base_toptexture;
+	int __base_bottomtexture;
+	int __base_midtexture;
+
+	// Sector the SideDef is facing.
+	sector_t *sector;
+};
+
+struct sec_plane_t : TPlane
+{
+	float minz;
+	float maxz;
+
+	int pic;
+	int __base_pic;
+
+	float xoffs;
+	float yoffs;
+
+	int flags;
+	int translucency;
+
+	int LightSourceSector;
+};
+
+struct sec_params_t
+{
+	int lightlevel;
+	int LightColor;
+	int contents;
+};
+
+struct sec_region_t
+{
+	//  Linked list of regions in bottom to top order
+	sec_region_t *prev;
+	sec_region_t *next;
+
+	//  Planes
+	sec_plane_t *floor;
+	sec_plane_t *ceiling;
+
+	sec_params_t *params;
+	line_t *extraline;
+};
+
+//
+//  The SECTORS record, at runtime.
+//  Stores things/mobjs.
+//
+struct sector_t
+{
+	sec_plane_t floor;
+	sec_plane_t ceiling;
+	sec_params_t params;
+
+	sec_region_t *topregion;	//  Highest region
+	sec_region_t *botregion;	//  Lowest region
+
+	float floorheight;
+	float ceilingheight;
+	int special;
+	int tag;
+
+	float base_floorheight;
+	float base_ceilingheight;
+	int __base_lightlevel;
+
+	float skyheight;
+
+	// stone, metal, heavy, etc...
+	int seqType;
+
+	// mapblock bounding box for height changes
+	int blockbox[4];
+
+	// origin for any sounds played by the sector
+	TVec soundorg;
+
+	// if == validcount, already checked
+	int validcount;
+
+	// list of subsectors in sector
+	// used to check if client can see this sector (it needs to be updated)
+	void* __subsectors;
+
+	int linecount;
+	line_t **lines;	// [linecount] size
+
+	//	Boom's fake floors.
+	sector_t* heightsec;
+	void* fakefloorinfo;			//	Info for rendering.
+
+	//	Flags.
+	bool		bHasExtrafloors;	//	This sector has extrafloors.
+	bool		bExtrafloorSource;	//	This sector is a source of an extrafloor.
+	bool		bFakeFloorOnly;		//	When used as heightsec in R_FakeFlat, only copies floor
+	bool		bClipFakePlanes;	//	As a heightsec, clip planes to target sector's planes
+	bool		bNoFakeLight;		//	heightsec does not change lighting
+	bool		bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
+	bool		bUnderWater;		//	Sector is underwater
+
+	// 0 = untraversed, 1,2 = sndlines -1
+	int			soundtraversed;
+
+	// thing that made a sound (or null)
+	Entity		SoundTarget;
+
+	// Thinker for reversable actions
+	Thinker		FloorData;
+	Thinker		CeilingData;
+	Thinker		LightingData;
+	Thinker		AffectorData;
+
+	int			Damage;
+
+	float		Friction;
+	float		MoveFactor;
+	float		Gravity;
+};
+
+//
+//  Polyobj data
+//
+struct polyobj_t
+{
+	int __numsegs;
+	void *__segs;
+	TVec startSpot;
+	void *__originalPts;	// used as the base for the rotations
+	void *__prevPts;		// use to restore the old point values
+	float angle;
+	int tag;				// reference tag assigned in HereticEd
+	int __bbox[4];
+	int validcount;
+	bool bCrush;			// should the polyobj attempt to crush mobjs?
+	int seqType;
+	subsector_t *__subsector;
+	float __base_x;
+	float __base_y;
+	float __base_angle;
+	int __changed;
+	Thinker SpecialData;	// pointer a thinker, if the poly is moving
+};
+
+//
+// Map thing definition with initialised fields for global use.
+//
+struct mthing_t
+{
+	int tid;
+	float x;
+	float y;
+	float height;
+	int angle;
+	int type;
+	int options;
+	int special;
+	int arg1;
+	int arg2;
+	int arg3;
+	int arg4;
+	int arg5;
+};
+
+//
+//  A SubSector.
+//  References a Sector. Basically, this is a list of LineSegs, indicating
+// the visible walls that define (all or some) sides of a convex BSP leaf.
+//
+struct subsector_t
+{
+	sector_t *sector;
+	void *__seclink;
+	int __numlines;
+	int __firstline;
+	polyobj_t *__poly;
+
+	void *__parent;
+	int __VisFrame;
+	int __SkyVisFrame;
+	void *__regions;
+};
+
+//
+//	Strife conversation scripts
+//
+
+struct RogueConChoice
+{
+	int		GiveItem;	//	Item given on success
+	int		NeedItem1;	//	Required item 1
+	int		NeedItem2;	//	Required item 2
+	int		NeedItem3;	//	Required item 3
+	int		NeedAmount1;//	Amount of item 1
+	int		NeedAmount2;//	Amount of item 2
+	int		NeedAmount3;//	Amount of item 3
+	string	Text;		//	Text of the answer
+	string	TextOK;		//	Message displayed on success
+	int		Next;		//	Dialog to go on success, negative values to go
+						// here immediately
+	int		Objectives;	//	Mission objectives, LOGxxxx lump
+	string	TextNo;		//	Message displayed on failure (player doesn't
+						// have needed thing, it haves enough health/ammo,
+						// item is not ready, quest is not completed)
+};
+
+struct RogueConSpeech
+{
+	int		SpeakerID;	//	Type of the object (MT_xxx)
+	int		DropItem;	//	Item dropped when killed
+	int		CheckItem1;	//	Item 1 to check for jump
+	int		CheckItem2;	//	Item 2 to check for jump
+	int		CheckItem3;	//	Item 3 to check for jump
+	int		JumpToConv;	//	Jump to conversation if have certain item(s)
+	string	Name;		//	Name of the character
+	name	Voice;		//	Voice to play
+	name	BackPic;	//	Picture of the speaker
+	string	Text;		//	Message
+	RogueConChoice Choices[5];	//	Choices
+};
+
+struct level_t
+{
+	float		time;
+	int			tictime;
+
+	int			totalkills;
+	int			totalitems;
+	int			totalsecret;	// for intermission
+	int			currentkills;
+	int			currentitems;
+	int			currentsecret;
+
+	name		MapName;
+	int			levelnum;
+	int			cluster;
+	int			partime;
+	string		LevelName;
+
+	int			sky1Texture;
+	int			sky2Texture;
+	float		sky1ScrollDelta;
+	float		sky2ScrollDelta;
+	int			doubleSky;
+	int			lightning;
+	name		SkyBox;
+	name		FadeTable;
+
+	int			cdTrack;
+	name		SongLump;
+};
+
+//**************************************************************************
+//
+//  Server types
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  Other stuff
+//
+//==========================================================================
+
+struct opening_t
+{
+	float top;
+	float bottom;
+	float range;
+	float lowfloor;
+	sec_plane_t *floor;
+	sec_plane_t *ceiling;
+	opening_t *next;
+};
+
+struct intercept_t
+{
+	float frac;	// along trace line
+	bool bIsALine;
+	Entity Thing;
+	line_t *line;
+};
+
+const int MAXSPECIALCROSS	= 32;
+
+struct tmtrace_t
+{
+	Entity Thing;
+	TVec End;
+	float BBox[4];
+	float FloorZ;
+	float CeilingZ;
+	float DropOffZ;
+	sec_plane_t *Floor;
+	sec_plane_t *Ceiling;
+
+	bool bFloatOk;	// if true, move would be ok if
+					// within tmtrace.FloorZ - tmtrace.CeilingZ
+
+	// keep track of the line that lowers the ceiling,
+	// so missiles don't explode against sky hack walls
+	line_t *CeilingLine;
+
+	// keep track of special lines as they are hit,
+	// but don't process them until the move is proven valid
+	line_t *SpecHit[MAXSPECIALCROSS];
+	int NumSpecHit;
+
+	Entity BlockingMobj;
+};
+
+//**************************************************************************
+//
+//  Client types
+//
+//**************************************************************************
+
+struct cl_pspdef_t
+{
+	int sprite;
+	int frame;
+	void* __alias_model;
+	int alias_frame;
+	int alias_skinnum;
+	float sx;
+	float sy;
+};
+
+//
+//  Server list
+//
+
+enum { HOSTCACHESIZE		= 8 };
+
+struct hostcache_t
+{
+	string			Name;
+	string			Map;
+	string			CName;
+	string			WadFiles[20];
+	int				Users;
+	int				MaxUsers;
+};
+
+struct slist_t
+{
+	bool			bInProgress;
+	int				Count;
+	hostcache_t*	Cache;
+	string			ReturnReason;
+};
+
+struct scores_t
+{
+	string	Name;
+	bool	bActive;
+	int		frags[MAXPLAYERS];
+	int		killcount;
+	int		itemcount;
+	int		secretcount;
+	float	time;
+	string	userinfo;
+};
+
+struct im_t
+{
+	name	LeaveMap;
+	int		LeaveCluster;
+	string	LeaveName;
+
+	name	EnterMap;
+	int		EnterCluster;
+	string	EnterName;
+
+	string	Text;
+	name	TextFlat;
+	name	TextPic;
+	name	TextMusic;
+	int		TextCDTrack;
+	int		TextCDId;
+
+	int		TotalKills;
+	int		TotalItems;
+	int		TotalSecret;
+	float	Time;
+
+	bool	bNoIntermission;
+	bool	bTextIsLump;
+};
+
+struct picinfo_t
+{
+	int width;
+	int height;
+	int xoffset;
+	int yoffset;
+};
+
+struct dlight_t
+{
+	TVec origin;
+	float radius;
+	float die;	// stop lighting after this time
+	float decay;	// drop this each second
+	float minlight;	// don't add when contributing less
+	int key;
+	int color;
+};
+
+struct particle_t
+{
+	TVec org;
+	int color;
+	particle_t *next;
+	TVec vel;
+	float die;
+	int type;
+	float ramp;
+};
+
+struct ClipRect
+{
+	float OriginX;		// X origin of rectangle, in absolute coordinates
+	float OriginY;		// Y origin of rectangle, in absolute coordinates
+
+	float ClipX;		// Leftmost edge of rectangle relative to origin
+	float ClipY;		// Topmost edge of rectangle relative to origin
+	float ClipWidth;	// Width of rectangle
+	float ClipHeight;	// Height of rectangle
+};
+
+//**************************************************************************
+//
+//	Network protocol constants.
+//
+//**************************************************************************
+
+enum { PROTOCOL_VERSION = 10 };
+
+enum
+{
+	svc_bad,
+	svc_nop,
+	svc_disconnect,
+	svc_server_info,
+
+	svc_print,
+	svc_center_print,
+	svc_stringcmd,
+	svc_signonnum,
+
+	svc_set_angles,
+	svc_center_look,
+	svc_view_data,
+	svc_stats_long,
+	svc_stats_short,
+	svc_stats_byte,
+
+	svc_time,
+	svc_pause,
+
+	svc_spawn_baseline,
+	svc_update_mobj,
+
+	svc_side_top,
+	svc_side_mid,
+	svc_side_bot,
+	svc_side_ofs,
+
+	svc_sec_floor,
+	svc_sec_ceil,
+	svc_sec_update,
+
+	svc_start_sound,
+	svc_stop_sound,
+	svc_start_seq,
+	svc_stop_seq,
+
+	svc_poly_spawn,
+	svc_poly_translate,
+	svc_poly_update,
+	svc_force_lightning,
+
+	svc_intermission,
+	svc_skip_intermission,
+	svc_finale,
+
+	svc_sec_floor_plane,
+	svc_sec_ceil_plane,
+
+	svc_serverinfo,
+	svc_userinfo,
+	svc_setinfo,
+
+	svc_sprites,
+	svc_model,
+	svc_skin,
+
+	svc_line_transluc,
+	svc_sec_transluc,
+	svc_extra_floor,
+	svc_swap_planes,
+
+	svc_static_light,
+	svc_static_light_rgb,
+	svc_sec_light_color,
+
+	svc_change_sky,
+	svc_change_music,
+	svc_set_floor_light_sec,
+	svc_set_ceil_light_sec,
+
+	svc_set_heightsec,
+
+	svc_class_name,
+	svc_stats_string,
+
+	USER_PROTOCOL_START = 128
+};
+
+enum
+{
+	clc_bad,
+	clc_nop,
+	clc_disconnect,
+	clc_move,
+	clc_stringcmd,
+	clc_player_info
+};
+
+//**************************************************************************
+
+//  Keys and buttons
+enum
+{
+	K_SPACE = 32,
+
+	K_a = 97,
+	K_b,
+	K_c,
+	K_d,
+	K_e,
+	K_f,
+	K_g,
+	K_h,
+	K_i,
+	K_j,
+	K_k,
+	K_l,
+	K_m,
+	K_n,
+	K_o,
+	K_p,
+	K_q,
+	K_r,
+	K_s,
+	K_t,
+	K_u,
+	K_v,
+	K_w,
+	K_x,
+	K_y,
+	K_z,
+
+	K_UPARROW = 0x80,
+	K_LEFTARROW,
+	K_RIGHTARROW,
+	K_DOWNARROW,
+	K_INSERT,
+	K_DELETE,
+	K_HOME,
+	K_END,
+	K_PAGEUP,
+	K_PAGEDOWN,
+
+	K_PAD0,
+	K_PAD1,
+	K_PAD2,
+	K_PAD3,
+	K_PAD4,
+	K_PAD5,
+	K_PAD6,
+	K_PAD7,
+	K_PAD8,
+	K_PAD9,
+
+	K_NUMLOCK,
+	K_PADDIVIDE,
+	K_PADMULTIPLE,
+	K_PADMINUS,
+	K_PADPLUS,
+	K_PADENTER,
+	K_PADDOT,
+
+	K_ESCAPE,
+	K_ENTER,
+	K_TAB,
+	K_BACKSPACE,
+	K_CAPSLOCK,
+
+	K_F1,
+	K_F2,
+	K_F3,
+	K_F4,
+	K_F5,
+	K_F6,
+	K_F7,
+	K_F8,
+	K_F9,
+	K_F10,
+	K_F11,
+	K_F12,
+
+	K_LSHIFT,
+	K_RSHIFT,
+	K_LCTRL,
+	K_RCTRL,
+	K_LALT,
+	K_RALT,
+
+	K_LWIN,
+	K_RWIN,
+	K_MENU,
+
+	K_PRINTSCRN,
+	K_SCROLLLOCK,
+	K_PAUSE,
+
+	K_ABNT_C1,
+	K_YEN,
+	K_KANA,
+	K_CONVERT,
+	K_NOCONVERT,
+	K_AT,
+	K_CIRCUMFLEX,
+	K_COLON2,
+	K_KANJI,
+
+	K_MOUSE1,
+	K_MOUSE2,
+	K_MOUSE3,
+
+	K_MOUSED1,
+	K_MOUSED2,
+	K_MOUSED3,
+
+	K_MWHEELUP,
+	K_MWHEELDOWN,
+
+	K_JOY1,
+	K_JOY2,
+	K_JOY3,
+	K_JOY4,
+	K_JOY5,
+	K_JOY6,
+	K_JOY7,
+	K_JOY8,
+	K_JOY9,
+	K_JOY10,
+	K_JOY11,
+	K_JOY12,
+	K_JOY13,
+	K_JOY14,
+	K_JOY15,
+	K_JOY16,
+
+	KEY_COUNT,
+
+	SCANCODECOUNT = KEY_COUNT - 0x80
+};
+
+//  Input event types.
+enum
+{
+	ev_keydown,
+	ev_keyup,
+	ev_mouse,
+	ev_joystick
+};
+
+//  Event structure.
+struct event_t
+{
+	int type;	// event type
+	int data1;	// keys / mouse/joystick buttons
+	int data2;	// mouse/joystick x move
+	int data3;	// mouse/joystick y move
+};
+
+native readonly private void* CxxVTable;
+native readonly private void* VTable;
+native readonly private int ObjectIndex;
+native readonly private int ObjectFlags;
+native readonly classid Class;
+
+native void Destroy();
+native final bool IsA(name CheckName);
+native final bool IsDestroyed();
+
+//==========================================================================
+//
+//              COMMON BUILTINS
+//
+//==========================================================================
+
+//
+//  Error functions
+//
+
+//  Shut down client and server, go to title
+native static final void Error(string format, ...);
+//  Exit programm with error
+native static final void FatalError(string format, ...);
+
+//
+//  Cvar functions
+//
+
+//  Create a new cvar
+native static final void CreateCvar(name Name, string default_value, int flags);
+//  Read value
+native static final int GetCvar(name Name);
+//  Set cvar value
+native static final void SetCvar(name Name, int value);
+//  Read float value
+native static final float GetCvarF(name Name);
+//  Set cvar float value
+native static final void SetCvarF(name Name, float value);
+//  Read string value
+native static final string GetCvarS(name Name);
+//  Set cvar string value
+native static final void SetCvarS(name Name, string value);
+
+//
+//  Math functions
+//
+
+//  Normalises angle in range 0..360
+native static final float AngleMod360(float angle);
+//  Normalises angle in range -180..180
+native static final float AngleMod180(float angle);
+//  Absolute value
+native static final int abs(int val);
+//  Absolute value
+native static final float fabs(float val);
+//  Sine
+native static final float sin(float angle);
+//  Cosine
+native static final float cos(float angle);
+//  Tangent
+native static final float tan(float angle);
+//  Arctangent
+native static final float atan(float slope);
+//  Arctangent
+native static final float atan2(float y, float x);
+//  Vector length
+native static final float Length(TVec vec);
+//  Normalises vector
+native static final TVec Normalise(TVec vec);
+//  Dot product
+native static final float DotProduct(TVec v1, TVec v2);
+//  Cross product (perpendicular vector)
+native static final TVec CrossProduct(TVec v1, TVec v2);
+//  Creates vectors for given angle vector
+native static final void AngleVectors(TAVec * angles, TVec * forward, TVec * right,
+	TVec * up);
+//  Simplified version of AngleVectors, creates only forward vector
+native static final void AngleVector(TAVec * angles, TVec * forward);
+//  Create angle vector for a vector
+native static final void VectorAngles(TVec * vec, TAVec * angles);
+//  Get z of point with given x and y coords
+// Don't try to use it on a vertical plane
+native static final float GetPlanePointZ(TPlane * plane, TVec point);
+//  Returns side 0 (front) or 1 (back).
+native static final int PointOnPlaneSide(TVec point, TPlane * plane);
+//  Rotates a direction vector
+native static final TVec RotateDirectionVector(TVec vec, TAVec rot);
+//  Rotates vector around Z axis
+native static final void VectorRotateAroundZ(TVec * vec, float angle);
+
+//
+//  Random numbers
+//
+
+//  Floating random number 0.0 ... 0.999999
+native static final float Random();
+//  Integer random number 1 .. 255
+native static final int P_Random();
+
+//
+//  String functions
+//
+
+//  String length
+native static final int strlen(string s);
+//  Compare strings
+native static final int strcmp(string s1, string s2);
+//  Compare strings ingnoring case
+native static final int stricmp(string s1, string s2);
+//  Append string to string
+native static final string strcat(string s1, string s2);
+//  Convert string to lowercase
+native static final string strlwr(string s);
+//  Convert string to uppercase
+native static final string strupr(string s);
+//  Gets a substring
+native static final string substr(string Str, int Start, int Len);
+//  Does varargs print into a temporary buffer
+native static final string va(string format, ...);
+//  Converts string to integer
+native static final int atoi(string str);
+//  Converts string to float
+native static final float atof(string str);
+
+//
+//  Printing to console
+//
+
+//  Print to console
+native static final void print(string format, ...);
+//  Print to console only when developer == 1
+native static final void dprint(string format, ...);
+
+//
+//  Texture / flat number retrieval
+//
+
+native static final int CheckTextureNumForName(name Name);
+native static final int TextureNumForName(name Name);
+native static final int CheckFlatNumForName(name Name);
+native static final int FlatNumForName(name Name);
+native static final float TextureHeight(int pic);
+
+//
+//  Message IO functions
+//
+
+native static final void MSG_Select(int msgtype);
+native static final bool MSG_CheckSpace(int Size);
+native static final void MSG_WriteByte(int data);
+native static final void MSG_WriteShort(int data);
+native static final void MSG_WriteLong(int data);
+native static final int MSG_ReadChar();
+native static final int MSG_ReadByte();
+native static final int MSG_ReadShort();
+native static final int MSG_ReadWord();
+native static final int MSG_ReadLong();
+
+//
+//  Type conversions
+//
+
+//  float -> int
+native static final int ftoi(float f);
+//  int -> float
+native static final float itof(int f);
+//  Converts string to name
+native static final name StrToName(string Str);
+
+//
+//  Console command functions
+//
+
+native static final int Cmd_CheckParm(string str);
+//  Adds text to command buffer, same as typing it in console
+native static final void CmdBuf_AddText(string format, ...);
+
+//
+//  Misc
+//
+
+//  Reads key value from info string (userinfo or serverinfo)
+native static final string Info_ValueForKey(string info, string key);
+//  Checks if WAD lump is present, used to check for shareware/extended WADs
+native static final bool WadLumpPresent(name Name);
+native static final Object SpawnObject(classid cid);
+native static final classid FindClass(name Name);
+native static final bool StateIsInRange(state State, state Start, state End,
+	int MaxDepth);
+native static final name GetStateSpriteName(state State);
+
+//==========================================================================
+//
+//              CLIENT BUILTINS
+//
+//==========================================================================
+
+//
+//  Graphics
+//
+
+native static final void SetVirtualScreen(int Width, int Height);
+//  Registers a graphic, returns handle
+native static final int R_RegisterPic(name Name);
+//  Registers a graphic with custom palette, returns handle
+native static final int R_RegisterPicPal(name Name, name palname);
+//  Retrieves pic info
+native static final void R_GetPicInfo(int handle, picinfo_t * info);
+//  Draws a pic
+native static final void R_DrawPic(int x, int y, int handle);
+//  Draws a translucent pic
+native static final void R_DrawPic2(int x, int y, int handle, int trans);
+//  Draws a shadowed pic
+native static final void R_DrawShadowedPic(int x, int y, int handle);
+//  Installs a sprite model
+native static final void R_InstallSprite(string Name, int index);
+//  Draws a sprite
+native static final void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
+	int translation);
+//  Installs model
+native static final void* InstallModel(string Name);
+//  Draws a model
+native static final void R_DrawModelFrame(TVec origin, float angle, void* model,
+	int frame, string skin);
+//  Draws a rectangle filled with a flat
+native static final void R_FillRectWithFlat(int x, int y, int width, int height,
+	name Name);
+//  Darkens a screen region
+native static final void R_ShadeRect(int x, int y, int w, int h, int shade);
+//  Draws a coloured rectangle
+native static final void R_FillRect(int x, int y, int w, int h, int colour);
+
+//
+//  Text
+//
+
+//  Selects active font
+native static final void T_SetFont(int font);
+//  Changes text alignement
+native static final void T_SetAlign(int halign, int valign);
+//  Changes text spacing
+native static final void T_SetDist(int hdist, int vdist);
+//  Enable/disable text shadow
+native static final void T_SetShadow(bool on);
+//  Calculates text width
+native static final int T_TextWidth(string text);
+//  Calculates text height
+native static final int T_TextHeight(string text);
+//  Draws text
+native static final void T_DrawText(int x, int y, string text);
+//  Draws text wrapping at the width w
+native static final void T_DrawTextW(int x, int y, string text, int w);
+//  Draws a cursor at the end of last drawn string
+native static final void T_DrawCursor();
+
+//
+//  Client sound stuff
+//
+
+//  Plays a sound
+native static final void LocalSound(name Name);
+//  Checks if sound is still playing.
+native static final bool IsLocalSoundPlaying(name Name);
+//  Stops all local sounds.
+native static final void StopLocalSounds();
+
+//  Handle shift+key
+native static final string TranslateKey(int c);
+native static final string P_GetMapName(int map);
+native static final name P_GetMapLumpName(int map);
+native static final name P_TranslateMap(int map);
+native static final bool SV_GetSaveString(int i, string* buf);
+native static final void StartSearch();
+native static final slist_t * GetSlist();
+native static final string KeyNameForNum(int KeyNr);
+native static final void IN_GetBindingKeys(string cmd, int *key1, int *key2);
+native static final void IN_SetBinding(int key, string ondown, string onup);
+native static final string LoadTextLump(name Name);
+native static final dlight_t *AllocDlight(int key);
+native static final particle_t *NewParticle();
+
+//==========================================================================
+//
+//              SERVER BUILTINS
+//
+//==========================================================================
+
+//
+//  Print functions
+//
+
+//  Broadcast message (print to all clients)
+native static final void bprint(string format, ...);
+
+//
+//  Map utilites
+//
+
+native static final opening_t *LineOpenings(line_t * linedef, TVec point);
+//  Returns 0 - front, 1 - back, -1 - on
+native static final int P_BoxOnLineSide(float *tmbox, line_t * ld);
+//  Find the best gap that the thing could fit in, given a certain Z
+// position (z1 is foot, z2 is head).
+native static final sec_region_t *FindThingGap(sec_region_t * gaps, TVec point, float z1,
+	float z2);
+//  Find the best opening
+native static final opening_t *FindOpening(opening_t * gaps, float z1, float z2);
+//  Find best region in sector for a given point
+native static final sec_region_t *PointInRegion(sector_t * sector, TVec p);
+native static final int MapBlock(float val);
+
+//
+//  Mobj utilites
+//
+
+native static final Entity NewMobjThinker(classid cid);
+
+//
+//  Special thinker utilites
+//
+
+native static final Thinker NewSpecialThinker(classid);
+native static final void RemoveSpecialThinker(Thinker spec);
+native static final void P_ChangeSwitchTexture(line_t * line, int useAgain, name DefaultSound);
+native static final Thinker NextThinker(Thinker last, classid id);
+
+//
+//  ACS functions
+//
+
+native static final bool StartACS(int number, int map, int arg1, int arg2, int arg3,
+	Entity activator, line_t* line, int side, bool Always, bool WantResult);
+native static final bool SuspendACS(int number, int map);
+native static final bool TerminateACS(int number, int map);
+
+//
+//  Sound functions
+//
+
+native static final void StartSoundAtVolume(Entity mobj, int sound, int channel,
+	int volume);
+native static final void SectorStartSound(sector_t * sec, int sound, int channel);
+native static final void SectorStopSound(sector_t * sec, int channel);
+native static final bool GetSoundPlayingInfo(Entity mobj, int sound_id);
+native static final int GetSoundID(name Name);
+native static final void SetSeqTrans(name Name, int Num, int SeqType);
+native static final name GetSeqTrans(int Num, int SeqType);
+native static final void SectorStartSequence(sector_t * sector, name sequence);
+native static final void SectorStopSequence(sector_t * sector);
+native static final void PolyobjStartSequence(polyobj_t * mobj, name sequence);
+native static final void PolyobjStopSequence(polyobj_t * mobj);
+
+#define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)
+
+native static final void G_ExitLevel(int Position);
+native static final void G_SecretExitLevel(int Position);
+
+native static final void G_Completed(int Map, int Position, int SaveAngle);
+native static final int TerrainType(int pic);
+native static final void P_ForceLightning();
+native static final void SB_Start();
+native static final int FindModel(string Name);
+native static final int GetModelIndex(name Name);
+native static final int FindSkin(string Name);
+native static final classid FindClassFromEditorId(int Id);
+native static final classid FindClassFromScriptId(int Id);
+native static final void ChangeMusic(string SongName);
+
+defaultproperties
+{
+}
