@@ -5,8 +5,7 @@ default.cfg				@srcdir@/default.cfg
 startup.vs				@srcdir@/startup.vs
 
 //	Common progs
-progs/common.dat		progs/common.dat
-progs/clcommon.dat		progs/clcommon.dat
+progs/engine.dat		progs/engine.dat
 progs/svcommon.dat		progs/svcommon.dat
 
 //	Default texture
