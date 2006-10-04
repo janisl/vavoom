@@ -150,6 +150,8 @@ void Host_Init()
 
 	PR_Init();
 
+	GLanguage.LoadStrings();
+
 	GSoundManager = new VSoundManager;
 	GSoundManager->Init();
 	R_InitTexture();
@@ -697,6 +699,7 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(ShutdownMapInfo, ())
 	SAFE_SHUTDOWN(FL_Shutdown, ())
 	SAFE_SHUTDOWN(W_Shutdown, ())
+	SAFE_SHUTDOWN(GLanguage.FreeData, ())
 
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())

@@ -125,6 +125,7 @@ REGISTER_NAME(ammnum0)
 REGISTER_NAME(stcfn033)
 REGISTER_NAME(clprogs)
 REGISTER_NAME(svprogs)
+REGISTER_NAME(language)
 
 // Closing -----------------------------------------------------------------
 

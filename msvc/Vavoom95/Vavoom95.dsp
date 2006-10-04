@@ -144,6 +144,10 @@ SOURCE=..\..\source\infostr.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\source\language.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\source\level.cpp
 # End Source File
 # Begin Source File
@@ -288,6 +292,10 @@ SOURCE=..\..\source\host.h
 # Begin Source File
 
 SOURCE=..\..\source\infostr.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\source\language.h
 # End Source File
 # Begin Source File
 

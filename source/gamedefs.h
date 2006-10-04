@@ -47,6 +47,7 @@
 #include "names.h"
 #include "name.h"
 #include "str.h"		//	Strings
+#include "language.h"
 #include "vector.h"
 #include "maths.h"
 #include "message.h"

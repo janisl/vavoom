@@ -126,6 +126,8 @@ _____MAIN_EXE__SOURCES = \
 	input.h \
 	l_glbsp.cpp \
 	l_glvis.cpp \
+	language.cpp \
+	language.h \
 	level.cpp \
 	level.h \
 	mapinfo.cpp \
@@ -395,6 +397,7 @@ _____SERVER_EXE__SOURCES = \
 	fs_zip.cpp \
 	host.cpp \
 	infostr.cpp \
+	language.cpp \
 	level.cpp \
 	mapinfo.cpp \
 	maths.cpp \
