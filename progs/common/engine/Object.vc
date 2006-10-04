@@ -84,13 +84,13 @@ enum
 	// orientation
 	SPR_ORIENTED,
 	//  Generate the sprite's axes, parallel to the viewplane, but
-	// rotated in that plane around the center according to the sprite
+	// rotated in that plane around the centre according to the sprite
 	// entity's roll angle. So sprforward stays the same, but sprright
 	// and sprup rotate
 	SPR_VP_PARALLEL_ORIENTED,
 	//  Generate the sprite's axes, with sprup straight up in worldspace,
 	// and sprright parallel to the viewplane and then rotated in that
-	// plane around the center according to the sprite entity's roll
+	// plane around the centre according to the sprite entity's roll
 	// angle. So sprforward stays the same, but sprright and sprup rotate
 	SPR_VP_PARALLEL_UPRIGHT_ORIENTED
 };
@@ -135,7 +135,7 @@ enum
 	PST_REBORN
 };
 
-const float TOCENTER		= -128.0;
+const float TOCENTRE		= -128.0;
 
 enum
 {
@@ -238,6 +238,12 @@ enum
 
 const int MAX_TID_COUNT		= 200;
 
+const float ATTN_NONE		= 0.0;
+const float ATTN_NORMAL		= 1.0;
+const float ATTN_IDLE		= 2.0;
+const float ATTN_STATIC		= 3.0;
+const float ATTN_SURROUND	= -1.0;
+
 //**************************************************************************
 //**
 //**    CLIENT DEFINES
@@ -262,7 +268,7 @@ enum
 enum
 {
 	hleft,		//Left
-	hcenter,	//Centred
+	hcentre,	//Centred
 	hright		//Right
 };
 
@@ -272,7 +278,7 @@ enum
 enum
 {
 	vtop,		//Top
-	vcenter,	//Center
+	vcentre,	//Centre
 	vbottom		//Bottom
 };
 
@@ -292,7 +298,7 @@ enum
 //**
 //**************************************************************************
 
-#define MobjCenter(mobj)\
+#define MobjCentre(mobj)\
 	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
 
 #define FOREACH(type, var) \
@@ -746,7 +752,7 @@ struct sec_plane_t : TPlane
 struct sec_params_t
 {
 	int lightlevel;
-	int LightColor;
+	int LightColour;
 	int contents;
 };
 
@@ -1036,17 +1042,6 @@ struct tmtrace_t
 //
 //**************************************************************************
 
-struct cl_pspdef_t
-{
-	int sprite;
-	int frame;
-	void* __alias_model;
-	int alias_frame;
-	int alias_skinnum;
-	float sx;
-	float sy;
-};
-
 //
 //  Server list
 //
@@ -1125,13 +1120,13 @@ struct dlight_t
 	float decay;	// drop this each second
 	float minlight;	// don't add when contributing less
 	int key;
-	int color;
+	int colour;
 };
 
 struct particle_t
 {
 	TVec org;
-	int color;
+	int colour;
 	particle_t *next;
 	TVec vel;
 	float die;
@@ -1166,12 +1161,12 @@ enum
 	svc_server_info,
 
 	svc_print,
-	svc_center_print,
+	svc_centre_print,
 	svc_stringcmd,
 	svc_signonnum,
 
 	svc_set_angles,
-	svc_center_look,
+	svc_centre_look,
 	svc_view_data,
 	svc_stats_long,
 	svc_stats_short,
@@ -1224,7 +1219,7 @@ enum
 
 	svc_static_light,
 	svc_static_light_rgb,
-	svc_sec_light_color,
+	svc_sec_light_colour,
 
 	svc_change_sky,
 	svc_change_music,
@@ -1235,6 +1230,7 @@ enum
 
 	svc_class_name,
 	svc_stats_string,
+	svc_add_seq_choice,
 
 	USER_PROTOCOL_START = 128
 };
@@ -1748,20 +1744,17 @@ native static final bool TerminateACS(int number, int map);
 //  Sound functions
 //
 
-native static final void StartSoundAtVolume(Entity mobj, int sound, int channel,
-	int volume);
-native static final void SectorStartSound(sector_t * sec, int sound, int channel);
-native static final void SectorStopSound(sector_t * sec, int channel);
 native static final bool GetSoundPlayingInfo(Entity mobj, int sound_id);
 native static final int GetSoundID(name Name);
 native static final void SetSeqTrans(name Name, int Num, int SeqType);
 native static final name GetSeqTrans(int Num, int SeqType);
-native static final void SectorStartSequence(sector_t * sector, name sequence);
+native static final name GetSeqSlot(name Sequence);
+native static final void SectorStartSequence(sector_t * sector, name sequence,
+	int ModeNum);
 native static final void SectorStopSequence(sector_t * sector);
-native static final void PolyobjStartSequence(polyobj_t * mobj, name sequence);
+native static final void PolyobjStartSequence(polyobj_t * mobj, name sequence,
+	int ModeNum);
 native static final void PolyobjStopSequence(polyobj_t * mobj);
-
-#define SectorStartSoundName(sec, Name, channel)	SectorStartSound(sec, GetSoundID(Name), channel)
 
 native static final void G_ExitLevel(int Position);
 native static final void G_SecretExitLevel(int Position);

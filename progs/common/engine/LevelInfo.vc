@@ -391,7 +391,7 @@ void AddStaticLight(TVec origin, float radius)
 //
 //==========================================================================
 
-void AddStaticLightRGB(TVec origin, float radius, int color)
+void AddStaticLightRGB(TVec origin, float radius, int colour)
 {
 	MSG_Select(MSG_SV_SIGNON);
 	MSG_WriteByte(svc_static_light_rgb);
@@ -399,7 +399,7 @@ void AddStaticLightRGB(TVec origin, float radius, int color)
 	MSG_WriteShort(ftoi(origin.y));
 	MSG_WriteShort(ftoi(origin.z));
 	MSG_WriteByte(ftoi(radius / 8.0));
-	MSG_WriteLong(color);
+	MSG_WriteLong(colour);
 }
 
 //==========================================================================
@@ -1001,7 +1001,7 @@ sector_t* FindModelFloorSector(sector_t* sec, float height)
 //
 //	jff 02/03/98 Add routine to find numeric model ceiling
 // around a sector specified by sector number
-// used only from generalized ceiling types
+// used only from generalised ceiling types
 //	jff 3/14/98 change first parameter to plain height to allow call
 // from routine not using ceiling_t
 //
