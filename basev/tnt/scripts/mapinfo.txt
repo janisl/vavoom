@@ -1,306 +1,257 @@
-map MAP01 "system control"
+map map01 lookup thustr_1
 cluster 5
-next MAP02
-secret MAP31
-SKY1 SKY1 0
-Music D_runnin
+next map02
+secret map31
+sky1 sky1 0
+Music d_runnin
 
-map MAP02 "human bbq"
+map map02 lookup thustr_2
 cluster 5
-next MAP03
-secret MAP31
-SKY1 SKY1 0
-Music D_stalks
+next map03
+secret map31
+sky1 sky1 0
+Music d_stalks
 
-map MAP03 "power control"
+map map03 lookup thustr_3
 cluster 5
-next MAP04
-secret MAP31
-SKY1 SKY1 0
-Music D_countd
+next map04
+secret map31
+sky1 sky1 0
+Music d_countd
 
-map MAP04 "wormhole"
+map map04 lookup thustr_4
 cluster 5
-next MAP05
-secret MAP31
-SKY1 SKY1 0
-Music D_betwee
+next map05
+secret map31
+sky1 sky1 0
+Music d_betwee
 
-map MAP05 "hanger"
+map map05 lookup thustr_5
 cluster 5
-next MAP06
-secret MAP31
-SKY1 SKY1 0
-Music D_doom
+next map06
+secret map31
+sky1 sky1 0
+Music d_doom
 
-map MAP06 "open season"
+map map06 lookup thustr_6
 cluster 5
-next MAP07
-secret MAP31
-SKY1 SKY1 0
-Music D_the_da
+next map07
+secret map31
+sky1 sky1 0
+Music d_the_da
 
 ;------------------------------------------------------
-map MAP07 "prison"
+map map07 lookup thustr_7
 cluster 6
-next MAP08
-secret MAP31
-SKY1 SKY1 0
-Music D_shawn
+next map08
+secret map31
+sky1 sky1 0
+Music d_shawn
 map07special
 
-map MAP08 "metal"
+map map08 lookup thustr_8
 cluster 6
-next MAP09
-secret MAP31
-SKY1 SKY1 0
-Music D_ddtblu
+next map09
+secret map31
+sky1 sky1 0
+Music d_ddtblu
 
-map MAP09 "stronghold"
+map map09 lookup thustr_9
 cluster 6
-next MAP10
-secret MAP31
-SKY1 SKY1 0
-Music D_in_cit
+next map10
+secret map31
+sky1 sky1 0
+Music d_in_cit
 
-map MAP10 "redemption"
+map map10 lookup thustr_10
 cluster 6
-next MAP11
-secret MAP31
-SKY1 SKY1 0
-Music D_dead
+next map11
+secret map31
+sky1 sky1 0
+Music d_dead
 
-map MAP11 "storage facility"
+map map11 lookup thustr_11
 cluster 6
-next MAP12
-secret MAP31
-SKY1 SKY1 0
-Music D_stlks2
+next map12
+secret map31
+sky1 sky1 0
+Music d_stlks2
 
 ;------------------------------------------------------
-map MAP12 "crater"
+map map12 lookup thustr_12
 cluster 7
-next MAP13
-secret MAP31
-SKY1 SKY2 0
-Music D_theda2
+next map13
+secret map31
+sky1 sky2 0
+Music d_theda2
 
-map MAP13 "nukage processing"
+map map13 lookup thustr_13
 cluster 7
-next MAP14
-secret MAP31
-SKY1 SKY2 0
-Music D_doom2
+next map14
+secret map31
+sky1 sky2 0
+Music d_doom2
 
-map MAP14 "steel works"
+map map14 lookup thustr_14
 cluster 7
-next MAP15
-secret MAP31
-SKY1 SKY2 0
-Music D_ddtbl2
+next map15
+secret map31
+sky1 sky2 0
+Music d_ddtbl2
 
-map MAP15 "dead zone"
+map map15 lookup thustr_15
 cluster 7
-next MAP16
-secret MAP31
-SKY1 SKY2 0
-Music D_runni2
+next map16
+secret map31
+sky1 sky2 0
+Music d_runni2
 
-map MAP16 "deepest reaches"
+map map16 lookup thustr_16
 cluster 7
-next MAP17
-secret MAP31
-SKY1 SKY2 0
-Music D_dead2
+next map17
+secret map31
+sky1 sky2 0
+Music d_dead2
 
-map MAP17 "processing area"
+map map17 lookup thustr_17
 cluster 7
-next MAP18
-secret MAP31
-SKY1 SKY2 0
-Music D_stlks3
+next map18
+secret map31
+sky1 sky2 0
+Music d_stlks3
 
-map MAP18 "mill"
+map map18 lookup thustr_18
 cluster 7
-next MAP19
-secret MAP31
-SKY1 SKY2 0
-Music D_romero
+next map19
+secret map31
+sky1 sky2 0
+Music d_romero
 
-map MAP19 "shipping/respawning"
+map map19 lookup thustr_19
 cluster 7
-next MAP20
-secret MAP31
-SKY1 SKY2 0
-Music D_shawn2
+next map20
+secret map31
+sky1 sky2 0
+Music d_shawn2
 
-map MAP20 "central processing"
+map map20 lookup thustr_20
 cluster 7
-next MAP21
-secret MAP31
-SKY1 SKY2 0
-Music D_messag
+next map21
+secret map31
+sky1 sky2 0
+Music d_messag
 
 ;-------------------------------------------------------
-map MAP21 "administration center"
+map map21 lookup thustr_21
 cluster 8
-next MAP22
-secret MAP31
-SKY1 SKY3 0
-Music D_count2
+next map22
+secret map31
+sky1 sky3 0
+Music d_count2
 
-map MAP22 "habitat"
+map map22 lookup thustr_22
 cluster 8
-next MAP23
-secret MAP31
-SKY1 SKY3 0
-Music D_ddtbl3
+next map23
+secret map31
+sky1 sky3 0
+Music d_ddtbl3
 
-map MAP23 "lunar mining project"
+map map23 lookup thustr_23
 cluster 8
-next MAP24
-secret MAP31
-SKY1 SKY3 0
-Music D_ampie
+next map24
+secret map31
+sky1 sky3 0
+Music d_ampie
 
-map MAP24 "quarry"
+map map24 lookup thustr_24
 cluster 8
-next MAP25
-secret MAP31
-SKY1 SKY3 0
-Music D_theda3
+next map25
+secret map31
+sky1 sky3 0
+Music d_theda3
 
-map MAP25 "baron's den"
+map map25 lookup thustr_25
 cluster 8
-next MAP26
-secret MAP31
-SKY1 SKY3 0
-Music D_adrian
+next map26
+secret map31
+sky1 sky3 0
+Music d_adrian
 
-map MAP26 "ballistyx"
+map map26 lookup thustr_26
 cluster 8
-next MAP27
-secret MAP31
-SKY1 SKY3 0
-Music D_messg2
+next map27
+secret map31
+sky1 sky3 0
+Music d_messg2
 
-map MAP27 "mount pain"
+map map27 lookup thustr_27
 cluster 8
-next MAP28
-secret MAP31
-SKY1 SKY3 0
-Music D_romer2
+next map28
+secret map31
+sky1 sky3 0
+Music d_romer2
 
-map MAP28 "heck"
+map map28 lookup thustr_28
 cluster 8
-next MAP29
-secret MAP31
-SKY1 SKY3 0
-Music D_tense
+next map29
+secret map31
+sky1 sky3 0
+Music d_tense
 
-map MAP29 "river styx"
+map map29 lookup thustr_29
 cluster 8
-next MAP30
-secret MAP31
-SKY1 SKY3 0
-Music D_shawn3
+next map30
+secret map31
+sky1 sky3 0
+Music d_shawn3
 
-map MAP30 "last call"
+map map30 lookup thustr_30
 cluster 8
-next MAP01
-SKY1 SKY3 0
-Music D_openin
+next map01
+sky1 sky3 0
+Music d_openin
 
 ;------------------------------------------------------
-map MAP31 "pharaoh"
+map map31 lookup thustr_31
 cluster 9
-next MAP32
-secret MAP32
-SKY1 SKY3 0
-Music D_evil
+next map32
+secret map32
+sky1 sky3 0
+Music d_evil
 
-map MAP32 "caribbean"
+map map32 lookup thustr_32
 cluster 10
-next MAP01
-SKY1 SKY3 0
-Music D_ultima
+next map01
+sky1 sky3 0
+Music d_ultima
 
 ;------------------------------------------------------
 clusterdef 5
-exittext "You've fought your way out of the infested
-experimental labs.   It seems that UAC has
-once again gulped it down.  With their
-high turnover, it must be hard for poor
-old UAC to buy corporate health insurance
-nowadays..
-
-Ahead lies the military complex, now
-swarming with diseased horrors hot to get
-their teeth into you. With luck, the
-complex still has some warlike ordnance
-laying around."
+exittext lookup t1text
 flat slime16
 music d_read_m
 
 clusterdef 6
-exittext "You hear the grinding of heavy machinery
-ahead.  You sure hope they're not stamping
-out new hellspawn, but you're ready to
-ream out a whole herd if you have to.
-They might be planning a blood feast, but
-you feel about as mean as two thousand
-maniacs packed into one mad killer.
-
-You don't plan to go down easy."
+exittext lookup t2text
 flat rrock14
 music d_read_m
 
 clusterdef 7
-exittext "The vista opening ahead looks real damn
-familiar. Smells familiar, too -- like
-fried excrement. You didn't like this
-place before, and you sure as hell ain't
-planning to like it now. The more you
-brood on it, the madder you get.
-Hefting your gun, an evil grin trickles
-onto your face. Time to take some names."
+exittext lookup t3text
 flat rrock07
 music d_read_m
 
 clusterdef 8
-exittext "Suddenly, all is silent, from one horizon
-to the other. The agonizing echo of Hell
-fades away, the nightmare sky turns to
-blue, the heaps of monster corpses start
-to evaporate along with the evil stench
-that filled the air. Jeeze, maybe you've
-done it. Have you really won?
-
-Something rumbles in the distance.
-A blue light begins to glow inside the
-ruined skull of the demon-spitter."
+exittext lookup t4text
 flat rrock17
 music d_read_m
 
 clusterdef 9
-entertext "What now? Looks totally different. Kind
-of like King Tut's condo. Well,
-whatever's here can't be any worse
-than usual. Can it?  Or maybe it's best
-to let sleeping gods lie.."
+entertext lookup t5text
 flat rrock13
 music d_read_m
 
 clusterdef 10
-entertext "Time for a vacation. You've burst the
-bowels of hell and by golly you're ready
-for a break. You mutter to yourself,
-Maybe someone else can kick Hell's ass
-next time around. Ahead lies a quiet town,
-with peaceful flowing water, quaint
-buildings, and presumably no Hellspawn.
-
-As you step off the transport, you hear
-the stomp of a cyberdemon's iron shoe."
+entertext lookup t6text
 flat rrock19
 music d_read_m

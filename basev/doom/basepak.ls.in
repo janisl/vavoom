@@ -112,6 +112,9 @@ sndseq.txt				@srcdir@/scripts/sndseq.txt
 terrains.txt			@srcdir@/scripts/terrains.txt
 skyboxes.txt			@srcdir@/scripts/skyboxes.txt
 
+//	Language strings
+language.en				@srcdir@/language.en
+
 //	Generated data
 $load @srcdir@/palette.pcx
 rgbtable.dat			rgbtable

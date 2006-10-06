@@ -5284,9 +5284,149 @@ string_def_t	strings[] =
 	{NULL, NULL, NULL}
 };
 
-string_def_t	txtlumps2[] =
+string_def_t	Strings[] =
 {
-	{ "fin1text.txt",
+	{ "hustr_e1m1", "E1M1: Hangar", NULL },
+	{ "hustr_e1m2", "E1M2: Nuclear Plant", NULL },
+	{ "hustr_e1m3", "E1M3: Toxin Refinery", NULL },
+	{ "hustr_e1m4", "E1M4: Command Control", NULL },
+	{ "hustr_e1m5", "E1M5: Phobos Lab", NULL },
+	{ "hustr_e1m6", "E1M6: Central Processing", NULL },
+	{ "hustr_e1m7", "E1M7: Computer Station", NULL },
+	{ "hustr_e1m8", "E1M8: Phobos Anomaly", NULL },
+	{ "hustr_e1m9", "E1M9: Military Base", NULL },
+	{ "hustr_e2m1", "E2M1: Deimos Anomaly", NULL },
+	{ "hustr_e2m2", "E2M2: Containment Area", NULL },
+	{ "hustr_e2m3", "E2M3: Refinery", NULL },
+	{ "hustr_e2m4", "E2M4: Deimos Lab", NULL },
+	{ "hustr_e2m5", "E2M5: Command Center", NULL },
+	{ "hustr_e2m6", "E2M6: Halls of the Damned", NULL },
+	{ "hustr_e2m7", "E2M7: Spawning Vats", NULL },
+	{ "hustr_e2m8", "E2M8: Tower of Babel", NULL },
+	{ "hustr_e2m9", "E2M9: Fortress of Mystery", NULL },
+	{ "hustr_e3m1", "E3M1: Hell Keep", NULL },
+	{ "hustr_e3m2", "E3M2: Slough of Despair", NULL },
+	{ "hustr_e3m3", "E3M3: Pandemonium", NULL },
+	{ "hustr_e3m4", "E3M4: House of Pain", NULL },
+	{ "hustr_e3m5", "E3M5: Unholy Cathedral", NULL },
+	{ "hustr_e3m6", "E3M6: Mt. Erebus", NULL },
+	{ "hustr_e3m7", "E3M7: Limbo", NULL },
+	{ "hustr_e3m8", "E3M8: Dis", NULL },
+	{ "hustr_e3m9", "E3M9: Warrens", NULL },
+	{ "hustr_e4m1", "E4M1: Hell Beneath", NULL },
+	{ "hustr_e4m2", "E4M2: Perfect Hatred", NULL },
+	{ "hustr_e4m3", "E4M3: Sever the Wicked", NULL },
+	{ "hustr_e4m4", "E4M4: Unruly Evil", NULL },
+	{ "hustr_e4m5", "E4M5: They Will Repent", NULL },
+	{ "hustr_e4m6", "E4M6: Against thee Wickedly", NULL },
+	{ "hustr_e4m7", "E4M7: And Hell Followed", NULL },
+	{ "hustr_e4m8", "E4M8: Unto the Cruel", NULL },
+	{ "hustr_e4m9", "E4M9: Fear", NULL },
+
+	{ "hustr_1", "level 1: entryway", NULL },
+	{ "hustr_2", "level 2: underhalls", NULL },
+	{ "hustr_3", "level 3: the gantlet", NULL },
+	{ "hustr_4", "level 4: the focus", NULL },
+	{ "hustr_5", "level 5: the waste tunnels", NULL },
+	{ "hustr_6", "level 6: the crusher", NULL },
+	{ "hustr_7", "level 7: dead simple", NULL },
+	{ "hustr_8", "level 8: tricks and traps", NULL },
+	{ "hustr_9", "level 9: the pit", NULL },
+	{ "hustr_10", "level 10: refueling base", NULL },
+	{ "hustr_11", "level 11: 'o' of destruction!", NULL },
+	{ "hustr_12", "level 12: the factory", NULL },
+	{ "hustr_13", "level 13: downtown", NULL },
+	{ "hustr_14", "level 14: the inmost dens", NULL },
+	{ "hustr_15", "level 15: industrial zone", NULL },
+	{ "hustr_16", "level 16: suburbs", NULL },
+	{ "hustr_17", "level 17: tenements", NULL },
+	{ "hustr_18", "level 18: the courtyard", NULL },
+	{ "hustr_19", "level 19: the citadel", NULL },
+	{ "hustr_20", "level 20: gotcha!", NULL },
+	{ "hustr_21", "level 21: nirvana", NULL },
+	{ "hustr_22", "level 22: the catacombs", NULL },
+	{ "hustr_23", "level 23: barrels o' fun", NULL },
+	{ "hustr_24", "level 24: the chasm", NULL },
+	{ "hustr_25", "level 25: bloodfalls", NULL },
+	{ "hustr_26", "level 26: the abandoned mines", NULL },
+	{ "hustr_27", "level 27: monster condo", NULL },
+	{ "hustr_28", "level 28: the spirit world", NULL },
+	{ "hustr_29", "level 29: the living end", NULL },
+	{ "hustr_30", "level 30: icon of sin", NULL },
+	{ "hustr_31", "level 31: wolfenstein", NULL },
+	{ "hustr_32", "level 32: grosse", NULL },
+
+	{ "e1text",
+		"Once you beat the big badasses and\n"
+		"clean out the moon base you're supposed\n"
+		"to win, aren't you? Aren't you? Where's\n"
+		"your fat reward and ticket home? What\n"
+		"the hell is this? It's not supposed to\n"
+		"end this way!\n"
+		"\n"
+		"It stinks like rotten meat, but looks\n"
+		"like the lost Deimos base.  Looks like\n"
+		"you're stuck on The Shores of Hell.\n"
+		"The only way out is through.\n"
+		"\n"
+		"To continue the DOOM experience, play\n"
+		"The Shores of Hell and its amazing\n"
+		"sequel, Inferno!\n", NULL },
+	{ "e2text",
+		"You've done it! The hideous cyber-\n"
+		"demon lord that ruled the lost Deimos\n"
+		"moon base has been slain and you\n"
+		"are triumphant! But ... where are\n"
+		"you? You clamber to the edge of the\n"
+		"moon and look down to see the awful\n"
+		"truth.\n"
+		"\n"
+		"Deimos floats above Hell itself!\n"
+		"You've never heard of anyone escaping\n"
+		"from Hell, but you'll make the bastards\n"
+		"sorry they ever heard of you! Quickly,\n"
+		"you rappel down to  the surface of\n"
+		"Hell.\n"
+		"\n"
+		"Now, it's on to the final chapter of\n"
+		"DOOM! -- Inferno.", NULL },
+	{ "e3text",
+		"The loathsome spiderdemon that\n"
+		"masterminded the invasion of the moon\n"
+		"bases and caused so much death has had\n"
+		"its ass kicked for all time.\n"
+		"\n"
+		"A hidden doorway opens and you enter.\n"
+		"You've proven too tough for Hell to\n"
+		"contain, and now Hell at last plays\n"
+		"fair -- for you emerge from the door\n"
+		"to see the green fields of Earth!\n"
+		"Home at last.\n"
+		"\n"
+		"You wonder what's been happening on\n"
+		"Earth while you were battling evil\n"
+		"unleashed. It's good that no Hell-\n"
+		"spawn could have come through that\n"
+		"door with you ...", NULL },
+	{ "e4text",
+		"the spider mastermind must have sent forth\n"
+		"its legions of hellspawn before your\n"
+		"final confrontation with that terrible\n"
+		"east from hell.  but you stepped forward\n"
+		"and brought forth eternal damnation and\n"
+		"suffering upon the horde as a true hero\n"
+		"would in the face of something so evil.\n"
+		"\n"
+		"besides, someone was gonna pay for what\n"
+		"happened to daisy, your pet rabbit.\n"
+		"\n"
+		"but now, you see spread before you more\n"
+		"potential pain and gibbitude as a nation\n"
+		"of demons run amok among our cities.\n"
+		"\n"
+		"next stop, hell on earth!", NULL },
+
+	{ "c1text",
 		"YOU HAVE ENTERED DEEPLY INTO THE INFESTED\n"
 		"STARPORT. BUT SOMETHING IS WRONG. THE\n"
 		"MONSTERS HAVE BROUGHT THEIR OWN REALITY\n"
@@ -5299,7 +5439,7 @@ string_def_t	txtlumps2[] =
 		"OF THE STARBASE AND FIND THE CONTROLLING\n"
 		"SWITCH WHICH HOLDS EARTH'S POPULATION\n"
 		"HOSTAGE.", NULL },
-	{ "fin2text.txt",
+	{ "c2text",
 		"YOU HAVE WON! YOUR VICTORY HAS ENABLED\n"
 		"HUMANKIND TO EVACUATE EARTH AND ESCAPE\n"
 		"THE NIGHTMARE.  NOW YOU ARE THE ONLY\n"
@@ -5317,7 +5457,7 @@ string_def_t	txtlumps2[] =
 		"YOUR OWN HOME CITY, NOT FAR FROM THE\n"
 		"STARPORT.\" SLOWLY AND PAINFULLY YOU GET\n"
 		"UP AND RETURN TO THE FRAY.", NULL },
-	{ "fin3text.txt",
+	{ "c3text",
 		"YOU ARE AT THE CORRUPT HEART OF THE CITY,\n"
 		"SURROUNDED BY THE CORPSES OF YOUR ENEMIES.\n"
 		"YOU SEE NO WAY TO DESTROY THE CREATURES'\n"
@@ -5327,7 +5467,7 @@ string_def_t	txtlumps2[] =
 		"THERE MUST BE A WAY TO CLOSE IT ON THE\n"
 		"OTHER SIDE. WHAT DO YOU CARE IF YOU'VE\n"
 		"GOT TO GO THROUGH HELL TO GET TO IT?", NULL },
-	{ "fin4text.txt",
+	{ "c4text",
 		"THE HORRENDOUS VISAGE OF THE BIGGEST\n"
 		"DEMON YOU'VE EVER SEEN CRUMBLES BEFORE\n"
 		"YOU, AFTER YOU PUMP YOUR ROCKETS INTO\n"
@@ -5343,164 +5483,92 @@ string_def_t	txtlumps2[] =
 		"FOREHEAD YOU BEGIN THE LONG TREK BACK\n"
 		"HOME. REBUILDING EARTH OUGHT TO BE A\n"
 		"LOT MORE FUN THAN RUINING IT WAS.\n", NULL },
-	{ "sec1text.txt",
+	{ "c5text",
 		"CONGRATULATIONS, YOU'VE FOUND THE SECRET\n"
 		"LEVEL! LOOKS LIKE IT'S BEEN BUILT BY\n"
 		"HUMANS, RATHER THAN DEMONS. YOU WONDER\n"
 		"WHO THE INMATES OF THIS CORNER OF HELL\n"
 		"WILL BE.", NULL },
-	{ "sec2text.txt",
+	{ "c6text",
 		"CONGRATULATIONS, YOU'VE FOUND THE\n"
 		"SUPER SECRET LEVEL!  YOU'D BETTER\n"
 		"BLAZE THROUGH THIS ONE!\n", NULL },
-};
 
-string_def_t	txtlumps1[] =
-{
-	{ "fin1text.txt",
-"Once you beat the big badasses and\n"
-"clean out the moon base you're supposed\n"
-"to win, aren't you? Aren't you? Where's\n"
-"your fat reward and ticket home? What\n"
-"the hell is this? It's not supposed to\n"
-"end this way!\n"
-"\n"
-"It stinks like rotten meat, but looks\n"
-"like the lost Deimos base.  Looks like\n"
-"you're stuck on The Shores of Hell.\n"
-"The only way out is through.\n"
-"\n"
-"To continue the DOOM experience, play\n"
-"The Shores of Hell and its amazing\n"
-"sequel, Inferno!", NULL },
-	{ "fin2text.txt",
-"You've done it! The hideous cyber-\n"
-"demon lord that ruled the lost Deimos\n"
-"moon base has been slain and you\n"
-"are triumphant! But ... where are\n"
-"you? You clamber to the edge of the\n"
-"moon and look down to see the awful\n"
-"truth.\n"
-"\n"
-"Deimos floats above Hell itself!\n"
-"You've never heard of anyone escaping\n"
-"from Hell, but you'll make the bastards\n"
-"sorry they ever heard of you! Quickly,\n"
-"you rappel down to  the surface of\n"
-"Hell.\n"
-"\n"
-"Now, it's on to the final chapter of\n"
-"DOOM! -- Inferno.", NULL },
-	{ "fin3text.txt",
-"The loathsome spiderdemon that\n"
-"masterminded the invasion of the moon\n"
-"bases and caused so much death has had\n"
-"its ass kicked for all time.\n"
-"\n"
-"A hidden doorway opens and you enter.\n"
-"You've proven too tough for Hell to\n"
-"contain, and now Hell at last plays\n"
-"fair -- for you emerge from the door\n"
-"to see the green fields of Earth!\n"
-"Home at last.\n"
-"\n"
-"You wonder what's been happening on\n"
-"Earth while you were battling evil\n"
-"unleashed. It's good that no Hell-\n"
-"spawn could have come through that\n"
-"door with you ...", NULL },
-	{ "fin4text.txt",
-"the spider mastermind must have sent forth\n"
-"its legions of hellspawn before your\n"
-"final confrontation with that terrible\n"
-"east from hell.  but you stepped forward\n"
-"and brought forth eternal damnation and\n"
-"suffering upon the horde as a true hero\n"
-"would in the face of something so evil.\n"
-"\n"
-"besides, someone was gonna pay for what\n"
-"happened to daisy, your pet rabbit.\n"
-"\n"
-"but now, you see spread before you more\n"
-"potential pain and gibbitude as a nation\n"
-"of demons run amok among our cities.\n"
-"\n"
-"next stop, hell on earth!", NULL },
 	{NULL, NULL, NULL}
 };
 
 map_info_t		map_info2[] =
 {
-	{ "entryway", "D_runnin" },
-	{ "underhalls", "D_stalks" },
-	{ "the gantlet", "D_countd" },
-	{ "the focus", "D_betwee" },
-	{ "the waste tunnels", "D_doom" },
-	{ "the crusher", "D_the_da" },
-	{ "dead simple", "D_shawn" },
-	{ "tricks and traps", "D_ddtblu" },
-	{ "the pit", "D_in_cit" },
-	{ "refueling base", "D_dead" },
-	{ "'o' of destruction!", "D_stlks2" },
-	{ "the factory", "D_theda2" },
-	{ "downtown", "D_doom2" },
-	{ "the inmost dens", "D_ddtbl2" },
-	{ "industrial zone", "D_runni2" },
-	{ "suburbs", "D_dead2" },
-	{ "tenements", "D_stlks3" },
-	{ "the courtyard", "D_romero" },
-	{ "the citadel", "D_shawn2" },
-	{ "gotcha!", "D_messag" },
-	{ "nirvana", "D_count2" },
-	{ "the catacombs", "D_ddtbl3" },
-	{ "barrels o' fun", "D_ampie" },
-	{ "the chasm", "D_theda3" },
-	{ "bloodfalls", "D_adrian" },
-	{ "the abandoned mines", "D_messg2" },
-	{ "monster condo", "D_romer2" },
-	{ "the spirit world", "D_tense" },
-	{ "the living end", "D_shawn3" },
-	{ "icon of sin", "D_openin" },
-	{ "wolfenstein", "D_evil" },
-	{ "grosse", "D_ultima" },
+	{ "lookup hustr_1", "d_runnin" },
+	{ "lookup hustr_2", "d_stalks" },
+	{ "lookup hustr_3", "d_countd" },
+	{ "lookup hustr_4", "d_betwee" },
+	{ "lookup hustr_5", "d_doom" },
+	{ "lookup hustr_6", "d_the_da" },
+	{ "lookup hustr_7", "d_shawn" },
+	{ "lookup hustr_8", "d_ddtblu" },
+	{ "lookup hustr_9", "d_in_cit" },
+	{ "lookup hustr_10", "d_dead" },
+	{ "lookup hustr_11", "d_stlks2" },
+	{ "lookup hustr_12", "d_theda2" },
+	{ "lookup hustr_13", "d_doom2" },
+	{ "lookup hustr_14", "d_ddtbl2" },
+	{ "lookup hustr_15", "d_runni2" },
+	{ "lookup hustr_16", "d_dead2" },
+	{ "lookup hustr_17", "d_stlks3" },
+	{ "lookup hustr_18", "d_romero" },
+	{ "lookup hustr_19", "d_shawn2" },
+	{ "lookup hustr_20", "d_messag" },
+	{ "lookup hustr_21", "d_count2" },
+	{ "lookup hustr_22", "d_ddtbl3" },
+	{ "lookup hustr_23", "d_ampie" },
+	{ "lookup hustr_24", "d_theda3" },
+	{ "lookup hustr_25", "d_adrian" },
+	{ "lookup hustr_26", "d_messg2" },
+	{ "lookup hustr_27", "d_romer2" },
+	{ "lookup hustr_28", "d_tense" },
+	{ "lookup hustr_29", "d_shawn3" },
+	{ "lookup hustr_30", "d_openin" },
+	{ "lookup hustr_31", "d_evil" },
+	{ "lookup hustr_32", "d_ultima" },
 };
 
 map_info_t		map_info1[] =
 {
-	{ "Hangar", "D_e1m1" },
-	{ "Nuclear Plant", "D_e1m2" },
-	{ "Toxin Refinery", "D_e1m3" },
-	{ "Command Control", "D_e1m4" },
-	{ "Phobos Lab", "D_e1m5" },
-	{ "Central Processing", "D_e1m6" },
-	{ "Computer Station", "D_e1m7" },
-	{ "Phobos Anomaly", "D_e1m8" },
-	{ "Military Base", "D_e1m9" },
-	{ "Deimos Anomaly", "D_e2m1" },
-	{ "Containment Area", "D_e2m2" },
-	{ "Refinery", "D_e2m3" },
-	{ "Deimos Lab", "D_e2m4" },
-	{ "Command Center", "D_e2m5" },
-	{ "Halls of the Damned", "D_e2m6" },
-	{ "Spawning Vats", "D_e2m7" },
-	{ "Tower of Babel", "D_e2m8" },
-	{ "Fortress of Mystery", "D_e2m9" },
-	{ "Hell Keep", "D_e3m1" },
-	{ "Slough of Despair", "D_e3m2" },
-	{ "Pandemonium", "D_e3m3" },
-	{ "House of Pain", "D_e3m4" },
-	{ "Unholy Cathedral", "D_e3m5" },
-	{ "Mt. Erebus", "D_e3m6" },
-	{ "Limbo", "D_e3m7" },
-	{ "Dis", "D_e3m8" },
-	{ "Warrens", "D_e3m9" },
-	{ "Hell Beneath", "D_e3m4" },
-	{ "Perfect Hatred", "D_e3m2" },
-	{ "Sever the Wicked", "D_e3m3" },
-	{ "Unruly Evil", "D_e1m5" },
-	{ "They Will Repent", "D_e2m7" },
-	{ "Against thee Wickedly", "D_e2m4" },
-	{ "And Hell Followed", "D_e2m6" },
-	{ "Unto the Cruel", "D_e2m5" },
-	{ "Fear", "D_e1m9" },
+	{ "lookup hustr_e1m1", "d_e1m1" },
+	{ "lookup hustr_e1m2", "d_e1m2" },
+	{ "lookup hustr_e1m3", "d_e1m3" },
+	{ "lookup hustr_e1m4", "d_e1m4" },
+	{ "lookup hustr_e1m5", "d_e1m5" },
+	{ "lookup hustr_e1m6", "d_e1m6" },
+	{ "lookup hustr_e1m7", "d_e1m7" },
+	{ "lookup hustr_e1m8", "d_e1m8" },
+	{ "lookup hustr_e1m9", "d_e1m9" },
+	{ "lookup hustr_e2m1", "d_e2m1" },
+	{ "lookup hustr_e2m2", "d_e2m2" },
+	{ "lookup hustr_e2m3", "d_e2m3" },
+	{ "lookup hustr_e2m4", "d_e2m4" },
+	{ "lookup hustr_e2m5", "d_e2m5" },
+	{ "lookup hustr_e2m6", "d_e2m6" },
+	{ "lookup hustr_e2m7", "d_e2m7" },
+	{ "lookup hustr_e2m8", "d_e2m8" },
+	{ "lookup hustr_e2m9", "d_e2m9" },
+	{ "lookup hustr_e3m1", "d_e3m1" },
+	{ "lookup hustr_e3m2", "d_e3m2" },
+	{ "lookup hustr_e3m3", "d_e3m3" },
+	{ "lookup hustr_e3m4", "d_e3m4" },
+	{ "lookup hustr_e3m5", "d_e3m5" },
+	{ "lookup hustr_e3m6", "d_e3m6" },
+	{ "lookup hustr_e3m7", "d_e3m7" },
+	{ "lookup hustr_e3m8", "d_e3m8" },
+	{ "lookup hustr_e3m9", "d_e3m9" },
+	{ "lookup hustr_e4m1", "d_e3m4" },
+	{ "lookup hustr_e4m2", "d_e3m2" },
+	{ "lookup hustr_e4m3", "d_e3m3" },
+	{ "lookup hustr_e4m4", "d_e1m5" },
+	{ "lookup hustr_e4m5", "d_e2m7" },
+	{ "lookup hustr_e4m6", "d_e2m4" },
+	{ "lookup hustr_e4m7", "d_e2m6" },
+	{ "lookup hustr_e4m8", "d_e2m5" },
+	{ "lookup hustr_e4m9", "d_e1m9" },
 };

@@ -44,6 +44,7 @@ enum
 	MAPINFOF_SpecialActionLowerFloor	= 0x00000400,
 	MAPINFOF_SpecialActionKillMonsters	= 0x00000800,
 	MAPINFOF_NoIntermission				= 0x00001000,
+	MAPINFOF_LookupName					= 0x00002000,
 };
 
 struct mapInfo_t
@@ -65,6 +66,11 @@ struct mapInfo_t
 	VName		FadeTable;		// Fade table {fogmap}
 	float		Gravity;		// Map gravity
 	vuint32		Flags;
+
+	VStr GetName() const
+	{
+		return Flags & MAPINFOF_LookupName ? GLanguage[*Name] : Name;
+	}
 };
 
 enum
@@ -72,6 +78,9 @@ enum
 	CLUSTERF_Hub				= 0x01,
 	CLUSTERF_EnterTextIsLump	= 0x02,
 	CLUSTERF_ExitTextIsLump		= 0x04,
+	CLUSTERF_FinalePic			= 0x80,
+	CLUSTERF_LookupEnterText	= 0x10,
+	CLUSTERF_LookupExitText		= 0x20,
 };
 
 struct VClusterDef
@@ -81,7 +90,6 @@ struct VClusterDef
 	VStr		EnterText;
 	VStr		ExitText;
 	VName		Flat;
-	VName		Pic;
 	VName		Music;
 	vint32		CDTrack;
 	vint32		CDId;

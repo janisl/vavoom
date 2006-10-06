@@ -1,298 +1,257 @@
-map MAP01 "congo"
+map map01 lookup phustr_1
 cluster 5
-next MAP02
-secret MAP31
-sky1 SKY1 0
-music D_runnin
+next map02
+secret map31
+sky1 sky1 0
+music d_runnin
 
-map MAP02 "well of souls"
+map map02 lookup phustr_1
 cluster 5
-next MAP03
-secret MAP31
-sky1 SKY1 0
-music D_stalks
+next map03
+secret map31
+sky1 sky1 0
+music d_stalks
 
-map MAP03 "aztec"
+map map03 lookup phustr_1
 cluster 5
-next MAP04
-secret MAP31
-sky1 SKY1 0
-music D_countd
+next map04
+secret map31
+sky1 sky1 0
+music d_countd
 
-map MAP04 "caged"
+map map04 lookup phustr_1
 cluster 5
-next MAP05
-secret MAP31
-sky1 SKY1 0
-music D_betwee
+next map05
+secret map31
+sky1 sky1 0
+music d_betwee
 
-map MAP05 "ghost town"
+map map05 lookup phustr_1
 cluster 5
-next MAP06
-secret MAP31
-sky1 SKY1 0
-music D_doom
+next map06
+secret map31
+sky1 sky1 0
+music d_doom
 
-map MAP06 "baron's lair"
+map map06 lookup phustr_1
 cluster 5
-next MAP07
-secret MAP31
-sky1 SKY1 0
-music D_the_da
+next map07
+secret map31
+sky1 sky1 0
+music d_the_da
 
 ;------------------------------------------------------
-map MAP07 "caughtyard"
+map map07 lookup phustr_1
 cluster 6
-next MAP08
-secret MAP31
-sky1 SKY1 0
-music D_shawn
+next map08
+secret map31
+sky1 sky1 0
+music d_shawn
 map07special
 
-map MAP08 "realm"
+map map08 lookup phustr_1
 cluster 6
-next MAP09
-secret MAP31
-sky1 SKY1 0
-music D_ddtblu
+next map09
+secret map31
+sky1 sky1 0
+music d_ddtblu
 
-map MAP09 "abattoire"
+map map09 lookup phustr_1
 cluster 6
-next MAP10
-secret MAP31
-sky1 SKY1 0
-music D_in_cit
+next map10
+secret map31
+sky1 sky1 0
+music d_in_cit
 
-map MAP10 "onslaught"
+map map10 lookup phustr_1
 cluster 6
-next MAP11
-secret MAP31
-sky1 SKY1 0
-music D_dead
+next map11
+secret map31
+sky1 sky1 0
+music d_dead
 
-map MAP11 "hunted"
+map map11 lookup phustr_1
 cluster 6
-next MAP12
-secret MAP31
-sky1 SKY1 0
-music D_stlks2
+next map12
+secret map31
+sky1 sky1 0
+music d_stlks2
 
 ;------------------------------------------------------
-map MAP12 "speed"
+map map12 lookup phustr_1
 cluster 7
-next MAP13
-secret MAP31
-sky1 SKY2 0
-music D_theda2
+next map13
+secret map31
+sky1 sky2 0
+music d_theda2
 
-map MAP13 "the crypt"
+map map13 lookup phustr_1
 cluster 7
-next MAP14
-secret MAP31
-sky1 SKY2 0
-music D_doom2
+next map14
+secret map31
+sky1 sky2 0
+music d_doom2
 
-map MAP14 "genesis"
+map map14 lookup phustr_1
 cluster 7
-next MAP15
-secret MAP31
-sky1 SKY2 0
-music D_ddtbl2
+next map15
+secret map31
+sky1 sky2 0
+music d_ddtbl2
 
-map MAP15 "the twilight"
+map map15 lookup phustr_1
 cluster 7
-next MAP16
-secret MAP31
-sky1 SKY2 0
-music D_runni2
+next map16
+secret map31
+sky1 sky2 0
+music d_runni2
 
-map MAP16 "the omen"
+map map16 lookup phustr_1
 cluster 7
-next MAP17
-secret MAP31
-sky1 SKY2 0
-music D_dead2
+next map17
+secret map31
+sky1 sky2 0
+music d_dead2
 
-map MAP17 "compound"
+map map17 lookup phustr_1
 cluster 7
-next MAP18
-secret MAP31
-sky1 SKY2 0
-music D_stlks3
+next map18
+secret map31
+sky1 sky2 0
+music d_stlks3
 
-map MAP18 "neurosphere"
+map map18 lookup phustr_1
 cluster 7
-next MAP19
-secret MAP31
-sky1 SKY2 0
-music D_romero
+next map19
+secret map31
+sky1 sky2 0
+music d_romero
 
-map MAP19 "nme"
+map map19 lookup phustr_1
 cluster 7
-next MAP20
-secret MAP31
-sky1 SKY2 0
-music D_shawn2
+next map20
+secret map31
+sky1 sky2 0
+music d_shawn2
 
-map MAP20 "the death domain"
+map map20 lookup phustr_2
 cluster 7
-next MAP21
-secret MAP31
-sky1 SKY2 0
-music D_messag
+next map21
+secret map31
+sky1 sky2 0
+music d_messag
 
 ;-------------------------------------------------------
-map MAP21 "slayer"
+map map21 lookup phustr_2
 cluster 8
-next MAP22
-secret MAP31
-sky1 SKY3 0
-music D_count2
+next map22
+secret map31
+sky1 sky3 0
+music d_count2
 
-map MAP22 "impossible mission"
+map map22 lookup phustr_2
 cluster 8
-next MAP23
-secret MAP31
-sky1 SKY3 0
-music D_ddtbl3
+next map23
+secret map31
+sky1 sky3 0
+music d_ddtbl3
 
-map MAP23 "tombstone"
+map map23 lookup phustr_2
 cluster 8
-next MAP24
-secret MAP31
-sky1 SKY3 0
-music D_ampie
+next map24
+secret map31
+sky1 sky3 0
+music d_ampie
 
-map MAP24 "the final frontier"
+map map24 lookup phustr_2
 cluster 8
-next MAP25
-secret MAP31
-sky1 SKY3 0
-music D_theda3
+next map25
+secret map31
+sky1 sky3 0
+music d_theda3
 
-map MAP25 "the temple of darkness"
+map map25 lookup phustr_2
 cluster 8
-next MAP26
-secret MAP31
-sky1 SKY3 0
-music D_adrian
+next map26
+secret map31
+sky1 sky3 0
+music d_adrian
 
-map MAP26 "bunker"
+map map26 lookup phustr_2
 cluster 8
-next MAP27
-secret MAP31
-sky1 SKY3 0
-music D_messg2
+next map27
+secret map31
+sky1 sky3 0
+music d_messg2
 
-map MAP27 "anti-christ"
+map map27 lookup phustr_2
 cluster 8
-next MAP28
-secret MAP31
-sky1 SKY3 0
-music D_romer2
+next map28
+secret map31
+sky1 sky3 0
+music d_romer2
 
-map MAP28 "the sewers"
+map map28 lookup phustr_2
 cluster 8
-next MAP29
-secret MAP31
-sky1 SKY3 0
-music D_tense
+next map29
+secret map31
+sky1 sky3 0
+music d_tense
 
-map MAP29 "odyssey of noises"
+map map29 lookup phustr_2
 cluster 8
-next MAP30
-secret MAP31
-sky1 SKY3 0
-music D_shawn3
+next map30
+secret map31
+sky1 sky3 0
+music d_shawn3
 
-map MAP30 "the gateway of hell"
+map map30 lookup phustr_2
 cluster 8
-next MAP01
-sky1 SKY3 0
-music D_openin
+next map01
+sky1 sky3 0
+music d_openin
 
 ;------------------------------------------------------
-map MAP31 "cyberden"
+map map31 lookup phustr_2
 cluster 9
-next MAP32
-secret MAP32
-sky1 SKY3 0
-music D_evil
+next map32
+secret map32
+sky1 sky3 0
+music d_evil
 
-map MAP32 "go 2 it"
+map map32 lookup phustr_2
 cluster 10
-next MAP01
-sky1 SKY3 0
-music D_ultima
+next map01
+sky1 sky3 0
+music d_ultima
 
 ;------------------------------------------------------
 clusterdef 5
-exittext "You gloat over the steaming carcass of the
-Guardian.  With its death, you've wrested
-the Accelerator from the stinking claws
-of Hell.  You relax and glance around the
-room.  Damn!  There was supposed to be at
-least one working prototype, but you can't
-see it. The demons must have taken it.
-
-You must find the prototype, or all your
-struggles will have been wasted. Keep
-moving, keep fighting, keep killing.
-Oh yes, keep living, too."
+exittext lookup p1text
 flat slime16
 music d_read_m
 
 clusterdef 6
-exittext "Even the deadly Arch-Vile labyrinth could
-not stop you, and you've gotten to the
-prototype Accelerator which is soon
-efficiently and permanently deactivated.
-
-You're good at that kind of thing."
+exittext lookup p2text
 flat rrock14
 music d_read_m
 
 clusterdef 7
-exittext "You've bashed and battered your way into
-the heart of the devil-hive.  Time for a
-Search-and-Destroy mission, aimed at the
-Gatekeeper, whose foul offspring is
-cascading to Earth.  Yeah, he's bad. But
-you know who's worse!
-
-Grinning evilly, you check your gear, and
-get ready to give the bastard a little Hell
-of your own making!"
+exittext lookup p3text
 flat rrock07
 music d_read_m
 
 clusterdef 8
-exittext "The Gatekeeper's evil face is splattered
-all over the place.  As its tattered corpse
-collapses, an inverted Gate forms and
-sucks down the shards of the last
-prototype Accelerator, not to mention the
-few remaining demons.  You're done. Hell
-has gone back to pounding bad dead folks
-instead of good live ones.  Remember to
-tell your grandkids to put a rocket
-launcher in your coffin. If you go to Hell
-when you die, you'll need it for some
-final cleaning-up ..."
+exittext lookup p4text
 flat rrock17
 music d_read_m
 
 clusterdef 9
-entertext "You've found the second-hardest level we
-got. Hope you have a saved game a level or
-two previous.  If not, be prepared to die
-aplenty. For master marines only."
+entertext lookup p5text
 flat rrock13
 music d_read_m
 
 clusterdef 10
-entertext "Betcha wondered just what WAS the hardest
-level we had ready for ya?  Now you know.
-No one gets out alive."
+entertext lookup p6text
 flat rrock19
 music d_read_m

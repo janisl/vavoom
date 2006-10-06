@@ -44,8 +44,7 @@ extern mobjinfo_t			mobjinfo[];
 extern weaponinfo_t			weaponinfo[];
 extern sfxinfo_t			sfx[];
 extern string_def_t			strings[];
-extern string_def_t			txtlumps1[];
-extern string_def_t			txtlumps2[];
+extern string_def_t			Strings[];
 extern map_info_t			map_info1[];
 extern map_info_t			map_info2[];
 
@@ -616,14 +615,6 @@ static void WriteTxtLumps()
 		strcpy(sfx[sfx1_radio].tagName, "misc/chat");
 	}
 
-	string_def_t* txtlumps = Doom2 ? txtlumps2 : txtlumps1;
-	for (i = 0; txtlumps[i].macro; i++)
-	{
-		f = fopen(txtlumps[i].macro, "w");
-		fprintf(f, "%s", txtlumps[i].new_val ? txtlumps[i].new_val : txtlumps[i].def_val);
-		fclose(f);
-	}
-
 	f = fopen("sndinfo.txt", "w");
 	for (i = 1; i < num_sfx; i++)
 	{
@@ -637,8 +628,8 @@ static void WriteTxtLumps()
 	{
 		for (i = 0; i < 32; i++)
 		{
-			fprintf(f, "map MAP%02d \"%s\"\nnext MAP%02d\nSKY1 SKY%d 0\nMusic %s\n\n",
-				i + 1, map_info2[i].name, (i == 29 || i == 31) ? 1 : i + 2,
+			fprintf(f, "map map%02d %s\nnext map%02d\nsky1 sky%d 0\nmusic %s\n\n",
+				i + 1, map_info2[i].Name, (i == 29 || i == 31) ? 1 : i + 2,
 				i < 11 ? 1 : i < 20 ? 2 : 3, map_info2[i].song);
 		}
 	}
@@ -646,11 +637,37 @@ static void WriteTxtLumps()
 	{
 		for (i = 0; i < 36; i++)
 		{
-			fprintf(f, "map E%dM%d \"%s\"\nnext E%dM%d\nSKY1 SKY%d 0\nMusic %s\n\n",
-				(i / 9) + 1, (i % 9) + 1, map_info1[i].name,
+			fprintf(f, "map e%dm%d %s\nnext e%dm%d\nsky1 sky%d 0\nmusic %s\n\n",
+				(i / 9) + 1, (i % 9) + 1, map_info1[i].Name,
 				(i / 9) + 1, (i % 9) > 6 ? 1 : (i % 9) + 2,
 				i < 11 ? 1 : i < 20 ? 2 : 3, map_info1[i].song);
 		}
+	}
+	fclose(f);
+
+	f = fopen("language.txt", "w");
+	fprintf(f, "[en default]\n");
+	for (i = 0; Strings[i].macro; i++)
+	{
+		fprintf(f, "%s = \"", Strings[i].macro);
+		const char* c = Strings[i].new_val ? Strings[i].new_val : Strings[i].def_val;
+		while (*c)
+		{
+			if (*c == '\"')
+				fprintf(f, "\\\"");
+			else if (*c == '\t')
+				fprintf(f, "\\t");
+			else if (*c == '\n' && c[1])
+				fprintf(f, "\\n\"\n\t\"");
+			else if (*c == '\n')
+				fprintf(f, "\\n");
+			else if (*c == '\r')
+				fprintf(f, "\\r");
+			else
+				fprintf(f, "%c", *c);
+			c++;
+		}
+		fprintf(f, "\";\n");
 	}
 	fclose(f);
 }

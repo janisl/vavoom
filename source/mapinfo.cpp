@@ -216,8 +216,18 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 		}
 
 		// Map name must follow the number
-		sc->ExpectString();
-		info->Name = sc->String;
+		if (sc->Check("lookup"))
+		{
+			info->Flags |= MAPINFOF_LookupName;
+			sc->ExpectString();
+			info->Name = sc->String.ToLower();
+		}
+		else
+		{
+			info->Flags &= ~MAPINFOF_LookupName;
+			sc->ExpectString();
+			info->Name = sc->String;
+		}
 
 		//	Set song lump name from SNDINFO script
 		for (int i = 0; i < MapSongList.Num(); i++)
@@ -264,7 +274,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 				C.EnterText = VStr();
 				C.ExitText = VStr();
 				C.Flat = NAME_None;
-				C.Pic = NAME_None;
 				C.Music = NAME_None;
 				C.CDTrack = 0;
 				C.CDId = 0;
@@ -280,7 +289,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 			sc->ExpectName8();
 			info->NextMap = sc->Name8;
 		}
-		else if (sc->Check("secret"))
+		else if (sc->Check("secret") || sc->Check("secretnext"))
 		{
 			sc->ExpectName8();
 			info->SecretMap = sc->Name8;
@@ -483,7 +492,6 @@ static void ParseClusterDef(VScriptParser* sc)
 	CDef->EnterText = VStr();
 	CDef->ExitText = VStr();
 	CDef->Flat = NAME_None;
-	CDef->Pic = NAME_None;
 	CDef->Music = NAME_None;
 	CDef->CDTrack = 0;
 	CDef->CDId = 0;
@@ -496,8 +504,18 @@ static void ParseClusterDef(VScriptParser* sc)
 		}
 		else if (sc->Check("entertext"))
 		{
-			sc->ExpectString();
-			CDef->EnterText = sc->String;
+			if (sc->Check("lookup"))
+			{
+				CDef->Flags |= CLUSTERF_LookupEnterText;
+				sc->ExpectString();
+				CDef->EnterText = sc->String;
+			}
+			else
+			{
+				CDef->Flags &= ~CLUSTERF_LookupEnterText;
+				sc->ExpectString();
+				CDef->EnterText = sc->String;
+			}
 		}
 		else if (sc->Check("entertextislump"))
 		{
@@ -505,8 +523,18 @@ static void ParseClusterDef(VScriptParser* sc)
 		}
 		else if (sc->Check("exittext"))
 		{
-			sc->ExpectString();
-			CDef->ExitText = sc->String;
+			if (sc->Check("lookup"))
+			{
+				CDef->Flags |= CLUSTERF_LookupExitText;
+				sc->ExpectString();
+				CDef->ExitText = sc->String.ToLower();
+			}
+			else
+			{
+				CDef->Flags &= ~CLUSTERF_LookupExitText;
+				sc->ExpectString();
+				CDef->ExitText = sc->String;
+			}
 		}
 		else if (sc->Check("exittextislump"))
 		{
@@ -516,11 +544,13 @@ static void ParseClusterDef(VScriptParser* sc)
 		{
 			sc->ExpectName8();
 			CDef->Flat = sc->Name8;
+			CDef->Flags &= ~CLUSTERF_FinalePic;
 		}
 		else if (sc->Check("pic"))
 		{
 			sc->ExpectName8();
-			CDef->Pic = sc->Name8;
+			CDef->Flat = sc->Name8;
+			CDef->Flags |= CLUSTERF_FinalePic;
 		}
 		else if (sc->Check("music"))
 		{

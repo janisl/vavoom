@@ -640,14 +640,14 @@ static void CL_ParseIntermission(VMessage& msg)
 	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
 	im.LeaveMap = cl_level.MapName;
 	im.LeaveCluster = linfo.Cluster;
-	im.LeaveName = linfo.Name;
+	im.LeaveName = linfo.GetName();
 	if (linfo.Flags & MAPINFOF_NoIntermission)
 		im.IMFlags |= im_t::IMF_NoIntermission;
 
 	const mapInfo_t& einfo = P_GetMapInfo(nextmap);
 	im.EnterMap = nextmap;
 	im.EnterCluster = einfo.Cluster;
-	im.EnterName = einfo.Name;
+	im.EnterName = einfo.GetName();
 
 	if (linfo.Cluster != einfo.Cluster)
 	{
@@ -656,13 +656,28 @@ static void CL_ParseIntermission(VMessage& msg)
 			const VClusterDef* CDef = P_GetClusterDef(einfo.Cluster);
 			if (CDef->EnterText.Length())
 			{
-				im.Text = CDef->EnterText;
+				if (CDef->Flags & CLUSTERF_LookupEnterText)
+				{
+					im.Text = GLanguage[*CDef->EnterText];
+				}
+				else
+				{
+					im.Text = CDef->EnterText;
+				}
 				if (CDef->Flags & CLUSTERF_EnterTextIsLump)
 				{
 					im.IMFlags |= im_t::IMF_TextIsLump;
 				}
-				im.TextFlat = CDef->Flat;
-				im.TextPic = CDef->Pic;
+				if (CDef->Flags & CLUSTERF_FinalePic)
+				{
+					im.TextFlat = NAME_None;
+					im.TextPic = CDef->Flat;
+				}
+				else
+				{
+					im.TextFlat = CDef->Flat;
+					im.TextPic = NAME_None;
+				}
 				im.TextMusic = CDef->Music;
 				im.TextCDTrack = CDef->CDTrack;
 				im.TextCDId = CDef->CDId;
@@ -673,13 +688,28 @@ static void CL_ParseIntermission(VMessage& msg)
 			const VClusterDef* CDef = P_GetClusterDef(linfo.Cluster);
 			if (CDef->ExitText.Length())
 			{
-				im.Text = CDef->ExitText;
+				if (CDef->Flags & CLUSTERF_LookupExitText)
+				{
+					im.Text = GLanguage[*CDef->ExitText];
+				}
+				else
+				{
+					im.Text = CDef->ExitText;
+				}
 				if (CDef->Flags & CLUSTERF_ExitTextIsLump)
 				{
 					im.IMFlags |= im_t::IMF_TextIsLump;
 				}
-				im.TextFlat = CDef->Flat;
-				im.TextPic = CDef->Pic;
+				if (CDef->Flags & CLUSTERF_FinalePic)
+				{
+					im.TextFlat = NAME_None;
+					im.TextPic = CDef->Flat;
+				}
+				else
+				{
+					im.TextFlat = CDef->Flat;
+					im.TextPic = NAME_None;
+				}
 				im.TextMusic = CDef->Music;
 				im.TextCDTrack = CDef->CDTrack;
 				im.TextCDId = CDef->CDId;

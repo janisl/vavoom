@@ -22,6 +22,9 @@ sndinfo.txt				@srcdir@/scripts/sndinfo.txt
 sndseq.txt				@srcdir@/scripts/sndseq.txt
 terrains.txt			@srcdir@/scripts/terrains.txt
 
+//	Language strings
+language.en				@srcdir@/language.en
+
 $load @srcdir@/palette.pcx
 rgbtable.dat			rgbtable
 translat.dat			raw 0 0 256 8

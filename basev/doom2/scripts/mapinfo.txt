@@ -1,313 +1,258 @@
-map MAP01 "entryway"
+map map01 lookup hustr_1
 cluster 5
-next MAP02
-secret MAP31
-SKY1 SKY1 0
-Music D_runnin
+next map02
+secretnext map31
+sky1 sky1 0
+music d_runnin
 cdtrack 5
 
-map MAP02 "underhalls"
+map map02 lookup hustr_2
 cluster 5
-next MAP03
-secret MAP31
-SKY1 SKY1 0
-Music D_stalks
+next map03
+secretnext map31
+sky1 sky1 0
+music d_stalks
 
-map MAP03 "the gantlet"
+map map03 lookup hustr_3
 cluster 5
-next MAP04
-secret MAP31
-SKY1 SKY1 0
-Music D_countd
+next map04
+secretnext map31
+sky1 sky1 0
+music d_countd
 
-map MAP04 "the focus"
+map map04 lookup hustr_4
 cluster 5
-next MAP05
-secret MAP31
-SKY1 SKY1 0
-Music D_betwee
+next map05
+secretnext map31
+sky1 sky1 0
+music d_betwee
 
-map MAP05 "the waste tunnels"
+map map05 lookup hustr_5
 cluster 5
-next MAP06
-secret MAP31
-SKY1 SKY1 0
-Music D_doom
+next map06
+secretnext map31
+sky1 sky1 0
+music d_doom
 
-map MAP06 "the crusher"
+map map06 lookup hustr_6
 cluster 5
-next MAP07
-secret MAP31
-SKY1 SKY1 0
-Music D_the_da
+next map07
+secretnext map31
+sky1 sky1 0
+music d_the_da
 
 ;------------------------------------------------------
-map MAP07 "dead simple"
+map map07 lookup hustr_7
 cluster 6
-next MAP08
-secret MAP31
-SKY1 SKY1 0
-Music D_shawn
+next map08
+secretnext map31
+sky1 sky1 0
+music d_shawn
 map07special
 
-map MAP08 "tricks and traps"
+map map08 lookup hustr_8
 cluster 6
-next MAP09
-secret MAP31
-SKY1 SKY1 0
-Music D_ddtblu
+next map09
+secretnext map31
+sky1 sky1 0
+music d_ddtblu
 
-map MAP09 "the pit"
+map map09 lookup hustr_9
 cluster 6
-next MAP10
-secret MAP31
-SKY1 SKY1 0
-Music D_in_cit
+next map10
+secretnext map31
+sky1 sky1 0
+music d_in_cit
 
-map MAP10 "refueling base"
+map map10 lookup hustr_10
 cluster 6
-next MAP11
-secret MAP31
-SKY1 SKY1 0
-Music D_dead
+next map11
+secretnext map31
+sky1 sky1 0
+music d_dead
 
-map MAP11 "'o' of destruction!"
+map map11 lookup hustr_11
 cluster 6
-next MAP12
-secret MAP31
-SKY1 SKY1 0
-Music D_stlks2
+next map12
+secretnext map31
+sky1 sky1 0
+music d_stlks2
 
 ;------------------------------------------------------
-map MAP12 "the factory"
+map map12 lookup hustr_12
 cluster 7
-next MAP13
-secret MAP31
-SKY1 SKY2 0
-Music D_theda2
+next map13
+secretnext map31
+sky1 sky2 0
+music d_theda2
 
-map MAP13 "downtown"
+map map13 lookup hustr_13
 cluster 7
-next MAP14
-secret MAP31
-SKY1 SKY2 0
-Music D_doom2
+next map14
+secretnext map31
+sky1 sky2 0
+music d_doom2
 
-map MAP14 "the inmost dens"
+map map14 lookup hustr_14
 cluster 7
-next MAP15
-secret MAP31
-SKY1 SKY2 0
-Music D_ddtbl2
+next map15
+secretnext map31
+sky1 sky2 0
+music d_ddtbl2
 
-map MAP15 "industrial zone"
+map map15 lookup hustr_15
 cluster 7
-next MAP16
-secret MAP31
-SKY1 SKY2 0
-Music D_runni2
+next map16
+secretnext map31
+sky1 sky2 0
+music d_runni2
 
-map MAP16 "suburbs"
+map map16 lookup hustr_16
 cluster 7
-next MAP17
-secret MAP31
-SKY1 SKY2 0
-Music D_dead2
+next map17
+secretnext map31
+sky1 sky2 0
+music d_dead2
 
-map MAP17 "tenements"
+map map17 lookup hustr_17
 cluster 7
-next MAP18
-secret MAP31
-SKY1 SKY2 0
-Music D_stlks3
+next map18
+secretnext map31
+sky1 sky2 0
+music d_stlks3
 
-map MAP18 "the courtyard"
+map map18 lookup hustr_18
 cluster 7
-next MAP19
-secret MAP31
-SKY1 SKY2 0
-Music D_romero
+next map19
+secretnext map31
+sky1 sky2 0
+music d_romero
 
-map MAP19 "the citadel"
+map map19 lookup hustr_19
 cluster 7
-next MAP20
-secret MAP31
-SKY1 SKY2 0
-Music D_shawn2
+next map20
+secretnext map31
+sky1 sky2 0
+music d_shawn2
 
-map MAP20 "gotcha!"
+map map20 lookup hustr_20
 cluster 7
-next MAP21
-secret MAP31
-SKY1 SKY2 0
-Music D_messag
+next map21
+secretnext map31
+sky1 sky2 0
+music d_messag
 
 ;-------------------------------------------------------
-map MAP21 "nirvana"
+map map21 lookup hustr_21
 cluster 8
-next MAP22
-secret MAP31
-SKY1 SKY3 0
-Music D_count2
+next map22
+secretnext map31
+sky1 sky3 0
+music d_count2
 
-map MAP22 "the catacombs"
+map map22 lookup hustr_22
 cluster 8
-next MAP23
-secret MAP31
-SKY1 SKY3 0
-Music D_ddtbl3
+next map23
+secretnext map31
+sky1 sky3 0
+music d_ddtbl3
 
-map MAP23 "barrels o' fun"
+map map23 lookup hustr_23
 cluster 8
-next MAP24
-secret MAP31
-SKY1 SKY3 0
-Music D_ampie
+next map24
+secretnext map31
+sky1 sky3 0
+music d_ampie
 
-map MAP24 "the chasm"
+map map24 lookup hustr_24
 cluster 8
-next MAP25
-secret MAP31
-SKY1 SKY3 0
-Music D_theda3
+next map25
+secretnext map31
+sky1 sky3 0
+music d_theda3
 
-map MAP25 "bloodfalls"
+map map25 lookup hustr_25
 cluster 8
-next MAP26
-secret MAP31
-SKY1 SKY3 0
-Music D_adrian
+next map26
+secretnext map31
+sky1 sky3 0
+music d_adrian
 
-map MAP26 "the abandoned mines"
+map map26 lookup hustr_26
 cluster 8
-next MAP27
-secret MAP31
-SKY1 SKY3 0
-Music D_messg2
+next map27
+secretnext map31
+sky1 sky3 0
+music d_messg2
 
-map MAP27 "monster condo"
+map map27 lookup hustr_27
 cluster 8
-next MAP28
-secret MAP31
-SKY1 SKY3 0
-Music D_romer2
+next map28
+secretnext map31
+sky1 sky3 0
+music d_romer2
 
-map MAP28 "the spirit world"
+map map28 lookup hustr_28
 cluster 8
-next MAP29
-secret MAP31
-SKY1 SKY3 0
-Music D_tense
+next map29
+secretnext map31
+sky1 sky3 0
+music d_tense
 
-map MAP29 "the living end"
+map map29 lookup hustr_29
 cluster 8
-next MAP30
-secret MAP31
-SKY1 SKY3 0
-Music D_shawn3
+next map30
+secretnext map31
+sky1 sky3 0
+music d_shawn3
 
-map MAP30 "icon of sin"
+map map30 lookup hustr_30
 cluster 8
-next MAP01
-SKY1 SKY3 0
-Music D_openin
+next map01
+sky1 sky3 0
+music d_openin
 
 ;------------------------------------------------------
-map MAP31 "wolfenstein"
+map map31 lookup hustr_31
 cluster 9
-next MAP32
-secret MAP32
-SKY1 SKY3 0
-Music D_evil
+next map32
+secretnext map32
+sky1 sky3 0
+music d_evil
 
-map MAP32 "grosse"
+map map32 lookup hustr_32
 cluster 10
-next MAP01
-SKY1 SKY3 0
-Music D_ultima
+next map01
+sky1 sky3 0
+music d_ultima
 
 ;------------------------------------------------------
 clusterdef 5
-exittext "YOU HAVE ENTERED DEEPLY INTO THE INFESTED
-STARPORT. BUT SOMETHING IS WRONG. THE
-MONSTERS HAVE BROUGHT THEIR OWN REALITY
-WITH THEM, AND THE STARPORT'S TECHNOLOGY
-IS BEING SUBVERTED BY THEIR PRESENCE.
-
-AHEAD, YOU SEE AN OUTPOST OF HELL, A
-FORTIFIED ZONE. IF YOU CAN GET PAST IT,
-YOU CAN PENETRATE INTO THE HAUNTED HEART
-OF THE STARBASE AND FIND THE CONTROLLING
-SWITCH WHICH HOLDS EARTH'S POPULATION
-HOSTAGE."
+exittext lookup c1text
 flat slime16
 music d_read_m
 
 clusterdef 6
-exittext "YOU HAVE WON! YOUR VICTORY HAS ENABLED
-HUMANKIND TO EVACUATE EARTH AND ESCAPE
-THE NIGHTMARE.  NOW YOU ARE THE ONLY
-HUMAN LEFT ON THE FACE OF THE PLANET.
-CANNIBAL MUTATIONS, CARNIVOROUS ALIENS,
-AND EVIL SPIRITS ARE YOUR ONLY NEIGHBORS.
-YOU SIT BACK AND WAIT FOR DEATH, CONTENT
-THAT YOU HAVE SAVED YOUR SPECIES.
-
-BUT THEN, EARTH CONTROL BEAMS DOWN A
-MESSAGE FROM SPACE: \"SENSORS HAVE LOCATED
-THE SOURCE OF THE ALIEN INVASION. IF YOU
-GO THERE, YOU MAY BE ABLE TO BLOCK THEIR
-ENTRY.  THE ALIEN BASE IS IN THE HEART OF
-YOUR OWN HOME CITY, NOT FAR FROM THE
-STARPORT.\" SLOWLY AND PAINFULLY YOU GET
-UP AND RETURN TO THE FRAY."
+exittext lookup c2text
 flat rrock14
 music d_read_m
 
 clusterdef 7
-exittext "YOU ARE AT THE CORRUPT HEART OF THE CITY,
-SURROUNDED BY THE CORPSES OF YOUR ENEMIES.
-YOU SEE NO WAY TO DESTROY THE CREATURES'
-ENTRYWAY ON THIS SIDE, SO YOU CLENCH YOUR
-TEETH AND PLUNGE THROUGH IT.
-
-THERE MUST BE A WAY TO CLOSE IT ON THE
-OTHER SIDE. WHAT DO YOU CARE IF YOU'VE
-GOT TO GO THROUGH HELL TO GET TO IT?"
+exittext lookup c3text
 flat rrock07
 music d_read_m
 
 clusterdef 8
-exittext "THE HORRENDOUS VISAGE OF THE BIGGEST
-DEMON YOU'VE EVER SEEN CRUMBLES BEFORE
-YOU, AFTER YOU PUMP YOUR ROCKETS INTO
-HIS EXPOSED BRAIN. THE MONSTER SHRIVELS
-UP AND DIES, ITS THRASHING LIMBS
-DEVASTATING UNTOLD MILES OF HELL'S
-SURFACE.
-
-YOU'VE DONE IT. THE INVASION IS OVER.
-EARTH IS SAVED. HELL IS A WRECK. YOU
-WONDER WHERE BAD FOLKS WILL GO WHEN THEY
-DIE, NOW. WIPING THE SWEAT FROM YOUR
-FOREHEAD YOU BEGIN THE LONG TREK BACK
-HOME. REBUILDING EARTH OUGHT TO BE A
-LOT MORE FUN THAN RUINING IT WAS."
+exittext lookup c4text
 flat rrock17
 music d_read_m
 
 clusterdef 9
-entertext "CONGRATULATIONS, YOU'VE FOUND THE SECRET
-LEVEL! LOOKS LIKE IT'S BEEN BUILT BY
-HUMANS, RATHER THAN DEMONS. YOU WONDER
-WHO THE INMATES OF THIS CORNER OF HELL
-WILL BE."
+entertext lookup c5text
 flat rrock13
 music d_read_m
 
 clusterdef 10
-entertext "CONGRATULATIONS, YOU'VE FOUND THE
-SUPER SECRET LEVEL!  YOU'D BETTER
-BLAZE THROUGH THIS ONE!"
+entertext lookup c6text
 flat rrock19
 music d_read_m

@@ -204,7 +204,7 @@ struct string_def_t
 
 struct map_info_t
 {
-	char	name[32];
+	char	Name[32];
     char	song[12];
 };
 

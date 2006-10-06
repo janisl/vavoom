@@ -1,469 +1,376 @@
 ; EPISODE 1 - THE CITY OF THE DAMNED
 
-MAP E1M1 "THE DOCKS"
+map e1m1 lookup hhustr_e1m1
 cluster 1
-next E1M2
-secret E1M9
-SKY1 SKY1 0
-Music "MUS_E1M1"
+next e1m2
+secret e1m9
+sky1 sky1 0
+music mus_e1m1
 cdtrack 8
 
-MAP E1M2 "THE DUNGEONS"
+map e1m2 lookup hhustr_e1m2
 cluster 1
-next E1M3
-secret E1M9
-SKY1 SKY1 0
-Music "MUS_E1M2"
+next e1m3
+secret e1m9
+sky1 sky1 0
+music mus_e1m2
 
-MAP E1M3 "THE GATEHOUSE"
+map e1m3 lookup hhustr_e1m3
 cluster 1
-next E1M4
-secret E1M9
-SKY1 SKY1 0
-Music "MUS_E1M3"
+next e1m4
+secret e1m9
+sky1 sky1 0
+music mus_e1m3
 
-MAP E1M4 "THE GUARD TOWER"
+map e1m4 lookup hhustr_e1m4
 cluster 1
-next E1M5
-secret E1M9
-SKY1 SKY1 0
-Music "MUS_E1M4"
+next e1m5
+secret e1m9
+sky1 sky1 0
+music mus_e1m4
 
-MAP E1M5 "THE CITADEL"
+map e1m5 lookup hhustr_e1m5
 cluster 1
-next E1M6
-secret E1M9
-SKY1 SKY1 0
-Music "MUS_E1M5"
+next e1m6
+secret e1m9
+sky1 sky1 0
+music mus_e1m5
 
-MAP E1M6 "THE CATHEDRAL"
+map e1m6 lookup hhustr_e1m6
 cluster 1
-next E1M7
-secret E1M9
-SKY1 SKY1 0
-Music "MUS_E1M6"
+next e1m7
+secret e1m9
+sky1 sky1 0
+music mus_e1m6
 
-MAP E1M7 "THE CRYPTS"
+map e1m7 lookup hhustr_e1m7
 cluster 1
-next E1M8
-secret E1M9
-SKY1 SKY1 0
-Music "MUS_E1M7"
+next e1m8
+secret e1m9
+sky1 sky1 0
+music mus_e1m7
 
-MAP E1M8 "HELL'S MAW"
+map e1m8 lookup hhustr_e1m8
 cluster 1
 next EndGame1
-SKY1 SKY1 0
-Music "MUS_E1M8"
+sky1 sky1 0
+music mus_e1m8
 nointermission
 ironlichspecial
 specialaction_lowerfloor
 
-MAP E1M9 "THE GRAVEYARD"
+map e1m9 lookup hhustr_e1m9
 cluster 1
-next E1M1
-SKY1 SKY1 0
-Music "MUS_E1M9"
+next e1m1
+sky1 sky1 0
+music mus_e1m9
 
 ; EPISODE 2 - HELL'S MAW
 
-MAP E2M1 "THE CRATER"
+map e2m1 lookup hhustr_e2m1
 cluster 2
-next E2M2
-secret E2M9
-SKY1 SKY2 0
-Music "MUS_E2M1"
+next e2m2
+secret e2m9
+sky1 sky2 0
+music mus_e2m1
 
-MAP E2M2 "THE LAVA PITS"
+map e2m2 lookup hhustr_e2m2
 cluster 2
-next E2M3
-secret E2M9
-SKY1 SKY2 0
-Music "MUS_E2M2"
+next e2m3
+secret e2m9
+sky1 sky2 0
+music mus_e2m2
 
-MAP E2M3 "THE RIVER OF FIRE"
+map e2m3 lookup hhustr_e2m3
 cluster 2
-next E2M4
-secret E2M9
-SKY1 SKY2 0
-Music "MUS_E2M3"
+next e2m4
+secret e2m9
+sky1 sky2 0
+music mus_e2m3
 
-MAP E2M4 "THE ICE GROTTO"
+map e2m4 lookup hhustr_e2m4
 cluster 2
-next E2M5
-secret E2M9
-SKY1 SKY2 0
-Music "MUS_E2M4"
+next e2m5
+secret e2m9
+sky1 sky2 0
+music mus_e2m4
 
-MAP E2M5 "THE CATACOMBS"
+map e2m5 lookup hhustr_e2m5
 cluster 2
-next E2M6
-secret E2M9
-SKY1 SKY2 0
-Music "MUS_E1M4"
+next e2m6
+secret e2m9
+sky1 sky2 0
+music mus_e1m4
 
-MAP E2M6 "THE LABYRINTH"
+map e2m6 lookup hhustr_e2m6
 cluster 2
-next E2M7
-secret E2M9
-SKY1 SKY2 0
-Music "MUS_E2M6"
+next e2m7
+secret e2m9
+sky1 sky2 0
+music mus_e2m6
 
-MAP E2M7 "THE GREAT HALL"
+map e2m7 lookup hhustr_e2m7
 cluster 2
-next E2M8
-secret E2M9
-SKY1 SKY2 0
-Music "MUS_E2M7"
+next e2m8
+secret e2m9
+sky1 sky2 0
+music mus_e2m7
 
-MAP E2M8 "THE PORTALS OF CHAOS"
+map e2m8 lookup hhustr_e2m8
 cluster 2
 next EndGame2
-SKY1 SKY2 0
-Music "MUS_E2M8"
+sky1 sky2 0
+music mus_e2m8
 nointermission
 minotaurspecial
 specialaction_lowerfloor
 specialaction_killmonsters
 
-MAP E2M9 "THE GLACIER"
+map e2m9 lookup hhustr_e2m9
 cluster 2
-next E2M1
-SKY1 SKY2 0
-Music "MUS_E2M9"
+next e2m1
+sky1 sky2 0
+music mus_e2m9
 
 ; EPISODE 3 - THE DOME OF D'SPARIL
 
-MAP E3M1 "THE STOREHOUSE"
+map e3m1 lookup hhustr_e3m1
 cluster 3
-next E3M2
-secret E3M9
-SKY1 SKY3 0
-Music "MUS_E1M1"
+next e3m2
+secret e3m9
+sky1 sky3 0
+music mus_e1m1
 
-MAP E3M2 "THE CESSPOOL"
+map e3m2 lookup hhustr_e3m2
 cluster 3
-next E3M3
-secret E3M9
-SKY1 SKY3 0
-Music "MUS_E3M2"
+next e3m3
+secret e3m9
+sky1 sky3 0
+music mus_e3m2
 
-MAP E3M3 "THE CONFLUENCE"
+map e3m3 lookup hhustr_e3m3
 cluster 3
-next E3M4
-secret E3M9
-SKY1 SKY3 0
-Music "MUS_E3M3"
+next e3m4
+secret e3m9
+sky1 sky3 0
+music mus_e3m3
 
-MAP E3M4 "THE AZURE FORTRESS"
+map e3m4 lookup hhustr_e3m4
 cluster 3
-next E3M5
-secret E3M9
-SKY1 SKY3 0
-Music "MUS_E1M6"
+next e3m5
+secret e3m9
+sky1 sky3 0
+music mus_e1m6
 
-MAP E3M5 "THE OPHIDIAN LAIR"
+map e3m5 lookup hhustr_e3m5
 cluster 3
-next E3M6
-secret E3M9
-SKY1 SKY3 0
-Music "MUS_E1M3"
+next e3m6
+secret e3m9
+sky1 sky3 0
+music mus_e1m3
 
-MAP E3M6 "THE HALLS OF FEAR"
+map e3m6 lookup hhustr_e3m6
 cluster 3
-next E3M7
-secret E3M9
-SKY1 SKY3 0
-Music "MUS_E1M2"
+next e3m7
+secret e3m9
+sky1 sky3 0
+music mus_e1m2
 
-MAP E3M7 "THE CHASM"
+map e3m7 lookup hhustr_e3m7
 cluster 3
-next E3M8
-secret E3M9
-SKY1 SKY3 0
-Music "MUS_E1M5"
+next e3m8
+secret e3m9
+sky1 sky3 0
+music mus_e1m5
 
-MAP E3M8 "D'SPARIL'S KEEP"
+map e3m8 lookup hhustr_e3m8
 cluster 3
 next EndGame3
-SKY1 SKY3 0
-Music "MUS_E1M9"
+sky1 sky3 0
+music mus_e1m9
 nointermission
 dsparilspecial
 specialaction_lowerfloor
 specialaction_killmonsters
 
-MAP E3M9 "THE AQUIFER"
+map e3m9 lookup hhustr_e3m9
 cluster 3
-next E3M1
-SKY1 SKY3 0
-Music "MUS_E2M6"
+next e3m1
+sky1 sky3 0
+music mus_e2m6
 
 ; EPISODE 4: THE OSSUARY
 
-MAP E4M1 "CATAFALQUE"
+map e4m1 lookup hhustr_e4m1
 cluster 4
-next E4M2
-secret E4M9
-SKY1 SKY1 0
-Music "MUS_E1M6"
+next e4m2
+secret e4m9
+sky1 sky1 0
+music mus_e1m6
 
-MAP E4M2 "BLOCKHOUSE"
+map e4m2 lookup hhustr_e4m2
 cluster 4
-next E4M3
-secret E4M9
-SKY1 SKY1 0
-Music "MUS_E1M2"
+next e4m3
+secret e4m9
+sky1 sky1 0
+music mus_e1m2
 
-MAP E4M3 "AMBULATORY"
+map e4m3 lookup hhustr_e4m3
 cluster 4
-next E4M4
-secret E4M9
-SKY1 SKY1 0
-Music "MUS_E1M3"
+next e4m4
+secret e4m9
+sky1 sky1 0
+music mus_e1m3
 
-MAP E4M4 "SEPULCHER"
+map e4m4 lookup hhustr_e4m4
 cluster 4
-next E4M5
-secret E4M9
-SKY1 SKY1 0
-Music "MUS_E1M4"
+next e4m5
+secret e4m9
+sky1 sky1 0
+music mus_e1m4
 
-MAP E4M5 "GREAT STAIR"
+map e4m5 lookup hhustr_e4m5
 cluster 4
-next E4M6
-secret E4M9
-SKY1 SKY1 0
-Music "MUS_E1M5"
+next e4m6
+secret e4m9
+sky1 sky1 0
+music mus_e1m5
 
-MAP E4M6 "HALLS OF THE APOSTATE"
+map e4m6 lookup hhustr_e4m6
 cluster 4
-next E4M7
-secret E4M9
-SKY1 SKY1 0
-Music "MUS_E1M1"
+next e4m7
+secret e4m9
+sky1 sky1 0
+music mus_e1m1
 
-MAP E4M7 "RAMPARTS OF PERDITION"
+map e4m7 lookup hhustr_e4m7
 cluster 4
-next E4M8
-secret E4M9
-SKY1 SKY1 0
-Music "MUS_E1M7"
+next e4m8
+secret e4m9
+sky1 sky1 0
+music mus_e1m7
 
-MAP E4M8 "SHATTERED BRIDGE"
+map e4m8 lookup hhustr_e4m8
 cluster 4
 next EndGame4
-SKY1 SKY1 0
-Music "MUS_E1M8"
+sky1 sky1 0
+music mus_e1m8
 nointermission
 ironlichspecial
 specialaction_lowerfloor
 specialaction_killmonsters
 
-MAP E4M9 "MAUSOLEUM"
+map e4m9 lookup hhustr_e4m9
 cluster 4
-next E4M1
-SKY1 SKY1 0
-Music "MUS_E1M9"
+next e4m1
+sky1 sky1 0
+music mus_e1m9
 
 ; EPISODE 5: THE STAGNANT DEMESNE
 
-MAP E5M1 "OCHRE CLIFFS"
+map e5m1 lookup hhustr_e5m1
 cluster 5
-next E5M2
-secret E5M9
-SKY1 SKY3 0
-Music "MUS_E2M1"
+next e5m2
+secret e5m9
+sky1 sky3 0
+music mus_e2m1
 
-MAP E5M2 "RAPIDS"
+map e5m2 lookup hhustr_e5m2
 cluster 5
-next E5M3
-secret E5M9
-SKY1 SKY3 0
-Music "MUS_E2M2"
+next e5m3
+secret e5m9
+sky1 sky3 0
+music mus_e2m2
 
-MAP E5M3 "QUAY"
+map e5m3 lookup hhustr_e5m3
 cluster 5
-next E5M4
-secret E5M9
-SKY1 SKY3 0
-Music "MUS_E2M3"
+next e5m4
+secret e5m9
+sky1 sky3 0
+music mus_e2m3
 
-MAP E5M4 "COURTYARD"
+map e5m4 lookup hhustr_e5m4
 cluster 5
-next E5M5
-secret E5M9
-SKY1 SKY3 0
-Music "MUS_E2M4"
+next e5m5
+secret e5m9
+sky1 sky3 0
+music mus_e2m4
 
-MAP E5M5 "HYDRATYR"
+map e5m5 lookup hhustr_e5m5
 cluster 5
-next E5M6
-secret E5M9
-SKY1 SKY3 0
-Music "MUS_E1M4"
+next e5m6
+secret e5m9
+sky1 sky3 0
+music mus_e1m4
 
-MAP E5M6 "COLONNADE"
+map e5m6 lookup hhustr_e5m6
 cluster 5
-next E5M7
-secret E5M9
-SKY1 SKY3 0
-Music "MUS_E2M6"
+next e5m7
+secret e5m9
+sky1 sky3 0
+music mus_e2m6
 
-MAP E5M7 "FOETID MANSE"
+map e5m7 lookup hhustr_e5m7
 cluster 5
-next E5M8
-SKY1 SKY3 0
-Music "MUS_E2M7"
+next e5m8
+sky1 sky3 0
+music mus_e2m7
 
-MAP E5M8 "FIELD OF JUDGEMENT"
+map e5m8 lookup hhustr_e5m8
 cluster 5
 next EndGame5
-SKY1 SKY3 0
-Music "MUS_E2M8"
+sky1 sky3 0
+music mus_e2m8
 nointermission
 minotaurspecial
 specialaction_lowerfloor
 specialaction_killmonsters
 
-MAP E5M9 "SKEIN OF D'SPARIL"
+map e5m9 lookup hhustr_e5m9
 cluster 5
-next E5M1
-secret E5M9
-SKY1 SKY3 0
-Music "MUS_E2M9"
+next e5m1
+secret e5m9
+sky1 sky3 0
+music mus_e2m9
 
 ; Additional 3 levels
 
-MAP E6M1 "Development map"
-next E6M2
-SKY1 SKY1 0
-Music "MUS_E3M2"
+map e6m1 "Development map"
+next e6m2
+sky1 sky1 0
+music mus_e3m2
 
-MAP E6M2 "development map"
-next E6M3
-SKY1 SKY1 0
-Music "MUS_E3M3"
+map e6m2 "development map"
+next e6m3
+sky1 sky1 0
+music mus_e3m3
 
-MAP E6M3 "Development map"
-next E6M1
-SKY1 SKY1 0
-Music "MUS_E1M6"
-
-;Music "MUS_TITL"
-;Music "MUS_INTR"
-;Music "MUS_CPTD"
+map e6m3 "Development map"
+next e6m1
+sky1 sky1 0
+music mus_e1m6
 
 clusterdef 1
-exittext "with the destruction of the iron
-liches and their minions, the last
-of the undead are cleared from this
-plane of existence.
-
-those creatures had to come from
-somewhere, though, and you have the
-sneaky suspicion that the fiery
-portal of hell's maw opens onto
-their home dimension.
-
-to make sure that more undead
-(or even worse things) don't come
-through, you'll have to seal hell's
-maw from the other side. of course
-this means you may get stuck in a
-very unfriendly world, but no one
-ever said being a Heretic was easy!"
+exittext lookup he1text
 flat floor25
+music mus_cptd
 
 clusterdef 2
-exittext "the mighty maulotaurs have proved
-to be no match for you, and as
-their steaming corpses slide to the
-ground you feel a sense of grim
-satisfaction that they have been
-destroyed.
-
-the gateways which they guarded
-have opened, revealing what you
-hope is the way home. but as you
-step through, mocking laughter
-rings in your ears.
-
-was some other force controlling
-the maulotaurs? could there be even
-more horrific beings through this
-gate? the sweep of a crystal dome
-overhead where the sky should be is
-certainly not a good sign...."
+exittext lookup he2text
 flat flathuh1
+music mus_cptd
 
 clusterdef 3
-exittext "the death of d'sparil has loosed
-the magical bonds holding his
-creatures on this plane, their
-dying screams overwhelming his own
-cries of agony.
-
-your oath of vengeance fulfilled,
-you enter the portal to your own
-world, mere moments before the dome
-shatters into a million pieces.
-
-but if d'sparil's power is broken
-forever, why don't you feel safe?
-was it that last shout just before
-his death, the one that sounded
-like a curse? or a summoning? you
-can't really be sure, but it might
-just have been a scream.
-
-then again, what about the other
-serpent riders?"
+exittext lookup he3text
 flat fltwawa2
+music mus_cptd
 
 clusterdef 4
-exittext "you thought you would return to your
-own world after d'sparil died, but
-his final act banished you to his
-own plane. here you entered the
-shattered remnants of lands
-conquered by d'sparil. you defeated
-the last guardians of these lands,
-but now you stand before the gates
-to d'sparil's stronghold. until this
-moment you had no doubts about your
-ability to face anything you might
-encounter, but beyond this portal
-lies the very heart of the evil
-which invaded your world. d'sparil
-might be dead, but the pit where he
-was spawned remains. now you must
-enter that pit in the hopes of
-finding a way out. and somewhere,
-in the darkest corner of d'sparil's
-demesne, his personal bodyguards
-await your arrival ..."
+exittext lookup he4text
 flat floor28
+music mus_cptd
 
 clusterdef 5
-exittext "as the final maulotaur bellows his
-death-agony, you realize that you
-have never come so close to your own
-destruction. not even the fight with
-d'sparil and his disciples had been
-this desperate. grimly you stare at
-the gates which open before you,
-wondering if they lead home, or if
-they open onto some undreamed-of
-horror. you find yourself wondering
-if you have the strength to go on,
-if nothing but death and pain await
-you. but what else can you do, if
-the will to fight is gone? can you
-force yourself to continue in the
-face of such despair? do you have
-the courage? you find, in the end,
-that it is not within you to
-surrender without a fight. eyes
-wide, you go to meet your fate."
+exittext lookup he5text
 flat floor08
+music mus_cptd

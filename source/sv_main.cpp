@@ -2443,7 +2443,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	sv_next_map = info.NextMap;
 	sv_secret_map = info.SecretMap;
 
-	level.LevelName = info.Name;
+	level.LevelName = info.GetName();
 	level.levelnum = info.LevelNum;
 	level.cluster = info.Cluster;
 	level.partime = 0;//FIXME not used in Vavoom.

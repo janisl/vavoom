@@ -63,8 +63,7 @@ extern mobjinfo_t			mobjinfo[];
 extern weaponinfo_t			weaponinfo[];
 extern sfxinfo_t			sfx[];
 extern string_def_t			strings[];
-extern string_def_t			txtlumps1[];
-extern string_def_t			txtlumps2[];
+extern string_def_t			Strings[];
 extern map_info_t			map_info1[];
 extern map_info_t			map_info2[];
 extern int					maxammo[];
@@ -459,48 +458,21 @@ static void FindString(char *oldStr, char *newStr)
 		}
 	}
 
-	string_def_t* txtlumps = Doom2 ? txtlumps2 : txtlumps1;
-	for (i = 0; txtlumps[i].macro; i++)
+	for (i = 0; Strings[i].macro; i++)
 	{
-		if (!strcmp(txtlumps[i].def_val, oldStr))
+		if (!strcmp(Strings[i].def_val, oldStr))
 		{
-//			printf("Lump %s, old \"%s\" new \"%s\"\n", txtlumps[i].macro, oldStr, newStr);
-			if (txtlumps[i].new_val)
-				free(txtlumps[i].new_val);
-			txtlumps[i].new_val = (char*)malloc(strlen(newStr) + 1);
-			strcpy(txtlumps[i].new_val, newStr);
+//			printf("String %s, old \"%s\" new \"%s\"\n", strings[i].macro, oldStr, newStr);
+			if (Strings[i].new_val)
+				free(Strings[i].new_val);
+			Strings[i].new_val = (char*)malloc(strlen(newStr) + 1);
+			strcpy(Strings[i].new_val, newStr);
 			return;
 		}
 	}
 
 	if (Doom2)
 	{
-		if (!strncmp(oldStr, "level", 5))
-		{
-			for (i = 0; i < 32; i++)
-			{
-				if (!strcmp(map_info2[i].name, oldStr + 9) ||
-					!strcmp(map_info2[i].name, oldStr + 10))
-				{
-	//				printf("Map name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-					while (newStr[0] && newStr[strlen(newStr) - 1] == ' ')
-						newStr[strlen(newStr) - 1] = 0;
-					if (oldStr[8] == ':' && !strnicmp(oldStr, newStr, 9))
-					{
-						newStr += 9;
-					}
-					else if (oldStr[7] == ':' && !strnicmp(oldStr, newStr, 8))
-					{
-						newStr += 8;
-					}
-					while (newStr[0] == ' ')
-						newStr++;
-					strcpy(map_info2[i].name, newStr);
-					return;
-				}
-			}
-		}
-
 		for (i = 0; i < 32; i++)
 		{
 			if (!strcmp(map_info2[i].song + 2, oldStr))
@@ -513,26 +485,6 @@ static void FindString(char *oldStr, char *newStr)
 	}
 	else
 	{
-		if (oldStr[0] == 'E' && oldStr[2] == 'M' && oldStr[4] == ':')
-		{
-			for (i = 0; i < 32; i++)
-			{
-				if (!strcmp(map_info1[i].name, oldStr + 6))
-				{
-					while (newStr[0] && newStr[strlen(newStr) - 1] == ' ')
-						newStr[strlen(newStr) - 1] = 0;
-					if (oldStr[4] == ':' && !strnicmp(oldStr, newStr, 5))
-					{
-						newStr += 5;
-					}
-					while (newStr[0] == ' ')
-						newStr++;
-					strcpy(map_info1[i].name, newStr);
-					return;
-				}
-			}
-		}
-
 		for (i = 0; i < 32; i++)
 		{
 			if (!strcmp(map_info1[i].song + 2, oldStr))
