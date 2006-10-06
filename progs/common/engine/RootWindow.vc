@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: RootWindow.vc 1755 2006-10-03 19:24:11Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,18 +23,9 @@
 //**
 //**************************************************************************
 
-#include "../macros.vc"
+class RootWindow:ModalWindow
+	native;
 
-#include "Object.vc"
-#include "Level.vc"
-#include "Thinker.vc"
-#include "LevelInfo.vc"
-#include "Entity.vc"
-#include "BasePlayer.vc"
-#include "ViewEntity.vc"
-#include "GameInfo.vc"
-#include "GC.vc"
-#include "Window.vc"
-#include "ModalWindow.vc"
-#include "RootWindow.vc"
-#include "ClientGameBase.vc"
+defaultproperties
+{
+}

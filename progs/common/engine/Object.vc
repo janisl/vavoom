@@ -58,7 +58,6 @@ const int TICRATE				= 35;
 const int MAXPLAYERS			= 8;
 
 const int NUM_CSHIFTS			= 8;
-#define CSHIFT(r, g, b, a)	(((a) << 24) | ((r) << 16) | ((g) << 8) | (b))
 
 // Difficulty/skill settings/filters.
 enum
@@ -179,7 +178,6 @@ const int
 	ML_REPEAT_SPECIAL	= 0x0200,	// special is repeatable
 	ML_SPAC_SHIFT		= 10,
 	ML_SPAC_MASK		= 0x1c00,
-#define GET_SPAC(_flags_)	(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
 	ML_MONSTERSCANACTIVATE	= 0x2000,	//	Monsters (as well as players) can activate the line
 	ML_BLOCKEVERYTHING	= 0x8000,	//	Line blocks everything.
 	ML_RAILING			= 0x20000,
@@ -232,9 +230,6 @@ enum
 	MSG_SV_CLIENT,
 	MSG_CL_MESSAGE
 };
-
-#define RGB(r, g, b)		(0xff000000 + ((r) << 16) + ((g) << 8) + (b))
-#define RGBA(r, g, b, a)	(((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
 
 const int MAX_TID_COUNT		= 200;
 
@@ -297,13 +292,6 @@ enum
 //**    SERVER DEFINES
 //**
 //**************************************************************************
-
-#define MobjCentre(mobj)\
-	(mobj.Origin + vector(0.0, 0.0, mobj.Height * 0.5 - mobj.FloorClip))
-
-#define FOREACH(type, var) \
-	for (var = type(NextThinker(none, type)); var; \
-		var = type(NextThinker(var, type)))
 
 const int MAX_MSGLEN	= 8000;
 

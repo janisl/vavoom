@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: GC.vc 1755 2006-10-03 19:24:11Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,18 +23,28 @@
 //**
 //**************************************************************************
 
-#include "../macros.vc"
+class GC : Object
+	native;
 
-#include "Object.vc"
-#include "Level.vc"
-#include "Thinker.vc"
-#include "LevelInfo.vc"
-#include "Entity.vc"
-#include "BasePlayer.vc"
-#include "ViewEntity.vc"
-#include "GameInfo.vc"
-#include "GC.vc"
-#include "Window.vc"
-#include "ModalWindow.vc"
-#include "RootWindow.vc"
-#include "ClientGameBase.vc"
+readonly ClipRect ClipRect;
+
+void DrawIcon(int X, int Y, int Handle)
+{
+	R_DrawPic(X + ftoi(ClipRect.OriginX), Y + ftoi(ClipRect.OriginY), Handle);
+}
+
+void DrawText(int X, int Y, string Text)
+{
+	T_DrawText(X + ftoi(ClipRect.OriginX), Y + ftoi(ClipRect.OriginY), Text);
+}
+
+void DrawFullScreenPic(int Handle)
+{
+	SetVirtualScreen(320, 200);
+	R_DrawPic(0, 0, Handle);
+	SetVirtualScreen(640, 480);
+}
+
+defaultproperties
+{
+}

@@ -1,0 +1,247 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: Window.vc 1755 2006-10-03 19:24:11Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class Window : Object
+	native;
+
+// Quick class reference
+readonly int WindowType;			// Contains window type
+
+// Booleans
+readonly bool bIsVisible;		// True if the window is visible
+readonly bool bIsSensitive;		// True if the window can take input
+readonly bool bIsSelectable;		// True if the window can have keyboard focus
+bool bTickEnabled;		// True if Tick() event should be called
+readonly bool bIsInitialised;	// True if the window has been initialised
+
+// Destructor information
+readonly bool bBeingDestroyed;	// TRUE if this window is going bye-bye
+
+int X;
+int Y;
+int Width;
+int Height;
+
+readonly ClipRect ClipRect;
+
+readonly GC WinGC;
+
+// Relatives
+readonly Window Parent;			// Parent window; NULL if this is root
+readonly Window FirstChild;		// "Lowest" child (first one drawn)
+readonly Window LastChild;		// "Highest" child (last one drawn)
+readonly Window PrevSibling;		// Next "lowest" sibling (previous one drawn)
+readonly Window NextSibling;		// Next "highest" sibling (next one drawn)
+
+native void Destroy();
+native Window NewChild(classid ChildClass);
+native void Raise();
+native void Lower();
+native void SetVisibility(bool bNewVisibility);
+native void Show();
+native void Hide();
+native bool IsVisible();
+native void SetSensitivity(bool bNewSensitivity);
+native void Enable();
+native void Disable();
+native bool IsSensitive();
+native void SetSelectability(bool bNewSelectability);
+
+native RootWindow GetRootWindow();
+native ModalWindow GetModalWindow();
+native Window GetParent();
+
+native void SetPos(int NewX, int NewY);
+native void SetSize(int NewWidth, int NewHeight);
+native void SetConfiguration(int NewX, int NewY, int NewWidth, int NewHeight);
+native void SetWidth(int NewWidth);
+native void SetHeight(int NewHeight);
+
+native Window GetBottomChild(bool bVisibleOnly);
+native Window GetTopChild(bool bVisibleOnly);
+native Window GetLowerSibling(bool bVisibleOnly);
+native Window GetHigherSibling(bool bVisibleOnly);
+
+native void DestroyAllChildren();
+
+//==========================================================================
+//
+//	InitWindow
+//
+//	Window constructor.
+//
+//==========================================================================
+
+void InitWindow()
+{
+}
+
+//==========================================================================
+//
+//	DestroyWindow
+//
+//	Window destructor.
+//
+//==========================================================================
+
+void DestroyWindow()
+{
+}
+
+//==========================================================================
+//
+//	WindowReady
+//
+//	Called just before window is first drawn.
+//
+//==========================================================================
+
+void WindowReady()
+{
+}
+
+//==========================================================================
+//
+//	ChildAdded
+//
+//	Called when a child window is added.
+//
+//==========================================================================
+
+void ChildAdded(Window Child)
+{
+}
+
+//==========================================================================
+//
+//	ChildRemoved
+//
+//	Called when a child window is removed.
+//
+//==========================================================================
+
+void ChildRemoved(Window Child)
+{
+}
+
+//==========================================================================
+//
+//	DescendantAdded
+//
+//	Called when a descendant window is added.
+//
+//==========================================================================
+
+void DescendantAdded(Window Descendant)
+{
+}
+
+//==========================================================================
+//
+//	DescendantRemoved
+//
+//	Called when a descendant window is removed.
+//
+//==========================================================================
+
+void DescendantRemoved(Window Descendant)
+{
+}
+
+//==========================================================================
+//
+//	ConfigurationChanged
+//
+//	Called when the parent changes this window's size.
+//
+//==========================================================================
+
+void ConfigurationChanged()
+{
+}
+
+//==========================================================================
+//
+//	VisibilityChanged
+//
+//	Called when the parent shows or hides this window.
+//
+//==========================================================================
+
+void VisibilityChanged(bool bNewVisibility)
+{
+}
+
+//==========================================================================
+//
+//	SensitivityChanged
+//
+//	Called when this window becomes sensitive or insensitive.
+//
+//==========================================================================
+
+void SensitivityChanged(bool bNewSensitivity)
+{
+}
+
+//==========================================================================
+//
+//	DrawWindow
+//
+//	Draws the window.
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+}
+
+//==========================================================================
+//
+//	PostDrawWindow
+//
+//	Draws the window (AFTER all children are drawn).
+//
+//==========================================================================
+
+void PostDrawWindow(GC gc)
+{
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//	Called periodicly, but only when bTickEnabled is true.
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+}
+
+defaultproperties
+{
+}
