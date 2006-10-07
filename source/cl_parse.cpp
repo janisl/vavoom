@@ -74,6 +74,7 @@ void CL_Clear()
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
 	cl->ViewEnts[0] = PrevVEnts[0];
 	cl->ViewEnts[1] = PrevVEnts[1];
+	cl_level.LevelName.Clean();
 	memset(&cl_level, 0, sizeof(cl_level));
 	for (int i = 0; i < GMaxEntities; i++)
 		if (cl_mobjs[i])

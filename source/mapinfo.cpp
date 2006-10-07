@@ -844,6 +844,7 @@ COMMAND(MapList)
 void ShutdownMapInfo()
 {
 	guard(ShutdownMapInfo);
+	DefaultMap.Name.Clean();
 	MapInfo.Clear();
 	MapSongList.Clear();
 	ClusterDefs.Clear();

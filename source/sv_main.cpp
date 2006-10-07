@@ -242,8 +242,10 @@ void SV_Shutdown()
 	delete[] sv_mobjs;
 	delete[] sv_mo_base;
 	delete[] sv_mo_free_time;
+	level.LevelName.Clean();
 	
 	P_FreeTerrainTypes();
+	P_ClearButtons();
 	svs.serverinfo.Clean();
 	for (int i = 0; i < MAX_SKINS; i++)
 	{
@@ -268,6 +270,7 @@ void SV_Clear()
 		VObject::CollectGarbage();
 	}
 	memset(&sv, 0, sizeof(sv));
+	level.LevelName.Clean();
 	memset(&level, 0, sizeof(level));
 	memset(sv_mobjs, 0, sizeof(VEntity *) * GMaxEntities);
 	memset(sv_mo_base, 0, sizeof(mobj_base_t) * GMaxEntities);

@@ -172,6 +172,7 @@ void CL_Shutdown()
 	im.LeaveName.Clean();
 	im.EnterName.Clean();
 	im.Text.Clean();
+	cl_level.LevelName.Clean();
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		scores[i].name.Clean();
