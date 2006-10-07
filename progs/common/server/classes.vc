@@ -23,6 +23,6 @@
 //**
 //**************************************************************************
 
-#include "SectorThinker.vc"
-#include "SectorMover.vc"
+import linespec;
+
 #include "Lighting.vc"
