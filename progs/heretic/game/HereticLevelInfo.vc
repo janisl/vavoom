@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HereticLevelInfo : LevelInfo;
+class HereticLevelInfo : LineSpecialLevelInfo;
 
 const int MAX_BOSS_SPOTS	= 8;
 
@@ -132,7 +132,7 @@ void SpawnSpecials()
 			sector->special &= ~SECSPEC_BASE_MASK;
 			break;
 		case SECSPEC_DoorRaiseIn5Minutes:
-			SpawnDoorRaiseIn5Mins(sector, i);
+			SpawnDoorRaiseIn5Mins(sector);
 			break;
 		case SECSPEC_LightFireFlicker:
 			SpawnFireFlicker(sector);
@@ -470,25 +470,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_OpenPolyDoor(Line, Arg1, Arg2, Arg3, Arg4, Arg5,
 			PODOOR_SLIDE);
 		break;
-	case LNSPEC_DoorClose:
-		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			DOOREV_Close, Line, A);
-		break;
-	case LNSPEC_DoorOpen:
-		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			DOOREV_Open, Line, A);
-		break;
-	case LNSPEC_DoorRaise:
-		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			DOOREV_Raise, Line, A);
-		break;
-	case LNSPEC_DoorLockedRaise:
-		if (CheckLock(A, Arg4))
-		{
-			buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
-				DOOREV_RaiseLocked, Line, A);
-		}
-		break;
 	case LNSPEC_FloorLowerByValue:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FLOOREV_LowerByValue, Line);
@@ -553,9 +534,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FLOOREV_LowerByValueTimes8, Line);
 		break;
-	case LNSPEC_CeilingWaggle:
-		buttonSuccess = EV_StartCeilingWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
 	case LNSPEC_TeleportZombieChanger:
 		if (Side == 0)
 		{
@@ -564,30 +542,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 				true);
 			A.SetState(A.PainState);
 		}
-		break;
-	case LNSPEC_CeilingLowerByValue:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_LowerByValue, Line);
-		break;
-	case LNSPEC_CeilingRaiseByValue:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_RaiseByValue, Line);
-		break;
-	case LNSPEC_CeilingCrushAndRaise:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_CrushAndRaise, Line);
-		break;
-	case LNSPEC_CeilingLowerAndCrush:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_LowerAndCrush, Line);
-		break;
-	case LNSPEC_CeilingCrushStop:
-		buttonSuccess = EV_CeilingCrushStop(Line, Arg1, Arg2, Arg3, Arg4,
-			Arg5);
-		break;
-	case LNSPEC_CeilingCrushRaiseAndStay:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_CrushRaiseAndStay, Line);
 		break;
 	case LNSPEC_FloorCrushStop:
 		buttonSuccess = EV_FloorCrushStop(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -626,10 +580,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_FloorMoveToValueTimes8:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FLOOREV_MoveToValueTimes8, Line);
-		break;
-	case LNSPEC_CeilingMoveToValueTimes8:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_MoveToValueTimes8, Line);
 		break;
 	case LNSPEC_Teleport:
 		if (Side == 0)
@@ -829,45 +779,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_NoiseAlert:
 		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
-	case LNSPEC_CeilingLowerToHighestFloor:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_LowerToHighestFloor, Line);
-		break;
-	case LNSPEC_CeilingLowerInstant:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_LowerTimes8Instant, Line);
-		break;
-	case LNSPEC_CeilingRaiseInstant:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_RaiseTimes8Instant, Line);
-		break;
-	case LNSPEC_CeilingCrushRaiseAndStayA:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_CrushRaiseAndStayA, Line);
-		break;
-	case LNSPEC_CeilingCrushAndRaiseA:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_CrushAndRaiseA, Line);
-		break;
-	case LNSPEC_CeilingCrushAndRaiseSilentA:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_CrushAndRaiseSilA, Line);
-		break;
-	case LNSPEC_CeilingRaiseByValueTimes8:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_RaiseByValueTimes8, Line);
-		break;
-	case LNSPEC_CeilingLowerByValueTimes8:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_LowerByValueTimes8, Line);
-		break;
 	case LNSPEC_FloorGeneric:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FLOOREV_Generic, Line);
-		break;
-	case LNSPEC_CeilingGeneric:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_Generic, Line);
 		break;
 	case LNSPEC_DoorGeneric:
 		buttonSuccess = EV_GenericDoor(Arg1, Arg2, Arg3, Arg4, Arg5, Line, A);
@@ -879,10 +793,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_StairsGeneric:
 		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
 			true, Line);
-		break;
-	case LNSPEC_CeilingGenericCrush:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_GenericCrush, Line);
 		break;
 	case LNSPEC_PlatDownWaitUpStayLip:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -990,34 +900,14 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
 			ELEVEV_Down, Line);
 		break;
-	case LNSPEC_DoorCloseWaitOpen:
-		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			DOOREV_CloseWaitOpen, Line, A);
-		break;
 	case LNSPEC_FloorDonut:
 		buttonSuccess = EV_DoDonut(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_FloorAndCeilingLowerRaise:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg3, 0, 0, 0,
-			CEILEV_RaiseToHighest, Line);
+			CeilingMover::CEILEV_RaiseToHighest, Line);
 		buttonSuccess |= EV_DoFloor(Arg1, Arg2, 0, 0, 0,
 			FLOOREV_LowerToLowest, Line);
-		break;
-	case LNSPEC_CeilingRaiseToNearest:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_RaiseToNearest, Line);
-		break;
-	case LNSPEC_CeilingLowerToLowest:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_LowerToLowest, Line);
-		break;
-	case LNSPEC_CeilingLowerToFloor:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_LowerToFloor, Line);
-		break;
-	case LNSPEC_CeilingCrushRaiseAndStaySilentA:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
-			CEILEV_CrushRaiseAndStaySilA, Line);
 		break;
 
 	// Line specials only processed during level initialization
@@ -1040,6 +930,8 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 
 	// Inert Line specials
 	default:
+		buttonSuccess = ::ExecuteActionSpecial(Special, Arg1, Arg2, Arg3,
+			Arg4, Arg5, Line, Side, E);
 		break;
 	}
 	return buttonSuccess;
@@ -1194,7 +1086,7 @@ void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
 //
 //==========================================================================
 
-bool CheckLock(Actor user, int lock)
+bool CheckLock(Entity user, int lock)
 {
 	if (!user.bIsPlayer)
 	{
@@ -1374,156 +1266,6 @@ bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		}
 	}
 	return true;
-}
-
-//**************************************************************************
-//
-//  VERTICAL DOORS
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  EV_DoDoor
-//
-//  Move a door up/down
-//
-//==========================================================================
-
-int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
-	line_t* Line, Actor Thing)
-{
-	int				SecNum;
-	int				RetCode;
-	sector_t*		Sec;
-	VerticalDoor	Door;
-
-	RetCode = false;
-	if (!Arg1)
-	{
-		if (!Line)
-			return false;
-
-		//	Make sure it's a two-sided line.
-		if (Line->sidenum[1] < 0)
-			return false;
-	
-		// if the sector has an active thinker, use it
-		Sec = XLevel.Sides[Line->sidenum[1]].sector;
-		if (Sec->CeilingData)
-		{
-			Door = VerticalDoor(Sec->CeilingData);
-			if (Door)
-			{
-				return Door.ReUse(Type, Line, Thing);
-			}
-			return false;
-		}
-	
-		//
-		// new door thinker
-		//
-		Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
-		Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
-		RetCode = true;
-	}
-	else
-	{
-		for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-			SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-		{
-			Sec = &XLevel.Sectors[SecNum];
-			if (Sec->CeilingData)
-			{
-				continue;
-			}
-			// Add new door thinker
-			RetCode = true;
-			Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
-			Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
-		}
-	}
-	return RetCode;
-}
-
-//==========================================================================
-//
-//  EV_GenericDoor
-//
-//	Boom's generic doors.
-//
-//==========================================================================
-
-int EV_GenericDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	line_t* Line, Actor Thing)
-{
-	int			Tag;
-	int			LightTag;
-
-	//	Check for locked door.
-	if (Arg5 && !CheckLock(Thing, Arg5))
-	{
-		return false;
-	}
-
-	//	Check for Boom's local door light special.
-	if (Arg3 & 128)
-	{
-		Tag = 0;
-		LightTag = Arg1;
-	}
-	else
-	{
-		Tag = Arg1;
-		LightTag = 0;
-	}
-
-	switch (Arg3 & 127)
-	{
-	case 0:
-		return EV_DoDoor(Tag, Arg2, Arg4, LightTag, 0, DOOREV_Raise,
-			Line, Thing);
-	case 1:
-		return EV_DoDoor(Tag, Arg2, LightTag, 0, 0, DOOREV_Open,
-			Line, Thing);
-	case 2:
-		return EV_DoDoor(Tag, Arg2, Arg4, LightTag, 0, DOOREV_CloseWaitOpen,
-			Line, Thing);
-	case 3:
-		return EV_DoDoor(Tag, Arg2, LightTag, 0, 0, DOOREV_Close,
-			Line, Thing);
-	}
-	return false;
-}
-
-//==========================================================================
-//
-//  Spawn a door that closes after 30 seconds
-//
-//==========================================================================
-
-void SpawnDoorCloseIn30(sector_t * sec)
-{
-	VerticalDoor	Door;
-
-	Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
-	Door.InitCloseIn30(sec);
-	sec->special = 0;
-}
-
-//==========================================================================
-//
-//  Spawn a door that opens after 5 minutes
-//
-//==========================================================================
-
-void SpawnDoorRaiseIn5Mins(sector_t * sec, int secnum)
-{
-	VerticalDoor Door;
-
-	sec->special = 0;
-	Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
-	Door.Init(sec, 0, 16, 150, 0, 0, DOOREV_RaiseIn5Mins);
 }
 
 //==========================================================================
@@ -2018,136 +1760,6 @@ int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		Elev.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 	}
 	return Rtn;
-}
-
-//**************************************************************************
-//
-//  CEILINGS
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//  EV_DoCeiling
-//
-//  Move a ceiling up/down and all around!
-//
-//==========================================================================
-
-int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
-	line_t* Line)
-{
-	int				SecNum;
-	int				Rtn;
-	sector_t*		Sec;
-	CeilingMover	Ceiling;
-
-	Rtn = false;
-
-	if (!Arg1)
-	{
-		if (!Line || !Line->backsector)
-			return false;
-
-		//  Reactivate in-stasis ceilings...for certain types.
-		if ((Type == CEILEV_CrushAndRaiseA ||
-			Type == CEILEV_CrushAndRaiseSilA) &&
-			CeilingMover(Line->backsector->CeilingData))
-		{
-			CeilingMover(Line->backsector->CeilingData).ActivateInStasis(0);
-		}
-
-		if (!Line->backsector->CeilingData)
-		{
-			// new ceiling thinker
-			Rtn = true;
-			Ceiling = CeilingMover(NewSpecialThinker(CeilingMover));
-			Ceiling.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5,
-				Type, Line);
-		}
-	}
-	else
-	{
-		//  Reactivate in-stasis ceilings...for certain types.
-		if (Type == CEILEV_CrushAndRaiseA ||
-			Type == CEILEV_CrushAndRaiseSilA)
-		{
-			FOREACH(CeilingMover, Ceiling)
-			{
-				Ceiling.ActivateInStasis(Arg1);
-			}
-		}
-
-		for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-			SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-		{
-			Sec = &XLevel.Sectors[SecNum];
-			if (Sec->CeilingData)
-				continue;
-
-			// new ceiling thinker
-			Rtn = true;
-			Ceiling = CeilingMover(NewSpecialThinker(CeilingMover));
-			Ceiling.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
-		}
-	}
-	return Rtn;
-}
-
-//==========================================================================
-//
-//  EV_CeilingCrushStop
-//
-//  Stop a ceiling from crushing!
-//
-//==========================================================================
-
-int EV_CeilingCrushStop(line_t* line, int Arg1, int Arg2, int Arg3,
-	int Arg4, int Arg5)
-{
-	int rtn;
-	CeilingMover Ceiling;
-
-	rtn = false;
-	FOREACH(CeilingMover, Ceiling)
-	{
-		if (Ceiling.CrushStop(Arg1))
-		{
-			rtn = true;
-		}
-	}
-
-	return rtn;
-}
-
-//==========================================================================
-//
-//	EV_StartCeilingWaggle
-//
-//==========================================================================
-
-bool EV_StartCeilingWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
-{
-	int				SectorIndex;
-	sector_t*		Sector;
-	CeilingWaggle	Waggle;
-	bool			RetCode;
-
-	RetCode = false;
-	for (SectorIndex = XLevel.FindSectorFromTag(Arg1, -1); SectorIndex >= 0;
-		SectorIndex = XLevel.FindSectorFromTag(Arg1, SectorIndex))
-	{
-		Sector = &XLevel.Sectors[SectorIndex];
-		if (Sector->CeilingData)
-		{
-			// Already busy with another thinker
-			continue;
-		}
-		RetCode = true;
-		Waggle = CeilingWaggle(NewSpecialThinker(CeilingWaggle));
-		Waggle.Init(Sector, Arg1, Arg2, Arg3, Arg4, Arg5);
-	}
-	return RetCode;
 }
 
 //==========================================================================
@@ -4224,4 +3836,7 @@ void P_Massacre()
 
 defaultproperties
 {
+	DefaultDoorSound = 'HereticDoor';
+	DefaultCeilingSound = 'CeilingNormal';
+	DefaultSilentCeilingSound = 'CeilingSemiSilent';
 }

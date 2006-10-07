@@ -42,7 +42,8 @@ class AcolyteArmor : AcolyteBase
 
 void A_HideDecepticon()
 {
-	StrifeLevelInfo(Level).EV_DoDoor(999, 64, 0, 0, 0, DOOREV_Close, NULL, none);
+	StrifeLevelInfo(Level).EV_DoDoor(999, 64, 0, 0, 0,
+		VerticalDoor::DOOREV_Close, NULL, none);
 	if (Enemy && Enemy.bIsPlayer)
 	{
 		StrifeLevelInfo(Level).NoiseAlert(Enemy, self);

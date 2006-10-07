@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: VerticalDoor.vc 1744 2006-10-01 12:40:46Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -25,12 +25,23 @@
 
 class VerticalDoor : SectorMover;
 
+enum
+{
+	DOOREV_Close,
+	DOOREV_Open,
+	DOOREV_Raise,
+	DOOREV_RaiseLocked,
+	DOOREV_CloseWaitOpen,
+	DOOREV_RaiseIn5Mins
+};
+
 int			Type;
 float		TopHeight;
 float		Speed;
-int			Direction;	// 1 = up, 0 = waiting at top, -1 = down
-float		TopWait;	// tics to wait at the top (keep in case a door going down is reset)
-float		TopTime;	// when it reaches 0, start going down
+int			Direction;	// 1 = up, 0 = waiting, -1 = down
+float		TopWait;	// time to wait at the top
+float		TopTime;	// (keep in case a door going down is reset)
+						// when it reaches 0, start going down
 
 float		BotDist;
 float		OldFloorDist;
@@ -103,7 +114,10 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = Height - 4.0;
 		TopHeight = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = 1;
-		StartDoorSound(true);
+		if (TopHeight != Sector->ceiling.dist)
+		{
+			StartDoorSound(true);
+		}
 		break;
 
 	case DOOREV_RaiseIn5Mins:
@@ -123,9 +137,9 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 
 //==========================================================================
 //
-//	InitCloseIn30
+//  InitCloseIn30
 //
-//	Spawn a door that closes after 30 seconds
+//  Spawn a door that closes after 30 seconds
 //
 //==========================================================================
 
@@ -150,28 +164,32 @@ void InitCloseIn30(sector_t* InSector)
 
 //==========================================================================
 //
-//	Tick
+//	ReUse
 //
 //==========================================================================
 
-bool ReUse(int InType, line_t* Line, Actor Thing)
+bool ReUse(int InType, line_t* Line, Entity Thing)
 {
 	if (InType == DOOREV_Raise && Type == DOOREV_Raise)
 	{
-		// ONLY FOR "RAISE" DOORS, NOT "OPEN"s
+		// Only for "raise" doors, not "open"s
 		if (Direction == -1)
 		{
-			Direction = 1;	// go back up
+			// go back up
+			Direction = 1;
 			return true;
 		}
 		else if (GET_SPAC(Line->flags) != SPAC_PUSH)
-			// [RH] activate push doors don't go back down when you
-			//		run into them (otherwise opening them would be
-			//		a real pain).
+		//	Activate push doors don't go back down when you run into them
+		// (otherwise opening them would be a real pain).
 		{
 			if (!Thing || !Thing.bIsPlayer || Thing.Player.bIsBot)
-				return false;	// JDC: bad guys never close doors
-			Direction = -1;	// start going down immediately
+			{
+				//	Monsters never close doors
+				return false;
+			}
+			//	Start going down immediately
+			Direction = -1;
 			return true;
 		}
 	}
@@ -186,7 +204,7 @@ bool ReUse(int InType, line_t* Line, Actor Thing)
 
 void Tick(float deltaTime)
 {
-	int res;
+	int			res;
 
 	if (Sector->floor.dist != OldFloorDist)
 	{
@@ -197,9 +215,12 @@ void Tick(float deltaTime)
 
 	switch (Direction)
 	{
-	case 0:	// WAITING
+	case 0:
+		// WAITING
 		TopTime -= deltaTime;
 		if (TopTime <= 0.0)
+		{
+			TopTime = 0.0;
 			switch (Type)
 			{
 			case DOOREV_Raise:
@@ -213,6 +234,7 @@ void Tick(float deltaTime)
 			default:
 				break;
 			}
+		}
 		break;
 
 	case 2:
@@ -232,7 +254,8 @@ void Tick(float deltaTime)
 		}
 		break;
 
-	case -1:	// DOWN
+	case -1:
+		// DOWN
 		res = MovePlane(Sector, Speed * deltaTime, BotDist, false, 1,
 			Direction, false);
 
@@ -268,12 +291,14 @@ void Tick(float deltaTime)
 				break;
 			default:
 				Direction = 1;
+				StartDoorSound(true);
 				break;
 			}
 		}
 		break;
 
-	case 1:	// UP
+	case 1:
+		// UP
 		res = MovePlane(Sector, Speed * deltaTime, TopHeight, false, 1,
 			Direction, false);
 
@@ -370,7 +395,9 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 
 void StartDoorSound(bool bOpen)
 {
-	name SeqName = GetSeqTrans(Sector->seqType, SEQ_Door);
+	name SeqName = !LineSpecialLevelInfo(Level).DefaultDoorSound ||
+		Sector->seqType >= 0 ? GetSeqTrans(Sector->seqType, SEQ_Door) :
+		LineSpecialLevelInfo(Level).DefaultDoorSound;
 	if (bOpen)
 	{
 		if (Speed >= 256.0)

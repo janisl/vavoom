@@ -78,16 +78,6 @@ enum
 
 enum
 {
-	DOOREV_Close,
-	DOOREV_Open,
-	DOOREV_Raise,
-	DOOREV_RaiseLocked,
-	DOOREV_CloseWaitOpen,
-	DOOREV_RaiseIn5Mins
-};
-
-enum
-{
 	FLOOREV_LowerToHighest,
 	FLOOREV_RaiseToHighest,
 	FLOOREV_LowerToLowest,
@@ -137,34 +127,6 @@ enum
 	WGLSTATE_EXPAND,
 	WGLSTATE_STABLE,
 	WGLSTATE_REDUCE
-};
-
-enum
-{
-	CEILEV_LowerToFloor,
-	CEILEV_LowerToHighestFloor,
-	CEILEV_LowerToLowest,
-	CEILEV_RaiseToHighest,
-	CEILEV_RaiseToNearest,
-	CEILEV_LowerByValue,
-	CEILEV_RaiseByValue,
-	CEILEV_LowerByValueTimes8,
-	CEILEV_RaiseByValueTimes8,
-	CEILEV_LowerTimes8Instant,
-	CEILEV_RaiseTimes8Instant,
-	CEILEV_MoveToValueTimes8,
-	CEILEV_LowerAndCrush,
-	CEILEV_CrushAndRaise,
-	CEILEV_CrushRaiseAndStay,
-	CEILEV_CrushAndRaiseA,
-	CEILEV_CrushAndRaiseSilA,
-	CEILEV_CrushRaiseAndStayA,
-	CEILEV_CrushRaiseAndStaySilA,
-	CEILEV_Generic,
-	CEILEV_GenericChange0,
-	CEILEV_GenericChangeT,
-	CEILEV_GenericChange,
-	CEILEV_GenericCrush
 };
 
 enum

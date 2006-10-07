@@ -1,0 +1,466 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: DoomLevelInfo.vc 1744 2006-10-01 12:40:46Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class LineSpecialLevelInfo : LevelInfo;
+
+name			DefaultDoorSound;
+name			DefaultCeilingSound;
+name			DefaultSilentCeilingSound;
+
+//==========================================================================
+//
+//  ExecuteActionSpecial
+//
+//==========================================================================
+
+bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
+	int Arg4, int Arg5, line_t* Line, int Side, Entity A)
+{
+	bool buttonSuccess = false;
+	switch (Special)
+	{
+//LNSPEC_PolyDoorSlide:
+	case LNSPEC_DoorClose:
+		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
+			VerticalDoor::DOOREV_Close, Line, A);
+		break;
+	case LNSPEC_DoorOpen:
+		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
+			VerticalDoor::DOOREV_Open, Line, A);
+		break;
+	case LNSPEC_DoorRaise:
+		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
+			VerticalDoor::DOOREV_Raise, Line, A);
+		break;
+	case LNSPEC_DoorLockedRaise:
+		if (CheckLock(A, Arg4))
+		{
+			buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
+				VerticalDoor::DOOREV_RaiseLocked, Line, A);
+		}
+		break;
+//LNSPEC_FloorLowerByValue:
+//LNSPEC_FloorLowerByValueTimes8:
+	case LNSPEC_CeilingWaggle:
+		buttonSuccess = EV_StartCeilingWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+//LNSPEC_TeleportZombieChanger:
+	case LNSPEC_CeilingLowerByValue:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_LowerByValue, Line);
+		break;
+	case LNSPEC_CeilingRaiseByValue:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_RaiseByValue, Line);
+		break;
+	case LNSPEC_CeilingCrushAndRaise:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_CrushAndRaise, Line);
+		break;
+	case LNSPEC_CeilingLowerAndCrush:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_LowerAndCrush, Line);
+		break;
+	case LNSPEC_CeilingCrushStop:
+		buttonSuccess = EV_CeilingCrushStop(Line, Arg1, Arg2, Arg3, Arg4,
+			Arg5);
+		break;
+	case LNSPEC_CeilingCrushRaiseAndStay:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_CrushRaiseAndStay, Line);
+		break;
+//LNSPEC_FloorCrushStop:
+//LNSPEC_FloorMoveToValueTimes8:
+	case LNSPEC_CeilingMoveToValueTimes8:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_MoveToValueTimes8, Line);
+		break;
+//LNSPEC_Teleport:
+//LNSPEC_NoiseAlert:
+	case LNSPEC_CeilingLowerToHighestFloor:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_LowerToHighestFloor, Line);
+		break;
+	case LNSPEC_CeilingLowerInstant:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_LowerTimes8Instant, Line);
+		break;
+	case LNSPEC_CeilingRaiseInstant:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_RaiseTimes8Instant, Line);
+		break;
+	case LNSPEC_CeilingCrushRaiseAndStayA:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_CrushRaiseAndStayA, Line);
+		break;
+	case LNSPEC_CeilingCrushAndRaiseA:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_CrushAndRaiseA, Line);
+		break;
+	case LNSPEC_CeilingCrushAndRaiseSilentA:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_CrushAndRaiseSilA, Line);
+		break;
+	case LNSPEC_CeilingRaiseByValueTimes8:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_RaiseByValueTimes8, Line);
+		break;
+	case LNSPEC_CeilingLowerByValueTimes8:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_LowerByValueTimes8, Line);
+		break;
+//LNSPEC_FloorGeneric:
+	case LNSPEC_CeilingGeneric:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_Generic, Line);
+		break;
+//LNSPEC_DoorGeneric:
+//LNSPEC_StairsGeneric:
+	case LNSPEC_CeilingGenericCrush:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_GenericCrush, Line);
+		break;
+//LNSPEC_PlatDownWaitUpStayLip:
+//LNSPEC_ElevatorLowerToNearest:
+	case LNSPEC_DoorCloseWaitOpen:
+		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
+			VerticalDoor::DOOREV_CloseWaitOpen, Line, A);
+		break;
+//LNSPEC_FloorDonut:
+//LNSPEC_FloorAndCeilingLowerRaise:
+	case LNSPEC_CeilingRaiseToNearest:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_RaiseToNearest, Line);
+		break;
+	case LNSPEC_CeilingLowerToLowest:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_LowerToLowest, Line);
+		break;
+	case LNSPEC_CeilingLowerToFloor:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_LowerToFloor, Line);
+		break;
+	case LNSPEC_CeilingCrushRaiseAndStaySilentA:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_CrushRaiseAndStaySilA, Line);
+		break;
+	}
+	return buttonSuccess;
+}
+
+//**************************************************************************
+//
+//  Door animation code (opening/closing)
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  EV_DoDoor
+//
+//  Move a door up/down
+//
+//==========================================================================
+
+int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line, Entity Thing)
+{
+	int				SecNum;
+	int				RetCode;
+	sector_t*		Sec;
+	VerticalDoor	Door;
+
+	RetCode = false;
+	if (!Arg1)
+	{
+		if (!Line)
+			return false;
+	
+		//	Make sure it's a two-sided line.
+		if (Line->sidenum[1] < 0)
+			return false;
+	
+		// if the sector has an active thinker, use it
+		Sec = XLevel.Sides[Line->sidenum[1]].sector;
+		if (Sec->CeilingData)
+		{
+			Door = VerticalDoor(Sec->CeilingData);
+			if (Door)
+			{
+				return Door.ReUse(Type, Line, Thing);
+			}
+			return false;
+		}
+	
+		// new door thinker
+		Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
+		Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		RetCode = true;
+	}
+	else
+	{
+		for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+		{
+			Sec = &XLevel.Sectors[SecNum];
+			if (Sec->CeilingData)
+			{
+				continue;
+			}
+			// Add new door thinker
+			RetCode = true;
+			Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
+			Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
+		}
+	}
+	return RetCode;
+}
+
+//==========================================================================
+//
+//  EV_GenericDoor
+//
+//	Boom's generic doors.
+//
+//==========================================================================
+
+int EV_GenericDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	line_t* Line, Entity Thing)
+{
+	int			Tag;
+	int			LightTag;
+
+	//	Check for locked door.
+	if (Arg5 && !CheckLock(Thing, Arg5))
+	{
+		return false;
+	}
+
+	//	Check for Boom's local door light special.
+	if (Arg3 & 128)
+	{
+		Tag = 0;
+		LightTag = Arg1;
+	}
+	else
+	{
+		Tag = Arg1;
+		LightTag = 0;
+	}
+
+	switch (Arg3 & 127)
+	{
+	case 0:
+		return EV_DoDoor(Tag, Arg2, Arg4, LightTag, 0,
+			VerticalDoor::DOOREV_Raise, Line, Thing);
+	case 1:
+		return EV_DoDoor(Tag, Arg2, LightTag, 0, 0,
+			VerticalDoor::DOOREV_Open, Line, Thing);
+	case 2:
+		return EV_DoDoor(Tag, Arg2, Arg4, LightTag, 0,
+			VerticalDoor::DOOREV_CloseWaitOpen, Line, Thing);
+	case 3:
+		return EV_DoDoor(Tag, Arg2, LightTag, 0, 0,
+			VerticalDoor::DOOREV_Close, Line, Thing);
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  SpawnDoorCloseIn30
+//
+//  Spawn a door that closes after 30 seconds
+//
+//==========================================================================
+
+void SpawnDoorCloseIn30(sector_t* sec)
+{
+	VerticalDoor	Door;
+
+	Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
+	Door.InitCloseIn30(sec);
+	sec->special = 0;
+}
+
+//==========================================================================
+//
+//  SpawnDoorRaiseIn5Mins
+//
+//  Spawn a door that opens after 5 minutes
+//
+//==========================================================================
+
+void SpawnDoorRaiseIn5Mins(sector_t* sec)
+{
+	VerticalDoor Door;
+
+	sec->special = 0;
+	Door = VerticalDoor(NewSpecialThinker(VerticalDoor));
+	Door.Init(sec, 0, 16, 150, 0, 0, VerticalDoor::DOOREV_RaiseIn5Mins);
+}
+
+//**************************************************************************
+//
+//  CEILINGS
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  EV_DoCeiling
+//
+//  Move a ceiling up/down and all around!
+//
+//==========================================================================
+
+int EV_DoCeiling(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line)
+{
+	int				SecNum;
+	int				Rtn;
+	sector_t*		Sec;
+	CeilingMover	Ceiling;
+
+	Rtn = false;
+
+	if (!Arg1)
+	{
+		if (!Line || !Line->backsector)
+			return false;
+
+		//  Reactivate in-stasis ceilings...for certain types.
+		if ((Type == CeilingMover::CEILEV_CrushAndRaiseA ||
+			Type == CeilingMover::CEILEV_CrushAndRaiseSilA) &&
+			CeilingMover(Line->backsector->CeilingData))
+		{
+			CeilingMover(Line->backsector->CeilingData).ActivateInStasis(0);
+		}
+
+		if (!Line->backsector->CeilingData)
+		{
+			// new ceiling thinker
+			Rtn = true;
+			Ceiling = CeilingMover(NewSpecialThinker(CeilingMover));
+			Ceiling.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5,
+				Type, Line);
+		}
+	}
+	else
+	{
+		//  Reactivate in-stasis ceilings...for certain types.
+		if (Type == CeilingMover::CEILEV_CrushAndRaiseA ||
+			Type == CeilingMover::CEILEV_CrushAndRaiseSilA)
+		{
+			FOREACH(CeilingMover, Ceiling)
+			{
+				Ceiling.ActivateInStasis(Arg1);
+			}
+		}
+
+		for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+			SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+		{
+			Sec = &XLevel.Sectors[SecNum];
+			if (Sec->CeilingData)
+				continue;
+
+			// new ceiling thinker
+			Rtn = true;
+			Ceiling = CeilingMover(NewSpecialThinker(CeilingMover));
+			Ceiling.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
+		}
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//  EV_CeilingCrushStop
+//
+//  Stop a ceiling from crushing!
+//
+//==========================================================================
+
+int EV_CeilingCrushStop(line_t* line, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int				rtn;
+	CeilingMover	Ceiling;
+
+	rtn = false;
+	FOREACH(CeilingMover, Ceiling)
+	{
+		if (Ceiling.CrushStop(Arg1))
+		{
+			rtn = true;
+		}
+	}
+	return rtn;
+}
+
+//==========================================================================
+//
+//	EV_StartCeilingWaggle
+//
+//==========================================================================
+
+bool EV_StartCeilingWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int				SectorIndex;
+	sector_t*		Sector;
+	CeilingWaggle	Waggle;
+	bool			RetCode;
+
+	RetCode = false;
+	for (SectorIndex = XLevel.FindSectorFromTag(Arg1, -1); SectorIndex >= 0;
+		SectorIndex = XLevel.FindSectorFromTag(Arg1, SectorIndex))
+	{
+		Sector = &XLevel.Sectors[SectorIndex];
+		if (Sector->CeilingData)
+		{
+			// Already busy with another thinker
+			continue;
+		}
+		RetCode = true;
+		Waggle = CeilingWaggle(NewSpecialThinker(CeilingWaggle));
+		Waggle.Init(Sector, Arg1, Arg2, Arg3, Arg4, Arg5);
+	}
+	return RetCode;
+}
+
+//==========================================================================
+//
+//  CheckLock
+//
+//==========================================================================
+
+bool CheckLock(Entity user, int lock)
+{
+}
+
+defaultproperties
+{
+}

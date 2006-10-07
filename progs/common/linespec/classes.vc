@@ -23,7 +23,13 @@
 //**
 //**************************************************************************
 
+#include "../macros.vc"
+
 import engine;
 
+#include "LineSpecialLevelInfo.vc"
 #include "SectorThinker.vc"
 #include "SectorMover.vc"
+#include "VerticalDoor.vc"
+#include "CeilingMover.vc"
+#include "CeilingWaggle.vc"

@@ -25,13 +25,41 @@
 
 class CeilingMover : SectorMover;
 
+enum
+{
+	CEILEV_LowerToFloor,
+	CEILEV_LowerToHighestFloor,
+	CEILEV_LowerToLowest,
+	CEILEV_RaiseToHighest,
+	CEILEV_RaiseToNearest,
+	CEILEV_LowerByValue,
+	CEILEV_RaiseByValue,
+	CEILEV_LowerByValueTimes8,
+	CEILEV_RaiseByValueTimes8,
+	CEILEV_LowerTimes8Instant,
+	CEILEV_RaiseTimes8Instant,
+	CEILEV_MoveToValueTimes8,
+	CEILEV_LowerAndCrush,
+	CEILEV_CrushAndRaise,
+	CEILEV_CrushRaiseAndStay,
+	CEILEV_CrushAndRaiseA,
+	CEILEV_CrushAndRaiseSilA,
+	CEILEV_CrushRaiseAndStayA,
+	CEILEV_CrushRaiseAndStaySilA,
+	CEILEV_Generic,
+	CEILEV_GenericChange0,
+	CEILEV_GenericChangeT,
+	CEILEV_GenericChange,
+	CEILEV_GenericCrush
+};
+
 int			Type;
 float		BottomDist;
 float		TopDist;
 float		Speed;
 int			Crush;
 int			Direction;	// 1 = up, 0 = waiting, -1 = down
-int			Tag;	// ID
+int			Tag;
 int			OldDirection;
 float		DnSpeed;
 float		UpSpeed;
@@ -285,15 +313,29 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 			}
 		}
 		break;
+
+	case CEILEV_GenericCrush:
+		Type = Arg4 ? CEILEV_CrushAndRaiseSilA : CEILEV_CrushAndRaiseA;
+		Crush = Arg5;	// args[4] = crushing value
+		TopDist = Sector->ceiling.dist;
+		DestHeight = Level.FindHighestFloorPoint(Sector, &Spot);
+		Spot.z = DestHeight + 8.0;
+		BottomDist = DotProduct(Sector->ceiling.normal, Spot);
+		Direction = -1;
+		DnSpeed = itof(Arg2) * 35.0 / 8.0;
+		UpSpeed = itof(Arg3) * 35.0 / 8.0;
+		if (Arg4)
+			SeqName = 'CeilingSemiSilent';
+		break;
 	}
 	StartCeilingSound();
 }
 
 //==========================================================================
 //
-//  CrushStop
+//	CrushStop
 //
-//  Stop a ceiling from crushing!
+//	Stop a ceiling from crushing!
 //
 //==========================================================================
 
@@ -320,9 +362,9 @@ bool CrushStop(int InTag)
 
 //==========================================================================
 //
-//  ActivateInStasis
+//	ActivateInStasis
 //
-//  Restart a ceiling that's in-stasis
+//	Restart a ceiling that's in-stasis
 //
 //==========================================================================
 
@@ -352,19 +394,23 @@ void Tick(float deltaTime)
 	case 1:	// UP
 		res = MovePlane(Sector, Speed * deltaTime, TopDist, false, 1,
 			Direction, bStopOnCrush);
+
 		if (res == RES_PASTDEST)
 		{
+			SectorStopSequence(Sector);
 			switch (Type)
 			{
 			case CEILEV_CrushAndRaise:
 				Direction = -1;
 				Speed = Speed * 2.0;
+				StartCeilingSound();
 				break;
 
 			case CEILEV_CrushAndRaiseSilA:
 			case CEILEV_CrushAndRaiseA:
 				Direction = -1;
 				Speed = DnSpeed;
+				StartCeilingSound();
 				break;
 
 			// movers with texture change, change the texture then get removed
@@ -383,24 +429,30 @@ void Tick(float deltaTime)
 	case -1:	// DOWN
 		res = MovePlane(Sector, Speed * deltaTime, BottomDist, Crush, 1,
 			Direction, bStopOnCrush);
+
 		if (res == RES_PASTDEST)
 		{
+			SectorStopSequence(Sector);
 			switch (Type)
 			{
 			case CEILEV_CrushAndRaise:
 			case CEILEV_CrushRaiseAndStay:
 				Speed = Speed / 2.0;
 				Direction = 1;
+				StartCeilingSound();
 				break;
 
-			case CEILEV_CrushAndRaiseA:
 			case CEILEV_CrushAndRaiseSilA:
-			case CEILEV_CrushRaiseAndStayA:
 			case CEILEV_CrushRaiseAndStaySilA:
+			case CEILEV_CrushAndRaiseA:
+			case CEILEV_CrushRaiseAndStayA:
 				Speed = UpSpeed;
 				Direction = 1;
+				StartCeilingSound();
 				break;
 
+			// in the case of ceiling mover/changer, change the texture
+			// then remove the active ceiling
 			case CEILEV_GenericChangeT:
 			case CEILEV_GenericChange0:
 				Sector->special = NewSpecial;

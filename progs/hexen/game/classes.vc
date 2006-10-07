@@ -39,13 +39,10 @@
 #include "Decoration.vc"
 
 #include "Scroller.vc"
-#include "CeilingMover.vc"
-#include "VerticalDoor.vc"
 #include "FloorMover.vc"
 #include "StairStepMover.vc"
 #include "Pillar.vc"
 #include "FloorWaggle.vc"
-#include "CeilingWaggle.vc"
 #include "Elevator.vc"
 #include "Platform.vc"
 #include "PolyobjThinker.vc"
