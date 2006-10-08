@@ -1163,7 +1163,8 @@ void A_BossDeath()
 	if (Class == Crusader)
 	{
 		A_Fall();
-		StrifeLevelInfo(Level).EV_DoFloor(667, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		StrifeLevelInfo(Level).EV_DoFloor(667, 8, 0, 0, 0,
+			FloorMover::FLOOREV_LowerToLowest, NULL);
 	}
 	else if (Class == Inquisitor)
 	{
@@ -1177,7 +1178,8 @@ void A_BossDeath()
 	else if (Class == Specter1)
 	{
 		//	Specter in ruined temple.
-		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		StrifeLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0,
+			FloorMover::FLOOREV_LowerToLowest, NULL);
 		Player(Enemy.Player).SetObjectives(95);
 		MSG_Select(MSG_SV_RELIABLE);
 		MSG_WriteByte(StrifeDefs::svc_voice);
@@ -1273,7 +1275,8 @@ void A_BossDeath()
 			MSG_WriteByte(StrifeDefs::svc_voice);
 			MSG_WriteShort(83);
 		}
-		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0, FLOOREV_LowerToLowest, NULL);
+		StrifeLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
+			FloorMover::FLOOREV_LowerToLowest, NULL);
 	}
 	else if (Class == SubEntity)
 	{

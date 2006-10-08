@@ -22,6 +22,10 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//
+//	Door animation code (opening/closing)
+//
+//**************************************************************************
 
 class VerticalDoor : SectorMover;
 

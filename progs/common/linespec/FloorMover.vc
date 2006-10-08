@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: FloorMover.vc 1744 2006-10-01 12:40:46Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -24,6 +24,35 @@
 //**************************************************************************
 
 class FloorMover : SectorMover;
+
+enum
+{
+	FLOOREV_LowerToHighest,
+	FLOOREV_RaiseToHighest,
+	FLOOREV_LowerToLowest,
+	FLOOREV_LowerToNearest,
+	FLOOREV_RaiseToNearest,
+	FLOOREV_RaiseToLowestCeiling,
+	FLOOREV_LowerByValue,
+	FLOOREV_RaiseByValue,
+	FLOOREV_LowerByValueTimes8,
+	FLOOREV_RaiseByValueTimes8,
+	FLOOREV_LowerTimes8Instant,
+	FLOOREV_RaiseTimes8Instant,
+	FLOOREV_MoveToValueTimes8,
+	FLOOREV_RaiseByTexture,
+	FLOOREV_LowerToLowestChange,
+	FLOOREV_RaiseToNearestChange,
+	FLOOREV_RaiseByValueChange,
+	FLOOREV_RaiseByValueChange2,
+	FLOOREV_RaiseAndCrush,
+	FLOOREV_RaiseBuildStep,
+	FLOOREV_Generic,
+	FLOOREV_GenericChange0,
+	FLOOREV_GenericChangeT,
+	FLOOREV_GenericChange,
+	FLOOREV_Donut
+};
 
 int		Type;
 float	Speed;
@@ -55,6 +84,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	float			CeilHeight;
 	TVec			Spot;
 	TVec			Spot2;
+	name			SeqName;
 
 	Sector = InSector;
 	Sector->FloorData = self;
@@ -68,6 +98,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Speed = 35.0 * 2000.0;
 	}
 	Spot = *Sector->lines[0]->v1;
+	SeqName = LineSpecialLevelInfo(Level).DefaultFloorSound;
 	switch (Type)
 	{
 	case FLOOREV_LowerToHighest:
@@ -189,7 +220,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		Texture = Sector->floor.pic;
 		// jff 1/24/98 make sure NewSpecial gets initialised
-		// in case no surrounding sector is at DestHeight
+		// in case no surrounding Sector is at DestHeight
 		// --> should not affect compatibility <--
 		NewSpecial = Sector->special & ~SECSPEC_SECRET_MASK; 
 		ModelSec = Level.FindModelFloorSector(Sector, DestHeight);
@@ -208,6 +239,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		XLevel.SetFloorPic(Sector, Line->frontsector->floor.pic);
 		// NO MORE DAMAGE, IF APPLICABLE
 		Sector->special &= SECSPEC_SECRET_MASK;
+		SeqName = LineSpecialLevelInfo(Level).DefaultFloorAltSound;
 		break;
 
 	case FLOOREV_RaiseByValueChange:
@@ -226,6 +258,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		XLevel.SetFloorPic(Sector, Line->frontsector->floor.pic);
+		SeqName = LineSpecialLevelInfo(Level).DefaultFloorAltSound;
 		break;
 
 	case FLOOREV_RaiseAndCrush:
@@ -328,7 +361,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		break;
 	}
-	StartFloorSound();
+	StartFloorSound(SeqName);
 }
 
 //==========================================================================
@@ -369,7 +402,7 @@ void InitStair(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	//	Reset.
 	ResetTime = itof(Arg5) / 35.0;
 	OrgDist = Sector->floor.dist;
-	StartFloorSound();
+	StartFloorSound(LineSpecialLevelInfo(Level).DefaultStairStepSound);
 }
 
 //==========================================================================
@@ -395,7 +428,7 @@ void InitDonut(sector_t* InSector, sector_t* OtherSector, int Arg2)
 	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	StartFloorSound();
+	StartFloorSound(LineSpecialLevelInfo(Level).DefaultFloorSound);
 }
 
 //==========================================================================
@@ -410,7 +443,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	TVec		Spot;
 
 	Sector = InSector;
-	InSector->FloorData = self;
+	Sector->FloorData = self;
 
 	Type = FLOOREV_LowerToNearest;
 	Crush = false;
@@ -419,7 +452,7 @@ void InitDonut2(sector_t* InSector, sector_t* OtherSector, int Arg3)
 	DestHeight = Level.FindHighestFloorPoint(OtherSector, &Spot);
 	Spot.z = DestHeight;
 	FloorDestDist = DotProduct(Sector->floor.normal, Spot);
-	StartFloorSound();
+	StartFloorSound(LineSpecialLevelInfo(Level).DefaultFloorSound);
 }
 
 //==========================================================================
@@ -455,8 +488,6 @@ bool CrushStop(int InTag)
 
 void Tick(float deltaTime)
 {
-	int res;
-
 	//	Handle resetting stairs.
 	if (Type == FLOOREV_RaiseBuildStep)
 	{
@@ -473,6 +504,7 @@ void Tick(float deltaTime)
 				Delay = 0.0;
 				StepTime = 0.0;
 				PerStepTime = 0.0;
+				StartFloorSound(LineSpecialLevelInfo(Level).DefaultStairStepSound);
 			}
 		}
 		if (PauseTime)
@@ -501,7 +533,7 @@ void Tick(float deltaTime)
 		}
 	}
 
-	res = MovePlane(Sector, Speed * deltaTime, FloorDestDist, Crush, 0,
+	int res = MovePlane(Sector, Speed * deltaTime, FloorDestDist, Crush, 0,
 		Direction, false);
 
 	if (res == RES_PASTDEST)
@@ -538,16 +570,16 @@ void Tick(float deltaTime)
 //
 //==========================================================================
 
-void StartFloorSound()
+void StartFloorSound(name DefaultSound)
 {
-	if (Sector->seqType >= 0)
+	if (!DefaultSound || Sector->seqType >= 0)
 	{
 		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
 			SEQ_Platform), 0);
 	}
 	else
 	{
-		SectorStartSequence(Sector, 'Floor', 0);
+		SectorStartSequence(Sector, DefaultSound, 0);
 	}
 }
 

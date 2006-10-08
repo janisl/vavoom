@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: Platform.vc 1744 2006-10-01 12:40:46Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -25,16 +25,41 @@
 
 class Platform : SectorMover;
 
+enum
+{
+	PLAT_Up,
+	PLAT_Down,
+	PLAT_Waiting,
+	PLAT_InStasis
+};
+
+enum
+{
+	PLATEV_PerpetualRaise,
+	PLATEV_PerpetualRaiseLip,
+	PLATEV_DownWaitUpStay,
+	PLATEV_DownWaitUpStayLip,
+	PLATEV_DownNearestWaitUpStay,
+	PLATEV_DownLowestCeilingWaitUpStay,
+	PLATEV_DownByValueWaitUpStay,
+	PLATEV_UpWaitDownStay,
+	PLATEV_UpNearestWaitDownStay,
+	PLATEV_UpByValueWaitDownStay,
+	PLATEV_Toggle,
+	PLATEV_Generic
+};
+
 int		Type;
-int		Tag;	// ID
+int		Tag;
 float	Speed;
 float	Low;
 float	High;
-int		Status;
 float	Time;
 float	Wait;
+int		Status;
 int		OldStatus;
 int		Crush;
+name	StartSound;
 
 //==========================================================================
 //
@@ -83,6 +108,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Tag = Arg1;
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Crush = 0;
+	StartSound = LineSpecialLevelInfo(Level).DefaultPlatformSound;
 	switch (Type)
 	{
 	case PLATEV_PerpetualRaise:
@@ -135,6 +161,8 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		High = Sector->floor.dist;
 		Wait = itof(Arg3) / 35.0;
 		Status = PLAT_Down;
+		if (Arg5)
+			StartSound = LineSpecialLevelInfo(Level).DefaultFloorSound;
 		break;
 
 	case PLATEV_DownNearestWaitUpStay:
@@ -212,7 +240,8 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Status = PLAT_Down;
 		break;
 	}
-	SectorStartSequence(Sector, GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
+	if (Type != PLATEV_Toggle)
+		StartPlatSound();
 }
 
 //==========================================================================
@@ -227,6 +256,7 @@ bool StopPlat(int InTag)
 	{
 		OldStatus = Status;
 		Status = PLAT_InStasis;
+		SectorStopSequence(Sector);
 		return true;
 	}
 	return false;
@@ -245,7 +275,10 @@ void ActivateInStasis(int InTag)
 		if (Type == PLATEV_Toggle)	//jff 3/14/98 reactivate toggle type
 			Status = OldStatus == PLAT_Up ? PLAT_Down : PLAT_Up;
 		else
+		{
 			Status = OldStatus;
+			StartPlatSound();
+		}
 	}
 }
 
@@ -270,12 +303,10 @@ void Tick(float deltaTime)
 		{
 			Time = Wait;
 			Status = PLAT_Down;
-			SectorStartSequence(Sector,
-				GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
+			StartPlatSound();
 		}
 		else if (res == RES_PASTDEST)
 		{
-			SectorStopSequence(Sector);
 			if (Type == PLATEV_Toggle)
 			{
 				OldStatus = Status;		//jff 3/14/98 after action wait  
@@ -285,6 +316,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
+				SectorStopSequence(Sector);
 				switch (Type)
 				{
 				case PLATEV_DownWaitUpStay:
@@ -306,7 +338,6 @@ void Tick(float deltaTime)
 			false);
 		if (res == RES_PASTDEST)
 		{
-			SectorStopSequence(Sector);
 			if (Type == PLATEV_Toggle)
 			{
 				// instant toggles go into stasis awaiting next activation
@@ -317,6 +348,7 @@ void Tick(float deltaTime)
 			{
 				Time = Wait;
 				Status = PLAT_Waiting;
+				SectorStopSequence(Sector);
 				switch (Type)
 				{
 				case PLATEV_UpWaitDownStay:
@@ -335,16 +367,36 @@ void Tick(float deltaTime)
 		Time -= deltaTime;
 		if (Time <= 0.0)
 		{
+			Time = 0.0;
 			if (Sector->floor.dist == Low)
 				Status = PLAT_Up;
 			else
 				Status = PLAT_Down;
-			SectorStartSequence(Sector,
-				GetSeqTrans(Sector->seqType, SEQ_Platform), 0);
+			StartPlatSound();
 		}
+		break;
 
 	case PLAT_InStasis:
 		break;
+	}
+}
+
+//==========================================================================
+//
+//	StartPlatSound
+//
+//==========================================================================
+
+void StartPlatSound()
+{
+	if (!StartSound || Sector->seqType >= 0)
+	{
+		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
+			SEQ_Platform), 0);
+	}
+	else
+	{
+		SectorStartSequence(Sector, StartSound, 0);
 	}
 }
 

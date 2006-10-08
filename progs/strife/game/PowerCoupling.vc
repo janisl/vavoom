@@ -56,7 +56,8 @@ void Died(Actor source)
 	StrifeLevelInfo(Level).NoiseAlert(source, self);
 	StrifeLevelInfo(Level).EV_DoDoor(225, 16, 0, 0, 0,
 		VerticalDoor::DOOREV_Close, NULL, Actor(Level.Game.Players[i].MO));
-	StrifeLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0, FLOOREV_LowerToHighest, NULL);
+	StrifeLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0,
+		FloorMover::FLOOREV_LowerToHighest, NULL);
 	Player(Level.Game.Players[i]).GiveQuest(QUEST_BrokePowerCoupling);
 	MSG_Select(MSG_SV_RELIABLE);
 	MSG_WriteByte(StrifeDefs::svc_voice);

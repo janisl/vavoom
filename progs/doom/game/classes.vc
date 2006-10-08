@@ -42,12 +42,8 @@
 #include "Pickup.vc"
 #include "Decoration.vc"
 
-#include "FloorMover.vc"
-#include "StairStepMover.vc"
 #include "Pillar.vc"
-#include "FloorWaggle.vc"
 #include "Elevator.vc"
-#include "Platform.vc"
 #include "PolyobjThinker.vc"
 #include "PolyobjRotator.vc"
 #include "PolyobjMover.vc"

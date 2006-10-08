@@ -116,79 +116,11 @@ enum
 
 enum
 {
-	FLOOREV_LowerToHighest,
-	FLOOREV_RaiseToHighest,
-	FLOOREV_LowerToLowest,
-	FLOOREV_LowerToNearest,
-	FLOOREV_RaiseToNearest,
-	FLOOREV_RaiseToLowestCeiling,
-	FLOOREV_LowerByValue,
-	FLOOREV_RaiseByValue,
-	FLOOREV_LowerByValueTimes8,
-	FLOOREV_RaiseByValueTimes8,
-	FLOOREV_LowerTimes8Instant,
-	FLOOREV_RaiseTimes8Instant,
-	FLOOREV_MoveToValueTimes8,
-	FLOOREV_RaiseByTexture,
-	FLOOREV_LowerToLowestChange,
-	FLOOREV_RaiseToNearestChange,
-	FLOOREV_RaiseByValueChange,
-	FLOOREV_RaiseByValueChange2,
-	FLOOREV_RaiseAndCrush,
-	FLOOREV_RaiseBuildStep,
-	FLOOREV_Generic,
-	FLOOREV_GenericChange0,
-	FLOOREV_GenericChangeT,
-	FLOOREV_GenericChange,
-	FLOOREV_Donut
-};
-
-enum
-{
 	ELEVEV_Down,
 	ELEVEV_Up,
 	ELEVEV_Current,
 	ELEVEV_Raise,
 	ELEVEV_Lower
-};
-
-enum
-{
-	STAIRSEV_DownNormal,
-	STAIRSEV_UpNormal,
-	STAIRSEV_DownSync,
-	STAIRSEV_UpSync
-};
-
-enum
-{
-	WGLSTATE_EXPAND,
-	WGLSTATE_STABLE,
-	WGLSTATE_REDUCE
-};
-
-enum
-{
-	PLAT_Up,
-	PLAT_Down,
-	PLAT_Waiting,
-	PLAT_InStasis
-};
-
-enum
-{
-	PLATEV_PerpetualRaise,
-	PLATEV_PerpetualRaiseLip,
-	PLATEV_DownWaitUpStay,
-	PLATEV_DownWaitUpStayLip,
-	PLATEV_DownNearestWaitUpStay,
-	PLATEV_DownLowestCeilingWaitUpStay,
-	PLATEV_DownByValueWaitUpStay,
-	PLATEV_UpWaitDownStay,
-	PLATEV_UpNearestWaitDownStay,
-	PLATEV_UpByValueWaitDownStay,
-	PLATEV_Toggle,
-	PLATEV_Generic
 };
 
 enum

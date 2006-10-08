@@ -33,3 +33,7 @@ import engine;
 #include "VerticalDoor.vc"
 #include "CeilingMover.vc"
 #include "CeilingWaggle.vc"
+#include "FloorMover.vc"
+#include "FloorWaggle.vc"
+#include "StairStepMover.vc"
+#include "Platform.vc"

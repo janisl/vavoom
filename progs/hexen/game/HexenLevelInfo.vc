@@ -464,71 +464,17 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_OpenPolyDoor(Line, Arg1, Arg2, Arg3, Arg4, Arg5,
 			PODOOR_SLIDE);
 		break;
-	case LNSPEC_FloorLowerByValue:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_LowerByValue, Line);
-		break;
-	case LNSPEC_FloorLowerToLowest:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_LowerToLowest, Line);
-		break;
-	case LNSPEC_FloorLowerToNearest:
-		//	Hexen actually used FLOOREV_LowerToHighest
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_LowerToNearest, Line);
-		break;
-	case LNSPEC_FloorRaiseByValue:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseByValue, Line);
-		break;
-	case LNSPEC_FloorRaiseToHighest:
-		//	Hexen actually used FLOOREV_RaiseToLowestCeiling
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseToHighest, Line);
-		break;
-	case LNSPEC_FloorRaiseToNearest:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseToNearest, Line);
-		break;
-	case LNSPEC_StairsBuildDownNormal:
-		buttonSuccess = EV_BuildStairs(Arg1, Arg2, Arg3, Arg4, Arg5,
-			STAIRSEV_DownNormal);
-		break;
-	case LNSPEC_StairsBuildUpNormal:
-		buttonSuccess = EV_BuildStairs(Arg1, Arg2, Arg3, Arg4, Arg5,
-			STAIRSEV_UpNormal);
-		break;
-	case LNSPEC_FloorRaiseAndCrush:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseAndCrush, Line);
-		break;
 	case LNSPEC_PillarBuild:	// (no crushing)
 		buttonSuccess = EV_BuildPillar(Arg1, Arg2, Arg3, Arg4, Arg5, false);
 		break;
 	case LNSPEC_PillarOpen:
 		buttonSuccess = EV_OpenPillar(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
-	case LNSPEC_StairsBuildDownSync:
-		buttonSuccess = EV_BuildStairs(Arg1, Arg2, Arg3, Arg4, Arg5,
-			STAIRSEV_DownSync);
-		break;
-	case LNSPEC_StairsBuildUpSync:
-		buttonSuccess = EV_BuildStairs(Arg1, Arg2, Arg3, Arg4, Arg5,
-			STAIRSEV_UpSync);
-		break;
 	case LNSPEC_ForceField:
 		buttonSuccess = EV_ForceField(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
 	case LNSPEC_ClearForceField:
 		buttonSuccess = EV_RemoveForceField(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
-	case LNSPEC_FloorRaiseByValueTimes8:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseByValueTimes8, Line);
-		break;
-	case LNSPEC_FloorLowerByValueTimes8:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_LowerByValueTimes8, Line);
 		break;
 	case LNSPEC_TeleportZombieChanger:
 		if (Side == 0)
@@ -538,44 +484,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 				true);
 			A.SetState(A.PainState);
 		}
-		break;
-	case LNSPEC_FloorCrushStop:
-		buttonSuccess = EV_FloorCrushStop(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
-	case LNSPEC_PlatPerpetualRaise:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_PerpetualRaise, Line);
-		break;
-	case LNSPEC_PlatStop:
-		EV_StopPlat(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
-	case LNSPEC_PlatDownWaitUpStay:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_DownWaitUpStay, Line);
-		break;
-	case LNSPEC_PlatDownByValueWaitUpStay:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_DownByValueWaitUpStay, Line);
-		break;
-	case LNSPEC_PlatUpWaitDownStay:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_UpWaitDownStay, Line);
-		break;
-	case LNSPEC_PlatUpByValueWaitDownStay:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_UpByValueWaitDownStay, Line);
-		break;
-	case LNSPEC_FloorLowerTimes8Instant:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_LowerTimes8Instant, Line);
-		break;
-	case LNSPEC_FloorRaiseTimes8Instant:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseTimes8Instant, Line);
-		break;
-	case LNSPEC_FloorMoveToValueTimes8:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_MoveToValueTimes8, Line);
 		break;
 	case LNSPEC_Teleport:
 		if (Side == 0)
@@ -762,51 +670,17 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_ThingSpawnNoFog:
 		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, Arg3, Arg4, Arg5, 0);
 		break;
-	case LNSPEC_FloorWaggle:
-		buttonSuccess = EV_StartFloorWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
 	case LNSPEC_SectorSoundChange:
 		buttonSuccess = EV_SectorSoundChange(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
-	case LNSPEC_PlaneUpNearestWaitDownStay:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_UpNearestWaitDownStay, Line);
-		break;
 	case LNSPEC_NoiseAlert:
 		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
-	case LNSPEC_FloorGeneric:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_Generic, Line);
-		break;
-	case LNSPEC_DoorGeneric:
-		buttonSuccess = EV_GenericDoor(Arg1, Arg2, Arg3, Arg4, Arg5, Line, A);
-		break;
-	case LNSPEC_PlatGeneric:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_Generic, Line);
-		break;
-	case LNSPEC_StairsGeneric:
-		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
-			true, Line);
-		break;
-	case LNSPEC_PlatDownWaitUpStayLip:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_DownWaitUpStayLip, Line);
-		break;
-	case LNSPEC_PlatPerpetualRaiseLip:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_PerpetualRaiseLip, Line);
 		break;
 	case LNSPEC_SectorSetDamage:
 		buttonSuccess = EV_SectorSetDamage(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_TeleportLine:
 		buttonSuccess = EV_SilentLineTeleport(Line, Side, A, Arg2, Arg3);
-		break;
-	case LNSPEC_StairsBuildUpDoom:
-		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
-			false, Line);
 		break;
 	case LNSPEC_SectorSetWind:
 		buttonSuccess = AdjustPusher(Arg1, Arg2, Arg3, Arg4, Arg5, Line,
@@ -828,18 +702,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line, Side,
 			true, false);
 		break;
-	case LNSPEC_FloorRaiseToNearestChange:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseToNearestChange, Line);
-		break;
-	case LNSPEC_FloorRaiseByValueChangeTex:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseByValueChange2, Line);
-		break;
-	case LNSPEC_PlatToggle:
-		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
-			PLATEV_Toggle, Line);
-		break;
 	case LNSPEC_LightStrobeDoom:
 		buttonSuccess = EV_StartLightStrobing(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
@@ -855,26 +717,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_FloorTransferNumeric:
 		buttonSuccess = EV_FloorTransferNumeric(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
-	case LNSPEC_FloorRaiseToLowestCeiling:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseToLowestCeiling, Line);
-		break;
-	case LNSPEC_FloorRaiseByValueChange:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseByValueChange, Line);
-		break;
-	case LNSPEC_FloorRaiseByTexture:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_RaiseByTexture, Line);
-		break;
-	case LNSPEC_FloorLowerToLowestChange:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_LowerToLowestChange, Line);
-		break;
-	case LNSPEC_FloorLowerToHighest:
-		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			FLOOREV_LowerToHighest, Line);
 		break;
 	case LNSPEC_ExitNormal:
 		buttonSuccess = true;
@@ -895,15 +737,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_ElevatorLowerToNearest:
 		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
 			ELEVEV_Down, Line);
-		break;
-	case LNSPEC_FloorDonut:
-		buttonSuccess = EV_DoDonut(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
-	case LNSPEC_FloorAndCeilingLowerRaise:
-		buttonSuccess = EV_DoCeiling(Arg1, Arg3, 0, 0, 0,
-			CeilingMover::CEILEV_RaiseToHighest, Line);
-		buttonSuccess |= EV_DoFloor(Arg1, Arg2, 0, 0, 0,
-			FLOOREV_LowerToLowest, Line);
 		break;
 
 	// Line specials only processed during level initialization
@@ -1215,302 +1048,6 @@ bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	return true;
 }
 
-//==========================================================================
-//
-//  EV_DoFloor
-//
-//  HANDLE FLOOR TYPES
-//
-//==========================================================================
-
-int EV_DoFloor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
-	line_t* Line)
-{
-	int			SecNum;
-	int			Rtn;
-	sector_t*	Sec;
-	FloorMover	Floor;
-
-	Rtn = false;
-	if (!Arg1)
-	{
-		if (!Line || !Line->backsector)
-			return false;
-
-		if (!Line->backsector->FloorData)
-		{
-			// new floor thinker
-			Rtn = true;
-			Floor = FloorMover(NewSpecialThinker(FloorMover));
-			Floor.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Type,
-				Line);
-		}
-	}
-	else
-	{
-		for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-			SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-		{
-			Sec = &XLevel.Sectors[SecNum];
-
-			// ALREADY MOVING?  IF SO, KEEP GOING...
-			if (Sec->FloorData)
-				continue;
-
-			// new floor thinker
-			Rtn = true;
-			Floor = FloorMover(NewSpecialThinker(FloorMover));
-			Floor.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
-		}
-	}
-	return Rtn;
-}
-
-//==========================================================================
-//
-// EV_FloorCrushStop
-//
-//==========================================================================
-
-int EV_FloorCrushStop(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
-{
-	FloorMover	Floor;
-	bool		Rtn;
-
-	Rtn = false;
-	FOREACH(FloorMover, Floor)
-	{
-		if (Floor.CrushStop(Arg1))
-		{
-			Rtn = true;
-		}
-	}
-	return Rtn;
-}
-
-//==========================================================================
-//
-//  EV_BuildStairsOld
-//
-//  BUILD A STAIRCASE!
-//
-//==========================================================================
-
-int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	bool Generic, line_t* Line)
-{
-	int			SecNum;
-	float		Height;
-	int			i;
-	int			j;
-	int			Ok;
-	int			Texture;
-	int			Rtn;
-	sector_t*	Sec;
-	sector_t*	TSec;
-	FloorMover	Floor;
-	line_t*		SecLine;
-	int			Direction;
-	float		StairSize;
-	bool		IgnTxt;
-	int			OldSecNum;
-
-	if (!Arg1 && (!Line || !Line->backsector))
-		return false;
-
-	if (Generic)
-	{
-		Direction = Arg4 & 1 ? 1 : -1;
-		IgnTxt = !!(Arg4 & 2);
-	}
-	else
-	{
-		Direction = 1;
-		IgnTxt = false;
-	}
-	StairSize = itof(Arg3 * Direction);
-	Rtn = 0;
-	for (SecNum = Arg1 ? XLevel.FindSectorFromTag(Arg1, -1) : 1; SecNum >= 0;
-		SecNum = Arg1 ? XLevel.FindSectorFromTag(Arg1, SecNum) : -1)
-	{
-		Sec = Arg1 ? &XLevel.Sectors[SecNum] : Line->backsector;
-
-		// ALREADY MOVING?  IF SO, KEEP GOING...
-		if (Sec->FloorData)
-			continue;
-
-		// new floor thinker
-		Rtn = 1;
-		Height = GetPlanePointZ(&Sec->floor, vector(0.0, 0.0, 0.0)) +
-			StairSize;
-		Floor = FloorMover(NewSpecialThinker(FloorMover));
-		Floor.InitStair(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Generic, Height);
-
-		Texture = Sec->floor.pic;
-		OldSecNum = SecNum;	//jff 3/4/98 preserve loop index
-
-		// Find next sector to raise
-		// 1. Find 2-sided line with same sector side[0]
-		// 2. Other side is the next sector to raise
-		// 3. Unless already moving, or different texture, then stop building
-		do
-		{
-			Ok = false;
-			for (i = 0; i < Sec->linecount; i++)
-			{
-				SecLine = Sec->lines[i];
-
-				if (!(SecLine->flags & ML_TWOSIDED))
-					continue;
-
-				TSec = SecLine->frontsector;
-				if (Sec != TSec)
-					continue;
-				TSec = SecLine->backsector;
-				if (!TSec)
-					continue;	//jff 5/7/98 if no backside, continue
-				if (!IgnTxt && TSec->floor.pic != Texture)
-					continue;
-
-				Height += StairSize;
-				if (TSec->FloorData)
-					continue;
-
-				Sec = TSec;
-				//	SecNum = TSec - XLevel.Sectors;
-				for (j = 0; j < XLevel.NumSectors; j++)
-				{
-					if (TSec == &XLevel.Sectors[j])
-					{
-						SecNum = j;
-						break;
-					}
-				}
-				Floor = FloorMover(NewSpecialThinker(FloorMover));
-				Floor.InitStair(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Generic,
-					Height);
-				Ok = true;
-				break;
-			}
-		}
-		while (Ok);
-		SecNum = OldSecNum;	//jff 3/4/98 restore loop index
-	}
-	return Rtn;
-}
-
-//==========================================================================
-//
-//  EV_DoDonut
-//
-//  Handle donut function: lower pillar, raise surrounding pool, both to
-// height, texture and type of the sector surrounding the pool.
-//  Passed the linedef that triggered the donut
-//  Returns whether a thinker was created
-//
-//==========================================================================
-
-int EV_DoDonut(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
-{
-	sector_t *s1;
-	sector_t *s2;
-	sector_t *s3;
-	int secnum;
-	int rtn;
-	int i;
-	FloorMover Floor;
-
-	rtn = 0;
-	// do function on all sectors with same tag as linedef
-	for (secnum = XLevel.FindSectorFromTag(Arg1, -1); secnum >= 0;
-		secnum = XLevel.FindSectorFromTag(Arg1, secnum))
-	{
-		s1 = &XLevel.Sectors[secnum];	// s1 is pillar's sector
-
-		// ALREADY MOVING?  IF SO, KEEP GOING...
-		if (s1->FloorData)
-			continue;
-
-		s2 = getNextSector(s1->lines[0], s1);	// s2 is pool's sector
-		rtn = 1;
-
-		// find a two sided line around the pool whose other side isn't the pillar
-		for (i = 0; i < s2->linecount; i++)
-		{
-			if ((!s2->lines[i]->flags & ML_TWOSIDED) ||
-				(s2->lines[i]->backsector == s1))
-				continue;
-			s3 = s2->lines[i]->backsector;
-
-			//  Spawn rising slime
-			Floor = FloorMover(NewSpecialThinker(FloorMover));
-			Floor.InitDonut(s2, s3, Arg2);
-
-			//  Spawn lowering donut-hole
-			Floor = FloorMover(NewSpecialThinker(FloorMover));
-			Floor.InitDonut2(s1, s3, Arg3);
-			break;
-		}
-	}
-	return rtn;
-}
-
-//**************************************************************************
-//
-//  STAIRS
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	EV_BuildStairs
-//
-//	BUILD A STAIRCASE!
-//
-//	StairDirection is either positive or negative, denoting build stairs
-// up or down.
-//
-//==========================================================================
-
-int EV_BuildStairs(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	int StairsType)
-{
-	int				SecNum;
-	sector_t*		Sec;
-	StairStepMover	StairStep;
-	StairStepMover	StairQueueHead;
-
-	StairQueueHead = none;
-	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-	{
-		Sec = &XLevel.Sectors[SecNum];
-
-		// ALREADY MOVING?  IF SO, KEEP GOING...
-		if (Sec->FloorData)
-			continue;
-
-		StairStep = StairStepMover(NewSpecialThinker(StairStepMover));
-		StairStep.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5,
-			StairsType);
-		if (StairQueueHead)
-		{
-			StairQueueHead.AppendToQueue(StairStep);
-		}
-		else
-		{
-			StairQueueHead = StairStep;
-		}
-		Sec->special &= ~SECSPEC_BASE_MASK;
-	}
-	for (StairStep = StairQueueHead; StairStep;
-		StairStep = StairStep.QueueNext)
-	{
-		StairStep.ProcessStairSector();
-	}
-	return 1;
-}
-
 //**************************************************************************
 //
 //  PILLAR
@@ -1570,42 +1107,6 @@ int EV_OpenPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		pillar.InitOpen(Sec, Arg1, Arg2, Arg3, Arg4, Arg5);
 	}
 	return Rtn;
-}
-
-//**************************************************************************
-//
-//  FLOOR WAGGLE
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	EV_StartFloorWaggle
-//
-//==========================================================================
-
-bool EV_StartFloorWaggle(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
-{
-	int				SectorIndex;
-	sector_t*		Sector;
-	FloorWaggle		Waggle;
-	bool			RetCode;
-
-	RetCode = false;
-	for (SectorIndex = XLevel.FindSectorFromTag(Arg1, -1); SectorIndex >= 0;
-		SectorIndex = XLevel.FindSectorFromTag(Arg1, SectorIndex))
-	{
-		Sector = &XLevel.Sectors[SectorIndex];
-		if (Sector->FloorData)
-		{
-			// Already busy with another thinker
-			continue;
-		}
-		RetCode = true;
-		Waggle = FloorWaggle(NewSpecialThinker(FloorWaggle));
-		Waggle.Init(Sector, Arg1, Arg2, Arg3, Arg4, Arg5);
-	}
-	return RetCode;
 }
 
 //==========================================================================
@@ -1707,100 +1208,6 @@ int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
 		Elev.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 	}
 	return Rtn;
-}
-
-//==========================================================================
-//
-//  EV_DoPlat
-//
-//  Do Platforms.
-//
-//==========================================================================
-
-int EV_DoPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
-	line_t* Line)
-{
-	Platform	Plat;
-	int			SecNum;
-	int			Rtn;
-	sector_t*	Sec;
-
-	Rtn = false;
-
-	if (!Arg1)
-	{
-		if (!Line || !Line->backsector)
-			return false;
-
-		//  Activate all <type> plats that are in stasis.
-		if ((Type == PLATEV_PerpetualRaise ||
-			Type == PLATEV_PerpetualRaiseLip ||
-			Type == PLATEV_Toggle) && Platform(Line->backsector->FloorData))
-		{
-			//  Activate in stasis
-			Platform(Line->backsector->FloorData).ActivateInStasis(Arg1);
-			if (Type == PLATEV_Toggle)
-			{
-				Rtn = true;
-			}
-		}
-
-		if (!Line->backsector->FloorData)
-		{
-			// Find lowest & highest floors around sector
-			Rtn = 1;
-			Plat = Platform(NewSpecialThinker(Platform));
-			Plat.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
-		}
-	}
-	else
-	{
-		//  Activate all <type> plats that are in stasis.
-		if (Type == PLATEV_PerpetualRaise ||
-			Type == PLATEV_PerpetualRaiseLip ||
-			Type == PLATEV_Toggle)
-		{
-			//  Activate in stasis
-			FOREACH(Platform, Plat)
-			{
-				Plat.ActivateInStasis(Arg1);
-			}
-			if (Type == PLATEV_Toggle)
-			{
-				Rtn = true;
-			}
-		}
-
-		for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-			SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-		{
-			Sec = &XLevel.Sectors[SecNum];
-			if (Sec->FloorData)
-				continue;
-
-			// Find lowest & highest floors around sector
-			Rtn = 1;
-			Plat = Platform(NewSpecialThinker(Platform));
-			Plat.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type);
-		}
-	}
-	return Rtn;
-}
-
-//==========================================================================
-//
-//  EV_StopPlat
-//
-//==========================================================================
-
-void EV_StopPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
-{
-	Platform	Plat;
-
-	FOREACH(Platform, Plat)
-	{
-		Plat.StopPlat(Arg1);
-	}
 }
 
 // ===== Polyobj Event Code =====
