@@ -116,15 +116,6 @@ enum
 
 enum
 {
-	ELEVEV_Down,
-	ELEVEV_Up,
-	ELEVEV_Current,
-	ELEVEV_Raise,
-	ELEVEV_Lower
-};
-
-enum
-{
 	PODOOR_NONE,
 	PODOOR_SLIDE,
 	PODOOR_SWING

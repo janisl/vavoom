@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: Elevator.vc 1744 2006-10-01 12:40:46Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -158,7 +158,7 @@ void Tick(float DeltaTime)
 	if (Res == RES_PASTDEST)	// if destination height acheived
 	{
 		// make floor stop sound
-		//SN_StopSequence(Sector);
+		SectorStopSequence(Sector);
 		Finished();		// remove elevator from actives
 	}
 }
@@ -171,14 +171,16 @@ void Tick(float DeltaTime)
 
 void StartFloorSound()
 {
-	if (Sector->seqType >= 0)
+	if (!LineSpecialLevelInfo(Level).DefaultFloorSound ||
+		Sector->seqType >= 0)
 	{
 		SectorStartSequence(Sector, GetSeqTrans(Sector->seqType,
 			SEQ_Platform), 0);
 	}
 	else
 	{
-		SectorStartSequence(Sector, 'Floor', 0);
+		SectorStartSequence(Sector, LineSpecialLevelInfo(Level).
+			DefaultFloorSound, 0);
 	}
 }
 

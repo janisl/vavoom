@@ -470,12 +470,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_OpenPolyDoor(Line, Arg1, Arg2, Arg3, Arg4, Arg5,
 			PODOOR_SLIDE);
 		break;
-	case LNSPEC_PillarBuild: // (no crushing)
-		buttonSuccess = EV_BuildPillar(Arg1, Arg2, Arg3, Arg4, Arg5, false);
-		break;
-	case LNSPEC_PillarOpen:
-		buttonSuccess = EV_OpenPillar(Arg1, Arg2, Arg3, Arg4, Arg5);
-		break;
 	case LNSPEC_ForceField:
 		buttonSuccess = EV_ForceField(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
@@ -602,17 +596,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_MovePoly(Line, Arg1, Arg2, Arg3, Arg4, Arg5,
 			true, true);
 		break;
-	case LNSPEC_PillarBuildCrush:
-		buttonSuccess = EV_BuildPillar(Arg1, Arg2, Arg3, Arg4, Arg5, true);
-		break;
-	case LNSPEC_FloorAndCeilingLowerByValue:
-		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
-			ELEVEV_Lower, Line);
-		break;
-	case LNSPEC_FloorAndCeilingRaiseByValue:
-		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
-			ELEVEV_Raise, Line);
-		break;
 	case LNSPEC_LightForceLightning:
 		buttonSuccess = true;
 		P_ForceLightning();
@@ -731,18 +714,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_ExitSecret:
 		buttonSuccess = true;
 		G_SecretExitLevel(Arg1);
-		break;
-	case LNSPEC_ElevatorRaiseToNearest:
-		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
-			ELEVEV_Up, Line);
-		break;
-	case LNSPEC_ElevatorMoveToFloor:
-		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
-			ELEVEV_Current, Line);
-		break;
-	case LNSPEC_ElevatorLowerToNearest:
-		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
-			ELEVEV_Down, Line);
 		break;
 
 	// Line specials only processed during level initialization
@@ -1103,67 +1074,6 @@ bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	return true;
 }
 
-//**************************************************************************
-//
-//  PILLAR
-//
-//**************************************************************************
-
-//==========================================================================
-//
-//	EV_BuildPillar
-//
-//==========================================================================
-
-int EV_BuildPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	bool Crush)
-{
-	int			SecNum;
-	sector_t*	Sec;
-	Pillar		pillar;
-	int			Rtn;
-
-	Rtn = false;
-	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-	{
-		Sec = &XLevel.Sectors[SecNum];
-		if (Sec->FloorData || Sec->CeilingData)
-			continue;	// already moving
-		Rtn = true;
-		pillar = Pillar(NewSpecialThinker(Pillar));
-		pillar.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Crush);
-	}
-	return Rtn;
-}
-
-//==========================================================================
-//
-//	EV_OpenPillar
-//
-//==========================================================================
-
-int EV_OpenPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
-{
-	int			SecNum;
-	sector_t*	Sec;
-	Pillar		pillar;
-	int			Rtn;
-
-	Rtn = false;
-	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-	{
-		Sec = &XLevel.Sectors[SecNum];
-		if (Sec->FloorData || Sec->CeilingData)
-			continue;	// already moving
-		Rtn = true;
-		pillar = Pillar(NewSpecialThinker(Pillar));
-		pillar.InitOpen(Sec, Arg1, Arg2, Arg3, Arg4, Arg5);
-	}
-	return Rtn;
-}
-
 //==========================================================================
 //
 //	EV_FloorTransferTrigger
@@ -1224,43 +1134,6 @@ bool EV_FloorTransferNumeric(int Arg1, int Arg2, int Arg3, int Arg4,
 			Sec->floor.pic = MdlSec->floor.pic;
 			Sec->special = MdlSec->special;
 		}
-	}
-	return Rtn;
-}
-
-//==========================================================================
-//
-//  EV_DoElevator
-//
-//==========================================================================
-
-int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
-	line_t* Line)
-{
-	int			SecNum;
-	int			Rtn;
-	sector_t*	Sec;
-	Elevator	Elev;
-
-	if (!Line && (Type == ELEVEV_Current))
-	{
-		return false;
-	}
-
-	Rtn = false;
-	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-	{
-		Sec = &XLevel.Sectors[SecNum];
-
-		//	Skip if already busy.
-		if (Sec->FloorData || Sec->CeilingData)
-			continue;
-
-		//	New elevator thinker
-		Rtn = true;
-		Elev = Elevator(NewSpecialThinker(Elevator));
-		Elev.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
 	}
 	return Rtn;
 }

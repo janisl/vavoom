@@ -37,3 +37,5 @@ import engine;
 #include "FloorWaggle.vc"
 #include "StairStepMover.vc"
 #include "Platform.vc"
+#include "Pillar.vc"
+#include "Elevator.vc"

@@ -101,8 +101,12 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_RaiseAndCrush, Line);
 		break;
-//LNSPEC_PillarBuild:
-//LNSPEC_PillarOpen:
+	case LNSPEC_PillarBuild:	// (no crushing)
+		buttonSuccess = EV_BuildPillar(Arg1, Arg2, Arg3, Arg4, Arg5, false);
+		break;
+	case LNSPEC_PillarOpen:
+		buttonSuccess = EV_OpenPillar(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_StairsBuildDownSync:
 		buttonSuccess = EV_BuildStairs(Arg1, Arg2, Arg3, Arg4, Arg5,
 			StairStepMover::STAIRSEV_DownSync);
@@ -192,6 +196,19 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			CeilingMover::CEILEV_MoveToValueTimes8, Line);
 		break;
 //LNSPEC_Teleport:
+//LNSPEC_PolyMoveTimes8Override:
+	case LNSPEC_PillarBuildCrush:
+		buttonSuccess = EV_BuildPillar(Arg1, Arg2, Arg3, Arg4, Arg5, true);
+		break;
+	case LNSPEC_FloorAndCeilingLowerByValue:
+		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
+			Elevator::ELEVEV_Lower, Line);
+		break;
+	case LNSPEC_FloorAndCeilingRaiseByValue:
+		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
+			Elevator::ELEVEV_Raise, Line);
+		break;
+//LNSPEC_LightForceLightning:
 //LNSPEC_ThingSpawnNoFog:
 	case LNSPEC_FloorWaggle:
 		buttonSuccess = EV_StartFloorWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -308,7 +325,19 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			FloorMover::FLOOREV_LowerToHighest, Line);
 		break;
 //LNSPEC_ExitNormal:
-//LNSPEC_ElevatorLowerToNearest:
+//LNSPEC_ExitSecret:
+	case LNSPEC_ElevatorRaiseToNearest:
+		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
+			Elevator::ELEVEV_Up, Line);
+		break;
+	case LNSPEC_ElevatorMoveToFloor:
+		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
+			Elevator::ELEVEV_Current, Line);
+		break;
+	case LNSPEC_ElevatorLowerToNearest:
+		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
+			Elevator::ELEVEV_Down, Line);
+		break;
 	case LNSPEC_DoorCloseWaitOpen:
 		buttonSuccess = EV_DoDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			VerticalDoor::DOOREV_CloseWaitOpen, Line, A);
@@ -1054,6 +1083,110 @@ int EV_StopPlat(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		Plat.StopPlat(Arg1);
 	}
 	return 1;
+}
+
+//**************************************************************************
+//
+//  Pillar
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	EV_BuildPillar
+//
+//==========================================================================
+
+int EV_BuildPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	bool Crush)
+{
+	int			SecNum;
+	sector_t*	Sec;
+	Pillar		pillar;
+	int			Rtn;
+
+	Rtn = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &XLevel.Sectors[SecNum];
+		if (Sec->FloorData || Sec->CeilingData)
+			continue;	// already moving
+		Rtn = true;
+		pillar = Pillar(NewSpecialThinker(Pillar));
+		pillar.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Crush);
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//	EV_OpenPillar
+//
+//==========================================================================
+
+int EV_OpenPillar(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int			SecNum;
+	sector_t*	Sec;
+	Pillar		pillar;
+	int			Rtn;
+
+	Rtn = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &XLevel.Sectors[SecNum];
+		if (Sec->FloorData || Sec->CeilingData)
+			continue;	// already moving
+		Rtn = true;
+		pillar = Pillar(NewSpecialThinker(Pillar));
+		pillar.InitOpen(Sec, Arg1, Arg2, Arg3, Arg4, Arg5);
+	}
+	return Rtn;
+}
+
+//**************************************************************************
+//
+//  Elevator
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  EV_DoElevator
+//
+//==========================================================================
+
+int EV_DoElevator(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, int Type,
+	line_t* Line)
+{
+	int			SecNum;
+	int			Rtn;
+	sector_t*	Sec;
+	Elevator	Elev;
+
+	if (!Line && (Type == Elevator::ELEVEV_Current))
+	{
+		return false;
+	}
+
+	Rtn = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &XLevel.Sectors[SecNum];
+
+		//	Skip if already busy.
+		if (Sec->FloorData || Sec->CeilingData)
+			continue;
+
+		//	New elevator thinker
+		Rtn = true;
+		Elev = Elevator(NewSpecialThinker(Elevator));
+		Elev.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Type, Line);
+	}
+	return Rtn;
 }
 
 //==========================================================================
