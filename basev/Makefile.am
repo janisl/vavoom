@@ -95,7 +95,7 @@ VLUMPY = ../utils/bin/vlumpy$(EXEEXT)
 ACC = ../utils/bin/acc$(EXEEXT)
 
 common/basepak.pk3: common/basepak.ls $(VLUMPY) \
-		common/progs/engine.dat common/progs/svcommon.dat
+		common/progs/engine.dat common/progs/linespec.dat
 	$(VLUMPY) $<
 
 doom/basepak.pk3: doom/basepak.ls $(VLUMPY)

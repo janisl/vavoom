@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: GlowingLight.vc 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,19 +23,22 @@
 //**
 //**************************************************************************
 //**
-//**	FIRELIGHT FLICKER
+//**	GLOWING LIGHT
 //**
 //**************************************************************************
 
-class FireFlicker : Lighting;
+class GlowingLight : Lighting;
 
-float		Time;
+float		Speed;
+int			Direction;
 int			MaxLight;
 int			MinLight;
 
 //==========================================================================
 //
 //  Init
+//
+//  Initialise glowing light
 //
 //==========================================================================
 
@@ -44,38 +47,44 @@ void Init(sector_t* InSector)
 	Sector = InSector;
 	Sector->LightingData = self;
 
-	Time = 4.0 / 35.0;
+	MinLight = Level.FindMinSurroundingLight(Sector, Sector->params.lightlevel);
 	MaxLight = Sector->params.lightlevel;
-	MinLight = Level.FindMinSurroundingLight(Sector,
-		Sector->params.lightlevel) + 16;
+	Direction = -1;
 }
 
 //==========================================================================
 //
-//	Tick
+//  Tick
 //
 //==========================================================================
 
-void Tick(float deltaTime)
+void Tick(float DeltaTime)
 {
-	int		Amount;
-
-	Time -= deltaTime;
-	if (Time > 0.0)
+	switch (Direction)
 	{
-		return;
+	case -1:
+		// DOWN
+		Sector->params.lightlevel -= ftoi(Speed * DeltaTime);
+		if (Sector->params.lightlevel <= MinLight)
+		{
+			Sector->params.lightlevel += ftoi(Speed * DeltaTime);
+			Direction = 1;
+		}
+		break;
+
+	case 1:
+		// UP
+		Sector->params.lightlevel += ftoi(Speed * DeltaTime);
+		if (Sector->params.lightlevel >= MaxLight)
+		{
+			Sector->params.lightlevel -= ftoi(Speed * DeltaTime);
+			Direction = -1;
+		}
+		break;
 	}
-
-	Amount = (P_Random() & 3) * 16;
-
-	if (Sector->params.lightlevel - Amount < MinLight)
-		Sector->params.lightlevel = MinLight;
-	else
-		Sector->params.lightlevel = MaxLight - Amount;
-
-	Time = 4.0 / 35.0;
 }
 
 defaultproperties
 {
+	Speed = 256.0;
 }

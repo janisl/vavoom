@@ -10,7 +10,7 @@ $(OUTDIR)/shared.dat: $(VCC) $(srcdir)/*.vc $(COMMON_PROGS_DIR)/engine.dat
 	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/hexndefs.vc $@
 
 $(OUTDIR)/svprogs.dat: $(VCC) $(OUTDIR)/shared.dat $(srcdir)/*.vc $(srcdir)/game/*.vc \
-		$(COMMON_PROGS_DIR)/svcommon.dat
+		$(COMMON_PROGS_DIR)/linespec.dat
 	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/svprogs.vc $@
 
 $(OUTDIR)/clprogs.dat: $(VCC) $(OUTDIR)/svprogs.dat $(srcdir)/*.vc $(srcdir)/cgame/*.vc

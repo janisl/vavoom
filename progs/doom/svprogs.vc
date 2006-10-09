@@ -30,7 +30,7 @@
 #include <macros.vc>
 
 import shared;
-import svcommon;
+import linespec;
 
 //
 // Map things flags

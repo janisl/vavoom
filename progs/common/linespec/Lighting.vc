@@ -22,55 +22,13 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Base class for all lighting effects.
+//**
+//**************************************************************************
 
-class PhasedLight : Lighting;
-
-float		Index;
-int			Base;
-
-//==========================================================================
-//
-//	Init
-//
-//==========================================================================
-
-void Init(sector_t* InSector, int InBase, int InIndex)
-{
-	Sector = InSector;
-	Sector->LightingData = self;
-
-	if (InIndex == -1)
-	{
-		// sector->lightlevel as the index
-		Index = itof(Sector->params.lightlevel) / 32.0;
-	}
-	else
-	{
-		Index = itof(InIndex) / 32.0;
-	}
-	Base = InBase & 255;
-	Sector->params.lightlevel = Base + Level.Game.PhaseTable[ftoi(Index * 32.0) & 63];
-	if (Sector->params.lightlevel > 255)
-	{
-		Sector->params.lightlevel = 255;
-	}
-}
-
-//============================================================================
-//
-//	Tick
-//
-//============================================================================
-
-void Tick(float deltaTime)
-{
-	Index += deltaTime;
-	Sector->params.lightlevel = Base + Level.Game.PhaseTable[ftoi(Index * 32.0) & 63];
-	if (Sector->params.lightlevel > 255)
-	{
-		Sector->params.lightlevel = 255;
-	}
-}
+class Lighting : SectorThinker
+	abstract;
 
 defaultproperties
 {

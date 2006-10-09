@@ -10,7 +10,7 @@ $(OUTDIR)/shared.dat: $(VCC) $(srcdir)/*.vc $(COMMON_PROGS_DIR)/engine.dat
 	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/doomdefs.vc $@
 
 $(OUTDIR)/svprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/game/*.vc $(srcdir)/game1/*.vc \
-		$(OUTDIR)/shared.dat $(COMMON_PROGS_DIR)/svcommon.dat
+		$(OUTDIR)/shared.dat $(COMMON_PROGS_DIR)/linespec.dat
 	$(VCC) -I$(COMMON_DIR) -P$(COMMON_PROGS_DIR) -P$(OUTDIR) $(srcdir)/svprogs.vc $@
 
 $(OUTDIR)/clprogs.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/cgame/*.vc $(OUTDIR)/svprogs.dat

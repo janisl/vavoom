@@ -30,7 +30,7 @@
 #include <macros.vc>
 
 import shared;
-import svcommon;
+import linespec;
 
 // CONSTANTS ---------------------------------------------------------------
 
@@ -112,14 +112,6 @@ enum
 	QUEST_31,
 
 	NUMQUESTS
-};
-
-enum
-{
-	LIGHTEV_Fade,
-	LIGHTEV_Glow,
-	LIGHTEV_Flicker,
-	LIGHTEV_Strobe
 };
 
 enum

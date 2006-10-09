@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: LightEffect.vc 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -24,6 +24,14 @@
 //**************************************************************************
 
 class LightEffect : Lighting;
+
+enum
+{
+	LIGHTEV_Fade,
+	LIGHTEV_Glow,
+	LIGHTEV_Flicker,
+	LIGHTEV_Strobe
+};
 
 int			Type;
 int			Value1;
@@ -134,8 +142,8 @@ void Tick(float DeltaTime)
 		else if (Sector->params.lightlevel <= Value1)
 		{
 			Sector->params.lightlevel = Value1;
-			if (Sector->LightingData == self)
-				Sector->LightingData = none;
+				if (Sector->LightingData == self)
+					Sector->LightingData = none;
 			RemoveSpecialThinker(self);
 		}
 		break;

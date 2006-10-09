@@ -42,12 +42,6 @@
 #include "Pickup.vc"
 #include "Decoration.vc"
 
-#include "FireFlicker.vc"
-#include "GlowingLight.vc"
-#include "LightFlash.vc"
-#include "Strobe.vc"
-#include "LightEffect.vc"
-#include "PhasedLight.vc"
 #include "Scroller.vc"
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"

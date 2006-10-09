@@ -37,12 +37,6 @@
 #include "ProjEffect.vc"
 #include "Decoration.vc"
 
-#include "LightFlash.vc"
-#include "GlowingLight.vc"
-#include "Strobe.vc"
-#include "LightEffect.vc"
-#include "PhasedLight.vc"
-#include "FireFlicker.vc"
 #include "Scroller.vc"
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"

@@ -7,7 +7,6 @@ startup.vs				@srcdir@/startup.vs
 //	Common progs
 progs/engine.dat		progs/engine.dat
 progs/linespec.dat		progs/linespec.dat
-progs/svcommon.dat		progs/svcommon.dat
 
 //	Default texture
 textures/-noflat-.png	@srcdir@/textures/-noflat-.png

@@ -1,7 +1,7 @@
 VCC=../../utils/bin/vcc$(EXEEXT)
 OUTDIR=../../basev/common/progs
 
-noinst_DATA = $(OUTDIR)/engine.dat $(OUTDIR)/linespec.dat $(OUTDIR)/svcommon.dat
+noinst_DATA = $(OUTDIR)/engine.dat $(OUTDIR)/linespec.dat
 
 $(OUTDIR)/engine.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/engine/*.vc
 	@mkdir -p $(OUTDIR)
@@ -10,7 +10,4 @@ $(OUTDIR)/engine.dat: $(VCC) $(srcdir)/*.vc $(srcdir)/engine/*.vc
 $(OUTDIR)/linespec.dat: $(VCC) $(OUTDIR)/engine.dat $(srcdir)/linespec/*.vc
 	$(VCC) -P$(OUTDIR) $(srcdir)/linespec/classes.vc $@
 
-$(OUTDIR)/svcommon.dat: $(VCC) $(OUTDIR)/linespec.dat $(srcdir)/server/*.vc
-	$(VCC) -P$(OUTDIR) $(srcdir)/server/classes.vc $@
-
-EXTRA_DIST = *.vc engine/*.vc linespec/*.vc server/*.vc
+EXTRA_DIST = *.vc engine/*.vc linespec/*.vc

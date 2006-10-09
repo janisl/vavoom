@@ -39,12 +39,6 @@
 #include "Decoration.vc"
 
 #include "Scroller.vc"
-#include "LightFlash.vc"
-#include "LightEffect.vc"
-#include "PhasedLight.vc"
-#include "Strobe.vc"
-#include "GlowingLight.vc"
-#include "FireFlicker.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
 #include "PlaneWatcher.vc"
