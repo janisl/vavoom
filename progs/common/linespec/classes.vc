@@ -50,3 +50,4 @@ import engine;
 #include "Strobe.vc"
 #include "PhasedLight.vc"
 #include "LightEffect.vc"
+#include "Scroller.vc"

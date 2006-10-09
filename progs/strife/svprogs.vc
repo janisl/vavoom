@@ -116,14 +116,6 @@ enum
 
 enum
 {
-	SCROLLEV_Side,
-	SCROLLEV_Floor,
-	SCROLLEV_Ceiling,
-	SCROLLEV_Carry
-};
-
-enum
-{
 	PUSHER_Push,
 	PUSHER_Pull,
 	PUSHER_Wind,

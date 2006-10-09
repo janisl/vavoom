@@ -65,136 +65,11 @@ float MaceSpot_y[MAX_MACE_SPOTS];
 
 void SpawnSpecials()
 {
-	sector_t *sector;
-	int i;
-
 	::SpawnSpecials();
 
 	InitLava();
 	CloseWeapons();
 
-	//
-	//  Init special SECTORs
-	//
-	for (i = 0; i < XLevel.NumSectors; i++)
-	{
-		sector = &XLevel.Sectors[i];
-		if (!sector->special)
-			continue;
-		if (sector->special & SECSPEC_SECRET_MASK)
-		{
-			//	Secret sector.
-			Game.level->totalsecret++;
-		}
-		switch (sector->special & SECSPEC_BASE_MASK)
-		{
-		case SECSPEC_ScrollEastLavaDamage:
-			SpawnScrollingFloor(sector, -1, 0, 3);
-			break;
-		case SECSPEC_ScrollNorthSlow:
-		case SECSPEC_ScrollNorthMedium:
-		case SECSPEC_ScrollNorthFast:
-			SpawnScrollingFloor(sector, 0, 1, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthSlow);
-			break;
-		case SECSPEC_ScrollEastSlow:
-		case SECSPEC_ScrollEastMedium:
-		case SECSPEC_ScrollEastFast:
-			SpawnScrollingFloor(sector, -1, 0, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollEastSlow);
-			break;
-		case SECSPEC_ScrollSouthSlow:
-		case SECSPEC_ScrollSouthMedium:
-		case SECSPEC_ScrollSouthFast:
-			SpawnScrollingFloor(sector, 0, -1, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthSlow);
-			break;
-		case SECSPEC_ScrollWestSlow:
-		case SECSPEC_ScrollWestMedium:
-		case SECSPEC_ScrollWestFast:
-			SpawnScrollingFloor(sector, 1, 0, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollWestSlow);
-			break;
-		case SECSPEC_ScrollNorthWestSlow:
-		case SECSPEC_ScrollNorthWestMedium:
-		case SECSPEC_ScrollNorthWestFast:
-			SpawnScrollingFloor(sector, 1, 1, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthWestSlow);
-			break;
-		case SECSPEC_ScrollNorthEastSlow:
-		case SECSPEC_ScrollNorthEastMedium:
-		case SECSPEC_ScrollNorthEastFast:
-			SpawnScrollingFloor(sector, -1, 1, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollNorthEastSlow);
-			break;
-		case SECSPEC_ScrollSouthEastSlow:
-		case SECSPEC_ScrollSouthEastMedium:
-		case SECSPEC_ScrollSouthEastFast:
-			SpawnScrollingFloor(sector, -1, -1, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthEastSlow);
-			break;
-		case SECSPEC_ScrollSouthWestSlow:
-		case SECSPEC_ScrollSouthWestMedium:
-		case SECSPEC_ScrollSouthWestFast:
-			SpawnScrollingFloor(sector, 1, -1, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollSouthWestSlow);
-			break;
-		case SECSPEC_ScrollEast5:
-		case SECSPEC_ScrollEast10:
-		case SECSPEC_ScrollEast25:
-		case SECSPEC_ScrollEast30:
-		case SECSPEC_ScrollEast35:
-			SpawnScrollingFloor(sector, -1, 0, (sector->special &
-				SECSPEC_BASE_MASK) - SECSPEC_ScrollEast5);
-			break;
-		}
-	}
-
-	//
-	//  Init line EFFECTs
-	//
-	for (i = 0; i < XLevel.NumLines; i++)
-	{
-		switch (XLevel.Lines[i].special)
-		{
-		case LNSPEC_ScrollTextureLeft:
-			SpawnWallScroller(&XLevel.Lines[i], 1, 0);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollTextureRight:
-			SpawnWallScroller(&XLevel.Lines[i], -1, 0);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollTextureUp:
-			SpawnWallScroller(&XLevel.Lines[i], 0, 1);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollTextureDown:
-			SpawnWallScroller(&XLevel.Lines[i], 0, -1);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollTextureBoth:
-			SpawnTextureBothScroller(&XLevel.Lines[i]);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollTextureModel:
-			SpawnScrollTextureModel(&XLevel.Lines[i]);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollFloor:
-			SpawnScrollFloor(&XLevel.Lines[i]);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollCeiling:
-			SpawnScrollCeiling(&XLevel.Lines[i]);
-			XLevel.Lines[i].special = 0;
-			break;
-		case LNSPEC_ScrollTextureOffsets:
-			SpawnWallOffsetsScroller(&XLevel.Lines[i]);
-			XLevel.Lines[i].special = 0;
-			break;
-		}
-	}
 	P_SpawnPushers();
 
 	CreateTIDList();
@@ -1005,145 +880,13 @@ bool EV_FloorTransferNumeric(int Arg1, int Arg2, int Arg3, int Arg4,
 
 //==========================================================================
 //
-//  SpawnScrollingFloor
-//
-//==========================================================================
-
-void SpawnScrollingFloor(sector_t* Sector, int XDir, int YDir, int Speed)
-{
-	Scroller	Scroll;
-
-	Scroll = Scroller(NewSpecialThinker(Scroller));
-	Scroll.InitFloor(Sector, XDir, YDir, Speed);
-}
-
-//==========================================================================
-//
-//  SpawnWallScroller
-//
-//==========================================================================
-
-void SpawnWallScroller(line_t* Line, int XDir, int YDir)
-{
-	Scroller	Scroll;
-
-	Scroll = Scroller(NewSpecialThinker(Scroller));
-	Scroll.InitWall(Line, XDir, YDir);
-}
-
-//==========================================================================
-//
-//  SpawnWallOffsetsScroller
-//
-//==========================================================================
-
-void SpawnWallOffsetsScroller(line_t* Line)
-{
-	Scroller	Scroll;
-
-	Scroll = Scroller(NewSpecialThinker(Scroller));
-	Scroll.InitWallOffsets(Line);
-}
-
-//==========================================================================
-//
-//  SpawnTextureBothScroller
-//
-//==========================================================================
-
-void SpawnTextureBothScroller(line_t* Line)
-{
-	Scroller	Scroll;
-
-	Scroll = Scroller(NewSpecialThinker(Scroller));
-	Scroll.InitTextureBoth(Line);
-}
-
-//==========================================================================
-//
-//  SpawnScrollCeiling
-//
-//==========================================================================
-
-void SpawnScrollCeiling(line_t* Line)
-{
-	Scroller	Scroll;
-	int			SecNum;
-
-	for (SecNum = XLevel.FindSectorFromTag(Line->arg1, -1); SecNum >= 0;
-		SecNum = XLevel.FindSectorFromTag(Line->arg1, SecNum))
-	{
-		Scroll = Scroller(NewSpecialThinker(Scroller));
-		Scroll.InitGen(SCROLLEV_Ceiling, Line, SecNum);
-	}
-}
-
-//==========================================================================
-//
-//  SpawnScrollFloor
-//
-//==========================================================================
-
-void SpawnScrollFloor(line_t* Line)
-{
-	Scroller	Scroll;
-	int			SecNum;
-
-	for (SecNum = XLevel.FindSectorFromTag(Line->arg1, -1); SecNum >= 0;
-		SecNum = XLevel.FindSectorFromTag(Line->arg1, SecNum))
-	{
-		if (Line->arg3 != 1)
-		{
-			//	Scroll the floor texture
-			Scroll = Scroller(NewSpecialThinker(Scroller));
-			Scroll.InitGen(SCROLLEV_Floor, Line, SecNum);
-		}
-
-		if (Line->arg3 > 0)
-		{
-			//	Carry objects on the floor
-			Scroll = Scroller(NewSpecialThinker(Scroller));
-			Scroll.InitGen(SCROLLEV_Carry, Line, SecNum);
-		}
-	}
-}
-
-//==========================================================================
-//
-//  SpawnScrollTextureModel
-//
-//	Scroll wall according to linedef
-// (same direction and speed as scrolling floors)
-//
-//==========================================================================
-
-void SpawnScrollTextureModel(line_t* Line)
-{
-	Scroller	Scroll;
-	int			Searcher;
-	line_t*		Other;
-
-	Searcher = -1;
-	for (Other = FindLine(Line->arg1, &Searcher); Other;
-		Other = FindLine(Line->arg1, &Searcher))
-	{
-		if (Line != Other)
-		{
-			Scroll = Scroller(NewSpecialThinker(Scroller));
-			Scroll.InitTextureModel(Other, Line);
-		}
-	}
-}
-
-//==========================================================================
-//
-//	P_GetPushThing
+//	GetPushThing
 //
 //	Returns a pointer to an MT_PUSH or MT_PULL thing, NULL otherwise.
 //
 //==========================================================================
 
-Actor P_GetPushThing(int s)
+Actor GetPushThing(int s)
 {
 	Actor		thing;
 	sector_t*	sec;
@@ -1204,7 +947,7 @@ void P_SpawnPushers()
 				for (s = XLevel.FindSectorFromTag(l->arg1, -1); s >= 0;
 					s = XLevel.FindSectorFromTag(l->arg1, s))
 				{
-					thing = P_GetPushThing(s);
+					thing = GetPushThing(s);
 					if (thing)
 					{
 						// No MT_P* means no effect

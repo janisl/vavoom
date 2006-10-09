@@ -42,7 +42,6 @@
 #include "Pickup.vc"
 #include "Decoration.vc"
 
-#include "Scroller.vc"
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"
 #include "QuakeFocus.vc"

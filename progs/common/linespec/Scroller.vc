@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: Scroller.vc 1741 2006-09-26 23:26:48Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -24,6 +24,14 @@
 //**************************************************************************
 
 class Scroller : SectorThinker;
+
+enum
+{
+	SCROLLEV_Side,
+	SCROLLEV_Floor,
+	SCROLLEV_Ceiling,
+	SCROLLEV_Carry
+};
 
 int				Type;
 int				Affectee;
