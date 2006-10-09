@@ -37,10 +37,6 @@
 #include "ProjEffect.vc"
 #include "Decoration.vc"
 
-#include "PolyobjThinker.vc"
-#include "PolyobjRotator.vc"
-#include "PolyobjMover.vc"
-#include "PolyobjDoor.vc"
 #include "LightFlash.vc"
 #include "GlowingLight.vc"
 #include "Strobe.vc"

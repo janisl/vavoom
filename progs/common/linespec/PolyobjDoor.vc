@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: PolyobjDoor.vc 1744 2006-10-01 12:40:46Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -33,6 +33,7 @@ enum
 };
 
 int type;
+int polyobj;
 float speed;
 float dist;
 float xSpeed;	// for sliding walls

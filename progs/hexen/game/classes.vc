@@ -39,10 +39,6 @@
 #include "Decoration.vc"
 
 #include "Scroller.vc"
-#include "PolyobjThinker.vc"
-#include "PolyobjRotator.vc"
-#include "PolyobjMover.vc"
-#include "PolyobjDoor.vc"
 #include "LightFlash.vc"
 #include "LightEffect.vc"
 #include "PhasedLight.vc"

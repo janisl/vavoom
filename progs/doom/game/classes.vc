@@ -42,10 +42,6 @@
 #include "Pickup.vc"
 #include "Decoration.vc"
 
-#include "PolyobjThinker.vc"
-#include "PolyobjRotator.vc"
-#include "PolyobjMover.vc"
-#include "PolyobjDoor.vc"
 #include "FireFlicker.vc"
 #include "GlowingLight.vc"
 #include "LightFlash.vc"

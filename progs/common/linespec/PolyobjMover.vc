@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: PolyobjMover.vc 1703 2006-09-07 23:04:54Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,10 +23,51 @@
 //**
 //**************************************************************************
 
-class PolyobjThinker:Thinker;
+class PolyobjMover:PolyobjThinker;
 
 int polyobj;
-float thrust_force;
+float speed;
+float dist;
+float angle;
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	float move;
+	float absMove;
+	float xMove;
+	float yMove;
+	polyobj_t *poly;
+
+	move = speed * deltaTime;
+	absMove = fabs(move);
+	if (dist < absMove)
+	{
+		move = dist * (move < 0.0 ? -1.0 : 1.0);
+	}
+	xMove = move * cos(angle);
+	yMove = move * sin(angle);
+	if (XLevel.MovePolyobj(polyobj, xMove, yMove))
+	{
+		dist -= absMove;
+		if (dist <= 0.0)
+		{
+			poly = XLevel.GetPolyobj(polyobj);
+			if (poly->SpecialData == self)
+			{
+				poly->SpecialData = none;
+			}
+			PolyobjStopSequence(poly);
+			RemoveSpecialThinker(self);
+			return;
+		}
+	}
+}
 
 defaultproperties
 {

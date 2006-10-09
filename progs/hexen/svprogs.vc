@@ -100,13 +100,6 @@ enum
 	PUSHER_Current
 };
 
-enum
-{
-	PODOOR_NONE,
-	PODOOR_SLIDE,
-	PODOOR_SWING
-};
-
 // TYPES -------------------------------------------------------------------
 
 #include "game/classes.vc"

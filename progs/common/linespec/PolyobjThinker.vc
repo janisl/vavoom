@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: PolyobjThinker.vc 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,51 +23,10 @@
 //**
 //**************************************************************************
 
-class PolyobjRotator:PolyobjThinker;
+class PolyobjThinker : Thinker
+	abstract;
 
-int polyobj;
-float dist;
-float speed;
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float deltaTime)
-{
-	float move;
-	float absMove;
-	polyobj_t *poly;
-
-	move = speed * deltaTime;
-	absMove = fabs(move);
-	if (dist >= 0.0 && dist < absMove)
-	{
-		move = dist * (speed < 0.0 ? -1.0 : 1.0);
-	}
-	if (XLevel.RotatePolyobj(polyobj, move))
-	{
-		if (dist < 0.0)
-		{
-			// perpetual polyobj
-			return;
-		}
-		dist -= absMove;
-		if (dist <= 0.0)
-		{
-			poly = XLevel.GetPolyobj(polyobj);
-			if (poly->SpecialData == self)
-			{
-				poly->SpecialData = none;
-			}
-			PolyobjStopSequence(poly);
-			RemoveSpecialThinker(self);
-			return;
-		}
-	}
-}
+float thrust_force;
 
 defaultproperties
 {

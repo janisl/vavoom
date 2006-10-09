@@ -31,7 +31,8 @@ int			Direction;		// 1 = up, 0 = waiting, -1 = down
 float		TopWait;		// time to wait at the top
 float		TopTime;		// (keep in case a door going down is reset)
 							// when it reaches 0, start going down
-name		DefaultSound;
+name		OpenSound;
+name		CloseSound;
 line_t*		Line;
 
 int			NumFrames;		//	Total number of animation frames.
@@ -83,34 +84,54 @@ void StartAnim()
 	texTop = XLevel.Sides[Line->sidenum[0]].toptexture;
 	if (texTop == TextureNumForName('doraln01'))
 	{
-		DefaultSound = 'DoorAirlock';
+		OpenSound = 'DoorOpenAirlock';
+		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName('dorchn01'))
 	{
-		DefaultSound = 'DoorChain';
+		OpenSound = 'DoorOpenChain';
+		CloseSound = 'DoorCloseChain';
 	}
 	else if (texTop == TextureNumForName('dorcrg01'))
 	{
-		DefaultSound = 'DoorSmallMetal';
+		OpenSound = 'DoorOpenSmallMetal';
+		CloseSound = 'DoorCloseSmallMetal';
 	}
 	else if (texTop == TextureNumForName('dorirs01'))
 	{
-		DefaultSound = 'DoorAirlock';
+		OpenSound = 'DoorOpenAirlock';
+		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName('dorqtr01'))
 	{
-		DefaultSound = 'DoorAirlock';
+		OpenSound = 'DoorOpenAirlock';
+		CloseSound = 'DoorCloseAirlock';
 	}
 	else if (texTop == TextureNumForName('dorstn01'))
 	{
-		DefaultSound = 'DoorStone';
+		OpenSound = 'DoorOpenStone';
+		CloseSound = 'DoorCloseStone';
 	}
 	else
 	{
-		DefaultSound = 'DoorLargeMetal';
+		OpenSound = 'DoorOpenLargeMetal';
+		CloseSound = 'DoorCloseLargeMetal';
 	}
-	StartDoorSound(true);
+	SectorStartSequence(Sector, OpenSound, 0);
 	SetAnimTexture(texTop);
+}
+
+//==========================================================================
+//
+//	StartClosing
+//
+//==========================================================================
+
+bool StartClosing()
+{
+	Direction = -1;	// time to go back down
+	SectorStartSequence(Sector, CloseSound, 0);
+	return true;
 }
 
 //==========================================================================
@@ -158,8 +179,7 @@ void Tick(float deltaTime)
 		if (TopTime <= 0.0)
 		{
 			TopTime = 0.0;
-			Direction = -1;	// time to go back down
-			StartDoorSound(false);
+			StartClosing();
 		}
 		break;
 
@@ -220,26 +240,6 @@ void SetAnimTexture(int NewTex)
 			XLevel.SetLineTexture(Sector->lines[i]->sidenum[0], 1, NewTex);
 			XLevel.SetLineTexture(Sector->lines[i]->sidenum[1], 1, NewTex);
 		}
-	}
-}
-
-//==========================================================================
-//
-//	SetAnimTexture
-//
-//==========================================================================
-
-void StartDoorSound(bool bOpen)
-{
-	name SeqName = Sector->seqType >= 0 ? GetSeqTrans(Sector->seqType,
-		SEQ_Door) : DefaultSound;
-	if (bOpen)
-	{
-		SectorStartSequence(Sector, SeqName, 0);
-	}
-	else
-	{
-		SectorStartSequence(Sector, SeqName, 1);
 	}
 }
 

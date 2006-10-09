@@ -39,3 +39,7 @@ import engine;
 #include "Platform.vc"
 #include "Pillar.vc"
 #include "Elevator.vc"
+#include "PolyobjThinker.vc"
+#include "PolyobjRotator.vc"
+#include "PolyobjMover.vc"
+#include "PolyobjDoor.vc"

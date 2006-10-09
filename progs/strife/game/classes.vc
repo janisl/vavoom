@@ -37,10 +37,6 @@
 #include "Decoration.vc"
 
 #include "TextureChangeDoor.vc"
-#include "PolyobjThinker.vc"
-#include "PolyobjRotator.vc"
-#include "PolyobjMover.vc"
-#include "PolyobjDoor.vc"
 #include "FireFlicker.vc"
 #include "GlowingLight.vc"
 #include "LightFlash.vc"
