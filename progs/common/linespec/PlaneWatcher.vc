@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: PlaneWatcher.vc 1725 2006-09-20 19:41:25Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -30,7 +30,7 @@ float		WatchD;
 float		LastD;
 int			Special;
 int			Args[5];
-Actor		Activator;
+Entity		Activator;
 line_t*		Line;
 int			LineSide;
 bool		bCeiling;
@@ -41,7 +41,7 @@ bool		bCeiling;
 //
 //==========================================================================
 
-void Start(Actor it, line_t* line, int lineSide, bool ceiling, int tag,
+void Start(Entity it, line_t* line, int lineSide, bool ceiling, int tag,
 	int height, int special, int arg0, int arg1, int arg2, int arg3, int arg4)
 {
 	int				secnum;

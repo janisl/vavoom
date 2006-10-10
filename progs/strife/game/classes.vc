@@ -41,7 +41,6 @@
 #include "QuakeFocus.vc"
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
-#include "PlaneWatcher.vc"
 #include "PointPusher.vc"
 #include "PointPuller.vc"
 #include "Pusher.vc"

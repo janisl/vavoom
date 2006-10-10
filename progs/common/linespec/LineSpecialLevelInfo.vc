@@ -38,6 +38,8 @@ name			DefaultFloorAltSound;
 name			DefaultStairStepSound;
 name			DefaultPlatformSound;
 
+bool			bTeleportNewMapBothSides;
+
 //==========================================================================
 //
 //  SpawnSpecials
@@ -410,7 +412,63 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			CeilingMover::CEILEV_MoveToValueTimes8, Line);
 		break;
 //LNSPEC_Teleport:
-//LNSPEC_ACSExecuteWithResult:
+//LNSPEC_ThingDamage:
+	case LNSPEC_TeleportNewMap:
+		if (Side == 0 || bTeleportNewMapBothSides)
+		{
+			// Only teleport when crossing the front side of a line
+			// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))
+			{
+				G_Completed(Arg1, Arg2, Arg3);
+				buttonSuccess = true;
+			}
+		}
+		break;
+	case LNSPEC_TeleportEndGame:
+		if (Side == 0)
+		{
+			// Only teleport when crossing the front side of a line
+			// Players must be alive to teleport
+			if (!(A && A.bIsPlayer && A.Player.PlayerState == PST_DEAD))
+			{
+				buttonSuccess = true;
+				if (Game.deathmatch)
+				{
+					// Winning in deathmatch just goes back to map 1
+					G_Completed(1, 0, 0);
+				}
+				else
+				{
+					// Passing -1, -1 to G_Completed() starts the Finale
+					G_Completed(-1, -1, 0);
+				}
+			}
+		}
+		break;
+//LNSPEC_TeleportOther:
+//LNSPEC_TeleportSector:
+	case LNSPEC_ACSExecute:
+		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line, Side,
+			false, false);
+		break;
+	case LNSPEC_ACSSuspend:
+		buttonSuccess = SuspendACS(Arg1, Arg2);
+		break;
+	case LNSPEC_ACSTerminate:
+		buttonSuccess = TerminateACS(Arg1, Arg2);
+		break;
+	case LNSPEC_ACSLockedExecute:
+		if (CheckLock(A, Arg5))
+		{
+			buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, 0, A, Line, Side,
+				false, false);
+		}
+		break;
+	case LNSPEC_ACSExecuteWithResult:
+		buttonSuccess = StartACS(Arg1, 0, Arg2, Arg3, Arg4, A, Line, Side,
+			true, true);
+		break;
 	case LNSPEC_PolyRotateLeftOverride:
 		buttonSuccess = EV_RotatePoly(Line, Arg1, Arg2, Arg3, Arg4, Arg5, 1,
 			true);
@@ -475,7 +533,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_FloorWaggle:
 		buttonSuccess = EV_StartFloorWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
-//LNSPEC_SectorSoundChange:
+	case LNSPEC_SectorSoundChange:
+		buttonSuccess = EV_SectorSoundChange(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_PlaneUpNearestWaitDownStay:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Platform::PLATEV_UpNearestWaitDownStay, Line);
@@ -544,14 +604,23 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Platform::PLATEV_PerpetualRaiseLip, Line);
 		break;
-//LNSPEC_SectorSetDamage:
+	case LNSPEC_SectorSetDamage:
+		buttonSuccess = EV_SectorSetDamage(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 //LNSPEC_TeleportLine:
 	case LNSPEC_StairsBuildUpDoom:
 		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
 			false, Line);
 		break;
 //LNSPEC_SectorSetWind:
-//LNSPEC_ACSExecuteAlways:
+//LNSPEC_SectorSetCurrent:
+	case LNSPEC_SectorSetGravity:
+		buttonSuccess = EV_SectorSetGravity(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_ACSExecuteAlways:
+		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line, Side,
+			true, false);
+		break;
 	case LNSPEC_FloorRaiseToNearestChange:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_RaiseToNearestChange, Line);
@@ -573,8 +642,13 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_LightMaxNeighbor:
 		buttonSuccess = EV_TagLightTurnOn(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
-//LNSPEC_FloorTransferTrigger:
-//LNSPEC_FloorTransferNumeric:
+	case LNSPEC_FloorTransferTrigger:
+		buttonSuccess = EV_FloorTransferTrigger(Arg1, Arg2, Arg3, Arg4, Arg5,
+			Line);
+		break;
+	case LNSPEC_FloorTransferNumeric:
+		buttonSuccess = EV_FloorTransferNumeric(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_FloorRaiseToLowestCeiling:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_RaiseToLowestCeiling, Line);
@@ -595,8 +669,14 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_LowerToHighest, Line);
 		break;
-//LNSPEC_ExitNormal:
-//LNSPEC_ExitSecret:
+	case LNSPEC_ExitNormal:
+		buttonSuccess = true;
+		G_ExitLevel(Arg1);
+		break;
+	case LNSPEC_ExitSecret:
+		buttonSuccess = true;
+		G_SecretExitLevel(Arg1);
+		break;
 	case LNSPEC_ElevatorRaiseToNearest:
 		buttonSuccess = EV_DoElevator(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Elevator::ELEVEV_Up, Line);
@@ -640,6 +720,23 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	}
 	return buttonSuccess;
+}
+
+//==========================================================================
+//
+//  StartPlaneWatcher
+//
+//==========================================================================
+
+void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
+	int tag, int height, int special, int arg0, int arg1, int arg2, int arg3,
+	int arg4)
+{
+	PlaneWatcher	PW;
+
+	PW = PlaneWatcher(NewSpecialThinker(PlaneWatcher));
+	PW.Start(it, line, lineSide, ceiling, tag, height, special, arg0, arg1,
+		arg2, arg3, arg4);
 }
 
 //**************************************************************************
@@ -2359,6 +2456,159 @@ void SpawnScrollTextureModel(line_t* Line)
 			Scroll.InitTextureModel(Other, Line);
 		}
 	}
+}
+
+//**************************************************************************
+//
+//  Transfering floor texture and sector special
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	EV_FloorTransferTrigger
+//
+//==========================================================================
+
+bool EV_FloorTransferTrigger(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, line_t* Line)
+{
+	int			SecNum;
+	bool		Rtn;
+	sector_t*	Sec;
+
+	if (!Line)
+	{
+		return false;
+	}
+
+	Rtn = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &XLevel.Sectors[SecNum];
+		Rtn = true;
+
+		Sec->floor.pic = Line->frontsector->floor.pic;
+		Sec->special = (Sec->special & SECSPEC_SECRET_MASK) |
+			(Line->frontsector->special & ~SECSPEC_SECRET_MASK);
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//	EV_FloorTransferNumeric
+//
+//==========================================================================
+
+bool EV_FloorTransferNumeric(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int			SecNum;
+	bool		Rtn;
+	sector_t*	Sec;
+	sector_t*	MdlSec;
+
+	Rtn = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		Sec = &XLevel.Sectors[SecNum];
+		Rtn = true;
+
+		MdlSec = FindModelFloorSector(Sec, GetPlanePointZ(&Sec->floor,
+			Sec->soundorg));
+		if (MdlSec)
+		{
+			Sec->floor.pic = MdlSec->floor.pic;
+			Sec->special = MdlSec->special;
+		}
+	}
+	return Rtn;
+}
+
+//**************************************************************************
+//
+//	Changing of sector properties
+//
+//**************************************************************************
+
+//=========================================================================
+//
+//	EV_SectorSoundChange
+//
+//=========================================================================
+
+bool EV_SectorSoundChange(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int secNum;
+	bool rtn;
+
+	if (!Arg1)
+	{
+		return false;
+	}
+	rtn = false;
+	for (secNum = XLevel.FindSectorFromTag(Arg1, -1); secNum >= 0;
+		secNum = XLevel.FindSectorFromTag(Arg1, secNum))
+	{
+		XLevel.Sectors[secNum].seqType = Arg2;
+		rtn = true;
+	}
+	return rtn;
+}
+
+//=========================================================================
+//
+//	EV_SectorSetDamage
+//
+//=========================================================================
+
+bool EV_SectorSetDamage(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int		SecNum;
+	bool	Rtn;
+
+	if (!Arg1)
+	{
+		return false;
+	}
+	Rtn = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		XLevel.Sectors[SecNum].Damage = Arg2;
+		//FIXME Arg3 is MOD
+		Rtn = true;
+	}
+	return Rtn;
+}
+
+//==========================================================================
+//
+//  EV_SectorSetGravity
+//
+//==========================================================================
+
+bool EV_SectorSetGravity(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int		SecNum;
+	float	SecGrav;
+	bool	Ret;
+
+	if (Arg3 > 99)
+		Arg3 = 99;
+
+	SecGrav = itof(Arg2) + itof(Arg3) * 0.01;
+	Ret = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		XLevel.Sectors[SecNum].Gravity = SecGrav;
+		Ret = true;
+	}
+	return Ret;
 }
 
 //==========================================================================

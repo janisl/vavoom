@@ -52,3 +52,4 @@ import engine;
 #include "PhasedLight.vc"
 #include "LightEffect.vc"
 #include "Scroller.vc"
+#include "PlaneWatcher.vc"
