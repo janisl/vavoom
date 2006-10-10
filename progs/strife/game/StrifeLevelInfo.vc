@@ -456,10 +456,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	// LNSPEC_ScrollTextureOffsets:
 	// LNSPEC_PointPushSetForce:
 
-	case 14:	//	Door_Animated
-		buttonSuccess = EV_TextureChangeDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
-			Line, A);
-		break;
 	case 49:	//	Break glass.
 		buttonSuccess = EV_BreakGlass(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Line, A);
@@ -950,75 +946,6 @@ bool EV_BreakGlass(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	//	We already changed the switch texture, so don't make the main code
 	// switch it back.
 	return false;
-}
-
-//==========================================================================
-//
-//  EV_TextureChangeDoor
-//
-//==========================================================================
-
-int EV_TextureChangeDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	line_t* Line, Entity E)
-{
-	int					i;
-	int					SecNum;
-	int					Rtn;
-	sector_t*			Sec;
-	TextureChangeDoor	Door;
-
-	Rtn = false;
-
-	if (!Arg1)
-	{
-		if (!Line || !Line->backsector)
-		{
-			return false;
-		}
-
-		// if the sector has an active thinker, use it
-		if (Line->backsector->CeilingData)
-		{
-			if (!E.bIsPlayer)
-				return false;
-			Door = TextureChangeDoor(Line->backsector->CeilingData);
-			if (Door && Door.Direction == 0)
-			{
-				return Door.StartClosing();
-			}
-			return false;
-		}
-	
-		// new door thinker
-		Door = TextureChangeDoor(NewSpecialThinker(TextureChangeDoor));
-		Door.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Line);
-		Rtn = true;
-	}
-	else
-	{
-		for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
-			SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
-		{
-			Sec = &XLevel.Sectors[SecNum];
-			if (Sec->CeilingData)
-			{
-				continue;
-			}
-			for (i = 0; i < i < Sec->linecount; i++)
-			{
-				Line = Sec->lines[i];
-				if (!Line->backsector)
-				{
-					continue;
-				}
-				//	New door thinker
-				Rtn = true;
-				Door = TextureChangeDoor(NewSpecialThinker(TextureChangeDoor));
-				Door.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5, Line);
-			}
-		}
-	}
-	return Rtn;
 }
 
 //==========================================================================

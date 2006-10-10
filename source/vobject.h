@@ -316,6 +316,7 @@ public:
 	DECLARE_FUNCTION(FindClass)
 	DECLARE_FUNCTION(StateIsInRange)
 	DECLARE_FUNCTION(GetStateSpriteName)
+	DECLARE_FUNCTION(FindAnimDoor)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

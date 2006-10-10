@@ -64,6 +64,15 @@ struct TSwitch
 	int Sound;
 };
 
+struct VAnimDoorDef
+{
+	vint32		Texture;
+	VName		OpenSound;
+	VName		CloseSound;
+	vint32		NumFrames;
+	vint32*		Frames;
+};
+
 class VTexture;
 
 class VTextureManager
@@ -110,6 +119,7 @@ void R_RenderPlayerView();
 // r_tex
 void R_InitTexture();
 void R_ShutdownTexture();
+VAnimDoorDef* R_FindAnimDoor(vint32);
 void R_AnimateSurfaces();
 
 // r_surf

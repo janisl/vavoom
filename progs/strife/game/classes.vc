@@ -36,7 +36,6 @@
 #include "Effect.vc"
 #include "Decoration.vc"
 
-#include "TextureChangeDoor.vc"
 #include "MapSpot.vc"
 #include "MapSpotGravity.vc"
 #include "QuakeFocus.vc"

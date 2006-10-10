@@ -354,6 +354,7 @@ TArray<TSwitch>		Switches;
 
 static TArray<animDef_t>	AnimDefs;
 static TArray<frameDef_t>	FrameDefs;
+static TArray<VAnimDoorDef>	AnimDoorDefs;
 
 // CODE --------------------------------------------------------------------
 
@@ -3393,7 +3394,7 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 
 	if (!ignore && !ad.IsRange && FrameDefs.Num() - ad.startFrameDef < 2)
 	{
-		Sys_Error("P_InitFTAnims: AnimDef has framecount < 2.");
+		sc->Error("AnimDef has framecount < 2.");
 	}
 
 	if (!ignore)
@@ -3489,6 +3490,80 @@ static void ParseSwitchDef(VScriptParser* sc)
 
 //==========================================================================
 //
+//	ParseAnimatedDoor
+//
+//==========================================================================
+
+static void ParseAnimatedDoor(VScriptParser* sc)
+{
+	guard(ParseAnimatedDoor);
+	//	Get base texture name.
+	bool ignore = false;
+	sc->ExpectName8();
+	vint32 BaseTex = GTextureManager.CheckNumForName(sc->Name8,
+		TEXTYPE_Wall, true, true);
+	if (BaseTex == -1)
+	{
+		ignore = true;
+		GCon->Logf("ANIMDEFS: Can't find %s", *sc->String);
+	}
+
+	VName OpenSound(NAME_None);
+	VName CloseSound(NAME_None);
+	TArray<vint32> Frames;
+	while (!sc->AtEnd())
+	{
+		if (sc->Check("opensound"))
+		{
+			sc->ExpectString();
+			OpenSound = *sc->String;
+		}
+		else if (sc->Check("closesound"))
+		{
+			sc->ExpectString();
+			CloseSound = *sc->String;
+		}
+		else if (sc->Check("pic"))
+		{
+			vint32 v;
+			if (sc->CheckNumber())
+			{
+				v = BaseTex + sc->Number - 1;
+			}
+			else
+			{
+				sc->ExpectName8();
+				v = GTextureManager.CheckNumForName(sc->Name8,
+					TEXTYPE_Wall, true, true);
+				if (v == -1 && !ignore)
+				{
+					sc->Error(va("Unknown texture %s", *sc->String));
+				}
+			}
+			Frames.Append(v);
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (!ignore)
+	{
+		VAnimDoorDef& A = AnimDoorDefs.Alloc();
+		A.Texture = BaseTex;
+		A.OpenSound = OpenSound;
+		A.CloseSound = CloseSound;
+		A.NumFrames = Frames.Num();
+		A.Frames = new vint32[Frames.Num()];
+		for (int i = 0; i < A.NumFrames; i++)
+			A.Frames[i] = Frames[i];
+	}
+	unguard;
+};
+
+//==========================================================================
+//
 //	ParseFTAnims
 //
 //	Initialise flat and texture animation lists.
@@ -3511,6 +3586,10 @@ static void ParseFTAnims(VScriptParser* sc)
 		else if (sc->Check("switch"))
 		{
 			ParseSwitchDef(sc);
+		}
+		else if (sc->Check("animateddoor"))
+		{
+			ParseAnimatedDoor(sc);
 		}
 		else
 		{
@@ -3619,6 +3698,26 @@ void P_InitSwitchList()
 
 //==========================================================================
 //
+//	R_FindAnimDoor
+//
+//==========================================================================
+
+VAnimDoorDef* R_FindAnimDoor(vint32 BaseTex)
+{
+	guard(R_FindAnimDoor);
+	for (int i = 0; i < AnimDoorDefs.Num(); i++)
+	{
+		if (AnimDoorDefs[i].Texture == BaseTex)
+		{
+			return &AnimDoorDefs[i];
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	R_AnimateSurfaces
 //
 //==========================================================================
@@ -3710,6 +3809,11 @@ void R_ShutdownTexture()
 	Switches.Clear();
 	AnimDefs.Clear();
 	FrameDefs.Clear();
+	for (int i = 0; i < AnimDoorDefs.Num(); i++)
+	{
+		delete[] AnimDoorDefs[i].Frames;
+	}
+	AnimDoorDefs.Clear();
 
 	//	Shut down texture manager.
 	GTextureManager.Shutdown();

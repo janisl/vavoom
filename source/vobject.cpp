@@ -965,3 +965,8 @@ IMPLEMENT_FUNCTION(VObject, GetStateSpriteName)
 	RET_NAME(State ? State->SpriteName : NAME_None);
 }
 
+IMPLEMENT_FUNCTION(VObject, FindAnimDoor)
+{
+	P_GET_INT(BaseTex);
+	RET_PTR(R_FindAnimDoor(BaseTex));
+}

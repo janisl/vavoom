@@ -1,0 +1,224 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: TextureChangeDoor.vc 1768 2006-10-09 20:08:45Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class TextureChangeDoor : SectorMover;
+
+line_t*		Line1;
+line_t*		Line2;
+float		TopDist;
+float		BotDist;
+int			Direction;		// 1 = up, 0 = waiting, -1 = down
+float		AnimSpeed;
+float		TopWait;		// time to wait at the top
+float		Timer;
+int			CurrentFrame;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, line_t* InLine)
+{
+	float		Height;
+	TVec		Spot;
+	int			i;
+
+	Sector = InSector;
+	Sector->CeilingData = self;
+
+	Line1 = InLine;
+	Line2 = InLine;
+	for (i = 0; i < Sector->linecount; i++)
+	{
+		if (Sector->lines[i] == Line1)
+			continue;
+		if (XLevel.Sides[Sector->lines[i]->sidenum[0]].toptexture ==
+			XLevel.Sides[Line1->sidenum[0]].toptexture)
+		{
+			Line2 = Sector->lines[i];
+			break;
+		}
+	}
+
+	int texTop = XLevel.Sides[Line1->sidenum[0]].toptexture;
+	VAnimDoorDef* Def = FindAnimDoor(texTop);
+
+	Height = Level.FindLowestCeilingSurrounding(Sector, &Spot);
+	Spot.z = Height;
+	TopDist = DotProduct(Sector->ceiling.normal, Spot);
+	Height = Level.FindHighestFloorPoint(Sector, &Spot);
+	Spot.z = Height;
+	BotDist = DotProduct(Sector->ceiling.normal, Spot);
+
+	Sector->ceiling.dist = TopDist;
+	XLevel.ChangeSector(Sector, false);
+
+	CurrentFrame = 0;
+	AnimSpeed = itof(Arg2) / 35.0;
+	Timer = AnimSpeed;
+
+	Line1->flags |= ML_BLOCKING;
+	Line2->flags |= ML_BLOCKING;
+
+	Direction = 1;
+	TopWait = itof(Arg3) / 35.0;
+	if (Def->OpenSound)
+	{
+		SectorStartSequence(Sector, Def->OpenSound, 0);
+	}
+	SetAnimTexture(texTop);
+}
+
+//==========================================================================
+//
+//	StartClosing
+//
+//==========================================================================
+
+bool StartClosing()
+{
+	//	Try to close door. If it crushes it means that there's something
+	// inside the door.
+	Sector->ceiling.dist = BotDist;
+	bool Blocked = XLevel.ChangeSector(Sector, false);
+	Sector->ceiling.dist = TopDist;
+	XLevel.ChangeSector(Sector, false);
+	if (Blocked)
+	{
+		return false;
+	}
+
+	int texTop = XLevel.Sides[Line1->sidenum[0]].toptexture;
+	VAnimDoorDef* Def = FindAnimDoor(texTop);
+
+	Direction = -1;	// time to go back down
+	if (Def->CloseSound)
+	{
+		SectorStartSequence(Sector, Def->CloseSound, 0);
+	}
+	Line1->flags |= ML_BLOCKING;
+	Line2->flags |= ML_BLOCKING;
+	Timer = AnimSpeed;
+	return true;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	int		i;
+	int		res;
+	int		texTop;
+
+	texTop = XLevel.Sides[Line1->sidenum[0]].toptexture;	
+	VAnimDoorDef* Def = FindAnimDoor(texTop);
+	switch (Direction)
+	{
+	case 1:
+		//	Open door.
+		Timer -= deltaTime;
+		if (Timer <= 0.0)
+		{
+			CurrentFrame++;
+			if (CurrentFrame >= Def->NumFrames )
+			{
+				Line1->flags &= ~ML_BLOCKING;
+				Line2->flags &= ~ML_BLOCKING;
+				if (!TopWait)
+				{
+					Finished();
+					break;
+				}
+				Direction = 0;	// wait at top
+				Timer = TopWait;
+				SectorStopSequence(Sector);
+			}
+			else
+			{
+				Timer = AnimSpeed;
+				SetAnimTexture(Def->Frames[CurrentFrame]);
+			}
+		}
+		break;
+
+	case 0:
+		//	Waiting
+		Timer -= deltaTime;
+		if (Timer <= 0.0)
+		{
+			if (!StartClosing())
+			{
+				Timer = TopWait;
+			}
+		}
+		break;
+
+	case -1:
+		//	Close door.
+		Timer -= deltaTime;
+		if (Timer <= 0.0)
+		{
+			CurrentFrame--;
+			if (CurrentFrame < 0)
+			{
+				Sector->ceiling.dist = BotDist;
+				XLevel.ChangeSector(Sector, false);
+				SectorStopSequence(Sector);
+				Finished();	// unlink and free
+			}
+			else
+			{
+				Timer = AnimSpeed;
+				SetAnimTexture(Def->Frames[CurrentFrame]);
+			}
+		}
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	SetAnimTexture
+//
+//==========================================================================
+
+void SetAnimTexture(int NewTex)
+{
+	XLevel.SetLineTexture(Line1->sidenum[0], 1, NewTex);
+	XLevel.SetLineTexture(Line1->sidenum[1], 1, NewTex);
+	XLevel.SetLineTexture(Line2->sidenum[0], 1, NewTex);
+	XLevel.SetLineTexture(Line2->sidenum[1], 1, NewTex);
+}
+
+defaultproperties
+{
+}

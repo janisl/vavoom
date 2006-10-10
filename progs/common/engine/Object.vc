@@ -441,6 +441,7 @@ enum
 	LNSPEC_DoorOpen,
 	LNSPEC_DoorRaise,
 	LNSPEC_DoorLockedRaise,
+	LNSPEC_DoorAnimated,
 
 	LNSPEC_FloorLowerByValue = 20,// 20
 	LNSPEC_FloorLowerToLowest,
@@ -1024,6 +1025,15 @@ struct tmtrace_t
 	Entity BlockingMobj;
 };
 
+struct VAnimDoorDef
+{
+	int			Texture;
+	name		OpenSound;
+	name		CloseSound;
+	int			NumFrames;
+	int*		Frames;
+};
+
 //**************************************************************************
 //
 //  Client types
@@ -1583,6 +1593,7 @@ native static final classid FindClass(name Name);
 native static final bool StateIsInRange(state State, state Start, state End,
 	int MaxDepth);
 native static final name GetStateSpriteName(state State);
+native static final VAnimDoorDef* FindAnimDoor(int BaseTex);
 
 //==========================================================================
 //

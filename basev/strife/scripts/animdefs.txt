@@ -105,3 +105,87 @@ switch CITADL04 on pic CITADL05 tics 0
 switch SWITE03  on pic SWITE04  tics 0
 switch SWTELP01 on pic SWTELP02 tics 0
 switch BRNSCN01 on pic BRNSCN05 tics 0 sound switches/sizzle quest
+
+animateddoor doraln01
+opensound  DoorOpenAirlock
+closesound DoorCloseAirlock
+pic doraln01
+pic doraln02
+pic doraln03
+pic doraln04
+pic doraln05
+pic doraln06
+pic doraln07
+pic doraln08
+
+animateddoor dorchn01
+opensound  DoorOpenChain
+closesound DoorCloseChain
+pic dorchn01
+pic dorchn02
+pic dorchn03
+pic dorchn04
+pic dorchn05
+pic dorchn06
+pic dorchn07
+pic dorchn08
+	
+animateddoor dorcrg01
+opensound  DoorOpenSmallMetal
+closesound DoorCloseSmallMetal
+pic dorcrg01
+pic dorcrg02
+pic dorcrg03
+pic dorcrg04
+pic dorcrg05
+pic dorcrg06
+pic dorcrg07
+pic dorcrg08
+
+animateddoor dorirs01
+opensound  DoorOpenAirlock
+closesound DoorCloseAirlock
+pic dorirs01
+pic dorirs02
+pic dorirs03
+pic dorirs04
+pic dorirs05
+pic dorirs06
+pic dorirs07
+pic dorirs08
+
+animateddoor dorqtr01
+opensound  DoorOpenAirlock
+closesound DoorCloseAirlock
+pic dorqtr01
+pic dorqtr02
+pic dorqtr03
+pic dorqtr04
+pic dorqtr05
+pic dorqtr06
+pic dorqtr07
+pic dorqtr08
+
+animateddoor dorstn01
+opensound  DoorOpenStone
+closesound DoorCloseStone
+pic dorstn01
+pic dorstn02
+pic dorstn03
+pic dorstn04
+pic dorstn05
+pic dorstn06
+pic dorstn07
+pic dorstn08
+
+animateddoor sigldr01
+opensound DoorOpenLargeMetal
+closesound DoorCloseLargeMetal
+pic sigldr01
+pic sigldr02
+pic sigldr03
+pic sigldr04
+pic sigldr05
+pic sigldr06
+pic sigldr07
+pic sigldr08
