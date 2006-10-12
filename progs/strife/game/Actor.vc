@@ -23,14 +23,11 @@
 //**
 //**************************************************************************
 
-class Actor : Entity
+class Actor : EntityEx
 	abstract;
 
 // follow a player exlusively for 3 seconds
 const int BASETHRESHOLD		= 100;
-
-const float ONFLOORZ		= -99999.0;
-const float ONCEILINGZ		= 99999.0;
 
 const float
 	MELEERANGE		= 64.0,
@@ -193,6 +190,133 @@ Actor Spawn(classid type, TVec AOrigin)
 	A.Origin = AOrigin;
 	A.OnMapSpawn(NULL);
 	return A;
+}
+
+//===========================================================================
+//
+//  SetInstigator
+//
+//===========================================================================
+
+void SetInstigator(Entity NewInstigator)
+{
+	Instigator = Actor(NewInstigator);
+}
+
+//===========================================================================
+//
+//  PlaySightSound
+//
+//===========================================================================
+
+void PlaySightSound()
+{
+	if (SightSound)
+	{
+		PlaySound(SightSound, CHAN_VOICE);
+	}
+}
+
+//===========================================================================
+//
+//  SetDropped
+//
+//===========================================================================
+
+void SetDropped()
+{
+	bDropped = true;
+}
+
+//===========================================================================
+//
+//  StartFloatBob
+//
+//===========================================================================
+
+void StartFloatBob(Entity Src)
+{
+}
+
+//===========================================================================
+//
+//  SaveFloatBobOffset
+//
+//===========================================================================
+
+void SaveFloatBobOffset()
+{
+}
+
+//===========================================================================
+//
+//  ThingDestroy
+//
+//===========================================================================
+
+bool ThingDestroy()
+{
+	if (bShootable)
+	{
+		Damage(none, none, 10000);
+		return true;
+	}
+	return false;
+}
+
+//===========================================================================
+//
+//  ThingDamage
+//
+//===========================================================================
+
+void ThingDamage(int Amount)
+{
+	Damage(none, none, Amount);
+}
+
+//===========================================================================
+//
+//  IsTeleportSpot
+//
+//===========================================================================
+
+bool IsTeleportSpot()
+{
+	return !!TeleportSpot(self);
+}
+
+//===========================================================================
+//
+//  IsTeleportSpot2
+//
+//===========================================================================
+
+bool IsTeleportSpot2()
+{
+	return !!TeleportSpot2(self);
+}
+
+//===========================================================================
+//
+//  CanTeleport
+//
+//===========================================================================
+
+bool CanTeleport()
+{
+	return !bNoTeleport;
+}
+
+//===========================================================================
+//
+//  SetPainState
+//
+//===========================================================================
+
+void SetPainState()
+{
+	SetState(PainState);
 }
 
 //==========================================================================
@@ -2311,7 +2435,7 @@ bool TeleportMove(TVec org)
 //
 //==========================================================================
 
-int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
+bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 {
 	TVec oldOrg;
 	Actor fog;
@@ -2319,7 +2443,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 	oldOrg = Origin;
 
 	if (!TeleportMove(Dst))
-		return 0;
+		return false;
 
 	if (bIsPlayer)
 		Player.ViewOrg.z = Origin.z + Player(Player).ViewHeight;
@@ -2352,7 +2476,7 @@ int Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog, bool KeepDir)
 		Angles.yaw = angle;
 		Velocity = vector(0.0, 0.0, 0.0);
 	}
-	return 1;
+	return true;
 }
 
 //==========================================================================

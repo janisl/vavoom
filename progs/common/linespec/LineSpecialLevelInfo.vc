@@ -225,8 +225,9 @@ void SpawnSpecials()
 //==========================================================================
 
 bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
-	int Arg4, int Arg5, line_t* Line, int Side, Entity A)
+	int Arg4, int Arg5, line_t* Line, int Side, Entity E)
 {
+	EntityEx A = EntityEx(E);
 	bool buttonSuccess = false;
 	switch (Special)
 	{
@@ -331,8 +332,12 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_BuildStairs(Arg1, Arg2, Arg3, Arg4, Arg5,
 			StairStepMover::STAIRSEV_UpSync);
 		break;
-//LNSPEC_ForceField:
-//LNSPEC_ClearForceField:
+	case LNSPEC_ForceField:
+		buttonSuccess = EV_ForceField(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
+	case LNSPEC_ClearForceField:
+		buttonSuccess = EV_RemoveForceField(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_FloorRaiseByValueTimes8:
 		buttonSuccess = EV_DoFloor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			FloorMover::FLOOREV_RaiseByValueTimes8, Line);
@@ -344,7 +349,15 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_CeilingWaggle:
 		buttonSuccess = EV_StartCeilingWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
-//LNSPEC_TeleportZombieChanger:
+	case LNSPEC_TeleportZombieChanger:
+		if (Side == 0)
+		{
+			//	Only teleport when crossing the front side of a line
+			buttonSuccess = EV_Teleport(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line,
+				true);
+			A.SetPainState();
+		}
+		break;
 	case LNSPEC_CeilingLowerByValue:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
 			CeilingMover::CEILEV_LowerByValue, Line);
@@ -411,8 +424,41 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
 			CeilingMover::CEILEV_MoveToValueTimes8, Line);
 		break;
-//LNSPEC_Teleport:
-//LNSPEC_ThingDamage:
+	case LNSPEC_Teleport:
+		if (Side == 0)
+		{
+			// Only teleport when crossing the front side of a line
+			buttonSuccess = EV_Teleport(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line,
+				true);
+		}
+		break;
+	case LNSPEC_TeleportNoFog:
+		if (Side == 0)
+		{
+			// Only teleport when crossing the front side of a line
+			buttonSuccess = EV_Teleport(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line,
+				false);
+		}
+		break;
+	case LNSPEC_ThingThrust:
+		if (!Side) // Only thrust on side 0
+		{
+			A.Thrust(itof(Arg1) * (90.0 / 64.0), itof(Arg2));
+			buttonSuccess = 1;
+		}
+		break;
+	case LNSPEC_ThingDamage:
+		if (Arg1)
+		{
+			A.ThingDamage(Arg1);
+		}
+		else
+		{
+			// If arg1 is zero, then guarantee a kill
+			A.ThingDamage(10000);
+		}
+		buttonSuccess = 1;
+		break;
 	case LNSPEC_TeleportNewMap:
 		if (Side == 0 || bTeleportNewMapBothSides)
 		{
@@ -446,8 +492,15 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			}
 		}
 		break;
-//LNSPEC_TeleportOther:
-//LNSPEC_TeleportSector:
+	case LNSPEC_TeleportOther:
+		buttonSuccess = EV_TeleportOther(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_TeleportGroup:
+		buttonSuccess = EV_TeleportGroup(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
+	case LNSPEC_TeleportSector:
+		buttonSuccess = EV_TeleportSector(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_ACSExecute:
 		buttonSuccess = StartACS(Arg1, Arg2, Arg3, Arg4, Arg5, A, Line, Side,
 			false, false);
@@ -529,7 +582,31 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_LightStop(Arg1);
 		break;
 //LNSPEC_QuakeTremor:
-//LNSPEC_ThingSpawnNoFog:
+//LNSPEC_UsePuzzleItem:
+	case LNSPEC_ThingActivate:
+		buttonSuccess = EV_ThingActivate(Arg1);
+		break;
+	case LNSPEC_ThingDeactivate:
+		buttonSuccess = EV_ThingDeactivate(Arg1);
+		break;
+	case LNSPEC_ThingRemove:
+		buttonSuccess = EV_ThingRemove(Arg1);
+		break;
+	case LNSPEC_ThingDestroy:
+		buttonSuccess = EV_ThingDestroy(Arg1);
+		break;
+	case LNSPEC_ThingProjectile:
+		buttonSuccess = EV_ThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, 0, 0);
+		break;
+	case LNSPEC_ThingSpawn:
+		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, Arg3, Arg4, Arg5, 1);
+		break;
+	case LNSPEC_ThingProjectileGravity:
+		buttonSuccess = EV_ThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, 1, 0);
+		break;
+	case LNSPEC_ThingSpawnNoFog:
+		buttonSuccess = EV_ThingSpawn(Arg1, Arg2, Arg3, Arg4, Arg5, 0);
+		break;
 	case LNSPEC_FloorWaggle:
 		buttonSuccess = EV_StartFloorWaggle(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
@@ -540,7 +617,9 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Platform::PLATEV_UpNearestWaitDownStay, Line);
 		break;
-//LNSPEC_NoiseAlert:
+	case LNSPEC_NoiseAlert:
+		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_CeilingLowerToHighestFloor:
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
 			CeilingMover::CEILEV_LowerToHighestFloor, Line);
@@ -607,12 +686,17 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_SectorSetDamage:
 		buttonSuccess = EV_SectorSetDamage(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
-//LNSPEC_TeleportLine:
+	case LNSPEC_TeleportLine:
+		buttonSuccess = EV_SilentLineTeleport(Line, Side, A, Arg2, Arg3);
+		break;
 	case LNSPEC_StairsBuildUpDoom:
 		buttonSuccess = EV_BuildStairsOld(Arg1, Arg2, Arg3, Arg4, Arg5,
 			false, Line);
 		break;
 //LNSPEC_SectorSetWind:
+	case LNSPEC_SectorSetFriction:
+		buttonSuccess = EV_SectorSetFriction(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 //LNSPEC_SectorSetCurrent:
 	case LNSPEC_SectorSetGravity:
 		buttonSuccess = EV_SectorSetGravity(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -718,6 +802,24 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
 			CeilingMover::CEILEV_CrushRaiseAndStaySilA, Line);
 		break;
+
+	// Line specials only processed during level initialization
+	// LNSPEC_ScrollTextureLeft:
+	// LNSPEC_ScrollTextureRight:
+	// LNSPEC_ScrollTextureUp:
+	// LNSPEC_ScrollTextureDown:
+	// LNSPEC_LineSetIdentification:
+	// LNSPEC_3DFloor:
+	// LNSPEC_Contents:
+	// LNSPEC_PlaneAlign:
+	// LNSPEC_LineTranslucent:
+	// LNSPEC_TransferHeights:
+	// LNSPEC_ScrollTextureBoth:
+	// LNSPEC_ScrollTextureModel:
+	// LNSPEC_ScrollFloor:
+	// LNSPEC_ScrollCeiling:
+	// LNSPEC_ScrollTextureOffsets:
+	// LNSPEC_PointPushSetForce:
 	}
 	return buttonSuccess;
 }
@@ -2609,6 +2711,923 @@ bool EV_SectorSetGravity(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 		Ret = true;
 	}
 	return Ret;
+}
+
+//==========================================================================
+//
+//  SetSectorFriction
+//
+//==========================================================================
+
+bool EV_SectorSetFriction(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int			s;
+	int			OldFriction;
+	int			OldMoveFactor;
+	float		Friction;
+	float		MoveFactor;
+	bool		Ret;
+
+	// An amount of 100 should result in a friction of
+	// ORIG_FRICTION (0xE800)
+	OldFriction = (0x1EB8 * Arg2) / 0x80 + 0xD001;
+
+	// killough 8/28/98: prevent odd situations
+	if (OldFriction > 0x10000)
+		OldFriction = 0x10000;
+	if (OldFriction < 0)
+		OldFriction = 0;
+
+	// The following check might seem odd. At the time of movement,
+	// the move distance is multiplied by 'friction/0x10000', so a
+	// higher friction value actually means 'less friction'.
+
+	// [RH] Twiddled these values so that momentum on ice (with
+	//		friction 0xf900) is the same as in Heretic/Hexen.
+	if (OldFriction >= 0xe800)	// ice
+//		movefactor = ((0x10092 - friction)*(0x70))/0x158;
+		OldMoveFactor = ((0x10092 - OldFriction) * 1024) / 4352 + 568;
+	else
+		OldMoveFactor = ((OldFriction - 0xDB34) * (0xA)) / 0x80;
+
+	// killough 8/28/98: prevent odd situations
+	if (OldMoveFactor < 32)
+		OldMoveFactor = 32;
+
+	Friction = (1.0 - itof(OldFriction) / itof(0x10000)) * 35.0;
+	MoveFactor = itof(OldMoveFactor) / itof(0x10000);
+
+	Ret = false;
+	for (s = XLevel.FindSectorFromTag(Arg1, -1); s >= 0;
+		s = XLevel.FindSectorFromTag(Arg1, s))
+	{
+		// killough 8/28/98:
+		//
+		// Instead of spawning thinkers, which are slow and expensive,
+		// modify the sector's own friction values. Friction should be
+		// a property of sectors, not objects which reside inside them.
+		// Original code scanned every object in every friction sector
+		// on every tic, adjusting its friction, putting unnecessary
+		// drag on CPU. New code adjusts friction of sector only once
+		// at level startup, and then uses this friction value.
+
+		XLevel.Sectors[s].Friction = Friction;
+		XLevel.Sectors[s].MoveFactor = MoveFactor;
+		// When used inside a script, the sectors' friction flags
+		// can be enabled and disabled at will.
+		if (OldFriction == 0xe800)
+		{
+			XLevel.Sectors[s].special &= ~SECSPEC_FRICTION_MASK;
+		}
+		else
+		{
+			XLevel.Sectors[s].special |= SECSPEC_FRICTION_MASK;
+		}
+		Ret = true;
+	}
+	return Ret;
+}
+
+//**************************************************************************
+//
+//  Thing line specials
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	EV_ThingProjectile
+//
+//==========================================================================
+
+bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	bool gravity, int newtid)
+{
+	int			tid;
+	float		angle;
+	float		speed;
+	float		vspeed;
+	classid		moType;
+	Entity		A;
+	EntityEx	newA;
+	int			searcher;
+	bool		success;
+
+	success = false;
+	searcher = -1;
+	tid = Arg1;
+	moType = FindClassFromScriptId(Arg2);
+	if (!moType)
+	{
+		return false;
+	}
+	angle = itof(Arg3) * (360.0 / 256.0);
+	speed = itof(Arg4) / 8.0;
+	vspeed = itof(Arg5) / 8.0;
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
+	{
+		newA = SpawnEntity(moType, A.Origin);
+		newA.PlaySightSound();
+		newA.SetInstigator(A);	// Originator
+		newA.Angles.yaw = angle;
+		newA.Velocity.x = speed * cos(angle) * 35.0;
+		newA.Velocity.y = speed * sin(angle) * 35.0;
+		newA.Velocity.z = vspeed * 35.0;
+		newA.SetDropped();	// Don't respawn
+		if (gravity)
+		{
+			newA.bNoGravity = false;
+			newA.Mass = 12.5;
+		}
+		if (newtid)
+			newA.InsertIntoTIDList(newtid);
+		if (newA.CheckMissileSpawn())
+		{
+			success = true;
+		}
+	}
+	return success;
+}
+
+//==========================================================================
+//
+//	EV_ThingSpawn
+//
+//==========================================================================
+
+bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
+{
+	int			tid;
+	float		angle;
+	Entity		A;
+	EntityEx	newAct;
+	classid		moType;
+	int			searcher;
+	bool		success;
+
+	success = false;
+	searcher = -1;
+	tid = Arg1;
+	moType = FindClassFromScriptId(Arg2);
+	if (!moType)
+	{
+		return false;
+	}
+	angle = itof(Arg3) * 360.0 / 256.0;
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
+	{
+		newAct = SpawnEntity(moType, A.Origin);
+		newAct.StartFloatBob(A);
+		if (newAct.TestLocation() == false)
+		{
+			// Didn't fit
+			newAct.Remove();
+		}
+		else
+		{
+			newAct.Angles.yaw = angle;
+			if (Arg4)
+				newAct.InsertIntoTIDList(Arg4);
+			if (fog == true)
+			{
+				SpawnTeleportFog(A.Origin);
+			}
+			newAct.SetDropped();	// Don't respawn
+			newAct.SaveFloatBobOffset();
+			success = true;
+		}
+	}
+	return success;
+}
+
+//==========================================================================
+//
+//	EV_ThingActivate
+//
+//==========================================================================
+
+bool EV_ThingActivate(int tid)
+{
+	Entity	A;
+	int		searcher;
+	bool	success;
+
+	success = false;
+	searcher = -1;
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
+	{
+		if (A.Activate())
+		{
+			success = true;
+		}
+	}
+	return success;
+}
+
+//==========================================================================
+//
+//	EV_ThingDeactivate
+//
+//==========================================================================
+
+bool EV_ThingDeactivate(int tid)
+{
+	Entity	A;
+	int		searcher;
+	bool	success;
+
+	success = false;
+	searcher = -1;
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
+	{
+		if (A.Deactivate())
+		{
+			success = true;
+		}
+	}
+	return success;
+}
+
+//==========================================================================
+//
+//	EV_ThingRemove
+//
+//==========================================================================
+
+bool EV_ThingRemove(int tid)
+{
+	Entity	A;
+	int		searcher;
+	bool	success;
+
+	success = false;
+	searcher = -1;
+	for (A = FindMobjFromTID(tid, &searcher); A;
+		A = FindMobjFromTID(tid, &searcher))
+	{
+		A.RemoveThing();
+		success = true;
+	}
+	return success;
+}
+
+//==========================================================================
+//
+//	EV_ThingDestroy
+//
+//==========================================================================
+
+bool EV_ThingDestroy(int tid)
+{
+	EntityEx	A;
+	int			searcher;
+	bool		success;
+
+	success = false;
+	searcher = -1;
+	for (A = EntityEx(FindMobjFromTID(tid, &searcher)); A;
+		A = EntityEx(FindMobjFromTID(tid, &searcher)))
+	{
+		if (A.ThingDestroy())
+		{
+			success = true;
+		}
+	}
+	return success;
+}
+
+//**************************************************************************
+//
+//	Force field
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  EV_ForceField
+//
+//==========================================================================
+
+bool EV_ForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	A.ThingDamage(10);
+	A.Velocity.x += 5.0 * cos(A.Angles.yaw + 180.0) * 35.0;
+	A.Velocity.y += 5.0 * sin(A.Angles.yaw + 180.0) * 35.0;
+	return true;
+}
+
+//==========================================================================
+//
+//  EV_RemoveForceField
+//
+//==========================================================================
+
+bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	int			i;
+	int			secnum;
+	sector_t*	sec;
+	line_t*		secline;
+
+	for (secnum = XLevel.FindSectorFromTag(Arg1, -1); secnum >= 0;
+		secnum = XLevel.FindSectorFromTag(Arg1, secnum))
+	{
+		sec = &XLevel.Sectors[secnum];
+		for (i = 0; i < sec->linecount; i++)
+		{
+			secline = sec->lines[i];
+			if (secline->special != LNSPEC_ForceField)
+				continue;
+			if (!(secline->flags & ML_TWOSIDED))
+				continue;
+
+			XLevel.SetLineTexture(secline->sidenum[0], 1, 0);
+			XLevel.SetLineTexture(secline->sidenum[1], 1, 0);
+			secline->special = 0;
+			secline->flags &= ~ML_BLOCKING;
+		}
+	}
+	return true;
+}
+
+//**************************************************************************
+//
+//  Teleportation
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	EV_Teleport
+//
+//==========================================================================
+
+bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx thing, line_t* Line, bool fog)
+{
+	int			i;
+	int			count;
+	EntityEx	A;
+	int			searcher;
+	int			SecTag;
+	int			SecNum;
+	sector_t*	Sec;
+	bool		SrcFog;
+	bool		KeepOrient;
+	TVec		DstOrg;
+	float		Angle;
+	TVec		OldVel;
+
+	if (!thing)
+	{
+		// Teleport function called with an invalid mobj
+		return false;
+	}
+	if (!thing.CanTeleport())
+	{
+		return false;
+	}
+
+	A = none;
+	if (fog)
+	{
+		SecTag = Arg2;
+		SrcFog = !Arg3;
+		KeepOrient = false;
+	}
+	else
+	{
+		SecTag = Arg3;
+		SrcFog = false;
+		KeepOrient = !Arg2;
+	}
+	if (Arg1)
+	{
+		count = 0;
+		searcher = -1;
+		for (A = EntityEx(FindMobjFromTID(Arg1, &searcher)); A;
+			A = EntityEx(FindMobjFromTID(Arg1, &searcher)))
+		{
+			if (SecTag == 0 || A.Sector->tag == SecTag)
+			{
+				count++;
+			}
+		}
+		if (count == 0)
+		{
+			return false;
+		}
+		count = 1 + (P_Random() % count);
+		searcher = -1;
+		for (i = 0; i < count; i++)
+		{
+			do
+			{
+				A = EntityEx(FindMobjFromTID(Arg1, &searcher));
+			}
+			while (A && SecTag != 0 && A.Sector->tag != SecTag);
+		}
+	}
+	else if (SecTag)
+	{
+		for (SecNum = XLevel.FindSectorFromTag(SecTag, -1); SecNum >= 0;
+			SecNum = XLevel.FindSectorFromTag(SecTag, SecNum))
+		{
+			Sec = &XLevel.Sectors[SecNum];
+			FOREACH(EntityEx, A)
+			{
+				if (!A.IsTeleportSpot())
+				{
+					//	Not a teleportman
+					continue;
+				}
+				if (A.Sector != Sec)
+				{
+					//	Wrong sector
+					continue;
+				}
+				break;
+			}
+			if (A)
+			{
+				break;
+			}
+		}
+	}
+	if (!A)
+	{
+		return false;
+	}
+
+	DstOrg = A.Origin;
+	// Lee Killough's changes for silent teleporters from BOOM
+	if (KeepOrient && Line)
+	{
+		// Get the angle between the exit thing and source linedef.
+		// Rotate 180 degrees, so that walking perpendicularly across
+		// teleporter linedef causes thing to exit in the direction
+		// indicated by the exit thing.
+		Angle = atan2(Line->normal.y, Line->normal.x) - A.Angles.yaw + 180.0;
+
+		// Momentum of thing crossing teleporter linedef
+		OldVel = thing.Velocity;
+	}
+	if (!A.IsTeleportSpot2())
+	{
+		DstOrg.z = EntityEx::ONFLOORZ;
+	}
+	if (thing.Teleport(DstOrg, A.Angles.yaw, fog, SrcFog, KeepOrient))
+	{
+		// Lee Killough's changes for silent teleporters from BOOM
+		if (!fog && Line && KeepOrient)
+		{
+			// Rotate thing according to difference in angles
+			thing.Angles.yaw = AngleMod360(thing.Angles.yaw + Angle);
+
+			// Rotate thing's momentum to come out of exit just like it entered
+			thing.Velocity.x = OldVel.x * cos(Angle) - OldVel.y * sin(Angle);
+			thing.Velocity.y = OldVel.y * cos(Angle) + OldVel.x * sin(Angle);
+		}
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	EV_TeleportOther
+//
+//	Teleport anything matching other_tid to dest_tid
+//
+//==========================================================================
+
+bool EV_TeleportOther(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
+{
+	bool		Ret;
+	int			Searcher;
+	EntityEx	A;
+
+	Ret = false;
+	if (Arg1 && Arg2)
+	{
+		Searcher = -1;
+		for (A = EntityEx(FindMobjFromTID(Arg1, &Searcher)); A;
+			A = EntityEx(FindMobjFromTID(Arg1, &Searcher)))
+		{
+			Ret |= EV_Teleport(Arg2, 0, 0, 0, 0, A, NULL, !!Arg3);
+		}
+	}
+	return Ret;
+}
+
+//==========================================================================
+//
+//	DoGroupForOne
+//
+//==========================================================================
+
+bool DoGroupForOne(EntityEx victim, EntityEx source, EntityEx dest,
+	bool floorz, bool fog)
+{
+	float an = dest.Angles.yaw - source.Angles.yaw;
+	float offX = victim.Origin.x - source.Origin.x;
+	float offY = victim.Origin.y - source.Origin.y;
+	float offAngle = victim.Angles.yaw - source.Angles.yaw;
+	float newX = offX * cos(an) - offY * sin(an);
+	float newY = offX * sin(an) + offY * cos(an);
+	bool res;
+
+	res = victim.Teleport(vector(dest.Origin.x + newX,
+		dest.Origin.y + newY, floorz ? EntityEx::ONFLOORZ : dest.Origin.z +
+		victim.Origin.z - source.Origin.z), 0.0, fog, fog, !fog);
+	// P_Teleport only changes angle if fog is true
+	victim.Angles.yaw = AngleMod360(dest.Angles.yaw + offAngle);
+
+	return res;
+}
+
+//==========================================================================
+//
+//	EV_TeleportGroup
+//
+//	[RH] Teleport a group of actors centred around source_tid so
+// that they become centred around dest_tid instead.
+//
+//==========================================================================
+
+bool EV_TeleportGroup(int group_tid, int source_tid, int dest_tid,
+	bool moveSource, bool fog, EntityEx victim)
+{
+	EntityEx	sourceOrigin;
+	EntityEx	destOrigin;
+	int			Searcher;
+	bool		didSomething;
+	bool		floorz;
+
+	Searcher = -1;
+	sourceOrigin = EntityEx(FindMobjFromTID(source_tid, &Searcher));
+	if (!sourceOrigin)
+	{
+		//	If there is no source origin, behave like TeleportOther
+		return EV_TeleportOther(group_tid, dest_tid, fog, 0, 0);
+	}
+
+	Searcher = -1;
+	do
+	{
+		destOrigin = EntityEx(FindMobjFromTID(dest_tid, &Searcher));
+	}
+	while (destOrigin && !destOrigin.IsTeleportSpot());
+	if (!destOrigin)
+	{
+		return false;
+	}
+
+	didSomething = false;
+	floorz = !destOrigin.IsTeleportSpot2();
+
+	// Use the passed victim if group_tid is 0
+	if (group_tid == 0 && victim)
+	{
+		didSomething = DoGroupForOne(victim, sourceOrigin, destOrigin,
+			floorz, fog);
+	}
+	else
+	{
+		// For each actor with tid matching arg0, move it to the same
+		// position relative to destOrigin as it is relative to
+		// sourceOrigin before the teleport.
+		Searcher = -1;
+		for (victim = EntityEx(FindMobjFromTID(group_tid, &Searcher)); victim;
+			victim = EntityEx(FindMobjFromTID(group_tid, &Searcher)))
+		{
+			didSomething |= DoGroupForOne(victim, sourceOrigin, destOrigin,
+				floorz, fog);
+		}
+	}
+
+	if (moveSource && didSomething)
+	{
+		didSomething |= sourceOrigin.Teleport(vector(destOrigin.Origin.x,
+			destOrigin.Origin.y, floorz ? EntityEx::ONFLOORZ : destOrigin.Origin.z),
+			0.0, false, false, true);
+		sourceOrigin.Angles.yaw = destOrigin.Angles.yaw;
+	}
+
+	return didSomething;
+}
+
+//==========================================================================
+//
+//	EV_TeleportSector
+//
+//	[RH] Teleport a group of actors in a sector. Source_tid is used as a
+// reference point so that they end up in the same position relative to
+// dest_tid. Group_tid can be used to not teleport all actors in the sector.
+//
+//==========================================================================
+
+bool EV_TeleportSector(int tag, int source_tid, int dest_tid, bool fog,
+	int group_tid)
+{
+	EntityEx	sourceOrigin;
+	EntityEx	destOrigin;
+	int			Searcher;
+	bool		didSomething;
+	bool		floorz;
+	int			secnum;
+	sector_t*	sec;
+	EntityEx	A;
+
+	Searcher = -1;
+	sourceOrigin = EntityEx(FindMobjFromTID(source_tid, &Searcher));
+	if (!sourceOrigin)
+	{
+		return false;
+	}
+
+	Searcher = -1;
+	do
+	{
+		destOrigin = EntityEx(FindMobjFromTID(dest_tid, &Searcher));
+	}
+	while (destOrigin && !destOrigin.IsTeleportSpot());
+	if (!destOrigin)
+	{
+		return false;
+	}
+
+	didSomething = false;
+	floorz = !destOrigin.IsTeleportSpot2();
+
+	for (secnum = XLevel.FindSectorFromTag(tag, -1); secnum >= 0;
+		secnum = XLevel.FindSectorFromTag(tag, secnum))
+	{
+		sec = &XLevel.Sectors[secnum];
+
+		FOREACH(EntityEx, A)
+		{
+			// possibly limit actors by group
+			if (A.Sector == sec && (group_tid == 0 || A.TID == group_tid))
+			{
+				didSomething |= DoGroupForOne(A, sourceOrigin, destOrigin,
+					floorz, fog);
+			}
+		}
+	}
+	return didSomething;
+}
+
+//==========================================================================
+//
+//	EV_SilentLineTeleport
+//
+// Silent linedef-based TELEPORTATION, by Lee Killough
+// Primarily for rooms-over-rooms etc.
+// This is the complete player-preserving kind of teleporter.
+// It has advantages over the teleporter with thing exits.
+//
+// [RH] Modified to support different source and destination ids.
+//
+//==========================================================================
+
+bool EV_SilentLineTeleport(line_t *line, int side, EntityEx thing, int id,
+	bool reverse)
+{
+	int searcher;
+	line_t *l;
+
+	if (side || !thing.CanTeleport() || !line)
+	{
+		return false;
+	}
+
+	searcher = -1;
+	for (l = FindLine(id, &searcher); l; l = FindLine(id, &searcher))
+	{
+		TVec SrcXAxis;
+		TVec SrcYAxis;
+		TVec DstXAxis;
+		TVec DstYAxis;
+		TVec newPos;
+		TVec TempV;
+		TAVec TempA;
+		float pos;
+		float TempX;
+		float TempY;
+		float oldZ;
+
+		if (l == line || !l->backsector)
+		{
+			continue;
+		}
+
+		// Get the thing's position along the source linedef
+		SrcXAxis = Normalise(*line->v2 - *line->v1);
+		SrcYAxis = -line->normal;
+		pos = DotProduct(SrcXAxis, thing.Origin - *line->v1);
+		oldZ = thing.Origin.z;
+
+		// Interpolate position across the exit linedef
+		if (reverse)
+		{
+			DstXAxis = Normalise(*l->v2 - *l->v1);
+			DstYAxis = -l->normal;
+			newPos = *l->v1 + pos * DstXAxis;
+			newPos.z = thing.Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing.Origin) +
+				GetPlanePointZ(l->frontsector->botregion->floor, newPos);
+		}
+		else
+		{
+			DstXAxis = Normalise(*l->v1 - *l->v2);
+			DstYAxis = l->normal;
+			newPos = *l->v2 + pos * DstXAxis;
+			newPos.z = thing.Origin.z - GetPlanePointZ(
+				line->frontsector->botregion->floor, thing.Origin) +
+				GetPlanePointZ(l->backsector->botregion->floor, newPos);
+		}
+
+		// Attempt to teleport, aborting if blocked
+		if (!thing.TeleportMove(newPos))
+		{
+			return false;
+		}
+
+		// Rotate thing's orientation according to difference in linedef angles
+		TempV.x = DotProduct(DstXAxis, SrcXAxis);
+		TempV.y = DotProduct(DstYAxis, SrcXAxis);
+		TempV.z = 0.0;
+		VectorAngles(&TempV, &TempA);
+		thing.Angles.yaw = AngleMod360(thing.Angles.yaw - TempA.yaw);
+
+		// Rotate thing's momentum to come out of exit just like it entered
+		TempX = DotProduct(thing.Velocity, SrcXAxis);
+		TempY = DotProduct(thing.Velocity, SrcYAxis);
+		thing.Velocity.x = TempX * DstXAxis.x + TempY * DstYAxis.x;
+		thing.Velocity.y = TempX * DstXAxis.y + TempY * DstYAxis.y;
+
+		// Adjust a player's view, in case there has been a height change
+		if (thing.bIsPlayer)
+		{
+			thing.Player.ViewOrg.z += thing.Origin.z - oldZ;
+
+			thing.Player.bFixAngle = true;
+		}
+		return true;
+	}
+	return false;
+}
+
+//**************************************************************************
+//
+//	Noise alert
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  RecursiveSound
+//
+//  Called by NoiseAlert. Recursively traverse adjacent sectors, sound
+// blocking lines cut off traversal.
+//
+//==========================================================================
+
+void RecursiveSound(sector_t * sec, int soundblocks, Entity soundtarget)
+{
+	int			i;
+	line_t*		check;
+	sector_t*	other;
+
+	// wake up all monsters in this sector
+	if (sec->validcount == *Game.validcount &&
+		sec->soundtraversed <= soundblocks + 1)
+	{
+		return;	// already flooded
+	}
+
+	sec->validcount = *Game.validcount;
+	sec->soundtraversed = soundblocks + 1;
+	sec->SoundTarget = soundtarget;
+
+	for (i = 0; i < sec->linecount; i++)
+	{
+		check = sec->lines[i];
+		if (check->sidenum[1] == -1	||
+		    !(check->flags & ML_TWOSIDED))
+			continue;
+
+		// Early out for intra-sector lines
+		if (XLevel.Sides[check->sidenum[0]].sector == XLevel.Sides[check->sidenum[1]].sector)
+			continue;
+
+		if (!LineOpenings(check, *check->v1))
+		{
+			if (!LineOpenings(check, *check->v2))
+				continue;	// closed door
+		}
+
+		if (XLevel.Sides[check->sidenum[0]].sector == sec)
+			other = XLevel.Sides[check->sidenum[1]].sector;
+		else
+			other = XLevel.Sides[check->sidenum[0]].sector;
+
+		if (check->flags & ML_SOUNDBLOCK)
+		{
+			if (!soundblocks)
+				RecursiveSound(other, 1, soundtarget);
+		}
+		else
+			RecursiveSound(other, soundblocks, soundtarget);
+	}
+}
+
+//==========================================================================
+//
+//  NoiseAlert
+//
+//  If a monster yells at a player, it will alert other monsters to the
+// player.
+//
+//==========================================================================
+
+void NoiseAlert(Entity target, Entity emmiter)
+{
+	if (!emmiter)
+		return;
+
+	(*Game.validcount)++;
+	RecursiveSound(emmiter.Sector, 0, target);
+}
+
+//==========================================================================
+//
+//  EV_NoiseAlert
+//
+//==========================================================================
+
+bool EV_NoiseAlert(EntityEx A, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	EntityEx	ASource;
+	EntityEx	ATarget;
+	int			Search;
+
+	if (!Arg1)
+	{
+		ASource = A;
+	}
+	else
+	{
+		Search = -1;
+		ASource = EntityEx(FindMobjFromTID(Arg1, &Search));
+	}
+
+	if (!Arg2)
+	{
+		ATarget = A;
+	}
+	else
+	{
+		Search = -1;
+		ATarget = EntityEx(FindMobjFromTID(Arg2, &Search));
+	}
+
+	NoiseAlert(ASource, ATarget);
+	return true;
+}
+
+//===========================================================================
+//
+//  SpawnEntity
+//
+//===========================================================================
+
+EntityEx SpawnEntity(classid type, TVec AOrigin)
+{
+	EntityEx A;
+
+	A = EntityEx(NewMobjThinker(type));
+
+	A.Origin = AOrigin;
+	A.OnMapSpawn(NULL);
+	return A;
+}
+
+//==========================================================================
+//
+//	SpawnTeleportFog
+//
+//==========================================================================
+
+void SpawnTeleportFog(TVec Org)
+{
 }
 
 //==========================================================================
