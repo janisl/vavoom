@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: Pusher.vc 1741 2006-09-26 23:26:48Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -78,7 +78,7 @@ enum
 };
 
 int			Type;
-Actor		Source;			// Point source if point pusher
+EntityEx	Source;			// Point source if point pusher
 int			Xmag;			// X Strength
 int			Ymag;			// Y Strength
 int			Magnitude;		// Vector strength for point pusher
@@ -97,7 +97,7 @@ Pusher		AdjustLink;
 //
 //==========================================================================
 
-void Init(int InType, line_t* l, int magnitude, int angle, Actor source,
+void Init(int InType, line_t* l, int magnitude, int angle, EntityEx source,
 	int affectee)
 {
 	Source = source;
@@ -163,7 +163,7 @@ void ChangeValues(int magnitude, int angle)
 //
 //==========================================================================
 
-bool PIT_PushThing(Actor thing)
+bool PIT_PushThing(Entity thing)
 {
 	float sx;
 	float sy;
@@ -171,7 +171,7 @@ bool PIT_PushThing(Actor thing)
 	float speed;
 	float pushangle;
 
-	if (thing.bWindThrust && thing.bColideWithWorld)
+	if (EntityEx(thing).CanWindThrust() && thing.bColideWithWorld)
 	{
 		sx = X;
 		sy = Y;
@@ -184,7 +184,7 @@ bool PIT_PushThing(Actor thing)
 		if ((speed > 0.0) && thing.CanSee(Source))
 		{
 			pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
-			if (PointPusher(Source))
+			if (Source.IsPointPusher())
 				pushangle += 180.0;    // away
 			thing.Velocity.x += speed * cos(pushangle) * 35.0 * Level.Game.frametime;
 			thing.Velocity.y += speed * sin(pushangle) * 35.0 * Level.Game.frametime;
@@ -204,7 +204,7 @@ bool PIT_PushThing(Actor thing)
 void Tick(float DeltaTime)
 {
 	sector_t*		sec;
-	Actor			thing;
+	EntityEx		thing;
 	int				xspeed, yspeed;
 	int				xl, xh, yl, yh, bx, by;
 	float			ht;
@@ -258,11 +258,11 @@ void Tick(float DeltaTime)
 	// constant pushers p_wind and p_current
 
 	// things touching this sector
-	FOREACH(Actor, thing)
+	FOREACH(EntityEx, thing)
 	{
 		if (thing.Sector != sec)
 			continue;
-		if (!thing.bWindThrust || !thing.bColideWithWorld)
+		if (!thing.CanWindThrust() || !thing.bColideWithWorld)
 			continue;
 		if (Type == PUSHER_Wind)
 		{
@@ -299,7 +299,7 @@ void Tick(float DeltaTime)
 					yspeed = Ymag;
 				}
 				else if (thing.bIsPlayer &&
-					thing.Origin.z + Player(thing.Player).ViewHeight < ht) // underwater
+					thing.Origin.z + thing.GetPlayerViewHeight() < ht) // underwater
 				{
 					xspeed = 0;
 					yspeed = 0; // no force

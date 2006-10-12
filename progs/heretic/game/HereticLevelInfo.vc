@@ -69,10 +69,6 @@ void SpawnSpecials()
 
 	InitLava();
 	CloseWeapons();
-
-	P_SpawnPushers();
-
-	CreateTIDList();
 }
 
 //==========================================================================
@@ -250,14 +246,6 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_LineSearchForPuzzleItem(Arg1, Arg2, Arg3, Arg4,
 			Arg5, A);
 		break;*/
-	case LNSPEC_SectorSetWind:
-		buttonSuccess = AdjustPusher(Arg1, Arg2, Arg3, Arg4, Arg5, Line,
-			PUSHER_Wind);
-		break;
-	case LNSPEC_SectorSetCurrent:
-		buttonSuccess = AdjustPusher(Arg1, Arg2, Arg3, Arg4, Arg5, Line,
-			PUSHER_Current);
-		break;
 
 	// Inert Line specials
 	default:
@@ -429,165 +417,6 @@ bool CheckLock(Entity user, int lock)
 //
 //==========================================================================
 //==========================================================================
-
-//==========================================================================
-//
-//	GetPushThing
-//
-//	Returns a pointer to an MT_PUSH or MT_PULL thing, NULL otherwise.
-//
-//==========================================================================
-
-Actor GetPushThing(int s)
-{
-	Actor		thing;
-	sector_t*	sec;
-
-	sec = &XLevel.Sectors[s];
-	FOREACH(Actor, thing)
-	{
-		if (PointPusher(thing) || PointPuller(thing))
-		{
-			return thing;
-		}
-	}
-	return none;
-}
-
-//==========================================================================
-//
-//	P_SpawnPushers
-//
-//	Initialise the sectors where pushers are present
-//
-//==========================================================================
-
-void P_SpawnPushers()
-{
-	int			i;
-	line_t*		l;
-	int			s;
-	Pusher		P;
-	Actor		thing;
-	int			searcher;
-
-	for (i = 0; i < XLevel.NumLines; i++)
-	{
-		l = &XLevel.Lines[i];
-		switch (l->special)
-		{
-		case LNSPEC_SectorSetWind: // wind
-			for (s = XLevel.FindSectorFromTag(l->arg1, -1); s >= 0; s = XLevel.FindSectorFromTag(l->arg1, s))
-			{
-				P = Pusher(NewSpecialThinker(Pusher));
-				P.Init(PUSHER_Wind, l->arg4 ? l : NULL, l->arg2, l->arg3, none, s);
-			}
-			break;
-
-		case LNSPEC_SectorSetCurrent: // current
-			for (s = XLevel.FindSectorFromTag(l->arg1, -1); s >= 0; s = XLevel.FindSectorFromTag(l->arg1, s))
-			{
-				P = Pusher(NewSpecialThinker(Pusher));
-				P.Init(PUSHER_Current, l->arg4 ? l : NULL, l->arg2, l->arg3, none, s);
-			}
-			break;
-
-		case LNSPEC_PointPushSetForce: // push/pull
-			if (l->arg1)
-			{
-				// [RH] Find thing by sector
-				for (s = XLevel.FindSectorFromTag(l->arg1, -1); s >= 0;
-					s = XLevel.FindSectorFromTag(l->arg1, s))
-				{
-					thing = GetPushThing(s);
-					if (thing)
-					{
-						// No MT_P* means no effect
-						// [RH] Allow narrowing it down by tid
-						if (!l->arg2 || l->arg2 == thing.TID)
-						{
-							P = Pusher(NewSpecialThinker(Pusher));
-							P.Init(PUSHER_Push, l->arg4 ? l : NULL, l->arg3,
-								0, thing, s);
-						}
-					}
-				}
-			}
-			else
-			{
-				// [RH] Find thing by tid
-				searcher = -1;
-				for (thing = Actor(FindMobjFromTID(l->arg2, &searcher)); thing;
-					thing = Actor(FindMobjFromTID(l->arg2, &searcher)))
-				{
-					if (PointPuller(thing) || PointPusher(thing))
-					{
-						for (s = 0; s < XLevel.NumSectors; s++)
-							if (&XLevel.Sectors[s] == thing.Sector)
-								break;
-						P = Pusher(NewSpecialThinker(Pusher));
-						P.Init(PUSHER_Push, l->arg4 ? l : NULL, l->arg3, 0,
-							thing, s);
-					}
-				}
-			}
-			break;
-		}
-	}
-}
-
-//==========================================================================
-//
-//	AdjustPusher
-//
-//==========================================================================
-
-bool AdjustPusher(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
-	line_t* Line, int Type)
-{
-	int		tag;
-	int		magnitude;
-	int		angle;
-	Pusher	Collection;
-	Pusher	P;
-	int		secnum;
-
-	if (Line || Arg4)
-	{
-		return false;
-	}
-	tag = Arg1;
-	magnitude = Arg2;
-	angle = Arg3;
-	Collection = none;
-	// Find pushers already attached to the sector, and change their parameters.
-	FOREACH(Pusher, P)
-	{
-		if (P.CheckForSectorMatch(Type, tag) >= 0)
-		{
-			P.ChangeValues(magnitude, angle);
-			P.AdjustLink = Collection;
-			Collection = P;
-		}
-	}
-
-	// Now create pushers for any sectors that don't already have them.
-	for (secnum = XLevel.FindSectorFromTag(tag, -1); secnum >= 0;
-		secnum = XLevel.FindSectorFromTag(tag, secnum))
-	{
-		for (P = Collection; P; P = P.AdjustLink)
-		{
-			if (P.Affectee == secnum)
-				break;
-		}
-		if (!P)
-		{
-			P = Pusher(NewSpecialThinker(Pusher));
-			P.Init(Type, NULL, magnitude, angle, none, secnum);
-		}
-	}
-	return true;
-}
 
 //==========================================================================
 //

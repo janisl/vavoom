@@ -114,14 +114,6 @@ enum
 	NUMQUESTS
 };
 
-enum
-{
-	PUSHER_Push,
-	PUSHER_Pull,
-	PUSHER_Wind,
-	PUSHER_Current
-};
-
 // TYPES -------------------------------------------------------------------
 
 #include "game/classes.vc"

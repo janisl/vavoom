@@ -42,7 +42,6 @@
 #include "StaticRGBLightSource.vc"
 #include "PointPusher.vc"
 #include "PointPuller.vc"
-#include "Pusher.vc"
 
 #include "LavaInflictor.vc"
 

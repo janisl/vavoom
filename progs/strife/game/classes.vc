@@ -43,7 +43,6 @@
 #include "StaticRGBLightSource.vc"
 #include "PointPusher.vc"
 #include "PointPuller.vc"
-#include "Pusher.vc"
 
 #include "ReactorPuff.vc"
 #include "Puff.vc"
