@@ -353,6 +353,10 @@ _____MAIN_EXE__SOURCES += \
 	s_win32m.cpp \
 	sys_i386.s \
 	sys_win.cpp \
+	vavoom.ico \
+	vavoom_2.ico \
+	vavoom_3.ico \
+	vavoom.rc \
 	winlocal.h
 endif
 if MAIN_OPENGL_WIN32
@@ -453,7 +457,8 @@ if SERVER_PLATFORM_WIN32
 _____SERVER_EXE__SOURCES += \
 	net_wins.cpp \
 	net_wipx.cpp \
-	sys_wind.cpp
+	sys_wind.cpp \
+	vavoom.rc
 endif
 
 vavoom-dedicated: Makefile
@@ -463,6 +468,15 @@ vavoom-dedicated: Makefile
 	echo "cd \"$(datadir)/vavoom\"" >> $@
 	echo "\"$(bindir)/$(SERVER_EXE)\" \$$* $(IWADDIR_PARM)" >> $@
 	echo "exit \$$?" >> $@
+
+# ---------------------------------------
+#
+#	Compilation of Windows resources
+#
+# ---------------------------------------
+
+.rc.o:
+	windres --include-dir=$(srcdir) -o $@ -i $<
 
 # ---------------------------------------
 #
@@ -522,8 +536,4 @@ EXTRA_DIST = \
 	gl_x.cpp \
 	template.cpp \
 	template.h \
-	template.s \
-	vavoom.ico \
-	vavoom_2.ico \
-	vavoom_3.ico \
-	vavoom.rc
+	template.s
