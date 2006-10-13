@@ -649,6 +649,11 @@ int VTextureManager::CreatePatch(int Type, int LumpNum)
 		return AddTexture(new VAutopageTexture(LumpNum));
 	}
 
+	if (Type == TEXTYPE_Flat)
+	{
+		return AddTexture(new VFlatTexture(LumpNum));
+	}
+
 	return AddTexture(new TPatchTexture(Type, LumpNum));
 	unguard;
 }
@@ -827,7 +832,7 @@ void VTextureManager::InitFlats()
 	for (int Lump = W_IterateNS(-1, WADNS_Flats); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Flats))
 	{
-		AddTexture(new VFlatTexture(Lump));
+		CreatePatch(TEXTYPE_Flat, Lump);
 	}
 	unguard;
 }
