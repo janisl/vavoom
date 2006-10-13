@@ -47,6 +47,7 @@ enum
 	TEXTYPE_SkyMap,
 	TEXTYPE_Skin,
 	TEXTYPE_Pic,
+	TEXTYPE_Autopage,
 };
 
 struct picinfo_t

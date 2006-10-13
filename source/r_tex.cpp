@@ -94,8 +94,6 @@ struct animDef_t
 	int		CurrentRangeFrame;
 };
 
-#pragma pack(1)
-
 struct pcx_t
 {
 	vint8		manufacturer;
@@ -154,8 +152,6 @@ struct tgaHeader_t
 			<< h.top << h.width << h.height << h.bpp << h.descriptor_bits;
 	}
 };
-
-#pragma pack()
 
 //
 //	A dummy texture.
@@ -246,6 +242,21 @@ public:
 	~VRawPicTexture();
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
+	void Unload();
+};
+
+//
+//	Raven's automap background.
+//
+class VAutopageTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+
+	VAutopageTexture(int);
+	~VAutopageTexture();
+	vuint8* GetPixels();
 	void Unload();
 };
 
@@ -627,15 +638,15 @@ int VTextureManager::CreatePatch(int Type, int LumpNum)
 		return AddTexture(new VPngTexture(Type, LumpNum));
 	}
 
-	//	Check for automap background.
-	if (W_LumpName(LumpNum) == NAME_autopage)
+	if (Type == TEXTYPE_Pic && W_LumpLength(LumpNum) == 64000)
 	{
 		return AddTexture(new VRawPicTexture(LumpNum, -1));
 	}
 
-	if (W_LumpLength(LumpNum) == 64000)
+	//	Check for automap background.
+	if (Type == TEXTYPE_Autopage && W_LumpLength(LumpNum) >= 320)
 	{
-		return AddTexture(new VRawPicTexture(LumpNum, -1));
+		return AddTexture(new VAutopageTexture(LumpNum));
 	}
 
 	return AddTexture(new TPatchTexture(Type, LumpNum));
@@ -1062,6 +1073,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 		DirName = "sprites";
 		break;
 	case TEXTYPE_Pic:
+	case TEXTYPE_Autopage:
 		DirName = "graphics";
 		break;
 	default:
@@ -1791,7 +1803,7 @@ VRawPicTexture::VRawPicTexture(int InLumpNum, int InPalLumpNum)
 	Type = TEXTYPE_Pic;
 	Name = W_LumpName(InLumpNum);
 	Width = 320;
-	Height = W_LumpLength(InLumpNum) / 320;
+	Height = 200;
 	Format = PalLumpNum >= 0 ? TEXFMT_8Pal : TEXFMT_8;
 }
 
@@ -1830,10 +1842,7 @@ vuint8* VRawPicTexture::GetPixels()
 		return Pixels;
 	}
 
-	int len = W_LumpLength(LumpNum);
-	Height = len / 320;
-
-	Pixels = new vuint8[len];
+	Pixels = new vuint8[64000];
 
 	//	Set up palette.
 	int black;
@@ -1875,7 +1884,7 @@ vuint8* VRawPicTexture::GetPixels()
 	//	Read data.
 	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
 	vuint8* dst = Pixels;
-	for (int i = 0; i < len; i++, dst++)
+	for (int i = 0; i < 64000; i++, dst++)
 	{
 		*Strm << *dst;
 		if (!*dst)
@@ -1918,6 +1927,98 @@ void VRawPicTexture::Unload()
 	{
 		delete[] Palette;
 		Palette = NULL;
+	}
+	unguard;
+}
+
+//END
+
+//BEGIN VAutopageTexture
+
+//**************************************************************************
+//	VAutopageTexture
+//**************************************************************************
+
+//==========================================================================
+//
+//	VAutopageTexture::VAutopageTexture
+//
+//==========================================================================
+
+VAutopageTexture::VAutopageTexture(int InLumpNum)
+: LumpNum(InLumpNum)
+, Pixels(0)
+{
+	Type = TEXTYPE_Autopage;
+	Name = W_LumpName(InLumpNum);
+	Width = 320;
+	Height = W_LumpLength(InLumpNum) / 320;
+	Format = TEXFMT_8;
+}
+
+//==========================================================================
+//
+//	VAutopageTexture::~VAutopageTexture
+//
+//==========================================================================
+
+VAutopageTexture::~VAutopageTexture()
+{
+	guard(VAutopageTexture::~VAutopageTexture);
+	if (Pixels)
+	{
+		delete[] Pixels;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAutopageTexture::GetPixels
+//
+//==========================================================================
+
+vuint8* VAutopageTexture::GetPixels()
+{
+	guard(VAutopageTexture::GetPixels);
+	//	If already got pixels, then just return them.
+	if (Pixels)
+	{
+		return Pixels;
+	}
+
+	//	Read data.
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	int len = Strm->TotalSize();
+	Pixels = new vuint8[len];
+	vuint8* dst = Pixels;
+	for (int i = 0; i < len; i++, dst++)
+	{
+		*Strm << *dst;
+		if (!*dst)
+		{
+			*dst = r_black_colour;
+		}
+	}
+	delete Strm;
+
+	return Pixels;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAutopageTexture::Unload
+//
+//==========================================================================
+
+void VAutopageTexture::Unload()
+{
+	guard(VAutopageTexture::Unload);
+	if (Pixels)
+	{
+		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }

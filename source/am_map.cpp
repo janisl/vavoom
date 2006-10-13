@@ -544,19 +544,17 @@ static void AM_initVariables()
 
 static void AM_loadPics()
 {
-	int		i;
-
 	if (W_CheckNumForName(NAME_ammnum0) >= 0)
 	{
-		for (i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++)
 		{
-			marknums[i] = GTextureManager.AddPatch(VName(va("AMMNUM%d", i),
-				VName::AddLower8), TEXTYPE_Pic);
+			marknums[i] = GTextureManager.AddPatch(va("ammnum%d", i),
+				TEXTYPE_Pic);
 		}
 		use_marks = true;
 	}
 
-	mappic = GTextureManager.AddPatch(NAME_autopage, TEXTYPE_Pic);
+	mappic = GTextureManager.AddPatch(NAME_autopage, TEXTYPE_Autopage);
 	mapheight = (int)GTextureManager.TextureHeight(mappic);
 }
 
