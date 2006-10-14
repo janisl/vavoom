@@ -1766,15 +1766,8 @@ void IM_UpdateText(float DeltaTime)
 	if (ClGame.skipintermission || intertime > HubCount)
 	{
 		ClGame.skipintermission = false;
-		if (ClGame.im->LeaveMap == 'map30')
-		{
-			ClGame.StartFinale();
-		}
-		else
-		{
-			CmdBuf_AddText("TeleportNewMap\n");
-			interstate = IMS_Done;
-		}
+		CmdBuf_AddText("TeleportNewMap\n");
+		interstate = IMS_Done;
 	}
 }
 

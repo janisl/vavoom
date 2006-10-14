@@ -118,10 +118,15 @@ void InitMapInfo()
 
 	for (int i = 0; i < MapInfo.Num(); i++)
 	{
-		if ((*MapInfo[i].NextMap)[0] >= '0' &&
-			(*MapInfo[i].NextMap)[0] <= '9')
+		if (VStr(MapInfo[i].NextMap).StartsWith("&wt@"))
 		{
-			MapInfo[i].NextMap = P_TranslateMap(atoi(*MapInfo[i].NextMap));
+			MapInfo[i].NextMap = P_TranslateMap(atoi(
+				*MapInfo[i].NextMap + 4));
+		}
+		if (VStr(MapInfo[i].SecretMap).StartsWith("&wt@"))
+		{
+			MapInfo[i].SecretMap = P_TranslateMap(atoi(
+				*MapInfo[i].SecretMap + 4));
 		}
 	}
 	unguard;
@@ -133,10 +138,86 @@ void InitMapInfo()
 //
 //==========================================================================
 
-static void ParseMap(VScriptParser* sc, bool IsDefault)
+static VName ParseNextMapName(VScriptParser* sc, bool HexenMode)
+{
+	if (sc->CheckNumber())
+	{
+		if (HexenMode)
+			return va("&wt@%02d", sc->Number);
+		else
+			return va("map%02d", sc->Number);
+	}
+	else if (sc->Check("endbunny"))
+	{
+		return "EndGameBunny";
+	}
+	else if (sc->Check("endcast"))
+	{
+		return "EndGameCast";
+	}
+	else if (sc->Check("enddemon"))
+	{
+		return "EndGameDemon";
+	}
+	else if (sc->Check("endchess"))
+	{
+		return "EndGameChess";
+	}
+	else if (sc->Check("endunderwater"))
+	{
+		return "EndGameUnderwater";
+	}
+	else if (sc->Check("endbuystrife"))
+	{
+		return "EndGameBuyStrife";
+	}
+	else if (sc->Check("endpic"))
+	{
+		sc->ExpectName8();
+		return va("EndGameCustomPic%s", *sc->Name8);
+	}
+	else
+	{
+		sc->ExpectString();
+		if (sc->String.ToLower().StartsWith("endgame"))
+		{
+			switch (sc->String[7])
+			{
+			case '1':
+				return "EndGamePic1";
+			case '2':
+				return "EndGamePic2";
+			case '3':
+				return "EndGameBunny";
+			case 'c':
+			case 'C':
+				return "EndGameCast";
+			case 'w':
+			case 'W':
+				return "EndGameUnderwater";
+			case 's':
+			case 'S':
+				return "EndGameStrife";
+			default:
+				return "EndGamePic3";
+			}
+		}
+		else
+		{
+			return VName(*sc->String, VName::AddLower8);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	ParseMap
+//
+//==========================================================================
+
+static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 {
 	mapInfo_t* info = NULL;
-	bool HexenMode = false;
 	if (IsDefault)
 	{
 		info = &DefaultMap;
@@ -286,13 +367,11 @@ static void ParseMap(VScriptParser* sc, bool IsDefault)
 		}
 		else if (sc->Check("next"))
 		{
-			sc->ExpectName8();
-			info->NextMap = sc->Name8;
+			info->NextMap = ParseNextMapName(sc, HexenMode);
 		}
 		else if (sc->Check("secret") || sc->Check("secretnext"))
 		{
-			sc->ExpectName8();
-			info->SecretMap = sc->Name8;
+			info->SecretMap = ParseNextMapName(sc, HexenMode);
 		}
 		else if (sc->Check("sky1"))
 		{
@@ -593,15 +672,16 @@ static void ParseClusterDef(VScriptParser* sc)
 static void ParseMapInfo(VScriptParser* sc)
 {
 	guard(ParseMapInfo);
+	bool HexenMode = false;
 	while (!sc->AtEnd())
 	{
 		if (sc->Check("map"))
 		{
-			ParseMap(sc, false);
+			ParseMap(sc, false, HexenMode);
 		}
 		else if (sc->Check("defaultmap"))
 		{
-			ParseMap(sc, true);
+			ParseMap(sc, true, HexenMode);
 		}
 		else if (sc->Check("clusterdef"))
 		{

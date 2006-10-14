@@ -25,15 +25,13 @@
 
 class FinaleScreen : Window;
 
-ClientGameBase ClGame;
+ClientGameBase	ClGame;
 
-int f_episode;
-int f_map;
+name			FinaleType;
+float			FinaleTime;
 
-float FinaleTime;
-
-int fpage1;
-int fpage2;
+int				fpage1;
+int				fpage2;
 
 //==========================================================================
 //
@@ -41,14 +39,13 @@ int fpage2;
 //
 //==========================================================================
 
-void StartFinale()
+void StartFinale(name AFinaleType)
 {
-	FindEpisodeAndMap(ClGame.level->MapName, &f_episode, &f_map);
+	FinaleType = AFinaleType;
 
 	FinaleTime = 0.0;
-	switch (f_episode)
+	if (FinaleType == 'EndGamePic1')
 	{
-	case 1:
 		if (!WadLumpPresent('e2m1'))
 		{
 			fpage1 = R_RegisterPic('order');
@@ -57,18 +54,31 @@ void StartFinale()
 		{
 			fpage1 = R_RegisterPic('credit');
 		}
-		break;
-	case 2:
+	}
+	else if (FinaleType == 'EndGameUnderwater')
+	{
 		fpage1 = R_RegisterPicPal('e2end', 'e2pal');
-		break;
-	case 3:
+	}
+	else if (FinaleType == 'EndGameDemon')
+	{
 		fpage1 = R_RegisterPic('final1');
 		fpage2 = R_RegisterPic('final2');
-		break;
-	case 4:	// Just show credits screen for extended episodes
-	case 5:
+	}
+	else if (FinaleType == 'EndGamePic3')
+	{
+		// Just show credits screen for extended episodes
 		fpage1 = R_RegisterPic('credit');
-		break;
+	}
+	else if (strlen(va("%n", FinaleType)) > 16 &&
+		!strcmp(substr(va("%n", FinaleType), 0, 16), "EndGameCustomPic"))
+	{
+		fpage1 = R_RegisterPic(StrToName(substr(va("%n", FinaleType), 16,
+			strlen(va("%n", FinaleType)) - 16)));
+	}
+	else
+	{
+		print("Unknown finale type %n", FinaleType);
+		fpage1 = R_RegisterPic('credit');
 	}
 
 #ifdef FIXME
@@ -97,42 +107,14 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	switch (f_episode)
+	if (FinaleType == 'EndGameDemon')
 	{
-	case 3:
 		F_DemonScroll();
-		break;
-	default:
-		gc.DrawFullScreenPic(fpage1);
-		break;
 	}
-}
-
-//==========================================================================
-//
-//  FindEpisodeAndMap
-//
-//==========================================================================
-
-void FindEpisodeAndMap(name Name, int *epi, int *map)
-{
-	int e;
-	int m;
-
-	for (e = 1; e <= 5; e++)
+	else
 	{
-		for (m = 1; m <= 9; m++)
-		{
-			if (Name == StrToName(va("e%dm%d", e, m)))
-			{
-				*epi = e;
-				*map = m;
-				return;
-			}
-		}
+		gc.DrawFullScreenPic(fpage1);
 	}
-	*epi = 4;
-	*map = 1;
 }
 
 //==========================================================================

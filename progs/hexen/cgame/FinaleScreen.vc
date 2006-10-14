@@ -45,7 +45,7 @@ string FinaleText;
 //
 //==========================================================================
 
-void StartFinale()
+void StartFinale(name FinaleType)
 {
 	FinaleStage = 0;
 	FinaleTime = 0.0;

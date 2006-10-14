@@ -176,7 +176,7 @@ music d_action
 cluster 1
 
 map map29 lookup shustr_29
-next map30
+next EndGameS
 sky1 skymnt01 0
 music d_instry
 cluster 1
@@ -209,7 +209,7 @@ music d_map2
 cluster 2
 
 map map34 lookup shustr_34
-next map32
+next EndBuyStrife
 sky1 skymnt02 0
 music d_map3
 cluster 2

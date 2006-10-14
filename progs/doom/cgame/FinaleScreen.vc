@@ -27,16 +27,7 @@ class FinaleScreen : Window;
 
 ClientGameBase ClGame;
 
-//**************************************************************************
-//**
-//**    DOOM finale
-//**
-//**************************************************************************
-
-#ifndef DOOM2
-
-int f_episode;
-int f_map;
+name FinaleType;
 
 float FinaleTime;
 
@@ -46,41 +37,108 @@ int fend[7];
 
 int laststage;
 
+#if 0
+static int castnum;
+static int *castorder;
+static state_t *caststate;
+static float casttime;
+static bool castdeath;
+static int castframes;
+static int castonmelee;
+static bool castattacking;
+
+// Casting by id Software. in order of appearance
+int castorder[] = {
+	MT_POSSESSED,
+	MT_SHOTGUY,
+	MT_CHAINGUY,
+	MT_TROOP,
+	MT_SERGEANT,
+	MT_SKULL,
+	MT_HEAD,
+	MT_KNIGHT,
+	MT_BRUISER,
+	MT_BABY,
+	MT_PAIN,
+	MT_UNDEAD,
+	MT_FATSO,
+	MT_VILE,
+	MT_SPIDER,
+	MT_CYBORG,
+	MT_PLAYER,
+
+	-1
+};
+
+//
+// Character cast strings
+//
+string caststrings[] = {
+	"ZOMBIEMAN",
+	"SHOTGUN GUY",
+	"HEAVY WEAPON DUDE",
+	"IMP",
+	"DEMON",
+	"LOST SOUL",
+	"CACODEMON",
+	"HELL KNIGHT",
+	"BARON OF HELL",
+	"ARACHNOTRON",
+	"PAIN ELEMENTAL",
+	"REVENANT",
+	"MANCUBUS",
+	"ARCH-VILE",
+	"THE SPIDER MASTERMIND",
+	"THE CYBERDEMON",
+	"OUR HERO"
+};
+#endif
+
 //==========================================================================
 //
 //  StartFinale
 //
 //==========================================================================
 
-void StartFinale()
+void StartFinale(name AFinaleType)
 {
-	FindEpisodeAndMap(ClGame.level->MapName, &f_episode, &f_map);
+	FinaleType = AFinaleType;
 
 	FinaleTime = 0.0;
-	switch (f_episode)
+	if (FinaleType == 'EndGamePic1')
 	{
-	case 1:
 		if (WadLumpPresent('e4m1'))
-			fpage1 = R_RegisterPic('credit');
+			InitPic('credit');
 		else
-			fpage1 = R_RegisterPic('help2');
-		break;
-	case 2:
-		fpage1 = R_RegisterPic('victory2');
-		break;
-	case 3:
-		F_InitBunnyScroll();
-		break;
-	case 4:
-		fpage1 = R_RegisterPic('endpic');
-		break;
+			InitPic('help2');
 	}
-
-#ifdef FIXME
-	S_StartSong("D_VICTOR", P_GetCDEnd1Track(), true);
-#else
-	CmdBuf_AddText("music loop D_VICTOR\n");
-#endif
+	else if (FinaleType == 'EndGamePic2')
+	{
+		InitPic('victory2');
+	}
+	else if (FinaleType == 'EndGameBunny')
+	{
+		F_InitBunnyScroll();
+	}
+	else if (FinaleType == 'EndGamePic3')
+	{
+		InitPic('endpic');
+	}
+	else if (FinaleType == 'EndGameCast')
+	{
+		F_StartCast();
+	}
+	else if (strlen(va("%n", FinaleType)) > 16 &&
+		!strcmp(substr(va("%n", FinaleType), 0, 16), "EndGameCustomPic"))
+	{
+		InitPic(StrToName(substr(va("%n", FinaleType), 16, strlen(va("%n",
+			FinaleType)) - 16)));
+	}
+	else
+	{
+		print("Unknown finale type %n", FinaleType);
+		InitPic('credit');
+	}
 }
 
 //==========================================================================
@@ -92,6 +150,10 @@ void StartFinale()
 void Tick(float DeltaTime)
 {
 	FinaleTime += DeltaTime;
+	if (FinaleType == 'EndGameCast')
+	{
+		F_CastTicker();
+	}
 }
 
 //==========================================================================
@@ -102,9 +164,13 @@ void Tick(float DeltaTime)
 
 void DrawWindow(GC gc)
 {
-	if (f_episode == 3)
+	if (FinaleType == 'EndGameBunny')
 	{
 		F_BunnyScroll();
+	}
+	else if (FinaleType == 'EndGameCast')
+	{
+		F_CastDrawer();
 	}
 	else
 	{
@@ -120,7 +186,27 @@ void DrawWindow(GC gc)
 
 bool Responder(event_t * event)
 {
+	if (FinaleType == 'EndGameCast')
+	{
+		return F_CastResponder(event);
+	}
 	return false;
+}
+
+//==========================================================================
+//
+//  InitPic
+//
+//==========================================================================
+
+void InitPic(name PicName)
+{
+	fpage1 = R_RegisterPic(PicName);
+#ifdef FIXME
+	S_StartSong("d_victor", P_GetCDEnd1Track(), true);
+#else
+	CmdBuf_AddText("music loop d_victor\n");
+#endif
 }
 
 //==========================================================================
@@ -196,144 +282,6 @@ void F_BunnyScroll()
 		laststage = stage;
 	}
 	R_DrawPic((640 - 13 * 8) / 2, (480 - 8 * 8) / 2, fend[stage]);
-}
-
-//==========================================================================
-//
-//  FindEpisodeAndMap
-//
-//==========================================================================
-
-void FindEpisodeAndMap(name Name, int *epi, int *map)
-{
-	int e;
-	int m;
-
-	for (e = 1; e <= 3; e++)
-	{
-		for (m = 1; m <= 9; m++)
-		{
-			if (Name == StrToName(va("e%dm%d", e, m)))
-			{
-				*epi = e;
-				*map = m;
-				return;
-			}
-		}
-	}
-	*epi = 4;
-	*map = 1;
-}
-
-#else
-
-//**************************************************************************
-//**
-//**    DOOM 2 finale
-//**
-//**************************************************************************
-
-int fpage1;
-
-#if 0
-static int castnum;
-static int *castorder;
-static state_t *caststate;
-static float casttime;
-static bool castdeath;
-static int castframes;
-static int castonmelee;
-static bool castattacking;
-
-// Casting by id Software. in order of appearance
-int castorder[] = {
-	MT_POSSESSED,
-	MT_SHOTGUY,
-	MT_CHAINGUY,
-	MT_TROOP,
-	MT_SERGEANT,
-	MT_SKULL,
-	MT_HEAD,
-	MT_KNIGHT,
-	MT_BRUISER,
-	MT_BABY,
-	MT_PAIN,
-	MT_UNDEAD,
-	MT_FATSO,
-	MT_VILE,
-	MT_SPIDER,
-	MT_CYBORG,
-	MT_PLAYER,
-
-	-1
-};
-
-//
-// Character cast strings
-//
-string caststrings[] = {
-	"ZOMBIEMAN",
-	"SHOTGUN GUY",
-	"HEAVY WEAPON DUDE",
-	"IMP",
-	"DEMON",
-	"LOST SOUL",
-	"CACODEMON",
-	"HELL KNIGHT",
-	"BARON OF HELL",
-	"ARACHNOTRON",
-	"PAIN ELEMENTAL",
-	"REVENANT",
-	"MANCUBUS",
-	"ARCH-VILE",
-	"THE SPIDER MASTERMIND",
-	"THE CYBERDEMON",
-	"OUR HERO"
-};
-#endif
-
-//==========================================================================
-//
-//  StartFinale
-//
-//==========================================================================
-
-void StartFinale()
-{
-	F_StartCast();
-}
-
-//==========================================================================
-//
-//	Tick
-//
-//==========================================================================
-
-void Tick(float DeltaTime)
-{
-	F_CastTicker();
-}
-
-//==========================================================================
-//
-//  DrawWindow
-//
-//==========================================================================
-
-void DrawWindow(GC gc)
-{
-	F_CastDrawer();
-}
-
-//===========================================================================
-//
-//  Responder
-//
-//===========================================================================
-
-bool Responder(event_t * event)
-{
-	return F_CastResponder(event);
 }
 
 //==========================================================================
@@ -583,8 +531,6 @@ void F_CastDrawer()
 	R_DrawSpritePatch(160, 170, caststate->sprite, caststate->frame, 0);
 #endif
 }
-
-#endif
 
 //==========================================================================
 //

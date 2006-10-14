@@ -1116,7 +1116,7 @@ void CL_ParseServerMessage(VMessage& msg)
 			break;
 
 		case svc_finale:
-			F_StartFinale();
+			F_StartFinale(msg.ReadString());
 			break;
 
 		case svc_sec_floor_plane:

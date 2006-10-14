@@ -253,13 +253,13 @@ void IintermissionStart()
 //
 //==========================================================================
 
-void StartFinale()
+void StartFinale(name FinaleType)
 {
 	intermission = 2;
 	GSBar.Hide();
 	GImission.Hide();
 	GFinale.Show();
-	GFinale.StartFinale();
+	GFinale.StartFinale(FinaleType);
 }
 
 //===========================================================================

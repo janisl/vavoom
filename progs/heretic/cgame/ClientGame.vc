@@ -230,12 +230,12 @@ void IintermissionStart()
 //
 //==========================================================================
 
-void StartFinale()
+void StartFinale(name FinaleType)
 {
 	GSBar.Hide();
 	GImission.Hide();
 	GFinale.Show();
-	GFinale.StartFinale();
+	GFinale.StartFinale(FinaleType);
 }
 
 //===========================================================================

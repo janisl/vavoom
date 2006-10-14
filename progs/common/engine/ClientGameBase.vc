@@ -175,7 +175,7 @@ void IintermissionStart()
 //
 //==========================================================================
 
-void StartFinale()
+void StartFinale(name FinaleType)
 {
 }
 

@@ -157,9 +157,10 @@ class VClientGameBase : public VObject
 		P_PASS_SELF;
 		EV_RET_VOID("IintermissionStart");
 	}
-	void eventStartFinale()
+	void eventStartFinale(VName FinaleType)
 	{
 		P_PASS_SELF;
+		P_PASS_NAME(FinaleType);
 		EV_RET_VOID("StartFinale");
 	}
 	bool eventFinaleResponder(event_t* event)

@@ -2012,7 +2012,8 @@ void G_Completed(int InMap, int InPosition, int SaveAngle)
 	{
 		if (!deathmatch)
 		{
-			sv_reliable << (vuint8)svc_finale;
+			sv_reliable << (vuint8)svc_finale <<
+				(VStr(sv_next_map).StartsWith("EndGame") ? *sv_next_map : "");
 			sv.intermission = 2;
 			return;
 		}
@@ -2060,11 +2061,9 @@ COMMAND(TeleportNewMap)
 
 	if (!deathmatch)
 	{
-		if (level.MapName == "e1m8" || level.MapName == "e2m8" ||
-			level.MapName == "e3m8" || level.MapName == "e4m8" ||
-			level.MapName == "e5m8")
+		if (VStr(sv_next_map).StartsWith("EndGame"))
 		{
-			sv_reliable << (vuint8)svc_finale;
+			sv_reliable << (vuint8)svc_finale << *sv_next_map;
 			sv.intermission = 2;
 			return;
 		}

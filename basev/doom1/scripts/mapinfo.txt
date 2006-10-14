@@ -1,49 +1,49 @@
 map e1m1 lookup hustr_e1m1
 cluster 1
 next e1m2
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music d_e1m1
 
 map e1m2 lookup hustr_e1m2
 cluster 1
 next e1m3
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music d_e1m2
 
 map e1m3 lookup hustr_e1m3
 cluster 1
 next e1m4
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music d_e1m3
 
 map e1m4 lookup hustr_e1m4
 cluster 1
 next e1m5
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music d_e1m4
 
 map e1m5 lookup hustr_e1m5
 cluster 1
 next e1m6
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music d_e1m5
 
 map e1m6 lookup hustr_e1m6
 cluster 1
 next e1m7
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music d_e1m6
 
 map e1m7 lookup hustr_e1m7
 cluster 1
 next e1m8
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music d_e1m7
 
@@ -66,49 +66,49 @@ music d_e1m9
 map e2m1 lookup hustr_e2m1
 cluster 2
 next e2m2
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music d_e2m1
 
 map e2m2 lookup hustr_e2m2
 cluster 2
 next e2m3
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music d_e2m2
 
 map e2m3 lookup hustr_e2m3
 cluster 2
 next e2m4
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music d_e2m3
 
 map e2m4 lookup hustr_e2m4
 cluster 2
 next e2m5
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music d_e2m4
 
 map e2m5 lookup hustr_e2m5
 cluster 2
 next e2m6
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music d_e2m5
 
 map e2m6 lookup hustr_e2m6
 cluster 2
 next e2m7
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music d_e2m6
 
 map e2m7 lookup hustr_e2m7
 cluster 2
 next e2m8
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music d_e2m7
 
@@ -131,49 +131,49 @@ music d_e2m9
 map e3m1 lookup hustr_e3m1
 cluster 3
 next e3m2
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music d_e3m1
 
 map e3m2 lookup hustr_e3m2
 cluster 3
 next e3m3
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music d_e3m2
 
 map e3m3 lookup hustr_e3m3
 cluster 3
 next e3m4
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music d_e3m3
 
 map e3m4 lookup hustr_e3m4
 cluster 3
 next e3m5
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music d_e3m4
 
 map e3m5 lookup hustr_e3m5
 cluster 3
 next e3m6
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music d_e3m5
 
 map e3m6 lookup hustr_e3m6
 cluster 3
 next e3m7
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music d_e3m6
 
 map e3m7 lookup hustr_e3m7
 cluster 3
 next e3m8
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music d_e3m7
 
@@ -196,42 +196,42 @@ music d_e3m9
 map e4m1 lookup hustr_e4m1
 cluster 4
 next e4m2
-secret e4m9
+secretnext e4m9
 sky1 sky4 0
 music d_e3m4
 
 map e4m2 lookup hustr_e4m2
 cluster 4
 next e4m3
-secret e4m9
+secretnext e4m9
 sky1 sky4 0
 music d_e3m2
 
 map e4m3 lookup hustr_e4m3
 cluster 4
 next e4m4
-secret e4m9
+secretnext e4m9
 sky1 sky4 0
 music d_e3m3
 
 map e4m4 lookup hustr_e4m4
 cluster 4
 next e4m5
-secret e4m9
+secretnext e4m9
 sky1 sky4 0
 music d_e1m5
 
 map e4m5 lookup hustr_e4m5
 cluster 4
 next e4m6
-secret e4m9
+secretnext e4m9
 sky1 sky4 0
 music d_e2m7
 
 map e4m6 lookup hustr_e4m6
 cluster 4
 next e4m7
-secret e4m9
+secretnext e4m9
 sky1 sky4 0
 music d_e2m4
 cyberdemonspecial
@@ -240,7 +240,7 @@ specialaction_opendoor
 map e4m7 lookup hustr_e4m7
 cluster 4
 next e4m8
-secret e4m9
+secretnext e4m9
 sky1 sky4 0
 music d_e2m6
 

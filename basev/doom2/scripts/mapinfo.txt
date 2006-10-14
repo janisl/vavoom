@@ -208,7 +208,7 @@ music d_shawn3
 
 map map30 lookup hustr_30
 cluster 8
-next map01
+next EndGameC
 sky1 sky3 0
 music d_openin
 

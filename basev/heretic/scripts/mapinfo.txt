@@ -118,7 +118,7 @@ music mus_e2m7
 
 map e2m8 lookup hhustr_e2m8
 cluster 2
-next EndGame2
+next EndGameW
 sky1 sky2 0
 music mus_e2m8
 nointermission
@@ -185,7 +185,7 @@ music mus_e1m5
 
 map e3m8 lookup hhustr_e3m8
 cluster 3
-next EndGame3
+next EndDemon
 sky1 sky3 0
 music mus_e1m9
 nointermission
@@ -318,7 +318,7 @@ music mus_e2m7
 
 map e5m8 lookup hhustr_e5m8
 cluster 5
-next EndGame5
+next EndGame1
 sky1 sky3 0
 music mus_e2m8
 nointermission
