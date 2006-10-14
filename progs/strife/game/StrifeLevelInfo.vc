@@ -1114,6 +1114,47 @@ Actor Spawn(classid type, TVec AOrigin)
 	return A;
 }
 
+//==========================================================================
+//
+//  GetDefaultDoorSound
+//
+//==========================================================================
+
+name GetDefaultDoorSound(sector_t* Sector)
+{
+	int			i;
+	name		SeqName = DefaultDoorSound;
+
+	//	Search the front top textures of 2-sided lines on the door sector
+	// for a door sound to use.
+	for (i = 0; i < Sector->linecount; i++)
+	{
+		if (!Sector->lines[i]->backsector)
+			continue;
+
+		string TexName = va("%n", GetTextureName(XLevel.Sides[
+			Sector->lines[i]->sidenum[0]].toptexture));
+		if (StrStartsWith(TexName, "dors"))
+		{
+			SeqName = 'DoorStone';
+		}
+		else if (StrStartsWith(TexName, "dorml"))
+		{
+			SeqName = 'DoorLargeMetal';
+		}
+		else if (StrStartsWith(TexName, "dorwl"))
+		{
+			SeqName = 'DoorLargeWood';
+		}
+		else if (StrStartsWith(TexName, "dorw"))
+		{
+			SeqName = 'DoorSmallWood';
+		}
+	}
+
+	return SeqName;
+}
+
 defaultproperties
 {
 	DefaultDoorSound = 'DoorSmallMetal';

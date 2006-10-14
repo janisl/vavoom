@@ -90,6 +90,7 @@ public:
 		bool bCheckAny = false);
 	int	NumForName(VName Name, int Type, bool bOverload = false,
 		bool bCheckAny = false);
+	VName GetTextureName(int TexNum);
 	float TextureHeight(int TexNum);
 	int TextureAnimation(int InTex);
 	void SetFrontSkyLayer(int tex);

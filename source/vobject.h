@@ -272,6 +272,8 @@ public:
 	DECLARE_FUNCTION(va)
 	DECLARE_FUNCTION(atoi)
 	DECLARE_FUNCTION(atof)
+	DECLARE_FUNCTION(StrStartsWith)
+	DECLARE_FUNCTION(StrEndsWith)
 
 	//	Random numbers
 	DECLARE_FUNCTION(Random)
@@ -283,6 +285,7 @@ public:
 	DECLARE_FUNCTION(CheckFlatNumForName)
 	DECLARE_FUNCTION(FlatNumForName)
 	DECLARE_FUNCTION(TextureHeight)
+	DECLARE_FUNCTION(GetTextureName)
 
 	//	Message IO functions
 	DECLARE_FUNCTION(MSG_Select)

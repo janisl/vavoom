@@ -1526,6 +1526,10 @@ native static final string va(string format, ...);
 native static final int atoi(string str);
 //  Converts string to float
 native static final float atof(string str);
+//  Checks if string starts with given string
+native static final bool StrStartsWith(string Str, string Check);
+//  Checks if string ends with given string
+native static final bool StrEndsWith(string Str, string Check);
 
 //
 //  Printing to console
@@ -1545,6 +1549,7 @@ native static final int TextureNumForName(name Name);
 native static final int CheckFlatNumForName(name Name);
 native static final int FlatNumForName(name Name);
 native static final float TextureHeight(int pic);
+native static final name GetTextureName(int Handle);
 
 //
 //  Message IO functions

@@ -522,6 +522,23 @@ int	VTextureManager::NumForName(VName Name, int Type, bool bOverload,
 //
 //==========================================================================
 
+VName VTextureManager::GetTextureName(int TexNum)
+{
+	guard(VTextureManager::GetTextureName);
+	if (TexNum < 0 || TexNum >= Textures.Num())
+	{
+		return NAME_None;
+	}
+	return Textures[TexNum]->Name;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTextureManager::TextureHeight
+//
+//==========================================================================
+
 float VTextureManager::TextureHeight(int TexNum)
 {
 	guard(VTextureManager::TextureHeight);

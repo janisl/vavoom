@@ -3815,6 +3815,17 @@ bool CheckLock(Entity user, int lock)
 {
 }
 
+//==========================================================================
+//
+//  GetDefaultDoorSound
+//
+//==========================================================================
+
+name GetDefaultDoorSound(sector_t* Sector)
+{
+	return DefaultDoorSound;
+}
+
 defaultproperties
 {
 }

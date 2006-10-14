@@ -399,9 +399,11 @@ void EV_LightTurnOnPartway(int Tag, float Frac)
 
 void StartDoorSound(bool bOpen)
 {
-	name SeqName = !LineSpecialLevelInfo(Level).DefaultDoorSound ||
-		Sector->seqType >= 0 ? GetSeqTrans(Sector->seqType, SEQ_Door) :
-		LineSpecialLevelInfo(Level).DefaultDoorSound;
+	name SeqName = LineSpecialLevelInfo(Level).GetDefaultDoorSound(Sector);
+	if (!SeqName || Sector->seqType >= 0)
+	{
+		SeqName = GetSeqTrans(Sector->seqType, SEQ_Door);
+	}
 	if (bOpen)
 	{
 		if (Speed >= 256.0)

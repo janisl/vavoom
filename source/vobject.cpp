@@ -747,6 +747,20 @@ IMPLEMENT_FUNCTION(VObject, atof)
 	RET_FLOAT(atof(*str));
 }
 
+IMPLEMENT_FUNCTION(VObject, StrStartsWith)
+{
+	P_GET_STR(Check);
+	P_GET_STR(Str);
+	RET_BOOL(Str.StartsWith(Check));
+}
+
+IMPLEMENT_FUNCTION(VObject, StrEndsWith)
+{
+	P_GET_STR(Check);
+	P_GET_STR(Str);
+	RET_BOOL(Str.EndsWith(Check));
+}
+
 //**************************************************************************
 //
 //	Random numbers
@@ -797,6 +811,12 @@ IMPLEMENT_FUNCTION(VObject, TextureHeight)
 {
 	P_GET_INT(pic);
 	RET_FLOAT(GTextureManager.TextureHeight(pic));
+}
+
+IMPLEMENT_FUNCTION(VObject, GetTextureName)
+{
+	P_GET_INT(Handle);
+	RET_NAME(GTextureManager.GetTextureName(Handle));
 }
 
 //**************************************************************************
@@ -880,7 +900,7 @@ IMPLEMENT_FUNCTION(VObject, dprint)
 
 //==========================================================================
 //
-//	PF_itof
+//	Type conversions
 //
 //==========================================================================
 
