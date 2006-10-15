@@ -75,6 +75,8 @@
 
 // TYPES -------------------------------------------------------------------
 
+typedef VTexture* (*VTexCreateFunc)(VStream&, int, VName);
+
 struct frameDef_t
 {
 	int		index;
@@ -116,7 +118,10 @@ struct pcx_t
 	vuint16		bytes_per_line;
 	vuint16		palette_type;
 
-	vint8		filler[58];
+	vuint16		horz_screen_size;
+	vuint16		vert_screen_size;
+
+	vint8		filler[54];
 
 	friend VStream& operator<<(VStream& Strm, pcx_t& h)
 	{
@@ -124,8 +129,8 @@ struct pcx_t
 			<< h.xmin << h.ymin << h.xmax << h.ymax << h.hres << h.vres;
 		Strm.Serialise(h.palette, 48);
 		Strm << h.reserved << h.colour_planes << h.bytes_per_line
-			<< h.palette_type;
-		Strm.Serialise(h.filler, 58);
+			<< h.palette_type << h.horz_screen_size << h.vert_screen_size;
+		Strm.Serialise(h.filler, 54);
 		return Strm;
 	}
 };
@@ -173,9 +178,10 @@ public:
 	int			LumpNum;
 	vuint8*		Pixels;
 
-	TPatchTexture(int InType, int InLumpNum);
+	static VTexture* Create(VStream&, int, VName);
+
+	TPatchTexture(int, VName, int, int, int, int);
 	~TPatchTexture();
-	void GetDimensions();
 	vuint8* GetPixels();
 	void Unload();
 };
@@ -221,6 +227,8 @@ public:
 	int			LumpNum;
 	vuint8*		Pixels;
 
+	static VTexture* Create(VStream&, int, VName);
+
 	VFlatTexture(int InLumpNum);
 	~VFlatTexture();
 	vuint8* GetPixels();
@@ -238,7 +246,9 @@ public:
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
-	VRawPicTexture(int InLumpNum, int InPalLumpNum);
+	static VTexture* Create(VStream&, int, VName);
+
+	VRawPicTexture(int, int);
 	~VRawPicTexture();
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
@@ -253,6 +263,8 @@ class VAutopageTexture : public VTexture
 public:
 	int			LumpNum;
 	vuint8*		Pixels;
+
+	static VTexture* Create(VStream&, int, VName);
 
 	VAutopageTexture(int);
 	~VAutopageTexture();
@@ -271,9 +283,10 @@ public:
 	int			LumpNum;
 	vuint8*		Pixels;
 
-	VImgzTexture(int InType, int InLumpNum);
+	static VTexture* Create(VStream&, int, VName);
+
+	VImgzTexture(int, VName, int, int, int, int);
 	~VImgzTexture();
-	void GetDimensions();
 	vuint8* GetPixels();
 	void Unload();
 };
@@ -284,12 +297,14 @@ public:
 class VPcxTexture : public VTexture
 {
 public:
+	int			LumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
-	VPcxTexture(int InType, VName InName);
+	static VTexture* Create(VStream&, int, VName);
+
+	VPcxTexture(int, VName, pcx_t&);
 	~VPcxTexture();
-	void GetDimensions();
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
 	void Unload();
@@ -301,12 +316,14 @@ public:
 class VTgaTexture : public VTexture
 {
 public:
+	int			LumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
-	VTgaTexture(int InType, VName InName);
+	static VTexture* Create(VStream&, int, VName);
+
+	VTgaTexture(int, VName, tgaHeader_t&);
 	~VTgaTexture();
-	void GetDimensions();
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
 	void Unload();
@@ -322,11 +339,11 @@ public:
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
-	VPngTexture(int InType, int InLumpNum);
-	VPngTexture(int InType, VName InName);
+	static VTexture* Create(VStream&, int, VName);
+
+	VPngTexture(int, VName, int, int);
 	~VPngTexture();
-	void GetDimensions();
-	static void ReadFunc(png_structp png, png_bytep data, png_size_t len);
+	static void ReadFunc(png_structp, png_bytep, png_size_t);
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
 	void Unload();
@@ -451,6 +468,10 @@ void VTextureManager::Shutdown()
 int VTextureManager::AddTexture(VTexture* Tex)
 {
 	guard(VTextureManager::AddTexture);
+	if (!Tex)
+	{
+		return -1;
+	}
 	Textures.Append(Tex);
 	Tex->TextureTranslation = Textures.Num() - 1;
 	return Textures.Num() - 1;
@@ -623,55 +644,7 @@ int VTextureManager::AddPatch(VName Name, int Type)
 	}
 
 	//	Create new patch texture.
-	return CreatePatch(Type, LumpNum);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VTextureManager::CreatePatch
-//
-//==========================================================================
-
-int VTextureManager::CreatePatch(int Type, int LumpNum)
-{
-	guard(VTextureManager::CreatePatch);
-	//	Read lump header and see what type of lump it is.
-	vuint8 LumpHeader[16];
-	memset(LumpHeader, 0, sizeof(LumpHeader));
-	W_ReadFromLump(LumpNum, LumpHeader, 0, MIN(W_LumpLength(LumpNum), 16));
-
-	//	Check for ZDoom's IMGZ image.
-	if (LumpHeader[0] == 'I' && LumpHeader[1] == 'M' &&
-		LumpHeader[2] == 'G' && LumpHeader[3] == 'Z')
-	{
-		return AddTexture(new VImgzTexture(Type, LumpNum));
-	}
-
-	//	Check for PNG image.
-	if (LumpHeader[0] == 137 && LumpHeader[1] == 'P' &&
-		LumpHeader[2] == 'N' && LumpHeader[3] == 'G')
-	{
-		return AddTexture(new VPngTexture(Type, LumpNum));
-	}
-
-	if (Type == TEXTYPE_Pic && W_LumpLength(LumpNum) == 64000)
-	{
-		return AddTexture(new VRawPicTexture(LumpNum, -1));
-	}
-
-	//	Check for automap background.
-	if (Type == TEXTYPE_Autopage && W_LumpLength(LumpNum) >= 320)
-	{
-		return AddTexture(new VAutopageTexture(LumpNum));
-	}
-
-	if (Type == TEXTYPE_Flat)
-	{
-		return AddTexture(new VFlatTexture(LumpNum));
-	}
-
-	return AddTexture(new TPatchTexture(Type, LumpNum));
+	return AddTexture(VTexture::CreateTexture(Type, LumpNum, NAME_None));
 	unguard;
 }
 
@@ -728,24 +701,14 @@ int VTextureManager::AddFileTexture(VName Name, int Type)
 		return i;
 	}
 
-	VStr Ext = VStr(Name).ExtractFileExtension();
-	if (Ext == "pcx")
+	VTexture* Tex = VTexture::CreateTexture(Type, -1, Name);
+	if (Tex)
 	{
-		return AddTexture(new VPcxTexture(Type, Name));
+		return AddTexture(Tex);
 	}
-	else if (Ext == "tga")
-	{
-		return AddTexture(new VTgaTexture(Type, Name));
-	}
-	else if (Ext == "png")
-	{
-		return AddTexture(new VPngTexture(Type, Name));
-	}
-	else
-	{
-		Sys_Error("Unsupported texture type (%s).", *Name);
-		return -1;
-	}
+
+	GCon->Logf("Couldn\'t create texture %s.", *Name);
+	return DefaultTexture;
 	unguard;
 }
 
@@ -787,7 +750,9 @@ void VTextureManager::InitTextures()
 		}
 		else
 		{
-			patchtexlookup[i] = Textures[CreatePatch(TEXTYPE_WallPatch, LNum)];
+			patchtexlookup[i] = VTexture::CreateTexture(TEXTYPE_WallPatch,
+				LNum, NAME_None);
+			AddTexture(patchtexlookup[i]);
 		}
 	}
 	delete Strm;
@@ -849,7 +814,7 @@ void VTextureManager::InitFlats()
 	for (int Lump = W_IterateNS(-1, WADNS_Flats); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Flats))
 	{
-		CreatePatch(TEXTYPE_Flat, Lump);
+		AddTexture(VTexture::CreateTexture(TEXTYPE_Flat, Lump, NAME_None));
 	}
 	unguard;
 }
@@ -866,7 +831,7 @@ void VTextureManager::InitOverloads()
 	for (int Lump = W_IterateNS(-1, WADNS_NewTextures); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_NewTextures))
 	{
-		CreatePatch(TEXTYPE_Overload, Lump);
+		AddTexture(VTexture::CreateTexture(TEXTYPE_Overload, Lump, NAME_None));
 	}
 	unguard;
 }
@@ -883,7 +848,7 @@ void VTextureManager::InitSpriteLumps()
 	for (int Lump = W_IterateNS(-1, WADNS_Sprites); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Sprites))
 	{
-		CreatePatch(TEXTYPE_Sprite, Lump);
+		AddTexture(VTexture::CreateTexture(TEXTYPE_Sprite, Lump, NAME_None));
 	}
 	unguard;
 }
@@ -918,6 +883,58 @@ vuint8* VTextureManager::GetRgbTable()
 
 //==========================================================================
 //
+//	VTexture::CreateTexture
+//
+//==========================================================================
+
+VTexture* VTexture::CreateTexture(int Type, int LumpNum, VName Name)
+{
+	guard(VTexture::CreateTexture);
+	static const struct
+	{
+		VTexCreateFunc	Create;
+		int				Type;
+	} TexTable[] =
+	{
+		{ VImgzTexture::Create,		TEXTYPE_Any },
+		{ VPngTexture::Create,		TEXTYPE_Any },
+		{ VPcxTexture::Create,		TEXTYPE_Any },
+		{ VTgaTexture::Create,		TEXTYPE_Any },
+		{ VFlatTexture::Create,		TEXTYPE_Flat },
+		{ VRawPicTexture::Create,	TEXTYPE_Pic },
+		{ TPatchTexture::Create,	TEXTYPE_Any },
+		{ VAutopageTexture::Create,	TEXTYPE_Autopage },
+	};
+
+	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
+		FL_OpenFileRead(*Name);
+	if (!Strm)
+	{
+		//	Couldn't open, should happen only for files.
+		return NULL;
+	}
+
+	for (size_t i = 0; i < ARRAY_COUNT(TexTable); i++)
+	{
+		if (TexTable[i].Type == Type || TexTable[i].Type == TEXTYPE_Any)
+		{
+			VTexture* Tex = TexTable[i].Create(*Strm, LumpNum, Name);
+			if (Tex)
+			{
+				Tex->Type = Type;
+				delete Strm;
+				return Tex;
+			}
+		}
+	}
+
+	delete Strm;
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VTexture::VTexture
 //
 //==========================================================================
@@ -926,8 +943,8 @@ VTexture::VTexture()
 : Type(TEXTYPE_Any)
 , Format(TEXFMT_8)
 , Name(NAME_None)
-, Width(-1)
-, Height(-1)
+, Width(0)
+, Height(0)
 , SOffset(0)
 , TOffset(0)
 , bNoRemap0(false)
@@ -956,20 +973,6 @@ VTexture::~VTexture()
 	{
 		delete HiResTexture;
 	}
-}
-
-//==========================================================================
-//
-//	VTexture::GetDimensions
-//
-//==========================================================================
-
-void VTexture::GetDimensions()
-{
-	guardSlow(VTexture::GetDimensions);
-	Width = 0;
-	Height = 0;
-	unguardSlow;
 }
 
 //==========================================================================
@@ -1108,7 +1111,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 	if (FL_FileExists(HighResName))
 	{
 		//	Create new high-resolution texture.
-		HiResTexture = new VPngTexture(Type, HighResName);
+		HiResTexture = CreateTexture(Type, -1, HighResName);
 		return HiResTexture;
 	}
 
@@ -1117,7 +1120,7 @@ VTexture* VTexture::GetHighResolutionTexture()
 	if (FL_FileExists(HighResName))
 	{
 		//	Create new high-resolution texture.
-		HiResTexture = new VTgaTexture(Type, HighResName);
+		HiResTexture = CreateTexture(Type, -1, HighResName);
 		return HiResTexture;
 	}
 #endif
@@ -1214,17 +1217,83 @@ void VDummyTexture::Unload()
 
 //==========================================================================
 //
+//	TPatchTexture::Create
+//
+//==========================================================================
+
+VTexture* TPatchTexture::Create(VStream& Strm, int LumpNum, VName Name)
+{
+	guard(TPatchTexture::Create);
+	if (Strm.TotalSize() < 13)
+	{
+		//	Lump is too small.
+		return NULL;
+	}
+
+	Strm.Seek(0);
+	int Width = Streamer<vint16>(Strm);
+	int Height = Streamer<vint16>(Strm);
+	int SOffset = Streamer<vint16>(Strm);
+	int TOffset = Streamer<vint16>(Strm);
+
+	if (Width < 0 || Height < 0 || Width > 2048 || Height > 2048)
+	{
+		//	Not valid dimensions.
+		return NULL;
+	}
+	if (Strm.TotalSize() < Width * 4 + 8)
+	{
+		//	File has no space for offsets table.
+		return NULL;
+	}
+
+	vint32* Offsets = new vint32[Width];
+	for (int i = 0; i < Width; i++)
+	{
+		Strm << Offsets[i];
+	}
+	//	Make sure that all offsets are valid and that at least one is
+	// right at the end of offsets table.
+	bool GapAtStart = true;
+	for (int i = 0; i < Width; i++)
+	{
+		if (Offsets[i] == Width * 4 + 8)
+		{
+			GapAtStart = false;
+		}
+		else if (Offsets[i] < Width * 4 + 8 || Offsets[i] >= Strm.TotalSize())
+		{
+			delete[] Offsets;
+			return NULL;
+		}
+	}
+	delete[] Offsets;
+	if (GapAtStart)
+	{
+		return NULL;
+	}
+
+	return new TPatchTexture(LumpNum, Name, Width, Height, SOffset, TOffset);
+	unguard;
+}
+
+//==========================================================================
+//
 //	TPatchTexture::TPatchTexture
 //
 //==========================================================================
 
-TPatchTexture::TPatchTexture(int InType, int InLumpNum)
-: LumpNum(InLumpNum)
+TPatchTexture::TPatchTexture(int ALumpNum, VName AName, int AWidth,
+	int AHeight, int ASOffset, int ATOffset)
+: LumpNum(ALumpNum)
 , Pixels(0)
 {
-	Type = InType;
-	Name = W_LumpName(InLumpNum);
+	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
 	Format = TEXFMT_8;
+	Width = AWidth;
+	Height = AHeight;
+	SOffset = ASOffset;
+	TOffset = ATOffset;
 }
 
 //==========================================================================
@@ -1240,24 +1309,6 @@ TPatchTexture::~TPatchTexture()
 	{
 		delete[] Pixels;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	TPatchTexture::GetDimensions
-//
-//==========================================================================
-
-void TPatchTexture::GetDimensions()
-{
-	guard(TPatchTexture::GetDimensions);
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
-	Width = Streamer<vint16>(*Strm);
-	Height = Streamer<vint16>(*Strm);
-	SOffset = Streamer<vint16>(*Strm);
-	TOffset = Streamer<vint16>(*Strm);
-	delete Strm;
 	unguard;
 }
 
@@ -1709,6 +1760,19 @@ void VMultiPatchTexture::Unload()
 //
 //==========================================================================
 
+VTexture* VFlatTexture::Create(VStream&, int LumpNum, VName)
+{
+	guard(VFlatTexture::Create);
+	return new VFlatTexture(LumpNum);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlatTexture::VFlatTexture
+//
+//==========================================================================
+
 VFlatTexture::VFlatTexture(int InLumpNum)
 : LumpNum(InLumpNum)
 , Pixels(0)
@@ -1724,9 +1788,12 @@ VFlatTexture::VFlatTexture(int InLumpNum)
 		Width *= 2;
 	}
 	Height = Width;
-	//	Scale to 64x64.
-	SScale = Width / 64;
-	TScale = Width / 64;
+	//	Scale large flats to 64x64.
+	if (Width > 64)
+	{
+		SScale = Width / 64;
+		TScale = Width / 64;
+	}
 	unguard;
 }
 
@@ -1812,18 +1879,76 @@ void VFlatTexture::Unload()
 
 //==========================================================================
 //
+//	VRawPicTexture::Create
+//
+//==========================================================================
+
+VTexture* VRawPicTexture::Create(VStream& Strm, int LumpNum, VName)
+{
+	guard(VRawPicTexture::Create);
+	if (Strm.TotalSize() != 64000)
+	{
+		//	Wrong size.
+		return NULL;
+	}
+
+	//	Do an extra check to see if it's a valid patch
+	vint16		Width;
+	vint16		Height;
+	vint16		SOffset;
+	vint16		TOffset;
+
+	Strm.Seek(0);
+	Strm << Width << Height << SOffset << TOffset;
+	if (Width > 0 && Height > 0 && Width <= 2048 && Height < 510)
+	{
+		//	Dimensions seem to be valid. Check column directory to see if
+		// it's valid. We expect at least one column to start exactly right
+		// after the directory.
+		bool GapAtStart = true;
+		bool IsValid = true;
+		vint32* Offsets = new vint32[Width];
+		for (int i = 0; i < Width; i++)
+		{
+			Strm << Offsets[i];
+			if (Offsets[i] == 8 + Width * 4)
+			{
+				GapAtStart = false;
+			}
+			else if (Offsets[i] < 8 + Width * 4 ||
+				Offsets[i] >= Strm.TotalSize())
+			{
+				IsValid = false;
+				break;
+			}
+		}
+		if (IsValid && !GapAtStart)
+		{
+			//	Offsets seem to be valid.
+			delete[] Offsets;
+			return NULL;
+		}
+		delete[] Offsets;
+	}
+
+	return new VRawPicTexture(LumpNum, -1);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VRawPicTexture::VRawPicTexture
 //
 //==========================================================================
 
-VRawPicTexture::VRawPicTexture(int InLumpNum, int InPalLumpNum)
-: LumpNum(InLumpNum)
-, PalLumpNum(InPalLumpNum)
+VRawPicTexture::VRawPicTexture(int ALumpNum, int APalLumpNum)
+: LumpNum(ALumpNum)
+, PalLumpNum(APalLumpNum)
 , Pixels(0)
 , Palette(0)
 {
 	Type = TEXTYPE_Pic;
-	Name = W_LumpName(InLumpNum);
+	Name = W_LumpName(LumpNum);
 	Width = 320;
 	Height = 200;
 	Format = PalLumpNum >= 0 ? TEXFMT_8Pal : TEXFMT_8;
@@ -1967,14 +2092,31 @@ void VRawPicTexture::Unload()
 //
 //==========================================================================
 
-VAutopageTexture::VAutopageTexture(int InLumpNum)
-: LumpNum(InLumpNum)
+VTexture* VAutopageTexture::Create(VStream& Strm, int LumpNum, VName)
+{
+	guard(VAutopageTexture::Create);
+	if (Strm.TotalSize() < 320)
+	{
+		return NULL;
+	}
+
+	return new VAutopageTexture(LumpNum);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAutopageTexture::VAutopageTexture
+//
+//==========================================================================
+
+VAutopageTexture::VAutopageTexture(int ALumpNum)
+: LumpNum(ALumpNum)
 , Pixels(0)
 {
-	Type = TEXTYPE_Autopage;
-	Name = W_LumpName(InLumpNum);
+	Name = W_LumpName(LumpNum);
 	Width = 320;
-	Height = W_LumpLength(InLumpNum) / 320;
+	Height = W_LumpLength(LumpNum) / 320;
 	Format = TEXFMT_8;
 }
 
@@ -2055,17 +2197,54 @@ void VAutopageTexture::Unload()
 
 //==========================================================================
 //
+//	VImgzTexture::Create
+//
+//==========================================================================
+
+VTexture* VImgzTexture::Create(VStream& Strm, int LumpNum, VName Name)
+{
+	guard(VImgzTexture::Create);
+	if (Strm.TotalSize() < 24)
+	{
+		//	Not enough space for IMGZ header.
+		return NULL;
+	}
+
+	vuint8 Id[4];
+	vuint16 Width;
+	vuint16 Height;
+	vuint16 SOffset;
+	vuint16 TOffset;
+
+	Strm.Seek(0);
+	Strm.Serialise(Id, 4);
+	if (Id[0] != 'I' || Id[1] != 'M' || Id[2] != 'G' || Id[3] == 'Z')
+	{
+		return NULL;
+	}
+
+	Strm << Width << Height << SOffset << TOffset;
+	return new VImgzTexture(LumpNum, Name, Width, Height, SOffset, TOffset);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VImgzTexture::VImgzTexture
 //
 //==========================================================================
 
-VImgzTexture::VImgzTexture(int InType, int InLumpNum)
-: LumpNum(InLumpNum)
+VImgzTexture::VImgzTexture(int ALumpNum, VName AName, int AWidth,
+	int AHeight, int ASOffset, int ATOffset)
+: LumpNum(ALumpNum)
 , Pixels(0)
 {
-	Type = InType;
-	Name = W_LumpName(InLumpNum);
+	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
 	Format = TEXFMT_8;
+	Width = AWidth;
+	Height = AHeight;
+	SOffset = ASOffset;
+	TOffset = ATOffset;
 }
 
 //==========================================================================
@@ -2086,26 +2265,6 @@ VImgzTexture::~VImgzTexture()
 
 //==========================================================================
 //
-//	VImgzTexture::GetDimensions
-//
-//==========================================================================
-
-void VImgzTexture::GetDimensions()
-{
-	guard(VImgzTexture::GetDimensions);
-	//	Read header.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
-	Strm->Seek(4);	//	Skip magic.
-	Width = Streamer<vuint16>(*Strm);
-	Height = Streamer<vuint16>(*Strm);
-	SOffset = Streamer<vint16>(*Strm);
-	TOffset = Streamer<vint16>(*Strm);
-	delete Strm;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VImgzTexture::GetPixels
 //
 //==========================================================================
@@ -2119,7 +2278,8 @@ vuint8* VImgzTexture::GetPixels()
 		return Pixels;
 	}
 
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
+		FL_OpenFileRead(*Name);
 
 	//	Read header.
 	Strm->Seek(4);	//	Skip magic.
@@ -2216,12 +2376,54 @@ void VImgzTexture::Unload()
 //
 //==========================================================================
 
-VPcxTexture::VPcxTexture(int InType, VName InName)
-: Pixels(0)
+VTexture* VPcxTexture::Create(VStream& Strm, int LumpNum, VName Name)
+{
+	guard(VPcxTexture::Create);
+	if (Strm.TotalSize() < 128)
+	{
+		//	File is too small.
+		return NULL;
+	}
+
+	pcx_t Hdr;
+	Strm.Seek(0);
+	Strm << Hdr;
+
+	if (Hdr.manufacturer != 0x0a || Hdr.encoding != 1 ||
+		Hdr.version == 1 || Hdr.version > 5 || Hdr.reserved != 0 ||
+		(Hdr.bits_per_pixel != 1 && Hdr.bits_per_pixel != 8) ||
+		(Hdr.bits_per_pixel == 1 && Hdr.colour_planes != 1 && Hdr.colour_planes != 4) ||
+		(Hdr.bits_per_pixel == 8 && Hdr.bytes_per_line != ((Hdr.xmax - Hdr.xmin + 1) & ~1)) ||
+		(Hdr.palette_type != 1 && Hdr.palette_type != 2))
+	{
+		return NULL;
+	}
+	for (int i = 0; i < 54; i++) 
+	{
+		if (Hdr.filler[i] != 0)
+		{
+			return NULL;
+		}
+	}
+
+	return new VPcxTexture(LumpNum, Name, Hdr);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPcxTexture::VPcxTexture
+//
+//==========================================================================
+
+VPcxTexture::VPcxTexture(int ALumpNum, VName AName, pcx_t& Hdr)
+: LumpNum(ALumpNum)
+, Pixels(0)
 , Palette(0)
 {
-	Type = InType;
-	Name = InName;
+	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Width = Hdr.xmax - Hdr.xmin + 1;
+	Height = Hdr.ymax - Hdr.ymin + 1;
 }
 
 //==========================================================================
@@ -2246,19 +2448,6 @@ VPcxTexture::~VPcxTexture()
 
 //==========================================================================
 //
-//	VPcxTexture::GetDimensions
-//
-//==========================================================================
-
-void VPcxTexture::GetDimensions()
-{
-	guard(VPcxTexture::GetDimensions);
-	GetPixels();
-	unguard;
-}
-
-//==========================================================================
-//
 //	VPcxTexture::GetPixels
 //
 //==========================================================================
@@ -2277,7 +2466,8 @@ vuint8* VPcxTexture::GetPixels()
 	}
 
 	//	Open stream.
-	VStream* Strm = FL_OpenFileRead(*Name);
+	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
+		FL_OpenFileRead(*Name);
 	if (!Strm)
 	{
 		Sys_Error("Couldn't find file %s", *Name);
@@ -2401,16 +2591,55 @@ void VPcxTexture::Unload()
 
 //==========================================================================
 //
+//	VTgaTexture::Create
+//
+//==========================================================================
+
+VTexture* VTgaTexture::Create(VStream& Strm, int LumpNum, VName Name)
+{
+	guard(VTgaTexture::Create);
+	if (Strm.TotalSize() < 18)
+	{
+		//	File is too small.
+		return NULL;
+	}
+
+	tgaHeader_t Hdr;
+	Strm.Seek(0);
+	Strm << Hdr;
+
+	if ((Hdr.pal_type != 0 && Hdr.pal_type != 1) || Hdr.width <= 0 ||
+		Hdr.height <= 0 || Hdr.width > 2048 || Hdr.height > 2048 ||
+		(Hdr.pal_type == 0 && Hdr.bpp != 15 && Hdr.bpp != 16 &&
+		Hdr.bpp != 24 && Hdr.bpp != 32) ||
+		(Hdr.pal_type == 1 && Hdr.bpp != 8) ||
+		(Hdr.pal_type == 0 && Hdr.img_type != 2 && Hdr.img_type != 10) ||
+		(Hdr.pal_type == 1 && Hdr.img_type != 1 && Hdr.img_type != 3 &&
+		Hdr.img_type != 9 && Hdr.img_type != 11) ||
+		(Hdr.pal_type == 1 && Hdr.pal_entry_size != 16 &&
+		Hdr.pal_entry_size != 24 && Hdr.pal_entry_size != 32) ||
+		(Hdr.descriptor_bits & 16) != 0)
+	{
+		return NULL;
+	}
+	return new VTgaTexture(LumpNum, Name, Hdr);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VTgaTexture::VTgaTexture
 //
 //==========================================================================
 
-VTgaTexture::VTgaTexture(int InType, VName InName)
-: Pixels(0)
+VTgaTexture::VTgaTexture(int ALumpNum, VName AName, tgaHeader_t& Hdr)
+: LumpNum(ALumpNum)
+, Pixels(0)
 , Palette(0)
 {
-	Type = InType;
-	Name = InName;
+	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Width = Hdr.width;
+	Height = Hdr.height;
 }
 
 //==========================================================================
@@ -2430,19 +2659,6 @@ VTgaTexture::~VTgaTexture()
 	{
 		delete[] Palette;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VTgaTexture::GetDimensions
-//
-//==========================================================================
-
-void VTgaTexture::GetDimensions()
-{
-	guard(VTgaTexture::GetDimensions);
-	GetPixels();
 	unguard;
 }
 
@@ -2873,20 +3089,49 @@ void VTgaTexture::Unload()
 //	VPngTexture
 //**************************************************************************
 
-//==========================================================================
-//
-//	VPngTexture::VPngTexture
-//
-//==========================================================================
-
-VPngTexture::VPngTexture(int InType, int InLumpNum)
-: LumpNum(InLumpNum)
-, Pixels(0)
-, Palette(0)
+VTexture* VPngTexture::Create(VStream& Strm, int LumpNum, VName Name)
 {
-	Type = InType;
-	Name = W_LumpName(InLumpNum);
-	Format = TEXFMT_8;
+	guard(VPngTexture::Create);
+	if (Strm.TotalSize() < 29)
+	{
+		//	File is too small.
+		return NULL;
+	}
+
+	vuint8		Id[8];
+
+	//	Verify signature.
+	Strm.Seek(0);
+	Strm.Serialise(Id, 8);
+	if (Id[0] != 137 || Id[1] != 'P' || Id[2] != 'N' || Id[3] != 'G' ||
+		Id[4] != 13 || Id[5] != 10 || Id[6] != 26 || Id[7] != 10)
+	{
+		//	Not a PNG file.
+		return NULL;
+	}
+
+	//	Make sure it's followed by an image header.
+	Strm.Serialise(Id, 8);
+	if (Id[0] != 0 || Id[1] != 0 || Id[2] != 0 || Id[3] != 13 ||
+		Id[4] != 'I' || Id[5] != 'H' || Id[6] != 'D' || Id[7] != 'R')
+	{
+		//	Assume it's a corupted file.
+		return NULL;
+	}
+
+	//	Read image info.
+	vint32		Width;
+	vint32		Height;
+	vuint8		BitDepth;
+	vuint8		ColourType;
+	vuint8		Compression;
+	vuint8		Filter;
+	vuint8		Interlace;
+	Strm << Width << Height << BitDepth << ColourType << Compression
+		<< Filter << Interlace;
+
+	return new VPngTexture(LumpNum, Name, Width, Height);
+	unguard;
 }
 
 //==========================================================================
@@ -2895,13 +3140,14 @@ VPngTexture::VPngTexture(int InType, int InLumpNum)
 //
 //==========================================================================
 
-VPngTexture::VPngTexture(int InType, VName InName)
-: LumpNum(-1)
+VPngTexture::VPngTexture(int ALumpNum, VName AName, int AWidth, int AHeight)
+: LumpNum(ALumpNum)
 , Pixels(0)
 , Palette(0)
 {
-	Type = InType;
-	Name = InName;
+	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Width = AWidth;
+	Height = AHeight;
 }
 
 //==========================================================================
@@ -2921,19 +3167,6 @@ VPngTexture::~VPngTexture()
 	{
 		delete[] Palette;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VPngTexture::GetDimensions
-//
-//==========================================================================
-
-void VPngTexture::GetDimensions()
-{
-	guard(VPngTexture::GetDimensions);
-	GetPixels();
 	unguard;
 }
 
@@ -3155,6 +3388,8 @@ void WritePCX(char* filename, void* data, int width, int height, int bpp,
 	pcx.colour_planes = bpp == 8 ? 1 : 3;
 	pcx.bytes_per_line = width;
 	pcx.palette_type = 1;	// not a grey scale
+	pcx.horz_screen_size = 0;
+	pcx.vert_screen_size = 0;
 	memset(pcx.filler, 0, sizeof(pcx.filler));
 	*Strm << pcx;
 

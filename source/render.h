@@ -31,13 +31,6 @@
 
 enum
 {
-	PIC_PATCH,	// A standard Doom patch
-	PIC_RAW,	// Raw screens in Heretic and Hexen
-	PIC_IMAGE	// External graphic image file
-};
-
-enum
-{
 	TEXTYPE_Any,
 	TEXTYPE_WallPatch,
 	TEXTYPE_Wall,
@@ -52,17 +45,17 @@ enum
 
 struct picinfo_t
 {
-	int		width;
-	int		height;
-	int		xoffset;
-	int		yoffset;
+	vint32		width;
+	vint32		height;
+	vint32		xoffset;
+	vint32		yoffset;
 };
 
 struct TSwitch
 {
-	int Tex1;
-	int Tex2;
-	int Sound;
+	vint32		Tex1;
+	vint32		Tex2;
+	vint32		Sound;
 };
 
 struct VAnimDoorDef
@@ -96,7 +89,6 @@ public:
 	void SetFrontSkyLayer(int tex);
 	void GetTextureInfo(int TexNum, picinfo_t* info);
 	int AddPatch(VName Name, int Type);
-	int CreatePatch(int Type, int LumpNum);
 	int AddRawWithPal(VName Name, VName PalName);
 	int AddFileTexture(VName Name, int Type);
 	vuint8* GetRgbTable();

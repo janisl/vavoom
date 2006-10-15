@@ -931,8 +931,12 @@ VStream* VWadFile::CreateLumpReaderNum(int lump)
 
 	// read the lump in
 	void* ptr = Z_Malloc(l.Size);
-	Stream->Seek(l.Position);
-	Stream->Serialise(ptr, l.Size);
+	if (l.Size)
+	{
+		Stream->Seek(l.Position);
+		Stream->Serialise(ptr, l.Size);
+	}
+	
 
 	//	Create stream.
 	VStream* S = new VMemoryStream(ptr, l.Size);

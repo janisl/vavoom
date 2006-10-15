@@ -113,9 +113,10 @@ public:
 	VTexture();
 	virtual ~VTexture();
 
-	int GetWidth() { if (Width == -1) GetDimensions(); return Width; }
-	int GetHeight() { if (Width == -1) GetDimensions(); return Height; }
-	virtual void GetDimensions();
+	static VTexture* CreateTexture(int, int, VName);
+
+	int GetWidth() { return Width; }
+	int GetHeight() { return Height; }
 	virtual void SetFrontSkyLayer();
 	virtual vuint8* GetPixels() = 0;
 	virtual vuint8* GetPixels8();
