@@ -1763,6 +1763,9 @@ void MakeContents(line_t * line)
 		line->frontsector->ceiling.flags = line->arg3;
 		line->frontsector->floor.flags = line->arg3;
 	}
+	print("---- Contents %d %d %d ----", line->frontsector->params.contents,
+		line->frontsector->floor.translucency,
+		line->frontsector->ceiling.flags);
 }
 
 //==========================================================================
@@ -2121,7 +2124,7 @@ defaultproperties
 	terrain_contents[2] = CONTENTS_BLOOD;
 	terrain_contents[3] = CONTENTS_NUKAGE;
 	terrain_contents[4] = CONTENTS_SLIME;
-	terrain_contents[5] = CONTENTS_LAVA;
+	terrain_contents[5] = CONTENTS_HELLSLIME;
 
 	contents_transluc[0] = 0;
 	contents_transluc[1] = 50;

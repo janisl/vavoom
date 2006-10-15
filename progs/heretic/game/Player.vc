@@ -1482,7 +1482,7 @@ void PlayerInSpecialSector(float deltaTime)
 //
 //==========================================================================
 
-void PlayerInContents()
+void PlayerInContents(float deltaTime)
 {
 	if (!MO.WaterLevel)
 	{
@@ -1491,17 +1491,47 @@ void PlayerInContents()
 	switch (MO.WaterType)
 	{
 	case CONTENTS_LAVA:
-		if (!(Level.Game.level->tictime & 15))
+		if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
-			Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 8);
+			LastSectorDamageTime = Level.Game.level->time;
+			Actor(MO).Damage(HereticLevelInfo(Level).GLavaInflictor, none, 10);
+		}
+		break;
+
+	case CONTENTS_NUKAGE:
+		if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.Game.level->time;
+			Actor(MO).Damage(none, none, 5);
+		}
+		break;
+
+	case CONTENTS_SLIME:
+		if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.Game.level->time;
+			Actor(MO).Damage(none, none, 10);
+		}
+		break;
+
+	case CONTENTS_HELLSLIME:
+		if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
+		{
+			LastSectorDamageTime = Level.Game.level->time;
+			Actor(MO).Damage(none, none, 20);
 		}
 		break;
 
 	case CONTENTS_SLUDGE:
-		if (!(Level.Game.level->tictime & 31))
+		if (Level.Game.level->time - LastSectorDamageTime >= 32.0 / 35.0)
 		{
+			LastSectorDamageTime = Level.Game.level->time;
 			Actor(MO).Damage(none, none, 4);
 		}
+		break;
+
+	case CONTENTS_HAZARD:
+		HazardTime += 2.0 * deltaTime;
 		break;
 	}
 }
@@ -1935,7 +1965,7 @@ void PlayerTick(float deltaTime)
 
 	if (MO.Sector->special)
 		PlayerInSpecialSector(deltaTime);
-	PlayerInContents();
+	PlayerInContents(deltaTime);
 
 	// Check for weapon change.
 	if (Impulse)
@@ -2126,12 +2156,32 @@ void PaletteFlash()
 			CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
 			break;
 
+		case CONTENTS_LAVA:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			break;
+
+		case CONTENTS_NUKAGE:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
+			break;
+
+		case CONTENTS_SLIME:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
+			break;
+
+		case CONTENTS_HELLSLIME:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			break;
+
+		case CONTENTS_BLOOD:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
+			break;
+
 		case CONTENTS_SLUDGE:
 			CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
 			break;
 
-		case CONTENTS_LAVA:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+		case CONTENTS_HAZARD:
+			CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 128);
 			break;
 		}
 	}
