@@ -79,7 +79,11 @@ enum
 
 enum
 {
-	CSHIFT_CONTENTS
+	CSHIFT_Contents,
+	CSHIFT_Damage,
+	CSHIFT_Bonus,
+	CSHIFT_Berserk,
+	CSHIFT_Power
 };
 
 enum

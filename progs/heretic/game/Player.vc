@@ -49,12 +49,7 @@ const int
 const float MAXBOB	= 16.0;
 
 const int
-	INVERSECOLOURMAP	= 32,
-
-	STARTREDPALS	= 1,
-	STARTBONUSPALS	= 9,
-	NUMREDPALS		= 8,
-	NUMBONUSPALS	= 4;
+	INVERSECOLOURMAP	= 32;
 
 const int MAXHEALTH	= 100;
 
@@ -1862,7 +1857,6 @@ void DeathPlayerTick(float deltaTime)
 	{
 		NewTorch = 0;
 		NewTorchDelta = 0;
-		Palette = 0;
 		InvCurPos = 0;
 		InvPtr = 0;
 		PlayerState = PST_REBORN;
@@ -2147,66 +2141,61 @@ void PlayerTick(float deltaTime)
 
 void PaletteFlash()
 {
-	CShifts[CSHIFT_CONTENTS] = 0;
+	CShifts[CSHIFT_Contents] = 0;
 	if (MO.WaterLevel == 3)
 	{
 		switch (MO.WaterType)
 		{
 		case CONTENTS_WATER:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			CShifts[CSHIFT_Contents] = CSHIFT(130, 80, 50, 128);
 			break;
 
 		case CONTENTS_LAVA:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(255, 80, 0, 150);
 			break;
 
 		case CONTENTS_NUKAGE:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(50, 255, 50, 150);
 			break;
 
 		case CONTENTS_SLIME:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(0, 25, 5, 150);
 			break;
 
 		case CONTENTS_HELLSLIME:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(255, 80, 0, 150);
 			break;
 
 		case CONTENTS_BLOOD:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(160, 16, 16, 150);
 			break;
 
 		case CONTENTS_SLUDGE:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(128, 160, 128, 150);
 			break;
 
 		case CONTENTS_HAZARD:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 128);
+			CShifts[CSHIFT_Contents] = CSHIFT(128, 160, 128, 128);
 			break;
 		}
 	}
 
+	CShifts[CSHIFT_Damage] = 0;
 	if (DamageFlash)
 	{
-		Palette = (ftoi(32.0 * DamageFlash) + 7) >> 3;
-		if (Palette >= NUMREDPALS)
-		{
-			Palette = NUMREDPALS - 1;
-		}
-		Palette += STARTREDPALS;
+		int Amount = ftoi(114.0 * DamageFlash);
+		if (Amount >= 228)
+			Amount = 228;
+		CShifts[CSHIFT_Damage] = CSHIFT(255, 0, 0, Amount);
 	}
-	else if (BonusFlash)
+
+	CShifts[CSHIFT_Bonus] = 0;
+	if (BonusFlash)
 	{
-		Palette = (ftoi(32.0 * BonusFlash) + 7) >> 3;
-		if (Palette >= NUMBONUSPALS)
-		{
-			Palette = NUMBONUSPALS - 1;
-		}
-		Palette += STARTBONUSPALS;
-	}
-	else
-	{
-		Palette = 0;
+		int Amount = ftoi(256.0 * BonusFlash);
+		if (Amount >= 128)
+			Amount = 128;
+		CShifts[CSHIFT_Bonus] = CSHIFT(215, 186, 68, Amount);
 	}
 }
 

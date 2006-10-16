@@ -65,7 +65,7 @@ void A_MStaffAttack()
 	Player.MO.PlaySound('MageStaffFire', CHAN_WEAPON);
 	Player(Player).DamageFlash = 0.0;
 	Player(Player).BonusFlash = 0.0;
-	Player(Player).WeaponPalette = Player::STARTSCOURGEPAL;
+	Player(Player).WeaponCShift = CSHIFT(255, 187, 4, 76);
 }
 
 //==========================================================================
@@ -76,7 +76,7 @@ void A_MStaffAttack()
 
 void A_MStaffPalette1()
 {
-	Player(Player).WeaponPalette = Player::STARTSCOURGEPAL + 1;
+	Player(Player).WeaponCShift = CSHIFT(255, 187, 4, 63);
 }
 
 //==========================================================================
@@ -87,7 +87,7 @@ void A_MStaffPalette1()
 
 void A_MStaffPalette2()
 {
-	Player(Player).WeaponPalette = Player::STARTSCOURGEPAL + 2;
+	Player(Player).WeaponCShift = CSHIFT(255, 187, 4, 51);
 }
 
 //==========================================================================
@@ -99,7 +99,7 @@ void A_MStaffPalette2()
 void A_MStaffPalette3()
 {
 	// reset back to original playpal
-	Player(Player).WeaponPalette = 0;
+	Player(Player).WeaponCShift = 0;
 }
 
 __states__

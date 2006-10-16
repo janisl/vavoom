@@ -41,9 +41,6 @@ void A_Punch()
 	power = Player(Player).Stamina / 10;
 	damage = (P_Random() % (power + 8)) * (power + 2);
 
-	if (Player(Player).Powers[pw_strength])
-		damage *= 10;
-
 	angles = Player.MO.Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);

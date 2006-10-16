@@ -38,7 +38,6 @@ import linespec;
 enum
 {
 	pw_invulnerability,
-	pw_strength,
 	pw_invisibility,
 	pw_ironfeet,
 	pw_infrared,
@@ -70,7 +69,10 @@ enum
 
 enum
 {
-	CSHIFT_CONTENTS
+	CSHIFT_Contents,
+	CSHIFT_Damage,
+	CSHIFT_Bonus,
+	CSHIFT_Hazard
 };
 
 enum

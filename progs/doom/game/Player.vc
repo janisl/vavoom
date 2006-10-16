@@ -45,19 +45,6 @@ const float BONUSADD		= 0.2;
 
 const int INVERSECOLOURMAP	= 32;
 
-//
-//  PALETTE MACROS
-//
-
-// Palette indices.
-// For damage/bonus red-/gold-shifts
-const int STARTREDPALS		= 1;
-const int STARTBONUSPALS	= 9;
-const int NUMREDPALS		= 8;
-const int NUMBONUSPALS		= 4;
-// Radiation suit, green shift.
-const int RADIATIONPAL		= 13;
-
 const float USERANGE		= 64.0;
 
 const float ST_STRAIGHTFACETIME		= 0.5;
@@ -1830,82 +1817,80 @@ void PlayerTick(float deltaTime)
 
 void PaletteFlash()
 {
-	int cnt;
-	int bzc;
-
-	CShifts[CSHIFT_CONTENTS] = 0;
+	CShifts[CSHIFT_Contents] = 0;
 	if (MO.WaterLevel == 3)
 	{
 		switch (MO.WaterType)
 		{
 		case CONTENTS_WATER:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(130, 80, 50, 128);
+			CShifts[CSHIFT_Contents] = CSHIFT(130, 80, 50, 128);
 			break;
 
 		case CONTENTS_LAVA:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(255, 80, 0, 150);
 			break;
 
 		case CONTENTS_NUKAGE:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(50, 255, 50, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(50, 255, 50, 150);
 			break;
 
 		case CONTENTS_SLIME:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(0, 25, 5, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(0, 25, 5, 150);
 			break;
 
 		case CONTENTS_HELLSLIME:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(255, 80, 0, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(255, 80, 0, 150);
 			break;
 
 		case CONTENTS_BLOOD:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(160, 16, 16, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(160, 16, 16, 150);
 			break;
 
 		case CONTENTS_SLUDGE:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 150);
+			CShifts[CSHIFT_Contents] = CSHIFT(128, 160, 128, 150);
 			break;
 
 		case CONTENTS_HAZARD:
-			CShifts[CSHIFT_CONTENTS] = CSHIFT(128, 160, 128, 128);
+			CShifts[CSHIFT_Contents] = CSHIFT(128, 160, 128, 128);
 			break;
 		}
 	}
 
-	cnt = ftoi(32.0 * DamageFlash);
+	CShifts[CSHIFT_Damage] = 0;
+	if (DamageFlash)
+	{
+		int Amount = ftoi(114.0 * DamageFlash);
+		if (Amount >= 228)
+			Amount = 228;
+		CShifts[CSHIFT_Damage] = CSHIFT(255, 0, 0, Amount);
+	}
 
+	CShifts[CSHIFT_Bonus] = 0;
+	if (BonusFlash)
+	{
+		int Amount = ftoi(256.0 * BonusFlash);
+		if (Amount >= 128)
+			Amount = 128;
+		CShifts[CSHIFT_Bonus] = CSHIFT(215, 186, 68, Amount);
+	}
+
+	CShifts[CSHIFT_Berserk] = 0;
 	if (Powers[pw_strength])
 	{
 		// slowly fade the berzerk out
-		bzc = 12 - ftoi(Powers[pw_strength] / 2.0);
-
-		if (bzc > cnt)
-			cnt = bzc;
+		int Amount = 12 - ftoi(Powers[pw_strength] / 2.0);
+		if (Amount > 0)
+		{
+			Amount = (Amount + 7) >> 3;
+			CShifts[CSHIFT_Berserk] = CSHIFT(255, 0, 0, (Amount + 1) * 28);
+		}
 	}
 
-	if (cnt)
+	CShifts[CSHIFT_Power] = 0;
+	if (Powers[pw_ironfeet] > 4.0 || ftoi(4.0 * Powers[pw_ironfeet]) & 1)
 	{
-		Palette = (cnt + 7) >> 3;
-
-		if (Palette >= NUMREDPALS)
-			Palette = NUMREDPALS - 1;
-
-		Palette += STARTREDPALS;
+		CShifts[CSHIFT_Power] = CSHIFT(0, 255, 0, 32);
 	}
-	else if (BonusFlash)
-	{
-		Palette = (ftoi(32.0 * BonusFlash) + 7) >> 3;
-
-		if (Palette >= NUMBONUSPALS)
-			Palette = NUMBONUSPALS - 1;
-
-		Palette += STARTBONUSPALS;
-	}
-	else if (Powers[pw_ironfeet] > 4.0 ||
-		ftoi(4.0 * Powers[pw_ironfeet]) & 1)
-		Palette = RADIATIONPAL;
-	else
-		Palette = 0;
 }
 
 //==========================================================================

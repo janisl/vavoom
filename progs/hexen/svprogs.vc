@@ -58,7 +58,11 @@ enum
 
 enum
 {
-	CSHIFT_CONTENTS
+	CSHIFT_Contents,
+	CSHIFT_Damage,
+	CSHIFT_Bonus,
+	CSHIFT_Poison,
+	CSHIFT_Weapon
 };
 
 // Power up artifacts.

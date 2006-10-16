@@ -40,7 +40,7 @@ void A_CHolyAttack()
 	Player(Player).SpawnPlayerMissile(HolyMissile);
 	Player(Player).DamageFlash = 0.0;
 	Player(Player).BonusFlash = 0.0;
-	Player(Player).WeaponPalette = Player::STARTHOLYPAL;
+	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 66);
 	Player.MO.PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
@@ -52,7 +52,7 @@ void A_CHolyAttack()
 
 void A_CHolyPalette1()
 {
-	Player(Player).WeaponPalette = Player::STARTHOLYPAL + 1;
+	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 51);
 }
 
 //============================================================================
@@ -63,7 +63,7 @@ void A_CHolyPalette1()
 
 void A_CHolyPalette2()
 {
-	Player(Player).WeaponPalette = Player::STARTHOLYPAL + 2;
+	Player(Player).WeaponCShift = CSHIFT(255, 255, 255, 36);
 }
 
 //============================================================================
@@ -75,7 +75,7 @@ void A_CHolyPalette2()
 void A_CHolyPalette3()
 {
 	// reset back to original playpal
-	Player(Player).WeaponPalette = 0;
+	Player(Player).WeaponCShift = 0;
 }
 
 __states__
