@@ -376,7 +376,7 @@ rgba_t				r_palette[256];
 vuint8				r_black_colour;
 
 //	Switches
-TArray<TSwitch>		Switches;
+TArray<TSwitch*>	Switches;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -3767,6 +3767,116 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 
 //==========================================================================
 //
+//	AddSwitchDef
+//
+//==========================================================================
+
+static int AddSwitchDef(TSwitch* Switch)
+{
+	for (int i = 0; i < Switches.Num(); i++)
+	{
+		if (Switches[i]->Tex == Switch->Tex)
+		{
+			delete Switches[i];
+			Switches[i] = Switch;
+			return i;
+		}
+	}
+	return Switches.Append(Switch);
+}
+
+//==========================================================================
+//
+//	ParseSwitchState
+//
+//==========================================================================
+
+static TSwitch* ParseSwitchState(VScriptParser* sc, bool IgnoreBad)
+{
+	TArray<TSwitchFrame>	Frames;
+	int						Sound = 0;
+	bool					Bad = false;
+
+	while (1)
+	{
+		if (sc->Check("sound"))
+		{
+			if (Sound)
+			{
+				sc->Error("Switch state already has a sound");
+			}
+			sc->ExpectString();
+			Sound = GSoundManager->GetSoundID(*sc->String);
+		}
+		else if (sc->Check("pic"))
+		{
+			sc->ExpectName8();
+			int Tex = GTextureManager.CheckNumForName(sc->Name8,
+				TEXTYPE_Wall, true, false);
+			if (Tex < 0 && !IgnoreBad)
+			{
+				Bad = true;
+			}
+			TSwitchFrame& F = Frames.Alloc();
+			F.Texture = Tex;
+			if (sc->Check("tics"))
+			{
+				sc->ExpectNumber();
+				F.BaseTime = sc->Number;
+				F.RandomRange = 0;
+			}
+			else if (sc->Check("range"))
+			{
+				sc->ExpectNumber();
+				int Min = sc->Number;
+				sc->ExpectNumber();
+				int Max = sc->Number;
+				if (Min < Max)
+				{
+					F.BaseTime = Min;
+					F.RandomRange = Max - Min + 1;
+				}
+				else
+				{
+					F.BaseTime = Max;
+					F.RandomRange = Min - Max + 1;
+				}
+			}
+			else
+			{
+				sc->Error("Must specify a duration for switch frame");
+			}
+		}
+		else
+		{
+			break;
+		}
+	}
+
+	if (!Frames.Num())
+	{
+		sc->Error("Switch state needs at least one frame");
+	}
+	if (Bad)
+	{
+		return NULL;
+	}
+
+	TSwitch* Def = new TSwitch();
+	Def->Sound = Sound;
+	Def->NumFrames = Frames.Num();
+	Def->Frames = new TSwitchFrame[Frames.Num()];
+	for (int i = 0; i < Frames.Num(); i++)
+	{
+		Def->Frames[i].Texture = Frames[i].Texture;
+		Def->Frames[i].BaseTime = Frames[i].BaseTime;
+		Def->Frames[i].RandomRange = Frames[i].RandomRange;
+	}
+	return Def;
+}
+
+//==========================================================================
+//
 //	ParseSwitchDef
 //
 //==========================================================================
@@ -3795,37 +3905,32 @@ static void ParseSwitchDef(VScriptParser* sc)
 	sc->ExpectName8();
 	int t1 = GTextureManager.CheckNumForName(sc->Name8, TEXTYPE_Wall, true,
 		false);
-	int t2 = -1;
-	VName SndName = NAME_None;
+	bool Quest = false;
+	TSwitch* Def1 = NULL;
+	TSwitch* Def2 = NULL;
 
 	//	Currently only basic switch definition is supported.
 	while (1)
 	{
 		if (sc->Check("quest"))
 		{
+			Quest = true;
 		}
 		else if (sc->Check("on"))
 		{
-			while (1)
+			if (Def1)
 			{
-				if (sc->Check("sound"))
-				{
-					sc->ExpectString();
-					SndName = *sc->String;
-				}
-				else if (sc->Check("pic"))
-				{
-					sc->ExpectName8();
-					t2 = GTextureManager.CheckNumForName(sc->Name8,
-						TEXTYPE_Wall, true, false);
-					sc->Expect("tics");
-					sc->Expect("0");
-				}
-				else
-				{
-					break;
-				}
+				sc->Error("Switch already has an on state");
 			}
+			Def1 = ParseSwitchState(sc, t1 == -1);
+		}
+		else if (sc->Check("off"))
+		{
+			if (Def2)
+			{
+				sc->Error("Switch already has an off state");
+			}
+			Def2 = ParseSwitchState(sc, t1 == -1);
 		}
 		else
 		{
@@ -3833,17 +3938,38 @@ static void ParseSwitchDef(VScriptParser* sc)
 		}
 	}
 
-	if (t1 < 0 || t2 < 0)
+	if (t1 < 0 || !Def1)
 	{
+		if (Def1)
+			delete Def1;
+		if (Def2)
+			delete Def2;
 		return;
 	}
-	TSwitch& sw = Switches.Alloc();
-	if (SndName == NAME_None)
-		sw.Sound = 0;
-	else
-		sw.Sound = GSoundManager->GetSoundID(SndName);
-	sw.Tex1 = t1;
-	sw.Tex2 = t2;
+
+	if (!Def2)
+	{
+		//	If switch has no off state create one that just switches
+		// back to base texture.
+		Def2 = new TSwitch();
+		Def2->Sound = Def1->Sound;
+		Def2->NumFrames = 1;
+		Def2->Frames = new TSwitchFrame[1];
+		Def2->Frames[0].Texture = t1;
+		Def2->Frames[0].BaseTime = 0;
+		Def2->Frames[0].RandomRange = 0;
+	}
+
+	Def1->Tex = t1;
+	Def2->Tex = Def1->Frames[Def1->NumFrames - 1].Texture;
+	if (Def1->Tex == Def2->Tex)
+	{
+		sc->Error("On state must not end on base texture");
+	}
+	Def1->Quest = Quest;
+	Def2->Quest = Quest;
+	Def2->PairIndex = AddSwitchDef(Def1);
+	Def1->PairIndex = AddSwitchDef(Def2);
 }
 
 //==========================================================================
@@ -4043,10 +4169,24 @@ void P_InitSwitchList()
 			{
 				continue;
 			}
-			TSwitch& sw = Switches.Alloc();
-			sw.Sound = 0;
-			sw.Tex1 = t1;
-			sw.Tex2 = t2;
+			TSwitch* Def1 = new TSwitch();
+			TSwitch* Def2 = new TSwitch();
+			Def1->Sound = 0;
+			Def2->Sound = 0;
+			Def1->Tex = t1;
+			Def2->Tex = t2;
+			Def1->NumFrames = 1;
+			Def2->NumFrames = 1;
+			Def1->Frames = new TSwitchFrame[1];
+			Def2->Frames = new TSwitchFrame[1];
+			Def1->Frames[0].Texture = t2;
+			Def1->Frames[0].BaseTime = 0;
+			Def1->Frames[0].RandomRange = 0;
+			Def2->Frames[0].Texture = t1;
+			Def2->Frames[0].BaseTime = 0;
+			Def2->Frames[0].RandomRange = 0;
+			Def2->PairIndex = AddSwitchDef(Def1);
+			Def1->PairIndex = AddSwitchDef(Def2);
 		}
 		delete Strm;
 	}
@@ -4164,6 +4304,10 @@ void R_ShutdownTexture()
 {
 	guard(R_ShutdownTexture);
 	//	Clean up animation and switch definitions.
+	for (int i = 0; i < Switches.Num(); i++)
+	{
+		delete Switches[i];
+	}
 	Switches.Clear();
 	AnimDefs.Clear();
 	FrameDefs.Clear();

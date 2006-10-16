@@ -57,11 +57,15 @@ class VButton : public VThinker
 
 	vint32		Side;
 	vuint8		Where;
-	vint32		Texture;
+	vint32		SwitchDef;
+	vint32		Frame;
 	float		Timer;
+	VName		DefaultSound;
+	bool		UseAgain;
 
-	void Tick(float);
 	void Serialise(VStream&);
+	void Tick(float);
+	bool AdvanceFrame();
 };
 
 struct TTerrainType
@@ -97,7 +101,8 @@ static TArray<TTerrainType>	TerrainTypes;
 //
 //==========================================================================
 
-static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
+static bool P_StartButton(int sidenum, EBWhere w, int SwitchDef,
+	VName DefaultSound, bool UseAgain)
 {
 	guard(P_StartButton);
 	// See if button is already pressed
@@ -110,7 +115,9 @@ static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 		}
 		if (((VButton*)Th)->Side == sidenum)
 		{
-			return;
+			//	Force advancing to the next frame
+			((VButton*)Th)->Timer = 0.001;
+			return false;
 		}
 	}
 
@@ -118,8 +125,12 @@ static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 	GLevel->AddThinker(But);
 	But->Side = sidenum;
 	But->Where = w;
-	But->Texture = texture;
-	But->Timer = time;
+	But->SwitchDef = SwitchDef;
+	But->Frame = -1;
+	But->DefaultSound = DefaultSound;
+	But->UseAgain = UseAgain;
+	But->AdvanceFrame();
+	return true;
 	unguard;
 }
 
@@ -142,45 +153,19 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 
 	for (int  i = 0; i < Switches.Num(); i++)
 	{
-		int fromTex;
-		int toTex;
 		EBWhere where;
-		TSwitch* sw = &Switches[i];
+		TSwitch* sw = Switches[i];
 
-		if (sw->Tex1 == texTop)
+		if (sw->Tex == texTop)
 		{
-			fromTex = sw->Tex1;
-			toTex = sw->Tex2;
 			where = SWITCH_TOP;
 		}
-		else if (sw->Tex1 == texMid)
+		else if (sw->Tex == texMid)
 		{
-			fromTex = sw->Tex1;
-			toTex = sw->Tex2;
 			where = SWITCH_MIDDLE;
 		}
-		else if (sw->Tex1 == texBot)
+		else if (sw->Tex == texBot)
 		{
-			fromTex = sw->Tex1;
-			toTex = sw->Tex2;
-			where = SWITCH_BOTTOM;
-		}
-		else if (sw->Tex2 == texTop)
-		{
-			fromTex = sw->Tex2;
-			toTex = sw->Tex1;
-			where = SWITCH_TOP;
-		}
-		else if (sw->Tex2 == texMid)
-		{
-			fromTex = sw->Tex2;
-			toTex = sw->Tex1;
-			where = SWITCH_MIDDLE;
-		}
-		else if (sw->Tex2 == texBot)
-		{
-			fromTex = sw->Tex2;
-			toTex = sw->Tex1;
 			where = SWITCH_BOTTOM;
 		}
 		else
@@ -188,37 +173,19 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 			continue;
 		}
 
-		int Sound = sw->Sound;
-		if (!Sound)
+		SV_SetLineTexture(sidenum, where, sw->Frames[0].Texture);
+		bool PlaySound;
+		if (useAgain || sw->NumFrames > 1)
+			PlaySound = P_StartButton(sidenum, where, i, DefaultSound,
+				useAgain);
+		else
+			PlaySound = true;
+		if (PlaySound)
 		{
-			Sound = GSoundManager->GetSoundID(DefaultSound);
-		}
-		SV_SectorStartSound(GLevel->Sides[sidenum].sector, Sound, 0, 1, 1);
-		SV_SetLineTexture(sidenum, where, toTex);
-		if (useAgain)
-		{
-			P_StartButton(sidenum, where, fromTex, BUTTONTIME);
+			SV_SectorStartSound(GLevel->Sides[sidenum].sector, sw->Sound ?
+				sw->Sound : GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
 		}
 		return;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VButton::Tick
-//
-//==========================================================================
-
-void VButton::Tick(float DeltaTime)
-{
-	guard(VButton::Tick);
-	//  DO BUTTONS
-	Timer -= DeltaTime;
-	if (Timer <= 0.0)
-	{
-		SV_SetLineTexture(Side, Where, Texture);
-		SetFlags(_OF_DelayedDestroy);
 	}
 	unguard;
 }
@@ -235,8 +202,83 @@ void VButton::Serialise(VStream& Strm)
 	Super::Serialise(Strm);
 	Strm << STRM_INDEX(Side)
 		<< Where
-		<< STRM_INDEX(Texture)
+		<< STRM_INDEX(SwitchDef)
+		<< STRM_INDEX(Frame)
 		<< Timer;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VButton::Tick
+//
+//==========================================================================
+
+void VButton::Tick(float DeltaTime)
+{
+	guard(VButton::Tick);
+	//  DO BUTTONS
+	Timer -= DeltaTime;
+	if (Timer <= 0.0)
+	{
+		TSwitch* Def = Switches[SwitchDef];
+		if (Frame == Def->NumFrames - 1)
+		{
+			SwitchDef = Def->PairIndex;
+			Def = Switches[Def->PairIndex];
+			Frame = -1;
+			SV_SectorStartSound(GLevel->Sides[Side].sector,
+				Def->Sound ? Def->Sound :
+				GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
+			UseAgain = false;
+		}
+
+		bool KillMe = AdvanceFrame();
+		SV_SetLineTexture(Side, Where, Def->Frames[Frame].Texture);
+		if (KillMe)
+		{
+			SetFlags(_OF_DelayedDestroy);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VButton::Tick
+//
+//==========================================================================
+
+bool VButton::AdvanceFrame()
+{
+	guard(VButton::AdvanceFrame);
+	Frame++;
+	bool Ret = false;
+	TSwitch* Def = Switches[SwitchDef];
+	if (Frame == Def->NumFrames - 1)
+	{
+		if (UseAgain)
+		{
+			Timer = BUTTONTIME;
+		}
+		else
+		{
+			Ret = true;
+		}
+	}
+	else
+	{
+		if (Def->Frames[Frame].RandomRange)
+		{
+			Timer = (Def->Frames[Frame].BaseTime + Random() *
+				Def->Frames[Frame].RandomRange) / 35.0;
+		}
+		else
+		{
+			Timer = Def->Frames[Frame].BaseTime / 35.0;
+		}
+	}
+	return Ret;
 	unguard;
 }
 

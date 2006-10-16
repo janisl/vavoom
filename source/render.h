@@ -51,11 +51,30 @@ struct picinfo_t
 	vint32		yoffset;
 };
 
+struct TSwitchFrame
+{
+	vint16		Texture;
+	vint16		BaseTime;
+	vint16		RandomRange;
+};
+
 struct TSwitch
 {
-	vint32		Tex1;
-	vint32		Tex2;
-	vint32		Sound;
+	vint16			Tex;
+	vint16			PairIndex;
+	vint16			Sound;
+	vint16			NumFrames;
+	TSwitchFrame*	Frames;
+	bool			Quest;
+
+	TSwitch()
+	: Frames(NULL)
+	{}
+	~TSwitch()
+	{
+		if (Frames)
+			delete[] Frames;
+	}
 };
 
 struct VAnimDoorDef
@@ -144,4 +163,4 @@ extern int				validcount;
 extern int				skyflatnum;
 
 //	Switches
-extern TArray<TSwitch>	Switches;
+extern TArray<TSwitch*>	Switches;
