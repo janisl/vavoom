@@ -51,12 +51,17 @@ enum EBWhere
 	SWITCH_BOTTOM
 };
 
-struct TButton
+class VButton : public VThinker
 {
-    int		Side;
-    EBWhere	Where;
-    int		Texture;
-    float	Timer;
+	DECLARE_CLASS(VButton, VThinker, 0)
+
+	vint32		Side;
+	vuint8		Where;
+	vint32		Texture;
+	float		Timer;
+
+	void Tick(float);
+	void Serialise(VStream&);
 };
 
 struct TTerrainType
@@ -77,26 +82,12 @@ struct TTerrainType
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-//	Buttons
-static TArray<TButton>		ButtonList;
+IMPLEMENT_CLASS(V, Button)
 
 //	Terrain types, maby not right place for them
 static TArray<TTerrainType>	TerrainTypes;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//  P_ClearButtons
-//
-//==========================================================================
-
-void P_ClearButtons()
-{
-	guard(P_ClearButtons);
-	ButtonList.Clear();
-	unguard;
-}
 
 //==========================================================================
 //
@@ -109,20 +100,26 @@ void P_ClearButtons()
 static void P_StartButton(int sidenum, EBWhere w, int texture, float time)
 {
 	guard(P_StartButton);
-    // See if button is already pressed
-	for (int i = 0; i < ButtonList.Num(); i++)
-    {
-		if (ButtonList[i].Side == sidenum)
+	// See if button is already pressed
+	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
+	{
+		if (!Th->IsA(VButton::StaticClass()) ||
+			(Th->GetFlags() & _OF_DelayedDestroy))
 		{
-		    return;
+			continue;
 		}
-    }
+		if (((VButton*)Th)->Side == sidenum)
+		{
+			return;
+		}
+	}
 
-    TButton& but = ButtonList.Alloc();
-	but.Side = sidenum;
-	but.Where = w;
-	but.Texture = texture;
-	but.Timer = time;
+	VButton* But = Spawn<VButton>();
+	GLevel->AddThinker(But);
+	But->Side = sidenum;
+	But->Where = w;
+	But->Texture = texture;
+	But->Timer = time;
 	unguard;
 }
 
@@ -209,25 +206,37 @@ void P_ChangeSwitchTexture(line_t* line, bool useAgain, VName DefaultSound)
 
 //==========================================================================
 //
-//	P_UpdateButtons
+//	VButton::Tick
 //
 //==========================================================================
 
-void P_UpdateButtons()
+void VButton::Tick(float DeltaTime)
 {
-	guard(P_UpdateButtons);
+	guard(VButton::Tick);
 	//  DO BUTTONS
-	for (int i = 0; i < ButtonList.Num(); i++)
+	Timer -= DeltaTime;
+	if (Timer <= 0.0)
 	{
-		TButton& b = ButtonList[i];
-		b.Timer -= host_frametime;
-		if (b.Timer <= 0.0)
-		{
-			SV_SetLineTexture(b.Side, b.Where, b.Texture);
-			ButtonList.RemoveIndex(i);
-			i--;
-		}
+		SV_SetLineTexture(Side, Where, Texture);
+		SetFlags(_OF_DelayedDestroy);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VButton::Serialise
+//
+//==========================================================================
+
+void VButton::Serialise(VStream& Strm)
+{
+	guard(VButton::Serialise);
+	Super::Serialise(Strm);
+	Strm << STRM_INDEX(Side)
+		<< Where
+		<< STRM_INDEX(Texture)
+		<< Timer;
 	unguard;
 }
 

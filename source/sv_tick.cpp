@@ -94,7 +94,6 @@ void P_Ticker()
 
 	RunThinkers();
 	GLevelInfo->eventUpdateSpecials();
-    P_UpdateButtons();
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{

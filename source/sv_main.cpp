@@ -245,7 +245,6 @@ void SV_Shutdown()
 	level.LevelName.Clean();
 	
 	P_FreeTerrainTypes();
-	P_ClearButtons();
 	svs.serverinfo.Clean();
 	for (int i = 0; i < MAX_SKINS; i++)
 	{
@@ -2527,9 +2526,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	}
 
 	// set up world state
-
-	//	Init buttons
-	P_ClearButtons();
 
 	//
 	//	P_SpawnSpecials
