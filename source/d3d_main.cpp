@@ -890,7 +890,6 @@ void VDirect3DDrawer::EndView()
 	guard(VDirect3DDrawer::EndView);
 	Setup2D();
 
-	cl->CShifts[7] = GClGame->prev_cshifts[7];
 	for (int i = 0; i < NUM_CSHIFTS; i++)
 	{
 		if (!cl->CShifts[i])
@@ -1150,31 +1149,5 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = false;
 	return dst;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::SetPalette
-//
-//==========================================================================
-
-void VDirect3DDrawer::SetPalette(int pnum)
-{
-	guard(VDirect3DDrawer::SetPalette);
-	rgb_t* pal = (rgb_t*)r_playpal;
-
-	pal += 256 * pnum;
-	int cmax = MAX(MAX(pal[0].r, pal[0].g), pal[0].b);
-	if (!cmax)
-	{
-		cl->CShifts[7] = 0;
-	}
-	else
-	{
-		cl->CShifts[7] = (cmax << 24) | ((255 * pal[0].r / cmax) << 16) |
-			((255 * pal[0].g / cmax) << 8) | (255 * pal[0].b / cmax);
-	}
-	GClGame->prev_cshifts[7] = cl->CShifts[7];
 	unguard;
 }

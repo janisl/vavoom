@@ -69,8 +69,6 @@ vuint8*			consbgmap = NULL;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static rgb_t	host_basepal[256];
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -237,49 +235,6 @@ static void CalcFadetable32(rgb_t *pal)
 
 //==========================================================================
 //
-//	VSoftwareDrawer::SetPalette
-//
-//==========================================================================
-
-void VSoftwareDrawer::SetPalette(int InNum)
-{
-	guard(VSoftwareDrawer::SetPalette);
-	int num = InNum;
-	if (num < 0 || num >= 32)
-	{
-		GCon->Logf(NAME_Dev, "Invalid palette num %d", num);
-		num = 0;
-	}
-	vuint8 *pal = r_playpal + num * 768;
-	if (ScreenBPP == 8)
-	{
-		SetPalette8(pal);
-		CalcRGBTable8();
-	}
-	else if (PixelBytes == 2)
-	{
-		CalcCol16Table();
-		CalcFadetable16((rgb_t*)pal);
-		FlushCaches(true);
-		FlushTextureCaches();
-	}
-	else
-	{
-		CalcCol32Table();
-		CalcFadetable32((rgb_t*)pal);
-		FlushCaches(true);
-		FlushTextureCaches();
-	}
-
-	//	Save palette
-	memcpy(host_basepal, pal, 768);
-	//	Must recalculate any cshifts
-	memset(GClGame->prev_cshifts, 0, sizeof(GClGame->prev_cshifts));
-	unguard;
-}
-
-//==========================================================================
-//
 //	InitColourmaps
 //
 //==========================================================================
@@ -389,13 +344,13 @@ void VSoftwareDrawer::UpdatePalette()
 	guard(VSoftwareDrawer::UpdatePalette);
 	int		i, j;
 	bool	newshifts;
-	byte	*basepal, *newpal;
+	byte	*newpal;
 	byte	pal[768];
 	int		r,g,b;
 	int		dstr, dstg, dstb, perc;
 
 	newshifts = false;
-	
+
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
 		if (cl->CShifts[i] != GClGame->prev_cshifts[i])
@@ -404,21 +359,21 @@ void VSoftwareDrawer::UpdatePalette()
 			GClGame->prev_cshifts[i] = cl->CShifts[i];
 		}
 	}
-	
+
 	if (!newshifts)
 	{
 		return;
 	}
-			
-	basepal = (byte*)host_basepal;
+
+	rgba_t* basepal = r_palette;
 	newpal = pal;
 	
 	for (i = 0; i < 256; i++)
 	{
-		r = basepal[0];
-		g = basepal[1];
-		b = basepal[2];
-		basepal += 3;
+		r = basepal->r;
+		g = basepal->g;
+		b = basepal->b;
+		basepal++;
 	
 		for (j = 0; j < NUM_CSHIFTS; j++)
 		{

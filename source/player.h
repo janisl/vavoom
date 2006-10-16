@@ -156,10 +156,6 @@ class VBasePlayer : public VObject
 	// For lite-amp and invulnarability powers
 	int				FixedColourmap;
 
-	// Current PLAYPAL index
-	//  can be set to REDCOLOURMAP for pain, etc.
-	int				Palette;
-
 	// Colour shifts for damage, powerups and content types
 	vuint32			CShifts[NUM_CSHIFTS];
 

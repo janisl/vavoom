@@ -60,7 +60,6 @@ void F_StartFinale(const char* FinaleType)
 {
 	GClGame->intermission = 2;
 	automapactive = false;
-	cl->Palette = 0;
 
 	GClGame->eventStartFinale(FinaleType);
 }

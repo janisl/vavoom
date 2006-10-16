@@ -1066,7 +1066,6 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 		<< player.ViewOrg.z
 		<< (vuint8)player.ExtraLight
 		<< (vuint8)player.FixedColourmap
-		<< (vuint8)player.Palette
 		<< (vuint8)player.MO->Translucency
 		<< (vuint16)player.PSpriteSY;
 	if (player.ViewEnts[0] && player.ViewEnts[0]->State)

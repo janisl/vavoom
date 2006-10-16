@@ -153,7 +153,6 @@ public:
 	void InitData();
 	void InitResolution();
 	void NewMap();
-	void SetPalette(int);
 	void StartUpdate();
 	void BeginDirectUpdate();
 	void EndDirectUpdate();

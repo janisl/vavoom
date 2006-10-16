@@ -423,7 +423,6 @@ void VOpenGLDrawer::EndView()
 	guard(VOpenGLDrawer::EndView);
 	Setup2D();
 
-	cl->CShifts[7] = GClGame->prev_cshifts[7];
 	for (int i = 0; i < NUM_CSHIFTS; i++)
 	{
 		if (!cl->CShifts[i])
@@ -468,29 +467,5 @@ void *VOpenGLDrawer::ReadScreen(int *bpp, bool *bot2top)
 	*bpp = 24;
 	*bot2top = true;
 	return dst;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenGLDrawer::SetPalette
-//
-//==========================================================================
-
-void VOpenGLDrawer::SetPalette(int pnum)
-{
-	guard(VOpenGLDrawer::SetPalette);
-	vuint8* pal = r_playpal + 768 * pnum;
-	int cmax = MAX(MAX(pal[0], pal[1]), pal[2]);
-	if (!cmax)
-	{
-		cl->CShifts[7] = 0;
-	}
-	else
-	{
-		cl->CShifts[7] = (cmax << 24) | ((255 * pal[0] / cmax) << 16) |
-			((255 * pal[1] / cmax) << 8) | (255 * pal[2] / cmax);
-	}
-	GClGame->prev_cshifts[7] = cl->CShifts[7];
 	unguard;
 }

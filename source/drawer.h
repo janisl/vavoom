@@ -87,7 +87,6 @@ public:
 	virtual bool SetResolution(int, int, int) = 0;
 	virtual void InitResolution() = 0;
 	virtual void NewMap() = 0;
-	virtual void SetPalette(int) = 0;
 	virtual void StartUpdate() = 0;
 	virtual void Update() = 0;
 	virtual void BeginDirectUpdate() = 0;

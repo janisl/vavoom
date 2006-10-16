@@ -302,7 +302,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClearPlayer)
 	Self->PlayerFlags &= ~VBasePlayer::PF_UseDown;
 	Self->ExtraLight = 0;
 	Self->FixedColourmap = 0;
-	Self->Palette = 0;
 	memset(Self->CShifts, 0, sizeof(Self->CShifts));
 	Self->PSpriteSY = 0;
 	memset((vuint8*)Self + sizeof(VBasePlayer), 0,

@@ -315,7 +315,6 @@ static void CL_ParseViewData(VMessage& msg)
 		>> cl->ViewOrg.z;
 	cl->ExtraLight = msg.ReadByte();
 	cl->FixedColourmap = msg.ReadByte();
-	cl->Palette = msg.ReadByte();
 	cl->ViewEntTranslucency = msg.ReadByte();
 	cl->PSpriteSY = msg.ReadShort();
 

@@ -117,7 +117,6 @@ public:
 	void InitData();
 	void InitResolution();
 	void NewMap();
-	void SetPalette(int);
 	void StartUpdate();
 	void Setup2D();
 	void BeginDirectUpdate();

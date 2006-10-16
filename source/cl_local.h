@@ -94,8 +94,6 @@ class VClientGameBase : public VObject
 
 	int					intermission;
 
-	int					prev_palette;
-
 	vuint32				prev_cshifts[NUM_CSHIFTS];	// powerups and content types
 
 	float				time;

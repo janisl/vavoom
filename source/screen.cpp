@@ -348,7 +348,6 @@ static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 static void CheckResolutionChange()
 {
 	guard(CheckResolutionChange);
-	bool		must_set_pal = false;
 	bool		res_changed = false;
 
 	if (brightness != usegamma)
@@ -364,26 +363,18 @@ static void CheckResolutionChange()
 			usegamma = 4;
 			brightness = usegamma;
 		}
-		must_set_pal = true;
 	}
 	if (setresolutionneeded)
 	{
 		ChangeResolution(setwidth, setheight, setbpp);
 		setresolutionneeded = false;
 		res_changed = true;
-		must_set_pal = true;
 	}
 	else if (!screen_width || screen_width != ScreenWidth ||
 		screen_height != ScreenHeight || screen_bpp != ScreenBPP)
 	{
 		ChangeResolution(screen_width, screen_height, screen_bpp);
 		res_changed = true;
-		must_set_pal = true;
-	}
-
-	if (must_set_pal)
-	{
-		Drawer->SetPalette(GClGame->prev_palette);
 	}
 
 	if (res_changed)
@@ -472,12 +463,6 @@ void SCR_Update()
 	CheckResolutionChange();
 
 	Drawer->StartUpdate();
-
-	if (GClGame->prev_palette != cl->Palette)
-	{
-		Drawer->SetPalette(cl->Palette);
-		GClGame->prev_palette = cl->Palette;
-	}
 
 	// do buffered drawing
 	if (cls.state != ca_disconnected)

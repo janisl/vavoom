@@ -171,7 +171,6 @@ public:
 	bool SetResolution(int, int, int);
 	void InitResolution();
 	void NewMap();
-	void SetPalette(int);
 	void StartUpdate();
 	void Update();
 	void BeginDirectUpdate();

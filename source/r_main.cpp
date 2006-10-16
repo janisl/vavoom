@@ -181,7 +181,6 @@ void R_Start()
 	{
 		R_PrecacheLevel();
 	}
-	Drawer->SetPalette(0);
 	unguard;
 }
 
