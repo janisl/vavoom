@@ -30,6 +30,7 @@
 #define DEFAULT_GRAVITY			1225.0
 
 struct tmtrace_t;
+struct avoiddropoff_t;
 
 extern VGameInfo*		GGameInfo;
 extern VLevelInfo*		GLevelInfo;
