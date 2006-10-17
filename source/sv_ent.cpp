@@ -89,6 +89,8 @@ struct avoiddropoff_t
 {
 	VEntity *thing;
 	float angle;
+	float deltax;
+	float deltay;
 	float floorx;
 	float floory;
 	float floorz;
@@ -399,7 +401,9 @@ static bool PIT_CheckThing(void* arg, VEntity *Other)
 	float blockdist;
 	cptrace_t cptrace = *(cptrace_t*)arg;
 
-	if (!(Other->EntityFlags & VEntity::EF_Solid))
+	// can't hit thing
+	if (!(cptrace.Thing->EntityFlags & VEntity::EF_Solid) ||
+		!(cptrace.Thing->EntityFlags & VEntity::EF_Shootable))
 		return true;
 
 	blockdist = Other->Radius + cptrace.Thing->Radius;
@@ -601,6 +605,9 @@ bool VEntity::CheckPosition(TVec Pos)
 
 	validcount++;
 
+	if ((cptrace.Thing->EntityFlags & EF_ColideWithThings) && !(cptrace.Thing->EntityFlags & EF_SkullFly))
+		return true;
+
 	// Check things first, possibly picking things up.
 	// The bounding box is extended by MAXRADIUS
 	// because mobj_ts are grouped into mapblocks
@@ -615,6 +622,9 @@ bool VEntity::CheckPosition(TVec Pos)
 		for (by = yl; by <= yh; by++)
 			if (!XLevel->BlockThingsIterator(bx, by, PIT_CheckThing, &cptrace, NULL, NULL))
 				return false;
+
+	if ((cptrace.Thing->EntityFlags & EF_ColideWithWorld) && !(cptrace.Thing->EntityFlags & EF_SkullFly))
+		return true;
 
 	// check lines
 	xl = MapBlock(cptrace.bbox[BOXLEFT] - XLevel->BlockMapOrgX);
@@ -652,7 +662,7 @@ bool VEntity::CheckPosition(TVec Pos)
 
 static bool PIT_AvoidDropoff(void* arg, line_t *line)
 {
-	guardSlow(PIT_AvoidDropoff);
+	guard(PIT_AvoidDropoff);
 	float front;
 	float back;
 	sec_region_t* FrontReg;
@@ -671,29 +681,30 @@ static bool PIT_AvoidDropoff(void* arg, line_t *line)
 			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
 		BackReg = SV_FindThingGap(line->backsector->botregion,
 			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
-
 		front = FrontReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
 		back = BackReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
-
 		// The monster must contact one of the two floors,
 		// and the other must be a tall dropoff.
 		if ((back == a.floorz) && (front < a.floorz - a.thing->MaxDropoffHeight))
 		{
 			// front side dropoff
 			a.angle = matan(line->normal.y, line->normal.x);
-			return false;
 		}
 		else if ((front == a.floorz) && (back < a.floorz - a.thing->MaxDropoffHeight))
 		{
 			// back side dropoff
 			a.angle = matan(-line->normal.y, -line->normal.x);
-			return false;
 		}
 		else
 			return true;
+		// Move away from dropoff at a standard speed.
+		// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
+		a.deltax -= sin(a.angle) * 32.0;
+		a.deltay += cos(a.angle) * 32.0;
 	}
+
 	return true;
-	unguardSlow;
+	unguard;
 }
 
 //=============================================================================
@@ -704,7 +715,7 @@ static bool PIT_AvoidDropoff(void* arg, line_t *line)
 //
 //=============================================================================
 
-float VEntity::CheckDropOff()
+bool VEntity::CheckDropOff(avoiddropoff_t& a)
 {
 	guard(VEntity::CheckDropOff);
 	int xl;
@@ -713,8 +724,6 @@ float VEntity::CheckDropOff()
 	int yh;
 	int bx;
 	int by;
-
-	avoiddropoff_t a;
 
 	// Try to move away from a dropoff
 	a.thing = this;
@@ -736,10 +745,10 @@ float VEntity::CheckDropOff()
 	validcount++;
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if(!XLevel->BlockLinesIterator(bx, by, PIT_AvoidDropoff, &a)) // all contacted lines
-				return a.angle;
+			if(XLevel->BlockLinesIterator(bx, by, PIT_AvoidDropoff, &a)) // all contacted lines
+				return true;
 
-	return 0.0;
+	return false;
 	unguard;
 }
 
@@ -769,7 +778,8 @@ static bool PIT_CheckRelThing(void* arg, VEntity *Other)
 		return true;
 
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj))
+	if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) ||
+		tmtrace.Thing->EntityFlags & VEntity::EF_Special)
 	{
 		// check if a mobj passed over/under another object
 /*		if ((tmtrace.Thing.Class == Imp || tmtrace.Thing.Class == Wizard)
@@ -1116,7 +1126,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			eventPushLine(&tmtrace);
 			return false;
 		}
-		else if (Origin.z < tmtrace.FloorZ)
+		if (Origin.z < tmtrace.FloorZ)
 		{
 			// Check to make sure there's nothing in the way for the step up
 			tztrace_t tztrace;
@@ -1133,7 +1143,8 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 //			eventPushLine();
 //		}
 		// killough 3/15/98: Allow certain objects to drop off
-		if (!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float))
+		if ((!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float)  && !(EntityFlags & EF_Missile)) ||
+			(EntityFlags & EF_AvoidingDropoff))
 		{
 			float floorz = tmtrace.FloorZ;
 
@@ -1146,8 +1157,8 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 
 			if (!(EntityFlags & EF_AvoidingDropoff))
 			{
-				if (!(EntityFlags & EF_Blasted) &&
-					(floorz - tmtrace.DropOffZ > MaxDropoffHeight))
+				if ((floorz - tmtrace.DropOffZ > MaxDropoffHeight) &&
+					!(EntityFlags & EF_Blasted))
 				{
 					// Can't move over a dropoff unless it's been blasted
 					return false;
@@ -1156,7 +1167,8 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			else
 			{
 				// special logic to move a monster off a dropoff
-				if (DropOffZ - tmtrace.DropOffZ > MaxDropoffHeight)
+				if (FloorZ - floorz > MaxDropoffHeight ||
+					DropOffZ - tmtrace.DropOffZ > MaxDropoffHeight)
 					return false;
 			}
 		}
@@ -1636,6 +1648,10 @@ static bool PIT_CheckOnmobjZ(void* arg, VEntity *Other)
 		// Didn't hit thing
 		return true;
 	}
+	if (Other->EntityFlags & VEntity::EF_Corpse)
+	{ // Specials don't block moves
+		return true;
+	}
 	if (Other == tztrace.tzmthing)
 	{
 		// Don't clip against self
@@ -2044,8 +2060,9 @@ IMPLEMENT_FUNCTION(VEntity, CheckWater)
 
 IMPLEMENT_FUNCTION(VEntity, CheckDropOff)
 {
+	P_GET_PTR(avoiddropoff_t, a);
 	P_GET_SELF;
-	RET_FLOAT(Self->CheckDropOff());
+	RET_BOOL(Self->CheckDropOff(*a));
 }
 
 //==========================================================================
