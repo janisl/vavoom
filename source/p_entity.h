@@ -79,6 +79,7 @@
 
 struct tztrace_t;
 struct tmtrace_t;
+struct avoiddropoff_t;
 
 class VEntity : public VThinker
 {
@@ -159,6 +160,10 @@ class VEntity : public VThinker
 		EF_OnMobj				= 0x00080000,	// mobj is resting on top of another mobj
 		EF_Corpse				= 0x00100000,	// don't stop moving halfway off a step
 		EF_FullBright			= 0x00200000,	// make current state full bright
+		EF_Special				= 0x00400000,	// call P_SpecialThing when touched
+		EF_Shootable			= 0x00800000,	// Can be hit
+		EF_Missile				= 0x01000000,	// don't hit same species, explode on block
+		EF_SkullFly				= 0x02000000,	// skull in flight
 	};
 	vuint32			EntityFlags;
 
@@ -309,7 +314,7 @@ class VEntity : public VThinker
 
 	bool CheckWater();
 	bool CheckSides(TVec);
-	float CheckDropOff();
+	bool CheckDropOff(avoiddropoff_t&);
 	bool CheckPosition(TVec);
 	bool CheckRelPosition(tmtrace_t&, TVec);
 	bool TryMove(tmtrace_t&, TVec);
