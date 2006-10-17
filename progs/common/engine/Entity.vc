@@ -150,6 +150,10 @@ bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step
 bool bFullBright;		// make current state full bright
+bool bSpecial;			// call P_SpecialThing when touched
+bool bShootable;		// Can be hit.
+bool bSkullFly;			// skull in flight
+bool bMissile;			// don't hit same species, explode on block
 
 int Health;
 
@@ -201,7 +205,7 @@ native final void AddSoundSequenceChoice(name Choice);
 native final void StopSoundSequence();
 
 native final bool CheckSides(TVec lsPos);
-native final float CheckDropOff();
+native final bool CheckDropOff(avoiddropoff_t* a);
 native final bool CheckPosition(TVec Pos);
 native final bool CheckRelPosition(tmtrace_t* tmtrace, TVec Pos);
 native final bool TryMove(TVec newPos);
