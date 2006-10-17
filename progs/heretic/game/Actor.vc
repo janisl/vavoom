@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -69,20 +69,16 @@ name PainSound;
 name DeathSound;
 
 //	FLAGS
-bool bSpecial;		// call P_SpecialThing when touched
-bool bShootable;	// Can be hit.
 bool bAmbush;		// Ambush
 bool bJustHit;		// try to attack right back
 bool bJustAttacked;	// take at least one step before attacking
 bool bSpawnCeiling;	// hang from ceiling instead of floor
 //	MOVEMENT FLAGS
 bool bPickUp;		// for players to pick up items
-bool bMissile;		// don't hit same species, explode on block
 bool bDropped;		// dropped by a demon, not level spawned
 bool bNoBlood;		// don't bleed when shot (use puff)
 bool bInFloat;		// floating to a height for a move, don't
 			// auto float to target's height
-bool bSkullFly;		// skull in flight
 bool bCountKill;	// count towards intermission kill total
 bool bCountItem;	// count towards intermission item total
 bool bWindThrust;	// gets pushed around by the wind specials
@@ -462,6 +458,11 @@ void OnMapSpawn(mthing_t * mthing)
 	}
 
 	LastLook = P_Random() % MAXPLAYERS;
+
+	if (bMissile)
+	{
+		MaxStepHeight = 4.0;
+	}
 
 	// Set the state, but do not use P_SetMobjState, because action
 	// routines can't be called yet.  If the spawnstate has an action
@@ -3419,14 +3420,11 @@ void DO_NewChaseDir(float deltax, float deltay)
 
 void NewChaseDir()
 {
-	float deltax, deltaxx;
-	float deltay, deltayy;
-	float angle;
+	float deltax;
+	float deltay;
 
 	deltax = Enemy.Origin.x - Origin.x;
 	deltay = Enemy.Origin.y - Origin.y;
-	deltaxx = 0.0;
-	deltayy = 0.0;
 
 	if (!Enemy)
 		Error("NewChaseDir: called with no Enemy");
@@ -3438,11 +3436,12 @@ void NewChaseDir()
 	if (FloorZ - tmtrace.DropOffZ > MaxDropoffHeight && 
 		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
 	{
-		// We call the CheckDropoff here to determine if the
+		avoiddropoff_t a;
+		// We call CheckDropoff here to determine if the
 		// bounding box actually needs to be used below
-		angle = CheckDropOff();
+		CheckDropOff(&a);
 
-		if (angle)
+		if (a.deltax || a.deltay)
 		{
 			// [Graf Zahl] I have changed TryMove to only apply this logic when
 			// being called from here. bAavoidingDropoff activates the code that
@@ -3450,14 +3449,9 @@ void NewChaseDir()
 			// MBF which requires unconditional use of the altered logic and therefore
 			// forcing a massive change in the monster behavior to use this.
 
-			// Move away from dropoff at a standard speed.
-			// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
-			deltaxx -= sin(angle) * 32.0;
-			deltayy += cos(angle) * 32.0;
-
 			// use different dropoff movement logic in TryMove
 			bAvoidingDropoff = true;
-			DO_NewChaseDir(deltaxx, deltayy);
+			DO_NewChaseDir(a.deltax, a.deltay);
 			bAvoidingDropoff = false;
 		
 			// If moving away from dropoff, set MoveCount to 1 so that
