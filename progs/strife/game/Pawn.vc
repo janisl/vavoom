@@ -544,14 +544,12 @@ void DO_NewChaseDir(float deltax, float deltay)
 
 void NewChaseDir()
 {
-	float deltax, deltaxx;
-	float deltay, deltayy;
+	float deltax;
+	float deltay;
 	float angle;
 
 	deltax = Enemy.Origin.x - Origin.x;
 	deltay = Enemy.Origin.y - Origin.y;
-	deltaxx = 0.0;
-	deltayy = 0.0;
 
 	if (!Enemy)
 		Error("NewChaseDir: called with no Enemy");
@@ -563,26 +561,22 @@ void NewChaseDir()
 	if (FloorZ - tmtrace.DropOffZ > MaxDropoffHeight && 
 		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
 	{
-		// We call the CheckDropoff here to determine if the
+		avoiddropoff_t a;
+		// We call CheckDropoff here to determine if the
 		// bounding box actually needs to be used below
-		angle = CheckDropOff();
+		CheckDropOff(&a);
 
-		if (angle)
+		if (a.deltax || a.deltay)
 		{
 			// [Graf Zahl] I have changed P_TryMove to only apply this logic when
-			// being called from here. AVOIDINGDROPOFF activates the code that
+			// being called from here. bAvoidingDropoff activates the code that
 			// allows monsters to move away from a dropoff. This is different from
 			// MBF which requires unconditional use of the altered logic and therefore
 			// forcing a massive change in the monster behavior to use this.
 
-			// Move away from dropoff at a standard speed.
-			// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
-			deltaxx -= sin(angle) * 32.0;
-			deltayy += cos(angle) * 32.0;
-
 			// use different dropoff movement logic in P_TryMove
 			bAvoidingDropoff = true;
-			DO_NewChaseDir(deltaxx, deltayy);
+			DO_NewChaseDir(a.deltax, a.deltay);
 			bAvoidingDropoff = false;
 		
 			// If moving away from dropoff, set movecount to 1 so that
