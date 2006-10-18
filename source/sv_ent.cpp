@@ -403,6 +403,7 @@ static bool PIT_CheckThing(void* arg, VEntity *Other)
 
 	// can't hit thing
 	if (!(cptrace.Thing->EntityFlags & VEntity::EF_Solid) ||
+		!(cptrace.Thing->EntityFlags & VEntity::EF_Special) ||
 		!(cptrace.Thing->EntityFlags & VEntity::EF_Shootable))
 		return true;
 
@@ -605,9 +606,6 @@ bool VEntity::CheckPosition(TVec Pos)
 
 	validcount++;
 
-	if ((cptrace.Thing->EntityFlags & EF_ColideWithThings) && !(cptrace.Thing->EntityFlags & EF_SkullFly))
-		return true;
-
 	// Check things first, possibly picking things up.
 	// The bounding box is extended by MAXRADIUS
 	// because mobj_ts are grouped into mapblocks
@@ -778,8 +776,7 @@ static bool PIT_CheckRelThing(void* arg, VEntity *Other)
 		return true;
 
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) ||
-		tmtrace.Thing->EntityFlags & VEntity::EF_Special)
+	if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj))
 	{
 		// check if a mobj passed over/under another object
 /*		if ((tmtrace.Thing.Class == Imp || tmtrace.Thing.Class == Wizard)
@@ -1143,7 +1140,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 //			eventPushLine();
 //		}
 		// killough 3/15/98: Allow certain objects to drop off
-		if ((!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float)  && !(EntityFlags & EF_Missile)) ||
+		if ((!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float)) ||
 			(EntityFlags & EF_AvoidingDropoff))
 		{
 			float floorz = tmtrace.FloorZ;
@@ -1646,10 +1643,6 @@ static bool PIT_CheckOnmobjZ(void* arg, VEntity *Other)
 		fabs(Other->Origin.y - tztrace.tzorg.y) >= blockdist)
 	{
 		// Didn't hit thing
-		return true;
-	}
-	if (Other->EntityFlags & VEntity::EF_Corpse)
-	{ // Specials don't block moves
 		return true;
 	}
 	if (Other == tztrace.tzmthing)
