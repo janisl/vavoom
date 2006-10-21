@@ -623,6 +623,7 @@ void VWadFile::OpenSingleLump(const VStr& FileName)
 	LumpInfo->Name = VName(*FileName.ExtractFileBase(), VName::AddLower8);
 	LumpInfo->Position = 0;
 	LumpInfo->Size = Stream->TotalSize();
+	LumpInfo->Namespace = WADNS_Global;
 	unguard;
 }
 
