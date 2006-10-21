@@ -79,6 +79,8 @@ extern surfcache_t*		d_initial_rover;
 extern surfcache_t*		sc_rover;
 extern surfcache_t*		sc_base;
 
+extern bool				ForcePaletteUpdate;
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 byte*					scrn;
@@ -291,6 +293,10 @@ void VSoftwareDrawer::InitResolution()
 	d_rowbytes = -ScreenWidth * PixelBytes;
 	d_zrowbytes = -ScreenWidth * 2;
 #endif
+
+	//	Force palette update
+	ForcePaletteUpdate = true;
+	UpdatePalette();
 	unguard;
 }
 

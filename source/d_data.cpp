@@ -67,6 +67,8 @@ vuint8*			d_rgbtable;
 
 vuint8*			consbgmap = NULL;
 
+bool			ForcePaletteUpdate;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
@@ -349,7 +351,8 @@ void VSoftwareDrawer::UpdatePalette()
 	int		r,g,b;
 	int		dstr, dstg, dstb, perc;
 
-	newshifts = false;
+	newshifts = ForcePaletteUpdate;
+	ForcePaletteUpdate = false;
 
 	for (i = 0; i < NUM_CSHIFTS; i++)
 	{
