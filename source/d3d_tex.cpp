@@ -257,7 +257,8 @@ void VDirect3DDrawer::SetTexture(int tex)
 
 	tex = GTextureManager.TextureAnimation(tex);
 
-	if (!GTextureManager.Textures[tex]->DriverData)
+	if (!GTextureManager.Textures[tex]->DriverData ||
+		GTextureManager.Textures[tex]->CheckModified())
 	{
 		GenerateTexture(tex);
 	}
@@ -304,6 +305,12 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 			{
 				if (trsprlump[i] == lump && trsprtnum[i] == translation)
 				{
+					if (GTextureManager.Textures[lump]->CheckModified())
+					{
+						SAFE_RELEASE(trsprdata[i]);
+						avail = i;
+						break;
+					}
 					RenderDevice->SetTexture(0, trsprdata[i]);
 					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
 					RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -332,7 +339,8 @@ void VDirect3DDrawer::SetSpriteLump(int lump, int translation)
 	}
 	else
 	{
-		if (!GTextureManager.Textures[lump]->DriverData)
+		if (!GTextureManager.Textures[lump]->DriverData ||
+			GTextureManager.Textures[lump]->CheckModified())
 		{
 			GenerateTexture(lump);
 		}
@@ -365,7 +373,8 @@ void VDirect3DDrawer::SetPic(int handle)
 
 	handle = GTextureManager.TextureAnimation(handle);
 
-	if (!GTextureManager.Textures[handle]->DriverData)
+	if (!GTextureManager.Textures[handle]->DriverData ||
+		GTextureManager.Textures[handle]->CheckModified())
 	{
 		GenerateTexture(handle);
 	}
@@ -399,6 +408,7 @@ void VDirect3DDrawer::GenerateTexture(int texnum)
 		SrcTex = Tex;
 	}
 
+	SAFE_RELEASE_TEXTURE(Tex->DriverData);
 	byte* block = SrcTex->GetPixels();
 	if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
 	{
@@ -410,7 +420,6 @@ void VDirect3DDrawer::GenerateTexture(int texnum)
 		Tex->DriverData = UploadTexture(SrcTex->GetWidth(),
 			SrcTex->GetHeight(), (rgba_t*)block);
 	}
-	SrcTex->Unload();
 	unguard;
 }
 
@@ -440,7 +449,6 @@ void VDirect3DDrawer::GenerateTranslatedSprite(int lump, int slot,
 	trsprdata[slot] = UploadTexture8(Tex->GetWidth(), Tex->GetHeight(),
 		block, Tex->GetPalette());
 	Z_Free(block);
-	Tex->Unload();
 	unguard;
 }
 

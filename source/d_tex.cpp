@@ -116,7 +116,8 @@ void VSoftwareDrawer::SetTexture(int tex)
 
 	if (GTextureManager.Textures[tex]->Type == TEXTYPE_SkyMap)
 	{
-		if (!GTextureManager.Textures[tex]->DriverData)
+		if (!GTextureManager.Textures[tex]->DriverData ||
+			GTextureManager.Textures[tex]->CheckModified())
 		{
 			LoadSkyMap(tex);
 		}
@@ -125,7 +126,10 @@ void VSoftwareDrawer::SetTexture(int tex)
 		return;
 	}
 
-	if (!GTextureManager.Textures[tex]->DriverData)
+if (GTextureManager.Textures[tex]->WarpType)
+dprintf("Warp needs rebuild %d\n", GTextureManager.Textures[tex]->CheckModified());
+	if (!GTextureManager.Textures[tex]->DriverData ||
+		GTextureManager.Textures[tex]->CheckModified())
 	{
 		GenerateTexture(tex);
 	}
@@ -148,6 +152,18 @@ void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
 
 	int i;
 	int avail = -1;
+	//	If texture has been modified, free all instances of this texture.
+	if (GTextureManager.Textures[lump]->CheckModified())
+	{
+		for (i = 0; i <	SPRITE_CACHE_SIZE; i++)
+		{
+			if (sprite_cache[i].data && sprite_cache[i].lump == lump)
+			{
+				Z_Free(sprite_cache[i].data);
+				sprite_cache[i].data = NULL;
+			}
+		}
+	}
 	for (i = 0; i <	SPRITE_CACHE_SIZE; i++)
 	{
 		if (sprite_cache[i].data)
@@ -190,7 +206,10 @@ void VSoftwareDrawer::SetSpriteLump(int lump, vuint32 light, int translation)
 byte* VSoftwareDrawer::SetPic(int handle)
 {
 	guard(VSoftwareDrawer::SetPic);
-	if (!GTextureManager.Textures[handle]->DriverData)
+	handle = GTextureManager.TextureAnimation(handle);
+
+	if (!GTextureManager.Textures[handle]->DriverData ||
+		GTextureManager.Textures[handle]->CheckModified())
 	{
 		GeneratePic(handle);
 	}
@@ -214,9 +233,13 @@ void VSoftwareDrawer::GenerateTexture(int texnum)
 
 	int mipw = (Tex->GetWidth() + 15) & ~15;
 	int miph = (Tex->GetHeight() + 15) & ~15;
-	miptexture_t* mip = (miptexture_t*)Z_Calloc(sizeof(miptexture_t) +
-		mipw * miph / 64 * 85);
-	Tex->DriverData = mip;
+	if (!Tex->DriverData)
+	{
+		Tex->DriverData = Z_Malloc(sizeof(miptexture_t) +
+			mipw * miph / 64 * 85);
+	}
+	miptexture_t* mip = (miptexture_t*)Tex->DriverData;
+	memset(mip, 0, sizeof(miptexture_t) + mipw * miph / 64 * 85);
 	mip->width = mipw;
 	mip->height = miph;
 	byte* pSrc = block;
@@ -229,7 +252,6 @@ void VSoftwareDrawer::GenerateTexture(int texnum)
 				(y % Tex->GetHeight()) * Tex->GetWidth()];
 		}
 	}
-	Tex->Unload();
 	MakeMips(mip);
 	unguard;
 }
@@ -349,7 +371,10 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 
 	byte* Pixels = Tex->GetPixels();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	Tex->DriverData = Z_Malloc(NumPixels * PixelBytes);
+	if (!Tex->DriverData)
+	{
+		Tex->DriverData = Z_Malloc(NumPixels * PixelBytes);
+	}
 	if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal)
 	{
 		// Load paletted skymap
@@ -433,7 +458,6 @@ void VSoftwareDrawer::LoadSkyMap(int texnum)
 			}
 		}
 	}
-	Tex->Unload();
 	unguard;
 }
 
@@ -593,8 +617,10 @@ void VSoftwareDrawer::GeneratePic(int texnum)
 	VTexture* Tex = GTextureManager.Textures[texnum];
 	byte* Pixels = Tex->GetPixels8();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	Tex->DriverData = (byte*)Z_Malloc(NumPixels);
+	if (!Tex->DriverData)
+	{
+		Tex->DriverData = (byte*)Z_Malloc(NumPixels);
+	}
 	memcpy(Tex->DriverData, Pixels, NumPixels);
-	Tex->Unload();
 	unguard;
 }

@@ -230,7 +230,8 @@ protected:
 	void InitCaches(void*, int);
 	void FlushCaches(bool);
 	surfcache_t *SCAlloc(int, int);
-	void SCDump(FOutputDevice& Ar);
+	void SCDump(FOutputDevice&);
+	void SCInvalidateTexture(int);
 
 	//	Surface caching.
 	surfcache_t *CacheSurface(surface_t *surface, int miplevel);

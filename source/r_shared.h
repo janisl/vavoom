@@ -97,6 +97,7 @@ public:
 	int			SOffset;
 	int			TOffset;
 	bool		bNoRemap0;
+	vuint8		WarpType;
 	float		SScale;				//	Scaling
 	float		TScale;
 	int			TextureTranslation;	// Animation
@@ -108,6 +109,7 @@ public:
 protected:
 	vuint8*		Pixels8Bit;
 	VTexture*	HiResTexture;
+	bool		Pixels8BitValid;
 
 public:
 	VTexture();
@@ -118,11 +120,12 @@ public:
 	int GetWidth() { return Width; }
 	int GetHeight() { return Height; }
 	virtual void SetFrontSkyLayer();
+	virtual bool CheckModified();
 	virtual vuint8* GetPixels() = 0;
-	virtual vuint8* GetPixels8();
+	vuint8* GetPixels8();
 	virtual rgba_t* GetPalette();
 	virtual void Unload() = 0;
-	VTexture* GetHighResolutionTexture();
+	virtual VTexture* GetHighResolutionTexture();
 
 protected:
 	void FixupPalette(vuint8* Pixels, rgba_t* Palette);

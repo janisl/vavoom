@@ -187,7 +187,8 @@ void VOpenGLDrawer::SetTexture(int tex)
 	guard(VOpenGLDrawer::SetTexture);
 	tex = GTextureManager.TextureAnimation(tex);
 
-	if (!GTextureManager.Textures[tex]->DriverHandle)
+	if (!GTextureManager.Textures[tex]->DriverHandle ||
+		GTextureManager.Textures[tex]->CheckModified())
 	{
 		GenerateTexture(tex);
 	}
@@ -221,6 +222,11 @@ void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
 			{
 				if (trspr_lump[i] == lump && trspr_tnum[i] == translation)
 				{
+					if (GTextureManager.Textures[lump]->CheckModified())
+					{
+						avail = i;
+						break;
+					}
 					glBindTexture(GL_TEXTURE_2D, trspr_id[i]);
 					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 					glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
@@ -248,7 +254,8 @@ void VOpenGLDrawer::SetSpriteLump(int lump, int translation)
 	}
 	else
 	{
-		if (!GTextureManager.Textures[lump]->DriverHandle)
+		if (!GTextureManager.Textures[lump]->DriverHandle ||
+			GTextureManager.Textures[lump]->CheckModified())
 		{
 			GenerateTexture(lump);
 		}
@@ -274,7 +281,10 @@ void VOpenGLDrawer::SetPic(int handle)
 {
 	guard(VOpenGLDrawer::SetPic);
 
-	if (!GTextureManager.Textures[handle]->DriverHandle)
+	handle = GTextureManager.TextureAnimation(handle);
+
+	if (!GTextureManager.Textures[handle]->DriverHandle ||
+		GTextureManager.Textures[handle]->CheckModified())
 	{
 		GenerateTexture(handle);
 	}
@@ -302,7 +312,10 @@ void VOpenGLDrawer::GenerateTexture(int texnum)
 	guard(VOpenGLDrawer::GenerateTexture);
 	VTexture* Tex = GTextureManager.Textures[texnum];
 
-	glGenTextures(1, (GLuint*)&Tex->DriverHandle);
+	if (!Tex->DriverHandle)
+	{
+		glGenTextures(1, (GLuint*)&Tex->DriverHandle);
+	}
 	glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
 
 	//	Try to load high resolution version.
@@ -323,7 +336,6 @@ void VOpenGLDrawer::GenerateTexture(int texnum)
 	{
 		UploadTexture(SrcTex->GetWidth(), SrcTex->GetHeight(), (rgba_t*)block);
 	}
-	SrcTex->Unload();
 
 	//	Set up texture wrapping.
 	if (Tex->Type == TEXTYPE_Wall || Tex->Type == TEXTYPE_Flat ||
@@ -380,7 +392,6 @@ void VOpenGLDrawer::GenerateTranslatedSprite(int lump, int slot, int translation
 	}
 
 	Z_Free(block);
-	Tex->Unload();
 	unguard;
 }
 

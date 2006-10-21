@@ -177,6 +177,13 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	// if the surface is animating or flashing, flush the cache
 	//
 	texture = GTextureManager.TextureAnimation(surface->texinfo->pic);
+
+	//	If texture has been modified mark all cache spots using this texture
+	// as invalid.
+	if (GTextureManager.Textures[texture]->CheckModified())
+	{
+		SCInvalidateTexture(texture);
+	}
 	
 	//
 	// see if the cache holds apropriate data

@@ -349,6 +349,42 @@ public:
 	void Unload();
 };
 
+//
+//	A texture that returns a wiggly version of another texture.
+//
+class VWarpTexture : public VTexture
+{
+public:
+	VTexture*	SrcTex;
+	vuint8*		Pixels;
+	float		GenTime;
+	float		WarpXScale;
+	float		WarpYScale;
+	float*		XSin1;
+	float*		XSin2;
+	float*		YSin1;
+	float*		YSin2;
+
+	VWarpTexture(VTexture*);
+	~VWarpTexture();
+	void SetFrontSkyLayer();
+	bool CheckModified();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	VTexture* GetHighResolutionTexture();
+	void Unload();
+};
+
+//
+//	Different style of warping.
+//
+class VWarp2Texture : public VWarpTexture
+{
+public:
+	VWarp2Texture(VTexture*);
+	vuint8* GetPixels();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -948,12 +984,14 @@ VTexture::VTexture()
 , SOffset(0)
 , TOffset(0)
 , bNoRemap0(false)
+, WarpType(0)
 , SScale(1)
 , TScale(1)
 , TextureTranslation(0)
 , DriverData(0)
 , Pixels8Bit(0)
 , HiResTexture(0)
+, Pixels8BitValid(false)
 {
 }
 
@@ -990,6 +1028,17 @@ void VTexture::SetFrontSkyLayer()
 
 //==========================================================================
 //
+//	VTexture::CheckModified
+//
+//==========================================================================
+
+bool VTexture::CheckModified()
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	VTexture::GetPixels8
 //
 //==========================================================================
@@ -998,7 +1047,7 @@ vuint8* VTexture::GetPixels8()
 {
 	guard(VTexture::GetPixels8);
 	//	If already have converted version, then just return it.
-	if (Pixels8Bit)
+	if (Pixels8Bit && Pixels8BitValid)
 	{
 		return Pixels8Bit;
 	}
@@ -1019,20 +1068,27 @@ vuint8* VTexture::GetPixels8()
 				((Pal[i].g << 2) & 0x3e0) + ((Pal[i].b >> 3) & 0x1f)];
 		}
 
-		Pixels8Bit = new vuint8[NumPixels];
+		if (!Pixels8Bit)
+		{
+			Pixels8Bit = new vuint8[NumPixels];
+		}
 		vuint8* pSrc = Pixels;
 		vuint8* pDst = Pixels8Bit;
 		for (i = 0; i < NumPixels; i++, pSrc++, pDst++)
 		{
 			*pDst = Remap[*pSrc];
 		}
+		Pixels8BitValid = true;
 		return Pixels8Bit;
 	}
 	else if (Format == TEXFMT_RGBA)
 	{
 		vuint8* RGBTable = GTextureManager.GetRgbTable();
 		int NumPixels = Width * Height;
-		Pixels8Bit = new vuint8[NumPixels];
+		if (!Pixels8Bit)
+		{
+			Pixels8Bit = new vuint8[NumPixels];
+		}
 		rgba_t* pSrc = (rgba_t*)Pixels;
 		vuint8* pDst = Pixels8Bit;
 		for (int i = 0; i < NumPixels; i++, pSrc++, pDst++)
@@ -1043,6 +1099,7 @@ vuint8* VTexture::GetPixels8()
 				*pDst = RGBTable[((pSrc->r << 7) & 0x7c00) +
 					((pSrc->g << 2) & 0x3e0) + ((pSrc->b >> 3) & 0x1f)];
 		}
+		Pixels8BitValid = true;
 		return Pixels8Bit;
 	}
 	return Pixels;
@@ -3089,6 +3146,12 @@ void VTgaTexture::Unload()
 //	VPngTexture
 //**************************************************************************
 
+//==========================================================================
+//
+//	VPngTexture::Create
+//
+//==========================================================================
+
 VTexture* VPngTexture::Create(VStream& Strm, int LumpNum, VName Name)
 {
 	guard(VPngTexture::Create);
@@ -3127,8 +3190,9 @@ VTexture* VPngTexture::Create(VStream& Strm, int LumpNum, VName Name)
 	vuint8		Compression;
 	vuint8		Filter;
 	vuint8		Interlace;
-	Strm << Width << Height << BitDepth << ColourType << Compression
-		<< Filter << Interlace;
+	Strm.SerialiseBigEndian(&Width, 4);
+	Strm.SerialiseBigEndian(&Height, 4);
+	Strm << BitDepth << ColourType << Compression << Filter << Interlace;
 
 	return new VPngTexture(LumpNum, Name, Width, Height);
 	unguard;
@@ -3347,6 +3411,359 @@ void VPngTexture::Unload()
 		delete[] Palette;
 		Palette = NULL;
 	}
+	unguard;
+}
+
+//END
+
+//BEGIN VWarpTexture
+
+//**************************************************************************
+//	VWarpTexture
+//**************************************************************************
+
+//==========================================================================
+//
+//	VWarpTexture::VWarpTexture
+//
+//==========================================================================
+
+VWarpTexture::VWarpTexture(VTexture* ASrcTex)
+: SrcTex(ASrcTex)
+, Pixels(NULL)
+, GenTime(0)
+, WarpXScale(1.0)
+, WarpYScale(1.0)
+, XSin1(NULL)
+, XSin2(NULL)
+, YSin1(NULL)
+, YSin2(NULL)
+{
+	Width = SrcTex->GetWidth();
+	Height = SrcTex->GetHeight();
+	SOffset = SrcTex->SOffset;
+	TOffset = SrcTex->TOffset;
+	SScale = SrcTex->SScale;
+	TScale = SrcTex->TScale;
+	WarpType = 1;
+}
+
+//==========================================================================
+//
+//	VWarpTexture::~VWarpTexture
+//
+//==========================================================================
+
+VWarpTexture::~VWarpTexture()
+{
+	guard(VWarpTexture::~VWarpTexture);
+	if (Pixels)
+	{
+		delete[] Pixels;
+	}
+	if (SrcTex)
+	{
+		delete SrcTex;
+	}
+	if (XSin1)
+	{
+		delete[] XSin1;
+	}
+	if (XSin2)
+	{
+		delete[] XSin2;
+	}
+	if (YSin1)
+	{
+		delete[] YSin1;
+	}
+	if (YSin2)
+	{
+		delete[] YSin2;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWarpTexture::SetFrontSkyLayer
+//
+//==========================================================================
+
+void VWarpTexture::SetFrontSkyLayer()
+{
+	guardSlow(VWarpTexture::SetFrontSkyLayer);
+	SrcTex->SetFrontSkyLayer();
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VWarpTexture::CheckModified
+//
+//==========================================================================
+
+bool VWarpTexture::CheckModified()
+{
+#ifdef CLIENT
+	return GenTime != cl_level.time;
+#else
+	return false;
+#endif
+}
+
+//==========================================================================
+//
+//	VWarpTexture::GetPixels
+//
+//==========================================================================
+
+vuint8* VWarpTexture::GetPixels()
+{
+	guard(VWarpTexture::GetPixels);
+#ifdef CLIENT
+	if (Pixels && GenTime == cl_level.time)
+	{
+		return Pixels;
+	}
+
+	const vuint8* SrcPixels = SrcTex->GetPixels();
+	Format = SrcTex->Format;
+
+	GenTime = cl_level.time;
+	Pixels8BitValid = false;
+
+	if (!XSin1)
+	{
+		XSin1 = new float[Width];
+		YSin1 = new float[Height];
+	}
+
+	//	Precalculate sine values.
+	for (int x = 0; x < Width; x++)
+	{
+		XSin1[x] = msin(GenTime * 44 + x / WarpXScale * 5.625 + 95.625) *
+			8 * WarpYScale + 8 * WarpYScale * Height;
+	}
+	for (int y = 0; y < Height; y++)
+	{
+		YSin1[y] = msin(GenTime * 50 + y / WarpYScale * 5.625) *
+			8 * WarpXScale + 8 * WarpXScale * Width;
+	}
+
+	if (Format == TEXFMT_8 || Format == TEXFMT_8Pal)
+	{
+		if (!Pixels)
+		{
+			Pixels = new vuint8[Width * Height];
+		}
+
+		vuint8* Dst = Pixels;
+		for (int y = 0; y < Height; y++)
+		{
+			for (int x = 0; x < Width; x++)
+			{
+				*Dst++ = SrcPixels[(((int)YSin1[y] + x) % Width) +
+					(((int)XSin1[x] + y) % Height) * Width];
+			}
+		}
+	}
+	else
+	{
+		if (!Pixels)
+		{
+			Pixels = new vuint8[Width * Height * 4];
+		}
+
+		vuint32* Dst = (vuint32*)Pixels;
+		for (int y = 0; y < Height; y++)
+		{
+			for (int x = 0; x < Width; x++)
+			{
+				*Dst++ = ((vuint32*)SrcPixels)[(((int)YSin1[y] + x) % Width) +
+					(((int)XSin1[x] + y) % Height) * Width];
+			}
+		}
+	}
+
+	return Pixels;
+#else
+	return NULL;
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWarpTexture::GetPalette
+//
+//==========================================================================
+
+rgba_t* VWarpTexture::GetPalette()
+{
+	guard(VWarpTexture::GetPalette);
+	return SrcTex->GetPalette();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWarpTexture::GetHighResolutionTexture
+//
+//==========================================================================
+
+VTexture* VWarpTexture::GetHighResolutionTexture()
+{
+	guard(VWarpTexture::GetHighResolutionTexture);
+	//	If high resolution texture is already created, then just return it.
+	if (HiResTexture)
+	{
+		return HiResTexture;
+	}
+
+	VTexture* SrcTex = VTexture::GetHighResolutionTexture();
+	if (!SrcTex)
+	{
+		return NULL;
+	}
+
+	VWarpTexture* NewTex;
+	if (WarpType == 1)
+		NewTex = new VWarpTexture(SrcTex);
+	else
+		NewTex = new VWarp2Texture(SrcTex);
+	NewTex->Name = Name;
+	NewTex->Type = Type;
+	NewTex->WarpXScale = NewTex->GetWidth() / GetWidth();
+	NewTex->WarpYScale = NewTex->GetHeight() / GetHeight();
+	HiResTexture = NewTex;
+	return HiResTexture;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWarpTexture::Unload
+//
+//==========================================================================
+
+void VWarpTexture::Unload()
+{
+	guard(VWarpTexture::Unload);
+	if (Pixels)
+	{
+		delete[] Pixels;
+		Pixels = NULL;
+	}
+	SrcTex->Unload();
+	unguard;
+}
+
+//END
+
+//BEGIN VWarpTexture
+
+//**************************************************************************
+//	VWarp2Texture
+//**************************************************************************
+
+//==========================================================================
+//
+//	VWarp2Texture::VWarp2Texture
+//
+//==========================================================================
+
+VWarp2Texture::VWarp2Texture(VTexture* ASrcTex)
+: VWarpTexture(ASrcTex)
+{
+	WarpType = 2;
+}
+
+//==========================================================================
+//
+//	VWarp2Texture::GetPixels
+//
+//==========================================================================
+
+vuint8* VWarp2Texture::GetPixels()
+{
+	guard(VWarp2Texture::GetPixels);
+#ifdef CLIENT
+	if (Pixels && GenTime == cl_level.time)
+	{
+		return Pixels;
+	}
+
+	const vuint8* SrcPixels = SrcTex->GetPixels();
+	Format = SrcTex->Format;
+
+	GenTime = cl_level.time;
+	Pixels8BitValid = false;
+
+	if (!XSin1)
+	{
+		XSin1 = new float[Height];
+		XSin2 = new float[Width];
+		YSin1 = new float[Height];
+		YSin2 = new float[Width];
+	}
+
+	//	Precalculate sine values.
+	for (int y = 0; y < Height; y++)
+	{
+		XSin1[y] = msin(y / WarpYScale * 5.625 + GenTime * 313.895 + 39.55) *
+			2 * WarpXScale;
+		YSin1[y] = y + (2 * Height + msin(y / WarpYScale * 5.625 + GenTime *
+			118.337 + 30.76) * 2) * WarpYScale;
+	}
+	for (int x = 0; x < Width; x++)
+	{
+		XSin2[x] = x + (2 * Width + msin(x / WarpXScale * 11.25 + GenTime *
+			251.116 + 13.18) * 2) * WarpXScale;
+		YSin2[x] = msin(x / WarpXScale * 11.25 + GenTime * 251.116 + 52.73) *
+			2 * WarpYScale;
+	}
+
+	if (Format == TEXFMT_8 || Format == TEXFMT_8Pal)
+	{
+		if (!Pixels)
+		{
+			Pixels = new vuint8[Width * Height];
+		}
+
+		vuint8* dest = Pixels;
+		for (int y = 0; y < Height; y++)
+		{
+			for (int x = 0; x < Width; x++)
+			{
+				*dest++ = SrcPixels[((int)(XSin1[y] + XSin2[x]) % Width) +
+					((int)(YSin1[y] + YSin2[x]) % Height) * Width];
+			}
+		}
+	}
+	else
+	{
+		if (!Pixels)
+		{
+			Pixels = new vuint8[Width * Height * 4];
+		}
+
+		vuint32* dest = (vuint32*)Pixels;
+		for (int y = 0; y < Height; y++)
+		{
+			for (int x = 0; x < Width; x++)
+			{
+				int Idx = ((int)(XSin1[y] + XSin2[x]) % Width) * 4 +
+					((int)(YSin1[y] + YSin2[x]) % Height) * Width * 4;
+				*dest++ = *(vuint32*)(SrcPixels + Idx);
+			}
+		}
+	}
+
+	return Pixels;
+#else
+	return NULL;
+#endif
 	unguard;
 }
 
@@ -4048,6 +4465,55 @@ static void ParseAnimatedDoor(VScriptParser* sc)
 
 //==========================================================================
 //
+//	ParseWarp
+//
+//==========================================================================
+
+static void ParseWarp(VScriptParser* sc, int Type)
+{
+	guard(ParseWarp);
+	int TexType = TEXTYPE_Wall;
+	if (sc->Check("texture"))
+	{
+		TexType = TEXTYPE_Wall;
+	}
+	else if (sc->Check("flat"))
+	{
+		TexType = TEXTYPE_Flat;
+	}
+	else
+	{
+		sc->Error("Texture type expected");
+	}
+
+	sc->ExpectName8();
+	int TexNum = GTextureManager.CheckNumForName(sc->Name8, TexType, true, true);
+	if (TexNum < 0)
+	{
+		return;
+	}
+
+	VTexture* SrcTex = GTextureManager.Textures[TexNum];
+	VTexture* WarpTex = SrcTex;
+	//	Warp only once.
+	if (!SrcTex->WarpType)
+	{
+		if (Type == 1)
+			WarpTex = new VWarpTexture(SrcTex);
+		else
+			WarpTex = new VWarp2Texture(SrcTex);
+		WarpTex->Name = SrcTex->Name;
+		WarpTex->Type = SrcTex->Type;
+		WarpTex->TextureTranslation = SrcTex->TextureTranslation;
+		GTextureManager.Textures[TexNum] = WarpTex;
+	}
+	//	Ignored for now.
+	sc->Check("allowdecals");
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseFTAnims
 //
 //	Initialise flat and texture animation lists.
@@ -4074,6 +4540,14 @@ static void ParseFTAnims(VScriptParser* sc)
 		else if (sc->Check("animateddoor"))
 		{
 			ParseAnimatedDoor(sc);
+		}
+		else if (sc->Check("warp"))
+		{
+			ParseWarp(sc, 1);
+		}
+		else if (sc->Check("warp2"))
+		{
+			ParseWarp(sc, 2);
 		}
 		else
 		{
