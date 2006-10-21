@@ -402,9 +402,7 @@ static bool PIT_CheckThing(void* arg, VEntity *Other)
 	cptrace_t cptrace = *(cptrace_t*)arg;
 
 	// can't hit thing
-	if (!(cptrace.Thing->EntityFlags & VEntity::EF_Solid) ||
-		!(cptrace.Thing->EntityFlags & VEntity::EF_Special) ||
-		!(cptrace.Thing->EntityFlags & VEntity::EF_Shootable))
+	if (!(cptrace.Thing->EntityFlags & VEntity::EF_Solid))
 		return true;
 
 	blockdist = Other->Radius + cptrace.Thing->Radius;
@@ -606,34 +604,37 @@ bool VEntity::CheckPosition(TVec Pos)
 
 	validcount++;
 
-	// Check things first, possibly picking things up.
-	// The bounding box is extended by MAXRADIUS
-	// because mobj_ts are grouped into mapblocks
-	// based on their origin point, and can overlap
-	// into adjacent blocks by up to MAXRADIUS units.
-	xl = MapBlock(cptrace.bbox[BOXLEFT] - XLevel->BlockMapOrgX - MAXRADIUS);
-	xh = MapBlock(cptrace.bbox[BOXRIGHT] - XLevel->BlockMapOrgX + MAXRADIUS);
-	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - XLevel->BlockMapOrgY - MAXRADIUS);
-	yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY + MAXRADIUS);
+	if (EntityFlags & EF_ColideWithThings)
+	{
+		// Check things first, possibly picking things up.
+		// The bounding box is extended by MAXRADIUS
+		// because mobj_ts are grouped into mapblocks
+		// based on their origin point, and can overlap
+		// into adjacent blocks by up to MAXRADIUS units.
+		xl = MapBlock(cptrace.bbox[BOXLEFT] - XLevel->BlockMapOrgX - MAXRADIUS);
+		xh = MapBlock(cptrace.bbox[BOXRIGHT] - XLevel->BlockMapOrgX + MAXRADIUS);
+		yl = MapBlock(cptrace.bbox[BOXBOTTOM] - XLevel->BlockMapOrgY - MAXRADIUS);
+		yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY + MAXRADIUS);
 
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!XLevel->BlockThingsIterator(bx, by, PIT_CheckThing, &cptrace, NULL, NULL))
-				return false;
+		for (bx = xl; bx <= xh; bx++)
+			for (by = yl; by <= yh; by++)
+				if (!XLevel->BlockThingsIterator(bx, by, PIT_CheckThing, &cptrace, NULL, NULL))
+					return false;
+	}
 
-	if ((cptrace.Thing->EntityFlags & EF_ColideWithWorld) && !(cptrace.Thing->EntityFlags & EF_SkullFly))
-		return true;
+	if (EntityFlags & EF_ColideWithWorld)
+	{
+		// check lines
+		xl = MapBlock(cptrace.bbox[BOXLEFT] - XLevel->BlockMapOrgX);
+		xh = MapBlock(cptrace.bbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+		yl = MapBlock(cptrace.bbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+		yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY);
 
-	// check lines
-	xl = MapBlock(cptrace.bbox[BOXLEFT] - XLevel->BlockMapOrgX);
-	xh = MapBlock(cptrace.bbox[BOXRIGHT] - XLevel->BlockMapOrgX);
-	yl = MapBlock(cptrace.bbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
-	yh = MapBlock(cptrace.bbox[BOXTOP] - XLevel->BlockMapOrgY);
-
-	for (bx = xl; bx <= xh; bx++)
-		for (by = yl; by <= yh; by++)
-			if (!XLevel->BlockLinesIterator(bx, by, PIT_CheckLine, &cptrace))
-				return false;
+		for (bx = xl; bx <= xh; bx++)
+			for (by = yl; by <= yh; by++)
+				if (!XLevel->BlockLinesIterator(bx, by, PIT_CheckLine, &cptrace))
+					return false;
+	}
 
 	return true;
 	unguard;
@@ -728,6 +729,8 @@ bool VEntity::CheckDropOff(avoiddropoff_t& a)
 	a.floorx = Origin.x;
 	a.floory = Origin.y;
 	a.floorz = Origin.z;
+	a.deltax = 0;
+	a.deltay = 0;
 
 	a.t_bbox[BOXTOP]   = Origin.y + Radius;
 	a.t_bbox[BOXBOTTOM]= Origin.y - Radius;
@@ -743,7 +746,7 @@ bool VEntity::CheckDropOff(avoiddropoff_t& a)
 	validcount++;
 	for (bx = xl; bx <= xh; bx++)
 		for (by = yl; by <= yh; by++)
-			if(XLevel->BlockLinesIterator(bx, by, PIT_AvoidDropoff, &a)) // all contacted lines
+			if (!XLevel->BlockLinesIterator(bx, by, PIT_AvoidDropoff, &a)) // all contacted lines
 				return true;
 
 	return false;

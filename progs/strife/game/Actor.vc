@@ -67,6 +67,8 @@ name PainSound;
 name DeathSound;
 
 //	FLAGS
+bool bSpecial;			// call P_SpecialThing when touched
+bool bShootable;		// Can be hit.
 bool bStanding;			// Don't walk around.
 bool bJustHit;			// try to attack right back
 bool bJustAttacked;		// take at least one step before attacking
@@ -74,10 +76,12 @@ bool bSpawnCeiling;		// hang from ceiling instead of floor
 //	MOVEMENT FLAGS
 bool bNeutral;			// Neutral characters (peasants and beggars)
 bool bSlide;			// keep info about sliding along walls
+bool bMissile;			// don't hit same species, explode on block
 bool bDropped;			// dropped by a demon, not level spawned
 bool bNoBlood;			// don't bleed when shot (use puff)
 bool bInFloat;			// floating to a height for a move, don't
 				// auto float to target's height
+bool bSkullFly;			// skull in flight
 bool bCountKill;		// count towards intermission kill total
 bool bFloorBounce;		// bounces off the floor
 bool bCountItem;		//COUNTITEM	800000

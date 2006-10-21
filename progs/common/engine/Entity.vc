@@ -150,10 +150,6 @@ bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step
 bool bFullBright;		// make current state full bright
-bool bSpecial;			// call P_SpecialThing when touched
-bool bShootable;		// Can be hit.
-bool bSkullFly;			// skull in flight
-bool bMissile;			// don't hit same species, explode on block
 
 int Health;
 

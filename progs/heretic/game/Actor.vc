@@ -1,4 +1,4 @@
-﻿//**************************************************************************
+//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -69,16 +69,20 @@ name PainSound;
 name DeathSound;
 
 //	FLAGS
+bool bSpecial;		// call P_SpecialThing when touched
+bool bShootable;	// Can be hit.
 bool bAmbush;		// Ambush
 bool bJustHit;		// try to attack right back
 bool bJustAttacked;	// take at least one step before attacking
 bool bSpawnCeiling;	// hang from ceiling instead of floor
 //	MOVEMENT FLAGS
 bool bPickUp;		// for players to pick up items
+bool bMissile;		// don't hit same species, explode on block
 bool bDropped;		// dropped by a demon, not level spawned
 bool bNoBlood;		// don't bleed when shot (use puff)
 bool bInFloat;		// floating to a height for a move, don't
 			// auto float to target's height
+bool bSkullFly;		// skull in flight
 bool bCountKill;	// count towards intermission kill total
 bool bCountItem;	// count towards intermission item total
 bool bWindThrust;	// gets pushed around by the wind specials
