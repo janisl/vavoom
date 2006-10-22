@@ -23,73 +23,50 @@ EXTRA_DIST = \
 	doom/graphics/*.lmp \
 	doom/palette.pcx \
 	doom/basepak.ls.in \
-	doom/scripts/animdefs.txt \
-	doom/scripts/skyboxes.txt \
-	doom/scripts/sndinfo.txt \
-	doom/scripts/sndseq.txt \
-	doom/scripts/terrains.txt \
+	doom/language.en \
+	doom/animdefs.txt \
+	doom/skyboxes.txt \
+	doom/sndinfo.txt \
+	doom/sndseq.txt \
+	doom/terrains.txt \
 	doom1/basepak.ls.in \
-	doom1/scripts/fin1text.txt \
-	doom1/scripts/fin2text.txt \
-	doom1/scripts/fin3text.txt \
-	doom1/scripts/fin4text.txt \
-	doom1/scripts/mapinfo.txt \
-	doom1/scripts/sndinfo.txt \
+	doom1/mapinfo.txt \
+	doom1/sndinfo.txt \
 	doom2/basepak.ls.in \
-	doom2/scripts/fin1text.txt \
-	doom2/scripts/fin2text.txt \
-	doom2/scripts/fin3text.txt \
-	doom2/scripts/fin4text.txt \
-	doom2/scripts/mapinfo.txt \
-	doom2/scripts/sec1text.txt \
-	doom2/scripts/sec2text.txt \
+	doom2/mapinfo.txt \
 	heretic/graphics/*.lmp \
 	heretic/palette.pcx \
 	heretic/basepak.ls.in \
-	heretic/scripts/animdefs.txt \
-	heretic/scripts/fin1text.txt \
-	heretic/scripts/fin2text.txt \
-	heretic/scripts/fin3text.txt \
-	heretic/scripts/fin4text.txt \
-	heretic/scripts/fin5text.txt \
-	heretic/scripts/mapinfo.txt \
-	heretic/scripts/skyboxes.txt \
-	heretic/scripts/sndinfo.txt \
-	heretic/scripts/sndseq.txt \
-	heretic/scripts/terrains.txt \
+	heretic/language.en \
+	heretic/animdefs.txt \
+	heretic/mapinfo.txt \
+	heretic/skyboxes.txt \
+	heretic/sndinfo.txt \
+	heretic/sndseq.txt \
+	heretic/terrains.txt \
 	hexen/graphics/*.lmp \
 	hexen/palette.pcx \
 	hexen/basepak.ls.in \
-	hexen/scripts/animdefs.txt \
-	hexen/scripts/mapinfo.txt \
-	hexen/scripts/skyboxes.txt \
-	hexen/scripts/sndinfo.txt \
-	hexen/scripts/terrains.txt \
+	hexen/language.en \
+	hexen/animdefs.txt \
+	hexen/mapinfo.txt \
+	hexen/skyboxes.txt \
+	hexen/sndinfo.txt \
+	hexen/terrains.txt \
 	plutonia/basepak.ls.in \
-	plutonia/scripts/fin1text.txt \
-	plutonia/scripts/fin2text.txt \
-	plutonia/scripts/fin3text.txt \
-	plutonia/scripts/fin4text.txt \
-	plutonia/scripts/mapinfo.txt \
-	plutonia/scripts/sec1text.txt \
-	plutonia/scripts/sec2text.txt \
+	plutonia/mapinfo.txt \
 	strife/palette.pcx \
 	strife/graphics/*.lmp \
 	strife/basepak.ls.in \
-	strife/scripts/animdefs.txt \
-	strife/scripts/mapinfo.txt \
-	strife/scripts/skyboxes.txt \
-	strife/scripts/sndinfo.txt \
-	strife/scripts/sndseq.txt \
-	strife/scripts/terrains.txt \
+	strife/language.en \
+	strife/animdefs.txt \
+	strife/mapinfo.txt \
+	strife/skyboxes.txt \
+	strife/sndinfo.txt \
+	strife/sndseq.txt \
+	strife/terrains.txt \
 	tnt/basepak.ls.in \
-	tnt/scripts/fin1text.txt \
-	tnt/scripts/fin2text.txt \
-	tnt/scripts/fin3text.txt \
-	tnt/scripts/fin4text.txt \
-	tnt/scripts/mapinfo.txt \
-	tnt/scripts/sec1text.txt \
-	tnt/scripts/sec2text.txt
+	tnt/scripts/mapinfo.txt
 
 VLUMPY = ../utils/bin/vlumpy$(EXEEXT)
 ACC = ../utils/bin/acc$(EXEEXT)
