@@ -50,12 +50,14 @@ struct im_t
 	VName		LeaveMap;
 	vint32		LeaveCluster;
 	VStr		LeaveName;
+	VName		LeaveTitlePatch;
 	vint32		ParTime;
 	vint32		SuckTime;
 
 	VName		EnterMap;
 	vint32		EnterCluster;
 	VStr		EnterName;
+	VName		EnterTitlePatch;
 
 	VStr		Text;
 	VName		TextFlat;

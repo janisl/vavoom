@@ -99,6 +99,7 @@ void InitMapInfo()
 	info->FadeTable = NAME_colormap;
 	info->Gravity = 0.0;
 	info->Flags = 0;
+	info->TitlePatch = NAME_None;
 	info->ParTime = 0;
 	info->SuckTime = 0;
 
@@ -240,6 +241,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->FadeTable = NAME_colormap;
 		info->Gravity = 0;
 		info->Flags = 0;
+		info->TitlePatch = NAME_None;
 		info->ParTime = 0;
 		info->SuckTime = 0;
 	}
@@ -294,6 +296,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->FadeTable = DefaultMap.FadeTable;
 		info->Gravity = DefaultMap.Gravity;
 		info->Flags = DefaultMap.Flags;
+		info->TitlePatch = DefaultMap.TitlePatch;
 		info->ParTime = DefaultMap.ParTime;
 		info->SuckTime = DefaultMap.SuckTime;
 
@@ -490,6 +493,11 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("nointermission"))
 		{
 			info->Flags |= MAPINFOF_NoIntermission;
+		}
+		else if (sc->Check("titlepatch"))
+		{
+			sc->ExpectName8();
+			info->TitlePatch = sc->Name8;
 		}
 		else if (sc->Check("par"))
 		{

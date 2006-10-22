@@ -1,4 +1,5 @@
 map map01 lookup phustr_1
+titlepatch cwilv00
 cluster 5
 next map02
 secretnext map31
@@ -7,7 +8,8 @@ music d_runnin
 par 30
 sucktime 1
 
-map map02 lookup phustr_1
+map map02 lookup phustr_2
+titlepatch cwilv01
 cluster 5
 next map03
 secretnext map31
@@ -16,7 +18,8 @@ music d_stalks
 par 90
 sucktime 1
 
-map map03 lookup phustr_1
+map map03 lookup phustr_3
+titlepatch cwilv02
 cluster 5
 next map04
 secretnext map31
@@ -25,7 +28,8 @@ music d_countd
 par 120
 sucktime 1
 
-map map04 lookup phustr_1
+map map04 lookup phustr_4
+titlepatch cwilv03
 cluster 5
 next map05
 secretnext map31
@@ -34,7 +38,8 @@ music d_betwee
 par 120
 sucktime 1
 
-map map05 lookup phustr_1
+map map05 lookup phustr_5
+titlepatch cwilv04
 cluster 5
 next map06
 secretnext map31
@@ -43,7 +48,8 @@ music d_doom
 par 90
 sucktime 1
 
-map map06 lookup phustr_1
+map map06 lookup phustr_6
+titlepatch cwilv05
 cluster 5
 next map07
 secretnext map31
@@ -53,7 +59,8 @@ par 150
 sucktime 1
 
 ;------------------------------------------------------
-map map07 lookup phustr_1
+map map07 lookup phustr_7
+titlepatch cwilv06
 cluster 6
 next map08
 secretnext map31
@@ -63,7 +70,8 @@ par 120
 sucktime 1
 map07special
 
-map map08 lookup phustr_1
+map map08 lookup phustr_8
+titlepatch cwilv07
 cluster 6
 next map09
 secretnext map31
@@ -72,7 +80,8 @@ music d_ddtblu
 par 120
 sucktime 1
 
-map map09 lookup phustr_1
+map map09 lookup phustr_9
+titlepatch cwilv08
 cluster 6
 next map10
 secretnext map31
@@ -81,7 +90,8 @@ music d_in_cit
 par 270
 sucktime 1
 
-map map10 lookup phustr_1
+map map10 lookup phustr_10
+titlepatch cwilv09
 cluster 6
 next map11
 secretnext map31
@@ -90,7 +100,8 @@ music d_dead
 par 90
 sucktime 1
 
-map map11 lookup phustr_1
+map map11 lookup phustr_11
+titlepatch cwilv10
 cluster 6
 next map12
 secretnext map31
@@ -100,7 +111,8 @@ par 210
 sucktime 1
 
 ;------------------------------------------------------
-map map12 lookup phustr_1
+map map12 lookup phustr_12
+titlepatch cwilv11
 cluster 7
 next map13
 secretnext map31
@@ -109,7 +121,8 @@ music d_theda2
 par 150
 sucktime 1
 
-map map13 lookup phustr_1
+map map13 lookup phustr_13
+titlepatch cwilv12
 cluster 7
 next map14
 secretnext map31
@@ -118,7 +131,8 @@ music d_doom2
 par 150
 sucktime 1
 
-map map14 lookup phustr_1
+map map14 lookup phustr_14
+titlepatch cwilv13
 cluster 7
 next map15
 secretnext map31
@@ -127,7 +141,8 @@ music d_ddtbl2
 par 150
 sucktime 1
 
-map map15 lookup phustr_1
+map map15 lookup phustr_15
+titlepatch cwilv14
 cluster 7
 next map16
 secretnext map31
@@ -136,7 +151,8 @@ music d_runni2
 par 210
 sucktime 1
 
-map map16 lookup phustr_1
+map map16 lookup phustr_16
+titlepatch cwilv15
 cluster 7
 next map17
 secretnext map31
@@ -145,7 +161,8 @@ music d_dead2
 par 150
 sucktime 1
 
-map map17 lookup phustr_1
+map map17 lookup phustr_17
+titlepatch cwilv16
 cluster 7
 next map18
 secretnext map31
@@ -154,7 +171,8 @@ music d_stlks3
 par 420
 sucktime 1
 
-map map18 lookup phustr_1
+map map18 lookup phustr_18
+titlepatch cwilv17
 cluster 7
 next map19
 secretnext map31
@@ -163,7 +181,8 @@ music d_romero
 par 150
 sucktime 1
 
-map map19 lookup phustr_1
+map map19 lookup phustr_19
+titlepatch cwilv18
 cluster 7
 next map20
 secretnext map31
@@ -172,7 +191,8 @@ music d_shawn2
 par 210
 sucktime 1
 
-map map20 lookup phustr_2
+map map20 lookup phustr_20
+titlepatch cwilv19
 cluster 7
 next map21
 secretnext map31
@@ -182,7 +202,8 @@ par 150
 sucktime 1
 
 ;-------------------------------------------------------
-map map21 lookup phustr_2
+map map21 lookup phustr_21
+titlepatch cwilv20
 cluster 8
 next map22
 secretnext map31
@@ -191,7 +212,8 @@ music d_count2
 par 240
 sucktime 1
 
-map map22 lookup phustr_2
+map map22 lookup phustr_22
+titlepatch cwilv21
 cluster 8
 next map23
 secretnext map31
@@ -200,7 +222,8 @@ music d_ddtbl3
 par 150
 sucktime 1
 
-map map23 lookup phustr_2
+map map23 lookup phustr_23
+titlepatch cwilv22
 cluster 8
 next map24
 secretnext map31
@@ -209,7 +232,8 @@ music d_ampie
 par 180
 sucktime 1
 
-map map24 lookup phustr_2
+map map24 lookup phustr_24
+titlepatch cwilv23
 cluster 8
 next map25
 secretnext map31
@@ -218,7 +242,8 @@ music d_theda3
 par 150
 sucktime 1
 
-map map25 lookup phustr_2
+map map25 lookup phustr_25
+titlepatch cwilv24
 cluster 8
 next map26
 secretnext map31
@@ -227,7 +252,8 @@ music d_adrian
 par 150
 sucktime 1
 
-map map26 lookup phustr_2
+map map26 lookup phustr_26
+titlepatch cwilv25
 cluster 8
 next map27
 secretnext map31
@@ -236,7 +262,8 @@ music d_messg2
 par 300
 sucktime 1
 
-map map27 lookup phustr_2
+map map27 lookup phustr_27
+titlepatch cwilv26
 cluster 8
 next map28
 secretnext map31
@@ -245,7 +272,8 @@ music d_romer2
 par 330
 sucktime 1
 
-map map28 lookup phustr_2
+map map28 lookup phustr_28
+titlepatch cwilv27
 cluster 8
 next map29
 secretnext map31
@@ -254,7 +282,8 @@ music d_tense
 par 420
 sucktime 1
 
-map map29 lookup phustr_2
+map map29 lookup phustr_29
+titlepatch cwilv28
 cluster 8
 next map30
 secretnext map31
@@ -263,7 +292,8 @@ music d_shawn3
 par 300
 sucktime 1
 
-map map30 lookup phustr_2
+map map30 lookup phustr_30
+titlepatch cwilv29
 cluster 8
 next EndGameC
 secretnext EndGameC
@@ -273,7 +303,8 @@ par 180
 sucktime 1
 
 ;------------------------------------------------------
-map map31 lookup phustr_2
+map map31 lookup phustr_31
+titlepatch cwilv30
 cluster 9
 next map32
 secretnext map32
@@ -282,7 +313,8 @@ music d_evil
 par 120
 sucktime 1
 
-map map32 lookup phustr_2
+map map32 lookup phustr_32
+titlepatch cwilv31
 cluster 10
 next map01
 sky1 sky3 0

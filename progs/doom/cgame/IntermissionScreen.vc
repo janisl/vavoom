@@ -139,6 +139,9 @@ struct anim_t
 // background (map of levels).
 int patchINTERPIC;
 
+int LeaveTitlePic;
+int EnterTitlePic;
+
 int interstate;
 
 // used for timing of background animation
@@ -720,6 +723,15 @@ void IM_LoadData()
 	}
 #endif
 
+	if (ClGame.im->LeaveTitlePatch)
+	{
+		LeaveTitlePic = R_RegisterPic(ClGame.im->LeaveTitlePatch);
+	}
+	if (ClGame.im->EnterTitlePatch)
+	{
+		EnterTitlePic = R_RegisterPic(ClGame.im->EnterTitlePatch);
+	}
+
 	if (ClGame.maxclients > 1 || ClGame.deathmatch)
 	{
 		// "killers" (vertical)
@@ -765,15 +777,25 @@ void IM_UnloadData()
 
 void IM_DrawLF()
 {
+	picinfo_t info;
 	int y = WI_TITLEY;
 
 	// draw <LevelName>
-	T_SetAlign(hcentre, vtop);
-	T_DrawText(320, y, ClGame.im->LeaveName);
+	if (ClGame.im->LeaveTitlePatch)
+	{
+		R_GetPicInfo(LeaveTitlePic, &info);
+		R_DrawPic(320 - info.width / 2, y, LeaveTitlePic);
+		y += info.height + T_TextHeight("DUMMY") / 4;
+	}
+	else
+	{
+		T_SetAlign(hcentre, vtop);
+		T_DrawText(320, y, ClGame.im->LeaveName);
+		y += (5 * T_TextHeight("DUMMY")) / 4;
+	}
 
 	// draw "Finished!"
-	y += (5 * T_TextHeight("DUMMY")) / 4;
-
+	T_SetAlign(hcentre, vtop);
 	T_DrawText(320, y, "finished");
 }
 
@@ -787,6 +809,7 @@ void IM_DrawLF()
 
 void IM_DrawEL()
 {
+	picinfo_t info;
 	int y = WI_TITLEY;
 
 	// draw "Entering"
@@ -795,7 +818,15 @@ void IM_DrawEL()
 
 	// draw level
 	y += (5 * T_TextHeight("DUMMY")) / 4;
-	T_DrawText(320, y, ClGame.im->EnterName);
+	if (ClGame.im->EnterTitlePatch)
+	{
+		R_GetPicInfo(EnterTitlePic, &info);
+		R_DrawPic(320 - info.width / 2, y, EnterTitlePic);
+	}
+	else
+	{
+		T_DrawText(320, y, ClGame.im->EnterName);
+	}
 }
 
 //==========================================================================

@@ -1,4 +1,5 @@
 map map01 lookup hustr_1
+titlepatch cwilv00
 cluster 5
 next map02
 secretnext map31
@@ -8,6 +9,7 @@ par 30
 sucktime 1
 
 map map02 lookup hustr_2
+titlepatch cwilv01
 cluster 5
 next map03
 secretnext map31
@@ -17,6 +19,7 @@ par 90
 sucktime 1
 
 map map03 lookup hustr_3
+titlepatch cwilv02
 cluster 5
 next map04
 secretnext map31
@@ -26,6 +29,7 @@ par 120
 sucktime 1
 
 map map04 lookup hustr_4
+titlepatch cwilv03
 cluster 5
 next map05
 secretnext map31
@@ -35,6 +39,7 @@ par 120
 sucktime 1
 
 map map05 lookup hustr_5
+titlepatch cwilv04
 cluster 5
 next map06
 secretnext map31
@@ -44,6 +49,7 @@ par 90
 sucktime 1
 
 map map06 lookup hustr_6
+titlepatch cwilv05
 cluster 5
 next map07
 secretnext map31
@@ -54,6 +60,7 @@ sucktime 1
 
 ;------------------------------------------------------
 map map07 lookup hustr_7
+titlepatch cwilv06
 cluster 6
 next map08
 secretnext map31
@@ -64,6 +71,7 @@ sucktime 1
 map07special
 
 map map08 lookup hustr_8
+titlepatch cwilv07
 cluster 6
 next map09
 secretnext map31
@@ -73,6 +81,7 @@ par 120
 sucktime 1
 
 map map09 lookup hustr_9
+titlepatch cwilv08
 cluster 6
 next map10
 secretnext map31
@@ -82,6 +91,7 @@ par 270
 sucktime 1
 
 map map10 lookup hustr_10
+titlepatch cwilv09
 cluster 6
 next map11
 secretnext map31
@@ -91,6 +101,7 @@ par 90
 sucktime 1
 
 map map11 lookup hustr_11
+titlepatch cwilv10
 cluster 6
 next map12
 secretnext map31
@@ -101,6 +112,7 @@ sucktime 1
 
 ;------------------------------------------------------
 map map12 lookup hustr_12
+titlepatch cwilv11
 cluster 7
 next map13
 secretnext map31
@@ -110,6 +122,7 @@ par 150
 sucktime 1
 
 map map13 lookup hustr_13
+titlepatch cwilv12
 cluster 7
 next map14
 secretnext map31
@@ -119,6 +132,7 @@ par 150
 sucktime 1
 
 map map14 lookup hustr_14
+titlepatch cwilv13
 cluster 7
 next map15
 secretnext map31
@@ -128,6 +142,7 @@ par 150
 sucktime 1
 
 map map15 lookup hustr_15
+titlepatch cwilv14
 cluster 7
 next map16
 secretnext map31
@@ -137,6 +152,7 @@ par 210
 sucktime 1
 
 map map16 lookup hustr_16
+titlepatch cwilv15
 cluster 7
 next map17
 secretnext map31
@@ -146,6 +162,7 @@ par 150
 sucktime 1
 
 map map17 lookup hustr_17
+titlepatch cwilv16
 cluster 7
 next map18
 secretnext map31
@@ -155,6 +172,7 @@ par 420
 sucktime 1
 
 map map18 lookup hustr_18
+titlepatch cwilv17
 cluster 7
 next map19
 secretnext map31
@@ -164,6 +182,7 @@ par 150
 sucktime 1
 
 map map19 lookup hustr_19
+titlepatch cwilv18
 cluster 7
 next map20
 secretnext map31
@@ -173,6 +192,7 @@ par 210
 sucktime 1
 
 map map20 lookup hustr_20
+titlepatch cwilv19
 cluster 7
 next map21
 secretnext map31
@@ -183,6 +203,7 @@ sucktime 1
 
 ;-------------------------------------------------------
 map map21 lookup hustr_21
+titlepatch cwilv20
 cluster 8
 next map22
 secretnext map31
@@ -192,6 +213,7 @@ par 240
 sucktime 1
 
 map map22 lookup hustr_22
+titlepatch cwilv21
 cluster 8
 next map23
 secretnext map31
@@ -201,6 +223,7 @@ par 150
 sucktime 1
 
 map map23 lookup hustr_23
+titlepatch cwilv22
 cluster 8
 next map24
 secretnext map31
@@ -210,6 +233,7 @@ par 180
 sucktime 1
 
 map map24 lookup hustr_24
+titlepatch cwilv23
 cluster 8
 next map25
 secretnext map31
@@ -219,6 +243,7 @@ par 150
 sucktime 1
 
 map map25 lookup hustr_25
+titlepatch cwilv24
 cluster 8
 next map26
 secretnext map31
@@ -228,6 +253,7 @@ par 150
 sucktime 1
 
 map map26 lookup hustr_26
+titlepatch cwilv25
 cluster 8
 next map27
 secretnext map31
@@ -237,6 +263,7 @@ par 300
 sucktime 1
 
 map map27 lookup hustr_27
+titlepatch cwilv26
 cluster 8
 next map28
 secretnext map31
@@ -246,6 +273,7 @@ par 330
 sucktime 1
 
 map map28 lookup hustr_28
+titlepatch cwilv27
 cluster 8
 next map29
 secretnext map31
@@ -255,6 +283,7 @@ par 420
 sucktime 1
 
 map map29 lookup hustr_29
+titlepatch cwilv28
 cluster 8
 next map30
 secretnext map31
@@ -264,6 +293,7 @@ par 300
 sucktime 1
 
 map map30 lookup hustr_30
+titlepatch cwilv29
 cluster 8
 next EndGameC
 secretnext EndGameC
@@ -274,6 +304,7 @@ sucktime 1
 
 ;------------------------------------------------------
 map map31 lookup hustr_31
+titlepatch cwilv30
 cluster 9
 next map32
 secretnext map32
@@ -283,6 +314,7 @@ par 120
 sucktime 1
 
 map map32 lookup hustr_32
+titlepatch cwilv31
 cluster 10
 next map01
 sky1 sky3 0

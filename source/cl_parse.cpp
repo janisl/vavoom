@@ -641,6 +641,7 @@ static void CL_ParseIntermission(VMessage& msg)
 	im.LeaveMap = cl_level.MapName;
 	im.LeaveCluster = linfo.Cluster;
 	im.LeaveName = linfo.GetName();
+	im.LeaveTitlePatch = linfo.TitlePatch;
 	im.ParTime = linfo.ParTime;
 	im.SuckTime = linfo.SuckTime;
 	if (linfo.Flags & MAPINFOF_NoIntermission)
@@ -650,6 +651,7 @@ static void CL_ParseIntermission(VMessage& msg)
 	im.EnterMap = nextmap;
 	im.EnterCluster = einfo.Cluster;
 	im.EnterName = einfo.GetName();
+	im.EnterTitlePatch = einfo.TitlePatch;
 
 	if (linfo.Cluster != einfo.Cluster)
 	{
