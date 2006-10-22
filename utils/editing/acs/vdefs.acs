@@ -51,6 +51,7 @@
 #define LEVELINFO_FOUND_ITEMS		6
 #define LEVELINFO_TOTAL_MONSTERS	7
 #define LEVELINFO_KILLED_MONSTERS	8
+#define LEVELINFO_SUCK_TIME			9
 
 // Thing types  -------------------------------------------------------------
 
