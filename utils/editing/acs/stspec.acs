@@ -6,6 +6,5 @@
 
 special
 // New specials
-	14:Door_Animated(3),
 	49:BreakGlass(2),
 	174:SendToCommunicator(4);

@@ -15,6 +15,7 @@ special
 	11:Door_Open(2, 3),
 	12:Door_Raise(3, 4),
 	13:Door_LockedRaise(4, 5),
+	14:Door_Animated(3),
 	20:Floor_LowerByValue(3),
 	21:Floor_LowerToLowest(2),
 	22:Floor_LowerToNearest(2),
@@ -146,7 +147,6 @@ special
 /*
 special
 	  9:Line_Horizon(0),
-	 14:Door_Animated(3),
 	 15:Autosave(0),
 	 49:GlassBreak(0,1),
 	119:Thing_Damage(2,3),
