@@ -77,23 +77,30 @@
 
 typedef VTexture* (*VTexCreateFunc)(VStream&, int, VName);
 
+enum
+{
+	ANIM_Normal,
+	ANIM_Forward,
+	ANIM_Backward,
+	ANIM_OscillateUp,
+	ANIM_OscillateDown,
+};
+
 struct frameDef_t
 {
-	int		index;
-	short	baseTime;
-	short	randomRange;
+	vint16		Index;
+	vint16		BaseTime;
+	vint16		RandomRange;
 };
 
 struct animDef_t
 {
-	int		index;
-	float	time;
-	int		currentFrameDef;
-	int		startFrameDef;
-	int		endFrameDef;
-	bool	IsRange;
-	bool	Backwards;
-	int		CurrentRangeFrame;
+	vint16		Index;
+	vint16		NumFrames;
+	float		Time;
+	vint16		StartFrameDef;
+	vint16		CurrentFrame;
+	vuint8		Type;
 };
 
 struct pcx_t
@@ -4014,34 +4021,33 @@ void P_InitAnimated()
 		memset(&ad, 0, sizeof(ad));
 		memset(&fd, 0, sizeof(fd));
 
-		ad.startFrameDef = FrameDefs.Num();
-		ad.IsRange = true;
+		ad.StartFrameDef = FrameDefs.Num();
+		ad.Type = ANIM_Forward;
 
 		// [RH] Allow for either forward or backward animations.
 		if (pic1 < pic2)
 		{
-			ad.index = pic1;
-			fd.index = pic2;
+			ad.Index = pic1;
+			fd.Index = pic2;
 		}
 		else
 		{
-			ad.index = pic2;
-			fd.index = pic1;
-			ad.Backwards = true;
+			ad.Index = pic2;
+			fd.Index = pic1;
+			ad.Type = ANIM_Backward;
 		}
 
-		if (fd.index - ad.index < 1)
+		if (fd.Index - ad.Index < 1)
 			Sys_Error("P_InitPicAnims: bad cycle from %s to %s", TmpName2,
 				TmpName1);
 		
-		fd.baseTime = BaseTime;
-		fd.randomRange = 0;
+		fd.BaseTime = BaseTime;
+		fd.RandomRange = 0;
 		FrameDefs.Append(fd);
 
-		ad.endFrameDef = FrameDefs.Num() - 1;
-		ad.CurrentRangeFrame = FrameDefs[ad.startFrameDef].index - ad.index;
-		ad.currentFrameDef = ad.endFrameDef;
-		ad.time = 0.01; // Force 1st game tic to animate
+		ad.NumFrames = FrameDefs[ad.StartFrameDef].Index - ad.Index + 1;
+		ad.CurrentFrame = ad.NumFrames - 1;
+		ad.Time = 0.01; // Force 1st game tic to animate
 		AnimDefs.Append(ad);
 	}
 	delete Strm;
@@ -4072,9 +4078,9 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 	//	Name
 	bool ignore = false;
 	sc->ExpectName8();
-	ad.index = GTextureManager.CheckNumForName(sc->Name8,
+	ad.Index = GTextureManager.CheckNumForName(sc->Name8,
 		IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
-	if (ad.index == -1)
+	if (ad.Index == -1)
 	{
 		ignore = true;
 		if (!optional)
@@ -4084,8 +4090,9 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 	}
 	bool missing = ignore && optional;
 
-	bool HadPic = false;
-	ad.startFrameDef = FrameDefs.Num();
+	int CurType = 0;
+	ad.StartFrameDef = FrameDefs.Num();
+	ad.Type = ANIM_Normal;
 	while (1)
 	{
 		if (sc->Check("allowdecals"))
@@ -4096,23 +4103,24 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 
 		if (sc->Check("pic"))
 		{
-			if (ad.IsRange)
+			if (CurType == 2)
 			{
 				sc->Error("You cannot use pic together with range.");
 			}
-			HadPic = true;
+			CurType = 1;
 		}
 		else if (sc->Check("range"))
 		{
-			if (ad.IsRange)
+			if (CurType == 2)
 			{
 				sc->Error("You can only use range once in a single animation.");
 			}
-			if (HadPic)
+			if (CurType == 1)
 			{
 				sc->Error("You cannot use range together with pic.");
 			}
-			ad.IsRange = true;
+			CurType = 2;
+			ad.Type = ANIM_Forward;
 		}
 		else
 		{
@@ -4122,14 +4130,14 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 		memset(&fd, 0, sizeof(fd));
 		if (sc->CheckNumber())
 		{
-			fd.index = ad.index + sc->Number - 1;
+			fd.Index = ad.Index + sc->Number - 1;
 		}
 		else
 		{
 			sc->ExpectName8();
-			fd.index = GTextureManager.CheckNumForName(sc->Name8,
+			fd.Index = GTextureManager.CheckNumForName(sc->Name8,
 				IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
-			if (fd.index == -1 && !missing)
+			if (fd.Index == -1 && !missing)
 			{
 				sc->Error(va("Unknown texture %s", *sc->String));
 			}
@@ -4137,28 +4145,32 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 		if (sc->Check("tics"))
 		{
 			sc->ExpectNumber();
-			fd.baseTime = sc->Number;
-			fd.randomRange = 0;
+			fd.BaseTime = sc->Number;
+			fd.RandomRange = 0;
 		}
 		else if (sc->Check("rand"))
 		{
 			sc->ExpectNumber();
-			fd.baseTime = sc->Number;
+			fd.BaseTime = sc->Number;
 			sc->ExpectNumber();
-			fd.randomRange = sc->Number - fd.baseTime + 1;
+			fd.RandomRange = sc->Number - fd.BaseTime + 1;
 		}
 		else
 		{
 			sc->Error("bad command");
 		}
-		if (ad.IsRange)
+		if (ad.Type != ANIM_Normal)
 		{
-			if (fd.index < ad.index)
+			if (fd.Index < ad.Index)
 			{
-				int tmp = ad.index;
-				ad.index = fd.index;
-				fd.index = tmp;
-				ad.Backwards = true;
+				int tmp = ad.Index;
+				ad.Index = fd.Index;
+				fd.Index = tmp;
+				ad.Type = ANIM_Backward;
+			}
+			if (sc->Check("oscillate"))
+			{
+				ad.Type = ANIM_OscillateUp;
 			}
 		}
 		if (!ignore)
@@ -4167,17 +4179,25 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 		}
 	}
 
-	if (!ignore && !ad.IsRange && FrameDefs.Num() - ad.startFrameDef < 2)
+	if (!ignore && ad.Type == ANIM_Normal &&
+		FrameDefs.Num() - ad.StartFrameDef < 2)
 	{
 		sc->Error("AnimDef has framecount < 2.");
 	}
 
 	if (!ignore)
 	{
-		ad.endFrameDef = FrameDefs.Num() - 1;
-		ad.CurrentRangeFrame = FrameDefs[ad.startFrameDef].index - ad.index;
-		ad.currentFrameDef = ad.endFrameDef;
-		ad.time = 0.01; // Force 1st game tic to animate
+		if (ad.Type == ANIM_Normal)
+		{
+			ad.NumFrames = FrameDefs.Num() - ad.StartFrameDef;
+			ad.CurrentFrame = ad.NumFrames - 1;
+		}
+		else
+		{
+			ad.NumFrames = FrameDefs[ad.StartFrameDef].Index - ad.Index + 1;
+			ad.CurrentFrame = 0;
+		}
+		ad.Time = 0.01; // Force 1st game tic to animate
 		AnimDefs.Append(ad);
 	}
 }
@@ -4713,50 +4733,65 @@ void R_AnimateSurfaces()
 	//	Animate flats and textures
 	for (int i = 0; i < AnimDefs.Num(); i++)
 	{
-		animDef_t* ad = &AnimDefs[i];
-		ad->time -= host_frametime;
-		if (ad->time <= 0.0)
+		animDef_t& ad = AnimDefs[i];
+		ad.Time -= host_frametime;
+		if (ad.Time > 0.0)
 		{
-			if (!ad->IsRange)
+			continue;
+		}
+
+		switch (ad.Type)
+		{
+		case ANIM_Normal:
+		case ANIM_Forward:
+			ad.CurrentFrame = (ad.CurrentFrame + 1) % ad.NumFrames;
+			break;
+
+		case ANIM_Backward:
+			if (ad.CurrentFrame == 0)
 			{
-				if (ad->currentFrameDef == ad->endFrameDef)
-				{
-					ad->currentFrameDef = ad->startFrameDef;
-				}
-				else
-				{
-					ad->currentFrameDef++;
-				}
-			}
-			frameDef_t fd = FrameDefs[ad->currentFrameDef];
-			ad->time = fd.baseTime / 35.0;
-			if (fd.randomRange)
-			{ 
-				// Random tics
-				ad->time += Random() * (fd.randomRange / 35.0);
-			}
-			if (!ad->IsRange)
-			{
-				GTextureManager.Textures[ad->index]->TextureTranslation = fd.index;
+				ad.CurrentFrame = ad.NumFrames - 1;
 			}
 			else
 			{
-				int Range = fd.index - ad->index + 1;
-				if (ad->CurrentRangeFrame >= Range - 1)
-				{
-					ad->CurrentRangeFrame = 0;
-				}
-				else
-				{
-					ad->CurrentRangeFrame++;
-				}
-				for (int i = 0; i < Range; i++)
-				{
-					GTextureManager.Textures[ad->index + i]->TextureTranslation = ad->index +
-						(ad->Backwards ?
-						(Range - 1 - (ad->CurrentRangeFrame + i) % Range) :
-						((ad->CurrentRangeFrame + i) % Range));
-				}
+				ad.CurrentFrame--;
+			}
+			break;
+
+		case ANIM_OscillateUp:
+			ad.CurrentFrame++;
+			if (ad.CurrentFrame == ad.NumFrames - 1)
+			{
+				ad.Type = ANIM_OscillateDown;
+			}
+			break;
+
+		case ANIM_OscillateDown:
+			ad.CurrentFrame--;
+			if (ad.CurrentFrame == 0)
+			{
+				ad.Type = ANIM_OscillateUp;
+			}
+			break;
+		}
+		const frameDef_t& fd = FrameDefs[ad.StartFrameDef +
+			(ad.Type == ANIM_Normal ? ad.CurrentFrame : 0)];
+		ad.Time = fd.BaseTime / 35.0;
+		if (fd.RandomRange)
+		{
+			// Random tics
+			ad.Time += Random() * (fd.RandomRange / 35.0);
+		}
+		if (ad.Type == ANIM_Normal)
+		{
+			GTextureManager.Textures[ad.Index]->TextureTranslation = fd.Index;
+		}
+		else
+		{
+			for (int i = 0; i < ad.NumFrames; i++)
+			{
+				GTextureManager.Textures[ad.Index + i]->TextureTranslation =
+					ad.Index + (ad.CurrentFrame + i) % ad.NumFrames;
 			}
 		}
 	}
