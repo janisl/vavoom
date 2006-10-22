@@ -4549,6 +4549,18 @@ static void ParseFTAnims(VScriptParser* sc)
 		{
 			ParseWarp(sc, 2);
 		}
+		else if (sc->Check("cameratexture"))
+		{
+			//	Just skip it for now.
+			sc->ExpectString();
+			sc->ExpectNumber();
+			sc->ExpectNumber();
+			if (sc->Check("fit"))
+			{
+				sc->ExpectNumber();
+				sc->ExpectNumber();
+			}
+		}
 		else
 		{
 			sc->Error("bad command");
