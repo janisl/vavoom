@@ -951,6 +951,7 @@ struct level_t
 	int			levelnum;
 	int			cluster;
 	int			partime;
+	int			sucktime;
 	string		LevelName;
 
 	int			sky1Texture;
@@ -1093,6 +1094,8 @@ struct im_t
 	name	LeaveMap;
 	int		LeaveCluster;
 	string	LeaveName;
+	int		ParTime;
+	int		SuckTime;
 
 	name	EnterMap;
 	int		EnterCluster;

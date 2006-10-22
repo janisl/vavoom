@@ -49,6 +49,9 @@ const int SP_STATSY		= 190;
 const int SP_TIMEX		= 176;
 const int SP_TIMEY		= 308;
 
+const int SP_PARX		= 376;
+const int SP_PARY		= 308;
+
 // NET GAME STUFF
 const int NG_STATSY		= 210;
 const int NG_STATSX		= (172 + 32 / 2);
@@ -818,25 +821,38 @@ void IM_DrawPercent(int x, int y, int p)
 //
 //==========================================================================
 
-void IM_DrawTime(int x, int y, int t)
+void IM_DrawTime(int x, int y, int t, string BaseText, bool sucks)
 {
 	if (t < 0)
 		return;
 
 	T_SetAlign(hleft, vtop);
 
-	if (t <= 61 * 59)
+	string Text;
+	if (!sucks || !ClGame.im->SuckTime || t < ClGame.im->SuckTime * 60 * 60)
 	{
-		if (t % 60 < 10)
-			T_DrawText(x, y, va("time: %d:0%d", t / 60, t % 60));
+		Text = BaseText;
+		if (t >= 60 * 60)
+		{
+			Text = strcat(Text, va("%d:", t / (60 * 60)));
+			if ((t / 60) % 60 < 10)
+				Text = strcat(Text, va("0%d", (t / 60) % 60));
+			else
+				Text = strcat(Text, va("%d", (t / 60) % 60));
+		}
 		else
-			T_DrawText(x, y, va("time: %d:%d", t / 60, t % 60));
+			Text = strcat(Text, va("%d", t / 60));
+		if (t % 60 < 10)
+			Text = strcat(Text, va(":0%d", t % 60));
+		else
+			Text = strcat(Text, va(":%d", t % 60));
 	}
 	else
 	{
 		// "sucks"
-		T_DrawText(x, y, "time: sucks");
+		Text = strcat(BaseText, "sucks");
 	}
+	T_DrawText(x, y, Text);
 }
 
 //==========================================================================
@@ -885,7 +901,9 @@ void IM_DrawSingleStats()
 	IM_DrawPercent(640 - SP_STATSX, SP_STATSY, cnt_kills[0]);
 	IM_DrawPercent(640 - SP_STATSX, SP_STATSY + lh, cnt_items[0]);
 	IM_DrawPercent(640 - SP_STATSX, SP_STATSY + 2 * lh, cnt_secret[0]);
-	IM_DrawTime(SP_TIMEX, SP_TIMEY, cnt_time);
+	IM_DrawTime(SP_TIMEX, SP_TIMEY, cnt_time, "time: ", true);
+	if (cnt_time >= 0 && ClGame.im->ParTime)
+		IM_DrawTime(SP_PARX, SP_PARY, ClGame.im->ParTime, "par: ", false);
 }
 
 //==========================================================================
