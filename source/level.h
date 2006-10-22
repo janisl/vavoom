@@ -713,6 +713,7 @@ struct level_t
 	int			levelnum;
 	int			cluster;
 	int			partime;
+	int			sucktime;
 	VStr		LevelName;
 
 	int			sky1Texture;

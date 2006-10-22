@@ -1,229 +1,294 @@
 map map01 lookup thustr_1
 cluster 5
 next map02
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_runnin
+music d_runnin
+par 30
+sucktime 1
 
 map map02 lookup thustr_2
 cluster 5
 next map03
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_stalks
+music d_stalks
+par 90
+sucktime 1
 
 map map03 lookup thustr_3
 cluster 5
 next map04
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_countd
+music d_countd
+par 120
+sucktime 1
 
 map map04 lookup thustr_4
 cluster 5
 next map05
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_betwee
+music d_betwee
+par 120
+sucktime 1
 
 map map05 lookup thustr_5
 cluster 5
 next map06
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_doom
+music d_doom
+par 90
+sucktime 1
 
 map map06 lookup thustr_6
 cluster 5
 next map07
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_the_da
+music d_the_da
+par 150
+sucktime 1
 
 ;------------------------------------------------------
 map map07 lookup thustr_7
 cluster 6
 next map08
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_shawn
+music d_shawn
+par 120
+sucktime 1
 map07special
 
 map map08 lookup thustr_8
 cluster 6
 next map09
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_ddtblu
+music d_ddtblu
+par 120
+sucktime 1
 
 map map09 lookup thustr_9
 cluster 6
 next map10
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_in_cit
+music d_in_cit
+par 270
+sucktime 1
 
 map map10 lookup thustr_10
 cluster 6
 next map11
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_dead
+music d_dead
+par 90
+sucktime 1
 
 map map11 lookup thustr_11
 cluster 6
 next map12
-secret map31
+secretnext map31
 sky1 sky1 0
-Music d_stlks2
+music d_stlks2
+par 210
+sucktime 1
 
 ;------------------------------------------------------
 map map12 lookup thustr_12
 cluster 7
 next map13
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_theda2
+music d_theda2
+par 150
+sucktime 1
 
 map map13 lookup thustr_13
 cluster 7
 next map14
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_doom2
+music d_doom2
+par 150
+sucktime 1
 
 map map14 lookup thustr_14
 cluster 7
 next map15
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_ddtbl2
+music d_ddtbl2
+par 150
+sucktime 1
 
 map map15 lookup thustr_15
 cluster 7
 next map16
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_runni2
+music d_runni2
+par 210
+sucktime 1
 
 map map16 lookup thustr_16
 cluster 7
 next map17
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_dead2
+music d_dead2
+par 150
+sucktime 1
 
 map map17 lookup thustr_17
 cluster 7
 next map18
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_stlks3
+music d_stlks3
+par 420
+sucktime 1
 
 map map18 lookup thustr_18
 cluster 7
 next map19
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_romero
+music d_romero
+par 150
+sucktime 1
 
 map map19 lookup thustr_19
 cluster 7
 next map20
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_shawn2
+music d_shawn2
+par 210
+sucktime 1
 
 map map20 lookup thustr_20
 cluster 7
 next map21
-secret map31
+secretnext map31
 sky1 sky2 0
-Music d_messag
+music d_messag
+par 150
+sucktime 1
 
 ;-------------------------------------------------------
 map map21 lookup thustr_21
 cluster 8
 next map22
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_count2
+music d_count2
+par 240
+sucktime 1
 
 map map22 lookup thustr_22
 cluster 8
 next map23
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_ddtbl3
+music d_ddtbl3
+par 150
+sucktime 1
 
 map map23 lookup thustr_23
 cluster 8
 next map24
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_ampie
+music d_ampie
+par 180
+sucktime 1
 
 map map24 lookup thustr_24
 cluster 8
 next map25
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_theda3
+music d_theda3
+par 150
+sucktime 1
 
 map map25 lookup thustr_25
 cluster 8
 next map26
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_adrian
+music d_adrian
+par 150
+sucktime 1
 
 map map26 lookup thustr_26
 cluster 8
 next map27
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_messg2
+music d_messg2
+par 300
+sucktime 1
 
 map map27 lookup thustr_27
 cluster 8
 next map28
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_romer2
+music d_romer2
+par 330
+sucktime 1
 
 map map28 lookup thustr_28
 cluster 8
 next map29
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_tense
+music d_tense
+par 420
+sucktime 1
 
 map map29 lookup thustr_29
 cluster 8
 next map30
-secret map31
+secretnext map31
 sky1 sky3 0
-Music d_shawn3
+music d_shawn3
+par 300
+sucktime 1
 
 map map30 lookup thustr_30
 cluster 8
 next EndGameC
+secretnext EndGameC
 sky1 sky3 0
-Music d_openin
+music d_openin
+par 180
+sucktime 1
 
 ;------------------------------------------------------
 map map31 lookup thustr_31
 cluster 9
 next map32
-secret map32
+secretnext map32
 sky1 sky3 0
-Music d_evil
+music d_evil
+par 120
+sucktime 1
 
 map map32 lookup thustr_32
 cluster 10
 next map01
 sky1 sky3 0
-Music d_ultima
+music d_ultima
+par 30
+sucktime 1
 
 ;------------------------------------------------------
 clusterdef 5

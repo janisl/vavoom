@@ -66,6 +66,8 @@ struct mapInfo_t
 	VName		FadeTable;		// Fade table {fogmap}
 	float		Gravity;		// Map gravity
 	vuint32		Flags;
+	vint32		ParTime;
+	vint32		SuckTime;
 
 	VStr GetName() const
 	{

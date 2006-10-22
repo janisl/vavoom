@@ -4,7 +4,8 @@ next map02
 secretnext map31
 sky1 sky1 0
 music d_runnin
-cdtrack 5
+par 30
+sucktime 1
 
 map map02 lookup hustr_2
 cluster 5
@@ -12,6 +13,8 @@ next map03
 secretnext map31
 sky1 sky1 0
 music d_stalks
+par 90
+sucktime 1
 
 map map03 lookup hustr_3
 cluster 5
@@ -19,6 +22,8 @@ next map04
 secretnext map31
 sky1 sky1 0
 music d_countd
+par 120
+sucktime 1
 
 map map04 lookup hustr_4
 cluster 5
@@ -26,6 +31,8 @@ next map05
 secretnext map31
 sky1 sky1 0
 music d_betwee
+par 120
+sucktime 1
 
 map map05 lookup hustr_5
 cluster 5
@@ -33,6 +40,8 @@ next map06
 secretnext map31
 sky1 sky1 0
 music d_doom
+par 90
+sucktime 1
 
 map map06 lookup hustr_6
 cluster 5
@@ -40,6 +49,8 @@ next map07
 secretnext map31
 sky1 sky1 0
 music d_the_da
+par 150
+sucktime 1
 
 ;------------------------------------------------------
 map map07 lookup hustr_7
@@ -48,6 +59,8 @@ next map08
 secretnext map31
 sky1 sky1 0
 music d_shawn
+par 120
+sucktime 1
 map07special
 
 map map08 lookup hustr_8
@@ -56,6 +69,8 @@ next map09
 secretnext map31
 sky1 sky1 0
 music d_ddtblu
+par 120
+sucktime 1
 
 map map09 lookup hustr_9
 cluster 6
@@ -63,6 +78,8 @@ next map10
 secretnext map31
 sky1 sky1 0
 music d_in_cit
+par 270
+sucktime 1
 
 map map10 lookup hustr_10
 cluster 6
@@ -70,6 +87,8 @@ next map11
 secretnext map31
 sky1 sky1 0
 music d_dead
+par 90
+sucktime 1
 
 map map11 lookup hustr_11
 cluster 6
@@ -77,6 +96,8 @@ next map12
 secretnext map31
 sky1 sky1 0
 music d_stlks2
+par 210
+sucktime 1
 
 ;------------------------------------------------------
 map map12 lookup hustr_12
@@ -85,6 +106,8 @@ next map13
 secretnext map31
 sky1 sky2 0
 music d_theda2
+par 150
+sucktime 1
 
 map map13 lookup hustr_13
 cluster 7
@@ -92,6 +115,8 @@ next map14
 secretnext map31
 sky1 sky2 0
 music d_doom2
+par 150
+sucktime 1
 
 map map14 lookup hustr_14
 cluster 7
@@ -99,6 +124,8 @@ next map15
 secretnext map31
 sky1 sky2 0
 music d_ddtbl2
+par 150
+sucktime 1
 
 map map15 lookup hustr_15
 cluster 7
@@ -106,6 +133,8 @@ next map16
 secretnext map31
 sky1 sky2 0
 music d_runni2
+par 210
+sucktime 1
 
 map map16 lookup hustr_16
 cluster 7
@@ -113,6 +142,8 @@ next map17
 secretnext map31
 sky1 sky2 0
 music d_dead2
+par 150
+sucktime 1
 
 map map17 lookup hustr_17
 cluster 7
@@ -120,6 +151,8 @@ next map18
 secretnext map31
 sky1 sky2 0
 music d_stlks3
+par 420
+sucktime 1
 
 map map18 lookup hustr_18
 cluster 7
@@ -127,6 +160,8 @@ next map19
 secretnext map31
 sky1 sky2 0
 music d_romero
+par 150
+sucktime 1
 
 map map19 lookup hustr_19
 cluster 7
@@ -134,6 +169,8 @@ next map20
 secretnext map31
 sky1 sky2 0
 music d_shawn2
+par 210
+sucktime 1
 
 map map20 lookup hustr_20
 cluster 7
@@ -141,6 +178,8 @@ next map21
 secretnext map31
 sky1 sky2 0
 music d_messag
+par 150
+sucktime 1
 
 ;-------------------------------------------------------
 map map21 lookup hustr_21
@@ -149,6 +188,8 @@ next map22
 secretnext map31
 sky1 sky3 0
 music d_count2
+par 240
+sucktime 1
 
 map map22 lookup hustr_22
 cluster 8
@@ -156,6 +197,8 @@ next map23
 secretnext map31
 sky1 sky3 0
 music d_ddtbl3
+par 150
+sucktime 1
 
 map map23 lookup hustr_23
 cluster 8
@@ -163,6 +206,8 @@ next map24
 secretnext map31
 sky1 sky3 0
 music d_ampie
+par 180
+sucktime 1
 
 map map24 lookup hustr_24
 cluster 8
@@ -170,6 +215,8 @@ next map25
 secretnext map31
 sky1 sky3 0
 music d_theda3
+par 150
+sucktime 1
 
 map map25 lookup hustr_25
 cluster 8
@@ -177,6 +224,8 @@ next map26
 secretnext map31
 sky1 sky3 0
 music d_adrian
+par 150
+sucktime 1
 
 map map26 lookup hustr_26
 cluster 8
@@ -184,6 +233,8 @@ next map27
 secretnext map31
 sky1 sky3 0
 music d_messg2
+par 300
+sucktime 1
 
 map map27 lookup hustr_27
 cluster 8
@@ -191,6 +242,8 @@ next map28
 secretnext map31
 sky1 sky3 0
 music d_romer2
+par 330
+sucktime 1
 
 map map28 lookup hustr_28
 cluster 8
@@ -198,6 +251,8 @@ next map29
 secretnext map31
 sky1 sky3 0
 music d_tense
+par 420
+sucktime 1
 
 map map29 lookup hustr_29
 cluster 8
@@ -205,12 +260,17 @@ next map30
 secretnext map31
 sky1 sky3 0
 music d_shawn3
+par 300
+sucktime 1
 
 map map30 lookup hustr_30
 cluster 8
 next EndGameC
+secretnext EndGameC
 sky1 sky3 0
 music d_openin
+par 180
+sucktime 1
 
 ;------------------------------------------------------
 map map31 lookup hustr_31
@@ -219,12 +279,16 @@ next map32
 secretnext map32
 sky1 sky3 0
 music d_evil
+par 120
+sucktime 1
 
 map map32 lookup hustr_32
 cluster 10
 next map01
 sky1 sky3 0
 music d_ultima
+par 30
+sucktime 1
 
 ;------------------------------------------------------
 clusterdef 5

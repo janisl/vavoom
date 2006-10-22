@@ -50,6 +50,8 @@ struct im_t
 	VName		LeaveMap;
 	vint32		LeaveCluster;
 	VStr		LeaveName;
+	vint32		ParTime;
+	vint32		SuckTime;
 
 	VName		EnterMap;
 	vint32		EnterCluster;

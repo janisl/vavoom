@@ -641,6 +641,8 @@ static void CL_ParseIntermission(VMessage& msg)
 	im.LeaveMap = cl_level.MapName;
 	im.LeaveCluster = linfo.Cluster;
 	im.LeaveName = linfo.GetName();
+	im.ParTime = linfo.ParTime;
+	im.SuckTime = linfo.SuckTime;
 	if (linfo.Flags & MAPINFOF_NoIntermission)
 		im.IMFlags |= im_t::IMF_NoIntermission;
 

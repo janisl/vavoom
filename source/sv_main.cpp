@@ -2446,7 +2446,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	level.LevelName = info.GetName();
 	level.levelnum = info.LevelNum;
 	level.cluster = info.Cluster;
-	level.partime = 0;//FIXME not used in Vavoom.
+	level.partime = info.ParTime;
+	level.sucktime = info.SuckTime;
 
 	level.sky1Texture = info.Sky1Texture;
 	level.sky2Texture = info.Sky2Texture;

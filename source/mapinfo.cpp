@@ -99,6 +99,8 @@ void InitMapInfo()
 	info->FadeTable = NAME_colormap;
 	info->Gravity = 0.0;
 	info->Flags = 0;
+	info->ParTime = 0;
+	info->SuckTime = 0;
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
@@ -238,6 +240,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->FadeTable = NAME_colormap;
 		info->Gravity = 0;
 		info->Flags = 0;
+		info->ParTime = 0;
+		info->SuckTime = 0;
 	}
 	else
 	{
@@ -290,6 +294,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->FadeTable = DefaultMap.FadeTable;
 		info->Gravity = DefaultMap.Gravity;
 		info->Flags = DefaultMap.Flags;
+		info->ParTime = DefaultMap.ParTime;
+		info->SuckTime = DefaultMap.SuckTime;
 
 		if (HexenMode)
 		{
@@ -484,6 +490,16 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("nointermission"))
 		{
 			info->Flags |= MAPINFOF_NoIntermission;
+		}
+		else if (sc->Check("par"))
+		{
+			sc->ExpectNumber();
+			info->ParTime = sc->Number;
+		}
+		else if (sc->Check("sucktime"))
+		{
+			sc->ExpectNumber();
+			info->SuckTime = sc->Number;
 		}
 		else if (sc->Check("cd_start_track"))
 		{

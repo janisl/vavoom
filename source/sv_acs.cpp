@@ -119,7 +119,8 @@ enum
 	LEVELINFO_TOTAL_ITEMS,
 	LEVELINFO_FOUND_ITEMS,
 	LEVELINFO_TOTAL_MONSTERS,
-	LEVELINFO_KILLED_MONSTERS
+	LEVELINFO_KILLED_MONSTERS,
+	LEVELINFO_SUCK_TIME
 };
 
 struct acsHeader_t
@@ -3476,6 +3477,9 @@ int VACS::RunScript(float DeltaTime)
 			{
 			case LEVELINFO_PAR_TIME:
 				sp[-1] = level.partime;
+				break;
+			case LEVELINFO_SUCK_TIME:
+				sp[-1] = level.sucktime;
 				break;
 			case LEVELINFO_CLUSTERNUM:
 				sp[-1] = level.cluster;
