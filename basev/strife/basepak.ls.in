@@ -77,12 +77,12 @@ progs/svprogs.dat		progs/svprogs.dat
 acs/strfhelp.o			strfhelp.o
 
 //	Scripts
-mapinfo.txt				@srcdir@/scripts/mapinfo.txt
-skyboxes.txt			@srcdir@/scripts/skyboxes.txt
-animdefs.txt			@srcdir@/scripts/animdefs.txt
-terrains.txt			@srcdir@/scripts/terrains.txt
-sndinfo.txt				@srcdir@/scripts/sndinfo.txt
-sndseq.txt				@srcdir@/scripts/sndseq.txt
+mapinfo.txt				@srcdir@/mapinfo.txt
+skyboxes.txt			@srcdir@/skyboxes.txt
+animdefs.txt			@srcdir@/animdefs.txt
+terrains.txt			@srcdir@/terrains.txt
+sndinfo.txt				@srcdir@/sndinfo.txt
+sndseq.txt				@srcdir@/sndseq.txt
 
 //	Language strings
 language.en				@srcdir@/language.en

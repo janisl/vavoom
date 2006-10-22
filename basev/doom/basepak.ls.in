@@ -106,11 +106,11 @@ graphics/fontb94.lmp	@srcdir@/graphics/fontb94.lmp
 graphics/fontb95.lmp	@srcdir@/graphics/fontb95.lmp
 
 //	Scripts
-animdefs.txt			@srcdir@/scripts/animdefs.txt
-sndinfo.txt				@srcdir@/scripts/sndinfo.txt
-sndseq.txt				@srcdir@/scripts/sndseq.txt
-terrains.txt			@srcdir@/scripts/terrains.txt
-skyboxes.txt			@srcdir@/scripts/skyboxes.txt
+animdefs.txt			@srcdir@/animdefs.txt
+sndinfo.txt				@srcdir@/sndinfo.txt
+sndseq.txt				@srcdir@/sndseq.txt
+terrains.txt			@srcdir@/terrains.txt
+skyboxes.txt			@srcdir@/skyboxes.txt
 
 //	Language strings
 language.en				@srcdir@/language.en

@@ -15,12 +15,12 @@ progs/clprogs.dat		progs/clprogs.dat
 progs/svprogs.dat		progs/svprogs.dat
 
 //	Scripts
-animdefs.txt			@srcdir@/scripts/animdefs.txt
-mapinfo.txt				@srcdir@/scripts/mapinfo.txt
-skyboxes.txt			@srcdir@/scripts/skyboxes.txt
-sndinfo.txt				@srcdir@/scripts/sndinfo.txt
-sndseq.txt				@srcdir@/scripts/sndseq.txt
-terrains.txt			@srcdir@/scripts/terrains.txt
+animdefs.txt			@srcdir@/animdefs.txt
+mapinfo.txt				@srcdir@/mapinfo.txt
+skyboxes.txt			@srcdir@/skyboxes.txt
+sndinfo.txt				@srcdir@/sndinfo.txt
+sndseq.txt				@srcdir@/sndseq.txt
+terrains.txt			@srcdir@/terrains.txt
 
 //	Language strings
 language.en				@srcdir@/language.en

@@ -6,5 +6,5 @@ progs/clprogs.dat		progs/clprogs.dat
 progs/svprogs.dat		progs/svprogs.dat
 
 //	Scripts
-mapinfo.txt				@srcdir@/scripts/mapinfo.txt
-sndinfo.txt				@srcdir@/scripts/sndinfo.txt
+mapinfo.txt				@srcdir@/mapinfo.txt
+sndinfo.txt				@srcdir@/sndinfo.txt
