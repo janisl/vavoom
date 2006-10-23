@@ -3092,7 +3092,7 @@ bool PIT_StompThing(Entity Other)
 	}
 
 	//  Check if allowed to stomp things
-	if (!bTelestomp)
+	if (!bTelestomp && !XLevel.bAllowMonsterTelefrags)
 	{
 		return false;
 	}

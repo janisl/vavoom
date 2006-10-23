@@ -245,6 +245,7 @@ VAudio::VAudio()
 , MidiDevice(NULL)
 , CDAudioDevice(NULL)
 {
+	NoSoundClipping = false;
 	ActiveSequences = 0;
 	SequenceListHead = NULL;
 	memset(Channel, 0, sizeof(Channel));
@@ -470,7 +471,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	int dist = 0;
 	if (origin_id && origin_id != cl->ClientNum + 1 && Attenuation > 0)
 		dist = (int)(Length(origin - cl->ViewOrg) * Attenuation);
-	if (dist >= MaxSoundDist)
+	if (dist >= MaxSoundDist && !NoSoundClipping)
 	{
 		return; // sound is beyond the hearing range...
 	}
@@ -905,7 +906,7 @@ void VAudio::UpdateSfx()
 
 		int dist = (int)(Length(Channel[i].origin - cl->ViewOrg) *
 			Channel[i].Attenuation);
-		if (dist >= MaxSoundDist)
+		if (dist >= MaxSoundDist && !NoSoundClipping)
 		{
 			//	Too far away
 			StopChannel(i);

@@ -1,58 +1,59 @@
-; EPISODE 1 - THE CITY OF THE DAMNED
+//--------------------------------------------------------
+// EPISODE 1 - THE CITY OF THE DAMNED
 
 map e1m1 lookup hhustr_e1m1
 cluster 1
 next e1m2
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m1
-cdtrack 8
 
 map e1m2 lookup hhustr_e1m2
 cluster 1
 next e1m3
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m2
 
 map e1m3 lookup hhustr_e1m3
 cluster 1
 next e1m4
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m3
 
 map e1m4 lookup hhustr_e1m4
 cluster 1
 next e1m5
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m4
 
 map e1m5 lookup hhustr_e1m5
 cluster 1
 next e1m6
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m5
 
 map e1m6 lookup hhustr_e1m6
 cluster 1
 next e1m7
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m6
 
 map e1m7 lookup hhustr_e1m7
 cluster 1
 next e1m8
-secret e1m9
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m7
 
 map e1m8 lookup hhustr_e1m8
 cluster 1
 next EndGame1
+secretnext e1m9
 sky1 sky1 0
 music mus_e1m8
 nointermission
@@ -61,64 +62,67 @@ specialaction_lowerfloor
 
 map e1m9 lookup hhustr_e1m9
 cluster 1
-next e1m1
+next e1m7
+secretnext e1m7
 sky1 sky1 0
 music mus_e1m9
 
-; EPISODE 2 - HELL'S MAW
+//--------------------------------------------------------
+// EPISODE 2 - HELL'S MAW
 
 map e2m1 lookup hhustr_e2m1
 cluster 2
 next e2m2
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music mus_e2m1
 
 map e2m2 lookup hhustr_e2m2
 cluster 2
 next e2m3
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music mus_e2m2
 
 map e2m3 lookup hhustr_e2m3
 cluster 2
 next e2m4
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music mus_e2m3
 
 map e2m4 lookup hhustr_e2m4
 cluster 2
 next e2m5
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music mus_e2m4
 
 map e2m5 lookup hhustr_e2m5
 cluster 2
 next e2m6
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music mus_e1m4
 
 map e2m6 lookup hhustr_e2m6
 cluster 2
 next e2m7
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music mus_e2m6
 
 map e2m7 lookup hhustr_e2m7
 cluster 2
 next e2m8
-secret e2m9
+secretnext e2m9
 sky1 sky2 0
 music mus_e2m7
 
 map e2m8 lookup hhustr_e2m8
 cluster 2
 next EndGameW
+secretnext e2m9
 sky1 sky2 0
 music mus_e2m8
 nointermission
@@ -128,64 +132,67 @@ specialaction_killmonsters
 
 map e2m9 lookup hhustr_e2m9
 cluster 2
-next e2m1
+next e2m5
+secretnext e2m5
 sky1 sky2 0
 music mus_e2m9
 
-; EPISODE 3 - THE DOME OF D'SPARIL
+//--------------------------------------------------------
+// EPISODE 3 - THE DOME OF D'SPARIL
 
 map e3m1 lookup hhustr_e3m1
 cluster 3
 next e3m2
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music mus_e1m1
 
 map e3m2 lookup hhustr_e3m2
 cluster 3
 next e3m3
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music mus_e3m2
 
 map e3m3 lookup hhustr_e3m3
 cluster 3
 next e3m4
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music mus_e3m3
 
 map e3m4 lookup hhustr_e3m4
 cluster 3
 next e3m5
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music mus_e1m6
 
 map e3m5 lookup hhustr_e3m5
 cluster 3
 next e3m6
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music mus_e1m3
 
 map e3m6 lookup hhustr_e3m6
 cluster 3
 next e3m7
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music mus_e1m2
 
 map e3m7 lookup hhustr_e3m7
 cluster 3
 next e3m8
-secret e3m9
+secretnext e3m9
 sky1 sky3 0
 music mus_e1m5
 
 map e3m8 lookup hhustr_e3m8
 cluster 3
 next EndDemon
+secretnext e3m9
 sky1 sky3 0
 music mus_e1m9
 nointermission
@@ -195,64 +202,67 @@ specialaction_killmonsters
 
 map e3m9 lookup hhustr_e3m9
 cluster 3
-next e3m1
+next e3m5
+secretnext e3m5
 sky1 sky3 0
 music mus_e2m6
 
-; EPISODE 4: THE OSSUARY
+//--------------------------------------------------------
+// EPISODE 4: THE OSSUARY
 
 map e4m1 lookup hhustr_e4m1
 cluster 4
 next e4m2
-secret e4m9
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m6
 
 map e4m2 lookup hhustr_e4m2
 cluster 4
 next e4m3
-secret e4m9
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m2
 
 map e4m3 lookup hhustr_e4m3
 cluster 4
 next e4m4
-secret e4m9
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m3
 
 map e4m4 lookup hhustr_e4m4
 cluster 4
 next e4m5
-secret e4m9
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m4
 
 map e4m5 lookup hhustr_e4m5
 cluster 4
 next e4m6
-secret e4m9
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m5
 
 map e4m6 lookup hhustr_e4m6
 cluster 4
 next e4m7
-secret e4m9
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m1
 
 map e4m7 lookup hhustr_e4m7
 cluster 4
 next e4m8
-secret e4m9
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m7
 
 map e4m8 lookup hhustr_e4m8
 cluster 4
 next EndGame4
+secretnext e4m9
 sky1 sky1 0
 music mus_e1m8
 nointermission
@@ -262,63 +272,67 @@ specialaction_killmonsters
 
 map e4m9 lookup hhustr_e4m9
 cluster 4
-next e4m1
+next e4m5
+secretnext e4m5
 sky1 sky1 0
 music mus_e1m9
 
-; EPISODE 5: THE STAGNANT DEMESNE
+//--------------------------------------------------------
+// EPISODE 5: THE STAGNANT DEMESNE
 
 map e5m1 lookup hhustr_e5m1
 cluster 5
 next e5m2
-secret e5m9
+secretnext e5m9
 sky1 sky3 0
 music mus_e2m1
 
 map e5m2 lookup hhustr_e5m2
 cluster 5
 next e5m3
-secret e5m9
+secretnext e5m9
 sky1 sky3 0
 music mus_e2m2
 
 map e5m3 lookup hhustr_e5m3
 cluster 5
 next e5m4
-secret e5m9
+secretnext e5m9
 sky1 sky3 0
 music mus_e2m3
 
 map e5m4 lookup hhustr_e5m4
 cluster 5
 next e5m5
-secret e5m9
+secretnext e5m9
 sky1 sky3 0
 music mus_e2m4
 
 map e5m5 lookup hhustr_e5m5
 cluster 5
 next e5m6
-secret e5m9
+secretnext e5m9
 sky1 sky3 0
 music mus_e1m4
 
 map e5m6 lookup hhustr_e5m6
 cluster 5
 next e5m7
-secret e5m9
+secretnext e5m9
 sky1 sky3 0
 music mus_e2m6
 
 map e5m7 lookup hhustr_e5m7
 cluster 5
 next e5m8
+secretnext e5m9
 sky1 sky3 0
 music mus_e2m7
 
 map e5m8 lookup hhustr_e5m8
 cluster 5
 next EndGame1
+secretnext e5m9
 sky1 sky3 0
 music mus_e2m8
 nointermission
@@ -328,28 +342,36 @@ specialaction_killmonsters
 
 map e5m9 lookup hhustr_e5m9
 cluster 5
-next e5m1
-secret e5m9
+next e5m4
+secretnext e5m4
 sky1 sky3 0
 music mus_e2m9
 
-; Additional 3 levels
+//--------------------------------------------------------
+// Additional 3 levels
 
 map e6m1 "Development map"
+cluster 6
 next e6m2
+secretnext e6m2
 sky1 sky1 0
 music mus_e3m2
 
 map e6m2 "development map"
+cluster 6
 next e6m3
+secretnext e6m3
 sky1 sky1 0
 music mus_e3m3
 
 map e6m3 "Development map"
+cluster 6
 next e6m1
+secretnext e6m1
 sky1 sky1 0
 music mus_e1m6
 
+//--------------------------------------------------------
 clusterdef 1
 exittext lookup he1text
 flat floor25
@@ -374,3 +396,6 @@ clusterdef 5
 exittext lookup he5text
 flat floor08
 music mus_cptd
+
+clusterdef 6
+flat floor25

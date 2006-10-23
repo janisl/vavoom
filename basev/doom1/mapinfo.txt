@@ -72,18 +72,21 @@ map e1m8 lookup hustr_e1m8
 titlepatch wilv07
 cluster 1
 next EndGame1
+secretnext e1m9
 sky1 sky1 0
 music d_e1m8
 par 30
 sucktime 1
 nointermission
+nosoundclipping
 baronspecial
 specialaction_lowerfloor
 
 map e1m9 lookup hustr_e1m9
 titlepatch wilv08
 cluster 1
-next e1m1
+next e1m4
+secretnext e1m4
 sky1 sky1 0
 music d_e1m9
 par 165
@@ -164,18 +167,21 @@ map e2m8 lookup hustr_e2m8
 titlepatch wilv17
 cluster 2
 next EndGame2
+secretnext e2m9
 sky1 sky2 0
 music d_e2m8
 par 30
 sucktime 1
 nointermission
+nosoundclipping
 cyberdemonspecial
 specialaction_exitlevel
 
 map e2m9 lookup hustr_e2m9
 titlepatch wilv18
 cluster 2
-next e2m1
+next e2m6
+secretnext e2m6
 sky1 sky2 0
 music d_e2m9
 par 170
@@ -256,18 +262,21 @@ map e3m8 lookup hustr_e3m8
 titlepatch wilv27
 cluster 3
 next EndGame3
+secretnext e3m9
 sky1 sky3 0
 music d_e3m8
 par 30
 sucktime 1
 nointermission
+nosoundclipping
 spidermastermindspecial
 specialaction_exitlevel
 
 map e3m9 lookup hustr_e3m9
 titlepatch wilv28
 cluster 3
-next e3m1
+next e3m7
+secretnext e3m7
 sky1 sky3 0
 music d_e3m9
 par 135
@@ -343,17 +352,20 @@ map e4m8 lookup hustr_e4m8
 titlepatch wilv37
 cluster 4
 next EndGame4
+secretnext e4m9
 sky1 sky4 0
 music d_e2m5
 sucktime 1
 nointermission
+nosoundclipping
 spidermastermindspecial
 specialaction_lowerfloor
 
 map e4m9 lookup hustr_e4m9
 titlepatch wilv38
 cluster 4
-next e4m1
+next e4m3
+secretnext e4m3
 sky1 sky4 0
 music d_e1m9
 sucktime 1

@@ -134,6 +134,8 @@ private:
 class VAudioPublic : public VVirtualObjectBase
 {
 public:
+	bool		NoSoundClipping;
+
 	//	Top level methods.
 	virtual void Init() = 0;
 	virtual void Shutdown() = 0;

@@ -2,7 +2,7 @@ map map01 lookup hustr_1
 titlepatch cwilv00
 cluster 5
 next map02
-secretnext map31
+secretnext map02
 sky1 sky1 0
 music d_runnin
 par 30
@@ -12,7 +12,7 @@ map map02 lookup hustr_2
 titlepatch cwilv01
 cluster 5
 next map03
-secretnext map31
+secretnext map03
 sky1 sky1 0
 music d_stalks
 par 90
@@ -22,7 +22,7 @@ map map03 lookup hustr_3
 titlepatch cwilv02
 cluster 5
 next map04
-secretnext map31
+secretnext map04
 sky1 sky1 0
 music d_countd
 par 120
@@ -32,7 +32,7 @@ map map04 lookup hustr_4
 titlepatch cwilv03
 cluster 5
 next map05
-secretnext map31
+secretnext map05
 sky1 sky1 0
 music d_betwee
 par 120
@@ -42,7 +42,7 @@ map map05 lookup hustr_5
 titlepatch cwilv04
 cluster 5
 next map06
-secretnext map31
+secretnext map06
 sky1 sky1 0
 music d_doom
 par 90
@@ -52,7 +52,7 @@ map map06 lookup hustr_6
 titlepatch cwilv05
 cluster 5
 next map07
-secretnext map31
+secretnext map07
 sky1 sky1 0
 music d_the_da
 par 150
@@ -63,7 +63,7 @@ map map07 lookup hustr_7
 titlepatch cwilv06
 cluster 6
 next map08
-secretnext map31
+secretnext map08
 sky1 sky1 0
 music d_shawn
 par 120
@@ -74,7 +74,7 @@ map map08 lookup hustr_8
 titlepatch cwilv07
 cluster 6
 next map09
-secretnext map31
+secretnext map09
 sky1 sky1 0
 music d_ddtblu
 par 120
@@ -84,7 +84,7 @@ map map09 lookup hustr_9
 titlepatch cwilv08
 cluster 6
 next map10
-secretnext map31
+secretnext map10
 sky1 sky1 0
 music d_in_cit
 par 270
@@ -94,7 +94,7 @@ map map10 lookup hustr_10
 titlepatch cwilv09
 cluster 6
 next map11
-secretnext map31
+secretnext map11
 sky1 sky1 0
 music d_dead
 par 90
@@ -104,7 +104,7 @@ map map11 lookup hustr_11
 titlepatch cwilv10
 cluster 6
 next map12
-secretnext map31
+secretnext map12
 sky1 sky1 0
 music d_stlks2
 par 210
@@ -115,7 +115,7 @@ map map12 lookup hustr_12
 titlepatch cwilv11
 cluster 7
 next map13
-secretnext map31
+secretnext map13
 sky1 sky2 0
 music d_theda2
 par 150
@@ -125,7 +125,7 @@ map map13 lookup hustr_13
 titlepatch cwilv12
 cluster 7
 next map14
-secretnext map31
+secretnext map14
 sky1 sky2 0
 music d_doom2
 par 150
@@ -135,7 +135,7 @@ map map14 lookup hustr_14
 titlepatch cwilv13
 cluster 7
 next map15
-secretnext map31
+secretnext map15
 sky1 sky2 0
 music d_ddtbl2
 par 150
@@ -155,7 +155,7 @@ map map16 lookup hustr_16
 titlepatch cwilv15
 cluster 7
 next map17
-secretnext map31
+secretnext map17
 sky1 sky2 0
 music d_dead2
 par 150
@@ -165,7 +165,7 @@ map map17 lookup hustr_17
 titlepatch cwilv16
 cluster 7
 next map18
-secretnext map31
+secretnext map18
 sky1 sky2 0
 music d_stlks3
 par 420
@@ -175,7 +175,7 @@ map map18 lookup hustr_18
 titlepatch cwilv17
 cluster 7
 next map19
-secretnext map31
+secretnext map19
 sky1 sky2 0
 music d_romero
 par 150
@@ -185,7 +185,7 @@ map map19 lookup hustr_19
 titlepatch cwilv18
 cluster 7
 next map20
-secretnext map31
+secretnext map20
 sky1 sky2 0
 music d_shawn2
 par 210
@@ -195,7 +195,7 @@ map map20 lookup hustr_20
 titlepatch cwilv19
 cluster 7
 next map21
-secretnext map31
+secretnext map21
 sky1 sky2 0
 music d_messag
 par 150
@@ -206,7 +206,7 @@ map map21 lookup hustr_21
 titlepatch cwilv20
 cluster 8
 next map22
-secretnext map31
+secretnext map22
 sky1 sky3 0
 music d_count2
 par 240
@@ -216,7 +216,7 @@ map map22 lookup hustr_22
 titlepatch cwilv21
 cluster 8
 next map23
-secretnext map31
+secretnext map23
 sky1 sky3 0
 music d_ddtbl3
 par 150
@@ -226,7 +226,7 @@ map map23 lookup hustr_23
 titlepatch cwilv22
 cluster 8
 next map24
-secretnext map31
+secretnext map24
 sky1 sky3 0
 music d_ampie
 par 180
@@ -236,7 +236,7 @@ map map24 lookup hustr_24
 titlepatch cwilv23
 cluster 8
 next map25
-secretnext map31
+secretnext map25
 sky1 sky3 0
 music d_theda3
 par 150
@@ -246,7 +246,7 @@ map map25 lookup hustr_25
 titlepatch cwilv24
 cluster 8
 next map26
-secretnext map31
+secretnext map26
 sky1 sky3 0
 music d_adrian
 par 150
@@ -256,7 +256,7 @@ map map26 lookup hustr_26
 titlepatch cwilv25
 cluster 8
 next map27
-secretnext map31
+secretnext map27
 sky1 sky3 0
 music d_messg2
 par 300
@@ -266,7 +266,7 @@ map map27 lookup hustr_27
 titlepatch cwilv26
 cluster 8
 next map28
-secretnext map31
+secretnext map28
 sky1 sky3 0
 music d_romer2
 par 330
@@ -276,7 +276,7 @@ map map28 lookup hustr_28
 titlepatch cwilv27
 cluster 8
 next map29
-secretnext map31
+secretnext map29
 sky1 sky3 0
 music d_tense
 par 420
@@ -286,7 +286,7 @@ map map29 lookup hustr_29
 titlepatch cwilv28
 cluster 8
 next map30
-secretnext map31
+secretnext map30
 sky1 sky3 0
 music d_shawn3
 par 300
@@ -301,12 +301,13 @@ sky1 sky3 0
 music d_openin
 par 180
 sucktime 1
+allowmonstertelefrags
 
 ;------------------------------------------------------
 map map31 lookup hustr_31
 titlepatch cwilv30
 cluster 9
-next map32
+next map16
 secretnext map32
 sky1 sky3 0
 music d_evil
@@ -316,7 +317,8 @@ sucktime 1
 map map32 lookup hustr_32
 titlepatch cwilv31
 cluster 10
-next map01
+next map16
+secretnext map16
 sky1 sky3 0
 music d_ultima
 par 30

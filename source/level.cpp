@@ -481,6 +481,9 @@ void CL_LoadLevel(VName MapName)
 	GClGame->GLevel = GClLevel;
 
 	GClLevel->LoadMap(MapName);
+
+	const mapInfo_t& info = P_GetMapInfo(MapName);
+	GAudio->NoSoundClipping = !!(info.Flags & MAPINFOF_NoSoundClipping);
 	unguard;
 }
 

@@ -509,6 +509,22 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 			sc->ExpectNumber();
 			info->SuckTime = sc->Number;
 		}
+		else if (sc->Check("nosoundclipping"))
+		{
+			info->Flags |= MAPINFOF_NoSoundClipping;
+		}
+		else if (sc->Check("allowmonstertelefrags"))
+		{
+			info->Flags |= MAPINFOF_AllowMonsterTelefrags;
+		}
+		else if (sc->Check("noallies"))
+		{
+			info->Flags |= MAPINFOF_NoAllies;
+		}
+		else if (sc->Check("deathslideshow"))
+		{
+			info->Flags |= MAPINFOF_DeathSlideShow;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();

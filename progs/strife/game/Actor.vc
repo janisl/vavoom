@@ -596,7 +596,7 @@ void Died(Actor source)
 	classid DropItemType;
 	Actor A;
 
-	if (bIsPlayer && Level.Game.level->MapName == 'map29')
+	if (bIsPlayer && XLevel.bDeathSlideShow)
 	{
 		//	Start sad finale.
 		MSG_Select(MSG_SV_RELIABLE);
@@ -2420,7 +2420,7 @@ bool PIT_StompThing(Entity Other)
 	if (Other == self)
 		return true;
 
-	if (!bIsPlayer)
+	if (!bIsPlayer && !XLevel.bAllowMonsterTelefrags)
 	{
 		return false;
 	}

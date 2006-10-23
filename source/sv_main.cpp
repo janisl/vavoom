@@ -2492,6 +2492,12 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 		GLevel->LevelFlags |= VLevel::LF_SpecialActionLowerFloor;
 	if (info.Flags & MAPINFOF_SpecialActionKillMonsters)
 		GLevel->LevelFlags |= VLevel::LF_SpecialActionKillMonsters;
+	if (info.Flags & MAPINFOF_AllowMonsterTelefrags)
+		GLevel->LevelFlags |= VLevel::LF_AllowMonsterTelefrags;
+	if (info.Flags & MAPINFOF_NoAllies)
+		GLevel->LevelFlags |= VLevel::LF_NoAllies;
+	if (info.Flags & MAPINFOF_DeathSlideShow)
+		GLevel->LevelFlags |= VLevel::LF_DeathSlideShow;
 
 	//	Spawn slopes, extra floors, etc.
 	GGameInfo->eventSpawnWorld(GLevel);

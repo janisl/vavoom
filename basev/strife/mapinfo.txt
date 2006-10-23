@@ -24,6 +24,7 @@ next map04
 sky1 skymnt02 0
 music d_danger
 cluster 1
+noallies
 
 map map04 lookup shustr_4
 next map05
@@ -57,7 +58,7 @@ cluster 1
 
 map map09 lookup shustr_9
 next map10
-sky1 skymnt01 0
+sky1 skymnt02 0
 music d_tribal
 cluster 1
 
@@ -180,6 +181,7 @@ next EndGameS
 sky1 skymnt01 0
 music d_instry
 cluster 1
+deathslideshow
 
 map map30 lookup shustr_30
 next map31
@@ -213,6 +215,7 @@ next EndBuyStrife
 sky1 skymnt02 0
 music d_map3
 cluster 2
+noallies
 
 //------------------------------------------------------
 //  Cluster definitions
@@ -222,3 +225,7 @@ hub
 
 clusterdef 2
 hub
+exittext t1text
+exittextislump
+pic panel7
+music d_fmfast

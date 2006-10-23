@@ -41,6 +41,9 @@ native readonly bool			bIronLichSpecial;
 native readonly bool			bSpecialActionOpenDoor;
 native readonly bool			bSpecialActionLowerFloor;
 native readonly bool			bSpecialActionKillMonsters;
+native readonly bool			bAllowMonsterTelefrags;
+native readonly bool			bNoAllies;
+native readonly bool			bDeathSlideShow;
 
 //
 //	MAP related Lookup tables.

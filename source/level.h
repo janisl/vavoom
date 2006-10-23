@@ -512,6 +512,9 @@ class VLevel : public VObject
 		LF_SpecialActionOpenDoor		= 0x00000400,
 		LF_SpecialActionLowerFloor		= 0x00000800,
 		LF_SpecialActionKillMonsters	= 0x00001000,
+		LF_AllowMonsterTelefrags		= 0x00002000,
+		LF_NoAllies						= 0x00004000,
+		LF_DeathSlideShow				= 0x00008000,
 	};
 	vuint32			LevelFlags;
 

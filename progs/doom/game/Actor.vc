@@ -2253,7 +2253,7 @@ bool PIT_StompThing(Entity Other)
 	if (Other == self)
 		return true;
 
-	if (!bTelestomp)
+	if (!bTelestomp && !XLevel.bAllowMonsterTelefrags)
 	{
 		return false;
 	}
