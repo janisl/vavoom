@@ -122,7 +122,7 @@ void VEmitContext::EndCode()
 #endif
 	FInstruction& Dummy = CurrentFunc->Instructions.Alloc();
 	Dummy.Opcode = OPC_Done;
-	CurrentFunc->DumpAsm();
+//	CurrentFunc->DumpAsm();
 }
 
 //==========================================================================
