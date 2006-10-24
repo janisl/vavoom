@@ -110,9 +110,6 @@ VName			sv_secret_map;
 
 int 			TimerGame;
 
-boolean			in_secret;
-VName			mapaftersecret;
-
 VGameInfo*		GGameInfo;
 VLevelInfo*		GLevelInfo;
 
@@ -1947,12 +1944,6 @@ void G_ExitLevel(int Position)
 	guard(G_ExitLevel);
 	LeavePosition = Position;
 	completed = true;
-
-	if (in_secret)
-	{
-		sv_next_map = mapaftersecret;
-	}
-	in_secret = false;
 	unguard;
 }
 
@@ -1972,16 +1963,11 @@ void G_SecretExitLevel(int Position)
 		return;
 	}
 
-	if (!in_secret)
-	{
-		mapaftersecret = sv_next_map;
-	}
 	LeavePosition = Position;
 	completed = true;
 
 	sv_next_map = sv_secret_map; 	// go to secret level
 
-	in_secret = true;
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GGameInfo->Players[i])
@@ -2429,7 +2415,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 	else if (!sv_loading)
 	{
 		//	New game
-		in_secret = false;
 	}
 
 	SV_Clear();

@@ -87,9 +87,6 @@ extern bool			sv_loading;
 extern int			sv_load_num_players;
 extern VMessage		sv_signon;
 
-extern boolean		in_secret;
-extern VName		mapaftersecret;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -914,11 +911,6 @@ void SV_SaveGame(int slot, const char* description)
 	*Saver << Skill;
 	*Saver << level.MapName;
 
-	// Write secret level info
-	byte InSec = in_secret;
-	*Saver << InSec;
-	*Saver << mapaftersecret;
-
 	// Write global script info
 	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
 	{
@@ -1029,10 +1021,6 @@ void SV_LoadGame(int slot)
 
 	//	Init skill hacks
 	GGameInfo->eventInitNewGame(gameskill);
-
-	// Read secret level info
-	in_secret = Streamer<byte>(*Loader);
-	*Loader << mapaftersecret;
 
 	// Read global script info
 	for (i = 0; i < MAX_ACS_WORLD_VARS; i++)
