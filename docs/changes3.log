@@ -1522,3 +1522,77 @@
   Implemented proper handling of string stats in player class.
   Fixed printing of development messages to the console.
   Fixed freeing of the sector regions.
+24.09.2006
+  Correctly recognise files with .zip extension when specified with the -file
+ option.
+25.09.2006
+  Firebrand fixed a typo in ZIP file namespace detection.
+  Added optimised opcodes for accessing local variables and member fields.
+26.09.2006
+  Fixed spelling of many variables.
+27.09.2006
+  Implemented support for optional and out method parameters.
+28.09.2006
+  Changed client side to use actual Player class instead of ClientState class.
+29.09.2006
+  Implemented sound sequence support for random and relative volume and restart
+ of the sequence.
+30.09.2006
+  Implemented support for random and selection sound sequences.
+01.10.2006
+  Implemented playback of sound sequence by actor.
+  Implemented placeable sound sequence objects.
+  Replaced Heretic's ambient sound with sound sequences.
+  Implemented ambient sound objects.
+02.10.2006
+  Implemented sound attenuation.
+03.10.2006
+  Renamed 'common' progs package to 'engine', moved the rest of native classes
+ to this package.
+  Added C-mode to the scripts parser.
+  Started to implement parsing of language scripts.
+05.10.2006
+  Finished implementing language script parser.
+  Made map names and cluster messages localisable.
+  I found out that mapinfo command 'secret' should be 'secretnext'.
+06.10.2006
+  Updated MAPINFO scripts to use localised map names and cluster messages.
+07.10.2006
+  Crated 'linespec' package, started to move line specials code there. Moved
+ door and ceiling specials.
+08.10.2006
+  Moved floor, stair, platform, pillar and elevator specials to 'linespec'.
+09.10.2006
+  Moved polyobj lighting and scrolling specials to 'linespec'.
+10.10.2006
+  Implemented parsing of animated door defintions in ANIMDEFS, made texture
+ change door to use it.
+  Moved plane watcher, texture change door, exit, ACS some sector specials to
+ 'linespec'.
+13.10.2006
+  Moved puller, pusher and thing specials to 'linespec'.
+  Added special texture usage type for automap background.
+  Implemented support for special end game map names in MAPINFO.
+14.10.2006
+  Changed client to use end game type for finale.
+  Fixed Strife to use correct sounds for doors.
+  Improved texture type recognition. Added support for PCX and TGA textures in
+ WAD files.
+15.10.2006
+  Unified content types.
+  Started to replace usage of multiple palettes with colour shifts.
+  Some more improvements in texture manager.
+16.10.2006
+  Finished replacing palette effects with colour shifts.
+  Changed buttons to be thinkers, implemented support for animated switches.
+20.10.2006
+  Firebrand did some improvements for avoiding a dropoff.
+21.10.2006
+  Implemented support for warping textures.
+  Skip camera texture definitions.
+22.10.2006
+  Implemented support for oscillate range animations.
+  In MAPINFO added definitions for par and suck times and level title image.
+23.10.2006
+  Added MAPINFO flags for monster telefrags, no sound clipping, no alies and
+ death slide show. Some MAPINFO script fixes.

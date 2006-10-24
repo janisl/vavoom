@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                  Version 1.21.2
+                                                    Version 1.22
 
 Contents:
     0. Disclaimer
@@ -122,7 +122,7 @@ Step by step:
 
   1. Unpack the Vavoom source package:
 
-    tar xvjf vavoom-1.21.2.tar.bz2
+    tar xvjf vavoom-1.22.tar.bz2
 
   If you got the zip file instead of tarball then you must run fixunix.sh to
 convert text files to UNIX format:
@@ -977,6 +977,20 @@ Version 1.21.2
 * Fixed DeHackEd support.
 * Fixed Windows MIDI driver to use MIDI device selected in control panel and
  to properly set music volume.
+
+==============================================================================
+Version 1.22
+==============================================================================
+
+* Added support for PK3 (ZIP) files.
+* Rewrote most of the vcc, added code optimisations.
+* Changed directory for high-resolution textures to hirestex.
+* Added support for many MAPINFO extensions.
+* Added support for latest SNDSEQ extensions.
+* Added placeable ambient sound and sound sequence objects.
+* Added support for language scripts.
+* Added support for ANIMDEFS extensions (except camera textures).
+* Some improvements in network protocol.
 
 *****************************************************************************
 8. Licensing
