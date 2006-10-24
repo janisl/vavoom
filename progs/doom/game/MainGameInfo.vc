@@ -1763,9 +1763,6 @@ void MakeContents(line_t * line)
 		line->frontsector->ceiling.flags = line->arg3;
 		line->frontsector->floor.flags = line->arg3;
 	}
-	print("---- Contents %d %d %d ----", line->frontsector->params.contents,
-		line->frontsector->floor.translucency,
-		line->frontsector->ceiling.flags);
 }
 
 //==========================================================================
