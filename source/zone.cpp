@@ -581,7 +581,8 @@ void Z_Free(void* ptr)
 	}
 	if (!mainzone)
 	{
-		::free(ptr);
+		//::free(ptr);
+		dprintf("Z_Free after Z_Shutdown\n");
 		return;
 	}
 

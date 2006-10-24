@@ -55,7 +55,7 @@
  externdef DP_u
  externdef DP_v
  externdef DP_32768
- externdef DP_Color
+ externdef DP_Colour
  externdef DP_Pix
  externdef lzistepx
  externdef gb
@@ -77,8 +77,8 @@
  externdef _r_ppn
  externdef _r_pup
  externdef _r_pright
- externdef _centerxfrac
- externdef _centeryfrac
+ externdef _centrexfrac
+ externdef _centreyfrac
  externdef _d_particle_right
  externdef _d_particle_top
  externdef _d_pix_min
@@ -161,8 +161,8 @@
  externdef _aliastransform
  externdef _xprojection
  externdef _yprojection
- externdef _aliasxcenter
- externdef _aliasycenter
+ externdef _aliasxcentre
+ externdef _aliasycentre
  externdef _ziscale
  externdef _d_plightvec
  externdef _d_avertexnormals
@@ -253,7 +253,7 @@ _D_DrawParticle_15:
  or ebp,eax
  sal ebx,cl
  or ebp,ebx
- mov dword ptr[DP_Color],ebp
+ mov dword ptr[DP_Colour],ebp
  jmp L15bppEntry
  align 4
  public _D_DrawParticle_16
@@ -279,7 +279,7 @@ _D_DrawParticle_16:
  or ebp,eax
  sal ebx,cl
  or ebp,ebx
- mov dword ptr[DP_Color],ebp
+ mov dword ptr[DP_Colour],ebp
 L15bppEntry:
  fld dword ptr[_vieworg]
  fsubr dword ptr[0+edi]
@@ -328,9 +328,9 @@ L15bppEntry:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fadd dword ptr[_centeryfrac]
+ fadd dword ptr[_centreyfrac]
  fxch st(1)
- fadd dword ptr[_centerxfrac]
+ fadd dword ptr[_centrexfrac]
  fxch st(1)
  fadd dword ptr[float_point5]
  fxch st(1)
@@ -381,7 +381,7 @@ LTestDone:
  jnz LDefault
  cmp eax,4
  ja LDefault
- mov cx,word ptr[DP_Color]
+ mov cx,word ptr[DP_Colour]
  jmp  dword ptr[DP_EntryTable-4+eax*4]
  align 4
 DP_EntryTable:
@@ -570,7 +570,7 @@ LDefault:
  mov dword ptr[DP_Pix],eax
  mov cl,byte ptr[_d_y_aspect_shift]
  shl ebx,cl
- mov cx,word ptr[DP_Color]
+ mov cx,word ptr[DP_Colour]
 LGenRowLoop:
  mov eax,dword ptr[DP_Pix]
 LGenColLoop:

@@ -55,7 +55,7 @@
  externdef DP_u
  externdef DP_v
  externdef DP_32768
- externdef DP_Color
+ externdef DP_Colour
  externdef DP_Pix
  externdef lzistepx
  externdef gb
@@ -77,8 +77,8 @@
  externdef _r_ppn
  externdef _r_pup
  externdef _r_pright
- externdef _centerxfrac
- externdef _centeryfrac
+ externdef _centrexfrac
+ externdef _centreyfrac
  externdef _d_particle_right
  externdef _d_particle_top
  externdef _d_pix_min
@@ -161,8 +161,8 @@
  externdef _aliastransform
  externdef _xprojection
  externdef _yprojection
- externdef _aliasxcenter
- externdef _aliasycenter
+ externdef _aliasxcentre
+ externdef _aliasycentre
  externdef _ziscale
  externdef _d_plightvec
  externdef _d_avertexnormals
@@ -284,9 +284,9 @@ L15bppEntry:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fadd dword ptr[_centeryfrac]
+ fadd dword ptr[_centreyfrac]
  fxch st(1)
- fadd dword ptr[_centerxfrac]
+ fadd dword ptr[_centrexfrac]
  fxch st(1)
  fadd dword ptr[float_point5]
  fxch st(1)
@@ -311,11 +311,11 @@ L15bppEntry:
  mov ebp,dword ptr[12+edi]
  mov ecx,dword ptr[_rshift]
  cmp ecx,16
- je LColorDone
+ je LColourDone
  bswap ebp
  ror ebp,8
-LColorDone:
- mov dword ptr[DP_Color],ebp
+LColourDone:
+ mov dword ptr[DP_Colour],ebp
  mov ebx,dword ptr[_scrn]
  mov edi,dword ptr[_ylookup+edx*4]
  add edi,eax
@@ -344,7 +344,7 @@ LTestDone:
  jnz LDefault
  cmp eax,4
  ja LDefault
- mov ecx,dword ptr[DP_Color]
+ mov ecx,dword ptr[DP_Colour]
  jmp  dword ptr[DP_EntryTable-4+eax*4]
  align 4
 DP_EntryTable:
@@ -533,7 +533,7 @@ LDefault:
  mov dword ptr[DP_Pix],eax
  mov cl,byte ptr[_d_y_aspect_shift]
  shl ebx,cl
- mov ecx,dword ptr[DP_Color]
+ mov ecx,dword ptr[DP_Colour]
 LGenRowLoop:
  mov eax,dword ptr[DP_Pix]
 LGenColLoop:

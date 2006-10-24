@@ -55,7 +55,7 @@
  externdef DP_u
  externdef DP_v
  externdef DP_32768
- externdef DP_Color
+ externdef DP_Colour
  externdef DP_Pix
  externdef lzistepx
  externdef gb
@@ -77,8 +77,8 @@
  externdef _r_ppn
  externdef _r_pup
  externdef _r_pright
- externdef _centerxfrac
- externdef _centeryfrac
+ externdef _centrexfrac
+ externdef _centreyfrac
  externdef _d_particle_right
  externdef _d_particle_top
  externdef _d_pix_min
@@ -161,8 +161,8 @@
  externdef _aliastransform
  externdef _xprojection
  externdef _yprojection
- externdef _aliasxcenter
- externdef _aliasycenter
+ externdef _aliasxcentre
+ externdef _aliasycentre
  externdef _ziscale
  externdef _d_plightvec
  externdef _d_avertexnormals
@@ -504,9 +504,9 @@ _D_AliasProjectFinalVert:
  fmul st(1),st(0)
  fmulp st(3),st(0)
  fxch st(1)
- fadd dword ptr[_aliasxcenter]
+ fadd dword ptr[_aliasxcentre]
  fxch st(1)
- fadd dword ptr[_aliasycenter]
+ fadd dword ptr[_aliasycentre]
  fxch st(2)
  fistp dword ptr[8+ecx]
  fistp dword ptr[ecx]
@@ -623,13 +623,13 @@ Lp3:
  mov dword ptr[12+esi],ecx
  mov dword ptr[16+esi],edx
  fxch st(1)
- fadd dword ptr[_aliasxcenter]
+ fadd dword ptr[_aliasxcentre]
  fxch st(2)
  faddp st(3),st(0)
  fist dword ptr[8+esi]
  fmulp st(2),st(0)
  fistp dword ptr[esi]
- fadd dword ptr[_aliasycenter]
+ fadd dword ptr[_aliasycentre]
  mov dword ptr[20+esi],ebx
  mov dword ptr[24+esi],0
  fistp dword ptr[4+esi]

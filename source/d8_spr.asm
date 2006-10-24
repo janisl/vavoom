@@ -55,7 +55,7 @@
  externdef DP_u
  externdef DP_v
  externdef DP_32768
- externdef DP_Color
+ externdef DP_Colour
  externdef DP_Pix
  externdef lzistepx
  externdef gb
@@ -77,8 +77,8 @@
  externdef _r_ppn
  externdef _r_pup
  externdef _r_pright
- externdef _centerxfrac
- externdef _centeryfrac
+ externdef _centrexfrac
+ externdef _centreyfrac
  externdef _d_particle_right
  externdef _d_particle_top
  externdef _d_pix_min
@@ -161,8 +161,8 @@
  externdef _aliastransform
  externdef _xprojection
  externdef _yprojection
- externdef _aliasxcenter
- externdef _aliasycenter
+ externdef _aliasxcentre
+ externdef _aliasycentre
  externdef _ziscale
  externdef _d_plightvec
  externdef _d_avertexnormals

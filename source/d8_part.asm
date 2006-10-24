@@ -55,7 +55,7 @@
  externdef DP_u
  externdef DP_v
  externdef DP_32768
- externdef DP_Color
+ externdef DP_Colour
  externdef DP_Pix
  externdef lzistepx
  externdef gb
@@ -77,8 +77,8 @@
  externdef _r_ppn
  externdef _r_pup
  externdef _r_pright
- externdef _centerxfrac
- externdef _centeryfrac
+ externdef _centrexfrac
+ externdef _centreyfrac
  externdef _d_particle_right
  externdef _d_particle_top
  externdef _d_pix_min
@@ -161,8 +161,8 @@
  externdef _aliastransform
  externdef _xprojection
  externdef _yprojection
- externdef _aliasxcenter
- externdef _aliasycenter
+ externdef _aliasxcentre
+ externdef _aliasycentre
  externdef _ziscale
  externdef _d_plightvec
  externdef _d_avertexnormals
@@ -283,9 +283,9 @@ _D_DrawParticle_8:
  fxch st(1)
  fmul st(0),st(2)
  fxch st(1)
- fadd dword ptr[_centeryfrac]
+ fadd dword ptr[_centreyfrac]
  fxch st(1)
- fadd dword ptr[_centerxfrac]
+ fadd dword ptr[_centrexfrac]
  fxch st(1)
  fadd dword ptr[float_point5]
  fxch st(1)
@@ -320,7 +320,7 @@ _D_DrawParticle_8:
  mov ebp,dword ptr[_d_rgbtable]
  add ebx,ecx
  mov cl,byte ptr[ebp+ebx]
- mov byte ptr[DP_Color],cl
+ mov byte ptr[DP_Colour],cl
  mov ebx,dword ptr[_scrn]
  add ebx,eax
  mov edi,dword ptr[_ylookup+edx*4]
@@ -345,7 +345,7 @@ LTestPixMax:
  jng LTestDone
  mov eax,ecx
 LTestDone:
- mov ch,byte ptr[DP_Color]
+ mov ch,byte ptr[DP_Colour]
  mov ebx,dword ptr[_d_y_aspect_shift]
  test ebx,ebx
  jnz LDefault
