@@ -117,38 +117,57 @@ void VLevel::LoadMap(VName MapName)
 {
 	guard(VLevel::LoadMap);
 	bool AuxiliaryMap = false;
+	int lumpnum;
+	VName MapLumpName;
+
 	//	If working with a devlopment map, reload it.
-	if (fl_devmode)
+	VStr aux_file_name = va("maps/%s.wad", *MapName);
+	if (FL_FileExists(aux_file_name))
 	{
-		VStr aux_file_name = FL_FindFile(va("maps/%s.wad", *MapName));
-		if (aux_file_name)
+		lumpnum = W_OpenAuxiliary(aux_file_name);
+		MapLumpName = W_LumpName(lumpnum);
+		AuxiliaryMap = true;
+	}
+	else
+	{
+		//	Find map and GL nodes.
+		MapLumpName = MapName;
+		lumpnum = W_CheckNumForName(MapName);
+		if (lumpnum < 0)
 		{
-			W_OpenAuxiliary(aux_file_name);
-			AuxiliaryMap = true;
+			Host_Error("Map %s not found\n", *MapName);
 		}
 	}
 
-	//	Find map and GL nodes.
-	int lumpnum = W_CheckNumForName(MapName);
-	if (lumpnum < 0)
+	//	Verify that it's a valid map.
+	if (W_LumpName(lumpnum + ML_THINGS) != "things" ||
+		W_LumpName(lumpnum + ML_LINEDEFS) != "linedefs" ||
+		W_LumpName(lumpnum + ML_SIDEDEFS) != "sidedefs" ||
+		W_LumpName(lumpnum + ML_VERTEXES) != "vertexes" ||
+		W_LumpName(lumpnum + ML_SEGS) != "segs" ||
+		W_LumpName(lumpnum + ML_SSECTORS) != "ssectors" ||
+		W_LumpName(lumpnum + ML_NODES) != "nodes" ||
+		W_LumpName(lumpnum + ML_SECTORS) != "sectors" ||
+		W_LumpName(lumpnum + ML_REJECT) != "reject" ||
+		W_LumpName(lumpnum + ML_BLOCKMAP) != "blockmap")
 	{
-		Host_Error("Map %s not found\n", *MapName);
+		Host_Error("Map %s is not a valid map", *MapName);
 	}
-	int gl_lumpnum = FindGLNodes(MapName);
 
+	int gl_lumpnum = FindGLNodes(MapLumpName);
 #ifdef CLIENT
 	//	If missing GL nodes or VIS data, then build them.
 	if (gl_lumpnum < lumpnum)
 	{
 		W_BuildGLNodes(lumpnum);
-		gl_lumpnum = FindGLNodes(MapName);
+		gl_lumpnum = FindGLNodes(MapLumpName);
 	}
 	else if (W_LumpName(gl_lumpnum + ML_GL_PVS) != NAME_gl_pvs ||
 		W_LumpLength(gl_lumpnum + ML_GL_PVS) == 0)
 	{
 		W_BuildPVS(lumpnum, gl_lumpnum);
-		lumpnum = W_GetNumForName(MapName);
-		gl_lumpnum = FindGLNodes(MapName);
+		lumpnum = W_GetNumForName(MapLumpName);
+		gl_lumpnum = FindGLNodes(MapLumpName);
 	}
 #endif
 	if (gl_lumpnum < lumpnum)
@@ -211,13 +230,11 @@ void VLevel::LoadMap(VName MapName)
 		}
 	}
 
-#ifdef SERVER
 	if (!(LevelFlags & LF_Extended))
 	{
 		//	Translate level to Hexen format
 		GGameInfo->eventTranslateLevel(this);
 	}
-#endif
 	//	Set up textures after loading lines because for some Boom line
 	// specials there can be special meaning of some texture names.
 	LoadSideDefsPass2(lumpnum + ML_SIDEDEFS);

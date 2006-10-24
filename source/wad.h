@@ -78,7 +78,7 @@ public:
 void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices);
 void W_Shutdown();
 
-void W_OpenAuxiliary(const VStr& FileName);
+int W_OpenAuxiliary(const VStr& FileName);
 void W_CloseAuxiliary();
 
 void W_BuildGLNodes(int lump);

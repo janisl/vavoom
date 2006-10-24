@@ -218,14 +218,18 @@ void W_AddFileFromZip(const VStr& WadName, VStream* WadStrm,
 //
 //==========================================================================
 
-void W_OpenAuxiliary(const VStr& FileName)
+int W_OpenAuxiliary(const VStr& FileName)
 {
 	guard(W_OpenAuxiliary);
 	W_CloseAuxiliary();
 
 	AuxiliaryIndex = SearchPaths.Num();
 
-	W_AddFile(FileName, VStr(), false);
+	VStr GwaName = FileName.StripExtension() + ".gwa";
+	VStream* WadStrm = FL_OpenFileRead(FileName);
+	VStream* GwaStrm = FL_OpenFileRead(GwaName);
+	W_AddFileFromZip(FileName, WadStrm, GwaName, GwaStrm);
+	return MAKE_HANDLE(AuxiliaryIndex, 0);
 	unguard;
 }
 
