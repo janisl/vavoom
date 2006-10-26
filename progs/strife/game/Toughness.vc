@@ -41,6 +41,7 @@ bool HandlePickup(Actor Toucher)
 		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Accuracy, 1);
 		Player(Toucher.Player).GiveInvItem(StrifeDefs::ITEM_Coin, Player(Toucher.Player).Accuracy * 5 + 300);
 	}
+	return Ret;
 }
 
 __states__
