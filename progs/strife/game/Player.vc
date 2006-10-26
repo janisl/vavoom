@@ -727,7 +727,15 @@ bool GiveItem(int item)
 
 bool GiveInvItem(int item, int amount)
 {
+	if (Inventory[item] >= MainGameInfo(Level.Game).MaxInvItem[item])
+	{
+		return false;
+	}
 	Inventory[item] += amount;
+	if (Inventory[item] > MainGameInfo(Level.Game).MaxInvItem[item])
+	{
+		Inventory[item] = MainGameInfo(Level.Game).MaxInvItem[item];
+	}
 	while (!Inventory[InvCursor] && InvCursor < StrifeDefs::NUMINVITEMS - 1)
 	{
 		InvCursor++;
