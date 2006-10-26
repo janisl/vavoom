@@ -371,10 +371,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\fmapdefs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\fs_local.h"
 				>
 			</File>
