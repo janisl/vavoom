@@ -514,6 +514,30 @@ VMemberBase* VMemberBase::StaticFindMember(VName InName,
 
 //==========================================================================
 //
+//	VMemberBase::SetUpNetClasses
+//
+//==========================================================================
+
+void VMemberBase::SetUpNetClasses()
+{
+	guard(VMemberBase::SetUpNetClasses);
+	int CurId = 0;
+	for (int i = 0; i < GMembers.Num(); i++)
+	{
+		if (GMembers[i]->MemberType == MEMBER_Class)
+		{
+			VClass* C = static_cast<VClass*>(GMembers[i]);
+			if (C->IsChildOf(VThinker::StaticClass()))
+			{
+				C->NetId = CurId++;
+			}
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VPackage::VPackage
 //
 //==========================================================================

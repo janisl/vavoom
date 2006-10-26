@@ -110,7 +110,9 @@ void CL_Clear()
 
 static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
 {
-	mobj.Class = ClassLookup[(vuint16)msg.ReadShort()];
+	guard(CL_ReadMobjBase);
+	vuint16 CIdx = (vuint16)msg.ReadShort();
+	mobj.Class = ClassLookup[CIdx];
 	check(mobj.Class);
 	mobj.State = mobj.Class->StatesLookup[(vuint16)msg.ReadShort()];
 	mobj.origin.x = msg.ReadShort();
@@ -123,15 +125,18 @@ static void CL_ReadMobjBase(VMessage& msg, clmobjbase_t &mobj)
 	mobj.translucency = msg.ReadByte();
 	mobj.translation = msg.ReadByte();
 	mobj.effects = msg.ReadByte();
+	unguard;
 }
 
 static void CL_ParseBaseline(VMessage& msg)
 {
+	guard(CL_ParseBaseline);
 	int		i;
 
 	i = msg.ReadShort();
 
 	CL_ReadMobjBase(msg, cl_mo_base[i]);
+	unguard;
 }
 
 static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbase_t &base)
@@ -608,6 +613,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 		CL_AddModel(i, va("models/%s", *VClass::GModelNames[i]));
 	}
 
+	VMemberBase::SetUpNetClasses();
 	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
 	{
 		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
@@ -615,6 +621,7 @@ static void CL_ParseServerInfo(VMessage& msg)
 			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
 			if (C->IsChildOf(VThinker::StaticClass()))
 			{
+				check(C->NetId >= 0);
 				ClassLookup[C->NetId] = C;
 			}
 		}

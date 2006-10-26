@@ -545,18 +545,7 @@ void SV_CreateBaseline()
 	guard(SV_CreateBaseline);
 	int		i;
 
-	int CurId = 0;
-	for (i = 0; i < VMemberBase::GMembers.Num(); i++)
-	{
-		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
-		{
-			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()))
-			{
-				C->NetId = CurId++;
-			}
-		}
-	}
+	VMemberBase::SetUpNetClasses();
 
 	for (i = 0; i < GLevel->NumSectors; i++)
 	{

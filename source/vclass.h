@@ -77,6 +77,7 @@ public:
 	static void StaticExit();
 	static VPackage* StaticLoadPackage(VName);
 	static VMemberBase* StaticFindMember(VName, VMemberBase*, vuint8);
+	static void SetUpNetClasses();
 };
 
 //==========================================================================
