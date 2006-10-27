@@ -20,6 +20,7 @@ EXTRA_DIST = \
 	common/basepak.ls.in \
 	common/default.cfg \
 	common/startup.vs \
+	common/textures/-noflat-.png \
 	doom/graphics/*.lmp \
 	doom/palette.pcx \
 	doom/basepak.ls.in \
@@ -66,7 +67,7 @@ EXTRA_DIST = \
 	strife/sndseq.txt \
 	strife/terrains.txt \
 	tnt/basepak.ls.in \
-	tnt/scripts/mapinfo.txt
+	tnt/mapinfo.txt
 
 VLUMPY = ../utils/bin/vlumpy$(EXEEXT)
 ACC = ../utils/bin/acc$(EXEEXT)
