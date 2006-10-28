@@ -285,10 +285,10 @@ void InitTranslationTables()
 	SetLineTrans(139, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_USE, true);
 
 	SetLineTrans(140, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_USE, false);
-	SetLineTrans(141, 197, -1, 8, 8, 10, 0, SPAC_CROSS, false);
+	SetLineTrans(141, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_CROSS, false);
 	SetLineTrans(142, LNSPEC_ScrollTextureUp, 64, 0, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(143, LNSPEC_ScrollTextureDown, 64, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(144, 14, -1, 4, 105, 0, 0, SPAC_USE, true);
+	SetLineTrans(144, LNSPEC_DoorAnimated, -1, 4, 105, 0, 0, SPAC_USE, true);
 	SetLineTrans(145, LNSPEC_ACSExecuteWithResult, 0, 145, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(146, LNSPEC_StairsGeneric, -1, 16, 16, 0, 0, SPAC_USE, false);
 	SetLineTrans(147, LNSPEC_ClearForceField, -1, 0, 0, 0, 0, SPAC_USE, false);
@@ -344,7 +344,7 @@ void InitTranslationTables()
 	SetLineTrans(192, LNSPEC_DoorLockedRaise, -1, 16, 0, 1 + StrifeDefs::KEY_WarehouseKey, 0, SPAC_USE, false);
 	SetLineTrans(193, LNSPEC_ACSExecuteWithResult, 0, 193, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(194, LNSPEC_ACSExecuteWithResult, 0, 194, -1, 0, 0, SPAC_USE, false);
-	SetLineTrans(195, 39, -1, 0, 0, 0, 0, SPAC_MCROSS, true);
+	SetLineTrans(195, LNSPEC_TeleportZombieChanger, 0, -1, 0, 0, 0, SPAC_MCROSS, true);
 	SetLineTrans(196, LNSPEC_ACSExecuteWithResult, 0, 196, -1, 0, 0, SPAC_CROSS, true); // TRIGGER? UNUSED
 	SetLineTrans(197, LNSPEC_ACSExecuteWithResult, 0, 197, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(198, LNSPEC_ACSExecuteWithResult, 0, 198, -1, 0, 0, SPAC_CROSS, true);
@@ -357,7 +357,7 @@ void InitTranslationTables()
 	SetLineTrans(204, LNSPEC_ACSExecuteWithResult, 0, 204, -1, 0, 0, SPAC_USE, false);
 	SetLineTrans(205, LNSPEC_DoorLockedRaise, 0, 0, 0, 103, 0, SPAC_USE, true);
 	SetLineTrans(206, LNSPEC_ACSExecuteWithResult, 0, 206, -1, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(207, 14, -1, 4, 105, 0, 0, SPAC_USE, true);
+	SetLineTrans(207, LNSPEC_DoorAnimated, -1, 4, 105, 0, 0, SPAC_USE, true);
 	SetLineTrans(208, LNSPEC_ACSExecuteWithResult, 0, 208, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(209, LNSPEC_ACSExecuteWithResult, 0, 209, -1, 0, 0, SPAC_USE, false);
 
