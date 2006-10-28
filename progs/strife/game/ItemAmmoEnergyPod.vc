@@ -27,6 +27,19 @@ class ItemAmmoEnergyPod : AmmoPickup
 	__mobjinfo__(2047)
 	__scriptid__(75);
 
+//==========================================================================
+//
+//	HandlePickup
+//
+//==========================================================================
+
+bool HandlePickup(Actor Toucher)
+{
+	if (bDropped)
+		AmmoCount = 40;
+	return ::HandlePickup(Toucher);
+}
+
 __states__
 {
 	S_ENERGY_POD_1('BRY1', 0, 6.0 / 35.0, S_ENERGY_POD_2) { }
@@ -40,5 +53,4 @@ defaultproperties
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = StrifeDefs::am_cell;
 	AmmoCount = 20;
-	DropAmount = 20;
 }
