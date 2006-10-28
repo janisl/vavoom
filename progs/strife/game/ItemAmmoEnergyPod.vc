@@ -40,4 +40,5 @@ defaultproperties
 	IdleState = S_ENERGY_POD_1;
 	AmmoType = StrifeDefs::am_cell;
 	AmmoCount = 20;
+	DropAmount = 20;
 }

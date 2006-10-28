@@ -28,6 +28,7 @@ class AmmoPickup : Pickup
 
 int AmmoType;
 int AmmoCount;
+int DropAmount;
 
 //==========================================================================
 //
@@ -37,7 +38,8 @@ int AmmoCount;
 
 bool HandlePickup(Actor Toucher)
 {
-	return Player(Toucher.Player).GiveAmmo(AmmoType, bDropped ? AmmoCount / 2 : AmmoCount);
+	return Player(Toucher.Player).GiveAmmo(AmmoType,
+		bDropped ? DropAmount ? DropAmount : AmmoCount / 2 : AmmoCount);
 }
 
 defaultproperties
