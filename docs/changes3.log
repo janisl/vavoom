@@ -1596,3 +1596,14 @@
 23.10.2006
   Added MAPINFO flags for monster telefrags, no sound clipping, no alies and
  death slide show. Some MAPINFO script fixes.
+25.10.2006
+  Implemented support for maps in PK3 file.
+26.10.2006
+  Implemented Strife inventory limits.
+  Fixed loading a saved game on startup.
+28.10.2006
+  Some Strife fixes.
+
+******************************************************************************
+                            VERSION 1.22
+******************************************************************************
