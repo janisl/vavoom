@@ -9,13 +9,17 @@ EXTRA_DIST = \
 	docs/gnu.txt \
 	docs/vavoom.txt \
 	docs/vcc.log \
-	msvc/Vavoom.dsw \
-	msvc/ddf2vc/ddf2vc.dsp \
-	msvc/libglbsp/libglbsp.dsp \
-	msvc/libglvis/libglvis.dsp \
-	msvc/Progs/Progs.dsp \
-	msvc/timidity/timidity.dsp \
-	msvc/Vavoom95/Vavoom95.dsp \
-	msvc/vcc/vcc.dsp \
-	msvc/vcpp/vcpp.dsp \
-	msvc/vlumpy/vlumpy.dsp
+	msvc/Vavoom.sln \
+	msvc/acc.vcproj \
+	msvc/libglbsp.vcproj \
+	msvc/libglvis.vcproj \
+	msvc/progs_common.vcproj \
+	msvc/progs_doom.vcproj \
+	msvc/progs_doom2.vcproj \
+	msvc/progs_heretic.vcproj \
+	msvc/progs_hexen.vcproj \
+	msvc/progs_strife.vcproj \
+	msvc/timidity.vcproj \
+	msvc/vavoom.vcproj \
+	msvc/vcc.vcproj \
+	msvc/vlumpy.vcproj
