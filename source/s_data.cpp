@@ -60,6 +60,8 @@ VSoundManager*		GSoundManager;
 static VRawSampleLoader		RawSampleLoader;
 #endif
 
+static VCvarI	s_external_sounds("s_external_sounds", "1", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -831,11 +833,15 @@ bool VSoundManager::LoadSound(int sound_id)
 				*S_sfx[sound_id].TagName);
 			return false;
 		}
-		VStream* Strm = FL_OpenFileRead(va("sound/%s.flac", *W_LumpName(S_sfx[sound_id].LumpNum)));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("sound/%s.wav", *W_LumpName(S_sfx[sound_id].LumpNum)));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("sound/%s.raw", *W_LumpName(S_sfx[sound_id].LumpNum)));
+		VStream* Strm = NULL;
+		if (s_external_sounds)
+		{
+			Strm = FL_OpenFileRead(va("sound/%s.flac", *W_LumpName(S_sfx[sound_id].LumpNum)));
+			if (!Strm)
+				Strm = FL_OpenFileRead(va("sound/%s.wav", *W_LumpName(S_sfx[sound_id].LumpNum)));
+			if (!Strm)
+				Strm = FL_OpenFileRead(va("sound/%s.raw", *W_LumpName(S_sfx[sound_id].LumpNum)));
+		}
 		if (!Strm)
 		{
 			// get LumpNum if necessary

@@ -165,6 +165,7 @@ private:
 	static VCvarI		swap_stereo;
 	static VCvarI		s_channels;
 	static VCvarI		cd_music;
+	static VCvarI		s_external_music;
 
 	//	Friends
 	friend class TCmdMusic;
@@ -203,6 +204,7 @@ VCvarF				VAudio::music_volume("music_volume", "0.5", CVAR_Archive);
 VCvarI				VAudio::swap_stereo("swap_stereo", "0", CVAR_Archive);
 VCvarI				VAudio::s_channels("s_channels", "16", CVAR_Archive);
 VCvarI				VAudio::cd_music("use_cd_music", "0", CVAR_Archive);
+VCvarI				VAudio::s_external_music("s_external_music", "1", CVAR_Archive);
 
 FAudioCodecDesc*	FAudioCodecDesc::List;
 
@@ -1149,53 +1151,57 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	MusicVolumeFactor = GSoundManager->GetMusicVolume(Song);
 
 	//	Find the song.
-	VStream* Strm = FL_OpenFileRead(va("music/%s.ogg", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mp3", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.wav", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mid", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mus", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.669", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.amf", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.dsm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.far", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.gdm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.imf", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.it", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.m15", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.med", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mod", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mtm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.okt", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.s3m", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.stm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.stx", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.ult", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.uni", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.xm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.flac", Song));
+	VStream* Strm = NULL;
+	if (s_external_music)
+	{
+		Strm = FL_OpenFileRead(va("music/%s.ogg", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.mp3", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.wav", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.mid", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.mus", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.669", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.amf", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.dsm", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.far", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.gdm", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.imf", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.it", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.m15", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.med", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.mod", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.mtm", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.okt", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.s3m", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.stm", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.stx", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.ult", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.uni", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.xm", Song));
+		if (!Strm)
+			Strm = FL_OpenFileRead(va("music/%s.flac", Song));
+	}
 	if (!Strm)
 	{
 		int Lump = W_CheckNumForName(VName(Song, VName::AddLower8), WADNS_Music);

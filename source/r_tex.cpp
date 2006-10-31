@@ -421,6 +421,8 @@ vuint8				r_black_colour;
 //	Switches
 TArray<TSwitch*>	Switches;
 
+VCvarI				r_hirestex("r_hirestex", "1", CVAR_Archive);
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<animDef_t>	AnimDefs;
@@ -1139,6 +1141,10 @@ VTexture* VTexture::GetHighResolutionTexture()
 {
 	guard(VTexture::GetHighResolutionTexture);
 #ifdef CLIENT
+	if (!r_hirestex)
+	{
+		return NULL;
+	}
 	//	If high resolution texture is already created, then just return it.
 	if (HiResTexture)
 	{
@@ -3622,6 +3628,10 @@ rgba_t* VWarpTexture::GetPalette()
 VTexture* VWarpTexture::GetHighResolutionTexture()
 {
 	guard(VWarpTexture::GetHighResolutionTexture);
+	if (!r_hirestex)
+	{
+		return NULL;
+	}
 	//	If high resolution texture is already created, then just return it.
 	if (HiResTexture)
 	{
