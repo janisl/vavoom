@@ -279,6 +279,8 @@ private:
 			(g << gshift32) | (b << bshift32);
 	}
 
+	bool						Windowed;
+
 #if DIRECT3D_VERSION >= 0x0800
 	HMODULE						DLLHandle;
 

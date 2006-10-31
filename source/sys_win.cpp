@@ -680,10 +680,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		}
 
 		//	Create window
-		hwnd = CreateWindowEx(WS_EX_APPWINDOW,
-			"VAVOOM", "VAVOOM for Windows'95", 
-			GArgs.CheckParm("-window") ? WS_OVERLAPPEDWINDOW : WS_POPUP,
-			0, 0, 2, 2, NULL, NULL, hInst, NULL);
+		hwnd = CreateWindowEx(WS_EX_APPWINDOW, "VAVOOM", "VAVOOM for Windows",
+			WS_POPUP, 0, 0, 2, 2, NULL, NULL, hInst, NULL);
 		if (!hwnd)
 		{
 			MessageBox(NULL, "Couldn't create window", "Error", MB_OK);

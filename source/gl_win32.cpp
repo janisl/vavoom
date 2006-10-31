@@ -40,7 +40,7 @@ public:
 	HWND		RenderWindow;
 
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void* GetExtFuncPtr(const char*);
 	void Update();
 	void Shutdown();
@@ -73,7 +73,7 @@ IMPLEMENT_DRAWER(VWin32OpenGLDrawer, DRAWER_OpenGL, "OpenGL",
 
 void VWin32OpenGLDrawer::Init()
 {
-	Windowed = !!GArgs.CheckParm("-window");
+	Windowed = true;
 	DeviceContext = NULL;
 	RenderContext = NULL;
 	RenderWindow = NULL;
@@ -87,7 +87,8 @@ void VWin32OpenGLDrawer::Init()
 //
 //==========================================================================
 
-bool VWin32OpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
+	bool AWindowed)
 {
 	guard(VWin32OpenGLDrawer::SetResolution);
 	int Width = InWidth;
@@ -115,6 +116,8 @@ bool VWin32OpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	//	Sut down current mode
 	Shutdown();
 
+	Windowed = AWindowed;
+
 	if (!Windowed)
 	{
 		//	Try to switch to the new mode
@@ -133,7 +136,7 @@ bool VWin32OpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	}
 
 	//	Create window
-	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows'95",
+	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows",
 		Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP,
 		0, 0, 2, 2, hwnd, NULL, hInst, NULL);
 	if (!RenderWindow)

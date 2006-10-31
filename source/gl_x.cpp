@@ -63,7 +63,7 @@ public:
 #endif
 
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void* GetExtFuncPtr(const char*);
 	void Update();
 	void Shutdown();
@@ -117,12 +117,13 @@ void VAllgeroOpenGLDrawer::Init()
 //
 //==========================================================================
 
-bool VAllgeroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VAllgeroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
+	bool Windowed)
 {
 	guard(VAllgeroOpenGLDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
 	bool default_mode = false;
 	if (!Width || !Height)
 	{
@@ -209,7 +210,7 @@ bool VAllgeroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	}
 
 #ifdef USE_FULLSCREEN
-	if (vidmode_ext && !GArgs.CheckParm("-window"))
+	if (vidmode_ext && !Windowed)
 	{
 		int best_fit;
 

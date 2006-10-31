@@ -42,7 +42,7 @@ public:
 	AMesaContext	RenderContext;
 
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void* GetExtFuncPtr(const char*);
 	void Update();
 	void Shutdown();
@@ -88,13 +88,13 @@ void VAllegroOpenGLDrawer::Init()
 //
 //==========================================================================
 
-bool VAllegroOpenGLDrawer::SetResolution(int InWidth, int InHeight,
-	int InBPP)
+bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
+	bool)
 {
 	guard(VAllegroOpenGLDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
 	if (!Width || !Height)
 	{
 		//	Set defaults

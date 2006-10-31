@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: MenuChoice_CDMusic.vc 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,41 +23,14 @@
 //**
 //**************************************************************************
 
-class MenuScreenScreenResolution : MenuScreen;
+class MenuChoice_Windowed : MenuChoice_OnOff;
 
-MenuChoice_VideoMode Mode;
-MenuChoice_BitDepth Depth;
-MenuChoice_Windowed Windowed;
-
-void CreateChoices()
+int GetInitialValue()
 {
-	Mode = MenuChoice_VideoMode(NewChild(MenuChoice_VideoMode));
-	Mode.SetPos(ChoicesStartX, ChoicesStartY);
-	ChoicesStartY += Mode.Height;
-
-	Depth = MenuChoice_BitDepth(NewChild(MenuChoice_BitDepth));
-	Depth.SetPos(ChoicesStartX, ChoicesStartY);
-	ChoicesStartY += Depth.Height;
-
-	Windowed = MenuChoice_Windowed(NewChild(MenuChoice_Windowed));
-	Windowed.SetPos(ChoicesStartX, ChoicesStartY);
-	ChoicesStartY += Windowed.Height;
-
-	::CreateChoices();
-}
-
-void SetMode()
-{
-	SetCvar('screen_windowed', Windowed.Value);
-	CmdBuf_AddText("SetResolution %d %d %d\n", Mode.GetModeWidth(),
-		Mode.GetModeHeight(), Depth.GetDepth());
+	return GetCvar('screen_windowed');
 }
 
 defaultproperties
 {
-	Choices[0] = MenuChoice_ApplyVidMode;
-	ChoicesStartX = 120;
-	ChoicesStartY = 26;
-	SelectorType = MenuSelector_SmallRight;
-	Title = "SCREEN RESOLUTION";
+	Text = "Windowed";
 }

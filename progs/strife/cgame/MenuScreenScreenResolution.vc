@@ -27,6 +27,7 @@ class MenuScreenScreenResolution : MenuScreen;
 
 MenuChoice_VideoMode Mode;
 MenuChoice_BitDepth Depth;
+MenuChoice_Windowed Windowed;
 
 void CreateChoices()
 {
@@ -38,11 +39,16 @@ void CreateChoices()
 	Depth.SetPos(ChoicesStartX, ChoicesStartY);
 	ChoicesStartY += Depth.Height;
 
+	Windowed = MenuChoice_Windowed(NewChild(MenuChoice_Windowed));
+	Windowed.SetPos(ChoicesStartX, ChoicesStartY);
+	ChoicesStartY += Windowed.Height;
+
 	::CreateChoices();
 }
 
 void SetMode()
 {
+	SetCvar('screen_windowed', Windowed.Value);
 	CmdBuf_AddText("SetResolution %d %d %d\n", Mode.GetModeWidth(),
 		Mode.GetModeHeight(), Depth.GetDepth());
 }

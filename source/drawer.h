@@ -84,7 +84,7 @@ public:
 
 	virtual void Init() = 0;
 	virtual void InitData() = 0;
-	virtual bool SetResolution(int, int, int) = 0;
+	virtual bool SetResolution(int, int, int, bool) = 0;
 	virtual void InitResolution() = 0;
 	virtual void NewMap() = 0;
 	virtual void StartUpdate() = 0;

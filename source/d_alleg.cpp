@@ -39,7 +39,7 @@ public:
 	BITMAP*		gamebitmap;
 
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void SetPalette8(vuint8*);
 	void Update();
 	void Shutdown();
@@ -129,8 +129,8 @@ BITMAP* VAllegroSoftwareDrawer::my_create_bitmap_ex(int colour_depth,
 //
 //==========================================================================
 
-bool VAllegroSoftwareDrawer::SetResolution(int InWidth, int InHeight,
-	int InBPP)
+bool VAllegroSoftwareDrawer::SetResolution(int AWidth, int AHeight,
+	int ABPP, bool Windowed)
 {
 	guard(VAllegroSoftwareDrawer::SetResolution);
 	int Width = InWidth;
@@ -152,8 +152,8 @@ bool VAllegroSoftwareDrawer::SetResolution(int InWidth, int InHeight,
 	FreeMemory();
 
 	set_color_depth(BPP);
-	if (set_gfx_mode(GArgs.CheckParm("-window") ? GFX_AUTODETECT_WINDOWED :
-		GFX_AUTODETECT, Width, Height, 0, 0))
+	if (set_gfx_mode(Windowed ? GFX_AUTODETECT_WINDOWED : GFX_AUTODETECT,
+		Width, Height, 0, 0))
 	{
 		GCon->Log(NAME_Init, "Failed to set video mode:");
 		GCon->Log(NAME_Init, allegro_error);

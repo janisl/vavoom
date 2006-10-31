@@ -55,8 +55,6 @@ VCvarI VDirect3DDrawer::specular_highlights("d3d_specular_highlights", "1", CVAR
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static bool					Windowed;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -66,12 +64,13 @@ static bool					Windowed;
 //==========================================================================
 
 VDirect3DDrawer::VDirect3DDrawer()
+: Windowed(false)
 #if DIRECT3D_VERSION >= 0x0800
-: DLLHandle(0)
+, DLLHandle(0)
 , Direct3D(0)
 , RenderDevice(0)
 #else
-: DDraw(0)
+, DDraw(0)
 , PrimarySurface(0)
 , RenderSurface(0)
 , ZBuffer(0)
@@ -126,8 +125,6 @@ VDirect3DDrawer::VDirect3DDrawer()
 void VDirect3DDrawer::Init()
 {
 	guard(VDirect3DDrawer::Init);
-
-	Windowed = !!GArgs.CheckParm("-window");
 #if DIRECT3D_VERSION >= 0x0800
 	typedef IDirect3D8* (WINAPI*fp_Direct3DCreate8)(UINT SDKVersion);
 
@@ -139,7 +136,8 @@ void VDirect3DDrawer::Init()
 		Sys_Error("Couldn't load d3d8.dll");
 	}
 
-	p_Direct3DCreate8 = (fp_Direct3DCreate8)GetProcAddress(DLLHandle, "Direct3DCreate8");
+	p_Direct3DCreate8 = (fp_Direct3DCreate8)GetProcAddress(DLLHandle,
+		"Direct3DCreate8");
 	if (!p_Direct3DCreate8)
 	{
 		Sys_Error("Symbol Direct3DCreate8 not found");
@@ -151,31 +149,6 @@ void VDirect3DDrawer::Init()
 	{
 		Sys_Error("Failed to create Direct3D object");
 	}
-#else
-	HRESULT			result;
-
-	// Create DirectDraw object
-	result = CoCreateInstance(CLSID_DirectDraw7, NULL,
-		CLSCTX_ALL, IID_IDirectDraw7, (void**)&DDraw);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to create DirecDraw7");
-
-	// Initialise
-	result = DDraw->Initialize(NULL);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to initialise DirectDraw");
-
-	// Set cooperative level
-	result = DDraw->SetCooperativeLevel(hwnd,
-		Windowed ? DDSCL_NORMAL | DDSCL_FPUPRESERVE :
-		DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_FPUPRESERVE);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to set cooperative level.");
-
-	// Create Direct3D object
-	result = DDraw->QueryInterface(IID_IDirect3D7, (void**)&Direct3D);
-	if (FAILED(result))
-		Sys_Error("Failed to create Direct3D object");
 #endif
 	unguard;
 }
@@ -330,9 +303,11 @@ int GetShift(vuint32 mask)
 //
 //==========================================================================
 
-bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
+bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
+	bool AWindowed)
 {
 	guard(VDirect3DDrawer::SetResolution);
+	Windowed = AWindowed;
 	if (!Width || !Height)
 	{
 		//	Set defaults
@@ -430,9 +405,36 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP)
 	//	Shut down current mode
 	ReleaseTextures();
 	SAFE_RELEASE(RenderDevice)
+	SAFE_RELEASE(Direct3D)
 	SAFE_RELEASE(ZBuffer)
 	SAFE_RELEASE(RenderSurface)
 	SAFE_RELEASE(PrimarySurface)
+	SAFE_RELEASE(DDraw)
+
+	HRESULT			result;
+
+	// Create DirectDraw object
+	result = CoCreateInstance(CLSID_DirectDraw7, NULL,
+		CLSCTX_ALL, IID_IDirectDraw7, (void**)&DDraw);
+	if (result != DD_OK)
+		Sys_Error("I_InitGraphics: Failed to create DirecDraw7");
+
+	// Initialise
+	result = DDraw->Initialize(NULL);
+	if (result != DD_OK)
+		Sys_Error("I_InitGraphics: Failed to initialise DirectDraw");
+
+	// Set cooperative level
+	result = DDraw->SetCooperativeLevel(hwnd,
+		Windowed ? DDSCL_NORMAL | DDSCL_FPUPRESERVE :
+		DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_FPUPRESERVE);
+	if (result != DD_OK)
+		Sys_Error("I_InitGraphics: Failed to set cooperative level.");
+
+	// Create Direct3D object
+	result = DDraw->QueryInterface(IID_IDirect3D7, (void**)&Direct3D);
+	if (FAILED(result))
+		Sys_Error("Failed to create Direct3D object");
 
 	if (Windowed)
 	{

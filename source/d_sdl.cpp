@@ -40,7 +40,7 @@ public:
 	bool			new_palette;
 
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void SetPalette8(vuint8*);
 	void Update();
 	void Shutdown();
@@ -87,12 +87,13 @@ void VSdlSoftwareDrawer::Init()
 //
 //==========================================================================
 
-bool VSdlSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VSdlSoftwareDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
+	bool Windowed)
 {
 	guard(VSdlSoftwareDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
 	Uint32 flags = 0;
 
 	if (!Width || !Height)
@@ -124,7 +125,7 @@ bool VSdlSoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	{
 		flags |= SDL_HWPALETTE;
 	}
-	if (!GArgs.CheckParm("-window"))
+	if (!Windowed)
 	{
 		flags |= SDL_FULLSCREEN;
 	}

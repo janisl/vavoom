@@ -165,6 +165,7 @@ static VCvarI	draw_pause("draw_pause", "1");
 static VCvarI	screen_width("screen_width", "0", CVAR_Archive);
 static VCvarI	screen_height("screen_height", "0", CVAR_Archive);
 static VCvarI	screen_bpp("screen_bpp", "0", CVAR_Archive);
+static VCvarI	screen_windowed("screen_windowed", "0", CVAR_Archive);
 static VCvarI	brightness("brightness", "0", CVAR_Archive);
 
 static VCvarI	draw_fps("draw_fps", "0", CVAR_Archive);
@@ -306,24 +307,25 @@ static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 	}
 
 	// Changing resolution
-    if (!Drawer->SetResolution(width, height, bpp))
-   	{
-        GCon->Logf("Failed to set resolution %dx%dx%d", width, height, bpp);
-   	   	if (ScreenWidth)
-       	{
-           	if (!Drawer->SetResolution(ScreenWidth, ScreenHeight, ScreenBPP))
-           		Sys_Error("ChangeResolution: failed to restore resolution");
-            else
-   	            GCon->Log("Restoring previous resolution");
-       	}
-        else
-   		{
-   			if (!Drawer->SetResolution(0, 0, 0))
-   				Sys_Error("ChangeResolution: Failed to set default resolution");
+	if (!Drawer->SetResolution(width, height, bpp, screen_windowed))
+	{
+		GCon->Logf("Failed to set resolution %dx%dx%d", width, height, bpp);
+		if (ScreenWidth)
+		{
+			if (!Drawer->SetResolution(ScreenWidth, ScreenHeight, ScreenBPP,
+				screen_windowed))
+				Sys_Error("ChangeResolution: failed to restore resolution");
 			else
-           		GCon->Log("Setting default resolution");
-	  	}
-   	}
+				GCon->Log("Restoring previous resolution");
+		}
+		else
+		{
+			if (!Drawer->SetResolution(0, 0, 0, screen_windowed))
+				Sys_Error("ChangeResolution: Failed to set default resolution");
+			else
+				GCon->Log("Setting default resolution");
+		}
+	}
 	GCon->Logf("%dx%dx%d.", ScreenWidth, ScreenHeight, ScreenBPP);
 
 	screen_width = ScreenWidth;
@@ -332,10 +334,10 @@ static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 
 	PixelBytes = (ScreenBPP + 7) / 8;
 
-    fScaleX = (float)ScreenWidth / (float)VirtualWidth;
-    fScaleY = (float)ScreenHeight / (float)VirtualHeight;
-    fScaleXI = (float)VirtualWidth / (float)ScreenWidth;
-    fScaleYI = (float)VirtualHeight / (float)ScreenHeight;
+	fScaleX = (float)ScreenWidth / (float)VirtualWidth;
+	fScaleY = (float)ScreenHeight / (float)VirtualHeight;
+	fScaleXI = (float)VirtualWidth / (float)ScreenWidth;
+	fScaleYI = (float)VirtualHeight / (float)ScreenHeight;
 	unguard;
 }
 
@@ -395,22 +397,22 @@ static void CheckResolutionChange()
 
 COMMAND(SetResolution)
 {
-   	if (Args.Num() == 3)
+	if (Args.Num() == 3)
 	{
-     	setwidth = superatoi(*Args[1]);
+		setwidth = superatoi(*Args[1]);
 		setheight = superatoi(*Args[2]);
 		setbpp = ScreenBPP;
 		setresolutionneeded = true;
 	}
-   	else if (Args.Num() == 4)
+	else if (Args.Num() == 4)
 	{
-     	setwidth = superatoi(*Args[1]);
+		setwidth = superatoi(*Args[1]);
 		setheight = superatoi(*Args[2]);
 		setbpp = superatoi(*Args[3]);
 		setresolutionneeded = true;
 	}
-    else
-    {
+	else
+	{
 		GCon->Log("SetResolution <width> <height> [<bpp>]:change resolution");
 	}
 }

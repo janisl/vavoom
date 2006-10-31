@@ -38,7 +38,7 @@ public:
 	SDL_Surface*	hw_screen;
 
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void* GetExtFuncPtr(const char*);
 	void Update();
 	void Shutdown();
@@ -82,12 +82,13 @@ void VSdlOpenGLDrawer::Init()
 //
 //==========================================================================
 
-bool VSdlOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VSdlOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
+	bool Windowed)
 {
 	guard(VSdlOpenGLDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
 	if (!Width || !Height)
 	{
 		// Set defaults
@@ -109,7 +110,7 @@ bool VSdlOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	Shutdown();
 
 	Uint32 flags = SDL_OPENGL;
-	if (!GArgs.CheckParm("-window"))
+	if (!Windowed)
 	{
 		flags |= SDL_FULLSCREEN;
 	}

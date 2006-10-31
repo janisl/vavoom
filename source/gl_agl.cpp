@@ -41,7 +41,7 @@ class VAllegroOpenGLDrawer : public VOpenGLDrawer
 {
 public:
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void* GetExtFuncPtr(const char*);
 	void Update();
 	void Shutdown();
@@ -84,7 +84,8 @@ void VAllegroOpenGLDrawer::Init()
 //
 //==========================================================================
 
-bool VAllegroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
+	bool Windowed)
 {
 	guard(VAllegroOpenGLDrawer::SetResolution);
 	int Width = InWidth;
@@ -117,7 +118,7 @@ bool VAllegroOpenGLDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 	allegro_gl_clear_settings();
 	allegro_gl_set(AGL_COLOR_DEPTH, BPP);
 	allegro_gl_set(AGL_Z_DEPTH, 8);
-	allegro_gl_set(AGL_WINDOWED, !!GArgs.CheckParm("-window"));
+	allegro_gl_set(AGL_WINDOWED, Windowed);
 	allegro_gl_set(AGL_DOUBLEBUFFER, 1);
 	allegro_gl_set(AGL_RENDERMETHOD, 1);
 	allegro_gl_set(AGL_SUGGEST, AGL_COLOR_DEPTH | AGL_DOUBLEBUFFER

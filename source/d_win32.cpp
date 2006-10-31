@@ -45,7 +45,7 @@ public:
 	bool					new_palette;
 
 	void Init();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void SetPalette8(vuint8*);
 	void Update();
 	void Shutdown();
@@ -79,38 +79,11 @@ IMPLEMENT_DRAWER(VWin32SoftwareDrawer, DRAWER_Software, "Software",
 void VWin32SoftwareDrawer::Init()
 {
 	guard(VWin32SoftwareDrawer::Init);
-	HRESULT			result;
-
 	DDraw = NULL;
 	PrimarySurface = NULL;
 	Palette = NULL;
+	Windowed = false;
 	new_palette = false;
-
-	Windowed = !!GArgs.CheckParm("-window");
-
-	// Create DirectDraw object
-	result = CoCreateInstance(CLSID_DirectDraw, NULL,
-		CLSCTX_ALL, IID_IDirectDraw, (void**)&DDraw);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to create DirecDraw7");
-
-	// Initialise
-	result = DDraw->Initialize(NULL);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to initialise DirectDraw");
-
-	// Set cooperative level
-	result = DDraw->SetCooperativeLevel(hwnd,
-		Windowed ? DDSCL_NORMAL :
-		DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to set cooperative level.");
-
-	// Create palette
-	result = DDraw->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256,
-		PaletteEntries, &Palette, NULL);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to create palette");
 	unguard;
 }
 
@@ -122,12 +95,14 @@ void VWin32SoftwareDrawer::Init()
 //
 //==========================================================================
 
-bool VWin32SoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
+bool VWin32SoftwareDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
+	bool AWindowed)
 {
 	guard(VWin32SoftwareDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
+	Windowed = AWindowed;
 	if (!Width || !Height)
 	{
 		//	Set default mode for Windows
@@ -138,10 +113,20 @@ bool VWin32SoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 
 	DDSURFACEDESC ddsd;
 
+	if (Palette)
+	{
+		Palette->Release();
+		Palette = NULL;
+	}
 	if (PrimarySurface)
 	{
 		PrimarySurface->Release();
 		PrimarySurface = NULL;
+	}
+	if (DDraw)
+	{
+		DDraw->Release();
+		DDraw = NULL;
 	}
 	FreeMemory();
 
@@ -149,6 +134,32 @@ bool VWin32SoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 		BPP = 16;
 	if (BPP != 8 && BPP != 16 && BPP != 32)
 		return false;
+
+	HRESULT			result;
+
+	// Create DirectDraw object
+	result = CoCreateInstance(CLSID_DirectDraw, NULL,
+		CLSCTX_ALL, IID_IDirectDraw, (void**)&DDraw);
+	if (result != DD_OK)
+	{
+		Sys_Error("Failed to create DirecDraw7");
+	}
+
+	// Initialise
+	result = DDraw->Initialize(NULL);
+	if (result != DD_OK)
+	{
+		Sys_Error("Failed to initialise DirectDraw");
+	}
+
+	// Set cooperative level
+	result = DDraw->SetCooperativeLevel(hwnd,
+		Windowed ? DDSCL_NORMAL :
+		DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_ALLOWMODEX);
+	if (result != DD_OK)
+	{
+		Sys_Error("Failed to set cooperative level.");
+	}
 
 	if (Windowed)
 	{
@@ -241,10 +252,17 @@ bool VWin32SoftwareDrawer::SetResolution(int InWidth, int InHeight, int InBPP)
 		}
 	}
 
+	// Create palette
+	if (DDraw->CreatePalette(DDPCAPS_8BIT | DDPCAPS_ALLOW256,
+		PaletteEntries, &Palette, NULL) != DD_OK)
+	{
+		Sys_Error("Failed to create palette");
+	}
+
 	if (BPP == 8)
 	{
 		if (PrimarySurface->SetPalette(Palette) != DD_OK)
-			Sys_Error("I_SetResolution: Failed to set palette");
+			Sys_Error("Failed to set palette");
 	}
 
 	if (!AllocMemory(Width, Height, BPP))

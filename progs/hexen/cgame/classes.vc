@@ -114,6 +114,7 @@
 #include "MenuScreenMouseOptions.vc"
 #include "MenuChoice_VideoMode.vc"
 #include "MenuChoice_BitDepth.vc"
+#include "MenuChoice_Windowed.vc"
 #include "MenuChoice_ApplyVidMode.vc"
 #include "MenuScreenScreenResolution.vc"
 #include "MenuChoice_ScreenSize.vc"
