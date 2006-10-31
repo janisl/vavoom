@@ -166,6 +166,7 @@ void VSdlOpenGLDrawer::Update()
 void VSdlOpenGLDrawer::Shutdown()
 {
 	guard(VSdlOpenGLDrawer::Shutdown);
+	DeleteTextures();
 	if (hw_screen != NULL)
 		SDL_FreeSurface(hw_screen);
 	unguard;
