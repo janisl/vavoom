@@ -59,6 +59,7 @@
 #include "files.h"
 #include "wad.h"		//	WAD file I/O routines
 #include "scripts.h"	//	Script parsing
+#include "xml.h"		//	XML file parsing
 #include "progs.h"		//	Progs
 #include "vclass.h"
 #include "vobject.h"

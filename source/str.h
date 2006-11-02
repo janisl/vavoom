@@ -369,6 +369,8 @@ public:
 	static size_t Length(const char*);
 	static size_t Utf8Length(const char*);
 	static size_t ByteLengthForUtf8(const char*, size_t);
+	static int GetChar(const char*&);
+	static VStr FromChar(int);
 	static int Cmp(const char*, const char*);
 	static int NCmp(const char*, const char*, size_t);
 	static int ICmp(const char*, const char*);

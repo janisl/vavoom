@@ -322,6 +322,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\xml.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\zone.cpp"
 				>
 			</File>
@@ -472,6 +476,10 @@
 			</File>
 			<File
 				RelativePath="..\source\waddefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\xml.h"
 				>
 			</File>
 			<File

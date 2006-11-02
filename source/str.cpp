@@ -810,6 +810,94 @@ size_t VStr::ByteLengthForUtf8(const char* S, size_t N)
 
 //==========================================================================
 //
+//	VStr::GetChar
+//
+//==========================================================================
+
+int VStr::GetChar(const char*& S)
+{
+	guard(VStr::GetChar);
+	if ((vuint8)*S < 128)
+	{
+		return *S++;
+	}
+	int Cnt;
+	int Val;
+	if ((*S & 0xe0) == 0xc0)
+	{
+		Val = *S & 0x1f;
+		Cnt = 1;
+	}
+	else if ((*S & 0xf0) == 0xe0)
+	{
+		Val = *S & 0x0f;
+		Cnt = 2;
+	}
+	else if ((*S & 0xf8) == 0xf0)
+	{
+		Val = *S & 0x07;
+		Cnt = 3;
+	}
+	else
+	{
+		Sys_Error("Not a valid UTF-8");
+		return 0;
+	}
+	S++;
+
+	do
+	{
+		if ((*S & 0xc0) != 0x80)
+			Sys_Error("Not a valid UTF-8");
+		Val = (Val << 6) | (*S & 0x3f);
+	}
+	while (--Cnt);
+	return Val;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VStr::FromChar
+//
+//==========================================================================
+
+VStr VStr::FromChar(int C)
+{
+	guard(VStr::FromChar);
+	char Ret[8];
+	if (C < 0x80)
+	{
+		Ret[0] = C;
+		Ret[1] = 0;
+	}
+	else if (C < 0x800)
+	{
+		Ret[0] = 0xc0 | (C & 0x1f);
+		Ret[1] = 0x80 | ((C >> 5) & 0x3f);
+		Ret[2] = 0;
+	}
+	else if (C < 0x10000)
+	{
+		Ret[0] = 0xe0 | (C & 0x0f);
+		Ret[1] = 0x80 | ((C >> 4) & 0x3f);
+		Ret[2] = 0x80 | ((C >> 10) & 0x3f);
+		Ret[3] = 0;
+	}
+	else
+	{
+		Ret[0] = 0xf0 | (C & 0x07);
+		Ret[1] = 0x80 | ((C >> 3) & 0x3f);
+		Ret[2] = 0x80 | ((C >> 9) & 0x3f);
+		Ret[3] = 0x80 | ((C >> 15) & 0x3f);
+		Ret[4] = 0;
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VStr::Cmp
 //
 //==========================================================================
