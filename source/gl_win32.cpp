@@ -91,9 +91,9 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	bool AWindowed)
 {
 	guard(VWin32OpenGLDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
 	int			pixelformat;
 	MSG			msg;
 

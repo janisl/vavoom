@@ -168,7 +168,7 @@ public:
 	VDirect3DDrawer();
 	void Init();
 	void InitData();
-	bool SetResolution(int, int, int);
+	bool SetResolution(int, int, int, bool);
 	void InitResolution();
 	void NewMap();
 	void StartUpdate();
