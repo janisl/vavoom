@@ -39,13 +39,7 @@ namespace LibTimidity
 
 char current_filename[1024];
 
-#ifdef DEFAULT_PATH
-    /* The paths in this list will be tried whenever we're reading a file */
-    static PathList defaultpathlist={DEFAULT_PATH,0};
-    static PathList *pathlist=&defaultpathlist; /* This is a linked list */
-#else
-    static PathList *pathlist=0;
-#endif
+static PathList *pathlist = NULL;
 
 /* Try to open a file for reading. If the filename ends in one of the 
    defined compressor extensions, pipe the file through the decompressor */
@@ -59,7 +53,6 @@ static FILE *try_to_open(char *name, int decompress, int noise_mode)
 FILE *open_file(char *name, int decompress, int noise_mode)
 {
   FILE *fp;
-  PathList *plp=pathlist;
   int l;
 
   if (!name || !(*name))
@@ -67,6 +60,14 @@ FILE *open_file(char *name, int decompress, int noise_mode)
       ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Attempted to open nameless file.");
       return 0;
     }
+
+#ifdef DEFAULT_PATH
+  if (pathlist==NULL)
+  {
+    /* Generate path list */
+    add_to_pathlist(DEFAULT_PATH);
+  }
+#endif
 
   /* First try the given name */
 
@@ -85,7 +86,8 @@ FILE *open_file(char *name, int decompress, int noise_mode)
       return 0;
     }
 #endif
-  
+
+  PathList* plp=pathlist;
   if (name[0] != PATH_SEP)
     while (plp)  /* Try along the path then */
       {
@@ -171,6 +173,23 @@ void add_to_pathlist(const char *s)
   strcpy((plp->path=(char*)safe_malloc(strlen(s)+1)),s);
   plp->next=pathlist;
   pathlist=plp;
+}
+
+/* Free memory associated to path list */
+void free_pathlist()
+{
+	PathList* plp = pathlist;
+	while (plp)
+	{
+		if (plp->path)
+		{
+			free(plp->path);
+		}
+		PathList* next_plp = plp->next;
+		free(plp);
+		plp = next_plp;
+	}
+	pathlist = NULL;
 }
 
 };

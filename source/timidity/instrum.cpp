@@ -113,16 +113,23 @@ static void free_bank(int dr, int b)
   int i;
   ToneBank *bank=((dr) ? drumset[b] : tonebank[b]);
   for (i=0; i<MAXPROG; i++)
+  {
     if (bank->tone[i].layer)
-      {
-	/* Not that this could ever happen, of course */
-	if (bank->tone[i].layer != MAGIC_LOAD_INSTRUMENT)
+    {
+	  /* Not that this could ever happen, of course */
+	  if (bank->tone[i].layer != MAGIC_LOAD_INSTRUMENT)
 	  {
 	    free_layer(bank->tone[i].layer);
-	    bank->tone[i].layer=0;
+	    bank->tone[i].layer=NULL;
 	    bank->tone[i].last_used=-1;
 	  }
-      }
+    }
+    if (bank->tone[i].name)
+    {
+      free(bank->tone[i].name);
+      bank->tone[i].name = NULL;
+    }
+  }
 }
 
 
@@ -140,7 +147,7 @@ static void free_old_bank(int dr, int b, int how_old)
 		(dr)? "drum" : "inst", bank->tone[i].name,
 		i, b, bank->tone[i].last_used);
 	    free_layer(bank->tone[i].layer);
-	    bank->tone[i].layer=0;
+	    bank->tone[i].layer=NULL;
 	    bank->tone[i].last_used=-1;
 	  }
       }
@@ -861,100 +868,102 @@ static InstrumentLayer *load_instrument(char *name, int font_type, int percussio
 
 static int fill_bank(int dr, int b)
 {
-  int i, errors=0;
-  ToneBank *bank=((dr) ? drumset[b] : tonebank[b]);
-  if (!bank)
-    {
-      ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
-	   "Huh. Tried to load instruments in non-existent %s %d",
-	   (dr) ? "drumset" : "tone bank", b);
-      return 0;
-    }
-  for (i=0; i<MAXPROG; i++)
-    {
-      if (bank->tone[i].layer==MAGIC_LOAD_INSTRUMENT)
+	int i, errors=0;
+	ToneBank *bank=((dr) ? drumset[b] : tonebank[b]);
+	if (!bank)
 	{
-	  if (!(bank->tone[i].name))
-	    {
-	      ctl->cmsg(CMSG_WARNING, (b!=0) ? VERB_VERBOSE : VERB_NORMAL,
-		   "No instrument mapped to %s %d, program %d%s",
-		   (dr)? "drum set" : "tone bank", b, i, 
-		   (b!=0) ? "" : " - this instrument will not be heard");
-	      if (b!=0)
-		{
-		  /* Mark the corresponding instrument in the default
-		     bank / drumset for loading (if it isn't already) */
-		  if (!dr)
-		    {
-		      if (!(standard_tonebank.tone[i].layer))
-			standard_tonebank.tone[i].layer=
-			  MAGIC_LOAD_INSTRUMENT;
-		    }
-		  else
-		    {
-		      if (!(standard_drumset.tone[i].layer))
-			standard_drumset.tone[i].layer=
-			  MAGIC_LOAD_INSTRUMENT;
-		    }
-		}
-	      bank->tone[i].layer=0;
-	      errors++;
-	    }
-	  else if (!(bank->tone[i].layer=
-		     load_instrument(bank->tone[i].name, 
-			     	     bank->tone[i].font_type,
-				     (dr) ? 1 : 0,
-				     bank->tone[i].pan,
-				     bank->tone[i].amp,
-				     bank->tone[i].tuning,
-				     (bank->tone[i].note!=-1) ? 
-				       bank->tone[i].note :
-				       ((dr) ? i : -1),
-				     (bank->tone[i].strip_loop!=-1) ?
-				     bank->tone[i].strip_loop :
-				     ((dr) ? 1 : -1),
-				     (bank->tone[i].strip_envelope != -1) ? 
-				     bank->tone[i].strip_envelope :
-				     ((dr) ? 1 : -1),
-				     bank->tone[i].strip_tail,
-				     b,
-				     ((dr) ? i + 128 : i),
-				     bank->tone[i].sf_ix
-			    			 )))
-	    {
-	      ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
-		   "Couldn't load instrument %s (%s %d, program %d)",
-		   bank->tone[i].name,
-		   (dr)? "drum set" : "tone bank", b, i);
-	      errors++;
-	    }
-	  else
-	    { /* it's loaded now */
-		bank->tone[i].last_used = current_tune_number;
-		current_patch_memory += bank->tone[i].layer->size;
-		purge_as_required();
-		if (current_patch_memory > max_patch_memory) {
-	      		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
-		   		"Not enough memory to load instrument %s (%s %d, program %d)",
-		   		bank->tone[i].name,
-		   		(dr)? "drum set" : "tone bank", b, i);
-	      		errors++;
-	    		free_layer(bank->tone[i].layer);
-	    		bank->tone[i].layer=0;
-	    		bank->tone[i].last_used=-1;
-		}
-#if 0
-  	        if (check_for_rc()) {
-	    		free_layer(bank->tone[i].layer);
-	    		bank->tone[i].layer=0;
-	    		bank->tone[i].last_used=-1;
-			return 0;
-		}
-#endif
-	    }
+		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
+			"Huh. Tried to load instruments in non-existent %s %d",
+			(dr) ? "drumset" : "tone bank", b);
+		return 0;
 	}
-    }
-  return errors;
+	for (i=0; i<MAXPROG; i++)
+	{
+		if (bank->tone[i].layer==MAGIC_LOAD_INSTRUMENT)
+		{
+			if (!(bank->tone[i].name))
+			{
+				ctl->cmsg(CMSG_WARNING, (b!=0) ? VERB_VERBOSE : VERB_NORMAL,
+					"No instrument mapped to %s %d, program %d%s",
+					(dr)? "drum set" : "tone bank", b, i, 
+					(b!=0) ? "" : " - this instrument will not be heard");
+				if (b!=0)
+				{
+					/* Mark the corresponding instrument in the default
+						bank / drumset for loading (if it isn't already) */
+					if (!dr)
+					{
+						if (!(standard_tonebank.tone[i].layer))
+							standard_tonebank.tone[i].layer=
+								MAGIC_LOAD_INSTRUMENT;
+					}
+					else
+					{
+						if (!(standard_drumset.tone[i].layer))
+							standard_drumset.tone[i].layer=
+								MAGIC_LOAD_INSTRUMENT;
+					}
+				}
+				bank->tone[i].layer=0;
+				errors++;
+			}
+			else if (!(bank->tone[i].layer=
+				load_instrument(bank->tone[i].name, 
+						bank->tone[i].font_type,
+					(dr) ? 1 : 0,
+					bank->tone[i].pan,
+					bank->tone[i].amp,
+					bank->tone[i].tuning,
+					(bank->tone[i].note!=-1) ? 
+					bank->tone[i].note :
+					((dr) ? i : -1),
+					(bank->tone[i].strip_loop!=-1) ?
+					bank->tone[i].strip_loop :
+					((dr) ? 1 : -1),
+					(bank->tone[i].strip_envelope != -1) ? 
+					bank->tone[i].strip_envelope :
+					((dr) ? 1 : -1),
+					bank->tone[i].strip_tail,
+					b,
+					((dr) ? i + 128 : i),
+					bank->tone[i].sf_ix
+				)))
+			{
+				ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
+					"Couldn't load instrument %s (%s %d, program %d)",
+					bank->tone[i].name,
+					(dr)? "drum set" : "tone bank", b, i);
+				errors++;
+			}
+			else
+			{ /* it's loaded now */
+				bank->tone[i].last_used = current_tune_number;
+				current_patch_memory += bank->tone[i].layer->size;
+				purge_as_required();
+				if (current_patch_memory > max_patch_memory)
+				{
+					ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
+						"Not enough memory to load instrument %s (%s %d, program %d)",
+						bank->tone[i].name,
+						(dr)? "drum set" : "tone bank", b, i);
+					errors++;
+					free_layer(bank->tone[i].layer);
+					bank->tone[i].layer=0;
+					bank->tone[i].last_used=-1;
+				}
+#if 0
+				if (check_for_rc())
+				{
+					free_layer(bank->tone[i].layer);
+					bank->tone[i].layer=0;
+					bank->tone[i].last_used=-1;
+					return 0;
+				}
+#endif
+			}
+		}
+	}
+	return errors;
 }
 
 static void free_old_instruments(int how_old)

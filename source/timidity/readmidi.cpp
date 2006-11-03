@@ -73,7 +73,7 @@ static void compute_sample_increment(int32 tempo, int32 divisions)
        sample_increment, sample_correction);
 }
 
-static int midi_read(void* ptr, int size)
+static int midi_read(void* ptr, uint32 size)
 {
 	if (size > image_left)
 		size = image_left;
@@ -83,7 +83,7 @@ static int midi_read(void* ptr, int size)
 	return size;
 }
 
-static void midi_skip(int size)
+static void midi_skip(uint32 size)
 {
 	if (size > image_left)
 		size = image_left;

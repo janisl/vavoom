@@ -82,6 +82,7 @@ struct _MidiSong {
 static int midi_playing = 0;
 static int32 lost_notes, cut_notes;
 extern int32 *common_buffer;
+extern resample_t *resample_buffer; /* to free it on Timidity_Close */
 
 static MidiEvent *event_list, *current_event;
 static int32 sample_count, current_sample;
@@ -1662,22 +1663,21 @@ int Timidity_PlaySome(void *stream, int samples)
 
 void Timidity_SetVolume(int volume)
 {
-  int i;
-  if (volume > MAX_AMPLIFICATION)
-    amplification=MAX_AMPLIFICATION;
-  else
-  if (volume < 0)
-    amplification=0;
-  else
-    amplification=volume;
-  adjust_amplification();
-  for (i=0; i<voices; i++)
-    if (voice[i].status != VOICE_FREE)
-      {
-        recompute_amp(i);
-        apply_envelope_to_amp(i);
-      }
-  ctl->master_volume(amplification);
+	int i;
+	if (volume > MAX_AMPLIFICATION)
+		amplification = MAX_AMPLIFICATION;
+	else if (volume < 0)
+		amplification = 0;
+	else
+		amplification = volume;
+	adjust_amplification();
+	for (i = 0; i < voices; i++)
+		if (voice[i].status != VOICE_FREE)
+		{
+			recompute_amp(i);
+			apply_envelope_to_amp(i);
+		}
+	ctl->master_volume(amplification);
 }
 
 MidiSong *Timidity_LoadSongMem(void* data, int size)
@@ -1703,14 +1703,14 @@ MidiSong *Timidity_LoadSongMem(void* data, int size)
 
 void Timidity_Start(MidiSong *song)
 {
-  load_missing_instruments();
-  adjust_amplification();
-  sample_count = song->samples;
-  event_list = song->events;
-  lost_notes=cut_notes=0;
+	load_missing_instruments();
+	adjust_amplification();
+	sample_count = song->samples;
+	event_list = song->events;
+	lost_notes=cut_notes=0;
 
-  skip_to(0);
-  midi_playing = 1;
+	skip_to(0);
+	midi_playing = 1;
 }
 
 int Timidity_Active(void)
@@ -1720,16 +1720,32 @@ int Timidity_Active(void)
 
 void Timidity_Stop(void)
 {
-  midi_playing = 0;
+	midi_playing = 0;
 }
 
 void Timidity_FreeSong(MidiSong *song)
 {
-  if (free_instruments_afterwards)
-      free_instruments();
-  
-  free(song->events);
-  free(song);
+	if (free_instruments_afterwards)
+		free_instruments();
+
+	free(song->events);
+	free(song);
+}
+
+void Timidity_Close(void)
+{
+	if (resample_buffer)
+	{
+		free(resample_buffer);
+		resample_buffer=NULL;
+	}
+	if (common_buffer)
+	{
+		free(common_buffer);
+		common_buffer=NULL;
+	}
+	free_instruments();
+	free_pathlist();
 }
 
 };

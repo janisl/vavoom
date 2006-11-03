@@ -45,7 +45,6 @@ class VTimidityAudioCodec : public VAudioCodec
 public:
 	MidiSong*			Song;
 
-	static bool			TimidityInitialised;
 	static ControlMode	MyControlMode;
 	static PlayMode		MyPlayMode;
 
@@ -91,7 +90,6 @@ public:
 
 IMPLEMENT_AUDIO_CODEC(VTimidityAudioCodec, "Timidity");
 
-bool			VTimidityAudioCodec::TimidityInitialised;
 ControlMode		VTimidityAudioCodec::MyControlMode =
 {
 	"Vavoom interface", 's', 0, 0, 0,
@@ -131,7 +129,7 @@ static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CV
 
 //==========================================================================
 //
-//	VVorbisAudioCodec::VVorbisAudioCodec
+//	VTimidityAudioCodec::VTimidityAudioCodec
 //
 //==========================================================================
 
@@ -146,7 +144,7 @@ VTimidityAudioCodec::VTimidityAudioCodec(MidiSong* InSong)
 
 //==========================================================================
 //
-//	VVorbisAudioCodec::VVorbisAudioCodec
+//	VTimidityAudioCodec::~VTimidityAudioCodec
 //
 //==========================================================================
 
@@ -155,6 +153,7 @@ VTimidityAudioCodec::~VTimidityAudioCodec()
 	guard(VTimidityAudioCodec::~VTimidityAudioCodec);
 	Timidity_Stop();
 	Timidity_FreeSong(Song);
+	Timidity_Close();
 	unguard;
 }
 
@@ -285,15 +284,11 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 	ctl = &MyControlMode;
 
 	//	Initialise Timidity.
-	if (!TimidityInitialised)
+	add_to_pathlist(s_timidity_patches);
+	if (Timidity_Init(44100, 16, 2, 2 * 1024))
 	{
-		add_to_pathlist(s_timidity_patches);
-		if (Timidity_Init(44100, 16, 2, 2 * 1024))
-		{
-			GCon->Logf("Timidity init failed");
-			return NULL;
-		}
-		TimidityInitialised = true;
+		GCon->Logf("Timidity init failed");
+		return NULL;
 	}
 
 	//	Load song.
@@ -306,6 +301,7 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 	if (!Song)
 	{
 		GCon->Logf("Failed to load MIDI song");
+		Timidity_Close();
 		return NULL;
 	}
 	InStrm->Close();

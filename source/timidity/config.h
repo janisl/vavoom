@@ -193,14 +193,8 @@ namespace LibTimidity
 #define LITTLE_ENDIAN
 #endif
 
-/* DEC MMS has 64 bit long words */
-#ifdef DEC
 typedef unsigned int uint32;
 typedef int int32; 
-#else
-typedef unsigned long uint32;
-typedef long int32; 
-#endif
 typedef unsigned short uint16;
 typedef short int16;
 typedef unsigned char uint8;
@@ -232,7 +226,7 @@ typedef char int8;
 /* You could specify a complete path, e.g. "/etc/timidity.cfg", and
    then specify the library directory in the configuration file. */
 #define CONFIG_FILE	"timidity.cfg"
-#ifdef __WIN32__
+#if defined(DJGPP) || defined(__WIN32__) || defined(__OS2__)
 #define DEFAULT_PATH	"\\TIMIDITY"
 #else
 #define DEFAULT_PATH	"/usr/local/lib/timidity"
@@ -282,7 +276,7 @@ typedef int16 resample_t;
 #endif
 
 /* The path separator (D.M.) */
-#ifdef __WIN32__
+#if defined(DJGPP) || defined(__WIN32__) || defined(__OS2__)
 #  define PATH_SEP '\\'
 #  define PATH_STRING "\\"
 #else
