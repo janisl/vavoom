@@ -1270,7 +1270,7 @@ int NumObjs = 0;
 			continue;
 		if (sv_mobjs[i]->EntityFlags & VEntity::EF_Hidden)
 			continue;
-		if (!sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer)
+		if (!(sv_mobjs[i]->EntityFlags & VEntity::EF_IsPlayer))
 			continue;
 		if (!msg.CheckSpace(29))
 		{
