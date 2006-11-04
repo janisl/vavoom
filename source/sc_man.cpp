@@ -481,7 +481,7 @@ bool VScriptParser::CheckFloat()
 	{
 		char* stopper;
 		Float = strtod(*String, &stopper);
-		if (*stopper != 0)
+		if (*stopper == 0)
 		{
 			return true;
 		}
