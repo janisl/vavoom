@@ -24,6 +24,7 @@ typedef enum
 	SY_DUMMY,
 	SY_LABEL,
 	SY_SCRIPTVAR,
+	SY_SCRIPTALIAS,
 	SY_MAPVAR,
 	SY_WORLDVAR,
 	SY_GLOBALVAR,
@@ -63,6 +64,7 @@ typedef struct
 typedef struct
 {
 	int value;
+	int fileDepth;
 } symConstant_t;
 
 typedef struct
@@ -119,6 +121,7 @@ symbolNode_t *SY_InsertGlobal(char *name, symbolType_t type);
 symbolNode_t *SY_InsertGlobalUnique(char *name, symbolType_t type);
 void SY_FreeLocals(void);
 void SY_FreeGlobals(void);
+void SY_FreeConstants(int depth);
 void SY_ClearShared(void);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

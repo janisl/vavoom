@@ -80,6 +80,7 @@ static void SkipComment(void);
 static void SkipCPPComment(void);
 static void BumpMasterSourceLine(char Chr, boolean clear); // master line - Ty 07jan2000
 static char *AddFileName(const char *name);
+static int OctalChar();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -139,6 +140,7 @@ static struct keyword_s
 	{ "open", TK_OPEN },
 	{ "print", TK_PRINT },
 	{ "printbold", TK_PRINTBOLD },
+	{ "log", TK_LOG },
 	{ "hudmessage", TK_HUDMESSAGE },
 	{ "hudmessagebold", TK_HUDMESSAGEBOLD },
 	{ "restart", TK_RESTART },
@@ -162,7 +164,6 @@ static struct keyword_s
 	{ "redreturn", TK_REDRETURN },
 	{ "whitereturn", TK_WHITERETURN },
 	// [BC] End Skulltag tokens.
-	{ "localizedstrings", TK_LOCALIZEDSTRINGS },
 	{ "nocompact", TK_NOCOMPACT },
 	{ "lightning", TK_LIGHTNING },
 	{ "createtranslation", TK_CREATETRANSLATION },
@@ -179,6 +180,7 @@ static struct keyword_s
 	{ "net", TK_NET },
 	{ "disconnect", TK_DISCONNECT },
 	{ "unloading", TK_UNLOADING },
+	{ "static", TK_STATIC }
 };
 
 #define NUM_KEYWORDS (sizeof(Keywords)/sizeof(Keywords[0]))
@@ -380,6 +382,7 @@ static int PopNestedSource(enum ImportModes *prevMode)
 
 	MS_Message(MSG_DEBUG, "*Leaving %s\n", tk_SourceName);
 	free(FileStart);
+	SY_FreeConstants(NestDepth);
 	tk_IncludedLines += tk_Line;
 	info = &OpenFiles[--NestDepth];
 	tk_SourceName = info->name;
@@ -414,6 +417,17 @@ void TK_CloseSource(void)
 		}
 		SourceOpen = FALSE;
 	}
+}
+
+//==========================================================================
+//
+// TK_GetDepth
+//
+//==========================================================================
+
+int TK_GetDepth(void)
+{
+	return NestDepth;
 }
 
 //==========================================================================
@@ -908,13 +922,15 @@ static void ProcessQuoteToken(void)
 {
 	int i;
 	char *text;
+	boolean escaped;
 
 	i = 0;
+	escaped = FALSE;
 	text = TokenStringBuffer;
 	NextChr();
 	while(Chr != EOF_CHARACTER)
 	{
-		if(Chr == ASCII_QUOTE)
+		if(Chr == ASCII_QUOTE && escaped == 0) // [JB]
 		{
 			break;
 		}
@@ -926,6 +942,11 @@ static void ProcessQuoteToken(void)
 		{
 			*text++ = Chr;
 		}
+		// escape the character after a backslash [JB]
+		if(Chr == ASCII_BACKSLASH)
+			escaped ^= (Chr == ASCII_BACKSLASH);
+		else
+			escaped = FALSE;
 		NextChr();
 	}
 	*text = 0;
@@ -1047,8 +1068,17 @@ static void ProcessSpecialToken(void)
 			}
 			else if(Chr == '<')
 			{
-				tk_Token = TK_LSHIFT;
 				NextChr();
+				if(Chr == '=')
+				{
+					tk_Token = TK_LSASSIGN;
+					NextChr();
+				}
+				else
+				{
+					tk_Token = TK_LSHIFT;
+				}
+				
 			}
 			else
 			{
@@ -1063,8 +1093,16 @@ static void ProcessSpecialToken(void)
 			}
 			else if(Chr == '>')
 			{
-				tk_Token = TK_RSHIFT;
 				NextChr();
+				if(Chr == '=')
+				{
+					tk_Token = TK_RSASSIGN;
+					NextChr();
+				}
+				else
+				{
+					tk_Token = TK_RSHIFT;
+				}
 			}
 			else
 			{
@@ -1088,6 +1126,11 @@ static void ProcessSpecialToken(void)
 				tk_Token = TK_ANDLOGICAL;
 				NextChr();
 			}
+			else if(Chr == '=')
+			{
+				tk_Token = TK_ANDASSIGN;
+				NextChr();
+			}
 			else
 			{
 				tk_Token = TK_ANDBITWISE;
@@ -1097,6 +1140,11 @@ static void ProcessSpecialToken(void)
 			if(Chr == '|')
 			{
 				tk_Token = TK_ORLOGICAL;
+				NextChr();
+			}
+			else if(Chr == '=')
+			{
+				tk_Token = TK_ORASSIGN;
 				NextChr();
 			}
 			else
@@ -1138,7 +1186,15 @@ static void ProcessSpecialToken(void)
 			tk_Token = TK_NUMBERSIGN;
 			break;
 		case '^':
-			tk_Token = TK_EORBITWISE;
+			if(Chr == '=')
+			{
+				tk_Token = TK_EORASSIGN;
+				NextChr();
+			}
+			else
+			{
+				tk_Token = TK_EORBITWISE;
+			}
 			break;
 		case '~':
 			tk_Token = TK_TILDE;
@@ -1149,8 +1205,39 @@ static void ProcessSpecialToken(void)
 				NextChr();
 				switch(Chr)
 				{
+				case '0': case '1': case '2': case '3':
+				case '4': case '5': case '6': case '7':
+					tk_Number = OctalChar();
+					break;
+				case 'x': case 'X':
+					NextChr();
+					EvalHexConstant();
+					if(Chr != '\'')
+					{
+						ERR_Exit(ERR_BAD_CHARACTER_CONSTANT, YES, NULL);
+					}
+					NextChr();
+					break;
+				case 'a':
+					tk_Number = '\a';
+					break;
+				case 'b':
+					tk_Number = '\b';
+					break;
+				case 't':
+					tk_Number = '\t';
+					break;
+				case 'v':
+					tk_Number = '\v';
+					break;
 				case 'n':
 					tk_Number = '\n';
+					break;
+				case 'f':
+					tk_Number = '\f';
+					break;
+				case 'r':
+					tk_Number = '\r';
 					break;
 				case '\'':
 					tk_Number = Chr;
@@ -1158,6 +1245,7 @@ static void ProcessSpecialToken(void)
 				default:
 					ERR_Exit(ERR_BAD_CHARACTER_CONSTANT, YES, NULL);
 				}
+				tk_Token = TK_NUMBER;
 			}
 			else if(Chr == '\'')
 			{
@@ -1166,9 +1254,8 @@ static void ProcessSpecialToken(void)
 			else
 			{
 				tk_Number = Chr;
+				tk_Token = TK_NUMBER;
 			}
-			tk_Token = TK_NUMBER;
-			tk_Number = Chr;
 			NextChr();
 			if(Chr != '\'')
 			{
@@ -1211,6 +1298,45 @@ static void NextChr(void)
 		Chr = ASCII_SPACE;
 	}
 	BumpMasterSourceLine(Chr,FALSE);
+}
+
+//==========================================================================
+//
+// PeekChr // [JB]
+//
+//==========================================================================
+
+static int PeekChr(void)
+{
+	char ch;
+	if(FilePtr >= FileEnd)
+	{
+		return EOF_CHARACTER;
+	}
+	ch = *FilePtr-1;
+	if(ch < ASCII_SPACE && ch >= 0) // Allow high ASCII characters
+	{
+		ch = ASCII_SPACE;
+	}
+	return ch;
+}
+
+//==========================================================================
+//
+// OctalChar // [JB]
+//
+//==========================================================================
+
+static int OctalChar() 
+{
+	int digits = 1;
+	int code = Chr - '0';
+	while(digits < 4 && PeekChr() >= '0' && PeekChr() <= '7')
+	{
+		NextChr();
+		code = (code << 3) + Chr - '0';
+	}
+	return code;
 }
 
 //==========================================================================

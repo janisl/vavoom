@@ -40,6 +40,8 @@ static symbolNode_t *Find(char *name, symbolNode_t *root);
 static symbolNode_t *Insert(char *name, symbolType_t type,
 	symbolNode_t **root);
 static void FreeNodes(symbolNode_t *root);
+static void FreeNodesAtDepth(symbolNode_t **root, int depth);
+static void DeleteNode(symbolNode_t *node, symbolNode_t **parent_p);
 static void ClearShared(symbolNode_t *root);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -59,6 +61,7 @@ static internFuncDef_t InternalFunctions[] =
 	{ "delay", PCD_DELAYDIRECT, PCD_DELAY, 1, 0, 0, NO, YES },
 	{ "random", PCD_RANDOMDIRECT, PCD_RANDOM, 2, 0, 0, YES, NO },
 	{ "thingcount", PCD_THINGCOUNTDIRECT, PCD_THINGCOUNT, 2, 0, 0, YES, NO },
+	{ "thingcountname", PCD_NOP, PCD_THINGCOUNTNAME, 2, 0, 0, YES, NO },
 	{ "changefloor", PCD_CHANGEFLOORDIRECT, PCD_CHANGEFLOOR, 2, 0, 0, NO, NO },
 	{ "changeceiling", PCD_CHANGECEILINGDIRECT, PCD_CHANGECEILING, 2, 0, 0, NO, NO },
 	{ "lineside", PCD_NOP, PCD_LINESIDE, 0, 0, 0, YES, NO },
@@ -107,8 +110,13 @@ static internFuncDef_t InternalFunctions[] =
 	{ "giveinventory", PCD_GIVEINVENTORYDIRECT, PCD_GIVEINVENTORY, 2, 0, 0, NO, NO },
 	{ "takeinventory", PCD_TAKEINVENTORYDIRECT, PCD_TAKEINVENTORY, 2, 0, 0, NO, NO },
 	{ "checkinventory", PCD_CHECKINVENTORYDIRECT, PCD_CHECKINVENTORY, 1, 0, 0, YES, NO },
+	{ "clearactorinventory", PCD_NOP, PCD_CLEARACTORINVENTORY, 1, 0, 0, NO, NO },
+	{ "giveactorinventory", PCD_NOP, PCD_GIVEACTORINVENTORY, 3, 0, 0, NO, NO },
+	{ "takeactorinventory", PCD_NOP, PCD_TAKEACTORINVENTORY, 3, 0, 0, NO, NO },
+	{ "checkactorinventory", PCD_NOP, PCD_CHECKACTORINVENTORY, 2, 0, 0, YES, NO },
 	{ "spawn", PCD_SPAWNDIRECT, PCD_SPAWN, 6, 16|32, 0, YES, NO },
 	{ "spawnspot", PCD_SPAWNSPOTDIRECT, PCD_SPAWNSPOT, 4, 4|8, 0, YES, NO },
+	{ "spawnspotfacing", PCD_NOP, PCD_SPAWNSPOTFACING, 3, 4, 0, YES, NO },
 	{ "setmusic", PCD_SETMUSICDIRECT, PCD_SETMUSIC, 3, 2|4, 0, NO, NO },
 	{ "localsetmusic", PCD_LOCALSETMUSICDIRECT, PCD_LOCALSETMUSIC, 3, 2|4, 0, NO, NO },
 	{ "setstyle", PCD_SETSTYLEDIRECT, PCD_SETSTYLE, 1, 0, 0, NO, NO },
@@ -120,10 +128,12 @@ static internFuncDef_t InternalFunctions[] =
 	{ "playmovie", PCD_NOP, PCD_PLAYMOVIE, 1, 0, 0, YES, NO },
 	{ "setfloortrigger", PCD_NOP, PCD_SETFLOORTRIGGER, 8, 8|16|32|64|128, 0, NO, NO },
 	{ "setceilingtrigger", PCD_NOP, PCD_SETCEILINGTRIGGER, 8, 8|16|32|64|128, 0, NO, NO },
+	{ "setactorposition", PCD_NOP, PCD_SETACTORPOSITION, 5, 0, 0, YES, NO },
 	{ "getactorx", PCD_NOP, PCD_GETACTORX, 1, 0, 0, YES, NO },
 	{ "getactory", PCD_NOP, PCD_GETACTORY, 1, 0, 0, YES, NO },
 	{ "getactorz", PCD_NOP, PCD_GETACTORZ, 1, 0, 0, YES, NO },
 	{ "getactorfloorz", PCD_NOP, PCD_GETACTORFLOORZ, 1, 0, 0, YES, NO },
+	{ "getactorceilingz", PCD_NOP, PCD_GETACTORCEILINGZ, 1, 0, 0, YES, NO },
 	{ "getactorangle", PCD_NOP, PCD_GETACTORANGLE, 1, 0, 0, YES, NO },
 	{ "writetoini", PCD_NOP, PCD_WRITETOINI, 3, 0, 0, NO, NO },
 	{ "getfromini", PCD_NOP, PCD_GETFROMINI, 3, 0, 0, YES, NO },
@@ -153,7 +163,23 @@ static internFuncDef_t InternalFunctions[] =
 	{ "changesky", PCD_NOP, PCD_CHANGESKY, 2, 0, 0, NO, NO },
 	{ "playeringame", PCD_NOP, PCD_PLAYERINGAME, 1, 0, 0, YES, NO },
 	{ "playerisbot", PCD_NOP, PCD_PLAYERISBOT, 1, 0, 0, YES, NO },
-
+	{ "setcameratotexture", PCD_NOP, PCD_SETCAMERATOTEXTURE, 3, 0, 0, NO, NO },
+	{ "grabinput", PCD_NOP, PCD_GRABINPUT, 2, 0, 0, NO, NO },
+	{ "setmousepointer", PCD_NOP, PCD_SETMOUSEPOINTER, 3, 0, 0, NO, NO },
+	{ "movemousepointer", PCD_NOP, PCD_MOVEMOUSEPOINTER, 2, 0, 0, NO, NO },
+	{ "getammocapacity", PCD_NOP, PCD_GETAMMOCAPACITY, 1, 0, 0, YES, NO },
+	{ "setammocapacity", PCD_NOP, PCD_SETAMMOCAPACITY, 2, 0, 0, NO, NO },
+	{ "setactorangle", PCD_NOP, PCD_SETACTORANGLE, 2, 0, 0, NO, NO },
+	{ "spawnprojectile", PCD_NOP, PCD_SPAWNPROJECTILE, 7, 0, 0, NO, NO },
+	{ "getsectorlightlevel", PCD_NOP, PCD_GETSECTORLIGHTLEVEL, 1, 0, 0, YES, NO },
+	{ "playerclass", PCD_NOP, PCD_PLAYERCLASS, 1, 0, 0, YES, NO },
+	{ "getplayerinfo", PCD_NOP, PCD_GETPLAYERINFO, 2, 0, 0, YES, NO },
+	{ "changelevel", PCD_NOP, PCD_CHANGELEVEL, 4, 8, 0, NO, NO },
+	{ "sectordamage", PCD_NOP, PCD_SECTORDAMAGE, 5, 0, 0, NO, NO },
+	{ "replacetextures", PCD_NOP, PCD_REPLACETEXTURES, 3, 4, 0, NO, NO },
+	{ "getactorpitch", PCD_NOP, PCD_GETACTORPITCH, 1, 0, 0, YES, NO },
+	{ "setactorpitch", PCD_NOP, PCD_SETACTORPITCH, 2, 0, 0, NO, NO },
+	
 	{ NULL, PCD_NOP, PCD_NOP, 0, 0, 0, NO, NO }
 };
 
@@ -162,6 +188,7 @@ static char *SymbolTypeNames[] =
 	"SY_DUMMY",
 	"SY_LABEL",
 	"SY_SCRIPTVAR",
+	"SY_SCRIPTALIAS",
 	"SY_MAPVAR",
 	"SY_WORLDVAR",
 	"SY_GLOBALVAR",
@@ -426,6 +453,98 @@ static void FreeNodes(symbolNode_t *root)
 	FreeNodes(root->right);
 	free(root->name);
 	free(root);
+}
+
+//==========================================================================
+//
+// SY_FreeConstants
+//
+//==========================================================================
+
+void SY_FreeConstants(int depth)
+{
+	MS_Message(MSG_DEBUG, "Freeing constants for depth %d\n", depth);
+	FreeNodesAtDepth(&GlobalRoot, depth);
+}
+
+//==========================================================================
+//
+// FreeNodesAtDepth
+//
+// Like FreeNodes, but it only frees the nodes of type SY_CONSTANT that are
+// marked at the specified depth. The other nodes are relinked to maintain a
+// proper binary tree.
+//
+//==========================================================================
+
+static void FreeNodesAtDepth(symbolNode_t **root, int depth)
+{
+	symbolNode_t *node = *root;
+
+	if(node == NULL)
+	{
+		return;
+	}
+	FreeNodesAtDepth(&node->left, depth);
+	FreeNodesAtDepth(&node->right, depth);
+	if(node->type == SY_CONSTANT && node->info.constant.fileDepth == depth)
+	{
+		MS_Message(MSG_DEBUG, "Deleting constant %s\n", node->name);
+		DeleteNode(node, root);
+	}
+}
+
+//==========================================================================
+//
+// DeleteNode
+//
+//==========================================================================
+
+static void DeleteNode(symbolNode_t *node, symbolNode_t **parent_p)
+{
+	symbolNode_t **temp;
+
+	if(node->left == NULL)
+	{
+		*parent_p = node->right;
+		free(node->name);
+		free(node);
+	}
+	else if(node->right == NULL)
+	{
+		*parent_p = node->left;
+		free(node->name);
+		free(node);
+	}
+	else
+	{
+		// "Randomly" pick the in-order successor or predecessor to take
+		// the place of the deleted node.
+		if(rand() & 1)
+		{
+			// predecessor
+			temp = &node->left;
+			while((*temp)->right != NULL)
+			{
+				temp = &(*temp)->right;
+			}
+		}
+		else
+		{
+			// successor
+			temp = &node->right;
+			while((*temp)->left != NULL)
+			{
+				temp = &(*temp)->left;
+			}
+		}
+		node->name = (*temp)->name;
+		node->type = (*temp)->type;
+		node->unused = (*temp)->unused;
+		node->imported = (*temp)->imported;
+		node->info = (*temp)->info;
+		DeleteNode(*temp, temp);
+	}
 }
 
 //==========================================================================

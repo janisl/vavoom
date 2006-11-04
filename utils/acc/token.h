@@ -83,6 +83,7 @@ typedef enum
 	TK_OPEN,			// 'open'
 	TK_PRINT,			// 'print'
 	TK_PRINTBOLD,		// 'printbold'
+	TK_LOG,				// 'log'
 	TK_HUDMESSAGE,		// 'hudmessage'
 	TK_HUDMESSAGEBOLD,	// 'hudmessagebold'
 	TK_RESTART,			// 'restart'
@@ -104,7 +105,6 @@ typedef enum
 	TK_BLUERETURN,		// 'bluereturn'		[BC]
 	TK_REDRETURN,		// 'redreturn'		[BC]
 	TK_WHITERETURN,		// 'whitereturn'	[BC]
-	TK_LOCALIZEDSTRINGS,// 'localizedstrings'
 	TK_NOCOMPACT,		// 'nocompact'
 	TK_LIGHTNING,		// 'ligtning'
 	TK_CREATETRANSLATION,// 'createtranslation'
@@ -121,6 +121,12 @@ typedef enum
 	TK_NET,				// 'net'
 	TK_DISCONNECT,		// 'disconnect'
 	TK_UNLOADING,		// 'unloading'
+	TK_STATIC,			// 'static'
+	TK_ANDASSIGN,		// '&='
+	TK_ORASSIGN,		// '|='
+	TK_EORASSIGN,		// '^='
+	TK_LSASSIGN,		// '<<='
+	TK_RSASSIGN,		// '>>='
 } tokenType_t;
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -130,6 +136,7 @@ void TK_OpenSource(char *fileName);
 void TK_Include(char *fileName);
 void TK_Import(char *fileName, enum ImportModes prevMode);
 void TK_CloseSource(void);
+int TK_GetDepth(void);
 tokenType_t TK_NextToken(void);
 int TK_NextCharacter(void);
 boolean TK_NextTokenMustBe(tokenType_t token, error_t error);

@@ -35,8 +35,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define ASCII_SLASH 47
-#define ASCII_BACKSLASH 92
 #ifndef O_BINARY
 #define O_BINARY 0
 #endif

@@ -196,17 +196,6 @@ const char *STR_GetString(int list, int index)
 
 //==========================================================================
 //
-// STR_PutStringInLanguage
-//
-//==========================================================================
-
-int STR_PutStringInLanguage(int language, int index, char *name)
-{
-	return STR_PutStringInSomeList(&LanguageInfo[language]->list, index, name);
-}
-
-//==========================================================================
-//
 // STR_AppendToList
 //
 //==========================================================================

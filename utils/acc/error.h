@@ -142,6 +142,7 @@ typedef enum
 	ERR_NEED_ARRAY_SIZE,
 	ERR_DISCONNECT_NEEDS_1_ARG,
 	ERR_UNCLOSED_WITH_ARGS,
+	ERR_NOT_A_CHAR_ARRAY
 } error_t;
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

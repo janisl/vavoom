@@ -82,19 +82,19 @@ static void CountScript(int type);
 static void Outside(void);
 static void OuterScript(void);
 static void OuterFunction(void);
-static void OuterMapVar(void);
+static void OuterMapVar(boolean local);
 static void OuterWorldVar(boolean isGlobal);
 static void OuterSpecialDef(void);
 static void OuterDefine(boolean force);
 static void OuterInclude(void);
 static void OuterImport(void);
-static void OuterLocalizedStrings(void);
 static boolean ProcessStatement(statement_t owner);
 static void LeadingCompoundStatement(statement_t owner);
 static void LeadingVarDeclare(void);
 static void LeadingLineSpecial(boolean executewait);
 static void LeadingIdentifier(void);
 static void BuildPrintString(void);
+static void PrintCharArray(void);
 static void LeadingPrint(void);
 static void LeadingHudMessage(void);
 static void LeadingVarAssign(symbolNode_t *sym);
@@ -129,16 +129,8 @@ static boolean ContinueAncestor(void);
 static void ProcessInternFunc(symbolNode_t *sym);
 static void ProcessScriptFunc(symbolNode_t *sym, boolean discardReturn);
 static void EvalExpression(void);
+static void ExprLevX(int level);
 static void ExprLevA(void);
-static void ExprLevB(void);
-static void ExprLevC(void);
-static void ExprLevD(void);
-static void ExprLevE(void);
-static void ExprLevF(void);
-static void ExprLevG(void);
-static void ExprLevH(void);
-static void ExprLevI(void);
-static void ExprLevJ(void);
 static void ExprFactor(void);
 static void ConstExprFactor(void);
 static void SendExprCommand(pcd_t pcd);
@@ -148,7 +140,7 @@ static pcd_t TokenToPCD(tokenType_t token);
 static pcd_t GetPushVarPCD(symbolType_t symType);
 static pcd_t GetIncDecPCD(tokenType_t token, symbolType_t symbol);
 static int EvalConstExpression(void);
-static void ParseArrayIndices(symbolNode_t *sym);
+static void ParseArrayIndices(symbolNode_t *sym, int requiredIndices);
 static void InitializeArray(symbolNode_t *sym, int dims[MAX_ARRAY_DIMS], int size);
 static symbolNode_t *DemandSymbol(char *name);
 static symbolNode_t *SpeculateSymbol(char *name, boolean hasReturn);
@@ -226,6 +218,36 @@ static boolean IsContinueRoot[] =
 	YES		// STMT_FOR
 };
 
+static tokenType_t LevAOps[] =
+{
+	TK_ORLOGICAL,
+	TK_NONE
+};
+
+static tokenType_t LevBOps[] =
+{
+	TK_ANDLOGICAL,
+	TK_NONE
+};
+
+static tokenType_t LevCOps[] =
+{
+	TK_ORBITWISE,
+	TK_NONE
+};
+
+static tokenType_t LevDOps[] =
+{
+	TK_EORBITWISE,
+	TK_NONE
+};
+
+static tokenType_t LevEOps[] =
+{
+	TK_ANDBITWISE,
+	TK_NONE
+};
+
 static tokenType_t LevFOps[] =
 {
 	TK_EQ,
@@ -264,6 +286,21 @@ static tokenType_t LevJOps[] =
 	TK_NONE
 };
 
+static tokenType_t *OpsList[] =
+{
+	LevAOps,
+	LevBOps,
+	LevCOps,
+	LevDOps,
+	LevEOps,
+	LevFOps,
+	LevGOps,
+	LevHOps,
+	LevIOps,
+	LevJOps,
+	NULL
+};
+
 static tokenType_t AssignOps[] =
 {
 	TK_ASSIGN,
@@ -272,6 +309,11 @@ static tokenType_t AssignOps[] =
 	TK_MULASSIGN,
 	TK_DIVASSIGN,
 	TK_MODASSIGN,
+	TK_ANDASSIGN,
+	TK_EORASSIGN,
+	TK_ORASSIGN,
+	TK_LSASSIGN,
+	TK_RSASSIGN,
 	TK_NONE
 };
 
@@ -375,7 +417,7 @@ static void Outside(void)
 		case TK_INT:
 		case TK_STR:
 		case TK_BOOL:
-			OuterMapVar();
+			OuterMapVar(NO);
 			break;
 		case TK_WORLD:
 			OuterWorldVar(NO);
@@ -385,9 +427,6 @@ static void Outside(void)
 			break;
 		case TK_SPECIAL:
 			OuterSpecialDef();
-			break;
-		case TK_LOCALIZEDSTRINGS:
-			OuterLocalizedStrings();
 			break;
 		case TK_NUMBERSIGN:
 			TK_NextToken();
@@ -737,11 +776,35 @@ static void OuterFunction(void)
 		TK_Undo();
 		do
 		{
+			symbolType_t type;
 			symbolNode_t *local;
 
 			TK_NextToken();
-			if(tk_Token != TK_INT && tk_Token != TK_STR && tk_Token != TK_BOOL)
+/*			if(tk_Token != TK_INT && tk_Token != TK_STR && tk_Token != TK_BOOL)
 			{
+				ERR_Error(ERR_BAD_VAR_TYPE, YES);
+				tk_Token = TK_INT;
+			}
+*/			if(tk_Token == TK_INT || tk_Token == TK_BOOL)
+			{
+				if(TK_NextToken() == TK_LBRACKET)
+				{
+					TK_NextTokenMustBe(TK_RBRACKET, ERR_BAD_VAR_TYPE);
+					type = SY_SCRIPTALIAS;
+				}
+				else
+				{
+					TK_Undo();
+					type = SY_SCRIPTVAR;
+				}
+			}
+			else if(tk_Token == TK_STR)
+			{
+				type = SY_SCRIPTVAR;
+			}
+			else
+			{
+				type = SY_SCRIPTVAR;
 				ERR_Error(ERR_BAD_VAR_TYPE, YES);
 				tk_Token = TK_INT;
 			}
@@ -752,7 +815,7 @@ static void OuterFunction(void)
 			}
 			else
 			{
-				local = SY_InsertLocal(tk_String, SY_SCRIPTVAR);
+				local = SY_InsertLocal(tk_String, type);
 				local->info.var.index = ScriptVarCount;
 				ScriptVarCount++;
 			}
@@ -820,12 +883,12 @@ static void OuterFunction(void)
 //
 //==========================================================================
 
-static void OuterMapVar(void)
+static void OuterMapVar(boolean local)
 {
 	symbolNode_t *sym = NULL;
-	int index;
+	int index, i;
 
-	MS_Message(MSG_DEBUG, "---- OuterMapVar ----\n");
+	MS_Message(MSG_DEBUG, "---- %s ----\n", local ? "LeadingStaticVarDeclare" : "OuterMapVar");
 	do
 	{
 		if(pa_MapVarCount >= MAX_MAP_VARIABLES)
@@ -834,14 +897,17 @@ static void OuterMapVar(void)
 			index = MAX_MAP_VARIABLES;
 		}
 		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
-		if(SY_FindGlobal(tk_String) != NULL)
+		sym = local ? SY_FindLocal(tk_String)
+					: SY_FindGlobal(tk_String);
+		if(sym != NULL)
 		{ // Redefined
 			ERR_Error(ERR_REDEFINED_IDENTIFIER, YES, tk_String);
 			index = MAX_MAP_VARIABLES;
 		}
 		else
 		{
-			sym = SY_InsertGlobal(tk_String, SY_MAPVAR);
+			sym = local ? SY_InsertLocal(tk_String, SY_MAPVAR)
+						: SY_InsertGlobal(tk_String, SY_MAPVAR);
 			if(ImportMode == IMPORT_Importing)
 			{
 				sym->info.var.index = index = 0;
@@ -849,7 +915,10 @@ static void OuterMapVar(void)
 			else
 			{
 				sym->info.var.index = index = pa_MapVarCount;
-				PC_NameMapVariable(index, sym);
+				if (!local)
+				{ // Local variables are not exported
+					PC_NameMapVariable(index, sym);
+				}
 				pa_MapVarCount++;
 			}
 		}
@@ -928,8 +997,6 @@ static void OuterMapVar(void)
 				sym->info.array.size = size;
 				if(ndim > 0)
 				{
-					int i;
-
 					sym->info.array.dimensions[ndim-1] = 1;
 					for(i = ndim - 2; i >= 0; --i)
 					{
@@ -937,6 +1004,12 @@ static void OuterMapVar(void)
 							sym->info.array.dimensions[i+1] * dims[i+1];
 					}
 				}
+				MS_Message(MSG_DEBUG, " - with multipliers ");
+				for(i = 0; i < ndim; ++i)
+				{
+					MS_Message(MSG_DEBUG, "[%d]", sym->info.array.dimensions[i]);
+				}
+				MS_Message(MSG_DEBUG, "\n");
 				if(tk_Token == TK_ASSIGN)
 				{
 					InitializeArray(sym, dims, size);
@@ -1010,7 +1083,11 @@ static void OuterWorldVar(boolean isGlobal)
 					while(tk_Token == TK_LBRACKET);
 				}
 				sym = SY_InsertGlobal(tk_String, isGlobal ? SY_GLOBALARRAY : SY_WORLDARRAY);
-				sym->info.var.index = index;
+				sym->info.array.index = index;
+				sym->info.array.ndim = 1;
+				sym->info.array.size = 0x7fffffff;	// not used
+				memset(sym->info.array.dimensions, 0, sizeof(sym->info.array.dimensions));
+
 				if (isGlobal)
 					pa_GlobalArrayCount++;
 				else
@@ -1082,79 +1159,6 @@ static void OuterSpecialDef(void)
 
 //==========================================================================
 //
-// OuterLocalizedStrings
-//
-//==========================================================================
-
-static void OuterLocalizedStrings(void)
-{
-	int language = 0;	// Shut up, GCC
-	int strIndex;
-
-	MS_Message(MSG_DEBUG, "---- OuterLocalizedStrings ----\n");
-	if(ImportMode == IMPORT_Importing)
-	{ // We don't care about localizations when importing, because the
-	  // importer has no way of accessing them.
-		SkipBraceBlock(0);
-		TK_NextToken();
-		return;
-	}
-
-	TK_NextTokenMustBe(TK_IDENTIFIER, ERR_MISSING_LANGCODE);
-
-	if(strlen(tk_String) != 3 && strlen(tk_String) != 2)
-	{
-		ERR_Error(ERR_LANGCODE_SIZE, YES);
-		SkipBraceBlock(0);
-		TK_NextToken();
-		return;
-	}
-	tk_String[0] = tolower(tk_String[0]);
-	tk_String[1] = tolower(tk_String[1]);
-	tk_String[2] = tolower(tk_String[2]);
-	if (tk_String[0] < 'a' || tk_String[0] > 'z' ||
-		tk_String[1] < 'a' || tk_String[1] > 'z' ||
-		(tk_String[2] && (tk_String[2] < 'a' || tk_String[2] > 'z')))
-	{
-		ERR_Error(ERR_BAD_LANGCODE, YES);
-		SkipBraceBlock(0);
-		TK_NextToken();
-		return;
-	}
-	if (ImportMode != IMPORT_Importing)
-	{
-		language = STR_FindLanguage(tk_String);
-		MS_Message(MSG_DEBUG, "Language %s (%d)\n", tk_String, language);
-	}
-
-	TK_NextToken();
-	if(tk_Token != TK_LBRACE)
-	{
-		ERR_Error(ERR_MISSING_LBRACE_LOC, YES);
-		SkipBraceBlock(0);
-		TK_NextToken();
-		return;
-	}
-	TK_NextToken();
-
-	while (tk_Token == TK_STRING)
-	{
-		strIndex = STR_Find(tk_String);
-		TK_NextTokenMustBe(TK_ASSIGN, ERR_MISSING_ASSIGN_OP);
-		TK_NextTokenMustBe(TK_STRING, ERR_MISSING_LOCALIZED);
-		if (ImportMode != IMPORT_Importing)
-		{
-			STR_PutStringInLanguage(language, strIndex, tk_String);
-		}
-		TK_NextToken();
-	}
-
-	TK_TokenMustBe(TK_RBRACE, ERR_MISSING_RBRACE_LOC);
-	TK_NextToken();
-}
-
-//==========================================================================
-//
 // OuterDefine
 //
 //==========================================================================
@@ -1164,23 +1168,22 @@ static void OuterDefine(boolean force)
 	int value;
 	symbolNode_t *sym;
 
-	// Don't define inside an import
+	MS_Message(MSG_DEBUG, "---- OuterDefine %s----\n",
+		force ? "(forced) " : "");
+	TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
+	sym = SY_InsertGlobalUnique(tk_String, SY_CONSTANT);
+	TK_NextToken();
+	value = EvalConstExpression();
+	MS_Message(MSG_DEBUG, "Constant value: %d\n", value);
+	sym->info.constant.value = value;
+	// Defines inside an import are deleted when the import is popped.
 	if(ImportMode != IMPORT_Importing || force)
 	{
-		MS_Message(MSG_DEBUG, "---- OuterDefine %s----\n",
-			force ? "(forced) " : "");
-		TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
-		sym = SY_InsertGlobalUnique(tk_String, SY_CONSTANT);
-		TK_NextToken();
-		value = EvalConstExpression();
-		MS_Message(MSG_DEBUG, "Constant value: %d\n", value);
-		sym->info.constant.value = value;
+		sym->info.constant.fileDepth = 0;
 	}
 	else
 	{
-		TK_NextToken();
-		TK_NextToken();
-		EvalConstExpression();
+		sym->info.constant.fileDepth = TK_GetDepth();
 	}
 }
 
@@ -1248,6 +1251,7 @@ static boolean ProcessStatement(statement_t owner)
 		case TK_INT:
 		case TK_STR:
 		case TK_BOOL:
+		case TK_STATIC:
 			LeadingVarDeclare();
 			break;
 		case TK_LINESPECIAL:
@@ -1275,6 +1279,7 @@ static boolean ProcessStatement(statement_t owner)
 			break;
 		case TK_PRINT:
 		case TK_PRINTBOLD:
+		case TK_LOG:
 			LeadingPrint();
 			break;
 		case TK_HUDMESSAGE:
@@ -1393,6 +1398,18 @@ static void LeadingCompoundStatement(statement_t owner)
 static void LeadingVarDeclare(void)
 {
 	symbolNode_t *sym = NULL;
+
+	if(tk_Token == TK_STATIC)
+	{
+		TK_NextToken();
+		if(tk_Token != TK_INT && tk_Token != TK_STR && tk_Token != TK_BOOL)
+		{
+			ERR_Error(ERR_BAD_VAR_TYPE, YES);
+			TK_Undo();
+		}
+		OuterMapVar(YES);
+		return;
+	}
 
 	MS_Message(MSG_DEBUG, "---- LeadingVarDeclare ----\n");
 	do
@@ -1597,6 +1614,7 @@ static void LeadingIdentifier(void)
 	{
 		case SY_MAPARRAY:
 		case SY_SCRIPTVAR:
+		case SY_SCRIPTALIAS:
 		case SY_MAPVAR:
 		case SY_WORLDVAR:
 		case SY_GLOBALVAR:
@@ -2004,6 +2022,9 @@ static void BuildPrintString(void)
 	{
 		switch(TK_NextCharacter())
 		{
+			case 'a': // character array support [JB]
+				PrintCharArray();
+				continue;
 			case 's': // string
 				printCmd = PCD_PRINTSTRING;
 				break;
@@ -2037,6 +2058,48 @@ static void BuildPrintString(void)
 
 //==========================================================================
 //
+// PrintCharArray // JB
+//
+//==========================================================================
+
+static void PrintCharArray(void)
+{
+	symbolNode_t *sym;
+	TK_NextTokenMustBe(TK_COLON, ERR_MISSING_COLON);
+	TK_NextToken();
+	sym = SpeculateSymbol(tk_String, NO);
+	if((sym->type != SY_MAPARRAY) && (sym->type != SY_WORLDARRAY)
+		&& (sym->type != SY_GLOBALARRAY))
+	{
+		ERR_Error(ERR_NOT_AN_ARRAY, YES);
+	}
+	TK_NextToken();
+	if(sym->info.array.ndim > 1)
+	{
+		ParseArrayIndices(sym, sym->info.array.ndim-1);
+	}
+	else
+	{
+		PC_AppendPushVal(0);
+	}
+
+	PC_AppendPushVal(sym->info.array.index);
+	if(sym->type == SY_MAPARRAY)
+	{
+		PC_AppendCmd(PCD_PRINTMAPCHARARRAY);
+	}
+	else if(sym->type == SY_WORLDARRAY)
+	{
+		PC_AppendCmd(PCD_PRINTWORLDCHARARRAY);
+	}
+	else // if(sym->type == SY_GLOBALARRAY)
+	{
+		PC_AppendCmd(PCD_PRINTGLOBALCHARARRAY);
+	}
+}
+
+//==========================================================================
+//
 // LeadingPrint
 //
 //==========================================================================
@@ -2046,7 +2109,7 @@ static void LeadingPrint(void)
 	tokenType_t stmtToken;
 
 	MS_Message(MSG_DEBUG, "---- LeadingPrint ----\n");
-	stmtToken = tk_Token; // Will be TK_PRINT or TK_PRINTBOLD
+	stmtToken = tk_Token; // Will be TK_PRINT or TK_PRINTBOLD or TK_LOG
 	PC_AppendCmd(PCD_BEGINPRINT);
 	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
 	BuildPrintString();
@@ -2055,9 +2118,13 @@ static void LeadingPrint(void)
 	{
 		PC_AppendCmd(PCD_ENDPRINT);
 	}
-	else
+	else if(stmtToken == TK_PRINTBOLD)
 	{
 		PC_AppendCmd(PCD_ENDPRINTBOLD);
+	}
+	else
+	{
+		PC_AppendCmd(PCD_ENDLOG);
 	}
 	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
 	TK_NextToken();
@@ -2702,6 +2769,12 @@ static boolean ContinueAncestor(void)
 	return NO;
 }
 
+//==========================================================================
+//
+// LeadingIncDec
+//
+//==========================================================================
+
 static void LeadingIncDec(int token)
 {
 	symbolNode_t *sym;
@@ -2712,7 +2785,7 @@ static void LeadingIncDec(int token)
 	if(sym->type != SY_SCRIPTVAR && sym->type != SY_MAPVAR
 		&& sym->type != SY_WORLDVAR && sym->type != SY_GLOBALVAR
 		&& sym->type != SY_MAPARRAY && sym->type != SY_GLOBALARRAY
-		&& sym->type != SY_WORLDARRAY)
+		&& sym->type != SY_WORLDARRAY && sym->type != SY_SCRIPTALIAS)
 	{
 		ERR_Error(ERR_INCDEC_OP_ON_NON_VAR, YES);
 		TK_SkipPast(TK_SEMICOLON);
@@ -2722,7 +2795,7 @@ static void LeadingIncDec(int token)
 	if(sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
 		|| sym->type == SY_GLOBALARRAY)
 	{
-		ParseArrayIndices(sym);
+		ParseArrayIndices(sym, sym->info.array.ndim);
 	}
 	else if(tk_Token == TK_LBRACKET)
 	{
@@ -2764,7 +2837,7 @@ static void LeadingVarAssign(symbolNode_t *sym)
 		if(sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
 			|| sym->type == SY_GLOBALARRAY)
 		{
-			ParseArrayIndices(sym);
+			ParseArrayIndices(sym, sym->info.array.ndim);
 		}
 		else if(tk_Token == TK_LBRACKET)
 		{
@@ -2807,7 +2880,8 @@ static void LeadingVarAssign(symbolNode_t *sym)
 			sym = DemandSymbol(tk_String);
 			if(sym->type != SY_SCRIPTVAR && sym->type != SY_MAPVAR
 				&& sym->type != SY_WORLDVAR && sym->type != SY_GLOBALVAR
-				&& sym->type != SY_WORLDARRAY && sym->type != SY_GLOBALARRAY)
+				&& sym->type != SY_WORLDARRAY && sym->type != SY_GLOBALARRAY
+				&& sym->type != SY_SCRIPTALIAS)
 			{
 				ERR_Error(ERR_BAD_ASSIGNMENT, YES);
 				TK_SkipPast(TK_SEMICOLON);
@@ -2835,21 +2909,28 @@ static pcd_t GetAssignPCD(tokenType_t token, symbolType_t symbol)
 	static tokenType_t tokenLookup[] =
 	{
 		TK_ASSIGN, TK_ADDASSIGN, TK_SUBASSIGN,
-		TK_MULASSIGN, TK_DIVASSIGN, TK_MODASSIGN
+		TK_MULASSIGN, TK_DIVASSIGN, TK_MODASSIGN,
+		TK_ANDASSIGN, TK_EORASSIGN, TK_ORASSIGN,
+		TK_LSASSIGN, TK_RSASSIGN
 	};
 	static symbolType_t symbolLookup[] =
 	{
 		SY_SCRIPTVAR, SY_MAPVAR, SY_WORLDVAR, SY_GLOBALVAR, SY_MAPARRAY,
 		SY_WORLDARRAY, SY_GLOBALARRAY
 	};
-	static pcd_t assignmentLookup[6][7] =
+	static pcd_t assignmentLookup[11][7] =
 	{
 		{ PCD_ASSIGNSCRIPTVAR, PCD_ASSIGNMAPVAR, PCD_ASSIGNWORLDVAR, PCD_ASSIGNGLOBALVAR, PCD_ASSIGNMAPARRAY, PCD_ASSIGNWORLDARRAY, PCD_ASSIGNGLOBALARRAY },
 		{ PCD_ADDSCRIPTVAR, PCD_ADDMAPVAR, PCD_ADDWORLDVAR, PCD_ADDGLOBALVAR, PCD_ADDMAPARRAY, PCD_ADDWORLDARRAY, PCD_ADDGLOBALARRAY },
 		{ PCD_SUBSCRIPTVAR, PCD_SUBMAPVAR, PCD_SUBWORLDVAR, PCD_SUBGLOBALVAR, PCD_SUBMAPARRAY, PCD_SUBWORLDARRAY, PCD_SUBGLOBALARRAY },
 		{ PCD_MULSCRIPTVAR, PCD_MULMAPVAR, PCD_MULWORLDVAR, PCD_MULGLOBALVAR, PCD_MULMAPARRAY, PCD_MULWORLDARRAY, PCD_MULGLOBALARRAY },
 		{ PCD_DIVSCRIPTVAR, PCD_DIVMAPVAR, PCD_DIVWORLDVAR, PCD_DIVGLOBALVAR, PCD_DIVMAPARRAY, PCD_DIVWORLDARRAY, PCD_DIVGLOBALARRAY },
-		{ PCD_MODSCRIPTVAR, PCD_MODMAPVAR, PCD_MODWORLDVAR, PCD_MODGLOBALVAR, PCD_MODMAPARRAY, PCD_MODWORLDARRAY, PCD_MODGLOBALARRAY }
+		{ PCD_MODSCRIPTVAR, PCD_MODMAPVAR, PCD_MODWORLDVAR, PCD_MODGLOBALVAR, PCD_MODMAPARRAY, PCD_MODWORLDARRAY, PCD_MODGLOBALARRAY },
+		{ PCD_ANDSCRIPTVAR, PCD_ANDMAPVAR, PCD_ANDWORLDVAR, PCD_ANDGLOBALVAR, PCD_ANDMAPARRAY, PCD_ANDWORLDARRAY, PCD_ANDGLOBALARRAY },
+		{ PCD_EORSCRIPTVAR, PCD_EORMAPVAR, PCD_EORWORLDVAR, PCD_EORGLOBALVAR, PCD_EORMAPARRAY, PCD_EORWORLDARRAY, PCD_EORGLOBALARRAY },
+		{ PCD_ORSCRIPTVAR, PCD_ORMAPVAR, PCD_ORWORLDVAR, PCD_ORGLOBALVAR, PCD_ORMAPARRAY, PCD_ORWORLDARRAY, PCD_ORGLOBALARRAY },
+		{ PCD_LSSCRIPTVAR, PCD_LSMAPVAR, PCD_LSWORLDVAR, PCD_LSGLOBALVAR, PCD_LSMAPARRAY, PCD_LSWORLDARRAY, PCD_LSGLOBALARRAY },
+		{ PCD_RSSCRIPTVAR, PCD_RSMAPVAR, PCD_RSWORLDVAR, PCD_RSGLOBALVAR, PCD_RSMAPARRAY, PCD_RSWORLDARRAY, PCD_RSGLOBALARRAY }
 	};
 
 	for(i = 0; i < ARRAY_SIZE(tokenLookup); ++i)
@@ -2991,6 +3072,9 @@ static int EvalConstExpression(void)
 //
 // EvalExpression
 //
+// [RH] Rewrote all the ExprLevA - ExprLevJ functions in favor of a single
+// table-driven parser function.
+//
 //==========================================================================
 
 static void EvalExpression(void)
@@ -2999,154 +3083,35 @@ static void EvalExpression(void)
 	ExprLevA();
 }
 
-// Operator: ||
 static void ExprLevA(void)
 {
-	ExprLevB();
-	while(tk_Token == TK_ORLOGICAL)
-	{
-		TK_NextToken();
-		ExprLevB();
-		SendExprCommand(PCD_ORLOGICAL);
-	}
+	ExprLevX(0);
 }
 
+// Operator precedence levels:
+// Operator: ||
 // Operator: &&
-static void ExprLevB(void)
-{
-	ExprLevC();
-	while(tk_Token == TK_ANDLOGICAL)
-	{
-		TK_NextToken();
-		ExprLevC();
-		SendExprCommand(PCD_ANDLOGICAL);
-	}
-}
-
 // Operator: |
-static void ExprLevC(void)
-{
-	ExprLevD();
-	while(tk_Token == TK_ORBITWISE)
-	{
-		TK_NextToken();
-		ExprLevD();
-		SendExprCommand(PCD_ORBITWISE);
-	}
-}
-
 // Operator: ^
-static void ExprLevD(void)
-{
-	ExprLevE();
-	while(tk_Token == TK_EORBITWISE)
-	{
-		TK_NextToken();
-		ExprLevE();
-		SendExprCommand(PCD_EORBITWISE);
-	}
-}
-
 // Operator: &
-static void ExprLevE(void)
-{
-	ExprLevF();
-	while(tk_Token == TK_ANDBITWISE)
-	{
-		TK_NextToken();
-		ExprLevF();
-		SendExprCommand(PCD_ANDBITWISE);
-	}
-}
-
 // Operators: == !=
-static void ExprLevF(void)
-{
-	tokenType_t token;
-
-	ExprLevG();
-	while(TK_Member(LevFOps))
-	{
-		token = tk_Token;
-		TK_NextToken();
-		ExprLevG();
-		SendExprCommand(TokenToPCD(token));
-	}
-}
-
 // Operators: < <= > >=
-static void ExprLevG(void)
-{
-	tokenType_t token;
-
-	ExprLevH();
-	while(TK_Member(LevGOps))
-	{
-		token = tk_Token;
-		TK_NextToken();
-		ExprLevH();
-		SendExprCommand(TokenToPCD(token));
-	}
-}
-
 // Operators: << >>
-static void ExprLevH(void)
-{
-	tokenType_t token;
-
-	ExprLevI();
-	while(TK_Member(LevHOps))
-	{
-		token = tk_Token;
-		TK_NextToken();
-		ExprLevI();
-		SendExprCommand(TokenToPCD(token));
-	}
-}
-
 // Operators: + -
-static void ExprLevI(void)
-{
-	tokenType_t token;
-
-	ExprLevJ();
-	while(TK_Member(LevIOps))
-	{
-		token = tk_Token;
-		TK_NextToken();
-		ExprLevJ();
-		SendExprCommand(TokenToPCD(token));
-	}
-}
-
 // Operators: * / %
-static void ExprLevJ(void)
-{
-	tokenType_t token;
-	boolean unaryMinus;
 
-	unaryMinus = FALSE;
-	if(tk_Token == TK_MINUS)
+static void ExprLevX(int level)
+{
+	if(OpsList[level] == NULL)
 	{
-		unaryMinus = TRUE;
-		TK_NextToken();
-	}
-	if(ConstantExpression == YES)
-	{
-		ConstExprFactor();
-	}
-	else
-	{
-		ExprFactor();
-	}
-	if(unaryMinus == TRUE)
-	{
-		SendExprCommand(PCD_UNARYMINUS);
-	}
-	while(TK_Member(LevJOps))
-	{
-		token = tk_Token;
-		TK_NextToken();
+		boolean unaryMinus;
+
+		unaryMinus = FALSE;
+		if(tk_Token == TK_MINUS)
+		{
+			unaryMinus = TRUE;
+			TK_NextToken();
+		}
 		if(ConstantExpression == YES)
 		{
 			ConstExprFactor();
@@ -3155,7 +3120,21 @@ static void ExprLevJ(void)
 		{
 			ExprFactor();
 		}
-		SendExprCommand(TokenToPCD(token));
+		if(unaryMinus == TRUE)
+		{
+			SendExprCommand(PCD_UNARYMINUS);
+		}
+	}
+	else
+	{
+		ExprLevX(level + 1);
+		while(TK_Member(OpsList[level]))
+		{
+			tokenType_t token = tk_Token;
+			TK_NextToken();
+			ExprLevX(level + 1);
+			SendExprCommand(TokenToPCD(token));
+		}
 	}
 }
 
@@ -3279,6 +3258,11 @@ static void ExprFactor(void)
 		ExprFactor();
 		PC_AppendCmd(PCD_NEGATELOGICAL);
 		break;
+	case TK_TILDE:
+		TK_NextToken();
+		ExprFactor();
+		PC_AppendCmd(PCD_NEGATEBINARY);
+		break;
 	case TK_INC:
 	case TK_DEC:
 		opToken = tk_Token;
@@ -3297,7 +3281,7 @@ static void ExprFactor(void)
 			if(sym->type == SY_MAPARRAY || sym->type == SY_WORLDARRAY
 				|| sym->type == SY_GLOBALARRAY)
 			{
-				ParseArrayIndices(sym);
+				ParseArrayIndices(sym, sym->info.array.ndim);
 				PC_AppendCmd(PCD_DUP);
 			}
 			else if(tk_Token == TK_LBRACKET)
@@ -3318,11 +3302,14 @@ static void ExprFactor(void)
 		sym = SpeculateSymbol(tk_String, YES);
 		switch(sym->type)
 		{
+			case SY_SCRIPTALIAS:
+				// FIXME
+				break;
 			case SY_MAPARRAY:
 			case SY_WORLDARRAY:
 			case SY_GLOBALARRAY:
 				TK_NextToken();
-				ParseArrayIndices(sym);
+				ParseArrayIndices(sym, sym->info.array.ndim);
 				// fallthrough
 			case SY_SCRIPTVAR:
 			case SY_MAPVAR:
@@ -3489,16 +3476,20 @@ static void SendExprCommand(pcd_t pcd)
 			PushExStk(PopExStk() != PopExStk());
 			break;
 		case PCD_LT:
-			PushExStk(PopExStk() >= PopExStk());
+			operand2 = PopExStk();
+			PushExStk(PopExStk() >= operand2);
 			break;
 		case PCD_GT:
-			PushExStk(PopExStk() <= PopExStk());
+			operand2 = PopExStk();
+			PushExStk(PopExStk() <= operand2);
 			break;
 		case PCD_LE:
-			PushExStk(PopExStk() > PopExStk());
+			operand2 = PopExStk();
+			PushExStk(PopExStk() > operand2);
 			break;
 		case PCD_GE:
-			PushExStk(PopExStk() < PopExStk());
+			operand2 = PopExStk();
+			PushExStk(PopExStk() < operand2);
 			break;
 		case PCD_ANDLOGICAL:
 			PushExStk(PopExStk() && PopExStk());
@@ -3520,11 +3511,11 @@ static void SendExprCommand(pcd_t pcd)
 			break;
 		case PCD_LSHIFT:
 			operand2 = PopExStk();
-			PushExStk(PopExStk()>>operand2);
+			PushExStk(PopExStk()<<operand2);
 			break;
 		case PCD_RSHIFT:
 			operand2 = PopExStk();
-			PushExStk(PopExStk()<<operand2);
+			PushExStk(PopExStk()>>operand2);
 			break;
 		case PCD_UNARYMINUS:
 			PushExStk(-PopExStk());
@@ -3581,20 +3572,25 @@ static pcd_t TokenToPCD(tokenType_t token)
 		pcd_t pcd;
 	}  operatorLookup[] =
 	{
-		{ TK_EQ,		PCD_EQ },
-		{ TK_NE,		PCD_NE },
-		{ TK_LT,		PCD_LT },
-		{ TK_LE,		PCD_LE },
-		{ TK_GT,		PCD_GT },
-		{ TK_GE,		PCD_GE },
-		{ TK_LSHIFT,	PCD_LSHIFT },
-		{ TK_RSHIFT,	PCD_RSHIFT },
-		{ TK_PLUS,		PCD_ADD },
-		{ TK_MINUS,		PCD_SUBTRACT },
-		{ TK_ASTERISK,	PCD_MULTIPLY },
-		{ TK_SLASH,		PCD_DIVIDE },
-		{ TK_PERCENT,	PCD_MODULUS },
-		{ TK_NONE,		PCD_NOP }
+		{ TK_ORLOGICAL,		PCD_ORLOGICAL },
+		{ TK_ANDLOGICAL,	PCD_ANDLOGICAL },
+		{ TK_ORBITWISE,		PCD_ORBITWISE },
+		{ TK_EORBITWISE,	PCD_EORBITWISE },
+		{ TK_ANDBITWISE,	PCD_ANDBITWISE },
+		{ TK_EQ,			PCD_EQ },
+		{ TK_NE,			PCD_NE },
+		{ TK_LT,			PCD_LT },
+		{ TK_LE,			PCD_LE },
+		{ TK_GT,			PCD_GT },
+		{ TK_GE,			PCD_GE },
+		{ TK_LSHIFT,		PCD_LSHIFT },
+		{ TK_RSHIFT,		PCD_RSHIFT },
+		{ TK_PLUS,			PCD_ADD },
+		{ TK_MINUS,			PCD_SUBTRACT },
+		{ TK_ASTERISK,		PCD_MULTIPLY },
+		{ TK_SLASH,			PCD_DIVIDE },
+		{ TK_PERCENT,		PCD_MODULUS },
+		{ TK_NONE,			PCD_NOP }
 	};
 
 	for(i = 0; operatorLookup[i].token != TK_NONE; i++)
@@ -3689,32 +3685,43 @@ static pcd_t GetIncDecPCD(tokenType_t token, symbolType_t symbol)
 //
 //==========================================================================
 
-static void ParseArrayIndices(symbolNode_t *sym)
+static void ParseArrayIndices(symbolNode_t *sym, int requiredIndices)
 {
 	boolean warned = NO;
 	int i;
 
-	TK_TokenMustBe(TK_LBRACKET, ERR_MISSING_LBRACKET);
+	if(requiredIndices > 0)
+	{
+		TK_TokenMustBe(TK_LBRACKET, ERR_MISSING_LBRACKET);
+	}
 	i = 0;
 	while(tk_Token == TK_LBRACKET)
 	{
 		TK_NextToken();
-		if((sym->type == SY_MAPARRAY && i == sym->info.array.ndim) ||
+		if((sym->type == SY_MAPARRAY && i == requiredIndices) ||
 			(sym->type != SY_MAPARRAY && i > 0))
 		{
 			if (!warned)
 			{
 				warned = YES;
-				ERR_Error(ERR_TOO_MANY_DIM_USED, YES,
-					sym->name, sym->info.array.ndim);
+				if(sym->info.array.ndim == requiredIndices)
+				{
+					ERR_Error(ERR_TOO_MANY_DIM_USED, YES,
+						sym->name, sym->info.array.ndim);
+				}
+				else
+				{
+					ERR_Error(ERR_NOT_A_CHAR_ARRAY, YES, sym->name,
+						sym->info.array.ndim, requiredIndices);
+				}
 			}
 		}
-		if(i > 0)
+		EvalExpression();
+		if(i < sym->info.array.ndim - 1 && sym->info.array.dimensions[i] > 1)
 		{
-			PC_AppendPushVal(sym->info.array.dimensions[i-1]);
+			PC_AppendPushVal(sym->info.array.dimensions[i]);
 			PC_AppendCmd(PCD_MULTIPLY);
 		}
-		EvalExpression();
 		if(i > 0)
 		{
 			PC_AppendCmd(PCD_ADD);
@@ -3722,6 +3729,20 @@ static void ParseArrayIndices(symbolNode_t *sym)
 		i++;
 		TK_TokenMustBe(TK_RBRACKET, ERR_MISSING_RBRACKET);
 		TK_NextToken();
+	}
+	// if there were unspecified indices, multiply the offset by their sizes [JB]
+	if(requiredIndices < sym->info.array.ndim)
+	{
+		int i, mult = 1;
+		for(i = 0; i < sym->info.array.ndim - requiredIndices; ++i)
+		{
+			mult *= sym->info.array.dimensions[sym->info.array.ndim - 2 - i];
+		}
+		if(mult > 1)
+		{
+			PC_AppendPushVal(mult);
+			PC_AppendCmd(PCD_MULTIPLY);
+		}
 	}
 }
 
