@@ -208,6 +208,7 @@ class VEntity : public VThinker
 	static int FIndex_TakeInventory;
 	static int FIndex_CheckInventory;
 	static int FIndex_GetSigilPieces;
+	static int FIndex_MoveThing;
 
 	static void InitFuncIndexes();
 
@@ -296,6 +297,13 @@ class VEntity : public VThinker
 	{
 		P_PASS_SELF;
 		EV_RET_INT(FIndex_GetSigilPieces);
+	}
+	bool eventMoveThing(TVec Pos, bool Fog)
+	{
+		P_PASS_SELF;
+		P_PASS_VEC(Pos);
+		P_PASS_BOOL(Fog);
+		EV_RET_BOOL(FIndex_MoveThing);
 	}
 
 	void Remove()

@@ -374,6 +374,37 @@ float GetPlayerViewHeight()
 	return Player(Player).ViewHeight;
 }
 
+//===========================================================================
+//
+//  MoveThing
+//
+//===========================================================================
+
+bool MoveThing(TVec Pos, bool Fog)
+{
+	TVec OldOrg = Origin;
+
+	UnlinkFromWorld();
+	Origin = Pos;
+	LinkToWorld();
+	if (TestLocation())
+	{
+		if (Fog)
+		{
+			LineSpecialLevelInfo(Level).SpawnTeleportFog(Pos);
+			LineSpecialLevelInfo(Level).SpawnTeleportFog(OldOrg);
+		}
+		return true;
+	}
+	else
+	{
+		UnlinkFromWorld();
+		Origin = OldOrg;
+		LinkToWorld();
+		return false;
+	}
+}
+
 //==========================================================================
 //
 //  HITDICE

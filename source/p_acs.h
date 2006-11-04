@@ -131,7 +131,7 @@ enum EPCD
 	DECLARE_PCD(SetLineSpecial),
 	DECLARE_PCD(ThingSound),//100
 	DECLARE_PCD(EndPrintBold),
-	DECLARE_PCD(ActivatorSound),// Start of the extended opcodes.
+	DECLARE_PCD(ActivatorSound),	// Start of the extended opcodes.
 	DECLARE_PCD(LocalAmbientSound),
 	DECLARE_PCD(SetLineMonsterBlocking),
 	DECLARE_PCD(PlayerBlueSkull),	// Start of new [Skull Tag] pcodes
@@ -158,8 +158,8 @@ enum EPCD
 	DECLARE_PCD(BlueTeamScore),
 	DECLARE_PCD(RedTeamScore),
 	DECLARE_PCD(IsOneFlagCTF),
-	DECLARE_PCD(LSpec6),				// These are never used. They should probably
-	DECLARE_PCD(LSpec6Direct),//130	// be given names like DECLARE_PCD(Dummy.
+	DECLARE_PCD(LSpec6),			// These are never used. They should probably
+	DECLARE_PCD(LSpec6Direct),//130	// be given names like PCD_Dummy.
 	DECLARE_PCD(PrintName),
 	DECLARE_PCD(MusicChange),
 	DECLARE_PCD(Team2FragPoints),
@@ -298,6 +298,67 @@ enum EPCD
 	DECLARE_PCD(ChangeSky),
 	DECLARE_PCD(PlayerInGame),
 	DECLARE_PCD(PlayerIsBot),
+	DECLARE_PCD(SetCameraToTexture),
+	DECLARE_PCD(EndLog),//270
+	DECLARE_PCD(GetAmmoCapacity),
+	DECLARE_PCD(SetAmmoCapacity),
+	DECLARE_PCD(PrintMapCharArray),
+	DECLARE_PCD(PrintWorldCharArray),
+	DECLARE_PCD(PrintGlobalCharArray),
+	DECLARE_PCD(SetActorAngle),
+	DECLARE_PCD(GrabInput),
+	DECLARE_PCD(SetMousePointer),
+	DECLARE_PCD(MoveMousePointer),
+	DECLARE_PCD(SpawnProjectile),//280
+	DECLARE_PCD(GetSectorLightLevel),
+	DECLARE_PCD(GetActorCeilingZ),
+	DECLARE_PCD(SetActorPosition),
+	DECLARE_PCD(ClearActorInventory),
+	DECLARE_PCD(GiveActorInventory),
+	DECLARE_PCD(TakeActorInventory),
+	DECLARE_PCD(CheckActorInventory),
+	DECLARE_PCD(ThingCountName),
+	DECLARE_PCD(SpawnSpotFacing),
+	DECLARE_PCD(PlayerClass),//290
+	DECLARE_PCD(AndScriptVar),
+	DECLARE_PCD(AndMapVar),
+	DECLARE_PCD(AndWorldVar),
+	DECLARE_PCD(AndGlobalVar),
+	DECLARE_PCD(AndMapArray),
+	DECLARE_PCD(AndWorldArray),
+	DECLARE_PCD(AndGlobalArray),
+	DECLARE_PCD(EOrScriptVar),
+	DECLARE_PCD(EOrMapVar),
+	DECLARE_PCD(EOrWorldVar),//300
+	DECLARE_PCD(EOrGlobalVar),
+	DECLARE_PCD(EOrMapArray),
+	DECLARE_PCD(EOrWorldArray),
+	DECLARE_PCD(EOrGlobalArray),
+	DECLARE_PCD(OrScriptVar),
+	DECLARE_PCD(OrMapVar),
+	DECLARE_PCD(OrWorldVar),
+	DECLARE_PCD(OrGlobalVar),
+	DECLARE_PCD(OrMapArray),
+	DECLARE_PCD(OrWorldArray),//310
+	DECLARE_PCD(OrGlobalArray),
+	DECLARE_PCD(LSScriptVar),
+	DECLARE_PCD(LSMapVar),
+	DECLARE_PCD(LSWorldVar),
+	DECLARE_PCD(LSGlobalVar),
+	DECLARE_PCD(LSMapArray),
+	DECLARE_PCD(LSWorldArray),
+	DECLARE_PCD(LSGlobalArray),
+	DECLARE_PCD(RSScriptVar),
+	DECLARE_PCD(RSMapVar),//320
+	DECLARE_PCD(RSWorldVar),
+	DECLARE_PCD(RSGlobalVar),
+	DECLARE_PCD(RSMapArray),
+	DECLARE_PCD(RSWorldArray),
+	DECLARE_PCD(RSGlobalArray),
+	DECLARE_PCD(GetPlayerInfo),
+	DECLARE_PCD(ChangeLevel),
+	DECLARE_PCD(SectorDamage),
+	DECLARE_PCD(ReplaceTextures),
 
 #ifdef DECLARING_PCD_ENUM
 	PCODE_COMMAND_COUNT

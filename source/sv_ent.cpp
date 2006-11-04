@@ -142,6 +142,7 @@ int VEntity::FIndex_GiveInventory;
 int VEntity::FIndex_TakeInventory;
 int VEntity::FIndex_CheckInventory;
 int VEntity::FIndex_GetSigilPieces;
+int VEntity::FIndex_MoveThing;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -2324,6 +2325,7 @@ void VEntity::InitFuncIndexes()
 	FIndex_TakeInventory = StaticClass()->GetFunctionIndex("TakeInventory");
 	FIndex_CheckInventory = StaticClass()->GetFunctionIndex("CheckInventory");
 	FIndex_GetSigilPieces = StaticClass()->GetFunctionIndex("GetSigilPieces");
+	FIndex_MoveThing = StaticClass()->GetFunctionIndex("MoveThing");
 	unguard;
 }
 

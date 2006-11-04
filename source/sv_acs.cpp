@@ -71,31 +71,17 @@ enum EACSFormat
 	ACS_Unknown
 };
 
+//	Script flags.
+enum
+{
+	SCRIPTF_Net = 0x0001	//	Safe to "puke" in multiplayer.
+};
+
 enum EScriptAction
 {
 	SCRIPT_CONTINUE,
 	SCRIPT_STOP,
 	SCRIPT_TERMINATE,
-};
-
-enum EGameMode
-{
-	GAME_SINGLE_PLAYER,
-	GAME_NET_COOPERATIVE,
-	GAME_NET_DEATHMATCH
-};
-
-enum ETexturePosition
-{
-	TEXTURE_TOP,
-	TEXTURE_MIDDLE,
-	TEXTURE_BOTTOM
-};
-
-//	Script flags.
-enum
-{
-	SCRIPTF_Net = 0x0001	//	Safe to "puke" in multiplayer.
 };
 
 enum aste_t
@@ -107,6 +93,29 @@ enum aste_t
 	ASTE_WAITINGFORPOLY,
 	ASTE_WAITINGFORSCRIPT,
 	ASTE_TERMINATING
+};
+
+enum EGameMode
+{
+	GAME_SINGLE_PLAYER,
+	GAME_NET_COOPERATIVE,
+	GAME_NET_DEATHMATCH,
+	GAME_TITLE_MAP
+};
+
+enum ETexturePosition
+{
+	TEXTURE_TOP,
+	TEXTURE_MIDDLE,
+	TEXTURE_BOTTOM
+};
+
+enum
+{
+	BLOCK_NOTHING,
+	BLOCK_CREATURES,
+	BLOCK_EVERYTHING,
+	BLOCK_RAILING
 };
 
 enum
@@ -121,6 +130,16 @@ enum
 	LEVELINFO_TOTAL_MONSTERS,
 	LEVELINFO_KILLED_MONSTERS,
 	LEVELINFO_SUCK_TIME
+};
+
+//	Flags for ReplaceTextures
+enum
+{
+	NOT_BOTTOM			= 1,
+	NOT_MIDDLE			= 2,
+	NOT_TOP				= 4,
+	NOT_FLOOR			= 8,
+	NOT_CEILING			= 16,
 };
 
 struct acsHeader_t
@@ -1494,6 +1513,8 @@ void VACS::Tick(float DeltaTime)
 //
 //==========================================================================
 
+#define STUB(cmd)	GCon->Log("Executing unimplemented ACS PCODE " #cmd);
+
 #ifdef __GNUC__
 #define USE_COMPUTED_GOTO 1
 #endif
@@ -2288,10 +2309,25 @@ int VACS::RunScript(float DeltaTime)
 				for (line_t* line = Level->eventFindLine(sp[-2], &searcher);
 					line != NULL; line = Level->eventFindLine(sp[-2], &searcher))
 				{
-					if (sp[-1])
+					switch (sp[-1])
+					{
+					case BLOCK_NOTHING:
+						line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING | ML_RAILING);
+						break;
+					case BLOCK_CREATURES:
+					default:
+						line->flags &= ~(ML_BLOCKEVERYTHING | ML_RAILING);
 						line->flags |= ML_BLOCKING;
-					else
-						line->flags &= ~ML_BLOCKING;
+						break;
+					case BLOCK_EVERYTHING:
+						line->flags &= ~ML_RAILING;
+						line->flags |= ML_BLOCKING | ML_BLOCKEVERYTHING;
+						break;
+					case BLOCK_RAILING:
+						line->flags &= ~ML_BLOCKEVERYTHING;
+						line->flags |= ML_BLOCKING | ML_RAILING;
+						break;
+					}
 				}
 				sp -= 2;
 			}
@@ -2374,6 +2410,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PlayerArmorPoints)
+			STUB(PCD_PlayerArmorPoints)
 			//FIXME implement this
 			if (Activator && Activator->Player)
 			{
@@ -2462,18 +2499,21 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetAirControl)
+			STUB(PCD_SetAirControl)
 			//FIXME implement this
 			//sp[-1] - air control, fixed point
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetAirControlDirect)
+			STUB(PCD_SetAirControlDirect)
 			//FIXME implement this
 			//READ_INT32(ip) - air control, fixed point
 			ip += 4;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ClearInventory)
+			STUB(PCD_ClearInventory)
 			//FIXME implement this
 			if (Activator)
 			{
@@ -2487,37 +2527,44 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GiveInventory)
+			STUB(PCD_GiveInventory)
 			GiveInventory(Activator, GetStr(sp[-2]), sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GiveInventoryDirect)
+			STUB(PCD_GiveInventoryDirect)
 			GiveInventory(Activator, GetStr(READ_INT32(ip)),
 				READ_INT32(ip + 4));
 			ip += 8;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TakeInventory)
+			STUB(PCD_TakeInventory)
 			TakeInventory(Activator, GetStr(sp[-2]), sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TakeInventoryDirect)
+			STUB(PCD_TakeInventoryDirect)
 			TakeInventory(Activator, GetStr(READ_INT32(ip)),
 				READ_INT32(ip + 4));
 			ip += 8;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckInventory)
+			STUB(PCD_CheckInventory)
 			sp[-1] = CheckInventory(Activator, GetStr(sp[-1]));
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckInventoryDirect)
+			STUB(PCD_CheckInventoryDirect)
 			*sp = CheckInventory(Activator, GetStr(READ_INT32(ip)));
 			ip += 4;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_Spawn)
+			STUB(PCD_Spawn)
 			//FIXME implement this
 			//sp[-6] - type name, string
 			//sp[-5] - x, fixed point
@@ -2531,6 +2578,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnDirect)
+			STUB(PCD_SpawnDirect)
 			//FIXME implement this
 			//READ_INT32(ip) - type name, string
 			//READ_INT32(ip + 4) - x, fixed point
@@ -2544,6 +2592,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpot)
+			STUB(PCD_SpawnSpot)
 			//FIXME implement this
 			//sp[-4] - type name, string
 			//sp[-3] - TID of the spot
@@ -2555,6 +2604,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpotDirect)
+			STUB(PCD_SpawnSpotDirect)
 			//FIXME implement this
 			//READ_INT32(ip) - type name, string.
 			//READ_INT32(ip + 4) - TID of the spot
@@ -2597,8 +2647,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintLocalised)
-			//FIXME print localised string.
-			PrintStr += GetStr(sp[-1]);
+			PrintStr += GLanguage[GetStr(sp[-1])];
 			sp--;
 			ACSVM_BREAK;
 
@@ -2613,6 +2662,7 @@ int VACS::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_EndHudMessage)
 		ACSVM_CASE(PCD_EndHudMessageBold)
+			STUB(PCD_EndHudMessage or PCD_EndHudMessageBold)
 			//FIXME implement this
 			if (!optstart)
 			{
@@ -2637,12 +2687,14 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetFont)
+			STUB(PCD_SetFont)
 			//FIXME implement this
 			//sp[-1] - font name, string
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetFontDirect)
+			STUB(PCD_SetFontDirect)
 			//FIXME implement this
 			//READ_INT32(ip) - font name, string
 			ip += 4;
@@ -2807,6 +2859,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_FadeTo)
+			STUB(PCD_FadeTo)
 			//FIXME implement this
 			//sp[-5] - r
 			//sp[-4] - g
@@ -2817,6 +2870,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_FadeRange)
+			STUB(PCD_FadeRange)
 			//FIXME implement this
 			//sp[-9] - r1
 			//sp[-8] - g1
@@ -2831,10 +2885,12 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CancelFade)
+			STUB(PCD_CancelFade)
 			//FIXME implement this
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PlayMovie)
+			STUB(PCD_PlayMovie)
 			//FIXME implement this
 			//sp[-1] - movie name, string
 			//Pushes result
@@ -2898,12 +2954,14 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_StartTranslation)
+			STUB(PCD_StartTranslation)
 			//FIXME implement this
 			//sp[-1] - index
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TranslationRange1)
+			STUB(PCD_TranslationRange1)
 			//FIXME implement this
 			//sp[-4] - start
 			//sp[-3] - end
@@ -2913,6 +2971,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_TranslationRange2)
+			STUB(PCD_TranslationRange2)
 			//FIXME implement this
 			//sp[-8] - start
 			//sp[-7] - end
@@ -2926,6 +2985,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_EndTranslation)
+			STUB(PCD_EndTranslation)
 			//FIXME implement this
 			ACSVM_BREAK;
 
@@ -3127,6 +3187,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckWeapon)
+			STUB(PCD_CheckWeapon)
 			//FIXME implement this
 			//sp[-1] - weapon name, string
 			//Pushes result
@@ -3134,6 +3195,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetWeapon)
+			STUB(PCD_SetWeapon)
 			//FIXME implement this
 			//sp[-1] - weapon name, string
 			//Pushes result
@@ -3307,6 +3369,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMarineWeapon)
+			STUB(PCD_SetMarineWeapon)
 			//FIXME implement this
 			//sp[-2] - TID
 			//sp[-1] - weapon name, string
@@ -3314,6 +3377,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetActorProperty)
+			STUB(PCD_SetActorProperty)
 			//FIXME implement this
 			//sp[-3] - TID
 			//sp[-2] - property
@@ -3322,6 +3386,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetActorProperty)
+			STUB(PCD_GetActorProperty)
 			//FIXME implement this
 			//sp[-2] - TID
 			//sp[-1] - property
@@ -3342,6 +3407,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMarineSprite)
+			STUB(PCD_SetMarineSprite)
 			//FIXME implement this
 			//sp[-2] - TID
 			//sp[-1] - class name, string
@@ -3369,6 +3435,7 @@ int VACS::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetHudSize)
+			STUB(PCD_SetHudSize)
 			//FIXME implement this
 			//sp[-3] - hud width, abs-ed
 			//sp[-2] - hud height, abs-ed
@@ -3530,6 +3597,532 @@ int VACS::RunScript(float DeltaTime)
 				VBasePlayer::PF_IsBot;
 			ACSVM_BREAK;
 
+		ACSVM_CASE(PCD_SetCameraToTexture)
+			STUB(PCD_SetCameraToTexture)
+			//sp[-3] - TID
+			//sp[-2] - Texture
+			//sp[-1] - FOV
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EndLog)
+			PrintStr = PrintStr.EvalEscapeSequences();
+			GCon->Log(PrintStr);
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetAmmoCapacity)
+			STUB(PCD_GetAmmoCapacity)
+			//sp[-1] - Type name
+			//Pushes result
+			sp[-1] = 0;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetAmmoCapacity)
+			STUB(PCD_SetAmmoCapacity)
+			//sp[-2] - Type name
+			//sp[-1] - Amount
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintMapCharArray)
+			{
+				int ANum = *ActiveObject->MapVars[sp[-1]];
+				int Idx = sp[-2];
+				for (int c = ActiveObject->GetArrayVal(ANum, Idx); c;
+					c = ActiveObject->GetArrayVal(ANum, Idx))
+				{
+					PrintStr += (char)c;
+					Idx++;
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintWorldCharArray)
+			{
+				int ANum = *ActiveObject->MapVars[sp[-1]];
+				int Idx = sp[-2];
+				for (int c = WorldArrays[ANum].GetElemVal(Idx); c;
+					c = WorldArrays[ANum].GetElemVal(Idx))
+				{
+					PrintStr += (char)c;
+					Idx++;
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintGlobalCharArray)
+			{
+				int ANum = *ActiveObject->MapVars[sp[-1]];
+				int Idx = sp[-2];
+				for (int c = GlobalArrays[ANum].GetElemVal(Idx); c;
+					c = GlobalArrays[ANum].GetElemVal(Idx))
+				{
+					PrintStr += (char)c;
+					Idx++;
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetActorAngle)
+			{
+				int searcher = -1;
+				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-2], &searcher);
+					Ent; Ent = Level->eventFindMobjFromTID(sp[-2], &searcher))
+				{
+					Ent->Angles.yaw = (float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000;
+				}
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SpawnProjectile)
+			STUB(PCD_SpawnProjectile)
+			//sp[-7] - TID
+			//sp[-6] - Type name
+			//sp[-5] - angle
+			//sp[-4] - speed
+			//sp[-3] - vspeed
+			//sp[-2] - Gravity
+			//sp[-1] - New TID
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetSectorLightLevel)
+			{
+				int SNum = FindSectorFromTag(sp[-1], -1);
+				sp[-1] = SNum >= 0 ? XLevel->Sectors[SNum].params.lightlevel : 0;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorCeilingZ)
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				sp[-1] = Ent ? vint32(Ent->CeilingZ * 0x10000) : 0;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetActorPosition)
+			{
+				VEntity* Ent = EntityFromTID(sp[-5], Activator);
+				sp[-5] = Ent ? Ent->eventMoveThing(TVec(
+					(float)sp[-4] / (float)0x10000,
+					(float)sp[-3] / (float)0x10000,
+					(float)sp[-2] / (float)0x10000), !!sp[-1]) : 0;
+				sp -= 4;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ClearActorInventory)
+			STUB(PCD_ClearActorInventory)
+			//sp[-1] - TID
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GiveActorInventory)
+			STUB(PCD_GiveActorInventory)
+			//sp[-3] - TID
+			//sp[-2] - Item name
+			//sp[-1] - Count
+			GiveInventory(EntityFromTID(sp[-3], NULL), GetStr(sp[-2]), sp[-1]);
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_TakeActorInventory)
+			STUB(PCD_TakeActorInventory)
+			//sp[-3] - TID
+			//sp[-2] - Item name
+			//sp[-1] - Count
+			TakeInventory(EntityFromTID(sp[-3], NULL), GetStr(sp[-2]), sp[-1]);
+			sp -= 3;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CheckActorInventory)
+			STUB(PCD_CheckActorInventory)
+			//sp[-2] - TID
+			//sp[-1] - Item name
+			sp[-2] = CheckInventory(EntityFromTID(sp[-2], NULL), GetStr(sp[-1]));
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingCountName)
+			STUB(PCD_ThingCountName)
+			//sp[-2] - Type name
+			//sp[-1] - TID
+			//Pushes result.
+			sp[-2] = 0;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SpawnSpotFacing)
+			STUB(PCD_SpawnSpotFacing)
+			//sp[-3] - Type name
+			//sp[-2] - Spot TID
+			//sp[-1] - New TID
+			//Pushes result.
+			sp[-3] = 0;
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PlayerClass)
+			if (sp[-1] < 0 || sp[-1] >= MAXPLAYERS || !GGameInfo->Players[sp[-1]] ||
+				!(GGameInfo->Players[sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned))
+			{
+				sp[-1] = -1;
+			}
+			else
+			{
+				sp[-1] = GGameInfo->Players[sp[-1]]->PClass;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndScriptVar)
+			locals[READ_BYTE_OR_INT32] &= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] &= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] &= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] &= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) & sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) & sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_AndGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) & sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EOrScriptVar)
+			locals[READ_BYTE_OR_INT32] ^= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EOrMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] ^= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EOrWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] ^= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EOrGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] ^= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EOrMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) ^ sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EOrWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) ^ sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_EOrGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) ^ sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrScriptVar)
+			locals[READ_BYTE_OR_INT32] |= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] |= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] |= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] |= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) | sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) | sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_OrGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) | sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSScriptVar)
+			locals[READ_BYTE_OR_INT32] <<= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] <<= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] <<= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] <<= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) << sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) << sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_LSGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) << sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RSScriptVar)
+			locals[READ_BYTE_OR_INT32] >>= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RSMapVar)
+			*ActiveObject->MapVars[READ_BYTE_OR_INT32] >>= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RSWorldVar)
+			WorldVars[READ_BYTE_OR_INT32] >>= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RSGlobalVar)
+			GlobalVars[READ_BYTE_OR_INT32] >>= sp[-1];
+			INC_BYTE_OR_INT32;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RSMapArray)
+			{
+				int ANum = *ActiveObject->MapVars[READ_BYTE_OR_INT32];
+				ActiveObject->SetArrayVal(ANum, sp[-2],
+					ActiveObject->GetArrayVal(ANum, sp[-2]) >> sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RSWorldArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				WorldArrays[ANum].SetElemVal(sp[-2],
+					WorldArrays[ANum].GetElemVal(sp[-2]) >> sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_RSGlobalArray)
+			{
+				int ANum = READ_BYTE_OR_INT32;
+				GlobalArrays[ANum].SetElemVal(sp[-2],
+					GlobalArrays[ANum].GetElemVal(sp[-2]) >> sp[-1]);
+				INC_BYTE_OR_INT32;
+				sp -= 2;
+			}
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetPlayerInfo)
+			STUB(PCD_GetPlayerInfo)
+			//sp[-2] - Player num
+			//sp[-1] - Info type
+			//Pushes result.
+			sp[-2] = -1;
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ChangeLevel)
+			STUB(PCD_ChangeLevel)
+			//sp[-4] - Level name
+			//sp[-3] - Position
+			//sp[-2] - Skill
+			//sp[-1] - Flags
+			sp -= 4;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SectorDamage)
+			STUB(PCD_SectorDamage)
+			//sp[-5] - Tag
+			//sp[-4] - Amount
+			//sp[-3] - Damage type
+			//sp[-2] - Protection inventory class name
+			//sp[-1] - Flags
+			sp -= 5;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ReplaceTextures)
+			if (~sp[-1] & (NOT_TOP | NOT_MIDDLE | NOT_BOTTOM))
+			{
+				int FromTex = GTextureManager.NumForName(VName(GetStr(sp[-3]),
+					VName::AddLower8), TEXTYPE_Wall, true);
+				int ToTex = GTextureManager.NumForName(VName(GetStr(sp[-2]),
+					VName::AddLower8), TEXTYPE_Wall, true);
+				for (int i = 0; i < XLevel->NumSides; i++)
+				{
+					if (!(sp[-1] & NOT_TOP) &&
+						XLevel->Sides[i].toptexture == FromTex)
+					{
+						SV_SetLineTexture(i, TEXTURE_TOP, ToTex);
+					}
+					if (!(sp[-1] & NOT_MIDDLE) &&
+						XLevel->Sides[i].midtexture == FromTex)
+					{
+						SV_SetLineTexture(i, TEXTURE_MIDDLE, ToTex);
+					}
+					if (!(sp[-1] & NOT_BOTTOM) &&
+						XLevel->Sides[i].bottomtexture == FromTex)
+					{
+						SV_SetLineTexture(i, TEXTURE_BOTTOM, ToTex);
+					}
+				}
+			}
+			if (~sp[-1] & (NOT_FLOOR | NOT_CEILING))
+			{
+				int FromTex = GTextureManager.NumForName(VName(GetStr(sp[-3]),
+					VName::AddLower8), TEXTYPE_Flat, true);
+				int ToTex = GTextureManager.NumForName(VName(GetStr(sp[-2]),
+					VName::AddLower8), TEXTYPE_Flat, true);
+				for (int i = 0; i < XLevel->NumSectors; i++)
+				{
+					if (!(sp[-1] & NOT_FLOOR) &&
+						XLevel->Sectors[i].floor.pic == FromTex)
+					{
+						SV_SetFloorPic(i, ToTex);
+					}
+					if (!(sp[-1] & NOT_CEILING) &&
+						XLevel->Sectors[i].ceiling.pic == FromTex)
+					{
+						SV_SetCeilPic(i, ToTex);
+					}
+				}
+			}
+			sp -= 3;
+			ACSVM_BREAK;
+
 		//	These p-codes are not supported. They will terminate script.
 		ACSVM_CASE(PCD_PlayerBlueSkull)
 		ACSVM_CASE(PCD_PlayerRedSkull)
@@ -3560,6 +4153,9 @@ int VACS::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_SetStyleDirect)
 		ACSVM_CASE(PCD_WriteToIni)
 		ACSVM_CASE(PCD_GetFromIni)
+		ACSVM_CASE(PCD_GrabInput)
+		ACSVM_CASE(PCD_SetMousePointer)
+		ACSVM_CASE(PCD_MoveMousePointer)
 			GCon->Logf(NAME_Dev, "Unsupported ACS p-code %d", cmd);
 			action = SCRIPT_TERMINATE;
 			ACSVM_BREAK_STOP;
