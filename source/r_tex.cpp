@@ -2442,7 +2442,7 @@ void VImgzTexture::Unload()
 
 //==========================================================================
 //
-//	VPcxTexture::VPcxTexture
+//	VPcxTexture::Create
 //
 //==========================================================================
 
@@ -2463,7 +2463,7 @@ VTexture* VPcxTexture::Create(VStream& Strm, int LumpNum, VName Name)
 		Hdr.version == 1 || Hdr.version > 5 || Hdr.reserved != 0 ||
 		(Hdr.bits_per_pixel != 1 && Hdr.bits_per_pixel != 8) ||
 		(Hdr.bits_per_pixel == 1 && Hdr.colour_planes != 1 && Hdr.colour_planes != 4) ||
-		(Hdr.bits_per_pixel == 8 && Hdr.bytes_per_line != ((Hdr.xmax - Hdr.xmin + 1) & ~1)) ||
+		(Hdr.bits_per_pixel == 8 && Hdr.bytes_per_line != (Hdr.xmax - Hdr.xmin + 1)) ||
 		(Hdr.palette_type != 1 && Hdr.palette_type != 2))
 	{
 		return NULL;
