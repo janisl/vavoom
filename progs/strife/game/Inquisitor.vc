@@ -51,23 +51,44 @@ void A_InquisitorChase()
 	ZSpeed = fabs(Velocity.z);
 	if (Origin.z < Enemy.Origin.z)
 	{
-		A_FaceTarget();
-		Origin.z = FloorZ + 80.0;
-		if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
+		if(TestMobjZ())
+			Origin.z = FloorZ + 80.0;
+		else
 		{
-			SetState(JumpState);
-			Effects = StrifeDefs::EF_DL_BLUE;
+			Origin.z = FloorZ;
+			return;
+		}
+
+		if(TestMobjZ())
+		{
+			A_FaceTarget();
+
+			if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
+			{
+				SetState(JumpState);
+				Effects = StrifeDefs::EF_DL_BLUE;
+			}
+			else
+				//	Don't let him jump while under a low ceiling
+				Origin.z = FloorZ;
 		}
 		else
-			//	Don't let him jump while under a low ceiling
+		{
 			Origin.z = FloorZ;
+			return;
+		}
 	}
 	else if (Origin.z != Enemy.Origin.z && Origin.z != FloorZ && 
 		ZSpeed > 21.0)
 	{
 		A_FaceTarget();
-		SetState(JumpState);
-		Effects = StrifeDefs::EF_DL_BLUE;
+		if(TestMobjZ())
+		{
+			SetState(JumpState);
+			Effects = StrifeDefs::EF_DL_BLUE;
+		}
+		else
+			return;
 	}
 }
 
@@ -79,7 +100,7 @@ void A_InquisitorChase()
 
 void A_InquisitorChase2()
 {
-	if (Origin.z != FloorZ)
+	if (!Enemy || Origin.z != FloorZ)
 		return;
 
 	if (!CheckRobotRange())
@@ -103,7 +124,7 @@ void A_InquisitorGrenade()
 	Actor A;
 	float an;
 
-	if (!Enemy || Origin.z != FloorZ)
+	if (Origin.z != FloorZ)
 		return;
 
 	A_FaceTarget();
@@ -135,8 +156,6 @@ void A_InquisitorInitJump()
 	if (!Enemy)
 		return;
 
-	bNoGravity = true;
-	bFloat = false;
 	PlaySound(JumpSound, CHAN_BODY);
 	A_FaceTarget();
 	Velocity.x += JumpSpeed * cos(Angles.yaw);
@@ -149,6 +168,8 @@ void A_InquisitorInitJump()
 	}
 	Velocity.z = (Enemy.Origin.z - Origin.z) / dist;
 	ReactionCount = 60;
+	bNoGravity = true;
+	bFloat = false;
 }
 
 //==========================================================================
@@ -161,13 +182,14 @@ void A_InquisitorJump()
 {
 	ReactionCount--;
 	if (ReactionCount < 0 || Velocity.x == 0.0 || Velocity.y == 0.0 ||
-		Origin.z <= FloorZ ||
-		fabs(Velocity.x) > JumpSpeed || fabs(Velocity.y) > JumpSpeed)
+		Origin.z <= FloorZ/* || fabs(Velocity.x) > JumpSpeed ||
+		fabs(Velocity.y) > JumpSpeed*/)
 	{
 		SetState(SeeState2);
 		ReactionCount = 0;
 		bNoGravity = false;
 		Effects = StrifeDefs::EF_DL_NONE;
+		return;
 	}
 	PlaySound(JumpSound, CHAN_BODY);
 }
