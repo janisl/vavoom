@@ -145,7 +145,7 @@ static void AddZipFile(VStr ZipName)
 
 static int cmpfunc(const void* v1, const void* v2)
 {
-	return ((VStr*)v1)->ICmp(*(VStr*)v2);
+	return ((VStr*)v1)->StripExtension().ICmp(((VStr*)v2)->StripExtension());
 }
 
 static void AddGameDir(const VStr& basedir, const VStr& dir)
