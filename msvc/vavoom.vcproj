@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="vavoom"
 	ProjectGUID="{D4D2D73F-1D39-4832-8FBC-FE49CF3F0833}"
 	RootNamespace="vavoom"
@@ -47,7 +47,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				InlineFunctionExpansion="1"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
