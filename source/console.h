@@ -29,23 +29,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-// An output device.
-class FOutputDevice
-{
-public:
-	// FOutputDevice interface.
-	virtual ~FOutputDevice() {}
-	virtual void Serialise(const char* V, EName Event) = 0;
-
-	// Simple text printing.
-	void Log(const char* S);
-	void Log(EName Type, const char* S);
-	void Log(const VStr& S);
-	void Log(EName Type, const VStr& S);
-	void Logf(const char* Fmt, ...);
-	void Logf(EName Type, const char* Fmt, ...);
-};
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void C_Init(void);

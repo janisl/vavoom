@@ -31,6 +31,18 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VLogSysError : public FOutputDevice
+{
+public:
+	void Serialise(const char* V, EName Event);
+};
+
+class VLogHostError : public FOutputDevice
+{
+public:
+	void Serialise(const char* V, EName Event);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -40,6 +52,12 @@
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+static VLogSysError		LogSysError;
+static VLogHostError	LogHostError;
+
+FOutputDevice*			GLogSysError = &LogSysError;
+FOutputDevice*			GLogHostError = &LogHostError;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -121,6 +139,76 @@ void M_InitByteOrder()
 		BigFloat = FloatNoSwap;
 		LittleFloat = FloatSwap;
 	}
+}
+
+//==========================================================================
+//
+//	FOutputDevice implementation.
+//
+//==========================================================================
+
+FOutputDevice::~FOutputDevice()
+{
+}
+void FOutputDevice::Log(const char* S)
+{
+	Serialise(S, NAME_Log);
+}
+void FOutputDevice::Log(EName Type, const char* S)
+{
+	Serialise(S, Type);
+}
+void FOutputDevice::Log(const VStr& S)
+{
+	Serialise(*S, NAME_Log);
+}
+void FOutputDevice::Log(EName Type, const VStr& S)
+{
+	Serialise(*S, Type);
+}
+void FOutputDevice::Logf(const char* Fmt, ...)
+{
+	va_list argptr;
+	char string[1024];
+	
+	va_start(argptr, Fmt);
+	vsprintf(string, Fmt, argptr);
+	va_end(argptr);
+
+	Serialise(string, NAME_Log);
+}
+void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
+{
+	va_list argptr;
+	char string[1024];
+	
+	va_start(argptr, Fmt);
+	vsprintf(string, Fmt, argptr);
+	va_end(argptr);
+
+	Serialise(string, Type);
+}
+
+//==========================================================================
+//
+//	VLogSysError
+//
+//==========================================================================
+
+void VLogSysError::Serialise(const char* V, EName)
+{
+	Sys_Error(V);
+}
+
+//==========================================================================
+//
+//	VLogHostError
+//
+//==========================================================================
+
+void VLogHostError::Serialise(const char* V, EName)
+{
+	Host_Error(V);
 }
 
 //==========================================================================

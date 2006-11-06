@@ -3232,43 +3232,4 @@ FConsoleDevice			Console;
 
 FOutputDevice			*GCon = &Console;
 
-void FOutputDevice::Log(const char* S)
-{
-	Serialise(S, NAME_Log);
-}
-void FOutputDevice::Log(EName Type, const char* S)
-{
-	Serialise(S, Type);
-}
-void FOutputDevice::Log(const VStr& S)
-{
-	Serialise(*S, NAME_Log);
-}
-void FOutputDevice::Log(EName Type, const VStr& S)
-{
-	Serialise(*S, Type);
-}
-void FOutputDevice::Logf(const char* Fmt, ...)
-{
-	va_list argptr;
-	char string[1024];
-	
-	va_start(argptr, Fmt);
-	vsprintf(string, Fmt, argptr);
-	va_end(argptr);
-
-	Serialise(string, NAME_Log);
-}
-void FOutputDevice::Logf(EName Type, const char* Fmt, ...)
-{
-	va_list argptr;
-	char string[1024];
-	
-	va_start(argptr, Fmt);
-	vsprintf(string, Fmt, argptr);
-	va_end(argptr);
-
-	Serialise(string, Type);
-}
-
 #endif

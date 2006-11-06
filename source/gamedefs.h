@@ -39,7 +39,6 @@
 
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types
-#include "misc.h"		//	Misc utilites
 #include "args.h"		//	Command line arguments.
 #include "zone.h"		//	Zone memory allocation
 #include "array.h"		//	Dynamic arrays
@@ -48,6 +47,7 @@
 #include "name.h"
 #include "str.h"		//	Strings
 #include "language.h"
+#include "misc.h"		//	Misc utilites
 #include "vector.h"
 #include "maths.h"
 #include "message.h"
