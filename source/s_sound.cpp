@@ -1154,54 +1154,79 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	VStream* Strm = NULL;
 	if (s_external_music)
 	{
-		Strm = FL_OpenFileRead(va("music/%s.ogg", Song));
+		//	Check external music definition file.
+		VStream* XmlStrm = FL_OpenFileRead("extras/music/remap.xml");
+		if (XmlStrm)
+		{
+			VXmlDocument* Doc = new VXmlDocument();
+			Doc->Parse(*XmlStrm, "extras/music/remap.xml");
+			delete XmlStrm;
+			for (VXmlNode* N = Doc->Root.FirstChild; N; N = N->NextSibling)
+			{
+				if (N->Name != "song")
+					continue;
+				if (N->GetAttribute("name") != Song)
+					continue;
+				Strm = FL_OpenFileRead(N->GetAttribute("file"));
+				if (Strm)
+					break;
+			}
+			delete Doc;
+		}
+		//	Also try OGG or MP3 directly.
 		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.mp3", Song));
+			Strm = FL_OpenFileRead(va("extras/music/%s.ogg", Song));
 		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.wav", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.mid", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.mus", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.669", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.amf", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.dsm", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.far", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.gdm", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.imf", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.it", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.m15", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.med", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.mod", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.mtm", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.okt", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.s3m", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.stm", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.stx", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.ult", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.uni", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.xm", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("music/%s.flac", Song));
+			Strm = FL_OpenFileRead(va("extras/music/%s.mp3", Song));
 	}
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.ogg", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mp3", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.wav", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mid", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mus", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.669", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.amf", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.dsm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.far", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.gdm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.imf", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.it", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.m15", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.med", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mod", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.mtm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.okt", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.s3m", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.stm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.stx", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.ult", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.uni", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.xm", Song));
+	if (!Strm)
+		Strm = FL_OpenFileRead(va("music/%s.flac", Song));
 	if (!Strm)
 	{
 		int Lump = W_CheckNumForName(VName(Song, VName::AddLower8), WADNS_Music);
