@@ -13,7 +13,7 @@ texture optional SLADRIP1 range SLADRIP3 tics 8
 texture optional BLODRIP1 range BLODRIP4 tics 8
 texture optional FIREWALA range FIREWALL tics 8
 texture optional GSTFONT1 range GSTFONT3 tics 8
-texture optional FIRELAV2 range FIRELAVA tics 8
+texture optional FIRELAV3 range FIRELAVA tics 8
 texture optional FIREMAG1 range FIREMAG3 tics 8
 texture optional FIREBLU1 range FIREBLU2 tics 8
 texture optional ROCKRED1 range ROCKRED3 tics 8
