@@ -412,6 +412,37 @@ static bool ClipIsBBoxVisible(float* BBox)
 
 //==========================================================================
 //
+//	ClipAddSubsectorSegs
+//
+//==========================================================================
+
+static void ClipAddSubsectorSegs(subsector_t* Sub)
+{
+	guard(ClipAddSubsectorSegs);
+	for (int i = 0; i < Sub->numlines; i++)
+	{
+		seg_t* line = &GClLevel->Segs[Sub->firstline + i];
+		if (line->backsector || !line->linedef)
+		{
+			//	Miniseg or two-sided line.
+			continue;
+		}
+
+		float dist = DotProduct(vieworg, line->normal) - line->dist;
+		if (dist <= 0)
+		{
+			//	Viewer is in back side or on plane
+			continue;
+		}
+
+		AddClipRange(PointToClipAngle(*line->v2),
+			PointToClipAngle(*line->v1));
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	R_SetUpFrustumIndexes
 //
 //==========================================================================
@@ -535,7 +566,6 @@ static void RenderLine(drawseg_t* dseg, int clipflags)
 
 	if (!line->backsector)
 	{
-		AddClipRange(a1, a2);
 		// single sided line
 		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags);
 		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, clipflags);
@@ -664,6 +694,8 @@ static void RenderSubsector(int num, int clipflags)
 	}
 
 	RenderSubRegion(r_sub->regions, clipflags);
+
+	ClipAddSubsectorSegs(r_sub);
 	unguard;
 }
 
