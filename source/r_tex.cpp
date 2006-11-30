@@ -859,6 +859,11 @@ void VTextureManager::InitFlats()
 	for (int Lump = W_IterateNS(-1, WADNS_Flats); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Flats))
 	{
+		//	To avoid duplicates, add only the last one.
+		if (W_GetNumForName(W_LumpName(Lump), WADNS_Flats) != Lump)
+		{
+			continue;
+		}
 		AddTexture(VTexture::CreateTexture(TEXTYPE_Flat, Lump, NAME_None));
 	}
 	unguard;
@@ -876,6 +881,11 @@ void VTextureManager::InitOverloads()
 	for (int Lump = W_IterateNS(-1, WADNS_NewTextures); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_NewTextures))
 	{
+		//	To avoid duplicates, add only the last one.
+		if (W_GetNumForName(W_LumpName(Lump), WADNS_NewTextures) != Lump)
+		{
+			continue;
+		}
 		AddTexture(VTexture::CreateTexture(TEXTYPE_Overload, Lump, NAME_None));
 	}
 	unguard;
@@ -893,6 +903,11 @@ void VTextureManager::InitSpriteLumps()
 	for (int Lump = W_IterateNS(-1, WADNS_Sprites); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Sprites))
 	{
+		//	To avoid duplicates, add only the last one.
+		if (W_GetNumForName(W_LumpName(Lump), WADNS_Sprites) != Lump)
+		{
+			continue;
+		}
 		AddTexture(VTexture::CreateTexture(TEXTYPE_Sprite, Lump, NAME_None));
 	}
 	unguard;
@@ -1569,6 +1584,14 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 	Strm.Serialise(TmpName, 8);
 	TmpName[8] = 0;
 	Name = VName(TmpName, VName::AddLower8);
+
+	//	In Doom textures were searched from the beginning, so to avoid
+	// problems, especially with animated textures, set name to a blank one
+	// if this one is a duplicate.
+	if (GTextureManager.CheckNumForName(Name, TEXTYPE_Wall, false, false) >= 0)
+	{
+		Name = NAME_None;
+	}
 
 	//	Skip unused value.
 	Streamer<vint16>(Strm);	//	Masked, unused.
