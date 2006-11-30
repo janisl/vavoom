@@ -80,7 +80,7 @@ VCvarF					r_fog_density("r_fog_density", "0.5");
 
 VCvarI					r_draw_particles("r_draw_particles", "1", CVAR_Archive);
 
-VCvarI					old_aspect("r_old_aspect_ratio", "0", CVAR_Archive);
+VCvarI					old_aspect("r_old_aspect_ratio", "1", CVAR_Archive);
 
 VDrawer					*Drawer;
 
