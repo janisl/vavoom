@@ -312,7 +312,7 @@ static void ParseBase(const VStr& name)
 		}
 		if (fl_mainwad)
 		{
-			if (!G.MainWad || G.MainWad == fl_mainwad)
+			if (!G.MainWad || G.MainWad == fl_mainwad || select_game)
 			{
 				if (!bIwadAdded)
 				{
