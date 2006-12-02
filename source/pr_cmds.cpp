@@ -1114,6 +1114,17 @@ IMPLEMENT_FUNCTION(VObject, P_TranslateMap)
 	RET_NAME(P_TranslateMap(map));
 }
 
+IMPLEMENT_FUNCTION(VObject, P_GetNumEpisodes)
+{
+	RET_INT(P_GetNumEpisodes());
+}
+
+IMPLEMENT_FUNCTION(VObject, P_GetEpisodeDef)
+{
+	P_GET_INT(Index);
+	RET_PTR(P_GetEpisodeDef(Index));
+}
+
 IMPLEMENT_FUNCTION(VObject, KeyNameForNum)
 {
 	P_GET_INT(keynum);

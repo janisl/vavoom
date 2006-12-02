@@ -1,4 +1,4 @@
-﻿//**************************************************************************
+//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -1160,6 +1160,17 @@ struct ClipRect
 	float ClipHeight;	// Height of rectangle
 };
 
+struct EpisodeDef
+{
+	name		Name;
+	name		TeaserName;
+	string		Text;
+	name		PicName;
+	bool		bLookupText;
+	bool		bNoSkillMenu;
+	string		Key;
+};
+
 //**************************************************************************
 //
 //	Network protocol constants.
@@ -1616,6 +1627,7 @@ native static final bool StateIsInRange(state State, state Start, state End,
 	int MaxDepth);
 native static final name GetStateSpriteName(state State);
 native static final VAnimDoorDef* FindAnimDoor(int BaseTex);
+native static final string GetLangString(name Id);
 
 //==========================================================================
 //
@@ -1697,6 +1709,8 @@ native static final string TranslateKey(int c);
 native static final string P_GetMapName(int map);
 native static final name P_GetMapLumpName(int map);
 native static final name P_TranslateMap(int map);
+native static final int P_GetNumEpisodes();
+native static final EpisodeDef* P_GetEpisodeDef(int i);
 native static final bool SV_GetSaveString(int i, string* buf);
 native static final void StartSearch();
 native static final slist_t * GetSlist();

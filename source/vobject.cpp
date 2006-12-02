@@ -990,3 +990,9 @@ IMPLEMENT_FUNCTION(VObject, FindAnimDoor)
 	P_GET_INT(BaseTex);
 	RET_PTR(R_FindAnimDoor(BaseTex));
 }
+
+IMPLEMENT_FUNCTION(VObject, GetLangString)
+{
+	P_GET_NAME(Id);
+	RET_STR(GLanguage[Id]);
+}

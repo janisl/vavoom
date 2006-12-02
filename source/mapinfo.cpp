@@ -68,6 +68,7 @@ static TArray<mapInfo_t>	MapInfo;
 static TArray<FMapSongInfo>	MapSongList;
 static VClusterDef			DefaultClusterDef;
 static TArray<VClusterDef>	ClusterDefs;
+static TArray<VEpisodeDef>	EpisodeDefs;
 // Non-level specific song cd track numbers
 static int					cd_NonLevelTracks[6];
 
@@ -137,12 +138,13 @@ void InitMapInfo()
 
 //==========================================================================
 //
-//	ParseMap
+//	ParseNextMapName
 //
 //==========================================================================
 
 static VName ParseNextMapName(VScriptParser* sc, bool HexenMode)
 {
+	guard(ParseNextMapName);
 	if (sc->CheckNumber())
 	{
 		if (HexenMode)
@@ -210,6 +212,7 @@ static VName ParseNextMapName(VScriptParser* sc, bool HexenMode)
 			return VName(*sc->String, VName::AddLower8);
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -220,6 +223,7 @@ static VName ParseNextMapName(VScriptParser* sc, bool HexenMode)
 
 static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 {
+	guard(ParseMap);
 	mapInfo_t* info = NULL;
 	if (IsDefault)
 	{
@@ -385,7 +389,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("sky1"))
 		{
 			sc->ExpectName8();
-			info->Sky1Texture = GTextureManager.CheckNumForName(
+			info->Sky1Texture = GTextureManager.NumForName(
 				sc->Name8, TEXTYPE_Wall, true, false);
 			sc->ExpectFloat();
 			if (HexenMode)
@@ -397,7 +401,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("sky2"))
 		{
 			sc->ExpectName8();
-			info->Sky2Texture = GTextureManager.CheckNumForName(
+			info->Sky2Texture = GTextureManager.NumForName(
 				sc->Name8, TEXTYPE_Wall, true, false);
 			sc->ExpectFloat();
 			if (HexenMode)
@@ -418,6 +422,9 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("lightning"))
 		{
 			info->Flags |= MAPINFOF_Lightning;
+		}
+		else if (sc->Check("forcenoskystretch"))
+		{
 		}
 		else if (sc->Check("fadetable"))
 		{
@@ -578,6 +585,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 			}
 		}
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -588,6 +596,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 
 static void ParseClusterDef(VScriptParser* sc)
 {
+	guard(ParseClusterDef);
 	VClusterDef* CDef = NULL;
 	sc->ExpectNumber();
 
@@ -627,7 +636,7 @@ static void ParseClusterDef(VScriptParser* sc)
 			{
 				CDef->Flags |= CLUSTERF_LookupEnterText;
 				sc->ExpectString();
-				CDef->EnterText = sc->String;
+				CDef->EnterText = sc->String.ToLower();
 			}
 			else
 			{
@@ -701,6 +710,96 @@ static void ParseClusterDef(VScriptParser* sc)
 	{
 		CDef->ExitText = CDef->ExitText.ToLower();
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseEpisodeDef
+//
+//==========================================================================
+
+static void ParseEpisodeDef(VScriptParser* sc)
+{
+	guard(ParseEpisodeDef);
+	VEpisodeDef* EDef = NULL;
+	int EIdx = 0;
+	sc->ExpectName8();
+
+	//	Check for replaced episode.
+	for (int i = 0; i < EpisodeDefs.Num(); i++)
+	{
+		if (sc->Name8 == EpisodeDefs[i].Name)
+		{
+			EDef = &EpisodeDefs[i];
+			EIdx = i;
+			break;
+		}
+	}
+	if (!EDef)
+	{
+		EDef = &EpisodeDefs.Alloc();
+		EIdx = EpisodeDefs.Num() - 1;
+	}
+
+	//	Check for removal of an episode.
+	if (sc->Check("remove"))
+	{
+		EpisodeDefs.RemoveIndex(EIdx);
+		return;
+	}
+
+	//	Set defaults.
+	EDef->Name = sc->Name8;
+	EDef->TeaserName = NAME_None;
+	EDef->Text = VStr();
+	EDef->PicName = NAME_None;
+	EDef->Flags = 0;
+	EDef->Key = VStr();
+
+	if (sc->Check("teaser"))
+	{
+		sc->ExpectName8();
+		EDef->TeaserName = sc->Name8;
+	}
+
+	while (1)
+	{
+		if (sc->Check("name"))
+		{
+			if (sc->Check("lookup"))
+			{
+				EDef->Flags |= EPISODEF_LookupText;
+				sc->ExpectString();
+				EDef->Text = sc->String.ToLower();
+			}
+			else
+			{
+				EDef->Flags &= ~EPISODEF_LookupText;
+				sc->ExpectString();
+				EDef->Text = sc->String;
+			}
+		}
+		else if (sc->Check("picname"))
+		{
+			sc->ExpectName8();
+			EDef->PicName = sc->Name8;
+		}
+		else if (sc->Check("key"))
+		{
+			sc->ExpectString();
+			EDef->Key = sc->String.ToLower();
+		}
+		else if (sc->Check("noskillmenu"))
+		{
+			EDef->Flags |= EPISODEF_NoSkillMenu;
+		}
+		else
+		{
+			break;
+		}
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -726,6 +825,14 @@ static void ParseMapInfo(VScriptParser* sc)
 		else if (sc->Check("clusterdef"))
 		{
 			ParseClusterDef(sc);
+		}
+		else if (sc->Check("episode"))
+		{
+			ParseEpisodeDef(sc);
+		}
+		else if (sc->Check("clearepisodes"))
+		{
+			EpisodeDefs.Clear();
 		}
 		else
 		{
@@ -872,6 +979,28 @@ const VClusterDef* P_GetClusterDef(int Cluster)
 
 //==========================================================================
 //
+//	P_GetNumEpisodes
+//
+//==========================================================================
+
+int P_GetNumEpisodes()
+{
+	return EpisodeDefs.Num();
+}
+
+//==========================================================================
+//
+//	P_GetEpisodeDef
+//
+//==========================================================================
+
+VEpisodeDef* P_GetEpisodeDef(int Index)
+{
+	return &EpisodeDefs[Index];
+}
+
+//==========================================================================
+//
 // P_GetCDStartTrack
 //
 //==========================================================================
@@ -968,5 +1097,6 @@ void ShutdownMapInfo()
 	MapInfo.Clear();
 	MapSongList.Clear();
 	ClusterDefs.Clear();
+	EpisodeDefs.Clear();
 	unguard;
 }

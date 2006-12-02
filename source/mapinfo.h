@@ -23,12 +23,6 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
 enum
 {
 	MAPINFOF_DoubleSky					= 0x00000001,	// parallax sky: sky2 behind sky1
@@ -102,7 +96,21 @@ struct VClusterDef
 	vint32		CDId;
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+enum
+{
+	EPISODEF_LookupText		= 0x0001,
+	EPISODEF_NoSkillMenu	= 0x0002,
+};
+
+struct VEpisodeDef
+{
+	VName		Name;
+	VName		TeaserName;
+	VStr		Text;
+	VName		PicName;
+	vuint32		Flags;
+	VStr		Key;
+};
 
 void InitMapInfo();
 void ShutdownMapInfo();
@@ -113,11 +121,11 @@ VName P_TranslateMap(int);
 VName P_GetMapNameByLevelNum(int);
 void P_PutMapSongLump(int, VName);
 const VClusterDef* P_GetClusterDef(int);
+int P_GetNumEpisodes();
+VEpisodeDef* P_GetEpisodeDef(int);
 int P_GetCDStartTrack();
 int P_GetCDEnd1Track();
 int P_GetCDEnd2Track();
 int P_GetCDEnd3Track();
 int P_GetCDIntermissionTrack();
 int P_GetCDTitleTrack();
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
