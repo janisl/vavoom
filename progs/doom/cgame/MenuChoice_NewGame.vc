@@ -31,11 +31,24 @@ void ActivateEvent()
 	{
 		return;
 	}
+	if (P_GetNumEpisodes() > 1)
+	{
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
+	}
+	else if (P_GetNumEpisodes() == 1)
+	{
+		GetClGame().MenuStartMap = P_GetEpisodeDef(0)->Name;
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+	}
+	else
+	{
 #ifdef DOOM2
-	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+		GetClGame().MenuStartMap = 'map01';
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
 #else
-	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
 #endif
+	}
 }
 
 defaultproperties

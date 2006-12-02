@@ -56,13 +56,8 @@
 #include "MenuChoice_SaveGame.vc"
 #include "MenuChoice_EndGame.vc"
 #include "MenuScreenSinglePlayer.vc"
-#ifndef DOOM2
-#include "MenuChoice_Episode1.vc"
-#include "MenuChoice_Episode2.vc"
-#include "MenuChoice_Episode3.vc"
-#include "MenuChoice_Episode4.vc"
+#include "MenuChoiceEpisode.vc"
 #include "MenuScreenEpisode.vc"
-#endif
 #include "MenuChoice_SkillBaby.vc"
 #include "MenuChoice_SkillEasy.vc"
 #include "MenuChoice_SkillNormal.vc"

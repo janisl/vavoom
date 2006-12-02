@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: MenuChoice_Episode1.vc 1583 2006-06-27 19:05:42Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,10 +23,33 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Episode3:MenuChoice_Episode1;
+class MenuChoiceEpisode : MenuTextButton;
+
+int PicHandle;
+name EpisodeMap;
+bool bNoSkillMenu;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void DrawWindow(GC gc)
+{
+	if (PicHandle > 0)
+	{
+		gc.DrawIcon(0, 0, PicHandle);
+	}
+	else
+	{
+		T_SetFont(font_big);
+		T_SetAlign(hleft, vtop);
+		gc.DrawText(0, 0, Text);
+	}
+}
 
 defaultproperties
 {
-	Text = "Inferno";
-	EpisodeNum = 3;
+	Height = 18;
 }

@@ -37,9 +37,7 @@ enum
 	MB_None,
 	MB_Quit,
 	MB_Control,
-#ifndef DOOM2
 	MB_Shareware,
-#endif
 	MB_Nightmare
 };
 
@@ -57,9 +55,7 @@ int menu_sp;
 
 MenuScreen CurrentMenuScreen;
 
-#ifndef DOOM2
-int MenuEpisode;
-#endif
+name MenuStartMap;
 
 MenuControlKey CurrentCtl;
 int ControlColumn;	// menu column for controls
@@ -601,11 +597,9 @@ bool MessageBoxResponder(event_t * event)
 		case MB_Control:
 			ControlResponse(event->data1);
 			break;
-#ifndef DOOM2
 		case MB_Shareware:
 			SharewareResponse(event->data1);
 			break;
-#endif
 		case MB_Nightmare:
 			VerifyNightmare(event->data1);
 			break;
@@ -690,8 +684,6 @@ void ControlResponse(int key)
 	}
 }
 
-#ifndef DOOM2
-
 //==========================================================================
 //
 //  SharewareResponse
@@ -702,8 +694,6 @@ void SharewareResponse(int key)
 {
 	PushMenuScreen(SpawnMenu(MenuScreenHelp));
 }
-
-#endif
 
 //==========================================================================
 //
@@ -734,11 +724,7 @@ void NewGame(int skill)
 	CmdBuf_AddText("Disconnect\n");
 	CmdBuf_AddText("MaxPlayers 1\n");
 
-#ifdef DOOM2
-	CmdBuf_AddText("Map %n\n", P_TranslateMap(1));
-#else
-	CmdBuf_AddText("Map e%dm1\n", MenuEpisode);
-#endif
+	CmdBuf_AddText("Map %n\n", MenuStartMap);
 
 	ForceMenuOff();
 }
