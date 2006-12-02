@@ -31,7 +31,26 @@ void ActivateEvent()
 	{
 		return;
 	}
-	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
+	if (P_GetNumEpisodes() > 1)
+	{
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
+	}
+	else if (P_GetNumEpisodes() == 1)
+	{
+		GetClGame().MenuStartMap = P_GetEpisodeDef(0)->Name;
+		if (P_GetEpisodeDef(0)->bNoSkillMenu)
+		{
+			GetClGame().NewGame(sk_medium);
+		}
+		else
+		{
+			GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+		}
+	}
+	else
+	{
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
+	}
 }
 
 defaultproperties

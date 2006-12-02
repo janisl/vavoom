@@ -27,12 +27,45 @@ class MenuScreenEpisode : MenuScreen;
 
 void CreateChoices()
 {
-	if (WadLumpPresent('extended'))
+	MenuChoice_Episode1	newChoice;
+	int					currentY;
+	int					i;
+	EpisodeDef*			EDef;
+
+	if (P_GetNumEpisodes() > 0)
 	{
-		Choices[3] = MenuChoice_Episode4;
-		Choices[4] = MenuChoice_Episode5;
+		currentY = ChoicesStartY;
+		for (i = 0; i < P_GetNumEpisodes(); i++)
+		{
+			EDef = P_GetEpisodeDef(i);
+			newChoice = MenuChoice_Episode1(NewChild(MenuChoice_Episode1));
+			newChoice.SetPos(ChoicesStartX, currentY);
+			newChoice.EpisodeMap = EDef->Name;
+			if (EDef->PicName)
+			{
+				newChoice.PicHandle = R_RegisterPic(EDef->PicName);
+			}
+			else if (EDef->bLookupText)
+			{
+				newChoice.Text = GetLangString(StrToName(EDef->Text));
+			}
+			else
+			{
+				newChoice.Text = EDef->Text;
+			}
+			newChoice.bNoSkillMenu = EDef->bNoSkillMenu;
+			currentY += newChoice.Height;
+		}
 	}
-	::CreateChoices();
+	else
+	{
+		if (WadLumpPresent('extended'))
+		{
+			Choices[3] = MenuChoice_Episode4;
+			Choices[4] = MenuChoice_Episode5;
+		}
+		::CreateChoices();
+	}
 }
 
 defaultproperties

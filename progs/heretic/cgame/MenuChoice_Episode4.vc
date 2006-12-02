@@ -23,10 +23,10 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Episode4:MenuChoice_Episode1;
+class MenuChoice_Episode4 : MenuChoice_Episode1;
 
 defaultproperties
 {
 	Text = "THE OSSUARY";
-	EpisodeNum = 4;
+	EpisodeMap = 'e4m1';
 }

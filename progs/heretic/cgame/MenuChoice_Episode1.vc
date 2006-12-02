@@ -25,22 +25,43 @@
 
 class MenuChoice_Episode1 : MenuBigTextButton;
 
-int EpisodeNum;
+int PicHandle;
+name EpisodeMap;
+bool bNoSkillMenu;
 
 void ActivateEvent()
 {
-	if (!WadLumpPresent('e2m1') && EpisodeNum > 1)
+	if (!WadLumpPresent('e2m1') && EpisodeMap != 'e1m1')
 	{
 		GetClGame().MessageBoxStartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
 			ClientGame::MB_Shareware, false);
 		return;
 	}
-	GetClGame().MenuEpisode = EpisodeNum;
-	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+	GetClGame().MenuStartMap = EpisodeMap;
+	if (bNoSkillMenu)
+	{
+		GetClGame().NewGame(sk_medium);
+	}
+	else
+	{
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+	}
+}
+
+void DrawWindow(GC gc)
+{
+	if (PicHandle > 0)
+	{
+		gc.DrawIcon(0, 0, PicHandle);
+	}
+	else
+	{
+		::DrawWindow(gc);
+	}
 }
 
 defaultproperties
 {
 	Text = "CITY OF THE DAMNED";
-	EpisodeNum = 1;
+	EpisodeMap = 'e1m1';
 }

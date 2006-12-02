@@ -38,7 +38,14 @@ void ActivateEvent()
 	else if (P_GetNumEpisodes() == 1)
 	{
 		GetClGame().MenuStartMap = P_GetEpisodeDef(0)->Name;
-		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+		if (P_GetEpisodeDef(0)->bNoSkillMenu)
+		{
+			GetClGame().NewGame(sk_medium);
+		}
+		else
+		{
+			GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+		}
 	}
 	else
 	{
