@@ -29,17 +29,7 @@ int SkillLevel;
 
 void ActivateEvent()
 {
-	SetCvar('Skill', SkillLevel);
-
-	CmdBuf_AddText("Disconnect\n");
-	CmdBuf_AddText("MaxPlayers 1\n");
-
-	if (!WadLumpPresent('map01'))
-		CmdBuf_AddText("Map MAP33\n");
-	else
-		CmdBuf_AddText("Map MAP02\n");
-
-	GetClGame().ForceMenuOff();
+	GetClGame().NewGame(SkillLevel);
 }
 
 defaultproperties

@@ -47,6 +47,8 @@ MenuScreen CurrentMenuScreen;
 MenuControlKey CurrentCtl;
 int ControlColumn;	// menu column for controls
 
+name MenuStartMap;
+
 //
 //  MESSAGE BOX
 //
@@ -640,6 +642,23 @@ void ControlResponse(int key)
 			IN_SetBinding(key, kb_down, kb_up);
 		}
 	}
+}
+
+//==========================================================================
+//
+//  NewGame
+//
+//==========================================================================
+
+void NewGame(int SkillLevel)
+{
+	SetCvar('Skill', SkillLevel);
+
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers 1\n");
+	CmdBuf_AddText("Map %n\n", MenuStartMap);
+
+	ForceMenuOff();
 }
 
 //==========================================================================

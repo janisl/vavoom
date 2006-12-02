@@ -31,7 +31,35 @@ void ActivateEvent()
 	{
 		return;
 	}
-	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+	if (P_GetNumEpisodes() > 1)
+	{
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
+	}
+	else if (P_GetNumEpisodes() == 1)
+	{
+		GetClGame().MenuStartMap = P_GetEpisodeDef(0)->Name;
+		if (P_GetEpisodeDef(0)->TeaserName &&
+			!WadLumpPresent(P_GetEpisodeDef(0)->Name))
+		{
+			GetClGame().MenuStartMap = P_GetEpisodeDef(0)->TeaserName;
+		}
+		if (P_GetEpisodeDef(0)->bNoSkillMenu)
+		{
+			GetClGame().NewGame(sk_medium);
+		}
+		else
+		{
+			GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+		}
+	}
+	else
+	{
+		if (!WadLumpPresent('map01'))
+			GetClGame().MenuStartMap = 'map33';
+		else
+			GetClGame().MenuStartMap = 'map02';
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+	}
 }
 
 defaultproperties

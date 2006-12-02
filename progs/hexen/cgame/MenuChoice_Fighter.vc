@@ -25,10 +25,12 @@
 
 class MenuChoice_Fighter : MenuBigTextButton;
 
+int PClass;
 MenuObject Box;
 MenuObject Walk;
 classid BoxType;
 classid WalkType;
+classid SkillMenuType;
 
 void InitWindow()
 {
@@ -59,12 +61,36 @@ void FocusReceived()
 
 void ActivateEvent()
 {
-	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenFighterSkill));
+	GetClGame().MenuPClass = PClass;
+	GetClGame().SkillMenuType = SkillMenuType;
+	if (P_GetNumEpisodes() > 1)
+	{
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenEpisode));
+	}
+	else if (P_GetNumEpisodes() == 1)
+	{
+		GetClGame().MenuStartMap = P_GetEpisodeDef(0)->Name;
+		if (P_GetEpisodeDef(0)->bNoSkillMenu)
+		{
+			GetClGame().NewGame(sk_medium);
+		}
+		else
+		{
+			GetClGame().PushMenuScreen(GetClGame().SpawnMenu(SkillMenuType));
+		}
+	}
+	else
+	{
+		GetClGame().MenuStartMap = P_TranslateMap(1);
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(SkillMenuType));
+	}
 }
 
 defaultproperties
 {
 	Text = "FIGHTER";
+	PClass = HexenDefs::PCLASS_FIGHTER;
 	BoxType = MenuFighterBox;
 	WalkType = MenuFighterWalk;
+	SkillMenuType = MenuScreenFighterSkill;
 }

@@ -66,6 +66,8 @@
 #include "MenuMageWalk.vc"
 #include "MenuChoice_Mage.vc"
 #include "MenuScreenClass.vc"
+#include "MenuChoiceEpisode.vc"
+#include "MenuScreenEpisode.vc"
 #include "MenuChoice_Skill.vc"
 #include "MenuScreenFighterSkill.vc"
 #include "MenuScreenClericSkill.vc"

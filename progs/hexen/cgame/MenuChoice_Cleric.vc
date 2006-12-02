@@ -25,14 +25,11 @@
 
 class MenuChoice_Cleric : MenuChoice_Fighter;
 
-void ActivateEvent()
-{
-	GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenClericSkill));
-}
-
 defaultproperties
 {
 	Text = "CLERIC";
+	PClass = HexenDefs::PCLASS_CLERIC;
 	BoxType = MenuClericBox;
 	WalkType = MenuClericWalk;
+	SkillMenuType = MenuScreenClericSkill;
 }

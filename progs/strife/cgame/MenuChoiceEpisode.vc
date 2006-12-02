@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id$
+//**    $Id: MenuChoice_Episode1.vc 1861 2006-12-02 16:15:29Z dj_jl $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,13 +23,39 @@
 //**
 //**************************************************************************
 
-class MenuChoice_Mage : MenuChoice_Fighter;
+class MenuChoice_Episode1 : MenuBigTextButton;
+
+int PicHandle;
+name EpisodeMap;
+bool bNoSkillMenu;
+
+void ActivateEvent()
+{
+	GetClGame().MenuStartMap = EpisodeMap;
+	if (bNoSkillMenu)
+	{
+		GetClGame().NewGame(sk_medium);
+	}
+	else
+	{
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
+	}
+}
+
+void DrawWindow(GC gc)
+{
+	if (PicHandle > 0)
+	{
+		gc.DrawIcon(0, 0, PicHandle);
+	}
+	else
+	{
+		::DrawWindow(gc);
+	}
+}
 
 defaultproperties
 {
-	Text = "MAGE";
-	PClass = HexenDefs::PCLASS_MAGE;
-	BoxType = MenuMageBox;
-	WalkType = MenuMageWalk;
-	SkillMenuType = MenuScreenMageSkill;
+	Text = "CITY OF THE DAMNED";
+	EpisodeMap = 'e1m1';
 }

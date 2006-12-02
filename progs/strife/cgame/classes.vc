@@ -55,6 +55,8 @@
 #include "MenuChoice_SaveGame.vc"
 #include "MenuChoice_EndGame.vc"
 #include "MenuScreenSinglePlayer.vc"
+#include "MenuChoiceEpisode.vc"
+#include "MenuScreenEpisode.vc"
 #include "MenuChoice_Skill.vc"
 #include "MenuScreenSkill.vc"
 #include "MenuChoice_LoadSlot.vc"

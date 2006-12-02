@@ -30,14 +30,7 @@ int PClass;
 
 void ActivateEvent()
 {
-	SetCvar('Skill', SkillLevel);
-	SetCvar('Class', PClass);
-
-	CmdBuf_AddText("Disconnect\n");
-	CmdBuf_AddText("MaxPlayers 1\n");
-	CmdBuf_AddText("Map %n\n", P_TranslateMap(1));
-
-	GetClGame().ForceMenuOff();
+	GetClGame().NewGame(SkillLevel);
 }
 
 defaultproperties
