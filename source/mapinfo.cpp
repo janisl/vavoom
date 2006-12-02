@@ -425,6 +425,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		}
 		else if (sc->Check("forcenoskystretch"))
 		{
+			info->Flags |= MAPINFOF_ForceNoSkyStretch;
 		}
 		else if (sc->Check("fadetable"))
 		{

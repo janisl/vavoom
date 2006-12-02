@@ -172,6 +172,8 @@ static void R_InitOldSky()
 	guard(R_InitOldSky);
 	memset(sky, 0, sizeof(sky));
 
+	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
+
 	// Check if the level is a lightning level
 	LevelHasLightning = false;
 	LightningFlash = 0;
@@ -197,6 +199,10 @@ static void R_InitOldSky()
 	}
 
 	int skyheight = GTextureManager.Textures[cl_level.sky1Texture]->GetHeight();
+	if (linfo.Flags & MAPINFOF_ForceNoSkyStretch)
+	{
+		skyheight = 256;
+	}
 	float skytop;
 	float skybot;
 	int j;

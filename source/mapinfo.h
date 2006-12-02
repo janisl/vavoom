@@ -43,6 +43,7 @@ enum
 	MAPINFOF_AllowMonsterTelefrags		= 0x00008000,
 	MAPINFOF_NoAllies					= 0x00010000,
 	MAPINFOF_DeathSlideShow				= 0x00020000,
+	MAPINFOF_ForceNoSkyStretch			= 0x00040000,
 };
 
 struct mapInfo_t
