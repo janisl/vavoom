@@ -217,8 +217,7 @@ private:
 	vuint8*			Pixels;
 
 public:
-	VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
-		VTexture** PatchLookup, int NumPatchLookup, bool IsStrife);
+	VMultiPatchTexture(VStream&, int, VTexture**, int, bool);
 	~VMultiPatchTexture();
 	void SetFrontSkyLayer();
 	vuint8* GetPixels();
@@ -825,8 +824,18 @@ void VTextureManager::InitTextures()
 
 	for (int i = 0; i < NumTex; i++)
 	{
-		AddTexture(new VMultiPatchTexture(*Strm, i,
-			patchtexlookup, nummappatches, IsStrife));
+		VMultiPatchTexture* Tex = new VMultiPatchTexture(*Strm, i,
+			patchtexlookup, nummappatches, IsStrife);
+		AddTexture(Tex);
+		if (i == 0)
+		{
+			//	Copy dimensions of the first texture to the dummy texture in
+			// case they are used. Also set translation of this texture to 0
+			// in a case it's accessed by name.
+			Textures[0]->Width = Tex->Width;
+			Textures[0]->Height = Tex->Height;
+			Tex->Type = TEXTYPE_Null;
+		}
 	}
 	delete Strm;
 
@@ -1267,7 +1276,7 @@ void VTexture::FixupPalette(vuint8* Pixels, rgba_t* Palette)
 
 VDummyTexture::VDummyTexture()
 {
-	Type = TEXTYPE_Any;
+	Type = TEXTYPE_Null;
 	Format = TEXFMT_8;
 }
 

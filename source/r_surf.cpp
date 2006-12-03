@@ -407,10 +407,10 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 	ssurf->texinfo.translucency = splane->translucency ? splane->translucency + 1 : 0;
 
 	surf->count = sub->numlines;
-    seg_t *line = &GClLevel->Segs[sub->firstline];
+	seg_t *line = &GClLevel->Segs[sub->firstline];
 	int vlindex = (splane->normal.z < 0);
-   	for (int i = 0; i < surf->count; i++)
-    {
+	for (int i = 0; i < surf->count; i++)
+	{
 		TVec &v = *line[vlindex ? surf->count - i - 1 : i].v1;
 		TVec &dst = surf->verts[i];
 		dst = v;
@@ -474,8 +474,8 @@ static void UpdateSecSurface(sec_surface_t *ssurf, sec_plane_t* RealPlane)
 		ssurf->dist = plane->dist;
 		for (surface_t *surf = ssurf->surfs; surf; surf = surf->next)
 		{
-		   	for (int i = 0; i < surf->count; i++)
-    		{
+			for (int i = 0; i < surf->count; i++)
+			{
 				surf->verts[i].z = plane->GetPointZ(surf->verts[i]);
 			}
 		}
@@ -701,7 +701,7 @@ static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
 		return NULL;
 	}
 
-	if (!texinfo->pic)
+	if (GTextureManager.Textures[texinfo->pic]->Type == TEXTYPE_Null)
 	{
 		return NULL;
 	}
@@ -813,21 +813,21 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		hdelta = topz2 - topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
 
-   	    if (linedef->flags & ML_DONTPEGBOTTOM)
-        {
-       	    //	bottom of texture at bottom
+		if (linedef->flags & ML_DONTPEGBOTTOM)
+		{
+			//	bottom of texture at bottom
 			sp->texinfo.toffs = MIN(botz1, botz2) +
 				GTextureManager.TextureHeight(sidedef->midtexture);
-       	}
+		}
 		else if (linedef->flags & ML_DONTPEGTOP)
 		{
-           	// top of texture at top of top region
+			// top of texture at top of top region
 			sp->texinfo.toffs =
 				r_sub->sector->topregion->ceiling->GetPointZ(*seg->v1);
 		}
-   	    else
+		else
 		{
-           	// top of texture at top
+			// top of texture at top
 			sp->texinfo.toffs = topz1;
 		}
 		sp->texinfo.toffs -= offshdelta;
@@ -852,7 +852,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->rowoffset = sidedef->rowoffset;
 
 		dseg->topsky = pspart++;
-       	if (r_ceiling->pic == skyflatnum)
+		if (r_ceiling->pic == skyflatnum)
 		{
 			sp = dseg->topsky;
 
@@ -884,7 +884,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		float back_botz1 = r_back_floor->GetPointZ(*seg->v1);
 		float back_botz2 = r_back_floor->GetPointZ(*seg->v2);
 
-        // hack to allow height changes in outdoor areas
+		// hack to allow height changes in outdoor areas
 		if (r_ceiling->pic == skyflatnum &&
 			r_back_ceiling->pic == skyflatnum)
 		{
@@ -941,8 +941,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 		//	Sky abowe top
 		dseg->topsky = pspart++;
-       	if (r_ceiling->pic == skyflatnum &&
-       		r_back_ceiling->pic != skyflatnum)
+		if (r_ceiling->pic == skyflatnum &&
+			r_back_ceiling->pic != skyflatnum)
 		{
 			sp = dseg->topsky;
 
@@ -983,7 +983,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		}
 		else
 		{
-           	// top of texture at top
+			// top of texture at top
 			sp->texinfo.toffs = back_botz1;
 		}
 		sp->texinfo.toffs -= offshdelta;
@@ -1195,21 +1195,21 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			float hdelta = topz2 - topz1;
 			float offshdelta = hdelta * seg->offset / seg->length;
 
-	   	    if (linedef->flags & ML_DONTPEGBOTTOM)
-        	{
-    	   	    //	bottom of texture at bottom
+			if (linedef->flags & ML_DONTPEGBOTTOM)
+			{
+				//	bottom of texture at bottom
 				sp->texinfo.toffs = MIN(botz1, botz2) +
 					GTextureManager.TextureHeight(sidedef->midtexture);
-       		}
+			}
 			else if (linedef->flags & ML_DONTPEGTOP)
 			{
-        	   	// top of texture at top of top region
+				// top of texture at top of top region
 				sp->texinfo.toffs =
 					r_sub->sector->topregion->ceiling->GetPointZ(*seg->v1);
 			}
-   		    else
+			else
 			{
-           		// top of texture at top
+				// top of texture at top
 				sp->texinfo.toffs = topz1;
 			}
 			sp->texinfo.toffs -= offshdelta;
@@ -1243,7 +1243,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		}
 
 		sp = dseg->topsky;
-       	if (r_ceiling->pic == skyflatnum &&
+		if (r_ceiling->pic == skyflatnum &&
 			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
@@ -1286,7 +1286,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			float back_topz1 = r_back_ceiling->GetPointZ(*seg->v1);
 			float back_topz2 = r_back_ceiling->GetPointZ(*seg->v2);
 
-	        // hack to allow height changes in outdoor areas
+			// hack to allow height changes in outdoor areas
 			if (r_ceiling->pic == skyflatnum &&
 				r_back_ceiling->pic == skyflatnum)
 			{
@@ -1345,7 +1345,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 		sp = dseg->topsky;
 		if (r_ceiling->pic == skyflatnum &&
 			r_back_ceiling->pic != skyflatnum &&
-       		FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
+			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
 			float topz2 = r_ceiling->GetPointZ(*seg->v2);
@@ -1381,7 +1381,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			float back_botz1 = r_back_floor->GetPointZ(*seg->v1);
 			float back_botz2 = r_back_floor->GetPointZ(*seg->v2);
 
-	        // hack to allow height changes in outdoor areas
+			// hack to allow height changes in outdoor areas
 			if (r_ceiling->pic == skyflatnum &&
 				r_back_ceiling->pic == skyflatnum)
 			{
@@ -1402,7 +1402,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			}
 			else
 			{
-           		// top of texture at top
+				// top of texture at top
 				sp->texinfo.toffs = back_botz1;
 			}
 			sp->texinfo.toffs -= offshdelta;
@@ -1464,7 +1464,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				float back_botz1 = r_back_floor->GetPointZ(*seg->v1);
 				float back_botz2 = r_back_floor->GetPointZ(*seg->v2);
 
-		        // hack to allow height changes in outdoor areas
+				// hack to allow height changes in outdoor areas
 				if (r_ceiling->pic == skyflatnum &&
 					r_back_ceiling->pic == skyflatnum)
 				{
@@ -1853,9 +1853,9 @@ static void UpdateBSPNode(int bspnum, float *bbox)
 	if (bspnum & NF_SUBSECTOR)
 	{
 		if (bspnum == -1)
-		    UpdateSubsector(0, bbox);
+			UpdateSubsector(0, bbox);
 		else
-		    UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
+			UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
 		return;
 	}
 

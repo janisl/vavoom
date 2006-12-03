@@ -41,6 +41,7 @@ enum
 	TEXTYPE_Skin,
 	TEXTYPE_Pic,
 	TEXTYPE_Autopage,
+	TEXTYPE_Null,
 };
 
 struct picinfo_t

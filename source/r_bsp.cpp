@@ -504,6 +504,11 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 		return;
 	}
 
+	if (GTextureManager.Textures[texinfo->pic]->Type == TEXTYPE_Null)
+	{
+		return;
+	}
+
 	if (texinfo->pic == skyflatnum)
 	{
 		sky_is_visible = true;
