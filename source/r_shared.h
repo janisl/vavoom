@@ -97,6 +97,7 @@ public:
 	int			SOffset;
 	int			TOffset;
 	bool		bNoRemap0;
+	bool		bWorldPanning;
 	vuint8		WarpType;
 	float		SScale;				//	Scaling
 	float		TScale;

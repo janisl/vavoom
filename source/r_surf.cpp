@@ -107,6 +107,32 @@ inline float TextureTScale(int pic)
 	return GTextureManager.Textures[pic]->TScale;
 }
 
+//==========================================================================
+//
+//	TextureOffsetSScale
+//
+//==========================================================================
+
+inline float TextureOffsetSScale(int pic)
+{
+	if (GTextureManager.Textures[pic]->bWorldPanning)
+		return GTextureManager.Textures[pic]->SScale;
+	return 1.0;
+}
+
+//==========================================================================
+//
+//	TextureOffsetTScale
+//
+//==========================================================================
+
+inline float TextureOffsetTScale(int pic)
+{
+	if (GTextureManager.Textures[pic]->bWorldPanning)
+		return GTextureManager.Textures[pic]->TScale;
+	return 1.0;
+}
+
 //**************************************************************************
 //**
 //**	Sector surfaces
@@ -807,7 +833,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->midtexture);
 		sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 			seg->offset * TextureSScale(sidedef->midtexture) +
-			sidedef->textureoffset;
+			sidedef->textureoffset * TextureOffsetSScale(sidedef->midtexture);
 		sp->texinfo.pic = sidedef->midtexture;
 
 		hdelta = topz2 - topz1;
@@ -832,7 +858,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		}
 		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(sidedef->midtexture);
-		sp->texinfo.toffs += sidedef->rowoffset;
+		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(sidedef->midtexture);
 
 		wv[0].x = wv[1].x = seg->v1->x;
 		wv[0].y = wv[1].y = seg->v1->y;
@@ -900,7 +926,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->toptexture);
 		sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 			seg->offset * TextureSScale(sidedef->toptexture) +
-			sidedef->textureoffset;
+			sidedef->textureoffset * TextureOffsetSScale(sidedef->toptexture);
 		sp->texinfo.pic = sidedef->toptexture;
 
 		hdelta = topz2 - topz1;
@@ -918,7 +944,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		}
 		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(sidedef->toptexture);
-		sp->texinfo.toffs += sidedef->rowoffset;
+		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(sidedef->toptexture);
 
 		wv[0].x = wv[1].x = seg->v1->x;
 		wv[0].y = wv[1].y = seg->v1->y;
@@ -970,7 +996,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->bottomtexture);
 		sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 			seg->offset * TextureSScale(sidedef->bottomtexture) +
-			sidedef->textureoffset;
+			sidedef->textureoffset * TextureOffsetSScale(sidedef->bottomtexture);
 		sp->texinfo.pic = sidedef->bottomtexture;
 
 		hdelta = back_botz2 - back_botz1;
@@ -988,7 +1014,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		}
 		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(sidedef->bottomtexture);
-		sp->texinfo.toffs += sidedef->rowoffset;
+		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(sidedef->bottomtexture);
 
 		wv[0].x = wv[1].x = seg->v1->x;
 		wv[0].y = wv[1].y = seg->v1->y;
@@ -1030,7 +1056,7 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->midtexture);
 			sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 				seg->offset * TextureSScale(sidedef->midtexture) +
-				sidedef->textureoffset;
+				sidedef->textureoffset * TextureOffsetSScale(sidedef->midtexture);
 			sp->texinfo.translucency = linedef->translucency + 1;
 
 			if (linedef->flags & ML_DONTPEGBOTTOM)
@@ -1044,9 +1070,10 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				// top of texture at top
 				z_org = MAX(midtopz1, midtopz2);
 			}
-			z_org += sidedef->rowoffset - offshdelta;
+			z_org -= offshdelta;
 
-			sp->texinfo.toffs = z_org * TextureTScale(sidedef->midtexture);
+			sp->texinfo.toffs = z_org * TextureTScale(sidedef->midtexture) +
+				sidedef->rowoffset * TextureOffsetTScale(sidedef->midtexture);
 			sp->texinfo.pic = sidedef->midtexture;
 
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -1089,12 +1116,13 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(extraside->midtexture);
 			sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 				seg->offset * TextureSScale(extraside->midtexture) +
-				sidedef->textureoffset;
+				sidedef->textureoffset * TextureOffsetSScale(extraside->midtexture);
 
 			hdelta = extratopz2 - extratopz1;
 			offshdelta = hdelta * seg->offset / seg->length;
 			sp->texinfo.toffs = (extratopz1 - offshdelta) *
-				TextureTScale(extraside->midtexture) + sidedef->rowoffset;
+				TextureTScale(extraside->midtexture) + sidedef->rowoffset *
+				TextureOffsetTScale(extraside->midtexture);
 			sp->texinfo.pic = extraside->midtexture;
 			sp->texinfo.translucency = reg->prev->extraline->translucency ? reg->prev->extraline->translucency + 1 : 0;
 
@@ -1130,7 +1158,8 @@ static void CreateSegParts(drawseg_t* dseg, seg_t *seg)
 static void	UpdateRowOffset(segpart_t *sp, float rowoffset)
 {
 	guard(UpdateRowOffset);
-	sp->texinfo.toffs += rowoffset - sp->rowoffset;
+	sp->texinfo.toffs += (rowoffset - sp->rowoffset) *
+		TextureOffsetTScale(sp->texinfo.pic);
 	sp->rowoffset = rowoffset;
 	FlushSurfCaches(sp->surfs);
 	InitSurfs(sp->surfs, &sp->texinfo, NULL);
@@ -1146,7 +1175,8 @@ static void	UpdateRowOffset(segpart_t *sp, float rowoffset)
 static void UpdateTextureOffset(segpart_t *sp, float textureoffset)
 {
 	guard(UpdateTextureOffset);
-	sp->texinfo.soffs += textureoffset - sp->textureoffset;
+	sp->texinfo.soffs += (textureoffset - sp->textureoffset) *
+		TextureOffsetSScale(sp->texinfo.pic);
 	sp->textureoffset = textureoffset;
 	FlushSurfCaches(sp->surfs);
 	InitSurfs(sp->surfs, &sp->texinfo, NULL);
@@ -1214,7 +1244,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 			}
 			sp->texinfo.toffs -= offshdelta;
 			sp->texinfo.toffs *= TextureTScale(sidedef->midtexture);
-			sp->texinfo.toffs += sidedef->rowoffset;
+			sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(sidedef->midtexture);
 			sp->texinfo.pic = sidedef->midtexture;
 
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -1311,8 +1341,8 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 					GTextureManager.TextureHeight(sidedef->toptexture);
 			}
 			sp->texinfo.toffs -= offshdelta;
-			sp->texinfo.toffs *= TextureTScale(sidedef->midtexture);
-			sp->texinfo.toffs += sidedef->rowoffset;
+			sp->texinfo.toffs *= TextureTScale(sidedef->toptexture);
+			sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(sidedef->toptexture);
 			sp->texinfo.pic = sidedef->toptexture;
 
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -1406,8 +1436,9 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				sp->texinfo.toffs = back_botz1;
 			}
 			sp->texinfo.toffs -= offshdelta;
-			sp->texinfo.toffs *= TextureTScale(sidedef->midtexture);
-			sp->texinfo.toffs += sidedef->rowoffset;
+			sp->texinfo.toffs *= TextureTScale(sidedef->bottomtexture);
+			sp->texinfo.toffs += sidedef->rowoffset *
+				TextureOffsetTScale(sidedef->bottomtexture);
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -1489,7 +1520,7 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(sidedef->midtexture);
 				sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 					seg->offset * TextureSScale(sidedef->midtexture) +
-					sidedef->textureoffset;
+					sidedef->textureoffset * TextureOffsetSScale(sidedef->midtexture);
 				sp->texinfo.translucency = linedef->translucency + 1;
 
 				if (linedef->flags & ML_DONTPEGBOTTOM)
@@ -1565,7 +1596,8 @@ static void UpdateDrawSeg(drawseg_t* dseg)
 				float hdelta = extratopz2 - extratopz1;
 				float offshdelta = hdelta * seg->offset / seg->length;
 				sp->texinfo.toffs = (extratopz1 - offshdelta) *
-					TextureTScale(sidedef->midtexture) + sidedef->rowoffset;
+					TextureTScale(sidedef->midtexture) + sidedef->rowoffset *
+					TextureOffsetTScale(sidedef->midtexture);
 
 				wv[0].x = wv[1].x = seg->v1->x;
 				wv[0].y = wv[1].y = seg->v1->y;
@@ -1627,7 +1659,7 @@ void R_SegMoved(seg_t *seg)
 	seg->drawsegs->mid->texinfo.soffs = -DotProduct(*seg->v1,
 		seg->drawsegs->mid->texinfo.saxis) +
 		seg->offset * TextureSScale(seg->sidedef->midtexture) +
-		seg->sidedef->textureoffset;
+		seg->sidedef->textureoffset * TextureOffsetSScale(seg->sidedef->midtexture);
 
 	//	Force update
 	seg->drawsegs->mid->frontTopDist += 0.346;
