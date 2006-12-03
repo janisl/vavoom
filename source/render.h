@@ -120,6 +120,7 @@ private:
 	void InitFlats();
 	void InitOverloads();
 	void InitSpriteLumps();
+	void InitHiResTextures();
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

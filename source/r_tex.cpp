@@ -468,6 +468,9 @@ void VTextureManager::Init()
 	//	Initialise sprites.
 	InitSpriteLumps();
 
+	//	Initialise hires textures.
+	InitHiResTextures();
+
 	//	Find default texture.
 	DefaultTexture = CheckNumForName("-noflat-", TEXTYPE_Overload, false,
 		false);
@@ -924,7 +927,64 @@ void VTextureManager::InitSpriteLumps()
 
 //==========================================================================
 //
-//	VTexture::VTexture
+//	VTextureManager::InitHiResTextures
+//
+//==========================================================================
+
+void VTextureManager::InitHiResTextures()
+{
+	guard(VTextureManager::InitHiResTextures);
+	for (int Lump = W_IterateNS(-1, WADNS_HiResTextures); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_HiResTextures))
+	{
+		VName Name = W_LumpName(Lump);
+		//	To avoid duplicates, add only the last one.
+		if (W_GetNumForName(Name, WADNS_HiResTextures) != Lump)
+		{
+			continue;
+		}
+
+		//	Create new texture.
+		VTexture* NewTex = VTexture::CreateTexture(TEXTYPE_Any, Lump, NAME_None);
+		if (!NewTex)
+		{
+			continue;
+		}
+
+		//	Find texture to replace.
+		int OldIdx = CheckNumForName(Name, TEXTYPE_Wall, true, true);
+		if (OldIdx < 0)
+		{
+			OldIdx = AddPatch(Name, TEXTYPE_Pic);
+		}
+
+		if (OldIdx < 0)
+		{
+			//	Add it as a new texture.
+			NewTex->Type = TEXTYPE_Overload;
+			AddTexture(NewTex);
+		}
+		else
+		{
+			//	Repalce existing texture by adjusting scale and offsets.
+			VTexture* OldTex = Textures[OldIdx];
+			NewTex->bWorldPanning = true;
+			NewTex->SScale = NewTex->GetWidth() / OldTex->GetWidth();
+			NewTex->TScale = NewTex->GetHeight() / OldTex->GetHeight();
+			NewTex->SOffset = (int)floor(OldTex->SOffset * NewTex->SScale);
+			NewTex->TOffset = (int)floor(OldTex->TOffset * NewTex->TScale);
+			NewTex->Type = OldTex->Type;
+			NewTex->TextureTranslation = OldTex->TextureTranslation;
+			Textures[OldIdx] = NewTex;
+			delete OldTex;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTextureManager::GetRgbTable
 //
 //==========================================================================
 
@@ -1017,6 +1077,7 @@ VTexture::VTexture()
 , SOffset(0)
 , TOffset(0)
 , bNoRemap0(false)
+, bWorldPanning(false)
 , WarpType(0)
 , SScale(1)
 , TScale(1)
