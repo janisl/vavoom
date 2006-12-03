@@ -965,5 +965,6 @@ void V_Shutdown()
 		Z_Free(translationtables);
 	}
 	R_FreeSkyboxData();
+	R_ClipShutdown();
 	unguard;
 }

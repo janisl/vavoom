@@ -97,6 +97,7 @@ struct fakefloor_t
 // R_BSP
 //
 void R_RenderWorld();
+void R_ClipShutdown();
 
 //
 // R_Things
