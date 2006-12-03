@@ -116,11 +116,9 @@ public:
 private:
 	vuint8*		RgbTable;
 
-	void InitTextures();
-	void InitFlats();
-	void InitOverloads();
-	void InitSpriteLumps();
-	void InitHiResTextures();
+	void AddTextures();
+	void AddGroup(int, EWadNamespace);
+	void AddHiResTextures();
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

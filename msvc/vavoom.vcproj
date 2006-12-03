@@ -1436,6 +1436,43 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Textures"
+				>
+				<File
+					RelativePath="..\source\r_tex_automap.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_base.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_flat.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_imgz.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_multipatch.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_patch.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_pcx.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_png.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_raw.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_tga.cpp"
+					>
+				<File
+					RelativePath="..\source\r_tex_warp.cpp"
+					>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Networking"

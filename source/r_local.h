@@ -87,6 +87,231 @@ struct fakefloor_t
 	sec_params_t	params;
 };
 
+//
+//	A dummy texture.
+//
+class VDummyTexture : public VTexture
+{
+public:
+	VDummyTexture();
+	vuint8* GetPixels();
+	void Unload();
+};
+
+//
+//	A standard Doom patch.
+//
+class VPatchTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VPatchTexture(int, VName, int, int, int, int);
+	~VPatchTexture();
+	vuint8* GetPixels();
+	void Unload();
+};
+
+//
+//	A texture defined in TEXTURE1/TEXTURE2 lumps.
+//	A maptexturedef_t describes a rectangular texture, which is composed of
+// one or more mappatch_t structures that arrange graphic patches
+//
+class VMultiPatchTexture : public VTexture
+{
+private:
+	struct VTexPatch
+	{
+		//	Block origin (allways UL), which has allready accounted for the
+		// internal origin of the patch.
+		short		XOrigin;
+		short		YOrigin;
+		VTexture*	Tex;
+	};
+
+	//	All the Patches[PatchCount] are drawn back to front into the cached
+	// texture.
+	int				PatchCount;
+	VTexPatch*		Patches;
+	vuint8*			Pixels;
+
+public:
+	VMultiPatchTexture(VStream&, int, VTexture**, int, bool);
+	~VMultiPatchTexture();
+	void SetFrontSkyLayer();
+	vuint8* GetPixels();
+	void Unload();
+};
+
+//
+//	A standard Doom flat.
+//
+class VFlatTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VFlatTexture(int InLumpNum);
+	~VFlatTexture();
+	vuint8* GetPixels();
+	void Unload();
+};
+
+//
+//	Raven's raw screens.
+//
+class VRawPicTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	int			PalLumpNum;
+	vuint8*		Pixels;
+	rgba_t*		Palette;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VRawPicTexture(int, int);
+	~VRawPicTexture();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	void Unload();
+};
+
+//
+//	Raven's automap background.
+//
+class VAutopageTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VAutopageTexture(int);
+	~VAutopageTexture();
+	vuint8* GetPixels();
+	void Unload();
+};
+
+//
+//	ZDoom's IMGZ grapnics.
+// [RH] Just a format I invented to avoid WinTex's palette remapping
+// when I wanted to insert some alpha maps.
+//
+class VImgzTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VImgzTexture(int, VName, int, int, int, int);
+	~VImgzTexture();
+	vuint8* GetPixels();
+	void Unload();
+};
+
+//
+//	A PCX file.
+//
+class VPcxTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+	rgba_t*		Palette;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VPcxTexture(int, VName, struct pcx_t&);
+	~VPcxTexture();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	void Unload();
+};
+
+//
+//	A TGA file.
+//
+class VTgaTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+	rgba_t*		Palette;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VTgaTexture(int, VName, struct tgaHeader_t&);
+	~VTgaTexture();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	void Unload();
+};
+
+//
+//	A PNG file.
+//
+class VPngTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+	rgba_t*		Palette;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VPngTexture(int, VName, int, int);
+	~VPngTexture();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	void Unload();
+};
+
+//
+//	A texture that returns a wiggly version of another texture.
+//
+class VWarpTexture : public VTexture
+{
+public:
+	VTexture*	SrcTex;
+	vuint8*		Pixels;
+	float		GenTime;
+	float		WarpXScale;
+	float		WarpYScale;
+	float*		XSin1;
+	float*		XSin2;
+	float*		YSin1;
+	float*		YSin2;
+
+	VWarpTexture(VTexture*);
+	~VWarpTexture();
+	void SetFrontSkyLayer();
+	bool CheckModified();
+	vuint8* GetPixels();
+	rgba_t* GetPalette();
+	VTexture* GetHighResolutionTexture();
+	void Unload();
+};
+
+//
+//	Different style of warping.
+//
+class VWarp2Texture : public VWarpTexture
+{
+public:
+	VWarp2Texture(VTexture*);
+	vuint8* GetPixels();
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
@@ -151,5 +376,6 @@ extern VCvarI			r_darken;
 extern refdef_t			refdef;
 
 extern VCvarI			old_aspect;
+extern VCvarI			r_hirestex;
 
 #endif

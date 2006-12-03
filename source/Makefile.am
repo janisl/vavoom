@@ -172,6 +172,17 @@ _____MAIN_EXE__SOURCES = \
 	r_sky.cpp \
 	r_surf.cpp \
 	r_tex.cpp \
+	r_tex_automap.cpp \
+	r_tex_base.cpp \
+	r_tex_flat.cpp \
+	r_tex_imgz.cpp \
+	r_tex_multipatch.cpp \
+	r_tex_patch.cpp \
+	r_tex_pcx.cpp \
+	r_tex_png.cpp \
+	r_tex_raw.cpp \
+	r_tex_tga.cpp \
+	r_tex_warp.cpp \
 	r_things.cpp \
 	render.h \
 	s_data.cpp \
@@ -420,6 +431,17 @@ _____SERVER_EXE__SOURCES = \
 	pr_cmds.cpp \
 	pr_exec.cpp \
 	r_tex.cpp \
+	r_tex_automap.cpp \
+	r_tex_base.cpp \
+	r_tex_flat.cpp \
+	r_tex_imgz.cpp \
+	r_tex_multipatch.cpp \
+	r_tex_patch.cpp \
+	r_tex_pcx.cpp \
+	r_tex_png.cpp \
+	r_tex_raw.cpp \
+	r_tex_tga.cpp \
+	r_tex_warp.cpp \
 	s_data.cpp \
 	sc_man.cpp \
 	str.cpp \
