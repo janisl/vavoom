@@ -1,6 +1,7 @@
 //------------------------------------------------------
 //  Default map
 defaultmap
+forcenoskystretch
 nointermission
 sky1 skymnt02 0
 
