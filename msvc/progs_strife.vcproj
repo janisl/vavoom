@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="progs_strife"
 	ProjectGUID="{1CD88557-1039-4B0C-9DF6-AB181E799536}"
 	RootNamespace="progs_doom_shared"
@@ -25,7 +25,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/strfdefs.vc ../basev/strife/progs/shared.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/strfdefs.vc ../basev/strife/progs/shared.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;"
 				Outputs="../basev/strife/progs/shared.dat;../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
 			/>
 			<Tool
@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/strfdefs.vc ../basev/strife/progs/shared.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/strfdefs.vc ../basev/strife/progs/shared.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/svprogs.vc ../basev/strife/progs/svprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/clprogs.vc ../basev/strife/progs/clprogs.dat -P../basev/common/progs -P../basev/strife/progs -I../progs/common&#x0D;&#x0A;"
 				Outputs="../basev/strife/progs/shared.dat;../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
 			/>
 			<Tool
@@ -200,7 +200,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_AddLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_AdvancedVideoOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_ApplyVidMode.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_AspectRatio.vc"
 				>
 			</File>
 			<File
@@ -213,6 +225,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_CDMusic.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_ClipLights.vc"
 				>
 			</File>
 			<File
@@ -236,7 +252,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_CroshairTrans.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_D3DBlendSprites.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_D3DDither.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_D3DModelLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_D3DSpecular.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_D3DTextureFilter.vc"
 				>
 			</File>
 			<File
@@ -252,11 +288,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_DrawFPS.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_DynamicLights.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_EndGame.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_ExternalMusic.vc"
 				>
 			</File>
 			<File
@@ -268,11 +312,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_GLModelLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_GLSpecular.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_GLTextureFilter.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_GoToConsole.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_Help.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_HiResTextures.vc"
 				>
 			</File>
 			<File
@@ -305,6 +365,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_LookStrafe.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_Models.vc"
 				>
 			</File>
 			<File
@@ -412,6 +476,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_SpecularLevel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_SpriteDelta.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_SpriteOffset.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuChoice_StartGame.vc"
 				>
 			</File>
@@ -432,7 +508,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_ViewModels.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoice_Windowed.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuChoiceEnum.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuChoiceEpisode.vc"
 				>
 			</File>
 			<File
@@ -468,11 +556,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\strife\cgame\MenuScreenAdvancedVideoOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenControls.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenControls2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\strife\cgame\MenuScreenEpisode.vc"
 				>
 			</File>
 			<File

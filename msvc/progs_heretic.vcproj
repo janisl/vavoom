@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="progs_heretic"
 	ProjectGUID="{AEDD4819-EE4F-4A94-9776-10C430A9D291}"
 	RootNamespace="progs_doom_cgame"
@@ -25,7 +25,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/herdefs.vc ../basev/heretic/progs/shared.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/svprogs.vc ../basev/heretic/progs/svprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/clprogs.vc ../basev/heretic/progs/clprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/herdefs.vc ../basev/heretic/progs/shared.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/svprogs.vc ../basev/heretic/progs/svprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/clprogs.vc ../basev/heretic/progs/clprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;"
 				Outputs="../basev/heretic/progs/shared.dat;../basev/heretic/progs/svprogs.dat;../basev/heretic/progs/clprogs.dat"
 			/>
 			<Tool
@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/herdefs.vc ../basev/heretic/progs/shared.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/svprogs.vc ../basev/heretic/progs/svprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/clprogs.vc ../basev/heretic/progs/clprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/herdefs.vc ../basev/heretic/progs/shared.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/svprogs.vc ../basev/heretic/progs/svprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/clprogs.vc ../basev/heretic/progs/clprogs.dat -P../basev/common/progs -P../basev/heretic/progs -I../progs/common&#x0D;&#x0A;"
 				Outputs="../basev/heretic/progs/shared.dat;../basev/heretic/progs/svprogs.dat;../basev/heretic/progs/clprogs.dat"
 			/>
 			<Tool
@@ -184,7 +184,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_AddLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_AdvancedVideoOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_ApplyVidMode.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_AspectRatio.vc"
 				>
 			</File>
 			<File
@@ -197,6 +209,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_CDMusic.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_ClipLights.vc"
 				>
 			</File>
 			<File
@@ -220,7 +236,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_CroshairTrans.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_D3DBlendSprites.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_D3DDither.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_D3DModelLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_D3DSpecular.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_D3DTextureFilter.vc"
 				>
 			</File>
 			<File
@@ -233,6 +269,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_DeathMatch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_DrawFPS.vc"
 				>
 			</File>
 			<File
@@ -264,6 +304,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_ExternalMusic.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_ExtraSamples.vc"
 				>
 			</File>
@@ -272,11 +316,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_GLModelLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_GLSpecular.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_GLTextureFilter.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_GoToConsole.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_Help.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_HiResTextures.vc"
 				>
 			</File>
 			<File
@@ -309,6 +369,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_LookStrafe.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_Models.vc"
 				>
 			</File>
 			<File
@@ -420,6 +484,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_SpecularLevel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_SpriteDelta.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_SpriteOffset.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_StartGame.vc"
 				>
 			</File>
@@ -437,6 +513,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\cgame\MenuChoice_VideoOptions.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_ViewModels.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuChoice_Windowed.vc"
 				>
 			</File>
 			<File
@@ -473,6 +557,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\heretic\cgame\MenuScreen.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\heretic\cgame\MenuScreenAdvancedVideoOptions.vc"
 				>
 			</File>
 			<File

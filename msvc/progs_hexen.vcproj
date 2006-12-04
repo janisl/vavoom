@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="progs_hexen"
 	ProjectGUID="{DD00F5CF-9520-44D2-BDC4-45130B5024FA}"
 	RootNamespace="progs_doom_game"
@@ -25,7 +25,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/hexndefs.vc ../basev/hexen/progs/shared.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/svprogs.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/clprogs.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/hexndefs.vc ../basev/hexen/progs/shared.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/svprogs.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/clprogs.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;"
 				Outputs="../basev/hexen/progs/shared.dat;../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
 			/>
 			<Tool
@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/hexndefs.vc ../basev/hexen/progs/shared.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/svprogs.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/clprogs.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/hexndefs.vc ../basev/hexen/progs/shared.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/svprogs.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/clprogs.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;"
 				Outputs="../basev/hexen/progs/shared.dat;../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
 			/>
 			<Tool
@@ -184,7 +184,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_AddLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_AdvancedVideoOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_ApplyVidMode.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_AspectRatio.vc"
 				>
 			</File>
 			<File
@@ -201,6 +213,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_Cleric.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_ClipLights.vc"
 				>
 			</File>
 			<File
@@ -224,7 +240,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_CroshairTrans.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DBlendSprites.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DDither.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DModelLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DSpecular.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_D3DTextureFilter.vc"
 				>
 			</File>
 			<File
@@ -240,11 +276,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_DrawFPS.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_DynamicLights.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_EndGame.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_ExternalMusic.vc"
 				>
 			</File>
 			<File
@@ -260,11 +304,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_GLModelLights.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_GLSpecular.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_GLTextureFilter.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_GoToConsole.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_Help.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_HiResTextures.vc"
 				>
 			</File>
 			<File
@@ -301,6 +361,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_Mage.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_Models.vc"
 				>
 			</File>
 			<File
@@ -412,6 +476,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_SpecularLevel.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_SpriteDelta.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_SpriteOffset.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoice_StartGame.vc"
 				>
 			</File>
@@ -432,7 +508,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_ViewModels.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoice_Windowed.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuChoiceEnum.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuChoiceEpisode.vc"
 				>
 			</File>
 			<File
@@ -496,6 +584,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\hexen\cgame\MenuScreenAdvancedVideoOptions.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\hexen\cgame\MenuScreenClass.vc"
 				>
 			</File>
@@ -509,6 +601,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\MenuScreenControls2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\hexen\cgame\MenuScreenEpisode.vc"
 				>
 			</File>
 			<File

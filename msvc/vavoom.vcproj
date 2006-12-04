@@ -1442,36 +1442,47 @@
 				<File
 					RelativePath="..\source\r_tex_automap.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_base.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_flat.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_imgz.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_multipatch.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_patch.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_pcx.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_png.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_raw.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_tga.cpp"
 					>
+				</File>
 				<File
 					RelativePath="..\source\r_tex_warp.cpp"
 					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
