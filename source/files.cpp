@@ -151,22 +151,7 @@ static int cmpfunc(const void* v1, const void* v2)
 static void AddGameDir(const VStr& basedir, const VStr& dir)
 {
 	guard(AddGameDir);
-	//	First add wad##.wad files.
-	VStr gwadir;
-	if (fl_savedir && basedir != fl_savedir)
-	{
-		gwadir = fl_savedir + "/" + dir;
-	}
-
-	for (int i = 0; i < 1024; i++)
-	{
-		VStr buf = basedir + "/" + dir + "/wad" + i + ".wad";
-		if (!Sys_FileExists(buf))
-			break;
-		W_AddFile(buf, gwadir, false);
-	}
-
-	//	Then add all .pk3 files in that directory.
+	//	First add all .pk3 files in that directory.
 	if (Sys_OpenDir(basedir + "/" + dir))
 	{
 		TArray<VStr> ZipFiles;
@@ -182,6 +167,21 @@ static void AddGameDir(const VStr& basedir, const VStr& dir)
 		{
 			AddZipFile(basedir + "/" + dir + "/" + ZipFiles[i]);
 		}
+	}
+
+	//	Then add wad##.wad files.
+	VStr gwadir;
+	if (fl_savedir && basedir != fl_savedir)
+	{
+		gwadir = fl_savedir + "/" + dir;
+	}
+
+	for (int i = 0; i < 1024; i++)
+	{
+		VStr buf = basedir + "/" + dir + "/wad" + i + ".wad";
+		if (!Sys_FileExists(buf))
+			break;
+		W_AddFile(buf, gwadir, false);
 	}
 
 	//	Finally add directory itself.
