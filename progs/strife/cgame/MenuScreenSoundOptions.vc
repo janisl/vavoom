@@ -28,9 +28,10 @@ class MenuScreenSoundOptions:MenuScreen;
 defaultproperties
 {
 	Choices[0] = MenuChoice_SoundVolume;
-	Choices[1] = MenuChoice_MusicVolume;
-	Choices[2] = MenuChoice_SwapStereo;
+	Choices[1] = MenuChoice_SwapStereo;
+	Choices[2] = MenuChoice_MusicVolume;
 	Choices[3] = MenuChoice_CDMusic;
+	Choices[4] = MenuChoice_ExternalMusic;
 	ChoicesStartX = 160;
 	ChoicesStartY = 37;
 	SelectorType = MenuSelector_SmallRight;

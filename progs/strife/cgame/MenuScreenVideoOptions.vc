@@ -25,30 +25,8 @@
 
 class MenuScreenVideoOptions : MenuScreen;
 
-enum
-{
-	DRV_SOFTWARE,
-	DRV_OPENGL,
-	DRV_DIRECT3D
-};
-
 void InitWindow()
 {
-	switch (GetCvar('_driver'))
-	{
-	case DRV_SOFTWARE:
-		Choices[7] = MenuChoice_ColouredLights;
-		Choices[8] = MenuChoice_SpanDrawing;
-		break;
-
-	case DRV_OPENGL:
-		Choices[7] = MenuChoice_GLBlendSprites;
-		break;
-
-	case DRV_DIRECT3D:
-		Choices[7] = MenuChoice_D3DBlendSprites;
-		break;
-	}
 	::InitWindow();
 }
 
@@ -58,9 +36,15 @@ defaultproperties
 	Choices[1] = MenuChoice_Brightness;
 	Choices[2] = MenuChoice_Darkening;
 	Choices[3] = MenuChoice_Croshair;
-	Choices[4] = MenuChoice_DarkenLights;
-	Choices[5] = MenuChoice_ExtraSamples;
-	Choices[6] = MenuChoice_DynamicLights;
+	Choices[4] = MenuChoice_CroshairTrans;
+	Choices[5] = MenuChoice_HiResTextures;
+	Choices[6] = MenuChoice_Models;
+	Choices[7] = MenuChoice_ViewModels;
+	Choices[8] = MenuChoice_SpriteOffset;
+	Choices[9] = MenuChoice_SpriteDelta;
+	Choices[10] = MenuChoice_DrawFPS;
+	Choices[11] = MenuChoice_AdvancedVideoOptions;
+
 	ChoicesStartX = 160;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;

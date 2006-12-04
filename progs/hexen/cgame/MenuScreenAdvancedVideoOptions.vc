@@ -1,0 +1,78 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: MenuScreenVideoOptions.vc 1741 2006-09-26 23:26:48Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenAdvancedVideoOptions : MenuScreen;
+
+enum
+{
+	DRV_SOFTWARE,
+	DRV_OPENGL,
+	DRV_DIRECT3D
+};
+
+void InitWindow()
+{
+	switch (GetCvar('_driver'))
+	{
+	case DRV_SOFTWARE:
+		Choices[5] = MenuChoice_ColouredLights;
+		Choices[6] = MenuChoice_SpanDrawing;
+		break;
+
+	case DRV_OPENGL:
+		Choices[5] = MenuChoice_AddLights;
+		Choices[6] = MenuChoice_SpecularLevel;
+		Choices[7] = MenuChoice_GLBlendSprites;
+		Choices[8] = MenuChoice_GLTextureFilter;
+		Choices[9] = MenuChoice_GLModelLights;
+		Choices[10] = MenuChoice_GLSpecular;
+		break;
+
+	case DRV_DIRECT3D:
+		Choices[5] = MenuChoice_AddLights;
+		Choices[6] = MenuChoice_SpecularLevel;
+		Choices[7] = MenuChoice_D3DBlendSprites;
+		Choices[8] = MenuChoice_D3DTextureFilter;
+		Choices[9] = MenuChoice_D3DDither;
+		Choices[10] = MenuChoice_D3DModelLights;
+		Choices[11] = MenuChoice_D3DSpecular;
+		break;
+	}
+	::InitWindow();
+}
+
+defaultproperties
+{
+	Choices[0] = MenuChoice_DarkenLights;
+	Choices[1] = MenuChoice_ExtraSamples;
+	Choices[2] = MenuChoice_DynamicLights;
+	Choices[3] = MenuChoice_ClipLights;
+	Choices[4] = MenuChoice_AspectRatio;
+
+	ChoicesStartX = 160;
+	ChoicesStartY = 26;
+	SelectorType = MenuSelector_SmallRight;
+	Title = "ADVANCED VIDEO OPTIONS";
+}
