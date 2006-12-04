@@ -372,7 +372,7 @@ void VTextureManager::GetTextureInfo(int TexNum, picinfo_t* info)
 //
 //==========================================================================
 
-int VTextureManager::AddPatch(VName Name, int Type)
+int VTextureManager::AddPatch(VName Name, int Type, bool Silent)
 {
 	guard(VTextureManager::AddPatch);
 	//	Find the lump number.
@@ -381,7 +381,10 @@ int VTextureManager::AddPatch(VName Name, int Type)
 		LumpNum = W_CheckNumForName(Name, WADNS_Sprites);
 	if (LumpNum < 0)
 	{
-		GCon->Logf("VTextureManager::AddPatch: Pic %s not found", *Name);
+		if (!Silent)
+		{
+			GCon->Logf("VTextureManager::AddPatch: Pic %s not found", *Name);
+		}
 		return -1;
 	}
 
@@ -613,7 +616,7 @@ void VTextureManager::AddHiResTextures()
 		int OldIdx = CheckNumForName(Name, TEXTYPE_Wall, true, true);
 		if (OldIdx < 0)
 		{
-			OldIdx = AddPatch(Name, TEXTYPE_Pic);
+			OldIdx = AddPatch(Name, TEXTYPE_Pic, true);
 		}
 
 		if (OldIdx < 0)
@@ -636,6 +639,107 @@ void VTextureManager::AddHiResTextures()
 			Textures[OldIdx] = NewTex;
 			delete OldTex;
 		}
+	}
+
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) != "hirestex")
+		{
+			continue;
+		}
+
+		VScriptParser* sc = new VScriptParser("hirestex",
+			W_CreateLumpReaderNum(Lump));
+		while (!sc->AtEnd())
+		{
+			if (sc->Check("remap"))
+			{
+				sc->ExpectName8();
+				int OldIdx = CheckNumForName(sc->Name8, TEXTYPE_Any, false,
+					false);
+				if (OldIdx < 0)
+				{
+					OldIdx = AddPatch(sc->Name8, TEXTYPE_Pic, true);
+				}
+
+				sc->ExpectName8();
+				int LumpIdx = W_CheckNumForName(sc->Name8, WADNS_Graphics);
+				if (OldIdx < 0 || LumpIdx < 0)
+				{
+					continue;
+				}
+
+				//	Create new texture.
+				VTexture* NewTex = VTexture::CreateTexture(TEXTYPE_Any,
+					LumpIdx, NAME_None);
+				if (!NewTex)
+				{
+					continue;
+				}
+				//	Repalce existing texture by adjusting scale and offsets.
+				VTexture* OldTex = Textures[OldIdx];
+				NewTex->bWorldPanning = true;
+				NewTex->SScale = NewTex->GetWidth() / OldTex->GetWidth();
+				NewTex->TScale = NewTex->GetHeight() / OldTex->GetHeight();
+				NewTex->SOffset = (int)floor(OldTex->SOffset * NewTex->SScale);
+				NewTex->TOffset = (int)floor(OldTex->TOffset * NewTex->TScale);
+				NewTex->Name = OldTex->Name;
+				NewTex->Type = OldTex->Type;
+				NewTex->TextureTranslation = OldTex->TextureTranslation;
+				Textures[OldIdx] = NewTex;
+				delete OldTex;
+			}
+			else if (sc->Check("define"))
+			{
+				sc->ExpectName8();
+				VName Name = sc->Name8;
+				int LumpIdx = W_CheckNumForName(sc->Name8, WADNS_Graphics);
+
+				//	Dimensions
+				sc->ExpectNumber();
+				int Width = sc->Number;
+				sc->ExpectNumber();
+				int Height = sc->Number;
+				if (LumpIdx < 0)
+				{
+					continue;
+				}
+
+				//	Create new texture.
+				VTexture* NewTex = VTexture::CreateTexture(TEXTYPE_Overload,
+					LumpIdx, NAME_None);
+				if (!NewTex)
+				{
+					continue;
+				}
+
+				//	Repalce existing texture by adjusting scale and offsets.
+				NewTex->bWorldPanning = true;
+				NewTex->SScale = NewTex->GetWidth() / Width;
+				NewTex->TScale = NewTex->GetHeight() / Height;
+				NewTex->Name = Name;
+
+				int OldIdx = CheckNumForName(Name, TEXTYPE_Overload, false,
+					false);
+				if (OldIdx >= 0)
+				{
+					VTexture* OldTex = Textures[OldIdx];
+					NewTex->TextureTranslation = OldTex->TextureTranslation;
+					Textures[OldIdx] = NewTex;
+					delete OldTex;
+				}
+				else
+				{
+					AddTexture(NewTex);
+				}
+			}
+			else
+			{
+				sc->Error("Bad command");
+			}
+		}
+		delete sc;
 	}
 	unguard;
 }
