@@ -1324,6 +1324,26 @@
 				Name="OpenGL"
 				>
 				<File
+					RelativePath="..\source\gl_agl.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\source\gl_alleg.cpp"
 					>
 					<FileConfiguration
@@ -1706,6 +1726,10 @@
 			</File>
 			<File
 				RelativePath="..\source\eax.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\s_al.cpp"
 				>
 			</File>
 			<File
