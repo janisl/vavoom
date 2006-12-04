@@ -163,3 +163,43 @@ $alias menu/clear				PlatformStop
 $alias menu/prompt				Chat
 $alias menu/invalid				DoorCloseMetal
 $alias menu/dismiss				PlatformStop
+
+//===========================================================================
+//
+// MAP SONG DEFINITIONS FOR DEATHKINGS
+//
+//===========================================================================
+
+$MAP    41              Winnowr
+$MAP    42              Jachr
+$MAP    43              Voidr
+$MAP    44              Deepr
+$MAP    45              Fubasr
+$MAP    46              Sixater
+$MAP    47              Chap_1r
+$MAP    48              Bonesr
+$MAP    49              Wutzitr
+$MAP    50              Chap_2r
+$MAP    51              Octor
+$MAP    52              Stalkr
+$MAP    53              Falconr
+$MAP    54              Chap_3r
+$MAP    55              Percr
+$MAP    56              Rithmr
+$MAP    57              Foojar
+$MAP    58              Cryptr
+$MAP    59              Simonr
+$MAP    60              Crucibr
+
+$MAP    33              Grover
+$MAP    34              Fortr
+$MAP    35              Swampr
+$MAP    36              Wobabyr
+$MAP    37              Blechr
+$MAP    38              Falconr
+
+$MAP    0               hexen
+$MAP    0               hub
+$MAP    0               hall
+$MAP    0               orb
+$MAP    0               chess
