@@ -60,15 +60,17 @@
 //
 //==========================================================================
 
-#define MINCHAR		((char)-128)
-#define MINSHORT	((short)-32768)
-#define MININT		((int)-2147483648)
-#define MINLONG		((long)-2147483648)
+#define MIN_VINT8	((vint8)-128)
+#define MIN_VINT16	((vint16)-32768)
+#define MIN_VINT32	((vint32)-2147483648)
 
-#define MAXCHAR		((char)0x7f)
-#define MAXSHORT	((short)0x7fff)
-#define MAXINT		((int)0x7fffffff)
-#define MAXLONG		((long)0x7fffffff)
+#define MAX_VINT8	((vint8)0x7f)
+#define MAX_VINT16	((vint16)0x7fff)
+#define MAX_VINT32	((vint32)0x7fffffff)
+
+#define MAX_VUINT8	((vuint8)0xff)
+#define MAX_VUINT16	((vuint16)0xffff)
+#define MAX_VUINT32	((vuint32)0xffffffff)
 
 enum ENoInit { E_NoInit };
 

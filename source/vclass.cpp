@@ -1359,7 +1359,7 @@ void VMethod::OptimiseInstructions()
 			{
 				Instructions[i].Opcode = OPC_DelegateCallB;
 			}
-			else if (((VField*)Instructions[i].Member)->Ofs <= MAXSHORT)
+			else if (((VField*)Instructions[i].Member)->Ofs <= MAX_VINT16)
 			{
 				Instructions[i].Opcode = OPC_DelegateCallS;
 			}
@@ -1380,7 +1380,7 @@ void VMethod::OptimiseInstructions()
 			{
 				Instructions[i].Opcode += 2;
 			}
-			else if (((VField*)Instructions[i].Member)->Ofs <= MAXSHORT)
+			else if (((VField*)Instructions[i].Member)->Ofs <= MAX_VINT16)
 			{
 				Instructions[i].Opcode++;
 			}
@@ -1391,7 +1391,7 @@ void VMethod::OptimiseInstructions()
 			{
 				Instructions[i].Opcode = OPC_ArrayElementB;
 			}
-			else if (Instructions[i].TypeArg.GetSize() < MAXSHORT)
+			else if (Instructions[i].TypeArg.GetSize() < MAX_VINT16)
 			{
 				Instructions[i].Opcode = OPC_ArrayElementS;
 			}
@@ -1402,7 +1402,7 @@ void VMethod::OptimiseInstructions()
 			{
 				Instructions[i].Opcode = OPC_PushNameB;
 			}
-			else if (Instructions[i].NameArg.GetIndex() < MAXSHORT)
+			else if (Instructions[i].NameArg.GetIndex() < MAX_VINT16)
 			{
 				Instructions[i].Opcode = OPC_PushNameS;
 			}
@@ -1478,7 +1478,7 @@ void VMethod::OptimiseInstructions()
 			{
 				Instructions[i].Opcode -= 2;
 			}
-			else if (Offs >= MINSHORT && Offs <= MAXSHORT)
+			else if (Offs >= MIN_VINT16 && Offs <= MAX_VINT16)
 			{
 				Instructions[i].Opcode -= 1;
 			}

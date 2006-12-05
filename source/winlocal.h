@@ -26,17 +26,7 @@
 #ifndef _WIN_LOCAL_H
 #define _WIN_LOCAL_H
 
-// HEADER FILES ------------------------------------------------------------
-
 #include <windows.h>
-#undef MINCHAR
-#undef MINSHORT
-#undef MINLONG
-#undef MAXCHAR
-#undef MAXSHORT
-#undef MAXLONG
-
-// MACROS ------------------------------------------------------------------
 
 #define SAFE_RELEASE(iface) \
 	if (iface) \
@@ -45,19 +35,13 @@
 		iface = NULL; \
 	}
 
-// TYPES -------------------------------------------------------------------
-
 class VWinMessageHandler
 {
 public:
 	virtual LONG OnMessage(HWND, UINT, WPARAM, LPARAM) = 0;
 };
 
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
 void IN_SetActiveWindow(HWND window);
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern HWND					hwnd;
 extern HINSTANCE			hInst;

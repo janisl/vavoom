@@ -494,7 +494,7 @@ int VIpxDriver::Read(int handle, vuint8* buf, int len, sockaddr_t* addr)
 	// if multiple packets are waiting, return them in order by time
 tryagain:
 
-		besttic = MAXLONG;
+	besttic = MAX_INT32;
 	packetnum = -1;
 
 	for (int i = BasePacket[handle] + 1;
@@ -511,7 +511,7 @@ tryagain:
 		}
 	}
 
-	if (besttic == MAXLONG)
+	if (besttic == MAX_INT32)
 	{
 		return 0;                           // no packets
 	}

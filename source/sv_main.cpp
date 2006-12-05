@@ -1449,7 +1449,7 @@ void SV_SendReliable()
 				GGameInfo->Players[i]->Message << (vuint8)svc_stats_byte
 					<< (vuint8)j << (vuint8)sval;
 			}
-			else if (sval >= MINSHORT && sval <= MAXSHORT)
+			else if (sval >= MIN_VINT16 && sval <= MAX_VINT16)
 			{
 				GGameInfo->Players[i]->Message << (vuint8)svc_stats_short
 					<< (vuint8)j << (vint16)sval;
