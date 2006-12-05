@@ -438,6 +438,13 @@ AC_CHECK_HEADER([png.h], [], AC_MSG_ERROR(['Vavoom requires libpng to compile'])
 AC_CHECK_LIB([png], [png_read_image], [], AC_MSG_ERROR(['Vavoom requires libpng to compile']))
 
 dnl
+dnl  **** Check for libjpeg ****
+dnl
+
+AC_CHECK_HEADER([jpeglib.h], [], AC_MSG_ERROR(['Vavoom requires libjpeg to compile']))
+AC_CHECK_LIB([jpeg], [jpeg_read_header], [], AC_MSG_ERROR(['Vavoom requires libjpeg to compile']))
+
+dnl
 dnl  **** Check wether using external glBSP ****
 dnl
 

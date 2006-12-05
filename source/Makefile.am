@@ -176,6 +176,7 @@ _____MAIN_EXE__SOURCES = \
 	r_tex_base.cpp \
 	r_tex_flat.cpp \
 	r_tex_imgz.cpp \
+	r_tex_jpeg.cpp \
 	r_tex_multipatch.cpp \
 	r_tex_patch.cpp \
 	r_tex_pcx.cpp \
@@ -435,6 +436,7 @@ _____SERVER_EXE__SOURCES = \
 	r_tex_base.cpp \
 	r_tex_flat.cpp \
 	r_tex_imgz.cpp \
+	r_tex_jpeg.cpp \
 	r_tex_multipatch.cpp \
 	r_tex_patch.cpp \
 	r_tex_pcx.cpp \

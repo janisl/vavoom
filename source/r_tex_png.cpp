@@ -28,6 +28,7 @@
 #if defined(CLIENT) || !defined(SERVER)
 #include <png.h>
 #endif
+
 #include "gamedefs.h"
 #include "r_local.h"
 
@@ -115,7 +116,6 @@ VTexture* VPngTexture::Create(VStream& Strm, int LumpNum, VName Name)
 VPngTexture::VPngTexture(int ALumpNum, VName AName, int AWidth, int AHeight)
 : LumpNum(ALumpNum)
 , Pixels(0)
-, Palette(0)
 {
 	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
 	Width = AWidth;
@@ -134,10 +134,6 @@ VPngTexture::~VPngTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
-	}
-	if (Palette)
-	{
-		delete[] Palette;
 	}
 	unguard;
 }
@@ -290,19 +286,6 @@ vuint8* VPngTexture::GetPixels()
 
 //==========================================================================
 //
-//	VPngTexture::GetPalette
-//
-//==========================================================================
-
-rgba_t* VPngTexture::GetPalette()
-{
-	guardSlow(VPngTexture::GetPalette);
-	return Palette;
-	unguardSlow;
-}
-
-//==========================================================================
-//
 //	VPngTexture::Unload
 //
 //==========================================================================
@@ -314,11 +297,6 @@ void VPngTexture::Unload()
 	{
 		delete[] Pixels;
 		Pixels = NULL;
-	}
-	if (Palette)
-	{
-		delete[] Palette;
-		Palette = NULL;
 	}
 	unguard;
 }

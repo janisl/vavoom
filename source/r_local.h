@@ -103,10 +103,11 @@ public:
 //
 class VPatchTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	vuint8*		Pixels;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VPatchTexture(int, VName, int, int, int, int);
@@ -151,10 +152,11 @@ public:
 //
 class VFlatTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	vuint8*		Pixels;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VFlatTexture(int InLumpNum);
@@ -168,12 +170,13 @@ public:
 //
 class VRawPicTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	int			PalLumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VRawPicTexture(int, int);
@@ -188,10 +191,11 @@ public:
 //
 class VAutopageTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	vuint8*		Pixels;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VAutopageTexture(int);
@@ -207,10 +211,11 @@ public:
 //
 class VImgzTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	vuint8*		Pixels;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VImgzTexture(int, VName, int, int, int, int);
@@ -224,11 +229,12 @@ public:
 //
 class VPcxTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VPcxTexture(int, VName, struct pcx_t&);
@@ -243,11 +249,12 @@ public:
 //
 class VTgaTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VTgaTexture(int, VName, struct tgaHeader_t&);
@@ -262,17 +269,33 @@ public:
 //
 class VPngTexture : public VTexture
 {
-public:
+private:
 	int			LumpNum;
 	vuint8*		Pixels;
-	rgba_t*		Palette;
 
+public:
 	static VTexture* Create(VStream&, int, VName);
 
 	VPngTexture(int, VName, int, int);
 	~VPngTexture();
 	vuint8* GetPixels();
-	rgba_t* GetPalette();
+	void Unload();
+};
+
+//
+//	A JPEG file.
+//
+class VJpegTexture : public VTexture
+{
+public:
+	int			LumpNum;
+	vuint8*		Pixels;
+
+	static VTexture* Create(VStream&, int, VName);
+
+	VJpegTexture(int, VName, int, int);
+	~VJpegTexture();
+	vuint8* GetPixels();
 	void Unload();
 };
 
@@ -281,7 +304,7 @@ public:
 //
 class VWarpTexture : public VTexture
 {
-public:
+protected:
 	VTexture*	SrcTex;
 	vuint8*		Pixels;
 	float		GenTime;
@@ -292,6 +315,7 @@ public:
 	float*		YSin1;
 	float*		YSin2;
 
+public:
 	VWarpTexture(VTexture*);
 	~VWarpTexture();
 	void SetFrontSkyLayer();

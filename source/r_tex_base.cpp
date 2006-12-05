@@ -65,6 +65,7 @@ VTexture* VTexture::CreateTexture(int Type, int LumpNum, VName Name)
 	{
 		{ VImgzTexture::Create,		TEXTYPE_Any },
 		{ VPngTexture::Create,		TEXTYPE_Any },
+		{ VJpegTexture::Create,		TEXTYPE_Any },
 		{ VPcxTexture::Create,		TEXTYPE_Any },
 		{ VTgaTexture::Create,		TEXTYPE_Any },
 		{ VFlatTexture::Create,		TEXTYPE_Flat },
@@ -301,6 +302,15 @@ VTexture* VTexture::GetHighResolutionTexture()
 	//	First try PNG.
 	char HighResName[80];
 	sprintf(HighResName, "hirestex/%s/%s.png", DirName, *Name);
+	if (FL_FileExists(HighResName))
+	{
+		//	Create new high-resolution texture.
+		HiResTexture = CreateTexture(Type, -1, HighResName);
+		return HiResTexture;
+	}
+
+	//	Then try JPG.
+	sprintf(HighResName, "hirestex/%s/%s.jpg", DirName, *Name);
 	if (FL_FileExists(HighResName))
 	{
 		//	Create new high-resolution texture.
