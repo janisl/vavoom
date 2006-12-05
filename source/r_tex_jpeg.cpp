@@ -310,8 +310,13 @@ vuint8* VJpegTexture::GetPixels()
 		//	Read file parameters with jpeg_read_header()
 		jpeg_read_header(&cinfo, TRUE);
 
-		Width = cinfo.image_width;
-		Height = cinfo.image_height;
+		if (!((cinfo.out_color_space == JCS_RGB && cinfo.num_components == 3) ||
+			(cinfo.out_color_space == JCS_CMYK && cinfo.num_components == 4) ||
+			(cinfo.out_color_space == JCS_GRAYSCALE && cinfo.num_components == 1)))
+		{
+			GCon->Log("Unsupported JPEG file format");
+			throw -1;
+		}
 
 		//	Start decompressor.
 		jpeg_start_decompress(&cinfo);
@@ -328,14 +333,46 @@ vuint8* VJpegTexture::GetPixels()
 		{
 			jpeg_read_scanlines(&cinfo, buffer, 1);
 			JOCTET* pSrc = buffer[0];
-			for (int x = 0; x < Width; x++)
+			switch (cinfo.out_color_space)
 			{
-				pDst[0] = pSrc[0];
-				pDst[1] = pSrc[1];
-				pDst[2] = pSrc[2];
-				pDst[3] = 0xff;
-				pSrc += 3;
-				pDst += 4;
+			case JCS_RGB:
+				for (int x = 0; x < Width; x++)
+				{
+					pDst[0] = pSrc[0];
+					pDst[1] = pSrc[1];
+					pDst[2] = pSrc[2];
+					pDst[3] = 0xff;
+					pSrc += 3;
+					pDst += 4;
+				}
+				break;
+
+			case JCS_GRAYSCALE:
+				for (int x = 0; x < Width; x++)
+				{
+					pDst[0] = pSrc[0];
+					pDst[1] = pSrc[0];
+					pDst[2] = pSrc[0];
+					pDst[3] = 0xff;
+					pSrc++;
+					pDst += 4;
+				}
+				break;
+
+			case JCS_CMYK:
+				for (int x = 0; x < Width; x++)
+				{
+					pDst[0] = (255 - pSrc[0]) * (255 - pSrc[3]) / 255;
+					pDst[1] = (255 - pSrc[1]) * (255 - pSrc[3]) / 255;
+					pDst[2] = (255 - pSrc[2]) * (255 - pSrc[3]) / 255;
+					pDst[3] = 0xff;
+					pSrc += 4;
+					pDst += 4;
+				}
+				break;
+
+			default:
+				break;
 			}
 		}
 
