@@ -31,11 +31,11 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void MN_Init(void);
-boolean MN_Responder(event_t *event);
-void MN_Drawer(void);
-void MN_ActivateMenu(void);
-void MN_DeactivateMenu(void);
-boolean MN_Active(void);
+void MN_Init();
+bool MN_Responder(event_t *event);
+void MN_Drawer();
+void MN_ActivateMenu();
+void MN_DeactivateMenu();
+bool MN_Active();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

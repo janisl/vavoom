@@ -28,8 +28,6 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define boolean		fucked_boolean
-#define byte		fucked_byte
 #include <windows.h>
 #undef MINCHAR
 #undef MINSHORT
@@ -37,8 +35,6 @@
 #undef MAXCHAR
 #undef MAXSHORT
 #undef MAXLONG
-#undef boolean
-#undef byte
 
 // MACROS ------------------------------------------------------------------
 

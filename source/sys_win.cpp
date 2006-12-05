@@ -90,7 +90,7 @@ static int			lowshift;
 
 static HANDLE		tevent;
 
-boolean		ActiveApp, Minimized;
+static bool			ActiveApp, Minimized;
 
 static VCvarI		win_priority("win_priority", "0", CVAR_Archive);
 static VCvarI		win_sys_keys("win_sys_keys", "1", CVAR_Archive);

@@ -31,7 +31,7 @@
 
 struct server_t
 {
-	boolean		active;
+	bool		active;
 
 	int			intermission;
 	int			intertime;

@@ -58,7 +58,7 @@ public:
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern boolean				graphics_started;
+extern bool				graphics_started;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -279,7 +279,7 @@ void C_Drawer()
 //
 //==========================================================================
 
-boolean C_Responder(event_t* ev)
+bool C_Responder(event_t* ev)
 {
 	const char*	cp;
 	VStr		str;

@@ -65,7 +65,7 @@ float	fScaleYI;
 
 int		usegamma = 0;
 
-boolean				graphics_started = false;
+bool	graphics_started = false;
 
 // Table of RGB values in current gamma corection level
 byte 	gammatable[5][256] =
@@ -154,7 +154,7 @@ byte 	gammatable[5][256] =
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean	setresolutionneeded = false;
+static bool		setresolutionneeded = false;
 static int		setwidth;
 static int		setheight;
 static int		setbpp;

@@ -40,8 +40,8 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void SV_ShutdownServer(boolean crash);
-void CL_Disconnect(void);
+void SV_ShutdownServer(bool crash);
+void CL_Disconnect();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -115,7 +115,7 @@ void MN_DeactivateMenu()
 //
 //==========================================================================
 
-boolean MN_Responder(event_t* event)
+bool MN_Responder(event_t* event)
 {
 	if (GClGame->eventMessageBoxResponder(event))
 	{
@@ -153,7 +153,7 @@ void MN_Drawer()
 //
 //==========================================================================
 
-boolean MN_Active()
+bool MN_Active()
 {
 	return GClGame->eventMenuActive() || GClGame->eventMessageBoxActive();
 }

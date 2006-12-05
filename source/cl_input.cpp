@@ -662,7 +662,7 @@ void CL_SendMove()
 // 
 //==========================================================================
 
-boolean CL_Responder(event_t* ev)
+bool CL_Responder(event_t* ev)
 {
 	guard(CL_Responder);
 	switch (ev->type) 

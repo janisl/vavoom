@@ -31,14 +31,14 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void AM_Init(void);
-boolean AM_Responder(event_t* ev);
-void AM_Ticker(void);
-void AM_Drawer(void);
+void AM_Init();
+bool AM_Responder(event_t* ev);
+void AM_Ticker();
+void AM_Drawer();
 // Called to force the automap to quit
 // if the level is completed while it is up.
-void AM_Stop(void);
+void AM_Stop();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern boolean 		automapactive;	// In AutoMap mode?
+extern bool 		automapactive;	// In AutoMap mode?

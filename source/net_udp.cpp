@@ -234,7 +234,7 @@ int VUdpDriver::OpenSocket(int port)
 	guard(UDP_OpenSocket);
 	int			newsocket;
 	sockaddr_in	address;
-	boolean		trueval = true;
+	int			trueval = true;
 
 	newsocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (newsocket == -1)
@@ -242,7 +242,7 @@ int VUdpDriver::OpenSocket(int port)
 		return -1;
 	}
 
-	if (ioctl(newsocket, FIONBIO, (char *)&trueval) == -1)
+	if (ioctl(newsocket, FIONBIO, (char*)&trueval) == -1)
 	{
 		close(newsocket);
 		return -1;

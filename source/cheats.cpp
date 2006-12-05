@@ -56,7 +56,7 @@
 //
 //==========================================================================
 
-static boolean CheatAllowed()
+static bool CheatAllowed()
 {
    	if (!sv.active || sv.intermission || !GGameInfo->Players[0])
     {

@@ -56,7 +56,7 @@ void EntInit();
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void SV_DropClient(bool crash);
-void SV_ShutdownServer(boolean);
+void SV_ShutdownServer(bool);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
@@ -87,10 +87,10 @@ VBasePlayer*	GPlayersBase[MAXPLAYERS];
 
 skill_t         gameskill; 
 
-boolean         paused;
+bool			paused;
 
-boolean         deathmatch = false;   	// only if started as net death
-boolean         netgame;                // only true if packets are broadcast
+bool			deathmatch = false;   	// only if started as net death
+bool			netgame;                // only true if packets are broadcast
 
 VEntity**		sv_mobjs;
 mobj_base_t*	sv_mo_base;
@@ -1538,7 +1538,7 @@ static void CheckForSkip()
 {
 	int   			i;
 	VBasePlayer		*player;
-	static boolean	triedToSkip;
+	static bool		triedToSkip;
 	bool			skip = false;
 
 	for (i = 0; i < MAXPLAYERS; i++)
@@ -2753,7 +2753,7 @@ void SV_DropClient(bool)
 //
 //==========================================================================
 
-void SV_ShutdownServer(boolean crash)
+void SV_ShutdownServer(bool crash)
 {
 	guard(SV_ShutdownServer);
 	vuint8		buf[128];

@@ -67,7 +67,7 @@ int 					sb_height = 32;
 //
 //==========================================================================
 
-void SB_Init(void)
+void SB_Init()
 {
 	sb_height = GClGame->sb_height;
 }
@@ -78,7 +78,7 @@ void SB_Init(void)
 //
 //==========================================================================
 
-void SB_Ticker(void)
+void SB_Ticker()
 {
 	if (cls.signon == SIGNONS)
 	{
@@ -92,7 +92,7 @@ void SB_Ticker(void)
 //
 //==========================================================================
 
-boolean SB_Responder(event_t *)
+bool SB_Responder(event_t *)
 {
 	return false;
 }
@@ -116,7 +116,7 @@ void SB_Drawer()
 //
 //==========================================================================
 
-void SB_Start(void)
+void SB_Start()
 {
 	GClGame->eventStatusBarStartMap();
 }

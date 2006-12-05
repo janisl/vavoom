@@ -70,7 +70,7 @@ void F_StartFinale(const char* FinaleType)
 //
 //===========================================================================
 
-boolean F_Responder(event_t *event)
+bool F_Responder(event_t *event)
 {
     if (cls.state != ca_connected || GClGame->intermission != 2)
     	return false;

@@ -344,7 +344,7 @@ struct polyobj_t
 	float		base_x;
 	float		base_y;
 	float		base_angle;
-	boolean		changed;
+	int			changed;
 	VThinker*	SpecialData;	// pointer a thinker, if the poly is moving
 };
 
@@ -723,8 +723,8 @@ struct level_t
 	int			sky2Texture;
 	float		sky1ScrollDelta;
 	float		sky2ScrollDelta;
-	boolean		doubleSky;
-	boolean		lightning;
+	int			doubleSky;
+	int			lightning;
 	VName		SkyBox;
 	VName		FadeTable;
 

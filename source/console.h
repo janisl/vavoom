@@ -31,14 +31,14 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void C_Init(void);
-boolean	C_Responder(event_t*);
-void C_Drawer(void);
-bool C_Active(void);
-void C_Start(void);
-void C_StartFull(void);
-void C_Stop(void);
-void C_ClearNotify(void);
+void C_Init();
+bool C_Responder(event_t*);
+void C_Drawer();
+bool C_Active();
+void C_Start();
+void C_StartFull();
+void C_Stop();
+void C_ClearNotify();
 void C_NotifyMessage(const char *msg);
 void C_CentreMessage(const char *msg);
 

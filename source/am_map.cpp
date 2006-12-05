@@ -127,7 +127,7 @@ struct mline_t
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-boolean		automapactive = false;
+bool		automapactive = false;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -221,7 +221,7 @@ static float	start_scale_mtof = INITSCALEMTOF;
 
 static mpoint_t	oldplr;
 
-static boolean	use_marks = false;
+static bool		use_marks = false;
 static int		marknums[10]; // numbers used for marking by the automap
 static mpoint_t	markpoints[AM_NUMMARKPOINTS]; // where the points are
 static int 		markpointnum = 0; // next point to be assigned
@@ -231,7 +231,7 @@ static int		mapheight;
 static short	mapystart=0; // y-value for the start of the map bitmap...used in the paralax stuff.
 static short	mapxstart=0; //x-value for the bitmap.
 
-static boolean	stopped = true;
+static bool		stopped = true;
 
 static VName	lastmap;
 
@@ -656,7 +656,7 @@ static void AM_maxOutWindowScale()
 //
 //==========================================================================
 
-boolean AM_Responder(event_t* ev)
+bool AM_Responder(event_t* ev)
 {
 	int 		rc;
 	static int	bigstate = 0;
@@ -965,7 +965,7 @@ static void AM_clearFB()
 //
 //==========================================================================
 
-static boolean AM_clipMline(mline_t* ml, fline_t* fl)
+static bool AM_clipMline(mline_t* ml, fline_t* fl)
 {
 	enum
 	{

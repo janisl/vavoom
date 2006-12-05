@@ -74,9 +74,9 @@ struct client_static_t
 
 	// demo recording info must be here, because record is started before
 	// entering a map (and clearing client_state_t)
-	boolean			demorecording;
-	boolean			demoplayback;
-	boolean			timedemo;
+	bool			demorecording;
+	bool			demoplayback;
+	bool			timedemo;
 	VStream*		demofile;
 	int				td_lastframe;	// to meter out one message a frame
 	int				td_startframe;	// host_framecount at start
@@ -90,7 +90,7 @@ struct client_static_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-boolean CL_Responder(event_t* ev);
+bool CL_Responder(event_t* ev);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

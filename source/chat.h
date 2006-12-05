@@ -31,10 +31,10 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void CT_Init(void);
-void CT_Drawer(void);
-boolean CT_Responder(event_t *ev);
+void CT_Init();
+void CT_Drawer();
+bool CT_Responder(event_t *ev);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern boolean	chatmodeon;
+extern bool		chatmodeon;

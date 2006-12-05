@@ -72,7 +72,7 @@ enum gameArchiveSegment_t
 
 void SV_SpawnServer(const char *mapname, bool spawn_thinkers);
 void SV_SendServerInfoToClients();
-void SV_ShutdownServer(boolean);
+void SV_ShutdownServer(bool);
 void CL_Disconnect();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -91,7 +91,7 @@ extern VMessage		sv_signon;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static boolean 		SavingPlayers;
+static bool 		SavingPlayers;
 
 // CODE --------------------------------------------------------------------
 
@@ -700,7 +700,7 @@ static void UnarchiveSounds()
 //
 //==========================================================================
 
-static void SV_SaveMap(int slot, boolean savePlayers)
+static void SV_SaveMap(int slot, bool savePlayers)
 {
 	guard(SV_SaveMap);
 	// Make sure we don't have any garbage

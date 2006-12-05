@@ -35,7 +35,7 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void SV_ShutdownServer(boolean crash);
+void SV_ShutdownServer(bool crash);
 void CL_Disconnect();
 
 void CL_ParseServerMessage(VMessage&);

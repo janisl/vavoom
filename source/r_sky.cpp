@@ -552,7 +552,7 @@ static void R_LightningFlash()
 	int 		i;
 	sector_t 	*tempSec;
 	int 		*tempLight;
-	boolean 	foundSec;
+	bool	 	foundSec;
 	int 		flashLight;
 
 	if (LightningFlash)

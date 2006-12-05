@@ -74,7 +74,7 @@ struct spriteframe_t
 	// If false use 0 for any position.
 	// Note: as eight entries are available,
 	//  we might as well insert the same name eight times.
-	boolean     rotate;
+	bool		rotate;
 
 	// Lump to use for view angles 0-7.
 	short		lump[8];
@@ -611,7 +611,7 @@ static void RenderSprite(VEntity* thing)
 	sprframe = &sprdef->spriteframes[thing->State->frame & FF_FRAMEMASK];
 
 	int			lump;
-	boolean		flip;
+	bool		flip;
 
 	if (sprframe->rotate)
 	{
@@ -622,13 +622,13 @@ static void RenderSprite(VEntity* thing)
 		ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 2.0);
 		vuint32 rot = (vuint32)(ang * 8 / 360.0) & 7;
 		lump = sprframe->lump[rot];
-		flip = (boolean)sprframe->flip[rot];
+		flip = sprframe->flip[rot];
 	}
 	else
 	{
 		// use single rotation for all views
 		lump = sprframe->lump[0];
-		flip = (boolean)sprframe->flip[0];
+		flip = sprframe->flip[0];
 	}
 
 	VTexture* Tex = GTextureManager.Textures[lump];
@@ -962,7 +962,7 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 	spritedef_t*		sprdef;
 	spriteframe_t*		sprframe;
 	int					lump;
-	boolean				flip;
+	bool				flip;
 
 	// decide which patch to use
 	if ((vuint32)VEnt->SpriteIndex >= MAX_SPRITE_MODELS)
@@ -984,7 +984,7 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 	sprframe = &sprdef->spriteframes[VEnt->SpriteFrame & FF_FRAMEMASK];
 
 	lump = sprframe->lump[0];
-	flip = (boolean)sprframe->flip[0];
+	flip = sprframe->flip[0];
 	VTexture* Tex = GTextureManager.Textures[lump];
 
 	int TexWidth = Tex->GetWidth();
@@ -1147,11 +1147,11 @@ void R_DrawCroshair()
 void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot, int translation)
 {
 	guard(R_DrawSpritePatch);
-	boolean			flip;
+	bool			flip;
 	int				lump;
 
 	spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & FF_FRAMEMASK];
-	flip = (boolean)sprframe->flip[rot];
+	flip = sprframe->flip[rot];
 	lump = sprframe->lump[rot];
 	VTexture* Tex = GTextureManager.Textures[lump];
 

@@ -35,7 +35,7 @@ void SV_Shutdown();
 void CL_SendMove();
 void ServerFrame(int realtics);
 void CL_ReadFromServer();
-void SV_ShutdownServer(boolean crash);
+void SV_ShutdownServer(bool crash);
 void CL_Disconnect();
 VName P_TranslateMap(int map);
 void C_Shutdown();
@@ -664,7 +664,7 @@ const char *Host_GetCoreDump()
 
 void Host_Shutdown()
 {
-	static boolean		shutting_down = false;
+	static bool		shutting_down = false;
 
 	if (shutting_down)
 	{

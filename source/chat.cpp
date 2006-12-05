@@ -42,7 +42,7 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-boolean					chatmodeon;
+bool					chatmodeon;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -103,9 +103,9 @@ static void CT_Stop()
 //
 //===========================================================================
 
-boolean CT_Responder(event_t *ev)
+bool CT_Responder(event_t *ev)
 {
-	boolean		eatkey;
+	bool		eatkey;
 
 	if (!chatmodeon || ev->type != ev_keydown)
 	{

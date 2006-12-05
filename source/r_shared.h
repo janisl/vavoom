@@ -46,8 +46,8 @@ public:
 	int				clipflag;
 	TVec			enter;
 	TVec			exit;
-	boolean			entered;
-	boolean			exited;
+	int				entered;
+	int				exited;
 };
 
 struct texinfo_t

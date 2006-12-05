@@ -249,10 +249,10 @@ extern VBasePlayer*		GPlayersBase[MAXPLAYERS]; // Bookkeeping on players - state
 
 extern skill_t			gameskill;
  
-extern boolean			netgame;                // only true if packets are broadcast
-extern boolean			deathmatch;   			// only if started as net death
+extern bool				netgame;                // only true if packets are broadcast
+extern bool				deathmatch;   			// only if started as net death
 
-extern boolean			paused;
+extern bool				paused;
 
 //==========================================================================
 //

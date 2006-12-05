@@ -37,7 +37,7 @@
 void SB_Init();
 void SB_Drawer();
 void SB_Ticker();
-boolean	SB_Responder(event_t* ev);
+bool SB_Responder(event_t* ev);
 void SB_Start();// Called when the console player is spawned on each level.
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

@@ -100,7 +100,7 @@ vuint8*					translationtables;
 static FDrawerDesc		*DrawerList[DRAWER_MAX];
 
 static VCvarI			screen_size("screen_size", "10", CVAR_Archive);
-static boolean			set_resolutioon_needed = true;
+static bool				set_resolutioon_needed = true;
 
 // Angles in the SCREENWIDTH wide window.
 static VCvarF			fov("fov", "90");
