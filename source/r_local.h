@@ -140,7 +140,7 @@ private:
 	vuint8*			Pixels;
 
 public:
-	VMultiPatchTexture(VStream&, int, VTexture**, int, bool);
+	VMultiPatchTexture(VStream&, int, VTexture**, int, int, bool);
 	~VMultiPatchTexture();
 	void SetFrontSkyLayer();
 	vuint8* GetPixels();

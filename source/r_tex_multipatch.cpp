@@ -53,7 +53,7 @@
 //==========================================================================
 
 VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
-	VTexture** PatchLookup, int NumPatchLookup, bool IsStrife)
+	VTexture** PatchLookup, int NumPatchLookup, int FirstTex, bool IsStrife)
 : Pixels(0)
 {
 	guard(VMultiPatchTexture::VMultiPatchTexture);
@@ -78,7 +78,7 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 	//	In Doom textures were searched from the beginning, so to avoid
 	// problems, especially with animated textures, set name to a blank one
 	// if this one is a duplicate.
-	if (GTextureManager.CheckNumForName(Name, TEXTYPE_Wall, false, false) >= 0)
+	if (GTextureManager.CheckNumForName(Name, TEXTYPE_Wall, false, false) >= FirstTex)
 	{
 		Name = NAME_None;
 	}

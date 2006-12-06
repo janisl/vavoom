@@ -478,6 +478,7 @@ void VTextureManager::AddTextures()
 	int NamesFile = -1;
 	int LumpTex1 = -1;
 	int LumpTex2 = -1;
+	int FirstTex;
 
 	//	For each PNAMES lump load TEXTURE1 and TEXTURE2 from the same wad.
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
@@ -490,8 +491,9 @@ void VTextureManager::AddTextures()
 		NamesFile = W_LumpFile(Lump);
 		LumpTex1 = W_CheckNumForNameInFile(NAME_texture1, NamesFile);
 		LumpTex2 = W_CheckNumForNameInFile(NAME_texture2, NamesFile);
-		AddTexturesLump(Lump, LumpTex1, true);
-		AddTexturesLump(Lump, LumpTex2, false);
+		FirstTex = Textures.Num();
+		AddTexturesLump(Lump, LumpTex1, FirstTex, true);
+		AddTexturesLump(Lump, LumpTex2, FirstTex, false);
 	}
 
 	//	If last TEXTURE1 or TEXTURE2 are in a wad without a PNAMES, they
@@ -508,8 +510,9 @@ void VTextureManager::AddTextures()
 	{
 		LastTex1 = -1;
 	}
-	AddTexturesLump(W_GetNumForName(NAME_pnames), LastTex1, true);
-	AddTexturesLump(W_GetNumForName(NAME_pnames), LastTex2, false);
+	FirstTex = Textures.Num();
+	AddTexturesLump(W_GetNumForName(NAME_pnames), LastTex1, FirstTex, true);
+	AddTexturesLump(W_GetNumForName(NAME_pnames), LastTex2, FirstTex, false);
 	unguard;
 }
 
@@ -519,7 +522,8 @@ void VTextureManager::AddTextures()
 //
 //==========================================================================
 
-void VTextureManager::AddTexturesLump(int NamesLump, int TexLump, bool First)
+void VTextureManager::AddTexturesLump(int NamesLump, int TexLump,
+	int FirstTex, bool First)
 {
 	guard(VTextureManager::AddTexturesLump);
 	if (TexLump < 0)
@@ -593,7 +597,7 @@ void VTextureManager::AddTexturesLump(int NamesLump, int TexLump, bool First)
 	for (int i = 0; i < NumTex; i++)
 	{
 		VMultiPatchTexture* Tex = new VMultiPatchTexture(*Strm, i,
-			patchtexlookup, nummappatches, IsStrife);
+			patchtexlookup, nummappatches, FirstTex, IsStrife);
 		AddTexture(Tex);
 		if (i == 0 && First)
 		{
