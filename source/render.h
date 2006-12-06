@@ -117,6 +117,7 @@ private:
 	vuint8*		RgbTable;
 
 	void AddTextures();
+	void AddTexturesLump(int, int, bool);
 	void AddGroup(int, EWadNamespace);
 	void AddHiResTextures();
 };

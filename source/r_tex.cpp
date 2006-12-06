@@ -475,8 +475,60 @@ int VTextureManager::AddFileTexture(VName Name, int Type)
 void VTextureManager::AddTextures()
 {
 	guard(VTextureManager::AddTextures);
+	int NamesFile = -1;
+	int LumpTex1 = -1;
+	int LumpTex2 = -1;
+
+	//	For each PNAMES lump load TEXTURE1 and TEXTURE2 from the same wad.
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) != NAME_pnames)
+		{
+			continue;
+		}
+		NamesFile = W_LumpFile(Lump);
+		LumpTex1 = W_CheckNumForNameInFile(NAME_texture1, NamesFile);
+		LumpTex2 = W_CheckNumForNameInFile(NAME_texture2, NamesFile);
+		AddTexturesLump(Lump, LumpTex1, true);
+		AddTexturesLump(Lump, LumpTex2, false);
+	}
+
+	//	If last TEXTURE1 or TEXTURE2 are in a wad without a PNAMES, they
+	// must be loaded too.
+	int LastTex1 = W_CheckNumForName(NAME_texture1);
+	int LastTex2 = W_CheckNumForName(NAME_texture2);
+	if (LastTex1 >= 0 && (LastTex1 == LumpTex1 ||
+		W_LumpFile(LastTex1) <= NamesFile))
+	{
+		LastTex1 = -1;
+	}
+	if (LastTex2 >= 0 && (LastTex2 == LumpTex2 ||
+		W_LumpFile(LastTex2) <= NamesFile))
+	{
+		LastTex1 = -1;
+	}
+	AddTexturesLump(W_GetNumForName(NAME_pnames), LastTex1, true);
+	AddTexturesLump(W_GetNumForName(NAME_pnames), LastTex2, false);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTextureManager::AddTexturesLump
+//
+//==========================================================================
+
+void VTextureManager::AddTexturesLump(int NamesLump, int TexLump, bool First)
+{
+	guard(VTextureManager::AddTexturesLump);
+	if (TexLump < 0)
+	{
+		return;
+	}
+
 	//	Load the patch names from pnames.lmp.
-	VStream* Strm = W_CreateLumpReaderName(NAME_pnames);
+	VStream* Strm = W_CreateLumpReaderNum(NamesLump);
 	vint32 nummappatches = Streamer<vint32>(*Strm);
 	VTexture** patchtexlookup = new VTexture*[nummappatches];
 	for (int i = 0; i < nummappatches; i++)
@@ -486,6 +538,14 @@ void VTextureManager::AddTextures()
 		Strm->Serialise(TmpName, 8);
 		TmpName[8] = 0;
 		VName PatchName(TmpName, VName::AddLower8);
+
+		//	Check if it's already has ben added.
+		int PIdx = CheckNumForName(PatchName, TEXTYPE_WallPatch, false, false);
+		if (PIdx >= 0)
+		{
+			patchtexlookup[i] = Textures[PIdx];
+			continue;
+		}
 
 		//	Get wad lump number.
 		int LNum = W_CheckNumForName(PatchName, WADNS_Patches);
@@ -512,7 +572,7 @@ void VTextureManager::AddTextures()
 	//	Load the map texture definitions from textures.lmp.
 	//	The data is contained in one or two lumps, TEXTURE1 for shareware,
 	// plus TEXTURE2 for commercial.
-	Strm = W_CreateLumpReaderName(NAME_texture1);
+	Strm = W_CreateLumpReaderNum(TexLump);
 	vint32 NumTex = Streamer<vint32>(*Strm);
 
 	//	Check the texture file format.
@@ -535,31 +595,16 @@ void VTextureManager::AddTextures()
 		VMultiPatchTexture* Tex = new VMultiPatchTexture(*Strm, i,
 			patchtexlookup, nummappatches, IsStrife);
 		AddTexture(Tex);
-		if (i == 0)
+		if (i == 0 && First)
 		{
 			//	Copy dimensions of the first texture to the dummy texture in
-			// case they are used. Also set translation of this texture to 0
-			// in a case it's accessed by name.
+			// case they are used.
 			Textures[0]->Width = Tex->Width;
 			Textures[0]->Height = Tex->Height;
 			Tex->Type = TEXTYPE_Null;
 		}
 	}
 	delete Strm;
-
-	//	Read texture2 if present.
-	if (W_CheckNumForName(NAME_texture2) != -1)
-	{
-		Strm = W_CreateLumpReaderName(NAME_texture2);
-		NumTex = Streamer<vint32>(*Strm);
-		for (int i = 0; i < NumTex; i++)
-		{
-			AddTexture(new VMultiPatchTexture(*Strm, i,
-				patchtexlookup, nummappatches, IsStrife));
-		}
-		delete Strm;
-	}
-
 	delete[] patchtexlookup;
 	unguard;
 }
