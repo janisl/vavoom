@@ -331,6 +331,30 @@ int W_GetNumForName(VName Name, EWadNamespace NS)
 
 //==========================================================================
 //
+//  W_CheckNumForNameInFile
+//
+//  Returns -1 if name not found.
+//
+//==========================================================================
+
+int W_CheckNumForNameInFile(VName Name, int File, EWadNamespace NS)
+{
+	guard(W_CheckNumForNameInFile);
+	check(File >= 0);
+	check(File < SearchPaths.Num());
+	int i = SearchPaths[File]->CheckNumForName(Name, NS);
+	if (i >= 0)
+	{
+		return MAKE_HANDLE(File, i);
+	}
+
+	// Not found.
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
 //  W_LumpLength
 //
 //  Returns the buffer size needed to load the given lump.
@@ -367,6 +391,19 @@ VName W_LumpName(int lump)
 	int lumpindex = LUMP_INDEX(lump);
 	return w->LumpName(lumpindex);
 	unguard;
+}
+
+//==========================================================================
+//
+//  W_LumpFile
+//
+//  Returns file index of the given lump.
+//
+//==========================================================================
+
+int W_LumpFile(int lump)
+{
+	return FILE_INDEX(lump);
 }
 
 //==========================================================================

@@ -86,9 +86,11 @@ void W_BuildPVS(int lump, int gllump);
 
 int W_CheckNumForName(VName Name, EWadNamespace NS = WADNS_Global);
 int W_GetNumForName(VName Name, EWadNamespace NS = WADNS_Global);
+int W_CheckNumForNameInFile(VName Name, int File, EWadNamespace NS = WADNS_Global);
 
 int W_LumpLength(int lump);
 VName W_LumpName(int lump);
+int W_LumpFile(int lump);
 
 void W_ReadFromLump(int lump, void *dest, int pos, int size);
 VStream* W_CreateLumpReaderNum(int lump);
