@@ -88,9 +88,9 @@ bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	bool Windowed)
 {
 	guard(VAllegroOpenGLDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
 	bool default_mode = false;
 	if (!Width || !Height)
 	{
