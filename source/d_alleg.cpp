@@ -133,9 +133,9 @@ bool VAllegroSoftwareDrawer::SetResolution(int AWidth, int AHeight,
 	int ABPP, bool Windowed)
 {
 	guard(VAllegroSoftwareDrawer::SetResolution);
-	int Width = InWidth;
-	int Height = InHeight;
-	int BPP = InBPP;
+	int Width = AWidth;
+	int Height = AHeight;
+	int BPP = ABPP;
 	if (!Width || !Height)
 	{
 		//	Set defaults
