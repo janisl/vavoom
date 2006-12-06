@@ -378,11 +378,18 @@ bool TraceLine(TVec start, TVec end)
 void AddStaticLight(TVec origin, float radius)
 {
 	MSG_Select(MSG_SV_SIGNON);
-	MSG_WriteByte(svc_static_light);
-	MSG_WriteShort(ftoi(origin.x));
-	MSG_WriteShort(ftoi(origin.y));
-	MSG_WriteShort(ftoi(origin.z));
-	MSG_WriteByte(ftoi(radius / 8.0));
+	if (MSG_CheckSpace(8))
+	{
+		MSG_WriteByte(svc_static_light);
+		MSG_WriteShort(ftoi(origin.x));
+		MSG_WriteShort(ftoi(origin.y));
+		MSG_WriteShort(ftoi(origin.z));
+		MSG_WriteByte(ftoi(radius / 8.0));
+	}
+	else
+	{
+		print("Too many static lights");
+	}
 }
 
 //==========================================================================
@@ -394,12 +401,19 @@ void AddStaticLight(TVec origin, float radius)
 void AddStaticLightRGB(TVec origin, float radius, int colour)
 {
 	MSG_Select(MSG_SV_SIGNON);
-	MSG_WriteByte(svc_static_light_rgb);
-	MSG_WriteShort(ftoi(origin.x));
-	MSG_WriteShort(ftoi(origin.y));
-	MSG_WriteShort(ftoi(origin.z));
-	MSG_WriteByte(ftoi(radius / 8.0));
-	MSG_WriteLong(colour);
+	if (MSG_CheckSpace(12))
+	{
+		MSG_WriteByte(svc_static_light_rgb);
+		MSG_WriteShort(ftoi(origin.x));
+		MSG_WriteShort(ftoi(origin.y));
+		MSG_WriteShort(ftoi(origin.z));
+		MSG_WriteByte(ftoi(radius / 8.0));
+		MSG_WriteLong(colour);
+	}
+	else
+	{
+		print("Too many static lights");
+	}
 }
 
 //==========================================================================
