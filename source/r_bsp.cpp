@@ -394,10 +394,10 @@ static bool ClipIsBBoxVisible(float* BBox)
 		}
 		else if (BBox[4] < vieworg.y)
 		{
-			v1.x = BBox[3];
-			v1.y = BBox[1];
-			v2.x = BBox[0];
-			v2.y = BBox[4];
+			v1.x = BBox[0];
+			v1.y = BBox[4];
+			v2.x = BBox[3];
+			v2.y = BBox[1];
 		}
 		else
 		{
