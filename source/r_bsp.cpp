@@ -502,6 +502,40 @@ static bool ClipIsBBoxVisible(float* BBox)
 
 //==========================================================================
 //
+//	ClipCheckSubsector
+//
+//==========================================================================
+
+static bool ClipCheckSubsector(subsector_t* Sub)
+{
+	guard(ClipCheckSubsector);
+	if (!ClipHead)
+	{
+		return true;
+	}
+	for (int i = 0; i < Sub->numlines; i++)
+	{
+		seg_t* line = &GClLevel->Segs[Sub->firstline + i];
+
+		float dist = DotProduct(vieworg, line->normal) - line->dist;
+		if (dist <= 0)
+		{
+			//	Viewer is in back side or on plane
+			continue;
+		}
+
+		if (IsRangeVisible(PointToClipAngle(*line->v2),
+			PointToClipAngle(*line->v1)))
+		{
+			return true;
+		}
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ClipAddSubsectorSegs
 //
 //==========================================================================
@@ -785,6 +819,11 @@ static void RenderSubsector(int num, int clipflags)
 	if (!r_sub->sector->linecount)
 	{
 		//	Skip sectors containing original polyobjs
+		return;
+	}
+
+	if (!ClipCheckSubsector(r_sub))
+	{
 		return;
 	}
 
