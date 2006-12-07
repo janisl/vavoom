@@ -159,6 +159,78 @@ void R_ClipShutdown()
 
 //==========================================================================
 //
+//	ClipInitFrustrumRange
+//
+//==========================================================================
+
+static void ClipInitFrustrumRange()
+{
+	guard(ClipInitFrustrumRange);
+	check(!ClipHead);
+
+	if (viewforward.z > 0.9 || viewforward.z < -0.9)
+	{
+		//	Looking up or down, can see behind.
+		return;
+	}
+
+	TVec Pts[4];
+	TVec TransPts[4];
+	Pts[0] = TVec(1, refdef.fovx, refdef.fovy);
+	Pts[1] = TVec(1, refdef.fovx, -refdef.fovy);
+	Pts[2] = TVec(1, -refdef.fovx, refdef.fovy);
+	Pts[3] = TVec(1, -refdef.fovx, -refdef.fovy);
+	TVec clipforward = Normalise(TVec(viewforward.x, viewforward.y, 0.0));
+	float d1 = 0;
+	float d2 = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		TransPts[i].x = Pts[i].y * viewright.x + Pts[i].z * viewup.x + Pts[i].x * viewforward.x;
+		TransPts[i].y = Pts[i].y * viewright.y + Pts[i].z * viewup.y + Pts[i].x * viewforward.y;
+		TransPts[i].z = Pts[i].y * viewright.z + Pts[i].z * viewup.z + Pts[i].x * viewforward.z;
+		if (DotProduct(TransPts[i], clipforward) <= 0)
+		{
+			//	Player can see behind.
+			return;
+		}
+		float a = matan(TransPts[i].y, TransPts[i].x);
+		if (a < 0)
+			a += 360.0;
+		float d = AngleMod180(a - viewangles.yaw);
+		if (d1 > d)
+			d1 = d;
+		if (d2 < d)
+			d2 = d;
+	}
+	float a1 = AngleMod(viewangles.yaw + d1);
+	float a2 = AngleMod(viewangles.yaw + d2);
+	if (a1 > a2)
+	{
+		ClipHead = NewClipNode();
+		ClipTail = ClipHead;
+		ClipHead->From = a1;
+		ClipHead->To = a2;
+		ClipHead->Prev = NULL;
+		ClipHead->Next = NULL;
+	}
+	else
+	{
+		ClipHead = NewClipNode();
+		ClipHead->From = 0.0;
+		ClipHead->To = a1;
+		ClipTail = NewClipNode();
+		ClipTail->From = a2;
+		ClipTail->To = 360.0;
+		ClipHead->Prev = NULL;
+		ClipHead->Next = ClipTail;
+		ClipTail->Prev = ClipHead;
+		ClipTail->Next = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	DoAddClipRange
 //
 //==========================================================================
@@ -823,6 +895,7 @@ void R_RenderWorld()
 
 	R_SetUpFrustumIndexes();
 	ClearClipNodes();
+	ClipInitFrustrumRange();
 
 	sky_is_visible = false;
 
