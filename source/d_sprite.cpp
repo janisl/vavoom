@@ -102,7 +102,7 @@ extern "C" void D_DrawSpriteSpans_8(sspan_t *pspan)
 	do
 	{
 		pdest = (byte*)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -261,7 +261,7 @@ extern "C" void D_DrawSpriteSpans_16(sspan_t *pspan)
 	do
 	{
 		pdest = (word*)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -420,7 +420,7 @@ extern "C" void D_DrawSpriteSpans_32(sspan_t *pspan)
 	do
 	{
 		pdest = (vuint32*)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -581,7 +581,7 @@ extern "C" void D_DrawFuzzSpriteSpans_8(sspan_t *pspan)
 	do
 	{
 		pdest = (byte*)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -739,7 +739,7 @@ extern "C" void D_DrawAltFuzzSpriteSpans_8(sspan_t *pspan)
 	do
 	{
 		pdest = (byte *)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -902,7 +902,7 @@ extern "C" void D_DrawFuzzSpriteSpans_15(sspan_t *pspan)
 	do
 	{
 		pdest = (word*)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -1074,7 +1074,7 @@ extern "C" void D_DrawFuzzSpriteSpans_16(sspan_t *pspan)
 	do
 	{
 		pdest = (word*)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -1246,7 +1246,7 @@ extern "C" void D_DrawFuzzSpriteSpans_32(sspan_t *pspan)
 	do
 	{
 		pdest = (vuint32*)scrn + ylookup[pspan->v] + pspan->u;
-    	pz = zbuffer + ylookup[pspan->v] + pspan->u;
+		pz = zbuffer + ylookup[pspan->v] + pspan->u;
 
 		count = pspan->count;
 
@@ -1623,16 +1623,17 @@ void VSoftwareDrawer::SpriteScanRightEdge(TVec *vb, int count)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SpriteCaclulateGradients(int lump)
+void VSoftwareDrawer::SpriteCaclulateGradients(int lump, const TVec& normal,
+	float dist, const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	TVec		p_normal, p_saxis, p_taxis;
 	float		distinv;
 
-	TransformVector(r_normal, p_normal);
-	TransformVector(r_saxis, p_saxis);
-	TransformVector(r_taxis, p_taxis);
+	TransformVector(normal, p_normal);
+	TransformVector(saxis, p_saxis);
+	TransformVector(taxis, p_taxis);
 
-	distinv = 1.0 / (r_dist - DotProduct(vieworg, r_normal));
+	distinv = 1.0 / (dist - DotProduct(vieworg, normal));
 
 	d_sdivzstepu = p_saxis.x / xprojection;
 	d_tdivzstepu = p_taxis.x / xprojection;
@@ -1650,8 +1651,10 @@ void VSoftwareDrawer::SpriteCaclulateGradients(int lump)
 	d_ziorigin = p_normal.z * distinv - centrexfrac * d_zistepu -
 			centreyfrac * d_zistepv;
 
-	sadjust = (fixed_t)(DotProduct(vieworg - r_texorg, r_saxis) * 0x10000 + 0.5) - spr_texturemins[0];
-	tadjust = (fixed_t)(DotProduct(vieworg - r_texorg, r_taxis) * 0x10000 + 0.5) - spr_texturemins[1];
+	sadjust = (fixed_t)(DotProduct(vieworg - texorg, saxis) * 0x10000 +
+		0.5) - spr_texturemins[0];
+	tadjust = (fixed_t)(DotProduct(vieworg - texorg, taxis) * 0x10000 +
+		0.5) - spr_texturemins[1];
 
 	// -1 (-epsilon) so we never wander off the edge of the texture
 	bbextents = (GTextureManager.Textures[lump]->GetWidth() << 16) - 1;
@@ -1676,11 +1679,11 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 	miplevel = D_MipLevelForScale(r_nearzi * scale_for_mip);
 	mipscale = 1.0 / (float)(1 << miplevel);
 
-	TransformVector(r_normal, p_normal);
+	TransformVector(surf->plane->normal, p_normal);
 	TransformVector(tex->saxis, p_saxis);
 	TransformVector(tex->taxis, p_taxis);
 
-	distinv = 1.0 / (r_dist - DotProduct(vieworg, r_normal));
+	distinv = 1.0 / (surf->plane->dist - DotProduct(vieworg, surf->plane->normal));
 
 	d_zistepu = p_normal.x * distinv / xprojection;
 	d_zistepv = p_normal.y * distinv / yprojection;
@@ -1723,8 +1726,10 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
-	int translation, int translucency, vuint32 light)
+void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
+	int lump, int translation, int translucency, vuint32 light,
+	const TVec& normal, float dist, const TVec& saxis, const TVec& taxis,
+	const TVec& texorg)
 {
 	int			i;
 	float		ymin, ymax;
@@ -1821,7 +1826,7 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, in
 	}
 	else
 	{
-		SpriteCaclulateGradients(lump);
+		SpriteCaclulateGradients(lump, normal, dist, saxis, taxis, texorg);
 		SetSpriteLump(lump, light, translation);
 	}
 	SpriteScanLeftEdge(verts, r_emited);
@@ -1835,11 +1840,11 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, in
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
-	int translucency)
+void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 {
 	guard(VSoftwareDrawer::DrawMaskedPolygon);
-	SpriteDrawPolygon(cv, count, r_surface, 0, 0, translucency, 0);
+	SpriteDrawPolygon(surf->verts, surf->count, surf, 0, 0, translucency, 0,
+		TVec(), 0, TVec(), TVec(), TVec());
 	unguard;
 }
 
@@ -1849,10 +1854,12 @@ void VSoftwareDrawer::DrawMaskedPolygon(TVec *cv, int count, int,
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawSpritePolygon(TVec *cv, int lump,
-	int translucency, int translation, vuint32 light)
+void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, int lump, int translucency,
+	int translation, vuint32 light, const TVec& normal, float dist,
+	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
-	SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light);
+	SpriteDrawPolygon(cv, 4, NULL, lump, translation, translucency, light,
+		normal, dist, saxis, taxis, texorg);
 	unguard;
 }

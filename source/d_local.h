@@ -169,14 +169,16 @@ public:
 	void SetTexture(int);
 
 	//	Polygon drawing
-	void DrawPolygon(TVec*, int, int, int);
+	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
-	void DrawSkyPolygon(TVec*, int, int, float, int, float);
+	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
 	void EndSky();
-	void DrawMaskedPolygon(TVec*, int, int, int);
-	void DrawSpritePolygon(TVec*, int, int, int, vuint32);
-	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, vuint32, int, bool);
+	void DrawMaskedPolygon(surface_t*, int);
+	void DrawSpritePolygon(TVec*, int, int, int, vuint32, const TVec&, float,
+		const TVec&, const TVec&, const TVec&);
+	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int,
+		const char*, vuint32, int, bool);
 
 	//	Particles
 	void StartParticles();
@@ -235,19 +237,18 @@ protected:
 	void SCInvalidateTexture(int);
 
 	//	Surface caching.
-	surfcache_t *CacheSurface(surface_t *surface, int miplevel);
-	surfcache_t *CacheSkySurface(surface_t *surface, int texture1,
-		int texture2, float offs1, float offs2);
+	surfcache_t* CacheSurface(surface_t*, int);
+	surfcache_t* CacheSkySurface(surface_t*, int, int, float, float);
 
 	//	Sprite drawing.
-	static void SpriteClipEdge(const TVec &v0, const TVec &v1,
-		TClipPlane *clip, int clipflags);
-	static void SpriteScanLeftEdge(TVec *vb, int count);
-	static void SpriteScanRightEdge(TVec *vb, int count);
-	void SpriteCaclulateGradients(int lump);
-	void MaskedSurfCaclulateGradients(surface_t *surf);
-	void SpriteDrawPolygon(TVec *cv, int count, surface_t *surf, int lump,
-		int translation, int translucency, vuint32 light);
+	static void SpriteClipEdge(const TVec&, const TVec&, TClipPlane*, int);
+	static void SpriteScanLeftEdge(TVec*, int);
+	static void SpriteScanRightEdge(TVec*, int);
+	void SpriteCaclulateGradients(int, const TVec&, float, const TVec&,
+		const TVec&, const TVec&);
+	void MaskedSurfCaclulateGradients(surface_t*);
+	void SpriteDrawPolygon(TVec*, int, surface_t*, int, int, int, vuint32,
+		const TVec&, float, const TVec&, const TVec&, const TVec&);
 
 	//	Drawing of the aliased models, i.e. md2
 	bool AliasCheckBBox(VModel* model, const TAVec &angles, int frame);

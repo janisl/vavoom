@@ -459,11 +459,9 @@ void VDirect3DDrawer::CacheSurface(surface_t *surface)
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawPolygon(TVec*, int, int, int)
+void VDirect3DDrawer::DrawPolygon(surface_t* surf, int)
 {
 	guard(VDirect3DDrawer::DrawPolygon);
-	surface_t*	surf = r_surface;
-
 	bool lightmaped = surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount;
 
@@ -827,7 +825,7 @@ void VDirect3DDrawer::BeginSky()
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
+void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	int texture1, float offs1, int texture2, float offs2)
 {
 	guard(VDirect3DDrawer::DrawSkyPolygon);
@@ -839,9 +837,9 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	sidx[1] = 1;
 	sidx[2] = 2;
 	sidx[3] = 3;
-	if (cl_level.SkyBox == NAME_None)
+	if (!bIsSkyBox)
 	{
-		if (cv[1].z > 0)
+		if (surf->verts[1].z > 0)
 		{
 			sidx[1] = 0;
 			sidx[2] = 3;
@@ -852,7 +850,7 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 			sidx[3] = 2;
 		}
 	}
-	texinfo_t *tex = r_surface->texinfo;
+	texinfo_t *tex = surf->texinfo;
 	if (maxMultiTex >= 2 && texture2)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
@@ -865,13 +863,13 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		TexStage = 1;
 		SetTexture(texture2);
 		TexStage = 0;
-		for (i = 0; i < count; i++)
+		for (i = 0; i < surf->count; i++)
 		{
-			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
-				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
-				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih,
-				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
-				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
+			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
+				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih,
+				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
 #if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
@@ -885,11 +883,11 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 	else
 	{
 		SetTexture(texture1);
-		for (i = 0; i < count; i++)
+		for (i = 0; i < surf->count; i++)
 		{
-			out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
-				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
-				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
+			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
+				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
 #if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
@@ -900,11 +898,11 @@ void VDirect3DDrawer::DrawSkyPolygon(TVec *cv, int count,
 		if (texture2)
 		{
 			SetTexture(texture2);
-			for (i = 0; i < count; i++)
+			for (i = 0; i < surf->count; i++)
 			{
-				out[i] = MyD3DVertex(cv[i] + vieworg, 0xffffffff,
-					(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
-					(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
+				out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
+					(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
+					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 			}
 			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 #if DIRECT3D_VERSION >= 0x0800
@@ -941,41 +939,51 @@ void VDirect3DDrawer::EndSky()
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
-	int texture, int translucency)
+void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 {
 	guard(VDirect3DDrawer::DrawMaskedPolygon);
 	MyD3DVertex	out[256];
-	int			i, r, g, b, alpha, w, h, size, l;
-	surface_t	*surf = r_surface;
+	int			l;
 
-	SetTexture(texture);
+	texinfo_t* tex = surf->texinfo;
+	SetTexture(tex->pic);
 
-	R_BuildLightMap(surf, 0);
-	w = (surf->extents[0] >> 4) + 1;
-	h = (surf->extents[1] >> 4) + 1;
-	size = w * h;
-	r = 0;
-	g = 0;
-	b = 0;
-	for (i = 0; i < size; i++)
+	if (surf->lightmap != NULL ||
+		surf->dlightframe == r_dlightframecount)
 	{
-		r += 255 * 256 - blocklightsr[i];
-		g += 255 * 256 - blocklightsg[i];
-		b += 255 * 256 - blocklightsb[i];
+		R_BuildLightMap(surf, 0);
+		int w = (surf->extents[0] >> 4) + 1;
+		int h = (surf->extents[1] >> 4) + 1;
+		int size = w * h;
+		int r = 0;
+		int g = 0;
+		int b = 0;
+		for (int i = 0; i < size; i++)
+		{
+			r += 255 * 256 - blocklightsr[i];
+			g += 255 * 256 - blocklightsg[i];
+			b += 255 * 256 - blocklightsb[i];
+		}
+		r = r / (size * 256);
+		g = g / (size * 256);
+		b = b / (size * 256);
+		int alpha = (100 - translucency) * 255 / 100;
+		l = (alpha << 24) | (r << 16) | (g << 8) | b;
 	}
-	r = r / (size * 256);
-	g = g / (size * 256);
-	b = b / (size * 256);
-	alpha = (100 - translucency) * 255 / 100;
-	l = (alpha << 24) | (r << 16) | (g << 8) | b;
-
-	texinfo_t *tex = r_surface->texinfo;
-	for (i = 0; i < count; i++)
+	else
 	{
-		out[i] = MyD3DVertex(cv[i], l,
-			(DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
-			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
+		int lev = surf->Light >> 24;
+		int lR = ((surf->Light >> 16) & 255) * lev / 255;
+		int lG = ((surf->Light >> 8) & 255) * lev / 255;
+		int lB = (surf->Light & 255) * lev / 255;
+		l = 0xff000000 | (lR << 16) | (lG << 8) | lB;
+	}
+
+	for (int i = 0; i < surf->count; i++)
+	{
+		out[i] = MyD3DVertex(surf->verts[i], l,
+			(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+			(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -1006,22 +1014,22 @@ void VDirect3DDrawer::DrawMaskedPolygon(TVec *cv, int count,
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump,
-	int translucency, int translation, vuint32 light)
+void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
+	int translation, vuint32 light, const TVec&, float, const TVec& saxis,
+	const TVec& taxis, const TVec& texorg)
 {
 	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
-	int				i;
 
 	SetSpriteLump(lump, translation);
 
 	int l = (((100 - translucency) * 255 / 100) << 24) | (light & 0x00ffffff);
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		TVec texpt = cv[i] - r_texorg;
+		TVec texpt = cv[i] - texorg;
 		out[i] = MyD3DVertex(cv[i], l,
-			DotProduct(texpt, r_saxis) * tex_iw,
-			DotProduct(texpt, r_taxis) * tex_ih);
+			DotProduct(texpt, saxis) * tex_iw,
+			DotProduct(texpt, taxis) * tex_ih);
 	}
 
 	if (blend_sprites || translucency)

@@ -101,6 +101,7 @@ static int*			LightningLightLevels;
 
 static sky_t		sky[HDIVS * VDIVS];
 static int			NumSkySurfs;
+static bool			bIsSkyBox;
 
 // CODE --------------------------------------------------------------------
 
@@ -171,6 +172,7 @@ static void R_InitOldSky()
 {
 	guard(R_InitOldSky);
 	memset(sky, 0, sizeof(sky));
+	bIsSkyBox = false;
 
 	const mapInfo_t& linfo = P_GetMapInfo(cl_level.MapName);
 
@@ -305,6 +307,7 @@ float tk = skyh / RADIUS;
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
 		sky[j].surf.count = 4;
+		sky[j].surf.Light = 0xffffffff;
 	}
 
 	//	Precache textures
@@ -436,6 +439,7 @@ static void R_InitSkyBox()
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
 		sky[j].surf.count = 4;
+		sky[j].surf.Light = 0xffffffff;
 
 		//	Precache texture
 		Drawer->SetTexture(sky[j].texture1);
@@ -449,6 +453,7 @@ static void R_InitSkyBox()
 		sky[j].texinfo.taxis *= STex->GetHeight() / 256.0;
 		sky[j].texinfo.toffs *= STex->GetHeight() / 256.0;
 	}
+	bIsSkyBox = true;
 	unguard;
 }
 
@@ -707,13 +712,7 @@ void R_DrawSky()
 
 	for (int i = 0; i < NumSkySurfs; i++)
 	{
-		r_normal = sky[i].plane.normal;
-		r_dist = sky[i].plane.dist;
-
-		sky[i].surf.Light = 0xffffffff;
-
-		r_surface = &sky[i].surf;
-		Drawer->DrawSkyPolygon(sky[i].surf.verts, 4, sky[i].texture1,
+		Drawer->DrawSkyPolygon(&sky[i].surf, bIsSkyBox, sky[i].texture1,
 			sky[i].columnOffset1, sky[i].texture2, sky[i].columnOffset2);
 	}
 

@@ -436,11 +436,9 @@ inline void	glVertex(const TVec &v)
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawPolygon(TVec*, int, int, int)
+void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 {
 	guard(VOpenGLDrawer::DrawPolygon);
-	surface_t*	surf = r_surface;
-
 	bool lightmaped = surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount;
 
@@ -750,7 +748,7 @@ void VOpenGLDrawer::BeginSky()
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
+void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	int texture1, float offs1, int texture2, float offs2)
 {
 	guard(VOpenGLDrawer::DrawSkyPolygon);
@@ -761,9 +759,9 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 	sidx[1] = 1;
 	sidx[2] = 2;
 	sidx[3] = 3;
-	if (cl_level.SkyBox == NAME_None)
+	if (!bIsSkyBox)
 	{
-		if (cv[1].z > 0)
+		if (surf->verts[1].z > 0)
 		{
 			sidx[1] = 0;
 			sidx[2] = 3;
@@ -774,7 +772,7 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 			sidx[3] = 2;
 		}
 	}
-	texinfo_t *tex = r_surface->texinfo;
+	texinfo_t *tex = surf->texinfo;
 	if (mtexable && texture2)
 	{
 		SetTexture(texture1);
@@ -786,15 +784,15 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 
 		glColor4f(1, 1, 1, 1);
 		glBegin(GL_POLYGON);
-		for (i = 0; i < count; i++)
+		for (i = 0; i < surf->count; i++)
 		{
 			MultiTexCoord(0, 
-				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
-				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
+				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 			MultiTexCoord(1, 
-				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
-				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
-			glVertex(cv[i]);
+				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+			glVertex(surf->verts[i]);
 		}
 		glEnd();
 
@@ -807,12 +805,12 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 		SetTexture(texture1);
 		glBegin(GL_POLYGON);
 		glColor4f(1, 1, 1, 1);
-		for (i = 0; i < count; i++)
+		for (i = 0; i < surf->count; i++)
 		{
 			glTexCoord2f(
-				(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
-				(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
-			glVertex(cv[i]);
+				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+			glVertex(surf->verts[i]);
 		}
 		glEnd();
 
@@ -822,12 +820,12 @@ void VOpenGLDrawer::DrawSkyPolygon(TVec *cv, int count,
 			glEnable(GL_BLEND);
 			glBegin(GL_POLYGON);
 			glColor4f(1, 1, 1, 1);
-			for (i = 0; i < count; i++)
+			for (i = 0; i < surf->count; i++)
 			{
 				glTexCoord2f(
-					(DotProduct(cv[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
-					(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
-				glVertex(cv[i]);
+					(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
+					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+				glVertex(surf->verts[i]);
 			}
 			glEnd();
 			glDisable(GL_BLEND);
@@ -861,15 +859,11 @@ void VOpenGLDrawer::EndSky()
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
-	int texture, int translucency)
+void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 {
 	guard(VOpenGLDrawer::DrawMaskedPolygon);
-	int			i, r, g, b, w, h, size;
-	double		iscale;
-	surface_t	*surf = r_surface;
-
-	SetTexture(texture);
+	texinfo_t* tex = surf->texinfo;
+	SetTexture(tex->pic);
 	glEnable(GL_ALPHA_TEST);
 	if (blend_sprites || translucency)
 	{
@@ -877,30 +871,40 @@ void VOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 		glEnable(GL_BLEND);
 	}
 
-	R_BuildLightMap(surf, 0);
-	w = (surf->extents[0] >> 4) + 1;
-	h = (surf->extents[1] >> 4) + 1;
-	size = w * h;
-	r = 0;
-	g = 0;
-	b = 0;
-	for (i = 0; i < size; i++)
+	if (surf->lightmap != NULL ||
+		surf->dlightframe == r_dlightframecount)
 	{
-		r += 255 * 256 - blocklightsr[i];
-		g += 255 * 256 - blocklightsg[i];
-		b += 255 * 256 - blocklightsb[i];
+		R_BuildLightMap(surf, 0);
+		int w = (surf->extents[0] >> 4) + 1;
+		int h = (surf->extents[1] >> 4) + 1;
+		int size = w * h;
+		int r = 0;
+		int g = 0;
+		int b = 0;
+		for (int i = 0; i < size; i++)
+		{
+			r += 255 * 256 - blocklightsr[i];
+			g += 255 * 256 - blocklightsg[i];
+			b += 255 * 256 - blocklightsb[i];
+		}
+		float alpha = (100.0 - translucency) / 100.0;
+		double iscale = 1.0 / (size * 255 * 256);
+		glColor4f(r * iscale, g * iscale, b * iscale, alpha);
 	}
-	float alpha = (100.0 - translucency) / 100.0;
-	iscale = 1.0 / (size * 255 * 256);
-	glColor4f(r * iscale, g * iscale, b * iscale, alpha);
-
-	texinfo_t *tex = r_surface->texinfo;
-	glBegin(GL_POLYGON);
-	for (i = 0; i < count; i++)
+	else
 	{
-		glTexCoord2f((DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
-			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
-		glVertex(cv[i]);
+		float lev = float(surf->Light >> 24) / 255.0;
+		glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
+			((surf->Light >> 8) & 255) * lev / 255.0,
+			(surf->Light & 255) * lev / 255.0, 1.0);
+	}
+
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < surf->count; i++)
+	{
+		glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+			(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+		glVertex(surf->verts[i]);
 	}
 	glEnd();
 
@@ -919,8 +923,9 @@ void VOpenGLDrawer::DrawMaskedPolygon(TVec *cv, int count,
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
-	int translucency, int translation, vuint32 light)
+void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump, int translucency,
+	int translation, vuint32 light, const TVec&, float, const TVec& saxis,
+	const TVec& taxis, const TVec& texorg)
 {
 	guard(VOpenGLDrawer::DrawSpritePolygon);
 	TVec	texpt;
@@ -939,24 +944,24 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, int lump,
 
 	glBegin(GL_QUADS);
 
-	texpt = cv[0] - r_texorg;
-	glTexCoord2f(DotProduct(texpt, r_saxis) * tex_iw,
-		DotProduct(texpt, r_taxis) * tex_ih);
+	texpt = cv[0] - texorg;
+	glTexCoord2f(DotProduct(texpt, saxis) * tex_iw,
+		DotProduct(texpt, taxis) * tex_ih);
 	glVertex(cv[0]);
 
-	texpt = cv[1] - r_texorg;
-	glTexCoord2f(DotProduct(texpt, r_saxis) * tex_iw,
-		DotProduct(texpt, r_taxis) * tex_ih);
+	texpt = cv[1] - texorg;
+	glTexCoord2f(DotProduct(texpt, saxis) * tex_iw,
+		DotProduct(texpt, taxis) * tex_ih);
 	glVertex(cv[1]);
 
-	texpt = cv[2] - r_texorg;
-	glTexCoord2f(DotProduct(texpt, r_saxis) * tex_iw,
-		DotProduct(texpt, r_taxis) * tex_ih);
+	texpt = cv[2] - texorg;
+	glTexCoord2f(DotProduct(texpt, saxis) * tex_iw,
+		DotProduct(texpt, taxis) * tex_ih);
 	glVertex(cv[2]);
 
-	texpt = cv[3] - r_texorg;
-	glTexCoord2f(DotProduct(texpt, r_saxis) * tex_iw,
-		DotProduct(texpt, r_taxis) * tex_ih);
+	texpt = cv[3] - texorg;
+	glTexCoord2f(DotProduct(texpt, saxis) * tex_iw,
+		DotProduct(texpt, taxis) * tex_ih);
 	glVertex(cv[3]);
 
 	glEnd();

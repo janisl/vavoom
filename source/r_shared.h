@@ -171,15 +171,6 @@ extern "C" {
 extern TClipPlane		view_clipplanes[4];
 }
 
-extern TVec				r_normal;
-extern float			r_dist;
-
-extern TVec				r_saxis;
-extern TVec				r_taxis;
-extern TVec				r_texorg;
-
-extern surface_t		*r_surface;
-
 extern int				r_dlightframecount;
 extern bool				r_light_add;
 extern vuint32			blocklights[18 * 18];
@@ -197,7 +188,5 @@ extern int				usegamma;
 extern byte				gammatable[5][256];
 
 extern float			PixelAspect;
-
-extern vuint8*			r_playpal;
 
 #endif

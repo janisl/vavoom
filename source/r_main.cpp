@@ -88,8 +88,6 @@ refdef_t				refdef;
 
 float					PixelAspect;
 
-vuint8*					r_playpal;
-
 //
 //	Translation tables
 //
@@ -849,12 +847,6 @@ void R_InitData()
 			}
 		}
 	}
-
-	//	Load entire palette for palette effects.
-	r_playpal = (vuint8*)Z_Malloc(Strm->TotalSize());
-	Strm->Seek(0);
-	Strm->Serialise(r_playpal, Strm->TotalSize());
-
 	delete Strm;
 
 	InitTranslationTables();
@@ -955,10 +947,6 @@ void V_Shutdown()
 	if (particles)
 	{
 		delete[] particles;
-	}
-	if (r_playpal)
-	{
-		Z_Free(r_playpal);
 	}
 	if (translationtables)
 	{

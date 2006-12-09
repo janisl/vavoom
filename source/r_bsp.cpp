@@ -54,11 +54,6 @@ struct VClipNode
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TVec				r_normal;
-float				r_dist;
-
-surface_t*			r_surface;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int				r_frustum_indexes[4][6];
@@ -636,16 +631,15 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 		surfs->dlightframe = r_sub->dlightframe;
 		surfs->dlightbits = r_sub->dlightbits;
 
-		r_surface = surfs;
 		if (!texinfo->translucency)
 		{
-			Drawer->DrawPolygon(surfs->verts, surfs->count, texinfo->pic,
-				clipflags);
+			Drawer->DrawPolygon(surfs, clipflags);
 		}
 		else
 		{
-			R_DrawTranslucentPoly(surfs->verts, surfs->count, texinfo->pic,
-				texinfo->translucency - 1, 0, false, 0);
+			R_DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
+				texinfo->pic, texinfo->translucency - 1, 0, false, 0,
+				TVec(), 0, TVec(), TVec(), TVec());
 		}
 		surfs = surfs->next;
 	} while (surfs);
@@ -686,9 +680,6 @@ static void RenderLine(drawseg_t* dseg, int clipflags)
 	}
 
 	line_t *linedef = line->linedef;
-
-	r_normal = line->normal;
-	r_dist = line->dist;
 
 	//FIXME this marks all lines
 	// mark the segment as visible for auto map
@@ -737,9 +728,6 @@ static void	RenderSecSurface(sec_surface_t *ssurf, int clipflags)
 		//	Viewer is in back side or on plane
 		return;
 	}
-
-	r_normal = plane.normal;
-	r_dist = plane.dist;
 
 	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags,
 		plane.LightSourceSector);

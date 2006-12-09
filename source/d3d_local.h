@@ -190,14 +190,16 @@ public:
 	void SetSpriteLump(int, int);
 
 	//	Polygon drawing
-	void DrawPolygon(TVec*, int, int, int);
+	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
-	void DrawSkyPolygon(TVec*, int, int, float, int, float);
+	void DrawSkyPolygon(surface_t*, bool, int, float, int, float);
 	void EndSky();
-	void DrawMaskedPolygon(TVec*, int, int, int);
-	void DrawSpritePolygon(TVec*, int, int, int, vuint32);
-	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int, const char*, vuint32, int, bool);
+	void DrawMaskedPolygon(surface_t*, int);
+	void DrawSpritePolygon(TVec*, int, int, int, vuint32, const TVec&, float,
+		const TVec&, const TVec&, const TVec&);
+	void DrawAliasModel(const TVec&, const TAVec&, VModel*, int, int,
+		const char*, vuint32, int, bool);
 
 	//	Particles
 	void StartParticles();

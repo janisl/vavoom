@@ -427,7 +427,7 @@ extern "C" void D_ClipEdge(const TVec &v0, const TVec &v1,
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
+void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
 {
 	guard(VSoftwareDrawer::DrawPolygon);
 	int		i;
@@ -437,9 +437,9 @@ void VSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 		outofsurfs++;
 		return;
 	}
-	if (edge_p + count + 4 >= edge_max)
+	if (edge_p + surf->count + 4 >= edge_max)
 	{
-		outofedges += count;
+		outofedges += surf->count;
 		return;
 	}
 
@@ -453,9 +453,10 @@ void VSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 	r_nearzi = 0;
 	d_lastvertvalid = false;
 
-	for (i = 0; i < count; i++)
+	for (i = 0; i < surf->count; i++)
 	{
-		D_ClipEdge(cv[i ? i - 1 : count - 1], cv[i], view_clipplanes, clipflags);
+		D_ClipEdge(surf->verts[i ? i - 1 : surf->count - 1], surf->verts[i],
+			view_clipplanes, clipflags);
 	}
 	if (d_lastvertvalid)
 	{
@@ -467,7 +468,7 @@ void VSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 		return;
 	}
 
-	surface_p->surf = r_surface;
+	surface_p->surf = surf;
 	surface_p->spans = NULL;
 
 	surface_p->next = NULL;
@@ -510,7 +511,7 @@ void VSoftwareDrawer::BeginSky()
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
+void VSoftwareDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	int texture1, float offs1, int texture2, float offs2)
 {
 	guard(VSoftwareDrawer::DrawSkyPolygon);
@@ -521,9 +522,9 @@ void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 		outofsurfs++;
 		return;
 	}
-	if (edge_p + count + 4 >= edge_max)
+	if (edge_p + surf->count + 4 >= edge_max)
 	{
-		outofedges += count;
+		outofedges += surf->count;
 		return;
 	}
 
@@ -537,9 +538,10 @@ void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	r_nearzi = 0;
 	d_lastvertvalid = false;
 
-	for (i = 0; i < count; i++)
+	for (i = 0; i < surf->count; i++)
 	{
-		D_ClipEdge(cv[i ? i - 1 : count - 1] + vieworg, cv[i] + vieworg, view_clipplanes, 15);
+		D_ClipEdge(surf->verts[i ? i - 1 : surf->count - 1] + vieworg,
+			surf->verts[i] + vieworg, view_clipplanes, 15);
 	}
 	if (d_lastvertvalid)
 	{
@@ -551,7 +553,7 @@ void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 		return;
 	}
 
-	surface_p->surf = r_surface;
+	surface_p->surf = surf;
 	surface_p->spans = NULL;
 
 	surface_p->next = NULL;
@@ -559,8 +561,7 @@ void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 	surface_p->key = r_currentkey++;
 	surface_p->last_u = 0;
 	surface_p->spanstate = 0;
-	surface_p->flags = GTextureManager.Textures[texture1]->Type ==
-		TEXTYPE_SkyMap ? SURF_SKY_BOX : SURF_SKY;
+	surface_p->flags = bIsSkyBox ? SURF_SKY_BOX : SURF_SKY;
 	surface_p->nearzi = r_nearzi;
 
 	surface_p->texture1 = texture1;

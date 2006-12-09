@@ -128,16 +128,12 @@ extern VStr			skin_list[256];
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-TVec				r_saxis;
-TVec				r_taxis;
-TVec				r_texorg;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 //	Temporary variables for sprite installing
 static spriteframe_t	sprtemp[30];
 static int				maxframe;
-static const char		*spritename;
+static const char*		spritename;
 
 //	variables used to look up
 // and range check thing_t sprites patches
@@ -339,8 +335,10 @@ void R_FreeSpriteData()
 //
 //==========================================================================
 
-void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
-	int translucency, int translation, bool type, vuint32 light)
+void R_DrawTranslucentPoly(surface_t* surf, TVec* sv, int count, int lump,
+	int translucency, int translation, bool type, vuint32 light,
+	const TVec& normal, float pdist, const TVec& saxis, const TVec& taxis,
+	const TVec& texorg)
 {
 	guard(R_DrawTranslucentPoly);
 	int i;
@@ -360,20 +358,18 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		trans_sprite_t &spr = trans_sprites[i];
 		if (!spr.translucency)
 		{
-			if (count <= 4)
-				spr.dv = trans_sprite_verts + 4 * i;
-			else
-				spr.dv = (TVec*)Z_Malloc(sizeof(TVec) * count);
-			memcpy(spr.dv, sv, sizeof(TVec) * count);
+			spr.dv = trans_sprite_verts + 4 * i;
+			if (type)
+				memcpy(spr.dv, sv, sizeof(TVec) * count);
 			spr.count = count;
 			spr.dist = dist;
 			spr.lump = lump;
-			spr.normal = r_normal;
-			spr.pdist = r_dist;
-			spr.saxis = r_saxis;
-			spr.taxis = r_taxis;
-			spr.texorg = r_texorg;
-			spr.surf = r_surface;
+			spr.normal = normal;
+			spr.pdist = pdist;
+			spr.saxis = saxis;
+			spr.taxis = taxis;
+			spr.texorg = texorg;
+			spr.surf = surf;
 			spr.translucency = translucency + 1;
 			spr.translation = translation;
 			spr.type = type;
@@ -389,19 +385,7 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 	if (best_dist > dist)
 	{
 		//	All slots are full, draw and replace a far away sprite
-		TVec tmp_normal = r_normal;
-		float tmp_dist = r_dist;
-		TVec tmp_saxis = r_saxis;
-		TVec tmp_taxis = r_taxis;
-		TVec tmp_texorg = r_texorg;
-		surface_t *tmp_surf = r_surface;
 		trans_sprite_t &spr = trans_sprites[found];
-		r_normal = spr.normal;
-		r_dist = spr.pdist;
-		r_saxis = spr.saxis;
-		r_taxis = spr.taxis;
-		r_texorg = spr.texorg;
-		r_surface = spr.surf;
 		if (spr.type == 2)
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
@@ -410,30 +394,26 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.dv, spr.lump,
-				spr.translucency - 1, spr.translation, spr.light);
+			Drawer->DrawSpritePolygon(spr.dv, spr.lump, spr.translucency - 1,
+				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
+				spr.taxis, spr.texorg);
 		}
 		else
 		{
-			Drawer->DrawMaskedPolygon(spr.dv, spr.count, spr.lump,
-				spr.translucency - 1);
-			if (spr.count > 4)
-				Z_Free(spr.dv);
+			Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
 		}
-		if (count <= 4)
-			spr.dv = trans_sprite_verts + 4 * found;
-		else
-			spr.dv = (TVec*)Z_Malloc(sizeof(TVec) * count);
-		memcpy(spr.dv, sv, sizeof(TVec) * count);
+		spr.dv = trans_sprite_verts + 4 * found;
+		if (type)
+			memcpy(spr.dv, sv, sizeof(TVec) * count);
 		spr.count = count;
 		spr.dist = dist;
 		spr.lump = lump;
-		spr.normal = tmp_normal;
-		spr.pdist = tmp_dist;
-		spr.saxis = tmp_saxis;
-		spr.taxis = tmp_taxis;
-		spr.texorg = tmp_texorg;
-		spr.surf = tmp_surf;
+		spr.normal = normal;
+		spr.pdist = pdist;
+		spr.saxis = saxis;
+		spr.taxis = taxis;
+		spr.texorg = texorg;
+		spr.surf = surf;
 		spr.translucency = translucency + 1;
 		spr.translation = translation;
 		spr.light = light;
@@ -443,12 +423,12 @@ void R_DrawTranslucentPoly(TVec *sv, int count, int lump,
 	//	All slots are full and are nearer to current sprite so draw it
 	if (type)
 	{
-		Drawer->DrawSpritePolygon(sv, lump, translucency,
-			translation, light);
+		Drawer->DrawSpritePolygon(sv, lump, translucency, translation,
+			light, normal, pdist, saxis, taxis, texorg);
 	}
 	else
 	{
-		Drawer->DrawMaskedPolygon(sv, count, lump, translucency);
+		Drawer->DrawMaskedPolygon(surf, translucency);
 	}
 	unguard;
 }
@@ -655,21 +635,6 @@ static void RenderSprite(VEntity* thing)
 	sv[2] = sprorigin + end + topdelta;
 	sv[3] = sprorigin + end + botdelta;
 
-	r_normal = -sprforward;
-	r_dist = DotProduct(sprorigin, r_normal);
-
-	if (flip)
-	{
-		r_saxis = -sprright;
-		r_texorg = sv[2];
-	}
-	else
-	{
-		r_saxis = sprright;
-		r_texorg = sv[1];
-	}
-	r_taxis = -sprup;
-
 	vuint32 light;
 	if (fixedlight || (thing->State->frame & FF_FULLBRIGHT) ||
 		(thing->EntityFlags & VEntity::EF_FullBright))
@@ -683,13 +648,17 @@ static void RenderSprite(VEntity* thing)
 
 	if (thing->Translucency > 0 || r_sort_sprites)
 	{
-		R_DrawTranslucentPoly(sv, 4, lump,
-			thing->Translucency, thing->Translation, true, light);
+		R_DrawTranslucentPoly(NULL, sv, 4, lump, thing->Translucency,
+			thing->Translation, true, light, -sprforward, DotProduct(
+			sprorigin, -sprforward), flip ? -sprright : sprright, -sprup,
+			flip ? sv[2] : sv[1]);
 	}
 	else
 	{
 		Drawer->DrawSpritePolygon(sv, lump, thing->Translucency,
-			thing->Translation, light);
+			thing->Translation, light, -sprforward, DotProduct(sprorigin,
+			-sprforward), flip ? -sprright : sprright, -sprup,
+			flip ? sv[2] : sv[1]);
 	}
 	unguard;
 }
@@ -738,12 +707,6 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 	{
 		//	All slots are full, draw and replace a far away sprite
 		trans_sprite_t &spr = trans_sprites[found];
-		r_normal = spr.normal;
-		r_dist = spr.pdist;
-		r_saxis = spr.saxis;
-		r_taxis = spr.taxis;
-		r_texorg = spr.texorg;
-		r_surface = spr.surf;
 		if (spr.type == 2)
 		{
 			Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
@@ -752,15 +715,13 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 		}
 		else if (spr.type)
 		{
-			Drawer->DrawSpritePolygon(spr.dv, spr.lump,
-				spr.translucency - 1, spr.translation, spr.light);
+			Drawer->DrawSpritePolygon(spr.dv, spr.lump, spr.translucency - 1,
+				spr.translation, spr.light, spr.normal, spr.pdist, spr.saxis,
+				spr.taxis, spr.texorg);
 		}
 		else
 		{
-			Drawer->DrawMaskedPolygon(spr.dv, spr.count, spr.lump,
-				spr.translucency - 1);
-			if (spr.count > 4)
-				Z_Free(spr.dv);
+			Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
 		}
 		spr.dv = trans_sprite_verts + 4 * i;
 		spr.dv[0] = mobj->Origin;
@@ -920,12 +881,6 @@ void R_DrawTranslucentPolys()
 		if (found != -1)
 		{
 			trans_sprite_t &spr = trans_sprites[found];
-			r_normal = spr.normal;
-			r_dist = spr.pdist;
-			r_saxis = spr.saxis;
-			r_taxis = spr.taxis;
-			r_texorg = spr.texorg;
-			r_surface = spr.surf;
 			if (spr.type == 2)
 			{
 				Drawer->DrawAliasModel(spr.dv[0], ((TAVec *)spr.dv)[1],
@@ -935,14 +890,12 @@ void R_DrawTranslucentPolys()
 			else if (spr.type)
 			{
 				Drawer->DrawSpritePolygon(spr.dv, spr.lump,
-					spr.translucency - 1, spr.translation, spr.light);
+					spr.translucency - 1, spr.translation, spr.light,
+					spr.normal, spr.pdist, spr.saxis, spr.taxis, spr.texorg);
 			}
 			else
 			{
-				Drawer->DrawMaskedPolygon(spr.dv, spr.count, spr.lump,
-					spr.translucency - 1);
-				if (spr.count > 4)
-					Z_Free(spr.dv);
+				Drawer->DrawMaskedPolygon(spr.surf, spr.translucency - 1);
 			}
 			spr.translucency = 0;
 		}
@@ -1020,23 +973,23 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 	dv[2] = end + topdelta;
 	dv[3] = end + botdelta;
 
-	r_normal = -viewforward;
-	r_dist = DotProduct(dv[0], r_normal);
-
+	TVec saxis;
+	TVec taxis;
+	TVec texorg;
 	if (flip)
 	{
-		r_saxis = -(viewright * 160 * PSP_DISTI);
-		r_texorg = dv[2];
+		saxis = -(viewright * 160 * PSP_DISTI);
+		texorg = dv[2];
 	}
 	else
 	{
-		r_saxis = viewright * 160 * PSP_DISTI;
-		r_texorg = dv[1];
+		saxis = viewright * 160 * PSP_DISTI;
+		texorg = dv[1];
 	}
 	if (old_aspect)
-		r_taxis = -(viewup * 160 * PSP_DISTI);
+		taxis = -(viewup * 160 * PSP_DISTI);
 	else
-		r_taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
+		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
 	vuint32 light;
 	if (VEnt->SpriteFrame & FF_FULLBRIGHT)
@@ -1048,7 +1001,8 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 		light = R_LightPoint(sprorigin);
 	}
 
-	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntTranslucency, 0, light);
+	Drawer->DrawSpritePolygon(dv, lump, cl->ViewEntTranslucency, 0, light,
+		-viewforward, DotProduct(dv[0], -viewforward), saxis, taxis, texorg);
 	unguard;
 }
 
