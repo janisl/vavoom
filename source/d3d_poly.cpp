@@ -72,17 +72,17 @@ static byte ptex[8][8] =
 void MatrixMultiply(MyD3DMatrix &out, const MyD3DMatrix& a, const MyD3DMatrix& b)
 {
 	MyD3DMatrix ret;
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            ret(i, j) = 0.0f;
-            for (int k = 0; k < 4; k++)
-            {
-                ret(i, j) += a(i, k) * b(k, j);
-            }
-        }
-    }
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			ret(i, j) = 0.0f;
+			for (int k = 0; k < 4; k++)
+			{
+				ret(i, j) += a(i, k) * b(k, j);
+			}
+		}
+	}
 	out = ret;
 }
 
@@ -421,7 +421,7 @@ void VDirect3DDrawer::CacheSurface(surface_t *surface)
 		for (i = 0; i < smax; i++)
 		{
 			rgba_t &cdst = light_block[bnum][(j + cache->t) * BLOCK_WIDTH + i + cache->s];
- 			cdst.r = byte(255 - (blocklightsr[j * smax + i] >> 8));
+			cdst.r = byte(255 - (blocklightsr[j * smax + i] >> 8));
 			cdst.g = byte(255 - (blocklightsg[j * smax + i] >> 8));
 			cdst.b = byte(255 - (blocklightsb[j * smax + i] >> 8));
 			cdst.a = 255;
@@ -459,15 +459,12 @@ void VDirect3DDrawer::CacheSurface(surface_t *surface)
 //
 //==========================================================================
 
-void VDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
+void VDirect3DDrawer::DrawPolygon(TVec*, int, int, int)
 {
 	guard(VDirect3DDrawer::DrawPolygon);
-	MyD3DVertex		out[256];
-	int				i, l;
-	bool			lightmaped;
-	surface_t		*surf = r_surface;
+	surface_t*	surf = r_surface;
 
-	lightmaped = surf->lightmap != NULL ||
+	bool lightmaped = surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount;
 
 	if (lightmaped)
@@ -477,32 +474,42 @@ void VDirect3DDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 		{
 			return;
 		}
-		l = 0xffffffff;
+	}
+
+	if (SimpleSurfsTail)
+	{
+		SimpleSurfsTail->DrawNext = surf;
+		SimpleSurfsTail = surf;
 	}
 	else
 	{
-		int lev = surf->Light >> 24;
-		int lR = ((surf->Light >> 16) & 255) * lev / 255;
-		int lG = ((surf->Light >> 8) & 255) * lev / 255;
-		int lB = (surf->Light & 255) * lev / 255;
-		l =	0xff000000 | (lR << 16) | (lG << 8) | lB;
+		SimpleSurfsHead = surf;
+		SimpleSurfsTail = surf;
 	}
+	surf->DrawNext = NULL;
+	unguard;
+}
 
-	SetTexture(texture);
+//==========================================================================
+//
+//	VDirect3DDrawer::DrawSkyPortal
+//
+//==========================================================================
 
-	texinfo_t *tex = r_surface->texinfo;
-	for (i = 0; i < count; i++)
+void VDirect3DDrawer::DrawSkyPortal(surface_t* surf, int)
+{
+	guard(VDirect3DDrawer::DrawSkyPortal);
+	if (SkyPortalsTail)
 	{
-		out[i] = MyD3DVertex(cv[i], l,
-			(DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
-			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
+		SkyPortalsTail->DrawNext = surf;
+		SkyPortalsTail = surf;
 	}
-
-#if DIRECT3D_VERSION >= 0x0800
-	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, count - 2, out, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, count, 0);
-#endif
+	else
+	{
+		SkyPortalsHead = surf;
+		SkyPortalsTail = surf;
+	}
+	surf->DrawNext = NULL;
 	unguard;
 }
 
@@ -521,6 +528,63 @@ void VDirect3DDrawer::WorldDrawing()
 	float			s, t, lights, lightt;
 	surface_t		*surf;
 	texinfo_t		*tex;
+
+	//	For sky areas we just write to the depth buffer to prevent drawing
+	// polygons behind the sky.
+	if (SkyPortalsHead)
+	{
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+		//FIXME is there another way how to disable colour writes?
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		{
+			for (i = 0; i < surf->count; i++)
+			{
+				out[i] = MyD3DVertex(surf->verts[i], 0, 0, 0);
+			}
+#if DIRECT3D_VERSION >= 0x0800
+			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
+#else
+			RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
+#endif
+		}
+		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	}
+
+	//	Draw surfaces.
+	for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	{
+		texinfo_t *tex = surf->texinfo;
+		if (surf->lightmap != NULL ||
+			surf->dlightframe == r_dlightframecount)
+		{
+			light = 0xffffffff;
+		}
+		else
+		{
+			int lev = surf->Light >> 24;
+			int lR = ((surf->Light >> 16) & 255) * lev / 255;
+			int lG = ((surf->Light >> 8) & 255) * lev / 255;
+			int lB = (surf->Light & 255) * lev / 255;
+			light = 0xff000000 | (lR << 16) | (lG << 8) | lB;
+		}
+
+		SetTexture(tex->pic);
+
+		for (i = 0; i < surf->count; i++)
+		{
+			out[i] = MyD3DVertex(surf->verts[i], light,
+				(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+		}
+
+#if DIRECT3D_VERSION >= 0x0800
+		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
+#else
+		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
+#endif
+	}
 
 	if (maxMultiTex >= 2)
 	{
@@ -749,13 +813,7 @@ void VDirect3DDrawer::WorldDrawing()
 void VDirect3DDrawer::BeginSky()
 {
 	guard(VDirect3DDrawer::BeginSky);
-#if DIRECT3D_VERSION >= 0x0800
-	viewData.MinZ = 0.99;
-#else
-	viewData.dvMinZ = 0.99;
-#endif
-    RenderDevice->SetViewport(&viewData);
-
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);
 	if (r_fog)
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
@@ -873,13 +931,7 @@ void VDirect3DDrawer::EndSky()
 	{
 		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
 	}
-
-#if DIRECT3D_VERSION >= 0x0800
-	viewData.MinZ = 0;
-#else
-	viewData.dvMinZ = 0;
-#endif
-    RenderDevice->SetViewport(&viewData);
+	RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);
 	unguard;
 }
 

@@ -408,6 +408,10 @@ void VOpenGLDrawer::SetupView(const refdef_t *rd)
 
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
+	SimpleSurfsHead = NULL;
+	SimpleSurfsTail = NULL;
+	SkyPortalsHead = NULL;
+	SkyPortalsTail = NULL;
 	cacheframecount++;
 	unguard;
 }

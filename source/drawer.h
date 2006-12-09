@@ -23,11 +23,8 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
+struct surface_t;
+struct surfcache_t;
 
 struct rgb_t
 {
@@ -43,8 +40,6 @@ struct rgba_t
 	byte	b;
 	byte	a;
 };
-
-struct surfcache_t;
 
 struct particle_t
 {
@@ -106,6 +101,7 @@ public:
 
 	//	Polygon drawing
 	virtual void DrawPolygon(TVec*, int, int, int) = 0;
+	virtual void DrawSkyPortal(surface_t*, int) = 0;
 	virtual void BeginSky() = 0;
 	virtual void DrawSkyPolygon(TVec*, int, int, float, int, float) = 0;
 	virtual void EndSky() = 0;
@@ -162,9 +158,5 @@ static VDrawer* Create##TClass() \
 	return new TClass(); \
 } \
 FDrawerDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern VDrawer			*Drawer;

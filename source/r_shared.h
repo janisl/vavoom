@@ -64,18 +64,19 @@ struct texinfo_t
 
 struct surface_t
 {
-	surface_t		*next;
-	texinfo_t		*texinfo;
-	TPlane			*plane;
+	surface_t*		next;
+	surface_t*		DrawNext;
+	texinfo_t*		texinfo;
+	TPlane*			plane;
 	vuint32			Light;		//	Light level and colour.
-	byte			*lightmap;
-	rgb_t			*lightmap_rgb;
+	vuint8*			lightmap;
+	rgb_t*			lightmap_rgb;
 	int				dlightframe;
 	int				dlightbits;
 	int				count;
 	short			texturemins[2];
 	short			extents[2];
-	surfcache_t		*cachespots[4];
+	surfcache_t*	cachespots[4];
 	TVec			verts[1];
 };
 

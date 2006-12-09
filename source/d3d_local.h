@@ -84,7 +84,7 @@ struct MyD3DVertex
 	float		texs;		// Texture coordinates
 	float		text;
 	float		lights;		// Lightmap coordinates
-    float		lightt;
+	float		lightt;
 
 	MyD3DVertex() { }
 	MyD3DVertex(const TVec& v, vuint32 _colour, float _s, float _t)
@@ -191,6 +191,7 @@ public:
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
+	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void EndSky();
@@ -355,6 +356,11 @@ private:
 	int							trsprlump[MAX_TRANSLATED_SPRITES];
 	int							trsprtnum[MAX_TRANSLATED_SPRITES];
 	int							tscount;
+
+	surface_t*					SimpleSurfsHead;
+	surface_t*					SimpleSurfsTail;
+	surface_t*					SkyPortalsHead;
+	surface_t*					SkyPortalsTail;
 
 	//	Lightmaps.
 #if DIRECT3D_VERSION >= 0x0800

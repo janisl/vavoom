@@ -618,6 +618,7 @@ static void DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo, int clipflags,
 	if (texinfo->pic == skyflatnum)
 	{
 		sky_is_visible = true;
+		Drawer->DrawSkyPortal(surfs, clipflags);
 		return;
 	}
 

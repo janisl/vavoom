@@ -170,6 +170,7 @@ public:
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
+	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void EndSky();

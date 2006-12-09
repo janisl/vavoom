@@ -203,7 +203,7 @@ HRESULT CALLBACK VDirect3DDrawer::EnumZBufferCallback(LPDDPIXELFORMAT pf, void* 
 	{
 		memcpy(dst, pf, sizeof(DDPIXELFORMAT));
 	}
- 
+
 	// Return with D3DENUMRET_OK to continue the search.
 	return D3DENUMRET_OK;
 }
@@ -224,7 +224,7 @@ HRESULT CALLBACK VDirect3DDrawer::EnumPixelFormatsCallback(LPDDPIXELFORMAT pf, v
 		(pf->dwRGBBitCount == 16))
 	{
 		memcpy(dst, pf, sizeof(DDPIXELFORMAT));
- 
+
 		// Return with D3DENUMRET_CANCEL to end the search.
 		return D3DENUMRET_CANCEL;
 	}
@@ -468,19 +468,19 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	GUID DeviceGUID;
 	switch (device)
 	{
-	 default:
+	default:
 		device = 0;
-	 case 0:
+	case 0:
 		DeviceGUID = IID_IDirect3DHALDevice;
 		SurfaceMemFlag = DDSCAPS_VIDEOMEMORY;
 		break;
 
-	 case 1:
+	case 1:
 		DeviceGUID = IID_IDirect3DRGBDevice;
 		SurfaceMemFlag = DDSCAPS_SYSTEMMEMORY;
 		break;
 
-	 case 2:
+	case 2:
 		DeviceGUID = IID_IDirect3DRefDevice;
 		SurfaceMemFlag = DDSCAPS_SYSTEMMEMORY;
 		break;
@@ -492,7 +492,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE | SurfaceMemFlag;
 	ddsd.dwWidth  = Width;
 	ddsd.dwHeight = Height;
- 
+
 	//	Create the back buffer.
 	if (FAILED(DDraw->CreateSurface(&ddsd, &RenderSurface, NULL)))
 		return false;
@@ -507,7 +507,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	// will be properly initialised. Check this just in case.
 	if (sizeof(DDPIXELFORMAT) != ddpfZBuffer.dwSize)
 		return false;
- 
+
 	// Get z-buffer dimensions from the render target
 	// Setup the surface desc for the z-buffer.
 	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
@@ -599,7 +599,7 @@ void VDirect3DDrawer::InitResolution()
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ZFUNC, D3DCMP_LESSEQUAL);
- 	
+	
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAFUNC, D3DCMP_GREATER);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
 
@@ -875,6 +875,10 @@ void VDirect3DDrawer::SetupView(const refdef_t *rd)
 
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
+	SimpleSurfsHead = NULL;
+	SimpleSurfsTail = NULL;
+	SkyPortalsHead = NULL;
+	SkyPortalsTail = NULL;
 	cacheframecount++;
 
 	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);

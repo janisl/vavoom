@@ -90,7 +90,7 @@ struct surf_t
 extern "C"
 {
 void D_ClipEdge(const TVec&, const TVec&, TClipPlane*, int);
-void D_GenerateSpans(void);
+void D_GenerateSpans();
 }
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
@@ -169,7 +169,7 @@ static int		outofedges;
 //
 //==========================================================================
 
-void VSoftwareDrawer::BeginEdgeFrame(void)
+void VSoftwareDrawer::BeginEdgeFrame()
 {
 	guard(D_BeginEdgeFrame);
 	edge_p = r_edges;
@@ -484,11 +484,23 @@ void VSoftwareDrawer::DrawPolygon(TVec *cv, int count, int, int clipflags)
 
 //==========================================================================
 //
+//	VSoftwareDrawer::DrawSkyPortal
+//
+//==========================================================================
+
+void VSoftwareDrawer::DrawSkyPortal(surface_t*, int)
+{
+	guard(VSoftwareDrawer::DrawSkyPortal);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VSoftwareDrawer::BeginSky
 //
 //==========================================================================
 
-void VSoftwareDrawer::BeginSky(void)
+void VSoftwareDrawer::BeginSky()
 {
 }
 
@@ -566,7 +578,7 @@ void VSoftwareDrawer::DrawSkyPolygon(TVec *cv, int count,
 //
 //==========================================================================
 
-void VSoftwareDrawer::EndSky(void)
+void VSoftwareDrawer::EndSky()
 {
 }
 
@@ -781,7 +793,7 @@ static void D_TrailingEdge(surf_t *surf, edge_t *edge)
 //
 //==========================================================================
 
-static void D_CleanupSpan(void)
+static void D_CleanupSpan()
 {
 	surf_t	*surf;
 	int		iu;
@@ -815,7 +827,7 @@ static void D_CleanupSpan(void)
 //
 //==========================================================================
 
-extern "C" void D_GenerateSpans(void)
+extern "C" void D_GenerateSpans()
 {
 	edge_t			*edge;
 	surf_t			*surf;
@@ -937,7 +949,7 @@ static void D_CalcGradients(surface_t *pface, int miplevel, const TVec &modelorg
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawSurfaces(void)
+void VSoftwareDrawer::DrawSurfaces()
 {
 	surfcache_t		*cache;
 	int				miplevel;
@@ -969,7 +981,7 @@ void VSoftwareDrawer::DrawSurfaces(void)
 			D_DrawSpans(surf->spans);
 			d_ziorigin = 0;
 			d_zistepv = 0;
- 			d_zistepu = 0;
+			d_zistepu = 0;
 			D_DrawZSpans(surf->spans);
 		}
 		else if (surf->flags & SURF_SKY_BOX)
@@ -979,7 +991,7 @@ void VSoftwareDrawer::DrawSurfaces(void)
 			D_DrawSpans(surf->spans);
 			d_ziorigin = 0;
 			d_zistepv = 0;
- 			d_zistepu = 0;
+			d_zistepu = 0;
 			D_DrawZSpans(surf->spans);
 		}
 		else if (surf->flags & SURF_BACKGROUND)
@@ -1002,7 +1014,7 @@ void VSoftwareDrawer::DrawSurfaces(void)
 //
 //==========================================================================
 
-void VSoftwareDrawer::WorldDrawing(void)
+void VSoftwareDrawer::WorldDrawing()
 {
 	guard(VSoftwareDrawer::WorldDrawing);
 	int			iv, bottom;

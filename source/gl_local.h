@@ -135,6 +135,7 @@ public:
 
 	//	Polygon drawing
 	void DrawPolygon(TVec*, int, int, int);
+	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
 	void DrawSkyPolygon(TVec*, int, int, float, int, float);
 	void EndSky();
@@ -171,6 +172,11 @@ protected:
 	int			trspr_tnum[MAX_TRANSLATED_SPRITES];
 
 	GLuint		particle_texture;
+
+	surface_t*	SimpleSurfsHead;
+	surface_t*	SimpleSurfsTail;
+	surface_t*	SkyPortalsHead;
+	surface_t*	SkyPortalsTail;
 
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
 	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];

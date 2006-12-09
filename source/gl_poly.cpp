@@ -436,14 +436,12 @@ inline void	glVertex(const TVec &v)
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
+void VOpenGLDrawer::DrawPolygon(TVec*, int, int, int)
 {
 	guard(VOpenGLDrawer::DrawPolygon);
-	int			i;
-	bool		lightmaped;
-	surface_t	*surf = r_surface;
+	surface_t*	surf = r_surface;
 
-	lightmaped = surf->lightmap != NULL ||
+	bool lightmaped = surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount;
 
 	if (lightmaped)
@@ -455,29 +453,40 @@ void VOpenGLDrawer::DrawPolygon(TVec *cv, int count, int texture, int)
 		}
 	}
 
-	SetTexture(texture);
-
-	if (lightmaped)
+	if (SimpleSurfsTail)
 	{
-		glColor4f(1, 1, 1, 1);
+		SimpleSurfsTail->DrawNext = surf;
+		SimpleSurfsTail = surf;
 	}
 	else
 	{
-		float lev = float(surf->Light >> 24) / 255.0;
-		glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
-			((surf->Light >> 8) & 255) * lev / 255.0,
-			(surf->Light & 255) * lev / 255.0, 1.0);
+		SimpleSurfsHead = surf;
+		SimpleSurfsTail = surf;
 	}
+	surf->DrawNext = NULL;
+	unguard;
+}
 
-	texinfo_t *tex = r_surface->texinfo;
-	glBegin(GL_POLYGON);
-	for (i = 0; i < count; i++)
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawSkyPortal
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawSkyPortal(surface_t* surf, int)
+{
+	guard(VOpenGLDrawer::DrawSkyPortal);
+	if (SkyPortalsTail)
 	{
-		glTexCoord2f((DotProduct(cv[i], tex->saxis) + tex->soffs) * tex_iw,
-			(DotProduct(cv[i], tex->taxis) + tex->toffs) * tex_ih);
-		glVertex(cv[i]);
+		SkyPortalsTail->DrawNext = surf;
+		SkyPortalsTail = surf;
 	}
-	glEnd();
+	else
+	{
+		SkyPortalsHead = surf;
+		SkyPortalsTail = surf;
+	}
+	surf->DrawNext = NULL;
 	unguard;
 }
 
@@ -496,6 +505,54 @@ void VOpenGLDrawer::WorldDrawing()
 	GLfloat		lights, lightt;
 	surface_t	*surf;
 	texinfo_t	*tex;
+
+	//	For sky areas we just write to the depth buffer to prevent drawing
+	// polygons behind the sky.
+	if (SkyPortalsHead)
+	{
+		glDisable(GL_TEXTURE_2D);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		{
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glEnable(GL_TEXTURE_2D);
+	}
+
+	//	Draw surfaces.
+	for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	{
+		texinfo_t* tex = surf->texinfo;
+		SetTexture(tex->pic);
+
+		if (surf->lightmap != NULL ||
+			surf->dlightframe == r_dlightframecount)
+		{
+			glColor4f(1, 1, 1, 1);
+		}
+		else
+		{
+			float lev = float(surf->Light >> 24) / 255.0;
+			glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
+				((surf->Light >> 8) & 255) * lev / 255.0,
+				(surf->Light & 255) * lev / 255.0, 1.0);
+		}
+
+		glBegin(GL_POLYGON);
+		for (i = 0; i < surf->count; i++)
+		{
+			glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+			glVertex(surf->verts[i]);
+		}
+		glEnd();
+	}
 
 	if (mtexable)
 	{
@@ -674,7 +731,7 @@ void VOpenGLDrawer::WorldDrawing()
 void VOpenGLDrawer::BeginSky()
 {
 	guard(VOpenGLDrawer::BeginSky);
-	glDepthRange(0.99, 1.0);
+	glDepthMask(0);
 
 	//	Sky polys are alredy translated
 	glPushMatrix();
@@ -794,7 +851,7 @@ void VOpenGLDrawer::EndSky()
 	}
 
 	glPopMatrix();
-	glDepthRange(0.0, 1.0);
+	glDepthMask(1);
 	unguard;
 }
 
