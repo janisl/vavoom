@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -1298,7 +1298,7 @@ bool Touch(Entity InOther)
 		Other.Damage(self, self, damage);
 		bSkullFly = false;
 		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SeeState);
+		SetState(IdleState);
 		return false;	// stop moving
 	}
 
