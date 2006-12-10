@@ -157,6 +157,8 @@ static void	SetupSky()
 			skyheight = GClLevel->Sectors[i].ceiling.maxz;
 		}
 	}
+	//	Make it a bit higher to avoid clipping of the sprites.
+	skyheight += 256;
 	sky_plane.Set(TVec(0, 0, -1), -skyheight);
 	sky_plane.pic = skyflatnum;
 	unguard;
@@ -447,6 +449,8 @@ static sec_surface_t *CreateSecSurface(subsector_t* sub, sec_plane_t* InSplane)
 	{
 		//	Don't subdivide sky
 		ssurf->surfs = surf;
+		surf->texinfo = &ssurf->texinfo;
+		surf->plane = splane;
 	}
 	else
 	{
@@ -740,6 +744,8 @@ static surface_t *CreateWSurfs(TVec *wv, texinfo_t *texinfo, seg_t *seg)
 		surf = NewWSurf();
 		surf->next = NULL;
 		surf->count = 4;
+		surf->texinfo = texinfo;
+		surf->plane = seg;
 		memcpy(surf->verts, wv, 4 * sizeof(TVec));
 		return surf;
 	}
