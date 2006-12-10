@@ -1058,6 +1058,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 			return;
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
+		SetState(SeeState);
 	}
 	if (bDormant)
 	{
