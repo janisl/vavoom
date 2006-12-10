@@ -105,6 +105,9 @@ graphics/fontb93.lmp	@srcdir@/graphics/fontb93.lmp
 graphics/fontb94.lmp	@srcdir@/graphics/fontb94.lmp
 graphics/fontb95.lmp	@srcdir@/graphics/fontb95.lmp
 
+//	Binary data lumps
+animated.lmp			@srcdir@/animated.lmp
+
 //	Scripts
 animdefs.txt			@srcdir@/animdefs.txt
 sndinfo.txt				@srcdir@/sndinfo.txt
