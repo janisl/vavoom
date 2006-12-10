@@ -952,6 +952,7 @@ void Died(Actor source)
 
 	bDropOff = true;
 	bCorpse = true;
+	bNoPassMobj = true;
 	Height /= 4.0;
 
 	if (bCountKill && Special)
@@ -1091,6 +1092,7 @@ void Damage(Actor inflictor, Actor source, int damage)
 	if (bSkullFly)
 	{
 		Velocity = vector(0.0, 0.0, 0.0);
+		SetState(SeeState);
 	}
 	if (bDormant)
 	{
@@ -1296,7 +1298,7 @@ bool Touch(Entity InOther)
 		Other.Damage(self, self, damage);
 		bSkullFly = false;
 		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(IdleState);
+		SetState(SeeState);
 		return false;	// stop moving
 	}
 

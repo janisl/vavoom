@@ -31,4 +31,5 @@ defaultproperties
 	Height = 8.0;
 	ReactionCount = 8;
 	bSpecial = true;
+	bNoPassMobj = true;
 }
