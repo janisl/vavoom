@@ -103,6 +103,8 @@ static sky_t		sky[HDIVS * VDIVS];
 static int			NumSkySurfs;
 static bool			bIsSkyBox;
 
+static VCvarI		r_skyboxes("r_skyboxes", "1", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -160,6 +162,26 @@ void R_InitSkyBoxes()
 		ParseSkyBoxesScript(new VScriptParser("scripts/skyboxes.txt",
 			FL_OpenFileRead("scripts/skyboxes.txt")));
 	}
+}
+
+//==========================================================================
+//
+//	CheckSkyboxNumForName
+//
+//==========================================================================
+
+static int CheckSkyboxNumForName(VName Name)
+{
+	guard(CheckSkyboxNumForName);
+	for (int num = skyboxinfo.Num() - 1; num >= 0 ; num--)
+	{
+		if (skyboxinfo[num].Name == Name)
+		{
+			return num;
+		}
+	}
+	return -1;
+	unguard;
 }
 
 //==========================================================================
@@ -322,23 +344,24 @@ float tk = skyh / RADIUS;
 //
 //==========================================================================
 
-static void R_InitSkyBox()
+static void R_InitSkyBox(VName Name1, VName Name2)
 {
 	guard(R_InitSkyBox);
-	int num;
-
-	for (num = 0; num < skyboxinfo.Num(); num++)
+	int num = CheckSkyboxNumForName(Name1);
+	if (num == -1)
 	{
-		if (cl_level.SkyBox == skyboxinfo[num].Name)
+		Host_Error("No such skybox %s", *Name1);
+	}
+	skyboxinfo_t& s1info = skyboxinfo[num];
+	if (Name2 != NAME_None)
+	{
+		num = CheckSkyboxNumForName(Name2);
+		if (num == -1)
 		{
-			break;
+			Host_Error("No such skybox %s", *Name2);
 		}
 	}
-	if (num == skyboxinfo.Num())
-	{
-		Host_Error("No such skybox %s", *cl_level.SkyBox);
-	}
-	skyboxinfo_t &sinfo = skyboxinfo[num];
+	skyboxinfo_t& s2info = skyboxinfo[num];
 
 	memset(sky, 0, sizeof(sky));
 
@@ -435,7 +458,9 @@ static void R_InitSkyBox()
 	NumSkySurfs = 6;
 	for (int j = 0; j < 6; j++)
 	{
-		sky[j].texture1 = sinfo.surfs[j].texture;
+		sky[j].texture1 = s1info.surfs[j].texture;
+		sky[j].baseTexture1 = s1info.surfs[j].texture;
+		sky[j].baseTexture2 = s2info.surfs[j].texture;
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
 		sky[j].surf.count = 4;
@@ -470,11 +495,32 @@ void R_InitSky()
 	guard(R_InitSky);
 	if (cl_level.SkyBox != NAME_None)
 	{
-		R_InitSkyBox();
+		R_InitSkyBox(cl_level.SkyBox, NAME_None);
 	}
 	else
 	{
-		R_InitOldSky();
+		int Num1 = -1;
+		int Num2 = -1;
+		VName Name1(NAME_None);
+		VName Name2(NAME_None);
+		//	Check if we want to replace old sky with a skybox. We can't do
+		// this if level is using double sky or it's scrolling.
+		if (r_skyboxes && !cl_level.doubleSky && !cl_level.sky1ScrollDelta)
+		{
+			Name1 = GTextureManager.Textures[cl_level.sky1Texture]->Name;
+			Name2 = cl_level.lightning ? GTextureManager.Textures[
+				cl_level.sky2Texture]->Name : Name1;
+			Num1 = CheckSkyboxNumForName(Name1);
+			Num2 = CheckSkyboxNumForName(Name2);
+		}
+		if (Num1 != -1 && Num2 != -1)
+		{
+			R_InitSkyBox(Name1, Name2);
+		}
+		else
+		{
+			R_InitOldSky();
+		}
 	}
 	unguard;
 }
@@ -488,7 +534,7 @@ void R_InitSky()
 void R_SkyChanged()
 {
 	guard(R_SkyChanged);
-	if (cl_level.SkyBox != NAME_None)
+	if (bIsSkyBox)
 	{
 		return;
 	}
@@ -597,13 +643,9 @@ static void R_LightningFlash()
 					tempLight++;
 				}
 			}
-			// Check if we aren't using a skybox
-			if (cl_level.SkyBox == NAME_None)
+			for (i = 0; i < NumSkySurfs; i++)
 			{
-				for (i = 0; i < NumSkySurfs; i++)
-				{
-					sky[i].texture1 = sky[i].baseTexture1;
-				}
+				sky[i].texture1 = sky[i].baseTexture1;
 			}
 		}
 		return;
@@ -652,13 +694,9 @@ static void R_LightningFlash()
 	}
 	if (foundSec)
 	{
-		// Check if we aren't using a skybox
-		if (cl_level.SkyBox == NAME_None)
+		for (i = 0; i < NumSkySurfs; i++)
 		{
-			for (i = 0; i < NumSkySurfs; i++)
-			{
-				sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
-			}
+			sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
 		}
 		GAudio->PlaySound(GSoundManager->GetSoundID("world/thunder"),
 			TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1, 0);
