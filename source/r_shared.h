@@ -117,7 +117,7 @@ public:
 	VTexture();
 	virtual ~VTexture();
 
-	static VTexture* CreateTexture(int, int, VName);
+	static VTexture* CreateTexture(int, int);
 
 	int GetWidth() { return Width; }
 	int GetHeight() { return Height; }

@@ -91,7 +91,7 @@ struct pcx_t
 //
 //==========================================================================
 
-VTexture* VPcxTexture::Create(VStream& Strm, int LumpNum, VName Name)
+VTexture* VPcxTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VPcxTexture::Create);
 	if (Strm.TotalSize() < 128)
@@ -121,7 +121,7 @@ VTexture* VPcxTexture::Create(VStream& Strm, int LumpNum, VName Name)
 		}
 	}
 
-	return new VPcxTexture(LumpNum, Name, Hdr);
+	return new VPcxTexture(LumpNum, Hdr);
 	unguard;
 }
 
@@ -131,12 +131,12 @@ VTexture* VPcxTexture::Create(VStream& Strm, int LumpNum, VName Name)
 //
 //==========================================================================
 
-VPcxTexture::VPcxTexture(int ALumpNum, VName AName, pcx_t& Hdr)
+VPcxTexture::VPcxTexture(int ALumpNum, pcx_t& Hdr)
 : LumpNum(ALumpNum)
 , Pixels(0)
 , Palette(0)
 {
-	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Name = W_LumpName(LumpNum);
 	Width = Hdr.xmax - Hdr.xmin + 1;
 	Height = Hdr.ymax - Hdr.ymin + 1;
 }
@@ -181,12 +181,7 @@ vuint8* VPcxTexture::GetPixels()
 	}
 
 	//	Open stream.
-	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
-		FL_OpenFileRead(*Name);
-	if (!Strm)
-	{
-		Sys_Error("Couldn't find file %s", *Name);
-	}
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
 
 	//	Read header.
 	pcx_t pcx;

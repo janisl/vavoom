@@ -51,7 +51,7 @@
 //
 //==========================================================================
 
-VTexture* VImgzTexture::Create(VStream& Strm, int LumpNum, VName Name)
+VTexture* VImgzTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VImgzTexture::Create);
 	if (Strm.TotalSize() < 24)
@@ -74,7 +74,7 @@ VTexture* VImgzTexture::Create(VStream& Strm, int LumpNum, VName Name)
 	}
 
 	Strm << Width << Height << SOffset << TOffset;
-	return new VImgzTexture(LumpNum, Name, Width, Height, SOffset, TOffset);
+	return new VImgzTexture(LumpNum, Width, Height, SOffset, TOffset);
 	unguard;
 }
 
@@ -84,12 +84,12 @@ VTexture* VImgzTexture::Create(VStream& Strm, int LumpNum, VName Name)
 //
 //==========================================================================
 
-VImgzTexture::VImgzTexture(int ALumpNum, VName AName, int AWidth,
-	int AHeight, int ASOffset, int ATOffset)
+VImgzTexture::VImgzTexture(int ALumpNum, int AWidth, int AHeight,
+	int ASOffset, int ATOffset)
 : LumpNum(ALumpNum)
 , Pixels(0)
 {
-	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Name = W_LumpName(LumpNum);
 	Format = TEXFMT_8;
 	Width = AWidth;
 	Height = AHeight;
@@ -128,8 +128,7 @@ vuint8* VImgzTexture::GetPixels()
 		return Pixels;
 	}
 
-	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
-		FL_OpenFileRead(*Name);
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
 
 	//	Read header.
 	Strm->Seek(4);	//	Skip magic.

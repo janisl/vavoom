@@ -75,7 +75,7 @@ struct tgaHeader_t
 //
 //==========================================================================
 
-VTexture* VTgaTexture::Create(VStream& Strm, int LumpNum, VName Name)
+VTexture* VTgaTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VTgaTexture::Create);
 	if (Strm.TotalSize() < 18)
@@ -102,7 +102,7 @@ VTexture* VTgaTexture::Create(VStream& Strm, int LumpNum, VName Name)
 	{
 		return NULL;
 	}
-	return new VTgaTexture(LumpNum, Name, Hdr);
+	return new VTgaTexture(LumpNum, Hdr);
 	unguard;
 }
 
@@ -112,12 +112,12 @@ VTexture* VTgaTexture::Create(VStream& Strm, int LumpNum, VName Name)
 //
 //==========================================================================
 
-VTgaTexture::VTgaTexture(int ALumpNum, VName AName, tgaHeader_t& Hdr)
+VTgaTexture::VTgaTexture(int ALumpNum, tgaHeader_t& Hdr)
 : LumpNum(ALumpNum)
 , Pixels(0)
 , Palette(0)
 {
-	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Name = W_LumpName(LumpNum);
 	Width = Hdr.width;
 	Height = Hdr.height;
 }
@@ -161,7 +161,8 @@ vuint8* VTgaTexture::GetPixels()
 	int			count;
 	int			c;
 
-	VStream* Strm = FL_OpenFileRead(*Name);
+	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
+		FL_OpenFileRead(*Name);
 	if (!Strm)
 	{
 		Sys_Error("Couldn't find file %s", *Name);

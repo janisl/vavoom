@@ -67,7 +67,7 @@ struct VJpegClientData
 //
 //==========================================================================
 
-VTexture* VJpegTexture::Create(VStream& Strm, int LumpNum, VName Name)
+VTexture* VJpegTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VJpegTexture::Create);
 	if (Strm.TotalSize() < 11)
@@ -140,7 +140,7 @@ VTexture* VJpegTexture::Create(VStream& Strm, int LumpNum, VName Name)
 	Strm.Serialise(Buf, 5);
 	vint32 Width = Buf[4] + (Buf[3] << 8);
 	vint32 Height = Buf[2] + (Buf[1] << 8);
-	return new VJpegTexture(LumpNum, Name, Width, Height);
+	return new VJpegTexture(LumpNum, Width, Height);
 	unguard;
 }
 
@@ -150,11 +150,11 @@ VTexture* VJpegTexture::Create(VStream& Strm, int LumpNum, VName Name)
 //
 //==========================================================================
 
-VJpegTexture::VJpegTexture(int ALumpNum, VName AName, int AWidth, int AHeight)
+VJpegTexture::VJpegTexture(int ALumpNum, int AWidth, int AHeight)
 : LumpNum(ALumpNum)
 , Pixels(0)
 {
-	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Name = W_LumpName(LumpNum);
 	Width = AWidth;
 	Height = AHeight;
 }
@@ -182,13 +182,13 @@ VJpegTexture::~VJpegTexture()
 //==========================================================================
 
 #ifdef CLIENT
-void my_init_source(j_decompress_ptr cinfo)
+static void my_init_source(j_decompress_ptr cinfo)
 {
 	cinfo->src->next_input_byte = NULL;
 	cinfo->src->bytes_in_buffer = 0;
 }
 
-boolean my_fill_input_buffer(j_decompress_ptr cinfo)
+static boolean my_fill_input_buffer(j_decompress_ptr cinfo)
 {
 	VJpegClientData* cdata = (VJpegClientData*)cinfo->client_data;
 	if (cdata->Strm->AtEnd())
@@ -212,7 +212,7 @@ boolean my_fill_input_buffer(j_decompress_ptr cinfo)
 	return TRUE;
 }
 
-void my_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
+static void my_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 {
 	if (num_bytes <= 0)
 	{
@@ -236,17 +236,17 @@ void my_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 	}
 }
 
-void my_term_source(j_decompress_ptr)
+static void my_term_source(j_decompress_ptr)
 {
 }
 
-void my_error_exit(j_common_ptr cinfo)
+static void my_error_exit(j_common_ptr cinfo)
 {
 	(*cinfo->err->output_message)(cinfo);
 	throw -1;
 }
 
-void my_output_message(j_common_ptr cinfo)
+static void my_output_message(j_common_ptr cinfo)
 {
 	char Msg[JMSG_LENGTH_MAX];
 	cinfo->err->format_message(cinfo, Msg);
@@ -274,15 +274,7 @@ vuint8* VJpegTexture::GetPixels()
 	VJpegClientData			cdata;
 
 	//	Open stream.
-	VStream* Strm;
-	if (LumpNum != -1)
-	{
-		Strm = W_CreateLumpReaderNum(LumpNum);
-	}
-	else
-	{
-		Strm = FL_OpenFileRead(*Name);
-	}
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
 	check(Strm);
 
 	try

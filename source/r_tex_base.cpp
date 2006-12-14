@@ -32,7 +32,7 @@
 
 // TYPES -------------------------------------------------------------------
 
-typedef VTexture* (*VTexCreateFunc)(VStream&, int, VName);
+typedef VTexture* (*VTexCreateFunc)(VStream&, int);
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -54,7 +54,7 @@ typedef VTexture* (*VTexCreateFunc)(VStream&, int, VName);
 //
 //==========================================================================
 
-VTexture* VTexture::CreateTexture(int Type, int LumpNum, VName Name)
+VTexture* VTexture::CreateTexture(int Type, int LumpNum)
 {
 	guard(VTexture::CreateTexture);
 	static const struct
@@ -74,19 +74,17 @@ VTexture* VTexture::CreateTexture(int Type, int LumpNum, VName Name)
 		{ VAutopageTexture::Create,	TEXTYPE_Autopage },
 	};
 
-	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
-		FL_OpenFileRead(*Name);
-	if (!Strm)
+	if (LumpNum < 0)
 	{
-		//	Couldn't open, should happen only for files.
 		return NULL;
 	}
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
 
 	for (size_t i = 0; i < ARRAY_COUNT(TexTable); i++)
 	{
 		if (TexTable[i].Type == Type || TexTable[i].Type == TEXTYPE_Any)
 		{
-			VTexture* Tex = TexTable[i].Create(*Strm, LumpNum, Name);
+			VTexture* Tex = TexTable[i].Create(*Strm, LumpNum);
 			if (Tex)
 			{
 				Tex->Type = Type;
@@ -301,29 +299,36 @@ VTexture* VTexture::GetHighResolutionTexture()
 
 	//	First try PNG.
 	char HighResName[80];
+	int LumpNum;
 	sprintf(HighResName, "hirestex/%s/%s.png", DirName, *Name);
-	if (FL_FileExists(HighResName))
+	LumpNum = W_CheckNumForFileName(HighResName);
+	if (LumpNum >= 0)
 	{
 		//	Create new high-resolution texture.
-		HiResTexture = CreateTexture(Type, -1, HighResName);
+		HiResTexture = CreateTexture(Type, LumpNum);
+		HiResTexture->Name = HighResName;
 		return HiResTexture;
 	}
 
 	//	Then try JPG.
 	sprintf(HighResName, "hirestex/%s/%s.jpg", DirName, *Name);
-	if (FL_FileExists(HighResName))
+	LumpNum = W_CheckNumForFileName(HighResName);
+	if (LumpNum >= 0)
 	{
 		//	Create new high-resolution texture.
-		HiResTexture = CreateTexture(Type, -1, HighResName);
+		HiResTexture = CreateTexture(Type, LumpNum);
+		HiResTexture->Name = HighResName;
 		return HiResTexture;
 	}
 
 	//	Then try TGA.
 	sprintf(HighResName, "hirestex/%s/%s.tga", DirName, *Name);
-	if (FL_FileExists(HighResName))
+	LumpNum = W_CheckNumForFileName(HighResName);
+	if (LumpNum >= 0)
 	{
 		//	Create new high-resolution texture.
-		HiResTexture = CreateTexture(Type, -1, HighResName);
+		HiResTexture = CreateTexture(Type, LumpNum);
+		HiResTexture->Name = HighResName;
 		return HiResTexture;
 	}
 #endif

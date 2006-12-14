@@ -52,7 +52,7 @@
 //
 //==========================================================================
 
-VTexture* VPatchTexture::Create(VStream& Strm, int LumpNum, VName Name)
+VTexture* VPatchTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VPatchTexture::Create);
 	if (Strm.TotalSize() < 13)
@@ -104,7 +104,7 @@ VTexture* VPatchTexture::Create(VStream& Strm, int LumpNum, VName Name)
 		return NULL;
 	}
 
-	return new VPatchTexture(LumpNum, Name, Width, Height, SOffset, TOffset);
+	return new VPatchTexture(LumpNum, Width, Height, SOffset, TOffset);
 	unguard;
 }
 
@@ -114,12 +114,12 @@ VTexture* VPatchTexture::Create(VStream& Strm, int LumpNum, VName Name)
 //
 //==========================================================================
 
-VPatchTexture::VPatchTexture(int ALumpNum, VName AName, int AWidth,
-	int AHeight, int ASOffset, int ATOffset)
+VPatchTexture::VPatchTexture(int ALumpNum, int AWidth, int AHeight,
+	int ASOffset, int ATOffset)
 : LumpNum(ALumpNum)
 , Pixels(0)
 {
-	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Name = W_LumpName(LumpNum);
 	Format = TEXFMT_8;
 	Width = AWidth;
 	Height = AHeight;

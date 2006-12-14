@@ -52,7 +52,7 @@
 //
 //==========================================================================
 
-VTexture* VAutopageTexture::Create(VStream& Strm, int LumpNum, VName)
+VTexture* VAutopageTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VAutopageTexture::Create);
 	if (Strm.TotalSize() < 320)

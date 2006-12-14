@@ -61,7 +61,7 @@
 //
 //==========================================================================
 
-VTexture* VPngTexture::Create(VStream& Strm, int LumpNum, VName Name)
+VTexture* VPngTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VPngTexture::Create);
 	if (Strm.TotalSize() < 29)
@@ -103,7 +103,7 @@ VTexture* VPngTexture::Create(VStream& Strm, int LumpNum, VName Name)
 	Strm.SerialiseBigEndian(&Height, 4);
 	Strm << BitDepth << ColourType << Compression << Filter << Interlace;
 
-	return new VPngTexture(LumpNum, Name, Width, Height);
+	return new VPngTexture(LumpNum, Width, Height);
 	unguard;
 }
 
@@ -113,11 +113,11 @@ VTexture* VPngTexture::Create(VStream& Strm, int LumpNum, VName Name)
 //
 //==========================================================================
 
-VPngTexture::VPngTexture(int ALumpNum, VName AName, int AWidth, int AHeight)
+VPngTexture::VPngTexture(int ALumpNum, int AWidth, int AHeight)
 : LumpNum(ALumpNum)
 , Pixels(0)
 {
-	Name = LumpNum >= 0 ? W_LumpName(LumpNum) : AName;
+	Name = W_LumpName(LumpNum);
 	Width = AWidth;
 	Height = AHeight;
 }
@@ -199,15 +199,7 @@ vuint8* VPngTexture::GetPixels()
 	}
 
 	//	Open stream.
-	VStream* Strm;
-	if (LumpNum != -1)
-	{
-		Strm = W_CreateLumpReaderNum(LumpNum);
-	}
-	else
-	{
-		Strm = FL_OpenFileRead(*Name);
-	}
+	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
 
 	//	Verify signature.
 	png_byte Signature[8];

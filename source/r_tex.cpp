@@ -396,7 +396,7 @@ int VTextureManager::AddPatch(VName Name, int Type, bool Silent)
 	}
 
 	//	Create new patch texture.
-	return AddTexture(VTexture::CreateTexture(Type, LumpNum, NAME_None));
+	return AddTexture(VTexture::CreateTexture(Type, LumpNum));
 	unguard;
 }
 
@@ -453,10 +453,15 @@ int VTextureManager::AddFileTexture(VName Name, int Type)
 		return i;
 	}
 
-	VTexture* Tex = VTexture::CreateTexture(Type, -1, Name);
-	if (Tex)
+	i = W_CheckNumForFileName(*Name);
+	if (i >= 0)
 	{
-		return AddTexture(Tex);
+		VTexture* Tex = VTexture::CreateTexture(Type, i);
+		if (Tex)
+		{
+			Tex->Name = Name;
+			return AddTexture(Tex);
+		}
 	}
 
 	GCon->Logf("Couldn\'t create texture %s.", *Name);
@@ -567,7 +572,7 @@ void VTextureManager::AddTexturesLump(int NamesLump, int TexLump,
 		else
 		{
 			patchtexlookup[i] = VTexture::CreateTexture(TEXTYPE_WallPatch,
-				LNum, NAME_None);
+				LNum);
 			AddTexture(patchtexlookup[i]);
 		}
 	}
@@ -630,7 +635,7 @@ void VTextureManager::AddGroup(int Type, EWadNamespace Namespace)
 		{
 			continue;
 		}
-		AddTexture(VTexture::CreateTexture(Type, Lump, NAME_None));
+		AddTexture(VTexture::CreateTexture(Type, Lump));
 	}
 	unguard;
 }
@@ -655,7 +660,7 @@ void VTextureManager::AddHiResTextures()
 		}
 
 		//	Create new texture.
-		VTexture* NewTex = VTexture::CreateTexture(TEXTYPE_Any, Lump, NAME_None);
+		VTexture* NewTex = VTexture::CreateTexture(TEXTYPE_Any, Lump);
 		if (!NewTex)
 		{
 			continue;
@@ -721,7 +726,7 @@ void VTextureManager::AddHiResTextures()
 
 				//	Create new texture.
 				VTexture* NewTex = VTexture::CreateTexture(TEXTYPE_Any,
-					LumpIdx, NAME_None);
+					LumpIdx);
 				if (!NewTex)
 				{
 					continue;
@@ -757,7 +762,7 @@ void VTextureManager::AddHiResTextures()
 
 				//	Create new texture.
 				VTexture* NewTex = VTexture::CreateTexture(TEXTYPE_Overload,
-					LumpIdx, NAME_None);
+					LumpIdx);
 				if (!NewTex)
 				{
 					continue;

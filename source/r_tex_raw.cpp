@@ -52,7 +52,7 @@
 //
 //==========================================================================
 
-VTexture* VRawPicTexture::Create(VStream& Strm, int LumpNum, VName)
+VTexture* VRawPicTexture::Create(VStream& Strm, int LumpNum)
 {
 	guard(VRawPicTexture::Create);
 	if (Strm.TotalSize() != 64000)

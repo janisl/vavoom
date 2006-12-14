@@ -108,9 +108,9 @@ private:
 	vuint8*		Pixels;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
-	VPatchTexture(int, VName, int, int, int, int);
+	VPatchTexture(int, int, int, int, int);
 	~VPatchTexture();
 	vuint8* GetPixels();
 	void Unload();
@@ -157,9 +157,9 @@ private:
 	vuint8*		Pixels;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
-	VFlatTexture(int InLumpNum);
+	VFlatTexture(int);
 	~VFlatTexture();
 	vuint8* GetPixels();
 	void Unload();
@@ -177,7 +177,7 @@ private:
 	rgba_t*		Palette;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
 	VRawPicTexture(int, int);
 	~VRawPicTexture();
@@ -196,7 +196,7 @@ private:
 	vuint8*		Pixels;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
 	VAutopageTexture(int);
 	~VAutopageTexture();
@@ -216,9 +216,9 @@ private:
 	vuint8*		Pixels;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
-	VImgzTexture(int, VName, int, int, int, int);
+	VImgzTexture(int, int, int, int, int);
 	~VImgzTexture();
 	vuint8* GetPixels();
 	void Unload();
@@ -235,9 +235,9 @@ private:
 	rgba_t*		Palette;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
-	VPcxTexture(int, VName, struct pcx_t&);
+	VPcxTexture(int, struct pcx_t&);
 	~VPcxTexture();
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
@@ -255,9 +255,9 @@ private:
 	rgba_t*		Palette;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
-	VTgaTexture(int, VName, struct tgaHeader_t&);
+	VTgaTexture(int, struct tgaHeader_t&);
 	~VTgaTexture();
 	vuint8* GetPixels();
 	rgba_t* GetPalette();
@@ -274,9 +274,9 @@ private:
 	vuint8*		Pixels;
 
 public:
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
-	VPngTexture(int, VName, int, int);
+	VPngTexture(int, int, int);
 	~VPngTexture();
 	vuint8* GetPixels();
 	void Unload();
@@ -291,9 +291,9 @@ public:
 	int			LumpNum;
 	vuint8*		Pixels;
 
-	static VTexture* Create(VStream&, int, VName);
+	static VTexture* Create(VStream&, int);
 
-	VJpegTexture(int, VName, int, int);
+	VJpegTexture(int, int, int);
 	~VJpegTexture();
 	vuint8* GetPixels();
 	void Unload();

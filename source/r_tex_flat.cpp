@@ -52,7 +52,7 @@
 //
 //==========================================================================
 
-VTexture* VFlatTexture::Create(VStream&, int LumpNum, VName)
+VTexture* VFlatTexture::Create(VStream&, int LumpNum)
 {
 	guard(VFlatTexture::Create);
 	return new VFlatTexture(LumpNum);
