@@ -27,12 +27,6 @@
 //**
 //**************************************************************************
 
-// HEADER FILES ------------------------------------------------------------
-
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
 //	Boom namespaces.
 enum EWadNamespace
 {
@@ -55,26 +49,6 @@ enum EWadNamespace
 	WADNS_Music,
 };
 
-class VSearchPath
-{
-public:
-	virtual ~VSearchPath();
-	virtual VStr FindFile(const VStr&) = 0;
-	virtual bool FileExists(const VStr&) = 0;
-	virtual VStream* OpenFileRead(const VStr&) = 0;
-	virtual void Close() = 0;
-	virtual int CheckNumForName(VName, EWadNamespace) = 0;
-	virtual void ReadFromLump(int, void*, int, int) = 0;
-	virtual int LumpLength(int) = 0;
-	virtual VName LumpName(int) = 0;
-	virtual int IterateNS(int, EWadNamespace) = 0;
-	virtual void BuildGLNodes(VSearchPath*) = 0;
-	virtual void BuildPVS(VSearchPath*) = 0;
-	virtual VStream* CreateLumpReaderNum(int) = 0;
-};
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
 void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices);
 void W_Shutdown();
 
@@ -88,6 +62,9 @@ int W_CheckNumForName(VName Name, EWadNamespace NS = WADNS_Global);
 int W_GetNumForName(VName Name, EWadNamespace NS = WADNS_Global);
 int W_CheckNumForNameInFile(VName Name, int File, EWadNamespace NS = WADNS_Global);
 
+int W_CheckNumForFileName(VStr Name);
+int W_GetNumForFileName(VStr Name);
+
 int W_LumpLength(int lump);
 VName W_LumpName(int lump);
 int W_LumpFile(int lump);
@@ -97,7 +74,3 @@ VStream* W_CreateLumpReaderNum(int lump);
 VStream* W_CreateLumpReaderName(VName Name, EWadNamespace NS = WADNS_Global);
 
 int W_IterateNS(int Prev, EWadNamespace NS);
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern TArray<VSearchPath*>	SearchPaths;

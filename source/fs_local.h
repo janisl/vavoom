@@ -26,11 +26,108 @@
 #ifndef __FS_LOCAL_H__
 #define __FS_LOCAL_H__
 
+//==========================================================================
+//	VSearchPath
+//==========================================================================
+
+class VSearchPath
+{
+public:
+	virtual ~VSearchPath();
+	virtual VStr FindFile(const VStr&) = 0;
+	virtual bool FileExists(const VStr&) = 0;
+	virtual VStream* OpenFileRead(const VStr&) = 0;
+	virtual void Close() = 0;
+	virtual int CheckNumForName(VName, EWadNamespace) = 0;
+	virtual int CheckNumForFileName(VStr) = 0;
+	virtual void ReadFromLump(int, void*, int, int) = 0;
+	virtual int LumpLength(int) = 0;
+	virtual VName LumpName(int) = 0;
+	virtual int IterateNS(int, EWadNamespace) = 0;
+	virtual void BuildGLNodes(VSearchPath*) = 0;
+	virtual void BuildPVS(VSearchPath*) = 0;
+	virtual VStream* CreateLumpReaderNum(int) = 0;
+};
+
+//==========================================================================
+//	VFilesDir
+//==========================================================================
+
+class VFilesDir : public VSearchPath
+{
+private:
+	VStr			Path;
+	TArray<VStr>	CachedFiles;
+
+public:
+	VFilesDir(const VStr& aPath)
+	: Path(aPath)
+	{}
+	VStr FindFile(const VStr&);
+	bool FileExists(const VStr&);
+	VStream* OpenFileRead(const VStr&);
+	void Close();
+	int CheckNumForName(VName, EWadNamespace);
+	int CheckNumForFileName(VStr);
+	void ReadFromLump(int, void*, int, int);
+	int LumpLength(int);
+	VName LumpName(int);
+	int IterateNS(int, EWadNamespace);
+	void BuildGLNodes(VSearchPath*);
+	void BuildPVS(VSearchPath*);
+	VStream* CreateLumpReaderNum(int);
+};
+
+//==========================================================================
+//	VWadFile
+//==========================================================================
+
+struct lumpinfo_t;
+
+class VWadFile : public VSearchPath
+{
+private:
+	VStr			Name;
+	VStream*		Stream;
+	int				NumLumps;
+	lumpinfo_t*		LumpInfo;	// Location of each lump on disk.
+	VStr			GwaDir;
+
+	void InitNamespaces();
+	void FixVoiceNamespaces();
+	void InitNamespace(EWadNamespace NS, VName Start, VName End,
+		VName AltStart = NAME_None, VName AltEnd = NAME_None);
+
+public:
+	VWadFile();
+	~VWadFile();
+	void Open(const VStr&, const VStr&, bool, VStream*);
+	void OpenSingleLump(const VStr& FileName);
+	void Close();
+	int CheckNumForName(VName LumpName, EWadNamespace NS);
+	int CheckNumForFileName(VStr);
+	void ReadFromLump(int lump, void* dest, int pos, int size);
+	int LumpLength(int);
+	VName LumpName(int);
+	int IterateNS(int, EWadNamespace);
+	void BuildGLNodes(VSearchPath*);
+	void BuildPVS(VSearchPath*);
+	VStr FindFile(const VStr&);
+	bool FileExists(const VStr&);
+	VStream* OpenFileRead(const VStr&);
+	VStream* CreateLumpReaderNum(int);
+};
+
+//==========================================================================
+//	VZipFile
+//==========================================================================
+
 struct VZipFileInfo;
 
 //	A zip file.
 class VZipFile : public VSearchPath
 {
+private:
 	VStr			ZipFileName;
 	VStream*		FileStream;			//	Source stream of the zipfile
 	VZipFileInfo*	Files;
@@ -47,6 +144,7 @@ public:
 	VStream* OpenFileRead(const VStr&);
 	void Close();
 	int CheckNumForName(VName, EWadNamespace);
+	int CheckNumForFileName(VStr);
 	void ReadFromLump(int, void*, int, int);
 	int LumpLength(int);
 	VName LumpName(int);
@@ -60,6 +158,32 @@ public:
 	void ListWadFiles(TArray<VStr>&);
 };
 
+//==========================================================================
+//	VStreamFileReader
+//==========================================================================
+
+class VStreamFileReader : public VStream
+{
+public:
+	VStreamFileReader(FILE*, FOutputDevice*);
+	~VStreamFileReader();
+	void Seek(int InPos);
+	int Tell();
+	int TotalSize();
+	bool AtEnd();
+	bool Close();
+	void Serialise(void* V, int Length);
+
+protected:
+	FILE *File;
+	FOutputDevice *Error;
+};
+
 void W_AddFileFromZip(const VStr&, VStream*, const VStr&, VStream*);
+
+bool GLBSP_BuildNodes(const char *name, const char* gwafile);
+void GLVis_BuildPVS(const char *srcfile, const char* gwafile);
+
+extern TArray<VSearchPath*>	SearchPaths;
 
 #endif

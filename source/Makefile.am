@@ -111,6 +111,8 @@ _____MAIN_EXE__SOURCES = \
 	finale.h \
 	fmd2defs.h \
 	fs_local.h \
+	fs_dir.cpp \
+	fs_wad.cpp \
 	fs_zip.cpp \
 	fwaddefs.h \
 	gamedefs.h \
@@ -412,6 +414,8 @@ _____SERVER_EXE__SOURCES = \
 	cvar.cpp \
 	debug.cpp \
 	files.cpp \
+	fs_dir.cpp \
+	fs_wad.cpp \
 	fs_zip.cpp \
 	host.cpp \
 	infostr.cpp \

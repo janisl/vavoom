@@ -230,6 +230,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\fs_dir.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\fs_wad.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\fs_zip.cpp"
 				>
 			</File>

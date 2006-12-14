@@ -444,6 +444,28 @@ int VZipFile::CheckNumForName(VName LumpName, EWadNamespace NS)
 
 //==========================================================================
 //
+//	VZipFile::CheckNumForFileName
+//
+//==========================================================================
+
+int VZipFile::CheckNumForFileName(VStr Name)
+{
+	guard(VZipFile::CheckNumForFileName);
+	for (int i = NumFiles - 1; i >= 0; i--)
+	{
+		if (Files[i].Name == Name)
+		{
+			return i;
+		}
+	}
+
+	// Not found.
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VZipFile::ReadFromLump
 //
 //==========================================================================

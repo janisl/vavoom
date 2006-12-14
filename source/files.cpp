@@ -32,29 +32,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VFilesDir : public VSearchPath
-{
-private:
-	VStr			Path;
-
-public:
-	VFilesDir(const VStr& aPath)
-	: Path(aPath)
-	{}
-	VStr FindFile(const VStr&);
-	bool FileExists(const VStr&);
-	VStream* OpenFileRead(const VStr&);
-	void Close();
-	int CheckNumForName(VName, EWadNamespace);
-	void ReadFromLump(int, void*, int, int);
-	int LumpLength(int);
-	VName LumpName(int);
-	int IterateNS(int, EWadNamespace);
-	void BuildGLNodes(VSearchPath*);
-	void BuildPVS(VSearchPath*);
-	VStream* CreateLumpReaderNum(int);
-};
-
 struct version_t
 {
 	VStr			MainWad;
@@ -603,80 +580,6 @@ bool FL_WriteFile(const VStr& name, const void* source, int length)
 
 //==========================================================================
 //
-//	VStreamFileReader
-//
-//==========================================================================
-
-class VStreamFileReader : public VStream
-{
-public:
-	VStreamFileReader(FILE* InFile, FOutputDevice *InError) 
-		: File(InFile), Error(InError)
-	{
-		guard(VStreamFileReader::VStreamFileReader);
-		fseek(File, 0, SEEK_SET);
-		bLoading = true;
-		unguard;
-	}
-	~VStreamFileReader()
-	{
-		guard(VStreamFileReader::~VStreamFileReader);
-		if (File)
-			Close();
-		unguard;
-	}
-	void Seek(int InPos)
-	{
-		//guard(VStreamFileReader::Seek);
-		if (fseek(File, InPos, SEEK_SET))
-		{
-			bError = true;
-			//Error->Logf("seek Failed %i/%i: %i %i", InPos, Size, Pos, ferror(File) );
-		}
-		//unguard;
-	}
-	int Tell()
-	{
-		return ftell(File);
-	}
-	int TotalSize()
-	{
-		int CurPos = ftell(File);
-		fseek(File, 0, SEEK_END);
-		int Size = ftell(File);
-		fseek(File, CurPos, SEEK_SET);
-		return Size;
-	}
-	bool AtEnd()
-	{
-		return !!feof(File);
-	}
-	bool Close()
-	{
-		guardSlow(VStreamFileReader::Close);
-		if (File)
-			fclose(File);
-		File = NULL;
-		return !bError;
-		unguardSlow;
-	}
-	void Serialise(void* V, int Length)
-	{
-		guardSlow(VStreamFileReader::Serialise);
-		if (fread(V, Length, 1, File) != 1)
-		{
-			bError = true;
-			Error->Logf("fread failed: Length=%i Error=%i", Length, ferror(File));
-		}
-		unguardSlow;
-	}
-protected:
-	FILE *File;
-	FOutputDevice *Error;
-};
-
-//==========================================================================
-//
 //	FL_OpenFileRead
 //
 //==========================================================================
@@ -825,90 +728,67 @@ VStream* FL_OpenFileWrite(const VStr& Name)
 
 //==========================================================================
 //
-//	VFilesDir::FindFile
+//	VStreamFileReader
 //
 //==========================================================================
 
-VStr VFilesDir::FindFile(const VStr& fname)
+VStreamFileReader::VStreamFileReader(FILE* InFile, FOutputDevice *InError) 
+	: File(InFile), Error(InError)
 {
-	guard(VFilesDir::FindFile);
-	VStr tmp = Path + "/" + fname;
-	if (Sys_FileExists(tmp))
-	{
-		return tmp;
-	}
-	return VStr();
+	guard(VStreamFileReader::VStreamFileReader);
+	fseek(File, 0, SEEK_SET);
+	bLoading = true;
 	unguard;
 }
-
-//==========================================================================
-//
-//	VFilesDir::FileExists
-//
-//==========================================================================
-
-bool VFilesDir::FileExists(const VStr& fname)
+VStreamFileReader::~VStreamFileReader()
 {
-	guard(VFilesDir::FileExists);
-	return Sys_FileExists(Path + "/" + fname);
+	guard(VStreamFileReader::~VStreamFileReader);
+	if (File)
+		Close();
 	unguard;
 }
-
-//==========================================================================
-//
-//	VFilesDir::OpenFileRead
-//
-//==========================================================================
-
-VStream* VFilesDir::OpenFileRead(const VStr& Name)
+void VStreamFileReader::Seek(int InPos)
 {
-	guard(FL_OpenFileRead);
-	VStr TmpName = Path + "/" + Name;
-	if (!Sys_FileExists(TmpName))
+	guard(VStreamFileReader::Seek);
+	if (fseek(File, InPos, SEEK_SET))
 	{
-		return NULL;
+		bError = true;
+		//Error->Logf("seek Failed %i/%i: %i %i", InPos, Size, Pos, ferror(File) );
 	}
-	FILE *File = fopen(*TmpName, "rb");
-	if (!File)
-	{
-		return NULL;
-	}
-	return new VStreamFileReader(File, GCon);
 	unguard;
 }
-
-void VFilesDir::Close()
+int VStreamFileReader::Tell()
 {
+	return ftell(File);
 }
-int VFilesDir::CheckNumForName(VName, EWadNamespace)
+int VStreamFileReader::TotalSize()
 {
-	return -1;
+	int CurPos = ftell(File);
+	fseek(File, 0, SEEK_END);
+	int Size = ftell(File);
+	fseek(File, CurPos, SEEK_SET);
+	return Size;
 }
-void VFilesDir::ReadFromLump(int, void*, int, int)
+bool VStreamFileReader::AtEnd()
 {
-	Sys_Error("ReadFromLump on directory");
+	return !!feof(File);
 }
-int VFilesDir::LumpLength(int)
+bool VStreamFileReader::Close()
 {
-	return 0;
+	guardSlow(VStreamFileReader::Close);
+	if (File)
+		fclose(File);
+	File = NULL;
+	return !bError;
+	unguardSlow;
 }
-VName VFilesDir::LumpName(int)
+void VStreamFileReader::Serialise(void* V, int Length)
 {
-	return NAME_None;
-}
-int VFilesDir::IterateNS(int, EWadNamespace)
-{
-	return -1;
-}
-void VFilesDir::BuildGLNodes(VSearchPath*)
-{
-	Sys_Error("BuildGLNodes on directory");
-}
-void VFilesDir::BuildPVS(VSearchPath*)
-{
-	Sys_Error("BuildPVS on directory");
-}
-VStream* VFilesDir::CreateLumpReaderNum(int)
-{
-	return NULL;
+	guardSlow(VStreamFileReader::Serialise);
+	if (fread(V, Length, 1, File) != 1)
+	{
+		bError = true;
+		Error->Logf("fread failed: Length=%i Error=%i", Length, ferror(File));
+	}
+	unguardSlow;
 }
