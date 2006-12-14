@@ -830,6 +830,17 @@ bool ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	// LNSPEC_ScrollCeiling:
 	// LNSPEC_ScrollTextureOffsets:
 	// LNSPEC_PointPushSetForce:
+
+	//	These are implemented in game-specific progs.
+	case LNSPEC_QuakeTremor:
+	case LNSPEC_UsePuzzleItem:
+		break;
+
+	default:
+		//	Log everything else to know what needs to be implemented.
+		print("Unknown action special %d(%d, %d, %d, %d, %d)", Special,
+			Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	}
 	return buttonSuccess;
 }
