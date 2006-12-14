@@ -32,4 +32,5 @@ defaultproperties
 	ReactionCount = 8;
 	bNoBlockmap = true;
 	bNoGravity = true;
+	bNoPassMobj = true;
 }

@@ -170,6 +170,7 @@ defaultproperties
 	Height = 8.0;
 	bSpecial = true;
 	bFloorClip = true;
+	bNoPassMobj = true;
 	PickupSound = 'misc/i_pkup';
 	PickupString = "Item";
 }
