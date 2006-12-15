@@ -512,8 +512,8 @@ void Draw_TeleportIcon()
 	if (W_CheckNumForName(NAME_teleicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(260, 68, GTextureManager.AddPatch(VName("teleicon",
-			VName::AddLower8), TEXTYPE_Pic));
+		R_DrawPic(260, 68, GTextureManager.AddPatch(NAME_teleicon,
+			TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -531,8 +531,8 @@ void Draw_SaveIcon()
 	if (W_CheckNumForName(NAME_saveicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(260, 68, GTextureManager.AddPatch(VName("saveicon",
-			VName::AddLower8), TEXTYPE_Pic));
+		R_DrawPic(260, 68, GTextureManager.AddPatch(NAME_saveicon,
+			TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
@@ -550,8 +550,8 @@ void Draw_LoadIcon()
 	if (W_CheckNumForName(NAME_loadicon) >= 0)
 	{
 		Drawer->BeginDirectUpdate();
-		R_DrawPic(260, 68, GTextureManager.AddPatch(VName("loadicon",
-			VName::AddLower8), TEXTYPE_Pic));
+		R_DrawPic(260, 68, GTextureManager.AddPatch(NAME_loadicon,
+			TEXTYPE_Pic));
 		Drawer->EndDirectUpdate();
 	}
 	unguard;
