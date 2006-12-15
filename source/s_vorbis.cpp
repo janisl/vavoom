@@ -48,7 +48,7 @@ public:
 	vorbis_dsp_state	vd;
 	vorbis_block		vb;
 
-	int					eos;
+	bool				eos;
 
 	VVorbisAudioCodec(VStream* InStrm);
 	~VVorbisAudioCodec();
@@ -127,7 +127,7 @@ bool VVorbisAudioCodec::Init()
 	ogg_page			og;
 	ogg_packet			op;
 
-	eos = 0;
+	eos = false;
 	InitLevel = 0;
 
 	//	Read some data.
@@ -289,7 +289,7 @@ int VVorbisAudioCodec::Decode(short* Data, int NumSamples)
 		}
 		else if (ReadData() == 0)
 		{
-			eos = 1;
+			eos = true;
 		}
 	}
 	return CurSample;

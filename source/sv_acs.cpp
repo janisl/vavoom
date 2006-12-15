@@ -4425,7 +4425,7 @@ bool P_StartACS(int number, int map_num, int arg1, int arg2, int arg3,
 		arg2, arg3, false);
 	if (WantResult)
 	{
-		return script->RunScript(host_frametime);
+		return !!script->RunScript(host_frametime);
 	}
 	return true;
 	unguard;
