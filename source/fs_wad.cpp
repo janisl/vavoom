@@ -514,11 +514,6 @@ int VWadFile::CheckNumForFileName(VStr)
 	return -1;
 }
 
-VStr VWadFile::FindFile(const VStr&)
-{
-	return VStr();
-}
-
 bool VWadFile::FileExists(const VStr&)
 {
 	return false;

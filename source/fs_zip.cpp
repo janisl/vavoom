@@ -548,10 +548,6 @@ VStream* VZipFile::CreateLumpReaderNum(int Lump)
 	unguard;
 }
 
-VStr VZipFile::FindFile(const VStr&)
-{
-	return VStr();
-}
 void VZipFile::BuildGLNodes(VSearchPath*)
 {
 }

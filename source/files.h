@@ -34,9 +34,7 @@
 void FL_Init();
 void FL_Shutdown();
 
-VStr FL_FindFile(const VStr& fname);
 bool FL_FileExists(const VStr& fname);
-bool FL_WriteFile(const VStr& name, const void* source, int length);
 void FL_CreatePath(const VStr& Path);
 
 VStream* FL_OpenFileRead(const VStr& Name);

@@ -474,27 +474,6 @@ void FL_Shutdown()
 
 //==========================================================================
 //
-//	FL_FindFile
-//
-//==========================================================================
-
-VStr FL_FindFile(const VStr& fname)
-{
-	guard(FL_FindFile);
-	for (int i = SearchPaths.Num() - 1; i >= 0 ; i--)
-	{
-		VStr tmp = SearchPaths[i]->FindFile(fname);
-		if (tmp)
-		{
-			return tmp;
-		}
-	}
-	return VStr();
-	unguard;
-}
-
-//==========================================================================
-//
 //	FL_FileExists
 //
 //==========================================================================
@@ -534,47 +513,6 @@ void FL_CreatePath(const VStr& Path)
 			Temp[i] = Save;
 		}
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	FL_WriteFile
-//
-//==========================================================================
-
-bool FL_WriteFile(const VStr& name, const void* source, int length)
-{
-	guard(FL_WriteFile);
-	int		handle;
-	int		count;
-	VStr	RealName;
-
-	if (fl_savedir)
-	{
-		RealName = fl_savedir + "/" + fl_gamedir + "/" + name;
-	}
-	else
-	{
-		RealName = fl_basedir + "/" + fl_gamedir + "/" + name;
-	}
-	FL_CreatePath(RealName.ExtractFilePath());
-	handle = Sys_FileOpenWrite(RealName);
-
-	if (handle == -1)
-	{
-		return false;
-	}
-
-	count = Sys_FileWrite(handle, source, length);
-	Sys_FileClose(handle);
-
-	if (count < length)
-	{
-		return false;
-	}
-
-	return true;
 	unguard;
 }
 

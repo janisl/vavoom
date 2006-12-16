@@ -34,7 +34,6 @@ class VSearchPath
 {
 public:
 	virtual ~VSearchPath();
-	virtual VStr FindFile(const VStr&) = 0;
 	virtual bool FileExists(const VStr&) = 0;
 	virtual VStream* OpenFileRead(const VStr&) = 0;
 	virtual void Close() = 0;
@@ -63,7 +62,6 @@ public:
 	VFilesDir(const VStr& aPath)
 	: Path(aPath)
 	{}
-	VStr FindFile(const VStr&);
 	bool FileExists(const VStr&);
 	VStream* OpenFileRead(const VStr&);
 	void Close();
@@ -112,7 +110,6 @@ public:
 	int IterateNS(int, EWadNamespace);
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);
-	VStr FindFile(const VStr&);
 	bool FileExists(const VStr&);
 	VStream* OpenFileRead(const VStr&);
 	VStream* CreateLumpReaderNum(int);
@@ -151,7 +148,6 @@ public:
 	int IterateNS(int, EWadNamespace);
 	VStream* CreateLumpReaderNum(int);
 
-	VStr FindFile(const VStr&);
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);
 

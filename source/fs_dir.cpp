@@ -75,24 +75,6 @@ int VFilesDir::CheckNumForFileName(VStr Name)
 
 //==========================================================================
 //
-//	VFilesDir::FindFile
-//
-//==========================================================================
-
-VStr VFilesDir::FindFile(const VStr& fname)
-{
-	guard(VFilesDir::FindFile);
-	VStr tmp = Path + "/" + fname;
-	if (Sys_FileExists(tmp))
-	{
-		return tmp;
-	}
-	return VStr();
-	unguard;
-}
-
-//==========================================================================
-//
 //	VFilesDir::FileExists
 //
 //==========================================================================
