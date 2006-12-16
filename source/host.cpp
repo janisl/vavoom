@@ -674,7 +674,7 @@ void Host_Shutdown()
 	shutting_down = true;
 
 #define SAFE_SHUTDOWN(name, args) \
-	try { name args; } catch (...) { GCon->Log(#name" failed"); }
+	try { GCon->Log("Doing "#name); name args; } catch (...) { GCon->Log(#name" failed"); }
 
 #ifdef CLIENT
 	SAFE_SHUTDOWN(C_Shutdown, ())
@@ -683,16 +683,32 @@ void Host_Shutdown()
 #ifdef SERVER
 	SAFE_SHUTDOWN(SV_Shutdown, ())
 #endif
-	SAFE_SHUTDOWN(delete GNet,)
+	if (GNet)
+	{
+		SAFE_SHUTDOWN(delete GNet,)
+		GNet = NULL;
+	}
 #ifdef CLIENT
-	SAFE_SHUTDOWN(delete GInput,)
+	if (GInput)
+	{
+		SAFE_SHUTDOWN(delete GInput,)
+		GInput = NULL;
+	}
 	SAFE_SHUTDOWN(V_Shutdown, ())
-	SAFE_SHUTDOWN(delete GAudio,)
+	if (GAudio)
+	{
+		SAFE_SHUTDOWN(delete GAudio,)
+		GAudio = NULL;
+	}
 	SAFE_SHUTDOWN(T_Shutdown, ())
 #endif
 	SAFE_SHUTDOWN(Sys_Shutdown, ())
 
-	SAFE_SHUTDOWN(delete GSoundManager,)
+	if (GSoundManager)
+	{
+		SAFE_SHUTDOWN(delete GSoundManager,)
+		GSoundManager = NULL;
+	}
 	SAFE_SHUTDOWN(R_ShutdownTexture, ())
 	SAFE_SHUTDOWN(VCommand::Shutdown, ())
 	SAFE_SHUTDOWN(VCvar::Shutdown, ())
