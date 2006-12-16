@@ -1136,6 +1136,11 @@ void VAudio::UpdateSounds()
 void VAudio::PlaySong(const char* Song, bool Loop)
 {
 	guard(VAudio::PlaySong);
+	static const char* Exts[] = { "ogg", "mp3", "wav", "mid", "mus", "669",
+		"amf", "dsm", "far", "gdm", "imf", "it", "m15", "med", "mod", "mtm",
+		"okt", "s3m", "stm", "stx", "ult", "uni", "xm", "flac", NULL };
+	static const char* ExtraExts[] = { "ogg", "mp3", NULL };
+
 	if (!Song || !Song[0])
 	{
 		return;
@@ -1151,7 +1156,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	MusicVolumeFactor = GSoundManager->GetMusicVolume(Song);
 
 	//	Find the song.
-	VStream* Strm = NULL;
+	int Lump = -1;
 	if (s_external_music)
 	{
 		//	Check external music definition file.
@@ -1167,76 +1172,31 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 					continue;
 				if (N->GetAttribute("name") != Song)
 					continue;
-				Strm = FL_OpenFileRead(N->GetAttribute("file"));
-				if (Strm)
+				Lump = W_CheckNumForFileName(N->GetAttribute("file"));
+				if (Lump >= 0)
 					break;
 			}
 			delete Doc;
 		}
 		//	Also try OGG or MP3 directly.
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("extras/music/%s.ogg", Song));
-		if (!Strm)
-			Strm = FL_OpenFileRead(va("extras/music/%s.mp3", Song));
-	}
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.ogg", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mp3", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.wav", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mid", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mus", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.669", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.amf", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.dsm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.far", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.gdm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.imf", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.it", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.m15", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.med", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mod", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.mtm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.okt", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.s3m", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.stm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.stx", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.ult", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.uni", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.xm", Song));
-	if (!Strm)
-		Strm = FL_OpenFileRead(va("music/%s.flac", Song));
-	if (!Strm)
-	{
-		int Lump = W_CheckNumForName(VName(Song, VName::AddLower8), WADNS_Music);
 		if (Lump < 0)
 		{
-			GCon->Logf("Can't find song %s", Song);
-			return;
+			Lump = W_FindLumpByFileNameWithExts(va("extras/music/%s", Song),
+				ExtraExts);
 		}
-		Strm = W_CreateLumpReaderNum(Lump);
 	}
+	if (Lump < 0)
+	{
+		int FileIdx = W_FindLumpByFileNameWithExts(va("music/%s", Song), Exts);
+		int LumpIdx = W_CheckNumForName(VName(Song, VName::AddLower8), WADNS_Music);
+		Lump = MAX(FileIdx, LumpIdx);
+	}
+	if (Lump < 0)
+	{
+		GCon->Logf("Can't find song %s", Song);
+		return;
+	}
+	VStream* Strm = W_CreateLumpReaderNum(Lump);
 
 	byte Hdr[4];
 	Strm->Serialise(Hdr, 4);
@@ -1288,7 +1248,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 		}
 		else
 		{
-			GCon->Log("Not a MUS or MIDI file");
+			GCon->Log("Music file format is not supported");
 			Z_Free(Data);
 		}
 	}

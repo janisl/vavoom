@@ -64,6 +64,7 @@ int W_CheckNumForNameInFile(VName Name, int File, EWadNamespace NS = WADNS_Globa
 
 int W_CheckNumForFileName(VStr Name);
 int W_GetNumForFileName(VStr Name);
+int W_FindLumpByFileNameWithExts(VStr BaseName, const char** Exts);
 
 int W_LumpLength(int lump);
 VName W_LumpName(int lump);

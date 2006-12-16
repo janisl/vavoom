@@ -297,38 +297,15 @@ VTexture* VTexture::GetHighResolutionTexture()
 		return NULL;
 	}
 
-	//	First try PNG.
-	char HighResName[80];
-	int LumpNum;
-	sprintf(HighResName, "hirestex/%s/%s.png", DirName, *Name);
-	LumpNum = W_CheckNumForFileName(HighResName);
+	//	Try to find it.
+	static const char* Exts[] = { "png", "jpg", "tga", NULL };
+	int LumpNum = W_FindLumpByFileNameWithExts(VStr("hirestex/") + DirName +
+		"/" + *Name, Exts);
 	if (LumpNum >= 0)
 	{
 		//	Create new high-resolution texture.
 		HiResTexture = CreateTexture(Type, LumpNum);
-		HiResTexture->Name = HighResName;
-		return HiResTexture;
-	}
-
-	//	Then try JPG.
-	sprintf(HighResName, "hirestex/%s/%s.jpg", DirName, *Name);
-	LumpNum = W_CheckNumForFileName(HighResName);
-	if (LumpNum >= 0)
-	{
-		//	Create new high-resolution texture.
-		HiResTexture = CreateTexture(Type, LumpNum);
-		HiResTexture->Name = HighResName;
-		return HiResTexture;
-	}
-
-	//	Then try TGA.
-	sprintf(HighResName, "hirestex/%s/%s.tga", DirName, *Name);
-	LumpNum = W_CheckNumForFileName(HighResName);
-	if (LumpNum >= 0)
-	{
-		//	Create new high-resolution texture.
-		HiResTexture = CreateTexture(Type, LumpNum);
-		HiResTexture->Name = HighResName;
+		HiResTexture->Name = Name;
 		return HiResTexture;
 	}
 #endif

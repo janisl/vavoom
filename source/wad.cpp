@@ -473,6 +473,36 @@ int W_IterateNS(int Prev, EWadNamespace NS)
 
 //==========================================================================
 //
+//  W_FindLumpByFileNameWithExts
+//
+//==========================================================================
+
+int W_FindLumpByFileNameWithExts(VStr BaseName, const char** Exts)
+{
+	guard(W_FindLumpByFileNameWithExts);
+	int Found = -1;
+	for (const char** Ext = Exts; *Ext; Ext++)
+	{
+		VStr Check = BaseName + "." + *Ext;
+		int Lump = W_CheckNumForFileName(Check);
+		if (Lump <= Found)
+		{
+			continue;
+		}
+		//	For files from the same directory the order of extensions defines
+		// the priority order.
+		if (Found >= 0 && W_LumpFile(Found) == W_LumpFile(Lump))
+		{
+			continue;
+		}
+		Found = Lump;
+	}
+	return Found;
+	unguard;
+}
+
+//==========================================================================
+//
 //  W_Profile
 //
 //==========================================================================

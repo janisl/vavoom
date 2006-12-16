@@ -60,8 +60,6 @@ VSoundManager*		GSoundManager;
 static VRawSampleLoader		RawSampleLoader;
 #endif
 
-static VCvarI	s_external_sounds("s_external_sounds", "1", CVAR_Archive);
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -825,28 +823,24 @@ int VSoundManager::ResolveSound(int ClassID, int GenderID, int InSoundId)
 bool VSoundManager::LoadSound(int sound_id)
 {
 	guard(VSoundManager::LoadSound);
+	static const char* Exts[] = { "flac", "wav", "raw", NULL };
+
 	if (!S_sfx[sound_id].Data)
 	{
+		int Lump = S_sfx[sound_id].LumpNum;
 		if (S_sfx[sound_id].LumpNum < 0)
 		{
 			GCon->Logf(NAME_Dev, "Sound %s lump not found",
 				*S_sfx[sound_id].TagName);
 			return false;
 		}
-		VStream* Strm = NULL;
-		if (s_external_sounds)
+		int FileLump = W_FindLumpByFileNameWithExts(va("sound/%s",
+			*W_LumpName(Lump)), Exts);
+		if (Lump < FileLump)
 		{
-			Strm = FL_OpenFileRead(va("sound/%s.flac", *W_LumpName(S_sfx[sound_id].LumpNum)));
-			if (!Strm)
-				Strm = FL_OpenFileRead(va("sound/%s.wav", *W_LumpName(S_sfx[sound_id].LumpNum)));
-			if (!Strm)
-				Strm = FL_OpenFileRead(va("sound/%s.raw", *W_LumpName(S_sfx[sound_id].LumpNum)));
+			Lump = FileLump;
 		}
-		if (!Strm)
-		{
-			// get LumpNum if necessary
-			Strm = W_CreateLumpReaderNum(S_sfx[sound_id].LumpNum);
-		}
+		VStream* Strm = W_CreateLumpReaderNum(Lump);
 
 		for (VSampleLoader* Ldr = VSampleLoader::List;
 			Ldr && !S_sfx[sound_id].Data; Ldr = Ldr->Next)
