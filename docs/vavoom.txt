@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.22
+                                                  Version 1.22.1
 
 Contents:
     0. Disclaimer
@@ -991,6 +991,23 @@ Version 1.22
 * Added support for language scripts.
 * Added support for ANIMDEFS extensions (except camera textures).
 * Some improvements in network protocol.
+
+==============================================================================
+Version 1.22.1
+==============================================================================
+
+* Implemented switching to windowed mode on run-time.
+* Implemented support for custom episode definitions in MAPINFO.
+* Added support for HI_START/HI_END high resolution textures and HIERSTEX
+ scripts.
+* Implemented support for JPEG textures.
+* Changed old aspect ratio to be on by default.
+* Implemented simpler support for skybox replacements of the normal sky.
+* Implemented propper support for enhanced music files.
+* Added console variables to disable hi-res textures and external music.
+* Updated ACS support.
+* Some rendering improvements.
+* Fixed many bugs.
 
 *****************************************************************************
 8. Licensing

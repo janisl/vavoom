@@ -1603,7 +1603,89 @@
   Fixed loading a saved game on startup.
 28.10.2006
   Some Strife fixes.
+29.10.2006
+  Updated version number, fixed distfiles.
 
 ******************************************************************************
                             VERSION 1.22
+******************************************************************************
+
+01.11.2006
+  Implemented switching to windowed mode on run-time, added it to the menu.
+  Added console variables to disable hi-res textures, external sounds and
+ music.
+02.11.2006
+  Implemented simple XML parser.
+03.11.2006
+  Added all new ACS p-codes, implemented many of them, added stubs to report
+ unimplemented ones.
+  Some Timidity fixes from latest version of SDL_mixer.
+04.11.2006
+  When sorting PK3 files, ignore extension.
+  A little fix for PCX files.
+  Fixed scripts parser incorrectly checking for floating point constants.
+  Properly implemented all ACS set line blocking flags.
+  Fixed network update incorrectly updating all objects causing network packet
+ overflows.
+  Updated ACC to the latest version.
+  Updated ACS include files.
+  Firebrand did some fixes for Strife.
+06.11.2006
+  Moved output device interface implementation to a common location.
+18.11.2006
+  Started to implement a simple angle based view clipping.
+21.11.2006
+  Stop processing BSP tree if view clip nodes are full.
+23.11.2006
+  Use view clipping to clip BSP bounding boxes.
+30.11.2006
+  Fixed usage of -iwad option.
+  Fixed view clipping with 3D floors.
+  Changed old aspect ratio to be on by default.
+  Avoid adding duplicate textures.
+  Implemented proper support for enhanced music.
+02.12.2006
+  Implemented support for custom episode definitions in MAPINFO.
+  Implemented forcenoskystretch MAPINFO command.
+03.12.2006
+  Don't crash game with too many static lights.
+  Firebrand add more options to the video options menu.
+  Split different texture format types into separate files.
+  Copy dimensions of the first texture to the dummy texture so that floor raise
+ by texture work correctly.
+  Added support for HI_START/HI_END high resolution textures.
+04.12.2006
+  Simplified loading of textures lumps.
+  Implemented support for HIERSTEX scripts.
+05.12.2006
+  Got rid of old boolean type, renamed integer limit macros.
+  Implemented support for JPEG textures.
+06.12.2006
+  Fixed compilation with Allegro library.
+  Fixed wrong bounding box check in view clipping.
+  Now parse all TEXTURE1/TEXTURE2 lumps that have a corresponding PNAMES lump.
+07.12.2006
+  Initialise view clipping to the frustrum range, added clipping check for each
+ subsector.
+09.12.2006
+  In OpenGL and Direct3D fixed areas behind the sky being visible. Tried to do
+ the same thing for software driver, but so far no success. Got rid of some of
+ the global variables that were shared by renderer and driver.
+10.12.2006
+  Fixed puffs and blood being in wrong place.
+  Added some pointer checks on shutdown.
+  Implemented simpler support for skybox replacements of the normal sky.
+11.12.2006
+  Firebrand fixed skyllfly objects not advancing state if being shot while they
+ are flying.
+13.12.2006
+  Split WAD file and directory search path classes into separate files.
+14.12.2006
+  Implemented lump index check for a file name. Changed textures to use it.
+16.12.2006
+  Changed the way extrernal sound, music and high-resolution texture files
+ are loaded.
+
+******************************************************************************
+                            VERSION 1.22.1
 ******************************************************************************
