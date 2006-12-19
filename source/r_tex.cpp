@@ -513,7 +513,7 @@ void VTextureManager::AddTextures()
 	if (LastTex2 >= 0 && (LastTex2 == LumpTex2 ||
 		W_LumpFile(LastTex2) <= NamesFile))
 	{
-		LastTex1 = -1;
+		LastTex2 = -1;
 	}
 	FirstTex = Textures.Num();
 	AddTexturesLump(W_GetNumForName(NAME_pnames), LastTex1, FirstTex, true);
