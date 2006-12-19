@@ -25,6 +25,7 @@ EXTRA_DIST = \
 	doom/palette.pcx \
 	doom/basepak.ls.in \
 	doom/language.en \
+	doom/animated.lmp \
 	doom/animdefs.txt \
 	doom/skyboxes.txt \
 	doom/sndinfo.txt \
