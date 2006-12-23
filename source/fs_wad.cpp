@@ -289,7 +289,7 @@ void VWadFile::InitNamespaces()
 	InitNamespace(WADNS_ACSLibrary, NAME_a_start, NAME_a_end, NAME_aa_start, NAME_aa_end);
 	InitNamespace(WADNS_NewTextures, NAME_tx_start, NAME_tx_end);
 	InitNamespace(WADNS_Voices, NAME_v_start, NAME_v_end, NAME_vv_start, NAME_vv_end);
-	InitNamespace(WADNS_HiResTextures, NAME_h_start, NAME_h_end, NAME_hh_start, NAME_hh_end);
+	InitNamespace(WADNS_HiResTextures, NAME_hi_start, NAME_hi_end);
 	InitNamespace(WADNS_Progs, NAME_pr_start, NAME_pr_end);
 	unguard;
 }
