@@ -362,6 +362,9 @@ void VXmlDocument::Parse(VStream& Strm, VStr AName)
 	{
 		Error("Text after root node");
 	}
+
+	delete[] Buf;
+	Buf = NULL;
 	unguard;
 }
 
