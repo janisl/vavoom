@@ -269,10 +269,11 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 		wpent->EntityFlags |= VEntity::EF_FixedModel;
 		wpent->FixedModelIndex = msg.ReadShort();
 		wpent->Translucency = ent->Translucency;
+		wpent->State = ent->State;
 
 		R_PositionWeaponModel(wpent, weapon_model_precache[ent->EntityFlags &
 			VEntity::EF_FixedModel ? ent->FixedModelIndex :
-			ent->State->ModelIndex], 1);
+			ent->State->ModelIndex], ent->State->model_frame);
 	}
 	else if (bits & MOB_WEAPON)
 	{
