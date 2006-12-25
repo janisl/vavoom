@@ -977,7 +977,8 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 		int lR = ((surf->Light >> 16) & 255) * lev / 255;
 		int lG = ((surf->Light >> 8) & 255) * lev / 255;
 		int lB = (surf->Light & 255) * lev / 255;
-		l = 0xff000000 | (lR << 16) | (lG << 8) | lB;
+		int alpha = (100 - translucency) * 255 / 100;
+		l = (alpha << 24) | (lR << 16) | (lG << 8) | lB;
 	}
 
 	for (int i = 0; i < surf->count; i++)

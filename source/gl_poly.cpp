@@ -894,9 +894,10 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, int translucency)
 	else
 	{
 		float lev = float(surf->Light >> 24) / 255.0;
+		float alpha = (100.0 - translucency) / 100.0;
 		glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
 			((surf->Light >> 8) & 255) * lev / 255.0,
-			(surf->Light & 255) * lev / 255.0, 1.0);
+			(surf->Light & 255) * lev / 255.0, alpha);
 	}
 
 	glBegin(GL_POLYGON);
