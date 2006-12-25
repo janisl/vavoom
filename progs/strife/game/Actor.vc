@@ -39,9 +39,6 @@ const float
 const float
 	MAXMOVE			= 1050.0,
 	STOPSPEED		= 2.1875,
-	FRICTION		= 3.28125,
-	FRICTION_LOW	= 0.95703125,
-	FRICTION_WATER	= 3.0,
 
 	BOUNCE_VAL		= 1.5,
 
@@ -2031,7 +2028,7 @@ float GetFriction()
 	{
 		return Sector->Friction;
 	}
-	return FRICTION;
+	return FRICTION_NORMAL;
 }
 
 //===========================================================================

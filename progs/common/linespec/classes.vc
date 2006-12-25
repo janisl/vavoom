@@ -29,6 +29,7 @@ import engine;
 
 #include "EntityEx.vc"
 #include "LineSpecialLevelInfo.vc"
+#include "LineSpecialGameInfo.vc"
 #include "SectorThinker.vc"
 #include "SectorMover.vc"
 #include "VerticalDoor.vc"

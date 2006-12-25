@@ -44,11 +44,6 @@ const float MAXMOVE 		= 1050.0;
 const float MAXMOVESTEP		= 15.0;	//MAXMOVE / (35.0 * 2.0)
 const float STOPSPEED		= 2.1875;
 
-const float FRICTION_NORMAL	= 3.28125;
-const float FRICTION_LOW	= 0.95703125;
-const float FRICTION_FLY	= 2.87109375;
-const float FRICTION_WATER	= 3.0;
-
 const float BONUSADD		= 0.2;
 
 const float SMALLSPLASHCLIP		= 12.0;

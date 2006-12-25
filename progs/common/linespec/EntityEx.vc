@@ -29,6 +29,11 @@ class EntityEx : Entity
 const float ONFLOORZ		= -99999.0;
 const float ONCEILINGZ		= 99999.0;
 
+const float FRICTION_NORMAL	= 3.28125;
+const float FRICTION_LOW	= 0.95703125;
+const float FRICTION_FLY	= 2.87109375;
+const float FRICTION_WATER	= 3.0;
+
 //===========================================================================
 //
 //  OnMapSpawn
