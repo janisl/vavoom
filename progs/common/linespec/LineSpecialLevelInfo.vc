@@ -3789,6 +3789,28 @@ bool AdjustPusher(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	return true;
 }
 
+//==========================================================================
+//
+//  FindLine
+//
+//==========================================================================
+
+line_t* FindLine(int lineTag, int *searchPosition)
+{
+	int i;
+
+	for (i = *searchPosition + 1; i < XLevel.NumLines; i++)
+	{
+		if (XLevel.Lines[i].LineTag == lineTag)
+		{
+			*searchPosition = i;
+			return &XLevel.Lines[i];
+		}
+	}
+	*searchPosition = -1;
+	return NULL;
+}
+
 //===========================================================================
 //
 //  SpawnEntity

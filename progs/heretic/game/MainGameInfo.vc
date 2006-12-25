@@ -583,11 +583,6 @@ defaultproperties
 	terrain_contents[2] = CONTENTS_SLUDGE;
 	terrain_contents[3] = CONTENTS_LAVA;
 
-	contents_transluc[0] = 0;
-	contents_transluc[1] = 50;
-	contents_transluc[2] = 20;
-	contents_transluc[3] = 30;
-
 	GetAmmoChange[0] = wp_goldwand;
 	GetAmmoChange[1] = wp_crossbow;
 	GetAmmoChange[2] = wp_blaster;

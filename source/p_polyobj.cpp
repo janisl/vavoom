@@ -58,16 +58,6 @@
 void VLevel::SpawnPolyobj(float x, float y, int tag, int crush)
 {
 	guard(VLevel::SpawnPolyobj);
-#ifdef SERVER
-	if (IsForServer())
-	{
-		sv_signon << (byte)svc_poly_spawn
-					<< (word)x
-					<< (word)y
-					<< (byte)tag;
-	}
-#endif
-
 	int index = NumPolyObjs++;
 	polyobj_t* Temp = PolyObjs;
 	PolyObjs = new polyobj_t[NumPolyObjs];
@@ -321,16 +311,6 @@ void VLevel::InitPolyobjs()
 void VLevel::TranslatePolyobjToStartSpot(float originX, float originY, int tag)
 {
 	guard(VLevel::TranslatePolyobjToStartSpot);
-#ifdef SERVER
-	if (IsForServer())
-	{
-		sv_signon << (byte)svc_poly_translate
-				<< (word)originX
-				<< (word)originY
-				<< (byte)tag;
-	}
-#endif
-
 	polyobj_t* po = NULL;
 	for (int i = 0; i < NumPolyObjs; i++)
 	{

@@ -663,11 +663,6 @@ defaultproperties
 	terrain_contents[2] = CONTENTS_SLUDGE;
 	terrain_contents[3] = CONTENTS_LAVA;
 
-	contents_transluc[0] = 0;
-	contents_transluc[1] = 50;
-	contents_transluc[2] = 30;
-	contents_transluc[3] = 40;
-
 	InvItemCID[0] = MedPatch;
 	InvItemCID[1] = MedicalKit;
 	InvItemCID[2] = SurgeryKit;

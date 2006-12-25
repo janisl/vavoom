@@ -73,28 +73,6 @@ void SpawnSpecials()
 
 //==========================================================================
 //
-//  FindLine
-//
-//==========================================================================
-
-line_t* FindLine(int lineTag, int *searchPosition)
-{
-	int i;
-
-	for (i = *searchPosition + 1; i < MainGameInfo(Game).TaggedLineCount; i++)
-	{
-		if (MainGameInfo(Game).TaggedLines[i].lineTag == lineTag)
-		{
-			*searchPosition = i;
-			return MainGameInfo(Game).TaggedLines[i].line;
-		}
-	}
-	*searchPosition = -1;
-	return NULL;
-}
-
-//==========================================================================
-//
 //  PolyThrustMobj
 //
 //==========================================================================

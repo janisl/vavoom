@@ -401,11 +401,6 @@ defaultproperties
 	terrain_contents[4] = CONTENTS_LAVA;
 	terrain_contents[5] = CONTENTS_SLUDGE;
 
-	contents_transluc[0] = 0;
-	contents_transluc[1] = 50;
-	contents_transluc[2] = 20;
-	contents_transluc[3] = 30;
-
 	AutoArmorSave[0] = 15.0;
 	AutoArmorSave[1] = 10.0;
 	AutoArmorSave[2] = 5.0;

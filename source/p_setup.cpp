@@ -200,22 +200,26 @@ void VLevel::LoadMap(VName MapName)
 	LoadSubsectors(gl_lumpnum + ML_GL_SSECT);
    	LoadNodes(gl_lumpnum + ML_GL_NODES);
 	LoadPVS(gl_lumpnum + ML_GL_PVS);
+	LoadBlockMap(lumpnum + ML_BLOCKMAP);
+	LoadReject(lumpnum + ML_REJECT);
+	if (!(LevelFlags & LF_Extended))
+	{
+		LoadThings1(lumpnum + ML_THINGS);
+	}
+	else
+	{
+		LoadThings2(lumpnum + ML_THINGS);
+	}
+#ifdef SERVER
 	if (LevelFlags & LF_ForServer)
 	{
-		LoadBlockMap(lumpnum + ML_BLOCKMAP);
-		LoadReject(lumpnum + ML_REJECT);
 		if (LevelFlags & LF_Extended)
 		{
-			LoadThings2(lumpnum + ML_THINGS);
-#ifdef SERVER
 			//	ACS object code
 			P_LoadACScripts(lumpnum + ML_BEHAVIOR);
-#endif
 		}
 		else
 		{
-			LoadThings1(lumpnum + ML_THINGS);
-#ifdef SERVER
 			if (GGameInfo->AcsHelper != NAME_None)
 			{
 				//	ACS object code
@@ -226,9 +230,9 @@ void VLevel::LoadMap(VName MapName)
 				//	Inform ACS, that we don't have scripts
 				P_LoadACScripts(-1);
 			}
-#endif
 		}
 	}
+#endif
 
 	if (!(LevelFlags & LF_Extended))
 	{
@@ -246,6 +250,14 @@ void VLevel::LoadMap(VName MapName)
 		NumGenericSpeeches);
 	LoadRogueConScript(GGameInfo->eventGetConScriptName(MapName),
 		LevelSpeeches, NumLevelSpeeches);
+
+	//	Set up polyobjs, slopes, 3D floors and some other static stuff.
+	GGameInfo->eventSpawnWorld(this);
+	//	We need this for client.
+	for (int i = 0; i < NumSectors; i++)
+	{
+		CalcSecMinMaxs(&Sectors[i]);
+	}
 
 	//
 	// End of map lump processing

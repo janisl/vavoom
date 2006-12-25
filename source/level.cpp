@@ -694,9 +694,6 @@ IMPLEMENT_FUNCTION(VLevel, AddExtraFloor)
 	P_GET_PTR(line_t, line);
 	P_GET_SELF;
 	RET_PTR(AddExtraFloor(line, dst));
-	sv_signon << (byte)svc_extra_floor
-				<< (short)(line - Self->Lines)
-				<< (short)(dst - Self->Sectors);
 }
 
 IMPLEMENT_FUNCTION(VLevel, SwapPlanes)
@@ -704,7 +701,6 @@ IMPLEMENT_FUNCTION(VLevel, SwapPlanes)
 	P_GET_PTR(sector_t, s);
 	P_GET_SELF;
 	SwapPlanes(s);
-	sv_signon << (byte)svc_swap_planes << (short)(s - Self->Sectors);
 }
 
 IMPLEMENT_FUNCTION(VLevel, SetFloorPic)
@@ -740,54 +736,12 @@ IMPLEMENT_FUNCTION(VLevel, SetLineTransluc)
 	SV_SetLineTransluc(line, trans);
 }
 
-IMPLEMENT_FUNCTION(VLevel, SendFloorSlope)
-{
-	P_GET_PTR(sector_t, sector);
-	P_GET_SELF;
-	sector->floor.CalcBits();
-	sv_signon << (byte)svc_sec_floor_plane
-			<< (word)(sector - Self->Sectors)
-			<< sector->floor.normal.x
-			<< sector->floor.normal.y
-			<< sector->floor.normal.z
-			<< sector->floor.dist;
-}
-
-IMPLEMENT_FUNCTION(VLevel, SendCeilingSlope)
-{
-	P_GET_PTR(sector_t, sector);
-	P_GET_SELF;
-	sector->ceiling.CalcBits();
-	sv_signon << (byte)svc_sec_ceil_plane
-			<< (word)(sector - Self->Sectors)
-			<< sector->ceiling.normal.x
-			<< sector->ceiling.normal.y
-			<< sector->ceiling.normal.z
-			<< sector->ceiling.dist;
-}
-
-IMPLEMENT_FUNCTION(VLevel, SetSecLightColour)
-{
-	P_GET_INT(Col);
-	P_GET_PTR(sector_t, sector);
-	P_GET_SELF;
-	sector->params.LightColour = Col;
-	sv_signon << (byte)svc_sec_light_colour
-			<< (word)(sector - Self->Sectors)
-			<< (byte)(Col >> 16)
-			<< (byte)(Col >> 8)
-			<< (byte)Col;
-}
-
 IMPLEMENT_FUNCTION(VLevel, SetFloorLightSector)
 {
 	P_GET_PTR(sector_t, SrcSector);
 	P_GET_PTR(sector_t, Sector);
 	P_GET_SELF;
 	Sector->floor.LightSourceSector = SrcSector - Self->Sectors;
-	sv_signon << (byte)svc_set_floor_light_sec
-			<< (word)(Sector - Self->Sectors)
-			<< (word)(SrcSector - Self->Sectors);
 }
 
 IMPLEMENT_FUNCTION(VLevel, SetCeilingLightSector)
@@ -796,9 +750,6 @@ IMPLEMENT_FUNCTION(VLevel, SetCeilingLightSector)
 	P_GET_PTR(sector_t, Sector);
 	P_GET_SELF;
 	Sector->ceiling.LightSourceSector = SrcSector - Self->Sectors;
-	sv_signon << (byte)svc_set_ceil_light_sec
-			<< (word)(Sector - Self->Sectors)
-			<< (word)(SrcSector - Self->Sectors);
 }
 
 IMPLEMENT_FUNCTION(VLevel, SetHeightSector)
@@ -807,10 +758,12 @@ IMPLEMENT_FUNCTION(VLevel, SetHeightSector)
 	P_GET_PTR(sector_t, SrcSector);
 	P_GET_PTR(sector_t, Sector);
 	P_GET_SELF;
-	sv_signon << (byte)svc_set_heightsec
-			<< (word)(Sector - Self->Sectors)
-			<< (word)(SrcSector - Self->Sectors)
-			<< (byte)Flags;
+#ifdef CLIENT
+	if (Self->IsForClient())
+	{
+		R_SetupFakeFloors(Sector);
+	}
+#endif
 }
 
 IMPLEMENT_FUNCTION(VLevel, FindSectorFromTag)

@@ -543,22 +543,9 @@ void VEntity::Destroy()
 void SV_CreateBaseline()
 {
 	guard(SV_CreateBaseline);
-	int		i;
-
 	VMemberBase::SetUpNetClasses();
 
-	for (i = 0; i < GLevel->NumSectors; i++)
-	{
-		sector_t &sec = GLevel->Sectors[i];
-		if (sec.floor.translucency)
-		{
-			sv_signon << (vuint8)svc_sec_transluc
-					<< (vuint16)i
-					<< (vuint8)sec.floor.translucency;
-		}
-	}
-
-	for (i = 0; i < GMaxEntities; i++)
+	for (int i = 0; i < GMaxEntities; i++)
 	{
 		if (!sv_mobjs[i])
 			continue;
@@ -1773,9 +1760,6 @@ void SV_SetLineTransluc(line_t *line, int trans)
 {
 	guard(SV_SetLineTransluc);
 	line->translucency = trans;
-	sv_signon	<< (vuint8)svc_line_transluc
-				<< (vint16)(line - GLevel->Lines)
-				<< (vuint8)trans;
 	unguard;
 }
 
@@ -2472,9 +2456,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers)
 		GLevel->LevelFlags |= VLevel::LF_NoAllies;
 	if (info.Flags & MAPINFOF_DeathSlideShow)
 		GLevel->LevelFlags |= VLevel::LF_DeathSlideShow;
-
-	//	Spawn slopes, extra floors, etc.
-	GGameInfo->eventSpawnWorld(GLevel);
 
 	P_InitThinkers();
 
