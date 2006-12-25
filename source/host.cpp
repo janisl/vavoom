@@ -97,6 +97,9 @@ static VCvarS	configfile("configfile", "config.cfg", CVAR_Archive);
 
 static char		*host_error_string;
 
+static char		CurrentLanguage[4];
+static VCvarS	Language("language", "en", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -150,7 +153,8 @@ void Host_Init()
 
 	PR_Init();
 
-	GLanguage.LoadStrings();
+	GLanguage.LoadStrings("en");
+	strcpy(CurrentLanguage, "en");
 
 	GSoundManager = new VSoundManager;
 	GSoundManager->Init();
@@ -288,6 +292,38 @@ static bool FilterTime()
 
 //==========================================================================
 //
+//  Host_UpdateLanguage
+//
+//==========================================================================
+
+static void Host_UpdateLanguage()
+{
+	guard(Host_UpdateLanguage);
+	if (!Language.IsModified())
+	{
+		return;
+	}
+
+	VStr NewLang = VStr((const char*)Language).ToLower();
+	if (NewLang.Length() != 2 && NewLang.Length() != 3)
+	{
+		GCon->Log("Language identifier must be 2 or 3 characters long");
+		Language = CurrentLanguage;
+		return;
+	}
+
+	if (Language == CurrentLanguage)
+	{
+		return;
+	}
+
+	GLanguage.LoadStrings(*NewLang);
+	VStr::Cpy(CurrentLanguage, *NewLang);
+	unguard;
+}
+
+//==========================================================================
+//
 //  Host_Frame
 //
 //	Runs all active servers
@@ -316,6 +352,8 @@ void Host_Frame()
 #endif
 			return;
 		}
+
+		Host_UpdateLanguage();
 
 #ifdef CLIENT
 		//	Get new key, mice and joystick events

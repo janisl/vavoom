@@ -107,7 +107,7 @@ void VLanguage::FreeData()
 //
 //==========================================================================
 
-void VLanguage::LoadStrings()
+void VLanguage::LoadStrings(const char* LangId)
 {
 	guard(VLanguage::LoadStrings);
 	FreeData();
@@ -118,9 +118,12 @@ void VLanguage::LoadStrings()
 		if (W_LumpName(Lump) == NAME_language)
 		{
 			int j = 1;
-			ParseLanguageScript(Lump, "*", true, j++);
-			ParseLanguageScript(Lump, "en", true, j++);
-			ParseLanguageScript(Lump, "en", false, j++);
+			if (VStr::Cmp(LangId, "**"))
+			{
+				ParseLanguageScript(Lump, "*", true, j++);
+				ParseLanguageScript(Lump, LangId, true, j++);
+				ParseLanguageScript(Lump, LangId, false, j++);
+			}
 			ParseLanguageScript(Lump, "**", true, j++);
 		}
 	}

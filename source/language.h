@@ -29,7 +29,7 @@ public:
 	VLanguage();
 	~VLanguage();
 
-	void LoadStrings();
+	void LoadStrings(const char*);
 	void FreeData();
 
 	VStr Find(VName) const;
