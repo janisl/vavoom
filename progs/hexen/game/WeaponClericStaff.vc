@@ -50,7 +50,7 @@ void A_CStaffCheckBlink()
 {
 	if (!--BlinkCount)
 	{
-		SetState(BlinkState);
+		Player.SetViewState(ps_weapon, BlinkState);
 		BlinkCount = (P_Random() + 50) >> 2;
 	}
 }
@@ -90,7 +90,7 @@ void A_CStaffCheck()
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo.Health = newLife;
 				Player.Health = newLife;
-				SetState(Attack2State);
+				Player.SetViewState(ps_weapon, Attack2State);
 			}
 			Player(Player).Mana[HexenDefs::MANA_1] -=
 				WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
@@ -111,7 +111,7 @@ void A_CStaffCheck()
 				newLife = newLife > 100 ? 100 : newLife;
 				pmo.Health = newLife;
 				Player.Health = pmo.Health;
-				SetState(Attack2State);
+				Player.SetViewState(ps_weapon, Attack2State);
 			}
 			Player(Player).Mana[HexenDefs::MANA_1] -=
 				WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);

@@ -575,20 +575,21 @@ static void RenderSprite(VEntity* thing)
 	if ((unsigned)thing->State->SpriteIndex >= MAX_SPRITE_MODELS)
 	{
 #ifdef PARANOID
-		GCon->Logf(NAME_Dev, "Invalid sprite number %d", thing->sprite);
+		GCon->Logf(NAME_Dev, "Invalid sprite number %d",
+			thing->State->SpriteIndex);
 #endif
 		return;
 	}
 	sprdef = &sprites[thing->State->SpriteIndex];
-	if ((thing->State->frame & FF_FRAMEMASK) >= sprdef->numframes)
+	if ((thing->State->Frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",
-			thing->sprite, thing->frame);
+			thing->State->SpriteIndex, thing->State->Frame);
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[thing->State->frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[thing->State->Frame & FF_FRAMEMASK];
 
 	int			lump;
 	bool		flip;
@@ -636,7 +637,7 @@ static void RenderSprite(VEntity* thing)
 	sv[3] = sprorigin + end + botdelta;
 
 	vuint32 light;
-	if (fixedlight || (thing->State->frame & FF_FULLBRIGHT) ||
+	if (fixedlight || (thing->State->Frame & FF_FULLBRIGHT) ||
 		(thing->EntityFlags & VEntity::EF_FullBright))
 	{
 		light = 0xffffffff;
@@ -688,7 +689,7 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 			spr.surf = (surface_t*)model_precache[mobj->EntityFlags &
 				VEntity::EF_FixedModel ? mobj->FixedModelIndex :
 				mobj->State->ModelIndex];
-			spr.lump = IsWeapon ? 1 : mobj->State->model_frame;
+			spr.lump = IsWeapon ? 1 : mobj->State->ModelFrame;
 			spr.count = mobj->ModelSkinIndex;
 			spr.light = light;
 			spr.translucency = mobj->Translucency + 1;
@@ -729,7 +730,7 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 		spr.surf = (surface_t*)model_precache[mobj->EntityFlags &
 				VEntity::EF_FixedModel ? mobj->FixedModelIndex :
 				mobj->State->ModelIndex];
-		spr.lump = IsWeapon ? 1 : mobj->State->model_frame;
+		spr.lump = IsWeapon ? 1 : mobj->State->ModelFrame;
 		spr.count = mobj->ModelSkinIndex;
 		spr.light = light;
 		spr.translucency = mobj->Translucency + 1;
@@ -741,7 +742,7 @@ void RenderTranslucentAliasModel(VEntity* mobj, vuint32 light, bool IsWeapon)
 	Drawer->DrawAliasModel(mobj->Origin, mobj->Angles,
 		model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 		mobj->FixedModelIndex : mobj->State->ModelIndex], IsWeapon ? 1 :
-		mobj->State->model_frame, mobj->ModelSkinIndex,
+		mobj->State->ModelFrame, mobj->ModelSkinIndex,
 		*skin_list[mobj->ModelSkinNum], light, mobj->Translucency, false);
 	unguard;
 }
@@ -770,7 +771,7 @@ static void RenderAliasModel(VEntity* mobj, bool IsWeapon)
 
 	//	Setup lighting
 	vuint32 light;
-	if (fixedlight || (mobj->State->frame & FF_FULLBRIGHT) ||
+	if (fixedlight || (mobj->State->Frame & FF_FULLBRIGHT) ||
 		(mobj->EntityFlags & VEntity::EF_FullBright))
 	{
 		light = 0xffffffff;
@@ -798,7 +799,7 @@ static void RenderAliasModel(VEntity* mobj, bool IsWeapon)
 		Drawer->DrawAliasModel(mobj->Origin, mobj->Angles,
 			model_precache[mobj->EntityFlags & VEntity::EF_FixedModel ?
 			mobj->FixedModelIndex : mobj->State->ModelIndex],
-			mobj->State->model_frame, mobj->ModelSkinIndex,
+			mobj->State->ModelFrame, mobj->ModelSkinIndex,
 			*skin_list[mobj->ModelSkinNum], light, 0, false);
 	}
 	unguard;
@@ -918,23 +919,24 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 	bool				flip;
 
 	// decide which patch to use
-	if ((vuint32)VEnt->SpriteIndex >= MAX_SPRITE_MODELS)
+	if ((vuint32)VEnt->State->SpriteIndex >= MAX_SPRITE_MODELS)
 	{
 #ifdef PARANOID
-		GCon->Logf("R_ProjectSprite: invalid sprite number %d", VEnt->SpriteIndex);
+		GCon->Logf("R_ProjectSprite: invalid sprite number %d",
+			VEnt->State->SpriteIndex);
 #endif
 		return;
 	}
-	sprdef = &sprites[VEnt->SpriteIndex];
-	if ((VEnt->SpriteFrame & FF_FRAMEMASK) >= sprdef->numframes)
+	sprdef = &sprites[VEnt->State->SpriteIndex];
+	if ((VEnt->State->Frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d",
-			VEnt->SpriteIndex, VEnt->SpriteFrame);
+			VEnt->State->SpriteIndex, VEnt->State->Frame);
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[VEnt->SpriteFrame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[VEnt->State->Frame & FF_FRAMEMASK];
 
 	lump = sprframe->lump[0];
 	flip = sprframe->flip[0];
@@ -992,7 +994,7 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
 	vuint32 light;
-	if (VEnt->SpriteFrame & FF_FULLBRIGHT)
+	if (VEnt->State->Frame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;
 	}
@@ -1019,7 +1021,7 @@ static void RenderViewModel(VViewEntity* VEnt)
 		(VEnt->SY - 32.0) * viewup / 6.0;
 
 	vuint32 light;
-	if (VEnt->SpriteFrame & FF_FULLBRIGHT)
+	if (VEnt->State->Frame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;
 	}
@@ -1029,8 +1031,8 @@ static void RenderViewModel(VViewEntity* VEnt)
 	}
 
 	Drawer->DrawAliasModel(origin, cl->ViewAngles,
-		model_precache[VEnt->ModelIndex], VEnt->ModelFrame, 0, NULL, light,
-		cl->ViewEntTranslucency, true);
+		model_precache[VEnt->State->ModelIndex], VEnt->State->ModelFrame,
+		0, NULL, light, cl->ViewEntTranslucency, true);
 	unguard;
 }
 
@@ -1048,7 +1050,8 @@ void R_DrawPlayerSprites()
 		return;
 	}
 
-	if (model_precache[cl->ViewEnts[0]->ModelIndex] && r_view_models)
+	if (cl->ViewEnts[0]->State &&
+		model_precache[cl->ViewEnts[0]->State->ModelIndex] && r_view_models)
 	{
 		RenderViewModel(cl->ViewEnts[0]);
 	}
@@ -1057,7 +1060,7 @@ void R_DrawPlayerSprites()
 		// add all active psprites
 		for (int i = 0; i < NUMPSPRITES; i++)
 		{
-			if (cl->ViewEnts[i]->SpriteIndex != -1)
+			if (cl->ViewEnts[i]->State)
 			{
 				RenderPSprite(cl->ViewEnts[i], 3 - i);
 			}

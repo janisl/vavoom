@@ -27,6 +27,31 @@ class WeaponSigil : Weapon;
 
 //==========================================================================
 //
+//	SetSigilSprite
+//
+//==========================================================================
+
+void SetSigilSprite()
+{
+	switch (Player(Player).Sigil)
+	{
+	case 1:
+		Player.SetViewState(ps_flash, S_SIGIL01);
+		break;
+	case 2:
+		Player.SetViewState(ps_flash, S_SIGIL02);
+		break;
+	case 3:
+		Player.SetViewState(ps_flash, S_SIGIL03);
+		break;
+	case 4:
+		Player.SetViewState(ps_flash, S_SIGIL04);
+		break;
+	}
+}
+
+//==========================================================================
+//
 //	A_SigilSound
 //
 //==========================================================================
@@ -34,7 +59,7 @@ class WeaponSigil : Weapon;
 void A_SigilSound()
 {
 	Player.MO.PlaySound('weapons/sigil', CHAN_WEAPON);
-	SpriteFrame = Player(Player).Sigil;
+	SetSigilSprite();
 }
 
 //==========================================================================
@@ -45,8 +70,7 @@ void A_SigilSound()
 
 void A_SigilShowFlash()
 {
-	Player(Player).SetPsprite(ps_flash, FlashState);
-	SpriteFrame = Player(Player).Sigil;
+	Player.SetViewState(ps_flash, FlashState);
 }
 
 //==========================================================================
@@ -112,7 +136,6 @@ void A_FireSigil()
 			sigil.Origin.y = Actor(Player.MO).linetarget.Origin.y;
 		}
 	}
-	SpriteFrame = Player(Player).Sigil;
 }
 
 //==========================================================================
@@ -133,7 +156,7 @@ __states__
 	S_SIGIL('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGIL)
 	{
 		A_WeaponReady();
-		SpriteFrame = Player(Player).Sigil;
+		SetSigilSprite();
 	}
 	S_SIGIL01('SIGH', 1 | FF_FULLBRIGHT, -1.0, none) { }
 	S_SIGIL02('SIGH', 2 | FF_FULLBRIGHT, -1.0, none) { }
@@ -141,13 +164,13 @@ __states__
 	S_SIGIL04('SIGH', 4 | FF_FULLBRIGHT, -1.0, none) { }
 	S_SIGILDOWN('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILDOWN)
 	{
+		SetSigilSprite();
 		A_Lower();
-		SpriteFrame = Player(Player).Sigil;
 	}
 	S_SIGILUP('SIGH', 0 | FF_FULLBRIGHT, 1.0 / 35.0, S_SIGILUP)
 	{
 		A_Raise();
-		SpriteFrame = Player(Player).Sigil;
+		SetSigilSprite();
 	}
 	S_SIGIL1('SIGH', 0 | FF_FULLBRIGHT, 18.0 / 35.0, S_SIGIL2) { A_SigilSound(); }
 	S_SIGIL2('SIGH', 0 | FF_FULLBRIGHT, 3.0 / 35.0, S_SIGIL3) { A_SigilShowFlash(); }
@@ -155,7 +178,7 @@ __states__
 	S_SIGIL4('SIGH', 0, 5.0 / 35.0, S_SIGIL)
 	{
 		A_ClearFlash();
-		SpriteFrame = Player(Player).Sigil;
+		SetSigilSprite();
 	}
 	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
 	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3)

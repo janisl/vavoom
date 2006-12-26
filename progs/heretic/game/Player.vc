@@ -1772,7 +1772,7 @@ void DeathPlayerTick(float deltaTime)
 	float delta;
 	int lookDelta;
 
-	MovePsprites();
+	MovePsprites(deltaTime);
 
 	onground = (MO.Origin.z <= MO.FloorZ);
 
@@ -1999,7 +1999,7 @@ void PlayerTick(float deltaTime)
 	}
 
 	// cycle psprites
-	MovePsprites();
+	MovePsprites(deltaTime);
 
 	// Counters, time dependend power ups.
 
@@ -2579,17 +2579,6 @@ void SetWeapon(int NewWeapon)
 
 //===========================================================================
 //
-//  SetPsprite
-//
-//===========================================================================
-
-void SetPsprite(int position, state stnum)
-{
-	ViewEnts[position].SetState(stnum);
-}
-
-//===========================================================================
-//
 //  BringUpWeapon
 //
 //  Starts bringing the pending weapon up from the bottom of the screen.
@@ -2606,11 +2595,11 @@ void BringUpWeapon()
 	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	if (Powers[pw_weaponlevel2])
 	{
-		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState2);
+		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState2);
 	}
 	else
 	{
-		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
 	}
 }
 
@@ -2626,11 +2615,11 @@ void DropWeapon()
 {
 	if (Powers[pw_weaponlevel2])
 	{
-		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
+		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
 	}
 	else
 	{
-		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
 	}
 }
 
@@ -2649,7 +2638,7 @@ void SetupPsprites()
 	// Remove all  ViewEnts
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		ViewEnts[i].State = none;
+		SetViewState(i, none);
 	}
 	// Spawn the ready weapon
 	BringUpWeapon();
@@ -2663,28 +2652,9 @@ void SetupPsprites()
 //
 //===========================================================================
 
-void MovePsprites()
+void MovePsprites(float deltaTime)
 {
-	int i;
-	ViewEntity e;
-
-	for (i = 0; i < NUMPSPRITES; i++)
-	{
-		e = ViewEnts[i];
-		if (e.State)	// a null state means not active
-		{
-			// drop tic count and possibly change state
-			if (e.StateTime != -1.0)	// a -1 tic count never changes
-			{
-				e.StateTime -= Level.Game.frametime;
-				if (e.StateTime <= 0.0)
-				{
-					e.StateTime = 0.0;
-					SetPsprite(i, e.NextState);
-				}
-			}
-		}
-	}
+	AdvanceViewStates(deltaTime);
 	ViewEnts[ps_flash].SX = ViewEnts[ps_weapon].SX;
 	ViewEnts[ps_flash].SY = ViewEnts[ps_weapon].SY;
 }
@@ -2762,11 +2732,11 @@ bool CheckAmmo()
 	while (PendingWeapon == wp_nochange);
 	if (Powers[pw_weaponlevel2])
 	{
-		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
+		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
 	}
 	else
 	{
-		SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
 	}
 	return false;
 }
@@ -2798,7 +2768,7 @@ void FireWeapon()
 			Weapon(ViewEnts[ps_weapon]).HoldAttackState :
 			Weapon(ViewEnts[ps_weapon]).AttackState;
 	}
-	SetPsprite(ps_weapon, attackState);
+	SetViewState(ps_weapon, attackState);
 	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 	if (ReadyWeapon == wp_gauntlets && !Refire)
 	{
@@ -2817,7 +2787,7 @@ void ActivateBeak()
 {
 	SetWeapon(wp_beak);
 	ViewEnts[ps_weapon].SY = Weapon::WEAPONTOP;
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).ReadyState);
+	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).ReadyState);
 }
 
 //===========================================================================
@@ -2835,7 +2805,7 @@ void PostChickenWeapon(int weapon)
 	}
 	SetWeapon(weapon);
 	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
 }
 
 //===========================================================================

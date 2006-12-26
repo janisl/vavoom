@@ -2947,22 +2947,10 @@ void Tick(float deltaTime)
 		return;
 	}
 	// Cycle through states, calling action functions at transitions
-	if (StateTime != -1.0)
+	if (!AdvanceState(deltaTime))
 	{
-		StateTime -= deltaTime;
-		if (StateTime <= 0.0)
-		{
-			// you can cycle through multiple states in a tic
-			do
-			{
-				if (!SetState(NextState))
-				{
-					// mobj was removed
-					return;
-				}
-			}
-			while (!StateTime);
-		}
+		// mobj was removed
+		return;
 	}
 }
 

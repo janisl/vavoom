@@ -33,7 +33,7 @@ class WeaponStaff : Weapon;
 
 void WeaponLevel2Init()
 {
-	SetState(ReadyState2);
+	Player.SetViewState(ps_weapon, ReadyState2);
 }
 
 //==========================================================================

@@ -44,7 +44,7 @@ void A_FireShotgun2()
 
 	Player(Player).Ammo[Ammo] -= 2;
 
-	Player(Player).SetPsprite(ps_flash, FlashState);
+	Player.SetViewState(ps_flash, FlashState);
 
 	aimDir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)

@@ -40,7 +40,7 @@ void A_FirePistol()
 	Player.MO.SetState(Actor(Player.MO).MissileState);
 	Player(Player).Ammo[Ammo]--;
 
-	Player(Player).SetPsprite(ps_flash, FlashState);
+	Player.SetViewState(ps_flash, FlashState);
 
 	dir = Actor(Player.MO).Aim(16.0 * 64.0);
 	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);

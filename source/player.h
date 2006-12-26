@@ -61,21 +61,11 @@ class VViewEntity : public VObject
 	DECLARE_CLASS(VViewEntity, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
 
-	int			SpriteIndex;	// a -1 sprite means not active
-	int			SpriteFrame;
-	int			ModelIndex;
-	int			ModelFrame;
-	int			ModelSkinNum;
-	float		SX;
-	float		SY;
-	VState*		State;
-	VState*		NextState;
-	float		StateTime;
-	VBasePlayer	*Player;
-
-	void SetState(VState* stnum);
-
-	DECLARE_FUNCTION(SetState)
+	VState*			State;
+	float			StateTime;
+	float			SX;
+	float			SY;
+	VBasePlayer*	Player;
 };
 
 //
@@ -171,11 +161,16 @@ class VBasePlayer : public VObject
 
 	int				ViewEntTranslucency;
 
+	void SetViewState(int, VState*);
+	void AdvanceViewStates(float);
+
 	DECLARE_FUNCTION(cprint)
 	DECLARE_FUNCTION(centreprint)
 	DECLARE_FUNCTION(GetPlayerNum)
 	DECLARE_FUNCTION(ClearPlayer)
 	DECLARE_FUNCTION(SelectClientMsg)
+	DECLARE_FUNCTION(SetViewState)
+	DECLARE_FUNCTION(AdvanceViewStates)
 
 	void eventPutClientIntoServer()
 	{

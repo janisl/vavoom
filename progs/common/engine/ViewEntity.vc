@@ -27,19 +27,11 @@ class ViewEntity : Object
 	native
 	abstract;
 
-int SpriteIndex;
-int SpriteFrame;
-int ModelIndex;
-int ModelFrame;
-int ModelSkinNum;
+readonly state State;	// a 0 state means not active
+float StateTime;
 float SX;
 float SY;
-state State;	// a 0 state means not active
-state NextState;
-float StateTime;
 BasePlayer Player;
-
-native final void SetState(state stnum);
 
 defaultproperties
 {

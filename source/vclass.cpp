@@ -527,7 +527,8 @@ void VMemberBase::SetUpNetClasses()
 		if (GMembers[i]->MemberType == MEMBER_Class)
 		{
 			VClass* C = static_cast<VClass*>(GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()))
+			if (C->IsChildOf(VThinker::StaticClass()) ||
+				C->IsChildOf(VViewEntity::StaticClass()))
 			{
 				C->NetId = CurId++;
 			}
@@ -1499,13 +1500,13 @@ VState::VState(VName AName)
 : VMemberBase(MEMBER_State, AName)
 , SpriteName(NAME_None)
 , SpriteIndex(0)
-, frame(0)
+, Frame(0)
 , ModelName(NAME_None)
 , ModelIndex(0)
-, model_frame(0)
-, time(0)
-, nextstate(0)
-, function(0)
+, ModelFrame(0)
+, Time(0)
+, NextState(0)
+, Function(0)
 , Next(0)
 , NetId(-1)
 {
@@ -1522,12 +1523,12 @@ void VState::Serialise(VStream& Strm)
 	guard(VState::Serialise);
 	VMemberBase::Serialise(Strm);
 	Strm << SpriteName
-		<< STRM_INDEX(frame)
+		<< STRM_INDEX(Frame)
 		<< ModelName
-		<< STRM_INDEX(model_frame)
-		<< time
-		<< nextstate
-		<< function
+		<< STRM_INDEX(ModelFrame)
+		<< Time
+		<< NextState
+		<< Function
 		<< Next;
 	if (Strm.IsLoading())
 	{

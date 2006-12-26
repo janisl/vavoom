@@ -95,7 +95,6 @@ class VEntity : public VThinker
 	TAVec			Angles;			// orientation
 
 	VState*			State;
-	VState*			NextState;
 	float			StateTime;		// state tic counter
 
 	//More drawing info.
@@ -314,6 +313,7 @@ class VEntity : public VThinker
 
 	bool SetState(VState*);
 	void SetInitialState(VState*);
+	bool AdvanceState(float);
 	VState* FindState(VName);
 
 	bool CheckWater();
@@ -339,6 +339,7 @@ class VEntity : public VThinker
 	DECLARE_FUNCTION(Remove)
 	DECLARE_FUNCTION(SetState)
 	DECLARE_FUNCTION(SetInitialState)
+	DECLARE_FUNCTION(AdvanceState)
 	DECLARE_FUNCTION(FindState)
 	DECLARE_FUNCTION(PlaySound)
 	DECLARE_FUNCTION(StopSound)

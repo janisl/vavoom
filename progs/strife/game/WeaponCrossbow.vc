@@ -69,15 +69,11 @@ __states__
 {
 	S_XBOW('XBOW', 0, 1.0 / 35.0, S_XBOW_2)
 	{
-		Player(Player).SetPsprite(ps_flash, S_XBOWFLASH1);
+		Player.SetViewState(ps_flash, S_XBOWFLASH1);
 		A_WeaponReady();
 	}
 	S_XBOW_2('XBOW', 0, 1.0 / 35.0, S_XBOW_2) { A_WeaponReady(); }
-	S_XBOWDOWN('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2)
-	{
-		Player(Player).SetPsprite(ps_flash, none);
-		A_Lower();
-	}
+	S_XBOWDOWN('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2) { A_Lower(); }
 	S_XBOWDOWN_2('XBOW', 0, 1.0 / 35.0, S_XBOWDOWN_2) { A_Lower(); }
 	S_XBOWUP('XBOW', 0, 1.0 / 35.0, S_XBOWUP) { A_Raise(); }
 	S_XBOW1('XBOW', 0, 3.0 / 35.0, S_XBOW2) { A_ClearFlash(); }

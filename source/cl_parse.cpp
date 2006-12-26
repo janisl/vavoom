@@ -273,7 +273,7 @@ static void CL_ParseUpdateMobj(VMessage& msg)
 
 		R_PositionWeaponModel(wpent, weapon_model_precache[ent->EntityFlags &
 			VEntity::EF_FixedModel ? ent->FixedModelIndex :
-			ent->State->ModelIndex], ent->State->model_frame);
+			ent->State->ModelIndex], ent->State->ModelFrame);
 	}
 	else if (bits & MOB_WEAPON)
 	{
@@ -313,6 +313,7 @@ static void CL_ParseSecUpdate(VMessage& msg)
 
 static void CL_ParseViewData(VMessage& msg)
 {
+	guard(CL_ParseViewData);
 	int		i;
 	int		bits;
 
@@ -324,24 +325,28 @@ static void CL_ParseViewData(VMessage& msg)
 	cl->ViewEntTranslucency = msg.ReadByte();
 	cl->PSpriteSY = msg.ReadShort();
 
-	cl->ViewEnts[0]->SpriteIndex = msg.ReadShort();
-	if (cl->ViewEnts[0]->SpriteIndex != -1)
+	i = msg.ReadShort();
+	if (i != -1)
 	{
-		cl->ViewEnts[0]->SpriteFrame = msg.ReadByte();
-		cl->ViewEnts[0]->ModelIndex = msg.ReadShort();
-		cl->ViewEnts[0]->ModelFrame = msg.ReadByte();
+		cl->ViewEnts[0]->State = ClassLookup[i]->StatesLookup[msg.ReadShort()];
 		cl->ViewEnts[0]->SX = msg.ReadShort();
 		cl->ViewEnts[0]->SY = msg.ReadShort();
 	}
-
-	cl->ViewEnts[1]->SpriteIndex = msg.ReadShort();
-	if (cl->ViewEnts[1]->SpriteIndex != -1)
+	else
 	{
-		cl->ViewEnts[1]->SpriteFrame = msg.ReadByte();
-		cl->ViewEnts[1]->ModelIndex = msg.ReadShort();
-		cl->ViewEnts[1]->ModelFrame = msg.ReadByte();
+		cl->ViewEnts[0]->State = NULL;
+	}
+
+	i = msg.ReadShort();
+	if (i != -1)
+	{
+		cl->ViewEnts[1]->State = ClassLookup[i]->StatesLookup[msg.ReadShort()];
 		cl->ViewEnts[1]->SX = msg.ReadShort();
 		cl->ViewEnts[1]->SY = msg.ReadShort();
+	}
+	else
+	{
+		cl->ViewEnts[1]->State = NULL;
 	}
 
 	cl->Health = msg.ReadByte();
@@ -356,6 +361,7 @@ static void CL_ParseViewData(VMessage& msg)
 		else
 			cl->CShifts[i] = 0;
 	}
+	unguard;
 }
 
 static void CL_ParseStartSound(VMessage& msg)
@@ -620,7 +626,8 @@ static void CL_ParseServerInfo(VMessage& msg)
 		if (VMemberBase::GMembers[i]->MemberType == MEMBER_Class)
 		{
 			VClass* C = static_cast<VClass*>(VMemberBase::GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()))
+			if (C->IsChildOf(VThinker::StaticClass()) ||
+				C->IsChildOf(VViewEntity::StaticClass()))
 			{
 				check(C->NetId >= 0);
 				ClassLookup[C->NetId] = C;

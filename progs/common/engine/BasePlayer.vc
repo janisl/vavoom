@@ -122,6 +122,9 @@ native final int GetPlayerNum();
 native final void ClearPlayer();
 native final void SelectClientMsg(int msgtype);
 
+native final void SetViewState(int position, state stnum);
+native final void AdvanceViewStates(float deltaTime);
+
 void PutClientIntoServer()
 {
 }

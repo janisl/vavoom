@@ -210,13 +210,13 @@ class VState : public VMemberBase
 public:
 	VName		SpriteName;
 	vint32		SpriteIndex;
-	vint32		frame;
+	vint32		Frame;
 	VName		ModelName;
 	vint32		ModelIndex;
-	vint32		model_frame;
-	float		time;
-	VState*		nextstate;
-	VMethod*	function;
+	vint32		ModelFrame;
+	float		Time;
+	VState*		NextState;
+	VMethod*	Function;
 	VState*		Next;
 
 	vint32		NetId;

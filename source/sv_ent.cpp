@@ -190,21 +190,25 @@ bool VEntity::SetState(VState* InState)
 		{
 			// Remove mobj
 			State = NULL;
+			StateTime = -1;
 			Remove();
 			return false;
 		}
 
 		State = st;
-		StateTime = st->time;
-		NextState = st->nextstate;
+		StateTime = st->Time;
 		EntityFlags &= ~EF_FullBright;
 
 		// Modified handling.
 		// Call action functions when the state is set
 		P_PASS_SELF;
-		ExecuteFunction(st->function);
+		ExecuteFunction(st->Function);
 
-		st = NextState;
+		if (!State)
+		{
+			return false;
+		}
+		st = State->NextState;
 	}
 	while (!StateTime);
 	return true;
@@ -225,14 +229,37 @@ void VEntity::SetInitialState(VState* InState)
 	State = InState;
 	if (InState)
 	{
-		StateTime = InState->time;
-		NextState = InState->nextstate;
+		StateTime = InState->Time;
 	}
 	else
 	{
 		StateTime = -1.0;
-		NextState = NULL;
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::AdvanceState
+//
+//==========================================================================
+
+bool VEntity::AdvanceState(float deltaTime)
+{
+	guard(VEntity::AdvanceState);
+	if (State && StateTime != -1.0)
+	{
+		StateTime -= deltaTime;
+		// you can cycle through multiple states in a tic
+		if (StateTime <= 0.0)
+		{
+			if (!SetState(State->NextState))
+			{
+				return false;	// freed itself
+			}
+		}
+	}
+	return true;
 	unguard;
 }
 
@@ -1951,7 +1978,7 @@ IMPLEMENT_FUNCTION(VEntity, SetState)
 {
 	P_GET_PTR(VState, state);
 	P_GET_SELF;
-	PR_Push(Self->SetState(state));
+	RET_BOOL(Self->SetState(state));
 }
 
 IMPLEMENT_FUNCTION(VEntity, SetInitialState)
@@ -1959,6 +1986,13 @@ IMPLEMENT_FUNCTION(VEntity, SetInitialState)
 	P_GET_PTR(VState, state);
 	P_GET_SELF;
 	Self->SetInitialState(state);
+}
+
+IMPLEMENT_FUNCTION(VEntity, AdvanceState)
+{
+	P_GET_FLOAT(deltaTime);
+	P_GET_SELF;
+	RET_BOOL(Self->AdvanceState(deltaTime));
 }
 
 IMPLEMENT_FUNCTION(VEntity, FindState)
@@ -2254,54 +2288,6 @@ IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
 	RET_REF(Self->RoughMonsterSearch(Distance));
 }
 
-//===========================================================================
-//
-//  VViewEntity::SetState
-//
-//===========================================================================
-
-void VViewEntity::SetState(VState* InState)
-{
-	guard(VViewEntity::SetState);
-	VState *state = InState;
-
-	do
-	{
-		if (!state)
-		{
-			// Object removed itself.
-			State = NULL;
-			break;
-		}
-		State = state;
-		StateTime = state->time;	// could be 0
-		SpriteIndex = state->SpriteIndex;
-		SpriteFrame = state->frame;
-		ModelIndex = state->ModelIndex;
-		ModelFrame = state->model_frame;
-		NextState = state->nextstate;
-		// Call action routine.
-		P_PASS_SELF;
-		ExecuteFunction(state->function);
-		state = NextState;
-	}
-	while (state && !StateTime);	// An initial state of 0 could cycle through.
-	unguard;
-}
-
-//==========================================================================
-//
-//	ViewEntity.SetState
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VViewEntity, SetState)
-{
-	P_GET_PTR(VState, state);
-	P_GET_SELF;
-	Self->SetState(state);
-}
-
 //==========================================================================
 //
 //	VEntity::InitFuncIndexes
@@ -2338,6 +2324,85 @@ void VEntity::InitFuncIndexes()
 void EntInit()
 {
 	VEntity::InitFuncIndexes();
+}
+
+//===========================================================================
+//
+//  VBasePlayer::SetViewState
+//
+//===========================================================================
+
+void VBasePlayer::SetViewState(int position, VState* stnum)
+{
+	guard(VBasePlayer::SetViewState);
+	VViewEntity* VEnt = ViewEnts[position];
+	VState *state = stnum;
+	do
+	{
+		if (!state)
+		{
+			// Object removed itself.
+			VEnt->State = NULL;
+			VEnt->StateTime = -1;
+			break;
+		}
+		VEnt->State = state;
+		VEnt->StateTime = state->Time;	// could be 0
+		// Call action routine.
+		P_PASS_REF(VEnt);
+		ExecuteFunction(state->Function);
+		if (!VEnt->State)
+		{
+			break;
+		}
+		state = VEnt->State->NextState;
+	}
+	while (state && !VEnt->StateTime);	// An initial state of 0 could cycle through.
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::AdvanceViewStates
+//
+//==========================================================================
+
+void VBasePlayer::AdvanceViewStates(float deltaTime)
+{
+	for (int i = 0; i < NUMPSPRITES; i++)
+	{
+		VViewEntity* e = ViewEnts[i];
+		// a null state means not active
+		if (e->State)
+		{
+			// drop tic count and possibly change state
+			// a -1 tic count never changes
+			if (e->StateTime != -1.0)
+			{
+				e->StateTime -= deltaTime;
+				if (e->StateTime <= 0.0)
+				{
+					e->StateTime = 0.0;
+					SetViewState(i, e->State->NextState);
+				}
+			}
+		}
+	}
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, SetViewState)
+{
+	P_GET_PTR(VState, stnum);
+	P_GET_INT(position);
+	P_GET_SELF;
+	Self->SetViewState(position, stnum);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, AdvanceViewStates)
+{
+	P_GET_FLOAT(deltaTime);
+	P_GET_SELF;
+	Self->AdvanceViewStates(deltaTime);
 }
 
 //==========================================================================

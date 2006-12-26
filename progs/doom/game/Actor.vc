@@ -2033,15 +2033,8 @@ void Tick(float deltaTime)
 	// calling action functions at transitions
 	if (StateTime != -1.0)
 	{
-		StateTime -= deltaTime;
-
-		// you can cycle through multiple states in a tic
-		if (StateTime <= 0.0)
-		{
-			StateTime = 0.0;
-			if (!SetState(NextState))
-				return;	// freed itself
-		}
+		if (!AdvanceState(deltaTime))
+			return;	// freed itself
 	}
 	else
 	{

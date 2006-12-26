@@ -129,7 +129,7 @@ void A_FPunchAttack()
 	if (PunchCount == 3)
 	{
 		PunchCount = 0;
-		SetState(Attack2State);
+		Player.SetViewState(ps_weapon, Attack2State);
 		Owner.PlaySound('*fistgrunt', CHAN_VOICE);
 	}
 }

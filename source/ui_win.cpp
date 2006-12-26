@@ -675,7 +675,7 @@ IMPLEMENT_FUNCTION(VWindow, Hide)
 IMPLEMENT_FUNCTION(VWindow, IsVisible)
 {
 	P_GET_SELF;
-	PR_Push(Self->IsVisible());
+	RET_BOOL(Self->IsVisible());
 }
 IMPLEMENT_FUNCTION(VWindow, SetSensitivity)
 {
@@ -696,7 +696,7 @@ IMPLEMENT_FUNCTION(VWindow, Disable)
 IMPLEMENT_FUNCTION(VWindow, IsSensitive)
 {
 	P_GET_SELF;
-	PR_Push(Self->IsSensitive());
+	RET_BOOL(Self->IsSensitive());
 }
 IMPLEMENT_FUNCTION(VWindow, SetSelectability)
 {

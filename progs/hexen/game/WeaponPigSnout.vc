@@ -66,7 +66,7 @@ void A_SnoutAttack()
 
 void SnoutSniff()
 {
-	SetState(SniffState);
+	Player.SetViewState(ps_weapon, SniffState);
 }
 
 __states__

@@ -118,7 +118,7 @@ void A_WeaponReady()
 	// Put the weapon away if the player has a pending weapon or has died.
 	if (Player(Player).PendingWeapon != HexenDefs::wp_nochange || !Player.Health)
 	{
-		Player(Player).SetPsprite(ps_weapon, GetDownState());
+		Player.SetViewState(ps_weapon, GetDownState());
 		return;
 	}
 
@@ -181,7 +181,7 @@ void A_Lower()
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
-		Player(Player).SetPsprite(ps_weapon, none);
+		Player.SetViewState(ps_weapon, none);
 		return;
 	}
 	Player(Player).SetWeapon(Player(Player).PendingWeapon);
@@ -207,7 +207,7 @@ void A_Raise()
 		return;
 	}
 	SY = WEAPONTOP;
-	Player(Player).SetPsprite(ps_weapon, GetReadyState());
+	Player.SetViewState(ps_weapon, GetReadyState());
 }
 
 //==========================================================================

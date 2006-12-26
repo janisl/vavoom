@@ -1662,7 +1662,7 @@ void DeathPlayerTick(float deltaTime)
 	float angle;
 	float delta;
 
-	MovePsprites();
+	MovePsprites(deltaTime);
 
 	// fall to the ground
 	if (ViewHeight > 6.0)
@@ -1915,7 +1915,7 @@ void PlayerTick(float deltaTime)
 	}
 
 	//  cycle psprites
-	MovePsprites();
+	MovePsprites(deltaTime);
 
 	//  Counters, time dependend power ups.
 
@@ -2209,17 +2209,6 @@ void SetWeapon(int NewWeapon)
 
 //===========================================================================
 //
-//  SetPsprite
-//
-//===========================================================================
-
-void SetPsprite(int position, state stnum)
-{
-	ViewEnts[position].SetState(stnum);
-}
-
-//===========================================================================
-//
 //  BringUpWeapon
 //
 //  Starts bringing the pending weapon up from the bottom of the screen.
@@ -2232,7 +2221,7 @@ void BringUpWeapon()
 	PendingWeapon = StrifeDefs::wp_nochange;
 	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
 }
 
 //==========================================================================
@@ -2292,7 +2281,7 @@ void ChangeWeapon(int newweapon)
 
 void DropWeapon()
 {
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
 }
 
 //===========================================================================
@@ -2310,7 +2299,7 @@ void SetupPsprites()
 	// remove all  ViewEnts
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		ViewEnts[i].State = none;
+		SetViewState(i, none);
 	}
 
 	// spawn the gun
@@ -2325,32 +2314,9 @@ void SetupPsprites()
 //
 //==========================================================================
 
-void MovePsprites()
+void MovePsprites(float deltaTime)
 {
-	int i;
-	ViewEntity e;
-
-	for (i = 0; i < NUMPSPRITES; i++)
-	{
-		e = ViewEnts[i];
-		// a null state means not active
-		if (e.State)
-		{
-			// drop tic count and possibly change state
-
-			// a -1 tic count never changes
-			if (e.StateTime != -1.0)
-			{
-				e.StateTime -= Level.Game.frametime;
-				if (e.StateTime <= 0.0)
-				{
-					e.StateTime = 0.0;
-					SetPsprite(i, e.NextState);
-				}
-			}
-		}
-	}
-
+	AdvanceViewStates(deltaTime);
 	ViewEnts[ps_flash].SX = ViewEnts[ps_weapon].SX;
 	ViewEnts[ps_flash].SY = ViewEnts[ps_weapon].SY;
 }
@@ -2414,7 +2380,7 @@ int CheckAmmo()
 	while (PendingWeapon == StrifeDefs::wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
 
 	return false;
 }
@@ -2433,7 +2399,7 @@ void FireWeapon()
 	}
 
 	MO.SetState(Actor(MO).MeleeState);
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).AttackState);
+	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).AttackState);
 	if (Weapon(ViewEnts[ps_weapon]).bRaiseNoiseAlert)
 		StrifeLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }

@@ -116,7 +116,7 @@ void A_FAxeAttack()
 			WeaponManaUse(Player.PClass, Player(Player).ReadyWeapon);
 		if (Player(Player).Mana[HexenDefs::MANA_1] <= 0)
 		{
-			SetState(NoMoreManaState);
+			Player.SetViewState(ps_weapon, NoMoreManaState);
 		}
 	}
 }
@@ -245,7 +245,7 @@ void GotMana(int InMana)
 {
 	if (InMana == HexenDefs::MANA_1)
 	{
-		SetState(S_FAXEREADY_G);
+		Player.SetViewState(ps_weapon, S_FAXEREADY_G);
 	}
 }
 

@@ -126,7 +126,7 @@ void A_WeaponReady()
 	{
 		// change weapon
 		//  (pending weapon should allready be validated)
-		Player(Player).SetPsprite(ps_weapon, DownState);
+		Player.SetViewState(ps_weapon, DownState);
 		return;
 	}
 
@@ -207,7 +207,7 @@ void A_Lower()
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Player(Player).SetPsprite(ps_weapon, none);
+		Player.SetViewState(ps_weapon, none);
 		return;
 	}
 
@@ -239,7 +239,7 @@ void A_Raise()
 
 	// The weapon has been raised all the way,
 	//  so change to the ready state.
-	Player(Player).SetPsprite(ps_weapon, ReadyState);
+	Player.SetViewState(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -295,7 +295,7 @@ void A_CheckReload()
 void A_GunFlash()
 {
 	Player.MO.SetState(Actor(Player.MO).MissileState);
-	Player(Player).SetPsprite(ps_flash, FlashState);
+	Player.SetViewState(ps_flash, FlashState);
 }
 
 //===========================================================================

@@ -1042,10 +1042,8 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 		<< (vuint16)player.PSpriteSY;
 	if (player.ViewEnts[0] && player.ViewEnts[0]->State)
 	{
-		msg << (vuint16)player.ViewEnts[0]->SpriteIndex
-			<< (vuint8)player.ViewEnts[0]->SpriteFrame
-			<< (vuint16)player.ViewEnts[0]->ModelIndex
-			<< (vuint8)player.ViewEnts[0]->ModelFrame
+		msg << (vuint16)((VClass*)player.ViewEnts[0]->State->Outer)->NetId
+			<< (vuint16)player.ViewEnts[0]->State->NetId
 			<< (vuint16)player.ViewEnts[0]->SX
 			<< (vuint16)player.ViewEnts[0]->SY;
 	}
@@ -1055,10 +1053,8 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 	}
 	if (player.ViewEnts[1] && player.ViewEnts[1]->State)
 	{
-		msg << (vuint16)player.ViewEnts[1]->SpriteIndex
-			<< (vuint8)player.ViewEnts[1]->SpriteFrame
-			<< (vuint16)player.ViewEnts[1]->ModelIndex
-			<< (vuint8)player.ViewEnts[1]->ModelFrame
+		msg << (vuint16)((VClass*)player.ViewEnts[1]->State->Outer)->NetId
+			<< (vuint16)player.ViewEnts[1]->State->NetId
 			<< (vuint16)player.ViewEnts[1]->SX
 			<< (vuint16)player.ViewEnts[1]->SY;
 	}

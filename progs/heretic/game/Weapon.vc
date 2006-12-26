@@ -108,11 +108,11 @@ void A_WeaponReady()
 	{
 		if (Player(Player).Powers[pw_weaponlevel2])
 		{
-			Player(Player).SetPsprite(ps_weapon, DownState2);
+			Player.SetViewState(ps_weapon, DownState2);
 		}
 		else
 		{
-			Player(Player).SetPsprite(ps_weapon, DownState);
+			Player.SetViewState(ps_weapon, DownState);
 		}
 		return;
 	}
@@ -176,7 +176,7 @@ void A_Lower()
 	if (!Player.Health)
 	{
 		// Player is dead, so keep the weapon off screen
-		Player(Player).SetPsprite(ps_weapon, none);
+		Player.SetViewState(ps_weapon, none);
 		return;
 	}
 	Player(Player).ReadyWeapon = Player(Player).PendingWeapon;
@@ -204,11 +204,11 @@ void A_Raise()
 	SY = WEAPONTOP;
 	if (Player(Player).Powers[pw_weaponlevel2])
 	{
-		Player(Player).SetPsprite(ps_weapon, ReadyState2);
+		Player.SetViewState(ps_weapon, ReadyState2);
 	}
 	else
 	{
-		Player(Player).SetPsprite(ps_weapon, ReadyState);
+		Player.SetViewState(ps_weapon, ReadyState);
 	}
 }
 

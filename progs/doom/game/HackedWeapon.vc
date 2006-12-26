@@ -128,7 +128,7 @@ void A_FirePistol()
 	Player.MO.SetState(Actor(Player.MO).MissileState);
 	Player(Player).Ammo[Ammo]--;
 
-	Player(Player).SetPsprite(ps_flash, FlashState);
+	Player.SetViewState(ps_flash, FlashState);
 
 	dir = Actor(Player.MO).Aim(16.0 * 64.0);
 	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
@@ -151,7 +151,7 @@ void A_FireShotgun()
 
 	Player(Player).Ammo[Ammo]--;
 
-	Player(Player).SetPsprite(ps_flash, FlashState);
+	Player.SetViewState(ps_flash, FlashState);
 
 	dir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 7; i++)
@@ -180,7 +180,7 @@ void A_FireShotgun2()
 
 	Player(Player).Ammo[Ammo] -= 2;
 
-	Player(Player).SetPsprite(ps_flash, FlashState);
+	Player.SetViewState(ps_flash, FlashState);
 
 	aimDir = Actor(Player.MO).Aim(16.0 * 64.0);
 	for (i = 0; i < 20; i++)
@@ -248,9 +248,9 @@ void A_FireCGun()
 	Player(Player).Ammo[Ammo]--;
 
 	if (State == AttackState)
-		Player(Player).SetPsprite(ps_flash, FlashState);
+		Player.SetViewState(ps_flash, FlashState);
 	else
-		Player(Player).SetPsprite(ps_flash, ChainFlash2);
+		Player.SetViewState(ps_flash, ChainFlash2);
 
 	dir = Actor(Player.MO).Aim(16.0 * 64.0);
 	GunShot(Actor(Player.MO), !Player(Player).Refire, dir);
@@ -280,9 +280,9 @@ void A_FirePlasma()
 	Player(Player).Ammo[Ammo]--;
 
 	if (!(P_Random() & 1))
-		Player(Player).SetPsprite(ps_flash, FlashState);
+		Player.SetViewState(ps_flash, FlashState);
 	else
-		Player(Player).SetPsprite(ps_flash, PlasmaFlash2);
+		Player.SetViewState(ps_flash, PlasmaFlash2);
 
 	Player(Player).SpawnPlayerMissile(PlasmaShot);
 }

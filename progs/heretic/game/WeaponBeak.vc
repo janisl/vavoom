@@ -34,7 +34,7 @@ class WeaponBeak : Weapon;
 void A_BeakRaise()
 {
 	SY = WEAPONTOP;
-	SetState(ReadyState);
+	Player.SetViewState(ps_weapon, ReadyState);
 }
 
 //===========================================================================
@@ -52,11 +52,11 @@ void A_BeakReady()
 		Player.MO.SetState(Actor(Player.MO).MissileState);
 		if (Player(Player).Powers[pw_weaponlevel2])
 		{
-			SetState(AttackState2);
+			Player.SetViewState(ps_weapon, AttackState2);
 		}
 		else
 		{
-			SetState(AttackState);
+			Player.SetViewState(ps_weapon, AttackState);
 		}
 		HereticLevelInfo(Player.MO.Level).NoiseAlert(Actor(Player.MO), Actor(Player.MO));
 	}

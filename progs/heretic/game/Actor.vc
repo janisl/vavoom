@@ -2312,15 +2312,10 @@ void Tick(float deltaTime)
 	//
 	if (StateTime != -1.0)
 	{
-		StateTime -= deltaTime;
-		if (StateTime <= 0.0)
+		if (!AdvanceState(deltaTime))
 		{
-			// you can cycle through multiple states in a tic
-			if (!SetState(NextState))
-			{
-				// mobj was removed
-				return;
-			}
+			// mobj was removed
+			return;
 		}
 	}
 	else
