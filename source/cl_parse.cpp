@@ -68,12 +68,9 @@ void CL_Clear()
 	GClGame->serverinfo.Clean();
 	GClGame->intermission = 0;
 	GClGame->time = 0;
-	VViewEntity* PrevVEnts[NUMPSPRITES];
-	PrevVEnts[0] = cl->ViewEnts[0];
-	PrevVEnts[1] = cl->ViewEnts[1];
+	VViewEntity* PrevVEnt = cl->ViewEnt;
 	memset((byte*)cl + sizeof(VObject), 0, cl->GetClass()->ClassSize - sizeof(VObject));
-	cl->ViewEnts[0] = PrevVEnts[0];
-	cl->ViewEnts[1] = PrevVEnts[1];
+	cl->ViewEnt = PrevVEnt;
 	cl_level.LevelName.Clean();
 	memset(&cl_level, 0, sizeof(cl_level));
 	for (int i = 0; i < GMaxEntities; i++)
@@ -325,28 +322,20 @@ static void CL_ParseViewData(VMessage& msg)
 	cl->ViewEntTranslucency = msg.ReadByte();
 	cl->PSpriteSY = msg.ReadShort();
 
-	i = msg.ReadShort();
-	if (i != -1)
+	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		cl->ViewEnts[0]->State = ClassLookup[i]->StatesLookup[msg.ReadShort()];
-		cl->ViewEnts[0]->SX = msg.ReadShort();
-		cl->ViewEnts[0]->SY = msg.ReadShort();
-	}
-	else
-	{
-		cl->ViewEnts[0]->State = NULL;
-	}
-
-	i = msg.ReadShort();
-	if (i != -1)
-	{
-		cl->ViewEnts[1]->State = ClassLookup[i]->StatesLookup[msg.ReadShort()];
-		cl->ViewEnts[1]->SX = msg.ReadShort();
-		cl->ViewEnts[1]->SY = msg.ReadShort();
-	}
-	else
-	{
-		cl->ViewEnts[1]->State = NULL;
+		int ClsIdx = msg.ReadShort();
+		if (ClsIdx != -1)
+		{
+			cl->ViewStates[i].State =
+				ClassLookup[ClsIdx]->StatesLookup[msg.ReadShort()];
+			cl->ViewStates[i].SX = msg.ReadShort();
+			cl->ViewStates[i].SY = msg.ReadShort();
+		}
+		else
+		{
+			cl->ViewStates[i].State = NULL;
+		}
 	}
 
 	cl->Health = msg.ReadByte();

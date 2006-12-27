@@ -43,7 +43,7 @@ void A_FireCGun()
 	Player.MO.SetState(Actor(Player.MO).MissileState);
 	Player(Player).Ammo[Ammo]--;
 
-	if (State == AttackState)
+	if (Player.ViewStates[ps_weapon].State == AttackState)
 		Player.SetViewState(ps_flash, FlashState);
 	else
 		Player.SetViewState(ps_flash, S_CHAINFLASH2);

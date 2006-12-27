@@ -96,9 +96,8 @@ void CL_Init()
 		VClass::FindClass("ClientGame"));
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));
-	for (int i = 0; i < NUMPSPRITES; i++)
-		cl->ViewEnts[i] = (VViewEntity*)VObject::StaticSpawnObject(
-			VViewEntity::StaticClass());
+	cl->ViewEnt = (VViewEntity*)VObject::StaticSpawnObject(
+		VViewEntity::StaticClass());
 	GClGame->cl = cl;
 	GClGame->level = &cl_level;
 	unguard;
@@ -158,8 +157,7 @@ void CL_Shutdown()
 		GClGame->ConditionalDestroy();
 	if (cl)
 	{
-		for (int i = 0; i < NUMPSPRITES; i++)
-			cl->ViewEnts[i]->ConditionalDestroy();
+		cl->ViewEnt->ConditionalDestroy();
 		cl->ConditionalDestroy();
 	}
 	if (GRoot)

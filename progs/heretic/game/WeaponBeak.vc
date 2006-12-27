@@ -33,7 +33,7 @@ class WeaponBeak : Weapon;
 
 void A_BeakRaise()
 {
-	SY = WEAPONTOP;
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
 	Player.SetViewState(ps_weapon, ReadyState);
 }
 
@@ -94,7 +94,7 @@ void A_BeakAttackPL1()
 	}
 	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
 	Player(Player).ChickenPeck = 12;
-	StateTime -= Random() * 0.25;
+	Player.ViewStates[ps_weapon].StateTime -= Random() * 0.25;
 }
 
 //===========================================================================
@@ -120,7 +120,7 @@ void A_BeakAttackPL2()
 	}
 	Player.MO.PlaySound('chicken/peck', CHAN_VOICE);
 	Player(Player).ChickenPeck = 12;
-	StateTime -= Random() * 0.125;
+	Player.ViewStates[ps_weapon].StateTime -= Random() * 0.125;
 }
 
 __states__

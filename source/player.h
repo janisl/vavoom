@@ -61,11 +61,15 @@ class VViewEntity : public VObject
 	DECLARE_CLASS(VViewEntity, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VViewEntity)
 
+	VBasePlayer*	Player;
+};
+
+struct VViewState
+{
 	VState*			State;
 	float			StateTime;
 	float			SX;
 	float			SY;
-	VBasePlayer*	Player;
 };
 
 //
@@ -150,7 +154,8 @@ class VBasePlayer : public VObject
 	vuint32			CShifts[NUM_CSHIFTS];
 
 	// Overlay view sprites (gun, etc).
-	VViewEntity*	ViewEnts[NUMPSPRITES];
+	VViewState		ViewStates[NUMPSPRITES];
+	VViewEntity*	ViewEnt;
 	float			PSpriteSY;
 
 	vuint32			WorldTimer;				// total time the player's been playing

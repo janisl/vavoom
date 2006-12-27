@@ -29,6 +29,14 @@
 
 class BasePlayer : Object;
 
+struct VViewState
+{
+	state		State;	// a 0 state means not active
+	float		StateTime;
+	float		SX;
+	float		SY;
+};
+
 readonly LevelInfo		Level;
 
 readonly bool bActive;
@@ -103,8 +111,9 @@ int FixedColourmap;
 int CShifts[NUM_CSHIFTS];
 
 // Overlay view sprites (gun, etc).
-ViewEntity ViewEnts[NUMPSPRITES];
-float PSpriteSY;
+VViewState		ViewStates[NUMPSPRITES];
+ViewEntity		ViewEnt;
+float			PSpriteSY;
 
 int WorldTimer;	// total time the player's been playing
 

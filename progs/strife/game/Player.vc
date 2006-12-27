@@ -133,10 +133,8 @@ TVec MoveDir;
 
 void PutClientIntoServer()
 {
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_weapon].Player = self;
-	ViewEnts[ps_flash] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_flash].Player = self;
+	ViewEnt = Weapon(SpawnObject(Weapon));
+	ViewEnt.Player = self;
 }
 
 //==========================================================================
@@ -221,13 +219,10 @@ void DisconnectClient()
 		MO.bIsPlayer = false;
 		Actor(MO).Damage(none, none, 10000);
 	}
-	for (i = 0; i < NUMPSPRITES; i++)
+	if (ViewEnt)
 	{
-		if (ViewEnts[i])
-		{
-			ViewEnts[i].Destroy();
-			ViewEnts[i] = none;
-		}
+		ViewEnt.Destroy();
+		ViewEnt = none;
 	}
 	bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
@@ -2104,7 +2099,7 @@ void SetViewPos()
 
 	ViewAngles = MO.Angles;
 
-	ReadyAmmo = Weapon(ViewEnts[ps_weapon]).Ammo;
+	ReadyAmmo = Weapon(ViewEnt).Ammo;
 
 	PaletteFlash();
 }
@@ -2199,12 +2194,12 @@ void SetWeapon(int NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = StrifeDefs::wp_nochange;
-	if (ViewEnts[ps_weapon])
+	if (ViewEnt)
 	{
-		ViewEnts[ps_weapon].Destroy();
+		ViewEnt.Destroy();
 	}
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
-	ViewEnts[ps_weapon].Player = self;
+	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
+	ViewEnt.Player = self;
 }
 
 //===========================================================================
@@ -2219,9 +2214,9 @@ void SetWeapon(int NewWeapon)
 void BringUpWeapon()
 {
 	PendingWeapon = StrifeDefs::wp_nochange;
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //==========================================================================
@@ -2281,7 +2276,7 @@ void ChangeWeapon(int newweapon)
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 }
 
 //===========================================================================
@@ -2296,7 +2291,7 @@ void SetupPsprites()
 {
 	int i;
 
-	// remove all  ViewEnts
+	// remove all  ViewStates
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
 		SetViewState(i, none);
@@ -2317,8 +2312,8 @@ void SetupPsprites()
 void MovePsprites(float deltaTime)
 {
 	AdvanceViewStates(deltaTime);
-	ViewEnts[ps_flash].SX = ViewEnts[ps_weapon].SX;
-	ViewEnts[ps_flash].SY = ViewEnts[ps_weapon].SY;
+	ViewStates[ps_flash].SX = ViewStates[ps_weapon].SX;
+	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
 }
 
 //==========================================================================
@@ -2335,7 +2330,7 @@ int CheckAmmo()
 	int ammo;
 	int count;
 
-	ammo = Weapon(ViewEnts[ps_weapon]).Ammo;
+	ammo = Weapon(ViewEnt).Ammo;
 
 	// Minimal amount for one shot varies.
 	if (ReadyWeapon == StrifeDefs::wp_blaster)
@@ -2380,7 +2375,7 @@ int CheckAmmo()
 	while (PendingWeapon == StrifeDefs::wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 
 	return false;
 }
@@ -2399,8 +2394,8 @@ void FireWeapon()
 	}
 
 	MO.SetState(Actor(MO).MeleeState);
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).AttackState);
-	if (Weapon(ViewEnts[ps_weapon]).bRaiseNoiseAlert)
+	SetViewState(ps_weapon, Weapon(ViewEnt).AttackState);
+	if (Weapon(ViewEnt).bRaiseNoiseAlert)
 		StrifeLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 

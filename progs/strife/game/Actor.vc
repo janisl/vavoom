@@ -707,7 +707,7 @@ void Died(Actor source)
 		if (bIsPlayer)
 		{
 			Player.SetViewState(ps_weapon,
-				Weapon(Player.ViewEnts[0]).FireDeathWaveState);
+				Weapon(Player.ViewEnt).FireDeathWaveState);
 			Player.SetViewState(ps_flash, none);
 		}
 	}

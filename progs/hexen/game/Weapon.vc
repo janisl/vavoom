@@ -138,12 +138,12 @@ void A_WeaponReady()
 	{
 		// Bob the weapon based on movement speed.
 		angle = AngleMod360(180.0 * Player.Level.Game.level->time);
-		SX = 1.0 + Player(Player).Bob * cos(angle);
+		Player.ViewStates[ps_weapon].SX = 1.0 + Player(Player).Bob * cos(angle);
 		if (angle >= 180.0)
 		{
 			angle -= 180.0;
 		}
-		SY = WEAPONTOP + Player(Player).Bob * sin(angle);
+		Player.ViewStates[ps_weapon].SY = WEAPONTOP + Player(Player).Bob * sin(angle);
 	}
 }
 
@@ -157,17 +157,17 @@ void A_Lower()
 {
 	if (Player(Player).MorphTime)
 	{
-		SY = WEAPONBOTTOM;
+		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 	}
 	else
 	{
 		//	FIXME!!
 		if (Player.Level.Game.frametime < 1.0 / 35.0)
-			SY += LOWERSPEED;
+			Player.ViewStates[ps_weapon].SY += LOWERSPEED;
 		else
-			SY += LOWERSPEED * 35.0 * Player.Level.Game.frametime;
+			Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 * Player.Level.Game.frametime;
 	}
-	if (SY < WEAPONBOTTOM)
+	if (Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
 	{
 		// Not lowered all the way yet
 		return;
@@ -175,7 +175,7 @@ void A_Lower()
 	if (Player.PlayerState == PST_DEAD)
 	{
 		// Player is dead, so don't bring up a pending weapon
-		SY = WEAPONBOTTOM;
+		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 		return;
 	}
 	if (!Player.Health)
@@ -198,15 +198,15 @@ void A_Raise()
 {
 	//	FIXME!!
 	if (Player.Level.Game.frametime < 1.0 / 35.0)
-		SY -= RAISESPEED;
+		Player.ViewStates[ps_weapon].SY -= RAISESPEED;
 	else
-		SY -= RAISESPEED * 35.0 * Player.Level.Game.frametime;
-	if (SY > WEAPONTOP)
+		Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Player.Level.Game.frametime;
+	if (Player.ViewStates[ps_weapon].SY > WEAPONTOP)
 	{
 		// Not raised all the way yet
 		return;
 	}
-	SY = WEAPONTOP;
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
 	Player.SetViewState(ps_weapon, GetReadyState());
 }
 

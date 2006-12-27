@@ -910,7 +910,7 @@ void R_DrawTranslucentPolys()
 //
 //==========================================================================
 
-static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
+static void RenderPSprite(VViewState* VSt, float PSP_DIST)
 {
 	guard(RenderPSprite);
 	spritedef_t*		sprdef;
@@ -919,24 +919,24 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 	bool				flip;
 
 	// decide which patch to use
-	if ((vuint32)VEnt->State->SpriteIndex >= MAX_SPRITE_MODELS)
+	if ((vuint32)VSt->State->SpriteIndex >= MAX_SPRITE_MODELS)
 	{
 #ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite number %d",
-			VEnt->State->SpriteIndex);
+			VSt->State->SpriteIndex);
 #endif
 		return;
 	}
-	sprdef = &sprites[VEnt->State->SpriteIndex];
-	if ((VEnt->State->Frame & FF_FRAMEMASK) >= sprdef->numframes)
+	sprdef = &sprites[VSt->State->SpriteIndex];
+	if ((VSt->State->Frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d",
-			VEnt->State->SpriteIndex, VEnt->State->Frame);
+			VSt->State->SpriteIndex, VSt->State->Frame);
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[VEnt->State->Frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[VSt->State->Frame & FF_FRAMEMASK];
 
 	lump = sprframe->lump[0];
 	flip = sprframe->flip[0];
@@ -952,8 +952,8 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 	float PSP_DISTI = 1.0 / PSP_DIST;
 	TVec sprorigin = vieworg + PSP_DIST * viewforward;
 
-	float sprx = 160.0 - VEnt->SX + TexSOffset;
-	float spry = 100.0 - VEnt->SY + TexTOffset;
+	float sprx = 160.0 - VSt->SX + TexSOffset;
+	float spry = 100.0 - VSt->SY + TexTOffset;
 
 	spry -= cl->PSpriteSY;
 
@@ -994,7 +994,7 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
 	vuint32 light;
-	if (VEnt->State->Frame & FF_FULLBRIGHT)
+	if (VSt->State->Frame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;
 	}
@@ -1014,14 +1014,14 @@ static void RenderPSprite(VViewEntity* VEnt, float PSP_DIST)
 //
 //==========================================================================
 
-static void RenderViewModel(VViewEntity* VEnt)
+static void RenderViewModel(VViewState* VSt)
 {
 	guard(RenderViewModel);
-	TVec origin = vieworg + (VEnt->SX - 1.0) * viewright / 8.0 -
-		(VEnt->SY - 32.0) * viewup / 6.0;
+	TVec origin = vieworg + (VSt->SX - 1.0) * viewright / 8.0 -
+		(VSt->SY - 32.0) * viewup / 6.0;
 
 	vuint32 light;
-	if (VEnt->State->Frame & FF_FULLBRIGHT)
+	if (VSt->State->Frame & FF_FULLBRIGHT)
 	{
 		light = 0xffffffff;
 	}
@@ -1031,7 +1031,7 @@ static void RenderViewModel(VViewEntity* VEnt)
 	}
 
 	Drawer->DrawAliasModel(origin, cl->ViewAngles,
-		model_precache[VEnt->State->ModelIndex], VEnt->State->ModelFrame,
+		model_precache[VSt->State->ModelIndex], VSt->State->ModelFrame,
 		0, NULL, light, cl->ViewEntTranslucency, true);
 	unguard;
 }
@@ -1050,19 +1050,19 @@ void R_DrawPlayerSprites()
 		return;
 	}
 
-	if (cl->ViewEnts[0]->State &&
-		model_precache[cl->ViewEnts[0]->State->ModelIndex] && r_view_models)
+	if (r_view_models && cl->ViewStates[0].State &&
+		model_precache[cl->ViewStates[0].State->ModelIndex])
 	{
-		RenderViewModel(cl->ViewEnts[0]);
+		RenderViewModel(&cl->ViewStates[0]);
 	}
 	else
 	{
 		// add all active psprites
 		for (int i = 0; i < NUMPSPRITES; i++)
 		{
-			if (cl->ViewEnts[i]->State)
+			if (cl->ViewStates[i].State)
 			{
-				RenderPSprite(cl->ViewEnts[i], 3 - i);
+				RenderPSprite(&cl->ViewStates[i], 3 - i);
 			}
 		}
 	}

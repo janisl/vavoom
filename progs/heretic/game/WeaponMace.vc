@@ -75,8 +75,8 @@ void A_FireMacePL1()
 		return;
 	}
 	Player(Player).Ammo[am_mace] -= USE_MACE_AMMO_1;
-	SX = Random() * 4.0 - 2.0;
-	SY = WEAPONTOP + Random() * 4.0;
+	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
 	ball = Actor(Player.MO).SpawnPlayerMissileAngle(MaceFX1,
 		AngleMod360(Player.MO.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)

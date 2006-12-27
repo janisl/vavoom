@@ -37,7 +37,8 @@ state Attack2ShutdownState;
 
 void WeaponLevel2Fade()
 {
-	if (State != ReadyState2 && State != UpState2)
+	if (Player.ViewStates[ps_weapon].State != ReadyState2 &&
+		Player.ViewStates[ps_weapon].State != UpState2)
 	{
 		Player.SetViewState(ps_weapon, ReadyState);
 		Player(Player).Ammo[am_phoenixrod] -= USE_PHRD_AMMO_2;

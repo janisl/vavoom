@@ -542,13 +542,10 @@ static void ArchiveThinkers()
 			continue;
 		}
 
-		for (int pi = 0; pi < NUMPSPRITES; pi++)
+		if (GGameInfo->Players[i]->ViewEnt)
 		{
-			if (GGameInfo->Players[i]->ViewEnts[pi])
-			{
-				Saver->Exports.Append(GGameInfo->Players[i]->ViewEnts[pi]);
-				Saver->ObjectsMap[GGameInfo->Players[i]->ViewEnts[pi]->GetIndex()] = Saver->Exports.Num();
-			}
+			Saver->Exports.Append(GGameInfo->Players[i]->ViewEnt);
+			Saver->ObjectsMap[GGameInfo->Players[i]->ViewEnt->GetIndex()] = Saver->Exports.Num();
 		}
 	}
 

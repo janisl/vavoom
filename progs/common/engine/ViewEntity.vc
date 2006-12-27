@@ -27,10 +27,6 @@ class ViewEntity : Object
 	native
 	abstract;
 
-readonly state State;	// a 0 state means not active
-float StateTime;
-float SX;
-float SY;
 BasePlayer Player;
 
 defaultproperties

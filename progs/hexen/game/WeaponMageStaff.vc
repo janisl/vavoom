@@ -141,13 +141,13 @@ __states__
 	S_MSTAFFREADY35('MSTF', 5, 1.0 / 35.0, S_MSTAFFREADY) { A_WeaponReady(); }
 	S_MSTAFFDOWN('MSTF', 0, 1.0 / 35.0, S_MSTAFFDOWN) { A_Lower(); }
 	S_MSTAFFUP('MSTF', 0, 1.0 / 35.0, S_MSTAFFUP) { A_Raise(); }
-	S_MSTAFFATK_1('MSTF', 6, 4.0 / 35.0, S_MSTAFFATK_2) { SY = 40.0; }
-	S_MSTAFFATK_2('MSTF', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFFATK_3) { SY = 48.0; A_MStaffAttack(); }
-	S_MSTAFFATK_3('MSTF', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFFATK_4) { SY = 48.0; A_MStaffPalette1(); }
-	S_MSTAFFATK_4('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_5) { SY = 48.0; A_MStaffPalette2(); }
-	S_MSTAFFATK_5('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_6) { SY = 48.0; A_MStaffPalette3(); }
-	S_MSTAFFATK_6('MSTF', 8, 1.0 / 35.0, S_MSTAFFATK_7) { SY = 40.0; }
-	S_MSTAFFATK_7('MSTF', 9, 5.0 / 35.0, S_MSTAFFREADY) { SY = 36.0; }
+	S_MSTAFFATK_1('MSTF', 6, 4.0 / 35.0, S_MSTAFFATK_2, 0, 40) { }
+	S_MSTAFFATK_2('MSTF', 7 | FF_FULLBRIGHT, 4.0 / 35.0, S_MSTAFFATK_3, 0, 48) { A_MStaffAttack(); }
+	S_MSTAFFATK_3('MSTF', 7 | FF_FULLBRIGHT, 2.0 / 35.0, S_MSTAFFATK_4, 0, 48) { A_MStaffPalette1(); }
+	S_MSTAFFATK_4('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_5, 0, 48) { A_MStaffPalette2(); }
+	S_MSTAFFATK_5('MSTF', 8, 2.0 / 35.0, S_MSTAFFATK_6, 0, 48) { A_MStaffPalette3(); }
+	S_MSTAFFATK_6('MSTF', 8, 1.0 / 35.0, S_MSTAFFATK_7, 0, 40) { }
+	S_MSTAFFATK_7('MSTF', 9, 5.0 / 35.0, S_MSTAFFREADY, 0, 36) { }
 }
 
 defaultproperties

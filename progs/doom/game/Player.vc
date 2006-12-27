@@ -156,10 +156,8 @@ BotPlayer Bot;
 
 void PutClientIntoServer()
 {
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_weapon].Player = self;
-	ViewEnts[ps_flash] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_flash].Player = self;
+	ViewEnt = Weapon(SpawnObject(Weapon));
+	ViewEnt.Player = self;
 #ifndef	NO_BOTS
 	if (bIsBot)
 	{
@@ -261,13 +259,10 @@ void DisconnectClient()
 		MO.bIsPlayer = false;
 		Actor(MO).Damage(none, none, 10000);
 	}
-	for (i = 0; i < NUMPSPRITES; i++)
+	if (ViewEnt)
 	{
-		if (ViewEnts[i])
-		{
-			ViewEnts[i].Destroy();
-			ViewEnts[i] = none;
-		}
+		ViewEnt.Destroy();
+		ViewEnt = none;
 	}
 	bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
@@ -2125,10 +2120,10 @@ void SetViewPos()
 	if ((Cheats & CF_GODMODE) || Powers[pw_invulnerability])
 		SBFlags |= DoomDefs::SBF_GOD_MODE;
 
-	if (Weapon(ViewEnts[ps_weapon]).Ammo == DoomDefs::am_noammo)
+	if (Weapon(ViewEnt).Ammo == DoomDefs::am_noammo)
 		ReadyAmmo = 1994;	// means "n/a"
 	else
-		ReadyAmmo = Ammo[Weapon(ViewEnts[ps_weapon]).Ammo];
+		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo];
 }
 
 //==========================================================================
@@ -2319,14 +2314,13 @@ void SetWeapon(int NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = DoomDefs::wp_nochange;
-	if (ViewEnts[ps_weapon])
+	if (ViewEnt)
 	{
-		ViewEnts[ps_weapon].Destroy();
+		ViewEnt.Destroy();
 	}
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
-	ViewEnts[ps_weapon].Player = self;
-	WeaponModel =
-		GetModelIndex(Weapon(ViewEnts[ps_weapon]).ThirdPersonModel);
+	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
+	ViewEnt.Player = self;
+	WeaponModel = GetModelIndex(Weapon(ViewEnt).ThirdPersonModel);
 }
 
 //===========================================================================
@@ -2341,17 +2335,17 @@ void SetWeapon(int NewWeapon)
 void BringUpWeapon()
 {
 #ifdef DDF
-	if (Weapon(ViewEnts[ps_weapon]).StartSound)
-		MO.PlaySound(Weapon(ViewEnts[ps_weapon]).StartSound, CHAN_WEAPON);
+	if (Weapon(ViewEnt).StartSound)
+		MO.PlaySound(Weapon(ViewEnt).StartSound, CHAN_WEAPON);
 #else
 	if (ReadyWeapon == DoomDefs::wp_chainsaw)
 		MO.PlaySound('weapons/sawup', CHAN_WEAPON);
 #endif
 
 	PendingWeapon = DoomDefs::wp_nochange;
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //==========================================================================
@@ -2447,7 +2441,7 @@ void ChangeWeapon(int newweapon)
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 }
 
 //===========================================================================
@@ -2483,8 +2477,8 @@ void SetupPsprites()
 void MovePsprites(float deltaTime)
 {
 	AdvanceViewStates(deltaTime);
-	ViewEnts[ps_flash].SX = ViewEnts[ps_weapon].SX;
-	ViewEnts[ps_flash].SY = ViewEnts[ps_weapon].SY;
+	ViewStates[ps_flash].SX = ViewStates[ps_weapon].SX;
+	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
 }
 
 //==========================================================================
@@ -2501,10 +2495,10 @@ int CheckAmmo()
 	int ammo;
 	int count;
 
-	ammo = Weapon(ViewEnts[ps_weapon]).Ammo;
+	ammo = Weapon(ViewEnt).Ammo;
 
 #ifdef DDF
-	count = Weapon(ViewEnts[ps_weapon]).AmmoPerShot;
+	count = Weapon(ViewEnt).AmmoPerShot;
 #else
 	// Minimal amount for one shot varies.
 	if (ReadyWeapon == DoomDefs::wp_bfg)
@@ -2578,7 +2572,7 @@ int CheckAmmo()
 	while (PendingWeapon == DoomDefs::wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 
 	return false;
 }
@@ -2597,7 +2591,7 @@ void FireWeapon()
 	}
 
 	MO.SetState(Actor(MO).MeleeState);
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).AttackState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).AttackState);
 	DoomLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 
@@ -2616,9 +2610,9 @@ int CheckAmmoSA()
 	int ammo;
 	int count;
 
-	ammo = Weapon(ViewEnts[ps_weapon]).SAAmmo;
+	ammo = Weapon(ViewEnt).SAAmmo;
 
-	count = Weapon(ViewEnts[ps_weapon]).SAAmmoPerShot;
+	count = Weapon(ViewEnt).SAAmmoPerShot;
 
 	// Some do not need ammunition anyway.
 	// Return if current ammunition sufficient.
@@ -2681,7 +2675,7 @@ int CheckAmmoSA()
 	while (PendingWeapon == wp_nochange);
 
 	// Now set appropriate weapon overlay.
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+	SetPsprite(ps_weapon, Weapon(ViewEnt).DownState);
 
 	return false;
 }
@@ -2694,7 +2688,7 @@ int CheckAmmoSA()
 
 void FireWeaponSA()
 {
-	if (!Weapon(ViewEnts[ps_weapon]).SAAttackState)
+	if (!Weapon(ViewEnt).SAAttackState)
 	{
 		return;
 	}
@@ -2704,7 +2698,7 @@ void FireWeaponSA()
 	}
 
 	MO.SetState(MO.MeleeState);
-	SetPsprite(ps_weapon, Weapon(ViewEnts[ps_weapon]).SAAttackState);
+	SetPsprite(ps_weapon, Weapon(ViewEnt).SAAttackState);
 	P_NoiseAlert(MO, MO);
 }
 #endif

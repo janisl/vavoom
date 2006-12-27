@@ -164,10 +164,8 @@ bool onground;
 
 void PutClientIntoServer()
 {
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_weapon].Player = self;
-	ViewEnts[ps_flash] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_flash].Player = self;
+	ViewEnt = Weapon(SpawnObject(Weapon));
+	ViewEnt.Player = self;
 	if (bIsBot)
 	{
 		Bot = BotPlayer(SpawnObject(BotPlayer));
@@ -353,13 +351,10 @@ void DisconnectClient()
 		MO.bIsPlayer = false;
 		Actor(MO).Damage(none, none, 10000);
 	}
-	for (i = 0; i < NUMPSPRITES; i++)
+	if (ViewEnt)
 	{
-		if (ViewEnts[i])
-		{
-			ViewEnts[i].Destroy();
-			ViewEnts[i] = none;
-		}
+		ViewEnt.Destroy();
+		ViewEnt = none;
 	}
 	bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
@@ -701,7 +696,7 @@ bool GiveMana(int mana, int count)
 	}
 	if (prevMana <= 0)
 	{
-		Weapon(ViewEnts[ps_weapon]).GotMana(mana);
+		Weapon(ViewEnt).GotMana(mana);
 	}
 	return true;
 }
@@ -1937,7 +1932,7 @@ void MorphPlayerThink()
 	if (!(MO.Velocity.x + MO.Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
-		Weapon(ViewEnts[ps_weapon]).SnoutSniff();
+		Weapon(ViewEnt).SnoutSniff();
 		MO.PlaySound('PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
@@ -3419,14 +3414,14 @@ void SetWeapon(int NewWeapon)
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = HexenDefs::wp_nochange;
 
-	if (ViewEnts[ps_weapon])
+	if (ViewEnt)
 	{
-		ViewEnts[ps_weapon].Destroy();
+		ViewEnt.Destroy();
 	}
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[
+	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[
 		NewWeapon * HexenDefs::NUMCLASSES + PClass]));
-	ViewEnts[ps_weapon].Player = self;
-	PSpriteSY = Weapon(ViewEnts[ps_weapon]).PSpriteSY;
+	ViewEnt.Player = self;
+	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
 
 //==========================================================================
@@ -3440,8 +3435,8 @@ void SetWeapon(int NewWeapon)
 void BringUpWeapon()
 {
 	PendingWeapon = HexenDefs::wp_nochange;
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).GetUpState());
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetUpState());
 }
 
 //==========================================================================
@@ -3454,7 +3449,7 @@ void BringUpWeapon()
 
 void DropWeapon()
 {
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).GetDownState());
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetDownState());
 }
 
 //==========================================================================
@@ -3489,8 +3484,8 @@ void SetupPsprites()
 void MovePsprites(float deltaTime)
 {
 	AdvanceViewStates(deltaTime);
-	ViewEnts[ps_flash].SX = ViewEnts[ps_weapon].SX;
-	ViewEnts[ps_flash].SY = ViewEnts[ps_weapon].SY;
+	ViewStates[ps_flash].SX = ViewStates[ps_weapon].SX;
+	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
 }
 
 //==========================================================================
@@ -3507,7 +3502,7 @@ bool CheckMana()
 	int mana;
 	int count;
 
-	mana = Weapon(ViewEnts[ps_weapon]).Mana;
+	mana = Weapon(ViewEnt).Mana;
 	count = WeaponManaUse(PClass, ReadyWeapon);
 	if (mana == HexenDefs::MANA_BOTH)
 	{
@@ -3545,7 +3540,7 @@ bool CheckMana()
 		}
 	}
 	while (PendingWeapon == HexenDefs::wp_nochange);
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).GetDownState());
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetDownState());
 	return false;
 }
 
@@ -3562,7 +3557,7 @@ void FireWeapon()
 		return;
 	}
 	MO.SetState(Actor(MO).MissileState);
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).GetAttackState());
+	SetViewState(ps_weapon, Weapon(ViewEnt).GetAttackState());
 	HexenLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
 }
 
@@ -3574,9 +3569,9 @@ void FireWeapon()
 
 void ActivateMorphWeapon()
 {
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONTOP;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
 	SetWeapon(HexenDefs::WP_FIRST);	// Snout is the first weapon
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).ReadyState);
+	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
 }
 
 //==========================================================================
@@ -3588,8 +3583,8 @@ void ActivateMorphWeapon()
 void PostMorphWeapon(int weapon)
 {
 	SetWeapon(weapon);
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //**************************************************************************

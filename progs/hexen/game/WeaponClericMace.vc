@@ -83,23 +83,23 @@ __states__
 	S_CMACEREADY('CMCE', 0, 'weapons/v_mace.md2', 0, 1.0 / 35.0, S_CMACEREADY) { A_WeaponReady(); }
 	S_CMACEDOWN('CMCE', 0, 'weapons/v_mace.md2', 1, 1.0 / 35.0, S_CMACEDOWN) { A_Lower(); }
 	S_CMACEUP('CMCE', 0, 'weapons/v_mace.md2', 2, 1.0 / 35.0, S_CMACEUP) { A_Raise(); }
-	S_CMACEATK_1('CMCE', 1, 'weapons/v_mace.md2', 3, 2.0 / 35.0, S_CMACEATK_2) { SX = 60.0; SY = 20.0; }
-	S_CMACEATK_2('CMCE', 1, 'weapons/v_mace.md2', 4, 1.0 / 35.0, S_CMACEATK_3) { SX = 30.0; SY = 33.0; }
-	S_CMACEATK_3('CMCE', 1, 'weapons/v_mace.md2', 5, 2.0 / 35.0, S_CMACEATK_4) { SX = 8.0; SY = 45.0; }
-	S_CMACEATK_4('CMCE', 2, 'weapons/v_mace.md2', 6, 1.0 / 35.0, S_CMACEATK_5) { SX = 8.0; SY = 45.0; }
-	S_CMACEATK_5('CMCE', 3, 'weapons/v_mace.md2', 7, 1.0 / 35.0, S_CMACEATK_6) { SX = 8.0; SY = 45.0; }
-	S_CMACEATK_6('CMCE', 4, 'weapons/v_mace.md2', 8, 1.0 / 35.0, S_CMACEATK_7) { SX = 8.0; SY = 45.0; }
-	S_CMACEATK_7('CMCE', 4, 'weapons/v_mace.md2', 9, 1.0 / 35.0, S_CMACEATK_8) { SX = -11.0; SY = 58.0; A_CMaceAttack(); }
-	S_CMACEATK_8('CMCE', 5, 'weapons/v_mace.md2', 10, 1.0 / 35.0, S_CMACEATK_9) { SX = 8.0; SY = 45.0; }
-	S_CMACEATK_9('CMCE', 5, 'weapons/v_mace.md2', 11, 2.0 / 35.0, S_CMACEATK_10) { SX = -8.0; SY = 74.0; }
-	S_CMACEATK_10('CMCE', 5, 'weapons/v_mace.md2', 12, 1.0 / 35.0, S_CMACEATK_11) { SX = -20.0; SY = 96.0; }
-	S_CMACEATK_11('CMCE', 5, 'weapons/v_mace.md2', 13, 8.0 / 35.0, S_CMACEATK_12) { SX = -33.0; SY = 160.0; }
-	S_CMACEATK_12('CMCE', 0, 'weapons/v_mace.md2', 14, 2.0 / 35.0, S_CMACEATK_13) { SX = 8.0; SY = 75.0; A_ReFire(); }
-	S_CMACEATK_13('CMCE', 0, 'weapons/v_mace.md2', 15, 1.0 / 35.0, S_CMACEATK_14) { SX = 8.0; SY = 65.0; }
-	S_CMACEATK_14('CMCE', 0, 'weapons/v_mace.md2', 16, 2.0 / 35.0, S_CMACEATK_15) { SX = 8.0; SY = 60.0; }
-	S_CMACEATK_15('CMCE', 0, 'weapons/v_mace.md2', 17, 1.0 / 35.0, S_CMACEATK_16) { SX = 8.0; SY = 55.0; }
-	S_CMACEATK_16('CMCE', 0, 'weapons/v_mace.md2', 18, 2.0 / 35.0, S_CMACEATK_17) { SX = 8.0; SY = 50.0; }
-	S_CMACEATK_17('CMCE', 0, 'weapons/v_mace.md2', 19, 1.0 / 35.0, S_CMACEREADY) { SX = 8.0; SY = 45.0; }
+	S_CMACEATK_1('CMCE', 1, 'weapons/v_mace.md2', 3, 2.0 / 35.0, S_CMACEATK_2, 60, 20) { }
+	S_CMACEATK_2('CMCE', 1, 'weapons/v_mace.md2', 4, 1.0 / 35.0, S_CMACEATK_3, 30, 33) { }
+	S_CMACEATK_3('CMCE', 1, 'weapons/v_mace.md2', 5, 2.0 / 35.0, S_CMACEATK_4, 8, 45) { }
+	S_CMACEATK_4('CMCE', 2, 'weapons/v_mace.md2', 6, 1.0 / 35.0, S_CMACEATK_5, 8, 45) { }
+	S_CMACEATK_5('CMCE', 3, 'weapons/v_mace.md2', 7, 1.0 / 35.0, S_CMACEATK_6, 8, 45) { }
+	S_CMACEATK_6('CMCE', 4, 'weapons/v_mace.md2', 8, 1.0 / 35.0, S_CMACEATK_7, 8, 45) { }
+	S_CMACEATK_7('CMCE', 4, 'weapons/v_mace.md2', 9, 1.0 / 35.0, S_CMACEATK_8, -11, 58) { A_CMaceAttack(); }
+	S_CMACEATK_8('CMCE', 5, 'weapons/v_mace.md2', 10, 1.0 / 35.0, S_CMACEATK_9, 8, 45) { }
+	S_CMACEATK_9('CMCE', 5, 'weapons/v_mace.md2', 11, 2.0 / 35.0, S_CMACEATK_10, -8, 74) { }
+	S_CMACEATK_10('CMCE', 5, 'weapons/v_mace.md2', 12, 1.0 / 35.0, S_CMACEATK_11, -20, 96) { }
+	S_CMACEATK_11('CMCE', 5, 'weapons/v_mace.md2', 13, 8.0 / 35.0, S_CMACEATK_12, -33, 160) { }
+	S_CMACEATK_12('CMCE', 0, 'weapons/v_mace.md2', 14, 2.0 / 35.0, S_CMACEATK_13, 8, 75) { A_ReFire(); }
+	S_CMACEATK_13('CMCE', 0, 'weapons/v_mace.md2', 15, 1.0 / 35.0, S_CMACEATK_14, 8, 65) { }
+	S_CMACEATK_14('CMCE', 0, 'weapons/v_mace.md2', 16, 2.0 / 35.0, S_CMACEATK_15, 8, 60) { }
+	S_CMACEATK_15('CMCE', 0, 'weapons/v_mace.md2', 17, 1.0 / 35.0, S_CMACEATK_16, 8, 55) { }
+	S_CMACEATK_16('CMCE', 0, 'weapons/v_mace.md2', 18, 2.0 / 35.0, S_CMACEATK_17, 8, 50) { }
+	S_CMACEATK_17('CMCE', 0, 'weapons/v_mace.md2', 19, 1.0 / 35.0, S_CMACEREADY, 8, 45) { }
 }
 
 defaultproperties

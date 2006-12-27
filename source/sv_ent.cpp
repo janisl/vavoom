@@ -2335,29 +2335,37 @@ void EntInit()
 void VBasePlayer::SetViewState(int position, VState* stnum)
 {
 	guard(VBasePlayer::SetViewState);
-	VViewEntity* VEnt = ViewEnts[position];
+	VViewState& VSt = ViewStates[position];
 	VState *state = stnum;
 	do
 	{
 		if (!state)
 		{
 			// Object removed itself.
-			VEnt->State = NULL;
-			VEnt->StateTime = -1;
+			VSt.State = NULL;
+			VSt.StateTime = -1;
 			break;
 		}
-		VEnt->State = state;
-		VEnt->StateTime = state->Time;	// could be 0
+		VSt.State = state;
+		VSt.StateTime = state->Time;	// could be 0
+		if (state->Misc1)
+		{
+			VSt.SX = state->Misc1;
+		}
+		if (state->Misc2)
+		{
+			VSt.SY = state->Misc2;
+		}
 		// Call action routine.
-		P_PASS_REF(VEnt);
+		P_PASS_REF(ViewEnt);
 		ExecuteFunction(state->Function);
-		if (!VEnt->State)
+		if (!VSt.State)
 		{
 			break;
 		}
-		state = VEnt->State->NextState;
+		state = VSt.State->NextState;
 	}
-	while (state && !VEnt->StateTime);	// An initial state of 0 could cycle through.
+	while (state && !VSt.StateTime);	// An initial state of 0 could cycle through.
 	unguard;
 }
 
@@ -2371,19 +2379,19 @@ void VBasePlayer::AdvanceViewStates(float deltaTime)
 {
 	for (int i = 0; i < NUMPSPRITES; i++)
 	{
-		VViewEntity* e = ViewEnts[i];
+		VViewState& St = ViewStates[i];
 		// a null state means not active
-		if (e->State)
+		if (St.State)
 		{
 			// drop tic count and possibly change state
 			// a -1 tic count never changes
-			if (e->StateTime != -1.0)
+			if (St.StateTime != -1.0)
 			{
-				e->StateTime -= deltaTime;
-				if (e->StateTime <= 0.0)
+				St.StateTime -= deltaTime;
+				if (St.StateTime <= 0.0)
 				{
-					e->StateTime = 0.0;
-					SetViewState(i, e->State->NextState);
+					St.StateTime = 0.0;
+					SetViewState(i, St.State->NextState);
 				}
 			}
 		}

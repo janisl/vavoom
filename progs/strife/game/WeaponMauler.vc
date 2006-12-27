@@ -67,8 +67,8 @@ void A_FireBlaster1()
 void A_FireBlasterSound()
 {
 	Player.MO.PlaySound('weapons/mauler2charge', CHAN_WEAPON);
-	SX += (Random() - Random()) * 4.0;
-	SY += (Random() - Random()) * 4.0;
+	Player.ViewStates[ps_weapon].SX += (Random() - Random()) * 4.0;
+	Player.ViewStates[ps_weapon].SY += (Random() - Random()) * 4.0;
 }
 
 //==========================================================================

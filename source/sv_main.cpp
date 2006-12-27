@@ -1040,27 +1040,19 @@ void SV_WriteViewData(VBasePlayer &player, VMessage &msg)
 		<< (vuint8)player.FixedColourmap
 		<< (vuint8)player.MO->Translucency
 		<< (vuint16)player.PSpriteSY;
-	if (player.ViewEnts[0] && player.ViewEnts[0]->State)
+	for (i = 0; i < NUMPSPRITES; i++)
 	{
-		msg << (vuint16)((VClass*)player.ViewEnts[0]->State->Outer)->NetId
-			<< (vuint16)player.ViewEnts[0]->State->NetId
-			<< (vuint16)player.ViewEnts[0]->SX
-			<< (vuint16)player.ViewEnts[0]->SY;
-	}
-	else
-	{
-		msg << (vint16)-1;
-	}
-	if (player.ViewEnts[1] && player.ViewEnts[1]->State)
-	{
-		msg << (vuint16)((VClass*)player.ViewEnts[1]->State->Outer)->NetId
-			<< (vuint16)player.ViewEnts[1]->State->NetId
-			<< (vuint16)player.ViewEnts[1]->SX
-			<< (vuint16)player.ViewEnts[1]->SY;
-	}
-	else
-	{
-		msg << (vint16)-1;
+		if (player.ViewStates[i].State)
+		{
+			msg << (vuint16)((VClass*)player.ViewStates[i].State->Outer)->NetId
+				<< (vuint16)player.ViewStates[i].State->NetId
+				<< (vuint16)player.ViewStates[i].SX
+				<< (vuint16)player.ViewStates[i].SY;
+		}
+		else
+		{
+			msg << (vint16)-1;
+		}
 	}
 
 	msg << (vuint8)player.Health

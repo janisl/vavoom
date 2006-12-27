@@ -53,7 +53,7 @@ void A_FireGrenade()
 	Player(Player).Ammo[Ammo]--;
 
 	// Make it flash
-	if (State == AttackState)
+	if (Player.ViewStates[ps_weapon].State == AttackState)
 		Player.SetViewState(ps_flash, FlashState);
 	else
 		Player.SetViewState(ps_flash, FlashState2);
@@ -76,7 +76,7 @@ void A_FireGrenade()
 	grenade.Origin.x += cos(an) * tworadii;
 	grenade.Origin.y += sin(an) * tworadii;
 
-	if (AttackState == State)
+	if (AttackState == Player.ViewStates[ps_weapon].State)
 	{
 		an = Player.MO.Angles.yaw - 90.0;
 	}

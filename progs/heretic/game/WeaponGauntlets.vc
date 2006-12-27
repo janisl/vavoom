@@ -64,8 +64,8 @@ void A_GauntletAttack()
 	TVec dir;
 	classid PuffType;
 
-	SX = Random() * 4.0 - 2.0;
-	SY = WEAPONTOP + Random() * 4.0;
+	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
 	angles = Player.MO.Angles;
 	if (Player(Player).Powers[pw_weaponlevel2])
 	{

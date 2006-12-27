@@ -160,10 +160,8 @@ bool onground;
 
 void PutClientIntoServer()
 {
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_weapon].Player = self;
-	ViewEnts[ps_flash] = Weapon(SpawnObject(Weapon));
-	ViewEnts[ps_flash].Player = self;
+	ViewEnt = Weapon(SpawnObject(Weapon));
+	ViewEnt.Player = self;
 	if (bIsBot)
 	{
 		Bot = BotPlayer(SpawnObject(BotPlayer));
@@ -260,13 +258,10 @@ void DisconnectClient()
 		MO.bIsPlayer = false;
 		Actor(MO).Damage(none, none, 10000);
 	}
-	for (i = 0; i < NUMPSPRITES; i++)
+	if (ViewEnt)
 	{
-		if (ViewEnts[i])
-		{
-			ViewEnts[i].Destroy();
-			ViewEnts[i] = none;
-		}
+		ViewEnt.Destroy();
+		ViewEnt = none;
 	}
 	bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
@@ -1682,7 +1677,7 @@ void ChickenPlayerThink()
 	if (Health > 0)
 	{
 		// Handle beak movement
-		UpdateBeak(ViewEnts[ps_weapon]);
+		UpdateBeak();
 	}
 	if (ftoi(32.0 * ChickenTime) & 15)
 	{
@@ -2259,7 +2254,7 @@ void SetViewPos()
 	}
 
 	if (ReadyWeapon > 0 && ReadyWeapon < 7)
-		ReadyAmmo = Ammo[Weapon(ViewEnts[ps_weapon]).Ammo];
+		ReadyAmmo = Ammo[Weapon(ViewEnt).Ammo];
 	else
 		ReadyAmmo = 0;
 }
@@ -2531,7 +2526,7 @@ bool UseArtiTomeOfPower()
 		{
 			return false;
 		}
-		Weapon(ViewEnts[ps_weapon]).WeaponLevel2Init();
+		Weapon(ViewEnt).WeaponLevel2Init();
 	}
 	return true;
 }
@@ -2568,13 +2563,13 @@ void SetWeapon(int NewWeapon)
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = wp_nochange;
 
-	if (ViewEnts[ps_weapon])
+	if (ViewEnt)
 	{
-		ViewEnts[ps_weapon].Destroy();
+		ViewEnt.Destroy();
 	}
-	ViewEnts[ps_weapon] = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
-	ViewEnts[ps_weapon].Player = self;
-	PSpriteSY = Weapon(ViewEnts[ps_weapon]).PSpriteSY;
+	ViewEnt = Weapon(SpawnObject(MainGameInfo(Level.Game).WeaponClasses[NewWeapon]));
+	ViewEnt.Player = self;
+	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
 }
 
 //===========================================================================
@@ -2592,14 +2587,14 @@ void BringUpWeapon()
 	{
 		MO.PlaySound('weapons/gauntletsactivate', CHAN_WEAPON);
 	}
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	if (Powers[pw_weaponlevel2])
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState2);
+		SetViewState(ps_weapon, Weapon(ViewEnt).UpState2);
 	}
 	else
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+		SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 	}
 }
 
@@ -2615,11 +2610,11 @@ void DropWeapon()
 {
 	if (Powers[pw_weaponlevel2])
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
+		SetViewState(ps_weapon, Weapon(ViewEnt).DownState2);
 	}
 	else
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+		SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 	}
 }
 
@@ -2635,7 +2630,7 @@ void SetupPsprites()
 {
 	int i;
 
-	// Remove all  ViewEnts
+	// Remove all ViewSprites
 	for (i = 0; i < NUMPSPRITES; i++)
 	{
 		SetViewState(i, none);
@@ -2655,8 +2650,8 @@ void SetupPsprites()
 void MovePsprites(float deltaTime)
 {
 	AdvanceViewStates(deltaTime);
-	ViewEnts[ps_flash].SX = ViewEnts[ps_weapon].SX;
-	ViewEnts[ps_flash].SY = ViewEnts[ps_weapon].SY;
+	ViewStates[ps_flash].SX = ViewStates[ps_weapon].SX;
+	ViewStates[ps_flash].SY = ViewStates[ps_weapon].SY;
 }
 
 //===========================================================================
@@ -2674,7 +2669,7 @@ bool CheckAmmo()
 	int *ammoUse;
 	int count;
 
-	ammo = Weapon(ViewEnts[ps_weapon]).Ammo;
+	ammo = Weapon(ViewEnt).Ammo;
 	if (Powers[pw_weaponlevel2] && !Level.Game.deathmatch)
 	{
 		ammoUse = &MainGameInfo(Level.Game).WeaponAmmoUsePL2[0];
@@ -2732,11 +2727,11 @@ bool CheckAmmo()
 	while (PendingWeapon == wp_nochange);
 	if (Powers[pw_weaponlevel2])
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState2);
+		SetViewState(ps_weapon, Weapon(ViewEnt).DownState2);
 	}
 	else
 	{
-		SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).DownState);
+		SetViewState(ps_weapon, Weapon(ViewEnt).DownState);
 	}
 	return false;
 }
@@ -2759,14 +2754,14 @@ void FireWeapon()
 	if (Powers[pw_weaponlevel2])
 	{
 		attackState = Refire ?
-			Weapon(ViewEnts[ps_weapon]).HoldAttackState2 :
-			Weapon(ViewEnts[ps_weapon]).AttackState2;
+			Weapon(ViewEnt).HoldAttackState2 :
+			Weapon(ViewEnt).AttackState2;
 	}
 	else
 	{
 		attackState = Refire ?
-			Weapon(ViewEnts[ps_weapon]).HoldAttackState :
-			Weapon(ViewEnts[ps_weapon]).AttackState;
+			Weapon(ViewEnt).HoldAttackState :
+			Weapon(ViewEnt).AttackState;
 	}
 	SetViewState(ps_weapon, attackState);
 	HereticLevelInfo(Level).NoiseAlert(Actor(MO), Actor(MO));
@@ -2786,8 +2781,8 @@ void FireWeapon()
 void ActivateBeak()
 {
 	SetWeapon(wp_beak);
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONTOP;
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).ReadyState);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
+	SetViewState(ps_weapon, Weapon(ViewEnt).ReadyState);
 }
 
 //===========================================================================
@@ -2804,8 +2799,8 @@ void PostChickenWeapon(int weapon)
 		weapon = wp_staff;
 	}
 	SetWeapon(weapon);
-	ViewEnts[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, Weapon(ViewEnts[ps_weapon]).UpState);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, Weapon(ViewEnt).UpState);
 }
 
 //===========================================================================
@@ -2814,9 +2809,9 @@ void PostChickenWeapon(int weapon)
 //
 //===========================================================================
 
-void UpdateBeak(ViewEntity e)
+void UpdateBeak()
 {
-	e.SY = Weapon::WEAPONTOP + itof(ChickenPeck) / 2.0;
+	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP + itof(ChickenPeck) / 2.0;
 }
 
 //===========================================================================
@@ -2827,7 +2822,7 @@ void UpdateBeak(ViewEntity e)
 
 void WeaponLevel2Fade()
 {
-	Weapon(ViewEnts[ps_weapon]).WeaponLevel2Fade();
+	Weapon(ViewEnt).WeaponLevel2Fade();
 }
 
 //==========================================================================

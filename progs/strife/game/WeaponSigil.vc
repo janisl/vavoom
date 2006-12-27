@@ -181,13 +181,10 @@ __states__
 		SetSigilSprite();
 	}
 	S_SIGILFLASH1('SIGF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SIGILFLASH2) { A_Light2(); }
-	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3)
-	{
-		WeaponSigil(Player.ViewEnts[ps_weapon]).A_SigilFlash();
-	}
+	S_SIGILFLASH2('SIGF', 1 | FF_FULLBRIGHT, 6.0 / 35.0, S_SIGILFLASH3) { A_SigilFlash(); }
 	S_SIGILFLASH3('SIGF', 2 | FF_FULLBRIGHT, 4.0 / 35.0, S_LIGHTDONE)
 	{
-		A_Light1(); 
+		A_Light1();
 		Player.FixedColourmap = 0;
 	}
 }
