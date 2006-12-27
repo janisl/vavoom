@@ -215,6 +215,8 @@ public:
 	vint32		ModelIndex;
 	vint32		ModelFrame;
 	float		Time;
+	vint32		Misc1;
+	vint32		Misc2;
 	VState*		NextState;
 	VMethod*	Function;
 	VState*		Next;

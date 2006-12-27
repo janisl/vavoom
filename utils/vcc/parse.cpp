@@ -1432,6 +1432,14 @@ void VParser::ParseStates(VClass* InClass)
 			s->NextStateName = Lex.Name;
 		}
 		Lex.NextToken();
+		if (Lex.Check(TK_Comma))
+		{
+			//	Misc 1
+			s->Misc1Expr = ParseExpression();
+			Lex.Expect(TK_Comma);
+			//	Misc 2
+			s->Misc2Expr = ParseExpression();
+		}
 		Lex.Expect(TK_RParen, ERR_NONE);
 		//	Code
 		s->Function = new VMethod(NAME_None, s, s->Loc);

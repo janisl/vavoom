@@ -1833,12 +1833,16 @@ VState::VState(VName InName, VMemberBase* InOuter, TLocation InLoc)
 , ModelName(NAME_None)
 , ModelFrame(0)
 , Time(0)
+, Misc1(0)
+, Misc2(0)
 , NextState(0)
 , Function(0)
 , Next(0)
 , FrameExpr(NULL)
 , ModelFrameExpr(NULL)
 , TimeExpr(NULL)
+, Misc1Expr(NULL)
+, Misc2Expr(NULL)
 , NextStateName(NAME_None)
 {
 }
@@ -1857,6 +1861,10 @@ VState::~VState()
 		delete ModelFrameExpr;
 	if (TimeExpr)
 		delete TimeExpr;
+	if (Misc1Expr)
+		delete Misc1Expr;
+	if (Misc2Expr)
+		delete Misc2Expr;
 }
 
 //==========================================================================
@@ -1873,6 +1881,8 @@ void VState::Serialise(VStream& Strm)
 		<< ModelName
 		<< STRM_INDEX(ModelFrame)
 		<< Time
+		<< STRM_INDEX(Misc1)
+		<< STRM_INDEX(Misc2)
 		<< NextState
 		<< Function
 		<< Next;
@@ -1911,6 +1921,10 @@ void VState::Emit()
 		ModelFrameExpr = ModelFrameExpr->Resolve(ec);
 	if (TimeExpr)
 		TimeExpr = TimeExpr->Resolve(ec);
+	if (Misc1Expr)
+		Misc1Expr = Misc1Expr->Resolve(ec);
+	if (Misc2Expr)
+		Misc2Expr = Misc2Expr->Resolve(ec);
 
 	if (!FrameExpr || !TimeExpr)
 		return;
@@ -1930,11 +1944,25 @@ void VState::Emit()
 		ParseError(TimeExpr->Loc, "Float constant expected");
 		return;
 	}
+	if (Misc1Expr && !Misc1Expr->IsIntConst())
+	{
+		ParseError(Misc1Expr->Loc, "Integer constant expected");
+		return;
+	}
+	if (Misc2Expr && !Misc2Expr->IsIntConst())
+	{
+		ParseError(Misc2Expr->Loc, "Integer constant expected");
+		return;
+	}
 
 	Frame = FrameExpr->GetIntConst();
 	if (ModelFrameExpr)
 		ModelFrame = ModelFrameExpr->GetIntConst();
 	Time = TimeExpr->GetFloatConst();
+	if (Misc1Expr)
+		Misc1 = Misc1Expr->GetIntConst();
+	if (Misc2Expr)
+		Misc2 = Misc2Expr->GetIntConst();
 
 	if (NextStateName != NAME_None)
 	{

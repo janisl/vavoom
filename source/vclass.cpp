@@ -1505,6 +1505,8 @@ VState::VState(VName AName)
 , ModelIndex(0)
 , ModelFrame(0)
 , Time(0)
+, Misc1(0)
+, Misc2(0)
 , NextState(0)
 , Function(0)
 , Next(0)
@@ -1527,6 +1529,8 @@ void VState::Serialise(VStream& Strm)
 		<< ModelName
 		<< STRM_INDEX(ModelFrame)
 		<< Time
+		<< STRM_INDEX(Misc1)
+		<< STRM_INDEX(Misc2)
 		<< NextState
 		<< Function
 		<< Next;

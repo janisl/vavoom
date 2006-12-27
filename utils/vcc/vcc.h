@@ -393,8 +393,10 @@ public:
 	VName			SpriteName;
 	vint32			Frame;
 	VName			ModelName;
-	int				ModelFrame;
+	vint32			ModelFrame;
 	float			Time;
+	vint32			Misc1;
+	vint32			Misc2;
 	VState*			NextState;
 	VMethod*		Function;
 
@@ -405,6 +407,8 @@ public:
 	VExpression*	FrameExpr;
 	VExpression*	ModelFrameExpr;
 	VExpression*	TimeExpr;
+	VExpression*	Misc1Expr;
+	VExpression*	Misc2Expr;
 	VName			NextStateName;
 
 	VState(VName, VMemberBase*, TLocation);
