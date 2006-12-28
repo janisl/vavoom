@@ -1527,6 +1527,12 @@ func_loop:
 			ip += 1 + sizeof(void*);
 			PR_VM_BREAK;
 
+		PR_VM_CASE(OPC_DynamicClassCast)
+			sp[-1].p = sp[-1].p && ((VClass*)sp[-1].p)->IsChildOf(
+				(VClass*)ReadPtr(ip + 1)) ? sp[-1].p : 0;
+			ip += 1 + sizeof(void*);
+			PR_VM_BREAK;
+
 		PR_VM_DEFAULT
 			Sys_Error("Invalid opcode %d", *ip);
 		}

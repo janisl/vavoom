@@ -145,7 +145,7 @@ int ThingCount(int type, int tid)
 	int count;
 	int searcher;
 	Actor Ent;
-	classid moType;
+	class moType;
 
 	if (!(type + tid))
 	{
@@ -462,7 +462,7 @@ void SpawnMapThing(mthing_t * mthing)
 {
 	int spawnMask;
 	Actor A;
-	classid moClass;
+	class<Actor> moClass;
 
 	if (mthing->type <= 0)
 		return;
@@ -567,7 +567,7 @@ void SpawnMapThing(mthing_t * mthing)
 #endif
 
 	// Find which type to spawn
-	moClass = FindClassFromEditorId(mthing->type);
+	moClass = class<Actor>(FindClassFromEditorId(mthing->type));
 	if (moClass)
 	{
 		// spawn it
@@ -599,7 +599,7 @@ void InitLava()
 //
 //==========================================================================
 
-Actor Spawn(classid type, TVec position)
+Actor Spawn(class<Actor> type, TVec position)
 {
 	Actor A;
 

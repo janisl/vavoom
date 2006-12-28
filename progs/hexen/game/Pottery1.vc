@@ -59,7 +59,7 @@ void A_PotteryExplode()
 	if (Args[0])
 	{
 		// Spawn an item
-		Spawn(FindClassFromScriptId(Args[0]), Origin);
+		Spawn(class<Actor>(FindClassFromScriptId(Args[0])), Origin);
 	}
 }
 

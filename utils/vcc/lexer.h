@@ -47,7 +47,6 @@ enum EToken
 	TK_Break,
 	TK_Case,
 	TK_Class,
-	TK_ClassId,
 	TK_Const,
 	TK_Continue,
 	TK_Default,

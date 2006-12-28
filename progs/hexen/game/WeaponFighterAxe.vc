@@ -43,7 +43,7 @@ void A_FAxeAttack()
 	int useMana;
 	TAVec angles;
 	TVec vforward;
-	classid PuffType;
+	class<Actor> PuffType;
 
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;

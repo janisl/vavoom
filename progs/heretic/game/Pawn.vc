@@ -319,7 +319,7 @@ void DropStuff()
 //
 //==========================================================================
 
-void DropItem(classid type, int amount, float chance)
+void DropItem(class<Actor> type, int amount, float chance)
 {
 	Actor A;
 

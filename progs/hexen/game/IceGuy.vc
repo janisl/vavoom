@@ -37,6 +37,7 @@ void A_IceGuyLook()
 {
 	float dist;
 	float an;
+	class<Actor> tp;
 
 	A_Look();
 	if (Random() < 0.25)
@@ -44,8 +45,11 @@ void A_IceGuyLook()
 		dist = Radius * (Random() * 2.0 - 1.0);
 		an = AngleMod360(Angles.yaw + 90.0);
 
-		Spawn(Random() < 0.5 ? IceGuyWisp2 : IceGuyWisp1,
-			Origin + vector(dist * cos(an), dist * sin(an), 60.0));
+		if (Random() < 0.5)
+			tp = IceGuyWisp2;
+		else
+			tp = IceGuyWisp1;
+		Spawn(tp, Origin + vector(dist * cos(an), dist * sin(an), 60.0));
 	}
 }
 
@@ -60,6 +64,7 @@ void A_IceGuyChase()
 	float dist;
 	float an;
 	Actor A;
+	class<Actor> tp;
 
 	A_Chase();
 	if (Random() < 0.5)
@@ -67,8 +72,11 @@ void A_IceGuyChase()
 		dist = Radius * (Random() * 2.0 - 1.0);
 		an = AngleMod360(Angles.yaw + 90.0);
 
-		A = Spawn(Random() < 0.5 ? IceGuyWisp2 : IceGuyWisp1,
-			Origin + vector(dist * cos(an), dist * sin(an), 60.0));
+		if (Random() < 0.5)
+			tp = IceGuyWisp2;
+		else
+			tp = IceGuyWisp1;
+		A = Spawn(tp, Origin + vector(dist * cos(an), dist * sin(an), 60.0));
 		if (A)
 		{
 			A.Velocity = Velocity;

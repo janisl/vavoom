@@ -58,7 +58,6 @@ const char*			VLexer::TokenNames[] =
 	"break",
 	"case",
 	"class",
-	"classid",
 	"const",
 	"continue",
 	"default",
@@ -548,16 +547,10 @@ void VLexer::ProcessLetterToken()
 		{
 			Token = TK_Case;
 		}
-		else if (s[1] == 'l' && s[2] == 'a' && s[3] == 's' && s[4] == 's')
+		else if (s[1] == 'l' && s[2] == 'a' && s[3] == 's' && s[4] == 's' &&
+			s[5] == 0)
 		{
-			if (s[5] == 0)
-			{
-				Token = TK_Class;
-			}
-			else if (s[5] == 'i' && s[6] == 'd' && s[7] == 0)
-			{
-				Token = TK_ClassId;
-			}
+			Token = TK_Class;
 		}
 		else if (s[1] == 'o' && s[2] == 'n')
 		{

@@ -2828,7 +2828,7 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	float		angle;
 	float		speed;
 	float		vspeed;
-	classid		moType;
+	class<EntityEx>	moType;
 	Entity		A;
 	EntityEx	newA;
 	int			searcher;
@@ -2837,7 +2837,7 @@ bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	success = false;
 	searcher = -1;
 	tid = Arg1;
-	moType = FindClassFromScriptId(Arg2);
+	moType = class<EntityEx>(FindClassFromScriptId(Arg2));
 	if (!moType)
 	{
 		return false;
@@ -2883,14 +2883,14 @@ bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5, bool fog)
 	float		angle;
 	Entity		A;
 	EntityEx	newAct;
-	classid		moType;
+	class<EntityEx>	moType;
 	int			searcher;
 	bool		success;
 
 	success = false;
 	searcher = -1;
 	tid = Arg1;
-	moType = FindClassFromScriptId(Arg2);
+	moType = class<EntityEx>(FindClassFromScriptId(Arg2));
 	if (!moType)
 	{
 		return false;
@@ -3817,7 +3817,7 @@ line_t* FindLine(int lineTag, int *searchPosition)
 //
 //===========================================================================
 
-EntityEx SpawnEntity(classid type, TVec AOrigin)
+EntityEx SpawnEntity(class<EntityEx> type, TVec AOrigin)
 {
 	EntityEx A;
 

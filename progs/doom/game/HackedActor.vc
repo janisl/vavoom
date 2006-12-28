@@ -81,7 +81,7 @@ string GOTSHOTGUN2;
 
 void DropStuff()
 {
-	classid item;
+	class<Actor> item;
 	Actor A;
 
 	// Drop stuff.
@@ -1403,7 +1403,7 @@ void A_SpawnFly()
 	Actor newmobj;
 	Actor fog;
 	int r;
-	classid type;
+	class<Actor> type;
 
 	if (--ReactionCount)
 		return;	// still flying

@@ -119,7 +119,7 @@ Actor Instigator;
 
 int Special1;	// Special info
 float Special1f;
-classid SpecialCID;
+class<Actor> SpecialCID;
 
 int MissileDamage;	// For missiles
 
@@ -164,7 +164,7 @@ TVec shoot_dir;
 int la_damage;
 TVec shoot_linestart;
 TVec shoot_lineend;
-classid shootPuffType;
+class<Actor> shootPuffType;
 
 // Static light parameters.
 TVec LightOffset;
@@ -178,7 +178,7 @@ int ExplodeEffect;
 //
 //===========================================================================
 
-Actor Spawn(classid type, TVec AOrigin)
+Actor Spawn(class<Actor> type, TVec AOrigin)
 {
 	Actor A;
 
@@ -902,7 +902,7 @@ bool ChickenMorph()
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	chicken = Spawn(Chicken, Origin);
-	chicken.SpecialCID = Class;
+	chicken.SpecialCID = class<Actor>(Class);
 	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
 	chicken.Translucency = Translucency;
 	chicken.Enemy = Enemy;
@@ -1431,7 +1431,7 @@ void NightmareRespawn()
 		z = ONCEILINGZ;
 	else
 		z = ONFLOORZ;
-	A = Spawn(Class, vector(x, y, z));
+	A = Spawn(class<Actor>(Class), vector(x, y, z));
 	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
 	A.Angles.yaw = itof(45 * (SpawnSpot.angle / 45));
 	if (SpawnSpot.options & HereticLevelInfo::MTF_AMBUSH)
@@ -2547,7 +2547,7 @@ bool CheckMissileSpawn()
 //
 //==========================================================================
 
-Actor SpawnMissile(Actor dest, classid type)
+Actor SpawnMissile(Actor dest, class<Actor> type)
 {
 	TVec org;
 	Actor A;
@@ -2606,7 +2606,7 @@ Actor SpawnMissile(Actor dest, classid type)
 //
 //==========================================================================
 
-Actor SpawnMissileAngles(classid type, float yaw, float pitch)
+Actor SpawnMissileAngles(class<Actor> type, float yaw, float pitch)
 {
 	TVec org;
 	Actor A;
@@ -2654,7 +2654,7 @@ Actor SpawnMissileAngles(classid type, float yaw, float pitch)
 //
 //==========================================================================
 
-Actor SpawnPlayerMissile(classid type)
+Actor SpawnPlayerMissile(class<Actor> type)
 {
 	TVec dir;
 	TVec org;
@@ -2699,7 +2699,7 @@ Actor SpawnPlayerMissile(classid type)
 //
 //==========================================================================
 
-Actor SpawnPlayerMissileAngle(classid type, float angle)
+Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 {
 	Actor A;
 	TVec dir;
@@ -3946,7 +3946,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 //
 //==========================================================================
 
-int LineAttack(TVec dir, float distance, int damage, classid PuffType)
+int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 {
 	TVec dst;
 
@@ -4086,7 +4086,7 @@ void A_Explode()
 //
 //==========================================================================
 
-void SpawnPuff(TVec org, classid PuffType)
+void SpawnPuff(TVec org, class<Actor> PuffType)
 {
 	Actor puff;
 

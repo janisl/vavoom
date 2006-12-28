@@ -133,7 +133,7 @@ int _Special1;	// Special info
 int _Special2;	// Special info
 float Special1f;
 float Special2f;
-classid SpecialCID;
+class<Actor> SpecialCID;
 
 int MissileDamage;	// For missiles
 
@@ -163,7 +163,7 @@ TVec shoot_dir;
 int la_damage;
 TVec shoot_linestart;
 TVec shoot_lineend;
-classid shootPuffType;
+class<Actor> shootPuffType;
 
 // Static light parameters.
 TVec LightOffset;
@@ -177,7 +177,7 @@ int ExplodeEffect;
 //
 //==========================================================================
 
-Actor Spawn(classid type, TVec position)
+Actor Spawn(class<Actor> type, TVec position)
 {
 	Actor A;
 
@@ -1088,7 +1088,7 @@ bool MorphMonster()
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	monster = Spawn(Pig, Origin);
-	monster.SpecialCID = Class;
+	monster.SpecialCID = class<Actor>(Class);
 	monster._Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster.Translucency = Translucency;
 	monster.Enemy = Enemy;
@@ -1653,7 +1653,7 @@ void SpawnDirt(float radius)
 {
 	float angle;
 	TVec org;
-	classid dtype;
+	class<Actor> dtype;
 	Actor dirt;
 
 	angle = 360.0 * Random();
@@ -3284,7 +3284,7 @@ bool CheckMissileSpawn()
 //
 //==========================================================================
 
-Actor SpawnMissileAngle(classid type, float angle, float momz)
+Actor SpawnMissileAngle(class<Actor> type, float angle, float momz)
 {
 	TVec org;
 	Actor mo;
@@ -3336,7 +3336,7 @@ Actor SpawnMissileAngle(classid type, float angle, float momz)
 //
 //==========================================================================
 
-Actor SpawnMissileAngleSpeed(classid type, float angle,
+Actor SpawnMissileAngleSpeed(class<Actor> type, float angle,
 	float momz, float speed)
 {
 	TVec org;
@@ -4040,7 +4040,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 //
 //==========================================================================
 
-int LineAttack(TVec dir, float distance, int damage, classid PuffType)
+int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 {
 	TVec dst;
 
@@ -4070,7 +4070,7 @@ int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 //
 //==========================================================================
 
-void SpawnPuff(TVec org, classid PuffType)
+void SpawnPuff(TVec org, class<Actor> PuffType)
 {
 	Actor puff;
 

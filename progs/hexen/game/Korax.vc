@@ -175,7 +175,7 @@ void A_KoraxDecide()
 //
 //============================================================================
 
-Actor SpawnKoraxMissile(TVec org, Actor dest, classid type)
+Actor SpawnKoraxMissile(TVec org, Actor dest, class<Actor> type)
 {
 	TVec dir;
 	Actor th;
@@ -203,7 +203,7 @@ Actor SpawnKoraxMissile(TVec org, Actor dest, classid type)
 // Arm 1 projectile
 //============================================================================
 
-void KoraxFire1(classid type)
+void KoraxFire1(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -219,7 +219,7 @@ void KoraxFire1(classid type)
 // Arm 2 projectile
 //============================================================================
 
-void KoraxFire2(classid type)
+void KoraxFire2(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -235,7 +235,7 @@ void KoraxFire2(classid type)
 // Arm 3 projectile
 //============================================================================
 
-void KoraxFire3(classid type)
+void KoraxFire3(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -251,7 +251,7 @@ void KoraxFire3(classid type)
 // Arm 4 projectile
 //============================================================================
 
-void KoraxFire4(classid type)
+void KoraxFire4(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -267,7 +267,7 @@ void KoraxFire4(classid type)
 // Arm 5 projectile
 //============================================================================
 
-void KoraxFire5(classid type)
+void KoraxFire5(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -283,7 +283,7 @@ void KoraxFire5(classid type)
 // Arm 6 projectile
 //============================================================================
 
-void KoraxFire6(classid type)
+void KoraxFire6(class<Actor> type)
 {
 	float ang;
 	float x, y, z;
@@ -303,7 +303,7 @@ void KoraxFire6(classid type)
 
 void A_KoraxMissile()
 {
-	classid mtype;
+	class<Actor> mtype;
 	name sound;
 
 	PlaySound('KoraxAttack', CHAN_VOICE);

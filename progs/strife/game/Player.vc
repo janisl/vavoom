@@ -952,7 +952,7 @@ void AdjustInvFirst()
 
 Actor InvThrow()
 {
-	classid	ItemType;
+	class<InventoryItem>	ItemType;
 	int		Amount;
 	Actor	Item;
 	TVec	Dir;
@@ -1040,8 +1040,8 @@ bool GivePower(int power)
 
 void GiveQuest(int QuestID)
 {
-	classid		QClass;
-	QuestInfo	QInfo;
+	class<Actor>	QClass;
+	QuestInfo		QInfo;
 	
 	if (Quests & (1 << QuestID))
 		cprint("Already have quest %d", QuestID);
@@ -2126,7 +2126,7 @@ void SetPlayerRunState()
 //
 //==========================================================================
 
-Actor SpawnPlayerMissile(classid type)
+Actor SpawnPlayerMissile(class<Actor> type)
 {
 	Actor A;
 	TVec dir;
@@ -2156,7 +2156,7 @@ Actor SpawnPlayerMissile(classid type)
 //
 //==========================================================================
 
-Actor SpawnPlayerMissileAngle(classid type, float angle)
+Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 {
 	Actor A;
 	TVec dir;

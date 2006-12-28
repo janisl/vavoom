@@ -125,7 +125,7 @@ int ThingCount(int type, int tid)
 	int count;
 	int searcher;
 	Actor Ent;
-	classid moType;
+	class moType;
 
 	if (!(type + tid))
 	{
@@ -598,7 +598,7 @@ void SpawnMapThing(mthing_t * mthing)
 	int bit;
 	Actor A;
 	int spawnMask;
-	classid moClass;
+	class<Actor> moClass;
 
 	if (mthing->type <= 0)
 		return;
@@ -660,7 +660,7 @@ void SpawnMapThing(mthing_t * mthing)
 		return;
 
 	// find which type to spawn
-	moClass = FindClassFromEditorId(mthing->type);
+	moClass = class<Actor>(FindClassFromEditorId(mthing->type));
 	if (moClass)
 	{
 		// spawn it
@@ -782,7 +782,7 @@ void StartSpeech(int SpeechNum)
 //
 //==========================================================================
 
-classid GetClassFromID(int ID)
+class<Actor> GetClassFromID(int ID)
 {
 	switch (ID)
 	{
@@ -923,7 +923,7 @@ classid GetClassFromID(int ID)
 
 int CheckForNeededItem(Actor A, int ID, int Amount)
 {
-	classid CID;
+	class<Actor> CID;
 	int i;
 
 	//	Get class ID.
@@ -985,7 +985,7 @@ void ConChoiceImpulse(int ChoiceNum)
 	int Item1;
 	int Item2;
 	int Item3;
-	classid ItemType;
+	class<Actor> ItemType;
 	Pickup Item;
 	bool GaveItem;
 
@@ -1081,7 +1081,7 @@ void ConChoiceImpulse(int ChoiceNum)
 //
 //===========================================================================
 
-Actor Spawn(classid type, TVec AOrigin)
+Actor Spawn(class<Actor> type, TVec AOrigin)
 {
 	Actor A;
 

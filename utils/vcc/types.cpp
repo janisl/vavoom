@@ -99,7 +99,7 @@ VStream& operator<<(VStream& Strm, TType& T)
 			<< T.PtrLevel;
 		RealType = T.InnerType;
 	}
-	if (RealType == ev_reference)
+	if (RealType == ev_reference || RealType == ev_class)
 		Strm << T.Class;
 	else if (RealType == ev_struct || RealType == ev_vector)
 		Strm << T.Struct;
@@ -123,7 +123,7 @@ bool TType::Equals(const TType& Other) const
 		ArrayInnerType != Other.ArrayInnerType ||
 		PtrLevel != Other.PtrLevel ||
 		array_dim != Other.array_dim ||
-		bit_mask != Other.bit_mask)
+		Class != Other.Class)
 		return false;
 	return true;
 }
@@ -231,7 +231,7 @@ int TType::GetSize() const
 	case ev_array:		return array_dim * GetArrayInnerType().GetSize();
 	case ev_struct:		return Struct->StackSize * 4;
 	case ev_vector:		return 12;
-	case ev_classid:	return 4;
+	case ev_class:		return 4;
 	case ev_state:		return 4;
 	case ev_bool:		return 4;
 	case ev_delegate:	return 8;
@@ -326,12 +326,36 @@ void TType::CheckMatch(TLocation l, const TType& Other) const
 			}
 		}
 	}
+	if (type == ev_class && Other.type == ev_class)
+	{
+		VClass* c1 = Class;
+		VClass* c2 = Other.Class;
+		if (!c2)
+		{
+			//	Can assgn any class type to generic class type.
+			return;
+		}
+		if (c1 == c2)
+		{
+			return;
+		}
+		if (c1)
+		{
+			for (VClass* pc1 = c1->ParentClass; pc1; pc1 = pc1->ParentClass)
+			{
+				if (pc1 == c2)
+				{
+					return;
+				}
+			}
+		}
+	}
 	if (type == ev_int && Other.type == ev_bool)
 	{
 		return;
 	}
 	//	Allow assigning none to states, classes and delegates
-	if (type == ev_reference && Class == NULL && (Other.type == ev_classid ||
+	if (type == ev_reference && Class == NULL && (Other.type == ev_class ||
 		Other.type == ev_state || Other.type == ev_delegate))
 	{
 		return;
@@ -387,7 +411,8 @@ void TType::GetName(char* Dest) const
 	case ev_array:		GetArrayInnerType().GetName(Dest); strcat(Dest, "[]"); break;
 	case ev_struct:		strcpy(Dest, *Struct->Name); break;
 	case ev_vector:		strcpy(Dest, "vector"); break;
-	case ev_classid:	strcpy(Dest, "classid"); break;
+	case ev_class:		strcpy(Dest, "class"); if (Class) { strcat(Dest, "<");
+		strcat(Dest, *Class->Name); strcat(Dest, ">"); } break;
 	case ev_state:		strcpy(Dest, "state"); break;
 	case ev_bool:		strcpy(Dest, "bool"); break;
 	default:			strcpy(Dest, "unknown"); break;
@@ -726,11 +751,11 @@ public:
 VMemberBase::VMemberBase(vuint8 InType, VName InName, VMemberBase* InOuter,
 	TLocation InLoc)
 : MemberType(InType)
-, MemberIndex(GMembers.Append(this))
 , Name(InName)
 , Outer(InOuter)
 , Loc(InLoc)
 {
+	MemberIndex = GMembers.Append(this);
 	int HashIndex = Name.GetIndex() & 4095;
 	HashNext = GMembersHash[HashIndex];
 	GMembersHash[HashIndex] = this;

@@ -176,11 +176,7 @@ VLocalDecl* VParser::ParseLocalVar(VExpression* TypeExpr)
 
 VExpression* VParser::ParseExpressionPriority0()
 {
-	VName		Name;
-	bool		bLocals;
-	TLocation	Loc;
-
-	bLocals = CheckForLocal;
+	bool bLocals = CheckForLocal;
 	CheckForLocal = false;
 	TLocation l = Lex.Location;
 	switch (Lex.Token)
@@ -259,25 +255,27 @@ VExpression* VParser::ParseExpressionPriority0()
 	}
 
 	case TK_DColon:
+	{
 		Lex.NextToken();
 		if (Lex.Token != TK_Identifier)
 		{
 			ParseError(l, "Method name expected.");
 			break;
 		}
-		Loc = Lex.Location;
-		Name = Lex.Name;
+		l = Lex.Location;
+		VName Name = Lex.Name;
 		Lex.NextToken();
 		Lex.Expect(TK_LParen, ERR_MISSING_LPAREN);
-		return ParseBaseMethodCall(Name, Loc);
+		return ParseBaseMethodCall(Name, l);
+	}
 
 	case TK_Identifier:
-		Loc = Lex.Location;
-		Name = Lex.Name;
+	{
+		VName Name = Lex.Name;
 		Lex.NextToken();
 		if (Lex.Check(TK_LParen))
 		{
-			return ParseMethodCallOrCast(Name, Loc);
+			return ParseMethodCallOrCast(Name, l);
 		}
 
 		if (Lex.Check(TK_DColon))
@@ -291,17 +289,40 @@ VExpression* VParser::ParseExpressionPriority0()
 			Lex.NextToken();
 			if (bLocals && Lex.Token == TK_Asterisk)
 			{
-				return ParseLocalVar(new VDoubleName(Name, Name2, Loc));
+				return ParseLocalVar(new VDoubleName(Name, Name2, l));
 			}
-			return new VDoubleName(Name, Name2, Loc);
+			return new VDoubleName(Name, Name2, l);
 		}
 
 		if (bLocals && Lex.Token == TK_Asterisk)
 		{
-			return ParseLocalVar(new VSingleName(Name, Loc));
+			return ParseLocalVar(new VSingleName(Name, l));
 		}
 
-		return new VSingleName(Name, Loc);
+		return new VSingleName(Name, l);
+	}
+
+	case TK_Class:
+	{
+		Lex.NextToken();
+		Lex.Expect(TK_Less);
+		if (Lex.Token != TK_Identifier)
+		{
+			ParseError(Lex.Location, "Identifier expected");
+			break;
+		}
+		VName ClassName = Lex.Name;
+		Lex.NextToken();
+		Lex.Expect(TK_Greater);
+		Lex.Expect(TK_LParen);
+		VExpression* Expr = ParseExpressionPriority13();
+		if (!Expr)
+		{
+			ParseError(Lex.Location, "Expression expected");
+		}
+		Lex.Expect(TK_RParen);
+		return new VDynamicClassCast(ClassName, Expr, l);
+	}
 
 	default:
 		break;
@@ -1007,7 +1028,7 @@ VStatement* VParser::ParseStatement()
 		return ParseCompoundStatement();
 
 	case TK_Bool:
-	case TK_ClassId:
+	case TK_Class:
 	case TK_Float:
 	case TK_Int:
 	case TK_Name:
@@ -1094,9 +1115,25 @@ VExpression* VParser::ParseType()
 		Lex.NextToken();
 		return new VTypeExpr(ev_string, l);
 
-	case TK_ClassId:
+	case TK_Class:
+	{
 		Lex.NextToken();
-		return new VTypeExpr(ev_classid, l);
+		VName MetaClassName = NAME_None;
+		if (Lex.Check(TK_Less))
+		{
+			if (Lex.Token != TK_Identifier)
+			{
+				ParseError(Lex.Location, "Invalid identifier, class name expected");
+			}
+			else
+			{
+				MetaClassName = Lex.Name;
+				Lex.NextToken();
+			}
+			Lex.Expect(TK_Greater);
+		}
+		return new VTypeExpr(ev_class, l, MetaClassName);
+	}
 
 	case TK_State:
 		Lex.NextToken();

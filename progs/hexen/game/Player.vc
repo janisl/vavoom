@@ -3221,7 +3221,7 @@ void UseArtiTeleportOther()
 //
 //==========================================================================
 
-Actor SpawnPlayerMissile(classid type)
+Actor SpawnPlayerMissile(class<Actor> type)
 {
 	Actor MissileMobj;
 	TAVec angles;
@@ -3292,7 +3292,7 @@ Actor SpawnPlayerMissile(classid type)
 //
 //===========================================================================
 
-Actor SpawnPlayerMissileAngle(classid type, float angle)
+Actor SpawnPlayerMissileAngle(class<Actor> type, float angle)
 {
 	TAVec angles;
 	TVec vforward;
@@ -3336,7 +3336,7 @@ Actor SpawnPlayerMissileAngle(classid type, float angle)
 //
 //===========================================================================
 
-Actor SpawnPlayerMissileAngleXYZ(TVec org, classid type, float angle)
+Actor SpawnPlayerMissileAngleXYZ(TVec org, class<Actor> type, float angle)
 {
 	Actor th;
 	TAVec angles;

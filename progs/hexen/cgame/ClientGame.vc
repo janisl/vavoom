@@ -49,7 +49,7 @@ int ControlColumn;	// menu column for controls
 
 int MenuPClass;
 name MenuStartMap;
-classid SkillMenuType;
+class<MenuScreen> SkillMenuType;
 
 //
 //  MESSAGE BOX
@@ -380,7 +380,7 @@ void SetMenu(string Name)
 //
 //==========================================================================
 
-MenuScreen SpawnMenu(classid CID)
+MenuScreen SpawnMenu(class<MenuScreen> CID)
 {
 	MenuScreen m;
 

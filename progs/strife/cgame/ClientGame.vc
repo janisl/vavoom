@@ -381,7 +381,7 @@ void SetMenu(string Name)
 //
 //==========================================================================
 
-MenuScreen SpawnMenu(classid CID)
+MenuScreen SpawnMenu(class<MenuScreen> CID)
 {
 	MenuScreen m;
 

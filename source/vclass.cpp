@@ -636,7 +636,7 @@ VStream& operator<<(VStream& Strm, VField::FType& T)
 			<< T.PtrLevel;
 		RealType = T.InnerType;
 	}
-	if (RealType == ev_reference)
+	if (RealType == ev_reference || RealType == ev_class)
 		Strm << T.Class;
 	else if (RealType == ev_struct || RealType == ev_vector)
 		Strm << T.Struct;
@@ -700,7 +700,7 @@ void VField::SerialiseFieldValue(VStream& Strm, byte* Data, const VField::FType&
 		Strm << *(VObject**)Data;
 		break;
 
-	case ev_classid:
+	case ev_class:
 		if (Strm.IsLoading())
 		{
 			VName CName;
@@ -887,7 +887,7 @@ int VField::FType::GetSize() const
 	case ev_array:		return ArrayDim * GetArrayInnerType().GetSize();
 	case ev_struct:		return (Struct->Size + 3) & ~3;
 	case ev_vector:		return sizeof(TVec);
-	case ev_classid:	return sizeof(VClass*);
+	case ev_class:		return sizeof(VClass*);
 	case ev_state:		return sizeof(VState*);
 	case ev_bool:		return sizeof(vuint32);
 	case ev_delegate:	return sizeof(VObject*) + sizeof(VMethod*);
@@ -916,7 +916,7 @@ int VField::FType::GetAlignment() const
 	case ev_array:		return GetArrayInnerType().GetAlignment();
 	case ev_struct:		return Struct->Alignment;
 	case ev_vector:		return sizeof(float);
-	case ev_classid:	return sizeof(VClass*);
+	case ev_class:		return sizeof(VClass*);
 	case ev_state:		return sizeof(VState*);
 	case ev_bool:		return sizeof(vuint32);
 	case ev_delegate:	return sizeof(VObject*);

@@ -41,12 +41,12 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-classid WeaponClasses[StrifeDefs::NUMWEAPONS];
+class<Weapon> WeaponClasses[StrifeDefs::NUMWEAPONS];
 int weapon_ammo_type[StrifeDefs::NUMWEAPONS];
 int WeaponOrder[StrifeDefs::NUMWEAPONS];
 
-classid InvItemCID[StrifeDefs::NUMINVITEMS];
-classid KeyCID[StrifeDefs::NUMKEYS];
+class<InventoryItem> InvItemCID[StrifeDefs::NUMINVITEMS];
+class<KeyPickup> KeyCID[StrifeDefs::NUMKEYS];
 
 int maxammo[StrifeDefs::NUMAMMO];
 

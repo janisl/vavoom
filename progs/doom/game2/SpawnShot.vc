@@ -38,7 +38,7 @@ void A_SpawnFly()
 	Actor newmobj;
 	Actor fog;
 	int r;
-	classid type;
+	class<Actor> type;
 
 	if (--ReactionCount)
 		return;	// still flying

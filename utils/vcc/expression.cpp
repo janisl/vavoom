@@ -311,7 +311,7 @@ VExpression* VExpression::ResolveBoolean(VEmitContext& ec)
 
 	case ev_pointer:
 	case ev_reference:
-	case ev_classid:
+	case ev_class:
 	case ev_state:
 		e = new VPointerToBool(e);
 		break;
@@ -395,7 +395,7 @@ void VExpression::EmitPushPointedCode(TType type, VEmitContext& ec)
 
 	case ev_pointer:
 	case ev_reference:
-	case ev_classid:
+	case ev_class:
 	case ev_state:
 		ec.AddStatement(OPC_PushPointedPtr);
 		break;
@@ -2364,7 +2364,7 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 			!(op1->Type.type == ev_name && op2->Type.type == ev_name) &&
 			!(op1->Type.type == ev_pointer && op2->Type.type == ev_pointer) &&
 			!(op1->Type.type == ev_vector && op2->Type.type == ev_vector) &&
-			!(op1->Type.type == ev_classid && op2->Type.type == ev_classid) &&
+			!(op1->Type.type == ev_class && op2->Type.type == ev_class) &&
 			!(op1->Type.type == ev_state && op2->Type.type == ev_state) &&
 			!(op1->Type.type == ev_reference && op2->Type.type == ev_reference))
 		{
@@ -2676,7 +2676,7 @@ void VBinary::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_VEquals);
 		}
-		else if (op1->Type.type == ev_classid && op2->Type.type == ev_classid)
+		else if (op1->Type.type == ev_class && op2->Type.type == ev_class)
 		{
 			ec.AddStatement(OPC_PtrEquals);
 		}
@@ -2711,7 +2711,7 @@ void VBinary::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_VNotEquals);
 		}
-		else if (op1->Type.type == ev_classid && op2->Type.type == ev_classid)
+		else if (op1->Type.type == ev_class && op2->Type.type == ev_class)
 		{
 			ec.AddStatement(OPC_PtrNotEquals);
 		}
@@ -3086,7 +3086,7 @@ void VAssignment::Emit(VEmitContext& ec)
 		{
 			ec.AddStatement(OPC_VAssignDrop);
 		}
-		else if (op1->RealType.type == ev_classid && (op2->Type.type == ev_classid ||
+		else if (op1->RealType.type == ev_class && (op2->Type.type == ev_class ||
 			(op2->Type.type == ev_reference && op2->Type.Class == NULL)))
 		{
 			ec.AddStatement(OPC_AssignPtrDrop);
@@ -3328,7 +3328,8 @@ VClassConstant::VClassConstant(VClass* AClass, const TLocation& ALoc)
 : VExpression(ALoc)
 , Class(AClass)
 {
-	Type = ev_classid;
+	Type = ev_class;
+	Type.Class = Class;
 }
 
 //==========================================================================
@@ -3513,6 +3514,82 @@ void VDynamicCast::Emit(VEmitContext& ec)
 
 //END
 
+//BEGIN VDynamicClassCast
+
+//==========================================================================
+//
+//	VDynamicClassCast::VDynamicClassCast
+//
+//==========================================================================
+
+VDynamicClassCast::VDynamicClassCast(VName AClassName, VExpression* AOp,
+	const TLocation& ALoc)
+: VExpression(ALoc)
+, ClassName(AClassName)
+, op(AOp)
+{
+}
+
+//==========================================================================
+//
+//	VDynamicClassCast::~VDynamicClassCast
+//
+//==========================================================================
+
+VDynamicClassCast::~VDynamicClassCast()
+{
+	if (op)
+		delete op;
+}
+
+//==========================================================================
+//
+//	VDynamicClassCast::DoResolve
+//
+//==========================================================================
+
+VExpression* VDynamicClassCast::DoResolve(VEmitContext& ec)
+{
+	if (op)
+		op = op->Resolve(ec);
+	if (!op)
+	{
+		delete this;
+		return NULL;
+	}
+
+	if (op->Type.type != ev_class)
+	{
+		ParseError(Loc, "Bad expression, class type required");
+		delete this;
+		return NULL;
+	}
+
+	Type = ev_class;
+	Type.Class = VMemberBase::CheckForClass(ClassName);
+	if (!Type.Class)
+	{
+		ParseError(Loc, "No such class %s", *ClassName);
+		delete this;
+		return NULL;
+	}
+	return this;
+}
+
+//==========================================================================
+//
+//	VDynamicClassCast::Emit
+//
+//==========================================================================
+
+void VDynamicClassCast::Emit(VEmitContext& ec)
+{
+	op->Emit(ec);
+	ec.AddStatement(OPC_DynamicClassCast, Type.Class);
+}
+
+//END
+
 //BEGIN VLocalVar
 
 //==========================================================================
@@ -3626,7 +3703,7 @@ void VLocalVar::Emit(VEmitContext& ec)
 		case ev_name:
 		case ev_pointer:
 		case ev_reference:
-		case ev_classid:
+		case ev_class:
 		case ev_state:
 		case ev_bool:
 			if (Ofs == 0)
@@ -3758,7 +3835,7 @@ void VFieldAccess::Emit(VEmitContext& ec)
 
 		case ev_pointer:
 		case ev_reference:
-		case ev_classid:
+		case ev_class:
 		case ev_state:
 			ec.AddStatement(OPC_PtrFieldValue, field);
 			break;
@@ -3967,7 +4044,7 @@ void VInvocation::Emit(VEmitContext& ec)
 			case ev_string:
 			case ev_pointer:
 			case ev_reference:
-			case ev_classid:
+			case ev_class:
 			case ev_state:
 				ec.AddStatement(OPC_PushNull);
 				SelfOffset++;
@@ -4357,6 +4434,21 @@ void VDropResult::Emit(VEmitContext& ec)
 
 VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc)
 : VExpression(ALoc)
+, MetaClassName(NAME_None)
+{
+	Type = AType;
+	Name[0] = 0;
+}
+
+//==========================================================================
+//
+//	VTypeExpr::VTypeExpr
+//
+//==========================================================================
+
+VTypeExpr::VTypeExpr(TType AType, const TLocation& ALoc, VName AMetaClassName)
+: VExpression(ALoc)
+, MetaClassName(AMetaClassName)
 {
 	Type = AType;
 	Name[0] = 0;
@@ -4379,13 +4471,24 @@ VExpression* VTypeExpr::DoResolve(VEmitContext& ec)
 //
 //==========================================================================
 
-VTypeExpr* VTypeExpr::ResolveAsType(VEmitContext&)
+VTypeExpr* VTypeExpr::ResolveAsType(VEmitContext& ec)
 {
 	if (Type.type == ev_unknown)
 	{
 		ParseError(Loc, "Bad type");
 		delete this;
 		return NULL;
+	}
+
+	if (Type.type == ev_class && MetaClassName != NAME_None)
+	{
+		Type.Class = VMemberBase::CheckForClass(MetaClassName);
+		if (!Type.Class)
+		{
+			ParseError(Loc, "No such class %s", *MetaClassName);
+			delete this;
+			return NULL;
+		}
 	}
 	return this;
 }
@@ -4422,7 +4525,7 @@ const char* VTypeExpr::GetName()
 
 VExpression* VTypeExpr::CreateTypeExprCopy()
 {
-	return new VTypeExpr(Type, Loc);
+	return new VTypeExpr(Type, Loc, MetaClassName);
 }
 
 //END

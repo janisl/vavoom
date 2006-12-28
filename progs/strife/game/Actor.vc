@@ -162,7 +162,7 @@ float shoot_range;
 TVec shoot_origin;
 TVec shoot_dir;
 int la_damage;
-classid shootPuffType;
+class<Actor> shootPuffType;
 TVec shoot_linestart;
 TVec shoot_lineend;
 
@@ -178,7 +178,7 @@ int ExplodeEffect;
 //
 //===========================================================================
 
-Actor Spawn(classid type, TVec AOrigin)
+Actor Spawn(class<Actor> type, TVec AOrigin)
 {
 	Actor A;
 
@@ -621,7 +621,7 @@ void Died(Actor source)
 {
 	int SpeechNum;
 	RogueConSpeech *Speech;
-	classid DropItemType;
+	class<Actor> DropItemType;
 	Actor A;
 
 	if (bIsPlayer && XLevel.bDeathSlideShow)
@@ -1102,7 +1102,7 @@ void NightmareRespawn()
 		z = ONFLOORZ;
 
 	// inherit attributes from deceased one
-	A = Spawn(Class, vector(x, y, z));
+	A = Spawn(class<Actor>(Class), vector(x, y, z));
 	Level.CopyMThing(&SpawnSpot, &A.SpawnSpot);
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 
@@ -2724,7 +2724,7 @@ bool LookForPlayers(bool allaround)
 //
 //==========================================================================
 
-Actor SpawnSubMissile(classid type, Actor AInstigator)
+Actor SpawnSubMissile(class<Actor> type, Actor AInstigator)
 {
 	Actor other;
 	TVec dir;
@@ -2752,7 +2752,7 @@ Actor SpawnSubMissile(classid type, Actor AInstigator)
 //
 //==========================================================================
 
-Actor TossUpObject(classid type)
+Actor TossUpObject(class<Actor> type)
 {
 	Actor		A;
 	float		an;
@@ -3225,7 +3225,7 @@ bool PTR_ShootTraverse(intercept_t * in)
 //
 //==========================================================================
 
-int LineAttack(TVec dir, float distance, int damage, classid PuffType)
+int LineAttack(TVec dir, float distance, int damage, class<Actor> PuffType)
 {
 	TVec dst;
 
@@ -3255,7 +3255,7 @@ int LineAttack(TVec dir, float distance, int damage, classid PuffType)
 //
 //==========================================================================
 
-void SpawnPuff(classid PuffType, TVec Org)
+void SpawnPuff(class<Actor> PuffType, TVec Org)
 {
 	Actor A;
 
@@ -3630,8 +3630,13 @@ void A_XDying()
 	Actor gib;
 	float an;
 	float speed;
+	class<Actor> tp;
 
-	gib = Spawn(bNoBlood ? TechJunk : MeatChunk, Origin + vector(0.0, 0.0, 24.0));
+	if (bNoBlood)
+		tp = TechJunk;
+	else
+		tp = MeatChunk;
+	gib = Spawn(tp, Origin + vector(0.0, 0.0, 24.0));
 	if (!gib)
 	{
 		return;

@@ -27,7 +27,7 @@ class Demon : Pawn
 	__mobjinfo__(31)
 	__scriptid__(3);
 
-classid FireBallType;
+class<Actor> FireBallType;
 
 //============================================================================
 //

@@ -28,9 +28,9 @@ class MenuChoice_Fighter : MenuBigTextButton;
 int PClass;
 MenuObject Box;
 MenuObject Walk;
-classid BoxType;
-classid WalkType;
-classid SkillMenuType;
+class<MenuObject> BoxType;
+class<MenuObject> WalkType;
+class<MenuScreen> SkillMenuType;
 
 void InitWindow()
 {

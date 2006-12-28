@@ -161,7 +161,7 @@ int MoveCount;	// when 0, select a new dir
 float MissileChance;
 float MissileMinRange;
 float MissileMaxRange;
-classid ImuneMissileType;
+class<Actor> ImuneMissileType;
 
 string PickupMessage;
 
@@ -234,13 +234,13 @@ struct AttackType
 	float KeepFireChance;
 
 	// the MOBJ that is integrated with this attack, or NULL
-	classid AtkMobj;
+	class<Actor> AtkMobj;
 
 	// spawned object (for spawners). Can be NULL.
-	classid SpawnedObj;
+	class<Actor> SpawnedObj;
 
 	// puff object.  Can be NULL.
-	classid Puff;
+	class<Actor> Puff;
 };
 
 // New states.
@@ -320,10 +320,10 @@ int DLightIntensity;
 int DLightColour;
 float DLightHeight;
 
-classid DropItem;
-classid BloodType;
-classid RespawnEffect;
-classid SpitSpot;
+class<Actor> DropItem;
+class<Actor> BloodType;
+class<Actor> RespawnEffect;
+class<Actor> SpitSpot;
 
 AttackType *CurrentAttack;
 
@@ -391,7 +391,7 @@ __states__
 //
 //===========================================================================
 
-Actor Spawn(classid type, TVec AOrigin)
+Actor Spawn(class<Actor> type, TVec AOrigin)
 {
 	Actor A;
 
@@ -897,7 +897,7 @@ bool CheckMissileSpawn()
 //
 //==========================================================================
 
-Actor SpawnMissile(Actor dest, classid type)
+Actor SpawnMissile(Actor dest, class<Actor> type)
 {
 	Actor A;
 	TVec dir;
@@ -1232,7 +1232,7 @@ void NightmareRespawn()
 		z = ONFLOORZ;
 
 	// inherit attributes from deceased one
-	A = Spawn(Class, vector(x, y, z));
+	A = Spawn(class<Actor>(Class), vector(x, y, z));
 	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
 	A.Angles.yaw = itof(45 * (mthing->angle / 45));
 
@@ -4715,7 +4715,7 @@ void A_CubeSpawn()
 {
 	Actor newmobj;
 	int r;
-	classid type;
+	class<Actor> type;
 
 	// Randomly select monster to spawn.
 	r = P_Random();

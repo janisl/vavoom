@@ -342,6 +342,24 @@ public:
 
 //==========================================================================
 //
+//	VDynamicClassCast
+//
+//==========================================================================
+
+class VDynamicClassCast : public VExpression
+{
+public:
+	VName				ClassName;
+	VExpression*		op;
+
+	VDynamicClassCast(VName, VExpression*, const TLocation&);
+	~VDynamicClassCast();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
+//==========================================================================
+//
 //	VUnary
 //
 //==========================================================================
@@ -556,8 +574,10 @@ class VTypeExpr : public VExpression
 {
 public:
 	char		Name[128];
+	VName		MetaClassName;
 
 	VTypeExpr(TType, const TLocation&);
+	VTypeExpr(TType, const TLocation&, VName);
 	VExpression* DoResolve(VEmitContext&);
 	VTypeExpr* ResolveAsType(VEmitContext&);
 	void Emit(VEmitContext&);

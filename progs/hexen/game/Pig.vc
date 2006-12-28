@@ -37,7 +37,7 @@ int UpdateMorphedMonster(int tics)
 {
 	Actor fog;
 	TVec oldOrigin;
-	classid originalClass;
+	class<Actor> originalClass;
 	float oldAngle;
 	Actor oldEnemy;
 	int oldSpecial;

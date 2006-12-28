@@ -1434,7 +1434,7 @@ native readonly private void* CxxVTable;
 native readonly private void* VTable;
 native readonly private int ObjectIndex;
 native readonly private int ObjectFlags;
-native readonly classid Class;
+native readonly class Class;
 
 native void Destroy();
 native final bool IsA(name CheckName);
@@ -1621,8 +1621,8 @@ native static final void CmdBuf_AddText(string format, ...);
 native static final string Info_ValueForKey(string info, string key);
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
 native static final bool WadLumpPresent(name Name);
-native static final Object SpawnObject(classid cid);
-native static final classid FindClass(name Name);
+native static final Object SpawnObject(class cid);
+native static final class FindClass(name Name);
 native static final bool StateIsInRange(state State, state Start, state End,
 	int MaxDepth);
 native static final name GetStateSpriteName(state State);
@@ -1755,16 +1755,16 @@ native static final int MapBlock(float val);
 //  Mobj utilites
 //
 
-native static final Entity NewMobjThinker(classid cid);
+native static final Entity NewMobjThinker(class<Entity> cid);
 
 //
 //  Special thinker utilites
 //
 
-native static final Thinker NewSpecialThinker(classid);
+native static final Thinker NewSpecialThinker(class<Thinker>);
 native static final void RemoveSpecialThinker(Thinker spec);
 native static final void P_ChangeSwitchTexture(line_t * line, int useAgain, name DefaultSound);
-native static final Thinker NextThinker(Thinker last, classid id);
+native static final Thinker NextThinker(Thinker last, class<Thinker> id);
 
 //
 //  ACS functions
@@ -1801,8 +1801,8 @@ native static final void SB_Start();
 native static final int FindModel(string Name);
 native static final int GetModelIndex(name Name);
 native static final int FindSkin(string Name);
-native static final classid FindClassFromEditorId(int Id);
-native static final classid FindClassFromScriptId(int Id);
+native static final class FindClassFromEditorId(int Id);
+native static final class FindClassFromScriptId(int Id);
 native static final void ChangeMusic(string SongName);
 
 defaultproperties

@@ -89,7 +89,7 @@ bool Deactivate()
 //
 //==========================================================================
 
-Actor SpawnMissile(Actor dest, classid type)
+Actor SpawnMissile(Actor dest, class<Actor> type)
 {
 	Actor A;
 	TVec dir;
@@ -123,7 +123,7 @@ Actor SpawnMissile(Actor dest, classid type)
 //
 //==========================================================================
 
-Actor SpawnMissileZ(float z, Actor dest, classid type)
+Actor SpawnMissileZ(float z, Actor dest, class<Actor> type)
 {
 	Actor A;
 	TVec dir;
@@ -157,7 +157,7 @@ Actor SpawnMissileZ(float z, Actor dest, classid type)
 //
 //==========================================================================
 
-Actor SpawnMissileZAimed(float z, Actor dest, classid type)
+Actor SpawnMissileZAimed(float z, Actor dest, class<Actor> type)
 {
 	Actor A;
 	TVec dir;

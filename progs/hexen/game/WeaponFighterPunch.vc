@@ -42,7 +42,7 @@ void A_FPunchAttack()
 	int i;
 	TAVec angles;
 	TVec vforward;
-	classid PuffType;
+	class<Actor> PuffType;
 
 	damage = 40 + (P_Random() & 15);
 	power = 2.0;

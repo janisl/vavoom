@@ -2148,7 +2148,7 @@ void SetPlayerRunState()
 //
 //==========================================================================
 
-Actor SpawnPlayerMissile(classid type)
+Actor SpawnPlayerMissile(class<Actor> type)
 {
 	Actor A;
 	TVec dir;

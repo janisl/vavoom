@@ -42,7 +42,7 @@ enum EType
 	ev_array,
 	ev_struct,
 	ev_vector,
-	ev_classid,
+	ev_class,
 	ev_bool,
 	ev_delegate,
 	ev_state,
@@ -340,6 +340,7 @@ enum
 
 	//	Dynamic cast
 	DECLARE_OPC(DynamicCast, Member),
+	DECLARE_OPC(DynamicClassCast, Member),
 
 #undef DECLARE_OPC
 #ifndef OPCODE_INFO

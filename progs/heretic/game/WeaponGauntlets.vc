@@ -62,7 +62,7 @@ void A_GauntletAttack()
 	float dist;
 	TAVec angles;
 	TVec dir;
-	classid PuffType;
+	class<Actor> PuffType;
 
 	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
 	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;

@@ -142,11 +142,11 @@ class TType
 public:
 	TType() :
 		type(ev_void), InnerType(ev_void), ArrayInnerType(ev_void),
-		PtrLevel(0), array_dim(0), bit_mask(0)
+		PtrLevel(0), array_dim(0), Class(0)
 	{}
 	TType(EType Atype) :
 		type(Atype), InnerType(ev_void), ArrayInnerType(ev_void),
-		PtrLevel(0), array_dim(0), bit_mask(0)
+		PtrLevel(0), array_dim(0), Class(0)
 	{}
 	explicit TType(VClass* InClass);
 	explicit TType(VStruct* InStruct);

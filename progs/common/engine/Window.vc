@@ -56,7 +56,7 @@ readonly Window PrevSibling;		// Next "lowest" sibling (previous one drawn)
 readonly Window NextSibling;		// Next "highest" sibling (next one drawn)
 
 native void Destroy();
-native Window NewChild(classid ChildClass);
+native Window NewChild(class<Window> ChildClass);
 native void Raise();
 native void Lower();
 native void SetVisibility(bool bNewVisibility);

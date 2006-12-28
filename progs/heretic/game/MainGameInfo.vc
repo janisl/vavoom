@@ -44,7 +44,7 @@ struct spec_trans_t
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
-classid WeaponClasses[NUMWEAPONS];
+class<Weapon> WeaponClasses[NUMWEAPONS];
 int weapon_ammo_type[NUMWEAPONS];
 int WeaponOrder[NUMWEAPONS];
 

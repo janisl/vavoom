@@ -112,7 +112,7 @@ bool Deactivate()
 //
 //==========================================================================
 
-Actor SpawnMissile(Actor dest, classid type)
+Actor SpawnMissile(Actor dest, class<Actor> type)
 {
 	Actor th;
 	TVec org;
@@ -173,7 +173,7 @@ Actor SpawnMissile(Actor dest, classid type)
 //
 //==========================================================================
 
-Actor SpawnMissileXYZ(TVec org, Actor dest, classid type)
+Actor SpawnMissileXYZ(TVec org, Actor dest, class<Actor> type)
 {
 	TVec dir;
 	Actor th;

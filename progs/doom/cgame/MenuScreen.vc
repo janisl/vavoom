@@ -34,11 +34,11 @@ int NumItems;
 int CursorPos;
 int CursorPrev;
 
-classid Choices[MAX_MENU_ITEMS];
+class<MenuChoice> Choices[MAX_MENU_ITEMS];
 int ChoicesStartX;
 int ChoicesStartY;
 
-classid SelectorType;
+class<MenuObject> SelectorType;
 MenuObject Selector;
 
 string Title;
