@@ -160,10 +160,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\AttackHolder.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\BotPlayer.vc"
 				>
 			</File>

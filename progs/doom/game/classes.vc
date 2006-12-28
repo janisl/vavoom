@@ -33,9 +33,6 @@
 #ifndef NO_BOTS
 #include "BotPlayer.vc"
 #endif
-#ifdef DDF
-#include "AttackHolder.vc"
-#endif
 
 #include "Projectile.vc"
 #include "Effect.vc"

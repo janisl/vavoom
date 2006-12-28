@@ -39,54 +39,6 @@ state AttackState;
 state HoldAttackState;
 state FlashState;
 name ThirdPersonModel;
-#ifdef DDF
-AttackType Attack;
-int AmmoPerShot;	// Ammo used per shot.
-int Clip;			// Amount of shots in a clip
-bool bAutoFire;		// If true, this is an automatic weapon.  If false it is semiautomatic.
-float Kick;			// Amount of kick this weapon gives
-AttackType SAAttack;// Second attack type.
-int SAAmmo;			// Type of ammo for second attack.
-int SAAmmoPerShot;	// Ammo used per second attack shot.
-int SAClip;			// Amount of shots in a second attack clip
-bool bSAAutoFire;	// Second attack is automatic ?
-int ReloadState;	// State showing the weapon being reloaded
-int SAAttackState;	// State showing the second attack firing
-int SAReloadState;	// State showing the second attack reloading
-int SAFlashState;	// State showing the second attack muzzle flash
-int Crosshair;		// Crosshair states
-int ZoomState;		// State showing viewfinder when zoomed.  Can be zero
-bool bFeedBack;		// This weapon gives feedback on hit (chainsaw)
-int UpgradedWeap;	// This weapon upgrades a previous one. (Berserk -> Fist)
-// This affects how it will be selected if out of ammo.  Also
-// determines the cycling order when on the same key.  Dangerous
-// weapons are not auto-selected when out of ammo.
-int Priority;
-bool bDangerous;
-AttackType EjectAttack;	// Attack type for the WEAPON_EJECT code pointer.
-// Sounds.
-name IdleSound;		// Played at the start of every readystate
-name EngagedSound;	// Played while the trigger is held (chainsaw)
-name HitSound;		// Played while the trigger is held and it is pointed at a target.
-name StartSound;	// Played when the weapon is selected
-name Sound1;		// Misc sounds
-name Sound2;
-name Sound3;
-bool bNoThrust;		// This close combat weapon should not push the target away (chainsaw)
-int BindKey;		// which number key this weapon is bound to, or -1 for none
-bool bSilentToMonsters;	// monsters cannot hear this weapon (doesn't wake them up)
-float ZoomFov;		// -AJA- 2000/03/18: when > 0, this weapon can zoom
-bool bRefireInacc;	// -AJA- 2000/05/23: weapon loses accuracy when refired.
-bool bShowClip;		// -AJA- 2000/10/20: show current clip in status bar (not total)
-// controls for weapon bob (up & down) and sway (left & right).
-// Given as percentages in DDF.
-float Bobbing;
-float Swaying;
-
-// Temporary for reloading.
-int AmmoFired;
-int AmmoFiredSA;
-#endif
 
 //===========================================================================
 //
@@ -108,18 +60,11 @@ void A_WeaponReady()
 		Player.MO.SetState(Actor(Player.MO).IdleState);
 	}
 
-#ifdef DDF
-	if (IdleSound && Player.ViewStates[ps_weapon].State == ReadyState)
-	{
-		Player.MO.PlaySound(IdleSound, CHAN_WEAPON);
-	}
-#else
 	if (Player(Player).ReadyWeapon == DoomDefs::wp_chainsaw &&
 		Player.ViewStates[ps_weapon].State == ReadyState)
 	{
 		Player.MO.PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
-#endif
 
 	// check for change
 	//  if player is dead, put the weapon away
@@ -135,12 +80,8 @@ void A_WeaponReady()
 	//  the missile launcher and bfg do not auto fire
 	if (Player.Buttons & BT_ATTACK)
 	{
-#ifdef DDF
-		if (!Player.bAttackDown || bAutoFire)
-#else
 		if (!Player.bAttackDown || (Player(Player).ReadyWeapon != DoomDefs::wp_missile &&
 			Player(Player).ReadyWeapon != DoomDefs::wp_bfg))
-#endif
 		{
 			Player.bAttackDown = true;
 			Player(Player).FireWeapon();
@@ -149,20 +90,6 @@ void A_WeaponReady()
 	}
 	else
 		Player.bAttackDown = false;
-
-#ifdef DDF
-	if (Player.Buttons & 0x08)
-	{
-		if (!Player.bAttackDown || bSAAutoFire)
-		{
-			Player.bAttackDown = true;
-			FireWeaponSA(Player);
-			return;
-		}
-	}
-	else
-		Player.bAttackDown = false;
-#endif
 
 	// bob the weapon based on movement speed
 	angle = AngleMod360(180.0 * Player.Level.Game.level->time);
@@ -277,14 +204,6 @@ void A_ReFire()
 void A_CheckReload()
 {
 	Player(Player).CheckAmmo();
-
-#ifdef DDF
-	if (ReloadState && AmmoFired >= Clip)
-	{
-		AmmoFired = 0;
-		SetState(ReloadState);
-	}
-#endif
 }
 
 //===========================================================================
@@ -333,259 +252,6 @@ void A_Light2()
 	Player.ExtraLight = 2;
 }
 
-#ifdef DDF	//--------------------------------------------------------------
-
-//==========================================================================
-//
-//	A_WeaponShoot
-//
-//==========================================================================
-
-void A_WeaponShoot(AttackType *custom_attack)
-{
-	AttackType *attack = &Attack;
-
-	// -AJA- 1999/08/10: Multiple attack support.
-	if (custom_attack)
-		attack = custom_attack;
-
-	// Some do not need ammunition anyway.
-	// Return if current ammunition sufficient.
-	if (!(Ammo == am_noammo || Player.Ammo[Ammo] >= AmmoPerShot))
-		return;
-
-	// -AJA- 1999/08/11: Increase fire count.
-	//p->weapons[p->ready_wp].clip_size--;
-
-	PlayerPawn(Player.MO).ActPlayerAttack(attack);
-
-	Player.DeltaViewHeight -= Kick;
-	//p->kick_offset = w->kick;
-
-	if (linetarget /*&& !DDFActor(Player.MO.Enemy).bDummyMobj*/)
-	{
-		if (HitSound)
-			Player.MO.PlaySound(HitSound, CHAN_WEAPON);
-
-		if (bFeedBack)
-			Player.MO.bJustAttacked = true;
-	}
-	else
-	{
-		if (EngagedSound)
-			Player.MO.PlaySound(EngagedSound, CHAN_WEAPON);
-	}
-
-	// show the player making the shot/attack...
-	if (attack->AttackStyle == ATK_CloseCombat && Player.MO.MeleeState)
-	{
-		Player.MO.SetState(Player.MO.MeleeState);
-	}
-	else if (Player.MO.MissileState)
-	{
-		Player.MO.SetState(Player.MO.MissileState);
-	}
-
-	if (Ammo != am_noammo)
-	{
-		Player.Ammo[Ammo] -= AmmoPerShot;
-		AmmoFired += AmmoPerShot;
-	}
-
-	if (FlashState/* && !p->flash*/)
-	{
-		Player.ViewEnts[ps_flash].SetState(FlashState);
-		//p->flash = true;
-	}
-}
-
-//==========================================================================
-//
-//	A_WeaponEject
-//
-//	Used for ejecting shells (or other effects).
-//
-//==========================================================================
-
-void A_WeaponEject(AttackType *custom_attack)
-{
-	AttackType *attack = &EjectAttack;
-
-	if (custom_attack)
-		attack = custom_attack;
-
-	PlayerPawn(Player.MO).ActPlayerAttack(attack);
-}
-
-//==========================================================================
-//
-//	A_WeaponJump
-//
-//==========================================================================
-
-void A_WeaponJump(float chance, name jumpState)
-{
-	if (Random() < chance)
-	{
-		NextState = FindState(jumpState);
-	}
-}
-
-void A_NoFire() { }					// EXTRA
-void A_NoFireReturn() { }			// EXTRA
-
-void A_SFXWeapon1()
-{
-	Player.MO.PlaySound(Sound1, CHAN_WEAPON);
-}
-void A_SFXWeapon2()
-{
-	Player.MO.PlaySound(Sound2, CHAN_WEAPON);
-}
-void A_SFXWeapon3()
-{
-	Player.MO.PlaySound(Sound3, CHAN_WEAPON);
-}
-void A_WeaponPlaySound(name snd)
-{
-	Player.MO.PlaySound(snd, CHAN_WEAPON);
-}
-void A_WeaponKillSound()
-{
-	Player.MO.StopSound(CHAN_WEAPON);
-}
-
-void A_WeaponTransSet() { }
-void A_WeaponTransFade() { }		// EXTRA
-void A_WeaponEnableRadTrig() { }	// EXTRA
-void A_WeaponDisableRadTrig() { }	// EXTRA
-
-void A_SetCrosshair() { }			// EXTRA
-void A_GotTarget() { }				// EXTRA
-void A_WeaponKick() { }				// EXTRA
-
-//==========================================================================
-//
-//	A_WeaponShootSA
-//
-//==========================================================================
-
-void A_WeaponShootSA(AttackType *custom_attack)
-{
-	AttackType *attack = &SAAttack;
-
-	// -AJA- 1999/08/10: Multiple attack support.
-	if (custom_attack)
-		attack = custom_attack;
-
-	// Some do not need ammunition anyway.
-	// Return if current ammunition sufficient.
-	if (!(SAAmmo == am_noammo || Player.Ammo[SAAmmo] >= SAAmmoPerShot))
-		return;
-
-	// -AJA- 1999/08/11: Increase fire count.
-	//p->weapons[p->ready_wp].clip_size--;
-
-	PlayerPawn(Player.MO).ActPlayerAttack(attack);
-
-	Player.DeltaViewHeight -= Kick;
-	//p->kick_offset = w->kick;
-
-	if (linetarget /*&& !DDFActor(Player.MO.Enemy).bDummyMobj*/)
-	{
-		if (HitSound)
-			Player.MO.PlaySound(HitSound, CHAN_WEAPON);
-
-		if (bFeedBack)
-			Player.MO.bJustAttacked = true;
-	}
-	else
-	{
-		if (EngagedSound)
-			Player.MO.PlaySound(EngagedSound, CHAN_WEAPON);
-	}
-
-	// show the player making the shot/attack...
-	if (attack->AttackStyle == ATK_CloseCombat && Player.MO.MeleeState)
-	{
-		Player.MO.SetState(Player.MO.MeleeState);
-	}
-	else if (Player.MO.MissileState)
-	{
-		Player.MO.SetState(Player.MO.MissileState);
-	}
-
-	if (SAAmmo != am_noammo)
-	{
-		Player.Ammo[SAAmmo] -= SAAmmoPerShot;
-		AmmoFiredSA += AmmoPerShot;
-	}
-
-	if (SAFlashState/* && !p->flash*/)
-	{
-		Player.ViewEnts[ps_flash].SetState(SAFlashState);
-		//p->flash = true;
-	}
-}
-
-//===========================================================================
-//
-//  A_ReFireSA
-//
-//  The player can re-fire the weapon without lowering it entirely.
-//
-//===========================================================================
-
-void A_ReFireSA()
-{
-	// check for fire
-	//  (if a weaponchange is pending, let it go through instead)
-	if ((Player.Buttons & 0x08)
-		&& Player.PendingWeapon == wp_nochange && Player.Health)
-	{
-		Player.Refire++;
-		FireWeaponSA(Player);
-	}
-	else
-	{
-		Player.Refire = 0;
-		CheckAmmoSA(Player);
-	}
-}
-
-void A_NoFireSA() { }				// EXTRA
-void A_NoFireReturnSA() { }			// EXTRA
-
-//===========================================================================
-//
-//  A_CheckReloadSA
-//
-//===========================================================================
-
-void A_CheckReloadSA()
-{
-	CheckAmmoSA(Player);
-	if (SAReloadState && AmmoFiredSA >= SAClip)
-	{
-		AmmoFiredSA = 0;
-		SetState(SAReloadState);
-	}
-}
-
-//===========================================================================
-//
-//  A_GunFlashSA
-//
-//===========================================================================
-
-void A_GunFlashSA()
-{
-	Player.MO.SetState(Player.MO.MissileState);
-	Player.SetPsprite(ps_flash, SAFlashState);
-}
-
-#endif
-
 //===========================================================================
 //
 //  GunShot
@@ -622,19 +288,4 @@ __states__
 defaultproperties
 {
 	Ammo = DoomDefs::am_noammo;
-#ifdef DDF
-	Attack.DamageMax = -1;
-	Attack.DamageError = -1;
-	SAAttack.DamageMax = -1;
-	SAAttack.DamageError = -1;
-	EjectAttack.DamageMax = -1;
-	EjectAttack.DamageError = -1;
-	SAAmmo = am_noammo;
-	Clip = 1;
-	SAClip = 1;
-	UpgradedWeap = -1;
-	BindKey = -1;
-	Bobbing = 1.0;
-	Swaying = 1.0;
-#endif
 }

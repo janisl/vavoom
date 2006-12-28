@@ -1,9 +1,5 @@
 SUBDIRS = common doom doom2 heretic hexen strife
 EXTRA_DIST = \
-	ddf/Makefile \
-	ddf/clprogs.vc \
-	ddf/svprogs.vc \
-	ddf/compile.bat \
 	hack_d1/Makefile \
 	hack_d1/clprogs.vc \
 	hack_d1/compile.bat \
