@@ -260,6 +260,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\LineSpecialGameInfo.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\LineSpecialLevelInfo.vc"
 				>
 			</File>
