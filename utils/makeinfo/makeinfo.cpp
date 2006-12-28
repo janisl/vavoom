@@ -102,59 +102,6 @@ void FixupHeights()
 
 //==========================================================================
 //
-//	MarkWeaponState
-//
-//==========================================================================
-
-void MarkWeaponState(int num)
-{
-	if (num && !states[num].weapon_state)
-	{
-		states[num].weapon_state = true;
-		MarkWeaponState(states[num].nextstate);
-	}
-}
-
-//==========================================================================
-//
-//	MarkWeaponStates
-//
-//==========================================================================
-
-void MarkWeaponStates()
-{
-	int			i;
-
-	for (i = 0; i < NUM_WEAPONS; i++)
-	{
-		MarkWeaponState(weaponinfo[i].upstate);
-		MarkWeaponState(weaponinfo[i].downstate);
-		MarkWeaponState(weaponinfo[i].readystate);
-		MarkWeaponState(weaponinfo[i].atkstate);
-		MarkWeaponState(weaponinfo[i].holdatkstate);
-		MarkWeaponState(weaponinfo[i].flashstate);
-	}
-	// Mark states set by code
-	MarkWeaponState(S1_CHAINFLASH2);
-	MarkWeaponState(S1_PLASMAFLASH2);
-	if (Hacked)
-	{
-		//	Need this for unused states with weapon action functions.
-		for (int i = 1; i < NUMSTATES; i++)
-		{
-			if (StateActionInfo[states[i].action_num].weapon_action)
-			{
-				states[i].weapon_state = true;
-			}
-		}
-	}
-
-	// Mark these unused super shotgun states
-	MarkWeaponState(S1_DSNR1);
-}
-
-//==========================================================================
-//
 //	WriteHeader
 //
 //==========================================================================
@@ -219,20 +166,16 @@ void WriteStates(FILE* f)
 		{
 			fprintf(f, " | FF_FULLBRIGHT");
 		}
-		if (states[i].model_name)
-		{
-			fprintf(f, ", \'%s\', %d", states[i].model_name, states[i].model_frame);
-		}
 		if (states[i].tics == -1)
 			fprintf(f, ", -1.0");
 		else
 			fprintf(f, ", %d.0 / 35.0", states[i].tics);
 		fprintf(f, ", %s", statename[states[i].nextstate]);
-		fprintf(f, ") { ");
-		if (states[i].misc1)
+		if (states[i].misc1 || states[i].misc2)
 		{
-			fprintf(f, "SX = %.1f; SY = %.1f; ", (float)states[i].misc1, (float)states[i].misc2);
+			fprintf(f, ", %d, %d", states[i].misc1, states[i].misc2);
 		}
+		fprintf(f, ") { ");
 		if (states[i].action_num)
 			fprintf(f, "%s(); ", StateActionInfo[states[i].action_num].fname);
 		fprintf(f, "}\n");
@@ -342,22 +285,6 @@ void WriteMobjInfo()
 
 		//  ------------ OnMapSpawn method -----------
 		bool no_monsters = flags & MF_COUNTKILL || mobjinfo[i].doomednum == 3006;
-		if (mobjinfo[i].extra)
-		{
-			fprintf(f, "\tvoid OnMapSpawn(mthing_t *mthing)\n");
-			fprintf(f, "\t{\n");
-
-			//	Calling of start function
-			fprintf(f, "\t\t::OnMapSpawn(mthing);\n");
-
-			//	Static lights
-			if (mobjinfo[i].extra)
-				fprintf(f, "\t\t%s\n", mobjinfo[i].extra);
-
-			//	End of function
-			fprintf(f, "\t}\n");
-			fprintf(f, "\n");
-		}
 
 		//  ------------ DefaultProperties -------------
 		fprintf(f, "\tdefaultproperties\n");
@@ -367,9 +294,6 @@ void WriteMobjInfo()
 		{
 			mobjinfo[i].height  = 8 * FRACUNIT;
 		}
-
-		if (mobjinfo[i].classname)
-			fprintf(f, "\t\tClassName = \'%s\';\n", mobjinfo[i].classname);
 
 		//	Misc params
 		if (mobjinfo[i].spawnhealth)
@@ -479,10 +403,6 @@ void WriteMobjInfo()
 			fprintf(f, "\t\tPainSound = \'%s\';\n", sfx[mobjinfo[i].painsound].tagName);
 		if (mobjinfo[i].deathsound)
 			fprintf(f, "\t\tDeathSound = \'%s\';\n", sfx[mobjinfo[i].deathsound].tagName);
-
-		//  Effects
-		if (mobjinfo[i].effects)
-			fprintf(f, "\t\tEffects = %s;\n", mobjinfo[i].effects);
 
 		fprintf(f, "\t}\n");
 
@@ -690,7 +610,6 @@ int main(int argc, char** argv)
 	}
 
 	ProcessDehackedFiles(argc, argv);
-	MarkWeaponStates();
 	WriteStates();
 	WriteMobjInfo();
 	WriteWeaponInfo();

@@ -30,12 +30,6 @@
 #include <macros.vc>
 
 import shared;
-import clcommon;
-
-#define NO_BOTS
-
-class ClientGame;
-class MenuScreen;
-class MenuControlKey;
+import svprogs;
 
 #include "cgame/classes.vc"

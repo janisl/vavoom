@@ -30,7 +30,7 @@
 #include <macros.vc>
 
 import shared;
-import svcommon;
+import linespec;
 
 #define DOOM2
 #define NO_BOTS
@@ -53,6 +53,8 @@ enum
 	MTF_GDEATHMATCH	= 0x0400
 };
 
+// CONSTANTS ---------------------------------------------------------------
+
 enum
 {
 	FLOOR_SOLID,
@@ -67,17 +69,24 @@ enum
 {
 	CONTENTS_EMPTY,
 	CONTENTS_WATER,
-	CONTENTS_BLOOD,
+	CONTENTS_LAVA,
 	CONTENTS_NUKAGE,
 	CONTENTS_SLIME,
-	CONTENTS_LAVA,
+	CONTENTS_HELLSLIME,
+	CONTENTS_BLOOD,
+	CONTENTS_SLUDGE,
+	CONTENTS_HAZARD,
 
 	CONTENTS_SOLID = -1
 };
 
 enum
 {
-	CSHIFT_CONTENTS
+	CSHIFT_Contents,
+	CSHIFT_Damage,
+	CSHIFT_Bonus,
+	CSHIFT_Berserk,
+	CSHIFT_Power
 };
 
 enum
@@ -111,8 +120,6 @@ enum
 	CHAN_ITEM,
 	CHAN_BODY
 };
-
-class PolyobjThinker;
 
 #define S_GIBS		FindState('S_GIBS')
 #include "game/classes.vc"

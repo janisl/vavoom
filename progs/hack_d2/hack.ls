@@ -1,9 +1,9 @@
-$label pr_start
-shared.dat
-clprogs.dat
-svprogs.dat
-$label pr_end
+$dest hack.pk3
 
-mapinfo.txt
-sndinfo.txt
-language.txt
+progs/shared.dat	shared.dat
+progs/clprogs.dat	clprogs.dat
+progs/svprogs.dat	svprogs.dat
+
+mapinfo.txt			mapinfo.txt
+sndinfo.txt			sndinfo.txt
+language.txt		language.txt

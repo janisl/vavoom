@@ -104,7 +104,7 @@
 #define MF2_DONTDRAW		0X00100000	// don't generate a vissprite
 
 #define MF2_IMPACT			0x00200000 	// an MF_MISSILE mobj can activate
-								 		// SPAC_IMPACT
+										// SPAC_IMPACT
 #define MF2_PUSHWALL		0x00400000 	// mobj can push walls
 #define MF2_MCROSS			0x00800000	// can activate monster cross lines
 #define MF2_PCROSS			0x01000000	// can activate projectile cross lines
@@ -120,7 +120,6 @@
 typedef struct
 {
 	char*			fname;
-    int				weapon_action;
 } state_action_info_t;
 
 typedef struct
@@ -131,42 +130,38 @@ typedef struct
 	int		action_num;
 	int		nextstate;
 	int		misc1;
-    int		misc2;
+	int		misc2;
 	char	*model_name;
 	int		model_frame;
-	int		weapon_state;
 } state_t;
 
 typedef struct
 {
-    int	doomednum;
-    int	spawnstate;
-    int	spawnhealth;
-    int	seestate;
-    int	seesound;
-    int	reactiontime;
-    int	attacksound;
-    int	painstate;
-    int	painchance;
-    int	painsound;
-    int	meleestate;
-    int	missilestate;
+	int	doomednum;
+	int	spawnstate;
+	int	spawnhealth;
+	int	seestate;
+	int	seesound;
+	int	reactiontime;
+	int	attacksound;
+	int	painstate;
+	int	painchance;
+	int	painsound;
+	int	meleestate;
+	int	missilestate;
 	int	crashstate;
-    int	deathstate;
-    int	xdeathstate;
-    int	deathsound;
-    int	speed;
-    int	radius;
-    int	height;
-    int	mass;
-    int	damage;
-    int	activesound;
-    int	flags;
+	int	deathstate;
+	int	xdeathstate;
+	int	deathsound;
+	int	speed;
+	int	radius;
+	int	height;
+	int	mass;
+	int	damage;
+	int	activesound;
+	int	flags;
 	int	flags2;
-    int	raisestate;
-	char *classname;
-	char *effects;
-	char *extra;
+	int	raisestate;
 } mobjinfo_t;
 
 // Weapon info: sprite frames, ammunition use.
@@ -191,23 +186,19 @@ typedef struct
 	int		priority;		// Higher priority takes precendence
 	int 	numchannels;	// total number of channels a sound type may occupy
 	int		changePitch;
-	void*	snd_ptr;
-    int		lumpnum;        // lump number of sfx
 } sfxinfo_t;
 
 struct string_def_t
 {
 	char	*macro;
-    char	*def_val;
-    char	*new_val;
+	char	*def_val;
+	char	*new_val;
 };
 
 struct map_info_t
 {
 	char	Name[32];
-    char	song[12];
+	char	song[12];
 };
-
-void MarkWeaponState(int num);
 
 extern bool						Doom2;

@@ -2,7 +2,7 @@ ifndef VCC
 VCC=vcc
 endif
 
-all: shared.dat clprogs.dat svprogs.dat
+all: shared.dat svprogs.dat clprogs.dat
 
 del:
 	rm clprogs.dat svprogs.dat

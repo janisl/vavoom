@@ -440,7 +440,9 @@ static void FindString(char *oldStr, char *newStr)
 		if (!strcmp(sprnames[i], oldStr))
 		{
 //			printf("Sprite name, old \"%s\" new \"%s\"\n", oldStr, newStr);
-			strcpy(sprnames[i], newStr);
+			char* NewName = new char[8];
+			strcpy(NewName, newStr);
+			sprnames[i] = NewName;
 			return;
 		}
 	}
