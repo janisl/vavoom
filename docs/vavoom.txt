@@ -98,6 +98,7 @@ Compiler and tools:
 Libraries:
     * zlib
     * libpng
+    * libjpeg
     * Allegro 4.0 (http://alleg.sourceforge.net)
   or
     * SDL 1.2 (http://www.libsdl.org) and SDL_mixer 1.2
@@ -178,6 +179,7 @@ For DOS you need
   Libraries:
       * zlib
       * libpng
+      * libjpeg
       * Allegro 4.0 (http://alleg.sourceforge.net) and later.
       * OpenGL version: MESA (http://www.mesa3d.org) and Allegro driver for
     MESA (http://www.geocities.com/SiliconValley/7259/)
@@ -191,6 +193,7 @@ For Windows you need:
   Libraries:
       * zlib
       * libpng
+      * libjpeg
       * DirectX 7 SDK (http://www.microsoft.com/directx), already included
     in Builder but some headers needed by DirectMusic are missing. In Allegro
     website (http://alleg.sourceforge.net) you will find a minimal version of
@@ -203,8 +206,6 @@ For Windows you need:
       * mikmod (http://mikmod.raphnet.net/)
       * FLAC (http://flac.sourceforge.net/)
 
-  The Makefile-s are for DOS and LINUX, for Windows the makefiles are the files
-with extension .mak. For DOS there's also RHIDE project files.
   You can also compile with MSVC, you will find the workspace and project files
 in the 'msvc' subdirectory.
 
