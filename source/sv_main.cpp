@@ -417,6 +417,15 @@ void SV_WriteMobj(int bits, VEntity &mobj, VMessage &msg)
 		msg << (vuint16)mobj.State->NetId;
 	else if (bits & MOB_STATE)
 		msg << (vuint8)mobj.State->NetId;
+	int TimeFrac = 0;
+	if (mobj.StateTime < 0)
+		TimeFrac = 255;
+	else if (mobj.State->Time > 0)
+	{
+		TimeFrac = (int)(254.0 * mobj.StateTime / mobj.State->Time);
+		TimeFrac = MID(0, TimeFrac, 254);
+	}
+	msg << (vuint8)TimeFrac;
 	if (bits & MOB_X)
 		msg << (vuint16)mobj.Origin.x;
 	if (bits & MOB_Y)

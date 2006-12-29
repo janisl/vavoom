@@ -170,6 +170,11 @@ static void CL_ReadMobj(VMessage& msg, int bits, VEntity*& mobj, const clmobjbas
 	{
 		mobj->State = base.State;
 	}
+	vuint8 TimeFrac = msg.ReadByte();
+	if (TimeFrac == 255)
+		mobj->StateTime = -1;
+	else
+		mobj->StateTime = mobj->State->Time * TimeFrac / 254.0;
 	if (bits & MOB_X)
 		mobj->Origin.x = msg.ReadShort();
 	else
