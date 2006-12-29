@@ -519,50 +519,8 @@ basedir = $(datadir)/vavoom
 dist_base_DATA = vavoom.png
 
 # ---------------------------------------
-#
-#	Generation of asm files for Windows
-#
-# ---------------------------------------
-
-ASM_FILES = \
-	d_aclipa.asm \
-	d_aliasa.asm \
-	d_edgea.asm \
-	d_polysa.asm \
-	d_zspan.asm \
-	d_varsa.asm \
-	d8_part.asm \
-	d8_poly.asm \
-	d8_s16.asm \
-	d8_span.asm \
-	d8_spr.asm \
-	d8_surf.asm \
-	d16_part.asm \
-	d16_poly.asm \
-	d16_s16.asm \
-	d16_span.asm \
-	d16_spr.asm \
-	d16_surf.asm \
-	d32_part.asm \
-	d32_poly.asm \
-	d32_s16.asm \
-	d32_span.asm \
-	d32_spr.asm \
-	d32_surf.asm \
-	sys_i386.asm
-
-asm: $(ASM_FILES)
-
-%.asm : %.s asm_i386.h gas2tasm$(EXEEXT)
-	$(CC) -x assembler-with-cpp -E -P -DGAS2TASM -DASM_PREFIX=_ $< -o - | ./gas2tasm$(EXEEXT) > $@
-
-gas2tasm$(EXEEXT) : gas2tasm.c
-	$(CC) -O3 -ffast-math -fomit-frame-pointer -s -o $@ $<
-
-# ---------------------------------------
 
 EXTRA_DIST = \
-	$(ASM_FILES) \
 	gas2tasm.c \
 	gl_x.cpp \
 	template.cpp \
