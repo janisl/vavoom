@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HangingTorsoSkull:Decoration
+class HangingTorsoSkull : Decoration
 	__mobjinfo__(76);
 
 __states__
 {
-	S_HANGTSKULL('HDB4', 0, 'bodies/htskull.md2', 0, -1.0, none) { }
+	S_HANGTSKULL('HDB4', 0, 'bodies/htskull.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

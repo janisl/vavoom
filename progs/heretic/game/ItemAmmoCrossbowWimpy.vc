@@ -29,7 +29,7 @@ class ItemAmmoCrossbowWimpy : Ammo
 
 __states__
 {
-	S_AMC1('AMC1', 0, 'ammo/bow1.md2', 0, -1.0, none) { }
+	S_AMC1('AMC1', 0, 'ammo/bow1.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

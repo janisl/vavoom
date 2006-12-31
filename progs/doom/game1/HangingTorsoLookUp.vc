@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HangingTorsoLookUp:Decoration
+class HangingTorsoLookUp : Decoration
 	__mobjinfo__(77);
 
 __states__
 {
-	S_HANGTLOOKUP('HDB5', 0, 'bodies/htlookup.md2', 0, -1.0, none) { }
+	S_HANGTLOOKUP('HDB5', 0, 'bodies/htlookup.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

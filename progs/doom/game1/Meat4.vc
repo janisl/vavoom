@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class Meat4:Decoration
+class Meat4 : Decoration
 	__mobjinfo__(52);
 
 __states__
 {
-	S_MEAT4('GOR4', 0, 'bodies/legs.md2', 0, -1.0, none) { }
+	S_MEAT4('GOR4', 0, 'bodies/legs.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

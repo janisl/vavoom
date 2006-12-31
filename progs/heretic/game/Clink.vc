@@ -62,59 +62,24 @@ void A_ClinkAttack()
 
 __states__
 {
-	//	Idle
-	S_CLINK_LOOK1('CLNK', 0, 'monsters/clink/base.md2', 0, 0.1, S_CLINK_LOOK2) { A_Look(); }
-	S_CLINK_LOOK2('CLNK', 0, 'monsters/clink/base.md2', 1, 0.1, S_CLINK_LOOK3) { }
-	S_CLINK_LOOK3('CLNK', 1, 'monsters/clink/base.md2', 2, 0.1, S_CLINK_LOOK4) { A_Look(); }
-	S_CLINK_LOOK4('CLNK', 1, 'monsters/clink/base.md2', 3, 0.1, S_CLINK_LOOK5) { }
-	S_CLINK_LOOK5('CLNK', 0, 'monsters/clink/base.md2', 4, 0.1, S_CLINK_LOOK6) { A_Look(); }
-	S_CLINK_LOOK6('CLNK', 0, 'monsters/clink/base.md2', 5, 0.1, S_CLINK_LOOK7) { }
-	S_CLINK_LOOK7('CLNK', 1, 'monsters/clink/base.md2', 6, 0.1, S_CLINK_LOOK8) { A_Look(); }
-	S_CLINK_LOOK8('CLNK', 1, 'monsters/clink/base.md2', 7, 0.1, S_CLINK_LOOK1) { }
-	//	Running
-	S_CLINK_WALK1('CLNK', 0, 'monsters/clink/base.md2', 8, 0.1, S_CLINK_WALK2) { A_Chase(); }
-	S_CLINK_WALK2('CLNK', 1, 'monsters/clink/base.md2', 9, 0.1, S_CLINK_WALK3) { A_Chase(); }
-	S_CLINK_WALK3('CLNK', 2, 'monsters/clink/base.md2', 10, 0.1, S_CLINK_WALK4) { A_Chase(); }
-	S_CLINK_WALK4('CLNK', 3, 'monsters/clink/base.md2', 11, 0.1, S_CLINK_WALK5) { A_Chase(); }
-	S_CLINK_WALK5('CLNK', 0, 'monsters/clink/base.md2', 12, 0.1, S_CLINK_WALK6) { A_Chase(); }
-	S_CLINK_WALK6('CLNK', 1, 'monsters/clink/base.md2', 13, 0.1, S_CLINK_WALK7) { A_Chase(); }
-	S_CLINK_WALK7('CLNK', 2, 'monsters/clink/base.md2', 14, 0.1, S_CLINK_WALK8) { A_Chase(); }
-	S_CLINK_WALK8('CLNK', 3, 'monsters/clink/base.md2', 15, 0.1, S_CLINK_WALK9) { A_Chase(); }
-	S_CLINK_WALK9('CLNK', 0, 'monsters/clink/base.md2', 16, 0.1, S_CLINK_WALK10) { A_Chase(); }
-	S_CLINK_WALK10('CLNK', 1, 'monsters/clink/base.md2', 17, 0.1, S_CLINK_WALK11) { A_Chase(); }
-	S_CLINK_WALK11('CLNK', 2, 'monsters/clink/base.md2', 18, 0.1, S_CLINK_WALK12) { A_Chase(); }
-	S_CLINK_WALK12('CLNK', 3, 'monsters/clink/base.md2', 19, 0.1, S_CLINK_WALK13) { A_Chase(); }
-	S_CLINK_WALK13('CLNK', 0, 'monsters/clink/base.md2', 20, 0.1, S_CLINK_WALK14) { A_Chase(); }
-	S_CLINK_WALK14('CLNK', 1, 'monsters/clink/base.md2', 21, 0.1, S_CLINK_WALK15) { A_Chase(); }
-	S_CLINK_WALK15('CLNK', 2, 'monsters/clink/base.md2', 22, 0.1, S_CLINK_WALK16) { A_Chase(); }
-	S_CLINK_WALK16('CLNK', 3, 'monsters/clink/base.md2', 23, 0.1, S_CLINK_WALK1) { A_Chase(); }
-	//	Attack
-	S_CLINK_ATK1('CLNK', 4, 'monsters/clink/base.md2', 24, 0.05, S_CLINK_ATK2) { A_FaceTarget(); }
-	S_CLINK_ATK2('CLNK', 4, 'monsters/clink/base.md2', 25, 0.05, S_CLINK_ATK3) { }
-	S_CLINK_ATK3('CLNK', 4, 'monsters/clink/base.md2', 26, 0.05, S_CLINK_ATK4) { }
-	S_CLINK_ATK4('CLNK', 5, 'monsters/clink/base.md2', 27, 0.05, S_CLINK_ATK5) { A_FaceTarget(); }
-	S_CLINK_ATK5('CLNK', 5, 'monsters/clink/base.md2', 28, 0.05, S_CLINK_ATK6) { }
-	S_CLINK_ATK6('CLNK', 6, 'monsters/clink/base.md2', 29, 0.05, S_CLINK_ATK7) { A_ClinkAttack(); }
-	S_CLINK_ATK7('CLNK', 6, 'monsters/clink/base.md2', 30, 0.05, S_CLINK_ATK8) { }
-	S_CLINK_ATK8('CLNK', 6, 'monsters/clink/base.md2', 31, 0.1, S_CLINK_WALK1) { }
-	//	Pain
-	S_CLINK_PAIN1('CLNK', 7, 'monsters/clink/base.md2', 32, 0.1, S_CLINK_PAIN2) { }
-	S_CLINK_PAIN2('CLNK', 7, 'monsters/clink/base.md2', 33, 0.1, S_CLINK_WALK1) { A_Pain(); }
-	//	Death
-	S_CLINK_DIE1('CLNK', 8, 'monsters/clink/base.md2', 34, 0.1, S_CLINK_DIE2) { }
-	S_CLINK_DIE2('CLNK', 8, 'monsters/clink/base.md2', 35, 0.1, S_CLINK_DIE3) { }
-	S_CLINK_DIE3('CLNK', 9, 'monsters/clink/base.md2', 36, 0.1, S_CLINK_DIE4) { }
-	S_CLINK_DIE4('CLNK', 9, 'monsters/clink/base.md2', 37, 0.1, S_CLINK_DIE5) { }
-	S_CLINK_DIE5('CLNK', 10, 'monsters/clink/death.md2', 0, 0.1, S_CLINK_DIE6) { A_Scream(); }
-	S_CLINK_DIE6('CLNK', 10, 'monsters/clink/death.md2', 1, 0.1, S_CLINK_DIE7) { }
-	S_CLINK_DIE7('CLNK', 11, 'monsters/clink/death.md2', 2, 0.1, S_CLINK_DIE8) { A_NoBlocking(); }
-	S_CLINK_DIE8('CLNK', 11, 'monsters/clink/death.md2', 3, 0.1, S_CLINK_DIE9) { }
-	S_CLINK_DIE9('CLNK', 12, 'monsters/clink/death.md2', 4, 0.1, S_CLINK_DIE10) { }
-	S_CLINK_DIE10('CLNK', 12, 'monsters/clink/death.md2', 5, 0.1, S_CLINK_DIE11) { }
-	S_CLINK_DIE11('CLNK', 13, 'monsters/clink/death.md2', 6, 0.1, S_CLINK_DIE12) { }
-	S_CLINK_DIE12('CLNK', 13, 'monsters/clink/death.md2', 7, 0.1, S_CLINK_DIE13) { }
-	S_CLINK_DIE13('CLNK', 14, 'monsters/clink/death.md2', 8, 0.1, S_CLINK_DIE14) { }
-	S_CLINK_DIE14('CLNK', 14, 'monsters/clink/death.md2', 9, -1.0, none) { }
+	S_CLINK_LOOK1('CLNK', 0, 'monsters/clink/model.xml', 0, 10.0 / 35.0, S_CLINK_LOOK2) { A_Look(); }
+	S_CLINK_LOOK2('CLNK', 1, 'monsters/clink/model.xml', 1, 10.0 / 35.0, S_CLINK_LOOK1) { A_Look(); }
+	S_CLINK_WALK1('CLNK', 0, 'monsters/clink/model.xml', 2, 3.0 / 35.0, S_CLINK_WALK2) { A_Chase(); }
+	S_CLINK_WALK2('CLNK', 1, 'monsters/clink/model.xml', 3, 3.0 / 35.0, S_CLINK_WALK3) { A_Chase(); }
+	S_CLINK_WALK3('CLNK', 2, 'monsters/clink/model.xml', 4, 3.0 / 35.0, S_CLINK_WALK4) { A_Chase(); }
+	S_CLINK_WALK4('CLNK', 3, 'monsters/clink/model.xml', 5, 3.0 / 35.0, S_CLINK_WALK1) { A_Chase(); }
+	S_CLINK_ATK1('CLNK', 4, 'monsters/clink/model.xml', 6, 5.0 / 35.0, S_CLINK_ATK2) { A_FaceTarget(); }
+	S_CLINK_ATK2('CLNK', 5, 'monsters/clink/model.xml', 7, 4.0 / 35.0, S_CLINK_ATK3) { A_FaceTarget(); }
+	S_CLINK_ATK3('CLNK', 6, 'monsters/clink/model.xml', 8, 7.0 / 35.0, S_CLINK_WALK1) { A_ClinkAttack(); }
+	S_CLINK_PAIN1('CLNK', 7, 'monsters/clink/model.xml', 9, 3.0 / 35.0, S_CLINK_PAIN2) { }
+	S_CLINK_PAIN2('CLNK', 7, 'monsters/clink/model.xml', 10, 3.0 / 35.0, S_CLINK_WALK1) { A_Pain(); }
+	S_CLINK_DIE1('CLNK', 8, 'monsters/clink/model.xml', 11, 6.0 / 35.0, S_CLINK_DIE2) { }
+	S_CLINK_DIE2('CLNK', 9, 'monsters/clink/model.xml', 12, 6.0 / 35.0, S_CLINK_DIE3) { }
+	S_CLINK_DIE3('CLNK', 10, 'monsters/clink/model.xml', 13, 5.0 / 35.0, S_CLINK_DIE4) { A_Scream(); }
+	S_CLINK_DIE4('CLNK', 11, 'monsters/clink/model.xml', 14, 5.0 / 35.0, S_CLINK_DIE5) { A_NoBlocking(); }
+	S_CLINK_DIE5('CLNK', 12, 'monsters/clink/model.xml', 15, 5.0 / 35.0, S_CLINK_DIE6) { }
+	S_CLINK_DIE6('CLNK', 13, 'monsters/clink/model.xml', 16, 5.0 / 35.0, S_CLINK_DIE7) { }
+	S_CLINK_DIE7('CLNK', 14, 'monsters/clink/model.xml', 17, -1.0, none) { }
 }
 
 defaultproperties

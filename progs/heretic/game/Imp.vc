@@ -140,52 +140,33 @@ void A_ImpExplode()
 __states__
 {
 	//	Idle
-	S_IMP_LOOK1('IMPX', 0, 'monsters/gargoyle/base.md2', 0, 0.1, S_IMP_LOOK2) { A_Look(); }
-	S_IMP_LOOK2('IMPX', 0, 'monsters/gargoyle/base.md2', 1, 0.1, S_IMP_LOOK3) { }
-	S_IMP_LOOK3('IMPX', 0, 'monsters/gargoyle/base.md2', 2, 0.1, S_IMP_LOOK4) { }
-	S_IMP_LOOK4('IMPX', 1, 'monsters/gargoyle/base.md2', 3, 0.1, S_IMP_LOOK5) { A_Look(); }
-	S_IMP_LOOK5('IMPX', 1, 'monsters/gargoyle/base.md2', 4, 0.1, S_IMP_LOOK6) { }
-	S_IMP_LOOK6('IMPX', 1, 'monsters/gargoyle/base.md2', 5, 0.1, S_IMP_LOOK7) { }
-	S_IMP_LOOK7('IMPX', 2, 'monsters/gargoyle/base.md2', 6, 0.1, S_IMP_LOOK8) { A_Look(); }
-	S_IMP_LOOK8('IMPX', 2, 'monsters/gargoyle/base.md2', 7, 0.1, S_IMP_LOOK9) { }
-	S_IMP_LOOK9('IMPX', 2, 'monsters/gargoyle/base.md2', 8, 0.1, S_IMP_LOOK10) { }
-	S_IMP_LOOK10('IMPX', 1, 'monsters/gargoyle/base.md2', 9, 0.1, S_IMP_LOOK11) { A_Look(); }
-	S_IMP_LOOK11('IMPX', 1, 'monsters/gargoyle/base.md2', 10, 0.1, S_IMP_LOOK12) { }
-	S_IMP_LOOK12('IMPX', 1, 'monsters/gargoyle/base.md2', 11, 0.1, S_IMP_LOOK1) { }
+	S_IMP_LOOK1('IMPX', 0, 'monsters/gargoyle/model.xml', 0, 10.0 / 35.0, S_IMP_LOOK2) { A_Look(); }
+	S_IMP_LOOK2('IMPX', 1, 'monsters/gargoyle/model.xml', 1, 10.0 / 35.0, S_IMP_LOOK3) { A_Look(); }
+	S_IMP_LOOK3('IMPX', 2, 'monsters/gargoyle/model.xml', 2, 10.0 / 35.0, S_IMP_LOOK4) { A_Look(); }
+	S_IMP_LOOK4('IMPX', 1, 'monsters/gargoyle/model.xml', 3, 10.0 / 35.0, S_IMP_LOOK1) { A_Look(); }
 	//	Flying
-	S_IMP_FLY1('IMPX', 0, 'monsters/gargoyle/base.md2', 12, 0.1, S_IMP_FLY2) { A_Chase(); }
-	S_IMP_FLY2('IMPX', 0, 'monsters/gargoyle/base.md2', 13, 0.1, S_IMP_FLY3) { A_Chase(); }
-	S_IMP_FLY3('IMPX', 1, 'monsters/gargoyle/base.md2', 14, 0.1, S_IMP_FLY4) { A_Chase(); }
-	S_IMP_FLY4('IMPX', 1, 'monsters/gargoyle/base.md2', 15, 0.1, S_IMP_FLY5) { A_Chase(); }
-	S_IMP_FLY5('IMPX', 2, 'monsters/gargoyle/base.md2', 16, 0.1, S_IMP_FLY6) { A_Chase(); }
-	S_IMP_FLY6('IMPX', 2, 'monsters/gargoyle/base.md2', 17, 0.1, S_IMP_FLY7) { A_Chase(); }
-	S_IMP_FLY7('IMPX', 1, 'monsters/gargoyle/base.md2', 19, 0.1, S_IMP_FLY8) { A_Chase(); }
-	S_IMP_FLY8('IMPX', 1, 'monsters/gargoyle/base.md2', 19, 0.1, S_IMP_FLY1) { A_Chase(); }
+	S_IMP_FLY1('IMPX', 0, 'monsters/gargoyle/model.xml', 4, 3.0 /35.0, S_IMP_FLY2) { A_Chase(); }
+	S_IMP_FLY2('IMPX', 0, 'monsters/gargoyle/model.xml', 5, 3.0 /35.0, S_IMP_FLY3) { A_Chase(); }
+	S_IMP_FLY3('IMPX', 1, 'monsters/gargoyle/model.xml', 6, 3.0 /35.0, S_IMP_FLY4) { A_Chase(); }
+	S_IMP_FLY4('IMPX', 1, 'monsters/gargoyle/model.xml', 7, 3.0 /35.0, S_IMP_FLY5) { A_Chase(); }
+	S_IMP_FLY5('IMPX', 2, 'monsters/gargoyle/model.xml', 8, 3.0 /35.0, S_IMP_FLY6) { A_Chase(); }
+	S_IMP_FLY6('IMPX', 2, 'monsters/gargoyle/model.xml', 9, 3.0 /35.0, S_IMP_FLY7) { A_Chase(); }
+	S_IMP_FLY7('IMPX', 1, 'monsters/gargoyle/model.xml', 10, 3.0 /35.0, S_IMP_FLY8) { A_Chase(); }
+	S_IMP_FLY8('IMPX', 1, 'monsters/gargoyle/model.xml', 11, 3.0 /35.0, S_IMP_FLY1) { A_Chase(); }
 	//	Melee
-	S_IMP_MEATK1('IMPX', 3, 'monsters/gargoyle/base.md2', 20, 0.1, S_IMP_MEATK2) { A_FaceTarget(); }
-	S_IMP_MEATK2('IMPX', 3, 'monsters/gargoyle/base.md2', 21, 0.1, S_IMP_MEATK3) { }
-	S_IMP_MEATK3('IMPX', 4, 'monsters/gargoyle/base.md2', 22, 0.1, S_IMP_MEATK4) { A_FaceTarget(); }
-	S_IMP_MEATK4('IMPX', 4, 'monsters/gargoyle/base.md2', 23, 0.1, S_IMP_MEATK5) { }
-	S_IMP_MEATK5('IMPX', 5, 'monsters/gargoyle/base.md2', 24, 0.1, S_IMP_MEATK6) { A_ImpMeAttack(); }
-	S_IMP_MEATK6('IMPX', 5, 'monsters/gargoyle/base.md2', 25, 0.1, S_IMP_MEATK7) { }
-	S_IMP_MEATK7('IMPX', 5, 'monsters/gargoyle/base.md2', 26, 0.1, S_IMP_FLY1) { }
+	S_IMP_MEATK1('IMPX', 3, 'monsters/gargoyle/model.xml', 12, 6.0 /35.0, S_IMP_MEATK2) { A_FaceTarget(); }
+	S_IMP_MEATK2('IMPX', 4, 'monsters/gargoyle/model.xml', 13, 6.0 /35.0, S_IMP_MEATK3) { A_FaceTarget(); }
+	S_IMP_MEATK3('IMPX', 5, 'monsters/gargoyle/model.xml', 14, 3.0 /35.0, S_IMP_FLY1) { A_ImpMeAttack(); }
 	//	Skull-fly attack
-	S_IMP_MSATK1_1('IMPX', 0, 'monsters/gargoyle/base.md2', 12, 0.1, S_IMP_MSATK1_2) { A_FaceTarget(); }
-	S_IMP_MSATK1_2('IMPX', 0, 'monsters/gargoyle/base.md2', 13, 0.1, S_IMP_MSATK1_3) { }
-	S_IMP_MSATK1_3('IMPX', 0, 'monsters/gargoyle/base.md2', 14, 0.1, S_IMP_MSATK1_4) { }
-	S_IMP_MSATK1_4('IMPX', 1, 'monsters/gargoyle/base.md2', 15, 0.1, S_IMP_MSATK1_5) { A_ImpMsAttack(); }
-	S_IMP_MSATK1_5('IMPX', 1, 'monsters/gargoyle/base.md2', 16, 0.1, S_IMP_MSATK1_6) { }
-	S_IMP_MSATK1_6('IMPX', 2, 'monsters/gargoyle/base.md2', 17, 0.1, S_IMP_MSATK1_7) { }
-	S_IMP_MSATK1_7('IMPX', 2, 'monsters/gargoyle/base.md2', 18, 0.1, S_IMP_MSATK1_8) { }
-	S_IMP_MSATK1_8('IMPX', 1, 'monsters/gargoyle/base.md2', 19, 0.1, S_IMP_MSATK1_9) { }
-	S_IMP_MSATK1_9('IMPX', 1, 'monsters/gargoyle/base.md2', 12, 0.1, S_IMP_MSATK1_10) { }
-	S_IMP_MSATK1_10('IMPX', 0, 'monsters/gargoyle/base.md2', 13, 0.1, S_IMP_MSATK1_11) { }
-	S_IMP_MSATK1_11('IMPX', 0, 'monsters/gargoyle/base.md2', 14, 0.1, S_IMP_MSATK1_12) { }
-	S_IMP_MSATK1_12('IMPX', 1, 'monsters/gargoyle/base.md2', 15, 0.1, S_IMP_MSATK1_13) { }
-	S_IMP_MSATK1_13('IMPX', 1, 'monsters/gargoyle/base.md2', 16, 0.1, S_IMP_MSATK1_6) { }
+	S_IMP_MSATK1_1('IMPX', 0, 'monsters/gargoyle/model.xml', 18, 10.0 /35.0, S_IMP_MSATK1_2) { A_FaceTarget(); }
+	S_IMP_MSATK1_2('IMPX', 1, 'monsters/gargoyle/model.xml', 19, 6.0 /35.0, S_IMP_MSATK1_3) { A_ImpMsAttack(); }
+	S_IMP_MSATK1_3('IMPX', 2, 'monsters/gargoyle/model.xml', 20, 6.0 /35.0, S_IMP_MSATK1_4) { }
+	S_IMP_MSATK1_4('IMPX', 1, 'monsters/gargoyle/model.xml', 21, 6.0 /35.0, S_IMP_MSATK1_5) { }
+	S_IMP_MSATK1_5('IMPX', 0, 'monsters/gargoyle/model.xml', 22, 6.0 /35.0, S_IMP_MSATK1_6) { }
+	S_IMP_MSATK1_6('IMPX', 1, 'monsters/gargoyle/model.xml', 23, 6.0 /35.0, S_IMP_MSATK1_3) { }
 	//	Pain
-	S_IMP_PAIN1('IMPX', 6, 'monsters/gargoyle/base.md2', 33, 0.1, S_IMP_PAIN2) { }
-	S_IMP_PAIN2('IMPX', 6, 'monsters/gargoyle/base.md2', 34, 0.1, S_IMP_FLY1) { A_Pain(); }
+	S_IMP_PAIN1('IMPX', 6, 'monsters/gargoyle/model.xml', 24, 3.0 /35.0, S_IMP_PAIN2) { }
+	S_IMP_PAIN2('IMPX', 6, 'monsters/gargoyle/model.xml', 25, 3.0 /35.0, S_IMP_FLY1) { A_Pain(); }
 	//	Deaths, no models because it doesn't fit right.
 	S_IMP_DIE1('IMPX', 6, 4.0 / 35.0, S_IMP_DIE2) { A_ImpDeath(); }
 	S_IMP_DIE2('IMPX', 7, 5.0 / 35.0, S_IMP_DIE2) { }

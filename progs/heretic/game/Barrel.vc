@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class Barrel:Decoration
+class Barrel : Decoration
 	__mobjinfo__(44);
 
 __states__
 {
-	S_BARREL('BARL', 0, 'objects/barrel.md2', 0, -1.0, none) { }
+	S_BARREL('BARL', 0, 'objects/barrel.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

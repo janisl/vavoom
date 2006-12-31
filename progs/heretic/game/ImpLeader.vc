@@ -53,12 +53,9 @@ void A_ImpMsAttack2()
 __states__
 {
 	//	Missile attack
-	S_IMP_MSATK2_1('IMPX', 3, 'monsters/gargoyle/base.md2', 27, 0.1, S_IMP_MSATK2_2) { A_FaceTarget(); }
-	S_IMP_MSATK2_2('IMPX', 3, 'monsters/gargoyle/base.md2', 28, 0.1, S_IMP_MSATK2_3) { }
-	S_IMP_MSATK2_3('IMPX', 4, 'monsters/gargoyle/base.md2', 29, 0.1, S_IMP_MSATK2_4) { A_FaceTarget(); }
-	S_IMP_MSATK2_4('IMPX', 4, 'monsters/gargoyle/base.md2', 30, 0.1, S_IMP_MSATK2_5) { }
-	S_IMP_MSATK2_5('IMPX', 5, 'monsters/gargoyle/base.md2', 31, 0.1, S_IMP_MSATK2_6) { A_ImpMsAttack2(); }
-	S_IMP_MSATK2_6('IMPX', 5, 'monsters/gargoyle/base.md2', 32, 0.1, S_IMP_FLY1) { }
+	S_IMP_MSATK2_1('IMPX', 3, 'monsters/gargoyle/model.xml', 15, 6.0 /35.0, S_IMP_MSATK2_2) { A_FaceTarget(); }
+	S_IMP_MSATK2_2('IMPX', 4, 'monsters/gargoyle/model.xml', 16, 6.0 /35.0, S_IMP_MSATK2_3) { A_FaceTarget(); }
+	S_IMP_MSATK2_3('IMPX', 5, 'monsters/gargoyle/model.xml', 17, 6.0 /35.0, S_IMP_FLY1) { A_ImpMsAttack2(); }
 }
 
 defaultproperties

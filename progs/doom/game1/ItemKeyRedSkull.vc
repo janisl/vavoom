@@ -29,8 +29,8 @@ class ItemKeyRedSkull : KeyPickup
 
 __states__
 {
-	S_RSKULL('RSKU', 0, 'keys/redskul.md2', 0, 10.0 / 35.0, S_RSKULL2) { }
-	S_RSKULL2('RSKU', 1 | FF_FULLBRIGHT, 'keys/redskul.md2', 1, 10.0 / 35.0, S_RSKULL) { }
+	S_RSKULL('RSKU', 0, 'keys/redskul.xml', 0, 10.0 / 35.0, S_RSKULL2) { }
+	S_RSKULL2('RSKU', 1 | FF_FULLBRIGHT, 'keys/redskul.xml', 1, 10.0 / 35.0, S_RSKULL) { }
 }
 
 defaultproperties

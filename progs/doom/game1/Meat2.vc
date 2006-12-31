@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class Meat2:Decoration
+class Meat2 : Decoration
 	__mobjinfo__(50);
 
 __states__
 {
-	S_MEAT2('GOR2', 0, 'bodies/hangguy.md2', 0, -1.0, none) { }
+	S_MEAT2('GOR2', 0, 'bodies/hangguy.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

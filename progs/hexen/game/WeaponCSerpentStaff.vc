@@ -29,7 +29,7 @@ class WeaponCSerpentStaff : WeaponPickup
 
 __states__
 {
-	S_CSTAFF('WCSS', 0, 'weapons/g_staff.md2', 0, -1.0, none) { }
+	S_CSTAFF('WCSS', 0, 'weapons/cstaff/ground.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

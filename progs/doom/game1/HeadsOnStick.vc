@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HeadsOnStick:Decoration
+class HeadsOnStick : Decoration
 	__mobjinfo__(28);
 
 __states__
 {
-	S_HEADSONSTICK('POL2', 0, 'bodies/poleskls.md2', 0, -1.0, none) { }
+	S_HEADSONSTICK('POL2', 0, 'bodies/poleskls.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

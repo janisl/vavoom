@@ -29,10 +29,10 @@ class DeadPlayerGibs : Decoration
 
 __states__
 {
-	S_PLAY_GIBS('PLAY', 22, 'players/doomguy/xplode.md2', 8, -1.0, none) { }
+	S_DEADBOTTOM('PLAY', 22, 'players/doomguy/gibbed.xml', 0, -1.0, none) { }
 }
 
 defaultproperties
 {
-	IdleState = S_PLAY_GIBS;
+	IdleState = S_DEADBOTTOM;
 }

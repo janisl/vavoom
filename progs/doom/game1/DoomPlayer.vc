@@ -27,31 +27,31 @@ class DoomPlayer : PlayerPawn;
 
 __states__
 {
-	S_PLAY('PLAY', 0, 'players/doomguy/tris.md2', 0, -1.0, none) { }
-	S_PLAY_RUN1('PLAY', 0, 'players/doomguy/tris.md2', 1, 4.0 / 35.0, S_PLAY_RUN2) { }
-	S_PLAY_RUN2('PLAY', 1, 'players/doomguy/tris.md2', 2, 4.0 / 35.0, S_PLAY_RUN3) { }
-	S_PLAY_RUN3('PLAY', 2, 'players/doomguy/tris.md2', 3, 4.0 / 35.0, S_PLAY_RUN4) { }
-	S_PLAY_RUN4('PLAY', 3, 'players/doomguy/tris.md2', 4, 4.0 / 35.0, S_PLAY_RUN1) { }
-	S_PLAY_ATK1('PLAY', 4, 'players/doomguy/tris.md2', 5, 12.0 / 35.0, S_PLAY) { }
-	S_PLAY_ATK2('PLAY', 5 | FF_FULLBRIGHT, 'players/doomguy/tris.md2', 6, 6.0 / 35.0, S_PLAY_ATK1) { }
-	S_PLAY_PAIN('PLAY', 6, 'players/doomguy/tris.md2', 7, 4.0 / 35.0, S_PLAY_PAIN2) { }
-	S_PLAY_PAIN2('PLAY', 6, 'players/doomguy/tris.md2', 8, 4.0 / 35.0, S_PLAY) { A_Pain(); }
-	S_PLAY_DIE1('PLAY', 7, 'players/doomguy/tris.md2', 9, 10.0 / 35.0, S_PLAY_DIE2) { }
-	S_PLAY_DIE2('PLAY', 8, 'players/doomguy/tris.md2', 10, 10.0 / 35.0, S_PLAY_DIE3) { A_PlayerScream(); }
-	S_PLAY_DIE3('PLAY', 9, 'players/doomguy/tris.md2', 11, 10.0 / 35.0, S_PLAY_DIE4) { A_Fall(); }
-	S_PLAY_DIE4('PLAY', 10, 'players/doomguy/tris.md2', 12, 10.0 / 35.0, S_PLAY_DIE5) { }
-	S_PLAY_DIE5('PLAY', 11, 'players/doomguy/tris.md2', 13, 10.0 / 35.0, S_PLAY_DIE6) { }
-	S_PLAY_DIE6('PLAY', 12, 'players/doomguy/tris.md2', 14, 10.0 / 35.0, S_PLAY_DIE7) { }
-	S_PLAY_DIE7('PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, none) { }
-	S_PLAY_XDIE1('PLAY', 14, 'players/doomguy/xplode.md2', 0, 5.0 / 35.0, S_PLAY_XDIE2) { }
-	S_PLAY_XDIE2('PLAY', 15, 'players/doomguy/xplode.md2', 1, 5.0 / 35.0, S_PLAY_XDIE3) { A_XScream(); }
-	S_PLAY_XDIE3('PLAY', 16, 'players/doomguy/xplode.md2', 2, 5.0 / 35.0, S_PLAY_XDIE4) { A_Fall(); }
-	S_PLAY_XDIE4('PLAY', 17, 'players/doomguy/xplode.md2', 3, 5.0 / 35.0, S_PLAY_XDIE5) { }
-	S_PLAY_XDIE5('PLAY', 18, 'players/doomguy/xplode.md2', 4, 5.0 / 35.0, S_PLAY_XDIE6) { }
-	S_PLAY_XDIE6('PLAY', 19, 'players/doomguy/xplode.md2', 5, 5.0 / 35.0, S_PLAY_XDIE7) { }
-	S_PLAY_XDIE7('PLAY', 20, 'players/doomguy/xplode.md2', 6, 5.0 / 35.0, S_PLAY_XDIE8) { }
-	S_PLAY_XDIE8('PLAY', 21, 'players/doomguy/xplode.md2', 7, 5.0 / 35.0, S_PLAY_XDIE9) { }
-	S_PLAY_XDIE9('PLAY', 22, 'players/doomguy/xplode.md2', 8, -1.0, none) { }
+	S_PLAY('PLAY', 0, 'players/doomguy/player.xml', 0, -1.0, none) { }
+	S_PLAY_RUN1('PLAY', 0, 'players/doomguy/player.xml', 1, 4.0 / 35.0, S_PLAY_RUN2) { }
+	S_PLAY_RUN2('PLAY', 1, 'players/doomguy/player.xml', 2, 4.0 / 35.0, S_PLAY_RUN3) { }
+	S_PLAY_RUN3('PLAY', 2, 'players/doomguy/player.xml', 3, 4.0 / 35.0, S_PLAY_RUN4) { }
+	S_PLAY_RUN4('PLAY', 3, 'players/doomguy/player.xml', 4, 4.0 / 35.0, S_PLAY_RUN1) { }
+	S_PLAY_ATK1('PLAY', 4, 'players/doomguy/player.xml', 5, 12.0 / 35.0, S_PLAY) { }
+	S_PLAY_ATK2('PLAY', 5 | FF_FULLBRIGHT, 'players/doomguy/player.xml', 6, 6.0 / 35.0, S_PLAY_ATK1) { }
+	S_PLAY_PAIN('PLAY', 6, 'players/doomguy/player.xml', 7, 4.0 / 35.0, S_PLAY_PAIN2) { }
+	S_PLAY_PAIN2('PLAY', 6, 'players/doomguy/player.xml', 8, 4.0 / 35.0, S_PLAY) { A_Pain(); }
+	S_PLAY_DIE1('PLAY', 7, 'players/doomguy/player.xml', 9, 10.0 / 35.0, S_PLAY_DIE2) { }
+	S_PLAY_DIE2('PLAY', 8, 'players/doomguy/player.xml', 10, 10.0 / 35.0, S_PLAY_DIE3) { A_PlayerScream(); }
+	S_PLAY_DIE3('PLAY', 9, 'players/doomguy/player.xml', 11, 10.0 / 35.0, S_PLAY_DIE4) { A_Fall(); }
+	S_PLAY_DIE4('PLAY', 10, 'players/doomguy/player.xml', 12, 10.0 / 35.0, S_PLAY_DIE5) { }
+	S_PLAY_DIE5('PLAY', 11, 'players/doomguy/player.xml', 13, 10.0 / 35.0, S_PLAY_DIE6) { }
+	S_PLAY_DIE6('PLAY', 12, 'players/doomguy/player.xml', 14, 10.0 / 35.0, S_PLAY_DIE7) { }
+	S_PLAY_DIE7('PLAY', 13, 'players/doomguy/player.xml', 15, -1.0, none) { }
+	S_PLAY_XDIE1('PLAY', 14, 'players/doomguy/player.xml', 16, 5.0 / 35.0, S_PLAY_XDIE2) { }
+	S_PLAY_XDIE2('PLAY', 15, 'players/doomguy/player.xml', 17, 5.0 / 35.0, S_PLAY_XDIE3) { A_XScream(); }
+	S_PLAY_XDIE3('PLAY', 16, 'players/doomguy/player.xml', 18, 5.0 / 35.0, S_PLAY_XDIE4) { A_Fall(); }
+	S_PLAY_XDIE4('PLAY', 17, 'players/doomguy/player.xml', 19, 5.0 / 35.0, S_PLAY_XDIE5) { }
+	S_PLAY_XDIE5('PLAY', 18, 'players/doomguy/player.xml', 20, 5.0 / 35.0, S_PLAY_XDIE6) { }
+	S_PLAY_XDIE6('PLAY', 19, 'players/doomguy/player.xml', 21, 5.0 / 35.0, S_PLAY_XDIE7) { }
+	S_PLAY_XDIE7('PLAY', 20, 'players/doomguy/player.xml', 22, 5.0 / 35.0, S_PLAY_XDIE8) { }
+	S_PLAY_XDIE8('PLAY', 21, 'players/doomguy/player.xml', 23, 5.0 / 35.0, S_PLAY_XDIE9) { }
+	S_PLAY_XDIE9('PLAY', 22, 'players/doomguy/player.xml', 24, -1.0, none) { }
 }
 
 defaultproperties

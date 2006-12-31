@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HangingNoBrain:Decoration
+class HangingNoBrain : Decoration
 	__mobjinfo__(74);
 
 __states__
 {
-	S_HANGBNOBRAIN('HDB2', 0, 'bodies/hnobrain.md2', 0, -1.0, none) { }
+	S_HANGBNOBRAIN('HDB2', 0, 'bodies/hnobrain.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -45,13 +45,13 @@ void A_CheckFloor()
 
 __states__
 {
-	S_ETTIN_MACE1('ETTB', 12, 'monsters/ettin/mace.md2', 0, 5.0 / 35.0, S_ETTIN_MACE2) { A_CheckFloor(); }
-	S_ETTIN_MACE2('ETTB', 13, 'monsters/ettin/mace.md2', 1, 5.0 / 35.0, S_ETTIN_MACE3) { A_CheckFloor(); }
-	S_ETTIN_MACE3('ETTB', 14, 'monsters/ettin/mace.md2', 2, 5.0 / 35.0, S_ETTIN_MACE4) { A_CheckFloor(); }
-	S_ETTIN_MACE4('ETTB', 15, 'monsters/ettin/mace.md2', 3, 5.0 / 35.0, S_ETTIN_MACE1) { A_CheckFloor(); }
-	S_ETTIN_MACE5('ETTB', 16, 'monsters/ettin/mace.md2', 4, 5.0 / 35.0, S_ETTIN_MACE6) { }
-	S_ETTIN_MACE6('ETTB', 17, 'monsters/ettin/mace.md2', 5, 5.0 / 35.0, S_ETTIN_MACE7) { A_QueueCorpse(); }
-	S_ETTIN_MACE7('ETTB', 18, 'monsters/ettin/mace.md2', 6, -1.0, none) { }
+	S_ETTIN_MACE1('ETTB', 12, 'monsters/ettin/mace.xml', 0, 5.0 / 35.0, S_ETTIN_MACE2) { A_CheckFloor(); }
+	S_ETTIN_MACE2('ETTB', 13, 'monsters/ettin/mace.xml', 1, 5.0 / 35.0, S_ETTIN_MACE3) { A_CheckFloor(); }
+	S_ETTIN_MACE3('ETTB', 14, 'monsters/ettin/mace.xml', 2, 5.0 / 35.0, S_ETTIN_MACE4) { A_CheckFloor(); }
+	S_ETTIN_MACE4('ETTB', 15, 'monsters/ettin/mace.xml', 3, 5.0 / 35.0, S_ETTIN_MACE1) { A_CheckFloor(); }
+	S_ETTIN_MACE5('ETTB', 16, 'monsters/ettin/mace.xml', 4, 5.0 / 35.0, S_ETTIN_MACE6) { }
+	S_ETTIN_MACE6('ETTB', 17, 'monsters/ettin/mace.xml', 5, 5.0 / 35.0, S_ETTIN_MACE7) { A_QueueCorpse(); }
+	S_ETTIN_MACE7('ETTB', 18, 'monsters/ettin/mace.xml', 6, -1.0, none) { }
 }
 
 defaultproperties

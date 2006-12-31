@@ -28,7 +28,7 @@ class SmallPillar : Decoration
 
 __states__
 {
-	S_SMALLPILLAR('SMPL', 0, 'objects/plrsmall.md2', 0, -1.0, none) { }
+	S_SMALLPILLAR('SMPL', 0, 'objects/plrsmall.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ColumnWithSkull:Decoration
+class ColumnWithSkull : Decoration
 	__mobjinfo__(37);
 
 __states__
 {
-	S_SKULLCOL('COL6', 0, 'objects/pillarsk.md2', 0, -1.0, none) { }
+	S_SKULLCOL('COL6', 0, 'objects/pillarsk.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

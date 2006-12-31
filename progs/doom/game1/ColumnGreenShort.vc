@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ColumnGreenShort:Decoration
+class ColumnGreenShort : Decoration
 	__mobjinfo__(31);
 
 __states__
 {
-	S_SHRTGRNCOL('COL2', 0, 'objects/pillargs.md2', 0, -1.0, none) { }
+	S_SHRTGRNCOL('COL2', 0, 'objects/pillargs.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

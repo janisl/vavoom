@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class DeadDemon:Decoration
+class DeadDemon : Decoration
 	__mobjinfo__(21);
 
 __states__
 {
-	S_SARG_DEAD('SARG', 13, 'monsters/demon/death.md2', 5, -1.0, none) { }
+	S_SARG_DEAD('SARG', 13, 'monsters/demon/model.xml', 20, -1.0, none) { }
 }
 
 defaultproperties

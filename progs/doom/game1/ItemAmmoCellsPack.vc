@@ -29,7 +29,7 @@ class ItemAmmoCellsPack : AmmoPickup
 
 __states__
 {
-	S_CELP('CELP', 0, 'ammo/bigcells.md2', 0, -1.0, none) { }
+	S_CELP('CELP', 0, 'ammo/bigcells.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HeadOnAStick:Decoration
+class HeadOnAStick : Decoration
 	__mobjinfo__(27);
 
 __states__
 {
-	S_HEADONASTICK('POL4', 0, 'bodies/poleskul.md2', 0, -1.0, none) { }
+	S_HEADONASTICK('POL4', 0, 'bodies/poleskul.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

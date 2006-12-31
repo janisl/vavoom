@@ -35,8 +35,8 @@ void OnMapSpawn(mthing_t* mthing)
 
 __states__
 {
-	S_RBALL1('BAL2', 0 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 0, 4.0 / 35.0, S_RBALL2) { }
-	S_RBALL2('BAL2', 1 | FF_FULLBRIGHT, 'missiles/cacoball.md2', 1, 4.0 / 35.0, S_RBALL1) { }
+	S_RBALL1('BAL2', 0 | FF_FULLBRIGHT, 'missiles/cacoball.xml', 0, 4.0 / 35.0, S_RBALL2) { }
+	S_RBALL2('BAL2', 1 | FF_FULLBRIGHT, 'missiles/cacoball.xml', 1, 4.0 / 35.0, S_RBALL1) { }
 	S_RBALLX1('BAL2', 2 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX2) { }
 	S_RBALLX2('BAL2', 3 | FF_FULLBRIGHT, 6.0 / 35.0, S_RBALLX3) { }
 	S_RBALLX3('BAL2', 4 | FF_FULLBRIGHT, 6.0 / 35.0, none) { }

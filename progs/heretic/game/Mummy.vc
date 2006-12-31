@@ -76,40 +76,25 @@ void A_MummySoul()
 
 __states__
 {
-	S_MUMMY_LOOK1('MUMM', 0, 'monsters/mummy/base.md2', 0, 2.5 / 35.0, S_MUMMY_LOOK2) { A_Look(); }
-	S_MUMMY_LOOK2('MUMM', 0, 'monsters/mummy/base.md2', 1, 2.5 / 35.0, S_MUMMY_LOOK3) { }
-	S_MUMMY_LOOK3('MUMM', 0, 'monsters/mummy/base.md2', 2, 2.5 / 35.0, S_MUMMY_LOOK4) { }
-	S_MUMMY_LOOK4('MUMM', 0, 'monsters/mummy/base.md2', 3, 2.5 / 35.0, S_MUMMY_LOOK5) { }
-	S_MUMMY_LOOK5('MUMM', 1, 'monsters/mummy/base.md2', 4, 2.5 / 35.0, S_MUMMY_LOOK6) { A_Look(); }
-	S_MUMMY_LOOK6('MUMM', 1, 'monsters/mummy/base.md2', 5, 2.5 / 35.0, S_MUMMY_LOOK7) { }
-	S_MUMMY_LOOK7('MUMM', 1, 'monsters/mummy/base.md2', 6, 2.5 / 35.0, S_MUMMY_LOOK8) { }
-	S_MUMMY_LOOK8('MUMM', 1, 'monsters/mummy/base.md2', 7, 2.5 / 35.0, S_MUMMY_LOOK1) { }
-	S_MUMMY_WALK1('MUMM', 0, 'monsters/mummy/base.md2', 8, 2.0 / 35.0, S_MUMMY_WALK2) { A_Chase(); }
-	S_MUMMY_WALK2('MUMM', 0, 'monsters/mummy/base.md2', 9, 2.0 / 35.0, S_MUMMY_WALK3) { }
-	S_MUMMY_WALK3('MUMM', 1, 'monsters/mummy/base.md2', 10, 2.0 / 35.0, S_MUMMY_WALK4) { A_Chase(); }
-	S_MUMMY_WALK4('MUMM', 1, 'monsters/mummy/base.md2', 11, 2.0 / 35.0, S_MUMMY_WALK5) { }
-	S_MUMMY_WALK5('MUMM', 2, 'monsters/mummy/base.md2', 12, 2.0 / 35.0, S_MUMMY_WALK6) { A_Chase(); }
-	S_MUMMY_WALK6('MUMM', 2, 'monsters/mummy/base.md2', 13, 2.0 / 35.0, S_MUMMY_WALK7) { }
-	S_MUMMY_WALK7('MUMM', 3, 'monsters/mummy/base.md2', 14, 2.0 / 35.0, S_MUMMY_WALK8) { A_Chase(); }
-	S_MUMMY_WALK8('MUMM', 3, 'monsters/mummy/base.md2', 15, 2.0 / 35.0, S_MUMMY_WALK1) { }
-	S_MUMMY_ATK1('MUMM', 4, 'monsters/mummy/base.md2', 16, 2.0 / 35.0, S_MUMMY_ATK2) { A_FaceTarget(); }
-	S_MUMMY_ATK2('MUMM', 4, 'monsters/mummy/base.md2', 17, 2.0 / 35.0, S_MUMMY_ATK3) { }
-	S_MUMMY_ATK3('MUMM', 4, 'monsters/mummy/base.md2', 18, 2.0 / 35.0, S_MUMMY_ATK4) { }
-	S_MUMMY_ATK4('MUMM', 5, 'monsters/mummy/base.md2', 19, 2.0 / 35.0, S_MUMMY_ATK5) { A_MummyAttack(); }
-	S_MUMMY_ATK5('MUMM', 5, 'monsters/mummy/base.md2', 20, 2.0 / 35.0, S_MUMMY_ATK6) { }
-	S_MUMMY_ATK6('MUMM', 5, 'monsters/mummy/base.md2', 21, 2.0 / 35.0, S_MUMMY_ATK7) { }
-	S_MUMMY_ATK7('MUMM', 6, 'monsters/mummy/base.md2', 22, 3.0 / 35.0, S_MUMMY_ATK8) { A_FaceTarget(); }
-	S_MUMMY_ATK8('MUMM', 6, 'monsters/mummy/base.md2', 23, 3.0 / 35.0, S_MUMMY_WALK1) { }
-	S_MUMMY_PAIN1('MUMM', 7, 'monsters/mummy/base.md2', 32, 4.0 / 35.0, S_MUMMY_PAIN2) { }
-	S_MUMMY_PAIN2('MUMM', 7, 'monsters/mummy/base.md2', 33, 4.0 / 35.0, S_MUMMY_WALK1) { A_Pain(); }
-	S_MUMMY_DIE1('MUMM', 8, 'monsters/mummy/death.md2', 0, 5.0 / 35.0, S_MUMMY_DIE2) { }
-	S_MUMMY_DIE2('MUMM', 9, 'monsters/mummy/death.md2', 1, 5.0 / 35.0, S_MUMMY_DIE3) { A_Scream(); }
-	S_MUMMY_DIE3('MUMM', 10, 'monsters/mummy/death.md2', 2, 5.0 / 35.0, S_MUMMY_DIE4) { A_MummySoul(); }
-	S_MUMMY_DIE4('MUMM', 11, 'monsters/mummy/death.md2', 3, 5.0 / 35.0, S_MUMMY_DIE5) { }
-	S_MUMMY_DIE5('MUMM', 12, 'monsters/mummy/death.md2', 4, 5.0 / 35.0, S_MUMMY_DIE6) { A_NoBlocking(); }
-	S_MUMMY_DIE6('MUMM', 13, 'monsters/mummy/death.md2', 5, 5.0 / 35.0, S_MUMMY_DIE7) { }
-	S_MUMMY_DIE7('MUMM', 14, 'monsters/mummy/death.md2', 6, 5.0 / 35.0, S_MUMMY_DIE8) { }
-	S_MUMMY_DIE8('MUMM', 15, 'monsters/mummy/death.md2', 7, -1.0, none) { }
+	S_MUMMY_LOOK1('MUMM', 0, 'monsters/mummy/model.xml', 0, 10.0 / 35.0, S_MUMMY_LOOK2) { A_Look(); }
+	S_MUMMY_LOOK2('MUMM', 1, 'monsters/mummy/model.xml', 1, 10.0 / 35.0, S_MUMMY_LOOK1) { A_Look(); }
+	S_MUMMY_WALK1('MUMM', 0, 'monsters/mummy/model.xml', 2, 4.0 / 35.0, S_MUMMY_WALK2) { A_Chase(); }
+	S_MUMMY_WALK2('MUMM', 1, 'monsters/mummy/model.xml', 3, 4.0 / 35.0, S_MUMMY_WALK3) { A_Chase(); }
+	S_MUMMY_WALK3('MUMM', 2, 'monsters/mummy/model.xml', 4, 4.0 / 35.0, S_MUMMY_WALK4) { A_Chase(); }
+	S_MUMMY_WALK4('MUMM', 3, 'monsters/mummy/model.xml', 5, 4.0 / 35.0, S_MUMMY_WALK1) { A_Chase(); }
+	S_MUMMY_ATK1('MUMM', 4, 'monsters/mummy/model.xml', 6, 6.0 / 35.0, S_MUMMY_ATK2) { A_FaceTarget(); }
+	S_MUMMY_ATK2('MUMM', 5, 'monsters/mummy/model.xml', 7, 6.0 / 35.0, S_MUMMY_ATK3) { A_MummyAttack(); }
+	S_MUMMY_ATK3('MUMM', 6, 'monsters/mummy/model.xml', 8, 6.0 / 35.0, S_MUMMY_WALK1) { A_FaceTarget(); }
+	S_MUMMY_PAIN1('MUMM', 7, 'monsters/mummy/model.xml', 15, 4.0 / 35.0, S_MUMMY_PAIN2) { }
+	S_MUMMY_PAIN2('MUMM', 7, 'monsters/mummy/model.xml', 16, 4.0 / 35.0, S_MUMMY_WALK1) { A_Pain(); }
+	S_MUMMY_DIE1('MUMM', 8, 'monsters/mummy/model.xml', 17, 5.0 / 35.0, S_MUMMY_DIE2) { }
+	S_MUMMY_DIE2('MUMM', 9, 'monsters/mummy/model.xml', 18, 5.0 / 35.0, S_MUMMY_DIE3) { A_Scream(); }
+	S_MUMMY_DIE3('MUMM', 10, 'monsters/mummy/model.xml', 19, 5.0 / 35.0, S_MUMMY_DIE4) { A_MummySoul(); }
+	S_MUMMY_DIE4('MUMM', 11, 'monsters/mummy/model.xml', 20, 5.0 / 35.0, S_MUMMY_DIE5) { }
+	S_MUMMY_DIE5('MUMM', 12, 'monsters/mummy/model.xml', 21, 5.0 / 35.0, S_MUMMY_DIE6) { A_NoBlocking(); }
+	S_MUMMY_DIE6('MUMM', 13, 'monsters/mummy/model.xml', 22, 5.0 / 35.0, S_MUMMY_DIE7) { }
+	S_MUMMY_DIE7('MUMM', 14, 'monsters/mummy/model.xml', 23, 5.0 / 35.0, S_MUMMY_DIE8) { }
+	S_MUMMY_DIE8('MUMM', 15, 'monsters/mummy/model.xml', 24, -1.0, none) { }
 }
 
 defaultproperties

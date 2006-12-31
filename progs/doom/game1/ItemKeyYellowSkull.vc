@@ -29,8 +29,8 @@ class ItemKeyYellowSkull : KeyPickup
 
 __states__
 {
-	S_YSKULL('YSKU', 0, 'keys/yelskul.md2', 0, 10.0 / 35.0, S_YSKULL2) { }
-	S_YSKULL2('YSKU', 1 | FF_FULLBRIGHT, 'keys/yelskul.md2', 1, 10.0 / 35.0, S_YSKULL) { }
+	S_YSKULL('YSKU', 0, 'keys/yelskul.xml', 0, 10.0 / 35.0, S_YSKULL2) { }
+	S_YSKULL2('YSKU', 1 | FF_FULLBRIGHT, 'keys/yelskul.xml', 1, 10.0 / 35.0, S_YSKULL) { }
 }
 
 defaultproperties

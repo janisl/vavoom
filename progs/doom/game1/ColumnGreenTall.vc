@@ -28,7 +28,7 @@ class ColumnGreenTall:Decoration
 
 __states__
 {
-	S_TALLGRNCOL('COL1', 0, 'objects/pillargt.md2', 0, -1.0, none) { }
+	S_TALLGRNCOL('COL1', 0, 'objects/pillargt.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

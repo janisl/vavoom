@@ -34,10 +34,10 @@ void Tick(float DeltaTime)
 
 __states__
 {
-	S_GREENTORCH('TGRN', 0 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 0, 4.0 / 35.0, S_GREENTORCH2) { }
-	S_GREENTORCH2('TGRN', 1 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 1, 4.0 / 35.0, S_GREENTORCH3) { }
-	S_GREENTORCH3('TGRN', 2 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 2, 4.0 / 35.0, S_GREENTORCH4) { }
-	S_GREENTORCH4('TGRN', 3 | FF_FULLBRIGHT, 'lights/torchgrn.md2', 3, 4.0 / 35.0, S_GREENTORCH) { }
+	S_GREENTORCH('TGRN', 0 | FF_FULLBRIGHT, 'lights/torchgrn.xml', 0, 4.0 / 35.0, S_GREENTORCH2) { }
+	S_GREENTORCH2('TGRN', 1 | FF_FULLBRIGHT, 'lights/torchgrn.xml', 1, 4.0 / 35.0, S_GREENTORCH3) { }
+	S_GREENTORCH3('TGRN', 2 | FF_FULLBRIGHT, 'lights/torchgrn.xml', 2, 4.0 / 35.0, S_GREENTORCH4) { }
+	S_GREENTORCH4('TGRN', 3 | FF_FULLBRIGHT, 'lights/torchgrn.xml', 3, 4.0 / 35.0, S_GREENTORCH) { }
 }
 
 defaultproperties

@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class Stalagtite:Decoration
+class Stalagtite : Decoration
 	__mobjinfo__(47);
 
 __states__
 {
-	S_STALAGTITE('SMIT', 0, 'objects/stub.md2', 0, -1.0, none) { }
+	S_STALAGTITE('SMIT', 0, 'objects/stub.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

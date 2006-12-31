@@ -28,7 +28,7 @@ class ZTombStoneSmallCross : Decoration
 
 __states__
 {
-	S_ZTOMBSTONESMALLCROSS1('TMS6', 0, 'objects/tomb6.md2', 0, -1.0, none) { }
+	S_ZTOMBSTONESMALLCROSS1('TMS6', 0, 'objects/tomb6.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

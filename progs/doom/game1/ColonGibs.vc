@@ -29,7 +29,7 @@ class ColonGibs : Decoration
 
 __states__
 {
-	S_COLONGIBS('POB1', 0, 'gibs/blood.md2', 0, -1.0, none) { }
+	S_COLONGIBS('POB1', 0, 'gibs/blood.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

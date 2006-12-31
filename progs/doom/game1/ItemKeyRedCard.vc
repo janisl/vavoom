@@ -29,8 +29,8 @@ class ItemKeyRedCard : KeyPickup
 
 __states__
 {
-	S_RKEY('RKEY', 0, 'keys/redcard.md2', 0, 10.0 / 35.0, S_RKEY2) { }
-	S_RKEY2('RKEY', 1 | FF_FULLBRIGHT, 'keys/redcard.md2', 1, 10.0 / 35.0, S_RKEY) { }
+	S_RKEY('RKEY', 0, 'keys/redcard.xml', 0, 10.0 / 35.0, S_RKEY2) { }
+	S_RKEY2('RKEY', 1 | FF_FULLBRIGHT, 'keys/redcard.xml', 1, 10.0 / 35.0, S_RKEY) { }
 }
 
 defaultproperties

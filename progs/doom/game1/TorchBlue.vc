@@ -34,10 +34,10 @@ void Tick(float DeltaTime)
 
 __states__
 {
-	S_BLUETORCH('TBLU', 0 | FF_FULLBRIGHT, 'lights/torchblu.md2', 0, 4.0 / 35.0, S_BLUETORCH2) { }
-	S_BLUETORCH2('TBLU', 1 | FF_FULLBRIGHT, 'lights/torchblu.md2', 1, 4.0 / 35.0, S_BLUETORCH3) { }
-	S_BLUETORCH3('TBLU', 2 | FF_FULLBRIGHT, 'lights/torchblu.md2', 2, 4.0 / 35.0, S_BLUETORCH4) { }
-	S_BLUETORCH4('TBLU', 3 | FF_FULLBRIGHT, 'lights/torchblu.md2', 3, 4.0 / 35.0, S_BLUETORCH) { }
+	S_BLUETORCH('TBLU', 0 | FF_FULLBRIGHT, 'lights/torchblu.xml', 0, 4.0 / 35.0, S_BLUETORCH2) { }
+	S_BLUETORCH2('TBLU', 1 | FF_FULLBRIGHT, 'lights/torchblu.xml', 1, 4.0 / 35.0, S_BLUETORCH3) { }
+	S_BLUETORCH3('TBLU', 2 | FF_FULLBRIGHT, 'lights/torchblu.xml', 2, 4.0 / 35.0, S_BLUETORCH4) { }
+	S_BLUETORCH4('TBLU', 3 | FF_FULLBRIGHT, 'lights/torchblu.xml', 3, 4.0 / 35.0, S_BLUETORCH) { }
 }
 
 defaultproperties

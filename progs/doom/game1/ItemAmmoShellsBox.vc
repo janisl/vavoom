@@ -29,7 +29,7 @@ class ItemAmmoShellsBox : AmmoPickup
 
 __states__
 {
-	S_SBOX('SBOX', 0, 'ammo/shellbox.md2', 0, -1.0, none) { }
+	S_SBOX('SBOX', 0, 'ammo/shellbox.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

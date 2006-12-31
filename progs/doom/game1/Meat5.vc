@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class Meat5:Decoration
+class Meat5 : Decoration
 	__mobjinfo__(53);
 
 __states__
 {
-	S_MEAT5('GOR5', 0, 'bodies/leg.md2', 0, -1.0, none) { }
+	S_MEAT5('GOR5', 0, 'bodies/leg.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

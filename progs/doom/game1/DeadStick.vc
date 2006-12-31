@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class DeadStick:Decoration
+class DeadStick : Decoration
 	__mobjinfo__(25);
 
 __states__
 {
-	S_DEADSTICK('POL1', 0, 'bodies/onstick1.md2', 0, -1.0, none) { }
+	S_DEADSTICK('POL1', 0, 'bodies/onstick1.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

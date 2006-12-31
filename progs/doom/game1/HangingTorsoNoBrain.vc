@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HangingTorsoNoBrain:Decoration
+class HangingTorsoNoBrain : Decoration
 	__mobjinfo__(78);
 
 __states__
 {
-	S_HANGTNOBRAIN('HDB6', 0, 'bodies/htnobrn.md2', 0, -1.0, none) { }
+	S_HANGTNOBRAIN('HDB6', 0, 'bodies/htnobrn.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

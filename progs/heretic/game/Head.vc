@@ -133,12 +133,12 @@ void A_BossDeath()
 
 __states__
 {
-	S_HEAD_LOOK('HEAD', 0, 'monsters/head/base.md2', 0, 10.0 / 35.0, S_HEAD_LOOK) { A_Look(); }
-	S_HEAD_FLOAT('HEAD', 0, 'monsters/head/base.md2', 0, 4.0 / 35.0, S_HEAD_FLOAT) { A_Chase(); }
-	S_HEAD_ATK1('HEAD', 0, 'monsters/head/base.md2', 1, 5.0 / 35.0, S_HEAD_ATK2) { A_FaceTarget(); }
-	S_HEAD_ATK2('HEAD', 1, 'monsters/head/base.md2', 2, 20.0 / 35.0, S_HEAD_FLOAT) { A_HeadAttack(); }
-	S_HEAD_PAIN1('HEAD', 0, 'monsters/head/base.md2', 3, 4.0 / 35.0, S_HEAD_PAIN2) { }
-	S_HEAD_PAIN2('HEAD', 0, 'monsters/head/base.md2', 4, 4.0 / 35.0, S_HEAD_FLOAT) { A_Pain(); }
+	S_HEAD_LOOK('HEAD', 0, 'monsters/head/model.xml', 0, 10.0 / 35.0, S_HEAD_LOOK) { A_Look(); }
+	S_HEAD_FLOAT('HEAD', 0, 'monsters/head/model.xml', 1, 4.0 / 35.0, S_HEAD_FLOAT) { A_Chase(); }
+	S_HEAD_ATK1('HEAD', 0, 'monsters/head/model.xml', 2, 5.0 / 35.0, S_HEAD_ATK2) { A_FaceTarget(); }
+	S_HEAD_ATK2('HEAD', 1, 'monsters/head/model.xml', 3, 20.0 / 35.0, S_HEAD_FLOAT) { A_HeadAttack(); }
+	S_HEAD_PAIN1('HEAD', 0, 'monsters/head/model.xml', 4, 4.0 / 35.0, S_HEAD_PAIN2) { }
+	S_HEAD_PAIN2('HEAD', 0, 'monsters/head/model.xml', 5, 4.0 / 35.0, S_HEAD_FLOAT) { A_Pain(); }
 	S_HEAD_DIE1('HEAD', 2, 7.0 / 35.0, S_HEAD_DIE2) { }
 	S_HEAD_DIE2('HEAD', 3, 7.0 / 35.0, S_HEAD_DIE3) { A_Scream(); }
 	S_HEAD_DIE3('HEAD', 4, 7.0 / 35.0, S_HEAD_DIE4) { }

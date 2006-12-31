@@ -61,70 +61,35 @@ void A_BeastAttack()
 
 __states__
 {
-	//	Idle
-	S_BEAST_LOOK1('BEAS', 0, 'monsters/beast/base.md2', 0, 0.1, S_BEAST_LOOK2) { A_Look(); }
-	S_BEAST_LOOK2('BEAS', 0, 'monsters/beast/base.md2', 1, 0.1, S_BEAST_LOOK3) { }
-	S_BEAST_LOOK3('BEAS', 1, 'monsters/beast/base.md2', 2, 0.1, S_BEAST_LOOK4) { A_Look(); }
-	S_BEAST_LOOK4('BEAS', 1, 'monsters/beast/base.md2', 3, 0.1, S_BEAST_LOOK5) { }
-	S_BEAST_LOOK5('BEAS', 0, 'monsters/beast/base.md2', 4, 0.1, S_BEAST_LOOK6) { A_Look(); }
-	S_BEAST_LOOK6('BEAS', 0, 'monsters/beast/base.md2', 5, 0.1, S_BEAST_LOOK7) { }
-	S_BEAST_LOOK7('BEAS', 1, 'monsters/beast/base.md2', 6, 0.1, S_BEAST_LOOK8) { A_Look(); }
-	S_BEAST_LOOK8('BEAS', 1, 'monsters/beast/base.md2', 7, 0.1, S_BEAST_LOOK1) { }
-	//	Walking, 6 sprite frames vs 8 model frames
-	S_BEAST_WALK1('BEAS', 0, 'monsters/beast/base.md2', 8, 0.1, S_BEAST_WALK2) { A_Chase(); }
-	S_BEAST_WALK2('BEAS', 1, 'monsters/beast/base.md2', 9, 0.1, S_BEAST_WALK3) { A_Chase(); }
-	S_BEAST_WALK3('BEAS', 2, 'monsters/beast/base.md2', 10, 0.1, S_BEAST_WALK4) { A_Chase(); }
-	S_BEAST_WALK4('BEAS', 3, 'monsters/beast/base.md2', 11, 0.1, S_BEAST_WALK5) { A_Chase(); }
-	S_BEAST_WALK5('BEAS', 4, 'monsters/beast/base.md2', 12, 0.1, S_BEAST_WALK6) { A_Chase(); }
-	S_BEAST_WALK6('BEAS', 5, 'monsters/beast/base.md2', 13, 0.1, S_BEAST_WALK7) { A_Chase(); }
-	S_BEAST_WALK7('BEAS', 0, 'monsters/beast/base.md2', 14, 0.1, S_BEAST_WALK8) { A_Chase(); }
-	S_BEAST_WALK8('BEAS', 1, 'monsters/beast/base.md2', 15, 0.1, S_BEAST_WALK9) { A_Chase(); }
-	S_BEAST_WALK9('BEAS', 2, 'monsters/beast/base.md2', 8, 0.1, S_BEAST_WALK10) { A_Chase(); }
-	S_BEAST_WALK10('BEAS', 3, 'monsters/beast/base.md2', 9, 0.1, S_BEAST_WALK11) { A_Chase(); }
-	S_BEAST_WALK11('BEAS', 4, 'monsters/beast/base.md2', 10, 0.1, S_BEAST_WALK12) { A_Chase(); }
-	S_BEAST_WALK12('BEAS', 5, 'monsters/beast/base.md2', 11, 0.1, S_BEAST_WALK13) { A_Chase(); }
-	S_BEAST_WALK13('BEAS', 0, 'monsters/beast/base.md2', 12, 0.1, S_BEAST_WALK14) { A_Chase(); }
-	S_BEAST_WALK14('BEAS', 1, 'monsters/beast/base.md2', 13, 0.1, S_BEAST_WALK15) { A_Chase(); }
-	S_BEAST_WALK15('BEAS', 2, 'monsters/beast/base.md2', 14, 0.1, S_BEAST_WALK16) { A_Chase(); }
-	S_BEAST_WALK16('BEAS', 3, 'monsters/beast/base.md2', 15, 0.1, S_BEAST_WALK17) { A_Chase(); }
-	S_BEAST_WALK17('BEAS', 4, 'monsters/beast/base.md2', 8, 0.1, S_BEAST_WALK18) { A_Chase(); }
-	S_BEAST_WALK18('BEAS', 5, 'monsters/beast/base.md2', 9, 0.1, S_BEAST_WALK19) { A_Chase(); }
-	S_BEAST_WALK19('BEAS', 0, 'monsters/beast/base.md2', 10, 0.1, S_BEAST_WALK20) { A_Chase(); }
-	S_BEAST_WALK20('BEAS', 1, 'monsters/beast/base.md2', 11, 0.1, S_BEAST_WALK21) { A_Chase(); }
-	S_BEAST_WALK21('BEAS', 2, 'monsters/beast/base.md2', 12, 0.1, S_BEAST_WALK22) { A_Chase(); }
-	S_BEAST_WALK22('BEAS', 3, 'monsters/beast/base.md2', 13, 0.1, S_BEAST_WALK23) { A_Chase(); }
-	S_BEAST_WALK23('BEAS', 4, 'monsters/beast/base.md2', 14, 0.1, S_BEAST_WALK24) { A_Chase(); }
-	S_BEAST_WALK24('BEAS', 5, 'monsters/beast/base.md2', 15, 0.1, S_BEAST_WALK1) { A_Chase(); }
-	//	Attack
-	S_BEAST_ATK1('BEAS', 7, 'monsters/beast/base.md2', 16, 2.5 / 35.0, S_BEAST_ATK2) { A_FaceTarget(); }
-	S_BEAST_ATK2('BEAS', 7, 'monsters/beast/base.md2', 17, 2.5 / 35.0, S_BEAST_ATK3) { }
-	S_BEAST_ATK3('BEAS', 7, 'monsters/beast/base.md2', 18, 2.5 / 35.0, S_BEAST_ATK4) { }
-	S_BEAST_ATK4('BEAS', 7, 'monsters/beast/base.md2', 19, 2.5 / 35.0, S_BEAST_ATK5) { }
-	S_BEAST_ATK5('BEAS', 8, 'monsters/beast/base.md2', 20, 2.5 / 35.0, S_BEAST_WALK6) { A_BeastAttack(); }
-	S_BEAST_ATK6('BEAS', 8, 'monsters/beast/base.md2', 21, 2.5 / 35.0, S_BEAST_WALK7) { }
-	S_BEAST_ATK7('BEAS', 8, 'monsters/beast/base.md2', 22, 2.5 / 35.0, S_BEAST_WALK8) { }
-	S_BEAST_ATK8('BEAS', 8, 'monsters/beast/base.md2', 23, 2.5 / 35.0, S_BEAST_WALK1) { }
-	//	Pain
-	S_BEAST_PAIN1('BEAS', 6, 'monsters/beast/base.md2', 24, 3.0 / 35.0, S_BEAST_PAIN2) { }
-	S_BEAST_PAIN2('BEAS', 6, 'monsters/beast/base.md2', 25, 3.0 / 35.0, S_BEAST_WALK1) { A_Pain(); }
-	//	Death
-	S_BEAST_DIE1('BEAS', 17, 'monsters/beast/base.md2', 26, 6.0 / 35.0, S_BEAST_DIE2) { }
-	S_BEAST_DIE2('BEAS', 18, 'monsters/beast/base.md2', 27, 6.0 / 35.0, S_BEAST_DIE3) { A_Scream(); }
-	S_BEAST_DIE3('BEAS', 19, 'monsters/beast/base.md2', 28, 6.0 / 35.0, S_BEAST_DIE4) { }
-	S_BEAST_DIE4('BEAS', 20, 'monsters/beast/base.md2', 29, 6.0 / 35.0, S_BEAST_DIE5) { }
-	S_BEAST_DIE5('BEAS', 21, 'monsters/beast/base.md2', 30, 6.0 / 35.0, S_BEAST_DIE6) { }
-	S_BEAST_DIE6('BEAS', 22, 'monsters/beast/base.md2', 31, 6.0 / 35.0, S_BEAST_DIE7) { A_NoBlocking(); }
-	S_BEAST_DIE7('BEAS', 23, 'monsters/beast/base.md2', 32, 6.0 / 35.0, S_BEAST_DIE8) { }
-	S_BEAST_DIE8('BEAS', 24, 'monsters/beast/base.md2', 33, 6.0 / 35.0, S_BEAST_DIE9) { }
-	S_BEAST_DIE9('BEAS', 25, 'monsters/beast/base.md2', 33, -1.0, none) { }
-	S_BEAST_XDIE1('BEAS', 9, 'monsters/beast/base.md2', 26, 5.0 / 35.0, S_BEAST_XDIE2) { }
-	S_BEAST_XDIE2('BEAS', 10, 'monsters/beast/base.md2', 27, 6.0 / 35.0, S_BEAST_XDIE3) { A_Scream(); }
-	S_BEAST_XDIE3('BEAS', 11, 'monsters/beast/base.md2', 28, 5.0 / 35.0, S_BEAST_XDIE4) { }
-	S_BEAST_XDIE4('BEAS', 12, 'monsters/beast/base.md2', 29, 6.0 / 35.0, S_BEAST_XDIE5) { }
-	S_BEAST_XDIE5('BEAS', 13, 'monsters/beast/base.md2', 30, 5.0 / 35.0, S_BEAST_XDIE6) { }
-	S_BEAST_XDIE6('BEAS', 14, 'monsters/beast/base.md2', 31, 6.0 / 35.0, S_BEAST_XDIE7) { A_NoBlocking(); }
-	S_BEAST_XDIE7('BEAS', 15, 'monsters/beast/base.md2', 32, 5.0 / 35.0, S_BEAST_XDIE8) { }
-	S_BEAST_XDIE8('BEAS', 16, 'monsters/beast/base.md2', 33, -1.0, none) { }
+	S_BEAST_LOOK1('BEAS', 0, 'monsters/beast/model.xml', 0, 10.0 / 35.0, S_BEAST_LOOK2) { A_Look(); }
+	S_BEAST_LOOK2('BEAS', 1, 'monsters/beast/model.xml', 1, 10.0 / 35.0, S_BEAST_LOOK1) { A_Look(); }
+	S_BEAST_WALK1('BEAS', 0, 'monsters/beast/model.xml', 2, 3.0 / 35.0, S_BEAST_WALK2) { A_Chase(); }
+	S_BEAST_WALK2('BEAS', 1, 'monsters/beast/model.xml', 3, 3.0 / 35.0, S_BEAST_WALK3) { A_Chase(); }
+	S_BEAST_WALK3('BEAS', 2, 'monsters/beast/model.xml', 4, 3.0 / 35.0, S_BEAST_WALK4) { A_Chase(); }
+	S_BEAST_WALK4('BEAS', 3, 'monsters/beast/model.xml', 5, 3.0 / 35.0, S_BEAST_WALK5) { A_Chase(); }
+	S_BEAST_WALK5('BEAS', 4, 'monsters/beast/model.xml', 6, 3.0 / 35.0, S_BEAST_WALK6) { A_Chase(); }
+	S_BEAST_WALK6('BEAS', 5, 'monsters/beast/model.xml', 7, 3.0 / 35.0, S_BEAST_WALK1) { A_Chase(); }
+	S_BEAST_ATK1('BEAS', 7, 'monsters/beast/model.xml', 8, 10.0 / 35.0, S_BEAST_ATK2) { A_FaceTarget(); }
+	S_BEAST_ATK2('BEAS', 8, 'monsters/beast/model.xml', 9, 10.0 / 35.0, S_BEAST_WALK1) { A_BeastAttack(); }
+	S_BEAST_PAIN1('BEAS', 6, 'monsters/beast/model.xml', 10, 3.0 / 35.0, S_BEAST_PAIN2) { }
+	S_BEAST_PAIN2('BEAS', 6, 'monsters/beast/model.xml', 11, 3.0 / 35.0, S_BEAST_WALK1) { A_Pain(); }
+	S_BEAST_DIE1('BEAS', 17, 'monsters/beast/model.xml', 12, 6.0 / 35.0, S_BEAST_DIE2) { }
+	S_BEAST_DIE2('BEAS', 18, 'monsters/beast/model.xml', 13, 6.0 / 35.0, S_BEAST_DIE3) { A_Scream(); }
+	S_BEAST_DIE3('BEAS', 19, 'monsters/beast/model.xml', 14, 6.0 / 35.0, S_BEAST_DIE4) { }
+	S_BEAST_DIE4('BEAS', 20, 'monsters/beast/model.xml', 15, 6.0 / 35.0, S_BEAST_DIE5) { }
+	S_BEAST_DIE5('BEAS', 21, 'monsters/beast/model.xml', 16, 6.0 / 35.0, S_BEAST_DIE6) { }
+	S_BEAST_DIE6('BEAS', 22, 'monsters/beast/model.xml', 17, 6.0 / 35.0, S_BEAST_DIE7) { A_NoBlocking(); }
+	S_BEAST_DIE7('BEAS', 23, 'monsters/beast/model.xml', 18, 6.0 / 35.0, S_BEAST_DIE8) { }
+	S_BEAST_DIE8('BEAS', 24, 'monsters/beast/model.xml', 19, 6.0 / 35.0, S_BEAST_DIE9) { }
+	S_BEAST_DIE9('BEAS', 25, 'monsters/beast/model.xml', 20, -1.0, none) { }
+	S_BEAST_XDIE1('BEAS', 9, 'monsters/beast/model.xml', 21, 5.0 / 35.0, S_BEAST_XDIE2) { }
+	S_BEAST_XDIE2('BEAS', 10, 'monsters/beast/model.xml', 22, 6.0 / 35.0, S_BEAST_XDIE3) { A_Scream(); }
+	S_BEAST_XDIE3('BEAS', 11, 'monsters/beast/model.xml', 23, 5.0 / 35.0, S_BEAST_XDIE4) { }
+	S_BEAST_XDIE4('BEAS', 12, 'monsters/beast/model.xml', 24, 6.0 / 35.0, S_BEAST_XDIE5) { }
+	S_BEAST_XDIE5('BEAS', 13, 'monsters/beast/model.xml', 25, 5.0 / 35.0, S_BEAST_XDIE6) { }
+	S_BEAST_XDIE6('BEAS', 14, 'monsters/beast/model.xml', 26, 6.0 / 35.0, S_BEAST_XDIE7) { A_NoBlocking(); }
+	S_BEAST_XDIE7('BEAS', 15, 'monsters/beast/model.xml', 27, 5.0 / 35.0, S_BEAST_XDIE8) { }
+	S_BEAST_XDIE8('BEAS', 16, 'monsters/beast/model.xml', 28, -1.0, none) { }
 }
 
 defaultproperties

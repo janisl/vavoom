@@ -29,7 +29,7 @@ class ItemAmmoBulletClip : AmmoPickup
 
 __states__
 {
-	S_CLIP('CLIP', 0, 'ammo/clip.md2', 0, -1.0, none) { }
+	S_CLIP('CLIP', 0, 'ammo/clip.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

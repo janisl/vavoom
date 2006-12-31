@@ -28,7 +28,7 @@ class MedPatch : InventoryItem
 
 __states__
 {
-	S_MED_PATCH('STMP', 0, 'items/stimpack.md2', 0, -1.0, none) { }
+	S_MED_PATCH('STMP', 0, 'items/stimpack.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

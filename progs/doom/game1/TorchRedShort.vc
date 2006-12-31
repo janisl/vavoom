@@ -34,10 +34,10 @@ void Tick(float DeltaTime)
 
 __states__
 {
-	S_RTORCHSHRT('SMRT', 0 | FF_FULLBRIGHT, 'lights/stickred.md2', 0, 4.0 / 35.0, S_RTORCHSHRT2) { }
-	S_RTORCHSHRT2('SMRT', 1 | FF_FULLBRIGHT, 'lights/stickred.md2', 1, 4.0 / 35.0, S_RTORCHSHRT3) { }
-	S_RTORCHSHRT3('SMRT', 2 | FF_FULLBRIGHT, 'lights/stickred.md2', 2, 4.0 / 35.0, S_RTORCHSHRT4) { }
-	S_RTORCHSHRT4('SMRT', 3 | FF_FULLBRIGHT, 'lights/stickred.md2', 3, 4.0 / 35.0, S_RTORCHSHRT) { }
+	S_RTORCHSHRT('SMRT', 0 | FF_FULLBRIGHT, 'lights/stickred.xml', 0, 4.0 / 35.0, S_RTORCHSHRT2) { }
+	S_RTORCHSHRT2('SMRT', 1 | FF_FULLBRIGHT, 'lights/stickred.xml', 1, 4.0 / 35.0, S_RTORCHSHRT3) { }
+	S_RTORCHSHRT3('SMRT', 2 | FF_FULLBRIGHT, 'lights/stickred.xml', 2, 4.0 / 35.0, S_RTORCHSHRT4) { }
+	S_RTORCHSHRT4('SMRT', 3 | FF_FULLBRIGHT, 'lights/stickred.xml', 3, 4.0 / 35.0, S_RTORCHSHRT) { }
 }
 
 defaultproperties

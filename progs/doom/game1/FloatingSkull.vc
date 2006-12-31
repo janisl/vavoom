@@ -23,14 +23,14 @@
 //**
 //**************************************************************************
 
-class FloatingSkull:Decoration
+class FloatingSkull : Decoration
 	__mobjinfo__(42);
 
 __states__
 {
-	S_FLOATSKULL('FSKU', 0 | FF_FULLBRIGHT, 'objects/fskulls.md2', 0, 6.0 / 35.0, S_FLOATSKULL2) { }
-	S_FLOATSKULL2('FSKU', 1 | FF_FULLBRIGHT, 'objects/fskulls.md2', 1, 6.0 / 35.0, S_FLOATSKULL3) { }
-	S_FLOATSKULL3('FSKU', 2 | FF_FULLBRIGHT, 'objects/fskulls.md2', 2, 6.0 / 35.0, S_FLOATSKULL) { }
+	S_FLOATSKULL('FSKU', 0 | FF_FULLBRIGHT, 'objects/fskulls.xml', 0, 6.0 / 35.0, S_FLOATSKULL2) { }
+	S_FLOATSKULL2('FSKU', 1 | FF_FULLBRIGHT, 'objects/fskulls.xml', 1, 6.0 / 35.0, S_FLOATSKULL3) { }
+	S_FLOATSKULL3('FSKU', 2 | FF_FULLBRIGHT, 'objects/fskulls.xml', 2, 6.0 / 35.0, S_FLOATSKULL) { }
 }
 
 defaultproperties

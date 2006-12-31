@@ -76,39 +76,39 @@ void DropStuff()
 
 __states__
 {
-	S_POSS_STND('POSS', 0, 'monsters/trooper/base.md2', 0, 10.0 / 35.0, S_POSS_STND2) { A_Look(); }
-	S_POSS_STND2('POSS', 1, 'monsters/trooper/base.md2', 1, 10.0 / 35.0, S_POSS_STND) { A_Look(); }
-	S_POSS_RUN1('POSS', 0, 'monsters/trooper/base.md2', 2, 4.0 / 35.0, S_POSS_RUN2) { A_Chase(); }
-	S_POSS_RUN2('POSS', 0, 'monsters/trooper/base.md2', 3, 4.0 / 35.0, S_POSS_RUN3) { A_Chase(); }
-	S_POSS_RUN3('POSS', 1, 'monsters/trooper/base.md2', 4, 4.0 / 35.0, S_POSS_RUN4) { A_Chase(); }
-	S_POSS_RUN4('POSS', 1, 'monsters/trooper/base.md2', 5, 4.0 / 35.0, S_POSS_RUN5) { A_Chase(); }
-	S_POSS_RUN5('POSS', 2, 'monsters/trooper/base.md2', 6, 4.0 / 35.0, S_POSS_RUN6) { A_Chase(); }
-	S_POSS_RUN6('POSS', 2, 'monsters/trooper/base.md2', 7, 4.0 / 35.0, S_POSS_RUN7) { A_Chase(); }
-	S_POSS_RUN7('POSS', 3, 'monsters/trooper/base.md2', 8, 4.0 / 35.0, S_POSS_RUN8) { A_Chase(); }
-	S_POSS_RUN8('POSS', 3, 'monsters/trooper/base.md2', 9, 4.0 / 35.0, S_POSS_RUN1) { A_Chase(); }
-	S_POSS_ATK1('POSS', 4, 'monsters/trooper/base.md2', 10, 10.0 / 35.0, S_POSS_ATK2) { A_FaceTarget(); }
-	S_POSS_ATK2('POSS', 5, 'monsters/trooper/base.md2', 11, 8.0 / 35.0, S_POSS_ATK3) { A_PosAttack(); }
-	S_POSS_ATK3('POSS', 4, 'monsters/trooper/base.md2', 12, 8.0 / 35.0, S_POSS_RUN1) { }
-	S_POSS_PAIN('POSS', 6, 'monsters/trooper/base.md2', 13, 3.0 / 35.0, S_POSS_PAIN2) { }
-	S_POSS_PAIN2('POSS', 6, 'monsters/trooper/base.md2', 14, 3.0 / 35.0, S_POSS_RUN1) { A_Pain(); }
-	S_POSS_DIE1('POSS', 7, 'monsters/trooper/death.md2', 0, 5.0 / 35.0, S_POSS_DIE2) { }
-	S_POSS_DIE2('POSS', 8, 'monsters/trooper/death.md2', 1, 5.0 / 35.0, S_POSS_DIE3) { A_Scream(); }
-	S_POSS_DIE3('POSS', 9, 'monsters/trooper/death.md2', 2, 5.0 / 35.0, S_POSS_DIE4) { A_Fall(); }
-	S_POSS_DIE4('POSS', 10, 'monsters/trooper/death.md2', 3, 5.0 / 35.0, S_POSS_DIE5) { }
-	S_POSS_DIE5('POSS', 11, 'monsters/trooper/death.md2', 4, -1.0, none) { }
-	S_POSS_XDIE1('POSS', 12, 'monsters/trooper/gibs.md2', 0, 5.0 / 35.0, S_POSS_XDIE2) { }
-	S_POSS_XDIE2('POSS', 13, 'monsters/trooper/gibs.md2', 1, 5.0 / 35.0, S_POSS_XDIE3) { A_XScream(); }
-	S_POSS_XDIE3('POSS', 14, 'monsters/trooper/gibs.md2', 2, 5.0 / 35.0, S_POSS_XDIE4) { A_Fall(); }
-	S_POSS_XDIE4('POSS', 15, 'monsters/trooper/gibs.md2', 3, 5.0 / 35.0, S_POSS_XDIE5) { }
-	S_POSS_XDIE5('POSS', 16, 'monsters/trooper/gibs.md2', 4, 5.0 / 35.0, S_POSS_XDIE6) { }
-	S_POSS_XDIE6('POSS', 17, 'monsters/trooper/gibs.md2', 5, 5.0 / 35.0, S_POSS_XDIE7) { }
-	S_POSS_XDIE7('POSS', 18, 'monsters/trooper/gibs.md2', 6, 5.0 / 35.0, S_POSS_XDIE8) { }
-	S_POSS_XDIE8('POSS', 19, 'monsters/trooper/gibs.md2', 7, 5.0 / 35.0, S_POSS_XDIE9) { }
-	S_POSS_XDIE9('POSS', 20, 'monsters/trooper/gibs.md2', 8, -1.0, none) { }
-	S_POSS_RAISE1('POSS', 10, 'monsters/trooper/death.md2', 5, 5.0 / 35.0, S_POSS_RAISE2) { }
-	S_POSS_RAISE2('POSS', 9, 'monsters/trooper/death.md2', 6, 5.0 / 35.0, S_POSS_RAISE3) { }
-	S_POSS_RAISE3('POSS', 8, 'monsters/trooper/death.md2', 7, 5.0 / 35.0, S_POSS_RAISE4) { }
-	S_POSS_RAISE4('POSS', 7, 'monsters/trooper/death.md2', 8, 5.0 / 35.0, S_POSS_RUN1) { }
+	S_POSS_STND('POSS', 0, 'monsters/trooper/model.xml', 0, 10.0 / 35.0, S_POSS_STND2) { A_Look(); }
+	S_POSS_STND2('POSS', 1, 'monsters/trooper/model.xml', 1, 10.0 / 35.0, S_POSS_STND) { A_Look(); }
+	S_POSS_RUN1('POSS', 0, 'monsters/trooper/model.xml', 2, 4.0 / 35.0, S_POSS_RUN2) { A_Chase(); }
+	S_POSS_RUN2('POSS', 0, 'monsters/trooper/model.xml', 3, 4.0 / 35.0, S_POSS_RUN3) { A_Chase(); }
+	S_POSS_RUN3('POSS', 1, 'monsters/trooper/model.xml', 4, 4.0 / 35.0, S_POSS_RUN4) { A_Chase(); }
+	S_POSS_RUN4('POSS', 1, 'monsters/trooper/model.xml', 5, 4.0 / 35.0, S_POSS_RUN5) { A_Chase(); }
+	S_POSS_RUN5('POSS', 2, 'monsters/trooper/model.xml', 6, 4.0 / 35.0, S_POSS_RUN6) { A_Chase(); }
+	S_POSS_RUN6('POSS', 2, 'monsters/trooper/model.xml', 7, 4.0 / 35.0, S_POSS_RUN7) { A_Chase(); }
+	S_POSS_RUN7('POSS', 3, 'monsters/trooper/model.xml', 8, 4.0 / 35.0, S_POSS_RUN8) { A_Chase(); }
+	S_POSS_RUN8('POSS', 3, 'monsters/trooper/model.xml', 9, 4.0 / 35.0, S_POSS_RUN1) { A_Chase(); }
+	S_POSS_ATK1('POSS', 4, 'monsters/trooper/model.xml', 10, 10.0 / 35.0, S_POSS_ATK2) { A_FaceTarget(); }
+	S_POSS_ATK2('POSS', 5, 'monsters/trooper/model.xml', 11, 8.0 / 35.0, S_POSS_ATK3) { A_PosAttack(); }
+	S_POSS_ATK3('POSS', 4, 'monsters/trooper/model.xml', 12, 8.0 / 35.0, S_POSS_RUN1) { }
+	S_POSS_PAIN('POSS', 6, 'monsters/trooper/model.xml', 13, 3.0 / 35.0, S_POSS_PAIN2) { }
+	S_POSS_PAIN2('POSS', 6, 'monsters/trooper/model.xml', 14, 3.0 / 35.0, S_POSS_RUN1) { A_Pain(); }
+	S_POSS_DIE1('POSS', 7, 'monsters/trooper/model.xml', 15, 5.0 / 35.0, S_POSS_DIE2) { }
+	S_POSS_DIE2('POSS', 8, 'monsters/trooper/model.xml', 16, 5.0 / 35.0, S_POSS_DIE3) { A_Scream(); }
+	S_POSS_DIE3('POSS', 9, 'monsters/trooper/model.xml', 17, 5.0 / 35.0, S_POSS_DIE4) { A_Fall(); }
+	S_POSS_DIE4('POSS', 10, 'monsters/trooper/model.xml', 18, 5.0 / 35.0, S_POSS_DIE5) { }
+	S_POSS_DIE5('POSS', 11, 'monsters/trooper/model.xml', 19, -1.0, none) { }
+	S_POSS_XDIE1('POSS', 12, 'monsters/trooper/model.xml', 20, 5.0 / 35.0, S_POSS_XDIE2) { }
+	S_POSS_XDIE2('POSS', 13, 'monsters/trooper/model.xml', 21, 5.0 / 35.0, S_POSS_XDIE3) { A_XScream(); }
+	S_POSS_XDIE3('POSS', 14, 'monsters/trooper/model.xml', 22, 5.0 / 35.0, S_POSS_XDIE4) { A_Fall(); }
+	S_POSS_XDIE4('POSS', 15, 'monsters/trooper/model.xml', 23, 5.0 / 35.0, S_POSS_XDIE5) { }
+	S_POSS_XDIE5('POSS', 16, 'monsters/trooper/model.xml', 24, 5.0 / 35.0, S_POSS_XDIE6) { }
+	S_POSS_XDIE6('POSS', 17, 'monsters/trooper/model.xml', 25, 5.0 / 35.0, S_POSS_XDIE7) { }
+	S_POSS_XDIE7('POSS', 18, 'monsters/trooper/model.xml', 26, 5.0 / 35.0, S_POSS_XDIE8) { }
+	S_POSS_XDIE8('POSS', 19, 'monsters/trooper/model.xml', 27, 5.0 / 35.0, S_POSS_XDIE9) { }
+	S_POSS_XDIE9('POSS', 20, 'monsters/trooper/model.xml', 28, -1.0, none) { }
+	S_POSS_RAISE1('POSS', 10, 'monsters/trooper/model.xml', 29, 5.0 / 35.0, S_POSS_RAISE2) { }
+	S_POSS_RAISE2('POSS', 9, 'monsters/trooper/model.xml', 30, 5.0 / 35.0, S_POSS_RAISE3) { }
+	S_POSS_RAISE3('POSS', 8, 'monsters/trooper/model.xml', 31, 5.0 / 35.0, S_POSS_RAISE4) { }
+	S_POSS_RAISE4('POSS', 7, 'monsters/trooper/model.xml', 32, 5.0 / 35.0, S_POSS_RUN1) { }
 }
 
 defaultproperties

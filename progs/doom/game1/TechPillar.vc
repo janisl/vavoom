@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class TechPillar:Decoration
+class TechPillar : Decoration
 	__mobjinfo__(48);
 
 __states__
 {
-	S_TECHPILLAR('ELEC', 0, 'objects/techpilr.md2', 0, -1.0, none) { }
+	S_TECHPILLAR('ELEC', 0, 'objects/techpilr.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

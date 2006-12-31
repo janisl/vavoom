@@ -115,37 +115,37 @@ void A_BossDeath()
 
 __states__
 {
-	S_SPID_STND('SPID', 0, 'monsters/spider/base.md2', 0, 10.0 / 35.0, S_SPID_STND2) { A_Look(); }
-	S_SPID_STND2('SPID', 1, 'monsters/spider/base.md2', 1, 10.0 / 35.0, S_SPID_STND) { A_Look(); }
-	S_SPID_RUN1('SPID', 0, 'monsters/spider/base.md2', 2, 3.0 / 35.0, S_SPID_RUN2) { A_Metal(); }
-	S_SPID_RUN2('SPID', 0, 'monsters/spider/base.md2', 3, 3.0 / 35.0, S_SPID_RUN3) { A_Chase(); }
-	S_SPID_RUN3('SPID', 1, 'monsters/spider/base.md2', 4, 3.0 / 35.0, S_SPID_RUN4) { A_Chase(); }
-	S_SPID_RUN4('SPID', 1, 'monsters/spider/base.md2', 5, 3.0 / 35.0, S_SPID_RUN5) { A_Chase(); }
-	S_SPID_RUN5('SPID', 2, 'monsters/spider/base.md2', 6, 3.0 / 35.0, S_SPID_RUN6) { A_Metal(); }
-	S_SPID_RUN6('SPID', 2, 'monsters/spider/base.md2', 7, 3.0 / 35.0, S_SPID_RUN7) { A_Chase(); }
-	S_SPID_RUN7('SPID', 3, 'monsters/spider/base.md2', 8, 3.0 / 35.0, S_SPID_RUN8) { A_Chase(); }
-	S_SPID_RUN8('SPID', 3, 'monsters/spider/base.md2', 9, 3.0 / 35.0, S_SPID_RUN9) { A_Chase(); }
-	S_SPID_RUN9('SPID', 4, 'monsters/spider/base.md2', 10, 3.0 / 35.0, S_SPID_RUN10) { A_Metal(); }
-	S_SPID_RUN10('SPID', 4, 'monsters/spider/base.md2', 11, 3.0 / 35.0, S_SPID_RUN11) { A_Chase(); }
-	S_SPID_RUN11('SPID', 5, 'monsters/spider/base.md2', 12, 3.0 / 35.0, S_SPID_RUN12) { A_Chase(); }
-	S_SPID_RUN12('SPID', 5, 'monsters/spider/base.md2', 13, 3.0 / 35.0, S_SPID_RUN1) { A_Chase(); }
-	S_SPID_ATK1('SPID', 0 | FF_FULLBRIGHT, 'monsters/spider/base.md2', 14, 20.0 / 35.0, S_SPID_ATK2) { A_FaceTarget(); }
-	S_SPID_ATK2('SPID', 6 | FF_FULLBRIGHT, 'monsters/spider/base.md2', 15, 4.0 / 35.0, S_SPID_ATK3) { A_SPosAttack(); }
-	S_SPID_ATK3('SPID', 7 | FF_FULLBRIGHT, 'monsters/spider/attack.md2', 0, 4.0 / 35.0, S_SPID_ATK4) { A_SPosAttack(); }
-	S_SPID_ATK4('SPID', 7 | FF_FULLBRIGHT, 'monsters/spider/attack.md2', 0, 1.0 / 35.0, S_SPID_ATK2) { A_SpidRefire(); }
-	S_SPID_PAIN('SPID', 8, 'monsters/spider/base.md2', 16, 3.0 / 35.0, S_SPID_PAIN2) { }
-	S_SPID_PAIN2('SPID', 8, 'monsters/spider/base.md2', 17, 3.0 / 35.0, S_SPID_RUN1) { A_Pain(); }
-	S_SPID_DIE1('SPID', 9, 'monsters/spider/death.md2', 0, 20.0 / 35.0, S_SPID_DIE2) { A_Scream(); }
-	S_SPID_DIE2('SPID', 10, 'monsters/spider/death.md2', 1, 10.0 / 35.0, S_SPID_DIE3) { A_Fall(); }
-	S_SPID_DIE3('SPID', 11, 'monsters/spider/death.md2', 2, 10.0 / 35.0, S_SPID_DIE4) { }
-	S_SPID_DIE4('SPID', 12, 'monsters/spider/death.md2', 3, 10.0 / 35.0, S_SPID_DIE5) { }
-	S_SPID_DIE5('SPID', 13, 'monsters/spider/death.md2', 4, 10.0 / 35.0, S_SPID_DIE6) { }
-	S_SPID_DIE6('SPID', 14, 'monsters/spider/death.md2', 5, 10.0 / 35.0, S_SPID_DIE7) { }
-	S_SPID_DIE7('SPID', 15, 'monsters/spider/death.md2', 6, 10.0 / 35.0, S_SPID_DIE8) { }
-	S_SPID_DIE8('SPID', 16, 'monsters/spider/death.md2', 7, 10.0 / 35.0, S_SPID_DIE9) { }
-	S_SPID_DIE9('SPID', 17, 'monsters/spider/death.md2', 8, 10.0 / 35.0, S_SPID_DIE10) { }
-	S_SPID_DIE10('SPID', 18, 'monsters/spider/death.md2', 9, 30.0 / 35.0, S_SPID_DIE11) { }
-	S_SPID_DIE11('SPID', 18, 'monsters/spider/death.md2', 10, -1.0, none) { A_BossDeath(); }
+	S_SPID_STND('SPID', 0, 'monsters/spider/model.xml', 0, 10.0 / 35.0, S_SPID_STND2) { A_Look(); }
+	S_SPID_STND2('SPID', 1, 'monsters/spider/model.xml', 1, 10.0 / 35.0, S_SPID_STND) { A_Look(); }
+	S_SPID_RUN1('SPID', 0, 'monsters/spider/model.xml', 2, 3.0 / 35.0, S_SPID_RUN2) { A_Metal(); }
+	S_SPID_RUN2('SPID', 0, 'monsters/spider/model.xml', 3, 3.0 / 35.0, S_SPID_RUN3) { A_Chase(); }
+	S_SPID_RUN3('SPID', 1, 'monsters/spider/model.xml', 4, 3.0 / 35.0, S_SPID_RUN4) { A_Chase(); }
+	S_SPID_RUN4('SPID', 1, 'monsters/spider/model.xml', 5, 3.0 / 35.0, S_SPID_RUN5) { A_Chase(); }
+	S_SPID_RUN5('SPID', 2, 'monsters/spider/model.xml', 6, 3.0 / 35.0, S_SPID_RUN6) { A_Metal(); }
+	S_SPID_RUN6('SPID', 2, 'monsters/spider/model.xml', 7, 3.0 / 35.0, S_SPID_RUN7) { A_Chase(); }
+	S_SPID_RUN7('SPID', 3, 'monsters/spider/model.xml', 8, 3.0 / 35.0, S_SPID_RUN8) { A_Chase(); }
+	S_SPID_RUN8('SPID', 3, 'monsters/spider/model.xml', 9, 3.0 / 35.0, S_SPID_RUN9) { A_Chase(); }
+	S_SPID_RUN9('SPID', 4, 'monsters/spider/model.xml', 10, 3.0 / 35.0, S_SPID_RUN10) { A_Metal(); }
+	S_SPID_RUN10('SPID', 4, 'monsters/spider/model.xml', 11, 3.0 / 35.0, S_SPID_RUN11) { A_Chase(); }
+	S_SPID_RUN11('SPID', 5, 'monsters/spider/model.xml', 12, 3.0 / 35.0, S_SPID_RUN12) { A_Chase(); }
+	S_SPID_RUN12('SPID', 5, 'monsters/spider/model.xml', 13, 3.0 / 35.0, S_SPID_RUN1) { A_Chase(); }
+	S_SPID_ATK1('SPID', 0 | FF_FULLBRIGHT, 'monsters/spider/model.xml', 14, 20.0 / 35.0, S_SPID_ATK2) { A_FaceTarget(); }
+	S_SPID_ATK2('SPID', 6 | FF_FULLBRIGHT, 'monsters/spider/model.xml', 15, 4.0 / 35.0, S_SPID_ATK3) { A_SPosAttack(); }
+	S_SPID_ATK3('SPID', 7 | FF_FULLBRIGHT, 'monsters/spider/model.xml', 16, 4.0 / 35.0, S_SPID_ATK4) { A_SPosAttack(); }
+	S_SPID_ATK4('SPID', 7 | FF_FULLBRIGHT, 'monsters/spider/model.xml', 17, 1.0 / 35.0, S_SPID_ATK2) { A_SpidRefire(); }
+	S_SPID_PAIN('SPID', 8, 'monsters/spider/model.xml', 18, 3.0 / 35.0, S_SPID_PAIN2) { }
+	S_SPID_PAIN2('SPID', 8, 'monsters/spider/model.xml', 19, 3.0 / 35.0, S_SPID_RUN1) { A_Pain(); }
+	S_SPID_DIE1('SPID', 9, 'monsters/spider/model.xml', 20, 20.0 / 35.0, S_SPID_DIE2) { A_Scream(); }
+	S_SPID_DIE2('SPID', 10, 'monsters/spider/model.xml', 21, 10.0 / 35.0, S_SPID_DIE3) { A_Fall(); }
+	S_SPID_DIE3('SPID', 11, 'monsters/spider/model.xml', 22, 10.0 / 35.0, S_SPID_DIE4) { }
+	S_SPID_DIE4('SPID', 12, 'monsters/spider/model.xml', 23, 10.0 / 35.0, S_SPID_DIE5) { }
+	S_SPID_DIE5('SPID', 13, 'monsters/spider/model.xml', 24, 10.0 / 35.0, S_SPID_DIE6) { }
+	S_SPID_DIE6('SPID', 14, 'monsters/spider/model.xml', 25, 10.0 / 35.0, S_SPID_DIE7) { }
+	S_SPID_DIE7('SPID', 15, 'monsters/spider/model.xml', 26, 10.0 / 35.0, S_SPID_DIE8) { }
+	S_SPID_DIE8('SPID', 16, 'monsters/spider/model.xml', 27, 10.0 / 35.0, S_SPID_DIE9) { }
+	S_SPID_DIE9('SPID', 17, 'monsters/spider/model.xml', 28, 10.0 / 35.0, S_SPID_DIE10) { }
+	S_SPID_DIE10('SPID', 18, 'monsters/spider/model.xml', 29, 30.0 / 35.0, S_SPID_DIE11) { }
+	S_SPID_DIE11('SPID', 18, 'monsters/spider/model.xml', 30, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties

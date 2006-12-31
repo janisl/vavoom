@@ -53,18 +53,18 @@ void A_FireShotgun()
 
 __states__
 {
-	S_SGUN('SHTG', 0, 'weapons/v_shotg.md2', 0, 1.0 / 35.0, S_SGUN) { A_WeaponReady(); }
-	S_SGUNDOWN('SHTG', 0, 'weapons/v_shotg.md2', 1, 1.0 / 35.0, S_SGUNDOWN) { A_Lower(); }
-	S_SGUNUP('SHTG', 0, 'weapons/v_shotg.md2', 2, 1.0 / 35.0, S_SGUNUP) { A_Raise(); }
-	S_SGUN1('SHTG', 0, 'weapons/v_shotg.md2', 3, 3.0 / 35.0, S_SGUN2) { }
-	S_SGUN2('SHTG', 0, 'weapons/v_shotg.md2', 4, 7.0 / 35.0, S_SGUN3) { A_FireShotgun(); }
-	S_SGUN3('SHTG', 1, 'weapons/v_shotg.md2', 5, 5.0 / 35.0, S_SGUN4) { }
-	S_SGUN4('SHTG', 2, 'weapons/v_shotg.md2', 6, 5.0 / 35.0, S_SGUN5) { }
-	S_SGUN5('SHTG', 3, 'weapons/v_shotg.md2', 7, 4.0 / 35.0, S_SGUN6) { }
-	S_SGUN6('SHTG', 2, 'weapons/v_shotg.md2', 8, 5.0 / 35.0, S_SGUN7) { }
-	S_SGUN7('SHTG', 1, 'weapons/v_shotg.md2', 9, 5.0 / 35.0, S_SGUN8) { }
-	S_SGUN8('SHTG', 0, 'weapons/v_shotg.md2', 10, 3.0 / 35.0, S_SGUN9) { }
-	S_SGUN9('SHTG', 0, 'weapons/v_shotg.md2', 11, 7.0 / 35.0, S_SGUN) { A_ReFire(); }
+	S_SGUN('SHTG', 0, 'weapons/shotgun/view.xml', 0, 1.0 / 35.0, S_SGUN) { A_WeaponReady(); }
+	S_SGUNDOWN('SHTG', 0, 'weapons/shotgun/view.xml', 1, 1.0 / 35.0, S_SGUNDOWN) { A_Lower(); }
+	S_SGUNUP('SHTG', 0, 'weapons/shotgun/view.xml', 2, 1.0 / 35.0, S_SGUNUP) { A_Raise(); }
+	S_SGUN1('SHTG', 0, 'weapons/shotgun/view.xml', 3, 3.0 / 35.0, S_SGUN2) { }
+	S_SGUN2('SHTG', 0, 'weapons/shotgun/view.xml', 4, 7.0 / 35.0, S_SGUN3) { A_FireShotgun(); }
+	S_SGUN3('SHTG', 1, 'weapons/shotgun/view.xml', 5, 5.0 / 35.0, S_SGUN4) { }
+	S_SGUN4('SHTG', 2, 'weapons/shotgun/view.xml', 6, 5.0 / 35.0, S_SGUN5) { }
+	S_SGUN5('SHTG', 3, 'weapons/shotgun/view.xml', 7, 4.0 / 35.0, S_SGUN6) { }
+	S_SGUN6('SHTG', 2, 'weapons/shotgun/view.xml', 8, 5.0 / 35.0, S_SGUN7) { }
+	S_SGUN7('SHTG', 1, 'weapons/shotgun/view.xml', 9, 5.0 / 35.0, S_SGUN8) { }
+	S_SGUN8('SHTG', 0, 'weapons/shotgun/view.xml', 10, 3.0 / 35.0, S_SGUN9) { }
+	S_SGUN9('SHTG', 0, 'weapons/shotgun/view.xml', 11, 7.0 / 35.0, S_SGUN) { A_ReFire(); }
 	S_SGUNFLASH1('SHTF', 0 | FF_FULLBRIGHT, 4.0 / 35.0, S_SGUNFLASH2) { A_Light1(); }
 	S_SGUNFLASH2('SHTF', 1 | FF_FULLBRIGHT, 3.0 / 35.0, S_LIGHTDONE) { A_Light2(); }
 }
@@ -77,5 +77,5 @@ defaultproperties
 	ReadyState = S_SGUN;
 	AttackState = S_SGUN1;
 	FlashState = S_SGUNFLASH1;
-	ThirdPersonModel = 'weapons/g_shotg.md2';
+	ThirdPersonModel = 'weapons/shotgun/ground.xml';
 }

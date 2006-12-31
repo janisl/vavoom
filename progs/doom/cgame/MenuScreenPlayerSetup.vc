@@ -53,7 +53,7 @@ void CreateChoices()
 	Anim.Translation = Colour.Value;
 	Colour.Anim = Anim;
 
-	model = InstallModel("models/players/doomguy/tris.md2");
+	model = InstallModel("models/players/doomguy/player.xml");
 	if (model)
 	{
 		SetCvarS('model', "doomguy");

@@ -29,8 +29,8 @@ class ItemInfrared : PowerupPickup
 
 __states__
 {
-	S_PVIS('PVIS', 0 | FF_FULLBRIGHT, 'items/visor.md2', 0, 6.0 / 35.0, S_PVIS2) { }
-	S_PVIS2('PVIS', 1, 'items/visor.md2', 1, 6.0 / 35.0, S_PVIS) { }
+	S_PVIS('PVIS', 0 | FF_FULLBRIGHT, 'items/visor.xml', 0, 6.0 / 35.0, S_PVIS2) { }
+	S_PVIS2('PVIS', 1, 'items/visor.xml', 1, 6.0 / 35.0, S_PVIS) { }
 }
 
 defaultproperties

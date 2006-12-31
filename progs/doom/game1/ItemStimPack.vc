@@ -29,7 +29,7 @@ class ItemStimPack:HealthPickup
 
 __states__
 {
-	S_STIM('STIM', 0, 'items/stim.md2', 0, -1.0, none) { }
+	S_STIM('STIM', 0, 'items/stim.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

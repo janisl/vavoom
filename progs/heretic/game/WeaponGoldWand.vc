@@ -81,17 +81,17 @@ void A_FireGoldWandPL2()
 
 __states__
 {
-	S_GOLDWANDREADY('GWND', 0, 'weapons/v_wand.md2', 0, 1.0 / 35.0, S_GOLDWANDREADY) { A_WeaponReady(); }
-	S_GOLDWANDDOWN('GWND', 0, 'weapons/v_wand.md2', 0, 1.0 / 35.0, S_GOLDWANDDOWN) { A_Lower(); }
-	S_GOLDWANDUP('GWND', 0, 'weapons/v_wand.md2', 0, 1.0 / 35.0, S_GOLDWANDUP) { A_Raise(); }
-	S_GOLDWANDATK1_1('GWND', 1, 'weapons/v_wand.md2', 1, 3.0 / 35.0, S_GOLDWANDATK1_2) { }
-	S_GOLDWANDATK1_2('GWND', 2, 'weapons/v_wand.md2', 2, 5.0 / 35.0, S_GOLDWANDATK1_3) { A_FireGoldWandPL1(); }
-	S_GOLDWANDATK1_3('GWND', 3, 'weapons/v_wand.md2', 3, 3.0 / 35.0, S_GOLDWANDATK1_4) { }
-	S_GOLDWANDATK1_4('GWND', 3, 'weapons/v_wand.md2', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
-	S_GOLDWANDATK2_1('GWND', 1, 'weapons/v_wand.md2', 1, 3.0 / 35.0, S_GOLDWANDATK2_2) { }
-	S_GOLDWANDATK2_2('GWND', 2, 'weapons/v_wand.md2', 2, 4.0 / 35.0, S_GOLDWANDATK2_3) { A_FireGoldWandPL2(); }
-	S_GOLDWANDATK2_3('GWND', 3, 'weapons/v_wand.md2', 3, 3.0 / 35.0, S_GOLDWANDATK2_4) { }
-	S_GOLDWANDATK2_4('GWND', 3, 'weapons/v_wand.md2', 3, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
+	S_GOLDWANDREADY('GWND', 0, 'weapons/wand/view.xml', 0, 1.0 / 35.0, S_GOLDWANDREADY) { A_WeaponReady(); }
+	S_GOLDWANDDOWN('GWND', 0, 'weapons/wand/view.xml', 1, 1.0 / 35.0, S_GOLDWANDDOWN) { A_Lower(); }
+	S_GOLDWANDUP('GWND', 0, 'weapons/wand/view.xml', 2, 1.0 / 35.0, S_GOLDWANDUP) { A_Raise(); }
+	S_GOLDWANDATK1_1('GWND', 1, 'weapons/wand/view.xml', 3, 3.0 / 35.0, S_GOLDWANDATK1_2) { }
+	S_GOLDWANDATK1_2('GWND', 2, 'weapons/wand/view.xml', 4, 5.0 / 35.0, S_GOLDWANDATK1_3) { A_FireGoldWandPL1(); }
+	S_GOLDWANDATK1_3('GWND', 3, 'weapons/wand/view.xml', 5, 3.0 / 35.0, S_GOLDWANDATK1_4) { }
+	S_GOLDWANDATK1_4('GWND', 3, 'weapons/wand/view.xml', 5, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
+	S_GOLDWANDATK2_1('GWND', 1, 'weapons/wand/view.xml', 6, 3.0 / 35.0, S_GOLDWANDATK2_2) { }
+	S_GOLDWANDATK2_2('GWND', 2, 'weapons/wand/view.xml', 7, 4.0 / 35.0, S_GOLDWANDATK2_3) { A_FireGoldWandPL2(); }
+	S_GOLDWANDATK2_3('GWND', 3, 'weapons/wand/view.xml', 8, 3.0 / 35.0, S_GOLDWANDATK2_4) { }
+	S_GOLDWANDATK2_4('GWND', 3, 'weapons/wand/view.xml', 8, 0.0 / 35.0, S_GOLDWANDREADY) { A_ReFire(); }
 }
 
 defaultproperties

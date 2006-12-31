@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class DeadShotgunGuy:Decoration
+class DeadShotgunGuy : Decoration
 	__mobjinfo__(19);
 
 __states__
 {
-	S_SPOS_DEAD('SPOS', 11, 'monsters/sargeant/death.md2', 4, -1.0, none) { }
+	S_SPOS_DEAD('SPOS', 11, 'monsters/sargeant/model.xml', 19, -1.0, none) { }
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ItemWeaponGauntlets : WeaponPickup
 
 __states__
 {
-	S_WGNT('WGNT', 0, 'weapons/g_gauntl.md2', 0, -1.0, none) { }
+	S_WGNT('WGNT', 0, 'weapons/gauntlet/ground.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

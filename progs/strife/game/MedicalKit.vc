@@ -28,7 +28,7 @@ class MedicalKit : InventoryItem
 
 __states__
 {
-	S_MEDICAL_KIT('MDKT', 0, 'items/medkit.md2', 0, -1.0, none) { }
+	S_MEDICAL_KIT('MDKT', 0, 'items/medkit.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

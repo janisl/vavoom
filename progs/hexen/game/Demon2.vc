@@ -86,48 +86,38 @@ void A_Demon2Death()
 
 __states__
 {
-	S_DEMN2_LOOK1('DEM2', 0, 'monsters/demon/base2.md2', 0, 5.0 / 35.0, S_DEMN2_LOOK2) { A_Look(); }
-	S_DEMN2_LOOK2('DEM2', 0, 'monsters/demon/base2.md2', 1, 5.0 / 35.0, S_DEMN2_LOOK3) { }
-	S_DEMN2_LOOK3('DEM2', 0, 'monsters/demon/base2.md2', 2, 5.0 / 35.0, S_DEMN2_LOOK4) { A_Look(); }
-	S_DEMN2_LOOK4('DEM2', 0, 'monsters/demon/base2.md2', 3, 5.0 / 35.0, S_DEMN2_LOOK5) { }
-	S_DEMN2_LOOK5('DEM2', 0, 'monsters/demon/base2.md2', 4, 5.0 / 35.0, S_DEMN2_LOOK6) { A_Look(); }
-	S_DEMN2_LOOK6('DEM2', 0, 'monsters/demon/base2.md2', 5, 5.0 / 35.0, S_DEMN2_LOOK7) { }
-	S_DEMN2_LOOK7('DEM2', 0, 'monsters/demon/base2.md2', 6, 5.0 / 35.0, S_DEMN2_LOOK8) { A_Look(); }
-	S_DEMN2_LOOK8('DEM2', 0, 'monsters/demon/base2.md2', 7, 5.0 / 35.0, S_DEMN2_LOOK1) { }
-	S_DEMN2_CHASE1('DEM2', 0, 'monsters/demon/base2.md2', 8, 2.0 / 35.0, S_DEMN2_CHASE2) { A_Chase(); }
-	S_DEMN2_CHASE2('DEM2', 0, 'monsters/demon/base2.md2', 9, 2.0 / 35.0, S_DEMN2_CHASE3) { }
-	S_DEMN2_CHASE3('DEM2', 1, 'monsters/demon/base2.md2', 10, 2.0 / 35.0, S_DEMN2_CHASE4) { A_Chase(); }
-	S_DEMN2_CHASE4('DEM2', 1, 'monsters/demon/base2.md2', 11, 2.0 / 35.0, S_DEMN2_CHASE5) { }
-	S_DEMN2_CHASE5('DEM2', 2, 'monsters/demon/base2.md2', 12, 2.0 / 35.0, S_DEMN2_CHASE6) { A_Chase(); }
-	S_DEMN2_CHASE6('DEM2', 2, 'monsters/demon/base2.md2', 13, 2.0 / 35.0, S_DEMN2_CHASE7) { }
-	S_DEMN2_CHASE7('DEM2', 3, 'monsters/demon/base2.md2', 14, 2.0 / 35.0, S_DEMN2_CHASE8) { A_Chase(); }
-	S_DEMN2_CHASE8('DEM2', 3, 'monsters/demon/base2.md2', 15, 2.0 / 35.0, S_DEMN2_CHASE1) { }
-	S_DEMN2_ATK1_1('DEM2', 4, 'monsters/demon/base2.md2', 16, 6.0 / 35.0, S_DEMN2_ATK1_2) { A_FaceTarget(); }
-	S_DEMN2_ATK1_2('DEM2', 5, 'monsters/demon/base2.md2', 17, 8.0 / 35.0, S_DEMN2_ATK1_3) { A_FaceTarget(); }
-	S_DEMN2_ATK1_3('DEM2', 6, 'monsters/demon/base2.md2', 18, 6.0 / 35.0, S_DEMN2_CHASE1) { A_DemonAttack1(); }
-	S_DEMN2_ATK2_1('DEM2', 4, 'monsters/demon/base2.md2', 19, 5.0 / 35.0, S_DEMN2_ATK2_2) { A_FaceTarget(); }
-	S_DEMN2_ATK2_2('DEM2', 5, 'monsters/demon/base2.md2', 20, 6.0 / 35.0, S_DEMN2_ATK2_3) { A_FaceTarget(); }
-	S_DEMN2_ATK2_3('DEM2', 6, 'monsters/demon/base2.md2', 21, 5.0 / 35.0, S_DEMN2_CHASE1) { A_DemonAttack2(); }
-	S_DEMN2_PAIN1('DEM2', 4, 'monsters/demon/base2.md2', 22, 4.0 / 35.0, S_DEMN2_PAIN2) { }
-	S_DEMN2_PAIN2('DEM2', 4, 'monsters/demon/base2.md2', 23, 4.0 / 35.0, S_DEMN2_CHASE1) { A_Pain(); }
-	S_DEMN2_DEATH1('DEM2', 7, 'monsters/demon/base2.md2', 24, 6.0 / 35.0, S_DEMN2_DEATH2) { }
-	S_DEMN2_DEATH2('DEM2', 8, 'monsters/demon/base2.md2', 25, 6.0 / 35.0, S_DEMN2_DEATH3) { }
-	S_DEMN2_DEATH3('DEM2', 9, 'monsters/demon/base2.md2', 26, 6.0 / 35.0, S_DEMN2_DEATH4) { A_Scream(); }
-	S_DEMN2_DEATH4('DEM2', 10, 'monsters/demon/base2.md2', 27, 6.0 / 35.0, S_DEMN2_DEATH5) { A_NoBlocking(); }
-	S_DEMN2_DEATH5('DEM2', 11, 'monsters/demon/base2.md2', 28, 6.0 / 35.0, S_DEMN2_DEATH6) { A_QueueCorpse(); }
-	S_DEMN2_DEATH6('DEM2', 12, 'monsters/demon/base2.md2', 29, 6.0 / 35.0, S_DEMN2_DEATH7) { }
-	S_DEMN2_DEATH7('DEM2', 13, 'monsters/demon/base2.md2', 30, 6.0 / 35.0, S_DEMN2_DEATH8) { }
-	S_DEMN2_DEATH8('DEM2', 14, 'monsters/demon/base2.md2', 31, 6.0 / 35.0, S_DEMN2_DEATH9) { }
-	S_DEMN2_DEATH9('DEM2', 15, 'monsters/demon/base2.md2', 32, -1.0, none) { }
-	S_DEMN2_XDEATH1('DEM2', 7, 'monsters/demon/base2.md2', 24, 6.0 / 35.0, S_DEMN2_XDEATH2) { }
-	S_DEMN2_XDEATH2('DEM2', 8, 'monsters/demon/base2.md2', 25, 6.0 / 35.0, S_DEMN2_XDEATH3) { A_Demon2Death(); }
-	S_DEMN2_XDEATH3('DEM2', 9, 'monsters/demon/base2.md2', 26, 6.0 / 35.0, S_DEMN2_XDEATH4) { A_Scream(); }
-	S_DEMN2_XDEATH4('DEM2', 10, 'monsters/demon/base2.md2', 27, 6.0 / 35.0, S_DEMN2_XDEATH5) { A_NoBlocking(); }
-	S_DEMN2_XDEATH5('DEM2', 11, 'monsters/demon/base2.md2', 28, 6.0 / 35.0, S_DEMN2_XDEATH6) { A_QueueCorpse(); }
-	S_DEMN2_XDEATH6('DEM2', 12, 'monsters/demon/base2.md2', 29, 6.0 / 35.0, S_DEMN2_XDEATH7) { }
-	S_DEMN2_XDEATH7('DEM2', 13, 'monsters/demon/base2.md2', 30, 6.0 / 35.0, S_DEMN2_XDEATH8) { }
-	S_DEMN2_XDEATH8('DEM2', 14, 'monsters/demon/base2.md2', 31, 6.0 / 35.0, S_DEMN2_XDEATH9) { }
-	S_DEMN2_XDEATH9('DEM2', 15, 'monsters/demon/base2.md2', 32, -1.0, none) { }
+	S_DEMN2_LOOK1('DEM2', 0, 'monsters/demon/model2.xml', 0, 10.0 / 35.0, S_DEMN2_LOOK2) { A_Look(); }
+	S_DEMN2_LOOK2('DEM2', 0, 'monsters/demon/model2.xml', 1, 10.0 / 35.0, S_DEMN2_LOOK1) { A_Look(); }
+	S_DEMN2_CHASE1('DEM2', 0, 'monsters/demon/model2.xml', 2, 4.0 / 35.0, S_DEMN2_CHASE2) { A_Chase(); }
+	S_DEMN2_CHASE2('DEM2', 1, 'monsters/demon/model2.xml', 3, 4.0 / 35.0, S_DEMN2_CHASE3) { A_Chase(); }
+	S_DEMN2_CHASE3('DEM2', 2, 'monsters/demon/model2.xml', 4, 4.0 / 35.0, S_DEMN2_CHASE4) { A_Chase(); }
+	S_DEMN2_CHASE4('DEM2', 3, 'monsters/demon/model2.xml', 5, 4.0 / 35.0, S_DEMN2_CHASE1) { A_Chase(); }
+	S_DEMN2_ATK1_1('DEM2', 4, 'monsters/demon/model2.xml', 6, 6.0 / 35.0, S_DEMN2_ATK1_2) { A_FaceTarget(); }
+	S_DEMN2_ATK1_2('DEM2', 5, 'monsters/demon/model2.xml', 7, 8.0 / 35.0, S_DEMN2_ATK1_3) { A_FaceTarget(); }
+	S_DEMN2_ATK1_3('DEM2', 6, 'monsters/demon/model2.xml', 8, 6.0 / 35.0, S_DEMN2_CHASE1) { A_DemonAttack1(); }
+	S_DEMN2_ATK2_1('DEM2', 4, 'monsters/demon/model2.xml', 9, 5.0 / 35.0, S_DEMN2_ATK2_2) { A_FaceTarget(); }
+	S_DEMN2_ATK2_2('DEM2', 5, 'monsters/demon/model2.xml', 10, 6.0 / 35.0, S_DEMN2_ATK2_3) { A_FaceTarget(); }
+	S_DEMN2_ATK2_3('DEM2', 6, 'monsters/demon/model2.xml', 11, 5.0 / 35.0, S_DEMN2_CHASE1) { A_DemonAttack2(); }
+	S_DEMN2_PAIN1('DEM2', 4, 'monsters/demon/model2.xml', 12, 4.0 / 35.0, S_DEMN2_PAIN2) { }
+	S_DEMN2_PAIN2('DEM2', 4, 'monsters/demon/model2.xml', 13, 4.0 / 35.0, S_DEMN2_CHASE1) { A_Pain(); }
+	S_DEMN2_DEATH1('DEM2', 7, 'monsters/demon/model2.xml', 14, 6.0 / 35.0, S_DEMN2_DEATH2) { }
+	S_DEMN2_DEATH2('DEM2', 8, 'monsters/demon/model2.xml', 15, 6.0 / 35.0, S_DEMN2_DEATH3) { }
+	S_DEMN2_DEATH3('DEM2', 9, 'monsters/demon/model2.xml', 16, 6.0 / 35.0, S_DEMN2_DEATH4) { A_Scream(); }
+	S_DEMN2_DEATH4('DEM2', 10, 'monsters/demon/model2.xml', 17, 6.0 / 35.0, S_DEMN2_DEATH5) { A_NoBlocking(); }
+	S_DEMN2_DEATH5('DEM2', 11, 'monsters/demon/model2.xml', 18, 6.0 / 35.0, S_DEMN2_DEATH6) { A_QueueCorpse(); }
+	S_DEMN2_DEATH6('DEM2', 12, 'monsters/demon/model2.xml', 19, 6.0 / 35.0, S_DEMN2_DEATH7) { }
+	S_DEMN2_DEATH7('DEM2', 13, 'monsters/demon/model2.xml', 20, 6.0 / 35.0, S_DEMN2_DEATH8) { }
+	S_DEMN2_DEATH8('DEM2', 14, 'monsters/demon/model2.xml', 21, 6.0 / 35.0, S_DEMN2_DEATH9) { }
+	S_DEMN2_DEATH9('DEM2', 15, 'monsters/demon/model2.xml', 22, -1.0, none) { }
+	S_DEMN2_XDEATH1('DEM2', 7, 'monsters/demon/model2.xml', 23, 6.0 / 35.0, S_DEMN2_XDEATH2) { }
+	S_DEMN2_XDEATH2('DEM2', 8, 'monsters/demon/model2.xml', 24, 6.0 / 35.0, S_DEMN2_XDEATH3) { A_Demon2Death(); }
+	S_DEMN2_XDEATH3('DEM2', 9, 'monsters/demon/model2.xml', 25, 6.0 / 35.0, S_DEMN2_XDEATH4) { A_Scream(); }
+	S_DEMN2_XDEATH4('DEM2', 10, 'monsters/demon/model2.xml', 26, 6.0 / 35.0, S_DEMN2_XDEATH5) { A_NoBlocking(); }
+	S_DEMN2_XDEATH5('DEM2', 11, 'monsters/demon/model2.xml', 27, 6.0 / 35.0, S_DEMN2_XDEATH6) { A_QueueCorpse(); }
+	S_DEMN2_XDEATH6('DEM2', 12, 'monsters/demon/model2.xml', 28, 6.0 / 35.0, S_DEMN2_XDEATH7) { }
+	S_DEMN2_XDEATH7('DEM2', 13, 'monsters/demon/model2.xml', 29, 6.0 / 35.0, S_DEMN2_XDEATH8) { }
+	S_DEMN2_XDEATH8('DEM2', 14, 'monsters/demon/model2.xml', 30, 6.0 / 35.0, S_DEMN2_XDEATH9) { }
+	S_DEMN2_XDEATH9('DEM2', 15, 'monsters/demon/model2.xml', 31, -1.0, none) { }
 }
 
 defaultproperties

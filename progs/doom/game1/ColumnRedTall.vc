@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class ColumnRedTall:Decoration
+class ColumnRedTall : Decoration
 	__mobjinfo__(32);
 
 __states__
 {
-	S_TALLREDCOL('COL3', 0, 'objects/pillarrt.md2', 0, -1.0, none) { }
+	S_TALLREDCOL('COL3', 0, 'objects/pillarrt.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

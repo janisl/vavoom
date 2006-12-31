@@ -261,94 +261,45 @@ void A_BossDeath()
 
 __states__
 {
-	S_SOR2_RISE1('SOR2', 0, 'monsters/dsparil/base2.md2', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
-	S_SOR2_RISE2('SOR2', 1, 'monsters/dsparil/base2.md2', 1, 4.0 / 35.0, S_SOR2_RISE3) { }
-	S_SOR2_RISE3('SOR2', 2, 'monsters/dsparil/base2.md2', 2, 4.0 / 35.0, S_SOR2_RISE4) { A_SorRise(); }
-	S_SOR2_RISE4('SOR2', 3, 'monsters/dsparil/base2.md2', 3, 4.0 / 35.0, S_SOR2_RISE5) { }
-	S_SOR2_RISE5('SOR2', 4, 'monsters/dsparil/base2.md2', 4, 4.0 / 35.0, S_SOR2_RISE6) { }
-	S_SOR2_RISE6('SOR2', 5, 'monsters/dsparil/base2.md2', 5, 4.0 / 35.0, S_SOR2_RISE7) { }
-	S_SOR2_RISE7('SOR2', 6, 'monsters/dsparil/base2.md2', 6, 12.0 / 35.0, S_SOR2_WALK1) { A_SorSightSnd(); }
-	S_SOR2_LOOK1('SOR2', 12, 'monsters/dsparil/base2.md2', 7, 2.5 / 35.0, S_SOR2_LOOK2) { A_Look(); }
-	S_SOR2_LOOK2('SOR2', 12, 'monsters/dsparil/base2.md2', 8, 2.5 / 35.0, S_SOR2_LOOK3) { }
-	S_SOR2_LOOK3('SOR2', 12, 'monsters/dsparil/base2.md2', 9, 2.5 / 35.0, S_SOR2_LOOK4) { }
-	S_SOR2_LOOK4('SOR2', 12, 'monsters/dsparil/base2.md2', 10, 2.5 / 35.0, S_SOR2_LOOK5) { }
-	S_SOR2_LOOK5('SOR2', 13, 'monsters/dsparil/base2.md2', 11, 2.5 / 35.0, S_SOR2_LOOK6) { A_Look(); }
-	S_SOR2_LOOK6('SOR2', 13, 'monsters/dsparil/base2.md2', 12, 2.5 / 35.0, S_SOR2_LOOK7) { }
-	S_SOR2_LOOK7('SOR2', 13, 'monsters/dsparil/base2.md2', 13, 2.5 / 35.0, S_SOR2_LOOK8) { }
-	S_SOR2_LOOK8('SOR2', 13, 'monsters/dsparil/base2.md2', 14, 2.5 / 35.0, S_SOR2_LOOK9) { }
-	S_SOR2_LOOK9('SOR2', 12, 'monsters/dsparil/base2.md2', 15, 2.5 / 35.0, S_SOR2_LOOK10) { A_Look(); }
-	S_SOR2_LOOK10('SOR2', 12, 'monsters/dsparil/base2.md2', 16, 2.5 / 35.0, S_SOR2_LOOK11) { }
-	S_SOR2_LOOK11('SOR2', 12, 'monsters/dsparil/base2.md2', 17, 2.5 / 35.0, S_SOR2_LOOK12) { }
-	S_SOR2_LOOK12('SOR2', 12, 'monsters/dsparil/base2.md2', 18, 2.5 / 35.0, S_SOR2_LOOK13) { }
-	S_SOR2_LOOK13('SOR2', 13, 'monsters/dsparil/base2.md2', 19, 2.5 / 35.0, S_SOR2_LOOK14) { A_Look(); }
-	S_SOR2_LOOK14('SOR2', 13, 'monsters/dsparil/base2.md2', 20, 2.5 / 35.0, S_SOR2_LOOK15) { }
-	S_SOR2_LOOK15('SOR2', 13, 'monsters/dsparil/base2.md2', 21, 2.5 / 35.0, S_SOR2_LOOK16) { }
-	S_SOR2_LOOK16('SOR2', 13, 'monsters/dsparil/base2.md2', 22, 2.5 / 35.0, S_SOR2_LOOK1) { }
-	S_SOR2_WALK1('SOR2', 12, 'monsters/dsparil/base2.md2', 23, 1.0 / 35.0, S_SOR2_WALK2) { A_Chase(); }
-	S_SOR2_WALK2('SOR2', 12, 'monsters/dsparil/base2.md2', 24, 1.0 / 35.0, S_SOR2_WALK3) { }
-	S_SOR2_WALK3('SOR2', 12, 'monsters/dsparil/base2.md2', 25, 1.0 / 35.0, S_SOR2_WALK4) { }
-	S_SOR2_WALK4('SOR2', 12, 'monsters/dsparil/base2.md2', 26, 1.0 / 35.0, S_SOR2_WALK5) { }
-	S_SOR2_WALK5('SOR2', 13, 'monsters/dsparil/base2.md2', 27, 1.0 / 35.0, S_SOR2_WALK6) { A_Chase(); }
-	S_SOR2_WALK6('SOR2', 13, 'monsters/dsparil/base2.md2', 28, 1.0 / 35.0, S_SOR2_WALK7) { }
-	S_SOR2_WALK7('SOR2', 13, 'monsters/dsparil/base2.md2', 29, 1.0 / 35.0, S_SOR2_WALK8) { }
-	S_SOR2_WALK8('SOR2', 13, 'monsters/dsparil/base2.md2', 30, 1.0 / 35.0, S_SOR2_WALK9) { }
-	S_SOR2_WALK9('SOR2', 14, 'monsters/dsparil/base2.md2', 31, 1.0 / 35.0, S_SOR2_WALK10) { A_Chase(); }
-	S_SOR2_WALK10('SOR2', 14, 'monsters/dsparil/base2.md2', 32, 1.0 / 35.0, S_SOR2_WALK11) { }
-	S_SOR2_WALK11('SOR2', 14, 'monsters/dsparil/base2.md2', 33, 1.0 / 35.0, S_SOR2_WALK12) { }
-	S_SOR2_WALK12('SOR2', 14, 'monsters/dsparil/base2.md2', 34, 1.0 / 35.0, S_SOR2_WALK13) { }
-	S_SOR2_WALK13('SOR2', 15, 'monsters/dsparil/base2.md2', 35, 1.0 / 35.0, S_SOR2_WALK14) { A_Chase(); }
-	S_SOR2_WALK14('SOR2', 15, 'monsters/dsparil/base2.md2', 36, 1.0 / 35.0, S_SOR2_WALK15) { }
-	S_SOR2_WALK15('SOR2', 15, 'monsters/dsparil/base2.md2', 37, 1.0 / 35.0, S_SOR2_WALK16) { }
-	S_SOR2_WALK16('SOR2', 15, 'monsters/dsparil/base2.md2', 38, 1.0 / 35.0, S_SOR2_WALK1) { }
-	S_SOR2_PAIN1('SOR2', 16, 'monsters/dsparil/base2.md2', 39, 3.0 / 35.0, S_SOR2_PAIN2) { }
-	S_SOR2_PAIN2('SOR2', 16, 'monsters/dsparil/base2.md2', 40, 6.0 / 35.0, S_SOR2_WALK1) { A_Pain(); }
-	S_SOR2_ATK1('SOR2', 17, 'monsters/dsparil/base2.md2', 41, 3.0 / 35.0, S_SOR2_ATK2) { A_Srcr2Decide(); }
-	S_SOR2_ATK2('SOR2', 17, 'monsters/dsparil/base2.md2', 42, 3.0 / 35.0, S_SOR2_ATK3) { }
-	S_SOR2_ATK3('SOR2', 17, 'monsters/dsparil/base2.md2', 43, 3.0 / 35.0, S_SOR2_ATK4) { }
-	S_SOR2_ATK4('SOR2', 18, 'monsters/dsparil/base2.md2', 44, 3.0 / 35.0, S_SOR2_ATK5) { A_FaceTarget(); }
-	S_SOR2_ATK5('SOR2', 18, 'monsters/dsparil/base2.md2', 45, 3.0 / 35.0, S_SOR2_ATK6) { }
-	S_SOR2_ATK6('SOR2', 18, 'monsters/dsparil/base2.md2', 46, 3.0 / 35.0, S_SOR2_ATK7) { }
-	S_SOR2_ATK7('SOR2', 19, 'monsters/dsparil/base2.md2', 47, 2.0 / 35.0, S_SOR2_ATK8) { A_Srcr2Attack(); }
-	S_SOR2_ATK8('SOR2', 19, 'monsters/dsparil/base2.md2', 48, 2.0 / 35.0, S_SOR2_ATK9) { }
-	S_SOR2_ATK9('SOR2', 19, 'monsters/dsparil/base2.md2', 49, 2.0 / 35.0, S_SOR2_ATK10) { }
-	S_SOR2_ATK10('SOR2', 19, 'monsters/dsparil/base2.md2', 50, 2.0 / 35.0, S_SOR2_ATK11) { }
-	S_SOR2_ATK11('SOR2', 19, 'monsters/dsparil/base2.md2', 51, 2.0 / 35.0, S_SOR2_ATK12) { }
-	S_SOR2_ATK12('SOR2', 19, 'monsters/dsparil/base2.md2', 52, 2.0 / 35.0, S_SOR2_ATK13) { }
-	S_SOR2_ATK13('SOR2', 19, 'monsters/dsparil/base2.md2', 53, 2.0 / 35.0, S_SOR2_ATK14) { }
-	S_SOR2_ATK14('SOR2', 19, 'monsters/dsparil/base2.md2', 54, 2.0 / 35.0, S_SOR2_ATK15) { }
-	S_SOR2_ATK15('SOR2', 19, 'monsters/dsparil/base2.md2', 55, 2.0 / 35.0, S_SOR2_ATK16) { }
-	S_SOR2_ATK16('SOR2', 19, 'monsters/dsparil/base2.md2', 56, 2.0 / 35.0, S_SOR2_WALK1) { }
-	S_SOR2_TELE1('SOR2', 11, 'monsters/dsparil/base2.md2', 62, 6.0 / 35.0, S_SOR2_TELE2) { }
-	S_SOR2_TELE2('SOR2', 10, 'monsters/dsparil/base2.md2', 61, 6.0 / 35.0, S_SOR2_TELE3) { }
-	S_SOR2_TELE3('SOR2', 9, 'monsters/dsparil/base2.md2', 60, 6.0 / 35.0, S_SOR2_TELE4) { }
-	S_SOR2_TELE4('SOR2', 8, 'monsters/dsparil/base2.md2', 59, 6.0 / 35.0, S_SOR2_TELE5) { }
-	S_SOR2_TELE5('SOR2', 7, 'monsters/dsparil/base2.md2', 58, 6.0 / 35.0, S_SOR2_TELE6) { }
-	S_SOR2_TELE6('SOR2', 6, 'monsters/dsparil/base2.md2', 57, 6.0 / 35.0, S_SOR2_WALK1) { }
-	S_SOR2_DIE1('SDTH', 0, 'monsters/dsparil/base2.md2', 63, 2.0 / 35.0, S_SOR2_DIE1A) { A_Sor2DthInit(); }
-	S_SOR2_DIE1A('SDTH', 0, 'monsters/dsparil/base2.md2', 64, 2.0 / 35.0, S_SOR2_DIE1B) { }
-	S_SOR2_DIE1B('SDTH', 0, 'monsters/dsparil/base2.md2', 65, 2.0 / 35.0, S_SOR2_DIE1C) { }
-	S_SOR2_DIE1C('SDTH', 0, 'monsters/dsparil/base2.md2', 66, 2.0 / 35.0, S_SOR2_DIE2) { }
-	S_SOR2_DIE2('SDTH', 1, 'monsters/dsparil/base2.md2', 67, 2.0 / 35.0, S_SOR2_DIE2A) { }
-	S_SOR2_DIE2A('SDTH', 1, 'monsters/dsparil/base2.md2', 68, 2.0 / 35.0, S_SOR2_DIE2B) { }
-	S_SOR2_DIE2B('SDTH', 1, 'monsters/dsparil/base2.md2', 69, 2.0 / 35.0, S_SOR2_DIE2C) { }
-	S_SOR2_DIE2C('SDTH', 1, 'monsters/dsparil/base2.md2', 70, 2.0 / 35.0, S_SOR2_DIE3) { }
-	S_SOR2_DIE3('SDTH', 2, 'monsters/dsparil/base2.md2', 71, 2.0 / 35.0, S_SOR2_DIE3A) { A_SorDSph(); }
-	S_SOR2_DIE3A('SDTH', 2, 'monsters/dsparil/base2.md2', 72, 2.0 / 35.0, S_SOR2_DIE3B) { }
-	S_SOR2_DIE3B('SDTH', 2, 'monsters/dsparil/base2.md2', 73, 2.0 / 35.0, S_SOR2_DIE3C) { }
-	S_SOR2_DIE3C('SDTH', 2, 'monsters/dsparil/base2.md2', 74, 2.0 / 35.0, S_SOR2_DIE4) { }
-	S_SOR2_DIE4('SDTH', 3, 'monsters/dsparil/base2.md2', 75, 3.0 / 35.0, S_SOR2_DIE4A) { }
-	S_SOR2_DIE4A('SDTH', 3, 'monsters/dsparil/base2.md2', 76, 4.0 / 35.0, S_SOR2_DIE5) { }
-	S_SOR2_DIE5('SDTH', 4, 'monsters/dsparil/base2.md2', 77, 7.0 / 35.0, S_SOR2_DIE6) { }
-	S_SOR2_DIE6('SDTH', 5, 'monsters/dsparil/base2.md2', 78, 7.0 / 35.0, S_SOR2_DIE7) { A_Sor2DthLoop(); }
-	S_SOR2_DIE7('SDTH', 6, 'monsters/dsparil/skel.md2', 0, 6.0 / 35.0, S_SOR2_DIE8) { A_SorDExp(); }
-	S_SOR2_DIE8('SDTH', 7, 'monsters/dsparil/skel.md2', 1, 6.0 / 35.0, S_SOR2_DIE9) { }
-	S_SOR2_DIE9('SDTH', 8, 'monsters/dsparil/skel.md2', 2, 18.0 / 35.0, S_SOR2_DIE10) { }
-	S_SOR2_DIE10('SDTH', 9, 'monsters/dsparil/skel.md2', 3, 6.0 / 35.0, S_SOR2_DIE11) { A_NoBlocking(); }
-	S_SOR2_DIE11('SDTH', 10, 'monsters/dsparil/skel.md2', 4, 6.0 / 35.0, S_SOR2_DIE12) { A_SorDBon(); }
-	S_SOR2_DIE12('SDTH', 11, 'monsters/dsparil/skel.md2', 5, 6.0 / 35.0, S_SOR2_DIE13) { }
-	S_SOR2_DIE13('SDTH', 12, 'monsters/dsparil/skel.md2', 6, 6.0 / 35.0, S_SOR2_DIE14) { }
-	S_SOR2_DIE14('SDTH', 13, 'monsters/dsparil/skel.md2', 7, 6.0 / 35.0, S_SOR2_DIE15) { }
-	S_SOR2_DIE15('SDTH', 14, 'monsters/dsparil/skel.md2', 8, -1.0, none) { A_BossDeath(); }
+	S_SOR2_RISE1('SOR2', 0, 'monsters/dsparil/model2.xml', 0, 4.0 / 35.0, S_SOR2_RISE2) { }
+	S_SOR2_RISE2('SOR2', 1, 'monsters/dsparil/model2.xml', 1, 4.0 / 35.0, S_SOR2_RISE3) { }
+	S_SOR2_RISE3('SOR2', 2, 'monsters/dsparil/model2.xml', 2, 4.0 / 35.0, S_SOR2_RISE4) { A_SorRise(); }
+	S_SOR2_RISE4('SOR2', 3, 'monsters/dsparil/model2.xml', 3, 4.0 / 35.0, S_SOR2_RISE5) { }
+	S_SOR2_RISE5('SOR2', 4, 'monsters/dsparil/model2.xml', 4, 4.0 / 35.0, S_SOR2_RISE6) { }
+	S_SOR2_RISE6('SOR2', 5, 'monsters/dsparil/model2.xml', 5, 4.0 / 35.0, S_SOR2_RISE7) { }
+	S_SOR2_RISE7('SOR2', 6, 'monsters/dsparil/model2.xml', 6, 12.0 / 35.0, S_SOR2_WALK1) { A_SorSightSnd(); }
+	S_SOR2_LOOK1('SOR2', 12, 'monsters/dsparil/model2.xml', 7, 10.0 / 35.0, S_SOR2_LOOK2) { A_Look(); }
+	S_SOR2_LOOK2('SOR2', 13, 'monsters/dsparil/model2.xml', 8, 10.0 / 35.0, S_SOR2_LOOK1) { A_Look(); }
+	S_SOR2_WALK1('SOR2', 12, 'monsters/dsparil/model2.xml', 9, 4.0 / 35.0, S_SOR2_WALK2) { A_Chase(); }
+	S_SOR2_WALK2('SOR2', 13, 'monsters/dsparil/model2.xml', 10, 4.0 / 35.0, S_SOR2_WALK3) { A_Chase(); }
+	S_SOR2_WALK3('SOR2', 14, 'monsters/dsparil/model2.xml', 11, 4.0 / 35.0, S_SOR2_WALK4) { A_Chase(); }
+	S_SOR2_WALK4('SOR2', 15, 'monsters/dsparil/model2.xml', 12, 4.0 / 35.0, S_SOR2_WALK1) { A_Chase(); }
+	S_SOR2_PAIN1('SOR2', 16, 'monsters/dsparil/model2.xml', 13, 3.0 / 35.0, S_SOR2_PAIN2) { }
+	S_SOR2_PAIN2('SOR2', 16, 'monsters/dsparil/model2.xml', 14, 6.0 / 35.0, S_SOR2_WALK1) { A_Pain(); }
+	S_SOR2_ATK1('SOR2', 17, 'monsters/dsparil/model2.xml', 15, 9.0 / 35.0, S_SOR2_ATK2) { A_Srcr2Decide(); }
+	S_SOR2_ATK2('SOR2', 18, 'monsters/dsparil/model2.xml', 16, 9.0 / 35.0, S_SOR2_ATK3) { A_FaceTarget(); }
+	S_SOR2_ATK3('SOR2', 19, 'monsters/dsparil/model2.xml', 17, 20.0 / 35.0, S_SOR2_WALK1) { A_Srcr2Attack(); }
+	S_SOR2_TELE1('SOR2', 11, 'monsters/dsparil/model2.xml', 18, 6.0 / 35.0, S_SOR2_TELE2) { }
+	S_SOR2_TELE2('SOR2', 10, 'monsters/dsparil/model2.xml', 19, 6.0 / 35.0, S_SOR2_TELE3) { }
+	S_SOR2_TELE3('SOR2', 9, 'monsters/dsparil/model2.xml', 20, 6.0 / 35.0, S_SOR2_TELE4) { }
+	S_SOR2_TELE4('SOR2', 8, 'monsters/dsparil/model2.xml', 21, 6.0 / 35.0, S_SOR2_TELE5) { }
+	S_SOR2_TELE5('SOR2', 7, 'monsters/dsparil/model2.xml', 22, 6.0 / 35.0, S_SOR2_TELE6) { }
+	S_SOR2_TELE6('SOR2', 6, 'monsters/dsparil/model2.xml', 23, 6.0 / 35.0, S_SOR2_WALK1) { }
+	S_SOR2_DIE1('SDTH', 0, 'monsters/dsparil/model2.xml', 24, 8.0 / 35.0, S_SOR2_DIE2) { A_Sor2DthInit(); }
+	S_SOR2_DIE2('SDTH', 1, 'monsters/dsparil/model2.xml', 25, 8.0 / 35.0, S_SOR2_DIE3) { }
+	S_SOR2_DIE3('SDTH', 2, 'monsters/dsparil/model2.xml', 26, 8.0 / 35.0, S_SOR2_DIE4) { A_SorDSph(); }
+	S_SOR2_DIE4('SDTH', 3, 'monsters/dsparil/model2.xml', 27, 7.0 / 35.0, S_SOR2_DIE5) { }
+	S_SOR2_DIE5('SDTH', 4, 'monsters/dsparil/model2.xml', 28, 7.0 / 35.0, S_SOR2_DIE6) { }
+	S_SOR2_DIE6('SDTH', 5, 'monsters/dsparil/model2.xml', 29, 7.0 / 35.0, S_SOR2_DIE7) { A_Sor2DthLoop(); }
+	S_SOR2_DIE7('SDTH', 6, 'monsters/dsparil/model2.xml', 30, 6.0 / 35.0, S_SOR2_DIE8) { A_SorDExp(); }
+	S_SOR2_DIE8('SDTH', 7, 'monsters/dsparil/model2.xml', 31, 6.0 / 35.0, S_SOR2_DIE9) { }
+	S_SOR2_DIE9('SDTH', 8, 'monsters/dsparil/model2.xml', 32, 18.0 / 35.0, S_SOR2_DIE10) { }
+	S_SOR2_DIE10('SDTH', 9, 'monsters/dsparil/model2.xml', 33, 6.0 / 35.0, S_SOR2_DIE11) { A_NoBlocking(); }
+	S_SOR2_DIE11('SDTH', 10, 'monsters/dsparil/model2.xml', 34, 6.0 / 35.0, S_SOR2_DIE12) { A_SorDBon(); }
+	S_SOR2_DIE12('SDTH', 11, 'monsters/dsparil/model2.xml', 35, 6.0 / 35.0, S_SOR2_DIE13) { }
+	S_SOR2_DIE13('SDTH', 12, 'monsters/dsparil/model2.xml', 36, 6.0 / 35.0, S_SOR2_DIE14) { }
+	S_SOR2_DIE14('SDTH', 13, 'monsters/dsparil/model2.xml', 37, 6.0 / 35.0, S_SOR2_DIE15) { }
+	S_SOR2_DIE15('SDTH', 14, 'monsters/dsparil/model2.xml', 38, -1.0, none) { A_BossDeath(); }
 }
 
 defaultproperties

@@ -28,7 +28,7 @@ class ZStalactiteLarge : Decoration
 
 __states__
 {
-	S_ZSTALACTITELARGE1('SLC1', 0, 'objects/stalact1.md2', 0, -1.0, none) { }
+	S_ZSTALACTITELARGE1('SLC1', 0, 'objects/stalact1.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

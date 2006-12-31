@@ -29,9 +29,9 @@ class WeaponMCone : WeaponPickup
 
 __states__
 {
-	S_COS1('WMCS', 0 | FF_FULLBRIGHT, 'weapons/g_cone.md2', 0, 8.0 / 35.0, S_COS2) { }
-	S_COS2('WMCS', 1 | FF_FULLBRIGHT, 'weapons/g_cone.md2', 0, 8.0 / 35.0, S_COS3) { }
-	S_COS3('WMCS', 2 | FF_FULLBRIGHT, 'weapons/g_cone.md2', 0, 8.0 / 35.0, S_COS1) { }
+	S_COS1('WMCS', 0 | FF_FULLBRIGHT, 'weapons/mcone/ground.xml', 0, 8.0 / 35.0, S_COS2) { }
+	S_COS2('WMCS', 1 | FF_FULLBRIGHT, 'weapons/mcone/ground.xml', 1, 8.0 / 35.0, S_COS3) { }
+	S_COS3('WMCS', 2 | FF_FULLBRIGHT, 'weapons/mcone/ground.xml', 2, 8.0 / 35.0, S_COS1) { }
 }
 
 defaultproperties

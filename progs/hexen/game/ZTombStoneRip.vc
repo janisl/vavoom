@@ -28,7 +28,7 @@ class ZTombStoneRip : Decoration
 
 __states__
 {
-	S_ZTOMBSTONERIP1('TMS1', 0, 'objects/tomb1.md2', 0, -1.0, none) { }
+	S_ZTOMBSTONERIP1('TMS1', 0, 'objects/tomb1.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -29,8 +29,8 @@ class ItemArmor1 : ArmorPickup
 
 __states__
 {
-	S_ARM1('ARM1', 0, 'items/grnarmor.md2', 0, 6.0 / 35.0, S_ARM1A) { }
-	S_ARM1A('ARM1', 1 | FF_FULLBRIGHT, 'items/grnarmor.md2', 1, 7.0 / 35.0, S_ARM1) { }
+	S_ARM1('ARM1', 0, 'items/grnarmor.xml', 0, 6.0 / 35.0, S_ARM1A) { }
+	S_ARM1A('ARM1', 1 | FF_FULLBRIGHT, 'items/grnarmor.xml', 1, 7.0 / 35.0, S_ARM1) { }
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ArtifactSuperHeal : Artifact
 
 __states__
 {
-	S_ARTI_SPHL1('SPHL', 0, 'artifact/shboost.md2', 0, 350.0 / 35.0, S_ARTI_SPHL1) { }
+	S_ARTI_SPHL1('SPHL', 0, 'artifact/shboost.xml', 0, 350.0 / 35.0, S_ARTI_SPHL1) { }
 }
 
 defaultproperties

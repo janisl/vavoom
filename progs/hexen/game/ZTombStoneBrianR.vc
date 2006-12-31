@@ -28,7 +28,7 @@ class ZTombStoneBrianR : Decoration
 
 __states__
 {
-	S_ZTOMBSTONEBRIANR1('TMS4', 0, 'objects/tomb4.md2', 0, -1.0, none) { }
+	S_ZTOMBSTONEBRIANR1('TMS4', 0, 'objects/tomb4.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

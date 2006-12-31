@@ -29,7 +29,7 @@ class WeaponMStaffPiece3 : WeaponPiece
 
 __states__
 {
-	S_MSTAFF3('WMS3', 0 | FF_FULLBRIGHT, 'weapons/g_mstaf3.md2', 0, -1.0, none) { }
+	S_MSTAFF3('WMS3', 0 | FF_FULLBRIGHT, 'weapons/mstaff/piece3.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

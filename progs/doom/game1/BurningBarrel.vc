@@ -35,9 +35,9 @@ void Tick(float DeltaTime)
 
 __states__
 {
-	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 0, 4.0 / 35.0, S_BBAR2) { }
-	S_BBAR2('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 1, 4.0 / 35.0, S_BBAR3) { }
-	S_BBAR3('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel.md2', 2, 4.0 / 35.0, S_BBAR1) { }
+	S_BBAR1('FCAN', 0 | FF_FULLBRIGHT, 'lights/fbarrel.xml', 0, 4.0 / 35.0, S_BBAR2) { }
+	S_BBAR2('FCAN', 1 | FF_FULLBRIGHT, 'lights/fbarrel.xml', 1, 4.0 / 35.0, S_BBAR3) { }
+	S_BBAR3('FCAN', 2 | FF_FULLBRIGHT, 'lights/fbarrel.xml', 2, 4.0 / 35.0, S_BBAR1) { }
 }
 
 defaultproperties

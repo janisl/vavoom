@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HangingTorsoLookDown:Decoration
+class HangingTorsoLookDown : Decoration
 	__mobjinfo__(75);
 
 __states__
 {
-	S_HANGTLOOKDN('HDB3', 0, 'bodies/htlookdn.md2', 0, -1.0, none) { }
+	S_HANGTLOOKDN('HDB3', 0, 'bodies/htlookdn.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

@@ -29,7 +29,7 @@ class ItemKey5 : Key
 
 __states__
 {
-	S_KEY5('KEY5', 0, 'keys/emerald.md2', 0, -1.0, none) { }
+	S_KEY5('KEY5', 0, 'keys/emerald.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

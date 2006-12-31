@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class HangingNoGuts:Decoration
+class HangingNoGuts : Decoration
 	__mobjinfo__(73);
 
 __states__
 {
-	S_HANGNOGUTS('HDB1', 0, 'bodies/hnoguts.md2', 0, -1.0, none) { }
+	S_HANGNOGUTS('HDB1', 0, 'bodies/hnoguts.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

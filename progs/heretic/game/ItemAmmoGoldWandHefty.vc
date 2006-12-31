@@ -29,9 +29,9 @@ class ItemAmmoGoldWandHefty : Ammo
 
 __states__
 {
-	S_AMG2_1('AMG2', 0, 'ammo/wand2.md2', 0, 4.0 / 35.0, S_AMG2_2) { }
-	S_AMG2_2('AMG2', 1, 'ammo/wand2.md2', 0, 4.0 / 35.0, S_AMG2_3) { }
-	S_AMG2_3('AMG2', 2, 'ammo/wand2.md2', 0, 4.0 / 35.0, S_AMG2_1) { }
+	S_AMG2_1('AMG2', 0, 'ammo/wand2.xml', 0, 4.0 / 35.0, S_AMG2_2) { }
+	S_AMG2_2('AMG2', 1, 'ammo/wand2.xml', 1, 4.0 / 35.0, S_AMG2_3) { }
+	S_AMG2_3('AMG2', 2, 'ammo/wand2.xml', 2, 4.0 / 35.0, S_AMG2_1) { }
 }
 
 defaultproperties

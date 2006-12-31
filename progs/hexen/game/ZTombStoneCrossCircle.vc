@@ -28,7 +28,7 @@ class ZTombStoneCrossCircle : Decoration
 
 __states__
 {
-	S_ZTOMBSTONECROSSCIRCLE1('TMS5', 0, 'objects/tomb5.md2', 0, -1.0, none) { }
+	S_ZTOMBSTONECROSSCIRCLE1('TMS5', 0, 'objects/tomb5.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

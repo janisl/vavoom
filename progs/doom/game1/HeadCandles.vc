@@ -23,13 +23,13 @@
 //**
 //**************************************************************************
 
-class HeadCandles:Decoration
+class HeadCandles : Decoration
 	__mobjinfo__(29);
 
 __states__
 {
-	S_HEADCANDLES('POL3', 0 | FF_FULLBRIGHT, 'bodies/polescan.md2', 0, 6.0 / 35.0, S_HEADCANDLES2) { }
-	S_HEADCANDLES2('POL3', 1 | FF_FULLBRIGHT, 'bodies/polescan.md2', 1, 6.0 / 35.0, S_HEADCANDLES) { }
+	S_HEADCANDLES('POL3', 0 | FF_FULLBRIGHT, 'bodies/polescan.xml', 0, 6.0 / 35.0, S_HEADCANDLES2) { }
+	S_HEADCANDLES2('POL3', 1 | FF_FULLBRIGHT, 'bodies/polescan.xml', 1, 6.0 / 35.0, S_HEADCANDLES) { }
 }
 
 defaultproperties

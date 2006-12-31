@@ -29,7 +29,7 @@ class ItemAmmoGoldWandWimpy : Ammo
 
 __states__
 {
-	S_AMG1('AMG1', 0, 'ammo/wand1.md2', 0, -1.0, none) { }
+	S_AMG1('AMG1', 0, 'ammo/wand1.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

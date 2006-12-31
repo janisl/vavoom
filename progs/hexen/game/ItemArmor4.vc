@@ -29,7 +29,7 @@ class ItemArmor4 : Armor
 
 __states__
 {
-	S_ARMOR_4('ARM4', 0, 'items/amulet.md2', 0, -1.0, none) { }
+	S_ARMOR_4('ARM4', 0, 'items/amulet.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

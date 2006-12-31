@@ -3668,7 +3668,7 @@ void P_SpawnBlood(TVec Org, int damage)
 #ifndef NO_BOTS
 __states__
 {
-	S_GIBS('POL5', 0, 'gibs/gibs.md2', 0, -1.0, none) { }
+	S_GIBS('POL5', 0, 'gibs/gibs.xml', 0, -1.0, none) { }
 }
 #endif
 

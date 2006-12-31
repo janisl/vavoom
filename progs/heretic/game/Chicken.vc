@@ -157,25 +157,25 @@ void A_ChicPain()
 
 __states__
 {
-	S_CHICKEN_LOOK1('CHKN', 0, 'monsters/chicken/base.md2', 0, 10.0 / 35.0, S_CHICKEN_LOOK2) { A_ChicLook(); }
-	S_CHICKEN_LOOK2('CHKN', 1, 'monsters/chicken/base.md2', 1, 10.0 / 35.0, S_CHICKEN_LOOK1) { A_ChicLook(); }
-	S_CHICKEN_WALK1('CHKN', 0, 'monsters/chicken/base.md2', 2, 3.0 / 35.0, S_CHICKEN_WALK2) { A_ChicChase(); }
-	S_CHICKEN_WALK2('CHKN', 1, 'monsters/chicken/base.md2', 3, 3.0 / 35.0, S_CHICKEN_WALK3) { A_ChicChase(); }
-	S_CHICKEN_WALK3('CHKN', 0, 'monsters/chicken/base.md2', 4, 3.0 / 35.0, S_CHICKEN_WALK4) { A_ChicChase(); }
-	S_CHICKEN_WALK4('CHKN', 1, 'monsters/chicken/base.md2', 5, 3.0 / 35.0, S_CHICKEN_WALK1) { A_ChicChase(); }
-	S_CHICKEN_ATK1('CHKN', 0, 'monsters/chicken/base.md2', 6, 8.0 / 35.0, S_CHICKEN_ATK2) { A_FaceTarget(); }
-	S_CHICKEN_ATK2('CHKN', 2, 'monsters/chicken/base.md2', 7, 5.0 / 35.0, S_CHICKEN_ATK3) { A_ChicAttack(); }
-	S_CHICKEN_ATK3('CHKN', 2, 'monsters/chicken/base.md2', 8, 5.0 / 35.0, S_CHICKEN_WALK1) { }
-	S_CHICKEN_PAIN1('CHKN', 3, 'monsters/chicken/base.md2', 9, 5.0 / 35.0, S_CHICKEN_PAIN2) { A_Feathers(); }
-	S_CHICKEN_PAIN2('CHKN', 2, 'monsters/chicken/base.md2', 10, 5.0 / 35.0, S_CHICKEN_WALK1) { A_ChicPain(); }
-	S_CHICKEN_DIE1('CHKN', 4, 'monsters/chicken/death.md2', 0, 6.0 / 35.0, S_CHICKEN_DIE2) { A_Scream(); }
-	S_CHICKEN_DIE2('CHKN', 5, 'monsters/chicken/death.md2', 1, 6.0 / 35.0, S_CHICKEN_DIE3) { A_Feathers(); }
-	S_CHICKEN_DIE3('CHKN', 6, 'monsters/chicken/death.md2', 2, 6.0 / 35.0, S_CHICKEN_DIE4) { }
-	S_CHICKEN_DIE4('CHKN', 7, 'monsters/chicken/death.md2', 3, 6.0 / 35.0, S_CHICKEN_DIE5) { A_NoBlocking(); }
-	S_CHICKEN_DIE5('CHKN', 8, 'monsters/chicken/death.md2', 4, 6.0 / 35.0, S_CHICKEN_DIE6) { }
-	S_CHICKEN_DIE6('CHKN', 9, 'monsters/chicken/death.md2', 5, 6.0 / 35.0, S_CHICKEN_DIE7) { }
-	S_CHICKEN_DIE7('CHKN', 10, 'monsters/chicken/death.md2', 6, 6.0 / 35.0, S_CHICKEN_DIE8) { }
-	S_CHICKEN_DIE8('CHKN', 11, 'monsters/chicken/death.md2', 7, -1.0, none) { }
+	S_CHICKEN_LOOK1('CHKN', 0, 'monsters/chicken/model.xml', 0, 10.0 / 35.0, S_CHICKEN_LOOK2) { A_ChicLook(); }
+	S_CHICKEN_LOOK2('CHKN', 1, 'monsters/chicken/model.xml', 1, 10.0 / 35.0, S_CHICKEN_LOOK1) { A_ChicLook(); }
+	S_CHICKEN_WALK1('CHKN', 0, 'monsters/chicken/model.xml', 2, 3.0 / 35.0, S_CHICKEN_WALK2) { A_ChicChase(); }
+	S_CHICKEN_WALK2('CHKN', 1, 'monsters/chicken/model.xml', 3, 3.0 / 35.0, S_CHICKEN_WALK3) { A_ChicChase(); }
+	S_CHICKEN_WALK3('CHKN', 0, 'monsters/chicken/model.xml', 4, 3.0 / 35.0, S_CHICKEN_WALK4) { A_ChicChase(); }
+	S_CHICKEN_WALK4('CHKN', 1, 'monsters/chicken/model.xml', 5, 3.0 / 35.0, S_CHICKEN_WALK1) { A_ChicChase(); }
+	S_CHICKEN_ATK1('CHKN', 0, 'monsters/chicken/model.xml', 6, 8.0 / 35.0, S_CHICKEN_ATK2) { A_FaceTarget(); }
+	S_CHICKEN_ATK2('CHKN', 2, 'monsters/chicken/model.xml', 7, 5.0 / 35.0, S_CHICKEN_ATK3) { A_ChicAttack(); }
+	S_CHICKEN_ATK3('CHKN', 2, 'monsters/chicken/model.xml', 8, 5.0 / 35.0, S_CHICKEN_WALK1) { }
+	S_CHICKEN_PAIN1('CHKN', 3, 'monsters/chicken/model.xml', 9, 5.0 / 35.0, S_CHICKEN_PAIN2) { A_Feathers(); }
+	S_CHICKEN_PAIN2('CHKN', 2, 'monsters/chicken/model.xml', 10, 5.0 / 35.0, S_CHICKEN_WALK1) { A_ChicPain(); }
+	S_CHICKEN_DIE1('CHKN', 4, 'monsters/chicken/model.xml', 11, 6.0 / 35.0, S_CHICKEN_DIE2) { A_Scream(); }
+	S_CHICKEN_DIE2('CHKN', 5, 'monsters/chicken/model.xml', 12, 6.0 / 35.0, S_CHICKEN_DIE3) { A_Feathers(); }
+	S_CHICKEN_DIE3('CHKN', 6, 'monsters/chicken/model.xml', 13, 6.0 / 35.0, S_CHICKEN_DIE4) { }
+	S_CHICKEN_DIE4('CHKN', 7, 'monsters/chicken/model.xml', 14, 6.0 / 35.0, S_CHICKEN_DIE5) { A_NoBlocking(); }
+	S_CHICKEN_DIE5('CHKN', 8, 'monsters/chicken/model.xml', 15, 6.0 / 35.0, S_CHICKEN_DIE6) { }
+	S_CHICKEN_DIE6('CHKN', 9, 'monsters/chicken/model.xml', 16, 6.0 / 35.0, S_CHICKEN_DIE7) { }
+	S_CHICKEN_DIE7('CHKN', 10, 'monsters/chicken/model.xml', 17, 6.0 / 35.0, S_CHICKEN_DIE8) { }
+	S_CHICKEN_DIE8('CHKN', 11, 'monsters/chicken/model.xml', 18, -1.0, none) { }
 }
 
 defaultproperties

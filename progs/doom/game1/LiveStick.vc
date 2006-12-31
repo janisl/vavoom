@@ -28,8 +28,8 @@ class LiveStick:Decoration
 
 __states__
 {
-	S_LIVESTICK('POL6', 0, 'bodies/onstick2.md2', 0, 6.0 / 35.0, S_LIVESTICK2) { }
-	S_LIVESTICK2('POL6', 1, 'bodies/onstick2.md2', 1, 8.0 / 35.0, S_LIVESTICK) { }
+	S_LIVESTICK('POL6', 0, 'bodies/onstick2.xml', 0, 6.0 / 35.0, S_LIVESTICK2) { }
+	S_LIVESTICK2('POL6', 1, 'bodies/onstick2.xml', 1, 8.0 / 35.0, S_LIVESTICK) { }
 }
 
 defaultproperties

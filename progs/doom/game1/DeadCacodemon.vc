@@ -28,7 +28,7 @@ class DeadCacodemon:Decoration
 
 __states__
 {
-	S_HEAD_DEAD('HEAD', 11, 'monsters/caco/death.md2', 5, -1.0, none) { }
+	S_HEAD_DEAD('HEAD', 11, 'monsters/caco/model.xml', 13, -1.0, none) { }
 }
 
 defaultproperties

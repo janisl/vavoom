@@ -46,7 +46,7 @@ void A_BoltSpark()
 
 __states__
 {
-	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 'missiles/arrows.md2', 0, 1.0 / 35.0, S_CRBOWFX2) { A_BoltSpark(); }
+	S_CRBOWFX2('FX03', 1 | FF_FULLBRIGHT, 'missiles/arrows.xml', 0, 1.0 / 35.0, S_CRBOWFX2) { A_BoltSpark(); }
 }
 
 defaultproperties

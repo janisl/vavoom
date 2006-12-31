@@ -29,8 +29,8 @@ class ItemKeyYellowCard : KeyPickup
 
 __states__
 {
-	S_YKEY('YKEY', 0, 'keys/yelcard.md2', 0, 10.0 / 35.0, S_YKEY2) { }
-	S_YKEY2('YKEY', 1 | FF_FULLBRIGHT, 'keys/yelcard.md2', 1, 10.0 / 35.0, S_YKEY) { }
+	S_YKEY('YKEY', 0, 'keys/yelcard.xml', 0, 10.0 / 35.0, S_YKEY2) { }
+	S_YKEY2('YKEY', 1 | FF_FULLBRIGHT, 'keys/yelcard.xml', 1, 10.0 / 35.0, S_YKEY) { }
 }
 
 defaultproperties

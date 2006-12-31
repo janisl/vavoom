@@ -23,12 +23,12 @@
 //**
 //**************************************************************************
 
-class BurnedTree:Decoration
+class BurnedTree : Decoration
 	__mobjinfo__(43);
 
 __states__
 {
-	S_TORCHTREE('TRE1', 0, 'objects/tree.md2', 0, -1.0, none) { }
+	S_TORCHTREE('TRE1', 0, 'objects/tree.xml', 0, -1.0, none) { }
 }
 
 defaultproperties

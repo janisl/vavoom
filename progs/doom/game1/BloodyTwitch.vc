@@ -23,15 +23,15 @@
 //**
 //**************************************************************************
 
-class BloodyTwitch:Decoration
+class BloodyTwitch : Decoration
 	__mobjinfo__(49);
 
 __states__
 {
-	S_BLOODYTWITCH('GOR1', 0, 'bodies/twitch.md2', 0, 10.0 / 35.0, S_BLOODYTWITCH2) { }
-	S_BLOODYTWITCH2('GOR1', 1, 'bodies/twitch.md2', 1, 15.0 / 35.0, S_BLOODYTWITCH3) { }
-	S_BLOODYTWITCH3('GOR1', 2, 'bodies/twitch.md2', 2, 8.0 / 35.0, S_BLOODYTWITCH4) { }
-	S_BLOODYTWITCH4('GOR1', 1, 'bodies/twitch.md2', 3, 6.0 / 35.0, S_BLOODYTWITCH) { }
+	S_BLOODYTWITCH('GOR1', 0, 'bodies/twitch.xml', 0, 10.0 / 35.0, S_BLOODYTWITCH2) { }
+	S_BLOODYTWITCH2('GOR1', 1, 'bodies/twitch.xml', 1, 15.0 / 35.0, S_BLOODYTWITCH3) { }
+	S_BLOODYTWITCH3('GOR1', 2, 'bodies/twitch.xml', 2, 8.0 / 35.0, S_BLOODYTWITCH4) { }
+	S_BLOODYTWITCH4('GOR1', 1, 'bodies/twitch.xml', 3, 6.0 / 35.0, S_BLOODYTWITCH) { }
 }
 
 defaultproperties

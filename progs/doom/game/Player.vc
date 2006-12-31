@@ -304,7 +304,7 @@ void SetClientModel()
 	}
 
 	MO.bFixedModel = true;
-	MO.FixedModelIndex = FindModel(va("players/%s/tris.md2", model));
+	MO.FixedModelIndex = FindModel(va("players/%s/player.xml", model));
 	skin = Info_ValueForKey(UserInfo, "skin");
 	if (skin)
 	{

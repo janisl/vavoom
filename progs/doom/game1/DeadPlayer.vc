@@ -23,15 +23,15 @@
 //**
 //**************************************************************************
 
-class DeadPlayer:Decoration
+class DeadPlayer : Decoration
 	__mobjinfo__(15);
 
 __states__
 {
-	S_PLAY_DEAD('PLAY', 13, 'players/doomguy/tris.md2', 15, -1.0, none) { }
+	S_DEADTORSO('PLAY', 13, 'players/doomguy/dead.xml', 0, -1.0, none) { }
 }
 
 defaultproperties
 {
-	IdleState = S_PLAY_DEAD;
+	IdleState = S_DEADTORSO;
 }
